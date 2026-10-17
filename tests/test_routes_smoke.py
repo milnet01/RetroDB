@@ -53,7 +53,6 @@ class TestRouteRegistration:
         'games_search.api_local_search_games': '/api/games/find',
         'games_search.api_similar_games': '/api/games/<int:game_id>/similar',
         'games_search.compare_games_page': '/compare',
-        'games_search.api_compare_games': '/api/games/compare',
         # Media blueprint (v2.77.10)
         'games_media.api_delete_game': '/api/delete-game/<int:game_id>',
         'games_media.api_rename_rom': '/api/rename-rom/<int:game_id>',
@@ -92,7 +91,6 @@ class TestAuthGuards:
         '/api/hltb/bulk/status',
         '/api/hltb/pending',
         '/api/maintenance/alt-titles-backfill/status',
-        '/api/games/compare?ids=1,2',
         '/api/games/1/similar',
         # admin_required, not login_required — same unauthenticated redirect.
         '/api/missing-media-refs/preview',

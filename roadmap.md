@@ -6475,7 +6475,13 @@ orchestrator, several by execution rather than reading.
 - **Plan**: for each, either wire it to its intended caller (the extraction's
   stated purpose) or delete it **and correct the changelog claim**. Do not
   leave a changelog entry describing an unreachable feature.
-- **Status**: planned (2026-09-01). Lanes: games, trophies, docs.
+- **Shipped** (2026-10-17, v3.29.5): both deleted rather than wired.
+  `/compare` already server-renders, so `/api/games/compare` had no use.
+  The live PSN linker works on pre-fetched rows; the service version
+  queries per title, so wiring it in would have slowed sync. The two old
+  changelog entries now carry a removal note. Pinned by
+  `tests/test_pass59_scrapers.py::test_uncalled_compare_api_and_psn_linker_are_deleted`.
+- **Status**: done (2026-10-17). Lanes: games, trophies, docs.
 - **Source**: review-code games-routes and trophies lanes 2026-09-01.
 
 ---

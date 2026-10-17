@@ -244,17 +244,7 @@ def extract_psn_platform(title):
 
 from services.achievement_linking import (
     clean_title_for_matching as _clean_title_for_matching,
-    find_linked_game_for_psn as _find_linked_game_for_psn_impl,
 )
-
-
-def find_linked_game_for_psn(title, platform):
-    """Backward-compat wrapper: delegate to the achievement_linking service.
-
-    Kept as a module-level function so existing callers (`routes.trophies`
-    internals and blueprint-scoped imports) don't need to change.
-    """
-    return _find_linked_game_for_psn_impl(title, platform, query)
 
 
 def calculate_rarity_class(rarity):

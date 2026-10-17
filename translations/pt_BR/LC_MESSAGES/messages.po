@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-17 15:28+0200\n"
+"POT-Creation-Date: 2026-10-17 16:38+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: pt_BR\n"
@@ -38,10 +38,10 @@ msgstr "Sistema não encontrado ou sem jogos com conquistas"
 
 #: routes/achievements.py:171 routes/achievements.py:436
 #: routes/bonus_discs.py:263 routes/bulk_scrape.py:46 routes/collections.py:276
-#: routes/collections.py:531 routes/games.py:342 routes/games.py:769
-#: routes/games.py:891 routes/games.py:949 routes/games_ai.py:46
+#: routes/collections.py:531 routes/games.py:342 routes/games.py:771
+#: routes/games.py:893 routes/games.py:951 routes/games_ai.py:46
 #: routes/games_media.py:35 routes/games_media.py:82 routes/games_media.py:143
-#: routes/reports.py:689 routes/reports.py:814 routes/trophies.py:1283
+#: routes/reports.py:689 routes/reports.py:814 routes/trophies.py:1273
 #: services/hltb_service.py:127
 msgid "Game not found"
 msgstr "Jogo não encontrado"
@@ -208,8 +208,8 @@ msgstr "Jogo principal não encontrado"
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "O disco bônus e o jogo principal devem estar no mesmo sistema"
 
-#: routes/bonus_discs.py:209 routes/bonus_discs.py:227 routes/games.py:1198
-#: routes/games.py:1228 routes/platform_import.py:290
+#: routes/bonus_discs.py:209 routes/bonus_discs.py:227 routes/games.py:1200
+#: routes/games.py:1230 routes/platform_import.py:290
 #: routes/platform_import.py:658 routes/platform_import.py:1027
 #: routes/scrape_logs.py:85 routes/scrape_logs.py:170 routes/scrape_logs.py:183
 #: routes/scrape_logs.py:221 routes/scraper.py:200 routes/scraper.py:528
@@ -217,9 +217,9 @@ msgstr "O disco bônus e o jogo principal devem estar no mesmo sistema"
 #: routes/settings.py:458 routes/settings.py:537 routes/settings.py:552
 #: routes/settings.py:597 routes/settings.py:614 routes/settings.py:650
 #: routes/steam_achievements.py:138 routes/systems.py:282 routes/systems.py:467
-#: routes/trophies.py:508 routes/trophies.py:704 routes/trophies.py:752
-#: routes/trophies.py:1600 routes/trophies.py:1624 routes/trophies.py:1669
-#: routes/trophies.py:1697 routes/trophies.py:1739 routes/trophies.py:1808
+#: routes/trophies.py:498 routes/trophies.py:694 routes/trophies.py:742
+#: routes/trophies.py:1590 routes/trophies.py:1614 routes/trophies.py:1659
+#: routes/trophies.py:1687 routes/trophies.py:1729 routes/trophies.py:1798
 #: routes/xbox_achievements.py:157 services/api_helpers.py:46
 msgid "An internal error occurred"
 msgstr "Ocorreu um erro interno"
@@ -395,15 +395,15 @@ msgstr "Forneça de 1 a 50 IDs válidos"
 msgid "Game not found after update"
 msgstr "Jogo não encontrado após a atualização"
 
-#: routes/games.py:895
+#: routes/games.py:897
 msgid "No game selected."
 msgstr "Nenhum jogo selecionado."
 
-#: routes/games.py:921
+#: routes/games.py:923
 msgid "This metadata apply is no longer running."
 msgstr "Esta aplicação de metadados não está mais em execução."
 
-#: routes/games.py:930
+#: routes/games.py:932
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
@@ -412,41 +412,41 @@ msgstr ""
 "Metadados aplicados de %(sources)s! (%(filled)d campos preenchidos, "
 "%(missing)d ainda faltando)"
 
-#: routes/games.py:936
+#: routes/games.py:938
 msgid "Failed to apply metadata."
 msgstr "Falha ao aplicar os metadados."
 
-#: routes/games.py:975 routes/games.py:1019
+#: routes/games.py:977 routes/games.py:1021
 msgid "No fields to update"
 msgstr "Nenhum campo para atualizar"
 
-#: routes/games.py:1016 routes/platform_import.py:212
+#: routes/games.py:1018 routes/platform_import.py:212
 #: routes/platform_import.py:571 routes/platform_import.py:930
-#: routes/trophies.py:1888
+#: routes/trophies.py:1878
 msgid "No games selected"
 msgstr "Nenhum jogo selecionado"
 
-#: routes/games.py:1026
+#: routes/games.py:1028
 msgid "Invalid completion status"
 msgstr "Status de conclusão inválido"
 
-#: routes/games.py:1074
+#: routes/games.py:1076
 msgid "No valid fields to update"
 msgstr "Nenhum campo válido para atualizar"
 
-#: routes/games.py:1191
+#: routes/games.py:1193
 msgid "Invalid status"
 msgstr "Status inválido"
 
-#: routes/games.py:1216
+#: routes/games.py:1218
 msgid "Not authenticated"
 msgstr "Não autenticado"
 
-#: routes/games.py:1247
+#: routes/games.py:1249
 msgid "Filter type and value required"
 msgstr "Tipo e valor de filtro são obrigatórios"
 
-#: routes/games.py:1260
+#: routes/games.py:1262
 msgid "Invalid filter type"
 msgstr "Tipo de filtro inválido"
 
@@ -506,14 +506,6 @@ msgstr "Captura de tela não encontrada"
 #: routes/games_search.py:42
 msgid "Title required"
 msgstr "Título obrigatório"
-
-#: routes/games_search.py:196
-msgid "Two game IDs required"
-msgstr "São necessários dois IDs de jogo"
-
-#: routes/games_search.py:210
-msgid "One or both games not found"
-msgstr "Um ou ambos os jogos não foram encontrados"
 
 #: routes/launch.py:65
 #, python-format
@@ -673,8 +665,8 @@ msgstr ""
 msgid "Missing required parameters"
 msgstr "Parâmetros obrigatórios ausentes"
 
-#: routes/reports.py:601 routes/tools.py:468 routes/tools.py:525
-#: routes/tools.py:560
+#: routes/reports.py:601 routes/tools.py:493 routes/tools.py:550
+#: routes/tools.py:585
 msgid "Invalid path"
 msgstr "Caminho inválido"
 
@@ -720,7 +712,7 @@ msgstr "O nome de arquivo gerado contém caracteres inválidos"
 msgid "Invalid log file"
 msgstr "Arquivo de log inválido"
 
-#: routes/scrape_logs.py:102 routes/tools.py:471
+#: routes/scrape_logs.py:102 routes/tools.py:496
 msgid "File not found"
 msgstr "Arquivo não encontrado"
 
@@ -806,7 +798,7 @@ msgid "Invalid %(field)s: %(result)s"
 msgstr "%(field)s inválido: %(result)s"
 
 #: routes/settings.py:533 routes/settings.py:594 routes/settings.py:647
-#: routes/tools.py:257
+#: routes/tools.py:282
 msgid "Failed to save settings"
 msgstr "Falha ao salvar configurações"
 
@@ -814,12 +806,12 @@ msgstr "Falha ao salvar configurações"
 msgid "Request body must be a JSON object"
 msgstr "O corpo da requisição deve ser um objeto JSON"
 
-#: routes/settings.py:573 routes/tools.py:249
+#: routes/settings.py:573 routes/tools.py:274
 #, python-format
 msgid "Unknown setting key: %(key)s"
 msgstr "Chave de configuração desconhecida: %(key)s"
 
-#: routes/settings.py:579 routes/tools.py:252
+#: routes/settings.py:579 routes/tools.py:277
 #, python-format
 msgid "Invalid value for '%(key)s': %(reason)s"
 msgstr "Valor inválido para '%(key)s': %(reason)s"
@@ -857,74 +849,74 @@ msgstr "ID do sistema obrigatório"
 msgid "ES-DE scraper not available"
 msgstr "Coletor do ES-DE não disponível"
 
-#: routes/tools.py:239
+#: routes/tools.py:264
 msgid "Administrator privileges required"
 msgstr "São necessários privilégios de administrador"
 
-#: routes/tools.py:243
+#: routes/tools.py:268
 msgid "Settings payload must be an object"
 msgstr "Os dados de configurações devem ser um objeto"
 
-#: routes/tools.py:292 routes/tools.py:903
+#: routes/tools.py:317 routes/tools.py:929
 #, python-format
 msgid "Path does not exist: %(path)s"
 msgstr "O caminho não existe: %(path)s"
 
-#: routes/tools.py:319
+#: routes/tools.py:344
 msgid "Permission denied"
 msgstr "Permissão negada"
 
-#: routes/tools.py:347
+#: routes/tools.py:372
 msgid "Task not found"
 msgstr "Tarefa não encontrada"
 
-#: routes/tools.py:370 routes/tools.py:390
+#: routes/tools.py:395 routes/tools.py:415
 msgid "Task not found or not running"
 msgstr "Tarefa não encontrada ou não está em execução"
 
-#: routes/tools.py:410
+#: routes/tools.py:435
 msgid "Task not found or not paused"
 msgstr "Tarefa não encontrada ou não está pausada"
 
-#: routes/tools.py:427 routes/tools.py:617 routes/tools.py:781
-#: routes/tools.py:895
+#: routes/tools.py:452 routes/tools.py:642 routes/tools.py:806
+#: routes/tools.py:921
 msgid "Invalid scan path"
 msgstr "Caminho de varredura inválido"
 
-#: routes/tools.py:465 routes/tools.py:522 routes/tools.py:557
+#: routes/tools.py:490 routes/tools.py:547 routes/tools.py:582
 msgid "No path provided"
 msgstr "Nenhum caminho fornecido"
 
-#: routes/tools.py:493
+#: routes/tools.py:518
 msgid "No archive path provided"
 msgstr "Nenhum caminho de arquivo compactado fornecido"
 
-#: routes/tools.py:496
+#: routes/tools.py:521
 msgid "Invalid archive path"
 msgstr "Caminho de arquivo compactado inválido"
 
-#: routes/tools.py:499
+#: routes/tools.py:524
 msgid "No files to remove"
 msgstr "Nenhum arquivo para remover"
 
-#: routes/tools.py:588
+#: routes/tools.py:613
 msgid "No paths provided"
 msgstr "Nenhum caminho fornecido"
 
-#: routes/tools.py:594
+#: routes/tools.py:619
 #, python-format
 msgid "Invalid path: %(path)s"
 msgstr "Caminho inválido: %(path)s"
 
-#: routes/tools.py:666
+#: routes/tools.py:691
 msgid "chdman not found. Please install MAME tools."
 msgstr "chdman não encontrado. Instale as ferramentas do MAME."
 
-#: routes/tools.py:804
+#: routes/tools.py:829
 msgid "chdman not found"
 msgstr "chdman não encontrado"
 
-#: routes/trophies.py:396
+#: routes/trophies.py:386
 msgid ""
 "Please configure your RPCS3 Trophy Path in your profile settings to view "
 "trophies"
@@ -932,61 +924,61 @@ msgstr ""
 "Configure o caminho de troféus do RPCS3 nas configurações do seu perfil "
 "para ver os troféus"
 
-#: routes/trophies.py:427
+#: routes/trophies.py:417
 msgid "Trophy set not found"
 msgstr "Conjunto de troféus não encontrado"
 
-#: routes/trophies.py:471
+#: routes/trophies.py:461
 msgid "RPCS3_TROPHY_PATH not configured"
 msgstr "RPCS3_TROPHY_PATH não configurado"
 
-#: routes/trophies.py:474
+#: routes/trophies.py:464
 #, python-format
 msgid "Trophy path not found: %(path)s"
 msgstr "Caminho de troféus não encontrado: %(path)s"
 
-#: routes/trophies.py:765 routes/trophies.py:1722
+#: routes/trophies.py:755 routes/trophies.py:1712
 msgid "PSN game not found"
 msgstr "Jogo da PSN não encontrado"
 
-#: routes/trophies.py:1002
+#: routes/trophies.py:992
 msgid "Sync already in progress"
 msgstr "Sincronização já em andamento"
 
-#: routes/trophies.py:1301
+#: routes/trophies.py:1291
 msgid "Game not found in your PSN trophy list"
 msgstr "Jogo não encontrado na sua lista de troféus da PSN"
 
-#: routes/trophies.py:1597
+#: routes/trophies.py:1587
 msgid "Game not found on PSN"
 msgstr "Jogo não encontrado na PSN"
 
-#: routes/trophies.py:1612 routes/trophies.py:1685
+#: routes/trophies.py:1602 routes/trophies.py:1675
 msgid "Missing npwr_id"
 msgstr "npwr_id ausente"
 
-#: routes/trophies.py:1710
+#: routes/trophies.py:1700
 msgid "Missing npwr_id or group_id"
 msgstr "npwr_id ou group_id ausente"
 
-#: routes/trophies.py:1713
+#: routes/trophies.py:1703
 msgid "Name cannot be empty"
 msgstr "O nome não pode estar vazio"
 
-#: routes/trophies.py:1751
+#: routes/trophies.py:1741
 msgid "PSNAWP library not installed. Run: pip install psnawp"
 msgstr "Biblioteca PSNAWP não instalada. Execute: pip install psnawp"
 
-#: routes/trophies.py:1847
+#: routes/trophies.py:1837
 msgid "No NPSSO token provided"
 msgstr "Nenhum token NPSSO fornecido"
 
-#: routes/trophies.py:1870
+#: routes/trophies.py:1860
 #, python-format
 msgid "Connection failed: %(error)s"
 msgstr "Falha na conexão: %(error)s"
 
-#: routes/trophies.py:1897
+#: routes/trophies.py:1887
 msgid "PSN NPSSO not configured"
 msgstr "NPSSO da PSN não configurado"
 
@@ -1531,7 +1523,7 @@ msgstr "Importações CLZ"
 #: templates/archive_scanner.html:798 templates/base.html:292
 #: templates/base.html:310 templates/base.html:1014
 #: templates/chd_converter.html:170 templates/chd_verify.html:126
-#: templates/game_detail.html:494 templates/login.html:254
+#: templates/game_detail.html:495 templates/login.html:254
 #: templates/museum.html:29 templates/psn_trophies.html:297
 #: templates/psn_trophy_detail.html:182 templates/psn_trophy_detail.html:325
 #: templates/reports.html:521 templates/screenshot_dedup.html:263
@@ -1658,8 +1650,8 @@ msgstr "Status de conclusão atualizado"
 
 #: services/js_i18n_strings.py:441 templates/achievement_game.html:172
 #: templates/achievement_game.html:197 templates/achievement_game.html:211
-#: templates/base.html:1009 templates/game_detail.html:488
-#: templates/game_detail.html:513 templates/game_detail.html:527
+#: templates/base.html:1009 templates/game_detail.html:489
+#: templates/game_detail.html:514 templates/game_detail.html:528
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:176
 #: templates/psn_trophy_detail.html:209
 #: templates/steam_achievement_game.html:134
@@ -2136,8 +2128,8 @@ msgstr "Arquivo de log excluído"
 
 #: services/js_i18n_strings.py:548 templates/achievement_game.html:168
 #: templates/achievement_game.html:197 templates/achievement_game.html:207
-#: templates/base.html:1005 templates/game_detail.html:484
-#: templates/game_detail.html:513 templates/game_detail.html:523
+#: templates/base.html:1005 templates/game_detail.html:485
+#: templates/game_detail.html:514 templates/game_detail.html:524
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:172
 #: templates/psn_trophy_detail.html:205
 #: templates/steam_achievement_game.html:133
@@ -2149,8 +2141,8 @@ msgstr "Principal + Extras"
 
 #: services/js_i18n_strings.py:549 templates/achievement_game.html:164
 #: templates/achievement_game.html:197 templates/achievement_game.html:203
-#: templates/base.html:1001 templates/game_detail.html:480
-#: templates/game_detail.html:513 templates/game_detail.html:519
+#: templates/base.html:1001 templates/game_detail.html:481
+#: templates/game_detail.html:514 templates/game_detail.html:520
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:168
 #: templates/psn_trophy_detail.html:201
 #: templates/steam_achievement_game.html:132
@@ -2220,7 +2212,7 @@ msgid "Network error syncing trophies"
 msgstr "Erro de rede ao sincronizar troféus"
 
 #: services/js_i18n_strings.py:562 templates/_bulk_edit_modal.html:171
-#: templates/_modals/edit_modal.html:139 templates/game_detail.html:642
+#: templates/_modals/edit_modal.html:139 templates/game_detail.html:643
 msgid "No"
 msgstr "Não"
 
@@ -2911,8 +2903,8 @@ msgid "Xbox Imports"
 msgstr "Importações Xbox"
 
 #: services/js_i18n_strings.py:707 templates/_bulk_edit_modal.html:170
-#: templates/_modals/edit_modal.html:139 templates/game_detail.html:585
-#: templates/game_detail.html:642
+#: templates/_modals/edit_modal.html:139 templates/game_detail.html:586
+#: templates/game_detail.html:643
 msgid "Yes"
 msgstr "Sim"
 
@@ -3292,7 +3284,7 @@ msgstr "Não foi possível carregar os dados de conquistas"
 msgid "Check your RetroAchievements credentials in Settings."
 msgstr "Verifique suas credenciais de RetroAchievements em Configurações."
 
-#: templates/achievement_game.html:146 templates/game_detail.html:462
+#: templates/achievement_game.html:146 templates/game_detail.html:463
 #: templates/local_trophy_detail.html:158 templates/psn_trophy_detail.html:149
 #: templates/steam_achievement_game.html:123
 #: templates/xbox_achievement_game.html:116
@@ -3300,7 +3292,7 @@ msgid "How Long to Beat"
 msgstr "How Long to Beat"
 
 #: templates/achievement_game.html:153 templates/base.html:982
-#: templates/game_detail.html:469 templates/psn_trophy_detail.html:157
+#: templates/game_detail.html:470 templates/psn_trophy_detail.html:157
 #: templates/psn_trophy_detail.html:317
 #: templates/steam_achievement_game.html:126
 #: templates/xbox_achievement_game.html:119
@@ -3308,7 +3300,7 @@ msgid "Search game title..."
 msgstr "Pesquisar título do jogo..."
 
 #: templates/achievement_game.html:156 templates/base.html:985
-#: templates/game_detail.html:472 templates/local_trophy_detail.html:193
+#: templates/game_detail.html:473 templates/local_trophy_detail.html:193
 #: templates/psn_trophy_detail.html:160
 #: templates/steam_achievement_game.html:127
 #: templates/xbox_achievement_game.html:120
@@ -3317,7 +3309,7 @@ msgstr "Consultar HLTB"
 
 #: templates/_settings_tabs/account.html:73 templates/achievement_game.html:177
 #: templates/achievement_game.html:253 templates/base.html:1013
-#: templates/game_detail.html:493 templates/local_trophy_detail.html:223
+#: templates/game_detail.html:494 templates/local_trophy_detail.html:223
 #: templates/psn_trophy_detail.html:181 templates/psn_trophy_detail.html:270
 #: templates/steam_achievement_game.html:137
 #: templates/xbox_achievement_game.html:130
@@ -3326,7 +3318,7 @@ msgstr "Salvar"
 
 #: templates/achievement_game.html:217 templates/all_games.html:124
 #: templates/base.html:1026 templates/duplicate_finder.html:301
-#: templates/game_detail.html:88 templates/game_detail.html:533
+#: templates/game_detail.html:88 templates/game_detail.html:534
 #: templates/local_trophy_detail.html:185 templates/psn_trophy_detail.html:214
 #: templates/reports.html:277 templates/screenshot_dedup.html:325
 #: templates/steam_achievement_game.html:163 templates/system_games.html:115
@@ -3334,7 +3326,7 @@ msgstr "Salvar"
 msgid "Clear"
 msgstr "Limpar"
 
-#: templates/achievement_game.html:225 templates/game_detail.html:541
+#: templates/achievement_game.html:225 templates/game_detail.html:542
 #: templates/local_trophy_detail.html:203 templates/psn_trophy_detail.html:234
 #: templates/steam_achievement_game.html:170
 #: templates/xbox_achievement_game.html:163
@@ -3577,7 +3569,7 @@ msgstr "Selecionar Todos"
 msgid "Select Unscraped"
 msgstr "Selecionar Sem Metadados"
 
-#: templates/all_games.html:72 templates/game_detail.html:684
+#: templates/all_games.html:72 templates/game_detail.html:685
 #: templates/system_games.html:63
 msgid "Full Re-scrape"
 msgstr "Rebusca Completa"
@@ -3586,7 +3578,7 @@ msgstr "Rebusca Completa"
 msgid "Toggle between full re-scrape and fill missing mode"
 msgstr "Alternar entre rebusca completa e modo de preencher ausentes"
 
-#: templates/all_games.html:77 templates/game_detail.html:684
+#: templates/all_games.html:77 templates/game_detail.html:685
 #: templates/system_games.html:68
 msgid "Fill Missing"
 msgstr "Preencher Ausentes"
@@ -4503,7 +4495,7 @@ msgid "e.g., Final Fantasy, Crash Bandicoot"
 msgstr "ex.: Final Fantasy, Crash Bandicoot"
 
 #: templates/_modals/edit_modal.html:52 templates/base.html:1058
-#: templates/compare_games.html:96 templates/game_detail.html:447
+#: templates/compare_games.html:96 templates/game_detail.html:448
 msgid "Similar Games"
 msgstr "Jogos Semelhantes"
 
@@ -5665,129 +5657,129 @@ msgstr "Próximas capturas de tela"
 msgid "Also Known As"
 msgstr "Também conhecido como"
 
-#: templates/game_detail.html:431
+#: templates/game_detail.html:432
 #, python-format
 msgid "Source: %(source)s"
 msgstr "Fonte: %(source)s"
 
-#: templates/game_detail.html:456
+#: templates/game_detail.html:457
 msgid "Loading recommendations..."
 msgstr "Carregando recomendações..."
 
-#: templates/game_detail.html:504
+#: templates/game_detail.html:505
 #, python-format
 msgid "%(pct)s%% match"
 msgstr "%(pct)s%% de correspondência"
 
-#: templates/game_detail.html:545
+#: templates/game_detail.html:546
 msgid "Source:"
 msgstr "Fonte:"
 
-#: templates/game_detail.html:548
+#: templates/game_detail.html:549
 msgid "CLZ Games Import (No ROM file)"
 msgstr "Importação CLZ Games (Sem arquivo de ROM)"
 
-#: templates/game_detail.html:550
+#: templates/game_detail.html:551
 msgid "Steam Import (No ROM file)"
 msgstr "Importação Steam (Sem arquivo de ROM)"
 
-#: templates/game_detail.html:552
+#: templates/game_detail.html:553
 msgid "Xbox Import (No ROM file)"
 msgstr "Importação Xbox (Sem arquivo de ROM)"
 
-#: templates/game_detail.html:554
+#: templates/game_detail.html:555
 msgid "PSN Import (No ROM file)"
 msgstr "Importação PSN (Sem arquivo de ROM)"
 
-#: templates/game_detail.html:560
+#: templates/game_detail.html:561
 msgid "Original Title:"
 msgstr "Título Original:"
 
-#: templates/game_detail.html:566
+#: templates/game_detail.html:567
 msgid "File:"
 msgstr "Arquivo:"
 
-#: templates/game_detail.html:568
+#: templates/game_detail.html:569
 msgid "Rename ROM file"
 msgstr "Renomear arquivo de ROM"
 
-#: templates/game_detail.html:571
+#: templates/game_detail.html:572
 msgid "Path:"
 msgstr "Caminho:"
 
-#: templates/game_detail.html:577
+#: templates/game_detail.html:578
 msgid "Edition:"
 msgstr "Edição:"
 
-#: templates/game_detail.html:584
+#: templates/game_detail.html:585
 msgid "Exclusive:"
 msgstr "Exclusivo:"
 
-#: templates/game_detail.html:587
+#: templates/game_detail.html:588
 msgid "Also On:"
 msgstr "Também Em:"
 
-#: templates/game_detail.html:594
+#: templates/game_detail.html:595
 msgid "Modes:"
 msgstr "Modos:"
 
-#: templates/game_detail.html:600
+#: templates/game_detail.html:601
 msgid "Players:"
 msgstr "Jogadores:"
 
-#: templates/game_detail.html:606
+#: templates/game_detail.html:607
 msgid "Campaign:"
 msgstr "Campanha:"
 
-#: templates/game_detail.html:612
+#: templates/game_detail.html:613
 msgid "Structure:"
 msgstr "Estrutura:"
 
-#: templates/game_detail.html:618
+#: templates/game_detail.html:619
 msgid "Perspective:"
 msgstr "Perspectiva:"
 
-#: templates/game_detail.html:624
+#: templates/game_detail.html:625
 msgid "Dimension:"
 msgstr "Dimensão:"
 
-#: templates/game_detail.html:630
+#: templates/game_detail.html:631
 msgid "Save:"
 msgstr "Save:"
 
-#: templates/game_detail.html:636
+#: templates/game_detail.html:637
 msgid "Input:"
 msgstr "Entrada:"
 
-#: templates/game_detail.html:641
+#: templates/game_detail.html:642
 msgid "Scraped:"
 msgstr "Metadados Obtidos:"
 
-#: templates/game_detail.html:650
+#: templates/game_detail.html:651
 msgid "Bonus Content"
 msgstr "Conteúdo Bônus"
 
-#: templates/game_detail.html:672
+#: templates/game_detail.html:673
 msgid "Scrape History"
 msgstr "Histórico de Busca de Metadados"
 
-#: templates/game_detail.html:698
+#: templates/game_detail.html:699
 msgid "Primary scraper"
 msgstr "Buscador primário"
 
-#: templates/game_detail.html:700
+#: templates/game_detail.html:701
 msgid "Fallback scraper"
 msgstr "Buscador de reserva"
 
-#: templates/game_detail.html:707
+#: templates/game_detail.html:708
 msgid "Fields filled:"
 msgstr "Campos preenchidos:"
 
-#: templates/game_detail.html:715
+#: templates/game_detail.html:716
 msgid "None"
 msgstr "Nenhum"
 
-#: templates/game_detail.html:720
+#: templates/game_detail.html:721
 msgid "Still missing:"
 msgstr "Ainda ausentes:"
 
@@ -9066,4 +9058,10 @@ msgstr "Apoiar no Patreon"
 
 #~ msgid "Trophies & Achievements"
 #~ msgstr "Troféus & Conquistas"
+
+#~ msgid "Two game IDs required"
+#~ msgstr "São necessários dois IDs de jogo"
+
+#~ msgid "One or both games not found"
+#~ msgstr "Um ou ambos os jogos não foram encontrados"
 

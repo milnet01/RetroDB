@@ -185,28 +185,3 @@ def compare_games_page():
         by_id = {r['id']: r for r in rows}
         games = [by_id[gid] for gid in game_ids if gid in by_id]
     return render_template('compare_games.html', games=games)
-
-
-@bp.route('/api/games/compare')
-@login_required
-def api_compare_games():
-    """Return comparison data for two games."""
-    game_ids = request.args.getlist('id', type=int)
-    if len(game_ids) < 2:
-        return error(_('Two game IDs required'), 400)
-
-    ids = game_ids[:2]
-    placeholders = ','.join('?' for _ in ids)
-    rows = query(f"""
-        SELECT g.*, s.name AS system_name, s.folder AS system_folder
-        FROM games g
-        JOIN systems s ON g.system_id = s.id
-        WHERE g.id IN ({placeholders})
-    """, tuple(ids))
-    by_id = {r['id']: dict(r) for r in rows}
-    results = [by_id[gid] for gid in ids if gid in by_id]
-
-    if len(results) < 2:
-        return error(_('One or both games not found'), 404)
-
-    return success(games=results)

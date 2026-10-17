@@ -1,3 +1,17 @@
+- version: 3.29.5
+  date: 2026-10-17
+  tags:
+  - type: cleanup
+    label: Two unused pieces of code removed
+  body: |
+    <ul>
+      <li><strong>Two unused pieces of code removed.</strong> The
+        <code>/api/games/compare</code> address was never used: the Compare
+        page builds its table itself. A spare PSN game-linking helper had no
+        caller either: trophy sync links games with its own faster
+        copy. Nothing you see changes. The two older changelog entries that
+        described them now say they are gone.</li>
+    </ul>
 - version: 3.29.4
   date: 2026-10-17
   tags:
@@ -4243,7 +4257,7 @@
         <li><strong>Roadmap Pass 7 stage 2 &mdash; title-matching consolidation in <code>services/achievement_linking.py</code></strong> &mdash; Pulled the three remaining cross-module title-normalization helpers out of their routes / jobs and into a single service module. <code>services/achievement_linking.py</code> grew 125 &rarr; 333 LOC (+208); consumers shrank collectively by ~75 LOC of inline boilerplate.
             <ul>
                 <li><code>normalize_title_for_dedup(title)</code> &mdash; NFKD + diacritic strip + ASCII-only lowercase. Lifted out of <code>routes/platform_import.py</code>'s <code>normalize_title()</code>. <code>platform_import.py</code> now imports the service symbol under the local name <code>normalize_title</code> so all nine internal call sites (Steam / Xbox / PSN dedup-by-title paths) are unchanged. The <code>unicodedata</code> and <code>re</code> imports are dropped from <code>platform_import.py</code>.</li>
-                <li><code>find_linked_game_for_psn(title, platform, query_fn)</code> &mdash; the PSN-trophy-to-owned-game linker. Moved out of <code>routes/trophies.py</code>; a thin wrapper stays in the blueprint that injects the module's <code>query</code> function so the service helper never has to import back into <code>routes/</code>. The re-export keeps every existing caller working.</li>
+                <li><code>find_linked_game_for_psn(title, platform, query_fn)</code> &mdash; the PSN-trophy-to-owned-game linker. Moved out of <code>routes/trophies.py</code>; a thin wrapper stays in the blueprint that injects the module's <code>query</code> function so the service helper never has to import back into <code>routes/</code>. The re-export keeps every existing caller working. <em>(Removed in 3.29.5: it never had a caller; PSN sync links games with its own copy.)</em></li>
                 <li><code>normalize_for_ra_match(title)</code>, <code>ra_significant_words(title)</code>, <code>match_ra_game(game_title, rom_name, ra_games, jaccard_threshold=0.85)</code> &mdash; the three-pass exact/word-set/Jaccard RetroAchievements matcher that lived as ~60 lines of nested inline functions inside <code>RARefreshJob._run_refresh</code>. The job now calls <code>match_ra_game(...)</code> and the <code>re</code> import drops from the file. Behaviour preserved exactly (spot-check: "The Legend of Zelda: A Link to the Past" still matches "Legend of Zelda, The - A Link to the Past (USA)").</li>
             </ul>
         </li>
@@ -4583,7 +4597,7 @@
     <ul>
         <li><strong>routes/games.py further decomposition</strong> &mdash; Split three more cohesive chunks out of the games blueprint, bringing <code>routes/games.py</code> from 2 000 down to 1 370 lines (cumulative &minus;45% from the original 2 472). New blueprints each register cleanly in <code>app.py</code> and preserve URL paths unchanged.</li>
         <li><strong>routes/games_ai.py (new blueprint)</strong> &mdash; Extracted the <code>/api/game/&lt;id&gt;/ai-fill</code> endpoint (302 lines) &mdash; AI metadata fill with smart overwrite, rating cross-mapping, controller-default preference, and scrape-history audit trail.</li>
-        <li><strong>routes/games_search.py (new blueprint)</strong> &mdash; Extracted the scraper search (<code>/api/games/search</code>), local library search (<code>/api/games/find</code>), similar-games recommendations (<code>/api/games/&lt;id&gt;/similar</code>), and game comparison (<code>/compare</code>, <code>/api/games/compare</code>) endpoints.</li>
+        <li><strong>routes/games_search.py (new blueprint)</strong> &mdash; Extracted the scraper search (<code>/api/games/search</code>), local library search (<code>/api/games/find</code>), similar-games recommendations (<code>/api/games/&lt;id&gt;/similar</code>), and game comparison (<code>/compare</code>, <code>/api/games/compare</code>) endpoints. <em>(<code>/api/games/compare</code> was removed in 3.29.5: no page ever called it.)</em></li>
         <li><strong>routes/games_media.py (new blueprint)</strong> &mdash; Extracted destructive game actions: DB delete, ROM file rename, screenshot removal.</li>
         <li><strong>Test coverage expanded</strong> &mdash; From 30 to 86 pytest cases (&plus;187%). New suites cover <code>services/formatters.py</code> (size formatting edge cases, manufacturer lookup, F601-duplicate-key regression), <code>services/game_query.py</code> (escape_like wildcard-safe escaping, _build_games_query WHERE clause generation across all filter types), and route-registration smoke tests that verify each split blueprint stays registered and that login_required actually redirects unauthenticated users.</li>
         <li><strong>CI: Node.js 24 opt-in</strong> &mdash; Added <code>FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true</code> to both workflow files so <code>actions/checkout@v4</code> / <code>actions/setup-python@v5</code> / <code>softprops/action-gh-release@v2</code> run on Node 24 instead of the deprecated Node 20 (GitHub removes Node 20 on 2026-09-16).</li>

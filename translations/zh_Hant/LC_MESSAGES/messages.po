@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-17 15:28+0200\n"
+"POT-Creation-Date: 2026-10-17 16:38+0200\n"
 "PO-Revision-Date: 2026-07-01 09:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hant\n"
@@ -38,10 +38,10 @@ msgstr "未找到系統，或該系統沒有包含成就的遊戲"
 
 #: routes/achievements.py:171 routes/achievements.py:436
 #: routes/bonus_discs.py:263 routes/bulk_scrape.py:46 routes/collections.py:276
-#: routes/collections.py:531 routes/games.py:342 routes/games.py:769
-#: routes/games.py:891 routes/games.py:949 routes/games_ai.py:46
+#: routes/collections.py:531 routes/games.py:342 routes/games.py:771
+#: routes/games.py:893 routes/games.py:951 routes/games_ai.py:46
 #: routes/games_media.py:35 routes/games_media.py:82 routes/games_media.py:143
-#: routes/reports.py:689 routes/reports.py:814 routes/trophies.py:1283
+#: routes/reports.py:689 routes/reports.py:814 routes/trophies.py:1273
 #: services/hltb_service.py:127
 msgid "Game not found"
 msgstr "未找到遊戲"
@@ -204,8 +204,8 @@ msgstr "未找到父遊戲"
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "附贈光碟與主遊戲必須屬於同一系統"
 
-#: routes/bonus_discs.py:209 routes/bonus_discs.py:227 routes/games.py:1198
-#: routes/games.py:1228 routes/platform_import.py:290
+#: routes/bonus_discs.py:209 routes/bonus_discs.py:227 routes/games.py:1200
+#: routes/games.py:1230 routes/platform_import.py:290
 #: routes/platform_import.py:658 routes/platform_import.py:1027
 #: routes/scrape_logs.py:85 routes/scrape_logs.py:170 routes/scrape_logs.py:183
 #: routes/scrape_logs.py:221 routes/scraper.py:200 routes/scraper.py:528
@@ -213,9 +213,9 @@ msgstr "附贈光碟與主遊戲必須屬於同一系統"
 #: routes/settings.py:458 routes/settings.py:537 routes/settings.py:552
 #: routes/settings.py:597 routes/settings.py:614 routes/settings.py:650
 #: routes/steam_achievements.py:138 routes/systems.py:282 routes/systems.py:467
-#: routes/trophies.py:508 routes/trophies.py:704 routes/trophies.py:752
-#: routes/trophies.py:1600 routes/trophies.py:1624 routes/trophies.py:1669
-#: routes/trophies.py:1697 routes/trophies.py:1739 routes/trophies.py:1808
+#: routes/trophies.py:498 routes/trophies.py:694 routes/trophies.py:742
+#: routes/trophies.py:1590 routes/trophies.py:1614 routes/trophies.py:1659
+#: routes/trophies.py:1687 routes/trophies.py:1729 routes/trophies.py:1798
 #: routes/xbox_achievements.py:157 services/api_helpers.py:46
 msgid "An internal error occurred"
 msgstr "發生內部錯誤"
@@ -389,56 +389,56 @@ msgstr "請提供 1-50 個有效 ID"
 msgid "Game not found after update"
 msgstr "更新後未找到該遊戲"
 
-#: routes/games.py:895
+#: routes/games.py:897
 msgid "No game selected."
 msgstr "未選擇遊戲。"
 
-#: routes/games.py:921
+#: routes/games.py:923
 msgid "This metadata apply is no longer running."
 msgstr "此中繼資料套用已不再執行。"
 
-#: routes/games.py:930
+#: routes/games.py:932
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
 " still missing)"
 msgstr "已從 %(sources)s 套用中繼資料！（已填寫 %(filled)d 個欄位，仍缺少 %(missing)d 個）"
 
-#: routes/games.py:936
+#: routes/games.py:938
 msgid "Failed to apply metadata."
 msgstr "套用中繼資料失敗。"
 
-#: routes/games.py:975 routes/games.py:1019
+#: routes/games.py:977 routes/games.py:1021
 msgid "No fields to update"
 msgstr "沒有可更新的欄位"
 
-#: routes/games.py:1016 routes/platform_import.py:212
+#: routes/games.py:1018 routes/platform_import.py:212
 #: routes/platform_import.py:571 routes/platform_import.py:930
-#: routes/trophies.py:1888
+#: routes/trophies.py:1878
 msgid "No games selected"
 msgstr "未選擇任何遊戲"
 
-#: routes/games.py:1026
+#: routes/games.py:1028
 msgid "Invalid completion status"
 msgstr "完成狀態無效"
 
-#: routes/games.py:1074
+#: routes/games.py:1076
 msgid "No valid fields to update"
 msgstr "沒有可更新的有效欄位"
 
-#: routes/games.py:1191
+#: routes/games.py:1193
 msgid "Invalid status"
 msgstr "狀態無效"
 
-#: routes/games.py:1216
+#: routes/games.py:1218
 msgid "Not authenticated"
 msgstr "未通過身分驗證"
 
-#: routes/games.py:1247
+#: routes/games.py:1249
 msgid "Filter type and value required"
 msgstr "需要篩選類型和值"
 
-#: routes/games.py:1260
+#: routes/games.py:1262
 msgid "Invalid filter type"
 msgstr "篩選類型無效"
 
@@ -496,14 +496,6 @@ msgstr "未找到螢幕截圖"
 #: routes/games_search.py:42
 msgid "Title required"
 msgstr "必須填寫標題"
-
-#: routes/games_search.py:196
-msgid "Two game IDs required"
-msgstr "需要提供兩個遊戲 ID"
-
-#: routes/games_search.py:210
-msgid "One or both games not found"
-msgstr "未找到其中一個或兩個遊戲"
 
 #: routes/launch.py:65
 #, python-format
@@ -649,8 +641,8 @@ msgstr "未設定 ROM 路徑。請前往「設定 → 路徑」進行設定。"
 msgid "Missing required parameters"
 msgstr "缺少必填參數"
 
-#: routes/reports.py:601 routes/tools.py:468 routes/tools.py:525
-#: routes/tools.py:560
+#: routes/reports.py:601 routes/tools.py:493 routes/tools.py:550
+#: routes/tools.py:585
 msgid "Invalid path"
 msgstr "路徑無效"
 
@@ -696,7 +688,7 @@ msgstr "產生的檔案名稱包含無效字元"
 msgid "Invalid log file"
 msgstr "日誌檔案無效"
 
-#: routes/scrape_logs.py:102 routes/tools.py:471
+#: routes/scrape_logs.py:102 routes/tools.py:496
 msgid "File not found"
 msgstr "未找到檔案"
 
@@ -780,7 +772,7 @@ msgid "Invalid %(field)s: %(result)s"
 msgstr "無效的 %(field)s：%(result)s"
 
 #: routes/settings.py:533 routes/settings.py:594 routes/settings.py:647
-#: routes/tools.py:257
+#: routes/tools.py:282
 msgid "Failed to save settings"
 msgstr "儲存設定失敗"
 
@@ -788,12 +780,12 @@ msgstr "儲存設定失敗"
 msgid "Request body must be a JSON object"
 msgstr "請求正文必須是 JSON 物件"
 
-#: routes/settings.py:573 routes/tools.py:249
+#: routes/settings.py:573 routes/tools.py:274
 #, python-format
 msgid "Unknown setting key: %(key)s"
 msgstr "未知的設定鍵：%(key)s"
 
-#: routes/settings.py:579 routes/tools.py:252
+#: routes/settings.py:579 routes/tools.py:277
 #, python-format
 msgid "Invalid value for '%(key)s': %(reason)s"
 msgstr "“%(key)s”的值無效：%(reason)s"
@@ -831,134 +823,134 @@ msgstr "需要系統 ID"
 msgid "ES-DE scraper not available"
 msgstr "ES-DE 抓取器不可用"
 
-#: routes/tools.py:239
+#: routes/tools.py:264
 msgid "Administrator privileges required"
 msgstr "需要管理員權限"
 
-#: routes/tools.py:243
+#: routes/tools.py:268
 msgid "Settings payload must be an object"
 msgstr "設定資料必須為物件"
 
-#: routes/tools.py:292 routes/tools.py:903
+#: routes/tools.py:317 routes/tools.py:929
 #, python-format
 msgid "Path does not exist: %(path)s"
 msgstr "路徑不存在：%(path)s"
 
-#: routes/tools.py:319
+#: routes/tools.py:344
 msgid "Permission denied"
 msgstr "權限被拒絕"
 
-#: routes/tools.py:347
+#: routes/tools.py:372
 msgid "Task not found"
 msgstr "未找到任務"
 
-#: routes/tools.py:370 routes/tools.py:390
+#: routes/tools.py:395 routes/tools.py:415
 msgid "Task not found or not running"
 msgstr "未找到任務或任務未執行"
 
-#: routes/tools.py:410
+#: routes/tools.py:435
 msgid "Task not found or not paused"
 msgstr "未找到任務或任務未暫停"
 
-#: routes/tools.py:427 routes/tools.py:617 routes/tools.py:781
-#: routes/tools.py:895
+#: routes/tools.py:452 routes/tools.py:642 routes/tools.py:806
+#: routes/tools.py:921
 msgid "Invalid scan path"
 msgstr "掃描路徑無效"
 
-#: routes/tools.py:465 routes/tools.py:522 routes/tools.py:557
+#: routes/tools.py:490 routes/tools.py:547 routes/tools.py:582
 msgid "No path provided"
 msgstr "未提供路徑"
 
-#: routes/tools.py:493
+#: routes/tools.py:518
 msgid "No archive path provided"
 msgstr "未提供歸檔路徑"
 
-#: routes/tools.py:496
+#: routes/tools.py:521
 msgid "Invalid archive path"
 msgstr "壓縮檔路徑無效"
 
-#: routes/tools.py:499
+#: routes/tools.py:524
 msgid "No files to remove"
 msgstr "沒有可移除的檔案"
 
-#: routes/tools.py:588
+#: routes/tools.py:613
 msgid "No paths provided"
 msgstr "未提供路徑"
 
-#: routes/tools.py:594
+#: routes/tools.py:619
 #, python-format
 msgid "Invalid path: %(path)s"
 msgstr "路徑無效：%(path)s"
 
-#: routes/tools.py:666
+#: routes/tools.py:691
 msgid "chdman not found. Please install MAME tools."
 msgstr "未找到 chdman。請安裝 MAME 工具。"
 
-#: routes/tools.py:804
+#: routes/tools.py:829
 msgid "chdman not found"
 msgstr "未找到 chdman"
 
-#: routes/trophies.py:396
+#: routes/trophies.py:386
 msgid ""
 "Please configure your RPCS3 Trophy Path in your profile settings to view "
 "trophies"
 msgstr "請在您的個人資料設定中設定 RPCS3 獎盃路徑以檢視獎盃"
 
-#: routes/trophies.py:427
+#: routes/trophies.py:417
 msgid "Trophy set not found"
 msgstr "找不到獎盃組"
 
-#: routes/trophies.py:471
+#: routes/trophies.py:461
 msgid "RPCS3_TROPHY_PATH not configured"
 msgstr "未設定 RPCS3_TROPHY_PATH"
 
-#: routes/trophies.py:474
+#: routes/trophies.py:464
 #, python-format
 msgid "Trophy path not found: %(path)s"
 msgstr "未找到獎盃路徑：%(path)s"
 
-#: routes/trophies.py:765 routes/trophies.py:1722
+#: routes/trophies.py:755 routes/trophies.py:1712
 msgid "PSN game not found"
 msgstr "未找到 PSN 遊戲"
 
-#: routes/trophies.py:1002
+#: routes/trophies.py:992
 msgid "Sync already in progress"
 msgstr "同步已在進行中"
 
-#: routes/trophies.py:1301
+#: routes/trophies.py:1291
 msgid "Game not found in your PSN trophy list"
 msgstr "在你的 PSN 獎盃列表中未找到該遊戲"
 
-#: routes/trophies.py:1597
+#: routes/trophies.py:1587
 msgid "Game not found on PSN"
 msgstr "在 PSN 上未找到該遊戲"
 
-#: routes/trophies.py:1612 routes/trophies.py:1685
+#: routes/trophies.py:1602 routes/trophies.py:1675
 msgid "Missing npwr_id"
 msgstr "缺少 npwr_id"
 
-#: routes/trophies.py:1710
+#: routes/trophies.py:1700
 msgid "Missing npwr_id or group_id"
 msgstr "缺少 npwr_id 或 group_id"
 
-#: routes/trophies.py:1713
+#: routes/trophies.py:1703
 msgid "Name cannot be empty"
 msgstr "名稱不能為空"
 
-#: routes/trophies.py:1751
+#: routes/trophies.py:1741
 msgid "PSNAWP library not installed. Run: pip install psnawp"
 msgstr "未安裝 PSNAWP 程式庫。請執行：pip install psnawp"
 
-#: routes/trophies.py:1847
+#: routes/trophies.py:1837
 msgid "No NPSSO token provided"
 msgstr "未提供 NPSSO 權杖"
 
-#: routes/trophies.py:1870
+#: routes/trophies.py:1860
 #, python-format
 msgid "Connection failed: %(error)s"
 msgstr "連線失敗：%(error)s"
 
-#: routes/trophies.py:1897
+#: routes/trophies.py:1887
 msgid "PSN NPSSO not configured"
 msgstr "未設定 PSN NPSSO"
 
@@ -1499,7 +1491,7 @@ msgstr "CLZ 匯入"
 #: templates/archive_scanner.html:798 templates/base.html:292
 #: templates/base.html:310 templates/base.html:1014
 #: templates/chd_converter.html:170 templates/chd_verify.html:126
-#: templates/game_detail.html:494 templates/login.html:254
+#: templates/game_detail.html:495 templates/login.html:254
 #: templates/museum.html:29 templates/psn_trophies.html:297
 #: templates/psn_trophy_detail.html:182 templates/psn_trophy_detail.html:325
 #: templates/reports.html:521 templates/screenshot_dedup.html:263
@@ -1625,8 +1617,8 @@ msgstr "完成狀態已更新"
 
 #: services/js_i18n_strings.py:441 templates/achievement_game.html:172
 #: templates/achievement_game.html:197 templates/achievement_game.html:211
-#: templates/base.html:1009 templates/game_detail.html:488
-#: templates/game_detail.html:513 templates/game_detail.html:527
+#: templates/base.html:1009 templates/game_detail.html:489
+#: templates/game_detail.html:514 templates/game_detail.html:528
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:176
 #: templates/psn_trophy_detail.html:209
 #: templates/steam_achievement_game.html:134
@@ -2101,8 +2093,8 @@ msgstr "日誌檔案已刪除"
 
 #: services/js_i18n_strings.py:548 templates/achievement_game.html:168
 #: templates/achievement_game.html:197 templates/achievement_game.html:207
-#: templates/base.html:1005 templates/game_detail.html:484
-#: templates/game_detail.html:513 templates/game_detail.html:523
+#: templates/base.html:1005 templates/game_detail.html:485
+#: templates/game_detail.html:514 templates/game_detail.html:524
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:172
 #: templates/psn_trophy_detail.html:205
 #: templates/steam_achievement_game.html:133
@@ -2114,8 +2106,8 @@ msgstr "主線 + 額外"
 
 #: services/js_i18n_strings.py:549 templates/achievement_game.html:164
 #: templates/achievement_game.html:197 templates/achievement_game.html:203
-#: templates/base.html:1001 templates/game_detail.html:480
-#: templates/game_detail.html:513 templates/game_detail.html:519
+#: templates/base.html:1001 templates/game_detail.html:481
+#: templates/game_detail.html:514 templates/game_detail.html:520
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:168
 #: templates/psn_trophy_detail.html:201
 #: templates/steam_achievement_game.html:132
@@ -2181,7 +2173,7 @@ msgid "Network error syncing trophies"
 msgstr "同步獎盃時發生網路錯誤"
 
 #: services/js_i18n_strings.py:562 templates/_bulk_edit_modal.html:171
-#: templates/_modals/edit_modal.html:139 templates/game_detail.html:642
+#: templates/_modals/edit_modal.html:139 templates/game_detail.html:643
 msgid "No"
 msgstr "否"
 
@@ -2855,8 +2847,8 @@ msgid "Xbox Imports"
 msgstr "Xbox 匯入"
 
 #: services/js_i18n_strings.py:707 templates/_bulk_edit_modal.html:170
-#: templates/_modals/edit_modal.html:139 templates/game_detail.html:585
-#: templates/game_detail.html:642
+#: templates/_modals/edit_modal.html:139 templates/game_detail.html:586
+#: templates/game_detail.html:643
 msgid "Yes"
 msgstr "是"
 
@@ -3234,7 +3226,7 @@ msgstr "無法載入成就資料"
 msgid "Check your RetroAchievements credentials in Settings."
 msgstr "請在設定中檢查你的 RetroAchievements 憑證。"
 
-#: templates/achievement_game.html:146 templates/game_detail.html:462
+#: templates/achievement_game.html:146 templates/game_detail.html:463
 #: templates/local_trophy_detail.html:158 templates/psn_trophy_detail.html:149
 #: templates/steam_achievement_game.html:123
 #: templates/xbox_achievement_game.html:116
@@ -3242,7 +3234,7 @@ msgid "How Long to Beat"
 msgstr "通關時長"
 
 #: templates/achievement_game.html:153 templates/base.html:982
-#: templates/game_detail.html:469 templates/psn_trophy_detail.html:157
+#: templates/game_detail.html:470 templates/psn_trophy_detail.html:157
 #: templates/psn_trophy_detail.html:317
 #: templates/steam_achievement_game.html:126
 #: templates/xbox_achievement_game.html:119
@@ -3250,7 +3242,7 @@ msgid "Search game title..."
 msgstr "搜尋遊戲標題…"
 
 #: templates/achievement_game.html:156 templates/base.html:985
-#: templates/game_detail.html:472 templates/local_trophy_detail.html:193
+#: templates/game_detail.html:473 templates/local_trophy_detail.html:193
 #: templates/psn_trophy_detail.html:160
 #: templates/steam_achievement_game.html:127
 #: templates/xbox_achievement_game.html:120
@@ -3259,7 +3251,7 @@ msgstr "查詢 HLTB"
 
 #: templates/_settings_tabs/account.html:73 templates/achievement_game.html:177
 #: templates/achievement_game.html:253 templates/base.html:1013
-#: templates/game_detail.html:493 templates/local_trophy_detail.html:223
+#: templates/game_detail.html:494 templates/local_trophy_detail.html:223
 #: templates/psn_trophy_detail.html:181 templates/psn_trophy_detail.html:270
 #: templates/steam_achievement_game.html:137
 #: templates/xbox_achievement_game.html:130
@@ -3268,7 +3260,7 @@ msgstr "儲存"
 
 #: templates/achievement_game.html:217 templates/all_games.html:124
 #: templates/base.html:1026 templates/duplicate_finder.html:301
-#: templates/game_detail.html:88 templates/game_detail.html:533
+#: templates/game_detail.html:88 templates/game_detail.html:534
 #: templates/local_trophy_detail.html:185 templates/psn_trophy_detail.html:214
 #: templates/reports.html:277 templates/screenshot_dedup.html:325
 #: templates/steam_achievement_game.html:163 templates/system_games.html:115
@@ -3276,7 +3268,7 @@ msgstr "儲存"
 msgid "Clear"
 msgstr "清除"
 
-#: templates/achievement_game.html:225 templates/game_detail.html:541
+#: templates/achievement_game.html:225 templates/game_detail.html:542
 #: templates/local_trophy_detail.html:203 templates/psn_trophy_detail.html:234
 #: templates/steam_achievement_game.html:170
 #: templates/xbox_achievement_game.html:163
@@ -3517,7 +3509,7 @@ msgstr "全選"
 msgid "Select Unscraped"
 msgstr "選擇未抓取的"
 
-#: templates/all_games.html:72 templates/game_detail.html:684
+#: templates/all_games.html:72 templates/game_detail.html:685
 #: templates/system_games.html:63
 msgid "Full Re-scrape"
 msgstr "完整重新抓取"
@@ -3526,7 +3518,7 @@ msgstr "完整重新抓取"
 msgid "Toggle between full re-scrape and fill missing mode"
 msgstr "在完整重新抓取與填補缺失模式之間切換"
 
-#: templates/all_games.html:77 templates/game_detail.html:684
+#: templates/all_games.html:77 templates/game_detail.html:685
 #: templates/system_games.html:68
 msgid "Fill Missing"
 msgstr "填充缺失項"
@@ -4441,7 +4433,7 @@ msgid "e.g., Final Fantasy, Crash Bandicoot"
 msgstr "例如：Final Fantasy、Crash Bandicoot"
 
 #: templates/_modals/edit_modal.html:52 templates/base.html:1058
-#: templates/compare_games.html:96 templates/game_detail.html:447
+#: templates/compare_games.html:96 templates/game_detail.html:448
 msgid "Similar Games"
 msgstr "相似遊戲"
 
@@ -5586,129 +5578,129 @@ msgstr "下一批螢幕截圖"
 msgid "Also Known As"
 msgstr "又名"
 
-#: templates/game_detail.html:431
+#: templates/game_detail.html:432
 #, python-format
 msgid "Source: %(source)s"
 msgstr "來源：%(source)s"
 
-#: templates/game_detail.html:456
+#: templates/game_detail.html:457
 msgid "Loading recommendations..."
 msgstr "正在載入推薦…"
 
-#: templates/game_detail.html:504
+#: templates/game_detail.html:505
 #, python-format
 msgid "%(pct)s%% match"
 msgstr "符合度 %(pct)s%%"
 
-#: templates/game_detail.html:545
+#: templates/game_detail.html:546
 msgid "Source:"
 msgstr "來源："
 
-#: templates/game_detail.html:548
+#: templates/game_detail.html:549
 msgid "CLZ Games Import (No ROM file)"
 msgstr "CLZ 遊戲匯入（無 ROM 檔案）"
 
-#: templates/game_detail.html:550
+#: templates/game_detail.html:551
 msgid "Steam Import (No ROM file)"
 msgstr "Steam 匯入（無 ROM 檔案）"
 
-#: templates/game_detail.html:552
+#: templates/game_detail.html:553
 msgid "Xbox Import (No ROM file)"
 msgstr "Xbox 匯入（無 ROM 檔案）"
 
-#: templates/game_detail.html:554
+#: templates/game_detail.html:555
 msgid "PSN Import (No ROM file)"
 msgstr "PSN 匯入（無 ROM 檔案）"
 
-#: templates/game_detail.html:560
+#: templates/game_detail.html:561
 msgid "Original Title:"
 msgstr "原始標題："
 
-#: templates/game_detail.html:566
+#: templates/game_detail.html:567
 msgid "File:"
 msgstr "檔案："
 
-#: templates/game_detail.html:568
+#: templates/game_detail.html:569
 msgid "Rename ROM file"
 msgstr "重新命名 ROM 檔案"
 
-#: templates/game_detail.html:571
+#: templates/game_detail.html:572
 msgid "Path:"
 msgstr "路徑："
 
-#: templates/game_detail.html:577
+#: templates/game_detail.html:578
 msgid "Edition:"
 msgstr "版本："
 
-#: templates/game_detail.html:584
+#: templates/game_detail.html:585
 msgid "Exclusive:"
 msgstr "獨佔："
 
-#: templates/game_detail.html:587
+#: templates/game_detail.html:588
 msgid "Also On:"
 msgstr "同樣支援："
 
-#: templates/game_detail.html:594
+#: templates/game_detail.html:595
 msgid "Modes:"
 msgstr "模式："
 
-#: templates/game_detail.html:600
+#: templates/game_detail.html:601
 msgid "Players:"
 msgstr "玩家人數："
 
-#: templates/game_detail.html:606
+#: templates/game_detail.html:607
 msgid "Campaign:"
 msgstr "戰役："
 
-#: templates/game_detail.html:612
+#: templates/game_detail.html:613
 msgid "Structure:"
 msgstr "結構："
 
-#: templates/game_detail.html:618
+#: templates/game_detail.html:619
 msgid "Perspective:"
 msgstr "視角："
 
-#: templates/game_detail.html:624
+#: templates/game_detail.html:625
 msgid "Dimension:"
 msgstr "維度："
 
-#: templates/game_detail.html:630
+#: templates/game_detail.html:631
 msgid "Save:"
 msgstr "儲存："
 
-#: templates/game_detail.html:636
+#: templates/game_detail.html:637
 msgid "Input:"
 msgstr "輸入："
 
-#: templates/game_detail.html:641
+#: templates/game_detail.html:642
 msgid "Scraped:"
 msgstr "已抓取："
 
-#: templates/game_detail.html:650
+#: templates/game_detail.html:651
 msgid "Bonus Content"
 msgstr "附贈內容"
 
-#: templates/game_detail.html:672
+#: templates/game_detail.html:673
 msgid "Scrape History"
 msgstr "抓取歷史"
 
-#: templates/game_detail.html:698
+#: templates/game_detail.html:699
 msgid "Primary scraper"
 msgstr "主抓取器"
 
-#: templates/game_detail.html:700
+#: templates/game_detail.html:701
 msgid "Fallback scraper"
 msgstr "備用抓取源"
 
-#: templates/game_detail.html:707
+#: templates/game_detail.html:708
 msgid "Fields filled:"
 msgstr "已填充欄位："
 
-#: templates/game_detail.html:715
+#: templates/game_detail.html:716
 msgid "None"
 msgstr "無"
 
-#: templates/game_detail.html:720
+#: templates/game_detail.html:721
 msgid "Still missing:"
 msgstr "仍缺失："
 
@@ -8812,4 +8804,10 @@ msgstr "在 Patreon 上支持"
 
 #~ msgid "Trophies & Achievements"
 #~ msgstr "獎盃與成就"
+
+#~ msgid "Two game IDs required"
+#~ msgstr "需要提供兩個遊戲 ID"
+
+#~ msgid "One or both games not found"
+#~ msgstr "未找到其中一個或兩個遊戲"
 

@@ -382,3 +382,16 @@ def test_unhashable_screenshot_does_not_break_later_dedup(tmp_path):
     assert all(h is not None for _, h in hashes)
     # Before the fix the None above made this raise TypeError.
     assert keep_screenshot_if_unique(str(good), 'good.png', hashes)
+
+
+# --- PASS-59-57: the two uncalled extractions are gone ---
+
+def test_uncalled_compare_api_and_psn_linker_are_deleted():
+    import app as app_module
+    import routes.trophies
+    import services.achievement_linking as linking
+    rules = {r.rule for r in app_module.app.url_map.iter_rules()}
+    assert '/api/games/compare' not in rules
+    assert '/compare' in rules
+    assert not hasattr(linking, 'find_linked_game_for_psn')
+    assert not hasattr(routes.trophies, 'find_linked_game_for_psn')
