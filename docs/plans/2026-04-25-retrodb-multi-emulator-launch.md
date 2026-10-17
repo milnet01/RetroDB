@@ -1,6 +1,6 @@
 # RetroDB Multi-Emulator Launch — Implementation Plan
 
-> **Historical record.** This shipped as Pass 44 in v3.6.2 (commit `1a70052`). Copied from the retired `retroarch-frontend-design` workspace on 2026-10-13; that workspace and its git history now sit, untracked, in `.archive/retroarch-frontend-design/`. The launcher is now governed by `docs/specs/PASS-59-64-launcher.md`; paths below still name the retired `/mnt/Storage` drive.
+> **Historical record.** This shipped as Pass 44 in v3.6.2 (commit `1a70052`). Copied from the retired `retroarch-frontend-design` workspace on 2026-10-13; that workspace and its git history now sit, untracked, in `.archive/retroarch-frontend-design/`. The launcher is now governed by `docs/specs/PASS-59-64-launcher.md`; paths below still name the retired `/mnt/Storage` drive. The spec it names is now `docs/specs/2026-04-25-retrodb-multi-emulator-launch.md`.
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 

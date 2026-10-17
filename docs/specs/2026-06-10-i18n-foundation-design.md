@@ -304,11 +304,10 @@ committing, since it imports new symbols.
 
 ### 8. Docs & workflow
 
-- New project spec `docs/specs/i18n.md` — **note the tree:** this *design* doc
-  lives under `docs/superpowers/specs/` (the cold-eyes-gated design-doc tree); the
-  shipped *contract* doc lands in the pre-existing `docs/specs/` tree alongside the
-  other contract docs (`auth.md`, `api-contracts.md`, `themes.md`). Don't file
-  `i18n.md` under `docs/superpowers/specs/`. It covers the wrap-new-strings
+- New project spec `docs/specs/i18n.md` — the shipped *contract* doc, alongside
+  the other contract docs (`auth.md`, `api-contracts.md`, `themes.md`). This
+  *design* doc sat under `docs/superpowers/specs/` until PASS-57-8 moved it to
+  `docs/specs/` too. `i18n.md` covers the wrap-new-strings
   contract, the selector chain, the catalog regeneration workflow (`pybabel
   extract` → `gen_pseudolocale.py` → `pybabel compile`), and the chosen pseudolocale
   code. (CLAUDE.md's "Reference Documents" list enumerates the standards docs but

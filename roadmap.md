@@ -3802,7 +3802,7 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   values) is NOT translated — canonical English feeds FIELD_SCHEMAS validation;
   theme names + rating-system trademarks stay as-is.
 - **Source**: net-new feature ask 2026-04-25. Design:
-  `docs/superpowers/specs/2026-06-10-i18n-foundation-design.md` (cold-eyes clean).
+  `docs/specs/2026-06-10-i18n-foundation-design.md` (cold-eyes clean).
 - **Status**: done (v3.7.0, 2026-06-12). Follow-on bulk migration = Pass 43.5.
 
 #### Pass 43.2 Translate canonical genre / dimension / perspective labels (MEDIUM, M)
@@ -4647,7 +4647,12 @@ weren't worth blocking the ship on.  Ordered by rough priority.
   sweep stops re-reporting it.
 - **Verify**: `doc_integrity` over `docs/` reports no broken links;
   `grep -rn "docs/superpowers"` returns only whatever option (b) sanctioned.
-- **Status**: planned (2026-08-06). Lanes: docs.
+- **Shipped** (2026-10-17): option (a). The three design docs moved to
+  `docs/specs/` and the two plans to a new `docs/plans/`; `docs/superpowers/`
+  is gone. Citations retargeted: `docs/specs/i18n.md`, the i18n design doc's
+  own note on its location, the PASS-43-1 body, and the 2026-04-25 plan's
+  pointer to its spec.
+- **Status**: done (2026-10-17). Lanes: docs.
 - **Source**: debt-sweep 2026-08-06 (v3.12.0..HEAD).
 
 ---
