@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-17 18:19+0200\n"
+"POT-Creation-Date: 2026-10-17 18:21+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: nl\n"
@@ -689,8 +689,8 @@ msgstr ""
 msgid "Missing required parameters"
 msgstr "Vereiste parameters ontbreken"
 
-#: routes/reports.py:605 routes/tools.py:493 routes/tools.py:550
-#: routes/tools.py:585
+#: routes/reports.py:605 routes/tools.py:503 routes/tools.py:560
+#: routes/tools.py:595
 msgid "Invalid path"
 msgstr "Ongeldig pad"
 
@@ -736,7 +736,7 @@ msgstr "Gegenereerde bestandsnaam bevat ongeldige tekens"
 msgid "Invalid log file"
 msgstr "Ongeldig logbestand"
 
-#: routes/scrape_logs.py:101 routes/tools.py:496
+#: routes/scrape_logs.py:101 routes/tools.py:506
 msgid "File not found"
 msgstr "Bestand niet gevonden"
 
@@ -822,7 +822,7 @@ msgid "Invalid %(field)s: %(result)s"
 msgstr "Ongeldig(e) %(field)s: %(result)s"
 
 #: routes/settings.py:529 routes/settings.py:588 routes/settings.py:640
-#: routes/tools.py:282
+#: routes/tools.py:289
 msgid "Failed to save settings"
 msgstr "Opslaan van instellingen mislukt"
 
@@ -830,12 +830,12 @@ msgstr "Opslaan van instellingen mislukt"
 msgid "Request body must be a JSON object"
 msgstr "Aanvraagtekst moet een JSON-object zijn"
 
-#: routes/settings.py:567 routes/tools.py:274
+#: routes/settings.py:567 routes/tools.py:281
 #, python-format
 msgid "Unknown setting key: %(key)s"
 msgstr "Onbekende instellingssleutel: %(key)s"
 
-#: routes/settings.py:573 routes/tools.py:277
+#: routes/settings.py:573 routes/tools.py:284
 #, python-format
 msgid "Invalid value for '%(key)s': %(reason)s"
 msgstr "Ongeldige waarde voor '%(key)s': %(reason)s"
@@ -873,72 +873,85 @@ msgstr "Systeem-ID vereist"
 msgid "ES-DE scraper not available"
 msgstr "ES-DE-scraper niet beschikbaar"
 
-#: routes/tools.py:264
+#: routes/tools.py:271
 msgid "Administrator privileges required"
 msgstr "Beheerdersrechten vereist"
 
-#: routes/tools.py:268
+#: routes/tools.py:275
 msgid "Settings payload must be an object"
 msgstr "Instellingen-payload moet een object zijn"
 
-#: routes/tools.py:317 routes/tools.py:929
+#: routes/tools.py:324 routes/tools.py:950
 #, python-format
 msgid "Path does not exist: %(path)s"
 msgstr "Pad bestaat niet: %(path)s"
 
-#: routes/tools.py:344
+#: routes/tools.py:354
 msgid "Permission denied"
 msgstr "Toegang geweigerd"
 
-#: routes/tools.py:372
+#: routes/tools.py:382
 msgid "Task not found"
 msgstr "Taak niet gevonden"
 
-#: routes/tools.py:395 routes/tools.py:415
+#: routes/tools.py:405 routes/tools.py:425
 msgid "Task not found or not running"
 msgstr "Taak niet gevonden of draait niet"
 
-#: routes/tools.py:435
+#: routes/tools.py:445
 msgid "Task not found or not paused"
 msgstr "Taak niet gevonden of niet gepauzeerd"
 
-#: routes/tools.py:452 routes/tools.py:642 routes/tools.py:806
-#: routes/tools.py:921
+#: routes/tools.py:462 routes/tools.py:652 routes/tools.py:823
+#: routes/tools.py:939
 msgid "Invalid scan path"
 msgstr "Ongeldig scanpad"
 
-#: routes/tools.py:490 routes/tools.py:547 routes/tools.py:582
+#: routes/tools.py:500 routes/tools.py:557 routes/tools.py:592
 msgid "No path provided"
 msgstr "Geen pad opgegeven"
 
-#: routes/tools.py:518
+#: routes/tools.py:528
 msgid "No archive path provided"
 msgstr "Geen archiefpad opgegeven"
 
-#: routes/tools.py:521
+#: routes/tools.py:531
 msgid "Invalid archive path"
 msgstr "Ongeldig archiefpad"
 
-#: routes/tools.py:524
+#: routes/tools.py:534
 msgid "No files to remove"
 msgstr "Geen bestanden om te verwijderen"
 
-#: routes/tools.py:613
+#: routes/tools.py:623
 msgid "No paths provided"
 msgstr "Geen paden opgegeven"
 
-#: routes/tools.py:619
+#: routes/tools.py:629
 #, python-format
 msgid "Invalid path: %(path)s"
 msgstr "Ongeldig pad: %(path)s"
 
-#: routes/tools.py:691
+#: routes/tools.py:701
 msgid "chdman not found. Please install MAME tools."
 msgstr "chdman niet gevonden. Installeer de MAME-tools."
 
-#: routes/tools.py:829
+#: routes/tools.py:846
 msgid "chdman not found"
 msgstr "chdman niet gevonden"
+
+#: routes/tools.py:944
+#, python-format
+msgid "Unknown duplicate method: %(method)s"
+msgstr ""
+
+#: routes/tools.py:1141
+msgid "These scan results have expired. Scan again, then delete."
+msgstr ""
+
+#: routes/tools.py:1146
+msgid "Keep at least one copy of each game. Nothing was deleted."
+msgstr ""
 
 #: routes/trophies.py:387
 msgid ""
@@ -4220,6 +4233,14 @@ msgstr "Huidig:"
 msgid "Waiting to start..."
 msgstr "Wachten op start..."
 
+#: templates/archive_scanner.html:1653
+msgid "Have the original archive moved to the staging folder"
+msgstr ""
+
+#: templates/archive_scanner.html:1756
+msgid "Original archives moved to:"
+msgstr ""
+
 #: templates/base.html:40
 msgid "Skip to main content"
 msgstr "Ga naar hoofdinhoud"
@@ -7183,6 +7204,16 @@ msgid ""
 msgstr ""
 "Configureer paden, locaties van externe tools, archieftypen en andere "
 "voorkeuren die worden gedeeld door alle ROM-tools."
+
+#: templates/rom_tools_settings.html:304
+msgid "Empty: RetroDB's data folder"
+msgstr ""
+
+#: templates/rom_tools_settings.html:305
+msgid ""
+"Where Create M3U moves original archives. Leave empty to use RetroDB's "
+"data folder."
+msgstr ""
 
 #: templates/screenshot_dedup.html:243
 msgid "Exact Hash (MD5) &mdash; identical files only"

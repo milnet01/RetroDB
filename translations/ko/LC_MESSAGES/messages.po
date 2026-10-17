@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-17 18:19+0200\n"
+"POT-Creation-Date: 2026-10-17 18:21+0200\n"
 "PO-Revision-Date: 2026-06-30 14:26+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ko\n"
@@ -663,8 +663,8 @@ msgstr "ROM 경로가 설정되지 않았습니다. 설정 → 경로에서 설�
 msgid "Missing required parameters"
 msgstr "필수 매개변수가 누락되었습니다"
 
-#: routes/reports.py:605 routes/tools.py:493 routes/tools.py:550
-#: routes/tools.py:585
+#: routes/reports.py:605 routes/tools.py:503 routes/tools.py:560
+#: routes/tools.py:595
 msgid "Invalid path"
 msgstr "잘못된 경로입니다"
 
@@ -710,7 +710,7 @@ msgstr "생성된 파일 이름에 잘못된 문자가 포함되어 있습니다
 msgid "Invalid log file"
 msgstr "잘못된 로그 파일입니다"
 
-#: routes/scrape_logs.py:101 routes/tools.py:496
+#: routes/scrape_logs.py:101 routes/tools.py:506
 msgid "File not found"
 msgstr "파일을 찾을 수 없습니다"
 
@@ -794,7 +794,7 @@ msgid "Invalid %(field)s: %(result)s"
 msgstr "잘못된 %(field)s: %(result)s"
 
 #: routes/settings.py:529 routes/settings.py:588 routes/settings.py:640
-#: routes/tools.py:282
+#: routes/tools.py:289
 msgid "Failed to save settings"
 msgstr "설정 저장에 실패했습니다"
 
@@ -802,12 +802,12 @@ msgstr "설정 저장에 실패했습니다"
 msgid "Request body must be a JSON object"
 msgstr "요청 본문은 JSON 객체여야 합니다"
 
-#: routes/settings.py:567 routes/tools.py:274
+#: routes/settings.py:567 routes/tools.py:281
 #, python-format
 msgid "Unknown setting key: %(key)s"
 msgstr "알 수 없는 설정 키: %(key)s"
 
-#: routes/settings.py:573 routes/tools.py:277
+#: routes/settings.py:573 routes/tools.py:284
 #, python-format
 msgid "Invalid value for '%(key)s': %(reason)s"
 msgstr "'%(key)s'에 대한 잘못된 값: %(reason)s"
@@ -845,72 +845,85 @@ msgstr "시스템 ID가 필요합니다"
 msgid "ES-DE scraper not available"
 msgstr "ES-DE 스크레이퍼를 사용할 수 없습니다"
 
-#: routes/tools.py:264
+#: routes/tools.py:271
 msgid "Administrator privileges required"
 msgstr "관리자 권한이 필요합니다"
 
-#: routes/tools.py:268
+#: routes/tools.py:275
 msgid "Settings payload must be an object"
 msgstr "설정 페이로드는 객체여야 합니다"
 
-#: routes/tools.py:317 routes/tools.py:929
+#: routes/tools.py:324 routes/tools.py:950
 #, python-format
 msgid "Path does not exist: %(path)s"
 msgstr "경로가 존재하지 않습니다: %(path)s"
 
-#: routes/tools.py:344
+#: routes/tools.py:354
 msgid "Permission denied"
 msgstr "권한이 거부되었습니다"
 
-#: routes/tools.py:372
+#: routes/tools.py:382
 msgid "Task not found"
 msgstr "작업을 찾을 수 없습니다"
 
-#: routes/tools.py:395 routes/tools.py:415
+#: routes/tools.py:405 routes/tools.py:425
 msgid "Task not found or not running"
 msgstr "작업을 찾을 수 없거나 실행 중이 아닙니다"
 
-#: routes/tools.py:435
+#: routes/tools.py:445
 msgid "Task not found or not paused"
 msgstr "작업을 찾을 수 없거나 일시정지되어 있지 않습니다"
 
-#: routes/tools.py:452 routes/tools.py:642 routes/tools.py:806
-#: routes/tools.py:921
+#: routes/tools.py:462 routes/tools.py:652 routes/tools.py:823
+#: routes/tools.py:939
 msgid "Invalid scan path"
 msgstr "잘못된 스캔 경로입니다"
 
-#: routes/tools.py:490 routes/tools.py:547 routes/tools.py:582
+#: routes/tools.py:500 routes/tools.py:557 routes/tools.py:592
 msgid "No path provided"
 msgstr "제공된 경로가 없습니다"
 
-#: routes/tools.py:518
+#: routes/tools.py:528
 msgid "No archive path provided"
 msgstr "제공된 아카이브 경로가 없습니다"
 
-#: routes/tools.py:521
+#: routes/tools.py:531
 msgid "Invalid archive path"
 msgstr "잘못된 아카이브 경로입니다"
 
-#: routes/tools.py:524
+#: routes/tools.py:534
 msgid "No files to remove"
 msgstr "제거할 파일이 없습니다"
 
-#: routes/tools.py:613
+#: routes/tools.py:623
 msgid "No paths provided"
 msgstr "제공된 경로가 없습니다"
 
-#: routes/tools.py:619
+#: routes/tools.py:629
 #, python-format
 msgid "Invalid path: %(path)s"
 msgstr "잘못된 경로: %(path)s"
 
-#: routes/tools.py:691
+#: routes/tools.py:701
 msgid "chdman not found. Please install MAME tools."
 msgstr "chdman을 찾을 수 없습니다. MAME 도구를 설치하세요."
 
-#: routes/tools.py:829
+#: routes/tools.py:846
 msgid "chdman not found"
 msgstr "chdman을 찾을 수 없습니다"
+
+#: routes/tools.py:944
+#, python-format
+msgid "Unknown duplicate method: %(method)s"
+msgstr ""
+
+#: routes/tools.py:1141
+msgid "These scan results have expired. Scan again, then delete."
+msgstr ""
+
+#: routes/tools.py:1146
+msgid "Keep at least one copy of each game. Nothing was deleted."
+msgstr ""
 
 #: routes/trophies.py:387
 msgid ""
@@ -4159,6 +4172,14 @@ msgstr "현재:"
 msgid "Waiting to start..."
 msgstr "시작 대기 중..."
 
+#: templates/archive_scanner.html:1653
+msgid "Have the original archive moved to the staging folder"
+msgstr ""
+
+#: templates/archive_scanner.html:1756
+msgid "Original archives moved to:"
+msgstr ""
+
 #: templates/base.html:40
 msgid "Skip to main content"
 msgstr "본문으로 건너뛰기"
@@ -7048,6 +7069,16 @@ msgid ""
 "Configure paths, external tool locations, archive types, and other "
 "preferences shared across all ROM tools."
 msgstr "모든 ROM 도구에서 공유되는 경로, 외부 도구 위치, 아카이브 유형 및 기타 환경설정을 구성합니다."
+
+#: templates/rom_tools_settings.html:304
+msgid "Empty: RetroDB's data folder"
+msgstr ""
+
+#: templates/rom_tools_settings.html:305
+msgid ""
+"Where Create M3U moves original archives. Leave empty to use RetroDB's "
+"data folder."
+msgstr ""
 
 #: templates/screenshot_dedup.html:243
 msgid "Exact Hash (MD5) &mdash; identical files only"

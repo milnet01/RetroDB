@@ -301,8 +301,8 @@
         
         <div class="form-group">
             <label for="tempPath">Temporary Path</label>
-            <input type="text" class="form-input" id="tempPath" value="{{ settings.temp_path }}" placeholder="/tmp/retrodb_romtools">
-            <p class="form-help">Directory for temporary files during processing</p>
+            <input type="text" class="form-input" id="tempPath" value="{{ settings.temp_path }}" placeholder="{{ _('Empty: RetroDB\'s data folder') }}">
+            <p class="form-help">{{ _('Where Create M3U moves original archives. Leave empty to use RetroDB\'s data folder.') }}</p>
         </div>
         
         <div class="form-group">
@@ -575,7 +575,7 @@ document.getElementById('settingsForm').addEventListener('submit', async functio
 function resetDefaults() {
     showConfirm('🔄 Reset Settings', 'Reset all ROM Tools settings to defaults?', function() {
         document.getElementById('romsPath').value = '/mnt/Games/ROMS';
-        document.getElementById('tempPath').value = '/tmp/retrodb_romtools';
+        document.getElementById('tempPath').value = '';
         document.getElementById('chdmanPath').value = 'chdman';
         unwantedPatterns = ['.txt', '.nfo', '.diz', '.url', '.html', '.htm', '.sfv', '.png', '.jpg', '.jpeg', '.gif', '.scr'];
         renderUnwantedPatterns();
@@ -584,7 +584,6 @@ function resetDefaults() {
         document.getElementById('chdVerifyAfter').checked = true;
         document.getElementById('chdDeleteOriginals').checked = false;
         document.getElementById('chdSkipExisting').checked = true;
-        document.getElementById('duplicateMethod').value = 'hash';
         document.getElementById('ignoreRegionTags').checked = true;
         document.getElementById('includeArchives').checked = false;
     });
