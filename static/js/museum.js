@@ -406,8 +406,8 @@ function _ctrlFetchShow(running) {
     var progress = document.getElementById('ctrlFetchProgress');
     var cancel = document.getElementById('ctrlFetchCancelBtn');
     if (btn) btn.disabled = running;
-    if (progress) progress.hidden = !running;
-    if (cancel) cancel.hidden = !running;
+    if (progress) progress.style.display = running ? '' : 'none';
+    if (cancel) cancel.style.display = running ? '' : 'none';
 }
 
 function _ctrlFetchPoll() {
