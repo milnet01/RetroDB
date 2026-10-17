@@ -1,3 +1,30 @@
+- version: 3.28.0
+  date: 2026-10-17
+  tags:
+  - type: feature
+    label: Point RetroDB at your emulator folder and it sets them up
+  - type: fix
+    label: Settings → Emulators page fixes
+  body: |
+    <ul>
+      <li><strong>Point RetroDB at your emulator folder and it sets them
+        up.</strong> Settings → Emulators has a new Emulator folders list.
+        Add the folder your emulators live in and RetroDB finds each one in
+        it, as an AppImage, a portable script or an installed Flatpak, and
+        links it to the systems it runs. A system that already has a working
+        emulator keeps it.</li>
+      <li><strong>See which systems are ready to play.</strong> The
+        Per-system mapping table now lists every system's emulators, says
+        whether each one works, and lets you pick a system's default. For
+        DuckStation, PCSX2, RPCS3 and RetroArch it also says whether the BIOS
+        files are in place, and names any that are missing. RetroDB only
+        reads BIOS files; it never copies or downloads one.</li>
+      <li>The emulator scan now finds every emulator on a large emulator
+        drive. Before, it could stop early inside an emulator's own settings
+        folder.</li>
+      <li>RetroArch's Auto-detect and Save buttons work again, and the Edit
+        emulator window no longer shows on the page until you press Edit.</li>
+    </ul>
 - version: 3.27.0
   date: 2026-10-17
   tags:

@@ -144,7 +144,10 @@ it at once, with `apply=true`.
 `apply` and its response, and changes underneath:
 
 - **Files:** the existing walk (`_walk_appimages`, its depth and entry caps),
-  matched through `ADAPTERS`. A `*-portable.sh` still beats its AppImage.
+  matched through `ADAPTERS`. A `*-portable.sh` still beats its AppImage,
+  and a copy beside one beats a bare copy found first. The walk does not
+  enter hidden folders or AppImage `.home` folders, whose files used up the
+  entry cap on `/mnt/Emulators` before the other emulators were reached.
 - **Flatpak:** for each adapter's `flatpak_ids`, the exported launcher
   `/var/lib/flatpak/exports/bin/<id>` or
   `~/.local/share/flatpak/exports/bin/<id>`, whichever exists and is
@@ -642,13 +645,13 @@ it is given; §10 says so.
 
 | Rule | What catches a breach |
 |------|----------------------|
-| INV-1 | `tests/test_emulator_autodetect.py` (to add) |
-| INV-2 | `tests/test_emulator_autodetect.py` (to add) |
-| INV-3 | `tests/test_emulator_autodetect.py` (to add) |
-| INV-4 | `tests/test_bios_status.py` (to add) |
-| INV-5 | `tests/test_bios_status.py` (to add) |
-| INV-6 | grep in §5 plus `tests/test_emulator_registry_routes.py` (to add) |
-| INV-7 | `tests/test_api_games_can_launch.py` (to add) |
+| INV-1 | `tests/test_emulator_autodetect.py` |
+| INV-2 | `tests/test_emulator_autodetect.py` |
+| INV-3 | `tests/test_emulator_autodetect.py` |
+| INV-4 | `tests/test_bios_status.py` |
+| INV-5 | `tests/test_bios_status.py` |
+| INV-6 | grep in §5 plus `tests/test_emulator_registry_routes.py` |
+| INV-7 | `tests/test_api_games_can_launch.py` |
 | INV-8 | **nothing** automated — manual recipe in §5; no browser harness in the suite |
 | INV-9 | `tests/test_disc_serial.py` (to add) |
 | INV-10 | `tests/test_disc_serial.py` (to add) |
@@ -660,7 +663,7 @@ it is given; §10 says so.
 | INV-16 | `tests/test_standalone_settings.py` (to add) |
 | INV-17 | `tests/test_launch_resolver.py` (to add) |
 | INV-18 | `tests/test_migrations.py` (to add) |
-| INV-19 | `tests/test_emulator_autodetect.py` (to add) |
+| INV-19 | `tests/test_emulator_autodetect.py` — detection, listing and walk-cap halves; the settings-PUT half comes with §4.6 (to add) |
 | INV-20 | `tests/test_standalone_settings.py` (to add) |
 | §4.6 the emulators honour the keys RetroDB writes | **nothing** — no test runs an emulator; key names were read from this machine's config files, not from each emulator's source |
 | §4.1 Flatpak and XDG data-dir candidates | **nothing** — no emulator Flatpak installed here; marked unverified |

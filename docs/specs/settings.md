@@ -347,7 +347,7 @@ unless explicitly noted.
 | `/api/settings/paths` | POST | `validate_settings_path` (Pass 32.1) | `data/settings.json` |
 | `/api/settings/logging` | POST | `validate_settings_value('logging', …)` (Pass 45.11) | `data/settings.json` |
 | `/api/settings/retroarch/detect` | POST | n/a (probe only) | reads only |
-| `/api/settings/emulators/detect` | POST | n/a (probe only) | reads only |
+| `/api/settings/emulators/detect` | POST | n/a (probe; `?apply=true` writes) | DB (`emulators.binary_path_override`, `system_emulators`) with `?apply=true`; reads only without it |
 | `/api/scraper-settings` | GET | n/a | `data/scraper_settings.json` |
 | `/api/scraper-settings` | POST | `validate_scraper_settings` (Pass 45.11) | `data/scraper_settings.json` |
 | `/api/scraper-api-keys` | POST | `validate_scraper_api_keys` (Pass 45.11) | `data/scraper_settings.json#api_keys` |

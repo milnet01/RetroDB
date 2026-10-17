@@ -13,6 +13,8 @@ from flask_babel import gettext as _
 from services.api_helpers import handle_api_errors, success, error
 from services.auth import login_required, admin_required
 from services.database import query, execute
+from services.emulator_adapters import bios_status
+from services.launch_resolver import _mapping_resolves
 from settings_manager import get_setting
 
 logger = logging.getLogger(__name__)
@@ -142,6 +144,32 @@ def api_delete_emulator(emulator_id):
 # -----------------------------------------------------------------------------
 # system_emulators mapping (admin-only)
 # -----------------------------------------------------------------------------
+
+@bp.route('/api/system_emulators', methods=['GET'])
+@login_required
+@admin_required
+@handle_api_errors
+def api_list_system_emulators():
+    """Every mapping with its system and emulator names, whether it resolves
+    and its BIOS status (PASS-59-91 §4.3, §4.4)."""
+    emulators = {e['id']: e for e in query("SELECT * FROM emulators")}
+    rows = query("""
+        SELECT se.*, s.name AS system_name, s.folder AS system_folder
+        FROM system_emulators se
+        JOIN systems s ON s.id = se.system_id
+        ORDER BY s.name, se.is_default DESC, se.id
+    """)
+    mappings = []
+    for r in rows:
+        emu = emulators.get(r['emulator_id'])
+        mappings.append(dict(
+            r,
+            emulator_name=emu['name'] if emu else None,
+            resolves=_mapping_resolves(emu, r),
+            bios=bios_status(emu, r),
+        ))
+    return success(mappings=mappings)
+
 
 @bp.route('/api/system_emulators', methods=['POST'])
 @login_required

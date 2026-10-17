@@ -39,18 +39,19 @@
 </section>
 
 <!-- ================================================== -->
-<!-- Pass 44.1B — Auto-detect AppImages -->
+<!-- PASS-59-91 — Emulator folders (Pass 44.1B scanner below) -->
 <!-- ================================================== -->
 <section class="settings-section">
-    <h2 class="section-title">Auto-detect emulator AppImages</h2>
+    <h2 class="section-title">{{ _('Emulator folders') }}</h2>
     <p class="text-muted" style="margin-bottom: var(--spacing-md);">
-        Walks the directories in <code>emulator_scan_paths</code>
-        ({{ emulator_scan_paths }}) for known emulator AppImages.
-        For each match, the corresponding registry entry's
-        <code>binary_path_override</code> can be set in one click.  Prefers
-        <code>&lt;name&gt;-portable.sh</code> wrapper scripts when present
-        alongside the AppImage so portable mode is preserved.
+        {{ _('Add the folder your emulators live in. RetroDB finds each emulator there, links it to the systems it runs and checks its BIOS files.') }}
     </p>
+    <ul id="emu-folders" class="emu-folder-list" data-paths="{{ emulator_scan_paths }}"></ul>
+    <div class="emu-folder-add">
+        <input type="text" class="form-input" id="emu-folder-input"
+               placeholder="/mnt/Emulators" aria-label="{{ _('Emulator folder') }}">
+        <button id="emu-folder-add" class="btn btn-primary"><span class="btn-icon">➕</span> {{ _('Add folder') }}</button>
+    </div>
     <div style="display: flex; gap: var(--spacing-sm); margin-bottom: var(--spacing-md);">
         <button id="emu-detect-btn" class="btn btn-secondary"><span class="btn-icon">🔍</span> Scan</button>
         <button id="emu-apply-btn" class="btn btn-primary" disabled><span class="btn-icon">💾</span> Apply all</button>
@@ -90,14 +91,13 @@
 <!-- ================================================== -->
 <!-- Pass 44.1C — Edit-emulator modal -->
 <!-- ================================================== -->
-<div id="emuEditModal" class="scrape-modal">
-    <div class="scrape-modal-content" style="max-width: 720px;" role="dialog" aria-modal="true" aria-labelledby="emuEditModalHeading">
-        <div class="scrape-modal-header">
-            <h2 id="emuEditModalHeading">Edit emulator</h2>
-            <span class="scrape-modal-subtitle">Configure binary path, args template, and enabled state</span>
+<div id="emuEditModal" class="custom-modal">
+    <div class="custom-modal-content" style="max-width: 720px; max-height: 90vh; overflow-y: auto;" role="dialog" aria-modal="true" aria-labelledby="emuEditModalHeading">
+        <div class="custom-modal-header">
+            <h3 id="emuEditModalHeading">Edit emulator</h3>
             <button type="button" class="modal-close-btn" onclick="closeEmuEditModal()" aria-label="Close emulator edit modal">×</button>
         </div>
-        <div class="scrape-modal-body">
+        <div class="custom-modal-body">
             <form id="emuEditForm" autocomplete="off">
                 <input type="hidden" name="id" id="emu_edit_id">
                 <div class="form-group mb-md">
@@ -150,11 +150,14 @@
 <section class="settings-section">
     <h2 class="section-title">Per-system mapping</h2>
     <p class="text-muted" style="margin-bottom: var(--spacing-md);">
-        For each system, the default emulator is starred (★).  Per-game overrides live in the edit-game modal.
+        {{ _('Pick the emulator each system uses by default. Per-game overrides live in the edit-game modal.') }}
     </p>
     <div id="mapping-body"><span class="text-muted">Loading…</span></div>
 </section>
 
-<script src="{{ asset_url('js/emulators-settings.js') }}" defer></script>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ asset_url('js/emulators-settings.js') }}" defer></script>
 {% endblock %}

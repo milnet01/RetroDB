@@ -145,3 +145,47 @@ class TestEmulatorCRUD:
         rv = viewer_client.delete('/api/emulators/7', headers=self._csrf())
         # admin_required redirects non-admins
         assert rv.status_code in (302, 403)
+
+
+# PASS-59-91 INV-6 — GET /api/system_emulators is admin-only and returns each
+# mapping with `resolves` and `bios`.
+PROBE = 'MapListProbe'
+
+
+@pytest.fixture
+def mapping(setup_complete):
+    from services.database import execute
+    sys_id = execute("INSERT INTO systems (name, folder) VALUES (?, ?)",
+                     (f'{PROBE} Sys', 'maplistprobe'))
+    emu_id = execute(
+        "INSERT INTO emulators (name, binary_name, args_template, is_retroarch, enabled) "
+        "VALUES (?, 'maplistprobe-not-installed', '\"{rom}\"', 0, 1)", (f'{PROBE} Emu',))
+    map_id = execute("INSERT INTO system_emulators (system_id, emulator_id, is_default) "
+                     "VALUES (?, ?, 1)", (sys_id, emu_id))
+    yield map_id
+    execute("DELETE FROM system_emulators WHERE id = ?", (map_id,))
+    execute("DELETE FROM emulators WHERE id = ?", (emu_id,))
+    execute("DELETE FROM systems WHERE id = ?", (sys_id,))
+
+
+def _role_client(monkeypatch, role):
+    import app as app_module
+    monkeypatch.setitem(app_module.app.config, 'TESTING', True)
+    monkeypatch.setattr('app.get_current_user',
+                        lambda: {'id': 99, 'username': 'tester', 'role': role})
+    monkeypatch.setattr('app.get_user_settings', lambda _uid: {})
+    return app_module.app.test_client()
+
+
+def test_admin_lists_mappings_with_resolves_and_bios(monkeypatch, mapping):
+    rv = _role_client(monkeypatch, 'admin').get('/api/system_emulators')
+    assert rv.status_code == 200, rv.data
+    row = next(m for m in rv.get_json()['mappings'] if m['id'] == mapping)
+    assert row['emulator_name'] == f'{PROBE} Emu'
+    assert row['system_name'] == f'{PROBE} Sys'
+    assert row['resolves'] is False
+    assert row['bios']['state'] == 'unknown'
+
+
+def test_viewer_cannot_list_mappings(monkeypatch, mapping):
+    assert _role_client(monkeypatch, 'viewer').get('/api/system_emulators').status_code == 403
