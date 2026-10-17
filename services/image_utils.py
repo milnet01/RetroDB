@@ -89,7 +89,6 @@ def _gpu_run(session, input_dict):
 
 
 _MODEL_URLS = [
-    'https://huggingface.co/Xenova/realesrgan-x4plus/resolve/main/model.onnx',
     'https://huggingface.co/AXERA-TECH/Real-ESRGAN/resolve/main/onnx/realesrgan-x4.onnx',
 ]
 
@@ -363,7 +362,7 @@ def _init_upscaler(allow_gpu=True):
         if not os.path.exists(model_path):
             model_url = getattr(
                 config, 'REALESRGAN_MODEL_URL',
-                'https://huggingface.co/Xenova/realesrgan-x4plus/resolve/main/model.onnx'
+                'https://huggingface.co/AXERA-TECH/Real-ESRGAN/resolve/main/onnx/realesrgan-x4.onnx'
             )
             _download_model(model_url, model_path)
 

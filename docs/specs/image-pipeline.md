@@ -187,8 +187,10 @@ logs its own errors so a finalize failure never fails the download
 `RealESRGAN_x4plus.onnx`). First-run download via `_download_model`.
 
 **Download source**: `REALESRGAN_MODEL_URL` (default
-`https://huggingface.co/Xenova/realesrgan-x4plus/resolve/main/model.onnx`).
-`_MODEL_URLS` carries a hardcoded fallback list (HuggingFace mirrors).
+`https://huggingface.co/AXERA-TECH/Real-ESRGAN/resolve/main/onnx/realesrgan-x4.onnx`).
+`_MODEL_URLS` carries a hardcoded fallback list of HuggingFace mirrors, tried
+after the configured URL. The Xenova mirror left the list on 2026-10-17: it
+answers 401 (PASS-59-101).
 Pass 41.14.B routes every URL through
 `services.ssrf.validate_outbound_url(require_https=True)`; Pass 45.2
 also pins the IP via `validate_and_pin_url` + `pin_host_ip` so DNS

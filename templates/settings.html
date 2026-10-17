@@ -1141,10 +1141,9 @@ function switchSettingsTab(tabId, skipScroll) {
 
     // Update tab buttons
     document.querySelectorAll('.settings-tab').forEach(tab => {
-        tab.classList.remove('active');
-        if (tab.dataset.tab === tabId) {
-            tab.classList.add('active');
-        }
+        const selected = tab.dataset.tab === tabId;
+        tab.classList.toggle('active', selected);
+        tab.setAttribute('aria-selected', selected ? 'true' : 'false');  // PASS-59-80
     });
     
     // Update tab panels
@@ -3001,7 +3000,11 @@ function updateMatchCriteria() {
 
 // AI provider field visibility
 function updateAIProviderFields() {
-    const provider = document.getElementById('apikey-ai-provider').value;
+    // PASS-59-103: the Scraping tab renders for admins only, so a
+    // non-admin's page has no provider select.
+    const select = document.getElementById('apikey-ai-provider');
+    if (!select) return;
+    const provider = select.value;
     ['gemini', 'openai', 'claude'].forEach(p => {
         const el = document.getElementById(`ai-fields-${p}`);
         if (el) el.style.display = (p === provider) ? '' : 'none';

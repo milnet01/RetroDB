@@ -146,7 +146,7 @@ IMAGE_UPSCALE_THRESHOLD = 0.80            # Upscale if below 80% of target
 IMAGE_DOWNSCALE_THRESHOLD = 1.20          # Downscale if above 120% of target
 REALESRGAN_MODEL_NAME = 'RealESRGAN_x4plus'
 REALESRGAN_TILE_SIZE = 256
-REALESRGAN_MODEL_URL = 'https://huggingface.co/Xenova/realesrgan-x4plus/resolve/main/model.onnx'
+REALESRGAN_MODEL_URL = 'https://huggingface.co/AXERA-TECH/Real-ESRGAN/resolve/main/onnx/realesrgan-x4.onnx'
 IMAGE_SKIP_TYPES = ['fanart']             # Image types to skip standardization
 
 # On-ingest image format.  'webp' (default) saves 25-35% vs JPEG at equivalent

@@ -429,3 +429,18 @@ class TestPass59_18StaleTagRefused:
         tagged = git('rev-parse', '-q', '--verify', 'refs/tags/v1.0.0^{commit}').stdout.strip()
         head = git('rev-parse', 'HEAD').stdout.strip()
         assert tagged != head, 'the stale tag must not resolve to HEAD'
+
+
+# --- PASS-59-102: install.py survives output redirected to a cp1252 file ---
+
+def test_install_banner_survives_a_cp1252_redirect():
+    """Windows encodes redirected stdout as cp1252, which has no box-drawing
+    characters. Simulated here with PYTHONIOENCODING; output goes to a pipe."""
+    import subprocess
+    import sys
+    env = {**os.environ, 'PYTHONIOENCODING': 'cp1252', 'NO_COLOR': '1'}
+    code = 'import install; install._prepare_output(); install._print_banner()'
+    proc = subprocess.run([sys.executable, '-c', code], capture_output=True, env=env,
+                          cwd=os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    assert proc.returncode == 0, proc.stderr.decode('utf-8', 'replace')[-300:]
+    assert 'ROM Library Manager' in proc.stdout.decode('utf-8', 'replace')

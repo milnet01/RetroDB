@@ -278,11 +278,18 @@ function _withTimeout(opts) {
         return { opts, cleanup: null };  // caller controls cancellation
     }
     const ac = new AbortController();
-    const t = setTimeout(() => ac.abort(), _API_DEFAULT_TIMEOUT_MS);
+    const t = setTimeout(
+        () => ac.abort(new DOMException('API request timed out', 'TimeoutError')),
+        _API_DEFAULT_TIMEOUT_MS);
     return {
         opts: Object.assign({}, opts, { signal: ac.signal }),
         cleanup: () => clearTimeout(t),
     };
+}
+
+function _logApiError(label, error) {
+    if (error && error.name === 'AbortError') return;
+    console.error(label, error);
 }
 
 const API = {
@@ -304,7 +311,7 @@ const API = {
             }
             return await response.json();
         } catch (error) {
-            console.error('API GET error:', error);
+            _logApiError('API GET error:', error);
             throw error;
         } finally {
             if (cleanup) cleanup();
@@ -335,7 +342,7 @@ const API = {
             }
             return await response.json();
         } catch (error) {
-            console.error('API POST error:', error);
+            _logApiError('API POST error:', error);
             throw error;
         } finally {
             if (cleanup) cleanup();
@@ -361,7 +368,7 @@ const API = {
             }
             return await response.json();
         } catch (error) {
-            console.error('API POST form error:', error);
+            _logApiError('API POST form error:', error);
             throw error;
         } finally {
             if (cleanup) cleanup();

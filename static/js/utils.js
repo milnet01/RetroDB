@@ -311,11 +311,22 @@ function _withTimeout(opts) {
         return { opts, cleanup: null };  // caller controls cancellation
     }
     const ac = new AbortController();
-    const t = setTimeout(() => ac.abort(), _API_DEFAULT_TIMEOUT_MS);
+    // A timeout aborts with its own reason, so it still logs (see
+    // _logApiError) while a caller's or page-unload abort does not.
+    const t = setTimeout(
+        () => ac.abort(new DOMException('API request timed out', 'TimeoutError')),
+        _API_DEFAULT_TIMEOUT_MS);
     return {
         opts: Object.assign({}, opts, { signal: ac.signal }),
         cleanup: () => clearTimeout(t),
     };
+}
+
+// PASS-59-80: leaving a page aborts its in-flight polls; that is not an
+// error, so an AbortError stays out of the console. It still rejects.
+function _logApiError(label, error) {
+    if (error && error.name === 'AbortError') return;
+    console.error(label, error);
 }
 
 const API = {
@@ -337,7 +348,7 @@ const API = {
             }
             return await response.json();
         } catch (error) {
-            console.error('API GET error:', error);
+            _logApiError('API GET error:', error);
             throw error;
         } finally {
             if (cleanup) cleanup();
@@ -368,7 +379,7 @@ const API = {
             }
             return await response.json();
         } catch (error) {
-            console.error('API POST error:', error);
+            _logApiError('API POST error:', error);
             throw error;
         } finally {
             if (cleanup) cleanup();
@@ -394,7 +405,7 @@ const API = {
             }
             return await response.json();
         } catch (error) {
-            console.error('API POST form error:', error);
+            _logApiError('API POST form error:', error);
             throw error;
         } finally {
             if (cleanup) cleanup();

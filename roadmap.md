@@ -7387,7 +7387,15 @@ were corrected in `2836bc3` and are not repeated here.
   the same loop that sets `.active`.
 - **Verify**: a fanart file named with an apostrophe shows; navigating away
   mid-poll logs nothing; the selected tab reports `aria-selected="true"`.
-- **Status**: planned (2026-09-25). Lanes: frontend, a11y.
+- **Shipped** (2026-10-17, v3.29.1): (a) the six fanart `url('…')`
+  attributes percent-encode an apostrophe (`|replace("'", '%27')`); (b)
+  `_logApiError` skips `AbortError` for get/post/postForm, and the 30 s
+  timeout now aborts with a `TimeoutError` reason, so it still logs; (c)
+  `switchSettingsTab` sets `aria-selected` beside `.active`. Browser check
+  on a scratch-DB server: a fanart named `Claude's Test.jpg` resolved
+  (200); a caller abort logged nothing while a timeout logged once; the
+  selected tab reported `aria-selected="true"` and the others false.
+- **Status**: done (2026-10-17). Lanes: frontend, a11y.
 - **Source**: in-session 2026-09-25 — Pass 59.30-59.40 browser walk.
 
 ---
@@ -7744,7 +7752,13 @@ were corrected in `2836bc3` and are not repeated here.
   501 px wide and `/reports` 470 px, so the page scrolls sideways. The tool
   tab strip itself fits (it wraps); the header, banner and stats grid do not.
   Predates Pass 53.3.
-- **Status**: todo. Lanes: ui.
+- **Shipped** (no longer reproduces, measured 2026-10-17): each page
+  loaded as admin in a 390 px iframe. `/tools/chd-verify`: document
+  scrollWidth 371 (the frame minus its scrollbar), no element past the
+  edge. `/reports`: scrollWidth 371; only the naming-results table runs
+  wider, inside its own scroll container, so the page does not scroll
+  sideways. Most likely fixed by the adaptive-layout work (PASS-59-104).
+- **Status**: done. Lanes: ui.
 - **Source**: Pass 53.3 browser walk, 2026-10-17.
 
 #### Pass 59.97 Check admin-only UI as a non-admin, in a browser (LOW, S)
@@ -7819,7 +7833,13 @@ were corrected in `2836bc3` and are not repeated here.
   fallback default and `_MODEL_URLS` order in `services/image_utils.py`.
 - **Why**: the Xenova address returns 401, so every fresh install logs a
   warning before the AXERA-TECH fallback succeeds (wintest, 2026-10-17).
-- **Status**: todo. Lanes: media.
+- **Shipped** (2026-10-17, v3.29.1): checked live: the Xenova URL
+  answers 401, the AXERA-TECH one 200 (66,991,363 bytes). AXERA-TECH is
+  now the default in `config.example.py` and `image_utils`' fallback
+  default; Xenova is dropped from `_MODEL_URLS`. `image-pipeline.md`
+  updated. An existing `config.py` still naming Xenova gets one 401, then
+  the fallback, only when the model is not yet downloaded.
+- **Status**: done. Lanes: media.
 - **Source**: Windows zip test, 2026-10-17.
 
 #### Pass 59.102 `install.py` crashes when its output is redirected on Windows (LOW, S)
@@ -7828,7 +7848,14 @@ were corrected in `2836bc3` and are not repeated here.
   cp1252 and the banner's box-drawing characters raise
   `UnicodeEncodeError`. A console window is unaffected. Seen on wintest,
   2026-10-17.
-- **Status**: todo. Lanes: distribution.
+- **Shipped** (2026-10-17, v3.29.1): `install.py::_prepare_output`
+  reconfigures a redirected stdout/stderr to UTF-8 (a console is left
+  alone), called before the banner. Pinned by
+  `tests/test_pass59_packaging.py::test_install_banner_survives_a_cp1252_redirect`
+  (cp1252 via PYTHONIOENCODING; the crash reproduced first). Checked on
+  wintest: the old banner raised UnicodeEncodeError into a redirected
+  file, the new one wrote it with empty stderr.
+- **Status**: done. Lanes: distribution.
 - **Source**: Windows zip test, 2026-10-17.
 
 #### Pass 59.103 Settings throws for a non-admin: `updateAIProviderFields` (LOW, S)
@@ -7836,7 +7863,11 @@ were corrected in `2836bc3` and are not repeated here.
 - **Why**: it reads `#apikey-ai-provider`, which lives on the Scraping tab,
   and runs on page load. A viewer's page has no such element, so the
   console shows a TypeError on every Settings visit (Chrome, 2026-10-17).
-- **Status**: todo. Lanes: ui.
+- **Shipped** (2026-10-17, v3.29.1): `updateAIProviderFields` returns
+  when `#apikey-ai-provider` is absent. Browser check as a viewer on a
+  scratch-DB server: the select is absent, Settings loads with no console
+  error, and `initMatchFilter`, which ran after the throw, now runs too.
+- **Status**: done. Lanes: ui.
 - **Source**: PASS-59-94 browser check, 2026-10-17.
 
 #### Pass 59.104 Adaptive layout: a page region widens only when its content can use it (HIGH, L)

@@ -33,6 +33,16 @@ def _bold(t):   return _c('1', t)
 
 # ── Banner ───────────────────────────────────────────────────────────────────
 
+def _prepare_output():
+    """PASS-59-102 — when output is redirected to a file, Python on Windows
+    encodes it as cp1252, which has no box-drawing characters, so the banner
+    raised UnicodeEncodeError. Write UTF-8 there instead; a console keeps
+    its own encoding."""
+    for stream in (sys.stdout, sys.stderr):
+        if not stream.isatty() and hasattr(stream, 'reconfigure'):
+            stream.reconfigure(encoding='utf-8', errors='replace')
+
+
 def _print_banner():
     banner = """
 ╔══════════════════════════════════════════════════════════════╗
@@ -60,6 +70,7 @@ def main():
     errors = []
     warnings = []
 
+    _prepare_output()
     _print_banner()
 
     print(f"  Platform:  {_bold(installer_core.distro_label(distro))}")

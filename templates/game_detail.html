@@ -9,7 +9,7 @@
 <div class="game-page page-box">
 <!-- Fanart Background -->
 <div class="game-fanart-bg {% if game.fanart %}active{% endif %}"
-     {% if game.fanart %}style="background-image: url('{{ url_for('static', filename='images/fanart/' + game.fanart) }}')"{% endif %}></div>
+     {% if game.fanart %}style="background-image: url('{{ url_for('static', filename='images/fanart/' + game.fanart)|replace("'", '%27') }}')"{% endif %}></div>
 
 <!-- Breadcrumb -->
 {% set _from = request.args.get('from') %}
