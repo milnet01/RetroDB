@@ -372,7 +372,7 @@ def generate_system(system_id):
     from scraper.scrape_ai import (
         _get_active_provider, _call_gemini, _call_openai, _call_claude,
     )
-    from services.jobs.museum import _build_museum_prompt, _build_top_games_prompt, _parse_museum_response
+    from services.jobs.museum import _build_museum_prompt, _parse_museum_response
 
     db = get_request_db()
     system = db.execute(
@@ -416,35 +416,13 @@ def generate_system(system_id):
     if not history and not summary:
         return jsonify({'success': False, 'error': _('No usable content in AI response')}), 500
 
-    # Generate top games
-    db_games = db.execute("""
-        SELECT title FROM games
-        WHERE system_id = ? AND critic_score IS NOT NULL AND critic_score > 0
-        ORDER BY critic_score DESC LIMIT 10
-    """, (system_id,)).fetchall()
-    existing_titles = [g['title'] for g in db_games]
-
-    top_games_json = '[]'
-    if len(existing_titles) < 10:
-        tg_prompt = _build_top_games_prompt(system['name'], existing_titles)
-        tg_raw = call_fn(tg_prompt, api_key, model)
-        if tg_raw:
-            tg_data = _parse_museum_response(tg_raw)
-            ai_games = tg_data.get('top_games', [])
-            top_games = [
-                {'title': g['title'], 'rank': i + 1, 'source': 'db'}
-                for i, g in enumerate(db_games)
-            ]
-            rank = len(top_games) + 1
-            for ag in ai_games:
-                if rank > 10:
-                    break
-                title = ag.get('title', '') if isinstance(ag, dict) else str(ag)
-                if title and title not in existing_titles:
-                    top_games.append({'title': title, 'rank': rank, 'source': 'ai'})
-                    existing_titles.append(title)
-                    rank += 1
-            top_games_json = json.dumps(top_games)
+    # PASS-59-63 — the bulk job's top-games logic, shared rather than copied:
+    # stores the DB's ten when it has them, keeps critic scores, passes
+    # call kwargs, and falls back to the DB games instead of '[]'.
+    from services.jobs import museum_generate_job
+    top_games_json = museum_generate_job._generate_top_games(
+        system_id, system['name'], call_fn, api_key, model, db, kwargs
+    )
 
     from datetime import datetime, timezone
     now = datetime.now(timezone.utc).isoformat()

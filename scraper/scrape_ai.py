@@ -962,6 +962,14 @@ def _validate_field(field_name, value):
         logger.info(f"AI field '{field_name}': rejected invalid value '{value}'")
         return ''
 
+    # PASS-59-63 — region is a single-value column; reduce a comma list the
+    # same way the hybrid scrape does.
+    if field_name == 'region':
+        from scraper.hybrid_scraper import _normalize_region
+        metadata = {'region': value}
+        _normalize_region(metadata, {'filled_fields': []})
+        return metadata['region'][:200]
+
     # Numeric score fields — validate as integers in range
     if field_name in ('critic_score', 'user_score'):
         try:

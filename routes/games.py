@@ -962,6 +962,10 @@ def api_game_edit(game_id):
     # (Pass 40.6), rating cross-map, sort_title auto-generation.
     payload = {k: data[k] for k in allowed_fields if k in data}
     normalized = normalize_game_edit(payload)
+    # title is NOT NULL: a blank one keeps the stored title, as the
+    # form-POST twin does (`title or game['title']`), so the rest still saves.
+    if 'title' in normalized and not normalized['title']:
+        del normalized['title']
 
     updates = []
     values = []
@@ -1171,15 +1175,15 @@ def api_games_bulk_edit():
 @bp.route('/api/game/<int:game_id>/completion', methods=['POST'])
 @login_required
 @permission_required('track_progress')
+@permission_required('edit')
 def api_update_completion(game_id):
     """Update game completion status.
 
     Pass 41.9 — drop @editor_required to login + 'track_progress' permission.
-    Marking your own copy as played/completed is a self-tracking action;
-    Player and Viewer roles legitimately want to do this. The completion
-    column is currently global on `games` (cross-user leak); the per-user
-    move is filed as a separate follow-up since it requires a schema
-    rename and front-end-side dashboard changes.
+    Marking your own copy as played/completed is a self-tracking action.
+    But the completion column is still global on `games`, so a write here
+    changes every user's library: PASS-59-63 also requires 'edit' until the
+    per-user move lands, then the 'edit' line goes.
     """
     try:
         data = request.get_json() or {}

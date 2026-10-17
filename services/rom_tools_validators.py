@@ -15,7 +15,8 @@
 import os
 
 
-_ALLOWED_DUPLICATE_METHODS = {'hash', 'name', 'size'}
+# PASS-59-63 — the three methods DuplicateFinder and /api/rom-tools implement.
+_ALLOWED_DUPLICATE_METHODS = {'hash', 'name', 'both'}
 
 # Linux + macOS system binary directories considered safe to invoke from.
 # Windows installs typically rely on PATH lookup of the bare name `chdman.exe`,

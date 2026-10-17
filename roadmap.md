@@ -6835,7 +6835,32 @@ when already in the file.
   inline `<script>` with no nonce, because it is built in a route rather than
   a template, so the template-scoped FU.1 inventory misses it.
 
-- **Status**: planned (2026-09-01). Lanes: all.
+- **Shipped** (2026-10-17, v3.29.1): worked as three file-disjoint
+  groups, every sub-finding run red first. Routes (all 10): blank JSON
+  title kept; AI-fill column dict; completion gated on `edit` (and greyed
+  out in `game_detail.html` for non-editors); `/api/restart` drains jobs
+  via `request_shutdown` and fixes the frozen argv; secret-key self-heal;
+  `/health` doc matched to code (`alive` + `version` kept: the version is
+  already on the unauthenticated login page); atomic bonus-disc sweep;
+  plural set-default checks ids; CLZ genres normalised; report settings
+  read once. Services (12 of 13): GPU wait timeout 120 s; pixel cap was
+  already single-valued (spec fixed); TROPUSR guard; empty pattern list
+  and anchored globs; Create M3U refuses to overwrite; AI region
+  normalised; `'both'` allowed; dead `scraper_priority`/`scraper_enabled`
+  keys retired; analytics counts a game once and anchors the playtime
+  regex; `safe_column` refuses a str; FK pragma on job and scraper
+  connections; museum route uses the job's `_generate_top_games`. JS (all
+  7): focus trap idempotent (plus a lightbox close bug); chips removed by
+  canonical value; normalisation confirm escaped with `allowHtml`;
+  shortcuts ignore modifiers; image-error handler at load; screenshot
+  close handlers scoped; `escAttr` in onerror. Tests:
+  `tests/test_pass59_63_{routes,services,js}.py`. Moved elsewhere: the
+  two untranslated surfaces (PASS-59-113 step 7), CSP readiness
+  (PASS-60-1), the museum bulk image fetch (PASS-59-116). Residual:
+  `apply_article_placement` still reads its setting per filename.
+  **Browser walk owed** for JS items 1–4 and 6–7 (item 5 and the viewer
+  completion menu were checked: no console errors, menu disabled).
+- **Status**: done (2026-10-17). Lanes: all.
 - **Source**: review-code, 18 lanes, 2026-09-01.
 
 ---
@@ -6975,7 +7000,15 @@ when already in the file.
   `review-contract --genre adr`. Seed `docs/decisions/` with the decisions
   this audit found undocumented: the fill-only exceptions, the
   `error(code=200)` convention, and the threat model.
-- **Status**: planned (2026-09-01). Lanes: docs.
+- **Shipped** (2026-10-17): `docs/design.md` and `docs/decisions/`
+  (0001 threat model, 0002 fill-only scraping, 0003 the HTTP-200 error
+  convention), indexed in CLAUDE.md and `docs/README.md`. Claims checked
+  against code, git history and changelog. The threat model states the
+  product's intended deployment (a trusted home network), not one user's
+  network. README.md § Deployment, SECURITY.md and `.semgrep.yml` said
+  "localhost" and now agree with 0001. No review-contract run: the gate
+  is cancelled for this project.
+- **Status**: done (2026-10-17). Lanes: docs.
 - **Source**: orchestrator, 2026-09-01 sweep.
 
 ---
@@ -8163,6 +8196,21 @@ were corrected in `2836bc3` and are not repeated here.
 - **Plan**: translate the two corrected English sentences into each
   locale. Part of the v4.0.0 "Fully translated" group (PASS-59-113 step 7).
 - **Verify**: grep each locale page for the old claims; none remain.
+
+---
+
+#### Pass 59.116 The Museum's bulk controller-image fetch runs inside the web request (LOW, M).
+- **Status**: todo
+- **Target**: `routes/museum.py::fetch_controller_images_bulk` and the
+  Museum page JS that reads its result.
+- **Why**: a Bing search, download and background-removal loop with a
+  one-second sleep per item runs synchronously in the request handler.
+  `docs/specs/jobs.md` makes long work like this a job's. The museum job
+  only generates AI text, so there is no job to queue it on.
+- **Plan**: a job class with status and cancel (jobs.md §11 skeleton);
+  the page polls it instead of waiting on the response.
+- **Verify**: a bulk fetch over several controllers returns at once, shows
+  progress, and can be cancelled.
 
 ## Done index
 

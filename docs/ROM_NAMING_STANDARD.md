@@ -320,7 +320,7 @@ FF7 (USA)/FF7 (Disc 1).bin                Final Fantasy VII (USA)/FF7 (Disc 1).b
 RetroDB's Archive Scanner can automatically create M3U playlists:
 
 1. **Scan** for multi-file archives
-2. **Create M3U** extracts the archive, creates the folder structure, adds `noload.txt`, and generates the M3U playlist
+2. **Create M3U** extracts the archive, creates the folder structure, adds `noload.txt`, and generates the M3U playlist. It refuses when the playlist or the game folder already exists, so hand edits are never overwritten; move or rename them first
 3. **Original archive** is moved — never deleted — to a server-side staging
    folder: `m3u_staging` inside the *Temporary Path* set on the ROM Tools
    Settings page (the system temp folder when that is empty). The Archive

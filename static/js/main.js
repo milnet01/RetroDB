@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeTooltips();
     initializeConfirmDialogs();
     initializeBackToTop();
-    initializeImageErrorHandling();
+    // initializeImageErrorHandling() runs at script load (PASS-59-63).
 
     // Apply themed icons to all [data-themed-icon] elements
     if (typeof getThemedIcon === 'function') {
@@ -172,9 +172,14 @@ window.scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 //   outer-html         — `target.outerHTML = target.dataset.onErrorHtml`
 //                        (used for trophy emoji fallbacks).
 
+//
+// PASS-59-63: this runs when the script loads, not on DOMContentLoaded.
+// The bundle is deferred, so a missing server-rendered boxart can fire
+// `error` before any script runs; the sweep below handles those, and the
+// listener catches every later failure.
+
 function initializeImageErrorHandling() {
-    document.addEventListener('error', function(event) {
-        const target = event.target;
+    function handle(target) {
         if (!target || !target.dataset) return;
         const action = target.dataset.onError;
         if (!action) return;
@@ -205,8 +210,22 @@ function initializeImageErrorHandling() {
             const html = target.dataset.onErrorHtml;
             if (html) target.outerHTML = html;
         }
+    }
+
+    document.addEventListener('error', function(event) {
+        handle(event.target);
     }, /* useCapture */ true);
+
+    // A broken image is `complete` with no decoded pixels; a lazy image not
+    // yet fetched is not `complete`, so it is left for the listener.
+    const sweep = () => document.querySelectorAll('img[data-on-error]').forEach(img => {
+        if (img.complete && img.naturalWidth === 0 && img.getAttribute('src')) handle(img);
+    });
+    sweep();
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', sweep);
 }
+
+initializeImageErrorHandling();
 
 // =============================================================================
 // SIDEBAR FUNCTIONALITY
@@ -502,17 +521,22 @@ function initializeModals() {
     // Note: Escape key handling is done by KeyboardShortcuts.closeAnyModal()
     // and game-modals.js — no duplicate keydown listener needed here.
 
-    // Close modal on backdrop click
-    document.querySelectorAll('.modal').forEach(modal => {
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) {
-                closeScreenshotModal();
-            }
-        });
+    // PASS-59-63: these handlers close the screenshot viewer, so bind them
+    // to that modal only. Bound to every .modal / .modal-close they also
+    // fired for unrelated dialogs, restoring page scroll and popping the
+    // wrong focus trap.
+    const modal = document.getElementById('screenshotModal');
+    if (!modal) return;
+
+    // Close on backdrop click
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeScreenshotModal();
+        }
     });
 
-    // Modal close buttons
-    document.querySelectorAll('.modal-close').forEach(btn => {
+    // Close button
+    modal.querySelectorAll('.modal-close').forEach(btn => {
         btn.addEventListener('click', closeScreenshotModal);
     });
 }
@@ -1331,7 +1355,11 @@ const KeyboardShortcuts = {
             closeAnyModal();
             return;
         }
-        
+
+        // PASS-59-63: Ctrl/Cmd/Alt combinations belong to the browser
+        // (Ctrl+D bookmarks, Ctrl+G finds next). Shift stays allowed: '?'.
+        if (e.ctrlKey || e.metaKey || e.altKey) return;
+
         // Handle pending key (for two-key shortcuts like g+d)
         if (this.pendingKey) {
             const combo = `${this.pendingKey} ${key}`;

@@ -143,12 +143,16 @@ const GameDetailModal = {
         const loading = document.getElementById('gameDetailLoading');
         const content = document.getElementById('gameDetailContent');
 
+        // PASS-59-63: AI Fill re-opens the modal while it is already open.
+        // Only the first open pushes a focus trap; close() pops one, so a
+        // second push would leave a capture keydown listener behind.
+        const wasOpen = modal.classList.contains('active');
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
         loading.style.display = 'flex';
         content.style.display = 'none';
 
-        if (window.ModalFocusTrap) {
+        if (window.ModalFocusTrap && !wasOpen) {
             ModalFocusTrap.activate(modal, document.activeElement, { onEscape: () => this.close() });
         }
 
@@ -377,11 +381,12 @@ const GameDetailModal = {
         this._screenshotIndex = index;
         this._updateLightbox();
         const lb = document.getElementById('gdmScreenshotLightbox');
+        const wasOpen = !!lb && lb.classList.contains('active');
         if (lb) lb.classList.add('active');
         // Pass 29.3: push a stacked focus trap so Escape reaches the
         // lightbox first and the enclosing GameDetailModal trap stays
         // intact underneath. onEscape closes the lightbox only.
-        if (window.ModalFocusTrap && lb) {
+        if (window.ModalFocusTrap && lb && !wasOpen) {
             ModalFocusTrap.activate(lb, document.activeElement, {
                 onEscape: () => this.closeLightbox(),
                 // Pass 36.8 — arrows consolidated via the focus trap.
@@ -396,8 +401,11 @@ const GameDetailModal = {
      */
     closeLightbox() {
         const lb = document.getElementById('gdmScreenshotLightbox');
+        // PASS-59-63: close() calls this unconditionally; popping a trap
+        // when the lightbox was not open would pop the one beneath.
+        const wasOpen = !!lb && lb.classList.contains('active');
         if (lb) lb.classList.remove('active');
-        if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
+        if (window.ModalFocusTrap && wasOpen) ModalFocusTrap.deactivate();
     },
 
     /**
@@ -910,10 +918,11 @@ const GameEditModal = {
         document.getElementById('gemHltbLookupBtn').innerHTML = t('🔍 Lookup HLTB');
         this.pendingHltbData = null;
 
-        // Show modal
+        // Show modal (PASS-59-63: push the focus trap on the first open only)
+        const wasOpen = editModal.classList.contains('active');
         editModal.classList.add('active');
 
-        if (window.ModalFocusTrap) {
+        if (window.ModalFocusTrap && !wasOpen) {
             ModalFocusTrap.activate(editModal, document.activeElement, { onEscape: () => this.close() });
         }
     },
@@ -1249,6 +1258,8 @@ const GameEditModal = {
         // Display the translated label (canonical genre/perspective/etc.); the
         // stored value + remove callback keep the canonical English token (43-2).
         tag.textContent = tField(value) + ' ';
+        // PASS-59-63: removal matches on this, never on the translated text.
+        tag.dataset.value = value;
         const btn = document.createElement('span');
         btn.className = className === 'controller-tag' ? 'remove-controller' : 'remove-genre';
         btn.textContent = '×';
@@ -1333,7 +1344,7 @@ const GameEditModal = {
         hidden.value = currentGenres.join(', ');
 
         container.querySelectorAll('.genre-tag').forEach(tag => {
-            if (tag.textContent.trim().replace('×', '').trim().toLowerCase() === genre.toLowerCase()) {
+            if ((tag.dataset.value || '').toLowerCase() === genre.toLowerCase()) {
                 tag.remove();
             }
         });
@@ -1414,7 +1425,7 @@ const GameEditModal = {
         hidden.value = currentModes.join(', ');
 
         container.querySelectorAll('.genre-tag').forEach(tag => {
-            if (tag.textContent.trim().replace('×', '').trim().toLowerCase() === mode.toLowerCase()) {
+            if ((tag.dataset.value || '').toLowerCase() === mode.toLowerCase()) {
                 tag.remove();
             }
         });
@@ -1495,7 +1506,7 @@ const GameEditModal = {
         hidden.value = currentSaveTypes.join(', ');
 
         container.querySelectorAll('.genre-tag').forEach(tag => {
-            if (tag.textContent.trim().replace('×', '').trim().toLowerCase() === saveType.toLowerCase()) {
+            if ((tag.dataset.value || '').toLowerCase() === saveType.toLowerCase()) {
                 tag.remove();
             }
         });
@@ -1614,7 +1625,7 @@ const GameEditModal = {
         hidden.value = currentControllers.join(', ');
 
         container.querySelectorAll('.controller-tag').forEach(tag => {
-            if (tag.textContent.trim().replace('×', '').trim().toLowerCase() === controller.toLowerCase()) {
+            if ((tag.dataset.value || '').toLowerCase() === controller.toLowerCase()) {
                 tag.remove();
             }
         });
@@ -1820,7 +1831,7 @@ const GameEditModal = {
         hidden.value = currentStructures.join(', ');
 
         container.querySelectorAll('.genre-tag').forEach(tag => {
-            if (tag.textContent.trim().replace('×', '').trim().toLowerCase() === structure.toLowerCase()) {
+            if ((tag.dataset.value || '').toLowerCase() === structure.toLowerCase()) {
                 tag.remove();
             }
         });
@@ -1902,7 +1913,7 @@ const GameEditModal = {
         hidden.value = currentPerspectives.join(', ');
 
         container.querySelectorAll('.genre-tag').forEach(tag => {
-            if (tag.textContent.trim().replace('\u00d7', '').trim().toLowerCase() === perspective.toLowerCase()) {
+            if ((tag.dataset.value || '').toLowerCase() === perspective.toLowerCase()) {
                 tag.remove();
             }
         });
@@ -1984,7 +1995,7 @@ const GameEditModal = {
         hidden.value = currentDimensions.join(', ');
 
         container.querySelectorAll('.genre-tag').forEach(tag => {
-            if (tag.textContent.trim().replace('\u00d7', '').trim().toLowerCase() === dimension.toLowerCase()) {
+            if ((tag.dataset.value || '').toLowerCase() === dimension.toLowerCase()) {
                 tag.remove();
             }
         });

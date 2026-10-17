@@ -411,6 +411,13 @@ def api_set_system_default_controllers(system_id):
     if not system:
         return error(_('System not found'), 404)
 
+    # Verify every controller exists before clearing anything, as the
+    # singular sibling does.
+    for controller_id in controller_ids:
+        if controller_id and not query("SELECT id FROM controllers WHERE id = ?",
+                                       (controller_id,), one=True):
+            return error(_('Controller not found'), 404)
+
     # Clear existing defaults for this system
     execute("UPDATE system_controllers SET is_default = 0 WHERE system_id = ?", (system_id,))
 

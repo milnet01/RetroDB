@@ -131,15 +131,9 @@ in the security log rather than a generic "format normalize failed").
 screenshot batch aborted the whole dedup loop for the game being
 scraped.
 
-`app.py:22` sets a stricter 25 MP cap before any other Pillow call sites.
-`Image.MAX_IMAGE_PIXELS` is a process-global singleton (the last assignment
-wins), so the effective cap at any moment depends on import order: once
-`services/image_utils.py` has been imported anywhere in the process, the 64 MP
-cap is live everywhere. In practice the pipeline modules load lazily inside
-`scraper/` and `services/jobs/`, so the 25 MP cap holds for the first few
-requests and the 64 MP cap holds once the image pipeline is warm. If you need
-a single source of truth, set `config.IMAGE_MAX_PIXELS` and reference it from
-both modules instead of relying on import-order convergence.
+`config.IMAGE_MAX_PIXELS` is the single source of truth. `Image.MAX_IMAGE_PIXELS`
+is a process-global singleton, so `app.py` deliberately does not set it: a
+second value there would be overwritten by whichever module imports last.
 
 ---
 
@@ -236,6 +230,9 @@ breaker (`_gpu_failed = True`), tears down the GPU thread, and rebuilds
 the session as CPU-only — every subsequent upscale stays on CPU for the
 process lifetime. This is intentional: a wedged ROCm session can fail
 in obscure ways and CPU is the known-good baseline.
+A wedged session that never returns counts as a failure: `_gpu_run()`
+waits at most `_GPU_RUN_TIMEOUT` seconds per call, then raises
+`TimeoutError`, which trips the same breaker.
 
 ---
 
@@ -625,8 +622,8 @@ is a regression — flag it in code review.
    equally to scraper images, screenshots, fanart, manuals, *and* the
    ESRGAN model download (Pass 41.14.B / 45.2).
 3. **`Image.MAX_IMAGE_PIXELS` is set at module import** in
-   `services/image_utils.py`, `services/game_media_service.py`, and
-   `app.py`. Every `Image.open(...)` call site has an explicit
+   `services/image_utils.py` and `services/game_media_service.py`, both
+   from `config.IMAGE_MAX_PIXELS`. Every `Image.open(...)` call site has an explicit
    `Image.DecompressionBombError` catch with a distinct log line.
 4. **ESRGAN model load is lazy and singleton.** `_get_upscaler()`
    double-checks under `_upscaler_lock`; the GPU inference worker is a

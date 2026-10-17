@@ -293,7 +293,7 @@ class ArchiveScanner:
     # Unwanted file patterns
     UNWANTED_PATTERNS = [
         "*.txt", "*.nfo", "*.diz", "*.url", "*.html", "*.htm",
-        "*.sfv", "readme*", "release*", "*.md5", "*.sha1",
+        "*.sfv", "readme", "readme.*", "release", "release.*", "*.md5", "*.sha1",
         "*.png", "*.jpg", "*.jpeg", "*.gif", "*.scr"
     ]
     
@@ -330,7 +330,8 @@ class ArchiveScanner:
             modes = {"corrupted": True, "multiFile": True, "unwanted": True}
         
         # Use custom unwanted patterns if provided, otherwise use class default
-        if unwanted_patterns:
+        # PASS-59-63 — an empty list means "delete nothing", not "use defaults".
+        if unwanted_patterns is not None:
             self._custom_unwanted_patterns = unwanted_patterns
             logger.info(f"Using custom unwanted patterns: {unwanted_patterns}")
         else:
@@ -476,7 +477,8 @@ class ArchiveScanner:
         unwanted = []
         
         # Priority: 1. Method parameter, 2. Instance custom patterns, 3. Class default
-        if custom_patterns:
+        # PASS-59-63 — `is not None`: an empty list means "delete nothing".
+        if custom_patterns is not None:
             # Convert extension patterns like ".png" to glob patterns like "*.png"
             patterns = []
             for pattern in custom_patterns:
@@ -485,7 +487,7 @@ class ArchiveScanner:
                 else:
                     patterns.append(pattern)
             logger.debug(f"Using provided custom patterns: {patterns}")
-        elif hasattr(self, '_custom_unwanted_patterns') and self._custom_unwanted_patterns:
+        elif getattr(self, '_custom_unwanted_patterns', None) is not None:
             # Convert extension patterns like ".png" to glob patterns like "*.png"
             patterns = []
             for pattern in self._custom_unwanted_patterns:
@@ -761,7 +763,14 @@ class ArchiveScanner:
         
         # Create M3U file path
         m3u_path = path.parent / f"{folder_name}.m3u"
-        
+
+        # PASS-59-63 — never overwrite an existing playlist or game folder;
+        # they may carry hand edits (ROM_NAMING_STANDARD.md, Renaming M3U Games).
+        for existing in (m3u_path, extract_folder):
+            if existing.exists():
+                return {"success": False,
+                        "error": f"{existing.name} already exists; move or rename it first"}
+
         try:
             # Create extraction folder if it doesn't exist
             extract_folder.mkdir(parents=True, exist_ok=True)

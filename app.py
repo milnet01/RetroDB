@@ -103,14 +103,18 @@ def _get_secret_key():
         return env_key
 
     key_path = os.path.join(config.BASE_DIR, 'data', '.secret_key')
-    os.makedirs(os.path.dirname(key_path), exist_ok=True)
+    # Its own try: a read-only BASE_DIR must still read an existing key.
+    try:
+        os.makedirs(os.path.dirname(key_path), exist_ok=True)
+    except OSError:
+        pass
     try:
         if os.path.exists(key_path):
             with open(key_path, 'r') as f:
                 key = f.read().strip()
                 if key:
                     return key
-    except OSError:
+    except (OSError, UnicodeDecodeError):
         pass
     # Generate new key
     key = secrets.token_hex(32)

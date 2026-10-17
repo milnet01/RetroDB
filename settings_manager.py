@@ -53,16 +53,9 @@ DEFAULT_SETTINGS = {
     'preferred_boxart': '2d',  # '2d' or '3d' - if 3d, falls back to 2d when unavailable
     'preferred_rating_system': 'esrb',  # esrb, pegi, cero, usk, acb, fpb, grac, classind
     
-    # Scraper settings
-    'scraper_priority': ['esde', 'screenscraper', 'tgdb', 'igdb', 'rawg'],
-    'scraper_enabled': {
-        'esde': True,
-        'tgdb': True,
-        'igdb': True,
-        'screenscraper': True,
-        'rawg': True
-    },
-    
+    # Scraper priority and enablement live in data/scraper_settings.json
+    # (scraper.scraper_manager.load_scraper_settings), not here.
+
     # Feature toggles
     'enable_animations': True,
     'enable_mist_effect': True,
@@ -155,7 +148,11 @@ DEFAULT_SETTINGS = {
 #   - server_host changes which interfaces the app answers on, which is not
 #     something a web form should be able to do to its own host.
 # `server_port` is genuinely benign and stays.
-_RETIRED_SETTINGS = frozenset({'server_host', 'debug_mode'})
+#
+# scraper_priority / scraper_enabled were stored here but read from nowhere;
+# the live values are in scraper_settings.json (PASS-59-63).
+_RETIRED_SETTINGS = frozenset({'server_host', 'debug_mode',
+                               'scraper_priority', 'scraper_enabled'})
 
 
 def ensure_settings_dir():

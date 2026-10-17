@@ -17,6 +17,7 @@ All values are big-endian.
 Timestamps are microseconds since year 0001.
 """
 
+import logging
 import struct
 import defusedxml.ElementTree as ET
 # Element is only used for type annotations — defusedxml doesn't re-export
@@ -29,6 +30,8 @@ from typing import List, Dict, Optional, Tuple
 from datetime import datetime
 from pathlib import Path
 
+
+logger = logging.getLogger(__name__)
 
 # Constants from RPCS3
 TROPUSR_MAGIC = 0x818F54AD
@@ -234,6 +237,11 @@ class TROPUSRParser:
         # but explicit early return makes the safety obvious.
         if offset >= len(data):
             return
+        # PASS-59-63 — the fields read below end at byte 48 of the entry; an
+        # entries_size below 32 would make every slice short and raise
+        # struct.error.
+        if entry_size < 48:
+            return
 
         for i in range(header['entries_count']):
             entry_offset = offset + (i * entry_size)
@@ -342,7 +350,12 @@ class TrophyManager:
     def load_all_trophy_sets(self) -> Dict[str, TrophySet]:
         """Load all discovered trophy sets"""
         for npwr_id in self.discover_trophy_sets():
-            self.load_trophy_set(npwr_id)
+            # PASS-59-63 — one corrupt set must not drop every other game's
+            # trophies; skip it and keep going.
+            try:
+                self.load_trophy_set(npwr_id)
+            except Exception as e:
+                logger.warning(f"Skipping unreadable trophy set {npwr_id}: {e}")
         return self.trophy_sets
     
     def get_total_trophy_counts(self) -> Dict[str, Tuple[int, int]]:

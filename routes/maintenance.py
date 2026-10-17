@@ -364,10 +364,20 @@ def api_alt_titles_backfill_cancel():
 @bp.route('/api/restart', methods=['POST'])
 @admin_required
 def api_restart():
-    """Restart server"""
+    """Restart server.
+
+    Drains running jobs first, as the SIGTERM handler behind /api/shutdown
+    does: os.execv replaces the process at once, so without the drain a
+    restart mid-scrape loses the progress the drain exists to persist.
+    Under PyInstaller sys.executable IS the app and sys.argv[0] names it
+    again, so the frozen argv drops argv[0] rather than pass it as an arg.
+    """
     def restart():
+        from services.jobs.base import request_shutdown
         time.sleep(1)
-        os.execv(sys.executable, [sys.executable] + sys.argv)
+        request_shutdown(timeout=5.0)
+        args = sys.argv[1:] if getattr(sys, 'frozen', False) else sys.argv
+        os.execv(sys.executable, [sys.executable] + args)
 
     threading.Thread(target=restart).start()
 

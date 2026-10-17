@@ -192,7 +192,7 @@
                 
                 <!-- Completion Status Dropdown -->
                 <div class="completion-dropdown-wrapper">
-                    <select id="completionStatus" class="completion-select" aria-label="{{ _('Completion status') }}" onchange="updateCompletionStatus({{ game.id }}, this.value)">
+                    <select id="completionStatus" class="completion-select" aria-label="{{ _('Completion status') }}" onchange="updateCompletionStatus({{ game.id }}, this.value)"{% if not has_permission('edit') %} disabled{% endif %}>
                         <option value="not_started" {% if not game.completion_status or game.completion_status == 'not_started' %}selected{% endif %}>📋 {{ _('Not Started') }}</option>
                         <option value="in_progress" {% if game.completion_status == 'in_progress' %}selected{% endif %}>🎮 {{ _('In Progress') }}</option>
                         <option value="played" {% if game.completion_status == 'played' %}selected{% endif %}>🕹️ {{ _('Played') }}</option>

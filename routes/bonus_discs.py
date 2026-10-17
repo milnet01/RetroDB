@@ -10,7 +10,7 @@ import os
 import re
 import logging
 
-from services.database import query, execute
+from services.database import query, execute, get_db_with_context
 from services.game_utils import is_bonus_disc_title, extract_base_game_title
 from services.game_query import escape_like
 from services.auth import login_required, editor_required
@@ -363,33 +363,36 @@ def api_auto_link_bonus_discs():
     # Detect bonus discs
     result = auto_detect_bonus_discs(system_id)
 
+    # One transaction for the whole sweep: an interruption rolls every flag
+    # back instead of leaving an arbitrary prefix of the library flagged.
     linked_count = 0
-    for game in result['games']:
-        # Mark as bonus disc
-        execute("UPDATE games SET is_bonus_disc = 1 WHERE id = ?", (game['id'],))
+    with get_db_with_context() as conn:
+        for game in result['games']:
+            # Mark as bonus disc
+            conn.execute("UPDATE games SET is_bonus_disc = 1 WHERE id = ?", (game['id'],))
 
-        # Try to find and link parent
-        if game['base_title']:
-            # Escape LIKE wildcards so a base_title containing % or _ matches
-            # literally instead of over-matching unrelated titles.
-            base_like = escape_like(game['base_title'])
-            # Look for exact or close title match
-            parent = query("""
-                SELECT id FROM games
-                WHERE system_id = ?
-                  AND id != ?
-                  AND (is_bonus_disc = 0 OR is_bonus_disc IS NULL)
-                  AND (title = ? OR title LIKE ? ESCAPE '\\')
-                ORDER BY
-                    CASE WHEN title = ? THEN 0 ELSE 1 END
-                LIMIT 1
-            """, (game['system_id'], game['id'], game['base_title'],
-                  f"{base_like}%", game['base_title']), one=True)
+            # Try to find and link parent
+            if game['base_title']:
+                # Escape LIKE wildcards so a base_title containing % or _ matches
+                # literally instead of over-matching unrelated titles.
+                base_like = escape_like(game['base_title'])
+                # Look for exact or close title match
+                parent = conn.execute("""
+                    SELECT id FROM games
+                    WHERE system_id = ?
+                      AND id != ?
+                      AND (is_bonus_disc = 0 OR is_bonus_disc IS NULL)
+                      AND (title = ? OR title LIKE ? ESCAPE '\\')
+                    ORDER BY
+                        CASE WHEN title = ? THEN 0 ELSE 1 END
+                    LIMIT 1
+                """, (game['system_id'], game['id'], game['base_title'],
+                      f"{base_like}%", game['base_title'])).fetchone()
 
-            if parent:
-                execute("UPDATE games SET parent_game_id = ? WHERE id = ?",
-                       (parent['id'], game['id']))
-                linked_count += 1
+                if parent:
+                    conn.execute("UPDATE games SET parent_game_id = ? WHERE id = ?",
+                                 (parent['id'], game['id']))
+                    linked_count += 1
 
     return success(
         detected=result['detected'],

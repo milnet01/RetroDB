@@ -70,7 +70,8 @@ def safe_column(name, allowed):
         column = safe_column(request.args.get('sort'), {'title', 'year', 'rating'})
         sql = f"SELECT * FROM games ORDER BY {column}"
     """
-    if name not in allowed:
+    # PASS-59-63 — a str allowlist would turn `in` into substring matching.
+    if isinstance(allowed, str) or name not in allowed:
         raise ValueError(f"Invalid column name: {name!r}")
     return name
 

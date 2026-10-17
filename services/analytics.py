@@ -13,7 +13,7 @@ import time
 import settings_manager
 from services.database import query
 from services.formatters import format_size, get_manufacturer
-from services.game_utils import RATING_SYSTEMS, RATING_VALUES
+from services.game_utils import RATING_SYSTEM_KEYS, RATING_SYSTEMS, RATING_VALUES
 
 logger = logging.getLogger(__name__)
 
@@ -272,6 +272,38 @@ def _get_score_statistics():
             top_rated_games, lowest_rated_games)
 
 
+# Per-board value -> maturity bucket for the per-system stacked bar.
+# Values not listed (e.g. ESRB RP) fall in no bucket.
+_MATURITY_BUCKETS = {
+    **{('esrb', v): 'family' for v in ('E', 'EC')},
+    **{('esrb', v): 'teen' for v in ('E10+', 'T')},
+    **{('esrb', v): 'mature' for v in ('M', 'AO')},
+    **{('pegi', v): 'family' for v in ('PEGI 3', 'PEGI 7')},
+    **{('pegi', v): 'teen' for v in ('PEGI 12', 'PEGI 16')},
+    ('pegi', 'PEGI 18'): 'mature',
+    ('cero', 'A'): 'family',
+    **{('cero', v): 'teen' for v in ('B', 'C')},
+    **{('cero', v): 'mature' for v in ('D', 'Z')},
+    **{('usk', v): 'family' for v in ('0', '6')},
+    **{('usk', v): 'teen' for v in ('12', '16')},
+    ('usk', '18'): 'mature',
+    **{('acb', v): 'family' for v in ('G', 'PG')},
+    **{('acb', v): 'teen' for v in ('M', 'MA15+')},
+    ('acb', 'R18+'): 'mature',
+    ('grac', 'ALL'): 'family',
+    **{('grac', v): 'teen' for v in ('12', '15')},
+    ('grac', '18'): 'mature',
+    **{('classind', v): 'family' for v in ('L', '10')},
+    **{('classind', v): 'teen' for v in ('12', '14', '16')},
+    ('classind', '18'): 'mature',
+    **{('fpb', v): 'family' for v in ('A', 'PG', '7-9 PG')},
+    **{('fpb', v): 'teen' for v in ('10', '10-12 PG', '13', '16')},
+    ('fpb', '18'): 'mature',
+    ('china', '8+'): 'family',
+    **{('china', v): 'teen' for v in ('12+', '16+')},
+}
+
+
 def _get_rating_data():
     """Get rating distribution for the user's preferred system and per-system maturity breakdown."""
     settings = settings_manager.load_settings()
@@ -308,44 +340,35 @@ def _get_rating_data():
         AND (china_rating IS NULL OR china_rating = '')
     """, one=True)['count']
 
-    rating_by_system = query("""
-        SELECT s.name,
-               SUM(CASE WHEN g.esrb_rating IN ('E', 'EC') OR g.pegi_rating IN ('PEGI 3', 'PEGI 7')
-                   OR g.cero_rating = 'A' OR g.usk_rating IN ('0', '6')
-                   OR g.acb_rating IN ('G', 'PG') OR g.grac_rating = 'ALL'
-                   OR g.classind_rating IN ('L', '10')
-                   OR g.fpb_rating IN ('A', 'PG', '7-9 PG')
-                   OR g.china_rating = '8+'
-                   THEN 1 ELSE 0 END) as family,
-               SUM(CASE WHEN g.esrb_rating IN ('E10+', 'T') OR g.pegi_rating IN ('PEGI 12', 'PEGI 16')
-                   OR g.cero_rating IN ('B', 'C') OR g.usk_rating IN ('12', '16')
-                   OR g.acb_rating IN ('M', 'MA15+') OR g.grac_rating IN ('12', '15')
-                   OR g.classind_rating IN ('12', '14', '16')
-                   OR g.fpb_rating IN ('10', '10-12 PG', '13', '16')
-                   OR g.china_rating IN ('12+', '16+')
-                   THEN 1 ELSE 0 END) as teen,
-               SUM(CASE WHEN g.esrb_rating IN ('M', 'AO') OR g.pegi_rating = 'PEGI 18'
-                   OR g.cero_rating IN ('D', 'Z') OR g.usk_rating = '18'
-                   OR g.acb_rating = 'R18+' OR g.grac_rating = '18'
-                   OR g.classind_rating = '18'
-                   OR g.fpb_rating = '18'
-                   THEN 1 ELSE 0 END) as mature
+    # PASS-59-63 — one bucket per game. Independent SUM(CASE) columns
+    # counted a game with ESRB M and PEGI 16 in two buckets. Each game now
+    # uses its preferred-system rating, else the first rated board in
+    # RATING_SYSTEM_KEYS order (the order get_preferred_rating falls back in).
+    rating_cols = [RATING_SYSTEMS[k]['db_column'] for k in RATING_SYSTEM_KEYS]
+    any_rated = ' OR '.join(f"(g.{c} IS NOT NULL AND g.{c} != '')" for c in rating_cols)
+    rated_games = query(f"""
+        SELECT s.id AS system_id, s.name, {', '.join('g.' + c for c in rating_cols)}
         FROM systems s
         JOIN games g ON s.id = g.system_id
-        WHERE (g.esrb_rating IS NOT NULL AND g.esrb_rating != '')
-           OR (g.pegi_rating IS NOT NULL AND g.pegi_rating != '')
-           OR (g.cero_rating IS NOT NULL AND g.cero_rating != '')
-           OR (g.usk_rating IS NOT NULL AND g.usk_rating != '')
-           OR (g.acb_rating IS NOT NULL AND g.acb_rating != '')
-           OR (g.fpb_rating IS NOT NULL AND g.fpb_rating != '')
-           OR (g.grac_rating IS NOT NULL AND g.grac_rating != '')
-           OR (g.classind_rating IS NOT NULL AND g.classind_rating != '')
-           OR (g.china_rating IS NOT NULL AND g.china_rating != '')
-        GROUP BY s.id
-        HAVING (family + teen + mature) >= 5
-        ORDER BY (family + teen + mature) DESC
-        LIMIT 12
+        WHERE {any_rated}
     """)
+    key_order = [pref_key] + [k for k in RATING_SYSTEM_KEYS if k != pref_key]
+    per_system = {}
+    for g in rated_games:
+        bucket = None
+        for key in key_order:
+            value = g.get(RATING_SYSTEMS[key]['db_column'])
+            bucket = _MATURITY_BUCKETS.get((key, value)) if value else None
+            if bucket:
+                break
+        counts = per_system.setdefault(
+            g['system_id'], {'name': g['name'], 'family': 0, 'teen': 0, 'mature': 0})
+        if bucket:
+            counts[bucket] += 1
+    rating_by_system = sorted(
+        (c for c in per_system.values() if c['family'] + c['teen'] + c['mature'] >= 5),
+        key=lambda c: c['family'] + c['teen'] + c['mature'], reverse=True,
+    )[:12]
 
     rating_system_labels = [r['name'] for r in rating_by_system]
     rating_system_family = [r['family'] for r in rating_by_system]
@@ -460,7 +483,8 @@ def _get_playtime_data():
     main_hours = []
     for row in rows:
         est = row.get('playtime_estimate', '')
-        match = re.search(r'Main[^:]*:\s*([\d.½]+)', est)
+        # PASS-59-63 — anchored to a segment start so `Main+Extras:` never matches.
+        match = re.search(r'(?:^|\|)\s*Main(?: Story)?\s*:\s*([\d.½]+)', est)
         if match:
             val = match.group(1).replace('½', '.5')
             try:

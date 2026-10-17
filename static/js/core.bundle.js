@@ -2807,7 +2807,6 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeTooltips();
     initializeConfirmDialogs();
     initializeBackToTop();
-    initializeImageErrorHandling();
 
     if (typeof getThemedIcon === 'function') {
         document.querySelectorAll('[data-themed-icon]').forEach(el => {
@@ -2869,8 +2868,7 @@ function initializeBackToTop() {
 window.scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
 function initializeImageErrorHandling() {
-    document.addEventListener('error', function(event) {
-        const target = event.target;
+    function handle(target) {
         if (!target || !target.dataset) return;
         const action = target.dataset.onError;
         if (!action) return;
@@ -2897,8 +2895,20 @@ function initializeImageErrorHandling() {
             const html = target.dataset.onErrorHtml;
             if (html) target.outerHTML = html;
         }
+    }
+
+    document.addEventListener('error', function(event) {
+        handle(event.target);
     }, /* useCapture */ true);
+
+    const sweep = () => document.querySelectorAll('img[data-on-error]').forEach(img => {
+        if (img.complete && img.naturalWidth === 0 && img.getAttribute('src')) handle(img);
+    });
+    sweep();
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', sweep);
 }
+
+initializeImageErrorHandling();
 
 function initializeSidebar() {
     const sidebar = document.querySelector('.sidebar');
@@ -3166,15 +3176,16 @@ function updateEmptyState(containerSelector, items) {
 
 function initializeModals() {
 
-    document.querySelectorAll('.modal').forEach(modal => {
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) {
-                closeScreenshotModal();
-            }
-        });
+    const modal = document.getElementById('screenshotModal');
+    if (!modal) return;
+
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeScreenshotModal();
+        }
     });
 
-    document.querySelectorAll('.modal-close').forEach(btn => {
+    modal.querySelectorAll('.modal-close').forEach(btn => {
         btn.addEventListener('click', closeScreenshotModal);
     });
 }
@@ -3909,6 +3920,8 @@ const KeyboardShortcuts = {
             closeAnyModal();
             return;
         }
+
+        if (e.ctrlKey || e.metaKey || e.altKey) return;
 
         if (this.pendingKey) {
             const combo = `${this.pendingKey} ${key}`;

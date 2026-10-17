@@ -96,6 +96,7 @@ def _get_conn():
     conn.execute("PRAGMA journal_mode = WAL")
     conn.execute("PRAGMA busy_timeout = 30000")
     conn.execute("PRAGMA synchronous = NORMAL")
+    conn.execute("PRAGMA foreign_keys = ON")  # PASS-59-63 — match get_db()
     conn.execute("PRAGMA temp_store = MEMORY")
     conn.execute("PRAGMA mmap_size = 268435456")
     conn.execute("PRAGMA journal_size_limit = 67108864")

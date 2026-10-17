@@ -84,7 +84,9 @@ Return type is `(jsonify(...), status_code)` — return it directly, do not unpa
 helper and exist for systemd / Docker / reverse-proxy probes that expect a
 status string. Actual shapes:
 
-- `/health` → `{"status": "ok"}` (HTTP 200).
+- `/health` → `{"status": "alive", "version": config.APP_VERSION}` (HTTP 200).
+  The version is no new disclosure: the unauthenticated login page already
+  shows it in the sidebar footer (`templates/base.html`).
 - `/ready` (DB probe pass) → `{"status": "ready"}` (HTTP 200).
 - `/ready` (DB probe fail) → `{"status": "not_ready", "error": str(e)}` (HTTP 503).
 

@@ -16,6 +16,7 @@ from datetime import datetime, timezone
 import config
 from services.analytics import invalidate_analytics_cache
 from services.database import get_db, query, execute
+from services.normalization import normalize_genre
 from flask import g
 
 from services.auth import editor_required, login_required
@@ -634,7 +635,7 @@ def api_clz_import():
                     rom_path,
                     game.get('publisher', ''),
                     game.get('developer', ''),
-                    game.get('genre', ''),
+                    normalize_genre(game.get('genre', '')),
                     release_date,
                     game['title'],
                     datetime.now(timezone.utc).isoformat()

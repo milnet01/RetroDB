@@ -85,8 +85,9 @@ def api_game_ai_fill(game_id):
             )
 
         filled_fields = []
-        all_updates = []
-        all_values = []
+        # column -> value. One key per column, so a later fixup overrides an
+        # earlier assignment instead of appending a duplicate `col = ?`.
+        sets = {}
         for field, value in ai_data.items():
             if field not in ai_fields or not value:
                 continue
@@ -123,19 +124,17 @@ def api_game_ai_fill(game_id):
                     # the scraper-fill-only invariant in CLAUDE.md).
                     if value == 0:
                         continue
-                all_updates.append(f"{field} = ?")
-                all_values.append(value)
+                sets[field] = value
                 filled_fields.append(field)
 
         # Post-fill fixups (merged into the same UPDATE)
-        pending = dict(zip(filled_fields, all_values[: len(filled_fields)]))
+        pending = dict(sets)
 
         title_val = (game.get('title', '') or '').strip()
         if title_val:
             new_sort = generate_sort_title(title_val)
             if new_sort and new_sort != (game.get('sort_title', '') or ''):
-                all_updates.append("sort_title = ?")
-                all_values.append(new_sort)
+                sets['sort_title'] = new_sort
 
         # Cross-map empty rating fields from any available rating. The helper
         # treats 'RP' (Rating Pending) as empty so it gets replaced.
@@ -148,8 +147,7 @@ def api_game_ai_fill(game_id):
         for key in RATING_SYSTEM_KEYS:
             if mapped[key] and mapped[key] != effective[key]:
                 col = RATING_SYSTEMS[key]['db_column']
-                all_updates.append(f"{col} = ?")
-                all_values.append(mapped[key])
+                sets[col] = mapped[key]
                 filled_fields.append(col)
                 logger.info(f"AI fill: auto-mapped {RATING_SYSTEMS[key]['name']} '{mapped[key]}'")
 
@@ -165,8 +163,7 @@ def api_game_ai_fill(game_id):
             inferred = infer_rating_from_content(infer_data)
             if inferred:
                 for col, val in inferred.items():
-                    all_updates.append(f"{col} = ?")
-                    all_values.append(val)
+                    sets[col] = val
                     filled_fields.append(col)
                 logger.info(f"AI fill: inferred ratings from content ({len(inferred)} systems)")
 
@@ -174,15 +171,13 @@ def api_game_ai_fill(game_id):
         ctrl = pending.get('controller_support') or (game.get('controller_support', '') or '').strip()
         if db_default_ctrl:
             if ctrl != db_default_ctrl:
-                all_updates.append("controller_support = ?")
-                all_values.append(db_default_ctrl)
+                sets['controller_support'] = db_default_ctrl
                 if 'controller_support' not in filled_fields:
                     filled_fields.append('controller_support')
 
         franchise_val = pending.get('franchise') or (game.get('franchise', '') or '').strip()
         if franchise_val.lower() == 'standalone':
-            all_updates.append("franchise = ?")
-            all_values.append(None)
+            sets['franchise'] = None
             if 'franchise' in filled_fields:
                 filled_fields.remove('franchise')
 
@@ -197,19 +192,12 @@ def api_game_ai_fill(game_id):
                     unique.append(p)
             sorted_str = ', '.join(sorted(unique))
             if sorted_str != other_plats:
-                for i, u in enumerate(all_updates):
-                    if u == "other_platforms = ?":
-                        all_values[i] = sorted_str
-                        break
-                else:
-                    all_updates.append("other_platforms = ?")
-                    all_values.append(sorted_str)
+                sets['other_platforms'] = sorted_str
                 logger.info(f"AI fill: sorted platforms '{other_plats}' → '{sorted_str}'")
 
         edition = pending.get('edition') or (game.get('edition', '') or '').strip()
         if not edition:
-            all_updates.append("edition = ?")
-            all_values.append('Standard Edition')
+            sets['edition'] = 'Standard Edition'
             if 'edition' not in filled_fields:
                 filled_fields.append('edition')
 
@@ -249,12 +237,11 @@ def api_game_ai_fill(game_id):
                 logger.warning(f"AI fill: failed to build scrape history: {e}")
 
         if scrape_history_json is not None:
-            all_updates.append("scrape_history = ?")
-            all_values.append(scrape_history_json)
+            sets['scrape_history'] = scrape_history_json
 
-        if all_updates:
-            all_values.append(game_id)
-            execute(f"UPDATE games SET {', '.join(all_updates)} WHERE id = ?", tuple(all_values))
+        if sets:
+            assignments = ', '.join(f'{col} = ?' for col in sets)
+            execute(f"UPDATE games SET {assignments} WHERE id = ?", (*sets.values(), game_id))
             invalidate_analytics_cache()
 
             verify = query("SELECT esrb_rating, edition FROM games WHERE id = ?", (game_id,), one=True)

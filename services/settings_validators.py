@@ -31,7 +31,6 @@ _ALLOWED_RATING_SYSTEMS = {
 _ALLOWED_BOXART_MODES = {'2d', '3d'}
 _ALLOWED_ARTICLE_PLACEMENTS = {'beginning', 'end'}
 _ALLOWED_SORT_ORDERS = {'asc', 'desc'}
-_ALLOWED_SCRAPERS = {'esde', 'tgdb', 'igdb', 'screenscraper', 'rawg'}
 _ALLOWED_LOG_CATEGORIES = {'scraping', 'rom_tools', 'rom_reports', 'image_resize', 'system'}
 _ALLOWED_LOG_LEVELS = {'info', 'warning', 'error'}
 _ALLOWED_NAMING_SYSTEM_TYPES = {'console', 'handheld', 'computer', 'engine'}
@@ -113,30 +112,6 @@ def _region_options_validator(value):
     if len(cleaned) > 64:
         return False, 'region_options may contain at most 64 entries', None
     return True, None, cleaned
-
-
-def _scraper_priority_validator(value):
-    if not isinstance(value, list):
-        return False, 'must be a list of scraper names', None
-    seen = set()
-    for item in value:
-        if not isinstance(item, str) or item not in _ALLOWED_SCRAPERS:
-            return False, f'every entry must be one of {sorted(_ALLOWED_SCRAPERS)}', None
-        if item in seen:
-            return False, f'duplicate scraper: {item}', None
-        seen.add(item)
-    return True, None, list(value)
-
-
-def _scraper_enabled_validator(value):
-    if not isinstance(value, dict):
-        return False, 'must be an object of {scraper: bool}', None
-    for key, enabled in value.items():
-        if key not in _ALLOWED_SCRAPERS:
-            return False, f'unknown scraper: {key}', None
-        if not isinstance(enabled, bool):
-            return False, f'{key} enablement must be a boolean', None
-    return True, None, dict(value)
 
 
 def _notification_timeouts_validator(value):
@@ -266,8 +241,6 @@ _VALIDATORS = {
     'show_unscraped_first': _bool_validator,
     'preferred_boxart': _enum_validator(_ALLOWED_BOXART_MODES, 'preferred_boxart'),
     'preferred_rating_system': _enum_validator(_ALLOWED_RATING_SYSTEMS, 'preferred_rating_system'),
-    'scraper_priority': _scraper_priority_validator,
-    'scraper_enabled': _scraper_enabled_validator,
     'enable_animations': _bool_validator,
     'enable_mist_effect': _bool_validator,
     'enable_scanlines': _bool_validator,

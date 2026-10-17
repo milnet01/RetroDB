@@ -200,25 +200,26 @@ const NormalizationManager = {
         const mappings = this.getSelectedMappings();
         if (mappings.length === 0) return;
 
-        // Build confirmation message — escapeHtml from utils.js per security standards
+        // Build confirmation message. It renders with allowHtml, so every
+        // interpolated value goes through escapeHtml (PASS-59-63).
         let msg = '<div style="max-height: 300px; overflow-y: auto; margin-bottom: var(--spacing-sm);">';
         msg += '<table style="width: 100%; font-size: 0.85rem;">';
-        msg += `<tr style="border-bottom: 1px solid var(--border-subtle);"><th style="text-align:left; padding: 4px;">${t('From')}</th><th style="text-align:left; padding: 4px;">${t('To')}</th><th style="text-align:right; padding: 4px;">${t('Games')}</th></tr>`;
+        msg += `<tr style="border-bottom: 1px solid var(--border-subtle);"><th style="text-align:left; padding: 4px;">${escapeHtml(t('From'))}</th><th style="text-align:left; padding: 4px;">${escapeHtml(t('To'))}</th><th style="text-align:right; padding: 4px;">${escapeHtml(t('Games'))}</th></tr>`;
         mappings.forEach(m => {
             msg += `<tr><td style="padding: 4px;"><code>${escapeHtml(m.old)}</code></td>`;
             msg += `<td style="padding: 4px;"><code>${escapeHtml(m.new)}</code></td>`;
-            msg += `<td style="text-align:right; padding: 4px;">${m.count}</td></tr>`;
+            msg += `<td style="text-align:right; padding: 4px;">${escapeHtml(String(m.count))}</td></tr>`;
         });
         msg += '</table></div>';
         const ruleQuestion = mappings.length !== 1
             ? t('Apply {n} normalization rules?', {n: mappings.length})
             : t('Apply {n} normalization rule?', {n: mappings.length});
-        msg += `<p>${ruleQuestion}</p>`;
+        msg += `<p>${escapeHtml(ruleQuestion)}</p>`;
 
         // Use custom confirm dialog — never browser confirm() per standards
         showConfirm(t('Apply Normalization'), msg, async () => {
             await this._doApply(mappings);
-        });
+        }, { allowHtml: true });
     },
 
     /**

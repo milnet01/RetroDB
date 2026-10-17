@@ -459,7 +459,7 @@ const AllGamesController = (function() {
         let boxartHtml;
         if (boxartToShow) {
             const fallbackAttr = fallbackBoxart
-                ? ` onerror="this.onerror=null; this.classList.remove('boxart-3d'); this.removeAttribute('srcset'); this.removeAttribute('sizes'); this.src='/static/images/boxart/${esc(fallbackBoxart)}';"`
+                ? ` onerror="this.onerror=null; this.classList.remove('boxart-3d'); this.removeAttribute('srcset'); this.removeAttribute('sizes'); this.src='/static/images/boxart/${escAttr(fallbackBoxart)}';"`
                 : ` onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"`;
             // Pass FU.2 — pre-computed srcset (boxart 160 w / 320 w variants
             // plus the original) shipped from build_game_card(). `sizes`

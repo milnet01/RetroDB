@@ -108,7 +108,7 @@ For values that exist in more than one store, the resolution order is:
    `_deep_merge` in `load_settings()` overlays saved values on top of these
    defaults so a newly-added default automatically appears for existing
    installs. **Caveat:** `_deep_merge` recurses on dicts only — list-valued
-   defaults (e.g. `scraper_priority`, `region_options`) are replaced
+   defaults (e.g. `region_options`) are replaced
    wholesale by the saved value, so adding a new entry to a list default
    will NOT appear for an existing install. For those, ship a migration
    that mutates `data/settings.json` instead of relying on default-overlay.
@@ -176,8 +176,9 @@ The collision points worth knowing:
   the six: it has no UI, no validator and no default, and it self-heals rather
   than failing. Two behaviours follow from that and are easy to get wrong:
   - **Generation is the fallback, so nothing errors when the file is
-    unreadable.** An `OSError` reading *or* writing `.secret_key` is swallowed
-    and a key is generated in memory. The app boots either way; the cost is that
+    unreadable.** An `OSError` creating `data/`, reading or writing
+    `.secret_key`, or a `UnicodeDecodeError` reading it, is swallowed and a
+    key is generated in memory. The app boots either way; the cost is that
     every restart invalidates existing sessions, which looks like random logouts
     rather than like a failure.
   - **The write goes through `atomic_write_text(..., mode=0o600)`** (Pass 45.5),

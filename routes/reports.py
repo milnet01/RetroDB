@@ -95,6 +95,10 @@ def api_reports_naming_check():
           AND g.rom_path NOT LIKE '%_import/%'
     """)
     
+    # Read once, not once per game.
+    article_placement = settings_manager.get_setting('article_placement', 'beginning')
+    naming_settings = settings_manager.get_setting('naming_convention', {})
+
     for game in games:
         game_id = game['id']
         title = game['title'] or ''
@@ -130,7 +134,6 @@ def api_reports_naming_check():
             found_issues.append('bracket')
         
         # Check for moved article based on article_placement setting
-        article_placement = settings_manager.get_setting('article_placement', 'beginning')
         if article_placement == 'beginning':
             # Articles at end are wrong when placement is 'beginning'
             if re.search(r',\s*(The|A|An)$', name_without_ext, re.IGNORECASE):
@@ -146,7 +149,6 @@ def api_reports_naming_check():
         genre = game['genre'] or ''
 
         # Load user's naming convention for this system type
-        naming_settings = settings_manager.get_setting('naming_convention', {})
         tags = naming_settings.get(system_type, ['region'])
 
         # Check which tags are expected but missing in the filename
@@ -274,6 +276,9 @@ def api_reports_name_mismatch():
         aliases = region_aliases.get(fr, [fr])
         return dr in aliases
 
+    # Read once, not once per game.
+    naming_settings = settings_manager.get_setting('naming_convention', {})
+
     for game in games:
         game_id = game['id']
         scraped_title = game['title']
@@ -330,7 +335,6 @@ def api_reports_name_mismatch():
         system_type = get_system_type(system)
 
         # Load user's naming convention for this system type
-        naming_settings = settings_manager.get_setting('naming_convention', {})
         tags = naming_settings.get(system_type, ['region'])
 
         # Build the suggested filename so the UI can show it

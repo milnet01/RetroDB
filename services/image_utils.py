@@ -59,6 +59,11 @@ _upscaler_lock = threading.Lock()
 # ---------------------------------------------------------------------------
 _gpu_queue = None   # queue.Queue — items: (session, input_dict, Event, result_dict) or None to stop
 _gpu_thread = None
+# PASS-59-63 — upper bound on one GPU call (a 256px tile, or the warm-up run
+# with MIOpen benchmarking). A wedged ROCm session otherwise blocks the
+# calling thread forever; the TimeoutError trips the circuit breaker in
+# `_upscale_image` (or the warm-up fallback), which moves to CPU.
+_GPU_RUN_TIMEOUT = 120
 
 
 def _gpu_inference_worker():
@@ -78,11 +83,12 @@ def _gpu_inference_worker():
 
 def _gpu_run(session, input_dict):
     """Submit an inference request to the dedicated GPU thread and block
-    until the result is ready."""
+    until the result is ready, or raise TimeoutError after _GPU_RUN_TIMEOUT."""
     result = {}
     event = threading.Event()
     _gpu_queue.put((session, input_dict, event, result))
-    event.wait()
+    if not event.wait(_GPU_RUN_TIMEOUT):
+        raise TimeoutError(f"GPU inference gave no result in {_GPU_RUN_TIMEOUT}s")
     if 'error' in result:
         raise result['error']
     return result['output']
