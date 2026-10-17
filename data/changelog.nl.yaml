@@ -1,3 +1,723 @@
+- version: 3.26.0
+  date: '2026-10-17'
+  tags:
+  - type: feature
+    label: Elke pagina past nu in het venster waarin hij staat
+  - type: enhancement
+    label: De gamepagina toont andere namen in een eigen kaart, en een knop Handleiding
+  body: |
+    <ul>
+      <li><strong>Elke pagina past nu in het venster waarin hij staat.</strong>
+        Kaartpagina's (Systemen, Museum, Tags, Lijsten, ROM-tools, trofeeën en
+        prestaties) krijgen een kolom erbij zodra er nog een hele kaart past,
+        tot vier per rij. Tabellen, tools en detailpagina's worden iets breder,
+        maar stoppen waar breder hun kolommen alleen verder uit elkaar zou
+        zetten. Instellingen houdt zijn vakken op een leesbare breedte.</li>
+      <li><strong>Help en het wijzigingslogboek houden een prettige
+        regellengte.</strong> In een breed venster verhuizen de sectielinks
+        van Help naar een kolom naast de tekst; in een smal venster staan ze
+        in één rij waar je doorheen kunt vegen, in plaats van een blok dat een
+        groot deel van een telefoonscherm bedekte.</li>
+      <li><strong>De gamepagina:</strong> in een breed venster lopen de
+        screenshots over de bovenkant, met daaronder de video en een nieuwe
+        kaart <strong>Ook bekend
+        als</strong> naast elkaar, op gelijke hoogte met de hoes. De andere
+        namen waren vage tekst onder de titel; nu staan ze op een kaart die
+        makkelijk te lezen is. <strong>Handleiding</strong> is een knop naast
+        Spelen, en de Scrapegeschiedenis begint ingeklapt.</li>
+      <li>PSN-trofeeën toont één tot vier kolommen, passend bij het venster,
+        in plaats van altijd drie.</li>
+      <li>Verschillende pagina's scrollen op een telefoon niet meer zijwaarts:
+        Trofeeën, Verzamelaarstrofeeën, de RetroAchievements-systeempagina,
+        Help, Instellingen, Analyse, Game-imports en de detailpagina's van
+        prestaties en trofeeën. Brede tabellen scrollen daar nu binnen zichzelf.</li>
+    </ul>
+- version: 3.25.0
+  date: '2026-10-17'
+  tags:
+  - type: feature
+    label: Bibliotheek, systeem- en gamepagina's passen nu in het venster waarin ze staan
+  body: |
+    <ul>
+      <li><strong>Pagina's gebruiken een breed venster als dat helpt, en alleen dan.</strong>
+        De Bibliotheek en elke systeempagina krijgen een kolom gamekaarten erbij
+        zodra er nog een hele kaart past, tot vier per rij. Een telefoon toont
+        er één, een venster op half scherm twee of drie, een breed venster
+        vier. Pagina's stopten vroeger bij een vaste breedte en lieten het
+        grootste deel van een groot venster leeg.</li>
+      <li><strong>De gamepagina zet de hoes en de details naast de
+        screenshots en video</strong> als die naast elkaar passen, en stapelt
+        ze anders onder elkaar. De beschrijving houdt een prettige
+        regellengte.</li>
+      <li><strong>De knop Spelen is verhuisd naar de rechterbovenhoek van elke kaart,</strong>
+        kleiner en gecentreerd. Hij controleert nu ook of het ROM-bestand van
+        de game er nog is en van een type is dat het systeem accepteert, zodat
+        hij alleen verschijnt waar een klik de game echt start. Hij verdwijnt
+        terwijl je games in bulk selecteert.</li>
+      <li>De knop terug-naar-boven en de voortgangspop-ups staan nu vlak naast
+        de inhoud van de pagina in plaats van aan de uiterste randen van het
+        venster.</li>
+      <li>De gamepagina scrolt op een telefoon niet meer zijwaarts.</li>
+    </ul>
+- version: 3.24.2
+  date: '2026-10-17'
+  tags:
+  - type: ui
+    label: De testtaal "Pseudo" wordt alleen nog aan beheerders aangeboden
+  body: |
+    <ul>
+      <li><strong>"Pseudo" staat niet meer voor iedereen in de
+        talenlijst.</strong> Het is een hulpmiddel voor ontwikkelaars dat elk
+        woord tussen haakjes en met accenten toont, dus het wordt nu alleen nog
+        aan beheerders aangeboden. Wie het eerder had gekozen, ziet de app nu in
+        het Engels, met Engels geselecteerd in Instellingen.</li>
+    </ul>
+- version: 3.24.1
+  date: '2026-10-17'
+  tags:
+  - type: fix
+    label: De Windows-download installeert weer, en geen stroom foutmeldingen meer na het vergroten van het venster
+  body: |
+    <ul>
+      <li><strong>De gewone Windows-download kon niet installeren.</strong>
+        Het installatieprogramma stopte bij "Core dependencies failed to install",
+        omdat de vastgelegde pakketlijst een pakket wegliet dat alleen Windows
+        nodig heeft. De lijst dekt nu elk platform. De Windows-download zonder
+        Python had hier geen last van.</li>
+      <li><strong>Er bleven foutmeldingen in de rechterbovenhoek verschijnen</strong>
+        bij het Cyberpunk-thema nadat het browservenster breder was gemaakt,
+        bijvoorbeeld door het te maximaliseren. De geanimeerde achtergrond past
+        zich nu netjes aan de nieuwe grootte aan.</li>
+    </ul>
+- version: 3.24.0
+  date: '2026-10-17'
+  tags:
+  - type: feature
+    label: Speel een game rechtstreeks vanaf de Bibliotheek en de systeempagina's
+  body: |
+    <ul>
+      <li><strong>Een knop ▶ Spelen op elke gamekaart.</strong> Hij verschijnt
+        in de linkeronderhoek van de hoesafbeelding op de Bibliotheek-pagina en
+        op elke systeempagina. Druk erop en de game start in zijn emulator; je
+        blijft in de lijst in plaats van eerst de pagina van de game te
+        openen.</li>
+      <li>De knop verschijnt alleen waar een klik kan werken: je account mag
+        games starten, en de emulator van de game is ingeschakeld,
+        geïnstalleerd en heeft, bij RetroArch, zijn core. Games op systemen
+        zonder werkende emulator krijgen geen knop.</li>
+      <li>Als het starten toch mislukt, bijvoorbeeld omdat het ROM-bestand is
+        verplaatst, verschijnt de reden in een melding en blijft de pagina zoals
+        hij was.</li>
+    </ul>
+- version: 3.23.21
+  date: '2026-10-17'
+  tags:
+  - type: ui
+    label: Een kortere zijbalk, met één pagina Prestaties voor elk platform
+  body: |
+    <ul>
+      <li><strong>Eén link "Prestaties" vervangt er vijf.</strong>
+        RetroAchievements, RPCS3, PSN, Steam en Xbox zijn nu tabbladen op één
+        pagina, en de link opent weer het tabblad dat je het laatst gebruikte.
+        Heb je geen RetroAchievements-games, dan opent hij op het tabblad RPCS3
+        in plaats van je terug te sturen naar het Dashboard.</li>
+      <li><strong>ROM-rapporten staat nu bij ROM-tools,</strong> als tabblad
+        naast de andere tools en als kaart op de pagina ROM-tools.</li>
+      <li><strong>Geen twee zijbalklinks delen nog een pictogram:</strong>
+        Dashboard is nu 🏠 en Logviewer 🧾. De zijbalk heeft 16 links in
+        plaats van 21.</li>
+      <li>De tabbladen van de tools op de instellingenpagina van ROM-tools
+        waren altijd in het Engels; ze volgen nu je taal.</li>
+    </ul>
+- version: 3.23.20
+  date: '2026-10-17'
+  tags:
+  - type: fix
+    label: Opzoeken in How Long To Beat werkt weer
+  body: |
+    <ul>
+      <li><strong>Elke opzoeking in How Long To Beat meldde dat de game niet
+        gevonden kon worden.</strong> De site heeft zijn zoekfunctie naar een
+        nieuw adres verplaatst, waardoor de verzoeken van RetroDB werden
+        geweigerd; dat gebeurde tussen eind juli en eind september. RetroDB
+        gebruikt nu het nieuwe adres en stuurt de filters voor platform en jaar
+        in het nieuwe formaat van de site, die het oude was gaan negeren.
+        Opzoeken voor één game en het bulk-opzoeken in ROM-tools werken allebei
+        weer.</li>
+    </ul>
+- version: 3.23.19
+  date: '2026-10-17'
+  tags:
+  - type: ui
+    label: RetroDB zegt nu duidelijk dat het piraterij niet goedkeurt
+  - type: fix
+    label: Het venster Over opent weer op volle grootte
+  body: |
+    <ul>
+      <li><strong>Er staat nu een anti-piraterijmelding in de app.</strong> Die
+        verschijnt in het venster Over en onder Pad ROM-bibliotheek in
+        Instellingen, in elke taal. Er staat dat RetroDB geen ROM-bestanden
+        verspreidt of host, dat je alleen games moet gebruiken die gekopieerd
+        zijn van discs en cartridges die je zelf bezit, en dat RetroDB niet
+        verbonden is met een consolemaker, uitgever of gamedatabase. De tekst
+        komt overeen met de website en de trailer van RetroDB.</li>
+      <li><strong>Het venster Over werd in de zijbalk geperst.</strong> Het
+        opent nu midden op het scherm op zijn normale grootte, en scrolt op een
+        klein scherm in plaats van zijn titel en sluitknop te
+        verbergen.</li>
+    </ul>
+- version: 3.23.18
+  date: '2026-10-15'
+  tags:
+  - type: security
+    label: RetroDB start of hernoemt alleen nog naar echte ROM-bestandstypen
+  body: |
+    <ul>
+      <li><strong>Een game kon worden gestart met een bestand dat geen ROM
+        is.</strong> Het hernoemen van een ROM accepteerde elke naam, dus
+        <code>crash.bin</code> kon <code>crash.cfg</code> worden en de
+        emulator kreeg dat bestand. Bij het starten wordt het bestandstype nu
+        gecontroleerd tegen de lijst in <code>systeminfo.txt</code> van die
+        systeemmap, dezelfde lijst die de bibliotheekscan gebruikt, en hernoemen
+        weigert een type dat niet in die lijst staat. Heeft een systeemmap geen
+        lijst, dan starten de games daarin niet, en de melding noemt het
+        ontbrekende bestand.</li>
+    </ul>
+- version: 3.23.17
+  date: '2026-10-15'
+  tags:
+  - type: security
+    label: Alleen een beheerder kan de startargumenten van een game wijzigen
+  - type: fix
+    label: Startargumenten met meerdere woorden, of een losse aanhalingsteken, werken nu
+  - type: fix
+    label: RetroDB houdt niet langer elke afgeronde start in het geheugen
+  body: |
+    <ul>
+      <li><strong>Een bewerker kon startargumenten toevoegen die andere code
+        uitvoerden.</strong> De <em>Aangepaste startargumenten</em> van een game
+        gaan rechtstreeks naar de emulator, en met RetroArch konden ze elk
+        programmabestand op de computer laden. Ze wijzigen vereist nu de rol
+        beheerder, en het veld is voor iedereen anders verborgen.</li>
+      <li><strong>Startargumenten met meer dan één woord kwamen bij de emulator
+        aan als één argument.</strong> <code>--a --b</code> komt nu aan als twee
+        argumenten, en een lege waarde voegt niets toe. Een ontbrekend
+        afsluitend aanhalingsteken liet vroeger elke start van die game mislukken
+        met een serverfout; nu verschijnt er een melding die het veld noemt dat
+        je moet aanpassen. De token
+        <code>{disc_paths}</code> is verdwenen: die was altijd leeg.</li>
+      <li><strong>Afgeronde starts stapelden zich op in het geheugen tot RetroDB
+        opnieuw startte.</strong> Een start die meer dan een uur geleden is
+        geëindigd, wordt nu opgeruimd.</li>
+    </ul>
+- version: 3.23.16
+  date: '2026-10-15'
+  tags:
+  - type: fix
+    label: Een taal kiezen in Instellingen werkt weer
+  body: |
+    <ul>
+      <li><strong>Een taal kiezen onder Instellingen &rarr; Bibliotheek &rarr;
+        Weergave deed niets.</strong> Er verscheen in plaats daarvan een fout en
+        de pagina bleef in de oude taal. Dit ging mis sinds 3.23.8. Een taal
+        kiezen slaat die nu op en laadt de pagina opnieuw in die taal.</li>
+    </ul>
+- version: 3.23.15
+  date: '2026-10-15'
+  tags:
+  - type: fix
+    label: Trofee- en platformpictogrammen zitten weer in de download
+  body: |
+    <ul>
+      <li><strong>In de download ontbraken de trofee- en platformpictogrammen
+        van RetroDB.</strong> Elke gamekaart met RetroAchievements toonde een
+        kapotte afbeelding waar de badge hoort, en ook de trofeeniveaus en de
+        logo's van PSN, Steam, Xbox en RPCS3 ontbraken. Ze zitten nu in elke
+        download.</li>
+    </ul>
+- version: 3.23.14
+  date: '2026-10-10'
+  tags:
+  - type: security
+    label: Twee meegeleverde bibliotheken bijgewerkt voor gepubliceerde beveiligingsfixes
+  body: |
+    <ul>
+      <li><strong>urllib3 en Werkzeug hadden bekende beveiligingsproblemen.</strong>
+        RetroDB levert nu urllib3 2.8.0 en Werkzeug 3.1.9 mee, de versies die
+        ze oplossen. Een installatie vanaf de broncode krijgt ze door
+        <code>install.py</code> opnieuw uit te voeren, dat installeert vanuit
+        <code>requirements.lock</code>.</li>
+    </ul>
+- version: 3.23.13
+  date: '2026-09-26'
+  tags:
+  - type: fix
+    label: Media die als mappad is opgeslagen, wordt niet langer als ontbrekend gemeld
+  body: |
+    <ul>
+      <li><strong>In de standalone-build kon "ontbrekende mediaverwijzingen
+        wissen" media leegmaken die er echt was.</strong> Dat gebeurde als de
+        database de media opsloeg als mappad, zoals
+        <code>images/boxart/…</code>, in plaats van alleen een bestandsnaam.
+        RetroDB zoekt nu in de juiste map.</li>
+    </ul>
+- version: 3.23.12
+  date: '2026-09-26'
+  tags:
+  - type: fix
+    label: Het dashboard toont een lopende bulkscrape, plus vier kleine fixes
+  body: |
+    <ul>
+      <li><strong>De scrapevoortgangskaart op het dashboard verscheen nooit.</strong>
+        Hij verschijnt nu terwijl een bulkscrape loopt, en meldt het als die
+        gepauzeerd is.</li>
+      <li><strong>Geen fouten meer in de browserconsole op de
+        inlogpagina.</strong> Die controleert geen achtergrondtaken meer
+        voordat iemand is ingelogd.</li>
+      <li><strong>De installatiewizard zegt niet meer "Installatie voltooid!" als
+        opslaan mislukt is.</strong> Hij vertelt je nu dat de instellingen niet
+        konden worden opgeslagen.</li>
+      <li><strong>Twee bulkscrapes die in dezelfde seconde starten, delen niet
+        langer een id</strong>, zodat wachtrijacties zoals annuleren op de
+        juiste werken.</li>
+    </ul>
+- version: 3.23.11
+  date: '2026-09-26'
+  tags:
+  - type: ui
+    label: Donatieknoppen zeggen nu wat ze ondersteunen
+  body: |
+    <ul>
+      <li><strong>Duidelijkere tekst bij doneren.</strong> De knoppen in de
+        kopbalk heten nu "Sponsor RetroDB" en "Support RetroDB". De README zegt
+        dat elke release gratis is, en dat donaties RetroDB zelf financieren,
+        niet de emulators en cores die het kan starten.</li>
+    </ul>
+- version: 3.23.10
+  date: '2026-09-26'
+  tags:
+  - type: fix
+    label: ROM-tools-pagina's volgen je opgeslagen instellingen, en de pagina's Logs en ROM-tools werken weer
+  body: |
+    <ul>
+      <li><strong>De pagina Logs en enkele ROM-tools-pagina's werkten niet.</strong>
+        Een script op die pagina's mislukte tijdens het laden, waardoor de
+        logviewer en de gedeelde ROM-tools-hulpmiddelen nooit startten. Ze laden
+        nu goed.</li>
+      <li><strong>Instellingen van ROM-tools doen nu iets.</strong> Duplicaten
+        zoeken en de CHD-converter openen met hun opties ingesteld vanaf de
+        instellingenpagina van ROM-tools, en je kunt ze nog steeds voor één keer
+        aanpassen.</li>
+      <li><strong>De schakelaars van de CHD-converter werden genegeerd.</strong>
+        "Originele bestanden verwijderen" uitzetten op de pagina hield het
+        verwijderen niet tegen als je opgeslagen instelling zei dat er verwijderd
+        moest worden. De schakelaars op de pagina beslissen nu.</li>
+      <li><strong>De instelling Tijdelijk pad wordt gebruikt.</strong> Bestanden
+        die worden klaargezet tijdens het maken van M3U-afspeellijsten komen er
+        nu in terecht.</li>
+    </ul>
+- version: 3.23.9
+  date: '2026-09-26'
+  tags:
+  - type: security
+    label: Scraperlogbestanden bewaren geen wachtwoorden en tokens meer, en inlogpogingen worden weer beperkt
+  - type: fix
+    label: Instellingen opslaan wist je instellingen niet meer, en een gebruiker verwijderen werkt
+  body: |
+    <ul>
+      <li><strong>Logbestanden bewaarden geheimen als leesbare tekst.</strong>
+        Scraperlogbestanden hoorden aanmeldtokens en API-sleutels te verbergen,
+        maar die stap werd nooit uitgevoerd, dus ze werden volledig
+        weggeschreven. Nu worden ze verborgen. Oudere logbestanden bevatten ze
+        nog; verwijder oude bestanden in
+        <code>logs/</code> als je je installatie deelt.</li>
+      <li><strong>Limieten op inlogpogingen werden niet gehandhaafd.</strong>
+        De limieten op herhaald inloggen en op zware acties (scans, scrapes,
+        imports) waren ingesteld maar nooit ingeschakeld. Ze werken nu, en een
+        geblokkeerd verzoek krijgt een duidelijke melding "te veel verzoeken".</li>
+      <li><strong>Een beschadigd instellingenbestand kon worden gewist.</strong>
+        Als <code>data/settings.json</code> niet gelezen kon worden, verving de
+        volgende opslag het door de standaardwaarden. RetroDB bewaart het
+        beschadigde bestand nu als
+        <code>settings.json.corrupt-&lt;time&gt;</code> voordat het opslaat. Als
+        het bestand weer goed leesbaar is, wordt het opslaan in plaats daarvan
+        geweigerd.</li>
+      <li><strong>De naamgevingsrij Engine raakte andere instellingen kwijt.</strong>
+        Een tag toevoegen aan de rij Engine in de naamgevingsinstellingen
+        mislukte, en gooide ook de lidwoord- en regio-instellingen weg die
+        ermee werden opgeslagen. Het wordt nu goed opgeslagen.</li>
+      <li><strong>Een gebruiker verwijderen mislukte.</strong> Een gebruiker met
+        tags, lijsten, verlanglijstitems of PSN-gegevens kon niet worden
+        verwijderd. Verwijderen haalt nu de gebruiker weg en alles wat hij of zij
+        bezit.</li>
+      <li><strong>Er konden twee scrapes tegelijk draaien.</strong> Een lopende
+        bulkscrape in de wachtrij omwisselen of verplaatsen startte twee
+        scrapes die één voortgangsteller deelden. Nu draait er maar één.</li>
+      <li><strong>De voortgang van een bulkscrape kon op een fout lijken.</strong>
+        Vóór het eerste succes meldde een bulkscrape zijn status op een manier
+        die sommige schermen als mislukking lazen. Dat is opgelost.</li>
+      <li><strong>Na het inloggen kom je nu terug op de pagina die je had opgevraagd.</strong>
+        Vroeger ging het altijd naar het dashboard.</li>
+      <li><strong>Bestandsacties voor beheerders blijven binnen je mappen.</strong>
+        Het hulpmiddel om afbeeldingsformaten te wijzigen en de acties om ROM's
+        te hernoemen weigeren nu alles buiten je mediamap of ROM-map.</li>
+      <li><strong>Oude aanmeldbestanden van PSN en Xbox worden naar je account
+        verplaatst.</strong> Een achtergebleven <code>data/psn_tokens.json</code> of
+        <code>data/xbox_tokens.json</code> wordt in je account geladen en
+        hernoemd zodat het eindigt op <code>.migrated-015</code>. Dat bestand
+        bevat nog steeds de token, dus verwijder het zodra je hebt gecontroleerd
+        dat aanmelden werkt.</li>
+      <li><strong>Duidelijkere foutmeldingen van de server.</strong> Een ongeldig
+        verzoek krijgt nu een echte foutmelding als antwoord in plaats van
+        "Er is een interne fout opgetreden".</li>
+    </ul>
+- version: 3.23.8
+  date: '2026-09-25'
+  tags:
+  - type: fix
+    label: CLZ-import werkt weer, lijsthoezen verschijnen, en meerdere pagina's lopen niet meer vast op een apostrof
+  - type: security
+    label: Gescrapete namen en bestandspaden kunnen niet langer uit paginaknoppen breken
+  body: |
+    <ul>
+      <li><strong>CLZ-import deed niets.</strong> Het uploaden van een CLZ-pdf
+        stuurde die naar een adres dat de server niet heeft, dus elke upload
+        mislukte met "Parse failed". Nu komt hij aan bij de verwerker.</li>
+      <li><strong>Op een lijstpagina ontbraken alle hoezen.</strong> De
+        lijstpagina vroeg elke hoes op bij het verkeerde adres, en de kolom
+        Systeem was altijd leeg. Beide verschijnen nu. Ook de hoesafbeeldingen
+        in de zoekfunctie "een game toevoegen" op die pagina zijn
+        gerepareerd.</li>
+      <li><strong>Knoppen werkten niet bij namen met een apostrof.</strong>
+        "Assassin's Creed" uit een lijst verwijderen, een screenshot
+        verwijderen, op een hoes inzoomen of een genretag verwijderen kon
+        zonder melding niets doen als de naam een apostrof bevatte. Door
+        dezelfde fout kon een kwaadwillig gemaakte gescrapete naam code
+        uitvoeren in de pagina. Namen gaan nu zo naar die knoppen dat ze niet
+        als code kunnen worden opgevat.</li>
+      <li><strong>Afbeeldings- en linkadressen worden overal beveiligd.</strong>
+        Een paar pagina's bouwden afbeeldingsadressen uit gescrapete
+        bestandsnamen zonder ze te escapen, en vijf pagina's hadden hun eigen,
+        zwakkere kopie van de escape-hulpfunctie. Ze gebruiken nu allemaal de
+        gedeelde.</li>
+      <li><strong>De pagina Instellingen kon leeg openen.</strong> Als het
+        tabblad dat je het laatst gebruikte door een update was hernoemd, opende
+        Instellingen zonder zichtbaar paneel. Nu negeert de pagina een tabblad
+        dat niet meer bestaat. Links zoals
+        <code>/settings#account</code> openen dat tabblad weer.</li>
+      <li><strong>Je thema volgt je nu naar andere apparaten.</strong> Het
+        thema dat je kiest, wordt in je account opgeslagen. Een browser die nog
+        nooit een thema heeft gekregen, gebruikt je opgeslagen thema in plaats
+        van het standaardthema.</li>
+      <li><strong>Voortgangspop-ups van taken tonen het juiste pictogram.</strong>
+        Gepauzeerde, voltooide en wachtende taken toonden hetzelfde
+        "bezig"-pictogram. Elke status heeft nu zijn eigen pictogram, per
+        thema.</li>
+      <li><strong>De lijst met sneltoetsen kan nu worden vertaald.</strong> De
+        labels waren onzichtbaar voor de vertaalhulpmiddelen, dus ze bleven in
+        elke taal Engels.</li>
+    </ul>
+- version: 3.23.6
+  date: '2026-09-03'
+  tags:
+  - type: fix
+    label: Leeftijdsclassificaties klopten vaak niet, en gescrapete games konden hun details kwijtraken
+  body: |
+    <ul>
+      <li><strong>Leeftijdsclassificaties klopten vaak niet, en de fout verspreidde zich.</strong>
+        Als een classificatie van TheGamesDB kwam, zocht de app de
+        classificatiecode ergens in de tekst in plaats van die goed te lezen
+        &mdash; zodat "T - Teen", "M - Mature 17+", "AO - Adults Only 18+" en
+        "RP - Rating Pending" allemaal als de verkeerde classificatie werden
+        opgeslagen, en een game voor volwassenen als geschikt voor iedereen kon
+        worden ingedeeld. Erger nog: die verkeerde classificatie werd daarna
+        gebruikt om de acht andere classificatiesystemen in te vullen, zodat één
+        foute lezing zich over het geheel verspreidde. Classificaties worden nu
+        gelezen uit de code aan het begin van de tekst.</li>
+      <li><strong>Omgerekende classificaties vielen te mild uit.</strong> Bij het
+        invullen van een ontbrekende classificatie op basis van een die je al
+        had, kon de app een classificatie gebruiken die hij even daarvoor zelf
+        had berekend in plaats van de classificatie waarmee je echt begon. Elke
+        stap verloor wat strengheid. Nu rekent hij altijd om vanuit de
+        classificaties die de game echt heeft.</li>
+      <li><strong>Volledige herscrape wiste zelf gekozen Regio en Save-type.</strong>
+        Geen van beide komt van een scraper &mdash; de app bepaalt ze zelf
+        &mdash; dus een Volledige herscrape verving je zorgvuldig gekozen "Japan"
+        door de standaardwaarde "USA". Je waarden blijven nu behouden, tenzij een
+        bron echt een nieuwe levert.</li>
+      <li><strong>Een scraper kon de verkeerde game accepteren.</strong>
+        Resultaten van ScreenScraper worden normaal gecontroleerd tegen een
+        overeenkomstscore voordat ze worden gebruikt, maar een zoekopdracht met
+        precies één resultaat sloeg die controle helemaal over. Elk resultaat
+        krijgt nu een score.</li>
+      <li><strong>Een game kon al zijn gescrapete details verliezen door één
+        ontbrekend veld.</strong> Als IGDB of ScreenScraper één veld op een
+        onverwachte manier leeg liet, werd de hele update weggegooid &mdash;
+        uitgever, ontwikkelaar, artwork en al. Die gevallen worden nu afgehandeld
+        en de rest van de details blijft behouden.</li>
+      <li><strong>Een mislukte afbeelding kon als succes worden vastgelegd.</strong>
+        Als een gedownloade afbeelding geen bruikbare afbeelding bleek te zijn,
+        verwijderde de app niets en sloeg toch de bestandsnaam op, wat een
+        kapotte verwijzing achterliet. Het bestand wordt nu verwijderd en het
+        veld met rust gelaten.</li>
+      <li><strong>Spelmodi gebruiken nu consistente bewoordingen.</strong>
+        Verschillende scrapers schreven "Single-player" en "Single-Player" en een
+        los "Multiplayer" dat niet een van de eigen labels van de app was,
+        waardoor die games niet vertaald of gevonden konden worden met het filter
+        Modi. Alle bronnen schrijven nu dezelfde labels. Bestaande games houden
+        hun oude bewoording tot je ze opnieuw scrapet of het
+        normalisatiehulpmiddel in Instellingen uitvoert.</li>
+      <li><strong>Xbox-opzoekingen gedragen zich nu zoals elke andere bron.</strong>
+        Ze deden hun eigen webverzoeken, dus ze probeerden het niet opnieuw als
+        Xbox Live vroeg om het rustiger aan te doen, en er was geen limiet op
+        hoeveel gegevens een antwoord kon binnenhalen. Ze gebruiken nu dezelfde
+        gedeelde verbinding als de andere scrapers.</li>
+      <li><strong>Ongebruikte ScreenScraper-code verwijderd.</strong> Twee
+        functies die nergens in de app werden aangeroepen, zijn verwijderd. Een
+        ervan gaf een webadres terug waar je ScreenScraper-wachtwoord nog in
+        stond, wat het wachtwoord zou hebben doorgegeven aan alles wat het
+        gebruikte. Het "System Media Endpoint" uit de release-opmerkingen van
+        3.6.x was er een van &mdash; het was nergens in de app bereikbaar.</li>
+    </ul>
+- version: 3.23.5
+  date: '2026-09-02'
+  tags:
+  - type: fix
+    label: De verpakte download kon niet starten, plus andere buildfixes
+  body: |
+    <ul>
+      <li><strong>De standalone-download kon helemaal niet starten.</strong> De
+        verpakte build heeft zijn eigen Python, maar de starter erin was die
+        voor de installatie vanaf broncode &mdash; die zocht naar
+        Python-bestanden die een verpakte build niet bevat, en stopte op de
+        eerste regel. De bundel heeft nu zijn eigen starter, die gewoon de app
+        draait en je browser opent zodra de server klaar is.</li>
+      <li><strong>De bureaubladsnelkoppeling in de Linux-download startte
+        niets.</strong> Er stond opvultekst op de plek waar het pad naar de app
+        hoort. Er is nu een <code>install-launcher.sh</code>
+        naast de starter &mdash; voer het één keer uit en de snelkoppeling wordt
+        geschreven met het echte pad naar de plek waar je hem hebt uitgepakt.</li>
+      <li><strong>Starten vanaf broncode installeerde ongecontroleerde
+        afhankelijkheden.</strong> Als Flask ontbrak, haalde het startscript
+        pakketten rechtstreeks van internet zonder controlesom, en drong het
+        daarbij langs je systeempakketbeheerder. Het geeft nu het werk door aan
+        <code>install.py</code>, dat het lockbestand met controlesommen gebruikt.</li>
+      <li><strong>De broncode-download bevatte beheerdersbestanden die er niet
+        in hoorden.</strong> De lijst van wat weggelaten moest worden, werd met
+        de hand bijgehouden en was achtergeraakt, waardoor auditresultaten en
+        achtergebleven buildmappen met de app werden meeverpakt. De download
+        wordt nu gebouwd uit de lijst van bestanden die echt in het project
+        zitten, en die kan niet uit de pas raken.</li>
+      <li><strong>Twee panelen in Instellingen werkten niet in de verpakte build.</strong>
+        De panelen voor bibliotheekstatistieken en API-status zochten het
+        hoofdprogramma op met een naam die het in een verpakte build niet heeft,
+        dus beide mislukten.</li>
+      <li><strong>Sommige tekst op het scherm kon nooit worden vertaald.</strong>
+        Drie nieuwere delen van de app &mdash; de emulatorinstellingen, de
+        startknop en de balk "nu aan het spelen" &mdash; werden overgeslagen
+        door de vertaalscan, en de controle die dat moest opvangen, keek naar
+        dezelfde onvolledige lijst. De scan dekt nu automatisch elk bestand, en
+        hun tekst is aan de vertalingen toegevoegd.</li>
+      <li><strong>Vertalingen opnieuw opbouwen kon stilletjes niets doen.</strong>
+        Na het toevoegen van tekst aan een paginaspecifiek script dacht het
+        opnieuw opbouwen dat er niets te doen was, dus de nieuwe tekst bereikte
+        het vertaalbestand nooit.</li>
+      <li><strong>Een oplossing voor een videokaart werd op iedereen toegepast.</strong>
+        Het Linux-startscript dwong een instelling die bedoeld was voor één
+        specifieke AMD-kaart af op elke machine, wat de beeldopschaler op andere
+        AMD-hardware kon laten vastlopen. Die geldt nu alleen als die kaart echt
+        aanwezig is, en overschrijft nooit een waarde die je zelf hebt
+        ingesteld.</li>
+      <li><strong>Het releasescript kon de verkeerde versie publiceren.</strong>
+        Een achtergebleven tag van een eerdere poging werd zonder melding
+        hergebruikt, zodat de build van een oudere momentopname kon worden
+        gemaakt terwijl succes werd gemeld.</li>
+    </ul>
+- version: 3.23.4
+  date: '2026-09-02'
+  tags:
+  - type: fix
+    label: Negen manieren waarop je bibliotheek gegevens kon verliezen, gedicht
+  body: |
+    <ul>
+      <li><strong>"Gescrapete gegevens wissen" wiste je hele bibliotheek.</strong>
+        Het bevestigingsvenster telde alleen de games die echt gescrapet waren,
+        en daarna wiste de actie toch elke game &mdash; dus kon hij er een
+        dozijn beloven en er duizenden wissen. Met afbeeldingen ingeschakeld
+        verwijderde hij ook hoezen die je met de hand had geüpload en zette hij
+        titels terug die je zelf had bewerkt, bij games die nooit gescrapet
+        waren. Nu doet hij precies wat er in het venster staat.</li>
+      <li><strong>3D-hoezen lieten een kapotte link achter.</strong> Wissen met
+        afbeeldingen verwijderde de 3D-hoes van de schijf, maar liet de
+        database ernaar verwijzen, zodat de app zocht naar een bestand dat weg
+        was.</li>
+      <li><strong>De schakelaar "Toevoegen" bij bulkbewerking verving in plaats van toe te voegen.</strong>
+        Bij Perspectief en Dimensie deed hij precies het tegenovergestelde van
+        zijn label en overschreef hij de bestaande waarden van alle
+        geselecteerde games tegelijk, zonder ongedaan maken.</li>
+      <li><strong>Standalone-builds konden met één klik elke afbeeldingsverwijzing
+        wissen.</strong> In de verpakte download zocht de app je media op de
+        verkeerde plek, besloot dat elke afbeelding ontbrak, en "ontbrekende
+        mediaverwijzingen wissen" leegde vervolgens de hoes-, screenshot-,
+        video- en handleidingvermeldingen van de hele bibliotheek. De
+        veiligheidscontrole die er juist is om dit op te vangen, kon het niet
+        zien. Alleen de verpakte build had hier last van.</li>
+      <li><strong>Het opruimen van verweesde bestanden kon artwork verwijderen terwijl het binnenkwam.</strong>
+        Een hoes die werd gedownload terwijl het opruimen liep, kon als
+        verweesd worden gezien en verwijderd.</li>
+      <li><strong>Afspeellijsten maken verplaatste je archieven zonder te vragen.</strong>
+        In bulk M3U-afspeellijsten maken verplaatste je originele archiefbestanden,
+        zelfs als je die optie uit had gelaten &mdash; en als je er wel om vroeg,
+        meldde het een mislukking voor een verplaatsing die gelukt was.</li>
+      <li><strong>Het hulpmiddel om afbeeldingsformaten te wijzigen blies je mediamap op.</strong>
+        Het zag de kleine miniaturen die het zelf maakt als nieuwe afbeeldingen
+        om te vergroten, blies ze op tot volle grootte en maakte daar weer
+        miniaturen van. Elke run voegde meer bestanden toe, pagina's toonden
+        ongemerkt afbeeldingen op volle grootte in plaats van miniaturen, en de
+        AI-opschaler draaide op ongeveer drie keer zoveel bestanden als
+        bedoeld.</li>
+      <li><strong>AI-aanvulling overschreef details die je had verbeterd.</strong>
+        Bij een gewone scrape kon het je eigen uitgever, ontwikkelaar, genre,
+        leeftijdsclassificaties en meer vervangen. Het vult nu alleen lege
+        velden in; de knop AI-aanvulling die je zelf indrukt, is
+        ongewijzigd.</li>
+      <li><strong>Herhaalde scrapes konden een goede screenshot verwijderen.</strong>
+        Games die van RAWG werden gescrapet, hergebruikten dezelfde
+        bestandsnamen, dus een tweede scrape overschreef een opgeslagen
+        screenshot en verwijderde die daarna als duplicaat, terwijl de
+        bibliotheek hem nog vermeldde.</li>
+    </ul>
+- version: 3.23.3
+  date: '2026-09-01'
+  tags:
+  - type: fix
+    label: Gezinsrollen doen nu precies wat ze zeggen, en een gedeactiveerd account is echt buitengesloten
+  body: |
+    <ul>
+      <li><strong>Iemand deactiveren beëindigt nu de sessie.</strong> Een
+        account uitzetten verborg het op elk scherm, maar wie al op dat account
+        was ingelogd, kon tot een week lang gewoon doorwerken. Deactiveren is de
+        enige manier om iemand buiten te sluiten zonder hem of haar te
+        verwijderen, dus het werkt nu bij de allereerstvolgende klik.</li>
+      <li><strong>Alleen-lezen-accounts kunnen geen gamegegevens meer wijzigen.</strong>
+        Drie acties voor "how long to beat" stonden open voor iedereen die was
+        ingelogd, ook voor wie alleen mocht kijken &mdash; zodat een
+        alleen-lezen-account een speelduur kon overschrijven, of die uit elke
+        game in de bibliotheek kon wissen. Ze vereisen nu bewerkrechten, net als
+        elke andere actie die een game wijzigt.</li>
+      <li><strong>De trofeetracker werkt weer voor iedereen.</strong>
+        Je eigen verzamelaarstrofeeën vernieuwen vereiste bewerkrechten, die de
+        rollen Speler en Kijker niet hebben &mdash; en het is het enige dat die
+        trofeeën wegschrijft. Die accounts konden er dus nooit een verdienen, en
+        de knop Vernieuwen toonde alleen een fout. Het is je eigen voortgang, dus
+        er zijn nu helemaal geen speciale rechten meer voor nodig.</li>
+      <li><strong>De PlayStation-vernieuwing van de één kan niet meer door een
+        ander worden gestopt.</strong> Elk ingelogd account kon een vernieuwing
+        pauzeren of annuleren die iemand anders had gestart, en kon zien bij
+        welke game die persoon was. Beide zijn nu beperkt tot degene die hem
+        startte.</li>
+      <li><strong>Steam-imports gebruiken je eigen account, niet dat van wie het
+        eerst het zijne opsloeg.</strong> De bibliotheekimport las één gedeelde
+        kopie van de Steam-inloggegevens in plaats van de jouwe, dus hij kon
+        de bibliotheek van iemand anders ophalen &mdash; terwijl je eigen
+        opgeslagen gegevens leken te ontbreken.</li>
+      <li><strong>Een beheerderswachtwoord raden is weer moeilijk.</strong> De
+        limiet op mislukte inlogpogingen werd gedeeld door iedereen op het
+        netwerk, dus iedereen met een eigen account kon die resetten door in te
+        loggen en eindeloos door blijven raden. De limiet geldt nu per
+        account.</li>
+      <li><strong>Fouten van de app bereiken nu de pagina in plaats van te verdwijnen.
+        </strong> Als een actie werd geweigerd, antwoordden 115 ervan in een vorm
+        die de pagina niet kon lezen, zodat het leek alsof de actie was gelukt.
+        Ze melden de weigering nu correct, en je ziet de echte melding.</li>
+    </ul>
+- version: 3.23.2
+  date: '2026-08-06'
+  tags:
+  - type: fix
+    label: Pagina's met scraperinstellingen laden sneller en tonen nooit een verouderde API-sleutel
+  body: |
+    <ul>
+      <li><strong>De pagina's Instellingen en Scraperconfiguratie lezen het
+        bestand met scraperinstellingen niet meer bij elk verzoek opnieuw.</strong>
+        Vier plekken openden het en verwerkten het telkens opnieuw van de
+        schijf als een pagina of controle draaide, terwijl er al een gedeelde
+        lezer met cache bestond. Ze gebruiken die nu allemaal, dus die pagina's
+        doen minder werk per bezoek.</li>
+      <li><strong>Opslaan werkt nog steeds direct.</strong> Een cache die na
+        een tijdje vergeet, had je tot een halve minuut na het opslaan de oude
+        waarden kunnen tonen. Elke opslag wist nu de cache tijdens het
+        schrijven, dus wat je ziet, is wat je net hebt opgeslagen.</li>
+      <li><strong>Je echte API-sleutels kunnen niet meer worden vervangen door
+        hun eigen gemaskeerde weergave.</strong> Instellingenpagina's tonen
+        opgeslagen sleutels als <code>***1234</code> in plaats van de echte
+        sleutel. Omdat de pagina dezelfde kopie van de instellingen kreeg die
+        de scrapers gebruiken, kon dat maskeren de echte sleutels in het
+        geheugen overschrijven, waardoor scrapers zich met sterretjes
+        aanmeldden tot de cache verliep.</li>
+      <li><strong>Standalone-builds zoeken de scraperinstellingen nu op de
+        juiste plek.</strong> De scrapers bepaalden de locatie van het bestand
+        anders dan de pagina's die het opslaan. Bij een normale installatie
+        kwamen beide bij hetzelfde bestand uit; bij een standalone-build (met
+        dubbelklik) niet, zodat opgeslagen API-sleutels terecht konden komen
+        waar de scrapers nooit keken.</li>
+    </ul>
+- version: 3.23.1
+  date: '2026-08-06'
+  tags:
+  - type: fix
+    label: De serverpoort die je in Instellingen opslaat, is nu de poort die wordt gebruikt
+  body: |
+    <ul>
+      <li><strong>Een serverpoort opslaan verplaatst de server echt.</strong>
+        Instellingen accepteerde een poort, controleerde die, sloeg hem op en
+        meldde dat er een herstart nodig was om hem toe te passen &mdash; en
+        daarna startte de server toch op 5000. Niets las de waarde ooit terug.
+        Hij maakt nu deel uit van het opstarten, dus een herstart verplaatst
+        RetroDB echt naar de poort die je koos. Wat in de omgeving is ingesteld,
+        gaat nog steeds voor, dus een starter of container die een poort
+        toewijst, merkt er niets van.</li>
+      <li><strong>Twee instellingen die nooit iets deden, zijn verwijderd in
+        plaats van gerepareerd.</strong> "Serverhost" en "debugmodus" werden
+        opgeslagen en deden dezelfde loze belofte. Debugmodus aanzetten vanuit
+        een webformulier zou een interactieve Python-console in de browser
+        hebben blootgesteld, en het bindadres bepaalt welke machines RetroDB
+        überhaupt kunnen bereiken &mdash; geen van beide hoort achter een
+        instellingenformulier. Beide blijven instelbaar via de omgeving, waar ze
+        al zaten. Staan ze nog in je instellingenbestand, dan worden ze bij het
+        laden stilletjes weggelaten; je hoeft niets te doen.</li>
+      <li><strong>Niets belooft nu nog dat een herstart iets toepast, tenzij een
+        herstart het ook echt toepast.</strong> Dat was het echte gebrek &mdash;
+        een dode instelling is slordig, maar een loze belofte kost je een hele
+        middag.</li>
+    </ul>
+- version: 3.23.0
+  date: '2026-08-06'
+  tags:
+  - type: enhancement
+    label: Start RetroDB op een poort die iemand anders kiest
+  body: |
+    <ul>
+      <li><strong>RetroDB leest nu een instelling <code>PORT</code> uit zijn
+        omgeving.</strong> Als je RetroDB vanuit een ander programma start
+        &mdash; een dashboard, een container, een thuisserverpaneel &mdash; kan
+        dat programma RetroDB nu de gewenste poort doorgeven, zonder dat iemand
+        een bestand hoeft te bewerken. Stel <code>PORT</code> in en RetroDB
+        luistert daar; laat het met rust en er verandert helemaal niets. De
+        bestaande <code>RETRODB_PORT</code> werkt nog precies zoals voorheen, en
+        <code>PORT</code> gaat voor als beide zijn ingesteld.</li>
+      <li><strong>Een ongeldig poortnummer zegt dat nu in plaats van te gokken.</strong>
+        Vroeger leverde een onleesbare poort een muur van Python-fouttekst op,
+        en een poort buiten het bruikbare bereik werd pas ontdekt als de server
+        niet kon starten. RetroDB stopt nu meteen met één regel die de waarde
+        noemt die het niet kon gebruiken. Het start nooit stilletjes op een
+        andere poort dan de gevraagde &mdash; ongemerkt verplaatst worden is
+        erger dan een nee te horen krijgen.</li>
+      <li><strong>De opstartbanner en het browsertabblad volgen de echte
+        poort.</strong> Het adres dat wordt getoond als RetroDB start, en de
+        pagina die voor je wordt geopend, zeiden vroeger allebei 5000, welke
+        poort er ook echt in gebruik was.</li>
+    </ul>
 - version: 3.22.1
   date: '2026-07-31'
   tags:

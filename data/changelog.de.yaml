@@ -1,3 +1,678 @@
+- version: 3.26.0
+  date: '2026-10-17'
+  tags:
+  - type: feature
+    label: 'Jede Seite passt sich jetzt dem Fenster an, in dem sie angezeigt wird'
+  - type: enhancement
+    label: 'Die Spielseite zeigt andere Namen in einer eigenen Karte und hat eine Handbuch-Schaltfläche'
+  body: |
+    <ul>
+      <li><strong>Jede Seite passt sich jetzt dem Fenster an, in dem sie angezeigt wird.</strong> Kartenseiten
+        (Systeme, Museum, Tags, Listen, ROM-Werkzeuge, Trophäen und Achievements)
+        fügen eine Spalte hinzu, sobald eine weitere ganze Karte Platz hat, bis zu vier pro Reihe.
+        Tabellen, Werkzeuge und Detailseiten werden etwas breiter, hören aber dort auf, wo mehr Breite
+        ihre Spalten nur auseinanderziehen würde. Die Einstellungen halten ihre Felder in einer
+        gut lesbaren Breite.</li>
+      <li><strong>Hilfe und Änderungsprotokoll behalten eine angenehme
+        Zeilenlänge.</strong> In einem breiten Fenster rücken die Abschnittslinks der Hilfe in eine
+        Spalte neben dem Text; in einem schmalen stehen sie in einer einzigen Reihe, durch die Sie
+        wischen können, statt in einem Block, der einen großen Teil des Handybildschirms
+        verdeckte.</li>
+      <li><strong>Die Spielseite:</strong> In einem breiten Fenster laufen die Screenshots
+        oben quer über die Seite, darunter stehen das Video und eine neue Karte <strong>Auch bekannt
+        als</strong> nebeneinander, auf Höhe des Covers. Die anderen
+        Namen waren blasser Text unter dem Titel; jetzt stehen sie auf einer Karte, die
+        gut lesbar ist. <strong>Handbuch</strong> ist eine Schaltfläche neben Spielen, und der
+        Scrape-Verlauf ist anfangs zugeklappt.</li>
+      <li>PSN-Trophäen zeigt je nach Fenster eine bis vier Spalten statt
+        immer drei.</li>
+      <li>Mehrere Seiten scrollen auf dem Handy nicht mehr seitwärts: Trophäen,
+        Sammler-Trophäen, die RetroAchievements-Systemseite, Hilfe, Einstellungen,
+        Analyse, Spiel-Importe sowie die Detailseiten für Achievements und Trophäen.
+        Breite Tabellen scrollen dort jetzt in sich selbst.</li>
+    </ul>
+- version: 3.25.0
+  date: '2026-10-17'
+  tags:
+  - type: feature
+    label: 'Bibliothek, Systemseiten und Spielseiten passen sich jetzt dem Fenster an'
+  body: |
+    <ul>
+      <li><strong>Seiten nutzen ein breites Fenster, wenn es hilft &ndash; und nur dann.</strong>
+        Die Bibliothek und jede Systemseite fügen eine Spalte mit Spielkarten hinzu,
+        sobald eine weitere ganze Karte Platz hat, bis zu vier pro Reihe. Ein Handy zeigt
+        eine, ein halber Bildschirm zwei oder drei, ein breites Fenster vier. Früher
+        endeten die Seiten bei einer festen Breite und ließen den Großteil eines großen Fensters leer.</li>
+      <li><strong>Die Spielseite stellt Cover und Details neben die
+        Screenshots und das Video</strong>, wenn beides nebeneinander passt, und stapelt
+        sie sonst untereinander. Die Beschreibung behält eine angenehme Zeilenlänge.</li>
+      <li><strong>Die Spielen-Schaltfläche ist in die rechte obere Ecke jeder Karte gewandert,</strong>
+        kleiner und mittig ausgerichtet. Sie prüft jetzt außerdem, ob die ROM-Datei des Spiels noch
+        vorhanden ist und einen Typ hat, den sein System akzeptiert. So erscheint sie nur dort, wo
+        ein Klick das Spiel wirklich startet. Während Sie Spiele für eine Sammelaktion auswählen,
+        ist sie ausgeblendet.</li>
+      <li>Die Nach-oben-Schaltfläche und die Fortschrittsfenster sitzen jetzt direkt neben dem
+        Inhalt der Seite statt an den äußersten Rändern des Fensters.</li>
+      <li>Die Spielseite scrollt auf dem Handy nicht mehr seitwärts.</li>
+    </ul>
+- version: 3.24.2
+  date: '2026-10-17'
+  tags:
+  - type: ui
+    label: 'Die Testsprache „Pseudo“ wird nur noch Admins angeboten'
+  body: |
+    <ul>
+      <li><strong>„Pseudo“ erscheint nicht mehr für alle in der
+        Sprachliste.</strong> Es ist ein Entwicklerwerkzeug, das jedes Wort in
+        Klammern und mit Akzenten anzeigt, und wird deshalb nur noch Admins angeboten. Wer es
+        bisher gewählt hatte, sieht die App jetzt auf Englisch, und in den Einstellungen ist
+        Englisch ausgewählt.</li>
+    </ul>
+- version: 3.24.1
+  date: '2026-10-17'
+  tags:
+  - type: fix
+    label: 'Der Windows-Download lässt sich wieder installieren, und keine Fehlerflut mehr nach Größenänderung'
+  body: |
+    <ul>
+      <li><strong>Der normale Windows-Download ließ sich nicht installieren.</strong>
+        Das Installationsprogramm brach mit „Core dependencies failed to install“ ab,
+        weil seiner festgeschriebenen Paketliste ein Paket fehlte, das nur
+        Windows braucht. Die Liste deckt jetzt jede Plattform ab. Der Windows-Download
+        ohne Python war nicht betroffen.</li>
+      <li><strong>In der rechten oberen Ecke erschienen immer wieder Fehlermeldungen</strong>,
+        und zwar beim Cyberpunk-Theme, nachdem das Browserfenster breiter gemacht wurde,
+        zum Beispiel durch Maximieren. Der animierte Hintergrund passt seine Größe jetzt
+        sauber an.</li>
+    </ul>
+- version: 3.24.0
+  date: '2026-10-17'
+  tags:
+  - type: feature
+    label: 'Ein Spiel direkt aus der Bibliothek und den Systemseiten starten'
+  body: |
+    <ul>
+      <li><strong>Eine ▶-Spielen-Schaltfläche auf jeder Spielkarte.</strong> Sie erscheint in
+        der linken unteren Ecke des Covers auf der Bibliotheksseite und auf
+        jeder Systemseite. Klicken Sie darauf, und das Spiel startet in seinem Emulator; Sie
+        bleiben in der Liste, statt erst die Seite des Spiels zu öffnen.</li>
+      <li>Die Schaltfläche erscheint nur, wo ein Klick auch funktionieren kann: Ihr Konto
+        darf Spiele starten, und der Emulator des Spiels ist aktiviert, installiert
+        und hat bei RetroArch seinen Core. Spiele auf Systemen ohne funktionierenden
+        Emulator zeigen keine Schaltfläche.</li>
+      <li>Schlägt ein Start trotzdem fehl, etwa weil die ROM-Datei
+        verschoben wurde, erscheint der Grund in einer Meldung, und die Seite bleibt, wie sie
+        war.</li>
+    </ul>
+- version: 3.23.21
+  date: '2026-10-17'
+  tags:
+  - type: ui
+    label: 'Eine kürzere Seitenleiste mit einer einzigen Achievements-Seite für alle Plattformen'
+  body: |
+    <ul>
+      <li><strong>Ein einziger Link „Achievements“ ersetzt fünf.</strong>
+        RetroAchievements, RPCS3, PSN, Steam und Xbox sind jetzt Reiter auf einer
+        Seite, und der Link öffnet wieder den Reiter, den Sie zuletzt benutzt haben. Wenn Sie keine
+        RetroAchievements-Spiele haben, öffnet er den RPCS3-Reiter, statt
+        Sie zurück zum Dashboard zu schicken.</li>
+      <li><strong>ROM-Berichte befinden sich jetzt unter ROM-Werkzeuge,</strong> als Reiter
+        neben den anderen Werkzeugen und als Karte auf der Seite ROM-Werkzeuge.</li>
+      <li><strong>Keine zwei Links der Seitenleiste teilen sich mehr ein Symbol:</strong> Das Dashboard
+        hat jetzt 🏠 und die Protokoll-Anzeige 🧾. Die Seitenleiste hat 16 Links statt
+        21.</li>
+      <li>Die Werkzeug-Reiter auf der Einstellungsseite der ROM-Werkzeuge waren immer auf
+        Englisch; jetzt folgen sie Ihrer Sprache.</li>
+    </ul>
+- version: 3.23.20
+  date: '2026-10-17'
+  tags:
+  - type: fix
+    label: 'Abfragen bei How Long To Beat funktionieren wieder'
+  body: |
+    <ul>
+      <li><strong>Jede Abfrage bei How Long To Beat meldete, das Spiel sei nicht
+        zu finden.</strong> Die Website hat ihre Suche an eine neue Adresse verlegt, daher
+        wurden die Anfragen von RetroDB abgelehnt; der Fehler trat zwischen Ende
+        Juli und Ende September auf. RetroDB nutzt jetzt die neue Adresse und sendet die
+        Filter für Plattform und Jahr im neuen Format der Website, die sie zuvor
+        nicht mehr beachtet hatte. Abfragen für einzelne Spiele und die Sammelabfrage in den
+        ROM-Werkzeugen funktionieren wieder.</li>
+    </ul>
+- version: 3.23.19
+  date: '2026-10-17'
+  tags:
+  - type: ui
+    label: 'RetroDB sagt jetzt klar, dass es Piraterie nicht duldet'
+  - type: fix
+    label: 'Das Über-Fenster öffnet sich wieder in voller Größe'
+  body: |
+    <ul>
+      <li><strong>Ein Hinweis gegen Piraterie ist jetzt in der App.</strong> Er
+        erscheint im Über-Fenster und unter dem ROM-Bibliothekspfad in den
+        Einstellungen, in jeder Sprache. Er besagt, dass RetroDB keine ROM-Dateien verbreitet oder
+        bereitstellt, dass Sie nur Spiele verwenden sollten, die von Ihren eigenen Discs und
+        Modulen kopiert wurden, und dass RetroDB mit keinem
+        Konsolenhersteller, Publisher oder keiner Spieldatenbank verbunden ist. Der Wortlaut entspricht der
+        RetroDB-Website und dem Trailer.</li>
+      <li><strong>Das Über-Fenster war in die Seitenleiste gequetscht.</strong>
+        Jetzt öffnet es sich in normaler Größe in der Bildschirmmitte und
+        scrollt auf einem kleinen Bildschirm, statt seinen Titel und die Schließen-Schaltfläche
+        zu verstecken.</li>
+    </ul>
+- version: 3.23.18
+  date: '2026-10-15'
+  tags:
+  - type: security
+    label: 'RetroDB startet nur echte ROM-Dateitypen und benennt nur in solche um'
+  body: |
+    <ul>
+      <li><strong>Ein Spiel ließ sich mit einer Datei starten, die keine
+        ROM ist.</strong> Beim Umbenennen einer ROM war jeder Name erlaubt, sodass
+        aus <code>crash.bin</code> eine <code>crash.cfg</code> werden konnte, die dann
+        an den Emulator übergeben wurde. Beim Start wird der Dateityp jetzt mit der
+        Liste in der <code>systeminfo.txt</code> des Systemordners abgeglichen, derselben Liste,
+        die auch der Bibliotheks-Scan nutzt, und das Umbenennen lehnt einen Typ ab, der nicht in dieser Liste
+        steht. Hat ein Systemordner keine Liste, starten seine Spiele nicht, und
+        die Meldung nennt die fehlende Datei.</li>
+    </ul>
+- version: 3.23.17
+  date: '2026-10-15'
+  tags:
+  - type: security
+    label: 'Nur ein Admin kann die Startargumente eines Spiels ändern'
+  - type: fix
+    label: 'Startargumente mit mehreren Wörtern oder einem verirrten Anführungszeichen funktionieren jetzt'
+  - type: fix
+    label: 'RetroDB behält nicht mehr jeden beendeten Start im Speicher'
+  body: |
+    <ul>
+      <li><strong>Ein Bearbeiter konnte Startargumente hinzufügen, die anderen Code
+        ausführten.</strong> Die <em>Eigenen Startargumente</em> eines Spiels gehen direkt an den
+        Emulator, und mit RetroArch konnten sie jede Programmdatei auf dem
+        Computer laden. Sie zu ändern erfordert jetzt die Admin-Rolle, und für alle anderen ist das Feld
+        ausgeblendet.</li>
+      <li><strong>Startargumente mit mehr als einem Wort kamen beim
+        Emulator als eines an.</strong> <code>--a --b</code> kommt jetzt als zwei
+        Argumente an, und ein leerer Wert fügt nichts hinzu. Ein fehlendes schließendes Anführungszeichen
+        ließ früher jeden Start dieses Spiels mit einem Serverfehler scheitern; jetzt
+        erscheint eine Meldung, die das zu korrigierende Feld nennt. Der Platzhalter
+        <code>{disc_paths}</code> ist entfernt: Er war immer leer.</li>
+      <li><strong>Beendete Starts sammelten sich im Speicher, bis RetroDB
+        neu startete.</strong> Ein Start, der vor mehr als einer Stunde endete, wird jetzt
+        entfernt.</li>
+    </ul>
+- version: 3.23.16
+  date: '2026-10-15'
+  tags:
+  - type: fix
+    label: 'Die Sprachauswahl in den Einstellungen funktioniert wieder'
+  body: |
+    <ul>
+      <li><strong>Eine Sprache unter Einstellungen &rarr; Bibliothek &rarr;
+        Anzeige zu wählen, bewirkte nichts.</strong> Stattdessen erschien ein Fehler, und die Seite
+        blieb in ihrer alten Sprache. Das war seit 3.23.8 defekt. Die gewählte Sprache wird
+        jetzt gespeichert, und die Seite lädt in dieser Sprache neu.</li>
+    </ul>
+- version: 3.23.15
+  date: '2026-10-15'
+  tags:
+  - type: fix
+    label: 'Trophäen- und Plattformsymbole sind wieder im Download'
+  body: |
+    <ul>
+      <li><strong>Im Download fehlten die Trophäen- und Plattformsymbole von
+        RetroDB.</strong> Jede Spielkarte mit RetroAchievements zeigte ein defektes
+        Bild an der Stelle ihres Abzeichens, und auch die Trophäenstufen sowie die Logos von PSN, Steam,
+        Xbox und RPCS3 fehlten. Sie sind jetzt in jedem
+        Download enthalten.</li>
+    </ul>
+- version: 3.23.14
+  date: '2026-10-10'
+  tags:
+  - type: security
+    label: 'Zwei mitgelieferte Bibliotheken für veröffentlichte Sicherheitskorrekturen aktualisiert'
+  body: |
+    <ul>
+      <li><strong>urllib3 und Werkzeug hatten bekannte Sicherheitslücken.</strong>
+        RetroDB liefert jetzt urllib3 2.8.0 und Werkzeug 3.1.9 mit, die Versionen, die
+        sie beheben. Eine Installation aus dem Quellcode erhält sie, indem Sie
+        <code>install.py</code> erneut ausführen; es installiert aus
+        <code>requirements.lock</code>.</li>
+    </ul>
+- version: 3.23.13
+  date: '2026-09-26'
+  tags:
+  - type: fix
+    label: 'Als Ordnerpfad gespeicherte Medien werden nicht mehr als fehlend gemeldet'
+  body: |
+    <ul>
+      <li><strong>In der Standalone-Version konnte „Fehlende Medienverweise
+        entfernen“ Medien leeren, die tatsächlich vorhanden waren.</strong> Das passierte, wenn die Datenbank
+        die Medien als Ordnerpfad wie
+        <code>images/boxart/…</code> statt als bloßen Dateinamen gespeichert hatte. RetroDB
+        sucht sie jetzt im richtigen Ordner.</li>
+    </ul>
+- version: 3.23.12
+  date: '2026-09-26'
+  tags:
+  - type: fix
+    label: 'Das Dashboard zeigt ein laufendes Sammel-Scrapen, dazu vier kleine Korrekturen'
+  body: |
+    <ul>
+      <li><strong>Die Scrape-Fortschrittskarte im Dashboard erschien nie.</strong>
+        Jetzt wird sie angezeigt, während ein Sammel-Scrapen läuft, und zeigt an, wenn es
+        pausiert ist.</li>
+      <li><strong>Keine Fehler mehr in der Browserkonsole auf der Anmeldeseite.</strong>
+        Sie prüft Hintergrundaufgaben nicht mehr, bevor jemand
+        angemeldet ist.</li>
+      <li><strong>Der Einrichtungsassistent meldet nicht mehr „Setup complete!“, wenn
+        das Speichern fehlgeschlagen ist.</strong> Er teilt Ihnen jetzt mit, dass die Einstellungen nicht
+        gespeichert werden konnten.</li>
+      <li><strong>Zwei Sammel-Scrapes, die in derselben Sekunde gestartet werden, teilen sich keine
+        ID mehr</strong>, sodass Warteschlangen-Aktionen wie Abbrechen das richtige
+        betreffen.</li>
+    </ul>
+- version: 3.23.11
+  date: '2026-09-26'
+  tags:
+  - type: ui
+    label: 'Spenden-Schaltflächen sagen jetzt, was sie unterstützen'
+  body: |
+    <ul>
+      <li><strong>Klarere Formulierung bei Spenden.</strong> Die Schaltflächen in der Kopfzeile
+        heißen jetzt „Sponsor“ und „Auf Patreon unterstützen“. Die README sagt, dass jede
+        Version kostenlos ist und dass Spenden RetroDB selbst finanzieren, nicht die
+        Emulatoren und Cores, die es starten kann.</li>
+    </ul>
+- version: 3.23.10
+  date: '2026-09-26'
+  tags:
+  - type: fix
+    label: 'ROM-Werkzeuge folgen Ihren gespeicherten Einstellungen, und die Seiten Protokolle und ROM-Werkzeuge funktionieren wieder'
+  body: |
+    <ul>
+      <li><strong>Die Protokollseite und einige Seiten der ROM-Werkzeuge waren defekt.</strong>
+        Ein Skript auf diesen Seiten scheiterte beim Laden, sodass die Protokoll-Anzeige und
+        die gemeinsamen Hilfsfunktionen der ROM-Werkzeuge nie starteten. Jetzt laden sie
+        korrekt.</li>
+      <li><strong>Die Einstellungen der ROM-Werkzeuge wirken jetzt.</strong> Der Duplikat-Finder
+        und der CHD-Konverter öffnen sich mit den Optionen von der Einstellungsseite der
+        ROM-Werkzeuge, und Sie können sie weiterhin für einen einzelnen Durchlauf ändern.</li>
+      <li><strong>Die Schalter des CHD-Konverters wurden ignoriert.</strong> Wenn Sie
+        „Originaldateien löschen“ auf der Seite ausschalteten, verhinderte das das Löschen nicht, wenn
+        Ihre gespeicherte Einstellung das Löschen vorsah. Jetzt entscheiden die Schalter auf der Seite.</li>
+      <li><strong>Die Einstellung „Temporärer Pfad“ wird verwendet.</strong> Dateien, die beim
+        Erstellen von M3U-Playlists zwischengespeichert werden, landen jetzt dort.</li>
+    </ul>
+- version: 3.23.9
+  date: '2026-09-26'
+  tags:
+  - type: security
+    label: 'Scraper-Protokolldateien speichern keine Passwörter und Tokens mehr, und Anmeldeversuche werden wieder begrenzt'
+  - type: fix
+    label: 'Speichern der Einstellungen löscht Ihre Einstellungen nicht mehr, und das Löschen eines Benutzers funktioniert'
+  body: |
+    <ul>
+      <li><strong>Protokolldateien enthielten Geheimnisse im Klartext.</strong> Scraper-Protokolldateien
+        sollten Anmelde-Tokens und API-Schlüssel verbergen, doch dieser Schritt
+        lief nie, sodass sie vollständig geschrieben wurden. Jetzt werden sie verborgen.
+        Ältere Protokolldateien enthalten sie noch; löschen Sie alte Dateien in
+        <code>logs/</code>, wenn Sie Ihre Installation weitergeben.</li>
+      <li><strong>Grenzen für Anmeldeversuche wurden nicht durchgesetzt.</strong> Die Grenzen
+        für wiederholte Anmeldungen und für aufwendige Aktionen (Scans, Scrapes, Importe) waren
+        eingerichtet, aber nie eingeschaltet. Jetzt wirken sie, und eine blockierte Anfrage
+        erhält eine klare Meldung „zu viele Anfragen“.</li>
+      <li><strong>Eine beschädigte Einstellungsdatei konnte gelöscht werden.</strong> Wenn
+        <code>data/settings.json</code> nicht gelesen werden konnte, ersetzte das nächste Speichern
+        sie durch die Standardwerte. RetroDB bewahrt die beschädigte Datei jetzt als
+        <code>settings.json.corrupt-&lt;time&gt;</code> auf, bevor es speichert. Lässt sich die
+        Datei wieder einwandfrei lesen, wird das Speichern stattdessen abgelehnt.</li>
+      <li><strong>Die Engine-Zeile der Benennung verlor andere Einstellungen.</strong> Ein
+        Tag zur Engine-Zeile in den Benennungseinstellungen hinzuzufügen, schlug fehl und verwarf
+        außerdem die damit gespeicherten Artikel- und Regionseinstellungen. Jetzt wird
+        korrekt gespeichert.</li>
+      <li><strong>Das Löschen eines Benutzers schlug fehl.</strong> Ein Benutzer mit Tags, Listen,
+        Wunschlisteneinträgen oder PSN-Daten konnte nicht gelöscht werden. Das Löschen entfernt jetzt
+        den Benutzer und alles, was ihm gehört.</li>
+      <li><strong>Zwei Scrapes konnten gleichzeitig laufen.</strong> Wurde ein laufendes
+        Sammel-Scrapen in der Warteschlange getauscht oder verschoben, starteten zwei Scrapes, die
+        sich einen Fortschrittszähler teilten. Jetzt läuft nur eines.</li>
+      <li><strong>Der Fortschritt eines Sammel-Scrapens konnte wie ein Fehler aussehen.</strong>
+        Vor seinem ersten Erfolg meldete ein Sammel-Scrapen seinen Status so, dass
+        manche Ansichten ihn als Fehlschlag lasen. Das ist behoben.</li>
+      <li><strong>Nach der Anmeldung landen Sie jetzt auf der Seite, die Sie aufrufen wollten.</strong>
+        Früher ging es immer zum Dashboard.</li>
+      <li><strong>Datei-Aktionen für Admins bleiben in Ihren Ordnern.</strong> Das
+        Werkzeug zur Bildgrößenänderung und die Aktionen zum Umbenennen von ROMs lehnen jetzt alles
+        außerhalb Ihres Medienordners oder ROM-Ordners ab.</li>
+      <li><strong>Alte PSN- und Xbox-Anmeldedateien werden in Ihr
+        Konto übernommen.</strong> Eine übrig gebliebene <code>data/psn_tokens.json</code> oder
+        <code>data/xbox_tokens.json</code> wird in Ihr Konto geladen und
+        so umbenannt, dass sie auf <code>.migrated-015</code> endet. Diese Datei enthält noch
+        den Token, also löschen Sie sie, sobald Sie geprüft haben, dass die Anmeldung funktioniert.</li>
+      <li><strong>Klarere Fehlermeldungen vom Server.</strong> Eine fehlerhafte Anfrage
+        erhält jetzt eine passende Fehlermeldung statt „An internal error
+        occurred“.</li>
+    </ul>
+- version: 3.23.8
+  date: '2026-09-25'
+  tags:
+  - type: fix
+    label: 'CLZ-Import funktioniert wieder, Listen-Cover werden angezeigt, und mehrere Seiten scheitern nicht mehr an einem Apostroph'
+  - type: security
+    label: 'Gescrapte Namen und Dateipfade können nicht mehr aus Seiten-Schaltflächen ausbrechen'
+  body: |
+    <ul>
+      <li><strong>Der CLZ-Import bewirkte nichts.</strong> Das Hochladen eines CLZ-PDFs schickte es
+        an eine Adresse, die der Server nicht hat, sodass jeder Upload mit
+        „Parse failed“ scheiterte. Jetzt erreicht es den Parser.</li>
+      <li><strong>Auf einer Listenseite fehlten alle Cover.</strong> Die Listenseite
+        fragte jedes Cover unter der falschen Adresse ab, und die Spalte System war
+        immer leer. Beides wird jetzt angezeigt. Auch die Coverbilder in der Suche „Spiel
+        hinzufügen“ der Seite sind behoben.</li>
+      <li><strong>Schaltflächen versagten bei Namen mit Apostroph.</strong> Das Entfernen von
+        „Assassin's Creed“ aus einer Liste, das Löschen eines Screenshots, das Vergrößern eines Covers
+        oder das Entfernen eines Genre-Tags konnte stillschweigend nichts bewirken, wenn der Name
+        einen Apostroph enthielt. Derselbe Fehler ließ einen präparierten gescrapten Namen Code
+        in der Seite ausführen. Namen gelangen jetzt so zu diesen Schaltflächen, dass sie
+        nicht als Code missverstanden werden können.</li>
+      <li><strong>Bild- und Linkadressen werden überall maskiert.</strong> Einige
+        Seiten bauten Bildadressen aus gescrapten Dateinamen, ohne sie
+        zu maskieren, und fünf Seiten hatten ihre eigene, schwächere Kopie der Hilfsfunktion zum Maskieren. Jetzt nutzen alle die gemeinsame.</li>
+      <li><strong>Die Einstellungsseite konnte leer erscheinen.</strong> Wenn der Reiter, den Sie
+        zuletzt benutzt hatten, durch ein Update umbenannt worden war, öffneten sich die Einstellungen ohne sichtbaren
+        Bereich. Jetzt wird ein Reiter, den es nicht mehr gibt, ignoriert. Links wie
+        <code>/settings#account</code> öffnen diesen Reiter wieder.</li>
+      <li><strong>Ihr Theme folgt Ihnen jetzt auf andere Geräte.</strong> Das
+        gewählte Theme wird in Ihrem Konto gespeichert. Ein Browser, dem noch nie
+        ein Theme mitgeteilt wurde, verwendet Ihr gespeichertes statt des Standards.</li>
+      <li><strong>Fortschrittsfenster von Aufgaben zeigen das richtige Symbol.</strong> Pausierte,
+        beendete und wartende Aufgaben zeigten dasselbe „läuft“-Symbol. Jetzt hat jeder Zustand
+        sein eigenes, passend zum Theme.</li>
+      <li><strong>Die Liste der Tastenkürzel kann jetzt übersetzt werden.</strong> Ihre
+        Beschriftungen waren für die Übersetzungswerkzeuge unsichtbar und blieben deshalb in jeder Sprache
+        auf Englisch.</li>
+    </ul>
+- version: 3.23.6
+  date: '2026-09-03'
+  tags:
+  - type: fix
+    label: 'Altersfreigaben waren oft falsch, und gescrapte Spiele konnten ihre Details verlieren'
+  body: |
+    <ul>
+      <li><strong>Altersfreigaben waren häufig falsch, und der Fehler breitete sich aus.</strong>
+        Kam eine Freigabe von TheGamesDB, suchte die App den Freigabecode
+        irgendwo im Text, statt ihn richtig auszulesen &mdash; so wurden
+        „T - Teen“, „M - Mature 17+“, „AO - Adults Only 18+“ und
+        „RP - Rating Pending“ alle als falsche Freigabe gespeichert, und ein Mature-Spiel
+        konnte als für alle geeignet eingestuft werden. Schlimmer noch: Diese falsche Freigabe
+        wurde dann verwendet, um die acht anderen Freigabesysteme auszufüllen, sodass sich ein einziger
+        Lesefehler über alle verbreitete. Freigaben werden jetzt aus dem Code am
+        Anfang des Textes gelesen.</li>
+      <li><strong>Umgerechnete Freigaben fielen zu nachsichtig aus.</strong> Beim Ausfüllen
+        einer fehlenden Freigabe aus einer vorhandenen konnte die App eine
+        Freigabe verwenden, die sie gerade erst selbst errechnet hatte, statt der, mit der Sie
+        tatsächlich begonnen hatten. Jeder Schritt verlor etwas an Strenge. Jetzt
+        rechnet sie immer von den Freigaben um, die das Spiel wirklich hat.</li>
+      <li><strong>Vollständiges Neu-Scrapen löschte von Hand gewählte Region und Speichertyp.</strong>
+        Keines von beiden stammt von einem Scraper &mdash; die App ermittelt sie selbst
+        &mdash;, daher ersetzte ein vollständiges Neu-Scrapen Ihr sorgfältig gesetztes „Japan“ durch den
+        Standard „USA“. Ihre Werte bleiben jetzt erhalten, außer eine Quelle
+        liefert tatsächlich einen neuen.</li>
+      <li><strong>Ein Scraper konnte das falsche Spiel übernehmen.</strong> ScreenScraper-Ergebnisse
+        werden normalerweise vor der Verwendung anhand einer Trefferbewertung geprüft,
+        doch eine Suche mit genau einem Ergebnis übersprang diese Prüfung komplett.
+        Jetzt wird jedes Ergebnis bewertet.</li>
+      <li><strong>Ein Spiel konnte wegen eines einzigen fehlenden Felds alle gescrapten Details
+        verlieren.</strong> Ließ IGDB oder ScreenScraper ein einzelnes Feld auf
+        unerwartete Weise leer, wurde die ganze Aktualisierung verworfen &mdash; Publisher,
+        Entwickler, Artwork und alles andere. Diese Fälle werden jetzt behandelt, und die übrigen
+        Details bleiben erhalten.</li>
+      <li><strong>Ein fehlgeschlagenes Bild konnte als Erfolg verbucht werden.</strong> Stellte sich
+        ein heruntergeladenes Bild als unbrauchbar heraus, löschte die App
+        nichts und speicherte trotzdem den Dateinamen, was einen defekten Verweis hinterließ. Die
+        Datei wird jetzt entfernt und das Feld unverändert gelassen.</li>
+      <li><strong>Spielmodi verwenden jetzt einheitliche Bezeichnungen.</strong> Verschiedene
+        Scraper schrieben „Single-player“ und „Single-Player“ sowie ein schlichtes
+        „Multiplayer“, das keine der eigenen Bezeichnungen der App war, sodass diese Spiele
+        weder übersetzt noch vom Modi-Filter erfasst werden konnten. Alle Quellen
+        schreiben jetzt dieselben Bezeichnungen. Vorhandene Spiele behalten ihre alte Schreibweise, bis Sie
+        sie neu scrapen oder das Normalisierungswerkzeug in den Einstellungen ausführen.</li>
+      <li><strong>Xbox-Abfragen verhalten sich jetzt wie jede andere Quelle.</strong> Sie
+        stellten ihre eigenen Webanfragen, hatten also keinen neuen Versuch, wenn Xbox Live
+        sie bat, langsamer zu machen, und keine Grenze dafür, wie viele Daten eine Antwort
+        laden konnte. Jetzt nutzen sie dieselbe gemeinsame Verbindung wie die anderen
+        Scraper.</li>
+      <li><strong>Ungenutzter ScreenScraper-Code entfernt.</strong> Zwei Funktionen, die
+        nichts in der App aufrief, wurden gelöscht. Eine davon gab eine Webadresse
+        zurück, in der noch Ihr ScreenScraper-Passwort stand, und hätte so
+        das Passwort an alles weitergegeben, was sie nutzte. Der in den Versionshinweisen zu 3.6.x
+        aufgeführte „System Media Endpoint“ war einer davon &mdash; er
+        war nirgendwo in der App erreichbar.</li>
+    </ul>
+- version: 3.23.5
+  date: '2026-09-02'
+  tags:
+  - type: fix
+    label: 'Der paketierte Download ließ sich nicht starten, und weitere Build-Korrekturen'
+  body: |
+    <ul>
+      <li><strong>Der Standalone-Download ließ sich überhaupt nicht starten.</strong> Die
+        paketierte Version bringt ihr eigenes Python mit, doch der Starter darin war
+        der für die Installation aus dem Quellcode &mdash; er suchte nach
+        Python-Dateien, die eine paketierte Version nicht enthält, und brach in der
+        ersten Zeile ab. Das Paket liefert jetzt einen eigenen Starter mit, der einfach
+        die App ausführt und Ihren Browser öffnet, sobald der Server läuft.</li>
+      <li><strong>Die Desktop-Verknüpfung im Linux-Download startete
+        nichts.</strong> Sie wurde mit Platzhaltertext ausgeliefert, wo der Pfad zur
+        App stehen sollte. Jetzt gibt es ein <code>install-launcher.sh</code>
+        neben dem Starter &mdash; führen Sie es einmal aus, und die Verknüpfung wird
+        mit dem echten Pfad dorthin geschrieben, wo Sie die App entpackt haben.</li>
+      <li><strong>Der Start aus dem Quellcode installierte ungeprüfte
+        Abhängigkeiten.</strong> Fehlte Flask, holte das Startskript
+        Pakete direkt aus dem Internet ohne Prüfsummenkontrolle und setzte sich
+        dabei über die Paketverwaltung Ihres Systems hinweg. Jetzt übergibt es an
+        <code>install.py</code>, das die Lock-Datei mit Prüfsummen verwendet.</li>
+      <li><strong>Der Quellcode-Download enthielt Entwicklerdateien, die nicht
+        hineingehören.</strong> Die Liste der auszulassenden Dateien wurde von Hand gepflegt und
+        war veraltet, sodass Prüfberichte und übrig gebliebene Build-Ordner
+        mit der App verpackt wurden. Der Download wird jetzt aus der Liste der
+        Dateien gebaut, die tatsächlich im Projekt sind, und kann so nicht mehr abweichen.</li>
+      <li><strong>Zwei Bereiche der Einstellungen waren in der paketierten Version defekt.</strong> Die
+        Bereiche für Bibliotheksstatistik und API-Status suchten das Hauptprogramm unter
+        einem Namen, den es in einer paketierten Version nicht hat, sodass beide scheiterten.</li>
+      <li><strong>Mancher Text auf dem Bildschirm konnte nie übersetzt werden.</strong> Drei
+        neuere Teile der App &mdash; die Emulator-Einstellungen, die Start-Schaltfläche
+        und die „Läuft gerade“-Leiste &mdash; wurden bei der Suche nach übersetzbarem Text
+        übersprungen, und die Prüfung, die das erkennen sollte, sah auf dieselbe
+        unvollständige Liste. Die Suche erfasst jetzt automatisch jede Datei, und
+        deren Text wurde den Übersetzungen hinzugefügt.</li>
+      <li><strong>Das Neuerstellen der Übersetzungen konnte stillschweigend nichts tun.</strong>
+        Wurde einem seitenspezifischen Skript Text hinzugefügt, hielt die Neuerstellung das
+        für unnötig, sodass der neue Text nie in die Übersetzungsdatei
+        gelangte.</li>
+      <li><strong>Ein Workaround für Grafikkarten wurde bei allen angewendet.</strong>
+        Das Linux-Startskript erzwang eine Einstellung, die für eine bestimmte AMD-Karte gedacht war,
+        auf jedem Rechner, was den Bild-Upscaler auf anderer AMD-Hardware
+        hängen lassen konnte. Jetzt gilt sie nur, wenn diese Karte tatsächlich vorhanden ist, und
+        überschreibt nie einen Wert, den Sie selbst gesetzt haben.</li>
+      <li><strong>Das Release-Skript konnte die falsche Version veröffentlichen.</strong>
+        Ein übrig gebliebener Tag aus einem früheren Versuch wurde stillschweigend wiederverwendet, sodass der
+        Build aus einem älteren Stand erstellt werden konnte, während er Erfolg
+        meldete.</li>
+    </ul>
+- version: 3.23.4
+  date: '2026-09-02'
+  tags:
+  - type: fix
+    label: 'Neun Wege, auf denen Ihre Bibliothek Daten verlieren konnte, geschlossen'
+  body: |
+    <ul>
+      <li><strong>„Gescrapte Daten löschen“ löschte Ihre gesamte Bibliothek.</strong> Das
+        Bestätigungsfenster zählte nur die Spiele, die tatsächlich gescrapt worden waren,
+        doch die Aktion löschte dann trotzdem jedes Spiel &mdash; sie konnte also
+        ein Dutzend ankündigen und Tausende leeren. Mit eingeschalteten Bildern löschte sie außerdem
+        von Hand hochgeladene Cover und setzte selbst bearbeitete Titel
+        zurück, auch bei Spielen, die nie gescrapt worden waren. Jetzt tut sie
+        genau das, was im Fenster steht.</li>
+      <li><strong>3D-Cover hinterließen einen defekten Verweis.</strong> Das Löschen mit
+        Bildern entfernte das 3D-Cover von der Festplatte, doch die Datenbank verwies weiterhin
+        darauf, sodass die App nach einer Datei suchte, die nicht mehr da war.</li>
+      <li><strong>Der Schalter „Anhängen“ der Sammelbearbeitung ersetzte, statt hinzuzufügen.</strong>
+        Bei Perspektive und Dimension tat er genau das Gegenteil seiner Beschriftung
+        und überschrieb die vorhandenen Werte aller ausgewählten Spiele auf einmal, ohne
+        Rückgängig-Möglichkeit.</li>
+      <li><strong>Standalone-Versionen konnten mit einem Klick jeden Bildverweis
+        löschen.</strong> Im paketierten Download suchte die App Ihre Medien
+        am falschen Ort, hielt jedes einzelne Bild für fehlend, und
+        „Fehlende Medienverweise entfernen“ leerte dann die Einträge für Artwork, Screenshots,
+        Videos und Handbücher der gesamten Bibliothek. Die Sicherheitsprüfung, die
+        genau das verhindern soll, konnte es nicht erkennen. Nur die paketierte Version
+        war betroffen.</li>
+      <li><strong>Die Suche nach verwaisten Dateien konnte Artwork beim Eintreffen löschen.</strong>
+        Ein Cover, das während der Suche heruntergeladen wurde, konnte als verwaist
+        gelten und entfernt werden.</li>
+      <li><strong>Das Erstellen von Playlists verschob Ihre Archive ungefragt.</strong>
+        Beim Erstellen mehrerer M3U-Playlists wurden Ihre ursprünglichen Archivdateien auch dann verschoben,
+        wenn Sie diese Option ausgeschaltet hatten &mdash; und wenn Sie sie eingeschaltet hatten,
+        wurde für eine erfolgreiche Verschiebung ein Fehler gemeldet.</li>
+      <li><strong>Die Bildgrößenänderung blähte Ihren Medienordner auf.</strong> Sie
+        behandelte die kleinen Vorschaubilder, die sie selbst erzeugt, als neue Bilder zum Vergrößern,
+        zog sie auf volle Größe auf und erstellte davon wieder Vorschaubilder. Jeder
+        Durchlauf fügte weitere Dateien hinzu, Seiten lieferten stillschweigend Bilder in voller Größe statt
+        Vorschaubildern aus, und der KI-Upscaler lief über etwa dreimal so viele
+        Dateien wie vorgesehen.</li>
+      <li><strong>Das KI-Auffüllen überschrieb Details, die Sie korrigiert hatten.</strong> Bei einem
+        normalen Scrape konnte es Ihren eigenen Publisher, Entwickler, Ihr Genre, Ihre Altersfreigaben
+        und mehr ersetzen. Jetzt füllt es nur leere Felder; die Schaltfläche AI-Auffüllen, die Sie
+        selbst anklicken, bleibt unverändert.</li>
+      <li><strong>Wiederholtes Scrapen konnte einen guten Screenshot löschen.</strong> Von RAWG
+        gescrapte Spiele verwendeten dieselben Dateinamen erneut, sodass ein zweites Scrapen
+        einen gespeicherten Screenshot überschrieb und ihn dann als Duplikat entfernte, obwohl die
+        Bibliothek ihn noch aufführte.</li>
+    </ul>
+- version: 3.23.3
+  date: '2026-09-01'
+  tags:
+  - type: fix
+    label: 'Haushaltsrollen tun jetzt genau, was sie sagen, und ein deaktiviertes Konto ist wirklich gesperrt'
+  body: |
+    <ul>
+      <li><strong>Das Deaktivieren eines Kontos beendet jetzt dessen Sitzung.</strong> Ein ausgeschaltetes
+        Konto war zwar auf allen Seiten verborgen, doch wer bereits damit angemeldet war,
+        konnte bis zu eine Woche lang normal weiterarbeiten. Deaktivieren ist der einzige Weg, jemanden auszusperren,
+        ohne ihn zu löschen, daher wirkt es jetzt schon beim nächsten Klick.</li>
+      <li><strong>Nur-Lese-Konten können keine Spieldaten mehr ändern.</strong>
+        Drei „How Long To Beat“-Aktionen standen jeder angemeldeten Person offen,
+        auch reinen Betrachtern — so konnte ein Nur-Lese-Konto eine
+        Spielzeit überschreiben oder sie bei jedem Spiel der Bibliothek löschen. Jetzt brauchen sie
+        Bearbeitungsrechte, wie jede andere Aktion, die ein Spiel verändert.</li>
+      <li><strong>Der Trophäen-Tracker funktioniert wieder für alle.</strong>
+        Das Aktualisieren Ihrer eigenen Sammler-Trophäen erforderte Bearbeitungsrechte, die die
+        Rollen Spieler und Betrachter nicht haben — und es ist das Einzige, was
+        diese Trophäen vergibt. Diese Konten konnten nie eine erhalten, und die
+        Schaltfläche Aktualisieren zeigte nur einen Fehler. Es ist Ihr eigener Fortschritt, daher
+        braucht es jetzt überhaupt keine besonderen Rechte.</li>
+      <li><strong>Die PlayStation-Aktualisierung einer Person kann niemand anderes mehr
+        anhalten.</strong> Jedes angemeldete Konto konnte eine Aktualisierung, die jemand anderes
+        gestartet hatte, pausieren oder abbrechen und sehen, bei welchem Spiel diese Person
+        gerade war. Beides ist jetzt auf die Person beschränkt, die sie gestartet hat.</li>
+      <li><strong>Steam-Importe nutzen Ihr eigenes Konto, nicht das von dem, der seins zuerst
+        gespeichert hat.</strong> Der Bibliotheksimport las eine gemeinsame Kopie der Steam-Zugangsdaten
+        statt Ihrer eigenen, sodass er die Bibliothek eines anderen
+        abrufen konnte — während Ihre eigenen gespeicherten Daten zu fehlen schienen.</li>
+      <li><strong>Ein Admin-Passwort zu erraten ist wieder schwer.</strong> Die Grenze
+        für fehlgeschlagene Anmeldeversuche galt für alle im Netzwerk gemeinsam,
+        sodass jeder mit eigenem Konto sie durch eine Anmeldung zurücksetzen und unbegrenzt
+        weiterraten konnte. Die Grenze gilt jetzt pro Konto.</li>
+      <li><strong>Fehler der App erreichen jetzt die Seite, statt zu verschwinden.
+        </strong> Wurde eine Aktion abgelehnt, antworteten 115 von ihnen in einer Form, die
+        die Seite nicht lesen konnte, sodass es aussah, als hätte die Aktion funktioniert. Jetzt
+        melden sie die Ablehnung korrekt, und Sie sehen die echte Meldung.</li>
+    </ul>
+- version: 3.23.2
+  date: '2026-08-06'
+  tags:
+  - type: fix
+    label: 'Die Scraper-Einstellungsseiten laden schneller und zeigen nie einen veralteten API-Schlüssel'
+  body: |
+    <ul>
+      <li><strong>Die Seiten Einstellungen und Scraper-Konfiguration lesen die
+        Scraper-Einstellungsdatei nicht mehr bei jeder Anfrage neu ein.</strong> Vier Stellen
+        öffneten und verarbeiteten sie jedes Mal neu von der Festplatte, wenn eine Seite oder Prüfung lief,
+        obwohl es bereits einen gemeinsamen, zwischengespeicherten Lesezugriff gab. Jetzt nutzen alle
+        ihn, sodass diese Seiten pro Aufruf weniger Arbeit haben.</li>
+      <li><strong>Speichern wirkt weiterhin sofort.</strong> Ein Zwischenspeicher, der
+        nach einer festen Zeit vergisst, hätte Ihnen nach dem Speichern bis zu einer halben
+        Minute lang die alten Werte zeigen können. Jedes Speichern leert jetzt beim Schreiben den Zwischenspeicher,
+        sodass Sie sehen, was Sie gerade gespeichert haben.</li>
+      <li><strong>Ihre echten API-Schlüssel können nicht mehr durch ihren eigenen
+        maskierten Anzeigewert ersetzt werden.</strong> Einstellungsseiten zeigen gespeicherte Schlüssel als
+        <code>***1234</code> statt im Klartext. Weil die Seite
+        dieselbe Kopie der Einstellungen erhielt, die auch die Scraper nutzen, hätte diese Maskierung
+        die echten Schlüssel im Speicher überschreiben können, sodass sich die Scraper
+        bis zum Ablauf des Zwischenspeichers mit Sternchen anmeldeten.</li>
+      <li><strong>Standalone-Versionen suchen die Scraper-Einstellungen jetzt am richtigen
+        Ort.</strong> Die Scraper ermittelten den Speicherort der Datei anders
+        als die Seiten, die sie speichern. Bei einer normalen Installation landeten beide bei derselben
+        Datei; in einer Standalone-Version (per Doppelklick) wäre das nicht so gewesen,
+        sodass gespeicherte API-Schlüssel an einem Ort hätten landen können, an dem die Scraper nie
+        nachsahen.</li>
+    </ul>
+- version: 3.23.1
+  date: '2026-08-06'
+  tags:
+  - type: fix
+    label: 'Der in den Einstellungen gespeicherte Server-Port ist jetzt der Port, den der Server nutzt'
+  body: |
+    <ul>
+      <li><strong>Das Speichern eines Server-Ports verlegt den Server jetzt tatsächlich.</strong>
+        Die Einstellungen nahmen einen Port an, prüften ihn, speicherten ihn und meldeten, dass zum Übernehmen
+        ein Neustart nötig sei &mdash; und dann startete der Server trotzdem auf 5000.
+        Nichts las den Wert je wieder aus. Jetzt ist er Teil des Startvorgangs,
+        sodass ein Neustart RetroDB wirklich auf den gewählten Port verlegt. Was in der
+        Umgebung gesetzt ist, hat weiterhin Vorrang, sodass ein Starter oder Container, der
+        einen Port zuweist, nicht betroffen ist.</li>
+      <li><strong>Zwei Einstellungen, die nie etwas bewirkt haben, wurden entfernt
+        statt repariert.</strong> „Server-Host“ und „Debug-Modus“ wurden
+        gespeichert und machten dasselbe falsche Versprechen. Den Debug-Modus über
+        ein Webformular einzuschalten, hätte im Browser eine interaktive Python-Konsole
+        offengelegt, und die Bindungsadresse bestimmt, welche Rechner RetroDB
+        überhaupt erreichen können &mdash; beides gehört nicht hinter ein Einstellungsformular. Beide bleiben
+        über die Umgebung einstellbar, wo sie schon immer lagen. Falls Ihre
+        Einstellungsdatei sie noch enthält, werden sie beim Laden stillschweigend verworfen;
+        Sie müssen nichts tun.</li>
+      <li><strong>Nichts behauptet mehr, ein Neustart werde es übernehmen, wenn ein Neustart
+        es nicht übernimmt.</strong> Das war der eigentliche Fehler &mdash; eine tote Einstellung ist
+        unordentlich, aber ein falsches Versprechen kostet einen ganzen Nachmittag.</li>
+    </ul>
+- version: 3.23.0
+  date: '2026-08-06'
+  tags:
+  - type: enhancement
+    label: 'RetroDB auf einem Port starten, den jemand anderes wählt'
+  body: |
+    <ul>
+      <li><strong>RetroDB liest jetzt eine Einstellung <code>PORT</code> aus seiner
+        Umgebung.</strong> Wenn Sie RetroDB aus einem anderen Werkzeug starten &mdash; einem
+        Dashboard, einem Container, einer Heimserver-Oberfläche &mdash;, kann dieses Werkzeug
+        RetroDB jetzt den gewünschten Port mitgeben, ohne dass jemand eine Datei bearbeitet.
+        Setzen Sie <code>PORT</code>, und RetroDB lauscht dort; lassen Sie es weg, und
+        es ändert sich gar nichts. Das bestehende <code>RETRODB_PORT</code> funktioniert weiterhin
+        genau wie bisher, und <code>PORT</code> hat Vorrang, wenn beide gesetzt sind.</li>
+      <li><strong>Eine ungültige Portnummer wird jetzt gemeldet, statt zu raten.</strong>
+        Bisher erzeugte ein unlesbarer Port eine Wand aus Python-Fehlertext, und
+        ein Port außerhalb des nutzbaren Bereichs fiel erst auf, wenn der Server
+        nicht startete. RetroDB hält jetzt sofort an, mit einer Zeile, die den
+        Wert nennt, den es nicht verwenden konnte. Es startet nie stillschweigend auf einem anderen Port
+        als dem verlangten &mdash; stillschweigend verlegt zu werden ist schlimmer, als
+        ein Nein zu hören.</li>
+      <li><strong>Das Startbanner und der Browser-Tab folgen dem tatsächlichen
+        Port.</strong> Die Adresse, die beim Start von RetroDB ausgegeben wird, und die Seite, die es
+        für Sie öffnet, nannten früher immer 5000, egal welcher Port tatsächlich
+        verwendet wurde.</li>
+    </ul>
 - version: 3.22.1
   date: '2026-07-31'
   tags:

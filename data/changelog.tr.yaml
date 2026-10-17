@@ -1,3 +1,716 @@
+- version: 3.26.0
+  date: '2026-10-17'
+  tags:
+  - type: feature
+    label: Artık her sayfa içinde bulunduğu pencereye uyuyor
+  - type: enhancement
+    label: Oyun sayfası diğer adları kendi kartında gösteriyor ve bir Kılavuz düğmesi var
+  body: |
+    <ul>
+      <li><strong>Artık her sayfa içinde bulunduğu pencereye uyuyor.</strong> Kartlı
+        sayfalar (Sistemler, Müze, Etiketler, Listeler, ROM Araçları, kupalar ve
+        başarımlar) bir kart daha tam olarak sığdığında bir sütun ekliyor; satır
+        başına en fazla dört sütun. Tablolar, araçlar ve ayrıntı sayfaları biraz
+        genişliyor, ancak daha geniş olmanın yalnızca sütunlarını birbirinden
+        uzaklaştıracağı yerde duruyor. Ayarlar kutularını okunabilir bir
+        genişlikte tutuyor.</li>
+      <li><strong>Yardım ve değişiklik günlüğü rahat bir satır uzunluğunu
+        koruyor.</strong> Geniş bir pencerede Yardım bölüm bağlantıları metnin
+        yanındaki bir sütuna geçiyor; dar bir pencerede ise telefon ekranının
+        büyük kısmını kaplayan bir blok yerine kaydırabileceğiniz tek bir satırda
+        duruyor.</li>
+      <li><strong>Oyun sayfası:</strong> geniş bir pencerede ekran görüntüleri
+        üstte boydan boya uzanıyor; altında, kapakla aynı hizada video ve yeni
+        bir <strong>Diğer adları</strong> kartı yan yana duruyor. Diğer adlar
+        başlığın altında soluk bir metin olarak görünüyordu; artık okunması
+        kolay bir kartta yer alıyor. <strong>Kılavuz</strong>, Oyna düğmesinin
+        yanında bir düğme oldu ve Kazıma Geçmişi kapalı olarak açılıyor.</li>
+      <li>PSN Kupaları artık her zaman üç sütun yerine pencereye göre bir ile
+        dört arasında sütun gösteriyor.</li>
+      <li>Birkaç sayfa artık telefonda yana doğru kaymıyor: Kupalar,
+        Koleksiyoncu Kupaları, RetroAchievements sistem sayfası, Yardım, Ayarlar,
+        Analitik, Oyun İçe Aktarmaları ile başarım ve kupa ayrıntı sayfaları.
+        Geniş tablolar orada artık kendi içlerinde kayıyor.</li>
+    </ul>
+- version: 3.25.0
+  date: '2026-10-17'
+  tags:
+  - type: feature
+    label: Kütüphane, sistem ve oyun sayfaları artık içinde bulundukları pencereye uyuyor
+  body: |
+    <ul>
+      <li><strong>Sayfalar geniş bir pencereyi işe yaradığında, yalnızca o zaman kullanıyor.</strong>
+        Kütüphane ve her sistem sayfası, bir oyun kartı daha tam olarak
+        sığdığında bir sütun ekliyor; satır başına en fazla dört. Telefon bir,
+        yarım ekran pencere iki ya da üç, geniş bir pencere dört sütun gösteriyor.
+        Sayfalar önceden sabit bir genişlikte durup büyük bir pencerenin çoğunu
+        boş bırakıyordu.</li>
+      <li><strong>Oyun sayfası, kapağını ve ayrıntılarını ekran görüntülerinin ve
+        videonun yanına koyuyor</strong>; ikisi yan yana sığmıyorsa alt alta
+        diziyor. Açıklama rahat bir satır uzunluğunu koruyor.</li>
+      <li><strong>Oyna düğmesi her kartın sağ üst köşesine taşındı;</strong>
+        daha küçük ve ortalanmış. Artık oyunun ROM dosyasının hâlâ yerinde
+        olduğunu ve sisteminin kabul ettiği bir türde olduğunu da denetliyor;
+        böylece yalnızca basıldığında oyunu başlatacağı yerde görünüyor. Oyunları
+        toplu olarak seçerken gizleniyor.</li>
+      <li>Başa dön düğmesi ve ilerleme açılır pencereleri, pencerenin en uç
+        kenarları yerine sayfa içeriğinin hemen yanında duruyor.</li>
+      <li>Oyun sayfası artık telefonda yana doğru kaymıyor.</li>
+    </ul>
+- version: 3.24.2
+  date: '2026-10-17'
+  tags:
+  - type: ui
+    label: '"Pseudo" test dili yalnızca yöneticilere sunuluyor'
+  body: |
+    <ul>
+      <li><strong>"Pseudo" artık herkesin dil listesinde görünmüyor.</strong>
+        Her sözcüğü köşeli parantez ve aksanlarla gösteren bir geliştirici
+        aracıdır, bu yüzden artık yalnızca yöneticilere sunuluyor. Onu seçmiş
+        olan diğer herkes uygulamayı İngilizce görüyor ve Ayarlar&rsquo;da
+        İngilizce seçili oluyor.</li>
+    </ul>
+- version: 3.24.1
+  date: '2026-10-17'
+  tags:
+  - type: fix
+    label: Windows indirmesi yeniden kuruluyor ve yeniden boyutlandırmadan sonra hata yağmuru yok
+  body: |
+    <ul>
+      <li><strong>Normal Windows indirmesi kurulamıyordu.</strong>
+        Kurulum programı "Core dependencies failed to install" iletisinde
+        duruyordu, çünkü kilitli paket listesi yalnızca Windows&rsquo;un
+        ihtiyaç duyduğu bir paketi dışarıda bırakıyordu. Liste artık her
+        platformu kapsıyor. Python gerektirmeyen Windows indirmesi bundan
+        etkilenmemişti.</li>
+      <li><strong>Sağ üst köşede sürekli hata iletileri beliriyordu;</strong>
+        bu, Cyberpunk temasında tarayıcı penceresi genişletildikten sonra,
+        örneğin ekranı kaplayacak biçimde büyütüldüğünde oluyordu. Hareketli
+        arka plan artık sorunsuzca yeniden boyutlanıyor.</li>
+    </ul>
+- version: 3.24.0
+  date: '2026-10-17'
+  tags:
+  - type: feature
+    label: Bir oyunu doğrudan Kütüphane ve sistem sayfalarından oynayın
+  body: |
+    <ul>
+      <li><strong>Her oyun kartında bir ▶ Oyna düğmesi.</strong> Kütüphane
+        sayfasında ve her sistem sayfasında kutu görselinin sol alt köşesinde
+        görünüyor. Ona basın, oyun kendi emülatöründe başlasın; önce oyunun
+        sayfasını açmak yerine listede kalırsınız.</li>
+      <li>Düğme yalnızca basıldığında çalışabileceği yerde görünüyor: hesabınızın
+        oyun başlatma izni olmalı, oyunun emülatörü etkin ve kurulu olmalı,
+        RetroArch için de çekirdeği bulunmalı. Çalışan bir emülatörü olmayan
+        sistemlerdeki oyunlarda düğme görünmüyor.</li>
+      <li>Başlatma yine de başarısız olursa, örneğin ROM dosyası taşındığı için,
+        nedeni bir iletide görünüyor ve sayfa olduğu gibi kalıyor.</li>
+    </ul>
+- version: 3.23.21
+  date: '2026-10-17'
+  tags:
+  - type: ui
+    label: Daha kısa bir kenar çubuğu ve her platform için tek bir Başarımlar sayfası
+  body: |
+    <ul>
+      <li><strong>Beş bağlantının yerini tek bir "Başarımlar" bağlantısı aldı.</strong>
+        RetroAchievements, RPCS3, PSN, Steam ve Xbox artık tek bir sayfada
+        sekmeler; bağlantı en son kullandığınız sekmeyi yeniden açıyor.
+        RetroAchievements oyununuz yoksa sizi Kontrol Paneli&rsquo;ne geri
+        göndermek yerine RPCS3 sekmesinde açılıyor.</li>
+      <li><strong>ROM Raporları artık ROM Araçları içinde;</strong> diğer
+        araçların yanında bir sekme ve ROM Araçları sayfasında bir kart
+        olarak.</li>
+      <li><strong>Artık hiçbir iki kenar çubuğu bağlantısı aynı simgeyi
+        paylaşmıyor:</strong> Kontrol Paneli artık 🏠, Günlük Görüntüleyici 🧾.
+        Kenar çubuğunda 21 yerine 16 bağlantı var.</li>
+      <li>ROM Araçları ayarlar sayfasındaki araç sekmeleri her zaman
+        İngilizceydi; artık dilinizi izliyor.</li>
+    </ul>
+- version: 3.23.20
+  date: '2026-10-17'
+  tags:
+  - type: fix
+    label: How Long To Beat aramaları yeniden çalışıyor
+  body: |
+    <ul>
+      <li><strong>Her How Long To Beat araması oyunun bulunamadığını
+        söylüyordu.</strong> Site aramasını yeni bir adrese taşıdı, bu yüzden
+        RetroDB&rsquo;nin istekleri reddediliyordu; sorun temmuz sonu ile eylül
+        sonu arasında başladı. RetroDB artık yeni adresi kullanıyor ve sitenin
+        yok saymaya başladığı platform ve yıl filtrelerini sitenin yeni
+        biçiminde gönderiyor. Tek oyunluk aramalar da ROM Araçları&rsquo;ndaki
+        toplu arama da yeniden çalışıyor.</li>
+    </ul>
+- version: 3.23.19
+  date: '2026-10-17'
+  tags:
+  - type: ui
+    label: RetroDB artık korsanlığı onaylamadığını açıkça söylüyor
+  - type: fix
+    label: Hakkında penceresi yeniden tam boyutta açılıyor
+  body: |
+    <ul>
+      <li><strong>Uygulamada artık bir korsanlık karşıtı uyarı var.</strong>
+        Hakkında penceresinde ve Ayarlar&rsquo;da ROM Kütüphanesi Yolu&rsquo;nun
+        altında, her dilde görünüyor. RetroDB&rsquo;nin ROM dosyası dağıtmadığını
+        ya da barındırmadığını, yalnızca sahip olduğunuz disk ve kartuşlardan
+        kopyalanmış oyunları kullanmanız gerektiğini ve RetroDB&rsquo;nin hiçbir
+        konsol üreticisi, yayıncı ya da oyun veritabanıyla bağlantısı olmadığını
+        söylüyor. Metin, RetroDB web sitesi ve tanıtım videosuyla aynı.</li>
+      <li><strong>Hakkında penceresi kenar çubuğuna sıkışıyordu.</strong>
+        Artık ekranın ortasında normal boyutunda açılıyor ve küçük bir ekranda
+        başlığını ve kapatma düğmesini gizlemek yerine kayıyor.</li>
+    </ul>
+- version: 3.23.18
+  date: '2026-10-15'
+  tags:
+  - type: security
+    label: RetroDB yalnızca gerçek ROM dosya türlerini başlatıyor ve bunlara yeniden adlandırıyor
+  body: |
+    <ul>
+      <li><strong>Bir oyun, ROM olmayan bir dosyayla başlatılabiliyordu.</strong>
+        ROM yeniden adlandırma her adı kabul ediyordu; böylece
+        <code>crash.bin</code>, <code>crash.cfg</code> olabiliyor ve bu dosya
+        emülatöre veriliyordu. Başlatma artık dosya türünü o sistem klasörünün
+        <code>systeminfo.txt</code> dosyasındaki listeyle, yani kütüphane
+        taramasının kullandığı listeyle karşılaştırıyor; yeniden adlandırma da o
+        listede olmayan bir türü reddediyor. Bir sistem klasöründe liste yoksa
+        oyunları başlatılmıyor ve ileti eksik dosyanın adını veriyor.</li>
+    </ul>
+- version: 3.23.17
+  date: '2026-10-15'
+  tags:
+  - type: security
+    label: Bir oyunun başlatma parametrelerini yalnızca bir yönetici değiştirebilir
+  - type: fix
+    label: Birden çok sözcüklü ya da fazladan tırnak içeren başlatma parametreleri artık çalışıyor
+  - type: fix
+    label: RetroDB artık biten her başlatmayı bellekte tutmuyor
+  body: |
+    <ul>
+      <li><strong>Bir düzenleyici, başka kod çalıştıran başlatma parametreleri
+        ekleyebiliyordu.</strong> Bir oyunun <em>Özel başlatma parametreleri</em>
+        doğrudan emülatöre gider ve RetroArch ile bilgisayardaki herhangi bir
+        program dosyasını yükleyebiliyordu. Bunları değiştirmek artık yönetici
+        rolü gerektiriyor ve alan diğer herkesten gizleniyor.</li>
+      <li><strong>Birden çok sözcüklü başlatma parametreleri emülatöre tek
+        parça olarak ulaşıyordu.</strong> <code>--a --b</code> artık iki ayrı
+        parametre olarak ulaşıyor ve boş bir değer hiçbir şey eklemiyor. Eksik
+        bir kapanış tırnağı eskiden o oyunun her başlatmasını bir sunucu
+        hatasıyla bozuyordu; artık düzeltilecek alanın adını veren bir ileti
+        gösteriyor. <code>{disc_paths}</code> belirteci kaldırıldı: zaten her
+        zaman boştu.</li>
+      <li><strong>Biten başlatmalar RetroDB yeniden başlayana kadar bellekte
+        birikiyordu.</strong> Bir saatten daha önce biten bir başlatma artık
+        temizleniyor.</li>
+    </ul>
+- version: 3.23.16
+  date: '2026-10-15'
+  tags:
+  - type: fix
+    label: Ayarlar&rsquo;da dil seçmek yeniden çalışıyor
+  body: |
+    <ul>
+      <li><strong>Ayarlar &rarr; Kütüphane &rarr; Görüntü altında bir dil
+        seçmek hiçbir şey yapmıyordu.</strong> Bunun yerine bir hata gösteriyor
+        ve sayfa eski dilinde kalıyordu. Bu sorun 3.23.8 sürümünde başladı. Dil
+        seçmek artık onu kaydediyor ve sayfayı o dilde yeniden yüklüyor.</li>
+    </ul>
+- version: 3.23.15
+  date: '2026-10-15'
+  tags:
+  - type: fix
+    label: Kupa ve platform simgeleri indirmeye geri döndü
+  body: |
+    <ul>
+      <li><strong>İndirmede RetroDB&rsquo;nin kupa ve platform simgeleri
+        eksikti.</strong> RetroAchievements içeren her oyun kartında rozetin
+        olması gereken yerde bozuk bir resim görünüyordu; kupa seviyeleri ile
+        PSN, Steam, Xbox ve RPCS3 logoları da eksikti. Artık her indirmede
+        bulunuyorlar.</li>
+    </ul>
+- version: 3.23.14
+  date: '2026-10-10'
+  tags:
+  - type: security
+    label: Yayımlanmış güvenlik düzeltmeleri için iki paket kütüphanesi güncellendi
+  body: |
+    <ul>
+      <li><strong>urllib3 ve Werkzeug&rsquo;de bilinen güvenlik sorunları
+        vardı.</strong> RetroDB artık bunları düzelten sürümler olan urllib3
+        2.8.0 ve Werkzeug 3.1.9 ile geliyor. Kaynaktan kurulum, bunları
+        <code>install.py</code> dosyasını yeniden çalıştırarak alır; bu dosya
+        <code>requirements.lock</code> üzerinden kurulum yapar.</li>
+    </ul>
+- version: 3.23.13
+  date: '2026-09-26'
+  tags:
+  - type: fix
+    label: Klasör yolu olarak saklanan medya artık eksik olarak bildirilmiyor
+  body: |
+    <ul>
+      <li><strong>Bağımsız sürümde "eksik medya başvurularını temizle", gerçekte
+        orada olan medyayı silebiliyordu.</strong> Bu, veritabanı medyayı yalın
+        bir dosya adı yerine <code>images/boxart/…</code> gibi bir klasör yolu
+        olarak sakladığında oluyordu. RetroDB artık onu doğru klasörde
+        arıyor.</li>
+    </ul>
+- version: 3.23.12
+  date: '2026-09-26'
+  tags:
+  - type: fix
+    label: Kontrol paneli süren bir toplu kazımayı gösteriyor, ayrıca dört küçük düzeltme
+  body: |
+    <ul>
+      <li><strong>Kontrol panelindeki kazıma ilerleme kartı hiç görünmüyordu.</strong>
+        Artık bir toplu kazıma sürerken görünüyor ve duraklatıldığında bunu
+        belirtiyor.</li>
+      <li><strong>Giriş sayfasında tarayıcı konsolunda artık hata
+        yok.</strong> Sayfa, kimse giriş yapmadan arka plan işlerini denetlemeyi
+        bıraktı.</li>
+      <li><strong>Kurulum sihirbazı, kaydetme başarısız olduğunda artık
+        "Kurulum tamamlandı!" demiyor.</strong> Artık ayarların
+        kaydedilemediğini söylüyor.</li>
+      <li><strong>Aynı saniyede başlatılan iki toplu kazıma artık aynı kimliği
+        paylaşmıyor</strong>; böylece iptal gibi kuyruk işlemleri doğru kazımaya
+        uygulanıyor.</li>
+    </ul>
+- version: 3.23.11
+  date: '2026-09-26'
+  tags:
+  - type: ui
+    label: Bağış düğmeleri artık neyi desteklediklerini söylüyor
+  body: |
+    <ul>
+      <li><strong>Daha açık bağış ifadeleri.</strong> Üst kısımdaki düğmeler
+        artık "Destekle" ve "Patreon&rsquo;da Destekle" yazıyor. README, her
+        sürümün ücretsiz olduğunu ve bağışların, RetroDB&rsquo;nin başlatabildiği
+        emülatörleri ve çekirdekleri değil, RetroDB&rsquo;nin kendisini
+        desteklediğini söylüyor.</li>
+    </ul>
+- version: 3.23.10
+  date: '2026-09-26'
+  tags:
+  - type: fix
+    label: ROM Araçları sayfaları kayıtlı ayarlarınızı izliyor; Günlükler ve ROM Araçları sayfaları yeniden çalışıyor
+  body: |
+    <ul>
+      <li><strong>Günlükler sayfası ve bazı ROM Araçları sayfaları bozuktu.</strong>
+        Bu sayfalardaki bir betik yüklenirken başarısız oluyordu; bu yüzden
+        günlük görüntüleyici ve ortak ROM Araçları yardımcıları hiç
+        başlamıyordu. Artık düzgün yükleniyorlar.</li>
+      <li><strong>ROM Araçları ayarları artık bir işe yarıyor.</strong> Kopya
+        Bulucu ve CHD Dönüştürücü, seçenekleri ROM Araçları ayarlar sayfasından
+        alınmış olarak açılıyor ve bunları yine tek bir çalıştırma için
+        değiştirebiliyorsunuz.</li>
+      <li><strong>CHD Dönüştürücü&rsquo;nün anahtarları yok sayılıyordu.</strong>
+        Sayfada "Başarıdan sonra orijinal dosyaları sil" seçeneğini kapatmak,
+        kayıtlı ayarınız silmeyi söylüyorsa silmeyi durdurmuyordu. Artık sayfadaki
+        anahtarlar karar veriyor.</li>
+      <li><strong>Geçici Yol ayarı kullanılıyor.</strong> M3U oynatma listeleri
+        oluşturulurken hazırlanan dosyalar artık onun içine gidiyor.</li>
+    </ul>
+- version: 3.23.9
+  date: '2026-09-26'
+  tags:
+  - type: security
+    label: Kazıyıcı günlük dosyaları artık parola ve belirteç saklamıyor; giriş denemeleri yeniden sınırlanıyor
+  - type: fix
+    label: Ayarları kaydetmek artık ayarlarınızı silmiyor ve kullanıcı silmek çalışıyor
+  body: |
+    <ul>
+      <li><strong>Günlük dosyaları gizli bilgileri düz metin olarak tutuyordu.</strong>
+        Kazıyıcı günlük dosyalarının oturum belirteçlerini ve API anahtarlarını
+        gizlemesi gerekiyordu, ancak gizleme adımı hiç çalışmadı, bu yüzden
+        bunlar eksiksiz yazılıyordu. Artık gizleniyorlar. Eski günlük dosyaları
+        bunları hâlâ içeriyor; kurulumunuzu paylaşıyorsanız
+        <code>logs/</code> içindeki eski dosyaları silin.</li>
+      <li><strong>Giriş denemesi sınırları uygulanmıyordu.</strong> Tekrarlanan
+        girişler ve ağır işlemler (taramalar, kazımalar, içe aktarmalar)
+        için sınırlar ayarlanmıştı ama hiç açılmamıştı. Artık çalışıyorlar ve
+        engellenen bir istek açık bir "çok fazla istek" iletisi alıyor.</li>
+      <li><strong>Hasarlı bir ayarlar dosyası silinebiliyordu.</strong>
+        <code>data/settings.json</code> okunamazsa, bir sonraki kayıt onu
+        varsayılanlarla değiştiriyordu. RetroDB artık kaydetmeden önce hasarlı
+        dosyayı <code>settings.json.corrupt-&lt;time&gt;</code> olarak saklıyor.
+        Dosya yeniden düzgün okunursa kayıt bunun yerine reddediliyor.</li>
+      <li><strong>Motor adlandırma satırı başka ayarları kaybediyordu.</strong>
+        Adlandırma ayarlarında Motor satırına etiket eklemek başarısız oluyor ve
+        onunla birlikte kaydedilen artikel ve bölge ayarlarını da atıyordu.
+        Artık düzgün kaydediyor.</li>
+      <li><strong>Kullanıcı silmek başarısız oluyordu.</strong> Etiketleri,
+        listeleri, istek listesi öğeleri ya da PSN verisi olan bir kullanıcı
+        silinemiyordu. Silme artık kullanıcıyı ve ona ait her şeyi
+        kaldırıyor.</li>
+      <li><strong>İki kazıma aynı anda çalışabiliyordu.</strong> Kuyrukta
+        çalışan bir toplu kazımanın yerini değiştirmek ya da onu taşımak, tek bir
+        ilerleme sayacını paylaşan iki kazıma başlatıyordu. Artık yalnızca biri
+        çalışıyor.</li>
+      <li><strong>Toplu kazıma ilerlemesi bir hata gibi görünebiliyordu.</strong>
+        İlk başarısından önce bir toplu kazıma, durumunu bazı ekranların hata
+        olarak okuduğu bir biçimde bildiriyordu. Bu düzeltildi.</li>
+      <li><strong>Giriş yapmak artık sizi istediğiniz sayfaya döndürüyor.</strong>
+        Eskiden her zaman kontrol paneline gidiyordu.</li>
+      <li><strong>Yönetici dosya işlemleri klasörlerinizin içinde kalıyor.</strong>
+        Görüntü yeniden boyutlandırma aracı ve ROM yeniden adlandırma işlemleri
+        artık medya klasörünüzün ya da ROM klasörünüzün dışındaki her şeyi
+        reddediyor.</li>
+      <li><strong>Eski PSN ve Xbox oturum dosyaları hesabınıza
+        taşınıyor.</strong> Geride kalmış bir <code>data/psn_tokens.json</code>
+        ya da <code>data/xbox_tokens.json</code> hesabınıza yükleniyor ve adı
+        <code>.migrated-015</code> ile bitecek şekilde değiştiriliyor. Bu dosya
+        belirteci hâlâ tutuyor, bu yüzden oturum açmanın çalıştığını
+        denetledikten sonra onu silin.</li>
+      <li><strong>Sunucudan daha açık hata iletileri.</strong> Hatalı bir istek
+        artık "Dahili bir hata oluştu" yerine düzgün bir hata iletisiyle
+        yanıtlanıyor.</li>
+    </ul>
+- version: 3.23.8
+  date: '2026-09-25'
+  tags:
+  - type: fix
+    label: CLZ içe aktarma yeniden çalışıyor, liste kapakları görünüyor ve birkaç sayfa artık kesme işaretinde bozulmuyor
+  - type: security
+    label: Kazınan adlar ve dosya yolları artık sayfa düğmelerinin dışına taşamıyor
+  body: |
+    <ul>
+      <li><strong>CLZ içe aktarma hiçbir şey yapmıyordu.</strong> Bir CLZ PDF
+        dosyası yüklemek onu sunucuda olmayan bir adrese gönderiyordu, bu yüzden
+        her yükleme "Parse failed" hatasıyla başarısız oluyordu. Artık
+        ayrıştırıcıya ulaşıyor.</li>
+      <li><strong>Bir liste sayfasındaki kapakların hepsi eksikti.</strong> Liste
+        sayfası her kapağı yanlış adresten istiyordu ve Sistem sütunu her zaman
+        boştu. Artık ikisi de görünüyor. Sayfanın "oyun ekle" aramasındaki kapak
+        resimleri de düzeltildi.</li>
+      <li><strong>Düğmeler kesme işaretli adlarda bozuluyordu.</strong> Bir
+        listeden "Assassin's Creed" oyununu kaldırmak, bir ekran görüntüsünü
+        silmek, bir kapağı yakınlaştırmak ya da bir tür etiketini kaldırmak, ad
+        kesme işareti içerdiğinde sessizce hiçbir şey yapmayabiliyordu. Aynı
+        hata, özel olarak hazırlanmış bir kazınan adın sayfada kod
+        çalıştırmasına izin veriyordu. Adlar artık bu düğmelere kod olarak
+        yanlış okunamayacak bir şekilde ulaşıyor.</li>
+      <li><strong>Görüntü ve bağlantı adresleri artık her yerde kaçışlanıyor.</strong>
+        Birkaç sayfa, resim adreslerini kazınan dosya adlarından kaçışlamadan
+        oluşturuyordu ve beş sayfa kaçışlama yardımcısının kendi zayıf bir
+        kopyasını taşıyordu. Artık hepsi ortak olanı kullanıyor.</li>
+      <li><strong>Ayarlar sayfası boş açılabiliyordu.</strong> En son
+        kullandığınız sekmenin adı bir güncellemeyle değiştiyse, Ayarlar hiçbir
+        panel görünmeden açılıyordu. Artık var olmayan bir sekmeyi yok sayıyor.
+        <code>/settings#account</code> gibi bağlantılar o sekmeyi yeniden
+        açıyor.</li>
+      <li><strong>Temanız artık sizi diğer cihazlara da izliyor.</strong>
+        Seçtiğiniz tema hesabınıza kaydediliyor. Hiç tema belirtilmemiş bir
+        tarayıcı, varsayılan yerine kayıtlı temanızı kullanıyor.</li>
+      <li><strong>İş ilerleme açılır pencereleri doğru simgeyi gösteriyor.</strong>
+        Duraklatılmış, bitmiş ve sıradaki işler aynı "çalışıyor" simgesini
+        gösteriyordu. Artık her durumun, her temada kendi simgesi var.</li>
+      <li><strong>Klavye kısayolu listesi artık çevrilebiliyor.</strong>
+        Etiketleri çeviri araçlarına görünmüyordu, bu yüzden her dilde
+        İngilizce kalıyordu.</li>
+    </ul>
+- version: 3.23.6
+  date: '2026-09-03'
+  tags:
+  - type: fix
+    label: Yaş derecelendirmeleri sık sık yanlıştı ve kazınan oyunlar ayrıntılarını kaybedebiliyordu
+  body: |
+    <ul>
+      <li><strong>Yaş derecelendirmeleri sık sık yanlıştı ve hata yayılıyordu.</strong>
+        Bir derecelendirme TheGamesDB&rsquo;den geldiğinde uygulama onu düzgün
+        okumak yerine derecelendirme kodunu metnin herhangi bir yerinde
+        arıyordu &mdash; bu yüzden "T - Teen", "M - Mature 17+", "AO - Adults
+        Only 18+" ve "RP - Rating Pending" hep yanlış derecelendirme olarak
+        kaydediliyordu ve Mature bir oyun herkese uygun olarak kaydedilebiliyordu.
+        Daha kötüsü, bu yanlış derecelendirme daha sonra diğer sekiz
+        derecelendirme sistemini doldurmak için kullanılıyordu; böylece tek bir
+        hatalı okuma hepsine yayılıyordu. Derecelendirmeler artık metnin
+        başındaki koddan okunuyor.</li>
+      <li><strong>Dönüştürülen derecelendirmeler fazla hoşgörülü çıkıyordu.</strong>
+        Eksik bir derecelendirmeyi zaten sahip olduğunuz birinden doldururken
+        uygulama, gerçekte başladığınız derecelendirme yerine biraz önce kendi
+        hesapladığı bir derecelendirmeyi kullanabiliyordu. Her adım biraz
+        katılık kaybettiriyordu. Artık her zaman oyunun gerçekten sahip olduğu
+        derecelendirmelerden dönüştürüyor.</li>
+      <li><strong>Tam Yeniden Kazıma elle seçilmiş Bölge ve Kayıt Türü&rsquo;nü siliyordu.</strong>
+        Bunların hiçbiri bir kazıyıcıdan gelmez &mdash; uygulama bunları kendisi
+        çıkarır &mdash; bu yüzden Tam Yeniden Kazıma, özenle seçtiğiniz "Japan"
+        değerini varsayılan "USA" ile değiştiriyordu. Bir kaynak gerçekten yeni
+        bir değer sağlamadıkça değerleriniz artık korunuyor.</li>
+      <li><strong>Bir kazıyıcı yanlış oyunu kabul edebiliyordu.</strong>
+        ScreenScraper sonuçları normalde kullanılmadan önce bir eşleşme puanına
+        göre denetlenir, ancak tam olarak tek bir sonuç döndüren bir arama bu
+        denetimi tamamen atlıyordu. Artık her sonuç puanlanıyor.</li>
+      <li><strong>Bir oyun, tek bir eksik alan yüzünden kazınan tüm ayrıntılarını
+        kaybedebiliyordu.</strong> IGDB ya da ScreenScraper tek bir alanı
+        beklenmedik bir şekilde boş bırakırsa, güncellemenin tamamı atılıyordu
+        &mdash; yayıncı, geliştirici, görseller, hepsi. Bu durumlar artık ele
+        alınıyor ve ayrıntıların geri kalanı korunuyor.</li>
+      <li><strong>Başarısız bir görüntü başarılı olarak kaydedilebiliyordu.</strong>
+        İndirilen bir resmin kullanılabilir bir görüntü olmadığı ortaya çıkarsa,
+        uygulama hiçbir şey silmiyor ve yine de dosya adını kaydediyordu; bu da
+        bozuk bir başvuru bırakıyordu. Artık dosya kaldırılıyor ve alana
+        dokunulmuyor.</li>
+      <li><strong>Oyun modları artık tutarlı ifadeler kullanıyor.</strong> Farklı
+        kazıyıcılar "Single-player" ve "Single-Player" ile uygulamanın kendi
+        etiketlerinden biri olmayan yalın bir "Multiplayer" yazıyordu; bu yüzden
+        bu oyunlar çevrilemiyor ya da Modlar filtresiyle eşleştirilemiyordu.
+        Artık tüm kaynaklar aynı etiketleri yazıyor. Mevcut oyunlar, siz onları
+        yeniden kazıyana ya da Ayarlar&rsquo;daki normalleştirme aracını
+        çalıştırana kadar eski ifadelerini koruyor.</li>
+      <li><strong>Xbox aramaları artık diğer tüm kaynaklar gibi davranıyor.</strong>
+        Kendi web isteklerini yapıyorlardı; bu yüzden Xbox Live onlardan
+        yavaşlamalarını istediğinde yeniden deneme yoktu ve bir yanıtın ne kadar
+        veri çekebileceğine dair bir sınır yoktu. Artık diğer kazıyıcılarla aynı
+        ortak bağlantıyı kullanıyorlar.</li>
+      <li><strong>Kullanılmayan ScreenScraper kodu kaldırıldı.</strong>
+        Uygulamada hiçbir şeyin çağırmadığı iki işlev silindi. Bunlardan biri,
+        içinde ScreenScraper parolanızın hâlâ bulunduğu bir web adresi
+        döndürüyordu; bu da onu kullanan her şeye parolayı vermiş olurdu. 3.6.x
+        sürüm notlarında listelenen "System Media Endpoint" bunlardan biriydi
+        &mdash; uygulamanın hiçbir yerinden erişilebilir değildi.</li>
+    </ul>
+- version: 3.23.5
+  date: '2026-09-02'
+  tags:
+  - type: fix
+    label: Paketlenmiş indirme başlayamıyordu, ayrıca diğer derleme düzeltmeleri
+  body: |
+    <ul>
+      <li><strong>Bağımsız indirme hiç başlayamıyordu.</strong> Paketlenmiş
+        sürüm kendi Python&rsquo;unu taşır, ancak içindeki başlatıcı kaynaktan
+        kurulum için yazılmış olandı &mdash; paketlenmiş bir sürümün içermediği
+        Python dosyalarını arıyor ve ilk satırda duruyordu. Paket artık kendi
+        başlatıcısıyla geliyor; bu başlatıcı uygulamayı çalıştırıyor ve sunucu
+        hazır olunca tarayıcınızı açıyor.</li>
+      <li><strong>Linux indirmesindeki masaüstü kısayolu hiçbir şey
+        başlatmıyordu.</strong> Uygulamanın yolunun olması gereken yerde yer
+        tutucu bir metinle geliyordu. Artık başlatıcının yanında bir
+        <code>install-launcher.sh</code> var &mdash; onu bir kez çalıştırın,
+        kısayol, paketi açtığınız yerin gerçek yoluyla yazılsın.</li>
+      <li><strong>Kaynaktan başlatmak doğrulanmamış bağımlılıklar
+        kuruyordu.</strong> Flask eksik olduğunda başlatma betiği paketleri
+        hiçbir sağlama toplamı denetimi olmadan doğrudan internetten indiriyor
+        ve bu sırada sisteminizin paket yöneticisini zorla aşıyordu. Artık işi
+        sağlama toplamlı kilit dosyasını kullanan <code>install.py</code>
+        dosyasına bırakıyor.</li>
+      <li><strong>Kaynak indirmesi, içermemesi gereken bakımcı dosyalarını
+        taşıyordu.</strong> Dışarıda bırakılacakların listesi elle tutuluyordu ve
+        geride kalmıştı; bu yüzden denetim çıktıları ve artık derleme klasörleri
+        uygulamayla birlikte paketleniyordu. İndirme artık projede gerçekten
+        bulunan dosyaların listesinden oluşturuluyor; bu liste kayamaz.</li>
+      <li><strong>Paketlenmiş sürümde iki Ayarlar paneli bozuluyordu.</strong>
+        Kütüphane istatistikleri ve API durumu panelleri ana programı,
+        paketlenmiş bir sürümde sahip olmadığı bir adla arıyordu; bu yüzden ikisi
+        de başarısız oluyordu.</li>
+      <li><strong>Ekrandaki bazı metinler hiçbir zaman çevrilemiyordu.</strong>
+        Uygulamanın daha yeni üç bölümü &mdash; emülatör ayarları, başlatma
+        düğmesi ve "şu anda oynanıyor" çubuğu &mdash; çeviri taramasında
+        atlanıyordu ve bunu yakalaması gereken denetim de aynı eksik listeye
+        bakıyordu. Tarama artık her dosyayı otomatik olarak kapsıyor ve
+        bunların metinleri çevirilere eklendi.</li>
+      <li><strong>Çevirileri yeniden oluşturmak sessizce hiçbir şey
+        yapmayabiliyordu.</strong> Sayfaya özel bir betiğe metin eklemek,
+        yeniden oluşturma işlemini yapacak bir şey olmadığına inandırıyordu; bu
+        yüzden yeni metin hiçbir zaman çeviri dosyasına ulaşmıyordu.</li>
+      <li><strong>Bir ekran kartı geçici çözümü herkese uygulanıyordu.</strong>
+        Linux başlatma betiği, belirli bir AMD kartı için olan bir ayarı her
+        makineye zorluyordu; bu da diğer AMD donanımlarında görüntü büyütücüyü
+        kilitleyebiliyordu. Artık yalnızca o kart gerçekten takılıyken
+        uygulanıyor ve kendiniz belirlediğiniz bir değeri hiçbir zaman
+        geçersiz kılmıyor.</li>
+      <li><strong>Sürüm betiği yanlış sürümü yayımlayabiliyordu.</strong>
+        Önceki bir denemeden kalan bir etiket sessizce yeniden kullanılıyordu;
+        böylece derleme daha eski bir anlık görüntüden yapılıp yine de başarılı
+        olduğu bildirilebiliyordu.</li>
+    </ul>
+- version: 3.23.4
+  date: '2026-09-02'
+  tags:
+  - type: fix
+    label: Kütüphanenizin veri kaybedebileceği dokuz yol kapatıldı
+  body: |
+    <ul>
+      <li><strong>"Kazınan verileri temizle" tüm kütüphanenizi temizliyordu.</strong>
+        Onay kutusu yalnızca gerçekten kazınmış oyunları sayıyordu, ardından
+        işlem ne olursa olsun her oyunu siliyordu &mdash; yani bir düzine oyun
+        söz verip binlercesini temizleyebiliyordu. Görüntüler açıkken, hiç
+        kazınmamış oyunlarda bile elle yüklediğiniz kapak görsellerini siliyor
+        ve kendiniz düzenlediğiniz başlıkları sıfırlıyordu. Artık tam olarak
+        kutuda yazanı yapıyor.</li>
+      <li><strong>3D kutu görseli geride bozuk bir bağlantı bırakıyordu.</strong>
+        Görüntülerle birlikte temizlemek 3D kapağı diskten siliyor ama
+        veritabanını ona işaret eder halde bırakıyordu; bu yüzden uygulama artık
+        olmayan bir dosyayı arıyordu.</li>
+      <li><strong>Toplu düzenlemenin "Ekle" anahtarı eklemek yerine değiştiriyordu.</strong>
+        Bakış Açısı ve Boyut için etiketinin tam tersini yapıyor, seçilen her
+        oyundaki mevcut değerlerin üzerine bir anda, geri alınamaz şekilde
+        yazıyordu.</li>
+      <li><strong>Bağımsız sürümler tek tıklamayla tüm görüntü başvurularını
+        silebiliyordu.</strong> Paketlenmiş indirmede uygulama medyanızı yanlış
+        yerde arıyor, her görüntünün eksik olduğuna karar veriyor ve "eksik medya
+        başvurularını temizle" ardından tüm kütüphanenin görsel, ekran görüntüsü,
+        video ve kılavuz kayıtlarını boşaltıyordu. Tam olarak bunu yakalamak için
+        var olan güvenlik denetimi bunu göremiyordu. Yalnızca paketlenmiş sürüm
+        etkilendi.</li>
+      <li><strong>Sahipsiz dosya taraması görselleri gelir gelmez silebiliyordu.</strong>
+        Tarama sürerken indirilen bir kapak, sahipsiz sayılıp
+        kaldırılabiliyordu.</li>
+      <li><strong>Oynatma listesi oluşturma arşivlerinizi sormadan taşıyordu.</strong>
+        Toplu M3U oynatma listesi oluşturmak, o seçeneği kapalı bıraktığınızda
+        bile orijinal arşiv dosyalarınızı taşıyordu &mdash; istediğinizde ise
+        başarılı olmuş bir taşıma için hata bildiriyordu.</li>
+      <li><strong>Görüntü yeniden boyutlandırıcı medya klasörünüzü şişiriyordu.</strong>
+        Oluşturduğu küçük önizlemeleri büyütülecek yeni görüntüler olarak
+        görüyor, onları tam boyuta çıkarıyor, sonra bunların önizlemelerini
+        oluşturuyordu. Her çalıştırma daha fazla dosya ekliyor, sayfalar
+        önizlemeler yerine sessizce tam boyutlu görüntüler sunuyor ve yapay zeka
+        büyütücü amaçlanan dosya sayısının kabaca üç katı üzerinde
+        çalışıyordu.</li>
+      <li><strong>Yapay zeka ile doldurma düzelttiğiniz ayrıntıların üzerine
+        yazıyordu.</strong> Normal bir kazımada kendi yayıncı, geliştirici, tür,
+        yaş derecelendirmesi ve daha fazla bilginizi değiştirebiliyordu. Artık
+        yalnızca boşlukları dolduruyor; kendiniz bastığınız Yapay Zeka Doldur
+        düğmesi değişmedi.</li>
+      <li><strong>Tekrarlanan kazımalar iyi bir ekran görüntüsünü silebiliyordu.</strong>
+        RAWG&rsquo;den kazınan oyunlar aynı dosya adlarını yeniden kullanıyordu;
+        bu yüzden ikinci bir kazıma kayıtlı bir ekran görüntüsünün üzerine yazıyor,
+        ardından kütüphane onu hâlâ listelerken kopya olarak kaldırıyordu.</li>
+    </ul>
+- version: 3.23.3
+  date: '2026-09-01'
+  tags:
+  - type: fix
+    label: Ev halkı rolleri artık tam olarak söylediklerini yapıyor ve devre dışı bırakılan bir hesap gerçekten kilitleniyor
+  body: |
+    <ul>
+      <li><strong>Birini devre dışı bırakmak artık oturumunu sonlandırıyor.</strong>
+        Bir hesabı kapatmak onu her ekrandan gizliyordu, ancak o hesapta zaten
+        oturum açmış olan biri bir haftaya kadar normal şekilde çalışmayı
+        sürdürüyordu. Devre dışı bırakma, birini silmeden kilitlemenin tek
+        yoludur; bu yüzden artık o kişinin bir sonraki tıklamasında geçerli
+        oluyor.</li>
+      <li><strong>Salt okunur hesaplar artık oyun verilerini değiştiremiyor.</strong>
+        Üç "how long to beat" işlemi, yalnızca görüntüleme yetkisi olanlar dahil
+        oturum açmış herkese açıktı — bu yüzden salt okunur bir hesap bir oynama
+        süresinin üzerine yazabiliyor ya da onu kütüphanedeki her oyundan
+        silebiliyordu. Artık bir oyunu değiştiren diğer her işlem gibi düzenleme
+        yetkisi gerektiriyorlar.</li>
+      <li><strong>Kupa takipçisi yeniden herkes için çalışıyor.</strong>
+        Kendi koleksiyoncu kupalarınızı yenilemek, Oyuncu ve İzleyici rollerinde
+        olmayan düzenleyici yetkisi gerektiriyordu — ve bu kupaları yazan tek şey
+        oydu. Bu hesaplar hiçbir zaman kupa kazanamıyordu ve Yenile düğmesi
+        yalnızca bir hata gösteriyordu. Bu sizin kendi ilerlemeniz olduğu için
+        artık hiçbir özel yetki gerektirmiyor.</li>
+      <li><strong>Bir kişinin PlayStation yenilemesini artık başkası
+        durduramıyor.</strong> Oturum açmış herhangi bir hesap, başka birinin
+        başlattığı bir yenilemeyi duraklatabiliyor ya da iptal edebiliyor ve o
+        kişinin hangi oyunda olduğunu görebiliyordu. İkisi de artık yalnızca
+        yenilemeyi başlatan kişiyle sınırlı.</li>
+      <li><strong>Steam içe aktarmaları, bilgilerini ilk kaydeden kişinin değil,
+        sizin hesabınızı kullanıyor.</strong> Kütüphane içe aktarması sizinki
+        yerine Steam kimlik bilgilerinin tek bir ortak kopyasını okuyordu; bu
+        yüzden başka birinin kütüphanesini getirebiliyordu — bu sırada sizin
+        kayıtlı bilgileriniz eksik görünüyordu.</li>
+      <li><strong>Bir yönetici parolasını tahmin etmek yeniden zor.</strong>
+        Başarısız oturum açma denemeleri sınırı ağdaki herkes arasında
+        paylaşılıyordu; bu yüzden kendi hesabı olan herkes oturum açarak sınırı
+        sıfırlayıp sonsuza dek tahmin etmeyi sürdürebiliyordu. Sınır artık hesap
+        başına.</li>
+      <li><strong>Uygulamadan gelen hatalar artık kaybolmak yerine sayfaya ulaşıyor.
+        </strong> Bir işlem reddedildiğinde, bunların 115&rsquo;i sayfanın
+        okuyamadığı bir biçimde yanıt veriyordu; bu yüzden işlem çalışmış gibi
+        görünüyordu. Artık reddi düzgün bildiriyorlar ve gerçek iletiyi
+        görüyorsunuz.</li>
+    </ul>
+- version: 3.23.2
+  date: '2026-08-06'
+  tags:
+  - type: fix
+    label: Kazıyıcı ayar sayfaları daha hızlı yükleniyor ve hiçbir zaman eski bir API anahtarı göstermiyor
+  body: |
+    <ul>
+      <li><strong>Ayarlar ve Kazıyıcı Yapılandırması sayfaları artık her istekte
+        kazıyıcı ayarları dosyasını yeniden okumuyor.</strong> Ortak bir
+        önbellekli okuyucu zaten var olduğu halde, dört yer bir sayfa ya da
+        denetim her çalıştığında dosyayı diskten açıp yeniden ayrıştırıyordu.
+        Artık hepsi onu kullanıyor; böylece bu sayfalar her ziyarette daha az iş
+        yapıyor.</li>
+      <li><strong>Kaydetmek yine anında etkili oluyor.</strong> Bir zamanlayıcıyla
+        unutan bir önbellek, kaydettikten sonra yarım dakikaya kadar size eski
+        değerleri gösterebilirdi. Artık her kayıt, yazarken önbelleği temizliyor;
+        böylece gördüğünüz, az önce kaydettiğinizdir.</li>
+      <li><strong>Gerçek API anahtarlarınızın yerini artık kendi maskelenmiş
+        görüntü değerleri alamıyor.</strong> Ayarlar sayfaları kayıtlı anahtarları
+        gerçek halleri yerine <code>***1234</code> olarak gösterir. Sayfaya,
+        kazıyıcıların kullandığı ayarların aynı kopyası verildiği için bu
+        maskeleme bellekteki gerçek anahtarların üzerine yazabilir ve önbellek
+        süresi dolana kadar kazıyıcıların yıldız işaretleriyle oturum açmasına
+        yol açabilirdi.</li>
+      <li><strong>Bağımsız sürümler artık kazıyıcı ayarlarını doğru yerde
+        arıyor.</strong> Kazıyıcılar dosyanın konumunu, onu kaydeden
+        sayfalardan farklı bir şekilde belirliyordu. Normal bir kurulumda ikisi
+        de aynı dosyaya varıyordu; bağımsız (çift tıklamalı) bir sürümde ise
+        varmazdı; bu yüzden kayıtlı API anahtarları kazıyıcıların hiç bakmadığı
+        bir yere gidebilirdi.</li>
+    </ul>
+- version: 3.23.1
+  date: '2026-08-06'
+  tags:
+  - type: fix
+    label: Ayarlar&rsquo;da kaydettiğiniz sunucu bağlantı noktası artık kullanılan bağlantı noktası
+  body: |
+    <ul>
+      <li><strong>Bir sunucu bağlantı noktasını kaydetmek sunucuyu gerçekten taşıyor.</strong>
+        Ayarlar bir bağlantı noktasını kabul ediyor, denetliyor, kaydediyor ve
+        uygulamak için yeniden başlatma gerektiğini söylüyordu &mdash; ardından
+        sunucu yine de 5000 üzerinde başlıyordu. Hiçbir şey değeri geri
+        okumuyordu. Artık başlatma zincirinin bir parçası; böylece yeniden
+        başlatma RetroDB&rsquo;yi gerçekten seçtiğiniz bağlantı noktasına
+        taşıyor. Ortamda ayarlanan her şey yine önceliklidir; bu yüzden bir
+        bağlantı noktası atayan başlatıcı ya da kapsayıcı etkilenmez.</li>
+      <li><strong>Hiçbir zaman bir işe yaramayan iki ayar onarılmak yerine
+        kaldırıldı.</strong> "Sunucu ana bilgisayarı" ve "hata ayıklama modu"
+        saklanıyor ve aynı yanlış sözü veriyordu. Hata ayıklama modunu bir web
+        formundan açmak, tarayıcıda etkileşimli bir Python konsolunu açığa
+        çıkarırdı; bağlanma adresi ise RetroDB&rsquo;ye hangi makinelerin
+        erişebileceğini belirler &mdash; ikisi de bir ayarlar formunun arkasında
+        olmamalı. İkisi de zaten bulundukları ortamdan yapılandırılabilir
+        kalıyor. Ayarlar dosyanız bunları hâlâ içeriyorsa yükleme sırasında
+        sessizce atılıyorlar; yapmanız gereken bir şey yok.</li>
+      <li><strong>Artık hiçbir şey, yeniden başlatma onu uygulamadıkça yeniden
+        başlatmanın onu uygulayacağını iddia etmiyor.</strong> Asıl kusur buydu
+        &mdash; ölü bir ayar dağınıklıktır, ama yanlış bir söz bir öğleden sonrayı
+        boşa harcatır.</li>
+    </ul>
+- version: 3.23.0
+  date: '2026-08-06'
+  tags:
+  - type: enhancement
+    label: RetroDB&rsquo;yi başka birinin seçtiği bir bağlantı noktasında başlatın
+  body: |
+    <ul>
+      <li><strong>RetroDB artık ortamından bir <code>PORT</code> ayarı
+        okuyor.</strong> RetroDB&rsquo;yi başka bir araçtan başlatıyorsanız
+        &mdash; bir pano, bir kapsayıcı, bir ev sunucusu paneli &mdash; o araç
+        artık kimse bir dosyayı düzenlemeden RetroDB&rsquo;ye istediği bağlantı
+        noktasını verebilir. <code>PORT</code> ayarlayın, RetroDB oraya
+        bağlansın; dokunmazsanız hiçbir şey değişmez. Mevcut
+        <code>RETRODB_PORT</code> tam olarak eskisi gibi çalışmaya devam ediyor
+        ve ikisi de ayarlanmışsa <code>PORT</code> öncelikli oluyor.</li>
+      <li><strong>Hatalı bir bağlantı noktası numarası artık tahmin etmek yerine
+        bunu söylüyor.</strong> Önceden okunamayan bir bağlantı noktası bir duvar
+        dolusu Python hata metni üretiyordu ve kullanılabilir aralığın dışındaki
+        bir bağlantı noktası ancak sunucu başlayamadığında fark ediliyordu.
+        RetroDB artık kullanamadığı değeri adlandıran tek bir satırla hemen
+        duruyor. Kendisinden istenenden farklı bir bağlantı noktasında hiçbir
+        zaman sessizce başlamaz &mdash; sessizce başka yere taşınmak, hayır
+        cevabı almaktan daha kötüdür.</li>
+      <li><strong>Başlangıç başlığı ve tarayıcı sekmesi gerçek bağlantı
+        noktasını izliyor.</strong> RetroDB başlarken yazdırılan adres ve sizin
+        için açtığı sayfa, gerçekte hangi bağlantı noktası kullanılırsa
+        kullanılsın eskiden hep 5000 diyordu.</li>
+    </ul>
 - version: 3.22.1
   date: '2026-07-31'
   tags:

@@ -1,3 +1,760 @@
+- version: 3.26.0
+  date: '2026-10-17'
+  tags:
+  - type: feature
+    label: Ogni pagina ora si adatta alla finestra in cui si trova
+  - type: enhancement
+    label: La pagina del gioco mostra gli altri nomi in una scheda a sé, e un pulsante Manuale
+  body: |
+    <ul>
+      <li><strong>Ogni pagina ora si adatta alla finestra in cui si trova.</strong>
+        Le pagine a schede (Sistemi, Museo, Etichette, Liste, Strumenti ROM,
+        trofei e obiettivi) aggiungono una colonna ogni volta che c&rsquo;è spazio
+        per un&rsquo;altra scheda intera, fino a quattro per riga. Tabelle,
+        strumenti e pagine di dettaglio si allargano un po&rsquo;, ma si fermano
+        dove allargarsi ancora servirebbe solo a distanziare le colonne.
+        Impostazioni mantiene i suoi riquadri a una larghezza comoda da
+        leggere.</li>
+      <li><strong>Aiuto e il changelog mantengono righe di lunghezza
+        comoda.</strong> In una finestra larga i collegamenti alle sezioni
+        dell&rsquo;Aiuto si spostano in una colonna accanto al testo; in una
+        stretta stanno su un&rsquo;unica riga che puoi scorrere col dito, invece
+        di un blocco che copriva buona parte dello schermo del telefono.</li>
+      <li><strong>La pagina del gioco:</strong> in una finestra larga gli
+        screenshot scorrono lungo la parte alta, con sotto il video e una nuova
+        scheda <strong>Conosciuto anche come</strong> affiancati, all&rsquo;altezza
+        della copertina. Gli altri nomi erano un testo sbiadito sotto il titolo;
+        ora stanno in una scheda facile da leggere. <strong>Manuale</strong> è
+        un pulsante accanto a Gioca, e la Cronologia delle scansioni parte
+        chiusa.</li>
+      <li>Trofei PSN mostra da una a quattro colonne a seconda della finestra,
+        invece di sempre tre.</li>
+      <li>Diverse pagine non scorrono più di lato sul telefono: Trofei, Trofei
+        del collezionista, la pagina di sistema di RetroAchievements, Aiuto,
+        Impostazioni, Analisi, Importazioni giochi e le pagine di dettaglio di
+        obiettivi e trofei. Lì le tabelle larghe ora scorrono al proprio
+        interno.</li>
+    </ul>
+- version: 3.25.0
+  date: '2026-10-17'
+  tags:
+  - type: feature
+    label: Le pagine Libreria, sistema e gioco ora si adattano alla finestra in cui si trovano
+  body: |
+    <ul>
+      <li><strong>Le pagine usano una finestra larga quando serve, e solo
+        allora.</strong> La Libreria e ogni pagina di sistema aggiungono una
+        colonna di schede dei giochi ogni volta che c&rsquo;è spazio per
+        un&rsquo;altra scheda intera, fino a quattro per riga. Un telefono ne
+        mostra una, una finestra a metà schermo due o tre, una finestra larga
+        quattro. Prima le pagine si fermavano a una larghezza fissa e lasciavano
+        vuota gran parte di una finestra grande.</li>
+      <li><strong>La pagina del gioco mette copertina e dettagli accanto a
+        screenshot e video</strong> quando c&rsquo;è spazio per affiancarli, e
+        altrimenti li impila. La descrizione mantiene righe di lunghezza
+        comoda.</li>
+      <li><strong>Il pulsante Gioca si è spostato nell&rsquo;angolo in alto a
+        destra di ogni scheda,</strong> più piccolo e centrato. Ora controlla
+        anche che il file ROM del gioco sia ancora lì e di un tipo accettato dal
+        suo sistema, così appare solo dove premerlo avvierà davvero il gioco. Si
+        nasconde mentre selezioni più giochi insieme.</li>
+      <li>Il pulsante Torna su e i pop-up di avanzamento stanno subito accanto
+        al contenuto della pagina, invece che ai bordi estremi della
+        finestra.</li>
+      <li>La pagina del gioco non scorre più di lato sul telefono.</li>
+    </ul>
+- version: 3.24.2
+  date: '2026-10-17'
+  tags:
+  - type: ui
+    label: La lingua di prova "Pseudo" è offerta solo agli amministratori
+  body: |
+    <ul>
+      <li><strong>"Pseudo" non compare più nell&rsquo;elenco delle lingue per
+        tutti.</strong> È uno strumento per sviluppatori che mostra ogni parola
+        tra parentesi e con accenti, quindi ora è offerto solo agli
+        amministratori. Chiunque altro l&rsquo;avesse scelto vede l&rsquo;app in
+        inglese, con l&rsquo;inglese selezionato nelle Impostazioni.</li>
+    </ul>
+- version: 3.24.1
+  date: '2026-10-17'
+  tags:
+  - type: fix
+    label: Il download per Windows si installa di nuovo, e niente più valanga di errori dopo il ridimensionamento
+  body: |
+    <ul>
+      <li><strong>Il normale download per Windows non si installava.</strong>
+        L&rsquo;installazione si fermava su "Core dependencies failed to
+        install", perché il suo elenco bloccato di pacchetti ometteva un
+        pacchetto che serve solo a Windows. Ora l&rsquo;elenco copre ogni
+        piattaforma. Il download per Windows senza Python non era
+        interessato.</li>
+      <li><strong>Messaggi di errore continuavano ad apparire nell&rsquo;angolo
+        in alto a destra</strong> con il tema Cyberpunk dopo che la finestra del
+        browser veniva allargata, per esempio massimizzandola. Lo sfondo animato
+        ora si ridimensiona senza problemi.</li>
+    </ul>
+- version: 3.24.0
+  date: '2026-10-17'
+  tags:
+  - type: feature
+    label: Avvia un gioco direttamente dalla Libreria e dalle pagine di sistema
+  body: |
+    <ul>
+      <li><strong>Un pulsante ▶ Gioca su ogni scheda di gioco.</strong> Appare
+        nell&rsquo;angolo in basso a sinistra della copertina nella pagina
+        Libreria e in ogni pagina di sistema. Premilo e il gioco si avvia nel
+        suo emulatore; resti sull&rsquo;elenco invece di aprire prima la pagina
+        del gioco.</li>
+      <li>Il pulsante appare solo dove premerlo può funzionare: il tuo account
+        ha il permesso di avviare giochi, e l&rsquo;emulatore del gioco è
+        attivato, installato e, per RetroArch, ha il suo core. I giochi di
+        sistemi senza un emulatore funzionante non mostrano il pulsante.</li>
+      <li>Se un avvio fallisce comunque, per esempio perché il file ROM è stato
+        spostato, il motivo appare in un messaggio e la pagina resta
+        com&rsquo;era.</li>
+    </ul>
+- version: 3.23.21
+  date: '2026-10-17'
+  tags:
+  - type: ui
+    label: Una barra laterale più corta, con un&rsquo;unica pagina Obiettivi per ogni piattaforma
+  body: |
+    <ul>
+      <li><strong>Un solo collegamento "Obiettivi" ne sostituisce cinque.</strong>
+        RetroAchievements, RPCS3, PSN, Steam e Xbox ora sono schede di
+        un&rsquo;unica pagina, e il collegamento riapre l&rsquo;ultima scheda che
+        hai usato. Se non hai giochi RetroAchievements, si apre sulla scheda
+        RPCS3 invece di rimandarti alla Dashboard.</li>
+      <li><strong>Report ROM ora si trova in Strumenti ROM,</strong> come scheda
+        accanto agli altri strumenti e come riquadro nella pagina Strumenti
+        ROM.</li>
+      <li><strong>Nessun collegamento della barra laterale condivide
+        un&rsquo;icona con un altro:</strong> Dashboard ora è 🏠 e Visualizzatore
+        di log 🧾. La barra laterale ha 16 collegamenti invece di 21.</li>
+      <li>Le schede degli strumenti nella pagina delle impostazioni di
+        Strumenti ROM erano sempre in inglese; ora seguono la tua lingua.</li>
+    </ul>
+- version: 3.23.20
+  date: '2026-10-17'
+  tags:
+  - type: fix
+    label: Le ricerche su How Long To Beat funzionano di nuovo
+  body: |
+    <ul>
+      <li><strong>Ogni ricerca su How Long To Beat diceva che il gioco non si
+        trovava.</strong> Il sito ha spostato la sua ricerca a un nuovo
+        indirizzo, quindi le richieste di RetroDB venivano rifiutate; il guasto
+        è avvenuto tra fine luglio e fine settembre. RetroDB ora usa il nuovo
+        indirizzo e invia i filtri per piattaforma e anno nel nuovo formato del
+        sito, che il sito aveva iniziato a ignorare. Funzionano di nuovo sia le
+        ricerche per un singolo gioco sia la ricerca in blocco in Strumenti
+        ROM.</li>
+    </ul>
+- version: 3.23.19
+  date: '2026-10-17'
+  tags:
+  - type: ui
+    label: RetroDB ora dice chiaramente che non approva la pirateria
+  - type: fix
+    label: La finestra Informazioni si apre di nuovo a grandezza piena
+  body: |
+    <ul>
+      <li><strong>Nell&rsquo;app ora c&rsquo;è un avviso contro la
+        pirateria.</strong> Appare nella finestra Informazioni e sotto Percorso
+        libreria ROM nelle Impostazioni, in ogni lingua. Dice che RetroDB non
+        distribuisce né ospita file ROM, che dovresti usare solo giochi copiati
+        da dischi e cartucce che possiedi, e che RetroDB non è affiliato ad
+        alcun produttore di console, editore o database di giochi. Il testo
+        corrisponde a quello del sito web e del trailer di RetroDB.</li>
+      <li><strong>La finestra Informazioni era schiacciata dentro la barra
+        laterale.</strong> Ora si apre al centro dello schermo alla sua
+        grandezza normale, e su uno schermo piccolo scorre invece di nascondere
+        il titolo e il pulsante di chiusura.</li>
+    </ul>
+- version: 3.23.18
+  date: '2026-10-15'
+  tags:
+  - type: security
+    label: RetroDB avvia o rinomina solo veri tipi di file ROM
+  body: |
+    <ul>
+      <li><strong>Un gioco poteva essere avviato con un file che non è una
+        ROM.</strong> Rinominare una ROM accettava qualsiasi nome, quindi
+        <code>crash.bin</code> poteva diventare <code>crash.cfg</code> e
+        l&rsquo;emulatore lo riceveva. Ora l&rsquo;avvio controlla il tipo di
+        file rispetto all&rsquo;elenco nel <code>systeminfo.txt</code> della
+        cartella di quel sistema, lo stesso elenco usato dalla scansione della
+        libreria, e la rinomina rifiuta un tipo che non è in quell&rsquo;elenco.
+        Se la cartella di un sistema non ha l&rsquo;elenco, i suoi giochi non si
+        avviano, e il messaggio indica il file mancante.</li>
+    </ul>
+- version: 3.23.17
+  date: '2026-10-15'
+  tags:
+  - type: security
+    label: Solo un amministratore può cambiare gli argomenti di avvio di un gioco
+  - type: fix
+    label: Gli argomenti di avvio con più parole, o con una virgoletta in più, ora funzionano
+  - type: fix
+    label: RetroDB non tiene più in memoria ogni avvio terminato
+  body: |
+    <ul>
+      <li><strong>Un editor poteva aggiungere argomenti di avvio che eseguivano
+        altro codice.</strong> Gli <em>Argomenti di avvio personalizzati</em> di
+        un gioco vanno direttamente all&rsquo;emulatore, e con RetroArch
+        potevano caricare qualsiasi file di programma sul computer. Ora per
+        cambiarli serve il ruolo di amministratore, e il campo è nascosto a
+        tutti gli altri.</li>
+      <li><strong>Gli argomenti di avvio con più di una parola arrivavano
+        all&rsquo;emulatore come uno solo.</strong> <code>--a --b</code> ora
+        arriva come due argomenti, e un valore vuoto non aggiunge nulla. Una
+        virgoletta di chiusura mancante bloccava ogni avvio di quel gioco con un
+        errore del server; ora mostra un messaggio che indica il campo da
+        correggere. Il segnaposto <code>{disc_paths}</code> è stato rimosso: era
+        sempre vuoto.</li>
+      <li><strong>Gli avvii terminati si accumulavano in memoria finché RetroDB
+        non veniva riavviato.</strong> Ora un avvio finito da più di
+        un&rsquo;ora viene eliminato.</li>
+    </ul>
+- version: 3.23.16
+  date: '2026-10-15'
+  tags:
+  - type: fix
+    label: Scegliere una lingua nelle Impostazioni funziona di nuovo
+  body: |
+    <ul>
+      <li><strong>Scegliere una lingua in Impostazioni &rarr; Libreria &rarr;
+        Visualizzazione non faceva nulla.</strong> Mostrava invece un errore e la
+        pagina restava nella lingua di prima. Il problema era comparso nella
+        3.23.8. Ora scegliere una lingua la salva e ricarica la pagina in quella
+        lingua.</li>
+    </ul>
+- version: 3.23.15
+  date: '2026-10-15'
+  tags:
+  - type: fix
+    label: Le icone dei trofei e delle piattaforme sono tornate nel download
+  body: |
+    <ul>
+      <li><strong>Nel download mancavano le icone dei trofei e delle
+        piattaforme di RetroDB.</strong> Ogni scheda di gioco con
+        RetroAchievements mostrava un&rsquo;immagine rotta al posto del suo
+        badge, e mancavano anche i livelli dei trofei e i loghi di PSN, Steam,
+        Xbox e RPCS3. Ora sono inclusi in ogni download.</li>
+    </ul>
+- version: 3.23.14
+  date: '2026-10-10'
+  tags:
+  - type: security
+    label: Due librerie incluse aggiornate con correzioni di sicurezza pubblicate
+  body: |
+    <ul>
+      <li><strong>urllib3 e Werkzeug avevano problemi di sicurezza
+        noti.</strong> RetroDB ora include urllib3 2.8.0 e Werkzeug 3.1.9, le
+        versioni che li correggono. Un&rsquo;installazione dal codice sorgente
+        li riceve eseguendo di nuovo <code>install.py</code>, che installa da
+        <code>requirements.lock</code>.</li>
+    </ul>
+- version: 3.23.13
+  date: '2026-09-26'
+  tags:
+  - type: fix
+    label: I media salvati come percorso di cartella non vengono più segnalati come mancanti
+  body: |
+    <ul>
+      <li><strong>Nella versione standalone, "cancella i riferimenti ai media
+        mancanti" poteva svuotare media che in realtà c&rsquo;erano.</strong>
+        Succedeva quando il database salvava il media come percorso di cartella,
+        per esempio <code>images/boxart/…</code>, invece che come semplice nome
+        di file. RetroDB ora lo cerca nella cartella giusta.</li>
+    </ul>
+- version: 3.23.12
+  date: '2026-09-26'
+  tags:
+  - type: fix
+    label: La dashboard mostra una scansione in blocco in corso, più quattro piccole correzioni
+  body: |
+    <ul>
+      <li><strong>La scheda di avanzamento della scansione nella dashboard non
+        appariva mai.</strong> Ora si vede mentre è in corso una scansione in
+        blocco, e indica quando è in pausa.</li>
+      <li><strong>Niente più errori nella console del browser sulla pagina di
+        accesso.</strong> Non controlla più le attività in background prima che
+        qualcuno abbia effettuato l&rsquo;accesso.</li>
+      <li><strong>La procedura di configurazione non dice più "Setup complete!"
+        quando il salvataggio è fallito.</strong> Ora ti dice che non è stato
+        possibile salvare le impostazioni.</li>
+      <li><strong>Due scansioni in blocco avviate nello stesso secondo non
+        condividono più un id</strong>, così le azioni della coda, come
+        l&rsquo;annullamento, agiscono su quella giusta.</li>
+    </ul>
+- version: 3.23.11
+  date: '2026-09-26'
+  tags:
+  - type: ui
+    label: I pulsanti per le donazioni ora dicono cosa sostengono
+  body: |
+    <ul>
+      <li><strong>Testo più chiaro per le donazioni.</strong> I pulsanti
+        nell&rsquo;intestazione ora dicono "Sponsor RetroDB" e "Support
+        RetroDB". Il README dice che ogni versione è gratuita, e che le
+        donazioni finanziano RetroDB stesso, non gli emulatori e i core che può
+        avviare.</li>
+    </ul>
+- version: 3.23.10
+  date: '2026-09-26'
+  tags:
+  - type: fix
+    label: Le pagine di Strumenti ROM seguono le impostazioni salvate, e le pagine Log e Strumenti ROM funzionano di nuovo
+  body: |
+    <ul>
+      <li><strong>La pagina Log e alcune pagine di Strumenti ROM non
+        funzionavano.</strong> Uno script su quelle pagine falliva durante il
+        caricamento, quindi il visualizzatore di log e gli strumenti comuni di
+        Strumenti ROM non partivano mai. Ora si caricano correttamente.</li>
+      <li><strong>Le impostazioni di Strumenti ROM ora hanno effetto.</strong>
+        Cerca duplicati e Convertitore CHD si aprono con le opzioni impostate
+        nella pagina delle impostazioni di Strumenti ROM, e puoi comunque
+        cambiarle per una singola esecuzione.</li>
+      <li><strong>Gli interruttori del Convertitore CHD venivano
+        ignorati.</strong> Disattivare "Elimina i file originali" sulla pagina
+        non impediva l&rsquo;eliminazione se la tua impostazione salvata diceva
+        di eliminare. Ora decidono gli interruttori sulla pagina.</li>
+      <li><strong>L&rsquo;impostazione Percorso temporaneo viene usata.</strong>
+        I file preparati durante la creazione delle playlist M3U ora vanno al
+        suo interno.</li>
+    </ul>
+- version: 3.23.9
+  date: '2026-09-26'
+  tags:
+  - type: security
+    label: I file di log degli scraper non salvano più password e token, e i tentativi di accesso sono di nuovo limitati
+  - type: fix
+    label: Salvare le impostazioni non le cancella più, ed eliminare un utente funziona
+  body: |
+    <ul>
+      <li><strong>I file di log conservavano dati segreti in chiaro.</strong> I
+        file di log degli scraper dovevano nascondere i token di accesso e le
+        chiavi API, ma il passaggio che li nascondeva non veniva mai eseguito,
+        quindi venivano scritti per intero. Ora sono nascosti. I file di log
+        più vecchi li contengono ancora; elimina i vecchi file in
+        <code>logs/</code> se condividi la tua installazione.</li>
+      <li><strong>I limiti ai tentativi di accesso non venivano
+        applicati.</strong> I limiti sugli accessi ripetuti e sulle azioni
+        pesanti (scansioni della libreria, scraping, importazioni) erano
+        impostati ma mai attivati. Ora funzionano, e una richiesta bloccata
+        riceve un chiaro messaggio di "troppi tentativi".</li>
+      <li><strong>Un file di impostazioni danneggiato poteva essere
+        cancellato.</strong> Se <code>data/settings.json</code> non si poteva
+        leggere, il salvataggio successivo lo sostituiva con i valori
+        predefiniti. RetroDB ora conserva il file danneggiato come
+        <code>settings.json.corrupt-&lt;time&gt;</code> prima di salvare. Se il
+        file torna a leggersi correttamente, il salvataggio viene invece
+        rifiutato.</li>
+      <li><strong>La riga di denominazione Motore perdeva altre
+        impostazioni.</strong> Aggiungere un&rsquo;etichetta alla riga Motore
+        nelle impostazioni di denominazione falliva, e buttava via anche le
+        impostazioni di articolo e regione salvate insieme. Ora si salva
+        correttamente.</li>
+      <li><strong>Eliminare un utente falliva.</strong> Un utente con etichette,
+        liste, elementi della lista dei desideri o dati PSN non poteva essere
+        eliminato. Ora l&rsquo;eliminazione rimuove l&rsquo;utente e tutto ciò
+        che gli appartiene.</li>
+      <li><strong>Potevano partire due scansioni insieme.</strong> Scambiare o
+        spostare nella coda una scansione in blocco in corso avviava due
+        scansioni che condividevano un unico conteggio di avanzamento. Ora ne
+        parte una sola.</li>
+      <li><strong>L&rsquo;avanzamento della scansione in blocco poteva sembrare
+        un errore.</strong> Prima del suo primo successo, una scansione in
+        blocco riportava il suo stato in un modo che alcune schermate leggevano
+        come un fallimento. Ora è corretto.</li>
+      <li><strong>Dopo l&rsquo;accesso torni alla pagina che avevi
+        chiesto.</strong> Prima portava sempre alla dashboard.</li>
+      <li><strong>Le azioni sui file degli amministratori restano dentro le tue
+        cartelle.</strong> Lo strumento di ridimensionamento immagini e le
+        azioni di rinomina delle ROM ora rifiutano qualsiasi cosa fuori dalla tua
+        cartella dei media o delle ROM.</li>
+      <li><strong>I vecchi file di accesso PSN e Xbox vengono spostati nel tuo
+        account.</strong> Un <code>data/psn_tokens.json</code> o
+        <code>data/xbox_tokens.json</code> rimasto viene caricato nel tuo
+        account e rinominato con la fine <code>.migrated-015</code>. Quel file
+        contiene ancora il token, quindi eliminalo dopo aver verificato che
+        l&rsquo;accesso funziona.</li>
+      <li><strong>Errori più chiari dal server.</strong> Una richiesta errata
+        ora risponde con un vero messaggio di errore invece di "An internal
+        error occurred".</li>
+    </ul>
+- version: 3.23.8
+  date: '2026-09-25'
+  tags:
+  - type: fix
+    label: L&rsquo;importazione CLZ funziona di nuovo, le copertine delle liste si vedono, e diverse pagine non si rompono più con un apostrofo
+  - type: security
+    label: Nomi ottenuti dallo scraping e percorsi dei file non possono più uscire dai pulsanti della pagina
+  body: |
+    <ul>
+      <li><strong>L&rsquo;importazione CLZ non faceva nulla.</strong> Caricare
+        un PDF di CLZ lo inviava a un indirizzo che il server non ha, quindi
+        ogni caricamento falliva con "Parse failed". Ora arriva
+        all&rsquo;analizzatore.</li>
+      <li><strong>Le copertine in una pagina di lista mancavano tutte.</strong>
+        La pagina della lista chiedeva ogni copertina all&rsquo;indirizzo
+        sbagliato, e la colonna Sistema era sempre vuota. Ora si vedono
+        entrambe. Sono corrette anche le immagini di copertina nella ricerca
+        "aggiungi un gioco" della pagina.</li>
+      <li><strong>I pulsanti si rompevano con nomi contenenti un
+        apostrofo.</strong> Rimuovere "Assassin's Creed" da una lista, eliminare
+        uno screenshot, ingrandire una copertina o rimuovere un&rsquo;etichetta
+        di genere poteva non fare nulla, senza avvisi, quando il nome conteneva
+        un apostrofo. Lo stesso difetto permetteva a un nome ottenuto dallo
+        scraping, creato apposta, di eseguire codice nella pagina. Ora i nomi
+        arrivano a quei pulsanti in un modo che non può essere scambiato per
+        codice.</li>
+      <li><strong>Gli indirizzi di immagini e collegamenti sono protetti
+        ovunque.</strong> Alcune pagine costruivano gli indirizzi delle immagini
+        dai nomi di file ottenuti dallo scraping senza proteggerli, e cinque
+        pagine avevano una propria copia, più debole, della funzione di
+        protezione. Ora usano tutte quella comune.</li>
+      <li><strong>La pagina Impostazioni poteva aprirsi vuota.</strong> Se la
+        scheda usata per ultima era stata rinominata da un aggiornamento,
+        Impostazioni si apriva senza alcun pannello visibile. Ora ignora una
+        scheda che non esiste più. Collegamenti come
+        <code>/settings#account</code> aprono di nuovo quella scheda.</li>
+      <li><strong>Il tuo tema ora ti segue sugli altri dispositivi.</strong> Il
+        tema che scegli viene salvato nel tuo account. Un browser in cui non è
+        mai stato scelto un tema usa quello salvato invece di quello
+        predefinito.</li>
+      <li><strong>I pop-up di avanzamento delle attività mostrano
+        l&rsquo;icona giusta.</strong> Le attività in pausa, finite e in coda
+        mostravano la stessa icona "in esecuzione". Ora ogni stato ha la sua,
+        per ogni tema.</li>
+      <li><strong>L&rsquo;elenco delle scorciatoie da tastiera ora si può
+        tradurre.</strong> Le sue etichette erano invisibili agli strumenti di
+        traduzione, quindi restavano in inglese in ogni lingua.</li>
+    </ul>
+- version: 3.23.6
+  date: '2026-09-03'
+  tags:
+  - type: fix
+    label: Le classificazioni per età erano spesso sbagliate, e i giochi scansionati potevano perdere i loro dettagli
+  body: |
+    <ul>
+      <li><strong>Le classificazioni per età erano spesso sbagliate, e
+        l&rsquo;errore si propagava.</strong> Quando una classificazione
+        arrivava da TheGamesDB, l&rsquo;app cercava il codice della
+        classificazione in un punto qualsiasi del testo invece di leggerlo
+        correttamente &mdash; così "T - Teen", "M - Mature 17+", "AO - Adults
+        Only 18+" e "RP - Rating Pending" venivano tutti salvati con la
+        classificazione sbagliata, e un gioco Mature poteva risultare adatto a
+        tutti. Peggio ancora, quella classificazione sbagliata veniva poi usata
+        per compilare gli altri otto sistemi di classificazione, quindi una sola
+        lettura errata si propagava a tutti. Ora le classificazioni vengono
+        lette dal codice all&rsquo;inizio del testo.</li>
+      <li><strong>Le classificazioni convertite risultavano troppo
+        permissive.</strong> Nel ricavare una classificazione mancante da una
+        che avevi già, l&rsquo;app poteva usare una classificazione appena
+        calcolata pochi istanti prima invece di quella da cui eri partito
+        davvero. A ogni passaggio si perdeva un po&rsquo; di severità. Ora
+        converte sempre dalle classificazioni che il gioco ha davvero.</li>
+      <li><strong>La Riscansione completa cancellava Regione e Tipo di
+        salvataggio scelti a mano.</strong> Nessuno dei due arriva da uno
+        scraper &mdash; li calcola l&rsquo;app &mdash; quindi una Riscansione
+        completa sostituiva il tuo "Japan" scelto con cura con il "USA"
+        predefinito. Ora i tuoi valori vengono mantenuti, a meno che una fonte
+        non ne fornisca davvero uno nuovo.</li>
+      <li><strong>Uno scraper poteva accettare il gioco sbagliato.</strong> I
+        risultati di ScreenScraper vengono normalmente confrontati con un
+        punteggio di corrispondenza prima di essere usati, ma una ricerca che
+        restituiva un solo risultato saltava del tutto quel controllo. Ora ogni
+        risultato riceve un punteggio.</li>
+      <li><strong>Un gioco poteva perdere tutti i dettagli ottenuti dallo
+        scraping per un solo campo mancante.</strong> Se IGDB o ScreenScraper
+        lasciavano vuoto un singolo campo in modo inatteso, l&rsquo;intero
+        aggiornamento veniva scartato &mdash; editore, sviluppatore, immagini e
+        tutto il resto. Ora questi casi vengono gestiti e il resto dei dettagli
+        viene mantenuto.</li>
+      <li><strong>Un&rsquo;immagine non riuscita poteva essere registrata come
+        riuscita.</strong> Se un&rsquo;immagine scaricata risultava non
+        utilizzabile, l&rsquo;app non eliminava nulla e salvava comunque il nome
+        del file, lasciando un riferimento rotto. Ora il file viene rimosso e il
+        campo lasciato com&rsquo;è.</li>
+      <li><strong>Le modalità di gioco ora usano diciture coerenti.</strong>
+        Scraper diversi scrivevano "Single-player" e "Single-Player" e un
+        semplice "Multiplayer" che non era una delle etichette dell&rsquo;app,
+        quindi quei giochi non potevano essere tradotti né trovati dal filtro
+        Modalità. Ora tutte le fonti scrivono le stesse etichette. I giochi
+        esistenti mantengono la vecchia dicitura finché non li riscansioni o
+        non esegui lo strumento di normalizzazione nelle Impostazioni.</li>
+      <li><strong>Le ricerche Xbox ora si comportano come ogni altra
+        fonte.</strong> Facevano le proprie richieste web, quindi non
+        riprovavano quando Xbox Live chiedeva di rallentare, e non avevano un
+        limite alla quantità di dati che una risposta poteva portare. Ora usano
+        la stessa connessione condivisa degli altri scraper.</li>
+      <li><strong>Rimosso codice di ScreenScraper non usato.</strong> Sono state
+        eliminate due funzioni che nessuna parte dell&rsquo;app chiamava. Una di
+        esse restituiva un indirizzo web che conteneva ancora la tua password di
+        ScreenScraper, consegnandola a qualunque cosa la usasse. Il "System
+        Media Endpoint" elencato nelle note di rilascio della 3.6.x era una di
+        queste &mdash; non è mai stato raggiungibile da nessuna parte
+        dell&rsquo;app.</li>
+    </ul>
+- version: 3.23.5
+  date: '2026-09-02'
+  tags:
+  - type: fix
+    label: Il download pacchettizzato non si avviava, e altre correzioni alla compilazione
+  body: |
+    <ul>
+      <li><strong>Il download Standalone non si avviava affatto.</strong> La
+        versione pacchettizzata include il proprio Python, ma l&rsquo;avviatore
+        al suo interno era quello scritto per l&rsquo;installazione dal codice
+        sorgente &mdash; cercava file Python che una versione pacchettizzata non
+        contiene, e si fermava alla prima riga. Ora il pacchetto include il
+        proprio avviatore, che avvia semplicemente l&rsquo;app e apre il browser
+        appena il server è pronto.</li>
+      <li><strong>Il collegamento sul desktop nel download per Linux non
+        avviava nulla.</strong> Veniva distribuito con un testo segnaposto al
+        posto del percorso dell&rsquo;app. Ora c&rsquo;è un
+        <code>install-launcher.sh</code> accanto all&rsquo;avviatore &mdash;
+        eseguilo una volta e il collegamento viene scritto con il percorso reale
+        di dove l&rsquo;hai estratto.</li>
+      <li><strong>L&rsquo;avvio dal codice sorgente installava dipendenze non
+        verificate.</strong> Quando mancava Flask, lo script di avvio scaricava
+        i pacchetti direttamente da internet senza controllo dei checksum, e nel
+        farlo scavalcava il gestore di pacchetti del sistema. Ora passa la mano
+        a <code>install.py</code>, che usa il file di lock con i checksum.</li>
+      <li><strong>Il download del codice sorgente conteneva file del
+        manutentore che non doveva contenere.</strong> L&rsquo;elenco di ciò da
+        escludere era mantenuto a mano ed era rimasto indietro, quindi risultati
+        di audit e cartelle di compilazione rimaste venivano impacchettati con
+        l&rsquo;app. Ora il download viene creato dall&rsquo;elenco dei file
+        realmente presenti nel progetto, che non può andare fuori sincrono.</li>
+      <li><strong>Due pannelli delle Impostazioni non funzionavano nella
+        versione pacchettizzata.</strong> I pannelli delle statistiche della
+        libreria e dello stato delle API cercavano il programma principale con
+        un nome che non ha dentro una versione pacchettizzata, quindi fallivano
+        entrambi.</li>
+      <li><strong>Parte del testo sullo schermo non poteva mai essere
+        tradotta.</strong> Tre parti più recenti dell&rsquo;app &mdash; le
+        impostazioni degli emulatori, il pulsante di avvio e la barra "In
+        riproduzione" &mdash; venivano saltate dalla ricerca dei testi da
+        tradurre, e il controllo che doveva accorgersene guardava lo stesso
+        elenco incompleto. Ora la ricerca copre automaticamente ogni file, e il
+        loro testo è stato aggiunto alle traduzioni.</li>
+      <li><strong>La rigenerazione delle traduzioni poteva non fare nulla senza
+        avvisare.</strong> Aggiungere testo a uno script specifico di una pagina
+        lasciava la rigenerazione convinta di non avere nulla da fare, quindi il
+        nuovo testo non arrivava mai al file delle traduzioni.</li>
+      <li><strong>Un accorgimento per una scheda grafica veniva applicato a
+        tutti.</strong> Lo script di avvio per Linux imponeva su ogni computer
+        un&rsquo;impostazione pensata per una specifica scheda AMD, che poteva
+        bloccare l&rsquo;upscaler delle immagini su altro hardware AMD. Ora si
+        applica solo quando quella scheda è davvero presente, e non sovrascrive
+        mai un valore impostato da te.</li>
+      <li><strong>Lo script di rilascio poteva pubblicare la versione
+        sbagliata.</strong> Un tag rimasto da un tentativo precedente veniva
+        riutilizzato senza avvisi, quindi la versione poteva essere creata da
+        un&rsquo;istantanea più vecchia pur segnalando un successo.</li>
+    </ul>
+- version: 3.23.4
+  date: '2026-09-02'
+  tags:
+  - type: fix
+    label: Chiusi nove modi in cui la tua libreria poteva perdere dati
+  body: |
+    <ul>
+      <li><strong>"Cancella dati di scraping" cancellava l&rsquo;intera
+        libreria.</strong> La finestra di conferma contava solo i giochi
+        effettivamente scansionati, ma poi l&rsquo;azione svuotava comunque
+        ogni gioco &mdash; così poteva promettere una dozzina e cancellarne
+        migliaia. Con le immagini attivate cancellava anche le copertine caricate
+        a mano e ripristinava i titoli che avevi modificato tu, su giochi mai
+        scansionati. Ora fa esattamente ciò che dice la finestra.</li>
+      <li><strong>La copertina 3D lasciava un collegamento rotto.</strong>
+        Cancellare con le immagini eliminava la copertina 3D dal disco ma il
+        database continuava a puntarvi, quindi l&rsquo;app cercava un file che
+        non c&rsquo;era più.</li>
+      <li><strong>L&rsquo;interruttore "Aggiungi in coda" della modifica in
+        blocco sostituiva invece di aggiungere.</strong> Per Prospettiva e
+        Dimensione faceva l&rsquo;esatto contrario della sua etichetta,
+        sovrascrivendo in un colpo solo i valori esistenti di ogni gioco
+        selezionato, senza possibilità di annullare.</li>
+      <li><strong>Le versioni standalone potevano cancellare ogni riferimento
+        alle immagini con un clic.</strong> Nel download pacchettizzato
+        l&rsquo;app cercava i tuoi media nel posto sbagliato, concludeva che
+        ogni singola immagine mancava, e "cancella i riferimenti ai media
+        mancanti" svuotava poi le voci di copertine, screenshot, video e manuali
+        dell&rsquo;intera libreria. Il controllo di sicurezza che esiste proprio
+        per evitarlo non poteva accorgersene. Era interessata solo la versione
+        pacchettizzata.</li>
+      <li><strong>La pulizia dei file orfani poteva eliminare le immagini
+        appena arrivate.</strong> Una copertina scaricata mentre la pulizia era
+        in corso poteva essere considerata orfana e rimossa.</li>
+      <li><strong>La creazione delle playlist spostava i tuoi archivi senza
+        chiedere.</strong> La creazione in blocco delle playlist M3U spostava
+        altrove i tuoi file di archivio originali anche quando avevi lasciato
+        disattivata quell&rsquo;opzione &mdash; e quando la chiedevi, segnalava
+        un errore per uno spostamento riuscito.</li>
+      <li><strong>Il ridimensionatore di immagini gonfiava la tua cartella dei
+        media.</strong> Trattava le piccole miniature che genera come nuove
+        immagini da ingrandire, portandole a grandezza piena e creando poi
+        miniature di quelle. Ogni esecuzione aggiungeva altri file, le pagine
+        servivano senza avvisi immagini a grandezza piena al posto delle
+        miniature, e l&rsquo;upscaler AI lavorava su circa il triplo dei file
+        previsti.</li>
+      <li><strong>Il completamento automatico con l&rsquo;AI sovrascriveva
+        dettagli che avevi corretto.</strong> In una normale scansione poteva
+        sostituire i tuoi editore, sviluppatore, genere, classificazioni per età
+        e altro. Ora riempie solo i campi vuoti; il pulsante Riempimento AI che
+        premi tu non cambia.</li>
+      <li><strong>Scansioni ripetute potevano eliminare uno screenshot
+        valido.</strong> I giochi scansionati da RAWG riutilizzavano gli stessi
+        nomi di file, quindi una seconda scansione sovrascriveva uno screenshot
+        salvato, e poi lo rimuoveva come duplicato mentre la libreria lo
+        elencava ancora.</li>
+    </ul>
+- version: 3.23.3
+  date: '2026-09-01'
+  tags:
+  - type: fix
+    label: I ruoli della famiglia ora fanno esattamente ciò che dicono, e un account disattivato è davvero bloccato
+  body: |
+    <ul>
+      <li><strong>Disattivare qualcuno ora chiude la sua sessione.</strong>
+        Disattivare un account lo nascondeva da ogni schermata, ma chi aveva già
+        effettuato l&rsquo;accesso con quell&rsquo;account continuava a lavorare
+        normalmente fino a una settimana. La disattivazione è l&rsquo;unico modo
+        per bloccare qualcuno senza eliminarlo, quindi ora ha effetto al suo
+        clic successivo.</li>
+      <li><strong>Gli account di sola lettura non possono più modificare i dati
+        dei giochi.</strong> Tre azioni di "how long to beat" erano aperte a
+        chiunque avesse effettuato l&rsquo;accesso, compresi gli account di sola
+        visualizzazione &mdash; così un account di sola lettura poteva
+        sovrascrivere un tempo di gioco, o cancellarlo da ogni gioco della
+        libreria. Ora richiedono i permessi di modifica, come ogni altra azione
+        che cambia un gioco.</li>
+      <li><strong>Il tracciamento dei trofei funziona di nuovo per
+        tutti.</strong> Aggiornare i propri trofei del collezionista richiedeva i
+        permessi di editor, che i ruoli Giocatore e Visualizzatore non hanno
+        &mdash; ed è l&rsquo;unica cosa che scrive quei trofei. Quegli account
+        non potevano mai ottenerne uno, e il pulsante Aggiorna mostrava solo un
+        errore. Sono i tuoi progressi, quindi ora non serve alcun permesso
+        speciale.</li>
+      <li><strong>L&rsquo;aggiornamento PlayStation di una persona non può più
+        essere fermato da altri.</strong> Qualsiasi account connesso poteva
+        mettere in pausa o annullare un aggiornamento avviato da qualcun altro,
+        e vedere a quale gioco era arrivata quella persona. Ora entrambe le cose
+        sono riservate a chi l&rsquo;ha avviato.</li>
+      <li><strong>Le importazioni da Steam usano il tuo account, non quello di
+        chi ha salvato per primo il suo.</strong> L&rsquo;importazione della
+        libreria leggeva un&rsquo;unica copia condivisa delle credenziali Steam
+        invece delle tue, quindi poteva recuperare la libreria di qualcun altro
+        &mdash; mentre i tuoi dati salvati sembravano mancare.</li>
+      <li><strong>Indovinare la password di un amministratore è di nuovo
+        difficile.</strong> Il limite ai tentativi di accesso falliti era
+        condiviso da tutti sulla rete, quindi chiunque avesse un proprio account
+        poteva azzerarlo accedendo e continuare a tentare all&rsquo;infinito. Ora
+        il limite è per account.</li>
+      <li><strong>Gli errori dell&rsquo;app ora arrivano alla pagina invece di
+        sparire.
+        </strong> Quando un&rsquo;azione veniva rifiutata, 115 di esse
+        rispondevano in una forma che la pagina non sapeva leggere, quindi
+        sembrava che l&rsquo;azione fosse riuscita. Ora segnalano correttamente
+        il rifiuto, e vedi il vero messaggio.</li>
+    </ul>
+- version: 3.23.2
+  date: '2026-08-06'
+  tags:
+  - type: fix
+    label: Le pagine delle impostazioni degli scraper si caricano più in fretta e non mostrano mai una chiave API superata
+  body: |
+    <ul>
+      <li><strong>Le pagine Impostazioni e configurazione degli scraper non
+        rileggono più il file delle impostazioni degli scraper a ogni
+        richiesta.</strong> Quattro punti lo aprivano e lo rianalizzavano dal
+        disco ogni volta che una pagina o un controllo veniva eseguito, anche se
+        esisteva già un lettore condiviso con cache. Ora lo usano tutti, così
+        quelle pagine fanno meno lavoro a ogni visita.</li>
+      <li><strong>Il salvataggio ha ancora effetto immediato.</strong> Una
+        cache che dimentica a tempo avrebbe potuto mostrarti i vecchi valori
+        fino a mezzo minuto dopo un salvataggio. Ora ogni salvataggio svuota la
+        cache mentre scrive, così ciò che vedi è ciò che hai appena
+        salvato.</li>
+      <li><strong>Le tue vere chiavi API non possono più essere sostituite dal
+        loro stesso valore mascherato.</strong> Le pagine delle impostazioni
+        mostrano le chiavi salvate come <code>***1234</code> invece di quelle
+        vere. Poiché la pagina riceveva la stessa copia delle impostazioni usata
+        dagli scraper, quel mascheramento avrebbe potuto sovrascrivere in
+        memoria le chiavi autentiche e lasciare gli scraper ad accedere con
+        degli asterischi finché la cache non scadeva.</li>
+      <li><strong>Le versioni standalone ora cercano le impostazioni degli
+        scraper nel posto giusto.</strong> Gli scraper ricavavano la posizione
+        del file in modo diverso dalle pagine che lo salvano. In
+        un&rsquo;installazione normale finivano entrambi sullo stesso file; in
+        una versione standalone (con doppio clic) no, quindi le chiavi API
+        salvate potevano finire in un posto dove gli scraper non guardavano
+        mai.</li>
+    </ul>
+- version: 3.23.1
+  date: '2026-08-06'
+  tags:
+  - type: fix
+    label: La porta del server che salvi nelle Impostazioni ora è quella che usa
+  body: |
+    <ul>
+      <li><strong>Salvare una porta del server sposta davvero il server.</strong>
+        Le Impostazioni accettavano una porta, la controllavano, la salvavano e
+        ti dicevano che serviva un riavvio per applicarla &mdash; e poi il
+        server partiva comunque sulla 5000. Niente rileggeva mai quel valore.
+        Ora fa parte della sequenza di avvio, quindi un riavvio sposta davvero
+        RetroDB sulla porta che hai scelto. Qualsiasi valore impostato
+        nell&rsquo;ambiente ha comunque la precedenza, quindi un avviatore o un
+        container che assegna una porta non è interessato.</li>
+      <li><strong>Due impostazioni che non facevano mai nulla sono state rimosse
+        anziché riparate.</strong> "Host del server" e "modalità debug" venivano
+        salvate e facevano la stessa falsa promessa. Attivare la modalità debug
+        da un modulo web avrebbe esposto nel browser una console Python
+        interattiva, e l&rsquo;indirizzo di ascolto decide quali computer
+        possono raggiungere RetroDB &mdash; nessuna delle due cose deve stare in
+        un modulo di impostazioni. Entrambe restano configurabili
+        dall&rsquo;ambiente, dove erano già. Se il tuo file di impostazioni le
+        contiene ancora, vengono scartate senza avvisi al caricamento; non devi
+        fare nulla.</li>
+      <li><strong>Ora nulla dice che un riavvio lo applicherà se un riavvio non
+        lo applica.</strong> Era questo il vero difetto &mdash;
+        un&rsquo;impostazione morta è disordinata, ma una falsa promessa fa
+        perdere un pomeriggio.</li>
+    </ul>
+- version: 3.23.0
+  date: '2026-08-06'
+  tags:
+  - type: enhancement
+    label: Avvia RetroDB su una porta scelta da qualcun altro
+  body: |
+    <ul>
+      <li><strong>RetroDB ora legge un&rsquo;impostazione <code>PORT</code> dal
+        suo ambiente.</strong> Se avvii RetroDB da un altro strumento &mdash;
+        una dashboard, un container, un pannello per server domestico &mdash;
+        quello strumento ora può indicare a RetroDB la porta su cui lo vuole,
+        senza che nessuno modifichi un file. Imposta <code>PORT</code> e RetroDB
+        si mette in ascolto lì; lascialo stare e non cambia proprio nulla.
+        L&rsquo;esistente <code>RETRODB_PORT</code> funziona ancora esattamente
+        come prima, e <code>PORT</code> ha la precedenza se sono impostati
+        entrambi.</li>
+      <li><strong>Un numero di porta errato ora lo dice invece di tirare a
+        indovinare.</strong> Prima una porta illeggibile produceva un muro di
+        testo di errore Python, e una porta fuori dall&rsquo;intervallo
+        utilizzabile veniva scoperta solo quando il server non riusciva a
+        partire. RetroDB ora si ferma subito con una riga che indica il valore
+        che non ha potuto usare. Non partirà mai in silenzio su una porta
+        diversa da quella richiesta &mdash; essere spostati in silenzio è
+        peggio che sentirsi dire di no.</li>
+      <li><strong>Il messaggio di avvio e la scheda del browser seguono la
+        porta reale.</strong> L&rsquo;indirizzo stampato all&rsquo;avvio di
+        RetroDB, e la pagina che apre per te, dicevano sempre 5000
+        indipendentemente dalla porta effettivamente in uso.</li>
+    </ul>
 - version: 3.22.1
   date: '2026-07-31'
   tags:

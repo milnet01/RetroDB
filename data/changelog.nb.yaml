@@ -1,3 +1,680 @@
+- version: 3.26.0
+  date: '2026-10-17'
+  tags:
+  - type: feature
+    label: Hver side passer nå til vinduet den vises i
+  - type: enhancement
+    label: Spillsiden viser andre navn i et eget kort, og har en Manual-knapp
+  body: |
+    <ul>
+      <li><strong>Hver side passer nå til vinduet den vises i.</strong> Sider med
+        kort (Systemer, Museum, Merkelapper, Lister, ROM-verktøy, trofeer og
+        prestasjoner) legger til en kolonne hver gang et helt kort til får plass,
+        opptil fire per rad. Tabeller, verktøy og detaljsider blir litt bredere,
+        men stopper der mer bredde bare ville spredt kolonnene fra hverandre.
+        Innstillinger holder boksene sine i en bredde som er lett å lese.</li>
+      <li><strong>Hjelp og endringsloggen holder en behagelig
+        linjelengde.</strong> I et bredt vindu flyttes lenkene til Hjelp-avsnittene
+        inn i en kolonne ved siden av teksten; i et smalt vindu ligger de på én
+        rad du kan sveipe, i stedet for en blokk som dekket mye av
+        telefonskjermen.</li>
+      <li><strong>Spillsiden:</strong> i et bredt vindu ligger skjermbildene
+        øverst, med videoen og et nytt <strong>Også kjent
+        som</strong>-kort side om side under, på høyde med omslaget. De andre
+        navnene var svak tekst under tittelen; nå står de på et kort som er
+        lett å lese. <strong>Manual</strong> er en knapp ved siden av Spill, og
+        Skrapehistorikk starter sammenfoldet.</li>
+      <li>PSN-trofeer viser én til fire kolonner etter vinduets størrelse i
+        stedet for alltid tre.</li>
+      <li>Flere sider ruller ikke lenger sidelengs på telefon: Trofeer,
+        Samlertrofeer, RetroAchievements-systemsiden, Hjelp, Innstillinger,
+        Analyse, Spillimport og detaljsidene for prestasjoner og trofeer.
+        Brede tabeller ruller nå inni seg selv der.</li>
+    </ul>
+- version: 3.25.0
+  date: '2026-10-17'
+  tags:
+  - type: feature
+    label: Biblioteket, systemsidene og spillsidene passer nå til vinduet de vises i
+  body: |
+    <ul>
+      <li><strong>Sidene bruker et bredt vindu når det hjelper, og bare da.</strong>
+        Biblioteket og hver systemside legger til en kolonne med spillkort
+        hver gang et helt kort til får plass, opptil fire per rad. En telefon viser
+        ett, et vindu på halve skjermen to eller tre, et bredt vindu fire. Før
+        stoppet sidene ved en fast bredde og lot det meste av et stort vindu stå tomt.</li>
+      <li><strong>Spillsiden plasserer omslaget og detaljene ved siden av
+        skjermbildene og videoen</strong> når begge får plass side om side, og
+        stabler dem ellers. Beskrivelsen holder en behagelig linjelengde.</li>
+      <li><strong>Spill-knappen er flyttet til øvre høyre hjørne av hvert kort,</strong>
+        mindre og midtstilt. Den sjekker nå også at spillets ROM-fil fortsatt
+        finnes og er av en type systemet godtar, så den vises bare der
+        et trykk faktisk starter spillet. Den skjules mens du velger flere spill
+        samtidig.</li>
+      <li>Til toppen-knappen og fremdriftsvinduene ligger rett ved siden av
+        sidens innhold i stedet for helt ute ved vinduskantene.</li>
+      <li>Spillsiden ruller ikke lenger sidelengs på telefon.</li>
+    </ul>
+- version: 3.24.2
+  date: '2026-10-17'
+  tags:
+  - type: ui
+    label: Testspråket «Pseudo» tilbys bare til administratorer
+  body: |
+    <ul>
+      <li><strong>«Pseudo» vises ikke lenger i språklisten for
+        alle.</strong> Det er et utviklerverktøy som viser hvert ord med
+        klammer og aksenter, så det tilbys nå bare til administratorer. Andre
+        som hadde valgt det, ser appen på engelsk, med engelsk valgt i
+        Innstillinger.</li>
+    </ul>
+- version: 3.24.1
+  date: '2026-10-17'
+  tags:
+  - type: fix
+    label: Windows-nedlastingen installeres igjen, og ingen flom av feil etter endring av vindusstørrelse
+  body: |
+    <ul>
+      <li><strong>Den vanlige Windows-nedlastingen kunne ikke installeres.</strong>
+        Installasjonsprogrammet stoppet ved «Core dependencies failed to install»,
+        fordi den låste pakkelisten manglet en pakke som bare Windows
+        trenger. Listen dekker nå alle plattformer. Windows-nedlastingen
+        uten Python ble ikke berørt.</li>
+      <li><strong>Feilmeldinger dukket stadig opp i øvre høyre hjørne</strong>
+        med Cyberpunk-temaet etter at nettleservinduet ble gjort bredere, for
+        eksempel ved å maksimere det. Den animerte bakgrunnen endrer nå størrelse
+        uten problemer.</li>
+    </ul>
+- version: 3.24.0
+  date: '2026-10-17'
+  tags:
+  - type: feature
+    label: Spill et spill rett fra Bibliotek- og systemsidene
+  body: |
+    <ul>
+      <li><strong>En ▶ Spill-knapp på hvert spillkort.</strong> Den vises i
+        nedre venstre hjørne av omslagsbildet på Bibliotek-siden og på
+        hver systemside. Trykk på den, og spillet starter i emulatoren sin; du
+        blir værende i listen i stedet for å åpne spillets side først.</li>
+      <li>Knappen vises bare der et trykk kan fungere: kontoen din har
+        lov til å starte spill, og spillets emulator er aktivert, installert
+        og, for RetroArch, har sin kjerne. Spill på systemer uten en emulator
+        som fungerer, viser ingen knapp.</li>
+      <li>Hvis en oppstart likevel mislykkes, for eksempel fordi ROM-filen er
+        flyttet, vises årsaken i en melding, og siden blir som den
+        var.</li>
+    </ul>
+- version: 3.23.21
+  date: '2026-10-17'
+  tags:
+  - type: ui
+    label: En kortere sidelinje, med én Prestasjoner-side for alle plattformer
+  body: |
+    <ul>
+      <li><strong>Én «Prestasjoner»-lenke erstatter fem.</strong>
+        RetroAchievements, RPCS3, PSN, Steam og Xbox er nå faner på én
+        side, og lenken åpner igjen fanen du brukte sist. Hvis du ikke har
+        RetroAchievements-spill, åpnes RPCS3-fanen i stedet for at du
+        sendes tilbake til Oversikt.</li>
+      <li><strong>ROM-rapporter ligger nå i ROM-verktøy,</strong> som en fane
+        ved siden av de andre verktøyene og et kort på ROM-verktøy-siden.</li>
+      <li><strong>Ingen sidelinjelenker deler ikon lenger:</strong> Oversikt er
+        nå 🏠 og Loggviser 🧾. Sidelinjen har 16 lenker i stedet for
+        21.</li>
+      <li>Verktøyfanene på innstillingssiden for ROM-verktøy var alltid på
+        engelsk; nå følger de språket ditt.</li>
+    </ul>
+- version: 3.23.20
+  date: '2026-10-17'
+  tags:
+  - type: fix
+    label: Oppslag i How Long To Beat fungerer igjen
+  body: |
+    <ul>
+      <li><strong>Hvert oppslag i How Long To Beat sa at spillet ikke ble
+        funnet.</strong> Nettstedet flyttet søket sitt til en ny adresse, så
+        forespørslene fra RetroDB ble avvist; feilen oppsto mellom slutten av
+        juli og slutten av september. RetroDB bruker nå den nye adressen, og sender
+        plattform- og årstallsfiltrene i nettstedets nye format, som nettstedet
+        hadde begynt å overse. Både oppslag for enkeltspill og masseoppslaget i
+        ROM-verktøy fungerer igjen.</li>
+    </ul>
+- version: 3.23.19
+  date: '2026-10-17'
+  tags:
+  - type: ui
+    label: RetroDB sier nå tydelig at det ikke støtter piratkopiering
+  - type: fix
+    label: Om-vinduet åpnes i full størrelse igjen
+  body: |
+    <ul>
+      <li><strong>Appen har nå en merknad mot piratkopiering.</strong> Den
+        vises i Om-vinduet og under Sti til ROM-bibliotek i
+        Innstillinger, på alle språk. Den sier at RetroDB ikke distribuerer eller
+        lagrer ROM-filer, at du bare skal bruke spill kopiert fra plater og
+        kassetter du eier, og at RetroDB ikke er tilknyttet noen
+        konsollprodusent, utgiver eller spilldatabase. Ordlyden er den samme som på
+        RetroDB-nettstedet og i traileren.</li>
+      <li><strong>Om-vinduet ble klemt inn i sidelinjen.</strong>
+        Nå åpnes det midt på skjermen i vanlig størrelse, og
+        ruller på en liten skjerm i stedet for å skjule tittelen og
+        lukkeknappen.</li>
+    </ul>
+- version: 3.23.18
+  date: '2026-10-15'
+  tags:
+  - type: security
+    label: RetroDB starter og gir bare nytt navn til ekte ROM-filtyper
+  body: |
+    <ul>
+      <li><strong>Et spill kunne startes med en fil som ikke er en
+        ROM.</strong> Når du ga en ROM nytt navn, ble ethvert navn godtatt, så
+        <code>crash.bin</code> kunne bli til <code>crash.cfg</code>, og
+        emulatoren fikk den. Ved oppstart sjekkes nå filtypen mot
+        listen i systemmappens <code>systeminfo.txt</code>, den samme listen
+        som biblioteksskanningen bruker, og nytt navn avvises hvis typen ikke står
+        på listen. Hvis en systemmappe ikke har noen liste, starter ikke spillene i den, og
+        meldingen sier hvilken fil som mangler.</li>
+    </ul>
+- version: 3.23.17
+  date: '2026-10-15'
+  tags:
+  - type: security
+    label: Bare en administrator kan endre startargumentene til et spill
+  - type: fix
+    label: Startargumenter med flere ord, eller et løst anførselstegn, fungerer nå
+  - type: fix
+    label: RetroDB holder ikke lenger hver avsluttede oppstart i minnet
+  body: |
+    <ul>
+      <li><strong>En redaktør kunne legge til startargumenter som kjørte annen
+        kode.</strong> Et spills <em>Egendefinerte startargumenter</em> går rett til
+        emulatoren, og med RetroArch kunne de laste hvilken som helst programfil på
+        datamaskinen. Å endre dem krever nå administratorrollen, og feltet er
+        skjult for alle andre.</li>
+      <li><strong>Startargumenter med mer enn ett ord kom fram til
+        emulatoren som ett.</strong> <code>--a --b</code> kommer nå fram som to
+        argumenter, og en tom verdi legger ikke til noe. Et manglende avsluttende
+        anførselstegn ødela tidligere hver oppstart av spillet med en serverfeil; nå
+        vises en melding som sier hvilket felt som må rettes.
+        <code>{disc_paths}</code>-symbolet er fjernet: det var alltid tomt.</li>
+      <li><strong>Avsluttede oppstarter hopet seg opp i minnet til RetroDB
+        ble startet på nytt.</strong> En oppstart som ble avsluttet for mer enn en time siden, blir nå
+        ryddet bort.</li>
+    </ul>
+- version: 3.23.16
+  date: '2026-10-15'
+  tags:
+  - type: fix
+    label: Valg av språk i Innstillinger fungerer igjen
+  body: |
+    <ul>
+      <li><strong>Å velge et språk under Innstillinger &rarr; Bibliotek &rarr;
+        Visning gjorde ingenting.</strong> Det viste en feil i stedet, og siden
+        ble værende på det gamle språket. Dette sluttet å virke i 3.23.8. Når du velger et språk,
+        lagres det nå, og siden lastes inn på nytt på det språket.</li>
+    </ul>
+- version: 3.23.15
+  date: '2026-10-15'
+  tags:
+  - type: fix
+    label: Trofé- og plattformikonene er tilbake i nedlastingen
+  body: |
+    <ul>
+      <li><strong>Nedlastingen manglet RetroDBs trofé- og plattformikoner.</strong>
+        Hvert spillkort med RetroAchievements viste et ødelagt
+        bilde der merket skulle vært, og trofénivåene og logoene for PSN, Steam,
+        Xbox og RPCS3 manglet også. Nå følger de med i alle
+        nedlastinger.</li>
+    </ul>
+- version: 3.23.14
+  date: '2026-10-10'
+  tags:
+  - type: security
+    label: To medfølgende biblioteker oppdatert med publiserte sikkerhetsrettelser
+  body: |
+    <ul>
+      <li><strong>urllib3 og Werkzeug hadde kjente sikkerhetsproblemer.</strong>
+        RetroDB leveres nå med urllib3 2.8.0 og Werkzeug 3.1.9, versjonene som
+        retter dem. En kildeinstallasjon får dem ved å kjøre
+        <code>install.py</code> på nytt, som installerer fra
+        <code>requirements.lock</code>.</li>
+    </ul>
+- version: 3.23.13
+  date: '2026-09-26'
+  tags:
+  - type: fix
+    label: Media lagret som en mappesti meldes ikke lenger som manglende
+  body: |
+    <ul>
+      <li><strong>I den frittstående versjonen kunne «fjern manglende
+        mediereferanser» tømme media som faktisk fantes.</strong> Dette
+        skjedde når databasen lagret mediet som en mappesti, for eksempel
+        <code>images/boxart/…</code>, i stedet for bare et filnavn. RetroDB
+        leter nå etter det i riktig mappe.</li>
+    </ul>
+- version: 3.23.12
+  date: '2026-09-26'
+  tags:
+  - type: fix
+    label: Oversikten viser en pågående masseskraping, og fire små rettelser
+  body: |
+    <ul>
+      <li><strong>Kortet for skrapefremdrift på oversikten dukket aldri opp.</strong>
+        Nå vises det mens en masseskraping pågår, og det sier fra når den er
+        satt på pause.</li>
+      <li><strong>Ingen flere feil i nettleserkonsollen på
+        påloggingssiden.</strong> Den sjekker ikke lenger bakgrunnsjobber før noen er
+        logget inn.</li>
+      <li><strong>Oppsettsveiviseren sier ikke lenger «Oppsett fullført!» når
+        lagringen mislyktes.</strong> Nå sier den at innstillingene ikke kunne
+        lagres.</li>
+      <li><strong>To masseskrapinger startet i samme sekund deler ikke lenger
+        id</strong>, så køhandlinger som avbryt virker på den riktige.</li>
+    </ul>
+- version: 3.23.11
+  date: '2026-09-26'
+  tags:
+  - type: ui
+    label: Donasjonsknappene sier nå hva de støtter
+  body: |
+    <ul>
+      <li><strong>Tydeligere ordlyd om donasjoner.</strong> Knappene i toppfeltet heter nå
+        «Sponsor RetroDB» og «Støtt RetroDB». README-filen sier at hver
+        utgivelse er gratis, og at donasjoner finansierer selve RetroDB, ikke
+        emulatorene og kjernene det kan starte.</li>
+    </ul>
+- version: 3.23.10
+  date: '2026-09-26'
+  tags:
+  - type: fix
+    label: ROM-verktøy-sidene følger de lagrede innstillingene dine, og Logger- og ROM-verktøy-sidene fungerer igjen
+  body: |
+    <ul>
+      <li><strong>Logger-siden og noen ROM-verktøy-sider var ødelagt.</strong>
+        Et skript på disse sidene feilet under innlasting, så loggviseren og
+        de delte ROM-verktøy-hjelperne startet aldri. Nå lastes de som de
+        skal.</li>
+      <li><strong>Innstillingene for ROM-verktøy gjør nå noe.</strong> Duplikatsøker
+        og CHD-konverterer åpnes med valgene hentet fra innstillingssiden for
+        ROM-verktøy, og du kan fortsatt endre dem for én kjøring.</li>
+      <li><strong>Bryterne i CHD-konverterer ble oversett.</strong> Å slå
+        av «Slett originalfiler» på siden stoppet ikke slettingen hvis
+        den lagrede innstillingen sa at filene skulle slettes. Nå er det bryterne på siden som
+        bestemmer.</li>
+      <li><strong>Innstillingen for midlertidig sti brukes.</strong> Filer som klargjøres
+        mens M3U-spillelister bygges, havner nå der.</li>
+    </ul>
+- version: 3.23.9
+  date: '2026-09-26'
+  tags:
+  - type: security
+    label: Loggfilene fra skraperne lagrer ikke lenger passord og tokener, og påloggingsforsøk er begrenset igjen
+  - type: fix
+    label: Lagring av innstillinger sletter ikke lenger innstillingene dine, og sletting av en bruker fungerer
+  body: |
+    <ul>
+      <li><strong>Loggfiler lagret hemmeligheter i klartekst.</strong> Loggfilene
+        fra skraperne skulle skjule påloggingstokener og API-nøkler, men skjulingen
+        kjørte aldri, så de ble skrevet i sin helhet. Nå skjules de.
+        Eldre loggfiler inneholder dem fortsatt; slett gamle filer i
+        <code>logs/</code> hvis du deler installasjonen din.</li>
+      <li><strong>Grensene for påloggingsforsøk ble ikke håndhevet.</strong> Grensene
+        for gjentatte pålogginger og for tunge handlinger (skanninger, skraping, import) var
+        satt opp, men aldri slått på. Nå virker de, og en blokkert forespørsel
+        får en tydelig melding om «for mange forsøk».</li>
+      <li><strong>En skadet innstillingsfil kunne bli slettet.</strong> Hvis
+        <code>data/settings.json</code> ikke kunne leses, erstattet neste lagring
+        den med standardverdiene. RetroDB tar nå vare på den skadede filen som
+        <code>settings.json.corrupt-&lt;time&gt;</code> før lagring. Hvis
+        filen kan leses igjen, avvises lagringen i stedet.</li>
+      <li><strong>Motor-raden i navneinnstillingene mistet andre innstillinger.</strong> Å legge
+        til en merkelapp i Motor-raden i navneinnstillingene mislyktes, og kastet også
+        artikkel- og regionsinnstillingene som ble lagret sammen med den. Nå lagres den
+        som den skal.</li>
+      <li><strong>Sletting av en bruker mislyktes.</strong> En bruker med merkelapper, lister,
+        ønskelisteelementer eller PSN-data kunne ikke slettes. Nå fjerner sletting
+        brukeren og alt brukeren eier.</li>
+      <li><strong>To skrapinger kunne kjøre samtidig.</strong> Å bytte om eller
+        flytte en pågående masseskraping i køen startet to skrapinger som
+        delte én fremdriftsteller. Nå kjører bare én.</li>
+      <li><strong>Fremdriften for masseskraping kunne se ut som en feil.</strong>
+        Før første vellykkede treff rapporterte en masseskraping statusen sin på en måte
+        noen skjermbilder tolket som en feil. Det er rettet.</li>
+      <li><strong>Pålogging sender deg nå tilbake til siden du ba om.</strong>
+        Før gikk den alltid til oversikten.</li>
+      <li><strong>Administratorens filhandlinger holder seg innenfor mappene dine.</strong> Verktøyet
+        for å endre bildestørrelse og handlingene for å gi ROM-er nytt navn avviser nå alt
+        utenfor mediemappen eller ROM-mappen din.</li>
+      <li><strong>Gamle påloggingsfiler for PSN og Xbox flyttes inn i
+        kontoen din.</strong> En gjenværende <code>data/psn_tokens.json</code> eller
+        <code>data/xbox_tokens.json</code> lastes inn i kontoen din og
+        får nytt navn som slutter på <code>.migrated-015</code>. Den filen inneholder fortsatt
+        tokenet, så slett den når du har sjekket at påloggingen fungerer.</li>
+      <li><strong>Tydeligere feilmeldinger fra serveren.</strong> En ugyldig forespørsel
+        svarer nå med en ordentlig feilmelding i stedet for «En intern feil
+        oppstod».</li>
+    </ul>
+- version: 3.23.8
+  date: '2026-09-25'
+  tags:
+  - type: fix
+    label: CLZ-import fungerer igjen, listeomslag vises, og flere sider slutter å feile på en apostrof
+  - type: security
+    label: Skrapte navn og filstier kan ikke lenger bryte ut av knappene på siden
+  body: |
+    <ul>
+      <li><strong>CLZ-import gjorde ingenting.</strong> Opplasting av en CLZ-PDF sendte den
+        til en adresse serveren ikke har, så hver opplasting mislyktes med
+        «Parse failed». Nå kommer den fram til tolkeren.</li>
+      <li><strong>Alle omslagene på en listeside manglet.</strong> Listesiden
+        ba om hvert omslag på feil adresse, og System-kolonnen var
+        alltid tom. Nå vises begge. Omslagsbildene i sidens søk for å «legge til et
+        spill» er også rettet.</li>
+      <li><strong>Knapper sluttet å virke på navn med apostrof.</strong> Å fjerne
+        «Assassin's Creed» fra en liste, slette et skjermbilde, zoome inn på et omslag
+        eller fjerne en sjangermerkelapp kunne stille og rolig gjøre ingenting når navnet
+        inneholdt en apostrof. Den samme feilen lot et konstruert skrapt navn kjøre
+        kode på siden. Nå sendes navn til disse knappene på en måte som
+        ikke kan misforstås som kode.</li>
+      <li><strong>Bilde- og lenkeadresser er escapet overalt.</strong> Noen få
+        sider bygde bildeadresser fra skrapte filnavn uten å escape
+        dem, og fem sider hadde sin egen svakere kopi av escape-hjelperen.
+        Nå bruker alle den felles.</li>
+      <li><strong>Innstillinger-siden kunne åpnes tom.</strong> Hvis fanen du
+        brukte sist hadde fått nytt navn i en oppdatering, åpnet Innstillinger uten noe panel
+        synlig. Nå overses en fane som ikke lenger finnes. Lenker som
+        <code>/settings#account</code> åpner den fanen igjen.</li>
+      <li><strong>Temaet ditt følger deg nå til andre enheter.</strong>
+        Temaet du velger, lagres på kontoen din. En nettleser som aldri har fått
+        beskjed om et tema, bruker det lagrede i stedet for standardtemaet.</li>
+      <li><strong>Fremdriftsvinduene for jobber viser riktig ikon.</strong> Jobber som var satt på pause,
+        fullført eller i kø, viste det samme «kjører»-ikonet. Nå har hver tilstand
+        sitt eget, per tema.</li>
+      <li><strong>Listen over hurtigtaster kan nå oversettes.</strong>
+        Etikettene var usynlige for oversettelsesverktøyene, så de forble på
+        engelsk på alle språk.</li>
+    </ul>
+- version: 3.23.6
+  date: '2026-09-03'
+  tags:
+  - type: fix
+    label: Aldersgrensene var ofte feil, og skrapte spill kunne miste detaljene sine
+  body: |
+    <ul>
+      <li><strong>Aldersgrensene var ofte feil, og feilen spredte seg.</strong>
+        Når en aldersgrense kom fra TheGamesDB, lette appen etter vurderingskoden
+        hvor som helst i teksten i stedet for å lese den ordentlig &mdash; så
+        «T - Teen», «M - Mature 17+», «AO - Adults Only 18+» og
+        «RP - Rating Pending» ble alle lagret som feil aldersgrense, og et spill for voksne
+        kunne bli registrert som egnet for alle. Enda verre: den feile aldersgrensen
+        ble så brukt til å fylle ut de åtte andre vurderingssystemene, så én feil
+        avlesning spredte seg til alle. Aldersgrenser leses nå fra koden i
+        starten av teksten.</li>
+      <li><strong>Omregnede aldersgrenser ble for milde.</strong> Når appen fylte
+        inn en manglende aldersgrense ut fra en du allerede hadde, kunne den bruke en
+        aldersgrense den nettopp hadde regnet ut, i stedet for den du
+        faktisk startet med. Hvert ledd mistet litt strenghet. Nå regner den
+        alltid om fra aldersgrensene spillet faktisk har.</li>
+      <li><strong>Full reskraping slettet håndvalgt Region og Lagringstype.</strong>
+        Ingen av dem kommer fra en skraper &mdash; appen regner dem ut
+        &mdash; så en Full reskraping erstattet din kuraterte «Japan» med
+        standardverdien «USA». Verdiene dine beholdes nå med mindre en kilde faktisk
+        leverer en ny.</li>
+      <li><strong>En skraper kunne godta feil spill.</strong> Resultater fra ScreenScraper
+        sjekkes vanligvis mot en treffpoengsum før de brukes,
+        men et søk som ga nøyaktig ett resultat, hoppet helt over den sjekken.
+        Nå får hvert resultat en poengsum.</li>
+      <li><strong>Et spill kunne miste alle skrapte detaljer på grunn av ett manglende
+        felt.</strong> Hvis IGDB eller ScreenScraper lot ett enkelt felt stå tomt på en
+        uventet måte, ble hele oppdateringen kastet &mdash; utgiver,
+        utvikler, grafikk og alt. Disse tilfellene håndteres nå, og resten av
+        detaljene beholdes.</li>
+      <li><strong>Et mislykket bilde kunne bli registrert som vellykket.</strong> Hvis et
+        nedlastet bilde viste seg å ikke være brukbart, slettet appen
+        ingenting og lagret likevel filnavnet, slik at en ødelagt referanse ble liggende igjen. Filen
+        fjernes nå, og feltet lar den være i fred.</li>
+      <li><strong>Spillmoduser bruker nå konsekvent ordlyd.</strong> Ulike
+        skrapere skrev «Single-player» og «Single-Player» og et enkelt
+        «Multiplayer» som ikke var en av appens egne etiketter, så de spillene
+        kunne ikke oversettes eller treffes av Moduser-filteret. Alle kilder skriver nå
+        de samme etikettene. Eksisterende spill beholder den gamle ordlyden til du
+        skraper dem på nytt eller kjører normaliseringsverktøyet i Innstillinger.</li>
+      <li><strong>Xbox-oppslag oppfører seg nå som alle andre kilder.</strong> De
+        gjorde sine egne nettforespørsler, så de prøvde ikke på nytt når Xbox Live
+        ba dem senke farten, og hadde ingen grense for hvor mye data et svar kunne
+        dra inn. Nå bruker de den samme delte tilkoblingen som de andre
+        skraperne.</li>
+      <li><strong>Ubrukt ScreenScraper-kode er fjernet.</strong> To funksjoner
+        som ingenting i appen kalte, er slettet. Den ene returnerte en nett-
+        adresse med ScreenScraper-passordet ditt fortsatt i seg, noe som ville ha
+        gitt passordet til alt som brukte den. «System Media
+        Endpoint» som ble nevnt i utgivelsesnotatene for 3.6.x, var en av disse &mdash; den
+        kunne aldri nås fra noe sted i appen.</li>
+    </ul>
+- version: 3.23.5
+  date: '2026-09-02'
+  tags:
+  - type: fix
+    label: Den pakkede nedlastingen kunne ikke starte, og andre byggrettelser
+  body: |
+    <ul>
+      <li><strong>Den frittstående nedlastingen kunne ikke starte i det hele tatt.</strong> Den
+        pakkede versjonen har sin egen Python, men oppstarteren i den var
+        den som var skrevet for kildeinstallasjonen &mdash; den lette etter
+        Python-filer som en pakket versjon ikke inneholder, og stoppet på den
+        første linjen. Pakken har nå sin egen oppstarter, som ganske enkelt kjører
+        appen og åpner nettleseren når serveren er oppe.</li>
+      <li><strong>Skrivebordssnarveien i Linux-nedlastingen startet
+        ingenting.</strong> Den ble levert med plassholdertekst der stien til
+        appen skulle stått. Nå finnes det en <code>install-launcher.sh</code>
+        ved siden av oppstarteren &mdash; kjør den én gang, så skrives snarveien
+        med den faktiske stien til stedet du pakket den ut.</li>
+      <li><strong>Oppstart fra kildekode installerte ubekreftede
+        avhengigheter.</strong> Når Flask manglet, hentet oppstartsskriptet
+        pakker rett fra internett uten kontrollsumsjekk, og tvang seg
+        forbi systemets pakkebehandler underveis. Nå overlater det jobben til
+        <code>install.py</code>, som bruker låsefilen med kontrollsummer.</li>
+      <li><strong>Kildenedlastingen inneholdt vedlikeholderfiler den ikke
+        skulle ha.</strong> Listen over hva som skulle utelates, ble vedlikeholdt for hånd og
+        hadde sakket akterut, så revisjonsutdata og gjenværende byggmapper ble
+        pakket med appen. Nedlastingen bygges nå fra listen
+        over filer som faktisk finnes i prosjektet, og den kan ikke komme ut av takt.</li>
+      <li><strong>To paneler i Innstillinger sluttet å virke i den pakkede versjonen.</strong>
+        Panelene for bibliotekstatistikk og API-status slo opp hovedprogrammet med
+        et navn det ikke har i en pakket versjon, så begge feilet.</li>
+      <li><strong>Noe tekst på skjermen kunne aldri oversettes.</strong> Tre
+        nyere deler av appen &mdash; emulatorinnstillingene, startknappen
+        og «spilles nå»-linjen &mdash; ble hoppet over av oversettelses-
+        skanningen, og sjekken som skulle fange opp det, så på den samme
+        ufullstendige listen. Skanningen dekker nå alle filer automatisk, og
+        teksten deres er lagt til i oversettelsene.</li>
+      <li><strong>Gjenoppbygging av oversettelser kunne stille og rolig gjøre ingenting.</strong>
+        Når tekst ble lagt til i et sidespesifikt skript, trodde gjenoppbyggingen at det
+        ikke var noe å gjøre, så den nye teksten nådde aldri
+        oversettelsesfilen.</li>
+      <li><strong>En løsning for et bestemt grafikkort ble brukt på alle.</strong>
+        Oppstartsskriptet for Linux tvang en innstilling ment for ett bestemt AMD-kort
+        på alle maskiner, noe som kunne få bildeoppskalereren til å henge på annen AMD-
+        maskinvare. Nå brukes den bare når det kortet faktisk finnes, og
+        overstyrer aldri en verdi du har satt selv.</li>
+      <li><strong>Utgivelsesskriptet kunne publisere feil versjon.</strong>
+        En gjenværende tagg fra et tidligere forsøk ble stille gjenbrukt, så
+        versjonen kunne bygges fra et eldre øyeblikksbilde mens den meldte
+        suksess.</li>
+    </ul>
+- version: 3.23.4
+  date: '2026-09-02'
+  tags:
+  - type: fix
+    label: Ni måter biblioteket ditt kunne miste data på, tettet
+  body: |
+    <ul>
+      <li><strong>«Fjern skrapte data» tømte hele biblioteket ditt.</strong>
+        Bekreftelsesboksen telte bare spillene som faktisk var skrapet,
+        og så slettet handlingen alle spill uansett &mdash; så den kunne
+        love et dusin og tømme tusenvis. Med bilder slått på slettet den også
+        omslagsbilder du hadde lastet opp for hånd, og tilbakestilte titler du hadde
+        redigert selv, på spill som aldri var skrapet i det hele tatt. Nå gjør den
+        nøyaktig det boksen sier.</li>
+      <li><strong>3D-omslag etterlot en ødelagt lenke.</strong> Fjerning med
+        bilder slettet 3D-omslaget fra disken, men databasen pekte fortsatt på
+        det, så appen lette etter en fil som var borte.</li>
+      <li><strong>Bryteren «Legg til» i masseredigering erstattet i stedet for å legge til.</strong>
+        For Perspektiv og Dimensjon gjorde den det stikk motsatte av det den het,
+        og overskrev de eksisterende verdiene på alle valgte spill på én gang, uten
+        angremulighet.</li>
+      <li><strong>Frittstående versjoner kunne slette alle bildereferanser med ett
+        klikk.</strong> I den pakkede nedlastingen lette appen etter mediene dine
+        på feil sted, konkluderte med at hvert eneste bilde manglet, og
+        «fjern manglende mediereferanser» tømte deretter omslag, skjermbilder,
+        video og manualer for hele biblioteket. Sikkerhetssjekken som
+        finnes nettopp for å fange opp dette, kunne ikke se det. Bare den pakkede versjonen
+        ble berørt.</li>
+      <li><strong>Opprydding av foreldreløse filer kunne slette grafikk idet den kom inn.</strong>
+        Et omslag lastet ned mens oppryddingen pågikk, kunne bli behandlet som
+        foreldreløst og fjernet.</li>
+      <li><strong>Oppretting av spillelister flyttet arkivene dine uten å spørre.</strong>
+        Masseoppretting av M3U-spillelister flyttet de originale arkivfilene dine selv
+        når du hadde latt det valget være av &mdash; og når du faktisk ba om det,
+        meldte den feil for en flytting som hadde gått bra.</li>
+      <li><strong>Bildeskaleringen blåste opp mediemappen din.</strong> Den
+        behandlet de små miniatyrbildene den lager som nye bilder som skulle forstørres,
+        blåste dem opp til full størrelse og lagde så miniatyrbilder av dem. Hver
+        kjøring la til flere filer, sider viste stille bilder i full størrelse i stedet for
+        miniatyrbilder, og AI-oppskalereren kjørte på omtrent tre ganger så mange
+        filer som tiltenkt.</li>
+      <li><strong>AI-utfylling overskrev detaljer du hadde rettet.</strong> Ved en
+        vanlig skraping kunne den erstatte din egen utgiver, utvikler, sjanger, aldersgrenser
+        og mer. Nå fyller den bare inn tomme felt; AI-utfylling-knappen du trykker på
+        selv, er uendret.</li>
+      <li><strong>Gjentatte skrapinger kunne slette et godt skjermbilde.</strong> Spill
+        skrapet fra RAWG gjenbrukte de samme filnavnene, så en ny skraping
+        overskrev et lagret skjermbilde, og fjernet det deretter som duplikat mens
+        biblioteket fortsatt viste det.</li>
+    </ul>
+- version: 3.23.3
+  date: '2026-09-01'
+  tags:
+  - type: fix
+    label: Husstandsrollene gjør nå nøyaktig det de sier, og en deaktivert konto er virkelig utestengt
+  body: |
+    <ul>
+      <li><strong>Når du deaktiverer noen, avsluttes nå økten deres.</strong> Å slå
+        av en konto skjulte den fra alle skjermbilder, men alle som allerede var logget inn
+        på den kontoen, kunne fortsette som normalt i opptil en uke. Deaktivering
+        er den eneste måten å stenge noen ute på uten å slette dem, så den
+        trer nå i kraft ved deres aller neste klikk.</li>
+      <li><strong>Skrivebeskyttede kontoer kan ikke lenger endre spilldata.</strong>
+        Tre «how long to beat»-handlinger var åpne for alle innloggede,
+        også dem med bare visningstilgang — så en skrivebeskyttet konto kunne overskrive en
+        spilletid, eller slette den fra alle spill i biblioteket. Nå krever de
+        redigeringsrettigheter, som alle andre handlinger som endrer et spill.</li>
+      <li><strong>Trofésporeren fungerer for alle igjen.</strong>
+        Å oppdatere dine egne samlertrofeer krevde redaktørrettigheter, som rollene
+        Spiller og Seer ikke har — og det er det eneste som
+        skriver disse trofeene. Disse kontoene kunne aldri tjene et, og
+        Oppdater-knappen viste bare en feil. Det er din egen fremgang, så det
+        krever nå ingen spesielle rettigheter i det hele tatt.</li>
+      <li><strong>Én persons PlayStation-oppdatering kan ikke lenger stoppes av
+        andre.</strong> Enhver innlogget konto kunne sette på pause eller avbryte en
+        oppdatering noen andre hadde startet, og kunne se hvilket spill den personen
+        var på. Begge deler er nå forbeholdt den som startet den.</li>
+      <li><strong>Steam-import bruker din egen konto, ikke den som lagret sin
+        først.</strong> Bibliotekimporten leste én felles kopi av Steam-
+        påloggingsdetaljene i stedet for dine, så den kunne hente noen andres
+        bibliotek — mens dine egne lagrede detaljer så ut til å mangle.</li>
+      <li><strong>Det er vanskelig å gjette et administratorpassord igjen.</strong> Grensen
+        for mislykkede påloggingsforsøk ble delt av alle på nettverket,
+        så alle med sin egen konto kunne nullstille den ved å logge inn og fortsette å
+        gjette i det uendelige. Grensen gjelder nå per konto.</li>
+      <li><strong>Feil fra appen når nå fram til siden i stedet for å forsvinne.
+        </strong> Når en handling ble avvist, svarte 115 av dem i en form
+        siden ikke kunne lese, så det så ut som om handlingen hadde virket. Nå
+        melder de avvisningen ordentlig, og du ser den virkelige meldingen.</li>
+    </ul>
+- version: 3.23.2
+  date: '2026-08-06'
+  tags:
+  - type: fix
+    label: Sidene for skraperinnstillinger laster raskere og viser aldri en utdatert API-nøkkel
+  body: |
+    <ul>
+      <li><strong>Innstillinger- og skraperkonfigurasjonssidene slutter å lese
+        skraperinnstillingsfilen på nytt ved hver forespørsel.</strong> Fire steder
+        åpnet og tolket den fra disken hver gang en side eller sjekk kjørte,
+        selv om en delt, mellomlagret leser allerede fantes. Nå bruker alle
+        den, så disse sidene gjør mindre arbeid per besøk.</li>
+      <li><strong>Lagring trer fortsatt i kraft umiddelbart.</strong> En mellomlager som
+        glemmer etter en tidsfrist, kunne ha vist deg de gamle verdiene i opptil et halvt
+        minutt etter en lagring. Hver lagring tømmer nå mellomlageret idet den skriver,
+        så det du ser, er det du nettopp lagret.</li>
+      <li><strong>De ekte API-nøklene dine kan ikke lenger erstattes av sin egen
+        maskerte visningsverdi.</strong> Innstillingssidene viser lagrede nøkler som
+        <code>***1234</code> i stedet for de ekte. Fordi siden fikk
+        den samme kopien av innstillingene som skraperne bruker, kunne maskeringen
+        ha overskrevet de ekte nøklene i minnet, slik at skraperne
+        logget inn med stjerner til mellomlageret utløp.</li>
+      <li><strong>Frittstående versjoner ser nå etter skraperinnstillingene på riktig
+        sted.</strong> Skraperne fant filens plassering på en annen måte
+        enn sidene som lagrer den. I en vanlig installasjon havnet begge på
+        samme fil; i en frittstående versjon (dobbeltklikk) ville de ikke gjort det,
+        så lagrede API-nøkler kunne ha havnet et sted skraperne aldri
+        så.</li>
+    </ul>
+- version: 3.23.1
+  date: '2026-08-06'
+  tags:
+  - type: fix
+    label: Serverporten du lagrer i Innstillinger, er nå porten den bruker
+  body: |
+    <ul>
+      <li><strong>Når du lagrer en serverport, flyttes serveren faktisk.</strong>
+        Innstillinger godtok en port, sjekket den, lagret den og fortalte deg at en omstart
+        trengtes for å ta den i bruk &mdash; og så startet serveren på 5000 likevel.
+        Ingenting leste noen gang verdien tilbake. Den er nå en del av oppstartskjeden,
+        så en omstart flytter virkelig RetroDB til porten du valgte. Alt som er
+        satt i miljøet, vinner fortsatt, så en oppstarter eller container som
+        tildeler en port, påvirkes ikke.</li>
+      <li><strong>To innstillinger som aldri gjorde noe, er fjernet
+        i stedet for reparert.</strong> «Serververt» og «feilsøkingsmodus» ble
+        lagret og ga det samme falske løftet. Å slå på feilsøkingsmodus fra
+        et nettskjema ville ha åpnet en interaktiv Python-konsoll i
+        nettleseren, og bindingsadressen styrer hvilke maskiner som i det hele tatt kan nå
+        RetroDB &mdash; ingen av dem hører hjemme bak et innstillingsskjema. Begge kan fortsatt
+        konfigureres fra miljøet, der de allerede hørte hjemme. Hvis
+        innstillingsfilen din fortsatt inneholder dem, forkastes de stille ved innlasting;
+        du trenger ikke gjøre noe.</li>
+      <li><strong>Ingenting påstår nå at en omstart tar det i bruk, med mindre en omstart
+        faktisk gjør det.</strong> Det var den egentlige feilen &mdash; en død innstilling er
+        rotete, men et falskt løfte kaster bort en ettermiddag.</li>
+    </ul>
+- version: 3.23.0
+  date: '2026-08-06'
+  tags:
+  - type: enhancement
+    label: Start RetroDB på en port noen andre har valgt
+  body: |
+    <ul>
+      <li><strong>RetroDB leser nå en <code>PORT</code>-innstilling fra
+        miljøet sitt.</strong> Hvis du starter RetroDB fra et annet verktøy &mdash; et
+        kontrollpanel, en container, et panel for hjemmeserver &mdash; kan det verktøyet nå
+        gi RetroDB porten det vil ha, uten at noen redigerer en fil.
+        Sett <code>PORT</code>, så binder RetroDB seg dit; la den være, så
+        endres ingenting i det hele tatt. Den eksisterende <code>RETRODB_PORT</code> fungerer fortsatt
+        nøyaktig som før, og <code>PORT</code> vinner hvis begge er satt.</li>
+      <li><strong>Et ugyldig portnummer sier nå fra i stedet for å gjette.</strong>
+        Før ga en uleselig port en vegg av Python-feiltekst, og
+        en port utenfor det brukbare området ble først oppdaget når serveren
+        ikke klarte å starte. RetroDB stopper nå umiddelbart med én linje som nevner
+        verdien den ikke kunne bruke. Den starter aldri stille på en annen port
+        enn den den ble bedt om &mdash; å bli flyttet i det stille er verre enn
+        å få et nei.</li>
+      <li><strong>Oppstartsbanneret og nettleserfanen følger den virkelige
+        porten.</strong> Adressen som skrives ut når RetroDB starter, og siden den
+        åpner for deg, sa begge 5000 uansett hvilken port som faktisk var
+        i bruk.</li>
+    </ul>
 - version: 3.22.1
   date: '2026-07-31'
   tags:

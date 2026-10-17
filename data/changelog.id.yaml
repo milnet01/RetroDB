@@ -1,3 +1,724 @@
+- version: 3.26.0
+  date: '2026-10-17'
+  tags:
+  - type: feature
+    label: Setiap halaman kini menyesuaikan dengan jendela tempatnya dibuka
+  - type: enhancement
+    label: Halaman game menampilkan nama lain di kartunya sendiri, plus tombol Manual
+  body: |
+    <ul>
+      <li><strong>Setiap halaman kini menyesuaikan dengan jendela tempatnya dibuka.</strong>
+        Halaman berisi kartu (Sistem, Museum, Tag, Daftar, Alat ROM, trofi, dan
+        achievement) menambah satu kolom setiap kali satu kartu utuh lagi muat,
+        hingga empat per baris. Tabel, alat, dan halaman detail sedikit melebar,
+        tetapi berhenti ketika lebih lebar hanya akan merenggangkan kolomnya.
+        Pengaturan menjaga kotak-kotaknya tetap selebar yang nyaman dibaca.</li>
+      <li><strong>Bantuan dan log perubahan menjaga panjang baris yang
+        nyaman.</strong> Di jendela lebar, tautan bagian Bantuan pindah ke
+        kolom di samping teks; di jendela sempit, tautan itu berada dalam satu
+        baris yang dapat Anda geser, bukan lagi blok yang menutupi sebagian
+        besar layar ponsel.</li>
+      <li><strong>Halaman game:</strong> di jendela lebar, tangkapan layar
+        berjajar di bagian atas, dengan video dan kartu baru <strong>Juga
+        Dikenal Sebagai</strong> berdampingan di bawahnya, sejajar dengan
+        sampul. Nama-nama lain sebelumnya berupa teks samar di bawah judul;
+        kini nama-nama itu ada di kartu yang mudah dibaca. <strong>Manual</strong>
+        kini menjadi tombol di samping Mainkan, dan Riwayat Scrape mulai dalam
+        keadaan terlipat.</li>
+      <li>Trofi PSN menampilkan satu hingga empat kolom sesuai jendela, bukan
+        selalu tiga.</li>
+      <li>Beberapa halaman tidak lagi bergulir ke samping di ponsel: Trofi,
+        Trofi Kolektor, halaman sistem RetroAchievements, Bantuan, Pengaturan,
+        Analitik, Impor Game, serta halaman detail achievement dan trofi.
+        Tabel lebar kini bergulir di dalam dirinya sendiri di sana.</li>
+    </ul>
+- version: 3.25.0
+  date: '2026-10-17'
+  tags:
+  - type: feature
+    label: Halaman Pustaka, sistem, dan game kini menyesuaikan dengan jendela tempatnya dibuka
+  body: |
+    <ul>
+      <li><strong>Halaman memakai jendela lebar saat itu membantu, dan hanya saat itu.</strong>
+        Pustaka dan setiap halaman sistem menambah satu kolom kartu game
+        setiap kali satu kartu utuh lagi muat, hingga empat per baris. Ponsel
+        menampilkan satu, jendela setengah layar dua atau tiga, jendela lebar
+        empat. Dulu halaman berhenti pada lebar tetap dan membiarkan sebagian
+        besar jendela besar kosong.</li>
+      <li><strong>Halaman game menempatkan sampul dan detailnya di samping
+        tangkapan layar dan video</strong> bila keduanya muat berdampingan, dan
+        menumpuknya bila tidak. Deskripsi menjaga panjang baris yang
+        nyaman.</li>
+      <li><strong>Tombol Mainkan pindah ke pojok kanan atas setiap kartu,</strong>
+        lebih kecil dan di tengah. Tombol ini kini juga memeriksa bahwa berkas
+        ROM game masih ada dan jenisnya diterima oleh sistemnya, sehingga
+        tombol hanya muncul di tempat menekannya akan memulai game. Tombol ini
+        disembunyikan saat Anda memilih game secara massal.</li>
+      <li>Tombol kembali-ke-atas dan pop-up progres kini berada tepat di samping
+        konten halaman, bukan di tepi terjauh jendela.</li>
+      <li>Halaman game tidak lagi bergulir ke samping di ponsel.</li>
+    </ul>
+- version: 3.24.2
+  date: '2026-10-17'
+  tags:
+  - type: ui
+    label: Bahasa uji "Pseudo" hanya ditawarkan kepada admin
+  body: |
+    <ul>
+      <li><strong>"Pseudo" tidak lagi muncul di daftar bahasa untuk
+        semua orang.</strong> Ini adalah alat pengembang yang menampilkan setiap
+        kata dengan tanda kurung dan aksen, jadi kini hanya ditawarkan kepada
+        admin. Pengguna lain yang sempat memilihnya akan melihat aplikasi dalam
+        bahasa Inggris, dengan bahasa Inggris terpilih di Pengaturan.</li>
+    </ul>
+- version: 3.24.1
+  date: '2026-10-17'
+  tags:
+  - type: fix
+    label: Unduhan Windows bisa dipasang lagi, dan tidak ada lagi banjir galat setelah mengubah ukuran
+  body: |
+    <ul>
+      <li><strong>Unduhan Windows biasa tidak bisa dipasang.</strong>
+        Penginstal berhenti dengan pesan "Core dependencies failed to install",
+        karena daftar paket terkuncinya melewatkan satu paket yang hanya
+        dibutuhkan Windows. Daftar itu kini mencakup semua platform. Unduhan
+        Windows tanpa Python tidak terpengaruh.</li>
+      <li><strong>Pesan galat terus muncul di pojok kanan atas</strong>
+        pada tema Cyberpunk setelah jendela browser dibuat lebih lebar, misalnya
+        dengan memaksimalkannya. Latar belakang animasi kini menyesuaikan
+        ukurannya dengan mulus.</li>
+    </ul>
+- version: 3.24.0
+  date: '2026-10-17'
+  tags:
+  - type: feature
+    label: Mainkan game langsung dari halaman Pustaka dan sistem
+  body: |
+    <ul>
+      <li><strong>Tombol ▶ Mainkan di setiap kartu game.</strong> Tombol ini
+        muncul di pojok kiri bawah gambar sampul di halaman Pustaka dan di
+        setiap halaman sistem. Tekan, dan game dimulai di emulatornya; Anda
+        tetap di daftar alih-alih membuka halaman game terlebih dahulu.</li>
+      <li>Tombol hanya muncul di tempat menekannya bisa berhasil: akun Anda
+        diizinkan meluncurkan game, dan emulator game itu aktif, terpasang,
+        dan, untuk RetroArch, memiliki core-nya. Game pada sistem tanpa
+        emulator yang berfungsi tidak menampilkan tombol.</li>
+      <li>Jika peluncuran tetap gagal, misalnya karena berkas ROM telah
+        dipindahkan, alasannya muncul dalam pesan dan halaman tetap seperti
+        semula.</li>
+    </ul>
+- version: 3.23.21
+  date: '2026-10-17'
+  tags:
+  - type: ui
+    label: Bilah samping lebih pendek, dengan satu halaman Achievement untuk semua platform
+  body: |
+    <ul>
+      <li><strong>Satu tautan "Achievement" menggantikan lima.</strong>
+        RetroAchievements, RPCS3, PSN, Steam, dan Xbox kini menjadi tab di satu
+        halaman, dan tautan itu membuka kembali tab yang terakhir Anda pakai.
+        Jika Anda tidak punya game RetroAchievements, halaman dibuka di tab
+        RPCS3 alih-alih mengembalikan Anda ke Dasbor.</li>
+      <li><strong>Laporan ROM kini berada di Alat ROM,</strong> sebagai tab
+        di samping alat lainnya dan sebagai kartu di halaman Alat ROM.</li>
+      <li><strong>Tidak ada lagi dua tautan bilah samping yang memakai ikon sama:</strong>
+        Dasbor kini 🏠 dan Penampil Log 🧾. Bilah samping kini berisi 16 tautan,
+        bukan 21.</li>
+      <li>Tab alat di halaman pengaturan Alat ROM sebelumnya selalu berbahasa
+        Inggris; kini tab itu mengikuti bahasa Anda.</li>
+    </ul>
+- version: 3.23.20
+  date: '2026-10-17'
+  tags:
+  - type: fix
+    label: Pencarian How Long To Beat berfungsi lagi
+  body: |
+    <ul>
+      <li><strong>Setiap pencarian How Long To Beat mengatakan game tidak
+        ditemukan.</strong> Situs itu memindahkan pencariannya ke alamat baru,
+        sehingga permintaan RetroDB ditolak; kerusakan ini terjadi antara akhir
+        Juli dan akhir September. RetroDB kini memakai alamat baru, dan
+        mengirim filter platform dan tahun dalam format baru situs itu, yang
+        sudah mulai diabaikan oleh situs tersebut. Pencarian satu game maupun
+        pencarian massal di Alat ROM berfungsi lagi.</li>
+    </ul>
+- version: 3.23.19
+  date: '2026-10-17'
+  tags:
+  - type: ui
+    label: RetroDB kini menyatakan dengan jelas bahwa ia tidak mendukung pembajakan
+  - type: fix
+    label: Dialog Tentang terbuka dalam ukuran penuh lagi
+  body: |
+    <ul>
+      <li><strong>Pemberitahuan anti-pembajakan kini ada di aplikasi.</strong>
+        Pemberitahuan ini muncul di dialog Tentang dan di bawah Jalur Pustaka
+        ROM di Pengaturan, dalam setiap bahasa. Isinya: RetroDB tidak
+        mendistribusikan atau menyimpan berkas ROM, Anda sebaiknya hanya
+        memakai game yang disalin dari cakram dan kartrid milik Anda sendiri,
+        dan RetroDB tidak berafiliasi dengan pembuat konsol, penerbit, atau
+        basis data game mana pun. Kata-katanya sama dengan situs web dan
+        trailer RetroDB.</li>
+      <li><strong>Dialog Tentang terjepit di dalam bilah samping.</strong>
+        Kini dialog itu terbuka di tengah layar dalam ukuran normalnya, dan
+        dapat digulir di layar kecil alih-alih menyembunyikan judul dan tombol
+        tutupnya.</li>
+    </ul>
+- version: 3.23.18
+  date: '2026-10-15'
+  tags:
+  - type: security
+    label: RetroDB hanya meluncurkan atau mengganti nama ke jenis berkas ROM yang sungguhan
+  body: |
+    <ul>
+      <li><strong>Sebuah game dapat diluncurkan dengan berkas yang bukan
+        ROM.</strong> Mengganti nama ROM menerima nama apa pun, sehingga
+        <code>crash.bin</code> bisa menjadi <code>crash.cfg</code> dan berkas
+        itu diserahkan ke emulator. Peluncuran kini memeriksa jenis berkas
+        terhadap daftar di <code>systeminfo.txt</code> milik folder sistem itu,
+        daftar yang sama yang dipakai pemindaian pustaka, dan penggantian nama
+        menolak jenis yang tidak ada di daftar itu. Jika sebuah folder sistem
+        tidak punya daftar, game-gamenya tidak akan diluncurkan, dan pesannya
+        menyebutkan berkas yang hilang.</li>
+    </ul>
+- version: 3.23.17
+  date: '2026-10-15'
+  tags:
+  - type: security
+    label: Hanya admin yang dapat mengubah argumen peluncuran sebuah game
+  - type: fix
+    label: Argumen peluncuran dengan beberapa kata, atau tanda kutip yang tersesat, kini berfungsi
+  - type: fix
+    label: RetroDB tidak lagi menyimpan setiap peluncuran yang selesai di memori
+  body: |
+    <ul>
+      <li><strong>Seorang editor dapat menambahkan argumen peluncuran yang
+        menjalankan kode lain.</strong> <em>Argumen peluncuran khusus</em> sebuah
+        game langsung diteruskan ke emulator, dan dengan RetroArch argumen itu
+        dapat memuat berkas program apa pun di komputer. Mengubahnya kini
+        memerlukan peran admin, dan kolom itu disembunyikan dari orang
+        lain.</li>
+      <li><strong>Argumen peluncuran yang lebih dari satu kata sampai ke
+        emulator sebagai satu kata.</strong> <code>--a --b</code> kini tiba
+        sebagai dua argumen, dan nilai kosong tidak menambahkan apa pun. Tanda
+        kutip penutup yang hilang dulu merusak setiap peluncuran game itu
+        dengan galat server; kini muncul pesan yang menyebutkan kolom yang
+        perlu diperbaiki. Token <code>{disc_paths}</code> sudah dihapus: token
+        itu selalu kosong.</li>
+      <li><strong>Peluncuran yang sudah selesai menumpuk di memori sampai
+        RetroDB dimulai ulang.</strong> Peluncuran yang berakhir lebih dari
+        satu jam yang lalu kini dibersihkan.</li>
+    </ul>
+- version: 3.23.16
+  date: '2026-10-15'
+  tags:
+  - type: fix
+    label: Memilih bahasa di Pengaturan berfungsi lagi
+  body: |
+    <ul>
+      <li><strong>Memilih bahasa di Pengaturan &rarr; Pustaka &rarr;
+        Tampilan tidak berpengaruh apa-apa.</strong> Yang muncul justru galat,
+        dan halaman tetap dalam bahasa lamanya. Ini rusak sejak 3.23.8. Memilih
+        bahasa kini menyimpannya dan memuat ulang halaman dalam bahasa
+        itu.</li>
+    </ul>
+- version: 3.23.15
+  date: '2026-10-15'
+  tags:
+  - type: fix
+    label: Ikon trofi dan platform kembali ada di unduhan
+  body: |
+    <ul>
+      <li><strong>Unduhan tidak menyertakan ikon trofi dan platform
+        RetroDB.</strong> Setiap kartu game dengan RetroAchievements
+        menampilkan gambar rusak di tempat lencananya, dan tingkatan trofi
+        serta logo PSN, Steam, Xbox, dan RPCS3 juga hilang. Semuanya kini
+        disertakan di setiap unduhan.</li>
+    </ul>
+- version: 3.23.14
+  date: '2026-10-10'
+  tags:
+  - type: security
+    label: Dua pustaka bawaan diperbarui untuk perbaikan keamanan yang telah dipublikasikan
+  body: |
+    <ul>
+      <li><strong>urllib3 dan Werkzeug memiliki masalah keamanan yang sudah diketahui.</strong>
+        RetroDB kini menyertakan urllib3 2.8.0 dan Werkzeug 3.1.9, versi yang
+        memperbaikinya. Instalasi dari kode sumber mendapatkannya dengan
+        menjalankan <code>install.py</code> lagi, yang memasang dari
+        <code>requirements.lock</code>.</li>
+    </ul>
+- version: 3.23.13
+  date: '2026-09-26'
+  tags:
+  - type: fix
+    label: Media yang disimpan sebagai jalur folder tidak lagi dilaporkan hilang
+  body: |
+    <ul>
+      <li><strong>Di build mandiri, "hapus referensi media yang hilang" bisa
+        mengosongkan media yang sebenarnya ada.</strong> Ini terjadi ketika
+        basis data menyimpan media sebagai jalur folder seperti
+        <code>images/boxart/…</code> alih-alih nama berkas saja. RetroDB
+        kini mencarinya di folder yang benar.</li>
+    </ul>
+- version: 3.23.12
+  date: '2026-09-26'
+  tags:
+  - type: fix
+    label: Dasbor menampilkan scrape massal yang sedang berjalan, plus empat perbaikan kecil
+  body: |
+    <ul>
+      <li><strong>Kartu progres scrape di dasbor tidak pernah muncul.</strong>
+        Kini kartu itu tampil selama scrape massal berjalan, dan memberi tahu
+        saat scrape dijeda.</li>
+      <li><strong>Tidak ada lagi galat di konsol browser pada halaman
+        masuk.</strong> Halaman itu berhenti memeriksa tugas latar belakang
+        sebelum ada yang masuk.</li>
+      <li><strong>Wizard penyiapan tidak lagi mengatakan "Penyiapan selesai!" saat
+        penyimpanan gagal.</strong> Kini wizard memberi tahu Anda bahwa
+        pengaturan tidak dapat disimpan.</li>
+      <li><strong>Dua scrape massal yang dimulai pada detik yang sama tidak lagi
+        berbagi id</strong>, sehingga tindakan antrean seperti batal
+        mengenai scrape yang tepat.</li>
+    </ul>
+- version: 3.23.11
+  date: '2026-09-26'
+  tags:
+  - type: ui
+    label: Tombol donasi kini menyebutkan apa yang didukungnya
+  body: |
+    <ul>
+      <li><strong>Kata-kata donasi yang lebih jelas.</strong> Tombol di header
+        kini bertuliskan "Sponsor RetroDB" dan "Support RetroDB". README
+        menyatakan bahwa setiap rilis gratis, dan bahwa donasi mendanai RetroDB
+        sendiri, bukan emulator dan core yang dapat diluncurkannya.</li>
+    </ul>
+- version: 3.23.10
+  date: '2026-09-26'
+  tags:
+  - type: fix
+    label: Halaman Alat ROM mengikuti pengaturan tersimpan Anda, dan halaman Log serta Alat ROM berfungsi lagi
+  body: |
+    <ul>
+      <li><strong>Halaman Log dan beberapa halaman Alat ROM rusak.</strong>
+        Sebuah skrip di halaman-halaman itu gagal saat dimuat, sehingga
+        penampil log dan alat bantu bersama Alat ROM tidak pernah berjalan.
+        Kini semuanya dimuat dengan benar.</li>
+      <li><strong>Pengaturan Alat ROM kini benar-benar berpengaruh.</strong>
+        Pencari Duplikat dan Konverter CHD terbuka dengan opsi yang diatur dari
+        halaman Pengaturan Alat ROM, dan Anda tetap dapat mengubahnya untuk
+        satu kali jalan.</li>
+      <li><strong>Sakelar di Konverter CHD diabaikan.</strong> Mematikan
+        "Hapus berkas asli" di halaman tidak mencegah penghapusan jika
+        pengaturan tersimpan Anda menyuruh untuk menghapus. Kini sakelar di
+        halaman itulah yang menentukan.</li>
+      <li><strong>Pengaturan Jalur Sementara kini dipakai.</strong> Berkas yang
+        disiapkan saat membuat playlist M3U kini ditempatkan di dalamnya.</li>
+    </ul>
+- version: 3.23.9
+  date: '2026-09-26'
+  tags:
+  - type: security
+    label: Berkas log scraper tidak lagi menyimpan kata sandi dan token, dan percobaan masuk kembali dibatasi
+  - type: fix
+    label: Menyimpan Pengaturan tidak lagi menghapus pengaturan Anda, dan menghapus pengguna kini berfungsi
+  body: |
+    <ul>
+      <li><strong>Berkas log menyimpan rahasia sebagai teks biasa.</strong>
+        Berkas log scraper seharusnya menyembunyikan token masuk dan kunci API,
+        tetapi langkah penyembunyiannya tidak pernah berjalan, sehingga
+        semuanya ditulis utuh. Kini semuanya disembunyikan. Berkas log lama
+        masih memuatnya; hapus berkas lama di <code>logs/</code> jika Anda
+        membagikan instalasi Anda.</li>
+      <li><strong>Batas percobaan masuk tidak diterapkan.</strong> Batas untuk
+        percobaan masuk berulang dan untuk tindakan berat (pemindaian, scrape,
+        impor) sudah disiapkan tetapi tidak pernah diaktifkan. Kini batas itu
+        berfungsi, dan permintaan yang diblokir mendapat pesan "terlalu banyak
+        permintaan" yang jelas.</li>
+      <li><strong>Berkas pengaturan yang rusak bisa terhapus.</strong> Jika
+        <code>data/settings.json</code> tidak dapat dibaca, penyimpanan
+        berikutnya menggantinya dengan nilai bawaan. RetroDB kini menyimpan
+        berkas yang rusak sebagai
+        <code>settings.json.corrupt-&lt;time&gt;</code> sebelum menyimpan. Jika
+        berkas itu bisa dibaca lagi, penyimpanan justru ditolak.</li>
+      <li><strong>Baris penamaan Engine menghilangkan pengaturan lain.</strong>
+        Menambahkan tag ke baris Engine di pengaturan penamaan gagal, dan juga
+        membuang pengaturan artikel dan wilayah yang disimpan bersamanya. Kini
+        tersimpan dengan benar.</li>
+      <li><strong>Menghapus pengguna gagal.</strong> Pengguna yang memiliki tag,
+        daftar, item wishlist, atau data PSN tidak dapat dihapus. Kini
+        penghapusan menghapus pengguna itu beserta semua miliknya.</li>
+      <li><strong>Dua scrape bisa berjalan bersamaan.</strong> Menukar atau
+        memindahkan scrape massal yang sedang berjalan di antrean memulai dua
+        scrape yang berbagi satu hitungan progres. Kini hanya satu yang
+        berjalan.</li>
+      <li><strong>Progres scrape massal bisa terlihat seperti galat.</strong>
+        Sebelum keberhasilan pertamanya, scrape massal melaporkan statusnya
+        dengan cara yang dibaca beberapa layar sebagai kegagalan. Itu sudah
+        diperbaiki.</li>
+      <li><strong>Setelah masuk, Anda kini dikembalikan ke halaman yang Anda minta.</strong>
+        Dulu selalu menuju ke dasbor.</li>
+      <li><strong>Tindakan berkas admin tetap berada di dalam folder Anda.</strong>
+        Alat pengubah ukuran gambar dan tindakan ganti nama ROM kini menolak
+        apa pun di luar folder media atau folder ROM Anda.</li>
+      <li><strong>Berkas masuk PSN dan Xbox lama dipindahkan ke akun
+        Anda.</strong> Sisa <code>data/psn_tokens.json</code> atau
+        <code>data/xbox_tokens.json</code> dimuat ke akun Anda dan namanya
+        diubah agar berakhiran <code>.migrated-015</code>. Berkas itu masih
+        menyimpan token, jadi hapuslah setelah Anda memastikan bahwa proses
+        masuk berfungsi.</li>
+      <li><strong>Pesan galat yang lebih jelas dari server.</strong> Permintaan
+        yang salah kini dijawab dengan pesan galat yang semestinya, bukan
+        "Terjadi galat internal".</li>
+    </ul>
+- version: 3.23.8
+  date: '2026-09-25'
+  tags:
+  - type: fix
+    label: Impor CLZ berfungsi lagi, sampul daftar tampil, dan beberapa halaman tidak lagi rusak karena tanda apostrof
+  - type: security
+    label: Nama hasil scrape dan jalur berkas tidak bisa lagi keluar dari tombol halaman
+  body: |
+    <ul>
+      <li><strong>Impor CLZ tidak melakukan apa-apa.</strong> Mengunggah PDF CLZ
+        mengirimnya ke alamat yang tidak dimiliki server, sehingga setiap
+        unggahan gagal dengan "Parse failed". Kini berkas itu sampai ke
+        pengurainya.</li>
+      <li><strong>Semua sampul di halaman daftar hilang.</strong> Halaman daftar
+        meminta setiap sampul di alamat yang salah, dan kolom Sistem selalu
+        kosong. Keduanya kini tampil. Gambar sampul di pencarian "tambah game"
+        di halaman itu juga sudah diperbaiki.</li>
+      <li><strong>Tombol rusak pada nama yang mengandung apostrof.</strong>
+        Menghapus "Assassin's Creed" dari daftar, menghapus tangkapan layar,
+        memperbesar sampul, atau menghapus tag genre bisa diam-diam tidak
+        melakukan apa-apa jika namanya mengandung apostrof. Kesalahan yang sama
+        memungkinkan nama hasil scrape yang direkayasa menjalankan kode di
+        halaman. Kini nama dikirim ke tombol-tombol itu dengan cara yang tidak
+        mungkin disalahartikan sebagai kode.</li>
+      <li><strong>Alamat gambar dan tautan kini di-escape di mana-mana.</strong>
+        Beberapa halaman menyusun alamat gambar dari nama berkas hasil scrape
+        tanpa meng-escape-nya, dan lima halaman membawa salinan sendiri dari
+        fungsi escape yang lebih lemah. Kini semuanya memakai fungsi bersama.</li>
+      <li><strong>Halaman Pengaturan bisa terbuka kosong.</strong> Jika tab yang
+        terakhir Anda pakai telah diganti namanya oleh pembaruan, Pengaturan
+        terbuka tanpa panel yang terlihat. Kini halaman mengabaikan tab yang
+        sudah tidak ada. Tautan seperti <code>/settings#account</code> kembali
+        membuka tab tersebut.</li>
+      <li><strong>Tema Anda kini mengikuti Anda ke perangkat lain.</strong> Tema
+        yang Anda pilih disimpan ke akun Anda. Browser yang belum pernah diberi
+        tema memakai tema tersimpan Anda, bukan tema bawaan.</li>
+      <li><strong>Pop-up progres tugas menampilkan ikon yang benar.</strong>
+        Tugas yang dijeda, selesai, dan mengantre menampilkan ikon "berjalan"
+        yang sama. Kini setiap status punya ikonnya sendiri, per tema.</li>
+      <li><strong>Daftar pintasan keyboard kini dapat diterjemahkan.</strong>
+        Labelnya tidak terlihat oleh alat penerjemahan, sehingga tetap dalam
+        bahasa Inggris di setiap bahasa.</li>
+    </ul>
+- version: 3.23.6
+  date: '2026-09-03'
+  tags:
+  - type: fix
+    label: Rating usia sering salah, dan game hasil scrape bisa kehilangan detailnya
+  body: |
+    <ul>
+      <li><strong>Rating usia sering salah, dan kesalahannya menyebar.</strong>
+        Ketika rating berasal dari TheGamesDB, aplikasi mencari kode rating di
+        mana saja di dalam teks alih-alih membacanya dengan benar &mdash;
+        sehingga "T - Teen", "M - Mature 17+", "AO - Adults Only 18+", dan
+        "RP - Rating Pending" semuanya tersimpan sebagai rating yang salah, dan
+        game Mature bisa dicatat sebagai cocok untuk semua umur. Lebih buruk
+        lagi, rating yang salah itu kemudian dipakai untuk mengisi delapan
+        sistem rating lainnya, sehingga satu pembacaan buruk menyebar ke
+        semuanya. Rating kini dibaca dari kode di awal teks.</li>
+      <li><strong>Rating hasil konversi menjadi terlalu longgar.</strong> Saat
+        mengisi rating yang kosong dari rating yang sudah Anda miliki, aplikasi
+        bisa memakai rating yang baru saja ia hitung beberapa saat sebelumnya,
+        bukan rating yang benar-benar Anda miliki sejak awal. Setiap langkah
+        mengurangi sedikit ketegasannya. Kini konversi selalu dilakukan dari
+        rating yang benar-benar dimiliki game itu.</li>
+      <li><strong>Scrape Ulang Penuh menghapus Wilayah dan Jenis Save yang dipilih manual.</strong>
+        Keduanya tidak berasal dari scraper &mdash; aplikasi yang menentukannya
+        &mdash; sehingga Scrape Ulang Penuh akan mengganti "Japan" pilihan Anda
+        dengan bawaan "USA". Nilai Anda kini dipertahankan kecuali sebuah
+        sumber benar-benar menyediakan nilai baru.</li>
+      <li><strong>Scraper bisa menerima game yang salah.</strong> Hasil
+        ScreenScraper biasanya diperiksa terhadap skor kecocokan sebelum
+        dipakai, tetapi pencarian yang menghasilkan tepat satu hasil melewati
+        pemeriksaan itu sepenuhnya. Kini setiap hasil diberi skor.</li>
+      <li><strong>Sebuah game bisa kehilangan semua detail hasil scrape karena
+        satu kolom yang hilang.</strong> Jika IGDB atau ScreenScraper membiarkan
+        satu kolom kosong dengan cara yang tak terduga, seluruh pembaruan
+        dibuang &mdash; penerbit, pengembang, gambar, dan semuanya. Kasus itu
+        kini ditangani dan detail lainnya dipertahankan.</li>
+      <li><strong>Gambar yang gagal bisa tercatat sebagai berhasil.</strong> Jika
+        gambar yang diunduh ternyata tidak dapat dipakai, aplikasi tidak
+        menghapus apa pun dan tetap menyimpan nama berkasnya, sehingga
+        meninggalkan referensi yang rusak. Kini berkas itu dihapus dan kolomnya
+        dibiarkan.</li>
+      <li><strong>Mode game kini memakai kata-kata yang konsisten.</strong>
+        Scraper yang berbeda menulis "Single-player" dan "Single-Player" serta
+        "Multiplayer" polos yang bukan salah satu label aplikasi sendiri,
+        sehingga game-game itu tidak dapat diterjemahkan atau dicocokkan oleh
+        filter Mode. Semua sumber kini menulis label yang sama. Game yang sudah
+        ada tetap memakai kata-kata lamanya sampai Anda melakukan scrape ulang
+        atau menjalankan alat normalisasi di Pengaturan.</li>
+      <li><strong>Pencarian Xbox kini berperilaku seperti sumber lainnya.</strong>
+        Pencarian itu membuat permintaan web sendiri, sehingga tidak ada
+        percobaan ulang saat Xbox Live meminta untuk memperlambat, dan tidak ada
+        batas berapa banyak data yang bisa ditarik oleh satu balasan. Kini
+        pencarian itu memakai koneksi bersama yang sama dengan scraper
+        lainnya.</li>
+      <li><strong>Kode ScreenScraper yang tidak terpakai dihapus.</strong> Dua
+        fungsi yang tidak pernah dipanggil oleh bagian mana pun di aplikasi
+        telah dihapus. Salah satunya mengembalikan alamat web yang masih memuat
+        kata sandi ScreenScraper Anda, yang akan menyerahkan kata sandi itu
+        kepada apa pun yang memakainya. "System Media Endpoint" yang tercantum
+        di catatan rilis 3.6.x adalah salah satunya &mdash; fungsi itu tidak
+        pernah dapat dijangkau dari bagian mana pun di aplikasi.</li>
+    </ul>
+- version: 3.23.5
+  date: '2026-09-02'
+  tags:
+  - type: fix
+    label: Unduhan paket tidak bisa dijalankan, dan perbaikan build lainnya
+  body: |
+    <ul>
+      <li><strong>Unduhan Standalone sama sekali tidak bisa dijalankan.</strong>
+        Build paket membawa Python-nya sendiri, tetapi peluncur di dalamnya
+        adalah peluncur yang ditulis untuk instalasi dari kode sumber &mdash;
+        peluncur itu mencari berkas Python yang tidak ada di build paket, dan
+        berhenti di baris pertama. Bundel kini menyertakan peluncurnya sendiri,
+        yang cukup menjalankan aplikasi dan membuka browser Anda begitu server
+        siap.</li>
+      <li><strong>Pintasan desktop di unduhan Linux tidak meluncurkan
+        apa-apa.</strong> Pintasan itu dikirim dengan teks pengganti di tempat
+        jalur ke aplikasi seharusnya berada. Kini ada
+        <code>install-launcher.sh</code> di samping peluncur &mdash; jalankan
+        sekali dan pintasan ditulis dengan jalur sebenarnya ke tempat Anda
+        mengekstraknya.</li>
+      <li><strong>Menjalankan dari kode sumber memasang dependensi yang tidak
+        terverifikasi.</strong> Saat Flask tidak ada, skrip awal mengambil paket
+        langsung dari internet tanpa pemeriksaan checksum, dan memaksa
+        melewati pengelola paket sistem Anda dalam prosesnya. Kini skrip itu
+        menyerahkannya ke <code>install.py</code>, yang memakai berkas kunci
+        ber-checksum.</li>
+      <li><strong>Unduhan kode sumber membawa berkas pengelola yang seharusnya
+        tidak ada.</strong> Daftar berkas yang harus dikecualikan diurus secara
+        manual dan sudah tertinggal, sehingga hasil audit dan sisa folder build
+        ikut dikemas bersama aplikasi. Unduhan kini dibangun dari daftar berkas
+        yang benar-benar ada di proyek, yang tidak mungkin menyimpang.</li>
+      <li><strong>Dua panel Pengaturan rusak di build paket.</strong> Panel
+        statistik pustaka dan status API mencari program utama dengan nama yang
+        tidak dimilikinya di dalam build paket, sehingga keduanya gagal.</li>
+      <li><strong>Sebagian teks di layar tidak pernah bisa diterjemahkan.</strong>
+        Tiga bagian aplikasi yang lebih baru &mdash; pengaturan emulator, tombol
+        luncur, dan bilah "sedang dimainkan" &mdash; terlewat oleh pemindaian
+        terjemahan, dan pemeriksaan yang seharusnya menangkapnya melihat daftar
+        tidak lengkap yang sama. Pemindaian kini mencakup setiap berkas secara
+        otomatis, dan teks bagian-bagian itu sudah ditambahkan ke
+        terjemahan.</li>
+      <li><strong>Membangun ulang terjemahan bisa diam-diam tidak melakukan apa-apa.</strong>
+        Menambahkan teks ke skrip khusus halaman membuat proses pembangunan
+        ulang yakin tidak ada yang perlu dikerjakan, sehingga teks baru itu
+        tidak pernah sampai ke berkas terjemahan.</li>
+      <li><strong>Solusi untuk kartu grafis diterapkan ke semua orang.</strong>
+        Skrip awal Linux memaksakan pengaturan yang dimaksudkan untuk satu kartu
+        AMD tertentu ke setiap mesin, yang bisa membuat peningkat resolusi
+        gambar macet di perangkat keras AMD lain. Kini pengaturan itu hanya
+        diterapkan bila kartu tersebut memang ada, dan tidak pernah menimpa
+        nilai yang Anda atur sendiri.</li>
+      <li><strong>Skrip rilis bisa memublikasikan versi yang salah.</strong>
+        Tag sisa dari percobaan sebelumnya diam-diam dipakai ulang, sehingga
+        build bisa dibuat dari snapshot yang lebih lama sambil melaporkan
+        berhasil.</li>
+    </ul>
+- version: 3.23.4
+  date: '2026-09-02'
+  tags:
+  - type: fix
+    label: Sembilan cara pustaka Anda bisa kehilangan data, kini ditutup
+  body: |
+    <ul>
+      <li><strong>"Hapus data hasil scrape" menghapus seluruh pustaka Anda.</strong>
+        Kotak konfirmasi hanya menghitung game yang benar-benar sudah di-scrape,
+        lalu tindakan itu menghapus setiap game tanpa kecuali &mdash; sehingga
+        bisa menjanjikan selusin dan menghapus ribuan. Dengan gambar diaktifkan,
+        tindakan itu juga menghapus gambar sampul yang Anda unggah sendiri dan
+        mengatur ulang judul yang Anda sunting sendiri, pada game yang sama
+        sekali belum pernah di-scrape. Kini tindakan itu melakukan persis apa
+        yang tertulis di kotak.</li>
+      <li><strong>Gambar sampul 3D meninggalkan tautan rusak.</strong> Menghapus
+        beserta gambar menghapus sampul 3D dari disk tetapi basis data tetap
+        menunjuk ke sana, sehingga aplikasi mencari berkas yang sudah
+        hilang.</li>
+      <li><strong>Sakelar "Tambahkan" di Edit Massal mengganti alih-alih menambah.</strong>
+        Untuk Perspektif dan Dimensi, sakelar itu melakukan kebalikan persis
+        dari labelnya, menimpa nilai yang ada di setiap game yang dipilih
+        sekaligus, tanpa bisa dibatalkan.</li>
+      <li><strong>Build mandiri bisa menghapus setiap referensi gambar dalam
+        satu klik.</strong> Di unduhan paket, aplikasi mencari media Anda di
+        tempat yang salah, menyimpulkan bahwa setiap gambar hilang, lalu
+        "hapus referensi media yang hilang" mengosongkan entri gambar, tangkapan
+        layar, video, dan manual untuk seluruh pustaka. Pemeriksaan keamanan
+        yang ada justru untuk menangkap hal ini tidak dapat melihatnya. Hanya
+        build paket yang terpengaruh.</li>
+      <li><strong>Pembersihan berkas yatim bisa menghapus gambar saat baru tiba.</strong>
+        Sampul yang diunduh saat pembersihan berjalan bisa dianggap yatim dan
+        dihapus.</li>
+      <li><strong>Pembuatan playlist memindahkan arsip Anda tanpa bertanya.</strong>
+        Membuat playlist M3U secara massal memindahkan berkas arsip asli Anda
+        bahkan saat opsi itu Anda biarkan mati &mdash; dan saat Anda memang
+        memintanya, melaporkan kegagalan untuk pemindahan yang sebenarnya
+        berhasil.</li>
+      <li><strong>Pengubah ukuran gambar menggelembungkan folder media Anda.</strong>
+        Alat itu memperlakukan gambar mini kecil yang dibuatnya sebagai gambar
+        baru untuk diperbesar, membesarkannya ke ukuran penuh lalu membuat
+        gambar mini dari hasil itu. Setiap kali dijalankan, berkasnya bertambah,
+        halaman diam-diam menyajikan gambar ukuran penuh sebagai pengganti
+        gambar mini, dan peningkat resolusi AI berjalan pada kira-kira tiga kali
+        jumlah berkas yang dimaksudkan.</li>
+      <li><strong>Pengisian AI menimpa detail yang sudah Anda koreksi.</strong>
+        Pada scrape biasa, pengisian itu bisa mengganti penerbit, pengembang,
+        genre, rating usia, dan lainnya milik Anda. Kini pengisian itu hanya
+        mengisi yang kosong; tombol Isi dengan AI yang Anda tekan sendiri tidak
+        berubah.</li>
+      <li><strong>Scrape berulang bisa menghapus tangkapan layar yang bagus.</strong>
+        Game yang di-scrape dari RAWG memakai ulang nama berkas yang sama,
+        sehingga scrape kedua menimpa tangkapan layar yang tersimpan, lalu
+        menghapusnya sebagai duplikat sementara pustaka masih mencantumkannya.</li>
+    </ul>
+- version: 3.23.3
+  date: '2026-09-01'
+  tags:
+  - type: fix
+    label: Peran rumah tangga kini bekerja persis seperti yang tertulis, dan akun yang dinonaktifkan benar-benar terkunci
+  body: |
+    <ul>
+      <li><strong>Menonaktifkan seseorang kini mengakhiri sesinya.</strong>
+        Mematikan sebuah akun menyembunyikannya dari setiap layar, tetapi siapa
+        pun yang sudah masuk dengan akun itu tetap bisa bekerja seperti biasa
+        hingga seminggu. Penonaktifan adalah satu-satunya cara mengunci
+        seseorang tanpa menghapusnya, jadi kini berlaku pada klik berikutnya.</li>
+      <li><strong>Akun hanya-baca tidak lagi dapat mengubah data game.</strong>
+        Tiga tindakan "how long to beat" terbuka untuk setiap orang yang sudah
+        masuk, termasuk yang hanya bisa melihat &mdash; sehingga akun hanya-baca
+        dapat menimpa waktu bermain, atau menghapusnya dari setiap game di
+        pustaka. Kini tindakan itu memerlukan hak edit, seperti setiap tindakan
+        lain yang mengubah game.</li>
+      <li><strong>Pelacak trofi kembali berfungsi untuk semua orang.</strong>
+        Menyegarkan trofi kolektor Anda sendiri memerlukan hak editor, yang
+        tidak dimiliki peran Player dan Viewer &mdash; dan hanya tindakan itulah
+        yang menulis trofi tersebut. Akun-akun itu tidak pernah bisa
+        mendapatkannya, dan tombol Segarkan hanya menampilkan galat. Itu adalah
+        progres Anda sendiri, jadi kini tidak memerlukan hak khusus sama
+        sekali.</li>
+      <li><strong>Penyegaran PlayStation milik seseorang tidak lagi bisa
+        dihentikan orang lain.</strong> Akun mana pun yang sudah masuk dapat
+        menjeda atau membatalkan penyegaran yang dimulai orang lain, dan dapat
+        melihat game apa yang sedang diproses orang itu. Keduanya kini terbatas
+        pada orang yang memulainya.</li>
+      <li><strong>Impor Steam memakai akun Anda sendiri, bukan akun siapa pun
+        yang pertama kali menyimpannya.</strong> Impor pustaka membaca satu
+        salinan bersama kredensial Steam alih-alih milik Anda, sehingga bisa
+        mengambil pustaka orang lain &mdash; sementara detail tersimpan Anda
+        sendiri tampak hilang.</li>
+      <li><strong>Menebak kata sandi admin kembali sulit.</strong> Batas
+        percobaan masuk yang gagal dibagi oleh semua orang di jaringan, sehingga
+        siapa pun yang punya akun sendiri dapat mengatur ulang batas itu dengan
+        masuk dan terus menebak tanpa batas. Batas kini berlaku per akun.</li>
+      <li><strong>Galat dari aplikasi kini sampai ke halaman alih-alih menghilang.
+        </strong> Saat sebuah tindakan ditolak, 115 di antaranya menjawab dalam
+        bentuk yang tidak dapat dibaca halaman, sehingga tampak seolah tindakan
+        itu berhasil. Kini penolakan dilaporkan dengan benar, dan Anda melihat
+        pesan yang sebenarnya.</li>
+    </ul>
+- version: 3.23.2
+  date: '2026-08-06'
+  tags:
+  - type: fix
+    label: Halaman pengaturan scraper dimuat lebih cepat dan tidak pernah menampilkan kunci API yang usang
+  body: |
+    <ul>
+      <li><strong>Halaman Pengaturan dan Konfigurasi Scraper berhenti membaca ulang
+        berkas pengaturan scraper pada setiap permintaan.</strong> Empat tempat
+        membuka dan mengurai ulang berkas itu dari disk setiap kali halaman atau
+        pemeriksaan berjalan, padahal pembaca bersama yang di-cache sudah ada.
+        Kini semuanya memakainya, sehingga halaman-halaman itu bekerja lebih
+        sedikit per kunjungan.</li>
+      <li><strong>Penyimpanan tetap langsung berlaku.</strong> Cache yang lupa
+        berdasarkan waktu bisa menampilkan nilai lama hingga setengah menit
+        setelah penyimpanan. Kini setiap penyimpanan mengosongkan cache saat
+        menulis, sehingga yang Anda lihat adalah yang baru saja Anda simpan.</li>
+      <li><strong>Kunci API asli Anda tidak bisa lagi tergantikan oleh nilai
+        tampilannya yang disamarkan.</strong> Halaman pengaturan menampilkan
+        kunci tersimpan sebagai <code>***1234</code>, bukan kunci aslinya.
+        Karena halaman diberi salinan pengaturan yang sama dengan yang dipakai
+        scraper, penyamaran itu bisa menimpa kunci asli di memori dan membuat
+        scraper masuk dengan tanda bintang sampai cache kedaluwarsa.</li>
+      <li><strong>Build mandiri kini mencari pengaturan scraper di tempat yang
+        benar.</strong> Scraper menentukan lokasi berkas dengan cara yang
+        berbeda dari halaman yang menyimpannya. Pada instalasi biasa keduanya
+        sampai di berkas yang sama; pada build mandiri (klik dua kali) tidak,
+        sehingga kunci API yang tersimpan bisa berakhir di tempat yang tidak
+        pernah dilihat scraper.</li>
+    </ul>
+- version: 3.23.1
+  date: '2026-08-06'
+  tags:
+  - type: fix
+    label: Port server yang Anda simpan di Pengaturan kini menjadi port yang dipakai
+  body: |
+    <ul>
+      <li><strong>Menyimpan port server kini benar-benar memindahkan server.</strong>
+        Pengaturan menerima port, memeriksanya, menyimpannya, dan memberi tahu
+        Anda bahwa perlu mulai ulang untuk menerapkannya &mdash; lalu server
+        tetap berjalan di 5000. Tidak ada yang pernah membaca kembali nilai itu.
+        Kini nilai itu menjadi bagian dari rangkaian startup, sehingga mulai
+        ulang benar-benar memindahkan RetroDB ke port yang Anda pilih. Apa pun
+        yang diatur di environment tetap menang, sehingga peluncur atau
+        container yang menetapkan port tidak terpengaruh.</li>
+      <li><strong>Dua pengaturan yang tidak pernah berfungsi dihapus alih-alih
+        diperbaiki.</strong> "Server host" dan "debug mode" disimpan dan
+        memberikan janji palsu yang sama. Menyalakan debug mode dari formulir
+        web akan membuka konsol Python interaktif di browser, dan alamat bind
+        menentukan mesin mana yang dapat menjangkau RetroDB sama sekali &mdash;
+        keduanya tidak pantas berada di balik formulir pengaturan. Keduanya
+        tetap dapat dikonfigurasi dari environment, tempat keduanya memang
+        sudah berada. Jika berkas pengaturan Anda masih memuatnya, keduanya
+        dibuang diam-diam saat dimuat; tidak ada yang perlu Anda lakukan.</li>
+      <li><strong>Tidak ada lagi yang mengklaim mulai ulang akan menerapkannya
+        kecuali mulai ulang memang menerapkannya.</strong> Itulah cacat yang
+        sebenarnya &mdash; pengaturan mati itu berantakan, tetapi janji palsu
+        membuang satu sore.</li>
+    </ul>
+- version: 3.23.0
+  date: '2026-08-06'
+  tags:
+  - type: enhancement
+    label: Jalankan RetroDB di port pilihan pihak lain
+  body: |
+    <ul>
+      <li><strong>RetroDB kini membaca pengaturan <code>PORT</code> dari
+        environment-nya.</strong> Jika Anda menjalankan RetroDB dari alat lain
+        &mdash; dasbor, container, panel server rumahan &mdash; alat itu kini
+        dapat memberi RetroDB port yang diinginkannya, tanpa ada yang perlu
+        menyunting berkas. Atur <code>PORT</code> dan RetroDB terikat di sana;
+        biarkan saja dan tidak ada yang berubah sama sekali.
+        <code>RETRODB_PORT</code> yang sudah ada tetap bekerja persis seperti
+        sebelumnya, dan <code>PORT</code> menang jika keduanya diatur.</li>
+      <li><strong>Nomor port yang salah kini dilaporkan alih-alih ditebak.</strong>
+        Sebelumnya port yang tidak terbaca menghasilkan setumpuk teks galat
+        Python, dan port di luar rentang yang bisa dipakai baru ketahuan saat
+        server gagal dimulai. RetroDB kini langsung berhenti dengan satu baris
+        yang menyebutkan nilai yang tidak dapat dipakainya. RetroDB tidak akan
+        pernah diam-diam berjalan di port yang berbeda dari yang diminta
+        &mdash; dipindahkan diam-diam lebih buruk daripada diberi tahu
+        tidak.</li>
+      <li><strong>Banner startup dan tab browser mengikuti port yang
+        sebenarnya.</strong> Alamat yang dicetak saat RetroDB dimulai, dan
+        halaman yang dibukanya untuk Anda, dulu sama-sama menyebut 5000 apa pun
+        port yang sebenarnya dipakai.</li>
+    </ul>
 - version: 3.22.1
   date: '2026-07-31'
   tags:
