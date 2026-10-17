@@ -577,6 +577,13 @@ const AllGamesController = (function() {
             ratingBadges += `<span class="game-badge achievement-progress rpcs3 ${rpcs3Class}" title="RPCS3 Trophies: ${game.rpcs3_earned}/${game.rpcs3_total} (${rpcs3Pct}%)"><img class="ach-icon" src="/static/images/trophies/rpcs3.png" alt="RPCS3"> ${game.rpcs3_earned}/${game.rpcs3_total}<span class="ach-bar"><span class="ach-fill" style="width:${rpcs3Pct}%"></span></span></span>`;
         }
 
+        // PASS-59-91 §4.5 — Play from the card without opening the game page.
+        const playHtml = game.can_launch
+            ? `<button type="button" class="card-play-btn" data-game-id="${game.id}"
+                       title="${escAttr(t('Play'))}" aria-label="${escAttr(t('Play'))}"
+                       onclick="event.preventDefault(); event.stopPropagation(); launchGame(this)">▶&#xFE0E;</button>`
+            : '';
+
         // Bulk checkbox
         const checkboxDisplay = bulkMode ? 'block' : 'none';
         const isSelected = selectedGames.has(game.id);
@@ -611,6 +618,7 @@ const AllGamesController = (function() {
                 <div class="card-glow"></div>
                 <div class="card-boxart-section">
                     <div class="game-card-image">${boxartHtml}</div>
+                    ${playHtml}
                 </div>
                 <div class="card-info-section">
                     ${infoSectionHtml}

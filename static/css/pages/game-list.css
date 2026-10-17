@@ -909,6 +909,36 @@
     position: relative;
 }
 
+/* PASS-59-91 §4.5 — Play from the card, over the box art's bottom-left corner. */
+.card-play-btn {
+    position: absolute;
+    left: var(--spacing-sm);
+    bottom: var(--spacing-sm);
+    z-index: 5;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--primary-cyan);
+    background: var(--bg-darkest);
+    color: var(--primary-cyan);
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: var(--shadow-md);
+    transition: background var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.card-play-btn:hover,
+.card-play-btn:focus-visible {
+    background: var(--primary-cyan);
+    color: var(--bg-darkest);
+    box-shadow: var(--shadow-glow-cyan);
+}
+
+.card-play-btn:disabled {
+    cursor: progress;
+}
+
 .card-info-section {
     flex: 1;
     padding: var(--spacing-md);

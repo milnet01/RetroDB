@@ -132,11 +132,17 @@ class TestClearMissingMediaRefs:
         conn.commit()
         conn.close()
 
-        cleared, game_count, guarded = clear_missing_media_refs()
+        try:
+            cleared, game_count, guarded = clear_missing_media_refs()
 
-        row = query("SELECT boxart, fanart FROM games WHERE id = 7001")[0]
-        assert row['boxart'] is None, "stale boxart ref (healthy dir) must be cleared"
-        assert row['fanart'] == '7001_fanart.png', \
-            "fanart ref must be preserved — its dir is empty (mass-missing guard)"
-        assert cleared >= 1
-        assert {'field': 'fanart', 'count': 1} in guarded
+            row = query("SELECT boxart, fanart FROM games WHERE id = 7001")[0]
+            assert row['boxart'] is None, "stale boxart ref (healthy dir) must be cleared"
+            assert row['fanart'] == '7001_fanart.png', \
+                "fanart ref must be preserved — its dir is empty (mass-missing guard)"
+            assert cleared >= 1
+            assert {'field': 'fanart', 'count': 1} in guarded
+        finally:
+            # The row points at system 1 with FKs off; left behind, it blocks
+            # a later test in this worker from deleting a system it got id 1 for.
+            from services.database import execute
+            execute("DELETE FROM games WHERE id = 7001")

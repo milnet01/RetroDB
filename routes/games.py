@@ -30,6 +30,7 @@ from services.game_query import (
     invalidate_filter_cache,
 )
 from services.analytics import invalidate_analytics_cache
+from services.launch_resolver import launch_checker
 from services.game_metadata_service import (
     build_game_card,
     apply_metadata_to_game, apply_hybrid_metadata_to_game,
@@ -122,6 +123,17 @@ def all_games():
         return f"Error loading games: {e}", 500
 
 
+def _add_can_launch(games, rows):
+    """PASS-59-91 §4.5 — mark each card the caller can start from the list:
+    they hold the launch permission and the game's emulator mapping resolves.
+    `games` and `rows` are parallel lists."""
+    allowed = has_permission(settings_manager.get_setting('launch_required_permission', 'launch'))
+    can_launch = launch_checker() if allowed else None
+    for card, row in zip(games, rows):
+        card['can_launch'] = bool(can_launch and can_launch(row['system_id'],
+                                                            row['emulator_override_id']))
+
+
 @bp.route('/api/games')
 @login_required
 @handle_api_errors
@@ -164,6 +176,7 @@ def api_games():
         build_game_card(row, lookup_rpcs3_info(row, rpcs3_trophy_map), include_source_flag=True)
         for row in rows
     ]
+    _add_can_launch(games, rows)
 
     return jsonify({
         'success': True,
@@ -254,7 +267,8 @@ def api_games_card_data():
 
     placeholders = ','.join('?' * len(game_ids))
     sql = f"""
-        SELECT g.id, g.title, g.sort_title, g.system_id, g.boxart, g.boxart_3d,
+        SELECT g.id, g.title, g.sort_title, g.system_id, g.emulator_override_id,
+               g.boxart, g.boxart_3d,
                g.fanart, g.genre, g.franchise, g.developer, g.publisher,
                g.release_date, g.modes, g.esrb_rating, g.pegi_rating,
                g.cero_rating, g.usk_rating, g.acb_rating, g.fpb_rating,
@@ -304,6 +318,7 @@ def api_games_card_data():
         build_game_card(row, lookup_rpcs3_info(row, rpcs3_trophy_map))
         for row in rows
     ]
+    _add_can_launch(games, rows)
 
     resp = jsonify({'success': True, 'games': games})
     resp.headers['ETag'] = etag

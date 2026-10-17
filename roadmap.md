@@ -7437,6 +7437,11 @@ were corrected in `2836bc3` and are not repeated here.
   (review-contract capped at 2 loops; 21 findings fixed).
 - **Progress** (2026-10-15): stage 1 shipped in v3.23.17 (Passes
   59.53–59.55; PASS-59-64 INV-2 to INV-6).
+- **Progress** (2026-10-17): stage 3 shipped in v3.24.0, ahead of stage 2
+  (user's order): Play buttons on Library and system-page cards, spec §4.5,
+  INV-7 (`tests/test_api_games_can_launch.py`) and INV-8 (walked in Chrome
+  at desktop and 375 px). Only those two pages get the button (user,
+  2026-10-17).
 - **Still unbuilt from PASS-59-64**, owned by no other item: INV-1
   (`binary_path_override` before the `retroarch_binary` setting), INV-7
   (`launcher_backend` loses `'remote'`), INV-15 (one SIGTERM per process),

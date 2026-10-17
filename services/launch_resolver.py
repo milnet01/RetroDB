@@ -29,6 +29,7 @@ import re
 import secrets
 import shlex
 import shutil
+import subprocess
 from pathlib import Path
 from typing import Optional
 
@@ -125,9 +126,91 @@ def _resolve_binary(emu_row, sys_emu_row) -> str:
     return found
 
 
+def _pick_mapping(system_id, emulator_override_id, system_name=''):
+    """Return (emulator row or None, system_emulators row or None): the game's
+    override emulator with its system's row for it, else the system's default
+    row, else its lowest-id row. Raises when the system has no row at all."""
+    if emulator_override_id:
+        emu = query("SELECT * FROM emulators WHERE id = ?",
+                    (emulator_override_id,), one=True)
+        # Per-game override may still need a system_emulators row for
+        # retroarch_core / extra_args.
+        sys_emu = None
+        if emu:
+            sys_emu = query("""
+                SELECT * FROM system_emulators
+                WHERE system_id = ? AND emulator_id = ?
+                LIMIT 1
+            """, (system_id, emu['id']), one=True)
+        return emu, sys_emu
+    sys_emu = query("""
+        SELECT * FROM system_emulators
+        WHERE system_id = ? AND is_default = 1
+        ORDER BY id LIMIT 1
+    """, (system_id,), one=True)
+    if not sys_emu:
+        sys_emu = query("""
+            SELECT * FROM system_emulators
+            WHERE system_id = ? ORDER BY id LIMIT 1
+        """, (system_id,), one=True)
+    if not sys_emu:
+        raise LaunchResolutionError(
+            f"No emulator configured for system {system_name!r}")
+    emu = query("SELECT * FROM emulators WHERE id = ?",
+                (sys_emu['emulator_id'],), one=True)
+    return emu, sys_emu
+
+
+def _mapping_resolves(emu, sys_emu) -> bool:
+    """PASS-59-91 §4.3: the emulator is enabled, its binary exists and is
+    executable (or is a `flatpak run <id>` that `flatpak info` accepts), and
+    a RetroArch row's core file exists. `_resolve_binary` returns the
+    `retroarch_binary` setting unchecked, so not raising is not enough."""
+    if not emu or not emu.get('enabled'):
+        return False
+    try:
+        binary_str = _resolve_binary(emu, sys_emu)
+    except LaunchResolutionError:
+        return False
+    if _FLATPAK_RE.match(binary_str):
+        flatpak = shutil.which('flatpak')
+        if not flatpak:
+            return False
+        done = subprocess.run([flatpak, 'info', binary_str.split()[2]],
+                              capture_output=True, timeout=10, check=False)
+        if done.returncode != 0:
+            return False
+    elif not (os.path.isfile(binary_str) and os.access(binary_str, os.X_OK)):
+        return False
+    if emu.get('is_retroarch'):
+        if not sys_emu or not sys_emu.get('retroarch_core'):
+            return False
+        cores_dir = get_setting('retroarch_cores_dir', '') or _default_cores_dir()
+        return (Path(cores_dir).expanduser() / sys_emu['retroarch_core']).exists()
+    return True
+
+
 # -----------------------------------------------------------------------------
 # Public
 # -----------------------------------------------------------------------------
+
+def launch_checker():
+    """Return can_launch(system_id, emulator_override_id) -> bool for one
+    request, resolving each distinct (system, override) pair once
+    (PASS-59-91 §4.5). The caller checks the launch permission."""
+    cache = {}
+
+    def can_launch(system_id, emulator_override_id):
+        key = (system_id, emulator_override_id)
+        if key not in cache:
+            try:
+                cache[key] = _mapping_resolves(
+                    *_pick_mapping(system_id, emulator_override_id))
+            except LaunchResolutionError:
+                cache[key] = False
+        return cache[key]
+    return can_launch
+
 
 def resolve_launch_context(game_id: int) -> LaunchContext:
     game = query("""
@@ -140,34 +223,8 @@ def resolve_launch_context(game_id: int) -> LaunchContext:
         raise LaunchResolutionError(f"game_id {game_id} not found")
 
     # ---- pick emulator -------------------------------------------------------
-    sys_emu = None
-    if game.get('emulator_override_id'):
-        emu = query("SELECT * FROM emulators WHERE id = ?",
-                    (game['emulator_override_id'],), one=True)
-        # Per-game override may still need a system_emulators row for
-        # retroarch_core / extra_args.
-        if emu:
-            sys_emu = query("""
-                SELECT * FROM system_emulators
-                WHERE system_id = ? AND emulator_id = ?
-                LIMIT 1
-            """, (game['system_id'], emu['id']), one=True)
-    else:
-        sys_emu = query("""
-            SELECT * FROM system_emulators
-            WHERE system_id = ? AND is_default = 1
-            ORDER BY id LIMIT 1
-        """, (game['system_id'],), one=True)
-        if not sys_emu:
-            sys_emu = query("""
-                SELECT * FROM system_emulators
-                WHERE system_id = ? ORDER BY id LIMIT 1
-            """, (game['system_id'],), one=True)
-        if not sys_emu:
-            raise LaunchResolutionError(
-                f"No emulator configured for system {game['system_name']!r}")
-        emu = query("SELECT * FROM emulators WHERE id = ?",
-                    (sys_emu['emulator_id'],), one=True)
+    emu, sys_emu = _pick_mapping(game['system_id'], game.get('emulator_override_id'),
+                                 game['system_name'])
     if not emu:
         raise LaunchResolutionError("emulator row missing")
     if not emu.get('enabled'):

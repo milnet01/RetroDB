@@ -1,8 +1,9 @@
 // =============================================================================
 // RETRODB - Game launch
 // =============================================================================
-// Pass 44 — wires the ▶ Play button on game_detail.html to
-// POST /api/game/<id>/launch.  On 409 (already running), prompts to kill
+// Pass 44 — wires the ▶ Play button on game_detail.html, and on library and
+// system-page cards (PASS-59-91), to POST /api/game/<id>/launch.
+// On 409 (already running), prompts to kill
 // the prior instance and relaunch.  Surfaces errors via showNotification.
 // =============================================================================
 
@@ -18,7 +19,10 @@
         const gid = btn.dataset.gameId;
         const orig = btn.innerHTML;
         btn.disabled = true;
-        btn.innerHTML = '<span class="btn-icon">⏳</span> ' + escapeHtml(t('Launching…'));
+        // A library card's Play button is icon-only (PASS-59-91 §4.5).
+        btn.innerHTML = btn.classList.contains('card-play-btn')
+            ? '⏳'
+            : '<span class="btn-icon">⏳</span> ' + escapeHtml(t('Launching…'));
 
         try {
             const rv = await fetch(`/api/game/${gid}/launch`, {

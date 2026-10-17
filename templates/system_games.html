@@ -213,6 +213,7 @@
     window.AVAILABLE_LETTERS = {{ available_letters | tojson }}; // nosemgrep: var-in-script-tag
 </script>
 <script src="{{ url_for('static', filename='js/all-games-controller.js') }}?v={{ config.APP_VERSION }}"></script>
+<script src="{{ asset_url('js/game-launch.js') }}" defer></script>
 <script nonce="{{ csp_nonce }}">
     // Initialize with system-specific configuration
     document.addEventListener('DOMContentLoaded', function() {
