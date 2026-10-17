@@ -8271,6 +8271,14 @@ were corrected in `2836bc3` and are not repeated here.
   missing `duplicateMethod` element.
 - **Plan**: red test first per item, riskiest first.
 - **Verify**: per item, its test.
+- **More, from the spec's fact-gathering pass** (2026-10-17, read from
+  code): `api_rom_tools_browse_folders`' parent-link check uses a bare
+  `startswith(base_real)` with no separator; the non-recursive `glob`
+  branches of `_find_archives` and `DuplicateFinder._find_rom_files` skip
+  `_safe_under_root`; the duplicate-finder route's `os.walk` hashes a
+  symlinked file that points outside the ROM root; the batch M3U confirm
+  text does not say archives are moved to staging. Low risk each; fold in
+  with the items above.
 
 ## Done index
 
