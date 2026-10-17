@@ -8223,7 +8223,11 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.117 Three trophy paths can destroy stored data (HIGH, M).
-- **Status**: todo
+- **Resolution** (2026-10-17): Shipped 2026-10-17 in 31d1ae5 (3.29.1, open). All three reproduced red
+  first in tests/test_pass59_trophy_dataloss.py, then fixed. A network
+  error on the RA list fetch already failed safe; the HTTP-error path
+  was the live bug.
+- **Status**: done
 - **Target**: see `docs/specs/trophies.md` § 13 Open.
 - **Why**: found while writing that spec; read from code, not yet
   reproduced. (a) The PSN bulk refresh still writes zero counts when PSN
