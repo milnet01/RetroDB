@@ -7686,7 +7686,17 @@ were corrected in `2836bc3` and are not repeated here.
   ("Rockman" in Japan, "Mega Man" in the USA). The names are stored without
   their region, so they cannot be shown that way or used to match one game's
   regional ROMs, which PASS-59-106 and duplicate finding need.
-- **Status**: todo. Lanes: scraper, ui.
+- **Resolution** (2026-10-17): **Shipped** (2026-10-17, v3.29.0, 9b06f26): names are stored with a
+  CLDR region code (`scraper/metadata_normalizer.py::alt_title_region`)
+  and the Also Known As card names it in the user's language via Babel.
+  ScreenScraper "ss" is its house name, not a region, and is dropped.
+  IGDB names had no region because the hybrid scraper never requested
+  `alternative_names.comment`; it does now. Existing names gain regions
+  when the user runs ROM Tools → Backfill Alternate Titles, which now
+  re-checks every scraped game. Still owed: the backfill paragraph in
+  each `help.<locale>.html` (translate with the bundled release), and
+  PASS-59-106 / the Duplicate Finder do not yet use the regional names.
+- **Status**: done. Lanes: scraper, ui.
 - **Source**: user, 2026-10-17.
 - **Note** (2026-10-17, v3.26.0): the alternate titles now show on the
   game page's "Also Known As" card (PASS-59-104), the place this item's
