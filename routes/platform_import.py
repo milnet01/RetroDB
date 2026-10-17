@@ -35,6 +35,7 @@ import secrets as _secrets
 import config
 from services.achievement_linking import normalize_title_for_dedup as normalize_title
 from services.database import get_db, query, execute
+from services.api_helpers import success, error
 from services.auth import login_required, editor_required
 from routes.scraper import get_saved_api_keys
 
@@ -142,15 +143,15 @@ def api_steam_fetch_library():
     steam_id = data.get('steam_id') or steam_id
 
     if not steam_api_key:
-        return jsonify({'success': False, 'error': _('Steam API key not configured. Add it in Settings → API Keys.')}), 400
+        return error(_('Steam API key not configured. Add it in Settings → API Keys.'), 400)
     if not steam_id:
-        return jsonify({'success': False, 'error': _('Steam ID not configured. Add it in Settings → API Keys.')}), 400
+        return error(_('Steam ID not configured. Add it in Settings → API Keys.'), 400)
 
     # Resolve vanity URL if not numeric
     if not steam_id.isdigit():
         resolved = resolve_vanity_url(steam_api_key, steam_id)
         if not resolved:
-            return jsonify({'success': False, 'error': _('Could not resolve Steam vanity URL "%(steam_id)s". Use your 17-digit Steam ID instead.') % {'steam_id': steam_id}}), 400
+            return error(_('Could not resolve Steam vanity URL "%(steam_id)s". Use your 17-digit Steam ID instead.') % {'steam_id': steam_id}, 400)
         steam_id = resolved
 
     # Fetch library
@@ -188,17 +189,16 @@ def api_steam_fetch_library():
     # Sort by name
     result_games.sort(key=lambda g: g['name'].lower())
 
-    return jsonify({
-        'success': True,
-        'games': result_games,
-        'total': len(result_games),
-        'already_imported': sum(1 for g in result_games if g['already_imported']),
-        'profile': {
+    return success(
+        games=result_games,
+        total=len(result_games),
+        already_imported=sum(1 for g in result_games if g['already_imported']),
+        profile={
             'personaname': profile.get('personaname', '') if profile else '',
             'avatarfull': profile.get('avatarfull', '') if profile else '',
             'steamid': steam_id,
         } if profile else None,
-    })
+    )
 
 
 @bp.route('/api/steam/import', methods=['POST'])
@@ -278,12 +278,11 @@ def api_steam_import():
 
         logger.info(f"Steam Import complete: {imported} imported, {skipped} skipped, {failed} failed")
 
-        return jsonify({
-            'success': True,
-            'imported': imported,
-            'skipped': skipped,
-            'failed': failed,
-        })
+        return success(
+            imported=imported,
+            skipped=skipped,
+            failed=failed,
+        )
 
     except Exception as e:
         logger.error(f"Steam Import error: {e}")
@@ -355,7 +354,7 @@ def api_xbox_auth_url():
     redirect_uri = request.host_url.rstrip('/') + '/api/xbox/callback'
     auth_url = get_auth_url(client_id, redirect_uri, state=state)
 
-    return jsonify({'success': True, 'auth_url': auth_url})
+    return success(auth_url=auth_url)
 
 
 @bp.route('/api/xbox/callback')
@@ -463,7 +462,7 @@ def api_xbox_disconnect():
     from scraper.scrape_xbox import clear_tokens
     clear_tokens(g.user['id'])
     logger.info(f"Xbox: Account disconnected (user={g.user['id']})")
-    return jsonify({'success': True})
+    return success()
 
 
 @bp.route('/api/xbox/fetch-library', methods=['POST'])
@@ -477,11 +476,11 @@ def api_xbox_fetch_library():
     client_secret = api_keys.get('xbox_client_secret', '')
 
     if not client_id or not client_secret:
-        return jsonify({'success': False, 'error': _('Xbox credentials not configured. Add them in Settings → API Keys.')}), 400
+        return error(_('Xbox credentials not configured. Add them in Settings → API Keys.'), 400)
 
     session = get_authenticated_session(client_id, client_secret, g.user['id'])
     if not session:
-        return jsonify({'success': False, 'error': _('Xbox authentication failed. Please re-connect your Xbox account.')}), 401
+        return error(_('Xbox authentication failed. Please re-connect your Xbox account.'), 401)
 
     titles = get_title_history(session['auth_header'], session['xuid'])
     if not titles:
@@ -551,13 +550,12 @@ def api_xbox_fetch_library():
 
     result_games.sort(key=lambda g: g['name'].lower())
 
-    return jsonify({
-        'success': True,
-        'games': result_games,
-        'total': len(result_games),
-        'already_imported': sum(1 for g in result_games if g['already_imported']),
-        'gamertag': session.get('gamertag', ''),
-    })
+    return success(
+        games=result_games,
+        total=len(result_games),
+        already_imported=sum(1 for g in result_games if g['already_imported']),
+        gamertag=session.get('gamertag', ''),
+    )
 
 
 @bp.route('/api/xbox/import', methods=['POST'])
@@ -646,12 +644,11 @@ def api_xbox_import():
 
         logger.info(f"Xbox Import complete: {imported} imported, {skipped} skipped, {failed} failed")
 
-        return jsonify({
-            'success': True,
-            'imported': imported,
-            'skipped': skipped,
-            'failed': failed,
-        })
+        return success(
+            imported=imported,
+            skipped=skipped,
+            failed=failed,
+        )
 
     except Exception as e:
         logger.error(f"Xbox Import error: {e}")
@@ -907,16 +904,15 @@ def _build_psn_library_response(games_data, from_api=False):
         else:
             avatar_out = stored
 
-    return jsonify({
-        'success': True,
-        'games': result_games,
-        'total': len(result_games),
-        'already_imported': sum(1 for g in result_games if g['already_imported']),
-        'profile': {
+    return success(
+        games=result_games,
+        total=len(result_games),
+        already_imported=sum(1 for g in result_games if g['already_imported']),
+        profile={
             'username': sync_info['username'] if sync_info else '',
             'avatar_url': avatar_out,
         } if sync_info else None,
-    })
+    )
 
 
 @bp.route('/api/psn/import', methods=['POST'])
@@ -1015,12 +1011,11 @@ def api_psn_import():
 
         logger.info(f"PSN Import complete: {imported} imported, {skipped} skipped, {failed} failed")
 
-        return jsonify({
-            'success': True,
-            'imported': imported,
-            'skipped': skipped,
-            'failed': failed,
-        })
+        return success(
+            imported=imported,
+            skipped=skipped,
+            failed=failed,
+        )
 
     except Exception as e:
         logger.error(f"PSN Import error: {e}")

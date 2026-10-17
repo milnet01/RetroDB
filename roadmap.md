@@ -286,7 +286,14 @@ are tracked here so the next pass picks them up:
   Non-standard payloads (e.g. `{'configured': True, 'error': '...'}` without
   `success`, or scanner-result passthroughs) stay as raw `jsonify` —
   document here if discovered.
-- **Status**: in-progress
+- **Shipped** (2026-10-17, v3.29.8): 117 responses across the ten
+  listed route files now use `success()` / `error()`, with body and status
+  unchanged (keyword args only; `error()` only where an explicit code was
+  already passed). Left raw by design: non-standard payloads (status
+  passthroughs, `**` spreads, `online`/`connected`/`has_token` shapes), and
+  every `success: false` reply sent at HTTP 200 — converting those changes
+  the status, so they move to the follow-up filed alongside.
+- **Status**: done
 
 #### Pass 12.5 — FTS5 virtual table for `games.title` + `alternate_titles` (MEDIUM, L)
 - **Target**: search endpoints (`routes/games_search.py::api_games_find`
@@ -7929,6 +7936,24 @@ were corrected in `2836bc3` and are not repeated here.
   10. Release v4.0.0, then PASS-59-112.
 - **Status**: todo. Lanes: release.
 - **Source**: user, 2026-10-17.
+
+---
+
+#### Pass 59.114 Error replies still sent with HTTP 200 in ten route files (LOW, M).
+- **Status**: todo
+- **Target**: `jsonify({'success': False, 'error': ...})` with no status
+  code in `routes/bonus_discs.py`, `games.py`, `scraper.py`,
+  `scrape_logs.py`, `settings.py`, `systems.py`, `platform_import.py`,
+  `steam_achievements.py`, `xbox_achievements.py`, `trophies.py`. Find them
+  with `grep -n "'success': False" routes/<file>.py`.
+- **Why**: `docs/specs/api-contracts.md` §3.2 names 4xx as the target and
+  HTTP 200 failures as legacy. PASS-2-9 left these raw because converting
+  changes the status a caller sees.
+- **Plan**: per endpoint, read its JS callers; where a caller gates on
+  `response.ok` before reading the body, make it read the envelope first,
+  then switch to `error(msg, 4xx)`. Several sit in functions with a local
+  variable named `error`; rename it.
+- **Verify**: per endpoint, the error path shows its message in the UI.
 
 ## Done index
 

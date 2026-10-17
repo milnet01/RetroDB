@@ -13,6 +13,7 @@ import threading
 
 import config
 from services.database import query, execute
+from services.api_helpers import success
 from services.auth import login_required, admin_required, editor_required, get_user_settings
 from services.jobs.base import _download_psn_trophy_image as download_psn_trophy_image
 
@@ -486,13 +487,12 @@ def api_scan_trophies():
         total_trophies = sum(totals[t][1] for t in totals)
         unlocked_trophies = sum(totals[t][0] for t in totals)
 
-        return jsonify({
-            'success': True,
-            'games_found': total_games,
-            'total_trophies': total_trophies,
-            'unlocked_trophies': unlocked_trophies,
-            'message': f'Scanned {total_games} games with {unlocked_trophies}/{total_trophies} trophies unlocked'
-        })
+        return success(
+            games_found=total_games,
+            total_trophies=total_trophies,
+            unlocked_trophies=unlocked_trophies,
+            message=f'Scanned {total_games} games with {unlocked_trophies}/{total_trophies} trophies unlocked',
+        )
     except Exception as e:
         logger.error(f"Trophy scan error: {e}")
         return jsonify({'success': False, 'error': _('An internal error occurred')})
@@ -1008,7 +1008,7 @@ def api_psn_sync_all():
     )
     t.start()
 
-    return jsonify({'success': True, 'started': True})
+    return success(started=True)
 
 
 @bp.route('/api/psn/sync/status')
@@ -1574,14 +1574,13 @@ def api_psn_sync_game(npwr_id):
             logger.warning(f"Trophy sync traceback: {traceback.format_exc()}")
             # Continue anyway - game counts are updated
         
-        return jsonify({
-            'success': True,
-            'progress': progress,
-            'earned': total_earned,
-            'total': total_trophies,
-            'trophies_synced': trophies_synced,
-            'message': f'Synced {target_title.title_name}: {total_earned}/{total_trophies} trophies ({progress}%)'
-        })
+        return success(
+            progress=progress,
+            earned=total_earned,
+            total=total_trophies,
+            trophies_synced=trophies_synced,
+            message=f'Synced {target_title.title_name}: {total_earned}/{total_trophies} trophies ({progress}%)',
+        )
         
     except PSNAWPNotFoundError:
         return jsonify({'success': False, 'error': _('Game not found on PSN')})
@@ -1608,7 +1607,7 @@ def api_psn_link_game():
             WHERE npwr_id = ? AND user_id = ?
         """, (game_id if game_id else None, npwr_id, g.user['id']))
 
-        return jsonify({'success': True})
+        return success()
 
     except Exception:
         return jsonify({'success': False, 'error': _('An internal error occurred')})
@@ -1681,7 +1680,7 @@ def api_psn_save_hltb():
             WHERE npwr_id = ? AND user_id = ?
         """, (hltb_id, hltb_title, hltb_main, hltb_extra, hltb_complete, npwr_id, g.user['id']))
         
-        return jsonify({'success': True})
+        return success()
         
     except Exception:
         return jsonify({'success': False, 'error': _('An internal error occurred')})
@@ -1722,7 +1721,7 @@ def api_psn_edit_group_name():
         
         logger.info(f"Updated group name for {npwr_id} group {group_id} to '{new_name}'")
         
-        return jsonify({'success': True, 'name': new_name})
+        return success(name=new_name)
         
     except Exception as e:
         logger.error(f"Error updating group name: {e}")
@@ -1758,12 +1757,11 @@ def api_psn_status():
     configured = bool(psn_username and psn_npsso)
 
     if not configured:
-        return jsonify({
-            'success': True,
-            'configured': False,
-            'username': '',
-            'game_count': 0
-        })
+        return success(
+            configured=False,
+            username='',
+            game_count=0,
+        )
 
     # Test the connection (uses token cache)
     try:
@@ -1785,12 +1783,11 @@ def api_psn_status():
             logger.warning(f"Failed to fetch PSN title stats: {e}")
             game_count = 0
 
-        return jsonify({
-            'success': True,
-            'configured': True,
-            'username': online_id,
-            'game_count': game_count
-        })
+        return success(
+            configured=True,
+            username=online_id,
+            game_count=game_count,
+        )
     except Exception:
         return jsonify({
             'success': False,
@@ -1855,7 +1852,7 @@ def api_psn_save_npsso():
             db.execute("UPDATE user_settings SET psn_username = ? WHERE user_id = ?",
                        (online_id, g.user['id']))
             db.commit()
-        return jsonify({'success': True, 'username': online_id or username})
+        return success(username=online_id or username)
     except Exception as e:
         return jsonify({'success': False, 'error': _('Connection failed: %(error)s') % {'error': e}})
 

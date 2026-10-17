@@ -16,6 +16,7 @@ import logging
 from flask import Blueprint, render_template, jsonify, g
 from flask_babel import gettext as _
 from services.database import query, get_db
+from services.api_helpers import success
 from services.auth import login_required, editor_required
 
 logger = logging.getLogger(__name__)
@@ -135,7 +136,7 @@ def api_xbox_sync_single(game_id):
 
     result = get_achievements(session['auth_header'], session['xuid'], game['xbox_title_id'])
     if result is None:
-        return jsonify({'success': True, 'message': 'Game has no achievements', 'earned': 0, 'total': 0})
+        return success(message='Game has no achievements', earned=0, total=0)
 
     conn = None
     try:
@@ -147,11 +148,10 @@ def api_xbox_sync_single(game_id):
 
         conn.commit()
 
-        return jsonify({
-            'success': True,
-            'earned': result['earned'],
-            'total': result['total'],
-        })
+        return success(
+            earned=result['earned'],
+            total=result['total'],
+        )
     except Exception as e:
         logger.error(f"Xbox achievement sync error for game {game_id}: {e}")
         return jsonify({'success': False, 'error': _('An internal error occurred')})

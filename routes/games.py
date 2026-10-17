@@ -16,7 +16,7 @@ import config
 import settings_manager
 from services.database import query, execute, safe_column
 from services.auth import login_required, editor_required, has_permission, permission_required
-from services.api_helpers import handle_api_errors
+from services.api_helpers import handle_api_errors, success, error
 from services.game_utils import (
     reset_game_title_from_filename,
     get_ra_supported_systems,
@@ -178,15 +178,14 @@ def api_games():
     ]
     _add_can_launch(games, rows)
 
-    return jsonify({
-        'success': True,
-        'games': games,
-        'total': total,
-        'page': page,
-        'per_page': per_page,
-        'total_pages': total_pages,
-        'has_more': page < total_pages,
-    })
+    return success(
+        games=games,
+        total=total,
+        page=page,
+        per_page=per_page,
+        total_pages=total_pages,
+        has_more=page < total_pages,
+    )
 
 
 
@@ -222,7 +221,7 @@ def api_games_ids():
     rows = query(ids_sql, tuple(ids_vals))
     ids = [r['id'] for r in rows]
 
-    return jsonify({'success': True, 'ids': ids, 'total': len(ids)})
+    return success(ids=ids, total=len(ids))
 
 
 @bp.route('/api/games/card-data')
@@ -232,7 +231,7 @@ def api_games_card_data():
     """Get card-compatible game data for specific game IDs (for live card refresh)."""
     ids_param = request.args.get('ids', '')
     if not ids_param:
-        return jsonify({'success': False, 'error': _('No IDs provided')}), 400
+        return error(_('No IDs provided'), 400)
 
     game_ids = []
     for part in ids_param.split(','):
@@ -240,7 +239,7 @@ def api_games_card_data():
         if part.isdigit():
             game_ids.append(int(part))
     if not game_ids or len(game_ids) > 50:
-        return jsonify({'success': False, 'error': _('Provide 1-50 valid IDs')}), 400
+        return error(_('Provide 1-50 valid IDs'), 400)
 
     # Pass 21.1: ETag short-circuit. Key off MAX(games.updated_at) for the
     # requested IDs — migration 004 guarantees every INSERT/UPDATE refreshes
@@ -320,7 +319,7 @@ def api_games_card_data():
     ]
     _add_can_launch(games, rows)
 
-    resp = jsonify({'success': True, 'games': games})
+    resp = success(games=games)
     resp.headers['ETag'] = etag
     resp.headers['Cache-Control'] = 'private, must-revalidate'
     return resp
@@ -768,7 +767,7 @@ def api_game_detail(game_id):
     """, (game_id,), one=True)
 
     if not game:
-        return jsonify({'success': False, 'error': _('Game not found')}), 404
+        return error(_('Game not found'), 404)
 
     bonus_count = query(
         "SELECT COUNT(*) as cnt FROM games WHERE parent_game_id = ?",
@@ -809,9 +808,8 @@ def api_game_detail(game_id):
             execute("UPDATE games SET screenshots = ? WHERE id = ?", (new_val, game_id))
         screenshots = valid_ss
 
-    return jsonify({
-        'success': True,
-        'game': {
+    return success(
+        game={
             'id': game['id'],
             'title': game['title'],
             'sort_title': game['sort_title'],
@@ -869,8 +867,8 @@ def api_game_detail(game_id):
             'hltb_match_name': game['hltb_match_name'],
             'hltb_match_platform': game['hltb_match_platform'],
             'hltb_match_confidence': game['hltb_match_confidence']
-        }
-    })
+        },
+    )
 
 
 @bp.route('/api/game/<int:game_id>/apply-metadata', methods=['POST'])
@@ -890,11 +888,11 @@ def api_game_apply_metadata(game_id):
         WHERE g.id = ?
     """, (game_id,), one=True)
     if not game:
-        return jsonify({'success': False, 'error': _('Game not found')}), 404
+        return error(_('Game not found'), 404)
 
     source, _sep, source_id = (data.get('game_source') or '').partition('_')
     if not source or not source_id:
-        return jsonify({'success': False, 'error': _('No game selected.')}), 400
+        return error(_('No game selected.'), 400)
 
     explicit_secondary = data.get('secondary_selections')
     if not isinstance(explicit_secondary, list):
@@ -909,7 +907,7 @@ def api_game_apply_metadata(game_id):
         all_results=session.get('last_search_results', []),
         explicit_secondary=explicit_secondary,
     )
-    return jsonify({'success': True, 'task_id': task.id})
+    return success(task_id=task.id)
 
 
 @bp.route('/api/apply-metadata/<task_id>')
@@ -919,8 +917,7 @@ def api_apply_metadata_progress(task_id):
     """Progress of one background apply: percent, current step, finished."""
     task = apply_progress.get(task_id)
     if not task:
-        return jsonify({'success': False,
-                        'error': _('This metadata apply is no longer running.')}), 404
+        return error(_('This metadata apply is no longer running.'), 404)
 
     snap = task.snapshot()
     if snap['finished']:
@@ -948,7 +945,7 @@ def api_game_edit(game_id):
 
     game = query("SELECT id, title FROM games WHERE id = ?", (game_id,), one=True)
     if not game:
-        return jsonify({'success': False, 'error': _('Game not found')}), 404
+        return error(_('Game not found'), 404)
 
     allowed_fields = [
         'title', 'sort_title', 'franchise', 'similar_games', 'edition',
@@ -974,7 +971,7 @@ def api_game_edit(game_id):
             values.append(normalized[field])
 
     if not updates:
-        return jsonify({'success': False, 'error': _('No fields to update')}), 400
+        return error(_('No fields to update'), 400)
 
     # Pass 34.7: structured observability on every mutation. Without this,
     # "who scrambled this game's metadata?" debugging has nothing to go on.
@@ -998,7 +995,7 @@ def api_game_edit(game_id):
     invalidate_filter_cache()
     invalidate_analytics_cache()
 
-    return jsonify({'success': True})
+    return success()
 
 
 
@@ -1015,17 +1012,17 @@ def api_games_bulk_edit():
     field_modes = data.get('field_modes', {})
 
     if not game_ids:
-        return jsonify({'success': False, 'error': _('No games selected')}), 400
+        return error(_('No games selected'), 400)
 
     if not fields:
-        return jsonify({'success': False, 'error': _('No fields to update')}), 400
+        return error(_('No fields to update'), 400)
 
     # Pass 48.5 — validate completion_status against the same whitelist the
     # single-edit endpoint enforces (bulk edit previously stored the raw value).
     if 'completion_status' in fields:
         cs = fields['completion_status']
         if cs not in ('', None) and cs not in VALID_COMPLETION_STATUSES:
-            return jsonify({'success': False, 'error': _('Invalid completion status')}), 400
+            return error(_('Invalid completion status'), 400)
 
     # Pass 32.12: gate this set at a single safe_column() call site per
     # interpolation; the allowlist itself is frozen below so a future edit
@@ -1073,7 +1070,7 @@ def api_games_bulk_edit():
             replace_values.append(value)
 
     if not replace_updates and not append_fields:
-        return jsonify({'success': False, 'error': _('No valid fields to update')}), 400
+        return error(_('No valid fields to update'), 400)
 
     from services.database import get_db_with_context
 
@@ -1165,10 +1162,9 @@ def api_games_bulk_edit():
     invalidate_filter_cache()
     invalidate_analytics_cache()
 
-    return jsonify({
-        'success': True,
-        'updated': len(game_ids)
-    })
+    return success(
+        updated=len(game_ids),
+    )
 
 
 
@@ -1194,7 +1190,7 @@ def api_update_completion(game_id):
 
         execute("UPDATE games SET completion_status = ? WHERE id = ?", (status, game_id))
 
-        return jsonify({'success': True, 'status': status})
+        return success(status=status)
     except Exception as e:
         logger.error(f"Completion update error: {e}")
         return jsonify({'success': False, 'error': _('An internal error occurred')})
@@ -1215,7 +1211,7 @@ def api_track_view(game_id):
     try:
         user_id = g.user['id'] if g.user else None
         if user_id is None:
-            return jsonify({'success': False, 'error': _('Not authenticated')}), 401
+            return error(_('Not authenticated'), 401)
         now_iso = datetime.now(timezone.utc).isoformat()
         execute(
             "INSERT INTO user_game_views (user_id, game_id, last_viewed) "
@@ -1224,7 +1220,7 @@ def api_track_view(game_id):
             "last_viewed = excluded.last_viewed",
             (user_id, game_id, now_iso),
         )
-        return jsonify({'success': True})
+        return success()
     except Exception as e:
         logger.error(f"track-view error: {e}")
         return jsonify({'success': False, 'error': _('An internal error occurred')})
@@ -1246,7 +1242,7 @@ def api_filter_games():
     sort_by = request.args.get('sort', 'title')
 
     if not filter_type or not filter_value:
-        return jsonify({'success': False, 'error': _('Filter type and value required')}), 400
+        return error(_('Filter type and value required'), 400)
 
     column_map = {
         'genre': 'genre',
@@ -1259,7 +1255,7 @@ def api_filter_games():
 
     column = column_map.get(filter_type)
     if not column:
-        return jsonify({'success': False, 'error': _('Invalid filter type')}), 400
+        return error(_('Invalid filter type'), 400)
 
     if sort_by == 'release_date':
         order_clause = "ORDER BY g.release_date ASC, COALESCE(g.sort_title, g.title) COLLATE NOCASE"
@@ -1324,6 +1320,6 @@ def api_filter_games():
             'developer': row['developer']
         })
 
-    return jsonify({'success': True, 'games': result_games, 'sort': sort_by})
+    return success(games=result_games, sort=sort_by)
 
 

@@ -17,7 +17,7 @@ from datetime import datetime, timezone
 import config
 import settings_manager
 import log_manager
-from services.api_helpers import handle_api_errors
+from services.api_helpers import handle_api_errors, success, error
 from services.database import query, execute, get_db, backup_database
 from services.auth import login_required, admin_required
 from services.security import safe_filename, validate_settings_path
@@ -209,7 +209,7 @@ def api_get_dropdown_options(category):
         WHERE category = ?
         ORDER BY value COLLATE NOCASE
     """, (category,))
-    return jsonify({'success': True, 'options': [dict(o) for o in options]})
+    return success(options=[dict(o) for o in options])
 
 
 @bp.route('/api/dropdown-options/<category>', methods=['POST'])
@@ -222,7 +222,7 @@ def api_add_dropdown_option(category):
         value = data.get('value', '').strip()
 
         if not value:
-            return jsonify({'success': False, 'error': _('Value is required')}), 400
+            return error(_('Value is required'), 400)
 
         # Use a single connection for the read+write to avoid "database is locked"
         # when a background job holds a write lock between two separate connections
@@ -242,9 +242,9 @@ def api_add_dropdown_option(category):
         finally:
             conn.close()
 
-        return jsonify({'success': True, 'message': f'Added "{value}" to {category}'})
+        return success(message=f'Added "{value}" to {category}')
     except sqlite3.IntegrityError:
-        return jsonify({'success': False, 'error': _('Option already exists')}), 400
+        return error(_('Option already exists'), 400)
 
 
 @bp.route('/api/dropdown-options/<int:option_id>', methods=['DELETE'])
@@ -253,7 +253,7 @@ def api_add_dropdown_option(category):
 def api_delete_dropdown_option(option_id):
     """Delete a dropdown option"""
     execute("DELETE FROM dropdown_options WHERE id = ?", (option_id,))
-    return jsonify({'success': True})
+    return success()
 
 
 # =============================================================================
@@ -307,12 +307,11 @@ def api_backup():
         _prune_old_backups(backup_dir, getattr(config, 'MAX_BACKUPS', 30))
 
         logger.info(f"Created backup: {backup_filename}")
-        return jsonify({
-            'success': True,
-            'message': f'Backup created: {backup_filename}',
-            'filename': backup_filename,
-            'size': backup_size
-        })
+        return success(
+            message=f'Backup created: {backup_filename}',
+            filename=backup_filename,
+            size=backup_size,
+        )
     except Exception as e:
         logger.error(f"Backup error: {e}", exc_info=True)
         return jsonify({'success': False, 'error': _('An internal error occurred')})
@@ -325,7 +324,7 @@ def api_list_backups():
     try:
         backup_dir = os.path.join(os.path.dirname(config.DB_PATH), 'backups')
         if not os.path.exists(backup_dir):
-            return jsonify({'success': True, 'backups': []})
+            return success(backups=[])
 
         backups = []
         for filename in sorted(os.listdir(backup_dir), reverse=True):
@@ -337,7 +336,7 @@ def api_list_backups():
                     'date': datetime.fromtimestamp(os.path.getmtime(path), tz=timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
                 })
 
-        return jsonify({'success': True, 'backups': backups})
+        return success(backups=backups)
     except Exception:
         return jsonify({'success': False, 'error': _('An internal error occurred')})
 
@@ -348,7 +347,7 @@ def api_restore(filename):
     """Restore database from backup"""
     try:
         if not safe_filename(filename):
-            return jsonify({'success': False, 'error': _('Invalid filename')}), 400
+            return error(_('Invalid filename'), 400)
 
         backup_dir = os.path.join(os.path.dirname(config.DB_PATH), 'backups')
         backup_path = os.path.join(backup_dir, filename)
@@ -367,10 +366,10 @@ def api_restore(filename):
         except Exception:
             active_jobs = 0  # table absent on a fresh DB → nothing running
         if active_jobs:
-            return jsonify({
-                'success': False,
-                'error': _('A background job is running. Wait for it to finish before restoring.')
-            }), 409
+            return error(
+                _('A background job is running. Wait for it to finish before restoring.'),
+                409,
+            )
 
         # Pass 48.5 — integrity-gate the backup BEFORE the destructive swap. A
         # truncated/corrupt backup os.replace'd over the live DB is unrecoverable
@@ -387,10 +386,10 @@ def api_restore(filename):
             logger.warning(f"Restore aborted — backup unreadable: {e}")
             integrity = None
         if not integrity or integrity[0] != 'ok':
-            return jsonify({
-                'success': False,
-                'error': _('Backup failed its integrity check; restore aborted.')
-            }), 400
+            return error(
+                _('Backup failed its integrity check; restore aborted.'),
+                400,
+            )
 
         # Create a backup of current db before restoring (online backup API
         # → consistent snapshot of the live, possibly-being-written DB).
@@ -448,11 +447,10 @@ def api_restore(filename):
             raise
 
         logger.info(f"Restored database from: {filename}")
-        return jsonify({
-            'success': True,
-            'message': f'Database restored from {filename}',
-            'restart_required': True
-        })
+        return success(
+            message=f'Database restored from {filename}',
+            restart_required=True,
+        )
     except Exception as e:
         logger.error(f"Restore error: {e}")
         return jsonify({'success': False, 'error': _('An internal error occurred')})
@@ -467,21 +465,20 @@ def api_restore(filename):
 def api_get_paths():
     """Get current path settings"""
     user_settings = settings_manager.load_settings()
-    return jsonify({
-        'success': True,
-        'paths': {
+    return success(
+        paths={
             'rom_path': get_rom_path(),
             'esde_gamelists': get_esde_gamelists_path(),
             'esde_media': get_esde_media_path(),
             'rpcs3_trophy': get_rpcs3_trophy_path()
         },
-        'user_overrides': {
+        user_overrides={
             'rom_path': user_settings.get('rom_path', ''),
             'esde_gamelists_path': user_settings.get('esde_gamelists_path', ''),
             'esde_downloaded_media_path': user_settings.get('esde_downloaded_media_path', ''),
             'rpcs3_trophy_path': user_settings.get('rpcs3_trophy_path', '')
-        }
-    })
+        },
+    )
 
 
 @bp.route('/api/settings/paths', methods=['POST'])
@@ -509,10 +506,10 @@ def api_update_paths():
             raw = data[incoming_key]
             ok, result = validate_settings_path(raw, allow_empty=True)
             if not ok:
-                return jsonify({
-                    'success': False,
-                    'error': _('Invalid %(field)s: %(result)s') % {'field': incoming_key, 'result': result},
-                }), 400
+                return error(
+                    _('Invalid %(field)s: %(result)s') % {'field': incoming_key, 'result': result},
+                    400,
+                )
             current_settings[stored_key] = result
             changed_keys.append(stored_key)
 
@@ -524,11 +521,10 @@ def api_update_paths():
 
             restart_needed = settings_manager.requires_restart(changed_keys)
 
-            return jsonify({
-                'success': True,
-                'message': 'Settings saved to settings.json',
-                'restart_required': restart_needed
-            })
+            return success(
+                message='Settings saved to settings.json',
+                restart_required=restart_needed,
+            )
         else:
             return jsonify({'success': False, 'error': _('Failed to save settings')})
 
@@ -543,11 +539,10 @@ def api_get_all_settings():
     """Get all user settings"""
     try:
         user_settings = settings_manager.load_settings()
-        return jsonify({
-            'success': True,
-            'settings': user_settings,
-            'defaults': settings_manager.DEFAULT_SETTINGS
-        })
+        return success(
+            settings=user_settings,
+            defaults=settings_manager.DEFAULT_SETTINGS,
+        )
     except Exception:
         return jsonify({'success': False, 'error': _('An internal error occurred')})
 
@@ -559,7 +554,7 @@ def api_update_all_settings():
     try:
         data = request.get_json()
         if not isinstance(data, dict):
-            return jsonify({'success': False, 'error': _('Request body must be a JSON object')}), 400
+            return error(_('Request body must be a JSON object'), 400)
         current_settings = settings_manager.load_settings()
         changed_keys = []
 
@@ -568,28 +563,27 @@ def api_update_all_settings():
         valid_keys = known_keys()
         for key, value in data.items():
             if key not in valid_keys:
-                return jsonify({
-                    'success': False,
-                    'error': _("Unknown setting key: %(key)s") % {'key': key},
-                }), 400
+                return error(
+                    _("Unknown setting key: %(key)s") % {'key': key},
+                    400,
+                )
             ok, reason, cleaned = validate_settings_value(key, value)
             if not ok:
-                return jsonify({
-                    'success': False,
-                    'error': _("Invalid value for '%(key)s': %(reason)s") % {'key': key, 'reason': reason},
-                }), 400
+                return error(
+                    _("Invalid value for '%(key)s': %(reason)s") % {'key': key, 'reason': reason},
+                    400,
+                )
             if current_settings.get(key) != cleaned:
                 changed_keys.append(key)
             current_settings[key] = cleaned
 
         if settings_manager.save_settings(current_settings):
             restart_needed = settings_manager.requires_restart(changed_keys)
-            return jsonify({
-                'success': True,
-                'message': 'Settings saved',
-                'restart_required': restart_needed,
-                'changed': changed_keys
-            })
+            return success(
+                message='Settings saved',
+                restart_required=restart_needed,
+                changed=changed_keys,
+            )
         else:
             return jsonify({'success': False, 'error': _('Failed to save settings')})
     except Exception as e:
@@ -603,11 +597,10 @@ def api_reset_settings():
     """Reset all settings to defaults"""
     try:
         if settings_manager.reset_to_defaults():
-            return jsonify({
-                'success': True,
-                'message': 'Settings reset to defaults',
-                'restart_required': True
-            })
+            return success(
+                message='Settings reset to defaults',
+                restart_required=True,
+            )
         else:
             return jsonify({'success': False, 'error': _('Failed to reset settings')})
     except Exception:
@@ -630,7 +623,7 @@ def api_save_logging_settings():
         # start. The validator is the same one /api/settings/<key> uses.
         ok, reason, cleaned = validate_settings_value('logging', data)
         if not ok:
-            return jsonify({'success': False, 'error': _('invalid logging settings: %(reason)s') % {'reason': reason}}), 400
+            return error(_('invalid logging settings: %(reason)s') % {'reason': reason}, 400)
 
         # Get current settings
         settings = settings_manager.load_settings()
@@ -642,7 +635,7 @@ def api_save_logging_settings():
         if settings_manager.save_settings(settings):
             # Reinitialize logging with new settings
             log_manager.setup_all_logging()
-            return jsonify({'success': True, 'message': 'Logging settings saved'})
+            return success(message='Logging settings saved')
         else:
             return jsonify({'success': False, 'error': _('Failed to save settings')})
     except Exception as e:
@@ -660,7 +653,7 @@ def api_save_logging_settings():
 def api_normalize_preview(field):
     """Preview normalization suggestions for a field (genre or modes)"""
     if field not in ('genre', 'modes'):
-        return jsonify({'success': False, 'error': _('Invalid field. Must be "genre" or "modes"')}), 400
+        return error(_('Invalid field. Must be "genre" or "modes"'), 400)
 
     values = get_unique_values(field)
 
@@ -672,11 +665,10 @@ def api_normalize_preview(field):
     )
     canonical_options = [row['value'] for row in canonical]
 
-    return jsonify({
-        'success': True,
-        'values': values,
-        'canonical_options': canonical_options
-    })
+    return success(
+        values=values,
+        canonical_options=canonical_options,
+    )
 
 
 @bp.route('/api/normalize/apply', methods=['POST'])
@@ -689,15 +681,14 @@ def api_normalize_apply():
     mappings = data.get('mappings', [])
 
     if field not in ('genre', 'modes'):
-        return jsonify({'success': False, 'error': _('Invalid field. Must be "genre" or "modes"')}), 400
+        return error(_('Invalid field. Must be "genre" or "modes"'), 400)
 
     if not mappings:
-        return jsonify({'success': False, 'error': _('No mappings provided')}), 400
+        return error(_('No mappings provided'), 400)
 
     result = apply_normalization(field, mappings)
 
-    return jsonify({
-        'success': True,
-        'games_updated': result['games_updated'],
-        'rules_saved': result['rules_saved']
-    })
+    return success(
+        games_updated=result['games_updated'],
+        rules_saved=result['rules_saved'],
+    )

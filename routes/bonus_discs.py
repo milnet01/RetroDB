@@ -14,7 +14,7 @@ from services.database import query, execute
 from services.game_utils import is_bonus_disc_title, extract_base_game_title
 from services.game_query import escape_like
 from services.auth import login_required, editor_required
-from services.api_helpers import handle_api_errors
+from services.api_helpers import handle_api_errors, success
 
 logger = logging.getLogger(__name__)
 
@@ -263,7 +263,7 @@ def api_get_potential_parents(game_id):
         return jsonify({'success': False, 'error': _('Game not found')})
 
     parents = find_potential_parent_games(game_id, game['system_id'])
-    return jsonify({'success': True, 'parents': parents})
+    return success(parents=parents)
 
 
 @bp.route('/api/bonus-discs/link', methods=['POST'])
@@ -306,7 +306,7 @@ def api_mark_bonus_disc():
     execute("UPDATE games SET is_bonus_disc = ? WHERE id = ?",
            (1 if is_bonus else 0, game_id))
 
-    return jsonify({'success': True})
+    return success()
 
 
 @bp.route('/api/bonus-discs/for-game/<int:game_id>')
@@ -315,10 +315,9 @@ def api_mark_bonus_disc():
 def api_get_bonus_discs_for_game(game_id):
     """Get all bonus discs linked to a parent game"""
     bonus_discs = get_bonus_discs_for_game(game_id)
-    return jsonify({
-        'success': True,
-        'bonus_discs': [dict(b) for b in bonus_discs]
-    })
+    return success(
+        bonus_discs=[dict(b) for b in bonus_discs],
+    )
 
 
 @bp.route('/api/bonus-discs/stats')
@@ -345,14 +344,13 @@ def api_bonus_disc_stats():
         ORDER BY s.name, g.title
     """)
 
-    return jsonify({
-        'success': True,
-        'total_bonus': total_bonus,
-        'linked': linked,
-        'unlinked': unlinked,
-        'parents_with_bonus': parents_with_bonus,
-        'bonus_discs': [dict(b) for b in bonus_list]
-    })
+    return success(
+        total_bonus=total_bonus,
+        linked=linked,
+        unlinked=unlinked,
+        parents_with_bonus=parents_with_bonus,
+        bonus_discs=[dict(b) for b in bonus_list],
+    )
 
 
 @bp.route('/api/bonus-discs/auto-link', methods=['POST'])
@@ -393,9 +391,8 @@ def api_auto_link_bonus_discs():
                        (parent['id'], game['id']))
                 linked_count += 1
 
-    return jsonify({
-        'success': True,
-        'detected': result['detected'],
-        'linked': linked_count,
-        'message': f"Detected {result['detected']} bonus discs, linked {linked_count} to parent games"
-    })
+    return success(
+        detected=result['detected'],
+        linked=linked_count,
+        message=f"Detected {result['detected']} bonus discs, linked {linked_count} to parent games",
+    )

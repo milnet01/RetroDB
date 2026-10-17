@@ -11,7 +11,7 @@ import logging
 
 import config
 from services.database import get_db, query, execute, execute_many
-from services.api_helpers import handle_api_errors
+from services.api_helpers import handle_api_errors, success, error
 from services.auth import login_required, admin_required
 from services.game_utils import find_image_file, is_ra_supported, get_ra_supported_systems
 
@@ -273,10 +273,9 @@ def api_get_systems():
             FROM systems
             ORDER BY name COLLATE NOCASE
         """)
-        return jsonify({
-            'success': True,
-            'systems': [dict(s) for s in systems]
-        })
+        return success(
+            systems=[dict(s) for s in systems],
+        )
     except Exception as e:
         logger.error(f"Get systems error: {e}")
         return jsonify({'success': False, 'error': _('An internal error occurred')})
@@ -290,7 +289,7 @@ def api_get_systems():
 def api_systems_list():
     """Get list of all systems for dropdown (deprecated — use /api/systems)"""
     systems = query("SELECT id, name, folder, system_type FROM systems ORDER BY name COLLATE NOCASE")
-    return jsonify({'success': True, 'systems': [dict(s) for s in systems]})
+    return success(systems=[dict(s) for s in systems])
 
 
 @bp.route('/api/update-system-type', methods=['POST'])
@@ -303,10 +302,10 @@ def api_update_system_type():
     system_type = data.get('system_type', '').strip()
 
     if not system_id:
-        return jsonify({'success': False, 'error': _('System ID required')}), 400
+        return error(_('System ID required'), 400)
 
     execute("UPDATE systems SET system_type = ? WHERE id = ?", (system_type, system_id))
-    return jsonify({'success': True, 'message': f'System type updated to {system_type}'})
+    return success(message=f'System type updated to {system_type}')
 
 
 @bp.route('/api/refresh-system-types', methods=['POST'])
@@ -327,7 +326,7 @@ def api_refresh_system_types():
         update_system_types(cursor, overwrite=True)
 
         conn.commit()
-        return jsonify({'success': True, 'message': 'System types refreshed'})
+        return success(message='System types refreshed')
     finally:
         if conn:
             conn.close()
@@ -355,11 +354,10 @@ def api_refresh_system_names():
     if updates_list:
         execute_many("UPDATE systems SET name = ? WHERE id = ?", updates_list)
 
-    return jsonify({
-        'success': True,
-        'message': f'Updated {updated} system names',
-        'updated': updated
-    })
+    return success(
+        message=f'Updated {updated} system names',
+        updated=updated,
+    )
 
 
 @bp.route('/api/refresh-system-logos', methods=['POST'])
@@ -386,11 +384,10 @@ def api_refresh_system_logos():
     if updates_list:
         execute_many("UPDATE systems SET logo = ? WHERE id = ?", updates_list)
 
-    return jsonify({
-        'success': True,
-        'message': f'Updated {updated} system logos',
-        'updated': updated
-    })
+    return success(
+        message=f'Updated {updated} system logos',
+        updated=updated,
+    )
 
 
 @bp.route('/api/import-logos', methods=['POST'])
@@ -422,22 +419,20 @@ def api_import_logos():
             finally:
                 conn.close()
 
-            return jsonify({
-                'success': True,
-                'imported': imported,
-                'message': f'Imported {imported} system logos from ES-DE'
-            })
+            return success(
+                imported=imported,
+                message=f'Imported {imported} system logos from ES-DE',
+            )
         else:
-            return jsonify({
-                'success': True,
-                'imported': 0,
-                'message': 'No new logos found to import'
-            })
+            return success(
+                imported=0,
+                message='No new logos found to import',
+            )
     except ImportError:
-        return jsonify({
-            'success': False,
-            'error': _('ES-DE scraper not available')
-        }), 500
+        return error(
+            _('ES-DE scraper not available'),
+            500,
+        )
 
 
 @bp.route('/api/calculate-storage', methods=['POST'])
@@ -457,11 +452,10 @@ def api_calculate_storage():
                 except Exception as e:
                     logger.warning(f"Could not get size for {game['rom_path']}: {e}")
 
-        return jsonify({
-            'success': True,
-            'updated': updated,
-            'message': f'Updated file sizes for {updated} games'
-        })
+        return success(
+            updated=updated,
+            message=f'Updated file sizes for {updated} games',
+        )
     except Exception as e:
         logger.error(f"Storage calculation error: {e}")
         return jsonify({'success': False, 'error': _('An internal error occurred')})

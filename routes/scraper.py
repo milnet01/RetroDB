@@ -23,7 +23,7 @@ from flask import Blueprint, request, jsonify
 from flask_babel import gettext as _
 
 import config
-from services.api_helpers import handle_api_errors
+from services.api_helpers import handle_api_errors, success, error
 from services.atomic_io import atomic_write_json
 from services.auth import admin_required
 from services.scraper_settings_validators import (
@@ -212,7 +212,7 @@ def api_save_scraper_settings():
     # would otherwise crash scraper_manager on next call.
     ok, reason, data = validate_scraper_settings(data)
     if not ok:
-        return jsonify({'success': False, 'error': _('invalid scraper settings: %(reason)s') % {'reason': reason}}), 400
+        return error(_('invalid scraper settings: %(reason)s') % {'reason': reason}, 400)
 
     # Ensure data directory exists
     os.makedirs(os.path.dirname(SCRAPER_SETTINGS_FILE), exist_ok=True)
@@ -240,7 +240,7 @@ def api_save_scraper_settings():
 
     logger.info(f"Saved scraper settings: priority={data.get('priority')}, enabled={data.get('enabled')}")
 
-    return jsonify({'success': True, 'message': 'Settings saved'})
+    return success(message='Settings saved')
 
 
 @scraper_bp.route('/api/scraper-api-keys', methods=['POST'])
@@ -273,7 +273,7 @@ def api_save_api_keys():
     # frontend echoes the *** display value.
     ok, reason, data = validate_scraper_api_keys(data)
     if not ok:
-        return jsonify({'success': False, 'error': _('invalid api keys: %(reason)s') % {'reason': reason}}), 400
+        return error(_('invalid api keys: %(reason)s') % {'reason': reason}, 400)
 
     # Update API keys
     existing['api_keys'] = data
@@ -284,7 +284,7 @@ def api_save_api_keys():
 
     logger.info("Saved API keys for scrapers")
 
-    return jsonify({'success': True, 'message': 'API keys saved'})
+    return success(message='API keys saved')
 
 
 @scraper_bp.route('/api/check-scraper/<scraper>')
@@ -676,18 +676,17 @@ def api_scraper_allowance(scraper):
                     if not user_data:
                         # Try alternate response format
                         user_data = data.get('ssuser', {})
-                    return jsonify({
-                        'success': True,
-                        'scraper': 'screenscraper',
-                        'max_requests_per_day': user_data.get('maxrequestsperday', 'Unknown'),
-                        'requests_today': user_data.get('requeststoday', 0),
-                        'max_requests_per_min': user_data.get('maxrequestspermin', 'Unknown'),
-                        'max_download_speed': user_data.get('maxdownloadspeed', 'Unknown'),
-                        'max_threads': user_data.get('maxthreads', 'Unknown'),
-                        'user_level': user_data.get('niveau', 'Unknown'),
-                        'contribution': user_data.get('contribution', 'Unknown'),
-                        'raw': user_data
-                    })
+                    return success(
+                        scraper='screenscraper',
+                        max_requests_per_day=user_data.get('maxrequestsperday', 'Unknown'),
+                        requests_today=user_data.get('requeststoday', 0),
+                        max_requests_per_min=user_data.get('maxrequestspermin', 'Unknown'),
+                        max_download_speed=user_data.get('maxdownloadspeed', 'Unknown'),
+                        max_threads=user_data.get('maxthreads', 'Unknown'),
+                        user_level=user_data.get('niveau', 'Unknown'),
+                        contribution=user_data.get('contribution', 'Unknown'),
+                        raw=user_data,
+                    )
                 except json.JSONDecodeError:
                     return jsonify({'success': False, 'error': _('Invalid JSON response from ScreenScraper')})
                 except Exception as e:
@@ -699,13 +698,12 @@ def api_scraper_allowance(scraper):
         elif scraper == 'igdb':
             # IGDB doesn't have a public rate limit endpoint
             # But we can report that it uses OAuth tokens which have their own limits
-            return jsonify({
-                'success': True,
-                'scraper': 'igdb',
-                'note': 'IGDB uses Twitch OAuth tokens. Rate limits are typically 4 requests/second.',
-                'limit_type': 'requests_per_second',
-                'limit': 4
-            })
+            return success(
+                scraper='igdb',
+                note='IGDB uses Twitch OAuth tokens. Rate limits are typically 4 requests/second.',
+                limit_type='requests_per_second',
+                limit=4,
+            )
 
         elif scraper == 'rawg':
             rawg_key = api_keys.get('rawg', '') or api_keys.get('rawg_api_key', '') or getattr(config, 'RAWG_API_KEY', '')
@@ -749,21 +747,19 @@ def api_scraper_allowance(scraper):
                     reset_dt = now.replace(year=now.year + 1, month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
                 else:
                     reset_dt = now.replace(month=now.month + 1, day=1, hour=0, minute=0, second=0, microsecond=0)
-                return jsonify({
-                    'success': True,
-                    'scraper': 'rawg',
-                    'limit_type': 'requests_per_month',
-                    'limit': 20000,
-                    'reset_date': reset_dt.strftime('%Y-%m-%d %H:%M UTC'),
-                })
+                return success(
+                    scraper='rawg',
+                    limit_type='requests_per_month',
+                    limit=20000,
+                    reset_date=reset_dt.strftime('%Y-%m-%d %H:%M UTC'),
+                )
 
         elif scraper == 'retroachievements':
-            return jsonify({
-                'success': True,
-                'scraper': 'retroachievements',
-                'note': 'RetroAchievements does not publish rate limits.',
-                'limit_type': 'unknown'
-            })
+            return success(
+                scraper='retroachievements',
+                note='RetroAchievements does not publish rate limits.',
+                limit_type='unknown',
+            )
 
         elif scraper == 'ai':
             # Check AI provider rate limits by making a minimal API call
