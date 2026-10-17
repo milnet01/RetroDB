@@ -397,4 +397,3 @@ queued by this document.
 - **RA, Steam and Xbox job status names the running game to everyone.**
   These are library titles every signed-in user can already see, so
   PASS-59-118 left them; only the PSN status blanks its game.
-- **`/api/psn/save-npsso` returns the raw exception text** to the client.

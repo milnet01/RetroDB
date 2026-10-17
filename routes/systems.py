@@ -278,7 +278,7 @@ def api_get_systems():
         )
     except Exception as e:
         logger.error(f"Get systems error: {e}")
-        return jsonify({'success': False, 'error': _('An internal error occurred')})
+        return error(_('An internal error occurred'), 500)
 
 
 # DEPRECATED: This endpoint duplicates /api/systems (api_get_systems).
@@ -458,4 +458,4 @@ def api_calculate_storage():
         )
     except Exception as e:
         logger.error(f"Storage calculation error: {e}")
-        return jsonify({'success': False, 'error': _('An internal error occurred')})
+        return error(_('An internal error occurred'), 500)

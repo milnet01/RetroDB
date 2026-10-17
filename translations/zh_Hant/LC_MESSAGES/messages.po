@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-17 18:21+0200\n"
+"POT-Creation-Date: 2026-10-17 18:29+0200\n"
 "PO-Revision-Date: 2026-07-01 09:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hant\n"
@@ -42,7 +42,7 @@ msgid "System not found or has no achievement games"
 msgstr "未找到系統，或該系統沒有包含成就的遊戲"
 
 #: routes/achievements.py:171 routes/achievements.py:440
-#: routes/bonus_discs.py:263 routes/bulk_scrape.py:46 routes/collections.py:276
+#: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/collections.py:276
 #: routes/collections.py:531 routes/games.py:341 routes/games.py:770
 #: routes/games.py:891 routes/games.py:948 routes/games_ai.py:46
 #: routes/games_media.py:35 routes/games_media.py:82 routes/games_media.py:143
@@ -207,21 +207,21 @@ msgstr "上傳頭像需要 Pillow；請聯絡操作員安裝專案相依套件�
 msgid "Invalid image file"
 msgstr "無效的圖片檔案"
 
-#: routes/bonus_discs.py:191
+#: routes/bonus_discs.py:192
 msgid "Bonus disc not found"
 msgstr "未找到附贈光碟"
 
-#: routes/bonus_discs.py:193
+#: routes/bonus_discs.py:194
 msgid "Parent game not found"
 msgstr "未找到父遊戲"
 
-#: routes/bonus_discs.py:195
+#: routes/bonus_discs.py:196
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "附贈光碟與主遊戲必須屬於同一系統"
 
-#: routes/bonus_discs.py:209 routes/bonus_discs.py:227 routes/games.py:1200
+#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1200
 #: routes/games.py:1230 routes/platform_import.py:289
-#: routes/platform_import.py:658 routes/platform_import.py:1028
+#: routes/platform_import.py:658 routes/platform_import.py:1024
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:200 routes/scraper.py:528
 #: routes/scraper.py:917 routes/settings.py:317 routes/settings.py:341
@@ -235,11 +235,11 @@ msgstr "附贈光碟與主遊戲必須屬於同一系統"
 msgid "An internal error occurred"
 msgstr "發生內部錯誤"
 
-#: routes/bonus_discs.py:279
+#: routes/bonus_discs.py:281
 msgid "Missing bonus_id or parent_id"
 msgstr "缺少 bonus_id 或 parent_id"
 
-#: routes/bonus_discs.py:304 routes/reports.py:806
+#: routes/bonus_discs.py:310 routes/reports.py:806
 msgid "Missing game_id"
 msgstr "缺少 game_id"
 
@@ -428,8 +428,8 @@ msgid "No fields to update"
 msgstr "沒有可更新的欄位"
 
 #: routes/games.py:1019 routes/platform_import.py:212
-#: routes/platform_import.py:572 routes/platform_import.py:932
-#: routes/trophies.py:1850
+#: routes/platform_import.py:572 routes/platform_import.py:928
+#: routes/trophies.py:1852
 msgid "No games selected"
 msgstr "未選擇任何遊戲"
 
@@ -636,11 +636,11 @@ msgstr "Xbox 身分驗證失敗。請重新連接你的 Xbox 帳戶。"
 msgid "No games found in Xbox title history."
 msgstr "在 Xbox 遊戲歷史記錄中未找到遊戲。"
 
-#: routes/platform_import.py:769
+#: routes/platform_import.py:768
 msgid "PSN NPSSO not configured. Add it in Settings → API Keys."
 msgstr "尚未設定 PSN NPSSO。請在「設定 → API 金鑰」中新增。"
 
-#: routes/platform_import.py:798
+#: routes/platform_import.py:795
 msgid "Failed to fetch PSN game list. Try syncing trophies first."
 msgstr "取得 PSN 遊戲清單失敗。請先嘗試同步獎盃。"
 
@@ -742,6 +742,11 @@ msgstr "ScreenScraper 返回的 JSON 回應無效"
 #: routes/scraper.py:694
 msgid "Error parsing API response"
 msgstr "解析 API 回應時出錯"
+
+#: routes/scraper.py:696
+#, python-format
+msgid "ScreenScraper answered HTTP %(code)s"
+msgstr ""
 
 #: routes/scraper.py:711
 msgid "No RAWG API key configured"
@@ -978,12 +983,11 @@ msgstr "未安裝 PSNAWP 程式庫。請執行：pip install psnawp"
 msgid "No NPSSO token provided"
 msgstr "未提供 NPSSO 權杖"
 
-#: routes/trophies.py:1832
-#, python-format
-msgid "Connection failed: %(error)s"
-msgstr "連線失敗：%(error)s"
+#: routes/trophies.py:1834
+msgid "Could not connect to PSN"
+msgstr ""
 
-#: routes/trophies.py:1859
+#: routes/trophies.py:1861
 msgid "PSN NPSSO not configured"
 msgstr "未設定 PSN NPSSO"
 
@@ -8878,4 +8882,7 @@ msgstr "在 Patreon 上支持"
 
 #~ msgid "Fetching controller images..."
 #~ msgstr "正在擷取手把圖片……"
+
+#~ msgid "Connection failed: %(error)s"
+#~ msgstr "連線失敗：%(error)s"
 

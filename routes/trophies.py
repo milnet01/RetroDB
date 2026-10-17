@@ -13,7 +13,7 @@ import threading
 
 import config
 from services.database import query, execute
-from services.api_helpers import success
+from services.api_helpers import success, error
 from services.auth import login_required, admin_required, editor_required, get_user_settings
 from services.jobs.base import _download_psn_trophy_image as download_psn_trophy_image
 
@@ -459,10 +459,10 @@ def api_scan_trophies():
     trophy_path = get_user_trophy_path()
 
     if not trophy_path:
-        return jsonify({'success': False, 'error': _('RPCS3_TROPHY_PATH not configured')})
+        return error(_('RPCS3_TROPHY_PATH not configured'), 400)
 
     if not os.path.exists(trophy_path):
-        return jsonify({'success': False, 'error': _('Trophy path not found: %(path)s') % {'path': trophy_path}})
+        return error(_('Trophy path not found: %(path)s') % {'path': trophy_path}, 404)
 
     try:
         # Clear cache to force fresh scan
@@ -495,7 +495,7 @@ def api_scan_trophies():
         )
     except Exception as e:
         logger.error(f"Trophy scan error: {e}")
-        return jsonify({'success': False, 'error': _('An internal error occurred')})
+        return error(_('An internal error occurred'), 500)
 
 
 # -----------------------------------------------------------------------------
@@ -1043,11 +1043,11 @@ def api_psn_sync_all():
     with _psn_sync_lock:
         state = _psn_state_for(uid)
         if state['running']:
-            return jsonify({'success': False, 'error': _('Sync already in progress')})
+            return error(_('Sync already in progress'), 409)
 
-        psnawp, error = get_psn_client()
-        if error:
-            return jsonify({'success': False, 'error': error})
+        psnawp, psn_error = get_psn_client()
+        if psn_error:
+            return error(psn_error, 400)
 
         state.update({
             'running': True, 'phase': 'connecting', 'total': 0, 'current': 0,
@@ -1262,10 +1262,10 @@ def _run_psn_full_sync(psnawp, user_id):
 @login_required
 def api_psn_sync_game(npwr_id):
     """Sync trophies for a specific PSN game"""
-    psnawp, error = get_psn_client()
+    psnawp, psn_error = get_psn_client()
     
-    if error:
-        return jsonify({'success': False, 'error': error})
+    if psn_error:
+        return error(psn_error, 400)
     
     # Get PSN game from database (Pass 31.1 — scope to caller).
     user_id = g.user['id']
@@ -1275,7 +1275,7 @@ def api_psn_sync_game(npwr_id):
     )
 
     if not psn_game:
-        return jsonify({'success': False, 'error': _('Game not found')})
+        return error(_('Game not found'), 404)
     
     psn_game = dict(psn_game)
     
@@ -1293,7 +1293,7 @@ def api_psn_sync_game(npwr_id):
                 break
         
         if not target_title:
-            return jsonify({'success': False, 'error': _('Game not found in your PSN trophy list')})
+            return error(_('Game not found in your PSN trophy list'), 404)
         
         counts = _psn_trophy_counts(target_title)
         # The reply reports what is stored after the write: an unknown count
@@ -1558,10 +1558,10 @@ def api_psn_sync_game(npwr_id):
         )
         
     except PSNAWPNotFoundError:
-        return jsonify({'success': False, 'error': _('Game not found on PSN')})
+        return error(_('Game not found on PSN'), 404)
     except Exception as e:
         logger.error(f"PSN game sync error for {npwr_id}: {e}")
-        return jsonify({'success': False, 'error': _('An internal error occurred')})
+        return error(_('An internal error occurred'), 500)
 
 
 @bp.route('/api/psn/link-game', methods=['POST'])
@@ -1573,7 +1573,7 @@ def api_psn_link_game():
     game_id = data.get('game_id')
 
     if not npwr_id:
-        return jsonify({'success': False, 'error': _('Missing npwr_id')})
+        return error(_('Missing npwr_id'), 400)
 
     try:
         execute("""
@@ -1585,7 +1585,7 @@ def api_psn_link_game():
         return success()
 
     except Exception:
-        return jsonify({'success': False, 'error': _('An internal error occurred')})
+        return error(_('An internal error occurred'), 500)
 
 
 @bp.route('/api/psn/search-games')
@@ -1646,7 +1646,7 @@ def api_psn_save_hltb():
     hltb_complete = data.get('hltb_complete')
 
     if not npwr_id:
-        return jsonify({'success': False, 'error': _('Missing npwr_id')})
+        return error(_('Missing npwr_id'), 400)
 
     try:
         execute("""
@@ -1658,7 +1658,7 @@ def api_psn_save_hltb():
         return success()
         
     except Exception:
-        return jsonify({'success': False, 'error': _('An internal error occurred')})
+        return error(_('An internal error occurred'), 500)
 
 
 @bp.route('/api/psn/edit-group-name', methods=['POST'])
@@ -1671,10 +1671,10 @@ def api_psn_edit_group_name():
     new_name = data.get('name', '').strip()
 
     if not npwr_id or not group_id:
-        return jsonify({'success': False, 'error': _('Missing npwr_id or group_id')})
+        return error(_('Missing npwr_id or group_id'), 400)
 
     if not new_name:
-        return jsonify({'success': False, 'error': _('Name cannot be empty')})
+        return error(_('Name cannot be empty'), 400)
 
     try:
         user_id = g.user['id']
@@ -1683,7 +1683,7 @@ def api_psn_edit_group_name():
             (npwr_id, user_id), one=True,
         )
         if not psn_game:
-            return jsonify({'success': False, 'error': _('PSN game not found')})
+            return error(_('PSN game not found'), 404)
 
         psn_game_id = psn_game['id']
 
@@ -1700,7 +1700,7 @@ def api_psn_edit_group_name():
         
     except Exception as e:
         logger.error(f"Error updating group name: {e}")
-        return jsonify({'success': False, 'error': _('An internal error occurred')})
+        return error(_('An internal error occurred'), 500)
 
 
 @bp.route('/api/psn/status')
@@ -1806,7 +1806,7 @@ def api_psn_save_npsso():
     username = (data.get('username') or '').strip()
 
     if not npsso:
-        return jsonify({'success': False, 'error': _('No NPSSO token provided')})
+        return error(_('No NPSSO token provided'), 400)
 
     # Save to user settings
     from services.database import get_request_db
@@ -1816,9 +1816,9 @@ def api_psn_save_npsso():
     db.commit()
 
     # Test the connection
-    psnawp, error = create_psn_client(npsso)
-    if error:
-        return jsonify({'success': False, 'error': error})
+    psnawp, psn_error = create_psn_client(npsso)
+    if psn_error:
+        return error(psn_error, 400)
 
     try:
         online_id = psnawp.me().online_id
@@ -1829,7 +1829,9 @@ def api_psn_save_npsso():
             db.commit()
         return success(username=online_id or username)
     except Exception as e:
-        return jsonify({'success': False, 'error': _('Connection failed: %(error)s') % {'error': e}})
+        # PASS-59-114 — the exception text stays in the log, not the reply.
+        logger.error(f"PSN NPSSO save failed: {e}")
+        return error(_('Could not connect to PSN'), 502)
 
 
 # -----------------------------------------------------------------------------
@@ -1847,7 +1849,7 @@ def api_psn_bulk_refresh_start():
     return_url = data.get('return_url', '/psn-trophies')
 
     if not npwr_ids:
-        return jsonify({'success': False, 'error': _('No games selected')})
+        return error(_('No games selected'), 400)
 
     # Get user's NPSSO token
     npsso = ''
@@ -1856,7 +1858,7 @@ def api_psn_bulk_refresh_start():
         npsso = settings.get('psn_npsso', '') or ''
 
     if not npsso:
-        return jsonify({'success': False, 'error': _('PSN NPSSO not configured')})
+        return error(_('PSN NPSSO not configured'), 400)
 
     result = psn_refresh_job.start(npwr_ids, npsso, return_url, user_id=g.user['id'])
     return jsonify(result)
