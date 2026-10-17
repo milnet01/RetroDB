@@ -7028,7 +7028,15 @@ when already in the file.
   irreversible, multi-subsystem) and **trophies** (four platforms, per-user
   data, a cross-user leak already fixed once). Record the skip decision for
   the rest so the next audit does not re-derive it.
-- **Status**: planned (2026-09-01). Lanes: docs.
+- **Shipped** (2026-10-17): `docs/specs/rom-tools.md` (15 invariants) and
+  `docs/specs/trophies.md` (17), written after the code. Each invariant
+  names its pinning test, run once; untested ones say so. `spec_lint`: 0
+  findings. The skip decision for collections, analytics, museum and
+  import is recorded in `docs/design.md` § 4. Both H1s carry PASS-59-66,
+  against spec-format § 2's one-spec-per-id rule; each spec's § 3 records
+  why. Defects found while writing are filed as PASS-59-117 (data loss),
+  PASS-59-118 and PASS-59-119.
+- **Status**: done (2026-10-17). Lanes: docs.
 - **Source**: orchestrator, 2026-09-01 sweep.
 
 ---
@@ -8211,6 +8219,58 @@ were corrected in `2836bc3` and are not repeated here.
   the page polls it instead of waiting on the response.
 - **Verify**: a bulk fetch over several controllers returns at once, shows
   progress, and can be cancelled.
+
+---
+
+#### Pass 59.117 Three trophy paths can destroy stored data (HIGH, M).
+- **Status**: todo
+- **Target**: see `docs/specs/trophies.md` § 13 Open.
+- **Why**: found while writing that spec; read from code, not yet
+  reproduced. (a) The PSN bulk refresh still writes zero counts when PSN
+  omits the count block; PASS-59-58 fixed the single and full syncs, not
+  this path. (b) When the RA game-list request for one console fails, RA
+  Refresh unlinks every game on that console. (c) `/api/clear-ra-data`
+  deletes every user's progress rows, Steam and Xbox included.
+- **Plan**: reproduce each with a red test first; (a) reuse
+  `_psn_trophy_counts` and the COALESCE write; (b) treat a failed list
+  fetch as "skip this console", never as "no matches"; (c) scope the
+  delete to RA rows.
+- **Verify**: the three red tests go green.
+
+---
+
+#### Pass 59.118 Smaller trophy defects from the trophies spec (MEDIUM, M).
+- **Status**: todo
+- **Target**: `docs/specs/trophies.md` § 13 Open.
+- **Why**: found while writing that spec, read from code: the RA
+  single-game sync stores a total of 0 (reads `total_count`, the scraper
+  returns `achievement_count`); RA jobs use the global RA account but
+  write the caller's progress rows; dashboard totals, job status/cancel
+  and `/api/jobs/resume` are not scoped to the caller; the per-user RPCS3
+  trophy path is not path-checked. Unverified: the PSN bulk refresh never
+  uses cached tokens; collector trophies count Steam/Xbox earns twice.
+- **Plan**: confirm each with a red test, then fix; drop any that do
+  not reproduce.
+- **Verify**: per item, its test.
+
+---
+
+#### Pass 59.119 ROM Tools defects from the rom-tools spec (MEDIUM, M).
+- **Status**: todo
+- **Target**: `docs/specs/rom-tools.md` § 13 Open.
+- **Why**: found while writing that spec, read from code. Riskiest first:
+  a saved unwanted pattern of `*` makes Clean delete every member,
+  ROMs included; CHD convert can overwrite an existing `.chd` and, with
+  verify off, deletes the original after an unverified conversion;
+  duplicate delete has no server-side keep-one check. Also: pause does
+  nothing on convert/verify/dedup and a paused task cannot be cancelled;
+  screenshot-dedup scan is not in `_guarded_worker`; archive-scan task ids
+  are 8 characters and never reaped; the duplicate scan's `method` is not
+  validated; the archive-scanner page shows a wrong staging path; staged
+  archives default to the system temp dir; the settings reset names a
+  missing `duplicateMethod` element.
+- **Plan**: red test first per item, riskiest first.
+- **Verify**: per item, its test.
 
 ## Done index
 

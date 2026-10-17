@@ -77,12 +77,40 @@ rows. Which store holds what, and which wins, is
 `services/launcher/` starts it. The contract is
 [`specs/PASS-59-64-launcher.md`](specs/PASS-59-64-launcher.md).
 
+**ROM Tools.** Archive cleaning, M3U building, CHD conversion and duplicate
+removal under the ROM folder. What each tool may change, and who may run it,
+is [`specs/rom-tools.md`](specs/rom-tools.md).
+
+**Trophies and achievements.** Progress from RetroAchievements, PSN, Steam,
+Xbox and RPCS3 trophy files, kept per user. That is
+[`specs/trophies.md`](specs/trophies.md).
+
 **Interface.** Jinja templates in `templates/`, with CSS and JS in `static/`.
 UI rules are [`RETRODB_DESIGN_STANDARDS.md`](RETRODB_DESIGN_STANDARDS.md).
 Themes are [`specs/themes.md`](specs/themes.md).
 
 **Translation.** Flask-Babel catalogs, plus whole per-locale files for the
 help manual and changelog. That is [`specs/i18n.md`](specs/i18n.md).
+
+### Subsystems without a spec
+
+Recorded under PASS-59-66 (2026-10-17) so the next audit does not decide this
+again. Each fails every trigger in `spec-format.md` § 1: one subsystem,
+obvious in shape, cheap to redo. If a change to one spreads to a second
+subsystem, write the spec then (§ 1's escape hatch).
+
+- **Collections** (`routes/collections.py`) — tags, lists and wishlist over
+  existing game rows. Per-user ownership is `owner_id` through
+  `_owner_clause()`, stated in the module header. Nothing outside binds to it.
+- **Analytics** (`services/analytics.py`, `/analytics` in `app.py`) —
+  read-only chart data. It writes nothing, so a wrong result is a display
+  defect.
+- **Museum** (`routes/museum.py`) — per-system pages with AI-generated text.
+  The content can be regenerated, and no other subsystem reads it.
+- **Import** (`routes/clz_import.py`, `routes/platform_import.py`,
+  `routes/game_imports.py`) — inserts new game rows from a CLZ export or a
+  platform library. The platform tokens and achievement syncs it starts are
+  in [`specs/trophies.md`](specs/trophies.md).
 
 ## 5. Rules that cross subsystems
 
