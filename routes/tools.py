@@ -73,6 +73,21 @@ def _cleanup_completed_tasks():
         del _rom_tool_tasks[task_id]
 
 
+def _guarded_worker(task, body):
+    """PASS-59-56 — wrap a dict-task worker so an uncaught error ends the
+    task as ``failed`` instead of leaving it ``running`` for good (the
+    reaper above only collects finished tasks)."""
+    def run():
+        try:
+            body()
+        except Exception as e:
+            logger.exception("ROM tools worker %s failed", task.get('task_type'))
+            task['status'] = 'failed'
+            task['end_time'] = datetime.now()
+            task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] ✗ Failed: {e}")
+    return run
+
+
 # =============================================================================
 # HELPER FUNCTIONS
 # =============================================================================
@@ -768,7 +783,7 @@ def api_chd_converter_convert():
             task['results']['percent_saved'] = round((saved / task['results']['original_size']) * 100, 1)
         task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] Conversion completed")
     
-    thread = threading.Thread(target=run_conversion)
+    thread = threading.Thread(target=_guarded_worker(task, run_conversion))
     thread.daemon = True
     thread.start()
 
@@ -853,11 +868,12 @@ def api_chd_verify_verify():
             task['current_file'] = os.path.basename(file_path)
             task['percent'] = round((i + 1) / len(files) * 100, 1) if files else 0
 
-            file_size = os.path.getsize(file_path)
-            task['results']['total_size'] += file_size
             task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] Verifying: {os.path.basename(file_path)}")
 
             try:
+                # PASS-59-56: inside the try — the file may be gone by now.
+                file_size = os.path.getsize(file_path)
+                task['results']['total_size'] += file_size
                 result = subprocess.run([chdman_path, 'verify', '-i', file_path],
                                       capture_output=True, text=True, timeout=600)
                 
@@ -882,7 +898,7 @@ def api_chd_verify_verify():
         task['status'] = 'completed' if task['status'] != 'cancelled' else 'cancelled'
         task['end_time'] = datetime.now()
 
-    thread = threading.Thread(target=run_verification)
+    thread = threading.Thread(target=_guarded_worker(task, run_verification))
     thread.daemon = True
     thread.start()
 
@@ -1071,7 +1087,7 @@ def api_duplicate_finder_scan():
         task['current_action'] = 'Scan complete'
         task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] Scan complete: {len(dup_groups)} groups found")
     
-    thread = threading.Thread(target=run_scan)
+    thread = threading.Thread(target=_guarded_worker(task, run_scan))
     thread.daemon = True
     thread.start()
 

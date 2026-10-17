@@ -6449,7 +6449,13 @@ orchestrator, several by execution rather than reading.
 - **Plan**: move `:828` inside the try, and wrap each worker body in
   `try/except/finally` that sets `status='failed'` and `end_time`.
 - **Verify**: delete a file mid-verify; confirm the task reaches `failed`.
-- **Status**: planned (2026-09-01). Lanes: rom-tools.
+- **Shipped** (2026-10-17, v3.29.4): `getsize` moved inside the per-file
+  try, so a vanished file counts as invalid. New `_guarded_worker` wraps
+  the conversion, verification and duplicate-scan workers: an uncaught
+  error sets `failed` and `end_time`, so the reaper collects it. Pinned by
+  `tests/test_pass59_rom_tools.py` (red before the fix). The archive-scan
+  worker uses `TaskStatus` objects and was left as it is.
+- **Status**: done (2026-10-17). Lanes: rom-tools.
 - **Source**: review-code tools/admin lane 2026-09-01.
 
 ---

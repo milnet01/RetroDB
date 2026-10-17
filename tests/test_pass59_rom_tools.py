@@ -94,19 +94,15 @@ def test_m3u_staging_follows_temp_path(tmp_path):
 # --- PASS-59-51: the live scan endpoints refuse symlinks out of the ROM root ---
 
 @pytest.fixture
-def escaping_rom_root(tmp_path, monkeypatch):
-    """A ROM root holding one real image and a symlink to a folder outside it."""
+def rom_client(tmp_path, monkeypatch):
+    """An admin test client whose ROM root is an empty tmp folder.
+
+    Returns (post, roms): post(route, body) sends a CSRF-valid JSON POST.
+    """
     import app as app_module
     import settings_manager as _settings_manager
-    roms, outside = tmp_path / 'roms', tmp_path / 'outside'
+    roms = tmp_path / 'roms'
     roms.mkdir()
-    outside.mkdir()
-    for name in ('inside.chd', 'disc.iso'):
-        (roms / name).write_bytes(b'x')
-    for name in ('escaped.chd', 'escaped_disc.iso'):
-        (outside / name).write_bytes(b'x')
-    (roms / 'link').symlink_to(outside, target_is_directory=True)
-
     user = {'id': 1, 'username': 'admin', 'role': 'admin'}
     monkeypatch.setattr(app_module, 'get_current_user', lambda: user)
     monkeypatch.setattr(app_module, 'get_user_settings', lambda _uid: None)
@@ -119,9 +115,25 @@ def escaping_rom_root(tmp_path, monkeypatch):
     with client.session_transaction() as sess:
         sess['_csrf_token'] = _CSRF
 
+    def post(route, body):
+        return client.post(route, json=body, headers={'X-CSRF-Token': _CSRF})
+    return post, roms
+
+
+@pytest.fixture
+def escaping_rom_root(rom_client, tmp_path):
+    """A ROM root holding one real image and a symlink to a folder outside it."""
+    post, roms = rom_client
+    outside = tmp_path / 'outside'
+    outside.mkdir()
+    for name in ('inside.chd', 'disc.iso'):
+        (roms / name).write_bytes(b'x')
+    for name in ('escaped.chd', 'escaped_disc.iso'):
+        (outside / name).write_bytes(b'x')
+    (roms / 'link').symlink_to(outside, target_is_directory=True)
+
     def scan(route):
-        resp = client.post(route, json={'path': str(roms)},
-                           headers={'X-CSRF-Token': _CSRF})
+        resp = post(route, {'path': str(roms)})
         assert resp.status_code == 200, resp.get_data(as_text=True)[:200]
         return {f['name'] for f in resp.get_json()['files']}
     return scan
@@ -142,3 +154,44 @@ def test_extracted_folder_walk_is_guarded():
     src = read_source('scraper/rom_tools.py')
     walk = src.index('extract_folder.rglob(')
     assert '_safe_under_root(' in src[walk:walk + 300]
+
+
+# --- PASS-59-56: a worker that hits an error ends its task, never hangs it ---
+
+class _InlineThread:
+    """Runs the worker inside start(), so the test sees its end state."""
+    def __init__(self, target):
+        self._target = target
+        self.daemon = True
+
+    def start(self):
+        self._target()
+
+
+def test_verify_survives_a_file_deleted_before_its_turn(rom_client, monkeypatch):
+    import routes.tools as tools
+    post, roms = rom_client
+    monkeypatch.setattr(tools.shutil, 'which', lambda _p: '/usr/bin/chdman')
+    monkeypatch.setattr(tools.threading, 'Thread', _InlineThread)
+    present = roms / 'present.chd'
+    present.write_bytes(b'x')
+    monkeypatch.setattr(tools.subprocess, 'run',
+                        lambda *a, **k: type('R', (), {'returncode': 0})())
+
+    resp = post('/api/rom-tools/chd-verify/verify',
+                {'files': [str(roms / 'gone.chd'), str(present)]})
+    task = tools._rom_tool_tasks[resp.get_json()['task_id']]
+    assert task['status'] == 'completed'
+    assert task['results']['valid'] == 1
+    assert task['results']['invalid'] == 1
+
+
+def test_worker_crash_marks_the_task_failed():
+    import routes.tools as tools
+    task = {'status': 'running', 'logs': []}
+
+    def body():
+        raise RuntimeError('boom')
+    tools._guarded_worker(task, body)()
+    assert task['status'] == 'failed'
+    assert task['end_time'] is not None

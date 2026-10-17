@@ -1,3 +1,18 @@
+- version: 3.29.4
+  date: 2026-10-17
+  tags:
+  - type: fix
+    label: ROM Tools jobs no longer get stuck on "running"
+  body: |
+    <ul>
+      <li><strong>ROM Tools jobs no longer get stuck on "running".</strong>
+        If a file was deleted after a CHD Verify scan listed it, the job
+        crashed and its progress bar spun forever. The missing file is now
+        counted as invalid and the job finishes.</li>
+      <li>If CHD Convert, CHD Verify or Duplicate Finder hits any other
+        unexpected error, the job now ends as failed, with the error in its
+        log, instead of hanging.</li>
+    </ul>
 - version: 3.29.3
   date: 2026-10-17
   tags:
