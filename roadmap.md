@@ -4689,7 +4689,19 @@ weren't worth blocking the ship on.  Ordered by rough priority.
   verify the second half. A bump landed under a cleanup commit is exactly the
   rot §5b exists to prevent.
 - **Verify**: `./scripts/ci_local.sh` green after any bump; `pip-audit` clean.
-- **Status**: planned (2026-08-06). Lanes: ci, deps.
+- **Shipped** (2026-10-17, v3.29.1): re-checked against upstream today,
+  not the August snapshot. Actions repinned by SHA to latest:
+  setup-python v7.0.0 (major; §5: its only breaking change, removing the
+  `pip-install` input, touches nothing here, since we pass only
+  `python-version`), checkout v7.0.1, upload-artifact v7.0.2,
+  action-gh-release v3.0.3, attest-build-provenance v4.2.2.
+  ruff-pre-commit v0.17.1, hook id `ruff` → `ruff-check`. Python: Pillow
+  13.0.0 (major; §5 gate: full suite green under it in an isolated venv
+  built from the new lock, no Pillow deprecation warnings), onnxruntime
+  1.31.0, numpy 2.5.4. The dev machine's system Python was not touched: its
+  onnxruntime-rocm 1.22.2 would be overwritten (see the ROCm note). Open
+  Dependabot PRs #13, #17, #18 are superseded.
+- **Status**: done (2026-10-17). Lanes: ci, deps.
 - **Source**: debt-sweep 2026-08-06 (v3.12.0..HEAD), step 2d.
 
 ---
