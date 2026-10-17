@@ -1,8 +1,10 @@
 {% extends "base.html" %}
+{% set adaptive_layout = true %}
 
 {% block title %}Lists - RetroDB{% endblock %}
 
 {% block content %}
+<div class="page-box grid-4 lists-page">
 <!-- Page Header -->
 <div class="page-header">
     <div>
@@ -78,15 +80,22 @@
         </div>
     </div>
 </div>
+</div>
 {% endblock %}
 
 {% block styles %}
 <style>
+/* PASS-59-104 — the page caps at 4 columns of this grid. */
+.lists-page {
+    --card-min: 300px;
+    --card-gap: var(--spacing-lg);
+}
+
 /* Lists Grid */
 .lists-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: var(--spacing-lg);
+    grid-template-columns: repeat(auto-fill, minmax(min(var(--card-min), 100%), 1fr));
+    gap: var(--card-gap);
     margin-top: var(--spacing-lg);
 }
 

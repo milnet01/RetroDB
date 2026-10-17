@@ -1,10 +1,12 @@
 {% extends "base.html" %}
+{% set adaptive_layout = true %}
 {% from "_macros/nav_tabs.html" import achievement_tabs %}
 {% set needs_games_bundle = true %}
 
 {% block title %}{{ _('PSN Trophies') }} - RetroDB{% endblock %}
 
 {% block content %}
+<div class="page-box grid-4 psn-page">
 {{ achievement_tabs('psn') }}
 
 <!-- Page Header -->
@@ -307,7 +309,7 @@
         </div>
     </div>
 </div>
-
+</div>
 {% endblock %}
 
 {% block styles %}
@@ -590,10 +592,16 @@
 /* ============================================================
    PSN Game Cards Grid
    ============================================================ */
+/* PASS-59-104 — the page caps at 4 columns of this grid. */
+.psn-page {
+    --card-min: 300px;
+    --card-gap: var(--spacing-md);
+}
+
 .psn-games-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--spacing-md);
+    grid-template-columns: repeat(auto-fill, minmax(min(var(--card-min), 100%), 1fr));
+    gap: var(--card-gap);
 }
 
 .psn-trophy-game-card {
@@ -799,16 +807,7 @@
 /* ============================================================
    Responsive
    ============================================================ */
-@media (max-width: 1024px) {
-    .psn-games-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
 @media (max-width: 768px) {
-    .psn-games-grid {
-        grid-template-columns: 1fr;
-    }
     .psn-stats-bar {
         grid-template-columns: repeat(2, 1fr);
     }

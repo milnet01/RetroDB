@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% set adaptive_layout = true %}
 {% from "_macros/nav_tabs.html" import rom_tool_tabs %}
 
 {% block title %}ROM Tools Settings - RetroDB{% endblock %}
@@ -216,6 +217,7 @@
 {% endblock %}
 
 {% block content %}
+<div class="page-box form-page">
 <div class="page-header">
     <h1>🔧 ROM Tools</h1>
     <p>Manage, organize, and optimize your ROM collection.</p>
@@ -424,6 +426,7 @@
 
 <div id="successMessage" class="success-message" style="display: none;">
     ✓ Settings saved successfully!
+</div>
 </div>
 {% endblock %}
 

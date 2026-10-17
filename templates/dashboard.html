@@ -1,8 +1,10 @@
 {% extends "base.html" %}
+{% set adaptive_layout = true %}
 
 {% block title %}Dashboard - RetroDB{% endblock %}
 
 {% block content %}
+<div class="page-box grid-4 dashboard-page">
 <!-- Pass 50.2 — proactive PSN session-expiry notice (shown only when the
      session is expiring soon or has lapsed; hidden by default + dismissible). -->
 <div id="psnSessionBanner" role="alert"
@@ -608,6 +610,7 @@
         </span>
     </div>
 </section>
+</div>
 {% endblock %}
 
 {% block styles %}

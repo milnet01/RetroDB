@@ -1,8 +1,10 @@
 {% extends "base.html" %}
+{% set adaptive_layout = true %}
 
 {% block title %}{{ _('Wishlist') }} - RetroDB{% endblock %}
 
 {% block content %}
+<div class="page-box data-page">
 <!-- Page Header -->
 <div class="page-header">
     <div>
@@ -113,6 +115,7 @@
             <button type="button" class="btn btn-primary" id="wishlistSaveBtn" onclick="saveWishlistItem()">{{ _('Add to Wishlist') }}</button>
         </div>
     </div>
+</div>
 </div>
 {% endblock %}
 

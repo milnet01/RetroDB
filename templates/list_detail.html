@@ -1,9 +1,11 @@
 {% extends "base.html" %}
+{% set adaptive_layout = true %}
 {% from "_macros/breadcrumb.html" import breadcrumb %}
 
 {% block title %}{{ list.name }} - Lists - RetroDB{% endblock %}
 
 {% block content %}
+<div class="page-box data-page">
 <!-- Breadcrumb -->
 {{ breadcrumb([
     ('Lists', url_for('collections.lists_page')),
@@ -103,6 +105,7 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 {% endblock %}
 

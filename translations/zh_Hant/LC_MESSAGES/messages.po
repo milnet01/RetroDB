@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-17 09:58+0200\n"
+"POT-Creation-Date: 2026-10-17 11:59+0200\n"
 "PO-Revision-Date: 2026-07-01 09:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hant\n"
@@ -18,12 +18,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: app.py:683
+#: app.py:688
 #, fuzzy
 msgid "Too many requests. Please wait and try again."
 msgstr "嘗試次數過多，請稍後再試。"
 
-#: app.py:808
+#: app.py:813
 #, fuzzy
 msgid "Password change required"
 msgstr "無需更改密碼"
@@ -38,8 +38,8 @@ msgstr "未找到系統，或該系統沒有包含成就的遊戲"
 
 #: routes/achievements.py:171 routes/achievements.py:436
 #: routes/bonus_discs.py:263 routes/bulk_scrape.py:46 routes/collections.py:276
-#: routes/collections.py:531 routes/games.py:342 routes/games.py:843
-#: routes/games.py:957 routes/games_ai.py:46 routes/games_media.py:35
+#: routes/collections.py:531 routes/games.py:345 routes/games.py:846
+#: routes/games.py:960 routes/games_ai.py:46 routes/games_media.py:35
 #: routes/games_media.py:82 routes/games_media.py:143 routes/reports.py:689
 #: routes/reports.py:814 routes/trophies.py:1283 services/hltb_service.py:127
 msgid "Game not found"
@@ -124,7 +124,7 @@ msgstr "角色無效"
 msgid "Username already exists"
 msgstr "使用者名稱已存在"
 
-#: routes/auth.py:202 routes/auth.py:251 routes/auth.py:433 routes/auth.py:478
+#: routes/auth.py:202 routes/auth.py:251 routes/auth.py:435 routes/auth.py:480
 msgid "Password must be at least 12 characters"
 msgstr "密碼長度至少為 12 個字元"
 
@@ -136,58 +136,58 @@ msgstr "無法刪除您自己的帳戶"
 msgid "Cannot delete the last admin user"
 msgstr "無法刪除最後一個管理員使用者"
 
-#: routes/auth.py:347 routes/auth.py:409 routes/auth.py:465
+#: routes/auth.py:347 routes/auth.py:411 routes/auth.py:467
 msgid "Not logged in"
 msgstr "未登入"
 
-#: routes/auth.py:385
+#: routes/auth.py:387
 msgid "Invalid locale"
 msgstr "無效的語言區域"
 
-#: routes/auth.py:390
+#: routes/auth.py:392
 #, fuzzy
 msgid "Invalid theme"
 msgstr "路徑無效"
 
-#: routes/auth.py:421
+#: routes/auth.py:423
 msgid "Too many attempts. Please try again later."
 msgstr "嘗試次數過多，請稍後再試。"
 
-#: routes/auth.py:428 routes/auth.py:474
+#: routes/auth.py:430 routes/auth.py:476
 msgid "New password is required"
 msgstr "需要設定新密碼"
 
-#: routes/auth.py:439
+#: routes/auth.py:441
 msgid "Current password is incorrect"
 msgstr "目前密碼不正確"
 
-#: routes/auth.py:468
+#: routes/auth.py:470
 msgid "Password change not required"
 msgstr "無需更改密碼"
 
-#: routes/auth.py:520
+#: routes/auth.py:522
 msgid "No file provided"
 msgstr "未提供檔案"
 
-#: routes/auth.py:524 routes/museum.py:692
+#: routes/auth.py:526 routes/museum.py:692
 msgid "No file selected"
 msgstr "未選擇檔案"
 
-#: routes/auth.py:529
+#: routes/auth.py:531
 msgid "Invalid file type. Allowed: jpg, png, gif, webp"
 msgstr "檔案類型無效。允許的類型：jpg、png、gif、webp"
 
-#: routes/auth.py:534
+#: routes/auth.py:536
 msgid "File too large. Maximum size is 2MB"
 msgstr "檔案過大。最大大小為 2MB"
 
-#: routes/auth.py:552
+#: routes/auth.py:554
 msgid ""
 "Avatar uploads require Pillow; please ask the operator to install the "
 "project requirements."
 msgstr "上傳頭像需要 Pillow；請聯絡操作員安裝專案相依套件。"
 
-#: routes/auth.py:568 routes/museum.py:724
+#: routes/auth.py:570 routes/museum.py:724
 msgid "Invalid image file"
 msgstr "無效的圖片檔案"
 
@@ -203,8 +203,8 @@ msgstr "未找到父遊戲"
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "附贈光碟與主遊戲必須屬於同一系統"
 
-#: routes/bonus_discs.py:209 routes/bonus_discs.py:227 routes/games.py:1206
-#: routes/games.py:1236 routes/platform_import.py:290
+#: routes/bonus_discs.py:209 routes/bonus_discs.py:227 routes/games.py:1209
+#: routes/games.py:1239 routes/platform_import.py:290
 #: routes/platform_import.py:658 routes/platform_import.py:1027
 #: routes/scrape_logs.py:85 routes/scrape_logs.py:170 routes/scrape_logs.py:183
 #: routes/scrape_logs.py:221 routes/scraper.py:200 routes/scraper.py:528
@@ -376,49 +376,49 @@ msgstr "無內容可更新"
 msgid "system_id and emulator_id required"
 msgstr "需要 system_id 和 emulator_id"
 
-#: routes/games.py:235
+#: routes/games.py:238
 msgid "No IDs provided"
 msgstr "未提供 ID"
 
-#: routes/games.py:243
+#: routes/games.py:246
 msgid "Provide 1-50 valid IDs"
 msgstr "請提供 1-50 個有效 ID"
 
-#: routes/games.py:691
+#: routes/games.py:694
 msgid "Game not found after update"
 msgstr "更新後未找到該遊戲"
 
-#: routes/games.py:983 routes/games.py:1027
+#: routes/games.py:986 routes/games.py:1030
 msgid "No fields to update"
 msgstr "沒有可更新的欄位"
 
-#: routes/games.py:1024 routes/platform_import.py:212
+#: routes/games.py:1027 routes/platform_import.py:212
 #: routes/platform_import.py:571 routes/platform_import.py:930
 #: routes/trophies.py:1888
 msgid "No games selected"
 msgstr "未選擇任何遊戲"
 
-#: routes/games.py:1034
+#: routes/games.py:1037
 msgid "Invalid completion status"
 msgstr "完成狀態無效"
 
-#: routes/games.py:1082
+#: routes/games.py:1085
 msgid "No valid fields to update"
 msgstr "沒有可更新的有效欄位"
 
-#: routes/games.py:1199
+#: routes/games.py:1202
 msgid "Invalid status"
 msgstr "狀態無效"
 
-#: routes/games.py:1224
+#: routes/games.py:1227
 msgid "Not authenticated"
 msgstr "未通過身分驗證"
 
-#: routes/games.py:1255
+#: routes/games.py:1258
 msgid "Filter type and value required"
 msgstr "需要篩選類型和值"
 
-#: routes/games.py:1268
+#: routes/games.py:1271
 msgid "Invalid filter type"
 msgstr "篩選類型無效"
 
@@ -976,9 +976,9 @@ msgstr "未提供遊玩時長"
 msgid "Pending match not found"
 msgstr "未找到待處理的符合項目"
 
-#: services/i18n_labels.py:32 templates/archive_scanner.html:724
-#: templates/multi_disc_organizer.html:215 templates/reports.html:367
-#: templates/reports.html:448
+#: services/i18n_labels.py:32 templates/archive_scanner.html:726
+#: templates/multi_disc_organizer.html:217 templates/reports.html:369
+#: templates/reports.html:450
 msgid "Action"
 msgstr "動作"
 
@@ -1329,7 +1329,7 @@ msgid "... and {n} more"
 msgstr "……還有 {n} 項"
 
 #: services/js_i18n_strings.py:354 templates/_bulk_edit_modal.html:30
-#: templates/base.html:972
+#: templates/base.html:973
 msgid "100%"
 msgstr "100%"
 
@@ -1345,13 +1345,13 @@ msgstr "已加入佇列——將在目前操作完成後開始"
 msgid "All ROMs accounted for!"
 msgstr "所有 ROM 均已核對！"
 
-#: services/js_i18n_strings.py:358 templates/logs.html:762
+#: services/js_i18n_strings.py:358 templates/logs.html:764
 msgid "All Sources"
 msgstr "所有來源"
 
-#: services/js_i18n_strings.py:359 templates/all_games.html:40
-#: templates/reports.html:326 templates/reports.html:405
-#: templates/reports.html:478
+#: services/js_i18n_strings.py:359 templates/all_games.html:42
+#: templates/reports.html:328 templates/reports.html:407
+#: templates/reports.html:480
 msgid "All Systems"
 msgstr "所有系統"
 
@@ -1433,7 +1433,7 @@ msgid ""
 "again manually."
 msgstr ""
 
-#: services/js_i18n_strings.py:375 templates/settings.html:65
+#: services/js_i18n_strings.py:375 templates/settings.html:67
 msgid "Are you sure?"
 msgstr "確定嗎？"
 
@@ -1463,16 +1463,16 @@ msgstr "CLZ 匯入"
 #: templates/_settings_tabs/account.html:72
 #: templates/_settings_tabs/account.html:365
 #: templates/_settings_tabs/customization.html:264
-#: templates/achievement_game.html:176 templates/archive_scanner.html:659
-#: templates/archive_scanner.html:796 templates/base.html:291
-#: templates/base.html:309 templates/base.html:1013
-#: templates/chd_converter.html:168 templates/chd_verify.html:124
-#: templates/game_detail.html:480 templates/login.html:252
-#: templates/museum.html:27 templates/psn_trophies.html:295
-#: templates/psn_trophy_detail.html:180 templates/psn_trophy_detail.html:323
-#: templates/reports.html:519 templates/screenshot_dedup.html:261
-#: templates/settings.html:67 templates/steam_achievement_game.html:136
-#: templates/wishlist.html:112 templates/xbox_achievement_game.html:129
+#: templates/achievement_game.html:178 templates/archive_scanner.html:661
+#: templates/archive_scanner.html:798 templates/base.html:292
+#: templates/base.html:310 templates/base.html:1014
+#: templates/chd_converter.html:170 templates/chd_verify.html:126
+#: templates/game_detail.html:494 templates/login.html:254
+#: templates/museum.html:29 templates/psn_trophies.html:297
+#: templates/psn_trophy_detail.html:182 templates/psn_trophy_detail.html:325
+#: templates/reports.html:521 templates/screenshot_dedup.html:263
+#: templates/settings.html:69 templates/steam_achievement_game.html:138
+#: templates/wishlist.html:114 templates/xbox_achievement_game.html:131
 msgid "Cancel"
 msgstr "取消"
 
@@ -1508,7 +1508,7 @@ msgstr "清除 CLZ 匯入"
 msgid "Clear HLTB data for this game?"
 msgstr "清除該遊戲的 HLTB 資料？"
 
-#: services/js_i18n_strings.py:391 templates/achievements_system.html:107
+#: services/js_i18n_strings.py:391 templates/achievements_system.html:109
 msgid "Clear RA Data"
 msgstr "清除 RA 資料"
 
@@ -1544,10 +1544,10 @@ msgstr ""
 msgid "Clearing..."
 msgstr "正在清除…"
 
-#: services/js_i18n_strings.py:398 templates/archive_scanner.html:755
-#: templates/base.html:194 templates/base.html:285 templates/base.html:302
-#: templates/base.html:653 templates/base.html:929 templates/base.html:1319
-#: templates/wishlist.html:54
+#: services/js_i18n_strings.py:398 templates/archive_scanner.html:757
+#: templates/base.html:194 templates/base.html:286 templates/base.html:303
+#: templates/base.html:654 templates/base.html:930 templates/base.html:1320
+#: templates/wishlist.html:56
 msgid "Close"
 msgstr "關閉"
 
@@ -1560,7 +1560,7 @@ msgstr "關閉鍵盤快速鍵"
 msgid "Close modal / cancel"
 msgstr "關閉使用者彈窗"
 
-#: services/js_i18n_strings.py:401 templates/dashboard.html:153
+#: services/js_i18n_strings.py:401 templates/dashboard.html:155
 msgid "Complete"
 msgstr "完成"
 
@@ -1569,13 +1569,13 @@ msgid "Complete!"
 msgstr "完成！"
 
 #: services/js_i18n_strings.py:403 templates/_bulk_edit_modal.html:29
-#: templates/base.html:971 templates/dashboard.html:471
-#: templates/game_detail.html:200
+#: templates/base.html:972 templates/dashboard.html:473
+#: templates/game_detail.html:199
 msgid "Completed"
 msgstr "已完成"
 
 #: services/js_i18n_strings.py:404 templates/_bulk_edit_modal.html:23
-#: templates/analytics.html:135 templates/base.html:966
+#: templates/analytics.html:137 templates/base.html:967
 msgid "Completion Status"
 msgstr "完成狀態"
 
@@ -1583,20 +1583,20 @@ msgstr "完成狀態"
 msgid "Completion status updated"
 msgstr "完成狀態已更新"
 
-#: services/js_i18n_strings.py:406 templates/achievement_game.html:170
-#: templates/achievement_game.html:195 templates/achievement_game.html:209
-#: templates/base.html:1008 templates/game_detail.html:474
-#: templates/game_detail.html:499 templates/game_detail.html:513
-#: templates/local_trophy_detail.html:173 templates/psn_trophy_detail.html:174
-#: templates/psn_trophy_detail.html:207
-#: templates/steam_achievement_game.html:132
-#: templates/steam_achievement_game.html:154
-#: templates/xbox_achievement_game.html:125
-#: templates/xbox_achievement_game.html:147
+#: services/js_i18n_strings.py:406 templates/achievement_game.html:172
+#: templates/achievement_game.html:197 templates/achievement_game.html:211
+#: templates/base.html:1009 templates/game_detail.html:488
+#: templates/game_detail.html:513 templates/game_detail.html:527
+#: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:176
+#: templates/psn_trophy_detail.html:209
+#: templates/steam_achievement_game.html:134
+#: templates/steam_achievement_game.html:156
+#: templates/xbox_achievement_game.html:127
+#: templates/xbox_achievement_game.html:149
 msgid "Completionist"
 msgstr "全成就達成者"
 
-#: services/js_i18n_strings.py:407 templates/settings.html:64
+#: services/js_i18n_strings.py:407 templates/settings.html:66
 msgid "Confirm Action"
 msgstr "確認操作"
 
@@ -1653,14 +1653,14 @@ msgid "Detecting…"
 msgstr "設定"
 
 #: services/js_i18n_strings.py:420 templates/_bulk_scrape_modal.html:69
-#: templates/psn_trophies.html:245 templates/psn_trophies.html:305
-#: templates/reports.html:523
+#: templates/psn_trophies.html:247 templates/psn_trophies.html:307
+#: templates/reports.html:525
 msgid "Done"
 msgstr "完成"
 
 #: services/js_i18n_strings.py:421 templates/_settings_tabs/account.html:315
-#: templates/base.html:927 templates/game_detail.html:95
-#: templates/wishlist.html:638
+#: templates/base.html:928 templates/game_detail.html:92
+#: templates/wishlist.html:641
 msgid "Edit"
 msgstr "編輯"
 
@@ -1733,7 +1733,7 @@ msgid "Error updating status"
 msgstr "更新狀態出錯"
 
 #: services/js_i18n_strings.py:438 templates/_modals/edit_modal.html:219
-#: templates/base.html:1195
+#: templates/base.html:1196
 msgid "Exclusive"
 msgstr "獨佔"
 
@@ -1826,7 +1826,7 @@ msgstr "正在擷取手把圖片……"
 msgid "Focus search box"
 msgstr ""
 
-#: services/js_i18n_strings.py:461 templates/logs.html:741
+#: services/js_i18n_strings.py:461 templates/logs.html:743
 msgid "From"
 msgstr "從"
 
@@ -1840,7 +1840,7 @@ msgid "Game details updated successfully."
 msgstr "遊戲詳情已成功更新。"
 
 #: services/js_i18n_strings.py:464 templates/_settings_tabs/data.html:186
-#: templates/achievements_system.html:117 templates/analytics.html:569
+#: templates/achievements_system.html:119 templates/analytics.html:571
 msgid "Games"
 msgstr "遊戲"
 
@@ -1848,11 +1848,11 @@ msgstr "遊戲"
 msgid "Generate All Museum Content"
 msgstr "產生全部博物館內容"
 
-#: services/js_i18n_strings.py:466 templates/museum_system.html:43
+#: services/js_i18n_strings.py:466 templates/museum_system.html:45
 msgid "Generate Content"
 msgstr "生成內容"
 
-#: services/js_i18n_strings.py:467 templates/museum.html:26
+#: services/js_i18n_strings.py:467 templates/museum.html:28
 msgid "Generating content..."
 msgstr "正在生成內容…"
 
@@ -1925,8 +1925,8 @@ msgstr "HowLongToBeat 資料已儲存"
 msgid "HLTB lookup cancelled"
 msgstr "已取消 HLTB 查詢"
 
-#: services/js_i18n_strings.py:483 templates/all_games.html:116
-#: templates/system_games.html:107
+#: services/js_i18n_strings.py:483 templates/all_games.html:118
+#: templates/system_games.html:109
 msgid "Has Achievements"
 msgstr "有成就"
 
@@ -1934,7 +1934,7 @@ msgstr "有成就"
 msgid "Hide Bonus"
 msgstr "隱藏附贈"
 
-#: services/js_i18n_strings.py:485 templates/logs.html:717
+#: services/js_i18n_strings.py:485 templates/logs.html:719
 msgid "Image Resize"
 msgstr "圖片縮放"
 
@@ -1943,11 +1943,11 @@ msgid "Image must be under 10MB"
 msgstr "圖片大小必須小於 10MB"
 
 #: services/js_i18n_strings.py:487 templates/_bulk_edit_modal.html:27
-#: templates/achievements_system.html:149
-#: templates/achievements_system.html:168 templates/base.html:969
-#: templates/dashboard.html:327 templates/dashboard.html:467
-#: templates/game_detail.html:198 templates/steam_achievements.html:75
-#: templates/xbox_achievements.html:75
+#: templates/achievements_system.html:151
+#: templates/achievements_system.html:170 templates/base.html:970
+#: templates/dashboard.html:329 templates/dashboard.html:469
+#: templates/game_detail.html:197 templates/steam_achievements.html:77
+#: templates/xbox_achievements.html:77
 msgid "In Progress"
 msgstr "進行中"
 
@@ -1956,7 +1956,7 @@ msgid "Initializing bulk scrape..."
 msgstr "正在初始化批次抓取…"
 
 #: services/js_i18n_strings.py:489 templates/_bulk_scrape_modal.html:23
-#: templates/duplicate_finder.html:248 templates/screenshot_dedup.html:274
+#: templates/duplicate_finder.html:250 templates/screenshot_dedup.html:276
 msgid "Initializing..."
 msgstr "正在初始化…"
 
@@ -2004,29 +2004,29 @@ msgstr "正在載入日誌檔案…"
 msgid "Log file deleted"
 msgstr "日誌檔案已刪除"
 
-#: services/js_i18n_strings.py:500 templates/achievement_game.html:166
-#: templates/achievement_game.html:195 templates/achievement_game.html:205
-#: templates/base.html:1004 templates/game_detail.html:470
-#: templates/game_detail.html:499 templates/game_detail.html:509
-#: templates/local_trophy_detail.html:173 templates/psn_trophy_detail.html:170
-#: templates/psn_trophy_detail.html:203
-#: templates/steam_achievement_game.html:131
-#: templates/steam_achievement_game.html:154
-#: templates/xbox_achievement_game.html:124
-#: templates/xbox_achievement_game.html:147
+#: services/js_i18n_strings.py:500 templates/achievement_game.html:168
+#: templates/achievement_game.html:197 templates/achievement_game.html:207
+#: templates/base.html:1005 templates/game_detail.html:484
+#: templates/game_detail.html:513 templates/game_detail.html:523
+#: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:172
+#: templates/psn_trophy_detail.html:205
+#: templates/steam_achievement_game.html:133
+#: templates/steam_achievement_game.html:156
+#: templates/xbox_achievement_game.html:126
+#: templates/xbox_achievement_game.html:149
 msgid "Main + Extras"
 msgstr "主線 + 額外"
 
-#: services/js_i18n_strings.py:501 templates/achievement_game.html:162
-#: templates/achievement_game.html:195 templates/achievement_game.html:201
-#: templates/base.html:1000 templates/game_detail.html:466
-#: templates/game_detail.html:499 templates/game_detail.html:505
-#: templates/local_trophy_detail.html:173 templates/psn_trophy_detail.html:166
-#: templates/psn_trophy_detail.html:199
-#: templates/steam_achievement_game.html:130
-#: templates/steam_achievement_game.html:154
-#: templates/xbox_achievement_game.html:123
-#: templates/xbox_achievement_game.html:147
+#: services/js_i18n_strings.py:501 templates/achievement_game.html:164
+#: templates/achievement_game.html:197 templates/achievement_game.html:203
+#: templates/base.html:1001 templates/game_detail.html:480
+#: templates/game_detail.html:513 templates/game_detail.html:519
+#: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:168
+#: templates/psn_trophy_detail.html:201
+#: templates/steam_achievement_game.html:132
+#: templates/steam_achievement_game.html:156
+#: templates/xbox_achievement_game.html:125
+#: templates/xbox_achievement_game.html:149
 msgid "Main Story"
 msgstr "主線"
 
@@ -2081,7 +2081,7 @@ msgid "Network error syncing trophies"
 msgstr "同步獎盃時發生網路錯誤"
 
 #: services/js_i18n_strings.py:513 templates/_bulk_edit_modal.html:171
-#: templates/_modals/edit_modal.html:139 templates/game_detail.html:628
+#: templates/_modals/edit_modal.html:139 templates/game_detail.html:642
 msgid "No"
 msgstr "否"
 
@@ -2105,9 +2105,9 @@ msgstr "未找到 HowLongToBeat 資料"
 msgid "No achievements found"
 msgstr "未找到成就"
 
-#: services/js_i18n_strings.py:519 templates/achievement_game.html:70
-#: templates/steam_achievement_game.html:67
-#: templates/xbox_achievement_game.html:57
+#: services/js_i18n_strings.py:519 templates/achievement_game.html:72
+#: templates/steam_achievement_game.html:69
+#: templates/xbox_achievement_game.html:59
 msgid "No description available."
 msgstr "暫無描述。"
 
@@ -2160,7 +2160,7 @@ msgstr "沒有工作階段符合目前的篩選條件"
 msgid "Normalization applied: {games} games updated, {rules} rules saved"
 msgstr "已套用規範化：更新了 {games} 個遊戲，儲存了 {rules} 條規則"
 
-#: services/js_i18n_strings.py:532 templates/base.html:1354
+#: services/js_i18n_strings.py:532 templates/base.html:1355
 msgid "Now playing"
 msgstr "正在遊玩"
 
@@ -2186,8 +2186,8 @@ msgid "Part of a Series"
 msgstr "系列作品之一"
 
 #: services/js_i18n_strings.py:538 templates/_bulk_scrape_modal.html:46
-#: templates/archive_scanner.html:656 templates/archive_scanner.html:793
-#: templates/psn_trophies.html:292
+#: templates/archive_scanner.html:658 templates/archive_scanner.html:795
+#: templates/psn_trophies.html:294
 msgid "Pause"
 msgstr "暫停"
 
@@ -2199,13 +2199,13 @@ msgstr "已暫停 - 點擊「繼續」以恢復"
 msgid "Platform not found"
 msgstr "未找到平台"
 
-#: services/js_i18n_strings.py:541 templates/game_detail.html:85
+#: services/js_i18n_strings.py:541 templates/game_detail.html:76
 msgid "Play"
 msgstr "遊玩"
 
 #: services/js_i18n_strings.py:542 templates/_bulk_edit_modal.html:28
-#: templates/base.html:970 templates/dashboard.html:469
-#: templates/game_detail.html:199
+#: templates/base.html:971 templates/dashboard.html:471
+#: templates/game_detail.html:198
 msgid "Played"
 msgstr "已遊玩"
 
@@ -2229,7 +2229,7 @@ msgstr "請至少選擇一個遊戲進行抓取。"
 msgid "Pre-session log entries"
 msgstr "工作階段前的日誌項目"
 
-#: services/js_i18n_strings.py:548 templates/game_imports.html:415
+#: services/js_i18n_strings.py:548 templates/game_imports.html:418
 msgid "Processing..."
 msgstr "正在處理…"
 
@@ -2251,11 +2251,11 @@ msgid "ROM Files"
 msgstr "ROM 檔案"
 
 #: services/js_i18n_strings.py:553 templates/_macros/nav_tabs.html:34
-#: templates/archive_scanner.html:559 templates/base.html:140
-#: templates/chd_converter.html:62 templates/chd_verify.html:78
-#: templates/duplicate_finder.html:164 templates/logs.html:711
-#: templates/multi_disc_organizer.html:157 templates/rom_tools_hub.html:106
-#: templates/screenshot_dedup.html:225
+#: templates/archive_scanner.html:561 templates/base.html:140
+#: templates/chd_converter.html:64 templates/chd_verify.html:80
+#: templates/duplicate_finder.html:166 templates/logs.html:713
+#: templates/multi_disc_organizer.html:159 templates/rom_tools_hub.html:114
+#: templates/screenshot_dedup.html:227
 msgid "ROM Tools"
 msgstr "ROM 工具"
 
@@ -2320,7 +2320,7 @@ msgstr "正在移除……"
 msgid "Replace"
 msgstr "取代"
 
-#: services/js_i18n_strings.py:567 templates/logs.html:714
+#: services/js_i18n_strings.py:567 templates/logs.html:716
 msgid "Reports"
 msgstr "報告"
 
@@ -2377,7 +2377,7 @@ msgstr "掃描失敗（HTTP {status}）"
 msgid "Scan failed: {error}"
 msgstr "備份失敗：{error}"
 
-#: services/js_i18n_strings.py:580 templates/multi_disc_organizer.html:202
+#: services/js_i18n_strings.py:580 templates/multi_disc_organizer.html:204
 msgid "Scanning..."
 msgstr "正在掃描..."
 
@@ -2401,14 +2401,14 @@ msgstr "已抓取 0/{total} - 0%"
 msgid "Scraped {processed} / {total} - {percent}%"
 msgstr "已抓取 {processed} / {total} - {percent}%"
 
-#: services/js_i18n_strings.py:585 templates/logs.html:708
-#: templates/settings.html:27 templates/wishlist.html:504
+#: services/js_i18n_strings.py:585 templates/logs.html:710
+#: templates/settings.html:29 templates/wishlist.html:507
 msgid "Scraping"
 msgstr "抓取中"
 
-#: services/js_i18n_strings.py:586 templates/logs.html:779
-#: templates/museum_system.html:187 templates/museum_system.html:194
-#: templates/psn_trophy_detail.html:318
+#: services/js_i18n_strings.py:586 templates/logs.html:781
+#: templates/museum_system.html:189 templates/museum_system.html:196
+#: templates/psn_trophy_detail.html:320
 msgid "Search"
 msgstr "搜尋"
 
@@ -2416,8 +2416,8 @@ msgstr "搜尋"
 msgid "Searching & removing background..."
 msgstr "正在搜尋並移除背景……"
 
-#: services/js_i18n_strings.py:588 templates/all_games.html:60
-#: templates/psn_trophies.html:158 templates/system_games.html:51
+#: services/js_i18n_strings.py:588 templates/all_games.html:62
+#: templates/psn_trophies.html:160 templates/system_games.html:53
 msgid "Select"
 msgstr "選擇"
 
@@ -2480,8 +2480,8 @@ msgstr "伺服器重啟成功！"
 msgid "Server stopped. You can close this tab."
 msgstr ""
 
-#: services/js_i18n_strings.py:603 templates/all_games.html:119
-#: templates/system_games.html:110
+#: services/js_i18n_strings.py:603 templates/all_games.html:121
+#: templates/system_games.html:112
 msgid "Show Bonus"
 msgstr "顯示附贈"
 
@@ -2500,7 +2500,7 @@ msgid "Shutting down server..."
 msgstr "正在重新啟動伺服器..."
 
 #: services/js_i18n_strings.py:607 templates/_modals/edit_modal.html:46
-#: templates/base.html:1052
+#: templates/base.html:1053
 msgid "Standalone"
 msgstr "獨立版"
 
@@ -2521,7 +2521,7 @@ msgstr "已成功更新 {count} 個遊戲"
 msgid "Sync In Progress"
 msgstr "同步進行中"
 
-#: services/js_i18n_strings.py:612 templates/achievements_system.html:103
+#: services/js_i18n_strings.py:612 templates/achievements_system.html:105
 msgid "Sync Progress"
 msgstr "同步進度"
 
@@ -2553,14 +2553,14 @@ msgstr "同步中：{processed} / {total}"
 
 #: services/js_i18n_strings.py:619
 #: templates/_settings_tabs/customization.html:299
-#: templates/achievement_game.html:226 templates/analytics.html:567
-#: templates/analytics.html:601 templates/compare_games.html:67
-#: templates/dashboard.html:295 templates/dashboard.html:354
-#: templates/dashboard.html:431 templates/dashboard.html:497
-#: templates/logs.html:720 templates/multi_disc_organizer.html:211
-#: templates/reports.html:358 templates/reports.html:433
-#: templates/settings.html:39 templates/steam_achievement_game.html:171
-#: templates/wishlist.html:64 templates/xbox_achievement_game.html:164
+#: templates/achievement_game.html:228 templates/analytics.html:569
+#: templates/analytics.html:603 templates/compare_games.html:69
+#: templates/dashboard.html:297 templates/dashboard.html:356
+#: templates/dashboard.html:433 templates/dashboard.html:499
+#: templates/logs.html:722 templates/multi_disc_organizer.html:213
+#: templates/reports.html:360 templates/reports.html:435
+#: templates/settings.html:41 templates/steam_achievement_game.html:173
+#: templates/wishlist.html:66 templates/xbox_achievement_game.html:166
 msgid "System"
 msgstr "系統"
 
@@ -2624,7 +2624,7 @@ msgid ""
 " Continue?"
 msgstr "這將使用您設定的 AI 服務商為所有系統生成歷史和熱門遊戲。此過程可能需要幾分鐘並消耗 API 額度。是否繼續？"
 
-#: services/js_i18n_strings.py:630 templates/logs.html:743
+#: services/js_i18n_strings.py:630 templates/logs.html:745
 msgid "To"
 msgstr "到"
 
@@ -2667,8 +2667,8 @@ msgstr ""
 "\n"
 "欄位：{fields}"
 
-#: services/js_i18n_strings.py:639 templates/museum_system.html:188
-#: templates/museum_system.html:195
+#: services/js_i18n_strings.py:639 templates/museum_system.html:190
+#: templates/museum_system.html:197
 msgid "Upload"
 msgstr "上傳"
 
@@ -2702,8 +2702,8 @@ msgid "Xbox Imports"
 msgstr "Xbox 匯入"
 
 #: services/js_i18n_strings.py:647 templates/_bulk_edit_modal.html:170
-#: templates/_modals/edit_modal.html:139 templates/game_detail.html:571
-#: templates/game_detail.html:628
+#: templates/_modals/edit_modal.html:139 templates/game_detail.html:585
+#: templates/game_detail.html:642
 msgid "Yes"
 msgstr "是"
 
@@ -2861,23 +2861,23 @@ msgstr "正在編輯 %(count)s 個遊戲"
 msgid "Only fields changed from \"Don't change\" will be updated."
 msgstr "只有從「不更改」改動過的欄位才會被更新。"
 
-#: templates/_bulk_edit_modal.html:26 templates/achievements_system.html:169
-#: templates/base.html:968 templates/dashboard.html:465
-#: templates/game_detail.html:197 templates/steam_achievements.html:76
-#: templates/xbox_achievements.html:76
+#: templates/_bulk_edit_modal.html:26 templates/achievements_system.html:171
+#: templates/base.html:969 templates/dashboard.html:467
+#: templates/game_detail.html:196 templates/steam_achievements.html:78
+#: templates/xbox_achievements.html:78
 msgid "Not Started"
 msgstr "未開始"
 
 #: templates/_bulk_edit_modal.html:36 templates/_modals/edit_modal.html:106
 #: templates/_settings_tabs/data.html:83 templates/_settings_tabs/data.html:156
-#: templates/achievement_game.html:239 templates/all_games.html:89
-#: templates/analytics.html:479 templates/base.html:898
-#: templates/base.html:1102 templates/compare_games.html:71
-#: templates/dashboard.html:355 templates/game_detail.html:243
-#: templates/local_trophy_detail.html:97 templates/psn_trophy_detail.html:92
-#: templates/psn_trophy_detail.html:256
-#: templates/steam_achievement_game.html:176 templates/system_games.html:80
-#: templates/xbox_achievement_game.html:169
+#: templates/achievement_game.html:241 templates/all_games.html:91
+#: templates/analytics.html:481 templates/base.html:899
+#: templates/base.html:1103 templates/compare_games.html:73
+#: templates/dashboard.html:357 templates/game_detail.html:242
+#: templates/local_trophy_detail.html:99 templates/psn_trophy_detail.html:94
+#: templates/psn_trophy_detail.html:258
+#: templates/steam_achievement_game.html:178 templates/system_games.html:82
+#: templates/xbox_achievement_game.html:171
 msgid "Genre"
 msgstr "類型"
 
@@ -2889,12 +2889,12 @@ msgid "Append"
 msgstr "追加"
 
 #: templates/_bulk_edit_modal.html:53 templates/_modals/edit_modal.html:90
-#: templates/achievement_game.html:79 templates/all_games.html:95
-#: templates/analytics.html:481 templates/base.html:897
-#: templates/base.html:1088 templates/compare_games.html:69
-#: templates/game_detail.html:219 templates/local_trophy_detail.html:85
-#: templates/psn_trophy_detail.html:80 templates/steam_achievement_game.html:76
-#: templates/system_games.html:86 templates/xbox_achievement_game.html:65
+#: templates/achievement_game.html:81 templates/all_games.html:97
+#: templates/analytics.html:483 templates/base.html:898
+#: templates/base.html:1089 templates/compare_games.html:71
+#: templates/game_detail.html:218 templates/local_trophy_detail.html:87
+#: templates/psn_trophy_detail.html:82 templates/steam_achievement_game.html:78
+#: templates/system_games.html:88 templates/xbox_achievement_game.html:67
 msgid "Publisher"
 msgstr "發行商"
 
@@ -2905,41 +2905,41 @@ msgid "Don't change"
 msgstr "不更改"
 
 #: templates/_bulk_edit_modal.html:67 templates/_modals/edit_modal.html:95
-#: templates/achievement_game.html:85 templates/all_games.html:98
-#: templates/analytics.html:480 templates/base.html:896
-#: templates/base.html:1092 templates/compare_games.html:68
-#: templates/game_detail.html:231 templates/local_trophy_detail.html:91
-#: templates/psn_trophy_detail.html:86 templates/steam_achievement_game.html:82
-#: templates/system_games.html:89 templates/xbox_achievement_game.html:71
+#: templates/achievement_game.html:87 templates/all_games.html:100
+#: templates/analytics.html:482 templates/base.html:897
+#: templates/base.html:1093 templates/compare_games.html:70
+#: templates/game_detail.html:230 templates/local_trophy_detail.html:93
+#: templates/psn_trophy_detail.html:88 templates/steam_achievement_game.html:84
+#: templates/system_games.html:91 templates/xbox_achievement_game.html:73
 msgid "Developer"
 msgstr "開發商"
 
-#: templates/_bulk_edit_modal.html:81 templates/compare_games.html:78
+#: templates/_bulk_edit_modal.html:81 templates/compare_games.html:80
 msgid "ESRB Rating"
 msgstr "ESRB 分級"
 
 #: templates/_bulk_edit_modal.html:84 templates/_modals/edit_modal.html:236
-#: templates/base.html:1205
+#: templates/base.html:1206
 msgid "E - Everyone"
 msgstr "E - 所有人"
 
 #: templates/_bulk_edit_modal.html:85 templates/_modals/edit_modal.html:237
-#: templates/base.html:1206
+#: templates/base.html:1207
 msgid "E10+ - Everyone 10+"
 msgstr "E10+ - 10 歲以上人群"
 
 #: templates/_bulk_edit_modal.html:86 templates/_modals/edit_modal.html:238
-#: templates/base.html:1207
+#: templates/base.html:1208
 msgid "T - Teen"
 msgstr "T - 青少年"
 
 #: templates/_bulk_edit_modal.html:87 templates/_modals/edit_modal.html:239
-#: templates/_modals/edit_modal.html:283 templates/base.html:1208
-#: templates/base.html:1252
+#: templates/_modals/edit_modal.html:283 templates/base.html:1209
+#: templates/base.html:1253
 msgid "M - Mature"
 msgstr "M - 成人"
 
-#: templates/_bulk_edit_modal.html:93 templates/compare_games.html:79
+#: templates/_bulk_edit_modal.html:93 templates/compare_games.html:81
 msgid "PEGI Rating"
 msgstr "PEGI 分級"
 
@@ -2964,34 +2964,34 @@ msgid "PEGI 18"
 msgstr "PEGI 18"
 
 #: templates/_bulk_edit_modal.html:106 templates/_modals/edit_modal.html:81
-#: templates/analytics.html:490 templates/base.html:1079
-#: templates/compare_games.html:73 templates/reports.html:442
+#: templates/analytics.html:492 templates/base.html:1080
+#: templates/compare_games.html:75 templates/reports.html:444
 msgid "Region"
 msgstr "地區"
 
 #: templates/_bulk_edit_modal.html:112 templates/_modals/edit_modal.html:128
-#: templates/all_games.html:101 templates/base.html:1118
-#: templates/compare_games.html:74 templates/game_detail.html:179
-#: templates/system_games.html:92
+#: templates/all_games.html:103 templates/base.html:1119
+#: templates/compare_games.html:76 templates/game_detail.html:178
+#: templates/system_games.html:94
 msgid "Players"
 msgstr "玩家人數"
 
 #: templates/_bulk_edit_modal.html:118 templates/_modals/edit_modal.html:145
-#: templates/_settings_tabs/data.html:93 templates/base.html:1122
+#: templates/_settings_tabs/data.html:93 templates/base.html:1123
 msgid "Game Structure"
 msgstr "遊戲結構"
 
 #: templates/_bulk_edit_modal.html:135 templates/_modals/edit_modal.html:158
-#: templates/_settings_tabs/data.html:103 templates/all_games.html:104
-#: templates/analytics.html:197 templates/base.html:1130
-#: templates/compare_games.html:76 templates/system_games.html:95
+#: templates/_settings_tabs/data.html:103 templates/all_games.html:106
+#: templates/analytics.html:199 templates/base.html:1131
+#: templates/compare_games.html:78 templates/system_games.html:97
 msgid "Perspective"
 msgstr "視角"
 
 #: templates/_bulk_edit_modal.html:151 templates/_modals/edit_modal.html:169
-#: templates/_settings_tabs/data.html:113 templates/all_games.html:107
-#: templates/analytics.html:205 templates/base.html:1138
-#: templates/compare_games.html:77 templates/system_games.html:98
+#: templates/_settings_tabs/data.html:113 templates/all_games.html:109
+#: templates/analytics.html:207 templates/base.html:1139
+#: templates/compare_games.html:79 templates/system_games.html:100
 msgid "Dimension"
 msgstr "維度"
 
@@ -2999,9 +2999,9 @@ msgstr "維度"
 msgid "Campaign"
 msgstr "戰役"
 
-#: templates/_bulk_edit_modal.html:177 templates/base.html:899
-#: templates/compare_games.html:72 templates/local_trophy_detail.html:103
-#: templates/psn_trophy_detail.html:98
+#: templates/_bulk_edit_modal.html:177 templates/base.html:900
+#: templates/compare_games.html:74 templates/local_trophy_detail.html:105
+#: templates/psn_trophy_detail.html:100
 msgid "Franchise"
 msgstr "系列"
 
@@ -3009,8 +3009,8 @@ msgstr "系列"
 msgid "Bulk Scraping"
 msgstr "批次抓取"
 
-#: templates/_bulk_scrape_modal.html:13 templates/chd_converter.html:175
-#: templates/chd_verify.html:131 templates/reports.html:507
+#: templates/_bulk_scrape_modal.html:13 templates/chd_converter.html:177
+#: templates/chd_verify.html:133 templates/reports.html:509
 msgid "Preparing..."
 msgstr "準備中……"
 
@@ -3029,7 +3029,7 @@ msgstr "失敗：%(count)s"
 msgid "Skipped: %(count)s"
 msgstr "已略過：%(count)s"
 
-#: templates/_bulk_scrape_modal.html:42 templates/psn_trophies.html:298
+#: templates/_bulk_scrape_modal.html:42 templates/psn_trophies.html:300
 msgid "Background"
 msgstr "背景"
 
@@ -3037,816 +3037,816 @@ msgstr "背景"
 msgid "Load More"
 msgstr "載入更多"
 
-#: templates/achievement_game.html:15 templates/achievement_game.html:35
-#: templates/achievements_system.html:13 templates/game_detail.html:19
-#: templates/game_detail.html:274 templates/systems.html:41
+#: templates/achievement_game.html:17 templates/achievement_game.html:37
+#: templates/achievements_system.html:15 templates/game_detail.html:21
+#: templates/game_detail.html:273 templates/systems.html:43
 msgid "RetroAchievements"
 msgstr "RetroAchievements"
 
-#: templates/achievement_game.html:26 templates/local_trophy_detail.html:25
-#: templates/psn_trophy_detail.html:30 templates/steam_achievement_game.html:25
-#: templates/xbox_achievement_game.html:25
+#: templates/achievement_game.html:28 templates/local_trophy_detail.html:27
+#: templates/psn_trophy_detail.html:32 templates/steam_achievement_game.html:27
+#: templates/xbox_achievement_game.html:27
 msgid "View Game"
 msgstr "檢視遊戲"
 
-#: templates/achievement_game.html:30 templates/system_games.html:46
+#: templates/achievement_game.html:32 templates/system_games.html:48
 msgid "Refresh RA"
 msgstr "重新整理 RA"
 
-#: templates/achievement_game.html:91 templates/all_games.html:92
-#: templates/game_detail.html:255 templates/system_games.html:83
+#: templates/achievement_game.html:93 templates/all_games.html:94
+#: templates/game_detail.html:254 templates/system_games.html:85
 msgid "Series"
 msgstr "系列"
 
-#: templates/achievement_game.html:106 templates/steam_achievement_game.html:97
-#: templates/xbox_achievement_game.html:86
+#: templates/achievement_game.html:108 templates/steam_achievement_game.html:99
+#: templates/xbox_achievement_game.html:88
 msgid "Achievement Progress"
 msgstr "成就進度"
 
-#: templates/achievement_game.html:118
+#: templates/achievement_game.html:120
 #, python-format
 msgid "%(earned)s / %(total)s Points"
 msgstr "%(earned)s / %(total)s 點"
 
-#: templates/achievement_game.html:123
+#: templates/achievement_game.html:125
 #, python-format
 msgid "%(count)s Hardcore"
 msgstr "%(count)s 硬核"
 
-#: templates/achievement_game.html:134
+#: templates/achievement_game.html:136
 msgid "Could not load achievement data"
 msgstr "無法載入成就資料"
 
-#: templates/achievement_game.html:135
+#: templates/achievement_game.html:137
 msgid "Check your RetroAchievements credentials in Settings."
 msgstr "請在設定中檢查你的 RetroAchievements 憑證。"
 
-#: templates/achievement_game.html:144 templates/game_detail.html:448
-#: templates/local_trophy_detail.html:156 templates/psn_trophy_detail.html:147
-#: templates/steam_achievement_game.html:121
-#: templates/xbox_achievement_game.html:114
+#: templates/achievement_game.html:146 templates/game_detail.html:462
+#: templates/local_trophy_detail.html:158 templates/psn_trophy_detail.html:149
+#: templates/steam_achievement_game.html:123
+#: templates/xbox_achievement_game.html:116
 msgid "How Long to Beat"
 msgstr "通關時長"
 
-#: templates/achievement_game.html:151 templates/base.html:981
-#: templates/game_detail.html:455 templates/psn_trophy_detail.html:155
-#: templates/psn_trophy_detail.html:315
-#: templates/steam_achievement_game.html:124
-#: templates/xbox_achievement_game.html:117
+#: templates/achievement_game.html:153 templates/base.html:982
+#: templates/game_detail.html:469 templates/psn_trophy_detail.html:157
+#: templates/psn_trophy_detail.html:317
+#: templates/steam_achievement_game.html:126
+#: templates/xbox_achievement_game.html:119
 msgid "Search game title..."
 msgstr "搜尋遊戲標題…"
 
-#: templates/achievement_game.html:154 templates/base.html:984
-#: templates/game_detail.html:458 templates/local_trophy_detail.html:191
-#: templates/psn_trophy_detail.html:158
-#: templates/steam_achievement_game.html:125
-#: templates/xbox_achievement_game.html:118
+#: templates/achievement_game.html:156 templates/base.html:985
+#: templates/game_detail.html:472 templates/local_trophy_detail.html:193
+#: templates/psn_trophy_detail.html:160
+#: templates/steam_achievement_game.html:127
+#: templates/xbox_achievement_game.html:120
 msgid "Lookup HLTB"
 msgstr "查詢 HLTB"
 
-#: templates/_settings_tabs/account.html:73 templates/achievement_game.html:175
-#: templates/achievement_game.html:251 templates/base.html:1012
-#: templates/game_detail.html:479 templates/local_trophy_detail.html:221
-#: templates/psn_trophy_detail.html:179 templates/psn_trophy_detail.html:268
-#: templates/steam_achievement_game.html:135
-#: templates/xbox_achievement_game.html:128
+#: templates/_settings_tabs/account.html:73 templates/achievement_game.html:177
+#: templates/achievement_game.html:253 templates/base.html:1013
+#: templates/game_detail.html:493 templates/local_trophy_detail.html:223
+#: templates/psn_trophy_detail.html:181 templates/psn_trophy_detail.html:270
+#: templates/steam_achievement_game.html:137
+#: templates/xbox_achievement_game.html:130
 msgid "Save"
 msgstr "儲存"
 
-#: templates/achievement_game.html:215 templates/all_games.html:122
-#: templates/base.html:1025 templates/duplicate_finder.html:299
-#: templates/game_detail.html:91 templates/game_detail.html:519
-#: templates/local_trophy_detail.html:183 templates/psn_trophy_detail.html:212
-#: templates/reports.html:275 templates/screenshot_dedup.html:323
-#: templates/steam_achievement_game.html:161 templates/system_games.html:113
-#: templates/systems.html:50 templates/xbox_achievement_game.html:154
+#: templates/achievement_game.html:217 templates/all_games.html:124
+#: templates/base.html:1026 templates/duplicate_finder.html:301
+#: templates/game_detail.html:88 templates/game_detail.html:533
+#: templates/local_trophy_detail.html:185 templates/psn_trophy_detail.html:214
+#: templates/reports.html:277 templates/screenshot_dedup.html:325
+#: templates/steam_achievement_game.html:163 templates/system_games.html:115
+#: templates/systems.html:52 templates/xbox_achievement_game.html:156
 msgid "Clear"
 msgstr "清除"
 
-#: templates/achievement_game.html:223 templates/game_detail.html:527
-#: templates/local_trophy_detail.html:201 templates/psn_trophy_detail.html:232
-#: templates/steam_achievement_game.html:168
-#: templates/xbox_achievement_game.html:161
+#: templates/achievement_game.html:225 templates/game_detail.html:541
+#: templates/local_trophy_detail.html:203 templates/psn_trophy_detail.html:234
+#: templates/steam_achievement_game.html:170
+#: templates/xbox_achievement_game.html:163
 msgid "More Details"
 msgstr "更多詳情"
 
-#: templates/achievement_game.html:230
+#: templates/achievement_game.html:232
 msgid "First Achievement"
 msgstr "首個成就"
 
 #: templates/_settings_tabs/account.html:310
-#: templates/achievement_game.html:231 templates/achievement_game.html:235
-#: templates/local_trophy_detail.html:209
-#: templates/local_trophy_detail.html:213 templates/psn_trophies.html:74
-#: templates/psn_trophy_detail.html:244 templates/psn_trophy_detail.html:248
-#: templates/psn_trophy_detail.html:252
+#: templates/achievement_game.html:233 templates/achievement_game.html:237
+#: templates/local_trophy_detail.html:211
+#: templates/local_trophy_detail.html:215 templates/psn_trophies.html:76
+#: templates/psn_trophy_detail.html:246 templates/psn_trophy_detail.html:250
+#: templates/psn_trophy_detail.html:254
 msgid "Never"
 msgstr "從不"
 
-#: templates/achievement_game.html:234
+#: templates/achievement_game.html:236
 msgid "Last Achievement"
 msgstr "最近成就"
 
-#: templates/_settings_tabs/data.html:157 templates/achievement_game.html:245
-#: templates/analytics.html:489 templates/compare_games.html:75
-#: templates/local_trophy_detail.html:217 templates/psn_trophy_detail.html:262
-#: templates/steam_achievement_game.html:182
+#: templates/_settings_tabs/data.html:157 templates/achievement_game.html:247
+#: templates/analytics.html:491 templates/compare_games.html:77
+#: templates/local_trophy_detail.html:219 templates/psn_trophy_detail.html:264
+#: templates/steam_achievement_game.html:184
 msgid "Modes"
 msgstr "模式"
 
-#: templates/achievement_game.html:257 templates/local_trophy_detail.html:225
+#: templates/achievement_game.html:259 templates/local_trophy_detail.html:227
 msgid "Input"
 msgstr "輸入"
 
-#: templates/_macros/nav_tabs.html:24 templates/achievement_game.html:263
-#: templates/achievements_system.html:124 templates/analytics.html:15
-#: templates/base.html:108 templates/dashboard.html:98
-#: templates/dashboard.html:183 templates/steam_achievement_game.html:188
-#: templates/xbox_achievement_game.html:175 templates/xbox_achievements.html:44
+#: templates/_macros/nav_tabs.html:24 templates/achievement_game.html:265
+#: templates/achievements_system.html:126 templates/analytics.html:17
+#: templates/base.html:108 templates/dashboard.html:100
+#: templates/dashboard.html:185 templates/steam_achievement_game.html:190
+#: templates/xbox_achievement_game.html:177 templates/xbox_achievements.html:46
 msgid "Achievements"
 msgstr "成就"
 
-#: templates/achievement_game.html:264 templates/psn_trophy_detail.html:275
-#: templates/steam_achievement_game.html:189
+#: templates/achievement_game.html:266 templates/psn_trophy_detail.html:277
+#: templates/steam_achievement_game.html:191
 #, python-format
 msgid "%(count)s total"
 msgstr "共 %(count)s 個"
 
-#: templates/achievement_game.html:279 templates/local_trophy_detail.html:239
-#: templates/psn_trophy_detail.html:337
-#: templates/steam_achievement_game.html:203
-#: templates/xbox_achievement_game.html:190
+#: templates/achievement_game.html:281 templates/local_trophy_detail.html:241
+#: templates/psn_trophy_detail.html:339
+#: templates/steam_achievement_game.html:205
+#: templates/xbox_achievement_game.html:192
 #, python-format
 msgid "Unlocked (%(count)s)"
 msgstr "已解鎖（%(count)s）"
 
-#: templates/achievement_game.html:299
+#: templates/achievement_game.html:301
 msgid "Hardcore"
 msgstr "硬核"
 
-#: templates/achievement_game.html:309
-#: templates/steam_achievement_game.html:229
-#: templates/xbox_achievement_game.html:217
+#: templates/achievement_game.html:311
+#: templates/steam_achievement_game.html:231
+#: templates/xbox_achievement_game.html:219
 msgid "No achievements unlocked yet"
 msgstr "尚未解鎖任何成就"
 
-#: templates/achievement_game.html:319 templates/local_trophy_detail.html:277
-#: templates/psn_trophy_detail.html:423
-#: templates/steam_achievement_game.html:238
-#: templates/xbox_achievement_game.html:226
+#: templates/achievement_game.html:321 templates/local_trophy_detail.html:279
+#: templates/psn_trophy_detail.html:425
+#: templates/steam_achievement_game.html:240
+#: templates/xbox_achievement_game.html:228
 #, python-format
 msgid "Locked (%(count)s)"
 msgstr "已鎖定（%(count)s）"
 
-#: templates/achievement_game.html:345
-#: templates/steam_achievement_game.html:261
-#: templates/xbox_achievement_game.html:252
+#: templates/achievement_game.html:347
+#: templates/steam_achievement_game.html:263
+#: templates/xbox_achievement_game.html:254
 msgid "All achievements unlocked!"
 msgstr "已解鎖所有成就！"
 
-#: templates/achievement_game.html:354
+#: templates/achievement_game.html:356
 msgid "Achievement Data Unavailable"
 msgstr "成就資料不可用"
 
-#: templates/achievement_game.html:356
+#: templates/achievement_game.html:358
 msgid "Could not fetch achievement progress from RetroAchievements."
 msgstr "無法從 RetroAchievements 取得成就進度。"
 
-#: templates/achievement_game.html:357
+#: templates/achievement_game.html:359
 msgid "Please check your API credentials in Settings."
 msgstr "請在設定中檢查您的 API 憑據。"
 
-#: templates/achievements_system.html:21
+#: templates/achievements_system.html:23
 #, python-format
 msgid "%(count)s games with achievements"
 msgstr "%(count)s 個帶成就的遊戲"
 
-#: templates/achievements_system.html:27
+#: templates/achievements_system.html:29
 msgid "RetroAchievements Not Configured"
 msgstr "尚未設定 RetroAchievements"
 
-#: templates/achievements_system.html:28
+#: templates/achievements_system.html:30
 msgid ""
 "To view your personal progress, configure your RetroAchievements username"
 " and API key in your"
 msgstr "如需查看個人進度，請在以下位置設定你的 RetroAchievements 使用者名稱和 API 金鑰："
 
-#: templates/achievements_system.html:29
+#: templates/achievements_system.html:31
 msgid "Profile Settings"
 msgstr "個人資料設定"
 
-#: templates/_settings_tabs/data.html:23 templates/achievements_system.html:40
-#: templates/analytics.html:69 templates/dashboard.html:129
-#: templates/steam_achievements.html:37 templates/xbox_achievements.html:37
+#: templates/_settings_tabs/data.html:23 templates/achievements_system.html:42
+#: templates/analytics.html:71 templates/dashboard.html:131
+#: templates/steam_achievements.html:39 templates/xbox_achievements.html:39
 msgid "Total Games"
 msgstr "遊戲總數"
 
 #: templates/_settings_tabs/customization.html:153
 #: templates/_settings_tabs/customization.html:234
-#: templates/_settings_tabs/data.html:19 templates/achievements_system.html:47
-#: templates/base.html:102 templates/dashboard.html:14
-#: templates/game_detail.html:22 templates/system_games.html:13
+#: templates/_settings_tabs/data.html:19 templates/achievements_system.html:49
+#: templates/base.html:102 templates/dashboard.html:16
+#: templates/game_detail.html:24 templates/system_games.html:15
 msgid "Systems"
 msgstr "系統"
 
-#: templates/achievements_system.html:54 templates/steam_achievements.html:44
+#: templates/achievements_system.html:56 templates/steam_achievements.html:46
 msgid "Total Achievements"
 msgstr "成就總數"
 
-#: templates/achievements_system.html:66
+#: templates/achievements_system.html:68
 msgid "Total Points"
 msgstr "總點數"
 
-#: templates/achievements_system.html:99 templates/changelog.html:178
-#: templates/logs.html:729
+#: templates/achievements_system.html:101 templates/changelog.html:179
+#: templates/logs.html:731
 msgid "Loading..."
 msgstr "載入中……"
 
-#: templates/achievements_system.html:99
+#: templates/achievements_system.html:101
 msgid "Never synced"
 msgstr "從未同步"
 
-#: templates/achievements_system.html:105
+#: templates/achievements_system.html:107
 msgid "Remove this system from Achievements"
 msgstr "將此系統從成就中移除"
 
-#: templates/achievements_system.html:136
+#: templates/achievements_system.html:138
 msgid "Points"
 msgstr "點數"
 
-#: templates/achievements_system.html:162 templates/all_games.html:31
-#: templates/game_imports.html:212 templates/game_imports.html:267
-#: templates/game_imports.html:323 templates/game_imports.html:386
-#: templates/psn_trophies.html:117 templates/steam_achievements.html:70
-#: templates/system_games.html:38 templates/xbox_achievements.html:70
+#: templates/achievements_system.html:164 templates/all_games.html:33
+#: templates/game_imports.html:215 templates/game_imports.html:270
+#: templates/game_imports.html:326 templates/game_imports.html:389
+#: templates/psn_trophies.html:119 templates/steam_achievements.html:72
+#: templates/system_games.html:40 templates/xbox_achievements.html:72
 msgid "Search games..."
 msgstr "搜尋遊戲…"
 
-#: templates/achievements_system.html:167 templates/all_games.html:13
-#: templates/steam_achievements.html:74 templates/xbox_achievements.html:74
+#: templates/achievements_system.html:169 templates/all_games.html:15
+#: templates/steam_achievements.html:76 templates/xbox_achievements.html:76
 msgid "All Games"
 msgstr "全部遊戲"
 
-#: templates/achievements_system.html:170 templates/steam_achievements.html:77
-#: templates/xbox_achievements.html:77
+#: templates/achievements_system.html:172 templates/steam_achievements.html:79
+#: templates/xbox_achievements.html:79
 msgid "Completed (100%)"
 msgstr "已完成（100%）"
 
 #: templates/_settings_tabs/customization.html:126
-#: templates/achievements_system.html:180 templates/all_games.html:135
-#: templates/local_trophies.html:98 templates/psn_trophies.html:177
-#: templates/steam_achievements.html:86 templates/system_games.html:126
-#: templates/xbox_achievements.html:86
+#: templates/achievements_system.html:182 templates/all_games.html:137
+#: templates/local_trophies.html:100 templates/psn_trophies.html:179
+#: templates/steam_achievements.html:88 templates/system_games.html:128
+#: templates/xbox_achievements.html:88
 msgid "Jump to:"
 msgstr "跳轉到："
 
-#: templates/achievements_system.html:229
+#: templates/achievements_system.html:231
 #, python-format
 msgid "<span>%(count)s</span> achievements"
 msgstr "<span>%(count)s</span> 個成就"
 
-#: templates/all_games.html:15
+#: templates/all_games.html:17
 msgid "games across all systems"
 msgstr "所有系統的遊戲"
 
-#: templates/all_games.html:17 templates/system_games.html:24
+#: templates/all_games.html:19 templates/system_games.html:26
 msgid "missing metadata"
 msgstr "缺少中繼資料"
 
-#: templates/all_games.html:24 templates/system_games.html:31
+#: templates/all_games.html:26 templates/system_games.html:33
 msgid "Game filters"
 msgstr "遊戲篩選"
 
-#: templates/all_games.html:32 templates/system_games.html:40
+#: templates/all_games.html:34 templates/system_games.html:42
 msgid "Search games"
 msgstr "搜尋遊戲"
 
-#: templates/all_games.html:35 templates/psn_trophies.html:121
-#: templates/system_games.html:42
+#: templates/all_games.html:37 templates/psn_trophies.html:123
+#: templates/system_games.html:44
 msgid "Clear search"
 msgstr "清除搜尋"
 
-#: templates/all_games.html:39
+#: templates/all_games.html:41
 msgid "Filter by system"
 msgstr "按系統篩選"
 
-#: templates/all_games.html:48
+#: templates/all_games.html:50
 msgid "Filter by system type"
 msgstr "按系統類型篩選"
 
-#: templates/all_games.html:49 templates/museum.html:56
-#: templates/reports.html:411 templates/systems.html:32
+#: templates/all_games.html:51 templates/museum.html:58
+#: templates/reports.html:413 templates/systems.html:34
 msgid "All Types"
 msgstr "所有類型"
 
-#: templates/all_games.html:50 templates/museum.html:57
-#: templates/systems.html:33
+#: templates/all_games.html:52 templates/museum.html:59
+#: templates/systems.html:35
 msgid "Console"
 msgstr "主機"
 
-#: templates/all_games.html:51 templates/museum.html:58
-#: templates/systems.html:34
+#: templates/all_games.html:53 templates/museum.html:60
+#: templates/systems.html:36
 msgid "Handheld"
 msgstr "掌機"
 
-#: templates/all_games.html:52 templates/museum.html:59
-#: templates/systems.html:35
+#: templates/all_games.html:54 templates/museum.html:61
+#: templates/systems.html:37
 msgid "Computer"
 msgstr "電腦"
 
-#: templates/all_games.html:53 templates/museum.html:60
-#: templates/systems.html:36
+#: templates/all_games.html:55 templates/museum.html:62
+#: templates/systems.html:38
 msgid "Arcade"
 msgstr "街機"
 
-#: templates/all_games.html:54 templates/museum.html:61
-#: templates/systems.html:37
+#: templates/all_games.html:56 templates/museum.html:63
+#: templates/systems.html:39
 msgid "Engine"
 msgstr "引擎"
 
-#: templates/all_games.html:63 templates/system_games.html:54
+#: templates/all_games.html:65 templates/system_games.html:56
 msgid "Select All"
 msgstr "全選"
 
-#: templates/all_games.html:66 templates/system_games.html:57
+#: templates/all_games.html:68 templates/system_games.html:59
 msgid "Select Unscraped"
 msgstr "選擇未抓取的"
 
-#: templates/all_games.html:70 templates/game_detail.html:679
-#: templates/system_games.html:61
+#: templates/all_games.html:72 templates/game_detail.html:684
+#: templates/system_games.html:63
 msgid "Full Re-scrape"
 msgstr "完整重新抓取"
 
-#: templates/all_games.html:72 templates/system_games.html:63
+#: templates/all_games.html:74 templates/system_games.html:65
 msgid "Toggle between full re-scrape and fill missing mode"
 msgstr "在完整重新抓取與填補缺失模式之間切換"
 
-#: templates/all_games.html:75 templates/game_detail.html:679
-#: templates/system_games.html:66
+#: templates/all_games.html:77 templates/game_detail.html:684
+#: templates/system_games.html:68
 msgid "Fill Missing"
 msgstr "填充缺失項"
 
-#: templates/all_games.html:79 templates/system_games.html:70
+#: templates/all_games.html:81 templates/system_games.html:72
 msgid "Scrape Selected"
 msgstr "抓取所選"
 
-#: templates/all_games.html:82 templates/system_games.html:73
+#: templates/all_games.html:84 templates/system_games.html:75
 msgid "Edit Selected"
 msgstr "編輯所選"
 
-#: templates/all_games.html:110 templates/compare_games.html:87
-#: templates/system_games.html:101
+#: templates/all_games.html:112 templates/compare_games.html:89
+#: templates/system_games.html:103
 msgid "Rating"
 msgstr "分級"
 
-#: templates/all_games.html:113 templates/logs.html:760
-#: templates/system_games.html:104
+#: templates/all_games.html:115 templates/logs.html:762
+#: templates/system_games.html:106
 msgid "Source"
 msgstr "來源"
 
-#: templates/all_games.html:118 templates/system_games.html:109
+#: templates/all_games.html:120 templates/system_games.html:111
 msgid "Show/hide bonus discs (hidden by default)"
 msgstr "顯示/隱藏附贈光碟（預設隱藏）"
 
-#: templates/all_games.html:129 templates/system_games.html:120
+#: templates/all_games.html:131 templates/system_games.html:122
 msgid "Active Filters:"
 msgstr "已啟用的篩選："
 
-#: templates/all_games.html:134 templates/psn_trophies.html:176
-#: templates/system_games.html:125
+#: templates/all_games.html:136 templates/psn_trophies.html:178
+#: templates/system_games.html:127
 msgid "Alphabetical jump navigation"
 msgstr "字母跳轉導覽"
 
-#: templates/all_games.html:169 templates/psn_trophies.html:211
-#: templates/system_games.html:160
+#: templates/all_games.html:171 templates/psn_trophies.html:213
+#: templates/system_games.html:162
 msgid "SHOWING"
 msgstr "正在顯示"
 
-#: templates/all_games.html:169 templates/psn_trophies.html:211
-#: templates/system_games.html:160
+#: templates/all_games.html:171 templates/psn_trophies.html:213
+#: templates/system_games.html:162
 msgid "OF"
 msgstr "共"
 
-#: templates/all_games.html:169 templates/psn_trophies.html:211
-#: templates/system_games.html:160
+#: templates/all_games.html:171 templates/psn_trophies.html:213
+#: templates/system_games.html:162
 msgid "GAMES"
 msgstr "遊戲"
 
-#: templates/_modals/filter_modal.html:18 templates/all_games.html:178
-#: templates/psn_trophies.html:220 templates/system_games.html:169
+#: templates/_modals/filter_modal.html:18 templates/all_games.html:180
+#: templates/psn_trophies.html:222 templates/system_games.html:171
 msgid "Loading games..."
 msgstr "正在載入遊戲…"
 
-#: templates/analytics.html:8
+#: templates/analytics.html:10
 msgid "Summary"
 msgstr "摘要"
 
-#: templates/analytics.html:9
+#: templates/analytics.html:11
 msgid "Charts"
 msgstr "圖表"
 
-#: templates/analytics.html:10
+#: templates/analytics.html:12
 msgid "Developers"
 msgstr "開發商"
 
-#: templates/_modals/edit_modal.html:103 templates/analytics.html:11
-#: templates/base.html:956 templates/base.html:1099
+#: templates/_modals/edit_modal.html:103 templates/analytics.html:13
+#: templates/base.html:957 templates/base.html:1100
 msgid "Gameplay"
 msgstr "玩法"
 
-#: templates/analytics.html:12 templates/dashboard.html:198
-#: templates/dashboard.html:296 templates/game_imports.html:274
+#: templates/analytics.html:14 templates/dashboard.html:200
+#: templates/dashboard.html:298 templates/game_imports.html:277
 msgid "Playtime"
 msgstr "遊玩時長"
 
-#: templates/analytics.html:13
+#: templates/analytics.html:15
 msgid "Review Scores"
 msgstr "評測分數"
 
-#: templates/_modals/edit_modal.html:228 templates/analytics.html:14
+#: templates/_modals/edit_modal.html:228 templates/analytics.html:16
 msgid "Age Ratings"
 msgstr "年齡分級"
 
-#: templates/analytics.html:16 templates/analytics.html:459
+#: templates/analytics.html:18 templates/analytics.html:461
 msgid "Data Quality"
 msgstr "資料品質"
 
-#: templates/analytics.html:17
+#: templates/analytics.html:19
 msgid "Growth"
 msgstr "增長"
 
-#: templates/analytics.html:18 templates/analytics.html:570
-#: templates/museum_system.html:107
+#: templates/analytics.html:20 templates/analytics.html:572
+#: templates/museum_system.html:109
 msgid "Storage"
 msgstr "儲存空間"
 
-#: templates/analytics.html:19 templates/analytics.html:555
+#: templates/analytics.html:21 templates/analytics.html:557
 msgid "Leaderboards"
 msgstr "排行榜"
 
-#: templates/analytics.html:25
+#: templates/analytics.html:27
 msgid "Collection Analytics"
 msgstr "收藏分析"
 
-#: templates/analytics.html:26
+#: templates/analytics.html:28
 msgid "Insights into your retro gaming library"
 msgstr "深入了解你的復古遊戲庫"
 
-#: templates/analytics.html:32
+#: templates/analytics.html:34
 msgid "Export"
 msgstr "匯出"
 
-#: templates/analytics.html:38
+#: templates/analytics.html:40
 msgid "PNG Infographic"
 msgstr "PNG 資訊圖"
 
-#: templates/analytics.html:39
+#: templates/analytics.html:41
 msgid "Save as shareable image"
 msgstr "另存為可分享圖片"
 
-#: templates/analytics.html:45
+#: templates/analytics.html:47
 msgid "Copy to Clipboard"
 msgstr "複製到剪貼簿"
 
-#: templates/analytics.html:46
+#: templates/analytics.html:48
 msgid "Forum-ready text stats"
 msgstr "適合發文的文字統計"
 
-#: templates/analytics.html:52
+#: templates/analytics.html:54
 msgid "CSV Export"
 msgstr "CSV 匯出"
 
-#: templates/analytics.html:53
+#: templates/analytics.html:55
 msgid "Data for spreadsheets"
 msgstr "適用於試算表的資料"
 
-#: templates/_settings_tabs/data.html:167 templates/analytics.html:60
-#: templates/local_trophy_detail.html:180 templates/psn_trophy_detail.html:25
-#: templates/steam_achievement_game.html:29
-#: templates/xbox_achievement_game.html:29
+#: templates/_settings_tabs/data.html:167 templates/analytics.html:62
+#: templates/local_trophy_detail.html:182 templates/psn_trophy_detail.html:27
+#: templates/steam_achievement_game.html:31
+#: templates/xbox_achievement_game.html:31
 msgid "Refresh"
 msgstr "重新整理"
 
-#: templates/analytics.html:76 templates/dashboard.html:120
+#: templates/analytics.html:78 templates/dashboard.html:122
 msgid "Total Systems"
 msgstr "系統總數"
 
-#: templates/analytics.html:83 templates/dashboard.html:165
+#: templates/analytics.html:85 templates/dashboard.html:167
 msgid "Total Storage"
 msgstr "總儲存空間"
 
-#: templates/analytics.html:90 templates/dashboard.html:174
+#: templates/analytics.html:92 templates/dashboard.html:176
 msgid "Completion Rate"
 msgstr "完成率"
 
-#: templates/analytics.html:102
+#: templates/analytics.html:104
 msgid "Games by Manufacturer"
 msgstr "按廠商分類的遊戲"
 
-#: templates/analytics.html:112
+#: templates/analytics.html:114
 msgid "Games by Decade"
 msgstr "按年代劃分的遊戲"
 
-#: templates/analytics.html:125
+#: templates/analytics.html:127
 msgid "Top Genres"
 msgstr "熱門類型"
 
-#: templates/analytics.html:147
+#: templates/analytics.html:149
 msgid "Release Timeline"
 msgstr "發行時間線"
 
-#: templates/analytics.html:158
+#: templates/analytics.html:160
 msgid "Developers &amp; Publishers"
 msgstr "開發商 &amp; 發行商"
 
-#: templates/analytics.html:164
+#: templates/analytics.html:166
 msgid "Top 15 Developers"
 msgstr "前 15 名開發商"
 
-#: templates/analytics.html:172
+#: templates/analytics.html:174
 msgid "Top 15 Publishers"
 msgstr "發行商 Top 15"
 
-#: templates/analytics.html:181
+#: templates/analytics.html:183
 msgid "Top 15 Franchises"
 msgstr "前 15 大系列"
 
-#: templates/analytics.html:191
+#: templates/analytics.html:193
 msgid "Gameplay Analysis"
 msgstr "玩法分析"
 
-#: templates/analytics.html:213
+#: templates/analytics.html:215
 msgid "Game Modes"
 msgstr "遊戲模式"
 
-#: templates/analytics.html:221
+#: templates/analytics.html:223
 msgid "Player Count"
 msgstr "玩家人數"
 
-#: templates/analytics.html:229
+#: templates/analytics.html:231
 msgid "Region Distribution"
 msgstr "地區分佈"
 
-#: templates/analytics.html:240
+#: templates/analytics.html:242
 msgid "Playtime Analysis"
 msgstr "遊玩時長分析"
 
-#: templates/analytics.html:245 templates/analytics.html:276
-#: templates/analytics.html:282
+#: templates/analytics.html:247 templates/analytics.html:278
+#: templates/analytics.html:284
 msgid "N/A"
 msgstr "無"
 
-#: templates/analytics.html:245
+#: templates/analytics.html:247
 msgid "hrs"
 msgstr "小時"
 
-#: templates/analytics.html:246
+#: templates/analytics.html:248
 msgid "Average Game Length"
 msgstr "平均遊戲時長"
 
-#: templates/analytics.html:250
+#: templates/analytics.html:252
 msgid "Games with HLTB Data"
 msgstr "含 HLTB 資料的遊戲"
 
-#: templates/analytics.html:255
+#: templates/analytics.html:257
 msgid "Game Length Distribution"
 msgstr "遊戲時長分佈"
 
-#: templates/analytics.html:265
+#: templates/analytics.html:267
 msgid "Review Scores Analysis"
 msgstr "評分分析"
 
-#: templates/analytics.html:272
+#: templates/analytics.html:274
 msgid "Games with Critic Scores"
 msgstr "有媒體評分的遊戲"
 
-#: templates/analytics.html:278
+#: templates/analytics.html:280
 msgid "Average Critic Score"
 msgstr "平均媒體評分"
 
-#: templates/analytics.html:284
+#: templates/analytics.html:286
 msgid "Average User Score"
 msgstr "平均使用者評分"
 
-#: templates/analytics.html:288
+#: templates/analytics.html:290
 msgid "Games with User Scores"
 msgstr "有使用者評分的遊戲"
 
-#: templates/analytics.html:295
+#: templates/analytics.html:297
 msgid "Critic Score Distribution"
 msgstr "媒體評分分布"
 
-#: templates/analytics.html:303
+#: templates/analytics.html:305
 msgid "Average Scores by System"
 msgstr "各系統平均評分"
 
-#: templates/analytics.html:312
+#: templates/analytics.html:314
 msgid "Critic vs User Score Comparison"
 msgstr "媒體評分與使用者評分對比"
 
-#: templates/analytics.html:321
+#: templates/analytics.html:323
 msgid "Highest Rated Games"
 msgstr "評分最高的遊戲"
 
-#: templates/analytics.html:342
+#: templates/analytics.html:344
 msgid "Lowest Rated Games"
 msgstr "評分最低的遊戲"
 
-#: templates/analytics.html:366
+#: templates/analytics.html:368
 msgid "Age Ratings Analysis"
 msgstr "年齡分級分析"
 
-#: templates/analytics.html:373
+#: templates/analytics.html:375
 #, python-format
 msgid "Games with %(name)s"
 msgstr "有 %(name)s 的遊戲"
 
-#: templates/analytics.html:377
+#: templates/analytics.html:379
 msgid "Most Common Rating"
 msgstr "最常見分級"
 
-#: templates/analytics.html:381
+#: templates/analytics.html:383
 msgid "No Rating"
 msgstr "無分級"
 
-#: templates/analytics.html:385
+#: templates/analytics.html:387
 msgid "Rating Coverage"
 msgstr "分級覆蓋率"
 
-#: templates/analytics.html:392
+#: templates/analytics.html:394
 #, python-format
 msgid "%(name)s Rating Distribution"
 msgstr "%(name)s 分級分布"
 
-#: templates/analytics.html:400
+#: templates/analytics.html:402
 msgid "Content Maturity by System"
 msgstr "各系統內容分級"
 
-#: templates/analytics.html:411
+#: templates/analytics.html:413
 msgid "RetroAchievements Coverage"
 msgstr "RetroAchievements 覆蓋率"
 
-#: templates/analytics.html:416
+#: templates/analytics.html:418
 msgid "Games with Achievements"
 msgstr "含成就的遊戲"
 
-#: templates/analytics.html:420
+#: templates/analytics.html:422
 msgid "Library Coverage"
 msgstr "遊戲庫覆蓋率"
 
-#: templates/analytics.html:424
+#: templates/analytics.html:426
 msgid "Systems with RA Games"
 msgstr "含 RA 遊戲的系統"
 
-#: templates/analytics.html:430
+#: templates/analytics.html:432
 msgid "Games with RetroAchievements by System"
 msgstr "按系統統計有 RetroAchievements 的遊戲"
 
-#: templates/analytics.html:437
+#: templates/analytics.html:439
 msgid "RA Coverage by System"
 msgstr "各系統 RA 覆蓋率"
 
-#: templates/analytics.html:465
+#: templates/analytics.html:467
 msgid "Completeness Overview"
 msgstr "完整度概覽"
 
-#: templates/analytics.html:473
+#: templates/analytics.html:475
 msgid "Field Completeness"
 msgstr "欄位完整度"
 
 #: templates/_modals/edit_modal.html:337
 #: templates/_settings_tabs/customization.html:193
-#: templates/_settings_tabs/customization.html:259 templates/analytics.html:477
-#: templates/base.html:211 templates/base.html:1306
-#: templates/compare_games.html:95
+#: templates/_settings_tabs/customization.html:259 templates/analytics.html:479
+#: templates/base.html:211 templates/base.html:1307
+#: templates/compare_games.html:97
 msgid "Description"
 msgstr "簡介"
 
-#: templates/analytics.html:478 templates/dashboard.html:96
-#: templates/dashboard.html:293 templates/dashboard.html:352
-#: templates/dashboard.html:429 templates/dashboard.html:495
+#: templates/analytics.html:480 templates/dashboard.html:98
+#: templates/dashboard.html:295 templates/dashboard.html:354
+#: templates/dashboard.html:431 templates/dashboard.html:497
 msgid "Boxart"
 msgstr "封面"
 
 #: templates/_modals/edit_modal.html:68 templates/_modals/filter_modal.html:14
-#: templates/analytics.html:482 templates/base.html:1071
-#: templates/compare_games.html:70
+#: templates/analytics.html:484 templates/base.html:1072
+#: templates/compare_games.html:72
 msgid "Release Date"
 msgstr "發行日期"
 
-#: templates/analytics.html:483
+#: templates/analytics.html:485
 msgid "Screenshots"
 msgstr "螢幕截圖"
 
-#: templates/analytics.html:484
+#: templates/analytics.html:486
 msgid "Fanart"
 msgstr "同人圖"
 
-#: templates/analytics.html:485 templates/game_detail.html:417
+#: templates/analytics.html:487 templates/game_detail.html:416
 msgid "Video"
 msgstr "影片"
 
-#: templates/analytics.html:486
+#: templates/analytics.html:488 templates/game_detail.html:82
 msgid "Manual"
 msgstr "說明書"
 
-#: templates/analytics.html:488
+#: templates/analytics.html:490
 msgid "Ratings"
 msgstr "分級"
 
-#: templates/analytics.html:512
+#: templates/analytics.html:514
 msgid "Bonus Discs"
 msgstr "附贈光碟"
 
-#: templates/analytics.html:516
+#: templates/analytics.html:518
 msgid "Special Editions"
 msgstr "特別版"
 
-#: templates/analytics.html:520
+#: templates/analytics.html:522
 msgid "Save Type Distribution"
 msgstr "存檔類型分布"
 
-#: templates/analytics.html:531
+#: templates/analytics.html:533
 msgid "Collection Growth"
 msgstr "合集增長"
 
-#: templates/analytics.html:543
+#: templates/analytics.html:545
 msgid "Storage by System"
 msgstr "按系統統計儲存空間"
 
-#: templates/analytics.html:561 templates/dashboard.html:247
+#: templates/analytics.html:563 templates/dashboard.html:249
 msgid "Top Systems by Game Count"
 msgstr "按遊戲數量排名的系統"
 
-#: templates/analytics.html:566 templates/analytics.html:599
+#: templates/analytics.html:568 templates/analytics.html:601
 msgid "Rank"
 msgstr "排名"
 
 #: templates/_settings_tabs/customization.html:164
-#: templates/_settings_tabs/customization.html:245 templates/analytics.html:568
-#: templates/museum_system.html:97
+#: templates/_settings_tabs/customization.html:245 templates/analytics.html:570
+#: templates/museum_system.html:99
 msgid "Manufacturer"
 msgstr "製造商"
 
-#: templates/analytics.html:571
+#: templates/analytics.html:573
 msgid "Avg Size"
 msgstr "平均大小"
 
-#: templates/analytics.html:581 templates/base.html:1152
-#: templates/local_trophy_detail.html:218
-#: templates/local_trophy_detail.html:222
+#: templates/analytics.html:583 templates/base.html:1153
+#: templates/local_trophy_detail.html:220
+#: templates/local_trophy_detail.html:224
 msgid "Unknown"
 msgstr "未知"
 
-#: templates/analytics.html:594
+#: templates/analytics.html:596
 msgid "Largest Games"
 msgstr "最大的遊戲"
 
-#: templates/analytics.html:600 templates/game_imports.html:219
-#: templates/game_imports.html:274 templates/game_imports.html:337
-#: templates/game_imports.html:400
+#: templates/analytics.html:602 templates/game_imports.html:222
+#: templates/game_imports.html:277 templates/game_imports.html:340
+#: templates/game_imports.html:403
 msgid "Game"
 msgstr "遊戲"
 
-#: templates/analytics.html:602
+#: templates/analytics.html:604
 msgid "Size"
 msgstr "大小"
 
-#: templates/archive_scanner.html:560 templates/chd_converter.html:63
-#: templates/chd_verify.html:79 templates/duplicate_finder.html:165
-#: templates/multi_disc_organizer.html:158 templates/screenshot_dedup.html:226
+#: templates/archive_scanner.html:562 templates/chd_converter.html:65
+#: templates/chd_verify.html:81 templates/duplicate_finder.html:167
+#: templates/multi_disc_organizer.html:160 templates/screenshot_dedup.html:228
 msgid "Manage, organize, and optimize your ROM collection."
 msgstr "管理、整理並優化您的 ROM 合集。"
 
-#: templates/archive_scanner.html:568 templates/duplicate_finder.html:181
-#: templates/screenshot_dedup.html:234
+#: templates/archive_scanner.html:570 templates/duplicate_finder.html:183
+#: templates/screenshot_dedup.html:236
 msgid "Scan Configuration"
 msgstr "掃描設定"
 
-#: templates/archive_scanner.html:573
+#: templates/archive_scanner.html:575
 msgid "ROMs Folder Path"
 msgstr "ROM 資料夾路徑"
 
-#: templates/archive_scanner.html:577 templates/chd_converter.html:87
-#: templates/chd_verify.html:103 templates/duplicate_finder.html:190
+#: templates/archive_scanner.html:579 templates/chd_converter.html:89
+#: templates/chd_verify.html:105 templates/duplicate_finder.html:192
 msgid "subfolder (optional)"
 msgstr "子資料夾（可選）"
 
-#: templates/archive_scanner.html:579 templates/archive_scanner.html:590
-#: templates/chd_converter.html:89 templates/chd_verify.html:105
-#: templates/duplicate_finder.html:192
+#: templates/archive_scanner.html:581 templates/archive_scanner.html:592
+#: templates/chd_converter.html:91 templates/chd_verify.html:107
+#: templates/duplicate_finder.html:194
 msgid "Browse"
 msgstr "瀏覽"
 
-#: templates/archive_scanner.html:583
+#: templates/archive_scanner.html:585
 msgid "Excluded Paths"
 msgstr "排除的路徑"
 
-#: templates/archive_scanner.html:583
+#: templates/archive_scanner.html:585
 msgid "(folders to skip)"
 msgstr "（要跳過的資料夾）"
 
-#: templates/archive_scanner.html:588
+#: templates/archive_scanner.html:590
 msgid "Enter folder name to exclude"
 msgstr "輸入要排除的資料夾名稱"
 
@@ -3854,147 +3854,147 @@ msgstr "輸入要排除的資料夾名稱"
 #: templates/_settings_tabs/data.html:107
 #: templates/_settings_tabs/data.html:117
 #: templates/_settings_tabs/data.html:127
-#: templates/_settings_tabs/data.html:137 templates/archive_scanner.html:589
+#: templates/_settings_tabs/data.html:137 templates/archive_scanner.html:591
 msgid "Add"
 msgstr "新增"
 
-#: templates/archive_scanner.html:597
+#: templates/archive_scanner.html:599
 msgid "Compression Types"
 msgstr "壓縮類型"
 
-#: templates/archive_scanner.html:601
+#: templates/archive_scanner.html:603
 msgid "Scan ZIP archives"
 msgstr "掃描 ZIP 壓縮包"
 
-#: templates/archive_scanner.html:604
+#: templates/archive_scanner.html:606
 msgid "ZIP"
 msgstr "ZIP"
 
-#: templates/archive_scanner.html:608
+#: templates/archive_scanner.html:610
 msgid "Scan 7-Zip archives"
 msgstr "掃描 7-Zip 壓縮包"
 
-#: templates/archive_scanner.html:611
+#: templates/archive_scanner.html:613
 msgid "7-Zip"
 msgstr "7-Zip"
 
-#: templates/archive_scanner.html:615
+#: templates/archive_scanner.html:617
 msgid "Scan RAR archives"
 msgstr "掃描 RAR 壓縮檔"
 
-#: templates/archive_scanner.html:618
+#: templates/archive_scanner.html:620
 msgid "RAR"
 msgstr "RAR"
 
-#: templates/archive_scanner.html:624
+#: templates/archive_scanner.html:626
 msgid "Scan Modes"
 msgstr "掃描模式"
 
-#: templates/archive_scanner.html:628
+#: templates/archive_scanner.html:630
 msgid "Scan for corrupted archives"
 msgstr "掃描損壞的壓縮檔"
 
-#: templates/archive_scanner.html:631 templates/archive_scanner.html:696
+#: templates/archive_scanner.html:633 templates/archive_scanner.html:698
 msgid "Corrupted"
 msgstr "已損毀"
 
-#: templates/archive_scanner.html:635
+#: templates/archive_scanner.html:637
 msgid "Scan for multi-file archives"
 msgstr "掃描多檔案壓縮包"
 
-#: templates/archive_scanner.html:638 templates/archive_scanner.html:703
+#: templates/archive_scanner.html:640 templates/archive_scanner.html:705
 msgid "Multi-file"
 msgstr "多檔案"
 
-#: templates/archive_scanner.html:642
+#: templates/archive_scanner.html:644
 msgid "Scan for unwanted files"
 msgstr "掃描無用檔案"
 
-#: templates/archive_scanner.html:645 templates/archive_scanner.html:710
+#: templates/archive_scanner.html:647 templates/archive_scanner.html:712
 msgid "Unwanted"
 msgstr "不需要"
 
-#: templates/archive_scanner.html:653 templates/duplicate_finder.html:208
-#: templates/screenshot_dedup.html:258
+#: templates/archive_scanner.html:655 templates/duplicate_finder.html:210
+#: templates/screenshot_dedup.html:260
 msgid "Start Scan"
 msgstr "開始掃描"
 
-#: templates/archive_scanner.html:662
+#: templates/archive_scanner.html:664
 msgid "Clear Log"
 msgstr "清除日誌"
 
-#: templates/archive_scanner.html:666
+#: templates/archive_scanner.html:668
 msgid "Batch Remove"
 msgstr "批量移除"
 
-#: templates/archive_scanner.html:669
+#: templates/archive_scanner.html:671
 msgid "Batch M3U"
 msgstr "批量 M3U"
 
-#: templates/archive_scanner.html:678
+#: templates/archive_scanner.html:680
 msgid "Ready to scan"
 msgstr "準備掃描"
 
-#: templates/archive_scanner.html:687 templates/duplicate_finder.html:298
-#: templates/screenshot_dedup.html:322
+#: templates/archive_scanner.html:689 templates/duplicate_finder.html:300
+#: templates/screenshot_dedup.html:324
 msgid "Scan Log"
 msgstr "掃描日誌"
 
-#: templates/archive_scanner.html:688
+#: templates/archive_scanner.html:690
 msgid "Found 0 issues"
 msgstr "發現 0 個問題"
 
-#: templates/archive_scanner.html:720
+#: templates/archive_scanner.html:722
 msgid "Date & Time"
 msgstr "日期與時間"
 
 #: templates/_settings_tabs/customization.html:300
-#: templates/archive_scanner.html:721
+#: templates/archive_scanner.html:723
 msgid "Type"
 msgstr "類型"
 
-#: templates/archive_scanner.html:722 templates/multi_disc_organizer.html:214
+#: templates/archive_scanner.html:724 templates/multi_disc_organizer.html:216
 msgid "Files"
 msgstr "檔案"
 
-#: templates/archive_scanner.html:723
+#: templates/archive_scanner.html:725
 msgid "Path"
 msgstr "路徑"
 
-#: templates/archive_scanner.html:732
+#: templates/archive_scanner.html:734
 msgid "Configure scan options and click \"Start Scan\" to find archive issues."
 msgstr "設定掃描選項並點擊「開始掃描」以查找壓縮檔問題。"
 
-#: templates/archive_scanner.html:746
+#: templates/archive_scanner.html:748
 msgid "Archive Contents"
 msgstr "壓縮檔內容"
 
-#: templates/archive_scanner.html:757
+#: templates/archive_scanner.html:759
 msgid "Remove Selected"
 msgstr "移除所選"
 
-#: templates/archive_scanner.html:767
+#: templates/archive_scanner.html:769
 msgid "Batch Processing"
 msgstr "批次處理"
 
-#: templates/archive_scanner.html:776
+#: templates/archive_scanner.html:778
 msgid "Processed"
 msgstr "已處理"
 
-#: templates/archive_scanner.html:780 templates/reports.html:490
+#: templates/archive_scanner.html:782 templates/reports.html:492
 msgid "Success"
 msgstr "成功"
 
-#: templates/archive_scanner.html:784 templates/reports.html:494
-#: templates/wishlist.html:506
+#: templates/archive_scanner.html:786 templates/reports.html:496
+#: templates/wishlist.html:509
 msgid "Failed"
 msgstr "失敗"
 
-#: templates/archive_scanner.html:788
+#: templates/archive_scanner.html:790
 msgid "Current:"
 msgstr "當前："
 
-#: templates/archive_scanner.html:788
+#: templates/archive_scanner.html:790
 msgid "Waiting to start..."
 msgstr "等待開始……"
 
@@ -4024,7 +4024,7 @@ msgstr "已達到最高等級！"
 msgid "Logout"
 msgstr "登出"
 
-#: templates/base.html:75 templates/login.html:3 templates/login.html:253
+#: templates/base.html:75 templates/login.html:4 templates/login.html:255
 msgid "Login"
 msgstr "登入"
 
@@ -4032,12 +4032,12 @@ msgstr "登入"
 msgid "Main"
 msgstr "主要"
 
-#: templates/base.html:94 templates/dashboard.html:59
+#: templates/base.html:94 templates/dashboard.html:61
 msgid "Dashboard"
 msgstr "儀表板"
 
 #: templates/_settings_tabs/customization.html:8 templates/base.html:98
-#: templates/game_detail.html:15 templates/settings.html:23
+#: templates/game_detail.html:17 templates/settings.html:25
 msgid "Library"
 msgstr "遊戲庫"
 
@@ -4057,12 +4057,12 @@ msgstr "標籤"
 msgid "Lists"
 msgstr "列表"
 
-#: templates/base.html:128 templates/wishlist.html:3 templates/wishlist.html:9
+#: templates/base.html:128 templates/wishlist.html:4 templates/wishlist.html:11
 msgid "Wishlist"
 msgstr "願望單"
 
-#: templates/base.html:132 templates/collector_trophies.html:3
-#: templates/collector_trophies.html:9
+#: templates/base.html:132 templates/collector_trophies.html:4
+#: templates/collector_trophies.html:11
 msgid "Collector Trophies"
 msgstr "收藏家獎盃"
 
@@ -4070,25 +4070,25 @@ msgstr "收藏家獎盃"
 msgid "Tools"
 msgstr "工具"
 
-#: templates/base.html:144 templates/game_imports.html:157
+#: templates/base.html:144 templates/game_imports.html:160
 msgid "Game Imports"
 msgstr "遊戲匯入"
 
-#: templates/base.html:149 templates/rom_tools_hub.html:281
+#: templates/base.html:149 templates/rom_tools_hub.html:289
 msgid "Configuration"
 msgstr "設定"
 
 #: templates/_macros/nav_tabs.html:42 templates/base.html:152
-#: templates/rom_tools_hub.html:111 templates/settings.html:4
-#: templates/settings.html:10
+#: templates/rom_tools_hub.html:119 templates/settings.html:5
+#: templates/settings.html:12
 msgid "Settings"
 msgstr "設定"
 
-#: templates/base.html:157 templates/logs.html:699
+#: templates/base.html:157 templates/logs.html:701
 msgid "Log Viewer"
 msgstr "日誌檢視器"
 
-#: templates/base.html:164 templates/base.html:958
+#: templates/base.html:164 templates/base.html:959
 msgid "Info"
 msgstr "資訊"
 
@@ -4100,7 +4100,7 @@ msgstr "博物館"
 msgid "Help"
 msgstr "幫助"
 
-#: templates/base.html:175 templates/base.html:221 templates/changelog.html:9
+#: templates/base.html:175 templates/base.html:221 templates/changelog.html:11
 msgid "Changelog"
 msgstr "更新日誌"
 
@@ -4116,7 +4116,7 @@ msgstr "關於"
 msgid "Version"
 msgstr "版本"
 
-#: templates/base.html:207 templates/psn_trophy_detail.html:251
+#: templates/base.html:207 templates/psn_trophy_detail.html:253
 msgid "Last Updated"
 msgstr "最近更新"
 
@@ -4144,309 +4144,309 @@ msgstr "支援開發"
 msgid "Support RetroDB"
 msgstr "在 Patreon 上支持"
 
-#: templates/base.html:244
+#: templates/base.html:245
 msgid "Toggle menu"
 msgstr "切換選單"
 
-#: templates/base.html:276
+#: templates/base.html:277
 msgid "Back to top"
 msgstr "返回頂部"
 
-#: templates/base.html:284
+#: templates/base.html:285
 msgid "Alert"
 msgstr "提示"
 
-#: templates/base.html:292
+#: templates/base.html:293
 msgid "OK"
 msgstr "確定"
 
-#: templates/base.html:301
+#: templates/base.html:302
 msgid "Browse Folders"
 msgstr "瀏覽資料夾"
 
-#: templates/base.html:310
+#: templates/base.html:311
 msgid "Select This Folder"
 msgstr "選擇此資料夾"
 
-#: templates/base.html:646
+#: templates/base.html:647
 msgid "Queue Manager"
 msgstr "佇列管理器"
 
-#: templates/base.html:647
+#: templates/base.html:648
 msgid "Close queue manager"
 msgstr "關閉佇列管理器"
 
-#: templates/base.html:863
+#: templates/base.html:864
 msgid "Game details"
 msgstr "遊戲詳情"
 
-#: templates/base.html:864
+#: templates/base.html:865
 msgid "Close game details"
 msgstr "關閉遊戲詳情"
 
-#: templates/base.html:869
+#: templates/base.html:870
 msgid "Loading game details..."
 msgstr "正在載入遊戲詳情…"
 
-#: templates/base.html:911 templates/game_detail.html:421
+#: templates/base.html:912 templates/game_detail.html:420
 msgid "Your browser does not support the video tag."
 msgstr "你的瀏覽器不支援 video 標籤。"
 
-#: templates/base.html:918
+#: templates/base.html:919
 msgid "View Full Page"
 msgstr "檢視完整頁面"
 
-#: templates/base.html:920 templates/game_detail.html:99
+#: templates/base.html:921 templates/game_detail.html:96
 msgid "Fill missing metadata with AI"
 msgstr "使用 AI 填充缺失的中繼資料"
 
-#: templates/base.html:921 templates/game_detail.html:101
+#: templates/base.html:922 templates/game_detail.html:98
 msgid "AI Fill"
 msgstr "AI 填充"
 
-#: templates/base.html:924 templates/game_detail.html:106
+#: templates/base.html:925 templates/game_detail.html:103
 msgid "Scrape"
 msgstr "抓取"
 
-#: templates/_modals/screenshot_modal.html:2 templates/base.html:936
+#: templates/_modals/screenshot_modal.html:2 templates/base.html:937
 msgid "Screenshot viewer"
 msgstr "螢幕截圖檢視器"
 
-#: templates/_modals/screenshot_modal.html:3 templates/base.html:937
+#: templates/_modals/screenshot_modal.html:3 templates/base.html:938
 msgid "Close screenshot viewer"
 msgstr "關閉螢幕截圖檢視器"
 
-#: templates/_modals/screenshot_modal.html:4 templates/base.html:938
+#: templates/_modals/screenshot_modal.html:4 templates/base.html:939
 msgid "Previous screenshot"
 msgstr "上一張螢幕截圖"
 
-#: templates/base.html:939
+#: templates/base.html:940
 msgid "Screenshot"
 msgstr "螢幕截圖"
 
-#: templates/_modals/screenshot_modal.html:6 templates/base.html:940
+#: templates/_modals/screenshot_modal.html:6 templates/base.html:941
 msgid "Next screenshot"
 msgstr "下一張螢幕截圖"
 
-#: templates/base.html:941
+#: templates/base.html:942
 msgid "Use &#8592; &#8594; arrow keys to navigate &bull; ESC to close"
 msgstr "使用 &#8592; &#8594; 方向鍵導覽 &bull; 按 ESC 關閉"
 
-#: templates/_modals/edit_modal.html:7 templates/base.html:948
+#: templates/_modals/edit_modal.html:7 templates/base.html:949
 msgid "Close edit modal"
 msgstr "關閉編輯視窗"
 
-#: templates/base.html:951
+#: templates/base.html:952
 msgid "Edit Game"
 msgstr "編輯遊戲"
 
-#: templates/base.html:952
+#: templates/base.html:953
 msgid "Edit game sections"
 msgstr "編輯遊戲欄目"
 
-#: templates/base.html:953
+#: templates/base.html:954
 msgid "Quick"
 msgstr "快速"
 
-#: templates/_modals/edit_modal.html:25 templates/base.html:954
-#: templates/base.html:1032
+#: templates/_modals/edit_modal.html:25 templates/base.html:955
+#: templates/base.html:1033
 msgid "Identity"
 msgstr "身分"
 
-#: templates/base.html:955
+#: templates/base.html:956
 msgid "Release"
 msgstr "發行"
 
-#: templates/_modals/edit_modal.html:183 templates/base.html:957
-#: templates/base.html:1160
+#: templates/_modals/edit_modal.html:183 templates/base.html:958
+#: templates/base.html:1161
 msgid "Technical"
 msgstr "技術資訊"
 
-#: templates/base.html:964
+#: templates/base.html:965
 msgid "Quick edit"
 msgstr "快速編輯"
 
-#: templates/base.html:977
+#: templates/base.html:978
 msgid "HowLongToBeat"
 msgstr "HowLongToBeat"
 
-#: templates/base.html:991
+#: templates/base.html:992
 msgid "Searching HowLongToBeat..."
 msgstr "正在搜尋 HowLongToBeat…"
 
-#: templates/base.html:1022 templates/local_trophy_detail.html:187
+#: templates/base.html:1023 templates/local_trophy_detail.html:189
 msgid "No playtime data"
 msgstr "無遊玩時長資料"
 
 #: templates/_modals/edit_modal.html:28 templates/_modals/filter_modal.html:13
-#: templates/base.html:1035 templates/dashboard.html:294
-#: templates/dashboard.html:353 templates/dashboard.html:430
-#: templates/dashboard.html:496
+#: templates/base.html:1036 templates/dashboard.html:296
+#: templates/dashboard.html:355 templates/dashboard.html:432
+#: templates/dashboard.html:498
 msgid "Title"
 msgstr "標題"
 
-#: templates/_modals/edit_modal.html:32 templates/base.html:1039
+#: templates/_modals/edit_modal.html:32 templates/base.html:1040
 msgid "Sort Title"
 msgstr "排序標題"
 
-#: templates/_modals/edit_modal.html:34 templates/base.html:1041
+#: templates/_modals/edit_modal.html:34 templates/base.html:1042
 msgid "Auto-generated from title"
 msgstr "根據標題自動生成"
 
-#: templates/_modals/edit_modal.html:40 templates/base.html:1046
+#: templates/_modals/edit_modal.html:40 templates/base.html:1047
 msgid "Franchise / Series"
 msgstr "系列 / 子系列"
 
-#: templates/_modals/edit_modal.html:43 templates/base.html:1049
+#: templates/_modals/edit_modal.html:43 templates/base.html:1050
 msgid "Toggle franchise status"
 msgstr "切換系列作品狀態"
 
-#: templates/_modals/edit_modal.html:48 templates/base.html:1054
+#: templates/_modals/edit_modal.html:48 templates/base.html:1055
 msgid "e.g., Final Fantasy, Crash Bandicoot"
 msgstr "例如：Final Fantasy、Crash Bandicoot"
 
-#: templates/_modals/edit_modal.html:52 templates/base.html:1057
-#: templates/compare_games.html:94 templates/game_detail.html:433
+#: templates/_modals/edit_modal.html:52 templates/base.html:1058
+#: templates/compare_games.html:96 templates/game_detail.html:447
 msgid "Similar Games"
 msgstr "相似遊戲"
 
-#: templates/_modals/edit_modal.html:53 templates/base.html:1058
+#: templates/_modals/edit_modal.html:53 templates/base.html:1059
 msgid "Game 1, Game 2, Game 3"
 msgstr "遊戲 1、遊戲 2、遊戲 3"
 
-#: templates/_modals/edit_modal.html:57 templates/base.html:1061
+#: templates/_modals/edit_modal.html:57 templates/base.html:1062
 msgid "Edition"
 msgstr "版本"
 
-#: templates/base.html:1062
+#: templates/base.html:1063
 msgid "Standard, Collector&#39;s, GOTY"
 msgstr "標準版、收藏版、年度版"
 
-#: templates/base.html:1068
+#: templates/base.html:1069
 msgid "Release info"
 msgstr "發行資訊"
 
-#: templates/base.html:1073
+#: templates/base.html:1074
 msgid "YYYY-MM-DD"
 msgstr "YYYY-MM-DD"
 
-#: templates/_modals/edit_modal.html:76 templates/base.html:1075
+#: templates/_modals/edit_modal.html:76 templates/base.html:1076
 msgid "Pick date"
 msgstr "選擇日期"
 
-#: templates/_modals/edit_modal.html:83 templates/base.html:1081
+#: templates/_modals/edit_modal.html:83 templates/base.html:1082
 msgid "— Select —"
 msgstr "— 選擇 —"
 
-#: templates/_modals/edit_modal.html:91 templates/base.html:1089
+#: templates/_modals/edit_modal.html:91 templates/base.html:1090
 msgid "Sony, Nintendo"
 msgstr "Sony、Nintendo"
 
-#: templates/base.html:1093
+#: templates/base.html:1094
 msgid "Naughty Dog, Insomniac"
 msgstr "Naughty Dog、Insomniac"
 
-#: templates/_modals/edit_modal.html:110 templates/base.html:1105
+#: templates/_modals/edit_modal.html:110 templates/base.html:1106
 msgid "Add genre"
 msgstr "新增類型"
 
-#: templates/_modals/edit_modal.html:111 templates/base.html:1106
+#: templates/_modals/edit_modal.html:111 templates/base.html:1107
 msgid "+ Add genre..."
 msgstr "+ 新增類型…"
 
 #: templates/_modals/edit_modal.html:117 templates/_settings_tabs/data.html:123
-#: templates/base.html:1110
+#: templates/base.html:1111
 msgid "Play Modes"
 msgstr "遊玩模式"
 
-#: templates/_modals/edit_modal.html:121 templates/base.html:1113
+#: templates/_modals/edit_modal.html:121 templates/base.html:1114
 msgid "Add play mode"
 msgstr "新增遊玩模式"
 
-#: templates/_modals/edit_modal.html:122 templates/base.html:1114
+#: templates/_modals/edit_modal.html:122 templates/base.html:1115
 msgid "+ Add mode..."
 msgstr "+ 新增模式…"
 
-#: templates/_modals/edit_modal.html:151 templates/base.html:1125
+#: templates/_modals/edit_modal.html:151 templates/base.html:1126
 msgid "Add game structure"
 msgstr "新增遊戲結構"
 
-#: templates/_modals/edit_modal.html:152 templates/base.html:1126
+#: templates/_modals/edit_modal.html:152 templates/base.html:1127
 msgid "+ Add structure..."
 msgstr "+ 新增結構……"
 
-#: templates/_modals/edit_modal.html:162 templates/base.html:1133
+#: templates/_modals/edit_modal.html:162 templates/base.html:1134
 msgid "Add perspective"
 msgstr "新增視角"
 
-#: templates/_modals/edit_modal.html:163 templates/base.html:1134
+#: templates/_modals/edit_modal.html:163 templates/base.html:1135
 msgid "+ Add perspective..."
 msgstr "+ 新增視角…"
 
-#: templates/_modals/edit_modal.html:173 templates/base.html:1141
+#: templates/_modals/edit_modal.html:173 templates/base.html:1142
 msgid "Add dimension"
 msgstr "新增維度"
 
-#: templates/_modals/edit_modal.html:174 templates/base.html:1142
+#: templates/_modals/edit_modal.html:174 templates/base.html:1143
 msgid "+ Add dimension..."
 msgstr "+ 新增維度……"
 
-#: templates/_modals/edit_modal.html:132 templates/base.html:1146
+#: templates/_modals/edit_modal.html:132 templates/base.html:1147
 msgid "Campaign Mode"
 msgstr "戰役模式"
 
-#: templates/_modals/edit_modal.html:136 templates/base.html:1149
+#: templates/_modals/edit_modal.html:136 templates/base.html:1150
 msgid "Toggle campaign mode"
 msgstr "切換戰役模式"
 
-#: templates/_modals/edit_modal.html:186 templates/base.html:1163
-#: templates/compare_games.html:89
+#: templates/_modals/edit_modal.html:186 templates/base.html:1164
+#: templates/compare_games.html:91
 msgid "Controller Support"
 msgstr "手把支援"
 
-#: templates/_modals/edit_modal.html:190 templates/base.html:1167
+#: templates/_modals/edit_modal.html:190 templates/base.html:1168
 msgid "Add controller"
 msgstr "新增手把"
 
-#: templates/_modals/edit_modal.html:191 templates/base.html:1168
+#: templates/_modals/edit_modal.html:191 templates/base.html:1169
 msgid "+ Add controller..."
 msgstr "+ 新增手把……"
 
-#: templates/_modals/edit_modal.html:195 templates/base.html:1170
+#: templates/_modals/edit_modal.html:195 templates/base.html:1171
 msgid "Custom controller name"
 msgstr "自訂手把名稱"
 
-#: templates/base.html:1170
+#: templates/base.html:1171
 msgid "Or type custom..."
 msgstr "或輸入自訂…"
 
 #: templates/_modals/edit_modal.html:202 templates/_settings_tabs/data.html:133
-#: templates/base.html:1174 templates/compare_games.html:90
+#: templates/base.html:1175 templates/compare_games.html:92
 msgid "Save Type"
 msgstr "存檔類型"
 
-#: templates/_modals/edit_modal.html:206 templates/base.html:1177
+#: templates/_modals/edit_modal.html:206 templates/base.html:1178
 msgid "Add save type"
 msgstr "新增存檔類型"
 
-#: templates/_modals/edit_modal.html:207 templates/base.html:1178
+#: templates/_modals/edit_modal.html:207 templates/base.html:1179
 msgid "+ Add save type..."
 msgstr "+ 新增存檔類型……"
 
-#: templates/_modals/edit_modal.html:213 templates/base.html:1182
+#: templates/_modals/edit_modal.html:213 templates/base.html:1183
 msgid "Platform Availability"
 msgstr "平台可用性"
 
-#: templates/_modals/edit_modal.html:216 templates/base.html:1192
+#: templates/_modals/edit_modal.html:216 templates/base.html:1193
 msgid "Toggle platform exclusivity"
 msgstr "切換平台獨佔"
 
-#: templates/base.html:1197
+#: templates/base.html:1198
 msgid "Xbox 360, PC, Switch"
 msgstr "Xbox 360、PC、Switch"
 
 #: templates/_modals/edit_modal.html:232
-#: templates/_settings_tabs/library.html:150 templates/base.html:1201
+#: templates/_settings_tabs/library.html:152 templates/base.html:1202
 msgid "ESRB (North America)"
 msgstr "ESRB（北美）"
 
@@ -4454,165 +4454,165 @@ msgstr "ESRB（北美）"
 #: templates/_modals/edit_modal.html:258 templates/_modals/edit_modal.html:269
 #: templates/_modals/edit_modal.html:280 templates/_modals/edit_modal.html:291
 #: templates/_modals/edit_modal.html:305 templates/_modals/edit_modal.html:315
-#: templates/_modals/edit_modal.html:327 templates/base.html:1203
-#: templates/base.html:1216 templates/base.html:1227 templates/base.html:1238
-#: templates/base.html:1249 templates/base.html:1260 templates/base.html:1274
-#: templates/base.html:1284 templates/base.html:1296
+#: templates/_modals/edit_modal.html:327 templates/base.html:1204
+#: templates/base.html:1217 templates/base.html:1228 templates/base.html:1239
+#: templates/base.html:1250 templates/base.html:1261 templates/base.html:1275
+#: templates/base.html:1285 templates/base.html:1297
 msgid "-- None --"
 msgstr "-- 無 --"
 
-#: templates/_modals/edit_modal.html:235 templates/base.html:1204
+#: templates/_modals/edit_modal.html:235 templates/base.html:1205
 msgid "EC - Early Childhood"
 msgstr "EC - 幼兒"
 
-#: templates/_modals/edit_modal.html:240 templates/base.html:1209
+#: templates/_modals/edit_modal.html:240 templates/base.html:1210
 msgid "AO - Adults Only"
 msgstr "AO - 僅限成人"
 
-#: templates/_modals/edit_modal.html:241 templates/base.html:1210
+#: templates/_modals/edit_modal.html:241 templates/base.html:1211
 msgid "RP - Rating Pending"
 msgstr "RP - 分級待定"
 
 #: templates/_modals/edit_modal.html:245
-#: templates/_settings_tabs/library.html:151 templates/base.html:1214
+#: templates/_settings_tabs/library.html:153 templates/base.html:1215
 msgid "PEGI (Europe)"
 msgstr "PEGI（歐洲）"
 
 #: templates/_modals/edit_modal.html:256
-#: templates/_settings_tabs/library.html:152 templates/base.html:1225
+#: templates/_settings_tabs/library.html:154 templates/base.html:1226
 msgid "CERO (Japan)"
 msgstr "CERO（日本）"
 
 #: templates/_modals/edit_modal.html:259 templates/_modals/edit_modal.html:292
-#: templates/base.html:1228 templates/base.html:1261
+#: templates/base.html:1229 templates/base.html:1262
 msgid "A - All Ages"
 msgstr "A - 全年齡"
 
-#: templates/_modals/edit_modal.html:260 templates/base.html:1229
+#: templates/_modals/edit_modal.html:260 templates/base.html:1230
 msgid "B - Ages 12+"
 msgstr "B - 12 歲以上"
 
-#: templates/_modals/edit_modal.html:261 templates/base.html:1230
+#: templates/_modals/edit_modal.html:261 templates/base.html:1231
 msgid "C - Ages 15+"
 msgstr "C - 15 歲以上"
 
-#: templates/_modals/edit_modal.html:262 templates/base.html:1231
+#: templates/_modals/edit_modal.html:262 templates/base.html:1232
 msgid "D - Ages 17+"
 msgstr "D - 17 歲以上"
 
-#: templates/_modals/edit_modal.html:263 templates/base.html:1232
+#: templates/_modals/edit_modal.html:263 templates/base.html:1233
 msgid "Z - Ages 18+"
 msgstr "Z - 18 歲以上"
 
 #: templates/_modals/edit_modal.html:267
-#: templates/_settings_tabs/library.html:153 templates/base.html:1236
+#: templates/_settings_tabs/library.html:155 templates/base.html:1237
 msgid "USK (Germany)"
 msgstr "USK（德國）"
 
 #: templates/_modals/edit_modal.html:278
-#: templates/_settings_tabs/library.html:154 templates/base.html:1247
+#: templates/_settings_tabs/library.html:156 templates/base.html:1248
 msgid "ACB (Australia)"
 msgstr "ACB（澳洲）"
 
-#: templates/_modals/edit_modal.html:281 templates/base.html:1250
+#: templates/_modals/edit_modal.html:281 templates/base.html:1251
 msgid "G - General"
 msgstr "G - 普遍級"
 
 #: templates/_modals/edit_modal.html:282 templates/_modals/edit_modal.html:293
-#: templates/base.html:1251
+#: templates/base.html:1252
 msgid "PG - Parental Guidance"
 msgstr "PG - 建議家長指導"
 
-#: templates/_modals/edit_modal.html:284 templates/base.html:1253
+#: templates/_modals/edit_modal.html:284 templates/base.html:1254
 msgid "MA15+ - Restricted"
 msgstr "MA15+ - 限制級"
 
-#: templates/_modals/edit_modal.html:285 templates/base.html:1254
+#: templates/_modals/edit_modal.html:285 templates/base.html:1255
 msgid "R18+ - Restricted"
 msgstr "R18+ - 限制級"
 
 #: templates/_modals/edit_modal.html:289
-#: templates/_settings_tabs/library.html:155 templates/base.html:1258
+#: templates/_settings_tabs/library.html:157 templates/base.html:1259
 msgid "FPB (South Africa)"
 msgstr "FPB（南非）"
 
 #: templates/_modals/edit_modal.html:303
-#: templates/_settings_tabs/library.html:156 templates/base.html:1272
+#: templates/_settings_tabs/library.html:158 templates/base.html:1273
 msgid "GRAC (South Korea)"
 msgstr "GRAC（韓國）"
 
-#: templates/_modals/edit_modal.html:306 templates/base.html:1275
+#: templates/_modals/edit_modal.html:306 templates/base.html:1276
 msgid "ALL - All Ages"
 msgstr "ALL - 全年齡"
 
 #: templates/_modals/edit_modal.html:313
-#: templates/_settings_tabs/library.html:157 templates/base.html:1282
+#: templates/_settings_tabs/library.html:159 templates/base.html:1283
 msgid "ClassInd (Brazil)"
 msgstr "ClassInd（巴西）"
 
-#: templates/_modals/edit_modal.html:316 templates/base.html:1285
+#: templates/_modals/edit_modal.html:316 templates/base.html:1286
 msgid "L - General"
 msgstr "L - 大眾級"
 
 #: templates/_modals/edit_modal.html:325
-#: templates/_settings_tabs/library.html:158 templates/base.html:1294
+#: templates/_settings_tabs/library.html:160 templates/base.html:1295
 msgid "CADPA (China)"
 msgstr ""
 
-#: templates/_modals/edit_modal.html:328 templates/base.html:1297
+#: templates/_modals/edit_modal.html:328 templates/base.html:1298
 #, fuzzy
 msgid "8+ - Ages 8 and up"
 msgstr "Z - 18 歲以上"
 
-#: templates/_modals/edit_modal.html:329 templates/base.html:1298
+#: templates/_modals/edit_modal.html:329 templates/base.html:1299
 #, fuzzy
 msgid "12+ - Ages 12 and up"
 msgstr "B - 12 歲以上"
 
-#: templates/_modals/edit_modal.html:330 templates/base.html:1299
+#: templates/_modals/edit_modal.html:330 templates/base.html:1300
 msgid "16+ - Ages 16 and up"
 msgstr ""
 
-#: templates/_modals/edit_modal.html:339 templates/base.html:1308
+#: templates/_modals/edit_modal.html:339 templates/base.html:1309
 msgid "Game Description"
 msgstr "遊戲描述"
 
-#: templates/base.html:1309
+#: templates/base.html:1310
 msgid "Enter game description..."
 msgstr "輸入遊戲描述…"
 
-#: templates/base.html:1316
+#: templates/base.html:1317
 msgid "Images/Video"
 msgstr "圖片/影片"
 
 #: templates/_modals/edit_modal.html:15
-#: templates/_settings_tabs/customization.html:267 templates/base.html:1321
-#: templates/wishlist.html:697
+#: templates/_settings_tabs/customization.html:267 templates/base.html:1322
+#: templates/wishlist.html:700
 msgid "Save Changes"
 msgstr "儲存變更"
 
-#: templates/base.html:1357
+#: templates/base.html:1358
 msgid "running"
 msgstr "執行中"
 
-#: templates/changelog.html:10
+#: templates/changelog.html:12
 msgid "Version history and release notes"
 msgstr "版本歷史與發行說明"
 
-#: templates/changelog.html:13
+#: templates/changelog.html:15
 #, python-format
 msgid "Current: v%(version)s"
 msgstr "當前：v%(version)s"
 
-#: templates/changelog.html:196
+#: templates/changelog.html:197
 msgid "Failed to load more entries."
 msgstr "載入更多條目失敗。"
 
-#: templates/chd_converter.html:72
+#: templates/chd_converter.html:74
 msgid "About CHD Format"
 msgstr "關於 CHD 格式"
 
-#: templates/chd_converter.html:73
+#: templates/chd_converter.html:75
 msgid ""
 "CHD (Compressed Hunks of Data) is a lossless compression format designed "
 "for disc images. It can reduce file sizes by 30-70% while maintaining "
@@ -4621,979 +4621,979 @@ msgstr ""
 "CHD（Compressed Hunks of Data）是一種專為光碟映像設計的無損壓縮格式。它可將檔案大小縮減 30-70%，同時與 "
 "PCSX2、Dolphin、MAME 等模擬器保持完美相容。"
 
-#: templates/chd_converter.html:79
+#: templates/chd_converter.html:81
 msgid "Source Files"
 msgstr "來源檔案"
 
-#: templates/chd_converter.html:83 templates/chd_verify.html:99
-#: templates/duplicate_finder.html:186
+#: templates/chd_converter.html:85 templates/chd_verify.html:101
+#: templates/duplicate_finder.html:188
 msgid "Source Folder"
 msgstr "來源資料夾"
 
-#: templates/chd_converter.html:90 templates/chd_verify.html:106
-#: templates/dashboard.html:224
+#: templates/chd_converter.html:92 templates/chd_verify.html:108
+#: templates/dashboard.html:226
 msgid "Scan"
 msgstr "掃描"
 
-#: templates/chd_converter.html:96
+#: templates/chd_converter.html:98
 msgid "File Types to Convert"
 msgstr "要轉換的檔案類型"
 
-#: templates/chd_converter.html:100
+#: templates/chd_converter.html:102
 msgid "Convert ISO files"
 msgstr "轉換 ISO 檔案"
 
-#: templates/chd_converter.html:103
+#: templates/chd_converter.html:105
 msgid "ISO (.iso)"
 msgstr "ISO (.iso)"
 
-#: templates/chd_converter.html:107
+#: templates/chd_converter.html:109
 msgid "Convert BIN/CUE files"
 msgstr "轉換 BIN/CUE 檔案"
 
-#: templates/chd_converter.html:110
+#: templates/chd_converter.html:112
 msgid "BIN/CUE (.cue)"
 msgstr "BIN/CUE (.cue)"
 
-#: templates/chd_converter.html:114
+#: templates/chd_converter.html:116
 msgid "Convert GDI files"
 msgstr "轉換 GDI 檔案"
 
-#: templates/chd_converter.html:117
+#: templates/chd_converter.html:119
 msgid "GDI (.gdi)"
 msgstr "GDI (.gdi)"
 
-#: templates/chd_converter.html:121
+#: templates/chd_converter.html:123
 msgid "Convert MDF/MDS files"
 msgstr "轉換 MDF/MDS 檔案"
 
-#: templates/chd_converter.html:124
+#: templates/chd_converter.html:126
 msgid "MDF/MDS (.mds)"
 msgstr "MDF/MDS (.mds)"
 
-#: templates/chd_converter.html:130
+#: templates/chd_converter.html:132
 msgid "Click \"Scan for Files\" to find disc images"
 msgstr "點擊「掃描檔案」以尋找光碟映像"
 
-#: templates/chd_converter.html:137
+#: templates/chd_converter.html:139
 msgid "Conversion Options"
 msgstr "轉換選項"
 
-#: templates/chd_converter.html:144 templates/chd_converter.html:147
+#: templates/chd_converter.html:146 templates/chd_converter.html:149
 msgid "Verify after conversion"
 msgstr "轉換後校驗"
 
-#: templates/chd_converter.html:151 templates/chd_converter.html:154
+#: templates/chd_converter.html:153 templates/chd_converter.html:156
 msgid "Delete original files after success"
 msgstr "成功後刪除原始檔案"
 
-#: templates/chd_converter.html:158 templates/chd_converter.html:161
+#: templates/chd_converter.html:160 templates/chd_converter.html:163
 msgid "Skip existing CHD files"
 msgstr "跳過已有的 CHD 檔案"
 
-#: templates/chd_converter.html:167
+#: templates/chd_converter.html:169
 msgid "Start Conversion"
 msgstr "開始轉換"
 
-#: templates/chd_converter.html:184
+#: templates/chd_converter.html:186
 msgid "Conversion Statistics"
 msgstr "轉換統計"
 
-#: templates/chd_converter.html:190
+#: templates/chd_converter.html:192
 msgid "Files Converted"
 msgstr "已轉換檔案"
 
-#: templates/chd_converter.html:194
+#: templates/chd_converter.html:196
 msgid "Original Size"
 msgstr "原始大小"
 
-#: templates/chd_converter.html:198
+#: templates/chd_converter.html:200
 msgid "Compressed Size"
 msgstr "壓縮後大小"
 
-#: templates/chd_converter.html:202
+#: templates/chd_converter.html:204
 msgid "Space Saved"
 msgstr "已節省空間"
 
-#: templates/chd_verify.html:88
+#: templates/chd_verify.html:90
 msgid "Why Verify CHD Files?"
 msgstr "為何要校驗 CHD 檔案？"
 
-#: templates/chd_verify.html:89
+#: templates/chd_verify.html:91
 msgid ""
 "CHD files contain internal checksums. Verification ensures the file data "
 "matches these checksums, detecting corruption from storage errors, "
 "incomplete downloads, or bad conversions."
 msgstr "CHD 檔案包含內部校驗和。校驗可確保檔案資料與這些校驗和相符，從而檢測出因儲存錯誤、下載不完整或轉換失敗而導致的損壞。"
 
-#: templates/chd_verify.html:95
+#: templates/chd_verify.html:97
 msgid "CHD Files"
 msgstr "CHD 檔案"
 
-#: templates/chd_verify.html:112
+#: templates/chd_verify.html:114
 msgid "Click \"Scan for CHD Files\" to find files"
 msgstr "點擊「掃描 CHD 檔案」以查找檔案"
 
-#: templates/chd_verify.html:119
+#: templates/chd_verify.html:121
 msgid "Verification"
 msgstr "驗證"
 
-#: templates/chd_verify.html:123
+#: templates/chd_verify.html:125
 msgid "Start Verification"
 msgstr "開始驗證"
 
-#: templates/chd_verify.html:140
+#: templates/chd_verify.html:142
 msgid "Verification Results"
 msgstr "校驗結果"
 
-#: templates/chd_verify.html:146
+#: templates/chd_verify.html:148
 msgid "Total Files"
 msgstr "檔案總數"
 
-#: templates/chd_verify.html:150
+#: templates/chd_verify.html:152
 msgid "Valid"
 msgstr "有效"
 
-#: templates/chd_verify.html:154
+#: templates/chd_verify.html:156
 msgid "Invalid"
 msgstr "無效"
 
-#: templates/chd_verify.html:158
+#: templates/chd_verify.html:160
 msgid "Total Size"
 msgstr "總大小"
 
-#: templates/collector_trophies.html:10
+#: templates/collector_trophies.html:12
 msgid "Track your collection milestones and earn trophies"
 msgstr "追蹤你的合集里程碑並贏取獎盃"
 
-#: templates/collector_trophies.html:17
+#: templates/collector_trophies.html:19
 msgid "EARNED"
 msgstr "已獲得"
 
-#: templates/collector_trophies.html:20
+#: templates/collector_trophies.html:22
 msgid "Refresh Progress"
 msgstr "重新整理進度"
 
-#: templates/collector_trophies.html:31
+#: templates/collector_trophies.html:33
 msgid "Collector Rank"
 msgstr "收藏家等級"
 
-#: templates/collector_trophies.html:37
+#: templates/collector_trophies.html:39
 #, python-format
 msgid ""
 "<span class=\"collector-rank-points-value\">%(points)s</span> trophy "
 "points"
 msgstr "<span class=\"collector-rank-points-value\">%(points)s</span> 獎盃點數"
 
-#: templates/collector_trophies.html:42
+#: templates/collector_trophies.html:44
 #, python-format
 msgid "Next: <strong>%(next_name)s</strong> at %(next_threshold)s pts"
 msgstr "下一個：<strong>%(next_name)s</strong>，需 %(next_threshold)s 點"
 
-#: templates/collector_trophies.html:50
+#: templates/collector_trophies.html:52
 msgid "Maximum rank reached. Flawless."
 msgstr "已達最高等級。完美無瑕。"
 
-#: templates/collector_trophies.html:64 templates/local_trophies.html:64
-#: templates/local_trophies.html:66 templates/psn_trophies.html:81
-#: templates/psn_trophies.html:83 templates/psn_trophy_detail.html:368
-#: templates/psn_trophy_detail.html:401 templates/psn_trophy_detail.html:454
-#: templates/psn_trophy_detail.html:484
+#: templates/collector_trophies.html:66 templates/local_trophies.html:66
+#: templates/local_trophies.html:68 templates/psn_trophies.html:83
+#: templates/psn_trophies.html:85 templates/psn_trophy_detail.html:370
+#: templates/psn_trophy_detail.html:403 templates/psn_trophy_detail.html:456
+#: templates/psn_trophy_detail.html:486
 msgid "Platinum"
 msgstr "白金"
 
-#: templates/collector_trophies.html:64
+#: templates/collector_trophies.html:66
 msgid "Legendary milestones"
 msgstr "傳奇里程碑"
 
-#: templates/collector_trophies.html:65 templates/local_trophies.html:71
-#: templates/local_trophies.html:73 templates/psn_trophies.html:88
-#: templates/psn_trophies.html:90 templates/psn_trophy_detail.html:368
-#: templates/psn_trophy_detail.html:401 templates/psn_trophy_detail.html:454
-#: templates/psn_trophy_detail.html:484
+#: templates/collector_trophies.html:67 templates/local_trophies.html:73
+#: templates/local_trophies.html:75 templates/psn_trophies.html:90
+#: templates/psn_trophies.html:92 templates/psn_trophy_detail.html:370
+#: templates/psn_trophy_detail.html:403 templates/psn_trophy_detail.html:456
+#: templates/psn_trophy_detail.html:486
 msgid "Gold"
 msgstr "金"
 
-#: templates/collector_trophies.html:65
+#: templates/collector_trophies.html:67
 msgid "Expert-level achievements"
 msgstr "專家級成就"
 
-#: templates/collector_trophies.html:66 templates/local_trophies.html:78
-#: templates/local_trophies.html:80 templates/psn_trophies.html:95
-#: templates/psn_trophies.html:97 templates/psn_trophy_detail.html:368
-#: templates/psn_trophy_detail.html:401 templates/psn_trophy_detail.html:454
-#: templates/psn_trophy_detail.html:484
+#: templates/collector_trophies.html:68 templates/local_trophies.html:80
+#: templates/local_trophies.html:82 templates/psn_trophies.html:97
+#: templates/psn_trophies.html:99 templates/psn_trophy_detail.html:370
+#: templates/psn_trophy_detail.html:403 templates/psn_trophy_detail.html:456
+#: templates/psn_trophy_detail.html:486
 msgid "Silver"
 msgstr "銀"
 
-#: templates/collector_trophies.html:66
+#: templates/collector_trophies.html:68
 msgid "Intermediate milestones"
 msgstr "中間里程碑"
 
-#: templates/collector_trophies.html:67 templates/local_trophies.html:85
-#: templates/local_trophies.html:87 templates/psn_trophies.html:102
-#: templates/psn_trophies.html:104 templates/psn_trophy_detail.html:368
-#: templates/psn_trophy_detail.html:401 templates/psn_trophy_detail.html:454
-#: templates/psn_trophy_detail.html:484
+#: templates/collector_trophies.html:69 templates/local_trophies.html:87
+#: templates/local_trophies.html:89 templates/psn_trophies.html:104
+#: templates/psn_trophies.html:106 templates/psn_trophy_detail.html:370
+#: templates/psn_trophy_detail.html:403 templates/psn_trophy_detail.html:456
+#: templates/psn_trophy_detail.html:486
 msgid "Bronze"
 msgstr "青銅"
 
-#: templates/collector_trophies.html:67
+#: templates/collector_trophies.html:69
 msgid "Getting started"
 msgstr "入門"
 
-#: templates/collector_trophies.html:97
+#: templates/collector_trophies.html:99
 #, python-format
 msgid "Earned %(date)s"
 msgstr "獲得於 %(date)s"
 
-#: templates/compare_games.html:9
+#: templates/compare_games.html:11
 msgid "Compare Games"
 msgstr "對比遊戲"
 
-#: templates/compare_games.html:10
+#: templates/compare_games.html:12
 msgid "Side-by-side metadata comparison"
 msgstr "中繼資料並排對比"
 
-#: templates/compare_games.html:22 templates/compare_games.html:38
+#: templates/compare_games.html:24 templates/compare_games.html:40
 msgid "Remove"
 msgstr "移除"
 
-#: templates/compare_games.html:27
+#: templates/compare_games.html:29
 msgid "Select Game 1"
 msgstr "選擇遊戲 1"
 
-#: templates/compare_games.html:31
+#: templates/compare_games.html:33
 msgid "VS"
 msgstr "對戰"
 
-#: templates/compare_games.html:43
+#: templates/compare_games.html:45
 msgid "Select Game 2"
 msgstr "選擇遊戲 2"
 
-#: templates/compare_games.html:55
+#: templates/compare_games.html:57
 msgid "Field"
 msgstr "欄位"
 
-#: templates/compare_games.html:62
+#: templates/compare_games.html:64
 msgid "Match"
 msgstr "匹配"
 
-#: templates/compare_games.html:80
+#: templates/compare_games.html:82
 msgid "CERO Rating"
 msgstr "CERO 分級"
 
-#: templates/compare_games.html:81
+#: templates/compare_games.html:83
 msgid "USK Rating"
 msgstr "USK 分級"
 
-#: templates/compare_games.html:82
+#: templates/compare_games.html:84
 msgid "ACB Rating"
 msgstr "ACB 分級"
 
-#: templates/compare_games.html:83
+#: templates/compare_games.html:85
 msgid "FPB Rating"
 msgstr "FPB 分級"
 
-#: templates/compare_games.html:84
+#: templates/compare_games.html:86
 msgid "GRAC Rating"
 msgstr "GRAC 分級"
 
-#: templates/compare_games.html:85
+#: templates/compare_games.html:87
 msgid "ClassInd Rating"
 msgstr "ClassInd 分級"
 
-#: templates/compare_games.html:86
+#: templates/compare_games.html:88
 #, fuzzy
 msgid "CADPA Rating"
 msgstr "ClassInd 分級"
 
-#: templates/compare_games.html:88
+#: templates/compare_games.html:90
 msgid "Playtime Estimate"
 msgstr "遊玩時長估算"
 
-#: templates/compare_games.html:91
+#: templates/compare_games.html:93
 msgid "File Size"
 msgstr "檔案大小"
 
-#: templates/compare_games.html:92
+#: templates/compare_games.html:94
 msgid "ROM Path"
 msgstr "ROM 路徑"
 
-#: templates/compare_games.html:93 templates/dashboard.html:18
-#: templates/dashboard.html:405 templates/dashboard.html:529
-#: templates/wishlist.html:505
+#: templates/compare_games.html:95 templates/dashboard.html:20
+#: templates/dashboard.html:407 templates/dashboard.html:531
+#: templates/wishlist.html:508
 msgid "Scraped"
 msgstr "已抓取"
 
-#: templates/dashboard.html:13
+#: templates/dashboard.html:15
 msgid "Overview"
 msgstr "概覽"
 
-#: templates/dashboard.html:15
+#: templates/dashboard.html:17
 msgid "Playing"
 msgstr "遊玩中"
 
-#: templates/dashboard.html:16
+#: templates/dashboard.html:18
 msgid "Added"
 msgstr "已新增"
 
-#: templates/dashboard.html:17
+#: templates/dashboard.html:19
 msgid "Viewed"
 msgstr "已查看"
 
-#: templates/dashboard.html:19 templates/dashboard.html:357
-#: templates/dashboard.html:498 templates/game_imports.html:221
-#: templates/game_imports.html:274 templates/game_imports.html:337
-#: templates/game_imports.html:400
+#: templates/dashboard.html:21 templates/dashboard.html:359
+#: templates/dashboard.html:500 templates/game_imports.html:224
+#: templates/game_imports.html:277 templates/game_imports.html:340
+#: templates/game_imports.html:403
 msgid "Status"
 msgstr "狀態"
 
-#: templates/dashboard.html:25
+#: templates/dashboard.html:27
 msgid "One or more configured APIs are offline"
 msgstr "一個或多個已設定的 API 處於離線狀態"
 
-#: templates/dashboard.html:26
+#: templates/dashboard.html:28
 msgid "Check Settings →"
 msgstr "檢查設定 →"
 
-#: templates/dashboard.html:35
+#: templates/dashboard.html:37
 #, python-format
 msgid "%(count)s interrupted job found"
 msgid_plural "%(count)s interrupted jobs found"
 msgstr[0] "找到 %(count)s 個中斷的任務"
 
-#: templates/dashboard.html:36
+#: templates/dashboard.html:38
 msgid "Resume All"
 msgstr "全部繼續"
 
-#: templates/dashboard.html:37
+#: templates/dashboard.html:39
 msgid "Dismiss All"
 msgstr "全部忽略"
 
-#: templates/dashboard.html:49 templates/dashboard.html:1385
+#: templates/dashboard.html:51 templates/dashboard.html:1388
 msgid "Dismiss"
 msgstr "忽略"
 
-#: templates/dashboard.html:60
+#: templates/dashboard.html:62
 msgid "Overview of your retro gaming collection"
 msgstr "您的復古遊戲合集概覽"
 
-#: templates/dashboard.html:63
+#: templates/dashboard.html:65
 msgid "Pick a random game"
 msgstr "隨機挑選一款遊戲"
 
-#: templates/dashboard.html:65
+#: templates/dashboard.html:67
 msgid "Random Game"
 msgstr "隨機遊戲"
 
-#: templates/_settings_tabs/library.html:42 templates/dashboard.html:69
-#: templates/systems.html:109
+#: templates/_settings_tabs/library.html:42 templates/dashboard.html:71
+#: templates/systems.html:111
 msgid "Scan Library"
 msgstr "掃描遊戲庫"
 
-#: templates/dashboard.html:86
+#: templates/dashboard.html:88
 msgid "Collection Health"
 msgstr "合集健康度"
 
-#: templates/dashboard.html:87
+#: templates/dashboard.html:89
 msgid "Metadata completeness across your library"
 msgstr "整個遊戲庫的中繼資料完整度"
 
-#: templates/dashboard.html:90
+#: templates/dashboard.html:92
 msgid "Excellent"
 msgstr "優秀"
 
-#: templates/dashboard.html:90
+#: templates/dashboard.html:92
 msgid "Good"
 msgstr "良好"
 
-#: templates/dashboard.html:90
+#: templates/dashboard.html:92
 msgid "Fair"
 msgstr "一般"
 
-#: templates/dashboard.html:90
+#: templates/dashboard.html:92
 msgid "Needs Work"
 msgstr "有待完善"
 
-#: templates/dashboard.html:97
+#: templates/dashboard.html:99
 msgid "Descriptions"
 msgstr "描述"
 
-#: templates/dashboard.html:124
+#: templates/dashboard.html:126
 msgid "Gaming platforms"
 msgstr "遊戲平台"
 
-#: templates/dashboard.html:133
+#: templates/dashboard.html:135
 msgid "ROMs in library"
 msgstr "遊戲庫中的 ROM"
 
-#: templates/_settings_tabs/data.html:31 templates/dashboard.html:138
+#: templates/_settings_tabs/data.html:31 templates/dashboard.html:140
 msgid "Missing Metadata"
 msgstr "缺少中繼資料"
 
-#: templates/dashboard.html:144
+#: templates/dashboard.html:146
 msgid "Action required"
 msgstr "需要處理"
 
-#: templates/dashboard.html:146
+#: templates/dashboard.html:148
 msgid "All games scraped"
 msgstr "所有遊戲已抓取"
 
-#: templates/dashboard.html:157
+#: templates/dashboard.html:159
 msgid "Games with metadata"
 msgstr "帶中繼資料的遊戲"
 
-#: templates/dashboard.html:169
+#: templates/dashboard.html:171
 msgid "ROM library size"
 msgstr "ROM 庫大小"
 
-#: templates/dashboard.html:178
+#: templates/dashboard.html:180
 #, python-format
 msgid "%(n)s game beaten"
 msgid_plural "%(n)s games beaten"
 msgstr[0] "已通關 %(n)s 個遊戲"
 
-#: templates/dashboard.html:189
+#: templates/dashboard.html:191
 #, python-format
 msgid "of %(n)s available"
 msgstr "共 %(n)s 個可用"
 
-#: templates/dashboard.html:191
+#: templates/dashboard.html:193
 msgid "RetroAchievements earned"
 msgstr "已獲得的 RetroAchievements"
 
-#: templates/dashboard.html:202
+#: templates/dashboard.html:204
 msgid "Estimated total (HLTB)"
 msgstr "預計總時長（HLTB）"
 
-#: templates/dashboard.html:210
+#: templates/dashboard.html:212
 #, fuzzy
 msgid "Quick Fixes"
 msgstr "快速編輯"
 
-#: templates/dashboard.html:217
+#: templates/dashboard.html:219
 #, fuzzy
 msgid "Games missing box art"
 msgstr "缺少年份"
 
-#: templates/dashboard.html:225
+#: templates/dashboard.html:227
 #, fuzzy
 msgid "Find duplicate ROMs"
 msgstr "重複分組"
 
-#: templates/dashboard.html:232
+#: templates/dashboard.html:234
 #, fuzzy
 msgid "Check"
 msgstr "正在檢查…"
 
-#: templates/dashboard.html:233
+#: templates/dashboard.html:235
 #, fuzzy
 msgid "Broken ROM paths"
 msgstr "未設定 ROM 路徑"
 
-#: templates/dashboard.html:248
+#: templates/dashboard.html:250
 msgid "View All Systems →"
 msgstr "檢視所有系統 →"
 
-#: templates/dashboard.html:275
+#: templates/dashboard.html:277
 #, python-format
 msgid "%(pct)s%% scraped"
 msgstr "已抓取 %(pct)s%%"
 
-#: templates/dashboard.html:286
+#: templates/dashboard.html:288
 msgid "Continue Playing"
 msgstr "繼續遊玩"
 
-#: templates/dashboard.html:344
+#: templates/dashboard.html:346
 msgid "Recently Added"
 msgstr "最近新增"
 
-#: templates/dashboard.html:345
+#: templates/dashboard.html:347
 msgid "View All Games →"
 msgstr "查看所有遊戲 →"
 
-#: templates/dashboard.html:356 templates/reports.html:445
+#: templates/dashboard.html:358 templates/reports.html:447
 msgid "Year"
 msgstr "年份"
 
-#: templates/dashboard.html:407
+#: templates/dashboard.html:409
 msgid "Missing"
 msgstr "缺失"
 
-#: templates/dashboard.html:422
+#: templates/dashboard.html:424
 msgid "Recently Viewed"
 msgstr "最近查看"
 
-#: templates/dashboard.html:432
+#: templates/dashboard.html:434
 msgid "Completion"
 msgstr "完成度"
 
-#: templates/dashboard.html:488
+#: templates/dashboard.html:490
 msgid "Recently Scraped"
 msgstr "最近抓取"
 
-#: templates/dashboard.html:542
+#: templates/dashboard.html:544
 msgid "System Status"
 msgstr "系統狀態"
 
-#: templates/dashboard.html:548
+#: templates/dashboard.html:550
 msgid "Database Service"
 msgstr "資料庫服務"
 
-#: templates/dashboard.html:550
+#: templates/dashboard.html:552
 msgid "Online"
 msgstr "線上"
 
-#: templates/dashboard.html:556
+#: templates/dashboard.html:558
 msgid "ES-DE Local Scraper"
 msgstr "ES-DE 本地抓取器"
 
-#: templates/dashboard.html:558
+#: templates/dashboard.html:560
 msgid "Available"
 msgstr "可用"
 
-#: templates/dashboard.html:567 templates/dashboard.html:577
-#: templates/dashboard.html:597 templates/dashboard.html:607
-#: templates/game_imports.html:365
+#: templates/dashboard.html:569 templates/dashboard.html:579
+#: templates/dashboard.html:599 templates/dashboard.html:609
+#: templates/game_imports.html:368
 msgid "Checking..."
 msgstr "正在檢查…"
 
-#: templates/dashboard.html:567 templates/dashboard.html:577
-#: templates/dashboard.html:597 templates/dashboard.html:607
+#: templates/dashboard.html:569 templates/dashboard.html:579
+#: templates/dashboard.html:599 templates/dashboard.html:609
 msgid "Disabled"
 msgstr "已停用"
 
-#: templates/dashboard.html:567 templates/dashboard.html:577
-#: templates/dashboard.html:587 templates/dashboard.html:597
-#: templates/dashboard.html:607
+#: templates/dashboard.html:569 templates/dashboard.html:579
+#: templates/dashboard.html:589 templates/dashboard.html:599
+#: templates/dashboard.html:609
 msgid "Not Configured"
 msgstr "未設定"
 
-#: templates/_settings_tabs/account.html:294 templates/dashboard.html:587
+#: templates/_settings_tabs/account.html:294 templates/dashboard.html:589
 msgid "Configured"
 msgstr "已設定"
 
-#: templates/dashboard.html:1368
+#: templates/dashboard.html:1371
 msgid ""
 "Your PlayStation Network session has expired — re-link it to keep trophy "
 "and library sync working."
 msgstr "您的 PlayStation Network 工作階段已過期 — 請重新關聯以保持獎盃和遊戲庫同步正常運作。"
 
-#: templates/dashboard.html:1371
+#: templates/dashboard.html:1374
 msgid ""
 "Your PlayStation Network session expires soon — re-link it to avoid an "
 "interruption."
 msgstr "你的 PlayStation Network 工作階段即將過期 — 請重新關聯以避免中斷。"
 
-#: templates/dashboard.html:1384
+#: templates/dashboard.html:1387
 msgid "Re-link now"
 msgstr "立即重新關聯"
 
-#: templates/duplicate_finder.html:174
+#: templates/duplicate_finder.html:176
 msgid "Careful Review Recommended"
 msgstr "建議仔細審查"
 
-#: templates/duplicate_finder.html:175
+#: templates/duplicate_finder.html:177
 msgid ""
 "Always review duplicates before deleting. Some \"duplicates\" may be "
 "different versions (regions, revisions) you might want to keep."
 msgstr "刪除前請務必檢查重複項。有些「重複項」可能是你想保留的不同版本（地區、修訂版）。"
 
-#: templates/duplicate_finder.html:198 templates/screenshot_dedup.html:239
+#: templates/duplicate_finder.html:200 templates/screenshot_dedup.html:241
 msgid "Detection Method"
 msgstr "偵測方式"
 
-#: templates/duplicate_finder.html:200
+#: templates/duplicate_finder.html:202
 msgid "By File Hash (Accurate but slow)"
 msgstr "按檔案雜湊（準確但較慢）"
 
-#: templates/duplicate_finder.html:201
+#: templates/duplicate_finder.html:203
 msgid "By Filename (Fast)"
 msgstr "按檔名（快速）"
 
-#: templates/duplicate_finder.html:202
+#: templates/duplicate_finder.html:204
 msgid "Combined (Hash + Name)"
 msgstr "組合（雜湊 + 名稱）"
 
-#: templates/duplicate_finder.html:214
+#: templates/duplicate_finder.html:216
 msgid "Options"
 msgstr "選項"
 
-#: templates/duplicate_finder.html:218
+#: templates/duplicate_finder.html:220
 msgid "Recursive scan including subfolders"
 msgstr "遞迴掃描（包含子資料夾）"
 
-#: templates/duplicate_finder.html:221
+#: templates/duplicate_finder.html:223
 msgid "Recursive scan (include subfolders)"
 msgstr "遞迴掃描（包含子資料夾）"
 
-#: templates/duplicate_finder.html:225
+#: templates/duplicate_finder.html:227
 msgid "Ignore region tags"
 msgstr "忽略地區標籤"
 
-#: templates/duplicate_finder.html:228
+#: templates/duplicate_finder.html:230
 msgid "Ignore region tags (USA, Europe, etc.)"
 msgstr "忽略地區標籤（USA、Europe 等）"
 
-#: templates/duplicate_finder.html:232
+#: templates/duplicate_finder.html:234
 msgid "Include archives in scan"
 msgstr "掃描時包含壓縮檔"
 
-#: templates/duplicate_finder.html:235
+#: templates/duplicate_finder.html:237
 msgid "Include archives (.zip, .7z, .rar)"
 msgstr "包含壓縮檔（.zip、.7z、.rar）"
 
-#: templates/duplicate_finder.html:246
+#: templates/duplicate_finder.html:248
 msgid "files processed"
 msgstr "個檔案已處理"
 
-#: templates/duplicate_finder.html:256 templates/screenshot_dedup.html:282
+#: templates/duplicate_finder.html:258 templates/screenshot_dedup.html:284
 msgid "Scan Results"
 msgstr "掃描結果"
 
-#: templates/duplicate_finder.html:262
+#: templates/duplicate_finder.html:264
 msgid "Files Scanned"
 msgstr "已掃描檔案"
 
-#: templates/duplicate_finder.html:266 templates/duplicate_finder.html:282
-#: templates/screenshot_dedup.html:308
+#: templates/duplicate_finder.html:268 templates/duplicate_finder.html:284
+#: templates/screenshot_dedup.html:310
 msgid "Duplicate Groups"
 msgstr "重複分組"
 
-#: templates/duplicate_finder.html:270
+#: templates/duplicate_finder.html:272
 msgid "Duplicate Files"
 msgstr "重複檔案"
 
-#: templates/duplicate_finder.html:274
+#: templates/duplicate_finder.html:276
 msgid "Wasted Space"
 msgstr "浪費的空間"
 
-#: templates/duplicate_finder.html:288
+#: templates/duplicate_finder.html:290
 msgid "Keep Newest"
 msgstr "保留最新"
 
-#: templates/duplicate_finder.html:289
+#: templates/duplicate_finder.html:291
 msgid "Keep Smallest"
 msgstr "保留最小的"
 
-#: templates/duplicate_finder.html:290 templates/screenshot_dedup.html:311
+#: templates/duplicate_finder.html:292 templates/screenshot_dedup.html:313
 msgid "Delete Unselected"
 msgstr "刪除未選項"
 
-#: templates/force_change_password.html:8
+#: templates/force_change_password.html:10
 msgid "Change Default Password"
 msgstr "修改預設密碼"
 
-#: templates/force_change_password.html:11
+#: templates/force_change_password.html:13
 msgid ""
 "You are using the default admin password. For security, you must set a "
 "new password before continuing."
 msgstr "你正在使用預設管理員密碼。出於安全考量，繼續操作前你必須設定新密碼。"
 
 #: templates/_settings_tabs/account.html:207
-#: templates/force_change_password.html:18
+#: templates/force_change_password.html:20
 msgid "New Password"
 msgstr "新密碼"
 
-#: templates/force_change_password.html:22
+#: templates/force_change_password.html:24
 msgid "Confirm Password"
 msgstr "確認密碼"
 
-#: templates/force_change_password.html:25
+#: templates/force_change_password.html:27
 msgid "Set New Password"
 msgstr "設定新密碼"
 
-#: templates/_macros/nav_tabs.html:41 templates/game_detail.html:17
-#: templates/reports.html:266 templates/rom_tools_hub.html:210
+#: templates/_macros/nav_tabs.html:41 templates/game_detail.html:19
+#: templates/reports.html:268 templates/rom_tools_hub.html:218
 msgid "ROM Reports"
 msgstr "ROM 報告"
 
-#: templates/game_detail.html:47
+#: templates/game_detail.html:49
 msgid "CLZ Import - No ROM file"
 msgstr "CLZ 匯入 - 無 ROM 檔案"
 
-#: templates/game_detail.html:47 templates/game_imports.html:164
+#: templates/game_detail.html:49 templates/game_imports.html:167
 msgid "CLZ Import"
 msgstr "CLZ 匯入"
 
-#: templates/game_detail.html:49
+#: templates/game_detail.html:51
 msgid "Steam Import - No ROM file"
 msgstr "Steam 匯入 - 無 ROM 檔案"
 
-#: templates/game_detail.html:49
+#: templates/game_detail.html:51
 msgid "Steam Import"
 msgstr "Steam 匯入"
 
-#: templates/game_detail.html:51
+#: templates/game_detail.html:53
 msgid "Xbox Import - No ROM file"
 msgstr "Xbox 匯入 - 無 ROM 檔案"
 
-#: templates/game_detail.html:51
+#: templates/game_detail.html:53
 msgid "Xbox Import"
 msgstr "Xbox 匯入"
 
-#: templates/game_detail.html:53
+#: templates/game_detail.html:55
 msgid "PSN Import - No ROM file"
 msgstr "PSN 匯入 - 無 ROM 檔案"
 
-#: templates/game_detail.html:53
+#: templates/game_detail.html:55
 msgid "PSN Import"
 msgstr "PSN 匯入"
 
-#: templates/game_detail.html:56
+#: templates/game_detail.html:58
 msgid "This is a bonus/extra disc"
 msgstr "這是附贈/額外光碟"
 
-#: templates/game_detail.html:56
+#: templates/game_detail.html:58
 msgid "Bonus Disc"
 msgstr "附贈光碟"
 
-#: templates/game_detail.html:61
+#: templates/game_detail.html:63
 msgid "Part of:"
 msgstr "所屬："
 
-#: templates/game_detail.html:72
-msgid "Also known as:"
-msgstr "又名："
-
 #: templates/game_detail.html:74
-#, python-format
-msgid "Source: %(source)s"
-msgstr "來源：%(source)s"
-
-#: templates/game_detail.html:83
 msgid "Launch this game in the configured emulator"
 msgstr "在已設定的模擬器中啟動此遊戲"
 
-#: templates/game_detail.html:108
+#: templates/game_detail.html:80
+msgid "View Manual (PDF)"
+msgstr "查看說明書（PDF）"
+
+#: templates/game_detail.html:105
 msgid "Delete game from database"
 msgstr "從資料庫刪除遊戲"
 
-#: templates/_settings_tabs/account.html:317 templates/game_detail.html:110
-#: templates/logs.html:733 templates/settings.html:68
-#: templates/wishlist.html:639
+#: templates/_settings_tabs/account.html:317 templates/game_detail.html:107
+#: templates/logs.html:735 templates/settings.html:70
+#: templates/wishlist.html:642
 msgid "Delete"
 msgstr "刪除"
 
-#: templates/game_detail.html:140 templates/game_detail.html:152
+#: templates/game_detail.html:139 templates/game_detail.html:151
 msgid "Click to zoom"
 msgstr "點擊放大"
 
-#: templates/game_detail.html:157
+#: templates/game_detail.html:156
 msgid "Switch between 2D and 3D boxart"
 msgstr "在 2D 和 3D 封面之間切換"
 
-#: templates/game_detail.html:179
+#: templates/game_detail.html:178
 msgid "Player"
 msgstr "玩家"
 
-#: templates/game_detail.html:184
+#: templates/game_detail.html:183
 #, python-format
 msgid "Critic Score (%(count)s reviews)"
 msgstr "媒體評分（%(count)s 條評論）"
 
-#: templates/game_detail.html:189
+#: templates/game_detail.html:188
 #, python-format
 msgid "User Score (%(count)s ratings)"
 msgstr "使用者評分（%(count)s 條評價）"
 
-#: templates/game_detail.html:196
+#: templates/game_detail.html:195
 msgid "Completion status"
 msgstr "完成狀態"
 
-#: templates/game_detail.html:211
+#: templates/game_detail.html:210
 msgid "No description available. Click \"Scrape\" to fetch metadata."
 msgstr "暫無描述。點擊「抓取」以獲取中繼資料。"
 
-#: templates/game_detail.html:282
+#: templates/game_detail.html:281
 msgid "View on RetroAchievements.org"
 msgstr "在 RetroAchievements.org 上查看"
 
-#: templates/game_detail.html:284
+#: templates/game_detail.html:283
 msgid "RA Site"
 msgstr "RA 網站"
 
-#: templates/game_detail.html:296 templates/steam_achievement_game.html:15
-#: templates/steam_achievements.html:6 templates/steam_achievements.html:13
-#: templates/steam_achievements.html:19
+#: templates/game_detail.html:295 templates/steam_achievement_game.html:17
+#: templates/steam_achievements.html:7 templates/steam_achievements.html:15
+#: templates/steam_achievements.html:21
 msgid "Steam Achievements"
 msgstr "Steam 成就"
 
-#: templates/game_detail.html:312 templates/xbox_achievement_game.html:15
-#: templates/xbox_achievements.html:6 templates/xbox_achievements.html:13
-#: templates/xbox_achievements.html:19
+#: templates/game_detail.html:311 templates/xbox_achievement_game.html:17
+#: templates/xbox_achievements.html:7 templates/xbox_achievements.html:15
+#: templates/xbox_achievements.html:21
 msgid "Xbox Achievements"
 msgstr "Xbox 成就"
 
-#: templates/game_detail.html:327 templates/psn_trophies.html:5
-#: templates/psn_trophies.html:13 templates/psn_trophy_detail.html:15
+#: templates/game_detail.html:326 templates/psn_trophies.html:6
+#: templates/psn_trophies.html:15 templates/psn_trophy_detail.html:17
 msgid "PSN Trophies"
 msgstr "PSN 獎盃"
 
-#: templates/game_detail.html:352 templates/local_trophy_detail.html:14
+#: templates/game_detail.html:351 templates/local_trophy_detail.html:16
 msgid "RPCS3 Trophies"
 msgstr "RPCS3 獎盃"
 
-#: templates/game_detail.html:385
+#: templates/game_detail.html:384
 msgid "(cross-mapped)"
 msgstr "（交叉映射）"
 
-#: templates/game_detail.html:398
+#: templates/game_detail.html:397
 #, python-format
 msgid "Screenshots (%(count)s)"
 msgstr "螢幕截圖（%(count)s）"
 
-#: templates/game_detail.html:400
+#: templates/game_detail.html:399
 msgid "Previous screenshots"
 msgstr "上一批螢幕截圖"
 
-#: templates/game_detail.html:406
+#: templates/game_detail.html:405
 msgid "Delete screenshot"
 msgstr "刪除螢幕截圖"
 
-#: templates/game_detail.html:410
+#: templates/game_detail.html:409
 msgid "Next screenshots"
 msgstr "下一批螢幕截圖"
 
-#: templates/game_detail.html:442
+#: templates/game_detail.html:428
+msgid "Also Known As"
+msgstr "又名"
+
+#: templates/game_detail.html:431
+#, python-format
+msgid "Source: %(source)s"
+msgstr "來源：%(source)s"
+
+#: templates/game_detail.html:456
 msgid "Loading recommendations..."
 msgstr "正在載入推薦…"
 
-#: templates/game_detail.html:490
+#: templates/game_detail.html:504
 #, python-format
 msgid "%(pct)s%% match"
 msgstr "符合度 %(pct)s%%"
 
-#: templates/game_detail.html:531
+#: templates/game_detail.html:545
 msgid "Source:"
 msgstr "來源："
 
-#: templates/game_detail.html:534
+#: templates/game_detail.html:548
 msgid "CLZ Games Import (No ROM file)"
 msgstr "CLZ 遊戲匯入（無 ROM 檔案）"
 
-#: templates/game_detail.html:536
+#: templates/game_detail.html:550
 msgid "Steam Import (No ROM file)"
 msgstr "Steam 匯入（無 ROM 檔案）"
 
-#: templates/game_detail.html:538
+#: templates/game_detail.html:552
 msgid "Xbox Import (No ROM file)"
 msgstr "Xbox 匯入（無 ROM 檔案）"
 
-#: templates/game_detail.html:540
+#: templates/game_detail.html:554
 msgid "PSN Import (No ROM file)"
 msgstr "PSN 匯入（無 ROM 檔案）"
 
-#: templates/game_detail.html:546
+#: templates/game_detail.html:560
 msgid "Original Title:"
 msgstr "原始標題："
 
-#: templates/game_detail.html:552
+#: templates/game_detail.html:566
 msgid "File:"
 msgstr "檔案："
 
-#: templates/game_detail.html:554
+#: templates/game_detail.html:568
 msgid "Rename ROM file"
 msgstr "重新命名 ROM 檔案"
 
-#: templates/game_detail.html:557
+#: templates/game_detail.html:571
 msgid "Path:"
 msgstr "路徑："
 
-#: templates/game_detail.html:563
+#: templates/game_detail.html:577
 msgid "Edition:"
 msgstr "版本："
 
-#: templates/game_detail.html:570
+#: templates/game_detail.html:584
 msgid "Exclusive:"
 msgstr "獨佔："
 
-#: templates/game_detail.html:573
+#: templates/game_detail.html:587
 msgid "Also On:"
 msgstr "同樣支援："
 
-#: templates/game_detail.html:580
+#: templates/game_detail.html:594
 msgid "Modes:"
 msgstr "模式："
 
-#: templates/game_detail.html:586
+#: templates/game_detail.html:600
 msgid "Players:"
 msgstr "玩家人數："
 
-#: templates/game_detail.html:592
+#: templates/game_detail.html:606
 msgid "Campaign:"
 msgstr "戰役："
 
-#: templates/game_detail.html:598
+#: templates/game_detail.html:612
 msgid "Structure:"
 msgstr "結構："
 
-#: templates/game_detail.html:604
+#: templates/game_detail.html:618
 msgid "Perspective:"
 msgstr "視角："
 
-#: templates/game_detail.html:610
+#: templates/game_detail.html:624
 msgid "Dimension:"
 msgstr "維度："
 
-#: templates/game_detail.html:616
+#: templates/game_detail.html:630
 msgid "Save:"
 msgstr "儲存："
 
-#: templates/game_detail.html:622
+#: templates/game_detail.html:636
 msgid "Input:"
 msgstr "輸入："
 
-#: templates/game_detail.html:627
+#: templates/game_detail.html:641
 msgid "Scraped:"
 msgstr "已抓取："
 
-#: templates/game_detail.html:636
+#: templates/game_detail.html:650
 msgid "Bonus Content"
 msgstr "附贈內容"
 
-#: templates/game_detail.html:658
-msgid "View Manual (PDF)"
-msgstr "查看說明書（PDF）"
-
-#: templates/game_detail.html:668
+#: templates/game_detail.html:672
 msgid "Scrape History"
 msgstr "抓取歷史"
 
-#: templates/game_detail.html:693
+#: templates/game_detail.html:698
 msgid "Primary scraper"
 msgstr "主抓取器"
 
-#: templates/game_detail.html:695
+#: templates/game_detail.html:700
 msgid "Fallback scraper"
 msgstr "備用抓取源"
 
-#: templates/game_detail.html:702
+#: templates/game_detail.html:707
 msgid "Fields filled:"
 msgstr "已填充欄位："
 
-#: templates/game_detail.html:710
+#: templates/game_detail.html:715
 msgid "None"
 msgstr "無"
 
-#: templates/game_detail.html:715
+#: templates/game_detail.html:720
 msgid "Still missing:"
 msgstr "仍缺失："
 
-#: templates/game_imports.html:167
+#: templates/game_imports.html:170
 msgid "Steam"
 msgstr "Steam"
 
-#: templates/game_imports.html:170
+#: templates/game_imports.html:173
 msgid "Xbox"
 msgstr "Xbox"
 
-#: templates/game_imports.html:173
+#: templates/game_imports.html:176
 msgid "PSN"
 msgstr "PSN"
 
-#: templates/game_imports.html:184
+#: templates/game_imports.html:187
 msgid ""
 "Import games from a <strong>CLZ Games</strong> PDF export. Export your "
 "collection from the CLZ app,\n"
@@ -5602,64 +5602,64 @@ msgstr ""
 "從 <strong>CLZ Games</strong> 的 PDF 匯出中匯入遊戲。從 CLZ 應用匯出您的合集，\n"
 "                然後在此處上傳該 PDF。"
 
-#: templates/game_imports.html:190
+#: templates/game_imports.html:193
 msgid "Upload CLZ Export"
 msgstr "上傳 CLZ 匯出"
 
-#: templates/game_imports.html:193
+#: templates/game_imports.html:196
 msgid "Click or drag a CLZ PDF file here"
 msgstr "點擊或拖動 CLZ PDF 檔案到此處"
 
-#: templates/game_imports.html:194
+#: templates/game_imports.html:197
 msgid "Supports PDF exports from CLZ Games app"
 msgstr "支援從 CLZ Games 應用匯出的 PDF"
 
-#: templates/game_imports.html:202
+#: templates/game_imports.html:205
 msgid "CLZ Library"
 msgstr "CLZ 庫"
 
-#: templates/game_imports.html:204 templates/game_imports.html:259
-#: templates/game_imports.html:315 templates/game_imports.html:378
+#: templates/game_imports.html:207 templates/game_imports.html:262
+#: templates/game_imports.html:318 templates/game_imports.html:381
 msgid "Total"
 msgstr "總計"
 
-#: templates/game_imports.html:205 templates/game_imports.html:260
-#: templates/game_imports.html:316 templates/game_imports.html:379
+#: templates/game_imports.html:208 templates/game_imports.html:263
+#: templates/game_imports.html:319 templates/game_imports.html:382
 msgid "New"
 msgstr "新建"
 
-#: templates/game_imports.html:206 templates/game_imports.html:261
-#: templates/game_imports.html:317 templates/game_imports.html:380
+#: templates/game_imports.html:209 templates/game_imports.html:264
+#: templates/game_imports.html:320 templates/game_imports.html:383
 msgid "Already Imported"
 msgstr "已匯入"
 
-#: templates/game_imports.html:210 templates/game_imports.html:265
-#: templates/game_imports.html:321 templates/game_imports.html:384
+#: templates/game_imports.html:213 templates/game_imports.html:268
+#: templates/game_imports.html:324 templates/game_imports.html:387
 msgid "Select All New"
 msgstr "全選新增"
 
-#: templates/game_imports.html:211 templates/game_imports.html:266
-#: templates/game_imports.html:322 templates/game_imports.html:385
+#: templates/game_imports.html:214 templates/game_imports.html:269
+#: templates/game_imports.html:325 templates/game_imports.html:388
 msgid "Deselect All"
 msgstr "取消全選"
 
-#: templates/_modals/filter_modal.html:15 templates/game_imports.html:220
-#: templates/game_imports.html:337 templates/game_imports.html:400
-#: templates/psn_trophies.html:151 templates/psn_trophy_detail.html:239
+#: templates/_modals/filter_modal.html:15 templates/game_imports.html:223
+#: templates/game_imports.html:340 templates/game_imports.html:403
+#: templates/psn_trophies.html:153 templates/psn_trophy_detail.html:241
 msgid "Platform"
 msgstr "平台"
 
-#: templates/game_imports.html:227 templates/game_imports.html:280
-#: templates/game_imports.html:343 templates/game_imports.html:406
+#: templates/game_imports.html:230 templates/game_imports.html:283
+#: templates/game_imports.html:346 templates/game_imports.html:409
 msgid "0 games selected"
 msgstr "已選擇 0 個遊戲"
 
-#: templates/game_imports.html:228 templates/game_imports.html:281
-#: templates/game_imports.html:344 templates/game_imports.html:407
+#: templates/game_imports.html:231 templates/game_imports.html:284
+#: templates/game_imports.html:347 templates/game_imports.html:410
 msgid "Import Selected"
 msgstr "匯入所選"
 
-#: templates/game_imports.html:240
+#: templates/game_imports.html:243
 #, python-format
 msgid ""
 "Import your Steam game library. Games are created under the "
@@ -5673,40 +5673,40 @@ msgstr ""
 "(--primary-cyan);\">設定 &rarr; API Keys</a> 中設定你的 Steam API 金鑰和 Steam "
 "ID，或在下方輸入。"
 
-#: templates/game_imports.html:245
+#: templates/game_imports.html:248
 msgid "Steam Credentials"
 msgstr "Steam 憑據"
 
-#: templates/game_imports.html:247
+#: templates/game_imports.html:250
 msgid "Steam Web API Key"
 msgstr "Steam Web API 金鑰"
 
-#: templates/game_imports.html:247
+#: templates/game_imports.html:250
 msgid "Your Steam Web API Key"
 msgstr "你的 Steam Web API 金鑰"
 
-#: templates/game_imports.html:248
+#: templates/game_imports.html:251
 msgid "Steam ID or Vanity URL"
 msgstr "Steam ID 或自訂 URL"
 
-#: templates/game_imports.html:248
+#: templates/game_imports.html:251
 msgid "76561198012345678 or custom URL name"
 msgstr "76561198012345678 或自訂 URL 名稱"
 
-#: templates/game_imports.html:249 templates/game_imports.html:308
-#: templates/game_imports.html:367
+#: templates/game_imports.html:252 templates/game_imports.html:311
+#: templates/game_imports.html:370
 msgid "Fetch Library"
 msgstr "取得遊戲庫"
 
-#: templates/game_imports.html:257
+#: templates/game_imports.html:260
 msgid "Steam Library"
 msgstr "Steam 遊戲庫"
 
-#: templates/game_imports.html:274
+#: templates/game_imports.html:277
 msgid "Last Played"
 msgstr "最近遊玩"
 
-#: templates/game_imports.html:293
+#: templates/game_imports.html:296
 #, python-format
 msgid ""
 "Import your Xbox game library. Games are assigned to their correct Xbox "
@@ -5720,58 +5720,58 @@ msgstr ""
 "href=\"%(settings_url)s\" style=\"color: var(--primary-cyan);\">設定 &rarr;"
 " API 金鑰</a> 中設定憑證。"
 
-#: templates/game_imports.html:298
+#: templates/game_imports.html:301
 msgid "Xbox Account"
 msgstr "Xbox 帳戶"
 
-#: templates/game_imports.html:301
+#: templates/game_imports.html:304
 msgid "Not Connected"
 msgstr "未連接"
 
-#: templates/game_imports.html:301
+#: templates/game_imports.html:304
 msgid "Connect your Xbox account to import games"
 msgstr "連接您的 Xbox 帳戶以匯入遊戲"
 
-#: templates/game_imports.html:303
+#: templates/game_imports.html:306
 msgid "Connect Xbox Account"
 msgstr "連接 Xbox 帳戶"
 
-#: templates/game_imports.html:304
+#: templates/game_imports.html:307
 msgid "Disconnect"
 msgstr "中斷連線"
 
-#: templates/game_imports.html:313
+#: templates/game_imports.html:316
 msgid "Xbox Library"
 msgstr "Xbox 遊戲庫"
 
-#: templates/game_imports.html:327 templates/game_imports.html:390
-#: templates/hltb_review.html:26 templates/logs.html:705
-#: templates/psn_trophies.html:127 templates/psn_trophies.html:161
-#: templates/wishlist.html:24
+#: templates/game_imports.html:330 templates/game_imports.html:393
+#: templates/hltb_review.html:28 templates/logs.html:707
+#: templates/psn_trophies.html:129 templates/psn_trophies.html:163
+#: templates/wishlist.html:26
 msgid "All"
 msgstr "全部"
 
-#: templates/game_imports.html:328
+#: templates/game_imports.html:331
 msgid "Xbox 360"
 msgstr "Xbox 360"
 
-#: templates/game_imports.html:329
+#: templates/game_imports.html:332
 msgid "Xbox One"
 msgstr "Xbox One"
 
-#: templates/game_imports.html:330
+#: templates/game_imports.html:333
 msgid "Xbox Series"
 msgstr "Xbox Series"
 
-#: templates/game_imports.html:331
+#: templates/game_imports.html:334
 msgid "PC"
 msgstr "PC"
 
-#: templates/game_imports.html:337 templates/xbox_achievements.html:51
+#: templates/game_imports.html:340 templates/xbox_achievements.html:53
 msgid "Gamerscore"
 msgstr "Gamerscore"
 
-#: templates/game_imports.html:356
+#: templates/game_imports.html:359
 #, python-format
 msgid ""
 "Import your PlayStation game library. Games come from your PSN trophy "
@@ -5789,1034 +5789,1036 @@ msgstr ""
 "                若想更快匯入，請先透過 <a href=\"%(trophies_url)s\" style=\"color: "
 "var(--primary-cyan);\">PSN 獎盃</a> 頁面同步您的獎盃。"
 
-#: templates/game_imports.html:362
+#: templates/game_imports.html:365
 msgid "PSN Account"
 msgstr "PSN 帳戶"
 
-#: templates/game_imports.html:376
+#: templates/game_imports.html:379
 msgid "PSN Library"
 msgstr "PSN 遊戲庫"
 
-#: templates/game_imports.html:391
+#: templates/game_imports.html:394
 msgid "PS5"
 msgstr "PS5"
 
-#: templates/game_imports.html:392
+#: templates/game_imports.html:395
 msgid "PS4"
 msgstr "PS4"
 
-#: templates/game_imports.html:393
+#: templates/game_imports.html:396
 msgid "PS3"
 msgstr "PS3"
 
-#: templates/game_imports.html:394
+#: templates/game_imports.html:397
 msgid "PS Vita"
 msgstr "PS Vita"
 
-#: templates/game_imports.html:400 templates/local_trophy_detail.html:121
-#: templates/psn_trophy_detail.html:112
+#: templates/game_imports.html:403 templates/local_trophy_detail.html:123
+#: templates/psn_trophy_detail.html:114
 msgid "Trophy Progress"
 msgstr "獎盃進度"
 
-#: templates/help.af.html:9 templates/help.de.html:9 templates/help.es.html:9
-#: templates/help.fr.html:9 templates/help.he.html:9 templates/help.html:9
-#: templates/help.id.html:9 templates/help.it.html:9 templates/help.ja.html:9
-#: templates/help.ko.html:9 templates/help.nb.html:9 templates/help.nl.html:9
-#: templates/help.pl.html:9 templates/help.pt_BR.html:9
-#: templates/help.ru.html:9 templates/help.tr.html:9 templates/help.uk.html:9
-#: templates/help.xh.html:9 templates/help.zh_Hans.html:9
-#: templates/help.zh_Hant.html:9 templates/help.zu.html:9
+#: templates/help.af.html:11 templates/help.de.html:11
+#: templates/help.es.html:11 templates/help.fr.html:11
+#: templates/help.he.html:11 templates/help.html:11 templates/help.id.html:11
+#: templates/help.it.html:11 templates/help.ja.html:11
+#: templates/help.ko.html:11 templates/help.nb.html:11
+#: templates/help.nl.html:11 templates/help.pl.html:11
+#: templates/help.pt_BR.html:11 templates/help.ru.html:11
+#: templates/help.tr.html:11 templates/help.uk.html:11
+#: templates/help.xh.html:11 templates/help.zh_Hans.html:11
+#: templates/help.zh_Hant.html:11 templates/help.zu.html:11
 msgid "Help & Documentation"
 msgstr "幫助與文件"
 
-#: templates/help.af.html:10 templates/help.de.html:10
-#: templates/help.es.html:10 templates/help.fr.html:10
-#: templates/help.he.html:10 templates/help.html:10 templates/help.id.html:10
-#: templates/help.it.html:10 templates/help.ja.html:10
-#: templates/help.ko.html:10 templates/help.nb.html:10
-#: templates/help.nl.html:10 templates/help.pl.html:10
-#: templates/help.pt_BR.html:10 templates/help.ru.html:10
-#: templates/help.tr.html:10 templates/help.uk.html:10
-#: templates/help.xh.html:10 templates/help.zh_Hans.html:10
-#: templates/help.zh_Hant.html:10 templates/help.zu.html:10
+#: templates/help.af.html:12 templates/help.de.html:12
+#: templates/help.es.html:12 templates/help.fr.html:12
+#: templates/help.he.html:12 templates/help.html:12 templates/help.id.html:12
+#: templates/help.it.html:12 templates/help.ja.html:12
+#: templates/help.ko.html:12 templates/help.nb.html:12
+#: templates/help.nl.html:12 templates/help.pl.html:12
+#: templates/help.pt_BR.html:12 templates/help.ru.html:12
+#: templates/help.tr.html:12 templates/help.uk.html:12
+#: templates/help.xh.html:12 templates/help.zh_Hans.html:12
+#: templates/help.zh_Hant.html:12 templates/help.zu.html:12
 #, python-format
 msgid "Complete guide to RetroDB v%(version)s"
 msgstr "RetroDB v%(version)s 完整指南"
 
-#: templates/hltb_review.html:8
+#: templates/hltb_review.html:10
 msgid "HLTB Pending Matches"
 msgstr "HLTB 待確認匹配"
 
-#: templates/hltb_review.html:9
+#: templates/hltb_review.html:11
 msgid ""
 "Review and approve bulk HowLongToBeat lookup matches that need a human "
 "glance."
 msgstr "審核並批准需要人工確認的批次 HowLongToBeat 查詢匹配。"
 
-#: templates/hltb_review.html:13
+#: templates/hltb_review.html:15
 msgid "Approve All"
 msgstr "全部核准"
 
-#: templates/hltb_review.html:16
+#: templates/hltb_review.html:18
 msgid "Reject All"
 msgstr "全部拒絕"
 
-#: templates/hltb_review.html:22
+#: templates/hltb_review.html:24
 msgid "Loading pending matches&hellip;"
 msgstr "正在載入待匹配項&hellip;"
 
-#: templates/hltb_review.html:27
+#: templates/hltb_review.html:29
 msgid "Alt-title matches"
 msgstr "別名標題匹配"
 
-#: templates/hltb_review.html:28
+#: templates/hltb_review.html:30
 msgid "Low confidence"
 msgstr "置信度低"
 
-#: templates/hltb_review.html:37
+#: templates/hltb_review.html:39
 msgid "No pending HLTB matches"
 msgstr "無待處理的 HLTB 比對"
 
-#: templates/hltb_review.html:38
+#: templates/hltb_review.html:40
 msgid ""
 "Run a bulk HLTB lookup from the ROM Tools Hub to queue matches for review"
 " here."
 msgstr "從 ROM 工具中心執行批次 HLTB 查詢，即可將匹配結果加入佇列在此審核。"
 
-#: templates/_settings_tabs/data.html:5 templates/local_trophies.html:5
-#: templates/psn_trophy_detail.html:274 templates/systems.html:87
+#: templates/_settings_tabs/data.html:5 templates/local_trophies.html:6
+#: templates/psn_trophy_detail.html:276 templates/systems.html:89
 msgid "Trophies"
 msgstr "獎盃"
 
-#: templates/local_trophies.html:13
+#: templates/local_trophies.html:15
 msgid "PlayStation 3 Trophies"
 msgstr "PlayStation 3 獎盃"
 
-#: templates/local_trophies.html:14
+#: templates/local_trophies.html:16
 msgid "RPCS3 Trophy Collection"
 msgstr "RPCS3 獎盃合集"
 
-#: templates/_settings_tabs/data.html:61 templates/local_trophies.html:20
-#: templates/local_trophies.html:53
+#: templates/_settings_tabs/data.html:61 templates/local_trophies.html:22
+#: templates/local_trophies.html:55
 msgid "Scan Trophies"
 msgstr "掃描獎盃"
 
-#: templates/local_trophies.html:31
+#: templates/local_trophies.html:33
 msgid "Trophy Path Not Configured"
 msgstr "未配置獎盃路徑"
 
-#: templates/local_trophies.html:33
+#: templates/local_trophies.html:35
 msgid ""
 "Configure your personal RPCS3 trophy folder path in your profile settings"
 " to view your trophies."
 msgstr "請在個人資料設定中設定你的 RPCS3 獎盃資料夾路徑，以查看你的獎盃。"
 
-#: templates/local_trophies.html:37 templates/psn_trophies.html:37
+#: templates/local_trophies.html:39 templates/psn_trophies.html:39
 msgid "Go to My Profile"
 msgstr "前往我的個人資料"
 
-#: templates/local_trophies.html:47
+#: templates/local_trophies.html:49
 msgid "No Trophies Found"
 msgstr "未找到獎盃"
 
-#: templates/local_trophies.html:49
+#: templates/local_trophies.html:51
 msgid ""
 "Click \"Scan Trophies\" to search for trophy data in your RPCS3 "
 "installation."
 msgstr "點擊「掃描獎盃」以在您的 RPCS3 安裝中搜尋獎盃資料。"
 
-#: templates/local_trophies.html:111
+#: templates/local_trophies.html:113
 #, python-format
 msgid "Games (%(count)s)"
 msgstr "遊戲（%(count)s）"
 
-#: templates/local_trophies.html:169
+#: templates/local_trophies.html:171
 msgid "Scanning Trophies"
 msgstr "正在掃描獎盃"
 
-#: templates/local_trophies.html:172
+#: templates/local_trophies.html:174
 msgid "Scanning trophy folders..."
 msgstr "正在掃描獎盃資料夾……"
 
-#: templates/local_trophy_detail.html:65
+#: templates/local_trophy_detail.html:67
 msgid "Sony PlayStation 3"
 msgstr "Sony PlayStation 3"
 
-#: templates/local_trophy_detail.html:67 templates/psn_trophy_detail.html:60
+#: templates/local_trophy_detail.html:69 templates/psn_trophy_detail.html:62
 #, python-format
 msgid "%(count)s Players"
 msgstr "%(count)s 名玩家"
 
-#: templates/local_trophy_detail.html:67 templates/psn_trophy_detail.html:60
+#: templates/local_trophy_detail.html:69 templates/psn_trophy_detail.html:62
 #, python-format
 msgid "%(count)s Player"
 msgstr "%(count)s 名玩家"
 
-#: templates/local_trophy_detail.html:76
+#: templates/local_trophy_detail.html:78
 #, python-format
 msgid "No description available. Trophy ID: %(trophy_id)s"
 msgstr "暫無描述。獎盃 ID：%(trophy_id)s"
 
-#: templates/local_trophy_detail.html:204
+#: templates/local_trophy_detail.html:206
 msgid "Trophy ID"
 msgstr "獎盃 ID"
 
-#: templates/local_trophy_detail.html:208 templates/psn_trophy_detail.html:243
+#: templates/local_trophy_detail.html:210 templates/psn_trophy_detail.html:245
 msgid "First Trophy"
 msgstr "首個獎盃"
 
-#: templates/local_trophy_detail.html:212 templates/psn_trophy_detail.html:247
+#: templates/local_trophy_detail.html:214 templates/psn_trophy_detail.html:249
 msgid "Last Trophy"
 msgstr "最近獎盃"
 
-#: templates/local_trophy_detail.html:226
+#: templates/local_trophy_detail.html:228
 msgid "Standard Controller"
 msgstr "標準手把"
 
-#: templates/local_trophy_detail.html:268 templates/psn_trophy_detail.html:414
+#: templates/local_trophy_detail.html:270 templates/psn_trophy_detail.html:416
 msgid "No trophies unlocked yet"
 msgstr "尚未解鎖任何獎盃"
 
-#: templates/local_trophy_detail.html:303 templates/psn_trophy_detail.html:494
+#: templates/local_trophy_detail.html:305 templates/psn_trophy_detail.html:496
 msgid "All trophies unlocked!"
 msgstr "已解鎖全部獎盃！"
 
-#: templates/login.html:203
+#: templates/login.html:205
 msgid "Welcome to RetroDB"
 msgstr "歡迎使用 RetroDB"
 
-#: templates/login.html:204
+#: templates/login.html:206
 msgid "Select your profile to continue"
 msgstr "選擇您的資料以繼續"
 
-#: templates/login.html:234
+#: templates/login.html:236
 msgid "No users found. Please contact your administrator."
 msgstr "未找到使用者。請聯絡你的管理員。"
 
-#: templates/login.html:243
+#: templates/login.html:245
 msgid "Admin Login"
 msgstr "管理員登入"
 
-#: templates/login.html:247
+#: templates/login.html:249
 msgid "Password"
 msgstr "密碼"
 
-#: templates/login.html:248
+#: templates/login.html:250
 msgid "Enter admin password"
 msgstr "輸入管理員密碼"
 
-#: templates/logs.html:727
+#: templates/logs.html:729
 msgid "File"
 msgstr "檔案"
 
-#: templates/logs.html:732
+#: templates/logs.html:734
 msgid "Download"
 msgstr "下載"
 
-#: templates/logs.html:740
+#: templates/logs.html:742
 msgid "Time"
 msgstr "時間"
 
-#: templates/logs.html:749
+#: templates/logs.html:751
 msgid "Level"
 msgstr "等級"
 
-#: templates/logs.html:751
+#: templates/logs.html:753
 msgid "INFO"
 msgstr "資訊"
 
-#: templates/logs.html:752
+#: templates/logs.html:754
 msgid "WARN"
 msgstr "警告"
 
-#: templates/logs.html:753
+#: templates/logs.html:755
 msgid "ERROR"
 msgstr "錯誤"
 
-#: templates/logs.html:769
+#: templates/logs.html:771
 msgid "View"
 msgstr "查看"
 
-#: templates/logs.html:771
+#: templates/logs.html:773
 msgid "Grouped"
 msgstr "已分組"
 
-#: templates/logs.html:772
+#: templates/logs.html:774
 msgid "Flat"
 msgstr "平面"
 
-#: templates/logs.html:780
+#: templates/logs.html:782
 msgid "Filter log lines..."
 msgstr "篩選日誌行……"
 
-#: templates/logs.html:783
+#: templates/logs.html:785
 msgid "Reset"
 msgstr "重置"
 
-#: templates/logs.html:789
+#: templates/logs.html:791
 msgid "Total:"
 msgstr "總計："
 
-#: templates/logs.html:793
+#: templates/logs.html:795
 msgid "Showing:"
 msgstr "顯示："
 
-#: templates/logs.html:797
+#: templates/logs.html:799
 msgid "INFO:"
 msgstr "資訊："
 
-#: templates/logs.html:801
+#: templates/logs.html:803
 msgid "WARN:"
 msgstr "警告："
 
-#: templates/logs.html:805
+#: templates/logs.html:807
 msgid "ERROR:"
 msgstr "錯誤："
 
-#: templates/logs.html:809
+#: templates/logs.html:811
 msgid "Sessions:"
 msgstr "工作階段："
 
-#: templates/logs.html:817
+#: templates/logs.html:819
 msgid "Select a log file to view"
 msgstr "選擇要檢視的日誌檔案"
 
-#: templates/multi_disc_organizer.html:166
+#: templates/multi_disc_organizer.html:168
 msgid "Multi-Disc Game Organizer"
 msgstr "多光碟遊戲整理器"
 
-#: templates/multi_disc_organizer.html:170
+#: templates/multi_disc_organizer.html:172
 msgid "What This Tool Does"
 msgstr "此工具的功能"
 
-#: templates/multi_disc_organizer.html:172
+#: templates/multi_disc_organizer.html:174
 msgid ""
 "Scans for multi-disc game files (Disc 1, Disc 2, etc.) that aren't "
 "properly organized"
 msgstr "掃描未正確整理的多光碟遊戲檔案（Disc 1、Disc 2 等）"
 
-#: templates/multi_disc_organizer.html:173
+#: templates/multi_disc_organizer.html:175
 msgid "Creates a folder for each game with the disc files inside"
 msgstr "為每個遊戲建立一個資料夾，並將光碟檔案放入其中"
 
-#: templates/multi_disc_organizer.html:174
+#: templates/multi_disc_organizer.html:176
 msgid ""
 "Adds a <code>noload.txt</code> file to prevent ES-DE from scanning "
 "individual discs"
 msgstr "新增 <code>noload.txt</code> 檔案以防止 ES-DE 掃描單獨的光碟"
 
-#: templates/multi_disc_organizer.html:175
+#: templates/multi_disc_organizer.html:177
 msgid "Creates an M3U playlist file for ES-DE compatibility"
 msgstr "建立 M3U 播放清單檔案以相容 ES-DE"
 
-#: templates/multi_disc_organizer.html:181 templates/reports.html:324
-#: templates/reports.html:403 templates/reports.html:478
+#: templates/multi_disc_organizer.html:183 templates/reports.html:326
+#: templates/reports.html:405 templates/reports.html:480
 msgid "System:"
 msgstr "系統："
 
-#: templates/multi_disc_organizer.html:183
+#: templates/multi_disc_organizer.html:185
 msgid "All Disc Systems"
 msgstr "所有光碟系統"
 
-#: templates/multi_disc_organizer.html:190
+#: templates/multi_disc_organizer.html:192
 msgid "Scan for Loose Discs"
 msgstr "掃描散裝光碟"
 
-#: templates/multi_disc_organizer.html:193
+#: templates/multi_disc_organizer.html:195
 msgid "Organize All"
 msgstr "全部整理"
 
-#: templates/multi_disc_organizer.html:203
+#: templates/multi_disc_organizer.html:205
 msgid "0 found"
 msgstr "找到 0 個"
 
-#: templates/multi_disc_organizer.html:212
+#: templates/multi_disc_organizer.html:214
 msgid "Game Name"
 msgstr "遊戲名稱"
 
-#: templates/multi_disc_organizer.html:213
+#: templates/multi_disc_organizer.html:215
 msgid "Discs"
 msgstr "光碟"
 
-#: templates/multi_disc_organizer.html:223
+#: templates/multi_disc_organizer.html:225
 msgid ""
 "Click \"Scan for Loose Discs\" to find multi-disc games that need to be "
 "organized."
 msgstr "點擊「掃描散落光碟」以查找需要整理的多光碟遊戲。"
 
-#: templates/multi_disc_organizer.html:233
+#: templates/multi_disc_organizer.html:235
 msgid "Systems scanned:"
 msgstr "已掃描系統："
 
-#: templates/multi_disc_organizer.html:237
+#: templates/multi_disc_organizer.html:239
 msgid "Games found:"
 msgstr "找到的遊戲："
 
-#: templates/museum.html:10
+#: templates/museum.html:12
 msgid "Gaming system encyclopedia — history, specs, and legacy"
 msgstr "遊戲系統百科全書 — 歷史、規格與傳承"
 
-#: templates/museum.html:15
+#: templates/museum.html:17
 #, python-format
 msgid "/ %(total)s DOCUMENTED"
 msgstr "/ %(total)s 已記錄"
 
-#: templates/museum.html:18
+#: templates/museum.html:20
 msgid "Generate All Content"
 msgstr "產生全部內容"
 
-#: templates/museum.html:33
+#: templates/museum.html:35
 msgid "systems"
 msgstr "系統"
 
-#: templates/museum.html:35
+#: templates/museum.html:37
 msgid "success,"
 msgstr "成功，"
 
-#: templates/museum.html:36
+#: templates/museum.html:38
 msgid "skipped,"
 msgstr "已略過，"
 
-#: templates/museum.html:37 templates/psn_trophies.html:276
+#: templates/museum.html:39 templates/psn_trophies.html:278
 msgid "failed"
 msgstr "失敗"
 
-#: templates/museum.html:50 templates/systems.html:27
+#: templates/museum.html:52 templates/systems.html:29
 msgid "Search systems..."
 msgstr "搜尋系統……"
 
-#: templates/museum.html:77
+#: templates/museum.html:79
 #, python-format
 msgid "%(count)s system"
 msgid_plural "%(count)s systems"
 msgstr[0] "%(count)s 個系統"
 
-#: templates/museum.html:109
+#: templates/museum.html:111
 msgid "Content generated"
 msgstr "內容已生成"
 
-#: templates/museum.html:121 templates/systems.html:103
+#: templates/museum.html:123 templates/systems.html:105
 msgid "No Systems Found"
 msgstr "找不到系統"
 
-#: templates/museum.html:122
+#: templates/museum.html:124
 msgid "Scan your ROM library first to populate the museum."
 msgstr "請先掃描您的 ROM 遊戲庫以填充博物館。"
 
-#: templates/museum.html:127 templates/museum_system.html:232
+#: templates/museum.html:129 templates/museum_system.html:234
 msgid "Hardware image viewer"
 msgstr "硬體圖片檢視器"
 
-#: templates/museum.html:128 templates/museum_system.html:233
+#: templates/museum.html:130 templates/museum_system.html:235
 msgid "Close hardware viewer"
 msgstr "關閉硬體檢視器"
 
-#: templates/museum_system.html:9
+#: templates/museum_system.html:11
 msgid "System Not Found"
 msgstr "未找到系統"
 
-#: templates/museum_system.html:10
+#: templates/museum_system.html:12
 msgid "The requested system could not be found."
 msgstr "找不到請求的系統。"
 
-#: templates/museum_system.html:11 templates/museum_system.html:50
+#: templates/museum_system.html:13 templates/museum_system.html:52
 msgid "Back to Museum"
 msgstr "返回博物館"
 
-#: templates/museum_system.html:43
+#: templates/museum_system.html:45
 msgid "Regenerate Content"
 msgstr "重新生成內容"
 
-#: templates/museum_system.html:47
+#: templates/museum_system.html:49
 #, python-format
 msgid "View Library (%(count)s)"
 msgstr "檢視遊戲庫（%(count)s）"
 
-#: templates/museum_system.html:58 templates/museum_system.html:67
+#: templates/museum_system.html:60 templates/museum_system.html:69
 msgid "History"
 msgstr "歷史"
 
-#: templates/museum_system.html:59
+#: templates/museum_system.html:61
 msgid "Specifications"
 msgstr "規格參數"
 
-#: templates/museum_system.html:60 templates/museum_system.html:128
+#: templates/museum_system.html:62 templates/museum_system.html:130
 msgid "Top 10 Games"
 msgstr "遊戲 Top 10"
 
 #: templates/_settings_tabs/customization.html:5
-#: templates/museum_system.html:61 templates/museum_system.html:170
+#: templates/museum_system.html:63 templates/museum_system.html:172
 msgid "Controllers"
 msgstr "手把"
 
-#: templates/museum_system.html:70
+#: templates/museum_system.html:72
 #, python-format
 msgid "Generated by %(generated_by)s on %(generated_at)s"
 msgstr "由 %(generated_by)s 於 %(generated_at)s 產生"
 
-#: templates/museum_system.html:85
+#: templates/museum_system.html:87
 msgid ""
 "No history generated yet. Click \"Generate Content\" to create AI-"
 "generated history for this system."
 msgstr "尚未生成歷史。點擊“生成內容”為該系統建立 AI 生成的歷史。"
 
-#: templates/museum_system.html:92
+#: templates/museum_system.html:94
 msgid "Technical Specifications"
 msgstr "技術規格"
 
-#: templates/museum_system.html:98
+#: templates/museum_system.html:100
 msgid "Released"
 msgstr "發行於"
 
-#: templates/museum_system.html:99
+#: templates/museum_system.html:101
 msgid "CPU"
 msgstr "CPU"
 
-#: templates/museum_system.html:100
+#: templates/museum_system.html:102
 msgid "GPU"
 msgstr "GPU"
 
-#: templates/museum_system.html:101
+#: templates/museum_system.html:103
 msgid "RAM"
 msgstr "RAM"
 
-#: templates/museum_system.html:102
+#: templates/museum_system.html:104
 msgid "VRAM"
 msgstr "顯示記憶體"
 
-#: templates/museum_system.html:103
+#: templates/museum_system.html:105
 msgid "Resolution"
 msgstr "解析度"
 
-#: templates/museum_system.html:104
+#: templates/museum_system.html:106
 msgid "Colors"
 msgstr "顏色"
 
-#: templates/museum_system.html:105
+#: templates/museum_system.html:107
 msgid "Sound"
 msgstr "音效"
 
-#: templates/museum_system.html:106
+#: templates/museum_system.html:108
 msgid "Media"
 msgstr "媒體"
 
-#: templates/museum_system.html:108
+#: templates/museum_system.html:110
 msgid "Generation"
 msgstr "世代"
 
-#: templates/museum_system.html:121
+#: templates/museum_system.html:123
 msgid "No specifications available for this system."
 msgstr "此系統暫無規格資訊。"
 
-#: templates/museum_system.html:153
+#: templates/museum_system.html:155
 msgid "AI suggested"
 msgstr "AI 建議"
 
-#: templates/museum_system.html:162
+#: templates/museum_system.html:164
 msgid ""
 "No top games data available. Generate content to get AI-suggested top "
 "games, or add games with critic scores to your library."
 msgstr "暫無熱門遊戲資料。請生成內容以取得 AI 推薦的熱門遊戲，或向遊戲庫中新增帶有媒體評分的遊戲。"
 
-#: templates/museum_system.html:173
+#: templates/museum_system.html:175
 msgid "Fetch All Images"
 msgstr "擷取所有圖片"
 
-#: templates/museum_system.html:186
+#: templates/museum_system.html:188
 msgid "Remove background"
 msgstr "移除背景"
 
-#: templates/museum_system.html:186
+#: templates/museum_system.html:188
 msgid "Remove BG"
 msgstr "移除背景"
 
-#: templates/museum_system.html:187
+#: templates/museum_system.html:189
 msgid "Search for a new image"
 msgstr "搜尋新圖片"
 
-#: templates/museum_system.html:188
+#: templates/museum_system.html:190
 msgid "Upload your own image"
 msgstr "上傳你自己的圖片"
 
 #: templates/_settings_tabs/customization.html:189
 #: templates/_settings_tabs/customization.html:255
-#: templates/museum_system.html:216
+#: templates/museum_system.html:218
 msgid "Button Layout"
 msgstr "按鍵佈局"
 
-#: templates/museum_system.html:226
+#: templates/museum_system.html:228
 msgid ""
 "No controllers registered for this system. Add controllers from the "
 "system game list page."
 msgstr "此系統未註冊任何手把。請從系統遊戲列表頁面新增手把。"
 
-#: templates/museum_system.html:239
+#: templates/museum_system.html:241
 msgid "Controller image viewer"
 msgstr "手把圖片檢視器"
 
-#: templates/museum_system.html:240
+#: templates/museum_system.html:242
 msgid "Close controller viewer"
 msgstr "關閉手把檢視器"
 
-#: templates/museum_system.html:241
+#: templates/museum_system.html:243
 msgid "Previous controller"
 msgstr "上一個手把"
 
-#: templates/museum_system.html:243
+#: templates/museum_system.html:245
 msgid "Next controller"
 msgstr "下一個手把"
 
-#: templates/museum_system.html:245
+#: templates/museum_system.html:247
 msgid "Use"
 msgstr "使用"
 
-#: templates/museum_system.html:245
+#: templates/museum_system.html:247
 msgid "arrow keys to navigate"
 msgstr "方向鍵導覽"
 
-#: templates/museum_system.html:245
+#: templates/museum_system.html:247
 msgid "ESC to close"
 msgstr "按 ESC 關閉"
 
-#: templates/_settings_tabs/account.html:111 templates/psn_trophies.html:14
+#: templates/_settings_tabs/account.html:111 templates/psn_trophies.html:16
 msgid "PlayStation Network"
 msgstr "PlayStation Network"
 
-#: templates/psn_trophies.html:20 templates/psn_trophies.html:53
+#: templates/psn_trophies.html:22 templates/psn_trophies.html:55
 msgid "Sync Trophies"
 msgstr "同步獎盃"
 
-#: templates/psn_trophies.html:31
+#: templates/psn_trophies.html:33
 msgid "PSN Not Configured"
 msgstr "PSN 未設定"
 
-#: templates/psn_trophies.html:33
+#: templates/psn_trophies.html:35
 msgid ""
 "Configure your PSN NPSSO token in your profile settings to sync your "
 "PlayStation Network trophies."
 msgstr "請在個人資料設定中設定您的 PSN NPSSO 令牌，以同步您的 PlayStation Network 獎盃。"
 
-#: templates/psn_trophies.html:47
+#: templates/psn_trophies.html:49
 msgid "No PSN Trophies Found"
 msgstr "未找到 PSN 獎盃"
 
-#: templates/psn_trophies.html:49
+#: templates/psn_trophies.html:51
 msgid ""
 "Click \"Sync Trophies\" to fetch your trophy data from PlayStation "
 "Network."
 msgstr "點擊「同步獎盃」以從 PlayStation Network 取得你的獎盃資料。"
 
-#: templates/psn_trophies.html:70
+#: templates/psn_trophies.html:72
 #, python-format
 msgid "PSN Level %(level)s"
 msgstr "PSN 等級 %(level)s"
 
-#: templates/psn_trophies.html:70
+#: templates/psn_trophies.html:72
 #, python-format
 msgid "%(count)s Games with Trophies"
 msgstr "%(count)s 款帶獎盃的遊戲"
 
-#: templates/psn_trophies.html:73
+#: templates/psn_trophies.html:75
 msgid "Last synced"
 msgstr "上次同步"
 
-#: templates/psn_trophies.html:79
+#: templates/psn_trophies.html:81
 msgid "Trophy statistics"
 msgstr "獎盃統計"
 
-#: templates/psn_trophies.html:111
+#: templates/psn_trophies.html:113
 msgid "Trophy filters"
 msgstr "獎盃篩選"
 
-#: templates/psn_trophies.html:118
+#: templates/psn_trophies.html:120
 msgid "Search trophy games"
 msgstr "搜尋獎盃遊戲"
 
-#: templates/psn_trophies.html:125
+#: templates/psn_trophies.html:127
 msgid "Filter by platform"
 msgstr "按平台篩選"
 
-#: templates/psn_trophies.html:126
+#: templates/psn_trophies.html:128
 msgid "All platforms"
 msgstr "所有平台"
 
-#: templates/psn_trophies.html:129
+#: templates/psn_trophies.html:131
 msgid "PlayStation 5"
 msgstr "PlayStation 5"
 
-#: templates/psn_trophies.html:132
+#: templates/psn_trophies.html:134
 msgid "PlayStation 4"
 msgstr "PlayStation 4"
 
-#: templates/psn_trophies.html:135
+#: templates/psn_trophies.html:137
 msgid "PlayStation 3"
 msgstr "PlayStation 3"
 
-#: templates/psn_trophies.html:138
+#: templates/psn_trophies.html:140
 msgid "PlayStation Vita"
 msgstr "PlayStation Vita"
 
-#: templates/psn_trophies.html:145
+#: templates/psn_trophies.html:147
 msgid "Sort trophies by"
 msgstr "獎盃排序方式"
 
-#: templates/psn_trophies.html:146
+#: templates/psn_trophies.html:148
 msgid "Name A-Z"
 msgstr "名稱 A-Z"
 
-#: templates/psn_trophies.html:147
+#: templates/psn_trophies.html:149
 msgid "Name Z-A"
 msgstr "名稱 Z-A"
 
-#: templates/psn_trophies.html:148 templates/psn_trophies.html:149
+#: templates/psn_trophies.html:150 templates/psn_trophies.html:151
 msgid "Progress"
 msgstr "進度"
 
-#: templates/psn_trophies.html:150
+#: templates/psn_trophies.html:152
 msgid "Recently Played"
 msgstr "最近遊玩"
 
-#: templates/psn_trophies.html:163
+#: templates/psn_trophies.html:165
 msgid "Select games without synced trophy details"
 msgstr "選擇尚未同步獎盃詳情的遊戲"
 
-#: templates/psn_trophies.html:164
+#: templates/psn_trophies.html:166
 msgid "Not Synced"
 msgstr "未同步"
 
-#: templates/psn_trophies.html:166
+#: templates/psn_trophies.html:168
 msgid "Select games with < 100% progress"
 msgstr "選擇進度低於 100% 的遊戲"
 
-#: templates/psn_trophies.html:167
+#: templates/psn_trophies.html:169
 msgid "Incomplete"
 msgstr "未完成"
 
-#: templates/psn_trophies.html:170
+#: templates/psn_trophies.html:172
 msgid "Sync Selected"
 msgstr "同步所選"
 
-#: templates/psn_trophies.html:231
+#: templates/psn_trophies.html:233
 msgid "Syncing PSN Trophies"
 msgstr "正在同步 PSN 獎盃"
 
-#: templates/psn_trophies.html:234
+#: templates/psn_trophies.html:236
 msgid "Connecting to PlayStation Network..."
 msgstr "正在連線 PlayStation Network..."
 
-#: templates/psn_trophies.html:240 templates/psn_trophies.html:272
+#: templates/psn_trophies.html:242 templates/psn_trophies.html:274
 msgid "synced"
 msgstr "已同步"
 
-#: templates/psn_trophies.html:241
+#: templates/psn_trophies.html:243
 msgid "images"
 msgstr "圖片"
 
-#: templates/psn_trophies.html:254
+#: templates/psn_trophies.html:256
 msgid "Bulk Trophy Refresh"
 msgstr "批次重新整理獎盃"
 
-#: templates/psn_trophies.html:257
+#: templates/psn_trophies.html:259
 msgid "Starting bulk refresh..."
 msgstr "正在開始批次重新整理……"
 
-#: templates/psn_trophies.html:280
+#: templates/psn_trophies.html:282
 msgid "skipped"
 msgstr "已略過"
 
-#: templates/psn_trophies.html:285
+#: templates/psn_trophies.html:287
 msgid "Rate limited: ~2.5 seconds between games to respect PSN API limits"
 msgstr "已限速：每個遊戲之間約間隔 2.5 秒，以遵守 PSN API 限制"
 
-#: templates/psn_trophy_detail.html:71
+#: templates/psn_trophy_detail.html:73
 #, python-format
 msgid "No description available. NPWR ID: %(npwr_id)s"
 msgstr "暫無描述。NPWR ID：%(npwr_id)s"
 
-#: templates/psn_trophy_detail.html:217
+#: templates/psn_trophy_detail.html:219
 msgid "Synced with linked game"
 msgstr "已與關聯遊戲同步"
 
-#: templates/psn_trophy_detail.html:223
+#: templates/psn_trophy_detail.html:225
 msgid "Link this PSN game to a RetroDB game to add HLTB data."
 msgstr "將此 PSN 遊戲關聯到 RetroDB 遊戲以新增 HLTB 資料。"
 
-#: templates/psn_trophy_detail.html:224
+#: templates/psn_trophy_detail.html:226
 msgid "HLTB data is shared with the linked game."
 msgstr "HowLongToBeat 資料與關聯的遊戲共享。"
 
-#: templates/psn_trophy_detail.html:235
+#: templates/psn_trophy_detail.html:237
 msgid "NPWR ID"
 msgstr "NPWR ID"
 
-#: templates/psn_trophy_detail.html:291
+#: templates/psn_trophy_detail.html:293
 msgid "Linked RetroDB Game"
 msgstr "已關聯的 RetroDB 遊戲"
 
-#: templates/psn_trophy_detail.html:297
+#: templates/psn_trophy_detail.html:299
 msgid "Change"
 msgstr "更改"
 
-#: templates/psn_trophy_detail.html:298
+#: templates/psn_trophy_detail.html:300
 msgid "Unlink"
 msgstr "取消關聯"
 
-#: templates/psn_trophy_detail.html:308
+#: templates/psn_trophy_detail.html:310
 msgid "Change Linked Game"
 msgstr "更改關聯遊戲"
 
-#: templates/psn_trophy_detail.html:308
+#: templates/psn_trophy_detail.html:310
 msgid "Link to RetroDB Game"
 msgstr "關聯到 RetroDB 遊戲"
 
-#: templates/psn_trophy_detail.html:365 templates/psn_trophy_detail.html:398
-#: templates/psn_trophy_detail.html:451 templates/psn_trophy_detail.html:481
+#: templates/psn_trophy_detail.html:367 templates/psn_trophy_detail.html:400
+#: templates/psn_trophy_detail.html:453 templates/psn_trophy_detail.html:483
 msgid "No description"
 msgstr "無描述"
 
-#: templates/reports.html:267 templates/rom_tools_hub.html:213
+#: templates/reports.html:269 templates/rom_tools_hub.html:221
 msgid "Analyze ROM filenames against naming standards and scraped metadata"
 msgstr "對照命名規範和已抓取的中繼資料分析 ROM 檔案名稱"
 
-#: templates/reports.html:272
+#: templates/reports.html:274
 msgid "Last scan:"
 msgstr "上次掃描："
 
-#: templates/reports.html:274
+#: templates/reports.html:276
 msgid "Clear cached results"
 msgstr "清除快取結果"
 
-#: templates/reports.html:278
+#: templates/reports.html:280
 msgid "Scan All ROMs"
 msgstr "掃描全部 ROM"
 
-#: templates/reports.html:287
+#: templates/reports.html:289
 msgid "Non-Standard Names"
 msgstr "非標準名稱"
 
-#: templates/reports.html:292
+#: templates/reports.html:294
 msgid "Name Mismatches"
 msgstr "名稱不符"
 
-#: templates/reports.html:302 templates/reports.html:333
+#: templates/reports.html:304 templates/reports.html:335
 msgid "Missing Region"
 msgstr "缺失地區"
 
-#: templates/reports.html:306 templates/reports.html:334
+#: templates/reports.html:308 templates/reports.html:336
 msgid "Missing Year"
 msgstr "缺少年份"
 
-#: templates/reports.html:310 templates/reports.html:335
+#: templates/reports.html:312 templates/reports.html:337
 msgid "Missing Publisher"
 msgstr "缺少發行商"
 
-#: templates/reports.html:314 templates/reports.html:336
+#: templates/reports.html:316 templates/reports.html:338
 msgid "Invalid Characters"
 msgstr "無效字元"
 
-#: templates/reports.html:318
+#: templates/reports.html:320
 msgid "Other Issues"
 msgstr "其他問題"
 
-#: templates/reports.html:330 templates/reports.html:479
+#: templates/reports.html:332 templates/reports.html:481
 msgid "Issue Type:"
 msgstr "問題類型："
 
-#: templates/reports.html:332 templates/reports.html:479
+#: templates/reports.html:334 templates/reports.html:481
 msgid "All Issues"
 msgstr "所有問題"
 
-#: templates/reports.html:337
+#: templates/reports.html:339
 msgid "Contains Underscores"
 msgstr "包含底線"
 
-#: templates/reports.html:338
+#: templates/reports.html:340
 msgid "Wrong Brackets"
 msgstr "括號錯誤"
 
-#: templates/reports.html:339
+#: templates/reports.html:341
 msgid "Moved Article"
 msgstr "冠詞移位"
 
-#: templates/reports.html:343 templates/reports.html:418
+#: templates/reports.html:345 templates/reports.html:420
 msgid "Search:"
 msgstr "搜尋："
 
-#: templates/reports.html:344
+#: templates/reports.html:346
 msgid "Search filenames..."
 msgstr "搜尋檔案名稱…"
 
-#: templates/reports.html:348 templates/reports.html:423
-#: templates/reports.html:469
+#: templates/reports.html:350 templates/reports.html:425
+#: templates/reports.html:471
 msgid "Batch Rename"
 msgstr "批次重新命名"
 
-#: templates/reports.html:361 templates/reports.html:436
+#: templates/reports.html:363 templates/reports.html:438
 msgid "Current Filename"
 msgstr "目前檔案名稱"
 
-#: templates/reports.html:363
+#: templates/reports.html:365
 msgid "Issues"
 msgstr "問題"
 
-#: templates/reports.html:365
+#: templates/reports.html:367
 msgid "Suggested Name"
 msgstr "建議名稱"
 
-#: templates/reports.html:375
+#: templates/reports.html:377
 msgid ""
 "Click \"Scan All ROMs\" to analyze your ROM collection against the naming"
 " standard."
 msgstr "點擊「掃描所有 ROM」，以按命名標準分析你的 ROM 收藏。"
 
-#: templates/reports.html:389 templates/reports.html:412
+#: templates/reports.html:391 templates/reports.html:414
 msgid "Title Mismatch"
 msgstr "標題不匹配"
 
-#: templates/reports.html:393 templates/reports.html:413
+#: templates/reports.html:395 templates/reports.html:415
 msgid "Region Mismatch"
 msgstr "地區不匹配"
 
-#: templates/reports.html:397 templates/reports.html:414
+#: templates/reports.html:399 templates/reports.html:416
 msgid "Year Mismatch"
 msgstr "年份不符"
 
-#: templates/reports.html:409
+#: templates/reports.html:411
 msgid "Mismatch Type:"
 msgstr "不比對類型："
 
-#: templates/reports.html:419
+#: templates/reports.html:421
 msgid "Search..."
 msgstr "搜尋…"
 
-#: templates/reports.html:439
+#: templates/reports.html:441
 msgid "Scraped Title"
 msgstr "抓取的標題"
 
-#: templates/reports.html:447
+#: templates/reports.html:449
 msgid "Mismatch"
 msgstr "不匹配"
 
-#: templates/reports.html:456
+#: templates/reports.html:458
 msgid ""
 "Click \"Scan All ROMs\" to find filenames that don't match scraped "
 "metadata."
 msgstr "點擊「掃描所有 ROM」以查找與已抓取中繼資料不匹配的檔案名稱。"
 
-#: templates/reports.html:475
+#: templates/reports.html:477
 msgid ""
 "This will rename <strong id=\"batchTotalCount\">0</strong> ROM files to "
 "their suggested names."
 msgstr "這將把 <strong id=\"batchTotalCount\">0</strong> 個 ROM 檔案重新命名為其建議名稱。"
 
-#: templates/reports.html:482
+#: templates/reports.html:484
 msgid "This action cannot be undone. Make sure you have backups."
 msgstr "此操作無法復原。請確保你已備份。"
 
-#: templates/reports.html:498
+#: templates/reports.html:500
 msgid "Remaining"
 msgstr "剩餘"
 
-#: templates/reports.html:514
+#: templates/reports.html:516
 msgid "Batch Rename Complete"
 msgstr "批次重新命名完成"
 
-#: templates/reports.html:521
+#: templates/reports.html:523
 msgid "Start Rename"
 msgstr "開始重新命名"
 
-#: templates/rom_tools_hub.html:107
+#: templates/rom_tools_hub.html:115
 msgid "Utilities for managing, converting, and organizing your ROM collection"
 msgstr "用於管理、轉換和整理您的 ROM 合集的實用工具"
 
-#: templates/_macros/nav_tabs.html:35 templates/rom_tools_hub.html:120
+#: templates/_macros/nav_tabs.html:35 templates/rom_tools_hub.html:128
 msgid "Archive Scanner"
 msgstr "壓縮檔掃描器"
 
-#: templates/rom_tools_hub.html:123
+#: templates/rom_tools_hub.html:131
 msgid ""
 "Scan ROM archives for corruption, unwanted files, and multi-file disc "
 "images. Clean up and create M3U playlists automatically."
 msgstr "掃描 ROM 壓縮包中的損壞、無用檔案和多檔案光碟映像。自動清理並建立 M3U 播放清單。"
 
-#: templates/rom_tools_hub.html:127
+#: templates/rom_tools_hub.html:135
 msgid "Tools available"
 msgstr "可用工具"
 
-#: templates/rom_tools_hub.html:129
+#: templates/rom_tools_hub.html:137
 msgid "Requires 7z or unzip"
 msgstr "需要 7z 或 unzip"
 
-#: templates/_macros/nav_tabs.html:36 templates/rom_tools_hub.html:137
+#: templates/_macros/nav_tabs.html:36 templates/rom_tools_hub.html:145
 msgid "CHD Converter"
 msgstr "CHD 轉換器"
 
-#: templates/rom_tools_hub.html:140
+#: templates/rom_tools_hub.html:148
 msgid ""
 "Convert disc images (ISO, CUE/BIN, GDI) to compressed CHD format. Save "
 "significant storage space while maintaining full compatibility."
 msgstr "將光碟映像（ISO、CUE/BIN、GDI）轉換為壓縮的 CHD 格式。在保持完全相容的同時大幅節省儲存空間。"
 
-#: templates/rom_tools_hub.html:144 templates/rom_tools_hub.html:161
+#: templates/rom_tools_hub.html:152 templates/rom_tools_hub.html:169
 msgid "chdman available"
 msgstr "chdman 可用"
 
-#: templates/rom_tools_hub.html:146 templates/rom_tools_hub.html:163
+#: templates/rom_tools_hub.html:154 templates/rom_tools_hub.html:171
 msgid "Requires chdman (MAME tools)"
 msgstr "需要 chdman（MAME 工具）"
 
-#: templates/_macros/nav_tabs.html:37 templates/rom_tools_hub.html:154
+#: templates/_macros/nav_tabs.html:37 templates/rom_tools_hub.html:162
 msgid "CHD Verify"
 msgstr "CHD 校驗"
 
-#: templates/rom_tools_hub.html:157
+#: templates/rom_tools_hub.html:165
 msgid ""
 "Verify the integrity of your CHD files to detect corruption. Ensure your "
 "compressed disc images are valid and playable."
 msgstr "校驗你的 CHD 檔案的完整性以偵測損壞。確保你的壓縮光碟映像有效且可執行。"
 
-#: templates/_macros/nav_tabs.html:39 templates/rom_tools_hub.html:171
+#: templates/_macros/nav_tabs.html:39 templates/rom_tools_hub.html:179
 msgid "Duplicate Finder"
 msgstr "重複查找器"
 
-#: templates/rom_tools_hub.html:174
+#: templates/rom_tools_hub.html:182
 msgid ""
 "Find duplicate ROMs by hash, filename, or both. Identify wasted storage "
 "from region variants and redundant copies."
 msgstr "按雜湊值、檔案名稱或兩者查找重複的 ROM。識別地區版本和冗餘副本浪費的儲存空間。"
 
-#: templates/rom_tools_hub.html:177 templates/rom_tools_hub.html:190
-#: templates/rom_tools_hub.html:203 templates/rom_tools_hub.html:216
-#: templates/rom_tools_hub.html:229
+#: templates/rom_tools_hub.html:185 templates/rom_tools_hub.html:198
+#: templates/rom_tools_hub.html:211 templates/rom_tools_hub.html:224
+#: templates/rom_tools_hub.html:237
 msgid "No dependencies required"
 msgstr "無需相依項"
 
-#: templates/_macros/nav_tabs.html:38 templates/rom_tools_hub.html:184
+#: templates/_macros/nav_tabs.html:38 templates/rom_tools_hub.html:192
 msgid "Multi-Disc Organizer"
 msgstr "多光碟整理器"
 
-#: templates/rom_tools_hub.html:187
+#: templates/rom_tools_hub.html:195
 msgid ""
 "Organize multi-disc games into proper folder structures and generate M3U "
 "playlists for seamless disc-swapping in emulators."
 msgstr "將多光碟遊戲整理為規範的資料夾結構，並產生 M3U 播放清單，以便在模擬器中無縫切換光碟。"
 
-#: templates/_macros/nav_tabs.html:40 templates/rom_tools_hub.html:197
+#: templates/_macros/nav_tabs.html:40 templates/rom_tools_hub.html:205
 msgid "Screenshot Dedup"
 msgstr "螢幕截圖去重"
 
-#: templates/rom_tools_hub.html:200
+#: templates/rom_tools_hub.html:208
 msgid ""
 "Find and remove duplicate screenshots per game using exact file hash or "
 "visual similarity matching. Free up storage and clean up your media "
 "library."
 msgstr "使用精確檔案雜湊或視覺相似度匹配，查找並刪除每個遊戲的重複螢幕截圖。釋放儲存空間，清理你的媒體庫。"
 
-#: templates/rom_tools_hub.html:223
+#: templates/rom_tools_hub.html:231
 msgid "Image Resizer"
 msgstr "圖片尺寸調整"
 
-#: templates/rom_tools_hub.html:226
+#: templates/rom_tools_hub.html:234
 msgid ""
 "Standardize all images to consistent sizes using AI upscaling (Real-"
 "ESRGAN) for small images and Lanczos downscaling for large ones. Targets "
@@ -6826,11 +6828,11 @@ msgstr ""
 "使用 AI 放大（Real-ESRGAN）處理小圖、Lanczos 縮小處理大圖，將所有圖片標準化為一致的尺寸。封面/螢幕截圖目標高度為 "
 "1080px，手把/硬體圖目標最長邊為 1280px。"
 
-#: templates/rom_tools_hub.html:236
+#: templates/rom_tools_hub.html:244
 msgid "Backfill Alternate Titles"
 msgstr "回填別名標題"
 
-#: templates/rom_tools_hub.html:239
+#: templates/rom_tools_hub.html:247
 msgid ""
 "Scan your library for regional / alternate game titles (e.g. "
 "&ldquo;Action in New York&rdquo; = &ldquo;S.C.A.T.&rdquo; = &ldquo;Final "
@@ -6842,15 +6844,15 @@ msgstr ""
 "&ldquo;S.C.A.T.&rdquo; = &ldquo;Final "
 "Mission&rdquo;），無需重新抓取媒體。使用抓取時會觸發的相同 IGDB 和 ScreenScraper 搜尋結果，僅提取別名。"
 
-#: templates/rom_tools_hub.html:242
+#: templates/rom_tools_hub.html:250
 msgid "Metadata only &middot; no media downloads"
 msgstr "僅中繼資料 &middot; 不下載媒體"
 
-#: templates/rom_tools_hub.html:249
+#: templates/rom_tools_hub.html:257
 msgid "Bulk HLTB Lookup"
 msgstr "批次 HLTB 查詢"
 
-#: templates/rom_tools_hub.html:252
+#: templates/rom_tools_hub.html:260
 msgid ""
 "Fetch HowLongToBeat playtime for every game. High-confidence primary-"
 "title matches apply automatically; alt-title matches and low-confidence "
@@ -6859,149 +6861,149 @@ msgstr ""
 "為每個遊戲取得 HowLongToBeat "
 "的遊玩時長。高信賴度的主標題匹配將自動套用；別名標題匹配和低信賴度結果將加入待審核佇列，以便您批次批准或拒絕。"
 
-#: templates/rom_tools_hub.html:255
+#: templates/rom_tools_hub.html:263
 msgid "Uses stored alternate titles"
 msgstr "使用已儲存的別名標題"
 
-#: templates/rom_tools_hub.html:262
+#: templates/rom_tools_hub.html:270
 msgid "HLTB Pending Review"
 msgstr "HLTB 待審核"
 
-#: templates/rom_tools_hub.html:265
+#: templates/rom_tools_hub.html:273
 msgid ""
 "Review and approve HLTB matches that were flagged during a bulk lookup "
 "&mdash; alt-title matches and anything below the confidence threshold."
 msgstr "審核並批准批次查詢中被標記的 HLTB 匹配結果 &mdash; 包括別名標題匹配以及信賴度低於閾值的項。"
 
-#: templates/rom_tools_hub.html:268
+#: templates/rom_tools_hub.html:276
 msgid "Requires review"
 msgstr "需要審核"
 
-#: templates/rom_tools_hub.html:275
+#: templates/rom_tools_hub.html:283
 msgid "Tool Settings"
 msgstr "工具設定"
 
-#: templates/rom_tools_hub.html:278
+#: templates/rom_tools_hub.html:286
 msgid ""
 "Configure paths, external tool locations, archive types, and other "
 "preferences shared across all ROM tools."
 msgstr "設定所有 ROM 工具共享的路徑、外部工具位置、壓縮檔類型及其他偏好設定。"
 
-#: templates/screenshot_dedup.html:241
+#: templates/screenshot_dedup.html:243
 msgid "Exact Hash (MD5) &mdash; identical files only"
 msgstr "精確雜湊（MD5）&mdash; 僅限完全相同的檔案"
 
-#: templates/screenshot_dedup.html:242
+#: templates/screenshot_dedup.html:244
 msgid "Visual Similarity &mdash; perceptual hash comparison"
 msgstr "視覺相似度 &mdash; 感知雜湊對比"
 
-#: templates/screenshot_dedup.html:247
+#: templates/screenshot_dedup.html:249
 msgid "Similarity Threshold"
 msgstr "相似度閾值"
 
-#: templates/screenshot_dedup.html:252
+#: templates/screenshot_dedup.html:254
 msgid "Lower = stricter"
 msgstr "值越低越嚴格"
 
-#: templates/screenshot_dedup.html:272
+#: templates/screenshot_dedup.html:274
 msgid "games scanned"
 msgstr "個遊戲已掃描"
 
-#: templates/screenshot_dedup.html:288
+#: templates/screenshot_dedup.html:290
 msgid "Games Scanned"
 msgstr "已掃描遊戲"
 
-#: templates/screenshot_dedup.html:292
+#: templates/screenshot_dedup.html:294
 msgid "Games with Duplicates"
 msgstr "有重複項的遊戲"
 
-#: templates/screenshot_dedup.html:296
+#: templates/screenshot_dedup.html:298
 msgid "Total Duplicates"
 msgstr "重複總數"
 
-#: templates/screenshot_dedup.html:300
+#: templates/screenshot_dedup.html:302
 msgid "Space Reclaimable"
 msgstr "可回收空間"
 
-#: templates/screenshot_dedup.html:310
+#: templates/screenshot_dedup.html:312
 msgid "Keep Largest"
 msgstr "保留最大的"
 
-#: templates/settings.html:11
+#: templates/settings.html:13
 msgid "Configure your RetroDB installation"
 msgstr "設定您的 RetroDB 安裝"
 
-#: templates/settings.html:16
+#: templates/settings.html:18
 msgid "Settings sections"
 msgstr "設定分區"
 
-#: templates/settings.html:19
+#: templates/settings.html:21
 msgid "Account"
 msgstr "帳戶"
 
-#: templates/settings.html:31
+#: templates/settings.html:33
 msgid "Data"
 msgstr "資料"
 
-#: templates/settings.html:35
+#: templates/settings.html:37
 msgid "Customization"
 msgstr "自訂"
 
-#: templates/settings.html:1402
+#: templates/settings.html:1405
 msgid "Failed to save language"
 msgstr "儲存語言失敗"
 
-#: templates/settings.html:1406
+#: templates/settings.html:1409
 msgid "Network error saving language"
 msgstr "儲存語言時發生網路錯誤"
 
-#: templates/steam_achievement_game.html:34
+#: templates/steam_achievement_game.html:36
 msgid "Steam Store"
 msgstr "Steam 商店"
 
-#: templates/steam_achievement_game.html:109
-#: templates/xbox_achievement_game.html:102
+#: templates/steam_achievement_game.html:111
+#: templates/xbox_achievement_game.html:104
 #, python-format
 msgid "Last synced: %(synced)s"
 msgstr "上次同步：%(synced)s"
 
-#: templates/steam_achievement_game.html:270
-#: templates/xbox_achievement_game.html:261
+#: templates/steam_achievement_game.html:272
+#: templates/xbox_achievement_game.html:263
 msgid "No Individual Achievement Data"
 msgstr "無單項成就資料"
 
-#: templates/steam_achievement_game.html:272
+#: templates/steam_achievement_game.html:274
 msgid ""
 "Click <strong>Refresh</strong> above to sync individual achievements from"
 " Steam."
 msgstr "點擊上方的<strong>重新整理</strong>以從 Steam 同步各項成就。"
 
-#: templates/steam_achievements.html:20 templates/xbox_achievements.html:20
+#: templates/steam_achievements.html:22 templates/xbox_achievements.html:22
 #, python-format
 msgid "%(count)s games with achievement data"
 msgstr "%(count)s 款帶成就資料的遊戲"
 
-#: templates/steam_achievements.html:25 templates/xbox_achievements.html:25
+#: templates/steam_achievements.html:27 templates/xbox_achievements.html:27
 msgid "Sync All"
 msgstr "全部同步"
 
-#: templates/steam_achievements.html:51
+#: templates/steam_achievements.html:53
 msgid "Earned"
 msgstr "已獲得"
 
-#: templates/steam_achievements.html:58 templates/xbox_achievements.html:58
+#: templates/steam_achievements.html:60 templates/xbox_achievements.html:60
 msgid "Avg. Completion"
 msgstr "平均完成度"
 
-#: templates/steam_achievements.html:140
+#: templates/steam_achievements.html:142
 msgid "No Steam Achievements"
 msgstr "無 Steam 成就"
 
-#: templates/steam_achievements.html:142
+#: templates/steam_achievements.html:144
 msgid "Import Steam games and sync achievements to see them here."
 msgstr "匯入 Steam 遊戲並同步成就即可在此查看。"
 
-#: templates/steam_achievements.html:143 templates/xbox_achievements.html:143
+#: templates/steam_achievements.html:145 templates/xbox_achievements.html:145
 #, python-format
 msgid ""
 "Go to <a href=\"%(url)s\" style=\"color: var(--primary-cyan);\">Game "
@@ -7010,298 +7012,298 @@ msgstr ""
 "前往 <a href=\"%(url)s\" style=\"color: var(--primary-cyan);\">遊戲匯入</a> "
 "開始使用。"
 
-#: templates/system_games.html:22
+#: templates/system_games.html:24
 msgid "games in your collection"
 msgstr "你收藏中的遊戲"
 
-#: templates/system_games.html:45
+#: templates/system_games.html:47
 msgid "Refresh RetroAchievements data for this system"
 msgstr "重新整理此系統的 RetroAchievements 資料"
 
-#: templates/systems.html:9
+#: templates/systems.html:11
 msgid "Gaming Systems"
 msgstr "遊戲系統"
 
-#: templates/systems.html:9
+#: templates/systems.html:11
 msgid "Gaming Sys"
 msgstr "遊戲系統"
 
-#: templates/systems.html:9
+#: templates/systems.html:11
 msgid "tems"
 msgstr "tems"
 
-#: templates/systems.html:10
+#: templates/systems.html:12
 msgid "Select a console to view your library."
 msgstr "選擇一個系統以檢視你的遊戲庫。"
 
-#: templates/systems.html:15
+#: templates/systems.html:17
 msgid "CONSOLES DETECTED"
 msgstr "偵測到的主機"
 
-#: templates/systems.html:40
+#: templates/systems.html:42
 msgid "All Features"
 msgstr "所有功能"
 
-#: templates/systems.html:42
+#: templates/systems.html:44
 msgid "Local Trophies"
 msgstr "本地獎盃"
 
-#: templates/systems.html:78
+#: templates/systems.html:80
 msgid "unscraped"
 msgstr "未抓取"
 
-#: templates/systems.html:84
+#: templates/systems.html:86
 msgid "Supports RetroAchievements"
 msgstr "支援 RetroAchievements"
 
-#: templates/systems.html:84
+#: templates/systems.html:86
 msgid "RA"
 msgstr "RA"
 
-#: templates/systems.html:87
+#: templates/systems.html:89
 msgid "Local Trophies (RPCS3)"
 msgstr "本地獎盃（RPCS3）"
 
-#: templates/systems.html:92
+#: templates/systems.html:94
 msgid "View Specifications"
 msgstr "檢視規格參數"
 
-#: templates/systems.html:105
+#: templates/systems.html:107
 msgid "Scan your ROM library to add systems."
 msgstr "掃描您的 ROM 遊戲庫以新增系統。"
 
-#: templates/systems.html:118
+#: templates/systems.html:120
 msgid "System Specifications"
 msgstr "系統規格"
 
-#: templates/wishlist.html:10
+#: templates/wishlist.html:12
 msgid "Games you want to find and add to your collection"
 msgstr "你想找到並加入合集的遊戲"
 
-#: templates/wishlist.html:13
+#: templates/wishlist.html:15
 msgid "Scrape metadata for every un-scraped wishlist item"
 msgstr "為每個未抓取的願望清單項抓取中繼資料"
 
-#: templates/wishlist.html:14 templates/wishlist.html:654
+#: templates/wishlist.html:16 templates/wishlist.html:657
 msgid "Scrape All"
 msgstr "全部抓取"
 
-#: templates/wishlist.html:17 templates/wishlist.html:53
-#: templates/wishlist.html:113 templates/wishlist.html:670
-#: templates/wishlist.html:671
+#: templates/wishlist.html:19 templates/wishlist.html:55
+#: templates/wishlist.html:115 templates/wishlist.html:673
+#: templates/wishlist.html:674
 msgid "Add to Wishlist"
 msgstr "新增到願望清單"
 
-#: templates/wishlist.html:25 templates/wishlist.html:81
-#: templates/wishlist.html:496
+#: templates/wishlist.html:27 templates/wishlist.html:83
+#: templates/wishlist.html:499
 msgid "Must Have"
 msgstr "必備"
 
-#: templates/wishlist.html:26 templates/wishlist.html:84
-#: templates/wishlist.html:496
+#: templates/wishlist.html:28 templates/wishlist.html:86
+#: templates/wishlist.html:499
 msgid "High"
 msgstr "高"
 
-#: templates/wishlist.html:27 templates/wishlist.html:87
-#: templates/wishlist.html:496
+#: templates/wishlist.html:29 templates/wishlist.html:89
+#: templates/wishlist.html:499
 msgid "Medium"
 msgstr "中"
 
-#: templates/wishlist.html:28 templates/wishlist.html:90
-#: templates/wishlist.html:496
+#: templates/wishlist.html:30 templates/wishlist.html:92
+#: templates/wishlist.html:499
 msgid "Low"
 msgstr "低"
 
-#: templates/wishlist.html:29 templates/wishlist.html:93
-#: templates/wishlist.html:496
+#: templates/wishlist.html:31 templates/wishlist.html:95
+#: templates/wishlist.html:499
 msgid "Someday"
 msgstr "有朝一日"
 
-#: templates/wishlist.html:40
+#: templates/wishlist.html:42
 msgid "Wishlist is Empty"
 msgstr "願望單為空"
 
-#: templates/wishlist.html:42
+#: templates/wishlist.html:44
 msgid "Add games you're looking for to keep track of your wants."
 msgstr "新增你正在尋找的遊戲，以便記錄你的心願。"
 
-#: templates/wishlist.html:45
+#: templates/wishlist.html:47
 msgid "Add First Item"
 msgstr "新增第一項"
 
-#: templates/wishlist.html:59
+#: templates/wishlist.html:61
 msgid "Game Title"
 msgstr "遊戲標題"
 
-#: templates/wishlist.html:60
+#: templates/wishlist.html:62
 msgid "e.g., Chrono Trigger"
 msgstr "例如：Chrono Trigger"
 
-#: templates/wishlist.html:66
+#: templates/wishlist.html:68
 msgid "(optional — pick from the list or type a new one for upcoming systems)"
 msgstr "（可選——從列表中選擇，或為即將支援的系統輸入新項）"
 
-#: templates/wishlist.html:71
+#: templates/wishlist.html:73
 msgid "e.g., SNES, PlayStation, Sony PlayStation 6"
 msgstr "例如：SNES、PlayStation、Sony PlayStation 6"
 
-#: templates/wishlist.html:78
+#: templates/wishlist.html:80
 msgid "Priority"
 msgstr "優先級"
 
-#: templates/wishlist.html:98
+#: templates/wishlist.html:100
 msgid "Notes"
 msgstr "備註"
 
-#: templates/wishlist.html:98
+#: templates/wishlist.html:100
 msgid "(optional)"
 msgstr "（可選）"
 
-#: templates/wishlist.html:99
+#: templates/wishlist.html:101
 msgid "Any notes, preferred edition, price target..."
 msgstr "任何備註、偏好的版本、目標價格..."
 
-#: templates/wishlist.html:104
+#: templates/wishlist.html:106
 msgid "Scrape metadata now (boxart, description, release date, &hellip;)"
 msgstr "立即抓取中繼資料（封面、描述、發行日期&hellip;）"
 
-#: templates/wishlist.html:107
+#: templates/wishlist.html:109
 msgid "Can be triggered later too. Unreleased titles may not have all fields."
 msgstr "之後也可以再次觸發。未發行的遊戲可能不含全部欄位。"
 
-#: templates/wishlist.html:503
+#: templates/wishlist.html:506
 msgid "Unscraped"
 msgstr "未抓取"
 
-#: templates/wishlist.html:507
+#: templates/wishlist.html:510
 msgid "No Match"
 msgstr "無比對"
 
-#: templates/wishlist.html:575
+#: templates/wishlist.html:578
 msgid "No items match this filter."
 msgstr "沒有符合此篩選條件的項。"
 
-#: templates/wishlist.html:612
+#: templates/wishlist.html:615
 msgid "No boxart yet"
 msgstr "尚無封面"
 
-#: templates/wishlist.html:614
+#: templates/wishlist.html:617
 msgid "Re-scrape metadata"
 msgstr "重新抓取中繼資料"
 
-#: templates/wishlist.html:614
+#: templates/wishlist.html:617
 msgid "Scrape metadata"
 msgstr "抓取中繼資料"
 
-#: templates/wishlist.html:634
+#: templates/wishlist.html:637
 #, python-brace-format
 msgid "Added {date}"
 msgstr "新增於 {date}"
 
-#: templates/wishlist.html:653
+#: templates/wishlist.html:656
 #, python-brace-format
 msgid "Scrape All ({n})"
 msgstr "全部抓取（{n}）"
 
-#: templates/wishlist.html:696
+#: templates/wishlist.html:699
 msgid "Edit Wishlist Item"
 msgstr "編輯心願單項目"
 
-#: templates/wishlist.html:740
+#: templates/wishlist.html:743
 msgid "Please enter a game title."
 msgstr "請輸入遊戲標題。"
 
-#: templates/wishlist.html:780
+#: templates/wishlist.html:783
 msgid "Wishlist item updated."
 msgstr "心願單項目已更新。"
 
-#: templates/wishlist.html:781
+#: templates/wishlist.html:784
 msgid "Added to wishlist — scraping metadata in the background."
 msgstr "已新增到願望清單 —— 正在後台抓取中繼資料。"
 
-#: templates/wishlist.html:781
+#: templates/wishlist.html:784
 msgid "Added to wishlist."
 msgstr "已加入願望清單。"
 
-#: templates/wishlist.html:786
+#: templates/wishlist.html:789
 msgid "Failed to save."
 msgstr "儲存失敗。"
 
-#: templates/wishlist.html:790
+#: templates/wishlist.html:793
 msgid "Error saving wishlist item."
 msgstr "儲存願望單項目時出錯。"
 
-#: templates/wishlist.html:809
+#: templates/wishlist.html:812
 msgid "Failed to start scrape."
 msgstr "啟動抓取失敗。"
 
-#: templates/wishlist.html:813
+#: templates/wishlist.html:816
 msgid "Scraping metadata — this may take a few seconds."
 msgstr "正在抓取中繼資料 — 這可能需要幾秒鐘。"
 
-#: templates/wishlist.html:818
+#: templates/wishlist.html:821
 msgid "Error starting scrape."
 msgstr "啟動抓取出錯。"
 
-#: templates/wishlist.html:830
+#: templates/wishlist.html:833
 msgid "Failed to start bulk scrape."
 msgstr "啟動批次抓取失敗。"
 
-#: templates/wishlist.html:834
+#: templates/wishlist.html:837
 msgid "Everything is already scraped."
 msgstr "所有內容均已抓取。"
 
-#: templates/wishlist.html:837
+#: templates/wishlist.html:840
 #, python-brace-format
 msgid "Scraping {n} item(s) in the background."
 msgstr "正在後台抓取 {n} 個項目。"
 
-#: templates/wishlist.html:841
+#: templates/wishlist.html:844
 msgid "Error starting bulk scrape."
 msgstr "啟動批次抓取時出錯。"
 
-#: templates/wishlist.html:854
+#: templates/wishlist.html:857
 msgid "Remove from Wishlist"
 msgstr "從願望清單移除"
 
-#: templates/wishlist.html:855
+#: templates/wishlist.html:858
 #, python-brace-format
 msgid "Are you sure you want to remove \"{title}\" from your wishlist?"
 msgstr "確定要將「{title}」從願望單中移除嗎？"
 
-#: templates/wishlist.html:865
+#: templates/wishlist.html:868
 msgid "Removed from wishlist."
 msgstr "已從願望單移除。"
 
-#: templates/wishlist.html:868
+#: templates/wishlist.html:871
 msgid "Failed to remove."
 msgstr "移除失敗。"
 
-#: templates/wishlist.html:872
+#: templates/wishlist.html:875
 msgid "Error removing item."
 msgstr "移除項目時出錯。"
 
-#: templates/xbox_achievement_game.html:98
+#: templates/xbox_achievement_game.html:100
 #, python-format
 msgid "%(earned)s / %(total)s Gamerscore"
 msgstr "%(earned)s / %(total)s Gamerscore"
 
-#: templates/xbox_achievement_game.html:176
+#: templates/xbox_achievement_game.html:178
 #, python-format
 msgid "%(count)s total (%(gs)s GS)"
 msgstr "共 %(count)s 個（%(gs)s GS）"
 
-#: templates/xbox_achievement_game.html:263
+#: templates/xbox_achievement_game.html:265
 msgid ""
 "Click <strong>Refresh</strong> above to sync individual achievements from"
 " Xbox."
 msgstr "點擊上方的<strong>重新整理</strong>以從 Xbox 同步各項成就。"
 
-#: templates/xbox_achievements.html:140
+#: templates/xbox_achievements.html:142
 msgid "No Xbox Achievements"
 msgstr "無 Xbox 成就"
 
-#: templates/xbox_achievements.html:142
+#: templates/xbox_achievements.html:144
 msgid "Import Xbox games and sync achievements to see them here."
 msgstr "匯入 Xbox 遊戲並同步成就後即可在此檢視。"
 
@@ -8378,45 +8380,45 @@ msgstr "主題即時生效。更改會自動儲存。"
 msgid "Language"
 msgstr "語言"
 
-#: templates/_settings_tabs/library.html:135
+#: templates/_settings_tabs/library.html:137
 msgid "Changes the interface language. The page reloads when you switch."
 msgstr "更改介面語言。切換時頁面將重新載入。"
 
-#: templates/_settings_tabs/library.html:139
+#: templates/_settings_tabs/library.html:141
 msgid "Preferred Boxart Style"
 msgstr "首選封面樣式"
 
-#: templates/_settings_tabs/library.html:141
+#: templates/_settings_tabs/library.html:143
 msgid "2D Boxart (Standard)"
 msgstr "2D 封面（標準）"
 
-#: templates/_settings_tabs/library.html:142
+#: templates/_settings_tabs/library.html:144
 msgid "3D Boxart (with 2D fallback)"
 msgstr "3D 封面（回退為 2D）"
 
-#: templates/_settings_tabs/library.html:144
+#: templates/_settings_tabs/library.html:146
 msgid "When 3D is selected, 2D boxart will be shown if no 3D version exists"
 msgstr "選擇 3D 時，若不存在 3D 版本，將顯示 2D 封面"
 
-#: templates/_settings_tabs/library.html:148
+#: templates/_settings_tabs/library.html:150
 msgid "Preferred Age Rating System"
 msgstr "首選年齡分級系統"
 
-#: templates/_settings_tabs/library.html:160
+#: templates/_settings_tabs/library.html:162
 msgid ""
 "Ratings from other systems are cross-mapped when the preferred system's "
 "rating is unavailable"
 msgstr "當首選系統的分級不可用時，將交叉映射來自其他系統的分級"
 
-#: templates/_settings_tabs/library.html:166
+#: templates/_settings_tabs/library.html:168
 msgid "Save Display Settings"
 msgstr "儲存顯示設定"
 
-#: templates/_settings_tabs/library.html:175
+#: templates/_settings_tabs/library.html:177
 msgid "ROM Naming Conventions"
 msgstr "ROM 命名規範"
 
-#: templates/_settings_tabs/library.html:179
+#: templates/_settings_tabs/library.html:181
 msgid ""
 "Configure the filename pattern for each system type. Title is always "
 "first.\n"
@@ -8426,35 +8428,35 @@ msgstr ""
 "為每種系統類型設定檔案名格式。標題始終排在最前。\n"
 "            按標籤應在檔案名中出現的順序新增它們（例如 <code>Title (Region).zip</code>）。"
 
-#: templates/_settings_tabs/library.html:184
+#: templates/_settings_tabs/library.html:186
 msgid "Article Placement"
 msgstr "冠詞位置"
 
-#: templates/_settings_tabs/library.html:186
+#: templates/_settings_tabs/library.html:188
 msgid ""
 "Controls where articles (A, An, The) appear in game titles and ROM "
 "filenames."
 msgstr "控制冠詞（A、An、The）在遊戲標題和 ROM 檔案名稱中的出現位置。"
 
-#: templates/_settings_tabs/library.html:189
+#: templates/_settings_tabs/library.html:191
 msgid "Beginning (natural) — \"The Legend of Zelda\""
 msgstr "開頭（自然）—「The Legend of Zelda」"
 
-#: templates/_settings_tabs/library.html:190
+#: templates/_settings_tabs/library.html:192
 msgid "End (sort-friendly) — \"Legend of Zelda, The\""
 msgstr "置於末尾（便於排序）— 「Legend of Zelda, The」"
 
-#: templates/_settings_tabs/library.html:192
+#: templates/_settings_tabs/library.html:194
 msgid ""
 "Applies to new scrapes and rename suggestions. Existing titles are not "
 "changed automatically."
 msgstr "適用於新的抓取和重新命名建議。現有標題不會自動更改。"
 
-#: templates/_settings_tabs/library.html:196
+#: templates/_settings_tabs/library.html:198
 msgid "Region Options"
 msgstr "地區選項"
 
-#: templates/_settings_tabs/library.html:198
+#: templates/_settings_tabs/library.html:200
 msgid ""
 "Configure the available region values and default. The default region is "
 "used when scraping if no region is detected."

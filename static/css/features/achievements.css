@@ -50,10 +50,16 @@
 }
 
 /* --- Games Grid --- */
+/* PASS-59-104 — the page caps at 4 columns of this grid. */
+.achievements-page {
+    --card-min: 280px;
+    --card-gap: var(--spacing-md);
+}
+
 .achievement-games-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: var(--spacing-md);
+    grid-template-columns: repeat(auto-fill, minmax(min(var(--card-min), 100%), 1fr));
+    gap: var(--card-gap);
 }
 
 .achievement-game-card {

@@ -1,8 +1,10 @@
 {% extends "base.html" %}
+{% set adaptive_layout = true %}
 
 {% block title %}Tags - RetroDB{% endblock %}
 
 {% block content %}
+<div class="page-box grid-4 tags-page">
 <!-- Page Header -->
 <div class="page-header">
     <div>
@@ -86,15 +88,22 @@
         No games have this tag yet. Add tags to games from the game detail page.
     </div>
 </div>
+</div>
 {% endblock %}
 
 {% block styles %}
 <style>
 /* Tags Grid */
+/* PASS-59-104 — the page caps at 4 columns of this grid. */
+.tags-page {
+    --card-min: 240px;
+    --card-gap: var(--spacing-lg);
+}
+
 .tags-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: var(--spacing-lg);
+    grid-template-columns: repeat(auto-fill, minmax(min(var(--card-min), 100%), 1fr));
+    gap: var(--card-gap);
     margin-top: var(--spacing-lg);
 }
 
@@ -257,9 +266,10 @@
     color: var(--text-muted);
 }
 
+/* A column is at least 200px and at least a quarter of the row, so 4 at most. */
 .tag-games-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(max(200px, (100% - 3 * var(--spacing-md)) / 4), 1fr));
     gap: var(--spacing-md);
 }
 

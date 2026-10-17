@@ -814,6 +814,10 @@ const StickyScroll = {
                     const scope = document.getElementById(scopeId);
                     if (scope && !scope.contains(targetEl)) return;
                 }
+
+                const navBox = nav.getBoundingClientRect();
+                const targetBox = targetEl.getBoundingClientRect();
+                if (navBox.right <= targetBox.left || navBox.left >= targetBox.right) return;
             }
 
             const stickyTop = parseFloat(getComputedStyle(nav).top) || 0;

@@ -1,8 +1,10 @@
 {% extends "base.html" %}
+{% set adaptive_layout = true %}
 
 {% block title %}Museum - RetroDB{% endblock %}
 
 {% block content %}
+<div class="page-box grid-4 museum-page">
 <!-- Page Header -->
 <div class="page-header">
     <div>
@@ -128,6 +130,7 @@
     <span class="museum-lightbox-close" onclick="closeHardwareLightbox()" aria-label="{{ _('Close hardware viewer') }}">&times;</span>
     <img id="museumHwLightboxImage" class="museum-lightbox-image" alt="Hardware">
     <div id="museumHwLightboxTitle" class="museum-lightbox-title"></div>
+</div>
 </div>
 {% endblock %}
 

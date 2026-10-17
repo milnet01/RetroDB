@@ -1,9 +1,11 @@
 {% extends "base.html" %}
+{% set adaptive_layout = true %}
 {% from "_macros/sticky_subnav.html" import tab_subnav, subnav_link %}
 
 {% block title %}{{ _('Settings') }} - RetroDB{% endblock %}
 
 {% block content %}
+<div class="page-box form-page">
 <!-- Page Header -->
 <div class="page-header">
     <div>
@@ -68,6 +70,7 @@
             <button type="button" class="btn btn-danger" id="confirmBtn" onclick="executeConfirm()">{{ _('Delete') }}</button>
         </div>
     </div>
+</div>
 </div>
 {% endblock %}
 

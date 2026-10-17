@@ -1873,9 +1873,14 @@ class TestPass41_13cDivAsButton:
         assert '<button type="button" class="scrape-history-toggle"' in body, (
             "Pass 41.13c — scrape-history disclosure must be a <button>"
         )
-        assert 'aria-expanded="true"' in body and 'aria-controls="scrapeHistoryContent"' in body, (
+        # PASS-59-104 (user, 2026-10-17): the history starts folded, so the
+        # button starts aria-expanded="false" and its panel hidden.
+        assert 'aria-expanded="false" aria-controls="scrapeHistoryContent"' in body, (
             "Pass 41.13c — scrape-history disclosure button must declare "
             "aria-expanded + aria-controls (WAI-ARIA APG accordion pattern)"
+        )
+        assert 'id="scrapeHistoryContent" class="scrape-history-content" style="display: none;"' in body, (
+            "PASS-59-104 — the folded state must match aria-expanded=\"false\""
         )
         assert "btn.setAttribute('aria-expanded'" in body, (
             "Pass 41.13c — toggleScrapeHistory must flip aria-expanded on "

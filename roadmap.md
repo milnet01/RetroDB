@@ -7645,7 +7645,16 @@ were corrected in `2836bc3` and are not repeated here.
   toasts sit 10px outside the `.page-box`. Measured in Chrome frames at
   375/960/1600/2560 px and the user's full 3840 px window: no sideways
   scroll, 1–4 columns; Dashboard (not adopted) unchanged at 1400px.
-  Still to adopt: the remaining pages, after the user has used these.
+  Stage 2 (2026-10-17, v3.26.0): the user approved stage 1, and every
+  other page extending `base.html` now opts in. Shared caps in
+  `static/css/layout/layout.css` (`grid-4`, `data-page`, `form-page`,
+  `detail-page`; table in §7); Help keeps 75ch with its links in a sticky
+  side column from 1300px; on a phone a `.data-table` scrolls inside
+  itself. The game page, on the user's requests: screenshots across the
+  top with Video and a new Also Known As card below, level with the hero;
+  Manual is a header button; Scrape History starts folded. Measured in
+  Chrome frames on 37 pages at 375 and 960px (no sideways scroll), the
+  card pages at 3840px (at most 4 columns).
 - **Release** (user, 2026-10-17): v3.24.2 and v3.25.0 are pushed but not
   released; release once the user is happy with the layout or the next
   pages are done. The 14-agent audit stays deferred (memory

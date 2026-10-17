@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% set adaptive_layout = true %}
 {% from "_macros/nav_tabs.html" import achievement_tabs %}
 {% from "_macros/breadcrumb.html" import breadcrumb %}
 {% set needs_games_bundle = true %}
@@ -6,6 +7,7 @@
 {% block title %}{{ _('Steam Achievements') }} - RetroDB{% endblock %}
 
 {% block content %}
+<div class="page-box grid-4 achievements-page">
 {{ achievement_tabs('steam') }}
 
 <!-- Breadcrumb -->
@@ -144,7 +146,7 @@
     </div>
 </div>
 {% endif %}
-
+</div>
 {% endblock %}
 
 {% block scripts %}

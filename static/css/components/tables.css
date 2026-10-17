@@ -12,6 +12,15 @@
     border-collapse: collapse;
 }
 
+/* PASS-59-104 — on an adaptive page, a table wider than a phone scrolls
+   inside itself, not the page. */
+@media (max-width: 600px) {
+    .page-box .data-table {
+        display: block;
+        overflow-x: auto;
+    }
+}
+
 .data-table th {
     background: var(--bg-darker, #0d1117);
     color: var(--text-secondary);

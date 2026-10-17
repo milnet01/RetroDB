@@ -1,13 +1,20 @@
 {% extends "base.html" %}
+{% set adaptive_layout = true %}
 
 {% block title %}ROM Tools - RetroDB{% endblock %}
 
 {% block styles %}
 <style>
+/* PASS-59-104 — the page caps at 4 columns of this grid. */
+.tools-page {
+    --card-min: 300px;
+    --card-gap: 1.5rem;
+}
+
 .tools-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(var(--card-min), 100%), 1fr));
+    gap: var(--card-gap);
     margin-top: 1.5rem;
 }
 
@@ -101,6 +108,7 @@
 {% endblock %}
 
 {% block content %}
+<div class="page-box grid-4 tools-page">
 <div class="page-header">
     <div>
         <h1 class="page-title">{{ _('ROM Tools') }}</h1>
@@ -403,4 +411,5 @@ function startImageResize() {
     );
 }
 </script>
+</div>
 {% endblock %}

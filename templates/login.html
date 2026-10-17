@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% set adaptive_layout = true %}
 
 {% block title %}{{ _('Login') }} - RetroDB{% endblock %}
 
@@ -197,6 +198,7 @@
 {% endblock %}
 
 {% block content %}
+<div class="page-box">
 <div class="login-container">
     <div class="login-card">
         <div class="login-header">
@@ -257,6 +259,7 @@
 </div>
 
 <input type="hidden" id="nextUrl" value="{{ next_url }}">
+</div>
 {% endblock %}
 
 {% block scripts %}

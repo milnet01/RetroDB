@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% set adaptive_layout = true %}
 {% from "_macros/nav_tabs.html" import rom_tool_tabs %}
 {% set needs_games_bundle = true %}
 
@@ -258,6 +259,7 @@
 {% endblock %}
 
 {% block content %}
+<div class="page-box data-page">
 {{ rom_tool_tabs('reports') }}
 
 <!-- Page Header -->
@@ -523,6 +525,7 @@
             <button type="button" class="btn btn-primary" onclick="closeBatchModal()" id="batchDoneBtn" style="display: none;">{{ _('Done') }}</button>
         </div>
     </div>
+</div>
 </div>
 {% endblock %}
 

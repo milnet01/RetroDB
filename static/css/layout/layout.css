@@ -59,6 +59,36 @@
     min-width: 0;
 }
 
+/* The element holding an adaptive page's content. A page caps it with
+   --page-max when nothing inside would use more width. */
+.page-box {
+    max-width: var(--page-max, none);
+    margin-inline: auto;
+}
+
+/* A card-grid page stops widening 1px before a fifth card would fit, so its
+   main grid shows at most 4 columns. The page sets --card-min and --card-gap
+   to that grid's minimum card width and column gap. */
+.page-box.grid-4 {
+    --page-max: calc(5 * var(--card-min) + 4 * var(--card-gap) - 1px);
+}
+
+/* Tables, lists and tool pages: wider only spreads their columns apart. */
+.page-box.data-page {
+    --page-max: 1400px;
+}
+
+/* Settings forms keep inputs a readable width. */
+.page-box.form-page {
+    --page-max: 1100px;
+}
+
+/* Detail and chart pages: two panels side by side, each wide enough that
+   rows rarely wrap; charts of fixed height wider than this turn into strips. */
+.page-box.detail-page {
+    --page-max: 1600px;
+}
+
 /* =============================================================================
    SECTION LAYOUTS
    ============================================================================= */

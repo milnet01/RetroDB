@@ -1,8 +1,10 @@
 {% extends "base.html" %}
+{% set adaptive_layout = true %}
 
 {% block title %}{{ _('Collector Trophies') }} - RetroDB{% endblock %}
 
 {% block content %}
+<div class="page-box grid-4 collector-page">
 <!-- Page Header -->
 <div class="page-header">
     <div>
@@ -111,6 +113,7 @@
 </section>
 {% endif %}
 {% endfor %}
+</div>
 {% endblock %}
 
 {% block styles %}
@@ -150,7 +153,7 @@
     display: flex;
     align-items: center;
     gap: var(--spacing-md);
-    min-width: 220px;
+    min-width: min(220px, 100%);
 }
 
 .collector-rank-icon {
@@ -174,11 +177,17 @@
     text-transform: uppercase;
     letter-spacing: 1px;
     line-height: 1.15;
+    overflow-wrap: anywhere;
+}
+
+/* Lets a long rank name wrap on a phone instead of widening the page. */
+.collector-rank-title > div {
+    min-width: 0;
 }
 
 .collector-rank-progress {
     flex: 1;
-    min-width: 260px;
+    min-width: min(260px, 100%);
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -335,11 +344,17 @@
     border: 1px solid var(--border-color);
 }
 
+/* PASS-59-104 — the page caps at 4 columns of this grid. */
+.collector-page {
+    --card-min: 280px;
+    --card-gap: var(--spacing-md);
+}
+
 /* Trophy Grid */
 .trophy-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: var(--spacing-md);
+    grid-template-columns: repeat(auto-fill, minmax(min(var(--card-min), 100%), 1fr));
+    gap: var(--card-gap);
 }
 
 /* Trophy Card */

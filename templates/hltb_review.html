@@ -1,8 +1,10 @@
 {% extends "base.html" %}
+{% set adaptive_layout = true %}
 
 {% block title %}HLTB Review - RetroDB{% endblock %}
 
 {% block content %}
+<div class="page-box data-page">
 <div class="page-header">
     <div>
         <h1 class="page-title">{{ _('HLTB Pending Matches') }}</h1>
@@ -334,4 +336,5 @@ function hltbRejectAll() {
 
 document.addEventListener('DOMContentLoaded', hltbLoadPending);
 </script>
+</div>
 {% endblock %}

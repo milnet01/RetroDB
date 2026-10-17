@@ -1,8 +1,10 @@
 {% extends "base.html" %}
+{% set adaptive_layout = true %}
 
 {% block title %}{{ system.name if system else 'System' }} - Museum - RetroDB{% endblock %}
 
 {% block content %}
+<div class="page-box grid-4 museum-system-page">
 {% if not system %}
 <div class="empty-state glass-panel">
     <div class="empty-state-icon">&#10060;</div>
@@ -246,6 +248,7 @@
 </div>
 
 {% endif %}
+</div>
 {% endblock %}
 
 {% block scripts %}

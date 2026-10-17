@@ -69,23 +69,18 @@
         </a>
     </div>
     {% endif %}
-    {% if alternate_titles %}
-    <div class="alternate-titles">
-        <span class="alternate-titles-label">{{ _('Also known as:') }}</span>
-        {% for alt in alternate_titles %}
-        <span class="alt-title-chip" {% if alt.region %}title="{{ alt.region }}{% if alt.source %} · {{ alt.source }}{% endif %}"{% elif alt.source %}title="{% trans source=alt.source %}Source: {{ source }}{% endtrans %}"{% endif %}>
-            {% if alt.region %}<span class="alt-title-region">{{ alt.region }}</span>{% endif %}
-            <span class="alt-title-text">{{ alt.title }}</span>
-        </span>
-        {% endfor %}
-    </div>
-    {% endif %}
     <div class="header-buttons">
         {% if has_perm('launch') %}
         <button type="button" id="play-btn" class="btn btn-primary" data-game-id="{{ game.id }}" onclick="launchGame(this)" title="{{ _('Launch this game in the configured emulator') }}">
             <span class="btn-icon">▶</span>
             {{ _('Play') }}
         </button>
+        {% endif %}
+        {% if game.manual %}
+        <a href="{{ url_for('static', filename='images/manuals/' + game.manual) }}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" title="{{ _('View Manual (PDF)') }}">
+            <span class="btn-icon">📖</span>
+            {{ _('Manual') }}
+        </a>
         {% endif %}
         {% if game.scraped %}
         <button type="button" class="btn btn-danger-outline" onclick="confirmClearMetadata()">
@@ -394,8 +389,8 @@
         </div>
     </div>
 
-    <!-- Media Row: Screenshots + Video side by side -->
-    {% if game.screenshots or game.video %}
+    <!-- Media Row: Screenshots, Video and Also Known As -->
+    {% if game.screenshots or game.video or alternate_titles %}
     <div class="media-row">
         {% if game.screenshots %}
         <div class="media-section screenshots-section">
@@ -424,6 +419,20 @@
                     <source src="{{ url_for('static', filename='videos/' + game.video) }}" type="video/{{ game.video.split('.')[-1] }}">
                     {{ _('Your browser does not support the video tag.') }}
                 </video>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if alternate_titles %}
+        <div class="media-section aka-section">
+            <h2 class="media-title">🏷️ {{ _('Also Known As') }}</h2>
+            <div class="aka-list">
+                {% for alt in alternate_titles %}
+                <span class="alt-title-chip" {% if alt.region %}title="{{ alt.region }}{% if alt.source %} · {{ alt.source }}{% endif %}"{% elif alt.source %}title="{% trans source=alt.source %}Source: {{ source }}{% endtrans %}"{% endif %}>
+                    {% if alt.region %}<span class="alt-title-region">{{ alt.region }}</span>{% endif %}
+                    <span class="alt-title-text">{{ alt.title }}</span>
+                </span>
+                {% endfor %}
             </div>
         </div>
         {% endif %}
@@ -655,25 +664,16 @@
         {% endif %}
     </div>
     
-    <!-- Manual Link -->
-    {% if game.manual %}
-    <div class="manual-link">
-        <a href="{{ url_for('static', filename='images/manuals/' + game.manual) }}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
-            <span class="btn-icon">📖</span>
-            {{ _('View Manual (PDF)') }}
-        </a>
-    </div>
-    {% endif %}
-    
     <!-- Scrape History -->
     {% if game.scrape_history %}
     <div class="scrape-history-section">
         <h2 class="section-title-sm">
-            <button type="button" class="scrape-history-toggle" onclick="toggleScrapeHistory()" aria-expanded="true" aria-controls="scrapeHistoryContent">
-                📜 {{ _('Scrape History') }} <span id="scrapeHistoryArrow">▼</span>
+            <button type="button" class="scrape-history-toggle" onclick="toggleScrapeHistory()" aria-expanded="false" aria-controls="scrapeHistoryContent">
+                📜 {{ _('Scrape History') }} <span id="scrapeHistoryArrow">▶</span>
             </button>
         </h2>
-        <div id="scrapeHistoryContent" class="scrape-history-content">
+        {# Starts folded: a technical record, the tallest block on the page (user, 2026-10-17). #}
+        <div id="scrapeHistoryContent" class="scrape-history-content" style="display: none;">
             {% if game.scrape_history is iterable and game.scrape_history is not string %}
             {% for entry in game.scrape_history | reverse %}
             <div class="history-entry">
@@ -900,8 +900,11 @@ body:has(.game-fanart-bg.active)::before {
 /* GAME PAGE LAYOUT - COMPACT */
 /* ============================================== */
 
+/* Title and buttons share a line when they fit, else the buttons wrap below. */
 .game-page-header {
     display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
     justify-content: space-between;
     align-items: center;
     margin-bottom: var(--spacing-lg);
@@ -924,22 +927,14 @@ body:has(.game-fanart-bg.active)::before {
     margin: 0;
 }
 
-.alternate-titles {
+/* Also Known As card: the game's other titles, on the card background so
+   they read clearly (user, 2026-10-17). */
+.aka-list {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
+    align-content: flex-start;
     gap: 0.5rem;
-    margin-top: 0.5rem;
-    font-size: 0.85rem;
-}
-
-.alternate-titles-label {
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    margin-right: 0.25rem;
+    overflow-y: auto;
 }
 
 .alt-title-chip {
@@ -950,8 +945,8 @@ body:has(.game-fanart-bg.active)::before {
     background: rgba(76, 201, 240, 0.08);
     border: 1px solid rgba(76, 201, 240, 0.25);
     border-radius: var(--radius-full);
-    color: var(--text-secondary);
-    font-size: 0.8rem;
+    color: var(--text-primary);
+    font-size: 0.9rem;
     line-height: 1.4;
 }
 
@@ -1153,6 +1148,7 @@ body:has(.game-fanart-bg.active)::before {
 
 .header-buttons {
     display: flex;
+    flex-wrap: wrap;
     gap: var(--spacing-sm);
 }
 
@@ -1169,10 +1165,44 @@ body:has(.game-fanart-bg.active)::before {
 }
 
 .game-top {
+    container-type: inline-size;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 760px), 1fr));
     column-gap: var(--spacing-lg);
     align-items: start;
+}
+
+/* Beside the hero (2 × 760px columns + the 24px gap = 1544px), screenshots
+   and video stack, and hero and media stretch to the taller of the two so
+   both columns end level (user, 2026-10-17). Under the hero they stay side
+   by side. */
+@container (min-width: 1544px) {
+    .game-top > .game-hero,
+    .game-top > .media-row {
+        align-self: stretch;
+    }
+
+    /* Screenshots across the top; video and Also Known As share the row
+       below, or one of them takes it alone. */
+    .game-top .media-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-auto-rows: minmax(220px, 1fr);
+    }
+
+    .game-top .media-row > .screenshots-section,
+    .game-top .media-row:not(:has(.aka-section)) > .video-section,
+    .game-top .media-row:not(:has(.video-section)) > .aka-section {
+        grid-column: 1 / -1;
+    }
+
+    /* Size containment stops a card's content from growing its row past
+       220px; a taller hero still stretches the rows. */
+    .game-top .media-section {
+        height: auto;
+        contain: size;
+        margin: 0;
+    }
 }
 
 /* Hero Section - Boxart + Core Info */
@@ -1865,11 +1895,6 @@ body:has(.game-fanart-bg.active)::before {
     color: var(--text-muted);
 }
 
-/* Manual Link */
-.manual-link {
-    margin-bottom: var(--spacing-lg);
-}
-
 /* Responsive */
 @media (max-width: 900px) {
     .game-hero {
@@ -1907,9 +1932,6 @@ body:has(.game-fanart-bg.active)::before {
         justify-content: center;
     }
     
-    .header-buttons {
-        flex-direction: column;
-    }
 }
 
 /* Two Column Layout (legacy - keeping for modal compatibility) */
@@ -2285,60 +2307,6 @@ body:has(.game-fanart-bg.active)::before {
     width: 100%;
     max-height: 400px;
     display: block;
-}
-
-/* Manual Link */
-.manual-container {
-    display: block;
-}
-
-.manual-link {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-md);
-    padding: var(--spacing-lg);
-    background: linear-gradient(135deg, rgba(76, 201, 240, 0.1), rgba(247, 37, 133, 0.1));
-    border: 1px solid rgba(76, 201, 240, 0.3);
-    border-radius: var(--radius-md);
-    text-decoration: none;
-    transition: all var(--transition-fast);
-}
-
-.manual-link:hover {
-    border-color: var(--primary-cyan);
-    background: linear-gradient(135deg, rgba(76, 201, 240, 0.2), rgba(247, 37, 133, 0.2));
-    transform: translateX(5px);
-}
-
-.manual-icon {
-    font-size: 2.5rem;
-}
-
-.manual-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.manual-title {
-    color: var(--text-primary);
-    font-weight: 600;
-    font-size: 1.1rem;
-}
-
-.manual-subtitle {
-    color: var(--text-muted);
-    font-size: 0.85rem;
-}
-
-.manual-arrow {
-    color: var(--primary-cyan);
-    font-size: 1.5rem;
-    transition: transform var(--transition-fast);
-}
-
-.manual-link:hover .manual-arrow {
-    transform: translateX(5px);
 }
 
 /* RetroAchievements */
@@ -2983,6 +2951,7 @@ body:has(.game-fanart-bg.active)::before {
 
 .header-buttons {
     display: flex;
+    flex-wrap: wrap;
     gap: var(--spacing-sm);
 }
 
@@ -3019,9 +2988,6 @@ body:has(.game-fanart-bg.active)::before {
         grid-template-columns: 1fr;
     }
     
-    .header-buttons {
-        flex-direction: column;
-    }
 }
 
 /* Applying Overlay */

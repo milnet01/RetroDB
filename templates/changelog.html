@@ -1,8 +1,10 @@
 {% extends "base.html" %}
+{% set adaptive_layout = true %}
 
 {% block title %}Changelog - RetroDB{% endblock %}
 
 {% block content %}
+<div class="page-box changelog-page">
 <!-- Page Header -->
 <div class="page-header">
     <div>
@@ -18,15 +20,14 @@
 <div class="changelog-container" id="changelogContainer">
     {% include '_changelog_entries.html' %}
 </div>
-
+</div>
 {% endblock %}
 
 {% block styles %}
 <style>
-    /* Page-unique: outer wrapper */
-    .changelog-container {
-        max-width: 1300px;
-        margin: 0 auto;
+    /* PASS-59-104 — release notes keep about 75 characters a line. */
+    .changelog-page {
+        --page-max: calc(75ch + 2 * var(--spacing-lg));
     }
 
     /* Load More button wrapper (Pass 49.1) */

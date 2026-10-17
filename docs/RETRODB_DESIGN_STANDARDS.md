@@ -554,9 +554,24 @@ less the page gutter, with no percentage, minimum or maximum width; each
 region sizes itself by the rules above. The element holding the page's content carries
 the class `page-box`; the back-to-top button and the progress toasts sit
 about 10px outside its right and left edges, over the content when there is no
-room. A page that has not opted in keeps the
-legacy wrapper (65% width, `min-width` 600px, `max-width` 1400px) until
-PASS-59-104 reaches it.
+room. Every page extending `base.html` opts in, and a new page must too; a page
+that does not keeps the legacy wrapper (65% width, `min-width` 600px,
+`max-width` 1400px).
+
+The `page-box` caps its width with `--page-max`. Shared caps live in
+`static/css/layout/layout.css`; a page adds one class:
+
+| Class | Cap | For |
+|---|---|---|
+| `grid-4` | 1px under five of the page's cards and four gaps (`--card-min`, `--card-gap`, set by the page) | card-grid pages |
+| `data-page` | 1400px | tables, lists, ROM tools |
+| `form-page` | 1100px | settings forms |
+| `detail-page` | 1600px | trophy and achievement detail pages, Analytics |
+
+A reading page sets `--page-max` to about 75ch plus its card padding (Help,
+Changelog). No class leaves the box uncapped (Logs). On a phone, a
+`.data-table` inside a `page-box` scrolls sideways inside itself; nothing
+else may make the page scroll sideways.
 
 **What checks this:** nothing automatic. Each adapted page is walked in a
 browser at 375 px, at about half of a 1920 px window, and at a window of

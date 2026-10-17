@@ -7,8 +7,11 @@
    GAME PAGE HEADER (shared across game detail, trophy detail, achievements)
    ============================================================================= */
 
+/* Title and buttons share a line when they fit, else the buttons wrap below. */
 .game-page-header {
     display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
     justify-content: space-between;
     align-items: center;
     margin-bottom: var(--spacing-lg);
@@ -26,6 +29,7 @@
 
 .header-buttons {
     display: flex;
+    flex-wrap: wrap;
     gap: var(--spacing-sm);
 }
 
@@ -294,10 +298,16 @@
    SYSTEMS GRID (Achievements/Dashboard)
    ============================================================================= */
 
+/* PASS-59-104 — the dashboard caps at 4 columns of its systems grid. */
+.dashboard-page {
+    --card-min: 280px;
+    --card-gap: var(--spacing-lg);
+}
+
 .systems-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: var(--spacing-lg);
+    grid-template-columns: repeat(auto-fill, minmax(min(var(--card-min, 280px), 100%), 1fr));
+    gap: var(--card-gap, var(--spacing-lg));
 }
 
 .system-card {
@@ -615,6 +625,61 @@
    HELP PAGE
    ============================================================================= */
 
+/* PASS-59-104 — help text keeps about 75 characters a line. From 1300px the
+   section links leave the top bar for a sticky column beside the text. */
+.help-page {
+    --help-text-max: calc(75ch + 2 * var(--spacing-lg));
+    --help-nav-width: 220px;
+    --page-max: var(--help-text-max);
+}
+
+/* On top, the links sit in one row that scrolls sideways, so the sticky bar
+   stays one line tall. */
+.help-page > .help-nav {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+}
+
+/* A long command or path wraps on a phone. */
+@media (max-width: 600px) {
+    .help-page code {
+        overflow-wrap: anywhere;
+    }
+}
+
+@media (min-width: 1300px) {
+    .help-page {
+        --page-max: calc(var(--help-nav-width) + var(--spacing-xl) + var(--help-text-max));
+        display: grid;
+        grid-template-columns: var(--help-nav-width) minmax(0, 1fr);
+        column-gap: var(--spacing-xl);
+        align-items: start;
+    }
+
+    .help-page > * {
+        grid-column: 2;
+    }
+
+    .help-page > .page-header {
+        grid-column: 1 / -1;
+    }
+
+    .help-page > .help-nav {
+        grid-column: 1;
+        grid-row: 2 / span 100;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        margin: 0;
+        max-height: 100vh;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    .help-page .help-nav-item {
+        white-space: normal;
+    }
+}
+
 .help-section {
     margin-bottom: var(--spacing-xl);
 }
@@ -742,9 +807,6 @@
         font-size: 1.25rem;
     }
 
-    .header-buttons {
-        flex-direction: column;
-    }
 }
 
 /* =============================================================================
@@ -1615,10 +1677,16 @@
 }
 
 /* --- System Grid (Landing) --- */
+/* PASS-59-104 — the page caps at 4 columns of this grid. */
+.museum-page {
+    --card-min: 260px;
+    --card-gap: var(--spacing-md);
+}
+
 .museum-systems-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: var(--spacing-md);
+    grid-template-columns: repeat(auto-fill, minmax(min(var(--card-min), 100%), 1fr));
+    gap: var(--card-gap);
 }
 
 .museum-system-card {
@@ -1847,6 +1915,7 @@
 
 /* --- History Content --- */
 .museum-history-content {
+    max-width: calc(75ch + 2 * var(--spacing-lg));
     padding: var(--spacing-lg);
     line-height: 1.75;
     color: var(--text-primary);
@@ -1893,10 +1962,16 @@
 }
 
 /* --- Specs Grid --- */
+/* PASS-59-104 — a museum system page caps at 4 columns of its specs grid. */
+.museum-system-page {
+    --card-min: 280px;
+    --card-gap: var(--spacing-md);
+}
+
 .museum-specs-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: var(--spacing-md);
+    grid-template-columns: repeat(auto-fill, minmax(min(var(--card-min), 100%), 1fr));
+    gap: var(--card-gap);
 }
 
 .museum-spec-item {

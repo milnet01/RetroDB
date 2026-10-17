@@ -1,8 +1,10 @@
 {% extends "base.html" %}
+{% set adaptive_layout = true %}
 
 {% block title %}Emulators · Settings · RetroDB{% endblock %}
 
 {% block content %}
+<div class="page-box form-page">
 <div class="page-header">
     <h1 class="page-title">🎮 Emulators</h1>
     <p class="page-subtitle">Manage emulator binaries and per-system mappings used by the ▶ Play button.</p>
@@ -154,4 +156,5 @@
 </section>
 
 <script src="{{ asset_url('js/emulators-settings.js') }}" defer></script>
+</div>
 {% endblock %}

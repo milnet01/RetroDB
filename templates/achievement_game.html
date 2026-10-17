@@ -1,10 +1,12 @@
 {% extends "base.html" %}
+{% set adaptive_layout = true %}
 {% from "_macros/breadcrumb.html" import breadcrumb %}
 {% set needs_games_bundle = true %}
 
 {% block title %}{{ game.title }} Achievements - RetroDB{% endblock %}
 
 {% block content %}
+<div class="page-box detail-page">
 <!-- Fanart Background -->
 {% if game.fanart %}
 <div class="game-fanart-bg active" style="background-image: url('{{ url_for('static', filename='images/fanart/' + game.fanart) }}')"></div>
@@ -358,7 +360,7 @@
     </div>
 </div>
 {% endif %}
-
+</div>
 {% endblock %}
 
 {% block styles %}

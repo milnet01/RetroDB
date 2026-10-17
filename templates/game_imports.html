@@ -1,6 +1,8 @@
 {% extends "base.html" %}
+{% set adaptive_layout = true %}
 {% block title %}Game Imports - RetroDB{% endblock %}
 {% block content %}
+<div class="page-box">
 <style>
 .import-container { max-width: 1200px; margin: 0 auto; }
 
@@ -19,6 +21,7 @@
 /* Tabs */
 .platform-tabs {
     display: flex;
+    flex-wrap: wrap;
     gap: 0;
     margin-bottom: var(--spacing-xl);
     border-bottom: 2px solid var(--card-border);
@@ -1006,4 +1009,5 @@ document.addEventListener('DOMContentLoaded', () => {
     if (params.get('tab') === 'psn') checkPsnStatus();
 });
 </script>
+</div>
 {% endblock %}
