@@ -7697,6 +7697,26 @@ were corrected in `2836bc3` and are not repeated here.
   Lanes: ai, ui.
 - **Source**: user, 2026-10-17.
 
+#### Pass 59.108 Apply Metadata shows a percentage gauge, not a spinner (MEDIUM, M)
+- **Target**: the game page's Search Metadata apply (`routes/games.py`
+  `action == 'apply'`, a plain form POST), `scraper/hybrid_scraper.py`
+  `apply_hybrid_metadata`, and `showApplyingOverlay()` in
+  `templates/game_detail.html`.
+- **Why**: applying one game's metadata takes a while, and the overlay shows
+  only a spinner. The request returns nothing until every source fetch, media
+  download and database write is done, so the page cannot know how far along
+  it is.
+- **Decisions** (user, 2026-10-17): a ring gauge that fills to 100% with the
+  percentage in its centre. Planned shape: the apply runs in the background
+  and counts steps done of steps planned (each source fetch, each media
+  download); the page polls it and shows the current step ("Downloading
+  video…"); a large download moves the gauge by bytes received. At 100% the
+  page reloads as it does now. The overlay's strings, English-only today,
+  get wrapped for i18n.
+- **Status**: todo, next after the PASS-59-104 release, before PASS-59-91
+  stage 2. Lanes: ui, scraper.
+- **Source**: user, 2026-10-17.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
