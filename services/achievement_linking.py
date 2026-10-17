@@ -46,6 +46,31 @@ _RA_NON_WORD = re.compile(r"[^\w\s']")
 
 _RA_STOPWORDS = frozenset({'the', 'a', 'an', 'of', 'and', 'in', 'on', 'at', 'to', 'for'})
 
+# RA matching — a roman-numeral sequel word (ii..xxxix, plus "v"). Bare "i"
+# and "x" are left alone: they are usually a pronoun or a letter ("Mega Man X").
+_RA_ROMAN = re.compile(r'^(?=[ivx]{2,}$|v$)x{0,3}(ix|iv|v?i{0,3})$')
+_ROMAN_VALUES = {'i': 1, 'v': 5, 'x': 10}
+
+
+def canonical_ra_word(word):
+    """Fold a number word to arabic digits ("II" / "02" -> "2"); others unchanged.
+
+    PASS-59-110: sequel numbers are part of a title's identity, so "Doom II"
+    and "Doom 2" must compare equal and "Doom" must not.
+    """
+    if word.isdigit():
+        return str(int(word))
+    if _RA_ROMAN.match(word):
+        values = [_ROMAN_VALUES[c] for c in word]
+        return str(sum(-v if nxt > v else v
+                       for v, nxt in zip(values, values[1:] + [0])))
+    return word
+
+
+def ra_sequel_numbers(words):
+    """The number words in a significant-word set (see canonical_ra_word)."""
+    return {w for w in words if w.isdigit()}
+
 
 def clean_title_for_matching(title):
     """Normalize a title for fuzzy cross-provider matching.
@@ -190,9 +215,15 @@ def normalize_for_ra_match(title):
 
 
 def ra_significant_words(title):
-    """Extract the stopword-filtered word set used by RA Jaccard matching."""
-    words = normalize_for_ra_match(title).split()
-    return {w for w in words if w not in _RA_STOPWORDS and len(w) > 1}
+    """Extract the stopword-filtered word set used by RA Jaccard matching.
+
+    Number words are folded to arabic and kept even when one character
+    long; dropping them made "Donkey Kong Country 2" equal "Donkey Kong
+    Country" (PASS-59-110).
+    """
+    words = (canonical_ra_word(w) for w in normalize_for_ra_match(title).split())
+    return {w for w in words
+            if w not in _RA_STOPWORDS and (len(w) > 1 or w.isdigit())}
 
 
 def match_ra_game(game_title, rom_name, ra_games, jaccard_threshold=0.85):
@@ -238,6 +269,8 @@ def match_ra_game(game_title, rom_name, ra_games, jaccard_threshold=0.85):
         if game_words and ra_words:
             if game_words == ra_words:
                 return ra_game
+            if ra_sequel_numbers(game_words) != ra_sequel_numbers(ra_words):
+                continue
             if game_words.issubset(ra_words) or ra_words.issubset(game_words):
                 intersection = len(game_words & ra_words)
                 union = len(game_words | ra_words)

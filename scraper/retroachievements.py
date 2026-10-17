@@ -15,6 +15,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import config
 from .base_scraper import http_get
+from services.achievement_linking import canonical_ra_word, ra_sequel_numbers
 
 logger = logging.getLogger(__name__)
 
@@ -179,10 +180,14 @@ def search_game_by_name(game_name, console_id):
     
     def get_significant_words(title):
         """Extract significant words (removing articles and very short words)"""
-        words = normalize_title(title).split()
+        # Number words fold to arabic ("II" -> "2") and are kept even when
+        # one character long, so a sequel never equals its original
+        # (PASS-59-110).
+        words = [canonical_ra_word(w) for w in normalize_title(title).split()]
         # Remove articles and single characters
         stopwords = {'the', 'a', 'an', 'of', 'and', 'in', 'on', 'at', 'to', 'for'}
-        return set(w for w in words if w not in stopwords and len(w) > 1)
+        return set(w for w in words
+                   if w not in stopwords and (len(w) > 1 or w.isdigit()))
     
     def calculate_similarity(search_title, ra_title):
         """
@@ -201,6 +206,10 @@ def search_game_by_name(game_name, console_id):
         ra_words = get_significant_words(ra_title)
         
         if not search_words or not ra_words:
+            return 0
+
+        # A sequel number must agree: "Doom 2" is not "Doom" (PASS-59-110).
+        if ra_sequel_numbers(search_words) != ra_sequel_numbers(ra_words):
             return 0
         
         # All search words must be in RA title (strict requirement)

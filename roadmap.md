@@ -7598,7 +7598,16 @@ were corrected in `2836bc3` and are not repeated here.
   the concurrency key and limit cancelling to non-default branches.
 - **Verify**: time a cold and a warm CI run before and after each commit, and
   record all four times; a run cancelled mid-job still saves its cache.
-- **Status**: todo. Lanes: ci.
+- **Shipped** (2026-10-17, `6d2a743`): each job's cache is now
+  `actions/cache/restore` (id `uv-cache`) plus an `actions/cache/save` at
+  the job's end with `if: always() && cache-hit != 'true'`. The
+  concurrency key carries `github.event_name`, and `cancel-in-progress` is
+  true only off the default branch (run 39044966496 for `2a394e6` on main
+  had been cancelled that day). Both levers landed in one commit. Timing:
+  warm runs before were 54–67 s; run 39046032182 after was 63 s, all jobs
+  green, every restore a cache hit, so each save correctly skipped. A cold
+  run was not measured: that needs the cache evicted on purpose.
+- **Status**: done. Lanes: ci.
 - **Source**: claude-config message 2026-09-28 (local-gate.md § 9 walk),
   checked 2026-10-10.
 
@@ -8045,7 +8054,21 @@ were corrected in `2836bc3` and are not repeated here.
   625 (DOOM) hold 528 beside "Doom 2". Grouping non-bonus games by
   `(system_id, ra_game_id)` gives 140 groups of two or more; the sample
   read were sequels, not regional versions.
-- **Status**: todo. Use `locate-defect` first. Lanes: achievements.
+- **Shipped** (2026-10-17, v3.29.1): both RA matchers built
+  significant-word sets keeping only words longer than one character, so
+  the sequel number vanished and "Donkey Kong Country 2" equalled "Donkey
+  Kong Country": `services/achievement_linking.py::ra_significant_words`
+  (RA Refresh) and `scraper/retroachievements.py::search_game_by_name`
+  (scrape and per-game refresh). New `canonical_ra_word` maps digits and
+  roman numerals ii–xxxix to numbers (a bare i or x stays a word, for
+  "Mega Man X"); a candidate with a different number set is rejected.
+  Pinned by `tests/test_pass59_ra_sequels.py` (14 red before). Existing
+  wrong links: one all-systems RA Refresh re-matches every game (it
+  selects all, not only unlinked); no manual-link path exists to protect.
+  Game 625 "DOOM" (ROM "Doom 2 (USA)") stays wrong until its title is
+  corrected. Known limit: "Final Fantasy X" vs "Final Fantasy" is not
+  separated, since a bare X is not read as a number.
+- **Status**: done. Use `locate-defect` first. Lanes: achievements.
 - **Source**: PASS-59-106 spec research, 2026-10-17.
 
 ---
