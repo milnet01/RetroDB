@@ -1,0 +1,13 @@
+{# Anti-piracy disclaimer text.
+
+    Usage:
+        {% from "_macros/legal_disclaimer.html" import legal_disclaimer %}
+        {{ legal_disclaimer() }}
+
+    The same wording as the antsprojectshub.co.za site and the trailer. It is
+    one msgid so each locale translates it as a whole. Shown in the About
+    dialog (base.html) and on the ROM path card (_settings_tabs/library.html).
+#}
+{% macro legal_disclaimer(class='') %}
+<p class="legal-disclaimer{% if class %} {{ class }}{% endif %}">{{ _('We do not condone piracy. RetroDB does not distribute or host ROM files. Only use games you own, copied from your own discs and cartridges; the law on making such copies differs from country to country, so check yours. Game names, cover art, screenshots and videos belong to their owners. RetroDB is not affiliated with or endorsed by any console maker, game publisher, or the game databases and services it works with.') }}</p>
+{%- endmacro %}

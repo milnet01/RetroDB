@@ -1,4 +1,5 @@
 {% from "_macros/sticky_subnav.html" import tab_subnav, subnav_link %}
+{% from "_macros/legal_disclaimer.html" import legal_disclaimer %}
 <div class="settings-tab-panel" id="tab-library" role="tabpanel" aria-label="{{ _('Library settings') }}">
     {% call tab_subnav('library') %}
         {{ subnav_link('library', '📁 ' ~ _('Paths'), active=True) }}
@@ -44,6 +45,7 @@
         <p class="text-muted" style="font-size: 0.85rem; margin-top: var(--spacing-sm);">
             {{ _('Changes to ROM path require a restart to take full effect') }}
         </p>
+        {{ legal_disclaimer('text-muted text-sm mt-lg') }}
     </div>
 </section>
 

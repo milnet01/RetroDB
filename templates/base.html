@@ -205,50 +205,56 @@
                 </button>
             </div>
             
-            <!-- About Modal (in sidebar to be globally available) -->
-            <div class="about-modal-overlay" id="aboutModalOverlay" onclick="if(event.target===this)hideAboutModal()">
-                <div class="about-modal glass-panel" role="dialog" aria-modal="true" aria-labelledby="aboutModalTitle">
-                    <div class="about-modal-header">
-                        <h2 id="aboutModalTitle">🎮 {{ _('About') }} RetroDB</h2>
-                        <button type="button" class="about-modal-close" onclick="hideAboutModal()" aria-label="{{ _('Close') }}">×</button>
+        </nav>
+        <!-- About Modal: outside <nav>, whose backdrop-filter would make it the
+         containing block for this fixed overlay and clip it to the sidebar -->
+        {% from "_macros/legal_disclaimer.html" import legal_disclaimer %}
+        <div class="about-modal-overlay" id="aboutModalOverlay" onclick="if(event.target===this)hideAboutModal()">
+            <div class="about-modal glass-panel" role="dialog" aria-modal="true" aria-labelledby="aboutModalTitle">
+                <div class="about-modal-header">
+                    <h2 id="aboutModalTitle">🎮 {{ _('About') }} RetroDB</h2>
+                    <button type="button" class="about-modal-close" onclick="hideAboutModal()" aria-label="{{ _('Close') }}">×</button>
+                </div>
+                <div class="about-modal-body">
+                    <div class="about-logo">
+                        <div class="about-logo-icon">🎮</div>
+                        <div class="about-logo-text">RETRO<span>DB</span></div>
                     </div>
-                    <div class="about-modal-body">
-                        <div class="about-logo">
-                            <div class="about-logo-icon">🎮</div>
-                            <div class="about-logo-text">RETRO<span>DB</span></div>
+                    <div class="about-details">
+                        <div class="about-item">
+                            <span class="about-label">{{ _('Version') }}</span>
+                            <span class="about-value">{{ config.APP_VERSION }}</span>
                         </div>
-                        <div class="about-details">
-                            <div class="about-item">
-                                <span class="about-label">{{ _('Version') }}</span>
-                                <span class="about-value">{{ config.APP_VERSION }}</span>
-                            </div>
-                            <div class="about-item">
-                                <span class="about-label">{{ _('Last Updated') }}</span>
-                                <span class="about-value">{{ config.APP_LAST_UPDATE }}</span>
-                            </div>
-                            <div class="about-item about-description">
-                                <span class="about-label">{{ _('Description') }}</span>
-                                <span class="about-value">{{ config.APP_DESCRIPTION }}</span>
-                            </div>
+                        <div class="about-item">
+                            <span class="about-label">{{ _('Last Updated') }}</span>
+                            <span class="about-value">{{ config.APP_LAST_UPDATE }}</span>
                         </div>
-                        <div class="about-links">
-                            <a href="{{ url_for('changelog') }}" class="btn btn-secondary btn-sm">
-                                <span>📜</span> {{ _('Changelog') }}
-                            </a>
-                            <a href="{{ url_for('help_page') }}" class="btn btn-secondary btn-sm">
-                                <span>❓</span> {{ _('Help') }}
-                            </a>
-                            <a href="https://github.com/sponsors/milnet01" class="btn btn-secondary btn-sm" target="_blank" rel="noopener noreferrer" title="{{ _("Support RetroDB's development on GitHub Sponsors") }}">
-                                <span>💝</span> {{ _('Sponsor RetroDB') }}
-                            </a>
-                            <a href="https://www.patreon.com/c/AntsProjectsHub" class="btn btn-secondary btn-sm" target="_blank" rel="noopener noreferrer" title="{{ _("Support RetroDB's development on Patreon") }}">
-                                <span>🧡</span> {{ _('Support RetroDB') }}
-                            </a>
+                        <div class="about-item about-description">
+                            <span class="about-label">{{ _('Description') }}</span>
+                            <span class="about-value">{{ config.APP_DESCRIPTION }}</span>
                         </div>
+                        <div class="about-item about-description">
+                            <span class="about-label">{{ _('Disclaimer') }}</span>
+                            {{ legal_disclaimer('about-value') }}
+                        </div>
+                    </div>
+                    <div class="about-links">
+                        <a href="{{ url_for('changelog') }}" class="btn btn-secondary btn-sm">
+                            <span>📜</span> {{ _('Changelog') }}
+                        </a>
+                        <a href="{{ url_for('help_page') }}" class="btn btn-secondary btn-sm">
+                            <span>❓</span> {{ _('Help') }}
+                        </a>
+                        <a href="https://github.com/sponsors/milnet01" class="btn btn-secondary btn-sm" target="_blank" rel="noopener noreferrer" title="{{ _("Support RetroDB's development on GitHub Sponsors") }}">
+                            <span>💝</span> {{ _('Sponsor RetroDB') }}
+                        </a>
+                        <a href="https://www.patreon.com/c/AntsProjectsHub" class="btn btn-secondary btn-sm" target="_blank" rel="noopener noreferrer" title="{{ _("Support RetroDB's development on Patreon") }}">
+                            <span>🧡</span> {{ _('Support RetroDB') }}
+                        </a>
                     </div>
                 </div>
             </div>
-        </nav>
+        </div>
         {% endif %}
 
         <!-- Main Content Area -->
