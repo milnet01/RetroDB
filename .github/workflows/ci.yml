@@ -18,9 +18,12 @@ env:
   # `semgrep` / `pip-audit` / `lockfile-drift` jobs always run on this one.
   PRIMARY_PYTHON: "3.13"
 
+# local-gate.md § 9: the event is in the key, and only a non-default branch
+# cancels a superseded run, so a cancelled run on main never hides which
+# commit broke.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != format('refs/heads/{0}', github.event.repository.default_branch) }}
 
 # Tag references can be force-pushed under our feet; SHA pins can't.
 # Mirrors release.yml. Dependabot's github-actions ecosystem bumps the
@@ -66,8 +69,9 @@ jobs:
       # uv-fast). The `lint-and-smoke-v2` suffix isolates this cache from the
       # dedicated audit-job caches that install a different (much smaller)
       # tool set under the same lockfile hash.
-      - name: Cache uv wheels
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+      - name: Restore uv wheels
+        id: uv-cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
         with:
           path: ~/.cache/uv
           key: uv-lint-${{ runner.os }}-py${{ matrix.python-version }}-${{ hashFiles('requirements.lock') }}-v2
@@ -140,11 +144,21 @@ jobs:
           path: coverage.xml
           if-no-files-found: ignore
 
+      # local-gate.md § 9: save even when the job fails or times out, so
+      # the next run still starts warm.
+      - name: Save uv wheels
+        if: always() && steps.uv-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+        with:
+          path: ~/.cache/uv
+          key: ${{ steps.uv-cache.outputs.cache-primary-key }}
+
   # ---------------------------------------------------------------------------
   # semgrep — security scan of the source tree. Independent of the matrix
   # (result is interpreter-independent). Runs in parallel with lint-and-smoke
   # so the critical path is max(lanes), not sum.
   # ---------------------------------------------------------------------------
+
   semgrep:
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -159,8 +173,9 @@ jobs:
         with:
           python-version: ${{ env.PRIMARY_PYTHON }}
 
-      - name: Cache uv wheels (semgrep)
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+      - name: Restore uv wheels (semgrep)
+        id: uv-cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
         with:
           path: ~/.cache/uv
           # Tool-only cache; no project lockfile in the key because semgrep
@@ -213,10 +228,20 @@ jobs:
         # needs a documented exclusion — either way, green CI should mean
         # zero.
 
+      # local-gate.md § 9: save even when the job fails or times out, so
+      # the next run still starts warm.
+      - name: Save uv wheels
+        if: always() && steps.uv-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+        with:
+          path: ~/.cache/uv
+          key: ${{ steps.uv-cache.outputs.cache-primary-key }}
+
   # ---------------------------------------------------------------------------
   # pip-audit — CVE check against requirements.lock. Also interpreter-
   # independent; runs in parallel.
   # ---------------------------------------------------------------------------
+
   pip-audit:
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -231,8 +256,9 @@ jobs:
         with:
           python-version: ${{ env.PRIMARY_PYTHON }}
 
-      - name: Cache uv wheels (pip-audit)
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+      - name: Restore uv wheels (pip-audit)
+        id: uv-cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
         with:
           path: ~/.cache/uv
           key: uv-audit-${{ runner.os }}-py${{ env.PRIMARY_PYTHON }}-v2
@@ -248,10 +274,20 @@ jobs:
         # cycles at 0/N actionable. New CVE surfacing means real action
         # required (Dependabot bump or pin rationale), not silent warning.
 
+      # local-gate.md § 9: save even when the job fails or times out, so
+      # the next run still starts warm.
+      - name: Save uv wheels
+        if: always() && steps.uv-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+        with:
+          path: ~/.cache/uv
+          key: ${{ steps.uv-cache.outputs.cache-primary-key }}
+
   # ---------------------------------------------------------------------------
   # lockfile-drift — pip-compile round-trip to catch "added a dep to
   # requirements.txt but forgot to recompile the lock".
   # ---------------------------------------------------------------------------
+
   lockfile-drift:
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -266,8 +302,9 @@ jobs:
         with:
           python-version: ${{ env.PRIMARY_PYTHON }}
 
-      - name: Cache uv wheels (lockfile-drift)
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+      - name: Restore uv wheels (lockfile-drift)
+        id: uv-cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
         with:
           path: ~/.cache/uv
           key: uv-drift-${{ runner.os }}-py${{ env.PRIMARY_PYTHON }}-v2
@@ -312,6 +349,15 @@ jobs:
             exit 1
           fi
 
+      # local-gate.md § 9: save even when the job fails or times out, so
+      # the next run still starts warm.
+      - name: Save uv wheels
+        if: always() && steps.uv-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+        with:
+          path: ~/.cache/uv
+          key: ${{ steps.uv-cache.outputs.cache-primary-key }}
+
   # ---------------------------------------------------------------------------
   # i18n-fresh — the catalog-freshness gate documented in CLAUDE.md step 8.
   # Fails when a t('...')/`_()` string was wrapped but the catalog was not
@@ -321,6 +367,7 @@ jobs:
   # exactly the "a fully-translated UI still pops English toasts" seam Pass 52
   # is closing. Interpreter-independent; runs in parallel with the matrix.
   # ---------------------------------------------------------------------------
+
   i18n-fresh:
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -335,8 +382,9 @@ jobs:
         with:
           python-version: ${{ env.PRIMARY_PYTHON }}
 
-      - name: Cache uv wheels (i18n-fresh)
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+      - name: Restore uv wheels (i18n-fresh)
+        id: uv-cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
         with:
           path: ~/.cache/uv
           key: uv-i18n-${{ runner.os }}-py${{ env.PRIMARY_PYTHON }}-${{ hashFiles('requirements.lock') }}-v2
@@ -356,3 +404,12 @@ jobs:
 
       - name: i18n freshness gate
         run: python scripts/check_i18n_fresh.py
+
+      # local-gate.md § 9: save even when the job fails or times out, so
+      # the next run still starts warm.
+      - name: Save uv wheels
+        if: always() && steps.uv-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+        with:
+          path: ~/.cache/uv
+          key: ${{ steps.uv-cache.outputs.cache-primary-key }}
