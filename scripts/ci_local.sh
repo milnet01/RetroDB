@@ -2,7 +2,7 @@
 #
 # scripts/ci_local.sh — run the GitHub Actions CI checks locally.
 #
-# Mirrors every job in .github/workflows/ci.yml 1:1 — ruff, import smoke,
+# Mirrors every job in .github/workflows/ci.yml 1:1 — ruff, JS syntax, import smoke,
 # pytest, i18n freshness, semgrep, pip-audit, and lockfile-drift — against the
 # LOCAL interpreter and installed tools, so a push that would go red in CI fails
 # here first. Adds ONE local-only extra: a lint of the workflow files themselves
@@ -96,6 +96,14 @@ fi
 step "Ruff lint  ·  ruff check ."
 if have ruff; then ruff check . && ok "ruff" || fail "ruff"
 else missing "ruff" "pip install ruff"; fi
+
+# 1b. JS syntax (PASS-58-1) — no linter covers static/js, so catch syntax errors
+step "JS syntax  ·  node --check static/js/*.js"
+if have node; then
+  JS_BAD=0
+  for f in static/js/*.js; do node --check "$f" || JS_BAD=1; done
+  [ "$JS_BAD" -eq 0 ] && ok "node --check" || fail "node --check"
+else missing "node" "install Node.js"; fi
 
 # 2. Import smoke — catch import-time errors against an isolated temp DB ------
 step "Import smoke  ·  python -c 'import app'"

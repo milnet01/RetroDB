@@ -13,6 +13,7 @@ extend-exclude = [
     "static/videos",
     ".ruff_cache",
     "__pycache__",
+    ".vulture-whitelist.py",  # bare names by design (PASS-58-4)
 ]
 
 [tool.ruff.lint]
@@ -85,3 +86,11 @@ exclude_also = [
 ]
 show_missing = true
 skip_covered = false
+
+[tool.bandit]
+# PASS-58-2: the same adjudications as [tool.ruff.lint] `ignore` above, by
+# bandit id (ruff's S<nnn> is bandit's B<nnn>). Change both together.
+# B404 (subprocess import) rides on B603's rationale; B105 (hard-coded password
+# string) is checked by ruff's S105, which flags no setting-key name or URL.
+exclude_dirs = ["tests", "venv", ".venv", ".archive", "data", "logs", "database", "static"]
+skips = ["B101", "B104", "B105", "B110", "B112", "B201", "B301", "B310", "B311", "B324", "B404", "B603", "B606", "B607", "B608"]

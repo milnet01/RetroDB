@@ -23,7 +23,7 @@ import defusedxml.ElementTree as ET
 # node classes (only parser functions), and annotating with a data-container
 # class has no security impact. Actual XML parsing still goes through
 # defusedxml.ElementTree.fromstring() below.
-from xml.etree.ElementTree import Element
+from xml.etree.ElementTree import Element  # nosec B405
 from dataclasses import dataclass, field
 from typing import List, Dict, Optional, Tuple
 from datetime import datetime

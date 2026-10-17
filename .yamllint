@@ -1,0 +1,13 @@
+# PASS-58-2: this project's YAML calibration.
+extends: default
+ignore: |
+  data/
+  translations/
+  .archive/
+rules:
+  line-length:
+    max: 120
+    level: warning      # URLs and shell commands stay on one line
+  document-start: disable
+  truthy:
+    check-keys: false   # GitHub Actions' `on:` key

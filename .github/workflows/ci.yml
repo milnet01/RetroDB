@@ -97,6 +97,11 @@ jobs:
       - name: Ruff (bugs only — E, F, B, S)
         run: ruff check .
 
+      # PASS-58-1: no linter covers the browser JS (no package.json), so at
+      # least catch a syntax error before a user does. The runner ships node.
+      - name: JS syntax check (node --check)
+        run: for f in static/js/*.js; do node --check "$f" || exit 1; done
+
       - name: Import smoke test
         env:
           RETRODB_DEBUG: "false"

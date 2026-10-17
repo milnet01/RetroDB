@@ -4218,7 +4218,19 @@ weren't worth blocking the ship on.  Ordered by rough priority.
     Synthesise the hash string directly:
     `f"pbkdf2:100000:{'a'*32}:{'b'*64}"` (already the pattern used at
     `:93`).
-- **Status**: planned. Folded from `/test-audit` 2026-05-18 sweep
+- **Shipped** (2026-10-17, v3.29.1): 17 bullets done, 1 partly (pass40
+  `done.wait` stays a bounded wait: `pytest-timeout` is absent and a
+  synchronous run deadlocks on `ImageResizeJob`'s non-reentrant lock; it
+  now also joins and asserts the worker exited), 2 already done
+  (frozen-paths teardown, retroarch-detect docstrings). New:
+  `admin_test_client` factory in conftest (media isolation untouched),
+  `open_db_positional`/`open_db_named` in `tests/_util.py`,
+  `LocalLauncher.wait()`. Splits: `test_pass40_1_8_security.py` +
+  `test_pass40_9_16_security.py`; `test_input_hardening_{app,scrapers,
+  museum,uploads}.py`, test ids identical before and after. Each
+  behavioural test that replaced a source-grep was run red against a
+  broken implementation. Suite 1630 -> 1633.
+- **Status**: done. Folded from `/test-audit` 2026-05-18 sweep
   (see changelog 3.6.21). Lanes: tests.
 
 ---
@@ -4758,7 +4770,12 @@ weren't worth blocking the ship on.  Ordered by rough priority.
      linter but catches syntax errors before a user does.
 - **Verify**: whichever option is taken, `check-code --tree` names the JS files
   as covered, or names them as deliberately uncovered with a reason.
-- **Status**: planned (2026-09-01). Lanes: ci, frontend.
+- **Shipped** (2026-10-17): option 3. `node --check` over
+  `static/js/*.js` runs in `scripts/ci_local.sh` (step 1b; fails if node
+  is missing) and in `ci.yml`'s lint job. A broken file was confirmed to
+  fail it. Templates and CSS stay unanalysed by choice: no tool fits
+  without a Node toolchain.
+- **Status**: done (2026-10-17). Lanes: ci, frontend.
 - **Source**: check-code whole-tree sweep 2026-09-01 — the language-signal gap
   list, which is what surfaced it.
 
@@ -4791,7 +4808,15 @@ weren't worth blocking the ship on.  Ordered by rough priority.
   exclusions in one place.
 - **Verify**: re-run each tool; the surviving findings should be ones nobody has
   already adjudicated.
-- **Status**: planned (2026-09-01). Lanes: ci.
+- **Shipped** (2026-10-17): `[tool.bandit]` in `pyproject.toml` mirrors
+  ruff's ignores by id (plus B404 and B105, reasons in its comment), so
+  bandit is clean; one `# nosec B405` on a type-only import.
+  `_typos.toml` excludes translations, localised help and changelogs,
+  vendor, bundled and minified files, and encoded SVG/font data, and
+  allows project words; typos is clean. `.yamllint`: 120 columns as a
+  warning, no document-start, `on:` keys allowed; yamllint passes with
+  three long-line warnings (a URL, a shell command, a description).
+- **Status**: done (2026-10-17). Lanes: ci.
 - **Source**: check-code whole-tree sweep 2026-09-01.
 
 ---
@@ -4821,7 +4846,11 @@ weren't worth blocking the ship on.  Ordered by rough priority.
   modules where a type actually constrains something.
 - **Verify**: (a) the addendum states it; (b) `mypy` is green on the modules
   opted in, and `scripts/ci_local.sh` gates them.
-- **Status**: planned (2026-09-01). Lanes: python, ci.
+- **Shipped** (2026-10-17): option (a). `docs/STANDARDS_ADDENDUM.md`
+  § Static-Analysis Decisions records that mypy is not adopted, and how
+  to reopen that. (The Why above says CLAUDE.md excludes mypy; it does
+  not, `.claude/rules/git-hooks.md` does.)
+- **Status**: done (2026-10-17). Lanes: python, ci.
 - **Source**: check-code whole-tree sweep 2026-09-01; the per-finding dismissals
   are in `.ants_review_falsepos.jsonl`.
 
@@ -4845,7 +4874,13 @@ weren't worth blocking the ship on.  Ordered by rough priority.
   signal the whitelist is meant to expose.
 - **Verify**: `vulture --min-confidence 80 <files> .vulture-whitelist.py`
   returns only findings a human has not already dismissed.
-- **Status**: planned (2026-09-01). Lanes: python, ci.
+- **Shipped** (2026-10-17): `.vulture-whitelist.py` holds the 49
+  reviewed false positives (fixtures, signal and `__exit__` signatures,
+  the pyrate_limiter monkeypatch signature, `enhance(outscale=)`,
+  side-effect imports); vulture is clean with it. The "real unused
+  locals" named above are all signature-bound, so none was removed. Ruff
+  excludes the whitelist file.
+- **Status**: done (2026-10-17). Lanes: python, ci.
 - **Source**: check-code whole-tree sweep 2026-09-01.
 
 ---
@@ -4868,7 +4903,10 @@ weren't worth blocking the ship on.  Ordered by rough priority.
   next sweep does not re-raise it.
 - **Verify**: if changed, a full `workflow_dispatch` release to a draft, with
   every asset and the changelog body present.
-- **Status**: planned (2026-09-01) — decision, not a fix. Lanes: ci.
+- **Shipped** (2026-10-17): decision recorded in
+  `docs/STANDARDS_ADDENDUM.md` § Static-Analysis Decisions: keep
+  `softprops/action-gh-release`.
+- **Status**: done (2026-10-17) — decision, not a fix. Lanes: ci.
 - **Source**: check-code whole-tree sweep 2026-09-01 (zizmor, Informational).
 
 ---

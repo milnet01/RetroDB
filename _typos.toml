@@ -1,0 +1,40 @@
+# PASS-58-2: typos reads English; skip what it cannot read or should not.
+[files]
+extend-exclude = [
+    "translations/",
+    "templates/help.*.html",
+    "data/changelog.*.yaml",
+    "static/js/vendor/",
+    "static/js/*.bundle.js",
+    "static/css/main.min.css",
+    "static/fonts/",
+    "static/css/core/fonts.css",  # base64 font data
+    "*.svg",                      # encoded path data
+    "*.lock",
+    ".archive/",
+]
+
+# Words that are right here: SQL keyword prefixes the code slices, setting and
+# package names, region codes, a 7-Zip flag, a Dutch msgid, a URL fragment.
+[default.extend-words]
+mis = "mis"            # "mis-scraped", "mis-matched"
+HSA = "HSA"            # ROCm HSA_OVERRIDE_GFX_VERSION
+datas = "datas"        # PyInstaller Analysis(datas=...)
+DATAS = "DATAS"
+unparseable = "unparseable"
+UPDAT = "UPDAT"
+SELEC = "SELEC"
+INSER = "INSER"
+ags = "ags"            # Adventure Game Studio engine
+AGS = "AGS"
+certifi = "certifi"
+excluder = "excluder"
+Writeable = "Writeable"
+systemes = "systemes"  # ScreenScraper systemesListe.php
+oce = "oce"            # region codes in metadata_normalizer
+mor = "mor"
+ba = "ba"              # 7z -ba
+alls = "alls"
+Actie = "Actie"        # Dutch msgid
+UE = "UE"
+PN = "PN"

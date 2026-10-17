@@ -89,3 +89,12 @@ logger.error(f"Operation failed: {e}")
 
 ### Settings
 Logging settings are stored in `data/settings.json` under the `logging` key and can be configured via Settings → System → Logging.
+
+---
+
+## Static-Analysis Decisions
+
+Decisions a whole-tree sweep would otherwise re-raise. Each names its roadmap item.
+
+- **mypy is not adopted** (PASS-58-3, 2026-10-17). A no-config run reports only annotation gaps and stub-less third-party imports, no runtime defect, so it is not part of `scripts/ci_local.sh` or CI. Reopen when a module gains types that constrain something: add `[tool.mypy]` with `ignore_missing_imports = true` and opt modules in one at a time.
+- **The release workflow keeps `softprops/action-gh-release`** (PASS-58-5, 2026-10-17). `zizmor` flags it as `superfluous-actions` because the runner ships `gh`. Hand-rolling release creation and asset upload in shell adds risk to the one workflow where a half-published release is costly; the action stays SHA-pinned and Dependabot tracks it.
