@@ -50,7 +50,8 @@ Dependabot config: `.github/dependabot.yml` (weekly Monday scan, grouped PRs,
 2. **`requirements.lock`** pins the exact resolved versions with `--generate-hashes`
    so installs are reproducible and tamper-evident (`--require-hashes`). Regenerate
    after editing `requirements.txt`:
-   `uv pip compile requirements.txt --strip-extras --generate-hashes -o requirements.lock`.
+   `uv pip compile requirements.txt --strip-extras --generate-hashes --universal -o requirements.lock`
+   (`--universal` keeps Windows-only deps in a lock compiled on Linux, Pass 59.99).
    (Pass 57.3 — was `pip-compile`; pip-tools imports a pip internal that pip 26
    removed, so it dies on any current pip. uv reproduces the lock byte-for-byte.)
 3. **CI gates** (`.github/workflows/ci.yml`, mirrored locally by

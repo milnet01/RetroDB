@@ -265,6 +265,8 @@ class TestPass59_99UniversalLockfile:
         os.path.join(_REPO_ROOT, '.github', 'workflows', 'ci.yml'),
         os.path.join(_REPO_ROOT, '.github', 'workflows', 'dependabot-lockfile.yml'),
         os.path.join(_REPO_ROOT, 'CLAUDE.md'),
+        os.path.join(_REPO_ROOT, 'scripts', 'ci_local.sh'),
+        os.path.join(_REPO_ROOT, 'docs', 'DEPENDENCY_POLICY.md'),
     )
 
     def test_lockfile_carries_windows_only_dependency(self):

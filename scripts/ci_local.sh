@@ -154,10 +154,10 @@ if have uv; then
   # hypothetical: pip-compile broke exactly this way against pip 26 (Pass
   # 57.3), the gate reported green, and CI went red on the same check.
   cp requirements.lock "$FRESH"
-  if uv pip compile requirements.txt --strip-extras --generate-hashes \
+  if uv pip compile requirements.txt --strip-extras --generate-hashes --universal \
        --quiet -o "$FRESH" >/dev/null 2>"$ERRLOG"; then
     if diff -u <(grep -v '^#' requirements.lock) <(grep -v '^#' "$FRESH") >/dev/null; then ok "lockfile in sync"
-    else fail "lockfile drift — run: uv pip compile requirements.txt --strip-extras --generate-hashes -o requirements.lock"; fi
+    else fail "lockfile drift — run: uv pip compile requirements.txt --strip-extras --generate-hashes --universal -o requirements.lock"; fi
   else
     tail -n 3 "$ERRLOG"
     fail "uv pip compile failed to run — drift NOT checked (see error above)"
