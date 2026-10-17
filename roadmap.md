@@ -7674,6 +7674,10 @@ were corrected in `2836bc3` and are not repeated here.
   regional ROMs, which PASS-59-106 and duplicate finding need.
 - **Status**: todo. Lanes: scraper, ui.
 - **Source**: user, 2026-10-17.
+- **Note** (2026-10-17, v3.26.0): the alternate titles now show on the
+  game page's "Also Known As" card (PASS-59-104), the place this item's
+  region tags will show. Some stored regions are ScreenScraper codes, not
+  regions: A Nightmare on Elm Street (game 2764) shows "SS".
 
 #### Pass 59.106 Regional versions of a game shown as one game (HIGH, L)
 - **Target**: schema (a version link between `games` rows), Library and
@@ -7725,6 +7729,22 @@ were corrected in `2836bc3` and are not repeated here.
 - **Status**: todo, next after the PASS-59-104 release, before PASS-59-91
   stage 2. Lanes: ui, scraper.
 - **Source**: user, 2026-10-17.
+
+---
+
+#### Pass 59.109 Confirm the UI strings each catalog still marks fuzzy (MEDIUM, M)
+- **Target**: `translations/<locale>/LC_MESSAGES/messages.po` in the 20
+  UI locales.
+- **Why**: each catalog holds entries marked `#, fuzzy` (`grep -c '^#,
+  fuzzy'` gave 46 for de, fr, ja and ko, 38 for nl and id on 2026-10-17).
+  Babel does not compile fuzzy entries, so those strings show in English.
+  Some fuzzy guesses are also wrong: `Launch failed: {error}` reads
+  "backup failed" in ko and ja, and "Sponsor RetroDB" / "Support RetroDB"
+  carry stale text in several locales (found by the changelog
+  translation agents).
+- **Status**: todo. Translate or confirm each entry, drop the flag, check
+  drafts with Gemini and DeepSeek. Lanes: i18n.
+- **Source**: changelog backlog translation, 2026-10-17.
 
 ## Done index
 
