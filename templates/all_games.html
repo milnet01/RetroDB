@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 {% set needs_games_bundle = true %}
+{% set adaptive_layout = true %}
 
 {% block title %}All Games - RetroDB{% endblock %}
 
 {% block content %}
+<div class="cards-page page-box">
 <!-- Fanart Background -->
 <div class="fanart-background" id="fanartBg"></div>
 
@@ -190,6 +192,7 @@
 <!-- Filter Modal -->
 {% include '_modals/select_filter_modal.html' %}
 
+</div>
 {% endblock %}
 
 {% block styles %}

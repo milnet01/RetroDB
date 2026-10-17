@@ -45,6 +45,20 @@
     z-index: 1;
 }
 
+/* PASS-59-104 — an adaptive page takes the whole main area (its padding is the
+   gutter); each region inside sizes itself by its content. */
+.content-wrapper.adaptive {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+}
+
+/* A flex item never shrinks below its content's width by default, so one wide
+   child would push the whole adaptive page sideways on a phone. */
+.main-content.adaptive {
+    min-width: 0;
+}
+
 /* =============================================================================
    SECTION LAYOUTS
    ============================================================================= */

@@ -222,7 +222,9 @@ the game's `emulator_override_id` emulator with its system's row for that
 emulator, else the system's default row, else its lowest-id row. Results are
 cached per request by (system, emulator), so one resolve per distinct pair,
 not per game. `api_games_card_data` adds the same flag, because a live card
-refresh re-renders the card from it.
+refresh re-renders the card from it. A card's flag also needs its ROM to pass
+`services/launch_resolver.py::rom_launch_problem`, the file checks the launch
+itself applies, so Play is offered only where the launch can start.
 
 `AllGamesController.renderGameCard` renders a Play button on a card whose
 game has `can_launch`, carrying `data-game-id`. It calls `window.launchGame`

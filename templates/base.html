@@ -236,9 +236,10 @@
         {% endif %}
 
         <!-- Main Content Area -->
-        <main id="main-content" class="main-content" {% if setup_mode %}style="margin-left: 0;"{% endif %}>
-            <!-- Centered Content Wrapper -->
-            <div class="content-wrapper">
+        <main id="main-content" class="main-content{% if adaptive_layout %} adaptive{% endif %}" {% if setup_mode %}style="margin-left: 0;"{% endif %}>
+            <!-- Centered Content Wrapper. A page that sets adaptive_layout
+                 sizes its own regions (design standards §7, PASS-59-104). -->
+            <div class="content-wrapper{% if adaptive_layout %} adaptive{% endif %}">
                 <!-- Mobile Menu Toggle -->
                 {% if not setup_mode %}
                 <button class="mobile-menu-toggle" aria-label="{{ _('Toggle menu') }}">

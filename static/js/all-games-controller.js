@@ -577,11 +577,12 @@ const AllGamesController = (function() {
             ratingBadges += `<span class="game-badge achievement-progress rpcs3 ${rpcs3Class}" title="RPCS3 Trophies: ${game.rpcs3_earned}/${game.rpcs3_total} (${rpcs3Pct}%)"><img class="ach-icon" src="/static/images/trophies/rpcs3.png" alt="RPCS3"> ${game.rpcs3_earned}/${game.rpcs3_total}<span class="ach-bar"><span class="ach-fill" style="width:${rpcs3Pct}%"></span></span></span>`;
         }
 
-        // PASS-59-91 §4.5 — Play from the card without opening the game page.
+        // PASS-59-91 §4.5 — Play from the card without opening the game page,
+        // from the card's top-right corner (hidden in bulk-select mode).
         const playHtml = game.can_launch
             ? `<button type="button" class="card-play-btn" data-game-id="${game.id}"
                        title="${escAttr(t('Play'))}" aria-label="${escAttr(t('Play'))}"
-                       onclick="event.preventDefault(); event.stopPropagation(); launchGame(this)">▶&#xFE0E;</button>`
+                       onclick="event.preventDefault(); event.stopPropagation(); launchGame(this)"><svg viewBox="0 0 100 100" aria-hidden="true" focusable="false"><polygon points="35,24 35,76 80,50"/></svg></button>`
             : '';
 
         // Bulk checkbox
@@ -612,13 +613,13 @@ const AllGamesController = (function() {
                 <input type="checkbox" class="game-checkbox" data-game-id="${game.id}" ${isSelected ? 'checked' : ''}
                        onclick="event.stopPropagation(); AllGamesController.toggleGameSelection(${game.id})">
             </div>
-            <div class="game-card-new glass-card"
+            <div class="game-card-new glass-card${playHtml ? ' has-play' : ''}"
                  data-game-id="${game.id}"
                  style="cursor: pointer;">
                 <div class="card-glow"></div>
+                ${playHtml}
                 <div class="card-boxart-section">
                     <div class="game-card-image">${boxartHtml}</div>
-                    ${playHtml}
                 </div>
                 <div class="card-info-section">
                     ${infoSectionHtml}
@@ -1108,6 +1109,8 @@ const AllGamesController = (function() {
         const scrapeBtn = document.getElementById('bulkScrapeBtn');
         const editBtn = document.getElementById('bulkEditBtn');
         const checkboxes = document.querySelectorAll('.bulk-select-checkbox');
+        // The checkbox takes the Play button's corner while selecting.
+        document.getElementById('gamesGrid')?.classList.toggle('bulk-mode', bulkMode);
 
         if (bulkMode) {
             btn?.classList.add('active');

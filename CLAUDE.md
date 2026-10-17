@@ -115,6 +115,7 @@ Moved to `.claude/rules/ratings.md`, which loads when a matching file is read. R
 - CSS: edit `static/css/<category>/<file>.css`, then `python3 build_css.py` to rebuild `main.min.css`.
 - JS: edit `static/js/<file>.js`, then `python3 build_js.py` if it's bundled. Never edit `core.bundle.js` / `games.bundle.js` directly — generated output.
 - Bundles: `core.bundle.js` (every page) and `games.bundle.js` (game-centric pages only). Templates that need the games bundle MUST set `{% set needs_games_bundle = true %}` at the template's top level — before the first `{% block %}`, so `base.html` sees it at render time. An intervening `{% from %}` import is fine; 6 of the 13 opted-in templates have one.
+- Adaptive layout (PASS-59-104): a page opts in with `{% set adaptive_layout = true %}` (same placement as `needs_games_bundle`) and wraps its content in an element with class `page-box`; the rules are `docs/RETRODB_DESIGN_STANDARDS.md` §7 "Page Width — adaptive".
 - Cache-busting: `build_css.py` / `build_js.py` write `static/asset_manifest.json` with SHA-256 prefixes. Reference assets via `{{ asset_url('js/core.bundle.js') }}` (Jinja global from `services/assets.py`). Fallback is `?v={APP_VERSION}`.
 - CSS rules: never duplicate external classes inline; use variables from `core/variables.css` (no hardcoded colors); promote any style used on 2+ pages to external CSS.
 

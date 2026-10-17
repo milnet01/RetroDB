@@ -522,10 +522,45 @@ Tabs stretch to fill the available width.
 │ Sidebar (260px)        │  Main Content                       │
 │                        │  ┌────────────────────────────────┐ │
 │ Logo                   │  │ Content Wrapper                │ │
-│ Nav Sections           │  │ (65% width, max 1400px)        │ │
+│ Nav Sections           │  │ (width: see Page Width below)  │ │
 │ Version Footer         │  └────────────────────────────────┘ │
 └──────────────────────────────────────────────────────────────┘
 ```
+
+### Page Width — adaptive (PASS-59-104)
+
+A page fits the browser window it is shown in, not the monitor: a desktop
+window may cover half the screen. **A region widens only when its content can
+use the space.** Width is never filled for its own sake, and text size does not
+change with width.
+
+- **Card grids** add a column only when a whole card fits at its minimum width
+  (`repeat(auto-fill, minmax(<card min>, 1fr))`), **to at most 4 columns**. The
+  grid's `max-width` is 4 cards plus 3 gaps; space beyond that is margin, with
+  the grid centred.
+- **Panels** sit side by side only when each has at least its comfortable
+  minimum width; otherwise they stack. The page states that minimum per
+  panel.
+- **Reading text** (descriptions, help, changelog) keeps a readable line
+  length (`max-width` about 75 characters) however wide the window. Spare width
+  may hold a related side panel, by the panel rule.
+- **Forms and dialogs** keep their natural width.
+- **No layout rule reads the screen size** (`screen.width`); media queries and
+  container queries see the window or the container.
+
+A page opts in by setting `{% set adaptive_layout = true %}` before its first
+`{% block %}`. Its `.content-wrapper` then takes the main area's full width
+less the page gutter, with no percentage, minimum or maximum width; each
+region sizes itself by the rules above. The element holding the page's content carries
+the class `page-box`; the back-to-top button and the progress toasts sit
+about 10px outside its right and left edges, over the content when there is no
+room. A page that has not opted in keeps the
+legacy wrapper (65% width, `min-width` 600px, `max-width` 1400px) until
+PASS-59-104 reaches it.
+
+**What checks this:** nothing automatic. Each adapted page is walked in a
+browser at 375 px, at about half of a 1920 px window, and at a window of
+2560 px or wider.
 
 ### Sidebar Variables
 ```css

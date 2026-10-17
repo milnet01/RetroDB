@@ -421,13 +421,24 @@ const UnifiedToastController = {
     },
     
     /**
-     * Position the toast container based on actual content wrapper position.
-     * Toast sits to the LEFT of content with a 25px gap between toast right edge and content left edge.
-     * Dynamically adjusts toast width to fit the available space.
+     * The box the page's content occupies. An adaptive page (PASS-59-104)
+     * spans the whole main area with .content-wrapper, so its content box is
+     * the .page-box inside; any other page's is the wrapper itself.
+     */
+    _contentBox() {
+        return document.querySelector('.content-wrapper.adaptive > .page-box')
+            || document.querySelector('.content-wrapper');
+    },
+
+    /**
+     * Position the toast container based on the content box's position.
+     * Toast sits to the LEFT of content with a 10px gap between toast right edge and content left edge.
+     * Dynamically adjusts toast width to fit the available space; with no room
+     * it overlaps the content's left edge.
      */
     positionContainer() {
         // Wait for DOM if content wrapper isn't ready yet
-        const contentWrapper = document.querySelector('.content-wrapper');
+        const contentWrapper = this._contentBox();
         if (!contentWrapper) {
             if (!this._positionRetryCount) this._positionRetryCount = 0;
             if (this._positionRetryCount < 10) {
@@ -442,7 +453,7 @@ const UnifiedToastController = {
         this._positionRetryCount = 0;
         
         const contentRect = contentWrapper.getBoundingClientRect();
-        const gap = 25;
+        const gap = 10;
         const maxToastWidth = 360;
         const minToastWidth = 260;
         
@@ -483,18 +494,18 @@ const UnifiedToastController = {
     },
     
     /**
-     * Position the Back to Top button 25px to the right of the content wrapper's right edge.
-     * Falls back to right: 20px if it would go off-screen.
+     * Position the Back to Top button 10px to the right of the content box's right edge.
+     * Falls back to right: 20px, over the content, if it would go off-screen.
      */
     positionBackToTop() {
         const btn = document.getElementById('backToTopBtn');
         if (!btn) return;
         
-        const contentWrapper = document.querySelector('.content-wrapper');
+        const contentWrapper = this._contentBox();
         if (!contentWrapper) return;
         
         const contentRect = contentWrapper.getBoundingClientRect();
-        const gap = 25;
+        const gap = 10;
         const btnSize = 50;
         
         const leftPos = contentRect.right + gap;

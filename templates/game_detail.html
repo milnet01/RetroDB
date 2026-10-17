@@ -1,10 +1,12 @@
 {% extends "base.html" %}
 {% from "_macros/breadcrumb.html" import breadcrumb %}
 {% set needs_games_bundle = true %}
+{% set adaptive_layout = true %}
 
 {% block title %}{{ game.title }} - RetroDB{% endblock %}
 
 {% block content %}
+<div class="game-page page-box">
 <!-- Fanart Background -->
 <div class="game-fanart-bg {% if game.fanart %}active{% endif %}"
      {% if game.fanart %}style="background-image: url('{{ url_for('static', filename='images/fanart/' + game.fanart) }}')"{% endif %}></div>
@@ -116,6 +118,8 @@
 <!-- COMPACT LAYOUT -->
 <!-- ============================================== -->
 <div class="game-compact-layout">
+    <!-- PASS-59-104 — hero and media sit side by side when both fit. -->
+    <div class="game-top">
     <!-- Top Row: Boxart + Core Info -->
     <div class="game-hero">
         <!-- Boxart -->
@@ -425,6 +429,7 @@
         {% endif %}
     </div>
     {% endif %}
+    </div>
     
     <!-- Bottom Row: Similar Games + Extra Details -->
     <div class="bottom-row">
@@ -744,6 +749,7 @@
 {% include '_modals/edit_modal.html' %}
 
 {% include '_modals/boxart_zoom_modal.html' %}
+</div>
 {% endblock %}
 
 {% block styles %}
@@ -1155,6 +1161,20 @@ body:has(.game-fanart-bg.active)::before {
     z-index: 1;
 }
 
+/* PASS-59-104 — the page grows to two comfortable panel columns, no wider.
+   The hero and the media row share a row once each gets 760px. */
+.game-page {
+    max-width: calc(2 * 1100px + var(--spacing-lg));
+    margin-inline: auto;
+}
+
+.game-top {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 760px), 1fr));
+    column-gap: var(--spacing-lg);
+    align-items: start;
+}
+
 /* Hero Section - Boxart + Core Info */
 .game-hero {
     display: flex;
@@ -1295,6 +1315,7 @@ body:has(.game-fanart-bg.active)::before {
 
 /* Description */
 .hero-description {
+    max-width: 75ch;
     color: var(--text-secondary);
     line-height: 1.6;
     font-size: 0.95rem;
@@ -3165,6 +3186,8 @@ body:has(.game-fanart-bg.active)::before {
 
 .history-header {
     display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
     justify-content: space-between;
     align-items: center;
     margin-bottom: 0.75rem;
@@ -3197,6 +3220,7 @@ body:has(.game-fanart-bg.active)::before {
 
 .history-sources {
     display: flex;
+    flex-wrap: wrap;
     gap: 0.5rem;
 }
 

@@ -7623,6 +7623,32 @@ were corrected in `2836bc3` and are not repeated here.
 - **Status**: todo. Lanes: ui.
 - **Source**: PASS-59-94 browser check, 2026-10-17.
 
+#### Pass 59.104 Adaptive layout: a page region widens only when its content can use it (HIGH, L)
+- **Target**: `static/css/layout/layout.css` `.content-wrapper` (65% width,
+  max 1400 px), page CSS and templates, and
+  `docs/RETRODB_DESIGN_STANDARDS.md` §7, which states that width.
+- **Why**: one fixed width serves phones and desktops alike. On a
+  3840 px-wide window the page uses 1400 px and leaves about 60% empty,
+  while a half-screen window gets the same squeezed layout.
+- **Decisions** (user, 2026-10-17): adapt to the browser window, never the
+  monitor. Widen a region only when its content can use the space: grids add
+  a column when a whole card fits, at most 4 columns; panels sit side by side
+  when both fit at a comfortable width; reading text keeps a readable line
+  length. Text size is unchanged; the app serves every user. Library, system
+  pages and the game page first, the rest after the user has seen them.
+- **Spec**: none needed (`spec-format.md` §1: one subsystem, cheap to redo).
+  The rule lives in `docs/RETRODB_DESIGN_STANDARDS.md` §7 "Page Width —
+  adaptive"; its edit took no review gate on the user's word (2026-10-17).
+- **Progress** (2026-10-17, v3.25.0): stage 1 shipped. `/games`,
+  `/system/<id>` and `/game/<id>` set `adaptive_layout`; the card pages cap
+  at 4 columns, the game page at two panel columns. Back-to-top and progress
+  toasts sit 10px outside the `.page-box`. Measured in Chrome frames at
+  375/960/1600/2560 px and the user's full 3840 px window: no sideways
+  scroll, 1–4 columns; Dashboard (not adopted) unchanged at 1400px.
+  Still to adopt: the remaining pages, after the user has used these.
+- **Status**: in progress. Lanes: ui, docs.
+- **Source**: user, 2026-10-17.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history

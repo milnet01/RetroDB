@@ -194,6 +194,29 @@ def _mapping_resolves(emu, sys_emu) -> bool:
 # Public
 # -----------------------------------------------------------------------------
 
+def rom_launch_problem(rom_path):
+    """Why the ROM at `rom_path` cannot be launched, or None. The checks
+    resolve_launch_context applies: the file exists, sits under a scan root,
+    and is a type its system lists (PASS-59-95). Shared with the library
+    cards' Play button, so a card offers Play only where the launch would
+    get past them."""
+    rom_path_obj = Path(rom_path or '')
+    if not rom_path or not rom_path_obj.exists():
+        return f"ROM file not found: {rom_path_obj}"
+    if not rom_path_obj.is_file():
+        return f"ROM path is not a file: {rom_path_obj}"
+    roots = _allowed_rom_roots()
+    if roots:
+        root = next((r for r in roots if _resolve_under(rom_path_obj, [r])), None)
+        if root is None:
+            return f"ROM path is outside configured scan roots: {rom_path_obj}"
+        # PASS-59-95 — only a file type the system's own list allows.
+        problem = rom_type_problem(str(rom_path_obj), str(root))
+        if problem:
+            return f"Not launching {rom_path_obj.name}: {problem}"
+    return None
+
+
 def launch_checker():
     """Return can_launch(system_id, emulator_override_id) -> bool for one
     request, resolving each distinct (system, override) pair once
@@ -294,20 +317,9 @@ def resolve_launch_context(game_id: int) -> LaunchContext:
     argv = list(binary_argv_prefix) + substituted
 
     # ---- validate rom_path under scan roots ---------------------------------
-    if not rom_path_obj.exists():
-        raise LaunchResolutionError(f"ROM file not found: {rom_path_obj}")
-    if not rom_path_obj.is_file():
-        raise LaunchResolutionError(f"ROM path is not a file: {rom_path_obj}")
-    roots = _allowed_rom_roots()
-    if roots:
-        root = next((r for r in roots if _resolve_under(rom_path_obj, [r])), None)
-        if root is None:
-            raise LaunchResolutionError(
-                f"ROM path is outside configured scan roots: {rom_path_obj}")
-        # PASS-59-95 — only a file type the system's own list allows.
-        problem = rom_type_problem(str(rom_path_obj), str(root))
-        if problem:
-            raise LaunchResolutionError(f"Not launching {rom_path_obj.name}: {problem}")
+    problem = rom_launch_problem(rom_path_obj)
+    if problem:
+        raise LaunchResolutionError(problem)
 
     return LaunchContext(
         game_id=game['id'],

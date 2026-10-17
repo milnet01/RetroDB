@@ -12,13 +12,22 @@ PROBE = 'CanLaunchProbe'
 
 
 @pytest.fixture
-def seeded(tmp_path, setup_complete):
+def seeded(tmp_path, monkeypatch, setup_complete):
     """Two systems: one whose default emulator resolves, one whose does not.
     A third game sits on the resolving system but overrides to a disabled
     emulator that would otherwise resolve."""
     binary = tmp_path / 'fake-emu'
     binary.write_text('#!/bin/sh\n')
     binary.chmod(binary.stat().st_mode | stat.S_IXUSR)
+    # A real ROM under a scan root, in a system folder that lists its type.
+    roms = tmp_path / 'roms'
+    (roms / 'canlaunch_ok').mkdir(parents=True)
+    (roms / 'canlaunch_ok' / 'systeminfo.txt').write_text(
+        'Supported file extensions:\n.bin\n')
+    rom = roms / 'canlaunch_ok' / 'a.bin'
+    rom.write_bytes(b'rom')
+    monkeypatch.setattr('services.launch_resolver._allowed_rom_roots',
+                        lambda: [roms.resolve()])
 
     ids = {}
     ids['sys_ok'] = execute("INSERT INTO systems (name, folder) VALUES (?, ?)",
@@ -37,7 +46,9 @@ def seeded(tmp_path, setup_complete):
                 "VALUES (?, ?, ?)", (ids[system], ids[emu], int(emu == 'emu_ok' or system == 'sys_bad')))
     game_sql = ("INSERT INTO games (system_id, title, rom_path, emulator_override_id) "
                 "VALUES (?, ?, ?, ?)")
-    ids['game_ok'] = execute(game_sql, (ids['sys_ok'], f'{PROBE} A', '/x/a.bin', None))
+    ids['game_ok'] = execute(game_sql, (ids['sys_ok'], f'{PROBE} A', str(rom), None))
+    ids['game_norom'] = execute(game_sql, (ids['sys_ok'], f'{PROBE} D',
+                                           str(rom.with_name('gone.bin')), None))
     ids['game_bad'] = execute(game_sql, (ids['sys_bad'], f'{PROBE} B', '/x/b.bin', None))
     ids['game_off'] = execute(game_sql, (ids['sys_ok'], f'{PROBE} C', '/x/c.bin',
                                          ids['emu_disabled']))
@@ -64,17 +75,19 @@ def _flags(client, ids):
     assert resp.status_code == 200, resp.data
     by_id = {g['id']: g for g in resp.get_json()['games']}
     return {name: by_id[ids[name]]['can_launch']
-            for name in ('game_ok', 'game_bad', 'game_off')}
+            for name in ('game_ok', 'game_bad', 'game_off', 'game_norom')}
 
 
 def test_player_sees_can_launch_only_where_the_mapping_resolves(monkeypatch, seeded):
+    # game_norom: the mapping resolves but the ROM file is gone, so the
+    # launch would fail; the button must not promise it (user, 2026-10-17).
     assert _flags(_client(monkeypatch, 'player'), seeded) == {
-        'game_ok': True, 'game_bad': False, 'game_off': False}
+        'game_ok': True, 'game_bad': False, 'game_off': False, 'game_norom': False}
 
 
 def test_viewer_never_sees_can_launch(monkeypatch, seeded):
     assert _flags(_client(monkeypatch, 'viewer'), seeded) == {
-        'game_ok': False, 'game_bad': False, 'game_off': False}
+        'game_ok': False, 'game_bad': False, 'game_off': False, 'game_norom': False}
 
 
 def test_card_data_carries_the_same_flag(monkeypatch, seeded):

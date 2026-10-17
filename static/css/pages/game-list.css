@@ -850,9 +850,18 @@
    GAMES GRID
    ============================================================================= */
 
+/* PASS-59-104 — a card page is as wide as 4 columns of the largest card a
+   1fr column grows to before a 5th would fit, plus 3 gaps. */
+.cards-page {
+    --card-min: 380px;
+    --card-gap: var(--spacing-lg);
+    max-width: calc(4 * 480px + 3 * var(--card-gap));
+    margin-inline: auto;
+}
+
 .games-grid-new {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(var(--card-min, 380px), 1fr));
     grid-auto-rows: 1px;
     column-gap: var(--spacing-lg);
 }
@@ -909,23 +918,39 @@
     position: relative;
 }
 
-/* PASS-59-91 §4.5 — Play from the card, over the box art's bottom-left corner. */
+/* PASS-59-91 §4.5 — Play from the card's top-right corner. In bulk-select mode
+   the checkbox takes that corner, so the button hides. */
 .card-play-btn {
     position: absolute;
-    left: var(--spacing-sm);
-    bottom: var(--spacing-sm);
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
     z-index: 5;
-    width: 36px;
-    height: 36px;
+    width: 28px;
+    height: 28px;
     border-radius: var(--radius-full);
     border: 1px solid var(--primary-cyan);
     background: var(--bg-darkest);
     color: var(--primary-cyan);
-    font-size: 1rem;
+    font-size: 0.8rem;
     line-height: 1;
     cursor: pointer;
     box-shadow: var(--shadow-md);
     transition: background var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+/* A drawn triangle, not the ▶ glyph: a glyph's ink sits above its line box's
+   centre. The polygon's centroid is (50, 50), the circle's centre. */
+.card-play-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.card-play-btn svg {
+    width: 60%;
+    height: 60%;
+    fill: currentColor;
 }
 
 .card-play-btn:hover,
@@ -937,6 +962,15 @@
 
 .card-play-btn:disabled {
     cursor: progress;
+}
+
+.games-grid-new.bulk-mode .card-play-btn {
+    display: none;
+}
+
+/* Keep the card's top row clear of the button. */
+.game-card-new.has-play .card-info-section > :first-child {
+    padding-right: calc(28px + var(--spacing-sm));
 }
 
 .card-info-section {

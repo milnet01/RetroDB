@@ -1,10 +1,12 @@
 {% extends "base.html" %}
 {% from "_macros/breadcrumb.html" import breadcrumb %}
 {% set needs_games_bundle = true %}
+{% set adaptive_layout = true %}
 
 {% block title %}{{ system.name }} - RetroDB{% endblock %}
 
 {% block content %}
+<div class="cards-page page-box">
 <!-- Fanart Background -->
 <div class="fanart-background" id="fanartBg"></div>
 
@@ -181,6 +183,7 @@
 <!-- Bulk Edit Modal -->
 {% include '_bulk_edit_modal.html' %}
 
+</div>
 {% endblock %}
 
 {% block styles %}
