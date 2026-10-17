@@ -70,7 +70,7 @@ From the roadmap item, user, 2026-10-17:
   revision, languages from No-Intro tags, ratings, achievements support.
 - Versions in one group are not duplicates.
 
-Choices this spec makes, not the user's (say if any is wrong):
+Proposed by this spec and confirmed by the user, 2026-10-17:
 
 - The RA id is left out of the signals until PASS-59-110 ships (§4.5).
 - Filters apply before grouping: a card shows the best version among those
