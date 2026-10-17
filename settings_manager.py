@@ -52,7 +52,6 @@ DEFAULT_SETTINGS = {
     'show_unscraped_first': False,
     'preferred_boxart': '2d',  # '2d' or '3d' - if 3d, falls back to 2d when unavailable
     'preferred_rating_system': 'esrb',  # esrb, pegi, cero, usk, acb, fpb, grac, classind
-    'theme': 'cyberpunk',  # 'cyberpunk', 'matrix', 'amber', 'ocean'
     
     # Scraper settings
     'scraper_priority': ['esde', 'screenscraper', 'tgdb', 'igdb', 'rawg'],

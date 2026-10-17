@@ -1244,7 +1244,7 @@ deviates should be migrated when touched (see `roadmap.md`).
 - Bundled files (see `build_js.py`): short, functional names — `utils.js`,
   `main.js`, `filters.js`.
 - Page-specific files: noun or noun-phrase — `achievements.js`,
-  `trophies.js`, `museum.js`, `log-viewer.js`, `rom-tools.js`.
+  `museum.js`, `log-viewer.js`, `rom-tools.js`.
 - Controllers bound to a page feature: noun + `-controller` —
   `all-games-controller.js`, `toast-controller.js`.
 

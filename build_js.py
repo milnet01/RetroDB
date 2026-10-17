@@ -51,7 +51,6 @@ EXCLUDED = [
     'theme.js',              # FOUC prevention - loaded non-deferred
     'all-games-controller.js',  # Page-specific
     'achievements.js',          # Page-specific
-    'trophies.js',              # Page-specific
     'settings-page.js',         # Page-specific
     'log-viewer.js',            # Page-specific
     'rom-tools.js',             # Page-specific

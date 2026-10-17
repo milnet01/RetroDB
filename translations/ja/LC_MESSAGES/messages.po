@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-17 16:41+0200\n"
+"POT-Creation-Date: 2026-10-17 17:23+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -43,10 +43,10 @@ msgstr "システムが見つからないか、実績対応ゲームがありま
 
 #: routes/achievements.py:171 routes/achievements.py:436
 #: routes/bonus_discs.py:263 routes/bulk_scrape.py:46 routes/collections.py:276
-#: routes/collections.py:531 routes/games.py:342 routes/games.py:771
-#: routes/games.py:893 routes/games.py:951 routes/games_ai.py:46
+#: routes/collections.py:531 routes/games.py:341 routes/games.py:770
+#: routes/games.py:891 routes/games.py:948 routes/games_ai.py:46
 #: routes/games_media.py:35 routes/games_media.py:82 routes/games_media.py:143
-#: routes/reports.py:689 routes/reports.py:814 routes/trophies.py:1273
+#: routes/reports.py:689 routes/reports.py:814 routes/trophies.py:1278
 #: services/hltb_service.py:127
 msgid "Game not found"
 msgstr "ゲームが見つかりません"
@@ -209,18 +209,18 @@ msgstr "親ゲームが見つかりません"
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "ボーナスディスクと親ゲームは同じシステム内にある必要があります"
 
-#: routes/bonus_discs.py:209 routes/bonus_discs.py:227 routes/games.py:1200
-#: routes/games.py:1230 routes/platform_import.py:290
-#: routes/platform_import.py:658 routes/platform_import.py:1027
-#: routes/scrape_logs.py:85 routes/scrape_logs.py:170 routes/scrape_logs.py:183
-#: routes/scrape_logs.py:221 routes/scraper.py:200 routes/scraper.py:528
-#: routes/scraper.py:921 routes/settings.py:318 routes/settings.py:342
-#: routes/settings.py:458 routes/settings.py:537 routes/settings.py:552
-#: routes/settings.py:597 routes/settings.py:614 routes/settings.py:650
-#: routes/steam_achievements.py:138 routes/systems.py:282 routes/systems.py:467
+#: routes/bonus_discs.py:209 routes/bonus_discs.py:227 routes/games.py:1196
+#: routes/games.py:1226 routes/platform_import.py:289
+#: routes/platform_import.py:655 routes/platform_import.py:1022
+#: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
+#: routes/scrape_logs.py:219 routes/scraper.py:200 routes/scraper.py:528
+#: routes/scraper.py:917 routes/settings.py:317 routes/settings.py:341
+#: routes/settings.py:456 routes/settings.py:533 routes/settings.py:547
+#: routes/settings.py:591 routes/settings.py:607 routes/settings.py:643
+#: routes/steam_achievements.py:138 routes/systems.py:281 routes/systems.py:461
 #: routes/trophies.py:498 routes/trophies.py:694 routes/trophies.py:742
-#: routes/trophies.py:1590 routes/trophies.py:1614 routes/trophies.py:1659
-#: routes/trophies.py:1687 routes/trophies.py:1729 routes/trophies.py:1798
+#: routes/trophies.py:1564 routes/trophies.py:1588 routes/trophies.py:1633
+#: routes/trophies.py:1661 routes/trophies.py:1703 routes/trophies.py:1770
 #: routes/xbox_achievements.py:157 services/api_helpers.py:46
 msgid "An internal error occurred"
 msgstr "内部エラーが発生しました"
@@ -384,68 +384,68 @@ msgstr "更新する項目がありません"
 msgid "system_id and emulator_id required"
 msgstr "system_idとemulator_idが必要です"
 
-#: routes/games.py:235
+#: routes/games.py:234
 msgid "No IDs provided"
 msgstr "IDが指定されていません"
 
-#: routes/games.py:243
+#: routes/games.py:242
 msgid "Provide 1-50 valid IDs"
 msgstr "有効なIDを1〜50件指定してください"
 
-#: routes/games.py:617
+#: routes/games.py:616
 msgid "Game not found after update"
 msgstr "更新後にゲームが見つかりません"
 
-#: routes/games.py:897
+#: routes/games.py:895
 msgid "No game selected."
 msgstr "ゲームが選択されていません。"
 
-#: routes/games.py:923
+#: routes/games.py:920
 msgid "This metadata apply is no longer running."
 msgstr "このメタデータの適用はすでに実行されていません。"
 
-#: routes/games.py:932
+#: routes/games.py:929
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
 " still missing)"
 msgstr "%(sources)s からメタデータを適用しました！（%(filled)d 項目を入力、%(missing)d 項目が未入力）"
 
-#: routes/games.py:938
+#: routes/games.py:935
 msgid "Failed to apply metadata."
 msgstr "メタデータの適用に失敗しました。"
 
-#: routes/games.py:977 routes/games.py:1021
+#: routes/games.py:974 routes/games.py:1018
 msgid "No fields to update"
 msgstr "更新するフィールドがありません"
 
-#: routes/games.py:1018 routes/platform_import.py:212
-#: routes/platform_import.py:571 routes/platform_import.py:930
-#: routes/trophies.py:1878
+#: routes/games.py:1015 routes/platform_import.py:212
+#: routes/platform_import.py:569 routes/platform_import.py:926
+#: routes/trophies.py:1850
 msgid "No games selected"
 msgstr "ゲームが選択されていません"
 
-#: routes/games.py:1028
+#: routes/games.py:1025
 msgid "Invalid completion status"
 msgstr "クリア状況が無効です"
 
-#: routes/games.py:1076
+#: routes/games.py:1073
 msgid "No valid fields to update"
 msgstr "更新できる有効なフィールドがありません"
 
-#: routes/games.py:1193
+#: routes/games.py:1189
 msgid "Invalid status"
 msgstr "ステータスが無効です"
 
-#: routes/games.py:1218
+#: routes/games.py:1214
 msgid "Not authenticated"
 msgstr "認証されていません"
 
-#: routes/games.py:1249
+#: routes/games.py:1245
 msgid "Filter type and value required"
 msgstr "フィルターの種類と値が必要です"
 
-#: routes/games.py:1262
+#: routes/games.py:1258
 msgid "Invalid filter type"
 msgstr "フィルターの種類が無効です"
 
@@ -461,8 +461,8 @@ msgstr "AIスクレイパーモジュールが利用できません"
 msgid "No filename provided"
 msgstr "ファイル名が指定されていません"
 
-#: routes/games_media.py:78 routes/reports.py:684 routes/scrape_logs.py:131
-#: routes/scrape_logs.py:156 routes/scrape_logs.py:205 routes/settings.py:351
+#: routes/games_media.py:78 routes/reports.py:684 routes/scrape_logs.py:129
+#: routes/scrape_logs.py:154 routes/scrape_logs.py:203 routes/settings.py:350
 msgid "Invalid filename"
 msgstr "ファイル名が無効です"
 
@@ -523,7 +523,7 @@ msgstr "以前のインスタンスの終了に失敗しました: %(err)s"
 msgid "Unknown image type"
 msgstr "処理する画像がありません"
 
-#: routes/museum.py:386 routes/scraper.py:774
+#: routes/museum.py:386 routes/scraper.py:770
 msgid "No AI provider configured"
 msgstr "AIプロバイダーが設定されていません"
 
@@ -578,26 +578,26 @@ msgstr "処理する画像がありません"
 msgid "Image file not found"
 msgstr "画像ファイルが見つかりません"
 
-#: routes/museum.py:772 routes/museum.py:776 services/js_i18n_strings.py:409
+#: routes/museum.py:772 routes/museum.py:776 services/js_i18n_strings.py:406
 msgid "Background removal failed"
 msgstr "背景の削除に失敗しました"
 
-#: routes/platform_import.py:145
+#: routes/platform_import.py:146
 msgid "Steam API key not configured. Add it in Settings → API Keys."
 msgstr "Steam API キーが設定されていません。「設定」→「API キー」で追加してください。"
 
-#: routes/platform_import.py:147
+#: routes/platform_import.py:148
 msgid "Steam ID not configured. Add it in Settings → API Keys."
 msgstr "Steam IDが設定されていません。「設定」→「API キー」で追加してください。"
 
-#: routes/platform_import.py:153
+#: routes/platform_import.py:154
 #, python-format
 msgid ""
 "Could not resolve Steam vanity URL \"%(steam_id)s\". Use your 17-digit "
 "Steam ID instead."
 msgstr "Steamのカスタム URL「%(steam_id)s」を解決できませんでした。代わりに17桁のSteam IDを使用してください。"
 
-#: routes/platform_import.py:159
+#: routes/platform_import.py:160
 msgid ""
 "No games found. Check that your Steam profile and game details are set to"
 " Public."
@@ -607,27 +607,27 @@ msgstr "ゲームが見つかりません。Steamのプロフィールとゲー�
 msgid "Could not create Windows system entry"
 msgstr "Windowsシステムのエントリを作成できませんでした"
 
-#: routes/platform_import.py:342
+#: routes/platform_import.py:341
 msgid "Xbox Client ID not configured. Add it in Settings → API Keys."
 msgstr "Xbox Client IDが設定されていません。「設定」→「API キー」で追加してください。"
 
-#: routes/platform_import.py:480
+#: routes/platform_import.py:479
 msgid "Xbox credentials not configured. Add them in Settings → API Keys."
 msgstr "Xboxの認証情報が設定されていません。「設定」→「API キー」で追加してください。"
 
-#: routes/platform_import.py:484
+#: routes/platform_import.py:483
 msgid "Xbox authentication failed. Please re-connect your Xbox account."
 msgstr "Xboxの認証に失敗しました。Xboxアカウントを再接続してください。"
 
-#: routes/platform_import.py:488
+#: routes/platform_import.py:487
 msgid "No games found in Xbox title history."
 msgstr "Xboxのタイトル履歴にゲームが見つかりません。"
 
-#: routes/platform_import.py:766
+#: routes/platform_import.py:763
 msgid "PSN NPSSO not configured. Add it in Settings → API Keys."
 msgstr "PSN NPSSOが設定されていません。「設定」→「API キー」で追加してください。"
 
-#: routes/platform_import.py:795
+#: routes/platform_import.py:792
 msgid "Failed to fetch PSN game list. Try syncing trophies first."
 msgstr "PSNのゲームリストの取得に失敗しました。まずトロフィーを同期してみてください。"
 
@@ -690,17 +690,17 @@ msgstr "サニタイズ後にタイトルが空になりました"
 msgid "Generated filename contains invalid characters"
 msgstr "生成されたファイル名に無効な文字が含まれています"
 
-#: routes/scrape_logs.py:98 routes/scrape_logs.py:134 routes/scrape_logs.py:159
-#: routes/scrape_logs.py:210
+#: routes/scrape_logs.py:97 routes/scrape_logs.py:132 routes/scrape_logs.py:157
+#: routes/scrape_logs.py:208
 msgid "Invalid log file"
 msgstr "ログファイルが無効です"
 
-#: routes/scrape_logs.py:102 routes/tools.py:496
+#: routes/scrape_logs.py:101 routes/tools.py:496
 msgid "File not found"
 msgstr "ファイルが見つかりません"
 
-#: routes/scrape_logs.py:139 routes/scrape_logs.py:164
-#: routes/scrape_logs.py:216
+#: routes/scrape_logs.py:137 routes/scrape_logs.py:162
+#: routes/scrape_logs.py:214
 msgid "Log file not found"
 msgstr "ログファイルが見つかりません"
 
@@ -722,33 +722,33 @@ msgstr "TGDB API キーが設定されていません"
 msgid "No ScreenScraper credentials configured"
 msgstr "ScreenScraperの認証情報が設定されていません"
 
-#: routes/scraper.py:692
+#: routes/scraper.py:691
 msgid "Invalid JSON response from ScreenScraper"
 msgstr "ScreenScraperからのJSON応答が無効です"
 
-#: routes/scraper.py:695
+#: routes/scraper.py:694
 msgid "Error parsing API response"
 msgstr "API応答の解析中にエラーが発生しました"
 
-#: routes/scraper.py:713
+#: routes/scraper.py:711
 msgid "No RAWG API key configured"
 msgstr "RAWG API キーが設定されていません"
 
-#: routes/scraper.py:820
+#: routes/scraper.py:816
 #, python-format
 msgid "Unknown AI provider: %(provider)s"
 msgstr "不明なAIプロバイダーです: %(provider)s"
 
-#: routes/scraper.py:823
+#: routes/scraper.py:819
 msgid "No response from AI provider"
 msgstr "AIプロバイダーからの応答がありません"
 
-#: routes/scraper.py:914
+#: routes/scraper.py:910
 #, python-format
 msgid "Connection error: %(error)s"
 msgstr "接続エラー: %(error)s"
 
-#: routes/scraper.py:917
+#: routes/scraper.py:913
 #, python-format
 msgid "Allowance check not supported for %(scraper)s"
 msgstr "%(scraper)sでは利用上限の確認はサポートされていません"
@@ -761,72 +761,72 @@ msgstr "値が必要です"
 msgid "Option already exists"
 msgstr "その選択肢はすでに存在します"
 
-#: routes/settings.py:357
+#: routes/settings.py:356
 msgid "Backup file not found"
 msgstr "バックアップファイルが見つかりません"
 
-#: routes/settings.py:372
+#: routes/settings.py:370
 msgid "A background job is running. Wait for it to finish before restoring."
 msgstr "バックグラウンドジョブが実行中です。復元する前に完了を待ってください。"
 
-#: routes/settings.py:392
+#: routes/settings.py:390
 msgid "Backup failed its integrity check; restore aborted."
 msgstr "バックアップの整合性チェックに失敗しました。復元を中止しました。"
 
-#: routes/settings.py:514
+#: routes/settings.py:510
 #, python-format
 msgid "Invalid %(field)s: %(result)s"
 msgstr "%(field)sが無効です: %(result)s"
 
-#: routes/settings.py:533 routes/settings.py:594 routes/settings.py:647
+#: routes/settings.py:529 routes/settings.py:588 routes/settings.py:640
 #: routes/tools.py:282
 msgid "Failed to save settings"
 msgstr "設定の保存に失敗しました"
 
-#: routes/settings.py:562
+#: routes/settings.py:557
 msgid "Request body must be a JSON object"
 msgstr "リクエスト本文はJSONオブジェクトである必要があります"
 
-#: routes/settings.py:573 routes/tools.py:274
+#: routes/settings.py:567 routes/tools.py:274
 #, python-format
 msgid "Unknown setting key: %(key)s"
 msgstr "不明な設定キーです: %(key)s"
 
-#: routes/settings.py:579 routes/tools.py:277
+#: routes/settings.py:573 routes/tools.py:277
 #, python-format
 msgid "Invalid value for '%(key)s': %(reason)s"
 msgstr "「%(key)s」の値が無効です: %(reason)s"
 
-#: routes/settings.py:612
+#: routes/settings.py:605
 msgid "Failed to reset settings"
 msgstr "設定のリセットに失敗しました"
 
-#: routes/settings.py:633
+#: routes/settings.py:626
 #, python-format
 msgid "invalid logging settings: %(reason)s"
 msgstr "ロギング設定が無効です: %(reason)s"
 
-#: routes/settings.py:663 routes/settings.py:692
+#: routes/settings.py:656 routes/settings.py:684
 msgid "Invalid field. Must be \"genre\" or \"modes\""
 msgstr "フィールドが無効です。「genre」または「modes」である必要があります"
 
-#: routes/settings.py:695
+#: routes/settings.py:687
 msgid "No mappings provided"
 msgstr "マッピングが指定されていません"
 
-#: routes/steam_achievements.py:111
+#: routes/steam_achievements.py:112
 msgid "Steam credentials not configured"
 msgstr "Steamの認証情報が設定されていません"
 
-#: routes/steam_achievements.py:115
+#: routes/steam_achievements.py:116
 msgid "Game not found or not a Steam game"
 msgstr "ゲームが見つからないか、Steamのゲームではありません"
 
-#: routes/systems.py:306
+#: routes/systems.py:305
 msgid "System ID required"
 msgstr "システムIDが必要です"
 
-#: routes/systems.py:439
+#: routes/systems.py:433
 msgid "ES-DE scraper not available"
 msgstr "ES-DEスクレイパーが利用できません"
 
@@ -897,79 +897,79 @@ msgstr "chdmanが見つかりません。MAMEツールをインストールし�
 msgid "chdman not found"
 msgstr "chdmanが見つかりません"
 
-#: routes/trophies.py:386
+#: routes/trophies.py:387
 msgid ""
 "Please configure your RPCS3 Trophy Path in your profile settings to view "
 "trophies"
 msgstr "トロフィーを表示するには、プロフィール設定でRPCS3トロフィーパスを設定してください"
 
-#: routes/trophies.py:417
+#: routes/trophies.py:418
 msgid "Trophy set not found"
 msgstr "トロフィーセットが見つかりません"
 
-#: routes/trophies.py:461
+#: routes/trophies.py:462
 msgid "RPCS3_TROPHY_PATH not configured"
 msgstr "RPCS3_TROPHY_PATHが設定されていません"
 
-#: routes/trophies.py:464
+#: routes/trophies.py:465
 #, python-format
 msgid "Trophy path not found: %(path)s"
 msgstr "トロフィーパスが見つかりません: %(path)s"
 
-#: routes/trophies.py:755 routes/trophies.py:1712
+#: routes/trophies.py:755 routes/trophies.py:1686
 msgid "PSN game not found"
 msgstr "PSNゲームが見つかりません"
 
-#: routes/trophies.py:992
+#: routes/trophies.py:1046
 msgid "Sync already in progress"
 msgstr "同期はすでに実行中です"
 
-#: routes/trophies.py:1291
+#: routes/trophies.py:1296
 msgid "Game not found in your PSN trophy list"
 msgstr "PSNのトロフィーリストにゲームが見つかりません"
 
-#: routes/trophies.py:1587
+#: routes/trophies.py:1561
 msgid "Game not found on PSN"
 msgstr "PSNにゲームが見つかりません"
 
-#: routes/trophies.py:1602 routes/trophies.py:1675
+#: routes/trophies.py:1576 routes/trophies.py:1649
 msgid "Missing npwr_id"
 msgstr "npwr_idがありません"
 
-#: routes/trophies.py:1700
+#: routes/trophies.py:1674
 msgid "Missing npwr_id or group_id"
 msgstr "npwr_idまたはgroup_idがありません"
 
-#: routes/trophies.py:1703
+#: routes/trophies.py:1677
 msgid "Name cannot be empty"
 msgstr "名前を空にすることはできません"
 
-#: routes/trophies.py:1741
+#: routes/trophies.py:1715
 msgid "PSNAWP library not installed. Run: pip install psnawp"
 msgstr "PSNAWPライブラリがインストールされていません。次を実行してください: pip install psnawp"
 
-#: routes/trophies.py:1837
+#: routes/trophies.py:1809
 msgid "No NPSSO token provided"
 msgstr "NPSSOトークンが指定されていません"
 
-#: routes/trophies.py:1860
+#: routes/trophies.py:1832
 #, python-format
 msgid "Connection failed: %(error)s"
 msgstr "接続に失敗しました: %(error)s"
 
-#: routes/trophies.py:1887
+#: routes/trophies.py:1859
 msgid "PSN NPSSO not configured"
 msgstr "PSN NPSSOが設定されていません"
 
-#: routes/xbox_achievements.py:125
+#: routes/xbox_achievements.py:126
 msgid "Xbox credentials not configured"
 msgstr "Xboxの認証情報が設定されていません"
 
-#: routes/xbox_achievements.py:130
+#: routes/xbox_achievements.py:131
 msgid "Xbox authentication failed — please re-connect your account"
 msgstr "Xboxの認証に失敗しました — アカウントを再接続してください"
 
-#: routes/xbox_achievements.py:134
+#: routes/xbox_achievements.py:135
 msgid "Game not found or not an Xbox game"
 msgstr "ゲームが見つからないか、Xboxのゲームではありません"
 
@@ -1321,16 +1321,16 @@ msgstr "サンドボックス"
 msgid "Turn-Based"
 msgstr "ターン制"
 
-#: services/js_i18n_strings.py:379
+#: services/js_i18n_strings.py:376
 msgid "(Paused)"
 msgstr "（一時停止中）"
 
-#: services/js_i18n_strings.py:380
+#: services/js_i18n_strings.py:377
 #, fuzzy
 msgid "(none)"
 msgstr "なし"
 
-#: services/js_i18n_strings.py:381 templates/_bulk_edit_modal.html:25
+#: services/js_i18n_strings.py:378 templates/_bulk_edit_modal.html:25
 #: templates/_bulk_edit_modal.html:38 templates/_bulk_edit_modal.html:83
 #: templates/_bulk_edit_modal.html:95 templates/_bulk_edit_modal.html:120
 #: templates/_bulk_edit_modal.html:137 templates/_bulk_edit_modal.html:153
@@ -1338,88 +1338,88 @@ msgstr "なし"
 msgid "-- Don't change --"
 msgstr "-- 変更しない --"
 
-#: services/js_i18n_strings.py:382
+#: services/js_i18n_strings.py:379
 msgid "-- Select log file --"
 msgstr "-- ログファイルを選択 --"
 
-#: services/js_i18n_strings.py:383
+#: services/js_i18n_strings.py:380
 #, python-brace-format
 msgid "... and {n} more"
 msgstr "...他{n}件"
 
-#: services/js_i18n_strings.py:384 templates/_bulk_edit_modal.html:30
+#: services/js_i18n_strings.py:381 templates/_bulk_edit_modal.html:30
 #: templates/base.html:973
 msgid "100%"
 msgstr "100%"
 
-#: services/js_i18n_strings.py:385 templates/_settings_tabs/account.html:270
+#: services/js_i18n_strings.py:382 templates/_settings_tabs/account.html:270
 msgid "Actions"
 msgstr "操作"
 
-#: services/js_i18n_strings.py:386
+#: services/js_i18n_strings.py:383
 msgid "Added to queue - will start when current operation completes"
 msgstr "キューに追加しました - 現在の操作が完了すると開始されます"
 
-#: services/js_i18n_strings.py:387
+#: services/js_i18n_strings.py:384
 msgid "All ROMs accounted for!"
 msgstr "すべてのROMが揃っています！"
 
-#: services/js_i18n_strings.py:388 templates/logs.html:764
+#: services/js_i18n_strings.py:385 templates/logs.html:764
 msgid "All Sources"
 msgstr "すべてのソース"
 
-#: services/js_i18n_strings.py:389 templates/all_games.html:42
+#: services/js_i18n_strings.py:386 templates/all_games.html:42
 #: templates/reports.html:328 templates/reports.html:407
 #: templates/reports.html:480
 msgid "All Systems"
 msgstr "すべてのシステム"
 
-#: services/js_i18n_strings.py:390
+#: services/js_i18n_strings.py:387
 msgid "Already Syncing"
 msgstr "すでに同期中"
 
-#: services/js_i18n_strings.py:391 templates/_bulk_edit_modal.html:193
+#: services/js_i18n_strings.py:388 templates/_bulk_edit_modal.html:193
 msgid "Apply Changes"
 msgstr "変更を適用"
 
-#: services/js_i18n_strings.py:392
+#: services/js_i18n_strings.py:389
 msgid "Apply Normalization"
 msgstr "正規化を適用"
 
-#: services/js_i18n_strings.py:393
+#: services/js_i18n_strings.py:390
 #, fuzzy, python-brace-format
 msgid "Apply failed: {error}"
 msgstr "バックアップに失敗しました: {error}"
 
-#: services/js_i18n_strings.py:394
+#: services/js_i18n_strings.py:391
 #, python-brace-format
 msgid "Apply {n} Selected"
 msgstr "選択した{n}件を適用"
 
-#: services/js_i18n_strings.py:395
+#: services/js_i18n_strings.py:392
 #, python-brace-format
 msgid "Apply {n} normalization rule?"
 msgstr "{n}件の正規化ルールを適用しますか？"
 
-#: services/js_i18n_strings.py:396
+#: services/js_i18n_strings.py:393
 #, python-brace-format
 msgid "Apply {n} normalization rules?"
 msgstr "{n}件の正規化ルールを適用しますか？"
 
-#: services/js_i18n_strings.py:397
+#: services/js_i18n_strings.py:394
 msgid "Applying Metadata"
 msgstr "メタデータを適用中"
 
-#: services/js_i18n_strings.py:398
+#: services/js_i18n_strings.py:395
 msgid "Applying..."
 msgstr "適用しています..."
 
-#: services/js_i18n_strings.py:399
+#: services/js_i18n_strings.py:396
 #, fuzzy
 msgid "Applying…"
 msgstr "適用しています..."
 
-#: services/js_i18n_strings.py:400
+#: services/js_i18n_strings.py:397
 msgid ""
 "Are you sure you want to cancel the bulk scrape?\n"
 "\n"
@@ -1431,64 +1431,64 @@ msgstr ""
 "\n"
 "注意: キャンセルが反映される前に現在のゲームの取得は完了します（通常10〜60秒）— その間も進行状況の通知は更新され続けます。"
 
-#: services/js_i18n_strings.py:401
+#: services/js_i18n_strings.py:398
 msgid "Are you sure you want to cancel?"
 msgstr "キャンセルしてもよろしいですか？"
 
-#: services/js_i18n_strings.py:402
+#: services/js_i18n_strings.py:399
 #, python-brace-format
 msgid "Are you sure you want to delete \"{filename}\"?"
 msgstr "「{filename}」を削除してもよろしいですか？"
 
-#: services/js_i18n_strings.py:403
+#: services/js_i18n_strings.py:400
 msgid ""
 "Are you sure you want to reset all metadata for this game? This will "
 "delete boxart and screenshots."
 msgstr "このゲームのすべてのメタデータをリセットしてもよろしいですか？ボックスアートとスクリーンショットが削除されます。"
 
-#: services/js_i18n_strings.py:404
+#: services/js_i18n_strings.py:401
 msgid "Are you sure you want to restart the server?"
 msgstr "サーバーを再起動してもよろしいですか？"
 
-#: services/js_i18n_strings.py:405
+#: services/js_i18n_strings.py:402
 msgid ""
 "Are you sure you want to shut down the server? You will need to start it "
 "again manually."
 msgstr ""
 
-#: services/js_i18n_strings.py:406 templates/settings.html:67
+#: services/js_i18n_strings.py:403 templates/settings.html:67
 msgid "Are you sure?"
 msgstr "よろしいですか？"
 
-#: services/js_i18n_strings.py:407
+#: services/js_i18n_strings.py:404
 msgid "Asking AI…"
 msgstr "AI に問い合わせています…"
 
-#: services/js_i18n_strings.py:408
+#: services/js_i18n_strings.py:405
 msgid "BIOS"
 msgstr "BIOS"
 
-#: services/js_i18n_strings.py:410
+#: services/js_i18n_strings.py:407
 msgid "Background removed"
 msgstr "背景を削除しました"
 
-#: services/js_i18n_strings.py:411
+#: services/js_i18n_strings.py:408
 msgid "Bulk fetch failed"
 msgstr "一括取得に失敗しました"
 
-#: services/js_i18n_strings.py:412
+#: services/js_i18n_strings.py:409
 msgid "Bulk fetch request failed"
 msgstr "一括取得要求に失敗しました"
 
-#: services/js_i18n_strings.py:413
+#: services/js_i18n_strings.py:410
 msgid "Bulk scraping complete!"
 msgstr "一括取得が完了しました！"
 
-#: services/js_i18n_strings.py:414
+#: services/js_i18n_strings.py:411
 msgid "CLZ Imports"
 msgstr "CLZインポート"
 
-#: services/js_i18n_strings.py:415 templates/_bulk_edit_modal.html:191
+#: services/js_i18n_strings.py:412 templates/_bulk_edit_modal.html:191
 #: templates/_bulk_scrape_modal.html:49 templates/_modals/edit_modal.html:12
 #: templates/_modals/rename_modal.html:19
 #: templates/_settings_tabs/account.html:72
@@ -1507,120 +1507,120 @@ msgstr "CLZインポート"
 msgid "Cancel"
 msgstr "キャンセル"
 
-#: services/js_i18n_strings.py:416
+#: services/js_i18n_strings.py:413
 msgid "Cancel Bulk Scrape"
 msgstr "一括スクレイピングをキャンセル"
 
-#: services/js_i18n_strings.py:417
+#: services/js_i18n_strings.py:414
 msgid "Cancel request failed"
 msgstr "キャンセル要求に失敗しました"
 
-#: services/js_i18n_strings.py:418
+#: services/js_i18n_strings.py:415
 msgid "Cancellation requested"
 msgstr "キャンセルを要求しました"
 
-#: services/js_i18n_strings.py:419
+#: services/js_i18n_strings.py:416
 msgid "Cancelled"
 msgstr "キャンセルしました"
 
-#: services/js_i18n_strings.py:420
+#: services/js_i18n_strings.py:417
 msgid "Cancelled by user"
 msgstr "ユーザーによりキャンセルされました"
 
-#: services/js_i18n_strings.py:421
+#: services/js_i18n_strings.py:418
 msgid "Checking RetroAchievements…"
 msgstr "RetroAchievements を確認しています…"
 
-#: services/js_i18n_strings.py:422
+#: services/js_i18n_strings.py:419
 msgid "Clean Missing ROMs"
 msgstr "欠落ROMをクリーンアップ"
 
-#: services/js_i18n_strings.py:423
+#: services/js_i18n_strings.py:420
 msgid "Clear CLZ Imports"
 msgstr "CLZインポートをクリア"
 
-#: services/js_i18n_strings.py:424
+#: services/js_i18n_strings.py:421
 msgid "Clear HLTB data for this game?"
 msgstr "このゲームのHLTBデータを消去しますか？"
 
-#: services/js_i18n_strings.py:425 templates/achievements_system.html:109
+#: services/js_i18n_strings.py:422 templates/achievements_system.html:109
 msgid "Clear RA Data"
 msgstr "RAデータを消去"
 
-#: services/js_i18n_strings.py:426
+#: services/js_i18n_strings.py:423
 msgid "Clear RetroAchievements Data"
 msgstr "RetroAchievementsデータを消去"
 
-#: services/js_i18n_strings.py:427
+#: services/js_i18n_strings.py:424
 #, python-brace-format
 msgid "Cleared RA data for {count} games in {system}"
 msgstr "{system}内の{count}件のゲームのRAデータを消去しました"
 
-#: services/js_i18n_strings.py:428
+#: services/js_i18n_strings.py:425
 #, python-brace-format
 msgid "Cleared RA data for {n} games"
 msgstr "{n}件のゲームのRAデータを消去しました"
 
-#: services/js_i18n_strings.py:429
+#: services/js_i18n_strings.py:426
 #, python-brace-format
 msgid "Cleared RA data for {n} games in {system}"
 msgstr "{system}内の{n}件のゲームのRAデータを消去しました"
 
-#: services/js_i18n_strings.py:430
+#: services/js_i18n_strings.py:427
 #, python-brace-format
 msgid ""
 "Cleared RetroAchievements data for {n} games. Run \"Refresh "
 "RetroAchievements\" to re-scan with updated matching."
 msgstr "{n}件のゲームのRetroAchievementsデータをクリアしました。更新された照合で再スキャンするには「RetroAchievementsを更新」を実行してください。"
 
-#: services/js_i18n_strings.py:431
+#: services/js_i18n_strings.py:428
 msgid "Clearing..."
 msgstr "消去しています..."
 
-#: services/js_i18n_strings.py:432
+#: services/js_i18n_strings.py:429
 msgid "Click again to remove"
 msgstr "もう一度クリックすると削除します"
 
-#: services/js_i18n_strings.py:433 templates/archive_scanner.html:757
+#: services/js_i18n_strings.py:430 templates/archive_scanner.html:757
 #: templates/base.html:194 templates/base.html:286 templates/base.html:303
 #: templates/base.html:654 templates/base.html:930 templates/base.html:1320
 #: templates/wishlist.html:56
 msgid "Close"
 msgstr "閉じる"
 
-#: services/js_i18n_strings.py:434
+#: services/js_i18n_strings.py:431
 msgid "Close keyboard shortcuts"
 msgstr "キーボードショートカットを閉じる"
 
-#: services/js_i18n_strings.py:435
+#: services/js_i18n_strings.py:432
 #, fuzzy
 msgid "Close modal / cancel"
 msgstr "ユーザーモーダルを閉じる"
 
-#: services/js_i18n_strings.py:436 templates/dashboard.html:155
+#: services/js_i18n_strings.py:433 templates/dashboard.html:155
 msgid "Complete"
 msgstr "完了"
 
-#: services/js_i18n_strings.py:437
+#: services/js_i18n_strings.py:434
 msgid "Complete!"
 msgstr "完了！"
 
-#: services/js_i18n_strings.py:438 templates/_bulk_edit_modal.html:29
+#: services/js_i18n_strings.py:435 templates/_bulk_edit_modal.html:29
 #: templates/base.html:972 templates/dashboard.html:473
 #: templates/game_detail.html:199
 msgid "Completed"
 msgstr "クリア済み"
 
-#: services/js_i18n_strings.py:439 templates/_bulk_edit_modal.html:23
+#: services/js_i18n_strings.py:436 templates/_bulk_edit_modal.html:23
 #: templates/analytics.html:137 templates/base.html:967
 msgid "Completion Status"
 msgstr "達成ステータス"
 
-#: services/js_i18n_strings.py:440
+#: services/js_i18n_strings.py:437
 msgid "Completion status updated"
 msgstr "達成ステータスを更新しました"
 
-#: services/js_i18n_strings.py:441 templates/achievement_game.html:172
+#: services/js_i18n_strings.py:438 templates/achievement_game.html:172
 #: templates/achievement_game.html:197 templates/achievement_game.html:211
 #: templates/base.html:1009 templates/game_detail.html:489
 #: templates/game_detail.html:514 templates/game_detail.html:528
@@ -1633,408 +1633,404 @@ msgstr "達成ステータスを更新しました"
 msgid "Completionist"
 msgstr "コンプリート"
 
-#: services/js_i18n_strings.py:442 templates/settings.html:66
+#: services/js_i18n_strings.py:439 templates/settings.html:66
 msgid "Confirm Action"
 msgstr "操作の確認"
 
-#: services/js_i18n_strings.py:443
+#: services/js_i18n_strings.py:440
 msgid "Confirm Bulk Edit"
 msgstr "一括編集の確認"
 
-#: services/js_i18n_strings.py:444
+#: services/js_i18n_strings.py:441
 msgid "Content generated successfully"
 msgstr "コンテンツを正常に生成しました"
 
-#: services/js_i18n_strings.py:445
+#: services/js_i18n_strings.py:442
 msgid "Controller"
 msgstr "コントローラー"
 
-#: services/js_i18n_strings.py:446
+#: services/js_i18n_strings.py:443
 msgid "Controller image saved"
 msgstr "コントローラー画像を保存しました"
 
-#: services/js_i18n_strings.py:447
+#: services/js_i18n_strings.py:444
 msgid "Controller image uploaded"
 msgstr "コントローラー画像をアップロードしました"
 
-#: services/js_i18n_strings.py:448
+#: services/js_i18n_strings.py:445
 msgid "Could not apply metadata."
 msgstr "メタデータを適用できませんでした。"
 
-#: services/js_i18n_strings.py:449
+#: services/js_i18n_strings.py:446
 msgid "Could not reconnect to server. Please refresh manually."
 msgstr "サーバーに再接続できませんでした。手動で更新してください。"
 
-#: services/js_i18n_strings.py:450
+#: services/js_i18n_strings.py:447
 msgid "Could not stop the running instance."
 msgstr ""
 
-#: services/js_i18n_strings.py:451
+#: services/js_i18n_strings.py:448
 #, fuzzy
 msgid "Currently set"
 msgstr "現在の値"
 
-#: services/js_i18n_strings.py:452
+#: services/js_i18n_strings.py:449
 msgid "Default"
 msgstr "既定"
 
-#: services/js_i18n_strings.py:453
+#: services/js_i18n_strings.py:450
 #, python-brace-format
 msgid "Default emulator for {system}"
 msgstr "{system} の既定のエミュレーター"
 
-#: services/js_i18n_strings.py:454
+#: services/js_i18n_strings.py:451
 msgid "Delete Log File"
 msgstr "ログファイルを削除"
 
-#: services/js_i18n_strings.py:455
+#: services/js_i18n_strings.py:452
 #, fuzzy, python-brace-format
 msgid "Detect failed: {error}"
 msgstr "復元に失敗しました: {error}"
 
-#: services/js_i18n_strings.py:456
+#: services/js_i18n_strings.py:453
 #, fuzzy
 msgid "Detected path"
 msgstr "除外パス"
 
-#: services/js_i18n_strings.py:457
+#: services/js_i18n_strings.py:454
 #, fuzzy
 msgid "Detecting…"
 msgstr "設定"
 
-#: services/js_i18n_strings.py:458 templates/_bulk_scrape_modal.html:69
+#: services/js_i18n_strings.py:455 templates/_bulk_scrape_modal.html:69
 #: templates/psn_trophies.html:247 templates/psn_trophies.html:307
 #: templates/reports.html:525
 msgid "Done"
 msgstr "完了"
 
-#: services/js_i18n_strings.py:459
+#: services/js_i18n_strings.py:456
 msgid "Downloading 3D box art…"
 msgstr "3D ボックスアートをダウンロードしています…"
 
-#: services/js_i18n_strings.py:460
+#: services/js_i18n_strings.py:457
 msgid "Downloading box art…"
 msgstr "ボックスアートをダウンロードしています…"
 
-#: services/js_i18n_strings.py:461
+#: services/js_i18n_strings.py:458
 msgid "Downloading fan art…"
 msgstr "ファンアートをダウンロードしています…"
 
-#: services/js_i18n_strings.py:462
+#: services/js_i18n_strings.py:459
 msgid "Downloading manual…"
 msgstr "マニュアルをダウンロードしています…"
 
-#: services/js_i18n_strings.py:463
+#: services/js_i18n_strings.py:460
 msgid "Downloading media…"
 msgstr "メディアをダウンロードしています…"
 
-#: services/js_i18n_strings.py:464
+#: services/js_i18n_strings.py:461
 msgid "Downloading screenshots…"
 msgstr "スクリーンショットをダウンロードしています…"
 
-#: services/js_i18n_strings.py:465
+#: services/js_i18n_strings.py:462
 msgid "Downloading video…"
 msgstr "動画をダウンロードしています…"
 
-#: services/js_i18n_strings.py:466 templates/_settings_tabs/account.html:315
+#: services/js_i18n_strings.py:463 templates/_settings_tabs/account.html:315
 #: templates/base.html:928 templates/game_detail.html:92
 #: templates/wishlist.html:641
 msgid "Edit"
 msgstr "編集"
 
-#: services/js_i18n_strings.py:467
+#: services/js_i18n_strings.py:464
 #, fuzzy
 msgid "Edit game"
 msgstr "ゲームを編集"
 
-#: services/js_i18n_strings.py:468
+#: services/js_i18n_strings.py:465
 #, python-brace-format
 msgid "Edit: {title}"
 msgstr "編集: {title}"
 
-#: services/js_i18n_strings.py:469
+#: services/js_i18n_strings.py:466
 #, fuzzy
 msgid "Emulator"
 msgstr "シミュレーション"
 
-#: services/js_i18n_strings.py:470
+#: services/js_i18n_strings.py:467
 msgid "Enter one folder path."
 msgstr "フォルダーのパスを 1 つ入力してください。"
 
-#: services/js_i18n_strings.py:471
+#: services/js_i18n_strings.py:468
 msgid "Error"
 msgstr "エラー"
 
-#: services/js_i18n_strings.py:472
+#: services/js_i18n_strings.py:469
 msgid "Error clearing HLTB data"
 msgstr "HLTBデータの消去中にエラーが発生しました"
 
-#: services/js_i18n_strings.py:473
+#: services/js_i18n_strings.py:470
 msgid "Error connecting to HowLongToBeat"
 msgstr "HowLongToBeatへの接続中にエラーが発生しました"
 
-#: services/js_i18n_strings.py:474
+#: services/js_i18n_strings.py:471
 msgid "Error deleting log file"
 msgstr "ログファイルの削除中にエラーが発生しました"
 
-#: services/js_i18n_strings.py:475
+#: services/js_i18n_strings.py:472
 msgid "Error loading file"
 msgstr "ファイルの読み込みエラー"
 
-#: services/js_i18n_strings.py:476
+#: services/js_i18n_strings.py:473
 msgid "Error loading log file"
 msgstr "ログファイルの読み込みエラー"
 
-#: services/js_i18n_strings.py:477
+#: services/js_i18n_strings.py:474
 msgid "Error looking up HLTB"
 msgstr "HLTBの検索中にエラーが発生しました"
 
-#: services/js_i18n_strings.py:478
+#: services/js_i18n_strings.py:475
 msgid "Error refreshing RetroAchievements: "
 msgstr "RetroAchievementsの更新中にエラーが発生しました: "
 
-#: services/js_i18n_strings.py:479
+#: services/js_i18n_strings.py:476
 msgid "Error saving HLTB data"
 msgstr "HLTBデータの保存中にエラーが発生しました"
 
-#: services/js_i18n_strings.py:480
+#: services/js_i18n_strings.py:477
 msgid "Error saving game: "
 msgstr "ゲームの保存中にエラーが発生しました: "
 
-#: services/js_i18n_strings.py:481
+#: services/js_i18n_strings.py:478
 #, python-brace-format
 msgid "Error scanning library: {error}"
 msgstr "ライブラリのスキャン中にエラーが発生しました: {error}"
 
-#: services/js_i18n_strings.py:482
+#: services/js_i18n_strings.py:479
 msgid "Error updating completion status"
 msgstr "達成ステータスの更新中にエラーが発生しました"
 
-#: services/js_i18n_strings.py:483
+#: services/js_i18n_strings.py:480
 msgid "Error updating status"
 msgstr "ステータスの更新中にエラーが発生しました"
 
-#: services/js_i18n_strings.py:484 templates/_modals/edit_modal.html:219
+#: services/js_i18n_strings.py:481 templates/_modals/edit_modal.html:219
 #: templates/base.html:1196
 msgid "Exclusive"
 msgstr "独占"
 
-#: services/js_i18n_strings.py:485
+#: services/js_i18n_strings.py:482
 msgid "Failed to apply bulk edit. Check console for details."
 msgstr "一括編集の適用に失敗しました。詳細はコンソールを確認してください。"
 
-#: services/js_i18n_strings.py:486
+#: services/js_i18n_strings.py:483
 msgid "Failed to apply normalization"
 msgstr "正規化の適用に失敗しました"
 
-#: services/js_i18n_strings.py:487
+#: services/js_i18n_strings.py:484
 msgid "Failed to clean missing ROMs"
 msgstr "欠落したROMのクリーンアップに失敗しました"
 
-#: services/js_i18n_strings.py:488
+#: services/js_i18n_strings.py:485
 msgid "Failed to clear CLZ imports"
 msgstr "CLZインポートの消去に失敗しました"
 
-#: services/js_i18n_strings.py:489
+#: services/js_i18n_strings.py:486
 msgid "Failed to clear HLTB: "
 msgstr "HLTBの消去に失敗しました: "
 
-#: services/js_i18n_strings.py:490
+#: services/js_i18n_strings.py:487
 msgid "Failed to clear RA data"
 msgstr "RAデータの消去に失敗しました"
 
-#: services/js_i18n_strings.py:491
+#: services/js_i18n_strings.py:488
 msgid "Failed to delete"
 msgstr "削除に失敗しました"
 
-#: services/js_i18n_strings.py:492
+#: services/js_i18n_strings.py:489
 msgid "Failed to fetch controller image"
 msgstr "コントローラー画像の取得に失敗しました"
 
-#: services/js_i18n_strings.py:493
+#: services/js_i18n_strings.py:490
 msgid "Failed to fetch image"
 msgstr "画像の取得に失敗しました"
 
-#: services/js_i18n_strings.py:494
+#: services/js_i18n_strings.py:491
 msgid "Failed to load game"
 msgstr "ゲームの読み込みに失敗しました"
 
-#: services/js_i18n_strings.py:495
+#: services/js_i18n_strings.py:492
 msgid "Failed to load normalization data"
 msgstr "正規化データの読み込みに失敗しました"
 
-#: services/js_i18n_strings.py:496
+#: services/js_i18n_strings.py:493
 msgid "Failed to save HLTB: "
 msgstr "HLTBの保存に失敗しました: "
 
-#: services/js_i18n_strings.py:497
+#: services/js_i18n_strings.py:494
 msgid "Failed to save: "
 msgstr "保存に失敗しました: "
 
-#: services/js_i18n_strings.py:498
+#: services/js_i18n_strings.py:495
 msgid "Failed to start RetroAchievements refresh"
 msgstr "RetroAchievementsの更新の開始に失敗しました"
 
-#: services/js_i18n_strings.py:499
+#: services/js_i18n_strings.py:496
 msgid "Failed to start bulk scrape"
 msgstr "一括取得の開始に失敗しました"
 
-#: services/js_i18n_strings.py:500
+#: services/js_i18n_strings.py:497
 msgid "Failed to start generation"
 msgstr "生成の開始に失敗しました"
 
-#: services/js_i18n_strings.py:501
-msgid "Failed to sync trophies"
-msgstr "トロフィーの同期に失敗しました"
-
-#: services/js_i18n_strings.py:502
+#: services/js_i18n_strings.py:498
 msgid "Failed to update completion status: "
 msgstr "達成ステータスの更新に失敗しました: "
 
-#: services/js_i18n_strings.py:503
+#: services/js_i18n_strings.py:499
 #, python-brace-format
 msgid "Failed to update status: {error}"
 msgstr "ステータスの更新に失敗しました: {error}"
 
-#: services/js_i18n_strings.py:504
+#: services/js_i18n_strings.py:500
 #, python-brace-format
 msgid "Failed: {error}"
 msgstr "失敗しました: {error}"
 
-#: services/js_i18n_strings.py:505
+#: services/js_i18n_strings.py:501
 msgid "Fetch All Controller Images"
 msgstr "すべてのコントローラー画像を取得"
 
-#: services/js_i18n_strings.py:506
+#: services/js_i18n_strings.py:502
 msgid "Fetching controller images..."
 msgstr "コントローラー画像を取得しています..."
 
-#: services/js_i18n_strings.py:507
+#: services/js_i18n_strings.py:503
 #, python-brace-format
 msgid "Fetching from {source}…"
 msgstr "{source} から取得しています…"
 
-#: services/js_i18n_strings.py:508
+#: services/js_i18n_strings.py:504
 msgid "Focus search box"
 msgstr ""
 
-#: services/js_i18n_strings.py:509 templates/logs.html:743
+#: services/js_i18n_strings.py:505 templates/logs.html:743
 msgid "From"
 msgstr "開始"
 
-#: services/js_i18n_strings.py:510
+#: services/js_i18n_strings.py:506
 #, fuzzy
 msgid "Game Page"
 msgstr "ゲーム名"
 
-#: services/js_i18n_strings.py:511
+#: services/js_i18n_strings.py:507
 msgid "Game details updated successfully."
 msgstr "ゲームの詳細を正常に更新しました。"
 
-#: services/js_i18n_strings.py:512 templates/_settings_tabs/data.html:186
+#: services/js_i18n_strings.py:508 templates/_settings_tabs/data.html:186
 #: templates/achievements_system.html:119 templates/analytics.html:571
 msgid "Games"
 msgstr "ゲーム"
 
-#: services/js_i18n_strings.py:513
+#: services/js_i18n_strings.py:509
 msgid "Generate All Museum Content"
 msgstr "すべてのミュージアムコンテンツを生成"
 
-#: services/js_i18n_strings.py:514 templates/museum_system.html:45
+#: services/js_i18n_strings.py:510 templates/museum_system.html:45
 msgid "Generate Content"
 msgstr "コンテンツを生成"
 
-#: services/js_i18n_strings.py:515 templates/museum.html:28
+#: services/js_i18n_strings.py:511 templates/museum.html:28
 msgid "Generating content..."
 msgstr "コンテンツを生成しています..."
 
-#: services/js_i18n_strings.py:516
+#: services/js_i18n_strings.py:512
 msgid "Generating..."
 msgstr "生成しています..."
 
-#: services/js_i18n_strings.py:517
+#: services/js_i18n_strings.py:513
 msgid "Generation cancelled"
 msgstr "生成をキャンセルしました"
 
-#: services/js_i18n_strings.py:518
+#: services/js_i18n_strings.py:514
 #, python-brace-format
 msgid ""
 "Generation complete: {generated} generated, {skipped} skipped, {failed} "
 "failed"
 msgstr "生成完了: {generated}件生成、{skipped}件スキップ、{failed}件失敗"
 
-#: services/js_i18n_strings.py:519
+#: services/js_i18n_strings.py:515
 msgid "Generation failed"
 msgstr "生成に失敗しました"
 
-#: services/js_i18n_strings.py:520
+#: services/js_i18n_strings.py:516
 msgid "Generation request failed"
 msgstr "生成要求に失敗しました"
 
-#: services/js_i18n_strings.py:521
+#: services/js_i18n_strings.py:517
 #, fuzzy
 msgid "Go to Analytics"
 msgstr "分析"
 
-#: services/js_i18n_strings.py:522
+#: services/js_i18n_strings.py:518
 #, fuzzy
 msgid "Go to Changelog"
 msgstr "変更履歴"
 
-#: services/js_i18n_strings.py:523
+#: services/js_i18n_strings.py:519
 #, fuzzy
 msgid "Go to Dashboard"
 msgstr "ダッシュボード"
 
-#: services/js_i18n_strings.py:524
+#: services/js_i18n_strings.py:520
 msgid "Go to Help"
 msgstr ""
 
-#: services/js_i18n_strings.py:525
+#: services/js_i18n_strings.py:521
 #, fuzzy
 msgid "Go to Library"
 msgstr "Xboxライブラリ"
 
-#: services/js_i18n_strings.py:526
+#: services/js_i18n_strings.py:522
 #, fuzzy
 msgid "Go to Settings"
 msgstr "ツール設定"
 
-#: services/js_i18n_strings.py:527
+#: services/js_i18n_strings.py:523
 #, fuzzy
 msgid "Go to Systems"
 msgstr "システム総数"
 
-#: services/js_i18n_strings.py:528
+#: services/js_i18n_strings.py:524
 msgid "HLTB data cleared"
 msgstr "HLTBデータを消去しました"
 
-#: services/js_i18n_strings.py:529
+#: services/js_i18n_strings.py:525
 msgid "HLTB data saved"
 msgstr "HLTBデータを保存しました"
 
-#: services/js_i18n_strings.py:530
+#: services/js_i18n_strings.py:526
 msgid "HLTB lookup cancelled"
 msgstr "HLTBの検索をキャンセルしました"
 
-#: services/js_i18n_strings.py:531 templates/all_games.html:118
+#: services/js_i18n_strings.py:527 templates/all_games.html:118
 #: templates/system_games.html:109
 msgid "Has Achievements"
 msgstr "実績あり"
 
-#: services/js_i18n_strings.py:532
+#: services/js_i18n_strings.py:528
 msgid "Hide Bonus"
 msgstr "ボーナスを非表示"
 
-#: services/js_i18n_strings.py:533 templates/logs.html:719
+#: services/js_i18n_strings.py:529 templates/logs.html:719
 msgid "Image Resize"
 msgstr "画像リサイズ"
 
-#: services/js_i18n_strings.py:534
+#: services/js_i18n_strings.py:530
 msgid "Image must be under 10MB"
 msgstr "画像は10MB未満である必要があります"
 
-#: services/js_i18n_strings.py:535 templates/_bulk_edit_modal.html:27
+#: services/js_i18n_strings.py:531 templates/_bulk_edit_modal.html:27
 #: templates/achievements_system.html:151
 #: templates/achievements_system.html:170 templates/base.html:970
 #: templates/dashboard.html:329 templates/dashboard.html:469
@@ -2043,60 +2039,60 @@ msgstr "画像は10MB未満である必要があります"
 msgid "In Progress"
 msgstr "進行中"
 
-#: services/js_i18n_strings.py:536
+#: services/js_i18n_strings.py:532
 msgid "Initializing bulk scrape..."
 msgstr "一括取得を初期化しています..."
 
-#: services/js_i18n_strings.py:537 templates/_bulk_scrape_modal.html:23
+#: services/js_i18n_strings.py:533 templates/_bulk_scrape_modal.html:23
 #: templates/duplicate_finder.html:250 templates/screenshot_dedup.html:276
 msgid "Initializing..."
 msgstr "初期化しています..."
 
-#: services/js_i18n_strings.py:538
+#: services/js_i18n_strings.py:534
 msgid "Just synced"
 msgstr "同期したばかり"
 
-#: services/js_i18n_strings.py:539
+#: services/js_i18n_strings.py:535
 msgid "Keyboard Shortcuts"
 msgstr "キーボードショートカット"
 
-#: services/js_i18n_strings.py:540
+#: services/js_i18n_strings.py:536
 msgid "Kill"
 msgstr ""
 
-#: services/js_i18n_strings.py:541
+#: services/js_i18n_strings.py:537
 #, fuzzy, python-brace-format
 msgid "Launch failed: {error}"
 msgstr "バックアップに失敗しました: {error}"
 
-#: services/js_i18n_strings.py:542
+#: services/js_i18n_strings.py:538
 #, python-brace-format
 msgid "Launched (pid {pid})"
 msgstr ""
 
-#: services/js_i18n_strings.py:543
+#: services/js_i18n_strings.py:539
 msgid "Launched (replaced previous instance)"
 msgstr ""
 
-#: services/js_i18n_strings.py:544
+#: services/js_i18n_strings.py:540
 #, fuzzy
 msgid "Launching…"
 msgstr "起動"
 
-#: services/js_i18n_strings.py:545
+#: services/js_i18n_strings.py:541
 #, python-brace-format
 msgid "Library scan complete! Found {n} new games."
 msgstr "ライブラリのスキャンが完了しました！{n}件の新しいゲームが見つかりました。"
 
-#: services/js_i18n_strings.py:546
+#: services/js_i18n_strings.py:542
 msgid "Loading log file..."
 msgstr "ログファイルを読み込み中..."
 
-#: services/js_i18n_strings.py:547
+#: services/js_i18n_strings.py:543
 msgid "Log file deleted"
 msgstr "ログファイルを削除しました"
 
-#: services/js_i18n_strings.py:548 templates/achievement_game.html:168
+#: services/js_i18n_strings.py:544 templates/achievement_game.html:168
 #: templates/achievement_game.html:197 templates/achievement_game.html:207
 #: templates/base.html:1005 templates/game_detail.html:485
 #: templates/game_detail.html:514 templates/game_detail.html:524
@@ -2109,7 +2105,7 @@ msgstr "ログファイルを削除しました"
 msgid "Main + Extras"
 msgstr "メイン + 追加要素"
 
-#: services/js_i18n_strings.py:549 templates/achievement_game.html:164
+#: services/js_i18n_strings.py:545 templates/achievement_game.html:164
 #: templates/achievement_game.html:197 templates/achievement_game.html:203
 #: templates/base.html:1001 templates/game_detail.html:481
 #: templates/game_detail.html:514 templates/game_detail.html:520
@@ -2122,248 +2118,244 @@ msgstr "メイン + 追加要素"
 msgid "Main Story"
 msgstr "メインストーリー"
 
-#: services/js_i18n_strings.py:550
+#: services/js_i18n_strings.py:546
 msgid "Match found - please confirm to save"
 msgstr "一致が見つかりました - 保存するには確認してください"
 
-#: services/js_i18n_strings.py:551
+#: services/js_i18n_strings.py:547
 msgid ""
 "Matched using this alternate/regional title — confirm it refers to the "
 "same game before saving."
 msgstr "この別名／地域別タイトルで一致しました — 保存する前に同じゲームを指していることを確認してください。"
 
-#: services/js_i18n_strings.py:552
+#: services/js_i18n_strings.py:548
 #, python-brace-format
 msgid ""
 "Matched via alternate title \"{term}\" — HLTB shows it as \"{match}\". "
 "Confirm before saving."
 msgstr "別名「{term}」で一致しました — HLTBでは「{match}」として表示されます。保存する前に確認してください。"
 
-#: services/js_i18n_strings.py:553
+#: services/js_i18n_strings.py:549
 #, python-brace-format
 msgid "Missing: {files}"
 msgstr "見つかりません: {files}"
 
-#: services/js_i18n_strings.py:554
+#: services/js_i18n_strings.py:550
 msgid "Multi-System"
 msgstr "複数システム"
 
-#: services/js_i18n_strings.py:555
+#: services/js_i18n_strings.py:551
 msgid "Multi-platform"
 msgstr "マルチプラットフォーム"
 
-#: services/js_i18n_strings.py:556
+#: services/js_i18n_strings.py:552
 msgid "Museum generation started"
 msgstr "ミュージアムの生成を開始しました"
 
-#: services/js_i18n_strings.py:557
+#: services/js_i18n_strings.py:553
 msgid "NOT"
 msgstr "NOT"
 
-#: services/js_i18n_strings.py:558
+#: services/js_i18n_strings.py:554
 #, fuzzy
 msgid "Navigation"
 msgstr "メインナビゲーション"
 
-#: services/js_i18n_strings.py:559
+#: services/js_i18n_strings.py:555
 msgid "Network error"
 msgstr "ネットワークエラー"
 
-#: services/js_i18n_strings.py:560
+#: services/js_i18n_strings.py:556
 msgid "Network error starting bulk scrape"
 msgstr "一括取得の開始中にネットワークエラーが発生しました"
 
-#: services/js_i18n_strings.py:561
-msgid "Network error syncing trophies"
-msgstr "トロフィーの同期中にネットワークエラーが発生しました"
-
-#: services/js_i18n_strings.py:562 templates/_bulk_edit_modal.html:171
+#: services/js_i18n_strings.py:557 templates/_bulk_edit_modal.html:171
 #: templates/_modals/edit_modal.html:139 templates/game_detail.html:643
 msgid "No"
 msgstr "いいえ"
 
-#: services/js_i18n_strings.py:563
+#: services/js_i18n_strings.py:558
 msgid "No CLZ Import games found"
 msgstr "CLZインポートのゲームが見つかりません"
 
-#: services/js_i18n_strings.py:564
+#: services/js_i18n_strings.py:559
 msgid "No Changes"
 msgstr "変更なし"
 
-#: services/js_i18n_strings.py:565
+#: services/js_i18n_strings.py:560
 msgid "No Games Selected"
 msgstr "ゲームが選択されていません"
 
-#: services/js_i18n_strings.py:566
+#: services/js_i18n_strings.py:561
 msgid "No HLTB data found"
 msgstr "HLTBデータが見つかりません"
 
-#: services/js_i18n_strings.py:567
+#: services/js_i18n_strings.py:562
 msgid "No achievements found"
 msgstr "実績が見つかりません"
 
-#: services/js_i18n_strings.py:568 templates/achievement_game.html:72
+#: services/js_i18n_strings.py:563 templates/achievement_game.html:72
 #: templates/steam_achievement_game.html:69
 #: templates/xbox_achievement_game.html:59
 msgid "No description available."
 msgstr "説明はありません。"
 
-#: services/js_i18n_strings.py:569
+#: services/js_i18n_strings.py:564
 msgid "No emulator AppImages found in the scan paths."
 msgstr ""
 
-#: services/js_i18n_strings.py:570
+#: services/js_i18n_strings.py:565
 msgid "No emulators registered."
 msgstr ""
 
-#: services/js_i18n_strings.py:571
+#: services/js_i18n_strings.py:566
 msgid "No folders yet."
 msgstr "フォルダーはまだありません。"
 
-#: services/js_i18n_strings.py:572
+#: services/js_i18n_strings.py:567
 msgid "No log files in this category"
 msgstr "このカテゴリーにログファイルがありません"
 
-#: services/js_i18n_strings.py:573
+#: services/js_i18n_strings.py:568
 msgid "No log lines match current filters"
 msgstr "現在のフィルターに一致するログ行がありません"
 
-#: services/js_i18n_strings.py:574
+#: services/js_i18n_strings.py:569
 msgid "No mappings yet. Add an emulator folder above."
 msgstr "割り当てはまだありません。上でエミュレーターフォルダーを追加してください。"
 
-#: services/js_i18n_strings.py:575
+#: services/js_i18n_strings.py:570
 msgid "No missing ROM files found."
 msgstr "欠落しているROMファイルは見つかりませんでした。"
 
-#: services/js_i18n_strings.py:576
+#: services/js_i18n_strings.py:571
 msgid "No options available"
 msgstr "利用可能なオプションがありません"
 
-#: services/js_i18n_strings.py:577
+#: services/js_i18n_strings.py:572
 msgid "No ratings available"
 msgstr "利用可能なレーティングがありません"
 
-#: services/js_i18n_strings.py:578
+#: services/js_i18n_strings.py:573
 msgid "No results"
 msgstr "結果なし"
 
-#: services/js_i18n_strings.py:579
+#: services/js_i18n_strings.py:574
 msgid "No results found"
 msgstr "結果が見つかりません"
 
-#: services/js_i18n_strings.py:580
+#: services/js_i18n_strings.py:575
 msgid "No results found on HowLongToBeat"
 msgstr "HowLongToBeatで結果が見つかりませんでした"
 
-#: services/js_i18n_strings.py:581
+#: services/js_i18n_strings.py:576
 msgid "No sessions match current filters"
 msgstr "現在のフィルターに一致するセッションがありません"
 
-#: services/js_i18n_strings.py:582
+#: services/js_i18n_strings.py:577
 #, python-brace-format
 msgid "Normalization applied: {games} games updated, {rules} rules saved"
 msgstr "正規化を適用しました: {games}件のゲームを更新、{rules}件のルールを保存"
 
-#: services/js_i18n_strings.py:583 templates/base.html:1355
+#: services/js_i18n_strings.py:578 templates/base.html:1355
 msgid "Now playing"
 msgstr "プレイ中"
 
-#: services/js_i18n_strings.py:584 templates/base.html:293
+#: services/js_i18n_strings.py:579 templates/base.html:293
 msgid "OK"
 msgstr "OK"
 
-#: services/js_i18n_strings.py:585
+#: services/js_i18n_strings.py:580
 msgid "Operation completed"
 msgstr "操作が完了しました"
 
-#: services/js_i18n_strings.py:586
+#: services/js_i18n_strings.py:581
 msgid "Operation failed"
 msgstr "操作に失敗しました"
 
-#: services/js_i18n_strings.py:587
+#: services/js_i18n_strings.py:582
 #, fuzzy
 msgid "Other"
 msgstr "シューター"
 
-#: services/js_i18n_strings.py:588
+#: services/js_i18n_strings.py:583
 msgid "PSN Imports"
 msgstr "PSNインポート"
 
-#: services/js_i18n_strings.py:589
+#: services/js_i18n_strings.py:584
 msgid "Part of a Series"
 msgstr "シリーズの一部"
 
-#: services/js_i18n_strings.py:590 templates/_bulk_scrape_modal.html:46
+#: services/js_i18n_strings.py:585 templates/_bulk_scrape_modal.html:46
 #: templates/archive_scanner.html:658 templates/archive_scanner.html:795
 #: templates/psn_trophies.html:294
 msgid "Pause"
 msgstr "一時停止"
 
-#: services/js_i18n_strings.py:591
+#: services/js_i18n_strings.py:586
 msgid "Paused - Click Resume to continue"
 msgstr "一時停止中 - 続行するには再開をクリックしてください"
 
-#: services/js_i18n_strings.py:592
+#: services/js_i18n_strings.py:587
 msgid "Platform not found"
 msgstr "プラットフォームが見つかりません"
 
-#: services/js_i18n_strings.py:593 templates/game_detail.html:76
+#: services/js_i18n_strings.py:588 templates/game_detail.html:76
 msgid "Play"
 msgstr "プレイ"
 
-#: services/js_i18n_strings.py:594 templates/_bulk_edit_modal.html:28
+#: services/js_i18n_strings.py:589 templates/_bulk_edit_modal.html:28
 #: templates/base.html:971 templates/dashboard.html:471
 #: templates/game_detail.html:198
 msgid "Played"
 msgstr "プレイ済み"
 
-#: services/js_i18n_strings.py:595
+#: services/js_i18n_strings.py:590
 msgid "Please change at least one field before applying."
 msgstr "適用する前に少なくとも1つのフィールドを変更してください。"
 
-#: services/js_i18n_strings.py:596
+#: services/js_i18n_strings.py:591
 msgid "Please enter a game title"
 msgstr "ゲームタイトルを入力してください"
 
-#: services/js_i18n_strings.py:597
+#: services/js_i18n_strings.py:592
 msgid "Please select at least one game to edit."
 msgstr "編集するゲームを1件以上選択してください。"
 
-#: services/js_i18n_strings.py:598
+#: services/js_i18n_strings.py:593
 msgid "Please select at least one game to scrape."
 msgstr "取得するゲームを1件以上選択してください。"
 
-#: services/js_i18n_strings.py:599
+#: services/js_i18n_strings.py:594
 msgid "Pre-session log entries"
 msgstr "セッション前のログエントリ"
 
-#: services/js_i18n_strings.py:600
+#: services/js_i18n_strings.py:595
 msgid "Processing images…"
 msgstr "画像を処理しています…"
 
-#: services/js_i18n_strings.py:601 templates/game_imports.html:418
+#: services/js_i18n_strings.py:596 templates/game_imports.html:418
 msgid "Processing..."
 msgstr "処理しています..."
 
-#: services/js_i18n_strings.py:602
+#: services/js_i18n_strings.py:597
 #, python-brace-format
 msgid "Processing: {file}"
 msgstr "処理中: {file}"
 
-#: services/js_i18n_strings.py:603
+#: services/js_i18n_strings.py:598
 msgid "Queued"
 msgstr "キュー待ち"
 
-#: services/js_i18n_strings.py:604
+#: services/js_i18n_strings.py:599
 msgid "RA Data Cleared"
 msgstr "RAデータをクリアしました"
 
-#: services/js_i18n_strings.py:605
+#: services/js_i18n_strings.py:600
 msgid "ROM Files"
 msgstr "ROMファイル"
 
-#: services/js_i18n_strings.py:606 templates/_macros/nav_tabs.html:34
+#: services/js_i18n_strings.py:601 templates/_macros/nav_tabs.html:34
 #: templates/archive_scanner.html:561 templates/base.html:140
 #: templates/chd_converter.html:64 templates/chd_verify.html:80
 #: templates/duplicate_finder.html:166 templates/logs.html:713
@@ -2372,317 +2364,317 @@ msgstr "ROMファイル"
 msgid "ROM Tools"
 msgstr "ROMツール"
 
-#: services/js_i18n_strings.py:607
+#: services/js_i18n_strings.py:602
 msgid "Ready"
 msgstr "準備完了"
 
-#: services/js_i18n_strings.py:608
+#: services/js_i18n_strings.py:603
 msgid "Refresh RetroAchievements"
 msgstr "RetroAchievementsを更新"
 
-#: services/js_i18n_strings.py:609
+#: services/js_i18n_strings.py:604
 #, python-brace-format
 msgid "Refresh: {system}"
 msgstr "更新：{system}"
 
-#: services/js_i18n_strings.py:610
+#: services/js_i18n_strings.py:605
 #, python-brace-format
 msgid "Refreshing RA for {system}..."
 msgstr "{system}のRAを更新しています..."
 
-#: services/js_i18n_strings.py:611 templates/compare_games.html:24
+#: services/js_i18n_strings.py:606 templates/compare_games.html:24
 #: templates/compare_games.html:40
 msgid "Remove"
 msgstr "削除"
 
-#: services/js_i18n_strings.py:612
+#: services/js_i18n_strings.py:607
 msgid "Remove background from the uploaded image?"
 msgstr "アップロードした画像から背景を削除しますか？"
 
-#: services/js_i18n_strings.py:613
+#: services/js_i18n_strings.py:608
 msgid "Remove from queue"
 msgstr "キューから削除"
 
-#: services/js_i18n_strings.py:614
+#: services/js_i18n_strings.py:609
 #, python-brace-format
 msgid "Removed {n} CLZ Import games"
 msgstr "{n}件のCLZインポートゲームを削除しました"
 
-#: services/js_i18n_strings.py:615
+#: services/js_i18n_strings.py:610
 #, python-brace-format
 msgid "Removed {n} CLZ Import games:"
 msgstr "{n}件のCLZインポートのゲームを削除しました："
 
-#: services/js_i18n_strings.py:616
+#: services/js_i18n_strings.py:611
 #, python-brace-format
 msgid "Removed {n} games with missing ROMs"
 msgstr "ROMが欠落している{n}件のゲームを削除しました"
 
-#: services/js_i18n_strings.py:617
+#: services/js_i18n_strings.py:612
 #, python-brace-format
 msgid "Removed {n} games:"
 msgstr "{n}件のゲームを削除しました："
 
-#: services/js_i18n_strings.py:618
+#: services/js_i18n_strings.py:613
 msgid "Removing background…"
 msgstr "背景を削除しています…"
 
-#: services/js_i18n_strings.py:619
+#: services/js_i18n_strings.py:614
 msgid "Removing..."
 msgstr "削除中..."
 
-#: services/js_i18n_strings.py:620 templates/_bulk_edit_modal.html:42
+#: services/js_i18n_strings.py:615 templates/_bulk_edit_modal.html:42
 #: templates/_bulk_edit_modal.html:56 templates/_bulk_edit_modal.html:70
 #: templates/_bulk_edit_modal.html:124 templates/_bulk_edit_modal.html:140
 #: templates/_bulk_edit_modal.html:156 templates/_bulk_edit_modal.html:180
 msgid "Replace"
 msgstr "置き換え"
 
-#: services/js_i18n_strings.py:621 templates/logs.html:716
+#: services/js_i18n_strings.py:616 templates/logs.html:716
 msgid "Reports"
 msgstr "レポート"
 
-#: services/js_i18n_strings.py:622
+#: services/js_i18n_strings.py:617
 msgid "Restarting server..."
 msgstr "サーバーを再起動しています..."
 
-#: services/js_i18n_strings.py:623
+#: services/js_i18n_strings.py:618
 msgid "Resume"
 msgstr "再開"
 
-#: services/js_i18n_strings.py:624
+#: services/js_i18n_strings.py:619
 msgid "Running"
 msgstr "実行中"
 
-#: services/js_i18n_strings.py:625
+#: services/js_i18n_strings.py:620
 msgid "Running..."
 msgstr "実行中..."
 
-#: services/js_i18n_strings.py:626
+#: services/js_i18n_strings.py:621
 msgid "Save Failed"
 msgstr "保存に失敗しました"
 
-#: services/js_i18n_strings.py:627
+#: services/js_i18n_strings.py:622
 #, fuzzy, python-brace-format
 msgid "Save failed: {error}"
 msgstr "復元に失敗しました: {error}"
 
-#: services/js_i18n_strings.py:628
+#: services/js_i18n_strings.py:623
 msgid "Saved"
 msgstr "保存しました"
 
-#: services/js_i18n_strings.py:629
+#: services/js_i18n_strings.py:624
 #, fuzzy
 msgid "Saved."
 msgstr "保存しました"
 
-#: services/js_i18n_strings.py:630
+#: services/js_i18n_strings.py:625
 msgid "Saving to the database…"
 msgstr "データベースに保存しています…"
 
-#: services/js_i18n_strings.py:631
+#: services/js_i18n_strings.py:626
 msgid "Saving..."
 msgstr "保存しています..."
 
-#: services/js_i18n_strings.py:632
+#: services/js_i18n_strings.py:627
 #, fuzzy
 msgid "Saving…"
 msgstr "保存しています..."
 
-#: services/js_i18n_strings.py:633
+#: services/js_i18n_strings.py:628
 #, python-brace-format
 msgid "Scan failed (HTTP {status})"
 msgstr "スキャンに失敗しました（HTTP {status}）"
 
-#: services/js_i18n_strings.py:634
+#: services/js_i18n_strings.py:629
 #, fuzzy, python-brace-format
 msgid "Scan failed: {error}"
 msgstr "バックアップに失敗しました: {error}"
 
-#: services/js_i18n_strings.py:635 templates/multi_disc_organizer.html:204
+#: services/js_i18n_strings.py:630 templates/multi_disc_organizer.html:204
 msgid "Scanning..."
 msgstr "スキャンしています..."
 
-#: services/js_i18n_strings.py:636
+#: services/js_i18n_strings.py:631
 #, fuzzy
 msgid "Scanning…"
 msgstr "スキャンしています..."
 
-#: services/js_i18n_strings.py:637
+#: services/js_i18n_strings.py:632
 #, fuzzy
 msgid "Scrape game"
 msgstr "すべてスクレイピング"
 
-#: services/js_i18n_strings.py:638
+#: services/js_i18n_strings.py:633
 #, python-brace-format
 msgid "Scraped 0/{total} - 0%"
 msgstr "取得済み 0/{total} - 0%"
 
-#: services/js_i18n_strings.py:639
+#: services/js_i18n_strings.py:634
 #, python-brace-format
 msgid "Scraped {processed} / {total} - {percent}%"
 msgstr "取得済み {processed} / {total} - {percent}%"
 
-#: services/js_i18n_strings.py:640 templates/logs.html:710
+#: services/js_i18n_strings.py:635 templates/logs.html:710
 #: templates/settings.html:29 templates/wishlist.html:507
 msgid "Scraping"
 msgstr "取得"
 
-#: services/js_i18n_strings.py:641 templates/logs.html:781
+#: services/js_i18n_strings.py:636 templates/logs.html:781
 #: templates/museum_system.html:189 templates/museum_system.html:196
 #: templates/psn_trophy_detail.html:320
 msgid "Search"
 msgstr "検索"
 
-#: services/js_i18n_strings.py:642
+#: services/js_i18n_strings.py:637
 msgid "Searching & removing background..."
 msgstr "背景を検索して削除中..."
 
-#: services/js_i18n_strings.py:643
+#: services/js_i18n_strings.py:638
 #, python-brace-format
 msgid "Searching {source}…"
 msgstr "{source} を検索しています…"
 
-#: services/js_i18n_strings.py:644 templates/all_games.html:62
+#: services/js_i18n_strings.py:639 templates/all_games.html:62
 #: templates/psn_trophies.html:160 templates/system_games.html:53
 msgid "Select"
 msgstr "選択"
 
-#: services/js_i18n_strings.py:645
+#: services/js_i18n_strings.py:640
 msgid "Select Developer"
 msgstr "デベロッパーを選択"
 
-#: services/js_i18n_strings.py:646
+#: services/js_i18n_strings.py:641
 msgid "Select Dimension"
 msgstr "次元を選択"
 
-#: services/js_i18n_strings.py:647
+#: services/js_i18n_strings.py:642
 #: templates/_modals/select_filter_modal.html:15
 msgid "Select Filter"
 msgstr "フィルターを選択"
 
-#: services/js_i18n_strings.py:648
+#: services/js_i18n_strings.py:643
 msgid "Select Genre"
 msgstr "ジャンルを選択"
 
-#: services/js_i18n_strings.py:649
+#: services/js_i18n_strings.py:644
 msgid "Select Perspective"
 msgstr "視点を選択"
 
-#: services/js_i18n_strings.py:650
+#: services/js_i18n_strings.py:645
 msgid "Select Play Mode"
 msgstr "プレイモードを選択"
 
-#: services/js_i18n_strings.py:651
+#: services/js_i18n_strings.py:646
 msgid "Select Publisher"
 msgstr "パブリッシャーを選択"
 
-#: services/js_i18n_strings.py:652
+#: services/js_i18n_strings.py:647
 msgid "Select Rating"
 msgstr "レーティングを選択"
 
-#: services/js_i18n_strings.py:653
+#: services/js_i18n_strings.py:648
 msgid "Select Series"
 msgstr "シリーズを選択"
 
-#: services/js_i18n_strings.py:654
+#: services/js_i18n_strings.py:649
 msgid "Select Source"
 msgstr "ソースを選択"
 
-#: services/js_i18n_strings.py:655
+#: services/js_i18n_strings.py:650
 #, python-brace-format
 msgid "Selected {count} games across all pages"
 msgstr "全ページで{count}件のゲームを選択しました"
 
-#: services/js_i18n_strings.py:656
+#: services/js_i18n_strings.py:651
 #, python-brace-format
 msgid "Selected {count} unscraped games across all pages"
 msgstr "全ページで未取得の{count}件のゲームを選択しました"
 
-#: services/js_i18n_strings.py:657
+#: services/js_i18n_strings.py:652
 msgid "Server restarted successfully!"
 msgstr "サーバーが正常に再起動しました！"
 
-#: services/js_i18n_strings.py:658
+#: services/js_i18n_strings.py:653
 msgid "Server stopped. You can close this tab."
 msgstr ""
 
-#: services/js_i18n_strings.py:659 templates/all_games.html:121
+#: services/js_i18n_strings.py:654 templates/all_games.html:121
 #: templates/system_games.html:112
 msgid "Show Bonus"
 msgstr "ボーナスを表示"
 
-#: services/js_i18n_strings.py:660
+#: services/js_i18n_strings.py:655
 #, fuzzy
 msgid "Show keyboard shortcuts"
 msgstr "キーボードショートカット"
 
-#: services/js_i18n_strings.py:661
+#: services/js_i18n_strings.py:656
 msgid "Showing Bonus Discs"
 msgstr "ボーナスディスクを表示中"
 
-#: services/js_i18n_strings.py:662
+#: services/js_i18n_strings.py:657
 #, fuzzy
 msgid "Shutting down server..."
 msgstr "サーバーを再起動しています..."
 
-#: services/js_i18n_strings.py:663 templates/_modals/edit_modal.html:46
+#: services/js_i18n_strings.py:658 templates/_modals/edit_modal.html:46
 #: templates/base.html:1053
 msgid "Standalone"
 msgstr "単独"
 
-#: services/js_i18n_strings.py:664
+#: services/js_i18n_strings.py:659
 msgid "Starting..."
 msgstr "開始しています..."
 
-#: services/js_i18n_strings.py:665
+#: services/js_i18n_strings.py:660
 msgid "Starting…"
 msgstr "開始しています…"
 
-#: services/js_i18n_strings.py:666
+#: services/js_i18n_strings.py:661
 msgid "Steam Imports"
 msgstr "Steamインポート"
 
-#: services/js_i18n_strings.py:667
+#: services/js_i18n_strings.py:662
 #, python-brace-format
 msgid "Successfully updated {count} games"
 msgstr "{count}件のゲームを正常に更新しました"
 
-#: services/js_i18n_strings.py:668
+#: services/js_i18n_strings.py:663
 msgid "Sync In Progress"
 msgstr "同期中"
 
-#: services/js_i18n_strings.py:669 templates/achievements_system.html:105
+#: services/js_i18n_strings.py:664 templates/achievements_system.html:105
 msgid "Sync Progress"
 msgstr "同期の進行状況"
 
-#: services/js_i18n_strings.py:670
+#: services/js_i18n_strings.py:665
 msgid "Sync Queued"
 msgstr "同期をキューに追加しました"
 
-#: services/js_i18n_strings.py:671
+#: services/js_i18n_strings.py:666
 msgid "Sync complete! Refresh page to see updated progress."
 msgstr "同期が完了しました！ページを更新すると最新の進行状況が表示されます。"
 
-#: services/js_i18n_strings.py:672
+#: services/js_i18n_strings.py:667
 msgid "Sync failed"
 msgstr "同期に失敗しました"
 
-#: services/js_i18n_strings.py:673
+#: services/js_i18n_strings.py:668
 #, python-brace-format
 msgid "Sync: {system}"
 msgstr "同期：{system}"
 
-#: services/js_i18n_strings.py:674
+#: services/js_i18n_strings.py:669
 msgid "Syncing..."
 msgstr "同期しています..."
 
-#: services/js_i18n_strings.py:675
+#: services/js_i18n_strings.py:670
 #, python-brace-format
 msgid "Syncing: {processed} / {total}"
 msgstr "同期中: {processed} / {total}"
 
-#: services/js_i18n_strings.py:676
+#: services/js_i18n_strings.py:671
 #: templates/_settings_tabs/customization.html:299
 #: templates/achievement_game.html:228 templates/analytics.html:569
 #: templates/analytics.html:603 templates/compare_games.html:69
@@ -2695,7 +2687,7 @@ msgstr "同期中: {processed} / {total}"
 msgid "System"
 msgstr "システム"
 
-#: services/js_i18n_strings.py:677
+#: services/js_i18n_strings.py:672
 #: templates/_settings_tabs/customization.html:153
 #: templates/_settings_tabs/customization.html:234
 #: templates/_settings_tabs/data.html:19 templates/achievements_system.html:49
@@ -2704,103 +2696,99 @@ msgstr "システム"
 msgid "Systems"
 msgstr "システム"
 
-#: services/js_i18n_strings.py:678
+#: services/js_i18n_strings.py:673
 msgid "This game is already running.  Kill the existing process and relaunch?"
 msgstr ""
 
-#: services/js_i18n_strings.py:679
+#: services/js_i18n_strings.py:674
 msgid "This system is already being synced."
 msgstr "このシステムはすでに同期中です。"
 
-#: services/js_i18n_strings.py:680
+#: services/js_i18n_strings.py:675
 msgid ""
 "This will clear ALL RetroAchievements game IDs and progress data from "
 "your database. You will need to run \"Refresh RetroAchievements\" again "
 "afterwards to re-scan your games. Continue?"
 msgstr "データベースからすべてのRetroAchievementsゲームIDと進行状況データを消去します。その後、ゲームを再スキャンするには「RetroAchievementsを更新」を再度実行する必要があります。続行しますか？"
 
-#: services/js_i18n_strings.py:681
+#: services/js_i18n_strings.py:676
 #, python-brace-format
 msgid ""
 "This will clear RetroAchievements game IDs and progress data for "
 "\"{system}\". Continue?"
 msgstr "「{system}」のRetroAchievementsゲームIDと進行状況データを消去します。続行しますか？"
 
-#: services/js_i18n_strings.py:682
+#: services/js_i18n_strings.py:677
 #, python-brace-format
 msgid "This will remove \"{system}\" from the Achievements page. Continue?"
 msgstr "「{system}」を実績ページから削除します。続行しますか？"
 
-#: services/js_i18n_strings.py:683
+#: services/js_i18n_strings.py:678
 msgid ""
 "This will remove ALL games imported via CLZ Games Import from the "
 "database. This cannot be undone. Continue?"
 msgstr "CLZ Games Importでインポートしたすべてのゲームをデータベースから削除します。この操作は元に戻せません。続行しますか？"
 
-#: services/js_i18n_strings.py:684
+#: services/js_i18n_strings.py:679
 msgid ""
 "This will remove database entries for ROM files that no longer exist on "
 "disk. This cannot be undone. Continue?"
 msgstr "ディスク上に存在しなくなったROMファイルのデータベースエントリを削除します。この操作は元に戻せません。続行しますか？"
 
-#: services/js_i18n_strings.py:685
+#: services/js_i18n_strings.py:680
 msgid ""
 "This will scan all games and update their RetroAchievements status. This "
 "may take several minutes for large collections. Continue?"
 msgstr "すべてのゲームをスキャンしてRetroAchievementsのステータスを更新します。大規模なコレクションでは数分かかる場合があります。続行しますか？"
 
-#: services/js_i18n_strings.py:686
+#: services/js_i18n_strings.py:681
 msgid ""
 "This will search for and download images for all controllers without "
 "images. Continue?"
 msgstr "画像のないすべてのコントローラーの画像を検索してダウンロードします。続行しますか？"
 
-#: services/js_i18n_strings.py:687
+#: services/js_i18n_strings.py:682
 msgid ""
 "This will use your configured AI provider to generate history and top "
 "games for all systems. This may take several minutes and use API credits."
 " Continue?"
 msgstr "設定されたAIプロバイダーを使用して、すべてのシステムの歴史とトップゲームを生成します。数分かかり、APIクレジットを消費する場合があります。続行しますか？"
 
-#: services/js_i18n_strings.py:688 templates/logs.html:745
+#: services/js_i18n_strings.py:683 templates/logs.html:745
 msgid "To"
 msgstr "終了"
 
-#: services/js_i18n_strings.py:689
-msgid "Trophies synced successfully!"
-msgstr "トロフィーを正常に同期しました！"
-
-#: services/js_i18n_strings.py:690
+#: services/js_i18n_strings.py:684
 msgid "Try adjusting your search or filters"
 msgstr "検索またはフィルターを調整してみてください"
 
-#: services/js_i18n_strings.py:691
+#: services/js_i18n_strings.py:685
 msgid "Unexpected error"
 msgstr "予期しないエラー"
 
-#: services/js_i18n_strings.py:692
+#: services/js_i18n_strings.py:686
 msgid "Unhandled rejection"
 msgstr "未処理の拒否"
 
-#: services/js_i18n_strings.py:693 templates/analytics.html:583
+#: services/js_i18n_strings.py:687 templates/analytics.html:583
 #: templates/base.html:1153 templates/local_trophy_detail.html:220
 #: templates/local_trophy_detail.html:224
 msgid "Unknown"
 msgstr "不明"
 
-#: services/js_i18n_strings.py:694
+#: services/js_i18n_strings.py:688
 msgid "Unknown error"
 msgstr "不明なエラー"
 
-#: services/js_i18n_strings.py:695
+#: services/js_i18n_strings.py:689
 msgid "Unknown error occurred."
 msgstr "不明なエラーが発生しました。"
 
-#: services/js_i18n_strings.py:696
+#: services/js_i18n_strings.py:690
 msgid "Update Failed"
 msgstr "更新に失敗しました"
 
-#: services/js_i18n_strings.py:697
+#: services/js_i18n_strings.py:691
 #, python-brace-format
 msgid ""
 "Update {count} game(s)?\n"
@@ -2811,188 +2799,188 @@ msgstr ""
 "\n"
 "フィールド: {fields}"
 
-#: services/js_i18n_strings.py:698 templates/museum_system.html:190
+#: services/js_i18n_strings.py:692 templates/museum_system.html:190
 #: templates/museum_system.html:197
 msgid "Upload"
 msgstr "アップロード"
 
-#: services/js_i18n_strings.py:699
+#: services/js_i18n_strings.py:693
 msgid "Upload Controller Image"
 msgstr "コントローラー画像をアップロード"
 
-#: services/js_i18n_strings.py:700
+#: services/js_i18n_strings.py:694
 msgid "Upload failed"
 msgstr "アップロードに失敗しました"
 
-#: services/js_i18n_strings.py:701
+#: services/js_i18n_strings.py:695
 msgid "Upload replacement image"
 msgstr "置き換え画像をアップロード"
 
-#: services/js_i18n_strings.py:702
+#: services/js_i18n_strings.py:696
 msgid "Uploading & removing background…"
 msgstr "アップロードして背景を削除しています…"
 
-#: services/js_i18n_strings.py:703
+#: services/js_i18n_strings.py:697
 msgid "Uploading…"
 msgstr "アップロードしています…"
 
-#: services/js_i18n_strings.py:704
+#: services/js_i18n_strings.py:698
 #, fuzzy
 msgid "Will change?"
 msgstr "変更"
 
-#: services/js_i18n_strings.py:705
+#: services/js_i18n_strings.py:699
 msgid "Works"
 msgstr "正常"
 
-#: services/js_i18n_strings.py:706
+#: services/js_i18n_strings.py:700
 msgid "Xbox Imports"
 msgstr "Xboxインポート"
 
-#: services/js_i18n_strings.py:707 templates/_bulk_edit_modal.html:170
+#: services/js_i18n_strings.py:701 templates/_bulk_edit_modal.html:170
 #: templates/_modals/edit_modal.html:139 templates/game_detail.html:586
 #: templates/game_detail.html:643
 msgid "Yes"
 msgstr "はい"
 
-#: services/js_i18n_strings.py:708
+#: services/js_i18n_strings.py:702
 #, python-brace-format
 msgid ""
 "Your bulk scrape has been queued (position {position}). It will start "
 "automatically when the current scrape finishes."
 msgstr "一括取得をキューに追加しました（位置 {position}）。現在の取得が終了すると自動的に開始されます。"
 
-#: services/js_i18n_strings.py:709
+#: services/js_i18n_strings.py:703
 msgid "found"
 msgstr "件見つかりました"
 
-#: services/js_i18n_strings.py:710
+#: services/js_i18n_strings.py:704
 msgid "in queue"
 msgstr "キュー内"
 
-#: services/js_i18n_strings.py:711
+#: services/js_i18n_strings.py:705
 msgid "system"
 msgstr "システム"
 
-#: services/js_i18n_strings.py:712
+#: services/js_i18n_strings.py:706
 #, python-brace-format
 msgid "{confidence}% match"
 msgstr "{confidence}% 一致"
 
-#: services/js_i18n_strings.py:713
+#: services/js_i18n_strings.py:707
 #, python-brace-format
 msgid "{count} Achievements"
 msgstr "{count}件の実績"
 
-#: services/js_i18n_strings.py:714
+#: services/js_i18n_strings.py:708
 #, python-brace-format
 msgid "{fetched} fetched, {skipped} skipped, {failed} failed"
 msgstr "{fetched}件取得、{skipped}件スキップ、{failed}件失敗"
 
-#: services/js_i18n_strings.py:715
+#: services/js_i18n_strings.py:709
 #, python-brace-format
 msgid "{job} Queued (#{position})"
 msgstr "{job}をキューに追加しました（#{position}）"
 
-#: services/js_i18n_strings.py:716
+#: services/js_i18n_strings.py:710
 #, python-brace-format
 msgid "{job} cancelled"
 msgstr "{job}をキャンセルしました"
 
-#: services/js_i18n_strings.py:717
+#: services/js_i18n_strings.py:711
 #, python-brace-format
 msgid "{job} completed ({n} processed)"
 msgstr "{job}が完了しました（{n}件処理）"
 
-#: services/js_i18n_strings.py:718
+#: services/js_i18n_strings.py:712
 #, python-brace-format
 msgid "{job} failed: {error}"
 msgstr "{job}が失敗しました: {error}"
 
-#: services/js_i18n_strings.py:719
+#: services/js_i18n_strings.py:713
 #, python-brace-format
 msgid "{job}: {current} of {total} ({percent}%)"
 msgstr "{job}: {total}件中{current}件 ({percent}%)"
 
-#: services/js_i18n_strings.py:720
+#: services/js_i18n_strings.py:714
 #, python-brace-format
 msgid "{n} Player(s)"
 msgstr "{n}人プレイ"
 
-#: services/js_i18n_strings.py:721
+#: services/js_i18n_strings.py:715
 #, python-brace-format
 msgid "{n} games"
 msgstr "{n}件のゲーム"
 
-#: services/js_i18n_strings.py:722
+#: services/js_i18n_strings.py:716
 #, python-brace-format
 msgid "{n} lines"
 msgstr "{n}行"
 
-#: services/js_i18n_strings.py:723
+#: services/js_i18n_strings.py:717
 #, python-brace-format
 msgid "{points} pts"
 msgstr "{points} pts"
 
-#: services/js_i18n_strings.py:724
+#: services/js_i18n_strings.py:718
 #, python-brace-format
 msgid "{system} has been added to the sync queue."
 msgstr "{system}を同期キューに追加しました。"
 
-#: services/js_i18n_strings.py:725
+#: services/js_i18n_strings.py:719
 msgid "⏳ Searching..."
 msgstr "⏳ 検索しています..."
 
-#: services/js_i18n_strings.py:726
+#: services/js_i18n_strings.py:720
 #, python-brace-format
 msgid "⚠️ Cancel {job}"
 msgstr "⚠️ {job}をキャンセル"
 
-#: services/js_i18n_strings.py:727
+#: services/js_i18n_strings.py:721
 msgid "⚠️ Confirm"
 msgstr "⚠️ 確認"
 
-#: services/js_i18n_strings.py:728
+#: services/js_i18n_strings.py:722
 msgid "⚡ via"
 msgstr "⚡ 経由"
 
-#: services/js_i18n_strings.py:729
+#: services/js_i18n_strings.py:723
 msgid "✕ Clear"
 msgstr "✕ クリア"
 
-#: services/js_i18n_strings.py:730
+#: services/js_i18n_strings.py:724
 msgid "🏆 Refresh RetroAchievements"
 msgstr "🏆 RetroAchievementsを更新"
 
-#: services/js_i18n_strings.py:731
+#: services/js_i18n_strings.py:725
 msgid "📋 Clear CLZ Imports"
 msgstr "📋 CLZインポートを消去"
 
-#: services/js_i18n_strings.py:732
+#: services/js_i18n_strings.py:726
 msgid "🔄 Restart Server"
 msgstr "🔄 サーバーを再起動"
 
-#: services/js_i18n_strings.py:733
+#: services/js_i18n_strings.py:727
 msgid "🔍 Lookup HLTB"
 msgstr "🔍 HLTBを検索"
 
-#: services/js_i18n_strings.py:734
+#: services/js_i18n_strings.py:728
 msgid "🗑️ Clear HLTB Data"
 msgstr "🗑️ HLTBデータを消去"
 
-#: services/js_i18n_strings.py:735
+#: services/js_i18n_strings.py:729
 msgid "🗑️ Clear RetroAchievements Data"
 msgstr "🗑️ RetroAchievementsデータを消去"
 
-#: services/js_i18n_strings.py:736
+#: services/js_i18n_strings.py:730
 msgid "🗑️ Reset Metadata"
 msgstr "🗑️ メタデータをリセット"
 
-#: services/js_i18n_strings.py:737
+#: services/js_i18n_strings.py:731
 msgid "🛑 Shut Down Server"
 msgstr ""
 
-#: services/js_i18n_strings.py:738
+#: services/js_i18n_strings.py:732
 msgid "🧹 Clean Missing ROMs"
 msgstr "🧹 欠落したROMをクリーンアップ"
 
@@ -8813,4 +8801,13 @@ msgstr "Patreon で支援"
 
 #~ msgid "One or both games not found"
 #~ msgstr "片方または両方のゲームが見つかりません"
+
+#~ msgid "Failed to sync trophies"
+#~ msgstr "トロフィーの同期に失敗しました"
+
+#~ msgid "Network error syncing trophies"
+#~ msgstr "トロフィーの同期中にネットワークエラーが発生しました"
+
+#~ msgid "Trophies synced successfully!"
+#~ msgstr "トロフィーを正常に同期しました！"
 

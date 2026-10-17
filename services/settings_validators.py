@@ -266,7 +266,6 @@ _VALIDATORS = {
     'show_unscraped_first': _bool_validator,
     'preferred_boxart': _enum_validator(_ALLOWED_BOXART_MODES, 'preferred_boxart'),
     'preferred_rating_system': _enum_validator(_ALLOWED_RATING_SYSTEMS, 'preferred_rating_system'),
-    'theme': _enum_validator(_ALLOWED_THEMES, 'theme'),
     'scraper_priority': _scraper_priority_validator,
     'scraper_enabled': _scraper_enabled_validator,
     'enable_animations': _bool_validator,

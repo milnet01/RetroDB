@@ -55,14 +55,6 @@ def test_29_4_no_unguarded_localstorage_json_parse_in_audited_files():
 # textContent default is pinned in tests/test_pass45_security.py.
 
 
-def test_29_1_trophies_render_escapes_icon_url():
-    """Pass 29.1 — trophies.js renderCard now wraps trophy.icon_url in
-    escapeHtml before interpolating into the <img src="..."> attribute.
-    """
-    src = _read_js('trophies.js')
-    assert 'iconUrlSafe = trophy.icon_url ? escapeHtml(trophy.icon_url)' in src
-
-
 def test_29_1_achievements_render_escapes_badge_url():
     """Pass 29.1 — achievements.js renderCard escapes badge_url before
     img src interpolation."""

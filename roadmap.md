@@ -7340,7 +7340,12 @@ were corrected in `2836bc3` and are not repeated here.
   reads it, and update the design-standards list naming it. Then drop it
   from `_KNOWN_DEAD_JS` in `tests/test_pass59_frontend.py`.
 - **Verify**: the route-map test passes with the exclusion removed.
-- **Status**: planned (2026-09-25). Lanes: frontend.
+- **Shipped** (2026-10-17, v3.29.1): `static/js/trophies.js` deleted,
+  with its `build_js.py` entry, the Pass 29.1 source test that read it,
+  its name in `RETRODB_DESIGN_STANDARDS.md`, and its `_KNOWN_DEAD_JS`
+  exclusion (the route-map test passes without it). Catalogs regenerated:
+  its three JS strings left `messages.pot`.
+- **Status**: done (2026-10-17). Lanes: frontend.
 - **Source**: in-session 2026-09-25 — found by Pass 59.30's route-map test.
 
 ---
@@ -7354,7 +7359,13 @@ were corrected in `2836bc3` and are not repeated here.
 - **Plan**: remove the default and the validator, and check the Settings
   export / import and backup paths for a reader first.
 - **Verify**: `git grep` finds no reader; saving Settings still round-trips.
-- **Status**: planned (2026-09-25). Lanes: settings.
+- **Shipped** (2026-10-17, v3.29.1): the `theme` default and its
+  validator are gone; `ALLOWED_THEMES` stays (it validates
+  `theme_preference`). `git grep` finds no reader. A stale `theme` key in an
+  existing `data/settings.json` is harmless: `/api/settings` validates only
+  the keys a request sends, the Settings UI never sends `theme`, and there
+  is no settings-import route.
+- **Status**: done (2026-10-17). Lanes: settings.
 - **Source**: in-session 2026-09-25 — Pass 59.38 sweep.
 
 ---

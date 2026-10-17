@@ -73,9 +73,7 @@ def list_with_game():
 # ---------------------------------------------------------------------------
 
 # A file here is known-dead and filed separately; its calls are not live.
-_KNOWN_DEAD_JS = {
-    'trophies.js',  # loaded by no template — Pass 59.78
-}
+_KNOWN_DEAD_JS = set()
 
 _CALL = re.compile(
     r"""(?:fetch|API\.(?:get|post|postForm|put|delete))\(\s*([`'"])(/api/[^`'"]*)\1(\s*\+)?""")
