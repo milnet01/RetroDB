@@ -286,7 +286,7 @@ are tracked here so the next pass picks them up:
   Non-standard payloads (e.g. `{'configured': True, 'error': '...'}` without
   `success`, or scanner-result passthroughs) stay as raw `jsonify` —
   document here if discovered.
-- **Shipped** (2026-10-17, v3.29.8): 117 responses across the ten
+- **Shipped** (2026-10-17, v3.29.1): 117 responses across the ten
   listed route files now use `success()` / `error()`, with body and status
   unchanged (keyword args only; `error()` only where an explicit code was
   already passed). Left raw by design: non-standard payloads (status
@@ -4055,7 +4055,7 @@ weren't worth blocking the ship on.  Ordered by rough priority.
   fieldset semantics don't fit. For prose-style labels heading a
   read-only display (e.g. `Database Location`), demote `<label>` to
   `<div class="form-label">` since there's no control to associate.
-- **Shipped** (2026-10-17, v3.29.7): the last open case, the redundant
+- **Shipped** (2026-10-17, v3.29.1): the last open case, the redundant
   `aria-label` on `#matchPlatformRequired` (now in
   `templates/_settings_tabs/scraping.html`), is removed, so the
   `<label for>` text is the accessible name. Every other case was closed
@@ -6323,7 +6323,7 @@ orchestrator, several by execution rather than reading.
   regardless, and correct the spec's grep recipe to cover `glob("**/...")`.
 - **Verify**: plant a symlink escaping the ROM root and confirm the walk
   refuses it.
-- **Shipped** (2026-10-17, v3.29.2): the CHD converter and CHD verify
+- **Shipped** (2026-10-17, v3.29.1): the CHD converter and CHD verify
   scan endpoints glob through `_glob_under_rom_root` in `routes/tools.py`,
   which drops matches resolving outside the ROM root. The extracted-archive
   `rglob` and `CHDVerifier.find_chd_files` are guarded too. The spec's
@@ -6350,7 +6350,7 @@ orchestrator, several by execution rather than reading.
   recomputed.
 - **Verify**: place a corrupt image among screenshots and confirm dedup
   continues.
-- **Shipped** (2026-10-17, v3.29.3): `keep_screenshot_if_unique` hashes
+- **Shipped** (2026-10-17, v3.29.1): `keep_screenshot_if_unique` hashes
   once and appends only a non-None hash; matching moved to `_find_match`,
   shared with `is_visual_duplicate`. `compute_dhash` reads pixels with
   `tobytes()` instead of the deprecated `getdata()`. Pinned by
@@ -6467,7 +6467,7 @@ orchestrator, several by execution rather than reading.
 - **Plan**: move `:828` inside the try, and wrap each worker body in
   `try/except/finally` that sets `status='failed'` and `end_time`.
 - **Verify**: delete a file mid-verify; confirm the task reaches `failed`.
-- **Shipped** (2026-10-17, v3.29.4): `getsize` moved inside the per-file
+- **Shipped** (2026-10-17, v3.29.1): `getsize` moved inside the per-file
   try, so a vanished file counts as invalid. New `_guarded_worker` wraps
   the conversion, verification and duplicate-scan workers: an uncaught
   error sets `failed` and `end_time`, so the reaper collects it. Pinned by
@@ -6493,7 +6493,7 @@ orchestrator, several by execution rather than reading.
 - **Plan**: for each, either wire it to its intended caller (the extraction's
   stated purpose) or delete it **and correct the changelog claim**. Do not
   leave a changelog entry describing an unreachable feature.
-- **Shipped** (2026-10-17, v3.29.5): both deleted rather than wired.
+- **Shipped** (2026-10-17, v3.29.1): both deleted rather than wired.
   `/compare` already server-renders, so `/api/games/compare` had no use.
   The live PSN linker works on pre-fetched rows; the service version
   queries per title, so wiring it in would have slowed sync. The two old
@@ -7025,7 +7025,7 @@ were corrected in `2836bc3` and are not repeated here.
   already uses.
 - **Verify**: fresh tree, no settings file, `GET /api/games` returns a JSON
   envelope rather than a redirect, and the setup wizard still completes.
-- **Shipped** (2026-10-17, v3.29.6): per the 2026-09-02 decision,
+- **Shipped** (2026-10-17, v3.29.1): per the 2026-09-02 decision,
   `check_first_time_setup` answers `/api/*` with a 503 envelope carrying
   `setup_required: true`; pages still redirect, and the wizard's exempt
   endpoints are unchanged. `api-contracts.md`'s 503 row records it. Pinned
