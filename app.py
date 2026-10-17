@@ -60,7 +60,7 @@ from services.atomic_io import atomic_write_json
 from services.database import query
 from services.auth import (
     hash_password, get_current_user, get_user_settings,
-    has_permission, login_required
+    has_permission, login_required, ROLE_PERMISSIONS,
 )
 from services.game_utils import (
     get_rating_image_map_js, get_rating_system_names_js,
@@ -169,7 +169,7 @@ if os.environ.get('RETRODB_TRUST_PROXY', '').lower() in ('true', '1', 'yes'):
 # wrapped {{ _('Save') }} and the English source IS the catalog key. Per-locale
 # .po/.mo catalogs live under translations/ (committed; bundled in retrodb.spec).
 from flask_babel import Babel
-from services.i18n import available_locales, TRANSLATIONS_DIR
+from services.i18n import available_locales, selectable_locales, TRANSLATIONS_DIR
 
 app.config['BABEL_DEFAULT_LOCALE'] = 'en'
 app.config['BABEL_TRANSLATION_DIRECTORIES'] = TRANSLATIONS_DIR
@@ -183,10 +183,14 @@ def select_locale():
     """
     locales = available_locales()
     # 1. logged-in user's saved preference (g.user_settings is a plain dict;
-    #    .get() returns None for a legacy row predating the column).
+    #    .get() returns None for a legacy row predating the column). The
+    #    pseudolocale counts here for admins only (PASS-59-94); g.get, not
+    #    has_permission, since g.user may be unset when this runs.
     if g.get('user_settings'):
         pref = g.user_settings.get('locale_preference')
-        if pref and pref in locales:
+        user = g.get('user')
+        is_admin = bool(user) and 'manage_settings' in ROLE_PERMISSIONS.get(user['role'], ())
+        if pref and pref in selectable_locales(is_admin):
             return pref
     # 2. transient per-session switch — intentionally retained but unreachable
     #    in v1 (no UI writes session['locale']); kept for a future
@@ -208,6 +212,7 @@ babel = Babel(app, locale_selector=select_locale)
 # source of truth shared with the selector chain + the route validator).
 from services.i18n import locale_display_name
 app.jinja_env.globals['available_locales'] = available_locales
+app.jinja_env.globals['selectable_locales'] = selectable_locales
 app.jinja_env.globals['locale_display_name'] = locale_display_name
 
 # i18n display helpers (Pass 43.2/43.3). All three are Jinja globals called once

@@ -6,8 +6,9 @@ The pseudolocale is a permanent QA tool, not throwaway scaffolding:
 * **Bracketing** (``⟦ … ⟧``) surfaces any *unwrapped* UI string — it renders
   as plain English with no brackets, so a missed ``{{ _() }}`` is visible at a
   glance.
-* **Accenting** (``a`` -> ``à`` …) plus a length pad surfaces layout and
-  truncation bugs that ASCII English hides.
+* **Accenting** (``a`` -> ``à`` …) and the brackets surface some layout and
+  truncation bugs that ASCII English hides. The accent map is 1:1, so the
+  brackets are the only width added; there is no length pad.
 
 The catalog is housed under the ``eo`` (Esperanto) CLDR code — see
 ``services/i18n.py::PSEUDO_LOCALE`` / INV-1 — but always labelled "Pseudo" in

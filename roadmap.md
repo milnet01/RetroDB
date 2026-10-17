@@ -7496,8 +7496,15 @@ were corrected in `2836bc3` and are not repeated here.
   contract check first.
 - **Spec gate** (2026-10-17): `review-contract` converged on the §3/§5/§8
   amendment in 2 loops, 1 fix (§5's `Accept-Language` sentence). Record:
-  `docs/reviews/i18n-loop-log.md`. The code is unbuilt.
-- **Status**: todo. Lanes: i18n.
+  `docs/reviews/i18n-loop-log.md`.
+- **Resolution** (2026-10-17, v3.24.2): `services.i18n.selectable_locales`
+  feeds the dropdown, the `/api/users/settings` validator and
+  `select_locale`'s saved-preference branch; a hidden saved choice shows
+  English selected. `has_permission` now treats an unset `g.user` as no
+  permission. Tests in `tests/test_i18n.py`, each shown to fail with its fix
+  undone. Chrome, a viewer with `eo` saved: English page, no Pseudo option,
+  English selected.
+- **Status**: shipped (2026-10-17). Lanes: i18n.
 - **Source**: trailer recording, 2026-10-15.
 
 #### Pass 59.95 Launch and rename accept a file of any type (MEDIUM, S)
@@ -7574,7 +7581,9 @@ were corrected in `2836bc3` and are not repeated here.
   Windows-only deps now carry `sys_platform` markers. No version changed.
   `tests/test_pass39_supply_chain.py::TestPass59_99UniversalLockfile` pins
   the lock and all three commands. Re-run on wintest: `install.py` passed
-  and `app.py` answered `/health`.
+  and `app.py` answered `/health`. The `ci_local.sh`,
+  `DEPENDENCY_POLICY.md` and test-pin half landed in `c72191a`, under the
+  PASS-59-94 review commit's message, by a mistaken amend.
 - **Status**: shipped (2026-10-17). Lanes: ci, distribution.
 - **Source**: Windows zip test, 2026-10-17.
 
@@ -7605,6 +7614,14 @@ were corrected in `2836bc3` and are not repeated here.
   2026-10-17.
 - **Status**: todo. Lanes: distribution.
 - **Source**: Windows zip test, 2026-10-17.
+
+#### Pass 59.103 Settings throws for a non-admin: `updateAIProviderFields` (LOW, S)
+- **Target**: `templates/settings.html::updateAIProviderFields`.
+- **Why**: it reads `#apikey-ai-provider`, which lives on the Scraping tab,
+  and runs on page load. A viewer's page has no such element, so the
+  console shows a TypeError on every Settings visit (Chrome, 2026-10-17).
+- **Status**: todo. Lanes: ui.
+- **Source**: PASS-59-94 browser check, 2026-10-17.
 
 ## Done index
 

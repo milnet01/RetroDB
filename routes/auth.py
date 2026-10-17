@@ -14,11 +14,11 @@ import time
 import config
 from services.database import query, execute, get_db_with_context
 from services.api_helpers import handle_api_errors, success, error
-from services.i18n import available_locales
+from services.i18n import selectable_locales
 from services.settings_validators import ALLOWED_THEMES
 from services.auth import (
     hash_password, verify_password, needs_rehash, get_user_settings,
-    admin_required, login_required, VALID_ROLES,
+    admin_required, login_required, has_permission, VALID_ROLES,
 )
 from services.security import rate_limit_login, record_login_attempt, safe_filename
 
@@ -378,7 +378,9 @@ def api_user_settings():
     # Pass 43.1 — validate the locale at request time (not against a frozen
     # snapshot) so a catalog added after process start is accepted and a
     # removed one cannot be persisted.
-    if 'locale_preference' in data and data['locale_preference'] not in available_locales():
+    # PASS-59-94 — the pseudolocale is accepted from admins only.
+    if ('locale_preference' in data and data['locale_preference']
+            not in selectable_locales(has_permission('manage_settings'))):
         # code=200 (success:false envelope) to match every other validation
         # error in this route — API.post throws on non-2xx, so a 400 would
         # surface as a generic "Network error" toast instead of this message.

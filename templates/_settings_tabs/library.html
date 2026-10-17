@@ -127,8 +127,10 @@
             <select id="languageSelect" class="form-select" style="max-width: 300px;"
                     aria-labelledby="languageSelectLabel"
                     onchange="saveLanguage(this.value)">
+                {% set choices = selectable_locales(has_perm('manage_settings')) %}
                 {% set current_locale = (current_user_settings.get('locale_preference') if current_user_settings else 'en') or 'en' %}
-                {% for code in available_locales() %}
+                {% if current_locale not in choices %}{% set current_locale = 'en' %}{% endif %}
+                {% for code in choices %}
                 <option value="{{ code }}" {% if code == current_locale %}selected{% endif %}>{{ locale_display_name(code) }}</option>
                 {% endfor %}
             </select>

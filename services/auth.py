@@ -224,9 +224,12 @@ def has_permission(permission):
     Returns:
         bool: True if user has permission, False otherwise
     """
-    if not g.user:
+    # getattr: a template or locale selector can run before load_user has
+    # set g.user (PASS-59-94); no user means no permission, not an error.
+    user = getattr(g, 'user', None)
+    if not user:
         return False
-    role = g.user['role']
+    role = user['role']
     return permission in ROLE_PERMISSIONS.get(role, set())
 
 

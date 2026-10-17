@@ -186,6 +186,9 @@ def jinja_env():
         # (registered in app.py); stub them so the partial renders standalone.
         available_locales=lambda: ("en",),
         locale_display_name=lambda code: code,
+        # PASS-59-94 — the dropdown narrows through these two.
+        selectable_locales=lambda is_admin: ("en",),
+        has_perm=lambda permission: False,
         tz=lambda *a, **kw: "",
         format_number=str,
     )

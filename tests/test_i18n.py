@@ -12,7 +12,9 @@ import pytest
 from bs4 import BeautifulSoup, Comment
 
 import app as app_module
-from services.i18n import available_locales, locale_display_name, PSEUDO_LOCALE
+from services.i18n import (
+    available_locales, locale_display_name, selectable_locales, PSEUDO_LOCALE,
+)
 
 app = app_module.app
 
@@ -45,11 +47,17 @@ def test_unparseable_locale_label_falls_back_to_code():
 # Locale-selection chain: user pref > session > Accept-Language > 'en'
 # ---------------------------------------------------------------------------
 
-def _select(headers=None, user_settings=None, session_locale=None):
+ADMIN = {'id': 1, 'username': 'admin', 'role': 'admin'}
+VIEWER = {'id': 2, 'username': 'viewer', 'role': 'viewer'}
+
+
+def _select(headers=None, user_settings=None, session_locale=None, user=None):
     """Invoke app.select_locale() inside a controlled request context."""
     from flask import g, session
     with app.test_request_context('/', headers=headers or {}):
         g.user_settings = user_settings
+        if user is not None:
+            g.user = user
         if session_locale is not None:
             session['locale'] = session_locale
         return app_module.select_locale()
@@ -60,7 +68,30 @@ def test_selector_user_pref_beats_everything():
         headers={'Accept-Language': 'en'},
         user_settings={'locale_preference': PSEUDO_LOCALE},
         session_locale='en',
+        user=ADMIN,
     ) == PSEUDO_LOCALE
+
+
+# PASS-59-94 (§5): the pseudolocale is for admins only.
+def test_selectable_locales_drop_pseudolocale_for_non_admins():
+    assert PSEUDO_LOCALE not in selectable_locales(False)
+    assert selectable_locales(True) == available_locales()
+    assert set(selectable_locales(False)) == set(available_locales()) - {PSEUDO_LOCALE}
+
+
+def test_selector_skips_a_non_admins_saved_pseudolocale():
+    assert _select(
+        headers={'Accept-Language': 'de'},
+        user_settings={'locale_preference': PSEUDO_LOCALE},
+        user=VIEWER,
+    ) == 'de'
+
+
+def test_selector_saved_pseudolocale_without_a_user_is_skipped():
+    assert _select(
+        headers={'Accept-Language': 'zz'},
+        user_settings={'locale_preference': PSEUDO_LOCALE},
+    ) == 'en'
 
 
 def test_selector_session_beats_accept_language():
@@ -95,10 +126,9 @@ def test_selector_stale_locale_does_not_raise_falls_through():
 # Locale validator on /api/users/settings (§3)
 # ---------------------------------------------------------------------------
 
-def _authed_client(monkeypatch, no_op_execute=True):
+def _authed_client(monkeypatch, no_op_execute=True, user=ADMIN):
     monkeypatch.setitem(app.config, 'TESTING', True)
-    monkeypatch.setattr('app.get_current_user',
-                        lambda: {'id': 1, 'username': 'admin', 'role': 'admin'})
+    monkeypatch.setattr('app.get_current_user', lambda: user)
     monkeypatch.setattr('app.get_user_settings', lambda _uid: {})
     monkeypatch.setattr('app.settings_manager.load_settings',
                         lambda: {'setup_completed': True, 'rom_path': '/tmp'})
@@ -119,6 +149,43 @@ def test_validator_accepts_installed_locale(monkeypatch):
                        json={'locale_preference': PSEUDO_LOCALE}, headers=headers)
     assert resp.status_code == 200
     assert resp.get_json()['success'] is True
+
+
+def _settings_page(monkeypatch, user, user_settings=None):
+    """Render /settings as `user`. The page needs the full settings shape, so
+    the setup-gate stub carries the defaults rather than two keys."""
+    import settings_manager
+    client, _headers = _authed_client(monkeypatch, user=user)
+    monkeypatch.setattr('app.settings_manager.load_settings', lambda: {
+        **settings_manager.DEFAULT_SETTINGS, 'setup_completed': True, 'rom_path': '/tmp'})
+    if user_settings is not None:
+        monkeypatch.setattr('app.get_user_settings', lambda _uid: user_settings)
+    resp = client.get('/settings')
+    assert resp.status_code == 200, resp.status_code
+    return BeautifulSoup(resp.data, 'html.parser')
+
+
+def test_validator_rejects_pseudolocale_for_a_non_admin(monkeypatch):
+    client, headers = _authed_client(monkeypatch, user=VIEWER)
+    resp = client.post('/api/users/settings',
+                       json={'locale_preference': PSEUDO_LOCALE}, headers=headers)
+    assert resp.status_code == 200
+    assert resp.get_json()['success'] is False
+    assert resp.get_json()['error'] == 'Invalid locale'
+
+
+@pytest.mark.parametrize('user, shown', [(ADMIN, True), (VIEWER, False)])
+def test_language_dropdown_offers_pseudo_to_admins_only(monkeypatch, user, shown):
+    soup = _settings_page(monkeypatch, user)
+    values = [o['value'] for o in soup.select('#languageSelect option')]
+    assert values, 'no language dropdown rendered'
+    assert (PSEUDO_LOCALE in values) is shown
+
+
+def test_language_dropdown_falls_back_to_en_for_a_hidden_saved_choice(monkeypatch):
+    soup = _settings_page(monkeypatch, VIEWER, {'locale_preference': PSEUDO_LOCALE})
+    selected = soup.select_one('#languageSelect option[selected]')
+    assert selected is not None and selected['value'] == 'en'
 
 
 def test_validator_rejects_unknown_locale(monkeypatch):

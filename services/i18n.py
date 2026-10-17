@@ -6,7 +6,8 @@ tested without constructing the Flask app.
 
 The pseudolocale (``PSEUDO_LOCALE``) is a permanent QA tool, not throwaway
 scaffolding: its bracketed + accented strings surface any *unwrapped* UI string
-(renders plain English) and any layout/truncation bug (padded length). See
+(renders plain English) and some layout/truncation bugs (the ⟦⟧ brackets
+widen every string). See
 ``scripts/gen_pseudolocale.py`` and ``docs/specs/i18n.md``.
 """
 
@@ -51,6 +52,15 @@ def available_locales():
         code = os.path.basename(os.path.dirname(os.path.dirname(mo_path)))
         locales.add(code)
     return sorted(locales)
+
+
+def selectable_locales(is_admin):
+    """The locales a caller may choose: ``available_locales()``, without the
+    pseudolocale unless ``is_admin`` (PASS-59-94, docs/specs/i18n.md §5).
+    Feeds the Settings dropdown, the /api/users/settings validator and the
+    saved-preference branch of app.select_locale()."""
+    locales = available_locales()
+    return locales if is_admin else [c for c in locales if c != PSEUDO_LOCALE]
 
 
 def locale_display_name(code):
