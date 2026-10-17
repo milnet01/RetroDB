@@ -7646,6 +7646,10 @@ were corrected in `2836bc3` and are not repeated here.
   375/960/1600/2560 px and the user's full 3840 px window: no sideways
   scroll, 1–4 columns; Dashboard (not adopted) unchanged at 1400px.
   Still to adopt: the remaining pages, after the user has used these.
+- **Release** (user, 2026-10-17): v3.24.2 and v3.25.0 are pushed but not
+  released; release once the user is happy with the layout or the next
+  pages are done. The 14-agent audit stays deferred (memory
+  `audit-deferred`).
 - **Status**: in progress. Lanes: ui, docs.
 - **Source**: user, 2026-10-17.
 
