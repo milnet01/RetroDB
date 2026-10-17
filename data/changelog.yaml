@@ -1,3 +1,18 @@
+- version: 3.23.20
+  date: 2026-10-17
+  tags:
+  - type: fix
+    label: How Long To Beat lookups work again
+  body: |
+    <ul>
+      <li><strong>Every How Long To Beat lookup said the game could not be
+        found.</strong> The site moved its search to a new address, so
+        RetroDB's requests were refused; the break happened between late
+        July and late September. RetroDB now uses the new address, and sends the
+        platform and year filters in the site's new format, which the site
+        had started ignoring. Single-game lookups and the bulk lookup in ROM
+        Tools both work again.</li>
+    </ul>
 - version: 3.23.19
   date: 2026-10-17
   tags:

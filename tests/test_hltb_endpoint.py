@@ -4,7 +4,10 @@
 # HowLongToBeat keeps renaming their search API endpoint:
 #   pre-2026-04   /api/finder        — 404
 #   2026-04..05   /api/find/init     — 404 (renamed ~2026-05)
-#   2026-05+      /api/bleed/init    — current
+#   2026-05..07   /api/bleed/init    — 404 (renamed again 2026-07/09)
+#   2026-09+      /api/search/site/init — current; the search filters also
+#                 changed shape to {'mode': 'include', 'values': [...]} and
+#                 the old string/rangeYear filters are silently ignored
 #
 # Diagnosed on 2026-05-17 from `scraper.base_scraper - WARNING - HTTP GET
 # failed: 404 - https://howlongtobeat.com/api/find/init?t=…` in the user's
@@ -59,7 +62,7 @@ def _strip_docstrings(src: str) -> str:
 
 
 class TestHLTBEndpointPin:
-    """The init + search URLs must point at /api/bleed. When HLTB renames
+    """The init + search URLs must point at /api/search/site. When HLTB renames
     again, update both the constant and the rename-history comment in
     scraper/hltb_lookup.py:_get_auth_token."""
 
@@ -69,27 +72,27 @@ class TestHLTBEndpointPin:
         with open(path, encoding='utf-8') as f:
             return f.read()
 
-    def test_init_url_points_to_bleed_init(self):
+    def test_init_url_points_to_search_site_init(self):
         src = self._read_source()
-        assert '/api/bleed/init' in src, (
-            'scraper/hltb_lookup.py must call /api/bleed/init — HLTB renamed '
-            'the init endpoint around 2026-05.  If this fails again, probe '
+        assert '/api/search/site/init' in src, (
+            'scraper/hltb_lookup.py must call /api/search/site/init — HLTB renamed '
+            'the init endpoint again in 2026.  If this fails again, probe '
             'https://howlongtobeat.com/api/<NEW>/init?t=<ms> and update the '
             'URL + rename-history comment in _get_auth_token.'
         )
 
-    def test_search_url_points_to_bleed(self):
+    def test_search_url_points_to_search_site(self):
         src = self._read_source()
-        # Two POSTs to /api/bleed — initial search + token-refresh retry.
+        # Two POSTs to /api/search/site — initial search + token-refresh retry.
         # Strict regex: match `/api/bleed` followed immediately by a closing
         # quote (single or double). That excludes `/api/bleed/init` (which
         # would have a `/` after `bleed`) — the bug the looser substring
         # count had: every `/api/bleed/init` line incremented the bare
         # `src.count('/api/bleed')` total, so a file with zero search calls
         # and three init lines would still pass.
-        bleed_full_path_hits = re.findall(r"/api/bleed['\"]", src)
-        assert len(bleed_full_path_hits) >= 2, (
-            'scraper/hltb_lookup.py must POST to /api/bleed for the search '
+        search_full_path_hits = re.findall(r"/api/search/site['\"]", src)
+        assert len(search_full_path_hits) >= 2, (
+            'scraper/hltb_lookup.py must POST to /api/search/site for the search '
             'call (and again in the token-expired retry branch). The init '
             'and search endpoints rename in lockstep, so updating one and '
             'not the other will 404 the search and silently return no hits.'
@@ -109,7 +112,46 @@ class TestHLTBEndpointPin:
             stripped = line.strip()
             if stripped.startswith('#'):
                 continue  # comment — rename-history allowed
-            assert '/api/find/' not in line and '/api/finder' not in line, (
+            assert ('/api/find/' not in line and '/api/finder' not in line
+                    and '/api/bleed' not in line), (
                 f'Stale HLTB URL on live line:\n  {line!r}\n'
                 f'Move it to the rename-history comment block or delete it.'
             )
+
+
+class TestHLTBSearchFilters:
+    """HLTB now reads filters as {'mode': 'include', 'values': [...]}. The old
+    string platform and rangeYear were silently ignored (probe 2026-10-17:
+    "Halo 3" on NES still returned Halo 3), so the platform-filtered search
+    step matched nothing extra."""
+
+    def _payload(self, monkeypatch, **kw):
+        import scraper.hltb_lookup as h
+
+        class _Resp:
+            status_code = 200
+            def __init__(self, body): self._b = body
+            def json(self): return self._b
+
+        sent = {}
+        monkeypatch.setattr(h, '_auth_token', None)
+        monkeypatch.setattr(h, 'http_get', lambda *a, **k: _Resp({'token': 't'}))
+        def fake_post(url, headers=None, json_data=None, timeout=None):
+            sent['url'], sent['body'] = url, json_data
+            return _Resp({'data': []})
+        monkeypatch.setattr(h, 'http_post', fake_post)
+        h._search_hltb('Halo 3', **kw)
+        return sent
+
+    def test_platform_and_year_use_include_filters(self, monkeypatch):
+        sent = self._payload(monkeypatch, platform='Xbox 360', year=2007)
+        games = sent['body']['searchOptions']['games']
+        assert sent['url'].endswith('/api/search/site')
+        assert games['platform'] == {'mode': 'include', 'values': ['Xbox 360']}
+        assert games['year'] == {'mode': 'include', 'values': ['2007']}
+        assert 'rangeYear' not in games
+
+    def test_no_platform_or_year_sends_empty_filters(self, monkeypatch):
+        games = self._payload(monkeypatch)['body']['searchOptions']['games']
+        assert games['platform'] == {'mode': 'include', 'values': []}
+        assert games['year'] == {'mode': 'include', 'values': []}

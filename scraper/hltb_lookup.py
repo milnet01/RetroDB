@@ -1,8 +1,8 @@
 """
 HLTB (HowLongToBeat) lookup module for RetroDB
 
-Uses the HowLongToBeat API directly via /api/bleed endpoint (HLTB renamed
-/api/find → /api/bleed around 2026-05; see _get_auth_token for full history).
+Uses the HowLongToBeat API directly via the /api/search/site endpoint (HLTB
+keeps renaming it; see _get_auth_token for the full history).
 """
 
 import logging
@@ -100,14 +100,15 @@ def _get_auth_token():
         # HLTB endpoint rename history (whack-a-mole, expect more):
         #   pre-2026-04   /api/finder        — 404
         #   2026-04..05   /api/find/init     — 404 (renamed again ~2026-05)
-        #   2026-05+      /api/bleed/init    — current (verified via the
-        #                                      site's own JS chunks: grep
-        #                                      "api/bleed" in _next/static/
+        #   2026-05..07   /api/bleed/init    — 404 (renamed again 2026-07/09)
+        #   2026-09+      /api/search/site/init — current (found 2026-10-17
+        #                                      in the site's own JS chunks:
+        #                                      grep "api/" in _next/static/
         #                                      chunks/*.js)
-        # The init response still ships {token, hpKey, hpVal} in the same
-        # shape; only the path moved. Search endpoint moved in lockstep —
-        # /api/find → /api/bleed.
-        init_url = f"{HLTB_BASE_URL}/api/bleed/init?t={int(time.time() * 1000)}"
+        # The search endpoint moves in lockstep with init. Since the
+        # /api/search/site rename the init response carries only {token};
+        # hpKey/hpVal are gone, which the `if hk and hv` guard tolerates.
+        init_url = f"{HLTB_BASE_URL}/api/search/site/init?t={int(time.time() * 1000)}"
         resp = http_get(init_url, headers=HLTB_HEADERS, timeout=15)
         if resp is None:
             logger.warning("HLTB: Auth token request failed (no response)")
@@ -129,7 +130,7 @@ def _get_auth_token():
 
 
 def _search_hltb(game_title, platform='', year=None):
-    """Search HLTB for a game using the /api/bleed endpoint.
+    """Search HLTB for a game using the /api/search/site endpoint.
 
     Args:
         game_title: Game title to search for
@@ -141,9 +142,10 @@ def _search_hltb(game_title, platform='', year=None):
         logger.error("HLTB: No auth token available")
         return None
 
-    range_year = {'min': '', 'max': ''}
-    if year:
-        range_year = {'min': str(year), 'max': str(year)}
+    # HLTB's filters are include-lists; the old string platform and
+    # rangeYear forms are silently ignored by /api/search/site.
+    def _include(values):
+        return {'mode': 'include', 'values': values}
 
     def _build_request(tok, hk, hv):
         """Compose (headers, payload) for a search call using a given token set."""
@@ -156,12 +158,13 @@ def _search_hltb(game_title, platform='', year=None):
             'searchOptions': {
                 'games': {
                     'userId': 0,
-                    'platform': platform or '',
+                    'platform': _include([platform] if platform else []),
                     'sortCategory': 'popular',
                     'rangeCategory': 'main',
                     'rangeTime': {'min': 0, 'max': 0},
-                    'gameplay': {'perspective': '', 'flow': '', 'genre': '', 'difficulty': ''},
-                    'rangeYear': range_year,
+                    'gameplay': {'perspective': _include([]), 'flow': _include([]),
+                                 'genre': _include([])},
+                    'year': _include([str(year)] if year else []),
                     'modifier': ''
                 },
                 'users': {'sortCategory': 'postcount'},
@@ -184,7 +187,7 @@ def _search_hltb(game_title, platform='', year=None):
 
     try:
         resp = http_post(
-            f"{HLTB_BASE_URL}/api/bleed",
+            f"{HLTB_BASE_URL}/api/search/site",
             headers=search_headers,
             json_data=payload,
             timeout=30
@@ -205,7 +208,7 @@ def _search_hltb(game_title, platform='', year=None):
             if token:
                 search_headers, payload = _build_request(token, hp_key, hp_val)
                 resp = http_post(
-                    f"{HLTB_BASE_URL}/api/bleed",
+                    f"{HLTB_BASE_URL}/api/search/site",
                     headers=search_headers,
                     json_data=payload,
                     timeout=30
