@@ -7659,7 +7659,10 @@ were corrected in `2836bc3` and are not repeated here.
   released; release once the user is happy with the layout or the next
   pages are done. The 14-agent audit stays deferred (memory
   `audit-deferred`).
-- **Status**: in progress. Lanes: ui, docs.
+- **Resolution** (2026-10-17, v3.26.0, 1d846cc): every page extending
+  `base.html` is adaptive; released as v3.26.0 together with v3.25.0 and
+  v3.24.2.
+- **Status**: shipped (2026-10-17). Lanes: ui, docs.
 - **Source**: user, 2026-10-17.
 
 #### Pass 59.105 Show every regional name of a game, tagged by region (MEDIUM, M)
