@@ -51,6 +51,20 @@ _GAP_COLUMNS = [
 ]
 
 
+def _copy_columns(cursor, table):
+    """Column lists for copying `table` into `<table>_new`.
+
+    PASS-59-60 — intersect the old table's columns with the new shape, as the
+    game_achievement_progress rebuild does. Copying the old list whole made a
+    legacy column the new DDL lacks fail the INSERT ("no such column"), which
+    rolled the migration back on every boot.
+    """
+    new = {row[1] for row in cursor.execute(f"PRAGMA table_info({table}_new)")}
+    old = [row[1] for row in cursor.execute(f"PRAGMA table_info({table})")]
+    shared = [c for c in old if c in new and c != 'user_id']
+    return ', '.join(shared), ', '.join(shared + ['user_id'])
+
+
 def _rebuild_game_achievement_progress(cursor, admin_id):
     """Rebuild to (game_id, user_id) composite UNIQUE.
 
@@ -86,11 +100,6 @@ def _rebuild_game_achievement_progress(cursor, admin_id):
 
 
 def _rebuild_steam_achievements(cursor, admin_id):
-    existing = [row[1] for row in cursor.execute("PRAGMA table_info(steam_achievements)")]
-    shared = [c for c in existing if c != 'user_id']
-    select_cols = ', '.join(shared)
-    insert_cols = ', '.join(shared + ['user_id'])
-
     cursor.execute("""
         CREATE TABLE steam_achievements_new (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -106,6 +115,7 @@ def _rebuild_steam_achievements(cursor, admin_id):
             FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE CASCADE
         )
     """)
+    select_cols, insert_cols = _copy_columns(cursor, 'steam_achievements')
     cursor.execute(
         f"INSERT INTO steam_achievements_new ({insert_cols}) "
         f"SELECT {select_cols}, ? FROM steam_achievements",
@@ -126,11 +136,6 @@ def _rebuild_steam_achievements(cursor, admin_id):
 
 
 def _rebuild_xbox_achievements(cursor, admin_id):
-    existing = [row[1] for row in cursor.execute("PRAGMA table_info(xbox_achievements)")]
-    shared = [c for c in existing if c != 'user_id']
-    select_cols = ', '.join(shared)
-    insert_cols = ', '.join(shared + ['user_id'])
-
     cursor.execute("""
         CREATE TABLE xbox_achievements_new (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -147,6 +152,7 @@ def _rebuild_xbox_achievements(cursor, admin_id):
             FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE CASCADE
         )
     """)
+    select_cols, insert_cols = _copy_columns(cursor, 'xbox_achievements')
     cursor.execute(
         f"INSERT INTO xbox_achievements_new ({insert_cols}) "
         f"SELECT {select_cols}, ? FROM xbox_achievements",

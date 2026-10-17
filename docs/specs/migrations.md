@@ -543,7 +543,9 @@ Violating any of them breaks the upgrade path for installed users.
    the change is a no-op, not an error. (§25.2, §11 step 5.)
 2. **Landed migrations are immutable.** No body edits, no renames, no
    re-numbers, no deletions from `MIGRATIONS`. Fixes are forward-only: ship a
-   new migration. (§4, §25.3.)
+   new migration. The one exception is §4's: a body edit whose effect on a DB
+   that already ran the old body is provably nil (Pass 41.2; PASS-59-60 used it
+   for 008, 009 and 011). (§4, §25.3.)
 3. **The runner aborts on any migration failure.** No partial-skip, no
    "continue past the broken one." A failed migration rolls back, the version
    cursor stays put, and Flask startup raises. (§5.)

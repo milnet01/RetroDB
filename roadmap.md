@@ -6568,7 +6568,14 @@ orchestrator, several by execution rather than reading.
   columns in `COALESCE(NULLIF(?, 0), column)`.
 - **Verify**: feed a response with the block omitted; confirm stored counts
   survive.
-- **Status**: planned (2026-09-01). Lanes: trophies.
+- **Shipped** (2026-10-17, v3.29.1): `_psn_trophy_counts` maps a missing
+  earned/defined block to None, not 0. The single-game UPDATE wraps every
+  count column in `COALESCE(?, col)`, and its reply reports the stored
+  values. The full sync's upsert moved to `_upsert_psn_title`: a new row
+  gets `COALESCE(?, 0)`; on conflict each count, and `icon_url`, keeps
+  its stored value when PSN sent nothing. Pinned by
+  `tests/test_pass59_psn_counts.py` (single sync red before the fix).
+- **Status**: done (2026-10-17). Lanes: trophies.
 - **Source**: review-code trophies lane 2026-09-01.
 
 ---
@@ -6637,7 +6644,18 @@ orchestrator, several by execution rather than reading.
   that row is what would have warned a reader.
 - **Verify**: migrate a DB carrying an extra legacy column and confirm the app
   boots.
-- **Status**: planned (2026-09-01). Lanes: migrations.
+- **Shipped** (2026-10-17, v3.29.1): fixed in place under §4's
+  provably-nil carve-out, not by a forward migration: the runner never
+  re-runs a migration at or below `user_version`, and each edited line also
+  sits behind an early return an already-migrated DB takes. A forward 016
+  could not help, since an old install runs the broken body first. 008 now
+  always counts and raises on rows with no admin; 009's steam/xbox rebuilds
+  copy only the columns shared with the new shape (`_copy_columns`); 011
+  raises on rows with no parent tables. `migrations.md` invariant 2 now
+  names the §4 exception. Pinned by `tests/test_pass59_migrations_dataloss.py`
+  (all three red before the fix). Rows already lost on migrated DBs are
+  recoverable only from a pre-upgrade backup.
+- **Status**: done (2026-10-17). Lanes: migrations.
 - **Source**: review-code data-layer lane 2026-09-01.
 
 ---

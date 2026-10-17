@@ -66,14 +66,17 @@ def apply(conn):
         return
 
     admin_id = _admin_user_id(cursor)
-    if admin_id is None:
-        # No admin user to backfill to — seed an empty reshape and let the
-        # next /api/collector-trophies/refresh populate the table. Without
-        # data there's nothing to lose in the rebuild.
-        existing_rows = 0
-    else:
-        row = cursor.execute("SELECT COUNT(*) FROM collector_trophies").fetchone()
-        existing_rows = row[0] if row else 0
+    row = cursor.execute("SELECT COUNT(*) FROM collector_trophies").fetchone()
+    existing_rows = row[0] if row else 0
+    if existing_rows and admin_id is None:
+        # PASS-59-60 — the rebuild drops the old table, so rows with no admin
+        # to own them would be lost. Raise, as 007 and 009 do on this state.
+        # An empty table with no admin reshapes and lets the next
+        # /api/collector-trophies/refresh populate it.
+        raise RuntimeError(
+            "Migration 008: collector_trophies has rows but no admin "
+            "user exists to backfill user_id."
+        )
 
     # Preserve column ordering with the new user_id column immediately after id
     # so existing DELETE-by-id patterns still read naturally.
@@ -84,7 +87,7 @@ def apply(conn):
         )
     """)
 
-    if existing_rows and admin_id is not None:
+    if existing_rows:
         cursor.execute(
             "INSERT INTO collector_trophies_new "
             "(id, user_id, name, description, icon, tier, category, threshold, earned_at, progress) "

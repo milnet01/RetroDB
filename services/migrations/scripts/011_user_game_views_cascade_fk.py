@@ -80,7 +80,15 @@ def apply(conn):
     # doesn't have games/users; on those, an empty source table means
     # nothing to migrate. Production always has both tables (baseline +
     # migration 005), so this guard is purely a test-fixture courtesy.
-    if pre_count > 0 and _table_exists(cursor, 'games') and _table_exists(cursor, 'users'):
+    # PASS-59-60 — rows with no parent tables to join against cannot be
+    # copied, and the DROP below would discard them; raise instead.
+    parents_exist = _table_exists(cursor, 'games') and _table_exists(cursor, 'users')
+    if pre_count > 0 and not parents_exist:
+        raise RuntimeError(
+            "Migration 011: user_game_views has rows but the games or users "
+            "table is missing, so they cannot be copied."
+        )
+    if pre_count > 0:
         cursor.execute("""
             INSERT INTO user_game_views_new (user_id, game_id, last_viewed)
             SELECT v.user_id, v.game_id, v.last_viewed

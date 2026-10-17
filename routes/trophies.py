@@ -980,6 +980,60 @@ def _psn_state_for(user_id):
     return _psn_sync_states.setdefault(user_id, _new_psn_sync_state())
 
 
+# PASS-59-58 — the count columns a PSN sync writes. A reply that omits the
+# earned or defined block means "unknown", not zero: writing zeros would wipe
+# the stored counts, so a missing value is None and the SQL keeps the column.
+_PSN_COUNT_KEYS = ('platinum', 'gold', 'silver', 'bronze')
+_PSN_COUNT_COLUMNS = (
+    'progress', 'earned_platinum', 'earned_gold', 'earned_silver', 'earned_bronze',
+    'total_platinum', 'total_gold', 'total_silver', 'total_bronze',
+    'total_trophies', 'earned_trophies',
+)
+
+
+def _psn_trophy_counts(title):
+    """Map a PSN trophy title to the count columns; None where PSN sent nothing."""
+    earned, defined = title.earned_trophies, title.defined_trophies
+    counts = {}
+    for k in _PSN_COUNT_KEYS:
+        counts[f'earned_{k}'] = getattr(earned, k) if earned else None
+        counts[f'total_{k}'] = getattr(defined, k) if defined else None
+    total_earned = sum(counts[f'earned_{k}'] for k in _PSN_COUNT_KEYS) if earned else None
+    total = sum(counts[f'total_{k}'] for k in _PSN_COUNT_KEYS) if defined else None
+    counts['earned_trophies'] = total_earned
+    counts['total_trophies'] = total
+    if earned and defined:
+        counts['progress'] = int(total_earned / total * 100) if total else 0
+    else:
+        counts['progress'] = None
+    return counts
+
+
+def _upsert_psn_title(conn, user_id, title, platform, icon_url, linked_game_id):
+    """Insert or update one psn_games row from the full sync (Pass 31.1 —
+    per-user rows; conflict key is (npwr_id, user_id)). A new row gets 0 for
+    an unknown count; an existing row keeps what it has."""
+    counts = [_psn_trophy_counts(title)[c] for c in _PSN_COUNT_COLUMNS]
+    cols = ', '.join(_PSN_COUNT_COLUMNS)
+    values = ', '.join('COALESCE(?, 0)' for _ in _PSN_COUNT_COLUMNS)
+    updates = ',\n            '.join(
+        f'{c} = COALESCE(?, psn_games.{c})' for c in _PSN_COUNT_COLUMNS)
+    conn.execute(f"""
+        INSERT INTO psn_games (
+            npwr_id, user_id, title, platform, icon_url, {cols},
+            last_updated, linked_game_id
+        ) VALUES (?, ?, ?, ?, ?, {values}, datetime('now'), ?)
+        ON CONFLICT(npwr_id, user_id) DO UPDATE SET
+            title = excluded.title,
+            platform = excluded.platform,
+            icon_url = COALESCE(excluded.icon_url, psn_games.icon_url),
+            {updates},
+            last_updated = datetime('now'),
+            linked_game_id = COALESCE(excluded.linked_game_id, psn_games.linked_game_id)
+    """, (title.np_communication_id, user_id, title.title_name, platform, icon_url,
+          *counts, linked_game_id, *counts))
+
+
 @bp.route('/api/psn/sync', methods=['POST'])
 @login_required
 def api_psn_sync_all():
@@ -1119,23 +1173,6 @@ def _run_psn_full_sync(psnawp, user_id):
                     with _psn_sync_lock:
                         state['current_game'] = title.title_name
 
-                    earned_counts = {
-                        'platinum': title.earned_trophies.platinum if title.earned_trophies else 0,
-                        'gold': title.earned_trophies.gold if title.earned_trophies else 0,
-                        'silver': title.earned_trophies.silver if title.earned_trophies else 0,
-                        'bronze': title.earned_trophies.bronze if title.earned_trophies else 0
-                    }
-                    total_counts = {
-                        'platinum': title.defined_trophies.platinum if title.defined_trophies else 0,
-                        'gold': title.defined_trophies.gold if title.defined_trophies else 0,
-                        'silver': title.defined_trophies.silver if title.defined_trophies else 0,
-                        'bronze': title.defined_trophies.bronze if title.defined_trophies else 0
-                    }
-
-                    total_earned = sum(earned_counts.values())
-                    total_trophies_count = sum(total_counts.values())
-                    progress = int((total_earned / total_trophies_count * 100) if total_trophies_count > 0 else 0)
-
                     platform = extract_psn_platform(title)
                     icon_url = title.title_icon_url if hasattr(title, 'title_icon_url') else None
 
@@ -1167,39 +1204,7 @@ def _run_psn_full_sync(psnawp, user_id):
                                     linked_game_id = ps_game['id']
                                     break
 
-                    # Pass 31.1 — per-user rows. Conflict key is (npwr_id, user_id).
-                    conn.execute("""
-                        INSERT INTO psn_games (
-                            npwr_id, user_id, title, platform, icon_url, progress,
-                            earned_platinum, earned_gold, earned_silver, earned_bronze,
-                            total_platinum, total_gold, total_silver, total_bronze,
-                            total_trophies, earned_trophies, last_updated, linked_game_id
-                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), ?)
-                        ON CONFLICT(npwr_id, user_id) DO UPDATE SET
-                            title = excluded.title,
-                            platform = excluded.platform,
-                            icon_url = excluded.icon_url,
-                            progress = excluded.progress,
-                            earned_platinum = excluded.earned_platinum,
-                            earned_gold = excluded.earned_gold,
-                            earned_silver = excluded.earned_silver,
-                            earned_bronze = excluded.earned_bronze,
-                            total_platinum = excluded.total_platinum,
-                            total_gold = excluded.total_gold,
-                            total_silver = excluded.total_silver,
-                            total_bronze = excluded.total_bronze,
-                            total_trophies = excluded.total_trophies,
-                            earned_trophies = excluded.earned_trophies,
-                            last_updated = datetime('now'),
-                            linked_game_id = COALESCE(excluded.linked_game_id, psn_games.linked_game_id)
-                    """, (
-                        npwr_id, user_id, title.title_name, platform, icon_url, progress,
-                        earned_counts['platinum'], earned_counts['gold'],
-                        earned_counts['silver'], earned_counts['bronze'],
-                        total_counts['platinum'], total_counts['gold'],
-                        total_counts['silver'], total_counts['bronze'],
-                        total_trophies_count, total_earned, linked_game_id
-                    ))
+                    _upsert_psn_title(conn, user_id, title, platform, icon_url, linked_game_id)
 
                     # Batch commit every 25 games instead of per-game
                     if (i + 1) % 25 == 0:
@@ -1290,25 +1295,13 @@ def api_psn_sync_game(npwr_id):
         if not target_title:
             return jsonify({'success': False, 'error': _('Game not found in your PSN trophy list')})
         
-        # Get trophy counts
-        earned_counts = {
-            'platinum': target_title.earned_trophies.platinum if target_title.earned_trophies else 0,
-            'gold': target_title.earned_trophies.gold if target_title.earned_trophies else 0,
-            'silver': target_title.earned_trophies.silver if target_title.earned_trophies else 0,
-            'bronze': target_title.earned_trophies.bronze if target_title.earned_trophies else 0
-        }
-        
-        total_counts = {
-            'platinum': target_title.defined_trophies.platinum if target_title.defined_trophies else 0,
-            'gold': target_title.defined_trophies.gold if target_title.defined_trophies else 0,
-            'silver': target_title.defined_trophies.silver if target_title.defined_trophies else 0,
-            'bronze': target_title.defined_trophies.bronze if target_title.defined_trophies else 0
-        }
-        
-        total_earned = sum(earned_counts.values())
-        total_trophies = sum(total_counts.values())
-        progress = int((total_earned / total_trophies * 100) if total_trophies > 0 else 0)
-        
+        counts = _psn_trophy_counts(target_title)
+        # The reply reports what is stored after the write: an unknown count
+        # keeps the old value.
+        progress, total_earned, total_trophies = (
+            psn_game[c] if counts[c] is None else counts[c]
+            for c in ('progress', 'earned_trophies', 'total_trophies'))
+
         # Get icon URL
         icon_url = None
         if hasattr(target_title, 'title_icon_url') and target_title.title_icon_url:
@@ -1318,22 +1311,14 @@ def api_psn_sync_game(npwr_id):
         platform = extract_psn_platform(target_title)
         
         # Update game in database
-        execute("""
+        count_sets = ',\n                '.join(
+            f'{c} = COALESCE(?, {c})' for c in _PSN_COUNT_COLUMNS)
+        execute(f"""
             UPDATE psn_games SET
                 title = ?,
                 platform = ?,
                 icon_url = COALESCE(?, icon_url),
-                progress = ?,
-                earned_platinum = ?,
-                earned_gold = ?,
-                earned_silver = ?,
-                earned_bronze = ?,
-                total_platinum = ?,
-                total_gold = ?,
-                total_silver = ?,
-                total_bronze = ?,
-                total_trophies = ?,
-                earned_trophies = ?,
+                {count_sets},
                 last_updated = datetime('now'),
                 trophies_synced = 1
             WHERE npwr_id = ? AND user_id = ?
@@ -1341,17 +1326,7 @@ def api_psn_sync_game(npwr_id):
             target_title.title_name,
             platform,
             icon_url,
-            progress,
-            earned_counts['platinum'],
-            earned_counts['gold'],
-            earned_counts['silver'],
-            earned_counts['bronze'],
-            total_counts['platinum'],
-            total_counts['gold'],
-            total_counts['silver'],
-            total_counts['bronze'],
-            total_trophies,
-            total_earned,
+            *(counts[c] for c in _PSN_COUNT_COLUMNS),
             npwr_id,
             user_id,
         ))

@@ -4,7 +4,7 @@
   - type: security
     label: AI Fill and ROM Tools are harder to misuse
   - type: fix
-    label: Scrapes, ROM Tools jobs and first-run setup handle errors properly
+    label: Scrapes, ROM Tools jobs, trophy sync and first-run setup handle errors properly
   - type: ui
     label: The About window's buttons are no longer cut off
   - type: accessibility
@@ -31,6 +31,13 @@
       <li><strong>Before setup is finished, the app's data requests get a
         clear answer.</strong> They answer "Setup required" instead of
         returning the setup page. Pages still take you to the setup wizard.</li>
+      <li><strong>A PlayStation sync no longer wipes your trophy counts.</strong>
+        When PlayStation's reply left out a game's trophy totals, RetroDB
+        saved zeros over the counts it already had. It now keeps them.</li>
+      <li><strong>Upgrading a very old install can no longer silently lose
+        data.</strong> Three old database upgrade steps could drop rows in
+        rare states. They now copy the rows, or stop with a clear error
+        instead of losing them.</li>
       <li><strong>The About window's buttons are no longer cut off.</strong>
         The window is wider and its four buttons sit in two rows, so every
         label shows in full; on a phone they stack.</li>
