@@ -19,6 +19,7 @@
 import logging
 
 from scraper.title_normalizer import normalize_for_matching, strip_title_noise
+from services.game_utils import normalize_article_for_comparison
 
 logger = logging.getLogger(__name__)
 
@@ -63,8 +64,10 @@ def calculate_title_match_score(result_title, search_title):
     # that only matches after brackets/editions are stripped.
     raw_exact = result_title.strip().lower() == search_title.strip().lower()
 
-    result_title = strip_title_noise(result_title)
-    search_title = strip_title_noise(search_title)
+    # Article moved last ("Legend of Zelda, The", No-Intro style) goes back to
+    # the front, after noise strip so a trailing "(USA)" can't hide it.
+    result_title = normalize_article_for_comparison(strip_title_noise(result_title))
+    search_title = normalize_article_for_comparison(strip_title_noise(search_title))
 
     result_normalized = normalize_for_matching(result_title)
     search_normalized = normalize_for_matching(search_title)

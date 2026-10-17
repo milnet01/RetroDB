@@ -7653,7 +7653,18 @@ were corrected in `2836bc3` and are not repeated here.
   The `article_placement` setting may be the place to start.
 - **Verify**: a regression test where a title ending ", The" matches its
   "The …" result; then one real scrape of each.
-- **Status**: todo. Lanes: scrapers.
+- **Shipped** (2026-10-17, v3.29.1): root cause in
+  `scraper/match_scorer.py::calculate_title_match_score`. A trailing
+  article was never moved back, and the normaliser kept the comma on the
+  word, so "Legend of Zelda, The" scored 68 against "The Legend of Zelda",
+  below both thresholds without a platform match. Both titles now pass
+  through the existing `normalize_article_for_comparison` (after noise
+  strip), extended for the "Name, The: Sub" / "Name, The - Sub" forms.
+  English articles only, as the codebase's one list is. Pinned by
+  `tests/test_pass59_article_match.py` (red before, with controls).
+  `scrapers.md` §6–7 updated. **Still owed:** one real scrape of each
+  title; the search query itself still sends the raw name.
+- **Status**: done. Lanes: scrapers.
 - **Source**: trailer library scrape, 2026-10-15.
 
 ---

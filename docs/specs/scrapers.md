@@ -151,7 +151,7 @@ The hybrid orchestrator's UPDATE in `apply_hybrid_metadata` is the same pattern 
 
 ## 6. Match scoring
 
-`scraper/match_scorer.py::calculate_title_match_score(result_title, search_title) -> int` is the shared title scorer for every source. It runs both titles through `title_normalizer.strip_title_noise` (drops region tags, disc markers, edition tags, version tags) and `normalize_for_matching` (lowercases, strips possessive `'s`, drops apostrophe variants, replaces colons/dashes/slashes with spaces, normalises Roman numerals II/VII → 2/7) before comparing.
+`scraper/match_scorer.py::calculate_title_match_score(result_title, search_title) -> int` is the shared title scorer for every source. It runs both titles through `title_normalizer.strip_title_noise` (drops region tags, disc markers, edition tags, version tags), `services/game_utils.py::normalize_article_for_comparison` (moves a trailing article to the front: `Legend of Zelda, The` and `Legend of Zelda, The: Ocarina of Time` compare as `The Legend of Zelda…`; English `The`/`A`/`An` only) and `normalize_for_matching` (lowercases, strips possessive `'s`, drops apostrophe variants, replaces colons/dashes/slashes with spaces, normalises Roman numerals II/VII → 2/7) before comparing.
 
 Score ladder (pure title similarity, 0-340 typical range):
 
@@ -186,7 +186,7 @@ Two distinct passes, both lossless and idempotent:
 - **`scraper/title_normalizer.py`** — the *match-time* normalizer. Strips noise (`strip_title_noise`) and produces a word-set comparison string (`normalize_for_matching`). Never touches the title we save to the DB; lives in the scoring path only.
 - **`scraper/metadata_normalizer.py::normalize_title(title)`** — the *save-time* normalizer. Converts "Call of Duty - World at War" → "Call of Duty: World at War" when the dash looks like a subtitle separator, collapses ` : ` / ` ,` spacing, applies the user's article-placement setting (`The Witcher` ↔ `Witcher, The`). Runs once per source merger before the value lands in `metadata['title']`.
 
-Integration with scoring: `calculate_title_match_score` always runs `strip_title_noise` then `normalize_for_matching` on both inputs before comparing — callers never need to pre-normalise. Roman-numeral normalisation in `normalize_for_matching` uses `base_scraper.normalize_roman_numerals` (II-XX → 2-20; deliberately excludes solo "I" and "X" because they're common as a pronoun and as a brand suffix respectively).
+Integration with scoring: `calculate_title_match_score` always runs `strip_title_noise`, then `normalize_article_for_comparison`, then `normalize_for_matching` on both inputs before comparing — callers never need to pre-normalise. Roman-numeral normalisation in `normalize_for_matching` uses `base_scraper.normalize_roman_numerals` (II-XX → 2-20; deliberately excludes solo "I" and "X" because they're common as a pronoun and as a brand suffix respectively).
 
 ---
 

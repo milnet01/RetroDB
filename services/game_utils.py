@@ -190,10 +190,26 @@ def move_article_to_beginning(title):
     return title
 
 
+# Matches an article moved to the end of the main title, ahead of a subtitle
+# (No-Intro style): "Legend of Zelda, The: Ocarina of Time" or
+# "Legend of Zelda, The - Ocarina of Time". The separator is required, so a
+# comma list such as "Rock, Paper, A Scissors" is left alone.
+_ARTICLE_BEFORE_SUBTITLE_RE = re.compile(
+    r'^(.+?),\s*(The|An|A)(\s*:\s*|\s+[-–—]\s+)(.+)$', re.IGNORECASE)
+
+
 def normalize_article_for_comparison(title):
-    """Always move article to the beginning for comparison so both forms match."""
+    """Always move article to the beginning for comparison so both forms match.
+
+    Also handles the article sitting before a subtitle:
+    'Legend of Zelda, The: Ocarina of Time' → 'The Legend of Zelda: Ocarina of Time'.
+    """
     if not title:
         return title
+    m = _ARTICLE_BEFORE_SUBTITLE_RE.match(title)
+    if m:
+        rest, article, sep, subtitle = m.groups()
+        return f"{article} {rest}{sep}{subtitle}"
     return move_article_to_beginning(title)
 
 
