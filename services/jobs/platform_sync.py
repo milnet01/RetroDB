@@ -328,12 +328,17 @@ class SteamSyncJob:
         """Resume Steam sync from persisted params after server restart.
 
         Uses persisted game_ids, user_id, and progress to continue from where
-        it left off. Pre-31 jobs without a user_id fall back to the shared
-        scraper_settings.json credentials (single-tenant compat).
+        it left off. Pre-31 snapshots without a user_id are dropped: every
+        per-user upsert would fail `user_id NOT NULL` (migration 009) while
+        the job still reported `completed`.
         """
         game_ids = params.get('game_ids')
         resume_index = progress.get('current', 0) if progress else 0
         user_id = params.get('user_id')
+
+        if not user_id:
+            logger.info("Steam sync resume skipped: params missing user_id (pre-Pass-31 snapshot)")
+            return False
 
         if resume_index > 0 and game_ids:
             remaining_ids = game_ids[resume_index:]
@@ -456,7 +461,9 @@ class SteamSyncJob:
                     if (i % 10 == 0 or _now - _last_persist_time >= 30) and i > 0:
                         with self._lock:
                             _progress = {
-                                'current': i + 1, 'total': len(games),
+                                # Item i has not run yet: persist the finished count,
+                                # since resume slices ids[current:] (Pass 49.8).
+                                'current': i, 'total': len(games),
                                 'success': self.success_count, 'failed': self.failed_count,
                                 'skipped': self.skipped_count,
                                 'current_item': self.current_game_title,
@@ -763,7 +770,9 @@ class XboxSyncJob:
                     if (i % 10 == 0 or _now - _last_persist_time >= 30) and i > 0:
                         with self._lock:
                             _progress = {
-                                'current': i + 1, 'total': len(games),
+                                # Item i has not run yet: persist the finished count,
+                                # since resume slices ids[current:] (Pass 49.8).
+                                'current': i, 'total': len(games),
                                 'success': self.success_count, 'failed': self.failed_count,
                                 'skipped': self.skipped_count,
                                 'current_item': self.current_game_title,

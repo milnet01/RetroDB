@@ -283,15 +283,17 @@ class RARefreshJob:
                         self.current_game_title = game['title']
                         self.current_system_name = game.get('system_name', '')
 
-                    # Persist progress every 10 items or 30 seconds
-                    # Commit write_conn first to release write lock before persist
-                    # opens its own connection (SQLite allows only one writer at a time)
+                    # Persist progress every 10 items or 30 seconds. Each game
+                    # already commits its own writes (per-game commit below), so
+                    # there is never anything pending to flush before persist
+                    # opens its own connection.
                     _now = time.time()
                     if (i % 10 == 0 or _now - _last_persist_time >= 30) and i > 0:
-                        _commit_with_retry(write_conn)
                         with self._lock:
                             _progress = {
-                                'current': i + 1, 'total': len(games),
+                                # Item i has not run yet: persist the finished count,
+                                # since resume slices ids[current:] (Pass 49.8).
+                                'current': i, 'total': len(games),
                                 'success': self.success_count, 'failed': self.failed_count,
                                 'skipped': self.skipped_count,
                                 'current_item': self.current_game_title
@@ -336,19 +338,23 @@ class RARefreshJob:
                                     has_retroachievements = 1
                                 WHERE id = ?
                             """, (ra_match.get('ID'), ra_match.get('NumAchievements', 0), game['id']))
-
-                            with self._lock:
-                                self.success_count += 1
                         else:
                             # Mark as no RA support
                             write_conn.execute("UPDATE games SET has_retroachievements = 0 WHERE id = ?", (game['id'],))
 
-                            with self._lock:
-                                self.skipped_count += 1
+                        # Commit each game's writes immediately. Batching
+                        # across games left prior successes uncommitted, so
+                        # the NEXT game's except-branch rollback() discarded
+                        # them while success_count had already counted them
+                        # (silent data loss). Per-game commit also shortens
+                        # the write-lock hold the batch was chasing.
+                        _commit_with_retry(write_conn)
 
-                        # Batch commit every 25 games to reduce write lock frequency
-                        if (i + 1) % 25 == 0:
-                            _commit_with_retry(write_conn)
+                        with self._lock:
+                            if ra_match:
+                                self.success_count += 1
+                            else:
+                                self.skipped_count += 1
 
                     except Exception as e:
                         logger.error(f"Error checking RA for game {game['id']}: {e}")

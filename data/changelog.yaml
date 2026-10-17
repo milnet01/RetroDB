@@ -34,6 +34,14 @@
       <li><strong>A PlayStation sync no longer wipes your trophy counts.</strong>
         When PlayStation's reply left out a game's trophy totals, RetroDB
         saved zeros over the counts it already had. It now keeps them.</li>
+      <li><strong>Background jobs no longer lose or skip work.</strong> A
+        RetroAchievements refresh that hit one bad game no longer throws away
+        the games it had already updated. A resumed sync or refresh no longer
+        skips the game it was on when it stopped. A resumed RetroAchievements
+        or Steam sync from a very old snapshot now stops with a message
+        instead of reporting success having synced nothing. The WebP
+        conversion checks a leftover WebP file before trusting it, and will
+        not start if it cannot read the free disk space.</li>
       <li><strong>Upgrading a very old install can no longer silently lose
         data.</strong> Three old database upgrade steps could drop rows in
         rare states. They now copy the rows, or stop with a clear error

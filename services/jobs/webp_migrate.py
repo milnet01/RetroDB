@@ -157,16 +157,20 @@ class WebPMigrateJob:
             # Disk-space guard. WebP is normally smaller than JPEG, but a
             # cold cap of 2× the in-scope total protects against the worst
             # case (re-encoding loss + tmp files held during atomic save).
+            # Fails closed: unreadable free space refuses rather than
+            # proceeding as if space were unlimited.
             try:
                 free_bytes = shutil.disk_usage(config.IMAGE_PATH).free
-            except (OSError, AttributeError):
+            except (OSError, AttributeError) as e:
                 free_bytes = None
+                msg = f"Refusing to start: cannot read free disk space ({e})."
             if free_bytes is not None and free_bytes < 2 * in_scope_bytes:
                 msg = (
                     f"Refusing to start: free disk {free_bytes / 1e6:.0f} MB "
                     f"< 2× in-scope media size ({in_scope_bytes / 1e6:.0f} MB). "
                     f"Free up space and retry."
                 )
+            if free_bytes is None or free_bytes < 2 * in_scope_bytes:
                 logger.warning(msg)
                 with self._lock:
                     self.error_message = msg
@@ -345,8 +349,18 @@ def _migrate_one(item):
     # If the .webp already exists, treat that as a partial-migration
     # leftover: update the DB to point at it and remove the original
     # without re-encoding (saves a PIL round-trip and avoids overwriting
-    # whatever variant is already there).
-    if os.path.exists(new_full_path):
+    # whatever variant is already there). Verify it first, as the main
+    # path does: adopting a corrupt leftover would delete the only good
+    # copy. A corrupt one falls through and is re-encoded over.
+    adopt = os.path.exists(new_full_path)
+    if adopt:
+        try:
+            with Image.open(new_full_path) as existing:
+                existing.verify()
+        except Exception as e:
+            logger.warning(f"WebP migration: existing {new_full_path} is corrupt, re-encoding: {e}")
+            adopt = False
+    if adopt:
         original_size = os.path.getsize(full_path)
         if _update_db_filename(item, new_filename):
             try:

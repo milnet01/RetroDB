@@ -139,6 +139,13 @@ class RASyncJob:
         user_id = params.get('user_id')
         resume_index = progress.get('current', 0) if progress else 0
 
+        # A pre-Pass-31 snapshot has no user_id; every per-user upsert would
+        # then fail `user_id NOT NULL` (migration 009) while the job still
+        # reported `completed`. Drop it, as psn_refresh and Xbox sync do.
+        if not user_id:
+            logger.info("RA sync resume skipped: params missing user_id (pre-Pass-31 snapshot)")
+            return False
+
         if resume_index > 0 and game_ids:
             remaining_ids = game_ids[resume_index:]
             system_name = params.get('system_name', 'Unknown System')
@@ -284,7 +291,9 @@ class RASyncJob:
                     if (i % 10 == 0 or _now - _last_persist_time >= 30) and i > 0:
                         with self._lock:
                             _progress = {
-                                'current': i + 1, 'total': len(games),
+                                # Item i has not run yet: persist the finished count,
+                                # since resume slices ids[current:] (Pass 49.8).
+                                'current': i, 'total': len(games),
                                 'success': self.success_count, 'failed': self.failed_count,
                                 'skipped': self.skipped_count,
                                 'current_item': self.current_game_title

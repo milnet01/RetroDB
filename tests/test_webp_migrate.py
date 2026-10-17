@@ -5,8 +5,6 @@
 # free space is tight. Tests use sqlite3 directly to avoid pulling in the
 # full Flask app context.
 
-import io
-import os
 import sqlite3
 import threading
 
@@ -226,6 +224,29 @@ class TestMigrateOne:
             'resume path must not re-encode an already-present .webp'
         assert webp_env['read_game'](game_id)['boxart'] == 'h.webp'
 
+    def test_corrupt_existing_webp_is_not_adopted(self, webp_env):
+        """PASS-59-59 (d): a `<stem>.webp` that does not pass PIL verify()
+        must not be adopted — adopting it deletes the only good copy (the
+        original) and points the DB at junk. The original is re-encoded
+        instead, and the result verifies."""
+        from services.jobs.webp_migrate import _build_work_list, _migrate_one
+
+        jpg_path = webp_env['write_image']('boxart', 'c.jpg', fmt='JPEG')
+        webp_path = webp_env['tmp'] / 'images' / 'boxart' / 'c.webp'
+        webp_path.write_bytes(b'not a webp')
+
+        game_id = webp_env['insert_game'](boxart='c.jpg')
+        items, _ = _build_work_list()
+        _migrate_one(items[0])
+
+        if not jpg_path.exists():
+            # Original gone: the .webp the DB now points at must be real.
+            with Image.open(webp_path) as img:
+                img.verify()
+            assert webp_env['read_game'](game_id)['boxart'] == 'c.webp'
+        else:
+            assert webp_env['read_game'](game_id)['boxart'] == 'c.jpg'
+
     def test_verification_failure_keeps_original_and_db(self, webp_env, monkeypatch):
         """If the new .webp does not pass PIL verify(), the original and DB
         column must stay untouched — we'd rather leak a partial output (which
@@ -334,6 +355,47 @@ class TestWebPMigrateJobLifecycle:
         assert 'free disk' in status['error_message'].lower()
         # No conversion happened.
         assert (webp_env['tmp'] / 'images' / 'boxart' / 'g.jpg').exists()
+
+    def test_disk_space_guard_fails_closed_when_unreadable(self, webp_env, monkeypatch):
+        """PASS-59-59 (d): if free space cannot be read, the guard must
+        refuse (fail closed), not proceed as if space were unlimited."""
+        from services.jobs import webp_migrate as mod
+
+        webp_env['write_image']('boxart', 'u.jpg', fmt='JPEG')
+        webp_env['insert_game'](boxart='u.jpg')
+
+        def _unreadable(_path):
+            raise OSError('cannot stat')
+        monkeypatch.setattr(mod.shutil, 'disk_usage', _unreadable)
+
+        monkeypatch.setattr(mod, 'persist_job_start', lambda *a, **kw: 'fake-id')
+        monkeypatch.setattr(mod, 'persist_job_progress', lambda *a, **kw: None)
+        monkeypatch.setattr(mod, 'persist_job_complete', lambda *a, **kw: None)
+        monkeypatch.setattr(mod, 'resolve_terminal_status', lambda *a, **kw: 'completed')
+        monkeypatch.setattr(mod, 'acquire_job_singleton_lock', lambda _: 0)
+        monkeypatch.setattr(mod, 'release_singleton_fd', lambda *_a, **_kw: None)
+
+        done = threading.Event()
+        original_worker = mod.WebPMigrateJob._worker
+
+        def _run_and_signal(self):
+            try:
+                return original_worker(self)
+            finally:
+                done.set()
+        monkeypatch.setattr(mod.WebPMigrateJob, '_worker', _run_and_signal)
+
+        job = mod.WebPMigrateJob()
+        job.start()
+        assert done.wait(timeout=5.0), (
+            f"webp migration worker did not finish in 5s; "
+            f"job state: {job.get_status()!r}"
+        )
+        status = job.get_status()
+        assert status['error_message'] is not None, \
+            'guard must refuse when free space is unreadable'
+        assert (webp_env['tmp'] / 'images' / 'boxart' / 'u.jpg').exists()
+        assert not (webp_env['tmp'] / 'images' / 'boxart' / 'u.webp').exists()
 
     def test_status_snapshot_holds_lock(self):
         """get_status reads every shared counter under self._lock to avoid

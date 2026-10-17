@@ -6614,7 +6614,19 @@ orchestrator, several by execution rather than reading.
   make the disk guard fail closed.
 - **Verify**: interrupt each job mid-run and confirm resume neither skips nor
   double-counts; corrupt a `.webp` sibling and confirm the original survives.
-- **Status**: planned (2026-09-01). Lanes: jobs.
+- **Shipped** (2026-10-17, v3.29.1): all four parts confirmed live, each
+  run red first. (a) `ra_refresh` commits per game, before counting. (b)
+  resume persists `'current': i` in ra_refresh, psn_refresh, ra_sync and
+  both platform_sync jobs; Pass 49.8's three named sites were still broken
+  and are fixed. `hltb_bulk` and `alt_titles_backfill` still save `i + 1`,
+  but neither resumes, so only their progress display is affected; left
+  as is. (c) the Xbox `user_id` guard copied into `RASyncJob` and
+  `SteamSyncJob.resume_from_params`. (d) the adopt path verifies an
+  existing `.webp` and re-encodes over a corrupt one (the original is
+  deleted only after the new file verifies); the disk guard fails closed.
+  Pinned by `tests/test_pass59_jobs_resume.py` and two new
+  `tests/test_webp_migrate.py` tests.
+- **Status**: done (2026-10-17). Lanes: jobs.
 - **Source**: review-code background-jobs lane 2026-09-01.
 
 ---

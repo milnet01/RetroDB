@@ -441,7 +441,9 @@ class PSNRefreshJob:
                         _commit_with_retry(write_conn)
                         with self._lock:
                             _progress = {
-                                'current': i + 1, 'total': len(self.npwr_ids),
+                                # Item i has not run yet: persist the finished count,
+                                # since resume slices ids[current:] (Pass 49.8).
+                                'current': i, 'total': len(self.npwr_ids),
                                 'success': self.success_count, 'failed': self.failed_count,
                                 'skipped': self.skipped_count,
                                 'current_item': self.current_game_title
