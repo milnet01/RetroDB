@@ -132,11 +132,12 @@ RetroDB runs on **Linux**, **Windows**, and **macOS**. Platform-specific launche
 
 ## Deployment
 
-The default `start.sh` / `start.bat` / `start.command` launchers bind RetroDB to
-`localhost` — fine for single-machine use. If you want to access RetroDB from
-other devices on your LAN, follow the reverse-proxy guide in
-[`docs/PROXY-DEPLOY.md`](docs/PROXY-DEPLOY.md). Putting RetroDB directly on a
-non-localhost interface without a proxy in front of it is unsupported.
+RetroDB is built for a trusted home network. The server listens on every
+network interface, so other devices in your home can open the Network address
+the start script prints. Do not expose it to the internet directly; if you
+need access from outside your home, put it behind a reverse proxy as described
+in [`docs/PROXY-DEPLOY.md`](docs/PROXY-DEPLOY.md). The full threat model is
+[`docs/decisions/0001-threat-model.md`](docs/decisions/0001-threat-model.md).
 
 ## Updating
 

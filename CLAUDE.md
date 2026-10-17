@@ -143,6 +143,8 @@ Moved to `.claude/rules/distribution.md`, which loads when a matching file is re
 
 ## Reference Documents
 
+- `docs/design.md` — What RetroDB is for, its threat model, its subsystems and the spec that owns each
+- `docs/decisions/` — Decision records (threat model, fill-only scraping, HTTP-200 error replies); index in its `README.md`
 - `docs/RETRODB_DESIGN_STANDARDS.md` — Full UI/CSS/JS/API standards (25 sections; §23 controller naming, §25 schema migrations)
 - `docs/STANDARDS_ADDENDUM.md` — Version checklist, logging system
 - `docs/DEPENDENCY_POLICY.md` — Dependency policy: latest-always (features + security), held-back ledger, major-bump review gate, re-test workflow (read before pinning/capping/major-bumping any dep)

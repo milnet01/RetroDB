@@ -2,6 +2,11 @@
 
 This directory holds project-internal documentation. Project-wide entry points (user-facing README, contributor guide, legal notices, license) live at the repo root.
 
+## Design
+
+- [`design.md`](design.md) — What RetroDB is for, who uses it, its threat model, and the spec that owns each subsystem.
+- [`decisions/`](decisions/README.md) — Decision records: one settled design decision each.
+
 ## Specifications & standards
 
 - [`RETRODB_DESIGN_STANDARDS.md`](RETRODB_DESIGN_STANDARDS.md) — Canonical UI / CSS / JS / API / security / migrations standards (25 sections). Required reading before any UI or schema change.

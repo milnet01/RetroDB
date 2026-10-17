@@ -1,8 +1,8 @@
 # Security Policy
 
 RetroDB is a self-hosted, solo-developed Flask application intended to run
-on `localhost` (or a trusted LAN reverse-proxy host) under a single
-operator's control. Most attack surface is therefore *internal* —
+on a trusted home network, for one household
+([`docs/decisions/0001-threat-model.md`](docs/decisions/0001-threat-model.md)). Most attack surface is therefore *internal* —
 hardened against accidental misuse, scraper response trust boundaries,
 and credential leakage in logs.
 

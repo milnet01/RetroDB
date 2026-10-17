@@ -40,7 +40,8 @@
 #
 # Threat model
 # ------------
-# - Single-user, localhost Flask app. One human operator (the admin) runs it.
+# - One-household app on a trusted home network
+#   (docs/decisions/0001-threat-model.md). The admin runs it.
 # - Admin == operator. There is no lower-privilege tier whose input flows into
 #   admin-authored content. Settings pages and admin-only routes are not
 #   treated as XSS or CSRF targets, because the attacker would have to be the
