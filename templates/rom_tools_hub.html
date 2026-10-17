@@ -204,6 +204,19 @@
         </div>
     </a>
 
+    <a href="{{ url_for('reports.reports') }}" class="tool-card">
+        <div class="tool-card-header">
+            <div class="tool-card-icon">📊</div>
+            <div class="tool-card-title">{{ _('ROM Reports') }}</div>
+        </div>
+        <div class="tool-card-desc">
+            {{ _('Analyze ROM filenames against naming standards and scraped metadata') }}
+        </div>
+        <div class="tool-card-status">
+            <span class="status-dot no-deps"></span> {{ _('No dependencies required') }}
+        </div>
+    </a>
+
     <button type="button" class="tool-card" onclick="startImageResize()">
         <div class="tool-card-header">
             <div class="tool-card-icon">🖼️</div>

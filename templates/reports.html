@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_macros/nav_tabs.html" import rom_tool_tabs %}
 {% set needs_games_bundle = true %}
 
 {% block title %}ROM Reports - RetroDB{% endblock %}
@@ -257,6 +258,8 @@
 {% endblock %}
 
 {% block content %}
+{{ rom_tool_tabs('reports') }}
+
 <!-- Page Header -->
 <div class="page-header">
     <div>

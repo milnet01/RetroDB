@@ -1,10 +1,13 @@
 {% extends "base.html" %}
+{% from "_macros/nav_tabs.html" import achievement_tabs %}
 {% from "_macros/breadcrumb.html" import breadcrumb %}
 {% set needs_games_bundle = true %}
 
 {% block title %}{{ system.name }} Achievements - RetroDB{% endblock %}
 
 {% block content %}
+{{ achievement_tabs('retroachievements') }}
+
 <!-- Breadcrumb -->
 {{ breadcrumb([
     (_('RetroAchievements'), url_for('achievements.achievements')),

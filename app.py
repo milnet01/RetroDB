@@ -720,6 +720,24 @@ def load_user():
         session['_csrf_token'] = secrets.token_hex(32)
 
 
+# The pages behind the sidebar's one "Achievements" link, one per tab of
+# templates/_macros/nav_tabs.html::achievement_tabs (Pass 53.3).
+_ACHIEVEMENT_TAB_ENDPOINTS = frozenset({
+    'achievements.achievements_system',
+    'trophies.trophies',
+    'trophies.psn_trophies',
+    'steam_achievements.steam_achievements_landing',
+    'xbox_achievements.xbox_achievements_landing',
+})
+
+
+@app.before_request
+def remember_achievements_tab():
+    """Record the last achievements tab opened, so the sidebar link reopens it."""
+    if request.method == 'GET' and request.endpoint in _ACHIEVEMENT_TAB_ENDPOINTS:
+        session['last_achievements_tab'] = request.path
+
+
 @app.before_request
 def validate_csrf():
     """Validate CSRF token on state-changing requests.

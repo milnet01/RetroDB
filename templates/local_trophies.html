@@ -1,9 +1,12 @@
 {% extends "base.html" %}
+{% from "_macros/nav_tabs.html" import achievement_tabs %}
 {% set needs_games_bundle = true %}
 
 {% block title %}{{ _('Trophies') }} - RetroDB{% endblock %}
 
 {% block content %}
+{{ achievement_tabs('rpcs3') }}
+
 <!-- Page Header -->
 <div class="page-header">
     <div>

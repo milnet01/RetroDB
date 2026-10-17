@@ -1,0 +1,44 @@
+{# Page-link tab strips shared by a family of pages (Pass 53.3).
+
+    Usage:
+        {% from "_macros/nav_tabs.html" import achievement_tabs, rom_tool_tabs %}
+        {{ achievement_tabs('psn') }}
+        {{ rom_tool_tabs('chd_verify') }}
+
+    `active` is the key of the current page's tab. Both reuse the
+    `.tool-tabs` / `.tool-tab` styling; the active tab carries
+    aria-current="page" (server-rendered, no JS toggle).
+
+    The achievement tabs are the pages behind the one "Achievements" sidebar
+    link. app.py's remember_achievements_tab hook records the last one opened,
+    so that link reopens it. Platform names are brands and stay untranslated.
+#}
+{% macro _tab(href, icon, label, is_active) -%}
+    <a href="{{ href }}" class="tool-tab{% if is_active %} active{% endif %}"{% if is_active %} aria-current="page"{% endif %}>
+        <span class="tab-icon">{{ icon }}</span>
+        <span class="tab-label">{{ label }}</span>
+    </a>
+{%- endmacro %}
+
+{% macro achievement_tabs(active) %}
+<nav class="tool-tabs achievement-tabs" aria-label="{{ _('Achievements') }}">
+    {{ _tab(url_for('achievements.achievements'), '🎖️', 'RetroAchievements', active == 'retroachievements') }}
+    {{ _tab(url_for('trophies.trophies'), '🏆', 'RPCS3', active == 'rpcs3') }}
+    {{ _tab(url_for('trophies.psn_trophies'), '🎮', 'PSN', active == 'psn') }}
+    {{ _tab(url_for('steam_achievements.steam_achievements_landing'), '🟦', 'Steam', active == 'steam') }}
+    {{ _tab(url_for('xbox_achievements.xbox_achievements_landing'), '🟢', 'Xbox', active == 'xbox') }}
+</nav>
+{% endmacro %}
+
+{% macro rom_tool_tabs(active) %}
+<nav class="tool-tabs" aria-label="{{ _('ROM Tools') }}">
+    {{ _tab(url_for('tools.archive_scanner'), '📦', _('Archive Scanner'), active == 'archive_scanner') }}
+    {{ _tab(url_for('tools.chd_converter'), '💿', _('CHD Converter'), active == 'chd_converter') }}
+    {{ _tab(url_for('tools.chd_verify'), '✅', _('CHD Verify'), active == 'chd_verify') }}
+    {{ _tab(url_for('tools.multi_disc_organizer'), '💽', _('Multi-Disc Organizer'), active == 'multi_disc_organizer') }}
+    {{ _tab(url_for('tools.duplicate_finder'), '🔍', _('Duplicate Finder'), active == 'duplicate_finder') }}
+    {{ _tab(url_for('tools.screenshot_dedup'), '📸', _('Screenshot Dedup'), active == 'screenshot_dedup') }}
+    {{ _tab(url_for('reports.reports'), '📊', _('ROM Reports'), active == 'reports') }}
+    {{ _tab(url_for('tools.rom_tools_settings'), '⚙️', _('Settings'), active == 'rom_tools_settings') }}
+</nav>
+{% endmacro %}

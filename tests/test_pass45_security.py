@@ -2487,12 +2487,19 @@ class TestPass45_16AriaCurrentRollout:
             'duplicate_finder.html', 'multi_disc_organizer.html',
             'rom_tools_settings.html', 'screenshot_dedup.html',
         ]
+        # Pass 53.3: the strip is the shared rom_tool_tabs macro, which
+        # emits the attribute; each page must call it with its own key.
+        # tests/test_sidebar_nav.py renders every page and checks the
+        # active tab's aria-current.
+        macro_path = os.path.join(_REPO_ROOT, 'templates', '_macros', 'nav_tabs.html')
+        with open(macro_path, encoding='utf-8') as f:
+            assert 'aria-current="page"' in f.read()
         missing = []
         for tpl in templates:
             path = os.path.join(_REPO_ROOT, 'templates', tpl)
             with open(path, encoding='utf-8') as f:
                 body = f.read()
-            if 'class="tool-tab active" aria-current="page"' not in body:
+            if "rom_tool_tabs('%s')" % tpl[:-len('.html')] not in body:
                 missing.append(tpl)
         assert not missing, (
             f"Pass 45.16: these rom-tools templates lack aria-current "
@@ -2516,7 +2523,9 @@ class TestPass45_16AriaCurrentRollout:
         for tpl in templates:
             path = os.path.join(_REPO_ROOT, 'templates', tpl)
             with open(path, encoding='utf-8') as f:
-                total += f.read().count('aria-current="page"')
+                body = f.read()
+            # Pass 53.3: a rom_tool_tabs(...) call renders one active tab.
+            total += body.count('aria-current="page"') + body.count('rom_tool_tabs(')
         # 7 rom-tools + 1 dashboard + 1 analytics + 1 museum + 1 base.html
         # macro = 11 static occurrences; the JS auto-syncs the rest from
         # data-tabbar containers at runtime. Pin the lower bound at 10

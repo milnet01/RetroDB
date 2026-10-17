@@ -45,9 +45,10 @@ def achievements():
     """, one=True)
     
     if not first_system:
+        # Stay inside Achievements: the next tab along (Pass 53.3).
         flash(_('No games with RetroAchievements found in your library'), 'info')
-        return redirect(url_for('dashboard'))
-    
+        return redirect(url_for('trophies.trophies'))
+
     # Return a minimal page that checks localStorage for last system
     return f'''<!DOCTYPE html>
 <html>

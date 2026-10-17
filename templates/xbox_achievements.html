@@ -1,10 +1,13 @@
 {% extends "base.html" %}
+{% from "_macros/nav_tabs.html" import achievement_tabs %}
 {% from "_macros/breadcrumb.html" import breadcrumb %}
 {% set needs_games_bundle = true %}
 
 {% block title %}{{ _('Xbox Achievements') }} - RetroDB{% endblock %}
 
 {% block content %}
+{{ achievement_tabs('xbox') }}
+
 <!-- Breadcrumb -->
 {{ breadcrumb([
     (_('Xbox Achievements'), None),

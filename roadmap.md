@@ -532,7 +532,19 @@ filter switches and a drawer's first open. Today the grid has no empty
 message, so nothing flashes yet.
 
 #### Pass 53.3 Slim the sidebar: consolidate achievements + tools sprawl (UX, M)
-- **Status**: planned.
+- **Resolution** (2026-10-17, v3.23.21): layout approved by the user
+  2026-10-17. The sidebar went from 21 links to 16. One "Achievements" link
+  replaces the five platform links; its pages share a tab strip
+  (`templates/_macros/nav_tabs.html::achievement_tabs`), and the link reopens
+  the last tab used (`app.py::remember_achievements_tab`, session-backed, so
+  it works without JS). ROM Reports left the sidebar and became a ROM Tools
+  tab and hub card; the seven hand-copied tool tab strips became one
+  `rom_tool_tabs` macro, which also fixed the untranslated labels on the ROM
+  Tools settings page. Dashboard is now 🏠 and Log Viewer 🧾, so no icon
+  repeats. With no RetroAchievements games the link opens the RPCS3 tab
+  instead of bouncing to the Dashboard. Help manual updated in all 21
+  languages. Pinned by `tests/test_sidebar_nav.py`.
+- **Status**: shipped (2026-10-17).
 - **Problem**: the sidebar carries ~21 links across 6 groups (`base.html:85-197`).
   Five near-synonymous destinations (RPCS3 / PSN / RetroAchievements / Steam /
   Xbox — `base.html:107-128`) are indistinguishable by label to a non-technical
@@ -574,6 +586,11 @@ message, so nothing flashes yet.
 - **Problem**: the sidebar "ROM Tools" link jumps to the last sub-tool visited
   (`base.html:840-855`) rather than the hub, so the label and destination
   disagree — disorienting for a new user.
+- **Correction** (2026-10-17): the premise is false. The link has always
+  opened the hub: `navigateToRomTools` in `base.html` is defined but nothing
+  calls it, in the whole git history, so the `lastRomToolsPage` script is
+  dead code. A last-visited option would be new behaviour, not a
+  preference over existing behaviour. The dead script is not removed yet.
 - **Plan**: make it a user preference (Settings): "ROM Tools opens → hub /
   last-visited", defaulting to hub for new users so power users keep the
   shortcut. Small, opt-in; no behaviour forced.
@@ -7469,9 +7486,10 @@ were corrected in `2836bc3` and are not repeated here.
 - **Why**: the list shows "Pseudo", the developer test locale. §5 makes it a
   permanent QA tool selectable in Settings, by design. Seen in the trailer
   footage; a user picking it gets bracketed, accented text.
-- **Decision needed**: keep it for everyone, show it only to admins or in
-  debug mode, or hide it. Changing it amends §5.
-- **Status**: todo — waiting on the user. Lanes: i18n.
+- **Decision** (user, 2026-10-17): show it to admins only. Changing it
+  amends `docs/specs/i18n.md` §5, so that edit goes through rule 14's
+  contract check first.
+- **Status**: todo. Lanes: i18n.
 - **Source**: trailer recording, 2026-10-15.
 
 #### Pass 59.95 Launch and rename accept a file of any type (MEDIUM, S)
@@ -7494,6 +7512,29 @@ were corrected in `2836bc3` and are not repeated here.
   `tests/test_launch_resolver.py` and `tests/test_pass59_paths.py`.
 - **Status**: shipped (2026-10-15). Lanes: security, launch.
 - **Source**: user request, 2026-10-15.
+
+#### Pass 59.96 Tool pages and ROM Reports overflow a phone screen (LOW, S)
+- **Target**: the ROM Tools page header and info banner (e.g.
+  `templates/chd_verify.html`), and the ROM Reports stats grid
+  (`templates/reports.html`).
+- **Why**: measured 2026-10-17 in a 390 px frame: `/tools/chd-verify` is
+  501 px wide and `/reports` 470 px, so the page scrolls sideways. The tool
+  tab strip itself fits (it wraps); the header, banner and stats grid do not.
+  Predates Pass 53.3.
+- **Status**: todo. Lanes: ui.
+- **Source**: Pass 53.3 browser walk, 2026-10-17.
+
+#### Pass 59.97 Check admin-only UI as a non-admin, in a browser (LOW, S)
+- **Target**: the edit modal's "Custom launch args" field (hidden from
+  non-admins since v3.23.17), and any other admin-only control.
+- **Why**: those were checked only in rendered test HTML. A session may not
+  type real passwords, so it needs its own login.
+- **Plan** (user approved 2026-10-17): create a throwaway non-admin account
+  with a generated password, kept in a local gitignored scratch file and
+  never in chat or a tracked file; sign in as it in Chrome; check; delete
+  the account.
+- **Status**: todo. Lanes: auth, ui.
+- **Source**: user, 2026-10-17.
 
 ## Done index
 

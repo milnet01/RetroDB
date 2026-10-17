@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_macros/nav_tabs.html" import rom_tool_tabs %}
 
 {% block title %}CHD Verify - RetroDB{% endblock %}
 
@@ -79,36 +80,7 @@
 </div>
 
 <!-- Tool Tabs -->
-<nav class="tool-tabs">
-    <a href="{{ url_for('tools.archive_scanner') }}" class="tool-tab">
-        <span class="tab-icon">📦</span>
-        <span class="tab-label">{{ _('Archive Scanner') }}</span>
-    </a>
-    <a href="{{ url_for('tools.chd_converter') }}" class="tool-tab">
-        <span class="tab-icon">💿</span>
-        <span class="tab-label">{{ _('CHD Converter') }}</span>
-    </a>
-    <a href="{{ url_for('tools.chd_verify') }}" class="tool-tab active" aria-current="page">
-        <span class="tab-icon">✅</span>
-        <span class="tab-label">{{ _('CHD Verify') }}</span>
-    </a>
-    <a href="{{ url_for('tools.multi_disc_organizer') }}" class="tool-tab">
-        <span class="tab-icon">💽</span>
-        <span class="tab-label">{{ _('Multi-Disc Organizer') }}</span>
-    </a>
-    <a href="{{ url_for('tools.duplicate_finder') }}" class="tool-tab">
-        <span class="tab-icon">🔍</span>
-        <span class="tab-label">{{ _('Duplicate Finder') }}</span>
-    </a>
-    <a href="{{ url_for('tools.screenshot_dedup') }}" class="tool-tab">
-        <span class="tab-icon">📸</span>
-        <span class="tab-label">{{ _('Screenshot Dedup') }}</span>
-    </a>
-    <a href="{{ url_for('tools.rom_tools_settings') }}" class="tool-tab">
-        <span class="tab-icon">⚙️</span>
-        <span class="tab-label">{{ _('Settings') }}</span>
-    </a>
-</nav>
+{{ rom_tool_tabs('chd_verify') }}
 
 <div class="info-banner">
     <span class="info-icon">💡</span>

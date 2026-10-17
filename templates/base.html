@@ -90,44 +90,26 @@
                 <div class="nav-section">
                     <div class="nav-section-title">{{ _('Main') }}</div>
                     <a href="{{ url_for('dashboard') }}" {{ nav_active(request.endpoint == 'dashboard') }}>
-                        <span class="nav-icon">📊</span>
+                        <span class="nav-icon">🏠</span>
                         <span class="nav-text">{{ _('Dashboard') }}</span>
-                    </a>
-                    <a href="{{ url_for('systems.systems') }}" {{ nav_active(request.endpoint in ['systems.systems', 'systems.system_games', 'games.game_detail'] and request.args.get('from') != 'library' and request.args.get('from') != 'achievements' and request.args.get('from') != 'rom_reports') }}>
-                        <span class="nav-icon">🖥️</span>
-                        <span class="nav-text">{{ _('Systems') }}</span>
                     </a>
                     <a href="{{ url_for('games.all_games') }}" {{ nav_active(request.endpoint == 'games.all_games' or (request.endpoint == 'games.game_detail' and request.args.get('from') == 'library')) }}>
                         <span class="nav-icon">📚</span>
                         <span class="nav-text">{{ _('Library') }}</span>
                     </a>
+                    <a href="{{ url_for('systems.systems') }}" {{ nav_active(request.endpoint in ['systems.systems', 'systems.system_games', 'games.game_detail'] and request.args.get('from') != 'library' and request.args.get('from') != 'achievements' and request.args.get('from') != 'rom_reports') }}>
+                        <span class="nav-icon">🖥️</span>
+                        <span class="nav-text">{{ _('Systems') }}</span>
+                    </a>
+                    {# One link for every trophy platform; the pages share a tab strip
+                       (_macros/nav_tabs.html) and the link reopens the last tab used. #}
+                    <a href="{{ session.get('last_achievements_tab') or url_for('achievements.achievements') }}" {{ nav_active(request.blueprint in ['achievements', 'trophies', 'steam_achievements', 'xbox_achievements']) }}>
+                        <span class="nav-icon">🏆</span>
+                        <span class="nav-text">{{ _('Achievements') }}</span>
+                    </a>
                     <a href="{{ url_for('analytics') }}" {{ nav_active(request.endpoint == 'analytics') }}>
                         <span class="nav-icon">📈</span>
                         <span class="nav-text">{{ _('Analytics') }}</span>
-                    </a>
-                </div>
-
-                <div class="nav-section">
-                    <div class="nav-section-title">{{ _('Trophies & Achievements') }}</div>
-                    <a href="{{ url_for('trophies.trophies') }}" {{ nav_active(request.endpoint == 'trophies.trophies' or request.endpoint == 'trophies.trophy_game') }}>
-                        <span class="nav-icon">🏆</span>
-                        <span class="nav-text">{{ _('RPCS3 Trophies') }}</span>
-                    </a>
-                    <a href="{{ url_for('trophies.psn_trophies') }}" {{ nav_active(request.endpoint in ['trophies.psn_trophies', 'trophies.psn_trophy_detail']) }}>
-                        <span class="nav-icon">🎮</span>
-                        <span class="nav-text">{{ _('PSN Trophies') }}</span>
-                    </a>
-                    <a href="{{ url_for('achievements.achievements') }}" {{ nav_active(request.endpoint in ['achievements.achievements', 'achievements.achievements_system', 'achievements.achievement_game']) }}>
-                        <span class="nav-icon">🎖️</span>
-                        <span class="nav-text">{{ _('Achievements') }}</span>
-                    </a>
-                    <a href="{{ url_for('steam_achievements.steam_achievements_landing') }}" {{ nav_active(request.endpoint and request.endpoint.startswith('steam_achievements.')) }}>
-                        <span class="nav-icon">🟦</span>
-                        <span class="nav-text">{{ _('Steam Achievements') }}</span>
-                    </a>
-                    <a href="{{ url_for('xbox_achievements.xbox_achievements_landing') }}" {{ nav_active(request.endpoint and request.endpoint.startswith('xbox_achievements.')) }}>
-                        <span class="nav-icon">🟢</span>
-                        <span class="nav-text">{{ _('Xbox Achievements') }}</span>
                     </a>
                 </div>
 
@@ -153,17 +135,13 @@
 
                 <div class="nav-section">
                     <div class="nav-section-title">{{ _('Tools') }}</div>
-                    <a href="{{ url_for('reports.reports') }}" {{ nav_active(request.endpoint == 'reports.reports' or (request.endpoint == 'games.game_detail' and request.args.get('from') == 'rom_reports')) }}>
-                        <span class="nav-icon">📊</span>
-                        <span class="nav-text">{{ _('ROM Reports') }}</span>
+                    <a href="{{ url_for('tools.rom_tools_hub') }}" {{ nav_active(request.blueprint in ['tools', 'reports'] or (request.endpoint == 'games.game_detail' and request.args.get('from') == 'rom_reports')) }}>
+                        <span class="nav-icon">🛠️</span>
+                        <span class="nav-text">{{ _('ROM Tools') }}</span>
                     </a>
                     <a href="{{ url_for('game_imports.game_imports_page') }}" {{ nav_active(request.endpoint == 'game_imports.game_imports_page') }}>
                         <span class="nav-icon">📥</span>
                         <span class="nav-text">{{ _('Game Imports') }}</span>
-                    </a>
-                    <a href="{{ url_for('tools.rom_tools_hub') }}" {{ nav_active(request.endpoint in ['tools.rom_tools_hub', 'tools.archive_scanner', 'tools.chd_converter', 'tools.chd_verify', 'tools.multi_disc_organizer', 'tools.duplicate_finder', 'tools.screenshot_dedup', 'tools.rom_tools_settings']) }}>
-                        <span class="nav-icon">🛠️</span>
-                        <span class="nav-text">{{ _('ROM Tools') }}</span>
                     </a>
                 </div>
 
@@ -175,7 +153,7 @@
                     </a>
                     {% if has_permission('system_functions') %}
                     <a href="{{ url_for('logs.log_viewer') }}" {{ nav_active(request.endpoint == 'logs.log_viewer') }}>
-                        <span class="nav-icon">📋</span>
+                        <span class="nav-icon">🧾</span>
                         <span class="nav-text">{{ _('Log Viewer') }}</span>
                     </a>
                     {% endif %}
