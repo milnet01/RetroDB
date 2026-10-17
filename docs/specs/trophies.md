@@ -188,8 +188,9 @@ admin-only (`/api/scan-trophies`).
 ## 5. Invariants
 
 - **INV-1** — A PSN reply missing its earned or defined block leaves the
-  stored counts unchanged on the single-game and full sync; a new title
-  stores zeros. *Test:* `python3 -m pytest -q tests/test_pass59_psn_counts.py`
+  stored counts unchanged on the single-game sync, the full sync and the
+  bulk refresh; a new title stores zeros. The bulk refresh is tested in
+  `tests/test_pass59_trophy_dataloss.py`. *Test:* `python3 -m pytest -q tests/test_pass59_psn_counts.py`
   → `4 passed`. *Breaks when:* `_psn_trophy_counts` maps a missing block to
   `0`, or a count column loses its `COALESCE`.
 - **INV-2** — An RA title match never pairs games whose sequel numbers differ
@@ -269,11 +270,19 @@ admin-only (`/api/scan-trophies`).
   did not start the job. *Test:* none. *Breaks when:* `_owns` is bypassed.
 - **INV-17** — A sync never clears an existing PSN game link. *Test:* none.
   *Breaks when:* `linked_game_id` loses its `COALESCE` in `_upsert_psn_title`.
+- **INV-18** — When RA Refresh cannot fetch a console's game list, it
+  counts that console's games failed and leaves their RA links as they
+  were. *Test:* `tests/test_pass59_trophy_dataloss.py::test_failed_ra_list_fetch_keeps_links`.
+  *Breaks when:* a failed fetch is cached as an empty list.
+- **INV-19** — Clear RA data deletes only RA progress rows; Steam and Xbox
+  rows stay. *Test:* `tests/test_pass59_trophy_dataloss.py::test_clear_ra_data_keeps_steam_and_xbox_rows`.
+  *Breaks when:* either `/api/clear-ra-data` delete loses its source filter.
 
 ## 6. Failure modes
 
 - **Platform unreachable.** Steam and Xbox count the game skipped; RA sync
-  counts it failed; PSN bulk refresh fails the whole run when the title list
+  counts it failed; RA Refresh counts every game on a console failed when
+  that console's game list will not load; PSN bulk refresh fails the whole run when the title list
   is empty or the fetch passes 300 s.
 - **Expired PSN session.** `create_psn_client` clears the cache and signs in
   with the NPSSO; an expired NPSSO surfaces as a sign-in error.
@@ -286,7 +295,7 @@ admin-only (`/api/scan-trophies`).
 
 | Invariant | Test |
 |---|---|
-| INV-1 | `tests/test_pass59_psn_counts.py` |
+| INV-1 | `tests/test_pass59_psn_counts.py`; `tests/test_pass59_trophy_dataloss.py` (bulk refresh) |
 | INV-2 | `tests/test_pass59_ra_sequels.py` |
 | INV-3 | `tests/test_pass31_migrations.py` (PSN, collector, achievement classes) |
 | INV-4 | `tests/test_auth_hardening.py` (token store cases) |
@@ -303,6 +312,8 @@ admin-only (`/api/scan-trophies`).
 | INV-15 | `tests/test_auth_hardening.py` (redactor cases) |
 | INV-16 | none |
 | INV-17 | none |
+| INV-18 | `tests/test_pass59_trophy_dataloss.py` |
+| INV-19 | `tests/test_pass59_trophy_dataloss.py` |
 
 ## 8. Alternatives considered (and rejected)
 
@@ -336,6 +347,8 @@ None. This spec records existing behaviour; it chose no design.
 | INV-15 | §7's tests |
 | INV-16 | **nothing** |
 | INV-17 | **nothing** |
+| INV-18 | §7's tests |
+| INV-19 | §7's tests |
 
 ## 11. Cross-doc impact
 
@@ -357,11 +370,6 @@ queued by this document.
 - **PASS-59-110 landed during this write-up** (commit `10b2f15`). INV-2
   describes the committed code. Links made before it stay wrong until an
   all-systems RA Refresh runs.
-- **Empty replies on other paths.** `PSNRefreshJob._sync_game_trophies`
-  still maps a missing block to `0` and writes it, so the bulk refresh can
-  zero counts that PASS-59-58 protects elsewhere. RA refresh caches `[]` for
-  a console whose game list fails, so every game on it loses its RA link at
-  the end of the run.
 - **RA single-game sync stores zero totals.** `api_sync_game_achievements`
   reads `total_count`, but `get_user_game_progress_custom` returns
   `achievement_count`.
@@ -369,9 +377,6 @@ queued by this document.
   progress rows. The single-game route uses the caller's own account.
 - **Steam and Xbox jobs walk every game** with a platform id, not only the
   caller's.
-- **Clear RA data deletes everyone's progress.** `/api/clear-ra-data` runs
-  `DELETE FROM game_achievement_progress` with no user or source filter, so
-  Steam and Xbox rows go too.
 - **Not scoped to the caller:** dashboard achievement totals
   (`app.py::get_stats`); RA, Steam and Xbox job status and cancel;
   `/api/jobs/resume/<id>` resuming an admin-only job for any signed-in user.

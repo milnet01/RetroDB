@@ -563,24 +563,12 @@ class PSNRefreshJob:
         # PHASE 1: Gather data (CPU + network I/O, NO DB writes)
         # =====================================================================
 
-        # Get trophy counts (CPU only — reads from in-memory target_title object)
-        earned_counts = {
-            'platinum': target_title.earned_trophies.platinum if target_title.earned_trophies else 0,
-            'gold': target_title.earned_trophies.gold if target_title.earned_trophies else 0,
-            'silver': target_title.earned_trophies.silver if target_title.earned_trophies else 0,
-            'bronze': target_title.earned_trophies.bronze if target_title.earned_trophies else 0
-        }
-
-        total_counts = {
-            'platinum': target_title.defined_trophies.platinum if target_title.defined_trophies else 0,
-            'gold': target_title.defined_trophies.gold if target_title.defined_trophies else 0,
-            'silver': target_title.defined_trophies.silver if target_title.defined_trophies else 0,
-            'bronze': target_title.defined_trophies.bronze if target_title.defined_trophies else 0
-        }
-
-        total_earned = sum(earned_counts.values())
-        total_trophies = sum(total_counts.values())
-        progress = int((total_earned / total_trophies * 100) if total_trophies > 0 else 0)
+        # Get trophy counts (CPU only — reads from in-memory target_title object).
+        # PASS-59-117 — a block PSN omitted is None, and the write keeps the
+        # stored value instead of zeroing it.
+        from routes.trophies import _psn_trophy_counts, _PSN_COUNT_COLUMNS
+        counts = [_psn_trophy_counts(target_title)[c] for c in _PSN_COUNT_COLUMNS]
+        count_sets = ', '.join(f'{c} = COALESCE(?, {c})' for c in _PSN_COUNT_COLUMNS)
 
         # Download game icon (network I/O, no lock)
         icon_url = target_title.title_icon_url if hasattr(target_title, 'title_icon_url') else None
@@ -592,22 +580,12 @@ class PSNRefreshJob:
         if not title_platform or len(title_platform) == 0:
             # No trophies to fetch — still update counts via a quick write
             c = conn.cursor()
-            c.execute("""
+            c.execute(f"""
                 UPDATE psn_games SET
-                    progress = ?, earned_platinum = ?, earned_gold = ?,
-                    earned_silver = ?, earned_bronze = ?, total_platinum = ?,
-                    total_gold = ?, total_silver = ?, total_bronze = ?,
-                    total_trophies = ?, earned_trophies = ?,
+                    {count_sets},
                     last_updated = datetime('now'), trophies_synced = 1
                 WHERE npwr_id = ? AND user_id = ?
-            """, (
-                progress,
-                earned_counts['platinum'], earned_counts['gold'],
-                earned_counts['silver'], earned_counts['bronze'],
-                total_counts['platinum'], total_counts['gold'],
-                total_counts['silver'], total_counts['bronze'],
-                total_trophies, total_earned, npwr_id, self._user_id
-            ))
+            """, (*counts, npwr_id, self._user_id))
             _commit_with_retry(conn)
             return 0
 
@@ -722,22 +700,12 @@ class PSNRefreshJob:
         c = conn.cursor()
 
         # Update game counts (Pass 31.1 — per user)
-        c.execute("""
+        c.execute(f"""
             UPDATE psn_games SET
-                progress = ?, earned_platinum = ?, earned_gold = ?,
-                earned_silver = ?, earned_bronze = ?, total_platinum = ?,
-                total_gold = ?, total_silver = ?, total_bronze = ?,
-                total_trophies = ?, earned_trophies = ?,
+                {count_sets},
                 last_updated = datetime('now'), trophies_synced = 1
             WHERE npwr_id = ? AND user_id = ?
-        """, (
-            progress,
-            earned_counts['platinum'], earned_counts['gold'],
-            earned_counts['silver'], earned_counts['bronze'],
-            total_counts['platinum'], total_counts['gold'],
-            total_counts['silver'], total_counts['bronze'],
-            total_trophies, total_earned, npwr_id, self._user_id
-        ))
+        """, (*counts, npwr_id, self._user_id))
 
         # Batch upsert all trophies
         for row in trophy_rows:

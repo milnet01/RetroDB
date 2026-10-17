@@ -314,17 +314,27 @@ class RARefreshJob:
                                 'h': 1  # Only games with achievements
                             }
 
-                            response = requests.get(url, params=params, timeout=60)
-                            if response.status_code == 200:
+                            # PASS-59-117 — a failed fetch is cached as None,
+                            # "unknown": reading it as an empty list unlinked
+                            # every game on the console.
+                            try:
+                                response = requests.get(url, params=params, timeout=60)
+                                if response.status_code != 200:
+                                    raise RuntimeError(f"HTTP {response.status_code}")
                                 ra_console_cache[console_id] = response.json()
-                            else:
-                                ra_console_cache[console_id] = []
+                            except Exception as e:
+                                logger.warning(f"RA Refresh: game list for console {console_id} failed: {e}")
+                                ra_console_cache[console_id] = None
 
                             # Rate limit after fetching console list —
                             # Pass 40.10: shutdown-aware sleep.
                             shutdown_requested.wait(1)
 
-                        ra_games = ra_console_cache.get(console_id, [])
+                        ra_games = ra_console_cache[console_id]
+                        if ra_games is None:
+                            with self._lock:
+                                self.failed_count += 1
+                            continue
 
                         rom_name = game['rom_path'].split('/')[-1].rsplit('.', 1)[0] if game['rom_path'] else ''
                         ra_match = match_ra_game(game['title'], rom_name, ra_games)

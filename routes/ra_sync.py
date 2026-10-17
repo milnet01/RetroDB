@@ -143,6 +143,11 @@ def api_refresh_retroachievements_system(system_id):
 # CLEAR RA DATA API
 # =============================================================================
 
+# PASS-59-117 — the progress table holds Steam and Xbox rows too; clearing RA
+# data must leave them. A row with no source predates the column: RA's.
+_RA_ROWS = "COALESCE(source, 'ra') = 'ra'"
+
+
 @bp.route('/api/clear-ra-data/<int:system_id>', methods=['POST'])
 @admin_required
 @handle_api_errors
@@ -170,7 +175,8 @@ def api_clear_ra_data_system(system_id):
     # Clear progress data
     placeholders = ','.join('?' * len(game_ids))
     execute(f"""
-        DELETE FROM game_achievement_progress WHERE game_id IN ({placeholders})
+        DELETE FROM game_achievement_progress
+        WHERE game_id IN ({placeholders}) AND {_RA_ROWS}
     """, game_ids)
 
     invalidate_analytics_cache()
@@ -191,8 +197,8 @@ def api_clear_ra_data_all():
     # Clear all ra_game_id values (only touch rows that have RA data)
     execute("UPDATE games SET ra_game_id = NULL, has_retroachievements = 0 WHERE ra_game_id IS NOT NULL")
 
-    # Clear all progress data
-    execute("DELETE FROM game_achievement_progress")
+    # Clear all RA progress data
+    execute(f"DELETE FROM game_achievement_progress WHERE {_RA_ROWS}")
 
     invalidate_analytics_cache()
     return success(
