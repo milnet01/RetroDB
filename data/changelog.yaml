@@ -1,3 +1,16 @@
+- version: 3.29.3
+  date: 2026-10-17
+  tags:
+  - type: fix
+    label: One broken screenshot no longer stops duplicate checks for a game
+  body: |
+    <ul>
+      <li><strong>One broken screenshot no longer stops duplicate checks for
+        a game.</strong> When a scrape downloaded a screenshot that could not
+        be read, the next screenshot crashed the duplicate check, so
+        lookalike screenshots after it were all kept. The unreadable one is
+        now set aside and the check carries on.</li>
+    </ul>
 - version: 3.29.2
   date: 2026-10-17
   tags:

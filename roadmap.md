@@ -6332,7 +6332,13 @@ orchestrator, several by execution rather than reading.
   recomputed.
 - **Verify**: place a corrupt image among screenshots and confirm dedup
   continues.
-- **Status**: planned (2026-09-01). Lanes: scraper, media.
+- **Shipped** (2026-10-17, v3.29.3): `keep_screenshot_if_unique` hashes
+  once and appends only a non-None hash; matching moved to `_find_match`,
+  shared with `is_visual_duplicate`. `compute_dhash` reads pixels with
+  `tobytes()` instead of the deprecated `getdata()`. Pinned by
+  `tests/test_pass59_scrapers.py::test_unhashable_screenshot_does_not_break_later_dedup`
+  (red before the fix).
+- **Status**: done (2026-10-17). Lanes: scraper, media.
 - **Source**: review-code AI-fill/ROM-tools lane 2026-09-01.
 
 ---

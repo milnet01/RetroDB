@@ -364,3 +364,21 @@ def test_ai_prompt_sanitises_existing_values():
     assert '{' not in line.split('Current value:')[1]
     assert '`' not in line
     assert '"pwned"' not in line
+
+
+# --- PASS-59-52: an unhashable screenshot does not poison the dedup list ---
+
+def test_unhashable_screenshot_does_not_break_later_dedup(tmp_path):
+    from PIL import Image
+    from scraper.image_dedup import keep_screenshot_if_unique
+
+    corrupt = tmp_path / 'corrupt.png'
+    corrupt.write_bytes(b'not an image')
+    good = tmp_path / 'good.png'
+    Image.new('RGB', (32, 32), (200, 10, 10)).save(good)
+
+    hashes = []
+    assert keep_screenshot_if_unique(str(corrupt), 'corrupt.png', hashes)
+    assert all(h is not None for _, h in hashes)
+    # Before the fix the None above made this raise TypeError.
+    assert keep_screenshot_if_unique(str(good), 'good.png', hashes)

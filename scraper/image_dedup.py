@@ -31,7 +31,7 @@ def compute_dhash(image_path, hash_size=8):
             (hash_size + 1, hash_size), Image.LANCZOS
         )
         try:
-            pixels = list(img.getdata())
+            pixels = img.tobytes()  # mode L: one byte per pixel
             diff = 0
             for row in range(hash_size):
                 for col in range(hash_size):
@@ -73,7 +73,10 @@ def is_visual_duplicate(new_path, existing_hashes, threshold=10):
     between two 64-bit dHashes typically sits around 0-3 for identical
     images, 10-20 for similar-but-different, and 25+ for unrelated.
     """
-    new_hash = compute_dhash(new_path)
+    return _find_match(compute_dhash(new_path), existing_hashes, threshold)
+
+
+def _find_match(new_hash, existing_hashes, threshold=10):
     if new_hash is None:
         return False, None
     for fname, h in existing_hashes:
@@ -92,7 +95,8 @@ def keep_screenshot_if_unique(local_path, filename, existing_hashes, source_labe
 
     `source_label` is used only in the "skipping duplicate" log message.
     """
-    is_dup, match = is_visual_duplicate(local_path, existing_hashes)
+    new_hash = compute_dhash(local_path)
+    is_dup, match = _find_match(new_hash, existing_hashes)
     if is_dup:
         prefix = f"{source_label} " if source_label else ""
         logger.info(f"Skipping duplicate {prefix}screenshot {filename} (visually matches {match})")
@@ -101,5 +105,8 @@ def keep_screenshot_if_unique(local_path, filename, existing_hashes, source_labe
         except OSError:
             pass
         return False
-    existing_hashes.append((filename, compute_dhash(local_path)))
+    # PASS-59-52: an unhashable image must not enter the list — a None
+    # there makes every later comparison raise TypeError.
+    if new_hash is not None:
+        existing_hashes.append((filename, new_hash))
     return True
