@@ -8208,7 +8208,11 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.116 The Museum's bulk controller-image fetch runs inside the web request (LOW, M).
-- **Status**: todo
+- **Resolution** (2026-10-17): Shipped 2026-10-17 in 6d452dc (3.29.1, open): MuseumImageFetchJob with
+  start/status/cancel; the Museum page polls, shows progress, offers
+  Cancel. Tests: tests/test_pass59_museum_images_job.py. Browser walk
+  owed.
+- **Status**: done
 - **Target**: `routes/museum.py::fetch_controller_images_bulk` and the
   Museum page JS that reads its result.
 - **Why**: a Bing search, download and background-removal loop with a
@@ -8265,7 +8269,14 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.119 ROM Tools defects from the rom-tools spec (MEDIUM, M).
-- **Status**: todo
+- **Resolution** (2026-10-17): Shipped 2026-10-17 (32c899f, d54973c, merged to main; 3.29.1, open).
+  Every listed item, plus the four fact-gathering findings, reproduced
+  red first in tests/test_pass59_119_rom_tools.py, then fixed; none
+  dropped. UI items (settings reset, archive-scanner staging text, batch
+  M3U confirm, duplicate delete, CHD Skip existing) are pinned by render
+  tests; browser walk owed. Screenshot-delete filename trust and
+  duplicate-delete staging stay open in rom-tools.md §13.
+- **Status**: done
 - **Target**: `docs/specs/rom-tools.md` § 13 Open.
 - **Why**: found while writing that spec, read from code. Riskiest first:
   a saved unwanted pattern of `*` makes Clean delete every member,
