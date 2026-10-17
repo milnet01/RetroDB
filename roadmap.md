@@ -4048,7 +4048,13 @@ weren't worth blocking the ship on.  Ordered by rough priority.
   fieldset semantics don't fit. For prose-style labels heading a
   read-only display (e.g. `Database Location`), demote `<label>` to
   `<div class="form-label">` since there's no control to associate.
-- **Status**: partial (v3.5.67) — turned out most of the 33-case master
+- **Shipped** (2026-10-17, v3.29.7): the last open case, the redundant
+  `aria-label` on `#matchPlatformRequired` (now in
+  `templates/_settings_tabs/scraping.html`), is removed, so the
+  `<label for>` text is the accessible name. Every other case was closed
+  in earlier passes, per the status above. That tab's missing i18n
+  wrapping is filed under PASS-59-63.
+- **Status**: done (v3.5.67) — turned out most of the 33-case master
   list was already addressed in earlier passes:
   - **Toggle grids** (`chd_converter.html:124`, `duplicate_finder.html:231`,
     `rom_tools_settings.html:393,425`) already use
