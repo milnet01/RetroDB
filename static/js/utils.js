@@ -329,6 +329,20 @@ function _logApiError(label, error) {
     console.error(label, error);
 }
 
+// PASS-59-114: a failed request rejects with the server's own message when
+// the reply is the JSON envelope ({success: false, error}), so a caller's
+// catch can show it. The envelope is on `.data`, the status on `.status`.
+async function _apiHttpError(response) {
+    let body = null;
+    try { body = await response.json(); } catch (_) { /* non-JSON body */ }
+    const msg = body && typeof body.error === 'string' && body.error
+        ? body.error : `HTTP ${response.status}`;
+    const err = new Error(msg);
+    err.status = response.status;
+    err.data = body;
+    return err;
+}
+
 const API = {
     /**
      * Make a GET request
@@ -344,7 +358,7 @@ const API = {
                 ...opts
             });
             if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
+                throw await _apiHttpError(response);
             }
             return await response.json();
         } catch (error) {
@@ -375,7 +389,7 @@ const API = {
                 body: JSON.stringify(data),
             });
             if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
+                throw await _apiHttpError(response);
             }
             return await response.json();
         } catch (error) {
@@ -401,7 +415,7 @@ const API = {
                 signal: opts.signal,
             });
             if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
+                throw await _apiHttpError(response);
             }
             return await response.json();
         } catch (error) {

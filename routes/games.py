@@ -1190,14 +1190,14 @@ def api_update_completion(game_id):
         status = data.get('status', 'not_started')
 
         if status not in VALID_COMPLETION_STATUSES:
-            return jsonify({'success': False, 'error': _('Invalid status')})
+            return error(_('Invalid status'), 400)
 
         execute("UPDATE games SET completion_status = ? WHERE id = ?", (status, game_id))
 
         return success(status=status)
     except Exception as e:
         logger.error(f"Completion update error: {e}")
-        return jsonify({'success': False, 'error': _('An internal error occurred')})
+        return error(_('An internal error occurred'), 500)
 
 
 @bp.route('/api/game/<int:game_id>/track-view', methods=['POST'])
@@ -1227,7 +1227,7 @@ def api_track_view(game_id):
         return success()
     except Exception as e:
         logger.error(f"track-view error: {e}")
-        return jsonify({'success': False, 'error': _('An internal error occurred')})
+        return error(_('An internal error occurred'), 500)
 
 
 # Pass 41.9 — `/api/recently-viewed` deleted. Zero callers (the dashboard

@@ -81,7 +81,7 @@ def api_log_files():
         )
     except Exception as e:
         logger.error(f"Error listing log files: {e}")
-        return jsonify({'success': False, 'error': _('An internal error occurred')})
+        return error(_('An internal error occurred'), 500)
 
 
 @logs_bp.route('/api/logs/content/<filename>')
@@ -159,13 +159,13 @@ def api_delete_log(filename):
         filepath = os.path.join(log_manager.LOGS_DIR, filename)
 
         if not os.path.exists(filepath):
-            return jsonify({'success': False, 'error': _('Log file not found')})
+            return error(_('Log file not found'), 404)
 
         os.remove(filepath)
         return success(message=f'Deleted {filename}')
     except Exception as e:
         logger.error(f"Error deleting log file: {e}")
-        return jsonify({'success': False, 'error': _('An internal error occurred')})
+        return error(_('An internal error occurred'), 500)
 
 
 @logs_bp.route('/api/logs/clear-old', methods=['POST'])
@@ -178,7 +178,7 @@ def api_clear_old_logs():
         return success(removed=removed)
     except Exception as e:
         logger.error(f"Error clearing old logs: {e}")
-        return jsonify({'success': False, 'error': _('An internal error occurred')})
+        return error(_('An internal error occurred'), 500)
 
 
 # =============================================================================
@@ -211,12 +211,12 @@ def api_view_log_compat(filename):
         content = log_manager.get_log_content(filename, lines=lines)
 
         if content is None:
-            return jsonify({'success': False, 'error': _('Log file not found')})
+            return error(_('Log file not found'), 404)
 
         return success(content=content)
     except Exception as e:
         logger.error(f"Error viewing log file: {e}")
-        return jsonify({'success': False, 'error': _('An internal error occurred')})
+        return error(_('An internal error occurred'), 500)
 
 
 # =============================================================================

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-17 18:12+0200\n"
+"POT-Creation-Date: 2026-10-17 18:24+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: af\n"
@@ -42,7 +42,7 @@ msgid "System not found or has no achievement games"
 msgstr "Stelsel nie gevind nie of het geen speletjies met prestasies nie"
 
 #: routes/achievements.py:171 routes/achievements.py:440
-#: routes/bonus_discs.py:263 routes/bulk_scrape.py:46 routes/collections.py:276
+#: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/collections.py:276
 #: routes/collections.py:531 routes/games.py:341 routes/games.py:770
 #: routes/games.py:891 routes/games.py:948 routes/games_ai.py:46
 #: routes/games_media.py:35 routes/games_media.py:82 routes/games_media.py:143
@@ -211,21 +211,21 @@ msgstr ""
 msgid "Invalid image file"
 msgstr "Ongeldige beeldlêer"
 
-#: routes/bonus_discs.py:191
+#: routes/bonus_discs.py:192
 msgid "Bonus disc not found"
 msgstr "Bonusskyf nie gevind nie"
 
-#: routes/bonus_discs.py:193
+#: routes/bonus_discs.py:194
 msgid "Parent game not found"
 msgstr "Ouerspeletjie nie gevind nie"
 
-#: routes/bonus_discs.py:195
+#: routes/bonus_discs.py:196
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "Bonusskyf en ouerspeletjie moet in dieselfde stelsel wees"
 
-#: routes/bonus_discs.py:209 routes/bonus_discs.py:227 routes/games.py:1200
+#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1200
 #: routes/games.py:1230 routes/platform_import.py:289
-#: routes/platform_import.py:658 routes/platform_import.py:1028
+#: routes/platform_import.py:658 routes/platform_import.py:1024
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:200 routes/scraper.py:528
 #: routes/scraper.py:917 routes/settings.py:317 routes/settings.py:341
@@ -239,11 +239,11 @@ msgstr "Bonusskyf en ouerspeletjie moet in dieselfde stelsel wees"
 msgid "An internal error occurred"
 msgstr "'n Interne fout het voorgekom"
 
-#: routes/bonus_discs.py:279
+#: routes/bonus_discs.py:281
 msgid "Missing bonus_id or parent_id"
 msgstr "bonus_id of parent_id ontbreek"
 
-#: routes/bonus_discs.py:304 routes/reports.py:806
+#: routes/bonus_discs.py:310 routes/reports.py:806
 msgid "Missing game_id"
 msgstr "game_id ontbreek"
 
@@ -436,8 +436,8 @@ msgid "No fields to update"
 msgstr "Geen velde om by te werk nie"
 
 #: routes/games.py:1019 routes/platform_import.py:212
-#: routes/platform_import.py:572 routes/platform_import.py:932
-#: routes/trophies.py:1850
+#: routes/platform_import.py:572 routes/platform_import.py:928
+#: routes/trophies.py:1852
 msgid "No games selected"
 msgstr "Geen speletjies gekies nie"
 
@@ -651,11 +651,11 @@ msgstr "Xbox-verifikasie het misluk. Herkoppel asseblief jou Xbox-rekening."
 msgid "No games found in Xbox title history."
 msgstr "Geen speletjies in Xbox-titelgeskiedenis gevind nie."
 
-#: routes/platform_import.py:769
+#: routes/platform_import.py:768
 msgid "PSN NPSSO not configured. Add it in Settings → API Keys."
 msgstr "PSN NPSSO nie opgestel nie. Voeg dit by in Instellings → API-sleutels."
 
-#: routes/platform_import.py:798
+#: routes/platform_import.py:795
 msgid "Failed to fetch PSN game list. Try syncing trophies first."
 msgstr "Kon nie PSN-speletjielys verkry nie. Probeer eers trofeë sinkroniseer."
 
@@ -757,6 +757,11 @@ msgstr "Ongeldige JSON-antwoord van ScreenScraper"
 #: routes/scraper.py:694
 msgid "Error parsing API response"
 msgstr "Fout tydens ontleding van API-antwoord"
+
+#: routes/scraper.py:696
+#, python-format
+msgid "ScreenScraper answered HTTP %(code)s"
+msgstr ""
 
 #: routes/scraper.py:711
 msgid "No RAWG API key configured"
@@ -982,12 +987,11 @@ msgstr "PSNAWP-biblioteek nie geïnstalleer nie. Voer uit: pip install psnawp"
 msgid "No NPSSO token provided"
 msgstr "Geen NPSSO-token verskaf nie"
 
-#: routes/trophies.py:1832
-#, python-format
-msgid "Connection failed: %(error)s"
-msgstr "Verbinding het misluk: %(error)s"
+#: routes/trophies.py:1834
+msgid "Could not connect to PSN"
+msgstr ""
 
-#: routes/trophies.py:1859
+#: routes/trophies.py:1861
 msgid "PSN NPSSO not configured"
 msgstr "PSN NPSSO nie opgestel nie"
 
@@ -9056,4 +9060,7 @@ msgstr "Ondersteun op Patreon"
 
 #~ msgid "Enter admin password"
 #~ msgstr "Voer administrateurwagwoord in"
+
+#~ msgid "Connection failed: %(error)s"
+#~ msgstr "Verbinding het misluk: %(error)s"
 

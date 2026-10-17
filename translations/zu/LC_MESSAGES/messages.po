@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-17 18:12+0200\n"
+"POT-Creation-Date: 2026-10-17 18:24+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zu\n"
@@ -42,7 +42,7 @@ msgid "System not found or has no achievement games"
 msgstr "Isistimu ayitholakali noma ayinamidlalo yezimpumelelo"
 
 #: routes/achievements.py:171 routes/achievements.py:440
-#: routes/bonus_discs.py:263 routes/bulk_scrape.py:46 routes/collections.py:276
+#: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/collections.py:276
 #: routes/collections.py:531 routes/games.py:341 routes/games.py:770
 #: routes/games.py:891 routes/games.py:948 routes/games_ai.py:46
 #: routes/games_media.py:35 routes/games_media.py:82 routes/games_media.py:143
@@ -209,21 +209,21 @@ msgstr ""
 msgid "Invalid image file"
 msgstr "Ifayela lesithombe elingavumelekile"
 
-#: routes/bonus_discs.py:191
+#: routes/bonus_discs.py:192
 msgid "Bonus disc not found"
 msgstr "Idiski yebhonasi ayitholakali"
 
-#: routes/bonus_discs.py:193
+#: routes/bonus_discs.py:194
 msgid "Parent game not found"
 msgstr "Umdlalo omzali awutholakali"
 
-#: routes/bonus_discs.py:195
+#: routes/bonus_discs.py:196
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "Idiski yebhonasi nomdlalo omzali kufanele kube kwisistimu efanayo"
 
-#: routes/bonus_discs.py:209 routes/bonus_discs.py:227 routes/games.py:1200
+#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1200
 #: routes/games.py:1230 routes/platform_import.py:289
-#: routes/platform_import.py:658 routes/platform_import.py:1028
+#: routes/platform_import.py:658 routes/platform_import.py:1024
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:200 routes/scraper.py:528
 #: routes/scraper.py:917 routes/settings.py:317 routes/settings.py:341
@@ -237,11 +237,11 @@ msgstr "Idiski yebhonasi nomdlalo omzali kufanele kube kwisistimu efanayo"
 msgid "An internal error occurred"
 msgstr "Kwenzeke iphutha langaphakathi"
 
-#: routes/bonus_discs.py:279
+#: routes/bonus_discs.py:281
 msgid "Missing bonus_id or parent_id"
 msgstr "Kushoda i-bonus_id noma i-parent_id"
 
-#: routes/bonus_discs.py:304 routes/reports.py:806
+#: routes/bonus_discs.py:310 routes/reports.py:806
 msgid "Missing game_id"
 msgstr "Kushoda i-game_id"
 
@@ -434,8 +434,8 @@ msgid "No fields to update"
 msgstr "Akukho zinkambu zokubuyekeza"
 
 #: routes/games.py:1019 routes/platform_import.py:212
-#: routes/platform_import.py:572 routes/platform_import.py:932
-#: routes/trophies.py:1850
+#: routes/platform_import.py:572 routes/platform_import.py:928
+#: routes/trophies.py:1852
 msgid "No games selected"
 msgstr "Ayikho imidlalo ekhethiwe"
 
@@ -647,11 +647,11 @@ msgstr ""
 msgid "No games found in Xbox title history."
 msgstr "Ayikho imidlalo etholakele emlandweni wezihloko ze-Xbox."
 
-#: routes/platform_import.py:769
+#: routes/platform_import.py:768
 msgid "PSN NPSSO not configured. Add it in Settings → API Keys."
 msgstr "I-PSN NPSSO ayilungiselelwanga. Yifake ku-Izilungiselelo → API Keys."
 
-#: routes/platform_import.py:798
+#: routes/platform_import.py:795
 msgid "Failed to fetch PSN game list. Try syncing trophies first."
 msgstr ""
 "Yehlulekile ukulanda uhlu lwemidlalo ye-PSN. Zama ukuvumelanisa izindondo"
@@ -757,6 +757,11 @@ msgstr "Impendulo ye-JSON engavumelekile evela ku-ScreenScraper"
 #: routes/scraper.py:694
 msgid "Error parsing API response"
 msgstr "Iphutha ekuhlaziyeni impendulo ye-API"
+
+#: routes/scraper.py:696
+#, python-format
+msgid "ScreenScraper answered HTTP %(code)s"
+msgstr ""
 
 #: routes/scraper.py:711
 msgid "No RAWG API key configured"
@@ -982,12 +987,11 @@ msgstr "Umtapo we-PSNAWP awufakiwe. Sebenzisa: pip install psnawp"
 msgid "No NPSSO token provided"
 msgstr "Alikho ithokheni ye-NPSSO enikeziwe"
 
-#: routes/trophies.py:1832
-#, python-format
-msgid "Connection failed: %(error)s"
-msgstr "Uxhumano luhlulekile: %(error)s"
+#: routes/trophies.py:1834
+msgid "Could not connect to PSN"
+msgstr ""
 
-#: routes/trophies.py:1859
+#: routes/trophies.py:1861
 msgid "PSN NPSSO not configured"
 msgstr "I-PSN NPSSO ayilungiselelwanga"
 
@@ -9093,4 +9097,7 @@ msgstr "Sekela ku-Patreon"
 
 #~ msgid "Enter admin password"
 #~ msgstr "Faka iphasiwedi lomlawuli"
+
+#~ msgid "Connection failed: %(error)s"
+#~ msgstr "Uxhumano luhlulekile: %(error)s"
 

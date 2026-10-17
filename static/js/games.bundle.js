@@ -2166,7 +2166,11 @@ const GameEditModal = {
         })
         .catch(err => {
             const _ei = typeof getThemedIcon === 'function' ? getThemedIcon('error') : '❌';
-            showModal(`${_ei} ${t('Error')}`, t('Error updating completion status'));
+            if (err.data) {
+                showModal(`${_ei} ${t('Update Failed')}`, t('Failed to update completion status: ') + err.message);
+            } else {
+                showModal(`${_ei} ${t('Error')}`, t('Error updating completion status'));
+            }
         });
     },
 

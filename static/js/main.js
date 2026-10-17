@@ -1616,7 +1616,9 @@ function updateCompletionStatus(gameId, status) {
             showNotification(t('Failed to update status: {error}', {error: data.error}), 'error');
         }
     })
-    .catch(e => showNotification(t('Error updating status'), 'error'));
+    .catch(e => showNotification(e.data
+        ? t('Failed to update status: {error}', {error: e.message})
+        : t('Error updating status'), 'error'));
 }
 
 // =============================================================================

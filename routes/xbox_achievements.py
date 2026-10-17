@@ -16,7 +16,7 @@ import logging
 from flask import Blueprint, render_template, jsonify, g
 from flask_babel import gettext as _
 from services.database import query, get_db
-from services.api_helpers import success
+from services.api_helpers import success, error
 from services.auth import login_required, editor_required
 
 logger = logging.getLogger(__name__)
@@ -123,16 +123,16 @@ def api_xbox_sync_single(game_id):
     client_secret = api_keys.get('xbox_client_secret', '')
 
     if not client_id or not client_secret:
-        return jsonify({'success': False, 'error': _('Xbox credentials not configured')})
+        return error(_('Xbox credentials not configured'), 400)
 
     user_id = g.user['id']
     session = get_authenticated_session(client_id, client_secret, user_id)
     if not session:
-        return jsonify({'success': False, 'error': _('Xbox authentication failed — please re-connect your account')})
+        return error(_('Xbox authentication failed — please re-connect your account'), 401)
 
     game = query("SELECT id, title, xbox_title_id FROM games WHERE id = ?", (game_id,), one=True)
     if not game or not game['xbox_title_id']:
-        return jsonify({'success': False, 'error': _('Game not found or not an Xbox game')})
+        return error(_('Game not found or not an Xbox game'), 404)
 
     result = get_achievements(session['auth_header'], session['xuid'], game['xbox_title_id'])
     if result is None:
@@ -154,7 +154,7 @@ def api_xbox_sync_single(game_id):
         )
     except Exception as e:
         logger.error(f"Xbox achievement sync error for game {game_id}: {e}")
-        return jsonify({'success': False, 'error': _('An internal error occurred')})
+        return error(_('An internal error occurred'), 500)
     finally:
         if conn:
             conn.close()

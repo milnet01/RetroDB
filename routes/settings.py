@@ -314,7 +314,7 @@ def api_backup():
         )
     except Exception as e:
         logger.error(f"Backup error: {e}", exc_info=True)
-        return jsonify({'success': False, 'error': _('An internal error occurred')})
+        return error(_('An internal error occurred'), 500)
 
 
 @bp.route('/api/backups', methods=['GET'])
@@ -338,7 +338,7 @@ def api_list_backups():
 
         return success(backups=backups)
     except Exception:
-        return jsonify({'success': False, 'error': _('An internal error occurred')})
+        return error(_('An internal error occurred'), 500)
 
 
 @bp.route('/api/restore/<filename>', methods=['POST'])
@@ -353,7 +353,7 @@ def api_restore(filename):
         backup_path = os.path.join(backup_dir, filename)
 
         if not os.path.exists(backup_path):
-            return jsonify({'success': False, 'error': _('Backup file not found')})
+            return error(_('Backup file not found'), 404)
 
         # Pass 48.5 — refuse to restore while a background job is running. A
         # job thread holds an open handle to the live DB and would keep writing
@@ -453,7 +453,7 @@ def api_restore(filename):
         )
     except Exception as e:
         logger.error(f"Restore error: {e}")
-        return jsonify({'success': False, 'error': _('An internal error occurred')})
+        return error(_('An internal error occurred'), 500)
 
 
 # =============================================================================
@@ -526,11 +526,11 @@ def api_update_paths():
                 restart_required=restart_needed,
             )
         else:
-            return jsonify({'success': False, 'error': _('Failed to save settings')})
+            return error(_('Failed to save settings'), 500)
 
     except Exception as e:
         logger.error(f"Settings update error: {e}")
-        return jsonify({'success': False, 'error': _('An internal error occurred')})
+        return error(_('An internal error occurred'), 500)
 
 
 @bp.route('/api/settings', methods=['GET'])
@@ -544,7 +544,7 @@ def api_get_all_settings():
             defaults=settings_manager.DEFAULT_SETTINGS,
         )
     except Exception:
-        return jsonify({'success': False, 'error': _('An internal error occurred')})
+        return error(_('An internal error occurred'), 500)
 
 
 @bp.route('/api/settings', methods=['POST'])
@@ -585,10 +585,10 @@ def api_update_all_settings():
                 changed=changed_keys,
             )
         else:
-            return jsonify({'success': False, 'error': _('Failed to save settings')})
+            return error(_('Failed to save settings'), 500)
     except Exception as e:
         logger.error(f"Settings update error: {e}")
-        return jsonify({'success': False, 'error': _('An internal error occurred')})
+        return error(_('An internal error occurred'), 500)
 
 
 @bp.route('/api/settings/reset', methods=['POST'])
@@ -602,9 +602,9 @@ def api_reset_settings():
                 restart_required=True,
             )
         else:
-            return jsonify({'success': False, 'error': _('Failed to reset settings')})
+            return error(_('Failed to reset settings'), 500)
     except Exception:
-        return jsonify({'success': False, 'error': _('An internal error occurred')})
+        return error(_('An internal error occurred'), 500)
 
 
 # =============================================================================
@@ -637,10 +637,10 @@ def api_save_logging_settings():
             log_manager.setup_all_logging()
             return success(message='Logging settings saved')
         else:
-            return jsonify({'success': False, 'error': _('Failed to save settings')})
+            return error(_('Failed to save settings'), 500)
     except Exception as e:
         logger.error(f"Error saving logging settings: {e}")
-        return jsonify({'success': False, 'error': _('An internal error occurred')})
+        return error(_('An internal error occurred'), 500)
 
 
 # =============================================================================

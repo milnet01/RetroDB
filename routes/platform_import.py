@@ -157,7 +157,7 @@ def api_steam_fetch_library():
     # Fetch library
     games = get_owned_games(steam_api_key, steam_id)
     if not games:
-        return jsonify({'success': False, 'error': _('No games found. Check that your Steam profile and game details are set to Public.')})
+        return error(_('No games found. Check that your Steam profile and game details are set to Public.'), 404)
 
     # Fetch profile info
     profile = get_player_summary(steam_api_key, steam_id)
@@ -209,12 +209,12 @@ def api_steam_import():
     selected_games = data.get('games', [])
 
     if not selected_games:
-        return jsonify({'success': False, 'error': _('No games selected')})
+        return error(_('No games selected'), 400)
 
     # Ensure "windows" system exists
     system = _ensure_system_exists('windows', 'Microsoft Windows')
     if not system:
-        return jsonify({'success': False, 'error': _('Could not create Windows system entry')})
+        return error(_('Could not create Windows system entry'), 500)
 
     system_id = system['id']
     imported = 0
@@ -286,7 +286,7 @@ def api_steam_import():
 
     except Exception as e:
         logger.error(f"Steam Import error: {e}")
-        return jsonify({'success': False, 'error': _('An internal error occurred')})
+        return error(_('An internal error occurred'), 500)
     finally:
         if conn:
             conn.close()
@@ -323,7 +323,7 @@ def api_steam_cancel_sync():
     from services.jobs import steam_sync_job
     from services.jobs.base import may_control
     if not may_control(steam_sync_job._user_id, g.user):
-        return jsonify({'success': False, 'error': _('That job belongs to another user')})
+        return error(_('That job belongs to another user'), 403)
     return jsonify(steam_sync_job.cancel())
 
 
@@ -341,7 +341,7 @@ def api_xbox_auth_url():
     client_id = api_keys.get('xbox_client_id', '')
 
     if not client_id:
-        return jsonify({'success': False, 'error': _('Xbox Client ID not configured. Add it in Settings → API Keys.')})
+        return error(_('Xbox Client ID not configured. Add it in Settings → API Keys.'), 400)
 
     # Pass 24.6 — generate a CSRF-protection `state` token, stash it in
     # the caller's session, and include it in the Microsoft auth URL so
@@ -487,7 +487,7 @@ def api_xbox_fetch_library():
 
     titles = get_title_history(session['auth_header'], session['xuid'])
     if not titles:
-        return jsonify({'success': False, 'error': _('No games found in Xbox title history.')})
+        return error(_('No games found in Xbox title history.'), 404)
 
     # Build system lookup and ensure Xbox systems exist
     xbox_systems = {}
@@ -569,7 +569,7 @@ def api_xbox_import():
     selected_games = data.get('games', [])
 
     if not selected_games:
-        return jsonify({'success': False, 'error': _('No games selected')})
+        return error(_('No games selected'), 400)
 
     # Ensure all needed Xbox systems exist
     xbox_systems = {}
@@ -655,7 +655,7 @@ def api_xbox_import():
 
     except Exception as e:
         logger.error(f"Xbox Import error: {e}")
-        return jsonify({'success': False, 'error': _('An internal error occurred')})
+        return error(_('An internal error occurred'), 500)
     finally:
         if conn:
             conn.close()
@@ -690,7 +690,7 @@ def api_xbox_cancel_sync():
     from services.jobs import xbox_sync_job
     from services.jobs.base import may_control
     if not may_control(xbox_sync_job.user_id, g.user):
-        return jsonify({'success': False, 'error': _('That job belongs to another user')})
+        return error(_('That job belongs to another user'), 403)
     return jsonify(xbox_sync_job.cancel())
 
 
@@ -764,10 +764,8 @@ def api_psn_fetch_library():
     npsso, _username = _get_psn_settings()
 
     if not npsso:
-        return jsonify({
-            'success': False,
-            'error': _('PSN NPSSO not configured. Add it in Settings \u2192 API Keys.')
-        }), 400
+        return error(
+            _('PSN NPSSO not configured. Add it in Settings \u2192 API Keys.'), 400)
 
     # Check local psn_games table first (Pass 31.1 — per user).
     try:
@@ -784,19 +782,17 @@ def api_psn_fetch_library():
         return _build_psn_library_response(local_games)
 
     # No local data — fetch live from PSN API
-    psnawp, error = create_psn_client(npsso)
-    if error:
-        return jsonify({'success': False, 'error': error}), 400
+    psnawp, psn_error = create_psn_client(npsso)
+    if psn_error:
+        return error(psn_error, 400)
 
     try:
         me = psnawp.me()
         trophy_titles = list(me.trophy_titles())
     except Exception as e:
         logger.error(f"PSN Import: Failed to fetch trophy titles: {e}")
-        return jsonify({
-            'success': False,
-            'error': _('Failed to fetch PSN game list. Try syncing trophies first.')
-        })
+        return error(
+            _('Failed to fetch PSN game list. Try syncing trophies first.'), 502)
 
     games_data = []
     for title in trophy_titles:
@@ -929,7 +925,7 @@ def api_psn_import():
     selected_games = data.get('games', [])
 
     if not selected_games:
-        return jsonify({'success': False, 'error': _('No games selected')})
+        return error(_('No games selected'), 400)
 
     # Ensure all needed PSN systems exist
     psn_systems = {}
@@ -1025,7 +1021,7 @@ def api_psn_import():
 
     except Exception as e:
         logger.error(f"PSN Import error: {e}")
-        return jsonify({'success': False, 'error': _('An internal error occurred')})
+        return error(_('An internal error occurred'), 500)
     finally:
         if conn:
             conn.close()
