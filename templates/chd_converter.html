@@ -317,7 +317,8 @@ async function startConversion() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ files: selectedFiles,
                                    verify: document.getElementById('optVerify').checked,
-                                   delete_originals: document.getElementById('optDelete').checked })
+                                   delete_originals: document.getElementById('optDelete').checked,
+                                   skip_existing: document.getElementById('optSkip').checked })
         });
 
         const data = await response.json();

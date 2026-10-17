@@ -138,6 +138,18 @@ def _chdman_path_validator(value):
     return False, 'must be in a system binary directory (/usr/bin, /usr/local/bin, etc.)', None
 
 
+def _unwanted_patterns_validator(value):
+    """PASS-59-119 — a pattern made only of wildcards and dots (`*`, `*.*`)
+    matches every member, so Clean would empty the archive, ROMs included."""
+    ok, reason, cleaned = _string_list_validator(max_items=64, max_len=64)(value)
+    if not ok:
+        return ok, reason, cleaned
+    for pattern in cleaned:
+        if not pattern.strip('*?.'):
+            return False, f'pattern "{pattern}" would match every file', None
+    return True, None, cleaned
+
+
 _VALIDATORS = {
     'roms_path':                _path_string_validator(allow_empty=True),
     'output_path':              _path_string_validator(allow_empty=True),
@@ -147,7 +159,7 @@ _VALIDATORS = {
     'verify_integrity':         _bool_validator,
     'generate_m3u':             _bool_validator,
     'remove_unwanted':          _bool_validator,
-    'unwanted_patterns':        _string_list_validator(max_items=64, max_len=64),
+    'unwanted_patterns':        _unwanted_patterns_validator,
     'excluded_paths':           _string_list_validator(max_items=128, max_len=4096),
     'chdman_path':              _chdman_path_validator,
     'chd_verify_after_convert': _bool_validator,

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-17 17:28+0200\n"
+"POT-Creation-Date: 2026-10-17 18:17+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -18,17 +18,17 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: app.py:688
+#: app.py:692
 #, fuzzy
 msgid "Too many requests. Please wait and try again."
 msgstr "Demasiados intentos. Inténtalo de nuevo más tarde."
 
-#: app.py:797
+#: app.py:801
 #, fuzzy
 msgid "Setup required"
 msgstr "Se requiere un título"
 
-#: app.py:818
+#: app.py:822
 #, fuzzy
 msgid "Password change required"
 msgstr "No se requiere cambiar la contraseña"
@@ -46,7 +46,7 @@ msgstr "Sistema no encontrado o sin juegos con logros"
 #: routes/collections.py:531 routes/games.py:341 routes/games.py:770
 #: routes/games.py:891 routes/games.py:948 routes/games_ai.py:46
 #: routes/games_media.py:35 routes/games_media.py:82 routes/games_media.py:143
-#: routes/reports.py:689 routes/reports.py:814 routes/trophies.py:1278
+#: routes/reports.py:693 routes/reports.py:818 routes/trophies.py:1278
 #: services/hltb_service.py:127
 msgid "Game not found"
 msgstr "Juego no encontrado"
@@ -72,7 +72,7 @@ msgid "Could not fetch achievement data"
 msgstr "No se pudieron obtener los datos de logros"
 
 #: routes/achievements.py:293 routes/controllers.py:412
-#: routes/controllers.py:455 routes/museum.py:310 routes/museum.py:382
+#: routes/controllers.py:462 routes/museum.py:310 routes/museum.py:382
 #: routes/ra_sync.py:98 routes/systems.py:220
 msgid "System not found"
 msgstr "Sistema no encontrado"
@@ -177,7 +177,7 @@ msgstr "No se requiere cambiar la contraseña"
 msgid "No file provided"
 msgstr "No se proporcionó ningún archivo"
 
-#: routes/auth.py:526 routes/museum.py:692
+#: routes/auth.py:526 routes/museum.py:670
 msgid "No file selected"
 msgstr "No se seleccionó ningún archivo"
 
@@ -197,7 +197,7 @@ msgstr ""
 "La subida de avatares requiere Pillow; pide al operador que instale las "
 "dependencias del proyecto."
 
-#: routes/auth.py:570 routes/museum.py:724
+#: routes/auth.py:570 routes/museum.py:702
 msgid "Invalid image file"
 msgstr "Archivo de imagen no válido"
 
@@ -213,8 +213,8 @@ msgstr "Juego principal no encontrado"
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "El disco extra y el juego principal deben estar en el mismo sistema"
 
-#: routes/bonus_discs.py:209 routes/bonus_discs.py:227 routes/games.py:1196
-#: routes/games.py:1226 routes/platform_import.py:289
+#: routes/bonus_discs.py:209 routes/bonus_discs.py:227 routes/games.py:1200
+#: routes/games.py:1230 routes/platform_import.py:289
 #: routes/platform_import.py:655 routes/platform_import.py:1022
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:200 routes/scraper.py:528
@@ -233,7 +233,7 @@ msgstr "Se produjo un error interno"
 msgid "Missing bonus_id or parent_id"
 msgstr "Falta bonus_id o parent_id"
 
-#: routes/bonus_discs.py:304 routes/reports.py:802
+#: routes/bonus_discs.py:304 routes/reports.py:806
 msgid "Missing game_id"
 msgstr "Falta game_id"
 
@@ -253,7 +253,7 @@ msgstr "No se encontraron coincidencias"
 msgid "No game IDs provided"
 msgstr "No se proporcionaron IDs de juego"
 
-#: routes/clz_import.py:257
+#: routes/clz_import.py:258
 msgid ""
 "pdfplumber module not installed. Please run: pip install pdfplumber "
 "--break-system-packages"
@@ -261,29 +261,29 @@ msgstr ""
 "El módulo pdfplumber no está instalado. Ejecuta: pip install pdfplumber "
 "--break-system-packages"
 
-#: routes/clz_import.py:262
+#: routes/clz_import.py:263
 msgid "No file uploaded"
 msgstr "No se subió ningún archivo"
 
-#: routes/clz_import.py:266
+#: routes/clz_import.py:267
 msgid "File must be a PDF"
 msgstr "El archivo debe ser un PDF"
 
-#: routes/clz_import.py:273
+#: routes/clz_import.py:274
 #, python-format
 msgid "File too large (%(size)sMB). Maximum size is 50MB"
 msgstr "Archivo demasiado grande (%(size)sMB). El tamaño máximo es 50MB"
 
-#: routes/clz_import.py:276
+#: routes/clz_import.py:277
 msgid "Invalid PDF file (bad magic bytes)"
 msgstr "Archivo PDF no válido (bytes mágicos incorrectos)"
 
-#: routes/clz_import.py:300
+#: routes/clz_import.py:301
 #, python-format
 msgid "PDF has %(pages)s pages; maximum is %(max)s."
 msgstr "El PDF tiene %(pages)s páginas; el máximo es %(max)s."
 
-#: routes/clz_import.py:569
+#: routes/clz_import.py:570
 msgid "No games to import"
 msgstr "No hay juegos para importar"
 
@@ -366,8 +366,8 @@ msgid "Controller \"%(name)s\" already exists"
 msgstr "El controlador \"%(name)s\" ya existe"
 
 #: routes/controllers.py:292 routes/controllers.py:334
-#: routes/controllers.py:461 routes/museum.py:600 routes/museum.py:685
-#: routes/museum.py:755
+#: routes/controllers.py:419 routes/controllers.py:468 routes/museum.py:578
+#: routes/museum.py:663 routes/museum.py:733
 msgid "Controller not found"
 msgstr "Controlador no encontrado"
 
@@ -421,37 +421,37 @@ msgstr ""
 msgid "Failed to apply metadata."
 msgstr "Error al aplicar los metadatos."
 
-#: routes/games.py:974 routes/games.py:1018
+#: routes/games.py:978 routes/games.py:1022
 msgid "No fields to update"
 msgstr "No hay campos que actualizar"
 
-#: routes/games.py:1015 routes/platform_import.py:212
+#: routes/games.py:1019 routes/platform_import.py:212
 #: routes/platform_import.py:569 routes/platform_import.py:926
 #: routes/trophies.py:1850
 msgid "No games selected"
 msgstr "Ningún juego seleccionado"
 
-#: routes/games.py:1025
+#: routes/games.py:1029
 msgid "Invalid completion status"
 msgstr "Estado de finalización no válido"
 
-#: routes/games.py:1073
+#: routes/games.py:1077
 msgid "No valid fields to update"
 msgstr "No hay campos válidos que actualizar"
 
-#: routes/games.py:1189
+#: routes/games.py:1193
 msgid "Invalid status"
 msgstr "Estado no válido"
 
-#: routes/games.py:1214
+#: routes/games.py:1218
 msgid "Not authenticated"
 msgstr "No autenticado"
 
-#: routes/games.py:1245
+#: routes/games.py:1249
 msgid "Filter type and value required"
 msgstr "Se requieren el tipo y el valor del filtro"
 
-#: routes/games.py:1258
+#: routes/games.py:1262
 msgid "Invalid filter type"
 msgstr "Tipo de filtro no válido"
 
@@ -461,7 +461,7 @@ msgstr ""
 "La IA no devolvió datos. Comprueba tu clave de API y los ajustes del "
 "proveedor."
 
-#: routes/games_ai.py:313
+#: routes/games_ai.py:300
 msgid "AI scraper module not available"
 msgstr "El módulo del scraper de IA no está disponible"
 
@@ -469,7 +469,7 @@ msgstr "El módulo del scraper de IA no está disponible"
 msgid "No filename provided"
 msgstr "No se proporcionó ningún nombre de archivo"
 
-#: routes/games_media.py:78 routes/reports.py:684 routes/scrape_logs.py:129
+#: routes/games_media.py:78 routes/reports.py:688 routes/scrape_logs.py:129
 #: routes/scrape_logs.py:154 routes/scrape_logs.py:203 routes/settings.py:350
 msgid "Invalid filename"
 msgstr "Nombre de archivo no válido"
@@ -479,16 +479,16 @@ msgstr "Nombre de archivo no válido"
 msgid "ROM file not found on disk: %(path)s"
 msgstr "Archivo ROM no encontrado en el disco: %(path)s"
 
-#: routes/games_media.py:102 routes/reports.py:717 routes/reports.py:888
+#: routes/games_media.py:102 routes/reports.py:721 routes/reports.py:892
 msgid "Destination is outside the configured ROM root"
 msgstr "El destino está fuera de la raíz de ROMs configurada"
 
-#: routes/games_media.py:106 routes/reports.py:721
+#: routes/games_media.py:106 routes/reports.py:725
 #, python-format
 msgid "Cannot rename: %(reason)s"
 msgstr ""
 
-#: routes/games_media.py:109 routes/reports.py:725 routes/reports.py:892
+#: routes/games_media.py:109 routes/reports.py:729 routes/reports.py:896
 msgid "A file with that name already exists"
 msgstr "Ya existe un archivo con ese nombre"
 
@@ -548,45 +548,45 @@ msgstr "Respuesta de IA vacía"
 msgid "No usable content in AI response"
 msgstr "No hay contenido utilizable en la respuesta de la IA"
 
-#: routes/museum.py:623
+#: routes/museum.py:601
 msgid "Could not find a suitable image for this controller"
 msgstr "No se pudo encontrar una imagen adecuada para este controlador"
 
-#: routes/museum.py:639
+#: routes/museum.py:617
 msgid "No controllers found"
 msgstr "No se encontraron controladores"
 
-#: routes/museum.py:688
+#: routes/museum.py:666
 msgid "No image file provided"
 msgstr "No se proporcionó ningún archivo de imagen"
 
-#: routes/museum.py:704
+#: routes/museum.py:682
 #, python-format
 msgid "File too large (%(size)s MB). Maximum is %(max)s MB."
 msgstr "Archivo demasiado grande (%(size)s MB). El máximo es %(max)s MB."
 
-#: routes/museum.py:714
+#: routes/museum.py:692
 #, python-format
 msgid "File too large (> %(max)s MB)."
 msgstr "Archivo demasiado grande (> %(max)s MB)."
 
-#: routes/museum.py:717
+#: routes/museum.py:695
 msgid "File is too small"
 msgstr "El archivo es demasiado pequeño"
 
-#: routes/museum.py:735
+#: routes/museum.py:713
 msgid "Failed to process image"
 msgstr "No se pudo procesar la imagen"
 
-#: routes/museum.py:758
+#: routes/museum.py:736
 msgid "No image to process"
 msgstr "No hay ninguna imagen que procesar"
 
-#: routes/museum.py:762
+#: routes/museum.py:740
 msgid "Image file not found"
 msgstr "Archivo de imagen no encontrado"
 
-#: routes/museum.py:772 routes/museum.py:776 services/js_i18n_strings.py:406
+#: routes/museum.py:750 routes/museum.py:754 services/js_i18n_strings.py:406
 msgid "Background removal failed"
 msgstr "Falló la eliminación del fondo"
 
@@ -656,59 +656,59 @@ msgstr ""
 msgid "System %(name)s does not support RetroAchievements"
 msgstr "El sistema %(name)s no admite RetroAchievements"
 
-#: routes/reports.py:409
+#: routes/reports.py:413
 msgid "Unknown system"
 msgstr "Sistema desconocido"
 
-#: routes/reports.py:430 routes/reports.py:595
+#: routes/reports.py:434 routes/reports.py:599
 msgid "ROM path not configured. Go to Settings → Paths to set it."
 msgstr ""
 "La ruta de ROMs no está configurada. Ve a Ajustes → Rutas para "
 "establecerla."
 
-#: routes/reports.py:591
+#: routes/reports.py:595
 msgid "Missing required parameters"
 msgstr "Faltan parámetros obligatorios"
 
-#: routes/reports.py:601 routes/tools.py:493 routes/tools.py:550
-#: routes/tools.py:585
+#: routes/reports.py:605 routes/tools.py:503 routes/tools.py:560
+#: routes/tools.py:595
 msgid "Invalid path"
 msgstr "Ruta no válida"
 
-#: routes/reports.py:607
+#: routes/reports.py:611
 #, python-format
 msgid "Folder does not exist: %(folder_path)s"
 msgstr "La carpeta no existe: %(folder_path)s"
 
-#: routes/reports.py:681
+#: routes/reports.py:685
 msgid "Missing game_id or new_name"
 msgstr "Falta game_id o new_name"
 
-#: routes/reports.py:693 routes/reports.py:818
+#: routes/reports.py:697 routes/reports.py:822
 msgid "No ROM path set"
 msgstr "No se ha establecido ninguna ruta de ROMs"
 
-#: routes/reports.py:708 routes/reports.py:823
+#: routes/reports.py:712 routes/reports.py:827
 msgid "ROM file not found"
 msgstr "Archivo ROM no encontrado"
 
-#: routes/reports.py:734
+#: routes/reports.py:738
 msgid "M3U files must keep the .m3u extension"
 msgstr "Los archivos M3U deben conservar la extensión .m3u"
 
-#: routes/reports.py:747 routes/reports.py:904
+#: routes/reports.py:751 routes/reports.py:908
 msgid "A folder with the new name already exists"
 msgstr "Ya existe una carpeta con el nuevo nombre"
 
-#: routes/reports.py:827
+#: routes/reports.py:831
 msgid "No scraped title available"
 msgstr "No hay ningún título obtenido disponible"
 
-#: routes/reports.py:845
+#: routes/reports.py:849
 msgid "Title is empty after sanitization"
 msgstr "El título queda vacío tras la depuración"
 
-#: routes/reports.py:868
+#: routes/reports.py:872
 msgid "Generated filename contains invalid characters"
 msgstr "El nombre de archivo generado contiene caracteres no válidos"
 
@@ -717,7 +717,7 @@ msgstr "El nombre de archivo generado contiene caracteres no válidos"
 msgid "Invalid log file"
 msgstr "Archivo de registro no válido"
 
-#: routes/scrape_logs.py:101 routes/tools.py:496
+#: routes/scrape_logs.py:101 routes/tools.py:506
 msgid "File not found"
 msgstr "Archivo no encontrado"
 
@@ -805,7 +805,7 @@ msgid "Invalid %(field)s: %(result)s"
 msgstr "%(field)s no válido: %(result)s"
 
 #: routes/settings.py:529 routes/settings.py:588 routes/settings.py:640
-#: routes/tools.py:282
+#: routes/tools.py:289
 msgid "Failed to save settings"
 msgstr "No se pudieron guardar los ajustes"
 
@@ -813,12 +813,12 @@ msgstr "No se pudieron guardar los ajustes"
 msgid "Request body must be a JSON object"
 msgstr "El cuerpo de la solicitud debe ser un objeto JSON"
 
-#: routes/settings.py:567 routes/tools.py:274
+#: routes/settings.py:567 routes/tools.py:281
 #, python-format
 msgid "Unknown setting key: %(key)s"
 msgstr "Clave de ajuste desconocida: %(key)s"
 
-#: routes/settings.py:573 routes/tools.py:277
+#: routes/settings.py:573 routes/tools.py:284
 #, python-format
 msgid "Invalid value for '%(key)s': %(reason)s"
 msgstr "Valor no válido para '%(key)s': %(reason)s"
@@ -856,72 +856,85 @@ msgstr "Se requiere el ID del sistema"
 msgid "ES-DE scraper not available"
 msgstr "El scraper de ES-DE no está disponible"
 
-#: routes/tools.py:264
+#: routes/tools.py:271
 msgid "Administrator privileges required"
 msgstr "Se requieren privilegios de administrador"
 
-#: routes/tools.py:268
+#: routes/tools.py:275
 msgid "Settings payload must be an object"
 msgstr "Los datos de los ajustes deben ser un objeto"
 
-#: routes/tools.py:317 routes/tools.py:929
+#: routes/tools.py:324 routes/tools.py:950
 #, python-format
 msgid "Path does not exist: %(path)s"
 msgstr "La ruta no existe: %(path)s"
 
-#: routes/tools.py:344
+#: routes/tools.py:354
 msgid "Permission denied"
 msgstr "Permiso denegado"
 
-#: routes/tools.py:372
+#: routes/tools.py:382
 msgid "Task not found"
 msgstr "Tarea no encontrada"
 
-#: routes/tools.py:395 routes/tools.py:415
+#: routes/tools.py:405 routes/tools.py:425
 msgid "Task not found or not running"
 msgstr "Tarea no encontrada o no en ejecución"
 
-#: routes/tools.py:435
+#: routes/tools.py:445
 msgid "Task not found or not paused"
 msgstr "Tarea no encontrada o no pausada"
 
-#: routes/tools.py:452 routes/tools.py:642 routes/tools.py:806
-#: routes/tools.py:921
+#: routes/tools.py:462 routes/tools.py:652 routes/tools.py:823
+#: routes/tools.py:939
 msgid "Invalid scan path"
 msgstr "Ruta de análisis no válida"
 
-#: routes/tools.py:490 routes/tools.py:547 routes/tools.py:582
+#: routes/tools.py:500 routes/tools.py:557 routes/tools.py:592
 msgid "No path provided"
 msgstr "No se proporcionó ninguna ruta"
 
-#: routes/tools.py:518
+#: routes/tools.py:528
 msgid "No archive path provided"
 msgstr "No se proporcionó ninguna ruta de archivo comprimido"
 
-#: routes/tools.py:521
+#: routes/tools.py:531
 msgid "Invalid archive path"
 msgstr "Ruta de archivo comprimido no válida"
 
-#: routes/tools.py:524
+#: routes/tools.py:534
 msgid "No files to remove"
 msgstr "No hay archivos que eliminar"
 
-#: routes/tools.py:613
+#: routes/tools.py:623
 msgid "No paths provided"
 msgstr "No se proporcionaron rutas"
 
-#: routes/tools.py:619
+#: routes/tools.py:629
 #, python-format
 msgid "Invalid path: %(path)s"
 msgstr "Ruta no válida: %(path)s"
 
-#: routes/tools.py:691
+#: routes/tools.py:701
 msgid "chdman not found. Please install MAME tools."
 msgstr "No se encontró chdman. Instala las herramientas de MAME."
 
-#: routes/tools.py:829
+#: routes/tools.py:846
 msgid "chdman not found"
 msgstr "No se encontró chdman"
+
+#: routes/tools.py:944
+#, python-format
+msgid "Unknown duplicate method: %(method)s"
+msgstr ""
+
+#: routes/tools.py:1141
+msgid "These scan results have expired. Scan again, then delete."
+msgstr ""
+
+#: routes/tools.py:1146
+msgid "Keep at least one copy of each game. Nothing was deleted."
+msgstr ""
 
 #: routes/trophies.py:387
 msgid ""
@@ -4191,6 +4204,14 @@ msgstr "Actual:"
 msgid "Waiting to start..."
 msgstr "Esperando para iniciar..."
 
+#: templates/archive_scanner.html:1653
+msgid "Have the original archive moved to the staging folder"
+msgstr ""
+
+#: templates/archive_scanner.html:1756
+msgid "Original archives moved to:"
+msgstr ""
+
 #: templates/base.html:40
 msgid "Skip to main content"
 msgstr "Saltar al contenido principal"
@@ -7163,6 +7184,16 @@ msgstr ""
 "comprimido y otras preferencias compartidas entre todas las herramientas "
 "ROM."
 
+#: templates/rom_tools_settings.html:304
+msgid "Empty: RetroDB's data folder"
+msgstr ""
+
+#: templates/rom_tools_settings.html:305
+msgid ""
+"Where Create M3U moves original archives. Leave empty to use RetroDB's "
+"data folder."
+msgstr ""
+
 #: templates/screenshot_dedup.html:243
 msgid "Exact Hash (MD5) &mdash; identical files only"
 msgstr "Hash exacto (MD5) &mdash; solo archivos idénticos"
@@ -7223,11 +7254,11 @@ msgstr "Datos"
 msgid "Customization"
 msgstr "Personalización"
 
-#: templates/settings.html:1405
+#: templates/settings.html:1404
 msgid "Failed to save language"
 msgstr "No se pudo guardar el idioma"
 
-#: templates/settings.html:1409
+#: templates/settings.html:1408
 msgid "Network error saving language"
 msgstr "Error de red al guardar el idioma"
 

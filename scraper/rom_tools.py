@@ -102,7 +102,10 @@ def convert_one_to_chd(
         result["compressed_size"] = dst.stat().st_size
 
         # Delete original only after the verified .chd is in place.
-        if delete_original:
+        # PASS-59-119 — an unverified .chd never costs the source.
+        if delete_original and not do_verify:
+            result["error"] = "original kept: conversion was not verified"
+        elif delete_original:
             try:
                 src.unlink()
             except OSError as e:
@@ -125,6 +128,10 @@ def convert_one_to_chd(
                 tmp.unlink()
             except OSError:
                 pass
+
+
+# PASS-59-119 — the Temporary Path default before it became empty.
+_OLD_DEFAULT_TEMP_PATH = os.path.join(tempfile.gettempdir(), 'retrodb_romtools')
 
 
 def _safe_under_root(path: Path, root_resolved: Path) -> bool:
@@ -152,7 +159,7 @@ class ROMToolsConfig:
     # Paths
     roms_path: str = ""
     output_path: str = ""  # Empty means same as source
-    temp_path: str = field(default_factory=lambda: os.path.join(tempfile.gettempdir(), 'retrodb_romtools'))
+    temp_path: str = ""  # Empty means RetroDB's own data folder (PASS-59-119)
     
     # Archive Scanner settings
     archive_types: List[str] = field(default_factory=lambda: [".zip", ".7z", ".rar"])
@@ -236,11 +243,22 @@ def get_task(task_id: str) -> Optional[TaskStatus]:
         return _tasks.get(task_id)
 
 
+_TASK_RETENTION_SECONDS = 1800  # as routes/tools.py's registry
+
+
 def create_task(task_type: str) -> TaskStatus:
+    """PASS-59-119 — a full UUID, as routes/tools.py's registry uses; and
+    finished tasks older than the retention window are dropped here, the one
+    point every new task passes through."""
     import uuid
-    task_id = str(uuid.uuid4())[:8]
+    task_id = str(uuid.uuid4())
     task = TaskStatus(task_id=task_id, task_type=task_type)
+    cutoff = time.time() - _TASK_RETENTION_SECONDS
     with _task_lock:
+        for old_id in [tid for tid, t in _tasks.items()
+                       if t.status in ("completed", "error", "cancelled")
+                       and t.end_time and t.end_time < cutoff]:
+            del _tasks[old_id]
         _tasks[task_id] = task
     return task
 
@@ -252,7 +270,7 @@ def update_task(task: TaskStatus):
 
 def cancel_task(task_id: str) -> bool:
     task = get_task(task_id)
-    if task and task.status == "running":
+    if task and task.status in ("running", "paused"):
         task.status = "cancelled"
         update_task(task)
         return True
@@ -302,9 +320,17 @@ class ArchiveScanner:
         self.task: Optional[TaskStatus] = None
     
     def _staging_folder(self) -> str:
-        """Where M3U builds stage extracted files: under the saved Temporary
-        Path, else the system temp dir (Pass 59.49)."""
-        base = self.config.temp_path or tempfile.gettempdir()
+        """Where Create M3U moves original archives: under the saved
+        Temporary Path (Pass 59.49), else RetroDB's data folder.
+
+        PASS-59-119 — never the system temp dir by default: it can be cleared
+        at boot, and a moved archive has no other copy. The old default
+        (`<tmp>/retrodb_romtools`) is still in saved configs; it counts as
+        unset."""
+        base = self.config.temp_path
+        if not base or base == _OLD_DEFAULT_TEMP_PATH:
+            import config
+            base = os.path.join(config.BASE_DIR, 'data')
         return os.path.join(base, 'm3u_staging')
 
     def scan_for_issues(self, path: str, task: TaskStatus, 
@@ -354,6 +380,8 @@ class ArchiveScanner:
                 
                 while task.status == "paused":
                     time.sleep(0.5)
+                if task.status == "cancelled":  # PASS-59-119 — cancelled while paused
+                    break
                 
                 task.progress = i + 1
                 # Show relative folder being scanned
@@ -699,7 +727,13 @@ class ArchiveScanner:
         
         if not unwanted:
             return {"success": True, "removed_count": 0, "message": "No unwanted files found"}
-        
+
+        # PASS-59-119 — patterns that match every member would empty the
+        # archive, ROMs included; refuse rather than trust the saved list.
+        if len(unwanted) == len(file_names):
+            return {"success": False,
+                    "error": "Unwanted patterns match every file in the archive; nothing removed"}
+
         logger.info(f"Found {len(unwanted)} unwanted files to remove from {archive_path}")
         for f in unwanted:
             logger.debug(f"  - {f}")
@@ -717,7 +751,7 @@ class ArchiveScanner:
         Args:
             archive_path: Path to the archive file
             move_to_staging: If True, move original archive to staging folder after success
-            staging_folder: Folder to move archives to (default: system temp dir)
+            staging_folder: Folder to move archives to (default: _staging_folder())
 
         ES-DE M3U structure:
         parent_folder/
@@ -1004,6 +1038,8 @@ class ArchiveScanner:
                 
                 while task.status == "paused":
                     time.sleep(0.5)
+                if task.status == "cancelled":  # PASS-59-119 — cancelled while paused
+                    break
                 
                 task.progress = i + 1
                 task.current_file = archive_path.name
@@ -1040,7 +1076,9 @@ class ArchiveScanner:
                 )
         else:
             for ext in extensions:
-                archives.extend(root.glob(f"*{ext}"))
+                # PASS-59-119 — a symlinked file can leave the root too.
+                archives.extend(p for p in root.glob(f"*{ext}")
+                                if _safe_under_root(p, root_resolved))
         
         return sorted(archives)
     
@@ -1242,6 +1280,8 @@ class CHDConverter:
                 
                 while task.status == "paused":
                     time.sleep(0.5)
+                if task.status == "cancelled":  # PASS-59-119 — cancelled while paused
+                    break
                 
                 task.progress = i + 1
                 task.current_file = Path(file_path).name
@@ -1392,6 +1432,8 @@ class CHDVerifier:
                 
                 while task.status == "paused":
                     time.sleep(0.5)
+                if task.status == "cancelled":  # PASS-59-119 — cancelled while paused
+                    break
                 
                 task.progress = i + 1
                 task.current_file = Path(file_path).name
@@ -1561,7 +1603,9 @@ class DuplicateFinder:
                 )
         else:
             for ext in extensions:
-                files.extend(root.glob(f"*{ext}"))
+                # PASS-59-119 — a symlinked file can leave the root too.
+                files.extend(p for p in root.glob(f"*{ext}")
+                             if _safe_under_root(p, root_resolved))
 
         return sorted(files)
     

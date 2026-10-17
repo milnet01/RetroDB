@@ -11,13 +11,13 @@ import os
 import json
 import logging
 import threading
+import time
 import uuid
 import subprocess
 import shutil
 import hashlib
 import re
 import glob
-import tempfile
 
 import config
 import settings_manager
@@ -73,6 +73,13 @@ def _cleanup_completed_tasks():
         del _rom_tool_tasks[task_id]
 
 
+def _wait_if_paused(task):
+    """PASS-59-119 — hold a routes-registry worker while its task is paused.
+    Returns when it is resumed or cancelled."""
+    while task['status'] == 'paused':
+        time.sleep(0.2)
+
+
 def _guarded_worker(task, body):
     """PASS-59-56 — wrap a dict-task worker so an uncaught error ends the
     task as ``failed`` instead of leaving it ``running`` for good (the
@@ -98,7 +105,7 @@ def load_rom_tools_config():
     defaults = {
         'roms_path': _get_rom_path(),
         'output_path': '',
-        'temp_path': os.path.join(tempfile.gettempdir(), 'retrodb_romtools'),
+        'temp_path': '',  # PASS-59-119 — empty: staging goes under data/
         'archive_types': ['.zip', '.7z', '.rar'],
         'recursive_scan': True,
         'verify_integrity': False,
@@ -319,7 +326,10 @@ def api_rom_tools_browse_folders():
     parent_path = None
     if current_real != base_real:
         parent = os.path.dirname(current_path)
-        if os.path.realpath(parent).startswith(base_real):
+        parent_real = os.path.realpath(parent)
+        # PASS-59-119 — the same boundary check as above; a bare
+        # startswith() let a sibling like /roms_other through.
+        if parent_real == base_real or parent_real.startswith(base_real + os.sep):
             parent_path = parent
 
     folders = []
@@ -384,7 +394,7 @@ def api_rom_tools_task_cancel(task_id):
     closes the legitimate-but-unauthorized cancellation vector.
     """
     task = _rom_tool_tasks.get(task_id)
-    if task and task.get('status') == 'running':
+    if task and task.get('status') in ('running', 'paused'):
         task['status'] = 'cancelled'
         return success()
 
@@ -715,6 +725,9 @@ def api_chd_converter_convert():
 
     do_verify = _run_option(data, 'verify', settings, 'chd_verify_after_convert', True)
     delete_originals = _run_option(data, 'delete_originals', settings, 'chd_delete_originals', False)
+    # PASS-59-119 — the request's file list can name a source whose .chd
+    # already exists; replacing it is the user's choice, never the default.
+    skip_existing = _run_option(data, 'skip_existing', settings, 'chd_skip_existing', True)
 
     def run_conversion():
         # Pass 42.5 — atomic per-file work delegates to the shared
@@ -724,6 +737,7 @@ def api_chd_converter_convert():
         from scraper.rom_tools import convert_one_to_chd
 
         for i, file_path in enumerate(files):
+            _wait_if_paused(task)
             if task['status'] == 'cancelled':
                 task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] Conversion cancelled")
                 break
@@ -752,7 +766,7 @@ def api_chd_converter_convert():
                 chdman_path,
                 do_verify=do_verify,
                 delete_original=delete_originals,
-                skip_existing=False,  # scan endpoint already filtered out existing .chd; convert what we're handed.
+                skip_existing=skip_existing,
             )
             status = file_result['status']
 
@@ -762,6 +776,9 @@ def api_chd_converter_convert():
                 task['results']['compressed_size'] += file_result['compressed_size']
                 task['results']['files'].append(file_result)
                 task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] ✓ Converted")
+            elif status == 'skipped':
+                task['results']['skipped'] += 1
+                task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] ↷ Skipped: a CHD already exists")
             else:
                 task['results']['failed'] += 1
                 err = file_result.get('error', '')
@@ -850,6 +867,7 @@ def api_chd_verify_verify():
 
     def run_verification():
         for i, file_path in enumerate(files):
+            _wait_if_paused(task)
             if task['status'] == 'cancelled':
                 break
 
@@ -921,6 +939,9 @@ def api_duplicate_finder_scan():
         return error(_('Invalid scan path'), 400)
     settings = load_rom_tools_config()
     method = data.get('method', settings.get('duplicate_method', 'hash'))
+    # PASS-59-119 — the same allowlist the saved setting passes.
+    if not validate_rom_tools_value('duplicate_method', method)[0]:
+        return error(_('Unknown duplicate method: %(method)s') % {'method': method}, 400)
     recursive = data.get('recursive', True)
     ignore_region = _run_option(data, 'ignore_region', settings, 'ignore_region_tags', True)
     include_archives = _run_option(data, 'include_archives', settings, 'include_archives', False)
@@ -974,17 +995,26 @@ def api_duplicate_finder_scan():
         
         files = []
         extensions_lower = [ext.lower() for ext in rom_extensions]
-        
+        # PASS-59-119 — a symlinked file can point outside the ROM root;
+        # never hash or offer it for deletion.
+        from pathlib import Path
+        from scraper.rom_tools import _safe_under_root
+        rom_root = Path(_get_rom_path()).resolve()
+
         if recursive:
             for root, dirs, filenames in os.walk(path):
                 for filename in filenames:
-                    if any(filename.lower().endswith(ext) for ext in extensions_lower):
-                        files.append(os.path.join(root, filename))
+                    filepath = os.path.join(root, filename)
+                    if (any(filename.lower().endswith(ext) for ext in extensions_lower)
+                            and _safe_under_root(Path(filepath), rom_root)):
+                        files.append(filepath)
                 task['current_action'] = f'Scanning: {os.path.basename(root)}'
         else:
             for filename in os.listdir(path):
                 filepath = os.path.join(path, filename)
-                if os.path.isfile(filepath) and any(filename.lower().endswith(ext) for ext in extensions_lower):
+                if (os.path.isfile(filepath)
+                        and any(filename.lower().endswith(ext) for ext in extensions_lower)
+                        and _safe_under_root(Path(filepath), rom_root)):
                     files.append(filepath)
         
         task['total'] = len(files)
@@ -1021,6 +1051,7 @@ def api_duplicate_finder_scan():
         
         groups = {}
         for i, f in enumerate(files):
+            _wait_if_paused(task)
             if task['status'] == 'cancelled':
                 break
             
@@ -1103,9 +1134,25 @@ def api_duplicate_finder_delete():
     data = request.get_json() or {}
     files = data.get('files', [])
 
+    # PASS-59-119 — delete only files the scan grouped, and never every copy
+    # in a group: the page's keep-one choice is checked here too.
+    task = _rom_tool_tasks.get(str(data.get('task_id') or ''))
+    if not task or task.get('task_type') != 'duplicate_scan':
+        return error(_('These scan results have expired. Scan again, then delete.'), 400)
+    groups = [{f['path'] for f in g.get('files', [])}
+              for g in task.get('results', {}).get('groups', [])]
+    requested = set(files)
+    if any(group <= requested for group in groups):
+        return error(_('Keep at least one copy of each game. Nothing was deleted.'), 400)
+    grouped = set().union(*groups) if groups else set()
+
     results = {'deleted': 0, 'failed': 0, 'freed_space': 0, 'errors': []}
 
     for fp in files:
+        if fp not in grouped:
+            results['failed'] += 1
+            results['errors'].append(f'Not in the scan results: {fp}')
+            continue
         if safe_path(fp, _get_rom_path()) is None:
             results['failed'] += 1
             results['errors'].append(f'Invalid path: {fp}')
@@ -1203,6 +1250,7 @@ def _run_screenshot_dedup_scan(task, method, threshold):
     results = task['results']
 
     for i, game in enumerate(games):
+        _wait_if_paused(task)
         if task['status'] == 'cancelled':
             break
 
@@ -1323,9 +1371,9 @@ def api_screenshot_dedup_scan():
     }
     _rom_tool_tasks[task_id] = task
 
-    thread = threading.Thread(
-        target=_run_screenshot_dedup_scan, args=(task, method, threshold)
-    )
+    # PASS-59-119 — guarded like the other workers, so a crash ends the task.
+    thread = threading.Thread(target=_guarded_worker(
+        task, lambda: _run_screenshot_dedup_scan(task, method, threshold)))
     thread.daemon = True
     thread.start()
 

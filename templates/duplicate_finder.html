@@ -310,6 +310,7 @@
 <script nonce="{{ csp_nonce }}">
 const ROM_PATH = {{ rom_path|tojson }};
 let duplicateGroups = [];
+let scanTaskId = null;  // PASS-59-119 — the server checks deletes against this scan
 
 // Update full path when subpath changes
 document.getElementById('subPath').addEventListener('input', function() {
@@ -394,6 +395,7 @@ async function startScan() {
                     addLogEntry('Scan completed!', 'info');
                     if (task.results && task.results.groups) {
                         duplicateGroups = task.results.groups;
+                        scanTaskId = data.task_id;
                         renderDuplicateGroups();
                     }
                     resetUI();
@@ -545,7 +547,7 @@ async function deleteSelected() {
             const response = await fetch('/api/rom-tools/duplicate-finder/delete', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ files: filesToDelete })
+                body: JSON.stringify({ task_id: scanTaskId, files: filesToDelete })
             });
             
             const data = await response.json();

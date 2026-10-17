@@ -1650,6 +1650,7 @@ async function batchCreateM3U() {
             <li>Extracted to its own folder</li>
             <li>Have <code>noload.txt</code> added</li>
             <li>Get an M3U playlist created</li>
+            <li>${ {{ _('Have the original archive moved to the staging folder')|tojson }} }</li>
         </ul>
         <p style="margin-top: 0.5rem; color: var(--text-secondary);">This may take a while for large archives.</p>`, 
         async function() {
@@ -1677,6 +1678,7 @@ async function batchCreateM3U() {
 async function processBatchM3U() {
     const successfulPaths = [];
     let movedCount = 0;
+    let movedFolder = '';  // PASS-59-119 — from the server, never a fixed path
     
     while (batchState.current < batchState.total && !batchState.cancelled) {
         // Check if paused
@@ -1713,6 +1715,9 @@ async function processBatchM3U() {
                 successfulPaths.push(result.path);
                 if (data.archive_moved) {
                     movedCount++;
+                    if (data.moved_to) {
+                        movedFolder = data.moved_to.replace(/[\\/][^\\/]*$/, '');
+                    }
                 }
             } else {
                 batchState.failed++;
@@ -1747,9 +1752,9 @@ async function processBatchM3U() {
                 <li>❌ Failed: ${formatNumber(batchState.failed)}</li>
                 <li>📦 Archives moved to staging: ${formatNumber(movedCount)}</li>
             </ul>
-            <p style="margin-top: 0.5rem; color: var(--text-secondary); font-size: 0.85rem;">
-                Original archives moved to:<br><code>/mnt/Games/ROMS_TO_BE_DELETED/M3U_Test/</code>
-            </p>`);
+            ${movedFolder ? `<p style="margin-top: 0.5rem; color: var(--text-secondary); font-size: 0.85rem;">
+                ${ {{ _('Original archives moved to:')|tojson }} }<br><code>${escapeHtml(movedFolder)}</code>
+            </p>` : ''}`);
     }
     
     // Update scan results - remove successful ones
