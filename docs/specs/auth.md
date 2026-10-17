@@ -475,7 +475,7 @@ context.
 - **Test per-user partitioning:** seed two users → insert under user A
   → log in as user B → assert the row is not visible / mutable.
   Canonical model: `TestPerUserPlatformTokens` in
-  `tests/test_auth_hardening.py` (`_isolated_db` builds a temp SQLite,
+  `tests/test_auth_hardening.py` (its `isolated_db` fixture builds a temp SQLite,
   tests assert round-trip + per-`(user, platform)` isolation +
   `user_id=None` no-op).
 

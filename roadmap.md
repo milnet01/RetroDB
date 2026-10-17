@@ -7076,7 +7076,18 @@ were corrected in `2836bc3` and are not repeated here.
   several broken citations *incidentally*, which is evidence there are more:
   they surfaced only where a lane happened to open the cited line.
 - **Plan**: `check-doc-facts` over `docs/specs/`, then triage.
-- **Status**: planned (2026-09-01). Lanes: docs.
+- **Shipped** (2026-10-17): `check-doc-facts` run over `docs/specs/`
+  via `doc_lint` (doc_integrity, doc_citations, doc_symbols, doc_facts).
+  Findings: no dead anchors or broken links; 16 count claims, no mismatch.
+  One citation unresolved (`:320-323` in the i18n design doc's loop-log
+  line): a dated record, left. `doc_symbols`' unresolved names were
+  re-checked by grepping backticked code-style names against the tracked
+  sources: the rest are template placeholders (`foo`), RetroArch/nginx
+  names, negations ("no `cancel_event`"), dated problem lists, and names in
+  specs for unbuilt work (PASS-59-106, the launcher spec's §4.3–4.6, tracked
+  by PASS-59-91). One real stale name, `_isolated_db` in `auth.md`, renamed
+  today by PASS-60-6; fixed. `spec_lint` was not run here.
+- **Status**: done (2026-10-17). Lanes: docs.
 - **Source**: orchestrator — recorded as a coverage gap of the sweep, not a
   finding about the code.
 
@@ -7134,7 +7145,15 @@ were corrected in `2836bc3` and are not repeated here.
   narrower guard suffices, e.g. a test that asserts the setup gate's
   behaviour explicitly so the dependency is pinned rather than incidental.
 - **Verify**: reintroduce the e236d9f defect and confirm the gate goes red.
-- **Status**: planned (2026-09-02). Lanes: ci.
+- **Shipped** (confirmed 2026-10-17): the 2026-09-02 decision is in
+  place. The machine-wide pre-push hook runs `scripts/ci_local.sh` in a
+  fresh checkout of the pushed commit (`.claude/rules/git-hooks.md`; the
+  run's paths sit under `~/.cache/pre-push/tmp.*`), so no gitignored
+  `config.py` or `data/settings.json` is present. Verified live today:
+  pushing `0017ac7` went red in that checkout on two tests that passed
+  only with a local settings file, `test_active_endpoint_unauth_blocked`
+  and `test_unauth_list_blocked`; fixed in `824c0ea`.
+- **Status**: done (2026-10-17). Lanes: ci.
 - **Decision** (2026-09-02, user): run the pre-push suite against a clean
   throwaway checkout, the way CI does, rather than only pinning this one case.
 - **Source**: in-session 2026-09-02 — the gate reported green on the commit
