@@ -8244,7 +8244,12 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.118 Smaller trophy defects from the trophies spec (MEDIUM, M).
-- **Status**: todo
+- **Resolution** (2026-10-17): Shipped 2026-10-17 in e79d7a4 (3.29.1, open). Every item reproduced
+  red first in tests/test_pass59_118_trophies.py, both "unverified" ones
+  included. Dropped one half: RA/Steam/Xbox job status naming the
+  running game, a library title every user sees (trophies.md §13). Owed:
+  a browser check of the profile page's RPCS3 folder error toast.
+- **Status**: done
 - **Target**: `docs/specs/trophies.md` § 13 Open.
 - **Why**: found while writing that spec, read from code: the RA
   single-game sync stores a total of 0 (reads `total_count`, the scraper
