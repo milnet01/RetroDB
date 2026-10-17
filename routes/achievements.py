@@ -268,7 +268,8 @@ def api_sync_game_achievements(game_id):
             g.user['id'],
             game['ra_game_id'],
             progress.get('unlocked_count', 0),
-            progress.get('total_count', 0),
+            # PASS-59-118 — the scraper's key; `total_count` stored 0.
+            progress.get('achievement_count', 0),
             progress.get('earned_points', 0),
             progress.get('total_points', 0),
             progress.get('completion_percentage', 0),
@@ -361,6 +362,9 @@ def api_achievements_sync_status():
 @editor_required
 def api_achievements_sync_cancel():
     """Cancel the current RA sync job"""
+    from services.jobs.base import may_control
+    if not may_control(ra_sync_job._user_id, g.user):
+        return jsonify({'success': False, 'error': _('That job belongs to another user')})
     result = ra_sync_job.cancel()
     return jsonify(result)
 

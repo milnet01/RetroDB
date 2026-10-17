@@ -314,7 +314,9 @@ class PSNRefreshJob:
                 logger.info("PSN refresh: authenticating with PSN API...")
                 with self._lock:
                     self.current_game_title = 'Authenticating with PSN...'
-                psnawp, error = create_psn_client(self._npsso)
+                # PASS-59-118 — this thread has no request user, so name the
+                # owner or the cached tokens are never found.
+                psnawp, error = create_psn_client(self._npsso, user_id=self._user_id)
                 if error:
                     raise Exception(error)
                 client = psnawp.me()

@@ -116,7 +116,7 @@ def job_env(tmp_path, monkeypatch):
         monkeypatch.setattr(mod, 'try_acquire_singleton_or_warn', lambda *_a, **_kw: 0)
         monkeypatch.setattr(mod, 'shutdown_requested', _NoWait())
         if hasattr(mod, '_get_ra_credentials'):
-            monkeypatch.setattr(mod, '_get_ra_credentials', lambda: ('user', 'key'))
+            monkeypatch.setattr(mod, '_get_ra_credentials', lambda *a: ('user', 'key'))
 
     return types.SimpleNamespace(
         db_path=db_path, conn=_conn, state=state, patch=patch_module,

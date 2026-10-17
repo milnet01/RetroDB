@@ -144,8 +144,28 @@ def _commit_with_retry(conn, max_retries=5, base_delay=0.5):
                 raise
 
 
-def _get_ra_credentials():
-    """Get RA credentials via centralized scraper_manager, falling back to config.py"""
+def may_control(owner_id, user):
+    """PASS-59-118 — a per-user job's controls belong to its owner and admins."""
+    return owner_id is None or user['role'] == 'admin' or owner_id == user['id']
+
+
+def _get_ra_credentials(user_id=None):
+    """Get RA credentials: `user_id`'s own account when set, else the global
+    one via scraper_manager (falling back to config.py).
+
+    PASS-59-118 — a job writing a user's progress rows must read that user's
+    RA account, as `services.auth.get_user_ra_credentials` does for routes.
+    """
+    if user_id is not None:
+        conn = _get_conn()
+        try:
+            row = conn.execute(
+                "SELECT ra_username, ra_api_key FROM user_settings WHERE user_id = ?",
+                (user_id,)).fetchone()
+        finally:
+            conn.close()
+        if row and row['ra_username'] and row['ra_api_key']:
+            return row['ra_username'], row['ra_api_key']
     from scraper.scraper_manager import get_api_key
     ra_api_key = get_api_key('ra_apikey', 'RETROACHIEVEMENTS_API_KEY')
     ra_username = get_api_key('ra_username', 'RETROACHIEVEMENTS_USERNAME')

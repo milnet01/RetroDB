@@ -20,7 +20,7 @@ from services.auth import (
     hash_password, verify_password, needs_rehash, get_user_settings,
     admin_required, login_required, has_permission, VALID_ROLES,
 )
-from services.security import rate_limit_login, record_login_attempt, safe_filename
+from services.security import rate_limit_login, record_login_attempt, safe_filename, validate_settings_path
 
 bp = Blueprint('auth', __name__)
 
@@ -390,6 +390,14 @@ def api_user_settings():
     # so only a known theme key may be saved.
     if 'theme_preference' in data and data['theme_preference'] not in ALLOWED_THEMES:
         return error(_('Invalid theme'), code=200)
+
+    # PASS-59-118 — the same check the global RPCS3 path gets in settings.
+    if 'rpcs3_trophy_path' in data:
+        ok, result = validate_settings_path(data['rpcs3_trophy_path'], allow_empty=True)
+        if not ok:
+            return error(_('Invalid RPCS3 trophy folder: %(reason)s') % {'reason': result},
+                         code=200)
+        data['rpcs3_trophy_path'] = result
 
     for field in allowed_fields:
         if field in data:

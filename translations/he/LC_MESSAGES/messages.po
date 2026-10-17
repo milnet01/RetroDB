@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-17 17:28+0200\n"
+"POT-Creation-Date: 2026-10-17 18:12+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: he\n"
@@ -18,17 +18,17 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: app.py:688
+#: app.py:692
 #, fuzzy
 msgid "Too many requests. Please wait and try again."
 msgstr "יותר מדי ניסיונות. נסה שוב מאוחר יותר."
 
-#: app.py:797
+#: app.py:801
 #, fuzzy
 msgid "Setup required"
 msgstr "נדרשת כותרת"
 
-#: app.py:818
+#: app.py:822
 #, fuzzy
 msgid "Password change required"
 msgstr "אין צורך בשינוי סיסמה"
@@ -41,12 +41,12 @@ msgstr "לא נמצאו משחקים עם RetroAchievements בספרייה של�
 msgid "System not found or has no achievement games"
 msgstr "המערכת לא נמצאה או שאין בה משחקים עם הישגים"
 
-#: routes/achievements.py:171 routes/achievements.py:436
+#: routes/achievements.py:171 routes/achievements.py:440
 #: routes/bonus_discs.py:263 routes/bulk_scrape.py:46 routes/collections.py:276
 #: routes/collections.py:531 routes/games.py:341 routes/games.py:770
 #: routes/games.py:891 routes/games.py:948 routes/games_ai.py:46
 #: routes/games_media.py:35 routes/games_media.py:82 routes/games_media.py:143
-#: routes/reports.py:689 routes/reports.py:814 routes/trophies.py:1278
+#: routes/reports.py:693 routes/reports.py:818 routes/trophies.py:1278
 #: services/hltb_service.py:127
 msgid "Game not found"
 msgstr "המשחק לא נמצא"
@@ -67,26 +67,31 @@ msgstr "המשחק אינו מקושר ל-RetroAchievements"
 msgid "RetroAchievements not configured"
 msgstr "RetroAchievements לא הוגדר"
 
-#: routes/achievements.py:280
+#: routes/achievements.py:281
 msgid "Could not fetch achievement data"
 msgstr "לא ניתן לאחזר נתוני הישגים"
 
-#: routes/achievements.py:293 routes/controllers.py:412
-#: routes/controllers.py:455 routes/museum.py:310 routes/museum.py:382
+#: routes/achievements.py:294 routes/controllers.py:412
+#: routes/controllers.py:462 routes/museum.py:310 routes/museum.py:382
 #: routes/ra_sync.py:98 routes/systems.py:220
 msgid "System not found"
 msgstr "המערכת לא נמצאה"
 
-#: routes/achievements.py:304
+#: routes/achievements.py:305
 msgid "No games with RetroAchievements in this system"
 msgstr "אין משחקים עם RetroAchievements במערכת זו"
 
-#: routes/achievements.py:314
+#: routes/achievements.py:315
 #, python-format
 msgid "Sync already in progress for %(name)s"
 msgstr "סנכרון כבר מתבצע עבור %(name)s"
 
-#: routes/achievements.py:453
+#: routes/achievements.py:367 routes/platform_import.py:326
+#: routes/platform_import.py:693
+msgid "That job belongs to another user"
+msgstr ""
+
+#: routes/achievements.py:457
 msgid "No RetroAchievements found for this game"
 msgstr "לא נמצאו RetroAchievements עבור משחק זה"
 
@@ -130,7 +135,7 @@ msgstr "תפקיד לא חוקי"
 msgid "Username already exists"
 msgstr "שם המשתמש כבר קיים"
 
-#: routes/auth.py:202 routes/auth.py:251 routes/auth.py:435 routes/auth.py:480
+#: routes/auth.py:202 routes/auth.py:251 routes/auth.py:443 routes/auth.py:488
 msgid "Password must be at least 12 characters"
 msgstr "הסיסמה חייבת להכיל לפחות 12 תווים"
 
@@ -142,7 +147,7 @@ msgstr "לא ניתן למחוק את החשבון שלך"
 msgid "Cannot delete the last admin user"
 msgstr "לא ניתן למחוק את משתמש המנהל האחרון"
 
-#: routes/auth.py:347 routes/auth.py:411 routes/auth.py:467
+#: routes/auth.py:347 routes/auth.py:419 routes/auth.py:475
 msgid "Not logged in"
 msgstr "לא מחובר"
 
@@ -155,45 +160,50 @@ msgstr "אזור/שפה לא חוקיים"
 msgid "Invalid theme"
 msgstr "נתיב לא חוקי"
 
-#: routes/auth.py:423
+#: routes/auth.py:398
+#, fuzzy, python-format
+msgid "Invalid RPCS3 trophy folder: %(reason)s"
+msgstr "מפתחות API לא חוקיים: %(reason)s"
+
+#: routes/auth.py:431
 msgid "Too many attempts. Please try again later."
 msgstr "יותר מדי ניסיונות. נסה שוב מאוחר יותר."
 
-#: routes/auth.py:430 routes/auth.py:476
+#: routes/auth.py:438 routes/auth.py:484
 msgid "New password is required"
 msgstr "נדרשת סיסמה חדשה"
 
-#: routes/auth.py:441
+#: routes/auth.py:449
 msgid "Current password is incorrect"
 msgstr "הסיסמה הנוכחית שגויה"
 
-#: routes/auth.py:470
+#: routes/auth.py:478
 msgid "Password change not required"
 msgstr "אין צורך בשינוי סיסמה"
 
-#: routes/auth.py:522
+#: routes/auth.py:530
 msgid "No file provided"
 msgstr "לא סופק קובץ"
 
-#: routes/auth.py:526 routes/museum.py:692
+#: routes/auth.py:534 routes/museum.py:670
 msgid "No file selected"
 msgstr "לא נבחר קובץ"
 
-#: routes/auth.py:531
+#: routes/auth.py:539
 msgid "Invalid file type. Allowed: jpg, png, gif, webp"
 msgstr "סוג קובץ לא חוקי. מותר: jpg, png, gif, webp"
 
-#: routes/auth.py:536
+#: routes/auth.py:544
 msgid "File too large. Maximum size is 2MB"
 msgstr "הקובץ גדול מדי. הגודל המרבי הוא 2MB"
 
-#: routes/auth.py:554
+#: routes/auth.py:562
 msgid ""
 "Avatar uploads require Pillow; please ask the operator to install the "
 "project requirements."
 msgstr "העלאת תמונות פרופיל דורשת את Pillow; בקש מהמפעיל להתקין את דרישות הפרויקט."
 
-#: routes/auth.py:570 routes/museum.py:724
+#: routes/auth.py:578 routes/museum.py:702
 msgid "Invalid image file"
 msgstr "קובץ תמונה לא חוקי"
 
@@ -209,9 +219,9 @@ msgstr "משחק האב לא נמצא"
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "דיסק הבונוס ומשחק האב חייבים להיות באותה מערכת"
 
-#: routes/bonus_discs.py:209 routes/bonus_discs.py:227 routes/games.py:1196
-#: routes/games.py:1226 routes/platform_import.py:289
-#: routes/platform_import.py:655 routes/platform_import.py:1022
+#: routes/bonus_discs.py:209 routes/bonus_discs.py:227 routes/games.py:1200
+#: routes/games.py:1230 routes/platform_import.py:289
+#: routes/platform_import.py:658 routes/platform_import.py:1028
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:200 routes/scraper.py:528
 #: routes/scraper.py:917 routes/settings.py:317 routes/settings.py:341
@@ -229,7 +239,7 @@ msgstr "אירעה שגיאה פנימית"
 msgid "Missing bonus_id or parent_id"
 msgstr "חסר bonus_id או parent_id"
 
-#: routes/bonus_discs.py:304 routes/reports.py:802
+#: routes/bonus_discs.py:304 routes/reports.py:806
 msgid "Missing game_id"
 msgstr "חסר game_id"
 
@@ -249,7 +259,7 @@ msgstr "לא נמצאו התאמות"
 msgid "No game IDs provided"
 msgstr "לא סופקו מזהי משחקים"
 
-#: routes/clz_import.py:257
+#: routes/clz_import.py:258
 msgid ""
 "pdfplumber module not installed. Please run: pip install pdfplumber "
 "--break-system-packages"
@@ -257,29 +267,29 @@ msgstr ""
 "המודול pdfplumber אינו מותקן. הרץ: pip install pdfplumber --break-system-"
 "packages"
 
-#: routes/clz_import.py:262
+#: routes/clz_import.py:263
 msgid "No file uploaded"
 msgstr "לא הועלה קובץ"
 
-#: routes/clz_import.py:266
+#: routes/clz_import.py:267
 msgid "File must be a PDF"
 msgstr "הקובץ חייב להיות PDF"
 
-#: routes/clz_import.py:273
+#: routes/clz_import.py:274
 #, python-format
 msgid "File too large (%(size)sMB). Maximum size is 50MB"
 msgstr "הקובץ גדול מדי (%(size)sMB). הגודל המרבי הוא 50MB"
 
-#: routes/clz_import.py:276
+#: routes/clz_import.py:277
 msgid "Invalid PDF file (bad magic bytes)"
 msgstr "קובץ PDF לא חוקי (בייטים מזהים שגויים)"
 
-#: routes/clz_import.py:300
+#: routes/clz_import.py:301
 #, python-format
 msgid "PDF has %(pages)s pages; maximum is %(max)s."
 msgstr "ל-PDF יש %(pages)s עמודים; המרבי הוא %(max)s."
 
-#: routes/clz_import.py:569
+#: routes/clz_import.py:570
 msgid "No games to import"
 msgstr "אין משחקים לייבוא"
 
@@ -362,8 +372,8 @@ msgid "Controller \"%(name)s\" already exists"
 msgstr "הבקר \"%(name)s\" כבר קיים"
 
 #: routes/controllers.py:292 routes/controllers.py:334
-#: routes/controllers.py:461 routes/museum.py:600 routes/museum.py:685
-#: routes/museum.py:755
+#: routes/controllers.py:419 routes/controllers.py:468 routes/museum.py:578
+#: routes/museum.py:663 routes/museum.py:733
 msgid "Controller not found"
 msgstr "הבקר לא נמצא"
 
@@ -417,37 +427,37 @@ msgstr ""
 msgid "Failed to apply metadata."
 msgstr "החלת המטא-נתונים נכשלה."
 
-#: routes/games.py:974 routes/games.py:1018
+#: routes/games.py:978 routes/games.py:1022
 msgid "No fields to update"
 msgstr "אין שדות לעדכון"
 
-#: routes/games.py:1015 routes/platform_import.py:212
-#: routes/platform_import.py:569 routes/platform_import.py:926
+#: routes/games.py:1019 routes/platform_import.py:212
+#: routes/platform_import.py:572 routes/platform_import.py:932
 #: routes/trophies.py:1850
 msgid "No games selected"
 msgstr "לא נבחרו משחקים"
 
-#: routes/games.py:1025
+#: routes/games.py:1029
 msgid "Invalid completion status"
 msgstr "סטטוס השלמה לא חוקי"
 
-#: routes/games.py:1073
+#: routes/games.py:1077
 msgid "No valid fields to update"
 msgstr "אין שדות חוקיים לעדכון"
 
-#: routes/games.py:1189
+#: routes/games.py:1193
 msgid "Invalid status"
 msgstr "סטטוס לא חוקי"
 
-#: routes/games.py:1214
+#: routes/games.py:1218
 msgid "Not authenticated"
 msgstr "לא מאומת"
 
-#: routes/games.py:1245
+#: routes/games.py:1249
 msgid "Filter type and value required"
 msgstr "נדרשים סוג וערך סינון"
 
-#: routes/games.py:1258
+#: routes/games.py:1262
 msgid "Invalid filter type"
 msgstr "סוג סינון לא חוקי"
 
@@ -455,7 +465,7 @@ msgstr "סוג סינון לא חוקי"
 msgid "AI returned no data. Check your API key and provider settings."
 msgstr "ה-AI לא החזיר נתונים. בדוק את מפתח ה-API והגדרות הספק שלך."
 
-#: routes/games_ai.py:313
+#: routes/games_ai.py:300
 msgid "AI scraper module not available"
 msgstr "מודול מגרד ה-AI אינו זמין"
 
@@ -463,7 +473,7 @@ msgstr "מודול מגרד ה-AI אינו זמין"
 msgid "No filename provided"
 msgstr "לא סופק שם קובץ"
 
-#: routes/games_media.py:78 routes/reports.py:684 routes/scrape_logs.py:129
+#: routes/games_media.py:78 routes/reports.py:688 routes/scrape_logs.py:129
 #: routes/scrape_logs.py:154 routes/scrape_logs.py:203 routes/settings.py:350
 msgid "Invalid filename"
 msgstr "שם קובץ לא חוקי"
@@ -473,16 +483,16 @@ msgstr "שם קובץ לא חוקי"
 msgid "ROM file not found on disk: %(path)s"
 msgstr "קובץ ה-ROM לא נמצא בדיסק: %(path)s"
 
-#: routes/games_media.py:102 routes/reports.py:717 routes/reports.py:888
+#: routes/games_media.py:102 routes/reports.py:721 routes/reports.py:892
 msgid "Destination is outside the configured ROM root"
 msgstr "היעד נמצא מחוץ לתיקיית השורש המוגדרת של ה-ROM"
 
-#: routes/games_media.py:106 routes/reports.py:721
+#: routes/games_media.py:106 routes/reports.py:725
 #, python-format
 msgid "Cannot rename: %(reason)s"
 msgstr ""
 
-#: routes/games_media.py:109 routes/reports.py:725 routes/reports.py:892
+#: routes/games_media.py:109 routes/reports.py:729 routes/reports.py:896
 msgid "A file with that name already exists"
 msgstr "קובץ בשם זה כבר קיים"
 
@@ -542,45 +552,45 @@ msgstr "תגובת AI ריקה"
 msgid "No usable content in AI response"
 msgstr "אין תוכן שמיש בתגובת ה-AI"
 
-#: routes/museum.py:623
+#: routes/museum.py:601
 msgid "Could not find a suitable image for this controller"
 msgstr "לא נמצאה תמונה מתאימה לבקר זה"
 
-#: routes/museum.py:639
+#: routes/museum.py:617
 msgid "No controllers found"
 msgstr "לא נמצאו בקרים"
 
-#: routes/museum.py:688
+#: routes/museum.py:666
 msgid "No image file provided"
 msgstr "לא סופק קובץ תמונה"
 
-#: routes/museum.py:704
+#: routes/museum.py:682
 #, python-format
 msgid "File too large (%(size)s MB). Maximum is %(max)s MB."
 msgstr "הקובץ גדול מדי (%(size)s MB). המרבי הוא %(max)s MB."
 
-#: routes/museum.py:714
+#: routes/museum.py:692
 #, python-format
 msgid "File too large (> %(max)s MB)."
 msgstr "הקובץ גדול מדי (> %(max)s MB)."
 
-#: routes/museum.py:717
+#: routes/museum.py:695
 msgid "File is too small"
 msgstr "הקובץ קטן מדי"
 
-#: routes/museum.py:735
+#: routes/museum.py:713
 msgid "Failed to process image"
 msgstr "עיבוד התמונה נכשל"
 
-#: routes/museum.py:758
+#: routes/museum.py:736
 msgid "No image to process"
 msgstr "אין תמונה לעיבוד"
 
-#: routes/museum.py:762
+#: routes/museum.py:740
 msgid "Image file not found"
 msgstr "קובץ התמונה לא נמצא"
 
-#: routes/museum.py:772 routes/museum.py:776 services/js_i18n_strings.py:406
+#: routes/museum.py:750 routes/museum.py:754 services/js_i18n_strings.py:406
 msgid "Background removal failed"
 msgstr "הסרת הרקע נכשלה"
 
@@ -611,27 +621,27 @@ msgstr "לא נמצאו משחקים. ודא שפרופיל ה-Steam ופרטי 
 msgid "Could not create Windows system entry"
 msgstr "לא ניתן ליצור רשומת מערכת Windows"
 
-#: routes/platform_import.py:341
+#: routes/platform_import.py:344
 msgid "Xbox Client ID not configured. Add it in Settings → API Keys."
 msgstr "מזהה הלקוח של Xbox לא הוגדר. הוסף אותו בהגדרות ← מפתחות API."
 
-#: routes/platform_import.py:479
+#: routes/platform_import.py:482
 msgid "Xbox credentials not configured. Add them in Settings → API Keys."
 msgstr "פרטי ההזדהות של Xbox לא הוגדרו. הוסף אותם בהגדרות ← מפתחות API."
 
-#: routes/platform_import.py:483
+#: routes/platform_import.py:486
 msgid "Xbox authentication failed. Please re-connect your Xbox account."
 msgstr "אימות Xbox נכשל. חבר מחדש את חשבון ה-Xbox שלך."
 
-#: routes/platform_import.py:487
+#: routes/platform_import.py:490
 msgid "No games found in Xbox title history."
 msgstr "לא נמצאו משחקים בהיסטוריית הכותרים של Xbox."
 
-#: routes/platform_import.py:763
+#: routes/platform_import.py:769
 msgid "PSN NPSSO not configured. Add it in Settings → API Keys."
 msgstr "ה-NPSSO של PSN לא הוגדר. הוסף אותו בהגדרות ← מפתחות API."
 
-#: routes/platform_import.py:792
+#: routes/platform_import.py:798
 msgid "Failed to fetch PSN game list. Try syncing trophies first."
 msgstr "אחזור רשימת המשחקים של PSN נכשל. נסה לסנכרן גביעים תחילה."
 
@@ -640,57 +650,57 @@ msgstr "אחזור רשימת המשחקים של PSN נכשל. נסה לסנכ�
 msgid "System %(name)s does not support RetroAchievements"
 msgstr "המערכת %(name)s אינה תומכת ב-RetroAchievements"
 
-#: routes/reports.py:409
+#: routes/reports.py:413
 msgid "Unknown system"
 msgstr "מערכת לא ידועה"
 
-#: routes/reports.py:430 routes/reports.py:595
+#: routes/reports.py:434 routes/reports.py:599
 msgid "ROM path not configured. Go to Settings → Paths to set it."
 msgstr "נתיב ה-ROM לא הוגדר. עבור להגדרות ← נתיבים כדי להגדירו."
 
-#: routes/reports.py:591
+#: routes/reports.py:595
 msgid "Missing required parameters"
 msgstr "חסרים פרמטרים נדרשים"
 
-#: routes/reports.py:601 routes/tools.py:493 routes/tools.py:550
+#: routes/reports.py:605 routes/tools.py:493 routes/tools.py:550
 #: routes/tools.py:585
 msgid "Invalid path"
 msgstr "נתיב לא חוקי"
 
-#: routes/reports.py:607
+#: routes/reports.py:611
 #, python-format
 msgid "Folder does not exist: %(folder_path)s"
 msgstr "התיקייה אינה קיימת: %(folder_path)s"
 
-#: routes/reports.py:681
+#: routes/reports.py:685
 msgid "Missing game_id or new_name"
 msgstr "חסר game_id או new_name"
 
-#: routes/reports.py:693 routes/reports.py:818
+#: routes/reports.py:697 routes/reports.py:822
 msgid "No ROM path set"
 msgstr "לא הוגדר נתיב ROM"
 
-#: routes/reports.py:708 routes/reports.py:823
+#: routes/reports.py:712 routes/reports.py:827
 msgid "ROM file not found"
 msgstr "קובץ ה-ROM לא נמצא"
 
-#: routes/reports.py:734
+#: routes/reports.py:738
 msgid "M3U files must keep the .m3u extension"
 msgstr "קבצי M3U חייבים לשמור על הסיומת .m3u"
 
-#: routes/reports.py:747 routes/reports.py:904
+#: routes/reports.py:751 routes/reports.py:908
 msgid "A folder with the new name already exists"
 msgstr "תיקייה בשם החדש כבר קיימת"
 
-#: routes/reports.py:827
+#: routes/reports.py:831
 msgid "No scraped title available"
 msgstr "אין כותרת מגורדת זמינה"
 
-#: routes/reports.py:845
+#: routes/reports.py:849
 msgid "Title is empty after sanitization"
 msgstr "הכותרת ריקה לאחר הניקוי"
 
-#: routes/reports.py:868
+#: routes/reports.py:872
 msgid "Generated filename contains invalid characters"
 msgstr "שם הקובץ שנוצר מכיל תווים לא חוקיים"
 
@@ -7140,11 +7150,11 @@ msgstr "נתונים"
 msgid "Customization"
 msgstr "התאמה אישית"
 
-#: templates/settings.html:1405
+#: templates/settings.html:1404
 msgid "Failed to save language"
 msgstr "שמירת השפה נכשלה"
 
-#: templates/settings.html:1409
+#: templates/settings.html:1408
 msgid "Network error saving language"
 msgstr "שגיאת רשת בשמירת השפה"
 

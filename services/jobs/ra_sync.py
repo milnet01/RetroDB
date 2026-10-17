@@ -191,7 +191,7 @@ class RASyncJob:
 
         try:
             # Get RA credentials
-            ra_username, ra_api_key = _get_ra_credentials()
+            ra_username, ra_api_key = _get_ra_credentials(self._user_id)
 
             if not ra_api_key or not ra_username:
                 with self._lock:

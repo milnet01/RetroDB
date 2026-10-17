@@ -321,6 +321,9 @@ def api_steam_sync_status():
 def api_steam_cancel_sync():
     """Cancel the Steam achievement sync."""
     from services.jobs import steam_sync_job
+    from services.jobs.base import may_control
+    if not may_control(steam_sync_job._user_id, g.user):
+        return jsonify({'success': False, 'error': _('That job belongs to another user')})
     return jsonify(steam_sync_job.cancel())
 
 
@@ -685,6 +688,9 @@ def api_xbox_sync_status():
 def api_xbox_cancel_sync():
     """Cancel the Xbox achievement sync."""
     from services.jobs import xbox_sync_job
+    from services.jobs.base import may_control
+    if not may_control(xbox_sync_job.user_id, g.user):
+        return jsonify({'success': False, 'error': _('That job belongs to another user')})
     return jsonify(xbox_sync_job.cancel())
 
 

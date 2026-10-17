@@ -311,9 +311,12 @@ def _gather_collection_stats(user_id=None):
 
     # --- Achievements (RA + Steam + Xbox + PSN, unified, per user via Pass 31.2) ---
     if user_id is not None:
+        # PASS-59-118 — RA rows only: Steam and Xbox earns are counted from
+        # their own tables below, and their progress rows would count twice.
         ra_earned = query(
             "SELECT COALESCE(SUM(earned_achievements), 0) AS s "
-            "FROM game_achievement_progress WHERE user_id = ?",
+            "FROM game_achievement_progress WHERE user_id = ? "
+            "AND COALESCE(source, 'ra') = 'ra'",
             (user_id,), one=True,
         )['s']
         steam_earned = query(

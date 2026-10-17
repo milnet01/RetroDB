@@ -60,7 +60,7 @@ from services.atomic_io import atomic_write_json
 from services.database import query
 from services.auth import (
     hash_password, get_current_user, get_user_settings,
-    has_permission, login_required, ROLE_PERMISSIONS,
+    has_permission, login_required, ROLE_PERMISSIONS, VALID_ROLES,
 )
 from services.game_utils import (
     get_rating_image_map_js, get_rating_system_names_js,
@@ -1013,6 +1013,8 @@ def _get_collector_rank_safe():
 
 def get_stats():
     """Get library statistics - optimized single query"""
+    # PASS-59-118 — achievement totals are the signed-in user's own.
+    uid = g.user['id'] if g.get('user') else None
     try:
         stats = query("""
             SELECT
@@ -1021,9 +1023,11 @@ def get_stats():
                 (SELECT COUNT(*) FROM games WHERE scraped = 1) as scraped_games,
                 (SELECT SUM(COALESCE(file_size, 0)) FROM games) as total_storage,
                 (SELECT COUNT(*) FROM games WHERE completion_status IN ('completed', '100_percent')) as completed_games,
-                (SELECT SUM(earned_achievements) FROM game_achievement_progress) as total_earned_achievements,
-                (SELECT SUM(total_achievements) FROM game_achievement_progress) as total_available_achievements
-        """, one=True)
+                (SELECT SUM(earned_achievements) FROM game_achievement_progress
+                 WHERE user_id = ?) as total_earned_achievements,
+                (SELECT SUM(total_achievements) FROM game_achievement_progress
+                 WHERE user_id = ?) as total_available_achievements
+        """, (uid, uid), one=True)
 
         total_games = stats['total_games'] or 0
         completed = stats['completed_games'] or 0
@@ -1373,6 +1377,17 @@ def dashboard():
         return "An error occurred loading the dashboard. Check logs for details.", 500
 
 
+# The roles each job's start route accepts; a job type missing here is
+# admin-only to resume.
+_EDITORS = ('admin', 'editor')
+_RESUME_ROLES = {
+    'bulk_scrape': _EDITORS, 'ra_sync': _EDITORS, 'steam_sync': _EDITORS,
+    'xbox_sync': _EDITORS, 'museum_generate': _EDITORS,
+    'ra_refresh': ('admin',),
+    'psn_refresh': VALID_ROLES,  # login_required: any signed-in role
+}
+
+
 @app.route('/api/jobs/resume/<int:job_id>', methods=['POST'])
 @login_required
 @handle_api_errors
@@ -1411,6 +1426,14 @@ def resume_job(job_id):
     handler = handler_map.get(job['job_type'])
     if not handler or not hasattr(handler, 'resume_from_params'):
         return api_error(f"No handler for job type '{job['job_type']}'", 400)
+
+    # PASS-59-118 — resuming needs the rights starting needed: the start
+    # route's role, and a per-user job belongs to its user (admins excepted).
+    role = g.user['role']
+    need = _RESUME_ROLES.get(job['job_type'], ('admin',))
+    owner = (job.get('params') or {}).get('user_id')
+    if role not in need or (owner is not None and owner != g.user['id'] and role != 'admin'):
+        return api_error('You do not have permission to perform this action', 403)
 
     resumed = handler.resume_from_params(job['params'], progress=job.get('progress'))
     if not resumed:

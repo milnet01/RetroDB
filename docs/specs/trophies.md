@@ -121,7 +121,7 @@ cross-process `flock` named after the job, persisted progress and resume.
 | Job | Started by (role) | Credentials | Writes |
 |---|---|---|---|
 | `RARefreshJob` (`ra_refresh`) | `/api/refresh-retroachievements[/<system_id>]` (admin) | global RA account (`_get_ra_credentials`) | `games` RA columns; commits per game |
-| `RASyncJob` (`ra_sync`) | `/api/achievements/sync-system/<id>` (editor) | global RA account | `games.ra_achievement_count`; the caller's `game_achievement_progress` |
+| `RASyncJob` (`ra_sync`) | `/api/achievements/sync-system/<id>` (editor) | the caller's own RA account, else the global one | `games.ra_achievement_count`; the caller's `game_achievement_progress` |
 | `PSNRefreshJob` (`psn_refresh`) | `/api/psn/bulk-refresh/start` (login) | the caller's NPSSO | the caller's `psn_games`, `psn_trophies` |
 | `SteamSyncJob` (`steam_sync`) | `/api/steam-achievements/sync-all`, `/api/steam/sync-achievements` (editor) | caller's `user_settings`, else `scraper_settings.json` | the caller's Steam rows |
 | `XboxSyncJob` (`xbox_sync`) | `/api/xbox-achievements/sync-all`, `/api/xbox/sync-achievements` (editor) | global client id; the caller's tokens | the caller's Xbox rows |
@@ -277,6 +277,26 @@ admin-only (`/api/scan-trophies`).
 - **INV-19** — Clear RA data deletes only RA progress rows; Steam and Xbox
   rows stay. *Test:* `tests/test_pass59_trophy_dataloss.py::test_clear_ra_data_keeps_steam_and_xbox_rows`.
   *Breaks when:* either `/api/clear-ra-data` delete loses its source filter.
+- **INV-20** — The RA single-game sync stores the game's achievement total.
+  *Test:* `tests/test_pass59_118_trophies.py::test_ra_single_game_sync_stores_the_total`. *Breaks when:*
+  the route reads a key `get_user_game_progress_custom` does not return.
+- **INV-21** — A background job signs in as the user who started it: RA sync
+  with that user's own RA account when set, PSN bulk refresh with that
+  user's cached tokens. *Test:* `tests/test_pass59_118_trophies.py` (`_callers_ra_account`,
+  `_signs_in_as_its_owner`). *Breaks when:* `_get_ra_credentials` or
+  `create_psn_client` is called without the job's user id.
+- **INV-22** — Achievement totals are the caller's own and count each earn
+  once: the dashboard sums only the caller's rows, and collector stats take
+  Steam and Xbox earns from their own tables only. *Test:* `tests/test_pass59_118_trophies.py`
+  (`_dashboard_achievement_totals_are_the_callers`,
+  `_collector_stats_count_a_steam_earn_once`).
+- **INV-23** — Resuming a job needs the role its start route needs, and a
+  per-user job is resumed or cancelled only by its owner or an admin (RA,
+  Steam and Xbox syncs; `services.jobs.base.may_control`). *Test:* `tests/test_pass59_118_trophies.py`
+  (`_resume_job_needs_`, `_only_the_owner_or_an_admin_cancels_`).
+- **INV-24** — A user's own RPCS3 trophy folder passes the same check as the
+  global one (`validate_settings_path`) and is stored canonical. *Test:*
+  `tests/test_pass59_118_trophies.py` (`_user_rpcs3_path_`).
 
 ## 6. Failure modes
 
@@ -314,6 +334,7 @@ admin-only (`/api/scan-trophies`).
 | INV-17 | none |
 | INV-18 | `tests/test_pass59_trophy_dataloss.py` |
 | INV-19 | `tests/test_pass59_trophy_dataloss.py` |
+| INV-20 to INV-24 | `tests/test_pass59_118_trophies.py` |
 
 ## 8. Alternatives considered (and rejected)
 
@@ -349,6 +370,7 @@ None. This spec records existing behaviour; it chose no design.
 | INV-17 | **nothing** |
 | INV-18 | §7's tests |
 | INV-19 | §7's tests |
+| INV-20 to INV-24 | §7's tests |
 
 ## 11. Cross-doc impact
 
@@ -370,24 +392,9 @@ queued by this document.
 - **PASS-59-110 landed during this write-up** (commit `10b2f15`). INV-2
   describes the committed code. Links made before it stay wrong until an
   all-systems RA Refresh runs.
-- **RA single-game sync stores zero totals.** `api_sync_game_achievements`
-  reads `total_count`, but `get_user_game_progress_custom` returns
-  `achievement_count`.
-- **RA background jobs use the global RA account** while writing the caller's
-  progress rows. The single-game route uses the caller's own account.
 - **Steam and Xbox jobs walk every game** with a platform id, not only the
   caller's.
-- **Not scoped to the caller:** dashboard achievement totals
-  (`app.py::get_stats`); RA, Steam and Xbox job status and cancel;
-  `/api/jobs/resume/<id>` resuming an admin-only job for any signed-in user.
-- **PSN bulk refresh starts without the user's cached tokens.**
-  `create_psn_client(self._npsso)` is called with no `user_id` on a thread
-  with no request user, so it signs in with the NPSSO each time. Inferred
-  from the code; not tested.
-- **`user_settings.rpcs3_trophy_path` is not path-validated.** The global
-  setting is. Only `NPWR*` folders and fixed filenames are read.
-- **Collector stats may count Steam and Xbox earns twice.**
-  `_gather_collection_stats` adds all-source `game_achievement_progress` sums
-  to counts from `steam_achievements` and `xbox_achievements`. Inferred from
-  the SQL; not tested.
+- **RA, Steam and Xbox job status names the running game to everyone.**
+  These are library titles every signed-in user can already see, so
+  PASS-59-118 left them; only the PSN status blanks its game.
 - **`/api/psn/save-npsso` returns the raw exception text** to the client.
