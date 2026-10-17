@@ -7454,6 +7454,17 @@ were corrected in `2836bc3` and are not repeated here.
 - **Source**: user request and decisions 2026-10-15; current state mapped
   from `routes/launch.py`, `services/launch_resolver.py` and
   `data/emulator_seeds.json` the same day.
+- **Progress** (2026-10-17): stage 2 shipped in v3.28.0 (d6bedce):
+  Emulator folders list, adapters (`services/emulator_adapters.py`),
+  Flatpak launchers, wiring, BIOS status, `GET /api/system_emulators`
+  and the mapping table. INV-1 to INV-6 and INV-19's detection half
+  tested; full suite 1591 passed; browser-checked desktop and 375 px.
+  Unpublished: v3.27.0 and v3.28.0 go out together (user, 2026-10-17).
+  - **Still owed from stage 2**: the help manual's Emulators section in
+  `templates/help.html` and every `help.<locale>.html` (spec §11), and
+  the changelog translations for v3.27.0–v3.28.0 at release time.
+  - **Next**: stage 4 (§4.6 per-game settings), whose PS3 gotcha above
+  still stands.
 
 ---
 
