@@ -111,7 +111,7 @@ sanitisation rule does not apply. Do not copy this shape for new routes.
 | **422 Unprocessable Entity** | **Spec target for new routes**; not currently emitted on the auth/profile paths. Legacy validators in `routes/auth.py` return 200 with `success: false` and no `field` kwarg (e.g. password < 12 chars, invalid rating value) — see §3.2 below. New routes that validate well-formed input should emit 422 with a `field=` kwarg when the failure is field-scoped. |
 | **429 Too Many Requests** | Rate-limit triggered. Both the custom IP/user bucket (login + change-password) and Flask-Limiter use 429 as the status code. Envelope shape differs — the custom bucket returns the standard `error()` envelope; Flask-Limiter returns plain HTML/text (its built-in default). See §7.3. |
 | **500 Internal Server Error** | Unhandled exception. The `@handle_api_errors` decorator (§4) emits the standard envelope; the global 500 handler does the same for anything that escapes. |
-| **503 Service Unavailable** | `/ready` only — DB probe failed. |
+| **503 Service Unavailable** | `/ready` — DB probe failed. Also any other `/api/*` path before first-run setup is done: `app.check_first_time_setup` answers `{"success": false, "error": "Setup required", "setup_required": true}` instead of redirecting to `/setup`. |
 
 ### 3.1 Auth-vs-redirect rule
 

@@ -790,6 +790,11 @@ def check_first_time_setup():
     has_rom_path = bool(user_settings.get('rom_path') or getattr(config, 'ROM_PATH', ''))
     setup_done = user_settings.get('setup_completed', False)
     if not setup_done and not has_rom_path:
+        # PASS-59-69: an /api/* caller reads JSON; fetch() would follow the
+        # redirect and read the setup page's HTML as a success.
+        if request.path.startswith('/api/'):
+            from flask_babel import gettext as _
+            return api_error(_('Setup required'), 503, setup_required=True)
         return redirect(url_for('setup_page'))
 
 

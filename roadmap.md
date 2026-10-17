@@ -6997,7 +6997,14 @@ were corrected in `2836bc3` and are not repeated here.
   already uses.
 - **Verify**: fresh tree, no settings file, `GET /api/games` returns a JSON
   envelope rather than a redirect, and the setup wizard still completes.
-- **Status**: planned (2026-09-02). Lanes: auth, api.
+- **Shipped** (2026-10-17, v3.29.6): per the 2026-09-02 decision,
+  `check_first_time_setup` answers `/api/*` with a 503 envelope carrying
+  `setup_required: true`; pages still redirect, and the wizard's exempt
+  endpoints are unchanged. `api-contracts.md`'s 503 row records it. Pinned
+  by `tests/test_pass59_auth_api.py` (setup-gate tests; the JSON one red
+  before the fix). Not walked in a browser: the core-bundle and base.html
+  calls on the setup page gate on `response.ok`, so a 503 is silent.
+- **Status**: done (2026-10-17). Lanes: auth, api.
 - **Decision** (2026-09-02, user): return a JSON envelope, not a redirect.
   Preference is 503 with a `setup_required` marker; the setup wizard's own API
   calls must keep working.

@@ -220,3 +220,35 @@ def test_deleting_a_user_removes_every_row_they_own(monkeypatch, setup_complete)
             execute(f"DELETE FROM {t} WHERE {c} = ?", (uid,))
         execute("DELETE FROM users WHERE id = ?", (uid,))
         delete_rows(('games', game_id), ('systems', sys_id))
+
+
+# ---------------------------------------------------------------------------
+# PASS-59-69 — before setup, /api/* answers JSON, pages still redirect
+# ---------------------------------------------------------------------------
+
+@pytest.fixture
+def setup_pending(monkeypatch):
+    monkeypatch.setattr('app.settings_manager.load_settings', lambda: {})
+    monkeypatch.setattr('app.config.ROM_PATH', '', raising=False)
+
+
+def test_setup_gate_answers_api_with_a_json_503(setup_pending):
+    import app as app_module
+    resp = app_module.app.test_client().get('/api/games')
+    assert resp.status_code == 503
+    body = resp.get_json()
+    assert body is not None and body['success'] is False
+    assert body['setup_required'] is True
+
+
+def test_setup_gate_still_redirects_pages(setup_pending):
+    import app as app_module
+    resp = app_module.app.test_client().get('/games')
+    assert resp.status_code == 302
+    assert urlparse(resp.headers['Location']).path == '/setup'
+
+
+def test_setup_wizard_api_stays_reachable(setup_pending):
+    import app as app_module
+    resp = app_module.app.test_client().get('/api/timezones')
+    assert resp.status_code == 200
