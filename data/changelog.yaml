@@ -1,3 +1,19 @@
+- version: 3.29.2
+  date: 2026-10-17
+  tags:
+  - type: security
+    label: ROM Tools scans stay inside your ROM folder
+  body: |
+    <ul>
+      <li><strong>ROM Tools scans stay inside your ROM folder.</strong> The
+        CHD Converter and CHD Verify scans no longer follow a shortcut
+        (symlink) that points outside your ROM folder. Before, a shortcut to
+        another drive made them list, and offer to convert, files from
+        there.</li>
+      <li>Unpacking a multi-disc archive ignores any shortcut packed inside
+        it, so a crafted archive cannot add files from elsewhere to the
+        disc list.</li>
+    </ul>
 - version: 3.29.1
   date: 2026-10-17
   tags:

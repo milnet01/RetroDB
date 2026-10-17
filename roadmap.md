@@ -6305,7 +6305,14 @@ orchestrator, several by execution rather than reading.
   regardless, and correct the spec's grep recipe to cover `glob("**/...")`.
 - **Verify**: plant a symlink escaping the ROM root and confirm the walk
   refuses it.
-- **Status**: planned (2026-09-01). Lanes: security, rom-tools.
+- **Shipped** (2026-10-17, v3.29.2): the CHD converter and CHD verify
+  scan endpoints glob through `_glob_under_rom_root` in `routes/tools.py`,
+  which drops matches resolving outside the ROM root. The extracted-archive
+  `rglob` and `CHDVerifier.find_chd_files` are guarded too. The spec's
+  enumeration recipe now greps `glob(` across both files. Pinned by
+  `tests/test_pass59_rom_tools.py` (symlink-escape route tests, red before
+  the fix). The guarded methods with no live caller were not deleted.
+- **Status**: done (2026-10-17). Lanes: security, rom-tools.
 - **Source**: review-code AI-fill/ROM-tools lane 2026-09-01.
 
 ---

@@ -806,8 +806,12 @@ class ArchiveScanner:
             if not m3u_entries:
                 # Files might be in a nested folder inside the archive
                 # Try to find them
+                # PASS-59-51 — the archive may carry symlink members.
+                extract_resolved = extract_folder.resolve()
                 for rom_ext in rom_extensions:
                     for found_file in extract_folder.rglob(f"*{rom_ext}"):
+                        if not _safe_under_root(found_file, extract_resolved):
+                            continue
                         relative_path = found_file.relative_to(path.parent)
                         m3u_entries.append(str(relative_path))
                         logger.debug(f"  M3U entry (searched): {relative_path}")
@@ -1336,8 +1340,11 @@ class CHDVerifier:
         root = Path(path)
         files = []
         
+        root_resolved = root.resolve()
         pattern = "**/*.chd" if self.config.recursive_scan else "*.chd"
         for f in root.glob(pattern):
+            if not _safe_under_root(f, root_resolved):
+                continue
             files.append({
                 "path": str(f),
                 "name": f.name,

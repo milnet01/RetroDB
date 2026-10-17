@@ -89,3 +89,56 @@ def test_m3u_staging_follows_temp_path(tmp_path):
     from scraper.rom_tools import ArchiveScanner, ROMToolsConfig
     scanner = ArchiveScanner(ROMToolsConfig(temp_path=str(tmp_path)))
     assert scanner._staging_folder().startswith(str(tmp_path))
+
+
+# --- PASS-59-51: the live scan endpoints refuse symlinks out of the ROM root ---
+
+@pytest.fixture
+def escaping_rom_root(tmp_path, monkeypatch):
+    """A ROM root holding one real image and a symlink to a folder outside it."""
+    import app as app_module
+    import settings_manager as _settings_manager
+    roms, outside = tmp_path / 'roms', tmp_path / 'outside'
+    roms.mkdir()
+    outside.mkdir()
+    for name in ('inside.chd', 'disc.iso'):
+        (roms / name).write_bytes(b'x')
+    for name in ('escaped.chd', 'escaped_disc.iso'):
+        (outside / name).write_bytes(b'x')
+    (roms / 'link').symlink_to(outside, target_is_directory=True)
+
+    user = {'id': 1, 'username': 'admin', 'role': 'admin'}
+    monkeypatch.setattr(app_module, 'get_current_user', lambda: user)
+    monkeypatch.setattr(app_module, 'get_user_settings', lambda _uid: None)
+    monkeypatch.setattr(_settings_manager, 'load_settings',
+                        lambda: {'setup_completed': True})
+    monkeypatch.setattr(_settings_manager, 'get_effective_path',
+                        lambda key, fallback='': str(roms))
+    monkeypatch.setitem(app_module.app.config, 'TESTING', True)
+    client = app_module.app.test_client()
+    with client.session_transaction() as sess:
+        sess['_csrf_token'] = _CSRF
+
+    def scan(route):
+        resp = client.post(route, json={'path': str(roms)},
+                           headers={'X-CSRF-Token': _CSRF})
+        assert resp.status_code == 200, resp.get_data(as_text=True)[:200]
+        return {f['name'] for f in resp.get_json()['files']}
+    return scan
+
+
+@pytest.mark.parametrize('route,inside', [
+    ('/api/rom-tools/chd-verify/scan', 'inside.chd'),
+    ('/api/rom-tools/chd-converter/scan', 'disc.iso'),
+])
+def test_scan_skips_files_reached_through_an_escaping_symlink(
+        escaping_rom_root, route, inside):
+    names = escaping_rom_root(route)
+    assert inside in names
+    assert not any(n.startswith('escaped') for n in names), names
+
+
+def test_extracted_folder_walk_is_guarded():
+    src = read_source('scraper/rom_tools.py')
+    walk = src.index('extract_folder.rglob(')
+    assert '_safe_under_root(' in src[walk:walk + 300]

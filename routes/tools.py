@@ -38,6 +38,16 @@ def _get_rom_path():
     """Get effective ROM path from settings (overrides config.py default)"""
     return settings_manager.get_effective_path('rom_path', config.ROM_PATH)
 
+
+def _glob_under_rom_root(pattern, recursive=True):
+    """PASS-59-51 — `glob` with `**` descends symlinked folders, so drop
+    any match that resolves outside the ROM root."""
+    from pathlib import Path
+    from scraper.rom_tools import _safe_under_root
+    root = Path(_get_rom_path()).resolve()
+    return [f for f in glob.glob(pattern, recursive=recursive)
+            if _safe_under_root(Path(f), root)]
+
 # Create blueprint
 tools_bp = Blueprint('tools', __name__)
 
@@ -623,7 +633,7 @@ def api_chd_converter_scan():
     
     for ext in extensions:
         pattern = os.path.join(path, '**', f'*{ext}')
-        files.extend(glob.glob(pattern, recursive=True))
+        files.extend(_glob_under_rom_root(pattern))
     
     result = []
     for f in sorted(files):
@@ -783,7 +793,7 @@ def api_chd_verify_scan():
 
     recursive = settings.get('recursive_scan', True)
     pattern = os.path.join(path, '**', '*.chd') if recursive else os.path.join(path, '*.chd')
-    files = glob.glob(pattern, recursive=recursive)
+    files = _glob_under_rom_root(pattern, recursive=recursive)
     
     result = [{'path': f, 'name': os.path.basename(f), 'size': os.path.getsize(f)} for f in sorted(files)]
     return success(files=result)

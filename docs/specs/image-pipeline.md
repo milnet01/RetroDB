@@ -398,10 +398,13 @@ entire filesystem — same shape of bug applies to media directories,
 though the orphan cleaner takes the `os.listdir` route (one level) so
 the rglob risk is concentrated in `scraper/rom_tools.py`.
 
-**Safe pattern** (used at every ROM_PATH-walk site in
-`scraper/rom_tools.py` — `grep -n "rglob" scraper/rom_tools.py` to enumerate;
-each is guarded by `_safe_under_root(p, root_resolved)`, defined near the
-top of the module):
+**Safe pattern** (used at every recursive ROM_PATH walk in
+`scraper/rom_tools.py` and `routes/tools.py` —
+`grep -n 'glob(' scraper/rom_tools.py routes/tools.py` lists the candidates,
+since a `**` pattern is often built in a variable; each recursive one is
+guarded by `_safe_under_root(p, root_resolved)`, defined near the top of
+`scraper/rom_tools.py`. In `routes/tools.py` the guard sits
+inside `_glob_under_rom_root`):
 
 ```python
 root = pathlib.Path(ROM_PATH).resolve()
@@ -420,7 +423,8 @@ for path in root.rglob(f"*{ext}"):
 
 Apply this same guard to any new code that walks media directories
 recursively — `os.listdir` over a single level is symlink-safe in the
-sense that `os.path.islink` filters cleanly, but `rglob` is not.
+sense that `os.path.islink` filters cleanly, but `rglob`, and `glob` with
+`**`, are not.
 
 `find_orphaned_media` also skips symlinks at scan time
 (`os.path.islink` check) and `clean_orphaned_files` re-checks at delete
