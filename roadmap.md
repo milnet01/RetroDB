@@ -8424,6 +8424,17 @@ were corrected in `2836bc3` and are not repeated here.
 - **Verify**: a 5-character password is refused in the browser with
   the 12-character message, and no request is sent.
 
+---
+
+#### Pass 59.122 The emulator seed wires Dolphin to a "gamecube" folder; libraries use "gc" (LOW, S).
+- **Where**: `data/emulator_seeds.json` maps Dolphin to system folder
+  `gamecube`; the live library's GameCube system has folder `gc`
+  (ES-DE's name), so the seeded mapping never matches.
+- **Plan**: red test first (a seed folder that no known system folder
+  uses); check every seed folder against ES-DE's names, not only this one.
+- **Verify**: a fresh seed wires Dolphin to `gc`.
+- **Status**: todo, after PASS-59-91 stage 4 merges (it edits the seeds).
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
