@@ -20,7 +20,7 @@ Origins:
 - [`../specs/api-contracts.md`](../specs/api-contracts.md) § 3.2 set 4xx as
   the target and named the 200 replies as legacy (commit `2eb831b`,
   2026-05-18).
-- PASS-2-9 finished the helper migration in v3.29.1. It left the 200
+- PASS-2-9 finished the helper migration in v3.30.0. It left the 200
   failure replies as they were, because converting one changes the status
   its caller sees.
 

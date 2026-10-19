@@ -286,7 +286,7 @@ are tracked here so the next pass picks them up:
   Non-standard payloads (e.g. `{'configured': True, 'error': '...'}` without
   `success`, or scanner-result passthroughs) stay as raw `jsonify` —
   document here if discovered.
-- **Shipped** (2026-10-17, v3.29.1): 117 responses across the ten
+- **Shipped** (2026-10-17, v3.30.0): 117 responses across the ten
   listed route files now use `success()` / `error()`, with body and status
   unchanged (keyword args only; `error()` only where an explicit code was
   already passed). Left raw by design: non-standard payloads (status
@@ -4055,7 +4055,7 @@ weren't worth blocking the ship on.  Ordered by rough priority.
   fieldset semantics don't fit. For prose-style labels heading a
   read-only display (e.g. `Database Location`), demote `<label>` to
   `<div class="form-label">` since there's no control to associate.
-- **Shipped** (2026-10-17, v3.29.1): the last open case, the redundant
+- **Shipped** (2026-10-17, v3.30.0): the last open case, the redundant
   `aria-label` on `#matchPlatformRequired` (now in
   `templates/_settings_tabs/scraping.html`), is removed, so the
   `<label for>` text is the accessible name. Every other case was closed
@@ -4218,7 +4218,7 @@ weren't worth blocking the ship on.  Ordered by rough priority.
     Synthesise the hash string directly:
     `f"pbkdf2:100000:{'a'*32}:{'b'*64}"` (already the pattern used at
     `:93`).
-- **Shipped** (2026-10-17, v3.29.1): 17 bullets done, 1 partly (pass40
+- **Shipped** (2026-10-17, v3.30.0): 17 bullets done, 1 partly (pass40
   `done.wait` stays a bounded wait: `pytest-timeout` is absent and a
   synchronous run deadlocks on `ImageResizeJob`'s non-reentrant lock; it
   now also joins and asserts the worker exited), 2 already done
@@ -4701,7 +4701,7 @@ weren't worth blocking the ship on.  Ordered by rough priority.
   verify the second half. A bump landed under a cleanup commit is exactly the
   rot §5b exists to prevent.
 - **Verify**: `./scripts/ci_local.sh` green after any bump; `pip-audit` clean.
-- **Shipped** (2026-10-17, v3.29.1): re-checked against upstream today,
+- **Shipped** (2026-10-17, v3.30.0): re-checked against upstream today,
   not the August snapshot. Actions repinned by SHA to latest:
   setup-python v7.0.0 (major; §5: its only breaking change, removing the
   `pip-install` input, touches nothing here, since we pass only
@@ -6343,7 +6343,7 @@ orchestrator, several by execution rather than reading.
   `get_game_details` (`:1019`), or at the interpolation site. `region_opts` at
   `:548` has the same shape at lower reach.
 - **Verify**: set a hostile publisher and confirm the prompt is escaped.
-- **Shipped** (2026-10-17, v3.29.1): `_build_prompt` runs each existing
+- **Shipped** (2026-10-17, v3.30.0): `_build_prompt` runs each existing
   value through `_sanitize_prompt_input` (max 512) before the "Current
   value" line; region options are sanitised too. Pinned by
   `tests/test_pass59_scrapers.py::test_ai_prompt_sanitises_existing_values`
@@ -6373,7 +6373,7 @@ orchestrator, several by execution rather than reading.
   regardless, and correct the spec's grep recipe to cover `glob("**/...")`.
 - **Verify**: plant a symlink escaping the ROM root and confirm the walk
   refuses it.
-- **Shipped** (2026-10-17, v3.29.1): the CHD converter and CHD verify
+- **Shipped** (2026-10-17, v3.30.0): the CHD converter and CHD verify
   scan endpoints glob through `_glob_under_rom_root` in `routes/tools.py`,
   which drops matches resolving outside the ROM root. The extracted-archive
   `rglob` and `CHDVerifier.find_chd_files` are guarded too. The spec's
@@ -6400,7 +6400,7 @@ orchestrator, several by execution rather than reading.
   recomputed.
 - **Verify**: place a corrupt image among screenshots and confirm dedup
   continues.
-- **Shipped** (2026-10-17, v3.29.1): `keep_screenshot_if_unique` hashes
+- **Shipped** (2026-10-17, v3.30.0): `keep_screenshot_if_unique` hashes
   once and appends only a non-None hash; matching moved to `_find_match`,
   shared with `is_visual_duplicate`. `compute_dhash` reads pixels with
   `tobytes()` instead of the deprecated `getdata()`. Pinned by
@@ -6517,7 +6517,7 @@ orchestrator, several by execution rather than reading.
 - **Plan**: move `:828` inside the try, and wrap each worker body in
   `try/except/finally` that sets `status='failed'` and `end_time`.
 - **Verify**: delete a file mid-verify; confirm the task reaches `failed`.
-- **Shipped** (2026-10-17, v3.29.1): `getsize` moved inside the per-file
+- **Shipped** (2026-10-17, v3.30.0): `getsize` moved inside the per-file
   try, so a vanished file counts as invalid. New `_guarded_worker` wraps
   the conversion, verification and duplicate-scan workers: an uncaught
   error sets `failed` and `end_time`, so the reaper collects it. Pinned by
@@ -6543,7 +6543,7 @@ orchestrator, several by execution rather than reading.
 - **Plan**: for each, either wire it to its intended caller (the extraction's
   stated purpose) or delete it **and correct the changelog claim**. Do not
   leave a changelog entry describing an unreachable feature.
-- **Shipped** (2026-10-17, v3.29.1): both deleted rather than wired.
+- **Shipped** (2026-10-17, v3.30.0): both deleted rather than wired.
   `/compare` already server-renders, so `/api/games/compare` had no use.
   The live PSN linker works on pre-fetched rows; the service version
   queries per title, so wiring it in would have slowed sync. The two old
@@ -6568,7 +6568,7 @@ orchestrator, several by execution rather than reading.
   columns in `COALESCE(NULLIF(?, 0), column)`.
 - **Verify**: feed a response with the block omitted; confirm stored counts
   survive.
-- **Shipped** (2026-10-17, v3.29.1): `_psn_trophy_counts` maps a missing
+- **Shipped** (2026-10-17, v3.30.0): `_psn_trophy_counts` maps a missing
   earned/defined block to None, not 0. The single-game UPDATE wraps every
   count column in `COALESCE(?, col)`, and its reply reports the stored
   values. The full sync's upsert moved to `_upsert_psn_title`: a new row
@@ -6614,7 +6614,7 @@ orchestrator, several by execution rather than reading.
   make the disk guard fail closed.
 - **Verify**: interrupt each job mid-run and confirm resume neither skips nor
   double-counts; corrupt a `.webp` sibling and confirm the original survives.
-- **Shipped** (2026-10-17, v3.29.1): all four parts confirmed live, each
+- **Shipped** (2026-10-17, v3.30.0): all four parts confirmed live, each
   run red first. (a) `ra_refresh` commits per game, before counting. (b)
   resume persists `'current': i` in ra_refresh, psn_refresh, ra_sync and
   both platform_sync jobs; Pass 49.8's three named sites were still broken
@@ -6656,7 +6656,7 @@ orchestrator, several by execution rather than reading.
   that row is what would have warned a reader.
 - **Verify**: migrate a DB carrying an extra legacy column and confirm the app
   boots.
-- **Shipped** (2026-10-17, v3.29.1): fixed in place under §4's
+- **Shipped** (2026-10-17, v3.30.0): fixed in place under §4's
   provably-nil carve-out, not by a forward migration: the runner never
   re-runs a migration at or below `user_version`, and each edited line also
   sits behind an early return an already-migrated DB takes. A forward 016
@@ -6835,7 +6835,7 @@ when already in the file.
   inline `<script>` with no nonce, because it is built in a route rather than
   a template, so the template-scoped FU.1 inventory misses it.
 
-- **Shipped** (2026-10-17, v3.29.1): worked as three file-disjoint
+- **Shipped** (2026-10-17, v3.30.0): worked as three file-disjoint
   groups, every sub-finding run red first. Routes (all 10): blank JSON
   title kept; AI-fill column dict; completion gated on `edit` (and greyed
   out in `game_detail.html` for non-editors); `/api/restart` drains jobs
@@ -7165,7 +7165,7 @@ were corrected in `2836bc3` and are not repeated here.
   already uses.
 - **Verify**: fresh tree, no settings file, `GET /api/games` returns a JSON
   envelope rather than a redirect, and the setup wizard still completes.
-- **Shipped** (2026-10-17, v3.29.1): per the 2026-09-02 decision,
+- **Shipped** (2026-10-17, v3.30.0): per the 2026-09-02 decision,
   `check_first_time_setup` answers `/api/*` with a 503 envelope carrying
   `setup_required: true`; pages still redirect, and the wizard's exempt
   endpoints are unchanged. `api-contracts.md`'s 503 row records it. Pinned
@@ -7389,7 +7389,7 @@ were corrected in `2836bc3` and are not repeated here.
   reads it, and update the design-standards list naming it. Then drop it
   from `_KNOWN_DEAD_JS` in `tests/test_pass59_frontend.py`.
 - **Verify**: the route-map test passes with the exclusion removed.
-- **Shipped** (2026-10-17, v3.29.1): `static/js/trophies.js` deleted,
+- **Shipped** (2026-10-17, v3.30.0): `static/js/trophies.js` deleted,
   with its `build_js.py` entry, the Pass 29.1 source test that read it,
   its name in `RETRODB_DESIGN_STANDARDS.md`, and its `_KNOWN_DEAD_JS`
   exclusion (the route-map test passes without it). Catalogs regenerated:
@@ -7408,7 +7408,7 @@ were corrected in `2836bc3` and are not repeated here.
 - **Plan**: remove the default and the validator, and check the Settings
   export / import and backup paths for a reader first.
 - **Verify**: `git grep` finds no reader; saving Settings still round-trips.
-- **Shipped** (2026-10-17, v3.29.1): the `theme` default and its
+- **Shipped** (2026-10-17, v3.30.0): the `theme` default and its
   validator are gone; `ALLOWED_THEMES` stays (it validates
   `theme_preference`). `git grep` finds no reader. A stale `theme` key in an
   existing `data/settings.json` is harmless: `/api/settings` validates only
@@ -7436,7 +7436,7 @@ were corrected in `2836bc3` and are not repeated here.
   the same loop that sets `.active`.
 - **Verify**: a fanart file named with an apostrophe shows; navigating away
   mid-poll logs nothing; the selected tab reports `aria-selected="true"`.
-- **Shipped** (2026-10-17, v3.29.1): (a) the six fanart `url('…')`
+- **Shipped** (2026-10-17, v3.30.0): (a) the six fanart `url('…')`
   attributes percent-encode an apostrophe (`|replace("'", '%27')`); (b)
   `_logApiError` skips `AbortError` for get/post/postForm, and the 30 s
   timeout now aborts with a `TimeoutError` reason, so it still logs; (c)
@@ -7616,7 +7616,7 @@ were corrected in `2836bc3` and are not repeated here.
   localStorage when they differ after login. Decide which in the fix.
 - **Verify**: fresh browser profile, account with a non-default saved theme,
   log in: the saved theme shows. Regression test pins it.
-- **Shipped** (2026-10-17, v3.29.1): the server value wins. base.html's
+- **Shipped** (2026-10-17, v3.30.0): the server value wins. base.html's
   FOUC block applies the signed-in user's `theme_preference` before
   localStorage and marks it `data-user-theme`; `ThemeManager.init` reads
   that first, so localStorage is overwritten with the saved theme. The
@@ -7730,7 +7730,7 @@ were corrected in `2836bc3` and are not repeated here.
   The `article_placement` setting may be the place to start.
 - **Verify**: a regression test where a title ending ", The" matches its
   "The …" result; then one real scrape of each.
-- **Shipped** (2026-10-17, v3.29.1): root cause in
+- **Shipped** (2026-10-17, v3.30.0): root cause in
   `scraper/match_scorer.py::calculate_title_match_score`. A trailing
   article was never moved back, and the normaliser kept the comma on the
   word, so "Legend of Zelda, The" scored 68 against "The Legend of Zelda",
@@ -7845,7 +7845,7 @@ were corrected in `2836bc3` and are not repeated here.
 - **Why**: Pass 24.1 made every role sign in with a password, but the
   dialog still calls it an admin login. It misleads: the user recalled
   non-admin accounts as passwordless.
-- **Shipped** (2026-10-17, v3.29.1): the dialog heading reuses the
+- **Shipped** (2026-10-17, v3.30.0): the dialog heading reuses the
   translated "Login"; the placeholder is "Enter your password". The same
   stale claim was fixed on Settings → Account ("Every account needs a
   password to log in.") and in the English Help login paragraph, checked
@@ -7891,7 +7891,7 @@ were corrected in `2836bc3` and are not repeated here.
   fallback default and `_MODEL_URLS` order in `services/image_utils.py`.
 - **Why**: the Xenova address returns 401, so every fresh install logs a
   warning before the AXERA-TECH fallback succeeds (wintest, 2026-10-17).
-- **Shipped** (2026-10-17, v3.29.1): checked live: the Xenova URL
+- **Shipped** (2026-10-17, v3.30.0): checked live: the Xenova URL
   answers 401, the AXERA-TECH one 200 (66,991,363 bytes). AXERA-TECH is
   now the default in `config.example.py` and `image_utils`' fallback
   default; Xenova is dropped from `_MODEL_URLS`. `image-pipeline.md`
@@ -7906,7 +7906,7 @@ were corrected in `2836bc3` and are not repeated here.
   cp1252 and the banner's box-drawing characters raise
   `UnicodeEncodeError`. A console window is unaffected. Seen on wintest,
   2026-10-17.
-- **Shipped** (2026-10-17, v3.29.1): `install.py::_prepare_output`
+- **Shipped** (2026-10-17, v3.30.0): `install.py::_prepare_output`
   reconfigures a redirected stdout/stderr to UTF-8 (a console is left
   alone), called before the banner. Pinned by
   `tests/test_pass59_packaging.py::test_install_banner_survives_a_cp1252_redirect`
@@ -7921,7 +7921,7 @@ were corrected in `2836bc3` and are not repeated here.
 - **Why**: it reads `#apikey-ai-provider`, which lives on the Scraping tab,
   and runs on page load. A viewer's page has no such element, so the
   console shows a TypeError on every Settings visit (Chrome, 2026-10-17).
-- **Shipped** (2026-10-17, v3.29.1): `updateAIProviderFields` returns
+- **Shipped** (2026-10-17, v3.30.0): `updateAIProviderFields` returns
   when `#apikey-ai-provider` is absent. Browser check as a viewer on a
   scratch-DB server: the select is absent, Settings loads with no console
   error, and `initMatchFilter`, which ran after the throw, now runs too.
@@ -8014,7 +8014,7 @@ were corrected in `2836bc3` and are not repeated here.
   version comparison uses stored data (title, date, publisher, file size and
   revision, languages from No-Intro tags, ratings, achievements support).
   Versions in one group are not duplicates.
-- **Shipped** (2026-10-19, commit 3b51dcd, in the open v3.29.1): built to
+- **Shipped** (2026-10-19, commit 3b51dcd, in the open v3.30.0): built to
   the spec, tests per §7, all seen red first. Fold-back in the spec and
   its loop log: foreign_keys is off, so migration 016 uses triggers; the
   scraper keeps a stored id (INV-10); signals 3 and 4 narrowed to the
@@ -8120,7 +8120,7 @@ were corrected in `2836bc3` and are not repeated here.
   625 (DOOM) hold 528 beside "Doom 2". Grouping non-bonus games by
   `(system_id, ra_game_id)` gives 140 groups of two or more; the sample
   read were sequels, not regional versions.
-- **Shipped** (2026-10-17, v3.29.1): both RA matchers built
+- **Shipped** (2026-10-17, v3.30.0): both RA matchers built
   significant-word sets keeping only words longer than one character, so
   the sequel number vanished and "Donkey Kong Country 2" equalled "Donkey
   Kong Country": `services/achievement_linking.py::ra_significant_words`
@@ -8200,7 +8200,7 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.114 Error replies still sent with HTTP 200 in ten route files (LOW, M).
-- **Resolution** (2026-10-17): Shipped 2026-10-17 (07229ac, merged in 46fa22f; 3.29.1, open). Every
+- **Resolution** (2026-10-17): Shipped 2026-10-17 (07229ac, merged in 46fa22f; 3.30.0, open). Every
   hand-built success:false reply in the ten listed files now uses
   error(msg, 4xx/5xx); red first in
   tests/test_pass59_114_error_status.py (19 cases).
@@ -8252,7 +8252,7 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.116 The Museum's bulk controller-image fetch runs inside the web request (LOW, M).
-- **Resolution** (2026-10-17): Shipped 2026-10-17 in 6d452dc (3.29.1, open): MuseumImageFetchJob with
+- **Resolution** (2026-10-17): Shipped 2026-10-17 in 6d452dc (3.30.0, open): MuseumImageFetchJob with
   start/status/cancel; the Museum page polls, shows progress, offers
   Cancel. Tests: tests/test_pass59_museum_images_job.py. Browser walk
   owed.
@@ -8277,7 +8277,7 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.117 Three trophy paths can destroy stored data (HIGH, M).
-- **Resolution** (2026-10-17): Shipped 2026-10-17 in 31d1ae5 (3.29.1, open). All three reproduced red
+- **Resolution** (2026-10-17): Shipped 2026-10-17 in 31d1ae5 (3.30.0, open). All three reproduced red
   first in tests/test_pass59_trophy_dataloss.py, then fixed. A network
   error on the RA list fetch already failed safe; the HTTP-error path
   was the live bug.
@@ -8298,7 +8298,7 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.118 Smaller trophy defects from the trophies spec (MEDIUM, M).
-- **Resolution** (2026-10-17): Shipped 2026-10-17 in e79d7a4 (3.29.1, open). Every item reproduced
+- **Resolution** (2026-10-17): Shipped 2026-10-17 in e79d7a4 (3.30.0, open). Every item reproduced
   red first in tests/test_pass59_118_trophies.py, both "unverified" ones
   included. Dropped one half: RA/Steam/Xbox job status naming the
   running game, a library title every user sees (trophies.md §13). Owed:
@@ -8323,7 +8323,7 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.119 ROM Tools defects from the rom-tools spec (MEDIUM, M).
-- **Resolution** (2026-10-17): Shipped 2026-10-17 (32c899f, d54973c, merged to main; 3.29.1, open).
+- **Resolution** (2026-10-17): Shipped 2026-10-17 (32c899f, d54973c, merged to main; 3.30.0, open).
   Every listed item, plus the four fact-gathering findings, reproduced
   red first in tests/test_pass59_119_rom_tools.py, then fixed; none
   dropped. UI items (settings reset, archive-scanner staging text, batch
