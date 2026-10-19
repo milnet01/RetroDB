@@ -1404,8 +1404,10 @@ function saveLanguage(locale) {
             showNotification(result.error || {{ _('Failed to save language')|tojson }}, 'error');
         }
     })
-    .catch(() => {
-        showNotification({{ _('Network error saving language')|tojson }}, 'error');
+    .catch(err => {
+        // A refusal carries the server's message on err.status (PASS-59-120).
+        showNotification(err.status ? err.message
+            : {{ _('Network error saving language')|tojson }}, 'error');
     });
 }
 

@@ -121,9 +121,9 @@ subsystem, write the spec then (§ 1's escape hatch).
 - **Per-user data.** Every table holding one user's state carries an owner
   column, and every read filters on it.
   [`specs/auth.md`](specs/auth.md) § 5.
-- **Error replies.** New routes answer a failure with a 4xx status. Older
-  validators still answer `success: false` at HTTP 200. Decided in
-  [decision 0003](decisions/0003-error-code-200-convention.md).
+- **Error replies.** A failed request answers with a 4xx or 5xx status and
+  the `success: false` envelope.
+  [`specs/api-contracts.md`](specs/api-contracts.md) § 3.
 - **Translation.** Every user-facing string is wrapped for translation.
   [`specs/i18n.md`](specs/i18n.md) § 2, and `CLAUDE.md` § Mandatory Workflow.
 - **Build and bundles.** CSS and JS are edited as source files and built into

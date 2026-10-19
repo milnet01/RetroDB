@@ -133,7 +133,7 @@ def api_delete_screenshot(game_id):
     screenshot_to_delete = data.get('screenshot')
 
     if not screenshot_to_delete:
-        return error(_('No screenshot specified'), code=200)
+        return error(_('No screenshot specified'), code=400)
 
     if not safe_filename(screenshot_to_delete):
         return error(_('Invalid screenshot filename'), 400)
@@ -146,7 +146,7 @@ def api_delete_screenshot(game_id):
     screenshots = [s.strip() for s in current.split(',') if s.strip()]
 
     if screenshot_to_delete not in screenshots:
-        return error(_('Screenshot not found'), code=200)
+        return error(_('Screenshot not found'), code=404)
 
     screenshots.remove(screenshot_to_delete)
     new_screenshots = ','.join(screenshots)

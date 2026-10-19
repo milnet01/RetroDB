@@ -260,11 +260,11 @@ def api_clz_parse():
         )
 
     if 'file' not in request.files:
-        return error(_('No file uploaded'), code=200)
+        return error(_('No file uploaded'), code=400)
 
     file = request.files['file']
     if not file.filename.lower().endswith('.pdf'):
-        return error(_('File must be a PDF'), code=200)
+        return error(_('File must be a PDF'), code=415)
 
     # Read file content for size and magic byte validation
     MAX_PDF_SIZE = 50 * 1024 * 1024  # 50MB
@@ -567,7 +567,7 @@ def api_clz_import():
     games = data.get('games', [])
 
     if not games:
-        return error(_('No games to import'), code=200)
+        return error(_('No games to import'), code=400)
 
     imported = 0
     skipped = 0

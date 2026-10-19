@@ -59,13 +59,13 @@ def api_login():
         return error(_('Too many login attempts. Please try again later.'), 429)
 
     if not user_id:
-        return error(_('No user selected'), code=200)
+        return error(_('No user selected'), code=400)
 
     user = query("SELECT * FROM users WHERE id = ? AND is_active = 1", (user_id,), one=True)
 
     if not user:
         record_login_attempt(client_ip, False)
-        return error(_('User not found'), code=200)
+        return error(_('User not found'), code=404)
 
     # Pass 24.1 — every role requires a password.
     if not user['password_hash']:
@@ -76,13 +76,13 @@ def api_login():
         record_login_attempt(client_ip, False)
         return error(
             _('This account has no password set. Ask an administrator to set one.'),
-            code=200,
+            code=403,
         )
     if not password:
-        return error(_('Password required'), code=200, needs_password=True)
+        return error(_('Password required'), code=401, needs_password=True)
     if not verify_password(password, user['password_hash']):
         record_login_attempt(client_ip, False)
-        return error(_('Invalid password'), code=200)
+        return error(_('Invalid password'), code=401)
 
     # Migrate legacy (pre-v2.84.0) password hash to current OWASP floor.
     # We have the plaintext here, so this is the natural rehash point.
@@ -181,15 +181,15 @@ def api_create_user():
     role = data.get('role', 'viewer')
 
     if not username:
-        return error(_('Username is required'), code=200)
+        return error(_('Username is required'), code=400)
 
     if role not in VALID_ROLES:
-        return error(_('Invalid role'), code=200)
+        return error(_('Invalid role'), code=422, field='role')
 
     # Check if username already exists
     existing = query("SELECT id FROM users WHERE username = ?", (username,), one=True)
     if existing:
-        return error(_('Username already exists'), code=200)
+        return error(_('Username already exists'), code=409)
 
     # Pass 24.1 — every role now requires a password, so every new account
     # seeds the same `changeme` + force_password_change=1 onboarding flow
@@ -199,7 +199,7 @@ def api_create_user():
     raw_password = data.get('password', '').strip()
     if raw_password:
         if len(raw_password) < 12:
-            return error(_('Password must be at least 12 characters'), code=200)
+            return error(_('Password must be at least 12 characters'), code=422, field='password')
         password_hash = hash_password(raw_password)
         must_change = 0
     else:
@@ -225,7 +225,7 @@ def api_update_user(user_id):
     
     user = query("SELECT * FROM users WHERE id = ?", (user_id,), one=True)
     if not user:
-        return error(_('User not found'), code=200)
+        return error(_('User not found'), code=404)
 
     updates = []
     params = []
@@ -248,7 +248,7 @@ def api_update_user(user_id):
         # password via this endpoint, violating the Pass 24.4 contract.
         raw_password = data['new_password']
         if len(raw_password) < 12:
-            return error(_('Password must be at least 12 characters'), code=200)
+            return error(_('Password must be at least 12 characters'), code=422, field='password')
         updates.append('password_hash = ?')
         params.append(hash_password(raw_password))
         # Pass 33.4: admin-reset passwords must trigger a force-change on
@@ -273,16 +273,16 @@ def api_delete_user(user_id):
     """Delete a user (admin only)"""
     user = query("SELECT * FROM users WHERE id = ?", (user_id,), one=True)
     if not user:
-        return error(_('User not found'), code=200)
+        return error(_('User not found'), code=404)
 
     # Can't delete yourself
     if g.user['id'] == user_id:
-        return error(_('Cannot delete your own account'), code=200)
+        return error(_('Cannot delete your own account'), code=403)
 
     # Can't delete the last admin
     admin_count = query("SELECT COUNT(*) as count FROM users WHERE role = 'admin' AND is_active = 1", one=True)
     if user['role'] == 'admin' and admin_count['count'] <= 1:
-        return error(_('Cannot delete the last admin user'), code=200)
+        return error(_('Cannot delete the last admin user'), code=403)
 
     # Custom avatar file, removed only once the rows are gone.
     avatar_path = None
@@ -339,11 +339,7 @@ def _delete_user_and_owned_rows(user_id):
 def api_user_settings():
     """Get or update current user's settings"""
     if not g.user:
-        # 401, not code=200. The 200-with-success:false shape is this
-        # file's house convention for VALIDATION rejections, where the
-        # caller is authenticated and the message is the payload. An
-        # anonymous caller is a different case and api-contracts.md §11
-        # mandates 401 for it (Pass 49.5).
+        # 401 for an anonymous caller (api-contracts.md §3, Pass 49.5).
         return error(_('Not logged in'), 401)
 
     if request.method == 'GET':
@@ -381,22 +377,19 @@ def api_user_settings():
     # PASS-59-94 — the pseudolocale is accepted from admins only.
     if ('locale_preference' in data and data['locale_preference']
             not in selectable_locales(has_permission('manage_settings'))):
-        # code=200 (success:false envelope) to match every other validation
-        # error in this route — API.post throws on non-2xx, so a 400 would
-        # surface as a generic "Network error" toast instead of this message.
-        return error(_('Invalid locale'), code=200)
+        return error(_('Invalid locale'), code=422, field='locale_preference')
 
     # Pass 59.38 — the stored theme is emitted into every page's FOUC script,
     # so only a known theme key may be saved.
     if 'theme_preference' in data and data['theme_preference'] not in ALLOWED_THEMES:
-        return error(_('Invalid theme'), code=200)
+        return error(_('Invalid theme'), code=422, field='theme_preference')
 
     # PASS-59-118 — the same check the global RPCS3 path gets in settings.
     if 'rpcs3_trophy_path' in data:
         ok, result = validate_settings_path(data['rpcs3_trophy_path'], allow_empty=True)
         if not ok:
             return error(_('Invalid RPCS3 trophy folder: %(reason)s') % {'reason': result},
-                         code=200)
+                         code=422, field='rpcs3_trophy_path')
         data['rpcs3_trophy_path'] = result
 
     for field in allowed_fields:
@@ -435,18 +428,18 @@ def api_change_password():
     new_password = data.get('new_password', '')
 
     if not new_password:
-        return error(_('New password is required'), code=200)
+        return error(_('New password is required'), code=400)
 
     # Pass 24.4 — 8 → 12 char floor. OWASP 2026 Password Storage Cheat
     # Sheet minimum for accounts without MFA; 8 chars let `password` pass.
     if len(new_password) < 12:
-        return error(_('Password must be at least 12 characters'), code=200)
+        return error(_('Password must be at least 12 characters'), code=422, field='password')
 
     # Verify current password
     user = query("SELECT password_hash FROM users WHERE id = ?", (user_id,), one=True)
     if not user or not verify_password(current_password, user['password_hash']):
         record_login_attempt(rl_bucket, False)
-        return error(_('Current password is incorrect'), code=200)
+        return error(_('Current password is incorrect'), code=403)
 
     # Update password and clear force_password_change flag
     new_hash = hash_password(new_password)
@@ -475,17 +468,17 @@ def api_force_change_password():
         return error(_('Not logged in'), 401)
 
     if not g.user.get('force_password_change'):
-        return error(_('Password change not required'), code=200)
+        return error(_('Password change not required'), code=400)
 
     data = request.get_json(silent=True) or {}
     new_password = data.get('new_password', '')
 
     if not new_password:
-        return error(_('New password is required'), code=200)
+        return error(_('New password is required'), code=400)
 
     # Pass 24.4 — 8 → 12 char floor, matching api_change_password.
     if len(new_password) < 12:
-        return error(_('Password must be at least 12 characters'), code=200)
+        return error(_('Password must be at least 12 characters'), code=422, field='password')
 
     # Update password and clear force flag
     new_hash = hash_password(new_password)
@@ -527,21 +520,21 @@ def _delete_custom_avatar(user_id):
 def api_upload_avatar():
     """Upload a custom avatar image"""
     if 'avatar' not in request.files:
-        return error(_('No file provided'), code=200)
+        return error(_('No file provided'), code=400)
 
     file = request.files['avatar']
     if not file.filename:
-        return error(_('No file selected'), code=200)
+        return error(_('No file selected'), code=400)
 
     # Validate extension
     ext = file.filename.rsplit('.', 1)[-1].lower() if '.' in file.filename else ''
     if ext not in ALLOWED_AVATAR_EXTENSIONS:
-        return error(_('Invalid file type. Allowed: jpg, png, gif, webp'), code=200)
+        return error(_('Invalid file type. Allowed: jpg, png, gif, webp'), code=415)
 
     # Read file data and check size
     file_data = file.read()
     if len(file_data) > MAX_AVATAR_SIZE:
-        return error(_('File too large. Maximum size is 2MB'), code=200)
+        return error(_('File too large. Maximum size is 2MB'), code=413)
 
     # Delete any previous custom avatar
     _delete_custom_avatar(g.user['id'])
@@ -575,7 +568,7 @@ def api_upload_avatar():
         img.save(avatar_path, quality=90)
     except Exception:
         # PIL.verify() failed or decode error — treat as invalid upload.
-        return error(_('Invalid image file'), code=200)
+        return error(_('Invalid image file'), code=422)
 
     # Update user settings
     execute("UPDATE user_settings SET avatar = ? WHERE user_id = ?", (filename, g.user['id']))

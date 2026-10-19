@@ -81,7 +81,7 @@ def api_game_ai_fill(game_id):
         if not ai_data:
             return error(
                 _('AI returned no data. Check your API key and provider settings.'),
-                code=200,
+                code=502,
             )
 
         filled_fields = []

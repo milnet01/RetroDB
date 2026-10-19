@@ -32,7 +32,7 @@ def api_bulk_scrape():
     game_id = data.get('game_id')
 
     if not game_id:
-        return error(_('No game ID provided'), code=200)
+        return error(_('No game ID provided'), code=400)
 
     # Get game info
     game = query("""
@@ -43,7 +43,7 @@ def api_bulk_scrape():
     """, (game_id,), one=True)
 
     if not game:
-        return error(_('Game not found'), code=200)
+        return error(_('Game not found'), code=404)
 
     # Skip if already scraped
     if game['scraped']:
@@ -139,9 +139,9 @@ def api_bulk_scrape():
                 filled_fields=len(result.get('filled_fields', [])),
             )
         else:
-            return error(_('Failed to apply metadata'), code=200)
+            return error(_('Failed to apply metadata'), code=500)
     else:
-        return error(_('No matches found'), code=200)
+        return error(_('No matches found'), code=404)
 
 
 # =============================================================================
@@ -160,7 +160,7 @@ def api_bulk_scrape_job_start():
     scrape_mode = data.get('scrape_mode', 'fill_missing')
 
     if not game_ids:
-        return error(_('No game IDs provided'), code=200)
+        return error(_('No game IDs provided'), code=400)
 
     result = bulk_scrape_job.start(game_ids, system_id, return_url, scrape_mode)
     return jsonify(result)

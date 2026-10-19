@@ -1,8 +1,9 @@
 # 0003 — Some error replies still use HTTP 200
 
-**Status:** accepted, transitional. **Recorded:** 2026-10-17 (roadmap
-PASS-59-65). **Narrowed:** 2026-10-17 by PASS-59-114, which converted the
-hand-built replies; the `code=200` calls below remain.
+**Status:** ended 2026-10-19 by PASS-59-120, which converted the last
+`code=200` calls. **Recorded:** 2026-10-17 (roadmap PASS-59-65).
+**Narrowed:** 2026-10-17 by PASS-59-114, which converted the hand-built
+replies.
 
 ## Context
 
@@ -48,3 +49,5 @@ Origins:
   `API.postForm`) rejects a failed request with the reply's `error` text as
   the message, the envelope on `.data` and the status on `.status`.
 - This record ends when the `code=200` calls above are converted.
+  PASS-59-120 did so on 2026-10-19. `/api/psn/status` keeps its 200, as
+  above.

@@ -43,9 +43,7 @@ class GameNotFound(HLTBError):
 
 
 class NoHLTBMatch(HLTBError):
-    # HTTP 200 with success:false matches the existing wire contract — the
-    # frontend treats "no match" as a normal outcome, not a failure state.
-    status_code = 200
+    status_code = 404
 
 
 class MissingPlaytime(HLTBError):
@@ -168,14 +166,14 @@ class HLTBLookup:
         If `alternate_titles` is omitted and `game_id` is supplied, the game's
         stored alt titles are loaded from the DB as a fallback.
 
-        Raises HLTBError(200) if no search query is provided.
+        Raises HLTBError(400) if no search query is provided.
         Raises NoHLTBMatch if HLTB has no match.
         """
         from scraper.hltb_lookup import lookup_playtime, format_playtime
 
         q = str(search_query or '').strip()
         if not q:
-            raise HLTBError(_('No search query provided'), status_code=200)
+            raise HLTBError(_('No search query provided'))
 
         alts = [str(t).strip() for t in alternate_titles if str(t).strip()] \
             if isinstance(alternate_titles, list) else []

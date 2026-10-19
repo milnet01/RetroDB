@@ -226,7 +226,7 @@ def api_get_achievements(game_id):
             source='local',
         )
     else:
-        return error(_('No progress data - click Refresh to sync'), code=200)
+        return error(_('No progress data - click Refresh to sync'), code=404)
 
 
 @bp.route('/api/achievements/sync/<int:game_id>', methods=['POST'])
@@ -240,11 +240,11 @@ def api_sync_game_achievements(game_id):
     game = query("SELECT ra_game_id FROM games WHERE id = ?", (game_id,), one=True)
 
     if not game or not game['ra_game_id']:
-        return error(_('Game not linked to RetroAchievements'), code=200)
+        return error(_('Game not linked to RetroAchievements'), code=400)
 
     username, api_key = get_user_ra_credentials()
     if not api_key or not username:
-        return error(_('RetroAchievements not configured'), code=200)
+        return error(_('RetroAchievements not configured'), code=400)
 
     progress = get_user_game_progress_custom(game['ra_game_id'], username, api_key)
 
@@ -278,7 +278,7 @@ def api_sync_game_achievements(game_id):
 
         return success(data=progress)
     else:
-        return error(_('Could not fetch achievement data'), code=200)
+        return error(_('Could not fetch achievement data'), code=502)
 
 
 @bp.route('/api/achievements/sync-system/<int:system_id>', methods=['POST'])
@@ -291,7 +291,7 @@ def api_sync_system_achievements(system_id):
     system = query("SELECT id, name FROM systems WHERE id = ?", (system_id,), one=True)
     if not system:
         system_log('error', f'System not found: {system_id}')
-        return error(_('System not found'), code=200)
+        return error(_('System not found'), code=404)
     
     # Get all games with RA data in this system
     games = query("""
@@ -302,7 +302,7 @@ def api_sync_system_achievements(system_id):
     
     if not games:
         system_log('warning', f'No games with RetroAchievements in system: {system["name"]}')
-        return error(_('No games with RetroAchievements in this system'), code=200)
+        return error(_('No games with RetroAchievements in this system'), code=404)
     
     game_count = len(games)
     
@@ -313,7 +313,7 @@ def api_sync_system_achievements(system_id):
             system_log('info', f'RA Sync already running for this system: {system["name"]}')
             return error(
                 _('Sync already in progress for %(name)s') % {'name': system["name"]},
-                code=200,
+                code=409,
                 already_running=True,
             )
     
@@ -437,7 +437,7 @@ def api_refresh_achievements(game_id):
     """, (game_id,), one=True)
     
     if not game:
-        return error(_('Game not found'), code=200)
+        return error(_('Game not found'), code=404)
 
     result = check_retroachievements(game['title'], game['system_folder'])
     
@@ -454,7 +454,7 @@ def api_refresh_achievements(game_id):
             data=result,
         )
     else:
-        return error(_('No RetroAchievements found for this game'), code=200)
+        return error(_('No RetroAchievements found for this game'), code=404)
 
 # =============================================================================
 # RETROACHIEVEMENTS API ROUTES

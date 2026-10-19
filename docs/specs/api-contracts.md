@@ -110,7 +110,7 @@ sanitisation rule does not apply. Do not copy this shape for new routes.
 | **404 Not Found** | Resource id does not exist, or path is unrecognised. The global 404 handler (`app.py:543-548`) emits the standard envelope for any `/api/*` path. |
 | **409 Conflict** | A write would violate a uniqueness constraint or duplicate an in-flight job. Currently used sparingly; most write conflicts surface as 400 with a descriptive `error`. |
 | **413 Payload Too Large** | Werkzeug raises this from `MAX_CONTENT_LENGTH` before the handler runs. `app.py:560-575` converts it to the standard envelope for `/api/*`. |
-| **422 Unprocessable Entity** | **Spec target for new routes**; not currently emitted on the auth/profile paths. Legacy validators in `routes/auth.py` return 200 with `success: false` and no `field` kwarg (e.g. password < 12 chars, invalid rating value) — see §3.2 below. New routes that validate well-formed input should emit 422 with a `field=` kwarg when the failure is field-scoped. |
+| **422 Unprocessable Entity** | Well-formed input that fails validation (e.g. password < 12 chars, an unknown locale). Pass a `field=` kwarg when the failure is field-scoped — see §3.2 below. |
 | **429 Too Many Requests** | Rate-limit triggered. Both the custom IP/user bucket (login + change-password) and Flask-Limiter use 429 as the status code. Envelope shape differs — the custom bucket returns the standard `error()` envelope; Flask-Limiter returns plain HTML/text (its built-in default). See §7.3. |
 | **500 Internal Server Error** | Unhandled exception. The `@handle_api_errors` decorator (§4) emits the standard envelope; the global 500 handler does the same for anything that escapes. |
 | **503 Service Unavailable** | `/ready` — DB probe failed. Also any other `/api/*` path before first-run setup is done: `app.check_first_time_setup` answers `{"success": false, "error": "Setup required", "setup_required": true}` instead of redirecting to `/setup`. |
@@ -138,15 +138,12 @@ decorator**; that divergence is what Pass 49.5 closed.
 > required to get an envelope from admin gating. `login_required` had the same
 > gap and this paragraph never mentioned it.
 
-### 3.2 Validation-failure shape (current vs target)
+### 3.2 Validation-failure shape
 
-Today's auth/profile validators return `error('…', code=200)` with no `field=`
-kwarg — see `routes/auth.py` (every validate-and-reject site uses
-`success: false` at HTTP 200). The 400/422 row in the table above is the spec
-target for new routes, not a description of what ships. When migrating an
-existing validator, switch the call from `error('…', code=200)` to
-`error('…', code=422, field='username')` in lockstep with any test that
-asserts on the status code.
+A missing required field answers 400. A present but invalid value answers
+422 with the field named: `error('…', code=422, field='password')`. No route
+answers a failure at HTTP 200; PASS-59-120 converted the last ones, and
+`grep -rn "code=200" routes services` finds none.
 
 ---
 

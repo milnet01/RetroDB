@@ -609,11 +609,14 @@ const HLTBManager = {
                 btn.disabled = false;
                 btn.innerHTML = t('🔍 Lookup HLTB');
             }
+            // The server answered (no match is a 404, PASS-59-120): show its message.
+            const answered = Boolean(err && err.status);
             if (errorDiv) {
-                errorDiv.textContent = t('Error connecting to HowLongToBeat');
+                errorDiv.textContent = answered ? err.message : t('Error connecting to HowLongToBeat');
                 errorDiv.style.display = 'block';
             } else {
-                showNotification(t('Error looking up HLTB'), 'error');
+                showNotification(answered ? err.message : t('Error looking up HLTB'),
+                                 answered ? 'warning' : 'error');
             }
         });
     },

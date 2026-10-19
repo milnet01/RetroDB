@@ -169,7 +169,7 @@ def test_validator_rejects_pseudolocale_for_a_non_admin(monkeypatch):
     client, headers = _authed_client(monkeypatch, user=VIEWER)
     resp = client.post('/api/users/settings',
                        json={'locale_preference': PSEUDO_LOCALE}, headers=headers)
-    assert resp.status_code == 200
+    assert resp.status_code == 422  # PASS-59-120
     assert resp.get_json()['success'] is False
     assert resp.get_json()['error'] == 'Invalid locale'
 
@@ -192,9 +192,7 @@ def test_validator_rejects_unknown_locale(monkeypatch):
     client, headers = _authed_client(monkeypatch)
     resp = client.post('/api/users/settings',
                        json={'locale_preference': 'qq_GONE'}, headers=headers)
-    # code=200 success:false envelope — the route's convention (API.post throws
-    # on non-2xx, so validation errors ride a 200 and the client reads `success`).
-    assert resp.status_code == 200
+    assert resp.status_code == 422  # PASS-59-120
     assert resp.get_json()['success'] is False
     assert resp.get_json()['error'] == 'Invalid locale'
 
