@@ -8043,7 +8043,18 @@ were corrected in `2836bc3` and are not repeated here.
 - **Why**: gameplay differences (censorship, difficulty, removed content)
   are in no scraped field. The user wants them shown, after the data
   comparison ships (user, 2026-10-17).
-- **Status**: todo, after PASS-59-106. Marked as AI-written wherever shown.
+- **Decision** (user, 2026-10-19): build it now; "this app isn't just
+  for me", so the user's own library having no true pairs is no reason
+  to hold it.
+  - **Shipped** (2026-10-19, de5accb, in the open v3.30.0): editor button
+  in the game page's Regional Versions section; summary stored on the
+  group (migration 017), tagged AI-written, hidden when members change.
+  Test: tests/test_version_ai_summary.py. Walked on :5001 with a
+  scratch-only Probotector 2 (Europe) row linked to Contra: The Alien
+  Wars: the reworded prompt returned the robot swap and two title-screen
+  and palette differences. Help locale pages owe one sentence
+  (PASS-59-115).
+- **Status**: done, after PASS-59-106. Marked as AI-written wherever shown.
   Lanes: ai, ui.
 - **Source**: user, 2026-10-17.
 - **Awaiting the user** (2026-10-19): PASS-59-106 shipped, but the live
@@ -8248,6 +8259,9 @@ were corrected in `2836bc3` and are not repeated here.
   Duplicate Finder. Add them to each `help.<locale>.html` in the same
   places, translated. Verify: each locale page has both "Regional
   Versions" entries' equivalents.
+- **Added** (2026-10-19): `templates/help.html` § Regional Versions
+  gained a sentence on Summarise differences with AI (PASS-59-107);
+  translate it into every `help.<locale>.html` with the rest.
 
 ---
 
@@ -8389,7 +8403,15 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.121 Password forms check 4 characters in the browser; the server needs 12 (LOW, S).
-- **Status**: todo
+- **Shipped** (2026-10-19, 2951169, in the open v3.30.0): also found
+  that `/api/setup` took a first-run admin password of any length; it now
+  refuses under 12 with auth.py's 422 and message. The setup wizard and
+  forced-change page check 12 and show that message. Settings' own
+  password forms had no wrong check. Test: tests/test_password_floor.py,
+  seen red first. Walked on :5001 (scratch DB): a typed 5-character
+  password on the forced-change page is blocked by the browser asking
+  for 12, and no password request is sent.
+- **Status**: done
 - **Where**: templates/force_change_password.html has minlength="4"
   and a `newPw.length < 4` check; routes/auth.py rejects under 12.
   Check the other password inputs (settings.html) for the same gap.
