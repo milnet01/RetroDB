@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-19 18:10+0200\n"
+"POT-Creation-Date: 2026-10-19 18:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: eo\n"
@@ -402,7 +402,7 @@ msgstr "⟦Ƒüļļšçŕééñ ìš šéţ þéŕ šýšţéɱ, ìñ Šéţţì
 msgid "That value is not one of the choices."
 msgstr "⟦Ţĥàţ ⱴàļüé ìš ñöţ öñé öƒ ţĥé çĥöìçéš.⟧"
 
-#: routes/emulators.py:264
+#: routes/emulators.py:264 services/standalone_settings.py:258
 msgid "RetroDB manages per-game settings for DuckStation, PCSX2 and RPCS3 only."
 msgstr "⟦ŔéţŕöÐƁ ɱàñàĝéš þéŕ-ĝàɱé šéţţìñĝš ƒöŕ ÐüçķŠţàţìöñ, ÞÇŠЖ2 àñð ŔÞÇŠ3 öñļý.⟧"
 
@@ -3175,6 +3175,31 @@ msgstr "⟦🛑 Šĥüţ Ðöŵñ Šéŕⱴéŕ⟧"
 #: services/js_i18n_strings.py:816
 msgid "🧹 Clean Missing ROMs"
 msgstr "⟦🧹 Çļéàñ Ɱìššìñĝ ŔÖⱮš⟧"
+
+#: services/standalone_settings.py:205
+msgid "RetroDB could not read this disc's serial, so it cannot name the emulator's per-game settings file."
+msgstr "⟦ŔéţŕöÐƁ çöüļð ñöţ ŕéàð ţĥìš ðìšç'š šéŕìàļ, šö ìţ çàññöţ ñàɱé ţĥé éɱüļàţöŕ'š þéŕ-ĝàɱé šéţţìñĝš ƒìļé.⟧"
+
+#: services/standalone_settings.py:215
+msgid "PCSX2 has two or more settings files for this game; remove the ones you do not use."
+msgstr "⟦ÞÇŠЖ2 ĥàš ţŵö öŕ ɱöŕé šéţţìñĝš ƒìļéš ƒöŕ ţĥìš ĝàɱé; ŕéɱöⱴé ţĥé öñéš ýöü ðö ñöţ üšé.⟧"
+
+#: services/standalone_settings.py:223
+msgid "RetroDB could not read this disc's boot file, so it cannot name PCSX2's per-game settings file."
+msgstr "⟦ŔéţŕöÐƁ çöüļð ñöţ ŕéàð ţĥìš ðìšç'š ƀööţ ƒìļé, šö ìţ çàññöţ ñàɱé ÞÇŠЖ2'š þéŕ-ĝàɱé šéţţìñĝš ƒìļé.⟧"
+
+#: services/standalone_settings.py:231
+msgid "Settings path outside the data folder."
+msgstr "⟦Šéţţìñĝš þàţĥ öüţšìðé ţĥé ðàţà ƒöļðéŕ.⟧"
+
+#: services/standalone_settings.py:253
+msgid "No emulator is set up for this system."
+msgstr "⟦Ñö éɱüļàţöŕ ìš šéţ üþ ƒöŕ ţĥìš šýšţéɱ.⟧"
+
+#: services/standalone_settings.py:268
+#, python-format
+msgid "Run %(name)s once so it creates its settings, then play again."
+msgstr "⟦Ŕüñ %(name)s öñçé šö ìţ çŕéàţéš ìţš šéţţìñĝš, ţĥéñ þļàý àĝàìñ.⟧"
 
 #: templates/_bulk_edit_modal.html:7
 msgid "Bulk Edit"

@@ -24,6 +24,8 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Optional
 
+from flask_babel import lazy_gettext as _
+
 from services.database import query, get_db_with_context
 from services.disc_serial import CRC_RE, SERIAL_RE, read_disc_ids
 
@@ -200,8 +202,8 @@ def _target(binary_name, data_dir: Path, serial, crc) -> dict:
     """{'file': Path or None, 'reason': str or None, 'candidates': [str]}."""
     if not SERIAL_RE.match(serial or ''):
         return {'file': None, 'candidates': [],
-                'reason': "RetroDB could not read this disc's serial, so it cannot "
-                          "name the emulator's per-game settings file."}
+                'reason': _("RetroDB could not read this disc's serial, so it cannot "
+                             "name the emulator's per-game settings file.")}
     candidates = []
     if binary_name == 'duckstation-qt':
         path = data_dir / 'gamesettings' / f'{serial}.ini'
@@ -210,23 +212,23 @@ def _target(binary_name, data_dir: Path, serial, crc) -> dict:
         candidates = [str(p) for p in found]
         if len(found) > 1:
             return {'file': None, 'candidates': candidates,
-                    'reason': 'PCSX2 has two or more settings files for this game; '
-                              'remove the ones you do not use.'}
+                    'reason': _('PCSX2 has two or more settings files for this game; '
+                                 'remove the ones you do not use.')}
         if found:
             path = found[0]
         elif CRC_RE.match(crc or ''):
             path = data_dir / 'gamesettings' / f'{serial}_{crc}.ini'
         else:
             return {'file': None, 'candidates': [],
-                    'reason': "RetroDB could not read this disc's boot file, so it "
-                              "cannot name PCSX2's per-game settings file."}
+                    'reason': _("RetroDB could not read this disc's boot file, so it "
+                                 "cannot name PCSX2's per-game settings file.")}
         candidates = []
     else:
         path = data_dir / 'custom_configs' / f"config_{serial.replace('-', '')}.yml"
     try:
         path.resolve().relative_to(data_dir.resolve())
     except ValueError:
-        return {'file': None, 'candidates': [], 'reason': 'Settings path outside the data folder.'}
+        return {'file': None, 'candidates': [], 'reason': _('Settings path outside the data folder.')}
     return {'file': path, 'reason': None, 'candidates': candidates}
 
 
@@ -248,13 +250,13 @@ def _context(game_id) -> dict:
         emu, sys_emu = _pick_mapping(game['system_id'], game.get('emulator_override_id'),
                                      game['system_name'])
     except LaunchResolutionError:
-        ctx['reason'] = 'No emulator is set up for this system.'
+        ctx['reason'] = _('No emulator is set up for this system.')
         return ctx
     ctx['emulator'] = emu
     ctx['table'] = settings_for(emu['binary_name'] if emu else '')
     if not ctx['table']:
-        ctx['reason'] = ('RetroDB manages per-game settings for DuckStation, '
-                         'PCSX2 and RPCS3 only.')
+        ctx['reason'] = _('RetroDB manages per-game settings for DuckStation, '
+                           'PCSX2 and RPCS3 only.')
         return ctx
     adapter = adapter_for(emu)
     try:
@@ -263,8 +265,8 @@ def _context(game_id) -> dict:
         binary = None
     data_dir = find_data_dir(adapter, binary) if adapter and binary else None
     if data_dir is None:
-        ctx['reason'] = (f"Run {emu['name']} once so it creates its settings, "
-                         'then play again.')
+        ctx['reason'] = _('Run %(name)s once so it creates its settings, '
+                           'then play again.', name=emu['name'])
         return ctx
     serial, crc = _disc_ids(game)
     ctx['serial'] = serial
@@ -360,7 +362,7 @@ def game_view(game_id) -> Optional[dict]:
                              'values': choice_keys(spec), 'per_game': 'flag' not in spec})
     return {
         'supported': bool(ctx.get('file')),
-        'reason': None if ctx.get('file') else ctx.get('reason'),
+        'reason': None if ctx.get('file') or not ctx.get('reason') else str(ctx['reason']),
         'candidates': ctx.get('candidates', []),
         'emulator': {'id': emu['id'], 'name': emu['name']} if emu else None,
         'serial': ctx.get('serial') or None,

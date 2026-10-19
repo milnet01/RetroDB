@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-19 18:10+0200\n"
+"POT-Creation-Date: 2026-10-19 18:18+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -419,7 +419,7 @@ msgstr ""
 msgid "That value is not one of the choices."
 msgstr "Тег не назначен этой игре"
 
-#: routes/emulators.py:264
+#: routes/emulators.py:264 services/standalone_settings.py:258
 msgid "RetroDB manages per-game settings for DuckStation, PCSX2 and RPCS3 only."
 msgstr ""
 
@@ -3338,6 +3338,38 @@ msgstr ""
 #: services/js_i18n_strings.py:816
 msgid "🧹 Clean Missing ROMs"
 msgstr "🧹 Очистить отсутствующие ROM"
+
+#: services/standalone_settings.py:205
+msgid ""
+"RetroDB could not read this disc's serial, so it cannot name the "
+"emulator's per-game settings file."
+msgstr ""
+
+#: services/standalone_settings.py:215
+msgid ""
+"PCSX2 has two or more settings files for this game; remove the ones you "
+"do not use."
+msgstr ""
+
+#: services/standalone_settings.py:223
+msgid ""
+"RetroDB could not read this disc's boot file, so it cannot name PCSX2's "
+"per-game settings file."
+msgstr ""
+
+#: services/standalone_settings.py:231
+msgid "Settings path outside the data folder."
+msgstr ""
+
+#: services/standalone_settings.py:253
+#, fuzzy
+msgid "No emulator is set up for this system."
+msgstr "Для этой системы нет характеристик."
+
+#: services/standalone_settings.py:268
+#, python-format
+msgid "Run %(name)s once so it creates its settings, then play again."
+msgstr ""
 
 #: templates/_bulk_edit_modal.html:7
 msgid "Bulk Edit"
