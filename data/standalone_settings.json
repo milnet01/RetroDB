@@ -1,0 +1,34 @@
+{
+  "_comment": "PASS-59-91 §4.6: the settings RetroDB manages per standalone emulator, keyed by emulators.binary_name. 'values' maps each choice to the raw text written; 'default' is a choice. A 'flag' setting goes on the command line; 'section'/'key' is an INI key; 'path' is a YAML block and key. Key names read from this machine's settings.ini, inis/PCSX2.ini and config.yml (2026-10-19).",
+  "duckstation-qt": {
+    "resolution_scale": {"section": "GPU", "key": "ResolutionScale",
+                         "values": {"1x": "1", "2x": "2", "3x": "3", "4x": "4", "5x": "5", "6x": "6", "8x": "8"},
+                         "default": "4x"},
+    "aspect_ratio":     {"section": "Display", "key": "AspectRatio",
+                         "values": {"auto": "Auto (Game Native)", "4:3": "4:3", "16:9": "16:9", "stretch": "Stretch To Fill"},
+                         "default": "auto"},
+    "fullscreen":       {"flag": {"on": "-fullscreen", "off": "-nofullscreen"},
+                         "default": "on"}
+  },
+  "pcsx2-qt": {
+    "resolution_scale": {"section": "EmuCore/GS", "key": "upscale_multiplier",
+                         "values": {"1x": "1", "2x": "2", "3x": "3", "4x": "4", "5x": "5", "6x": "6", "8x": "8"},
+                         "default": "3x"},
+    "aspect_ratio":     {"section": "EmuCore/GS", "key": "AspectRatio",
+                         "values": {"auto": "Auto 4:3/3:2", "4:3": "4:3", "16:9": "16:9", "stretch": "Stretch"},
+                         "default": "auto"},
+    "fullscreen":       {"flag": {"on": "-fullscreen", "off": "-nofullscreen"},
+                         "default": "on"}
+  },
+  "rpcs3": {
+    "resolution_scale": {"path": ["Video", "Resolution Scale"],
+                         "values": {"100%": "100", "150%": "150", "200%": "200", "300%": "300"},
+                         "default": "100%"},
+    "aspect_ratio":     {"path": ["Video", "Aspect ratio"],
+                         "values": {"4:3": "4:3", "16:9": "16:9"},
+                         "default": "16:9"},
+    "fullscreen":       {"path": ["Miscellaneous", "Start games in fullscreen mode"],
+                         "values": {"on": "true", "off": "false"},
+                         "default": "on"}
+  }
+}

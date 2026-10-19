@@ -311,3 +311,36 @@ def test_missing_type_list_is_refused_naming_the_file(tmpdb):
     from services.launcher.base import LaunchResolutionError
     with pytest.raises(LaunchResolutionError, match='systeminfo.txt'):
         resolve_launch_context(game_id=1)
+
+
+def _fullscreen_db(tmpdb, template, binary_name='duckstation-qt', choice=None):
+    conn = tmpdb['conn']
+    conn.execute("CREATE TABLE IF NOT EXISTS emulator_setting_choices (id INTEGER PRIMARY KEY, "
+                 "emulator_id INTEGER, scope TEXT, scope_id INTEGER, setting TEXT, value TEXT)")
+    conn.execute("UPDATE emulators SET args_template = ?, binary_name = ? WHERE id = 1",
+                 (template, binary_name))
+    if choice:
+        conn.execute("INSERT INTO emulator_setting_choices (emulator_id, scope, scope_id, "
+                     "setting, value) VALUES (1, 'system', 1, 'fullscreen', ?)", (choice,))
+    conn.commit()
+
+
+def test_inv17_fullscreen_flag_follows_the_system_choice(tmpdb):
+    """PASS-59-91 INV-17: {fullscreen_flag} is a list variable."""
+    from services.launch_resolver import resolve_launch_context
+    _fullscreen_db(tmpdb, '-batch {fullscreen_flag} "{rom}"', choice='off')
+    argv = resolve_launch_context(game_id=1).argv
+    assert '-nofullscreen' in argv and '' not in argv
+
+
+def test_inv17_fullscreen_flag_defaults_on(tmpdb):
+    from services.launch_resolver import resolve_launch_context
+    _fullscreen_db(tmpdb, '-batch {fullscreen_flag} "{rom}"')
+    assert '-fullscreen' in resolve_launch_context(game_id=1).argv
+
+
+def test_inv17_no_flag_emulator_gets_no_element(tmpdb):
+    from services.launch_resolver import resolve_launch_context
+    _fullscreen_db(tmpdb, '-b {fullscreen_flag} -e "{rom}"', binary_name='dolphin-emu')
+    argv = resolve_launch_context(game_id=1).argv
+    assert argv[1:] == ['-b', '-e', str(tmpdb['rom_file'])]

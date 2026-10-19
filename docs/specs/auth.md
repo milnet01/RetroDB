@@ -71,6 +71,10 @@ guarded routes — never just one.
 - `edit` does not cover a game's custom launch arguments
   (`games.launch_args_override`). They reach the emulator's command line,
   so changing them needs `manage_settings` (PASS-59-64 §4.2).
+- `edit` covers a game's emulator-settings choices
+  (`PUT /api/games/<id>/emulator-settings`) except fullscreen, which is a
+  command-line flag and so is set per system under `manage_settings`
+  (`/api/systems/<sid>/emulator-settings/<eid>`; PASS-59-91 §4.6).
 - `viewer` can read everything (`view`) and self-track (`track_progress`); no mutating perms — read-only with one self-mutation carve-out.
 
 ---

@@ -11,10 +11,11 @@ from flask import Blueprint, render_template, request
 from flask_babel import gettext as _
 
 from services.api_helpers import handle_api_errors, success, error
-from services.auth import login_required, admin_required
+from services.auth import login_required, admin_required, permission_required
 from services.database import query, execute
 from services.emulator_adapters import bios_status
 from services.launch_resolver import _mapping_resolves
+from services.standalone_settings import settings_for
 from settings_manager import get_setting
 
 logger = logging.getLogger(__name__)
@@ -167,6 +168,7 @@ def api_list_system_emulators():
             emulator_name=emu['name'] if emu else None,
             resolves=_mapping_resolves(emu, r),
             bios=bios_status(emu, r),
+            has_settings=bool(settings_for(emu['binary_name'] if emu else '')),
         ))
     return success(mappings=mappings)
 
@@ -208,3 +210,81 @@ def api_map_system_emulator():
 def api_delete_system_emulator(mapping_id):
     execute("DELETE FROM system_emulators WHERE id = ?", (mapping_id,))
     return success()
+
+
+# -----------------------------------------------------------------------------
+# Per-game settings for DuckStation, PCSX2 and RPCS3 (PASS-59-91 §4.6)
+# -----------------------------------------------------------------------------
+
+def _put_choices(emulator_id, scope, scope_id, *, allow_flags):
+    """Apply a body of {setting: value | null}; an error response or None."""
+    from services import standalone_settings
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict) or not data:
+        return error(_('Send at least one setting.'), 400)
+    emu = query("SELECT binary_name FROM emulators WHERE id = ?", (emulator_id,), one=True)
+    table = standalone_settings.settings_for(emu['binary_name'] if emu else '')
+    for setting, value in data.items():
+        spec = table.get(setting)
+        if not spec:
+            return error(_('RetroDB does not manage that setting for this emulator.'), 400)
+        if 'flag' in spec and not allow_flags:
+            return error(_('Fullscreen is set per system, in Settings > Emulators.'), 400)
+        if value is not None and value not in standalone_settings.choice_keys(spec):
+            return error(_('That value is not one of the choices.'), 400)
+    for setting, value in data.items():
+        standalone_settings.set_choice(emulator_id, scope, scope_id, setting, value)
+    return None
+
+
+@bp.route('/api/games/<int:game_id>/emulator-settings', methods=['GET'])
+@login_required
+@permission_required('view')
+@handle_api_errors
+def api_game_emulator_settings(game_id):
+    from services import standalone_settings
+    view = standalone_settings.game_view(game_id)
+    if view is None:
+        return error(_('Game not found'), 404)
+    return success(view)
+
+
+@bp.route('/api/games/<int:game_id>/emulator-settings', methods=['PUT'])
+@login_required
+@permission_required('edit')
+@handle_api_errors
+def api_put_game_emulator_settings(game_id):
+    """Body {setting: value | null}; null removes the game's choice. A flag
+    setting is an argv input, admin-only per system (PASS-59-64 §3.14)."""
+    from services import standalone_settings
+    view = standalone_settings.game_view(game_id)
+    if view is None:
+        return error(_('Game not found'), 404)
+    if not view['emulator'] or not view['settings']:
+        return error(_('RetroDB manages per-game settings for DuckStation, PCSX2 and RPCS3 only.'), 400)
+    problem = _put_choices(view['emulator']['id'], 'game', game_id, allow_flags=False)
+    return problem or success(standalone_settings.game_view(game_id))
+
+
+@bp.route('/api/systems/<int:system_id>/emulator-settings/<int:emulator_id>', methods=['GET'])
+@login_required
+@permission_required('manage_settings')
+@handle_api_errors
+def api_system_emulator_settings(system_id, emulator_id):
+    from services import standalone_settings
+    view = standalone_settings.system_view(system_id, emulator_id)
+    if view is None:
+        return error(_('Emulator not found'), 404)
+    return success(view)
+
+
+@bp.route('/api/systems/<int:system_id>/emulator-settings/<int:emulator_id>', methods=['PUT'])
+@login_required
+@permission_required('manage_settings')
+@handle_api_errors
+def api_put_system_emulator_settings(system_id, emulator_id):
+    from services import standalone_settings
+    if standalone_settings.system_view(system_id, emulator_id) is None:
+        return error(_('Emulator not found'), 404)
+    problem = _put_choices(emulator_id, 'system', system_id, allow_flags=True)
+    return problem or success(standalone_settings.system_view(system_id, emulator_id))

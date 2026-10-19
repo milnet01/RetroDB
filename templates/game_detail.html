@@ -673,6 +673,13 @@
         </div>
         {% endif %}
 
+        <!-- PASS-59-91 §4.6 — per-game emulator settings; game-emulator-settings.js fills it -->
+        <div class="bottom-section emu-settings-section" id="emuSettingsPanel" data-game-id="{{ game.id }}" data-can-edit="{{ 'true' if has_perm('edit') else 'false' }}" hidden>
+            <h2 class="section-title-sm">🎛️ {{ _('Emulator settings') }}</h2>
+            <p class="emu-settings-note" id="emuSettingsNote"></p>
+            <div class="emu-settings-grid" id="emuSettingsGrid"></div>
+        </div>
+
         <!-- PASS-59-106 §4.4 — regional versions, compared from stored data -->
         {% set can_link_versions = has_perm('edit') and not game.is_bonus_disc %}
         {% if versions|length > 1 or can_link_versions %}
@@ -1174,6 +1181,45 @@ body:has(.game-fanart-bg.active)::before {
 .version-chip.current {
     border-color: var(--neon-cyan);
     color: var(--neon-cyan);
+}
+
+/* PASS-59-91 §4.6 — per-game emulator settings */
+.emu-settings-section {
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+}
+
+.emu-settings-section[hidden] {
+    display: none;
+}
+
+.emu-settings-note {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin: 0 0 var(--spacing-sm);
+}
+
+.emu-settings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-sm);
+}
+
+.emu-setting label {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    margin-bottom: 2px;
+}
+
+.emu-setting .form-input {
+    width: 100%;
+}
+
+.emu-setting-source {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
 }
 
 .versions-section {
@@ -5663,6 +5709,8 @@ document.querySelectorAll('.filter-link').forEach(link => {
 
 <!-- Pass 44 — multi-emulator launch -->
 <script src="{{ asset_url('js/game-launch.js') }}" defer></script>
+<!-- PASS-59-91 §4.6 — per-game emulator settings panel -->
+<script src="{{ asset_url('js/game-emulator-settings.js') }}" defer></script>
 <!-- PASS-59-108 — Apply Metadata progress gauge -->
 <script src="{{ asset_url('js/apply-progress.js') }}" defer></script>
 <!-- PASS-59-106 — link and unlink regional versions -->
