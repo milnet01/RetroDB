@@ -8580,6 +8580,136 @@ were corrected in `2836bc3` and are not repeated here.
 - **Source**: review-readability draft trial, findings checked by hand.
 - **Status**: todo.
 
+---
+
+#### Pass 59.129 Scrape speed: time each step of a game's scrape before changing anything (MEDIUM, S).
+- **Status**: todo
+- **Source**: user request 2026-10-19, "roadmap any methods to help speed
+  it up", made while the PASS-59-124 Full Re-scrape ran at 45-90 s a game.
+- **Seen** (2026-10-19, `~/.local/state/cc-job/retrodb-rescrape.log`, Lufia
+  II on SNES): RAWG match picked at 22:57:35, then nothing logged for 76 s
+  until an IGDB screenshot dedup line; AI fill then took about 4 s.
+- **Do**: log one line per game with the seconds spent in search, the lead
+  fetch, each fallback source, media download, image processing (upscale
+  included), AI and the save. PASS-59-130 to -136 are guesses until this
+  shows where the time goes.
+- **Rules every speed item must keep** (user, 2026-10-19):
+  - The lead source is chosen as today: bulk takes the best score, which
+    includes the Settings priority bonus (`scraper_manager.py`, priority
+    boost); manual takes the column whose Apply was clicked.
+  - Fields are filled lead first, then the other sources in Settings
+    priority order, first non-empty value wins.
+  - Manual with boxes ticked queries only the ticked sources plus AI
+    (`restrict_to_selected`); a speed-up never adds an unticked source.
+  - A test pins that the merged result is identical before and after.
+
+---
+
+#### Pass 59.130 Scrape speed: drop duplicate screenshots before image processing, and take upscaling off the scrape path (MEDIUM, M).
+- **Status**: todo
+- **Where**: every scraped image goes through
+  `services/image_utils.py::finalize_downloaded_image`, which upscales
+  anything under 80% of `IMAGE_TARGET_HEIGHT` with Real-ESRGAN (ROCm GPU
+  here, one image at a time) and writes no log line. Fanart alone skips it.
+  Screenshots are fully processed first, and only then compared by dHash
+  (`scraper/image_dedup.py`), so a duplicate is upscaled and then deleted.
+- **Do**: (1) hash the raw download and drop duplicates before
+  finalising. (2) Consider saving the image as downloaded and upscaling in
+  a background pass after the game is saved.
+- **Keeps**: which duplicate survives stays the first in source order, so
+  the priority rule in PASS-59-129 holds.
+- **Needs**: PASS-59-129's timings, to show upscaling is the cost.
+
+---
+
+#### Pass 59.131 Scrape speed: skip a fallback source that cannot fill any field still empty (MEDIUM, M).
+- **Status**: todo
+- **Where**: `scraper/hybrid_scraper.py::_run_fallbacks` stops early only
+  when every key of the ~40-field metadata dict is filled, including fields
+  no source supplies (`edition`, `campaign`, `playtime_estimate`). So every
+  enabled source is queried for every game.
+- **Do**: give each source a list of fields it can supply. Skip a source
+  when none of the still-empty fields is on its list; stop the loop when no
+  remaining source can add anything.
+- **Keeps**: sources still run in Settings priority order and the first
+  non-empty value still wins; a skipped source could only have added
+  nothing. Manual still never queries an unticked source.
+- **Risk**: a wrong capability list silently drops data. Pin each list
+  with a test against the source's apply function.
+
+---
+
+#### Pass 59.132 Scrape speed: fetch fallback sources' details at the same time, then apply them in priority order (MEDIUM, M).
+- **Status**: todo
+- **Where**: after the parallel search (Pass 55.1), the lead fetch and
+  each fallback in `_run_fallbacks` run one after another.
+- **Do**: fetch the detail records of the lead and the fallbacks on a
+  small thread pool, then apply them one by one in today's order (lead,
+  then Settings priority order, `fill_only=True`).
+- **Keeps**: the apply order is unchanged, so field precedence is
+  unchanged. Manual fetches only the lead and the ticked sources.
+- **Trade-off**: fetching all at once queries sources PASS-59-131 would
+  have skipped. Decide after PASS-59-129's numbers.
+- **Before any added concurrency** (this item or Pass 55.4): IGDB has no
+  rate limiter in `scraper/scrape_igdb.py` (its limit is 4 requests a
+  second), and ScreenScraper reads `maxthreads` but does not enforce it.
+
+---
+
+#### Pass 59.133 Scrape speed: Full Re-scrape re-downloads every media file even when it is on disk (MEDIUM, M).
+- **Status**: todo
+- **Where**: force mode starts from empty metadata
+  (`hybrid_scraper.py`, "Force overwrite mode - starting with empty
+  metadata"), so each `if not metadata['boxart']` style check in
+  `scraper/metadata_merger.py` passes and boxart, 3D box, fanart, video and
+  manual download again. CLAUDE.md's media note says Full Re-scrape
+  re-downloads media "whose file is missing from disk"; the code does more.
+- **Decide with the user**: the PASS-59-124 run needed replaced media,
+  because the old art was another game's. A Full Re-scrape option "keep
+  existing media" would save the download and upscale time.
+- **Lead, unverified**: the IGDB, RAWG and ScreenScraper screenshot loops
+  skip a filename that already exists and, in force mode, do not add it
+  back to the list, so existing screenshots may drop off the game.
+
+---
+
+#### Pass 59.134 Scrape speed: a manual scrape searches again for sources whose results are already on screen (MEDIUM, S).
+- **Status**: todo
+- **Where**: the game page search (`/api/games/search`) shows one column
+  per enabled source. Apply posts to `/api/game/<id>/apply-metadata`
+  (`routes/games.py`) with the lead and the ticked results as
+  `secondary_selections`. With no box ticked, every enabled source searches
+  again. The route also passes `session['last_search_results']`, which only
+  the old form-POST search sets, so it can be stale or empty.
+- **Do**: send each on-screen result's source ID with Apply, and fetch by
+  ID instead of searching again; fix or drop the session field.
+- **Keeps**: lead = the column whose Apply was clicked; ticked sources
+  follow in Settings priority order.
+- **Open question for the user**: with no box ticked, should Apply still
+  query every enabled source, or only the lead plus AI?
+
+---
+
+#### Pass 59.135 Scrape speed: fetch by stored IGDB or ScreenScraper ID instead of searching (LOW, M).
+- **Status**: deferred
+- **Where**: `hybrid_scraper.py` writes `igdb_id` and `screenscraper_id`
+  but no scrape reads them to skip a search; only
+  `services/version_groups.py` does.
+- **Held**: PASS-59-124 found 111 games whose stored IDs pointed at the
+  wrong game. Using IDs would repeat those mistakes on every re-scrape.
+  Consider only for normal (fill) mode, never Full Re-scrape, and only once
+  PASS-59-125 makes the search use the filename.
+
+---
+
+#### Pass 59.136 Scrape speed: ES-DE re-reads gamelist.xml on every search (LOW, S).
+- **Status**: todo
+- **Where**: `scraper/scrape_esde.py` parses the system's `gamelist.xml`
+  on each search.
+- **Do**: cache the parsed list per file, keyed on its modified time.
+- **Keeps**: ES-DE results and their place in the priority order are
+  unchanged.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
