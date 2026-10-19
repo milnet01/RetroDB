@@ -8287,6 +8287,10 @@ were corrected in `2836bc3` and are not repeated here.
   showed before any fetch (8b71fb7). Narrow-width (375 px) layout not
   checked. Note: controller images save to the live
   static/images/controllers even on a scratch DB.
+- **Checked** (2026-10-19): Museum system pages at 375 px (Channel F,
+  Game & Watch, Atari 2600; same-origin iframe on :5000): no sideways
+  page scroll. Only the system nav runs wider, inside its own
+  overflow-x: auto strip, as designed.
 
 ---
 
