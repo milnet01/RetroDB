@@ -8505,6 +8505,24 @@ were corrected in `2836bc3` and are not repeated here.
 - **Plan**: find which source and mode set these titles (scrape history);
   decide with the user whether to fix the matcher or the rows. Such rows
   also feed PASS-59-106's title signal.
+- **Decision** (user, 2026-10-19): fix the rows, wrong-game rows only;
+  rows showing the right game under another region's name stay. Fix by
+  title from filename plus Full Re-scrape.
+  - **Done** (2026-10-19): 111 wrong-game rows chosen by hand from a
+  title-vs-filename check (ids in
+  `/mnt/Games/claude-scratch/wrong_title_ids.txt`, script
+  `fix_titles.py` beside it). Live DB backed up to
+  `/mnt/Games/claude-scratch/roms-before-title-fix.db`; titles reset from
+  the filename; igdb_id, screenscraper_id, alternate_titles cleared. Full
+  Re-scrape of those 111 started 21:50 on :5000 (`cc-job`
+  `retrodb-rescrape`). Origin: titles were already wrong in the Feb and May
+  2026 backups (unscraped imports and some RAWG scrapes); today's title
+  scorer ranks sequels right. Matcher half: PASS-59-125.
+  - **Owed**: when the log has "Bulk scrape completed", re-run the
+  title-vs-filename check and ROM Tools > Regional Versions (15 groups
+  expected on the copy), report to the user, stop the server (kill -9),
+  then ask before deleting the two scratch backups (they hold scraper
+  creds).
 
 ---
 
