@@ -8340,7 +8340,15 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.120 Explicit error(..., code=200) replies remain in seven files (LOW, M).
-- **Status**: todo
+- **Shipped 2026-10-19** (6c4407e): every code=200 in the seven files,
+  plus NoHLTBMatch, answers 4xx/5xx; ADR 0003 ended. Two API.post
+  catches now show the server's message (saveLanguage, HLTBManager).
+  Test: tests/test_pass59_120_error_status.py (red first, 23 checks).
+  - **Browser walk 2026-10-19** on :5001, scratch DB: language save,
+  add/edit user, forced password change, login (password prompt, wrong
+  password, no password set) and HLTB no-match (inline and toast) all
+  show the server's message.
+- **Status**: done
 - **Target**: `error(..., code=200)` in `routes/auth.py`,
   `achievements.py`, `bulk_scrape.py`, `clz_import.py`, `games_ai.py`,
   `games_media.py` and `services/hltb_service.py`; list them with
@@ -8354,6 +8362,18 @@ were corrected in `2836bc3` and are not repeated here.
   0003 when the last one goes.
 - **Verify**: per file, a test pinning one failure path's status and
   envelope; a browser check of each changed error toast.
+
+---
+
+#### Pass 59.121 Password forms check 4 characters in the browser; the server needs 12 (LOW, S).
+- **Status**: todo
+- **Where**: templates/force_change_password.html has minlength="4"
+  and a `newPw.length < 4` check; routes/auth.py rejects under 12.
+  Check the other password inputs (settings.html) for the same gap.
+- **Plan**: use 12 in the browser checks so the message shows before
+  the request.
+- **Verify**: a 5-character password is refused in the browser with
+  the 12-character message, and no request is sent.
 
 ## Done index
 
