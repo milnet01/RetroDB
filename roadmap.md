@@ -8014,7 +8014,19 @@ were corrected in `2836bc3` and are not repeated here.
   version comparison uses stored data (title, date, publisher, file size and
   revision, languages from No-Intro tags, ratings, achievements support).
   Versions in one group are not duplicates.
-- **Status**: todo. Needs a spec (schema plus several subsystems). Builds on
+- **Shipped** (2026-10-19, commit 3b51dcd, in the open v3.29.1): built to
+  the spec, tests per §7, all seen red first. Fold-back in the spec and
+  its loop log: foreign_keys is off, so migration 016 uses triggers; the
+  scraper keeps a stored id (INV-10); signals 3 and 4 narrowed to the
+  user's wording (tagged names; region-tagged alternate titles).
+  - **Walked** on :5001 against a scratch DB, desktop and 375 px: review
+  page, system page card and header, game page switcher and table, link,
+  unlink, Library header.
+  - **Q1 answer** (2026-10-19): the live library gives 4 suggestions, none
+  a true regional pair; filenames show almost no regional duplicates.
+  The IGDB and ScreenScraper id signals stay empty until the user runs
+  Backfill Alternate Titles, which searches every game online.
+- **Status**: done. Needs a spec (schema plus several subsystems). Builds on
   PASS-59-105. Lanes: schema, ui, scraper, tools.
 - **Source**: user, 2026-10-17.
 - **Progress** (2026-10-17): **Spec** (2026-10-17): `docs/specs/PASS-59-106-regional-versions.md`,
@@ -8225,6 +8237,12 @@ were corrected in `2836bc3` and are not repeated here.
 - **Plan**: translate the two corrected English sentences into each
   locale. Part of the v4.0.0 "Fully translated" group (PASS-59-113 step 7).
 - **Verify**: grep each locale page for the old claims; none remain.
+- **Also** (2026-10-19, PASS-59-106): `templates/help.html` gained two
+  "Regional Versions" entries (Game Details, after Bonus Discs; ROM
+  Tools, after Duplicate Finder) and a filename-mode sentence in
+  Duplicate Finder. Add them to each `help.<locale>.html` in the same
+  places, translated. Verify: each locale page has both "Regional
+  Versions" entries' equivalents.
 
 ---
 
