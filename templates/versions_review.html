@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% set adaptive_layout = true %}
+{% from "_macros/nav_tabs.html" import rom_tool_tabs %}
+
+{% block title %}{{ _('Regional Versions') }} - RetroDB{% endblock %}
+
+{% block styles %}
+<style>
+/* PASS-59-106 — suggestion review list */
+.version-filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    align-items: end;
+}
+
+.version-suggestions {
+    list-style: none;
+    margin: var(--spacing-md) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--spacing-md);
+}
+
+.version-suggestion {
+    padding: var(--spacing-md);
+}
+
+.version-signals {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-sm);
+}
+
+.version-signal {
+    font-size: 0.75rem;
+    padding: 1px 8px;
+    border: 1px solid var(--neon-cyan);
+    border-radius: var(--radius-full);
+    color: var(--neon-cyan);
+}
+
+.version-suggestion-games {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.version-suggestion-games li {
+    padding: 4px 0;
+    overflow-wrap: anywhere;
+}
+
+.version-file {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+}
+
+.version-suggestion-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-sm);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-box data-page" id="versionsReview">
+<div class="page-header">
+    <h1>🔧 {{ _('ROM Tools') }}</h1>
+    <p>{{ _('Manage, organize, and optimize your ROM collection.') }}</p>
+</div>
+
+{{ rom_tool_tabs('versions') }}
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title"><span>🌐</span> {{ _('Regional Versions') }}</h2>
+    </div>
+    <div class="card-body">
+        <p>{{ _('RetroDB looks for games that are the same game from different regions. Linked versions show as one card in the Library, opening the version from your preferred region. Nothing is linked until you confirm it here.') }}</p>
+        <div class="version-filter-row">
+            <div class="form-group">
+                <label for="versionSystem">{{ _('System') }}</label>
+                <select id="versionSystem" class="form-select">
+                    <option value="">{{ _('All systems') }}</option>
+                    {% for system in systems %}
+                    <option value="{{ system.id }}">{{ system.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="button" class="btn btn-primary" id="versionFindBtn">{{ _('Find suggestions') }}</button>
+        </div>
+        <p id="versionSuggestionsStatus" class="text-muted" role="status" aria-live="polite"></p>
+        <ul id="versionSuggestions" class="version-suggestions"></ul>
+    </div>
+</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ asset_url('js/versions.js') }}" defer></script>
+{% endblock %}

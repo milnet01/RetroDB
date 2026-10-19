@@ -55,6 +55,7 @@ EXCLUDED = [
     'log-viewer.js',            # Page-specific
     'rom-tools.js',             # Page-specific
     'museum.js',                # Page-specific
+    'versions.js',              # Page-specific (game page + Regional Versions)
 ]
 
 BUNDLES = [

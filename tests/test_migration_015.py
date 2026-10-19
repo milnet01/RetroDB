@@ -77,4 +77,5 @@ def test_leaves_invalid_json_in_place(install):
 
 def test_is_registered():
     from services.migrations import MIGRATIONS
-    assert MIGRATIONS[-1] == '015_ingest_legacy_platform_tokens'
+    # Version 15: an installed DB's user_version depends on the position.
+    assert MIGRATIONS.index('015_ingest_legacy_platform_tokens') == 14

@@ -156,11 +156,26 @@ def _get_filter_options(system_id=None):
     return options
 
 
-def _build_games_query(params, count_only=False, ids_only=False, user_id=None):
+# PASS-59-106 — a card's group and the group's whole size (not the filtered
+# size). Shared with routes/games.py::api_games_card_data.
+VERSION_COLUMNS = """g.version_group_id,
+                   CASE WHEN g.version_group_id IS NULL THEN 1
+                        ELSE (SELECT COUNT(*) FROM games gv
+                              WHERE gv.version_group_id = g.version_group_id)
+                   END AS version_count"""
+
+
+def _build_games_query(params, count_only=False, ids_only=False, user_id=None,
+                       group_versions=True):
     """Build dynamic WHERE clause for game queries from filter params.
 
     Returns (sql, bind_values) tuple. The SQL is either a SELECT for data,
     a COUNT, or an ids-only query depending on flags.
+
+    PASS-59-106 §4.3 — with `group_versions` (the default) the filters run
+    first, then each version group keeps one row: its preferred version
+    (services.version_groups.preferred_rank_sql). Ungrouped games are their
+    own group. `group_versions=False` counts every row, for `total_roms`.
 
     Pass 31.1 — `user_id` (optional) scopes the psn_games/psn_trophies subquery
     to the caller so each user sees only their own PSN progress on game cards.
@@ -261,7 +276,23 @@ def _build_games_query(params, count_only=False, ids_only=False, user_id=None):
     if params.get('ra_only') == '1':
         conditions.append("g.has_retroachievements = 1")
 
+    if params.get('_unscraped'):
+        conditions.append("g.scraped = 0")
+
     where = " AND ".join(conditions) if conditions else "1=1"
+
+    if group_versions:
+        from services.version_groups import preferred_rank_sql
+        rank_sql, rank_values = preferred_rank_sql('g')
+        where = f"""g.id IN (
+            SELECT id FROM (
+                SELECT g.id, ROW_NUMBER() OVER (
+                         PARTITION BY COALESCE(g.version_group_id, -g.id)
+                         ORDER BY {rank_sql}, g.id) AS version_rank
+                FROM games g JOIN systems s ON g.system_id = s.id
+                WHERE {where}
+            ) WHERE version_rank = 1)"""
+        values = [*rank_values, *values]
 
     if count_only:
         sql = f"SELECT COUNT(*) as total FROM games g JOIN systems s ON g.system_id = s.id WHERE {where}"
@@ -286,6 +317,7 @@ def _build_games_query(params, count_only=False, ids_only=False, user_id=None):
                    g.is_bonus_disc, g.rom_path, g.ra_achievement_count,
                    s.name AS system_name, s.folder AS system_folder, s.system_type,
                    COALESCE(bc.bonus_count, 0) AS bonus_count,
+                   {VERSION_COLUMNS},
                    gap.earned_achievements,
                    CASE WHEN COALESCE(gap.total_achievements, 0) > 0
                         THEN gap.total_achievements

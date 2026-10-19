@@ -487,6 +487,10 @@ const AllGamesController = (function() {
         // Title badges
         let badges = '';
         if (isBonus) badges += '<span class="bonus-badge" title="Bonus/Extra Disc">&#127873;</span>';
+        if (game.version_count > 1) {
+            const versionsTitle = t('{count} regional versions', { count: game.version_count });
+            badges += `<span class="versions-badge" title="${esc(versionsTitle)}" aria-label="${esc(versionsTitle)}">&#127760;${game.version_count}</span>`;
+        }
         if (game.bonus_count > 0) badges += `<span class="has-bonus-badge" title="Has ${game.bonus_count} bonus disc${game.bonus_count > 1 ? 's' : ''}">&#127873;+</span>`;
         if (isClz) badges += '<img class="import-badge clz-badge" src="/static/images/trophies/clz-games-web.svg" title="CLZ Import (No ROM file)" alt="CLZ">';
         if (importSource === 'steam') badges += '<img class="import-badge steam-badge" src="/static/images/trophies/steam.png" title="Steam Import" alt="Steam">';

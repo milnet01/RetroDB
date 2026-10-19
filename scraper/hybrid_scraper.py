@@ -653,6 +653,35 @@ def _normalize_players_and_sort_title(metadata):
         metadata['sort_title'] = generate_sort_title(metadata['title'])
 
 
+def source_game_id(data):
+    """The numeric game id a source's fetched data carries, or None.
+    ScreenScraper ids may arrive as "gameid:systemid"."""
+    raw = (data or {}).get('id')
+    if raw in (None, ''):
+        return None
+    try:
+        return int(str(raw).split(':')[0])
+    except ValueError:
+        return None
+
+
+def _save_source_ids(c, db_game_id, sources_data, force_overwrite=False):
+    """PASS-59-106 §4.5 — store the IGDB and ScreenScraper game ids this scrape
+    used; they are regional-version suggestion signals. A stored id is kept
+    (INV-10); only Full Re-scrape replaces it with one a source provides."""
+    igdb_id = source_game_id(sources_data.get('igdb'))
+    ss_id = source_game_id(sources_data.get('screenscraper'))
+    if igdb_id is None and ss_id is None:
+        return
+    if force_overwrite:
+        sql = ("UPDATE games SET igdb_id = COALESCE(?, igdb_id), "
+               "screenscraper_id = COALESCE(?, screenscraper_id) WHERE id = ?")
+    else:
+        sql = ("UPDATE games SET igdb_id = COALESCE(igdb_id, ?), "
+               "screenscraper_id = COALESCE(screenscraper_id, ?) WHERE id = ?")
+    c.execute(sql, (igdb_id, ss_id, db_game_id))
+
+
 def _save_game_row(c, metadata, scrape_history_json, db_game_id):
     """Write the assembled metadata back to the games row (fill-only).
 
@@ -1659,6 +1688,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
         # Pass 38.1 — SAVE TO DATABASE block extracted to _save_game_row.
         apply_progress.begin('save')
         _save_game_row(c, metadata, scrape_history_json, db_game_id)
+        _save_source_ids(c, db_game_id, sources_data, force_overwrite)
 
         conn.commit()
         apply_progress.step_done()

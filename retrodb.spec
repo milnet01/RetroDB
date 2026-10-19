@@ -46,6 +46,7 @@ _MIGRATION_SCRIPTS = [
     'services.migrations.scripts.013_fresh_install_schema_backfill',
     'services.migrations.scripts.014_games_china_rating',
     'services.migrations.scripts.015_ingest_legacy_platform_tokens',
+    'services.migrations.scripts.016_version_groups',
 ]
 
 # Some pip packages have their own runtime imports that PyInstaller's

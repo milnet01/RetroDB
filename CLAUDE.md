@@ -101,6 +101,7 @@ has seen the raw output. Triage into new roadmap passes after.
 - `players` is INTEGER. Scraper/AI ranges like `"1-4"` are normalized to the max (4) before saving.
 - Sort title is auto-generated during scraping and AI Fill via `generate_sort_title()` in `services/game_utils.py`.
 - When a system has curated default controllers in the DB, they always override scraped/AI controller values.
+- Regional versions (PASS-59-106): only `services/version_groups.py` links rows through `games.version_group_id`. `_build_games_query` shows one row per group unless `group_versions=False`. Contract: `docs/specs/PASS-59-106-regional-versions.md`.
 
 ### Media handling
 - Media fields (boxart, boxart_3d, screenshots, fanart, video, manual) are never replaced during normal scraping — only filled when empty. Screenshots are always appended, never replaced. To get new media: clear it from the edit modal first, then re-scrape. Full Re-scrape mode overrides this and overwrites any field a source actually provides (and re-downloads media whose file is missing from disk); fields no source fills keep their existing value — hand-curated data is not blanked.

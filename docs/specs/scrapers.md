@@ -143,6 +143,8 @@ The hybrid orchestrator's UPDATE in `apply_hybrid_metadata` is the same pattern 
 
 **Exception:** Full Re-scrape mode in `hybrid_scraper` (`force_overwrite=True`) intentionally bypasses fill-only — the user opted in. ES-DE in this mode still defers media deletion until a replacement is confirmed found.
 
+**Source ids are stricter.** `hybrid_scraper._save_source_ids` stores the IGDB and ScreenScraper game ids a scrape used, as regional-version signals (PASS-59-106 §4.5). It writes `COALESCE(igdb_id, ?)`: a stored id is kept, because a later wrong match would otherwise relink a game. Full Re-scrape writes `COALESCE(?, igdb_id)`. Pinned by `tests/test_scrape_fill_only.py::test_source_ids_fill_only`.
+
 **Test pin:** `tests/test_scrape_fill_only.py` exercises both IGDB and TGDB with an existing populated row + an empty API response and asserts every column survives. Re-asserts the failure-side contract too (DB error → `apply_metadata_to_game` returns `False`, not `True`, not a re-raise). ES-DE, the hybrid orchestrator UPDATE, and AI Fill are **not** currently covered by this test — extending coverage is a known roadmap item.
 
 **When adding a new field** to the metadata dict in `hybrid_scraper.apply_hybrid_metadata`, add the corresponding column to the UPDATE binding tuple AND wrap the `?` in COALESCE in the same commit, and add a regression case to `tests/test_scrape_fill_only.py`. Drift between the metadata dict and the UPDATE tuple is precisely why the UPDATE has no try/except fallback — silent drift is the bug; loud failure is the contract.

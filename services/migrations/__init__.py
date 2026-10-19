@@ -40,6 +40,7 @@ MIGRATIONS = [
     '013_fresh_install_schema_backfill',
     '014_games_china_rating',
     '015_ingest_legacy_platform_tokens',
+    '016_version_groups',
 ]
 
 

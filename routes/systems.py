@@ -222,12 +222,16 @@ def system_games(system_id):
 
         counts = query("""
             SELECT
-                COUNT(CASE WHEN (is_bonus_disc = 0 OR is_bonus_disc IS NULL) THEN 1 END) AS total_games,
+                -- PASS-59-106: a version group is one game; total_roms counts rows.
+                COUNT(DISTINCT CASE WHEN (is_bonus_disc = 0 OR is_bonus_disc IS NULL)
+                                    THEN COALESCE(version_group_id, -id) END) AS total_games,
+                COUNT(CASE WHEN (is_bonus_disc = 0 OR is_bonus_disc IS NULL) THEN 1 END) AS total_roms,
                 COUNT(CASE WHEN scraped = 0 AND (is_bonus_disc = 0 OR is_bonus_disc IS NULL) THEN 1 END) AS total_missing,
                 COUNT(CASE WHEN is_bonus_disc = 1 THEN 1 END) AS bonus_count
             FROM games WHERE system_id = ?
         """, (system_id,), one=True)
         total_games = counts['total_games']
+        total_roms = counts['total_roms']
         total_missing = counts['total_missing']
         bonus_count = counts['bonus_count']
 
@@ -249,6 +253,7 @@ def system_games(system_id):
         return render_template('system_games.html',
                              system=system,
                              total_games=total_games,
+                             total_roms=total_roms,
                              total_missing=total_missing,
                              ra_supported=ra_supported,
                              bonus_count=bonus_count,

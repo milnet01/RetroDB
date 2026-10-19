@@ -409,13 +409,20 @@ Response shape:
 {
   "success": true,
   "games": [...],
-  "total": 1234,
+  "total": 1204,
+  "total_roms": 1530,
   "page": 1,
   "per_page": 100,
   "total_pages": 13,
   "has_more": true
 }
 ```
+
+`total` counts cards: linked regional versions are one card (PASS-59-106
+§4.3). `total_roms` counts rows under the same filters. Each game carries
+`version_group_id` and `version_count`, the group's whole size;
+`/api/games/card-data` carries both too, and `/api/games/ids` returns the
+shown rows only.
 
 **Invariant**: `per_page` must be clamped server-side (`min(..., 200)`). Never
 trust the client. New paginated routes must do the same — `min(value, ceiling)`

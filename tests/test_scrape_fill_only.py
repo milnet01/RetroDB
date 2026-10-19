@@ -280,3 +280,19 @@ def test_apply_returns_false_when_db_fails(scraper_module, empty_response,
     monkeypatch.setattr(scraper_module, 'get_scraper_conn', lambda: _FailingConn())
     result = scraper_module.apply_metadata_to_game(999, empty_response)
     assert result is False
+
+
+# PASS-59-106 INV-10 — the hybrid scraper fills igdb_id and screenscraper_id
+# only when empty; Full Re-scrape is the one mode that may replace them.
+@pytest.mark.parametrize("force_overwrite,expected_igdb", [(False, 5), (True, 9)])
+def test_source_ids_fill_only(force_overwrite, expected_igdb):
+    from scraper import hybrid_scraper
+    conn = sqlite3.connect(':memory:')
+    conn.execute("CREATE TABLE games (id INTEGER PRIMARY KEY, igdb_id INTEGER, "
+                 "screenscraper_id INTEGER)")
+    conn.execute("INSERT INTO games (id, igdb_id) VALUES (1, 5)")
+    hybrid_scraper._save_source_ids(
+        conn.cursor(), 1, {'igdb': {'id': 9}, 'screenscraper': {'id': '77'}},
+        force_overwrite=force_overwrite)
+    assert conn.execute("SELECT igdb_id, screenscraper_id FROM games").fetchone() \
+        == (expected_igdb, 77)

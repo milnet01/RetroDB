@@ -1,6 +1,8 @@
 - version: 3.29.1
   date: 2026-10-17
   tags:
+  - type: feature
+    label: One game from several regions shows as one card
   - type: security
     label: AI Fill and ROM Tools are harder to misuse
   - type: fix
@@ -13,6 +15,15 @@
     label: Pillow 13 and other library updates
   body: |
     <ul>
+      <li><strong>Regional versions of a game show as one game.</strong>
+        Link the versions you own (say, the USA, European and Japanese
+        releases) and the Library shows one card with a &#127760; badge. The
+        card opens and plays the version from your Default Region. The game
+        page lists every version side by side and lets you switch between
+        them. ROM Tools &gt; Regional Versions suggests groups for editors to
+        confirm; nothing is linked without you. Linked versions are no longer
+        reported as duplicates by name. Run Backfill Alternate Titles once to
+        give the suggestions more to work with.</li>
       <li><strong>AI Fill can no longer be steered by text typed into a
         game's fields.</strong> When AI Fill checks a game's existing
         publisher, developer, edition or other platforms, it now cleans that

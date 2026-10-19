@@ -192,7 +192,8 @@ def build_game_card(row, rpcs3_info=None, include_source_flag=False):
 
     Args:
         row: sqlite3.Row with card columns + system_name, system_folder,
-             system_type, bonus_count, earned_achievements, achievement_total,
+             system_type, bonus_count, version_group_id, version_count
+             (PASS-59-106), earned_achievements, achievement_total,
              achievement_pct, achievement_source, psn_earned, psn_total.
         rpcs3_info: optional dict with 'earned' and 'total' from RPCS3 local
                     trophies (PS3 only).
@@ -210,6 +211,8 @@ def build_game_card(row, rpcs3_info=None, include_source_flag=False):
         'system_folder': row['system_folder'],
         'system_type': row['system_type'] or '',
         'bonus_count': row['bonus_count'],
+        'version_group_id': row['version_group_id'],
+        'version_count': row['version_count'],
         'import_source': import_source,
         'achievement_earned': row['earned_achievements'],
         'achievement_total': row['achievement_total'],

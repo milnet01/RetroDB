@@ -314,6 +314,7 @@ app.register_blueprint(scraper_bp)
 from routes.clz_import import bp as clz_import_bp
 from routes.controllers import bp as controllers_bp
 from routes.bonus_discs import bp as bonus_discs_bp
+from routes.versions import bp as versions_bp
 from routes.settings import bp as settings_bp
 from routes.systems import bp as systems_bp
 from routes.games import bp as games_bp
@@ -339,6 +340,7 @@ from routes.launch_settings import bp as launch_settings_bp
 app.register_blueprint(clz_import_bp)
 app.register_blueprint(controllers_bp)
 app.register_blueprint(bonus_discs_bp)
+app.register_blueprint(versions_bp)
 app.register_blueprint(settings_bp)
 app.register_blueprint(systems_bp)
 app.register_blueprint(games_bp)

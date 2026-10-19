@@ -1138,6 +1138,28 @@ PLATFORM_NAME_MAP = {
 # TITLE PARSING FUNCTIONS
 # =============================================================================
 
+def parse_dump_tags(rom_path):
+    """Read the No-Intro tags a ROM filename carries (PASS-59-106 §4.4).
+
+    'Game (Europe) (En,Fr,De) (Rev 1) (Disc 1 of 2).chd' ->
+    {'revision': 'Rev 1', 'languages': ['En', 'Fr', 'De'], 'disc': 'Disc 1 of 2'}.
+    A tag the filename lacks is None (languages: []).
+    """
+    name = os.path.splitext(os.path.basename(rom_path or ''))[0]
+    tags = {'revision': None, 'languages': [], 'disc': None}
+    for tag in re.findall(r'\(([^()]*)\)', name):
+        tag = tag.strip()
+        if re.fullmatch(r'Rev\s*[\w.]+|v\d+(\.\d+)*[a-z]?', tag, re.IGNORECASE):
+            tags['revision'] = tag
+        elif re.fullmatch(r'Dis[ck]\s*\d+(\s*of\s*\d+)?', tag, re.IGNORECASE):
+            tags['disc'] = tag
+        else:
+            parts = [p.strip() for p in tag.split(',')]
+            if all(re.fullmatch(r'[A-Z][a-z](-[A-Z][a-z]+)?', p) for p in parts):
+                tags['languages'] = parts
+    return tags
+
+
 def derive_title_from_filename(rom_path, is_computer_system=False):
     """
     Convert a ROM filename back to a proper game title following naming standards.

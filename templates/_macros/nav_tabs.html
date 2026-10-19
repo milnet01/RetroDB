@@ -37,6 +37,7 @@
     {{ _tab(url_for('tools.chd_verify'), '✅', _('CHD Verify'), active == 'chd_verify') }}
     {{ _tab(url_for('tools.multi_disc_organizer'), '💽', _('Multi-Disc Organizer'), active == 'multi_disc_organizer') }}
     {{ _tab(url_for('tools.duplicate_finder'), '🔍', _('Duplicate Finder'), active == 'duplicate_finder') }}
+    {% if has_perm('edit') %}{{ _tab(url_for('versions.versions_review'), '🌐', _('Regional Versions'), active == 'versions') }}{% endif %}
     {{ _tab(url_for('tools.screenshot_dedup'), '📸', _('Screenshot Dedup'), active == 'screenshot_dedup') }}
     {{ _tab(url_for('reports.reports'), '📊', _('ROM Reports'), active == 'reports') }}
     {{ _tab(url_for('tools.rom_tools_settings'), '⚙️', _('Settings'), active == 'rom_tools_settings') }}

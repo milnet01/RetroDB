@@ -864,6 +864,9 @@
         <h3>Bonus Discs</h3>
         <p>RetroDB automatically detects bonus/extra discs (e.g. soundtrack CDs, extra content discs) and links them to their parent game. Bonus discs are hidden by default in the library &mdash; toggle <strong>"Show Bonus"</strong> in filters to display them. Linked bonus discs appear in the parent game's detail modal.</p>
 
+        <h3>Regional Versions</h3>
+        <p>When you own one game from several regions, link the versions and the Library shows them as one card with a &#127760; badge. The card opens and plays the version from your preferred region (<strong>Settings &rarr; Library &rarr; Default Region</strong>). The game page lists every version, compares them (release date, publisher, file size, revision, languages, scores, RetroAchievements) and links to each one. Editors can unlink a version there, or search the same system to link another. The page header counts games, with the number of ROMs beside it when the two differ.</p>
+
         <div class="help-tip">
             <strong>Tip:</strong> The detail modal caches recently viewed games for faster loading. Edits automatically update the game card on the page without requiring a refresh.
         </div>
@@ -1388,7 +1391,11 @@
         <p><em>Requires: chdman</em></p>
 
         <h3>Duplicate Finder</h3>
-        <p>Find duplicate ROMs by hash or filename, with options to prioritize by region tags.</p>
+        <p>Find duplicate ROMs by hash or filename, with options to prioritize by region tags. In filename mode, linked regional versions of one game are not reported as duplicates; in hash mode, identical files always are.</p>
+        <p><em>No external dependencies</em></p>
+
+        <h3>Regional Versions</h3>
+        <p>Editors only. RetroDB suggests games that look like one game from different regions: the same IGDB or ScreenScraper game, the same title with a different region tag, or a regional name that matches. Untick any game that does not belong and click <strong>"Link ticked games"</strong>, or click <strong>"Not versions"</strong> so that group is never suggested again. Nothing is linked until you confirm it. Run <strong>Backfill Alternate Titles</strong> in Maintenance first: it fills the IGDB and ScreenScraper ids the suggestions use.</p>
         <p><em>No external dependencies</em></p>
 
         <h3>Multi-Disc Organizer</h3>

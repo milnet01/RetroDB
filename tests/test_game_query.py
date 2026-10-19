@@ -31,8 +31,10 @@ class TestEscapeLike:
 
 class TestBuildGamesQuery:
     def test_show_bonus_true_produces_no_filter(self):
-        # With show_bonus=1 and no other params, the fallback WHERE 1=1 kicks in
-        sql, vals = _build_games_query({'show_bonus': '1'})
+        # With show_bonus=1 and no other params, the fallback WHERE 1=1 kicks in.
+        # group_versions=False: these tests pin the filters; the PASS-59-106
+        # grouping wrapper is pinned by tests/test_version_groups_query.py.
+        sql, vals = _build_games_query({'show_bonus': '1'}, group_versions=False)
         assert "WHERE 1=1" in sql
         assert vals == []
 
@@ -47,7 +49,7 @@ class TestBuildGamesQuery:
         assert "is_bonus_disc = 0" not in sql
 
     def test_system_filter(self):
-        sql, vals = _build_games_query({'system': '42'})
+        sql, vals = _build_games_query({'system': '42'}, group_versions=False)
         assert "g.system_id = ?" in sql
         # The SUT passes params['system'] verbatim — value comes off the query
         # string as a str. Pin the exact bound-value list so a future
@@ -80,7 +82,7 @@ class TestBuildGamesQuery:
         assert "has_retroachievements = 1" in sql
 
     def test_count_only_emits_count_query(self):
-        sql, vals = _build_games_query({}, count_only=True)
+        sql, vals = _build_games_query({}, count_only=True, group_versions=False)
         assert "SELECT COUNT(*)" in sql
         assert "ORDER BY" not in sql  # counts don't need ordering
 

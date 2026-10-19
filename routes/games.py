@@ -27,7 +27,7 @@ from services.game_utils import (
 from services.game_query import (
     escape_like, get_retroachievements_info, get_trophy_info_for_game,
     get_bonus_discs_for_game, _get_filter_options, _build_games_query,
-    invalidate_filter_cache,
+    invalidate_filter_cache, VERSION_COLUMNS,
 )
 from services.analytics import invalidate_analytics_cache
 from services.launch_resolver import launch_checker, rom_launch_problem
@@ -87,12 +87,16 @@ def all_games():
 
         counts = query("""
             SELECT
-                COUNT(CASE WHEN (is_bonus_disc = 0 OR is_bonus_disc IS NULL) THEN 1 END) AS total_games,
+                -- PASS-59-106: a version group is one game; total_roms counts rows.
+                COUNT(DISTINCT CASE WHEN (is_bonus_disc = 0 OR is_bonus_disc IS NULL)
+                                    THEN COALESCE(version_group_id, -id) END) AS total_games,
+                COUNT(CASE WHEN (is_bonus_disc = 0 OR is_bonus_disc IS NULL) THEN 1 END) AS total_roms,
                 COUNT(CASE WHEN scraped = 0 AND (is_bonus_disc = 0 OR is_bonus_disc IS NULL) THEN 1 END) AS total_missing,
                 COUNT(CASE WHEN is_bonus_disc = 1 THEN 1 END) AS bonus_count
             FROM games
         """, one=True)
         total_games = counts['total_games']
+        total_roms = counts['total_roms']
         total_missing = counts['total_missing']
         bonus_count = counts['bonus_count']
 
@@ -110,6 +114,7 @@ def all_games():
         return render_template('all_games.html',
                              systems=systems,
                              total_games=total_games,
+                             total_roms=total_roms,
                              total_missing=total_missing,
                              bonus_count=bonus_count,
                              ra_systems=ra_systems,
@@ -153,9 +158,12 @@ def api_games():
                'not_modes', 'not_perspective', 'not_dimension', 'not_rating')
               if request.args.get(k)}
 
-    # Count query
+    # Count queries — PASS-59-106: `total` counts cards (one per version
+    # group), `total_roms` every row, under the same filters.
     count_sql, count_vals = _build_games_query(params, count_only=True)
     total = query(count_sql, tuple(count_vals), one=True)['total']
+    roms_sql, roms_vals = _build_games_query(params, count_only=True, group_versions=False)
+    total_roms = query(roms_sql, tuple(roms_vals), one=True)['total']
 
     # Data query with pagination (Pass 31.1 — scope the psn subquery to caller).
     data_sql, data_vals = _build_games_query(params, user_id=g.user['id'])
@@ -181,6 +189,7 @@ def api_games():
     return success(
         games=games,
         total=total,
+        total_roms=total_roms,
         page=page,
         per_page=per_page,
         total_pages=total_pages,
@@ -207,10 +216,6 @@ def api_games_ids():
         params['_unscraped'] = True
 
     ids_sql, ids_vals = _build_games_query(params, ids_only=True)
-
-    # Append unscraped condition if requested
-    if params.get('_unscraped'):
-        ids_sql = ids_sql.replace("ORDER BY", "AND g.scraped = 0 ORDER BY")
 
     # Pass 25.8 — sanity LIMIT. This endpoint feeds bulk-select ("select every
     # filtered game on this page") so a 500-row cap would break a realistic
@@ -277,6 +282,7 @@ def api_games_card_data():
                g.is_bonus_disc, g.rom_path, g.ra_achievement_count,
                s.name AS system_name, s.folder AS system_folder, s.system_type,
                COALESCE(bc.bonus_count, 0) AS bonus_count,
+               {VERSION_COLUMNS},
                gap.earned_achievements,
                CASE WHEN COALESCE(gap.total_achievements, 0) > 0
                     THEN gap.total_achievements
@@ -728,6 +734,15 @@ def game_detail(game_id):
                 alt['region_label'] = region_display_name(alt['region'], get_locale())
         alternate_titles.sort(key=lambda a: (not a.get('region_label'), a.get('region_label') or ''))
 
+        # PASS-59-106 §4.4 — the other regional versions this game is linked to.
+        from scraper.metadata_normalizer import alt_title_region
+        from services.version_groups import members as version_members
+        versions = version_members(game_id) if game_dict.get('version_group_id') else []
+        for version in versions:
+            code, _note = alt_title_region(version['region_label'])
+            version['region_name'] = (region_display_name(code, get_locale()) if code
+                                      else version['region_label'])
+
         return render_template('game_detail.html',
                              game=game,
                              system=system,
@@ -735,6 +750,7 @@ def game_detail(game_id):
                              message=message,
                              bonus_discs=bonus_discs,
                              parent_game=parent_game,
+                             versions=versions,
                              alternate_titles=alternate_titles,
                              pref_rating={'value': pref_rating_val, 'image': pref_rating_img,
                                           'crossmapped': pref_rating_crossmapped, 'name': pref_rating_name,

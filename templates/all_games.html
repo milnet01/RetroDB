@@ -14,7 +14,7 @@
     <div>
         <h1 class="page-title glitch-text" data-text="{{ _('All Games') }}">{{ _('All Games') }}</h1>
         <p class="page-subtitle">
-            <span id="totalGamesCount">{{ total_games|format_number }}</span> {{ _('games across all systems') }}
+            <span id="totalGamesCount">{{ total_games|format_number }}</span> {{ _('games across all systems') }}{% if total_roms != total_games %} {{ _('(%(roms)s ROMs)', roms=total_roms|format_number) }}{% endif %}
             {% if total_missing > 0 %}
                 • <span style="color: var(--status-warning);"><span id="totalMissingCount">{{ total_missing|format_number }}</span> {{ _('missing metadata') }}</span>
             {% endif %}

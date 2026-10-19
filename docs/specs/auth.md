@@ -98,7 +98,9 @@ def api_update_completion(game_id):
   profile reads). Use a permission decorator instead if the access is
   finer-grained.
 - `@editor_required` for every destructive metadata / scrape endpoint
-  (delete game, rename ROM, edit, bulk edit, bulk scrape). Pinned by
+  (delete game, rename ROM, edit, bulk edit, bulk scrape), and for the
+  regional-versions routes and review page (`routes/versions.py`,
+  PASS-59-106). Pinned by
   `tests/test_auth_hardening.py::TestEditorRequiredOnDestructiveEndpoints`
   — regex over each file asserts `@editor_required` (not
   `@login_required`) appears above each named view.

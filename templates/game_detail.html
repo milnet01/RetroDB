@@ -69,6 +69,15 @@
         </a>
     </div>
     {% endif %}
+    {% if versions|length > 1 %}
+    {# PASS-59-106 §4.4 — switch between the linked regional versions. #}
+    <nav class="version-switcher" aria-label="{{ _('Regional versions') }}">
+        <span class="version-switcher-label">🌐 {{ _('Versions:') }}</span>
+        {% for v in versions %}
+        <a href="{{ url_for('games.game_detail', game_id=v.id) }}" class="version-chip{% if v.id == game.id %} current{% endif %}"{% if v.id == game.id %} aria-current="page"{% endif %}>{{ v.region_name or _('Unknown region') }}</a>
+        {% endfor %}
+    </nav>
+    {% endif %}
     <div class="header-buttons">
         {% if has_perm('launch') %}
         <button type="button" id="play-btn" class="btn btn-primary" data-game-id="{{ game.id }}" onclick="launchGame(this)" title="{{ _('Launch this game in the configured emulator') }}">
@@ -663,6 +672,63 @@
             </div>
         </div>
         {% endif %}
+
+        <!-- PASS-59-106 §4.4 — regional versions, compared from stored data -->
+        {% set can_link_versions = has_perm('edit') and not game.is_bonus_disc %}
+        {% if versions|length > 1 or can_link_versions %}
+        <div class="bottom-section versions-section" id="versionsSection" data-game-id="{{ game.id }}" data-system-id="{{ game.system_id }}">
+            <h2 class="section-title-sm">🌐 {{ _('Regional Versions') }}</h2>
+            {% if versions|length > 1 %}
+            <div class="versions-table-wrap">
+                <table class="versions-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">{{ _('Region') }}</th>
+                            <th scope="col">{{ _('Title') }}</th>
+                            <th scope="col">{{ _('Released') }}</th>
+                            <th scope="col">{{ _('Publisher') }}</th>
+                            <th scope="col">{{ _('File size') }}</th>
+                            <th scope="col">{{ _('Revision') }}</th>
+                            <th scope="col">{{ _('Languages') }}</th>
+                            <th scope="col">{{ _('Scores') }}</th>
+                            <th scope="col">{{ _('RetroAchievements') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for v in versions %}
+                        <tr{% if v.id == game.id %} class="current"{% endif %}>
+                            <th scope="row">
+                                <a href="{{ url_for('games.game_detail', game_id=v.id) }}">{{ v.region_name or _('Unknown region') }}</a>
+                                {% if v.id == game.id %}<span class="version-current-tag">{{ _('(this page)') }}</span>{% endif %}
+                            </th>
+                            <td>{{ v.title }}</td>
+                            <td>{{ v.release_date or '—' }}</td>
+                            <td>{{ v.publisher or '—' }}</td>
+                            <td>{{ v.file_size|filesizeformat if v.file_size is not none else '—' }}</td>
+                            <td>{{ v.dump_tags.revision or '—' }}</td>
+                            <td>{{ v.dump_tags.languages|join(', ') or '—' }}</td>
+                            <td>{% if v.critic_score %}⭐ {{ v.critic_score|round|int }}{% endif %}{% if v.user_score %} 👤 {{ v.user_score|round|int }}{% endif %}{% if not v.critic_score and not v.user_score %}—{% endif %}</td>
+                            <td>{% if v.has_retroachievements %}{{ _('Yes') }}{% if v.ra_achievement_count %} ({{ v.ra_achievement_count }}){% endif %}{% else %}{{ _('No') }}{% endif %}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="versions-empty">{{ _('No other regional versions are linked to this game.') }}</p>
+            {% endif %}
+            {% if can_link_versions %}
+            <div class="versions-actions">
+                {% if versions|length > 1 %}
+                <button type="button" class="btn btn-secondary btn-sm" id="versionUnlinkBtn">{{ _('Unlink this version') }}</button>
+                {% endif %}
+                <label for="versionLinkSearch" class="visually-hidden">{{ _('Link a version') }}</label>
+                <input type="search" id="versionLinkSearch" class="form-input" placeholder="{{ _('Link a version: search this system') }}" autocomplete="off">
+            </div>
+            <ul id="versionLinkResults" class="version-link-results" hidden></ul>
+            {% endif %}
+        </div>
+        {% endif %}
     </div>
     
     <!-- Scrape History -->
@@ -1070,6 +1136,103 @@ body:has(.game-fanart-bg.active)::before {
     height: 32px;
     object-fit: cover;
     border-radius: 2px;
+}
+
+/* PASS-59-106 — regional versions: switcher under the title, comparison below */
+.version-switcher {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-xs);
+    width: 100%;
+}
+
+.version-switcher-label {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.version-chip {
+    padding: 2px 10px;
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-full);
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 0.85rem;
+}
+
+.version-chip:hover,
+.version-chip.current {
+    border-color: var(--neon-cyan);
+    color: var(--neon-cyan);
+}
+
+.versions-section {
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+}
+
+.versions-table-wrap {
+    overflow-x: auto;
+    margin-top: var(--spacing-sm);
+}
+
+.versions-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.versions-table th,
+.versions-table td {
+    padding: 6px 10px;
+    text-align: left;
+    border-bottom: 1px solid var(--card-border);
+    white-space: nowrap;
+}
+
+.versions-table thead th {
+    color: var(--text-secondary);
+    font-weight: normal;
+}
+
+.versions-table tr.current {
+    background: color-mix(in srgb, var(--neon-cyan) 8%, transparent);
+}
+
+.version-current-tag,
+.versions-empty {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+}
+
+.versions-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    align-items: center;
+    margin-top: var(--spacing-sm);
+}
+
+.versions-actions .form-input {
+    flex: 1;
+    min-width: 200px;
+}
+
+.version-link-results {
+    list-style: none;
+    margin: var(--spacing-xs) 0 0;
+    padding: 0;
+}
+
+.version-link-results li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: 4px 0;
+    border-bottom: 1px solid var(--card-border);
 }
 
 /* Bonus Discs Section */
@@ -5457,4 +5620,6 @@ document.querySelectorAll('.filter-link').forEach(link => {
 <script src="{{ asset_url('js/game-launch.js') }}" defer></script>
 <!-- PASS-59-108 — Apply Metadata progress gauge -->
 <script src="{{ asset_url('js/apply-progress.js') }}" defer></script>
+<!-- PASS-59-106 — link and unlink regional versions -->
+<script src="{{ asset_url('js/versions.js') }}" defer></script>
 {% endblock %}

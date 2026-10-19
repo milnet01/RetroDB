@@ -531,6 +531,7 @@ your migration — not in the runner.
 | 013 | `013_fresh_install_schema_backfill.py` | Backfill additive columns a fresh install's baseline `CREATE TABLE` may lag behind. | Pass 45.x. Idempotent `PRAGMA table_info` guard per column. |
 | 014 | `014_games_china_rating.py` | Add `games.china_rating` (9th rating board — China CADPA age reminder). | Pass 51.2. Plain additive ALTER; population via the normal cross-map / AI-fill path (§10). |
 | 015 | `015_ingest_legacy_platform_tokens.py` | Ingest legacy `psn_tokens.json` / `xbox_tokens.json` from the DB's directory or its sibling `data/`. | Pass 59.44. `INSERT OR IGNORE`, so a token saved since wins. Renames each ingested file to `*.migrated-015` rather than deleting it, so a rolled-back transaction loses nothing. |
+| 016 | `016_version_groups.py` | Create `version_groups` and `version_link_rejections`; add `games.version_group_id`, `games.igdb_id`, `games.screenscraper_id`. | PASS-59-106. Additive. `foreign_keys` is never on, so three triggers keep the group rules on delete, bonus-disc flag and system change, and drop a deleted game's rejections. |
 
 ---
 

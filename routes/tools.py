@@ -949,6 +949,15 @@ def api_duplicate_finder_scan():
     if not os.path.exists(path):
         return error(_('Path does not exist: %(path)s') % {'path': path}, 400)
 
+    # PASS-59-106 §4.6 — in name mode, two files of one version group are
+    # regional versions, not duplicates. Read here: the scan thread has no
+    # app context. Identical bytes stay duplicates in the hash modes.
+    version_of = {}
+    if method == 'name':
+        for row in query("SELECT rom_path, version_group_id FROM games "
+                         "WHERE version_group_id IS NOT NULL AND rom_path IS NOT NULL"):
+            version_of[os.path.realpath(row['rom_path'])] = row['version_group_id']
+
     _cleanup_completed_tasks()
     # Pass 41.10 — full UUID (no [:8] slice). 32 bits gave attackers ~4.3B
     # values to brute-force, which is insufficient for a per-process task
@@ -1098,7 +1107,9 @@ def api_duplicate_finder_scan():
         
         dup_groups = []
         for key, gfiles in groups.items():
-            if len(gfiles) > 1:
+            # One version group counts once: versions of a game are kept.
+            identities = {version_of.get(os.path.realpath(f['path']), f['path']) for f in gfiles}
+            if len(gfiles) > 1 and len(identities) > 1:
                 gfiles.sort(key=lambda x: x['modified'], reverse=True)
                 wasted = sum(f['size'] for f in gfiles[1:])
                 dup_groups.append({

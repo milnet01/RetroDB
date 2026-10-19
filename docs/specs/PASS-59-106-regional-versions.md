@@ -108,10 +108,14 @@ ALTER TABLE games ADD COLUMN igdb_id INTEGER;
 ALTER TABLE games ADD COLUMN screenscraper_id INTEGER;
 ```
 
-Group rules, enforced in one module, `services/version_groups.py`:
+Group rules. `services/version_groups.py` keeps them on link and unlink.
+RetroDB never turns `PRAGMA foreign_keys` on, so the `ON DELETE` clauses
+above do nothing; the migration's triggers keep the rules when a row is
+deleted, becomes a bonus disc, or changes system:
 
 - Every member of a group has the same `system_id`.
-- A bonus disc (`is_bonus_disc = 1`) is never a member.
+- A bonus disc (`is_bonus_disc = 1`) is never a member. A member flagged
+  as a bonus disc, or moved to another system, leaves its group.
 - A group has two or more members. An unlink that leaves one member deletes
   the group and clears that member's `version_group_id`. Deleting a game
   row that leaves one member does the same.
@@ -190,9 +194,14 @@ same system, not already in one group, and not rejected, on any one signal:
 1. Same `igdb_id`.
 2. Same `screenscraper_id`.
 3. Same title key: `derive_title_from_filename(rom_path)` lower-cased,
-   with different region tags or revisions.
+   with different region tags or revisions. Both filenames must carry
+   tags: an untagged name, such as a platform import, has no region tag.
 4. One game's title, or its title key, equals another's alternate title
-   (`games.alternate_titles`, PASS-59-105), case-insensitive.
+   (`games.alternate_titles`, PASS-59-105), case-insensitive. Only an
+   alternate title tagged with a region counts
+   (`scraper/metadata_normalizer.py::alt_title_region` gives a code). On
+   the live library, untagged and "ss"-tagged names paired sequels and
+   unrelated games (2026-10-19).
 
 A pair whose filenames carry different disc numbers (`(Disc 1 of 2)`) is
 never suggested: that is one game's discs. Pairs join into groups through
@@ -205,12 +214,14 @@ The RA id is not a signal: grouping live non-bonus rows by
 
 `igdb_id` and `screenscraper_id` are filled from now on:
 
-- The hybrid scraper writes them with the scraper fill-only rule
-  (`COALESCE(?, igdb_id)`, CLAUDE.md "Scraper fill-only invariant").
+- The hybrid scraper writes them only when empty
+  (`COALESCE(igdb_id, ?)`, INV-10); Full Re-scrape replaces a stored id
+  with one a source provides (`COALESCE(?, igdb_id)`).
 - The Backfill Alternate Titles job
   (`services/jobs/alt_titles_backfill.py`) writes them when empty, from the
-  same search results it already reads, so one run fills the signals for an
-  existing library.
+  same search results it already reads. Its "only empty" run takes games
+  missing alternate titles or either id, so one run fills the signals for
+  an existing library.
 
 The review list is a ROM Tools page, `/tools/versions`. Each suggestion has
 Link (all members, or the ones left ticked) and "Not versions" (writes a
@@ -292,8 +303,10 @@ unchanged: identical bytes are a duplicate whatever the grouping.
   *Breaks when:* a signal is missing or needs another to fire.
 
 - **INV-9** — Nothing links games except the link route.
-  *Test:* `command grep -rn "version_group_id = \|version_group_id=" --include=*.py services routes scraper`
-  lists only `services/version_groups.py` (run after implementation).
+  *Test:* `command grep -rn "SET version_group_id = ?" --include=*.py services routes scraper`
+  lists only `services/version_groups.py` → every line is
+  `services/version_groups.py` (2026-10-19). The migration's triggers only
+  clear the column.
   *Breaks when:* a scraper or job writes a link.
 
 - **INV-10** — The scraper fills `igdb_id` and `screenscraper_id` only when

@@ -8,6 +8,11 @@
 # Uses scraper_manager.search_games() which already surfaces alt titles from
 # IGDB (via alternative_names name + comment) and ScreenScraper (via regional noms) in
 # its search results at no extra API cost.
+#
+# PASS-59-106 §4.5 — the same results carry each source's game id, so the job
+# also fills games.igdb_id / games.screenscraper_id where empty: the regional-
+# version suggestion signals. "Only empty" therefore means games missing alt
+# titles OR either id, so one run fills the signals for an existing library.
 # =============================================================================
 
 import json
@@ -114,10 +119,13 @@ class AltTitlesBackfillJob:
         try:
             from scraper.scraper_manager import scraper_manager
             from scraper.metadata_normalizer import merge_alt_titles
+            from scraper.hybrid_scraper import source_game_id
 
             conn = _get_conn()
             c = conn.cursor()
-            where_empty = "AND (g.alternate_titles IS NULL OR g.alternate_titles = '' OR g.alternate_titles = '[]')" if only_empty else ""
+            where_empty = ("AND (g.alternate_titles IS NULL OR g.alternate_titles = '' "
+                           "OR g.alternate_titles = '[]' "
+                           "OR g.igdb_id IS NULL OR g.screenscraper_id IS NULL)") if only_empty else ""
             c.execute(f"""
                 SELECT g.id, g.title, g.alternate_titles,
                        s.name AS system_name, s.folder AS system_folder
@@ -201,6 +209,21 @@ class AltTitlesBackfillJob:
                             with self._lock:
                                 self.no_match_count += 1
                             continue
+
+                        # Best-scored id per source, same score floor as the
+                        # alt titles below; written only where empty.
+                        found_ids = {}
+                        for r in results:
+                            src = r.get('source')
+                            if src in ('igdb', 'screenscraper') and src not in found_ids \
+                                    and r.get('score', 0) >= 100:
+                                found_ids[src] = source_game_id(r)
+                        if any(found_ids.values()):
+                            write_conn.execute(
+                                "UPDATE games SET igdb_id = COALESCE(igdb_id, ?), "
+                                "screenscraper_id = COALESCE(screenscraper_id, ?) WHERE id = ?",
+                                (found_ids.get('igdb'), found_ids.get('screenscraper'), game['id']),
+                            )
 
                         # Take the best-scored result per source that also
                         # carries alt titles. Skip very-low-score matches that
