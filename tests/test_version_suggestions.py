@@ -75,3 +75,20 @@ def test_alternate_title_signal_needs_a_region(vdb):
         pair = [vdb.game(f'Lambda {region}'),
                 vdb.game('Mu', rom=f'Mu {region} (Japan).zip', alt=alt)]
         assert not _touching(vg.suggest_groups(vdb.sid), pair), region
+
+
+# §4.5 — a numbered sequel is not a version of the un-numbered first game,
+# even when a wrong scrape gave both rows one id (live library, 2026-10-19:
+# "Doom 2 (USA)" carried Doom's IGDB id). Two numbered names still pair:
+# Final Fantasy III (USA) is Final Fantasy VI (Japan).
+def test_sequel_number_on_one_name_only_not_suggested(vdb):
+    for igdb_id, first, sequel in (
+            (9, 'Doom (USA).zip', 'Doom 2 (USA).zip'),
+            (19, 'Descent (USA).chd', 'Descent II (Europe).chd'),
+            (29, 'Strider (1989) (Capcom).zip', 'Strider 2 (1990) (US Gold).zip')):
+        pair = [vdb.game('Doom', rom=first, igdb_id=igdb_id),
+                vdb.game('Doom', rom=sequel, igdb_id=igdb_id)]
+        assert not _touching(vg.suggest_groups(vdb.sid), pair), sequel
+    renumbered = [vdb.game('Final Fantasy III', rom='Final Fantasy III (USA).zip', igdb_id=10),
+                  vdb.game('Final Fantasy VI', rom='Final Fantasy VI (Japan).zip', igdb_id=10)]
+    assert _touching(vg.suggest_groups(vdb.sid), renumbered)

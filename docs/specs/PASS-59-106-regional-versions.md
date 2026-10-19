@@ -204,7 +204,12 @@ same system, not already in one group, and not rejected, on any one signal:
    unrelated games (2026-10-19).
 
 A pair whose filenames carry different disc numbers (`(Disc 1 of 2)`) is
-never suggested: that is one game's discs. Pairs join into groups through
+never suggested: that is one game's discs. Nor is a pair where only one
+filename, tags removed, carries a sequel number (a number, or a Roman
+numeral II to X). On the live library, wrong scrapes gave sequels their
+first game's ids (2026-10-19). Two numbered names still pair: a regional
+release can be renumbered (Final Fantasy III in the USA is Final Fantasy
+VI in Japan). Pairs join into groups through
 shared members. Each suggestion lists its members and the signals that
 fired.
 
@@ -290,7 +295,8 @@ unchanged: identical bytes are a duplicate whatever the grouping.
   different filters.
 
 - **INV-7** — Suggestions never include a rejected pair, games already in
-  one group, two discs of one game, or games on two systems.
+  one group, two discs of one game, a sequel paired with an un-numbered
+  name, or games on two systems.
   *Test:* `tests/test_version_suggestions.py` (to add) — one fixture per
   exclusion, each a pair that a signal would otherwise match; assert no
   suggestion. Each fixture breaks one exclusion only.

@@ -32,6 +32,9 @@ _DEFAULT_REGION_OPTIONS = ['USA', 'Europe', 'Japan', 'World']
 # One `(...)` or `[...]` tag in a ROM filename.
 _TAG_RE = re.compile(r'[(\[]([^()\[\]]*)[)\]]')
 
+# A sequel number in a title: a number, or a Roman numeral II to X.
+_SEQUEL_RE = re.compile(r'\b(?:\d+|II|III|IV|V|VI|VII|VIII|IX|X)\b')
+
 # Columns the game page's version list and comparison read (§4.4).
 _MEMBER_COLUMNS = """g.id, g.title, g.region, g.rom_path, g.release_date, g.publisher,
     g.critic_score, g.user_score, g.has_retroachievements, g.ra_achievement_count,
@@ -276,6 +279,12 @@ def _variant_tags(rom_path):
     return frozenset(tags)
 
 
+def _has_sequel_number(rom_path):
+    """True when the filename, tags removed, carries a sequel number."""
+    name = os.path.splitext(os.path.basename(rom_path or ''))[0]
+    return bool(_SEQUEL_RE.search(_TAG_RE.sub(' ', name)))
+
+
 def _regional_alt_names(raw):
     """Alternate titles tagged with a real region (PASS-59-105's regional
     names). An untagged name, or a non-region tag such as ScreenScraper's
@@ -295,7 +304,8 @@ def suggest_groups(system_id=None):
 
     Pairs non-bonus games on one system, not already in one group and not
     rejected, on any one signal in SIGNALS. Two discs of one game are never
-    paired. Pairs sharing a game join into one suggestion.
+    paired, nor a filename with a sequel number and one without. Pairs
+    sharing a game join into one suggestion.
 
     Returns [{'games': [...], 'signals': [...]}].
     """
@@ -317,6 +327,7 @@ def suggest_groups(system_id=None):
         g['key'] = derive_title_from_filename(g['rom_path'] or '').strip().lower()
         g['variant'] = _variant_tags(g['rom_path'])
         g['disc'] = parse_dump_tags(g['rom_path'])['disc']
+        g['sequel'] = _has_sequel_number(g['rom_path'])
 
     pair_signals = {}
 
@@ -367,6 +378,9 @@ def suggest_groups(system_id=None):
         if ga['version_group_id'] and ga['version_group_id'] == gb['version_group_id']:
             return False
         if ga['disc'] and gb['disc'] and ga['disc'].lower() != gb['disc'].lower():
+            return False
+        # A sequel and its first game; a wrong scrape can give both one id.
+        if ga['sequel'] != gb['sequel']:
             return False
         return True
 
