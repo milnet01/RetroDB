@@ -1087,6 +1087,104 @@ def get_game_details(game_id, title, system_name, system_folder=None, existing_m
     return result
 
 
+# =============================================================================
+# REGIONAL VERSION DIFFERENCES (PASS-59-107)
+# =============================================================================
+
+_MAX_DIFFERENCES = 8
+_MAX_DIFFERENCE_LEN = 400
+
+
+def active_provider_name():
+    """The configured AI provider's name, or None when AI is not set up."""
+    provider_config = _get_active_provider()
+    return provider_config['provider'] if provider_config else None
+
+
+def _build_versions_prompt(system_name, versions):
+    """Prompt asking how the linked regional versions of one game differ."""
+    lines = []
+    for v in versions:
+        tags = v.get('dump_tags') or {}
+        details = [f"region: {_sanitize_prompt_input(v.get('region_label')) or 'unknown'}"]
+        if tags.get('revision'):
+            details.append(f"revision: {_sanitize_prompt_input(tags['revision'])}")
+        if tags.get('languages'):
+            details.append('languages: ' + ', '.join(_sanitize_prompt_input(x) for x in tags['languages']))
+        if v.get('release_date'):
+            details.append(f"released: {_sanitize_prompt_input(v['release_date'])}")
+        if v.get('publisher'):
+            details.append(f"publisher: {_sanitize_prompt_input(v['publisher'])}")
+        lines.append(f'- "{_sanitize_prompt_input(v.get("title"))}" ({"; ".join(details)})')
+
+    return f"""These are regional releases of one video game on {_sanitize_prompt_input(system_name)}:
+{chr(10).join(lines)}
+
+List the known differences BETWEEN THESE RELEASES that a player would notice:
+censorship, changed or removed content, difficulty, bug fixes, game speed
+(for example 50 Hz PAL slowdown), translation and other gameplay changes.
+Compare these releases only with each other: never with the game on other
+systems, its arcade original, or its sequels. Name the release each
+difference belongs to. Only state differences you are confident are
+documented; never guess, and leave out opinions such as "generally
+considered". Leave out file size, box art and packaging. If no differences
+are documented, return an empty list.
+
+Respond with JSON only, in this shape:
+{{"differences": ["one short sentence per difference"]}}"""
+
+
+def _parse_differences(raw_text):
+    """The `differences` list from an AI reply; None when it cannot be read."""
+    if not raw_text:
+        return None
+    text = raw_text.strip()
+    if text.startswith('```'):
+        text = re.sub(r'^```(?:json)?\s*\n?', '', text)
+        text = re.sub(r'\n?```\s*$', '', text).strip()
+    try:
+        data = json.loads(text)
+    except json.JSONDecodeError:
+        match = re.search(r'\{.*\}', text, re.DOTALL)
+        if not match:
+            return None
+        try:
+            data = json.loads(match.group())
+        except json.JSONDecodeError:
+            return None
+    items = data.get('differences') if isinstance(data, dict) else None
+    if not isinstance(items, list):
+        return None
+    cleaned = [' '.join(i.split())[:_MAX_DIFFERENCE_LEN]
+               for i in items if isinstance(i, str) and i.strip()]
+    return cleaned[:_MAX_DIFFERENCES]
+
+
+def summarize_version_differences(system_name, versions):
+    """Ask the configured AI how these regional versions differ.
+
+    `versions` are services.version_groups.members() rows. Returns a list of
+    short sentences (empty when none are known), or None on any failure.
+    """
+    provider_config = _get_active_provider()
+    if not provider_config:
+        return None
+    call_fn = {'gemini': _call_gemini, 'openai': _call_openai,
+               'claude': _call_claude}.get(provider_config['provider'])
+    if not call_fn:
+        return None
+    kwargs = {}
+    if provider_config.get('project_id'):
+        kwargs['project_id'] = provider_config['project_id']
+    rate_limit(delay=1.0)
+    raw_text = call_fn(_build_versions_prompt(system_name, versions),
+                       provider_config['api_key'], provider_config['model'], **kwargs)
+    result = _parse_differences(raw_text)
+    if result is None:
+        logger.warning(f"AI version summary: unreadable reply from {provider_config['provider']}")
+    return result
+
+
 def check_api_status():
     """Validate the active AI provider's API key with a minimal test call.
 

@@ -714,6 +714,14 @@
                     </tbody>
                 </table>
             </div>
+            {# PASS-59-107 — AI-written summary of known differences; versions.js fills it after a request. #}
+            {% set ai_differences = version_ai_summary.differences if version_ai_summary else [] %}
+            <div class="versions-ai" id="versionsAiSummary"{% if not version_ai_summary %} hidden{% endif %}>
+                <h3 class="versions-ai-title">{{ _('Known differences') }} <span class="versions-ai-tag">{{ _('AI-written') }}</span></h3>
+                <p class="versions-ai-note">{{ _('Written by AI from what it knows about these releases. It can be wrong.') }}</p>
+                <ul id="versionsAiList">{% for d in ai_differences %}<li>{{ d }}</li>{% endfor %}</ul>
+                <p id="versionsAiNone" class="versions-empty"{% if ai_differences %} hidden{% endif %}>{{ _('The AI knows of no differences between these versions.') }}</p>
+            </div>
             {% else %}
             <p class="versions-empty">{{ _('No other regional versions are linked to this game.') }}</p>
             {% endif %}
@@ -721,6 +729,7 @@
             <div class="versions-actions">
                 {% if versions|length > 1 %}
                 <button type="button" class="btn btn-secondary btn-sm" id="versionUnlinkBtn">{{ _('Unlink this version') }}</button>
+                <button type="button" class="btn btn-secondary btn-sm" id="versionAiBtn">🤖 {{ _('Write again with AI') if version_ai_summary else _('Summarise differences with AI') }}</button>
                 {% endif %}
                 <label for="versionLinkSearch" class="visually-hidden">{{ _('Link a version') }}</label>
                 <input type="search" id="versionLinkSearch" class="form-input" placeholder="{{ _('Link a version: search this system') }}" autocomplete="off">
@@ -1205,6 +1214,42 @@ body:has(.game-fanart-bg.active)::before {
 .versions-empty {
     color: var(--text-secondary);
     font-size: 0.8rem;
+}
+
+.versions-ai {
+    margin-top: var(--spacing-md);
+}
+
+.versions-ai-title {
+    font-size: 0.95rem;
+    margin: 0 0 var(--spacing-xs);
+}
+
+.versions-ai-tag {
+    margin-left: var(--spacing-xs);
+    padding: 1px 8px;
+    border: 1px solid var(--neon-cyan);
+    border-radius: var(--radius-full);
+    color: var(--neon-cyan);
+    font-size: 0.75rem;
+    font-weight: normal;
+}
+
+.versions-ai-note {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    margin: 0 0 var(--spacing-xs);
+}
+
+.versions-ai ul {
+    margin: 0;
+    padding-left: 1.2rem;
+    list-style: disc;
+    font-size: 0.9rem;
+}
+
+.versions-ai li + li {
+    margin-top: var(--spacing-xs);
 }
 
 .versions-actions {

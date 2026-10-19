@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-19 17:26+0200\n"
+"POT-Creation-Date: 2026-10-19 17:52+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: tr\n"
@@ -18,20 +18,26 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: app.py:694
+#: app.py:695
 #, fuzzy
 msgid "Too many requests. Please wait and try again."
 msgstr "Çok fazla deneme. Lütfen daha sonra tekrar deneyin."
 
-#: app.py:803
+#: app.py:804
 #, fuzzy
 msgid "Setup required"
 msgstr "Başlık gerekli"
 
-#: app.py:824
+#: app.py:825
 #, fuzzy
 msgid "Password change required"
 msgstr "Şifre değişikliği gerekli değil"
+
+#: app.py:1648 routes/auth.py:202 routes/auth.py:251 routes/auth.py:436
+#: routes/auth.py:481 templates/force_change_password.html:49
+#: templates/setup.html:450
+msgid "Password must be at least 12 characters"
+msgstr "Şifre en az 12 karakter olmalıdır"
 
 #: routes/achievements.py:49
 msgid "No games with RetroAchievements found in your library"
@@ -43,8 +49,8 @@ msgstr "Sistem bulunamadı veya başarım içeren oyunu yok"
 
 #: routes/achievements.py:171 routes/achievements.py:440
 #: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/collections.py:276
-#: routes/collections.py:531 routes/games.py:347 routes/games.py:786
-#: routes/games.py:907 routes/games.py:964 routes/games_ai.py:46
+#: routes/collections.py:531 routes/games.py:347 routes/games.py:788
+#: routes/games.py:909 routes/games.py:966 routes/games_ai.py:46
 #: routes/games_media.py:35 routes/games_media.py:82 routes/games_media.py:143
 #: routes/reports.py:693 routes/reports.py:818 routes/trophies.py:1278
 #: services/hltb_service.py:125
@@ -137,10 +143,6 @@ msgstr "Geçersiz rol"
 msgid "Username already exists"
 msgstr "Bu kullanıcı adı zaten mevcut"
 
-#: routes/auth.py:202 routes/auth.py:251 routes/auth.py:436 routes/auth.py:481
-msgid "Password must be at least 12 characters"
-msgstr "Şifre en az 12 karakter olmalıdır"
-
 #: routes/auth.py:280
 msgid "Cannot delete your own account"
 msgstr "Kendi hesabınızı silemezsiniz"
@@ -223,8 +225,8 @@ msgstr "Ana oyun bulunamadı"
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "Bonus disk ve ana oyun aynı sistemde olmalıdır"
 
-#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1216
-#: routes/games.py:1246 routes/platform_import.py:289
+#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1218
+#: routes/games.py:1248 routes/platform_import.py:289
 #: routes/platform_import.py:658 routes/platform_import.py:1024
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:200 routes/scraper.py:528
@@ -410,15 +412,15 @@ msgstr "1-50 arası geçerli ID sağlayın"
 msgid "Game not found after update"
 msgstr "Güncellemeden sonra oyun bulunamadı"
 
-#: routes/games.py:911
+#: routes/games.py:913
 msgid "No game selected."
 msgstr "Oyun seçilmedi."
 
-#: routes/games.py:936
+#: routes/games.py:938
 msgid "This metadata apply is no longer running."
 msgstr "Bu meta veri uygulaması artık çalışmıyor."
 
-#: routes/games.py:945
+#: routes/games.py:947
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
@@ -427,41 +429,41 @@ msgstr ""
 "Meta veriler %(sources)s kaynağından uygulandı! (%(filled)d alan "
 "dolduruldu, %(missing)d alan hâlâ eksik)"
 
-#: routes/games.py:951
+#: routes/games.py:953
 msgid "Failed to apply metadata."
 msgstr "Meta veriler uygulanamadı."
 
-#: routes/games.py:994 routes/games.py:1038
+#: routes/games.py:996 routes/games.py:1040
 msgid "No fields to update"
 msgstr "Güncellenecek alan yok"
 
-#: routes/games.py:1035 routes/platform_import.py:212
+#: routes/games.py:1037 routes/platform_import.py:212
 #: routes/platform_import.py:572 routes/platform_import.py:928
 #: routes/trophies.py:1852
 msgid "No games selected"
 msgstr "Oyun seçilmedi"
 
-#: routes/games.py:1045
+#: routes/games.py:1047
 msgid "Invalid completion status"
 msgstr "Geçersiz tamamlanma durumu"
 
-#: routes/games.py:1093
+#: routes/games.py:1095
 msgid "No valid fields to update"
 msgstr "Güncellenecek geçerli alan yok"
 
-#: routes/games.py:1209
+#: routes/games.py:1211
 msgid "Invalid status"
 msgstr "Geçersiz durum"
 
-#: routes/games.py:1234
+#: routes/games.py:1236
 msgid "Not authenticated"
 msgstr "Kimlik doğrulanmadı"
 
-#: routes/games.py:1265
+#: routes/games.py:1267
 msgid "Filter type and value required"
 msgstr "Filtre türü ve değeri gereklidir"
 
-#: routes/games.py:1278
+#: routes/games.py:1280
 msgid "Invalid filter type"
 msgstr "Geçersiz filtre türü"
 
@@ -601,7 +603,7 @@ msgstr "İşlenecek resim yok"
 msgid "Image file not found"
 msgstr "Resim dosyası bulunamadı"
 
-#: routes/museum.py:740 routes/museum.py:744 services/js_i18n_strings.py:430
+#: routes/museum.py:740 routes/museum.py:744 services/js_i18n_strings.py:435
 msgid "Background removal failed"
 msgstr "Arka plan kaldırma başarısız oldu"
 
@@ -1040,10 +1042,18 @@ msgstr ""
 msgid "Those games cannot be linked."
 msgstr "Ad boş olamaz"
 
-#: routes/versions.py:81
+#: routes/versions.py:81 routes/versions.py:96
 #, fuzzy
 msgid "That game is not linked to other versions."
 msgstr "Etiket bu oyuna atanmamış"
+
+#: routes/versions.py:92
+msgid "Set up an AI provider in Settings > Scraping first."
+msgstr ""
+
+#: routes/versions.py:98
+msgid "The AI did not give a usable answer. Try again later."
+msgstr ""
 
 #: routes/xbox_achievements.py:126
 msgid "Xbox credentials not configured"
@@ -1407,16 +1417,16 @@ msgstr "Sandbox"
 msgid "Turn-Based"
 msgstr "Sıra Tabanlı"
 
-#: services/js_i18n_strings.py:400
+#: services/js_i18n_strings.py:404
 msgid "(Paused)"
 msgstr "(Duraklatıldı)"
 
-#: services/js_i18n_strings.py:401
+#: services/js_i18n_strings.py:405
 #, fuzzy
 msgid "(none)"
 msgstr "Yok"
 
-#: services/js_i18n_strings.py:402 templates/_bulk_edit_modal.html:25
+#: services/js_i18n_strings.py:406 templates/_bulk_edit_modal.html:25
 #: templates/_bulk_edit_modal.html:38 templates/_bulk_edit_modal.html:83
 #: templates/_bulk_edit_modal.html:95 templates/_bulk_edit_modal.html:120
 #: templates/_bulk_edit_modal.html:137 templates/_bulk_edit_modal.html:153
@@ -1424,88 +1434,88 @@ msgstr "Yok"
 msgid "-- Don't change --"
 msgstr "-- Değiştirme --"
 
-#: services/js_i18n_strings.py:403
+#: services/js_i18n_strings.py:407
 msgid "-- Select log file --"
 msgstr "-- Günlük dosyası seçin --"
 
-#: services/js_i18n_strings.py:404
+#: services/js_i18n_strings.py:408
 #, python-brace-format
 msgid "... and {n} more"
 msgstr "... ve {n} tane daha"
 
-#: services/js_i18n_strings.py:405 templates/_bulk_edit_modal.html:30
+#: services/js_i18n_strings.py:409 templates/_bulk_edit_modal.html:30
 #: templates/base.html:977
 msgid "100%"
 msgstr "%100"
 
-#: services/js_i18n_strings.py:406 templates/_settings_tabs/account.html:270
+#: services/js_i18n_strings.py:410 templates/_settings_tabs/account.html:270
 msgid "Actions"
 msgstr "İşlemler"
 
-#: services/js_i18n_strings.py:407
+#: services/js_i18n_strings.py:411
 msgid "Added to queue - will start when current operation completes"
 msgstr "Kuyruğa eklendi - mevcut işlem tamamlandığında başlayacak"
 
-#: services/js_i18n_strings.py:408
+#: services/js_i18n_strings.py:412
 msgid "All ROMs accounted for!"
 msgstr "Tüm ROM'lar hesaba katıldı!"
 
-#: services/js_i18n_strings.py:409 templates/logs.html:764
+#: services/js_i18n_strings.py:413 templates/logs.html:764
 msgid "All Sources"
 msgstr "Tüm Kaynaklar"
 
-#: services/js_i18n_strings.py:410 templates/all_games.html:42
+#: services/js_i18n_strings.py:414 templates/all_games.html:42
 #: templates/reports.html:328 templates/reports.html:407
 #: templates/reports.html:480
 msgid "All Systems"
 msgstr "Tüm Sistemler"
 
-#: services/js_i18n_strings.py:411
+#: services/js_i18n_strings.py:415
 msgid "Already Syncing"
 msgstr "Zaten Senkronize Ediliyor"
 
-#: services/js_i18n_strings.py:412 templates/_bulk_edit_modal.html:193
+#: services/js_i18n_strings.py:416 templates/_bulk_edit_modal.html:193
 msgid "Apply Changes"
 msgstr "Değişiklikleri Uygula"
 
-#: services/js_i18n_strings.py:413
+#: services/js_i18n_strings.py:417
 msgid "Apply Normalization"
 msgstr "Normalleştirmeyi Uygula"
 
-#: services/js_i18n_strings.py:414
+#: services/js_i18n_strings.py:418
 #, fuzzy, python-brace-format
 msgid "Apply failed: {error}"
 msgstr "Yedekleme başarısız oldu: {error}"
 
-#: services/js_i18n_strings.py:415
+#: services/js_i18n_strings.py:419
 #, python-brace-format
 msgid "Apply {n} Selected"
 msgstr "Seçili {n} Öğeyi Uygula"
 
-#: services/js_i18n_strings.py:416
+#: services/js_i18n_strings.py:420
 #, python-brace-format
 msgid "Apply {n} normalization rule?"
 msgstr "{n} normalleştirme kuralı uygulansın mı?"
 
-#: services/js_i18n_strings.py:417
+#: services/js_i18n_strings.py:421
 #, python-brace-format
 msgid "Apply {n} normalization rules?"
 msgstr "{n} normalleştirme kuralı uygulansın mı?"
 
-#: services/js_i18n_strings.py:418
+#: services/js_i18n_strings.py:422
 msgid "Applying Metadata"
 msgstr "Meta veriler uygulanıyor"
 
-#: services/js_i18n_strings.py:419
+#: services/js_i18n_strings.py:423
 msgid "Applying..."
 msgstr "Uygulanıyor..."
 
-#: services/js_i18n_strings.py:420
+#: services/js_i18n_strings.py:424
 #, fuzzy
 msgid "Applying…"
 msgstr "Uygulanıyor..."
 
-#: services/js_i18n_strings.py:421
+#: services/js_i18n_strings.py:425
 msgid ""
 "Are you sure you want to cancel the bulk scrape?\n"
 "\n"
@@ -1519,16 +1529,16 @@ msgstr ""
 " tamamlanacaktır (genellikle 10-60 saniye) — bu süre boyunca ilerleme "
 "bildirimi güncellenmeye devam edecek."
 
-#: services/js_i18n_strings.py:422
+#: services/js_i18n_strings.py:426
 msgid "Are you sure you want to cancel?"
 msgstr "İptal etmek istediğinizden emin misiniz?"
 
-#: services/js_i18n_strings.py:423
+#: services/js_i18n_strings.py:427
 #, python-brace-format
 msgid "Are you sure you want to delete \"{filename}\"?"
 msgstr "\"{filename}\" dosyasını silmek istediğinizden emin misiniz?"
 
-#: services/js_i18n_strings.py:424
+#: services/js_i18n_strings.py:428
 msgid ""
 "Are you sure you want to reset all metadata for this game? This will "
 "delete boxart and screenshots."
@@ -1536,49 +1546,53 @@ msgstr ""
 "Bu oyunun tüm meta verilerini sıfırlamak istediğinizden emin misiniz? Bu "
 "işlem kutu kapağını ve ekran görüntülerini silecektir."
 
-#: services/js_i18n_strings.py:425
+#: services/js_i18n_strings.py:429
 msgid "Are you sure you want to restart the server?"
 msgstr "Sunucuyu yeniden başlatmak istediğinizden emin misiniz?"
 
-#: services/js_i18n_strings.py:426
+#: services/js_i18n_strings.py:430
 msgid ""
 "Are you sure you want to shut down the server? You will need to start it "
 "again manually."
 msgstr ""
 
-#: services/js_i18n_strings.py:427 templates/settings.html:67
+#: services/js_i18n_strings.py:431 templates/settings.html:67
 msgid "Are you sure?"
 msgstr "Emin misiniz?"
 
-#: services/js_i18n_strings.py:428
+#: services/js_i18n_strings.py:432
 msgid "Asking AI…"
 msgstr "Yapay zekâya soruluyor…"
 
-#: services/js_i18n_strings.py:429
+#: services/js_i18n_strings.py:433
+msgid "Asking the AI. This can take up to a minute."
+msgstr ""
+
+#: services/js_i18n_strings.py:434
 msgid "BIOS"
 msgstr "BIOS"
 
-#: services/js_i18n_strings.py:431
+#: services/js_i18n_strings.py:436
 msgid "Background removed"
 msgstr "Arka plan kaldırıldı"
 
-#: services/js_i18n_strings.py:432
+#: services/js_i18n_strings.py:437
 msgid "Bulk fetch failed"
 msgstr "Toplu alma başarısız oldu"
 
-#: services/js_i18n_strings.py:433
+#: services/js_i18n_strings.py:438
 msgid "Bulk fetch request failed"
 msgstr "Toplu alma isteği başarısız oldu"
 
-#: services/js_i18n_strings.py:434
+#: services/js_i18n_strings.py:439
 msgid "Bulk scraping complete!"
 msgstr "Toplu kazıma tamamlandı!"
 
-#: services/js_i18n_strings.py:435
+#: services/js_i18n_strings.py:440
 msgid "CLZ Imports"
 msgstr "CLZ İçe Aktarmaları"
 
-#: services/js_i18n_strings.py:436 templates/_bulk_edit_modal.html:191
+#: services/js_i18n_strings.py:441 templates/_bulk_edit_modal.html:191
 #: templates/_bulk_scrape_modal.html:49 templates/_modals/edit_modal.html:12
 #: templates/_modals/rename_modal.html:19
 #: templates/_settings_tabs/account.html:72
@@ -1598,71 +1612,71 @@ msgstr "CLZ İçe Aktarmaları"
 msgid "Cancel"
 msgstr "İptal"
 
-#: services/js_i18n_strings.py:437
+#: services/js_i18n_strings.py:442
 msgid "Cancel Bulk Scrape"
 msgstr "Toplu Kazımayı İptal Et"
 
-#: services/js_i18n_strings.py:438
+#: services/js_i18n_strings.py:443
 #, fuzzy
 msgid "Cancel failed"
 msgstr "İptal Edildi"
 
-#: services/js_i18n_strings.py:439
+#: services/js_i18n_strings.py:444
 msgid "Cancel request failed"
 msgstr "İptal isteği başarısız oldu"
 
-#: services/js_i18n_strings.py:440
+#: services/js_i18n_strings.py:445
 msgid "Cancellation requested"
 msgstr "İptal istendi"
 
-#: services/js_i18n_strings.py:441
+#: services/js_i18n_strings.py:446
 msgid "Cancelled"
 msgstr "İptal Edildi"
 
-#: services/js_i18n_strings.py:442
+#: services/js_i18n_strings.py:447
 msgid "Cancelled by user"
 msgstr "Kullanıcı tarafından iptal edildi"
 
-#: services/js_i18n_strings.py:443
+#: services/js_i18n_strings.py:448
 msgid "Checking RetroAchievements…"
 msgstr "RetroAchievements denetleniyor…"
 
-#: services/js_i18n_strings.py:444
+#: services/js_i18n_strings.py:449
 msgid "Clean Missing ROMs"
 msgstr "Eksik ROM'ları Temizle"
 
-#: services/js_i18n_strings.py:445
+#: services/js_i18n_strings.py:450
 msgid "Clear CLZ Imports"
 msgstr "CLZ İçe Aktarmalarını Temizle"
 
-#: services/js_i18n_strings.py:446
+#: services/js_i18n_strings.py:451
 msgid "Clear HLTB data for this game?"
 msgstr "Bu oyun için HLTB verisi temizlensin mi?"
 
-#: services/js_i18n_strings.py:447 templates/achievements_system.html:109
+#: services/js_i18n_strings.py:452 templates/achievements_system.html:109
 msgid "Clear RA Data"
 msgstr "RA Verisini Temizle"
 
-#: services/js_i18n_strings.py:448
+#: services/js_i18n_strings.py:453
 msgid "Clear RetroAchievements Data"
 msgstr "RetroAchievements Verisini Temizle"
 
-#: services/js_i18n_strings.py:449
+#: services/js_i18n_strings.py:454
 #, python-brace-format
 msgid "Cleared RA data for {count} games in {system}"
 msgstr "{system} sisteminde {count} oyun için RA verisi temizlendi"
 
-#: services/js_i18n_strings.py:450
+#: services/js_i18n_strings.py:455
 #, python-brace-format
 msgid "Cleared RA data for {n} games"
 msgstr "{n} oyun için RA verisi temizlendi"
 
-#: services/js_i18n_strings.py:451
+#: services/js_i18n_strings.py:456
 #, python-brace-format
 msgid "Cleared RA data for {n} games in {system}"
 msgstr "{system} sisteminde {n} oyun için RA verisi temizlendi"
 
-#: services/js_i18n_strings.py:452
+#: services/js_i18n_strings.py:457
 #, python-brace-format
 msgid ""
 "Cleared RetroAchievements data for {n} games. Run \"Refresh "
@@ -1672,54 +1686,54 @@ msgstr ""
 "eşleştirmeyle yeniden taramak için \"RetroAchievements'ı Yenile\"yi "
 "çalıştırın."
 
-#: services/js_i18n_strings.py:453
+#: services/js_i18n_strings.py:458
 msgid "Clearing..."
 msgstr "Temizleniyor..."
 
-#: services/js_i18n_strings.py:454
+#: services/js_i18n_strings.py:459
 msgid "Click again to remove"
 msgstr "Kaldırmak için yeniden tıklayın"
 
-#: services/js_i18n_strings.py:455 templates/archive_scanner.html:757
+#: services/js_i18n_strings.py:460 templates/archive_scanner.html:757
 #: templates/base.html:198 templates/base.html:290 templates/base.html:307
 #: templates/base.html:658 templates/base.html:934 templates/base.html:1324
 #: templates/wishlist.html:56
 msgid "Close"
 msgstr "Kapat"
 
-#: services/js_i18n_strings.py:456
+#: services/js_i18n_strings.py:461
 msgid "Close keyboard shortcuts"
 msgstr "Klavye kısayollarını kapat"
 
-#: services/js_i18n_strings.py:457
+#: services/js_i18n_strings.py:462
 #, fuzzy
 msgid "Close modal / cancel"
 msgstr "Kullanıcı penceresini kapat"
 
-#: services/js_i18n_strings.py:458 templates/dashboard.html:155
+#: services/js_i18n_strings.py:463 templates/dashboard.html:155
 msgid "Complete"
 msgstr "Tamamlandı"
 
-#: services/js_i18n_strings.py:459
+#: services/js_i18n_strings.py:464
 msgid "Complete!"
 msgstr "Tamamlandı!"
 
-#: services/js_i18n_strings.py:460 templates/_bulk_edit_modal.html:29
+#: services/js_i18n_strings.py:465 templates/_bulk_edit_modal.html:29
 #: templates/base.html:976 templates/dashboard.html:473
 #: templates/game_detail.html:208
 msgid "Completed"
 msgstr "Tamamlandı"
 
-#: services/js_i18n_strings.py:461 templates/_bulk_edit_modal.html:23
+#: services/js_i18n_strings.py:466 templates/_bulk_edit_modal.html:23
 #: templates/analytics.html:137 templates/base.html:971
 msgid "Completion Status"
 msgstr "Tamamlanma Durumu"
 
-#: services/js_i18n_strings.py:462
+#: services/js_i18n_strings.py:467
 msgid "Completion status updated"
 msgstr "Tamamlanma durumu güncellendi"
 
-#: services/js_i18n_strings.py:463 templates/achievement_game.html:172
+#: services/js_i18n_strings.py:468 templates/achievement_game.html:172
 #: templates/achievement_game.html:197 templates/achievement_game.html:211
 #: templates/base.html:1013 templates/game_detail.html:498
 #: templates/game_detail.html:523 templates/game_detail.html:537
@@ -1732,344 +1746,349 @@ msgstr "Tamamlanma durumu güncellendi"
 msgid "Completionist"
 msgstr "Tamamlayıcı"
 
-#: services/js_i18n_strings.py:464 templates/settings.html:66
+#: services/js_i18n_strings.py:469 templates/settings.html:66
 msgid "Confirm Action"
 msgstr "İşlemi Onayla"
 
-#: services/js_i18n_strings.py:465
+#: services/js_i18n_strings.py:470
 msgid "Confirm Bulk Edit"
 msgstr "Toplu Düzenlemeyi Onayla"
 
-#: services/js_i18n_strings.py:466
+#: services/js_i18n_strings.py:471
 msgid "Content generated successfully"
 msgstr "İçerik başarıyla oluşturuldu"
 
-#: services/js_i18n_strings.py:467
+#: services/js_i18n_strings.py:472
 msgid "Controller"
 msgstr "Kontrolcü"
 
-#: services/js_i18n_strings.py:468
+#: services/js_i18n_strings.py:473
 msgid "Controller image saved"
 msgstr "Kontrolcü resmi kaydedildi"
 
-#: services/js_i18n_strings.py:469
+#: services/js_i18n_strings.py:474
 msgid "Controller image uploaded"
 msgstr "Kontrolcü resmi yüklendi"
 
-#: services/js_i18n_strings.py:470
+#: services/js_i18n_strings.py:475
 msgid "Could not apply metadata."
 msgstr "Meta veriler uygulanamadı."
 
-#: services/js_i18n_strings.py:471
+#: services/js_i18n_strings.py:476
 msgid "Could not link these versions."
 msgstr ""
 
-#: services/js_i18n_strings.py:472
+#: services/js_i18n_strings.py:477
 msgid "Could not load suggestions."
 msgstr ""
 
-#: services/js_i18n_strings.py:473
+#: services/js_i18n_strings.py:478
 msgid "Could not reconnect to server. Please refresh manually."
 msgstr "Sunucuya yeniden bağlanılamadı. Lütfen manuel olarak yenileyin."
 
-#: services/js_i18n_strings.py:474
+#: services/js_i18n_strings.py:479
 #, fuzzy
 msgid "Could not save that."
 msgstr "Meta veriler uygulanamadı."
 
-#: services/js_i18n_strings.py:475
+#: services/js_i18n_strings.py:480
 msgid "Could not stop the running instance."
 msgstr ""
 
-#: services/js_i18n_strings.py:476
+#: services/js_i18n_strings.py:481
 msgid "Could not unlink this version."
 msgstr ""
 
-#: services/js_i18n_strings.py:477
+#: services/js_i18n_strings.py:482
+#, fuzzy
+msgid "Could not write the summary."
+msgstr "Meta veriler uygulanamadı."
+
+#: services/js_i18n_strings.py:483
 #, fuzzy
 msgid "Currently set"
 msgstr "Mevcut Değer"
 
-#: services/js_i18n_strings.py:478
+#: services/js_i18n_strings.py:484
 msgid "Default"
 msgstr "Varsayılan"
 
-#: services/js_i18n_strings.py:479
+#: services/js_i18n_strings.py:485
 #, python-brace-format
 msgid "Default emulator for {system}"
 msgstr "{system} için varsayılan emülatör"
 
-#: services/js_i18n_strings.py:480
+#: services/js_i18n_strings.py:486
 msgid "Delete Log File"
 msgstr "Günlük Dosyasını Sil"
 
-#: services/js_i18n_strings.py:481
+#: services/js_i18n_strings.py:487
 #, fuzzy, python-brace-format
 msgid "Detect failed: {error}"
 msgstr "Geri yükleme başarısız oldu: {error}"
 
-#: services/js_i18n_strings.py:482
+#: services/js_i18n_strings.py:488
 #, fuzzy
 msgid "Detected path"
 msgstr "Hariç Tutulan Yollar"
 
-#: services/js_i18n_strings.py:483
+#: services/js_i18n_strings.py:489
 #, fuzzy
 msgid "Detecting…"
 msgstr "Ayarlar"
 
-#: services/js_i18n_strings.py:484 templates/_bulk_scrape_modal.html:69
+#: services/js_i18n_strings.py:490 templates/_bulk_scrape_modal.html:69
 #: templates/psn_trophies.html:247 templates/psn_trophies.html:307
 #: templates/reports.html:525
 msgid "Done"
 msgstr "Tamamlandı"
 
-#: services/js_i18n_strings.py:485
+#: services/js_i18n_strings.py:491
 msgid "Downloading 3D box art…"
 msgstr "3D kutu kapağı indiriliyor…"
 
-#: services/js_i18n_strings.py:486
+#: services/js_i18n_strings.py:492
 msgid "Downloading box art…"
 msgstr "Kutu kapağı indiriliyor…"
 
-#: services/js_i18n_strings.py:487
+#: services/js_i18n_strings.py:493
 msgid "Downloading fan art…"
 msgstr "Hayran sanatı indiriliyor…"
 
-#: services/js_i18n_strings.py:488
+#: services/js_i18n_strings.py:494
 msgid "Downloading manual…"
 msgstr "Kılavuz indiriliyor…"
 
-#: services/js_i18n_strings.py:489
+#: services/js_i18n_strings.py:495
 msgid "Downloading media…"
 msgstr "Medya indiriliyor…"
 
-#: services/js_i18n_strings.py:490
+#: services/js_i18n_strings.py:496
 msgid "Downloading screenshots…"
 msgstr "Ekran görüntüleri indiriliyor…"
 
-#: services/js_i18n_strings.py:491
+#: services/js_i18n_strings.py:497
 msgid "Downloading video…"
 msgstr "Video indiriliyor…"
 
-#: services/js_i18n_strings.py:492 templates/_settings_tabs/account.html:315
+#: services/js_i18n_strings.py:498 templates/_settings_tabs/account.html:315
 #: templates/base.html:932 templates/game_detail.html:101
 #: templates/wishlist.html:641
 msgid "Edit"
 msgstr "Düzenle"
 
-#: services/js_i18n_strings.py:493
+#: services/js_i18n_strings.py:499
 #, fuzzy
 msgid "Edit game"
 msgstr "Oyunu Düzenle"
 
-#: services/js_i18n_strings.py:494
+#: services/js_i18n_strings.py:500
 #, python-brace-format
 msgid "Edit: {title}"
 msgstr "Düzenle: {title}"
 
-#: services/js_i18n_strings.py:495
+#: services/js_i18n_strings.py:501
 #, fuzzy
 msgid "Emulator"
 msgstr "Simülasyon"
 
-#: services/js_i18n_strings.py:496
+#: services/js_i18n_strings.py:502
 msgid "Enter one folder path."
 msgstr "Tek bir klasör yolu girin."
 
-#: services/js_i18n_strings.py:497
+#: services/js_i18n_strings.py:503
 msgid "Error"
 msgstr "Hata"
 
-#: services/js_i18n_strings.py:498
+#: services/js_i18n_strings.py:504
 msgid "Error clearing HLTB data"
 msgstr "HLTB verisi temizlenirken hata"
 
-#: services/js_i18n_strings.py:499
+#: services/js_i18n_strings.py:505
 msgid "Error connecting to HowLongToBeat"
 msgstr "HowLongToBeat'e bağlanırken hata"
 
-#: services/js_i18n_strings.py:500
+#: services/js_i18n_strings.py:506
 msgid "Error deleting log file"
 msgstr "Günlük dosyası silinirken hata"
 
-#: services/js_i18n_strings.py:501
+#: services/js_i18n_strings.py:507
 msgid "Error loading file"
 msgstr "Dosya yüklenirken hata"
 
-#: services/js_i18n_strings.py:502
+#: services/js_i18n_strings.py:508
 msgid "Error loading log file"
 msgstr "Günlük dosyası yüklenirken hata"
 
-#: services/js_i18n_strings.py:503
+#: services/js_i18n_strings.py:509
 msgid "Error looking up HLTB"
 msgstr "HLTB aranırken hata"
 
-#: services/js_i18n_strings.py:504
+#: services/js_i18n_strings.py:510
 msgid "Error refreshing RetroAchievements: "
 msgstr "RetroAchievements yenilenirken hata: "
 
-#: services/js_i18n_strings.py:505
+#: services/js_i18n_strings.py:511
 msgid "Error saving HLTB data"
 msgstr "HLTB verisi kaydedilirken hata"
 
-#: services/js_i18n_strings.py:506
+#: services/js_i18n_strings.py:512
 msgid "Error saving game: "
 msgstr "Oyun kaydedilirken hata: "
 
-#: services/js_i18n_strings.py:507
+#: services/js_i18n_strings.py:513
 #, python-brace-format
 msgid "Error scanning library: {error}"
 msgstr "Kütüphane taranırken hata: {error}"
 
-#: services/js_i18n_strings.py:508
+#: services/js_i18n_strings.py:514
 msgid "Error updating completion status"
 msgstr "Tamamlanma durumu güncellenirken hata"
 
-#: services/js_i18n_strings.py:509
+#: services/js_i18n_strings.py:515
 msgid "Error updating status"
 msgstr "Durum güncellenirken hata"
 
-#: services/js_i18n_strings.py:510 templates/_modals/edit_modal.html:219
+#: services/js_i18n_strings.py:516 templates/_modals/edit_modal.html:219
 #: templates/base.html:1200
 msgid "Exclusive"
 msgstr "Özel"
 
-#: services/js_i18n_strings.py:511
+#: services/js_i18n_strings.py:517
 msgid "Failed to apply bulk edit. Check console for details."
 msgstr "Toplu düzenleme uygulanamadı. Ayrıntılar için konsolu kontrol edin."
 
-#: services/js_i18n_strings.py:512
+#: services/js_i18n_strings.py:518
 msgid "Failed to apply normalization"
 msgstr "Normalleştirme uygulanamadı"
 
-#: services/js_i18n_strings.py:513
+#: services/js_i18n_strings.py:519
 msgid "Failed to clean missing ROMs"
 msgstr "Eksik ROM'lar temizlenemedi"
 
-#: services/js_i18n_strings.py:514
+#: services/js_i18n_strings.py:520
 msgid "Failed to clear CLZ imports"
 msgstr "CLZ içe aktarmaları temizlenemedi"
 
-#: services/js_i18n_strings.py:515
+#: services/js_i18n_strings.py:521
 msgid "Failed to clear HLTB: "
 msgstr "HLTB temizlenemedi: "
 
-#: services/js_i18n_strings.py:516
+#: services/js_i18n_strings.py:522
 msgid "Failed to clear RA data"
 msgstr "RA verisi temizlenemedi"
 
-#: services/js_i18n_strings.py:517
+#: services/js_i18n_strings.py:523
 msgid "Failed to delete"
 msgstr "Silinemedi"
 
-#: services/js_i18n_strings.py:518
+#: services/js_i18n_strings.py:524
 msgid "Failed to fetch controller image"
 msgstr "Kontrolcü resmi alınamadı"
 
-#: services/js_i18n_strings.py:519
+#: services/js_i18n_strings.py:525
 msgid "Failed to fetch image"
 msgstr "Resim alınamadı"
 
-#: services/js_i18n_strings.py:520
+#: services/js_i18n_strings.py:526
 msgid "Failed to load game"
 msgstr "Oyun yüklenemedi"
 
-#: services/js_i18n_strings.py:521
+#: services/js_i18n_strings.py:527
 msgid "Failed to load normalization data"
 msgstr "Normalleştirme verisi yüklenemedi"
 
-#: services/js_i18n_strings.py:522
+#: services/js_i18n_strings.py:528
 msgid "Failed to save HLTB: "
 msgstr "HLTB kaydedilemedi: "
 
-#: services/js_i18n_strings.py:523
+#: services/js_i18n_strings.py:529
 msgid "Failed to save: "
 msgstr "Kaydedilemedi: "
 
-#: services/js_i18n_strings.py:524
+#: services/js_i18n_strings.py:530
 msgid "Failed to start RetroAchievements refresh"
 msgstr "RetroAchievements yenileme başlatılamadı"
 
-#: services/js_i18n_strings.py:525
+#: services/js_i18n_strings.py:531
 msgid "Failed to start bulk scrape"
 msgstr "Toplu kazıma başlatılamadı"
 
-#: services/js_i18n_strings.py:526
+#: services/js_i18n_strings.py:532
 msgid "Failed to start generation"
 msgstr "Oluşturma başlatılamadı"
 
-#: services/js_i18n_strings.py:527
+#: services/js_i18n_strings.py:533
 msgid "Failed to update completion status: "
 msgstr "Tamamlanma durumu güncellenemedi: "
 
-#: services/js_i18n_strings.py:528
+#: services/js_i18n_strings.py:534
 #, python-brace-format
 msgid "Failed to update status: {error}"
 msgstr "Durum güncellenemedi: {error}"
 
-#: services/js_i18n_strings.py:529
+#: services/js_i18n_strings.py:535
 #, python-brace-format
 msgid "Failed: {error}"
 msgstr "Başarısız: {error}"
 
-#: services/js_i18n_strings.py:530
+#: services/js_i18n_strings.py:536
 msgid "Fetch All Controller Images"
 msgstr "Tüm Kontrolcü Resimlerini Al"
 
-#: services/js_i18n_strings.py:531
+#: services/js_i18n_strings.py:537
 #, python-brace-format
 msgid "Fetching from {source}…"
 msgstr "{source} kaynağından alınıyor…"
 
-#: services/js_i18n_strings.py:532
+#: services/js_i18n_strings.py:538
 #, python-brace-format
 msgid "Fetching images: {done} of {total}"
 msgstr ""
 
-#: services/js_i18n_strings.py:533
+#: services/js_i18n_strings.py:539
 msgid "Focus search box"
 msgstr ""
 
-#: services/js_i18n_strings.py:534 templates/logs.html:743
+#: services/js_i18n_strings.py:540 templates/logs.html:743
 msgid "From"
 msgstr "Başlangıç"
 
-#: services/js_i18n_strings.py:535
+#: services/js_i18n_strings.py:541
 #, fuzzy
 msgid "Game Page"
 msgstr "Oyun Adı"
 
-#: services/js_i18n_strings.py:536
+#: services/js_i18n_strings.py:542
 msgid "Game details updated successfully."
 msgstr "Oyun ayrıntıları başarıyla güncellendi."
 
-#: services/js_i18n_strings.py:537 templates/_settings_tabs/data.html:186
+#: services/js_i18n_strings.py:543 templates/_settings_tabs/data.html:186
 #: templates/achievements_system.html:119 templates/analytics.html:571
 msgid "Games"
 msgstr "Oyunlar"
 
-#: services/js_i18n_strings.py:538
+#: services/js_i18n_strings.py:544
 msgid "Generate All Museum Content"
 msgstr "Tüm Müze İçeriğini Oluştur"
 
-#: services/js_i18n_strings.py:539 templates/museum_system.html:45
+#: services/js_i18n_strings.py:545 templates/museum_system.html:45
 msgid "Generate Content"
 msgstr "İçerik Oluştur"
 
-#: services/js_i18n_strings.py:540 templates/museum.html:28
+#: services/js_i18n_strings.py:546 templates/museum.html:28
 msgid "Generating content..."
 msgstr "İçerik oluşturuluyor..."
 
-#: services/js_i18n_strings.py:541
+#: services/js_i18n_strings.py:547
 msgid "Generating..."
 msgstr "Oluşturuluyor..."
 
-#: services/js_i18n_strings.py:542
+#: services/js_i18n_strings.py:548
 msgid "Generation cancelled"
 msgstr "Oluşturma iptal edildi"
 
-#: services/js_i18n_strings.py:543
+#: services/js_i18n_strings.py:549
 #, python-brace-format
 msgid ""
 "Generation complete: {generated} generated, {skipped} skipped, {failed} "
@@ -2078,83 +2097,83 @@ msgstr ""
 "Oluşturma tamamlandı: {generated} oluşturuldu, {skipped} atlandı, "
 "{failed} başarısız"
 
-#: services/js_i18n_strings.py:544
+#: services/js_i18n_strings.py:550
 msgid "Generation failed"
 msgstr "Oluşturma başarısız oldu"
 
-#: services/js_i18n_strings.py:545
+#: services/js_i18n_strings.py:551
 msgid "Generation request failed"
 msgstr "Oluşturma isteği başarısız oldu"
 
-#: services/js_i18n_strings.py:546
+#: services/js_i18n_strings.py:552
 #, fuzzy
 msgid "Go to Analytics"
 msgstr "Analitik"
 
-#: services/js_i18n_strings.py:547
+#: services/js_i18n_strings.py:553
 #, fuzzy
 msgid "Go to Changelog"
 msgstr "Değişiklik Günlüğü"
 
-#: services/js_i18n_strings.py:548
+#: services/js_i18n_strings.py:554
 #, fuzzy
 msgid "Go to Dashboard"
 msgstr "Kontrol Paneli"
 
-#: services/js_i18n_strings.py:549
+#: services/js_i18n_strings.py:555
 msgid "Go to Help"
 msgstr ""
 
-#: services/js_i18n_strings.py:550
+#: services/js_i18n_strings.py:556
 #, fuzzy
 msgid "Go to Library"
 msgstr "Xbox Kütüphanesi"
 
-#: services/js_i18n_strings.py:551
+#: services/js_i18n_strings.py:557
 #, fuzzy
 msgid "Go to Settings"
 msgstr "Araç Ayarları"
 
-#: services/js_i18n_strings.py:552
+#: services/js_i18n_strings.py:558
 #, fuzzy
 msgid "Go to Systems"
 msgstr "Toplam Sistem"
 
-#: services/js_i18n_strings.py:553
+#: services/js_i18n_strings.py:559
 msgid "HLTB data cleared"
 msgstr "HLTB verisi temizlendi"
 
-#: services/js_i18n_strings.py:554
+#: services/js_i18n_strings.py:560
 msgid "HLTB data saved"
 msgstr "HLTB verisi kaydedildi"
 
-#: services/js_i18n_strings.py:555
+#: services/js_i18n_strings.py:561
 msgid "HLTB lookup cancelled"
 msgstr "HLTB araması iptal edildi"
 
-#: services/js_i18n_strings.py:556 templates/all_games.html:118
+#: services/js_i18n_strings.py:562 templates/all_games.html:118
 #: templates/system_games.html:109
 msgid "Has Achievements"
 msgstr "Başarımları Var"
 
-#: services/js_i18n_strings.py:557
+#: services/js_i18n_strings.py:563
 msgid "Hide Bonus"
 msgstr "Bonusu Gizle"
 
-#: services/js_i18n_strings.py:558 templates/logs.html:719
+#: services/js_i18n_strings.py:564 templates/logs.html:719
 msgid "Image Resize"
 msgstr "Resim Boyutlandırma"
 
-#: services/js_i18n_strings.py:559
+#: services/js_i18n_strings.py:565
 #, fuzzy
 msgid "Image fetch cancelled."
 msgstr "Oluşturma iptal edildi"
 
-#: services/js_i18n_strings.py:560
+#: services/js_i18n_strings.py:566
 msgid "Image must be under 10MB"
 msgstr "Resim 10MB'ın altında olmalıdır"
 
-#: services/js_i18n_strings.py:561 templates/_bulk_edit_modal.html:27
+#: services/js_i18n_strings.py:567 templates/_bulk_edit_modal.html:27
 #: templates/achievements_system.html:151
 #: templates/achievements_system.html:170 templates/base.html:974
 #: templates/dashboard.html:329 templates/dashboard.html:469
@@ -2163,74 +2182,74 @@ msgstr "Resim 10MB'ın altında olmalıdır"
 msgid "In Progress"
 msgstr "Devam Ediyor"
 
-#: services/js_i18n_strings.py:562
+#: services/js_i18n_strings.py:568
 msgid "Initializing bulk scrape..."
 msgstr "Toplu kazıma başlatılıyor..."
 
-#: services/js_i18n_strings.py:563 templates/_bulk_scrape_modal.html:23
+#: services/js_i18n_strings.py:569 templates/_bulk_scrape_modal.html:23
 #: templates/duplicate_finder.html:250 templates/screenshot_dedup.html:276
 msgid "Initializing..."
 msgstr "Başlatılıyor..."
 
-#: services/js_i18n_strings.py:564
+#: services/js_i18n_strings.py:570
 msgid "Just synced"
 msgstr "Az önce senkronize edildi"
 
-#: services/js_i18n_strings.py:565
+#: services/js_i18n_strings.py:571
 msgid "Keyboard Shortcuts"
 msgstr "Klavye Kısayolları"
 
-#: services/js_i18n_strings.py:566
+#: services/js_i18n_strings.py:572
 msgid "Kill"
 msgstr ""
 
-#: services/js_i18n_strings.py:567
+#: services/js_i18n_strings.py:573
 #, fuzzy, python-brace-format
 msgid "Launch failed: {error}"
 msgstr "Yedekleme başarısız oldu: {error}"
 
-#: services/js_i18n_strings.py:568
+#: services/js_i18n_strings.py:574
 #, python-brace-format
 msgid "Launched (pid {pid})"
 msgstr ""
 
-#: services/js_i18n_strings.py:569
+#: services/js_i18n_strings.py:575
 msgid "Launched (replaced previous instance)"
 msgstr ""
 
-#: services/js_i18n_strings.py:570
+#: services/js_i18n_strings.py:576
 #, fuzzy
 msgid "Launching…"
 msgstr "Başlat"
 
-#: services/js_i18n_strings.py:571
+#: services/js_i18n_strings.py:577
 #, python-brace-format
 msgid "Library scan complete! Found {n} new games."
 msgstr "Kütüphane taraması tamamlandı! {n} yeni oyun bulundu."
 
-#: services/js_i18n_strings.py:572
+#: services/js_i18n_strings.py:578
 #, fuzzy
 msgid "Link"
 msgstr "Bağlantıyı Kaldır"
 
-#: services/js_i18n_strings.py:573
+#: services/js_i18n_strings.py:579
 #, fuzzy
 msgid "Link ticked games"
 msgstr "RetroDB Oyununa Bağla"
 
-#: services/js_i18n_strings.py:574
+#: services/js_i18n_strings.py:580
 msgid "Loading log file..."
 msgstr "Günlük dosyası yükleniyor..."
 
-#: services/js_i18n_strings.py:575
+#: services/js_i18n_strings.py:581
 msgid "Log file deleted"
 msgstr "Günlük dosyası silindi"
 
-#: services/js_i18n_strings.py:576
+#: services/js_i18n_strings.py:582
 msgid "Looking for versions…"
 msgstr ""
 
-#: services/js_i18n_strings.py:577 templates/achievement_game.html:168
+#: services/js_i18n_strings.py:583 templates/achievement_game.html:168
 #: templates/achievement_game.html:197 templates/achievement_game.html:207
 #: templates/base.html:1009 templates/game_detail.html:494
 #: templates/game_detail.html:523 templates/game_detail.html:533
@@ -2243,7 +2262,7 @@ msgstr ""
 msgid "Main + Extras"
 msgstr "Ana Oyun + Ekstralar"
 
-#: services/js_i18n_strings.py:578 templates/achievement_game.html:164
+#: services/js_i18n_strings.py:584 templates/achievement_game.html:164
 #: templates/achievement_game.html:197 templates/achievement_game.html:203
 #: templates/base.html:1005 templates/game_detail.html:490
 #: templates/game_detail.html:523 templates/game_detail.html:529
@@ -2256,15 +2275,15 @@ msgstr "Ana Oyun + Ekstralar"
 msgid "Main Story"
 msgstr "Ana Hikaye"
 
-#: services/js_i18n_strings.py:579
+#: services/js_i18n_strings.py:585
 msgid "Marked as not versions."
 msgstr ""
 
-#: services/js_i18n_strings.py:580
+#: services/js_i18n_strings.py:586
 msgid "Match found - please confirm to save"
 msgstr "Eşleşme bulundu - kaydetmek için lütfen onaylayın"
 
-#: services/js_i18n_strings.py:581
+#: services/js_i18n_strings.py:587
 msgid ""
 "Matched using this alternate/regional title — confirm it refers to the "
 "same game before saving."
@@ -2272,7 +2291,7 @@ msgstr ""
 "Bu alternatif/bölgesel başlık kullanılarak eşleştirildi — kaydetmeden "
 "önce aynı oyuna atıfta bulunduğunu onaylayın."
 
-#: services/js_i18n_strings.py:582
+#: services/js_i18n_strings.py:588
 #, python-brace-format
 msgid ""
 "Matched via alternate title \"{term}\" — HLTB shows it as \"{match}\". "
@@ -2281,243 +2300,243 @@ msgstr ""
 "\"{term}\" alternatif başlığı üzerinden eşleştirildi — HLTB bunu "
 "\"{match}\" olarak gösteriyor. Kaydetmeden önce onaylayın."
 
-#: services/js_i18n_strings.py:583
+#: services/js_i18n_strings.py:589
 #, python-brace-format
 msgid "Missing: {files}"
 msgstr "Eksik: {files}"
 
-#: services/js_i18n_strings.py:584
+#: services/js_i18n_strings.py:590
 msgid "Multi-System"
 msgstr "Çoklu Sistem"
 
-#: services/js_i18n_strings.py:585
+#: services/js_i18n_strings.py:591
 msgid "Multi-platform"
 msgstr "Çoklu Platform"
 
-#: services/js_i18n_strings.py:586
+#: services/js_i18n_strings.py:592
 msgid "Museum generation started"
 msgstr "Müze oluşturma başlatıldı"
 
-#: services/js_i18n_strings.py:587
+#: services/js_i18n_strings.py:593
 msgid "NOT"
 msgstr "DEĞİL"
 
-#: services/js_i18n_strings.py:588
+#: services/js_i18n_strings.py:594
 #, fuzzy
 msgid "Navigation"
 msgstr "Ana gezinme"
 
-#: services/js_i18n_strings.py:589
+#: services/js_i18n_strings.py:595
 msgid "Network error"
 msgstr "Ağ hatası"
 
-#: services/js_i18n_strings.py:590
+#: services/js_i18n_strings.py:596
 msgid "Network error starting bulk scrape"
 msgstr "Toplu kazıma başlatılırken ağ hatası"
 
-#: services/js_i18n_strings.py:591 templates/_bulk_edit_modal.html:171
+#: services/js_i18n_strings.py:597 templates/_bulk_edit_modal.html:171
 #: templates/_modals/edit_modal.html:139 templates/game_detail.html:652
 #: templates/game_detail.html:711
 msgid "No"
 msgstr "Hayır"
 
-#: services/js_i18n_strings.py:592
+#: services/js_i18n_strings.py:598
 msgid "No CLZ Import games found"
 msgstr "CLZ İçe Aktarma oyunu bulunamadı"
 
-#: services/js_i18n_strings.py:593
+#: services/js_i18n_strings.py:599
 msgid "No Changes"
 msgstr "Değişiklik Yok"
 
-#: services/js_i18n_strings.py:594
+#: services/js_i18n_strings.py:600
 msgid "No Games Selected"
 msgstr "Oyun Seçilmedi"
 
-#: services/js_i18n_strings.py:595
+#: services/js_i18n_strings.py:601
 msgid "No HLTB data found"
 msgstr "HLTB verisi bulunamadı"
 
-#: services/js_i18n_strings.py:596
+#: services/js_i18n_strings.py:602
 msgid "No achievements found"
 msgstr "Başarım bulunamadı"
 
-#: services/js_i18n_strings.py:597 templates/achievement_game.html:72
+#: services/js_i18n_strings.py:603 templates/achievement_game.html:72
 #: templates/steam_achievement_game.html:69
 #: templates/xbox_achievement_game.html:59
 msgid "No description available."
 msgstr "Açıklama mevcut değil."
 
-#: services/js_i18n_strings.py:598
+#: services/js_i18n_strings.py:604
 msgid "No emulator AppImages found in the scan paths."
 msgstr ""
 
-#: services/js_i18n_strings.py:599
+#: services/js_i18n_strings.py:605
 msgid "No emulators registered."
 msgstr ""
 
-#: services/js_i18n_strings.py:600
+#: services/js_i18n_strings.py:606
 msgid "No folders yet."
 msgstr "Henüz klasör yok."
 
-#: services/js_i18n_strings.py:601
+#: services/js_i18n_strings.py:607
 msgid "No log files in this category"
 msgstr "Bu kategoride günlük dosyası yok"
 
-#: services/js_i18n_strings.py:602
+#: services/js_i18n_strings.py:608
 msgid "No log lines match current filters"
 msgstr "Mevcut filtrelerle eşleşen günlük satırı yok"
 
-#: services/js_i18n_strings.py:603
+#: services/js_i18n_strings.py:609
 msgid "No mappings yet. Add an emulator folder above."
 msgstr "Henüz eşleme yok. Yukarıdan bir emülatör klasörü ekleyin."
 
-#: services/js_i18n_strings.py:604
+#: services/js_i18n_strings.py:610
 msgid "No matching games on this system."
 msgstr ""
 
-#: services/js_i18n_strings.py:605
+#: services/js_i18n_strings.py:611
 msgid "No missing ROM files found."
 msgstr "Eksik ROM dosyası bulunamadı."
 
-#: services/js_i18n_strings.py:606
+#: services/js_i18n_strings.py:612
 msgid "No options available"
 msgstr "Kullanılabilir seçenek yok"
 
-#: services/js_i18n_strings.py:607
+#: services/js_i18n_strings.py:613
 msgid "No ratings available"
 msgstr "Kullanılabilir derecelendirme yok"
 
-#: services/js_i18n_strings.py:608
+#: services/js_i18n_strings.py:614
 msgid "No results"
 msgstr "Sonuç yok"
 
-#: services/js_i18n_strings.py:609
+#: services/js_i18n_strings.py:615
 msgid "No results found"
 msgstr "Sonuç bulunamadı"
 
-#: services/js_i18n_strings.py:610
+#: services/js_i18n_strings.py:616
 msgid "No results found on HowLongToBeat"
 msgstr "HowLongToBeat'te sonuç bulunamadı"
 
-#: services/js_i18n_strings.py:611
+#: services/js_i18n_strings.py:617
 msgid "No sessions match current filters"
 msgstr "Mevcut filtrelerle eşleşen oturum yok"
 
-#: services/js_i18n_strings.py:612
+#: services/js_i18n_strings.py:618
 msgid "No suggestions. Run Backfill Alternate Titles in Maintenance to find more."
 msgstr ""
 
-#: services/js_i18n_strings.py:613
+#: services/js_i18n_strings.py:619
 #, python-brace-format
 msgid "Normalization applied: {games} games updated, {rules} rules saved"
 msgstr ""
 "Normalleştirme uygulandı: {games} oyun güncellendi, {rules} kural "
 "kaydedildi"
 
-#: services/js_i18n_strings.py:614
+#: services/js_i18n_strings.py:620
 #, fuzzy
 msgid "Not versions"
 msgstr "Sürüm"
 
-#: services/js_i18n_strings.py:615 templates/base.html:1359
+#: services/js_i18n_strings.py:621 templates/base.html:1359
 msgid "Now playing"
 msgstr "Şu anda oynanıyor"
 
-#: services/js_i18n_strings.py:616 templates/base.html:297
+#: services/js_i18n_strings.py:622 templates/base.html:297
 msgid "OK"
 msgstr "Tamam"
 
-#: services/js_i18n_strings.py:617
+#: services/js_i18n_strings.py:623
 msgid "Operation completed"
 msgstr "İşlem tamamlandı"
 
-#: services/js_i18n_strings.py:618
+#: services/js_i18n_strings.py:624
 msgid "Operation failed"
 msgstr "İşlem başarısız oldu"
 
-#: services/js_i18n_strings.py:619
+#: services/js_i18n_strings.py:625
 #, fuzzy
 msgid "Other"
 msgstr "Nişancı"
 
-#: services/js_i18n_strings.py:620
+#: services/js_i18n_strings.py:626
 msgid "PSN Imports"
 msgstr "PSN İçe Aktarmaları"
 
-#: services/js_i18n_strings.py:621
+#: services/js_i18n_strings.py:627
 msgid "Part of a Series"
 msgstr "Bir Serinin Parçası"
 
-#: services/js_i18n_strings.py:622 templates/_bulk_scrape_modal.html:46
+#: services/js_i18n_strings.py:628 templates/_bulk_scrape_modal.html:46
 #: templates/archive_scanner.html:658 templates/archive_scanner.html:795
 #: templates/psn_trophies.html:294
 msgid "Pause"
 msgstr "Duraklat"
 
-#: services/js_i18n_strings.py:623
+#: services/js_i18n_strings.py:629
 msgid "Paused - Click Resume to continue"
 msgstr "Duraklatıldı - Devam etmek için Sürdür'e tıklayın"
 
-#: services/js_i18n_strings.py:624
+#: services/js_i18n_strings.py:630
 msgid "Platform not found"
 msgstr "Platform bulunamadı"
 
-#: services/js_i18n_strings.py:625 templates/game_detail.html:85
+#: services/js_i18n_strings.py:631 templates/game_detail.html:85
 msgid "Play"
 msgstr "Oyna"
 
-#: services/js_i18n_strings.py:626 templates/_bulk_edit_modal.html:28
+#: services/js_i18n_strings.py:632 templates/_bulk_edit_modal.html:28
 #: templates/base.html:975 templates/dashboard.html:471
 #: templates/game_detail.html:207
 msgid "Played"
 msgstr "Oynandı"
 
-#: services/js_i18n_strings.py:627
+#: services/js_i18n_strings.py:633
 msgid "Please change at least one field before applying."
 msgstr "Uygulamadan önce en az bir alanı değiştirin."
 
-#: services/js_i18n_strings.py:628
+#: services/js_i18n_strings.py:634
 msgid "Please enter a game title"
 msgstr "Lütfen bir oyun başlığı girin"
 
-#: services/js_i18n_strings.py:629
+#: services/js_i18n_strings.py:635
 msgid "Please select at least one game to edit."
 msgstr "Lütfen düzenlemek için en az bir oyun seçin."
 
-#: services/js_i18n_strings.py:630
+#: services/js_i18n_strings.py:636
 msgid "Please select at least one game to scrape."
 msgstr "Lütfen kazımak için en az bir oyun seçin."
 
-#: services/js_i18n_strings.py:631
+#: services/js_i18n_strings.py:637
 msgid "Pre-session log entries"
 msgstr "Oturum öncesi günlük kayıtları"
 
-#: services/js_i18n_strings.py:632
+#: services/js_i18n_strings.py:638
 msgid "Processing images…"
 msgstr "Görseller işleniyor…"
 
-#: services/js_i18n_strings.py:633 templates/game_imports.html:418
+#: services/js_i18n_strings.py:639 templates/game_imports.html:418
 msgid "Processing..."
 msgstr "İşleniyor..."
 
-#: services/js_i18n_strings.py:634
+#: services/js_i18n_strings.py:640
 #, python-brace-format
 msgid "Processing: {file}"
 msgstr "İşleniyor: {file}"
 
-#: services/js_i18n_strings.py:635
+#: services/js_i18n_strings.py:641
 msgid "Queued"
 msgstr "Kuyrukta"
 
-#: services/js_i18n_strings.py:636
+#: services/js_i18n_strings.py:642
 msgid "RA Data Cleared"
 msgstr "RA Verisi Temizlendi"
 
-#: services/js_i18n_strings.py:637
+#: services/js_i18n_strings.py:643
 msgid "ROM Files"
 msgstr "ROM Dosyaları"
 
-#: services/js_i18n_strings.py:638 templates/_macros/nav_tabs.html:34
+#: services/js_i18n_strings.py:644 templates/_macros/nav_tabs.html:34
 #: templates/archive_scanner.html:561 templates/base.html:144
 #: templates/chd_converter.html:64 templates/chd_verify.html:80
 #: templates/duplicate_finder.html:166 templates/logs.html:713
@@ -2526,343 +2545,348 @@ msgstr "ROM Dosyaları"
 msgid "ROM Tools"
 msgstr "ROM Araçları"
 
-#: services/js_i18n_strings.py:639
+#: services/js_i18n_strings.py:645
 msgid "Ready"
 msgstr "Hazır"
 
-#: services/js_i18n_strings.py:640
+#: services/js_i18n_strings.py:646
 msgid "Refresh RetroAchievements"
 msgstr "RetroAchievements'ı Yenile"
 
-#: services/js_i18n_strings.py:641
+#: services/js_i18n_strings.py:647
 #, python-brace-format
 msgid "Refresh: {system}"
 msgstr "Yenile: {system}"
 
-#: services/js_i18n_strings.py:642
+#: services/js_i18n_strings.py:648
 #, python-brace-format
 msgid "Refreshing RA for {system}..."
 msgstr "{system} için RA yenileniyor..."
 
-#: services/js_i18n_strings.py:643
+#: services/js_i18n_strings.py:649
 #, fuzzy
 msgid "Regional name matches"
 msgstr "Bölge Uyuşmazlığı"
 
-#: services/js_i18n_strings.py:644 templates/compare_games.html:24
+#: services/js_i18n_strings.py:650 templates/compare_games.html:24
 #: templates/compare_games.html:40
 msgid "Remove"
 msgstr "Kaldır"
 
-#: services/js_i18n_strings.py:645
+#: services/js_i18n_strings.py:651
 msgid "Remove background from the uploaded image?"
 msgstr "Yüklenen resmin arka planı kaldırılsın mı?"
 
-#: services/js_i18n_strings.py:646
+#: services/js_i18n_strings.py:652
 msgid "Remove from queue"
 msgstr "Kuyruktan kaldır"
 
-#: services/js_i18n_strings.py:647
+#: services/js_i18n_strings.py:653
 #, python-brace-format
 msgid "Removed {n} CLZ Import games"
 msgstr "{n} CLZ İçe Aktarma oyunu kaldırıldı"
 
-#: services/js_i18n_strings.py:648
+#: services/js_i18n_strings.py:654
 #, python-brace-format
 msgid "Removed {n} CLZ Import games:"
 msgstr "{n} CLZ İçe Aktarma oyunu kaldırıldı:"
 
-#: services/js_i18n_strings.py:649
+#: services/js_i18n_strings.py:655
 #, python-brace-format
 msgid "Removed {n} games with missing ROMs"
 msgstr "Eksik ROM'lu {n} oyun kaldırıldı"
 
-#: services/js_i18n_strings.py:650
+#: services/js_i18n_strings.py:656
 #, python-brace-format
 msgid "Removed {n} games:"
 msgstr "{n} oyun kaldırıldı:"
 
-#: services/js_i18n_strings.py:651
+#: services/js_i18n_strings.py:657
 msgid "Removing background…"
 msgstr "Arka plan kaldırılıyor…"
 
-#: services/js_i18n_strings.py:652
+#: services/js_i18n_strings.py:658
 msgid "Removing..."
 msgstr "Kaldırılıyor..."
 
-#: services/js_i18n_strings.py:653 templates/_bulk_edit_modal.html:42
+#: services/js_i18n_strings.py:659 templates/_bulk_edit_modal.html:42
 #: templates/_bulk_edit_modal.html:56 templates/_bulk_edit_modal.html:70
 #: templates/_bulk_edit_modal.html:124 templates/_bulk_edit_modal.html:140
 #: templates/_bulk_edit_modal.html:156 templates/_bulk_edit_modal.html:180
 msgid "Replace"
 msgstr "Değiştir"
 
-#: services/js_i18n_strings.py:654 templates/logs.html:716
+#: services/js_i18n_strings.py:660 templates/logs.html:716
 msgid "Reports"
 msgstr "Raporlar"
 
-#: services/js_i18n_strings.py:655
+#: services/js_i18n_strings.py:661
 msgid "Restarting server..."
 msgstr "Sunucu yeniden başlatılıyor..."
 
-#: services/js_i18n_strings.py:656
+#: services/js_i18n_strings.py:662
 msgid "Resume"
 msgstr "Sürdür"
 
-#: services/js_i18n_strings.py:657
+#: services/js_i18n_strings.py:663
 msgid "Running"
 msgstr "Çalışıyor"
 
-#: services/js_i18n_strings.py:658
+#: services/js_i18n_strings.py:664
 msgid "Running..."
 msgstr "Çalışıyor..."
 
-#: services/js_i18n_strings.py:659
+#: services/js_i18n_strings.py:665
 #, fuzzy
 msgid "Same IGDB game"
 msgstr "Tümünü Kazı"
 
-#: services/js_i18n_strings.py:660
+#: services/js_i18n_strings.py:666
 #, fuzzy
 msgid "Same ScreenScraper game"
 msgstr "Tümünü Kazı"
 
-#: services/js_i18n_strings.py:661
+#: services/js_i18n_strings.py:667
 msgid "Same title, different region"
 msgstr ""
 
-#: services/js_i18n_strings.py:662
+#: services/js_i18n_strings.py:668
 msgid "Save Failed"
 msgstr "Kaydetme Başarısız Oldu"
 
-#: services/js_i18n_strings.py:663
+#: services/js_i18n_strings.py:669
 #, fuzzy, python-brace-format
 msgid "Save failed: {error}"
 msgstr "Geri yükleme başarısız oldu: {error}"
 
-#: services/js_i18n_strings.py:664
+#: services/js_i18n_strings.py:670
 msgid "Saved"
 msgstr "Kaydedildi"
 
-#: services/js_i18n_strings.py:665
+#: services/js_i18n_strings.py:671
 #, fuzzy
 msgid "Saved."
 msgstr "Kaydedildi"
 
-#: services/js_i18n_strings.py:666
+#: services/js_i18n_strings.py:672
 msgid "Saving to the database…"
 msgstr "Veritabanına kaydediliyor…"
 
-#: services/js_i18n_strings.py:667
+#: services/js_i18n_strings.py:673
 msgid "Saving..."
 msgstr "Kaydediliyor..."
 
-#: services/js_i18n_strings.py:668
+#: services/js_i18n_strings.py:674
 #, fuzzy
 msgid "Saving…"
 msgstr "Kaydediliyor..."
 
-#: services/js_i18n_strings.py:669
+#: services/js_i18n_strings.py:675
 #, python-brace-format
 msgid "Scan failed (HTTP {status})"
 msgstr "Tarama başarısız oldu (HTTP {status})"
 
-#: services/js_i18n_strings.py:670
+#: services/js_i18n_strings.py:676
 #, fuzzy, python-brace-format
 msgid "Scan failed: {error}"
 msgstr "Yedekleme başarısız oldu: {error}"
 
-#: services/js_i18n_strings.py:671 templates/multi_disc_organizer.html:204
+#: services/js_i18n_strings.py:677 templates/multi_disc_organizer.html:204
 msgid "Scanning..."
 msgstr "Taranıyor..."
 
-#: services/js_i18n_strings.py:672
+#: services/js_i18n_strings.py:678
 #, fuzzy
 msgid "Scanning…"
 msgstr "Taranıyor..."
 
-#: services/js_i18n_strings.py:673
+#: services/js_i18n_strings.py:679
 #, fuzzy
 msgid "Scrape game"
 msgstr "Tümünü Kazı"
 
-#: services/js_i18n_strings.py:674
+#: services/js_i18n_strings.py:680
 #, python-brace-format
 msgid "Scraped 0/{total} - 0%"
 msgstr "Kazındı 0/{total} - %0"
 
-#: services/js_i18n_strings.py:675
+#: services/js_i18n_strings.py:681
 #, python-brace-format
 msgid "Scraped {processed} / {total} - {percent}%"
 msgstr "Kazındı {processed} / {total} - %{percent}"
 
-#: services/js_i18n_strings.py:676 templates/logs.html:710
+#: services/js_i18n_strings.py:682 templates/logs.html:710
 #: templates/settings.html:29 templates/wishlist.html:507
 msgid "Scraping"
 msgstr "Kazınıyor"
 
-#: services/js_i18n_strings.py:677 templates/logs.html:781
+#: services/js_i18n_strings.py:683 templates/logs.html:781
 #: templates/museum_system.html:197 templates/museum_system.html:204
 #: templates/psn_trophy_detail.html:320
 msgid "Search"
 msgstr "Ara"
 
-#: services/js_i18n_strings.py:678
+#: services/js_i18n_strings.py:684
 #, fuzzy
 msgid "Search failed."
 msgstr "Dosya adlarında ara..."
 
-#: services/js_i18n_strings.py:679
+#: services/js_i18n_strings.py:685
 msgid "Searching & removing background..."
 msgstr "Aranıyor ve arka plan kaldırılıyor..."
 
-#: services/js_i18n_strings.py:680
+#: services/js_i18n_strings.py:686
 #, python-brace-format
 msgid "Searching {source}…"
 msgstr "{source} içinde aranıyor…"
 
-#: services/js_i18n_strings.py:681 templates/all_games.html:62
+#: services/js_i18n_strings.py:687 templates/all_games.html:62
 #: templates/psn_trophies.html:160 templates/system_games.html:53
 msgid "Select"
 msgstr "Seç"
 
-#: services/js_i18n_strings.py:682
+#: services/js_i18n_strings.py:688
 msgid "Select Developer"
 msgstr "Geliştirici Seç"
 
-#: services/js_i18n_strings.py:683
+#: services/js_i18n_strings.py:689
 msgid "Select Dimension"
 msgstr "Boyut Seç"
 
-#: services/js_i18n_strings.py:684
+#: services/js_i18n_strings.py:690
 #: templates/_modals/select_filter_modal.html:15
 msgid "Select Filter"
 msgstr "Filtre Seç"
 
-#: services/js_i18n_strings.py:685
+#: services/js_i18n_strings.py:691
 msgid "Select Genre"
 msgstr "Tür Seç"
 
-#: services/js_i18n_strings.py:686
+#: services/js_i18n_strings.py:692
 msgid "Select Perspective"
 msgstr "Bakış Açısı Seç"
 
-#: services/js_i18n_strings.py:687
+#: services/js_i18n_strings.py:693
 msgid "Select Play Mode"
 msgstr "Oynanış Modu Seç"
 
-#: services/js_i18n_strings.py:688
+#: services/js_i18n_strings.py:694
 msgid "Select Publisher"
 msgstr "Yayıncı Seç"
 
-#: services/js_i18n_strings.py:689
+#: services/js_i18n_strings.py:695
 msgid "Select Rating"
 msgstr "Derecelendirme Seç"
 
-#: services/js_i18n_strings.py:690
+#: services/js_i18n_strings.py:696
 msgid "Select Series"
 msgstr "Seri Seç"
 
-#: services/js_i18n_strings.py:691
+#: services/js_i18n_strings.py:697
 msgid "Select Source"
 msgstr "Kaynak Seç"
 
-#: services/js_i18n_strings.py:692
+#: services/js_i18n_strings.py:698
 #, python-brace-format
 msgid "Selected {count} games across all pages"
 msgstr "Tüm sayfalarda {count} oyun seçildi"
 
-#: services/js_i18n_strings.py:693
+#: services/js_i18n_strings.py:699
 #, python-brace-format
 msgid "Selected {count} unscraped games across all pages"
 msgstr "Tüm sayfalarda {count} kazınmamış oyun seçildi"
 
-#: services/js_i18n_strings.py:694
+#: services/js_i18n_strings.py:700
 msgid "Server restarted successfully!"
 msgstr "Sunucu başarıyla yeniden başlatıldı!"
 
-#: services/js_i18n_strings.py:695
+#: services/js_i18n_strings.py:701
 msgid "Server stopped. You can close this tab."
 msgstr ""
 
-#: services/js_i18n_strings.py:696 templates/all_games.html:121
+#: services/js_i18n_strings.py:702 templates/all_games.html:121
 #: templates/system_games.html:112
 msgid "Show Bonus"
 msgstr "Bonusu Göster"
 
-#: services/js_i18n_strings.py:697
+#: services/js_i18n_strings.py:703
 #, fuzzy
 msgid "Show keyboard shortcuts"
 msgstr "Klavye Kısayolları"
 
-#: services/js_i18n_strings.py:698
+#: services/js_i18n_strings.py:704
 msgid "Showing Bonus Discs"
 msgstr "Bonus Diskler Gösteriliyor"
 
-#: services/js_i18n_strings.py:699
+#: services/js_i18n_strings.py:705
 #, fuzzy
 msgid "Shutting down server..."
 msgstr "Sunucu yeniden başlatılıyor..."
 
-#: services/js_i18n_strings.py:700 templates/_modals/edit_modal.html:46
+#: services/js_i18n_strings.py:706 templates/_modals/edit_modal.html:46
 #: templates/base.html:1057
 msgid "Standalone"
 msgstr "Bağımsız"
 
-#: services/js_i18n_strings.py:701
+#: services/js_i18n_strings.py:707
 msgid "Starting..."
 msgstr "Başlatılıyor..."
 
-#: services/js_i18n_strings.py:702
+#: services/js_i18n_strings.py:708
 msgid "Starting…"
 msgstr "Başlatılıyor…"
 
-#: services/js_i18n_strings.py:703
+#: services/js_i18n_strings.py:709
 msgid "Steam Imports"
 msgstr "Steam İçe Aktarmaları"
 
-#: services/js_i18n_strings.py:704
+#: services/js_i18n_strings.py:710
 #, python-brace-format
 msgid "Successfully updated {count} games"
 msgstr "{count} oyun başarıyla güncellendi"
 
-#: services/js_i18n_strings.py:705
+#: services/js_i18n_strings.py:711
+#, fuzzy
+msgid "Summary written."
+msgstr "Özet"
+
+#: services/js_i18n_strings.py:712
 msgid "Sync In Progress"
 msgstr "Senkronizasyon Devam Ediyor"
 
-#: services/js_i18n_strings.py:706 templates/achievements_system.html:105
+#: services/js_i18n_strings.py:713 templates/achievements_system.html:105
 msgid "Sync Progress"
 msgstr "Senkronizasyon İlerlemesi"
 
-#: services/js_i18n_strings.py:707
+#: services/js_i18n_strings.py:714
 msgid "Sync Queued"
 msgstr "Senkronizasyon Kuyrukta"
 
-#: services/js_i18n_strings.py:708
+#: services/js_i18n_strings.py:715
 msgid "Sync complete! Refresh page to see updated progress."
 msgstr ""
 "Senkronizasyon tamamlandı! Güncellenen ilerlemeyi görmek için sayfayı "
 "yenileyin."
 
-#: services/js_i18n_strings.py:709
+#: services/js_i18n_strings.py:716
 msgid "Sync failed"
 msgstr "Senkronizasyon başarısız oldu"
 
-#: services/js_i18n_strings.py:710
+#: services/js_i18n_strings.py:717
 #, python-brace-format
 msgid "Sync: {system}"
 msgstr "Senkronize et: {system}"
 
-#: services/js_i18n_strings.py:711
+#: services/js_i18n_strings.py:718
 msgid "Syncing..."
 msgstr "Senkronize ediliyor..."
 
-#: services/js_i18n_strings.py:712
+#: services/js_i18n_strings.py:719
 #, python-brace-format
 msgid "Syncing: {processed} / {total}"
 msgstr "Senkronize ediliyor: {processed} / {total}"
 
-#: services/js_i18n_strings.py:713
+#: services/js_i18n_strings.py:720
 #: templates/_settings_tabs/customization.html:299
 #: templates/achievement_game.html:228 templates/analytics.html:569
 #: templates/analytics.html:603 templates/compare_games.html:69
@@ -2876,7 +2900,7 @@ msgstr "Senkronize ediliyor: {processed} / {total}"
 msgid "System"
 msgstr "Sistem"
 
-#: services/js_i18n_strings.py:714
+#: services/js_i18n_strings.py:721
 #: templates/_settings_tabs/customization.html:153
 #: templates/_settings_tabs/customization.html:234
 #: templates/_settings_tabs/data.html:19 templates/achievements_system.html:49
@@ -2885,15 +2909,15 @@ msgstr "Sistem"
 msgid "Systems"
 msgstr "Sistemler"
 
-#: services/js_i18n_strings.py:715
+#: services/js_i18n_strings.py:722
 msgid "This game is already running.  Kill the existing process and relaunch?"
 msgstr ""
 
-#: services/js_i18n_strings.py:716
+#: services/js_i18n_strings.py:723
 msgid "This system is already being synced."
 msgstr "Bu sistem zaten senkronize ediliyor."
 
-#: services/js_i18n_strings.py:717
+#: services/js_i18n_strings.py:724
 msgid ""
 "This will clear ALL RetroAchievements game IDs and progress data from "
 "your database. You will need to run \"Refresh RetroAchievements\" again "
@@ -2904,7 +2928,7 @@ msgstr ""
 "daha sonra tekrar \"RetroAchievements'ı Yenile\"yi çalıştırmanız "
 "gerekecek. Devam edilsin mi?"
 
-#: services/js_i18n_strings.py:718
+#: services/js_i18n_strings.py:725
 #, python-brace-format
 msgid ""
 "This will clear RetroAchievements game IDs and progress data for "
@@ -2913,14 +2937,14 @@ msgstr ""
 "Bu işlem \"{system}\" için RetroAchievements oyun ID'lerini ve ilerleme "
 "verilerini temizleyecektir. Devam edilsin mi?"
 
-#: services/js_i18n_strings.py:719
+#: services/js_i18n_strings.py:726
 #, python-brace-format
 msgid "This will remove \"{system}\" from the Achievements page. Continue?"
 msgstr ""
 "Bu işlem \"{system}\" sistemini Başarımlar sayfasından kaldıracaktır. "
 "Devam edilsin mi?"
 
-#: services/js_i18n_strings.py:720
+#: services/js_i18n_strings.py:727
 msgid ""
 "This will remove ALL games imported via CLZ Games Import from the "
 "database. This cannot be undone. Continue?"
@@ -2928,7 +2952,7 @@ msgstr ""
 "Bu işlem CLZ Games İçe Aktarma yoluyla içe aktarılan TÜM oyunları "
 "veritabanından kaldıracaktır. Bu işlem geri alınamaz. Devam edilsin mi?"
 
-#: services/js_i18n_strings.py:721
+#: services/js_i18n_strings.py:728
 msgid ""
 "This will remove database entries for ROM files that no longer exist on "
 "disk. This cannot be undone. Continue?"
@@ -2936,7 +2960,7 @@ msgstr ""
 "Bu işlem artık diskte bulunmayan ROM dosyalarına ait veritabanı "
 "kayıtlarını kaldıracaktır. Bu işlem geri alınamaz. Devam edilsin mi?"
 
-#: services/js_i18n_strings.py:722
+#: services/js_i18n_strings.py:729
 msgid ""
 "This will scan all games and update their RetroAchievements status. This "
 "may take several minutes for large collections. Continue?"
@@ -2945,7 +2969,7 @@ msgstr ""
 "güncelleyecektir. Büyük koleksiyonlar için birkaç dakika sürebilir. Devam"
 " edilsin mi?"
 
-#: services/js_i18n_strings.py:723
+#: services/js_i18n_strings.py:730
 msgid ""
 "This will search for and download images for all controllers without "
 "images. Continue?"
@@ -2953,7 +2977,7 @@ msgstr ""
 "Bu işlem resmi olmayan tüm kontrolcüler için resim arayıp indirecektir. "
 "Devam edilsin mi?"
 
-#: services/js_i18n_strings.py:724
+#: services/js_i18n_strings.py:731
 msgid ""
 "This will use your configured AI provider to generate history and top "
 "games for all systems. This may take several minutes and use API credits."
@@ -2963,46 +2987,46 @@ msgstr ""
 "sistemler için tarihçe ve en iyi oyunları oluşturacaktır. Birkaç dakika "
 "sürebilir ve API kredisi kullanabilir. Devam edilsin mi?"
 
-#: services/js_i18n_strings.py:725
+#: services/js_i18n_strings.py:732
 #, fuzzy
 msgid "Tick at least two games."
 msgstr "Rastgele bir oyun seç"
 
-#: services/js_i18n_strings.py:726 templates/logs.html:745
+#: services/js_i18n_strings.py:733 templates/logs.html:745
 msgid "To"
 msgstr "Bitiş"
 
-#: services/js_i18n_strings.py:727
+#: services/js_i18n_strings.py:734
 msgid "Try adjusting your search or filters"
 msgstr "Aramanızı veya filtrelerinizi ayarlamayı deneyin"
 
-#: services/js_i18n_strings.py:728
+#: services/js_i18n_strings.py:735
 msgid "Unexpected error"
 msgstr "Beklenmeyen hata"
 
-#: services/js_i18n_strings.py:729
+#: services/js_i18n_strings.py:736
 msgid "Unhandled rejection"
 msgstr "İşlenmemiş reddetme"
 
-#: services/js_i18n_strings.py:730 templates/analytics.html:583
+#: services/js_i18n_strings.py:737 templates/analytics.html:583
 #: templates/base.html:1157 templates/local_trophy_detail.html:220
 #: templates/local_trophy_detail.html:224
 msgid "Unknown"
 msgstr "Bilinmiyor"
 
-#: services/js_i18n_strings.py:731
+#: services/js_i18n_strings.py:738
 msgid "Unknown error"
 msgstr "Bilinmeyen hata"
 
-#: services/js_i18n_strings.py:732
+#: services/js_i18n_strings.py:739
 msgid "Unknown error occurred."
 msgstr "Bilinmeyen bir hata oluştu."
 
-#: services/js_i18n_strings.py:733
+#: services/js_i18n_strings.py:740
 msgid "Update Failed"
 msgstr "Güncelleme Başarısız Oldu"
 
-#: services/js_i18n_strings.py:734
+#: services/js_i18n_strings.py:741
 #, python-brace-format
 msgid ""
 "Update {count} game(s)?\n"
@@ -3013,61 +3037,65 @@ msgstr ""
 "\n"
 "Alanlar: {fields}"
 
-#: services/js_i18n_strings.py:735 templates/museum_system.html:198
+#: services/js_i18n_strings.py:742 templates/museum_system.html:198
 #: templates/museum_system.html:205
 msgid "Upload"
 msgstr "Yükle"
 
-#: services/js_i18n_strings.py:736
+#: services/js_i18n_strings.py:743
 msgid "Upload Controller Image"
 msgstr "Kontrolcü Resmi Yükle"
 
-#: services/js_i18n_strings.py:737
+#: services/js_i18n_strings.py:744
 msgid "Upload failed"
 msgstr "Yükleme başarısız oldu"
 
-#: services/js_i18n_strings.py:738
+#: services/js_i18n_strings.py:745
 msgid "Upload replacement image"
 msgstr "Değiştirme resmi yükle"
 
-#: services/js_i18n_strings.py:739
+#: services/js_i18n_strings.py:746
 msgid "Uploading & removing background…"
 msgstr "Yükleniyor ve arka plan kaldırılıyor…"
 
-#: services/js_i18n_strings.py:740
+#: services/js_i18n_strings.py:747
 msgid "Uploading…"
 msgstr "Yükleniyor…"
 
-#: services/js_i18n_strings.py:741
+#: services/js_i18n_strings.py:748
 #, fuzzy
 msgid "Version unlinked."
 msgstr "İzin reddedildi"
 
-#: services/js_i18n_strings.py:742
+#: services/js_i18n_strings.py:749
 #, fuzzy
 msgid "Versions linked."
 msgstr "Sürüm"
 
-#: services/js_i18n_strings.py:743
+#: services/js_i18n_strings.py:750
 #, fuzzy
 msgid "Will change?"
 msgstr "Değiştir"
 
-#: services/js_i18n_strings.py:744
+#: services/js_i18n_strings.py:751
 msgid "Works"
 msgstr "Çalışıyor"
 
-#: services/js_i18n_strings.py:745
+#: services/js_i18n_strings.py:752 templates/game_detail.html:732
+msgid "Write again with AI"
+msgstr ""
+
+#: services/js_i18n_strings.py:753
 msgid "Xbox Imports"
 msgstr "Xbox İçe Aktarmaları"
 
-#: services/js_i18n_strings.py:746 templates/_bulk_edit_modal.html:170
+#: services/js_i18n_strings.py:754 templates/_bulk_edit_modal.html:170
 #: templates/_modals/edit_modal.html:139 templates/game_detail.html:595
 #: templates/game_detail.html:652 templates/game_detail.html:711
 msgid "Yes"
 msgstr "Evet"
 
-#: services/js_i18n_strings.py:747
+#: services/js_i18n_strings.py:755
 #, python-brace-format
 msgid ""
 "Your bulk scrape has been queued (position {position}). It will start "
@@ -3076,152 +3104,152 @@ msgstr ""
 "Toplu kazımanız kuyruğa alındı (sıra: {position}). Mevcut kazıma "
 "bittiğinde otomatik olarak başlayacak."
 
-#: services/js_i18n_strings.py:748
+#: services/js_i18n_strings.py:756
 msgid "found"
 msgstr "bulundu"
 
-#: services/js_i18n_strings.py:749
+#: services/js_i18n_strings.py:757
 msgid "in queue"
 msgstr "kuyrukta"
 
-#: services/js_i18n_strings.py:750
+#: services/js_i18n_strings.py:758
 msgid "system"
 msgstr "sistem"
 
-#: services/js_i18n_strings.py:751
+#: services/js_i18n_strings.py:759
 #, python-brace-format
 msgid "{confidence}% match"
 msgstr "%{confidence} eşleşme"
 
-#: services/js_i18n_strings.py:752
+#: services/js_i18n_strings.py:760
 #, python-brace-format
 msgid "{count} Achievements"
 msgstr "{count} Başarım"
 
-#: services/js_i18n_strings.py:753
-#, fuzzy, python-brace-format, python-format
+#: services/js_i18n_strings.py:761
+#, fuzzy, python-brace-format
 msgid "{count} regional versions"
 msgstr "Mevcut: v%(version)s"
 
-#: services/js_i18n_strings.py:754
+#: services/js_i18n_strings.py:762
 #, python-brace-format
 msgid "{count} suggested groups. Untick any game that does not belong, then link."
 msgstr ""
 
-#: services/js_i18n_strings.py:755
+#: services/js_i18n_strings.py:763
 #, python-brace-format
 msgid "{fetched} fetched, {skipped} skipped, {failed} failed"
 msgstr "{fetched} alındı, {skipped} atlandı, {failed} başarısız"
 
-#: services/js_i18n_strings.py:756
+#: services/js_i18n_strings.py:764
 #, python-brace-format
 msgid "{job} Queued (#{position})"
 msgstr "{job} Kuyrukta (#{position})"
 
-#: services/js_i18n_strings.py:757
+#: services/js_i18n_strings.py:765
 #, python-brace-format
 msgid "{job} cancelled"
 msgstr "{job} iptal edildi"
 
-#: services/js_i18n_strings.py:758
+#: services/js_i18n_strings.py:766
 #, python-brace-format
 msgid "{job} completed ({n} processed)"
 msgstr "{job} tamamlandı ({n} işlendi)"
 
-#: services/js_i18n_strings.py:759
+#: services/js_i18n_strings.py:767
 #, python-brace-format
 msgid "{job} failed: {error}"
 msgstr "{job} başarısız oldu: {error}"
 
-#: services/js_i18n_strings.py:760
+#: services/js_i18n_strings.py:768
 #, python-brace-format
 msgid "{job}: {current} of {total} ({percent}%)"
 msgstr "{job}: {total} üzerinden {current} (%{percent})"
 
-#: services/js_i18n_strings.py:761
+#: services/js_i18n_strings.py:769
 #, python-brace-format
 msgid "{n} Player(s)"
 msgstr "{n} Oyuncu"
 
-#: services/js_i18n_strings.py:762
+#: services/js_i18n_strings.py:770
 #, python-brace-format
 msgid "{n} games"
 msgstr "{n} oyun"
 
-#: services/js_i18n_strings.py:763
+#: services/js_i18n_strings.py:771
 #, python-brace-format
 msgid "{n} lines"
 msgstr "{n} satır"
 
-#: services/js_i18n_strings.py:764
+#: services/js_i18n_strings.py:772
 #, python-brace-format
 msgid "{points} pts"
 msgstr "{points} puan"
 
-#: services/js_i18n_strings.py:765
+#: services/js_i18n_strings.py:773
 #, python-brace-format
 msgid "{system} has been added to the sync queue."
 msgstr "{system} senkronizasyon kuyruğuna eklendi."
 
-#: services/js_i18n_strings.py:766
+#: services/js_i18n_strings.py:774
 #, fuzzy, python-brace-format
 msgid "{title} ({count} versions)"
 msgstr "Dönüştürmeyi Başlat"
 
-#: services/js_i18n_strings.py:767
+#: services/js_i18n_strings.py:775
 msgid "⏳ Searching..."
 msgstr "⏳ Aranıyor..."
 
-#: services/js_i18n_strings.py:768
+#: services/js_i18n_strings.py:776
 #, python-brace-format
 msgid "⚠️ Cancel {job}"
 msgstr "⚠️ {job} İptal Et"
 
-#: services/js_i18n_strings.py:769
+#: services/js_i18n_strings.py:777
 msgid "⚠️ Confirm"
 msgstr "⚠️ Onayla"
 
-#: services/js_i18n_strings.py:770
+#: services/js_i18n_strings.py:778
 msgid "⚡ via"
 msgstr "⚡ kaynak:"
 
-#: services/js_i18n_strings.py:771
+#: services/js_i18n_strings.py:779
 msgid "✕ Clear"
 msgstr "✕ Temizle"
 
-#: services/js_i18n_strings.py:772
+#: services/js_i18n_strings.py:780
 msgid "🏆 Refresh RetroAchievements"
 msgstr "🏆 RetroAchievements'ı Yenile"
 
-#: services/js_i18n_strings.py:773
+#: services/js_i18n_strings.py:781
 msgid "📋 Clear CLZ Imports"
 msgstr "📋 CLZ İçe Aktarmalarını Temizle"
 
-#: services/js_i18n_strings.py:774
+#: services/js_i18n_strings.py:782
 msgid "🔄 Restart Server"
 msgstr "🔄 Sunucuyu Yeniden Başlat"
 
-#: services/js_i18n_strings.py:775
+#: services/js_i18n_strings.py:783
 msgid "🔍 Lookup HLTB"
 msgstr "🔍 HLTB Ara"
 
-#: services/js_i18n_strings.py:776
+#: services/js_i18n_strings.py:784
 msgid "🗑️ Clear HLTB Data"
 msgstr "🗑️ HLTB Verisini Temizle"
 
-#: services/js_i18n_strings.py:777
+#: services/js_i18n_strings.py:785
 msgid "🗑️ Clear RetroAchievements Data"
 msgstr "🗑️ RetroAchievements Verisini Temizle"
 
-#: services/js_i18n_strings.py:778
+#: services/js_i18n_strings.py:786
 msgid "🗑️ Reset Metadata"
 msgstr "🗑️ Meta Veriyi Sıfırla"
 
-#: services/js_i18n_strings.py:779
+#: services/js_i18n_strings.py:787
 msgid "🛑 Shut Down Server"
 msgstr ""
 
-#: services/js_i18n_strings.py:780
+#: services/js_i18n_strings.py:788
 msgid "🧹 Clean Missing ROMs"
 msgstr "🧹 Eksik ROM'ları Temizle"
 
@@ -3753,7 +3781,7 @@ msgstr "Tümünü Seç"
 msgid "Select Unscraped"
 msgstr "Kazınmamışları Seç"
 
-#: templates/all_games.html:72 templates/game_detail.html:751
+#: templates/all_games.html:72 templates/game_detail.html:760
 #: templates/system_games.html:63
 msgid "Full Re-scrape"
 msgstr "Tam Yeniden Kazıma"
@@ -3762,7 +3790,7 @@ msgstr "Tam Yeniden Kazıma"
 msgid "Toggle between full re-scrape and fill missing mode"
 msgstr "Tam yeniden kazıma ile eksikleri doldurma modu arasında geçiş yap"
 
-#: templates/all_games.html:77 templates/game_detail.html:751
+#: templates/all_games.html:77 templates/game_detail.html:760
 #: templates/system_games.html:68
 msgid "Fill Missing"
 msgstr "Eksikleri Doldur"
@@ -5995,44 +6023,64 @@ msgstr "Spor"
 msgid "(this page)"
 msgstr ""
 
-#: templates/game_detail.html:718
-msgid "No other regional versions are linked to this game."
+#: templates/game_detail.html:720
+msgid "Known differences"
+msgstr ""
+
+#: templates/game_detail.html:720
+msgid "AI-written"
+msgstr ""
+
+#: templates/game_detail.html:721
+msgid "Written by AI from what it knows about these releases. It can be wrong."
 msgstr ""
 
 #: templates/game_detail.html:723
+msgid "The AI knows of no differences between these versions."
+msgstr ""
+
+#: templates/game_detail.html:726
+msgid "No other regional versions are linked to this game."
+msgstr ""
+
+#: templates/game_detail.html:731
 msgid "Unlink this version"
 msgstr ""
 
-#: templates/game_detail.html:725
+#: templates/game_detail.html:732
+msgid "Summarise differences with AI"
+msgstr ""
+
+#: templates/game_detail.html:734
 #, fuzzy
 msgid "Link a version"
 msgstr "Sürüm"
 
-#: templates/game_detail.html:726
+#: templates/game_detail.html:735
 msgid "Link a version: search this system"
 msgstr ""
 
-#: templates/game_detail.html:739
+#: templates/game_detail.html:748
 msgid "Scrape History"
 msgstr "Kazıma Geçmişi"
 
-#: templates/game_detail.html:765
+#: templates/game_detail.html:774
 msgid "Primary scraper"
 msgstr "Birincil kazıyıcı"
 
-#: templates/game_detail.html:767
+#: templates/game_detail.html:776
 msgid "Fallback scraper"
 msgstr "Yedek kazıyıcı"
 
-#: templates/game_detail.html:774
+#: templates/game_detail.html:783
 msgid "Fields filled:"
 msgstr "Doldurulan alanlar:"
 
-#: templates/game_detail.html:782
+#: templates/game_detail.html:791
 msgid "None"
 msgstr "Yok"
 
-#: templates/game_detail.html:787
+#: templates/game_detail.html:796
 msgid "Still missing:"
 msgstr "Hala eksik:"
 

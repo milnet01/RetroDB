@@ -39,6 +39,34 @@
             });
         }
 
+        // PASS-59-107 — ask the AI how the versions differ.
+        const aiBtn = document.getElementById('versionAiBtn');
+        if (aiBtn) {
+            aiBtn.addEventListener('click', async () => {
+                aiBtn.disabled = true;
+                aiBtn.setAttribute('aria-busy', 'true');
+                showNotification(t('Asking the AI. This can take up to a minute.'), 'info');
+                try {
+                    const data = await API.post(`/api/versions/ai-summary/${gameId}`);
+                    const list = document.getElementById('versionsAiList');
+                    list.replaceChildren(...data.summary.differences.map(d => {
+                        const li = document.createElement('li');
+                        li.textContent = d;
+                        return li;
+                    }));
+                    document.getElementById('versionsAiNone').hidden = data.summary.differences.length > 0;
+                    document.getElementById('versionsAiSummary').hidden = false;
+                    aiBtn.textContent = '🤖 ' + t('Write again with AI');
+                    showNotification(t('Summary written.'), 'success');
+                } catch (err) {
+                    showNotification(failMessage(err, t('Could not write the summary.')), 'error');
+                } finally {
+                    aiBtn.disabled = false;
+                    aiBtn.removeAttribute('aria-busy');
+                }
+            });
+        }
+
         const input = document.getElementById('versionLinkSearch');
         const results = document.getElementById('versionLinkResults');
         if (!input || !results) return;

@@ -206,6 +206,64 @@ def _file_size(rom_path):
 
 
 # =============================================================================
+# AI SUMMARY OF DIFFERENCES (PASS-59-107)
+# =============================================================================
+
+def _member_key(group_id):
+    rows = query("SELECT id FROM games WHERE version_group_id = ? ORDER BY id", (group_id,))
+    return ','.join(str(r['id']) for r in rows)
+
+
+def ai_summary(game_id):
+    """The stored AI summary for this game's group, or None.
+
+    Returns {'differences': [str], 'generated_at', 'provider'}. A summary
+    written for a different set of members is stale and returns None.
+    """
+    row = query("""
+        SELECT vg.id, vg.ai_summary, vg.ai_summary_members, vg.ai_summary_at,
+               vg.ai_summary_provider
+        FROM games g JOIN version_groups vg ON vg.id = g.version_group_id
+        WHERE g.id = ?
+    """, (game_id,), one=True)
+    if not row or row['ai_summary'] is None or row['ai_summary_members'] != _member_key(row['id']):
+        return None
+    try:
+        differences = json.loads(row['ai_summary'])
+    except (ValueError, TypeError):
+        return None
+    return {'differences': differences, 'generated_at': row['ai_summary_at'],
+            'provider': row['ai_summary_provider']}
+
+
+def generate_ai_summary(game_id):
+    """Ask the AI how this game's versions differ and store the answer.
+
+    Returns the ai_summary() dict, None when the AI call failed (nothing is
+    stored), or raises VersionLinkError('not_found') for an ungrouped game.
+    """
+    from scraper import scrape_ai
+    row = query("""
+        SELECT g.version_group_id, s.name AS system_name
+        FROM games g JOIN systems s ON s.id = g.system_id WHERE g.id = ?
+    """, (game_id,), one=True)
+    if not row or not row['version_group_id']:
+        raise VersionLinkError('not_found')
+    differences = scrape_ai.summarize_version_differences(row['system_name'], members(game_id))
+    if differences is None:
+        return None
+    with get_db_with_context() as conn:
+        conn.execute("""
+            UPDATE version_groups SET ai_summary = ?, ai_summary_members = ?,
+                   ai_summary_at = ?, ai_summary_provider = ?
+            WHERE id = ?
+        """, (json.dumps(differences), _member_key(row['version_group_id']), _now(),
+              scrape_ai.active_provider_name(), row['version_group_id']))
+        conn.commit()
+    return ai_summary(game_id)
+
+
+# =============================================================================
 # SUGGESTIONS (§4.5)
 # =============================================================================
 

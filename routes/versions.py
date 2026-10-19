@@ -82,6 +82,23 @@ def api_versions_unlink(game_id):
     return success()
 
 
+@bp.route('/api/versions/ai-summary/<int:game_id>', methods=['POST'])
+@editor_required
+@handle_api_errors
+def api_versions_ai_summary(game_id):
+    """PASS-59-107: write the AI summary of how this game's versions differ."""
+    from scraper import scrape_ai
+    if not scrape_ai.active_provider_name():
+        return error(_('Set up an AI provider in Settings > Scraping first.'), 400)
+    try:
+        summary = version_groups.generate_ai_summary(game_id)
+    except version_groups.VersionLinkError:
+        return error(_('That game is not linked to other versions.'), 404)
+    if summary is None:
+        return error(_('The AI did not give a usable answer. Try again later.'), 502)
+    return success(summary=summary)
+
+
 @bp.route('/api/versions/reject', methods=['POST'])
 @editor_required
 @handle_api_errors

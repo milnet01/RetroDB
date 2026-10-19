@@ -736,8 +736,9 @@ def game_detail(game_id):
 
         # PASS-59-106 §4.4 — the other regional versions this game is linked to.
         from scraper.metadata_normalizer import alt_title_region
-        from services.version_groups import members as version_members
+        from services.version_groups import members as version_members, ai_summary
         versions = version_members(game_id) if game_dict.get('version_group_id') else []
+        version_ai_summary = ai_summary(game_id) if len(versions) > 1 else None
         for version in versions:
             code, _note = alt_title_region(version['region_label'])
             version['region_name'] = (region_display_name(code, get_locale()) if code
@@ -751,6 +752,7 @@ def game_detail(game_id):
                              bonus_discs=bonus_discs,
                              parent_game=parent_game,
                              versions=versions,
+                             version_ai_summary=version_ai_summary,
                              alternate_titles=alternate_titles,
                              pref_rating={'value': pref_rating_val, 'image': pref_rating_img,
                                           'crossmapped': pref_rating_crossmapped, 'name': pref_rating_name,

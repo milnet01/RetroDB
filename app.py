@@ -400,6 +400,7 @@ def _rate_limit(endpoint, spec):
 if limiter:
     # Expensive AI/scraping endpoints
     _rate_limit('games_ai.api_game_ai_fill', "10 per minute")
+    _rate_limit('versions.api_versions_ai_summary', "10 per minute")
     _rate_limit('bulk_scrape.api_bulk_scrape_job_start', "5 per minute")
     # Login brute force protection (supplements existing IP-based rate limiting)
     _rate_limit('auth.api_login', "10 per minute")

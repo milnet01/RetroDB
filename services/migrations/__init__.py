@@ -41,6 +41,7 @@ MIGRATIONS = [
     '014_games_china_rating',
     '015_ingest_legacy_platform_tokens',
     '016_version_groups',
+    '017_version_ai_summary',
 ]
 
 
