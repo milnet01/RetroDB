@@ -446,8 +446,8 @@ function finishSetup() {
         showTab('admin');
         return;
     }
-    if (pw.length < 4) {
-        errorBanner.textContent = 'Password must be at least 4 characters.';
+    if (pw.length < 12) {
+        errorBanner.textContent = {{ _('Password must be at least 12 characters')|tojson }};
         errorBanner.style.display = 'block';
         showTab('admin');
         return;

@@ -1641,6 +1641,10 @@ def setup_api():
     # 1. Create admin account if username/password provided
     admin_username = data.get('admin_username', '').strip()
     admin_password = data.get('admin_password', '').strip()
+    # PASS-59-121: the same 12-character floor as routes/auth.py.
+    if admin_password and len(admin_password) < 12:
+        from flask_babel import gettext as _
+        return api_error(_('Password must be at least 12 characters'), 422)
     if admin_username and admin_password:
         import sqlite3 as _sqlite3
         conn = _sqlite3.connect(config.DB_PATH)
