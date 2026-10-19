@@ -8506,6 +8506,62 @@ were corrected in `2836bc3` and are not repeated here.
   decide with the user whether to fix the matcher or the rows. Such rows
   also feed PASS-59-106's title signal.
 
+---
+
+#### Pass 59.125 Bulk scrape searches by the stored title, so a wrong title is re-confirmed on every re-scrape (MEDIUM, S).
+- **Where**: `services/jobs/bulk_scrape.py` calls
+  `scraper_manager.search_games(title, ...)` with `games.title`. The legacy
+  single-game route `/api/bulk-scrape` derives the search from the filename
+  (`derive_title_from_filename`).
+- **Seen** (2026-10-19): 111 live games carried another game's title
+  (PASS-59-124). Fixing them needed the title reset from the filename
+  before Full Re-scrape.
+- **Plan**: red test first; decide with the user whether bulk search uses
+  the filename always or only in Full Re-scrape mode.
+- **Status**: todo.
+
+---
+
+#### Pass 59.126 derive_title_from_filename keeps some tags: "(UK)", "(tzx)", publisher tags on ZX Spectrum, and a trailing dot (LOW, S).
+- **Seen** (2026-10-19, live library): `Chuckie Egg 2 (UK) (1985) (A'n'F
+  Software) (tzx).zip` gives "Chuckie Egg 2 (UK) (A'n'F Software)";
+  `Pokemon - Gold Version (USA, Europe).zip` keeps "(USA, Europe)";
+  `International Karate+ (1987) (System 3)..zip` gives a trailing dot.
+- **Where**: `services/game_utils.py::derive_title_from_filename`; ZX
+  Spectrum seems not treated as a computer system there.
+- **Plan**: red test per case; keep "(Simulation Mode)"-style name parts.
+- **Status**: todo.
+
+---
+
+#### Pass 59.127 Scraper match scoring: region bonus ignores Default Region; tag-only titles score as exact; sequel check reads the X in X-Men (MEDIUM, S).
+- **Status**: todo
+- **Region**: `scraper/match_scorer.py` `calculate_ss_score` and
+  `calculate_tgdb_score` give the region bonus to US/World only; the
+  `default_region` setting is not read. RetroDB ships to users outside the US.
+- **Empty titles**: two titles that are only tags (`(USA)` vs `(Europe)`)
+  normalise to empty and score 300, an exact match (checked 2026-10-19).
+- **Sequel check**: `services/version_groups.py::_SEQUEL_RE` matches the
+  `X` in "X-Men" (checked 2026-10-19), so such a game counts as numbered.
+- **Also**: `preferred_rank_sql` matches `%(USA%` on the full `rom_path`,
+  so a folder name can set the rank, and it ranks by a different region
+  reading than `members()`' label (`extract_region_from_filename`).
+- **Plan**: red test per case. **Status**: todo.
+
+---
+
+#### Pass 59.128 Comments in match_scorer.py and version_groups.py state wrong ranges and fields (LOW, S).
+- `scraper/match_scorer.py` header says title score 0-340 (it is 0-350);
+  the docstring ladder's lower bounds (150-280, 30-100, 20-120) are not
+  floors; the header's region bonus line omits that IGDB and RAWG give none;
+  the "WARN: Words match" line logs at info.
+- `services/version_groups.py`: `members()` docstring omits `file_size`; the
+  "Different region tags" comment covers every non-disc tag; `g['key']` is
+  the filename title (rename); `SIGNALS` must list every `add()` signal and
+  nothing says so.
+- **Source**: review-readability draft trial, findings checked by hand.
+- **Status**: todo.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
