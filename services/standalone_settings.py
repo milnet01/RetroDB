@@ -157,7 +157,7 @@ def _where(spec):
 def read_value(lines, spec) -> Optional[str]:
     """The text after `=` or `:` for this setting, trimmed; None if absent."""
     kind, block, key = _where(spec)
-    _, idx, _ = (_yaml_find if kind == 'yaml' else _ini_find)(lines, block, key)
+    _start, idx, _end = (_yaml_find if kind == 'yaml' else _ini_find)(lines, block, key)
     if idx is None:
         return None
     return lines[idx].split(':' if kind == 'yaml' else '=', 1)[1].strip()
