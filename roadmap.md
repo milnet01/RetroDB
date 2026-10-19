@@ -8046,6 +8046,11 @@ were corrected in `2836bc3` and are not repeated here.
 - **Status**: todo, after PASS-59-106. Marked as AI-written wherever shown.
   Lanes: ai, ui.
 - **Source**: user, 2026-10-17.
+- **Awaiting the user** (2026-10-19): PASS-59-106 shipped, but the live
+  library gives 4 version suggestions and none is a true regional pair,
+  so this summary would have almost nothing to work on. Recommended to
+  the user: hold it and go on to PASS-59-91's remaining stages. Ask
+  before building it.
 
 #### Pass 59.108 Apply Metadata shows a percentage gauge, not a spinner (MEDIUM, M)
 - **Target**: the game page's Search Metadata apply (`routes/games.py`
