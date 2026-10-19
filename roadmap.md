@@ -7471,6 +7471,17 @@ were corrected in `2836bc3` and are not repeated here.
   any of them per system or per game.
 - **Status**: planned (2026-09-26). Lanes: launch, docs.
 - **Source**: user decision 2026-09-26, relayed with `retroarch-f5`.
+- **Spec** (2026-10-19): `docs/specs/PASS-59-81-player-cores-and-settings.md`,
+  accepted (136805f, 9f3884a). User decisions 2026-10-19: no shipped
+  per-game recommendations for now; anyone who can launch may trigger a
+  core download, with an admin switch; build with the drafted core
+  ranking and latency. Checked: the buildbot index CRC covers the
+  extracted core, not the zip. Open for the build: macOS unsigned
+  `.dylib` loading (Q5) and the player's slang shader support (Q6).
+  - **Owed** (spec §11): PASS-59-64 §4.4 edits (the default-core rule
+  and where the core comes from) and a PASS-59-91 §4.6 note that its
+  choices table and routes also serve the player.
+  - **Blocked by** PASS-59-64's player clauses (unbuilt).
 
 ---
 
@@ -7717,6 +7728,22 @@ were corrected in `2836bc3` and are not repeated here.
   the changelog translations for v3.27.0–v3.28.0 at release time.
   - **Next**: stage 4 (§4.6 per-game settings), whose PS3 gotcha above
   still stands.
+- **Progress** (2026-10-19): stage 4 built (1f36b68, merged 16c6293;
+  i18n fix 378df88, 480fcff; in the open v3.30.0): disc serials
+  (`services/disc_serial.py`), `data/standalone_settings.json`,
+  `services/standalone_settings.py`, migration 018, `{fullscreen_flag}`,
+  game-page Emulator settings panel, Settings button in the mapping
+  table, Help "Emulators and Play" (English). Full suite 1944 passed on
+  main. Help's Emulators item from stage 2 is done (English only).
+  - **Still owed**: browser walk of the game-page panel
+  (`#emuSettingsPanel`) and the mapping table's Settings button, desktop
+  and 375 px, on a scratch DB; never press Play there (it writes into the
+  real emulator folders). Unverified: whether RPCS3 layers a partial
+  per-game file over the global config or fills missing keys with
+  defaults; if defaults, a RetroDB-created file drops the user's global
+  RPCS3 settings for that game. Check before relying on RPCS3.
+  - PASS-59-64 items listed above (INV-1, INV-7, INV-15, the player)
+  remain unbuilt.
 
 ---
 
@@ -8036,6 +8063,14 @@ were corrected in `2836bc3` and are not repeated here.
   not a signal until PASS-59-110; 3873 rows have no stored region, so the
   preferred version also reads the filename's region tag; the Duplicate
   Finder is filesystem-only and maps paths to `games.rom_path`.
+- **Backfill run** (2026-10-19, user's go-ahead): Backfill Alternate
+  Titles started from ROM Tools on the live library (1,670 games, about
+  5 s each), server `cc-job` `retrodb-live` on :5000; live DB backed up
+  first to `/mnt/Games/claude-scratch/roms-before-backfill.db`. At
+  roughly 380 games: ids filling, 0 failures. Owed when it ends: read
+  the job's done line in `~/.local/state/cc-job/retrodb-live.log`, then
+  ROM Tools > Regional Versions on the live library, and report the
+  suggestions to the user.
 
 #### Pass 59.107 AI summary of known differences between regional versions (LOW, M)
 - **Target**: PASS-59-106's version comparison, through the existing AI
@@ -8434,6 +8469,31 @@ were corrected in `2836bc3` and are not repeated here.
   uses); check every seed folder against ES-DE's names, not only this one.
 - **Verify**: a fresh seed wires Dolphin to `gc`.
 - **Status**: todo, after PASS-59-91 stage 4 merges (it edits the seeds).
+
+---
+
+#### Pass 59.123 The standalone build does not bundle data/emulator_seeds.json, so it seeds no emulators (MEDIUM, S).
+- **Status**: todo
+- **Where**: `retrodb.spec` datas list has no `data/emulator_seeds.json`
+  (stage 4 added `data/standalone_settings.json` only). Reported by the
+  stage 4 helper; not yet re-checked by hand.
+- **Plan**: confirm against `retrodb.spec` and `services/emulator_seeder.py`;
+  add it; a test like `tests/test_spec_migration_sync.py` that every
+  `data/*.json` the code opens is bundled.
+- **Verify**: a release build's seed log line names the seeds file.
+
+---
+
+#### Pass 59.124 Some library games carry another game's title (LOW, S).
+- **Status**: todo
+- **Seen** (live DB, 2026-10-19): `atari2600/Pitfall! - Pitfall Harry's
+  Jungle Adventure (USA).zip` titled "Adventure"; `nes/...Hillsfar (USA).zip`
+  titled "...DragonStrike"; `zxspectrum/Outrun (USA)...` titled "Auf
+  Wiedersehen Monty"; `megadrive/Chi Chi's Pro Challenge Gold (USA).zip`
+  titled "Championship Pro-Am". Likely wrong scraper matches.
+- **Plan**: find which source and mode set these titles (scrape history);
+  decide with the user whether to fix the matcher or the rows. Such rows
+  also feed PASS-59-106's title signal.
 
 ## Done index
 
