@@ -1,7 +1,7 @@
 <!-- ants-spec-format: 1 -->
 # PASS-59-81 — Best core, core download and recommended settings for the player
 
-**Status:** spec draft (2026-10-19).
+**Status:** accepted (2026-10-19; user answered §15 Q1 to Q3, Q4 checked).
 **Kind:** implement.
 **Source:** ROADMAP PASS-59-81 (user decisions 2026-09-26, relayed with
 `retroarch-f5`).
@@ -114,7 +114,7 @@ beyond its core file names matching the host platform.
   only after it is read from the core's source or from a `.opt` the core
   wrote, with that source cited in the commit.
 
-**Initial ranking** (author's proposal, every id checked present in the
+**Initial ranking** (accepted by the user 2026-10-19, every id checked present in the
 2026-10-19 `linux/x86_64` index):
 
 | Folders | Cores, best first | Default latency |
@@ -202,8 +202,8 @@ def install(core: str) -> Path
    `data/player_cores.json`.
 2. The zip streams to `<profile>/cores/.<file>.zip.part`, capped at
    256 MiB. A larger body, or a non-200 answer, fails.
-3. The zip's CRC-32 must equal the index's 8 hex digits for that file
-   (what the digits cover is checked at build time: §15 Q4).
+3. The extracted core's CRC-32 (the zip member named in step 4, not
+   the zip) must equal the index's 8 hex digits for that file (§15 Q4).
 4. Exactly one member is read: the one named `core_file_name(core)`, with
    no directory part. Missing → fail. Other members are ignored.
 5. It is written to a temporary file in `<profile>/cores/`, made
@@ -306,8 +306,8 @@ already stored keep their value; the Settings mapping table edits them.
   records no call.
   *Breaks when:* `install` builds the URL from a request field or a
   stored choice without the table check.
-- **INV-4** — A download whose CRC-32 differs from the index, or whose zip
-  lacks the core member, installs nothing and leaves an existing core file
+- **INV-4** — A download whose extracted core's CRC-32 differs from the
+  index, or whose zip lacks the core member, installs nothing and leaves an existing core file
   byte-identical.
   *Test:* `tests/test_player_cores.py` (to add) — an existing core file,
   then a fake zip with a wrong CRC, then one with the member under a
@@ -498,16 +498,20 @@ Rows live in `../reviews/PASS-59-81-player-cores-and-settings-loop-log.md`.
 ## 15. Open questions
 
 - **Q1 (user)** — Should RetroDB ship its own per-game recommendations
-  (for example, a different core for games one core runs badly)? The author
-  recommends no for now (§3.5).
+  (for example, a different core for games one core runs badly)?
+  **Decided** (user, 2026-10-19): no, not for now (§3.5).
 - **Q2 (user)** — Should any user who can press Play trigger a core
-  download, or admins only? The author recommends anyone, with the admin
-  switch (§3.6): the URL and file are fixed by RetroDB, not by the user.
-- **Q3 (user)** — The §4.1 ranking and default latency are the author's
-  proposal; the user may reorder them.
+  download, or admins only? **Decided** (user, 2026-10-19): anyone who can
+  launch, with the admin switch (§3.6); the URL and file are fixed by
+  RetroDB, not by the user.
+- **Q3 (user)** — The §4.1 ranking and default latency. **Decided**
+  (user, 2026-10-19): build with them as drafted; the user changes them
+  per system later.
 - **Q4 (build)** — Does the index's CRC cover the zip or the extracted
-  core? Checked against one real download before INV-4's test is written;
-  not downloaded while drafting.
+  core? **Checked** 2026-10-19 on `nightly/linux/x86_64`: the index line
+  for `snes9x_libretro.so.zip` read `e211e6cb`, the zip's own CRC-32 was
+  `82667a0c`, and the extracted `snes9x_libretro.so` was `e211e6cb`. The
+  index covers the extracted core (§4.4 step 3).
 - **Q5 (fork session)** — Does macOS load a downloaded unsigned `.dylib`
   in the player without a quarantine prompt? Unverified.
 - **Q6 (fork session)** — Which video driver does the player use, and does
