@@ -8082,6 +8082,9 @@ were corrected in `2836bc3` and are not repeated here.
   Bobble). True versions seen: TMNT Image Works / Ultra Games (1990), maybe
   Cabal Ocean / Capcom. Same game, two files: Aliens .zip/.m3u, DKO. Server
   stopped. Nothing linked. Fix choice is the user's.
+- **After the PASS-59-124 fix** (2026-10-19): the live library shows 15
+  suggestion groups, down from 56. Most left are same-name different games;
+  the user rejects those in the tool.
 
 #### Pass 59.107 AI summary of known differences between regional versions (LOW, M)
 - **Target**: PASS-59-106's version comparison, through the existing AI
@@ -8523,6 +8526,16 @@ were corrected in `2836bc3` and are not repeated here.
   expected on the copy), report to the user, stop the server (kill -9),
   then ask before deleting the two scratch backups (they hold scraper
   creds).
+- **Re-scrape result** (2026-10-19 23:06): "Bulk scrape completed: 77
+  success, 34 failed, 0 skipped". All 34 failures are "No results passed
+  match filter" (hacks, compilations, unusual names); those games keep the
+  filename title with no IDs. None of the 111 is flagged by the
+  title-vs-filename check now; the 70 still flagged are the regional or
+  fuller names the user chose to leave. Regional Versions: 15 suggestion
+  groups, as predicted on the copy. Server stopped.
+  - **Still owed**: ask the user before deleting the scratch backups
+  `roms-before-backfill.db` and `roms-before-title-fix.db` (and the
+  `roms-suggest-check.db` copy) in `/mnt/Games/claude-scratch/`.
 
 ---
 
