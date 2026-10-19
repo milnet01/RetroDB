@@ -8071,6 +8071,17 @@ were corrected in `2836bc3` and are not repeated here.
   the job's done line in `~/.local/state/cc-job/retrodb-live.log`, then
   ROM Tools > Regional Versions on the live library, and report the
   suggestions to the user.
+- **Backfill result** (2026-10-19): done 19:06, 1141 games updated
+  (424 alt titles added), 529 no new, 0 failed. Titles unchanged. Regional
+  Versions on the live library: 56 suggestions, almost all wrong. Most are a
+  sequel paired with its first game (Doom 2 / Doom, Strider 2 / Strider):
+  the sequel row already carried the first game's title, and the backfill
+  looked its ids up by that title. Others are wrong titles (Legend of Spyro
+  titled "The Last Of Us", Pitfall titled "Adventure"; PASS-59-124) or a
+  regional-name signal pairing different games (Rainbow Islands / Bubble
+  Bobble). True versions seen: TMNT Image Works / Ultra Games (1990), maybe
+  Cabal Ocean / Capcom. Same game, two files: Aliens .zip/.m3u, DKO. Server
+  stopped. Nothing linked. Fix choice is the user's.
 
 #### Pass 59.107 AI summary of known differences between regional versions (LOW, M)
 - **Target**: PASS-59-106's version comparison, through the existing AI
