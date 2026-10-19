@@ -48,6 +48,7 @@ _MIGRATION_SCRIPTS = [
     'services.migrations.scripts.015_ingest_legacy_platform_tokens',
     'services.migrations.scripts.016_version_groups',
     'services.migrations.scripts.017_version_ai_summary',
+    'services.migrations.scripts.018_standalone_settings',
 ]
 
 # Some pip packages have their own runtime imports that PyInstaller's
@@ -118,6 +119,9 @@ DATAS = [
     # static/videos/ — explicitly NOT bundled. Live in the writable image
     # dir at runtime; populated by the scraper.
     ('data/changelog.yaml', 'data'),
+    # PASS-59-91 §4.6 — the per-game settings RetroDB manages for DuckStation,
+    # PCSX2 and RPCS3; read at launch.
+    ('data/standalone_settings.json', 'data'),
     # Per-locale changelog translations (Pass 43.6) — the /changelog route merges
     # these over changelog.yaml by version; bundle them or non-English users see
     # English release notes. (help.<locale>.html ride the templates/ dir above.)

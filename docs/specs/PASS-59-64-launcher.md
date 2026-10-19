@@ -127,7 +127,8 @@ shape and its steps. The changes:
 - **Binary:** `_resolve_binary` applies §3.18's order. An override that
   is set but not executable still raises `LaunchResolutionError`.
 - **Template variables.** Scalar: `{rom}`, `{rom_dir}`, `{rom_name}`,
-  `{retroarch_core}`. List: `{system_extra_args}`, `{game_extra_args}`. A
+  `{retroarch_core}`. List: `{system_extra_args}`, `{game_extra_args}`, and
+  `{fullscreen_flag}` (PASS-59-91 §4.6; never auto-appended). A
   template token that is *exactly* a list variable expands to zero or more
   argv elements, `shlex.split` of the value. A list variable inside a larger
   token raises `LaunchResolutionError`. `{disc_paths}` is removed, so a
@@ -188,7 +189,8 @@ data/player/
 `BASE_DIR` is `config.BASE_DIR`, which is writable in a frozen build too.
 
 **Row.** A new `emulators` row for the player, marked by a new column
-`is_player INTEGER NOT NULL DEFAULT 0` (migration 016). Author's choices,
+`is_player INTEGER NOT NULL DEFAULT 0` (the next free migration number;
+016 to 018 are taken). Author's choices,
 because the resolver's RetroArch path cannot serve it:
 
 - `is_retroarch = 0`. The player never reads `retroarch_binary` or
@@ -200,7 +202,7 @@ because the resolver's RetroArch path cannot serve it:
 - **argv** is built by an `is_player` branch in `resolve_launch_context`,
   not from `args_template`, in the shape below.
 
-**Who writes what.** Migration 016 inserts the player's `emulators` row,
+**Who writes what.** Its migration inserts the player's `emulators` row,
 with no `system_emulators` rows. PASS-59-81's core installer owns the rest:
 when it installs a core for a system, it writes that system's player
 `system_emulators` row with `retroarch_core`, makes it the default, and
@@ -608,7 +610,7 @@ No test here launches the fork's real player; the player-side behaviour
   default-set list gains nothing new.
 - `docs/specs/auth.md` — the `edit` row notes that launch arguments need
   `manage_settings`.
-- `docs/specs/migrations.md` — migration 016 (`emulators.is_player`).
+- `docs/specs/migrations.md` — its migration (`emulators.is_player`).
 - `docs/specs/api-contracts.md` — `POST /api/games/<game_id>/player-settings/reset`
   (§4.5).
 - The module docstrings that cite "spec §…" are repointed at this file's
@@ -630,7 +632,7 @@ Rows live in `../reviews/PASS-59-64-launcher-loop-log.md`.
 
 ## 14. Migration / compatibility
 
-- Migration 016 adds `emulators.is_player` (default 0), so existing rows
+- Its migration adds `emulators.is_player` (default 0), so existing rows
   are unaffected.
 - **Behaviour change:** an install with both `retroarch_binary` and a
   RetroArch row override set now launches the override (§3.18). That row's

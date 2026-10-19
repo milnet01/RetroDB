@@ -371,3 +371,38 @@ class TestCollectionsOwnerId:
             assert 5 in applied
             assert conn.execute("SELECT COUNT(*) FROM tags").fetchone()[0] == 0
             conn.close()
+
+
+def test_inv18_fullscreen_flag_only_where_the_seed_is_untouched(tmp_path):
+    """PASS-59-91 INV-18: migration 018 rewrites a DuckStation or PCSX2
+    args_template only where it still equals the old seed exactly."""
+    conn = _open(str(tmp_path / 'm.db'))
+    conn.execute("CREATE TABLE games (id INTEGER PRIMARY KEY, rom_path TEXT)")
+    conn.execute("CREATE TABLE emulators (id INTEGER PRIMARY KEY, name TEXT, "
+                 "binary_name TEXT, args_template TEXT)")
+    old = '-batch -fullscreen "{rom}"'
+    conn.executemany("INSERT INTO emulators (name, binary_name, args_template) VALUES (?, ?, ?)",
+                     [('DuckStation', 'duckstation-qt', old),
+                      ('PCSX2', 'pcsx2-qt', '-batch "{rom}"'),
+                      ('Other', 'mgba-qt', old)])
+    migrations._load('018_standalone_settings').apply(conn)
+    rows = dict(conn.execute("SELECT name, args_template FROM emulators").fetchall())
+    assert rows['DuckStation'] == '-batch {fullscreen_flag} "{rom}"'
+    assert rows['PCSX2'] == '-batch "{rom}"'
+    assert rows['Other'] == old
+    conn.close()
+
+
+def test_018_rom_path_change_clears_the_serial(tmp_path):
+    conn = _open(str(tmp_path / 'm.db'))
+    conn.execute("CREATE TABLE games (id INTEGER PRIMARY KEY, rom_path TEXT)")
+    conn.execute("CREATE TABLE emulators (id INTEGER PRIMARY KEY, name TEXT, "
+                 "binary_name TEXT, args_template TEXT)")
+    migrations._load('018_standalone_settings').apply(conn)
+    conn.execute("INSERT INTO games (id, rom_path, disc_serial, disc_crc) "
+                 "VALUES (1, 'a.chd', 'SLUS-12345', '0000000A')")
+    conn.execute("UPDATE games SET disc_crc = disc_crc WHERE id = 1")
+    assert conn.execute("SELECT disc_serial FROM games").fetchone()[0] == 'SLUS-12345'
+    conn.execute("UPDATE games SET rom_path = 'b.chd' WHERE id = 1")
+    assert conn.execute("SELECT disc_serial, disc_crc FROM games").fetchone() == (None, None)
+    conn.close()

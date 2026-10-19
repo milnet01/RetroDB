@@ -10,8 +10,9 @@
 #   3. Verify enabled.
 #   4. Resolve binary (RA-special-cased to read settings).
 #   5. Resolve RA core (only when is_retroarch=1).
-#   6. shlex.split the template, then per token: {system_extra_args} and
-#      {game_extra_args} as a whole token expand to their words; {rom},
+#   6. shlex.split the template, then per token: {system_extra_args},
+#      {game_extra_args} and {fullscreen_flag} as a whole token expand to
+#      their words; {rom},
 #      {rom_dir}, {rom_name}, {retroarch_core} substitute via
 #      str.format_map(_SafeDict). A parse error names its field.
 #   7. Auto-append extra_args / launch_args_override if template lacked tokens.
@@ -190,6 +191,21 @@ def _mapping_resolves(emu, sys_emu) -> bool:
     return True
 
 
+def _fullscreen_flag(emu, system_id) -> list:
+    """{fullscreen_flag}: the emulator's flag for the system's choice, else
+    the table default; no element for an emulator with no flag (INV-17).
+    A flag is an argv input, so it is set per system only."""
+    from services.standalone_settings import flag_args, settings_for
+    spec = settings_for(emu.get('binary_name')).get('fullscreen')
+    if not spec or 'flag' not in spec:
+        return []
+    row = query("""
+        SELECT value FROM emulator_setting_choices
+        WHERE emulator_id = ? AND scope = 'system' AND scope_id = ? AND setting = 'fullscreen'
+    """, (emu['id'], system_id), one=True)
+    return flag_args(spec, row['value'] if row else None)
+
+
 # -----------------------------------------------------------------------------
 # Public
 # -----------------------------------------------------------------------------
@@ -297,6 +313,9 @@ def resolve_launch_context(game_id: int) -> LaunchContext:
     }
 
     template = emu['args_template']
+    # PASS-59-91 §4.6 — never auto-appended; only a template naming it gets it.
+    if '{fullscreen_flag}' in template:
+        list_vars['{fullscreen_flag}'] = _fullscreen_flag(emu, game['system_id'])
     substituted = []
     for tok in _split(template, 'args_template'):
         if tok in list_vars:
@@ -310,6 +329,7 @@ def resolve_launch_context(game_id: int) -> LaunchContext:
         substituted.append(tok.format_map(vars_dict))
 
     # Auto-append if template did NOT explicitly use the token
+    list_vars.pop('{fullscreen_flag}', None)
     for name, words in list_vars.items():
         if name not in template:
             substituted.extend(words)

@@ -21,6 +21,7 @@ from services.auth import login_required, has_permission, permission_required
 from services.launcher import get_launcher, LauncherError
 from services.launcher.base import LaunchResolutionError
 from services.launch_resolver import resolve_launch_context
+from services.standalone_settings import apply_for_launch
 from settings_manager import get_setting
 
 logger = logging.getLogger(__name__)
@@ -87,6 +88,10 @@ def api_launch_game(game_id):
         ctx = resolve_launch_context(game_id)
     except LaunchResolutionError as e:
         return error(str(e), 422)
+
+    # PASS-59-91 §4.6 — write the per-game settings file before the emulator
+    # reads it. Never raises; a settings problem does not stop the launch.
+    apply_for_launch(game_id)
 
     # Launch
     try:

@@ -377,6 +377,53 @@
         return t('Missing: {files}', {files: bios.missing.join(', ')});
     }
 
+    const SETTING_LABELS = () => ({
+        resolution_scale: t('Resolution scale'),
+        aspect_ratio: t('Aspect ratio'),
+        fullscreen: t('Fullscreen'),
+    });
+
+    async function renderSystemSettings(cell, m) {
+        const url = `/api/systems/${m.system_id}/emulator-settings/${m.emulator_id}`;
+        let view;
+        try {
+            view = (await fetchJSON(url)).data;
+        } catch (e) {
+            cell.textContent = t('Failed: {error}', {error: e.message});
+            return;
+        }
+        const labels = SETTING_LABELS();
+        const intro = document.createElement('p');
+        intro.className = 'text-muted';
+        intro.textContent = t('Used for every {system} game unless the game sets its own. Applied when you press Play.',
+            {system: m.system_name});
+        const boxes = view.settings.map((s) => {
+            const label = document.createElement('label');
+            label.style.marginRight = 'var(--spacing-md)';
+            label.textContent = (labels[s.setting] || s.setting) + ' ';
+            const select = document.createElement('select');
+            select.className = 'form-input';
+            for (const v of s.values) {
+                const opt = document.createElement('option');
+                opt.value = v;
+                opt.textContent = v;
+                select.appendChild(opt);
+            }
+            select.value = s.value;
+            select.addEventListener('change', async () => {
+                try {
+                    await fetchJSON(url, {method: 'PUT', body: JSON.stringify({[s.setting]: select.value})});
+                    showNotification(t('Saved. It applies the next time you press Play.'), 'success');
+                } catch (e) {
+                    showNotification(t('Save failed: {error}', {error: e.message}), 'error');
+                }
+            });
+            label.appendChild(select);
+            return label;
+        });
+        cell.replaceChildren(intro, ...boxes);
+    }
+
     async function refreshMappings() {
         const body = $('#mapping-body');
         if (!body) return;
@@ -454,6 +501,25 @@
             actions.appendChild(btn);
             for (const td of [...cells, def, works, bios, actions]) tr.appendChild(td);
             tbody.appendChild(tr);
+            if (m.has_settings) {
+                // PASS-59-91 §4.6 — the system-level choices for this emulator.
+                const settingsRow = document.createElement('tr');
+                settingsRow.hidden = true;
+                const cell = document.createElement('td');
+                cell.colSpan = 6;
+                settingsRow.appendChild(cell);
+                const toggle = document.createElement('button');
+                toggle.className = 'btn btn-sm btn-secondary';
+                toggle.textContent = t('Settings');
+                toggle.setAttribute('aria-expanded', 'false');
+                toggle.addEventListener('click', async () => {
+                    settingsRow.hidden = !settingsRow.hidden;
+                    toggle.setAttribute('aria-expanded', String(!settingsRow.hidden));
+                    if (!settingsRow.hidden) await renderSystemSettings(cell, m);
+                });
+                actions.prepend(toggle, document.createTextNode(' '));
+                tbody.appendChild(settingsRow);
+            }
         }
         table.appendChild(tbody);
         const wrap = document.createElement('div');
