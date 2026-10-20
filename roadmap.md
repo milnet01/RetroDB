@@ -8723,6 +8723,33 @@ were corrected in `2836bc3` and are not repeated here.
 - **Keeps**: ES-DE results and their place in the priority order are
   unchanged.
 
+---
+
+#### Pass 59.137 Create M3U leaves the game's library entry pointing at the moved archive (MEDIUM, S).
+- **Status**: todo
+- **Seen** (2026-10-20, code read): `scraper/rom_tools.py`
+  `create_m3u_playlist` moves the archive to staging, and
+  `routes/tools.py` `api_archive_scanner_create_m3u` updates no
+  `games` row. A playlist row stores the .m3u's own size in
+  `file_size` (After the War: 82).
+- **Do**: repoint `rom_path` and `file_size` of the row whose
+  `rom_path` is the archive, so metadata and media stay.
+- **Hand fix done** (2026-10-20): C64 TMNT ids 5882 and 5963; rows
+  saved first in `/mnt/Games/claude-scratch/games-5882-5963-tmnt-before-m3u.sql`.
+
+---
+
+#### Pass 59.138 Create M3U puts every release in an archive into one playlist (LOW, S).
+- **Status**: todo
+- **Seen** (2026-10-20): C64 TMNT zips hold several releases, each
+  split into disks (`[Bonzai_Disk 1].d64`, `[X-Ray_Disk 1].d64`,
+  ...). `create_m3u_playlist` lists every ROM file sorted, so all
+  releases land in one playlist.
+- **Do**: when the names show more than one release, ask which one
+  to use (or keep the first), and list only its disks.
+- **Also seen**: `unzip` reads `[` `]` in a member name as a
+  wildcard; extract by exact name if a member is ever named.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
