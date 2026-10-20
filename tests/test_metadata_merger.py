@@ -476,11 +476,9 @@ class TestApplyAi:
         # The user-invoked AI Fill route keeps its own override; it does not
         # call this function.
         from scraper.scrape_ai import VALIDATE_FIELDS
-        if not VALIDATE_FIELDS:
-            pytest.skip("VALIDATE_FIELDS empty on this build")
-        field = next(iter(VALIDATE_FIELDS))
-        if field not in _METADATA_KEYS:
-            pytest.skip(f"VALIDATE_FIELDS entry {field} not in test metadata skeleton")
+        # A set has no fixed order, so take the first field the skeleton has.
+        field = next((f for f in sorted(VALIDATE_FIELDS) if f in _METADATA_KEYS), None)
+        assert field, "no VALIDATE_FIELDS entry is in the test metadata skeleton"
         meta, result = blank
         meta[field] = 'curated'
         apply_ai_to_metadata(meta, {field: 'ai value'}, db_game_id=1, result=result, fill_only=True)
