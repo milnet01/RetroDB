@@ -56,7 +56,7 @@ else
 fi
 
 # Resolve the port once (PORT -> RETRODB_PORT -> config default) so the banner
-# and the browser-open URL below match what app.py actually binds.  app.py
+# matches what app.py actually binds.  app.py
 # re-resolves it from the same environment, so nothing is passed through here.
 # A malformed value dies now, with the message from server_port.py, rather
 # than after a dependency check and a CSS build.
@@ -125,7 +125,6 @@ echo ""
 echo -e "${YELLOW}Press Ctrl+C to stop the server${NC}"
 echo ""
 
-# Open the browser a moment after the server binds (background; non-fatal).
-( sleep 3; xdg-open "http://localhost:${SERVER_PORT}" >/dev/null 2>&1 || true ) &
-
-$PYTHON app.py
+# app.py opens the browser once the port is bound (skipped under
+# LocalWebServerManager, which has its own Open button).
+RETRODB_OPEN_BROWSER=1 $PYTHON app.py

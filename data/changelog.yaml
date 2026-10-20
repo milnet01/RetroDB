@@ -118,6 +118,12 @@
         which is not cleared at restart. The archive scanner shows where they
         went, and the batch confirm says they will be moved. Resetting ROM
         Tools settings now resets every option.</li>
+      <li><strong>The start-up script opens RetroDB when it is ready.</strong>
+        start.sh, start.command and start.bat opened the browser after a
+        fixed 3 seconds, often before the server could answer, so the page
+        failed to load. RetroDB now opens it once the server is listening.
+        Started from LocalWebServerManager, it opens no page at all; use the
+        manager's Open button.</li>
       <li><strong>Game videos can be up to 500 MB.</strong> The limit was
         50 MB, too small for most game trailers. An upload that is too big
         now shows a message on the game page instead of replacing the page

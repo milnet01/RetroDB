@@ -29,7 +29,7 @@ fi
 echo "  OK: Python found ($($PYTHON --version))"
 
 # Resolve the port once (PORT -> RETRODB_PORT -> config default) so the banner
-# and the browser-open URL below match what app.py actually binds.  A malformed
+# matches what app.py actually binds.  A malformed
 # value dies here with the message from server_port.py.
 if ! SERVER_PORT=$($PYTHON server_port.py); then
     echo "Press any key to exit..."
@@ -65,7 +65,6 @@ echo "  Press Ctrl+C to stop the server"
 echo "========================================================"
 echo ""
 
-# Open the browser a moment after the server binds (background; non-fatal).
-( sleep 3; open "http://localhost:${SERVER_PORT}" >/dev/null 2>&1 || true ) &
-
-$PYTHON app.py
+# app.py opens the browser once the port is bound (skipped under
+# LocalWebServerManager, which has its own Open button).
+RETRODB_OPEN_BROWSER=1 $PYTHON app.py

@@ -31,7 +31,7 @@ if %errorlevel% neq 0 (
 echo   OK: Python found
 
 REM Resolve the port once (PORT -^> RETRODB_PORT -^> config default) so the
-REM banner and the browser-open URL below match what app.py actually binds.
+REM banner matches what app.py actually binds.
 REM On a malformed value server_port.py prints the reason and produces no
 REM output, so SERVER_PORT stays undefined and we stop here.
 set SERVER_PORT=
@@ -79,8 +79,8 @@ echo   Press Ctrl+C to stop the server
 echo ========================================================
 echo.
 
-REM Open the browser (returns immediately; server still runs in foreground).
-start "" http://localhost:%SERVER_PORT%
-
+REM app.py opens the browser once the port is bound (skipped under
+REM LocalWebServerManager, which has its own Open button).
+set RETRODB_OPEN_BROWSER=1
 %PYTHON% app.py
 pause

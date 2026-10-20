@@ -77,6 +77,38 @@ class TestPass59_10StandaloneLaunchers:
 
 
 # -----------------------------------------------------------------------------
+# Browser opening (2026-10-20): the source launchers opened it on a 3 s guess,
+# often before the server could answer, and LocalWebServerManager has its own
+# Open button.
+# -----------------------------------------------------------------------------
+class TestBrowserOpening:
+
+    @pytest.mark.parametrize('environ,frozen,opens', [
+        ({}, False, False),                                   # bare `python3 app.py`
+        ({'RETRODB_OPEN_BROWSER': '1'}, False, True),         # start.sh etc.
+        ({}, True, True),                                     # standalone bundle
+        ({'RETRODB_OPEN_BROWSER': '1', 'LWSM_MANAGED': '1'}, False, False),
+        ({'LWSM_MANAGED': '1'}, True, False),
+        ({'RETRODB_OPEN_BROWSER': '1', 'LWSM_MANAGED': '0'}, False, True),
+    ])
+    def test_who_opens_the_browser(self, environ, frozen, opens):
+        from app import should_open_browser
+        assert should_open_browser(environ, frozen) is opens
+
+    def test_browser_opens_after_the_port_is_bound(self):
+        src = _read('app.py')
+        assert src.index('create_server(app') < src.index('webbrowser.open')
+
+    @pytest.mark.parametrize('name', ['start.sh', 'start.command', 'start.bat'])
+    def test_source_launcher_leaves_it_to_the_server(self, name):
+        src = _read(name)
+        assert 'RETRODB_OPEN_BROWSER=1' in src
+        assert 'http://localhost:${SERVER_PORT}" ' not in src   # sh / command
+        assert 'start "" http' not in src                       # bat
+        assert 'sleep 3' not in src
+
+
+# -----------------------------------------------------------------------------
 # 59.11 — the shipped .desktop must be substituted somewhere
 # -----------------------------------------------------------------------------
 class TestPass59_11DesktopLauncher:

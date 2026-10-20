@@ -1869,6 +1869,21 @@ if _is_worker:
 # MAIN ENTRY POINT
 # =============================================================================
 
+
+def should_open_browser(environ, frozen):
+    """Whether the server opens the browser once its port is bound.
+
+    The standalone bundle always does (only the server knows the resolved
+    port, Pass 59.10); a source install when start.sh / start.command /
+    start.bat set RETRODB_OPEN_BROWSER=1. Never under LocalWebServerManager
+    (LWSM_MANAGED=1), which has its own Open button.
+    scripts/retrodb_launcher.py opens the browser itself.
+    """
+    if environ.get('LWSM_MANAGED') == '1':
+        return False
+    return bool(frozen) or environ.get('RETRODB_OPEN_BROWSER') == '1'
+
+
 if __name__ == '__main__':
     import errno
     from platform_utils import get_local_ip, IS_WINDOWS, IS_MACOS
@@ -1995,7 +2010,7 @@ if __name__ == '__main__':
     else:
         # Production: use Waitress WSGI server
         try:
-            from waitress import serve
+            from waitress import create_server
         except ImportError:
             print("ERROR: Waitress is not installed. Install with: pip install waitress")
             print("       Or set DEBUG_MODE = True in config.py to use the Flask dev server.")
@@ -2017,22 +2032,23 @@ if __name__ == '__main__':
         # queued behind each other and every page load flooded the log with
         # "Task queue depth" warnings. 16 gives comfortable headroom for a
         # local single-user / small-household workload without being wasteful.
-        # Standalone bundle only: open the browser shortly after the bind.
-        # A source install gets this from start.sh / start.command / start.bat
-        # or scripts/retrodb_launcher.py, none of which ship in the bundle —
-        # and only the server knows the resolved port (Pass 59.10).
-        if getattr(sys, 'frozen', False):
-            import threading
-            import webbrowser
-            _opener = threading.Timer(
-                2.0, lambda: webbrowser.open(f'http://localhost:{port}')
-            )
-            _opener.daemon = True  # never hold up Ctrl+C
-            _opener.start()
-
+        #
+        # waitress.serve() unrolled, so the browser opens once the port is
+        # bound rather than after a guessed delay; a request made before
+        # run() waits in the listen backlog.
         try:
-            serve(app, host=host, port=port, threads=16)
+            server = create_server(app, host=host, port=port, threads=16)
         except OSError as _bind_err:
             if _bind_err.errno == errno.EADDRINUSE:
                 _die_port_in_use(port)
             raise
+        server.print_listen("Serving on http://{}:{}")
+
+        if should_open_browser(os.environ, getattr(sys, 'frozen', False)):
+            import threading
+            import webbrowser
+            threading.Thread(target=webbrowser.open,
+                             args=(f'http://localhost:{port}',),
+                             daemon=True).start()  # never hold up Ctrl+C
+
+        server.run()
