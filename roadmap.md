@@ -8765,6 +8765,31 @@ were corrected in `2836bc3` and are not repeated here.
   `/mnt/Emulators/Multi-System/RetroArch/retroarch-fork.sh` with the
   AppImage's settings folder as HOME.
 
+---
+
+#### Pass 59.140 RetroArch launches use only the user's own settings, so a bad local setting breaks games for anyone (HIGH, M).
+- **Status**: todo
+- **Seen** (2026-10-20): RetroDB launches RetroArch with
+  `-L <core> <rom>` only (emulators row 1 `args_template`); no
+  `--config` or `--appendconfig`, though the fork's player
+  contract names `--config`. Each user gets whatever their own
+  retroarch.cfg holds. Three settings broke C64 play on the
+  maintainer's machine; each was fixed there by hand only
+  (backups beside the files, `*.bak-2026-10-20-*`):
+  `input_driver = "x"` on Wayland left the keyboard dead (now
+  "wayland"); `fastforward_ratio = 1.0` capped the VICE core's
+  load warp at normal speed (now 0, unlimited); C64 prompts need
+  cursor keys and F1 a controller lacks (now right stick =
+  cursor keys, Start = F1 in `VICE x64sc.opt`).
+- **Also learned**: unsetting `WAYLAND_DISPLAY` does not force
+  X11 (libwayland defaults to `wayland-0`); `retroarch-fork.sh`
+  no longer tries.
+- **Do**: decide which settings RetroDB owns per launch (an
+  `--appendconfig` overlay is the likely route; core options need
+  their own route) and make them hold on X11 and Wayland. Works
+  with any RetroArch; PASS-59-139 (ship a preset build) is the
+  larger, separate option.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
