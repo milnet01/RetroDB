@@ -51,7 +51,7 @@ server {
     ssl_certificate     /etc/letsencrypt/live/retrodb.example.com/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/retrodb.example.com/privkey.pem;
 
-    client_max_body_size 100m;
+    client_max_body_size 600m;
 
     location / {
         proxy_pass http://127.0.0.1:5000;
@@ -149,7 +149,7 @@ makes any forged `X-Forwarded-For` instantly trusted.
 Flask caps request bodies at `config.MAX_UPLOAD_BYTES`. The constant lives in
 `config.py` (mirror in `config.example.py`); `app.py` only reads it into
 `MAX_CONTENT_LENGTH`. The nginx
-example above sets `client_max_body_size 100m;`. **If you raise the Flask
+example above sets `client_max_body_size 600m;`. **If you raise the Flask
 limit, also raise the proxy limit** — otherwise nginx returns 413 before the
 request reaches Waitress and the new cap is silently bypassed. Caddy and
 HAProxy have their own equivalents (`request_body { max_size … }` /

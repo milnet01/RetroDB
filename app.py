@@ -660,18 +660,25 @@ def handle_request_too_large(e):
     """Werkzeug raises this from MAX_CONTENT_LENGTH when the view first reads
     the request body. @handle_api_errors re-raises HTTPException so it lands
     here (Pass 59.45). Default page is bare HTML — give the user a hint about
-    the per-file cap and where the global limit comes from.
+    the per-file caps and where the global limit comes from. A page form
+    (the Edit modal posts to /game/<id>) gets the message flashed on the page
+    it came from, not a bare text page in its place.
     """
-    mb = config.MAX_UPLOAD_BYTES // (1024 * 1024)
-    msg = (
-        f"Upload exceeds the {mb} MB request limit. "
-        "Each image is also capped at 10 MB; try resizing oversized files "
-        "or upload them one at a time. "
-        "Operators can raise the global cap via RETRODB_MAX_UPLOAD_MB."
+    from flask import flash
+    from flask_babel import gettext as _
+    from services.game_media_service import MAX_IMAGE_SIZE
+    msg = _(
+        "Upload exceeds the %(total)s MB limit. Each image may be up to "
+        "%(image)s MB and a video up to %(video)s MB; upload fewer files at "
+        "once. Operators can raise the total limit via RETRODB_MAX_UPLOAD_MB.",
+        total=config.MAX_UPLOAD_BYTES // (1024 * 1024),
+        image=MAX_IMAGE_SIZE // (1024 * 1024),
+        video=config.MAX_VIDEO_SIZE // (1024 * 1024),
     )
     if request.path.startswith('/api/'):
         return api_error(msg, 413)
-    return msg, 413
+    flash(msg, 'error')
+    return redirect(request.path)
 
 
 @app.errorhandler(HTTPException)

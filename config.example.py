@@ -130,7 +130,7 @@ except ValueError:
 # Application metadata
 APP_NAME = "RetroDB"
 APP_VERSION = "3.30.0"
-APP_LAST_UPDATE = "2026-10-19"
+APP_LAST_UPDATE = "2026-10-20"
 APP_DESCRIPTION = "Retro Gaming ROM Library Manager"
 
 # Supported image extensions for boxart/screenshots
@@ -160,19 +160,20 @@ if IMAGE_FORMAT not in ('webp', 'jpeg'):
 # Maximum HTTP request body size, in bytes. Werkzeug enforces this when a
 # handler first reads the request body — a multipart edit-modal POST with
 # boxart + boxart_3d + several screenshots can easily exceed the old 16 MB
-# default. Per-file caps in services.game_media_service still apply.
+# default, and a full-quality game trailer can be hundreds of MB, so this sits
+# above MAX_VIDEO_SIZE. Per-file caps in services.game_media_service still apply.
 # Override via RETRODB_MAX_UPLOAD_MB.
 try:
-    _max_upload_mb = int(os.environ.get('RETRODB_MAX_UPLOAD_MB', '64'))
+    _max_upload_mb = int(os.environ.get('RETRODB_MAX_UPLOAD_MB', '600'))
 except ValueError:
-    _max_upload_mb = 64
+    _max_upload_mb = 600
 MAX_UPLOAD_BYTES = _max_upload_mb * 1024 * 1024
 
 # Pass 25 — per-operation size and response caps.  Werkzeug's
 # MAX_CONTENT_LENGTH backstops any HTTP body, but some code paths (scraper
 # streaming downloads, SS API JSON, PDF parsing) pre-size their reads from
 # the remote response — not the request body — so they need their own caps.
-MAX_VIDEO_SIZE = 50 * 1024 * 1024              # 25.6 — per-upload video cap
+MAX_VIDEO_SIZE = 500 * 1024 * 1024             # 25.6 — per-upload video cap
 MAX_MEDIA_DOWNLOAD_BYTES = 50 * 1024 * 1024    # 25.7 — scraper streaming download cap
 MAX_API_RESPONSE_BYTES = 10 * 1024 * 1024      # 25.7 — scraper JSON response cap
 MUSEUM_UPLOAD_MAX_BYTES = 10 * 1024 * 1024     # 25.4 — museum controller-image cap

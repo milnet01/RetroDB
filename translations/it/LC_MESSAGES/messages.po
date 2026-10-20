@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-19 18:18+0200\n"
+"POT-Creation-Date: 2026-10-20 17:04+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -18,22 +18,30 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: app.py:695
+#: app.py:671
+#, python-format
+msgid ""
+"Upload exceeds the %(total)s MB limit. Each image may be up to %(image)s "
+"MB and a video up to %(video)s MB; upload fewer files at once. Operators "
+"can raise the total limit via RETRODB_MAX_UPLOAD_MB."
+msgstr ""
+
+#: app.py:702
 #, fuzzy
 msgid "Too many requests. Please wait and try again."
 msgstr "Troppi tentativi. Riprova più tardi."
 
-#: app.py:804
+#: app.py:811
 #, fuzzy
 msgid "Setup required"
 msgstr "Titolo obbligatorio"
 
-#: app.py:825
+#: app.py:832
 #, fuzzy
 msgid "Password change required"
 msgstr "Cambio password non necessario"
 
-#: app.py:1648 routes/auth.py:202 routes/auth.py:251 routes/auth.py:436
+#: app.py:1655 routes/auth.py:202 routes/auth.py:251 routes/auth.py:436
 #: routes/auth.py:481 templates/force_change_password.html:49
 #: templates/setup.html:450
 msgid "Password must be at least 12 characters"
@@ -50,8 +58,8 @@ msgstr "Sistema non trovato o senza giochi con obiettivi"
 #: routes/achievements.py:171 routes/achievements.py:440
 #: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/collections.py:276
 #: routes/collections.py:531 routes/emulators.py:248 routes/emulators.py:262
-#: routes/games.py:347 routes/games.py:788 routes/games.py:909
-#: routes/games.py:966 routes/games_ai.py:46 routes/games_media.py:35
+#: routes/games.py:347 routes/games.py:793 routes/games.py:914
+#: routes/games.py:971 routes/games_ai.py:46 routes/games_media.py:35
 #: routes/games_media.py:82 routes/games_media.py:143 routes/reports.py:693
 #: routes/reports.py:818 routes/trophies.py:1278 services/hltb_service.py:125
 msgid "Game not found"
@@ -225,8 +233,8 @@ msgstr "Gioco principale non trovato"
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "Il disco bonus e il gioco principale devono essere nello stesso sistema"
 
-#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1218
-#: routes/games.py:1248 routes/platform_import.py:289
+#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1223
+#: routes/games.py:1253 routes/platform_import.py:289
 #: routes/platform_import.py:658 routes/platform_import.py:1024
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:200 routes/scraper.py:528
@@ -435,19 +443,24 @@ msgstr "Nessun ID fornito"
 msgid "Provide 1-50 valid IDs"
 msgstr "Fornisci da 1 a 50 ID validi"
 
-#: routes/games.py:622
+#: routes/games.py:501
+#, python-format
+msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
+msgstr ""
+
+#: routes/games.py:627
 msgid "Game not found after update"
 msgstr "Gioco non trovato dopo l'aggiornamento"
 
-#: routes/games.py:913
+#: routes/games.py:918
 msgid "No game selected."
 msgstr "Nessun gioco selezionato."
 
-#: routes/games.py:938
+#: routes/games.py:943
 msgid "This metadata apply is no longer running."
 msgstr "Questa applicazione dei metadati non è più in corso."
 
-#: routes/games.py:947
+#: routes/games.py:952
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
@@ -456,41 +469,41 @@ msgstr ""
 "Metadati applicati da %(sources)s! (%(filled)d campi compilati, "
 "%(missing)d ancora mancanti)"
 
-#: routes/games.py:953
+#: routes/games.py:958
 msgid "Failed to apply metadata."
 msgstr "Applicazione dei metadati non riuscita."
 
-#: routes/games.py:996 routes/games.py:1040
+#: routes/games.py:1001 routes/games.py:1045
 msgid "No fields to update"
 msgstr "Nessun campo da aggiornare"
 
-#: routes/games.py:1037 routes/platform_import.py:212
+#: routes/games.py:1042 routes/platform_import.py:212
 #: routes/platform_import.py:572 routes/platform_import.py:928
 #: routes/trophies.py:1852
 msgid "No games selected"
 msgstr "Nessun gioco selezionato"
 
-#: routes/games.py:1047
+#: routes/games.py:1052
 msgid "Invalid completion status"
 msgstr "Stato di completamento non valido"
 
-#: routes/games.py:1095
+#: routes/games.py:1100
 msgid "No valid fields to update"
 msgstr "Nessun campo valido da aggiornare"
 
-#: routes/games.py:1211
+#: routes/games.py:1216
 msgid "Invalid status"
 msgstr "Stato non valido"
 
-#: routes/games.py:1236
+#: routes/games.py:1241
 msgid "Not authenticated"
 msgstr "Non autenticato"
 
-#: routes/games.py:1267
+#: routes/games.py:1272
 msgid "Filter type and value required"
 msgstr "Tipo di filtro e valore obbligatori"
 
-#: routes/games.py:1280
+#: routes/games.py:1285
 msgid "Invalid filter type"
 msgstr "Tipo di filtro non valido"
 

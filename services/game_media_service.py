@@ -34,8 +34,8 @@ ALLOWED_IMAGE_EXT = frozenset({'jpg', 'jpeg', 'png', 'gif', 'webp'})
 ALLOWED_VIDEO_EXT = frozenset({'mp4', 'webm', 'ogg'})
 
 # Per-type upload size ceilings (bytes). Sit under the global
-# MAX_CONTENT_LENGTH (16 MB) to reject oversize single files before they
-# clobber disk. Videos stay at the global cap.
+# MAX_CONTENT_LENGTH (config.MAX_UPLOAD_BYTES) to reject oversize single files
+# before they clobber disk. Videos use config.MAX_VIDEO_SIZE.
 MAX_IMAGE_SIZE = 10 * 1024 * 1024  # 10 MB
 
 # Matches video extensions but is checked by extension on the caller; we

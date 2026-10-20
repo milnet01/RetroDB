@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-19 18:18+0200\n"
+"POT-Creation-Date: 2026-10-20 17:04+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: nl\n"
@@ -18,22 +18,30 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: app.py:695
+#: app.py:671
+#, python-format
+msgid ""
+"Upload exceeds the %(total)s MB limit. Each image may be up to %(image)s "
+"MB and a video up to %(video)s MB; upload fewer files at once. Operators "
+"can raise the total limit via RETRODB_MAX_UPLOAD_MB."
+msgstr ""
+
+#: app.py:702
 #, fuzzy
 msgid "Too many requests. Please wait and try again."
 msgstr "Te veel pogingen. Probeer het later opnieuw."
 
-#: app.py:804
+#: app.py:811
 #, fuzzy
 msgid "Setup required"
 msgstr "Titel vereist"
 
-#: app.py:825
+#: app.py:832
 #, fuzzy
 msgid "Password change required"
 msgstr "Wachtwoordwijziging niet vereist"
 
-#: app.py:1648 routes/auth.py:202 routes/auth.py:251 routes/auth.py:436
+#: app.py:1655 routes/auth.py:202 routes/auth.py:251 routes/auth.py:436
 #: routes/auth.py:481 templates/force_change_password.html:49
 #: templates/setup.html:450
 msgid "Password must be at least 12 characters"
@@ -50,8 +58,8 @@ msgstr "Systeem niet gevonden of heeft geen games met prestaties"
 #: routes/achievements.py:171 routes/achievements.py:440
 #: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/collections.py:276
 #: routes/collections.py:531 routes/emulators.py:248 routes/emulators.py:262
-#: routes/games.py:347 routes/games.py:788 routes/games.py:909
-#: routes/games.py:966 routes/games_ai.py:46 routes/games_media.py:35
+#: routes/games.py:347 routes/games.py:793 routes/games.py:914
+#: routes/games.py:971 routes/games_ai.py:46 routes/games_media.py:35
 #: routes/games_media.py:82 routes/games_media.py:143 routes/reports.py:693
 #: routes/reports.py:818 routes/trophies.py:1278 services/hltb_service.py:125
 msgid "Game not found"
@@ -225,8 +233,8 @@ msgstr "Hoofdgame niet gevonden"
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "Bonusschijf en hoofdgame moeten in hetzelfde systeem staan"
 
-#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1218
-#: routes/games.py:1248 routes/platform_import.py:289
+#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1223
+#: routes/games.py:1253 routes/platform_import.py:289
 #: routes/platform_import.py:658 routes/platform_import.py:1024
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:200 routes/scraper.py:528
@@ -435,19 +443,24 @@ msgstr "Geen ID's opgegeven"
 msgid "Provide 1-50 valid IDs"
 msgstr "Geef 1-50 geldige ID's op"
 
-#: routes/games.py:622
+#: routes/games.py:501
+#, python-format
+msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
+msgstr ""
+
+#: routes/games.py:627
 msgid "Game not found after update"
 msgstr "Game niet gevonden na update"
 
-#: routes/games.py:913
+#: routes/games.py:918
 msgid "No game selected."
 msgstr "Geen game geselecteerd."
 
-#: routes/games.py:938
+#: routes/games.py:943
 msgid "This metadata apply is no longer running."
 msgstr "Deze metadatatoepassing is niet meer actief."
 
-#: routes/games.py:947
+#: routes/games.py:952
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
@@ -456,41 +469,41 @@ msgstr ""
 "Metadata toegepast vanuit %(sources)s! (%(filled)d velden ingevuld, "
 "%(missing)d ontbreken nog)"
 
-#: routes/games.py:953
+#: routes/games.py:958
 msgid "Failed to apply metadata."
 msgstr "Toepassen van metadata mislukt."
 
-#: routes/games.py:996 routes/games.py:1040
+#: routes/games.py:1001 routes/games.py:1045
 msgid "No fields to update"
 msgstr "Geen velden om bij te werken"
 
-#: routes/games.py:1037 routes/platform_import.py:212
+#: routes/games.py:1042 routes/platform_import.py:212
 #: routes/platform_import.py:572 routes/platform_import.py:928
 #: routes/trophies.py:1852
 msgid "No games selected"
 msgstr "Geen games geselecteerd"
 
-#: routes/games.py:1047
+#: routes/games.py:1052
 msgid "Invalid completion status"
 msgstr "Ongeldige voltooiingsstatus"
 
-#: routes/games.py:1095
+#: routes/games.py:1100
 msgid "No valid fields to update"
 msgstr "Geen geldige velden om bij te werken"
 
-#: routes/games.py:1211
+#: routes/games.py:1216
 msgid "Invalid status"
 msgstr "Ongeldige status"
 
-#: routes/games.py:1236
+#: routes/games.py:1241
 msgid "Not authenticated"
 msgstr "Niet geauthenticeerd"
 
-#: routes/games.py:1267
+#: routes/games.py:1272
 msgid "Filter type and value required"
 msgstr "Filtertype en waarde vereist"
 
-#: routes/games.py:1280
+#: routes/games.py:1285
 msgid "Invalid filter type"
 msgstr "Ongeldig filtertype"
 

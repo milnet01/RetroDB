@@ -493,9 +493,14 @@ def game_detail(game_id):
                     if uploaded:
                         fanart_filename = uploaded
 
-                    uploaded = save_upload(request.files.get('custom_video'), os.path.join(config.STATIC_PATH, 'videos'), game_id, 'custom', ALLOWED_VIDEO_EXT)
+                    video_upload = request.files.get('custom_video')
+                    uploaded = save_upload(video_upload, os.path.join(config.STATIC_PATH, 'videos'), game_id, 'custom', ALLOWED_VIDEO_EXT)
                     if uploaded:
                         video_filename = uploaded
+                    elif video_upload and video_upload.filename:
+                        flash(_("Video not saved: it must be an MP4, WebM or OGG file "
+                                "of up to %(mb)s MB.",
+                                mb=config.MAX_VIDEO_SIZE // (1024 * 1024)), "error")
 
                     screenshots = save_screenshots(
                         request.files.getlist('custom_screenshots'),
