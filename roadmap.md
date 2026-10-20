@@ -8750,6 +8750,21 @@ were corrected in `2836bc3` and are not repeated here.
 - **Also seen**: `unzip` reads `[` `]` in a member name as a
   wildcard; extract by exact name if a member is ever named.
 
+---
+
+#### Pass 59.139 Ship a ready-configured RetroArch build with RetroDB (MEDIUM, L).
+- **Status**: deferred, not started.
+- **Why**: the Next disk button needs RetroArch's Network Commands on.
+  Upstream RetroArch 1.22.2 (the official AppImage) listens for them on
+  every network interface; the milnet01 fork binds 127.0.0.1 only
+  (`command.c`, 2026-04-25). Today each user turns the setting on by hand.
+- **Shape**: ship the fork's build with defaults preset (network
+  commands on, loopback; a Disk Next hotkey), cores fetched separately.
+  RetroArch is GPLv3: shipping it means shipping its source offer too.
+- **Seen** (2026-10-20): the user's setup runs the fork through
+  `/mnt/Emulators/Multi-System/RetroArch/retroarch-fork.sh` with the
+  AppImage's settings folder as HOME.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history

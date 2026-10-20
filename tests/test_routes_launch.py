@@ -21,9 +21,10 @@ def app_module(monkeypatch):
     '/api/launch/<token>/status',
     '/api/launch/<token>/kill',
     '/api/launches/active',
+    '/api/launch/<token>/disk-next',
 ])
 def test_launch_routes_registered(app_module, path):
-    """All four launch-subsystem routes must be registered. Collapsed from
+    """Every launch-subsystem route must be registered. Collapsed from
     four near-identical single-route tests (test-audit c-006 MED
     parametrisation) — a single failure now surfaces once, and adding a
     new launch route requires only adding to the parametrize list."""

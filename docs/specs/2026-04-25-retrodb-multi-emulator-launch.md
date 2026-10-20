@@ -87,7 +87,7 @@ Permission semantics:
 
 | permission | gates |
 |---|---|
-| `launch` | `POST /api/game/<id>/launch`, `POST /api/launch/<token>/kill`. (`GET .../status` and `GET /api/launches/active` are `view`-only — same as a Viewer being able to see what someone else is doing.) |
+| `launch` | `POST /api/game/<id>/launch`, `POST /api/launch/<token>/kill`, `POST /api/launch/<token>/disk-next`. (`GET .../status` and `GET /api/launches/active` are `view`-only — same as a Viewer being able to see what someone else is doing.) |
 | `track_progress` | `POST /api/game/<id>/completion` (`routes/games.py:1101`), `POST /api/game/<id>/track-view` (`routes/games.py:1119`), and any future write-on-play endpoints (e.g. last-played timestamp, future `launch_sessions` playtime updater). |
 
 These are the **only** routes whose decorators change as part of this pass. Everything else keeps its current `@admin_required` / `@editor_required` decorator. In particular: Player **cannot** edit game metadata, manage scrape, manage users, or change settings. The two existing `track-view` / `completion` endpoints are upgraded from "any logged-in user" (current state) to "users with `track_progress` permission" — Editor and Admin retain access; Viewer loses it; Player gains it. Viewers losing this is intentional: you couldn't realistically track progress as a Viewer because you couldn't launch the game in the first place.
@@ -312,7 +312,8 @@ class Launcher(Protocol):
 | POST | `/api/game/<int:game_id>/launch` | `@permission_required(settings["launch_required_permission"])` | Resolve + launch. **202** with `{token, pid, emulator: {id,name}, argv, started_at}`. **403** if user lacks the configured launch permission. **404** if game missing. **409** if same `game_id` already running and policy=`reject` (body includes `existing_token`). **422** on resolver failure (missing emulator, binary not found, rom missing, core missing). **500** on `OSError` from `Popen`. |
 | GET | `/api/launch/<token>/status` | `@permission_required('view')` | **200** `{state, exit_code, runtime_s, game_id, emulator_id}`. **404** if token unknown. Any logged-in user can poll status. |
 | POST | `/api/launch/<token>/kill` | `@permission_required('launch')` | **200** with the post-kill `LaunchStatus`. **404** if unknown. **403** RBAC. Admin can additionally kill any token via the future "kill any" admin endpoint; v1 only allows kill if the caller has `launch`. |
-| GET | `/api/launches/active` | `@permission_required('view')` | **200** `{launches: [LaunchHandle...]}`. Used by the nav indicator. |
+| GET | `/api/launches/active` | `@permission_required('view')` | **200** `{launches: [LaunchHandle...]}`, each with the game's `title` and `disk_swap` (RetroArch launched with a `.m3u`). Used by the nav indicator. |
+| POST | `/api/launch/<token>/disk-next` | `@permission_required('launch')` | Sends `DISK_NEXT` to RetroArch's network command port (127.0.0.1:55355), after a `GET_STATUS` probe. **200** sent. **404** token not running. **409** the launch has no disk list, or RetroArch did not answer (Network Commands off). |
 | POST | `/api/settings/retroarch/detect?validate=true\|false` | `@admin_required` | Runs the auto-detect probe (see §RetroArch path auto-detect). **200** with `{binary: {...}, cores_dir: {...}}`. Admin-only since it writes settings. |
 
 The launch decorator reads the setting *at request time* (not at import time) so admins can change `launch_required_permission` without restarting Flask.
@@ -362,7 +363,7 @@ The status line is populated by `POST /api/settings/retroarch/detect?validate=tr
 
 ### Top-nav indicator
 
-A small ▶ badge appears in the existing top-nav (next to the user menu) when `GET /api/launches/active` returns non-empty. Polled every 5s when the page is foregrounded. Clicking opens a popover listing active launches with title, emulator, runtime, and a Kill button. Implemented as a small JS partial wired into `base.html`.
+A small ▶ badge appears in the existing top-nav (next to the user menu) when `GET /api/launches/active` returns non-empty. Polled every 5s when the page is foregrounded. Clicking opens a popover listing active launches with title, emulator, runtime, and a Kill button; a launch with `disk_swap` also gets a Next disk button. Implemented as a small JS partial wired into `base.html`.
 
 ## Edge cases
 

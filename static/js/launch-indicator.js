@@ -3,7 +3,8 @@
 // =============================================================================
 // Pass 44 — polls /api/launches/active every 5s while the page is foregrounded.
 // Shows the running count when non-zero, hidden otherwise.  Click reveals the
-// list with kill buttons.
+// list with kill buttons, and a Next disk button for a RetroArch game started
+// from a .m3u disk list.
 // =============================================================================
 
 (function () {
@@ -35,6 +36,16 @@
         }
     }
 
+    async function nextDisk(token) {
+        const rv = await fetch(`/api/launch/${token}/disk-next`, {
+            method: 'POST',
+            headers: {'X-CSRF-Token': csrfToken()},
+        });
+        const body = await rv.json().catch(() => ({}));
+        showNotification(body.message || body.error || t('Next disk failed'),
+                         rv.ok ? 'success' : 'error');
+    }
+
     async function killLaunch(token) {
         await fetch(`/api/launch/${token}/kill`, {
             method: 'POST',
@@ -61,12 +72,19 @@
             const row = document.createElement('div');
             row.className = 'launch-indicator-popover-row';
             const label = document.createElement('span');
-            label.textContent = `game #${h.game_id} (pid ${h.pid})`;
+            label.textContent = h.title || `game #${h.game_id} (pid ${h.pid})`;
+            row.appendChild(label);
+            if (h.disk_swap) {
+                const dbtn = document.createElement('button');
+                dbtn.className = 'btn btn-sm btn-secondary';
+                dbtn.textContent = t('Next disk');
+                dbtn.addEventListener('click', () => nextDisk(h.token));
+                row.appendChild(dbtn);
+            }
             const kbtn = document.createElement('button');
             kbtn.className = 'btn btn-sm btn-danger';
             kbtn.textContent = t('Kill');
             kbtn.addEventListener('click', () => killLaunch(h.token));
-            row.appendChild(label);
             row.appendChild(kbtn);
             popover.appendChild(row);
         }
