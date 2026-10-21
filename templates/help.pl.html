@@ -318,7 +318,7 @@
             <li>Efekty wstrzymują się, gdy karta nie jest widoczna, aby oszczędzać zasoby</li>
             <li>Stan dymu Cyberpunk zachowuje się między nawigacjami stron dla płynnych przejść</li>
             <li>Subtelna nakładka linii skanowania w stylu CRT dostosowuje się do palety kolorów każdego motywu</li>
-            <li>Twoja preferencja motywu jest zapisywana w przeglądarce i zachowywana między sesjami</li>
+            <li>Twój motyw jest zapisywany na Twoim koncie, więc towarzyszy Ci w każdej przeglądarce, w której się zalogujesz</li>
         </ul>
 
         <h3>Ikony dostosowane do motywu</h3>
@@ -864,6 +864,9 @@
         <h3>Płyty bonusowe</h3>
         <p>RetroDB automatycznie wykrywa płyty bonusowe/dodatkowe (np. płyty ze ścieżką dźwiękową, płyty z dodatkową zawartością) i łączy je z grą nadrzędną. Płyty bonusowe są domyślnie ukryte w bibliotece &mdash; przełącz <strong>„Pokaż bonusowe”</strong> w filtrach, aby je wyświetlić. Powiązane płyty bonusowe pojawiają się w oknie szczegółów gry nadrzędnej.</p>
 
+        <h3>Wersje regionalne</h3>
+        <p>Jeśli masz jedną grę z kilku regionów, połącz jej wersje, a Biblioteka pokaże je jako jedną kartę z plakietką &#127760;. Karta otwiera i uruchamia wersję z Twojego preferowanego regionu (<strong>Ustawienia &rarr; Biblioteka &rarr; Domyślny region</strong>). Strona gry wymienia wszystkie wersje, porównuje je (data wydania, wydawca, rozmiar pliku, rewizja, języki, oceny, RetroAchievements) i zawiera link do każdej z nich. Edytorzy mogą tam odłączyć wersję albo wyszukać w tym samym systemie, aby połączyć kolejną. Edytorzy mogą też nacisnąć <strong>Podsumuj różnice z AI</strong>, aby otrzymać listę znanych różnic między wersjami, takich jak cenzura czy usunięta zawartość. Jest ona oznaczona jako napisana przez AI i może zawierać błędy; wymaga dostawcy AI w <strong>Ustawienia &rarr; Pobieranie danych</strong>. Nagłówek strony podaje liczbę gier, a obok liczbę ROM-ów, gdy te dwie wartości się różnią.</p>
+
         <div class="help-tip">
             <strong>Wskazówka:</strong> Okno szczegółów buforuje ostatnio przeglądane gry dla szybszego ładowania. Edycje automatycznie aktualizują kartę gry na stronie bez konieczności odświeżania.
         </div>
@@ -1388,7 +1391,11 @@
         <p><em>Wymaga: chdman</em></p>
 
         <h3>Wyszukiwarka duplikatów</h3>
-        <p>Znajdź zduplikowane ROM-y według hasza lub nazwy pliku, z opcjami priorytetyzacji według tagów regionu.</p>
+        <p>Znajdź zduplikowane ROM-y według hasza lub nazwy pliku, z opcjami priorytetyzacji według tagów regionu. W trybie nazw plików połączone wersje regionalne jednej gry nie są zgłaszane jako duplikaty; w trybie hash identyczne pliki są zgłaszane zawsze.</p>
+        <p><em>Brak zależności zewnętrznych</em></p>
+
+        <h3>Wersje regionalne</h3>
+        <p>Tylko dla edytorów. RetroDB sugeruje gry, które wyglądają na jedną grę z różnych regionów: tę samą grę w IGDB lub ScreenScraper, ten sam tytuł z innym tagiem regionu albo pasującą nazwę regionalną. Odznacz każdą grę, która nie pasuje, i kliknij <strong>„Połącz zaznaczone gry”</strong> albo kliknij <strong>„Nie wersje”</strong>, aby ta grupa nigdy więcej nie była sugerowana. Nic nie zostanie połączone, dopóki tego nie potwierdzisz. Najpierw uruchom <strong>Uzupełnij tytuły alternatywne</strong> w sekcji Konserwacja: uzupełnia to identyfikatory IGDB i ScreenScraper, z których korzystają sugestie.</p>
         <p><em>Brak zależności zewnętrznych</em></p>
 
         <h3>Organizator gier wielopłytowych</h3>
@@ -1586,8 +1593,8 @@
             </thead>
             <tbody>
                 <tr><td><strong>Administrator</strong></td><td>Pełny dostęp: ustawienia, zarządzanie użytkownikami, konserwacja, wszystkie funkcje</td><td>Wymagane</td></tr>
-                <tr><td><strong>Edytor</strong></td><td>Może edytować gry, pobierać metadane, używać narzędzi ROM, zarządzać kolekcjami</td><td>Brak</td></tr>
-                <tr><td><strong>Przeglądający</strong></td><td>Tylko do odczytu: przeglądanie biblioteki, wyświetlanie szczegółów, wyświetlanie osiągnięć/trofeów</td><td>Brak</td></tr>
+                <tr><td><strong>Edytor</strong></td><td>Może edytować gry, pobierać metadane, używać narzędzi ROM, zarządzać kolekcjami</td><td>Wymagane</td></tr>
+                <tr><td><strong>Przeglądający</strong></td><td>Tylko do odczytu: przeglądanie biblioteki, wyświetlanie szczegółów, wyświetlanie osiągnięć/trofeów</td><td>Wymagane</td></tr>
             </tbody>
         </table>
 
@@ -1596,11 +1603,11 @@
             <li>Przejdź do <strong>Ustawienia &rarr; Konto &rarr; Użytkownicy</strong> (tylko administrator)</li>
             <li>Kliknij <strong>„Dodaj użytkownika”</strong>, aby utworzyć nowe konto</li>
             <li>Ustaw nazwę użytkownika, nazwę wyświetlaną i rolę</li>
-            <li>Użytkownicy administratorzy otrzymują domyślne hasło, które musi zostać zmienione przy pierwszym logowaniu</li>
+            <li>Nowi użytkownicy otrzymują domyślne hasło, które musi zostać zmienione przy pierwszym logowaniu</li>
         </ol>
 
         <h3>Uwierzytelnianie</h3>
-        <p>Strona logowania pokazuje wszystkich aktywnych użytkowników. Konta administratora wymagają hasła; inne role po prostu klikają swoją nazwę, aby się zalogować. Sesje są trwałe do momentu wylogowania.</p>
+        <p>Strona logowania pokazuje wszystkich aktywnych użytkowników. Kliknij swoją nazwę, a następnie wpisz hasło; wymaga go każda rola. Sesje są trwałe do momentu wylogowania.</p>
 
         <h3>Ustawienia dla poszczególnych użytkowników</h3>
         <p>Każdy użytkownik może skonfigurować własne:</p>
@@ -1769,7 +1776,7 @@
     <div class="card-body">
         <h3>Najlepsze praktyki bezpieczeństwa</h3>
         <ul>
-            <li><strong>Zmień domyślne hasło</strong> &mdash; domyślne hasło administratora (<code>admin</code>) powinno zostać zmienione natychmiast po pierwszym zalogowaniu. Używaj silnego hasła składającego się z co najmniej 8 znaków.</li>
+            <li><strong>Zmień domyślne hasło</strong> &mdash; domyślne hasło administratora (<code>admin</code>) powinno zostać zmienione natychmiast po pierwszym zalogowaniu. Używaj silnego hasła składającego się z co najmniej 12 znaków.</li>
             <li><strong>Używaj serwera proxy HTTPS</strong> &mdash; RetroDB samo w sobie nie zapewnia TLS/SSL. Umieść je za serwerem proxy (np. Nginx, Caddy, Traefik) z włączonym HTTPS, aby szyfrować ruch między klientami a serwerem.</li>
             <li><strong>Ogranicz dostęp sieciowy</strong> &mdash; unikaj wystawiania RetroDB bezpośrednio do publicznego internetu. Użyj VPN lub ogranicz dostęp do swojej sieci lokalnej. Jeśli potrzebny jest dostęp zdalny, użyj serwera proxy z uwierzytelnianiem.</li>
             <li><strong>Wykonuj regularne kopie zapasowe</strong> &mdash; użyj wbudowanej funkcji kopii zapasowej w Ustawieniach, aby tworzyć okresowe kopie zapasowe bazy danych. Przechowuj kopie zapasowe w innej lokalizacji niż aplikacja.</li>
@@ -1779,7 +1786,7 @@
 
         <h3>Wbudowane funkcje bezpieczeństwa</h3>
         <ul>
-            <li><strong>Haszowanie haseł</strong> &mdash; hasła administratora są haszowane za pomocą PBKDF2 (nigdy nie są przechowywane w postaci jawnego tekstu)</li>
+            <li><strong>Haszowanie haseł</strong> &mdash; Hasła są hashowane za pomocą PBKDF2 (nigdy nie są przechowywane jako zwykły tekst)</li>
             <li><strong>Ograniczanie prób logowania</strong> &mdash; ochrona przed atakami typu brute-force na punkcie końcowym logowania</li>
             <li><strong>Walidacja ścieżek</strong> &mdash; wszystkie operacje na plikach używają pomocników <code>safe_path</code> i <code>safe_filename</code>, aby zapobiec atakom przechodzenia katalogów</li>
             <li><strong>Zapytania parametryzowane</strong> &mdash; wszystkie zapytania do bazy danych używają instrukcji parametryzowanych, aby zapobiec wstrzykiwaniu SQL</li>

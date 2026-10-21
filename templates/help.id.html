@@ -318,7 +318,7 @@
             <li>Efek berhenti sementara saat tab tidak terlihat untuk menghemat sumber daya</li>
             <li>Status asap Cyberpunk tetap bertahan antar navigasi halaman untuk transisi yang mulus</li>
             <li>Overlay garis pindai (scanline) bergaya CRT halus menyesuaikan dengan palet warna setiap tema</li>
-            <li>Preferensi tema Anda disimpan di peramban dan tetap berlaku antar sesi</li>
+            <li>Tema Anda disimpan bersama akun Anda, sehingga mengikuti Anda ke peramban mana pun tempat Anda masuk</li>
         </ul>
 
         <h3>Ikon Sadar-Tema</h3>
@@ -864,6 +864,9 @@
         <h3>Disc Bonus</h3>
         <p>RetroDB otomatis mendeteksi disc bonus/tambahan (mis. CD soundtrack, disc konten tambahan) dan menautkannya ke game induknya. Disc bonus disembunyikan secara bawaan di library &mdash; alihkan <strong>"Show Bonus"</strong> di filter untuk menampilkannya. Disc bonus yang tertaut muncul di modal detail game induknya.</p>
 
+        <h3>Versi Regional</h3>
+        <p>Jika Anda memiliki satu game dari beberapa region, tautkan versinya dan Pustaka menampilkannya sebagai satu kartu dengan lencana &#127760;. Kartu itu membuka dan memainkan versi dari region pilihan Anda (<strong>Pengaturan &rarr; Pustaka &rarr; Region Bawaan</strong>). Halaman game mencantumkan setiap versi, membandingkannya (tanggal rilis, penerbit, ukuran berkas, revisi, bahasa, skor, RetroAchievements) dan menautkan ke masing-masing. Editor dapat melepas tautan sebuah versi di sana, atau mencari di sistem yang sama untuk menautkan versi lain. Editor juga dapat menekan <strong>Ringkas perbedaan dengan AI</strong> untuk mendapatkan daftar perbedaan yang diketahui antarversi, seperti sensor atau konten yang dihapus. Daftar ini ditandai sebagai tulisan AI dan bisa salah; fitur ini memerlukan penyedia AI di <strong>Pengaturan &rarr; Scraping</strong>. Header halaman menghitung game, dengan jumlah ROM di sampingnya jika keduanya berbeda.</p>
+
         <div class="help-tip">
             <strong>Tip:</strong> Modal detail menyimpan cache game yang baru dilihat untuk pemuatan yang lebih cepat. Pengeditan otomatis memperbarui kartu game di halaman tanpa perlu memuat ulang.
         </div>
@@ -1388,7 +1391,11 @@
         <p><em>Memerlukan: chdman</em></p>
 
         <h3>Duplicate Finder</h3>
-        <p>Temukan ROM duplikat berdasarkan hash atau nama berkas, dengan opsi memprioritaskan berdasarkan tag region.</p>
+        <p>Temukan ROM duplikat berdasarkan hash atau nama berkas, dengan opsi memprioritaskan berdasarkan tag region. Dalam mode nama berkas, versi regional yang ditautkan dari satu game tidak dilaporkan sebagai duplikat; dalam mode hash, berkas yang identik selalu dilaporkan.</p>
+        <p><em>Tanpa dependensi eksternal</em></p>
+
+        <h3>Versi Regional</h3>
+        <p>Khusus Editor. RetroDB menyarankan game yang tampak seperti satu game dari region berbeda: game IGDB atau ScreenScraper yang sama, judul yang sama dengan tag region berbeda, atau nama regional yang cocok. Hapus centang game yang tidak termasuk lalu klik <strong>"Tautkan game yang dicentang"</strong>, atau klik <strong>"Bukan versi"</strong> agar grup itu tidak pernah disarankan lagi. Tidak ada yang ditautkan sampai Anda mengonfirmasinya. Jalankan <strong>Isi Ulang Judul Alternatif</strong> di Maintenance terlebih dahulu: fitur ini mengisi id IGDB dan ScreenScraper yang digunakan oleh saran tersebut.</p>
         <p><em>Tanpa dependensi eksternal</em></p>
 
         <h3>Multi-Disc Organizer</h3>
@@ -1586,8 +1593,8 @@
             </thead>
             <tbody>
                 <tr><td><strong>Admin</strong></td><td>Akses penuh: pengaturan, manajemen pengguna, pemeliharaan, semua fitur</td><td>Wajib</td></tr>
-                <tr><td><strong>Editor</strong></td><td>Bisa mengedit game, mengambil data, menggunakan ROM tools, mengelola koleksi</td><td>Tidak ada</td></tr>
-                <tr><td><strong>Viewer</strong></td><td>Hanya baca: menjelajahi perpustakaan, melihat detail, melihat achievement/trofi</td><td>Tidak ada</td></tr>
+                <tr><td><strong>Editor</strong></td><td>Bisa mengedit game, mengambil data, menggunakan ROM tools, mengelola koleksi</td><td>Wajib</td></tr>
+                <tr><td><strong>Viewer</strong></td><td>Hanya baca: menjelajahi perpustakaan, melihat detail, melihat achievement/trofi</td><td>Wajib</td></tr>
             </tbody>
         </table>
 
@@ -1596,11 +1603,11 @@
             <li>Buka <strong>Settings &rarr; Account &rarr; Users</strong> (khusus admin)</li>
             <li>Klik <strong>"Add User"</strong> untuk membuat akun baru</li>
             <li>Atur nama pengguna, nama tampilan, dan peran</li>
-            <li>Pengguna admin menerima kata sandi bawaan yang harus diganti saat login pertama kali</li>
+            <li>Pengguna baru menerima kata sandi bawaan yang harus diganti saat login pertama kali</li>
         </ol>
 
         <h3>Autentikasi</h3>
-        <p>Halaman login menampilkan semua pengguna aktif. Akun admin memerlukan kata sandi; peran lain cukup mengklik namanya untuk masuk. Sesi tetap berlangsung sampai keluar (logout).</p>
+        <p>Halaman login menampilkan semua pengguna aktif. Klik nama Anda, lalu masukkan kata sandi Anda; setiap peran memerlukannya. Sesi tetap berlangsung sampai keluar (logout).</p>
 
         <h3>Pengaturan per Pengguna</h3>
         <p>Setiap pengguna dapat mengonfigurasi miliknya sendiri:</p>
@@ -1769,7 +1776,7 @@
     <div class="card-body">
         <h3>Praktik Terbaik Keamanan</h3>
         <ul>
-            <li><strong>Ganti kata sandi bawaan</strong> &mdash; Kata sandi admin bawaan (<code>admin</code>) harus segera diganti saat login pertama kali. Gunakan kata sandi kuat setidaknya 8 karakter.</li>
+            <li><strong>Ganti kata sandi bawaan</strong> &mdash; Kata sandi admin bawaan (<code>admin</code>) harus segera diganti saat login pertama kali. Gunakan kata sandi kuat setidaknya 12 karakter.</li>
             <li><strong>Gunakan reverse proxy HTTPS</strong> &mdash; RetroDB tidak menyediakan TLS/SSL sendiri. Tempatkan di belakang reverse proxy (mis. Nginx, Caddy, Traefik) dengan HTTPS diaktifkan untuk mengenkripsi lalu lintas antara klien dan server.</li>
             <li><strong>Batasi akses jaringan</strong> &mdash; Hindari mengekspos RetroDB langsung ke internet publik. Gunakan VPN atau batasi akses ke jaringan lokal Anda. Jika akses jarak jauh diperlukan, gunakan reverse proxy dengan autentikasi.</li>
             <li><strong>Buat cadangan rutin</strong> &mdash; Gunakan fitur cadangan bawaan di Settings untuk membuat cadangan database secara berkala. Simpan cadangan di lokasi terpisah dari aplikasi.</li>
@@ -1779,7 +1786,7 @@
 
         <h3>Fitur Keamanan Bawaan</h3>
         <ul>
-            <li><strong>Hashing kata sandi</strong> &mdash; Kata sandi admin di-hash dengan PBKDF2 (tidak pernah disimpan dalam teks biasa)</li>
+            <li><strong>Hashing kata sandi</strong> &mdash; Kata sandi di-hash dengan PBKDF2 (tidak pernah disimpan dalam teks biasa)</li>
             <li><strong>Pembatasan laju login</strong> &mdash; Perlindungan brute-force pada endpoint login</li>
             <li><strong>Validasi jalur</strong> &mdash; Semua operasi berkas menggunakan helper <code>safe_path</code> dan <code>safe_filename</code> untuk mencegah serangan directory traversal</li>
             <li><strong>Kueri berparameter</strong> &mdash; Semua kueri database menggunakan pernyataan berparameter untuk mencegah SQL injection</li>

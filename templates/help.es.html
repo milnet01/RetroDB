@@ -318,7 +318,7 @@
             <li>Los efectos se pausan cuando la pestaña no es visible para ahorrar recursos</li>
             <li>El estado del humo de Cyberpunk persiste entre páginas para transiciones fluidas</li>
             <li>Una sutil superposición de líneas de barrido al estilo CRT se adapta a la paleta de colores de cada tema</li>
-            <li>Tu preferencia de tema se guarda en el navegador y persiste entre sesiones</li>
+            <li>Tu tema se guarda con tu cuenta, así que te sigue a cualquier navegador desde el que inicies sesión</li>
         </ul>
 
         <h3>Iconos según el tema</h3>
@@ -864,6 +864,9 @@
         <h3>Discos extra</h3>
         <p>RetroDB detecta automáticamente los discos extra/adicionales (p. ej. CDs de banda sonora, discos de contenido extra) y los vincula a su juego padre. Los discos extra están ocultos de forma predeterminada en la biblioteca &mdash; activa <strong>«Mostrar extras»</strong> en los filtros para mostrarlos. Los discos extra vinculados aparecen en el modal de detalles del juego padre.</p>
 
+        <h3>Versiones regionales</h3>
+        <p>Cuando tienes un mismo juego de varias regiones, vincula las versiones y la Biblioteca las muestra como una sola tarjeta con una insignia &#127760;. La tarjeta abre y ejecuta la versión de tu región preferida (<strong>Ajustes &rarr; Biblioteca &rarr; Región predeterminada</strong>). La página del juego enumera cada versión, las compara (fecha de lanzamiento, editor, tamaño de archivo, revisión, idiomas, puntuaciones, RetroAchievements) y enlaza a cada una. Los editores pueden desvincular allí una versión o buscar en el mismo sistema para vincular otra. Los editores también pueden pulsar <strong>Resumir diferencias con IA</strong> para obtener una lista de diferencias conocidas entre las versiones, como censura o contenido eliminado. Está marcada como escrita por IA y puede ser incorrecta; necesita un proveedor de IA en <strong>Ajustes &rarr; Scrapeo</strong>. El encabezado de la página cuenta juegos, con el número de ROMs al lado cuando ambos difieren.</p>
+
         <div class="help-tip">
             <strong>Consejo:</strong> El modal de detalles guarda en caché los juegos vistos recientemente para una carga más rápida. Las ediciones actualizan automáticamente la tarjeta del juego en la página sin necesidad de recargar.
         </div>
@@ -1388,7 +1391,11 @@
         <p><em>Requiere: chdman</em></p>
 
         <h3>Buscador de duplicados</h3>
-        <p>Encuentra ROMs duplicadas por hash o nombre de archivo, con opciones para priorizar por etiquetas de región.</p>
+        <p>Encuentra ROMs duplicadas por hash o nombre de archivo, con opciones para priorizar por etiquetas de región. En el modo por nombre de archivo, las versiones regionales vinculadas de un juego no se señalan como duplicados; en el modo por hash, los archivos idénticos siempre se señalan.</p>
+        <p><em>Sin dependencias externas</em></p>
+
+        <h3>Versiones regionales</h3>
+        <p>Solo para editores. RetroDB sugiere juegos que parecen un mismo juego de distintas regiones: el mismo juego de IGDB o ScreenScraper, el mismo título con otra etiqueta de región o un nombre regional que coincide. Desmarca cualquier juego que no corresponda y haz clic en <strong>«Vincular juegos marcados»</strong>, o haz clic en <strong>«No son versiones»</strong> para que ese grupo no se vuelva a sugerir nunca. No se vincula nada hasta que lo confirmes. Ejecuta primero <strong>Completar títulos alternativos</strong> en Mantenimiento: rellena los ids de IGDB y ScreenScraper que usan las sugerencias.</p>
         <p><em>Sin dependencias externas</em></p>
 
         <h3>Organizador de multidisco</h3>
@@ -1586,8 +1593,8 @@
             </thead>
             <tbody>
                 <tr><td><strong>Administrador</strong></td><td>Acceso total: ajustes, gestión de usuarios, mantenimiento, todas las funciones</td><td>Requerida</td></tr>
-                <tr><td><strong>Editor</strong></td><td>Puede editar juegos, hacer scraping, usar herramientas de ROM, gestionar colecciones</td><td>Ninguna</td></tr>
-                <tr><td><strong>Espectador</strong></td><td>Solo lectura: explorar la biblioteca, ver detalles, ver logros/trofeos</td><td>Ninguna</td></tr>
+                <tr><td><strong>Editor</strong></td><td>Puede editar juegos, hacer scraping, usar herramientas de ROM, gestionar colecciones</td><td>Requerida</td></tr>
+                <tr><td><strong>Espectador</strong></td><td>Solo lectura: explorar la biblioteca, ver detalles, ver logros/trofeos</td><td>Requerida</td></tr>
             </tbody>
         </table>
 
@@ -1596,11 +1603,11 @@
             <li>Ve a <strong>Ajustes &rarr; Cuenta &rarr; Usuarios</strong> (solo administrador)</li>
             <li>Haz clic en <strong>«Añadir usuario»</strong> para crear una cuenta nueva</li>
             <li>Define el nombre de usuario, el nombre visible y el rol</li>
-            <li>Los usuarios administradores reciben una contraseña predeterminada que debe cambiarse en el primer inicio de sesión</li>
+            <li>Los usuarios nuevos reciben una contraseña predeterminada que debe cambiarse en el primer inicio de sesión</li>
         </ol>
 
         <h3>Autenticación</h3>
-        <p>La página de inicio de sesión muestra todos los usuarios activos. Las cuentas de administrador requieren contraseña; los demás roles simplemente hacen clic en su nombre para iniciar sesión. Las sesiones son persistentes hasta el cierre de sesión.</p>
+        <p>La página de inicio de sesión muestra todos los usuarios activos. Haz clic en tu nombre y luego introduce tu contraseña; todos los roles necesitan una. Las sesiones son persistentes hasta el cierre de sesión.</p>
 
         <h3>Ajustes por usuario</h3>
         <p>Cada usuario puede configurar lo suyo:</p>
@@ -1771,7 +1778,7 @@
     <div class="card-body">
         <h3>Buenas prácticas de seguridad</h3>
         <ul>
-            <li><strong>Cambia la contraseña predeterminada</strong> &mdash; La contraseña de administrador predeterminada (<code>admin</code>) debe cambiarse de inmediato en el primer inicio de sesión. Usa una contraseña fuerte de al menos 8 caracteres.</li>
+            <li><strong>Cambia la contraseña predeterminada</strong> &mdash; La contraseña de administrador predeterminada (<code>admin</code>) debe cambiarse de inmediato en el primer inicio de sesión. Usa una contraseña fuerte de al menos 12 caracteres.</li>
             <li><strong>Usa un proxy inverso con HTTPS</strong> &mdash; RetroDB no proporciona TLS/SSL por sí mismo. Colócalo detrás de un proxy inverso (p. ej. Nginx, Caddy, Traefik) con HTTPS activado para cifrar el tráfico entre los clientes y el servidor.</li>
             <li><strong>Restringe el acceso de red</strong> &mdash; Evita exponer RetroDB directamente a la internet pública. Usa una VPN o restringe el acceso a tu red local. Si necesitas acceso remoto, usa un proxy inverso con autenticación.</li>
             <li><strong>Mantén copias de seguridad periódicas</strong> &mdash; Usa la función de copia de seguridad integrada en Ajustes para crear copias periódicas de la base de datos. Guarda las copias en una ubicación distinta de la de la aplicación.</li>
@@ -1781,7 +1788,7 @@
 
         <h3>Funciones de seguridad integradas</h3>
         <ul>
-            <li><strong>Hash de contraseñas</strong> &mdash; Las contraseñas de administrador se cifran con hash mediante PBKDF2 (nunca se almacenan en texto plano)</li>
+            <li><strong>Hash de contraseñas</strong> &mdash; Las contraseñas se cifran con hash mediante PBKDF2 (nunca se almacenan en texto plano)</li>
             <li><strong>Límite de tasa en el inicio de sesión</strong> &mdash; Protección contra ataques de fuerza bruta en el punto de inicio de sesión</li>
             <li><strong>Validación de rutas</strong> &mdash; Todas las operaciones de archivo usan los ayudantes <code>safe_path</code> y <code>safe_filename</code> para evitar ataques de traversía de directorios</li>
             <li><strong>Consultas parametrizadas</strong> &mdash; Todas las consultas a la base de datos usan sentencias parametrizadas para evitar inyecciones SQL</li>

@@ -318,7 +318,7 @@
             <li>Sekme görünür olmadığında kaynak tasarrufu için efektler duraklatılır</li>
             <li>Cyberpunk duman durumu, kesintisiz geçişler için sayfa gezinmeleri arasında korunur</li>
             <li>İnce CRT tarzı tarama çizgisi kaplaması her temanın renk paletine uyum sağlar</li>
-            <li>Tema tercihiniz tarayıcıda kaydedilir ve oturumlar arasında korunur</li>
+            <li>Temanız hesabınızla birlikte kaydedilir, böylece giriş yaptığınız her tarayıcıda sizinle gelir</li>
         </ul>
 
         <h3>Temaya Duyarlı Simgeler</h3>
@@ -864,6 +864,9 @@
         <h3>Bonus Diskler</h3>
         <p>RetroDB, bonus/ekstra diskleri (örn. soundtrack CD'leri, ekstra içerik diskleri) otomatik olarak algılar ve üst oyunlarıyla bağlar. Bonus diskler varsayılan olarak kütüphanede gizlenir &mdash; bunları görüntülemek için filtrelerde <strong>"Bonusu Göster"</strong> seçeneğini açın. Bağlı bonus diskler, üst oyunun detay penceresinde görünür.</p>
 
+        <h3>Bölgesel Sürümler</h3>
+        <p>Bir oyuna birkaç bölgeden sahipseniz sürümleri bağlayın; Kütüphane bunları &#127760; rozetli tek bir kart olarak gösterir. Kart, tercih ettiğiniz bölgenin sürümünü açar ve oynatır (<strong>Ayarlar &rarr; Kütüphane &rarr; Varsayılan Bölge</strong>). Oyun sayfası her sürümü listeler, bunları karşılaştırır (çıkış tarihi, yayıncı, dosya boyutu, revizyon, diller, puanlar, RetroAchievements) ve her birine bağlantı verir. Düzenleyiciler orada bir sürümün bağlantısını kaldırabilir ya da başka birini bağlamak için aynı sistemde arama yapabilir. Düzenleyiciler ayrıca sürümler arasındaki sansür veya kaldırılmış içerik gibi bilinen farkların listesi için <strong>Farkları yapay zeka ile özetle</strong> düğmesine basabilir. Liste yapay zeka tarafından yazıldı olarak işaretlenir ve hatalı olabilir; <strong>Ayarlar &rarr; Kazınıyor</strong> bölümünde bir AI sağlayıcı gerektirir. Sayfa başlığı oyunları sayar; iki sayı farklı olduğunda ROM sayısını yanında gösterir.</p>
+
         <div class="help-tip">
             <strong>İpucu:</strong> Detay penceresi, daha hızlı yükleme için yakın zamanda görüntülenen oyunları önbelleğe alır. Düzenlemeler, yenileme gerektirmeden sayfadaki oyun kartını otomatik olarak günceller.
         </div>
@@ -1388,7 +1391,11 @@
         <p><em>Gerektirir: chdman</em></p>
 
         <h3>Yinelenen Bulucu</h3>
-        <p>Bölge etiketlerine göre önceliklendirme seçenekleriyle hash veya dosya adına göre yinelenen ROM'ları bulun.</p>
+        <p>Bölge etiketlerine göre önceliklendirme seçenekleriyle hash veya dosya adına göre yinelenen ROM'ları bulun. Dosya adı modunda, bir oyunun bağlı bölgesel sürümleri yinelenen olarak bildirilmez; hash modunda özdeş dosyalar her zaman bildirilir.</p>
+        <p><em>Harici bağımlılık yok</em></p>
+
+        <h3>Bölgesel Sürümler</h3>
+        <p>Yalnızca düzenleyiciler. RetroDB, farklı bölgelerden tek bir oyun gibi görünen oyunları önerir: aynı IGDB veya ScreenScraper oyunu, farklı bölge etiketine sahip aynı başlık ya da eşleşen bölgesel bir ad. Gruba ait olmayan oyunların işaretini kaldırıp <strong>"İşaretli oyunları bağla"</strong> düğmesine tıklayın ya da bu grubun bir daha önerilmemesi için <strong>"Sürüm değil"</strong> düğmesine tıklayın. Siz onaylayana kadar hiçbir şey bağlanmaz. Önce Bakım bölümünde <strong>Alternatif Başlıkları Geriye Dönük Doldur</strong> işlemini çalıştırın: önerilerin kullandığı IGDB ve ScreenScraper kimliklerini doldurur.</p>
         <p><em>Harici bağımlılık yok</em></p>
 
         <h3>Çoklu Disk Düzenleyici</h3>
@@ -1586,8 +1593,8 @@
             </thead>
             <tbody>
                 <tr><td><strong>Yönetici</strong></td><td>Tam erişim: ayarlar, kullanıcı yönetimi, bakım, tüm özellikler</td><td>Gerekli</td></tr>
-                <tr><td><strong>Düzenleyici</strong></td><td>Oyunları düzenleyebilir, veri çekebilir, ROM araçlarını kullanabilir, koleksiyonları yönetebilir</td><td>Yok</td></tr>
-                <tr><td><strong>Görüntüleyici</strong></td><td>Salt okunur: kütüphaneye göz atma, ayrıntıları görüntüleme, başarımları/kupaları görüntüleme</td><td>Yok</td></tr>
+                <tr><td><strong>Düzenleyici</strong></td><td>Oyunları düzenleyebilir, veri çekebilir, ROM araçlarını kullanabilir, koleksiyonları yönetebilir</td><td>Gerekli</td></tr>
+                <tr><td><strong>Görüntüleyici</strong></td><td>Salt okunur: kütüphaneye göz atma, ayrıntıları görüntüleme, başarımları/kupaları görüntüleme</td><td>Gerekli</td></tr>
             </tbody>
         </table>
 
@@ -1596,11 +1603,11 @@
             <li><strong>Ayarlar &rarr; Hesap &rarr; Kullanıcılar</strong> bölümüne gidin (yalnızca yönetici)</li>
             <li>Yeni bir hesap oluşturmak için <strong>"Kullanıcı Ekle"</strong> düğmesine tıklayın</li>
             <li>Kullanıcı adı, görünen ad ve rol ayarlayın</li>
-            <li>Yönetici kullanıcılar, ilk girişte değiştirilmesi gereken varsayılan bir şifre alır</li>
+            <li>Yeni kullanıcılar, ilk girişte değiştirilmesi gereken varsayılan bir şifre alır</li>
         </ol>
 
         <h3>Kimlik Doğrulama</h3>
-        <p>Giriş sayfası tüm etkin kullanıcıları gösterir. Yönetici hesapları bir şifre gerektirir; diğer roller giriş yapmak için yalnızca adlarına tıklar. Oturumlar çıkış yapılana kadar kalıcıdır.</p>
+        <p>Giriş sayfası tüm etkin kullanıcıları gösterir. Adınıza tıklayın, ardından şifrenizi girin; her rol için şifre gerekir. Oturumlar çıkış yapılana kadar kalıcıdır.</p>
 
         <h3>Kullanıcı Başına Ayarlar</h3>
         <p>Her kullanıcı kendi tercihlerini yapılandırabilir:</p>
@@ -1769,7 +1776,7 @@
     <div class="card-body">
         <h3>En İyi Güvenlik Uygulamaları</h3>
         <ul>
-            <li><strong>Varsayılan şifreyi değiştirin</strong> &mdash; Varsayılan yönetici şifresi (<code>admin</code>) ilk girişte hemen değiştirilmelidir. En az 8 karakterlik güçlü bir şifre kullanın.</li>
+            <li><strong>Varsayılan şifreyi değiştirin</strong> &mdash; Varsayılan yönetici şifresi (<code>admin</code>) ilk girişte hemen değiştirilmelidir. En az 12 karakterlik güçlü bir şifre kullanın.</li>
             <li><strong>HTTPS ters proxy kullanın</strong> &mdash; RetroDB kendi başına TLS/SSL sağlamaz. İstemciler ve sunucu arasındaki trafiği şifrelemek için HTTPS etkinleştirilmiş bir ters proxy'nin (örn. Nginx, Caddy, Traefik) arkasına yerleştirin.</li>
             <li><strong>Ağ erişimini kısıtlayın</strong> &mdash; RetroDB'yi doğrudan genel internete açmaktan kaçının. Bir VPN kullanın veya erişimi yerel ağınızla sınırlayın. Uzaktan erişim gerekiyorsa, kimlik doğrulamalı bir ters proxy kullanın.</li>
             <li><strong>Düzenli yedekler alın</strong> &mdash; Periyodik veritabanı yedekleri oluşturmak için Ayarlar altındaki yerleşik yedekleme özelliğini kullanın. Yedekleri uygulamadan ayrı bir konumda saklayın.</li>
@@ -1779,7 +1786,7 @@
 
         <h3>Yerleşik Güvenlik Özellikleri</h3>
         <ul>
-            <li><strong>Şifre karma (hash)</strong> &mdash; Yönetici şifreleri PBKDF2 ile karmalanır (asla düz metin olarak saklanmaz)</li>
+            <li><strong>Şifre karma (hash)</strong> &mdash; Şifreler PBKDF2 ile karmalanır (asla düz metin olarak saklanmaz)</li>
             <li><strong>Giriş hız sınırlaması</strong> &mdash; Giriş uç noktasında kaba kuvvet saldırısı koruması</li>
             <li><strong>Yol doğrulama</strong> &mdash; Dizin geçişi saldırılarını önlemek için tüm dosya işlemleri <code>safe_path</code> ve <code>safe_filename</code> yardımcılarını kullanır</li>
             <li><strong>Parametreli sorgular</strong> &mdash; SQL enjeksiyonunu önlemek için tüm veritabanı sorguları parametreli ifadeler kullanır</li>

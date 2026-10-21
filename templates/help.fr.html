@@ -318,7 +318,7 @@
             <li>Les effets se mettent en pause lorsque l'onglet n'est pas visible afin d'économiser les ressources</li>
             <li>L'état de la fumée Cyberpunk persiste lors des navigations entre pages pour des transitions fluides</li>
             <li>Une superposition subtile de lignes de balayage façon CRT s'adapte à la palette de couleurs de chaque thème</li>
-            <li>Votre préférence de thème est enregistrée dans le navigateur et persiste d'une session à l'autre</li>
+            <li>Votre thème est enregistré avec votre compte : il vous suit dans tout navigateur où vous vous connectez</li>
         </ul>
 
         <h3>Icônes adaptées au thème</h3>
@@ -864,6 +864,9 @@
         <h3>Disques bonus</h3>
         <p>RetroDB détecte automatiquement les disques bonus/supplémentaires (par ex. CD de bande-son, disques de contenu supplémentaire) et les lie à leur jeu parent. Les disques bonus sont masqués par défaut dans la bibliothèque &mdash; activez <strong>« Afficher les bonus »</strong> dans les filtres pour les afficher. Les disques bonus liés apparaissent dans la fenêtre de détails du jeu parent.</p>
 
+        <h3>Versions régionales</h3>
+        <p>Lorsque vous possédez un même jeu de plusieurs régions, liez les versions et la Bibliothèque les affiche sous forme d'une seule carte avec un badge &#127760;. La carte ouvre et lance la version de votre région préférée (<strong>Paramètres &rarr; Bibliothèque &rarr; Région par défaut</strong>). La page du jeu liste chaque version, les compare (date de sortie, éditeur, taille du fichier, révision, langues, notes, RetroAchievements) et renvoie vers chacune. Les éditeurs peuvent y délier une version, ou chercher dans le même système pour en lier une autre. Les éditeurs peuvent aussi cliquer sur <strong>Résumer les différences avec l'IA</strong> pour obtenir une liste des différences connues entre les versions, comme une censure ou du contenu retiré. Elle est signalée comme rédigée par l'IA et peut être erronée ; elle nécessite un fournisseur d'IA dans <strong>Paramètres &rarr; Récupération</strong>. L'en-tête de la page compte les jeux, avec le nombre de ROM à côté lorsque les deux diffèrent.</p>
+
         <div class="help-tip">
             <strong>Astuce :</strong> La fenêtre de détails met en cache les jeux récemment consultés pour un chargement plus rapide. Les modifications mettent automatiquement à jour la carte du jeu sur la page sans nécessiter d'actualisation.
         </div>
@@ -1388,7 +1391,11 @@
         <p><em>Requiert : chdman</em></p>
 
         <h3>Détecteur de doublons</h3>
-        <p>Trouvez les ROM en double par hachage ou par nom de fichier, avec des options pour prioriser selon les étiquettes de région.</p>
+        <p>Trouvez les ROM en double par hachage ou par nom de fichier, avec des options pour prioriser selon les étiquettes de région. En mode nom de fichier, les versions régionales liées d'un même jeu ne sont pas signalées comme doublons ; en mode hachage, les fichiers identiques le sont toujours.</p>
+        <p><em>Aucune dépendance externe</em></p>
+
+        <h3>Versions régionales</h3>
+        <p>Éditeurs uniquement. RetroDB suggère des jeux qui semblent être un même jeu de différentes régions : le même jeu IGDB ou ScreenScraper, le même titre avec une autre étiquette de région, ou un nom régional correspondant. Décochez tout jeu qui n'en fait pas partie et cliquez sur <strong>« Lier les jeux cochés »</strong>, ou cliquez sur <strong>« Pas des versions »</strong> pour que ce groupe ne soit plus jamais suggéré. Rien n'est lié tant que vous ne l'avez pas confirmé. Lancez d'abord <strong>Compléter les titres alternatifs</strong> dans Maintenance : cela remplit les identifiants IGDB et ScreenScraper qu'utilisent les suggestions.</p>
         <p><em>Aucune dépendance externe</em></p>
 
         <h3>Organisateur multi-disques</h3>
@@ -1586,8 +1593,8 @@
             </thead>
             <tbody>
                 <tr><td><strong>Administrateur</strong></td><td>Accès complet : paramètres, gestion des utilisateurs, maintenance, toutes les fonctionnalités</td><td>Requis</td></tr>
-                <tr><td><strong>Éditeur</strong></td><td>Peut modifier les jeux, récupérer, utiliser les outils ROM, gérer les collections</td><td>Aucun</td></tr>
-                <tr><td><strong>Lecteur</strong></td><td>Lecture seule : parcourir la bibliothèque, consulter les détails, consulter les succès/trophées</td><td>Aucun</td></tr>
+                <tr><td><strong>Éditeur</strong></td><td>Peut modifier les jeux, récupérer, utiliser les outils ROM, gérer les collections</td><td>Requis</td></tr>
+                <tr><td><strong>Lecteur</strong></td><td>Lecture seule : parcourir la bibliothèque, consulter les détails, consulter les succès/trophées</td><td>Requis</td></tr>
             </tbody>
         </table>
 
@@ -1596,11 +1603,11 @@
             <li>Rendez-vous sur <strong>Paramètres &rarr; Compte &rarr; Utilisateurs</strong> (administrateur uniquement)</li>
             <li>Cliquez sur <strong>« Ajouter un utilisateur »</strong> pour créer un nouveau compte</li>
             <li>Définissez le nom d'utilisateur, le nom d'affichage et le rôle</li>
-            <li>Les utilisateurs administrateurs reçoivent un mot de passe par défaut qui doit être changé à la première connexion</li>
+            <li>Les nouveaux utilisateurs reçoivent un mot de passe par défaut qui doit être changé à la première connexion</li>
         </ol>
 
         <h3>Authentification</h3>
-        <p>La page de connexion affiche tous les utilisateurs actifs. Les comptes administrateurs nécessitent un mot de passe ; les autres rôles cliquent simplement sur leur nom pour se connecter. Les sessions sont persistantes jusqu'à la déconnexion.</p>
+        <p>La page de connexion affiche tous les utilisateurs actifs. Cliquez sur votre nom, puis saisissez votre mot de passe ; chaque rôle en nécessite un. Les sessions sont persistantes jusqu'à la déconnexion.</p>
 
         <h3>Paramètres par utilisateur</h3>
         <p>Chaque utilisateur peut configurer ses propres :</p>
@@ -1771,7 +1778,7 @@
     <div class="card-body">
         <h3>Bonnes pratiques de sécurité</h3>
         <ul>
-            <li><strong>Changez le mot de passe par défaut</strong> &mdash; Le mot de passe administrateur par défaut (<code>admin</code>) doit être changé immédiatement à la première connexion. Utilisez un mot de passe fort d'au moins 8 caractères.</li>
+            <li><strong>Changez le mot de passe par défaut</strong> &mdash; Le mot de passe administrateur par défaut (<code>admin</code>) doit être changé immédiatement à la première connexion. Utilisez un mot de passe fort d'au moins 12 caractères.</li>
             <li><strong>Utilisez un proxy inverse HTTPS</strong> &mdash; RetroDB ne fournit pas le TLS/SSL par lui-même. Placez-le derrière un proxy inverse (par ex. Nginx, Caddy, Traefik) avec HTTPS activé pour chiffrer le trafic entre les clients et le serveur.</li>
             <li><strong>Restreignez l'accès réseau</strong> &mdash; Évitez d'exposer RetroDB directement à l'internet public. Utilisez un VPN ou restreignez l'accès à votre réseau local. Si un accès distant est nécessaire, utilisez un proxy inverse avec authentification.</li>
             <li><strong>Conservez des sauvegardes régulières</strong> &mdash; Utilisez la fonction de sauvegarde intégrée dans les Paramètres pour créer des sauvegardes périodiques de la base de données. Stockez les sauvegardes dans un emplacement distinct de l'application.</li>
@@ -1781,7 +1788,7 @@
 
         <h3>Fonctionnalités de sécurité intégrées</h3>
         <ul>
-            <li><strong>Hachage des mots de passe</strong> &mdash; Les mots de passe administrateur sont hachés avec PBKDF2 (jamais stockés en clair)</li>
+            <li><strong>Hachage des mots de passe</strong> &mdash; Les mots de passe sont hachés avec PBKDF2 (jamais stockés en clair)</li>
             <li><strong>Limitation de débit de connexion</strong> &mdash; Protection contre la force brute sur le point d'accès de connexion</li>
             <li><strong>Validation des chemins</strong> &mdash; Toutes les opérations sur fichiers utilisent les assistants <code>safe_path</code> et <code>safe_filename</code> pour empêcher les attaques par traversée de répertoire</li>
             <li><strong>Requêtes paramétrées</strong> &mdash; Toutes les requêtes de base de données utilisent des instructions paramétrées pour empêcher les injections SQL</li>

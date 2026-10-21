@@ -1598,8 +1598,8 @@
             </thead>
             <tbody>
                 <tr><td><strong>Admin</strong></td><td>Full access: settings, user management, maintenance, all features</td><td>Required</td></tr>
-                <tr><td><strong>Editor</strong></td><td>Can edit games, scrape, use ROM tools, manage collections</td><td>None</td></tr>
-                <tr><td><strong>Viewer</strong></td><td>Read-only: browse library, view details, view achievements/trophies</td><td>None</td></tr>
+                <tr><td><strong>Editor</strong></td><td>Can edit games, scrape, use ROM tools, manage collections</td><td>Required</td></tr>
+                <tr><td><strong>Viewer</strong></td><td>Read-only: browse library, view details, view achievements/trophies</td><td>Required</td></tr>
             </tbody>
         </table>
 
@@ -1608,7 +1608,7 @@
             <li>Go to <strong>Settings &rarr; Account &rarr; Users</strong> (admin only)</li>
             <li>Click <strong>"Add User"</strong> to create a new account</li>
             <li>Set username, display name, and role</li>
-            <li>Admin users receive a default password that must be changed on first login</li>
+            <li>New users receive a default password that must be changed on first login</li>
         </ol>
 
         <h3>Authentication</h3>
@@ -1781,7 +1781,7 @@
     <div class="card-body">
         <h3>Security Best Practices</h3>
         <ul>
-            <li><strong>Change the default password</strong> &mdash; The default admin password (<code>admin</code>) should be changed immediately on first login. Use a strong password of at least 8 characters.</li>
+            <li><strong>Change the default password</strong> &mdash; The default admin password (<code>admin</code>) should be changed immediately on first login. Use a strong password of at least 12 characters.</li>
             <li><strong>Use an HTTPS reverse proxy</strong> &mdash; RetroDB does not provide TLS/SSL on its own. Place it behind a reverse proxy (e.g. Nginx, Caddy, Traefik) with HTTPS enabled to encrypt traffic between clients and the server.</li>
             <li><strong>Restrict network access</strong> &mdash; Avoid exposing RetroDB directly to the public internet. Use a VPN or restrict access to your local network. If remote access is needed, use a reverse proxy with authentication.</li>
             <li><strong>Keep regular backups</strong> &mdash; Use the built-in backup feature under Settings to create periodic database backups. Store backups in a separate location from the application.</li>
@@ -1791,7 +1791,7 @@
 
         <h3>Built-in Security Features</h3>
         <ul>
-            <li><strong>Password hashing</strong> &mdash; Admin passwords are hashed with PBKDF2 (never stored in plain text)</li>
+            <li><strong>Password hashing</strong> &mdash; Passwords are hashed with PBKDF2 (never stored in plain text)</li>
             <li><strong>Login rate limiting</strong> &mdash; Brute-force protection on the login endpoint</li>
             <li><strong>Path validation</strong> &mdash; All file operations use <code>safe_path</code> and <code>safe_filename</code> helpers to prevent directory traversal attacks</li>
             <li><strong>Parameterized queries</strong> &mdash; All database queries use parameterized statements to prevent SQL injection</li>

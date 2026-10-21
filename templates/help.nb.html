@@ -318,7 +318,7 @@
             <li>Effekter settes på pause når fanen ikke er synlig, for å spare ressurser</li>
             <li>Cyberpunk-røyktilstanden bevares på tvers av sidenavigering for sømløse overganger</li>
             <li>Et subtilt CRT-linjeoverlegg tilpasser seg hvert temas fargepalett</li>
-            <li>Temapreferansen din lagres i nettleseren og bevares på tvers av økter</li>
+            <li>Temaet ditt lagres med kontoen din, så det følger deg til alle nettlesere du logger inn fra</li>
         </ul>
 
         <h3>Temabaserte ikoner</h3>
@@ -864,6 +864,9 @@
         <h3>Bonusdisker</h3>
         <p>RetroDB oppdager automatisk bonus-/ekstradisker (f.eks. lydsporplater, disker med ekstra innhold) og kobler dem til hovedspillet. Bonusdisker er skjult som standard i biblioteket &mdash; slå på <strong>"Show Bonus"</strong> i filtre for å vise dem. Koblede bonusdisker vises i hovedspillets detaljmodal.</p>
 
+        <h3>Regionale versjoner</h3>
+        <p>Når du eier ett spill fra flere regioner, kan du koble versjonene sammen, og biblioteket viser dem som ett kort med et &#127760;-merke. Kortet åpner og spiller versjonen fra din foretrukne region (<strong>Innstillinger &rarr; Bibliotek &rarr; Standardregion</strong>). Spillsiden viser alle versjonene, sammenligner dem (utgivelsesdato, utgiver, filstørrelse, revisjon, språk, poengsummer, RetroAchievements) og lenker til hver av dem. Editorer kan koble fra en versjon der, eller søke i samme system for å koble til en annen. Editorer kan også trykke <strong>Oppsummer forskjeller med AI</strong> for en liste over kjente forskjeller mellom versjonene, som sensur eller fjernet innhold. Listen er merket som AI-skrevet og kan være feil; den krever en AI-leverandør i <strong>Innstillinger &rarr; Skraper</strong>. Sideoverskriften teller spill, med antall ROM-er ved siden av når de to er ulike.</p>
+
         <div class="help-tip">
             <strong>Tips:</strong> Detaljmodalen bufrer nylig viste spill for raskere innlasting. Redigeringer oppdaterer automatisk spillkortet på siden uten at det er nødvendig å oppdatere siden.
         </div>
@@ -1388,7 +1391,11 @@
         <p><em>Krever: chdman</em></p>
 
         <h3>Duplikatsøker</h3>
-        <p>Finn duplikate ROM-er etter hash eller filnavn, med alternativer for å prioritere etter regiontagger.</p>
+        <p>Finn duplikate ROM-er etter hash eller filnavn, med alternativer for å prioritere etter regiontagger. I filnavnmodus rapporteres ikke koblede regionale versjoner av ett spill som duplikater; i hash-modus blir identiske filer alltid det.</p>
+        <p><em>Ingen eksterne avhengigheter</em></p>
+
+        <h3>Regionale versjoner</h3>
+        <p>Kun for editorer. RetroDB foreslår spill som ser ut som ett spill fra ulike regioner: samme IGDB- eller ScreenScraper-spill, samme tittel med en annen regiontagg, eller et regionalt navn som samsvarer. Fjern avkrysningen for spill som ikke hører til, og klikk <strong>"Koble avkryssede spill"</strong>, eller klikk <strong>"Ikke versjoner"</strong> slik at gruppen aldri foreslås igjen. Ingenting kobles før du bekrefter det. Kjør <strong>Etterfyll alternative titler</strong> i Vedlikehold først: den fyller inn IGDB- og ScreenScraper-ID-ene som forslagene bruker.</p>
         <p><em>Ingen eksterne avhengigheter</em></p>
 
         <h3>Flerdisk-organiserer</h3>
@@ -1586,8 +1593,8 @@
             </thead>
             <tbody>
                 <tr><td><strong>Admin</strong></td><td>Full tilgang: innstillinger, brukeradministrasjon, vedlikehold, alle funksjoner</td><td>Påkrevd</td></tr>
-                <tr><td><strong>Editor</strong></td><td>Kan redigere spill, scrape, bruke ROM-verktøy, administrere samlinger</td><td>Ingen</td></tr>
-                <tr><td><strong>Viewer</strong></td><td>Skrivebeskyttet: bla i biblioteket, vis detaljer, vis prestasjoner/trofeer</td><td>Ingen</td></tr>
+                <tr><td><strong>Editor</strong></td><td>Kan redigere spill, scrape, bruke ROM-verktøy, administrere samlinger</td><td>Påkrevd</td></tr>
+                <tr><td><strong>Viewer</strong></td><td>Skrivebeskyttet: bla i biblioteket, vis detaljer, vis prestasjoner/trofeer</td><td>Påkrevd</td></tr>
             </tbody>
         </table>
 
@@ -1596,11 +1603,11 @@
             <li>Gå til <strong>Innstillinger &rarr; Konto &rarr; Brukere</strong> (kun admin)</li>
             <li>Klikk <strong>"Add User"</strong> for å opprette en ny konto</li>
             <li>Angi brukernavn, visningsnavn og rolle</li>
-            <li>Admin-brukere mottar et standardpassord som må endres ved første innlogging</li>
+            <li>Nye brukere mottar et standardpassord som må endres ved første innlogging</li>
         </ol>
 
         <h3>Autentisering</h3>
-        <p>Innloggingssiden viser alle aktive brukere. Admin-kontoer krever et passord; andre roller trenger bare å klikke navnet sitt for å logge inn. Økter varer til utlogging.</p>
+        <p>Innloggingssiden viser alle aktive brukere. Klikk navnet ditt, og skriv deretter inn passordet ditt; alle roller trenger et. Økter varer til utlogging.</p>
 
         <h3>Innstillinger per bruker</h3>
         <p>Hver bruker kan konfigurere sitt eget:</p>
@@ -1769,7 +1776,7 @@
     <div class="card-body">
         <h3>Beste praksis for sikkerhet</h3>
         <ul>
-            <li><strong>Endre standardpassordet</strong> &mdash; Standard admin-passord (<code>admin</code>) bør endres umiddelbart ved første innlogging. Bruk et sterkt passord på minst 8 tegn.</li>
+            <li><strong>Endre standardpassordet</strong> &mdash; Standard admin-passord (<code>admin</code>) bør endres umiddelbart ved første innlogging. Bruk et sterkt passord på minst 12 tegn.</li>
             <li><strong>Bruk en HTTPS-omvendt proxy</strong> &mdash; RetroDB tilbyr ikke TLS/SSL på egen hånd. Plasser det bak en omvendt proxy (f.eks. Nginx, Caddy, Traefik) med HTTPS aktivert for å kryptere trafikken mellom klienter og serveren.</li>
             <li><strong>Begrens nettverkstilgang</strong> &mdash; Unngå å eksponere RetroDB direkte mot det åpne internett. Bruk en VPN eller begrens tilgangen til det lokale nettverket ditt. Hvis fjerntilgang er nødvendig, bruk en omvendt proxy med autentisering.</li>
             <li><strong>Ta regelmessige sikkerhetskopier</strong> &mdash; Bruk den innebygde sikkerhetskopifunksjonen under Innstillinger for å opprette periodiske databasesikkerhetskopier. Lagre sikkerhetskopier på et annet sted enn applikasjonen.</li>
@@ -1779,7 +1786,7 @@
 
         <h3>Innebygde sikkerhetsfunksjoner</h3>
         <ul>
-            <li><strong>Passord-hashing</strong> &mdash; Admin-passord hashes med PBKDF2 (aldri lagret i klartekst)</li>
+            <li><strong>Passord-hashing</strong> &mdash; Passord hashes med PBKDF2 (aldri lagret i klartekst)</li>
             <li><strong>Hastighetsbegrensning ved innlogging</strong> &mdash; Beskyttelse mot brute force-angrep på innloggingsendepunktet</li>
             <li><strong>Stivalidering</strong> &mdash; Alle filoperasjoner bruker hjelpefunksjonene <code>safe_path</code> og <code>safe_filename</code> for å forhindre katalogtraversering-angrep</li>
             <li><strong>Parameteriserte spørringer</strong> &mdash; Alle databasespørringer bruker parameteriserte setninger for å forhindre SQL-injeksjon</li>

@@ -318,7 +318,7 @@
             <li>Effekte pausieren, wenn die Registerkarte nicht sichtbar ist, um Ressourcen zu sparen</li>
             <li>Der Cyberpunk-Rauchzustand bleibt über Seitenwechsel hinweg für nahtlose Übergänge erhalten</li>
             <li>Eine dezente CRT-artige Scanline-Überlagerung passt sich der Farbpalette jedes Designs an</li>
-            <li>Ihre Designeinstellung wird im Browser gespeichert und bleibt über Sitzungen hinweg erhalten</li>
+            <li>Ihr Design wird mit Ihrem Konto gespeichert und folgt Ihnen so in jeden Browser, in dem Sie sich anmelden</li>
         </ul>
 
         <h3>Designabhängige Symbole</h3>
@@ -864,6 +864,9 @@
         <h3>Bonus-Discs</h3>
         <p>RetroDB erkennt automatisch Bonus-/Zusatz-Discs (z. B. Soundtrack-CDs, Discs mit Zusatzinhalten) und verknüpft sie mit ihrem übergeordneten Spiel. Bonus-Discs sind in der Bibliothek standardmäßig ausgeblendet &mdash; schalten Sie <strong>„Bonus anzeigen“</strong> in den Filtern ein, um sie anzuzeigen. Verknüpfte Bonus-Discs erscheinen im Detaildialog des übergeordneten Spiels.</p>
 
+        <h3>Regionale Versionen</h3>
+        <p>Wenn Sie ein Spiel aus mehreren Regionen besitzen, verknüpfen Sie die Versionen, und die Bibliothek zeigt sie als eine Karte mit einem &#127760;-Abzeichen. Die Karte öffnet und startet die Version aus Ihrer bevorzugten Region (<strong>Einstellungen &rarr; Bibliothek &rarr; Standardregion</strong>). Die Spielseite listet jede Version auf, vergleicht sie (Veröffentlichungsdatum, Publisher, Dateigröße, Revision, Sprachen, Bewertungen, RetroAchievements) und verlinkt auf jede einzelne. Editoren können dort eine Version trennen oder im selben System nach einer weiteren suchen, um sie zu verknüpfen. Editoren können außerdem auf <strong>Unterschiede mit AI zusammenfassen</strong> klicken, um eine Liste bekannter Unterschiede zwischen den Versionen zu erhalten, etwa Zensur oder entfernte Inhalte. Sie ist als KI-generiert gekennzeichnet und kann falsch sein; sie benötigt einen KI-Anbieter unter <strong>Einstellungen &rarr; Scraping</strong>. Die Kopfzeile der Seite zählt Spiele, mit der Anzahl der ROMs daneben, wenn die beiden abweichen.</p>
+
         <div class="help-tip">
             <strong>Tipp:</strong> Der Detaildialog speichert kürzlich angesehene Spiele für schnelleres Laden zwischen. Bearbeitungen aktualisieren die Spielkarte auf der Seite automatisch, ohne dass ein Neuladen erforderlich ist.
         </div>
@@ -1388,7 +1391,11 @@
         <p><em>Benötigt: chdman</em></p>
 
         <h3>Duplikatfinder</h3>
-        <p>Finden Sie doppelte ROMs nach Hash oder Dateiname, mit Optionen zur Priorisierung nach Region-Tags.</p>
+        <p>Finden Sie doppelte ROMs nach Hash oder Dateiname, mit Optionen zur Priorisierung nach Region-Tags. Im Dateinamen-Modus werden verknüpfte regionale Versionen eines Spiels nicht als Duplikate gemeldet; im Hash-Modus werden identische Dateien immer gemeldet.</p>
+        <p><em>Keine externen Abhängigkeiten</em></p>
+
+        <h3>Regionale Versionen</h3>
+        <p>Nur für Editoren. RetroDB schlägt Spiele vor, die wie ein Spiel aus verschiedenen Regionen aussehen: dasselbe IGDB- oder ScreenScraper-Spiel, derselbe Titel mit einem anderen Region-Tag oder ein passender regionaler Name. Entfernen Sie das Häkchen bei jedem Spiel, das nicht dazugehört, und klicken Sie auf <strong>„Markierte Spiele verknüpfen“</strong>, oder klicken Sie auf <strong>„Keine Versionen“</strong>, damit diese Gruppe nie wieder vorgeschlagen wird. Nichts wird verknüpft, bevor Sie es bestätigen. Führen Sie zuerst <strong>Alternativtitel nachfüllen</strong> in der Wartung aus: Es füllt die IGDB- und ScreenScraper-IDs, die die Vorschläge verwenden.</p>
         <p><em>Keine externen Abhängigkeiten</em></p>
 
         <h3>Multi-Disc-Organizer</h3>
@@ -1586,8 +1593,8 @@
             </thead>
             <tbody>
                 <tr><td><strong>Administrator</strong></td><td>Vollzugriff: Einstellungen, Benutzerverwaltung, Wartung, alle Funktionen</td><td>Erforderlich</td></tr>
-                <tr><td><strong>Bearbeiter</strong></td><td>Kann Spiele bearbeiten, scrapen, ROM-Werkzeuge nutzen, Sammlungen verwalten</td><td>Keines</td></tr>
-                <tr><td><strong>Betrachter</strong></td><td>Nur Lesezugriff: Bibliothek durchsuchen, Details anzeigen, Achievements/Trophäen anzeigen</td><td>Keines</td></tr>
+                <tr><td><strong>Bearbeiter</strong></td><td>Kann Spiele bearbeiten, scrapen, ROM-Werkzeuge nutzen, Sammlungen verwalten</td><td>Erforderlich</td></tr>
+                <tr><td><strong>Betrachter</strong></td><td>Nur Lesezugriff: Bibliothek durchsuchen, Details anzeigen, Achievements/Trophäen anzeigen</td><td>Erforderlich</td></tr>
             </tbody>
         </table>
 
@@ -1596,11 +1603,11 @@
             <li>Gehen Sie zu <strong>Einstellungen &rarr; Konto &rarr; Benutzer</strong> (nur Administrator)</li>
             <li>Klicken Sie auf <strong>„Benutzer hinzufügen“</strong>, um ein neues Konto zu erstellen</li>
             <li>Legen Sie Benutzernamen, Anzeigenamen und Rolle fest</li>
-            <li>Administratorbenutzer erhalten ein Standardpasswort, das bei der ersten Anmeldung geändert werden muss</li>
+            <li>Neue Benutzer erhalten ein Standardpasswort, das bei der ersten Anmeldung geändert werden muss</li>
         </ol>
 
         <h3>Authentifizierung</h3>
-        <p>Die Anmeldeseite zeigt alle aktiven Benutzer. Administratorkonten erfordern ein Passwort; bei anderen Rollen klicken Sie einfach auf Ihren Namen, um sich anzumelden. Sitzungen bleiben bis zur Abmeldung bestehen.</p>
+        <p>Die Anmeldeseite zeigt alle aktiven Benutzer. Klicken Sie auf Ihren Namen und geben Sie dann Ihr Passwort ein; jede Rolle benötigt eines. Sitzungen bleiben bis zur Abmeldung bestehen.</p>
 
         <h3>Benutzerspezifische Einstellungen</h3>
         <p>Jeder Benutzer kann seine eigenen Einstellungen konfigurieren:</p>
@@ -1771,7 +1778,7 @@
     <div class="card-body">
         <h3>Bewährte Sicherheitspraktiken</h3>
         <ul>
-            <li><strong>Ändern Sie das Standardpasswort</strong> &mdash; Das Standard-Administratorpasswort (<code>admin</code>) sollte bei der ersten Anmeldung sofort geändert werden. Verwenden Sie ein starkes Passwort mit mindestens 8 Zeichen.</li>
+            <li><strong>Ändern Sie das Standardpasswort</strong> &mdash; Das Standard-Administratorpasswort (<code>admin</code>) sollte bei der ersten Anmeldung sofort geändert werden. Verwenden Sie ein starkes Passwort mit mindestens 12 Zeichen.</li>
             <li><strong>Verwenden Sie einen HTTPS-Reverse-Proxy</strong> &mdash; RetroDB bietet selbst kein TLS/SSL. Platzieren Sie es hinter einem Reverse-Proxy (z. B. Nginx, Caddy, Traefik) mit aktiviertem HTTPS, um den Datenverkehr zwischen Clients und Server zu verschlüsseln.</li>
             <li><strong>Beschränken Sie den Netzwerkzugriff</strong> &mdash; Vermeiden Sie es, RetroDB direkt dem öffentlichen Internet auszusetzen. Verwenden Sie ein VPN oder beschränken Sie den Zugriff auf Ihr lokales Netzwerk. Wenn Fernzugriff benötigt wird, verwenden Sie einen Reverse-Proxy mit Authentifizierung.</li>
             <li><strong>Erstellen Sie regelmäßige Sicherungen</strong> &mdash; Verwenden Sie die integrierte Sicherungsfunktion unter Einstellungen, um regelmäßige Datenbanksicherungen zu erstellen. Bewahren Sie Sicherungen an einem von der Anwendung getrennten Ort auf.</li>
@@ -1781,7 +1788,7 @@
 
         <h3>Integrierte Sicherheitsfunktionen</h3>
         <ul>
-            <li><strong>Passwort-Hashing</strong> &mdash; Administratorpasswörter werden mit PBKDF2 gehasht (niemals im Klartext gespeichert)</li>
+            <li><strong>Passwort-Hashing</strong> &mdash; Passwörter werden mit PBKDF2 gehasht (niemals im Klartext gespeichert)</li>
             <li><strong>Anmelde-Ratenbegrenzung</strong> &mdash; Brute-Force-Schutz am Anmelde-Endpunkt</li>
             <li><strong>Pfadvalidierung</strong> &mdash; Alle Dateioperationen verwenden die Hilfsfunktionen <code>safe_path</code> und <code>safe_filename</code>, um Directory-Traversal-Angriffe zu verhindern</li>
             <li><strong>Parametrisierte Abfragen</strong> &mdash; Alle Datenbankabfragen verwenden parametrisierte Anweisungen, um SQL-Injection zu verhindern</li>

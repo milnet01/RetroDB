@@ -318,7 +318,7 @@
             <li>Effecten pauzeren wanneer het tabblad niet zichtbaar is, om bronnen te sparen</li>
             <li>De Cyberpunk-rookstatus blijft behouden bij paginanavigatie voor naadloze overgangen</li>
             <li>Een subtiele CRT-stijl scanline-overlay past zich aan het kleurenpalet van elk thema aan</li>
-            <li>Uw themavoorkeur wordt opgeslagen in de browser en blijft behouden tussen sessies</li>
+            <li>Uw thema wordt opgeslagen bij uw account, zodat het u volgt naar elke browser waarin u zich aanmeldt</li>
         </ul>
 
         <h3>Thema-bewuste iconen</h3>
@@ -864,6 +864,9 @@
         <h3>Bonusschijven</h3>
         <p>RetroDB detecteert automatisch bonus-/extraschijven (bijv. soundtrack-cd's, schijven met extra inhoud) en koppelt ze aan het bijbehorende hoofdspel. Bonusschijven zijn standaard verborgen in de bibliotheek &mdash; schakel <strong>"Bonus tonen"</strong> in de filters in om ze weer te geven. Gekoppelde bonusschijven verschijnen in het detailvenster van het hoofdspel.</p>
 
+        <h3>Regionale versies</h3>
+        <p>Als u één spel uit meerdere regio's bezit, koppel dan de versies; de Bibliotheek toont ze dan als één kaart met een &#127760;-badge. De kaart opent en speelt de versie uit uw voorkeursregio (<strong>Instellingen &rarr; Bibliotheek &rarr; Standaardregio</strong>). De spelpagina toont elke versie, vergelijkt ze (releasedatum, uitgever, bestandsgrootte, revisie, talen, scores, RetroAchievements) en linkt naar elke versie. Bewerkers kunnen daar een versie ontkoppelen, of in hetzelfde systeem zoeken om er nog een te koppelen. Bewerkers kunnen ook op <strong>Verschillen samenvatten met AI</strong> drukken voor een lijst met bekende verschillen tussen de versies, zoals censuur of verwijderde inhoud. Deze is gemarkeerd als door AI geschreven en kan onjuist zijn; er is een AI-aanbieder nodig in <strong>Instellingen &rarr; Scrapen</strong>. De paginakop telt spellen, met het aantal ROMs ernaast als die twee verschillen.</p>
+
         <div class="help-tip">
             <strong>Tip:</strong> Het detailvenster cachet recent bekeken spellen voor sneller laden. Wijzigingen werken de spelkaart op de pagina automatisch bij, zonder dat u hoeft te vernieuwen.
         </div>
@@ -1388,7 +1391,11 @@
         <p><em>Vereist: chdman</em></p>
 
         <h3>Dubbeledetector</h3>
-        <p>Vind dubbele ROMs op basis van hash of bestandsnaam, met opties om te prioriteren op regiotags.</p>
+        <p>Vind dubbele ROMs op basis van hash of bestandsnaam, met opties om te prioriteren op regiotags. In de bestandsnaammodus worden gekoppelde regionale versies van één spel niet als duplicaten gemeld; in de hashmodus worden identieke bestanden altijd gemeld.</p>
+        <p><em>Geen externe afhankelijkheden</em></p>
+
+        <h3>Regionale versies</h3>
+        <p>Alleen voor bewerkers. RetroDB stelt spellen voor die eruitzien als één spel uit verschillende regio's: hetzelfde IGDB- of ScreenScraper-spel, dezelfde titel met een andere regiotag, of een overeenkomende regionale naam. Vink elk spel uit dat er niet bij hoort en klik op <strong>"Aangevinkte games koppelen"</strong>, of klik op <strong>"Geen versies"</strong> zodat die groep nooit meer wordt voorgesteld. Er wordt niets gekoppeld totdat u het bevestigt. Voer eerst <strong>Alternatieve titels aanvullen</strong> uit in Onderhoud: dit vult de IGDB- en ScreenScraper-id's die de voorstellen gebruiken.</p>
         <p><em>Geen externe afhankelijkheden</em></p>
 
         <h3>Multi-disc-organizer</h3>
@@ -1586,8 +1593,8 @@
             </thead>
             <tbody>
                 <tr><td><strong>Beheerder</strong></td><td>Volledige toegang: instellingen, gebruikersbeheer, onderhoud, alle functies</td><td>Vereist</td></tr>
-                <tr><td><strong>Editor</strong></td><td>Kan spellen bewerken, scrapen, ROM-tools gebruiken, collecties beheren</td><td>Geen</td></tr>
-                <tr><td><strong>Kijker</strong></td><td>Alleen-lezen: door de bibliotheek bladeren, details bekijken, prestaties/trofeeën bekijken</td><td>Geen</td></tr>
+                <tr><td><strong>Editor</strong></td><td>Kan spellen bewerken, scrapen, ROM-tools gebruiken, collecties beheren</td><td>Vereist</td></tr>
+                <tr><td><strong>Kijker</strong></td><td>Alleen-lezen: door de bibliotheek bladeren, details bekijken, prestaties/trofeeën bekijken</td><td>Vereist</td></tr>
             </tbody>
         </table>
 
@@ -1596,11 +1603,11 @@
             <li>Ga naar <strong>Instellingen &rarr; Account &rarr; Gebruikers</strong> (alleen beheerder)</li>
             <li>Klik op <strong>"Gebruiker toevoegen"</strong> om een nieuw account aan te maken</li>
             <li>Stel gebruikersnaam, weergavenaam en rol in</li>
-            <li>Beheerdersgebruikers ontvangen een standaardwachtwoord dat bij de eerste aanmelding moet worden gewijzigd</li>
+            <li>Nieuwe gebruikers ontvangen een standaardwachtwoord dat bij de eerste aanmelding moet worden gewijzigd</li>
         </ol>
 
         <h3>Authenticatie</h3>
-        <p>De aanmeldpagina toont alle actieve gebruikers. Beheerdersaccounts vereisen een wachtwoord; andere rollen klikken eenvoudig op hun naam om aan te melden. Sessies blijven behouden tot het afmelden.</p>
+        <p>De aanmeldpagina toont alle actieve gebruikers. Klik op uw naam en voer vervolgens uw wachtwoord in; elke rol heeft er een nodig. Sessies blijven behouden tot het afmelden.</p>
 
         <h3>Instellingen per gebruiker</h3>
         <p>Elke gebruiker kan het volgende zelf configureren:</p>
@@ -1769,7 +1776,7 @@
     <div class="card-body">
         <h3>Beste praktijken voor beveiliging</h3>
         <ul>
-            <li><strong>Wijzig het standaardwachtwoord</strong> &mdash; Het standaard beheerderswachtwoord (<code>admin</code>) moet direct bij de eerste aanmelding worden gewijzigd. Gebruik een sterk wachtwoord van minstens 8 tekens.</li>
+            <li><strong>Wijzig het standaardwachtwoord</strong> &mdash; Het standaard beheerderswachtwoord (<code>admin</code>) moet direct bij de eerste aanmelding worden gewijzigd. Gebruik een sterk wachtwoord van minstens 12 tekens.</li>
             <li><strong>Gebruik een HTTPS-reverseproxy</strong> &mdash; RetroDB biedt zelf geen TLS/SSL. Plaats het achter een reverseproxy (bijv. Nginx, Caddy, Traefik) met HTTPS ingeschakeld om het verkeer tussen clients en de server te versleutelen.</li>
             <li><strong>Beperk netwerktoegang</strong> &mdash; Vermijd het rechtstreeks blootstellen van RetroDB aan het openbare internet. Gebruik een VPN of beperk de toegang tot uw lokale netwerk. Als toegang op afstand nodig is, gebruik dan een reverseproxy met authenticatie.</li>
             <li><strong>Houd regelmatig back-ups bij</strong> &mdash; Gebruik de ingebouwde back-upfunctie in Instellingen om periodiek databaseback-ups te maken. Bewaar back-ups op een andere locatie dan de toepassing.</li>
@@ -1779,7 +1786,7 @@
 
         <h3>Ingebouwde beveiligingsfuncties</h3>
         <ul>
-            <li><strong>Wachtwoordhashing</strong> &mdash; Beheerderswachtwoorden worden gehasht met PBKDF2 (nooit als platte tekst opgeslagen)</li>
+            <li><strong>Wachtwoordhashing</strong> &mdash; Wachtwoorden worden gehasht met PBKDF2 (nooit als platte tekst opgeslagen)</li>
             <li><strong>Snelheidslimiet bij aanmelden</strong> &mdash; Bescherming tegen brute-force-aanvallen op het aanmeldpunt</li>
             <li><strong>Padvalidatie</strong> &mdash; Alle bestandsbewerkingen gebruiken de hulpfuncties <code>safe_path</code> en <code>safe_filename</code> om directory-traversal-aanvallen te voorkomen</li>
             <li><strong>Geparametriseerde queries</strong> &mdash; Alle databasequery's gebruiken geparametriseerde instructies om SQL-injectie te voorkomen</li>

@@ -318,7 +318,7 @@
             <li>Os efeitos pausam quando a aba não está visível, para economizar recursos</li>
             <li>O estado da fumaça do Cyberpunk persiste entre as navegações de página para transições contínuas</li>
             <li>Uma sobreposição sutil de linhas de varredura estilo CRT se adapta à paleta de cores de cada tema</li>
-            <li>Sua preferência de tema é salva no navegador e persiste entre as sessões</li>
+            <li>Seu tema é salvo com a sua conta, então ele acompanha você em qualquer navegador em que você entrar</li>
         </ul>
 
         <h3>Ícones Adaptáveis ao Tema</h3>
@@ -864,6 +864,9 @@
         <h3>Discos Bônus</h3>
         <p>O RetroDB detecta automaticamente discos bônus/extras (por exemplo, CDs de trilha sonora, discos de conteúdo extra) e os vincula ao jogo principal. Os discos bônus ficam ocultos por padrão na biblioteca &mdash; ative <strong>"Mostrar Bônus"</strong> nos filtros para exibi-los. Os discos bônus vinculados aparecem na janela de detalhes do jogo principal.</p>
 
+        <h3>Versões Regionais</h3>
+        <p>Quando você tem o mesmo jogo de várias regiões, vincule as versões e a Biblioteca as mostra como um único card com um selo &#127760;. O card abre e executa a versão da sua região preferida (<strong>Configurações &rarr; Biblioteca &rarr; Região Padrão</strong>). A página do jogo lista todas as versões, compara-as (data de lançamento, publicadora, tamanho do arquivo, revisão, idiomas, notas, RetroAchievements) e tem um link para cada uma. Editores podem desvincular uma versão ali ou pesquisar no mesmo sistema para vincular outra. Editores também podem clicar em <strong>Resumir diferenças com IA</strong> para obter uma lista das diferenças conhecidas entre as versões, como censura ou conteúdo removido. Ela é marcada como escrita por IA e pode conter erros; requer um provedor de IA em <strong>Configurações &rarr; Buscando metadados</strong>. O cabeçalho da página conta os jogos, com o número de ROMs ao lado quando os dois diferem.</p>
+
         <div class="help-tip">
             <strong>Dica:</strong> A janela de detalhes mantém em cache os jogos vistos recentemente para um carregamento mais rápido. As edições atualizam automaticamente o cartão do jogo na página sem exigir uma atualização.
         </div>
@@ -1388,7 +1391,11 @@
         <p><em>Requer: chdman</em></p>
 
         <h3>Localizador de Duplicatas</h3>
-        <p>Encontre ROMs duplicados por hash ou nome de arquivo, com opções para priorizar por etiquetas de região.</p>
+        <p>Encontre ROMs duplicados por hash ou nome de arquivo, com opções para priorizar por etiquetas de região. No modo por nome de arquivo, versões regionais vinculadas de um mesmo jogo não são relatadas como duplicatas; no modo por hash, arquivos idênticos sempre são.</p>
+        <p><em>Sem dependências externas</em></p>
+
+        <h3>Versões Regionais</h3>
+        <p>Somente editores. O RetroDB sugere jogos que parecem ser um mesmo jogo de regiões diferentes: o mesmo jogo no IGDB ou no ScreenScraper, o mesmo título com uma etiqueta de região diferente ou um nome regional correspondente. Desmarque qualquer jogo que não pertença ao grupo e clique em <strong>"Vincular jogos marcados"</strong>, ou clique em <strong>"Não São Versões"</strong> para que esse grupo nunca mais seja sugerido. Nada é vinculado até você confirmar. Execute primeiro <strong>Preencher Títulos Alternativos</strong> em Manutenção: isso preenche os ids do IGDB e do ScreenScraper que as sugestões usam.</p>
         <p><em>Sem dependências externas</em></p>
 
         <h3>Organizador Multidisco</h3>
@@ -1586,8 +1593,8 @@
             </thead>
             <tbody>
                 <tr><td><strong>Administrador</strong></td><td>Acesso total: configurações, gerenciamento de usuários, manutenção, todos os recursos</td><td>Obrigatória</td></tr>
-                <tr><td><strong>Editor</strong></td><td>Pode editar jogos, coletar dados, usar ferramentas de ROM, gerenciar coleções</td><td>Nenhuma</td></tr>
-                <tr><td><strong>Visualizador</strong></td><td>Somente leitura: navegar pela biblioteca, ver detalhes, ver conquistas/troféus</td><td>Nenhuma</td></tr>
+                <tr><td><strong>Editor</strong></td><td>Pode editar jogos, coletar dados, usar ferramentas de ROM, gerenciar coleções</td><td>Obrigatória</td></tr>
+                <tr><td><strong>Visualizador</strong></td><td>Somente leitura: navegar pela biblioteca, ver detalhes, ver conquistas/troféus</td><td>Obrigatória</td></tr>
             </tbody>
         </table>
 
@@ -1596,11 +1603,11 @@
             <li>Vá para <strong>Configurações &rarr; Conta &rarr; Usuários</strong> (somente administrador)</li>
             <li>Clique em <strong>"Adicionar Usuário"</strong> para criar uma nova conta</li>
             <li>Defina o nome de usuário, o nome de exibição e a função</li>
-            <li>Os usuários administradores recebem uma senha padrão que deve ser alterada no primeiro login</li>
+            <li>Novos usuários recebem uma senha padrão que deve ser alterada no primeiro login</li>
         </ol>
 
         <h3>Autenticação</h3>
-        <p>A página de login mostra todos os usuários ativos. As contas de administrador exigem uma senha; as outras funções simplesmente clicam no nome para fazer login. As sessões são persistentes até o logout.</p>
+        <p>A página de login mostra todos os usuários ativos. Clique no seu nome e digite sua senha; todas as funções exigem uma. As sessões são persistentes até o logout.</p>
 
         <h3>Configurações por Usuário</h3>
         <p>Cada usuário pode configurar os seus próprios:</p>
@@ -1771,7 +1778,7 @@
     <div class="card-body">
         <h3>Boas Práticas de Segurança</h3>
         <ul>
-            <li><strong>Altere a senha padrão</strong> &mdash; A senha padrão de administrador (<code>admin</code>) deve ser alterada imediatamente no primeiro login. Use uma senha forte de pelo menos 8 caracteres.</li>
+            <li><strong>Altere a senha padrão</strong> &mdash; A senha padrão de administrador (<code>admin</code>) deve ser alterada imediatamente no primeiro login. Use uma senha forte de pelo menos 12 caracteres.</li>
             <li><strong>Use um proxy reverso HTTPS</strong> &mdash; O RetroDB não fornece TLS/SSL por conta própria. Coloque-o atrás de um proxy reverso (por exemplo, Nginx, Caddy, Traefik) com HTTPS habilitado para criptografar o tráfego entre os clientes e o servidor.</li>
             <li><strong>Restrinja o acesso à rede</strong> &mdash; Evite expor o RetroDB diretamente à internet pública. Use uma VPN ou restrinja o acesso à sua rede local. Se o acesso remoto for necessário, use um proxy reverso com autenticação.</li>
             <li><strong>Mantenha backups regulares</strong> &mdash; Use o recurso de backup integrado em Configurações para criar backups periódicos do banco de dados. Armazene os backups em um local separado do aplicativo.</li>
@@ -1781,7 +1788,7 @@
 
         <h3>Recursos de Segurança Integrados</h3>
         <ul>
-            <li><strong>Hashing de senha</strong> &mdash; As senhas de administrador são protegidas por hash com PBKDF2 (nunca armazenadas em texto simples)</li>
+            <li><strong>Hashing de senha</strong> &mdash; As senhas são protegidas por hash com PBKDF2 (nunca armazenadas em texto simples)</li>
             <li><strong>Limitação de taxa de login</strong> &mdash; Proteção contra força bruta no endpoint de login</li>
             <li><strong>Validação de caminho</strong> &mdash; Todas as operações de arquivo usam os auxiliares <code>safe_path</code> e <code>safe_filename</code> para evitar ataques de travessia de diretório</li>
             <li><strong>Consultas parametrizadas</strong> &mdash; Todas as consultas ao banco de dados usam declarações parametrizadas para evitar injeção de SQL</li>

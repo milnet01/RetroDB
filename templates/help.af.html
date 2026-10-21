@@ -318,7 +318,7 @@
             <li>Effekte word onderbreek wanneer die oortjie nie sigbaar is nie, om hulpbronne te bespaar</li>
             <li>Die Cyberpunk-rook-toestand bly behoue oor bladsynavigasie heen vir naatlose oorgange</li>
             <li>'n Subtiele CRT-styl-skanlyn-oorlegsel pas by elke tema se kleurpalet aan</li>
-            <li>Jou temavoorkeur word in die blaaier gestoor en bly behoue oor sessies heen</li>
+            <li>Jou tema word saam met jou rekening gestoor, sodat dit jou volg na enige blaaier waarvandaan jy aanmeld</li>
         </ul>
 
         <h3>Temabewuste Ikone</h3>
@@ -864,6 +864,9 @@
         <h3>Bonus-skywe</h3>
         <p>RetroDB bespeur outomaties bonus-/ekstra-skywe (bv. klankbaan-CD's, ekstra-inhoud-skywe) en koppel hulle aan hul ouerspeletjie. Bonus-skywe word by verstek in die biblioteek versteek &mdash; wissel <strong>"Wys Bonus"</strong> in filters om hulle te vertoon. Gekoppelde bonus-skywe verskyn in die ouerspeletjie se detail-modaalvenster.</p>
 
+        <h3>Streeksweergawes</h3>
+        <p>Wanneer jy een speletjie uit verskeie streke besit, koppel die weergawes en die biblioteek wys hulle as een kaart met 'n &#127760;-kenteken. Die kaart open en speel die weergawe uit jou voorkeurstreek (<strong>Instellings &rarr; Biblioteek &rarr; Verstekstreek</strong>). Die speletjiebladsy lys elke weergawe, vergelyk hulle (vrystellingsdatum, uitgewer, lêergrootte, hersiening, tale, tellings, RetroAchievements) en skakel na elkeen. Redigeerders kan 'n weergawe daar ontkoppel, of dieselfde stelsel deursoek om 'n ander een te koppel. Redigeerders kan ook <strong>Som verskille op met KI</strong> druk vir 'n lys van bekende verskille tussen die weergawes, soos sensuur of verwyderde inhoud. Dit is gemerk as KI-geskryf en kan verkeerd wees; dit benodig 'n KI-verskaffer in <strong>Instellings &rarr; Skraap tans</strong>. Die bladsyopskrif tel speletjies, met die aantal ROM's daarnaas wanneer die twee verskil.</p>
+
         <div class="help-tip">
             <strong>Wenk:</strong> Die detail-modaalvenster stoor onlangs-bekykte speletjies in kas vir vinniger laai. Redigerings werk die speletjiekaart op die bladsy outomaties by sonder om 'n herlaai te vereis.
         </div>
@@ -1388,7 +1391,11 @@
         <p><em>Vereis: chdman</em></p>
 
         <h3>Duplikaatvinder</h3>
-        <p>Vind duplikaat-ROM's volgens hutswaarde of lêernaam, met opsies om volgens streek-etikette te prioritiseer.</p>
+        <p>Vind duplikaat-ROM's volgens hutswaarde of lêernaam, met opsies om volgens streek-etikette te prioritiseer. In lêernaammodus word gekoppelde streeksweergawes van een speletjie nie as duplikate gerapporteer nie; in hutswaardemodus word identiese lêers altyd gerapporteer.</p>
+        <p><em>Geen eksterne afhanklikhede</em></p>
+
+        <h3>Streeksweergawes</h3>
+        <p>Slegs redigeerders. RetroDB stel speletjies voor wat lyk soos een speletjie uit verskillende streke: dieselfde IGDB- of ScreenScraper-speletjie, dieselfde titel met 'n ander streek-etiket, of 'n streeksnaam wat ooreenstem. Ontmerk enige speletjie wat nie hoort nie en klik <strong>"Koppel gemerkte speletjies"</strong>, of klik <strong>"Nie weergawes nie"</strong> sodat daardie groep nooit weer voorgestel word nie. Niks word gekoppel voordat jy dit bevestig nie. Voer eers <strong>Vul Alternatiewe Titels In</strong> in Onderhoud uit: dit vul die IGDB- en ScreenScraper-ID's in wat die voorstelle gebruik.</p>
         <p><em>Geen eksterne afhanklikhede</em></p>
 
         <h3>Multi-skyf-organiseerder</h3>
@@ -1586,8 +1593,8 @@
             </thead>
             <tbody>
                 <tr><td><strong>Admin</strong></td><td>Volle toegang: instellings, gebruikerbestuur, onderhoud, alle funksies</td><td>Vereis</td></tr>
-                <tr><td><strong>Redigeerder</strong></td><td>Kan speletjies redigeer, ontgin, ROM-nutsgoed gebruik, versamelings bestuur</td><td>Geen</td></tr>
-                <tr><td><strong>Bekyker</strong></td><td>Leesalleen: blaai deur biblioteek, bekyk besonderhede, bekyk prestasies/trofeë</td><td>Geen</td></tr>
+                <tr><td><strong>Redigeerder</strong></td><td>Kan speletjies redigeer, ontgin, ROM-nutsgoed gebruik, versamelings bestuur</td><td>Vereis</td></tr>
+                <tr><td><strong>Bekyker</strong></td><td>Leesalleen: blaai deur biblioteek, bekyk besonderhede, bekyk prestasies/trofeë</td><td>Vereis</td></tr>
             </tbody>
         </table>
 
@@ -1596,11 +1603,11 @@
             <li>Gaan na <strong>Instellings &rarr; Rekening &rarr; Gebruikers</strong> (slegs admin)</li>
             <li>Klik <strong>"Voeg Gebruiker By"</strong> om 'n nuwe rekening te skep</li>
             <li>Stel gebruikersnaam, vertoonnaam, en rol</li>
-            <li>Admin-gebruikers ontvang 'n verstekwagwoord wat met eerste aanmelding verander moet word</li>
+            <li>Nuwe gebruikers ontvang 'n verstekwagwoord wat met eerste aanmelding verander moet word</li>
         </ol>
 
         <h3>Verifikasie</h3>
-        <p>Die aanmeldbladsy wys alle aktiewe gebruikers. Admin-rekenings vereis 'n wagwoord; ander rolle klik eenvoudig hul naam om aan te meld. Sessies bly behoue tot afmelding.</p>
+        <p>Die aanmeldbladsy wys alle aktiewe gebruikers. Klik op jou naam en voer dan jou wagwoord in; elke rol het een nodig. Sessies bly behoue tot afmelding.</p>
 
         <h3>Instellings per Gebruiker</h3>
         <p>Elke gebruiker kan hul eie stel:</p>
@@ -1769,7 +1776,7 @@
     <div class="card-body">
         <h3>Beste Sekuriteitspraktyke</h3>
         <ul>
-            <li><strong>Verander die verstekwagwoord</strong> &mdash; Die verstek-admin-wagwoord (<code>admin</code>) behoort onmiddellik met eerste aanmelding verander te word. Gebruik 'n sterk wagwoord van ten minste 8 karakters.</li>
+            <li><strong>Verander die verstekwagwoord</strong> &mdash; Die verstek-admin-wagwoord (<code>admin</code>) behoort onmiddellik met eerste aanmelding verander te word. Gebruik 'n sterk wagwoord van ten minste 12 karakters.</li>
             <li><strong>Gebruik 'n HTTPS-omgekeerde-instaanbediener</strong> &mdash; RetroDB bied nie self TLS/SSL nie. Plaas dit agter 'n omgekeerde-instaanbediener (bv. Nginx, Caddy, Traefik) met HTTPS aangeskakel om verkeer tussen kliënte en die bediener te enkripteer.</li>
             <li><strong>Beperk netwerktoegang</strong> &mdash; Vermy om RetroDB direk aan die publieke internet bloot te stel. Gebruik 'n VPN of beperk toegang tot jou plaaslike netwerk. As afgeleë toegang nodig is, gebruik 'n omgekeerde-instaanbediener met verifikasie.</li>
             <li><strong>Hou gereelde rugsteune</strong> &mdash; Gebruik die ingeboude rugsteunfunksie onder Instellings om periodieke databasisrugsteune te skep. Stoor rugsteune op 'n aparte plek van die toepassing.</li>
@@ -1779,7 +1786,7 @@
 
         <h3>Ingeboude Sekuriteitsfunksies</h3>
         <ul>
-            <li><strong>Wagwoord-verhutsing</strong> &mdash; Admin-wagwoorde word met PBKDF2 verhuts (nooit as gewone teks gestoor nie)</li>
+            <li><strong>Wagwoord-verhutsing</strong> &mdash; Wagwoorde word met PBKDF2 verhuts (nooit as gewone teks gestoor nie)</li>
             <li><strong>Aanmeld-tempolimietering</strong> &mdash; Beskerming teen brute-krag-aanvalle op die aanmeld-eindpunt</li>
             <li><strong>Padvalidasie</strong> &mdash; Alle lêerbewerkings gebruik <code>safe_path</code>- en <code>safe_filename</code>-helpers om gidsdeurkruisingsaanvalle te voorkom</li>
             <li><strong>Parameteriseerde soektogte</strong> &mdash; Alle databasissoektogte gebruik parameteriseerde stellings om SQL-inspuiting te voorkom</li>
