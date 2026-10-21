@@ -8796,7 +8796,13 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.133 Scrape speed: Full Re-scrape re-downloads every media file even when it is on disk (MEDIUM, M).
-- **Status**: todo
+- **Resolution** (2026-10-21): Shipped a8a620e (v3.30.0): "Keep existing media" checkbox beside the
+  Full Re-scrape switch; bulk mode full_rescrape_keep_media;
+  `_seed_kept_media` seeds media still on disk. Scratch smoke on game
+  320: without it boxart replaced and 3D box re-downloaded; with it
+  nothing touched. The screenshot lead is confirmed and filed as
+  PASS-59-146.
+- **Status**: done
 - **Where**: force mode starts from empty metadata
   (`hybrid_scraper.py`, "Force overwrite mode - starting with empty
   metadata"), so each `if not metadata['boxart']` style check in
@@ -9007,6 +9013,19 @@ were corrected in `2836bc3` and are not repeated here.
   a noun; then align the Settings paths in `help.<locale>.html`, which
   PASS-59-115 took from the catalog.
 - **Verify**: the tab and Help name agree and read as a noun.
+
+---
+
+#### Pass 59.146 Full Re-scrape drops screenshots whose file already exists (MEDIUM, S).
+- **Status**: todo
+- **Seen**: scratch copy, game 320 (Spy vs Spy), Full Re-scrape without
+  "Keep existing media": screenshots went from 4
+  (`320_ss_screenshot_0`, `320_igdb_ss2..4`) to 2 (`320_igdb_ss1`,
+  `320_ss_screenshot_1`).
+- **Where**: the IGDB, RAWG and ScreenScraper screenshot loops skip a
+  filename already on disk and, in force mode, do not add it back to
+  the list. The skipped files stay on disk, unlisted.
+- **Fix**: add an existing file to the list instead of skipping it.
 
 ## Done index
 
