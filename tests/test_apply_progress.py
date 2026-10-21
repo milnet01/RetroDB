@@ -189,6 +189,17 @@ def test_apply_runs_in_background_and_flashes_once_on_success(editor_client, mon
     assert flashes[0][0] == 'success' and 'IGDB' in flashes[0][1]
 
 
+def test_apply_with_nothing_ticked_sends_an_empty_selection(editor_client, monkeypatch):
+    """PASS-59-134: an empty list, not None, so only the clicked source and
+    AI fill gaps; no stale session results are passed."""
+    calls = []
+    monkeypatch.setattr('routes.games.apply_hybrid_metadata_to_game',
+                        lambda **k: calls.append(k) or {'success': True})
+    rv = _start(editor_client, game_source='igdb_1234')
+    _wait(apply_progress.get(rv.get_json()['task_id']))
+    assert calls[0]['explicit_secondary'] == []
+    assert 'all_results' not in calls[0]
+
 def test_a_poll_mid_apply_is_a_successful_request_not_a_failure(editor_client, monkeypatch):
     """The envelope's `success` means the request worked; the apply's own
     outcome is `applied`. Sharing one key made every mid-run poll read as a

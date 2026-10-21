@@ -822,7 +822,7 @@ def _fallback_order(primary_source, sources_data, restrict_to_selected,
     """The fallback scrapers _run_fallbacks will try, in the user's priority
     order: minus the primary, any already-used source and any disabled one.
     With `restrict_to_selected`, only the user-selected secondary_sources
-    (plus AI, always allowed for gap-filling)."""
+    (plus AI, always allowed for gap-filling); none selected leaves AI."""
     fallback_settings = load_scraper_settings()
     user_priority = fallback_settings.get('priority', ['screenscraper', 'esde', 'tgdb', 'igdb'])
     fallback_enabled = fallback_settings.get('enabled', {})
@@ -849,8 +849,8 @@ def _fallback_order(primary_source, sources_data, restrict_to_selected,
             continue
         fallback_scrapers.append(scraper_normalized)
 
-    if restrict_to_selected and secondary_sources:
-        selected_scrapers = {s['source'] for s in secondary_sources}
+    if restrict_to_selected:
+        selected_scrapers = {s['source'] for s in secondary_sources or []}
         fallback_scrapers = [s for s in fallback_scrapers
                              if s in selected_scrapers or s == 'ai']
     return fallback_scrapers
@@ -936,6 +936,7 @@ def _run_fallbacks(metadata, result, sources_data, game, db_game_id,
             'system_name': system_name,
             'system_folder': system_folder,
             'secondary_sources': secondary_sources or [],
+            'user_ticked': restrict_to_selected,
             'api_keys': fallback_settings.get('api_keys', {}),
         }
         fetchable = [s for s in fallback_scrapers if s in _FALLBACK_FETCHERS]
@@ -987,12 +988,20 @@ def _fetch_fallback(source, lookup):
             return None
 
 
-def _fallback_id(source, label, lookup, search):
-    """The id to fetch from `source`: the best-matching of the user's search
-    results, else the best match of a fresh `search()`."""
-    title = lookup['title']
+def _secondary_for(source, lookup):
+    """The search result to use for `source`: the one the user ticked, as
+    is, else the best title match among the bulk job's results."""
     candidates = [s for s in lookup['secondary_sources'] if s['source'] == source]
-    picked = _pick_best_secondary(candidates, title)
+    if lookup.get('user_ticked') and candidates:
+        return candidates[0]
+    return _pick_best_secondary(candidates, lookup['title'])
+
+
+def _fallback_id(source, label, lookup, search):
+    """The id to fetch from `source`: the chosen search result
+    (_secondary_for), else the best match of a fresh `search()`."""
+    title = lookup['title']
+    picked = _secondary_for(source, lookup)
     if picked and picked['id']:
         return picked['id']
     match = _pick_best_fallback(search(), title)
@@ -1007,16 +1016,11 @@ def _fetch_esde(lookup):
     from scraper.scrape_esde import search_esde_games, fetch_esde_game_details
     title, folder = lookup['title'], lookup['system_folder']
     logger.info(f"Trying ES-DE fallback for: '{title}'")
-    esde_results = search_esde_games(title, folder, limit=5)
-    esde_match = _pick_best_fallback(esde_results, title) if esde_results else None
-    if not esde_match:
-        logger.info(f"ES-DE fallback: no results found for '{title}'")
-        return None
-    esde_path = esde_match.get('id')  # ES-DE uses 'id' which contains the path
+    # ES-DE's id is the game's path in gamelist.xml.
+    esde_path = _fallback_id('esde', 'ES-DE', lookup,
+                             lambda: search_esde_games(title, folder, limit=5))
     if not esde_path:
-        logger.info("ES-DE fallback: no path found in result")
         return None
-    logger.info(f"Found ES-DE match: {esde_match.get('name')} (Path: {esde_path})")
     esde_data = fetch_esde_game_details(esde_path, folder)
     if not esde_data:
         logger.info("ES-DE fallback: failed to fetch game details")
@@ -1066,9 +1070,7 @@ def _fetch_screenscraper(lookup):
     logger.info(f"Trying ScreenScraper fallback for: '{game_title}'")
 
     # First check if we have a cached result from the initial search
-    # Pick the best title match (not just the first result)
-    ss_candidates = [s for s in lookup['secondary_sources'] if s['source'] == 'screenscraper']
-    ss_info = _pick_best_secondary(ss_candidates, game_title)
+    ss_info = _secondary_for('screenscraper', lookup)
     if ss_info and ss_info.get('id'):
         from scraper.scraper_manager import get_cached_screenscraper_result
         ss_id_parts = str(ss_info['id']).split(':')

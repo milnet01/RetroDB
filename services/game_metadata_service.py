@@ -325,16 +325,15 @@ def _apply_single_source(db_game_id, game_data, source, normalized, system_folde
 
 
 def apply_hybrid_metadata_to_game(db_game_id, primary_source, primary_id, system_folder,
-                                  all_results=None, explicit_secondary=None,
+                                  explicit_secondary=None,
                                   secondary_sources=None, fill_gaps=True,
                                   force_overwrite=False, primary_data=None,
                                   keep_media=False):
     """Apply primary-source metadata, then fill gaps from secondary scrapers.
 
     Unified entry point shared by every apply path:
-      - Manual edit (routes/games.py) passes `all_results` + optional
-        `explicit_secondary`; this function finds `primary_data` by ID match
-        and auto-builds `secondary_sources` from the remaining results.
+      - Manual edit (routes/games.py) passes `explicit_secondary`, the
+        results the user ticked; only those sources and AI fill gaps.
       - Single-game bulk (routes/bulk_scrape.py) and background bulk
         (services/jobs/bulk_scrape.py) pass pre-curated `primary_data` +
         `secondary_sources` directly.
@@ -344,13 +343,11 @@ def apply_hybrid_metadata_to_game(db_game_id, primary_source, primary_id, system
         primary_source: Raw or short-form source name for the primary scraper.
         primary_id: ID of the chosen primary-source result.
         system_folder: System folder (required for ES-DE and ScreenScraper).
-        all_results: Optional list of all search results (manual path).
         explicit_secondary: Optional list of user-picked secondary selections
-            [{'source', 'id', 'name'}, ...]. Forces `restrict_to_selected=True`
-            in the underlying hybrid apply so unselected scrapers are skipped.
-        secondary_sources: Optional pre-built secondary list (bulk paths). If
-            None and `all_results` is provided, auto-derived from the other
-            search results.
+            [{'source', 'id', 'name'}, ...], fetched by ID. Any list, even an
+            empty one, forces `restrict_to_selected=True` in the underlying
+            hybrid apply so unselected scrapers are skipped (PASS-59-134).
+        secondary_sources: Optional pre-built secondary list (bulk paths).
         fill_gaps: If True, search remaining scrapers for any field the
             primary left empty.
         force_overwrite: If True, overwrite existing fields (full-rescrape).
@@ -368,39 +365,20 @@ def apply_hybrid_metadata_to_game(db_game_id, primary_source, primary_id, system
 
     primary = _normalize_source(primary_source)
 
-    # Manual path: derive primary_data + secondary_sources from all_results.
-    if all_results is not None and secondary_sources is None:
-        if primary_data is None:
-            for r in all_results:
-                if r.get('id') == primary_id and _normalize_source(r.get('source')) == primary:
-                    primary_data = r
-                    logger.info(f"Found selected result data for {primary}: {r.get('name', 'Unknown')}")
-                    break
-
-        if explicit_secondary:
-            secondary_sources = []
-            for sel in explicit_secondary:
-                src = _normalize_source(sel.get('source'))
-                if src != primary:
-                    secondary_sources.append({
-                        'source': src,
-                        'id': sel.get('id'),
-                        'name': sel.get('name', ''),
-                    })
-            logger.info(
-                f"Using {len(secondary_sources)} explicit secondary selection(s): "
-                f"{[s['source'] + ':' + s.get('name', '') for s in secondary_sources]}"
-            )
-        else:
-            secondary_sources = []
-            for r in all_results:
-                src = _normalize_source(r.get('source'))
-                if src != primary:
-                    secondary_sources.append({
-                        'source': src,
-                        'id': r.get('id'),
-                        'name': r.get('name', ''),
-                    })
+    if explicit_secondary is not None and secondary_sources is None:
+        secondary_sources = []
+        for sel in explicit_secondary:
+            src = _normalize_source(sel.get('source'))
+            if src != primary:
+                secondary_sources.append({
+                    'source': src,
+                    'id': sel.get('id'),
+                    'name': sel.get('name', ''),
+                })
+        logger.info(
+            f"Using {len(secondary_sources)} explicit secondary selection(s): "
+            f"{[s['source'] + ':' + s.get('name', '') for s in secondary_sources]}"
+        )
 
     # A bulk job's timer already runs (it includes the search); this one is
     # for an apply started on its own, such as the game page's Apply.
@@ -417,7 +395,7 @@ def apply_hybrid_metadata_to_game(db_game_id, primary_source, primary_id, system
                 force_overwrite=force_overwrite,
                 keep_media=keep_media,
                 primary_data=primary_data,
-                restrict_to_selected=bool(explicit_secondary),
+                restrict_to_selected=explicit_secondary is not None,
             )
     except Exception as e:
         logger.error(f"Error in hybrid metadata apply: {e}")

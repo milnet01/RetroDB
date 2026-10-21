@@ -4,7 +4,7 @@
 # Handles game pages, game API endpoints, HLTB lookup, and game management.
 # =============================================================================
 
-from flask import Blueprint, render_template, request, jsonify, redirect, url_for, flash, session, g, make_response, abort
+from flask import Blueprint, render_template, request, jsonify, redirect, url_for, flash, g, make_response, abort
 from flask_babel import gettext as _
 import hashlib
 import os
@@ -374,9 +374,6 @@ def game_detail(game_id):
                     if not search_results:
                         message = "No results found. Try modifying the search title."
                     else:
-                        # Save results for hybrid scraping (cap to prevent session bloat)
-                        session['last_search_results'] = search_results[:20]
-
                         tgdb_count = sum(1 for r in search_results if r.get('source') == 'thegamesdb')
                         igdb_count = sum(1 for r in search_results if r.get('source') == 'igdb')
                         esde_count = sum(1 for r in search_results if r.get('source') == 'esde')
@@ -901,7 +898,8 @@ def api_game_apply_metadata(game_id):
     """Start the Search Metadata apply in the background (PASS-59-108).
 
     Returns a task id; the page polls api_apply_metadata_progress for the
-    gauge. Same apply as the form POST's action == 'apply' hybrid branch.
+    gauge. Fallbacks are the ticked results, fetched by ID, plus AI; with
+    none ticked, only AI (PASS-59-134).
     """
     data = request.get_json() or {}
 
@@ -919,7 +917,7 @@ def api_game_apply_metadata(game_id):
 
     explicit_secondary = data.get('secondary_selections')
     if not isinstance(explicit_secondary, list):
-        explicit_secondary = None
+        explicit_secondary = []
 
     task = apply_progress.start(
         game_id, apply_hybrid_metadata_to_game,
@@ -927,7 +925,6 @@ def api_game_apply_metadata(game_id):
         primary_source=source,
         primary_id=source_id,
         system_folder=game['system_folder'] or '',
-        all_results=session.get('last_search_results', []),
         explicit_secondary=explicit_secondary,
     )
     return success(task_id=task.id)
