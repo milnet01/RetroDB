@@ -8724,7 +8724,12 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.130 Scrape speed: drop duplicate screenshots before image processing, and take upscaling off the scrape path (MEDIUM, M).
-- **Status**: todo
+- **Resolution** (2026-10-21): Shipped 2026-10-21 (3eaf894). Scrapes defer upscaling via
+  services/upscale_queue.py; pending_upscales (migration 019) lists the
+  game; a server thread upscales after save and resumes after restart.
+  Dedup runs before any upscale. FF2 SNES: scrape 20.8s (was 70.1s);
+  background upscale of 11 screenshots 45.6s. Spec: image-pipeline.md §5.1.
+- **Status**: done
 - **Where**: every scraped image goes through
   `services/image_utils.py::finalize_downloaded_image`, which upscales
   anything under 80% of `IMAGE_TARGET_HEIGHT` with Real-ESRGAN (ROCm GPU
