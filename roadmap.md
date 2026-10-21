@@ -9028,7 +9028,9 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.144 Settings shows "Default Region" in English in every language (LOW, S).
-- **Status**: todo
+- **Resolution** (2026-10-21): Shipped 2026-10-21 (234b9c7): label wrapped and translated in all 20
+  locales; help Default Region wording aligned (id, ja, pt_BR, uk, xh).
+- **Status**: done
 - **Target**: `templates/_settings_tabs/library.html` — the Default
   Region label is not wrapped in `_()`, so no catalog has it.
 - **Plan**: wrap it, regenerate catalogs, translate in all 20.
@@ -9037,7 +9039,11 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.145 The Settings "Scraping" tab reads as "scraping in progress" in several languages (LOW, S).
-- **Status**: todo
+- **Resolution** (2026-10-21): Shipped 2026-10-21 (234b9c7): pgettext('settings tab', 'Scraping'), a
+  noun in every locale; help breadcrumbs updated in af, he, ja, ko, nb,
+  pt_BR, tr, zh_Hans, zh_Hant, zu. Logs page and wishlist keep the plain
+  msgid.
+- **Status**: done
 - **Target**: the shared msgid `Scraping` (Settings tab, logs page,
   wishlist). Its msgstr is a progress word in af, he, ja, ko, pt_BR, tr,
   zh_Hans, zh_Hant, zu (e.g. tr "Kazınıyor", zh "抓取中").
@@ -9049,7 +9055,10 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.146 Full Re-scrape drops screenshots whose file already exists (MEDIUM, S).
-- **Status**: todo
+- **Resolution** (2026-10-21): Shipped 2026-10-21 (234b9c7): _skip_screenshot() relists an on-disk
+  file in the IGDB, RAWG and ScreenScraper loops;
+  tests/test_pass59_146_rescrape_keeps_screenshots.py.
+- **Status**: done
 - **Seen**: scratch copy, game 320 (Spy vs Spy), Full Re-scrape without
   "Keep existing media": screenshots went from 4
   (`320_ss_screenshot_0`, `320_igdb_ss2..4`) to 2 (`320_igdb_ss1`,
