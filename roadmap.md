@@ -8990,6 +8990,14 @@ were corrected in `2836bc3` and are not repeated here.
   image checks as the other faces. Jewel-case fronts now include a tray
   hinge strip, so never reuse the front face as a flat cover. Case sizes
   vary by region and arrive through the existing case keys.
+- **Format update** (Slipcase session, 2026-10-21; SLIP-0110): box files
+  (still version 1) may carry optional `faces.top` / `faces.bottom`
+  (S.top.png / S.bottom.png, or null). Only a PS1 PAL jewel case has
+  them today. Same rule as edge: a non-null name is a plain file name
+  and the file must exist; otherwise use `colours.top` /
+  `colours.bottom`. Contract: Slipcase
+  `docs/specs/SLIP-0104-turnable-3d-box.md` § 4.1. Import them when
+  present.
 
 ---
 
@@ -9004,6 +9012,12 @@ were corrected in `2836bc3` and are not repeated here.
 - **Verify**: a game with imported faces shows a box that turns with
   drag and keyboard, has a transparent background, and falls back to
   the flat cover without faces.
+- **Format update** (Slipcase session, 2026-10-21; SLIP-0110): draw
+  `faces.top` / `faces.bottom` when present, else fill with
+  `colours.top` / `colours.bottom`. Orientation: seen from outside,
+  spine on the left; the top's picture has the back at its top edge,
+  the bottom's has the front at its top edge. Contract: Slipcase
+  `docs/specs/SLIP-0104-turnable-3d-box.md` § 4.1.
 
 ---
 
