@@ -107,7 +107,7 @@ const NormalizationManager = {
             html += `<tr data-idx="${idx}" style="${borderStyle} ${isHidden ? 'display: none;' : ''}">`;
 
             // Checkbox (row-selection checkboxes are standard table UI, not boolean toggles)
-            html += `<td><input type="checkbox" class="norm-row-check" data-idx="${idx}" onchange="NormalizationManager.updateApplyButton()" ${item.needs_change ? 'checked' : ''}></td>`;
+            html += `<td><input type="checkbox" class="norm-row-check" data-idx="${idx}" data-on-change="NormalizationManager.updateApplyButton" ${item.needs_change ? 'checked' : ''}></td>`;
 
             // Current value — escapeHtml from utils.js per security standards
             html += `<td><code>${escapeHtml(item.value)}</code></td>`;
@@ -118,7 +118,7 @@ const NormalizationManager = {
             // Normalize To input — free-text with datalist autocomplete
             html += '<td>';
             const inputValue = item.needs_change ? item.suggested : item.value;
-            html += `<input type="text" class="form-input norm-target-input" data-idx="${idx}" list="normCanonicalList" value="${escapeHtml(inputValue)}" style="min-width: 180px;" onchange="NormalizationManager.updateApplyButton()" oninput="NormalizationManager.updateApplyButton()">`;
+            html += `<input type="text" class="form-input norm-target-input" data-idx="${idx}" list="normCanonicalList" value="${escapeHtml(inputValue)}" style="min-width: 180px;" data-on-change="NormalizationManager.updateApplyButton" data-on-input="NormalizationManager.updateApplyButton">`;
             html += '</td>';
             html += '</tr>';
         });

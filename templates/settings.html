@@ -16,27 +16,27 @@
 
 <!-- Tab Navigation -->
 <div class="settings-tabs" id="settingsTabs" role="tablist" aria-label="{{ _('Settings sections') }}" data-sticky-nav>
-    <button type="button" class="settings-tab active" data-tab="account" onclick="switchSettingsTab('account')" role="tab" aria-selected="true" aria-controls="tab-account">
+    <button type="button" class="settings-tab active" data-tab="account" data-on-click="switchSettingsTab" data-args='["account"]' role="tab" aria-selected="true" aria-controls="tab-account">
         <span class="tab-icon">👤</span>
         <span class="tab-text">{{ _('Account') }}</span>
     </button>
-    <button type="button" class="settings-tab" data-tab="library" onclick="switchSettingsTab('library')" role="tab" aria-selected="false" aria-controls="tab-library">
+    <button type="button" class="settings-tab" data-tab="library" data-on-click="switchSettingsTab" data-args='["library"]' role="tab" aria-selected="false" aria-controls="tab-library">
         <span class="tab-icon">📁</span>
         <span class="tab-text">{{ _('Library') }}</span>
     </button>
-    <button type="button" class="settings-tab" data-tab="scraping" onclick="switchSettingsTab('scraping')" role="tab" aria-selected="false" aria-controls="tab-scraping">
+    <button type="button" class="settings-tab" data-tab="scraping" data-on-click="switchSettingsTab" data-args='["scraping"]' role="tab" aria-selected="false" aria-controls="tab-scraping">
         <span class="tab-icon">🔍</span>
         <span class="tab-text">{{ _('Scraping') }}</span>
     </button>
-    <button type="button" class="settings-tab" data-tab="data" onclick="switchSettingsTab('data')" role="tab" aria-selected="false" aria-controls="tab-data">
+    <button type="button" class="settings-tab" data-tab="data" data-on-click="switchSettingsTab" data-args='["data"]' role="tab" aria-selected="false" aria-controls="tab-data">
         <span class="tab-icon">📊</span>
         <span class="tab-text">{{ _('Data') }}</span>
     </button>
-    <button type="button" class="settings-tab" data-tab="customization" onclick="switchSettingsTab('customization')" role="tab" aria-selected="false" aria-controls="tab-customization">
+    <button type="button" class="settings-tab" data-tab="customization" data-on-click="switchSettingsTab" data-args='["customization"]' role="tab" aria-selected="false" aria-controls="tab-customization">
         <span class="tab-icon">🎨</span>
         <span class="tab-text">{{ _('Customization') }}</span>
     </button>
-    <button type="button" class="settings-tab" data-tab="system" onclick="switchSettingsTab('system')" role="tab" aria-selected="false" aria-controls="tab-system">
+    <button type="button" class="settings-tab" data-tab="system" data-on-click="switchSettingsTab" data-args='["system"]' role="tab" aria-selected="false" aria-controls="tab-system">
         <span class="tab-icon">⚙️</span>
         <span class="tab-text">{{ _('System') }}</span>
     </button>
@@ -66,8 +66,8 @@
         <div class="confirm-modal-title" id="confirmTitle">{{ _('Confirm Action') }}</div>
         <div class="confirm-modal-message" id="confirmMessage">{{ _('Are you sure?') }}</div>
         <div class="confirm-modal-buttons">
-            <button type="button" class="btn btn-secondary" id="confirmCancelBtn" onclick="closeConfirmModal()">{{ _('Cancel') }}</button>
-            <button type="button" class="btn btn-danger" id="confirmBtn" onclick="executeConfirm()">{{ _('Delete') }}</button>
+            <button type="button" class="btn btn-secondary" id="confirmCancelBtn" data-on-click="closeConfirmModal">{{ _('Cancel') }}</button>
+            <button type="button" class="btn btn-danger" id="confirmBtn" data-on-click="executeConfirm">{{ _('Delete') }}</button>
         </div>
     </div>
 </div>
@@ -1725,7 +1725,7 @@ function renderNamingBuilder() {
                         const tag = NAMING_AVAILABLE_TAGS.find(t => t.key === tagKey);
                         const tagLabel = tag ? tag.label : tagKey;
                         return `<span style="padding: 0.25rem 0.6rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600; background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.3); color: var(--neon-green); cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem;"
-                            >${tagLabel}${idx > 0 ? `<span onclick="moveNamingTag('${st.key}', ${idx}, -1)" title="Move left" style="opacity:0.7; font-size:0.7rem;">◀</span>` : ''}${idx < selected.length - 1 ? `<span onclick="moveNamingTag('${st.key}', ${idx}, 1)" title="Move right" style="opacity:0.7; font-size:0.7rem;">▶</span>` : ''}<span onclick="removeNamingTag('${st.key}', '${tagKey}')" title="Remove" style="opacity:0.7; font-size:0.7rem; margin-left:0.15rem;">✕</span></span>`;
+                            >${tagLabel}${idx > 0 ? `<span data-on-click="moveNamingTag" data-args="${actionArgs(String(st.key), idx, -1)}" title="Move left" style="opacity:0.7; font-size:0.7rem;">◀</span>` : ''}${idx < selected.length - 1 ? `<span data-on-click="moveNamingTag" data-args="${actionArgs(String(st.key), idx, 1)}" title="Move right" style="opacity:0.7; font-size:0.7rem;">▶</span>` : ''}<span data-on-click="removeNamingTag" data-args="${actionArgs(String(st.key), String(tagKey))}" title="Remove" style="opacity:0.7; font-size:0.7rem; margin-left:0.15rem;">✕</span></span>`;
                     }).join('')}
                 </div>
             </div>
@@ -1735,10 +1735,7 @@ function renderNamingBuilder() {
                 <span class="text-muted" style="font-size: 0.8rem; display: block; margin-bottom: 0.35rem;">Available tags (click to add):</span>
                 <div style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
                     ${available.length > 0 ? available.map(tag => `
-                        <span onclick="addNamingTag('${st.key}', '${tag.key}')"
-                            style="padding: 0.25rem 0.6rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600; background: rgba(100,116,139,0.15); border: 1px solid rgba(100,116,139,0.3); color: var(--text-secondary); cursor: pointer; transition: all 0.15s ease;"
-                            onmouseover="this.style.borderColor='var(--neon-green)'; this.style.color='var(--neon-green)'"
-                            onmouseout="this.style.borderColor='rgba(100,116,139,0.3)'; this.style.color='var(--text-secondary)'"
+                        <span class="naming-tag-option" data-on-click="addNamingTag" data-args="${actionArgs(String(st.key), String(tag.key))}"
                             title="Click to add">${tag.label}</span>
                     `).join('') : '<span class="text-muted" style="font-size: 0.8rem; font-style: italic;">All tags in use</span>'}
                 </div>
@@ -1835,7 +1832,7 @@ function addRegionOption() {
     const badge = document.createElement('span');
     badge.className = 'badge badge-info';
     badge.style.cssText = 'display:inline-flex;align-items:center;gap:4px;padding:4px 10px;font-size:0.85rem;';
-    badge.innerHTML = `${escapeHtml(val)}<button type="button" class="btn-icon-only" data-region="${escapeHtml(val)}" onclick="removeRegionOption(this, this.dataset.region)" title="Remove" style="background:none;border:none;color:var(--neon-red);cursor:pointer;font-size:1rem;padding:0 2px;">&times;</button>`;
+    badge.innerHTML = `${escapeHtml(val)}<button type="button" class="btn-icon-only" data-region="${escapeHtml(val)}" data-on-click="removeRegionOption" data-args="${actionArgs('$this', '$this.dataset.region')}" title="Remove" style="background:none;border:none;color:var(--neon-red);cursor:pointer;font-size:1rem;padding:0 2px;">&times;</button>`;
     container.appendChild(badge);
     // Also add to default region dropdown
     const sel = document.getElementById('defaultRegionSelect');
@@ -1990,10 +1987,10 @@ function detectBonusDiscs() {
                                     <br>${infoText}
                                 </div>
                                 <div style="display: flex; gap: var(--spacing-sm); flex-shrink: 0;">
-                                    <button type="button" class="btn btn-sm btn-secondary" onclick="showLinkOptions(${game.id}, ${game.system_id})">
+                                    <button type="button" class="btn btn-sm btn-secondary" data-on-click="showLinkOptions" data-args="${actionArgs(game.id, game.system_id)}">
                                         🔗 Link
                                     </button>
-                                    <button type="button" class="btn btn-sm btn-primary" onclick="markAsBonusDisc(${game.id})">
+                                    <button type="button" class="btn btn-sm btn-primary" data-on-click="markAsBonusDisc" data-args="${actionArgs(game.id)}">
                                         🎁 Mark
                                     </button>
                                 </div>
@@ -2105,11 +2102,8 @@ function showLinkOptions(gameId, systemId) {
         .then(data => {
             if (data.success && data.parents && data.parents.length > 0) {
                 let options = data.parents.map(p => 
-                    `<div style="padding: var(--spacing-sm); border-bottom: 1px solid var(--card-border); cursor: pointer;" 
-                         class="parent-option" 
-                         onclick="linkBonusToParent(${gameId}, ${p.id})"
-                         onmouseover="this.style.background='rgba(76, 201, 240, 0.1)'" 
-                         onmouseout="this.style.background='transparent'">
+                    `<div class="parent-option"
+                         data-on-click="linkBonusToParent" data-args="${actionArgs(gameId, p.id)}">
                         ${p.title}
                     </div>`
                 ).join('');
@@ -2203,7 +2197,7 @@ function loadBackups() {
                             <span class="backup-name">📁 ${backup.filename}</span>
                             <span class="backup-meta">${backup.size} • ${backup.date}</span>
                         </div>
-                        <button type="button" class="btn btn-sm btn-warning" onclick="restoreBackup('${backup.filename}')">
+                        <button type="button" class="btn btn-sm btn-warning" data-on-click="restoreBackup" data-args="${actionArgs(String(backup.filename))}">
                             Restore
                         </button>
                     </div>
@@ -2341,6 +2335,10 @@ function executeConfirm() {
 // =============================================================================
 // SCRAPER CONFIGURATION - DRAG & DROP + TOGGLES
 // =============================================================================
+
+function setMinimumMatchScore(input) {
+    scraperSettings.minimum_match_score = parseInt(input.value) || 200;
+}
 
 let scraperSettings = {
     priority: {{ scraper_settings.priority | tojson }},
@@ -3029,7 +3027,7 @@ async function loadDropdownOptions(category, containerId) {
             container.innerHTML = data.options.map(opt => `
                 <span class="option-tag">
                     ${opt.value}
-                    <button type="button" class="delete-btn" onclick="deleteDropdownOption(${opt.id}, '${category}', '${containerId}')" title="Delete">×</button>
+                    <button type="button" class="delete-btn" data-on-click="deleteDropdownOption" data-args="${actionArgs(opt.id, String(category), String(containerId))}" title="Delete">×</button>
                 </span>
             `).join('');
         } else {
@@ -3181,7 +3179,7 @@ async function loadSystemControllersTable() {
                 ? defaultControllers.map(c => `
                     <span class="badge badge-success" style="display: inline-flex; align-items: center; gap: 4px; font-size: 0.7rem;">
                         ${c.name}
-                        <span onclick="removeDefaultController(${system.id}, ${c.id})" style="cursor: pointer; opacity: 0.7;">×</span>
+                        <span data-on-click="removeDefaultController" data-args="${actionArgs(system.id, c.id)}" style="cursor: pointer; opacity: 0.7;">×</span>
                     </span>
                 `).join('')
                 : '<span class="text-muted" style="font-size: 0.8rem;">None set</span>';
@@ -3207,7 +3205,7 @@ async function loadSystemControllersTable() {
                         ${defaultTags}
                     </div>
                     <select class="form-select form-select-sm" style="width: 100%;" 
-                            onchange="addDefaultController(${system.id}, this.value); this.value='';">
+                            data-on-change="addDefaultController" data-args="${actionArgs(system.id, '$this.value')}" data-clear-value>
                         <option value="">+ Add default controller...</option>
                         ${dropdownOptions}
                     </select>
@@ -3224,7 +3222,7 @@ async function loadSystemControllersTable() {
                 const hasLetter = letterMap.has(letter);
                 return `<button type="button" class="sticky-nav-btn ${hasLetter ? '' : 'disabled'}" 
                                 data-letter="${letter}" 
-                                onclick="scrollToSystemLetter('${letter}')"
+                                data-on-click="scrollToSystemLetter" data-args="${actionArgs(String(letter))}"
                                 ${hasLetter ? '' : 'disabled'}>${letter}</button>`;
             }).join('');
         }
@@ -3369,7 +3367,7 @@ async function loadControllerLibrary() {
                     <div class="controller-list" style="display: flex; flex-direction: column; gap: 6px;">
                         ${byManufacturer[mfg].sort((a, b) => a.name.localeCompare(b.name)).map(c => `
                             <div class="controller-item" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: rgba(0,0,0,0.2); border-radius: var(--radius-sm); cursor: pointer;" 
-                                 onclick="toggleControllerDetails(this)" data-controller-id="${c.id}">
+                                 data-on-click="toggleControllerDetails" data-args="${actionArgs('$this')}" data-controller-id="${c.id}">
                                 <div style="flex: 1;">
                                     <span style="font-size: 0.9rem; color: var(--text-primary);">${c.name}</span>
                                     ${c.release_year ? `<span class="text-muted" style="font-size: 0.75rem; margin-left: 8px;">(${c.release_year})</span>` : ''}
@@ -3382,10 +3380,10 @@ async function loadControllerLibrary() {
                                 ${c.description ? `<p style="margin: 0 0 8px 0; color: var(--text-secondary);">${c.description}</p>` : ''}
                                 ${c.button_layout ? `<p style="margin: 0; color: var(--text-muted);"><strong>Buttons:</strong> ${c.button_layout}</p>` : ''}
                                 <div style="margin-top: 8px; display: flex; gap: 8px;">
-                                    <button type="button" class="btn btn-primary btn-sm" onclick="event.stopPropagation(); openEditControllerModal(${c.id})">
+                                    <button type="button" class="btn btn-primary btn-sm" data-on-click="openEditControllerModal" data-args="${actionArgs(c.id)}" data-stop>
                                         ✏️ Edit
                                     </button>
-                                    <button type="button" class="btn btn-danger btn-sm" data-name="${escapeHtml(c.name)}" onclick="event.stopPropagation(); deleteController(${c.id}, this.dataset.name)">
+                                    <button type="button" class="btn btn-danger btn-sm" data-name="${escapeHtml(c.name)}" data-on-click="deleteController" data-args="${actionArgs(c.id, '$this.dataset.name')}" data-stop>
                                         🗑️ Delete
                                     </button>
                                 </div>
@@ -3573,7 +3571,7 @@ function renderSystemTags(mode) {
     container.innerHTML = selectedSystems.map(sys => `
         <span class="badge badge-secondary" style="display: inline-flex; align-items: center; gap: 6px;">
             ${sys.name}
-            <span onclick="removeSystemFromController('${mode}', ${sys.id})" style="cursor: pointer; opacity: 0.7; font-size: 1.1em;">×</span>
+            <span data-on-click="removeSystemFromController" data-args="${actionArgs(String(mode), sys.id)}" style="cursor: pointer; opacity: 0.7; font-size: 1.1em;">×</span>
         </span>
     `).join('');
 }
@@ -5012,13 +5010,13 @@ async function loadLogFiles() {
                         <td>${file.date}</td>
                         <td>${sizeKB} KB</td>
                         <td>
-                            <button type="button" onclick="viewLogFile('${file.filename}')" class="btn btn-sm btn-secondary">
+                            <button type="button" data-on-click="viewLogFile" data-args="${actionArgs(String(file.filename))}" class="btn btn-sm btn-secondary">
                                 👁️ View
                             </button>
-                            <button type="button" onclick="downloadLogFile('${file.filename}')" class="btn btn-sm btn-primary">
+                            <button type="button" data-on-click="downloadLogFile" data-args="${actionArgs(String(file.filename))}" class="btn btn-sm btn-primary">
                                 📥 Download
                             </button>
-                            <button type="button" onclick="deleteLogFile('${file.filename}')" class="btn btn-sm btn-danger">
+                            <button type="button" data-on-click="deleteLogFile" data-args="${actionArgs(String(file.filename))}" class="btn btn-sm btn-danger">
                                 🗑️
                             </button>
                         </td>

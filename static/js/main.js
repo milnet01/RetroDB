@@ -205,7 +205,15 @@ function initializeImageErrorHandling() {
             }
         } else if (action === 'src') {
             const src = target.dataset.onErrorSrc;
-            if (src) target.src = src;
+            if (src) {
+                // A srcset would keep winning over the fallback src.
+                target.removeAttribute('srcset');
+                target.removeAttribute('sizes');
+                if (target.dataset.onErrorRemoveClass) {
+                    target.classList.remove(target.dataset.onErrorRemoveClass);
+                }
+                target.src = src;
+            }
         } else if (action === 'outer-html') {
             const html = target.dataset.onErrorHtml;
             if (html) target.outerHTML = html;
@@ -226,6 +234,115 @@ function initializeImageErrorHandling() {
 }
 
 initializeImageErrorHandling();
+
+// =============================================================================
+// DELEGATED EVENT ACTIONS (FU.1 CSP)
+// =============================================================================
+// Replaces inline `onclick="…"` style handlers, which an enforcing CSP blocks.
+//
+//   <button data-on-click="GameDetailModal.navigateScreenshot"
+//           data-args='[-1]' data-stop>
+//
+// - `data-on-<event>` names a function by dotted path from `window`. A page
+//   script that declares it with `const` must also assign it to `window`.
+// - `data-args` is a JSON array. A string "$this" is the element, "$event"
+//   the event; "$this.value" / "$this.dataset.path" / "$event.key" read a
+//   property path off either.
+// - `data-stop` stops propagation, `data-prevent` prevents the default.
+// - `data-self-only` runs only when the event's target is the element itself
+//   (a modal backdrop, not its content); `data-key="Enter"` only for that key.
+// - `data-clear-value` empties the element's value after the call (a picker
+//   `<select>` that adds the chosen item to a list).
+// - Nested elements run innermost first, like bubbling, until one stops.
+// Listeners run in the capture phase so `data-stop` keeps the event from
+// listeners attached to ancestors (a card's own click handler) as well.
+// `error` is not delegated here; images use `data-on-error` above.
+
+const _DELEGATED_EVENTS = ['click', 'change', 'input', 'keydown', 'keyup',
+    'keypress', 'submit', 'mouseover', 'mouseout'];
+
+function _resolveActionPath(root, path) {
+    let value = root;
+    for (const part of path.split('.')) {
+        if (value == null) return undefined;
+        value = value[part];
+    }
+    return value;
+}
+
+function _resolveActionArg(arg, el, event) {
+    if (typeof arg !== 'string' || arg[0] !== '$') return arg;
+    const match = /^\$(this|event)(?:\.(.+))?$/.exec(arg);
+    if (!match) return arg;
+    const base = match[1] === 'this' ? el : event;
+    return match[2] ? _resolveActionPath(base, match[2]) : base;
+}
+
+function _runAction(el, eventName, event) {
+    const name = el.getAttribute('data-on-' + eventName);
+    if (el.hasAttribute('data-self-only') && event.target !== el) return;
+    if (el.dataset.key && event.key !== el.dataset.key) return;
+    if (el.hasAttribute('data-prevent')) event.preventDefault();
+    if (!name) return;  // a bare data-on-<event> only stops or prevents
+    const dot = name.lastIndexOf('.');
+    const owner = dot === -1 ? window : _resolveActionPath(window, name.slice(0, dot));
+    const fn = owner ? owner[name.slice(dot + 1)] : undefined;
+    if (typeof fn !== 'function') {
+        console.error(`data-on-${eventName}: no function "${name}"`);
+        return;
+    }
+    let args = [];
+    if (el.dataset.args) {
+        try {
+            args = JSON.parse(el.dataset.args);
+        } catch (e) {
+            console.error(`data-args on data-on-${eventName}="${name}" is not JSON`, e);
+            return;
+        }
+    }
+    fn.apply(owner, args.map(arg => _resolveActionArg(arg, el, event)));
+    if (el.hasAttribute('data-clear-value')) el.value = '';
+}
+
+// Small actions for handlers that were one statement of plain DOM work.
+function navigateTo(url) { window.location.href = url; }
+function clickElement(id) { document.getElementById(id)?.click(); }
+function hideParent(el) { el.parentElement.style.display = 'none'; }
+function removeParent(el) { el.parentElement.remove(); }
+function setTextFromValue(targetId, el) {
+    document.getElementById(targetId).textContent = el.value;
+}
+// A visible date text box paired with a hidden native picker.
+function openDatePicker(pickerId, sourceId) {
+    const picker = document.getElementById(pickerId);
+    picker.value = document.getElementById(sourceId).value;
+    picker.showPicker();
+}
+
+window.navigateTo = navigateTo;
+window.clickElement = clickElement;
+window.hideParent = hideParent;
+window.removeParent = removeParent;
+window.setTextFromValue = setTextFromValue;
+window.openDatePicker = openDatePicker;
+
+function initializeDelegatedActions() {
+    _DELEGATED_EVENTS.forEach(eventName => {
+        const selector = `[data-on-${eventName}]`;
+        document.addEventListener(eventName, function(event) {
+            if (!(event.target instanceof Element)) return;
+            let el = event.target.closest(selector);
+            while (el) {
+                _runAction(el, eventName, event);
+                if (el.hasAttribute('data-stop')) event.stopPropagation();
+                if (event.cancelBubble) return;
+                el = el.parentElement && el.parentElement.closest(selector);
+            }
+        }, /* useCapture */ true);
+    });
+}
+
+initializeDelegatedActions();
 
 // =============================================================================
 // SIDEBAR FUNCTIONALITY
@@ -1536,7 +1653,7 @@ function showShortcutsModal() {
             <div class="custom-modal-content" style="max-width: 600px;" role="dialog" aria-modal="true" aria-labelledby="shortcutsModalTitle">
                 <div class="custom-modal-header">
                     <h3 id="shortcutsModalTitle">⌨️ ${escapeHtml(t('Keyboard Shortcuts'))}</h3>
-                    <button class="custom-modal-close" onclick="closeShortcutsModal()" aria-label="${escapeHtml(t('Close keyboard shortcuts'))}">×</button>
+                    <button class="custom-modal-close" data-on-click="closeShortcutsModal" aria-label="${escapeHtml(t('Close keyboard shortcuts'))}">×</button>
                 </div>
                 <div class="custom-modal-body" id="shortcutsModalBody">${body}</div>
             </div>

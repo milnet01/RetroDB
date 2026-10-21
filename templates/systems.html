@@ -30,7 +30,7 @@
                autocomplete="off">
     </div>
     <div class="filter-buttons">
-        <select id="systemTypeFilter" class="filter-select" onchange="applySystemFilters()">
+        <select id="systemTypeFilter" class="filter-select" data-on-change="applySystemFilters">
             <option value="">{{ _('All Types') }}</option>
             <option value="Console">🎮 {{ _('Console') }}</option>
             <option value="Handheld">📱 {{ _('Handheld') }}</option>
@@ -38,7 +38,7 @@
             <option value="Arcade">🕹️ {{ _('Arcade') }}</option>
             <option value="Engine">⚙️ {{ _('Engine') }}</option>
         </select>
-        <select id="featureFilter" class="filter-select" onchange="applySystemFilters()">
+        <select id="featureFilter" class="filter-select" data-on-change="applySystemFilters">
             <option value="">{{ _('All Features') }}</option>
             <option value="ra">🏆 {{ _('RetroAchievements') }}</option>
             <option value="trophies">🏅 {{ _('Local Trophies') }}</option>
@@ -49,7 +49,7 @@
 <!-- Filter Results Bar -->
 <div class="filter-results-bar" id="filterResultsBar" style="display: none;">
     <span class="filter-results-text" id="filterResultsText"></span>
-    <button type="button" class="filter-clear-btn" onclick="clearAllSystemFilters()">✕ {{ _('Clear') }}</button>
+    <button type="button" class="filter-clear-btn" data-on-click="clearAllSystemFilters">✕ {{ _('Clear') }}</button>
 </div>
 
 <!-- Systems Grid -->
@@ -91,7 +91,7 @@
                 </div>
             </div>
         </a>
-        <button type="button" class="specs-btn" data-folder="{{ system.folder }}" onclick="showSpecs(this.dataset.folder, event)" title="{{ _('View Specifications') }}">
+        <button type="button" class="specs-btn" data-folder="{{ system.folder }}" data-on-click="showSpecs" data-args='["$this.dataset.folder", "$event"]' title="{{ _('View Specifications') }}">
             ℹ️
         </button>
     </div>
@@ -106,7 +106,7 @@
     <div class="empty-state-text">
         {{ _('Scan your ROM library to add systems.') }}
     </div>
-    <button type="button" class="btn btn-primary" onclick="scanLibrary()">
+    <button type="button" class="btn btn-primary" data-on-click="scanLibrary">
         <span class="btn-icon">🔍</span>
         {{ _('Scan Library') }}
     </button>
@@ -118,7 +118,7 @@
     <div class="specs-modal-content glass-panel">
         <div class="specs-modal-header">
             <h2 id="specsTitle">{{ _('System Specifications') }}</h2>
-            <button type="button" class="modal-close-btn" onclick="closeSpecs()">×</button>
+            <button type="button" class="modal-close-btn" data-on-click="closeSpecs">×</button>
         </div>
         <div class="specs-modal-body" id="specsBody">
             <!-- Specs will be inserted here -->

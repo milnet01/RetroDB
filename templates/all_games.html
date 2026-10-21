@@ -34,11 +34,11 @@
                    aria-label="{{ _('Search games') }}"
                    autocomplete="off"
                    style="padding-left: 36px;">
-            <button type="button" class="search-clear-btn" id="searchClearBtn" onclick="clearSearch()" title="{{ _('Clear search') }}">×</button>
+            <button type="button" class="search-clear-btn" id="searchClearBtn" data-on-click="clearSearch" title="{{ _('Clear search') }}">×</button>
         </div>
 
         <div class="system-select-wrapper">
-            <select id="systemFilter" class="system-select-styled" aria-label="{{ _('Filter by system') }}" onchange="filterGames()">
+            <select id="systemFilter" class="system-select-styled" aria-label="{{ _('Filter by system') }}" data-on-change="filterGames">
                 <option value="">{{ _('All Systems') }}</option>
                 {% for system in systems %}
                 <option value="{{ system.id }}">{{ system.name }}</option>
@@ -47,7 +47,7 @@
         </div>
 
         <div class="system-select-wrapper">
-            <select id="systemTypeFilter" class="system-select-styled" aria-label="{{ _('Filter by system type') }}" onchange="filterGames()">
+            <select id="systemTypeFilter" class="system-select-styled" aria-label="{{ _('Filter by system type') }}" data-on-change="filterGames">
                 <option value="">{{ _('All Types') }}</option>
                 <option value="Console">🎮 {{ _('Console') }}</option>
                 <option value="Handheld">📱 {{ _('Handheld') }}</option>
@@ -58,13 +58,13 @@
         </div>
 
         <div class="bulk-controls">
-            <button type="button" class="filter-btn bulk-btn" onclick="toggleBulkMode()" id="bulkModeBtn">
+            <button type="button" class="filter-btn bulk-btn" data-on-click="toggleBulkMode" id="bulkModeBtn">
                 <span class="filter-icon">☑️</span> <span id="bulkModeText">{{ _('Select') }}</span>
             </button>
-            <button type="button" class="filter-btn bulk-action-btn" onclick="selectAllVisible()" id="selectAllBtn" style="display: none;">
+            <button type="button" class="filter-btn bulk-action-btn" data-on-click="selectAllVisible" id="selectAllBtn" style="display: none;">
                 <span class="filter-icon">✅</span> {{ _('Select All') }}
             </button>
-            <button type="button" class="filter-btn bulk-action-btn" onclick="selectAllUnscraped()" id="selectUnscrapedBtn" style="display: none;">
+            <button type="button" class="filter-btn bulk-action-btn" data-on-click="selectAllUnscraped" id="selectUnscrapedBtn" style="display: none;">
                 <span class="filter-icon">📋</span> {{ _('Select Unscraped') }}
             </button>
             <div class="bulk-mode-selector" id="bulkModeSelector" style="display: none;">
@@ -77,50 +77,50 @@
                     <span class="mode-label mode-on">📝 {{ _('Fill Missing') }}</span>
                 </div>
             </div>
-            <button type="button" class="filter-btn bulk-scrape-btn" onclick="startBulkScrape()" id="bulkScrapeBtn" style="display: none;">
+            <button type="button" class="filter-btn bulk-scrape-btn" data-on-click="startBulkScrape" id="bulkScrapeBtn" style="display: none;">
                 <span class="filter-icon">⬇️</span> {{ _('Scrape Selected') }} (<span id="selectedCount">0</span>)
             </button>
-            <button type="button" class="filter-btn bulk-action-btn" onclick="startBulkEdit()" id="bulkEditBtn" style="display: none;">
+            <button type="button" class="filter-btn bulk-action-btn" data-on-click="startBulkEdit" id="bulkEditBtn" style="display: none;">
                 <span class="filter-icon">✏️</span> {{ _('Edit Selected') }} (<span id="selectedEditCount">0</span>)
             </button>
         </div>
     </div>
 
     <div class="filter-buttons">
-        <button type="button" class="filter-btn" onclick="openFilterModal('genre')">
+        <button type="button" class="filter-btn" data-on-click="openFilterModal" data-args='["genre"]'>
             <span class="filter-icon">🎭</span> {{ _('Genre') }}
         </button>
-        <button type="button" class="filter-btn" onclick="openFilterModal('franchise')">
+        <button type="button" class="filter-btn" data-on-click="openFilterModal" data-args='["franchise"]'>
             <span class="filter-icon">📚</span> {{ _('Series') }}
         </button>
-        <button type="button" class="filter-btn" onclick="openFilterModal('publisher')">
+        <button type="button" class="filter-btn" data-on-click="openFilterModal" data-args='["publisher"]'>
             <span class="filter-icon">🏢</span> {{ _('Publisher') }}
         </button>
-        <button type="button" class="filter-btn" onclick="openFilterModal('developer')">
+        <button type="button" class="filter-btn" data-on-click="openFilterModal" data-args='["developer"]'>
             <span class="filter-icon">👨‍💻</span> {{ _('Developer') }}
         </button>
-        <button type="button" class="filter-btn" onclick="openFilterModal('modes')">
+        <button type="button" class="filter-btn" data-on-click="openFilterModal" data-args='["modes"]'>
             <span class="filter-icon">👥</span> {{ _('Players') }}
         </button>
-        <button type="button" class="filter-btn" onclick="openFilterModal('perspective')">
+        <button type="button" class="filter-btn" data-on-click="openFilterModal" data-args='["perspective"]'>
             <span class="filter-icon">👁️</span> {{ _('Perspective') }}
         </button>
-        <button type="button" class="filter-btn" onclick="openFilterModal('dimension')">
+        <button type="button" class="filter-btn" data-on-click="openFilterModal" data-args='["dimension"]'>
             <span class="filter-icon">📐</span> {{ _('Dimension') }}
         </button>
-        <button type="button" class="filter-btn" onclick="openFilterModal('rating')">
+        <button type="button" class="filter-btn" data-on-click="openFilterModal" data-args='["rating"]'>
             <span class="filter-icon">⭐</span> {{ _('Rating') }}
         </button>
-        <button type="button" class="filter-btn" onclick="openFilterModal('source')">
+        <button type="button" class="filter-btn" data-on-click="openFilterModal" data-args='["source"]'>
             <span class="filter-icon">📋</span> {{ _('Source') }}
         </button>
-        <button type="button" class="filter-btn ra-filter-btn" onclick="toggleRAFilter()">
+        <button type="button" class="filter-btn ra-filter-btn" data-on-click="toggleRAFilter">
             <span class="filter-icon">🏆</span> {{ _('Has Achievements') }}
         </button>
-        <button type="button" class="filter-btn bonus-filter-btn" onclick="toggleBonusDiscFilter()" title="{{ _('Show/hide bonus discs (hidden by default)') }}">
+        <button type="button" class="filter-btn bonus-filter-btn" data-on-click="toggleBonusDiscFilter" title="{{ _('Show/hide bonus discs (hidden by default)') }}">
             <span class="filter-icon">🎁</span> <span id="bonusFilterText">{{ _('Show Bonus') }}</span>
         </button>
-        <button type="button" class="filter-btn clear-btn" onclick="clearFilters()" id="clearFiltersBtn" style="display: none;">
+        <button type="button" class="filter-btn clear-btn" data-on-click="clearFilters" id="clearFiltersBtn" style="display: none;">
             <span class="filter-icon">✕</span> {{ _('Clear') }}
         </button>
     </div>

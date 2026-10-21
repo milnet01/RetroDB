@@ -191,7 +191,7 @@
                     <span class="locked-path-prefix" id="pathPrefix">{{ rom_path }}/</span>
                     <input type="text" id="subPath" placeholder="{{ _('subfolder (optional)') }}" value="">
                 </div>
-                <button type="button" class="btn btn-secondary" onclick="openFolderBrowser('hiddenFullPath')">📁 {{ _('Browse') }}</button>
+                <button type="button" class="btn btn-secondary" data-on-click="openFolderBrowser" data-args='["hiddenFullPath"]'>📁 {{ _('Browse') }}</button>
             </div>
             <input type="hidden" id="hiddenFullPath" value="{{ rom_path }}">
         </div>
@@ -206,7 +206,7 @@
         </div>
 
         <div class="form-group">
-            <button type="button" class="btn btn-primary" id="scanBtn" onclick="startScan()">
+            <button type="button" class="btn btn-primary" id="scanBtn" data-on-click="startScan">
                 <span class="btn-icon">🔍</span> {{ _('Start Scan') }}
             </button>
         </div>
@@ -287,9 +287,9 @@
     <div class="duplicate-groups" id="duplicateGroups"></div>
 
     <div class="action-bar">
-        <button type="button" class="btn btn-secondary" onclick="selectNewest()">📅 {{ _('Keep Newest') }}</button>
-        <button type="button" class="btn btn-secondary" onclick="selectSmallest()">📦 {{ _('Keep Smallest') }}</button>
-        <button type="button" class="btn btn-danger" onclick="deleteSelected()">🗑️ {{ _('Delete Unselected') }}</button>
+        <button type="button" class="btn btn-secondary" data-on-click="selectNewest">📅 {{ _('Keep Newest') }}</button>
+        <button type="button" class="btn btn-secondary" data-on-click="selectSmallest">📦 {{ _('Keep Smallest') }}</button>
+        <button type="button" class="btn btn-danger" data-on-click="deleteSelected">🗑️ {{ _('Delete Unselected') }}</button>
     </div>
     </div>
 </div>
@@ -298,7 +298,7 @@
 <div class="scan-log-container" id="logContainer" style="display: none;">
     <div class="scan-log-header">
         <h4>📋 {{ _('Scan Log') }}</h4>
-        <button type="button" class="btn btn-sm btn-danger" onclick="clearLog()">{{ _('Clear') }}</button>
+        <button type="button" class="btn btn-sm btn-danger" data-on-click="clearLog">{{ _('Clear') }}</button>
     </div>
     <div class="scan-log-content" id="scanLog"></div>
 </div>
@@ -446,7 +446,7 @@ function renderDuplicateGroups() {
         html += `
             <div class="duplicate-group">
                 <h4 class="duplicate-group-header">
-                    <button type="button" class="duplicate-group-toggle" onclick="toggleGroup(${gi})" aria-expanded="true" aria-controls="group-${gi}">
+                    <button type="button" class="duplicate-group-toggle" data-on-click="toggleGroup" data-args="${actionArgs(gi)}" aria-expanded="true" aria-controls="group-${gi}">
                         <span class="duplicate-group-title"><span id="arrow-${gi}">▼</span> ${escapeHtml(group.name)}</span>
                         <span class="group-stats">
                             <span>${group.count} files</span>
@@ -461,7 +461,7 @@ function renderDuplicateGroups() {
             const isFirst = fi === 0;
             html += `
                 <div class="duplicate-file ${isFirst ? 'keep' : ''}" id="file-${gi}-${fi}">
-                    <input type="radio" name="group-${gi}" ${isFirst ? 'checked' : ''} data-group="${gi}" data-file="${fi}" onchange="updateSelection(${gi}, ${fi})">
+                    <input type="radio" name="group-${gi}" ${isFirst ? 'checked' : ''} data-group="${gi}" data-file="${fi}" data-on-change="updateSelection" data-args="${actionArgs(gi, fi)}">
                     <span class="filename" title="${escapeHtml(file.path)}">${escapeHtml(file.name)}</span>
                     <span class="filesize">${formatBytes(file.size)}</span>
                     <span class="modified">${file.modified ? file.modified.split('T')[0] : ''}</span>

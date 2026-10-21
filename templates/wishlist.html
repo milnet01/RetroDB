@@ -12,10 +12,10 @@
         <p class="page-subtitle">{{ _('Games you want to find and add to your collection') }}</p>
     </div>
     <div class="page-actions">
-        <button type="button" class="btn btn-secondary" id="wishlistScrapeAllBtn" onclick="scrapeAllWishlist()" title="{{ _('Scrape metadata for every un-scraped wishlist item') }}">
+        <button type="button" class="btn btn-secondary" id="wishlistScrapeAllBtn" data-on-click="scrapeAllWishlist" title="{{ _('Scrape metadata for every un-scraped wishlist item') }}">
             <span class="btn-icon">&#128270;</span> {{ _('Scrape All') }}
         </button>
-        <button type="button" class="btn btn-primary" onclick="openAddWishlistModal()">
+        <button type="button" class="btn btn-primary" data-on-click="openAddWishlistModal">
             <span class="btn-icon">+</span> {{ _('Add to Wishlist') }}
         </button>
     </div>
@@ -23,12 +23,12 @@
 
 <!-- Priority Filter Tabs -->
 <div class="wishlist-filters">
-    <button type="button" class="filter-tab active" data-filter="all" onclick="filterWishlist('all', this)">{{ _('All') }}</button>
-    <button type="button" class="filter-tab" data-filter="1" onclick="filterWishlist('1', this)">{{ _('Must Have') }}</button>
-    <button type="button" class="filter-tab" data-filter="2" onclick="filterWishlist('2', this)">{{ _('High') }}</button>
-    <button type="button" class="filter-tab" data-filter="3" onclick="filterWishlist('3', this)">{{ _('Medium') }}</button>
-    <button type="button" class="filter-tab" data-filter="4" onclick="filterWishlist('4', this)">{{ _('Low') }}</button>
-    <button type="button" class="filter-tab" data-filter="5" onclick="filterWishlist('5', this)">{{ _('Someday') }}</button>
+    <button type="button" class="filter-tab active" data-filter="all" data-on-click="filterWishlist" data-args='["all", "$this"]'>{{ _('All') }}</button>
+    <button type="button" class="filter-tab" data-filter="1" data-on-click="filterWishlist" data-args='["1", "$this"]'>{{ _('Must Have') }}</button>
+    <button type="button" class="filter-tab" data-filter="2" data-on-click="filterWishlist" data-args='["2", "$this"]'>{{ _('High') }}</button>
+    <button type="button" class="filter-tab" data-filter="3" data-on-click="filterWishlist" data-args='["3", "$this"]'>{{ _('Medium') }}</button>
+    <button type="button" class="filter-tab" data-filter="4" data-on-click="filterWishlist" data-args='["4", "$this"]'>{{ _('Low') }}</button>
+    <button type="button" class="filter-tab" data-filter="5" data-on-click="filterWishlist" data-args='["5", "$this"]'>{{ _('Someday') }}</button>
 </div>
 
 <!-- Wishlist Items -->
@@ -43,17 +43,17 @@
     <div class="empty-state-text">
         {{ _("Add games you're looking for to keep track of your wants.") }}
     </div>
-    <button type="button" class="btn btn-primary" onclick="openAddWishlistModal()">
+    <button type="button" class="btn btn-primary" data-on-click="openAddWishlistModal">
         <span class="btn-icon">+</span> {{ _('Add First Item') }}
     </button>
 </div>
 
 <!-- Add/Edit Wishlist Modal -->
-<div class="custom-modal" id="wishlistModal" data-focus-trap data-focus-trap-onescape="closeWishlistModal" onclick="if(event.target===this)closeWishlistModal()">
+<div class="custom-modal" id="wishlistModal" data-focus-trap data-focus-trap-onescape="closeWishlistModal" data-on-click="closeWishlistModal" data-self-only>
     <div class="custom-modal-content" style="max-width: 500px;" role="dialog" aria-modal="true" aria-labelledby="wishlistModalTitle">
         <div class="custom-modal-header">
             <h3 id="wishlistModalTitle">{{ _('Add to Wishlist') }}</h3>
-            <button type="button" class="custom-modal-close" onclick="closeWishlistModal()" aria-label="{{ _('Close') }}">&times;</button>
+            <button type="button" class="custom-modal-close" data-on-click="closeWishlistModal" aria-label="{{ _('Close') }}">&times;</button>
         </div>
         <div class="custom-modal-body">
             <input type="hidden" id="wishlistEditId" value="">
@@ -79,19 +79,19 @@
             <div class="form-group">
                 <div class="form-label" id="wishlistPriorityLabel">{{ _('Priority') }}</div>
                 <div class="priority-picker" id="priorityPicker" role="group" aria-labelledby="wishlistPriorityLabel">
-                    <button type="button" class="priority-option" data-priority="1" onclick="selectPriority(this)">
+                    <button type="button" class="priority-option" data-priority="1" data-on-click="selectPriority" data-args='["$this"]'>
                         <span class="priority-dot" style="background: var(--neon-red);"></span> {{ _('Must Have') }}
                     </button>
-                    <button type="button" class="priority-option active" data-priority="2" onclick="selectPriority(this)">
+                    <button type="button" class="priority-option active" data-priority="2" data-on-click="selectPriority" data-args='["$this"]'>
                         <span class="priority-dot" style="background: var(--neon-orange);"></span> {{ _('High') }}
                     </button>
-                    <button type="button" class="priority-option" data-priority="3" onclick="selectPriority(this)">
+                    <button type="button" class="priority-option" data-priority="3" data-on-click="selectPriority" data-args='["$this"]'>
                         <span class="priority-dot" style="background: var(--primary-cyan);"></span> {{ _('Medium') }}
                     </button>
-                    <button type="button" class="priority-option" data-priority="4" onclick="selectPriority(this)">
+                    <button type="button" class="priority-option" data-priority="4" data-on-click="selectPriority" data-args='["$this"]'>
                         <span class="priority-dot" style="background: var(--text-secondary);"></span> {{ _('Low') }}
                     </button>
-                    <button type="button" class="priority-option" data-priority="5" onclick="selectPriority(this)">
+                    <button type="button" class="priority-option" data-priority="5" data-on-click="selectPriority" data-args='["$this"]'>
                         <span class="priority-dot" style="background: var(--text-muted);"></span> {{ _('Someday') }}
                     </button>
                 </div>
@@ -111,8 +111,8 @@
             </div>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="btn btn-secondary" onclick="closeWishlistModal()">{{ _('Cancel') }}</button>
-            <button type="button" class="btn btn-primary" id="wishlistSaveBtn" onclick="saveWishlistItem()">{{ _('Add to Wishlist') }}</button>
+            <button type="button" class="btn btn-secondary" data-on-click="closeWishlistModal">{{ _('Cancel') }}</button>
+            <button type="button" class="btn btn-primary" id="wishlistSaveBtn" data-on-click="saveWishlistItem">{{ _('Add to Wishlist') }}</button>
         </div>
     </div>
 </div>
@@ -637,9 +637,9 @@ function renderWishlistCard(item) {
                 ${date ? '<div class="wishlist-item-date">' + {{ _('Added {date}')|tojson }}.replace('{date}', date) + '</div>' : ''}
             </div>
             <div class="wishlist-item-actions">
-                <button type="button" class="wishlist-action-btn" onclick="scrapeWishlistItem(${item.id})" title="${rescrapeTitle}" ${rescrapeDisabled}>${rescrapeIcon}</button>
-                <button type="button" class="wishlist-action-btn" onclick="openEditWishlistModal(${item.id})" title="${ {{ _('Edit')|tojson }} }">&#9998;</button>
-                <button type="button" class="wishlist-action-btn danger" data-title="${escapeHtml(item.title)}" onclick="confirmDeleteWishlistItem(${item.id}, this.dataset.title)" title="${ {{ _('Delete')|tojson }} }">&#10005;</button>
+                <button type="button" class="wishlist-action-btn" data-on-click="scrapeWishlistItem" data-args="${actionArgs(item.id)}" title="${rescrapeTitle}" ${rescrapeDisabled}>${rescrapeIcon}</button>
+                <button type="button" class="wishlist-action-btn" data-on-click="openEditWishlistModal" data-args="${actionArgs(item.id)}" title="${ {{ _('Edit')|tojson }} }">&#9998;</button>
+                <button type="button" class="wishlist-action-btn danger" data-title="${escapeHtml(item.title)}" data-on-click="confirmDeleteWishlistItem" data-args="${actionArgs(item.id, '$this.dataset.title')}" title="${ {{ _('Delete')|tojson }} }">&#10005;</button>
             </div>
         </div>
     `;

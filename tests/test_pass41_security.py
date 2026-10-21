@@ -1839,11 +1839,11 @@ class TestPass41_13cDivAsButton:
         body = read_source('templates/rom_tools_hub.html')
         # The three onclick-driven cards must be <button>, not <div>.
         for handler in ('startImageResize', 'startAltTitlesBackfill', 'startHltbBulk'):
-            assert f'<button type="button" class="tool-card" onclick="{handler}()"' in body, (
+            assert f'<button type="button" class="tool-card" data-on-click="{handler}"' in body, (
                 f"Pass 41.13c — rom_tools_hub tool card invoking {handler}() "
                 "must be a <button>, not a <div onclick>"
             )
-        assert '<div class="tool-card" onclick=' not in body, (
+        assert '<div class="tool-card" data-on-click=' not in body, (
             "Pass 41.13c — no <div class=\"tool-card\" onclick=> may remain "
             "(WCAG 2.1.1 keyboard activation)"
         )
@@ -1853,7 +1853,7 @@ class TestPass41_13cDivAsButton:
         assert '<button type="button" class="version-info"' in body, (
             "Pass 41.13c — sidebar version-info About-trigger must be a <button>"
         )
-        assert '<div class="version-info" onclick=' not in body, (
+        assert '<div class="version-info" data-on-click=' not in body, (
             "Pass 41.13c — no <div class=\"version-info\" onclick=> may remain"
         )
 
@@ -1897,7 +1897,7 @@ class TestPass41_13cDivAsButton:
             "Pass 41.13c — duplicate group disclosure must declare "
             "aria-expanded + aria-controls"
         )
-        assert '<div class="duplicate-group-header" onclick=' not in body, (
+        assert '<div class="duplicate-group-header" data-on-click=' not in body, (
             "Pass 41.13c — no <div class=\"duplicate-group-header\" onclick=> "
             "may remain"
         )
@@ -1912,7 +1912,7 @@ class TestPass41_13cDivAsButton:
             "Pass 41.13c — screenshot-dedup disclosure must declare "
             "aria-expanded"
         )
-        assert "<div class=\"game-dedup-header\" onclick=" not in body, (
+        assert "<div class=\"game-dedup-header\" data-on-click=" not in body, (
             "Pass 41.13c — no <div class=\"game-dedup-header\" onclick=> "
             "may remain"
         )

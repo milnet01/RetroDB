@@ -358,7 +358,7 @@ const UnifiedToastController = {
 
         // Pass 45.4 — single delegated click handler routes every toast
         // action (navigate / pause / cancel / cancel-ra-queued). Replaces
-        // the inline onclick="UnifiedToastController.foo('${value}')"
+        // the inline `onclick` UnifiedToastController.foo('${value}')
         // pattern that interpolated values directly into a JS-string-in-
         // HTML-attribute context (XSS sink: a malicious return_url could
         // break out of the quotes and execute arbitrary JS at parse time,
@@ -1521,7 +1521,7 @@ const UnifiedToastController = {
         // interpolating into innerHTML.  job.system_name was previously
         // rendered raw — a system named `<img src=x onerror=alert(1)>`
         // fired in admin context (CWE-79).  type / job.job_id flowed
-        // through an inline onclick="..." JS-string-in-HTML-attribute
+        // through an inline `onclick` JS-string-in-HTML-attribute
         // double-decode context which can't be sanitized inline; we
         // replace the onclick with an addEventListener wired off
         // data-* attributes.

@@ -209,7 +209,7 @@
         {% if users %}
         <div class="user-list">
             {% for user in users %}
-            <div class="user-item {{ user.role }}" data-user-id="{{ user.id }}" data-role="{{ user.role }}" onclick="selectUser({{ user.id }}, '{{ user.role }}')">
+            <div class="user-item {{ user.role }}" data-user-id="{{ user.id }}" data-role="{{ user.role }}" data-on-click="selectUser" data-args='[{{ user.id|tojson }}, {{ (user.role)|string|tojson }}]'>
                 <div class="user-info">
                     <div class="user-avatar">
                         {% set u_avatar = user.avatar or '' %}
@@ -251,7 +251,7 @@
                 <div class="login-error" id="loginError"></div>
             </div>
             <div class="btn-group">
-                <button type="button" class="btn btn-secondary" onclick="closePasswordModal()">{{ _('Cancel') }}</button>
+                <button type="button" class="btn btn-secondary" data-on-click="closePasswordModal">{{ _('Cancel') }}</button>
                 <button type="submit" class="btn btn-primary">{{ _('Login') }}</button>
             </div>
         </form>

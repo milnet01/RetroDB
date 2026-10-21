@@ -15,12 +15,12 @@
 
     <!-- Tab Navigation -->
     <div class="setup-tabs" id="setupTabs">
-        <button type="button" class="setup-tab active" data-tab="welcome" onclick="showTab('welcome')">Welcome</button>
-        <button type="button" class="setup-tab" data-tab="admin" onclick="showTab('admin')">Admin</button>
-        <button type="button" class="setup-tab" data-tab="library" onclick="showTab('library')">Library</button>
-        <button type="button" class="setup-tab" data-tab="esde" onclick="showTab('esde')">ES-DE</button>
-        <button type="button" class="setup-tab" data-tab="apikeys" onclick="showTab('apikeys')">API Keys</button>
-        <button type="button" class="setup-tab" data-tab="complete" onclick="showTab('complete')">Complete</button>
+        <button type="button" class="setup-tab active" data-tab="welcome" data-on-click="showTab" data-args='["welcome"]'>Welcome</button>
+        <button type="button" class="setup-tab" data-tab="admin" data-on-click="showTab" data-args='["admin"]'>Admin</button>
+        <button type="button" class="setup-tab" data-tab="library" data-on-click="showTab" data-args='["library"]'>Library</button>
+        <button type="button" class="setup-tab" data-tab="esde" data-on-click="showTab" data-args='["esde"]'>ES-DE</button>
+        <button type="button" class="setup-tab" data-tab="apikeys" data-on-click="showTab" data-args='["apikeys"]'>API Keys</button>
+        <button type="button" class="setup-tab" data-tab="complete" data-on-click="showTab" data-args='["complete"]'>Complete</button>
     </div>
 
     <div id="error-banner" style="display: none; background: rgba(247, 37, 133, 0.15); border: 1px solid rgba(247, 37, 133, 0.4); border-radius: var(--radius-md); padding: var(--spacing-md); margin-bottom: var(--spacing-lg); color: var(--secondary-magenta);"></div>
@@ -78,13 +78,13 @@ SOFTWARE.</pre>
                 <!-- Acceptance Checkbox -->
                 <div style="margin-top: var(--spacing-lg); padding: var(--spacing-md); background: var(--bg-medium); border-radius: var(--radius-md); border: 1px solid var(--card-border);">
                     <label style="display: flex; align-items: center; gap: var(--spacing-sm); cursor: pointer; color: var(--text-secondary); font-size: 0.9rem;">
-                        <input type="checkbox" id="licenseAccepted" onchange="updateGetStartedBtn()">
+                        <input type="checkbox" id="licenseAccepted" data-on-change="updateGetStartedBtn">
                         I have read and accept the license and terms above
                     </label>
                 </div>
 
                 <div style="margin-top: var(--spacing-xl); text-align: right;">
-                    <button type="button" class="btn btn-primary" id="getStartedBtn" onclick="showTab('admin')" disabled>Get Started &rarr;</button>
+                    <button type="button" class="btn btn-primary" id="getStartedBtn" data-on-click="showTab" data-args='["admin"]' disabled>Get Started &rarr;</button>
                 </div>
             </div>
         </div>
@@ -114,12 +114,12 @@ SOFTWARE.</pre>
                     <select id="timezone_select" class="form-input" size="6" style="font-family: var(--font-mono); font-size: 0.85rem;"></select>
                     <small style="color: var(--text-muted); display: block; margin-top: 4px;">
                         Browser detected: <span id="detectedTzSetup"></span>
-                        &mdash; <a href="#" onclick="event.preventDefault(); useDetectedTzSetup()" style="color: var(--primary-cyan);">Use detected</a>
+                        &mdash; <a href="#" data-on-click="useDetectedTzSetup" data-prevent style="color: var(--primary-cyan);">Use detected</a>
                     </small>
                 </div>
                 <div class="setup-nav">
-                    <button type="button" class="btn btn-secondary" onclick="showTab('welcome')">&larr; Back</button>
-                    <button type="button" class="btn btn-primary" onclick="showTab('library')">Next &rarr;</button>
+                    <button type="button" class="btn btn-secondary" data-on-click="showTab" data-args='["welcome"]'>&larr; Back</button>
+                    <button type="button" class="btn btn-primary" data-on-click="showTab" data-args='["library"]'>Next &rarr;</button>
                 </div>
             </div>
         </div>
@@ -135,7 +135,7 @@ SOFTWARE.</pre>
                     <label for="rom_path">ROM Library Path</label>
                     <div class="setup-path-row">
                         <input type="text" id="rom_path" class="form-input" placeholder="{% if platform_name == 'Windows' %}C:\Games\ROMS{% elif platform_name == 'macOS' %}/Users/user/ROMS{% else %}/home/user/ROMS{% endif %}">
-                        <button type="button" class="btn btn-secondary setup-browse-btn" onclick="setupBrowseFolder('rom_path')" title="Browse folders">Browse</button>
+                        <button type="button" class="btn btn-secondary setup-browse-btn" data-on-click="setupBrowseFolder" data-args='["rom_path"]' title="Browse folders">Browse</button>
                     </div>
                     <small style="color: var(--text-muted); display: block; margin-top: 4px;">
                         {% if config.ROM_PATH %}Current: {{ config.ROM_PATH }}{% else %}
@@ -143,8 +143,8 @@ SOFTWARE.</pre>
                     </small>
                 </div>
                 <div class="setup-nav">
-                    <button type="button" class="btn btn-secondary" onclick="showTab('admin')">&larr; Back</button>
-                    <button type="button" class="btn btn-primary" onclick="showTab('esde')">Next &rarr;</button>
+                    <button type="button" class="btn btn-secondary" data-on-click="showTab" data-args='["admin"]'>&larr; Back</button>
+                    <button type="button" class="btn btn-primary" data-on-click="showTab" data-args='["esde"]'>Next &rarr;</button>
                 </div>
             </div>
         </div>
@@ -161,7 +161,7 @@ SOFTWARE.</pre>
                 <div style="margin-bottom: var(--spacing-lg); padding: var(--spacing-md); background: var(--bg-medium); border-radius: var(--radius-md); border: 1px solid var(--card-border);">
                     <div class="toggle-item">
                         <label class="toggle-switch">
-                            <input type="checkbox" id="skipEsde" onchange="toggleEsdeFields()">
+                            <input type="checkbox" id="skipEsde" data-on-change="toggleEsdeFields">
                             <span class="toggle-slider"></span>
                         </label>
                         <span class="toggle-label" style="color: var(--text-secondary); font-size: 0.9rem;">I don't use ES-DE</span>
@@ -173,14 +173,14 @@ SOFTWARE.</pre>
                         <label for="esde_gamelists">ES-DE Gamelists Path</label>
                         <div class="setup-path-row">
                             <input type="text" id="esde_gamelists" class="form-input" placeholder="{% if platform_name == 'Windows' %}C:\Users\&lt;user&gt;\ES-DE\gamelists{% elif platform_name == 'macOS' %}/Users/user/.emulationstation/gamelists{% else %}/home/user/.emulationstation/gamelists{% endif %}">
-                            <button type="button" class="btn btn-secondary setup-browse-btn" onclick="setupBrowseFolder('esde_gamelists')" title="Browse folders">Browse</button>
+                            <button type="button" class="btn btn-secondary setup-browse-btn" data-on-click="setupBrowseFolder" data-args='["esde_gamelists"]' title="Browse folders">Browse</button>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="esde_media">ES-DE Downloaded Media Path</label>
                         <div class="setup-path-row">
                             <input type="text" id="esde_media" class="form-input" placeholder="{% if platform_name == 'Windows' %}C:\Users\&lt;user&gt;\ES-DE\downloaded_media{% elif platform_name == 'macOS' %}/Users/user/.emulationstation/downloaded_media{% else %}/home/user/.emulationstation/downloaded_media{% endif %}">
-                            <button type="button" class="btn btn-secondary setup-browse-btn" onclick="setupBrowseFolder('esde_media')" title="Browse folders">Browse</button>
+                            <button type="button" class="btn btn-secondary setup-browse-btn" data-on-click="setupBrowseFolder" data-args='["esde_media"]' title="Browse folders">Browse</button>
                         </div>
                     </div>
                 </div>
@@ -189,8 +189,8 @@ SOFTWARE.</pre>
                 </div>
 
                 <div class="setup-nav">
-                    <button type="button" class="btn btn-secondary" onclick="showTab('library')">&larr; Back</button>
-                    <button type="button" class="btn btn-primary" onclick="showTab('apikeys')">Next &rarr;</button>
+                    <button type="button" class="btn btn-secondary" data-on-click="showTab" data-args='["library"]'>&larr; Back</button>
+                    <button type="button" class="btn btn-primary" data-on-click="showTab" data-args='["apikeys"]'>Next &rarr;</button>
                 </div>
             </div>
         </div>
@@ -268,8 +268,8 @@ SOFTWARE.</pre>
                 </details>
 
                 <div class="setup-nav">
-                    <button type="button" class="btn btn-secondary" onclick="showTab('esde')">&larr; Back</button>
-                    <button type="button" class="btn btn-primary" onclick="showTab('complete')">Next &rarr;</button>
+                    <button type="button" class="btn btn-secondary" data-on-click="showTab" data-args='["esde"]'>&larr; Back</button>
+                    <button type="button" class="btn btn-primary" data-on-click="showTab" data-args='["complete"]'>Next &rarr;</button>
                 </div>
             </div>
         </div>
@@ -282,9 +282,9 @@ SOFTWARE.</pre>
                 <h2 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">Ready to Go!</h2>
                 <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">Click the button below to save your configuration and start using RetroDB.</p>
                 <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: var(--spacing-xl);">You can change any of these settings later via the Settings page.</p>
-                <button type="button" class="btn btn-primary" id="finishBtn" onclick="finishSetup()" style="font-size: 1.1rem; padding: var(--spacing-md) var(--spacing-xl);">Complete Setup</button>
+                <button type="button" class="btn btn-primary" id="finishBtn" data-on-click="finishSetup" style="font-size: 1.1rem; padding: var(--spacing-md) var(--spacing-xl);">Complete Setup</button>
                 <div style="margin-top: var(--spacing-lg);">
-                    <button type="button" class="btn btn-secondary" onclick="showTab('apikeys')">&larr; Back</button>
+                    <button type="button" class="btn btn-secondary" data-on-click="showTab" data-args='["apikeys"]'>&larr; Back</button>
                 </div>
             </div>
         </div>
@@ -367,7 +367,7 @@ function renderSetupFolderBrowser(data) {
     let html = '';
 
     if (data.parent_path) {
-        html += '<div class="folder-item folder-parent" data-path="' + escapeHtml(data.parent_path) + '" onclick="navigateSetupFolder(this.dataset.path)">' +
+        html += '<div class="folder-item folder-parent" data-path="' + escapeHtml(data.parent_path) + '" data-on-click="navigateSetupFolder" data-args="' + actionArgs('$this.dataset.path') + '">' +
                 '<span class="folder-icon">\u{1F4C1}</span>' +
                 '<span class="folder-name">..</span>' +
                 '<span class="folder-info">Parent folder</span>' +
@@ -385,7 +385,7 @@ function renderSetupFolderBrowser(data) {
         if (folder.file_count > 0) info.push(folder.file_count + ' files');
         if (folder.subfolder_count > 0) info.push(folder.subfolder_count + ' folders');
 
-        html += '<div class="folder-item" data-path="' + escapeHtml(folder.path) + '" onclick="navigateSetupFolder(this.dataset.path)">' +
+        html += '<div class="folder-item" data-path="' + escapeHtml(folder.path) + '" data-on-click="navigateSetupFolder" data-args="' + actionArgs('$this.dataset.path') + '">' +
                 '<span class="folder-icon">\u{1F4C1}</span>' +
                 '<span class="folder-name">' + escapeHtml(folder.name) + '</span>' +
                 '<span class="folder-info">' + (info.join(', ') || 'Empty') + '</span>' +

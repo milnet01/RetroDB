@@ -100,11 +100,11 @@
                   style="font-size: 0.85rem; color: var(--text-muted);">
                 {% if system.last_synced %}{{ _('Loading...') }}{% else %}{{ _('Never synced') }}{% endif %}
             </span>
-            <button type="button" onclick="refreshSystemProgress()" class="btn btn-primary btn-sm" id="refreshBtn">
+            <button type="button" data-on-click="refreshSystemProgress" class="btn btn-primary btn-sm" id="refreshBtn">
                 <span class="btn-icon">🔄</span>
                 <span class="btn-text">{{ _('Sync Progress') }}</span>
             </button>
-            <button type="button" onclick="clearSystemRAData()" class="btn btn-danger btn-sm" id="clearRABtn" title="{{ _('Remove this system from Achievements') }}">
+            <button type="button" data-on-click="clearSystemRAData" class="btn btn-danger btn-sm" id="clearRABtn" title="{{ _('Remove this system from Achievements') }}">
                 <span class="btn-icon">🗑️</span>
                 <span class="btn-text">{{ _('Clear RA Data') }}</span>
             </button>
@@ -161,11 +161,11 @@
 <div class="filter-bar glass-panel" style="padding: var(--spacing-md); margin-bottom: var(--spacing-lg);">
     <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-md); align-items: center;">
         <div class="form-group" style="margin: 0; flex: 1; min-width: 200px;">
-            <input type="text" class="form-input" id="gameSearch" placeholder="🔍 {{ _('Search games...') }}" onkeyup="filterGames()">
+            <input type="text" class="form-input" id="gameSearch" placeholder="🔍 {{ _('Search games...') }}" data-on-keyup="filterGames">
         </div>
         {% if ra_configured %}
         <div class="form-group" style="margin: 0;">
-            <select class="form-select" id="progressFilter" onchange="filterGames()">
+            <select class="form-select" id="progressFilter" data-on-change="filterGames">
                 <option value="">{{ _('All Games') }}</option>
                 <option value="in-progress">{{ _('In Progress') }}</option>
                 <option value="not-started">{{ _('Not Started') }}</option>
@@ -195,7 +195,7 @@
         <div class="achievement-games-grid" id="gamesGrid">
             {% for game in games %}
             <div class="achievement-game-card"
-               onclick="window.location.href='{{ url_for('achievements.achievement_game', game_id=game.id) }}'"
+               data-on-click="navigateTo" data-args='[{{ url_for('achievements.achievement_game', game_id=game.id)|tojson }}]'
                style="cursor: pointer;"
                data-title="{{ game.title|lower }}"
                data-game-id="{{ game.id }}"

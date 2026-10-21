@@ -475,6 +475,11 @@ window.closeBulkScrapeModal = function() {
     BulkScrapeController.closeModal();
 };
 
+window.closeBulkScrapeModalAndReload = function() {
+    BulkScrapeController.closeModal();
+    location.reload();
+};
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
     BulkScrapeController.checkOnLoad();

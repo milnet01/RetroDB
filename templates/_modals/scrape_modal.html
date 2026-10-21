@@ -4,11 +4,11 @@
         <div class="scrape-modal-header">
             <h2 id="scrapeModalHeading">{{ _('Search Metadata') }}</h2>
             <span class="scrape-modal-subtitle" id="scrapeModalSubtitle">{{ _('Search enabled scrapers for metadata and boxart.') }}</span>
-            <button type="button" class="modal-close-btn" onclick="closeScrapeModal()" aria-label="{{ _('Close scrape modal') }}">×</button>
+            <button type="button" class="modal-close-btn" data-on-click="closeScrapeModal" aria-label="{{ _('Close scrape modal') }}">×</button>
         </div>
 
         <div class="scrape-modal-body">
-            <form id="scrapeSearchForm" onsubmit="performSearch(event)">
+            <form id="scrapeSearchForm" data-on-submit="performSearch" data-args='["$event"]'>
                 <div class="search-input-row">
                     <input type="text"
                            id="scrapeSearchInput"
@@ -34,7 +34,7 @@
             <form method="POST" id="resetMetadataForm">
                 <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
                 <input type="hidden" name="action" value="reset">
-                <button type="button" class="btn btn-danger btn-sm" onclick="showConfirm('🗑️ Reset Metadata', 'Reset all metadata including boxart and screenshots? This cannot be undone.', function() { document.getElementById('resetMetadataForm').submit(); })">
+                <button type="button" class="btn btn-danger btn-sm" data-on-click="confirmResetMetadata">
                     <span class="btn-icon">🗑️</span>
                     {{ _('Reset Metadata') }}
                 </button>

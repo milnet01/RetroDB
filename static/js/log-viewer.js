@@ -443,7 +443,7 @@ const LogViewer = {
             const badgeLabel = session.outcome === 'unknown' ? '...' : session.outcome;
 
             chunks.push(`<div class="log-session" data-session="${i}">`);
-            chunks.push(`<div class="log-session-header" onclick="LogViewer.toggleSession(this)">`);
+            chunks.push(`<div class="log-session-header" data-on-click="LogViewer.toggleSession" data-args="${actionArgs('$this')}">`);
             chunks.push(`<span class="session-toggle">\u25B6</span>`);
             chunks.push(`<span class="session-title">${this.escapeHtml(session.title)}</span>`);
             if (session.system) {
@@ -628,6 +628,8 @@ const LogViewer = {
         return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 };
+
+window.LogViewer = LogViewer;
 
 // Initialize on DOM ready
 document.addEventListener('DOMContentLoaded', () => {

@@ -3952,7 +3952,20 @@ weren't worth blocking the ship on.  Ordered by rough priority.
   files or nonced blocks (`<script nonce="{{ csp_nonce }}">`), then change
   the header name from `Content-Security-Policy-Report-Only` to
   `Content-Security-Policy` in `app.py::set_security_headers`.
-- **Status**: partial (v3.6.20). Phase A landed — every inline
+- **Resolution** (2026-10-21): Shipped in v3.30.0 (2026-10-21). Every inline on<event>= handler in
+  templates and in HTML the scripts build moved to data-on-<event>
+  (dispatcher: static/js/main.js initializeDelegatedActions;
+  actionArgs() in utils.js for script-built HTML). The header is now
+  Content-Security-Policy. Changes from the planned policy: the unused
+  cdn.jsdelivr.net, fonts.googleapis.com and fonts.gstatic.com
+  allowances are gone (vendored since Pass 46.1); img-src adds https:
+  because scrape previews and Steam / Xbox / PSN icons load from their
+  CDNs. style-src keeps 'unsafe-inline'. Pins: tests/test_fu1_csp.py (no
+  inline handler, every action resolves, literal data-args parse) and
+  tests/test_security_headers.py. Verified on a :5001 scratch server:
+  every page's actions resolve in the browser, and an injected onclick
+  is blocked (script-src-attr).
+- **Status**: done (v3.6.20). Phase A landed — every inline
   `<script>` block carries `nonce="{{ csp_nonce }}"` (46 blocks across
   38 templates) and every live `onerror=` attribute has moved to either
   a `data-on-error="<action>"` marker (handled by the document-level

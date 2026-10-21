@@ -4,11 +4,11 @@
         <div class="scrape-modal-header">
             <h2 id="editModalHeading">{{ _('Edit Metadata') }}</h2>
             <span class="scrape-modal-subtitle">{{ _('Edit game information and upload custom images') }}</span>
-            <button type="button" class="modal-close-btn" onclick="closeEditModal()" aria-label="{{ _('Close edit modal') }}">×</button>
+            <button type="button" class="modal-close-btn" data-on-click="closeEditModal" aria-label="{{ _('Close edit modal') }}">×</button>
         </div>
 
         <div class="modal-top-actions">
-            <button type="button" class="btn btn-secondary" onclick="closeEditModal()">
+            <button type="button" class="btn btn-secondary" data-on-click="closeEditModal">
                 <span class="btn-icon">✕</span> {{ _('Cancel') }}
             </button>
             <button type="submit" form="editMetadataForm" class="btn btn-primary">
@@ -32,7 +32,7 @@
                             <label for="edit_sort_title">{{ _('Sort Title') }}</label>
                             <div style="display: flex; gap: 8px;">
                                 <input type="text" name="edit_sort_title" id="edit_sort_title" value="{{ game.sort_title or '' }}" placeholder="{{ _('Auto-generated from title') }}" style="flex: 1;" />
-                                <button type="button" class="btn btn-secondary btn-sm" onclick="generateSortTitle()" title="{{ _('Generate from title') }}">⚡ {{ _('Auto') }}</button>
+                                <button type="button" class="btn btn-secondary btn-sm" data-on-click="generateSortTitle" title="{{ _('Generate from title') }}">⚡ {{ _('Auto') }}</button>
                             </div>
                             <span class="field-tip">{{ _('Used for proper franchise ordering (e.g., "Final Fantasy 07" instead of "VII")') }}</span>
                         </div>
@@ -40,7 +40,7 @@
                             <label for="edit_franchise">{{ _('Franchise / Series') }}</label>
                             <div class="toggle-row" style="margin-bottom: var(--spacing-sm);">
                                 <label class="toggle-switch" for="edit_franchise">
-                                    <input type="checkbox" id="edit_franchise_toggle" aria-label="{{ _('Toggle franchise status') }}" onchange="updateEditFranchiseToggle()">
+                                    <input type="checkbox" id="edit_franchise_toggle" aria-label="{{ _('Toggle franchise status') }}" data-on-change="updateEditFranchiseToggle">
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <span id="edit_franchise_label" class="toggle-label" style="margin-left: var(--spacing-sm);">{{ _('Standalone') }}</span>
@@ -73,7 +73,7 @@
                                        pattern="\d{4}-\d{2}-\d{2}"
                                        style="flex:1;" />
                                 <input type="date" id="editReleaseDatePicker" tabindex="-1" aria-hidden="true" style="position:absolute; opacity:0; width:0; height:0; pointer-events:none;">
-                                <button type="button" class="btn btn-sm btn-secondary" onclick="var p=document.getElementById('editReleaseDatePicker');p.value=document.getElementById('edit_release_date').value;p.showPicker()" title="{{ _('Pick date') }}" style="padding:4px 8px; font-size:1rem;">📅</button>
+                                <button type="button" class="btn btn-sm btn-secondary" data-on-click="openDatePicker" data-args='["editReleaseDatePicker", "edit_release_date"]' title="{{ _('Pick date') }}" style="padding:4px 8px; font-size:1rem;">📅</button>
                             </div>
                             <span class="field-tip">{{ _('Format: YYYY-MM-DD (e.g., 1996-09-29)') }}</span>
                         </div>
@@ -107,7 +107,7 @@
                             <div class="genre-select-container" id="genreContainer"></div>
                             <input type="hidden" name="edit_genre" id="edit_genre_hidden" value="{{ game.genre or '' }}" />
                             <div class="genre-dropdown" style="margin-top: 8px;">
-                                <select id="genreDropdown" class="form-select" onchange="addGenreFromDropdown()" aria-label="{{ _('Add genre') }}">
+                                <select id="genreDropdown" class="form-select" data-on-change="addGenreFromDropdown" aria-label="{{ _('Add genre') }}">
                                     <option value="">{{ _('+ Add genre...') }}</option>
                                 </select>
                             </div>
@@ -118,7 +118,7 @@
                             <div class="genre-select-container" id="modesContainer"></div>
                             <input type="hidden" name="edit_modes" id="edit_modes_hidden" value="{{ game.modes or '' }}" />
                             <div class="genre-dropdown" style="margin-top: 8px;">
-                                <select id="modesDropdown" class="form-select" onchange="addModeFromDropdown()" aria-label="{{ _('Add play mode') }}">
+                                <select id="modesDropdown" class="form-select" data-on-change="addModeFromDropdown" aria-label="{{ _('Add play mode') }}">
                                     <option value="">{{ _('+ Add mode...') }}</option>
                                 </select>
                             </div>
@@ -148,7 +148,7 @@
                                    value="{{ game.game_structure or '' }}" />
                             <div class="genre-dropdown" style="margin-top: 8px;">
                                 <select id="gameStructureDropdown" class="form-select"
-                                        onchange="addGameStructureFromDropdown()" aria-label="{{ _('Add game structure') }}">
+                                        data-on-change="addGameStructureFromDropdown" aria-label="{{ _('Add game structure') }}">
                                     <option value="">{{ _('+ Add structure...') }}</option>
                                 </select>
                             </div>
@@ -159,7 +159,7 @@
                             <div class="genre-select-container" id="perspectiveContainer"></div>
                             <input type="hidden" name="edit_perspective" id="edit_perspective_hidden" value="{{ game.perspective or '' }}" />
                             <div class="genre-dropdown" style="margin-top: 8px;">
-                                <select id="perspectiveDropdown" class="form-select" onchange="addPerspectiveFromDropdown()" aria-label="{{ _('Add perspective') }}">
+                                <select id="perspectiveDropdown" class="form-select" data-on-change="addPerspectiveFromDropdown" aria-label="{{ _('Add perspective') }}">
                                     <option value="">{{ _('+ Add perspective...') }}</option>
                                 </select>
                             </div>
@@ -170,7 +170,7 @@
                             <div class="genre-select-container" id="dimensionContainer"></div>
                             <input type="hidden" name="edit_dimension" id="edit_dimension_hidden" value="{{ game.dimension or '' }}" />
                             <div class="genre-dropdown" style="margin-top: 8px;">
-                                <select id="dimensionDropdown" class="form-select" onchange="addDimensionFromDropdown()" aria-label="{{ _('Add dimension') }}">
+                                <select id="dimensionDropdown" class="form-select" data-on-change="addDimensionFromDropdown" aria-label="{{ _('Add dimension') }}">
                                     <option value="">{{ _('+ Add dimension...') }}</option>
                                 </select>
                             </div>
@@ -187,7 +187,7 @@
                             <div class="controller-select-container" id="controllerContainer"></div>
                             <input type="hidden" name="edit_controller_support" id="edit_controller_hidden" value="{{ game.controller_support or '' }}" />
                             <div class="controller-dropdown">
-                                <select id="controllerDropdown" onchange="addControllerFromDropdown()" aria-label="{{ _('Add controller') }}">
+                                <select id="controllerDropdown" data-on-change="addControllerFromDropdown" aria-label="{{ _('Add controller') }}">
                                     <option value="">{{ _('+ Add controller...') }}</option>
                                 </select>
                             </div>
@@ -195,7 +195,7 @@
                                    aria-label="{{ _('Custom controller name') }}"
                                    placeholder="{{ _('Or type custom and press Enter') }}"
                                    style="margin-top: 8px;"
-                                   onkeypress="if(event.key==='Enter'){event.preventDefault(); addCustomController();}" />
+                                   data-on-keypress="addCustomController" data-key="Enter" data-prevent />
                             <span class="field-tip">{{ _('Click ✕ to remove, use dropdown or type custom') }}</span>
                         </div>
                         <div class="edit-field" role="group" aria-labelledby="editSaveTypeFieldLabel">
@@ -203,7 +203,7 @@
                             <div class="genre-select-container" id="saveTypeContainer"></div>
                             <input type="hidden" name="edit_save_type" id="edit_save_type_hidden" value="{{ game.save_type or '' }}" />
                             <div class="genre-dropdown" style="margin-top: 8px;">
-                                <select id="saveTypeDropdown" class="form-select" onchange="addSaveTypeFromDropdown()" aria-label="{{ _('Add save type') }}">
+                                <select id="saveTypeDropdown" class="form-select" data-on-change="addSaveTypeFromDropdown" aria-label="{{ _('Add save type') }}">
                                     <option value="">{{ _('+ Add save type...') }}</option>
                                 </select>
                             </div>
@@ -213,7 +213,7 @@
                             <label for="edit_other_platforms">{{ _('Platform Availability') }}</label>
                             <div class="toggle-row" style="margin-bottom: var(--spacing-sm);">
                                 <label class="toggle-switch" for="edit_other_platforms">
-                                    <input type="checkbox" id="edit_exclusive_toggle" aria-label="{{ _('Toggle platform exclusivity') }}" onchange="updateEditExclusiveToggle()">
+                                    <input type="checkbox" id="edit_exclusive_toggle" aria-label="{{ _('Toggle platform exclusivity') }}" data-on-change="updateEditExclusiveToggle">
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <span id="edit_exclusive_label" class="toggle-label" style="margin-left: var(--spacing-sm);">{{ _('Exclusive') }}</span>
@@ -349,7 +349,7 @@
                             <input id="custom_boxart" type="file" name="custom_boxart" accept="image/*" />
                             {% if game.boxart %}
                             <span class="current-file">{% trans filename=game.boxart %}Current: {{ filename }}{% endtrans %}</span>
-                            <button type="button" class="btn btn-sm btn-danger" style="margin-top: 8px;" onclick="showConfirm('🗑️ Delete Boxart', 'Delete boxart? You can re-scrape to get a new one.', function() { document.querySelector('input[name=remove_boxart]').value='1'; document.getElementById('editMetadataForm').submit(); })">
+                            <button type="button" class="btn btn-sm btn-danger" style="margin-top: 8px;" data-on-click="confirmRemoveMedia" data-args='["remove_boxart", "🗑️ Delete Boxart", "Delete boxart? You can re-scrape to get a new one."]'>
                                 🗑️ {{ _('Delete Boxart') }}
                             </button>
                             <input type="hidden" name="remove_boxart" value="" />
@@ -360,7 +360,7 @@
                             <input id="custom_boxart_3d" type="file" name="custom_boxart_3d" accept="image/*" />
                             {% if game.boxart_3d %}
                             <span class="current-file">{% trans filename=game.boxart_3d %}Current: {{ filename }}{% endtrans %}</span>
-                            <button type="button" class="btn btn-sm btn-danger" style="margin-top: 8px;" onclick="showConfirm('🗑️ Delete 3D Boxart', 'Delete 3D boxart? You can re-scrape to get a new one.', function() { document.querySelector('input[name=remove_boxart_3d]').value='1'; document.getElementById('editMetadataForm').submit(); })">
+                            <button type="button" class="btn btn-sm btn-danger" style="margin-top: 8px;" data-on-click="confirmRemoveMedia" data-args='["remove_boxart_3d", "🗑️ Delete 3D Boxart", "Delete 3D boxart? You can re-scrape to get a new one."]'>
                                 🗑️ {{ _('Delete 3D Boxart') }}
                             </button>
                             <input type="hidden" name="remove_boxart_3d" value="" />
@@ -371,7 +371,7 @@
                             <input id="custom_fanart" type="file" name="custom_fanart" accept="image/*" />
                             {% if game.fanart %}
                             <span class="current-file">{% trans filename=game.fanart %}Current: {{ filename }}{% endtrans %}</span>
-                            <button type="button" class="btn btn-sm btn-danger" style="margin-top: 8px;" onclick="showConfirm('🗑️ Delete Fanart', 'Delete fanart? You can re-scrape to get a new one.', function() { document.querySelector('input[name=remove_fanart]').value='1'; document.getElementById('editMetadataForm').submit(); })">
+                            <button type="button" class="btn btn-sm btn-danger" style="margin-top: 8px;" data-on-click="confirmRemoveMedia" data-args='["remove_fanart", "🗑️ Delete Fanart", "Delete fanart? You can re-scrape to get a new one."]'>
                                 🗑️ {{ _('Delete Fanart') }}
                             </button>
                             <input type="hidden" name="remove_fanart" value="" />
@@ -396,7 +396,7 @@
                         <span class="field-tip">{{ _('Supported formats: MP4, WebM, OGG') }}</span>
                         {% if game.video %}
                         <span class="current-file">{% trans filename=game.video %}Current: {{ filename }}{% endtrans %}</span>
-                        <button type="button" class="btn btn-sm btn-danger" style="margin-top: 8px;" onclick="showConfirm('🗑️ Remove Video', 'Remove video? You can upload a new one later.', function() { document.querySelector('input[name=remove_video]').value='1'; document.getElementById('editMetadataForm').submit(); })">
+                        <button type="button" class="btn btn-sm btn-danger" style="margin-top: 8px;" data-on-click="confirmRemoveMedia" data-args='["remove_video", "🗑️ Remove Video", "Remove video? You can upload a new one later."]'>
                             🗑️ {{ _('Remove Video') }}
                         </button>
                         <input type="hidden" name="remove_video" value="" />

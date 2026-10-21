@@ -88,8 +88,8 @@
                 <span class="locked-path-prefix" id="basePath">{{ rom_path }}/</span>
                 <input type="text" id="subPath" placeholder="{{ _('subfolder (optional)') }}" value="">
             </div>
-            <button type="button" class="btn btn-secondary" onclick="openFolderBrowser('hiddenFullPath')">📁 {{ _('Browse') }}</button>
-            <button type="button" class="btn btn-primary" onclick="scanFiles()">🔍 {{ _('Scan') }}</button>
+            <button type="button" class="btn btn-secondary" data-on-click="openFolderBrowser" data-args='["hiddenFullPath"]'>📁 {{ _('Browse') }}</button>
+            <button type="button" class="btn btn-primary" data-on-click="scanFiles">🔍 {{ _('Scan') }}</button>
         </div>
         <input type="hidden" id="hiddenFullPath" value="{{ rom_path }}">
     </div>
@@ -99,31 +99,31 @@
         <div class="toggle-grid" role="group" aria-labelledby="chdFileTypesLabel">
             <div class="toggle-item">
                 <label class="toggle-switch">
-                    <input type="checkbox" id="typeIso" aria-label="{{ _('Convert ISO files') }}" checked onchange="updateToggleLabel(this)">
+                    <input type="checkbox" id="typeIso" aria-label="{{ _('Convert ISO files') }}" checked data-on-change="updateToggleLabel" data-args='["$this"]'>
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label active" onclick="document.getElementById('typeIso').click()">{{ _('ISO (.iso)') }}</span>
+                <span class="toggle-label active" data-on-click="clickElement" data-args='["typeIso"]'>{{ _('ISO (.iso)') }}</span>
             </div>
             <div class="toggle-item">
                 <label class="toggle-switch">
-                    <input type="checkbox" id="typeCue" aria-label="{{ _('Convert BIN/CUE files') }}" checked onchange="updateToggleLabel(this)">
+                    <input type="checkbox" id="typeCue" aria-label="{{ _('Convert BIN/CUE files') }}" checked data-on-change="updateToggleLabel" data-args='["$this"]'>
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label active" onclick="document.getElementById('typeCue').click()">{{ _('BIN/CUE (.cue)') }}</span>
+                <span class="toggle-label active" data-on-click="clickElement" data-args='["typeCue"]'>{{ _('BIN/CUE (.cue)') }}</span>
             </div>
             <div class="toggle-item">
                 <label class="toggle-switch">
-                    <input type="checkbox" id="typeGdi" aria-label="{{ _('Convert GDI files') }}" checked onchange="updateToggleLabel(this)">
+                    <input type="checkbox" id="typeGdi" aria-label="{{ _('Convert GDI files') }}" checked data-on-change="updateToggleLabel" data-args='["$this"]'>
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label active" onclick="document.getElementById('typeGdi').click()">{{ _('GDI (.gdi)') }}</span>
+                <span class="toggle-label active" data-on-click="clickElement" data-args='["typeGdi"]'>{{ _('GDI (.gdi)') }}</span>
             </div>
             <div class="toggle-item">
                 <label class="toggle-switch">
-                    <input type="checkbox" id="typeMds" aria-label="{{ _('Convert MDF/MDS files') }}" onchange="updateToggleLabel(this)">
+                    <input type="checkbox" id="typeMds" aria-label="{{ _('Convert MDF/MDS files') }}" data-on-change="updateToggleLabel" data-args='["$this"]'>
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label" onclick="document.getElementById('typeMds').click()">{{ _('MDF/MDS (.mds)') }}</span>
+                <span class="toggle-label" data-on-click="clickElement" data-args='["typeMds"]'>{{ _('MDF/MDS (.mds)') }}</span>
             </div>
         </div>
     </div>
@@ -143,31 +143,31 @@
         <div class="toggle-grid">
             <div class="toggle-item">
                 <label class="toggle-switch">
-                    <input type="checkbox" id="optVerify" aria-label="{{ _('Verify after conversion') }}" {% if settings.chd_verify_after_convert %}checked{% endif %} onchange="updateToggleLabel(this)">
+                    <input type="checkbox" id="optVerify" aria-label="{{ _('Verify after conversion') }}" {% if settings.chd_verify_after_convert %}checked{% endif %} data-on-change="updateToggleLabel" data-args='["$this"]'>
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label{% if settings.chd_verify_after_convert %} active{% endif %}" onclick="document.getElementById('optVerify').click()">{{ _('Verify after conversion') }}</span>
+                <span class="toggle-label{% if settings.chd_verify_after_convert %} active{% endif %}" data-on-click="clickElement" data-args='["optVerify"]'>{{ _('Verify after conversion') }}</span>
             </div>
             <div class="toggle-item">
                 <label class="toggle-switch">
-                    <input type="checkbox" id="optDelete" aria-label="{{ _('Delete original files after success') }}" {% if settings.chd_delete_originals %}checked{% endif %} onchange="updateToggleLabel(this)">
+                    <input type="checkbox" id="optDelete" aria-label="{{ _('Delete original files after success') }}" {% if settings.chd_delete_originals %}checked{% endif %} data-on-change="updateToggleLabel" data-args='["$this"]'>
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label{% if settings.chd_delete_originals %} active{% endif %}" onclick="document.getElementById('optDelete').click()">{{ _('Delete original files after success') }}</span>
+                <span class="toggle-label{% if settings.chd_delete_originals %} active{% endif %}" data-on-click="clickElement" data-args='["optDelete"]'>{{ _('Delete original files after success') }}</span>
             </div>
             <div class="toggle-item">
                 <label class="toggle-switch">
-                    <input type="checkbox" id="optSkip" aria-label="{{ _('Skip existing CHD files') }}" {% if settings.chd_skip_existing %}checked{% endif %} onchange="updateToggleLabel(this)">
+                    <input type="checkbox" id="optSkip" aria-label="{{ _('Skip existing CHD files') }}" {% if settings.chd_skip_existing %}checked{% endif %} data-on-change="updateToggleLabel" data-args='["$this"]'>
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label{% if settings.chd_skip_existing %} active{% endif %}" onclick="document.getElementById('optSkip').click()">{{ _('Skip existing CHD files') }}</span>
+                <span class="toggle-label{% if settings.chd_skip_existing %} active{% endif %}" data-on-click="clickElement" data-args='["optSkip"]'>{{ _('Skip existing CHD files') }}</span>
             </div>
         </div>
     </div>
 
     <div class="btn-group">
-        <button type="button" class="btn btn-primary" id="convertBtn" onclick="startConversion()" disabled>🔄 {{ _('Start Conversion') }}</button>
-        <button type="button" class="btn btn-danger" id="cancelBtn" onclick="cancelConversion()" disabled>❌ {{ _('Cancel') }}</button>
+        <button type="button" class="btn btn-primary" id="convertBtn" data-on-click="startConversion" disabled>🔄 {{ _('Start Conversion') }}</button>
+        <button type="button" class="btn btn-danger" id="cancelBtn" data-on-click="cancelConversion" disabled>❌ {{ _('Cancel') }}</button>
     </div>
 
     <div class="progress-section" id="progressSection" style="display: none;">
@@ -269,7 +269,7 @@ function renderFileList() {
     
     let html = `
         <div class="file-list-header">
-            <span><input type="checkbox" checked onclick="toggleAll(this)"></span>
+            <span><input type="checkbox" checked data-on-click="toggleAll" data-args="${actionArgs('$this')}"></span>
             <span>Filename</span>
             <span>Size</span>
             <span>Type</span>

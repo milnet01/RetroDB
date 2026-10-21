@@ -22,7 +22,7 @@
 <div class="game-page-header">
     <h1 class="game-page-title">{{ psn_game.title }}</h1>
     <div class="header-buttons">
-        <button type="button" class="btn btn-secondary" onclick="refreshTrophies()" id="refreshBtn">
+        <button type="button" class="btn btn-secondary" data-on-click="refreshTrophies" id="refreshBtn">
             <span class="btn-icon">🔄</span>
             {{ _('Refresh') }}
         </button>
@@ -156,7 +156,7 @@
                        value="{{ psn_game.title }}"
                        placeholder="{{ _('Search game title...') }}">
 
-                <button type="button" class="btn-hltb" id="hltbLookupBtn" onclick="lookupHLTB()">
+                <button type="button" class="btn-hltb" id="hltbLookupBtn" data-on-click="lookupHLTB">
                     🔍 {{ _('Lookup HLTB') }}
                 </button>
 
@@ -178,8 +178,8 @@
                         </div>
                     </div>
                     <div class="hltb-actions" style="margin-top: var(--spacing-sm); display: flex; gap: var(--spacing-xs);">
-                        <button type="button" class="btn btn-sm btn-primary" onclick="confirmHLTB()">✓ {{ _('Save') }}</button>
-                        <button type="button" class="btn btn-sm btn-secondary" onclick="cancelHLTB()">✕ {{ _('Cancel') }}</button>
+                        <button type="button" class="btn btn-sm btn-primary" data-on-click="confirmHLTB">✓ {{ _('Save') }}</button>
+                        <button type="button" class="btn btn-sm btn-secondary" data-on-click="cancelHLTB">✕ {{ _('Cancel') }}</button>
                     </div>
                 </div>
 
@@ -211,7 +211,7 @@
                         </div>
                     </div>
                     <div class="hltb-actions" style="margin-top: var(--spacing-sm);">
-                        <button type="button" class="btn btn-sm btn-danger" onclick="clearHLTB()">✕ {{ _('Clear') }}</button>
+                        <button type="button" class="btn btn-sm btn-danger" data-on-click="clearHLTB">✕ {{ _('Clear') }}</button>
                     </div>
                 </div>
 
@@ -296,8 +296,8 @@
                         </div>
                     </a>
                     <div style="display: flex; gap: var(--spacing-xs); margin-top: var(--spacing-sm);">
-                        <button type="button" class="btn btn-sm btn-secondary" onclick="showLinkSearch()">{{ _('Change') }}</button>
-                        <button type="button" class="btn btn-sm btn-danger" onclick="unlinkGame()">{{ _('Unlink') }}</button>
+                        <button type="button" class="btn btn-sm btn-secondary" data-on-click="showLinkSearch">{{ _('Change') }}</button>
+                        <button type="button" class="btn btn-sm btn-danger" data-on-click="unlinkGame">{{ _('Unlink') }}</button>
                     </div>
                 </div>
                 {% else %}
@@ -316,13 +316,13 @@
                                    value="{{ psn_game.title|replace('™', '')|replace('®', '') }}"
                                    placeholder="{{ _('Search game title...') }}"
                                    style="flex: 1;"
-                                   onkeydown="if(event.key==='Enter') searchGamesForLink()">
-                            <button type="button" class="btn-hltb" onclick="searchGamesForLink()" style="width: auto; padding: 10px 16px;">{{ _('Search') }}</button>
+                                   data-on-keydown="searchGamesForLink" data-key="Enter">
+                            <button type="button" class="btn-hltb" data-on-click="searchGamesForLink" style="width: auto; padding: 10px 16px;">{{ _('Search') }}</button>
                         </div>
                         <div id="gameLinkResults" style="margin-top: var(--spacing-sm); display: none; max-height: 300px; overflow-y: auto;">
                         </div>
                         {% if game %}
-                        <button type="button" class="btn btn-sm btn-secondary" style="margin-top: var(--spacing-sm);" onclick="cancelLinkSearch()">{{ _('Cancel') }}</button>
+                        <button type="button" class="btn btn-sm btn-secondary" style="margin-top: var(--spacing-sm);" data-on-click="cancelLinkSearch">{{ _('Cancel') }}</button>
                         {% endif %}
                     </div>
                 </div>

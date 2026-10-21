@@ -511,6 +511,11 @@ window.closeBulkScrapeModal = function() {
     BulkScrapeController.closeModal();
 };
 
+window.closeBulkScrapeModalAndReload = function() {
+    BulkScrapeController.closeModal();
+    location.reload();
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     BulkScrapeController.checkOnLoad();
 });
@@ -1369,7 +1374,7 @@ const GameDetailModal = {
     showError(message) {
         document.getElementById('gameDetailLoading').innerHTML =
             `<p style="color: var(--neon-red);">${escapeHtml(message)}</p>
-             <button class="btn btn-secondary" onclick="closeGameDetailModal()">${escapeHtml(t('Close'))}</button>`;
+             <button class="btn btn-secondary" data-on-click="closeGameDetailModal">${escapeHtml(t('Close'))}</button>`;
     },
 
     /**
@@ -2054,7 +2059,7 @@ const GameEditModal = {
             savedDiv.innerHTML = `
                 <div id="gemHltbDisplay" class="hltb-compact"></div>
                 <div class="hltb-actions" style="margin-top: var(--spacing-sm);">
-                    <button class="btn btn-danger btn-sm" onclick="clearHltbFromModal()">✕ Clear</button>
+                    <button class="btn btn-danger btn-sm" data-on-click="clearHltbFromModal">✕ Clear</button>
                 </div>`;
             display = document.getElementById('gemHltbDisplay');
         }

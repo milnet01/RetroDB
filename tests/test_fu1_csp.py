@@ -170,3 +170,119 @@ class TestDelegatedErrorHandler:
             f"action '{action}' missing from the dispatcher — templates "
             f"using `data-on-error=\"{action}\"` will silently fail"
         )
+
+
+# ---------------------------------------------------------------------------
+# No inline event handlers at all; delegated actions resolve
+# ---------------------------------------------------------------------------
+
+STATIC_JS_DIR = REPO_ROOT / 'static' / 'js'
+
+
+def _iter_source_files():
+    """Templates plus hand-written JS — the JS builds HTML strings too.
+    Generated bundles are skipped; they are rebuilt from these."""
+    js = [p for p in STATIC_JS_DIR.glob('*.js')
+          if not p.name.endswith(('.bundle.js', '.min.js'))]
+    return _iter_template_files() + js
+
+
+class TestNoInlineEventHandlers:
+    """An enforcing CSP blocks every inline `on<event>=` attribute. They use
+    `data-on-<event>="fn"` instead (`main.js::initializeDelegatedActions`)."""
+
+    # ` onclick="`, ` onclick='`, the escaped form inside a JS string, and
+    # `setAttribute('onclick', ...)`.
+    _ATTR = re.compile(r'''\son[a-z]+\s*=\s*(?:["']|\\["'])'''
+                       r'''|setAttribute\(\s*["']on[a-z]+["']''')
+
+    def test_no_inline_event_handler(self):
+        offenders = []
+        for path in _iter_source_files():
+            for line_no, line in enumerate(
+                    path.read_text(encoding='utf-8').splitlines(), 1):
+                if self._ATTR.search(line):
+                    offenders.append(
+                        f"{path.relative_to(REPO_ROOT)}:{line_no}: {line.strip()[:120]}")
+        assert not offenders, (
+            "Inline event handlers break under an enforcing CSP; use "
+            '`data-on-<event>="fn" data-args=\'[...]\'`:\n  '
+            + "\n  ".join(offenders)
+        )
+
+
+class TestDelegatedActionsResolve:
+    """Every `data-on-<event>` name must be a function the page can reach
+    from `window`; a typo only shows as a console error at click time.
+    build_js.py wraps each bundled static/js file in its own function, so a
+    function declared there is reachable only through `window.X = `; a
+    top-level `function X` in a template or an unbundled file is a global."""
+
+    _ACTION = re.compile(r'data-on-(?!error\b)[a-z]+="([A-Za-z_$][\w$.]*)"')
+
+    def _text(self, paths):
+        return "\n".join(p.read_text(encoding='utf-8') for p in paths)
+
+    def test_actions_found(self):
+        text = self._text(_iter_source_files())
+        assert len(set(self._ACTION.findall(text))) > 20, (
+            "found almost no data-on-<event> actions — the scan is broken")
+
+    def test_every_action_is_defined(self):
+        import build_js
+        bundled = set(build_js.CORE_ORDER) | set(build_js.GAMES_ORDER)
+        everything = self._text(_iter_source_files())
+        # Where a top-level `function X` is a global: page scripts and the
+        # static/js files loaded on their own.
+        globals_text = self._text(
+            [p for p in _iter_source_files() if p.name not in bundled])
+        missing = []
+        for name in sorted(set(self._ACTION.findall(everything))):
+            root, *members = name.split('.')
+            r = re.escape(root)
+            root_defined = root == 'window' or re.search(
+                rf'window\.{r}\s*=|RetroDB\.{r}\s*=', everything) or re.search(
+                rf'(?:^|\n)\s*(?:async\s+)?function\s+{r}\s*\(', globals_text)
+            members_defined = all(
+                re.search(rf'\b{re.escape(m)}\s*(?::|\(|=|,|\n\s*\}})', everything)
+                for m in members)
+            if not (root_defined and members_defined):
+                missing.append(name)
+        assert not missing, (
+            "data-on-<event> names no window-reachable function (a static/js "
+            "or page `const` function needs `window.X = X`):\n  "
+            + "\n  ".join(missing))
+
+
+class TestLiteralActionArgsAreJson:
+    """A `data-args='[...]'` written out in full must parse; a stray
+    backslash or quote only shows as a console error at click time.
+    Values holding Jinja or `${...}` are built at render time and skipped."""
+
+    _ARGS = re.compile(r"""data-args='([^']*)'""")
+
+    def test_literal_args_parse(self):
+        import json
+        bad = []
+        checked = 0
+        for path in _iter_source_files():
+            for m in self._ARGS.finditer(path.read_text(encoding='utf-8')):
+                value = m.group(1)
+                if '{{' in value or '${' in value or '{%' in value:
+                    continue
+                checked += 1
+                try:
+                    assert isinstance(json.loads(value), list)
+                except (ValueError, AssertionError):
+                    bad.append(f"{path.relative_to(REPO_ROOT)}: {value}")
+        assert checked > 20, "found almost no literal data-args — the scan is broken"
+        assert not bad, "data-args is not a JSON array:\n  " + "\n  ".join(bad)
+
+
+class TestDelegatedActionDispatcher:
+    def test_dispatcher_wired_in_capture_phase(self):
+        src = (STATIC_JS_DIR / 'main.js').read_text(encoding='utf-8')
+        assert 'initializeDelegatedActions();' in src
+        m = re.search(r'function initializeDelegatedActions\(\) \{(.+?)^\}',
+                      src, re.DOTALL | re.MULTILINE)
+        assert m and re.search(r'\}\s*,\s*/\*[^*]*\*/\s*true\s*\)', m.group(1))

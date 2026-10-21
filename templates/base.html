@@ -182,7 +182,7 @@
             </nav>
             
             <div class="sidebar-footer">
-                <button type="button" class="version-info" onclick="showAboutModal()" title="{{ _('Click for more info') }}">
+                <button type="button" class="version-info" data-on-click="showAboutModal" title="{{ _('Click for more info') }}">
                     <span class="version-icon">ℹ️</span> RetroDB v{{ config.APP_VERSION }}
                 </button>
             </div>
@@ -191,11 +191,11 @@
         <!-- About Modal: outside <nav>, whose backdrop-filter would make it the
          containing block for this fixed overlay and clip it to the sidebar -->
         {% from "_macros/legal_disclaimer.html" import legal_disclaimer %}
-        <div class="about-modal-overlay" id="aboutModalOverlay" onclick="if(event.target===this)hideAboutModal()">
+        <div class="about-modal-overlay" id="aboutModalOverlay" data-on-click="hideAboutModal" data-self-only>
             <div class="about-modal glass-panel" role="dialog" aria-modal="true" aria-labelledby="aboutModalTitle">
                 <div class="about-modal-header">
                     <h2 id="aboutModalTitle">🎮 {{ _('About') }} RetroDB</h2>
-                    <button type="button" class="about-modal-close" onclick="hideAboutModal()" aria-label="{{ _('Close') }}">×</button>
+                    <button type="button" class="about-modal-close" data-on-click="hideAboutModal" aria-label="{{ _('Close') }}">×</button>
                 </div>
                 <div class="about-modal-body">
                     <div class="about-logo">
@@ -278,41 +278,41 @@
     </div>
 
     <!-- Global Back to Top Button -->
-    <button type="button" id="backToTopBtn" class="back-to-top-btn" onclick="scrollToTop()" title="{{ _('Back to top') }}" aria-label="{{ _('Back to top') }}">
+    <button type="button" id="backToTopBtn" class="back-to-top-btn" data-on-click="scrollToTop" title="{{ _('Back to top') }}" aria-label="{{ _('Back to top') }}">
         <span class="back-to-top-icon" aria-hidden="true">↑</span>
     </button>
 
     <!-- Custom Modal Dialog -->
-    <div id="customModal" class="custom-modal" onclick="if(event.target === this) closeModal()">
+    <div id="customModal" class="custom-modal" data-on-click="closeModal" data-self-only>
         <div class="custom-modal-content" role="dialog" aria-modal="true" aria-labelledby="customModalTitle">
             <div class="custom-modal-header">
                 <h3 id="customModalTitle">{{ _('Alert') }}</h3>
-                <button type="button" class="custom-modal-close" onclick="closeModal()" aria-label="{{ _('Close') }}">×</button>
+                <button type="button" class="custom-modal-close" data-on-click="closeModal" aria-label="{{ _('Close') }}">×</button>
             </div>
             <div class="custom-modal-body">
                 <p id="customModalMessage"></p>
             </div>
             <div class="custom-modal-footer">
-                <button type="button" id="customModalCancel" class="btn btn-secondary" onclick="closeModal()" style="display: none;">{{ _('Cancel') }}</button>
-                <button type="button" id="customModalConfirm" class="btn btn-primary" onclick="confirmModal()">{{ _('OK') }}</button>
+                <button type="button" id="customModalCancel" class="btn btn-secondary" data-on-click="closeModal" style="display: none;">{{ _('Cancel') }}</button>
+                <button type="button" id="customModalConfirm" class="btn btn-primary" data-on-click="confirmModal">{{ _('OK') }}</button>
             </div>
         </div>
     </div>
     
     <!-- Folder Browser Modal -->
-    <div id="folderBrowserModal" class="custom-modal" onclick="if(event.target === this) closeFolderBrowser()">
+    <div id="folderBrowserModal" class="custom-modal" data-on-click="closeFolderBrowser" data-self-only>
         <div class="custom-modal-content" style="max-width: 600px; max-height: 80vh;" role="dialog" aria-modal="true" aria-labelledby="folderBrowserTitle">
             <div class="custom-modal-header">
                 <h3 id="folderBrowserTitle">📁 {{ _('Browse Folders') }}</h3>
-                <button type="button" class="custom-modal-close" onclick="closeFolderBrowser()" aria-label="{{ _('Close') }}">×</button>
+                <button type="button" class="custom-modal-close" data-on-click="closeFolderBrowser" aria-label="{{ _('Close') }}">×</button>
             </div>
             <div class="custom-modal-body" style="padding: 0;">
                 <div id="folderBrowserPath" style="padding: 0.75rem 1rem; background: var(--bg-darker); border-bottom: 1px solid var(--border-color); font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-secondary); word-break: break-all;"></div>
                 <div id="folderBrowserList" style="max-height: 400px; overflow-y: auto; padding: 0.5rem;"></div>
             </div>
             <div class="custom-modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeFolderBrowser()">{{ _('Cancel') }}</button>
-                <button type="button" class="btn btn-primary" onclick="selectFolderPath()">{{ _('Select This Folder') }}</button>
+                <button type="button" class="btn btn-secondary" data-on-click="closeFolderBrowser">{{ _('Cancel') }}</button>
+                <button type="button" class="btn btn-primary" data-on-click="selectFolderPath">{{ _('Select This Folder') }}</button>
             </div>
         </div>
     </div>
@@ -551,7 +551,7 @@
         // Parent folder link (if not at root)
         if (data.parent_path) {
             html += `
-                <button type="button" class="folder-item folder-parent" data-path="${escapeHtml(data.parent_path)}" onclick="navigateFolder(this.dataset.path)">
+                <button type="button" class="folder-item folder-parent" data-path="${escapeHtml(data.parent_path)}" data-on-click="navigateFolder" data-args="${actionArgs('$this.dataset.path')}">
                     <span class="folder-icon">📁</span>
                     <span class="folder-name">..</span>
                     <span class="folder-info">Parent folder</span>
@@ -572,7 +572,7 @@
             if (folder.subfolder_count > 0) info.push(`${folder.subfolder_count} folders`);
             
             html += `
-                <button type="button" class="folder-item" data-path="${escapeHtml(folder.path)}" onclick="navigateFolder(this.dataset.path)">
+                <button type="button" class="folder-item" data-path="${escapeHtml(folder.path)}" data-on-click="navigateFolder" data-args="${actionArgs('$this.dataset.path')}">
                     <span class="folder-icon">📁</span>
                     <span class="folder-name">${escapeHtml(folder.name)}</span>
                     <span class="folder-info">${info.join(', ') || 'Empty'}</span>
@@ -649,13 +649,13 @@
         <div class="modal-content" style="max-width: 600px;" role="dialog" aria-modal="true" aria-labelledby="queueManagerTitle">
             <div class="modal-header">
                 <h2 id="queueManagerTitle">📋 {{ _('Queue Manager') }}</h2>
-                <button type="button" class="modal-close" onclick="closeQueueManager()" aria-label="{{ _('Close queue manager') }}">×</button>
+                <button type="button" class="modal-close" data-on-click="closeQueueManager" aria-label="{{ _('Close queue manager') }}">×</button>
             </div>
             <div class="modal-body" id="queueManagerBody">
                 <!-- Content populated by JavaScript -->
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeQueueManager()">{{ _('Close') }}</button>
+                <button type="button" class="btn btn-secondary" data-on-click="closeQueueManager">{{ _('Close') }}</button>
             </div>
         </div>
     </div>
@@ -772,7 +772,7 @@
                             <div class="queue-item-progress">${percent}% complete</div>
                         </div>
                         <div class="queue-item-controls">
-                            <button type="button" class="queue-btn" onclick="demoteRunningJob(); renderQueueManager();" ${queueLength === 0 ? 'disabled title="No queued jobs to swap with"' : 'title="Swap with next in queue"'}>
+                            <button type="button" class="queue-btn" data-on-click="demoteRunningJob" ${queueLength === 0 ? 'disabled title="No queued jobs to swap with"' : 'title="Swap with next in queue"'}>
                                 ↑ Demote
                             </button>
                         </div>
@@ -798,13 +798,13 @@
                             </div>
                             <div class="queue-item-controls">
                                 ${isFirst
-                                    ? `<button type="button" class="queue-btn" onclick="swapWithRunning('${job.job_id}'); renderQueueManager();" title="Run now (swap with running)">↓ Run Now</button>`
-                                    : `<button type="button" class="queue-btn" onclick="promoteQueuedJob('${job.job_id}'); renderQueueManager();" title="Run sooner">↓ Promote</button>`
+                                    ? `<button type="button" class="queue-btn" data-on-click="swapWithRunning" data-args="${actionArgs(String(job.job_id))}" title="Run now (swap with running)">↓ Run Now</button>`
+                                    : `<button type="button" class="queue-btn" data-on-click="promoteQueuedJob" data-args="${actionArgs(String(job.job_id))}" title="Run sooner">↓ Promote</button>`
                                 }
-                                <button type="button" class="queue-btn" onclick="demoteQueuedJob('${job.job_id}'); renderQueueManager();" ${isLast ? 'disabled' : ''} title="${isLast ? 'Already last in queue' : 'Run later'}">
+                                <button type="button" class="queue-btn" data-on-click="demoteQueuedJob" data-args="${actionArgs(String(job.job_id))}" ${isLast ? 'disabled' : ''} title="${isLast ? 'Already last in queue' : 'Run later'}">
                                     ↑ Demote
                                 </button>
-                                <button type="button" class="queue-btn danger" onclick="cancelQueuedJob('${job.job_id}'); renderQueueManager();" title="Cancel this queued scrape">
+                                <button type="button" class="queue-btn danger" data-on-click="cancelQueuedJob" data-args="${actionArgs(String(job.job_id))}" title="Cancel this queued scrape">
                                     ✕ Cancel
                                 </button>
                             </div>
@@ -864,9 +864,9 @@
     </script>
 
     <!-- Game Detail Modal -->
-    <div id="gameDetailModal" class="game-detail-modal" onclick="if(event.target===this)closeGameDetailModal()">
+    <div id="gameDetailModal" class="game-detail-modal" data-on-click="closeGameDetailModal" data-self-only>
         <div class="game-detail-modal-content" role="dialog" aria-modal="true" aria-label="{{ _('Game details') }}">
-            <button type="button" class="game-detail-modal-close" onclick="closeGameDetailModal()" aria-label="{{ _('Close game details') }}">&times;</button>
+            <button type="button" class="game-detail-modal-close" data-on-click="closeGameDetailModal" aria-label="{{ _('Close game details') }}">&times;</button>
 
             <!-- Loading State -->
             <div id="gameDetailLoading" class="game-detail-loading">
@@ -922,45 +922,45 @@
                     <a id="gdmViewFull" href="#" class="btn btn-primary">
                         <span class="btn-icon">📄</span> {{ _('View Full Page') }}
                     </a>
-                    <button type="button" id="gdmAiFill" class="btn btn-secondary" onclick="triggerAiFill()" title="{{ _('Fill missing metadata with AI') }}" style="display:none;">
+                    <button type="button" id="gdmAiFill" class="btn btn-secondary" data-on-click="triggerAiFill" title="{{ _('Fill missing metadata with AI') }}" style="display:none;">
                         <span class="btn-icon">🤖</span> {{ _('AI Fill') }}
                     </button>
                     <a id="gdmScrape" href="#" class="btn btn-secondary">
                         <span class="btn-icon">⬇️</span> {{ _('Scrape') }}
                     </a>
-                    <button type="button" id="gdmEdit" class="btn btn-warning" onclick="openGameEditModal()">
+                    <button type="button" id="gdmEdit" class="btn btn-warning" data-on-click="openGameEditModal">
                         <span class="btn-icon">✏️</span> {{ _('Edit') }}
                     </button>
-                    <button type="button" class="btn btn-secondary" onclick="closeGameDetailModal()">{{ _('Close') }}</button>
+                    <button type="button" class="btn btn-secondary" data-on-click="closeGameDetailModal">{{ _('Close') }}</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- GDM Screenshot Lightbox -->
-    <div id="gdmScreenshotLightbox" class="gdm-lightbox" onclick="if(event.target===this)GameDetailModal.closeLightbox()" role="dialog" aria-modal="true" aria-label="{{ _('Screenshot viewer') }}">
-        <span class="gdm-lightbox-close" onclick="GameDetailModal.closeLightbox()" aria-label="{{ _('Close screenshot viewer') }}">&times;</span>
-        <button type="button" class="gdm-lightbox-nav prev" onclick="event.stopPropagation();GameDetailModal.navigateScreenshot(-1)" aria-label="{{ _('Previous screenshot') }}">&#8249;</button>
+    <div id="gdmScreenshotLightbox" class="gdm-lightbox" data-on-click="GameDetailModal.closeLightbox" data-self-only role="dialog" aria-modal="true" aria-label="{{ _('Screenshot viewer') }}">
+        <span class="gdm-lightbox-close" data-on-click="GameDetailModal.closeLightbox" aria-label="{{ _('Close screenshot viewer') }}">&times;</span>
+        <button type="button" class="gdm-lightbox-nav prev" data-on-click="GameDetailModal.navigateScreenshot" data-args='[-1]' data-stop aria-label="{{ _('Previous screenshot') }}">&#8249;</button>
         <img id="gdmLightboxImage" class="gdm-lightbox-image" alt="{{ _('Screenshot') }}">
-        <button type="button" class="gdm-lightbox-nav next" onclick="event.stopPropagation();GameDetailModal.navigateScreenshot(1)" aria-label="{{ _('Next screenshot') }}">&#8250;</button>
+        <button type="button" class="gdm-lightbox-nav next" data-on-click="GameDetailModal.navigateScreenshot" data-args='[1]' data-stop aria-label="{{ _('Next screenshot') }}">&#8250;</button>
         <div class="gdm-lightbox-hint">{{ _('Use &#8592; &#8594; arrow keys to navigate &bull; ESC to close') }}</div>
         <div id="gdmLightboxCounter" class="gdm-lightbox-counter"></div>
     </div>
 
     <!-- Game Edit Modal -->
-    <div id="gameEditModal" class="game-edit-modal" onclick="if(event.target===this)closeGameEditModal()">
+    <div id="gameEditModal" class="game-edit-modal" data-on-click="closeGameEditModal" data-self-only>
         <div class="game-edit-modal-content" role="dialog" aria-modal="true" aria-labelledby="gemTitle">
-            <button type="button" class="game-edit-modal-close" onclick="closeGameEditModal()" aria-label="{{ _('Close edit modal') }}">&times;</button>
+            <button type="button" class="game-edit-modal-close" data-on-click="closeGameEditModal" aria-label="{{ _('Close edit modal') }}">&times;</button>
 
             <div class="gem-header">
                 <h2 id="gemTitle" class="gem-title">{{ _('Edit Game') }}</h2>
                 <div class="gem-tabs" role="tablist" aria-label="{{ _('Edit game sections') }}">
-                    <button type="button" class="gem-tab active" data-tab="quick" onclick="switchEditTab('quick')" role="tab" aria-selected="true" aria-controls="gemTabQuick">⚡ {{ _('Quick') }}</button>
-                    <button type="button" class="gem-tab" data-tab="identity" onclick="switchEditTab('identity')" role="tab" aria-selected="false" aria-controls="gemTabIdentity">📝 {{ _('Identity') }}</button>
-                    <button type="button" class="gem-tab" data-tab="release" onclick="switchEditTab('release')" role="tab" aria-selected="false" aria-controls="gemTabRelease">📅 {{ _('Release') }}</button>
-                    <button type="button" class="gem-tab" data-tab="gameplay" onclick="switchEditTab('gameplay')" role="tab" aria-selected="false" aria-controls="gemTabGameplay">🎮 {{ _('Gameplay') }}</button>
-                    <button type="button" class="gem-tab" data-tab="technical" onclick="switchEditTab('technical')" role="tab" aria-selected="false" aria-controls="gemTabTechnical">⚙️ {{ _('Technical') }}</button>
-                    <button type="button" class="gem-tab" data-tab="description" onclick="switchEditTab('description')" role="tab" aria-selected="false" aria-controls="gemTabDescription">📖 {{ _('Info') }}</button>
+                    <button type="button" class="gem-tab active" data-tab="quick" data-on-click="switchEditTab" data-args='["quick"]' role="tab" aria-selected="true" aria-controls="gemTabQuick">⚡ {{ _('Quick') }}</button>
+                    <button type="button" class="gem-tab" data-tab="identity" data-on-click="switchEditTab" data-args='["identity"]' role="tab" aria-selected="false" aria-controls="gemTabIdentity">📝 {{ _('Identity') }}</button>
+                    <button type="button" class="gem-tab" data-tab="release" data-on-click="switchEditTab" data-args='["release"]' role="tab" aria-selected="false" aria-controls="gemTabRelease">📅 {{ _('Release') }}</button>
+                    <button type="button" class="gem-tab" data-tab="gameplay" data-on-click="switchEditTab" data-args='["gameplay"]' role="tab" aria-selected="false" aria-controls="gemTabGameplay">🎮 {{ _('Gameplay') }}</button>
+                    <button type="button" class="gem-tab" data-tab="technical" data-on-click="switchEditTab" data-args='["technical"]' role="tab" aria-selected="false" aria-controls="gemTabTechnical">⚙️ {{ _('Technical') }}</button>
+                    <button type="button" class="gem-tab" data-tab="description" data-on-click="switchEditTab" data-args='["description"]' role="tab" aria-selected="false" aria-controls="gemTabDescription">📖 {{ _('Info') }}</button>
                 </div>
             </div>
 
@@ -969,7 +969,7 @@
                 <div class="gem-tab-content active" id="gemTabQuick" role="tabpanel" aria-label="{{ _('Quick edit') }}">
                     <div class="gem-section">
                         <label class="gem-label" for="gemCompletionStatus">{{ _('Completion Status') }}</label>
-                        <select id="gemCompletionStatus" class="gem-select" onchange="updateGameCompletion()">
+                        <select id="gemCompletionStatus" class="gem-select" data-on-change="updateGameCompletion">
                             <option value="not_started">📋 {{ _('Not Started') }}</option>
                             <option value="in_progress">🎮 {{ _('In Progress') }}</option>
                             <option value="played">🕹️ {{ _('Played') }}</option>
@@ -985,7 +985,7 @@
                                class="gem-input hltb-search-input"
                                placeholder="{{ _('Search game title...') }}"
                                style="margin-bottom: var(--spacing-sm);">
-                        <button type="button" class="btn-hltb" id="gemHltbLookupBtn" onclick="lookupHltbFromModal()">
+                        <button type="button" class="btn-hltb" id="gemHltbLookupBtn" data-on-click="lookupHltbFromModal">
                             🔍 {{ _('Lookup HLTB') }}
                         </button>
 
@@ -1014,8 +1014,8 @@
                                     <span class="hltb-value" id="gemHltbComplete">-</span>
                                 </div>
                                 <div class="hltb-actions" style="margin-top: var(--spacing-md); display: flex; gap: var(--spacing-xs);">
-                                    <button type="button" class="btn btn-primary btn-sm" onclick="saveHltbFromModal()">✓ {{ _('Save') }}</button>
-                                    <button type="button" class="btn btn-secondary btn-sm" onclick="cancelHltbFromModal()">✕ {{ _('Cancel') }}</button>
+                                    <button type="button" class="btn btn-primary btn-sm" data-on-click="saveHltbFromModal">✓ {{ _('Save') }}</button>
+                                    <button type="button" class="btn btn-secondary btn-sm" data-on-click="cancelHltbFromModal">✕ {{ _('Cancel') }}</button>
                                 </div>
                             </div>
                             <div class="hltb-empty" id="gemHltbError" style="display: none; color: var(--neon-red);"></div>
@@ -1027,7 +1027,7 @@
                                 <div class="hltb-empty">{{ _('No playtime data') }}</div>
                             </div>
                             <div class="hltb-actions" style="margin-top: var(--spacing-sm);">
-                                <button type="button" class="btn btn-danger btn-sm" onclick="clearHltbFromModal()">✕ {{ _('Clear') }}</button>
+                                <button type="button" class="btn btn-danger btn-sm" data-on-click="clearHltbFromModal">✕ {{ _('Clear') }}</button>
                             </div>
                         </div>
                     </div>
@@ -1044,14 +1044,14 @@
                             <label for="gemSortTitle">{{ _('Sort Title') }}</label>
                             <div class="gem-field-row">
                                 <input type="text" id="gemSortTitle" placeholder="{{ _('Auto-generated from title') }}">
-                                <button type="button" class="btn btn-secondary btn-sm" onclick="generateModalSortTitle()">⚡</button>
+                                <button type="button" class="btn btn-secondary btn-sm" data-on-click="generateModalSortTitle">⚡</button>
                             </div>
                         </div>
                         <div class="gem-field">
                             <label for="gemFranchise">{{ _('Franchise / Series') }}</label>
                             <div class="toggle-row" style="margin-bottom: var(--spacing-sm);">
                                 <label class="toggle-switch" for="gemFranchise">
-                                    <input type="checkbox" id="gemFranchiseToggle" aria-label="{{ _('Toggle franchise status') }}" onchange="updateGemFranchiseToggle()">
+                                    <input type="checkbox" id="gemFranchiseToggle" aria-label="{{ _('Toggle franchise status') }}" data-on-change="updateGemFranchiseToggle">
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <span id="gemFranchiseLabel" class="toggle-label" style="margin-left: var(--spacing-sm);">{{ _('Standalone') }}</span>
@@ -1077,7 +1077,7 @@
                             <div style="display:flex; gap:4px; align-items:center;">
                                 <input type="text" id="gemReleaseDate" placeholder="{{ _('YYYY-MM-DD') }}" style="flex:1;">
                                 <input type="date" id="gemReleaseDatePicker" tabindex="-1" aria-hidden="true" style="position:absolute; opacity:0; width:0; height:0; pointer-events:none;">
-                                <button type="button" class="btn btn-sm btn-secondary" onclick="var p=document.getElementById('gemReleaseDatePicker');p.value=document.getElementById('gemReleaseDate').value;p.showPicker()" title="{{ _('Pick date') }}" style="padding:4px 8px; font-size:1rem;">📅</button>
+                                <button type="button" class="btn btn-sm btn-secondary" data-on-click="openDatePicker" data-args='["gemReleaseDatePicker", "gemReleaseDate"]' title="{{ _('Pick date') }}" style="padding:4px 8px; font-size:1rem;">📅</button>
                             </div>
                         </div>
                         <div class="gem-field">
@@ -1107,7 +1107,7 @@
                             <div class="form-label" id="gemGenreFieldLabel">{{ _('Genre') }}</div>
                             <div class="gem-tag-container" id="gemGenreContainer"></div>
                             <input type="hidden" id="gemGenreHidden">
-                            <select id="gemGenreDropdown" class="gem-tag-dropdown" onchange="addModalGenre(this.value); this.value='';" aria-label="{{ _('Add genre') }}">
+                            <select id="gemGenreDropdown" class="gem-tag-dropdown" data-on-change="addModalGenre" data-args='["$this.value"]' data-clear-value aria-label="{{ _('Add genre') }}">
                                 <option value="">{{ _('+ Add genre...') }}</option>
                             </select>
                         </div>
@@ -1115,7 +1115,7 @@
                             <div class="form-label" id="gemModesFieldLabel">{{ _('Play Modes') }}</div>
                             <div class="gem-tag-container" id="gemModesContainer"></div>
                             <input type="hidden" id="gemModesHidden">
-                            <select id="gemModesDropdown" class="gem-tag-dropdown" onchange="addModalMode(this.value); this.value='';" aria-label="{{ _('Add play mode') }}">
+                            <select id="gemModesDropdown" class="gem-tag-dropdown" data-on-change="addModalMode" data-args='["$this.value"]' data-clear-value aria-label="{{ _('Add play mode') }}">
                                 <option value="">{{ _('+ Add mode...') }}</option>
                             </select>
                         </div>
@@ -1127,7 +1127,7 @@
                             <div class="form-label" id="gemGameStructureFieldLabel">{{ _('Game Structure') }}</div>
                             <div class="gem-tag-container" id="gemGameStructureContainer"></div>
                             <input type="hidden" id="gemGameStructureHidden">
-                            <select id="gemGameStructureDropdown" class="gem-tag-dropdown" onchange="addModalGameStructure(this.value); this.value='';" aria-label="{{ _('Add game structure') }}">
+                            <select id="gemGameStructureDropdown" class="gem-tag-dropdown" data-on-change="addModalGameStructure" data-args='["$this.value"]' data-clear-value aria-label="{{ _('Add game structure') }}">
                                 <option value="">{{ _('+ Add structure...') }}</option>
                             </select>
                         </div>
@@ -1135,7 +1135,7 @@
                             <div class="form-label" id="gemPerspectiveFieldLabel">{{ _('Perspective') }}</div>
                             <div class="gem-tag-container" id="gemPerspectiveContainer"></div>
                             <input type="hidden" id="gemPerspectiveHidden">
-                            <select id="gemPerspectiveDropdown" class="gem-tag-dropdown" onchange="addModalPerspective(this.value); this.value='';" aria-label="{{ _('Add perspective') }}">
+                            <select id="gemPerspectiveDropdown" class="gem-tag-dropdown" data-on-change="addModalPerspective" data-args='["$this.value"]' data-clear-value aria-label="{{ _('Add perspective') }}">
                                 <option value="">{{ _('+ Add perspective...') }}</option>
                             </select>
                         </div>
@@ -1143,7 +1143,7 @@
                             <div class="form-label" id="gemDimensionFieldLabel">{{ _('Dimension') }}</div>
                             <div class="gem-tag-container" id="gemDimensionContainer"></div>
                             <input type="hidden" id="gemDimensionHidden">
-                            <select id="gemDimensionDropdown" class="gem-tag-dropdown" onchange="addModalDimension(this.value); this.value='';" aria-label="{{ _('Add dimension') }}">
+                            <select id="gemDimensionDropdown" class="gem-tag-dropdown" data-on-change="addModalDimension" data-args='["$this.value"]' data-clear-value aria-label="{{ _('Add dimension') }}">
                                 <option value="">{{ _('+ Add dimension...') }}</option>
                             </select>
                         </div>
@@ -1151,7 +1151,7 @@
                             <label for="gemCampaignToggle">{{ _('Campaign Mode') }}</label>
                             <div class="gem-toggle-row">
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="gemCampaignToggle" aria-label="{{ _('Toggle campaign mode') }}" onchange="updateModalCampaignLabel()">
+                                    <input type="checkbox" id="gemCampaignToggle" aria-label="{{ _('Toggle campaign mode') }}" data-on-change="updateModalCampaignLabel">
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <span id="gemCampaignLabel" class="gem-toggle-label">{{ _('Unknown') }}</span>
@@ -1169,17 +1169,17 @@
                             <div class="gem-tag-container" id="gemControllerContainer"></div>
                             <input type="hidden" id="gemControllerHidden">
                             <div class="gem-controller-inputs">
-                                <select id="gemControllerDropdown" class="gem-tag-dropdown" onchange="addModalController(this.value); this.value='';" aria-label="{{ _('Add controller') }}">
+                                <select id="gemControllerDropdown" class="gem-tag-dropdown" data-on-change="addModalController" data-args='["$this.value"]' data-clear-value aria-label="{{ _('Add controller') }}">
                                     <option value="">{{ _('+ Add controller...') }}</option>
                                 </select>
-                                <input type="text" id="gemControllerCustom" class="gem-custom-input" aria-label="{{ _('Custom controller name') }}" placeholder="{{ _('Or type custom...') }}" onkeypress="if(event.key==='Enter'){event.preventDefault();addModalController(this.value);this.value='';}">
+                                <input type="text" id="gemControllerCustom" class="gem-custom-input" aria-label="{{ _('Custom controller name') }}" placeholder="{{ _('Or type custom...') }}" data-on-keypress="addModalController" data-args='["$this.value"]' data-key="Enter" data-prevent data-clear-value>
                             </div>
                         </div>
                         <div class="gem-field gem-field-full" role="group" aria-labelledby="gemSaveTypeFieldLabel">
                             <div class="form-label" id="gemSaveTypeFieldLabel">{{ _('Save Type') }}</div>
                             <div class="gem-tag-container" id="gemSaveTypeContainer"></div>
                             <input type="hidden" id="gemSaveTypeHidden">
-                            <select id="gemSaveTypeDropdown" class="gem-tag-dropdown" onchange="addModalSaveType(this.value); this.value='';" aria-label="{{ _('Add save type') }}">
+                            <select id="gemSaveTypeDropdown" class="gem-tag-dropdown" data-on-change="addModalSaveType" data-args='["$this.value"]' data-clear-value aria-label="{{ _('Add save type') }}">
                                 <option value="">{{ _('+ Add save type...') }}</option>
                             </select>
                         </div>
@@ -1194,7 +1194,7 @@
                                    sibling text input, so clicking the toggle
                                    focused the wrong control. #}
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="gemExclusiveToggle" aria-label="{{ _('Toggle platform exclusivity') }}" onchange="updateModalExclusiveToggle()">
+                                    <input type="checkbox" id="gemExclusiveToggle" aria-label="{{ _('Toggle platform exclusivity') }}" data-on-change="updateModalExclusiveToggle">
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <span id="gemExclusiveLabel" class="gem-toggle-label">{{ _('Exclusive') }}</span>
@@ -1321,8 +1321,8 @@
                     <span class="btn-icon">🖼️</span> {{ _('Images/Video') }}
                 </a>
                 <div class="gem-footer-right">
-                    <button type="button" class="btn btn-secondary" onclick="closeGameEditModal()">{{ _('Close') }}</button>
-                    <button type="button" class="btn btn-primary" onclick="saveGameEdits()">
+                    <button type="button" class="btn btn-secondary" data-on-click="closeGameEditModal">{{ _('Close') }}</button>
+                    <button type="button" class="btn btn-primary" data-on-click="saveGameEdits">
                         <span class="btn-icon">💾</span> {{ _('Save Changes') }}
                     </button>
                 </div>

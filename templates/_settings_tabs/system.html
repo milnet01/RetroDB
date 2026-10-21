@@ -20,7 +20,7 @@
     <div class="card-body">
         <div style="display: flex; gap: var(--spacing-md); flex-wrap: wrap; align-items: flex-start;">
             <div>
-                <button type="button" onclick="cleanMissingRoms()" class="btn btn-danger" id="cleanMissingBtn">
+                <button type="button" data-on-click="cleanMissingRoms" class="btn btn-danger" id="cleanMissingBtn">
                     <span class="btn-icon">🧹</span>
                     Clean Missing ROMs
                 </button>
@@ -29,7 +29,7 @@
                 </p>
             </div>
             <div>
-                <button type="button" onclick="refreshRetroAchievements()" class="btn btn-primary" id="refreshRABtn">
+                <button type="button" data-on-click="refreshRetroAchievements" class="btn btn-primary" id="refreshRABtn">
                     <span class="btn-icon">🏆</span>
                     Refresh RetroAchievements
                 </button>
@@ -43,7 +43,7 @@
                         <option value="{{ system.id }}">{{ system.name }}</option>
                         {% endfor %}
                     </select>
-                    <button type="button" onclick="clearRAData()" class="btn btn-danger" id="clearRABtn">
+                    <button type="button" data-on-click="clearRAData" class="btn btn-danger" id="clearRABtn">
                         <span class="btn-icon">🗑️</span>
                         Clear RA Data
                     </button>
@@ -64,7 +64,7 @@
 
         <div style="display: flex; gap: var(--spacing-md); align-items: flex-start; flex-wrap: wrap; margin-bottom: var(--spacing-lg);">
             <div>
-                <button type="button" onclick="clearClzImports()" class="btn btn-danger" id="clearClzBtn">
+                <button type="button" data-on-click="clearClzImports" class="btn btn-danger" id="clearClzBtn">
                     <span class="btn-icon">📋</span>
                     Clear CLZ Imports
                 </button>
@@ -96,11 +96,11 @@
                 </div>
             </div>
             <div style="display: flex; gap: var(--spacing-md); align-items: center;">
-                <button type="button" onclick="previewClearScrapedData()" class="btn btn-secondary" id="previewClearBtn">
+                <button type="button" data-on-click="previewClearScrapedData" class="btn btn-secondary" id="previewClearBtn">
                     <span class="btn-icon">👁️</span>
                     Preview
                 </button>
-                <button type="button" onclick="clearScrapedData()" class="btn btn-danger" id="clearScrapedBtn">
+                <button type="button" data-on-click="clearScrapedData" class="btn btn-danger" id="clearScrapedBtn">
                     <span class="btn-icon">🗑️</span>
                     Clear Scraped Data
                 </button>
@@ -117,11 +117,11 @@
             This cleans up leftover files from deleted games.
         </p>
         <div style="display: flex; gap: var(--spacing-md); align-items: center; flex-wrap: wrap;">
-            <button type="button" onclick="previewOrphanedMedia()" class="btn btn-secondary" id="previewOrphanedBtn">
+            <button type="button" data-on-click="previewOrphanedMedia" class="btn btn-secondary" id="previewOrphanedBtn">
                 <span class="btn-icon">🔍</span>
                 Scan for Orphaned Files
             </button>
-            <button type="button" onclick="cleanOrphanedMedia()" class="btn btn-danger" id="cleanOrphanedBtn" style="display: none;">
+            <button type="button" data-on-click="cleanOrphanedMedia" class="btn btn-danger" id="cleanOrphanedBtn" style="display: none;">
                 <span class="btn-icon">🗑️</span>
                 Delete Orphaned Files
             </button>
@@ -139,11 +139,11 @@
             example an unmounted drive), its references are kept and flagged rather than wiped.
         </p>
         <div style="display: flex; gap: var(--spacing-md); align-items: center; flex-wrap: wrap;">
-            <button type="button" onclick="previewMissingMediaRefs()" class="btn btn-secondary" id="previewMissingRefsBtn">
+            <button type="button" data-on-click="previewMissingMediaRefs" class="btn btn-secondary" id="previewMissingRefsBtn">
                 <span class="btn-icon">🔍</span>
                 Scan for Missing Media
             </button>
-            <button type="button" onclick="clearMissingMediaRefs()" class="btn btn-danger" id="clearMissingRefsBtn" style="display: none;">
+            <button type="button" data-on-click="clearMissingMediaRefs" class="btn btn-danger" id="clearMissingRefsBtn" style="display: none;">
                 <span class="btn-icon">🧹</span>
                 Clear Missing References
             </button>
@@ -159,7 +159,7 @@
             and ANALYZE to update query planner statistics.
         </p>
         <div>
-            <button type="button" onclick="optimizeDatabase()" class="btn btn-primary" id="optimizeDbBtn">
+            <button type="button" data-on-click="optimizeDatabase" class="btn btn-primary" id="optimizeDbBtn">
                 <span class="btn-icon">⚡</span> Optimize Database
             </button>
         </div>
@@ -173,11 +173,11 @@
         <h2 class="card-title">Server Controls</h2>
     </div>
     <div class="card-body">
-        <button type="button" onclick="restartServer()" class="btn btn-warning">
+        <button type="button" data-on-click="restartServer" class="btn btn-warning">
             <span class="btn-icon">🔄</span>
             Restart Server
         </button>
-        <button type="button" onclick="shutdownServer()" class="btn btn-danger">
+        <button type="button" data-on-click="shutdownServer" class="btn btn-danger">
             <span class="btn-icon">🛑</span>
             {{ _('Shut Down Server') }}
         </button>
@@ -365,7 +365,7 @@
         
         <!-- Save Logging Settings Button -->
         <div style="margin-top: var(--spacing-xl); display: flex; gap: var(--spacing-md); flex-wrap: wrap; align-items: center;">
-            <button type="button" onclick="saveLoggingSettings()" class="btn btn-primary" id="saveLoggingBtn">
+            <button type="button" data-on-click="saveLoggingSettings" class="btn btn-primary" id="saveLoggingBtn">
                 <span class="btn-icon">💾</span>
                 Save Logging Settings
             </button>
@@ -378,11 +378,11 @@
                 <span>📁</span> Log Files
             </h3>
             <div style="display: flex; gap: var(--spacing-md); flex-wrap: wrap; align-items: center; margin-bottom: var(--spacing-md);">
-                <button type="button" onclick="loadLogFiles()" class="btn btn-secondary">
+                <button type="button" data-on-click="loadLogFiles" class="btn btn-secondary">
                     <span class="btn-icon">🔄</span>
                     Refresh Log List
                 </button>
-                <button type="button" onclick="clearOldLogs()" class="btn btn-danger">
+                <button type="button" data-on-click="clearOldLogs" class="btn btn-danger">
                     <span class="btn-icon">🧹</span>
                     Clear Logs Older Than 5 Days
                 </button>
@@ -407,7 +407,7 @@
             If a bulk scrape gets stuck or won't clear from the toast notification, use this button to force clear all bulk scrape state from your browser's local storage.
         </p>
         <div style="display: flex; gap: var(--spacing-md); align-items: center; flex-wrap: wrap;">
-            <button type="button" onclick="clearStuckBulkScrape()" class="btn btn-danger">
+            <button type="button" data-on-click="clearStuckBulkScrape" class="btn btn-danger">
                 <span class="btn-icon">🧹</span>
                 Clear Stuck Bulk Scrape
             </button>
@@ -425,7 +425,7 @@
             If achievement syncs get stuck or the queue won't process, use this button to clear the sync queue and reset the sync state.
         </p>
         <div style="display: flex; gap: var(--spacing-md); align-items: center; flex-wrap: wrap;">
-            <button type="button" onclick="clearStuckRASync()" class="btn btn-danger">
+            <button type="button" data-on-click="clearStuckRASync" class="btn btn-danger">
                 <span class="btn-icon">🧹</span>
                 Clear Stuck RA Sync
             </button>

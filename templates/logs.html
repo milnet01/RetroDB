@@ -703,22 +703,22 @@
 
 <!-- Category Tabs -->
 <div class="log-category-tabs" id="categoryTabs">
-    <button type="button" class="category-tab active" data-category="" onclick="LogViewer.setCategory('', this)">
+    <button type="button" class="category-tab active" data-category="" data-on-click="LogViewer.setCategory" data-args='["", "$this"]'>
         {{ _('All') }} <span class="category-tab-count" id="countAll">0</span>
     </button>
-    <button type="button" class="category-tab" data-category="scraping" onclick="LogViewer.setCategory('scraping', this)">
+    <button type="button" class="category-tab" data-category="scraping" data-on-click="LogViewer.setCategory" data-args='["scraping", "$this"]'>
         {{ _('Scraping') }} <span class="category-tab-count" id="countScraping">0</span>
     </button>
-    <button type="button" class="category-tab" data-category="rom_tools" onclick="LogViewer.setCategory('rom_tools', this)">
+    <button type="button" class="category-tab" data-category="rom_tools" data-on-click="LogViewer.setCategory" data-args='["rom_tools", "$this"]'>
         {{ _('ROM Tools') }} <span class="category-tab-count" id="countRomTools">0</span>
     </button>
-    <button type="button" class="category-tab" data-category="rom_reports" onclick="LogViewer.setCategory('rom_reports', this)">
+    <button type="button" class="category-tab" data-category="rom_reports" data-on-click="LogViewer.setCategory" data-args='["rom_reports", "$this"]'>
         {{ _('Reports') }} <span class="category-tab-count" id="countReports">0</span>
     </button>
-    <button type="button" class="category-tab" data-category="image_resize" onclick="LogViewer.setCategory('image_resize', this)">
+    <button type="button" class="category-tab" data-category="image_resize" data-on-click="LogViewer.setCategory" data-args='["image_resize", "$this"]'>
         {{ _('Image Resize') }} <span class="category-tab-count" id="countImageResize">0</span>
     </button>
-    <button type="button" class="category-tab" data-category="system" onclick="LogViewer.setCategory('system', this)">
+    <button type="button" class="category-tab" data-category="system" data-on-click="LogViewer.setCategory" data-args='["system", "$this"]'>
         {{ _('System') }} <span class="category-tab-count" id="countSystem">0</span>
     </button>
 </div>
@@ -731,8 +731,8 @@
             <option value="">{{ _('Loading...') }}</option>
         </select>
         <div class="log-file-actions" id="fileActions" style="display: none;">
-            <button type="button" class="log-file-btn" onclick="LogViewer.downloadFile()" title="{{ _('Download') }}">{{ _('Download') }}</button>
-            <button type="button" class="log-file-btn delete-btn" onclick="LogViewer.deleteFile()" title="{{ _('Delete') }}">{{ _('Delete') }}</button>
+            <button type="button" class="log-file-btn" data-on-click="LogViewer.downloadFile" title="{{ _('Download') }}">{{ _('Download') }}</button>
+            <button type="button" class="log-file-btn delete-btn" data-on-click="LogViewer.deleteFile" title="{{ _('Delete') }}">{{ _('Delete') }}</button>
         </div>
     </div>
 
@@ -750,9 +750,9 @@
     <div class="toolbar-group">
         <span class="group-label" id="logLevelLabel">{{ _('Level') }}</span>
         <div class="level-toggles" role="group" aria-labelledby="logLevelLabel">
-            <button type="button" class="level-btn active" data-level="INFO" onclick="LogViewer.toggleLevel('INFO', this)">{{ _('INFO') }}</button>
-            <button type="button" class="level-btn active" data-level="WARNING" onclick="LogViewer.toggleLevel('WARNING', this)">{{ _('WARN') }}</button>
-            <button type="button" class="level-btn active" data-level="ERROR" onclick="LogViewer.toggleLevel('ERROR', this)">{{ _('ERROR') }}</button>
+            <button type="button" class="level-btn active" data-level="INFO" data-on-click="LogViewer.toggleLevel" data-args='["INFO", "$this"]'>{{ _('INFO') }}</button>
+            <button type="button" class="level-btn active" data-level="WARNING" data-on-click="LogViewer.toggleLevel" data-args='["WARNING", "$this"]'>{{ _('WARN') }}</button>
+            <button type="button" class="level-btn active" data-level="ERROR" data-on-click="LogViewer.toggleLevel" data-args='["ERROR", "$this"]'>{{ _('ERROR') }}</button>
         </div>
     </div>
 
@@ -760,7 +760,7 @@
 
     <div class="toolbar-group">
         <label for="logModuleFilter">{{ _('Source') }}</label>
-        <select id="logModuleFilter" class="log-module-select" onchange="LogViewer.setModuleFilter(this.value)">
+        <select id="logModuleFilter" class="log-module-select" data-on-change="LogViewer.setModuleFilter" data-args='["$this.value"]'>
             <option value="">{{ _('All Sources') }}</option>
         </select>
     </div>
@@ -770,8 +770,8 @@
     <div class="toolbar-group view-toggle-group" id="viewToggleGroup">
         <span class="group-label" id="logViewLabel">{{ _('View') }}</span>
         <div class="view-toggle" role="group" aria-labelledby="logViewLabel">
-            <button type="button" class="view-btn active" data-view="grouped" onclick="LogViewer.setView('grouped', this)">{{ _('Grouped') }}</button>
-            <button type="button" class="view-btn" data-view="flat" onclick="LogViewer.setView('flat', this)">{{ _('Flat') }}</button>
+            <button type="button" class="view-btn active" data-view="grouped" data-on-click="LogViewer.setView" data-args='["grouped", "$this"]'>{{ _('Grouped') }}</button>
+            <button type="button" class="view-btn" data-view="flat" data-on-click="LogViewer.setView" data-args='["flat", "$this"]'>{{ _('Flat') }}</button>
         </div>
     </div>
 
@@ -782,7 +782,7 @@
         <input type="text" id="logSearch" class="log-search" placeholder="{{ _('Filter log lines...') }}">
     </div>
 
-    <button type="button" class="log-reset-btn" onclick="LogViewer.resetFilters()">{{ _('Reset') }}</button>
+    <button type="button" class="log-reset-btn" data-on-click="LogViewer.resetFilters">{{ _('Reset') }}</button>
 </div>
 
 <!-- Stats Bar -->

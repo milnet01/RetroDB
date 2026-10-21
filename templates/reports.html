@@ -273,10 +273,10 @@
             <span class="scan-icon">🕐</span>
             <span class="scan-text">{{ _('Last scan:') }} <span class="scan-time"></span></span>
         </div>
-        <button type="button" class="btn btn-danger" onclick="clearScanResults()" title="{{ _('Clear cached results') }}">
+        <button type="button" class="btn btn-danger" data-on-click="clearScanResults" title="{{ _('Clear cached results') }}">
             <span class="btn-icon">🗑️</span> {{ _('Clear') }}
         </button>
-        <button type="button" class="btn btn-primary" onclick="runFullScan()">
+        <button type="button" class="btn btn-primary" data-on-click="runFullScan">
             <span class="btn-icon">🔄</span> {{ _('Scan All ROMs') }}
         </button>
     </div>
@@ -284,12 +284,12 @@
 
 <!-- Report Tabs -->
 <div class="report-tabs">
-    <button type="button" class="report-tab active" onclick="switchTab('naming')" id="tab-naming">
+    <button type="button" class="report-tab active" data-on-click="switchTab" data-args='["naming"]' id="tab-naming">
         <span class="tab-icon">📝</span>
         <span class="tab-label">{{ _('Non-Standard Names') }}</span>
         <span class="tab-count" id="count-naming">-</span>
     </button>
-    <button type="button" class="report-tab" onclick="switchTab('mismatch')" id="tab-mismatch">
+    <button type="button" class="report-tab" data-on-click="switchTab" data-args='["mismatch"]' id="tab-mismatch">
         <span class="tab-icon">⚠️</span>
         <span class="tab-label">{{ _('Name Mismatches') }}</span>
         <span class="tab-count" id="count-mismatch">-</span>
@@ -324,13 +324,13 @@
     <div class="filter-bar">
         <div class="filter-group">
             <label for="filter-system">{{ _('System:') }}</label>
-            <select id="filter-system" onchange="applyFilters()">
+            <select id="filter-system" data-on-change="applyFilters">
                 <option value="">{{ _('All Systems') }}</option>
             </select>
         </div>
         <div class="filter-group">
             <label for="filter-issue">{{ _('Issue Type:') }}</label>
-            <select id="filter-issue" onchange="applyFilters()">
+            <select id="filter-issue" data-on-change="applyFilters">
                 <option value="">{{ _('All Issues') }}</option>
                 <option value="missing-region">{{ _('Missing Region') }}</option>
                 <option value="missing-year">{{ _('Missing Year') }}</option>
@@ -343,10 +343,10 @@
         </div>
         <div class="filter-group">
             <label for="filter-search">{{ _('Search:') }}</label>
-            <input type="text" id="filter-search" placeholder="{{ _('Search filenames...') }}" oninput="applyFilters()">
+            <input type="text" id="filter-search" placeholder="{{ _('Search filenames...') }}" data-on-input="applyFilters">
         </div>
         <div class="filter-group" style="margin-left: auto;">
-            <button type="button" class="btn btn-success" id="batchRenameBtn" onclick="startBatchRename()" disabled>
+            <button type="button" class="btn btn-success" id="batchRenameBtn" data-on-click="startBatchRename" disabled>
                 <span class="btn-icon">✏️</span> {{ _('Batch Rename') }} (<span id="batchCount">0</span>)
             </button>
         </div>
@@ -356,14 +356,14 @@
         <table class="data-table">
             <thead>
                 <tr>
-                    <th class="sortable" style="width: 100px;" data-sort="system" data-tab="naming" onclick="sortColumn('naming', 'system', event)">
+                    <th class="sortable" style="width: 100px;" data-sort="system" data-tab="naming" data-on-click="sortColumn" data-args='["naming", "system", "$event"]'>
                         {{ _('System') }} <span class="sort-indicator"></span>
                     </th>
-                    <th class="sortable active" data-sort="filename" data-tab="naming" onclick="sortColumn('naming', 'filename', event)">
+                    <th class="sortable active" data-sort="filename" data-tab="naming" data-on-click="sortColumn" data-args='["naming", "filename", "$event"]'>
                         {{ _('Current Filename') }} <span class="sort-indicator">▲</span>
                     </th>
                     <th style="width: 150px;">{{ _('Issues') }}</th>
-                    <th class="sortable" data-sort="suggested" data-tab="naming" onclick="sortColumn('naming', 'suggested', event)">
+                    <th class="sortable" data-sort="suggested" data-tab="naming" data-on-click="sortColumn" data-args='["naming", "suggested", "$event"]'>
                         {{ _('Suggested Name') }} <span class="sort-indicator"></span>
                     </th>
                     <th style="width: 100px;">{{ _('Action') }}</th>
@@ -403,13 +403,13 @@
     <div class="filter-bar">
         <div class="filter-group">
             <label for="filter-mismatch-system">{{ _('System:') }}</label>
-            <select id="filter-mismatch-system" onchange="applyMismatchFilters()">
+            <select id="filter-mismatch-system" data-on-change="applyMismatchFilters">
                 <option value="">{{ _('All Systems') }}</option>
             </select>
         </div>
         <div class="filter-group">
             <label for="filter-mismatch-type">{{ _('Mismatch Type:') }}</label>
-            <select id="filter-mismatch-type" onchange="applyMismatchFilters()">
+            <select id="filter-mismatch-type" data-on-change="applyMismatchFilters">
                 <option value="">{{ _('All Types') }}</option>
                 <option value="title">{{ _('Title Mismatch') }}</option>
                 <option value="region">{{ _('Region Mismatch') }}</option>
@@ -418,10 +418,10 @@
         </div>
         <div class="filter-group">
             <label for="filter-mismatch-search">{{ _('Search:') }}</label>
-            <input type="text" id="filter-mismatch-search" placeholder="{{ _('Search...') }}" oninput="applyMismatchFilters()">
+            <input type="text" id="filter-mismatch-search" placeholder="{{ _('Search...') }}" data-on-input="applyMismatchFilters">
         </div>
         <div class="filter-group" style="margin-left: auto;">
-            <button type="button" class="btn btn-success" id="mismatchBatchRenameBtn" onclick="startMismatchBatchRename()" disabled>
+            <button type="button" class="btn btn-success" id="mismatchBatchRenameBtn" data-on-click="startMismatchBatchRename" disabled>
                 <span class="btn-icon">✏️</span> {{ _('Batch Rename') }} (<span id="mismatchBatchCount">0</span>)
             </button>
         </div>
@@ -431,19 +431,19 @@
         <table class="data-table">
             <thead>
                 <tr>
-                    <th class="sortable" style="width: 100px;" data-sort="system" data-tab="mismatch" onclick="sortColumn('mismatch', 'system', event)">
+                    <th class="sortable" style="width: 100px;" data-sort="system" data-tab="mismatch" data-on-click="sortColumn" data-args='["mismatch", "system", "$event"]'>
                         {{ _('System') }} <span class="sort-indicator"></span>
                     </th>
-                    <th class="sortable active" data-sort="filename" data-tab="mismatch" onclick="sortColumn('mismatch', 'filename', event)">
+                    <th class="sortable active" data-sort="filename" data-tab="mismatch" data-on-click="sortColumn" data-args='["mismatch", "filename", "$event"]'>
                         {{ _('Current Filename') }} <span class="sort-indicator">▲</span>
                     </th>
-                    <th class="sortable" data-sort="scraped_title" data-tab="mismatch" onclick="sortColumn('mismatch', 'scraped_title', event)">
+                    <th class="sortable" data-sort="scraped_title" data-tab="mismatch" data-on-click="sortColumn" data-args='["mismatch", "scraped_title", "$event"]'>
                         {{ _('Scraped Title') }} <span class="sort-indicator"></span>
                     </th>
-                    <th class="sortable" style="width: 100px;" data-sort="region" data-tab="mismatch" onclick="sortColumn('mismatch', 'region', event)">
+                    <th class="sortable" style="width: 100px;" data-sort="region" data-tab="mismatch" data-on-click="sortColumn" data-args='["mismatch", "region", "$event"]'>
                         {{ _('Region') }} <span class="sort-indicator"></span>
                     </th>
-                    <th class="sortable" style="width: 80px;" data-sort="year" data-tab="mismatch" onclick="sortColumn('mismatch', 'year', event)">
+                    <th class="sortable" style="width: 80px;" data-sort="year" data-tab="mismatch" data-on-click="sortColumn" data-args='["mismatch", "year", "$event"]'>
                         {{ _('Year') }} <span class="sort-indicator"></span>
                     </th>
                     <th style="width: 120px;">{{ _('Mismatch') }}</th>
@@ -469,7 +469,7 @@
     <div class="modal-content" style="max-width: 600px;">
         <div class="modal-header">
             <h2 id="batchModalTitle">✏️ {{ _('Batch Rename') }}</h2>
-            <button type="button" class="modal-close" onclick="closeBatchModal()" id="batchCloseBtn">&times;</button>
+            <button type="button" class="modal-close" data-on-click="closeBatchModal" id="batchCloseBtn">&times;</button>
         </div>
         <div class="modal-body">
             <!-- Confirmation View -->
@@ -518,11 +518,11 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" onclick="closeBatchModal()" id="batchCancelBtn">{{ _('Cancel') }}</button>
-            <button type="button" class="btn btn-success" onclick="executeBatchRename()" id="batchStartBtn">
+            <button type="button" class="btn btn-secondary" data-on-click="closeBatchModal" id="batchCancelBtn">{{ _('Cancel') }}</button>
+            <button type="button" class="btn btn-success" data-on-click="executeBatchRename" id="batchStartBtn">
                 <span class="btn-icon">✏️</span> {{ _('Start Rename') }}
             </button>
-            <button type="button" class="btn btn-primary" onclick="closeBatchModal()" id="batchDoneBtn" style="display: none;">{{ _('Done') }}</button>
+            <button type="button" class="btn btn-primary" data-on-click="closeBatchModal" id="batchDoneBtn" style="display: none;">{{ _('Done') }}</button>
         </div>
     </div>
 </div>
@@ -963,7 +963,7 @@ function renderNamingTable(items) {
             <td>${(item.issues || []).map(i => `<span class="issue-badge ${i}">${formatIssue(i)}</span>`).join(' ')}</td>
             <td class="suggested-name" title="${escapeHtml(item.suggested || '')}">${escapeHtml(item.suggested || '-')}</td>
             <td class="action-cell">
-                <button type="button" class="action-btn" onclick="viewGame(${item.game_id})">👁️</button>
+                <button type="button" class="action-btn" data-on-click="viewGame" data-args="${actionArgs(item.game_id)}">👁️</button>
                 ${item.suggested ? `<button class="action-btn rename" data-game-id="${item.game_id}" data-suggested="${escapeHtml(item.suggested)}">✏️</button>` : ''}
             </td>
         </tr>
@@ -1083,7 +1083,7 @@ function renderMismatchTable(items) {
             <td>${escapeHtml(year)}</td>
             <td>${(item.mismatch_types || (item.mismatch_type ? [item.mismatch_type] : [])).map(t => `<span class="issue-badge name-mismatch">${t}</span>`).join(' ')}</td>
             <td class="action-cell">
-                <button type="button" class="action-btn" onclick="viewGame(${item.game_id})">👁️</button>
+                <button type="button" class="action-btn" data-on-click="viewGame" data-args="${actionArgs(item.game_id)}">👁️</button>
                 <button class="action-btn rename" data-game-id="${item.game_id}">✏️</button>
             </td>
         </tr>`;
@@ -1259,11 +1259,11 @@ function closeBatchModal() {
             'A batch rename is in progress. Are you sure you want to cancel?',
             function() {
                 batchRenameCancelled = true;
-                document.getElementById('batchStartBtn').setAttribute('onclick', 'executeBatchRename()');
+                document.getElementById('batchStartBtn').setAttribute('data-on-click', 'executeBatchRename');
                 document.getElementById('batchRenameModal').classList.remove('active');
             });
     } else {
-        document.getElementById('batchStartBtn').setAttribute('onclick', 'executeBatchRename()');
+        document.getElementById('batchStartBtn').setAttribute('data-on-click', 'executeBatchRename');
         document.getElementById('batchRenameModal').classList.remove('active');
     }
 }
@@ -1406,7 +1406,7 @@ function startMismatchBatchRename() {
     document.getElementById('batchCancelBtn').style.display = 'inline-flex';
     document.getElementById('batchCancelBtn').textContent = 'Cancel';
     document.getElementById('batchStartBtn').style.display = 'inline-flex';
-    document.getElementById('batchStartBtn').setAttribute('onclick', 'executeMismatchBatchRename()');
+    document.getElementById('batchStartBtn').setAttribute('data-on-click', 'executeMismatchBatchRename');
     document.getElementById('batchDoneBtn').style.display = 'none';
     document.getElementById('batchCloseBtn').style.display = 'block';
     document.getElementById('batchModalTitle').textContent = '✏️ Batch Rename Mismatches';
@@ -1479,7 +1479,7 @@ async function executeMismatchBatchRename() {
     document.getElementById('batchDoneBtn').style.display = 'inline-flex';
     document.getElementById('batchCloseBtn').style.display = 'block';
     // Restore the Non-Standard tab's onclick handler
-    document.getElementById('batchStartBtn').setAttribute('onclick', 'executeBatchRename()');
+    document.getElementById('batchStartBtn').setAttribute('data-on-click', 'executeBatchRename');
 
     let message = `Successfully renamed ${success} files.`;
     if (failed > 0) message += ` Failed: ${failed}.`;

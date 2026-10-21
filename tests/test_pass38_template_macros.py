@@ -122,7 +122,7 @@ class TestStickySubnavMacros:
         html = tmpl.render()
         assert 'href="#display"' in html
         assert 'class="subnav-link"' in html
-        assert "scrollToSection('display')" in html
+        assert 'data-on-click="scrollToSection" data-args=\'["display"]\'' in html
         assert "🖼️ Display" in html
         assert "active" not in html
 
@@ -147,7 +147,7 @@ class TestStickySubnavMacros:
         assert 'id="subnav-account"' in html
         assert "👤 My Profile" in html
         assert 'class="subnav-link active"' in html
-        assert "scrollToSection('timezone')" in html
+        assert 'data-on-click="scrollToSection" data-args=\'["timezone"]\'' in html
 
 
 # ---------------------------------------------------------------------------

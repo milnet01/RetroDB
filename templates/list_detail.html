@@ -25,7 +25,7 @@
             <span class="count-number" id="listGameCount">{{ games|length|format_number }}</span>
             <span class="count-label">GAMES</span>
         </span>
-        <button type="button" class="btn btn-primary" onclick="openAddGameModal()">
+        <button type="button" class="btn btn-primary" data-on-click="openAddGameModal">
             <span class="btn-icon">+</span> Add Games
         </button>
         <a href="{{ url_for('collections.lists_page') }}" class="btn btn-secondary">
@@ -62,7 +62,7 @@
                         <span class="list-game-system">{{ game.system_name or '' }}</span>
                     </td>
                     <td>
-                        <button type="button" class="list-action-btn danger" data-title="{{ game.title }}" onclick="confirmRemoveGame({{ game.id }}, this.dataset.title)" title="Remove from list">&#10005;</button>
+                        <button type="button" class="list-action-btn danger" data-title="{{ game.title }}" data-on-click="confirmRemoveGame" data-args='[{{ game.id|tojson }}, "$this.dataset.title"]' title="Remove from list">&#10005;</button>
                     </td>
                 </tr>
                 {% endfor %}
@@ -79,26 +79,26 @@
     <div class="empty-state-text">
         Add games from the library or use the button above.
     </div>
-    <button type="button" class="btn btn-primary" onclick="openAddGameModal()">
+    <button type="button" class="btn btn-primary" data-on-click="openAddGameModal">
         <span class="btn-icon">+</span> Add Games
     </button>
 </div>
 {% endif %}
 
 <!-- Add Game Search Modal -->
-<div class="custom-modal" id="addGameModal" data-focus-trap data-focus-trap-onescape="closeAddGameModal" onclick="if(event.target===this)closeAddGameModal()">
+<div class="custom-modal" id="addGameModal" data-focus-trap data-focus-trap-onescape="closeAddGameModal" data-on-click="closeAddGameModal" data-self-only>
     <div class="custom-modal-content" style="max-width: 600px; max-height: 80vh;" role="dialog" aria-modal="true" aria-labelledby="addGameModalTitle">
         <div class="custom-modal-header">
             <h3 id="addGameModalTitle">Add Games to List</h3>
-            <button type="button" class="custom-modal-close" onclick="closeAddGameModal()" aria-label="Close">&times;</button>
+            <button type="button" class="custom-modal-close" data-on-click="closeAddGameModal" aria-label="Close">&times;</button>
         </div>
         <div class="custom-modal-body" style="padding: 0;">
             <div class="add-game-search-bar">
                 <input type="text" id="addGameSearchInput" class="form-control"
                        placeholder="Search games by title..."
-                       oninput="debounceGameSearch()"
-                       onkeydown="if(event.key==='Enter')searchGamesForList()">
-                <button type="button" class="btn btn-primary btn-sm" onclick="searchGamesForList()">Search</button>
+                       data-on-input="debounceGameSearch"
+                       data-on-keydown="searchGamesForList" data-key="Enter">
+                <button type="button" class="btn btn-primary btn-sm" data-on-click="searchGamesForList">Search</button>
             </div>
             <div class="add-game-results" id="addGameResults">
                 <div class="add-game-hint">Type a game title and press Enter or click Search.</div>
@@ -416,7 +416,7 @@ async function searchGamesForList() {
                     </div>
                     <button type="button" class="add-game-result-btn ${isAdded ? 'added' : ''}"
                             id="addBtn_${g.id}"
-                            onclick="addGameToList(${g.id}, this)"
+                            data-on-click="addGameToList" data-args="${actionArgs(g.id, '$this')}"
                             ${isAdded ? 'disabled' : ''}>
                         ${isAdded ? 'Added' : '+ Add'}
                     </button>

@@ -17,7 +17,7 @@
     </div>
     <div class="header-actions">
         {% if psn_configured %}
-        <button type="button" onclick="syncTrophies()" class="btn btn-primary" id="syncTrophiesBtn">
+        <button type="button" data-on-click="syncTrophies" class="btn btn-primary" id="syncTrophiesBtn">
             <span class="btn-icon">🔄</span>
             {{ _('Sync Trophies') }}
         </button>
@@ -50,7 +50,7 @@
         <p class="text-muted" style="margin-bottom: 20px;">
             {{ _('Click "Sync Trophies" to fetch your trophy data from PlayStation Network.') }}
         </p>
-        <button type="button" onclick="syncTrophies()" class="btn btn-primary">
+        <button type="button" data-on-click="syncTrophies" class="btn btn-primary">
             <span class="btn-icon">🔄</span>
             {{ _('Sync Trophies') }}
         </button>
@@ -156,19 +156,19 @@
 
     <!-- Bulk Controls -->
     <div class="bulk-controls">
-        <button type="button" class="filter-btn bulk-btn" onclick="PSNTrophyController.toggleBulkMode()" id="psnBulkModeBtn">
+        <button type="button" class="filter-btn bulk-btn" data-on-click="PSNTrophyController.toggleBulkMode" id="psnBulkModeBtn">
             <span class="filter-icon">☑️</span> <span id="psnBulkModeText">{{ _('Select') }}</span>
         </button>
-        <button type="button" class="filter-btn bulk-action-btn psn-bulk-action" onclick="PSNTrophyController.selectAllVisible()" id="psnSelectAllBtn" style="display: none;">
+        <button type="button" class="filter-btn bulk-action-btn psn-bulk-action" data-on-click="PSNTrophyController.selectAllVisible" id="psnSelectAllBtn" style="display: none;">
             <span class="filter-icon">✅</span> {{ _('All') }}
         </button>
-        <button type="button" class="filter-btn bulk-action-btn psn-bulk-action" onclick="PSNTrophyController.selectNotSynced()" id="psnSelectNotSyncedBtn" style="display: none;" title="{{ _('Select games without synced trophy details') }}">
+        <button type="button" class="filter-btn bulk-action-btn psn-bulk-action" data-on-click="PSNTrophyController.selectNotSynced" id="psnSelectNotSyncedBtn" style="display: none;" title="{{ _('Select games without synced trophy details') }}">
             <span class="filter-icon">🔄</span> {{ _('Not Synced') }}
         </button>
-        <button type="button" class="filter-btn bulk-action-btn psn-bulk-action" onclick="PSNTrophyController.selectIncomplete()" id="psnSelectIncompleteBtn" style="display: none;" title="{% trans %}Select games with < 100% progress{% endtrans %}">
+        <button type="button" class="filter-btn bulk-action-btn psn-bulk-action" data-on-click="PSNTrophyController.selectIncomplete" id="psnSelectIncompleteBtn" style="display: none;" title="{% trans %}Select games with < 100% progress{% endtrans %}">
             <span class="filter-icon">📊</span> {{ _('Incomplete') }}
         </button>
-        <button type="button" class="filter-btn bulk-scrape-btn psn-bulk-action" onclick="startBulkRefresh()" id="psnBulkRefreshBtn" style="display: none;">
+        <button type="button" class="filter-btn bulk-scrape-btn psn-bulk-action" data-on-click="startBulkRefresh" id="psnBulkRefreshBtn" style="display: none;">
             <span class="filter-icon">🔄</span> {% trans %}Sync Selected{% endtrans %} (<span id="psnSelectedCount">0</span>)
         </button>
     </div>
@@ -244,7 +244,7 @@
             </div>
         </div>
         <div id="syncFooter" class="modal-footer" style="display: none;">
-            <button type="button" class="btn btn-primary" onclick="closeSyncModal()">✓ {{ _('Done') }}</button>
+            <button type="button" class="btn btn-primary" data-on-click="closeSyncModal">✓ {{ _('Done') }}</button>
         </div>
     </div>
 </div>
@@ -290,20 +290,20 @@
 
         <!-- Controls Row -->
         <div id="bulkControlsRow" class="modal-footer" style="display: flex; gap: var(--spacing-sm); justify-content: center;">
-            <button type="button" class="btn btn-warning btn-sm" onclick="toggleBulkPause()" id="bulkPauseBtn">
+            <button type="button" class="btn btn-warning btn-sm" data-on-click="toggleBulkPause" id="bulkPauseBtn">
                 <span id="bulkPauseBtnIcon">⏸️</span> <span id="bulkPauseBtnText">{{ _('Pause') }}</span>
             </button>
-            <button type="button" class="btn btn-danger btn-sm" onclick="cancelBulkRefresh()">
+            <button type="button" class="btn btn-danger btn-sm" data-on-click="cancelBulkRefresh">
                 ❌ {{ _('Cancel') }}
             </button>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="psnRunInBackground()" id="bulkBackgroundBtn">
+            <button type="button" class="btn btn-secondary btn-sm" data-on-click="psnRunInBackground" id="bulkBackgroundBtn">
                 📤 {{ _('Background') }}
             </button>
         </div>
 
         <!-- Final Footer (shown when complete) -->
         <div id="bulkFooter" class="modal-footer" style="display: none;">
-            <button type="button" class="btn btn-primary" onclick="closeBulkRefreshModal(true)">
+            <button type="button" class="btn btn-primary" data-on-click="closeBulkRefreshModal" data-args='[true]'>
                 ✓ {{ _('Done') }}
             </button>
         </div>
@@ -1206,7 +1206,7 @@ const PSNTrophyController = (function() {
             '<div class="bulk-select-checkbox" style="display: ' + checkboxDisplay + ';">' +
                 '<input type="checkbox" class="game-checkbox" data-npwr-id="' + escapeHtml(game.npwr_id) + '"' +
                 (isSelected ? ' checked' : '') +
-                ' onclick="event.stopPropagation(); PSNTrophyController.toggleGameSelection(\'' + escapeHtml(game.npwr_id) + '\')">' +
+                ' data-on-click="PSNTrophyController.toggleGameSelection" data-args="' + actionArgs(String(game.npwr_id)) + '" data-stop>' +
             '</div>' +
             '<a href="/psn-trophies/' + escapeHtml(game.npwr_id) + '" class="psn-trophy-game-card">' +
                 '<div class="psn-trophy-game-thumb">' +
@@ -1496,6 +1496,7 @@ const PSNTrophyController = (function() {
         getSelectedIds: getSelectedIds,
     };
 })();
+window.PSNTrophyController = PSNTrophyController;
 
 // Initialize on DOM ready
 document.addEventListener('DOMContentLoaded', function() {

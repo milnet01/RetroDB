@@ -1,10 +1,12 @@
 - version: 3.30.0
-  date: 2026-10-20
+  date: 2026-10-21
   tags:
   - type: feature
     label: One game from several regions shows as one card
   - type: security
     label: AI Fill and ROM Tools are harder to misuse
+  - type: security
+    label: Pages refuse to run scripts slipped into them
   - type: fix
     label: Scrapes, ROM Tools jobs, trophy sync and first-run setup handle errors properly
   - type: ui
@@ -50,6 +52,10 @@
         Converter and CHD Verify no longer follow a shortcut (symlink) that
         points outside it, and unpacking a multi-disc archive ignores any
         shortcut packed inside the archive.</li>
+      <li><strong>Pages refuse to run scripts slipped into them.</strong>
+        Your browser now blocks any script RetroDB did not write itself, so
+        text that sneaks code into a game's title, a tag or a scraped
+        description cannot run it. Buttons and menus work as before.</li>
       <li><strong>One broken screenshot no longer stops duplicate checks for
         a game.</strong> An unreadable screenshot is set aside and the check
         carries on.</li>

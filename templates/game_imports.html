@@ -163,16 +163,16 @@
 
     <!-- Tabs -->
     <div class="platform-tabs">
-        <button type="button" class="platform-tab{% if active_tab == 'clz' %} active{% endif %}" onclick="switchTab('clz')" id="tab-clz">
+        <button type="button" class="platform-tab{% if active_tab == 'clz' %} active{% endif %}" data-on-click="switchTab" data-args='["clz"]' id="tab-clz">
             <span class="tab-icon">📄</span> {{ _('CLZ Import') }}
         </button>
-        <button type="button" class="platform-tab{% if active_tab == 'steam' %} active{% endif %}" onclick="switchTab('steam')" id="tab-steam">
+        <button type="button" class="platform-tab{% if active_tab == 'steam' %} active{% endif %}" data-on-click="switchTab" data-args='["steam"]' id="tab-steam">
             <span class="tab-icon">🟦</span> {{ _('Steam') }}
         </button>
-        <button type="button" class="platform-tab{% if active_tab == 'xbox' %} active{% endif %}" onclick="switchTab('xbox')" id="tab-xbox">
+        <button type="button" class="platform-tab{% if active_tab == 'xbox' %} active{% endif %}" data-on-click="switchTab" data-args='["xbox"]' id="tab-xbox">
             <span class="tab-icon">🟢</span> {{ _('Xbox') }}
         </button>
-        <button type="button" class="platform-tab{% if active_tab == 'psn' %} active{% endif %}" onclick="switchTab('psn')" id="tab-psn">
+        <button type="button" class="platform-tab{% if active_tab == 'psn' %} active{% endif %}" data-on-click="switchTab" data-args='["psn"]' id="tab-psn">
             <span class="tab-icon">🔵</span> {{ _('PSN') }}
         </button>
     </div>
@@ -196,7 +196,7 @@
                 <div class="upload-text">{{ _('Click or drag a CLZ PDF file here') }}</div>
                 <div class="upload-subtext">{{ _('Supports PDF exports from CLZ Games app') }}</div>
             </label>
-            <input type="file" id="clzFileInput" accept=".pdf" style="display: none;" onchange="uploadClzFile(this)">
+            <input type="file" id="clzFileInput" accept=".pdf" style="display: none;" data-on-change="uploadClzFile" data-args='["$this"]'>
         </div>
 
         <!-- CLZ Preview -->
@@ -210,15 +210,15 @@
                 </div>
             </div>
             <div class="preview-controls">
-                <button type="button" class="btn btn-secondary btn-sm" onclick="selectAllNew('clz')">☑️ {{ _('Select All New') }}</button>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="deselectAll('clz')">☐ {{ _('Deselect All') }}</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-on-click="selectAllNew" data-args='["clz"]'>☑️ {{ _('Select All New') }}</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-on-click="deselectAll" data-args='["clz"]'>☐ {{ _('Deselect All') }}</button>
                 <input type="text" id="clzSearch" placeholder="{{ _('Search games...') }}"
                        style="padding: 6px 12px; background: var(--bg-darker); border: 1px solid var(--card-border); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 0.85rem; min-width: 200px;">
             </div>
             <div class="preview-table-container">
                 <table class="data-table">
                     <thead><tr>
-                        <th class="checkbox-cell"><input type="checkbox" id="clzSelectAll" onchange="toggleSelectAll('clz')"></th>
+                        <th class="checkbox-cell"><input type="checkbox" id="clzSelectAll" data-on-change="toggleSelectAll" data-args='["clz"]'></th>
                         <th>{{ _('Game') }}</th>
                         <th>{{ _('Platform') }}</th>
                         <th>{{ _('Status') }}</th>
@@ -228,7 +228,7 @@
             </div>
             <div class="import-actions">
                 <span id="clzSelectedInfo" style="color: var(--text-secondary); margin-right: auto;">{{ _('0 games selected') }}</span>
-                <button type="button" class="btn btn-primary" id="clzImportBtn" onclick="importClzGames()" disabled>📥 {{ _('Import Selected') }}</button>
+                <button type="button" class="btn btn-primary" id="clzImportBtn" data-on-click="importClzGames" disabled>📥 {{ _('Import Selected') }}</button>
             </div>
         </div>
     </div>
@@ -249,7 +249,7 @@
             <div class="config-row">
                 <div class="config-field"><label for="steamApiKey">{{ _('Steam Web API Key') }}</label><input type="text" id="steamApiKey" placeholder="{{ _('Your Steam Web API Key') }}"></div>
                 <div class="config-field"><label for="steamId">{{ _('Steam ID or Vanity URL') }}</label><input type="text" id="steamId" placeholder="{{ _('76561198012345678 or custom URL name') }}"></div>
-                <button type="button" class="btn btn-primary" onclick="fetchSteamLibrary()" id="steamFetchBtn">📡 {{ _('Fetch Library') }}</button>
+                <button type="button" class="btn btn-primary" data-on-click="fetchSteamLibrary" id="steamFetchBtn">📡 {{ _('Fetch Library') }}</button>
             </div>
         </div>
         <div class="profile-card" id="steamProfile" style="display: none;">
@@ -265,15 +265,15 @@
                 </div>
             </div>
             <div class="preview-controls">
-                <button type="button" class="btn btn-secondary btn-sm" onclick="selectAllNew('steam')">☑️ {{ _('Select All New') }}</button>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="deselectAll('steam')">☐ {{ _('Deselect All') }}</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-on-click="selectAllNew" data-args='["steam"]'>☑️ {{ _('Select All New') }}</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-on-click="deselectAll" data-args='["steam"]'>☐ {{ _('Deselect All') }}</button>
                 <input type="text" id="steamSearch" placeholder="{{ _('Search games...') }}"
                        style="padding: 6px 12px; background: var(--bg-darker); border: 1px solid var(--card-border); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 0.85rem; min-width: 200px;">
             </div>
             <div class="preview-table-container">
                 <table class="data-table">
                     <thead><tr>
-                        <th class="checkbox-cell"><input type="checkbox" id="steamSelectAll" onchange="toggleSelectAll('steam')"></th>
+                        <th class="checkbox-cell"><input type="checkbox" id="steamSelectAll" data-on-change="toggleSelectAll" data-args='["steam"]'></th>
                         <th class="icon-cell"></th><th>{{ _('Game') }}</th><th>{{ _('Playtime') }}</th><th>{{ _('Last Played') }}</th><th>{{ _('Status') }}</th>
                     </tr></thead>
                     <tbody id="steamTableBody"></tbody>
@@ -281,7 +281,7 @@
             </div>
             <div class="import-actions">
                 <span id="steamSelectedInfo" style="color: var(--text-secondary); margin-right: auto;">{{ _('0 games selected') }}</span>
-                <button type="button" class="btn btn-primary" id="steamImportBtn" onclick="importGames('steam')" disabled>📥 {{ _('Import Selected') }}</button>
+                <button type="button" class="btn btn-primary" id="steamImportBtn" data-on-click="importGames" data-args='["steam"]' disabled>📥 {{ _('Import Selected') }}</button>
             </div>
         </div>
     </div>
@@ -303,12 +303,12 @@
                 <div class="auth-dot"></div>
                 <div><div id="xboxAuthText" style="color: var(--text-primary);">{{ _('Not Connected') }}</div><div id="xboxAuthDetail" style="color: var(--text-muted); font-size: 0.8rem;">{{ _('Connect your Xbox account to import games') }}</div></div>
                 <div style="margin-left: auto; display: flex; gap: var(--spacing-sm);">
-                    <button type="button" class="btn btn-primary btn-sm" onclick="connectXbox()" id="xboxConnectBtn">🔗 {{ _('Connect Xbox Account') }}</button>
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="disconnectXbox()" id="xboxDisconnectBtn" style="display: none;">{{ _('Disconnect') }}</button>
+                    <button type="button" class="btn btn-primary btn-sm" data-on-click="connectXbox" id="xboxConnectBtn">🔗 {{ _('Connect Xbox Account') }}</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-on-click="disconnectXbox" id="xboxDisconnectBtn" style="display: none;">{{ _('Disconnect') }}</button>
                 </div>
             </div>
             <div style="display: flex; gap: var(--spacing-md); align-items: center; margin-top: var(--spacing-md);" id="xboxFetchRow">
-                <button type="button" class="btn btn-primary" onclick="fetchXboxLibrary()" id="xboxFetchBtn" disabled>📡 {{ _('Fetch Library') }}</button>
+                <button type="button" class="btn btn-primary" data-on-click="fetchXboxLibrary" id="xboxFetchBtn" disabled>📡 {{ _('Fetch Library') }}</button>
             </div>
         </div>
         <div class="preview-section" id="xboxPreview">
@@ -321,22 +321,22 @@
                 </div>
             </div>
             <div class="preview-controls">
-                <button type="button" class="btn btn-secondary btn-sm" onclick="selectAllNew('xbox')">☑️ {{ _('Select All New') }}</button>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="deselectAll('xbox')">☐ {{ _('Deselect All') }}</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-on-click="selectAllNew" data-args='["xbox"]'>☑️ {{ _('Select All New') }}</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-on-click="deselectAll" data-args='["xbox"]'>☐ {{ _('Deselect All') }}</button>
                 <input type="text" id="xboxSearch" placeholder="{{ _('Search games...') }}"
                        style="padding: 6px 12px; background: var(--bg-darker); border: 1px solid var(--card-border); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 0.85rem; min-width: 200px;">
             </div>
             <div class="import-platform-filters" id="xboxPlatformFilters">
-                <button type="button" class="import-platform-filter-btn active" data-platform="all" onclick="setPlatformFilter('xbox', 'all')">{{ _('All') }}</button>
-                <button type="button" class="import-platform-filter-btn" data-platform="xbox360" onclick="setPlatformFilter('xbox', 'xbox360')">{{ _('Xbox 360') }}</button>
-                <button type="button" class="import-platform-filter-btn" data-platform="xboxone" onclick="setPlatformFilter('xbox', 'xboxone')">{{ _('Xbox One') }}</button>
-                <button type="button" class="import-platform-filter-btn" data-platform="xboxseriesx" onclick="setPlatformFilter('xbox', 'xboxseriesx')">{{ _('Xbox Series') }}</button>
-                <button type="button" class="import-platform-filter-btn" data-platform="windows" onclick="setPlatformFilter('xbox', 'windows')">{{ _('PC') }}</button>
+                <button type="button" class="import-platform-filter-btn active" data-platform="all" data-on-click="setPlatformFilter" data-args='["xbox", "all"]'>{{ _('All') }}</button>
+                <button type="button" class="import-platform-filter-btn" data-platform="xbox360" data-on-click="setPlatformFilter" data-args='["xbox", "xbox360"]'>{{ _('Xbox 360') }}</button>
+                <button type="button" class="import-platform-filter-btn" data-platform="xboxone" data-on-click="setPlatformFilter" data-args='["xbox", "xboxone"]'>{{ _('Xbox One') }}</button>
+                <button type="button" class="import-platform-filter-btn" data-platform="xboxseriesx" data-on-click="setPlatformFilter" data-args='["xbox", "xboxseriesx"]'>{{ _('Xbox Series') }}</button>
+                <button type="button" class="import-platform-filter-btn" data-platform="windows" data-on-click="setPlatformFilter" data-args='["xbox", "windows"]'>{{ _('PC') }}</button>
             </div>
             <div class="preview-table-container">
                 <table class="data-table">
                     <thead><tr>
-                        <th class="checkbox-cell"><input type="checkbox" id="xboxSelectAll" onchange="toggleSelectAll('xbox')"></th>
+                        <th class="checkbox-cell"><input type="checkbox" id="xboxSelectAll" data-on-change="toggleSelectAll" data-args='["xbox"]'></th>
                         <th>{{ _('Game') }}</th><th>{{ _('Platform') }}</th><th>{{ _('Gamerscore') }}</th><th>{{ _('Status') }}</th>
                     </tr></thead>
                     <tbody id="xboxTableBody"></tbody>
@@ -344,7 +344,7 @@
             </div>
             <div class="import-actions">
                 <span id="xboxSelectedInfo" style="color: var(--text-secondary); margin-right: auto;">{{ _('0 games selected') }}</span>
-                <button type="button" class="btn btn-primary" id="xboxImportBtn" onclick="importGames('xbox')" disabled>📥 {{ _('Import Selected') }}</button>
+                <button type="button" class="btn btn-primary" id="xboxImportBtn" data-on-click="importGames" data-args='["xbox"]' disabled>📥 {{ _('Import Selected') }}</button>
             </div>
         </div>
     </div>
@@ -367,7 +367,7 @@
                 <div class="auth-dot"></div>
                 <div><div id="psnAuthText" style="color: var(--text-primary);">{{ _('Checking...') }}</div><div id="psnAuthDetail" style="color: var(--text-muted); font-size: 0.8rem;"></div></div>
                 <div style="margin-left: auto; display: flex; gap: var(--spacing-sm);">
-                    <button type="button" class="btn btn-primary" onclick="fetchPsnLibrary()" id="psnFetchBtn" disabled>📡 {{ _('Fetch Library') }}</button>
+                    <button type="button" class="btn btn-primary" data-on-click="fetchPsnLibrary" id="psnFetchBtn" disabled>📡 {{ _('Fetch Library') }}</button>
                 </div>
             </div>
         </div>
@@ -384,22 +384,22 @@
                 </div>
             </div>
             <div class="preview-controls">
-                <button type="button" class="btn btn-secondary btn-sm" onclick="selectAllNew('psn')">☑️ {{ _('Select All New') }}</button>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="deselectAll('psn')">☐ {{ _('Deselect All') }}</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-on-click="selectAllNew" data-args='["psn"]'>☑️ {{ _('Select All New') }}</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-on-click="deselectAll" data-args='["psn"]'>☐ {{ _('Deselect All') }}</button>
                 <input type="text" id="psnSearch" placeholder="{{ _('Search games...') }}"
                        style="padding: 6px 12px; background: var(--bg-darker); border: 1px solid var(--card-border); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 0.85rem; min-width: 200px;">
             </div>
             <div class="import-platform-filters" id="psnPlatformFilters">
-                <button type="button" class="import-platform-filter-btn active" data-platform="all" onclick="setPlatformFilter('psn', 'all')">{{ _('All') }}</button>
-                <button type="button" class="import-platform-filter-btn" data-platform="ps5" onclick="setPlatformFilter('psn', 'ps5')">{{ _('PS5') }}</button>
-                <button type="button" class="import-platform-filter-btn" data-platform="ps4" onclick="setPlatformFilter('psn', 'ps4')">{{ _('PS4') }}</button>
-                <button type="button" class="import-platform-filter-btn" data-platform="ps3" onclick="setPlatformFilter('psn', 'ps3')">{{ _('PS3') }}</button>
-                <button type="button" class="import-platform-filter-btn" data-platform="psvita" onclick="setPlatformFilter('psn', 'psvita')">{{ _('PS Vita') }}</button>
+                <button type="button" class="import-platform-filter-btn active" data-platform="all" data-on-click="setPlatformFilter" data-args='["psn", "all"]'>{{ _('All') }}</button>
+                <button type="button" class="import-platform-filter-btn" data-platform="ps5" data-on-click="setPlatformFilter" data-args='["psn", "ps5"]'>{{ _('PS5') }}</button>
+                <button type="button" class="import-platform-filter-btn" data-platform="ps4" data-on-click="setPlatformFilter" data-args='["psn", "ps4"]'>{{ _('PS4') }}</button>
+                <button type="button" class="import-platform-filter-btn" data-platform="ps3" data-on-click="setPlatformFilter" data-args='["psn", "ps3"]'>{{ _('PS3') }}</button>
+                <button type="button" class="import-platform-filter-btn" data-platform="psvita" data-on-click="setPlatformFilter" data-args='["psn", "psvita"]'>{{ _('PS Vita') }}</button>
             </div>
             <div class="preview-table-container">
                 <table class="data-table">
                     <thead><tr>
-                        <th class="checkbox-cell"><input type="checkbox" id="psnSelectAll" onchange="toggleSelectAll('psn')"></th>
+                        <th class="checkbox-cell"><input type="checkbox" id="psnSelectAll" data-on-change="toggleSelectAll" data-args='["psn"]'></th>
                         <th class="icon-cell"></th><th>{{ _('Game') }}</th><th>{{ _('Platform') }}</th><th>{{ _('Trophy Progress') }}</th><th>{{ _('Status') }}</th>
                     </tr></thead>
                     <tbody id="psnTableBody"></tbody>
@@ -407,7 +407,7 @@
             </div>
             <div class="import-actions">
                 <span id="psnSelectedInfo" style="color: var(--text-secondary); margin-right: auto;">{{ _('0 games selected') }}</span>
-                <button type="button" class="btn btn-primary" id="psnImportBtn" onclick="importGames('psn')" disabled>📥 {{ _('Import Selected') }}</button>
+                <button type="button" class="btn btn-primary" id="psnImportBtn" data-on-click="importGames" data-args='["psn"]' disabled>📥 {{ _('Import Selected') }}</button>
             </div>
         </div>
     </div>
@@ -559,7 +559,7 @@ function renderClzTable() {
         const isNew = !game.existing && game.system_id;
         const idx = state.clz.games.indexOf(game);
         tr.innerHTML = `
-            <td class="checkbox-cell"><input type="checkbox" class="clz-checkbox" data-index="${idx}" ${!isNew ? 'disabled' : ''} onchange="updateSelection('clz')"></td>
+            <td class="checkbox-cell"><input type="checkbox" class="clz-checkbox" data-index="${idx}" ${!isNew ? 'disabled' : ''} data-on-change="updateSelection" data-args="${actionArgs('clz')}"></td>
             <td>${escapeHtml(game.title)}</td>
             <td>${game.system_name ? '<span class="platform-badge">' + escapeHtml(game.system_name) + '</span>' : '<span style="color:var(--neon-orange)">' + escapeHtml(game.clz_platform || '?') + '</span>'}</td>
             <td>${game.existing ? '<span class="status-existing">Already imported</span>' : (game.system_id ? '<span class="status-new">New</span>' : '<span style="color:var(--neon-orange)">No system match</span>')}</td>
@@ -754,7 +754,7 @@ function renderTable(platform) {
         const isNew = !game.already_imported;
         const idx = state[platform].games.indexOf(game);
         if (platform === 'steam') {
-            tr.innerHTML = `<td class="checkbox-cell"><input type="checkbox" class="${platform}-checkbox" data-index="${idx}" ${!isNew ? 'disabled' : ''} onchange="updateSelection('${platform}')"></td>
+            tr.innerHTML = `<td class="checkbox-cell"><input type="checkbox" class="${platform}-checkbox" data-index="${idx}" ${!isNew ? 'disabled' : ''} data-on-change="updateSelection" data-args="${actionArgs(String(platform))}"></td>
                 <td class="icon-cell">${game.icon_url ? `<img src="${escapeHtml(game.icon_url)}" alt="" loading="lazy" data-on-error="hide">` : ''}</td>
                 <td>${escapeHtml(game.name)}</td>
                 <td>${game.playtime > 0 ? formatPlaytime(game.playtime) : '<span style="color:var(--text-muted)">—</span>'}</td>
@@ -762,14 +762,14 @@ function renderTable(platform) {
                 <td>${isNew ? '<span class="status-new">New</span>' : '<span class="status-existing">Already imported</span>'}</td>`;
         } else if (platform === 'psn') {
             const progress = game.trophy_progress || 0;
-            tr.innerHTML = `<td class="checkbox-cell"><input type="checkbox" class="${platform}-checkbox" data-index="${idx}" ${!isNew ? 'disabled' : ''} onchange="updateSelection('${platform}')"></td>
+            tr.innerHTML = `<td class="checkbox-cell"><input type="checkbox" class="${platform}-checkbox" data-index="${idx}" ${!isNew ? 'disabled' : ''} data-on-change="updateSelection" data-args="${actionArgs(String(platform))}"></td>
                 <td class="icon-cell">${game.icon_url ? `<img src="${escapeHtml(game.icon_url)}" alt="" loading="lazy" data-on-error="hide">` : ''}</td>
                 <td>${escapeHtml(game.name)}</td>
                 <td><span class="platform-badge">${escapeHtml(game.system_name || game.platform_display)}</span></td>
                 <td><div class="trophy-progress-bar"><div class="trophy-progress-track"><div class="trophy-progress-fill" style="width:${progress}%"></div></div><span class="trophy-progress-text">${progress}%</span></div></td>
                 <td>${isNew ? '<span class="status-new">New</span>' : '<span class="status-existing">Already imported</span>'}</td>`;
         } else {
-            tr.innerHTML = `<td class="checkbox-cell"><input type="checkbox" class="${platform}-checkbox" data-index="${idx}" ${!isNew ? 'disabled' : ''} onchange="updateSelection('${platform}')"></td>
+            tr.innerHTML = `<td class="checkbox-cell"><input type="checkbox" class="${platform}-checkbox" data-index="${idx}" ${!isNew ? 'disabled' : ''} data-on-change="updateSelection" data-args="${actionArgs(String(platform))}"></td>
                 <td>${escapeHtml(game.name)}</td>
                 <td><span class="platform-badge">${escapeHtml(game.system_name || game.platform_display)}</span></td>
                 <td>${game.earned_gamerscore > 0 ? `${formatNumber(game.earned_gamerscore)} / ${formatNumber(game.total_gamerscore)}` : '<span style="color:var(--text-muted)">—</span>'}</td>

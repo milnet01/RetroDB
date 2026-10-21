@@ -26,7 +26,7 @@
             <span class="btn-icon">🎮</span>
             {{ _('View Game') }}
         </a>
-        <button type="button" onclick="refreshAchievements()" class="btn btn-secondary" id="refreshBtn">
+        <button type="button" data-on-click="refreshAchievements" class="btn btn-secondary" id="refreshBtn">
             <span class="btn-icon">🔄</span>
             {{ _('Refresh') }}
         </button>
@@ -124,7 +124,7 @@
             <div class="hltb-section" id="hltbSection">
                 <input type="text" id="hltbSearchQuery" class="hltb-search-input"
                        value="{{ game.title }}" placeholder="{{ _('Search game title...') }}">
-                <button type="button" class="btn-hltb" id="hltbLookupBtn" onclick="steamLookupHLTB()">🔍 {{ _('Lookup HLTB') }}</button>
+                <button type="button" class="btn-hltb" id="hltbLookupBtn" data-on-click="steamLookupHLTB">🔍 {{ _('Lookup HLTB') }}</button>
 
                 <div id="hltbPending" style="display: none;">
                     <div class="hltb-match-header" id="hltbMatchHeader"></div>
@@ -134,8 +134,8 @@
                         <div class="hltb-time-row"><span class="hltb-label">{{ _('Completionist') }}</span><span class="hltb-value" id="hltbPendingComplete">--</span></div>
                     </div>
                     <div class="hltb-actions" style="margin-top: var(--spacing-sm); display: flex; gap: var(--spacing-xs);">
-                        <button type="button" class="btn btn-sm btn-primary" onclick="steamConfirmHLTB()">✓ {{ _('Save') }}</button>
-                        <button type="button" class="btn btn-sm btn-secondary" onclick="steamCancelHLTB()">✕ {{ _('Cancel') }}</button>
+                        <button type="button" class="btn btn-sm btn-primary" data-on-click="steamConfirmHLTB">✓ {{ _('Save') }}</button>
+                        <button type="button" class="btn btn-sm btn-secondary" data-on-click="steamCancelHLTB">✕ {{ _('Cancel') }}</button>
                     </div>
                 </div>
 
@@ -160,7 +160,7 @@
                         {% endif %}
                     </div>
                     <div class="hltb-actions" style="margin-top: var(--spacing-sm);">
-                        <button type="button" class="btn btn-sm btn-danger" onclick="steamClearHLTB()">✕ {{ _('Clear') }}</button>
+                        <button type="button" class="btn btn-sm btn-danger" data-on-click="steamClearHLTB">✕ {{ _('Clear') }}</button>
                     </div>
                 </div>
             </div>

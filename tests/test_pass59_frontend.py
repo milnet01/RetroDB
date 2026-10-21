@@ -134,7 +134,8 @@ def test_list_detail_remove_button_carries_title_as_data(admin_client, list_with
     quote before the JS parses, so an apostrophe broke the Remove button."""
     html = admin_client.get(f"/list/{list_with_game['list_id']}").get_data(as_text=True)
     assert 'data-title="Assassin&#39;s Creed"' in html
-    assert 'confirmRemoveGame(%d, this.dataset.title)' % list_with_game['game_id'] in html
+    assert ('data-on-click="confirmRemoveGame" data-args=\'[%d, "$this.dataset.title"]\''
+            % list_with_game['game_id']) in html
 
 
 def test_no_template_defines_its_own_escape_helper():

@@ -13,6 +13,7 @@ primitives `showConfirm` / `showModal` live in `base.html` rather than a JS
 file so the CSP-nonce script-tag inlines them). Read source for full
 signatures.
 
+- **Events (CSP)**: no inline `onclick=` / `onchange=` etc. — the enforcing CSP blocks them. Write `data-on-click="fn"` (any bubbling event: `click`, `change`, `input`, `keydown`, `keyup`, `keypress`, `submit`, `mouseover`, `mouseout`) with `data-args='[...]'` (JSON; `"$this"`, `"$event"`, `"$this.value"`, `"$this.dataset.x"`), plus `data-stop`, `data-prevent`, `data-self-only`, `data-key="Enter"`, `data-clear-value` as needed. In HTML a script builds, `data-args="${actionArgs(a, '$this')}"`. `fn` is a dotted path from `window`: a page `const` or a function in a bundled file needs `window.fn = fn`. Image fallbacks use `data-on-error`. Both live in `main.js`; `tests/test_fu1_csp.py` pins them.
 - **Toasts/dialogs**: `showNotification(msg, type, duration?)` (`utils.js`), `showConfirm(title, msg, onConfirm, opts?)` (`base.html`), `showModal(title, msg, onConfirm?, showCancel?, onCancel?)` (`base.html`).
 - **HTTP/storage**: `API.get/post/postForm`, `Storage.get/set/remove/clearAll`.
 - **Utilities**: `escapeHtml`, `formatNumber` (thin-space thousands), `formatBytes`, `copyToClipboard`, `debounce`, `throttle`, `DOM.$/$$/create/toggle/delegate`, `DateUtils`.

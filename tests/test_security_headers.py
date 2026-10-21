@@ -74,22 +74,28 @@ class TestHstsEnvGated:
         assert 'includeSubDomains' in hsts
 
 
-class TestCspReportOnly:
-    """16.2: CSP ships in Report-Only until template migration is done."""
+class TestCspEnforcing:
+    """FU.1: CSP enforces once no template or script uses an inline handler
+    (tests/test_fu1_csp.py pins that)."""
 
-    def test_csp_report_only_present(self, app_client):
+    def test_csp_enforcing_present(self, app_client):
         resp = app_client.get('/health')
-        assert 'Content-Security-Policy-Report-Only' in resp.headers
+        assert 'Content-Security-Policy' in resp.headers
 
-    def test_csp_enforcing_not_sent(self, app_client):
-        """While templates still use inline handlers, the enforcing header
-        must stay absent — otherwise pages would break silently."""
+    def test_csp_report_only_not_sent(self, app_client):
         resp = app_client.get('/health')
-        assert 'Content-Security-Policy' not in resp.headers
+        assert 'Content-Security-Policy-Report-Only' not in resp.headers
+
+    def test_script_src_allows_no_inline_code(self, app_client):
+        resp = app_client.get('/health')
+        script_src = next(d for d in resp.headers['Content-Security-Policy'].split(';')
+                          if d.strip().startswith('script-src'))
+        assert "'unsafe-inline'" not in script_src
+        assert "'unsafe-eval'" not in script_src
 
     def test_csp_has_nonce(self, app_client):
         resp = app_client.get('/health')
-        csp = resp.headers['Content-Security-Policy-Report-Only']
+        csp = resp.headers['Content-Security-Policy']
         assert "'nonce-" in csp
 
     def test_csp_nonce_changes_per_request(self, app_client):
@@ -97,8 +103,8 @@ class TestCspReportOnly:
         resp1 = app_client.get('/health')
         resp2 = app_client.get('/health')
         pat = re.compile(r"'nonce-([^']+)'")
-        csp1 = resp1.headers['Content-Security-Policy-Report-Only']
-        csp2 = resp2.headers['Content-Security-Policy-Report-Only']
+        csp1 = resp1.headers['Content-Security-Policy']
+        csp2 = resp2.headers['Content-Security-Policy']
         m1 = pat.search(csp1)
         m2 = pat.search(csp2)
         assert m1 is not None, f"Nonce not found in CSP: {csp1[:100]}"
@@ -113,12 +119,12 @@ class TestCspReportOnly:
     def test_csp_includes_core_directives(self, app_client, directive):
         # Parametrized so multi-directive regressions show all failures at once.
         resp = app_client.get('/health')
-        csp = resp.headers['Content-Security-Policy-Report-Only']
+        csp = resp.headers['Content-Security-Policy']
         assert directive in csp, f"Missing directive: {directive}"
 
     def test_csp_blocks_objects(self, app_client):
         resp = app_client.get('/health')
-        csp = resp.headers['Content-Security-Policy-Report-Only']
+        csp = resp.headers['Content-Security-Policy']
         assert "object-src 'none'" in csp
 
 
@@ -169,7 +175,7 @@ class TestCspNonceInTemplateContext:
         finally:
             app_module.app.before_request_funcs[None].remove(appended_fn)
 
-        csp = resp.headers.get('Content-Security-Policy-Report-Only', '')
+        csp = resp.headers.get('Content-Security-Policy', '')
         m = re.search(r"'nonce-([^']+)'", csp)
         assert m is not None, f"No nonce in CSP header: {csp[:200]}"
         header_nonce = m.group(1)

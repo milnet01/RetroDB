@@ -368,10 +368,10 @@ out({afterOther, afterOwn: {open: shot.classList.contains('active'), traps: g('M
 # 7. Boxart fallback in an onerror attribute uses the JS-string escaper.
 # ---------------------------------------------------------------------------
 
-def test_boxart_fallback_onerror_uses_escattr():
-    """The fallback filename sits inside a single-quoted JS string inside
-    an HTML attribute; escapeHtml's &#039; is decoded before JS parses it,
-    so a filename with a quote broke out. Pass 36.1's escAttr is the fix."""
+def test_boxart_fallback_is_a_data_attribute():
+    """The fallback filename once sat inside a JS string inside an inline
+    `onerror` (Pass 36.1 needed escAttr there). FU.1 moved it to a plain
+    `data-on-error-src` attribute, where HTML escaping is the whole job."""
     src = _src('static/js/all-games-controller.js')
-    line = next(ln for ln in src.splitlines() if "this.src='/static/images/boxart/" in ln)
-    assert '${escAttr(fallbackBoxart)}' in line, line.strip()
+    line = next(ln for ln in src.splitlines() if 'data-on-error-src="/static/images/boxart/' in ln)
+    assert '${esc(fallbackBoxart)}' in line, line.strip()

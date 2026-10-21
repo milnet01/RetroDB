@@ -507,19 +507,20 @@ def set_security_headers(response):
         response.headers['Strict-Transport-Security'] = (
             'max-age=31536000; includeSubDomains'
         )
-    # CSP ships in Report-Only until inline event handlers across templates
-    # have been migrated to delegated listeners. The policy below is what we
-    # intend to enforce — currently it surfaces violations in the browser
-    # console so operators / devs can spot regressions before flipping to
-    # enforcing mode. Nonce is per-request and exposed via {{ csp_nonce }}.
+    # Enforcing CSP (FU.1). Scripts run only from this origin or from an
+    # inline <script> carrying the per-request nonce ({{ csp_nonce }}); an
+    # injected <script> or on<event>= attribute does not run. Pages wire
+    # events through data-on-<event> (static/js/main.js). Images may come from
+    # any https: host: scrape previews and Steam / Xbox / PSN icons and
+    # avatars are shown from their own CDNs, and an image cannot run code.
     nonce = g.get('csp_nonce', '')
     if nonce:
-        response.headers['Content-Security-Policy-Report-Only'] = (
+        response.headers['Content-Security-Policy'] = (
             "default-src 'self'; "
-            f"script-src 'self' 'nonce-{nonce}' https://cdn.jsdelivr.net; "
-            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
-            "img-src 'self' data: blob:; "
-            "font-src 'self' https://fonts.gstatic.com; "
+            f"script-src 'self' 'nonce-{nonce}'; "
+            "style-src 'self' 'unsafe-inline'; "
+            "img-src 'self' data: blob: https:; "
+            "font-src 'self'; "
             "connect-src 'self'; "
             "media-src 'self'; "
             "object-src 'none'; "

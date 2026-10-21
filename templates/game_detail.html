@@ -80,7 +80,7 @@
     {% endif %}
     <div class="header-buttons">
         {% if has_perm('launch') %}
-        <button type="button" id="play-btn" class="btn btn-primary" data-game-id="{{ game.id }}" onclick="launchGame(this)" title="{{ _('Launch this game in the configured emulator') }}">
+        <button type="button" id="play-btn" class="btn btn-primary" data-game-id="{{ game.id }}" data-on-click="launchGame" data-args='["$this"]' title="{{ _('Launch this game in the configured emulator') }}">
             <span class="btn-icon">▶</span>
             {{ _('Play') }}
         </button>
@@ -92,26 +92,26 @@
         </a>
         {% endif %}
         {% if game.scraped %}
-        <button type="button" class="btn btn-danger-outline" onclick="confirmClearMetadata()">
+        <button type="button" class="btn btn-danger-outline" data-on-click="confirmClearMetadata">
             <span class="btn-icon">🗑️</span>
             {{ _('Clear') }}
         </button>
-        <button type="button" class="btn btn-secondary" onclick="openEditModal()">
+        <button type="button" class="btn btn-secondary" data-on-click="openEditModal">
             <span class="btn-icon">✏️</span>
             {{ _('Edit') }}
         </button>
         {% endif %}
         {% if ai_scraper_enabled %}
-        <button type="button" id="pageAiFillBtn" class="btn btn-secondary" onclick="triggerPageAiFill(this)" title="{{ _('Fill missing metadata with AI') }}">
+        <button type="button" id="pageAiFillBtn" class="btn btn-secondary" data-on-click="triggerPageAiFill" data-args='["$this"]' title="{{ _('Fill missing metadata with AI') }}">
             <span class="btn-icon">🤖</span>
             {{ _('AI Fill') }}
         </button>
         {% endif %}
-        <button type="button" class="btn btn-primary" onclick="openScrapeModal()">
+        <button type="button" class="btn btn-primary" data-on-click="openScrapeModal">
             <span class="btn-icon">⬇️</span>
             {{ _('Scrape') }}
         </button>
-        <button type="button" class="btn btn-danger" onclick="deleteGame({{ game.id }})" title="{{ _('Delete game from database') }}">
+        <button type="button" class="btn btn-danger" data-on-click="deleteGame" data-args='[{{ game.id|tojson }}]' title="{{ _('Delete game from database') }}">
             <span class="btn-icon">🗑️</span>
             {{ _('Delete') }}
         </button>
@@ -144,7 +144,7 @@
                      decoding="async"
                      fetchpriority="high"
                      style="{% if show_3d_initially %}display: none;{% endif %}"
-                     data-zoom-url="{{ url_for('static', filename='images/boxart/' + game.boxart) }}" onclick="openBoxartZoom(this.dataset.zoomUrl)"
+                     data-zoom-url="{{ url_for('static', filename='images/boxart/' + game.boxart) }}" data-on-click="openBoxartZoom" data-args='["$this.dataset.zoomUrl"]'
                      title="{{ _('Click to zoom') }}"
                      data-on-error="hide-show-id"
                      data-on-error-target-id="boxartPlaceholder">
@@ -156,13 +156,13 @@
                      class="game-boxart-image clickable boxart-3d"
                      id="boxart3d"
                      style="{% if not show_3d_initially and game.boxart %}display: none;{% endif %}"
-                     data-zoom-url="{{ url_for('static', filename='images/boxart_3d/' + game.boxart_3d) }}" onclick="openBoxartZoom(this.dataset.zoomUrl)"
+                     data-zoom-url="{{ url_for('static', filename='images/boxart_3d/' + game.boxart_3d) }}" data-on-click="openBoxartZoom" data-args='["$this.dataset.zoomUrl"]'
                      title="{{ _('Click to zoom') }}"
                      data-on-error="hide-3d-fallback-2d">
                 {% endif %}
                 <!-- Toggle button if both exist -->
                 {% if game.boxart and game.boxart_3d %}
-                <button type="button" class="boxart-toggle-btn {% if show_3d_initially %}active{% endif %}" onclick="toggleBoxartView()" title="{{ _('Switch between 2D and 3D boxart') }}">
+                <button type="button" class="boxart-toggle-btn {% if show_3d_initially %}active{% endif %}" data-on-click="toggleBoxartView" title="{{ _('Switch between 2D and 3D boxart') }}">
                     <span id="boxartToggleIcon">{% if show_3d_initially %}📷{% else %}🎲{% endif %}</span>
                     <span id="boxartToggleText">{% if show_3d_initially %}2D{% else %}3D{% endif %}</span>
                 </button>
@@ -201,7 +201,7 @@
                 
                 <!-- Completion Status Dropdown -->
                 <div class="completion-dropdown-wrapper">
-                    <select id="completionStatus" class="completion-select" aria-label="{{ _('Completion status') }}" onchange="updateCompletionStatus({{ game.id }}, this.value)"{% if not has_permission('edit') %} disabled{% endif %}>
+                    <select id="completionStatus" class="completion-select" aria-label="{{ _('Completion status') }}" data-on-change="updateCompletionStatus" data-args='[{{ game.id|tojson }}, "$this.value"]'{% if not has_permission('edit') %} disabled{% endif %}>
                         <option value="not_started" {% if not game.completion_status or game.completion_status == 'not_started' %}selected{% endif %}>📋 {{ _('Not Started') }}</option>
                         <option value="in_progress" {% if game.completion_status == 'in_progress' %}selected{% endif %}>🎮 {{ _('In Progress') }}</option>
                         <option value="played" {% if game.completion_status == 'played' %}selected{% endif %}>🕹️ {{ _('Played') }}</option>
@@ -405,17 +405,17 @@
         <div class="media-section screenshots-section">
             <h2 class="media-title">📸 {% trans count=game.screenshots.split(',') | length %}Screenshots ({{ count }}){% endtrans %}</h2>
             <div class="screenshots-wrapper">
-                <button type="button" class="screenshots-nav prev" onclick="scrollScreenshots(-1)" aria-label="{{ _('Previous screenshots') }}">‹</button>
+                <button type="button" class="screenshots-nav prev" data-on-click="scrollScreenshots" data-args='[-1]' aria-label="{{ _('Previous screenshots') }}">‹</button>
                 <div class="screenshots-row" id="screenshotsRow">
                     {% for ss in game.screenshots.split(',') if ss %}
                     <div class="screenshot-thumb" data-filename="{{ ss.strip() }}">
                         <img src="{{ url_for('static', filename='images/screenshots/' + ss.strip()) }}"
                              alt="Screenshot {{ loop.index }}" loading="lazy" decoding="async">
-                        <button type="button" class="screenshot-delete-btn" data-filename="{{ ss.strip() }}" onclick="event.stopPropagation(); deleteScreenshot(this.dataset.filename)" title="{{ _('Delete screenshot') }}">×</button>
+                        <button type="button" class="screenshot-delete-btn" data-filename="{{ ss.strip() }}" data-on-click="deleteScreenshot" data-args='["$this.dataset.filename"]' data-stop title="{{ _('Delete screenshot') }}">×</button>
                     </div>
                     {% endfor %}
                 </div>
-                <button type="button" class="screenshots-nav next" onclick="scrollScreenshots(1)" aria-label="{{ _('Next screenshots') }}">›</button>
+                <button type="button" class="screenshots-nav next" data-on-click="scrollScreenshots" data-args='[1]' aria-label="{{ _('Next screenshots') }}">›</button>
             </div>
         </div>
         {% endif %}
@@ -478,7 +478,7 @@
                        value="{{ game.title }}"
                        placeholder="{{ _('Search game title...') }}">
 
-                <button type="button" class="btn-hltb" id="hltbLookupBtn" onclick="lookupHLTB()">
+                <button type="button" class="btn-hltb" id="hltbLookupBtn" data-on-click="lookupHLTB">
                     🔍 {{ _('Lookup HLTB') }}
                 </button>
 
@@ -500,8 +500,8 @@
                         </div>
                     </div>
                     <div class="hltb-actions" style="margin-top: var(--spacing-sm); display: flex; gap: var(--spacing-xs);">
-                        <button type="button" class="btn btn-sm btn-primary" onclick="confirmHLTB()">✓ {{ _('Save') }}</button>
-                        <button type="button" class="btn btn-sm btn-secondary" onclick="cancelHLTB()">✕ {{ _('Cancel') }}</button>
+                        <button type="button" class="btn btn-sm btn-primary" data-on-click="confirmHLTB">✓ {{ _('Save') }}</button>
+                        <button type="button" class="btn btn-sm btn-secondary" data-on-click="cancelHLTB">✕ {{ _('Cancel') }}</button>
                     </div>
                 </div>
 
@@ -540,7 +540,7 @@
                         {% endif %}
                     </div>
                     <div class="hltb-actions" style="margin-top: var(--spacing-sm);">
-                        <button type="button" class="btn btn-sm btn-danger" onclick="clearHLTB()">✕ {{ _('Clear') }}</button>
+                        <button type="button" class="btn btn-sm btn-danger" data-on-click="clearHLTB">✕ {{ _('Clear') }}</button>
                     </div>
                 </div>
             </div>
@@ -575,7 +575,7 @@
                 <div class="ed-row">
                     <span class="ed-label">{{ _('File:') }}</span>
                     <span class="ed-value mono" id="currentFilename">{{ game.rom_path.split('/')[-1] }}</span>
-                    <button type="button" class="btn-rename" onclick="openRenameModal()" title="{{ _('Rename ROM file') }}">✏️</button>
+                    <button type="button" class="btn-rename" data-on-click="openRenameModal" title="{{ _('Rename ROM file') }}">✏️</button>
                 </div>
                 <div class="ed-row">
                     <span class="ed-label">{{ _('Path:') }}</span>
@@ -751,7 +751,7 @@
     {% if game.scrape_history %}
     <div class="scrape-history-section">
         <h2 class="section-title-sm">
-            <button type="button" class="scrape-history-toggle" onclick="toggleScrapeHistory()" aria-expanded="false" aria-controls="scrapeHistoryContent">
+            <button type="button" class="scrape-history-toggle" data-on-click="toggleScrapeHistory" aria-expanded="false" aria-controls="scrapeHistoryContent">
                 📜 {{ _('Scrape History') }} <span id="scrapeHistoryArrow">▶</span>
             </button>
         </h2>
@@ -3647,6 +3647,19 @@ const systemFolder = {{ game.system_folder|tojson }};
 const systemId = {{ system.id }};
 const currentControllerSupport = {{ game.controller_support|tojson|default('""') }};
 
+// The edit modal's media Delete buttons and the scrape modal's Reset button.
+function confirmRemoveMedia(field, title, message) {
+    showConfirm(title, message, function() {
+        document.querySelector(`input[name=${field}]`).value = '1';
+        document.getElementById('editMetadataForm').submit();
+    });
+}
+function confirmResetMetadata() {
+    showConfirm('🗑️ Reset Metadata', 'Reset all metadata including boxart and screenshots? This cannot be undone.', function() {
+        document.getElementById('resetMetadataForm').submit();
+    });
+}
+
 // ============================================
 // SCRAPE HISTORY TOGGLE
 // ============================================
@@ -3804,7 +3817,7 @@ function renderGameStructureTags() {
     container.innerHTML = selectedGameStructures.map(structure => `
         <span class="genre-tag">
             ${structure}
-            <span class="remove-genre" data-value="${escapeHtml(structure)}" onclick="removeGameStructure(this.dataset.value)">×</span>
+            <span class="remove-genre" data-value="${escapeHtml(structure)}" data-on-click="removeGameStructure" data-args="${actionArgs('$this.dataset.value')}">×</span>
         </span>
     `).join('');
 
@@ -3995,7 +4008,7 @@ function renderPerspectiveTags() {
     container.innerHTML = selectedPerspectives.map(perspective => `
         <span class="genre-tag">
             ${perspective}
-            <span class="remove-genre" data-value="${escapeHtml(perspective)}" onclick="removePerspective(this.dataset.value)">×</span>
+            <span class="remove-genre" data-value="${escapeHtml(perspective)}" data-on-click="removePerspective" data-args="${actionArgs('$this.dataset.value')}">×</span>
         </span>
     `).join('');
 
@@ -4075,7 +4088,7 @@ function renderDimensionTags() {
     container.innerHTML = selectedDimensions.map(dimension => `
         <span class="genre-tag">
             ${dimension}
-            <span class="remove-genre" data-value="${escapeHtml(dimension)}" onclick="removeDimension(this.dataset.value)">×</span>
+            <span class="remove-genre" data-value="${escapeHtml(dimension)}" data-on-click="removeDimension" data-args="${actionArgs('$this.dataset.value')}">×</span>
         </span>
     `).join('');
 
@@ -4327,7 +4340,7 @@ function renderGenreTags() {
     container.innerHTML = selectedGenres.map(genre => `
         <span class="genre-tag">
             ${genre}
-            <span class="remove-genre" data-value="${escapeHtml(genre)}" onclick="removeGenre(this.dataset.value)">×</span>
+            <span class="remove-genre" data-value="${escapeHtml(genre)}" data-on-click="removeGenre" data-args="${actionArgs('$this.dataset.value')}">×</span>
         </span>
     `).join('');
     
@@ -4411,7 +4424,7 @@ function renderModesTags() {
     container.innerHTML = selectedModes.map(mode => `
         <span class="genre-tag">
             ${mode}
-            <span class="remove-genre" data-value="${escapeHtml(mode)}" onclick="removeMode(this.dataset.value)">×</span>
+            <span class="remove-genre" data-value="${escapeHtml(mode)}" data-on-click="removeMode" data-args="${actionArgs('$this.dataset.value')}">×</span>
         </span>
     `).join('');
 
@@ -4495,7 +4508,7 @@ function renderControllerTags() {
     container.innerHTML = selectedControllers.map(controller => `
         <span class="controller-tag">
             ${controller}
-            <span class="remove-controller" data-value="${escapeHtml(controller)}" onclick="removeController(this.dataset.value)">×</span>
+            <span class="remove-controller" data-value="${escapeHtml(controller)}" data-on-click="removeController" data-args="${actionArgs('$this.dataset.value')}">×</span>
         </span>
     `).join('');
     
@@ -4623,7 +4636,7 @@ function renderSaveTypeTags() {
     container.innerHTML = selectedSaveTypes.map(saveType => `
         <span class="genre-tag">
             ${saveType}
-            <span class="remove-genre" data-value="${escapeHtml(saveType)}" onclick="removeSaveType(this.dataset.value)">×</span>
+            <span class="remove-genre" data-value="${escapeHtml(saveType)}" data-on-click="removeSaveType" data-args="${actionArgs('$this.dataset.value')}">×</span>
         </span>
     `).join('');
 
@@ -4768,10 +4781,10 @@ function showBulkScrapeConflictModal(gameId) {
                 <p style="margin-top: 12px;">What would you like to do?</p>
             </div>
             <div class="confirm-modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeBulkConflictModal()">
+                <button type="button" class="btn btn-secondary" data-on-click="closeBulkConflictModal">
                     Cancel
                 </button>
-                <button type="button" class="btn btn-primary" onclick="scrapeNowRemoveFromBulk(${gameId})">
+                <button type="button" class="btn btn-primary" data-on-click="scrapeNowRemoveFromBulk" data-args="${actionArgs(gameId)}">
                     Scrape Now (Remove from Bulk)
                 </button>
             </div>
@@ -5457,7 +5470,7 @@ async function confirmHLTB() {
                     </div>
                 </div>
                 <div class="hltb-actions" style="margin-top: var(--spacing-sm);">
-                    <button type="button" class="btn btn-sm btn-danger" onclick="clearHLTB()">✕ Clear</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-on-click="clearHLTB">✕ Clear</button>
                 </div>
             `;
 

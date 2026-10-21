@@ -29,26 +29,26 @@
     </div>
     <div class="page-actions">
         <div class="export-dropdown" id="exportDropdown">
-            <button type="button" class="btn btn-secondary" onclick="toggleExportMenu()">
+            <button type="button" class="btn btn-secondary" data-on-click="toggleExportMenu">
                 <span class="btn-icon">&#128230;</span>
                 {{ _('Export') }}
             </button>
             <div class="export-menu" id="exportMenu">
-                <button type="button" class="export-menu-item" onclick="exportAsPNG()">
+                <button type="button" class="export-menu-item" data-on-click="exportAsPNG">
                     <span class="export-icon">&#128444;</span>
                     <div>
                         <div class="export-item-title">{{ _('PNG Infographic') }}</div>
                         <div class="export-item-desc">{{ _('Save as shareable image') }}</div>
                     </div>
                 </button>
-                <button type="button" class="export-menu-item" onclick="exportToClipboard()">
+                <button type="button" class="export-menu-item" data-on-click="exportToClipboard">
                     <span class="export-icon">&#128203;</span>
                     <div>
                         <div class="export-item-title">{{ _('Copy to Clipboard') }}</div>
                         <div class="export-item-desc">{{ _('Forum-ready text stats') }}</div>
                     </div>
                 </button>
-                <button type="button" class="export-menu-item" onclick="exportAsCSV()">
+                <button type="button" class="export-menu-item" data-on-click="exportAsCSV">
                     <span class="export-icon">&#128196;</span>
                     <div>
                         <div class="export-item-title">{{ _('CSV Export') }}</div>
@@ -57,7 +57,7 @@
                 </button>
             </div>
         </div>
-        <button type="button" class="btn btn-secondary" onclick="refreshAnalytics()">
+        <button type="button" class="btn btn-secondary" data-on-click="refreshAnalytics">
             <span class="btn-icon">🔄</span>
             {{ _('Refresh') }}
         </button>

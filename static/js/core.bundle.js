@@ -134,6 +134,17 @@ function escapeHtml(text) {
 }
 
 /**
+ * The `data-args` attribute value for a delegated action (main.js
+ * `initializeDelegatedActions`), escaped for a double-quoted attribute:
+ * `data-on-click="openEditListModal" data-args="${actionArgs(list.id)}"`.
+ * @param {...*} args - JSON-serialisable values, or "$this" / "$event" tokens
+ * @returns {string}
+ */
+function actionArgs(...args) {
+    return escapeHtml(JSON.stringify(args));
+}
+
+/**
  * Pass 29.4 — safely parse a localStorage value as JSON.
  *
  * A corrupted or tampered value (bad quotes, truncated string, attacker-
@@ -481,7 +492,7 @@ const Notifications = {
         notification.innerHTML = `
             <span class="notification-icon">${icon}</span>
             <span class="notification-message">${escapeHtml(message)}</span>
-            <button class="notification-close" onclick="this.parentElement.remove()">×</button>
+            <button class="notification-close" data-on-click="removeParent" data-args="${actionArgs('$this')}">×</button>
         `;
 
         container.appendChild(notification);
@@ -1098,6 +1109,7 @@ window.formatBytes = formatBytes;
 window.formatNumber = formatNumber;
 window.formatRatio = formatRatio;
 window.escapeHtml = escapeHtml;
+window.actionArgs = actionArgs;
 window.safeParseJSON = safeParseJSON;
 window.copyToClipboard = copyToClipboard;
 window.Storage = Storage;
@@ -2901,7 +2913,14 @@ function initializeImageErrorHandling() {
             }
         } else if (action === 'src') {
             const src = target.dataset.onErrorSrc;
-            if (src) target.src = src;
+            if (src) {
+                target.removeAttribute('srcset');
+                target.removeAttribute('sizes');
+                if (target.dataset.onErrorRemoveClass) {
+                    target.classList.remove(target.dataset.onErrorRemoveClass);
+                }
+                target.src = src;
+            }
         } else if (action === 'outer-html') {
             const html = target.dataset.onErrorHtml;
             if (html) target.outerHTML = html;
@@ -2920,6 +2939,90 @@ function initializeImageErrorHandling() {
 }
 
 initializeImageErrorHandling();
+
+const _DELEGATED_EVENTS = ['click', 'change', 'input', 'keydown', 'keyup',
+    'keypress', 'submit', 'mouseover', 'mouseout'];
+
+function _resolveActionPath(root, path) {
+    let value = root;
+    for (const part of path.split('.')) {
+        if (value == null) return undefined;
+        value = value[part];
+    }
+    return value;
+}
+
+function _resolveActionArg(arg, el, event) {
+    if (typeof arg !== 'string' || arg[0] !== '$') return arg;
+    const match = /^\$(this|event)(?:\.(.+))?$/.exec(arg);
+    if (!match) return arg;
+    const base = match[1] === 'this' ? el : event;
+    return match[2] ? _resolveActionPath(base, match[2]) : base;
+}
+
+function _runAction(el, eventName, event) {
+    const name = el.getAttribute('data-on-' + eventName);
+    if (el.hasAttribute('data-self-only') && event.target !== el) return;
+    if (el.dataset.key && event.key !== el.dataset.key) return;
+    if (el.hasAttribute('data-prevent')) event.preventDefault();
+    if (!name) return;  // a bare data-on-<event> only stops or prevents
+    const dot = name.lastIndexOf('.');
+    const owner = dot === -1 ? window : _resolveActionPath(window, name.slice(0, dot));
+    const fn = owner ? owner[name.slice(dot + 1)] : undefined;
+    if (typeof fn !== 'function') {
+        console.error(`data-on-${eventName}: no function "${name}"`);
+        return;
+    }
+    let args = [];
+    if (el.dataset.args) {
+        try {
+            args = JSON.parse(el.dataset.args);
+        } catch (e) {
+            console.error(`data-args on data-on-${eventName}="${name}" is not JSON`, e);
+            return;
+        }
+    }
+    fn.apply(owner, args.map(arg => _resolveActionArg(arg, el, event)));
+    if (el.hasAttribute('data-clear-value')) el.value = '';
+}
+
+function navigateTo(url) { window.location.href = url; }
+function clickElement(id) { document.getElementById(id)?.click(); }
+function hideParent(el) { el.parentElement.style.display = 'none'; }
+function removeParent(el) { el.parentElement.remove(); }
+function setTextFromValue(targetId, el) {
+    document.getElementById(targetId).textContent = el.value;
+}
+function openDatePicker(pickerId, sourceId) {
+    const picker = document.getElementById(pickerId);
+    picker.value = document.getElementById(sourceId).value;
+    picker.showPicker();
+}
+
+window.navigateTo = navigateTo;
+window.clickElement = clickElement;
+window.hideParent = hideParent;
+window.removeParent = removeParent;
+window.setTextFromValue = setTextFromValue;
+window.openDatePicker = openDatePicker;
+
+function initializeDelegatedActions() {
+    _DELEGATED_EVENTS.forEach(eventName => {
+        const selector = `[data-on-${eventName}]`;
+        document.addEventListener(eventName, function(event) {
+            if (!(event.target instanceof Element)) return;
+            let el = event.target.closest(selector);
+            while (el) {
+                _runAction(el, eventName, event);
+                if (el.hasAttribute('data-stop')) event.stopPropagation();
+                if (event.cancelBubble) return;
+                el = el.parentElement && el.parentElement.closest(selector);
+            }
+        }, /* useCapture */ true);
+    });
+}
+
+initializeDelegatedActions();
 
 function initializeSidebar() {
     const sidebar = document.querySelector('.sidebar');
@@ -4094,7 +4197,7 @@ function showShortcutsModal() {
             <div class="custom-modal-content" style="max-width: 600px;" role="dialog" aria-modal="true" aria-labelledby="shortcutsModalTitle">
                 <div class="custom-modal-header">
                     <h3 id="shortcutsModalTitle">⌨️ ${escapeHtml(t('Keyboard Shortcuts'))}</h3>
-                    <button class="custom-modal-close" onclick="closeShortcutsModal()" aria-label="${escapeHtml(t('Close keyboard shortcuts'))}">×</button>
+                    <button class="custom-modal-close" data-on-click="closeShortcutsModal" aria-label="${escapeHtml(t('Close keyboard shortcuts'))}">×</button>
                 </div>
                 <div class="custom-modal-body" id="shortcutsModalBody">${body}</div>
             </div>

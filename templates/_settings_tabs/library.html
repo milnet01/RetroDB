@@ -33,11 +33,11 @@
         </div>
         
         <div style="margin-top: var(--spacing-xl); display: flex; gap: var(--spacing-md); flex-wrap: wrap;">
-            <button type="button" onclick="savePathSettings()" class="btn btn-primary" id="savePathsBtn">
+            <button type="button" data-on-click="savePathSettings" class="btn btn-primary" id="savePathsBtn">
                 <span class="btn-icon">💾</span>
                 {{ _('Save Path Settings') }}
             </button>
-            <button type="button" onclick="scanLibrary()" class="btn btn-secondary">
+            <button type="button" data-on-click="scanLibrary" class="btn btn-secondary">
                 <span class="btn-icon">🔍</span>
                 {{ _('Scan Library') }}
             </button>
@@ -58,7 +58,7 @@
         <div class="form-group mb-lg">
             <div class="form-label" id="themeSelectorLabel">{{ _('Theme') }}</div>
             <div class="theme-selector" id="themeSelector" role="radiogroup" aria-labelledby="themeSelectorLabel">
-                <div class="theme-option" data-theme="cyberpunk" onclick="ThemeManager.apply('cyberpunk')">
+                <div class="theme-option" data-theme="cyberpunk" data-on-click="ThemeManager.apply" data-args='["cyberpunk"]'>
                     <div class="theme-preview">
                         <span class="theme-swatch" style="background: #4cc9f0;"></span>
                         <span class="theme-swatch" style="background: #f72585;"></span>
@@ -66,7 +66,7 @@
                     </div>
                     <span class="theme-name">{{ _('Cyberpunk') }}</span>
                 </div>
-                <div class="theme-option" data-theme="matrix" onclick="ThemeManager.apply('matrix')">
+                <div class="theme-option" data-theme="matrix" data-on-click="ThemeManager.apply" data-args='["matrix"]'>
                     <div class="theme-preview">
                         <span class="theme-swatch" style="background: #00ff41;"></span>
                         <span class="theme-swatch" style="background: #008f11;"></span>
@@ -74,7 +74,7 @@
                     </div>
                     <span class="theme-name">{{ _('Matrix') }}</span>
                 </div>
-                <div class="theme-option" data-theme="amber" onclick="ThemeManager.apply('amber')">
+                <div class="theme-option" data-theme="amber" data-on-click="ThemeManager.apply" data-args='["amber"]'>
                     <div class="theme-preview">
                         <span class="theme-swatch" style="background: #ffb000;"></span>
                         <span class="theme-swatch" style="background: #ff6600;"></span>
@@ -82,7 +82,7 @@
                     </div>
                     <span class="theme-name">{{ _('Retro Amber') }}</span>
                 </div>
-                <div class="theme-option" data-theme="ocean" onclick="ThemeManager.apply('ocean')">
+                <div class="theme-option" data-theme="ocean" data-on-click="ThemeManager.apply" data-args='["ocean"]'>
                     <div class="theme-preview">
                         <span class="theme-swatch" style="background: #4dabf7;"></span>
                         <span class="theme-swatch" style="background: #20c997;"></span>
@@ -90,7 +90,7 @@
                     </div>
                     <span class="theme-name">{{ _('Midnight Ocean') }}</span>
                 </div>
-                <div class="theme-option" data-theme="christian" onclick="ThemeManager.apply('christian')">
+                <div class="theme-option" data-theme="christian" data-on-click="ThemeManager.apply" data-args='["christian"]'>
                     <div class="theme-preview">
                         <span class="theme-swatch" style="background: #d4a843;"></span>
                         <span class="theme-swatch" style="background: #7b4db0;"></span>
@@ -98,7 +98,7 @@
                     </div>
                     <span class="theme-name">{{ _('Cathedral') }}</span>
                 </div>
-                <div class="theme-option" data-theme="bladerunner" onclick="ThemeManager.apply('bladerunner')">
+                <div class="theme-option" data-theme="bladerunner" data-on-click="ThemeManager.apply" data-args='["bladerunner"]'>
                     <div class="theme-preview">
                         <span class="theme-swatch" style="background: #1a9fff;"></span>
                         <span class="theme-swatch" style="background: #ff2d7c;"></span>
@@ -106,7 +106,7 @@
                     </div>
                     <span class="theme-name">{{ _('Blade Runner') }}</span>
                 </div>
-                <div class="theme-option" data-theme="elite" onclick="ThemeManager.apply('elite')">
+                <div class="theme-option" data-theme="elite" data-on-click="ThemeManager.apply" data-args='["elite"]'>
                     <div class="theme-preview">
                         <span class="theme-swatch" style="background: #00ff00;"></span>
                         <span class="theme-swatch" style="background: #cccccc;"></span>
@@ -126,7 +126,7 @@
             <div class="form-label" id="languageSelectLabel">{{ _('Language') }}</div>
             <select id="languageSelect" class="form-select" style="max-width: 300px;"
                     aria-labelledby="languageSelectLabel"
-                    onchange="saveLanguage(this.value)">
+                    data-on-change="saveLanguage" data-args='["$this.value"]'>
                 {% set choices = selectable_locales(has_perm('manage_settings')) %}
                 {% set current_locale = (current_user_settings.get('locale_preference') if current_user_settings else 'en') or 'en' %}
                 {% if current_locale not in choices %}{% set current_locale = 'en' %}{% endif %}
@@ -163,7 +163,7 @@
         </div>
 
         <div style="margin-top: var(--spacing-xl);">
-            <button type="button" onclick="saveDisplaySettings()" class="btn btn-primary" id="saveDisplayBtn">
+            <button type="button" data-on-click="saveDisplaySettings" class="btn btn-primary" id="saveDisplayBtn">
                 <span class="btn-icon">💾</span>
                 {{ _('Save Display Settings') }}
             </button>
@@ -187,7 +187,7 @@
             <p class="text-muted" style="margin-bottom: var(--spacing-sm); font-size: 0.85rem;">
                 {{ _('Controls where articles (A, An, The) appear in game titles and ROM filenames.') }}
             </p>
-            <select id="articlePlacementSelect" class="form-select" style="max-width: 400px;" onchange="renderNamingBuilder()">
+            <select id="articlePlacementSelect" class="form-select" style="max-width: 400px;" data-on-change="renderNamingBuilder">
                 <option value="beginning">{{ _('Beginning (natural) — "The Legend of Zelda"') }}</option>
                 <option value="end">{{ _('End (sort-friendly) — "Legend of Zelda, The"') }}</option>
             </select>
@@ -203,13 +203,13 @@
                 {% for r in user_settings.get('region_options', ['USA', 'Europe', 'Japan', 'World']) %}
                 <span class="badge badge-info" style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; font-size: 0.85rem;">
                     {{ r }}
-                    <button type="button" class="btn-icon-only" data-region="{{ r }}" onclick="removeRegionOption(this, this.dataset.region)" title="Remove" style="background:none; border:none; color:var(--neon-red); cursor:pointer; font-size:1rem; padding:0 2px;">&times;</button>
+                    <button type="button" class="btn-icon-only" data-region="{{ r }}" data-on-click="removeRegionOption" data-args='["$this", "$this.dataset.region"]' title="Remove" style="background:none; border:none; color:var(--neon-red); cursor:pointer; font-size:1rem; padding:0 2px;">&times;</button>
                 </span>
                 {% endfor %}
             </div>
             <div style="display: flex; gap: var(--spacing-sm); max-width: 400px;">
-                <input type="text" id="newRegionInput" class="form-input" placeholder="Add region..." style="flex:1;" onkeydown="if(event.key==='Enter'){event.preventDefault();addRegionOption();}">
-                <button type="button" class="btn btn-sm btn-secondary" onclick="addRegionOption()">Add</button>
+                <input type="text" id="newRegionInput" class="form-input" placeholder="Add region..." style="flex:1;" data-on-keydown="addRegionOption" data-key="Enter" data-prevent>
+                <button type="button" class="btn btn-sm btn-secondary" data-on-click="addRegionOption">Add</button>
             </div>
             <div style="margin-top: var(--spacing-sm);">
                 <label class="form-label" style="font-size:0.85rem;" for="defaultRegionSelect">Default Region</label>
@@ -226,7 +226,7 @@
         </div>
 
         <div style="margin-top: var(--spacing-xl);">
-            <button type="button" onclick="saveNamingSettings()" class="btn btn-primary" id="saveNamingBtn">
+            <button type="button" data-on-click="saveNamingSettings" class="btn btn-primary" id="saveNamingBtn">
                 <span class="btn-icon">💾</span>
                 Save Naming Settings
             </button>
@@ -246,15 +246,15 @@
         </p>
         
         <div style="display: flex; gap: var(--spacing-md); flex-wrap: wrap; margin-bottom: var(--spacing-lg);">
-            <button type="button" onclick="detectBonusDiscs()" class="btn btn-primary" id="detectBonusBtn">
+            <button type="button" data-on-click="detectBonusDiscs" class="btn btn-primary" id="detectBonusBtn">
                 <span class="btn-icon">🔍</span>
                 Auto-Detect Bonus Discs
             </button>
-            <button type="button" onclick="autoLinkBonusDiscs()" class="btn btn-secondary" id="autoLinkBonusBtn">
+            <button type="button" data-on-click="autoLinkBonusDiscs" class="btn btn-secondary" id="autoLinkBonusBtn">
                 <span class="btn-icon">🔗</span>
                 Auto-Link to Parents
             </button>
-            <button type="button" onclick="viewBonusStats()" class="btn btn-secondary">
+            <button type="button" data-on-click="viewBonusStats" class="btn btn-secondary">
                 <span class="btn-icon">📊</span>
                 View Stats
             </button>
@@ -278,11 +278,11 @@
     </div>
     <div class="card-body">
         <div style="display: flex; gap: var(--spacing-md); flex-wrap: wrap; margin-bottom: var(--spacing-lg);">
-            <button type="button" onclick="createBackup()" class="btn btn-primary" id="createBackupBtn">
+            <button type="button" data-on-click="createBackup" class="btn btn-primary" id="createBackupBtn">
                 <span class="btn-icon">💾</span>
                 Create Backup
             </button>
-            <button type="button" onclick="calculateStorage()" class="btn btn-secondary">
+            <button type="button" data-on-click="calculateStorage" class="btn btn-secondary">
                 <span class="btn-icon">📊</span>
                 Calculate File Sizes
             </button>

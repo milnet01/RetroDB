@@ -16,7 +16,7 @@
     <div class="card-body">
         {% if current_user %}
         <div class="profile-header" style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--card-border);">
-            <div class="profile-avatar-wrapper" onclick="openAvatarPicker()" title="{{ _('Change avatar') }}">
+            <div class="profile-avatar-wrapper" data-on-click="openAvatarPicker" title="{{ _('Change avatar') }}">
                 {% set profile_avatar_url = get_avatar_url(current_user, current_user_settings) %}
                 <div class="profile-avatar" id="profileAvatar" style="width: 80px; height: 80px; background: var(--bg-lighter); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; border: 2px solid var(--primary-cyan); cursor: pointer; position: relative; overflow: hidden;">
                     {% if profile_avatar_url %}
@@ -37,26 +37,26 @@
         </div>
 
         <!-- Avatar Picker Modal -->
-        <div class="avatar-picker-overlay" id="avatarPickerOverlay" onclick="if(event.target===this)closeAvatarPicker()">
+        <div class="avatar-picker-overlay" id="avatarPickerOverlay" data-on-click="closeAvatarPicker" data-self-only>
             <div class="avatar-picker-modal" role="dialog" aria-modal="true" aria-label="{{ _('Choose avatar') }}">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                     <h3 style="margin: 0; font-family: var(--font-heading); color: var(--primary-cyan);">{{ _('Choose Avatar') }}</h3>
-                    <button type="button" onclick="closeAvatarPicker()" style="background: none; border: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer;">&times;</button>
+                    <button type="button" data-on-click="closeAvatarPicker" style="background: none; border: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer;">&times;</button>
                 </div>
 
                 <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.9rem;">{{ _('Select a default avatar or upload your own image.') }}</p>
 
                 <div class="avatar-grid" id="avatarGrid">
                     {% for i in range(1, 9) %}
-                    <div class="avatar-option {% if current_user_settings and current_user_settings.avatar == 'default_' ~ i %}selected{% endif %}" data-avatar="default_{{ i }}" onclick="selectDefaultAvatar('default_{{ i }}', this)">
+                    <div class="avatar-option {% if current_user_settings and current_user_settings.avatar == 'default_' ~ i %}selected{% endif %}" data-avatar="default_{{ i }}" data-on-click="selectDefaultAvatar" data-args='[{{ ("default_" ~ i)|tojson }}, "$this"]'>
                         <img src="/static/images/avatars/default_{{ i }}.svg" alt="{{ _('Avatar') }} {{ i }}">
                     </div>
                     {% endfor %}
                 </div>
 
                 <div class="avatar-upload-zone" id="avatarUploadZone">
-                    <input type="file" id="avatarFileInput" accept=".jpg,.jpeg,.png,.gif,.webp" style="display: none;" onchange="uploadCustomAvatar(this)">
-                    <div onclick="document.getElementById('avatarFileInput').click()" style="cursor: pointer; text-align: center;">
+                    <input type="file" id="avatarFileInput" accept=".jpg,.jpeg,.png,.gif,.webp" style="display: none;" data-on-change="uploadCustomAvatar" data-args='["$this"]'>
+                    <div data-on-click="clickElement" data-args='["avatarFileInput"]' style="cursor: pointer; text-align: center;">
                         <div style="font-size: 2rem; margin-bottom: 0.5rem;">📤</div>
                         <p style="color: var(--text-secondary); margin: 0; font-size: 0.85rem;">{{ _('Click to upload custom image') }}</p>
                         <p style="color: var(--text-muted); margin: 0.25rem 0 0; font-size: 0.75rem;">{{ _('JPG, PNG, GIF, WebP &mdash; Max 2MB') }}</p>
@@ -65,12 +65,12 @@
 
                 {% set has_avatar = current_user_settings and current_user_settings.avatar %}
                 <div id="avatarRemoveRow" style="text-align: center; margin-top: 0.75rem; {% if not has_avatar %}display: none;{% endif %}">
-                    <a href="#" onclick="removeAvatar(); return false;" style="color: var(--neon-red); font-size: 0.85rem;">{{ _('Remove avatar') }}</a>
+                    <a href="#" data-on-click="removeAvatar" data-prevent style="color: var(--neon-red); font-size: 0.85rem;">{{ _('Remove avatar') }}</a>
                 </div>
 
                 <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
-                    <button type="button" class="btn btn-secondary" onclick="closeAvatarPicker()">{{ _('Cancel') }}</button>
-                    <button type="button" class="btn btn-primary" id="avatarSaveBtn" onclick="saveAvatarChoice()">{{ _('Save') }}</button>
+                    <button type="button" class="btn btn-secondary" data-on-click="closeAvatarPicker">{{ _('Cancel') }}</button>
+                    <button type="button" class="btn btn-primary" id="avatarSaveBtn" data-on-click="saveAvatarChoice">{{ _('Save') }}</button>
                 </div>
             </div>
         </div>
@@ -136,7 +136,7 @@
                     <div style="flex: 1;">
                         <div style="color: var(--text-primary); font-weight: 600; margin-bottom: 4px;">{{ _("Open Sony's account page") }}</div>
                         <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0 0 8px;">{{ _('Log in with your PlayStation account (if not already), then the page will show your NPSSO token as JSON.') }}</p>
-                        <button type="button" class="btn btn-secondary btn-sm" onclick="window.open('https://ca.account.sony.com/api/v1/ssocookie', '_blank')">
+                        <button type="button" class="btn btn-secondary btn-sm" data-on-click="window.open" data-args='["https://ca.account.sony.com/api/v1/ssocookie", "_blank"]'>
                             {{ _('Open Sony Account Page') }}
                         </button>
                         <!-- Pass 50.3 — optional one-click capture bookmarklet. Drag to
@@ -145,7 +145,7 @@
                              avoid embedding a javascript: URL in the attribute. -->
                         <div style="margin-top: 8px; padding: 8px 10px; background: var(--bg-medium); border: 1px dashed var(--card-border); border-radius: var(--radius-md);">
                             <p style="color: var(--text-muted); font-size: 0.8rem; margin: 0 0 6px;">{% trans %}Optional shortcut: drag the button below to your browser's bookmarks bar. Then, on the Sony JSON page, click the bookmark to copy your NPSSO in one click.{% endtrans %}</p>
-                            <a id="psnBookmarkletLink" href="#" class="btn btn-secondary btn-sm" draggable="true" style="cursor: grab;" onclick="return false;">📋 {{ _('Copy NPSSO') }}</a>
+                            <a id="psnBookmarkletLink" href="#" class="btn btn-secondary btn-sm" draggable="true" style="cursor: grab;" data-on-click data-prevent>📋 {{ _('Copy NPSSO') }}</a>
                         </div>
                     </div>
                 </div>
@@ -169,8 +169,8 @@
                                    value="{{ current_user_settings.psn_npsso if current_user_settings else '' }}"
                                    placeholder="{{ _('Paste JSON or token here') }}"
                                    style="flex: 1; min-width: 200px;"
-                                   oninput="psnNpssoAutoDetect(this)">
-                            <button type="button" class="btn btn-secondary btn-sm" onclick="psnPasteFromClipboard()" title="{{ _('Read from clipboard') }}">
+                                   data-on-input="psnNpssoAutoDetect" data-args='["$this"]'>
+                            <button type="button" class="btn btn-secondary btn-sm" data-on-click="psnPasteFromClipboard" title="{{ _('Read from clipboard') }}">
                                 {{ _('Paste &amp; Detect') }}
                             </button>
                         </div>
@@ -181,14 +181,14 @@
 
             <!-- Quick save + test -->
             <div style="margin-top: var(--spacing-lg); padding-top: var(--spacing-md); border-top: 1px solid var(--card-border); display: flex; gap: var(--spacing-sm); align-items: center; flex-wrap: wrap;">
-                <button type="button" class="btn btn-primary btn-sm" onclick="psnQuickSaveAndTest()" id="psnQuickSaveBtn">
+                <button type="button" class="btn btn-primary btn-sm" data-on-click="psnQuickSaveAndTest" id="psnQuickSaveBtn">
                     {{ _('Save &amp; Test Connection') }}
                 </button>
                 <span id="psnTestResult" style="font-size: 0.85rem;"></span>
             </div>
         </div>
 
-        <button type="button" class="btn btn-primary" onclick="saveUserSettings()">
+        <button type="button" class="btn btn-primary" data-on-click="saveUserSettings">
             {{ _('Save My Settings') }}
         </button>
         
@@ -208,7 +208,7 @@
             <input type="password" class="form-input" id="newPassword" placeholder="{{ _('Enter new password') }}">
         </div>
         
-        <button type="button" class="btn btn-warning" onclick="changePassword()">
+        <button type="button" class="btn btn-warning" data-on-click="changePassword">
             🔐 {{ _('Change Password') }}
         </button>
         {% endif %}
@@ -235,10 +235,10 @@
             <select id="tzSelect" class="form-input" size="8" style="font-family: var(--font-mono); font-size: 0.85rem;"></select>
             <span class="field-tip">
                 {{ _('Browser detected:') }} <span id="detectedTimezone"></span>
-                — <a href="#" onclick="event.preventDefault(); useDetectedTimezone()" style="color: var(--primary-cyan);">{{ _('Use detected') }}</a>
+                — <a href="#" data-on-click="useDetectedTimezone" data-prevent style="color: var(--primary-cyan);">{{ _('Use detected') }}</a>
             </span>
         </div>
-        <button type="button" onclick="saveTimezone()" class="btn btn-primary">💾 {{ _('Save Timezone') }}</button>
+        <button type="button" data-on-click="saveTimezone" class="btn btn-primary">💾 {{ _('Save Timezone') }}</button>
     </div>
 </section>
 
@@ -254,7 +254,7 @@
         </p>
 
         <div style="display: flex; justify-content: flex-end; margin-bottom: var(--spacing-lg);">
-            <button type="button" class="btn btn-primary" onclick="showAddUserModal()">
+            <button type="button" class="btn btn-primary" data-on-click="showAddUserModal">
                 ➕ {{ _('Add User') }}
             </button>
         </div>
@@ -312,9 +312,9 @@
                     </td>
                     <td>
                         <div style="display: flex; gap: 0.5rem;">
-                            <button type="button" class="btn btn-secondary btn-sm" onclick="editUser({{ user.id }})" title="{{ _('Edit') }}">✏️</button>
+                            <button type="button" class="btn btn-secondary btn-sm" data-on-click="editUser" data-args='[{{ user.id|tojson }}]' title="{{ _('Edit') }}">✏️</button>
                             {% if user.id != current_user.id %}
-                            <button type="button" class="btn btn-danger btn-sm" data-username="{{ user.username }}" onclick="deleteUser({{ user.id }}, this.dataset.username)" title="{{ _('Delete') }}">🗑️</button>
+                            <button type="button" class="btn btn-danger btn-sm" data-username="{{ user.username }}" data-on-click="deleteUser" data-args='[{{ user.id|tojson }}, "$this.dataset.username"]' title="{{ _('Delete') }}">🗑️</button>
                             {% endif %}
                         </div>
                     </td>
@@ -330,7 +330,7 @@
     <div class="modal-content" style="max-width: 500px;" role="dialog" aria-modal="true" aria-labelledby="userModalTitle">
         <div class="modal-header">
             <h2 id="userModalTitle">{{ _('Add User') }}</h2>
-            <button type="button" class="modal-close" onclick="closeUserModal()" aria-label="{{ _('Close user modal') }}">×</button>
+            <button type="button" class="modal-close" data-on-click="closeUserModal" aria-label="{{ _('Close user modal') }}">×</button>
         </div>
         <div class="modal-body">
             <input type="hidden" id="editUserId" value="">
@@ -362,8 +362,8 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" onclick="closeUserModal()">{{ _('Cancel') }}</button>
-            <button type="button" class="btn btn-primary" onclick="saveUser()">{{ _('Save User') }}</button>
+            <button type="button" class="btn btn-secondary" data-on-click="closeUserModal">{{ _('Cancel') }}</button>
+            <button type="button" class="btn btn-primary" data-on-click="saveUser">{{ _('Save User') }}</button>
         </div>
     </div>
 </div>

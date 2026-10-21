@@ -27,7 +27,7 @@
             <span class="btn-icon">🎮</span>
             {{ _('View Game') }}
         </a>
-        <button type="button" onclick="refreshRAProgress()" class="btn btn-secondary" id="refreshRABtn">
+        <button type="button" data-on-click="refreshRAProgress" class="btn btn-secondary" id="refreshRABtn">
             <span class="btn-icon">🔄</span>
             {{ _('Refresh RA') }}
         </button>
@@ -152,7 +152,7 @@
                        value="{{ game.title }}"
                        placeholder="{{ _('Search game title...') }}">
 
-                <button type="button" class="btn-hltb" id="hltbLookupBtn" onclick="achLookupHLTB()">
+                <button type="button" class="btn-hltb" id="hltbLookupBtn" data-on-click="achLookupHLTB">
                     🔍 {{ _('Lookup HLTB') }}
                 </button>
 
@@ -174,8 +174,8 @@
                         </div>
                     </div>
                     <div class="hltb-actions" style="margin-top: var(--spacing-sm); display: flex; gap: var(--spacing-xs);">
-                        <button type="button" class="btn btn-sm btn-primary" onclick="achConfirmHLTB()">✓ {{ _('Save') }}</button>
-                        <button type="button" class="btn btn-sm btn-secondary" onclick="achCancelHLTB()">✕ {{ _('Cancel') }}</button>
+                        <button type="button" class="btn btn-sm btn-primary" data-on-click="achConfirmHLTB">✓ {{ _('Save') }}</button>
+                        <button type="button" class="btn btn-sm btn-secondary" data-on-click="achCancelHLTB">✕ {{ _('Cancel') }}</button>
                     </div>
                 </div>
 
@@ -214,7 +214,7 @@
                         {% endif %}
                     </div>
                     <div class="hltb-actions" style="margin-top: var(--spacing-sm);">
-                        <button type="button" class="btn btn-sm btn-danger" onclick="achClearHLTB()">✕ {{ _('Clear') }}</button>
+                        <button type="button" class="btn btn-sm btn-danger" data-on-click="achClearHLTB">✕ {{ _('Clear') }}</button>
                     </div>
                 </div>
             </div>

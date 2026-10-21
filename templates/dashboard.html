@@ -26,7 +26,7 @@
     <span class="api-warning-icon">⚠️</span>
     <span class="api-warning-text">{{ _('One or more configured APIs are offline') }}</span>
     <a href="{{ url_for('settings.settings') }}" class="api-warning-link">{{ _('Check Settings →') }}</a>
-    <button type="button" class="api-warning-close" onclick="this.parentElement.style.display='none'">✕</button>
+    <button type="button" class="api-warning-close" data-on-click="hideParent" data-args='["$this"]'>✕</button>
 </div>
 
 <!-- Job Recovery Banner (shown when interrupted/queued jobs exist) -->
@@ -35,8 +35,8 @@
     <div class="job-recovery-header">
         <span class="job-recovery-icon">🔄</span>
         <span class="job-recovery-title">{% trans count=recoverable_jobs|length %}{{ count }} interrupted job found{% pluralize %}{{ count }} interrupted jobs found{% endtrans %}</span>
-        <button type="button" class="btn btn-sm btn-primary" onclick="resumeAllRecoverableJobs()">{{ _('Resume All') }}</button>
-        <button type="button" class="btn btn-sm btn-secondary" onclick="dismissAllRecoverableJobs()">{{ _('Dismiss All') }}</button>
+        <button type="button" class="btn btn-sm btn-primary" data-on-click="resumeAllRecoverableJobs">{{ _('Resume All') }}</button>
+        <button type="button" class="btn btn-sm btn-secondary" data-on-click="dismissAllRecoverableJobs">{{ _('Dismiss All') }}</button>
     </div>
     {% for job in recoverable_jobs %}
     <div class="job-recovery-item" id="recoveryItem{{ job.id }}" data-can-resume="{{ 'true' if job.can_resume else 'false' }}">
@@ -46,9 +46,9 @@
         </span>
         <div class="job-recovery-actions">
             {% if job.can_resume %}
-            <button type="button" class="btn btn-sm btn-primary" onclick="resumeJob({{ job.id }})">{{ job.action_label }}</button>
+            <button type="button" class="btn btn-sm btn-primary" data-on-click="resumeJob" data-args='[{{ job.id|tojson }}]'>{{ job.action_label }}</button>
             {% endif %}
-            <button type="button" class="btn btn-sm btn-secondary" onclick="dismissJob({{ job.id }})">{{ _('Dismiss') }}</button>
+            <button type="button" class="btn btn-sm btn-secondary" data-on-click="dismissJob" data-args='[{{ job.id|tojson }}]'>{{ _('Dismiss') }}</button>
         </div>
     </div>
     {% endfor %}
@@ -62,11 +62,11 @@
         <p class="page-subtitle">{{ _('Overview of your retro gaming collection') }}</p>
     </div>
     <div class="page-actions">
-        <button type="button" class="btn btn-secondary" onclick="randomGame()" title="{{ _('Pick a random game') }}">
+        <button type="button" class="btn btn-secondary" data-on-click="randomGame" title="{{ _('Pick a random game') }}">
             <span class="btn-icon">🎲</span>
             {{ _('Random Game') }}
         </button>
-        <button type="button" id="scanLibraryBtn" class="btn btn-primary" onclick="scanLibrary()">
+        <button type="button" id="scanLibraryBtn" class="btn btn-primary" data-on-click="scanLibrary">
             <span class="btn-icon">🔍</span>
             {{ _('Scan Library') }}
         </button>
@@ -361,7 +361,7 @@
             </thead>
             <tbody>
                 {% for game in recent_games[:5] %}
-                <tr onclick="window.location='{{ url_for('games.game_detail', game_id=game.id) }}'" style="cursor: pointer;">
+                <tr data-on-click="navigateTo" data-args='[{{ url_for('games.game_detail', game_id=game.id)|tojson }}]' style="cursor: pointer;">
                     <td>
                         {% set prefer_3d = user_settings.get('preferred_boxart', '2d') == '3d' %}
                         {% set use_3d = prefer_3d and game.boxart_3d %}
@@ -382,7 +382,7 @@
                         </a>
                     </td>
                     <td class="game-row-system">
-                        <a href="{{ url_for('systems.system_games', system_id=game.system_id) }}" class="game-row-system-link" onclick="event.stopPropagation();">
+                        <a href="{{ url_for('systems.system_games', system_id=game.system_id) }}" class="game-row-system-link" data-on-click data-stop>
                             {{ game.system_name }}
                         </a>
                     </td>

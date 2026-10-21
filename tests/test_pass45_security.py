@@ -2683,10 +2683,10 @@ class TestPass45_20ButtonTypeSweep:
         import glob
         import re
         pattern = os.path.join(_REPO_ROOT, 'templates', '**', '*.html')
-        # Find every <button ...>` opening tag with onclick=, then check
-        # for type=.
+        # Find every <button ...>` opening tag with a click action
+        # (data-on-click since FU.1), then check for type=.
         button_re = re.compile(
-            r'<button(?:(?!\btype\s*=)[^>])*?onclick\s*=[^>]*?>',
+            r'<button(?:(?!\btype\s*=)[^>])*?data-on-click\s*=[^>]*?>',
             re.IGNORECASE | re.DOTALL,
         )
         offenders = []

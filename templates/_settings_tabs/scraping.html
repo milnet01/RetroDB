@@ -39,11 +39,11 @@
         </div>
         
         <div style="margin-top: var(--spacing-xl); display: flex; gap: var(--spacing-md); flex-wrap: wrap;">
-            <button type="button" onclick="savePathSettings()" class="btn btn-primary">
+            <button type="button" data-on-click="savePathSettings" class="btn btn-primary">
                 <span class="btn-icon">💾</span>
                 Save Path Settings
             </button>
-            <button type="button" onclick="importSystemLogos()" class="btn btn-secondary" id="importLogosBtn">
+            <button type="button" data-on-click="importSystemLogos" class="btn btn-secondary" id="importLogosBtn">
                 <span class="btn-icon">🖼️</span>
                 Import System Logos
             </button>
@@ -79,7 +79,7 @@
                     <span class="status-text">Local</span>
                 </div>
                 <label class="toggle-switch">
-                    <input type="checkbox" id="toggle-esde" aria-label="Enable ES-DE local scraper" {{ 'checked' if scraper_settings.enabled.esde else '' }} onchange="toggleScraper('esde', this.checked)">
+                    <input type="checkbox" id="toggle-esde" aria-label="Enable ES-DE local scraper" {{ 'checked' if scraper_settings.enabled.esde else '' }} data-on-change="toggleScraper" data-args='["esde", "$this.checked"]'>
                     <span class="toggle-slider"></span>
                 </label>
             </div>
@@ -97,7 +97,7 @@
                     <span class="status-text">Checking...</span>
                 </div>
                 <label class="toggle-switch">
-                    <input type="checkbox" id="toggle-tgdb" aria-label="Enable TheGamesDB scraper" {{ 'checked' if scraper_settings.enabled.tgdb else '' }} onchange="toggleScraper('tgdb', this.checked)">
+                    <input type="checkbox" id="toggle-tgdb" aria-label="Enable TheGamesDB scraper" {{ 'checked' if scraper_settings.enabled.tgdb else '' }} data-on-change="toggleScraper" data-args='["tgdb", "$this.checked"]'>
                     <span class="toggle-slider"></span>
                 </label>
             </div>
@@ -115,7 +115,7 @@
                     <span class="status-text">Checking...</span>
                 </div>
                 <label class="toggle-switch">
-                    <input type="checkbox" id="toggle-igdb" aria-label="Enable IGDB scraper" {{ 'checked' if scraper_settings.enabled.igdb else '' }} onchange="toggleScraper('igdb', this.checked)">
+                    <input type="checkbox" id="toggle-igdb" aria-label="Enable IGDB scraper" {{ 'checked' if scraper_settings.enabled.igdb else '' }} data-on-change="toggleScraper" data-args='["igdb", "$this.checked"]'>
                     <span class="toggle-slider"></span>
                 </label>
             </div>
@@ -133,7 +133,7 @@
                     <span class="status-text">Checking...</span>
                 </div>
                 <label class="toggle-switch">
-                    <input type="checkbox" id="toggle-rawg" aria-label="Enable RAWG.io scraper" {{ 'checked' if scraper_settings.enabled.rawg else '' }} onchange="toggleScraper('rawg', this.checked)">
+                    <input type="checkbox" id="toggle-rawg" aria-label="Enable RAWG.io scraper" {{ 'checked' if scraper_settings.enabled.rawg else '' }} data-on-change="toggleScraper" data-args='["rawg", "$this.checked"]'>
                     <span class="toggle-slider"></span>
                 </label>
             </div>
@@ -151,7 +151,7 @@
                     <span class="status-text">Checking...</span>
                 </div>
                 <label class="toggle-switch">
-                    <input type="checkbox" id="toggle-screenscraper" aria-label="Enable ScreenScraper scraper" {{ 'checked' if scraper_settings.enabled.screenscraper else '' }} onchange="toggleScraper('screenscraper', this.checked)">
+                    <input type="checkbox" id="toggle-screenscraper" aria-label="Enable ScreenScraper scraper" {{ 'checked' if scraper_settings.enabled.screenscraper else '' }} data-on-change="toggleScraper" data-args='["screenscraper", "$this.checked"]'>
                     <span class="toggle-slider"></span>
                 </label>
             </div>
@@ -168,7 +168,7 @@
                     <span class="status-text">Checking...</span>
                 </div>
                 <label class="toggle-switch">
-                    <input type="checkbox" id="toggle-ai" aria-label="Enable AI metadata scraper" {{ 'checked' if scraper_settings.enabled.ai else '' }} onchange="toggleScraper('ai', this.checked)">
+                    <input type="checkbox" id="toggle-ai" aria-label="Enable AI metadata scraper" {{ 'checked' if scraper_settings.enabled.ai else '' }} data-on-change="toggleScraper" data-args='["ai", "$this.checked"]'>
                     <span class="toggle-slider"></span>
                 </label>
             </div>
@@ -183,7 +183,7 @@
 
             <div class="match-filter-mode">
                 <label class="toggle-switch" style="margin-right: var(--spacing-sm);">
-                    <input type="checkbox" id="matchModeToggle" onchange="toggleMatchMode(this.checked)" aria-label="Use advanced criteria mode">
+                    <input type="checkbox" id="matchModeToggle" data-on-change="toggleMatchMode" data-args='["$this.checked"]' aria-label="Use advanced criteria mode">
                     <span class="toggle-slider"></span>
                 </label>
                 <span class="text-secondary">Use advanced criteria instead of score threshold</span>
@@ -195,7 +195,7 @@
                     <label for="matchMinScore" class="form-label">Minimum Match Score</label>
                     <input type="number" id="matchMinScore" class="form-input" style="width: 100px;"
                            min="0" max="600" step="10" value="200"
-                           onchange="scraperSettings.minimum_match_score = parseInt(this.value) || 200">
+                           data-on-change="setMinimumMatchScore" data-args='["$this"]'>
                 </div>
                 <div class="match-score-guide">
                     <table class="match-score-table">
@@ -218,7 +218,7 @@
                 <div class="match-criteria-row">
                     <div class="match-criteria-field">
                         <label for="matchTitleQuality" class="form-label">Minimum Title Quality</label>
-                        <select id="matchTitleQuality" class="form-select" onchange="updateMatchCriteria()">
+                        <select id="matchTitleQuality" class="form-select" data-on-change="updateMatchCriteria">
                             <option value="exact">Exact (score &ge; 280)</option>
                             <option value="close" selected>Close (score &ge; 150)</option>
                             <option value="partial">Partial (score &ge; 50)</option>
@@ -229,7 +229,7 @@
                         <label class="form-label" for="matchPlatformRequired">Platform Match Required</label>
                         <div style="padding-top: 0.35rem;">
                             <label class="toggle-switch">
-                                <input type="checkbox" id="matchPlatformRequired" checked onchange="updateMatchCriteria()">
+                                <input type="checkbox" id="matchPlatformRequired" checked data-on-change="updateMatchCriteria">
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="text-secondary" style="margin-left: var(--spacing-sm);">Only accept results matching the game's system</span>
@@ -240,15 +240,15 @@
         </div>
 
         <div class="scraper-settings-actions">
-            <button type="button" onclick="saveScraperSettings()" class="btn btn-primary" id="saveScraperBtn">
+            <button type="button" data-on-click="saveScraperSettings" class="btn btn-primary" id="saveScraperBtn">
                 <span class="btn-icon">💾</span>
                 Save Settings
             </button>
-            <button type="button" onclick="resetScraperPriority()" class="btn btn-secondary">
+            <button type="button" data-on-click="resetScraperPriority" class="btn btn-secondary">
                 <span class="btn-icon">🔄</span>
                 Reset to Default
             </button>
-            <button type="button" onclick="checkRateLimits()" class="btn btn-secondary" id="checkRateLimitsBtn">
+            <button type="button" data-on-click="checkRateLimits" class="btn btn-secondary" id="checkRateLimitsBtn">
                 <span class="btn-icon">📊</span>
                 Check Rate Limits
             </button>
@@ -407,7 +407,7 @@
             <div style="border-top: 1px solid rgba(76, 201, 240, 0.2); padding-top: var(--spacing-md); margin-top: var(--spacing-md);">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md);">
                     <span class="api-key-name" style="font-size: 1rem;">🟢 Xbox Live Integration</span>
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="toggleXboxWizard()" id="xboxWizardToggle" style="font-size: 0.8rem;">
+                    <button type="button" class="btn btn-secondary btn-sm" data-on-click="toggleXboxWizard" id="xboxWizardToggle" style="font-size: 0.8rem;">
                         Show Setup Guide
                     </button>
                 </div>
@@ -425,7 +425,7 @@
                             <div>
                                 <div style="color: var(--text-primary); font-weight: 600; margin-bottom: 4px;">Create an Azure AD App Registration</div>
                                 <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0 0 8px;">Go to the Azure Portal and create a new app registration. Use any name (e.g. "RetroDB").</p>
-                                <button type="button" class="btn btn-secondary btn-sm" onclick="window.open('https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/CreateApplicationBlade/quickStartType//isMSAApp/true', '_blank')">
+                                <button type="button" class="btn btn-secondary btn-sm" data-on-click="window.open" data-args='["https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/CreateApplicationBlade/quickStartType//isMSAApp/true", "_blank"]'>
                                     Open Azure Portal
                                 </button>
                             </div>
@@ -439,7 +439,7 @@
                                 <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0 0 8px;">Under <strong>Authentication</strong>, add a <strong>Web</strong> platform redirect URI:</p>
                                 <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
                                     <code id="xboxRedirectUri" style="background: var(--bg-medium); padding: 6px 12px; border-radius: var(--radius-sm); border: 1px solid var(--card-border); color: var(--primary-cyan); font-size: 0.85rem; flex: 1; user-select: all;">http://localhost:5000/api/xbox/callback</code>
-                                    <button type="button" class="btn btn-secondary btn-sm" onclick="copyXboxRedirectUri()" title="Copy redirect URI">
+                                    <button type="button" class="btn btn-secondary btn-sm" data-on-click="copyXboxRedirectUri" title="Copy redirect URI">
                                         Copy
                                     </button>
                                 </div>
@@ -499,7 +499,7 @@
                 <div class="api-key-header">
                     <span class="api-key-name">🤖 AI Metadata Provider</span>
                 </div>
-                <select id="apikey-ai-provider" class="api-key-input" onchange="updateAIProviderFields()" style="cursor: pointer;">
+                <select id="apikey-ai-provider" class="api-key-input" data-on-change="updateAIProviderFields" style="cursor: pointer;">
                     <option value="">-- Select Provider --</option>
                     <option value="gemini" {{ 'selected' if scraper_settings.api_keys.ai_provider == 'gemini' else '' }}>Google Gemini</option>
                     <option value="openai" {{ 'selected' if scraper_settings.api_keys.ai_provider == 'openai' else '' }}>OpenAI</option>
@@ -588,7 +588,7 @@
         </div>
         
         <div style="margin-top: var(--spacing-xl);">
-            <button type="button" onclick="saveApiKeys()" class="btn btn-primary" id="saveApiKeysBtn">
+            <button type="button" data-on-click="saveApiKeys" class="btn btn-primary" id="saveApiKeysBtn">
                 <span class="btn-icon">💾</span>
                 Save API Keys
             </button>

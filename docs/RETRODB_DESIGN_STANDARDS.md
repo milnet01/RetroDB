@@ -1152,7 +1152,7 @@ Is this style used on 2+ pages?
   - `X-Frame-Options: SAMEORIGIN`
   - `Referrer-Policy: strict-origin-when-cross-origin`
 - `X-XSS-Protection` is **intentionally not set** — the legacy XSS Auditor was removed from Chromium/Edge and Safari, can introduce its own information-leak vulnerabilities on Firefox, and is superseded by CSP. Do not re-add it without removing this comment first (see `app.py::set_security_headers`).
-- **CSP rollout in progress** — `FU.1` in `roadmap.md` is staging a report-only → enforcing migration; v3.6.20 landed phase A (every inline `onclick=` migrated to event-bound listeners + `csp_nonce` wired through `base.html`).
+- **CSP enforces** (FU.1) — no inline `on<event>=` attribute, in a template or in HTML a script builds; use `data-on-<event>` (see `.claude/rules/js-template-contracts.md`). Every inline `<script>` carries `nonce="{{ csp_nonce }}"`.
 
 ### Login Security
 - Minimum password length: 8 characters.

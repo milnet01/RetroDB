@@ -78,11 +78,11 @@
             </div>
 
             <div style="margin-top: var(--spacing-lg); display: flex; gap: var(--spacing-md); align-items: center;">
-                <button type="button" onclick="saveNotificationSettings()" class="btn btn-primary" id="saveNotifSettingsBtn">
+                <button type="button" data-on-click="saveNotificationSettings" class="btn btn-primary" id="saveNotifSettingsBtn">
                     <span class="btn-icon">💾</span>
                     {{ _('Save Settings') }}
                 </button>
-                <button type="button" onclick="testNotifications()" class="btn btn-secondary">
+                <button type="button" data-on-click="testNotifications" class="btn btn-secondary">
                     <span class="btn-icon">🔔</span>
                     {{ _('Test Notifications') }}
                 </button>
@@ -109,7 +109,7 @@
             {{ _('Assign a default controller to each system. Games will inherit this controller unless manually changed.') }}
         </p>
         <div style="margin-bottom: var(--spacing-lg); display: flex; gap: var(--spacing-md); flex-wrap: wrap;">
-            <button type="button" onclick="autoAssignDefaultControllers()" class="btn btn-primary" id="autoAssignBtn">
+            <button type="button" data-on-click="autoAssignDefaultControllers" class="btn btn-primary" id="autoAssignBtn">
                 <span class="btn-icon">🎯</span>
                 {{ _('Auto-Assign Defaults') }}
             </button>
@@ -154,7 +154,7 @@
                     <div class="system-tags-container" id="newControllerSystemTags" style="display: flex; flex-wrap: wrap; gap: 6px; min-height: 38px; padding: 6px; background: var(--bg-darker); border: 1px solid var(--card-border); border-radius: var(--radius-md); margin-bottom: 6px;">
                         <!-- Tags added here -->
                     </div>
-                    <select class="form-select" id="newControllerSystemSelect" onchange="addSystemToController('new')">
+                    <select class="form-select" id="newControllerSystemSelect" data-on-change="addSystemToController" data-args='["new"]'>
                         <option value="">{{ _('+ Add system...') }}</option>
                         <!-- Populated by JavaScript -->
                     </select>
@@ -194,7 +194,7 @@
                 <textarea class="form-input" id="newControllerDescription" rows="2" placeholder="{{ _('Brief description of the controller...') }}"></textarea>
             </div>
             <div style="margin-top: var(--spacing-lg);">
-                <button type="button" onclick="addNewController()" class="btn btn-success">
+                <button type="button" data-on-click="addNewController" class="btn btn-success">
                     <span class="btn-icon">➕</span>
                     {{ _('Add Controller') }}
                 </button>
@@ -221,7 +221,7 @@
     <div class="modal-content" style="max-width: 600px;">
         <div class="modal-header">
             <h2>✏️ {{ _('Edit Controller') }}</h2>
-            <button type="button" class="modal-close" onclick="closeEditControllerModal()">×</button>
+            <button type="button" class="modal-close" data-on-click="closeEditControllerModal">×</button>
         </div>
         <div class="modal-body">
             <input type="hidden" id="editControllerId">
@@ -235,7 +235,7 @@
                     <div class="system-tags-container" id="editControllerSystemTags" style="display: flex; flex-wrap: wrap; gap: 6px; min-height: 38px; padding: 6px; background: var(--bg-darker); border: 1px solid var(--card-border); border-radius: var(--radius-md); margin-bottom: 6px;">
                         <!-- Tags added here -->
                     </div>
-                    <select class="form-select" id="editControllerSystemSelect" onchange="addSystemToController('edit')">
+                    <select class="form-select" id="editControllerSystemSelect" data-on-change="addSystemToController" data-args='["edit"]'>
                         <option value="">{{ _('+ Add system...') }}</option>
                         <!-- Populated by JavaScript -->
                     </select>
@@ -261,8 +261,8 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" onclick="closeEditControllerModal()">{{ _('Cancel') }}</button>
-            <button type="button" class="btn btn-primary" onclick="saveControllerChanges()">
+            <button type="button" class="btn btn-secondary" data-on-click="closeEditControllerModal">{{ _('Cancel') }}</button>
+            <button type="button" class="btn btn-primary" data-on-click="saveControllerChanges">
                 <span class="btn-icon">💾</span>
                 {{ _('Save Changes') }}
             </button>
@@ -281,10 +281,10 @@
         </p>
         
         <div style="margin-bottom: var(--spacing-lg); display: flex; gap: var(--spacing-md); flex-wrap: wrap; align-items: center;">
-            <button type="button" onclick="refreshSystemLogos()" class="btn btn-secondary" id="refreshLogosBtn">
+            <button type="button" data-on-click="refreshSystemLogos" class="btn btn-secondary" id="refreshLogosBtn">
                 🔄 {{ _('Refresh System Logos') }}
             </button>
-            <button type="button" onclick="refreshSystemNames()" class="btn btn-secondary" id="refreshNamesBtn">
+            <button type="button" data-on-click="refreshSystemNames" class="btn btn-secondary" id="refreshNamesBtn">
                 📝 {{ _('Refresh System Names') }}
             </button>
             <span class="text-muted" style="font-size: 0.85rem;">

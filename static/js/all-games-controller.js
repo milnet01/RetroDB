@@ -459,8 +459,8 @@ const AllGamesController = (function() {
         let boxartHtml;
         if (boxartToShow) {
             const fallbackAttr = fallbackBoxart
-                ? ` onerror="this.onerror=null; this.classList.remove('boxart-3d'); this.removeAttribute('srcset'); this.removeAttribute('sizes'); this.src='/static/images/boxart/${escAttr(fallbackBoxart)}';"`
-                : ` onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"`;
+                ? ` data-on-error="src" data-on-error-remove-class="boxart-3d" data-on-error-src="/static/images/boxart/${esc(fallbackBoxart)}"`
+                : ` data-on-error="hide-show-next"`;
             // Pass FU.2 — pre-computed srcset (boxart 160 w / 320 w variants
             // plus the original) shipped from build_game_card(). `sizes`
             // mirrors the card-boxart-section CSS: 100 px on the ≤768 px
@@ -502,18 +502,18 @@ const AllGamesController = (function() {
         let metaHtml = '';
         if (game.genre) {
             const firstGenre = game.genre.split(',')[0].trim();
-            metaHtml += `<div class="meta-item"><span class="meta-label">Genre</span><span class="meta-value meta-clickable" onclick="event.preventDefault();event.stopPropagation();if(event.shiftKey)AllGamesController.applyExcludeFilterDirect('genre','${escAttr(firstGenre)}');else AllGamesController.applyFilterDirect('genre','${escAttr(firstGenre)}')" title="Click to filter, Shift+click to exclude">${esc(tField(firstGenre))}</span></div>`;
+            metaHtml += `<div class="meta-item"><span class="meta-label">Genre</span><span class="meta-value meta-clickable" data-on-click="AllGamesController.metaFilterClick" data-args="${actionArgs('genre', firstGenre, '$event')}" data-stop data-prevent title="Click to filter, Shift+click to exclude">${esc(tField(firstGenre))}</span></div>`;
         }
         if (game.franchise) {
-            metaHtml += `<div class="meta-item"><span class="meta-label">Series</span><span class="meta-value meta-clickable" onclick="event.preventDefault();event.stopPropagation();if(event.shiftKey)AllGamesController.applyExcludeFilterDirect('franchise','${escAttr(game.franchise)}');else AllGamesController.applyFilterDirect('franchise','${escAttr(game.franchise)}')" title="Click to filter, Shift+click to exclude">${esc(game.franchise.substring(0, 20))}${game.franchise.length > 20 ? '...' : ''}</span></div>`;
+            metaHtml += `<div class="meta-item"><span class="meta-label">Series</span><span class="meta-value meta-clickable" data-on-click="AllGamesController.metaFilterClick" data-args="${actionArgs('franchise', game.franchise, '$event')}" data-stop data-prevent title="Click to filter, Shift+click to exclude">${esc(game.franchise.substring(0, 20))}${game.franchise.length > 20 ? '...' : ''}</span></div>`;
         }
         if (game.developer) {
             const firstDev = game.developer.split(',')[0].trim();
-            metaHtml += `<div class="meta-item"><span class="meta-label">Developer</span><span class="meta-value meta-clickable" onclick="event.preventDefault();event.stopPropagation();if(event.shiftKey)AllGamesController.applyExcludeFilterDirect('developer','${escAttr(firstDev)}');else AllGamesController.applyFilterDirect('developer','${escAttr(firstDev)}')" title="Click to filter, Shift+click to exclude">${esc(firstDev.substring(0, 20))}${firstDev.length > 20 ? '...' : ''}</span></div>`;
+            metaHtml += `<div class="meta-item"><span class="meta-label">Developer</span><span class="meta-value meta-clickable" data-on-click="AllGamesController.metaFilterClick" data-args="${actionArgs('developer', firstDev, '$event')}" data-stop data-prevent title="Click to filter, Shift+click to exclude">${esc(firstDev.substring(0, 20))}${firstDev.length > 20 ? '...' : ''}</span></div>`;
         }
         if (game.publisher) {
             const firstPub = game.publisher.split(',')[0].trim();
-            metaHtml += `<div class="meta-item"><span class="meta-label">Publisher</span><span class="meta-value meta-clickable" onclick="event.preventDefault();event.stopPropagation();if(event.shiftKey)AllGamesController.applyExcludeFilterDirect('publisher','${escAttr(firstPub)}');else AllGamesController.applyFilterDirect('publisher','${escAttr(firstPub)}')" title="Click to filter, Shift+click to exclude">${esc(firstPub.substring(0, 20))}${firstPub.length > 20 ? '...' : ''}</span></div>`;
+            metaHtml += `<div class="meta-item"><span class="meta-label">Publisher</span><span class="meta-value meta-clickable" data-on-click="AllGamesController.metaFilterClick" data-args="${actionArgs('publisher', firstPub, '$event')}" data-stop data-prevent title="Click to filter, Shift+click to exclude">${esc(firstPub.substring(0, 20))}${firstPub.length > 20 ? '...' : ''}</span></div>`;
         }
         if (game.release_date) {
             metaHtml += `<div class="meta-item"><span class="meta-label">Year</span><span class="meta-value">${esc(game.release_date.substring(0, 4))}</span></div>`;
@@ -586,7 +586,7 @@ const AllGamesController = (function() {
         const playHtml = game.can_launch
             ? `<button type="button" class="card-play-btn" data-game-id="${game.id}"
                        title="${escAttr(t('Play'))}" aria-label="${escAttr(t('Play'))}"
-                       onclick="event.preventDefault(); event.stopPropagation(); launchGame(this)"><svg viewBox="0 0 100 100" aria-hidden="true" focusable="false"><polygon points="35,24 35,76 80,50"/></svg></button>`
+                       data-on-click="launchGame" data-args="${actionArgs('$this')}" data-stop data-prevent><svg viewBox="0 0 100 100" aria-hidden="true" focusable="false"><polygon points="35,24 35,76 80,50"/></svg></button>`
             : '';
 
         // Bulk checkbox
@@ -615,7 +615,7 @@ const AllGamesController = (function() {
         wrapper.innerHTML = `
             <div class="bulk-select-checkbox" style="display: ${checkboxDisplay};">
                 <input type="checkbox" class="game-checkbox" data-game-id="${game.id}" ${isSelected ? 'checked' : ''}
-                       onclick="event.stopPropagation(); AllGamesController.toggleGameSelection(${game.id})">
+                       data-on-click="AllGamesController.toggleGameSelection" data-args="${actionArgs(game.id)}" data-stop>
             </div>
             <div class="game-card-new glass-card${playHtml ? ' has-play' : ''}"
                  data-game-id="${game.id}"
@@ -716,19 +716,19 @@ const AllGamesController = (function() {
         // Special: source (include only, no exclude support)
         if (filterType === 'source') {
             optionsEl.innerHTML = `
-                <div class="filter-option" onclick="AllGamesController.applyFilter('source','rom')">
+                <div class="filter-option" data-on-click="AllGamesController.applyFilter" data-args="${actionArgs('source', 'rom')}">
                     <span class="filter-option-name">${esc(t('ROM Files'))}</span>
                 </div>
-                <div class="filter-option" onclick="AllGamesController.applyFilter('source','clz')">
+                <div class="filter-option" data-on-click="AllGamesController.applyFilter" data-args="${actionArgs('source', 'clz')}">
                     <span class="filter-option-name">${esc(t('CLZ Imports'))}</span>
                 </div>
-                <div class="filter-option" onclick="AllGamesController.applyFilter('source','steam')">
+                <div class="filter-option" data-on-click="AllGamesController.applyFilter" data-args="${actionArgs('source', 'steam')}">
                     <span class="filter-option-name">${esc(t('Steam Imports'))}</span>
                 </div>
-                <div class="filter-option" onclick="AllGamesController.applyFilter('source','xbox')">
+                <div class="filter-option" data-on-click="AllGamesController.applyFilter" data-args="${actionArgs('source', 'xbox')}">
                     <span class="filter-option-name">${esc(t('Xbox Imports'))}</span>
                 </div>
-                <div class="filter-option" onclick="AllGamesController.applyFilter('source','psn')">
+                <div class="filter-option" data-on-click="AllGamesController.applyFilter" data-args="${actionArgs('source', 'psn')}">
                     <span class="filter-option-name">${esc(t('PSN Imports'))}</span>
                 </div>`;
             modal.classList.add('active');
@@ -748,7 +748,7 @@ const AllGamesController = (function() {
                 const label = sysNames[sysKey] || sysKey.toUpperCase();
                 html += `<div class="filter-subheading">${esc(label)}</div>`;
                 items.forEach(([val, cnt]) => {
-                    html += `<div class="filter-option" onclick="AllGamesController.handleFilterOptionClick('rating','${escAttr(val)}')">${esc(val)} <span class="filter-option-count">(${formatNumber(cnt)})</span></div>`;
+                    html += `<div class="filter-option" data-on-click="AllGamesController.handleFilterOptionClick" data-args="${actionArgs('rating', val)}">${esc(val)} <span class="filter-option-count">(${formatNumber(cnt)})</span></div>`;
                 });
             }
             optionsEl.innerHTML = html || `<div class="filter-empty">${esc(t('No ratings available'))}</div>`;
@@ -763,7 +763,7 @@ const AllGamesController = (function() {
             optionsEl.innerHTML = `<div class="filter-empty">${esc(t('No options available'))}</div>`;
         } else {
             optionsEl.innerHTML = opts.map(([val, cnt]) =>
-                `<div class="filter-option" onclick="AllGamesController.handleFilterOptionClick('${filterType}','${escAttr(val)}')">
+                `<div class="filter-option" data-on-click="AllGamesController.handleFilterOptionClick" data-args="${actionArgs(String(filterType), val)}">
                     <span class="filter-option-name">${esc(tField(val))}</span>
                     <span class="filter-option-count">(${formatNumber(cnt)})</span>
                 </div>`
@@ -857,6 +857,13 @@ const AllGamesController = (function() {
         excludeFilters[type] = value;
         closeFilterModal();
         resetAndFetch();
+    }
+
+    // A card's genre / series / developer / publisher: click filters to it,
+    // Shift+click excludes it.
+    function metaFilterClick(type, value, event) {
+        if (event.shiftKey) applyExcludeFilterDirect(type, value);
+        else applyFilterDirect(type, value);
     }
 
     function applyExcludeFilterDirect(type, value) {
@@ -962,7 +969,7 @@ const AllGamesController = (function() {
                 let html = displayFilters.map(([k, v]) =>
                     `<span class="filter-tag">
                         ${icons[k] || ''} ${esc(String(v))}
-                        <span class="filter-tag-remove" onclick="AllGamesController.removeFilter('${k}')">&#215;</span>
+                        <span class="filter-tag-remove" data-on-click="AllGamesController.removeFilter" data-args="${actionArgs(String(k))}">&#215;</span>
                     </span>`
                 ).join('');
 
@@ -970,18 +977,18 @@ const AllGamesController = (function() {
                 html += displayExcludeFilters.map(([k, v]) =>
                     `<span class="filter-tag filter-tag-exclude">
                         ${icons[k] || ''} ${esc(t('NOT'))} ${esc(String(v))}
-                        <span class="filter-tag-remove" onclick="AllGamesController.removeExcludeFilter('${k}')">&#215;</span>
+                        <span class="filter-tag-remove" data-on-click="AllGamesController.removeExcludeFilter" data-args="${actionArgs(String(k))}">&#215;</span>
                     </span>`
                 ).join('');
 
                 if (hasRA) {
                     html += `<span class="filter-tag ra-tag">&#127942; ${esc(t('Has Achievements'))}
-                        <span class="filter-tag-remove" onclick="AllGamesController.toggleRAFilter()">&#215;</span></span>`;
+                        <span class="filter-tag-remove" data-on-click="AllGamesController.toggleRAFilter">&#215;</span></span>`;
                 }
                 if (hasBonus) {
                     html += `<span class="filter-tag" style="background:rgba(168,85,247,0.15);border-color:#a855f7;color:#a855f7;">
                         &#127873; ${esc(t('Showing Bonus Discs'))}
-                        <span class="filter-tag-remove" onclick="AllGamesController.toggleBonusDiscFilter()">&#215;</span></span>`;
+                        <span class="filter-tag-remove" data-on-click="AllGamesController.toggleBonusDiscFilter">&#215;</span></span>`;
                 }
 
                 tags.innerHTML = html;
@@ -1513,6 +1520,7 @@ const AllGamesController = (function() {
         setFilterMode,
         applyExcludeFilter,
         applyExcludeFilterDirect,
+        metaFilterClick,
         removeExcludeFilter,
         toggleRAFilter,
         toggleBonusDiscFilter,

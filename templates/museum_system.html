@@ -19,7 +19,7 @@
     <div class="museum-hero-layout">
         <div class="museum-hero-image">
             {% if hw_image %}
-            <img src="{{ url_for('static', filename=hw_image) }}" alt="{{ system.name }}" onclick="openHardwareLightbox(this)" style="cursor:zoom-in">
+            <img src="{{ url_for('static', filename=hw_image) }}" alt="{{ system.name }}" data-on-click="openHardwareLightbox" data-args='["$this"]' style="cursor:zoom-in">
             {% else %}
             <div class="museum-hero-placeholder">&#127918;</div>
             {% endif %}
@@ -41,7 +41,7 @@
                 {% endif %}
             </div>
             <div class="museum-hero-actions">
-                <button type="button" class="btn btn-primary" onclick="generateContent({{ system.id }})" id="generateBtn">
+                <button type="button" class="btn btn-primary" data-on-click="generateContent" data-args='[{{ system.id|tojson }}]' id="generateBtn">
                     {% if museum_data and museum_data.history %}{{ _('Regenerate Content') }}{% else %}{{ _('Generate Content') }}{% endif %}
                 </button>
                 {% if game_count > 0 %}
@@ -57,10 +57,10 @@
 
 <!-- Sticky Tab Navigation -->
 <nav class="museum-nav" data-sticky-nav data-tabbar>
-    <a href="#history" class="museum-nav-item active" aria-current="page" onclick="switchMuseumTab(event, 'history')">{{ _('History') }}</a>
-    <a href="#specifications" class="museum-nav-item" onclick="switchMuseumTab(event, 'specifications')">{{ _('Specifications') }}</a>
-    <a href="#top-games" class="museum-nav-item" onclick="switchMuseumTab(event, 'top-games')">{{ _('Top 10 Games') }}</a>
-    <a href="#controllers" class="museum-nav-item" onclick="switchMuseumTab(event, 'controllers')">{{ _('Controllers') }}</a>
+    <a href="#history" class="museum-nav-item active" aria-current="page" data-on-click="switchMuseumTab" data-args='["$event", "history"]'>{{ _('History') }}</a>
+    <a href="#specifications" class="museum-nav-item" data-on-click="switchMuseumTab" data-args='["$event", "specifications"]'>{{ _('Specifications') }}</a>
+    <a href="#top-games" class="museum-nav-item" data-on-click="switchMuseumTab" data-args='["$event", "top-games"]'>{{ _('Top 10 Games') }}</a>
+    <a href="#controllers" class="museum-nav-item" data-on-click="switchMuseumTab" data-args='["$event", "controllers"]'>{{ _('Controllers') }}</a>
 </nav>
 
 <!-- History Section -->
@@ -173,12 +173,12 @@
         {% if controllers %}
         <div class="museum-section-actions">
         <button type="button" class="btn btn-sm btn-secondary" id="ctrlFetchAllBtn"
-                data-system-id="{{ system.id }}" onclick="fetchAllControllerImages({{ system.id }})">
+                data-system-id="{{ system.id }}" data-on-click="fetchAllControllerImages" data-args='[{{ system.id|tojson }}]'>
             {{ _('Fetch All Images') }}
         </button>
         <span id="ctrlFetchProgress" role="status" aria-live="polite" style="display: none;"></span>
         <button type="button" class="btn btn-sm btn-secondary" id="ctrlFetchCancelBtn"
-                onclick="cancelControllerImageFetch()" style="display: none;">
+                data-on-click="cancelControllerImageFetch" style="display: none;">
             {{ _('Cancel') }}
         </button>
         </div>
@@ -191,22 +191,22 @@
         <div class="museum-controller-card glass-panel" data-controller-id="{{ ctrl.id }}">
             <div class="museum-controller-image">
                 {% if ctrl.image %}
-                <img src="{{ url_for('static', filename='images/controllers/' ~ ctrl.image) }}" alt="{{ ctrl.name }}" title="{{ ctrl.image }}" loading="lazy" onclick="openControllerLightbox(this)">
+                <img src="{{ url_for('static', filename='images/controllers/' ~ ctrl.image) }}" alt="{{ ctrl.name }}" title="{{ ctrl.image }}" loading="lazy" data-on-click="openControllerLightbox" data-args='["$this"]'>
                 <div class="museum-controller-image-actions">
-                    <button type="button" class="btn btn-xs btn-ghost" onclick="event.stopPropagation();removeControllerBg({{ ctrl.id }})" title="{{ _('Remove background') }}">{{ _('Remove BG') }}</button>
-                    <button type="button" class="btn btn-xs btn-ghost" onclick="event.stopPropagation();fetchControllerImage({{ ctrl.id }})" title="{{ _('Search for a new image') }}">{{ _('Search') }}</button>
-                    <button type="button" class="btn btn-xs btn-ghost" onclick="event.stopPropagation();uploadControllerImage({{ ctrl.id }})" title="{{ _('Upload your own image') }}">{{ _('Upload') }}</button>
+                    <button type="button" class="btn btn-xs btn-ghost" data-on-click="removeControllerBg" data-args='[{{ ctrl.id|tojson }}]' data-stop title="{{ _('Remove background') }}">{{ _('Remove BG') }}</button>
+                    <button type="button" class="btn btn-xs btn-ghost" data-on-click="fetchControllerImage" data-args='[{{ ctrl.id|tojson }}]' data-stop title="{{ _('Search for a new image') }}">{{ _('Search') }}</button>
+                    <button type="button" class="btn btn-xs btn-ghost" data-on-click="uploadControllerImage" data-args='[{{ ctrl.id|tojson }}]' data-stop title="{{ _('Upload your own image') }}">{{ _('Upload') }}</button>
                 </div>
                 {% else %}
                 <div class="museum-controller-placeholder">
                     <span>&#128377;&#65039;</span>
                     <div class="museum-controller-image-actions">
-                        <button type="button" class="btn btn-sm btn-ghost" onclick="fetchControllerImage({{ ctrl.id }})">{{ _('Search') }}</button>
-                        <button type="button" class="btn btn-sm btn-ghost" onclick="uploadControllerImage({{ ctrl.id }})">{{ _('Upload') }}</button>
+                        <button type="button" class="btn btn-sm btn-ghost" data-on-click="fetchControllerImage" data-args='[{{ ctrl.id|tojson }}]'>{{ _('Search') }}</button>
+                        <button type="button" class="btn btn-sm btn-ghost" data-on-click="uploadControllerImage" data-args='[{{ ctrl.id|tojson }}]'>{{ _('Upload') }}</button>
                     </div>
                 </div>
                 {% endif %}
-                <input type="file" id="ctrlUpload{{ ctrl.id }}" accept="image/*" style="display:none" onchange="handleControllerUpload({{ ctrl.id }}, this)">
+                <input type="file" id="ctrlUpload{{ ctrl.id }}" accept="image/*" style="display:none" data-on-change="handleControllerUpload" data-args='[{{ ctrl.id|tojson }}, "$this"]'>
             </div>
             <div class="museum-controller-info">
                 <h4 class="museum-controller-name">{{ ctrl.name }}</h4>
@@ -239,18 +239,18 @@
 </section>
 
 <!-- Hardware Image Lightbox -->
-<div id="museumHardwareLightbox" class="museum-lightbox" onclick="if(event.target===this)closeHardwareLightbox()" role="dialog" aria-modal="true" aria-label="{{ _('Hardware image viewer') }}">
-    <span class="museum-lightbox-close" onclick="closeHardwareLightbox()" aria-label="{{ _('Close hardware viewer') }}">&times;</span>
+<div id="museumHardwareLightbox" class="museum-lightbox" data-on-click="closeHardwareLightbox" data-self-only role="dialog" aria-modal="true" aria-label="{{ _('Hardware image viewer') }}">
+    <span class="museum-lightbox-close" data-on-click="closeHardwareLightbox" aria-label="{{ _('Close hardware viewer') }}">&times;</span>
     <img id="museumHwLightboxImage" class="museum-lightbox-image" alt="Hardware">
     <div id="museumHwLightboxTitle" class="museum-lightbox-title"></div>
 </div>
 
 <!-- Controller Image Lightbox -->
-<div id="museumControllerLightbox" class="museum-lightbox" onclick="if(event.target===this)closeControllerLightbox()" role="dialog" aria-modal="true" aria-label="{{ _('Controller image viewer') }}">
-    <span class="museum-lightbox-close" onclick="closeControllerLightbox()" aria-label="{{ _('Close controller viewer') }}">&times;</span>
-    <button type="button" class="museum-lightbox-nav prev" onclick="event.stopPropagation();navigateControllerLightbox(-1)" aria-label="{{ _('Previous controller') }}">&#8249;</button>
+<div id="museumControllerLightbox" class="museum-lightbox" data-on-click="closeControllerLightbox" data-self-only role="dialog" aria-modal="true" aria-label="{{ _('Controller image viewer') }}">
+    <span class="museum-lightbox-close" data-on-click="closeControllerLightbox" aria-label="{{ _('Close controller viewer') }}">&times;</span>
+    <button type="button" class="museum-lightbox-nav prev" data-on-click="navigateControllerLightbox" data-args='[-1]' data-stop aria-label="{{ _('Previous controller') }}">&#8249;</button>
     <img id="museumLightboxImage" class="museum-lightbox-image" alt="Controller">
-    <button type="button" class="museum-lightbox-nav next" onclick="event.stopPropagation();navigateControllerLightbox(1)" aria-label="{{ _('Next controller') }}">&#8250;</button>
+    <button type="button" class="museum-lightbox-nav next" data-on-click="navigateControllerLightbox" data-args='[1]' data-stop aria-label="{{ _('Next controller') }}">&#8250;</button>
     <div id="museumLightboxTitle" class="museum-lightbox-title"></div>
     <div class="museum-lightbox-hint">{{ _('Use') }} &#8592; &#8594; {{ _('arrow keys to navigate') }} &bull; {{ _('ESC to close') }}</div>
 </div>

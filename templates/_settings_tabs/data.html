@@ -56,7 +56,7 @@
         </p>
         
         <div style="margin-top: var(--spacing-xl);">
-            <button type="button" onclick="scanTrophies()" class="btn btn-primary" id="scanTrophiesBtn" {% if not config.RPCS3_TROPHY_PATH %}disabled{% endif %}>
+            <button type="button" data-on-click="scanTrophies" class="btn btn-primary" id="scanTrophiesBtn" {% if not config.RPCS3_TROPHY_PATH %}disabled{% endif %}>
                 <span class="btn-icon">🔍</span>
                 {{ _('Scan Trophies') }}
             </button>
@@ -84,7 +84,7 @@
             <div id="genreOptions" class="options-list"></div>
             <div class="add-option-row">
                 <input type="text" id="newGenre" placeholder="{{ _('New genre...') }}" class="option-input">
-                <button type="button" onclick="addDropdownOption('genre', 'newGenre', 'genreOptions')" class="btn btn-sm btn-primary">{{ _('Add') }}</button>
+                <button type="button" data-on-click="addDropdownOption" data-args='["genre", "newGenre", "genreOptions"]' class="btn btn-sm btn-primary">{{ _('Add') }}</button>
             </div>
         </div>
         
@@ -94,7 +94,7 @@
             <div id="gameStructureOptions" class="options-list"></div>
             <div class="add-option-row">
                 <input type="text" id="newGameStructure" placeholder="{{ _('New game structure...') }}" class="option-input">
-                <button type="button" onclick="addDropdownOption('game_structure', 'newGameStructure', 'gameStructureOptions')" class="btn btn-sm btn-primary">{{ _('Add') }}</button>
+                <button type="button" data-on-click="addDropdownOption" data-args='["game_structure", "newGameStructure", "gameStructureOptions"]' class="btn btn-sm btn-primary">{{ _('Add') }}</button>
             </div>
         </div>
 
@@ -104,7 +104,7 @@
             <div id="perspectiveOptions" class="options-list"></div>
             <div class="add-option-row">
                 <input type="text" id="newPerspective" placeholder="{{ _('New perspective...') }}" class="option-input">
-                <button type="button" onclick="addDropdownOption('perspective', 'newPerspective', 'perspectiveOptions')" class="btn btn-sm btn-primary">{{ _('Add') }}</button>
+                <button type="button" data-on-click="addDropdownOption" data-args='["perspective", "newPerspective", "perspectiveOptions"]' class="btn btn-sm btn-primary">{{ _('Add') }}</button>
             </div>
         </div>
 
@@ -114,7 +114,7 @@
             <div id="dimensionOptions" class="options-list"></div>
             <div class="add-option-row">
                 <input type="text" id="newDimension" placeholder="{{ _('New dimension...') }}" class="option-input">
-                <button type="button" onclick="addDropdownOption('dimension', 'newDimension', 'dimensionOptions')" class="btn btn-sm btn-primary">{{ _('Add') }}</button>
+                <button type="button" data-on-click="addDropdownOption" data-args='["dimension", "newDimension", "dimensionOptions"]' class="btn btn-sm btn-primary">{{ _('Add') }}</button>
             </div>
         </div>
 
@@ -124,7 +124,7 @@
             <div id="gameModesOptions" class="options-list"></div>
             <div class="add-option-row">
                 <input type="text" id="newGameMode" placeholder="{{ _('New play mode...') }}" class="option-input">
-                <button type="button" onclick="addDropdownOption('game_modes', 'newGameMode', 'gameModesOptions')" class="btn btn-sm btn-primary">{{ _('Add') }}</button>
+                <button type="button" data-on-click="addDropdownOption" data-args='["game_modes", "newGameMode", "gameModesOptions"]' class="btn btn-sm btn-primary">{{ _('Add') }}</button>
             </div>
         </div>
 
@@ -134,7 +134,7 @@
             <div id="saveTypeOptions" class="options-list"></div>
             <div class="add-option-row">
                 <input type="text" id="newSaveType" placeholder="{{ _('New save type...') }}" class="option-input">
-                <button type="button" onclick="addDropdownOption('save_type', 'newSaveType', 'saveTypeOptions')" class="btn btn-sm btn-primary">{{ _('Add') }}</button>
+                <button type="button" data-on-click="addDropdownOption" data-args='["save_type", "newSaveType", "saveTypeOptions"]' class="btn btn-sm btn-primary">{{ _('Add') }}</button>
             </div>
         </div>
     </div>
@@ -153,17 +153,17 @@
 
         <!-- Field selector buttons -->
         <div style="display: flex; gap: var(--spacing-sm); margin-bottom: var(--spacing-lg); flex-wrap: wrap; align-items: center;">
-            <button type="button" class="btn btn-primary norm-field-btn active" id="normBtnGenre" onclick="NormalizationManager.load('genre')">{{ _('Genre') }}</button>
-            <button type="button" class="btn btn-secondary norm-field-btn" id="normBtnModes" onclick="NormalizationManager.load('modes')">{{ _('Modes') }}</button>
+            <button type="button" class="btn btn-primary norm-field-btn active" id="normBtnGenre" data-on-click="NormalizationManager.load" data-args='["genre"]'>{{ _('Genre') }}</button>
+            <button type="button" class="btn btn-secondary norm-field-btn" id="normBtnModes" data-on-click="NormalizationManager.load" data-args='["modes"]'>{{ _('Modes') }}</button>
             <div style="margin-left: auto; display: flex; gap: var(--spacing-sm); align-items: center;">
                 <div class="toggle-item" style="display: flex; align-items: center; gap: var(--spacing-xs);">
                     <label class="toggle-switch" style="transform: scale(0.75);" for="normSelectAll">
-                        <input type="checkbox" id="normFilterChanged" onchange="NormalizationManager.toggleFilter()">
+                        <input type="checkbox" id="normFilterChanged" data-on-change="NormalizationManager.toggleFilter">
                         <span class="toggle-slider"></span>
                     </label>
                     <span class="toggle-label" style="font-size: 0.85rem; color: var(--text-secondary);">{{ _('Show only values needing changes') }}</span>
                 </div>
-                <button type="button" class="btn btn-sm btn-secondary" onclick="NormalizationManager.load()" id="normRefreshBtn">
+                <button type="button" class="btn btn-sm btn-secondary" data-on-click="NormalizationManager.load" id="normRefreshBtn">
                     <span class="btn-icon">🔄</span> {{ _('Refresh') }}
                 </button>
             </div>
@@ -181,7 +181,7 @@
                 <table class="data-table" style="width: 100%;">
                     <thead>
                         <tr>
-                            <th style="width: 40px;"><input type="checkbox" id="normSelectAll" onchange="NormalizationManager.toggleSelectAll(this.checked)" title="{{ _('Select/deselect all') }}"></th>
+                            <th style="width: 40px;"><input type="checkbox" id="normSelectAll" data-on-change="NormalizationManager.toggleSelectAll" data-args='["$this.checked"]' title="{{ _('Select/deselect all') }}"></th>
                             <th>{{ _('Current Value') }}</th>
                             <th style="width: 80px; text-align: right;">{{ _('Games') }}</th>
                             <th style="min-width: 200px;">{{ _('Normalize To') }}</th>
@@ -194,8 +194,8 @@
 
             <!-- Action buttons -->
             <div style="display: flex; gap: var(--spacing-sm); margin-top: var(--spacing-lg); flex-wrap: wrap;">
-                <button type="button" class="btn btn-secondary" onclick="NormalizationManager.selectAllChanged()">{{ _('Select All Changed') }}</button>
-                <button type="button" class="btn btn-primary" onclick="NormalizationManager.apply()" id="normApplyBtn" disabled>
+                <button type="button" class="btn btn-secondary" data-on-click="NormalizationManager.selectAllChanged">{{ _('Select All Changed') }}</button>
+                <button type="button" class="btn btn-primary" data-on-click="NormalizationManager.apply" id="normApplyBtn" disabled>
                     Apply 0 Selected
                 </button>
             </div>

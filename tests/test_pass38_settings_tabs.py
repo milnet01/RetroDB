@@ -280,12 +280,13 @@ class TestInlineHandlersResolve:
                      'static/js/core.bundle.js', 'static/js/theme.js')
 
     def _callees(self):
+        # The root of each delegated action, `data-on-click="UserManager.x"`
+        # -> UserManager (FU.1 replaced the inline `on<event>=` handlers).
         import re
         names = set()
         for path in sorted((Path(REPO_ROOT) / 'templates' / '_settings_tabs').glob('*.html')):
-            for handler in re.findall(r'\bon[a-z]+="([^"]*)"', path.read_text(encoding='utf-8')):
-                code = re.sub(r"'[^']*'", "''", handler)
-                names.update(re.findall(r'(?<![\w.$])([A-Za-z_$][\w$]*)\s*[.(]', code))
+            names.update(re.findall(r'\bdata-on-(?!error\b)[a-z]+="([A-Za-z_$][\w$]*)',
+                                    path.read_text(encoding='utf-8')))
         return names - self._BUILTINS
 
     def test_the_scan_sees_the_language_picker(self):

@@ -23,5 +23,5 @@
 {% endmacro %}
 
 {%- macro subnav_link(href, label, active=False) -%}
-<a href="#{{ href }}" class="subnav-link{% if active %} active{% endif %}" onclick="scrollToSection('{{ href }}')">{{ label }}</a>
+<a href="#{{ href }}" class="subnav-link{% if active %} active{% endif %}" data-on-click="scrollToSection" data-args='[{{ (href)|string|tojson }}]'>{{ label }}</a>
 {%- endmacro -%}

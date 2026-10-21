@@ -188,10 +188,10 @@
                 {% endfor %}
             </select>
         </div>
-        <button type="button" class="btn btn-primary" onclick="scanMultiDisc()">
+        <button type="button" class="btn btn-primary" data-on-click="scanMultiDisc">
             <span class="btn-icon">🔍</span> {{ _('Scan for Loose Discs') }}
         </button>
-        <button type="button" class="btn btn-success" onclick="organizeAllMultiDisc()" id="organizeAllBtn" disabled>
+        <button type="button" class="btn btn-success" data-on-click="organizeAllMultiDisc" id="organizeAllBtn" disabled>
             <span class="btn-icon">📁</span> {{ _('Organize All') }}
         </button>
     </div>
@@ -329,7 +329,7 @@ function renderMultiDiscTable(games) {
             <td>${game.disc_count}</td>
             <td class="filename-cell" title="${game.files.join('\n')}">${game.files.map(f => escapeHtml(f)).join('<br>')}</td>
             <td class="action-cell">
-                <button type="button" class="action-btn" onclick="organizeMultiDisc(${idx})">${game.in_folder ? '📝 Create M3U' : '📁 Organize'}</button>
+                <button type="button" class="action-btn" data-on-click="organizeMultiDisc" data-args="${actionArgs(idx)}">${game.in_folder ? '📝 Create M3U' : '📁 Organize'}</button>
             </td>
         </tr>
     `).join('');

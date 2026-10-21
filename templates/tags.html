@@ -12,7 +12,7 @@
         <p class="page-subtitle">Organize your collection with custom tags</p>
     </div>
     <div class="page-actions">
-        <button type="button" class="btn btn-primary" onclick="openCreateTagModal()">
+        <button type="button" class="btn btn-primary" data-on-click="openCreateTagModal">
             <span class="btn-icon">+</span> New Tag
         </button>
     </div>
@@ -30,17 +30,17 @@
     <div class="empty-state-text">
         Create your first tag to start organizing your collection.
     </div>
-    <button type="button" class="btn btn-primary" onclick="openCreateTagModal()">
+    <button type="button" class="btn btn-primary" data-on-click="openCreateTagModal">
         <span class="btn-icon">+</span> Create Tag
     </button>
 </div>
 
 <!-- Create/Edit Tag Modal -->
-<div class="custom-modal" id="tagModal" data-focus-trap data-focus-trap-onescape="closeTagModal" onclick="if(event.target===this)closeTagModal()">
+<div class="custom-modal" id="tagModal" data-focus-trap data-focus-trap-onescape="closeTagModal" data-on-click="closeTagModal" data-self-only>
     <div class="custom-modal-content" style="max-width: 450px;" role="dialog" aria-modal="true" aria-labelledby="tagModalTitle">
         <div class="custom-modal-header">
             <h3 id="tagModalTitle">New Tag</h3>
-            <button type="button" class="custom-modal-close" onclick="closeTagModal()" aria-label="Close">&times;</button>
+            <button type="button" class="custom-modal-close" data-on-click="closeTagModal" aria-label="Close">&times;</button>
         </div>
         <div class="custom-modal-body">
             <input type="hidden" id="tagEditId" value="">
@@ -51,22 +51,22 @@
             <div class="form-group" style="margin-top: var(--spacing-md);">
                 <div class="form-label" id="tagColorLabel">Tag Color</div>
                 <div class="tag-color-picker" id="tagColorPicker" role="group" aria-labelledby="tagColorLabel">
-                    <button type="button" class="tag-color-swatch active" data-color="#4cc9f0" style="background: #4cc9f0;" onclick="selectTagColor(this)" title="Cyan"></button>
-                    <button type="button" class="tag-color-swatch" data-color="#f72585" style="background: #f72585;" onclick="selectTagColor(this)" title="Magenta"></button>
-                    <button type="button" class="tag-color-swatch" data-color="#22c55e" style="background: #22c55e;" onclick="selectTagColor(this)" title="Green"></button>
-                    <button type="button" class="tag-color-swatch" data-color="#ef4444" style="background: #ef4444;" onclick="selectTagColor(this)" title="Red"></button>
-                    <button type="button" class="tag-color-swatch" data-color="#f59e0b" style="background: #f59e0b;" onclick="selectTagColor(this)" title="Orange"></button>
-                    <button type="button" class="tag-color-swatch" data-color="#a855f7" style="background: #a855f7;" onclick="selectTagColor(this)" title="Purple"></button>
-                    <button type="button" class="tag-color-swatch" data-color="#3b82f6" style="background: #3b82f6;" onclick="selectTagColor(this)" title="Blue"></button>
-                    <button type="button" class="tag-color-swatch" data-color="#ec4899" style="background: #ec4899;" onclick="selectTagColor(this)" title="Pink"></button>
-                    <button type="button" class="tag-color-swatch" data-color="#14b8a6" style="background: #14b8a6;" onclick="selectTagColor(this)" title="Teal"></button>
-                    <button type="button" class="tag-color-swatch" data-color="#64748b" style="background: #64748b;" onclick="selectTagColor(this)" title="Gray"></button>
+                    <button type="button" class="tag-color-swatch active" data-color="#4cc9f0" style="background: #4cc9f0;" data-on-click="selectTagColor" data-args='["$this"]' title="Cyan"></button>
+                    <button type="button" class="tag-color-swatch" data-color="#f72585" style="background: #f72585;" data-on-click="selectTagColor" data-args='["$this"]' title="Magenta"></button>
+                    <button type="button" class="tag-color-swatch" data-color="#22c55e" style="background: #22c55e;" data-on-click="selectTagColor" data-args='["$this"]' title="Green"></button>
+                    <button type="button" class="tag-color-swatch" data-color="#ef4444" style="background: #ef4444;" data-on-click="selectTagColor" data-args='["$this"]' title="Red"></button>
+                    <button type="button" class="tag-color-swatch" data-color="#f59e0b" style="background: #f59e0b;" data-on-click="selectTagColor" data-args='["$this"]' title="Orange"></button>
+                    <button type="button" class="tag-color-swatch" data-color="#a855f7" style="background: #a855f7;" data-on-click="selectTagColor" data-args='["$this"]' title="Purple"></button>
+                    <button type="button" class="tag-color-swatch" data-color="#3b82f6" style="background: #3b82f6;" data-on-click="selectTagColor" data-args='["$this"]' title="Blue"></button>
+                    <button type="button" class="tag-color-swatch" data-color="#ec4899" style="background: #ec4899;" data-on-click="selectTagColor" data-args='["$this"]' title="Pink"></button>
+                    <button type="button" class="tag-color-swatch" data-color="#14b8a6" style="background: #14b8a6;" data-on-click="selectTagColor" data-args='["$this"]' title="Teal"></button>
+                    <button type="button" class="tag-color-swatch" data-color="#64748b" style="background: #64748b;" data-on-click="selectTagColor" data-args='["$this"]' title="Gray"></button>
                 </div>
             </div>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="btn btn-secondary" onclick="closeTagModal()">Cancel</button>
-            <button type="button" class="btn btn-primary" id="tagSaveBtn" onclick="saveTag()">Create Tag</button>
+            <button type="button" class="btn btn-secondary" data-on-click="closeTagModal">Cancel</button>
+            <button type="button" class="btn btn-primary" id="tagSaveBtn" data-on-click="saveTag">Create Tag</button>
         </div>
     </div>
 </div>
@@ -79,7 +79,7 @@
             <h2 class="tag-games-name" id="tagGamesName"></h2>
             <span class="tag-games-count" id="tagGamesCount"></span>
         </div>
-        <button type="button" class="btn btn-secondary btn-sm" onclick="closeTagGamesPanel()">Close</button>
+        <button type="button" class="btn btn-secondary btn-sm" data-on-click="closeTagGamesPanel">Close</button>
     </div>
     <div class="tag-games-grid" id="tagGamesGrid">
         <!-- Populated by JavaScript -->
@@ -410,12 +410,12 @@ function renderTags() {
     empty.style.display = 'none';
 
     grid.innerHTML = allTags.map(tag => `
-        <div class="tag-card" onclick="toggleTagGames(${tag.id})" data-tag-id="${tag.id}">
+        <div class="tag-card" data-on-click="toggleTagGames" data-args="${actionArgs(tag.id)}" data-tag-id="${tag.id}">
             <div class="tag-card-top">
                 <span class="tag-pill" style="background: ${escapeHtml(tag.color || '#4cc9f0')};">${escapeHtml(tag.name)}</span>
-                <div class="tag-card-actions" onclick="event.stopPropagation();">
-                    <button type="button" class="tag-action-btn" onclick="openEditTagModal(${tag.id})" title="Edit tag">&#9998;</button>
-                    <button type="button" class="tag-action-btn danger" data-name="${escapeHtml(tag.name)}" onclick="confirmDeleteTag(${tag.id}, this.dataset.name)" title="Delete tag">&#10005;</button>
+                <div class="tag-card-actions" data-on-click data-stop>
+                    <button type="button" class="tag-action-btn" data-on-click="openEditTagModal" data-args="${actionArgs(tag.id)}" title="Edit tag">&#9998;</button>
+                    <button type="button" class="tag-action-btn danger" data-name="${escapeHtml(tag.name)}" data-on-click="confirmDeleteTag" data-args="${actionArgs(tag.id, '$this.dataset.name')}" title="Delete tag">&#10005;</button>
                 </div>
             </div>
             <div class="tag-card-count">${formatNumber(tag.game_count || 0)}</div>

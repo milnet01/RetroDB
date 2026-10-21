@@ -146,6 +146,17 @@ function escapeHtml(text) {
 }
 
 /**
+ * The `data-args` attribute value for a delegated action (main.js
+ * `initializeDelegatedActions`), escaped for a double-quoted attribute:
+ * `data-on-click="openEditListModal" data-args="${actionArgs(list.id)}"`.
+ * @param {...*} args - JSON-serialisable values, or "$this" / "$event" tokens
+ * @returns {string}
+ */
+function actionArgs(...args) {
+    return escapeHtml(JSON.stringify(args));
+}
+
+/**
  * Pass 29.4 — safely parse a localStorage value as JSON.
  *
  * A corrupted or tampered value (bad quotes, truncated string, attacker-
@@ -535,7 +546,7 @@ const Notifications = {
         notification.innerHTML = `
             <span class="notification-icon">${icon}</span>
             <span class="notification-message">${escapeHtml(message)}</span>
-            <button class="notification-close" onclick="this.parentElement.remove()">×</button>
+            <button class="notification-close" data-on-click="removeParent" data-args="${actionArgs('$this')}">×</button>
         `;
 
         container.appendChild(notification);
@@ -1215,6 +1226,7 @@ window.formatBytes = formatBytes;
 window.formatNumber = formatNumber;
 window.formatRatio = formatRatio;
 window.escapeHtml = escapeHtml;
+window.actionArgs = actionArgs;
 window.safeParseJSON = safeParseJSON;
 window.copyToClipboard = copyToClipboard;
 window.Storage = Storage;

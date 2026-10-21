@@ -16,7 +16,7 @@
             <span class="count-number">{{ content_count|format_number }}</span>
             <span class="count-label">{% trans total=total_systems|format_number %}/ {{ total }} DOCUMENTED{% endtrans %}</span>
         </div>
-        <button type="button" class="btn btn-primary" id="generateAllBtn" onclick="startBulkGenerate()">
+        <button type="button" class="btn btn-primary" id="generateAllBtn" data-on-click="startBulkGenerate">
             {{ _('Generate All Content') }}
         </button>
     </div>
@@ -26,7 +26,7 @@
 <div class="museum-progress glass-panel" id="generateProgress" style="display: none;">
     <div class="museum-progress-header">
         <span class="museum-progress-title" id="progressTitle">{{ _('Generating content...') }}</span>
-        <button type="button" class="btn btn-sm btn-danger" onclick="cancelBulkGenerate()" id="cancelGenBtn">{{ _('Cancel') }}</button>
+        <button type="button" class="btn btn-sm btn-danger" data-on-click="cancelBulkGenerate" id="cancelGenBtn">{{ _('Cancel') }}</button>
     </div>
     <div class="progress-bar-container">
         <div class="progress-bar-fill" id="progressBar" style="width: 0%;"></div>
@@ -51,10 +51,10 @@
                class="search-input"
                placeholder="{{ _('Search systems...') }}"
                autocomplete="off"
-               oninput="filterMuseumSystems()">
+               data-on-input="filterMuseumSystems">
     </div>
     <div class="filter-buttons">
-        <select id="museumTypeFilter" class="filter-select" onchange="filterMuseumSystems()">
+        <select id="museumTypeFilter" class="filter-select" data-on-change="filterMuseumSystems">
             <option value="">{{ _('All Types') }}</option>
             <option value="Console">&#127918; {{ _('Console') }}</option>
             <option value="Handheld">&#128241; {{ _('Handheld') }}</option>
@@ -88,7 +88,7 @@
                data-type="{{ sys.system_type }}">
                 <div class="museum-card-image">
                     {% if sys.hw_image %}
-                    <img src="{{ url_for('static', filename=sys.hw_image) }}" alt="{{ sys.name }}" loading="lazy" onclick="event.stopPropagation();event.preventDefault();openHardwareLightbox(this)" style="cursor:zoom-in">
+                    <img src="{{ url_for('static', filename=sys.hw_image) }}" alt="{{ sys.name }}" loading="lazy" data-on-click="openHardwareLightbox" data-args='["$this"]' data-stop data-prevent style="cursor:zoom-in">
                     {% else %}
                     <div class="museum-card-placeholder">&#127918;</div>
                     {% endif %}
@@ -126,8 +126,8 @@
 {% endif %}
 
 <!-- Hardware Image Lightbox -->
-<div id="museumHardwareLightbox" class="museum-lightbox" onclick="if(event.target===this)closeHardwareLightbox()" role="dialog" aria-modal="true" aria-label="{{ _('Hardware image viewer') }}">
-    <span class="museum-lightbox-close" onclick="closeHardwareLightbox()" aria-label="{{ _('Close hardware viewer') }}">&times;</span>
+<div id="museumHardwareLightbox" class="museum-lightbox" data-on-click="closeHardwareLightbox" data-self-only role="dialog" aria-modal="true" aria-label="{{ _('Hardware image viewer') }}">
+    <span class="museum-lightbox-close" data-on-click="closeHardwareLightbox" aria-label="{{ _('Close hardware viewer') }}">&times;</span>
     <img id="museumHwLightboxImage" class="museum-lightbox-image" alt="Hardware">
     <div id="museumHwLightboxTitle" class="museum-lightbox-title"></div>
 </div>

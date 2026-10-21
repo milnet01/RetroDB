@@ -4,15 +4,15 @@
         <div class="scrape-modal-header">
             <h2 id="filterModalTitle">{{ _('Filter Games') }}</h2>
             <span id="filterModalSubtitle" class="scrape-modal-subtitle"></span>
-            <button type="button" class="modal-close-btn" onclick="closeGameDetailFilterModal()" aria-label="{{ _('Close filter modal') }}">×</button>
+            <button type="button" class="modal-close-btn" data-on-click="closeGameDetailFilterModal" aria-label="{{ _('Close filter modal') }}">×</button>
         </div>
 
         <div class="scrape-modal-body">
             <div class="filter-sort-controls" id="filterSortControls">
                 <span class="sort-label">{{ _('Sort by:') }}</span>
-                <button type="button" class="sort-btn active" data-sort="title" onclick="changeFilterSort('title')">📝 {{ _('Title') }}</button>
-                <button type="button" class="sort-btn" data-sort="release_date" onclick="changeFilterSort('release_date')">📅 {{ _('Release Date') }}</button>
-                <button type="button" class="sort-btn" data-sort="platform" onclick="changeFilterSort('platform')">🎮 {{ _('Platform') }}</button>
+                <button type="button" class="sort-btn active" data-sort="title" data-on-click="changeFilterSort" data-args='["title"]'>📝 {{ _('Title') }}</button>
+                <button type="button" class="sort-btn" data-sort="release_date" data-on-click="changeFilterSort" data-args='["release_date"]'>📅 {{ _('Release Date') }}</button>
+                <button type="button" class="sort-btn" data-sort="platform" data-on-click="changeFilterSort" data-args='["platform"]'>🎮 {{ _('Platform') }}</button>
             </div>
             <div id="filterResults" class="filter-results">
                 <div class="scrape-results-loading">{{ _('Loading games...') }}</div>

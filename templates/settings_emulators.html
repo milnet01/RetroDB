@@ -95,7 +95,7 @@
     <div class="custom-modal-content" style="max-width: 720px; max-height: 90vh; overflow-y: auto;" role="dialog" aria-modal="true" aria-labelledby="emuEditModalHeading">
         <div class="custom-modal-header">
             <h3 id="emuEditModalHeading">Edit emulator</h3>
-            <button type="button" class="modal-close-btn" onclick="closeEmuEditModal()" aria-label="Close emulator edit modal">×</button>
+            <button type="button" class="modal-close-btn" data-on-click="closeEmuEditModal" aria-label="Close emulator edit modal">×</button>
         </div>
         <div class="custom-modal-body">
             <form id="emuEditForm" autocomplete="off">
@@ -136,7 +136,7 @@
                     </label>
                 </div>
                 <div style="display: flex; gap: var(--spacing-sm); justify-content: flex-end;">
-                    <button type="button" class="btn btn-secondary" onclick="closeEmuEditModal()">Cancel</button>
+                    <button type="button" class="btn btn-secondary" data-on-click="closeEmuEditModal">Cancel</button>
                     <button type="submit" class="btn btn-primary"><span class="btn-icon">💾</span> Save</button>
                 </div>
             </form>

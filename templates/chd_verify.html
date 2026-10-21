@@ -104,8 +104,8 @@
                 <span class="locked-path-prefix" id="basePath">{{ rom_path }}/</span>
                 <input type="text" id="subPath" placeholder="{{ _('subfolder (optional)') }}" value="">
             </div>
-            <button type="button" class="btn btn-secondary" onclick="openFolderBrowser('hiddenFullPath')">📁 {{ _('Browse') }}</button>
-            <button type="button" class="btn btn-primary" onclick="scanFiles()">🔍 {{ _('Scan') }}</button>
+            <button type="button" class="btn btn-secondary" data-on-click="openFolderBrowser" data-args='["hiddenFullPath"]'>📁 {{ _('Browse') }}</button>
+            <button type="button" class="btn btn-primary" data-on-click="scanFiles">🔍 {{ _('Scan') }}</button>
         </div>
         <input type="hidden" id="hiddenFullPath" value="{{ rom_path }}">
     </div>
@@ -122,8 +122,8 @@
     </div>
     <div class="card-body">
     <div class="btn-group">
-        <button type="button" class="btn btn-primary" id="verifyBtn" onclick="startVerification()" disabled>🔬 {{ _('Start Verification') }}</button>
-        <button type="button" class="btn btn-danger" id="cancelBtn" onclick="cancelVerification()" disabled>❌ {{ _('Cancel') }}</button>
+        <button type="button" class="btn btn-primary" id="verifyBtn" data-on-click="startVerification" disabled>🔬 {{ _('Start Verification') }}</button>
+        <button type="button" class="btn btn-danger" id="cancelBtn" data-on-click="cancelVerification" disabled>❌ {{ _('Cancel') }}</button>
     </div>
 
     <div class="progress-section" id="progressSection" style="display: none;">
@@ -224,7 +224,7 @@ function renderFileList() {
     
     let html = `
         <div class="file-list-header">
-            <span><input type="checkbox" checked onclick="toggleAll(this)"></span>
+            <span><input type="checkbox" checked data-on-click="toggleAll" data-args="${actionArgs('$this')}"></span>
             <span>Filename</span>
             <span>Size</span>
             <span>Status</span>
