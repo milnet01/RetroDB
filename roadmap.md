@@ -8628,7 +8628,11 @@ were corrected in `2836bc3` and are not repeated here.
   before Full Re-scrape.
 - **Plan**: red test first; decide with the user whether bulk search uses
   the filename always or only in Full Re-scrape mode.
-- **Status**: todo.
+- **Shipped** (2026-10-21, ee96eae): the bulk job searches with
+  `derive_title_from_filename(rom_path)` in every mode; no rom_path
+  falls back to the stored title. Test:
+  `tests/test_bulk_scrape_search_title.py`.
+- **Status**: done.
 - **Decision** (user, 2026-10-21): bulk search uses the filename
   always, in every mode.
 
@@ -8642,7 +8646,13 @@ were corrected in `2836bc3` and are not repeated here.
 - **Where**: `services/game_utils.py::derive_title_from_filename`; ZX
   Spectrum seems not treated as a computer system there.
 - **Plan**: red test per case; keep "(Simulation Mode)"-style name parts.
-- **Status**: todo.
+- **Shipped** (2026-10-21, e709374): ZX Spectrum was already a
+  computer system; the cause was that only the last tag after the year
+  was removed. Now everything from the year onward goes, comma-joined
+  regions and (UK) are stripped, and a "..zip" dot is dropped. 144 of
+  5568 live titles change, each only losing trailing tags. Test:
+  `tests/test_derive_title_from_filename.py`.
+- **Status**: done.
 
 ---
 
