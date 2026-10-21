@@ -31,20 +31,53 @@ import secrets
 import shlex
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 from typing import Optional
 
 from services.database import query
 from services.launcher.base import LaunchContext, LaunchResolutionError
 from services.rom_scanner import rom_type_problem
+import config
 from settings_manager import get_setting
 
 logger = logging.getLogger(__name__)
+
+# PASS-59-140 — settings RetroDB lays over the user's own retroarch.cfg on
+# every RetroArch launch, so one bad local value cannot break games.
+_RETROARCH_OVERRIDES = Path(config.BASE_DIR) / 'data' / 'retroarch-overrides.cfg'
 
 
 # -----------------------------------------------------------------------------
 # Helpers
 # -----------------------------------------------------------------------------
+
+def _retroarch_overrides() -> list:
+    """Write the overrides file and return the argv words that load it, or
+    [] when it cannot be written: a launch never fails for a settings reason.
+
+    - fastforward_ratio 0 is RetroArch's default (unlimited); 1.0 capped
+      fast-forward, including a core's own load warp, at normal speed.
+    - input_driver must match the window system RetroArch opens on; "x" on
+      a Wayland session leaves the keyboard dead. RetroArch's automatic
+      video context picks Wayland whenever WAYLAND_DISPLAY is set."""
+    lines = ['fastforward_ratio = "0.000000"\n']
+    if sys.platform.startswith('linux'):
+        if os.environ.get('WAYLAND_DISPLAY'):
+            lines.append('input_driver = "wayland"\n')
+        elif os.environ.get('DISPLAY'):
+            lines.append('input_driver = "x"\n')
+    text = ''.join(lines)
+    try:
+        path = _RETROARCH_OVERRIDES
+        if not path.is_file() or path.read_text(encoding='utf-8') != text:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(text, encoding='utf-8')
+    except OSError as e:
+        logger.warning("RetroArch overrides not written (%s); launching without", e)
+        return []
+    return ['--appendconfig', str(path)]
+
 
 class _SafeDict(dict):
     """str.format_map dict whose missing-key path raises a clear error."""
@@ -334,7 +367,8 @@ def resolve_launch_context(game_id: int) -> LaunchContext:
         if name not in template:
             substituted.extend(words)
 
-    argv = list(binary_argv_prefix) + substituted
+    overrides = _retroarch_overrides() if emu.get('is_retroarch') else []
+    argv = list(binary_argv_prefix) + overrides + substituted
 
     # ---- validate rom_path under scan roots ---------------------------------
     problem = rom_launch_problem(rom_path_obj)

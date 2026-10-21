@@ -23,6 +23,8 @@
     label: ScreenScraper finds games whose title has a subtitle
   - type: fix
     label: Create M3U keeps the game in your library
+  - type: fix
+    label: RetroArch games start with a working keyboard and full-speed loading
   - type: deps
     label: Pillow 13 and other library updates
   body: |
@@ -240,6 +242,13 @@
         Nightmare" unless the colon had a space before it. RetroDB now
         searches it that way, then by the part before the colon if that
         still finds nothing.</li>
+      <li><strong>RetroArch games are protected from two bad settings.</strong>
+        RetroDB now gives RetroArch a small settings file of its own each
+        time it starts a game, on top of yours. It sets the keyboard to
+        match your desktop (Wayland or X11), so the keyboard is never dead,
+        and lets fast-forward run at full speed, which Commodore 64 games
+        use to load quickly. All your other RetroArch settings are
+        untouched.</li>
       <li><strong>Create M3U keeps the game in your library.</strong>
         Turning a multi-disk archive into a playlist used to leave the game
         pointing at the archive, which had been moved away. The game now

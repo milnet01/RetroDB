@@ -1,5 +1,6 @@
 # Pass 44 — Resolver: game_id -> LaunchContext.
 import sqlite3
+import sys
 
 import pytest
 
@@ -54,8 +55,12 @@ def tmpdb(monkeypatch, tmp_path):
                         lambda name: f'/usr/bin/{name}')
     monkeypatch.setattr('services.launch_resolver._allowed_rom_roots',
                         lambda: [rom_root])
+    overrides = tmp_path / 'retroarch-overrides.cfg'
+    monkeypatch.setattr('services.launch_resolver._RETROARCH_OVERRIDES', overrides,
+                        raising=False)
 
-    yield {'conn': conn, 'rom_file': rom_file, 'cores_dir': cores_dir}
+    yield {'conn': conn, 'rom_file': rom_file, 'cores_dir': cores_dir,
+           'overrides': overrides}
     conn.close()
 
 
@@ -344,3 +349,56 @@ def test_inv17_no_flag_emulator_gets_no_element(tmpdb):
     _fullscreen_db(tmpdb, '-b {fullscreen_flag} -e "{rom}"', binary_name='dolphin-emu')
     argv = resolve_launch_context(game_id=1).argv
     assert argv[1:] == ['-b', '-e', str(tmpdb['rom_file'])]
+
+
+# PASS-59-140 — RetroArch launches carry RetroDB's overrides file, so a bad
+# local setting cannot break games: the input driver follows the desktop
+# session, and fast-forward is unlimited (RetroArch's own default).
+
+def _retroarch_argv(tmpdb, monkeypatch, env):
+    for name in ('WAYLAND_DISPLAY', 'DISPLAY'):
+        monkeypatch.delenv(name, raising=False)
+    for name, value in env.items():
+        monkeypatch.setenv(name, value)
+    tmpdb['conn'].execute("UPDATE games SET emulator_override_id = 2 WHERE id = 1")
+    tmpdb['conn'].commit()
+    from services.launch_resolver import resolve_launch_context
+    return resolve_launch_context(game_id=1).argv
+
+
+@pytest.mark.parametrize('env, driver', [
+    ({'WAYLAND_DISPLAY': 'wayland-0', 'DISPLAY': ':0'}, 'wayland'),
+    ({'DISPLAY': ':0'}, 'x'),
+])
+def test_inv13_retroarch_gets_the_overrides_file(tmpdb, monkeypatch, env, driver):
+    argv = _retroarch_argv(tmpdb, monkeypatch, env)
+
+    assert '--config' not in argv
+    path = argv[argv.index('--appendconfig') + 1]
+    assert path == str(tmpdb['overrides'])
+    text = tmpdb['overrides'].read_text(encoding='utf-8')
+    assert 'fastforward_ratio = "0.000000"\n' in text
+    if sys.platform.startswith('linux'):
+        assert f'input_driver = "{driver}"\n' in text
+
+
+def test_inv13_no_display_sets_no_input_driver(tmpdb, monkeypatch):
+    _retroarch_argv(tmpdb, monkeypatch, {})
+
+    assert 'input_driver' not in tmpdb['overrides'].read_text(encoding='utf-8')
+
+
+def test_inv13_unwritable_overrides_still_launch(tmpdb, monkeypatch, tmp_path):
+    blocker = tmp_path / 'not-a-dir'
+    blocker.write_text('')
+    monkeypatch.setattr('services.launch_resolver._RETROARCH_OVERRIDES',
+                        blocker / 'retroarch-overrides.cfg')
+
+    argv = _retroarch_argv(tmpdb, monkeypatch, {'DISPLAY': ':0'})
+
+    assert '--appendconfig' not in argv and argv[0] == '/usr/bin/retroarch'
+
+
+def test_inv13_other_emulators_get_no_overrides(tmpdb):
+    from services.launch_resolver import resolve_launch_context
+    assert '--appendconfig' not in resolve_launch_context(game_id=1).argv

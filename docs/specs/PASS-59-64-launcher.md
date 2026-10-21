@@ -57,8 +57,8 @@ as it stands:
    `settings_validators._ALLOWED_LAUNCHER_BACKENDS` contains `'remote'`, and
    `get_launcher` raises `NotImplementedError` for it.
 7. **There is no player mode.** RetroDB launches the user's own RetroArch
-   with `-L <core> <rom>` and nothing else, so every per-game setting is the
-   user's job, in RetroArch.
+   with `-L <core> <rom>` plus one overrides file (INV-13), so every other
+   per-game setting is the user's job, in RetroArch.
 
 ## 3. Scope decisions (agreed with the user)
 
@@ -212,7 +212,7 @@ When the player row becomes `is_default = 1` in `system_emulators` for a
 system, the same write sets `is_default = 0` on that system's other rows.
 The resolver takes the lowest-id default row, so the RetroArch row would
 otherwise keep winning. The user's RetroArch row is otherwise untouched: no
-profile and no `--appendconfig`.
+profile, and no `--appendconfig` but INV-13's overrides file.
 
 **Base cfg keys** RetroDB sets before every player launch. It rewrites only
 these keys and keeps every other line, so global menu choices the player
@@ -470,10 +470,15 @@ Stopping a player, as the fork session read its source:
   *Breaks when:* regeneration rewrites the whole game cfg.
 
 - **INV-13** — Launching the user's own RetroArch row writes nothing under
-  the player profile and passes no `--config` or `--appendconfig`.
-  *Test:* `tests/test_player_launch.py` — resolve a game on the RetroArch
-  row; assert neither flag is in argv and the profile directory is not
-  created.
+  the player profile and passes no `--config`. Its one `--appendconfig` is
+  `data/retroarch-overrides.cfg` (PASS-59-140, user 2026-10-21): it sets
+  `fastforward_ratio` to RetroArch's default `0`, and on Linux
+  `input_driver` to `wayland` or `x` as the session's `WAYLAND_DISPLAY` or
+  `DISPLAY` says. A file that cannot be written drops the flag, never the
+  launch.
+  *Test:* `tests/test_launch_resolver.py` (`test_inv13_*`) — resolve a game
+  on the RetroArch row; assert no `--config`, the overrides file and its
+  keys, no flag when it cannot be written, none on other emulators.
   *Breaks when:* player handling keys on `is_retroarch` rather than
   `is_player`.
 
@@ -540,8 +545,9 @@ Stopping a player, as the fork session read its source:
 - `tests/test_launch_settings_validators.py` — INV-7.
 - `tests/test_launcher_local.py` — INV-15, with a stub child that ignores
   SIGTERM and counts the signals it receives.
+- `tests/test_launch_resolver.py` (extends) — INV-13.
 - `tests/test_player_launch.py` (new) — INV-8, INV-9, INV-10, INV-11, INV-12,
-  INV-13, INV-16 and INV-17, with the profile
+  INV-16 and INV-17, with the profile
   under `tmp_path` and a stub player binary. No real RetroArch runs in the
   suite.
 - INV-5's and INV-14's grep halves run as written above.
@@ -596,7 +602,7 @@ No test here launches the fork's real player; the player-side behaviour
 | INV-10 | `tests/test_player_launch.py` (to add) |
 | INV-11 | `tests/test_player_launch.py` (to add) |
 | INV-12 | `tests/test_player_launch.py` (to add) |
-| INV-13 | `tests/test_player_launch.py` (to add) |
+| INV-13 | `tests/test_launch_resolver.py` |
 | INV-14 | grep in §5 plus `tests/test_launcher_local.py` |
 | INV-15 | `tests/test_launcher_local.py` (to add) |
 | INV-16 | `tests/test_player_launch.py` (to add) |
