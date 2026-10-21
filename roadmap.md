@@ -9104,8 +9104,8 @@ were corrected in `2836bc3` and are not repeated here.
   a PDF renderer that runs under the CSP (vendored, no inline
   handlers); one focus trap; Escape closes; keep a link to the raw
   PDF. Respect reduced-motion: no flip animation there.
-- **Open question for the user**: is 'the manual' the game's PDF
-  manual (assumed) or RetroDB's own help manual?
+- **Decided** (user, 2026-10-21): the game's PDF manual, not the help
+  page.
 
 ---
 
