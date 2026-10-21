@@ -25,21 +25,22 @@ msgid ""
 "MB and a video up to %(video)s MB; upload fewer files at once. Operators "
 "can raise the total limit via RETRODB_MAX_UPLOAD_MB."
 msgstr ""
+"Yükleme %(total)s MB sınırını aşıyor. Her görsel en fazla %(image)s MB, "
+"bir video en fazla %(video)s MB olabilir; bir seferde daha az dosya "
+"yükleyin. Operatörler toplam sınırı RETRODB_MAX_UPLOAD_MB ile "
+"yükseltebilir."
 
 #: app.py:703
-#, fuzzy
 msgid "Too many requests. Please wait and try again."
-msgstr "Çok fazla deneme. Lütfen daha sonra tekrar deneyin."
+msgstr "Çok fazla istek. Lütfen bekleyip tekrar deneyin."
 
 #: app.py:812
-#, fuzzy
 msgid "Setup required"
-msgstr "Başlık gerekli"
+msgstr "Kurulum gerekli"
 
 #: app.py:833
-#, fuzzy
 msgid "Password change required"
-msgstr "Şifre değişikliği gerekli değil"
+msgstr "Şifre değişikliği gerekli"
 
 #: app.py:1656 routes/auth.py:202 routes/auth.py:251 routes/auth.py:436
 #: routes/auth.py:481 templates/force_change_password.html:49
@@ -103,7 +104,7 @@ msgstr "%(name)s için senkronizasyon zaten devam ediyor"
 #: routes/achievements.py:367 routes/platform_import.py:326
 #: routes/platform_import.py:693
 msgid "That job belongs to another user"
-msgstr ""
+msgstr "Bu iş başka bir kullanıcıya ait"
 
 #: routes/achievements.py:457
 msgid "No RetroAchievements found for this game"
@@ -168,14 +169,13 @@ msgid "Invalid locale"
 msgstr "Geçersiz dil"
 
 #: routes/auth.py:385
-#, fuzzy
 msgid "Invalid theme"
-msgstr "Geçersiz yol"
+msgstr "Geçersiz tema"
 
 #: routes/auth.py:391
-#, fuzzy, python-format
+#, python-format
 msgid "Invalid RPCS3 trophy folder: %(reason)s"
-msgstr "geçersiz API anahtarları: %(reason)s"
+msgstr "Geçersiz RPCS3 kupa klasörü: %(reason)s"
 
 #: routes/auth.py:424
 msgid "Too many attempts. Please try again later."
@@ -409,31 +409,30 @@ msgid "system_id and emulator_id required"
 msgstr "system_id ve emulator_id gereklidir"
 
 #: routes/emulators.py:224
-#, fuzzy
 msgid "Send at least one setting."
-msgstr "Veri ayarları"
+msgstr "En az bir ayar gönderin."
 
 #: routes/emulators.py:230
 msgid "RetroDB does not manage that setting for this emulator."
-msgstr ""
+msgstr "RetroDB bu emülatör için bu ayarı yönetmiyor."
 
 #: routes/emulators.py:232
 msgid "Fullscreen is set per system, in Settings > Emulators."
-msgstr ""
+msgstr "Tam ekran, Ayarlar > Emülatörler bölümünde sistem başına ayarlanır."
 
 #: routes/emulators.py:234
-#, fuzzy
 msgid "That value is not one of the choices."
-msgstr "Etiket bu oyuna atanmamış"
+msgstr "Bu değer seçeneklerden biri değil."
 
 #: routes/emulators.py:264 services/standalone_settings.py:258
 msgid "RetroDB manages per-game settings for DuckStation, PCSX2 and RPCS3 only."
 msgstr ""
+"RetroDB oyun başına ayarları yalnızca DuckStation, PCSX2 ve RPCS3 için "
+"yönetir."
 
 #: routes/emulators.py:277 routes/emulators.py:288
-#, fuzzy
 msgid "Emulator not found"
-msgstr "Platform bulunamadı"
+msgstr "Emülatör bulunamadı"
 
 #: routes/games.py:239
 msgid "No IDs provided"
@@ -447,6 +446,8 @@ msgstr "1-50 arası geçerli ID sağlayın"
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
 msgstr ""
+"Video kaydedilmedi: en fazla %(mb)s MB boyutunda bir MP4, WebM veya OGG "
+"dosyası olmalıdır."
 
 #: routes/games.py:627
 msgid "Game not found after update"
@@ -538,7 +539,7 @@ msgstr "Hedef, yapılandırılmış ROM kök dizininin dışında"
 #: routes/games_media.py:106 routes/reports.py:725
 #, python-format
 msgid "Cannot rename: %(reason)s"
-msgstr ""
+msgstr "Yeniden adlandırılamıyor: %(reason)s"
 
 #: routes/games_media.py:109 routes/reports.py:729 routes/reports.py:896
 msgid "A file with that name already exists"
@@ -579,13 +580,12 @@ msgid "failed to kill prior instance: %(err)s"
 msgstr "önceki örnek sonlandırılamadı: %(err)s"
 
 #: routes/launch.py:184
-#, fuzzy
 msgid "That game is no longer running"
-msgstr "Bu meta veri uygulaması artık çalışmıyor."
+msgstr "Bu oyun artık çalışmıyor"
 
 #: routes/launch.py:186
 msgid "This game has no disk list to swap through"
-msgstr ""
+msgstr "Bu oyunun değiştirilecek bir disk listesi yok"
 
 #: routes/launch.py:191
 #, python-format
@@ -593,15 +593,16 @@ msgid ""
 "RetroArch is not accepting commands. In RetroArch, turn on Settings > "
 "Network > Network Commands (port %(port)s)."
 msgstr ""
+"RetroArch komut kabul etmiyor. RetroArch'ta Ayarlar > Ağ > Ağ Komutları "
+"seçeneğini açın (bağlantı noktası %(port)s)."
 
 #: routes/launch.py:194
 msgid "Next disk inserted"
-msgstr ""
+msgstr "Sonraki disk takıldı"
 
 #: routes/maintenance.py:260
-#, fuzzy
 msgid "Unknown image type"
-msgstr "İşlenecek resim yok"
+msgstr "Bilinmeyen görsel türü"
 
 #: routes/museum.py:385 routes/scraper.py:770
 msgid "No AI provider configured"
@@ -629,9 +630,8 @@ msgid "No controllers found"
 msgstr "Kontrolcü bulunamadı"
 
 #: routes/museum.py:620
-#, fuzzy
 msgid "An image fetch is already running"
-msgstr "Bu oyun zaten çalışıyor"
+msgstr "Bir görsel indirme işlemi zaten çalışıyor"
 
 #: routes/museum.py:656
 msgid "No image file provided"
@@ -832,7 +832,7 @@ msgstr "API yanıtı ayrıştırılırken hata"
 #: routes/scraper.py:696
 #, python-format
 msgid "ScreenScraper answered HTTP %(code)s"
-msgstr ""
+msgstr "ScreenScraper HTTP %(code)s yanıtı verdi"
 
 #: routes/scraper.py:711
 msgid "No RAWG API key configured"
@@ -1004,15 +1004,15 @@ msgstr "chdman bulunamadı"
 #: routes/tools.py:944
 #, python-format
 msgid "Unknown duplicate method: %(method)s"
-msgstr ""
+msgstr "Bilinmeyen kopya bulma yöntemi: %(method)s"
 
 #: routes/tools.py:1152
 msgid "These scan results have expired. Scan again, then delete."
-msgstr ""
+msgstr "Bu tarama sonuçlarının süresi doldu. Yeniden tarayın, ardından silin."
 
 #: routes/tools.py:1157
 msgid "Keep at least one copy of each game. Nothing was deleted."
-msgstr ""
+msgstr "Her oyunun en az bir kopyasını tutun. Hiçbir şey silinmedi."
 
 #: routes/trophies.py:387
 msgid ""
@@ -1073,47 +1073,43 @@ msgstr "NPSSO token'ı sağlanmadı"
 
 #: routes/trophies.py:1834
 msgid "Could not connect to PSN"
-msgstr ""
+msgstr "PSN'ye bağlanılamadı"
 
 #: routes/trophies.py:1861
 msgid "PSN NPSSO not configured"
 msgstr "PSN NPSSO yapılandırılmamış"
 
 #: routes/versions.py:23
-#, fuzzy
 msgid "Pick at least two games."
-msgstr "Rastgele bir oyun seç"
+msgstr "En az iki oyun seçin."
 
 #: routes/versions.py:24
 msgid "One of those games no longer exists."
-msgstr ""
+msgstr "Bu oyunlardan biri artık mevcut değil."
 
 #: routes/versions.py:25
-#, fuzzy
 msgid "Versions must all be on the same system."
-msgstr "Bonus disk ve ana oyun aynı sistemde olmalıdır"
+msgstr "Tüm sürümler aynı sistemde olmalıdır."
 
 #: routes/versions.py:26
 msgid "A bonus disc cannot be a version of a game."
-msgstr ""
+msgstr "Bonus disk bir oyunun sürümü olamaz."
 
 #: routes/versions.py:28
-#, fuzzy
 msgid "Those games cannot be linked."
-msgstr "Ad boş olamaz"
+msgstr "Bu oyunlar bağlanamaz."
 
 #: routes/versions.py:81 routes/versions.py:96
-#, fuzzy
 msgid "That game is not linked to other versions."
-msgstr "Etiket bu oyuna atanmamış"
+msgstr "Bu oyun diğer sürümlere bağlı değil."
 
 #: routes/versions.py:92
 msgid "Set up an AI provider in Settings > Scraping first."
-msgstr ""
+msgstr "Önce Ayarlar > Kazıma bölümünde bir yapay zeka sağlayıcısı ayarlayın."
 
 #: routes/versions.py:98
 msgid "The AI did not give a usable answer. Try again later."
-msgstr ""
+msgstr "Yapay zeka kullanılabilir bir yanıt vermedi. Daha sonra tekrar deneyin."
 
 #: routes/xbox_achievements.py:126
 msgid "Xbox credentials not configured"
@@ -1480,9 +1476,8 @@ msgid "(Paused)"
 msgstr "(Duraklatıldı)"
 
 #: services/js_i18n_strings.py:421
-#, fuzzy
 msgid "(none)"
-msgstr "Yok"
+msgstr "(yok)"
 
 #: services/js_i18n_strings.py:422 templates/_bulk_edit_modal.html:25
 #: templates/_bulk_edit_modal.html:38 templates/_bulk_edit_modal.html:83
@@ -1537,7 +1532,7 @@ msgstr "Zaten Senkronize Ediliyor"
 #: services/js_i18n_strings.py:432
 #, python-brace-format
 msgid "Applied when you press Play, in the {emulator} settings for this game."
-msgstr ""
+msgstr "Oyna'ya bastığınızda bu oyun için {emulator} ayarlarında uygulanır."
 
 #: services/js_i18n_strings.py:433 templates/_bulk_edit_modal.html:193
 msgid "Apply Changes"
@@ -1548,9 +1543,9 @@ msgid "Apply Normalization"
 msgstr "Normalleştirmeyi Uygula"
 
 #: services/js_i18n_strings.py:435
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Apply failed: {error}"
-msgstr "Yedekleme başarısız oldu: {error}"
+msgstr "Uygulama başarısız: {error}"
 
 #: services/js_i18n_strings.py:436
 #, python-brace-format
@@ -1576,9 +1571,8 @@ msgid "Applying..."
 msgstr "Uygulanıyor..."
 
 #: services/js_i18n_strings.py:441
-#, fuzzy
 msgid "Applying…"
-msgstr "Uygulanıyor..."
+msgstr "Uygulanıyor…"
 
 #: services/js_i18n_strings.py:442
 msgid ""
@@ -1620,6 +1614,8 @@ msgid ""
 "Are you sure you want to shut down the server? You will need to start it "
 "again manually."
 msgstr ""
+"Sunucuyu kapatmak istediğinizden emin misiniz? Yeniden elle başlatmanız "
+"gerekecek."
 
 #: services/js_i18n_strings.py:448 templates/settings.html:67
 msgid "Are you sure?"
@@ -1631,12 +1627,11 @@ msgstr "Yapay zekâya soruluyor…"
 
 #: services/js_i18n_strings.py:450
 msgid "Asking the AI. This can take up to a minute."
-msgstr ""
+msgstr "Yapay zekaya soruluyor. Bu bir dakika kadar sürebilir."
 
 #: services/js_i18n_strings.py:451
-#, fuzzy
 msgid "Aspect ratio"
-msgstr "Derecelendirme Seç"
+msgstr "En boy oranı"
 
 #: services/js_i18n_strings.py:452
 msgid "BIOS"
@@ -1687,9 +1682,8 @@ msgid "Cancel Bulk Scrape"
 msgstr "Toplu Kazımayı İptal Et"
 
 #: services/js_i18n_strings.py:461
-#, fuzzy
 msgid "Cancel failed"
-msgstr "İptal Edildi"
+msgstr "İptal başarısız"
 
 #: services/js_i18n_strings.py:462
 msgid "Cancel request failed"
@@ -1782,9 +1776,8 @@ msgid "Close keyboard shortcuts"
 msgstr "Klavye kısayollarını kapat"
 
 #: services/js_i18n_strings.py:480
-#, fuzzy
 msgid "Close modal / cancel"
-msgstr "Kullanıcı penceresini kapat"
+msgstr "Pencereyi kapat / iptal"
 
 #: services/js_i18n_strings.py:481 templates/dashboard.html:155
 msgid "Complete"
@@ -1852,43 +1845,39 @@ msgstr "Meta veriler uygulanamadı."
 
 #: services/js_i18n_strings.py:494
 msgid "Could not link these versions."
-msgstr ""
+msgstr "Bu sürümler bağlanamadı."
 
 #: services/js_i18n_strings.py:495
 msgid "Could not load suggestions."
-msgstr ""
+msgstr "Öneriler yüklenemedi."
 
 #: services/js_i18n_strings.py:496
 msgid "Could not reconnect to server. Please refresh manually."
 msgstr "Sunucuya yeniden bağlanılamadı. Lütfen manuel olarak yenileyin."
 
 #: services/js_i18n_strings.py:497
-#, fuzzy
 msgid "Could not save that setting."
-msgstr "Meta veriler uygulanamadı."
+msgstr "Bu ayar kaydedilemedi."
 
 #: services/js_i18n_strings.py:498
-#, fuzzy
 msgid "Could not save that."
-msgstr "Meta veriler uygulanamadı."
+msgstr "Kaydedilemedi."
 
 #: services/js_i18n_strings.py:499
 msgid "Could not stop the running instance."
-msgstr ""
+msgstr "Çalışan örnek durdurulamadı."
 
 #: services/js_i18n_strings.py:500
 msgid "Could not unlink this version."
-msgstr ""
+msgstr "Bu sürümün bağlantısı kaldırılamadı."
 
 #: services/js_i18n_strings.py:501
-#, fuzzy
 msgid "Could not write the summary."
-msgstr "Meta veriler uygulanamadı."
+msgstr "Özet yazılamadı."
 
 #: services/js_i18n_strings.py:502
-#, fuzzy
 msgid "Currently set"
-msgstr "Mevcut Değer"
+msgstr "Şu anki ayar"
 
 #: services/js_i18n_strings.py:503
 msgid "Default"
@@ -1904,19 +1893,17 @@ msgid "Delete Log File"
 msgstr "Günlük Dosyasını Sil"
 
 #: services/js_i18n_strings.py:506
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Detect failed: {error}"
-msgstr "Geri yükleme başarısız oldu: {error}"
+msgstr "Algılama başarısız: {error}"
 
 #: services/js_i18n_strings.py:507
-#, fuzzy
 msgid "Detected path"
-msgstr "Hariç Tutulan Yollar"
+msgstr "Algılanan yol"
 
 #: services/js_i18n_strings.py:508
-#, fuzzy
 msgid "Detecting…"
-msgstr "Ayarlar"
+msgstr "Algılanıyor…"
 
 #: services/js_i18n_strings.py:509 templates/_bulk_scrape_modal.html:69
 #: templates/psn_trophies.html:247 templates/psn_trophies.html:307
@@ -1959,7 +1946,6 @@ msgid "Edit"
 msgstr "Düzenle"
 
 #: services/js_i18n_strings.py:518
-#, fuzzy
 msgid "Edit game"
 msgstr "Oyunu Düzenle"
 
@@ -1969,9 +1955,8 @@ msgid "Edit: {title}"
 msgstr "Düzenle: {title}"
 
 #: services/js_i18n_strings.py:520
-#, fuzzy
 msgid "Emulator"
-msgstr "Simülasyon"
+msgstr "Emülatör"
 
 #: services/js_i18n_strings.py:521
 msgid "Enter one folder path."
@@ -2125,30 +2110,27 @@ msgstr "{source} kaynağından alınıyor…"
 #: services/js_i18n_strings.py:557
 #, python-brace-format
 msgid "Fetching images: {done} of {total}"
-msgstr ""
+msgstr "Görseller indiriliyor: {done} / {total}"
 
 #: services/js_i18n_strings.py:558
 msgid "Focus search box"
-msgstr ""
+msgstr "Arama kutusuna odaklan"
 
 #: services/js_i18n_strings.py:559 templates/logs.html:743
 msgid "From"
 msgstr "Başlangıç"
 
 #: services/js_i18n_strings.py:560
-#, fuzzy
 msgid "From the system setting"
-msgstr "Kupa Ayarları"
+msgstr "Sistem ayarından"
 
 #: services/js_i18n_strings.py:561
-#, fuzzy
 msgid "Fullscreen"
-msgstr "Tam Yeniden Kazıma"
+msgstr "Tam ekran"
 
 #: services/js_i18n_strings.py:562
-#, fuzzy
 msgid "Game Page"
-msgstr "Oyun Adı"
+msgstr "Oyun Sayfası"
 
 #: services/js_i18n_strings.py:563
 msgid "Game details updated successfully."
@@ -2202,38 +2184,32 @@ msgid "Generation request failed"
 msgstr "Oluşturma isteği başarısız oldu"
 
 #: services/js_i18n_strings.py:573
-#, fuzzy
 msgid "Go to Analytics"
-msgstr "Analitik"
+msgstr "Analitik'e git"
 
 #: services/js_i18n_strings.py:574
-#, fuzzy
 msgid "Go to Changelog"
-msgstr "Değişiklik Günlüğü"
+msgstr "Değişiklik Günlüğü'ne git"
 
 #: services/js_i18n_strings.py:575
-#, fuzzy
 msgid "Go to Dashboard"
-msgstr "Kontrol Paneli"
+msgstr "Kontrol Paneli'ne git"
 
 #: services/js_i18n_strings.py:576
 msgid "Go to Help"
-msgstr ""
+msgstr "Yardım'a git"
 
 #: services/js_i18n_strings.py:577
-#, fuzzy
 msgid "Go to Library"
-msgstr "Xbox Kütüphanesi"
+msgstr "Kütüphane'ye git"
 
 #: services/js_i18n_strings.py:578
-#, fuzzy
 msgid "Go to Settings"
-msgstr "Araç Ayarları"
+msgstr "Ayarlar'a git"
 
 #: services/js_i18n_strings.py:579
-#, fuzzy
 msgid "Go to Systems"
-msgstr "Toplam Sistem"
+msgstr "Sistemler'e git"
 
 #: services/js_i18n_strings.py:580
 msgid "HLTB data cleared"
@@ -2261,9 +2237,8 @@ msgid "Image Resize"
 msgstr "Resim Boyutlandırma"
 
 #: services/js_i18n_strings.py:586
-#, fuzzy
 msgid "Image fetch cancelled."
-msgstr "Oluşturma iptal edildi"
+msgstr "Görsel indirme iptal edildi."
 
 #: services/js_i18n_strings.py:587
 msgid "Image must be under 10MB"
@@ -2297,26 +2272,25 @@ msgstr "Klavye Kısayolları"
 
 #: services/js_i18n_strings.py:593
 msgid "Kill"
-msgstr ""
+msgstr "Sonlandır"
 
 #: services/js_i18n_strings.py:594
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Launch failed: {error}"
-msgstr "Yedekleme başarısız oldu: {error}"
+msgstr "Başlatma başarısız: {error}"
 
 #: services/js_i18n_strings.py:595
 #, python-brace-format
 msgid "Launched (pid {pid})"
-msgstr ""
+msgstr "Başlatıldı (pid {pid})"
 
 #: services/js_i18n_strings.py:596
 msgid "Launched (replaced previous instance)"
-msgstr ""
+msgstr "Başlatıldı (önceki örneğin yerini aldı)"
 
 #: services/js_i18n_strings.py:597
-#, fuzzy
 msgid "Launching…"
-msgstr "Başlat"
+msgstr "Başlatılıyor…"
 
 #: services/js_i18n_strings.py:598
 #, python-brace-format
@@ -2324,14 +2298,12 @@ msgid "Library scan complete! Found {n} new games."
 msgstr "Kütüphane taraması tamamlandı! {n} yeni oyun bulundu."
 
 #: services/js_i18n_strings.py:599
-#, fuzzy
 msgid "Link"
-msgstr "Bağlantıyı Kaldır"
+msgstr "Bağla"
 
 #: services/js_i18n_strings.py:600
-#, fuzzy
 msgid "Link ticked games"
-msgstr "RetroDB Oyununa Bağla"
+msgstr "İşaretli oyunları bağla"
 
 #: services/js_i18n_strings.py:601
 msgid "Loading log file..."
@@ -2343,7 +2315,7 @@ msgstr "Günlük dosyası silindi"
 
 #: services/js_i18n_strings.py:603
 msgid "Looking for versions…"
-msgstr ""
+msgstr "Sürümler aranıyor…"
 
 #: services/js_i18n_strings.py:604 templates/achievement_game.html:168
 #: templates/achievement_game.html:197 templates/achievement_game.html:207
@@ -2373,7 +2345,7 @@ msgstr "Ana Hikaye"
 
 #: services/js_i18n_strings.py:606
 msgid "Marked as not versions."
-msgstr ""
+msgstr "Sürüm değil olarak işaretlendi."
 
 #: services/js_i18n_strings.py:607
 msgid "Match found - please confirm to save"
@@ -2418,9 +2390,8 @@ msgid "NOT"
 msgstr "DEĞİL"
 
 #: services/js_i18n_strings.py:615
-#, fuzzy
 msgid "Navigation"
-msgstr "Ana gezinme"
+msgstr "Gezinme"
 
 #: services/js_i18n_strings.py:616
 msgid "Network error"
@@ -2432,12 +2403,11 @@ msgstr "Toplu kazıma başlatılırken ağ hatası"
 
 #: services/js_i18n_strings.py:618
 msgid "Next disk"
-msgstr ""
+msgstr "Sonraki disk"
 
 #: services/js_i18n_strings.py:619
-#, fuzzy
 msgid "Next disk failed"
-msgstr "Oluşturma başarısız oldu"
+msgstr "Sonraki disk başarısız"
 
 #: services/js_i18n_strings.py:620 templates/_bulk_edit_modal.html:171
 #: templates/_modals/edit_modal.html:139 templates/game_detail.html:652
@@ -2473,11 +2443,11 @@ msgstr "Açıklama mevcut değil."
 
 #: services/js_i18n_strings.py:627
 msgid "No emulator AppImages found in the scan paths."
-msgstr ""
+msgstr "Tarama yollarında emülatör AppImage dosyası bulunamadı."
 
 #: services/js_i18n_strings.py:628
 msgid "No emulators registered."
-msgstr ""
+msgstr "Kayıtlı emülatör yok."
 
 #: services/js_i18n_strings.py:629
 msgid "No folders yet."
@@ -2497,7 +2467,7 @@ msgstr "Henüz eşleme yok. Yukarıdan bir emülatör klasörü ekleyin."
 
 #: services/js_i18n_strings.py:633
 msgid "No matching games on this system."
-msgstr ""
+msgstr "Bu sistemde eşleşen oyun yok."
 
 #: services/js_i18n_strings.py:634
 msgid "No missing ROM files found."
@@ -2530,6 +2500,8 @@ msgstr "Mevcut filtrelerle eşleşen oturum yok"
 #: services/js_i18n_strings.py:641
 msgid "No suggestions. Run Backfill Alternate Titles in Maintenance to find more."
 msgstr ""
+"Öneri yok. Daha fazlasını bulmak için Bakım bölümünde Alternatif "
+"Başlıkları Geriye Dönük Doldur'u çalıştırın."
 
 #: services/js_i18n_strings.py:642
 #, python-brace-format
@@ -2539,9 +2511,8 @@ msgstr ""
 "kaydedildi"
 
 #: services/js_i18n_strings.py:643
-#, fuzzy
 msgid "Not versions"
-msgstr "Sürüm"
+msgstr "Sürüm değil"
 
 #: services/js_i18n_strings.py:644 templates/base.html:1354
 msgid "Now playing"
@@ -2560,9 +2531,8 @@ msgid "Operation failed"
 msgstr "İşlem başarısız oldu"
 
 #: services/js_i18n_strings.py:648
-#, fuzzy
 msgid "Other"
-msgstr "Nişancı"
+msgstr "Diğer"
 
 #: services/js_i18n_strings.py:649
 msgid "PSN Imports"
@@ -2669,9 +2639,8 @@ msgid "Refreshing RA for {system}..."
 msgstr "{system} için RA yenileniyor..."
 
 #: services/js_i18n_strings.py:672
-#, fuzzy
 msgid "Regional name matches"
-msgstr "Bölge Uyuşmazlığı"
+msgstr "Bölgesel ad eşleşmeleri"
 
 #: services/js_i18n_strings.py:673 templates/compare_games.html:24
 #: templates/compare_games.html:40
@@ -2726,9 +2695,8 @@ msgid "Reports"
 msgstr "Raporlar"
 
 #: services/js_i18n_strings.py:684
-#, fuzzy
 msgid "Resolution scale"
-msgstr "Çözünürlük"
+msgstr "Çözünürlük ölçeği"
 
 #: services/js_i18n_strings.py:685
 msgid "Restarting server..."
@@ -2739,9 +2707,8 @@ msgid "Resume"
 msgstr "Sürdür"
 
 #: services/js_i18n_strings.py:687
-#, fuzzy
 msgid "RetroDB default"
-msgstr "Varsayılan"
+msgstr "RetroDB varsayılanı"
 
 #: services/js_i18n_strings.py:688
 msgid "Running"
@@ -2752,40 +2719,37 @@ msgid "Running..."
 msgstr "Çalışıyor..."
 
 #: services/js_i18n_strings.py:690
-#, fuzzy
 msgid "Same IGDB game"
-msgstr "Tümünü Kazı"
+msgstr "Aynı IGDB oyunu"
 
 #: services/js_i18n_strings.py:691
-#, fuzzy
 msgid "Same ScreenScraper game"
-msgstr "Tümünü Kazı"
+msgstr "Aynı ScreenScraper oyunu"
 
 #: services/js_i18n_strings.py:692
 msgid "Same title, different region"
-msgstr ""
+msgstr "Aynı başlık, farklı bölge"
 
 #: services/js_i18n_strings.py:693
 msgid "Save Failed"
 msgstr "Kaydetme Başarısız Oldu"
 
 #: services/js_i18n_strings.py:694
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Save failed: {error}"
-msgstr "Geri yükleme başarısız oldu: {error}"
+msgstr "Kaydetme başarısız: {error}"
 
 #: services/js_i18n_strings.py:695
 msgid "Saved"
 msgstr "Kaydedildi"
 
 #: services/js_i18n_strings.py:696
-#, fuzzy
 msgid "Saved."
-msgstr "Kaydedildi"
+msgstr "Kaydedildi."
 
 #: services/js_i18n_strings.py:697
 msgid "Saved. It applies the next time you press Play."
-msgstr ""
+msgstr "Kaydedildi. Bir dahaki sefer Oyna'ya bastığınızda uygulanır."
 
 #: services/js_i18n_strings.py:698
 msgid "Saving to the database…"
@@ -2796,9 +2760,8 @@ msgid "Saving..."
 msgstr "Kaydediliyor..."
 
 #: services/js_i18n_strings.py:700
-#, fuzzy
 msgid "Saving…"
-msgstr "Kaydediliyor..."
+msgstr "Kaydediliyor…"
 
 #: services/js_i18n_strings.py:701
 #, python-brace-format
@@ -2806,23 +2769,21 @@ msgid "Scan failed (HTTP {status})"
 msgstr "Tarama başarısız oldu (HTTP {status})"
 
 #: services/js_i18n_strings.py:702
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Scan failed: {error}"
-msgstr "Yedekleme başarısız oldu: {error}"
+msgstr "Tarama başarısız: {error}"
 
 #: services/js_i18n_strings.py:703 templates/multi_disc_organizer.html:204
 msgid "Scanning..."
 msgstr "Taranıyor..."
 
 #: services/js_i18n_strings.py:704
-#, fuzzy
 msgid "Scanning…"
-msgstr "Taranıyor..."
+msgstr "Taranıyor…"
 
 #: services/js_i18n_strings.py:705
-#, fuzzy
 msgid "Scrape game"
-msgstr "Tümünü Kazı"
+msgstr "Oyunu Kazı"
 
 #: services/js_i18n_strings.py:706
 #, python-brace-format
@@ -2846,9 +2807,8 @@ msgid "Search"
 msgstr "Ara"
 
 #: services/js_i18n_strings.py:710
-#, fuzzy
 msgid "Search failed."
-msgstr "Dosya adlarında ara..."
+msgstr "Arama başarısız."
 
 #: services/js_i18n_strings.py:711
 msgid "Searching & removing background..."
@@ -2921,20 +2881,19 @@ msgstr "Sunucu başarıyla yeniden başlatıldı!"
 
 #: services/js_i18n_strings.py:727
 msgid "Server stopped. You can close this tab."
-msgstr ""
+msgstr "Sunucu durduruldu. Bu sekmeyi kapatabilirsiniz."
 
 #: services/js_i18n_strings.py:728
-#, fuzzy
 msgid "Set for this game"
-msgstr "Bu oyun için HLTB verisi temizlensin mi?"
+msgstr "Bu oyun için ayarlandı"
 
 #: services/js_i18n_strings.py:729
 msgid "Set inside the emulator; RetroDB leaves it alone"
-msgstr ""
+msgstr "Emülatörün içinde ayarlanır; RetroDB buna dokunmaz"
 
 #: services/js_i18n_strings.py:730
 msgid "Set per system, in Settings > Emulators"
-msgstr ""
+msgstr "Ayarlar > Emülatörler bölümünde sistem başına ayarlanır"
 
 #: services/js_i18n_strings.py:731 templates/_macros/nav_tabs.html:43
 #: templates/base.html:156 templates/rom_tools_hub.html:119
@@ -2948,18 +2907,16 @@ msgid "Show Bonus"
 msgstr "Bonusu Göster"
 
 #: services/js_i18n_strings.py:733
-#, fuzzy
 msgid "Show keyboard shortcuts"
-msgstr "Klavye Kısayolları"
+msgstr "Klavye kısayollarını göster"
 
 #: services/js_i18n_strings.py:734
 msgid "Showing Bonus Discs"
 msgstr "Bonus Diskler Gösteriliyor"
 
 #: services/js_i18n_strings.py:735
-#, fuzzy
 msgid "Shutting down server..."
-msgstr "Sunucu yeniden başlatılıyor..."
+msgstr "Sunucu kapatılıyor..."
 
 #: services/js_i18n_strings.py:736 templates/_modals/edit_modal.html:46
 #: templates/base.html:1052
@@ -2984,9 +2941,8 @@ msgid "Successfully updated {count} games"
 msgstr "{count} oyun başarıyla güncellendi"
 
 #: services/js_i18n_strings.py:741
-#, fuzzy
 msgid "Summary written."
-msgstr "Özet"
+msgstr "Özet yazıldı."
 
 #: services/js_i18n_strings.py:742
 msgid "Sync In Progress"
@@ -3050,6 +3006,8 @@ msgstr "Sistemler"
 #: services/js_i18n_strings.py:752
 msgid "This game is already running.  Kill the existing process and relaunch?"
 msgstr ""
+"Bu oyun zaten çalışıyor.  Mevcut işlem sonlandırılıp yeniden başlatılsın "
+"mı?"
 
 #: services/js_i18n_strings.py:753
 msgid "This system is already being synced."
@@ -3126,9 +3084,8 @@ msgstr ""
 "sürebilir ve API kredisi kullanabilir. Devam edilsin mi?"
 
 #: services/js_i18n_strings.py:762
-#, fuzzy
 msgid "Tick at least two games."
-msgstr "Rastgele bir oyun seç"
+msgstr "En az iki oyunu işaretleyin."
 
 #: services/js_i18n_strings.py:763 templates/logs.html:745
 msgid "To"
@@ -3201,9 +3158,8 @@ msgid "Uploading…"
 msgstr "Yükleniyor…"
 
 #: services/js_i18n_strings.py:778
-#, fuzzy
 msgid "Use the system setting"
-msgstr "Yol Ayarlarını Kaydet"
+msgstr "Sistem ayarını kullan"
 
 #: services/js_i18n_strings.py:779
 #, python-brace-format
@@ -3211,21 +3167,20 @@ msgid ""
 "Used for every {system} game unless the game sets its own. Applied when "
 "you press Play."
 msgstr ""
+"Oyun kendi ayarını belirlemedikçe her {system} oyunu için kullanılır. "
+"Oyna'ya bastığınızda uygulanır."
 
 #: services/js_i18n_strings.py:780
-#, fuzzy
 msgid "Version unlinked."
-msgstr "İzin reddedildi"
+msgstr "Sürüm bağlantısı kaldırıldı."
 
 #: services/js_i18n_strings.py:781
-#, fuzzy
 msgid "Versions linked."
-msgstr "Sürüm"
+msgstr "Sürümler bağlandı."
 
 #: services/js_i18n_strings.py:782
-#, fuzzy
 msgid "Will change?"
-msgstr "Değiştir"
+msgstr "Değişecek mi?"
 
 #: services/js_i18n_strings.py:783
 msgid "Works"
@@ -3233,7 +3188,7 @@ msgstr "Çalışıyor"
 
 #: services/js_i18n_strings.py:784 templates/game_detail.html:739
 msgid "Write again with AI"
-msgstr ""
+msgstr "Yapay zeka ile yeniden yaz"
 
 #: services/js_i18n_strings.py:785
 msgid "Xbox Imports"
@@ -3277,14 +3232,16 @@ msgid "{count} Achievements"
 msgstr "{count} Başarım"
 
 #: services/js_i18n_strings.py:793
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{count} regional versions"
-msgstr "Mevcut: v%(version)s"
+msgstr "{count} bölgesel sürüm"
 
 #: services/js_i18n_strings.py:794
 #, python-brace-format
 msgid "{count} suggested groups. Untick any game that does not belong, then link."
 msgstr ""
+"{count} önerilen grup. Ait olmayan oyunların işaretini kaldırın, ardından"
+" bağlayın."
 
 #: services/js_i18n_strings.py:795
 #, python-brace-format
@@ -3342,9 +3299,9 @@ msgid "{system} has been added to the sync queue."
 msgstr "{system} senkronizasyon kuyruğuna eklendi."
 
 #: services/js_i18n_strings.py:806
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{title} ({count} versions)"
-msgstr "Dönüştürmeyi Başlat"
+msgstr "{title} ({count} sürüm)"
 
 #: services/js_i18n_strings.py:807
 msgid "⏳ Searching..."
@@ -3397,7 +3354,7 @@ msgstr "🗑️ Meta Veriyi Sıfırla"
 
 #: services/js_i18n_strings.py:819
 msgid "🛑 Shut Down Server"
-msgstr ""
+msgstr "🛑 Sunucuyu Kapat"
 
 #: services/js_i18n_strings.py:820
 msgid "🧹 Clean Missing ROMs"
@@ -3408,32 +3365,39 @@ msgid ""
 "RetroDB could not read this disc's serial, so it cannot name the "
 "emulator's per-game settings file."
 msgstr ""
+"RetroDB bu diskin seri numarasını okuyamadı, bu nedenle emülatörün oyun "
+"başına ayar dosyasını adlandıramıyor."
 
 #: services/standalone_settings.py:215
 msgid ""
 "PCSX2 has two or more settings files for this game; remove the ones you "
 "do not use."
 msgstr ""
+"PCSX2'de bu oyun için iki veya daha fazla ayar dosyası var; "
+"kullanmadıklarınızı kaldırın."
 
 #: services/standalone_settings.py:223
 msgid ""
 "RetroDB could not read this disc's boot file, so it cannot name PCSX2's "
 "per-game settings file."
 msgstr ""
+"RetroDB bu diskin önyükleme dosyasını okuyamadı, bu nedenle PCSX2'nin "
+"oyun başına ayar dosyasını adlandıramıyor."
 
 #: services/standalone_settings.py:231
 msgid "Settings path outside the data folder."
-msgstr ""
+msgstr "Ayar yolu veri klasörünün dışında."
 
 #: services/standalone_settings.py:253
-#, fuzzy
 msgid "No emulator is set up for this system."
-msgstr "Bu sistem için teknik özellik mevcut değil."
+msgstr "Bu sistem için ayarlanmış bir emülatör yok."
 
 #: services/standalone_settings.py:268
 #, python-format
 msgid "Run %(name)s once so it creates its settings, then play again."
 msgstr ""
+"%(name)s ayarlarını oluşturması için bir kez çalıştırın, ardından tekrar "
+"oynayın."
 
 #: templates/_bulk_edit_modal.html:7
 msgid "Bulk Edit"
@@ -3901,7 +3865,7 @@ msgstr "tüm sistemlerdeki oyun"
 #: templates/all_games.html:17 templates/system_games.html:24
 #, python-format
 msgid "(%(roms)s ROMs)"
-msgstr ""
+msgstr "(%(roms)s ROM)"
 
 #: templates/all_games.html:19 templates/system_games.html:26
 msgid "missing metadata"
@@ -4650,11 +4614,11 @@ msgstr "Başlaması bekleniyor..."
 
 #: templates/archive_scanner.html:1658
 msgid "Have the original archive moved to the staging folder"
-msgstr ""
+msgstr "Orijinal arşivi hazırlama klasörüne taşı"
 
 #: templates/archive_scanner.html:1761
 msgid "Original archives moved to:"
-msgstr ""
+msgstr "Orijinal arşivlerin taşındığı yer:"
 
 #: templates/base.html:40
 msgid "Skip to main content"
@@ -4774,28 +4738,24 @@ msgid "Last Updated"
 msgstr "Son Güncelleme"
 
 #: templates/base.html:219
-#, fuzzy
 msgid "Disclaimer"
 msgstr "Sorumluluk reddi"
 
 #: templates/base.html:230
 msgid "Support RetroDB's development on GitHub Sponsors"
-msgstr ""
+msgstr "GitHub Sponsors üzerinden RetroDB'nin geliştirilmesini destekleyin"
 
 #: templates/base.html:231
-#, fuzzy
 msgid "Sponsor RetroDB"
-msgstr "Destekle"
+msgstr "RetroDB'ye Sponsor Ol"
 
 #: templates/base.html:233
-#, fuzzy
 msgid "Support RetroDB's development on Patreon"
-msgstr "Geliştirmeyi Destekle"
+msgstr "Patreon üzerinden RetroDB'nin geliştirilmesini destekleyin"
 
 #: templates/base.html:234
-#, fuzzy
 msgid "Support RetroDB"
-msgstr "Patreon'da Destekle"
+msgstr "RetroDB'yi Destekle"
 
 #: templates/base.html:249
 msgid "Toggle menu"
@@ -6008,19 +5968,16 @@ msgid "Part of:"
 msgstr "Şunun parçası:"
 
 #: templates/game_detail.html:74
-#, fuzzy
 msgid "Regional versions"
-msgstr "Bölge Seçenekleri"
+msgstr "Bölgesel sürümler"
 
 #: templates/game_detail.html:75
-#, fuzzy
 msgid "Versions:"
-msgstr "Sürüm"
+msgstr "Sürümler:"
 
 #: templates/game_detail.html:77 templates/game_detail.html:708
-#, fuzzy
 msgid "Unknown region"
-msgstr "Bilinmeyen hata"
+msgstr "Bilinmeyen bölge"
 
 #: templates/game_detail.html:83
 msgid "Launch this game in the configured emulator"
@@ -6227,81 +6184,76 @@ msgid "Bonus Content"
 msgstr "Bonus İçerik"
 
 #: templates/game_detail.html:678
-#, fuzzy
 msgid "Emulator settings"
-msgstr "Araç Ayarları"
+msgstr "Emülatör ayarları"
 
 #: templates/_macros/nav_tabs.html:40 templates/game_detail.html:687
 #: templates/rom_tools_hub.html:193 templates/versions_review.html:5
 #: templates/versions_review.html:80
-#, fuzzy
 msgid "Regional Versions"
-msgstr "Bölge Seçenekleri"
+msgstr "Bölgesel Sürümler"
 
 #: templates/game_detail.html:695 templates/museum_system.html:100
 msgid "Released"
 msgstr "Çıkış"
 
 #: templates/game_detail.html:697
-#, fuzzy
 msgid "File size"
-msgstr "Dosya Boyutu"
+msgstr "Dosya boyutu"
 
 #: templates/game_detail.html:698
-#, fuzzy
 msgid "Revision"
-msgstr "Bölge"
+msgstr "Revizyon"
 
 #: templates/game_detail.html:699
-#, fuzzy
 msgid "Languages"
-msgstr "Dil"
+msgstr "Diller"
 
 #: templates/game_detail.html:700
-#, fuzzy
 msgid "Scores"
-msgstr "Spor"
+msgstr "Puanlar"
 
 #: templates/game_detail.html:709
 msgid "(this page)"
-msgstr ""
+msgstr "(bu sayfa)"
 
 #: templates/game_detail.html:727
 msgid "Known differences"
-msgstr ""
+msgstr "Bilinen farklar"
 
 #: templates/game_detail.html:727
 msgid "AI-written"
-msgstr ""
+msgstr "Yapay zeka yazdı"
 
 #: templates/game_detail.html:728
 msgid "Written by AI from what it knows about these releases. It can be wrong."
 msgstr ""
+"Yapay zeka tarafından bu sürümler hakkında bildiklerine göre yazıldı. "
+"Yanlış olabilir."
 
 #: templates/game_detail.html:730
 msgid "The AI knows of no differences between these versions."
-msgstr ""
+msgstr "Yapay zeka bu sürümler arasında bir fark bilmiyor."
 
 #: templates/game_detail.html:733
 msgid "No other regional versions are linked to this game."
-msgstr ""
+msgstr "Bu oyuna bağlı başka bölgesel sürüm yok."
 
 #: templates/game_detail.html:738
 msgid "Unlink this version"
-msgstr ""
+msgstr "Bu sürümün bağlantısını kaldır"
 
 #: templates/game_detail.html:739
 msgid "Summarise differences with AI"
-msgstr ""
+msgstr "Farkları yapay zeka ile özetle"
 
 #: templates/game_detail.html:741
-#, fuzzy
 msgid "Link a version"
-msgstr "Sürüm"
+msgstr "Bir sürüm bağla"
 
 #: templates/game_detail.html:742
 msgid "Link a version: search this system"
-msgstr ""
+msgstr "Bir sürüm bağla: bu sistemde ara"
 
 #: templates/game_detail.html:755
 msgid "Scrape History"
@@ -6759,9 +6711,8 @@ msgid "Password"
 msgstr "Şifre"
 
 #: templates/login.html:250
-#, fuzzy
 msgid "Enter your password"
-msgstr "Mevcut şifreyi girin"
+msgstr "Şifrenizi girin"
 
 #: templates/logs.html:729
 msgid "File"
@@ -7588,6 +7539,9 @@ msgid ""
 "Review the groups RetroDB suggests, or link versions by hand on a game "
 "page."
 msgstr ""
+"Kütüphane'nin aynı oyunu bir kez göstermesi için farklı bölgelerden aynı "
+"oyunu bağlayın. RetroDB'nin önerdiği grupları inceleyin veya sürümleri "
+"bir oyun sayfasında elle bağlayın."
 
 #: templates/_macros/nav_tabs.html:38 templates/rom_tools_hub.html:207
 msgid "Multi-Disc Organizer"
@@ -7703,13 +7657,15 @@ msgstr ""
 
 #: templates/rom_tools_settings.html:304
 msgid "Empty: RetroDB's data folder"
-msgstr ""
+msgstr "Boş: RetroDB'nin veri klasörü"
 
 #: templates/rom_tools_settings.html:305
 msgid ""
 "Where Create M3U moves original archives. Leave empty to use RetroDB's "
 "data folder."
 msgstr ""
+"M3U Oluştur'un orijinal arşivleri taşıdığı yer. RetroDB'nin veri "
+"klasörünü kullanmak için boş bırakın."
 
 #: templates/screenshot_dedup.html:243
 msgid "Exact Hash (MD5) &mdash; identical files only"
@@ -7937,16 +7893,17 @@ msgid ""
 "Linked versions show as one card in the Library, opening the version from"
 " your preferred region. Nothing is linked until you confirm it here."
 msgstr ""
+"RetroDB, farklı bölgelerden aynı oyun olan oyunları arar. Bağlı sürümler "
+"Kütüphane'de tek bir kart olarak görünür ve tercih ettiğiniz bölgenin "
+"sürümünü açar. Burada onaylayana kadar hiçbir şey bağlanmaz."
 
 #: templates/versions_review.html:88
-#, fuzzy
 msgid "All systems"
-msgstr "Tüm Sistemler"
+msgstr "Tüm sistemler"
 
 #: templates/versions_review.html:94
-#, fuzzy
 msgid "Find suggestions"
-msgstr "Yapay zeka önerisi"
+msgstr "Önerileri bul"
 
 #: templates/wishlist.html:12
 msgid "Games you want to find and add to your collection"
@@ -8726,9 +8683,8 @@ msgid "Change Password"
 msgstr "Şifreyi Değiştir"
 
 #: templates/_settings_tabs/account.html:198
-#, fuzzy
 msgid "Every account needs a password to log in."
-msgstr "Yönetici hesapları giriş için şifre gerektirir."
+msgstr "Her hesabın oturum açmak için bir şifreye ihtiyacı var."
 
 #: templates/_settings_tabs/account.html:202
 msgid "Current Password"
@@ -9426,13 +9382,15 @@ msgstr ""
 
 #: templates/_settings_tabs/system.html:182
 msgid "Shut Down Server"
-msgstr ""
+msgstr "Sunucuyu Kapat"
 
 #: templates/_settings_tabs/system.html:185
 msgid ""
 "Restart the Flask server (useful after configuration changes), or shut it"
 " down completely"
 msgstr ""
+"Flask sunucusunu yeniden başlatın (yapılandırma değişikliklerinden sonra "
+"yararlıdır) veya tamamen kapatın"
 
 #: templates/_settings_tabs/system.html:444
 msgid "Support Development"

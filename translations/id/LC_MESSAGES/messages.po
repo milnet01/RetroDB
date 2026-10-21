@@ -25,21 +25,21 @@ msgid ""
 "MB and a video up to %(video)s MB; upload fewer files at once. Operators "
 "can raise the total limit via RETRODB_MAX_UPLOAD_MB."
 msgstr ""
+"Unggahan melebihi batas %(total)s MB. Setiap gambar maksimal %(image)s MB"
+" dan video maksimal %(video)s MB; unggah lebih sedikit berkas sekaligus. "
+"Operator dapat menaikkan batas total melalui RETRODB_MAX_UPLOAD_MB."
 
 #: app.py:703
-#, fuzzy
 msgid "Too many requests. Please wait and try again."
-msgstr "Terlalu banyak percobaan. Silakan coba lagi nanti."
+msgstr "Terlalu banyak permintaan. Harap tunggu dan coba lagi."
 
 #: app.py:812
-#, fuzzy
 msgid "Setup required"
-msgstr "Judul wajib diisi"
+msgstr "Penyiapan diperlukan"
 
 #: app.py:833
-#, fuzzy
 msgid "Password change required"
-msgstr "Perubahan kata sandi tidak diperlukan"
+msgstr "Penggantian kata sandi diperlukan"
 
 #: app.py:1656 routes/auth.py:202 routes/auth.py:251 routes/auth.py:436
 #: routes/auth.py:481 templates/force_change_password.html:49
@@ -103,7 +103,7 @@ msgstr "Sinkronisasi sedang berlangsung untuk %(name)s"
 #: routes/achievements.py:367 routes/platform_import.py:326
 #: routes/platform_import.py:693
 msgid "That job belongs to another user"
-msgstr ""
+msgstr "Tugas itu milik pengguna lain"
 
 #: routes/achievements.py:457
 msgid "No RetroAchievements found for this game"
@@ -166,14 +166,13 @@ msgid "Invalid locale"
 msgstr "Locale tidak valid"
 
 #: routes/auth.py:385
-#, fuzzy
 msgid "Invalid theme"
-msgstr "Jalur tidak valid"
+msgstr "Tema tidak valid"
 
 #: routes/auth.py:391
-#, fuzzy, python-format
+#, python-format
 msgid "Invalid RPCS3 trophy folder: %(reason)s"
-msgstr "kunci API tidak valid: %(reason)s"
+msgstr "Folder trofi RPCS3 tidak valid: %(reason)s"
 
 #: routes/auth.py:424
 msgid "Too many attempts. Please try again later."
@@ -407,31 +406,30 @@ msgid "system_id and emulator_id required"
 msgstr "system_id dan emulator_id wajib diisi"
 
 #: routes/emulators.py:224
-#, fuzzy
 msgid "Send at least one setting."
-msgstr "Pengaturan data"
+msgstr "Kirim setidaknya satu pengaturan."
 
 #: routes/emulators.py:230
 msgid "RetroDB does not manage that setting for this emulator."
-msgstr ""
+msgstr "RetroDB tidak mengelola pengaturan itu untuk emulator ini."
 
 #: routes/emulators.py:232
 msgid "Fullscreen is set per system, in Settings > Emulators."
-msgstr ""
+msgstr "Layar penuh diatur per sistem, di Pengaturan > Emulator."
 
 #: routes/emulators.py:234
-#, fuzzy
 msgid "That value is not one of the choices."
-msgstr "Tag tidak ditetapkan ke game ini"
+msgstr "Nilai itu bukan salah satu pilihan."
 
 #: routes/emulators.py:264 services/standalone_settings.py:258
 msgid "RetroDB manages per-game settings for DuckStation, PCSX2 and RPCS3 only."
 msgstr ""
+"RetroDB hanya mengelola pengaturan per game untuk DuckStation, PCSX2, dan"
+" RPCS3."
 
 #: routes/emulators.py:277 routes/emulators.py:288
-#, fuzzy
 msgid "Emulator not found"
-msgstr "Platform tidak ditemukan"
+msgstr "Emulator tidak ditemukan"
 
 #: routes/games.py:239
 msgid "No IDs provided"
@@ -445,6 +443,8 @@ msgstr "Berikan 1-50 ID yang valid"
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
 msgstr ""
+"Video tidak disimpan: harus berupa berkas MP4, WebM, atau OGG maksimal "
+"%(mb)s MB."
 
 #: routes/games.py:627
 msgid "Game not found after update"
@@ -536,7 +536,7 @@ msgstr "Tujuan berada di luar root ROM yang dikonfigurasi"
 #: routes/games_media.py:106 routes/reports.py:725
 #, python-format
 msgid "Cannot rename: %(reason)s"
-msgstr ""
+msgstr "Tidak dapat mengganti nama: %(reason)s"
 
 #: routes/games_media.py:109 routes/reports.py:729 routes/reports.py:896
 msgid "A file with that name already exists"
@@ -577,13 +577,12 @@ msgid "failed to kill prior instance: %(err)s"
 msgstr "gagal menghentikan instance sebelumnya: %(err)s"
 
 #: routes/launch.py:184
-#, fuzzy
 msgid "That game is no longer running"
-msgstr "Penerapan metadata ini sudah tidak berjalan."
+msgstr "Game itu sudah tidak berjalan"
 
 #: routes/launch.py:186
 msgid "This game has no disk list to swap through"
-msgstr ""
+msgstr "Game ini tidak memiliki daftar disk untuk diganti"
 
 #: routes/launch.py:191
 #, python-format
@@ -591,15 +590,16 @@ msgid ""
 "RetroArch is not accepting commands. In RetroArch, turn on Settings > "
 "Network > Network Commands (port %(port)s)."
 msgstr ""
+"RetroArch tidak menerima perintah. Di RetroArch, aktifkan Settings > "
+"Network > Network Commands (port %(port)s)."
 
 #: routes/launch.py:194
 msgid "Next disk inserted"
-msgstr ""
+msgstr "Disk berikutnya dimasukkan"
 
 #: routes/maintenance.py:260
-#, fuzzy
 msgid "Unknown image type"
-msgstr "Tidak ada gambar untuk diproses"
+msgstr "Jenis gambar tidak dikenal"
 
 #: routes/museum.py:385 routes/scraper.py:770
 msgid "No AI provider configured"
@@ -627,9 +627,8 @@ msgid "No controllers found"
 msgstr "Tidak ada kontroler yang ditemukan"
 
 #: routes/museum.py:620
-#, fuzzy
 msgid "An image fetch is already running"
-msgstr "Game ini sudah berjalan"
+msgstr "Pengambilan gambar sudah berjalan"
 
 #: routes/museum.py:656
 msgid "No image file provided"
@@ -820,7 +819,7 @@ msgstr "Kesalahan saat mengurai respons API"
 #: routes/scraper.py:696
 #, python-format
 msgid "ScreenScraper answered HTTP %(code)s"
-msgstr ""
+msgstr "ScreenScraper menjawab HTTP %(code)s"
 
 #: routes/scraper.py:711
 msgid "No RAWG API key configured"
@@ -994,15 +993,15 @@ msgstr "chdman tidak ditemukan"
 #: routes/tools.py:944
 #, python-format
 msgid "Unknown duplicate method: %(method)s"
-msgstr ""
+msgstr "Metode duplikat tidak dikenal: %(method)s"
 
 #: routes/tools.py:1152
 msgid "These scan results have expired. Scan again, then delete."
-msgstr ""
+msgstr "Hasil pindaian ini sudah kedaluwarsa. Pindai lagi, lalu hapus."
 
 #: routes/tools.py:1157
 msgid "Keep at least one copy of each game. Nothing was deleted."
-msgstr ""
+msgstr "Sisakan setidaknya satu salinan setiap game. Tidak ada yang dihapus."
 
 #: routes/trophies.py:387
 msgid ""
@@ -1063,47 +1062,43 @@ msgstr "Token NPSSO tidak diberikan"
 
 #: routes/trophies.py:1834
 msgid "Could not connect to PSN"
-msgstr ""
+msgstr "Tidak dapat terhubung ke PSN"
 
 #: routes/trophies.py:1861
 msgid "PSN NPSSO not configured"
 msgstr "PSN NPSSO belum dikonfigurasi"
 
 #: routes/versions.py:23
-#, fuzzy
 msgid "Pick at least two games."
-msgstr "Pilih game secara acak"
+msgstr "Pilih setidaknya dua game."
 
 #: routes/versions.py:24
 msgid "One of those games no longer exists."
-msgstr ""
+msgstr "Salah satu game itu sudah tidak ada."
 
 #: routes/versions.py:25
-#, fuzzy
 msgid "Versions must all be on the same system."
-msgstr "Disc bonus dan game induk harus berada di sistem yang sama"
+msgstr "Semua versi harus berada di sistem yang sama."
 
 #: routes/versions.py:26
 msgid "A bonus disc cannot be a version of a game."
-msgstr ""
+msgstr "Disc bonus tidak bisa menjadi versi dari sebuah game."
 
 #: routes/versions.py:28
-#, fuzzy
 msgid "Those games cannot be linked."
-msgstr "Nama tidak boleh kosong"
+msgstr "Game-game itu tidak dapat ditautkan."
 
 #: routes/versions.py:81 routes/versions.py:96
-#, fuzzy
 msgid "That game is not linked to other versions."
-msgstr "Tag tidak ditetapkan ke game ini"
+msgstr "Game itu tidak ditautkan ke versi lain."
 
 #: routes/versions.py:92
 msgid "Set up an AI provider in Settings > Scraping first."
-msgstr ""
+msgstr "Siapkan penyedia AI di Pengaturan > Scraping terlebih dahulu."
 
 #: routes/versions.py:98
 msgid "The AI did not give a usable answer. Try again later."
-msgstr ""
+msgstr "AI tidak memberikan jawaban yang dapat dipakai. Coba lagi nanti."
 
 #: routes/xbox_achievements.py:126
 msgid "Xbox credentials not configured"
@@ -1468,9 +1463,8 @@ msgid "(Paused)"
 msgstr "(Dijeda)"
 
 #: services/js_i18n_strings.py:421
-#, fuzzy
 msgid "(none)"
-msgstr "Tidak Ada"
+msgstr "(tidak ada)"
 
 #: services/js_i18n_strings.py:422 templates/_bulk_edit_modal.html:25
 #: templates/_bulk_edit_modal.html:38 templates/_bulk_edit_modal.html:83
@@ -1526,6 +1520,8 @@ msgstr "Sedang Sinkronisasi"
 #, python-brace-format
 msgid "Applied when you press Play, in the {emulator} settings for this game."
 msgstr ""
+"Diterapkan saat Anda menekan Mainkan, di pengaturan {emulator} untuk game"
+" ini."
 
 #: services/js_i18n_strings.py:433 templates/_bulk_edit_modal.html:193
 msgid "Apply Changes"
@@ -1536,9 +1532,9 @@ msgid "Apply Normalization"
 msgstr "Terapkan Normalisasi"
 
 #: services/js_i18n_strings.py:435
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Apply failed: {error}"
-msgstr "Backup gagal: {error}"
+msgstr "Gagal menerapkan: {error}"
 
 #: services/js_i18n_strings.py:436
 #, python-brace-format
@@ -1564,9 +1560,8 @@ msgid "Applying..."
 msgstr "Menerapkan..."
 
 #: services/js_i18n_strings.py:441
-#, fuzzy
 msgid "Applying…"
-msgstr "Menerapkan..."
+msgstr "Menerapkan…"
 
 #: services/js_i18n_strings.py:442
 msgid ""
@@ -1608,6 +1603,8 @@ msgid ""
 "Are you sure you want to shut down the server? You will need to start it "
 "again manually."
 msgstr ""
+"Apakah Anda yakin ingin mematikan server? Anda harus menyalakannya lagi "
+"secara manual."
 
 #: services/js_i18n_strings.py:448 templates/settings.html:67
 msgid "Are you sure?"
@@ -1619,12 +1616,11 @@ msgstr "Bertanya ke AI…"
 
 #: services/js_i18n_strings.py:450
 msgid "Asking the AI. This can take up to a minute."
-msgstr ""
+msgstr "Menanyakan AI. Ini bisa memakan waktu hingga satu menit."
 
 #: services/js_i18n_strings.py:451
-#, fuzzy
 msgid "Aspect ratio"
-msgstr "Pilih Rating"
+msgstr "Rasio aspek"
 
 #: services/js_i18n_strings.py:452
 msgid "BIOS"
@@ -1675,9 +1671,8 @@ msgid "Cancel Bulk Scrape"
 msgstr "Batalkan Scrape Massal"
 
 #: services/js_i18n_strings.py:461
-#, fuzzy
 msgid "Cancel failed"
-msgstr "Dibatalkan"
+msgstr "Gagal membatalkan"
 
 #: services/js_i18n_strings.py:462
 msgid "Cancel request failed"
@@ -1770,9 +1765,8 @@ msgid "Close keyboard shortcuts"
 msgstr "Tutup pintasan keyboard"
 
 #: services/js_i18n_strings.py:480
-#, fuzzy
 msgid "Close modal / cancel"
-msgstr "Tutup modal pengguna"
+msgstr "Tutup modal / batal"
 
 #: services/js_i18n_strings.py:481 templates/dashboard.html:155
 msgid "Complete"
@@ -1840,43 +1834,39 @@ msgstr "Tidak dapat menerapkan metadata."
 
 #: services/js_i18n_strings.py:494
 msgid "Could not link these versions."
-msgstr ""
+msgstr "Tidak dapat menautkan versi-versi ini."
 
 #: services/js_i18n_strings.py:495
 msgid "Could not load suggestions."
-msgstr ""
+msgstr "Tidak dapat memuat saran."
 
 #: services/js_i18n_strings.py:496
 msgid "Could not reconnect to server. Please refresh manually."
 msgstr "Tidak dapat menyambung ulang ke server. Silakan segarkan secara manual."
 
 #: services/js_i18n_strings.py:497
-#, fuzzy
 msgid "Could not save that setting."
-msgstr "Tidak dapat menerapkan metadata."
+msgstr "Tidak dapat menyimpan pengaturan itu."
 
 #: services/js_i18n_strings.py:498
-#, fuzzy
 msgid "Could not save that."
-msgstr "Tidak dapat menerapkan metadata."
+msgstr "Tidak dapat menyimpannya."
 
 #: services/js_i18n_strings.py:499
 msgid "Could not stop the running instance."
-msgstr ""
+msgstr "Tidak dapat menghentikan instans yang sedang berjalan."
 
 #: services/js_i18n_strings.py:500
 msgid "Could not unlink this version."
-msgstr ""
+msgstr "Tidak dapat melepas tautan versi ini."
 
 #: services/js_i18n_strings.py:501
-#, fuzzy
 msgid "Could not write the summary."
-msgstr "Tidak dapat menerapkan metadata."
+msgstr "Tidak dapat menulis ringkasan."
 
 #: services/js_i18n_strings.py:502
-#, fuzzy
 msgid "Currently set"
-msgstr "Nilai Saat Ini"
+msgstr "Pengaturan saat ini"
 
 #: services/js_i18n_strings.py:503
 msgid "Default"
@@ -1892,19 +1882,17 @@ msgid "Delete Log File"
 msgstr "Hapus Berkas Log"
 
 #: services/js_i18n_strings.py:506
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Detect failed: {error}"
-msgstr "Pemulihan gagal: {error}"
+msgstr "Gagal mendeteksi: {error}"
 
 #: services/js_i18n_strings.py:507
-#, fuzzy
 msgid "Detected path"
-msgstr "Jalur yang Dikecualikan"
+msgstr "Jalur terdeteksi"
 
 #: services/js_i18n_strings.py:508
-#, fuzzy
 msgid "Detecting…"
-msgstr "Pengaturan"
+msgstr "Mendeteksi…"
 
 #: services/js_i18n_strings.py:509 templates/_bulk_scrape_modal.html:69
 #: templates/psn_trophies.html:247 templates/psn_trophies.html:307
@@ -1947,9 +1935,8 @@ msgid "Edit"
 msgstr "Edit"
 
 #: services/js_i18n_strings.py:518
-#, fuzzy
 msgid "Edit game"
-msgstr "Edit Game"
+msgstr "Edit game"
 
 #: services/js_i18n_strings.py:519
 #, python-brace-format
@@ -1957,9 +1944,8 @@ msgid "Edit: {title}"
 msgstr "Edit: {title}"
 
 #: services/js_i18n_strings.py:520
-#, fuzzy
 msgid "Emulator"
-msgstr "Simulation"
+msgstr "Emulator"
 
 #: services/js_i18n_strings.py:521
 msgid "Enter one folder path."
@@ -2113,30 +2099,27 @@ msgstr "Mengambil dari {source}…"
 #: services/js_i18n_strings.py:557
 #, python-brace-format
 msgid "Fetching images: {done} of {total}"
-msgstr ""
+msgstr "Mengambil gambar: {done} dari {total}"
 
 #: services/js_i18n_strings.py:558
 msgid "Focus search box"
-msgstr ""
+msgstr "Fokus ke kotak pencarian"
 
 #: services/js_i18n_strings.py:559 templates/logs.html:743
 msgid "From"
 msgstr "Dari"
 
 #: services/js_i18n_strings.py:560
-#, fuzzy
 msgid "From the system setting"
-msgstr "Pengaturan Trofi"
+msgstr "Dari pengaturan sistem"
 
 #: services/js_i18n_strings.py:561
-#, fuzzy
 msgid "Fullscreen"
-msgstr "Scrape Ulang Penuh"
+msgstr "Layar penuh"
 
 #: services/js_i18n_strings.py:562
-#, fuzzy
 msgid "Game Page"
-msgstr "Nama Game"
+msgstr "Halaman Game"
 
 #: services/js_i18n_strings.py:563
 msgid "Game details updated successfully."
@@ -2188,38 +2171,32 @@ msgid "Generation request failed"
 msgstr "Permintaan pembuatan gagal"
 
 #: services/js_i18n_strings.py:573
-#, fuzzy
 msgid "Go to Analytics"
-msgstr "Analitik"
+msgstr "Ke Analitik"
 
 #: services/js_i18n_strings.py:574
-#, fuzzy
 msgid "Go to Changelog"
-msgstr "Log Perubahan"
+msgstr "Ke Log Perubahan"
 
 #: services/js_i18n_strings.py:575
-#, fuzzy
 msgid "Go to Dashboard"
-msgstr "Dasbor"
+msgstr "Ke Dasbor"
 
 #: services/js_i18n_strings.py:576
 msgid "Go to Help"
-msgstr ""
+msgstr "Ke Bantuan"
 
 #: services/js_i18n_strings.py:577
-#, fuzzy
 msgid "Go to Library"
-msgstr "Pustaka Xbox"
+msgstr "Ke Pustaka"
 
 #: services/js_i18n_strings.py:578
-#, fuzzy
 msgid "Go to Settings"
-msgstr "Pengaturan Alat"
+msgstr "Ke Pengaturan"
 
 #: services/js_i18n_strings.py:579
-#, fuzzy
 msgid "Go to Systems"
-msgstr "Total Sistem"
+msgstr "Ke Sistem"
 
 #: services/js_i18n_strings.py:580
 msgid "HLTB data cleared"
@@ -2247,9 +2224,8 @@ msgid "Image Resize"
 msgstr "Ubah Ukuran Gambar"
 
 #: services/js_i18n_strings.py:586
-#, fuzzy
 msgid "Image fetch cancelled."
-msgstr "Pembuatan dibatalkan"
+msgstr "Pengambilan gambar dibatalkan."
 
 #: services/js_i18n_strings.py:587
 msgid "Image must be under 10MB"
@@ -2283,26 +2259,25 @@ msgstr "Pintasan Keyboard"
 
 #: services/js_i18n_strings.py:593
 msgid "Kill"
-msgstr ""
+msgstr "Paksa Berhenti"
 
 #: services/js_i18n_strings.py:594
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Launch failed: {error}"
-msgstr "Backup gagal: {error}"
+msgstr "Gagal menjalankan: {error}"
 
 #: services/js_i18n_strings.py:595
 #, python-brace-format
 msgid "Launched (pid {pid})"
-msgstr ""
+msgstr "Dijalankan (pid {pid})"
 
 #: services/js_i18n_strings.py:596
 msgid "Launched (replaced previous instance)"
-msgstr ""
+msgstr "Dijalankan (menggantikan instans sebelumnya)"
 
 #: services/js_i18n_strings.py:597
-#, fuzzy
 msgid "Launching…"
-msgstr "Jalankan"
+msgstr "Menjalankan…"
 
 #: services/js_i18n_strings.py:598
 #, python-brace-format
@@ -2310,14 +2285,12 @@ msgid "Library scan complete! Found {n} new games."
 msgstr "Pemindaian pustaka selesai! Ditemukan {n} game baru."
 
 #: services/js_i18n_strings.py:599
-#, fuzzy
 msgid "Link"
-msgstr "Lepas Tautan"
+msgstr "Tautkan"
 
 #: services/js_i18n_strings.py:600
-#, fuzzy
 msgid "Link ticked games"
-msgstr "Tautkan ke Game RetroDB"
+msgstr "Tautkan game yang dicentang"
 
 #: services/js_i18n_strings.py:601
 msgid "Loading log file..."
@@ -2329,7 +2302,7 @@ msgstr "Berkas log dihapus"
 
 #: services/js_i18n_strings.py:603
 msgid "Looking for versions…"
-msgstr ""
+msgstr "Mencari versi…"
 
 #: services/js_i18n_strings.py:604 templates/achievement_game.html:168
 #: templates/achievement_game.html:197 templates/achievement_game.html:207
@@ -2359,7 +2332,7 @@ msgstr "Cerita Utama"
 
 #: services/js_i18n_strings.py:606
 msgid "Marked as not versions."
-msgstr ""
+msgstr "Ditandai bukan versi."
 
 #: services/js_i18n_strings.py:607
 msgid "Match found - please confirm to save"
@@ -2404,9 +2377,8 @@ msgid "NOT"
 msgstr "TIDAK"
 
 #: services/js_i18n_strings.py:615
-#, fuzzy
 msgid "Navigation"
-msgstr "Navigasi utama"
+msgstr "Navigasi"
 
 #: services/js_i18n_strings.py:616
 msgid "Network error"
@@ -2418,12 +2390,11 @@ msgstr "Kesalahan jaringan saat memulai scrape massal"
 
 #: services/js_i18n_strings.py:618
 msgid "Next disk"
-msgstr ""
+msgstr "Disk berikutnya"
 
 #: services/js_i18n_strings.py:619
-#, fuzzy
 msgid "Next disk failed"
-msgstr "Pembuatan gagal"
+msgstr "Gagal ganti ke disk berikutnya"
 
 #: services/js_i18n_strings.py:620 templates/_bulk_edit_modal.html:171
 #: templates/_modals/edit_modal.html:139 templates/game_detail.html:652
@@ -2459,11 +2430,11 @@ msgstr "Tidak ada deskripsi yang tersedia."
 
 #: services/js_i18n_strings.py:627
 msgid "No emulator AppImages found in the scan paths."
-msgstr ""
+msgstr "Tidak ada AppImage emulator yang ditemukan di jalur pindai."
 
 #: services/js_i18n_strings.py:628
 msgid "No emulators registered."
-msgstr ""
+msgstr "Belum ada emulator yang terdaftar."
 
 #: services/js_i18n_strings.py:629
 msgid "No folders yet."
@@ -2483,7 +2454,7 @@ msgstr "Belum ada pemetaan. Tambahkan folder emulator di atas."
 
 #: services/js_i18n_strings.py:633
 msgid "No matching games on this system."
-msgstr ""
+msgstr "Tidak ada game yang cocok di sistem ini."
 
 #: services/js_i18n_strings.py:634
 msgid "No missing ROM files found."
@@ -2516,6 +2487,8 @@ msgstr "Tidak ada sesi yang cocok dengan filter saat ini"
 #: services/js_i18n_strings.py:641
 msgid "No suggestions. Run Backfill Alternate Titles in Maintenance to find more."
 msgstr ""
+"Tidak ada saran. Jalankan Isi Ulang Judul Alternatif di Pemeliharaan "
+"untuk menemukan lebih banyak."
 
 #: services/js_i18n_strings.py:642
 #, python-brace-format
@@ -2523,9 +2496,8 @@ msgid "Normalization applied: {games} games updated, {rules} rules saved"
 msgstr "Normalisasi diterapkan: {games} game diperbarui, {rules} aturan disimpan"
 
 #: services/js_i18n_strings.py:643
-#, fuzzy
 msgid "Not versions"
-msgstr "Versi"
+msgstr "Bukan versi"
 
 #: services/js_i18n_strings.py:644 templates/base.html:1354
 msgid "Now playing"
@@ -2544,9 +2516,8 @@ msgid "Operation failed"
 msgstr "Operasi gagal"
 
 #: services/js_i18n_strings.py:648
-#, fuzzy
 msgid "Other"
-msgstr "Shooter"
+msgstr "Lainnya"
 
 #: services/js_i18n_strings.py:649
 msgid "PSN Imports"
@@ -2653,9 +2624,8 @@ msgid "Refreshing RA for {system}..."
 msgstr "Menyegarkan RA untuk {system}..."
 
 #: services/js_i18n_strings.py:672
-#, fuzzy
 msgid "Regional name matches"
-msgstr "Ketidakcocokan Wilayah"
+msgstr "Nama regional cocok"
 
 #: services/js_i18n_strings.py:673 templates/compare_games.html:24
 #: templates/compare_games.html:40
@@ -2710,9 +2680,8 @@ msgid "Reports"
 msgstr "Laporan"
 
 #: services/js_i18n_strings.py:684
-#, fuzzy
 msgid "Resolution scale"
-msgstr "Resolusi"
+msgstr "Skala resolusi"
 
 #: services/js_i18n_strings.py:685
 msgid "Restarting server..."
@@ -2723,9 +2692,8 @@ msgid "Resume"
 msgstr "Lanjutkan"
 
 #: services/js_i18n_strings.py:687
-#, fuzzy
 msgid "RetroDB default"
-msgstr "Default"
+msgstr "Bawaan RetroDB"
 
 #: services/js_i18n_strings.py:688
 msgid "Running"
@@ -2736,40 +2704,37 @@ msgid "Running..."
 msgstr "Berjalan..."
 
 #: services/js_i18n_strings.py:690
-#, fuzzy
 msgid "Same IGDB game"
-msgstr "Scrape Semua"
+msgstr "Game IGDB yang sama"
 
 #: services/js_i18n_strings.py:691
-#, fuzzy
 msgid "Same ScreenScraper game"
-msgstr "Scrape Semua"
+msgstr "Game ScreenScraper yang sama"
 
 #: services/js_i18n_strings.py:692
 msgid "Same title, different region"
-msgstr ""
+msgstr "Judul sama, wilayah berbeda"
 
 #: services/js_i18n_strings.py:693
 msgid "Save Failed"
 msgstr "Penyimpanan Gagal"
 
 #: services/js_i18n_strings.py:694
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Save failed: {error}"
-msgstr "Pemulihan gagal: {error}"
+msgstr "Gagal menyimpan: {error}"
 
 #: services/js_i18n_strings.py:695
 msgid "Saved"
 msgstr "Disimpan"
 
 #: services/js_i18n_strings.py:696
-#, fuzzy
 msgid "Saved."
-msgstr "Disimpan"
+msgstr "Tersimpan."
 
 #: services/js_i18n_strings.py:697
 msgid "Saved. It applies the next time you press Play."
-msgstr ""
+msgstr "Tersimpan. Berlaku saat Anda menekan Mainkan berikutnya."
 
 #: services/js_i18n_strings.py:698
 msgid "Saving to the database…"
@@ -2780,9 +2745,8 @@ msgid "Saving..."
 msgstr "Menyimpan..."
 
 #: services/js_i18n_strings.py:700
-#, fuzzy
 msgid "Saving…"
-msgstr "Menyimpan..."
+msgstr "Menyimpan…"
 
 #: services/js_i18n_strings.py:701
 #, python-brace-format
@@ -2790,23 +2754,21 @@ msgid "Scan failed (HTTP {status})"
 msgstr "Pemindaian gagal (HTTP {status})"
 
 #: services/js_i18n_strings.py:702
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Scan failed: {error}"
-msgstr "Backup gagal: {error}"
+msgstr "Gagal memindai: {error}"
 
 #: services/js_i18n_strings.py:703 templates/multi_disc_organizer.html:204
 msgid "Scanning..."
 msgstr "Memindai..."
 
 #: services/js_i18n_strings.py:704
-#, fuzzy
 msgid "Scanning…"
-msgstr "Memindai..."
+msgstr "Memindai…"
 
 #: services/js_i18n_strings.py:705
-#, fuzzy
 msgid "Scrape game"
-msgstr "Scrape Semua"
+msgstr "Scrape game"
 
 #: services/js_i18n_strings.py:706
 #, python-brace-format
@@ -2830,9 +2792,8 @@ msgid "Search"
 msgstr "Cari"
 
 #: services/js_i18n_strings.py:710
-#, fuzzy
 msgid "Search failed."
-msgstr "Cari nama berkas..."
+msgstr "Pencarian gagal."
 
 #: services/js_i18n_strings.py:711
 msgid "Searching & removing background..."
@@ -2905,20 +2866,19 @@ msgstr "Server berhasil dimulai ulang!"
 
 #: services/js_i18n_strings.py:727
 msgid "Server stopped. You can close this tab."
-msgstr ""
+msgstr "Server berhenti. Anda dapat menutup tab ini."
 
 #: services/js_i18n_strings.py:728
-#, fuzzy
 msgid "Set for this game"
-msgstr "Hapus data HLTB untuk game ini?"
+msgstr "Diatur untuk game ini"
 
 #: services/js_i18n_strings.py:729
 msgid "Set inside the emulator; RetroDB leaves it alone"
-msgstr ""
+msgstr "Diatur di dalam emulator; RetroDB tidak mengubahnya"
 
 #: services/js_i18n_strings.py:730
 msgid "Set per system, in Settings > Emulators"
-msgstr ""
+msgstr "Diatur per sistem, di Pengaturan > Emulator"
 
 #: services/js_i18n_strings.py:731 templates/_macros/nav_tabs.html:43
 #: templates/base.html:156 templates/rom_tools_hub.html:119
@@ -2932,18 +2892,16 @@ msgid "Show Bonus"
 msgstr "Tampilkan Bonus"
 
 #: services/js_i18n_strings.py:733
-#, fuzzy
 msgid "Show keyboard shortcuts"
-msgstr "Pintasan Keyboard"
+msgstr "Tampilkan pintasan keyboard"
 
 #: services/js_i18n_strings.py:734
 msgid "Showing Bonus Discs"
 msgstr "Menampilkan Disc Bonus"
 
 #: services/js_i18n_strings.py:735
-#, fuzzy
 msgid "Shutting down server..."
-msgstr "Memulai ulang server..."
+msgstr "Mematikan server..."
 
 #: services/js_i18n_strings.py:736 templates/_modals/edit_modal.html:46
 #: templates/base.html:1052
@@ -2968,9 +2926,8 @@ msgid "Successfully updated {count} games"
 msgstr "Berhasil memperbarui {count} game"
 
 #: services/js_i18n_strings.py:741
-#, fuzzy
 msgid "Summary written."
-msgstr "Ringkasan"
+msgstr "Ringkasan ditulis."
 
 #: services/js_i18n_strings.py:742
 msgid "Sync In Progress"
@@ -3031,7 +2988,7 @@ msgstr "Sistem"
 
 #: services/js_i18n_strings.py:752
 msgid "This game is already running.  Kill the existing process and relaunch?"
-msgstr ""
+msgstr "Game ini sudah berjalan. Hentikan proses yang ada dan jalankan ulang?"
 
 #: services/js_i18n_strings.py:753
 msgid "This system is already being synced."
@@ -3105,9 +3062,8 @@ msgstr ""
 "beberapa menit dan menggunakan kredit API. Lanjutkan?"
 
 #: services/js_i18n_strings.py:762
-#, fuzzy
 msgid "Tick at least two games."
-msgstr "Pilih game secara acak"
+msgstr "Centang setidaknya dua game."
 
 #: services/js_i18n_strings.py:763 templates/logs.html:745
 msgid "To"
@@ -3180,9 +3136,8 @@ msgid "Uploading…"
 msgstr "Mengunggah…"
 
 #: services/js_i18n_strings.py:778
-#, fuzzy
 msgid "Use the system setting"
-msgstr "Simpan Pengaturan Jalur"
+msgstr "Gunakan pengaturan sistem"
 
 #: services/js_i18n_strings.py:779
 #, python-brace-format
@@ -3190,21 +3145,20 @@ msgid ""
 "Used for every {system} game unless the game sets its own. Applied when "
 "you press Play."
 msgstr ""
+"Dipakai untuk setiap game {system} kecuali game itu punya pengaturan "
+"sendiri. Diterapkan saat Anda menekan Mainkan."
 
 #: services/js_i18n_strings.py:780
-#, fuzzy
 msgid "Version unlinked."
-msgstr "Izin ditolak"
+msgstr "Tautan versi dilepas."
 
 #: services/js_i18n_strings.py:781
-#, fuzzy
 msgid "Versions linked."
-msgstr "Versi"
+msgstr "Versi ditautkan."
 
 #: services/js_i18n_strings.py:782
-#, fuzzy
 msgid "Will change?"
-msgstr "Ubah"
+msgstr "Akan berubah?"
 
 #: services/js_i18n_strings.py:783
 msgid "Works"
@@ -3212,7 +3166,7 @@ msgstr "Berfungsi"
 
 #: services/js_i18n_strings.py:784 templates/game_detail.html:739
 msgid "Write again with AI"
-msgstr ""
+msgstr "Tulis ulang dengan AI"
 
 #: services/js_i18n_strings.py:785
 msgid "Xbox Imports"
@@ -3256,14 +3210,16 @@ msgid "{count} Achievements"
 msgstr "{count} Achievement"
 
 #: services/js_i18n_strings.py:793
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{count} regional versions"
-msgstr "Saat ini: v%(version)s"
+msgstr "{count} versi regional"
 
 #: services/js_i18n_strings.py:794
 #, python-brace-format
 msgid "{count} suggested groups. Untick any game that does not belong, then link."
 msgstr ""
+"{count} grup disarankan. Hapus centang game yang tidak termasuk, lalu "
+"tautkan."
 
 #: services/js_i18n_strings.py:795
 #, python-brace-format
@@ -3321,9 +3277,9 @@ msgid "{system} has been added to the sync queue."
 msgstr "{system} telah ditambahkan ke antrean sinkronisasi."
 
 #: services/js_i18n_strings.py:806
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{title} ({count} versions)"
-msgstr "Mulai Konversi"
+msgstr "{title} ({count} versi)"
 
 #: services/js_i18n_strings.py:807
 msgid "⏳ Searching..."
@@ -3376,7 +3332,7 @@ msgstr "🗑️ Atur Ulang Metadata"
 
 #: services/js_i18n_strings.py:819
 msgid "🛑 Shut Down Server"
-msgstr ""
+msgstr "🛑 Matikan Server"
 
 #: services/js_i18n_strings.py:820
 msgid "🧹 Clean Missing ROMs"
@@ -3387,32 +3343,37 @@ msgid ""
 "RetroDB could not read this disc's serial, so it cannot name the "
 "emulator's per-game settings file."
 msgstr ""
+"RetroDB tidak dapat membaca serial disc ini, sehingga tidak dapat "
+"menentukan nama berkas pengaturan per game emulator."
 
 #: services/standalone_settings.py:215
 msgid ""
 "PCSX2 has two or more settings files for this game; remove the ones you "
 "do not use."
 msgstr ""
+"PCSX2 memiliki dua atau lebih berkas pengaturan untuk game ini; hapus "
+"yang tidak Anda gunakan."
 
 #: services/standalone_settings.py:223
 msgid ""
 "RetroDB could not read this disc's boot file, so it cannot name PCSX2's "
 "per-game settings file."
 msgstr ""
+"RetroDB tidak dapat membaca berkas boot disc ini, sehingga tidak dapat "
+"menentukan nama berkas pengaturan per game PCSX2."
 
 #: services/standalone_settings.py:231
 msgid "Settings path outside the data folder."
-msgstr ""
+msgstr "Jalur pengaturan berada di luar folder data."
 
 #: services/standalone_settings.py:253
-#, fuzzy
 msgid "No emulator is set up for this system."
-msgstr "Tidak ada spesifikasi yang tersedia untuk sistem ini."
+msgstr "Belum ada emulator yang disiapkan untuk sistem ini."
 
 #: services/standalone_settings.py:268
 #, python-format
 msgid "Run %(name)s once so it creates its settings, then play again."
-msgstr ""
+msgstr "Jalankan %(name)s sekali agar membuat pengaturannya, lalu mainkan lagi."
 
 #: templates/_bulk_edit_modal.html:7
 msgid "Bulk Edit"
@@ -3878,7 +3839,7 @@ msgstr "game di semua sistem"
 #: templates/all_games.html:17 templates/system_games.html:24
 #, python-format
 msgid "(%(roms)s ROMs)"
-msgstr ""
+msgstr "(%(roms)s ROM)"
 
 #: templates/all_games.html:19 templates/system_games.html:26
 msgid "missing metadata"
@@ -4627,11 +4588,11 @@ msgstr "Menunggu untuk mulai..."
 
 #: templates/archive_scanner.html:1658
 msgid "Have the original archive moved to the staging folder"
-msgstr ""
+msgstr "Pindahkan arsip asli ke folder staging"
 
 #: templates/archive_scanner.html:1761
 msgid "Original archives moved to:"
-msgstr ""
+msgstr "Arsip asli dipindahkan ke:"
 
 #: templates/base.html:40
 msgid "Skip to main content"
@@ -4751,28 +4712,24 @@ msgid "Last Updated"
 msgstr "Terakhir Diperbarui"
 
 #: templates/base.html:219
-#, fuzzy
 msgid "Disclaimer"
 msgstr "Penafian"
 
 #: templates/base.html:230
 msgid "Support RetroDB's development on GitHub Sponsors"
-msgstr ""
+msgstr "Dukung pengembangan RetroDB di GitHub Sponsors"
 
 #: templates/base.html:231
-#, fuzzy
 msgid "Sponsor RetroDB"
-msgstr "Sponsor"
+msgstr "Sponsori RetroDB"
 
 #: templates/base.html:233
-#, fuzzy
 msgid "Support RetroDB's development on Patreon"
-msgstr "Dukung Pengembangan"
+msgstr "Dukung pengembangan RetroDB di Patreon"
 
 #: templates/base.html:234
-#, fuzzy
 msgid "Support RetroDB"
-msgstr "Dukung di Patreon"
+msgstr "Dukung RetroDB"
 
 #: templates/base.html:249
 msgid "Toggle menu"
@@ -5985,19 +5942,16 @@ msgid "Part of:"
 msgstr "Bagian dari:"
 
 #: templates/game_detail.html:74
-#, fuzzy
 msgid "Regional versions"
-msgstr "Opsi Wilayah"
+msgstr "Versi regional"
 
 #: templates/game_detail.html:75
-#, fuzzy
 msgid "Versions:"
-msgstr "Versi"
+msgstr "Versi:"
 
 #: templates/game_detail.html:77 templates/game_detail.html:708
-#, fuzzy
 msgid "Unknown region"
-msgstr "Kesalahan tidak dikenal"
+msgstr "Wilayah tidak diketahui"
 
 #: templates/game_detail.html:83
 msgid "Launch this game in the configured emulator"
@@ -6206,81 +6160,76 @@ msgid "Bonus Content"
 msgstr "Konten Bonus"
 
 #: templates/game_detail.html:678
-#, fuzzy
 msgid "Emulator settings"
-msgstr "Pengaturan Alat"
+msgstr "Pengaturan emulator"
 
 #: templates/_macros/nav_tabs.html:40 templates/game_detail.html:687
 #: templates/rom_tools_hub.html:193 templates/versions_review.html:5
 #: templates/versions_review.html:80
-#, fuzzy
 msgid "Regional Versions"
-msgstr "Opsi Wilayah"
+msgstr "Versi Regional"
 
 #: templates/game_detail.html:695 templates/museum_system.html:100
 msgid "Released"
 msgstr "Dirilis"
 
 #: templates/game_detail.html:697
-#, fuzzy
 msgid "File size"
-msgstr "Ukuran Berkas"
+msgstr "Ukuran berkas"
 
 #: templates/game_detail.html:698
-#, fuzzy
 msgid "Revision"
-msgstr "Wilayah"
+msgstr "Revisi"
 
 #: templates/game_detail.html:699
-#, fuzzy
 msgid "Languages"
 msgstr "Bahasa"
 
 #: templates/game_detail.html:700
-#, fuzzy
 msgid "Scores"
-msgstr "Sports"
+msgstr "Skor"
 
 #: templates/game_detail.html:709
 msgid "(this page)"
-msgstr ""
+msgstr "(halaman ini)"
 
 #: templates/game_detail.html:727
 msgid "Known differences"
-msgstr ""
+msgstr "Perbedaan yang diketahui"
 
 #: templates/game_detail.html:727
 msgid "AI-written"
-msgstr ""
+msgstr "Ditulis AI"
 
 #: templates/game_detail.html:728
 msgid "Written by AI from what it knows about these releases. It can be wrong."
 msgstr ""
+"Ditulis oleh AI dari apa yang diketahuinya tentang rilis-rilis ini. Bisa "
+"saja keliru."
 
 #: templates/game_detail.html:730
 msgid "The AI knows of no differences between these versions."
-msgstr ""
+msgstr "AI tidak mengetahui perbedaan apa pun antara versi-versi ini."
 
 #: templates/game_detail.html:733
 msgid "No other regional versions are linked to this game."
-msgstr ""
+msgstr "Tidak ada versi regional lain yang ditautkan ke game ini."
 
 #: templates/game_detail.html:738
 msgid "Unlink this version"
-msgstr ""
+msgstr "Lepas tautan versi ini"
 
 #: templates/game_detail.html:739
 msgid "Summarise differences with AI"
-msgstr ""
+msgstr "Ringkas perbedaan dengan AI"
 
 #: templates/game_detail.html:741
-#, fuzzy
 msgid "Link a version"
-msgstr "Versi"
+msgstr "Tautkan versi"
 
 #: templates/game_detail.html:742
 msgid "Link a version: search this system"
-msgstr ""
+msgstr "Tautkan versi: cari di sistem ini"
 
 #: templates/game_detail.html:755
 msgid "Scrape History"
@@ -6737,9 +6686,8 @@ msgid "Password"
 msgstr "Kata Sandi"
 
 #: templates/login.html:250
-#, fuzzy
 msgid "Enter your password"
-msgstr "Masukkan kata sandi saat ini"
+msgstr "Masukkan kata sandi Anda"
 
 #: templates/logs.html:729
 msgid "File"
@@ -7566,6 +7514,9 @@ msgid ""
 "Review the groups RetroDB suggests, or link versions by hand on a game "
 "page."
 msgstr ""
+"Tautkan game yang sama dari wilayah berbeda agar Pustaka menampilkannya "
+"sekali. Tinjau grup yang disarankan RetroDB, atau tautkan versi secara "
+"manual di halaman game."
 
 #: templates/_macros/nav_tabs.html:38 templates/rom_tools_hub.html:207
 msgid "Multi-Disc Organizer"
@@ -7681,13 +7632,15 @@ msgstr ""
 
 #: templates/rom_tools_settings.html:304
 msgid "Empty: RetroDB's data folder"
-msgstr ""
+msgstr "Kosong: folder data RetroDB"
 
 #: templates/rom_tools_settings.html:305
 msgid ""
 "Where Create M3U moves original archives. Leave empty to use RetroDB's "
 "data folder."
 msgstr ""
+"Tempat Buat M3U memindahkan arsip asli. Biarkan kosong untuk memakai "
+"folder data RetroDB."
 
 #: templates/screenshot_dedup.html:243
 msgid "Exact Hash (MD5) &mdash; identical files only"
@@ -7913,16 +7866,18 @@ msgid ""
 "Linked versions show as one card in the Library, opening the version from"
 " your preferred region. Nothing is linked until you confirm it here."
 msgstr ""
+"RetroDB mencari game yang merupakan game yang sama dari wilayah berbeda. "
+"Versi yang ditautkan tampil sebagai satu kartu di Pustaka, membuka versi "
+"dari wilayah pilihan Anda. Tidak ada yang ditautkan sampai Anda "
+"mengonfirmasinya di sini."
 
 #: templates/versions_review.html:88
-#, fuzzy
 msgid "All systems"
-msgstr "Semua Sistem"
+msgstr "Semua sistem"
 
 #: templates/versions_review.html:94
-#, fuzzy
 msgid "Find suggestions"
-msgstr "Disarankan AI"
+msgstr "Cari saran"
 
 #: templates/wishlist.html:12
 msgid "Games you want to find and add to your collection"
@@ -8692,9 +8647,8 @@ msgid "Change Password"
 msgstr "Ubah Kata Sandi"
 
 #: templates/_settings_tabs/account.html:198
-#, fuzzy
 msgid "Every account needs a password to log in."
-msgstr "Akun admin memerlukan kata sandi untuk login."
+msgstr "Setiap akun memerlukan kata sandi untuk masuk."
 
 #: templates/_settings_tabs/account.html:202
 msgid "Current Password"
@@ -9387,13 +9341,15 @@ msgstr ""
 
 #: templates/_settings_tabs/system.html:182
 msgid "Shut Down Server"
-msgstr ""
+msgstr "Matikan Server"
 
 #: templates/_settings_tabs/system.html:185
 msgid ""
 "Restart the Flask server (useful after configuration changes), or shut it"
 " down completely"
 msgstr ""
+"Mulai ulang server Flask (berguna setelah perubahan konfigurasi), atau "
+"matikan sepenuhnya"
 
 #: templates/_settings_tabs/system.html:444
 msgid "Support Development"

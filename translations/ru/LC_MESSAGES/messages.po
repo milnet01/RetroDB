@@ -26,21 +26,21 @@ msgid ""
 "MB and a video up to %(video)s MB; upload fewer files at once. Operators "
 "can raise the total limit via RETRODB_MAX_UPLOAD_MB."
 msgstr ""
+"Загрузка превышает лимит %(total)s МБ. Каждое изображение может быть до "
+"%(image)s МБ, а видео — до %(video)s МБ; загружайте меньше файлов за раз."
+" Операторы могут повысить общий лимит через RETRODB_MAX_UPLOAD_MB."
 
 #: app.py:703
-#, fuzzy
 msgid "Too many requests. Please wait and try again."
-msgstr "Слишком много попыток. Повторите попытку позже."
+msgstr "Слишком много запросов. Подождите и повторите попытку."
 
 #: app.py:812
-#, fuzzy
 msgid "Setup required"
-msgstr "Требуется название"
+msgstr "Требуется настройка"
 
 #: app.py:833
-#, fuzzy
 msgid "Password change required"
-msgstr "Смена пароля не требуется"
+msgstr "Требуется смена пароля"
 
 #: app.py:1656 routes/auth.py:202 routes/auth.py:251 routes/auth.py:436
 #: routes/auth.py:481 templates/force_change_password.html:49
@@ -104,7 +104,7 @@ msgstr "Синхронизация для %(name)s уже выполняется
 #: routes/achievements.py:367 routes/platform_import.py:326
 #: routes/platform_import.py:693
 msgid "That job belongs to another user"
-msgstr ""
+msgstr "Это задание принадлежит другому пользователю"
 
 #: routes/achievements.py:457
 msgid "No RetroAchievements found for this game"
@@ -169,14 +169,13 @@ msgid "Invalid locale"
 msgstr "Недопустимая локаль"
 
 #: routes/auth.py:385
-#, fuzzy
 msgid "Invalid theme"
-msgstr "Недопустимый путь"
+msgstr "Недопустимая тема"
 
 #: routes/auth.py:391
-#, fuzzy, python-format
+#, python-format
 msgid "Invalid RPCS3 trophy folder: %(reason)s"
-msgstr "недопустимые API-ключи: %(reason)s"
+msgstr "Недопустимая папка трофеев RPCS3: %(reason)s"
 
 #: routes/auth.py:424
 msgid "Too many attempts. Please try again later."
@@ -410,31 +409,30 @@ msgid "system_id and emulator_id required"
 msgstr "Требуются system_id и emulator_id"
 
 #: routes/emulators.py:224
-#, fuzzy
 msgid "Send at least one setting."
-msgstr "Настройки данных"
+msgstr "Отправьте хотя бы одну настройку."
 
 #: routes/emulators.py:230
 msgid "RetroDB does not manage that setting for this emulator."
-msgstr ""
+msgstr "RetroDB не управляет этой настройкой для данного эмулятора."
 
 #: routes/emulators.py:232
 msgid "Fullscreen is set per system, in Settings > Emulators."
-msgstr ""
+msgstr "Полноэкранный режим задаётся для каждой системы в Настройки > Эмуляторы."
 
 #: routes/emulators.py:234
-#, fuzzy
 msgid "That value is not one of the choices."
-msgstr "Тег не назначен этой игре"
+msgstr "Это значение не входит в список вариантов."
 
 #: routes/emulators.py:264 services/standalone_settings.py:258
 msgid "RetroDB manages per-game settings for DuckStation, PCSX2 and RPCS3 only."
 msgstr ""
+"RetroDB управляет настройками для отдельных игр только для DuckStation, "
+"PCSX2 и RPCS3."
 
 #: routes/emulators.py:277 routes/emulators.py:288
-#, fuzzy
 msgid "Emulator not found"
-msgstr "Платформа не найдена"
+msgstr "Эмулятор не найден"
 
 #: routes/games.py:239
 msgid "No IDs provided"
@@ -448,6 +446,8 @@ msgstr "Укажите от 1 до 50 корректных ID"
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
 msgstr ""
+"Видео не сохранено: это должен быть файл MP4, WebM или OGG размером до "
+"%(mb)s МБ."
 
 #: routes/games.py:627
 msgid "Game not found after update"
@@ -537,7 +537,7 @@ msgstr "Целевой путь находится вне настроенной
 #: routes/games_media.py:106 routes/reports.py:725
 #, python-format
 msgid "Cannot rename: %(reason)s"
-msgstr ""
+msgstr "Не удалось переименовать: %(reason)s"
 
 #: routes/games_media.py:109 routes/reports.py:729 routes/reports.py:896
 msgid "A file with that name already exists"
@@ -578,13 +578,12 @@ msgid "failed to kill prior instance: %(err)s"
 msgstr "не удалось завершить предыдущий экземпляр: %(err)s"
 
 #: routes/launch.py:184
-#, fuzzy
 msgid "That game is no longer running"
-msgstr "Это применение метаданных больше не выполняется."
+msgstr "Эта игра больше не запущена"
 
 #: routes/launch.py:186
 msgid "This game has no disk list to swap through"
-msgstr ""
+msgstr "У этой игры нет списка дисков для смены"
 
 #: routes/launch.py:191
 #, python-format
@@ -592,15 +591,16 @@ msgid ""
 "RetroArch is not accepting commands. In RetroArch, turn on Settings > "
 "Network > Network Commands (port %(port)s)."
 msgstr ""
+"RetroArch не принимает команды. В RetroArch включите Настройки > Сеть > "
+"Сетевые команды (порт %(port)s)."
 
 #: routes/launch.py:194
 msgid "Next disk inserted"
-msgstr ""
+msgstr "Вставлен следующий диск"
 
 #: routes/maintenance.py:260
-#, fuzzy
 msgid "Unknown image type"
-msgstr "Нет изображения для обработки"
+msgstr "Неизвестный тип изображения"
 
 #: routes/museum.py:385 routes/scraper.py:770
 msgid "No AI provider configured"
@@ -628,9 +628,8 @@ msgid "No controllers found"
 msgstr "Контроллеры не найдены"
 
 #: routes/museum.py:620
-#, fuzzy
 msgid "An image fetch is already running"
-msgstr "Эта игра уже запущена"
+msgstr "Загрузка изображений уже выполняется"
 
 #: routes/museum.py:656
 msgid "No image file provided"
@@ -825,7 +824,7 @@ msgstr "Ошибка разбора ответа API"
 #: routes/scraper.py:696
 #, python-format
 msgid "ScreenScraper answered HTTP %(code)s"
-msgstr ""
+msgstr "ScreenScraper ответил HTTP %(code)s"
 
 #: routes/scraper.py:711
 msgid "No RAWG API key configured"
@@ -997,15 +996,15 @@ msgstr "chdman не найден"
 #: routes/tools.py:944
 #, python-format
 msgid "Unknown duplicate method: %(method)s"
-msgstr ""
+msgstr "Неизвестный метод поиска дубликатов: %(method)s"
 
 #: routes/tools.py:1152
 msgid "These scan results have expired. Scan again, then delete."
-msgstr ""
+msgstr "Эти результаты сканирования устарели. Просканируйте снова, затем удаляйте."
 
 #: routes/tools.py:1157
 msgid "Keep at least one copy of each game. Nothing was deleted."
-msgstr ""
+msgstr "Оставьте хотя бы одну копию каждой игры. Ничего не удалено."
 
 #: routes/trophies.py:387
 msgid ""
@@ -1066,47 +1065,43 @@ msgstr "Токен NPSSO не предоставлен"
 
 #: routes/trophies.py:1834
 msgid "Could not connect to PSN"
-msgstr ""
+msgstr "Не удалось подключиться к PSN"
 
 #: routes/trophies.py:1861
 msgid "PSN NPSSO not configured"
 msgstr "NPSSO PSN не настроен"
 
 #: routes/versions.py:23
-#, fuzzy
 msgid "Pick at least two games."
-msgstr "Выбрать случайную игру"
+msgstr "Выберите хотя бы две игры."
 
 #: routes/versions.py:24
 msgid "One of those games no longer exists."
-msgstr ""
+msgstr "Одна из этих игр больше не существует."
 
 #: routes/versions.py:25
-#, fuzzy
 msgid "Versions must all be on the same system."
-msgstr "Бонусный диск и основная игра должны относиться к одной системе"
+msgstr "Все версии должны быть на одной системе."
 
 #: routes/versions.py:26
 msgid "A bonus disc cannot be a version of a game."
-msgstr ""
+msgstr "Бонусный диск не может быть версией игры."
 
 #: routes/versions.py:28
-#, fuzzy
 msgid "Those games cannot be linked."
-msgstr "Имя не может быть пустым"
+msgstr "Эти игры нельзя связать."
 
 #: routes/versions.py:81 routes/versions.py:96
-#, fuzzy
 msgid "That game is not linked to other versions."
-msgstr "Тег не назначен этой игре"
+msgstr "Эта игра не связана с другими версиями."
 
 #: routes/versions.py:92
 msgid "Set up an AI provider in Settings > Scraping first."
-msgstr ""
+msgstr "Сначала настройте провайдера ИИ в Настройки > Скрапинг."
 
 #: routes/versions.py:98
 msgid "The AI did not give a usable answer. Try again later."
-msgstr ""
+msgstr "ИИ не дал пригодного ответа. Повторите попытку позже."
 
 #: routes/xbox_achievements.py:126
 msgid "Xbox credentials not configured"
@@ -1473,9 +1468,8 @@ msgid "(Paused)"
 msgstr "(Приостановлено)"
 
 #: services/js_i18n_strings.py:421
-#, fuzzy
 msgid "(none)"
-msgstr "Нет"
+msgstr "(нет)"
 
 #: services/js_i18n_strings.py:422 templates/_bulk_edit_modal.html:25
 #: templates/_bulk_edit_modal.html:38 templates/_bulk_edit_modal.html:83
@@ -1530,7 +1524,7 @@ msgstr "Уже синхронизируется"
 #: services/js_i18n_strings.py:432
 #, python-brace-format
 msgid "Applied when you press Play, in the {emulator} settings for this game."
-msgstr ""
+msgstr "Применяется при нажатии «Играть», в настройках {emulator} для этой игры."
 
 #: services/js_i18n_strings.py:433 templates/_bulk_edit_modal.html:193
 msgid "Apply Changes"
@@ -1541,9 +1535,9 @@ msgid "Apply Normalization"
 msgstr "Применить нормализацию"
 
 #: services/js_i18n_strings.py:435
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Apply failed: {error}"
-msgstr "Ошибка резервного копирования: {error}"
+msgstr "Не удалось применить: {error}"
 
 #: services/js_i18n_strings.py:436
 #, python-brace-format
@@ -1569,7 +1563,6 @@ msgid "Applying..."
 msgstr "Применение…"
 
 #: services/js_i18n_strings.py:441
-#, fuzzy
 msgid "Applying…"
 msgstr "Применение…"
 
@@ -1613,6 +1606,8 @@ msgid ""
 "Are you sure you want to shut down the server? You will need to start it "
 "again manually."
 msgstr ""
+"Вы уверены, что хотите выключить сервер? Его придётся запустить снова "
+"вручную."
 
 #: services/js_i18n_strings.py:448 templates/settings.html:67
 msgid "Are you sure?"
@@ -1624,12 +1619,11 @@ msgstr "Запрос к ИИ…"
 
 #: services/js_i18n_strings.py:450
 msgid "Asking the AI. This can take up to a minute."
-msgstr ""
+msgstr "Запрос к ИИ. Это может занять до минуты."
 
 #: services/js_i18n_strings.py:451
-#, fuzzy
 msgid "Aspect ratio"
-msgstr "Выбрать рейтинг"
+msgstr "Соотношение сторон"
 
 #: services/js_i18n_strings.py:452
 msgid "BIOS"
@@ -1680,9 +1674,8 @@ msgid "Cancel Bulk Scrape"
 msgstr "Отменить массовый скрапинг"
 
 #: services/js_i18n_strings.py:461
-#, fuzzy
 msgid "Cancel failed"
-msgstr "Отменено"
+msgstr "Не удалось отменить"
 
 #: services/js_i18n_strings.py:462
 msgid "Cancel request failed"
@@ -1775,9 +1768,8 @@ msgid "Close keyboard shortcuts"
 msgstr "Закрыть список горячих клавиш"
 
 #: services/js_i18n_strings.py:480
-#, fuzzy
 msgid "Close modal / cancel"
-msgstr "Закрыть окно пользователя"
+msgstr "Закрыть окно / отмена"
 
 #: services/js_i18n_strings.py:481 templates/dashboard.html:155
 msgid "Complete"
@@ -1845,41 +1837,37 @@ msgstr "Не удалось применить метаданные."
 
 #: services/js_i18n_strings.py:494
 msgid "Could not link these versions."
-msgstr ""
+msgstr "Не удалось связать эти версии."
 
 #: services/js_i18n_strings.py:495
 msgid "Could not load suggestions."
-msgstr ""
+msgstr "Не удалось загрузить предложения."
 
 #: services/js_i18n_strings.py:496
 msgid "Could not reconnect to server. Please refresh manually."
 msgstr "Не удалось переподключиться к серверу. Обновите страницу вручную."
 
 #: services/js_i18n_strings.py:497
-#, fuzzy
 msgid "Could not save that setting."
-msgstr "Не удалось применить метаданные."
+msgstr "Не удалось сохранить эту настройку."
 
 #: services/js_i18n_strings.py:498
-#, fuzzy
 msgid "Could not save that."
-msgstr "Не удалось применить метаданные."
+msgstr "Не удалось сохранить."
 
 #: services/js_i18n_strings.py:499
 msgid "Could not stop the running instance."
-msgstr ""
+msgstr "Не удалось остановить запущенный экземпляр."
 
 #: services/js_i18n_strings.py:500
 msgid "Could not unlink this version."
-msgstr ""
+msgstr "Не удалось отвязать эту версию."
 
 #: services/js_i18n_strings.py:501
-#, fuzzy
 msgid "Could not write the summary."
-msgstr "Не удалось применить метаданные."
+msgstr "Не удалось написать сводку."
 
 #: services/js_i18n_strings.py:502
-#, fuzzy
 msgid "Currently set"
 msgstr "Текущее значение"
 
@@ -1897,19 +1885,17 @@ msgid "Delete Log File"
 msgstr "Удалить файл журнала"
 
 #: services/js_i18n_strings.py:506
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Detect failed: {error}"
-msgstr "Восстановление не удалось: {error}"
+msgstr "Не удалось определить: {error}"
 
 #: services/js_i18n_strings.py:507
-#, fuzzy
 msgid "Detected path"
-msgstr "Исключённые пути"
+msgstr "Найденный путь"
 
 #: services/js_i18n_strings.py:508
-#, fuzzy
 msgid "Detecting…"
-msgstr "Настройки"
+msgstr "Определение…"
 
 #: services/js_i18n_strings.py:509 templates/_bulk_scrape_modal.html:69
 #: templates/psn_trophies.html:247 templates/psn_trophies.html:307
@@ -1952,7 +1938,6 @@ msgid "Edit"
 msgstr "Редактировать"
 
 #: services/js_i18n_strings.py:518
-#, fuzzy
 msgid "Edit game"
 msgstr "Редактировать игру"
 
@@ -1962,9 +1947,8 @@ msgid "Edit: {title}"
 msgstr "Редактирование: {title}"
 
 #: services/js_i18n_strings.py:520
-#, fuzzy
 msgid "Emulator"
-msgstr "Симулятор"
+msgstr "Эмулятор"
 
 #: services/js_i18n_strings.py:521
 msgid "Enter one folder path."
@@ -2118,30 +2102,27 @@ msgstr "Получение данных из {source}…"
 #: services/js_i18n_strings.py:557
 #, python-brace-format
 msgid "Fetching images: {done} of {total}"
-msgstr ""
+msgstr "Загрузка изображений: {done} из {total}"
 
 #: services/js_i18n_strings.py:558
 msgid "Focus search box"
-msgstr ""
+msgstr "Перейти к полю поиска"
 
 #: services/js_i18n_strings.py:559 templates/logs.html:743
 msgid "From"
 msgstr "От"
 
 #: services/js_i18n_strings.py:560
-#, fuzzy
 msgid "From the system setting"
-msgstr "Настройки трофеев"
+msgstr "Из настройки системы"
 
 #: services/js_i18n_strings.py:561
-#, fuzzy
 msgid "Fullscreen"
-msgstr "Полный повторный скрапинг"
+msgstr "Полноэкранный режим"
 
 #: services/js_i18n_strings.py:562
-#, fuzzy
 msgid "Game Page"
-msgstr "Название игры"
+msgstr "Страница игры"
 
 #: services/js_i18n_strings.py:563
 msgid "Game details updated successfully."
@@ -2195,38 +2176,32 @@ msgid "Generation request failed"
 msgstr "Запрос генерации не удался"
 
 #: services/js_i18n_strings.py:573
-#, fuzzy
 msgid "Go to Analytics"
-msgstr "Аналитика"
+msgstr "Перейти к аналитике"
 
 #: services/js_i18n_strings.py:574
-#, fuzzy
 msgid "Go to Changelog"
-msgstr "Журнал изменений"
+msgstr "Перейти к журналу изменений"
 
 #: services/js_i18n_strings.py:575
-#, fuzzy
 msgid "Go to Dashboard"
-msgstr "Панель управления"
+msgstr "Перейти к панели управления"
 
 #: services/js_i18n_strings.py:576
 msgid "Go to Help"
-msgstr ""
+msgstr "Перейти к справке"
 
 #: services/js_i18n_strings.py:577
-#, fuzzy
 msgid "Go to Library"
-msgstr "Библиотека Xbox"
+msgstr "Перейти к библиотеке"
 
 #: services/js_i18n_strings.py:578
-#, fuzzy
 msgid "Go to Settings"
-msgstr "Настройки инструментов"
+msgstr "Перейти к настройкам"
 
 #: services/js_i18n_strings.py:579
-#, fuzzy
 msgid "Go to Systems"
-msgstr "Всего систем"
+msgstr "Перейти к системам"
 
 #: services/js_i18n_strings.py:580
 msgid "HLTB data cleared"
@@ -2254,9 +2229,8 @@ msgid "Image Resize"
 msgstr "Изменение размера изображения"
 
 #: services/js_i18n_strings.py:586
-#, fuzzy
 msgid "Image fetch cancelled."
-msgstr "Генерация отменена"
+msgstr "Загрузка изображений отменена."
 
 #: services/js_i18n_strings.py:587
 msgid "Image must be under 10MB"
@@ -2290,26 +2264,25 @@ msgstr "Горячие клавиши"
 
 #: services/js_i18n_strings.py:593
 msgid "Kill"
-msgstr ""
+msgstr "Завершить"
 
 #: services/js_i18n_strings.py:594
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Launch failed: {error}"
-msgstr "Ошибка резервного копирования: {error}"
+msgstr "Не удалось запустить: {error}"
 
 #: services/js_i18n_strings.py:595
 #, python-brace-format
 msgid "Launched (pid {pid})"
-msgstr ""
+msgstr "Запущено (pid {pid})"
 
 #: services/js_i18n_strings.py:596
 msgid "Launched (replaced previous instance)"
-msgstr ""
+msgstr "Запущено (предыдущий экземпляр заменён)"
 
 #: services/js_i18n_strings.py:597
-#, fuzzy
 msgid "Launching…"
-msgstr "Запуск"
+msgstr "Запуск…"
 
 #: services/js_i18n_strings.py:598
 #, python-brace-format
@@ -2317,14 +2290,12 @@ msgid "Library scan complete! Found {n} new games."
 msgstr "Сканирование библиотеки завершено! Найдено новых игр: {n}."
 
 #: services/js_i18n_strings.py:599
-#, fuzzy
 msgid "Link"
-msgstr "Отвязать"
+msgstr "Связать"
 
 #: services/js_i18n_strings.py:600
-#, fuzzy
 msgid "Link ticked games"
-msgstr "Связать с игрой RetroDB"
+msgstr "Связать отмеченные игры"
 
 #: services/js_i18n_strings.py:601
 msgid "Loading log file..."
@@ -2336,7 +2307,7 @@ msgstr "Файл журнала удалён"
 
 #: services/js_i18n_strings.py:603
 msgid "Looking for versions…"
-msgstr ""
+msgstr "Поиск версий…"
 
 #: services/js_i18n_strings.py:604 templates/achievement_game.html:168
 #: templates/achievement_game.html:197 templates/achievement_game.html:207
@@ -2366,7 +2337,7 @@ msgstr "Основной сюжет"
 
 #: services/js_i18n_strings.py:606
 msgid "Marked as not versions."
-msgstr ""
+msgstr "Помечено как не версии."
 
 #: services/js_i18n_strings.py:607
 msgid "Match found - please confirm to save"
@@ -2411,9 +2382,8 @@ msgid "NOT"
 msgstr "НЕ"
 
 #: services/js_i18n_strings.py:615
-#, fuzzy
 msgid "Navigation"
-msgstr "Основная навигация"
+msgstr "Навигация"
 
 #: services/js_i18n_strings.py:616
 msgid "Network error"
@@ -2425,12 +2395,11 @@ msgstr "Ошибка сети при запуске массового скра�
 
 #: services/js_i18n_strings.py:618
 msgid "Next disk"
-msgstr ""
+msgstr "Следующий диск"
 
 #: services/js_i18n_strings.py:619
-#, fuzzy
 msgid "Next disk failed"
-msgstr "Ошибка генерации"
+msgstr "Не удалось сменить диск"
 
 #: services/js_i18n_strings.py:620 templates/_bulk_edit_modal.html:171
 #: templates/_modals/edit_modal.html:139 templates/game_detail.html:652
@@ -2466,11 +2435,11 @@ msgstr "Описание недоступно."
 
 #: services/js_i18n_strings.py:627
 msgid "No emulator AppImages found in the scan paths."
-msgstr ""
+msgstr "В путях сканирования не найдено AppImage эмуляторов."
 
 #: services/js_i18n_strings.py:628
 msgid "No emulators registered."
-msgstr ""
+msgstr "Нет зарегистрированных эмуляторов."
 
 #: services/js_i18n_strings.py:629
 msgid "No folders yet."
@@ -2490,7 +2459,7 @@ msgstr "Сопоставлений пока нет. Добавьте папку 
 
 #: services/js_i18n_strings.py:633
 msgid "No matching games on this system."
-msgstr ""
+msgstr "На этой системе нет подходящих игр."
 
 #: services/js_i18n_strings.py:634
 msgid "No missing ROM files found."
@@ -2523,6 +2492,8 @@ msgstr "Нет сеансов, соответствующих текущим ф�
 #: services/js_i18n_strings.py:641
 msgid "No suggestions. Run Backfill Alternate Titles in Maintenance to find more."
 msgstr ""
+"Нет предложений. Запустите «Заполнение альтернативных названий» в разделе"
+" «Обслуживание», чтобы найти больше."
 
 #: services/js_i18n_strings.py:642
 #, python-brace-format
@@ -2532,9 +2503,8 @@ msgstr ""
 "{rules}"
 
 #: services/js_i18n_strings.py:643
-#, fuzzy
 msgid "Not versions"
-msgstr "Версия"
+msgstr "Не версии"
 
 #: services/js_i18n_strings.py:644 templates/base.html:1354
 msgid "Now playing"
@@ -2553,9 +2523,8 @@ msgid "Operation failed"
 msgstr "Операция не удалась"
 
 #: services/js_i18n_strings.py:648
-#, fuzzy
 msgid "Other"
-msgstr "Шутер"
+msgstr "Другое"
 
 #: services/js_i18n_strings.py:649
 msgid "PSN Imports"
@@ -2662,9 +2631,8 @@ msgid "Refreshing RA for {system}..."
 msgstr "Обновление RA для {system}…"
 
 #: services/js_i18n_strings.py:672
-#, fuzzy
 msgid "Regional name matches"
-msgstr "Несовпадение региона"
+msgstr "Совпадения региональных названий"
 
 #: services/js_i18n_strings.py:673 templates/compare_games.html:24
 #: templates/compare_games.html:40
@@ -2719,9 +2687,8 @@ msgid "Reports"
 msgstr "Отчёты"
 
 #: services/js_i18n_strings.py:684
-#, fuzzy
 msgid "Resolution scale"
-msgstr "Разрешение"
+msgstr "Масштаб разрешения"
 
 #: services/js_i18n_strings.py:685
 msgid "Restarting server..."
@@ -2732,9 +2699,8 @@ msgid "Resume"
 msgstr "Продолжить"
 
 #: services/js_i18n_strings.py:687
-#, fuzzy
 msgid "RetroDB default"
-msgstr "По умолчанию"
+msgstr "По умолчанию RetroDB"
 
 #: services/js_i18n_strings.py:688
 msgid "Running"
@@ -2745,40 +2711,37 @@ msgid "Running..."
 msgstr "Выполняется…"
 
 #: services/js_i18n_strings.py:690
-#, fuzzy
 msgid "Same IGDB game"
-msgstr "Скрапить все"
+msgstr "Та же игра в IGDB"
 
 #: services/js_i18n_strings.py:691
-#, fuzzy
 msgid "Same ScreenScraper game"
-msgstr "Скрапить все"
+msgstr "Та же игра в ScreenScraper"
 
 #: services/js_i18n_strings.py:692
 msgid "Same title, different region"
-msgstr ""
+msgstr "То же название, другой регион"
 
 #: services/js_i18n_strings.py:693
 msgid "Save Failed"
 msgstr "Сохранение не удалось"
 
 #: services/js_i18n_strings.py:694
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Save failed: {error}"
-msgstr "Восстановление не удалось: {error}"
+msgstr "Не удалось сохранить: {error}"
 
 #: services/js_i18n_strings.py:695
 msgid "Saved"
 msgstr "Сохранено"
 
 #: services/js_i18n_strings.py:696
-#, fuzzy
 msgid "Saved."
-msgstr "Сохранено"
+msgstr "Сохранено."
 
 #: services/js_i18n_strings.py:697
 msgid "Saved. It applies the next time you press Play."
-msgstr ""
+msgstr "Сохранено. Применится при следующем нажатии «Играть»."
 
 #: services/js_i18n_strings.py:698
 msgid "Saving to the database…"
@@ -2789,7 +2752,6 @@ msgid "Saving..."
 msgstr "Сохранение…"
 
 #: services/js_i18n_strings.py:700
-#, fuzzy
 msgid "Saving…"
 msgstr "Сохранение…"
 
@@ -2799,23 +2761,21 @@ msgid "Scan failed (HTTP {status})"
 msgstr "Сканирование не удалось (HTTP {status})"
 
 #: services/js_i18n_strings.py:702
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Scan failed: {error}"
-msgstr "Ошибка резервного копирования: {error}"
+msgstr "Ошибка сканирования: {error}"
 
 #: services/js_i18n_strings.py:703 templates/multi_disc_organizer.html:204
 msgid "Scanning..."
 msgstr "Сканирование…"
 
 #: services/js_i18n_strings.py:704
-#, fuzzy
 msgid "Scanning…"
 msgstr "Сканирование…"
 
 #: services/js_i18n_strings.py:705
-#, fuzzy
 msgid "Scrape game"
-msgstr "Скрапить все"
+msgstr "Скрапить игру"
 
 #: services/js_i18n_strings.py:706
 #, python-brace-format
@@ -2839,9 +2799,8 @@ msgid "Search"
 msgstr "Поиск"
 
 #: services/js_i18n_strings.py:710
-#, fuzzy
 msgid "Search failed."
-msgstr "Поиск по именам файлов…"
+msgstr "Ошибка поиска."
 
 #: services/js_i18n_strings.py:711
 msgid "Searching & removing background..."
@@ -2914,20 +2873,19 @@ msgstr "Сервер успешно перезапущен!"
 
 #: services/js_i18n_strings.py:727
 msgid "Server stopped. You can close this tab."
-msgstr ""
+msgstr "Сервер остановлен. Эту вкладку можно закрыть."
 
 #: services/js_i18n_strings.py:728
-#, fuzzy
 msgid "Set for this game"
-msgstr "Очистить данные HLTB для этой игры?"
+msgstr "Задано для этой игры"
 
 #: services/js_i18n_strings.py:729
 msgid "Set inside the emulator; RetroDB leaves it alone"
-msgstr ""
+msgstr "Задаётся в самом эмуляторе; RetroDB это не трогает"
 
 #: services/js_i18n_strings.py:730
 msgid "Set per system, in Settings > Emulators"
-msgstr ""
+msgstr "Задаётся для каждой системы в Настройки > Эмуляторы"
 
 #: services/js_i18n_strings.py:731 templates/_macros/nav_tabs.html:43
 #: templates/base.html:156 templates/rom_tools_hub.html:119
@@ -2941,18 +2899,16 @@ msgid "Show Bonus"
 msgstr "Показать бонусы"
 
 #: services/js_i18n_strings.py:733
-#, fuzzy
 msgid "Show keyboard shortcuts"
-msgstr "Горячие клавиши"
+msgstr "Показать горячие клавиши"
 
 #: services/js_i18n_strings.py:734
 msgid "Showing Bonus Discs"
 msgstr "Отображаются бонусные диски"
 
 #: services/js_i18n_strings.py:735
-#, fuzzy
 msgid "Shutting down server..."
-msgstr "Перезапуск сервера…"
+msgstr "Выключение сервера..."
 
 #: services/js_i18n_strings.py:736 templates/_modals/edit_modal.html:46
 #: templates/base.html:1052
@@ -2977,9 +2933,8 @@ msgid "Successfully updated {count} games"
 msgstr "Успешно обновлено игр: {count}"
 
 #: services/js_i18n_strings.py:741
-#, fuzzy
 msgid "Summary written."
-msgstr "Сводка"
+msgstr "Сводка написана."
 
 #: services/js_i18n_strings.py:742
 msgid "Sync In Progress"
@@ -3042,7 +2997,7 @@ msgstr "Системы"
 
 #: services/js_i18n_strings.py:752
 msgid "This game is already running.  Kill the existing process and relaunch?"
-msgstr ""
+msgstr "Эта игра уже запущена.  Завершить текущий процесс и запустить заново?"
 
 #: services/js_i18n_strings.py:753
 msgid "This system is already being synced."
@@ -3115,9 +3070,8 @@ msgstr ""
 "израсходовать кредиты API. Продолжить?"
 
 #: services/js_i18n_strings.py:762
-#, fuzzy
 msgid "Tick at least two games."
-msgstr "Выбрать случайную игру"
+msgstr "Отметьте хотя бы две игры."
 
 #: services/js_i18n_strings.py:763 templates/logs.html:745
 msgid "To"
@@ -3190,9 +3144,8 @@ msgid "Uploading…"
 msgstr "Загрузка…"
 
 #: services/js_i18n_strings.py:778
-#, fuzzy
 msgid "Use the system setting"
-msgstr "Сохранить настройки путей"
+msgstr "Использовать настройку системы"
 
 #: services/js_i18n_strings.py:779
 #, python-brace-format
@@ -3200,21 +3153,20 @@ msgid ""
 "Used for every {system} game unless the game sets its own. Applied when "
 "you press Play."
 msgstr ""
+"Используется для каждой игры {system}, если у игры нет своей настройки. "
+"Применяется при нажатии «Играть»."
 
 #: services/js_i18n_strings.py:780
-#, fuzzy
 msgid "Version unlinked."
-msgstr "Доступ запрещён"
+msgstr "Версия отвязана."
 
 #: services/js_i18n_strings.py:781
-#, fuzzy
 msgid "Versions linked."
-msgstr "Версия"
+msgstr "Версии связаны."
 
 #: services/js_i18n_strings.py:782
-#, fuzzy
 msgid "Will change?"
-msgstr "Изменить"
+msgstr "Изменится?"
 
 #: services/js_i18n_strings.py:783
 msgid "Works"
@@ -3222,7 +3174,7 @@ msgstr "Работает"
 
 #: services/js_i18n_strings.py:784 templates/game_detail.html:739
 msgid "Write again with AI"
-msgstr ""
+msgstr "Написать заново с ИИ"
 
 #: services/js_i18n_strings.py:785
 msgid "Xbox Imports"
@@ -3266,14 +3218,16 @@ msgid "{count} Achievements"
 msgstr "{count} достижений"
 
 #: services/js_i18n_strings.py:793
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{count} regional versions"
-msgstr "Текущая: v%(version)s"
+msgstr "Региональных версий: {count}"
 
 #: services/js_i18n_strings.py:794
 #, python-brace-format
 msgid "{count} suggested groups. Untick any game that does not belong, then link."
 msgstr ""
+"Предложено групп: {count}. Снимите отметку с игр, которые не подходят, "
+"затем свяжите."
 
 #: services/js_i18n_strings.py:795
 #, python-brace-format
@@ -3331,9 +3285,9 @@ msgid "{system} has been added to the sync queue."
 msgstr "{system} добавлена в очередь синхронизации."
 
 #: services/js_i18n_strings.py:806
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{title} ({count} versions)"
-msgstr "Начать конвертацию"
+msgstr "{title} (версий: {count})"
 
 #: services/js_i18n_strings.py:807
 msgid "⏳ Searching..."
@@ -3386,7 +3340,7 @@ msgstr "🗑️ Сбросить метаданные"
 
 #: services/js_i18n_strings.py:819
 msgid "🛑 Shut Down Server"
-msgstr ""
+msgstr "🛑 Выключить сервер"
 
 #: services/js_i18n_strings.py:820
 msgid "🧹 Clean Missing ROMs"
@@ -3397,32 +3351,39 @@ msgid ""
 "RetroDB could not read this disc's serial, so it cannot name the "
 "emulator's per-game settings file."
 msgstr ""
+"RetroDB не удалось прочитать серийный номер этого диска, поэтому он не "
+"может определить имя файла настроек эмулятора для этой игры."
 
 #: services/standalone_settings.py:215
 msgid ""
 "PCSX2 has two or more settings files for this game; remove the ones you "
 "do not use."
 msgstr ""
+"У PCSX2 есть два или более файлов настроек для этой игры; удалите те, "
+"которые не используете."
 
 #: services/standalone_settings.py:223
 msgid ""
 "RetroDB could not read this disc's boot file, so it cannot name PCSX2's "
 "per-game settings file."
 msgstr ""
+"RetroDB не удалось прочитать загрузочный файл этого диска, поэтому он не "
+"может определить имя файла настроек PCSX2 для этой игры."
 
 #: services/standalone_settings.py:231
 msgid "Settings path outside the data folder."
-msgstr ""
+msgstr "Путь настроек вне папки данных."
 
 #: services/standalone_settings.py:253
-#, fuzzy
 msgid "No emulator is set up for this system."
-msgstr "Для этой системы нет характеристик."
+msgstr "Для этой системы не настроен эмулятор."
 
 #: services/standalone_settings.py:268
 #, python-format
 msgid "Run %(name)s once so it creates its settings, then play again."
 msgstr ""
+"Запустите %(name)s один раз, чтобы он создал свои настройки, затем "
+"играйте снова."
 
 #: templates/_bulk_edit_modal.html:7
 msgid "Bulk Edit"
@@ -3888,7 +3849,7 @@ msgstr "игр во всех системах"
 #: templates/all_games.html:17 templates/system_games.html:24
 #, python-format
 msgid "(%(roms)s ROMs)"
-msgstr ""
+msgstr "(ROM: %(roms)s)"
 
 #: templates/all_games.html:19 templates/system_games.html:26
 msgid "missing metadata"
@@ -4639,11 +4600,11 @@ msgstr "Ожидание запуска…"
 
 #: templates/archive_scanner.html:1658
 msgid "Have the original archive moved to the staging folder"
-msgstr ""
+msgstr "Переместить исходный архив в промежуточную папку"
 
 #: templates/archive_scanner.html:1761
 msgid "Original archives moved to:"
-msgstr ""
+msgstr "Исходные архивы перемещены в:"
 
 #: templates/base.html:40
 msgid "Skip to main content"
@@ -4763,28 +4724,24 @@ msgid "Last Updated"
 msgstr "Последнее обновление"
 
 #: templates/base.html:219
-#, fuzzy
 msgid "Disclaimer"
 msgstr "Отказ от ответственности"
 
 #: templates/base.html:230
 msgid "Support RetroDB's development on GitHub Sponsors"
-msgstr ""
+msgstr "Поддержите разработку RetroDB на GitHub Sponsors"
 
 #: templates/base.html:231
-#, fuzzy
 msgid "Sponsor RetroDB"
-msgstr "Поддержать"
+msgstr "Спонсировать RetroDB"
 
 #: templates/base.html:233
-#, fuzzy
 msgid "Support RetroDB's development on Patreon"
-msgstr "Поддержать разработку"
+msgstr "Поддержите разработку RetroDB на Patreon"
 
 #: templates/base.html:234
-#, fuzzy
 msgid "Support RetroDB"
-msgstr "Поддержать на Patreon"
+msgstr "Поддержать RetroDB"
 
 #: templates/base.html:249
 msgid "Toggle menu"
@@ -5999,19 +5956,16 @@ msgid "Part of:"
 msgstr "Часть:"
 
 #: templates/game_detail.html:74
-#, fuzzy
 msgid "Regional versions"
-msgstr "Параметры регионов"
+msgstr "Региональные версии"
 
 #: templates/game_detail.html:75
-#, fuzzy
 msgid "Versions:"
-msgstr "Версия"
+msgstr "Версии:"
 
 #: templates/game_detail.html:77 templates/game_detail.html:708
-#, fuzzy
 msgid "Unknown region"
-msgstr "Неизвестная ошибка"
+msgstr "Неизвестный регион"
 
 #: templates/game_detail.html:83
 msgid "Launch this game in the configured emulator"
@@ -6218,81 +6172,76 @@ msgid "Bonus Content"
 msgstr "Бонусный контент"
 
 #: templates/game_detail.html:678
-#, fuzzy
 msgid "Emulator settings"
-msgstr "Настройки инструментов"
+msgstr "Настройки эмулятора"
 
 #: templates/_macros/nav_tabs.html:40 templates/game_detail.html:687
 #: templates/rom_tools_hub.html:193 templates/versions_review.html:5
 #: templates/versions_review.html:80
-#, fuzzy
 msgid "Regional Versions"
-msgstr "Параметры регионов"
+msgstr "Региональные версии"
 
 #: templates/game_detail.html:695 templates/museum_system.html:100
 msgid "Released"
 msgstr "Выпущено"
 
 #: templates/game_detail.html:697
-#, fuzzy
 msgid "File size"
 msgstr "Размер файла"
 
 #: templates/game_detail.html:698
-#, fuzzy
 msgid "Revision"
-msgstr "Регион"
+msgstr "Ревизия"
 
 #: templates/game_detail.html:699
-#, fuzzy
 msgid "Languages"
-msgstr "Язык"
+msgstr "Языки"
 
 #: templates/game_detail.html:700
-#, fuzzy
 msgid "Scores"
-msgstr "Спорт"
+msgstr "Оценки"
 
 #: templates/game_detail.html:709
 msgid "(this page)"
-msgstr ""
+msgstr "(эта страница)"
 
 #: templates/game_detail.html:727
 msgid "Known differences"
-msgstr ""
+msgstr "Известные различия"
 
 #: templates/game_detail.html:727
 msgid "AI-written"
-msgstr ""
+msgstr "Написано ИИ"
 
 #: templates/game_detail.html:728
 msgid "Written by AI from what it knows about these releases. It can be wrong."
 msgstr ""
+"Написано ИИ на основе того, что он знает об этих выпусках. Может "
+"содержать ошибки."
 
 #: templates/game_detail.html:730
 msgid "The AI knows of no differences between these versions."
-msgstr ""
+msgstr "ИИ не знает различий между этими версиями."
 
 #: templates/game_detail.html:733
 msgid "No other regional versions are linked to this game."
-msgstr ""
+msgstr "С этой игрой не связаны другие региональные версии."
 
 #: templates/game_detail.html:738
 msgid "Unlink this version"
-msgstr ""
+msgstr "Отвязать эту версию"
 
 #: templates/game_detail.html:739
 msgid "Summarise differences with AI"
-msgstr ""
+msgstr "Описать различия с помощью ИИ"
 
 #: templates/game_detail.html:741
-#, fuzzy
 msgid "Link a version"
-msgstr "Версия"
+msgstr "Связать версию"
 
 #: templates/game_detail.html:742
 msgid "Link a version: search this system"
-msgstr ""
+msgstr "Связать версию: поиск по этой системе"
 
 #: templates/game_detail.html:755
 msgid "Scrape History"
@@ -6751,9 +6700,8 @@ msgid "Password"
 msgstr "Пароль"
 
 #: templates/login.html:250
-#, fuzzy
 msgid "Enter your password"
-msgstr "Введите текущий пароль"
+msgstr "Введите пароль"
 
 #: templates/logs.html:729
 msgid "File"
@@ -7581,6 +7529,9 @@ msgid ""
 "Review the groups RetroDB suggests, or link versions by hand on a game "
 "page."
 msgstr ""
+"Свяжите одну и ту же игру из разных регионов, чтобы библиотека показывала"
+" её один раз. Проверьте группы, предложенные RetroDB, или свяжите версии "
+"вручную на странице игры."
 
 #: templates/_macros/nav_tabs.html:38 templates/rom_tools_hub.html:207
 msgid "Multi-Disc Organizer"
@@ -7697,13 +7648,15 @@ msgstr ""
 
 #: templates/rom_tools_settings.html:304
 msgid "Empty: RetroDB's data folder"
-msgstr ""
+msgstr "Пусто: папка данных RetroDB"
 
 #: templates/rom_tools_settings.html:305
 msgid ""
 "Where Create M3U moves original archives. Leave empty to use RetroDB's "
 "data folder."
 msgstr ""
+"Куда «Создать M3U» перемещает исходные архивы. Оставьте пустым, чтобы "
+"использовать папку данных RetroDB."
 
 #: templates/screenshot_dedup.html:243
 msgid "Exact Hash (MD5) &mdash; identical files only"
@@ -7931,16 +7884,18 @@ msgid ""
 "Linked versions show as one card in the Library, opening the version from"
 " your preferred region. Nothing is linked until you confirm it here."
 msgstr ""
+"RetroDB ищет игры, которые являются одной и той же игрой из разных "
+"регионов. Связанные версии показываются в библиотеке одной карточкой, "
+"которая открывает версию из предпочитаемого вами региона. Ничего не "
+"связывается, пока вы не подтвердите это здесь."
 
 #: templates/versions_review.html:88
-#, fuzzy
 msgid "All systems"
 msgstr "Все системы"
 
 #: templates/versions_review.html:94
-#, fuzzy
 msgid "Find suggestions"
-msgstr "Предложено ИИ"
+msgstr "Найти предложения"
 
 #: templates/wishlist.html:12
 msgid "Games you want to find and add to your collection"
@@ -8718,9 +8673,8 @@ msgid "Change Password"
 msgstr "Изменить пароль"
 
 #: templates/_settings_tabs/account.html:198
-#, fuzzy
 msgid "Every account needs a password to log in."
-msgstr "Учётным записям администратора требуется пароль для входа."
+msgstr "Каждой учётной записи нужен пароль для входа."
 
 #: templates/_settings_tabs/account.html:202
 msgid "Current Password"
@@ -9417,13 +9371,15 @@ msgstr ""
 
 #: templates/_settings_tabs/system.html:182
 msgid "Shut Down Server"
-msgstr ""
+msgstr "Выключить сервер"
 
 #: templates/_settings_tabs/system.html:185
 msgid ""
 "Restart the Flask server (useful after configuration changes), or shut it"
 " down completely"
 msgstr ""
+"Перезапустить сервер Flask (полезно после изменения настроек) или "
+"полностью выключить его"
 
 #: templates/_settings_tabs/system.html:444
 msgid "Support Development"

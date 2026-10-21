@@ -25,21 +25,20 @@ msgid ""
 "MB and a video up to %(video)s MB; upload fewer files at once. Operators "
 "can raise the total limit via RETRODB_MAX_UPLOAD_MB."
 msgstr ""
+"アップロードが上限の %(total)s MB を超えています。画像は1枚あたり最大 %(image)s MB、動画は最大 %(video)s "
+"MB です。一度にアップロードするファイルを減らしてください。管理者は RETRODB_MAX_UPLOAD_MB で上限を引き上げられます。"
 
 #: app.py:703
-#, fuzzy
 msgid "Too many requests. Please wait and try again."
-msgstr "試行回数が多すぎます。しばらくしてから再度お試しください。"
+msgstr "リクエストが多すぎます。しばらく待ってから再試行してください。"
 
 #: app.py:812
-#, fuzzy
 msgid "Setup required"
-msgstr "タイトルが必要です"
+msgstr "セットアップが必要です"
 
 #: app.py:833
-#, fuzzy
 msgid "Password change required"
-msgstr "パスワードの変更は不要です"
+msgstr "パスワードの変更が必要です"
 
 #: app.py:1656 routes/auth.py:202 routes/auth.py:251 routes/auth.py:436
 #: routes/auth.py:481 templates/force_change_password.html:49
@@ -103,7 +102,7 @@ msgstr "%(name)sの同期はすでに実行中です"
 #: routes/achievements.py:367 routes/platform_import.py:326
 #: routes/platform_import.py:693
 msgid "That job belongs to another user"
-msgstr ""
+msgstr "そのジョブは別のユーザーのものです"
 
 #: routes/achievements.py:457
 msgid "No RetroAchievements found for this game"
@@ -166,14 +165,13 @@ msgid "Invalid locale"
 msgstr "ロケールが無効です"
 
 #: routes/auth.py:385
-#, fuzzy
 msgid "Invalid theme"
-msgstr "パスが無効です"
+msgstr "無効なテーマです"
 
 #: routes/auth.py:391
-#, fuzzy, python-format
+#, python-format
 msgid "Invalid RPCS3 trophy folder: %(reason)s"
-msgstr "API キーが無効です: %(reason)s"
+msgstr "無効な RPCS3 トロフィーフォルダーです: %(reason)s"
 
 #: routes/auth.py:424
 msgid "Too many attempts. Please try again later."
@@ -405,31 +403,28 @@ msgid "system_id and emulator_id required"
 msgstr "system_idとemulator_idが必要です"
 
 #: routes/emulators.py:224
-#, fuzzy
 msgid "Send at least one setting."
-msgstr "データ設定"
+msgstr "設定を1つ以上送信してください。"
 
 #: routes/emulators.py:230
 msgid "RetroDB does not manage that setting for this emulator."
-msgstr ""
+msgstr "RetroDB はこのエミュレーターのその設定を管理していません。"
 
 #: routes/emulators.py:232
 msgid "Fullscreen is set per system, in Settings > Emulators."
-msgstr ""
+msgstr "フルスクリーンはシステムごとに 設定 > エミュレーター で設定します。"
 
 #: routes/emulators.py:234
-#, fuzzy
 msgid "That value is not one of the choices."
-msgstr "このゲームにはタグが割り当てられていません"
+msgstr "その値は選択肢にありません。"
 
 #: routes/emulators.py:264 services/standalone_settings.py:258
 msgid "RetroDB manages per-game settings for DuckStation, PCSX2 and RPCS3 only."
-msgstr ""
+msgstr "RetroDB がゲームごとの設定を管理するのは DuckStation、PCSX2、RPCS3 のみです。"
 
 #: routes/emulators.py:277 routes/emulators.py:288
-#, fuzzy
 msgid "Emulator not found"
-msgstr "プラットフォームが見つかりません"
+msgstr "エミュレーターが見つかりません"
 
 #: routes/games.py:239
 msgid "No IDs provided"
@@ -442,7 +437,7 @@ msgstr "有効なIDを1〜50件指定してください"
 #: routes/games.py:501
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
-msgstr ""
+msgstr "動画は保存されませんでした: %(mb)s MB 以下の MP4、WebM、OGG ファイルである必要があります。"
 
 #: routes/games.py:627
 msgid "Game not found after update"
@@ -530,7 +525,7 @@ msgstr "保存先が設定済みのROMルートの外にあります"
 #: routes/games_media.py:106 routes/reports.py:725
 #, python-format
 msgid "Cannot rename: %(reason)s"
-msgstr ""
+msgstr "名前を変更できません: %(reason)s"
 
 #: routes/games_media.py:109 routes/reports.py:729 routes/reports.py:896
 msgid "A file with that name already exists"
@@ -571,13 +566,12 @@ msgid "failed to kill prior instance: %(err)s"
 msgstr "以前のインスタンスの終了に失敗しました: %(err)s"
 
 #: routes/launch.py:184
-#, fuzzy
 msgid "That game is no longer running"
-msgstr "このメタデータの適用はすでに実行されていません。"
+msgstr "そのゲームはもう実行されていません"
 
 #: routes/launch.py:186
 msgid "This game has no disk list to swap through"
-msgstr ""
+msgstr "このゲームには切り替えるディスクリストがありません"
 
 #: routes/launch.py:191
 #, python-format
@@ -585,15 +579,16 @@ msgid ""
 "RetroArch is not accepting commands. In RetroArch, turn on Settings > "
 "Network > Network Commands (port %(port)s)."
 msgstr ""
+"RetroArch がコマンドを受け付けていません。RetroArch で Settings > Network > Network "
+"Commands（ポート %(port)s）をオンにしてください。"
 
 #: routes/launch.py:194
 msgid "Next disk inserted"
-msgstr ""
+msgstr "次のディスクを挿入しました"
 
 #: routes/maintenance.py:260
-#, fuzzy
 msgid "Unknown image type"
-msgstr "処理する画像がありません"
+msgstr "不明な画像タイプです"
 
 #: routes/museum.py:385 routes/scraper.py:770
 msgid "No AI provider configured"
@@ -621,9 +616,8 @@ msgid "No controllers found"
 msgstr "コントローラーが見つかりません"
 
 #: routes/museum.py:620
-#, fuzzy
 msgid "An image fetch is already running"
-msgstr "このゲームはすでに実行中です"
+msgstr "画像の取得はすでに実行中です"
 
 #: routes/museum.py:656
 msgid "No image file provided"
@@ -810,7 +804,7 @@ msgstr "API応答の解析中にエラーが発生しました"
 #: routes/scraper.py:696
 #, python-format
 msgid "ScreenScraper answered HTTP %(code)s"
-msgstr ""
+msgstr "ScreenScraper が HTTP %(code)s を返しました"
 
 #: routes/scraper.py:711
 msgid "No RAWG API key configured"
@@ -982,15 +976,15 @@ msgstr "chdmanが見つかりません"
 #: routes/tools.py:944
 #, python-format
 msgid "Unknown duplicate method: %(method)s"
-msgstr ""
+msgstr "不明な重複検出方法です: %(method)s"
 
 #: routes/tools.py:1152
 msgid "These scan results have expired. Scan again, then delete."
-msgstr ""
+msgstr "このスキャン結果は期限切れです。再度スキャンしてから削除してください。"
 
 #: routes/tools.py:1157
 msgid "Keep at least one copy of each game. Nothing was deleted."
-msgstr ""
+msgstr "各ゲームのコピーを少なくとも1つ残してください。何も削除されませんでした。"
 
 #: routes/trophies.py:387
 msgid ""
@@ -1049,47 +1043,43 @@ msgstr "NPSSOトークンが指定されていません"
 
 #: routes/trophies.py:1834
 msgid "Could not connect to PSN"
-msgstr ""
+msgstr "PSN に接続できませんでした"
 
 #: routes/trophies.py:1861
 msgid "PSN NPSSO not configured"
 msgstr "PSN NPSSOが設定されていません"
 
 #: routes/versions.py:23
-#, fuzzy
 msgid "Pick at least two games."
-msgstr "ランダムにゲームを選択"
+msgstr "ゲームを2つ以上選んでください。"
 
 #: routes/versions.py:24
 msgid "One of those games no longer exists."
-msgstr ""
+msgstr "それらのゲームの1つがもう存在しません。"
 
 #: routes/versions.py:25
-#, fuzzy
 msgid "Versions must all be on the same system."
-msgstr "ボーナスディスクと親ゲームは同じシステム内にある必要があります"
+msgstr "バージョンはすべて同じシステムである必要があります。"
 
 #: routes/versions.py:26
 msgid "A bonus disc cannot be a version of a game."
-msgstr ""
+msgstr "ボーナスディスクはゲームのバージョンにできません。"
 
 #: routes/versions.py:28
-#, fuzzy
 msgid "Those games cannot be linked."
-msgstr "名前を空にすることはできません"
+msgstr "それらのゲームはリンクできません。"
 
 #: routes/versions.py:81 routes/versions.py:96
-#, fuzzy
 msgid "That game is not linked to other versions."
-msgstr "このゲームにはタグが割り当てられていません"
+msgstr "そのゲームは他のバージョンにリンクされていません。"
 
 #: routes/versions.py:92
 msgid "Set up an AI provider in Settings > Scraping first."
-msgstr ""
+msgstr "先に 設定 > 取得 で AI プロバイダーを設定してください。"
 
 #: routes/versions.py:98
 msgid "The AI did not give a usable answer. Try again later."
-msgstr ""
+msgstr "AI から有効な回答が得られませんでした。後でもう一度お試しください。"
 
 #: routes/xbox_achievements.py:126
 msgid "Xbox credentials not configured"
@@ -1454,9 +1444,8 @@ msgid "(Paused)"
 msgstr "（一時停止中）"
 
 #: services/js_i18n_strings.py:421
-#, fuzzy
 msgid "(none)"
-msgstr "なし"
+msgstr "（なし）"
 
 #: services/js_i18n_strings.py:422 templates/_bulk_edit_modal.html:25
 #: templates/_bulk_edit_modal.html:38 templates/_bulk_edit_modal.html:83
@@ -1511,7 +1500,7 @@ msgstr "すでに同期中"
 #: services/js_i18n_strings.py:432
 #, python-brace-format
 msgid "Applied when you press Play, in the {emulator} settings for this game."
-msgstr ""
+msgstr "プレイを押したときに、このゲームの {emulator} 設定に適用されます。"
 
 #: services/js_i18n_strings.py:433 templates/_bulk_edit_modal.html:193
 msgid "Apply Changes"
@@ -1522,9 +1511,9 @@ msgid "Apply Normalization"
 msgstr "正規化を適用"
 
 #: services/js_i18n_strings.py:435
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Apply failed: {error}"
-msgstr "バックアップに失敗しました: {error}"
+msgstr "適用に失敗しました: {error}"
 
 #: services/js_i18n_strings.py:436
 #, python-brace-format
@@ -1550,9 +1539,8 @@ msgid "Applying..."
 msgstr "適用しています..."
 
 #: services/js_i18n_strings.py:441
-#, fuzzy
 msgid "Applying…"
-msgstr "適用しています..."
+msgstr "適用しています…"
 
 #: services/js_i18n_strings.py:442
 msgid ""
@@ -1589,7 +1577,7 @@ msgstr "サーバーを再起動してもよろしいですか？"
 msgid ""
 "Are you sure you want to shut down the server? You will need to start it "
 "again manually."
-msgstr ""
+msgstr "サーバーをシャットダウンしてもよろしいですか？再度手動で起動する必要があります。"
 
 #: services/js_i18n_strings.py:448 templates/settings.html:67
 msgid "Are you sure?"
@@ -1601,12 +1589,11 @@ msgstr "AI に問い合わせています…"
 
 #: services/js_i18n_strings.py:450
 msgid "Asking the AI. This can take up to a minute."
-msgstr ""
+msgstr "AI に問い合わせています。最大1分ほどかかることがあります。"
 
 #: services/js_i18n_strings.py:451
-#, fuzzy
 msgid "Aspect ratio"
-msgstr "レーティングを選択"
+msgstr "アスペクト比"
 
 #: services/js_i18n_strings.py:452
 msgid "BIOS"
@@ -1657,9 +1644,8 @@ msgid "Cancel Bulk Scrape"
 msgstr "一括スクレイピングをキャンセル"
 
 #: services/js_i18n_strings.py:461
-#, fuzzy
 msgid "Cancel failed"
-msgstr "キャンセルしました"
+msgstr "キャンセルに失敗しました"
 
 #: services/js_i18n_strings.py:462
 msgid "Cancel request failed"
@@ -1749,9 +1735,8 @@ msgid "Close keyboard shortcuts"
 msgstr "キーボードショートカットを閉じる"
 
 #: services/js_i18n_strings.py:480
-#, fuzzy
 msgid "Close modal / cancel"
-msgstr "ユーザーモーダルを閉じる"
+msgstr "モーダルを閉じる / キャンセル"
 
 #: services/js_i18n_strings.py:481 templates/dashboard.html:155
 msgid "Complete"
@@ -1819,43 +1804,39 @@ msgstr "メタデータを適用できませんでした。"
 
 #: services/js_i18n_strings.py:494
 msgid "Could not link these versions."
-msgstr ""
+msgstr "これらのバージョンをリンクできませんでした。"
 
 #: services/js_i18n_strings.py:495
 msgid "Could not load suggestions."
-msgstr ""
+msgstr "候補を読み込めませんでした。"
 
 #: services/js_i18n_strings.py:496
 msgid "Could not reconnect to server. Please refresh manually."
 msgstr "サーバーに再接続できませんでした。手動で更新してください。"
 
 #: services/js_i18n_strings.py:497
-#, fuzzy
 msgid "Could not save that setting."
-msgstr "メタデータを適用できませんでした。"
+msgstr "その設定を保存できませんでした。"
 
 #: services/js_i18n_strings.py:498
-#, fuzzy
 msgid "Could not save that."
-msgstr "メタデータを適用できませんでした。"
+msgstr "保存できませんでした。"
 
 #: services/js_i18n_strings.py:499
 msgid "Could not stop the running instance."
-msgstr ""
+msgstr "実行中のインスタンスを停止できませんでした。"
 
 #: services/js_i18n_strings.py:500
 msgid "Could not unlink this version."
-msgstr ""
+msgstr "このバージョンのリンクを解除できませんでした。"
 
 #: services/js_i18n_strings.py:501
-#, fuzzy
 msgid "Could not write the summary."
-msgstr "メタデータを適用できませんでした。"
+msgstr "概要を作成できませんでした。"
 
 #: services/js_i18n_strings.py:502
-#, fuzzy
 msgid "Currently set"
-msgstr "現在の値"
+msgstr "現在の設定"
 
 #: services/js_i18n_strings.py:503
 msgid "Default"
@@ -1871,19 +1852,17 @@ msgid "Delete Log File"
 msgstr "ログファイルを削除"
 
 #: services/js_i18n_strings.py:506
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Detect failed: {error}"
-msgstr "復元に失敗しました: {error}"
+msgstr "検出に失敗しました: {error}"
 
 #: services/js_i18n_strings.py:507
-#, fuzzy
 msgid "Detected path"
-msgstr "除外パス"
+msgstr "検出されたパス"
 
 #: services/js_i18n_strings.py:508
-#, fuzzy
 msgid "Detecting…"
-msgstr "設定"
+msgstr "検出しています…"
 
 #: services/js_i18n_strings.py:509 templates/_bulk_scrape_modal.html:69
 #: templates/psn_trophies.html:247 templates/psn_trophies.html:307
@@ -1926,7 +1905,6 @@ msgid "Edit"
 msgstr "編集"
 
 #: services/js_i18n_strings.py:518
-#, fuzzy
 msgid "Edit game"
 msgstr "ゲームを編集"
 
@@ -1936,9 +1914,8 @@ msgid "Edit: {title}"
 msgstr "編集: {title}"
 
 #: services/js_i18n_strings.py:520
-#, fuzzy
 msgid "Emulator"
-msgstr "シミュレーション"
+msgstr "エミュレーター"
 
 #: services/js_i18n_strings.py:521
 msgid "Enter one folder path."
@@ -2092,30 +2069,27 @@ msgstr "{source} から取得しています…"
 #: services/js_i18n_strings.py:557
 #, python-brace-format
 msgid "Fetching images: {done} of {total}"
-msgstr ""
+msgstr "画像を取得中: {done} / {total}"
 
 #: services/js_i18n_strings.py:558
 msgid "Focus search box"
-msgstr ""
+msgstr "検索ボックスにフォーカス"
 
 #: services/js_i18n_strings.py:559 templates/logs.html:743
 msgid "From"
 msgstr "開始"
 
 #: services/js_i18n_strings.py:560
-#, fuzzy
 msgid "From the system setting"
-msgstr "トロフィー設定"
+msgstr "システム設定から"
 
 #: services/js_i18n_strings.py:561
-#, fuzzy
 msgid "Fullscreen"
-msgstr "完全再取得"
+msgstr "フルスクリーン"
 
 #: services/js_i18n_strings.py:562
-#, fuzzy
 msgid "Game Page"
-msgstr "ゲーム名"
+msgstr "ゲームページ"
 
 #: services/js_i18n_strings.py:563
 msgid "Game details updated successfully."
@@ -2167,38 +2141,32 @@ msgid "Generation request failed"
 msgstr "生成要求に失敗しました"
 
 #: services/js_i18n_strings.py:573
-#, fuzzy
 msgid "Go to Analytics"
-msgstr "分析"
+msgstr "分析へ移動"
 
 #: services/js_i18n_strings.py:574
-#, fuzzy
 msgid "Go to Changelog"
-msgstr "変更履歴"
+msgstr "変更履歴へ移動"
 
 #: services/js_i18n_strings.py:575
-#, fuzzy
 msgid "Go to Dashboard"
-msgstr "ダッシュボード"
+msgstr "ダッシュボードへ移動"
 
 #: services/js_i18n_strings.py:576
 msgid "Go to Help"
-msgstr ""
+msgstr "ヘルプへ移動"
 
 #: services/js_i18n_strings.py:577
-#, fuzzy
 msgid "Go to Library"
-msgstr "Xboxライブラリ"
+msgstr "ライブラリへ移動"
 
 #: services/js_i18n_strings.py:578
-#, fuzzy
 msgid "Go to Settings"
-msgstr "ツール設定"
+msgstr "設定へ移動"
 
 #: services/js_i18n_strings.py:579
-#, fuzzy
 msgid "Go to Systems"
-msgstr "システム総数"
+msgstr "システムへ移動"
 
 #: services/js_i18n_strings.py:580
 msgid "HLTB data cleared"
@@ -2226,9 +2194,8 @@ msgid "Image Resize"
 msgstr "画像リサイズ"
 
 #: services/js_i18n_strings.py:586
-#, fuzzy
 msgid "Image fetch cancelled."
-msgstr "生成をキャンセルしました"
+msgstr "画像の取得をキャンセルしました。"
 
 #: services/js_i18n_strings.py:587
 msgid "Image must be under 10MB"
@@ -2262,26 +2229,25 @@ msgstr "キーボードショートカット"
 
 #: services/js_i18n_strings.py:593
 msgid "Kill"
-msgstr ""
+msgstr "強制終了"
 
 #: services/js_i18n_strings.py:594
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Launch failed: {error}"
-msgstr "バックアップに失敗しました: {error}"
+msgstr "起動に失敗しました: {error}"
 
 #: services/js_i18n_strings.py:595
 #, python-brace-format
 msgid "Launched (pid {pid})"
-msgstr ""
+msgstr "起動しました（pid {pid}）"
 
 #: services/js_i18n_strings.py:596
 msgid "Launched (replaced previous instance)"
-msgstr ""
+msgstr "起動しました（以前のインスタンスを置き換えました）"
 
 #: services/js_i18n_strings.py:597
-#, fuzzy
 msgid "Launching…"
-msgstr "起動"
+msgstr "起動しています…"
 
 #: services/js_i18n_strings.py:598
 #, python-brace-format
@@ -2289,14 +2255,12 @@ msgid "Library scan complete! Found {n} new games."
 msgstr "ライブラリのスキャンが完了しました！{n}件の新しいゲームが見つかりました。"
 
 #: services/js_i18n_strings.py:599
-#, fuzzy
 msgid "Link"
-msgstr "リンク解除"
+msgstr "リンク"
 
 #: services/js_i18n_strings.py:600
-#, fuzzy
 msgid "Link ticked games"
-msgstr "RetroDBゲームにリンク"
+msgstr "チェックしたゲームをリンク"
 
 #: services/js_i18n_strings.py:601
 msgid "Loading log file..."
@@ -2308,7 +2272,7 @@ msgstr "ログファイルを削除しました"
 
 #: services/js_i18n_strings.py:603
 msgid "Looking for versions…"
-msgstr ""
+msgstr "バージョンを探しています…"
 
 #: services/js_i18n_strings.py:604 templates/achievement_game.html:168
 #: templates/achievement_game.html:197 templates/achievement_game.html:207
@@ -2338,7 +2302,7 @@ msgstr "メインストーリー"
 
 #: services/js_i18n_strings.py:606
 msgid "Marked as not versions."
-msgstr ""
+msgstr "バージョンではないとマークしました。"
 
 #: services/js_i18n_strings.py:607
 msgid "Match found - please confirm to save"
@@ -2379,9 +2343,8 @@ msgid "NOT"
 msgstr "NOT"
 
 #: services/js_i18n_strings.py:615
-#, fuzzy
 msgid "Navigation"
-msgstr "メインナビゲーション"
+msgstr "ナビゲーション"
 
 #: services/js_i18n_strings.py:616
 msgid "Network error"
@@ -2393,12 +2356,11 @@ msgstr "一括取得の開始中にネットワークエラーが発生しまし
 
 #: services/js_i18n_strings.py:618
 msgid "Next disk"
-msgstr ""
+msgstr "次のディスク"
 
 #: services/js_i18n_strings.py:619
-#, fuzzy
 msgid "Next disk failed"
-msgstr "生成に失敗しました"
+msgstr "次のディスクへの切り替えに失敗しました"
 
 #: services/js_i18n_strings.py:620 templates/_bulk_edit_modal.html:171
 #: templates/_modals/edit_modal.html:139 templates/game_detail.html:652
@@ -2434,11 +2396,11 @@ msgstr "説明はありません。"
 
 #: services/js_i18n_strings.py:627
 msgid "No emulator AppImages found in the scan paths."
-msgstr ""
+msgstr "スキャンパスにエミュレーターの AppImage が見つかりません。"
 
 #: services/js_i18n_strings.py:628
 msgid "No emulators registered."
-msgstr ""
+msgstr "登録されたエミュレーターはありません。"
 
 #: services/js_i18n_strings.py:629
 msgid "No folders yet."
@@ -2458,7 +2420,7 @@ msgstr "割り当てはまだありません。上でエミュレーターフォ
 
 #: services/js_i18n_strings.py:633
 msgid "No matching games on this system."
-msgstr ""
+msgstr "このシステムに一致するゲームはありません。"
 
 #: services/js_i18n_strings.py:634
 msgid "No missing ROM files found."
@@ -2490,7 +2452,7 @@ msgstr "現在のフィルターに一致するセッションがありません
 
 #: services/js_i18n_strings.py:641
 msgid "No suggestions. Run Backfill Alternate Titles in Maintenance to find more."
-msgstr ""
+msgstr "候補はありません。メンテナンスで「別名を補充」を実行すると、さらに見つかります。"
 
 #: services/js_i18n_strings.py:642
 #, python-brace-format
@@ -2498,9 +2460,8 @@ msgid "Normalization applied: {games} games updated, {rules} rules saved"
 msgstr "正規化を適用しました: {games}件のゲームを更新、{rules}件のルールを保存"
 
 #: services/js_i18n_strings.py:643
-#, fuzzy
 msgid "Not versions"
-msgstr "バージョン"
+msgstr "バージョンではない"
 
 #: services/js_i18n_strings.py:644 templates/base.html:1354
 msgid "Now playing"
@@ -2519,9 +2480,8 @@ msgid "Operation failed"
 msgstr "操作に失敗しました"
 
 #: services/js_i18n_strings.py:648
-#, fuzzy
 msgid "Other"
-msgstr "シューター"
+msgstr "その他"
 
 #: services/js_i18n_strings.py:649
 msgid "PSN Imports"
@@ -2628,9 +2588,8 @@ msgid "Refreshing RA for {system}..."
 msgstr "{system}のRAを更新しています..."
 
 #: services/js_i18n_strings.py:672
-#, fuzzy
 msgid "Regional name matches"
-msgstr "地域の不一致"
+msgstr "地域名の一致"
 
 #: services/js_i18n_strings.py:673 templates/compare_games.html:24
 #: templates/compare_games.html:40
@@ -2685,9 +2644,8 @@ msgid "Reports"
 msgstr "レポート"
 
 #: services/js_i18n_strings.py:684
-#, fuzzy
 msgid "Resolution scale"
-msgstr "解像度"
+msgstr "解像度スケール"
 
 #: services/js_i18n_strings.py:685
 msgid "Restarting server..."
@@ -2698,9 +2656,8 @@ msgid "Resume"
 msgstr "再開"
 
 #: services/js_i18n_strings.py:687
-#, fuzzy
 msgid "RetroDB default"
-msgstr "既定"
+msgstr "RetroDB の既定値"
 
 #: services/js_i18n_strings.py:688
 msgid "Running"
@@ -2711,40 +2668,37 @@ msgid "Running..."
 msgstr "実行中..."
 
 #: services/js_i18n_strings.py:690
-#, fuzzy
 msgid "Same IGDB game"
-msgstr "すべてスクレイピング"
+msgstr "同じ IGDB ゲーム"
 
 #: services/js_i18n_strings.py:691
-#, fuzzy
 msgid "Same ScreenScraper game"
-msgstr "すべてスクレイピング"
+msgstr "同じ ScreenScraper ゲーム"
 
 #: services/js_i18n_strings.py:692
 msgid "Same title, different region"
-msgstr ""
+msgstr "同じタイトル、異なる地域"
 
 #: services/js_i18n_strings.py:693
 msgid "Save Failed"
 msgstr "保存に失敗しました"
 
 #: services/js_i18n_strings.py:694
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Save failed: {error}"
-msgstr "復元に失敗しました: {error}"
+msgstr "保存に失敗しました: {error}"
 
 #: services/js_i18n_strings.py:695
 msgid "Saved"
 msgstr "保存しました"
 
 #: services/js_i18n_strings.py:696
-#, fuzzy
 msgid "Saved."
-msgstr "保存しました"
+msgstr "保存しました。"
 
 #: services/js_i18n_strings.py:697
 msgid "Saved. It applies the next time you press Play."
-msgstr ""
+msgstr "保存しました。次にプレイを押したときに適用されます。"
 
 #: services/js_i18n_strings.py:698
 msgid "Saving to the database…"
@@ -2755,9 +2709,8 @@ msgid "Saving..."
 msgstr "保存しています..."
 
 #: services/js_i18n_strings.py:700
-#, fuzzy
 msgid "Saving…"
-msgstr "保存しています..."
+msgstr "保存しています…"
 
 #: services/js_i18n_strings.py:701
 #, python-brace-format
@@ -2765,23 +2718,21 @@ msgid "Scan failed (HTTP {status})"
 msgstr "スキャンに失敗しました（HTTP {status}）"
 
 #: services/js_i18n_strings.py:702
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Scan failed: {error}"
-msgstr "バックアップに失敗しました: {error}"
+msgstr "スキャンに失敗しました: {error}"
 
 #: services/js_i18n_strings.py:703 templates/multi_disc_organizer.html:204
 msgid "Scanning..."
 msgstr "スキャンしています..."
 
 #: services/js_i18n_strings.py:704
-#, fuzzy
 msgid "Scanning…"
-msgstr "スキャンしています..."
+msgstr "スキャンしています…"
 
 #: services/js_i18n_strings.py:705
-#, fuzzy
 msgid "Scrape game"
-msgstr "すべてスクレイピング"
+msgstr "ゲームを取得"
 
 #: services/js_i18n_strings.py:706
 #, python-brace-format
@@ -2805,9 +2756,8 @@ msgid "Search"
 msgstr "検索"
 
 #: services/js_i18n_strings.py:710
-#, fuzzy
 msgid "Search failed."
-msgstr "ファイル名を検索..."
+msgstr "検索に失敗しました。"
 
 #: services/js_i18n_strings.py:711
 msgid "Searching & removing background..."
@@ -2880,20 +2830,19 @@ msgstr "サーバーが正常に再起動しました！"
 
 #: services/js_i18n_strings.py:727
 msgid "Server stopped. You can close this tab."
-msgstr ""
+msgstr "サーバーを停止しました。このタブは閉じてかまいません。"
 
 #: services/js_i18n_strings.py:728
-#, fuzzy
 msgid "Set for this game"
-msgstr "このゲームのHLTBデータを消去しますか？"
+msgstr "このゲームで設定"
 
 #: services/js_i18n_strings.py:729
 msgid "Set inside the emulator; RetroDB leaves it alone"
-msgstr ""
+msgstr "エミュレーター内で設定します。RetroDB は変更しません"
 
 #: services/js_i18n_strings.py:730
 msgid "Set per system, in Settings > Emulators"
-msgstr ""
+msgstr "システムごとに 設定 > エミュレーター で設定"
 
 #: services/js_i18n_strings.py:731 templates/_macros/nav_tabs.html:43
 #: templates/base.html:156 templates/rom_tools_hub.html:119
@@ -2907,18 +2856,16 @@ msgid "Show Bonus"
 msgstr "ボーナスを表示"
 
 #: services/js_i18n_strings.py:733
-#, fuzzy
 msgid "Show keyboard shortcuts"
-msgstr "キーボードショートカット"
+msgstr "キーボードショートカットを表示"
 
 #: services/js_i18n_strings.py:734
 msgid "Showing Bonus Discs"
 msgstr "ボーナスディスクを表示中"
 
 #: services/js_i18n_strings.py:735
-#, fuzzy
 msgid "Shutting down server..."
-msgstr "サーバーを再起動しています..."
+msgstr "サーバーをシャットダウンしています..."
 
 #: services/js_i18n_strings.py:736 templates/_modals/edit_modal.html:46
 #: templates/base.html:1052
@@ -2943,9 +2890,8 @@ msgid "Successfully updated {count} games"
 msgstr "{count}件のゲームを正常に更新しました"
 
 #: services/js_i18n_strings.py:741
-#, fuzzy
 msgid "Summary written."
-msgstr "概要"
+msgstr "概要を作成しました。"
 
 #: services/js_i18n_strings.py:742
 msgid "Sync In Progress"
@@ -3006,7 +2952,7 @@ msgstr "システム"
 
 #: services/js_i18n_strings.py:752
 msgid "This game is already running.  Kill the existing process and relaunch?"
-msgstr ""
+msgstr "このゲームはすでに実行中です。既存のプロセスを終了して再起動しますか？"
 
 #: services/js_i18n_strings.py:753
 msgid "This system is already being synced."
@@ -3063,9 +3009,8 @@ msgid ""
 msgstr "設定されたAIプロバイダーを使用して、すべてのシステムの歴史とトップゲームを生成します。数分かかり、APIクレジットを消費する場合があります。続行しますか？"
 
 #: services/js_i18n_strings.py:762
-#, fuzzy
 msgid "Tick at least two games."
-msgstr "ランダムにゲームを選択"
+msgstr "ゲームを2つ以上チェックしてください。"
 
 #: services/js_i18n_strings.py:763 templates/logs.html:745
 msgid "To"
@@ -3138,31 +3083,27 @@ msgid "Uploading…"
 msgstr "アップロードしています…"
 
 #: services/js_i18n_strings.py:778
-#, fuzzy
 msgid "Use the system setting"
-msgstr "パス設定を保存"
+msgstr "システム設定を使用"
 
 #: services/js_i18n_strings.py:779
 #, python-brace-format
 msgid ""
 "Used for every {system} game unless the game sets its own. Applied when "
 "you press Play."
-msgstr ""
+msgstr "ゲーム側で独自に設定しない限り、すべての {system} ゲームに使用されます。プレイを押したときに適用されます。"
 
 #: services/js_i18n_strings.py:780
-#, fuzzy
 msgid "Version unlinked."
-msgstr "アクセスが拒否されました"
+msgstr "バージョンのリンクを解除しました。"
 
 #: services/js_i18n_strings.py:781
-#, fuzzy
 msgid "Versions linked."
-msgstr "バージョン"
+msgstr "バージョンをリンクしました。"
 
 #: services/js_i18n_strings.py:782
-#, fuzzy
 msgid "Will change?"
-msgstr "変更"
+msgstr "変更される？"
 
 #: services/js_i18n_strings.py:783
 msgid "Works"
@@ -3170,7 +3111,7 @@ msgstr "正常"
 
 #: services/js_i18n_strings.py:784 templates/game_detail.html:739
 msgid "Write again with AI"
-msgstr ""
+msgstr "AI で書き直す"
 
 #: services/js_i18n_strings.py:785
 msgid "Xbox Imports"
@@ -3212,14 +3153,14 @@ msgid "{count} Achievements"
 msgstr "{count}件の実績"
 
 #: services/js_i18n_strings.py:793
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{count} regional versions"
-msgstr "現在: v%(version)s"
+msgstr "{count} 件の地域版"
 
 #: services/js_i18n_strings.py:794
 #, python-brace-format
 msgid "{count} suggested groups. Untick any game that does not belong, then link."
-msgstr ""
+msgstr "{count} 件の候補グループ。属さないゲームのチェックを外してから、リンクしてください。"
 
 #: services/js_i18n_strings.py:795
 #, python-brace-format
@@ -3277,9 +3218,9 @@ msgid "{system} has been added to the sync queue."
 msgstr "{system}を同期キューに追加しました。"
 
 #: services/js_i18n_strings.py:806
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{title} ({count} versions)"
-msgstr "変換開始"
+msgstr "{title}（{count} バージョン）"
 
 #: services/js_i18n_strings.py:807
 msgid "⏳ Searching..."
@@ -3332,7 +3273,7 @@ msgstr "🗑️ メタデータをリセット"
 
 #: services/js_i18n_strings.py:819
 msgid "🛑 Shut Down Server"
-msgstr ""
+msgstr "🛑 サーバーをシャットダウン"
 
 #: services/js_i18n_strings.py:820
 msgid "🧹 Clean Missing ROMs"
@@ -3342,33 +3283,32 @@ msgstr "🧹 欠落したROMをクリーンアップ"
 msgid ""
 "RetroDB could not read this disc's serial, so it cannot name the "
 "emulator's per-game settings file."
-msgstr ""
+msgstr "RetroDB はこのディスクのシリアルを読み取れなかったため、エミュレーターのゲームごとの設定ファイル名を決められません。"
 
 #: services/standalone_settings.py:215
 msgid ""
 "PCSX2 has two or more settings files for this game; remove the ones you "
 "do not use."
-msgstr ""
+msgstr "PCSX2 にこのゲームの設定ファイルが2つ以上あります。使用しないものを削除してください。"
 
 #: services/standalone_settings.py:223
 msgid ""
 "RetroDB could not read this disc's boot file, so it cannot name PCSX2's "
 "per-game settings file."
-msgstr ""
+msgstr "RetroDB はこのディスクのブートファイルを読み取れなかったため、PCSX2 のゲームごとの設定ファイル名を決められません。"
 
 #: services/standalone_settings.py:231
 msgid "Settings path outside the data folder."
-msgstr ""
+msgstr "設定パスがデータフォルダーの外にあります。"
 
 #: services/standalone_settings.py:253
-#, fuzzy
 msgid "No emulator is set up for this system."
-msgstr "このシステムの仕様はありません。"
+msgstr "このシステムにはエミュレーターが設定されていません。"
 
 #: services/standalone_settings.py:268
 #, python-format
 msgid "Run %(name)s once so it creates its settings, then play again."
-msgstr ""
+msgstr "%(name)s を一度起動して設定を作成させてから、もう一度プレイしてください。"
 
 #: templates/_bulk_edit_modal.html:7
 msgid "Bulk Edit"
@@ -3832,7 +3772,7 @@ msgstr "全システムのゲーム"
 #: templates/all_games.html:17 templates/system_games.html:24
 #, python-format
 msgid "(%(roms)s ROMs)"
-msgstr ""
+msgstr "（%(roms)s ROM）"
 
 #: templates/all_games.html:19 templates/system_games.html:26
 msgid "missing metadata"
@@ -4579,11 +4519,11 @@ msgstr "開始を待っています..."
 
 #: templates/archive_scanner.html:1658
 msgid "Have the original archive moved to the staging folder"
-msgstr ""
+msgstr "元のアーカイブをステージングフォルダーへ移動する"
 
 #: templates/archive_scanner.html:1761
 msgid "Original archives moved to:"
-msgstr ""
+msgstr "元のアーカイブの移動先:"
 
 #: templates/base.html:40
 msgid "Skip to main content"
@@ -4703,28 +4643,24 @@ msgid "Last Updated"
 msgstr "最終更新"
 
 #: templates/base.html:219
-#, fuzzy
 msgid "Disclaimer"
 msgstr "免責事項"
 
 #: templates/base.html:230
 msgid "Support RetroDB's development on GitHub Sponsors"
-msgstr ""
+msgstr "GitHub Sponsors で RetroDB の開発を支援"
 
 #: templates/base.html:231
-#, fuzzy
 msgid "Sponsor RetroDB"
-msgstr "スポンサー"
+msgstr "RetroDB のスポンサーになる"
 
 #: templates/base.html:233
-#, fuzzy
 msgid "Support RetroDB's development on Patreon"
-msgstr "開発を支援する"
+msgstr "Patreon で RetroDB の開発を支援"
 
 #: templates/base.html:234
-#, fuzzy
 msgid "Support RetroDB"
-msgstr "Patreon で支援"
+msgstr "RetroDB を支援"
 
 #: templates/base.html:249
 msgid "Toggle menu"
@@ -5135,21 +5071,19 @@ msgstr "L - 一般"
 #: templates/_modals/edit_modal.html:325
 #: templates/_settings_tabs/library.html:160 templates/base.html:1294
 msgid "CADPA (China)"
-msgstr ""
+msgstr "CADPA（中国）"
 
 #: templates/_modals/edit_modal.html:328 templates/base.html:1297
-#, fuzzy
 msgid "8+ - Ages 8 and up"
-msgstr "Z - 18歳以上"
+msgstr "8+ - 8歳以上"
 
 #: templates/_modals/edit_modal.html:329 templates/base.html:1298
-#, fuzzy
 msgid "12+ - Ages 12 and up"
-msgstr "B - 12歳以上"
+msgstr "12+ - 12歳以上"
 
 #: templates/_modals/edit_modal.html:330 templates/base.html:1299
 msgid "16+ - Ages 16 and up"
-msgstr ""
+msgstr "16+ - 16歳以上"
 
 #: templates/_modals/edit_modal.html:339 templates/base.html:1308
 msgid "Game Description"
@@ -5478,9 +5412,8 @@ msgid "ClassInd Rating"
 msgstr "ClassIndレーティング"
 
 #: templates/compare_games.html:88
-#, fuzzy
 msgid "CADPA Rating"
-msgstr "ClassIndレーティング"
+msgstr "CADPA レーティング"
 
 #: templates/compare_games.html:90
 msgid "Playtime Estimate"
@@ -5535,7 +5468,7 @@ msgstr "設定を確認 →"
 #, python-format
 msgid "%(count)s interrupted job found"
 msgid_plural "%(count)s interrupted jobs found"
-msgstr[0] ""
+msgstr[0] "中断されたジョブが %(count)s 件見つかりました"
 
 #: templates/dashboard.html:38
 msgid "Resume All"
@@ -5626,7 +5559,7 @@ msgstr "ROMライブラリのサイズ"
 #, python-format
 msgid "%(n)s game beaten"
 msgid_plural "%(n)s games beaten"
-msgstr[0] ""
+msgstr[0] "%(n)s 本のゲームをクリア"
 
 #: templates/dashboard.html:191
 #, python-format
@@ -5642,29 +5575,24 @@ msgid "Estimated total (HLTB)"
 msgstr "推定合計（HLTB）"
 
 #: templates/dashboard.html:212
-#, fuzzy
 msgid "Quick Fixes"
-msgstr "クイック編集"
+msgstr "クイック修正"
 
 #: templates/dashboard.html:219
-#, fuzzy
 msgid "Games missing box art"
-msgstr "年欠落"
+msgstr "ボックスアートがないゲーム"
 
 #: templates/dashboard.html:227
-#, fuzzy
 msgid "Find duplicate ROMs"
-msgstr "重複グループ"
+msgstr "重複 ROM を探す"
 
 #: templates/dashboard.html:234
-#, fuzzy
 msgid "Check"
-msgstr "確認しています..."
+msgstr "確認"
 
 #: templates/dashboard.html:235
-#, fuzzy
 msgid "Broken ROM paths"
-msgstr "ROMパスが設定されていません"
+msgstr "壊れた ROM パス"
 
 #: templates/dashboard.html:250
 msgid "View All Systems →"
@@ -5752,17 +5680,17 @@ msgstr "設定済み"
 msgid ""
 "Your PlayStation Network session has expired — re-link it to keep trophy "
 "and library sync working."
-msgstr ""
+msgstr "PlayStation Network のセッションの有効期限が切れました。トロフィーとライブラリの同期を続けるには再リンクしてください。"
 
 #: templates/dashboard.html:1374
 msgid ""
 "Your PlayStation Network session expires soon — re-link it to avoid an "
 "interruption."
-msgstr ""
+msgstr "PlayStation Network のセッションの有効期限がまもなく切れます。中断を避けるため再リンクしてください。"
 
 #: templates/dashboard.html:1387
 msgid "Re-link now"
-msgstr ""
+msgstr "今すぐ再リンク"
 
 #: templates/duplicate_finder.html:176
 msgid "Careful Review Recommended"
@@ -5928,19 +5856,16 @@ msgid "Part of:"
 msgstr "所属:"
 
 #: templates/game_detail.html:74
-#, fuzzy
 msgid "Regional versions"
-msgstr "地域の選択肢"
+msgstr "地域版"
 
 #: templates/game_detail.html:75
-#, fuzzy
 msgid "Versions:"
-msgstr "バージョン"
+msgstr "バージョン:"
 
 #: templates/game_detail.html:77 templates/game_detail.html:708
-#, fuzzy
 msgid "Unknown region"
-msgstr "不明なエラー"
+msgstr "不明な地域"
 
 #: templates/game_detail.html:83
 msgid "Launch this game in the configured emulator"
@@ -6147,81 +6072,74 @@ msgid "Bonus Content"
 msgstr "ボーナスコンテンツ"
 
 #: templates/game_detail.html:678
-#, fuzzy
 msgid "Emulator settings"
-msgstr "ツール設定"
+msgstr "エミュレーター設定"
 
 #: templates/_macros/nav_tabs.html:40 templates/game_detail.html:687
 #: templates/rom_tools_hub.html:193 templates/versions_review.html:5
 #: templates/versions_review.html:80
-#, fuzzy
 msgid "Regional Versions"
-msgstr "地域の選択肢"
+msgstr "地域版"
 
 #: templates/game_detail.html:695 templates/museum_system.html:100
 msgid "Released"
 msgstr "リリース"
 
 #: templates/game_detail.html:697
-#, fuzzy
 msgid "File size"
 msgstr "ファイルサイズ"
 
 #: templates/game_detail.html:698
-#, fuzzy
 msgid "Revision"
-msgstr "地域"
+msgstr "リビジョン"
 
 #: templates/game_detail.html:699
-#, fuzzy
 msgid "Languages"
 msgstr "言語"
 
 #: templates/game_detail.html:700
-#, fuzzy
 msgid "Scores"
-msgstr "スポーツ"
+msgstr "スコア"
 
 #: templates/game_detail.html:709
 msgid "(this page)"
-msgstr ""
+msgstr "（このページ）"
 
 #: templates/game_detail.html:727
 msgid "Known differences"
-msgstr ""
+msgstr "既知の違い"
 
 #: templates/game_detail.html:727
 msgid "AI-written"
-msgstr ""
+msgstr "AI 作成"
 
 #: templates/game_detail.html:728
 msgid "Written by AI from what it knows about these releases. It can be wrong."
-msgstr ""
+msgstr "これらのリリースについて AI が知っている情報から作成されています。誤りがある可能性があります。"
 
 #: templates/game_detail.html:730
 msgid "The AI knows of no differences between these versions."
-msgstr ""
+msgstr "AI はこれらのバージョン間の違いを把握していません。"
 
 #: templates/game_detail.html:733
 msgid "No other regional versions are linked to this game."
-msgstr ""
+msgstr "このゲームにリンクされた他の地域版はありません。"
 
 #: templates/game_detail.html:738
 msgid "Unlink this version"
-msgstr ""
+msgstr "このバージョンのリンクを解除"
 
 #: templates/game_detail.html:739
 msgid "Summarise differences with AI"
-msgstr ""
+msgstr "AI で違いを要約"
 
 #: templates/game_detail.html:741
-#, fuzzy
 msgid "Link a version"
-msgstr "バージョン"
+msgstr "バージョンをリンク"
 
 #: templates/game_detail.html:742
 msgid "Link a version: search this system"
-msgstr ""
+msgstr "バージョンをリンク: このシステムを検索"
 
 #: templates/game_detail.html:755
 msgid "Scrape History"
@@ -6667,9 +6585,8 @@ msgid "Password"
 msgstr "パスワード"
 
 #: templates/login.html:250
-#, fuzzy
 msgid "Enter your password"
-msgstr "現在のパスワードを入力"
+msgstr "パスワードを入力してください"
 
 #: templates/logs.html:729
 msgid "File"
@@ -6855,7 +6772,7 @@ msgstr "システムを検索..."
 #, python-format
 msgid "%(count)s system"
 msgid_plural "%(count)s systems"
-msgstr[0] ""
+msgstr[0] "%(count)s システム"
 
 #: templates/museum.html:111
 msgid "Content generated"
@@ -7459,6 +7376,8 @@ msgid ""
 "Review the groups RetroDB suggests, or link versions by hand on a game "
 "page."
 msgstr ""
+"異なる地域の同じゲームをリンクすると、ライブラリに1つだけ表示されます。RetroDB "
+"が提案するグループを確認するか、ゲームページで手動でバージョンをリンクしてください。"
 
 #: templates/_macros/nav_tabs.html:38 templates/rom_tools_hub.html:207
 msgid "Multi-Disc Organizer"
@@ -7556,13 +7475,13 @@ msgstr "すべてのROMツールで共有されるパス、外部ツールの場
 
 #: templates/rom_tools_settings.html:304
 msgid "Empty: RetroDB's data folder"
-msgstr ""
+msgstr "空欄: RetroDB のデータフォルダー"
 
 #: templates/rom_tools_settings.html:305
 msgid ""
 "Where Create M3U moves original archives. Leave empty to use RetroDB's "
 "data folder."
-msgstr ""
+msgstr "M3U 作成で元のアーカイブを移動する先です。空欄にすると RetroDB のデータフォルダーを使用します。"
 
 #: templates/screenshot_dedup.html:243
 msgid "Exact Hash (MD5) &mdash; identical files only"
@@ -7783,16 +7702,16 @@ msgid ""
 "Linked versions show as one card in the Library, opening the version from"
 " your preferred region. Nothing is linked until you confirm it here."
 msgstr ""
+"RetroDB "
+"は、異なる地域の同じゲームを探します。リンクされたバージョンはライブラリで1枚のカードとして表示され、優先地域のバージョンが開きます。ここで確認するまで何もリンクされません。"
 
 #: templates/versions_review.html:88
-#, fuzzy
 msgid "All systems"
 msgstr "すべてのシステム"
 
 #: templates/versions_review.html:94
-#, fuzzy
 msgid "Find suggestions"
-msgstr "AI提案"
+msgstr "候補を探す"
 
 #: templates/wishlist.html:12
 msgid "Games you want to find and add to your collection"
@@ -8468,10 +8387,12 @@ msgid ""
 " Then, on the Sony JSON page, click the bookmark to copy your NPSSO in "
 "one click."
 msgstr ""
+"任意のショートカット: 下のボタンをブラウザーのブックマークバーにドラッグします。Sony の JSON "
+"ページでそのブックマークをクリックすると、NPSSO をワンクリックでコピーできます。"
 
 #: templates/_settings_tabs/account.html:148
 msgid "Copy NPSSO"
-msgstr ""
+msgstr "NPSSO をコピー"
 
 #: templates/_settings_tabs/account.html:157
 msgid "Copy the page content"
@@ -8523,9 +8444,8 @@ msgid "Change Password"
 msgstr "パスワードを変更"
 
 #: templates/_settings_tabs/account.html:198
-#, fuzzy
 msgid "Every account needs a password to log in."
-msgstr "管理者アカウントはログインにパスワードが必要です。"
+msgstr "ログインするには、すべてのアカウントにパスワードが必要です。"
 
 #: templates/_settings_tabs/account.html:202
 msgid "Current Password"
@@ -9177,13 +9097,13 @@ msgstr "利用可能な地域の値とデフォルトを設定します。スク
 
 #: templates/_settings_tabs/system.html:182
 msgid "Shut Down Server"
-msgstr ""
+msgstr "サーバーをシャットダウン"
 
 #: templates/_settings_tabs/system.html:185
 msgid ""
 "Restart the Flask server (useful after configuration changes), or shut it"
 " down completely"
-msgstr ""
+msgstr "Flask サーバーを再起動する（設定変更後に便利）か、完全にシャットダウンします"
 
 #: templates/_settings_tabs/system.html:444
 msgid "Support Development"

@@ -25,21 +25,22 @@ msgid ""
 "MB and a video up to %(video)s MB; upload fewer files at once. Operators "
 "can raise the total limit via RETRODB_MAX_UPLOAD_MB."
 msgstr ""
+"Opplastingen overskrider grensen på %(total)s MB. Hvert bilde kan være "
+"opptil %(image)s MB og en video opptil %(video)s MB; last opp færre filer"
+" om gangen. Driftsansvarlige kan heve totalgrensen via "
+"RETRODB_MAX_UPLOAD_MB."
 
 #: app.py:703
-#, fuzzy
 msgid "Too many requests. Please wait and try again."
-msgstr "For mange forsøk. Prøv igjen senere."
+msgstr "For mange forespørsler. Vent litt og prøv igjen."
 
 #: app.py:812
-#, fuzzy
 msgid "Setup required"
-msgstr "Tittel kreves"
+msgstr "Oppsett kreves"
 
 #: app.py:833
-#, fuzzy
 msgid "Password change required"
-msgstr "Passordendring er ikke nødvendig"
+msgstr "Passordbytte kreves"
 
 #: app.py:1656 routes/auth.py:202 routes/auth.py:251 routes/auth.py:436
 #: routes/auth.py:481 templates/force_change_password.html:49
@@ -103,7 +104,7 @@ msgstr "Synkronisering pågår allerede for %(name)s"
 #: routes/achievements.py:367 routes/platform_import.py:326
 #: routes/platform_import.py:693
 msgid "That job belongs to another user"
-msgstr ""
+msgstr "Den jobben tilhører en annen bruker"
 
 #: routes/achievements.py:457
 msgid "No RetroAchievements found for this game"
@@ -168,14 +169,13 @@ msgid "Invalid locale"
 msgstr "Ugyldig språkinnstilling"
 
 #: routes/auth.py:385
-#, fuzzy
 msgid "Invalid theme"
-msgstr "Ugyldig sti"
+msgstr "Ugyldig tema"
 
 #: routes/auth.py:391
-#, fuzzy, python-format
+#, python-format
 msgid "Invalid RPCS3 trophy folder: %(reason)s"
-msgstr "ugyldige API-nøkler: %(reason)s"
+msgstr "Ugyldig RPCS3-trofémappe: %(reason)s"
 
 #: routes/auth.py:424
 msgid "Too many attempts. Please try again later."
@@ -409,31 +409,30 @@ msgid "system_id and emulator_id required"
 msgstr "system_id og emulator_id kreves"
 
 #: routes/emulators.py:224
-#, fuzzy
 msgid "Send at least one setting."
-msgstr "Datainnstillinger"
+msgstr "Send minst én innstilling."
 
 #: routes/emulators.py:230
 msgid "RetroDB does not manage that setting for this emulator."
-msgstr ""
+msgstr "RetroDB håndterer ikke den innstillingen for denne emulatoren."
 
 #: routes/emulators.py:232
 msgid "Fullscreen is set per system, in Settings > Emulators."
-msgstr ""
+msgstr "Fullskjerm angis per system, i Innstillinger > Emulatorer."
 
 #: routes/emulators.py:234
-#, fuzzy
 msgid "That value is not one of the choices."
-msgstr "Merkelappen er ikke tilordnet dette spillet"
+msgstr "Den verdien er ikke et av valgene."
 
 #: routes/emulators.py:264 services/standalone_settings.py:258
 msgid "RetroDB manages per-game settings for DuckStation, PCSX2 and RPCS3 only."
 msgstr ""
+"RetroDB håndterer innstillinger per spill bare for DuckStation, PCSX2 og "
+"RPCS3."
 
 #: routes/emulators.py:277 routes/emulators.py:288
-#, fuzzy
 msgid "Emulator not found"
-msgstr "Plattformen ble ikke funnet"
+msgstr "Emulator ikke funnet"
 
 #: routes/games.py:239
 msgid "No IDs provided"
@@ -447,6 +446,8 @@ msgstr "Angi 1–50 gyldige IDer"
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
 msgstr ""
+"Videoen ble ikke lagret: den må være en MP4-, WebM- eller OGG-fil på "
+"opptil %(mb)s MB."
 
 #: routes/games.py:627
 msgid "Game not found after update"
@@ -538,7 +539,7 @@ msgstr "Målet er utenfor den konfigurerte ROM-rotmappen"
 #: routes/games_media.py:106 routes/reports.py:725
 #, python-format
 msgid "Cannot rename: %(reason)s"
-msgstr ""
+msgstr "Kan ikke gi nytt navn: %(reason)s"
 
 #: routes/games_media.py:109 routes/reports.py:729 routes/reports.py:896
 msgid "A file with that name already exists"
@@ -579,13 +580,12 @@ msgid "failed to kill prior instance: %(err)s"
 msgstr "kunne ikke avslutte forrige instans: %(err)s"
 
 #: routes/launch.py:184
-#, fuzzy
 msgid "That game is no longer running"
-msgstr "Denne metadatabehandlingen kjører ikke lenger."
+msgstr "Det spillet kjører ikke lenger"
 
 #: routes/launch.py:186
 msgid "This game has no disk list to swap through"
-msgstr ""
+msgstr "Dette spillet har ingen diskliste å bytte mellom"
 
 #: routes/launch.py:191
 #, python-format
@@ -593,15 +593,16 @@ msgid ""
 "RetroArch is not accepting commands. In RetroArch, turn on Settings > "
 "Network > Network Commands (port %(port)s)."
 msgstr ""
+"RetroArch tar ikke imot kommandoer. Slå på Settings > Network > Network "
+"Commands i RetroArch (port %(port)s)."
 
 #: routes/launch.py:194
 msgid "Next disk inserted"
-msgstr ""
+msgstr "Neste disk satt inn"
 
 #: routes/maintenance.py:260
-#, fuzzy
 msgid "Unknown image type"
-msgstr "Ingen bilde å behandle"
+msgstr "Ukjent bildetype"
 
 #: routes/museum.py:385 routes/scraper.py:770
 msgid "No AI provider configured"
@@ -629,9 +630,8 @@ msgid "No controllers found"
 msgstr "Ingen kontrollere funnet"
 
 #: routes/museum.py:620
-#, fuzzy
 msgid "An image fetch is already running"
-msgstr "Dette spillet kjører allerede"
+msgstr "En bildehenting kjører allerede"
 
 #: routes/museum.py:656
 msgid "No image file provided"
@@ -832,7 +832,7 @@ msgstr "Feil ved tolkning av API-svar"
 #: routes/scraper.py:696
 #, python-format
 msgid "ScreenScraper answered HTTP %(code)s"
-msgstr ""
+msgstr "ScreenScraper svarte HTTP %(code)s"
 
 #: routes/scraper.py:711
 msgid "No RAWG API key configured"
@@ -1004,15 +1004,15 @@ msgstr "chdman ble ikke funnet"
 #: routes/tools.py:944
 #, python-format
 msgid "Unknown duplicate method: %(method)s"
-msgstr ""
+msgstr "Ukjent duplikatmetode: %(method)s"
 
 #: routes/tools.py:1152
 msgid "These scan results have expired. Scan again, then delete."
-msgstr ""
+msgstr "Disse skanneresultatene er utløpt. Skann på nytt, og slett deretter."
 
 #: routes/tools.py:1157
 msgid "Keep at least one copy of each game. Nothing was deleted."
-msgstr ""
+msgstr "Behold minst én kopi av hvert spill. Ingenting ble slettet."
 
 #: routes/trophies.py:387
 msgid ""
@@ -1071,47 +1071,43 @@ msgstr "Ingen NPSSO-token angitt"
 
 #: routes/trophies.py:1834
 msgid "Could not connect to PSN"
-msgstr ""
+msgstr "Kunne ikke koble til PSN"
 
 #: routes/trophies.py:1861
 msgid "PSN NPSSO not configured"
 msgstr "PSN NPSSO er ikke konfigurert"
 
 #: routes/versions.py:23
-#, fuzzy
 msgid "Pick at least two games."
-msgstr "Velg et tilfeldig spill"
+msgstr "Velg minst to spill."
 
 #: routes/versions.py:24
 msgid "One of those games no longer exists."
-msgstr ""
+msgstr "Et av disse spillene finnes ikke lenger."
 
 #: routes/versions.py:25
-#, fuzzy
 msgid "Versions must all be on the same system."
-msgstr "Bonusplaten og det overordnede spillet må være i samme system"
+msgstr "Alle versjoner må være på samme system."
 
 #: routes/versions.py:26
 msgid "A bonus disc cannot be a version of a game."
-msgstr ""
+msgstr "En bonusplate kan ikke være en versjon av et spill."
 
 #: routes/versions.py:28
-#, fuzzy
 msgid "Those games cannot be linked."
-msgstr "Navnet kan ikke være tomt"
+msgstr "Disse spillene kan ikke kobles sammen."
 
 #: routes/versions.py:81 routes/versions.py:96
-#, fuzzy
 msgid "That game is not linked to other versions."
-msgstr "Merkelappen er ikke tilordnet dette spillet"
+msgstr "Det spillet er ikke koblet til andre versjoner."
 
 #: routes/versions.py:92
 msgid "Set up an AI provider in Settings > Scraping first."
-msgstr ""
+msgstr "Sett opp en AI-leverandør i Innstillinger > Skraping først."
 
 #: routes/versions.py:98
 msgid "The AI did not give a usable answer. Try again later."
-msgstr ""
+msgstr "AI-en ga ikke et brukbart svar. Prøv igjen senere."
 
 #: routes/xbox_achievements.py:126
 msgid "Xbox credentials not configured"
@@ -1476,9 +1472,8 @@ msgid "(Paused)"
 msgstr "(Pause)"
 
 #: services/js_i18n_strings.py:421
-#, fuzzy
 msgid "(none)"
-msgstr "Ingen"
+msgstr "(ingen)"
 
 #: services/js_i18n_strings.py:422 templates/_bulk_edit_modal.html:25
 #: templates/_bulk_edit_modal.html:38 templates/_bulk_edit_modal.html:83
@@ -1534,6 +1529,8 @@ msgstr "Synkroniserer allerede"
 #, python-brace-format
 msgid "Applied when you press Play, in the {emulator} settings for this game."
 msgstr ""
+"Brukes når du trykker Spill, i {emulator}-innstillingene for dette "
+"spillet."
 
 #: services/js_i18n_strings.py:433 templates/_bulk_edit_modal.html:193
 msgid "Apply Changes"
@@ -1544,9 +1541,9 @@ msgid "Apply Normalization"
 msgstr "Bruk normalisering"
 
 #: services/js_i18n_strings.py:435
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Apply failed: {error}"
-msgstr "Sikkerhetskopiering mislyktes: {error}"
+msgstr "Bruk mislyktes: {error}"
 
 #: services/js_i18n_strings.py:436
 #, python-brace-format
@@ -1572,9 +1569,8 @@ msgid "Applying..."
 msgstr "Bruker..."
 
 #: services/js_i18n_strings.py:441
-#, fuzzy
 msgid "Applying…"
-msgstr "Bruker..."
+msgstr "Bruker…"
 
 #: services/js_i18n_strings.py:442
 msgid ""
@@ -1615,7 +1611,7 @@ msgstr "Er du sikker på at du vil starte serveren på nytt?"
 msgid ""
 "Are you sure you want to shut down the server? You will need to start it "
 "again manually."
-msgstr ""
+msgstr "Er du sikker på at du vil slå av serveren? Du må starte den igjen manuelt."
 
 #: services/js_i18n_strings.py:448 templates/settings.html:67
 msgid "Are you sure?"
@@ -1627,12 +1623,11 @@ msgstr "Spør KI…"
 
 #: services/js_i18n_strings.py:450
 msgid "Asking the AI. This can take up to a minute."
-msgstr ""
+msgstr "Spør AI-en. Dette kan ta opptil ett minutt."
 
 #: services/js_i18n_strings.py:451
-#, fuzzy
 msgid "Aspect ratio"
-msgstr "Velg aldersgrense"
+msgstr "Sideforhold"
 
 #: services/js_i18n_strings.py:452
 msgid "BIOS"
@@ -1683,9 +1678,8 @@ msgid "Cancel Bulk Scrape"
 msgstr "Avbryt masseskraping"
 
 #: services/js_i18n_strings.py:461
-#, fuzzy
 msgid "Cancel failed"
-msgstr "Avbrutt"
+msgstr "Avbryting mislyktes"
 
 #: services/js_i18n_strings.py:462
 msgid "Cancel request failed"
@@ -1777,9 +1771,8 @@ msgid "Close keyboard shortcuts"
 msgstr "Lukk hurtigtaster"
 
 #: services/js_i18n_strings.py:480
-#, fuzzy
 msgid "Close modal / cancel"
-msgstr "Lukk brukervindu"
+msgstr "Lukk vindu / avbryt"
 
 #: services/js_i18n_strings.py:481 templates/dashboard.html:155
 msgid "Complete"
@@ -1847,43 +1840,39 @@ msgstr "Kunne ikke bruke metadata."
 
 #: services/js_i18n_strings.py:494
 msgid "Could not link these versions."
-msgstr ""
+msgstr "Kunne ikke koble sammen disse versjonene."
 
 #: services/js_i18n_strings.py:495
 msgid "Could not load suggestions."
-msgstr ""
+msgstr "Kunne ikke laste inn forslag."
 
 #: services/js_i18n_strings.py:496
 msgid "Could not reconnect to server. Please refresh manually."
 msgstr "Kunne ikke koble til serveren på nytt. Oppdater siden manuelt."
 
 #: services/js_i18n_strings.py:497
-#, fuzzy
 msgid "Could not save that setting."
-msgstr "Kunne ikke bruke metadata."
+msgstr "Kunne ikke lagre den innstillingen."
 
 #: services/js_i18n_strings.py:498
-#, fuzzy
 msgid "Could not save that."
-msgstr "Kunne ikke bruke metadata."
+msgstr "Kunne ikke lagre det."
 
 #: services/js_i18n_strings.py:499
 msgid "Could not stop the running instance."
-msgstr ""
+msgstr "Kunne ikke stoppe den kjørende instansen."
 
 #: services/js_i18n_strings.py:500
 msgid "Could not unlink this version."
-msgstr ""
+msgstr "Kunne ikke fjerne koblingen for denne versjonen."
 
 #: services/js_i18n_strings.py:501
-#, fuzzy
 msgid "Could not write the summary."
-msgstr "Kunne ikke bruke metadata."
+msgstr "Kunne ikke skrive sammendraget."
 
 #: services/js_i18n_strings.py:502
-#, fuzzy
 msgid "Currently set"
-msgstr "Gjeldende verdi"
+msgstr "Nåværende innstilling"
 
 #: services/js_i18n_strings.py:503
 msgid "Default"
@@ -1899,19 +1888,17 @@ msgid "Delete Log File"
 msgstr "Slett loggfil"
 
 #: services/js_i18n_strings.py:506
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Detect failed: {error}"
-msgstr "Gjenoppretting mislyktes: {error}"
+msgstr "Oppdaging mislyktes: {error}"
 
 #: services/js_i18n_strings.py:507
-#, fuzzy
 msgid "Detected path"
-msgstr "Ekskluderte stier"
+msgstr "Oppdaget bane"
 
 #: services/js_i18n_strings.py:508
-#, fuzzy
 msgid "Detecting…"
-msgstr "Innstillinger"
+msgstr "Oppdager…"
 
 #: services/js_i18n_strings.py:509 templates/_bulk_scrape_modal.html:69
 #: templates/psn_trophies.html:247 templates/psn_trophies.html:307
@@ -1954,7 +1941,6 @@ msgid "Edit"
 msgstr "Rediger"
 
 #: services/js_i18n_strings.py:518
-#, fuzzy
 msgid "Edit game"
 msgstr "Rediger spill"
 
@@ -1964,9 +1950,8 @@ msgid "Edit: {title}"
 msgstr "Rediger: {title}"
 
 #: services/js_i18n_strings.py:520
-#, fuzzy
 msgid "Emulator"
-msgstr "Simulering"
+msgstr "Emulator"
 
 #: services/js_i18n_strings.py:521
 msgid "Enter one folder path."
@@ -2120,30 +2105,27 @@ msgstr "Henter fra {source}…"
 #: services/js_i18n_strings.py:557
 #, python-brace-format
 msgid "Fetching images: {done} of {total}"
-msgstr ""
+msgstr "Henter bilder: {done} av {total}"
 
 #: services/js_i18n_strings.py:558
 msgid "Focus search box"
-msgstr ""
+msgstr "Fokuser søkefeltet"
 
 #: services/js_i18n_strings.py:559 templates/logs.html:743
 msgid "From"
 msgstr "Fra"
 
 #: services/js_i18n_strings.py:560
-#, fuzzy
 msgid "From the system setting"
-msgstr "Trofeinnstillinger"
+msgstr "Fra systeminnstillingen"
 
 #: services/js_i18n_strings.py:561
-#, fuzzy
 msgid "Fullscreen"
-msgstr "Full reskraping"
+msgstr "Fullskjerm"
 
 #: services/js_i18n_strings.py:562
-#, fuzzy
 msgid "Game Page"
-msgstr "Spillnavn"
+msgstr "Spillside"
 
 #: services/js_i18n_strings.py:563
 msgid "Game details updated successfully."
@@ -2197,38 +2179,32 @@ msgid "Generation request failed"
 msgstr "Genereringsforespørsel mislyktes"
 
 #: services/js_i18n_strings.py:573
-#, fuzzy
 msgid "Go to Analytics"
-msgstr "Analyse"
+msgstr "Gå til Analyse"
 
 #: services/js_i18n_strings.py:574
-#, fuzzy
 msgid "Go to Changelog"
-msgstr "Endringslogg"
+msgstr "Gå til Endringslogg"
 
 #: services/js_i18n_strings.py:575
-#, fuzzy
 msgid "Go to Dashboard"
-msgstr "Oversikt"
+msgstr "Gå til Oversikt"
 
 #: services/js_i18n_strings.py:576
 msgid "Go to Help"
-msgstr ""
+msgstr "Gå til Hjelp"
 
 #: services/js_i18n_strings.py:577
-#, fuzzy
 msgid "Go to Library"
-msgstr "Xbox-bibliotek"
+msgstr "Gå til Bibliotek"
 
 #: services/js_i18n_strings.py:578
-#, fuzzy
 msgid "Go to Settings"
-msgstr "Verktøyinnstillinger"
+msgstr "Gå til Innstillinger"
 
 #: services/js_i18n_strings.py:579
-#, fuzzy
 msgid "Go to Systems"
-msgstr "Totalt antall systemer"
+msgstr "Gå til Systemer"
 
 #: services/js_i18n_strings.py:580
 msgid "HLTB data cleared"
@@ -2256,9 +2232,8 @@ msgid "Image Resize"
 msgstr "Bildeendring"
 
 #: services/js_i18n_strings.py:586
-#, fuzzy
 msgid "Image fetch cancelled."
-msgstr "Generering avbrutt"
+msgstr "Bildehenting avbrutt."
 
 #: services/js_i18n_strings.py:587
 msgid "Image must be under 10MB"
@@ -2292,26 +2267,25 @@ msgstr "Hurtigtaster"
 
 #: services/js_i18n_strings.py:593
 msgid "Kill"
-msgstr ""
+msgstr "Avslutt"
 
 #: services/js_i18n_strings.py:594
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Launch failed: {error}"
-msgstr "Sikkerhetskopiering mislyktes: {error}"
+msgstr "Start mislyktes: {error}"
 
 #: services/js_i18n_strings.py:595
 #, python-brace-format
 msgid "Launched (pid {pid})"
-msgstr ""
+msgstr "Startet (pid {pid})"
 
 #: services/js_i18n_strings.py:596
 msgid "Launched (replaced previous instance)"
-msgstr ""
+msgstr "Startet (erstattet forrige instans)"
 
 #: services/js_i18n_strings.py:597
-#, fuzzy
 msgid "Launching…"
-msgstr "Start"
+msgstr "Starter…"
 
 #: services/js_i18n_strings.py:598
 #, python-brace-format
@@ -2319,14 +2293,12 @@ msgid "Library scan complete! Found {n} new games."
 msgstr "Biblioteksskanning fullført! Fant {n} nye spill."
 
 #: services/js_i18n_strings.py:599
-#, fuzzy
 msgid "Link"
-msgstr "Fjern kobling"
+msgstr "Koble"
 
 #: services/js_i18n_strings.py:600
-#, fuzzy
 msgid "Link ticked games"
-msgstr "Koble til RetroDB-spill"
+msgstr "Koble avkryssede spill"
 
 #: services/js_i18n_strings.py:601
 msgid "Loading log file..."
@@ -2338,7 +2310,7 @@ msgstr "Loggfil slettet"
 
 #: services/js_i18n_strings.py:603
 msgid "Looking for versions…"
-msgstr ""
+msgstr "Ser etter versjoner…"
 
 #: services/js_i18n_strings.py:604 templates/achievement_game.html:168
 #: templates/achievement_game.html:197 templates/achievement_game.html:207
@@ -2368,7 +2340,7 @@ msgstr "Hovedhistorie"
 
 #: services/js_i18n_strings.py:606
 msgid "Marked as not versions."
-msgstr ""
+msgstr "Merket som ikke versjoner."
 
 #: services/js_i18n_strings.py:607
 msgid "Match found - please confirm to save"
@@ -2413,9 +2385,8 @@ msgid "NOT"
 msgstr "IKKE"
 
 #: services/js_i18n_strings.py:615
-#, fuzzy
 msgid "Navigation"
-msgstr "Hovednavigasjon"
+msgstr "Navigasjon"
 
 #: services/js_i18n_strings.py:616
 msgid "Network error"
@@ -2427,12 +2398,11 @@ msgstr "Nettverksfeil ved start av masseskraping"
 
 #: services/js_i18n_strings.py:618
 msgid "Next disk"
-msgstr ""
+msgstr "Neste disk"
 
 #: services/js_i18n_strings.py:619
-#, fuzzy
 msgid "Next disk failed"
-msgstr "Generering mislyktes"
+msgstr "Neste disk mislyktes"
 
 #: services/js_i18n_strings.py:620 templates/_bulk_edit_modal.html:171
 #: templates/_modals/edit_modal.html:139 templates/game_detail.html:652
@@ -2468,11 +2438,11 @@ msgstr "Ingen beskrivelse tilgjengelig."
 
 #: services/js_i18n_strings.py:627
 msgid "No emulator AppImages found in the scan paths."
-msgstr ""
+msgstr "Fant ingen emulator-AppImages i skannebanene."
 
 #: services/js_i18n_strings.py:628
 msgid "No emulators registered."
-msgstr ""
+msgstr "Ingen emulatorer registrert."
 
 #: services/js_i18n_strings.py:629
 msgid "No folders yet."
@@ -2492,7 +2462,7 @@ msgstr "Ingen koblinger ennå. Legg til en emulatormappe ovenfor."
 
 #: services/js_i18n_strings.py:633
 msgid "No matching games on this system."
-msgstr ""
+msgstr "Ingen samsvarende spill på dette systemet."
 
 #: services/js_i18n_strings.py:634
 msgid "No missing ROM files found."
@@ -2525,6 +2495,8 @@ msgstr "Ingen økter samsvarer med gjeldende filtre"
 #: services/js_i18n_strings.py:641
 msgid "No suggestions. Run Backfill Alternate Titles in Maintenance to find more."
 msgstr ""
+"Ingen forslag. Kjør Etterfyll alternative titler i Vedlikehold for å "
+"finne flere."
 
 #: services/js_i18n_strings.py:642
 #, python-brace-format
@@ -2532,9 +2504,8 @@ msgid "Normalization applied: {games} games updated, {rules} rules saved"
 msgstr "Normalisering brukt: {games} spill oppdatert, {rules} regler lagret"
 
 #: services/js_i18n_strings.py:643
-#, fuzzy
 msgid "Not versions"
-msgstr "Versjon"
+msgstr "Ikke versjoner"
 
 #: services/js_i18n_strings.py:644 templates/base.html:1354
 msgid "Now playing"
@@ -2553,9 +2524,8 @@ msgid "Operation failed"
 msgstr "Operasjon mislyktes"
 
 #: services/js_i18n_strings.py:648
-#, fuzzy
 msgid "Other"
-msgstr "Skytespill"
+msgstr "Annet"
 
 #: services/js_i18n_strings.py:649
 msgid "PSN Imports"
@@ -2662,9 +2632,8 @@ msgid "Refreshing RA for {system}..."
 msgstr "Oppdaterer RA for {system}..."
 
 #: services/js_i18n_strings.py:672
-#, fuzzy
 msgid "Regional name matches"
-msgstr "Regionavvik"
+msgstr "Regionale navnetreff"
 
 #: services/js_i18n_strings.py:673 templates/compare_games.html:24
 #: templates/compare_games.html:40
@@ -2719,9 +2688,8 @@ msgid "Reports"
 msgstr "Rapporter"
 
 #: services/js_i18n_strings.py:684
-#, fuzzy
 msgid "Resolution scale"
-msgstr "Oppløsning"
+msgstr "Oppløsningsskala"
 
 #: services/js_i18n_strings.py:685
 msgid "Restarting server..."
@@ -2732,9 +2700,8 @@ msgid "Resume"
 msgstr "Fortsett"
 
 #: services/js_i18n_strings.py:687
-#, fuzzy
 msgid "RetroDB default"
-msgstr "Standard"
+msgstr "RetroDB-standard"
 
 #: services/js_i18n_strings.py:688
 msgid "Running"
@@ -2745,40 +2712,37 @@ msgid "Running..."
 msgstr "Kjører..."
 
 #: services/js_i18n_strings.py:690
-#, fuzzy
 msgid "Same IGDB game"
-msgstr "Skrap alle"
+msgstr "Samme IGDB-spill"
 
 #: services/js_i18n_strings.py:691
-#, fuzzy
 msgid "Same ScreenScraper game"
-msgstr "Skrap alle"
+msgstr "Samme ScreenScraper-spill"
 
 #: services/js_i18n_strings.py:692
 msgid "Same title, different region"
-msgstr ""
+msgstr "Samme tittel, annen region"
 
 #: services/js_i18n_strings.py:693
 msgid "Save Failed"
 msgstr "Lagring mislyktes"
 
 #: services/js_i18n_strings.py:694
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Save failed: {error}"
-msgstr "Gjenoppretting mislyktes: {error}"
+msgstr "Lagring mislyktes: {error}"
 
 #: services/js_i18n_strings.py:695
 msgid "Saved"
 msgstr "Lagret"
 
 #: services/js_i18n_strings.py:696
-#, fuzzy
 msgid "Saved."
-msgstr "Lagret"
+msgstr "Lagret."
 
 #: services/js_i18n_strings.py:697
 msgid "Saved. It applies the next time you press Play."
-msgstr ""
+msgstr "Lagret. Det tas i bruk neste gang du trykker Spill."
 
 #: services/js_i18n_strings.py:698
 msgid "Saving to the database…"
@@ -2789,9 +2753,8 @@ msgid "Saving..."
 msgstr "Lagrer..."
 
 #: services/js_i18n_strings.py:700
-#, fuzzy
 msgid "Saving…"
-msgstr "Lagrer..."
+msgstr "Lagrer…"
 
 #: services/js_i18n_strings.py:701
 #, python-brace-format
@@ -2799,23 +2762,21 @@ msgid "Scan failed (HTTP {status})"
 msgstr "Skanning mislyktes (HTTP {status})"
 
 #: services/js_i18n_strings.py:702
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Scan failed: {error}"
-msgstr "Sikkerhetskopiering mislyktes: {error}"
+msgstr "Skanning mislyktes: {error}"
 
 #: services/js_i18n_strings.py:703 templates/multi_disc_organizer.html:204
 msgid "Scanning..."
 msgstr "Skanner..."
 
 #: services/js_i18n_strings.py:704
-#, fuzzy
 msgid "Scanning…"
-msgstr "Skanner..."
+msgstr "Skanner…"
 
 #: services/js_i18n_strings.py:705
-#, fuzzy
 msgid "Scrape game"
-msgstr "Skrap alle"
+msgstr "Skrap spill"
 
 #: services/js_i18n_strings.py:706
 #, python-brace-format
@@ -2839,9 +2800,8 @@ msgid "Search"
 msgstr "Søk"
 
 #: services/js_i18n_strings.py:710
-#, fuzzy
 msgid "Search failed."
-msgstr "Søk filnavn..."
+msgstr "Søket mislyktes."
 
 #: services/js_i18n_strings.py:711
 msgid "Searching & removing background..."
@@ -2914,20 +2874,19 @@ msgstr "Serveren ble startet på nytt!"
 
 #: services/js_i18n_strings.py:727
 msgid "Server stopped. You can close this tab."
-msgstr ""
+msgstr "Serveren er stoppet. Du kan lukke denne fanen."
 
 #: services/js_i18n_strings.py:728
-#, fuzzy
 msgid "Set for this game"
-msgstr "Fjerne HLTB-data for dette spillet?"
+msgstr "Angitt for dette spillet"
 
 #: services/js_i18n_strings.py:729
 msgid "Set inside the emulator; RetroDB leaves it alone"
-msgstr ""
+msgstr "Angis i emulatoren; RetroDB lar den være"
 
 #: services/js_i18n_strings.py:730
 msgid "Set per system, in Settings > Emulators"
-msgstr ""
+msgstr "Angis per system, i Innstillinger > Emulatorer"
 
 #: services/js_i18n_strings.py:731 templates/_macros/nav_tabs.html:43
 #: templates/base.html:156 templates/rom_tools_hub.html:119
@@ -2941,18 +2900,16 @@ msgid "Show Bonus"
 msgstr "Vis bonus"
 
 #: services/js_i18n_strings.py:733
-#, fuzzy
 msgid "Show keyboard shortcuts"
-msgstr "Hurtigtaster"
+msgstr "Vis hurtigtaster"
 
 #: services/js_i18n_strings.py:734
 msgid "Showing Bonus Discs"
 msgstr "Viser bonusplater"
 
 #: services/js_i18n_strings.py:735
-#, fuzzy
 msgid "Shutting down server..."
-msgstr "Starter serveren på nytt..."
+msgstr "Slår av serveren..."
 
 #: services/js_i18n_strings.py:736 templates/_modals/edit_modal.html:46
 #: templates/base.html:1052
@@ -2977,9 +2934,8 @@ msgid "Successfully updated {count} games"
 msgstr "Oppdaterte {count} spill"
 
 #: services/js_i18n_strings.py:741
-#, fuzzy
 msgid "Summary written."
-msgstr "Sammendrag"
+msgstr "Sammendrag skrevet."
 
 #: services/js_i18n_strings.py:742
 msgid "Sync In Progress"
@@ -3041,6 +2997,8 @@ msgstr "Systemer"
 #: services/js_i18n_strings.py:752
 msgid "This game is already running.  Kill the existing process and relaunch?"
 msgstr ""
+"Dette spillet kjører allerede.  Avslutte den eksisterende prosessen og "
+"starte på nytt?"
 
 #: services/js_i18n_strings.py:753
 msgid "This system is already being synced."
@@ -3113,9 +3071,8 @@ msgstr ""
 "kreditter. Fortsette?"
 
 #: services/js_i18n_strings.py:762
-#, fuzzy
 msgid "Tick at least two games."
-msgstr "Velg et tilfeldig spill"
+msgstr "Kryss av minst to spill."
 
 #: services/js_i18n_strings.py:763 templates/logs.html:745
 msgid "To"
@@ -3188,9 +3145,8 @@ msgid "Uploading…"
 msgstr "Laster opp…"
 
 #: services/js_i18n_strings.py:778
-#, fuzzy
 msgid "Use the system setting"
-msgstr "Lagre stiinnstillinger"
+msgstr "Bruk systeminnstillingen"
 
 #: services/js_i18n_strings.py:779
 #, python-brace-format
@@ -3198,21 +3154,20 @@ msgid ""
 "Used for every {system} game unless the game sets its own. Applied when "
 "you press Play."
 msgstr ""
+"Brukes for alle {system}-spill med mindre spillet har sin egen. Tas i "
+"bruk når du trykker Spill."
 
 #: services/js_i18n_strings.py:780
-#, fuzzy
 msgid "Version unlinked."
-msgstr "Tilgang nektet"
+msgstr "Koblingen til versjonen er fjernet."
 
 #: services/js_i18n_strings.py:781
-#, fuzzy
 msgid "Versions linked."
-msgstr "Versjon"
+msgstr "Versjoner koblet sammen."
 
 #: services/js_i18n_strings.py:782
-#, fuzzy
 msgid "Will change?"
-msgstr "Endre"
+msgstr "Endres?"
 
 #: services/js_i18n_strings.py:783
 msgid "Works"
@@ -3220,7 +3175,7 @@ msgstr "Fungerer"
 
 #: services/js_i18n_strings.py:784 templates/game_detail.html:739
 msgid "Write again with AI"
-msgstr ""
+msgstr "Skriv på nytt med AI"
 
 #: services/js_i18n_strings.py:785
 msgid "Xbox Imports"
@@ -3264,14 +3219,16 @@ msgid "{count} Achievements"
 msgstr "{count} prestasjoner"
 
 #: services/js_i18n_strings.py:793
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{count} regional versions"
-msgstr "Gjeldende: v%(version)s"
+msgstr "{count} regionale versjoner"
 
 #: services/js_i18n_strings.py:794
 #, python-brace-format
 msgid "{count} suggested groups. Untick any game that does not belong, then link."
 msgstr ""
+"{count} foreslåtte grupper. Fjern avkrysningen for spill som ikke hører "
+"til, og koble deretter."
 
 #: services/js_i18n_strings.py:795
 #, python-brace-format
@@ -3329,9 +3286,9 @@ msgid "{system} has been added to the sync queue."
 msgstr "{system} er lagt til i synkroniseringskøen."
 
 #: services/js_i18n_strings.py:806
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{title} ({count} versions)"
-msgstr "Start konvertering"
+msgstr "{title} ({count} versjoner)"
 
 #: services/js_i18n_strings.py:807
 msgid "⏳ Searching..."
@@ -3384,7 +3341,7 @@ msgstr "🗑️ Tilbakestill metadata"
 
 #: services/js_i18n_strings.py:819
 msgid "🛑 Shut Down Server"
-msgstr ""
+msgstr "🛑 Slå av server"
 
 #: services/js_i18n_strings.py:820
 msgid "🧹 Clean Missing ROMs"
@@ -3395,32 +3352,39 @@ msgid ""
 "RetroDB could not read this disc's serial, so it cannot name the "
 "emulator's per-game settings file."
 msgstr ""
+"RetroDB kunne ikke lese serienummeret til denne platen, så den kan ikke "
+"navngi emulatorens innstillingsfil per spill."
 
 #: services/standalone_settings.py:215
 msgid ""
 "PCSX2 has two or more settings files for this game; remove the ones you "
 "do not use."
 msgstr ""
+"PCSX2 har to eller flere innstillingsfiler for dette spillet; fjern dem "
+"du ikke bruker."
 
 #: services/standalone_settings.py:223
 msgid ""
 "RetroDB could not read this disc's boot file, so it cannot name PCSX2's "
 "per-game settings file."
 msgstr ""
+"RetroDB kunne ikke lese oppstartsfilen til denne platen, så den kan ikke "
+"navngi PCSX2s innstillingsfil per spill."
 
 #: services/standalone_settings.py:231
 msgid "Settings path outside the data folder."
-msgstr ""
+msgstr "Innstillingsbanen er utenfor datamappen."
 
 #: services/standalone_settings.py:253
-#, fuzzy
 msgid "No emulator is set up for this system."
-msgstr "Ingen spesifikasjoner tilgjengelig for dette systemet."
+msgstr "Ingen emulator er satt opp for dette systemet."
 
 #: services/standalone_settings.py:268
 #, python-format
 msgid "Run %(name)s once so it creates its settings, then play again."
 msgstr ""
+"Kjør %(name)s én gang så den oppretter innstillingene sine, og spill "
+"deretter igjen."
 
 #: templates/_bulk_edit_modal.html:7
 msgid "Bulk Edit"
@@ -3886,7 +3850,7 @@ msgstr "spill på tvers av alle systemer"
 #: templates/all_games.html:17 templates/system_games.html:24
 #, python-format
 msgid "(%(roms)s ROMs)"
-msgstr ""
+msgstr "(%(roms)s ROM-er)"
 
 #: templates/all_games.html:19 templates/system_games.html:26
 msgid "missing metadata"
@@ -4635,11 +4599,11 @@ msgstr "Venter på å starte..."
 
 #: templates/archive_scanner.html:1658
 msgid "Have the original archive moved to the staging folder"
-msgstr ""
+msgstr "Få det opprinnelige arkivet flyttet til mellomlagringsmappen"
 
 #: templates/archive_scanner.html:1761
 msgid "Original archives moved to:"
-msgstr ""
+msgstr "Opprinnelige arkiver flyttet til:"
 
 #: templates/base.html:40
 msgid "Skip to main content"
@@ -4759,28 +4723,24 @@ msgid "Last Updated"
 msgstr "Sist oppdatert"
 
 #: templates/base.html:219
-#, fuzzy
 msgid "Disclaimer"
 msgstr "Ansvarsfraskrivelse"
 
 #: templates/base.html:230
 msgid "Support RetroDB's development on GitHub Sponsors"
-msgstr ""
+msgstr "Støtt utviklingen av RetroDB på GitHub Sponsors"
 
 #: templates/base.html:231
-#, fuzzy
 msgid "Sponsor RetroDB"
-msgstr "Sponsor"
+msgstr "Spons RetroDB"
 
 #: templates/base.html:233
-#, fuzzy
 msgid "Support RetroDB's development on Patreon"
-msgstr "Støtt utviklingen"
+msgstr "Støtt utviklingen av RetroDB på Patreon"
 
 #: templates/base.html:234
-#, fuzzy
 msgid "Support RetroDB"
-msgstr "Støtt på Patreon"
+msgstr "Støtt RetroDB"
 
 #: templates/base.html:249
 msgid "Toggle menu"
@@ -5991,19 +5951,16 @@ msgid "Part of:"
 msgstr "Del av:"
 
 #: templates/game_detail.html:74
-#, fuzzy
 msgid "Regional versions"
-msgstr "Regionalternativer"
+msgstr "Regionale versjoner"
 
 #: templates/game_detail.html:75
-#, fuzzy
 msgid "Versions:"
-msgstr "Versjon"
+msgstr "Versjoner:"
 
 #: templates/game_detail.html:77 templates/game_detail.html:708
-#, fuzzy
 msgid "Unknown region"
-msgstr "Ukjent feil"
+msgstr "Ukjent region"
 
 #: templates/game_detail.html:83
 msgid "Launch this game in the configured emulator"
@@ -6210,81 +6167,74 @@ msgid "Bonus Content"
 msgstr "Bonusinnhold"
 
 #: templates/game_detail.html:678
-#, fuzzy
 msgid "Emulator settings"
-msgstr "Verktøyinnstillinger"
+msgstr "Emulatorinnstillinger"
 
 #: templates/_macros/nav_tabs.html:40 templates/game_detail.html:687
 #: templates/rom_tools_hub.html:193 templates/versions_review.html:5
 #: templates/versions_review.html:80
-#, fuzzy
 msgid "Regional Versions"
-msgstr "Regionalternativer"
+msgstr "Regionale versjoner"
 
 #: templates/game_detail.html:695 templates/museum_system.html:100
 msgid "Released"
 msgstr "Utgitt"
 
 #: templates/game_detail.html:697
-#, fuzzy
 msgid "File size"
 msgstr "Filstørrelse"
 
 #: templates/game_detail.html:698
-#, fuzzy
 msgid "Revision"
-msgstr "Region"
+msgstr "Revisjon"
 
 #: templates/game_detail.html:699
-#, fuzzy
 msgid "Languages"
 msgstr "Språk"
 
 #: templates/game_detail.html:700
-#, fuzzy
 msgid "Scores"
-msgstr "Sport"
+msgstr "Poeng"
 
 #: templates/game_detail.html:709
 msgid "(this page)"
-msgstr ""
+msgstr "(denne siden)"
 
 #: templates/game_detail.html:727
 msgid "Known differences"
-msgstr ""
+msgstr "Kjente forskjeller"
 
 #: templates/game_detail.html:727
 msgid "AI-written"
-msgstr ""
+msgstr "AI-skrevet"
 
 #: templates/game_detail.html:728
 msgid "Written by AI from what it knows about these releases. It can be wrong."
-msgstr ""
+msgstr "Skrevet av AI ut fra det den vet om disse utgivelsene. Det kan være feil."
 
 #: templates/game_detail.html:730
 msgid "The AI knows of no differences between these versions."
-msgstr ""
+msgstr "AI-en kjenner ikke til noen forskjeller mellom disse versjonene."
 
 #: templates/game_detail.html:733
 msgid "No other regional versions are linked to this game."
-msgstr ""
+msgstr "Ingen andre regionale versjoner er koblet til dette spillet."
 
 #: templates/game_detail.html:738
 msgid "Unlink this version"
-msgstr ""
+msgstr "Fjern koblingen for denne versjonen"
 
 #: templates/game_detail.html:739
 msgid "Summarise differences with AI"
-msgstr ""
+msgstr "Oppsummer forskjeller med AI"
 
 #: templates/game_detail.html:741
-#, fuzzy
 msgid "Link a version"
-msgstr "Versjon"
+msgstr "Koble en versjon"
 
 #: templates/game_detail.html:742
 msgid "Link a version: search this system"
-msgstr ""
+msgstr "Koble en versjon: søk i dette systemet"
 
 #: templates/game_detail.html:755
 msgid "Scrape History"
@@ -6743,9 +6693,8 @@ msgid "Password"
 msgstr "Passord"
 
 #: templates/login.html:250
-#, fuzzy
 msgid "Enter your password"
-msgstr "Skriv inn nåværende passord"
+msgstr "Skriv inn passordet ditt"
 
 #: templates/logs.html:729
 msgid "File"
@@ -7568,6 +7517,9 @@ msgid ""
 "Review the groups RetroDB suggests, or link versions by hand on a game "
 "page."
 msgstr ""
+"Koble samme spill fra forskjellige regioner så Biblioteket viser det én "
+"gang. Gå gjennom gruppene RetroDB foreslår, eller koble versjoner manuelt"
+" på en spillside."
 
 #: templates/_macros/nav_tabs.html:38 templates/rom_tools_hub.html:207
 msgid "Multi-Disc Organizer"
@@ -7682,13 +7634,15 @@ msgstr ""
 
 #: templates/rom_tools_settings.html:304
 msgid "Empty: RetroDB's data folder"
-msgstr ""
+msgstr "Tom: datamappen til RetroDB"
 
 #: templates/rom_tools_settings.html:305
 msgid ""
 "Where Create M3U moves original archives. Leave empty to use RetroDB's "
 "data folder."
 msgstr ""
+"Hvor Create M3U flytter opprinnelige arkiver. La stå tom for å bruke "
+"datamappen til RetroDB."
 
 #: templates/screenshot_dedup.html:243
 msgid "Exact Hash (MD5) &mdash; identical files only"
@@ -7913,16 +7867,17 @@ msgid ""
 "Linked versions show as one card in the Library, opening the version from"
 " your preferred region. Nothing is linked until you confirm it here."
 msgstr ""
+"RetroDB ser etter spill som er samme spill fra forskjellige regioner. "
+"Koblede versjoner vises som ett kort i Biblioteket og åpner versjonen fra"
+" din foretrukne region. Ingenting kobles før du bekrefter det her."
 
 #: templates/versions_review.html:88
-#, fuzzy
 msgid "All systems"
 msgstr "Alle systemer"
 
 #: templates/versions_review.html:94
-#, fuzzy
 msgid "Find suggestions"
-msgstr "AI-foreslått"
+msgstr "Finn forslag"
 
 #: templates/wishlist.html:12
 msgid "Games you want to find and add to your collection"
@@ -8686,9 +8641,8 @@ msgid "Change Password"
 msgstr "Endre passord"
 
 #: templates/_settings_tabs/account.html:198
-#, fuzzy
 msgid "Every account needs a password to log in."
-msgstr "Administratorkontoer krever passord for innlogging."
+msgstr "Hver konto trenger et passord for å logge inn."
 
 #: templates/_settings_tabs/account.html:202
 msgid "Current Password"
@@ -9378,13 +9332,15 @@ msgstr ""
 
 #: templates/_settings_tabs/system.html:182
 msgid "Shut Down Server"
-msgstr ""
+msgstr "Slå av server"
 
 #: templates/_settings_tabs/system.html:185
 msgid ""
 "Restart the Flask server (useful after configuration changes), or shut it"
 " down completely"
 msgstr ""
+"Start Flask-serveren på nytt (nyttig etter konfigurasjonsendringer), "
+"eller slå den helt av"
 
 #: templates/_settings_tabs/system.html:444
 msgid "Support Development"

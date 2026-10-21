@@ -25,21 +25,20 @@ msgid ""
 "MB and a video up to %(video)s MB; upload fewer files at once. Operators "
 "can raise the total limit via RETRODB_MAX_UPLOAD_MB."
 msgstr ""
+"上传超过了 %(total)s MB 的上限。每张图片最大 %(image)s MB，视频最大 %(video)s "
+"MB；请减少一次上传的文件数。管理员可通过 RETRODB_MAX_UPLOAD_MB 提高总上限。"
 
 #: app.py:703
-#, fuzzy
 msgid "Too many requests. Please wait and try again."
-msgstr "尝试次数过多，请稍后再试。"
+msgstr "请求过多。请稍候再试。"
 
 #: app.py:812
-#, fuzzy
 msgid "Setup required"
-msgstr "必须填写标题"
+msgstr "需要初始设置"
 
 #: app.py:833
-#, fuzzy
 msgid "Password change required"
-msgstr "无需更改密码"
+msgstr "需要更改密码"
 
 #: app.py:1656 routes/auth.py:202 routes/auth.py:251 routes/auth.py:436
 #: routes/auth.py:481 templates/force_change_password.html:49
@@ -103,7 +102,7 @@ msgstr "%(name)s 的同步已在进行中"
 #: routes/achievements.py:367 routes/platform_import.py:326
 #: routes/platform_import.py:693
 msgid "That job belongs to another user"
-msgstr ""
+msgstr "该任务属于其他用户"
 
 #: routes/achievements.py:457
 msgid "No RetroAchievements found for this game"
@@ -166,14 +165,13 @@ msgid "Invalid locale"
 msgstr "无效的语言区域"
 
 #: routes/auth.py:385
-#, fuzzy
 msgid "Invalid theme"
-msgstr "路径无效"
+msgstr "无效的主题"
 
 #: routes/auth.py:391
-#, fuzzy, python-format
+#, python-format
 msgid "Invalid RPCS3 trophy folder: %(reason)s"
-msgstr "API 密钥无效：%(reason)s"
+msgstr "无效的 RPCS3 奖杯文件夹：%(reason)s"
 
 #: routes/auth.py:424
 msgid "Too many attempts. Please try again later."
@@ -403,31 +401,28 @@ msgid "system_id and emulator_id required"
 msgstr "需要 system_id 和 emulator_id"
 
 #: routes/emulators.py:224
-#, fuzzy
 msgid "Send at least one setting."
-msgstr "数据设置"
+msgstr "请至少发送一项设置。"
 
 #: routes/emulators.py:230
 msgid "RetroDB does not manage that setting for this emulator."
-msgstr ""
+msgstr "RetroDB 不管理此模拟器的该项设置。"
 
 #: routes/emulators.py:232
 msgid "Fullscreen is set per system, in Settings > Emulators."
-msgstr ""
+msgstr "全屏按系统设置，位于 设置 > 模拟器。"
 
 #: routes/emulators.py:234
-#, fuzzy
 msgid "That value is not one of the choices."
-msgstr "该标签未分配给此游戏"
+msgstr "该值不在可选项中。"
 
 #: routes/emulators.py:264 services/standalone_settings.py:258
 msgid "RetroDB manages per-game settings for DuckStation, PCSX2 and RPCS3 only."
-msgstr ""
+msgstr "RetroDB 仅为 DuckStation、PCSX2 和 RPCS3 管理单个游戏的设置。"
 
 #: routes/emulators.py:277 routes/emulators.py:288
-#, fuzzy
 msgid "Emulator not found"
-msgstr "未找到平台"
+msgstr "未找到模拟器"
 
 #: routes/games.py:239
 msgid "No IDs provided"
@@ -440,7 +435,7 @@ msgstr "请提供 1-50 个有效 ID"
 #: routes/games.py:501
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
-msgstr ""
+msgstr "视频未保存：必须是不超过 %(mb)s MB 的 MP4、WebM 或 OGG 文件。"
 
 #: routes/games.py:627
 msgid "Game not found after update"
@@ -528,7 +523,7 @@ msgstr "目标位置在已配置的 ROM 根目录之外"
 #: routes/games_media.py:106 routes/reports.py:725
 #, python-format
 msgid "Cannot rename: %(reason)s"
-msgstr ""
+msgstr "无法重命名：%(reason)s"
 
 #: routes/games_media.py:109 routes/reports.py:729 routes/reports.py:896
 msgid "A file with that name already exists"
@@ -569,13 +564,12 @@ msgid "failed to kill prior instance: %(err)s"
 msgstr "无法终止先前实例：%(err)s"
 
 #: routes/launch.py:184
-#, fuzzy
 msgid "That game is no longer running"
-msgstr "此元数据应用已不再运行。"
+msgstr "该游戏已不在运行"
 
 #: routes/launch.py:186
 msgid "This game has no disk list to swap through"
-msgstr ""
+msgstr "此游戏没有可切换的光盘列表"
 
 #: routes/launch.py:191
 #, python-format
@@ -583,15 +577,16 @@ msgid ""
 "RetroArch is not accepting commands. In RetroArch, turn on Settings > "
 "Network > Network Commands (port %(port)s)."
 msgstr ""
+"RetroArch 未接受命令。请在 RetroArch 中打开 Settings > Network > Network Commands（端口"
+" %(port)s）。"
 
 #: routes/launch.py:194
 msgid "Next disk inserted"
-msgstr ""
+msgstr "已插入下一张光盘"
 
 #: routes/maintenance.py:260
-#, fuzzy
 msgid "Unknown image type"
-msgstr "没有可处理的图片"
+msgstr "未知的图片类型"
 
 #: routes/museum.py:385 routes/scraper.py:770
 msgid "No AI provider configured"
@@ -619,9 +614,8 @@ msgid "No controllers found"
 msgstr "未找到任何手柄"
 
 #: routes/museum.py:620
-#, fuzzy
 msgid "An image fetch is already running"
-msgstr "该游戏已在运行中"
+msgstr "图片获取已在运行"
 
 #: routes/museum.py:656
 msgid "No image file provided"
@@ -808,7 +802,7 @@ msgstr "解析 API 响应时出错"
 #: routes/scraper.py:696
 #, python-format
 msgid "ScreenScraper answered HTTP %(code)s"
-msgstr ""
+msgstr "ScreenScraper 返回了 HTTP %(code)s"
 
 #: routes/scraper.py:711
 msgid "No RAWG API key configured"
@@ -980,15 +974,15 @@ msgstr "未找到 chdman"
 #: routes/tools.py:944
 #, python-format
 msgid "Unknown duplicate method: %(method)s"
-msgstr ""
+msgstr "未知的重复检测方式：%(method)s"
 
 #: routes/tools.py:1152
 msgid "These scan results have expired. Scan again, then delete."
-msgstr ""
+msgstr "这些扫描结果已过期。请重新扫描后再删除。"
 
 #: routes/tools.py:1157
 msgid "Keep at least one copy of each game. Nothing was deleted."
-msgstr ""
+msgstr "每个游戏至少保留一份副本。未删除任何内容。"
 
 #: routes/trophies.py:387
 msgid ""
@@ -1047,47 +1041,43 @@ msgstr "未提供 NPSSO 令牌"
 
 #: routes/trophies.py:1834
 msgid "Could not connect to PSN"
-msgstr ""
+msgstr "无法连接到 PSN"
 
 #: routes/trophies.py:1861
 msgid "PSN NPSSO not configured"
 msgstr "未配置 PSN NPSSO"
 
 #: routes/versions.py:23
-#, fuzzy
 msgid "Pick at least two games."
-msgstr "随机挑选一款游戏"
+msgstr "请至少选择两个游戏。"
 
 #: routes/versions.py:24
 msgid "One of those games no longer exists."
-msgstr ""
+msgstr "其中一个游戏已不存在。"
 
 #: routes/versions.py:25
-#, fuzzy
 msgid "Versions must all be on the same system."
-msgstr "附赠光盘与主游戏必须属于同一系统"
+msgstr "所有版本必须属于同一系统。"
 
 #: routes/versions.py:26
 msgid "A bonus disc cannot be a version of a game."
-msgstr ""
+msgstr "附赠光盘不能作为游戏的版本。"
 
 #: routes/versions.py:28
-#, fuzzy
 msgid "Those games cannot be linked."
-msgstr "名称不能为空"
+msgstr "这些游戏无法关联。"
 
 #: routes/versions.py:81 routes/versions.py:96
-#, fuzzy
 msgid "That game is not linked to other versions."
-msgstr "该标签未分配给此游戏"
+msgstr "该游戏未与其他版本关联。"
 
 #: routes/versions.py:92
 msgid "Set up an AI provider in Settings > Scraping first."
-msgstr ""
+msgstr "请先在 设置 > 抓取 中设置 AI 提供方。"
 
 #: routes/versions.py:98
 msgid "The AI did not give a usable answer. Try again later."
-msgstr ""
+msgstr "AI 未给出可用的回答。请稍后再试。"
 
 #: routes/xbox_achievements.py:126
 msgid "Xbox credentials not configured"
@@ -1452,9 +1442,8 @@ msgid "(Paused)"
 msgstr "（已暂停）"
 
 #: services/js_i18n_strings.py:421
-#, fuzzy
 msgid "(none)"
-msgstr "无"
+msgstr "（无）"
 
 #: services/js_i18n_strings.py:422 templates/_bulk_edit_modal.html:25
 #: templates/_bulk_edit_modal.html:38 templates/_bulk_edit_modal.html:83
@@ -1509,7 +1498,7 @@ msgstr "正在同步中"
 #: services/js_i18n_strings.py:432
 #, python-brace-format
 msgid "Applied when you press Play, in the {emulator} settings for this game."
-msgstr ""
+msgstr "按下游玩时，应用到此游戏的 {emulator} 设置中。"
 
 #: services/js_i18n_strings.py:433 templates/_bulk_edit_modal.html:193
 msgid "Apply Changes"
@@ -1520,9 +1509,9 @@ msgid "Apply Normalization"
 msgstr "应用规范化"
 
 #: services/js_i18n_strings.py:435
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Apply failed: {error}"
-msgstr "备份失败：{error}"
+msgstr "应用失败：{error}"
 
 #: services/js_i18n_strings.py:436
 #, python-brace-format
@@ -1548,9 +1537,8 @@ msgid "Applying..."
 msgstr "正在应用……"
 
 #: services/js_i18n_strings.py:441
-#, fuzzy
 msgid "Applying…"
-msgstr "正在应用……"
+msgstr "正在应用…"
 
 #: services/js_i18n_strings.py:442
 msgid ""
@@ -1587,7 +1575,7 @@ msgstr "确定要重启服务器吗？"
 msgid ""
 "Are you sure you want to shut down the server? You will need to start it "
 "again manually."
-msgstr ""
+msgstr "确定要关闭服务器吗？之后需要手动重新启动。"
 
 #: services/js_i18n_strings.py:448 templates/settings.html:67
 msgid "Are you sure?"
@@ -1599,12 +1587,11 @@ msgstr "正在询问 AI…"
 
 #: services/js_i18n_strings.py:450
 msgid "Asking the AI. This can take up to a minute."
-msgstr ""
+msgstr "正在询问 AI。最多可能需要一分钟。"
 
 #: services/js_i18n_strings.py:451
-#, fuzzy
 msgid "Aspect ratio"
-msgstr "选择分级"
+msgstr "宽高比"
 
 #: services/js_i18n_strings.py:452
 msgid "BIOS"
@@ -1655,9 +1642,8 @@ msgid "Cancel Bulk Scrape"
 msgstr "取消批量抓取"
 
 #: services/js_i18n_strings.py:461
-#, fuzzy
 msgid "Cancel failed"
-msgstr "已取消"
+msgstr "取消失败"
 
 #: services/js_i18n_strings.py:462
 msgid "Cancel request failed"
@@ -1747,9 +1733,8 @@ msgid "Close keyboard shortcuts"
 msgstr "关闭键盘快捷键"
 
 #: services/js_i18n_strings.py:480
-#, fuzzy
 msgid "Close modal / cancel"
-msgstr "关闭用户弹窗"
+msgstr "关闭对话框 / 取消"
 
 #: services/js_i18n_strings.py:481 templates/dashboard.html:155
 msgid "Complete"
@@ -1817,43 +1802,39 @@ msgstr "无法应用元数据。"
 
 #: services/js_i18n_strings.py:494
 msgid "Could not link these versions."
-msgstr ""
+msgstr "无法关联这些版本。"
 
 #: services/js_i18n_strings.py:495
 msgid "Could not load suggestions."
-msgstr ""
+msgstr "无法加载建议。"
 
 #: services/js_i18n_strings.py:496
 msgid "Could not reconnect to server. Please refresh manually."
 msgstr "无法重新连接服务器。请手动刷新。"
 
 #: services/js_i18n_strings.py:497
-#, fuzzy
 msgid "Could not save that setting."
-msgstr "无法应用元数据。"
+msgstr "无法保存该设置。"
 
 #: services/js_i18n_strings.py:498
-#, fuzzy
 msgid "Could not save that."
-msgstr "无法应用元数据。"
+msgstr "无法保存。"
 
 #: services/js_i18n_strings.py:499
 msgid "Could not stop the running instance."
-msgstr ""
+msgstr "无法停止正在运行的实例。"
 
 #: services/js_i18n_strings.py:500
 msgid "Could not unlink this version."
-msgstr ""
+msgstr "无法取消关联此版本。"
 
 #: services/js_i18n_strings.py:501
-#, fuzzy
 msgid "Could not write the summary."
-msgstr "无法应用元数据。"
+msgstr "无法撰写摘要。"
 
 #: services/js_i18n_strings.py:502
-#, fuzzy
 msgid "Currently set"
-msgstr "当前值"
+msgstr "当前设置"
 
 #: services/js_i18n_strings.py:503
 msgid "Default"
@@ -1869,19 +1850,17 @@ msgid "Delete Log File"
 msgstr "删除日志文件"
 
 #: services/js_i18n_strings.py:506
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Detect failed: {error}"
-msgstr "恢复失败：{error}"
+msgstr "检测失败：{error}"
 
 #: services/js_i18n_strings.py:507
-#, fuzzy
 msgid "Detected path"
-msgstr "排除的路径"
+msgstr "检测到的路径"
 
 #: services/js_i18n_strings.py:508
-#, fuzzy
 msgid "Detecting…"
-msgstr "设置"
+msgstr "正在检测…"
 
 #: services/js_i18n_strings.py:509 templates/_bulk_scrape_modal.html:69
 #: templates/psn_trophies.html:247 templates/psn_trophies.html:307
@@ -1924,7 +1903,6 @@ msgid "Edit"
 msgstr "编辑"
 
 #: services/js_i18n_strings.py:518
-#, fuzzy
 msgid "Edit game"
 msgstr "编辑游戏"
 
@@ -1934,9 +1912,8 @@ msgid "Edit: {title}"
 msgstr "编辑：{title}"
 
 #: services/js_i18n_strings.py:520
-#, fuzzy
 msgid "Emulator"
-msgstr "模拟"
+msgstr "模拟器"
 
 #: services/js_i18n_strings.py:521
 msgid "Enter one folder path."
@@ -2090,30 +2067,27 @@ msgstr "正在从 {source} 获取…"
 #: services/js_i18n_strings.py:557
 #, python-brace-format
 msgid "Fetching images: {done} of {total}"
-msgstr ""
+msgstr "正在获取图片：{done} / {total}"
 
 #: services/js_i18n_strings.py:558
 msgid "Focus search box"
-msgstr ""
+msgstr "聚焦搜索框"
 
 #: services/js_i18n_strings.py:559 templates/logs.html:743
 msgid "From"
 msgstr "从"
 
 #: services/js_i18n_strings.py:560
-#, fuzzy
 msgid "From the system setting"
-msgstr "奖杯设置"
+msgstr "来自系统设置"
 
 #: services/js_i18n_strings.py:561
-#, fuzzy
 msgid "Fullscreen"
-msgstr "完整重新抓取"
+msgstr "全屏"
 
 #: services/js_i18n_strings.py:562
-#, fuzzy
 msgid "Game Page"
-msgstr "游戏名称"
+msgstr "游戏页面"
 
 #: services/js_i18n_strings.py:563
 msgid "Game details updated successfully."
@@ -2165,38 +2139,32 @@ msgid "Generation request failed"
 msgstr "生成请求失败"
 
 #: services/js_i18n_strings.py:573
-#, fuzzy
 msgid "Go to Analytics"
-msgstr "分析"
+msgstr "前往分析"
 
 #: services/js_i18n_strings.py:574
-#, fuzzy
 msgid "Go to Changelog"
-msgstr "更新日志"
+msgstr "前往更新日志"
 
 #: services/js_i18n_strings.py:575
-#, fuzzy
 msgid "Go to Dashboard"
-msgstr "仪表盘"
+msgstr "前往仪表盘"
 
 #: services/js_i18n_strings.py:576
 msgid "Go to Help"
-msgstr ""
+msgstr "前往帮助"
 
 #: services/js_i18n_strings.py:577
-#, fuzzy
 msgid "Go to Library"
-msgstr "Xbox 游戏库"
+msgstr "前往游戏库"
 
 #: services/js_i18n_strings.py:578
-#, fuzzy
 msgid "Go to Settings"
-msgstr "工具设置"
+msgstr "前往设置"
 
 #: services/js_i18n_strings.py:579
-#, fuzzy
 msgid "Go to Systems"
-msgstr "系统总数"
+msgstr "前往系统"
 
 #: services/js_i18n_strings.py:580
 msgid "HLTB data cleared"
@@ -2224,9 +2192,8 @@ msgid "Image Resize"
 msgstr "图片缩放"
 
 #: services/js_i18n_strings.py:586
-#, fuzzy
 msgid "Image fetch cancelled."
-msgstr "生成已取消"
+msgstr "已取消图片获取。"
 
 #: services/js_i18n_strings.py:587
 msgid "Image must be under 10MB"
@@ -2260,26 +2227,25 @@ msgstr "键盘快捷键"
 
 #: services/js_i18n_strings.py:593
 msgid "Kill"
-msgstr ""
+msgstr "强制结束"
 
 #: services/js_i18n_strings.py:594
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Launch failed: {error}"
-msgstr "备份失败：{error}"
+msgstr "启动失败：{error}"
 
 #: services/js_i18n_strings.py:595
 #, python-brace-format
 msgid "Launched (pid {pid})"
-msgstr ""
+msgstr "已启动（pid {pid}）"
 
 #: services/js_i18n_strings.py:596
 msgid "Launched (replaced previous instance)"
-msgstr ""
+msgstr "已启动（已替换之前的实例）"
 
 #: services/js_i18n_strings.py:597
-#, fuzzy
 msgid "Launching…"
-msgstr "启动"
+msgstr "正在启动…"
 
 #: services/js_i18n_strings.py:598
 #, python-brace-format
@@ -2287,14 +2253,12 @@ msgid "Library scan complete! Found {n} new games."
 msgstr "游戏库扫描完成！找到 {n} 个新游戏。"
 
 #: services/js_i18n_strings.py:599
-#, fuzzy
 msgid "Link"
-msgstr "取消关联"
+msgstr "关联"
 
 #: services/js_i18n_strings.py:600
-#, fuzzy
 msgid "Link ticked games"
-msgstr "关联到 RetroDB 游戏"
+msgstr "关联已勾选的游戏"
 
 #: services/js_i18n_strings.py:601
 msgid "Loading log file..."
@@ -2306,7 +2270,7 @@ msgstr "日志文件已删除"
 
 #: services/js_i18n_strings.py:603
 msgid "Looking for versions…"
-msgstr ""
+msgstr "正在查找版本…"
 
 #: services/js_i18n_strings.py:604 templates/achievement_game.html:168
 #: templates/achievement_game.html:197 templates/achievement_game.html:207
@@ -2336,7 +2300,7 @@ msgstr "主线"
 
 #: services/js_i18n_strings.py:606
 msgid "Marked as not versions."
-msgstr ""
+msgstr "已标记为非版本。"
 
 #: services/js_i18n_strings.py:607
 msgid "Match found - please confirm to save"
@@ -2377,9 +2341,8 @@ msgid "NOT"
 msgstr "非"
 
 #: services/js_i18n_strings.py:615
-#, fuzzy
 msgid "Navigation"
-msgstr "主导航"
+msgstr "导航"
 
 #: services/js_i18n_strings.py:616
 msgid "Network error"
@@ -2391,12 +2354,11 @@ msgstr "启动批量抓取时发生网络错误"
 
 #: services/js_i18n_strings.py:618
 msgid "Next disk"
-msgstr ""
+msgstr "下一张光盘"
 
 #: services/js_i18n_strings.py:619
-#, fuzzy
 msgid "Next disk failed"
-msgstr "生成失败"
+msgstr "切换下一张光盘失败"
 
 #: services/js_i18n_strings.py:620 templates/_bulk_edit_modal.html:171
 #: templates/_modals/edit_modal.html:139 templates/game_detail.html:652
@@ -2432,11 +2394,11 @@ msgstr "暂无描述。"
 
 #: services/js_i18n_strings.py:627
 msgid "No emulator AppImages found in the scan paths."
-msgstr ""
+msgstr "在扫描路径中未找到模拟器 AppImage。"
 
 #: services/js_i18n_strings.py:628
 msgid "No emulators registered."
-msgstr ""
+msgstr "尚未登记任何模拟器。"
 
 #: services/js_i18n_strings.py:629
 msgid "No folders yet."
@@ -2456,7 +2418,7 @@ msgstr "还没有关联。请在上方添加模拟器文件夹。"
 
 #: services/js_i18n_strings.py:633
 msgid "No matching games on this system."
-msgstr ""
+msgstr "此系统中没有匹配的游戏。"
 
 #: services/js_i18n_strings.py:634
 msgid "No missing ROM files found."
@@ -2488,7 +2450,7 @@ msgstr "没有会话符合当前筛选条件"
 
 #: services/js_i18n_strings.py:641
 msgid "No suggestions. Run Backfill Alternate Titles in Maintenance to find more."
-msgstr ""
+msgstr "没有建议。在维护中运行“回填别名标题”可以找到更多。"
 
 #: services/js_i18n_strings.py:642
 #, python-brace-format
@@ -2496,9 +2458,8 @@ msgid "Normalization applied: {games} games updated, {rules} rules saved"
 msgstr "已应用规范化：更新了 {games} 个游戏，保存了 {rules} 条规则"
 
 #: services/js_i18n_strings.py:643
-#, fuzzy
 msgid "Not versions"
-msgstr "版本"
+msgstr "非版本"
 
 #: services/js_i18n_strings.py:644 templates/base.html:1354
 msgid "Now playing"
@@ -2517,9 +2478,8 @@ msgid "Operation failed"
 msgstr "操作失败"
 
 #: services/js_i18n_strings.py:648
-#, fuzzy
 msgid "Other"
-msgstr "射击"
+msgstr "其他"
 
 #: services/js_i18n_strings.py:649
 msgid "PSN Imports"
@@ -2626,9 +2586,8 @@ msgid "Refreshing RA for {system}..."
 msgstr "正在为 {system} 刷新 RA…"
 
 #: services/js_i18n_strings.py:672
-#, fuzzy
 msgid "Regional name matches"
-msgstr "地区不匹配"
+msgstr "地区名称匹配"
 
 #: services/js_i18n_strings.py:673 templates/compare_games.html:24
 #: templates/compare_games.html:40
@@ -2683,9 +2642,8 @@ msgid "Reports"
 msgstr "报告"
 
 #: services/js_i18n_strings.py:684
-#, fuzzy
 msgid "Resolution scale"
-msgstr "分辨率"
+msgstr "分辨率缩放"
 
 #: services/js_i18n_strings.py:685
 msgid "Restarting server..."
@@ -2696,9 +2654,8 @@ msgid "Resume"
 msgstr "继续"
 
 #: services/js_i18n_strings.py:687
-#, fuzzy
 msgid "RetroDB default"
-msgstr "默认"
+msgstr "RetroDB 默认值"
 
 #: services/js_i18n_strings.py:688
 msgid "Running"
@@ -2709,40 +2666,37 @@ msgid "Running..."
 msgstr "运行中…"
 
 #: services/js_i18n_strings.py:690
-#, fuzzy
 msgid "Same IGDB game"
-msgstr "全部抓取"
+msgstr "相同的 IGDB 游戏"
 
 #: services/js_i18n_strings.py:691
-#, fuzzy
 msgid "Same ScreenScraper game"
-msgstr "全部抓取"
+msgstr "相同的 ScreenScraper 游戏"
 
 #: services/js_i18n_strings.py:692
 msgid "Same title, different region"
-msgstr ""
+msgstr "同名，不同地区"
 
 #: services/js_i18n_strings.py:693
 msgid "Save Failed"
 msgstr "保存失败"
 
 #: services/js_i18n_strings.py:694
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Save failed: {error}"
-msgstr "恢复失败：{error}"
+msgstr "保存失败：{error}"
 
 #: services/js_i18n_strings.py:695
 msgid "Saved"
 msgstr "已保存"
 
 #: services/js_i18n_strings.py:696
-#, fuzzy
 msgid "Saved."
-msgstr "已保存"
+msgstr "已保存。"
 
 #: services/js_i18n_strings.py:697
 msgid "Saved. It applies the next time you press Play."
-msgstr ""
+msgstr "已保存。下次按下游玩时生效。"
 
 #: services/js_i18n_strings.py:698
 msgid "Saving to the database…"
@@ -2753,7 +2707,6 @@ msgid "Saving..."
 msgstr "正在保存…"
 
 #: services/js_i18n_strings.py:700
-#, fuzzy
 msgid "Saving…"
 msgstr "正在保存…"
 
@@ -2763,23 +2716,21 @@ msgid "Scan failed (HTTP {status})"
 msgstr "扫描失败（HTTP {status}）"
 
 #: services/js_i18n_strings.py:702
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Scan failed: {error}"
-msgstr "备份失败：{error}"
+msgstr "扫描失败：{error}"
 
 #: services/js_i18n_strings.py:703 templates/multi_disc_organizer.html:204
 msgid "Scanning..."
 msgstr "正在扫描..."
 
 #: services/js_i18n_strings.py:704
-#, fuzzy
 msgid "Scanning…"
-msgstr "正在扫描..."
+msgstr "正在扫描…"
 
 #: services/js_i18n_strings.py:705
-#, fuzzy
 msgid "Scrape game"
-msgstr "全部抓取"
+msgstr "抓取游戏"
 
 #: services/js_i18n_strings.py:706
 #, python-brace-format
@@ -2803,9 +2754,8 @@ msgid "Search"
 msgstr "搜索"
 
 #: services/js_i18n_strings.py:710
-#, fuzzy
 msgid "Search failed."
-msgstr "搜索文件名…"
+msgstr "搜索失败。"
 
 #: services/js_i18n_strings.py:711
 msgid "Searching & removing background..."
@@ -2878,20 +2828,19 @@ msgstr "服务器重启成功！"
 
 #: services/js_i18n_strings.py:727
 msgid "Server stopped. You can close this tab."
-msgstr ""
+msgstr "服务器已停止。可以关闭此标签页。"
 
 #: services/js_i18n_strings.py:728
-#, fuzzy
 msgid "Set for this game"
-msgstr "清除该游戏的 HLTB 数据？"
+msgstr "为此游戏设置"
 
 #: services/js_i18n_strings.py:729
 msgid "Set inside the emulator; RetroDB leaves it alone"
-msgstr ""
+msgstr "在模拟器内设置；RetroDB 不会更改"
 
 #: services/js_i18n_strings.py:730
 msgid "Set per system, in Settings > Emulators"
-msgstr ""
+msgstr "按系统设置，位于 设置 > 模拟器"
 
 #: services/js_i18n_strings.py:731 templates/_macros/nav_tabs.html:43
 #: templates/base.html:156 templates/rom_tools_hub.html:119
@@ -2905,18 +2854,16 @@ msgid "Show Bonus"
 msgstr "显示附赠"
 
 #: services/js_i18n_strings.py:733
-#, fuzzy
 msgid "Show keyboard shortcuts"
-msgstr "键盘快捷键"
+msgstr "显示键盘快捷键"
 
 #: services/js_i18n_strings.py:734
 msgid "Showing Bonus Discs"
 msgstr "显示附赠光盘"
 
 #: services/js_i18n_strings.py:735
-#, fuzzy
 msgid "Shutting down server..."
-msgstr "正在重启服务器..."
+msgstr "正在关闭服务器..."
 
 #: services/js_i18n_strings.py:736 templates/_modals/edit_modal.html:46
 #: templates/base.html:1052
@@ -2941,9 +2888,8 @@ msgid "Successfully updated {count} games"
 msgstr "已成功更新 {count} 个游戏"
 
 #: services/js_i18n_strings.py:741
-#, fuzzy
 msgid "Summary written."
-msgstr "摘要"
+msgstr "摘要已撰写。"
 
 #: services/js_i18n_strings.py:742
 msgid "Sync In Progress"
@@ -3004,7 +2950,7 @@ msgstr "系统"
 
 #: services/js_i18n_strings.py:752
 msgid "This game is already running.  Kill the existing process and relaunch?"
-msgstr ""
+msgstr "此游戏已在运行。要结束现有进程并重新启动吗？"
 
 #: services/js_i18n_strings.py:753
 msgid "This system is already being synced."
@@ -3063,9 +3009,8 @@ msgid ""
 msgstr "这将使用您配置的 AI 服务商为所有系统生成历史和热门游戏。此过程可能需要几分钟并消耗 API 额度。是否继续？"
 
 #: services/js_i18n_strings.py:762
-#, fuzzy
 msgid "Tick at least two games."
-msgstr "随机挑选一款游戏"
+msgstr "请至少勾选两个游戏。"
 
 #: services/js_i18n_strings.py:763 templates/logs.html:745
 msgid "To"
@@ -3138,31 +3083,27 @@ msgid "Uploading…"
 msgstr "正在上传…"
 
 #: services/js_i18n_strings.py:778
-#, fuzzy
 msgid "Use the system setting"
-msgstr "保存路径设置"
+msgstr "使用系统设置"
 
 #: services/js_i18n_strings.py:779
 #, python-brace-format
 msgid ""
 "Used for every {system} game unless the game sets its own. Applied when "
 "you press Play."
-msgstr ""
+msgstr "除非游戏自行设置，否则用于所有 {system} 游戏。按下游玩时生效。"
 
 #: services/js_i18n_strings.py:780
-#, fuzzy
 msgid "Version unlinked."
-msgstr "权限被拒绝"
+msgstr "已取消关联版本。"
 
 #: services/js_i18n_strings.py:781
-#, fuzzy
 msgid "Versions linked."
-msgstr "版本"
+msgstr "已关联版本。"
 
 #: services/js_i18n_strings.py:782
-#, fuzzy
 msgid "Will change?"
-msgstr "更改"
+msgstr "会更改？"
 
 #: services/js_i18n_strings.py:783
 msgid "Works"
@@ -3170,7 +3111,7 @@ msgstr "正常"
 
 #: services/js_i18n_strings.py:784 templates/game_detail.html:739
 msgid "Write again with AI"
-msgstr ""
+msgstr "用 AI 重新撰写"
 
 #: services/js_i18n_strings.py:785
 msgid "Xbox Imports"
@@ -3212,14 +3153,14 @@ msgid "{count} Achievements"
 msgstr "{count} 项成就"
 
 #: services/js_i18n_strings.py:793
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{count} regional versions"
-msgstr "当前：v%(version)s"
+msgstr "{count} 个地区版本"
 
 #: services/js_i18n_strings.py:794
 #, python-brace-format
 msgid "{count} suggested groups. Untick any game that does not belong, then link."
-msgstr ""
+msgstr "{count} 个建议分组。取消勾选不属于该组的游戏，然后关联。"
 
 #: services/js_i18n_strings.py:795
 #, python-brace-format
@@ -3277,9 +3218,9 @@ msgid "{system} has been added to the sync queue."
 msgstr "{system} 已加入同步队列。"
 
 #: services/js_i18n_strings.py:806
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{title} ({count} versions)"
-msgstr "开始转换"
+msgstr "{title}（{count} 个版本）"
 
 #: services/js_i18n_strings.py:807
 msgid "⏳ Searching..."
@@ -3332,7 +3273,7 @@ msgstr "🗑️ 重置元数据"
 
 #: services/js_i18n_strings.py:819
 msgid "🛑 Shut Down Server"
-msgstr ""
+msgstr "🛑 关闭服务器"
 
 #: services/js_i18n_strings.py:820
 msgid "🧹 Clean Missing ROMs"
@@ -3342,33 +3283,32 @@ msgstr "🧹 清理缺失的 ROM"
 msgid ""
 "RetroDB could not read this disc's serial, so it cannot name the "
 "emulator's per-game settings file."
-msgstr ""
+msgstr "RetroDB 无法读取此光盘的序列号，因此无法确定模拟器的单个游戏设置文件名。"
 
 #: services/standalone_settings.py:215
 msgid ""
 "PCSX2 has two or more settings files for this game; remove the ones you "
 "do not use."
-msgstr ""
+msgstr "PCSX2 中此游戏有两个或更多设置文件；请删除不用的文件。"
 
 #: services/standalone_settings.py:223
 msgid ""
 "RetroDB could not read this disc's boot file, so it cannot name PCSX2's "
 "per-game settings file."
-msgstr ""
+msgstr "RetroDB 无法读取此光盘的引导文件，因此无法确定 PCSX2 的单个游戏设置文件名。"
 
 #: services/standalone_settings.py:231
 msgid "Settings path outside the data folder."
-msgstr ""
+msgstr "设置路径位于数据文件夹之外。"
 
 #: services/standalone_settings.py:253
-#, fuzzy
 msgid "No emulator is set up for this system."
-msgstr "此系统暂无规格信息。"
+msgstr "此系统尚未设置模拟器。"
 
 #: services/standalone_settings.py:268
 #, python-format
 msgid "Run %(name)s once so it creates its settings, then play again."
-msgstr ""
+msgstr "请先运行一次 %(name)s 以生成其设置，然后再次游玩。"
 
 #: templates/_bulk_edit_modal.html:7
 msgid "Bulk Edit"
@@ -3832,7 +3772,7 @@ msgstr "所有系统的游戏"
 #: templates/all_games.html:17 templates/system_games.html:24
 #, python-format
 msgid "(%(roms)s ROMs)"
-msgstr ""
+msgstr "（%(roms)s 个 ROM）"
 
 #: templates/all_games.html:19 templates/system_games.html:26
 msgid "missing metadata"
@@ -4579,11 +4519,11 @@ msgstr "等待开始……"
 
 #: templates/archive_scanner.html:1658
 msgid "Have the original archive moved to the staging folder"
-msgstr ""
+msgstr "将原始压缩包移至暂存文件夹"
 
 #: templates/archive_scanner.html:1761
 msgid "Original archives moved to:"
-msgstr ""
+msgstr "原始压缩包已移至："
 
 #: templates/base.html:40
 msgid "Skip to main content"
@@ -4703,28 +4643,24 @@ msgid "Last Updated"
 msgstr "最近更新"
 
 #: templates/base.html:219
-#, fuzzy
 msgid "Disclaimer"
 msgstr "免责声明"
 
 #: templates/base.html:230
 msgid "Support RetroDB's development on GitHub Sponsors"
-msgstr ""
+msgstr "在 GitHub Sponsors 上支持 RetroDB 的开发"
 
 #: templates/base.html:231
-#, fuzzy
 msgid "Sponsor RetroDB"
-msgstr "赞助"
+msgstr "赞助 RetroDB"
 
 #: templates/base.html:233
-#, fuzzy
 msgid "Support RetroDB's development on Patreon"
-msgstr "支持开发"
+msgstr "在 Patreon 上支持 RetroDB 的开发"
 
 #: templates/base.html:234
-#, fuzzy
 msgid "Support RetroDB"
-msgstr "在 Patreon 上支持"
+msgstr "支持 RetroDB"
 
 #: templates/base.html:249
 msgid "Toggle menu"
@@ -5135,21 +5071,19 @@ msgstr "L - 大众级"
 #: templates/_modals/edit_modal.html:325
 #: templates/_settings_tabs/library.html:160 templates/base.html:1294
 msgid "CADPA (China)"
-msgstr ""
+msgstr "CADPA（中国）"
 
 #: templates/_modals/edit_modal.html:328 templates/base.html:1297
-#, fuzzy
 msgid "8+ - Ages 8 and up"
-msgstr "Z - 18 岁以上"
+msgstr "8+ - 8 岁及以上"
 
 #: templates/_modals/edit_modal.html:329 templates/base.html:1298
-#, fuzzy
 msgid "12+ - Ages 12 and up"
-msgstr "B - 12 岁以上"
+msgstr "12+ - 12 岁及以上"
 
 #: templates/_modals/edit_modal.html:330 templates/base.html:1299
 msgid "16+ - Ages 16 and up"
-msgstr ""
+msgstr "16+ - 16 岁及以上"
 
 #: templates/_modals/edit_modal.html:339 templates/base.html:1308
 msgid "Game Description"
@@ -5478,9 +5412,8 @@ msgid "ClassInd Rating"
 msgstr "ClassInd 分级"
 
 #: templates/compare_games.html:88
-#, fuzzy
 msgid "CADPA Rating"
-msgstr "ClassInd 分级"
+msgstr "CADPA 分级"
 
 #: templates/compare_games.html:90
 msgid "Playtime Estimate"
@@ -5642,29 +5575,24 @@ msgid "Estimated total (HLTB)"
 msgstr "预计总时长（HLTB）"
 
 #: templates/dashboard.html:212
-#, fuzzy
 msgid "Quick Fixes"
-msgstr "快速编辑"
+msgstr "快速修复"
 
 #: templates/dashboard.html:219
-#, fuzzy
 msgid "Games missing box art"
-msgstr "缺少年份"
+msgstr "缺少封面的游戏"
 
 #: templates/dashboard.html:227
-#, fuzzy
 msgid "Find duplicate ROMs"
-msgstr "重复分组"
+msgstr "查找重复 ROM"
 
 #: templates/dashboard.html:234
-#, fuzzy
 msgid "Check"
-msgstr "正在检查…"
+msgstr "检查"
 
 #: templates/dashboard.html:235
-#, fuzzy
 msgid "Broken ROM paths"
-msgstr "未设置 ROM 路径"
+msgstr "失效的 ROM 路径"
 
 #: templates/dashboard.html:250
 msgid "View All Systems →"
@@ -5928,19 +5856,16 @@ msgid "Part of:"
 msgstr "所属："
 
 #: templates/game_detail.html:74
-#, fuzzy
 msgid "Regional versions"
-msgstr "地区选项"
+msgstr "地区版本"
 
 #: templates/game_detail.html:75
-#, fuzzy
 msgid "Versions:"
-msgstr "版本"
+msgstr "版本："
 
 #: templates/game_detail.html:77 templates/game_detail.html:708
-#, fuzzy
 msgid "Unknown region"
-msgstr "未知错误"
+msgstr "未知地区"
 
 #: templates/game_detail.html:83
 msgid "Launch this game in the configured emulator"
@@ -6147,81 +6072,74 @@ msgid "Bonus Content"
 msgstr "附赠内容"
 
 #: templates/game_detail.html:678
-#, fuzzy
 msgid "Emulator settings"
-msgstr "工具设置"
+msgstr "模拟器设置"
 
 #: templates/_macros/nav_tabs.html:40 templates/game_detail.html:687
 #: templates/rom_tools_hub.html:193 templates/versions_review.html:5
 #: templates/versions_review.html:80
-#, fuzzy
 msgid "Regional Versions"
-msgstr "地区选项"
+msgstr "地区版本"
 
 #: templates/game_detail.html:695 templates/museum_system.html:100
 msgid "Released"
 msgstr "发行于"
 
 #: templates/game_detail.html:697
-#, fuzzy
 msgid "File size"
 msgstr "文件大小"
 
 #: templates/game_detail.html:698
-#, fuzzy
 msgid "Revision"
-msgstr "地区"
+msgstr "修订版"
 
 #: templates/game_detail.html:699
-#, fuzzy
 msgid "Languages"
 msgstr "语言"
 
 #: templates/game_detail.html:700
-#, fuzzy
 msgid "Scores"
-msgstr "体育"
+msgstr "评分"
 
 #: templates/game_detail.html:709
 msgid "(this page)"
-msgstr ""
+msgstr "（本页）"
 
 #: templates/game_detail.html:727
 msgid "Known differences"
-msgstr ""
+msgstr "已知差异"
 
 #: templates/game_detail.html:727
 msgid "AI-written"
-msgstr ""
+msgstr "AI 撰写"
 
 #: templates/game_detail.html:728
 msgid "Written by AI from what it knows about these releases. It can be wrong."
-msgstr ""
+msgstr "由 AI 根据其对这些发行版本的了解撰写，可能有误。"
 
 #: templates/game_detail.html:730
 msgid "The AI knows of no differences between these versions."
-msgstr ""
+msgstr "AI 不知道这些版本之间有任何差异。"
 
 #: templates/game_detail.html:733
 msgid "No other regional versions are linked to this game."
-msgstr ""
+msgstr "没有其他地区版本关联到此游戏。"
 
 #: templates/game_detail.html:738
 msgid "Unlink this version"
-msgstr ""
+msgstr "取消关联此版本"
 
 #: templates/game_detail.html:739
 msgid "Summarise differences with AI"
-msgstr ""
+msgstr "用 AI 总结差异"
 
 #: templates/game_detail.html:741
-#, fuzzy
 msgid "Link a version"
-msgstr "版本"
+msgstr "关联版本"
 
 #: templates/game_detail.html:742
 msgid "Link a version: search this system"
-msgstr ""
+msgstr "关联版本：在此系统中搜索"
 
 #: templates/game_detail.html:755
 msgid "Scrape History"
@@ -6666,9 +6584,8 @@ msgid "Password"
 msgstr "密码"
 
 #: templates/login.html:250
-#, fuzzy
 msgid "Enter your password"
-msgstr "输入当前密码"
+msgstr "输入您的密码"
 
 #: templates/logs.html:729
 msgid "File"
@@ -7457,7 +7374,7 @@ msgid ""
 "Link the same game from different regions so the Library shows it once. "
 "Review the groups RetroDB suggests, or link versions by hand on a game "
 "page."
-msgstr ""
+msgstr "关联不同地区的同一游戏，让游戏库只显示一次。审阅 RetroDB 建议的分组，或在游戏页面手动关联版本。"
 
 #: templates/_macros/nav_tabs.html:38 templates/rom_tools_hub.html:207
 msgid "Multi-Disc Organizer"
@@ -7557,13 +7474,13 @@ msgstr "配置所有 ROM 工具共享的路径、外部工具位置、压缩包�
 
 #: templates/rom_tools_settings.html:304
 msgid "Empty: RetroDB's data folder"
-msgstr ""
+msgstr "留空：RetroDB 的数据文件夹"
 
 #: templates/rom_tools_settings.html:305
 msgid ""
 "Where Create M3U moves original archives. Leave empty to use RetroDB's "
 "data folder."
-msgstr ""
+msgstr "创建 M3U 移动原始压缩包的位置。留空则使用 RetroDB 的数据文件夹。"
 
 #: templates/screenshot_dedup.html:243
 msgid "Exact Hash (MD5) &mdash; identical files only"
@@ -7781,17 +7698,15 @@ msgid ""
 "RetroDB looks for games that are the same game from different regions. "
 "Linked versions show as one card in the Library, opening the version from"
 " your preferred region. Nothing is linked until you confirm it here."
-msgstr ""
+msgstr "RetroDB 会查找来自不同地区的同一游戏。已关联的版本在游戏库中显示为一张卡片，打开时显示您首选地区的版本。在此确认前不会关联任何内容。"
 
 #: templates/versions_review.html:88
-#, fuzzy
 msgid "All systems"
 msgstr "所有系统"
 
 #: templates/versions_review.html:94
-#, fuzzy
 msgid "Find suggestions"
-msgstr "AI 建议"
+msgstr "查找建议"
 
 #: templates/wishlist.html:12
 msgid "Games you want to find and add to your collection"
@@ -8525,9 +8440,8 @@ msgid "Change Password"
 msgstr "更改密码"
 
 #: templates/_settings_tabs/account.html:198
-#, fuzzy
 msgid "Every account needs a password to log in."
-msgstr "管理员账户登录时需要密码。"
+msgstr "每个账户都需要密码才能登录。"
 
 #: templates/_settings_tabs/account.html:202
 msgid "Current Password"
@@ -9182,13 +9096,13 @@ msgstr "配置可用的地区值和默认地区。抓取时如果未检测到地
 
 #: templates/_settings_tabs/system.html:182
 msgid "Shut Down Server"
-msgstr ""
+msgstr "关闭服务器"
 
 #: templates/_settings_tabs/system.html:185
 msgid ""
 "Restart the Flask server (useful after configuration changes), or shut it"
 " down completely"
-msgstr ""
+msgstr "重启 Flask 服务器（配置更改后很有用），或将其完全关闭"
 
 #: templates/_settings_tabs/system.html:444
 msgid "Support Development"

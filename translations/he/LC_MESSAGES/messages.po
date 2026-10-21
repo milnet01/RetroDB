@@ -25,21 +25,21 @@ msgid ""
 "MB and a video up to %(video)s MB; upload fewer files at once. Operators "
 "can raise the total limit via RETRODB_MAX_UPLOAD_MB."
 msgstr ""
+"ההעלאה חורגת ממגבלת %(total)s MB. כל תמונה יכולה להיות עד %(image)s MB "
+"וסרטון עד %(video)s MB; העלה פחות קבצים בבת אחת. מפעילים יכולים להגדיל את"
+" המגבלה הכוללת דרך RETRODB_MAX_UPLOAD_MB."
 
 #: app.py:703
-#, fuzzy
 msgid "Too many requests. Please wait and try again."
-msgstr "יותר מדי ניסיונות. נסה שוב מאוחר יותר."
+msgstr "יותר מדי בקשות. המתן ונסה שוב."
 
 #: app.py:812
-#, fuzzy
 msgid "Setup required"
-msgstr "נדרשת כותרת"
+msgstr "נדרשת הגדרה ראשונית"
 
 #: app.py:833
-#, fuzzy
 msgid "Password change required"
-msgstr "אין צורך בשינוי סיסמה"
+msgstr "נדרש שינוי סיסמה"
 
 #: app.py:1656 routes/auth.py:202 routes/auth.py:251 routes/auth.py:436
 #: routes/auth.py:481 templates/force_change_password.html:49
@@ -103,7 +103,7 @@ msgstr "סנכרון כבר מתבצע עבור %(name)s"
 #: routes/achievements.py:367 routes/platform_import.py:326
 #: routes/platform_import.py:693
 msgid "That job belongs to another user"
-msgstr ""
+msgstr "משימה זו שייכת למשתמש אחר"
 
 #: routes/achievements.py:457
 msgid "No RetroAchievements found for this game"
@@ -166,14 +166,13 @@ msgid "Invalid locale"
 msgstr "אזור/שפה לא חוקיים"
 
 #: routes/auth.py:385
-#, fuzzy
 msgid "Invalid theme"
-msgstr "נתיב לא חוקי"
+msgstr "ערכת נושא לא חוקית"
 
 #: routes/auth.py:391
-#, fuzzy, python-format
+#, python-format
 msgid "Invalid RPCS3 trophy folder: %(reason)s"
-msgstr "מפתחות API לא חוקיים: %(reason)s"
+msgstr "תיקיית גביעי RPCS3 לא חוקית: %(reason)s"
 
 #: routes/auth.py:424
 msgid "Too many attempts. Please try again later."
@@ -405,31 +404,28 @@ msgid "system_id and emulator_id required"
 msgstr "נדרשים system_id ו-emulator_id"
 
 #: routes/emulators.py:224
-#, fuzzy
 msgid "Send at least one setting."
-msgstr "הגדרות נתונים"
+msgstr "שלח לפחות הגדרה אחת."
 
 #: routes/emulators.py:230
 msgid "RetroDB does not manage that setting for this emulator."
-msgstr ""
+msgstr "RetroDB אינו מנהל הגדרה זו עבור אמולטור זה."
 
 #: routes/emulators.py:232
 msgid "Fullscreen is set per system, in Settings > Emulators."
-msgstr ""
+msgstr "מסך מלא מוגדר לכל מערכת, בהגדרות > אמולטורים."
 
 #: routes/emulators.py:234
-#, fuzzy
 msgid "That value is not one of the choices."
-msgstr "התגית אינה משויכת למשחק זה"
+msgstr "ערך זה אינו אחת מהאפשרויות."
 
 #: routes/emulators.py:264 services/standalone_settings.py:258
 msgid "RetroDB manages per-game settings for DuckStation, PCSX2 and RPCS3 only."
-msgstr ""
+msgstr "RetroDB מנהל הגדרות לכל משחק עבור DuckStation, PCSX2 ו-RPCS3 בלבד."
 
 #: routes/emulators.py:277 routes/emulators.py:288
-#, fuzzy
 msgid "Emulator not found"
-msgstr "הפלטפורמה לא נמצאה"
+msgstr "האמולטור לא נמצא"
 
 #: routes/games.py:239
 msgid "No IDs provided"
@@ -442,7 +438,7 @@ msgstr "ספק 1-50 מזהים חוקיים"
 #: routes/games.py:501
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
-msgstr ""
+msgstr "הסרטון לא נשמר: עליו להיות קובץ MP4, WebM או OGG בגודל של עד %(mb)s MB."
 
 #: routes/games.py:627
 msgid "Game not found after update"
@@ -532,7 +528,7 @@ msgstr "היעד נמצא מחוץ לתיקיית השורש המוגדרת של
 #: routes/games_media.py:106 routes/reports.py:725
 #, python-format
 msgid "Cannot rename: %(reason)s"
-msgstr ""
+msgstr "לא ניתן לשנות שם: %(reason)s"
 
 #: routes/games_media.py:109 routes/reports.py:729 routes/reports.py:896
 msgid "A file with that name already exists"
@@ -573,13 +569,12 @@ msgid "failed to kill prior instance: %(err)s"
 msgstr "נכשל בסגירת המופע הקודם: %(err)s"
 
 #: routes/launch.py:184
-#, fuzzy
 msgid "That game is no longer running"
-msgstr "החלת המטא-נתונים הזו כבר אינה פועלת."
+msgstr "משחק זה כבר אינו פועל"
 
 #: routes/launch.py:186
 msgid "This game has no disk list to swap through"
-msgstr ""
+msgstr "למשחק זה אין רשימת דיסקים להחלפה"
 
 #: routes/launch.py:191
 #, python-format
@@ -587,15 +582,16 @@ msgid ""
 "RetroArch is not accepting commands. In RetroArch, turn on Settings > "
 "Network > Network Commands (port %(port)s)."
 msgstr ""
+"RetroArch אינו מקבל פקודות. ב-RetroArch, הפעל את Settings > Network > "
+"Network Commands (פורט %(port)s)."
 
 #: routes/launch.py:194
 msgid "Next disk inserted"
-msgstr ""
+msgstr "הדיסק הבא הוכנס"
 
 #: routes/maintenance.py:260
-#, fuzzy
 msgid "Unknown image type"
-msgstr "אין תמונה לעיבוד"
+msgstr "סוג תמונה לא ידוע"
 
 #: routes/museum.py:385 routes/scraper.py:770
 msgid "No AI provider configured"
@@ -623,9 +619,8 @@ msgid "No controllers found"
 msgstr "לא נמצאו בקרים"
 
 #: routes/museum.py:620
-#, fuzzy
 msgid "An image fetch is already running"
-msgstr "המשחק כבר פועל"
+msgstr "הורדת תמונות כבר פועלת"
 
 #: routes/museum.py:656
 msgid "No image file provided"
@@ -814,7 +809,7 @@ msgstr "שגיאה בניתוח תגובת ה-API"
 #: routes/scraper.py:696
 #, python-format
 msgid "ScreenScraper answered HTTP %(code)s"
-msgstr ""
+msgstr "ScreenScraper השיב HTTP %(code)s"
 
 #: routes/scraper.py:711
 msgid "No RAWG API key configured"
@@ -986,15 +981,15 @@ msgstr "chdman לא נמצא"
 #: routes/tools.py:944
 #, python-format
 msgid "Unknown duplicate method: %(method)s"
-msgstr ""
+msgstr "שיטת כפילויות לא ידועה: %(method)s"
 
 #: routes/tools.py:1152
 msgid "These scan results have expired. Scan again, then delete."
-msgstr ""
+msgstr "תוצאות סריקה אלה פגו. סרוק שוב ואז מחק."
 
 #: routes/tools.py:1157
 msgid "Keep at least one copy of each game. Nothing was deleted."
-msgstr ""
+msgstr "השאר לפחות עותק אחד של כל משחק. דבר לא נמחק."
 
 #: routes/trophies.py:387
 msgid ""
@@ -1053,47 +1048,43 @@ msgstr "לא סופק אסימון NPSSO"
 
 #: routes/trophies.py:1834
 msgid "Could not connect to PSN"
-msgstr ""
+msgstr "לא ניתן להתחבר ל-PSN"
 
 #: routes/trophies.py:1861
 msgid "PSN NPSSO not configured"
 msgstr "ה-NPSSO של PSN לא הוגדר"
 
 #: routes/versions.py:23
-#, fuzzy
 msgid "Pick at least two games."
-msgstr "בחר משחק אקראי"
+msgstr "בחר לפחות שני משחקים."
 
 #: routes/versions.py:24
 msgid "One of those games no longer exists."
-msgstr ""
+msgstr "אחד מהמשחקים האלה כבר אינו קיים."
 
 #: routes/versions.py:25
-#, fuzzy
 msgid "Versions must all be on the same system."
-msgstr "דיסק הבונוס ומשחק האב חייבים להיות באותה מערכת"
+msgstr "כל הגרסאות חייבות להיות באותה מערכת."
 
 #: routes/versions.py:26
 msgid "A bonus disc cannot be a version of a game."
-msgstr ""
+msgstr "דיסק בונוס אינו יכול להיות גרסה של משחק."
 
 #: routes/versions.py:28
-#, fuzzy
 msgid "Those games cannot be linked."
-msgstr "השם אינו יכול להיות ריק"
+msgstr "לא ניתן לקשר משחקים אלה."
 
 #: routes/versions.py:81 routes/versions.py:96
-#, fuzzy
 msgid "That game is not linked to other versions."
-msgstr "התגית אינה משויכת למשחק זה"
+msgstr "משחק זה אינו מקושר לגרסאות אחרות."
 
 #: routes/versions.py:92
 msgid "Set up an AI provider in Settings > Scraping first."
-msgstr ""
+msgstr "הגדר תחילה ספק AI בהגדרות > גירוד."
 
 #: routes/versions.py:98
 msgid "The AI did not give a usable answer. Try again later."
-msgstr ""
+msgstr "ה-AI לא נתן תשובה שמישה. נסה שוב מאוחר יותר."
 
 #: routes/xbox_achievements.py:126
 msgid "Xbox credentials not configured"
@@ -1458,9 +1449,8 @@ msgid "(Paused)"
 msgstr "(מושהה)"
 
 #: services/js_i18n_strings.py:421
-#, fuzzy
 msgid "(none)"
-msgstr "ללא"
+msgstr "(ללא)"
 
 #: services/js_i18n_strings.py:422 templates/_bulk_edit_modal.html:25
 #: templates/_bulk_edit_modal.html:38 templates/_bulk_edit_modal.html:83
@@ -1515,7 +1505,7 @@ msgstr "כבר מסנכרן"
 #: services/js_i18n_strings.py:432
 #, python-brace-format
 msgid "Applied when you press Play, in the {emulator} settings for this game."
-msgstr ""
+msgstr "מוחל בעת לחיצה על שחק, בהגדרות {emulator} עבור משחק זה."
 
 #: services/js_i18n_strings.py:433 templates/_bulk_edit_modal.html:193
 msgid "Apply Changes"
@@ -1526,9 +1516,9 @@ msgid "Apply Normalization"
 msgstr "החל נורמליזציה"
 
 #: services/js_i18n_strings.py:435
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Apply failed: {error}"
-msgstr "הגיבוי נכשל: {error}"
+msgstr "ההחלה נכשלה: {error}"
 
 #: services/js_i18n_strings.py:436
 #, python-brace-format
@@ -1554,9 +1544,8 @@ msgid "Applying..."
 msgstr "מחיל..."
 
 #: services/js_i18n_strings.py:441
-#, fuzzy
 msgid "Applying…"
-msgstr "מחיל..."
+msgstr "מחיל…"
 
 #: services/js_i18n_strings.py:442
 msgid ""
@@ -1596,7 +1585,7 @@ msgstr "האם אתה בטוח שברצונך להפעיל מחדש את השר�
 msgid ""
 "Are you sure you want to shut down the server? You will need to start it "
 "again manually."
-msgstr ""
+msgstr "האם אתה בטוח שברצונך לכבות את השרת? יהיה עליך להפעיל אותו שוב ידנית."
 
 #: services/js_i18n_strings.py:448 templates/settings.html:67
 msgid "Are you sure?"
@@ -1608,12 +1597,11 @@ msgstr "שואל את הבינה המלאכותית…"
 
 #: services/js_i18n_strings.py:450
 msgid "Asking the AI. This can take up to a minute."
-msgstr ""
+msgstr "שואל את ה-AI. זה עשוי להימשך עד דקה."
 
 #: services/js_i18n_strings.py:451
-#, fuzzy
 msgid "Aspect ratio"
-msgstr "בחר דירוג"
+msgstr "יחס גובה-רוחב"
 
 #: services/js_i18n_strings.py:452
 msgid "BIOS"
@@ -1664,9 +1652,8 @@ msgid "Cancel Bulk Scrape"
 msgstr "בטל גירוד המוני"
 
 #: services/js_i18n_strings.py:461
-#, fuzzy
 msgid "Cancel failed"
-msgstr "בוטל"
+msgstr "הביטול נכשל"
 
 #: services/js_i18n_strings.py:462
 msgid "Cancel request failed"
@@ -1758,9 +1745,8 @@ msgid "Close keyboard shortcuts"
 msgstr "סגור קיצורי מקלדת"
 
 #: services/js_i18n_strings.py:480
-#, fuzzy
 msgid "Close modal / cancel"
-msgstr "סגור את חלון המשתמש"
+msgstr "סגור חלון / ביטול"
 
 #: services/js_i18n_strings.py:481 templates/dashboard.html:155
 msgid "Complete"
@@ -1828,43 +1814,39 @@ msgstr "לא ניתן היה להחיל את המטא-נתונים."
 
 #: services/js_i18n_strings.py:494
 msgid "Could not link these versions."
-msgstr ""
+msgstr "לא ניתן לקשר גרסאות אלה."
 
 #: services/js_i18n_strings.py:495
 msgid "Could not load suggestions."
-msgstr ""
+msgstr "לא ניתן לטעון הצעות."
 
 #: services/js_i18n_strings.py:496
 msgid "Could not reconnect to server. Please refresh manually."
 msgstr "לא ניתן להתחבר מחדש לשרת. רענן ידנית."
 
 #: services/js_i18n_strings.py:497
-#, fuzzy
 msgid "Could not save that setting."
-msgstr "לא ניתן היה להחיל את המטא-נתונים."
+msgstr "לא ניתן לשמור הגדרה זו."
 
 #: services/js_i18n_strings.py:498
-#, fuzzy
 msgid "Could not save that."
-msgstr "לא ניתן היה להחיל את המטא-נתונים."
+msgstr "לא ניתן לשמור."
 
 #: services/js_i18n_strings.py:499
 msgid "Could not stop the running instance."
-msgstr ""
+msgstr "לא ניתן לעצור את המופע הפועל."
 
 #: services/js_i18n_strings.py:500
 msgid "Could not unlink this version."
-msgstr ""
+msgstr "לא ניתן לבטל את קישור גרסה זו."
 
 #: services/js_i18n_strings.py:501
-#, fuzzy
 msgid "Could not write the summary."
-msgstr "לא ניתן היה להחיל את המטא-נתונים."
+msgstr "לא ניתן לכתוב את הסיכום."
 
 #: services/js_i18n_strings.py:502
-#, fuzzy
 msgid "Currently set"
-msgstr "ערך נוכחי"
+msgstr "מוגדר כעת"
 
 #: services/js_i18n_strings.py:503
 msgid "Default"
@@ -1880,19 +1862,17 @@ msgid "Delete Log File"
 msgstr "מחק קובץ יומן"
 
 #: services/js_i18n_strings.py:506
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Detect failed: {error}"
-msgstr "השחזור נכשל: {error}"
+msgstr "הזיהוי נכשל: {error}"
 
 #: services/js_i18n_strings.py:507
-#, fuzzy
 msgid "Detected path"
-msgstr "נתיבים מוחרגים"
+msgstr "נתיב שזוהה"
 
 #: services/js_i18n_strings.py:508
-#, fuzzy
 msgid "Detecting…"
-msgstr "הגדרות"
+msgstr "מזהה…"
 
 #: services/js_i18n_strings.py:509 templates/_bulk_scrape_modal.html:69
 #: templates/psn_trophies.html:247 templates/psn_trophies.html:307
@@ -1935,7 +1915,6 @@ msgid "Edit"
 msgstr "ערוך"
 
 #: services/js_i18n_strings.py:518
-#, fuzzy
 msgid "Edit game"
 msgstr "ערוך משחק"
 
@@ -1945,9 +1924,8 @@ msgid "Edit: {title}"
 msgstr "עריכה: {title}"
 
 #: services/js_i18n_strings.py:520
-#, fuzzy
 msgid "Emulator"
-msgstr "סימולציה"
+msgstr "אמולטור"
 
 #: services/js_i18n_strings.py:521
 msgid "Enter one folder path."
@@ -2101,30 +2079,27 @@ msgstr "מאחזר מ-{source}…"
 #: services/js_i18n_strings.py:557
 #, python-brace-format
 msgid "Fetching images: {done} of {total}"
-msgstr ""
+msgstr "מוריד תמונות: {done} מתוך {total}"
 
 #: services/js_i18n_strings.py:558
 msgid "Focus search box"
-msgstr ""
+msgstr "מקד את תיבת החיפוש"
 
 #: services/js_i18n_strings.py:559 templates/logs.html:743
 msgid "From"
 msgstr "מ-"
 
 #: services/js_i18n_strings.py:560
-#, fuzzy
 msgid "From the system setting"
-msgstr "הגדרות גביעים"
+msgstr "מהגדרת המערכת"
 
 #: services/js_i18n_strings.py:561
-#, fuzzy
 msgid "Fullscreen"
-msgstr "גירוד מלא מחדש"
+msgstr "מסך מלא"
 
 #: services/js_i18n_strings.py:562
-#, fuzzy
 msgid "Game Page"
-msgstr "שם המשחק"
+msgstr "דף המשחק"
 
 #: services/js_i18n_strings.py:563
 msgid "Game details updated successfully."
@@ -2176,38 +2151,32 @@ msgid "Generation request failed"
 msgstr "בקשת היצירה נכשלה"
 
 #: services/js_i18n_strings.py:573
-#, fuzzy
 msgid "Go to Analytics"
-msgstr "ניתוח נתונים"
+msgstr "עבור לניתוח נתונים"
 
 #: services/js_i18n_strings.py:574
-#, fuzzy
 msgid "Go to Changelog"
-msgstr "יומן שינויים"
+msgstr "עבור ליומן שינויים"
 
 #: services/js_i18n_strings.py:575
-#, fuzzy
 msgid "Go to Dashboard"
-msgstr "לוח בקרה"
+msgstr "עבור ללוח הבקרה"
 
 #: services/js_i18n_strings.py:576
 msgid "Go to Help"
-msgstr ""
+msgstr "עבור לעזרה"
 
 #: services/js_i18n_strings.py:577
-#, fuzzy
 msgid "Go to Library"
-msgstr "ספריית Xbox"
+msgstr "עבור לספרייה"
 
 #: services/js_i18n_strings.py:578
-#, fuzzy
 msgid "Go to Settings"
-msgstr "הגדרות כלים"
+msgstr "עבור להגדרות"
 
 #: services/js_i18n_strings.py:579
-#, fuzzy
 msgid "Go to Systems"
-msgstr "סך המערכות"
+msgstr "עבור למערכות"
 
 #: services/js_i18n_strings.py:580
 msgid "HLTB data cleared"
@@ -2235,9 +2204,8 @@ msgid "Image Resize"
 msgstr "שינוי גודל תמונה"
 
 #: services/js_i18n_strings.py:586
-#, fuzzy
 msgid "Image fetch cancelled."
-msgstr "היצירה בוטלה"
+msgstr "הורדת התמונות בוטלה."
 
 #: services/js_i18n_strings.py:587
 msgid "Image must be under 10MB"
@@ -2271,26 +2239,25 @@ msgstr "קיצורי מקלדת"
 
 #: services/js_i18n_strings.py:593
 msgid "Kill"
-msgstr ""
+msgstr "סיים תהליך"
 
 #: services/js_i18n_strings.py:594
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Launch failed: {error}"
-msgstr "הגיבוי נכשל: {error}"
+msgstr "ההפעלה נכשלה: {error}"
 
 #: services/js_i18n_strings.py:595
 #, python-brace-format
 msgid "Launched (pid {pid})"
-msgstr ""
+msgstr "הופעל (pid {pid})"
 
 #: services/js_i18n_strings.py:596
 msgid "Launched (replaced previous instance)"
-msgstr ""
+msgstr "הופעל (המופע הקודם הוחלף)"
 
 #: services/js_i18n_strings.py:597
-#, fuzzy
 msgid "Launching…"
-msgstr "הפעל"
+msgstr "מפעיל…"
 
 #: services/js_i18n_strings.py:598
 #, python-brace-format
@@ -2298,14 +2265,12 @@ msgid "Library scan complete! Found {n} new games."
 msgstr "סריקת הספרייה הושלמה! נמצאו {n} משחקים חדשים."
 
 #: services/js_i18n_strings.py:599
-#, fuzzy
 msgid "Link"
-msgstr "בטל קישור"
+msgstr "קשר"
 
 #: services/js_i18n_strings.py:600
-#, fuzzy
 msgid "Link ticked games"
-msgstr "קשר למשחק RetroDB"
+msgstr "קשר משחקים מסומנים"
 
 #: services/js_i18n_strings.py:601
 msgid "Loading log file..."
@@ -2317,7 +2282,7 @@ msgstr "קובץ היומן נמחק"
 
 #: services/js_i18n_strings.py:603
 msgid "Looking for versions…"
-msgstr ""
+msgstr "מחפש גרסאות…"
 
 #: services/js_i18n_strings.py:604 templates/achievement_game.html:168
 #: templates/achievement_game.html:197 templates/achievement_game.html:207
@@ -2347,7 +2312,7 @@ msgstr "עלילה ראשית"
 
 #: services/js_i18n_strings.py:606
 msgid "Marked as not versions."
-msgstr ""
+msgstr "סומן כלא גרסאות."
 
 #: services/js_i18n_strings.py:607
 msgid "Match found - please confirm to save"
@@ -2392,9 +2357,8 @@ msgid "NOT"
 msgstr "לא"
 
 #: services/js_i18n_strings.py:615
-#, fuzzy
 msgid "Navigation"
-msgstr "ניווט ראשי"
+msgstr "ניווט"
 
 #: services/js_i18n_strings.py:616
 msgid "Network error"
@@ -2406,12 +2370,11 @@ msgstr "שגיאת רשת בהפעלת הגירוד ההמוני"
 
 #: services/js_i18n_strings.py:618
 msgid "Next disk"
-msgstr ""
+msgstr "הדיסק הבא"
 
 #: services/js_i18n_strings.py:619
-#, fuzzy
 msgid "Next disk failed"
-msgstr "היצירה נכשלה"
+msgstr "החלפת הדיסק נכשלה"
 
 #: services/js_i18n_strings.py:620 templates/_bulk_edit_modal.html:171
 #: templates/_modals/edit_modal.html:139 templates/game_detail.html:652
@@ -2447,11 +2410,11 @@ msgstr "אין תיאור זמין."
 
 #: services/js_i18n_strings.py:627
 msgid "No emulator AppImages found in the scan paths."
-msgstr ""
+msgstr "לא נמצאו קובצי AppImage של אמולטורים בנתיבי הסריקה."
 
 #: services/js_i18n_strings.py:628
 msgid "No emulators registered."
-msgstr ""
+msgstr "אין אמולטורים רשומים."
 
 #: services/js_i18n_strings.py:629
 msgid "No folders yet."
@@ -2471,7 +2434,7 @@ msgstr "אין עדיין שיוכים. הוסיפו תיקיית אמולטור
 
 #: services/js_i18n_strings.py:633
 msgid "No matching games on this system."
-msgstr ""
+msgstr "אין משחקים תואמים במערכת זו."
 
 #: services/js_i18n_strings.py:634
 msgid "No missing ROM files found."
@@ -2503,7 +2466,7 @@ msgstr "אין הפעלות התואמות לסינון הנוכחי"
 
 #: services/js_i18n_strings.py:641
 msgid "No suggestions. Run Backfill Alternate Titles in Maintenance to find more."
-msgstr ""
+msgstr "אין הצעות. הפעל את מלא כותרות חלופיות בתחזוקה כדי למצוא עוד."
 
 #: services/js_i18n_strings.py:642
 #, python-brace-format
@@ -2511,9 +2474,8 @@ msgid "Normalization applied: {games} games updated, {rules} rules saved"
 msgstr "הנורמליזציה הוחלה: {games} משחקים עודכנו, {rules} כללים נשמרו"
 
 #: services/js_i18n_strings.py:643
-#, fuzzy
 msgid "Not versions"
-msgstr "גרסה"
+msgstr "לא גרסאות"
 
 #: services/js_i18n_strings.py:644 templates/base.html:1354
 msgid "Now playing"
@@ -2532,9 +2494,8 @@ msgid "Operation failed"
 msgstr "הפעולה נכשלה"
 
 #: services/js_i18n_strings.py:648
-#, fuzzy
 msgid "Other"
-msgstr "יריות"
+msgstr "אחר"
 
 #: services/js_i18n_strings.py:649
 msgid "PSN Imports"
@@ -2641,9 +2602,8 @@ msgid "Refreshing RA for {system}..."
 msgstr "מרענן RA עבור {system}..."
 
 #: services/js_i18n_strings.py:672
-#, fuzzy
 msgid "Regional name matches"
-msgstr "אי-התאמת אזור"
+msgstr "התאמות שמות אזוריים"
 
 #: services/js_i18n_strings.py:673 templates/compare_games.html:24
 #: templates/compare_games.html:40
@@ -2698,9 +2658,8 @@ msgid "Reports"
 msgstr "דוחות"
 
 #: services/js_i18n_strings.py:684
-#, fuzzy
 msgid "Resolution scale"
-msgstr "רזולוציה"
+msgstr "קנה מידה של רזולוציה"
 
 #: services/js_i18n_strings.py:685
 msgid "Restarting server..."
@@ -2711,9 +2670,8 @@ msgid "Resume"
 msgstr "המשך"
 
 #: services/js_i18n_strings.py:687
-#, fuzzy
 msgid "RetroDB default"
-msgstr "ברירת מחדל"
+msgstr "ברירת המחדל של RetroDB"
 
 #: services/js_i18n_strings.py:688
 msgid "Running"
@@ -2724,40 +2682,37 @@ msgid "Running..."
 msgstr "פועל..."
 
 #: services/js_i18n_strings.py:690
-#, fuzzy
 msgid "Same IGDB game"
-msgstr "גרד הכול"
+msgstr "אותו משחק ב-IGDB"
 
 #: services/js_i18n_strings.py:691
-#, fuzzy
 msgid "Same ScreenScraper game"
-msgstr "גרד הכול"
+msgstr "אותו משחק ב-ScreenScraper"
 
 #: services/js_i18n_strings.py:692
 msgid "Same title, different region"
-msgstr ""
+msgstr "אותו כותר, אזור שונה"
 
 #: services/js_i18n_strings.py:693
 msgid "Save Failed"
 msgstr "השמירה נכשלה"
 
 #: services/js_i18n_strings.py:694
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Save failed: {error}"
-msgstr "השחזור נכשל: {error}"
+msgstr "השמירה נכשלה: {error}"
 
 #: services/js_i18n_strings.py:695
 msgid "Saved"
 msgstr "נשמר"
 
 #: services/js_i18n_strings.py:696
-#, fuzzy
 msgid "Saved."
-msgstr "נשמר"
+msgstr "נשמר."
 
 #: services/js_i18n_strings.py:697
 msgid "Saved. It applies the next time you press Play."
-msgstr ""
+msgstr "נשמר. יוחל בפעם הבאה שתלחץ על שחק."
 
 #: services/js_i18n_strings.py:698
 msgid "Saving to the database…"
@@ -2768,9 +2723,8 @@ msgid "Saving..."
 msgstr "שומר..."
 
 #: services/js_i18n_strings.py:700
-#, fuzzy
 msgid "Saving…"
-msgstr "שומר..."
+msgstr "שומר…"
 
 #: services/js_i18n_strings.py:701
 #, python-brace-format
@@ -2778,23 +2732,21 @@ msgid "Scan failed (HTTP {status})"
 msgstr "הסריקה נכשלה (HTTP {status})"
 
 #: services/js_i18n_strings.py:702
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Scan failed: {error}"
-msgstr "הגיבוי נכשל: {error}"
+msgstr "הסריקה נכשלה: {error}"
 
 #: services/js_i18n_strings.py:703 templates/multi_disc_organizer.html:204
 msgid "Scanning..."
 msgstr "סורק..."
 
 #: services/js_i18n_strings.py:704
-#, fuzzy
 msgid "Scanning…"
-msgstr "סורק..."
+msgstr "סורק…"
 
 #: services/js_i18n_strings.py:705
-#, fuzzy
 msgid "Scrape game"
-msgstr "גרד הכול"
+msgstr "גרד משחק"
 
 #: services/js_i18n_strings.py:706
 #, python-brace-format
@@ -2818,9 +2770,8 @@ msgid "Search"
 msgstr "חיפוש"
 
 #: services/js_i18n_strings.py:710
-#, fuzzy
 msgid "Search failed."
-msgstr "חפש שמות קבצים..."
+msgstr "החיפוש נכשל."
 
 #: services/js_i18n_strings.py:711
 msgid "Searching & removing background..."
@@ -2893,20 +2844,19 @@ msgstr "השרת הופעל מחדש בהצלחה!"
 
 #: services/js_i18n_strings.py:727
 msgid "Server stopped. You can close this tab."
-msgstr ""
+msgstr "השרת נעצר. ניתן לסגור לשונית זו."
 
 #: services/js_i18n_strings.py:728
-#, fuzzy
 msgid "Set for this game"
-msgstr "לנקות את נתוני ה-HLTB של משחק זה?"
+msgstr "מוגדר למשחק זה"
 
 #: services/js_i18n_strings.py:729
 msgid "Set inside the emulator; RetroDB leaves it alone"
-msgstr ""
+msgstr "מוגדר בתוך האמולטור; RetroDB לא נוגע בו"
 
 #: services/js_i18n_strings.py:730
 msgid "Set per system, in Settings > Emulators"
-msgstr ""
+msgstr "מוגדר לכל מערכת, בהגדרות > אמולטורים"
 
 #: services/js_i18n_strings.py:731 templates/_macros/nav_tabs.html:43
 #: templates/base.html:156 templates/rom_tools_hub.html:119
@@ -2920,18 +2870,16 @@ msgid "Show Bonus"
 msgstr "הצג בונוס"
 
 #: services/js_i18n_strings.py:733
-#, fuzzy
 msgid "Show keyboard shortcuts"
-msgstr "קיצורי מקלדת"
+msgstr "הצג קיצורי מקלדת"
 
 #: services/js_i18n_strings.py:734
 msgid "Showing Bonus Discs"
 msgstr "מציג דיסקי בונוס"
 
 #: services/js_i18n_strings.py:735
-#, fuzzy
 msgid "Shutting down server..."
-msgstr "מפעיל מחדש את השרת..."
+msgstr "מכבה את השרת..."
 
 #: services/js_i18n_strings.py:736 templates/_modals/edit_modal.html:46
 #: templates/base.html:1052
@@ -2956,9 +2904,8 @@ msgid "Successfully updated {count} games"
 msgstr "עודכנו בהצלחה {count} משחקים"
 
 #: services/js_i18n_strings.py:741
-#, fuzzy
 msgid "Summary written."
-msgstr "סיכום"
+msgstr "הסיכום נכתב."
 
 #: services/js_i18n_strings.py:742
 msgid "Sync In Progress"
@@ -3019,7 +2966,7 @@ msgstr "מערכות"
 
 #: services/js_i18n_strings.py:752
 msgid "This game is already running.  Kill the existing process and relaunch?"
-msgstr ""
+msgstr "משחק זה כבר פועל.  לסיים את התהליך הקיים ולהפעיל מחדש?"
 
 #: services/js_i18n_strings.py:753
 msgid "This system is already being synced."
@@ -3090,9 +3037,8 @@ msgstr ""
 "להמשיך?"
 
 #: services/js_i18n_strings.py:762
-#, fuzzy
 msgid "Tick at least two games."
-msgstr "בחר משחק אקראי"
+msgstr "סמן לפחות שני משחקים."
 
 #: services/js_i18n_strings.py:763 templates/logs.html:745
 msgid "To"
@@ -3165,9 +3111,8 @@ msgid "Uploading…"
 msgstr "מעלה…"
 
 #: services/js_i18n_strings.py:778
-#, fuzzy
 msgid "Use the system setting"
-msgstr "שמור הגדרות נתיב"
+msgstr "השתמש בהגדרת המערכת"
 
 #: services/js_i18n_strings.py:779
 #, python-brace-format
@@ -3175,21 +3120,20 @@ msgid ""
 "Used for every {system} game unless the game sets its own. Applied when "
 "you press Play."
 msgstr ""
+"משמש לכל משחק {system} אלא אם המשחק מגדיר הגדרה משלו. מוחל בעת לחיצה על "
+"שחק."
 
 #: services/js_i18n_strings.py:780
-#, fuzzy
 msgid "Version unlinked."
-msgstr "ההרשאה נדחתה"
+msgstr "קישור הגרסה בוטל."
 
 #: services/js_i18n_strings.py:781
-#, fuzzy
 msgid "Versions linked."
-msgstr "גרסה"
+msgstr "הגרסאות קושרו."
 
 #: services/js_i18n_strings.py:782
-#, fuzzy
 msgid "Will change?"
-msgstr "שנה"
+msgstr "ישתנה?"
 
 #: services/js_i18n_strings.py:783
 msgid "Works"
@@ -3197,7 +3141,7 @@ msgstr "עובד"
 
 #: services/js_i18n_strings.py:784 templates/game_detail.html:739
 msgid "Write again with AI"
-msgstr ""
+msgstr "כתוב שוב עם AI"
 
 #: services/js_i18n_strings.py:785
 msgid "Xbox Imports"
@@ -3241,14 +3185,14 @@ msgid "{count} Achievements"
 msgstr "{count} הישגים"
 
 #: services/js_i18n_strings.py:793
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{count} regional versions"
-msgstr "נוכחי: v%(version)s"
+msgstr "{count} גרסאות אזוריות"
 
 #: services/js_i18n_strings.py:794
 #, python-brace-format
 msgid "{count} suggested groups. Untick any game that does not belong, then link."
-msgstr ""
+msgstr "{count} קבוצות מוצעות. בטל סימון של כל משחק שאינו שייך, ואז קשר."
 
 #: services/js_i18n_strings.py:795
 #, python-brace-format
@@ -3306,9 +3250,9 @@ msgid "{system} has been added to the sync queue."
 msgstr "{system} נוסף לתור הסנכרון."
 
 #: services/js_i18n_strings.py:806
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{title} ({count} versions)"
-msgstr "התחל המרה"
+msgstr "{title} ({count} גרסאות)"
 
 #: services/js_i18n_strings.py:807
 msgid "⏳ Searching..."
@@ -3361,7 +3305,7 @@ msgstr "🗑️ אפס מטא-נתונים"
 
 #: services/js_i18n_strings.py:819
 msgid "🛑 Shut Down Server"
-msgstr ""
+msgstr "🛑 כבה את השרת"
 
 #: services/js_i18n_strings.py:820
 msgid "🧹 Clean Missing ROMs"
@@ -3372,32 +3316,35 @@ msgid ""
 "RetroDB could not read this disc's serial, so it cannot name the "
 "emulator's per-game settings file."
 msgstr ""
+"RetroDB לא הצליח לקרוא את המספר הסידורי של דיסק זה, ולכן אינו יכול לקבוע "
+"את שם קובץ ההגדרות של האמולטור למשחק זה."
 
 #: services/standalone_settings.py:215
 msgid ""
 "PCSX2 has two or more settings files for this game; remove the ones you "
 "do not use."
-msgstr ""
+msgstr "ל-PCSX2 יש שני קובצי הגדרות או יותר למשחק זה; הסר את אלה שאינך משתמש בהם."
 
 #: services/standalone_settings.py:223
 msgid ""
 "RetroDB could not read this disc's boot file, so it cannot name PCSX2's "
 "per-game settings file."
 msgstr ""
+"RetroDB לא הצליח לקרוא את קובץ האתחול של דיסק זה, ולכן אינו יכול לקבוע את"
+" שם קובץ ההגדרות של PCSX2 למשחק זה."
 
 #: services/standalone_settings.py:231
 msgid "Settings path outside the data folder."
-msgstr ""
+msgstr "נתיב ההגדרות מחוץ לתיקיית הנתונים."
 
 #: services/standalone_settings.py:253
-#, fuzzy
 msgid "No emulator is set up for this system."
-msgstr "אין מפרטים זמינים עבור מערכת זו."
+msgstr "לא הוגדר אמולטור למערכת זו."
 
 #: services/standalone_settings.py:268
 #, python-format
 msgid "Run %(name)s once so it creates its settings, then play again."
-msgstr ""
+msgstr "הפעל את %(name)s פעם אחת כדי שייצור את ההגדרות שלו, ואז שחק שוב."
 
 #: templates/_bulk_edit_modal.html:7
 msgid "Bulk Edit"
@@ -3863,7 +3810,7 @@ msgstr "משחקים בכל המערכות"
 #: templates/all_games.html:17 templates/system_games.html:24
 #, python-format
 msgid "(%(roms)s ROMs)"
-msgstr ""
+msgstr "(%(roms)s ROM)"
 
 #: templates/all_games.html:19 templates/system_games.html:26
 msgid "missing metadata"
@@ -4610,11 +4557,11 @@ msgstr "ממתין להתחלה..."
 
 #: templates/archive_scanner.html:1658
 msgid "Have the original archive moved to the staging folder"
-msgstr ""
+msgstr "העבר את הארכיון המקורי לתיקיית ההכנה"
 
 #: templates/archive_scanner.html:1761
 msgid "Original archives moved to:"
-msgstr ""
+msgstr "הארכיונים המקוריים הועברו אל:"
 
 #: templates/base.html:40
 msgid "Skip to main content"
@@ -4734,28 +4681,24 @@ msgid "Last Updated"
 msgstr "עודכן לאחרונה"
 
 #: templates/base.html:219
-#, fuzzy
 msgid "Disclaimer"
 msgstr "הבהרה משפטית"
 
 #: templates/base.html:230
 msgid "Support RetroDB's development on GitHub Sponsors"
-msgstr ""
+msgstr "תמוך בפיתוח RetroDB ב-GitHub Sponsors"
 
 #: templates/base.html:231
-#, fuzzy
 msgid "Sponsor RetroDB"
-msgstr "תמוך"
+msgstr "תן חסות ל-RetroDB"
 
 #: templates/base.html:233
-#, fuzzy
 msgid "Support RetroDB's development on Patreon"
-msgstr "תמוך בפיתוח"
+msgstr "תמוך בפיתוח RetroDB ב-Patreon"
 
 #: templates/base.html:234
-#, fuzzy
 msgid "Support RetroDB"
-msgstr "תמוך ב-Patreon"
+msgstr "תמוך ב-RetroDB"
 
 #: templates/base.html:249
 msgid "Toggle menu"
@@ -5965,19 +5908,16 @@ msgid "Part of:"
 msgstr "חלק מ:"
 
 #: templates/game_detail.html:74
-#, fuzzy
 msgid "Regional versions"
-msgstr "אפשרויות אזור"
+msgstr "גרסאות אזוריות"
 
 #: templates/game_detail.html:75
-#, fuzzy
 msgid "Versions:"
-msgstr "גרסה"
+msgstr "גרסאות:"
 
 #: templates/game_detail.html:77 templates/game_detail.html:708
-#, fuzzy
 msgid "Unknown region"
-msgstr "שגיאה לא ידועה"
+msgstr "אזור לא ידוע"
 
 #: templates/game_detail.html:83
 msgid "Launch this game in the configured emulator"
@@ -6184,81 +6124,74 @@ msgid "Bonus Content"
 msgstr "תוכן בונוס"
 
 #: templates/game_detail.html:678
-#, fuzzy
 msgid "Emulator settings"
-msgstr "הגדרות כלים"
+msgstr "הגדרות אמולטור"
 
 #: templates/_macros/nav_tabs.html:40 templates/game_detail.html:687
 #: templates/rom_tools_hub.html:193 templates/versions_review.html:5
 #: templates/versions_review.html:80
-#, fuzzy
 msgid "Regional Versions"
-msgstr "אפשרויות אזור"
+msgstr "גרסאות אזוריות"
 
 #: templates/game_detail.html:695 templates/museum_system.html:100
 msgid "Released"
 msgstr "הושק"
 
 #: templates/game_detail.html:697
-#, fuzzy
 msgid "File size"
 msgstr "גודל קובץ"
 
 #: templates/game_detail.html:698
-#, fuzzy
 msgid "Revision"
-msgstr "אזור"
+msgstr "מהדורה"
 
 #: templates/game_detail.html:699
-#, fuzzy
 msgid "Languages"
-msgstr "שפה"
+msgstr "שפות"
 
 #: templates/game_detail.html:700
-#, fuzzy
 msgid "Scores"
-msgstr "ספורט"
+msgstr "ציונים"
 
 #: templates/game_detail.html:709
 msgid "(this page)"
-msgstr ""
+msgstr "(דף זה)"
 
 #: templates/game_detail.html:727
 msgid "Known differences"
-msgstr ""
+msgstr "הבדלים ידועים"
 
 #: templates/game_detail.html:727
 msgid "AI-written"
-msgstr ""
+msgstr "נכתב על ידי AI"
 
 #: templates/game_detail.html:728
 msgid "Written by AI from what it knows about these releases. It can be wrong."
-msgstr ""
+msgstr "נכתב על ידי AI לפי מה שהוא יודע על מהדורות אלה. הוא עלול לטעות."
 
 #: templates/game_detail.html:730
 msgid "The AI knows of no differences between these versions."
-msgstr ""
+msgstr "ה-AI אינו מכיר הבדלים בין גרסאות אלה."
 
 #: templates/game_detail.html:733
 msgid "No other regional versions are linked to this game."
-msgstr ""
+msgstr "אין גרסאות אזוריות אחרות המקושרות למשחק זה."
 
 #: templates/game_detail.html:738
 msgid "Unlink this version"
-msgstr ""
+msgstr "בטל את קישור גרסה זו"
 
 #: templates/game_detail.html:739
 msgid "Summarise differences with AI"
-msgstr ""
+msgstr "סכם הבדלים עם AI"
 
 #: templates/game_detail.html:741
-#, fuzzy
 msgid "Link a version"
-msgstr "גרסה"
+msgstr "קשר גרסה"
 
 #: templates/game_detail.html:742
 msgid "Link a version: search this system"
-msgstr ""
+msgstr "קשר גרסה: חפש במערכת זו"
 
 #: templates/game_detail.html:755
 msgid "Scrape History"
@@ -6711,9 +6644,8 @@ msgid "Password"
 msgstr "סיסמה"
 
 #: templates/login.html:250
-#, fuzzy
 msgid "Enter your password"
-msgstr "הזן סיסמה נוכחית"
+msgstr "הזן את הסיסמה שלך"
 
 #: templates/logs.html:729
 msgid "File"
@@ -7526,6 +7458,8 @@ msgid ""
 "Review the groups RetroDB suggests, or link versions by hand on a game "
 "page."
 msgstr ""
+"קשר את אותו משחק מאזורים שונים כדי שהספרייה תציג אותו פעם אחת. עבור על "
+"הקבוצות ש-RetroDB מציע, או קשר גרסאות ידנית בדף משחק."
 
 #: templates/_macros/nav_tabs.html:38 templates/rom_tools_hub.html:207
 msgid "Multi-Disc Organizer"
@@ -7636,13 +7570,15 @@ msgstr ""
 
 #: templates/rom_tools_settings.html:304
 msgid "Empty: RetroDB's data folder"
-msgstr ""
+msgstr "ריק: תיקיית הנתונים של RetroDB"
 
 #: templates/rom_tools_settings.html:305
 msgid ""
 "Where Create M3U moves original archives. Leave empty to use RetroDB's "
 "data folder."
 msgstr ""
+"לאן צור M3U מעביר ארכיונים מקוריים. השאר ריק כדי להשתמש בתיקיית הנתונים "
+"של RetroDB."
 
 #: templates/screenshot_dedup.html:243
 msgid "Exact Hash (MD5) &mdash; identical files only"
@@ -7865,16 +7801,17 @@ msgid ""
 "Linked versions show as one card in the Library, opening the version from"
 " your preferred region. Nothing is linked until you confirm it here."
 msgstr ""
+"RetroDB מחפש משחקים שהם אותו משחק מאזורים שונים. גרסאות מקושרות מוצגות "
+"בספרייה ככרטיס אחד, שפותח את הגרסה מהאזור המועדף עליך. דבר אינו מקושר עד "
+"שתאשר זאת כאן."
 
 #: templates/versions_review.html:88
-#, fuzzy
 msgid "All systems"
 msgstr "כל המערכות"
 
 #: templates/versions_review.html:94
-#, fuzzy
 msgid "Find suggestions"
-msgstr "הוצע על ידי AI"
+msgstr "מצא הצעות"
 
 #: templates/wishlist.html:12
 msgid "Games you want to find and add to your collection"
@@ -8625,9 +8562,8 @@ msgid "Change Password"
 msgstr "שנה סיסמה"
 
 #: templates/_settings_tabs/account.html:198
-#, fuzzy
 msgid "Every account needs a password to log in."
-msgstr "חשבונות מנהל דורשים סיסמה להתחברות."
+msgstr "כל חשבון צריך סיסמה כדי להתחבר."
 
 #: templates/_settings_tabs/account.html:202
 msgid "Current Password"
@@ -9299,13 +9235,13 @@ msgstr ""
 
 #: templates/_settings_tabs/system.html:182
 msgid "Shut Down Server"
-msgstr ""
+msgstr "כבה את השרת"
 
 #: templates/_settings_tabs/system.html:185
 msgid ""
 "Restart the Flask server (useful after configuration changes), or shut it"
 " down completely"
-msgstr ""
+msgstr "הפעל מחדש את שרת Flask (שימושי לאחר שינויי תצורה), או כבה אותו לחלוטין"
 
 #: templates/_settings_tabs/system.html:444
 msgid "Support Development"

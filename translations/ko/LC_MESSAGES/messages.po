@@ -25,21 +25,21 @@ msgid ""
 "MB and a video up to %(video)s MB; upload fewer files at once. Operators "
 "can raise the total limit via RETRODB_MAX_UPLOAD_MB."
 msgstr ""
+"업로드가 %(total)s MB 한도를 초과합니다. 이미지는 각각 최대 %(image)s MB, 동영상은 최대 %(video)s "
+"MB까지 가능합니다. 한 번에 더 적은 파일을 업로드하세요. 운영자는 RETRODB_MAX_UPLOAD_MB로 전체 한도를 늘릴 수"
+" 있습니다."
 
 #: app.py:703
-#, fuzzy
 msgid "Too many requests. Please wait and try again."
-msgstr "시도가 너무 많습니다. 잠시 후 다시 시도하세요."
+msgstr "요청이 너무 많습니다. 잠시 후 다시 시도하세요."
 
 #: app.py:812
-#, fuzzy
 msgid "Setup required"
-msgstr "제목이 필요합니다"
+msgstr "설정이 필요합니다"
 
 #: app.py:833
-#, fuzzy
 msgid "Password change required"
-msgstr "비밀번호 변경이 필요하지 않습니다"
+msgstr "비밀번호 변경이 필요합니다"
 
 #: app.py:1656 routes/auth.py:202 routes/auth.py:251 routes/auth.py:436
 #: routes/auth.py:481 templates/force_change_password.html:49
@@ -103,7 +103,7 @@ msgstr "%(name)s에 대한 동기화가 이미 진행 중입니다"
 #: routes/achievements.py:367 routes/platform_import.py:326
 #: routes/platform_import.py:693
 msgid "That job belongs to another user"
-msgstr ""
+msgstr "해당 작업은 다른 사용자의 것입니다"
 
 #: routes/achievements.py:457
 msgid "No RetroAchievements found for this game"
@@ -166,14 +166,13 @@ msgid "Invalid locale"
 msgstr "잘못된 로캘입니다"
 
 #: routes/auth.py:385
-#, fuzzy
 msgid "Invalid theme"
-msgstr "잘못된 경로입니다"
+msgstr "잘못된 테마입니다"
 
 #: routes/auth.py:391
-#, fuzzy, python-format
+#, python-format
 msgid "Invalid RPCS3 trophy folder: %(reason)s"
-msgstr "잘못된 API 키입니다: %(reason)s"
+msgstr "잘못된 RPCS3 트로피 폴더: %(reason)s"
 
 #: routes/auth.py:424
 msgid "Too many attempts. Please try again later."
@@ -405,31 +404,28 @@ msgid "system_id and emulator_id required"
 msgstr "system_id와 emulator_id가 필요합니다"
 
 #: routes/emulators.py:224
-#, fuzzy
 msgid "Send at least one setting."
-msgstr "데이터 설정"
+msgstr "설정을 하나 이상 보내세요."
 
 #: routes/emulators.py:230
 msgid "RetroDB does not manage that setting for this emulator."
-msgstr ""
+msgstr "RetroDB는 이 에뮬레이터의 해당 설정을 관리하지 않습니다."
 
 #: routes/emulators.py:232
 msgid "Fullscreen is set per system, in Settings > Emulators."
-msgstr ""
+msgstr "전체 화면은 시스템별로 설정 > 에뮬레이터에서 지정합니다."
 
 #: routes/emulators.py:234
-#, fuzzy
 msgid "That value is not one of the choices."
-msgstr "이 게임에 태그가 할당되어 있지 않습니다"
+msgstr "해당 값은 선택 항목에 없습니다."
 
 #: routes/emulators.py:264 services/standalone_settings.py:258
 msgid "RetroDB manages per-game settings for DuckStation, PCSX2 and RPCS3 only."
-msgstr ""
+msgstr "RetroDB는 DuckStation, PCSX2, RPCS3의 게임별 설정만 관리합니다."
 
 #: routes/emulators.py:277 routes/emulators.py:288
-#, fuzzy
 msgid "Emulator not found"
-msgstr "플랫폼을 찾을 수 없습니다"
+msgstr "에뮬레이터를 찾을 수 없습니다"
 
 #: routes/games.py:239
 msgid "No IDs provided"
@@ -442,7 +438,7 @@ msgstr "유효한 ID를 1-50개 제공하세요"
 #: routes/games.py:501
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
-msgstr ""
+msgstr "동영상이 저장되지 않았습니다: 최대 %(mb)s MB의 MP4, WebM 또는 OGG 파일이어야 합니다."
 
 #: routes/games.py:627
 msgid "Game not found after update"
@@ -530,7 +526,7 @@ msgstr "대상이 설정된 ROM 루트 외부에 있습니다"
 #: routes/games_media.py:106 routes/reports.py:725
 #, python-format
 msgid "Cannot rename: %(reason)s"
-msgstr ""
+msgstr "이름을 바꿀 수 없습니다: %(reason)s"
 
 #: routes/games_media.py:109 routes/reports.py:729 routes/reports.py:896
 msgid "A file with that name already exists"
@@ -571,13 +567,12 @@ msgid "failed to kill prior instance: %(err)s"
 msgstr "이전 인스턴스 종료에 실패했습니다: %(err)s"
 
 #: routes/launch.py:184
-#, fuzzy
 msgid "That game is no longer running"
-msgstr "이 메타데이터 적용은 더 이상 실행 중이 아닙니다."
+msgstr "해당 게임은 더 이상 실행 중이 아닙니다"
 
 #: routes/launch.py:186
 msgid "This game has no disk list to swap through"
-msgstr ""
+msgstr "이 게임에는 전환할 디스크 목록이 없습니다"
 
 #: routes/launch.py:191
 #, python-format
@@ -585,15 +580,16 @@ msgid ""
 "RetroArch is not accepting commands. In RetroArch, turn on Settings > "
 "Network > Network Commands (port %(port)s)."
 msgstr ""
+"RetroArch가 명령을 받지 않습니다. RetroArch에서 Settings > Network > Network "
+"Commands(포트 %(port)s)를 켜세요."
 
 #: routes/launch.py:194
 msgid "Next disk inserted"
-msgstr ""
+msgstr "다음 디스크를 넣었습니다"
 
 #: routes/maintenance.py:260
-#, fuzzy
 msgid "Unknown image type"
-msgstr "처리할 이미지가 없습니다"
+msgstr "알 수 없는 이미지 유형"
 
 #: routes/museum.py:385 routes/scraper.py:770
 msgid "No AI provider configured"
@@ -621,9 +617,8 @@ msgid "No controllers found"
 msgstr "컨트롤러를 찾을 수 없습니다"
 
 #: routes/museum.py:620
-#, fuzzy
 msgid "An image fetch is already running"
-msgstr "이 게임은 이미 실행 중입니다"
+msgstr "이미지 가져오기가 이미 실행 중입니다"
 
 #: routes/museum.py:656
 msgid "No image file provided"
@@ -810,7 +805,7 @@ msgstr "API 응답 파싱 중 오류가 발생했습니다"
 #: routes/scraper.py:696
 #, python-format
 msgid "ScreenScraper answered HTTP %(code)s"
-msgstr ""
+msgstr "ScreenScraper가 HTTP %(code)s 응답을 반환했습니다"
 
 #: routes/scraper.py:711
 msgid "No RAWG API key configured"
@@ -982,15 +977,15 @@ msgstr "chdman을 찾을 수 없습니다"
 #: routes/tools.py:944
 #, python-format
 msgid "Unknown duplicate method: %(method)s"
-msgstr ""
+msgstr "알 수 없는 중복 검사 방법: %(method)s"
 
 #: routes/tools.py:1152
 msgid "These scan results have expired. Scan again, then delete."
-msgstr ""
+msgstr "이 스캔 결과는 만료되었습니다. 다시 스캔한 후 삭제하세요."
 
 #: routes/tools.py:1157
 msgid "Keep at least one copy of each game. Nothing was deleted."
-msgstr ""
+msgstr "각 게임의 사본을 하나 이상 남겨 두세요. 아무것도 삭제되지 않았습니다."
 
 #: routes/trophies.py:387
 msgid ""
@@ -1049,47 +1044,43 @@ msgstr "제공된 NPSSO 토큰이 없습니다"
 
 #: routes/trophies.py:1834
 msgid "Could not connect to PSN"
-msgstr ""
+msgstr "PSN에 연결할 수 없습니다"
 
 #: routes/trophies.py:1861
 msgid "PSN NPSSO not configured"
 msgstr "PSN NPSSO가 설정되지 않았습니다"
 
 #: routes/versions.py:23
-#, fuzzy
 msgid "Pick at least two games."
-msgstr "무작위 게임 선택"
+msgstr "게임을 두 개 이상 선택하세요."
 
 #: routes/versions.py:24
 msgid "One of those games no longer exists."
-msgstr ""
+msgstr "해당 게임 중 하나가 더 이상 존재하지 않습니다."
 
 #: routes/versions.py:25
-#, fuzzy
 msgid "Versions must all be on the same system."
-msgstr "보너스 디스크와 상위 게임은 같은 시스템에 있어야 합니다"
+msgstr "버전은 모두 같은 시스템이어야 합니다."
 
 #: routes/versions.py:26
 msgid "A bonus disc cannot be a version of a game."
-msgstr ""
+msgstr "보너스 디스크는 게임의 버전이 될 수 없습니다."
 
 #: routes/versions.py:28
-#, fuzzy
 msgid "Those games cannot be linked."
-msgstr "이름은 비워 둘 수 없습니다"
+msgstr "해당 게임들은 연결할 수 없습니다."
 
 #: routes/versions.py:81 routes/versions.py:96
-#, fuzzy
 msgid "That game is not linked to other versions."
-msgstr "이 게임에 태그가 할당되어 있지 않습니다"
+msgstr "해당 게임은 다른 버전과 연결되어 있지 않습니다."
 
 #: routes/versions.py:92
 msgid "Set up an AI provider in Settings > Scraping first."
-msgstr ""
+msgstr "먼저 설정 > 스크래핑에서 AI 공급자를 설정하세요."
 
 #: routes/versions.py:98
 msgid "The AI did not give a usable answer. Try again later."
-msgstr ""
+msgstr "AI가 사용할 수 있는 답변을 주지 않았습니다. 나중에 다시 시도하세요."
 
 #: routes/xbox_achievements.py:126
 msgid "Xbox credentials not configured"
@@ -1454,9 +1445,8 @@ msgid "(Paused)"
 msgstr "(일시정지됨)"
 
 #: services/js_i18n_strings.py:421
-#, fuzzy
 msgid "(none)"
-msgstr "없음"
+msgstr "(없음)"
 
 #: services/js_i18n_strings.py:422 templates/_bulk_edit_modal.html:25
 #: templates/_bulk_edit_modal.html:38 templates/_bulk_edit_modal.html:83
@@ -1511,7 +1501,7 @@ msgstr "이미 동기화 중"
 #: services/js_i18n_strings.py:432
 #, python-brace-format
 msgid "Applied when you press Play, in the {emulator} settings for this game."
-msgstr ""
+msgstr "실행을 누르면 이 게임의 {emulator} 설정에 적용됩니다."
 
 #: services/js_i18n_strings.py:433 templates/_bulk_edit_modal.html:193
 msgid "Apply Changes"
@@ -1522,9 +1512,9 @@ msgid "Apply Normalization"
 msgstr "정규화 적용"
 
 #: services/js_i18n_strings.py:435
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Apply failed: {error}"
-msgstr "백업 실패: {error}"
+msgstr "적용 실패: {error}"
 
 #: services/js_i18n_strings.py:436
 #, python-brace-format
@@ -1550,9 +1540,8 @@ msgid "Applying..."
 msgstr "적용 중..."
 
 #: services/js_i18n_strings.py:441
-#, fuzzy
 msgid "Applying…"
-msgstr "적용 중..."
+msgstr "적용 중…"
 
 #: services/js_i18n_strings.py:442
 msgid ""
@@ -1589,7 +1578,7 @@ msgstr "서버를 재시작하시겠습니까?"
 msgid ""
 "Are you sure you want to shut down the server? You will need to start it "
 "again manually."
-msgstr ""
+msgstr "서버를 종료하시겠습니까? 다시 수동으로 시작해야 합니다."
 
 #: services/js_i18n_strings.py:448 templates/settings.html:67
 msgid "Are you sure?"
@@ -1601,12 +1590,11 @@ msgstr "AI에 문의하는 중…"
 
 #: services/js_i18n_strings.py:450
 msgid "Asking the AI. This can take up to a minute."
-msgstr ""
+msgstr "AI에 요청하는 중입니다. 최대 1분 정도 걸릴 수 있습니다."
 
 #: services/js_i18n_strings.py:451
-#, fuzzy
 msgid "Aspect ratio"
-msgstr "등급 선택"
+msgstr "화면 비율"
 
 #: services/js_i18n_strings.py:452
 msgid "BIOS"
@@ -1657,9 +1645,8 @@ msgid "Cancel Bulk Scrape"
 msgstr "대량 스크래핑 취소"
 
 #: services/js_i18n_strings.py:461
-#, fuzzy
 msgid "Cancel failed"
-msgstr "취소됨"
+msgstr "취소 실패"
 
 #: services/js_i18n_strings.py:462
 msgid "Cancel request failed"
@@ -1751,9 +1738,8 @@ msgid "Close keyboard shortcuts"
 msgstr "키보드 단축키 닫기"
 
 #: services/js_i18n_strings.py:480
-#, fuzzy
 msgid "Close modal / cancel"
-msgstr "사용자 모달 닫기"
+msgstr "모달 닫기 / 취소"
 
 #: services/js_i18n_strings.py:481 templates/dashboard.html:155
 msgid "Complete"
@@ -1821,43 +1807,39 @@ msgstr "메타데이터를 적용할 수 없습니다."
 
 #: services/js_i18n_strings.py:494
 msgid "Could not link these versions."
-msgstr ""
+msgstr "이 버전들을 연결할 수 없습니다."
 
 #: services/js_i18n_strings.py:495
 msgid "Could not load suggestions."
-msgstr ""
+msgstr "추천 항목을 불러올 수 없습니다."
 
 #: services/js_i18n_strings.py:496
 msgid "Could not reconnect to server. Please refresh manually."
 msgstr "서버에 다시 연결할 수 없습니다. 수동으로 새로 고침하세요."
 
 #: services/js_i18n_strings.py:497
-#, fuzzy
 msgid "Could not save that setting."
-msgstr "메타데이터를 적용할 수 없습니다."
+msgstr "해당 설정을 저장할 수 없습니다."
 
 #: services/js_i18n_strings.py:498
-#, fuzzy
 msgid "Could not save that."
-msgstr "메타데이터를 적용할 수 없습니다."
+msgstr "저장할 수 없습니다."
 
 #: services/js_i18n_strings.py:499
 msgid "Could not stop the running instance."
-msgstr ""
+msgstr "실행 중인 인스턴스를 중지할 수 없습니다."
 
 #: services/js_i18n_strings.py:500
 msgid "Could not unlink this version."
-msgstr ""
+msgstr "이 버전의 연결을 해제할 수 없습니다."
 
 #: services/js_i18n_strings.py:501
-#, fuzzy
 msgid "Could not write the summary."
-msgstr "메타데이터를 적용할 수 없습니다."
+msgstr "요약을 작성할 수 없습니다."
 
 #: services/js_i18n_strings.py:502
-#, fuzzy
 msgid "Currently set"
-msgstr "현재 값"
+msgstr "현재 설정"
 
 #: services/js_i18n_strings.py:503
 msgid "Default"
@@ -1873,19 +1855,17 @@ msgid "Delete Log File"
 msgstr "로그 파일 삭제"
 
 #: services/js_i18n_strings.py:506
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Detect failed: {error}"
-msgstr "복원 실패: {error}"
+msgstr "감지 실패: {error}"
 
 #: services/js_i18n_strings.py:507
-#, fuzzy
 msgid "Detected path"
-msgstr "제외 경로"
+msgstr "감지된 경로"
 
 #: services/js_i18n_strings.py:508
-#, fuzzy
 msgid "Detecting…"
-msgstr "설정"
+msgstr "감지 중…"
 
 #: services/js_i18n_strings.py:509 templates/_bulk_scrape_modal.html:69
 #: templates/psn_trophies.html:247 templates/psn_trophies.html:307
@@ -1928,7 +1908,6 @@ msgid "Edit"
 msgstr "편집"
 
 #: services/js_i18n_strings.py:518
-#, fuzzy
 msgid "Edit game"
 msgstr "게임 편집"
 
@@ -1938,9 +1917,8 @@ msgid "Edit: {title}"
 msgstr "편집: {title}"
 
 #: services/js_i18n_strings.py:520
-#, fuzzy
 msgid "Emulator"
-msgstr "시뮬레이션"
+msgstr "에뮬레이터"
 
 #: services/js_i18n_strings.py:521
 msgid "Enter one folder path."
@@ -2094,30 +2072,27 @@ msgstr "{source}에서 가져오는 중…"
 #: services/js_i18n_strings.py:557
 #, python-brace-format
 msgid "Fetching images: {done} of {total}"
-msgstr ""
+msgstr "이미지 가져오는 중: {done} / {total}"
 
 #: services/js_i18n_strings.py:558
 msgid "Focus search box"
-msgstr ""
+msgstr "검색창에 포커스"
 
 #: services/js_i18n_strings.py:559 templates/logs.html:743
 msgid "From"
 msgstr "시작"
 
 #: services/js_i18n_strings.py:560
-#, fuzzy
 msgid "From the system setting"
-msgstr "트로피 설정"
+msgstr "시스템 설정에서"
 
 #: services/js_i18n_strings.py:561
-#, fuzzy
 msgid "Fullscreen"
-msgstr "전체 재스크랩"
+msgstr "전체 화면"
 
 #: services/js_i18n_strings.py:562
-#, fuzzy
 msgid "Game Page"
-msgstr "게임 이름"
+msgstr "게임 페이지"
 
 #: services/js_i18n_strings.py:563
 msgid "Game details updated successfully."
@@ -2169,38 +2144,32 @@ msgid "Generation request failed"
 msgstr "생성 요청 실패"
 
 #: services/js_i18n_strings.py:573
-#, fuzzy
 msgid "Go to Analytics"
-msgstr "분석"
+msgstr "분석으로 이동"
 
 #: services/js_i18n_strings.py:574
-#, fuzzy
 msgid "Go to Changelog"
-msgstr "변경 이력"
+msgstr "변경 이력으로 이동"
 
 #: services/js_i18n_strings.py:575
-#, fuzzy
 msgid "Go to Dashboard"
-msgstr "대시보드"
+msgstr "대시보드로 이동"
 
 #: services/js_i18n_strings.py:576
 msgid "Go to Help"
-msgstr ""
+msgstr "도움말로 이동"
 
 #: services/js_i18n_strings.py:577
-#, fuzzy
 msgid "Go to Library"
-msgstr "Xbox 라이브러리"
+msgstr "라이브러리로 이동"
 
 #: services/js_i18n_strings.py:578
-#, fuzzy
 msgid "Go to Settings"
-msgstr "도구 설정"
+msgstr "설정으로 이동"
 
 #: services/js_i18n_strings.py:579
-#, fuzzy
 msgid "Go to Systems"
-msgstr "전체 시스템"
+msgstr "시스템으로 이동"
 
 #: services/js_i18n_strings.py:580
 msgid "HLTB data cleared"
@@ -2228,9 +2197,8 @@ msgid "Image Resize"
 msgstr "이미지 크기 조정"
 
 #: services/js_i18n_strings.py:586
-#, fuzzy
 msgid "Image fetch cancelled."
-msgstr "생성이 취소되었습니다"
+msgstr "이미지 가져오기가 취소되었습니다."
 
 #: services/js_i18n_strings.py:587
 msgid "Image must be under 10MB"
@@ -2264,26 +2232,25 @@ msgstr "키보드 단축키"
 
 #: services/js_i18n_strings.py:593
 msgid "Kill"
-msgstr ""
+msgstr "강제 종료"
 
 #: services/js_i18n_strings.py:594
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Launch failed: {error}"
-msgstr "백업 실패: {error}"
+msgstr "실행 실패: {error}"
 
 #: services/js_i18n_strings.py:595
 #, python-brace-format
 msgid "Launched (pid {pid})"
-msgstr ""
+msgstr "실행됨 (pid {pid})"
 
 #: services/js_i18n_strings.py:596
 msgid "Launched (replaced previous instance)"
-msgstr ""
+msgstr "실행됨 (이전 인스턴스를 대체함)"
 
 #: services/js_i18n_strings.py:597
-#, fuzzy
 msgid "Launching…"
-msgstr "실행"
+msgstr "실행 중…"
 
 #: services/js_i18n_strings.py:598
 #, python-brace-format
@@ -2291,14 +2258,12 @@ msgid "Library scan complete! Found {n} new games."
 msgstr "라이브러리 스캔 완료! 새 게임 {n}개를 찾았습니다."
 
 #: services/js_i18n_strings.py:599
-#, fuzzy
 msgid "Link"
-msgstr "연결 해제"
+msgstr "연결"
 
 #: services/js_i18n_strings.py:600
-#, fuzzy
 msgid "Link ticked games"
-msgstr "RetroDB 게임에 연결"
+msgstr "선택한 게임 연결"
 
 #: services/js_i18n_strings.py:601
 msgid "Loading log file..."
@@ -2310,7 +2275,7 @@ msgstr "로그 파일이 삭제되었습니다"
 
 #: services/js_i18n_strings.py:603
 msgid "Looking for versions…"
-msgstr ""
+msgstr "버전을 찾는 중…"
 
 #: services/js_i18n_strings.py:604 templates/achievement_game.html:168
 #: templates/achievement_game.html:197 templates/achievement_game.html:207
@@ -2340,7 +2305,7 @@ msgstr "메인 스토리"
 
 #: services/js_i18n_strings.py:606
 msgid "Marked as not versions."
-msgstr ""
+msgstr "버전 아님으로 표시했습니다."
 
 #: services/js_i18n_strings.py:607
 msgid "Match found - please confirm to save"
@@ -2381,9 +2346,8 @@ msgid "NOT"
 msgstr "아님"
 
 #: services/js_i18n_strings.py:615
-#, fuzzy
 msgid "Navigation"
-msgstr "주 탐색"
+msgstr "탐색"
 
 #: services/js_i18n_strings.py:616
 msgid "Network error"
@@ -2395,12 +2359,11 @@ msgstr "대량 스크래핑 시작 중 네트워크 오류"
 
 #: services/js_i18n_strings.py:618
 msgid "Next disk"
-msgstr ""
+msgstr "다음 디스크"
 
 #: services/js_i18n_strings.py:619
-#, fuzzy
 msgid "Next disk failed"
-msgstr "생성에 실패했습니다"
+msgstr "다음 디스크 전환 실패"
 
 #: services/js_i18n_strings.py:620 templates/_bulk_edit_modal.html:171
 #: templates/_modals/edit_modal.html:139 templates/game_detail.html:652
@@ -2436,11 +2399,11 @@ msgstr "사용 가능한 설명이 없습니다."
 
 #: services/js_i18n_strings.py:627
 msgid "No emulator AppImages found in the scan paths."
-msgstr ""
+msgstr "스캔 경로에서 에뮬레이터 AppImage를 찾을 수 없습니다."
 
 #: services/js_i18n_strings.py:628
 msgid "No emulators registered."
-msgstr ""
+msgstr "등록된 에뮬레이터가 없습니다."
 
 #: services/js_i18n_strings.py:629
 msgid "No folders yet."
@@ -2460,7 +2423,7 @@ msgstr "아직 연결된 항목이 없습니다. 위에서 에뮬레이터 폴�
 
 #: services/js_i18n_strings.py:633
 msgid "No matching games on this system."
-msgstr ""
+msgstr "이 시스템에 일치하는 게임이 없습니다."
 
 #: services/js_i18n_strings.py:634
 msgid "No missing ROM files found."
@@ -2492,7 +2455,7 @@ msgstr "현재 필터와 일치하는 세션이 없습니다"
 
 #: services/js_i18n_strings.py:641
 msgid "No suggestions. Run Backfill Alternate Titles in Maintenance to find more."
-msgstr ""
+msgstr "추천 항목이 없습니다. 유지 관리에서 대체 제목 백필을 실행하면 더 찾을 수 있습니다."
 
 #: services/js_i18n_strings.py:642
 #, python-brace-format
@@ -2500,9 +2463,8 @@ msgid "Normalization applied: {games} games updated, {rules} rules saved"
 msgstr "정규화 적용됨: 게임 {games}개 업데이트, 규칙 {rules}개 저장됨"
 
 #: services/js_i18n_strings.py:643
-#, fuzzy
 msgid "Not versions"
-msgstr "버전"
+msgstr "버전 아님"
 
 #: services/js_i18n_strings.py:644 templates/base.html:1354
 msgid "Now playing"
@@ -2521,9 +2483,8 @@ msgid "Operation failed"
 msgstr "작업이 실패했습니다"
 
 #: services/js_i18n_strings.py:648
-#, fuzzy
 msgid "Other"
-msgstr "슈팅"
+msgstr "기타"
 
 #: services/js_i18n_strings.py:649
 msgid "PSN Imports"
@@ -2630,9 +2591,8 @@ msgid "Refreshing RA for {system}..."
 msgstr "{system}의 RA를 새로고침하는 중..."
 
 #: services/js_i18n_strings.py:672
-#, fuzzy
 msgid "Regional name matches"
-msgstr "지역 불일치"
+msgstr "지역별 이름 일치"
 
 #: services/js_i18n_strings.py:673 templates/compare_games.html:24
 #: templates/compare_games.html:40
@@ -2687,9 +2647,8 @@ msgid "Reports"
 msgstr "보고서"
 
 #: services/js_i18n_strings.py:684
-#, fuzzy
 msgid "Resolution scale"
-msgstr "해상도"
+msgstr "해상도 배율"
 
 #: services/js_i18n_strings.py:685
 msgid "Restarting server..."
@@ -2700,9 +2659,8 @@ msgid "Resume"
 msgstr "재개"
 
 #: services/js_i18n_strings.py:687
-#, fuzzy
 msgid "RetroDB default"
-msgstr "기본값"
+msgstr "RetroDB 기본값"
 
 #: services/js_i18n_strings.py:688
 msgid "Running"
@@ -2713,40 +2671,37 @@ msgid "Running..."
 msgstr "실행 중..."
 
 #: services/js_i18n_strings.py:690
-#, fuzzy
 msgid "Same IGDB game"
-msgstr "전체 스크래핑"
+msgstr "같은 IGDB 게임"
 
 #: services/js_i18n_strings.py:691
-#, fuzzy
 msgid "Same ScreenScraper game"
-msgstr "전체 스크래핑"
+msgstr "같은 ScreenScraper 게임"
 
 #: services/js_i18n_strings.py:692
 msgid "Same title, different region"
-msgstr ""
+msgstr "같은 제목, 다른 지역"
 
 #: services/js_i18n_strings.py:693
 msgid "Save Failed"
 msgstr "저장 실패"
 
 #: services/js_i18n_strings.py:694
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Save failed: {error}"
-msgstr "복원 실패: {error}"
+msgstr "저장 실패: {error}"
 
 #: services/js_i18n_strings.py:695
 msgid "Saved"
 msgstr "저장됨"
 
 #: services/js_i18n_strings.py:696
-#, fuzzy
 msgid "Saved."
-msgstr "저장됨"
+msgstr "저장했습니다."
 
 #: services/js_i18n_strings.py:697
 msgid "Saved. It applies the next time you press Play."
-msgstr ""
+msgstr "저장했습니다. 다음에 실행을 누를 때 적용됩니다."
 
 #: services/js_i18n_strings.py:698
 msgid "Saving to the database…"
@@ -2757,9 +2712,8 @@ msgid "Saving..."
 msgstr "저장 중..."
 
 #: services/js_i18n_strings.py:700
-#, fuzzy
 msgid "Saving…"
-msgstr "저장 중..."
+msgstr "저장 중…"
 
 #: services/js_i18n_strings.py:701
 #, python-brace-format
@@ -2767,23 +2721,21 @@ msgid "Scan failed (HTTP {status})"
 msgstr "스캔 실패 (HTTP {status})"
 
 #: services/js_i18n_strings.py:702
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Scan failed: {error}"
-msgstr "백업 실패: {error}"
+msgstr "스캔 실패: {error}"
 
 #: services/js_i18n_strings.py:703 templates/multi_disc_organizer.html:204
 msgid "Scanning..."
 msgstr "스캔 중..."
 
 #: services/js_i18n_strings.py:704
-#, fuzzy
 msgid "Scanning…"
-msgstr "스캔 중..."
+msgstr "스캔 중…"
 
 #: services/js_i18n_strings.py:705
-#, fuzzy
 msgid "Scrape game"
-msgstr "전체 스크래핑"
+msgstr "게임 스크래핑"
 
 #: services/js_i18n_strings.py:706
 #, python-brace-format
@@ -2807,9 +2759,8 @@ msgid "Search"
 msgstr "검색"
 
 #: services/js_i18n_strings.py:710
-#, fuzzy
 msgid "Search failed."
-msgstr "파일명 검색..."
+msgstr "검색 실패."
 
 #: services/js_i18n_strings.py:711
 msgid "Searching & removing background..."
@@ -2882,20 +2833,19 @@ msgstr "서버가 성공적으로 다시 시작되었습니다!"
 
 #: services/js_i18n_strings.py:727
 msgid "Server stopped. You can close this tab."
-msgstr ""
+msgstr "서버가 중지되었습니다. 이 탭을 닫아도 됩니다."
 
 #: services/js_i18n_strings.py:728
-#, fuzzy
 msgid "Set for this game"
-msgstr "이 게임의 HLTB 데이터를 지우시겠습니까?"
+msgstr "이 게임에 설정"
 
 #: services/js_i18n_strings.py:729
 msgid "Set inside the emulator; RetroDB leaves it alone"
-msgstr ""
+msgstr "에뮬레이터 안에서 설정합니다. RetroDB는 건드리지 않습니다"
 
 #: services/js_i18n_strings.py:730
 msgid "Set per system, in Settings > Emulators"
-msgstr ""
+msgstr "시스템별로 설정 > 에뮬레이터에서 지정"
 
 #: services/js_i18n_strings.py:731 templates/_macros/nav_tabs.html:43
 #: templates/base.html:156 templates/rom_tools_hub.html:119
@@ -2909,18 +2859,16 @@ msgid "Show Bonus"
 msgstr "보너스 표시"
 
 #: services/js_i18n_strings.py:733
-#, fuzzy
 msgid "Show keyboard shortcuts"
-msgstr "키보드 단축키"
+msgstr "키보드 단축키 보기"
 
 #: services/js_i18n_strings.py:734
 msgid "Showing Bonus Discs"
 msgstr "보너스 디스크 표시 중"
 
 #: services/js_i18n_strings.py:735
-#, fuzzy
 msgid "Shutting down server..."
-msgstr "서버를 다시 시작하는 중..."
+msgstr "서버를 종료하는 중..."
 
 #: services/js_i18n_strings.py:736 templates/_modals/edit_modal.html:46
 #: templates/base.html:1052
@@ -2945,9 +2893,8 @@ msgid "Successfully updated {count} games"
 msgstr "게임 {count}개를 성공적으로 업데이트했습니다"
 
 #: services/js_i18n_strings.py:741
-#, fuzzy
 msgid "Summary written."
-msgstr "요약"
+msgstr "요약을 작성했습니다."
 
 #: services/js_i18n_strings.py:742
 msgid "Sync In Progress"
@@ -3008,7 +2955,7 @@ msgstr "시스템"
 
 #: services/js_i18n_strings.py:752
 msgid "This game is already running.  Kill the existing process and relaunch?"
-msgstr ""
+msgstr "이 게임은 이미 실행 중입니다. 기존 프로세스를 종료하고 다시 실행하시겠습니까?"
 
 #: services/js_i18n_strings.py:753
 msgid "This system is already being synced."
@@ -3075,9 +3022,8 @@ msgstr ""
 "사용합니다. 계속하시겠습니까?"
 
 #: services/js_i18n_strings.py:762
-#, fuzzy
 msgid "Tick at least two games."
-msgstr "무작위 게임 선택"
+msgstr "게임을 두 개 이상 선택하세요."
 
 #: services/js_i18n_strings.py:763 templates/logs.html:745
 msgid "To"
@@ -3150,31 +3096,27 @@ msgid "Uploading…"
 msgstr "업로드 중…"
 
 #: services/js_i18n_strings.py:778
-#, fuzzy
 msgid "Use the system setting"
-msgstr "경로 설정 저장"
+msgstr "시스템 설정 사용"
 
 #: services/js_i18n_strings.py:779
 #, python-brace-format
 msgid ""
 "Used for every {system} game unless the game sets its own. Applied when "
 "you press Play."
-msgstr ""
+msgstr "게임에 자체 설정이 없으면 모든 {system} 게임에 사용됩니다. 실행을 누르면 적용됩니다."
 
 #: services/js_i18n_strings.py:780
-#, fuzzy
 msgid "Version unlinked."
-msgstr "권한이 거부되었습니다"
+msgstr "버전 연결을 해제했습니다."
 
 #: services/js_i18n_strings.py:781
-#, fuzzy
 msgid "Versions linked."
-msgstr "버전"
+msgstr "버전을 연결했습니다."
 
 #: services/js_i18n_strings.py:782
-#, fuzzy
 msgid "Will change?"
-msgstr "변경"
+msgstr "변경 여부"
 
 #: services/js_i18n_strings.py:783
 msgid "Works"
@@ -3182,7 +3124,7 @@ msgstr "작동"
 
 #: services/js_i18n_strings.py:784 templates/game_detail.html:739
 msgid "Write again with AI"
-msgstr ""
+msgstr "AI로 다시 작성"
 
 #: services/js_i18n_strings.py:785
 msgid "Xbox Imports"
@@ -3224,14 +3166,14 @@ msgid "{count} Achievements"
 msgstr "업적 {count}개"
 
 #: services/js_i18n_strings.py:793
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{count} regional versions"
-msgstr "현재: v%(version)s"
+msgstr "지역별 버전 {count}개"
 
 #: services/js_i18n_strings.py:794
 #, python-brace-format
 msgid "{count} suggested groups. Untick any game that does not belong, then link."
-msgstr ""
+msgstr "추천 그룹 {count}개. 속하지 않는 게임은 선택을 해제한 후 연결하세요."
 
 #: services/js_i18n_strings.py:795
 #, python-brace-format
@@ -3289,9 +3231,9 @@ msgid "{system} has been added to the sync queue."
 msgstr "{system}이(가) 동기화 대기열에 추가되었습니다."
 
 #: services/js_i18n_strings.py:806
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{title} ({count} versions)"
-msgstr "변환 시작"
+msgstr "{title} (버전 {count}개)"
 
 #: services/js_i18n_strings.py:807
 msgid "⏳ Searching..."
@@ -3344,7 +3286,7 @@ msgstr "🗑️ 메타데이터 재설정"
 
 #: services/js_i18n_strings.py:819
 msgid "🛑 Shut Down Server"
-msgstr ""
+msgstr "🛑 서버 종료"
 
 #: services/js_i18n_strings.py:820
 msgid "🧹 Clean Missing ROMs"
@@ -3354,33 +3296,32 @@ msgstr "🧹 누락된 ROM 정리"
 msgid ""
 "RetroDB could not read this disc's serial, so it cannot name the "
 "emulator's per-game settings file."
-msgstr ""
+msgstr "RetroDB가 이 디스크의 시리얼을 읽을 수 없어 에뮬레이터의 게임별 설정 파일 이름을 정할 수 없습니다."
 
 #: services/standalone_settings.py:215
 msgid ""
 "PCSX2 has two or more settings files for this game; remove the ones you "
 "do not use."
-msgstr ""
+msgstr "PCSX2에 이 게임의 설정 파일이 두 개 이상 있습니다. 사용하지 않는 파일을 삭제하세요."
 
 #: services/standalone_settings.py:223
 msgid ""
 "RetroDB could not read this disc's boot file, so it cannot name PCSX2's "
 "per-game settings file."
-msgstr ""
+msgstr "RetroDB가 이 디스크의 부트 파일을 읽을 수 없어 PCSX2의 게임별 설정 파일 이름을 정할 수 없습니다."
 
 #: services/standalone_settings.py:231
 msgid "Settings path outside the data folder."
-msgstr ""
+msgstr "설정 경로가 데이터 폴더 밖에 있습니다."
 
 #: services/standalone_settings.py:253
-#, fuzzy
 msgid "No emulator is set up for this system."
-msgstr "이 시스템에 대한 사양이 없습니다."
+msgstr "이 시스템에 설정된 에뮬레이터가 없습니다."
 
 #: services/standalone_settings.py:268
 #, python-format
 msgid "Run %(name)s once so it creates its settings, then play again."
-msgstr ""
+msgstr "%(name)s을(를) 한 번 실행해 설정을 만든 다음 다시 플레이하세요."
 
 #: templates/_bulk_edit_modal.html:7
 msgid "Bulk Edit"
@@ -3844,7 +3785,7 @@ msgstr "모든 시스템의 게임"
 #: templates/all_games.html:17 templates/system_games.html:24
 #, python-format
 msgid "(%(roms)s ROMs)"
-msgstr ""
+msgstr "(ROM %(roms)s개)"
 
 #: templates/all_games.html:19 templates/system_games.html:26
 msgid "missing metadata"
@@ -4591,11 +4532,11 @@ msgstr "시작 대기 중..."
 
 #: templates/archive_scanner.html:1658
 msgid "Have the original archive moved to the staging folder"
-msgstr ""
+msgstr "원본 아카이브를 스테이징 폴더로 이동"
 
 #: templates/archive_scanner.html:1761
 msgid "Original archives moved to:"
-msgstr ""
+msgstr "원본 아카이브 이동 위치:"
 
 #: templates/base.html:40
 msgid "Skip to main content"
@@ -4715,28 +4656,24 @@ msgid "Last Updated"
 msgstr "마지막 업데이트"
 
 #: templates/base.html:219
-#, fuzzy
 msgid "Disclaimer"
 msgstr "면책 조항"
 
 #: templates/base.html:230
 msgid "Support RetroDB's development on GitHub Sponsors"
-msgstr ""
+msgstr "GitHub Sponsors에서 RetroDB 개발 후원하기"
 
 #: templates/base.html:231
-#, fuzzy
 msgid "Sponsor RetroDB"
-msgstr "후원"
+msgstr "RetroDB 후원하기"
 
 #: templates/base.html:233
-#, fuzzy
 msgid "Support RetroDB's development on Patreon"
-msgstr "개발 지원"
+msgstr "Patreon에서 RetroDB 개발 후원하기"
 
 #: templates/base.html:234
-#, fuzzy
 msgid "Support RetroDB"
-msgstr "Patreon에서 후원하기"
+msgstr "RetroDB 지원하기"
 
 #: templates/base.html:249
 msgid "Toggle menu"
@@ -5147,21 +5084,19 @@ msgstr "L - 전체 이용가"
 #: templates/_modals/edit_modal.html:325
 #: templates/_settings_tabs/library.html:160 templates/base.html:1294
 msgid "CADPA (China)"
-msgstr ""
+msgstr "CADPA (중국)"
 
 #: templates/_modals/edit_modal.html:328 templates/base.html:1297
-#, fuzzy
 msgid "8+ - Ages 8 and up"
-msgstr "Z - 18세 이용가"
+msgstr "8+ - 8세 이상"
 
 #: templates/_modals/edit_modal.html:329 templates/base.html:1298
-#, fuzzy
 msgid "12+ - Ages 12 and up"
-msgstr "B - 12세 이용가"
+msgstr "12+ - 12세 이상"
 
 #: templates/_modals/edit_modal.html:330 templates/base.html:1299
 msgid "16+ - Ages 16 and up"
-msgstr ""
+msgstr "16+ - 16세 이상"
 
 #: templates/_modals/edit_modal.html:339 templates/base.html:1308
 msgid "Game Description"
@@ -5492,9 +5427,8 @@ msgid "ClassInd Rating"
 msgstr "ClassInd 등급"
 
 #: templates/compare_games.html:88
-#, fuzzy
 msgid "CADPA Rating"
-msgstr "ClassInd 등급"
+msgstr "CADPA 등급"
 
 #: templates/compare_games.html:90
 msgid "Playtime Estimate"
@@ -5656,29 +5590,24 @@ msgid "Estimated total (HLTB)"
 msgstr "예상 총합 (HLTB)"
 
 #: templates/dashboard.html:212
-#, fuzzy
 msgid "Quick Fixes"
-msgstr "빠른 편집"
+msgstr "빠른 수정"
 
 #: templates/dashboard.html:219
-#, fuzzy
 msgid "Games missing box art"
-msgstr "연도 누락"
+msgstr "박스아트가 없는 게임"
 
 #: templates/dashboard.html:227
-#, fuzzy
 msgid "Find duplicate ROMs"
-msgstr "중복 그룹"
+msgstr "중복 ROM 찾기"
 
 #: templates/dashboard.html:234
-#, fuzzy
 msgid "Check"
-msgstr "확인 중..."
+msgstr "확인"
 
 #: templates/dashboard.html:235
-#, fuzzy
 msgid "Broken ROM paths"
-msgstr "설정된 ROM 경로가 없습니다"
+msgstr "깨진 ROM 경로"
 
 #: templates/dashboard.html:250
 msgid "View All Systems →"
@@ -5766,17 +5695,17 @@ msgstr "구성됨"
 msgid ""
 "Your PlayStation Network session has expired — re-link it to keep trophy "
 "and library sync working."
-msgstr ""
+msgstr "PlayStation Network 세션이 만료되었습니다. 트로피와 라이브러리 동기화를 계속하려면 다시 연결하세요."
 
 #: templates/dashboard.html:1374
 msgid ""
 "Your PlayStation Network session expires soon — re-link it to avoid an "
 "interruption."
-msgstr ""
+msgstr "PlayStation Network 세션이 곧 만료됩니다. 중단을 피하려면 다시 연결하세요."
 
 #: templates/dashboard.html:1387
 msgid "Re-link now"
-msgstr ""
+msgstr "지금 다시 연결"
 
 #: templates/duplicate_finder.html:176
 msgid "Careful Review Recommended"
@@ -5942,19 +5871,16 @@ msgid "Part of:"
 msgstr "포함 항목:"
 
 #: templates/game_detail.html:74
-#, fuzzy
 msgid "Regional versions"
-msgstr "지역 옵션"
+msgstr "지역별 버전"
 
 #: templates/game_detail.html:75
-#, fuzzy
 msgid "Versions:"
-msgstr "버전"
+msgstr "버전:"
 
 #: templates/game_detail.html:77 templates/game_detail.html:708
-#, fuzzy
 msgid "Unknown region"
-msgstr "알 수 없는 오류"
+msgstr "알 수 없는 지역"
 
 #: templates/game_detail.html:83
 msgid "Launch this game in the configured emulator"
@@ -6161,81 +6087,74 @@ msgid "Bonus Content"
 msgstr "보너스 콘텐츠"
 
 #: templates/game_detail.html:678
-#, fuzzy
 msgid "Emulator settings"
-msgstr "도구 설정"
+msgstr "에뮬레이터 설정"
 
 #: templates/_macros/nav_tabs.html:40 templates/game_detail.html:687
 #: templates/rom_tools_hub.html:193 templates/versions_review.html:5
 #: templates/versions_review.html:80
-#, fuzzy
 msgid "Regional Versions"
-msgstr "지역 옵션"
+msgstr "지역별 버전"
 
 #: templates/game_detail.html:695 templates/museum_system.html:100
 msgid "Released"
 msgstr "출시"
 
 #: templates/game_detail.html:697
-#, fuzzy
 msgid "File size"
 msgstr "파일 크기"
 
 #: templates/game_detail.html:698
-#, fuzzy
 msgid "Revision"
-msgstr "지역"
+msgstr "리비전"
 
 #: templates/game_detail.html:699
-#, fuzzy
 msgid "Languages"
 msgstr "언어"
 
 #: templates/game_detail.html:700
-#, fuzzy
 msgid "Scores"
-msgstr "스포츠"
+msgstr "점수"
 
 #: templates/game_detail.html:709
 msgid "(this page)"
-msgstr ""
+msgstr "(이 페이지)"
 
 #: templates/game_detail.html:727
 msgid "Known differences"
-msgstr ""
+msgstr "알려진 차이점"
 
 #: templates/game_detail.html:727
 msgid "AI-written"
-msgstr ""
+msgstr "AI 작성"
 
 #: templates/game_detail.html:728
 msgid "Written by AI from what it knows about these releases. It can be wrong."
-msgstr ""
+msgstr "AI가 이 출시판들에 대해 알고 있는 내용으로 작성했습니다. 틀릴 수 있습니다."
 
 #: templates/game_detail.html:730
 msgid "The AI knows of no differences between these versions."
-msgstr ""
+msgstr "AI가 아는 이 버전들 간의 차이점은 없습니다."
 
 #: templates/game_detail.html:733
 msgid "No other regional versions are linked to this game."
-msgstr ""
+msgstr "이 게임에 연결된 다른 지역별 버전이 없습니다."
 
 #: templates/game_detail.html:738
 msgid "Unlink this version"
-msgstr ""
+msgstr "이 버전 연결 해제"
 
 #: templates/game_detail.html:739
 msgid "Summarise differences with AI"
-msgstr ""
+msgstr "AI로 차이점 요약"
 
 #: templates/game_detail.html:741
-#, fuzzy
 msgid "Link a version"
-msgstr "버전"
+msgstr "버전 연결"
 
 #: templates/game_detail.html:742
 msgid "Link a version: search this system"
-msgstr ""
+msgstr "버전 연결: 이 시스템에서 검색"
 
 #: templates/game_detail.html:755
 msgid "Scrape History"
@@ -6681,9 +6600,8 @@ msgid "Password"
 msgstr "비밀번호"
 
 #: templates/login.html:250
-#, fuzzy
 msgid "Enter your password"
-msgstr "현재 비밀번호를 입력하세요"
+msgstr "비밀번호를 입력하세요"
 
 #: templates/logs.html:729
 msgid "File"
@@ -7477,6 +7395,8 @@ msgid ""
 "Review the groups RetroDB suggests, or link versions by hand on a game "
 "page."
 msgstr ""
+"여러 지역의 같은 게임을 연결하면 라이브러리에 하나로 표시됩니다. RetroDB가 추천하는 그룹을 검토하거나 게임 페이지에서 직접 "
+"버전을 연결하세요."
 
 #: templates/_macros/nav_tabs.html:38 templates/rom_tools_hub.html:207
 msgid "Multi-Disc Organizer"
@@ -7578,13 +7498,13 @@ msgstr "모든 ROM 도구에서 공유되는 경로, 외부 도구 위치, 아�
 
 #: templates/rom_tools_settings.html:304
 msgid "Empty: RetroDB's data folder"
-msgstr ""
+msgstr "비어 있음: RetroDB 데이터 폴더"
 
 #: templates/rom_tools_settings.html:305
 msgid ""
 "Where Create M3U moves original archives. Leave empty to use RetroDB's "
 "data folder."
-msgstr ""
+msgstr "M3U 만들기가 원본 아카이브를 옮기는 위치입니다. 비워 두면 RetroDB 데이터 폴더를 사용합니다."
 
 #: templates/screenshot_dedup.html:243
 msgid "Exact Hash (MD5) &mdash; identical files only"
@@ -7805,16 +7725,16 @@ msgid ""
 "Linked versions show as one card in the Library, opening the version from"
 " your preferred region. Nothing is linked until you confirm it here."
 msgstr ""
+"RetroDB는 여러 지역의 같은 게임을 찾습니다. 연결된 버전은 라이브러리에서 하나의 카드로 표시되며, 선호 지역의 버전이 "
+"열립니다. 여기서 확인하기 전에는 아무것도 연결되지 않습니다."
 
 #: templates/versions_review.html:88
-#, fuzzy
 msgid "All systems"
 msgstr "모든 시스템"
 
 #: templates/versions_review.html:94
-#, fuzzy
 msgid "Find suggestions"
-msgstr "AI 제안"
+msgstr "추천 항목 찾기"
 
 #: templates/wishlist.html:12
 msgid "Games you want to find and add to your collection"
@@ -8496,10 +8416,12 @@ msgid ""
 " Then, on the Sony JSON page, click the bookmark to copy your NPSSO in "
 "one click."
 msgstr ""
+"선택 사항 바로 가기: 아래 버튼을 브라우저의 북마크 바로 끌어 놓으세요. 그런 다음 Sony JSON 페이지에서 북마크를 클릭하면"
+" NPSSO를 한 번에 복사할 수 있습니다."
 
 #: templates/_settings_tabs/account.html:148
 msgid "Copy NPSSO"
-msgstr ""
+msgstr "NPSSO 복사"
 
 #: templates/_settings_tabs/account.html:157
 msgid "Copy the page content"
@@ -8551,9 +8473,8 @@ msgid "Change Password"
 msgstr "비밀번호 변경"
 
 #: templates/_settings_tabs/account.html:198
-#, fuzzy
 msgid "Every account needs a password to log in."
-msgstr "관리자 계정은 로그인 시 비밀번호가 필요합니다."
+msgstr "로그인하려면 모든 계정에 비밀번호가 필요합니다."
 
 #: templates/_settings_tabs/account.html:202
 msgid "Current Password"
@@ -9213,13 +9134,13 @@ msgstr "사용 가능한 지역 값과 기본값을 설정합니다. 기본 지�
 
 #: templates/_settings_tabs/system.html:182
 msgid "Shut Down Server"
-msgstr ""
+msgstr "서버 종료"
 
 #: templates/_settings_tabs/system.html:185
 msgid ""
 "Restart the Flask server (useful after configuration changes), or shut it"
 " down completely"
-msgstr ""
+msgstr "Flask 서버를 재시작하거나(설정 변경 후 유용) 완전히 종료합니다"
 
 #: templates/_settings_tabs/system.html:444
 msgid "Support Development"
