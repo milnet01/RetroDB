@@ -9101,7 +9101,11 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.149 Play and emulator settings show on games with no ROM file (MEDIUM, S).
-- **Status**: todo
+- **Resolution** (2026-10-21): Shipped 2026-10-21: game page `can_play` (cards' `rom_launch_problem`
+  rule) gates Play, Emulator settings and the edit Launch section; cards
+  already hid Play. A save without the Launch section keeps override and
+  args.
+- **Status**: done
 - **Seen** (user, 2026-10-21): imported games offer a play option and
   emulator settings.
 - **Do**: show Play and the emulator / launch settings only for a game
