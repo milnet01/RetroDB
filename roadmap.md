@@ -8855,7 +8855,10 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.136 Scrape speed: ES-DE re-reads gamelist.xml on every search (LOW, S).
-- **Status**: todo
+- **Resolution** (2026-10-21): Shipped 2026-10-21: parse cached per file on (mtime_ns, size); covers
+  bulk scrape (search + fetch each parsed per game before). Real C64
+  list: 39 ms -> <0.1 ms.
+- **Status**: done
 - **Where**: `scraper/scrape_esde.py` parses the system's `gamelist.xml`
   on each search.
 - **Do**: cache the parsed list per file, keyed on its modified time.
