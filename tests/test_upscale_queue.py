@@ -93,3 +93,39 @@ def test_game_listed_again_mid_run_keeps_its_row(queue_env):
     upscale_queue.enqueue(GAME_ID)  # a newer scrape of the same game
     upscale_queue.process_game(GAME_ID, stale)
     assert [g for g, _ in _listed(connect)] == [GAME_ID]
+
+
+# PASS-59-153 — the sidebar counts games still waiting, and a waiting game's
+# page says so, so a player knows soft images are still being improved.
+
+def test_pending_status_counts_games_and_flags_one(queue_env):
+    _tmp, connect = queue_env
+    assert upscale_queue.pending_status(GAME_ID) == (0, False)
+    upscale_queue.enqueue(GAME_ID)
+    upscale_queue.enqueue(GAME_ID + 1)
+
+    assert upscale_queue.pending_status(GAME_ID) == (2, True)
+    assert upscale_queue.pending_status(GAME_ID + 2) == (2, False)
+    assert upscale_queue.pending_status() == (2, False)
+
+
+def test_status_route_reports_the_queue(admin_test_client, monkeypatch):
+    monkeypatch.setattr(upscale_queue, 'pending_status',
+                        lambda game_id=None: (3, game_id == GAME_ID))
+    client, _csrf = admin_test_client()
+
+    body = client.get(f'/api/upscale-queue/status?game_id={GAME_ID}').get_json()
+    assert (body['pending'], body['game_pending']) == (3, True)
+    assert client.get('/api/upscale-queue/status').get_json()['game_pending'] is False
+
+
+@pytest.mark.parametrize('pending', [0, 4])
+def test_sidebar_note_shows_only_while_work_remains(admin_test_client, monkeypatch, pending):
+    monkeypatch.setattr(upscale_queue, 'pending_status',
+                        lambda game_id=None: (pending, False))
+    client, _csrf = admin_test_client()
+
+    html = client.get('/help').get_data(as_text=True)
+    assert 'id="upscaleStatus"' in html
+    assert f'data-pending="{pending}"' in html
+    assert ('upscale-status" hidden' in html) is (pending == 0)

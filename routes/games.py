@@ -36,7 +36,7 @@ from services.game_metadata_service import (
     apply_hybrid_metadata_to_game,
     normalize_game_edit, cross_map_ratings,
 )
-from services import apply_progress
+from services import apply_progress, upscale_queue
 
 # Single source of truth for the completion-status whitelist, shared by the
 # single-edit endpoint (api_update_completion) and bulk-edit (Pass 48.5 — bulk
@@ -773,7 +773,9 @@ def game_detail(game_id):
                              xbox_counts=xbox_counts,
                              # PASS-59-149 — the cards' rule: an imported game
                              # with no ROM file has nothing to play.
-                             can_play=rom_launch_problem(game['rom_path']) is None)
+                             can_play=rom_launch_problem(game['rom_path']) is None,
+                             # PASS-59-153 — its images still await upscaling.
+                             upscale_pending=upscale_queue.pending_status(game_id)[1])
     except Exception as e:
         logger.error(f"Game detail error: {e}", exc_info=True)
         return f"Error loading game: {e}", 500

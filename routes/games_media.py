@@ -1,7 +1,8 @@
 # =============================================================================
 # RETRODB - Game Media & Deletion Routes
 # =============================================================================
-# Delete game record, rename ROM file on disk, remove a single screenshot.
+# Delete game record, rename ROM file on disk, remove a single screenshot;
+# report the background image upscaling still to do.
 # =============================================================================
 
 import logging
@@ -13,7 +14,8 @@ from flask_babel import gettext as _
 import config
 from services.analytics import invalidate_analytics_cache
 from services.api_helpers import handle_api_errors, success, error
-from services.auth import editor_required
+from services import upscale_queue
+from services.auth import editor_required, login_required
 from services.database import query, execute
 from services.game_query import invalidate_filter_cache
 from services.rom_scanner import rom_type_problem
@@ -163,3 +165,13 @@ def api_delete_screenshot(game_id):
         remaining=len(screenshots),
         screenshots=screenshots,
     )
+
+
+@bp.route('/api/upscale-queue/status', methods=['GET'])
+@login_required
+@handle_api_errors
+def api_upscale_queue_status():
+    """PASS-59-153 — games still waiting for background upscaling, and
+    whether `game_id` is one of them."""
+    pending, game_pending = upscale_queue.pending_status(request.args.get('game_id', type=int))
+    return success(pending=pending, game_pending=game_pending)

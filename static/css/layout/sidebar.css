@@ -193,6 +193,28 @@
     font-size: 1rem;
 }
 
+/* PASS-59-153 — games still waiting for background upscaling. */
+.upscale-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: var(--spacing-sm);
+    padding: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+}
+
+.upscale-status[hidden] {
+    display: none;
+}
+
+.upscale-status-icon {
+    font-size: 1rem;
+    color: var(--primary-cyan);
+}
+
 /* =============================================================================
    USER INDICATOR
    ============================================================================= */

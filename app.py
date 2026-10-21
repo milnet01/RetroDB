@@ -91,6 +91,11 @@ _register_template_filters(app)
 # `jinja_env.get_template(...).render(...)` in tests / tools).
 app.jinja_env.globals['asset_url'] = asset_url
 
+# PASS-59-153 — the sidebar's "Improving images" note. A global, not part of
+# inject_config, so the count is read once per page rather than per render.
+from services import upscale_queue as _upscale_queue
+app.jinja_env.globals['upscale_pending_count'] = lambda: _upscale_queue.pending_status()[0]
+
 
 def _get_secret_key():
     """Get or generate a persistent secret key for Flask sessions.

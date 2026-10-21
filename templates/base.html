@@ -182,6 +182,16 @@
             </nav>
             
             <div class="sidebar-footer">
+                {% if current_user %}
+                {# PASS-59-153 — games still waiting for background upscaling;
+                   main.js counts it down and hides it at zero. #}
+                {% set _upscale_pending = upscale_pending_count() %}
+                <div class="upscale-status"{% if not _upscale_pending %} hidden{% endif %} id="upscaleStatus" role="status" data-pending="{{ _upscale_pending }}">
+                    <span class="upscale-status-icon" data-themed-icon="background" aria-hidden="true">⟳</span>
+                    <span class="upscale-status-text">{{ _('Improving images') }}<br>
+                        {{ _('Games left:') }} <span id="upscaleStatusCount">{{ _upscale_pending|format_number }}</span></span>
+                </div>
+                {% endif %}
                 <button type="button" class="version-info" data-on-click="showAboutModal" title="{{ _('Click for more info') }}">
                     <span class="version-icon">ℹ️</span> RetroDB v{{ config.APP_VERSION }}
                 </button>

@@ -4387,4 +4387,56 @@ function _setupAutoFocusTraps() {
 
 document.addEventListener('DOMContentLoaded', _setupAutoFocusTraps);
 
+const UpscaleStatus = {
+    BUSY_MS: 10000,
+    IDLE_MS: 60000,
+
+    init() {
+        this.note = document.getElementById('upscaleStatus');
+        if (!this.note) return;
+        this.gameNote = document.getElementById('upscaleGameNote');
+        this.schedule(Number(this.note.dataset.pending) > 0);
+    },
+
+    schedule(busy) {
+        setTimeout(() => this.poll(), busy ? this.BUSY_MS : this.IDLE_MS);
+    },
+
+    async poll() {
+        if (document.hidden) {
+            document.addEventListener('visibilitychange', () => this.poll(), { once: true });
+            return;
+        }
+        const gameId = this.gameNote ? this.gameNote.dataset.gameId : '';
+        let data;
+        try {
+            data = await API.get('/api/upscale-queue/status' + (gameId ? `?game_id=${gameId}` : ''));
+        } catch (e) {
+            this.schedule(false);
+            return;
+        }
+        this.note.hidden = !data.pending;
+        document.getElementById('upscaleStatusCount').textContent = formatNumber(data.pending);
+        if (this.gameNote && !data.game_pending) {
+            this.gameNote.remove();
+            this.gameNote = null;
+            this.refreshImages();
+        }
+        this.schedule(data.pending > 0);
+    },
+
+    refreshImages() {
+        const stamp = Date.now();
+        const bust = url => url.replace(/(\/static\/images\/[^\s?,]+)(\?[^\s,]*)?/g, `$1?r=${stamp}`);
+        document.querySelectorAll('img').forEach(img => {
+            if (img.srcset) img.srcset = bust(img.srcset);
+            if (img.getAttribute('src')) img.src = bust(img.getAttribute('src'));
+        });
+        document.querySelectorAll('[data-zoom-url]').forEach(el => {
+            el.dataset.zoomUrl = bust(el.dataset.zoomUrl);
+        });
+    },
+};
+document.addEventListener('DOMContentLoaded', () => UpscaleStatus.init());
+
 })();

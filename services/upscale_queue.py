@@ -73,6 +73,24 @@ def upscale_later(game_id):
         enqueue(game_id)
 
 
+def pending_status(game_id=None):
+    """(games still listed, whether `game_id` is one of them), for the
+    PASS-59-153 indicator. (0, False) when the table cannot be read."""
+    try:
+        conn = _connect()
+        try:
+            count = conn.execute("SELECT COUNT(*) FROM pending_upscales").fetchone()[0]
+            listed = game_id is not None and conn.execute(
+                "SELECT 1 FROM pending_upscales WHERE game_id = ?", (game_id,)
+            ).fetchone() is not None
+        finally:
+            conn.close()
+    except sqlite3.Error as e:
+        logger.warning(f"Upscale queue: could not read the list: {e}")
+        return 0, False
+    return count, listed
+
+
 def _media_files(conn, game_id):
     """(path, image_type) for each media file `game_id` names."""
     import config

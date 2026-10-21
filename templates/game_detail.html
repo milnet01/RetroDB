@@ -176,6 +176,13 @@
                     <span class="boxart-empty-icon">🎮</span>
                 </div>
             {% endif %}
+            {% if upscale_pending %}
+            {# PASS-59-153 — main.js reloads this game's images when it is done. #}
+            <p class="upscale-game-note" id="upscaleGameNote" role="status" data-game-id="{{ game.id }}">
+                <span data-themed-icon="background" aria-hidden="true">⟳</span>
+                {{ _("Sharper images for this game are still being made. They'll appear on their own.") }}
+            </p>
+            {% endif %}
         </div>
 
         <!-- Core Info -->

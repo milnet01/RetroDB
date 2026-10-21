@@ -262,6 +262,12 @@ with the image count and seconds taken.
   images and `ImageResizeJob` upscale inline as before. A thread started
   without `contextvars.copy_context()` does not inherit the switch and
   upscales inline, which is the old behaviour.
+- **Shown** (PASS-59-153). While rows remain, the sidebar of every
+  signed-in page says "Improving images" with the count, from
+  `pending_status()` via `GET /api/upscale-queue/status`. A listed game's
+  page adds a line under its boxart. `main.js` (`UpscaleStatus`) polls
+  every 10 seconds while work remains and every minute while idle, hides
+  the note at zero, and reloads a game page's images when its row goes.
 
 Tests: `tests/test_upscale_queue.py`.
 

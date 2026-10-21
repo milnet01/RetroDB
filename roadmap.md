@@ -9170,6 +9170,20 @@ were corrected in `2836bc3` and are not repeated here.
 - **Check**: read the defaults from RetroArch's own config keys,
   not memory.
 
+---
+
+#### Pass 59.153 Show that images are still being improved in the background (MEDIUM, S).
+- **Shipped** (2026-10-21): `pending_status()`, `GET
+  /api/upscale-queue/status`, the sidebar note in base.html, the
+  game-page line, `UpscaleStatus` in main.js. Contract:
+  docs/specs/image-pipeline.md §5.1 "Shown".
+- **Status**: done
+- **Asked** (user, 2026-10-21): an indicator that the system is
+  still processing images in the background.
+- **Decided** (user, 2026-10-21): a counting-down note at the foot
+  of the sidebar on every page while `pending_upscales` holds rows,
+  and a line on a waiting game's own page. Both vanish when done.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
