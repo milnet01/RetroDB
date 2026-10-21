@@ -8534,12 +8534,19 @@ were corrected in `2836bc3` and are not repeated here.
 - **Plan**: red test first (a seed folder that no known system folder
   uses); check every seed folder against ES-DE's names, not only this one.
 - **Verify**: a fresh seed wires Dolphin to `gc`.
-- **Status**: todo, after PASS-59-91 stage 4 merges (it edits the seeds).
+- **Resolution** (2026-10-21): Shipped 5520078 (2026-10-21): seeds and adapters use gc / n3ds / sfc;
+  test checks every seed and adapter folder against
+  config.SYSTEM_NAME_MAP plus scummvm.
+- **Status**: done, after PASS-59-91 stage 4 merges (it edits the seeds).
 
 ---
 
 #### Pass 59.123 The standalone build does not bundle data/emulator_seeds.json, so it seeds no emulators (MEDIUM, S).
-- **Status**: todo
+- **Resolution** (2026-10-21): Shipped 546ad67 (2026-10-21): retrodb.spec bundles
+  data/emulator_seeds.json; a missing seeds file now logs a warning;
+  test checks every tracked data/ file the app reads is bundled. Not
+  verified in a real PyInstaller build.
+- **Status**: done
 - **Where**: `retrodb.spec` datas list has no `data/emulator_seeds.json`
   (stage 4 added `data/standalone_settings.json` only). Reported by the
   stage 4 helper; not yet re-checked by hand.
