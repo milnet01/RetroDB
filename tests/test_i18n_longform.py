@@ -26,11 +26,11 @@ import yaml
 
 from tests._util import REPO_ROOT
 
-# Versions whose locale entries are known to drop a tag, pending the
-# retranslation in roadmap.md Pass 57.6. Both directions are asserted below: a
-# NEW gap fails, and a gap that has since been fixed but is still listed here
-# also fails — so this set cannot quietly rot into a blanket exemption.
-KNOWN_TAG_GAPS = {'3.20.0'}
+# Versions whose locale entries are known to drop a tag. Both directions are
+# asserted below: a NEW gap fails, and a gap that has since been fixed but is
+# still listed here also fails — so this set cannot quietly rot into a blanket
+# exemption. Empty since PASS-57-6 restored 3.20.0's fix tag.
+KNOWN_TAG_GAPS = set()
 
 
 def _load_yaml(path):

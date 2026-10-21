@@ -4585,7 +4585,13 @@ weren't worth blocking the ship on.  Ordered by rough priority.
   internal/no-release bumps"). So the drift is expected between releases;
   what this bullet is for is that nothing forces the catch-up to happen,
   and the backlog is now the whole 3.23.x line rather than two entries.
-- **Status**: planned (2026-08-06). Lanes: i18n, docs.
+- **Resolution** (2026-10-21): Shipped 2026-10-21. The v3.20.0 fix tag and its body bullet are back,
+  translated, in all 20 locale changelogs; KNOWN_TAG_GAPS in
+  tests/test_i18n_longform.py is now empty, so any dropped tag fails.
+  The 3.23.x gap was closed by 423cc51 (v3.22.2-v3.26.0 into 20
+  locales). Entries after the last release (3.28.0 onward) stay English
+  until the next real release, per CLAUDE.md step 2.
+- **Status**: done (2026-10-21). Lanes: i18n, docs.
 - **Source**: debt-sweep 2026-08-06 (v3.12.0..HEAD).
 
 ---
@@ -7823,7 +7829,11 @@ were corrected in `2836bc3` and are not repeated here.
   entry untranslated, so those show in English in the other languages.
 - **Verify**: each locale file's top entry matches `data/changelog.yaml`'s,
   with version, date and tags repeated verbatim.
-- **Status**: todo. Lanes: i18n.
+- **Resolution** (2026-10-21): Shipped: the locale files no longer stop at 3.22.1; 423cc51 translated
+  v3.22.2-v3.26.0 and all 20 now lead with 3.27.0. Checked 2026-10-21:
+  every locale entry repeats English's version, date and tag types
+  (tests/test_i18n_longform.py).
+- **Status**: done. Lanes: i18n.
 - **Source**: release checks, 2026-10-15.
 
 ---
