@@ -551,6 +551,29 @@
             <li><strong>Solução de Problemas</strong> &mdash; Limpar coleta em lote travada, limpar fila de sincronização de RA, limpar atualização da PSN, limpar geração do museu, reiniciar servidor</li>
         </ul>
 
+        <h3 id="emulators-play">Emuladores e Jogar</h3>
+        <p>Os administradores configuram os emuladores em <strong>Configurações &rarr; Emuladores</strong>. Adicione a pasta onde seus emuladores ficam em <strong>Pastas de emuladores</strong>. O RetroDB encontra cada emulador ali (um AppImage, um script portátil ou um Flatpak instalado) e o associa aos sistemas que ele executa. A tabela de mapeamento mostra, para cada sistema, se o emulador funciona e se os arquivos de BIOS estão no lugar. O RetroDB apenas lê os arquivos de BIOS; ele nunca os copia nem os baixa.</p>
+        <p>Os jogos cujo emulador funciona recebem um botão <strong>Jogar</strong> na página do jogo, nos cartões da Biblioteca e nas páginas de sistema.</p>
+        <p>Para DuckStation, PCSX2 e RPCS3, o RetroDB também define a escala de resolução e a proporção de tela de cada jogo, no arquivo de configurações por jogo do próprio emulador, e se o jogo inicia em tela cheia. Altere os valores de um sistema inteiro com o botão <strong>Configurações</strong> na tabela de mapeamento, ou de um único jogo no painel <strong>Configurações do Emulador</strong> da página dele. Eles são gravados quando você pressiona Jogar. Uma configuração que você altera dentro do próprio emulador sempre prevalece: o RetroDB a deixa em paz a partir de então. Execute cada emulador uma vez antes de jogar, para que ele crie sua pasta de configurações.</p>
+
+        <h4>Teclas do RetroArch</h4>
+        <p>Estas são as teclas padrão do próprio RetroArch; você pode alterá-las no menu dele em <strong>Settings &rarr; Input &rarr; Hotkeys</strong>.</p>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>F1</kbd> <span>Abrir ou fechar o menu do RetroArch</span></div>
+            <div class="shortcut-item"><kbd>F2</kbd> <span>Salvar estado</span></div>
+            <div class="shortcut-item"><kbd>F4</kbd> <span>Carregar estado</span></div>
+            <div class="shortcut-item"><kbd>F6</kbd> <kbd>F7</kbd> <span>Slot de salvamento anterior ou seguinte</span></div>
+            <div class="shortcut-item"><kbd>Space</kbd> <span>Ativar ou desativar avanço rápido</span></div>
+            <div class="shortcut-item"><kbd>L</kbd> <span>Avanço rápido enquanto pressionada</span></div>
+            <div class="shortcut-item"><kbd>R</kbd> <span>Retroceder enquanto pressionada, se o retrocesso estiver ativado</span></div>
+            <div class="shortcut-item"><kbd>P</kbd> <span>Pausar</span></div>
+            <div class="shortcut-item"><kbd>H</kbd> <span>Reiniciar o jogo</span></div>
+            <div class="shortcut-item"><kbd>F8</kbd> <span>Captura de tela</span></div>
+            <div class="shortcut-item"><kbd>F</kbd> <span>Ativar ou desativar tela cheia</span></div>
+            <div class="shortcut-item"><kbd>Esc</kbd> <span>Sair</span></div>
+        </div>
+        <p>Jogos de computadores domésticos (Commodore 64, Amiga, ZX Spectrum e ZX81, MSX, DOS, Atari 8-bit e ST, Amstrad CPC, PC-98 e X68000) precisam do teclado inteiro, então o RetroDB os inicia com todas as teclas indo para o jogo e as teclas acima desativadas. Pressione <kbd>Scroll Lock</kbd> para reativar as teclas acima e, novamente, para devolver o teclado ao jogo. A página do jogo mostra um lembrete ao lado de <strong>Jogar</strong> nesses jogos. Na maioria dos controles de PlayStation e Xbox, o botão PS ou Xbox também abre o menu.</p>
+
         <div class="help-tip">
             <strong>Dica:</strong> Coletores desabilitados não acionam avisos de "API offline" no Painel. Se você não usa um coletor, desabilite-o em Configurações &rarr; Coleta de Dados &rarr; Coletor em vez de excluir a chave de API.
         </div>
@@ -657,6 +680,7 @@
         <ul>
             <li><strong>Preencher Apenas Ausentes</strong> &mdash; Preenche apenas os campos de metadados vazios, preservando os dados existentes</li>
             <li><strong>Recoleta Completa</strong> &mdash; Substitui todos os campos, incluindo mídia (baixa imagens e vídeos novos)</li>
+            <li><strong>Manter mídias existentes</strong> &mdash; Com a Recoleta Completa, mantém as imagens, vídeos e manuais que já estão no disco em vez de baixá-los de novo. Novas capturas de tela ainda são adicionadas.</li>
             <li><strong>Verificar RetroAchievements</strong> &mdash; Também verifica conjuntos de conquistas do RetroAchievements durante a coleta</li>
         </ul>
 

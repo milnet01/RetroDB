@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-21 19:36+0200\n"
+"POT-Creation-Date: 2026-10-21 19:52+0200\n"
 "PO-Revision-Date: 2026-07-01 09:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hans\n"
@@ -57,8 +57,8 @@ msgstr "未找到系统，或该系统没有包含成就的游戏"
 #: routes/achievements.py:171 routes/achievements.py:440
 #: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/collections.py:276
 #: routes/collections.py:531 routes/emulators.py:248 routes/emulators.py:262
-#: routes/games.py:347 routes/games.py:800 routes/games.py:922
-#: routes/games.py:978 routes/games_ai.py:46 routes/games_media.py:37
+#: routes/games.py:347 routes/games.py:803 routes/games.py:925
+#: routes/games.py:981 routes/games_ai.py:46 routes/games_media.py:37
 #: routes/games_media.py:84 routes/games_media.py:145 routes/reports.py:693
 #: routes/reports.py:818 routes/trophies.py:1278 services/hltb_service.py:125
 msgid "Game not found"
@@ -227,8 +227,8 @@ msgstr "未找到父游戏"
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "附赠光盘与主游戏必须属于同一系统"
 
-#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1230
-#: routes/games.py:1260 routes/platform_import.py:289
+#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1233
+#: routes/games.py:1263 routes/platform_import.py:289
 #: routes/platform_import.py:658 routes/platform_import.py:1024
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:200 routes/scraper.py:528
@@ -441,56 +441,56 @@ msgstr "视频未保存：必须是不超过 %(mb)s MB 的 MP4、WebM 或 OGG �
 msgid "Game not found after update"
 msgstr "更新后未找到该游戏"
 
-#: routes/games.py:926
+#: routes/games.py:929
 msgid "No game selected."
 msgstr "未选择游戏。"
 
-#: routes/games.py:950
+#: routes/games.py:953
 msgid "This metadata apply is no longer running."
 msgstr "此元数据应用已不再运行。"
 
-#: routes/games.py:959
+#: routes/games.py:962
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
 " still missing)"
 msgstr "已从 %(sources)s 应用元数据！（已填写 %(filled)d 个字段，仍缺少 %(missing)d 个）"
 
-#: routes/games.py:965
+#: routes/games.py:968
 msgid "Failed to apply metadata."
 msgstr "应用元数据失败。"
 
-#: routes/games.py:1008 routes/games.py:1052
+#: routes/games.py:1011 routes/games.py:1055
 msgid "No fields to update"
 msgstr "没有可更新的字段"
 
-#: routes/games.py:1049 routes/platform_import.py:212
+#: routes/games.py:1052 routes/platform_import.py:212
 #: routes/platform_import.py:572 routes/platform_import.py:928
 #: routes/trophies.py:1852
 msgid "No games selected"
 msgstr "未选择任何游戏"
 
-#: routes/games.py:1059
+#: routes/games.py:1062
 msgid "Invalid completion status"
 msgstr "完成状态无效"
 
-#: routes/games.py:1107
+#: routes/games.py:1110
 msgid "No valid fields to update"
 msgstr "没有可更新的有效字段"
 
-#: routes/games.py:1223
+#: routes/games.py:1226
 msgid "Invalid status"
 msgstr "状态无效"
 
-#: routes/games.py:1248
+#: routes/games.py:1251
 msgid "Not authenticated"
 msgstr "未通过身份验证"
 
-#: routes/games.py:1279
+#: routes/games.py:1282
 msgid "Filter type and value required"
 msgstr "需要筛选类型和值"
 
-#: routes/games.py:1292
+#: routes/games.py:1295
 msgid "Invalid filter type"
 msgstr "筛选类型无效"
 
@@ -1627,7 +1627,7 @@ msgstr "CLZ 导入"
 #: templates/archive_scanner.html:798 templates/base.html:306
 #: templates/base.html:324 templates/base.html:1023
 #: templates/chd_converter.html:170 templates/chd_verify.html:126
-#: templates/game_detail.html:514 templates/login.html:254
+#: templates/game_detail.html:518 templates/login.html:254
 #: templates/museum.html:29 templates/museum_system.html:182
 #: templates/psn_trophies.html:297 templates/psn_trophy_detail.html:182
 #: templates/psn_trophy_detail.html:325 templates/reports.html:521
@@ -1747,7 +1747,7 @@ msgstr "完成！"
 
 #: services/js_i18n_strings.py:487 templates/_bulk_edit_modal.html:29
 #: templates/analytics.html:1664 templates/base.html:981
-#: templates/dashboard.html:473 templates/game_detail.html:218
+#: templates/dashboard.html:473 templates/game_detail.html:222
 msgid "Completed"
 msgstr "已完成"
 
@@ -1762,8 +1762,8 @@ msgstr "完成状态已更新"
 
 #: services/js_i18n_strings.py:490 templates/achievement_game.html:172
 #: templates/achievement_game.html:197 templates/achievement_game.html:211
-#: templates/base.html:1018 templates/game_detail.html:508
-#: templates/game_detail.html:533 templates/game_detail.html:547
+#: templates/base.html:1018 templates/game_detail.html:512
+#: templates/game_detail.html:537 templates/game_detail.html:551
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:176
 #: templates/psn_trophy_detail.html:209
 #: templates/steam_achievement_game.html:134
@@ -1906,7 +1906,7 @@ msgid "Downloading video…"
 msgstr "正在下载视频…"
 
 #: services/js_i18n_strings.py:523 templates/_settings_tabs/account.html:315
-#: templates/base.html:937 templates/game_detail.html:101
+#: templates/base.html:937 templates/game_detail.html:105
 #: templates/wishlist.html:641
 msgid "Edit"
 msgstr "编辑"
@@ -2212,7 +2212,7 @@ msgstr "图片大小必须小于 10MB"
 #: templates/achievements_system.html:151
 #: templates/achievements_system.html:170 templates/analytics.html:1664
 #: templates/base.html:979 templates/dashboard.html:329
-#: templates/dashboard.html:469 templates/game_detail.html:216
+#: templates/dashboard.html:469 templates/game_detail.html:220
 #: templates/steam_achievements.html:77 templates/xbox_achievements.html:77
 msgid "In Progress"
 msgstr "进行中"
@@ -2287,8 +2287,8 @@ msgstr "正在查找版本…"
 
 #: services/js_i18n_strings.py:611 templates/achievement_game.html:168
 #: templates/achievement_game.html:197 templates/achievement_game.html:207
-#: templates/base.html:1014 templates/game_detail.html:504
-#: templates/game_detail.html:533 templates/game_detail.html:543
+#: templates/base.html:1014 templates/game_detail.html:508
+#: templates/game_detail.html:537 templates/game_detail.html:547
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:172
 #: templates/psn_trophy_detail.html:205
 #: templates/steam_achievement_game.html:133
@@ -2300,8 +2300,8 @@ msgstr "主线 + 额外"
 
 #: services/js_i18n_strings.py:612 templates/achievement_game.html:164
 #: templates/achievement_game.html:197 templates/achievement_game.html:203
-#: templates/base.html:1010 templates/game_detail.html:500
-#: templates/game_detail.html:533 templates/game_detail.html:539
+#: templates/base.html:1010 templates/game_detail.html:504
+#: templates/game_detail.html:537 templates/game_detail.html:543
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:168
 #: templates/psn_trophy_detail.html:201
 #: templates/steam_achievement_game.html:132
@@ -2374,8 +2374,8 @@ msgid "Next disk failed"
 msgstr "切换下一张光盘失败"
 
 #: services/js_i18n_strings.py:627 templates/_bulk_edit_modal.html:171
-#: templates/_modals/edit_modal.html:139 templates/game_detail.html:662
-#: templates/game_detail.html:730
+#: templates/_modals/edit_modal.html:139 templates/game_detail.html:666
+#: templates/game_detail.html:734
 msgid "No"
 msgstr "否"
 
@@ -2526,7 +2526,7 @@ msgstr "游玩"
 
 #: services/js_i18n_strings.py:663 templates/_bulk_edit_modal.html:28
 #: templates/analytics.html:1664 templates/base.html:980
-#: templates/dashboard.html:471 templates/game_detail.html:217
+#: templates/dashboard.html:471 templates/game_detail.html:221
 msgid "Played"
 msgstr "已游玩"
 
@@ -3126,7 +3126,7 @@ msgstr "会更改？"
 msgid "Works"
 msgstr "正常"
 
-#: services/js_i18n_strings.py:792 templates/game_detail.html:751
+#: services/js_i18n_strings.py:792 templates/game_detail.html:755
 msgid "Write again with AI"
 msgstr "用 AI 重新撰写"
 
@@ -3135,8 +3135,8 @@ msgid "Xbox Imports"
 msgstr "Xbox 导入"
 
 #: services/js_i18n_strings.py:794 templates/_bulk_edit_modal.html:170
-#: templates/_modals/edit_modal.html:139 templates/game_detail.html:605
-#: templates/game_detail.html:662 templates/game_detail.html:730
+#: templates/_modals/edit_modal.html:139 templates/game_detail.html:609
+#: templates/game_detail.html:666 templates/game_detail.html:734
 msgid "Yes"
 msgstr "是"
 
@@ -3342,7 +3342,7 @@ msgstr "只有从“不更改”改动过的字段才会被更新。"
 
 #: templates/_bulk_edit_modal.html:26 templates/achievements_system.html:171
 #: templates/analytics.html:1664 templates/base.html:978
-#: templates/dashboard.html:467 templates/game_detail.html:215
+#: templates/dashboard.html:467 templates/game_detail.html:219
 #: templates/steam_achievements.html:78 templates/xbox_achievements.html:78
 msgid "Not Started"
 msgstr "未开始"
@@ -3353,7 +3353,7 @@ msgstr "未开始"
 #: templates/analytics.html:481 templates/analytics.html:2428
 #: templates/base.html:908 templates/base.html:1112
 #: templates/compare_games.html:73 templates/dashboard.html:357
-#: templates/game_detail.html:261 templates/local_trophy_detail.html:99
+#: templates/game_detail.html:265 templates/local_trophy_detail.html:99
 #: templates/psn_trophy_detail.html:94 templates/psn_trophy_detail.html:258
 #: templates/steam_achievement_game.html:178 templates/system_games.html:86
 #: templates/xbox_achievement_game.html:171
@@ -3371,8 +3371,8 @@ msgstr "追加"
 #: templates/achievement_game.html:81 templates/all_games.html:101
 #: templates/analytics.html:483 templates/analytics.html:2428
 #: templates/base.html:907 templates/base.html:1098
-#: templates/compare_games.html:71 templates/game_detail.html:237
-#: templates/game_detail.html:708 templates/local_trophy_detail.html:87
+#: templates/compare_games.html:71 templates/game_detail.html:241
+#: templates/game_detail.html:712 templates/local_trophy_detail.html:87
 #: templates/psn_trophy_detail.html:82 templates/steam_achievement_game.html:78
 #: templates/system_games.html:92 templates/xbox_achievement_game.html:67
 msgid "Publisher"
@@ -3388,7 +3388,7 @@ msgstr "不更改"
 #: templates/achievement_game.html:87 templates/all_games.html:104
 #: templates/analytics.html:482 templates/analytics.html:2428
 #: templates/base.html:906 templates/base.html:1102
-#: templates/compare_games.html:70 templates/game_detail.html:249
+#: templates/compare_games.html:70 templates/game_detail.html:253
 #: templates/local_trophy_detail.html:93 templates/psn_trophy_detail.html:88
 #: templates/steam_achievement_game.html:84 templates/system_games.html:95
 #: templates/xbox_achievement_game.html:73
@@ -3447,13 +3447,13 @@ msgstr "PEGI 18"
 #: templates/_bulk_edit_modal.html:106 templates/_modals/edit_modal.html:81
 #: templates/analytics.html:492 templates/analytics.html:2428
 #: templates/base.html:1089 templates/compare_games.html:75
-#: templates/game_detail.html:705 templates/reports.html:444
+#: templates/game_detail.html:709 templates/reports.html:444
 msgid "Region"
 msgstr "地区"
 
 #: templates/_bulk_edit_modal.html:112 templates/_modals/edit_modal.html:128
 #: templates/all_games.html:107 templates/base.html:1128
-#: templates/compare_games.html:76 templates/game_detail.html:197
+#: templates/compare_games.html:76 templates/game_detail.html:201
 #: templates/system_games.html:98
 msgid "Players"
 msgstr "玩家人数"
@@ -3521,7 +3521,7 @@ msgstr "加载更多"
 
 #: templates/achievement_game.html:17 templates/achievement_game.html:37
 #: templates/achievements_system.html:15 templates/game_detail.html:21
-#: templates/game_detail.html:292 templates/game_detail.html:713
+#: templates/game_detail.html:296 templates/game_detail.html:717
 #: templates/systems.html:43
 msgid "RetroAchievements"
 msgstr "RetroAchievements"
@@ -3537,7 +3537,7 @@ msgid "Refresh RA"
 msgstr "刷新 RA"
 
 #: templates/achievement_game.html:93 templates/all_games.html:98
-#: templates/game_detail.html:273 templates/system_games.html:89
+#: templates/game_detail.html:277 templates/system_games.html:89
 msgid "Series"
 msgstr "系列"
 
@@ -3564,7 +3564,7 @@ msgstr "无法加载成就数据"
 msgid "Check your RetroAchievements credentials in Settings."
 msgstr "请在设置中检查你的 RetroAchievements 凭据。"
 
-#: templates/achievement_game.html:146 templates/game_detail.html:482
+#: templates/achievement_game.html:146 templates/game_detail.html:486
 #: templates/local_trophy_detail.html:158 templates/psn_trophy_detail.html:149
 #: templates/steam_achievement_game.html:123
 #: templates/xbox_achievement_game.html:116
@@ -3572,7 +3572,7 @@ msgid "How Long to Beat"
 msgstr "通关时长"
 
 #: templates/achievement_game.html:153 templates/base.html:991
-#: templates/game_detail.html:489 templates/psn_trophy_detail.html:157
+#: templates/game_detail.html:493 templates/psn_trophy_detail.html:157
 #: templates/psn_trophy_detail.html:317
 #: templates/steam_achievement_game.html:126
 #: templates/xbox_achievement_game.html:119
@@ -3580,7 +3580,7 @@ msgid "Search game title..."
 msgstr "搜索游戏标题…"
 
 #: templates/achievement_game.html:156 templates/base.html:994
-#: templates/game_detail.html:492 templates/local_trophy_detail.html:193
+#: templates/game_detail.html:496 templates/local_trophy_detail.html:193
 #: templates/psn_trophy_detail.html:160
 #: templates/steam_achievement_game.html:127
 #: templates/xbox_achievement_game.html:120
@@ -3589,7 +3589,7 @@ msgstr "查询 HLTB"
 
 #: templates/_settings_tabs/account.html:73 templates/achievement_game.html:177
 #: templates/achievement_game.html:253 templates/base.html:1022
-#: templates/game_detail.html:513 templates/local_trophy_detail.html:223
+#: templates/game_detail.html:517 templates/local_trophy_detail.html:223
 #: templates/psn_trophy_detail.html:181 templates/psn_trophy_detail.html:270
 #: templates/steam_achievement_game.html:137
 #: templates/xbox_achievement_game.html:130
@@ -3598,7 +3598,7 @@ msgstr "保存"
 
 #: templates/achievement_game.html:217 templates/all_games.html:128
 #: templates/base.html:1035 templates/duplicate_finder.html:301
-#: templates/game_detail.html:97 templates/game_detail.html:553
+#: templates/game_detail.html:101 templates/game_detail.html:557
 #: templates/local_trophy_detail.html:185 templates/psn_trophy_detail.html:214
 #: templates/reports.html:277 templates/screenshot_dedup.html:325
 #: templates/steam_achievement_game.html:163 templates/system_games.html:119
@@ -3606,7 +3606,7 @@ msgstr "保存"
 msgid "Clear"
 msgstr "清除"
 
-#: templates/achievement_game.html:225 templates/game_detail.html:561
+#: templates/achievement_game.html:225 templates/game_detail.html:565
 #: templates/local_trophy_detail.html:203 templates/psn_trophy_detail.html:234
 #: templates/steam_achievement_game.html:170
 #: templates/xbox_achievement_game.html:163
@@ -3854,7 +3854,7 @@ msgstr "全选"
 msgid "Select Unscraped"
 msgstr "选择未抓取的"
 
-#: templates/all_games.html:72 templates/game_detail.html:779
+#: templates/all_games.html:72 templates/game_detail.html:783
 #: templates/system_games.html:63
 msgid "Full Re-scrape"
 msgstr "完整重新抓取"
@@ -3863,7 +3863,7 @@ msgstr "完整重新抓取"
 msgid "Toggle between full re-scrape and fill missing mode"
 msgstr "在完整重新抓取与填补缺失模式之间切换"
 
-#: templates/all_games.html:77 templates/game_detail.html:779
+#: templates/all_games.html:77 templates/game_detail.html:783
 #: templates/system_games.html:68
 msgid "Fill Missing"
 msgstr "填充缺失项"
@@ -4236,12 +4236,12 @@ msgid "Fanart"
 msgstr "同人图"
 
 #: templates/analytics.html:487 templates/analytics.html:2428
-#: templates/game_detail.html:435
+#: templates/game_detail.html:439
 msgid "Video"
 msgstr "视频"
 
 #: templates/_modals/manual_reader_modal.html:9 templates/analytics.html:488
-#: templates/analytics.html:2428 templates/game_detail.html:91
+#: templates/analytics.html:2428 templates/game_detail.html:95
 msgid "Manual"
 msgstr "说明书"
 
@@ -4743,7 +4743,7 @@ msgstr "关闭游戏详情"
 msgid "Loading game details..."
 msgstr "正在加载游戏详情…"
 
-#: templates/base.html:921 templates/game_detail.html:439
+#: templates/base.html:921 templates/game_detail.html:443
 msgid "Your browser does not support the video tag."
 msgstr "你的浏览器不支持 video 标签。"
 
@@ -4751,15 +4751,15 @@ msgstr "你的浏览器不支持 video 标签。"
 msgid "View Full Page"
 msgstr "查看完整页面"
 
-#: templates/base.html:930 templates/game_detail.html:105
+#: templates/base.html:930 templates/game_detail.html:109
 msgid "Fill missing metadata with AI"
 msgstr "使用 AI 填充缺失的元数据"
 
-#: templates/base.html:931 templates/game_detail.html:107
+#: templates/base.html:931 templates/game_detail.html:111
 msgid "AI Fill"
 msgstr "AI 填充"
 
-#: templates/base.html:934 templates/game_detail.html:112
+#: templates/base.html:934 templates/game_detail.html:116
 msgid "Scrape"
 msgstr "抓取"
 
@@ -4836,7 +4836,7 @@ msgstr "无游玩时长数据"
 #: templates/_modals/edit_modal.html:28 templates/_modals/filter_modal.html:13
 #: templates/base.html:1045 templates/dashboard.html:296
 #: templates/dashboard.html:355 templates/dashboard.html:432
-#: templates/dashboard.html:498 templates/game_detail.html:706
+#: templates/dashboard.html:498 templates/game_detail.html:710
 msgid "Title"
 msgstr "标题"
 
@@ -4861,7 +4861,7 @@ msgid "e.g., Final Fantasy, Crash Bandicoot"
 msgstr "例如：Final Fantasy、Crash Bandicoot"
 
 #: templates/_modals/edit_modal.html:52 templates/base.html:1067
-#: templates/compare_games.html:96 templates/game_detail.html:467
+#: templates/compare_games.html:96 templates/game_detail.html:471
 msgid "Similar Games"
 msgstr "相似游戏"
 
@@ -5904,7 +5904,7 @@ msgstr "地区版本"
 msgid "Versions:"
 msgstr "版本："
 
-#: templates/game_detail.html:77 templates/game_detail.html:720
+#: templates/game_detail.html:77 templates/game_detail.html:724
 msgid "Unknown region"
 msgstr "未知地区"
 
@@ -5913,302 +5913,306 @@ msgid "Launch this game in the configured emulator"
 msgstr "在已配置的模拟器中启动此游戏"
 
 #: templates/game_detail.html:89
+msgid "Keyboard game: press Scroll Lock for RetroArch keys"
+msgstr "键盘游戏：按 Scroll Lock 使用 RetroArch 快捷键"
+
+#: templates/game_detail.html:93
 msgid "View Manual (PDF)"
 msgstr "查看说明书（PDF）"
 
-#: templates/game_detail.html:114
+#: templates/game_detail.html:118
 msgid "Delete game from database"
 msgstr "从数据库删除游戏"
 
-#: templates/_settings_tabs/account.html:317 templates/game_detail.html:116
+#: templates/_settings_tabs/account.html:317 templates/game_detail.html:120
 #: templates/logs.html:735 templates/settings.html:70
 #: templates/wishlist.html:642
 msgid "Delete"
 msgstr "删除"
 
-#: templates/game_detail.html:150 templates/game_detail.html:162
+#: templates/game_detail.html:154 templates/game_detail.html:166
 msgid "Click to zoom"
 msgstr "点击放大"
 
-#: templates/game_detail.html:167
+#: templates/game_detail.html:171
 msgid "Switch between 2D and 3D boxart"
 msgstr "在 2D 和 3D 封面之间切换"
 
-#: templates/game_detail.html:186
+#: templates/game_detail.html:190
 msgid ""
 "Sharper images for this game are still being made. They'll appear on "
 "their own."
 msgstr "正在为此游戏生成更清晰的图片。完成后会自动显示。"
 
-#: templates/game_detail.html:197
+#: templates/game_detail.html:201
 msgid "Player"
 msgstr "玩家"
 
-#: templates/game_detail.html:202
+#: templates/game_detail.html:206
 #, python-format
 msgid "Critic Score (%(count)s reviews)"
 msgstr "媒体评分（%(count)s 条评论）"
 
-#: templates/game_detail.html:207
+#: templates/game_detail.html:211
 #, python-format
 msgid "User Score (%(count)s ratings)"
 msgstr "用户评分（%(count)s 条评价）"
 
-#: templates/game_detail.html:214
+#: templates/game_detail.html:218
 msgid "Completion status"
 msgstr "完成状态"
 
-#: templates/game_detail.html:229
+#: templates/game_detail.html:233
 msgid "No description available. Click \"Scrape\" to fetch metadata."
 msgstr "暂无描述。点击“抓取”以获取元数据。"
 
-#: templates/game_detail.html:300
+#: templates/game_detail.html:304
 msgid "View on RetroAchievements.org"
 msgstr "在 RetroAchievements.org 上查看"
 
-#: templates/game_detail.html:302
+#: templates/game_detail.html:306
 msgid "RA Site"
 msgstr "RA 网站"
 
-#: templates/game_detail.html:314 templates/steam_achievement_game.html:17
+#: templates/game_detail.html:318 templates/steam_achievement_game.html:17
 #: templates/steam_achievements.html:7 templates/steam_achievements.html:15
 #: templates/steam_achievements.html:21
 msgid "Steam Achievements"
 msgstr "Steam 成就"
 
-#: templates/game_detail.html:330 templates/xbox_achievement_game.html:17
+#: templates/game_detail.html:334 templates/xbox_achievement_game.html:17
 #: templates/xbox_achievements.html:7 templates/xbox_achievements.html:15
 #: templates/xbox_achievements.html:21
 msgid "Xbox Achievements"
 msgstr "Xbox 成就"
 
-#: templates/game_detail.html:345 templates/psn_trophies.html:6
+#: templates/game_detail.html:349 templates/psn_trophies.html:6
 #: templates/psn_trophies.html:15 templates/psn_trophy_detail.html:17
 msgid "PSN Trophies"
 msgstr "PSN 奖杯"
 
-#: templates/game_detail.html:370 templates/local_trophy_detail.html:16
+#: templates/game_detail.html:374 templates/local_trophy_detail.html:16
 msgid "RPCS3 Trophies"
 msgstr "RPCS3 奖杯"
 
-#: templates/game_detail.html:403
+#: templates/game_detail.html:407
 msgid "(cross-mapped)"
 msgstr "（交叉映射）"
 
-#: templates/game_detail.html:416
+#: templates/game_detail.html:420
 #, python-format
 msgid "Screenshots (%(count)s)"
 msgstr "截图（%(count)s）"
 
-#: templates/game_detail.html:418
+#: templates/game_detail.html:422
 msgid "Previous screenshots"
 msgstr "上一批截图"
 
-#: templates/game_detail.html:424
+#: templates/game_detail.html:428
 msgid "Delete screenshot"
 msgstr "删除截图"
 
-#: templates/game_detail.html:428
+#: templates/game_detail.html:432
 msgid "Next screenshots"
 msgstr "下一批截图"
 
-#: templates/game_detail.html:447
+#: templates/game_detail.html:451
 msgid "Also Known As"
 msgstr "又名"
 
-#: templates/game_detail.html:451
+#: templates/game_detail.html:455
 #, python-format
 msgid "Source: %(source)s"
 msgstr "来源：%(source)s"
 
-#: templates/game_detail.html:476
+#: templates/game_detail.html:480
 msgid "Loading recommendations..."
 msgstr "正在加载推荐…"
 
-#: templates/game_detail.html:524
+#: templates/game_detail.html:528
 #, python-format
 msgid "%(pct)s%% match"
 msgstr "匹配度 %(pct)s%%"
 
-#: templates/game_detail.html:565
+#: templates/game_detail.html:569
 msgid "Source:"
 msgstr "来源："
 
-#: templates/game_detail.html:568
+#: templates/game_detail.html:572
 msgid "CLZ Games Import (No ROM file)"
 msgstr "CLZ 游戏导入（无 ROM 文件）"
 
-#: templates/game_detail.html:570
+#: templates/game_detail.html:574
 msgid "Steam Import (No ROM file)"
 msgstr "Steam 导入（无 ROM 文件）"
 
-#: templates/game_detail.html:572
+#: templates/game_detail.html:576
 msgid "Xbox Import (No ROM file)"
 msgstr "Xbox 导入（无 ROM 文件）"
 
-#: templates/game_detail.html:574
+#: templates/game_detail.html:578
 msgid "PSN Import (No ROM file)"
 msgstr "PSN 导入（无 ROM 文件）"
 
-#: templates/game_detail.html:580
+#: templates/game_detail.html:584
 msgid "Original Title:"
 msgstr "原始标题："
 
-#: templates/game_detail.html:586
+#: templates/game_detail.html:590
 msgid "File:"
 msgstr "文件："
 
-#: templates/game_detail.html:588
+#: templates/game_detail.html:592
 msgid "Rename ROM file"
 msgstr "重命名 ROM 文件"
 
-#: templates/game_detail.html:591
+#: templates/game_detail.html:595
 msgid "Path:"
 msgstr "路径："
 
-#: templates/game_detail.html:597
+#: templates/game_detail.html:601
 msgid "Edition:"
 msgstr "版本："
 
-#: templates/game_detail.html:604
+#: templates/game_detail.html:608
 msgid "Exclusive:"
 msgstr "独占："
 
-#: templates/game_detail.html:607
+#: templates/game_detail.html:611
 msgid "Also On:"
 msgstr "同样支持："
 
-#: templates/game_detail.html:614
+#: templates/game_detail.html:618
 msgid "Modes:"
 msgstr "模式："
 
-#: templates/game_detail.html:620
+#: templates/game_detail.html:624
 msgid "Players:"
 msgstr "玩家人数："
 
-#: templates/game_detail.html:626
+#: templates/game_detail.html:630
 msgid "Campaign:"
 msgstr "战役："
 
-#: templates/game_detail.html:632
+#: templates/game_detail.html:636
 msgid "Structure:"
 msgstr "结构："
 
-#: templates/game_detail.html:638
+#: templates/game_detail.html:642
 msgid "Perspective:"
 msgstr "视角："
 
-#: templates/game_detail.html:644
+#: templates/game_detail.html:648
 msgid "Dimension:"
 msgstr "维度："
 
-#: templates/game_detail.html:650
+#: templates/game_detail.html:654
 msgid "Save:"
 msgstr "保存："
 
-#: templates/game_detail.html:656
+#: templates/game_detail.html:660
 msgid "Input:"
 msgstr "输入："
 
-#: templates/game_detail.html:661
+#: templates/game_detail.html:665
 msgid "Scraped:"
 msgstr "已抓取："
 
-#: templates/game_detail.html:670
+#: templates/game_detail.html:674
 msgid "Bonus Content"
 msgstr "附赠内容"
 
-#: templates/game_detail.html:689
+#: templates/game_detail.html:693
 msgid "Emulator settings"
 msgstr "模拟器设置"
 
-#: templates/_macros/nav_tabs.html:40 templates/game_detail.html:699
+#: templates/_macros/nav_tabs.html:40 templates/game_detail.html:703
 #: templates/rom_tools_hub.html:193 templates/versions_review.html:5
 #: templates/versions_review.html:80
 msgid "Regional Versions"
 msgstr "地区版本"
 
-#: templates/game_detail.html:707 templates/museum_system.html:100
+#: templates/game_detail.html:711 templates/museum_system.html:100
 msgid "Released"
 msgstr "发行于"
 
-#: templates/game_detail.html:709
+#: templates/game_detail.html:713
 msgid "File size"
 msgstr "文件大小"
 
-#: templates/game_detail.html:710
+#: templates/game_detail.html:714
 msgid "Revision"
 msgstr "修订版"
 
-#: templates/game_detail.html:711
+#: templates/game_detail.html:715
 msgid "Languages"
 msgstr "语言"
 
-#: templates/game_detail.html:712
+#: templates/game_detail.html:716
 msgid "Scores"
 msgstr "评分"
 
-#: templates/game_detail.html:721
+#: templates/game_detail.html:725
 msgid "(this page)"
 msgstr "（本页）"
 
-#: templates/game_detail.html:739
+#: templates/game_detail.html:743
 msgid "Known differences"
 msgstr "已知差异"
 
-#: templates/game_detail.html:739
+#: templates/game_detail.html:743
 msgid "AI-written"
 msgstr "AI 撰写"
 
-#: templates/game_detail.html:740
+#: templates/game_detail.html:744
 msgid "Written by AI from what it knows about these releases. It can be wrong."
 msgstr "由 AI 根据其对这些发行版本的了解撰写，可能有误。"
 
-#: templates/game_detail.html:742
+#: templates/game_detail.html:746
 msgid "The AI knows of no differences between these versions."
 msgstr "AI 不知道这些版本之间有任何差异。"
 
-#: templates/game_detail.html:745
+#: templates/game_detail.html:749
 msgid "No other regional versions are linked to this game."
 msgstr "没有其他地区版本关联到此游戏。"
 
-#: templates/game_detail.html:750
+#: templates/game_detail.html:754
 msgid "Unlink this version"
 msgstr "取消关联此版本"
 
-#: templates/game_detail.html:751
+#: templates/game_detail.html:755
 msgid "Summarise differences with AI"
 msgstr "用 AI 总结差异"
 
-#: templates/game_detail.html:753
+#: templates/game_detail.html:757
 msgid "Link a version"
 msgstr "关联版本"
 
-#: templates/game_detail.html:754
+#: templates/game_detail.html:758
 msgid "Link a version: search this system"
 msgstr "关联版本：在此系统中搜索"
 
-#: templates/game_detail.html:767
+#: templates/game_detail.html:771
 msgid "Scrape History"
 msgstr "抓取历史"
 
-#: templates/game_detail.html:793
+#: templates/game_detail.html:797
 msgid "Primary scraper"
 msgstr "主抓取器"
 
-#: templates/game_detail.html:795
+#: templates/game_detail.html:799
 msgid "Fallback scraper"
 msgstr "备用抓取源"
 
-#: templates/game_detail.html:802
+#: templates/game_detail.html:806
 msgid "Fields filled:"
 msgstr "已填充字段："
 
-#: templates/game_detail.html:810
+#: templates/game_detail.html:814
 msgid "None"
 msgstr "无"
 
-#: templates/game_detail.html:815
+#: templates/game_detail.html:819
 msgid "Still missing:"
 msgstr "仍缺失："
 

@@ -551,6 +551,29 @@
             <li><strong>Probleemoplossing</strong> &mdash; Vastgelopen bulk scrapen wissen, RA-synchronisatiewachtrij wissen, PSN-vernieuwing wissen, museumgeneratie wissen, server herstarten</li>
         </ul>
 
+        <h3 id="emulators-play">Emulators en spelen</h3>
+        <p>Beheerders stellen emulators in via <strong>Instellingen &rarr; Emulators</strong>. Voeg de map waarin uw emulators staan toe bij <strong>Emulatormappen</strong>. RetroDB vindt daar elke emulator (een AppImage, een draagbaar script of een geïnstalleerde Flatpak) en koppelt die aan de systemen die hij draait. De koppelingstabel toont per systeem of de emulator werkt en of de BIOS-bestanden aanwezig zijn. RetroDB leest BIOS-bestanden alleen; het kopieert of downloadt ze nooit.</p>
+        <p>Spellen waarvan de emulator werkt, krijgen een knop <strong>Spelen</strong> op de spelpagina, op bibliotheekkaarten en op systeempagina's.</p>
+        <p>Voor DuckStation, PCSX2 en RPCS3 stelt RetroDB ook per spel de resolutieschaal en de beeldverhouding in, in het eigen instellingenbestand per spel van de emulator, en of het spel op volledig scherm start. Wijzig de waarden voor een heel systeem met de knop <strong>Instellingen</strong> in de koppelingstabel, of voor één spel in het paneel <strong>Emulatorinstellingen</strong> op de spelpagina. Ze worden weggeschreven wanneer u op Spelen drukt. Een instelling die u in de emulator zelf wijzigt, wint altijd: RetroDB laat die vanaf dan met rust. Start elke emulator één keer voordat u speelt, zodat hij zijn instellingenmap aanmaakt.</p>
+
+        <h4>RetroArch-toetsen</h4>
+        <p>Dit zijn de standaardtoetsen van RetroArch zelf; u kunt ze wijzigen in het menu onder <strong>Settings &rarr; Input &rarr; Hotkeys</strong>.</p>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>F1</kbd> <span>Het RetroArch-menu openen of sluiten</span></div>
+            <div class="shortcut-item"><kbd>F2</kbd> <span>Status opslaan</span></div>
+            <div class="shortcut-item"><kbd>F4</kbd> <span>Status laden</span></div>
+            <div class="shortcut-item"><kbd>F6</kbd> <kbd>F7</kbd> <span>Vorige of volgende opslagplek</span></div>
+            <div class="shortcut-item"><kbd>Space</kbd> <span>Vooruitspoelen aan of uit</span></div>
+            <div class="shortcut-item"><kbd>L</kbd> <span>Vooruitspoelen zolang ingedrukt</span></div>
+            <div class="shortcut-item"><kbd>R</kbd> <span>Terugspoelen zolang ingedrukt, als terugspoelen aan staat</span></div>
+            <div class="shortcut-item"><kbd>P</kbd> <span>Pauze</span></div>
+            <div class="shortcut-item"><kbd>H</kbd> <span>Het spel resetten</span></div>
+            <div class="shortcut-item"><kbd>F8</kbd> <span>Screenshot</span></div>
+            <div class="shortcut-item"><kbd>F</kbd> <span>Volledig scherm aan of uit</span></div>
+            <div class="shortcut-item"><kbd>Esc</kbd> <span>Afsluiten</span></div>
+        </div>
+        <p>Spellen voor thuiscomputers (Commodore 64, Amiga, ZX Spectrum en ZX81, MSX, DOS, Atari 8-bit en ST, Amstrad CPC, PC-98 en X68000) hebben het hele toetsenbord nodig. RetroDB start ze daarom met alle toetsen naar het spel en de bovenstaande toetsen uitgeschakeld. Druk op <kbd>Scroll Lock</kbd> om de bovenstaande toetsen weer in te schakelen, en nogmaals om het toetsenbord terug aan het spel te geven. De spelpagina toont bij deze spellen een herinnering naast <strong>Spelen</strong>. Op de meeste PlayStation- en Xbox-controllers opent de PS- of Xbox-knop ook het menu.</p>
+
         <div class="help-tip">
             <strong>Tip:</strong> Uitgeschakelde scrapers activeren geen "API offline"-waarschuwingen op het dashboard. Als u een scraper niet gebruikt, schakel deze dan uit bij Instellingen &rarr; Scrapen &rarr; Scraper in plaats van de API-sleutel te verwijderen.
         </div>
@@ -657,6 +680,7 @@
         <ul>
             <li><strong>Alleen ontbrekende invullen</strong> &mdash; Vult alleen lege metadatavelden in, bestaande gegevens blijven behouden</li>
             <li><strong>Volledig opnieuw scrapen</strong> &mdash; Vervangt alle velden, inclusief media (downloadt nieuwe afbeeldingen en video's)</li>
+            <li><strong>Bestaande media behouden</strong> &mdash; Bij Volledig opnieuw scrapen blijven de afbeeldingen, video's en handleidingen die al op schijf staan behouden in plaats van opnieuw gedownload te worden. Nieuwe screenshots worden nog steeds toegevoegd.</li>
             <li><strong>RetroAchievements controleren</strong> &mdash; Controleer tijdens het scrapen ook op RetroAchievements-prestatiesets</li>
         </ul>
 

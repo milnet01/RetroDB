@@ -7792,6 +7792,10 @@ were corrected in `2836bc3` and are not repeated here.
   RPCS3 settings for that game. Check before relying on RPCS3.
   - PASS-59-64 items listed above (INV-1, INV-7, INV-15, the player)
   remain unbuilt.
+- **Progress** (2026-10-21): the "Emulators and Play" help section
+  (with PASS-59-152's key table) is now in every
+  `help.<locale>.html`, so spec §11's help clause is met in all
+  locales. xh and zu text is machine-drafted; a native read is owed.
 
 ---
 
@@ -9163,7 +9167,17 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.152 Tell players RetroArch's keyboard shortcuts (MEDIUM, S).
-- **Status**: todo
+- **Shipped** (2026-10-21, open v3.30.0): Help "Emulators and Play"
+  (`#emulators-play`) has a RetroArch key table and the Scroll Lock
+  note; keys read from upstream `config.def.keybinds.h` (desktop
+  branch), which match the user's retroarch.cfg. Game page shows a
+  hint beside Play when `keyboard_core()` in
+  `services/launch_resolver.py` says the game starts in a keyboard
+  computer's core. Test: `test_pass_59_152_*`. Browser: C64 game shows
+  it, SNES game does not; 375 px no overflow. Unverified in session:
+  whether the PS/Xbox button reaches the menu while game focus is on
+  (help says "most" controllers, after the autoconfig profiles).
+- **Status**: shipped (2026-10-21).
 - **Asked** (user, 2026-10-21): users must be told RetroArch's
   keyboard shortcuts somewhere.
 - **Plan**: a key table in the "Emulators and Play" help section
@@ -9187,6 +9201,24 @@ were corrected in `2836bc3` and are not repeated here.
 - **Decided** (user, 2026-10-21): a counting-down note at the foot
   of the sidebar on every page while `pending_upscales` holds rows,
   and a line on a waiting game's own page. Both vanish when done.
+
+---
+
+#### Pass 59.154 Translate the Settings → Emulators page (MEDIUM, S).
+- **Status**: todo. Lanes: i18n, launch.
+- **Found** (2026-10-21, PASS-59-152): most of
+  `templates/settings_emulators.html` is bare English: the page
+  title and heading, subtitle, RetroArch section, the registered-
+  emulators table headers and the edit modal. Only a handful of
+  strings are wrapped. Its JS (`static/js/emulators-settings.js`)
+  may hold bare strings too; check.
+- **Plan**: wrap every user-facing string (`_()` / `t()`),
+  regenerate catalogs, translate. Reuse the term for "Emulators"
+  each locale already has in "Set per system, in Settings >
+  Emulators"; the help files' "Emulators and Play" section uses it.
+- **Check**: `scripts/check_i18n_fresh.py`; view the page in one
+  non-English locale.
+- **Source**: session finding, 2026-10-21.
 
 ## Done index
 

@@ -551,6 +551,29 @@
             <li><strong>Dépannage</strong> &mdash; Débloquer une récupération en masse bloquée, vider la file de synchronisation RA, vider l'actualisation PSN, vider la génération du musée, redémarrer le serveur</li>
         </ul>
 
+        <h3 id="emulators-play">Émulateurs et Jouer</h3>
+        <p>Les administrateurs configurent les émulateurs dans <strong>Paramètres &rarr; Émulateurs</strong>. Ajoutez le dossier où se trouvent vos émulateurs à <strong>Dossiers d'émulateurs</strong>. RetroDB y trouve chaque émulateur (un AppImage, un script portable ou un Flatpak installé) et le relie aux systèmes qu'il fait tourner. Le tableau de correspondance indique, pour chaque système, si son émulateur fonctionne et si ses fichiers BIOS sont en place. RetroDB ne fait que lire les fichiers BIOS ; il ne les copie ni ne les télécharge jamais.</p>
+        <p>Les jeux dont l'émulateur fonctionne reçoivent un bouton <strong>Jouer</strong> sur la page du jeu, sur les cartes de la Bibliothèque et sur les pages de système.</p>
+        <p>Pour DuckStation, PCSX2 et RPCS3, RetroDB règle aussi pour chaque jeu l'échelle de résolution et le format d'image, dans le fichier de réglages par jeu propre à l'émulateur, ainsi que le démarrage du jeu en plein écran. Modifiez les valeurs pour tout un système avec le bouton <strong>Paramètres</strong> du tableau de correspondance, ou pour un seul jeu dans le panneau <strong>Paramètres de l'émulateur</strong> de sa page. Elles sont écrites quand vous appuyez sur Jouer. Un réglage que vous modifiez dans l'émulateur lui-même l'emporte toujours : RetroDB n'y touche plus ensuite. Lancez chaque émulateur une fois avant de jouer, pour qu'il crée son dossier de réglages.</p>
+
+        <h4>Touches de RetroArch</h4>
+        <p>Ce sont les touches par défaut de RetroArch lui-même ; vous pouvez les changer dans son menu, sous <strong>Settings &rarr; Input &rarr; Hotkeys</strong>.</p>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>F1</kbd> <span>Ouvrir ou fermer le menu de RetroArch</span></div>
+            <div class="shortcut-item"><kbd>F2</kbd> <span>Sauvegarder l'état</span></div>
+            <div class="shortcut-item"><kbd>F4</kbd> <span>Charger l'état</span></div>
+            <div class="shortcut-item"><kbd>F6</kbd> <kbd>F7</kbd> <span>Emplacement de sauvegarde précédent ou suivant</span></div>
+            <div class="shortcut-item"><kbd>Space</kbd> <span>Avance rapide activée ou désactivée</span></div>
+            <div class="shortcut-item"><kbd>L</kbd> <span>Avance rapide tant que la touche est maintenue</span></div>
+            <div class="shortcut-item"><kbd>R</kbd> <span>Retour en arrière tant que la touche est maintenue, si le retour en arrière est activé</span></div>
+            <div class="shortcut-item"><kbd>P</kbd> <span>Pause</span></div>
+            <div class="shortcut-item"><kbd>H</kbd> <span>Réinitialiser le jeu</span></div>
+            <div class="shortcut-item"><kbd>F8</kbd> <span>Capture d'écran</span></div>
+            <div class="shortcut-item"><kbd>F</kbd> <span>Plein écran activé ou désactivé</span></div>
+            <div class="shortcut-item"><kbd>Esc</kbd> <span>Quitter</span></div>
+        </div>
+        <p>Les jeux d'ordinateurs personnels (Commodore 64, Amiga, ZX Spectrum et ZX81, MSX, DOS, Atari 8 bits et ST, Amstrad CPC, PC-98 et X68000) ont besoin de tout le clavier. RetroDB les lance donc avec toutes les touches envoyées au jeu et les touches ci-dessus désactivées. Appuyez sur <kbd>Scroll Lock</kbd> pour réactiver les touches ci-dessus, et à nouveau pour rendre le clavier au jeu. La page du jeu affiche un rappel à côté de <strong>Jouer</strong> pour ces jeux. Sur la plupart des manettes PlayStation et Xbox, le bouton PS ou Xbox ouvre aussi le menu.</p>
+
         <div class="help-tip">
             <strong>Astuce :</strong> Les scrapers désactivés ne déclencheront pas d'avertissements « API hors ligne » sur le Tableau de bord. Si vous n'utilisez pas un scraper, désactivez-le dans Paramètres &rarr; Récupération &rarr; Scraper plutôt que de supprimer la clé API.
         </div>
@@ -657,6 +680,7 @@
         <ul>
             <li><strong>Compléter les manquantes uniquement</strong> &mdash; Ne remplit que les champs de métadonnées vides, en préservant les données existantes</li>
             <li><strong>Récupération complète</strong> &mdash; Remplace tous les champs, y compris les médias (télécharge de nouvelles images et vidéos)</li>
+            <li><strong>Conserver les médias existants</strong> &mdash; Avec la récupération complète, conserve les visuels, les vidéos et les manuels déjà présents sur le disque au lieu de les télécharger à nouveau. Les nouvelles captures d'écran sont toujours ajoutées.</li>
             <li><strong>Vérifier RetroAchievements</strong> &mdash; Vérifie également la présence de jeux de succès RetroAchievements lors de la récupération</li>
         </ul>
 

@@ -84,6 +84,10 @@
             <span class="btn-icon">▶</span>
             {{ _('Play') }}
         </button>
+        {% if keyboard_play %}
+        {# PASS-59-152 — keyboard computers start in game focus. #}
+        <a href="{{ url_for('help_page') }}#emulators-play" class="play-key-hint">⌨ {{ _('Keyboard game: press Scroll Lock for RetroArch keys') }}</a>
+        {% endif %}
         {% endif %}
         {% if game.manual %}
         <a href="{{ url_for('static', filename='images/manuals/' + game.manual) }}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" title="{{ _('View Manual (PDF)') }}" data-on-click="ManualReader.openFromLink" data-args='["$this", "$event"]'>

@@ -551,6 +551,29 @@
             <li><strong>Solución de problemas</strong> &mdash; Limpiar scraping masivo atascado, limpiar cola de sincronización de RA, limpiar actualización de PSN, limpiar generación del museo, reiniciar el servidor</li>
         </ul>
 
+        <h3 id="emulators-play">Emuladores y Jugar</h3>
+        <p>Los administradores configuran los emuladores en <strong>Ajustes &rarr; Emuladores</strong>. Añade la carpeta donde están tus emuladores a <strong>Carpetas de emuladores</strong>. RetroDB encuentra allí cada emulador (un AppImage, un script portátil o un Flatpak instalado) y lo vincula con los sistemas que ejecuta. La tabla de asignación muestra, para cada sistema, si su emulador funciona y si sus archivos BIOS están en su sitio. RetroDB solo lee los archivos BIOS; nunca los copia ni los descarga.</p>
+        <p>Los juegos cuyo emulador funciona reciben un botón <strong>Jugar</strong> en la página del juego, en las tarjetas de la Biblioteca y en las páginas de sistema.</p>
+        <p>Para DuckStation, PCSX2 y RPCS3, RetroDB también define para cada juego la escala de resolución y la relación de aspecto, en el propio archivo de ajustes por juego del emulador, y si el juego se inicia a pantalla completa. Cambia los valores de todo un sistema con el botón <strong>Ajustes</strong> de la tabla de asignación, o de un solo juego en el panel <strong>Ajustes del emulador</strong> de su página. Se escriben cuando pulsas Jugar. Un ajuste que cambies dentro del propio emulador siempre prevalece: RetroDB no lo toca a partir de entonces. Ejecuta cada emulador una vez antes de jugar para que cree su carpeta de ajustes.</p>
+
+        <h4>Teclas de RetroArch</h4>
+        <p>Estas son las teclas predeterminadas del propio RetroArch; puedes cambiarlas en su menú, en <strong>Settings &rarr; Input &rarr; Hotkeys</strong>.</p>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>F1</kbd> <span>Abrir o cerrar el menú de RetroArch</span></div>
+            <div class="shortcut-item"><kbd>F2</kbd> <span>Guardar estado</span></div>
+            <div class="shortcut-item"><kbd>F4</kbd> <span>Cargar estado</span></div>
+            <div class="shortcut-item"><kbd>F6</kbd> <kbd>F7</kbd> <span>Ranura de guardado anterior o siguiente</span></div>
+            <div class="shortcut-item"><kbd>Space</kbd> <span>Activar o desactivar el avance rápido</span></div>
+            <div class="shortcut-item"><kbd>L</kbd> <span>Avance rápido mientras se mantiene pulsada</span></div>
+            <div class="shortcut-item"><kbd>R</kbd> <span>Rebobinar mientras se mantiene pulsada, si el rebobinado está activado</span></div>
+            <div class="shortcut-item"><kbd>P</kbd> <span>Pausa</span></div>
+            <div class="shortcut-item"><kbd>H</kbd> <span>Reiniciar el juego</span></div>
+            <div class="shortcut-item"><kbd>F8</kbd> <span>Captura de pantalla</span></div>
+            <div class="shortcut-item"><kbd>F</kbd> <span>Activar o desactivar la pantalla completa</span></div>
+            <div class="shortcut-item"><kbd>Esc</kbd> <span>Salir</span></div>
+        </div>
+        <p>Los juegos de ordenadores domésticos (Commodore 64, Amiga, ZX Spectrum y ZX81, MSX, DOS, Atari de 8 bits y ST, Amstrad CPC, PC-98 y X68000) necesitan todo el teclado, así que RetroDB los inicia con todas las teclas yendo al juego y las teclas anteriores desactivadas. Pulsa <kbd>Scroll Lock</kbd> para volver a activar las teclas anteriores, y otra vez para devolver el teclado al juego. La página del juego muestra un recordatorio junto a <strong>Jugar</strong> en estos juegos. En la mayoría de los mandos de PlayStation y Xbox, el botón PS o Xbox también abre el menú.</p>
+
         <div class="help-tip">
             <strong>Consejo:</strong> Los scrapers desactivados no provocan advertencias de «API desconectada» en el Panel. Si no usas un scraper, desactívalo en Ajustes &rarr; Scraping &rarr; Scraper en lugar de eliminar la clave de API.
         </div>
@@ -657,6 +680,7 @@
         <ul>
             <li><strong>Rellenar solo lo que falta</strong> &mdash; Rellena solo los campos de metadatos vacíos, conservando los datos existentes</li>
             <li><strong>Re-scraping completo</strong> &mdash; Reemplaza todos los campos, incluidos los medios (descarga imágenes y vídeos nuevos)</li>
+            <li><strong>Conservar los medios existentes</strong> &mdash; Con el re-scraping completo, conserva las ilustraciones, los vídeos y los manuales que ya están en el disco en lugar de descargarlos de nuevo. Las capturas nuevas se siguen añadiendo.</li>
             <li><strong>Comprobar RetroAchievements</strong> &mdash; Comprueba también la existencia de conjuntos de logros de RetroAchievements durante el scraping</li>
         </ul>
 

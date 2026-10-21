@@ -551,6 +551,29 @@
             <li><strong>Sorun Giderme</strong> &mdash; Takılan toplu veri çekmeyi temizleme, RA senkronizasyon kuyruğunu temizleme, PSN yenilemeyi temizleme, müze oluşturmayı temizleme, sunucuyu yeniden başlatma</li>
         </ul>
 
+        <h3 id="emulators-play">Emülatörler ve Oynama</h3>
+        <p>Yöneticiler emülatörleri <strong>Ayarlar &rarr; Emülatörler</strong> bölümünden ayarlar. Emülatörlerinizin bulunduğu klasörü <strong>Emülatör klasörleri</strong> alanına ekleyin. RetroDB her emülatörü orada bulur (bir AppImage, taşınabilir bir betik veya kurulu bir Flatpak) ve çalıştırdığı sistemlerle eşleştirir. Eşleme tablosu her sistem için emülatörünün çalışıp çalışmadığını ve BIOS dosyalarının yerinde olup olmadığını gösterir. RetroDB BIOS dosyalarını yalnızca okur; asla kopyalamaz veya indirmez.</p>
+        <p>Emülatörü çalışan oyunlar için oyun sayfasında, Kütüphane kartlarında ve sistem sayfalarında bir <strong>Oyna</strong> düğmesi bulunur.</p>
+        <p>DuckStation, PCSX2 ve RPCS3 için RetroDB ayrıca her oyunun çözünürlük ölçeğini ve en-boy oranını, emülatörün kendi oyun başına ayar dosyasında belirler; oyunun tam ekran başlayıp başlamayacağını da ayarlar. Bir sistemin tamamı için değerleri eşleme tablosundaki <strong>Ayarlar</strong> düğmesiyle, tek bir oyun için ise oyun sayfasındaki <strong>Emülatör ayarları</strong> panelinden değiştirin. Değerler Oyna'ya bastığınızda yazılır. Emülatörün kendi içinde değiştirdiğiniz bir ayar her zaman geçerlidir: RetroDB bundan sonra ona dokunmaz. Emülatör ayar klasörünü oluştursun diye oynamadan önce her emülatörü bir kez çalıştırın.</p>
+
+        <h4>RetroArch tuşları</h4>
+        <p>Bunlar RetroArch'ın kendi varsayılan tuşlarıdır; menüsündeki <strong>Settings &rarr; Input &rarr; Hotkeys</strong> bölümünden değiştirebilirsiniz.</p>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>F1</kbd> <span>RetroArch menüsünü aç veya kapat</span></div>
+            <div class="shortcut-item"><kbd>F2</kbd> <span>Durumu kaydet</span></div>
+            <div class="shortcut-item"><kbd>F4</kbd> <span>Durumu yükle</span></div>
+            <div class="shortcut-item"><kbd>F6</kbd> <kbd>F7</kbd> <span>Önceki veya sonraki kayıt yuvası</span></div>
+            <div class="shortcut-item"><kbd>Space</kbd> <span>Hızlı ileri sarmayı aç veya kapat</span></div>
+            <div class="shortcut-item"><kbd>L</kbd> <span>Basılı tutulurken hızlı ileri sar</span></div>
+            <div class="shortcut-item"><kbd>R</kbd> <span>Geri sarma açıksa, basılı tutulurken geri sar</span></div>
+            <div class="shortcut-item"><kbd>P</kbd> <span>Duraklat</span></div>
+            <div class="shortcut-item"><kbd>H</kbd> <span>Oyunu sıfırla</span></div>
+            <div class="shortcut-item"><kbd>F8</kbd> <span>Ekran görüntüsü</span></div>
+            <div class="shortcut-item"><kbd>F</kbd> <span>Tam ekranı aç veya kapat</span></div>
+            <div class="shortcut-item"><kbd>Esc</kbd> <span>Çık</span></div>
+        </div>
+        <p>Ev bilgisayarı oyunları (Commodore 64, Amiga, ZX Spectrum ve ZX81, MSX, DOS, Atari 8-bit ve ST, Amstrad CPC, PC-98 ve X68000) klavyenin tamamına ihtiyaç duyar; bu yüzden RetroDB onları tüm tuşlar oyuna gidecek ve yukarıdaki tuşlar kapalı olacak şekilde başlatır. Yukarıdaki tuşları yeniden açmak için <kbd>Scroll Lock</kbd> tuşuna basın, klavyeyi oyuna geri vermek için bir kez daha basın. Oyun sayfası bu oyunlar için <strong>Oyna</strong> düğmesinin yanında bir hatırlatma gösterir. Çoğu PlayStation ve Xbox kontrol cihazında PS veya Xbox düğmesi de menüyü açar.</p>
+
         <div class="help-tip">
             <strong>İpucu:</strong> Devre dışı bırakılan veri çekiciler, Kontrol Panelinde "API çevrimdışı" uyarılarını tetiklemez. Bir veri çekiciyi kullanmıyorsanız, API anahtarını silmek yerine Ayarlar &rarr; Veri Çekme &rarr; Veri Çekici bölümünden devre dışı bırakın.
         </div>
@@ -657,6 +680,7 @@
         <ul>
             <li><strong>Yalnızca Eksikleri Doldur</strong> &mdash; Mevcut verileri koruyarak yalnızca boş metadata alanlarını doldurur</li>
             <li><strong>Tam Yeniden Veri Çekme</strong> &mdash; Medya dahil tüm alanları değiştirir (yeni görseller ve videolar indirir)</li>
+            <li><strong>Mevcut medyayı koru</strong> &mdash; Tam Yeniden Veri Çekme ile diskte zaten bulunan görselleri, videoları ve kılavuzları yeniden indirmek yerine korur. Yeni ekran görüntüleri yine de eklenir.</li>
             <li><strong>RetroAchievements Kontrol Et</strong> &mdash; Veri çekme sırasında RetroAchievements başarım setlerini de kontrol eder</li>
         </ul>
 

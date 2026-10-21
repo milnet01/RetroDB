@@ -551,6 +551,29 @@
             <li><strong>Troubleshooting</strong> &mdash; Bersihkan pengambilan data massal yang macet, bersihkan antrean sinkronisasi RA, bersihkan penyegaran PSN, bersihkan pembuatan museum, mulai ulang server</li>
         </ul>
 
+        <h3 id="emulators-play">Emulator dan Bermain</h3>
+        <p>Admin menyiapkan emulator di <strong>Pengaturan &rarr; Emulator</strong>. Tambahkan folder tempat emulator Anda berada ke <strong>Folder emulator</strong>. RetroDB menemukan setiap emulator di sana (AppImage, skrip portabel, atau Flatpak yang terpasang) dan menautkannya ke sistem yang dijalankannya. Tabel pemetaan menunjukkan, untuk setiap sistem, apakah emulatornya berfungsi dan apakah file BIOS-nya sudah tersedia. RetroDB hanya membaca file BIOS; RetroDB tidak pernah menyalin atau mengunduhnya.</p>
+        <p>Game yang emulatornya berfungsi mendapat tombol <strong>Mainkan</strong> di halaman game, di kartu Library, dan di halaman sistem.</p>
+        <p>Untuk DuckStation, PCSX2, dan RPCS3, RetroDB juga mengatur skala resolusi dan rasio aspek untuk setiap game, di file pengaturan per game milik emulator itu sendiri, serta apakah game dimulai dalam layar penuh. Ubah nilainya untuk satu sistem sekaligus dengan tombol <strong>Pengaturan</strong> di tabel pemetaan, atau untuk satu game di panel <strong>Pengaturan emulator</strong> pada halaman game-nya. Nilai ini ditulis saat Anda menekan Mainkan. Pengaturan yang Anda ubah di dalam emulator itu sendiri selalu diutamakan: sejak saat itu RetroDB tidak mengubahnya lagi. Jalankan setiap emulator sekali sebelum bermain, agar emulator membuat folder pengaturannya.</p>
+
+        <h4>Tombol RetroArch</h4>
+        <p>Ini adalah tombol bawaan RetroArch sendiri; Anda dapat mengubahnya di menunya, di bawah <strong>Settings &rarr; Input &rarr; Hotkeys</strong>.</p>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>F1</kbd> <span>Buka atau tutup menu RetroArch</span></div>
+            <div class="shortcut-item"><kbd>F2</kbd> <span>Simpan state</span></div>
+            <div class="shortcut-item"><kbd>F4</kbd> <span>Muat state</span></div>
+            <div class="shortcut-item"><kbd>F6</kbd> <kbd>F7</kbd> <span>Slot simpan sebelumnya atau berikutnya</span></div>
+            <div class="shortcut-item"><kbd>Space</kbd> <span>Maju cepat hidup atau mati</span></div>
+            <div class="shortcut-item"><kbd>L</kbd> <span>Maju cepat selagi ditahan</span></div>
+            <div class="shortcut-item"><kbd>R</kbd> <span>Putar mundur selagi ditahan, jika putar mundur aktif</span></div>
+            <div class="shortcut-item"><kbd>P</kbd> <span>Jeda</span></div>
+            <div class="shortcut-item"><kbd>H</kbd> <span>Reset game</span></div>
+            <div class="shortcut-item"><kbd>F8</kbd> <span>Tangkapan layar</span></div>
+            <div class="shortcut-item"><kbd>F</kbd> <span>Layar penuh hidup atau mati</span></div>
+            <div class="shortcut-item"><kbd>Esc</kbd> <span>Keluar</span></div>
+        </div>
+        <p>Game komputer rumahan (Commodore 64, Amiga, ZX Spectrum dan ZX81, MSX, DOS, Atari 8-bit dan ST, Amstrad CPC, PC-98, dan X68000) membutuhkan seluruh keyboard, jadi RetroDB memulainya dengan semua tombol diarahkan ke game dan tombol di atas dimatikan. Tekan <kbd>Scroll Lock</kbd> untuk menyalakan kembali tombol di atas, dan tekan lagi untuk mengembalikan keyboard ke game. Halaman game menampilkan pengingat di samping <strong>Mainkan</strong> untuk game-game ini. Pada sebagian besar kontroler PlayStation dan Xbox, tombol PS atau Xbox juga membuka menu.</p>
+
         <div class="help-tip">
             <strong>Tip:</strong> Scraper yang dinonaktifkan tidak akan memicu peringatan "API offline" di Dasbor. Jika Anda tidak menggunakan sebuah scraper, nonaktifkan di Settings &rarr; Scraping &rarr; Scraper alih-alih menghapus kunci API-nya.
         </div>
@@ -657,6 +680,7 @@
         <ul>
             <li><strong>Fill Missing Only</strong> &mdash; Hanya mengisi kolom metadata yang kosong, mempertahankan data yang sudah ada</li>
             <li><strong>Full Re-scrape</strong> &mdash; Mengganti semua kolom termasuk media (mengunduh gambar dan video baru)</li>
+            <li><strong>Pertahankan media yang ada</strong> &mdash; Dengan Scrape Ulang Penuh, pertahankan gambar, video, dan manual yang sudah ada di disk alih-alih mengunduhnya lagi. Screenshot baru tetap ditambahkan.</li>
             <li><strong>Check RetroAchievements</strong> &mdash; Juga memeriksa set achievement RetroAchievements selama pengambilan data</li>
         </ul>
 

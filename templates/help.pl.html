@@ -551,6 +551,29 @@
             <li><strong>Rozwiązywanie problemów</strong> &mdash; czyszczenie zablokowanego masowego pobierania, czyszczenie kolejki synchronizacji RA, czyszczenie odświeżania PSN, czyszczenie generowania muzeum, restart serwera</li>
         </ul>
 
+        <h3 id="emulators-play">Emulatory i granie</h3>
+        <p>Administratorzy konfigurują emulatory w <strong>Ustawienia &rarr; Emulatory</strong>. Dodaj folder, w którym znajdują się Twoje emulatory, do <strong>Foldery emulatorów</strong>. RetroDB znajduje tam każdy emulator (AppImage, przenośny skrypt lub zainstalowany Flatpak) i łączy go z systemami, które uruchamia. Tabela przypisań pokazuje dla każdego systemu, czy jego emulator działa i czy pliki BIOS są na miejscu. RetroDB tylko odczytuje pliki BIOS; nigdy ich nie kopiuje ani nie pobiera.</p>
+        <p>Gry, których emulator działa, mają przycisk <strong>Graj</strong> na stronie gry, na kartach Biblioteki i na stronach systemów.</p>
+        <p>W przypadku DuckStation, PCSX2 i RPCS3 RetroDB ustawia też dla każdej gry skalę rozdzielczości i proporcje obrazu, w osobnym pliku ustawień gry samego emulatora, oraz to, czy gra uruchamia się na pełnym ekranie. Wartości dla całego systemu zmienisz przyciskiem <strong>Ustawienia</strong> w tabeli przypisań, a dla jednej gry w panelu <strong>Ustawienia emulatora</strong> na jej stronie. Są zapisywane po naciśnięciu Graj. Ustawienie zmienione w samym emulatorze zawsze ma pierwszeństwo: RetroDB od tej pory go nie rusza. Uruchom każdy emulator raz przed graniem, aby utworzył swój folder ustawień.</p>
+
+        <h4>Klawisze RetroArch</h4>
+        <p>To domyślne klawisze samego RetroArch; możesz je zmienić w jego menu w <strong>Settings &rarr; Input &rarr; Hotkeys</strong>.</p>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>F1</kbd> <span>Otwórz lub zamknij menu RetroArch</span></div>
+            <div class="shortcut-item"><kbd>F2</kbd> <span>Zapisz stan</span></div>
+            <div class="shortcut-item"><kbd>F4</kbd> <span>Wczytaj stan</span></div>
+            <div class="shortcut-item"><kbd>F6</kbd> <kbd>F7</kbd> <span>Poprzedni lub następny slot zapisu</span></div>
+            <div class="shortcut-item"><kbd>Space</kbd> <span>Włącz lub wyłącz przyspieszenie</span></div>
+            <div class="shortcut-item"><kbd>L</kbd> <span>Przyspieszenie po przytrzymaniu</span></div>
+            <div class="shortcut-item"><kbd>R</kbd> <span>Przewijanie wstecz po przytrzymaniu, jeśli przewijanie jest włączone</span></div>
+            <div class="shortcut-item"><kbd>P</kbd> <span>Pauza</span></div>
+            <div class="shortcut-item"><kbd>H</kbd> <span>Zresetuj grę</span></div>
+            <div class="shortcut-item"><kbd>F8</kbd> <span>Zrzut ekranu</span></div>
+            <div class="shortcut-item"><kbd>F</kbd> <span>Włącz lub wyłącz pełny ekran</span></div>
+            <div class="shortcut-item"><kbd>Esc</kbd> <span>Wyjdź</span></div>
+        </div>
+        <p>Gry na komputery domowe (Commodore 64, Amiga, ZX Spectrum i ZX81, MSX, DOS, Atari 8-bit i ST, Amstrad CPC, PC-98 i X68000) potrzebują całej klawiatury, więc RetroDB uruchamia je tak, że wszystkie klawisze trafiają do gry, a powyższe klawisze są wyłączone. Naciśnij <kbd>Scroll Lock</kbd>, aby ponownie włączyć powyższe klawisze, i jeszcze raz, aby oddać klawiaturę grze. Strona gry pokazuje dla tych gier przypomnienie obok przycisku <strong>Graj</strong>. Na większości kontrolerów PlayStation i Xbox przycisk PS lub Xbox również otwiera menu.</p>
+
         <div class="help-tip">
             <strong>Wskazówka:</strong> Wyłączone scrapery nie będą wywoływać ostrzeżeń „API offline” w Panelu głównym. Jeśli nie używasz jakiegoś scrapera, wyłącz go w Ustawienia &rarr; Pobieranie metadanych &rarr; Scraper, zamiast usuwać klucz API.
         </div>
@@ -657,6 +680,7 @@
         <ul>
             <li><strong>Uzupełnij tylko brakujące</strong> &mdash; uzupełnia tylko puste pola metadanych, zachowując istniejące dane</li>
             <li><strong>Pełne ponowne pobranie</strong> &mdash; zastępuje wszystkie pola, w tym multimedia (pobiera nowe obrazy i filmy)</li>
+            <li><strong>Zachowaj istniejące multimedia</strong> &mdash; Przy pełnym ponownym pobraniu zachowaj grafiki, filmy i instrukcje już zapisane na dysku zamiast pobierać je ponownie. Nowe zrzuty ekranu są nadal dodawane.</li>
             <li><strong>Sprawdź RetroAchievements</strong> &mdash; dodatkowo sprawdź zestawy osiągnięć RetroAchievements podczas pobierania</li>
         </ul>
 

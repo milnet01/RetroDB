@@ -551,6 +551,29 @@
             <li><strong>Risoluzione dei problemi</strong> &mdash; Sblocca lo scraping in blocco, svuota la coda di sincronizzazione RA, svuota l'aggiornamento PSN, svuota la generazione del museo, riavvia il server</li>
         </ul>
 
+        <h3 id="emulators-play">Emulatori e Gioco</h3>
+        <p>Gli amministratori configurano gli emulatori in <strong>Impostazioni &rarr; Emulatori</strong>. Aggiungi la cartella in cui si trovano i tuoi emulatori a <strong>Cartelle degli emulatori</strong>. RetroDB trova lì ogni emulatore (un AppImage, uno script portatile o un Flatpak installato) e lo collega ai sistemi che esegue. La tabella di associazione mostra, per ogni sistema, se il suo emulatore funziona e se i file BIOS sono al loro posto. RetroDB legge soltanto i file BIOS; non li copia né li scarica mai.</p>
+        <p>I giochi il cui emulatore funziona hanno un pulsante <strong>Gioca</strong> nella pagina del gioco, nelle schede della Libreria e nelle pagine dei sistemi.</p>
+        <p>Per DuckStation, PCSX2 e RPCS3, RetroDB imposta anche la scala di risoluzione e il rapporto d'aspetto per ogni gioco, nel file di impostazioni per gioco dell'emulatore stesso, e se il gioco parte a schermo intero. Cambia i valori per un intero sistema con il pulsante <strong>Impostazioni</strong> nella tabella di associazione, oppure per un singolo gioco nel pannello <strong>Impostazioni emulatore</strong> della sua pagina. Vengono scritti quando premi Gioca. Un'impostazione che modifichi dentro l'emulatore ha sempre la precedenza: da quel momento RetroDB non la tocca più. Avvia ogni emulatore una volta prima di giocare, così crea la sua cartella delle impostazioni.</p>
+
+        <h4>Tasti di RetroArch</h4>
+        <p>Questi sono i tasti predefiniti di RetroArch; puoi cambiarli nel suo menu in <strong>Settings &rarr; Input &rarr; Hotkeys</strong>.</p>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>F1</kbd> <span>Apri o chiudi il menu di RetroArch</span></div>
+            <div class="shortcut-item"><kbd>F2</kbd> <span>Salva lo stato</span></div>
+            <div class="shortcut-item"><kbd>F4</kbd> <span>Carica lo stato</span></div>
+            <div class="shortcut-item"><kbd>F6</kbd> <kbd>F7</kbd> <span>Slot di salvataggio precedente o successivo</span></div>
+            <div class="shortcut-item"><kbd>Space</kbd> <span>Avanti veloce attivo o disattivo</span></div>
+            <div class="shortcut-item"><kbd>L</kbd> <span>Avanti veloce finché tieni premuto</span></div>
+            <div class="shortcut-item"><kbd>R</kbd> <span>Riavvolgi finché tieni premuto, se il riavvolgimento è attivo</span></div>
+            <div class="shortcut-item"><kbd>P</kbd> <span>Pausa</span></div>
+            <div class="shortcut-item"><kbd>H</kbd> <span>Riavvia il gioco</span></div>
+            <div class="shortcut-item"><kbd>F8</kbd> <span>Schermata</span></div>
+            <div class="shortcut-item"><kbd>F</kbd> <span>Schermo intero attivo o disattivo</span></div>
+            <div class="shortcut-item"><kbd>Esc</kbd> <span>Esci</span></div>
+        </div>
+        <p>I giochi per home computer (Commodore 64, Amiga, ZX Spectrum e ZX81, MSX, DOS, Atari 8-bit e ST, Amstrad CPC, PC-98 e X68000) richiedono l'intera tastiera, quindi RetroDB li avvia con tutti i tasti diretti al gioco e i tasti sopra disattivati. Premi <kbd>Scroll Lock</kbd> per riattivare i tasti sopra, e premilo di nuovo per restituire la tastiera al gioco. La pagina del gioco mostra un promemoria accanto a <strong>Gioca</strong> per questi giochi. Sulla maggior parte dei controller PlayStation e Xbox, anche il tasto PS o Xbox apre il menu.</p>
+
         <div class="help-tip">
             <strong>Suggerimento:</strong> Gli scraper disabilitati non attivano gli avvisi "API offline" nella Dashboard. Se non usi uno scraper, disabilitalo in Impostazioni &rarr; Scraping &rarr; Scraper invece di eliminare la chiave API.
         </div>
@@ -657,6 +680,7 @@
         <ul>
             <li><strong>Riempi solo i mancanti</strong> &mdash; Riempi solo i campi di metadati vuoti, preservando i dati esistenti</li>
             <li><strong>Riscraping completo</strong> &mdash; Sostituisci tutti i campi inclusi i media (scarica immagini e video nuovi)</li>
+            <li><strong>Mantieni i media esistenti</strong> &mdash; Con la Riscansione completa, mantieni le immagini, i video e i manuali già presenti sul disco invece di scaricarli di nuovo. Gli screenshot nuovi vengono comunque aggiunti.</li>
             <li><strong>Controlla RetroAchievements</strong> &mdash; Controlla anche la presenza di set di obiettivi RetroAchievements durante lo scraping</li>
         </ul>
 

@@ -551,10 +551,28 @@
             <li><strong>Troubleshooting</strong> &mdash; Clear stuck bulk scrape, clear RA sync queue, clear PSN refresh, clear museum generation, restart server</li>
         </ul>
 
-        <h3>Emulators and Play</h3>
+        <h3 id="emulators-play">Emulators and Play</h3>
         <p>Admins set up emulators at <strong>Settings &rarr; Emulators</strong>. Add the folder your emulators live in to <strong>Emulator folders</strong>. RetroDB finds each emulator there (an AppImage, a portable script or an installed Flatpak) and links it to the systems it runs. The mapping table shows, for each system, whether its emulator works and whether its BIOS files are in place. RetroDB only reads BIOS files; it never copies or downloads them.</p>
         <p>Games whose emulator works get a <strong>Play</strong> button on the game page, on Library cards and on system pages.</p>
         <p>For DuckStation, PCSX2 and RPCS3, RetroDB also sets the resolution scale and aspect ratio for each game, in the emulator's own per-game settings file, and whether the game starts fullscreen. Change the values for a whole system with the <strong>Settings</strong> button in the mapping table, or for one game in the <strong>Emulator settings</strong> panel on its game page. They are written when you press Play. A setting you change inside the emulator itself always wins: RetroDB leaves it alone from then on. Run each emulator once before playing, so it creates its settings folder.</p>
+
+        <h4>RetroArch keys</h4>
+        <p>These are RetroArch's own default keys; you can change them in its menu under <strong>Settings &rarr; Input &rarr; Hotkeys</strong>.</p>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>F1</kbd> <span>Open or close the RetroArch menu</span></div>
+            <div class="shortcut-item"><kbd>F2</kbd> <span>Save state</span></div>
+            <div class="shortcut-item"><kbd>F4</kbd> <span>Load state</span></div>
+            <div class="shortcut-item"><kbd>F6</kbd> <kbd>F7</kbd> <span>Previous or next save slot</span></div>
+            <div class="shortcut-item"><kbd>Space</kbd> <span>Fast-forward on or off</span></div>
+            <div class="shortcut-item"><kbd>L</kbd> <span>Fast-forward while held</span></div>
+            <div class="shortcut-item"><kbd>R</kbd> <span>Rewind while held, if rewind is on</span></div>
+            <div class="shortcut-item"><kbd>P</kbd> <span>Pause</span></div>
+            <div class="shortcut-item"><kbd>H</kbd> <span>Reset the game</span></div>
+            <div class="shortcut-item"><kbd>F8</kbd> <span>Screenshot</span></div>
+            <div class="shortcut-item"><kbd>F</kbd> <span>Fullscreen on or off</span></div>
+            <div class="shortcut-item"><kbd>Esc</kbd> <span>Quit</span></div>
+        </div>
+        <p>Home computer games (Commodore 64, Amiga, ZX Spectrum and ZX81, MSX, DOS, Atari 8-bit and ST, Amstrad CPC, PC-98 and X68000) need the whole keyboard, so RetroDB starts them with every key going to the game and the keys above switched off. Press <kbd>Scroll Lock</kbd> to switch the keys above back on, and again to give the keyboard back to the game. The game page shows a reminder beside <strong>Play</strong> for these games. On most PlayStation and Xbox controllers, the PS or Xbox button opens the menu too.</p>
 
         <div class="help-tip">
             <strong>Tip:</strong> Disabled scrapers will not trigger "API offline" warnings on the Dashboard. If you don't use a scraper, disable it in Settings &rarr; Scraping &rarr; Scraper rather than deleting the API key.

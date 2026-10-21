@@ -504,3 +504,21 @@ def test_pass_59_150_any_script_beside_an_appimage_uses_its_home(tmp_path):
     cfg.write_text('')
     for script in ('retroarch-portable.sh', 'retroarch-fork.sh'):
         assert retroarch_cfg(tmp_path / script) == (cfg.parents[2], cfg)
+
+
+# PASS-59-152 — the game page hints Scroll Lock only where the game would
+# start in a keyboard computer's core.
+def test_pass_59_152_keyboard_core_follows_the_picked_mapping(tmpdb):
+    from services.launch_resolver import keyboard_core
+    conn = tmpdb['conn']
+    assert keyboard_core(1, None) is False                  # DuckStation default
+    assert keyboard_core(1, 2) is False                     # RetroArch, console core
+    conn.execute("UPDATE system_emulators SET retroarch_core = "
+                 "'vice_x64sc_libretro.so' WHERE emulator_id = 2")
+    conn.commit()
+    assert keyboard_core(1, 2) is True                      # per-game override
+    assert keyboard_core(1, None) is False                  # default is not RA
+    conn.execute("UPDATE system_emulators SET is_default = 1 - is_default")
+    conn.commit()
+    assert keyboard_core(1, None) is True                   # system default
+    assert keyboard_core(99, None) is False                 # no mapping at all

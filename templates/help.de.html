@@ -551,6 +551,29 @@
             <li><strong>Fehlerbehebung</strong> &mdash; Stecken gebliebenes Massen-Scraping bereinigen, RA-Synchronisierungswarteschlange leeren, PSN-Aktualisierung bereinigen, Museumsgenerierung bereinigen, Server neu starten</li>
         </ul>
 
+        <h3 id="emulators-play">Emulatoren und Spielen</h3>
+        <p>Administratoren richten Emulatoren unter <strong>Einstellungen &rarr; Emulatoren</strong> ein. Fügen Sie den Ordner, in dem Ihre Emulatoren liegen, zu <strong>Emulator-Ordner</strong> hinzu. RetroDB findet dort jeden Emulator (ein AppImage, ein portables Skript oder ein installiertes Flatpak) und verknüpft ihn mit den Systemen, die er ausführt. Die Zuordnungstabelle zeigt für jedes System, ob der Emulator funktioniert und ob die BIOS-Dateien vorhanden sind. RetroDB liest BIOS-Dateien nur; es kopiert oder lädt sie nie herunter.</p>
+        <p>Spiele, deren Emulator funktioniert, erhalten eine Schaltfläche <strong>Spielen</strong> auf der Spielseite, auf Bibliothekskarten und auf Systemseiten.</p>
+        <p>Für DuckStation, PCSX2 und RPCS3 legt RetroDB außerdem für jedes Spiel die Auflösungsskalierung und das Seitenverhältnis fest, und zwar in der eigenen Pro-Spiel-Einstellungsdatei des Emulators, sowie ob das Spiel im Vollbild startet. Ändern Sie die Werte für ein ganzes System mit der Schaltfläche <strong>Einstellungen</strong> in der Zuordnungstabelle oder für ein einzelnes Spiel im Bereich <strong>Emulator-Einstellungen</strong> auf seiner Spielseite. Sie werden geschrieben, wenn Sie auf Spielen drücken. Eine Einstellung, die Sie im Emulator selbst ändern, hat immer Vorrang: RetroDB lässt sie ab dann in Ruhe. Starten Sie jeden Emulator vor dem Spielen einmal, damit er seinen Einstellungsordner anlegt.</p>
+
+        <h4>RetroArch-Tasten</h4>
+        <p>Dies sind die Standardtasten von RetroArch selbst; Sie können sie im Menü unter <strong>Settings &rarr; Input &rarr; Hotkeys</strong> ändern.</p>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>F1</kbd> <span>RetroArch-Menü öffnen oder schließen</span></div>
+            <div class="shortcut-item"><kbd>F2</kbd> <span>Spielstand speichern</span></div>
+            <div class="shortcut-item"><kbd>F4</kbd> <span>Spielstand laden</span></div>
+            <div class="shortcut-item"><kbd>F6</kbd> <kbd>F7</kbd> <span>Vorheriger oder nächster Speicherplatz</span></div>
+            <div class="shortcut-item"><kbd>Space</kbd> <span>Schnellvorlauf ein- oder ausschalten</span></div>
+            <div class="shortcut-item"><kbd>L</kbd> <span>Schnellvorlauf, solange gedrückt</span></div>
+            <div class="shortcut-item"><kbd>R</kbd> <span>Zurückspulen, solange gedrückt, wenn Zurückspulen aktiv ist</span></div>
+            <div class="shortcut-item"><kbd>P</kbd> <span>Pause</span></div>
+            <div class="shortcut-item"><kbd>H</kbd> <span>Spiel zurücksetzen</span></div>
+            <div class="shortcut-item"><kbd>F8</kbd> <span>Screenshot</span></div>
+            <div class="shortcut-item"><kbd>F</kbd> <span>Vollbild ein- oder ausschalten</span></div>
+            <div class="shortcut-item"><kbd>Esc</kbd> <span>Beenden</span></div>
+        </div>
+        <p>Spiele für Heimcomputer (Commodore 64, Amiga, ZX Spectrum und ZX81, MSX, DOS, Atari 8-Bit und ST, Amstrad CPC, PC-98 und X68000) brauchen die ganze Tastatur. Deshalb startet RetroDB sie so, dass jede Taste an das Spiel geht und die obigen Tasten abgeschaltet sind. Drücken Sie <kbd>Scroll Lock</kbd>, um die obigen Tasten wieder einzuschalten, und noch einmal, um die Tastatur wieder dem Spiel zu geben. Die Spielseite zeigt bei diesen Spielen einen Hinweis neben <strong>Spielen</strong>. Bei den meisten PlayStation- und Xbox-Controllern öffnet auch die PS- oder Xbox-Taste das Menü.</p>
+
         <div class="help-tip">
             <strong>Tipp:</strong> Deaktivierte Scraper lösen keine „API offline“-Warnungen im Dashboard aus. Wenn Sie einen Scraper nicht verwenden, deaktivieren Sie ihn unter Einstellungen &rarr; Scraping &rarr; Scraper, anstatt den API-Schlüssel zu löschen.
         </div>
@@ -657,6 +680,7 @@
         <ul>
             <li><strong>Nur Fehlende ausfüllen</strong> &mdash; Nur leere Metadatenfelder ausfüllen und vorhandene Daten erhalten</li>
             <li><strong>Vollständiges Neu-Scrapen</strong> &mdash; Alle Felder einschließlich Medien ersetzen (lädt frische Bilder und Videos herunter)</li>
+            <li><strong>Vorhandene Medien behalten</strong> &mdash; Bei vollständigem Neu-Scrapen die bereits auf der Festplatte vorhandenen Bilder, Videos und Handbücher behalten, statt sie erneut herunterzuladen. Neue Screenshots werden weiterhin hinzugefügt.</li>
             <li><strong>RetroAchievements prüfen</strong> &mdash; Beim Scraping zusätzlich auf RetroAchievements-Achievement-Sets prüfen</li>
         </ul>
 

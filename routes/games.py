@@ -30,7 +30,7 @@ from services.game_query import (
     invalidate_filter_cache, VERSION_COLUMNS,
 )
 from services.analytics import invalidate_analytics_cache
-from services.launch_resolver import launch_checker, rom_launch_problem
+from services.launch_resolver import keyboard_core, launch_checker, rom_launch_problem
 from services.game_metadata_service import (
     build_game_card,
     apply_hybrid_metadata_to_game,
@@ -774,6 +774,9 @@ def game_detail(game_id):
                              # PASS-59-149 — the cards' rule: an imported game
                              # with no ROM file has nothing to play.
                              can_play=rom_launch_problem(game['rom_path']) is None,
+                             # PASS-59-152 — its hotkeys wait behind Scroll Lock.
+                             keyboard_play=keyboard_core(game['system_id'],
+                                                         game['emulator_override_id']),
                              # PASS-59-153 — its images still await upscaling.
                              upscale_pending=upscale_queue.pending_status(game_id)[1])
     except Exception as e:

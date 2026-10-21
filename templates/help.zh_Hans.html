@@ -551,6 +551,29 @@
             <li><strong>故障排除</strong> &mdash; 清除卡住的批量抓取、清除 RA 同步队列、清除 PSN 刷新、清除博物馆生成、重启服务器</li>
         </ul>
 
+        <h3 id="emulators-play">模拟器与游玩</h3>
+        <p>管理员在 <strong>设置 &rarr; 模拟器</strong> 中配置模拟器。把存放模拟器的文件夹添加到<strong>模拟器文件夹</strong>。RetroDB 会在其中找到每个模拟器（AppImage、便携脚本或已安装的 Flatpak），并将其与它能运行的系统关联起来。映射表会显示每个系统的模拟器是否可用，以及 BIOS 文件是否就位。RetroDB 只读取 BIOS 文件，绝不会复制或下载它们。</p>
+        <p>模拟器可用的游戏，会在游戏页面、资料库卡片和系统页面上显示<strong>游玩</strong>按钮。</p>
+        <p>对于 DuckStation、PCSX2 和 RPCS3，RetroDB 还会在模拟器自己的单游戏设置文件中，为每个游戏设置分辨率缩放和宽高比，以及游戏是否全屏启动。要修改整个系统的值，请使用映射表中的<strong>设置</strong>按钮；要修改单个游戏，请使用其游戏页面上的<strong>模拟器设置</strong>面板。这些值会在你按下游玩时写入。你在模拟器内部修改的设置始终优先：此后 RetroDB 不再改动它。请在游玩前先运行一次每个模拟器，让它创建自己的设置文件夹。</p>
+
+        <h4>RetroArch 按键</h4>
+        <p>这些是 RetroArch 自己的默认按键；你可以在它的菜单中通过 <strong>Settings &rarr; Input &rarr; Hotkeys</strong> 修改。</p>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>F1</kbd> <span>打开或关闭 RetroArch 菜单</span></div>
+            <div class="shortcut-item"><kbd>F2</kbd> <span>保存状态</span></div>
+            <div class="shortcut-item"><kbd>F4</kbd> <span>载入状态</span></div>
+            <div class="shortcut-item"><kbd>F6</kbd> <kbd>F7</kbd> <span>上一个或下一个存档位</span></div>
+            <div class="shortcut-item"><kbd>Space</kbd> <span>开启或关闭快进</span></div>
+            <div class="shortcut-item"><kbd>L</kbd> <span>按住时快进</span></div>
+            <div class="shortcut-item"><kbd>R</kbd> <span>按住时倒带（需已开启倒带）</span></div>
+            <div class="shortcut-item"><kbd>P</kbd> <span>暂停</span></div>
+            <div class="shortcut-item"><kbd>H</kbd> <span>重置游戏</span></div>
+            <div class="shortcut-item"><kbd>F8</kbd> <span>截图</span></div>
+            <div class="shortcut-item"><kbd>F</kbd> <span>开启或关闭全屏</span></div>
+            <div class="shortcut-item"><kbd>Esc</kbd> <span>退出</span></div>
+        </div>
+        <p>家用电脑游戏（Commodore 64、Amiga、ZX Spectrum 和 ZX81、MSX、DOS、Atari 8-bit 和 ST、Amstrad CPC、PC-98 和 X68000）需要用到整个键盘，因此 RetroDB 启动它们时会把所有按键都交给游戏，并关闭上面这些按键。按 <kbd>Scroll Lock</kbd> 可重新开启上面这些按键，再按一次则把键盘还给游戏。对于这些游戏，游戏页面会在<strong>游玩</strong>旁显示提醒。在大多数 PlayStation 和 Xbox 手柄上，PS 或 Xbox 按钮也能打开菜单。</p>
+
         <div class="help-tip">
             <strong>提示：</strong>已禁用的抓取器不会在仪表盘上触发 “API 离线” 警告。如果你不使用某个抓取器，请在 设置 &rarr; 抓取 &rarr; 抓取器 中将其禁用，而不是删除 API 密钥。
         </div>
@@ -657,6 +680,7 @@
         <ul>
             <li><strong>仅填充缺失</strong> &mdash; 只填充空的元数据字段，保留现有数据</li>
             <li><strong>完全重新抓取</strong> &mdash; 替换所有字段，包括媒体（下载新的图片和视频）</li>
+            <li><strong>保留现有媒体</strong> &mdash; 使用完全重新抓取时，保留磁盘上已有的图片、视频和手册，而不是重新下载。仍会添加新的截图。</li>
             <li><strong>检查 RetroAchievements</strong> &mdash; 抓取时也检查 RetroAchievements 成就集</li>
         </ul>
 

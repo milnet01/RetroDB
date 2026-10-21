@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-21 19:36+0200\n"
+"POT-Creation-Date: 2026-10-21 19:52+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -59,8 +59,8 @@ msgstr "Sistema no encontrado o sin juegos con logros"
 #: routes/achievements.py:171 routes/achievements.py:440
 #: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/collections.py:276
 #: routes/collections.py:531 routes/emulators.py:248 routes/emulators.py:262
-#: routes/games.py:347 routes/games.py:800 routes/games.py:922
-#: routes/games.py:978 routes/games_ai.py:46 routes/games_media.py:37
+#: routes/games.py:347 routes/games.py:803 routes/games.py:925
+#: routes/games.py:981 routes/games_ai.py:46 routes/games_media.py:37
 #: routes/games_media.py:84 routes/games_media.py:145 routes/reports.py:693
 #: routes/reports.py:818 routes/trophies.py:1278 services/hltb_service.py:125
 msgid "Game not found"
@@ -233,8 +233,8 @@ msgstr "Juego principal no encontrado"
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "El disco extra y el juego principal deben estar en el mismo sistema"
 
-#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1230
-#: routes/games.py:1260 routes/platform_import.py:289
+#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1233
+#: routes/games.py:1263 routes/platform_import.py:289
 #: routes/platform_import.py:658 routes/platform_import.py:1024
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:200 routes/scraper.py:528
@@ -449,15 +449,15 @@ msgstr "Vídeo no guardado: debe ser un archivo MP4, WebM u OGG de hasta %(mb)s 
 msgid "Game not found after update"
 msgstr "Juego no encontrado tras la actualización"
 
-#: routes/games.py:926
+#: routes/games.py:929
 msgid "No game selected."
 msgstr "No se ha seleccionado ningún juego."
 
-#: routes/games.py:950
+#: routes/games.py:953
 msgid "This metadata apply is no longer running."
 msgstr "Esta aplicación de metadatos ya no se está ejecutando."
 
-#: routes/games.py:959
+#: routes/games.py:962
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
@@ -466,41 +466,41 @@ msgstr ""
 "¡Metadatos aplicados desde %(sources)s! (%(filled)d campos completados, "
 "%(missing)d aún faltan)"
 
-#: routes/games.py:965
+#: routes/games.py:968
 msgid "Failed to apply metadata."
 msgstr "Error al aplicar los metadatos."
 
-#: routes/games.py:1008 routes/games.py:1052
+#: routes/games.py:1011 routes/games.py:1055
 msgid "No fields to update"
 msgstr "No hay campos que actualizar"
 
-#: routes/games.py:1049 routes/platform_import.py:212
+#: routes/games.py:1052 routes/platform_import.py:212
 #: routes/platform_import.py:572 routes/platform_import.py:928
 #: routes/trophies.py:1852
 msgid "No games selected"
 msgstr "Ningún juego seleccionado"
 
-#: routes/games.py:1059
+#: routes/games.py:1062
 msgid "Invalid completion status"
 msgstr "Estado de finalización no válido"
 
-#: routes/games.py:1107
+#: routes/games.py:1110
 msgid "No valid fields to update"
 msgstr "No hay campos válidos que actualizar"
 
-#: routes/games.py:1223
+#: routes/games.py:1226
 msgid "Invalid status"
 msgstr "Estado no válido"
 
-#: routes/games.py:1248
+#: routes/games.py:1251
 msgid "Not authenticated"
 msgstr "No autenticado"
 
-#: routes/games.py:1279
+#: routes/games.py:1282
 msgid "Filter type and value required"
 msgstr "Se requieren el tipo y el valor del filtro"
 
-#: routes/games.py:1292
+#: routes/games.py:1295
 msgid "Invalid filter type"
 msgstr "Tipo de filtro no válido"
 
@@ -1667,7 +1667,7 @@ msgstr "Importaciones CLZ"
 #: templates/archive_scanner.html:798 templates/base.html:306
 #: templates/base.html:324 templates/base.html:1023
 #: templates/chd_converter.html:170 templates/chd_verify.html:126
-#: templates/game_detail.html:514 templates/login.html:254
+#: templates/game_detail.html:518 templates/login.html:254
 #: templates/museum.html:29 templates/museum_system.html:182
 #: templates/psn_trophies.html:297 templates/psn_trophy_detail.html:182
 #: templates/psn_trophy_detail.html:325 templates/reports.html:521
@@ -1790,7 +1790,7 @@ msgstr "¡Completado!"
 
 #: services/js_i18n_strings.py:487 templates/_bulk_edit_modal.html:29
 #: templates/analytics.html:1664 templates/base.html:981
-#: templates/dashboard.html:473 templates/game_detail.html:218
+#: templates/dashboard.html:473 templates/game_detail.html:222
 msgid "Completed"
 msgstr "Completado"
 
@@ -1805,8 +1805,8 @@ msgstr "Estado de finalización actualizado"
 
 #: services/js_i18n_strings.py:490 templates/achievement_game.html:172
 #: templates/achievement_game.html:197 templates/achievement_game.html:211
-#: templates/base.html:1018 templates/game_detail.html:508
-#: templates/game_detail.html:533 templates/game_detail.html:547
+#: templates/base.html:1018 templates/game_detail.html:512
+#: templates/game_detail.html:537 templates/game_detail.html:551
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:176
 #: templates/psn_trophy_detail.html:209
 #: templates/steam_achievement_game.html:134
@@ -1949,7 +1949,7 @@ msgid "Downloading video…"
 msgstr "Descargando vídeo…"
 
 #: services/js_i18n_strings.py:523 templates/_settings_tabs/account.html:315
-#: templates/base.html:937 templates/game_detail.html:101
+#: templates/base.html:937 templates/game_detail.html:105
 #: templates/wishlist.html:641
 msgid "Edit"
 msgstr "Editar"
@@ -2259,7 +2259,7 @@ msgstr "La imagen debe pesar menos de 10 MB"
 #: templates/achievements_system.html:151
 #: templates/achievements_system.html:170 templates/analytics.html:1664
 #: templates/base.html:979 templates/dashboard.html:329
-#: templates/dashboard.html:469 templates/game_detail.html:216
+#: templates/dashboard.html:469 templates/game_detail.html:220
 #: templates/steam_achievements.html:77 templates/xbox_achievements.html:77
 msgid "In Progress"
 msgstr "En curso"
@@ -2334,8 +2334,8 @@ msgstr "Buscando versiones…"
 
 #: services/js_i18n_strings.py:611 templates/achievement_game.html:168
 #: templates/achievement_game.html:197 templates/achievement_game.html:207
-#: templates/base.html:1014 templates/game_detail.html:504
-#: templates/game_detail.html:533 templates/game_detail.html:543
+#: templates/base.html:1014 templates/game_detail.html:508
+#: templates/game_detail.html:537 templates/game_detail.html:547
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:172
 #: templates/psn_trophy_detail.html:205
 #: templates/steam_achievement_game.html:133
@@ -2347,8 +2347,8 @@ msgstr "Principal + Extras"
 
 #: services/js_i18n_strings.py:612 templates/achievement_game.html:164
 #: templates/achievement_game.html:197 templates/achievement_game.html:203
-#: templates/base.html:1010 templates/game_detail.html:500
-#: templates/game_detail.html:533 templates/game_detail.html:539
+#: templates/base.html:1010 templates/game_detail.html:504
+#: templates/game_detail.html:537 templates/game_detail.html:543
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:168
 #: templates/psn_trophy_detail.html:201
 #: templates/steam_achievement_game.html:132
@@ -2425,8 +2425,8 @@ msgid "Next disk failed"
 msgstr "Error al cambiar de disco"
 
 #: services/js_i18n_strings.py:627 templates/_bulk_edit_modal.html:171
-#: templates/_modals/edit_modal.html:139 templates/game_detail.html:662
-#: templates/game_detail.html:730
+#: templates/_modals/edit_modal.html:139 templates/game_detail.html:666
+#: templates/game_detail.html:734
 msgid "No"
 msgstr "No"
 
@@ -2581,7 +2581,7 @@ msgstr "Jugar"
 
 #: services/js_i18n_strings.py:663 templates/_bulk_edit_modal.html:28
 #: templates/analytics.html:1664 templates/base.html:980
-#: templates/dashboard.html:471 templates/game_detail.html:217
+#: templates/dashboard.html:471 templates/game_detail.html:221
 msgid "Played"
 msgstr "Jugado"
 
@@ -3203,7 +3203,7 @@ msgstr "¿Cambiará?"
 msgid "Works"
 msgstr "Funciona"
 
-#: services/js_i18n_strings.py:792 templates/game_detail.html:751
+#: services/js_i18n_strings.py:792 templates/game_detail.html:755
 msgid "Write again with AI"
 msgstr "Volver a escribir con IA"
 
@@ -3212,8 +3212,8 @@ msgid "Xbox Imports"
 msgstr "Importaciones Xbox"
 
 #: services/js_i18n_strings.py:794 templates/_bulk_edit_modal.html:170
-#: templates/_modals/edit_modal.html:139 templates/game_detail.html:605
-#: templates/game_detail.html:662 templates/game_detail.html:730
+#: templates/_modals/edit_modal.html:139 templates/game_detail.html:609
+#: templates/game_detail.html:666 templates/game_detail.html:734
 msgid "Yes"
 msgstr "Sí"
 
@@ -3429,7 +3429,7 @@ msgstr "Solo se actualizarán los campos modificados respecto a \"No cambiar\"."
 
 #: templates/_bulk_edit_modal.html:26 templates/achievements_system.html:171
 #: templates/analytics.html:1664 templates/base.html:978
-#: templates/dashboard.html:467 templates/game_detail.html:215
+#: templates/dashboard.html:467 templates/game_detail.html:219
 #: templates/steam_achievements.html:78 templates/xbox_achievements.html:78
 msgid "Not Started"
 msgstr "Sin empezar"
@@ -3440,7 +3440,7 @@ msgstr "Sin empezar"
 #: templates/analytics.html:481 templates/analytics.html:2428
 #: templates/base.html:908 templates/base.html:1112
 #: templates/compare_games.html:73 templates/dashboard.html:357
-#: templates/game_detail.html:261 templates/local_trophy_detail.html:99
+#: templates/game_detail.html:265 templates/local_trophy_detail.html:99
 #: templates/psn_trophy_detail.html:94 templates/psn_trophy_detail.html:258
 #: templates/steam_achievement_game.html:178 templates/system_games.html:86
 #: templates/xbox_achievement_game.html:171
@@ -3458,8 +3458,8 @@ msgstr "Añadir"
 #: templates/achievement_game.html:81 templates/all_games.html:101
 #: templates/analytics.html:483 templates/analytics.html:2428
 #: templates/base.html:907 templates/base.html:1098
-#: templates/compare_games.html:71 templates/game_detail.html:237
-#: templates/game_detail.html:708 templates/local_trophy_detail.html:87
+#: templates/compare_games.html:71 templates/game_detail.html:241
+#: templates/game_detail.html:712 templates/local_trophy_detail.html:87
 #: templates/psn_trophy_detail.html:82 templates/steam_achievement_game.html:78
 #: templates/system_games.html:92 templates/xbox_achievement_game.html:67
 msgid "Publisher"
@@ -3475,7 +3475,7 @@ msgstr "No cambiar"
 #: templates/achievement_game.html:87 templates/all_games.html:104
 #: templates/analytics.html:482 templates/analytics.html:2428
 #: templates/base.html:906 templates/base.html:1102
-#: templates/compare_games.html:70 templates/game_detail.html:249
+#: templates/compare_games.html:70 templates/game_detail.html:253
 #: templates/local_trophy_detail.html:93 templates/psn_trophy_detail.html:88
 #: templates/steam_achievement_game.html:84 templates/system_games.html:95
 #: templates/xbox_achievement_game.html:73
@@ -3534,13 +3534,13 @@ msgstr "PEGI 18"
 #: templates/_bulk_edit_modal.html:106 templates/_modals/edit_modal.html:81
 #: templates/analytics.html:492 templates/analytics.html:2428
 #: templates/base.html:1089 templates/compare_games.html:75
-#: templates/game_detail.html:705 templates/reports.html:444
+#: templates/game_detail.html:709 templates/reports.html:444
 msgid "Region"
 msgstr "Región"
 
 #: templates/_bulk_edit_modal.html:112 templates/_modals/edit_modal.html:128
 #: templates/all_games.html:107 templates/base.html:1128
-#: templates/compare_games.html:76 templates/game_detail.html:197
+#: templates/compare_games.html:76 templates/game_detail.html:201
 #: templates/system_games.html:98
 msgid "Players"
 msgstr "Jugadores"
@@ -3608,7 +3608,7 @@ msgstr "Cargar más"
 
 #: templates/achievement_game.html:17 templates/achievement_game.html:37
 #: templates/achievements_system.html:15 templates/game_detail.html:21
-#: templates/game_detail.html:292 templates/game_detail.html:713
+#: templates/game_detail.html:296 templates/game_detail.html:717
 #: templates/systems.html:43
 msgid "RetroAchievements"
 msgstr "RetroAchievements"
@@ -3624,7 +3624,7 @@ msgid "Refresh RA"
 msgstr "Actualizar RA"
 
 #: templates/achievement_game.html:93 templates/all_games.html:98
-#: templates/game_detail.html:273 templates/system_games.html:89
+#: templates/game_detail.html:277 templates/system_games.html:89
 msgid "Series"
 msgstr "Serie"
 
@@ -3651,7 +3651,7 @@ msgstr "No se pudieron cargar los datos de logros"
 msgid "Check your RetroAchievements credentials in Settings."
 msgstr "Comprueba tus credenciales de RetroAchievements en Ajustes."
 
-#: templates/achievement_game.html:146 templates/game_detail.html:482
+#: templates/achievement_game.html:146 templates/game_detail.html:486
 #: templates/local_trophy_detail.html:158 templates/psn_trophy_detail.html:149
 #: templates/steam_achievement_game.html:123
 #: templates/xbox_achievement_game.html:116
@@ -3659,7 +3659,7 @@ msgid "How Long to Beat"
 msgstr "How Long to Beat"
 
 #: templates/achievement_game.html:153 templates/base.html:991
-#: templates/game_detail.html:489 templates/psn_trophy_detail.html:157
+#: templates/game_detail.html:493 templates/psn_trophy_detail.html:157
 #: templates/psn_trophy_detail.html:317
 #: templates/steam_achievement_game.html:126
 #: templates/xbox_achievement_game.html:119
@@ -3667,7 +3667,7 @@ msgid "Search game title..."
 msgstr "Buscar título del juego..."
 
 #: templates/achievement_game.html:156 templates/base.html:994
-#: templates/game_detail.html:492 templates/local_trophy_detail.html:193
+#: templates/game_detail.html:496 templates/local_trophy_detail.html:193
 #: templates/psn_trophy_detail.html:160
 #: templates/steam_achievement_game.html:127
 #: templates/xbox_achievement_game.html:120
@@ -3676,7 +3676,7 @@ msgstr "Consultar HLTB"
 
 #: templates/_settings_tabs/account.html:73 templates/achievement_game.html:177
 #: templates/achievement_game.html:253 templates/base.html:1022
-#: templates/game_detail.html:513 templates/local_trophy_detail.html:223
+#: templates/game_detail.html:517 templates/local_trophy_detail.html:223
 #: templates/psn_trophy_detail.html:181 templates/psn_trophy_detail.html:270
 #: templates/steam_achievement_game.html:137
 #: templates/xbox_achievement_game.html:130
@@ -3685,7 +3685,7 @@ msgstr "Guardar"
 
 #: templates/achievement_game.html:217 templates/all_games.html:128
 #: templates/base.html:1035 templates/duplicate_finder.html:301
-#: templates/game_detail.html:97 templates/game_detail.html:553
+#: templates/game_detail.html:101 templates/game_detail.html:557
 #: templates/local_trophy_detail.html:185 templates/psn_trophy_detail.html:214
 #: templates/reports.html:277 templates/screenshot_dedup.html:325
 #: templates/steam_achievement_game.html:163 templates/system_games.html:119
@@ -3693,7 +3693,7 @@ msgstr "Guardar"
 msgid "Clear"
 msgstr "Borrar"
 
-#: templates/achievement_game.html:225 templates/game_detail.html:561
+#: templates/achievement_game.html:225 templates/game_detail.html:565
 #: templates/local_trophy_detail.html:203 templates/psn_trophy_detail.html:234
 #: templates/steam_achievement_game.html:170
 #: templates/xbox_achievement_game.html:163
@@ -3943,7 +3943,7 @@ msgstr "Seleccionar todo"
 msgid "Select Unscraped"
 msgstr "Seleccionar sin scrapear"
 
-#: templates/all_games.html:72 templates/game_detail.html:779
+#: templates/all_games.html:72 templates/game_detail.html:783
 #: templates/system_games.html:63
 msgid "Full Re-scrape"
 msgstr "Re-scrapeo completo"
@@ -3952,7 +3952,7 @@ msgstr "Re-scrapeo completo"
 msgid "Toggle between full re-scrape and fill missing mode"
 msgstr "Alternar entre re-scrapeo completo y modo de rellenar lo ausente"
 
-#: templates/all_games.html:77 templates/game_detail.html:779
+#: templates/all_games.html:77 templates/game_detail.html:783
 #: templates/system_games.html:68
 msgid "Fill Missing"
 msgstr "Rellenar ausentes"
@@ -4327,12 +4327,12 @@ msgid "Fanart"
 msgstr "Fanart"
 
 #: templates/analytics.html:487 templates/analytics.html:2428
-#: templates/game_detail.html:435
+#: templates/game_detail.html:439
 msgid "Video"
 msgstr "Vídeo"
 
 #: templates/_modals/manual_reader_modal.html:9 templates/analytics.html:488
-#: templates/analytics.html:2428 templates/game_detail.html:91
+#: templates/analytics.html:2428 templates/game_detail.html:95
 msgid "Manual"
 msgstr "Manual"
 
@@ -4838,7 +4838,7 @@ msgstr "Cerrar detalles del juego"
 msgid "Loading game details..."
 msgstr "Cargando detalles del juego..."
 
-#: templates/base.html:921 templates/game_detail.html:439
+#: templates/base.html:921 templates/game_detail.html:443
 msgid "Your browser does not support the video tag."
 msgstr "Tu navegador no admite la etiqueta de vídeo."
 
@@ -4846,15 +4846,15 @@ msgstr "Tu navegador no admite la etiqueta de vídeo."
 msgid "View Full Page"
 msgstr "Ver página completa"
 
-#: templates/base.html:930 templates/game_detail.html:105
+#: templates/base.html:930 templates/game_detail.html:109
 msgid "Fill missing metadata with AI"
 msgstr "Rellenar metadatos ausentes con AI"
 
-#: templates/base.html:931 templates/game_detail.html:107
+#: templates/base.html:931 templates/game_detail.html:111
 msgid "AI Fill"
 msgstr "Rellenar con AI"
 
-#: templates/base.html:934 templates/game_detail.html:112
+#: templates/base.html:934 templates/game_detail.html:116
 msgid "Scrape"
 msgstr "Scrapear"
 
@@ -4933,7 +4933,7 @@ msgstr "Sin datos de tiempo de juego"
 #: templates/_modals/edit_modal.html:28 templates/_modals/filter_modal.html:13
 #: templates/base.html:1045 templates/dashboard.html:296
 #: templates/dashboard.html:355 templates/dashboard.html:432
-#: templates/dashboard.html:498 templates/game_detail.html:706
+#: templates/dashboard.html:498 templates/game_detail.html:710
 msgid "Title"
 msgstr "Título"
 
@@ -4958,7 +4958,7 @@ msgid "e.g., Final Fantasy, Crash Bandicoot"
 msgstr "p. ej., Final Fantasy, Crash Bandicoot"
 
 #: templates/_modals/edit_modal.html:52 templates/base.html:1067
-#: templates/compare_games.html:96 templates/game_detail.html:467
+#: templates/compare_games.html:96 templates/game_detail.html:471
 msgid "Similar Games"
 msgstr "Juegos similares"
 
@@ -6020,7 +6020,7 @@ msgstr "Versiones regionales"
 msgid "Versions:"
 msgstr "Versiones:"
 
-#: templates/game_detail.html:77 templates/game_detail.html:720
+#: templates/game_detail.html:77 templates/game_detail.html:724
 msgid "Unknown region"
 msgstr "Región desconocida"
 
@@ -6029,28 +6029,32 @@ msgid "Launch this game in the configured emulator"
 msgstr "Ejecutar este juego en el emulador configurado"
 
 #: templates/game_detail.html:89
+msgid "Keyboard game: press Scroll Lock for RetroArch keys"
+msgstr "Juego de teclado: pulsa Scroll Lock para las teclas de RetroArch"
+
+#: templates/game_detail.html:93
 msgid "View Manual (PDF)"
 msgstr "Ver manual (PDF)"
 
-#: templates/game_detail.html:114
+#: templates/game_detail.html:118
 msgid "Delete game from database"
 msgstr "Eliminar juego de la base de datos"
 
-#: templates/_settings_tabs/account.html:317 templates/game_detail.html:116
+#: templates/_settings_tabs/account.html:317 templates/game_detail.html:120
 #: templates/logs.html:735 templates/settings.html:70
 #: templates/wishlist.html:642
 msgid "Delete"
 msgstr "Eliminar"
 
-#: templates/game_detail.html:150 templates/game_detail.html:162
+#: templates/game_detail.html:154 templates/game_detail.html:166
 msgid "Click to zoom"
 msgstr "Haz clic para ampliar"
 
-#: templates/game_detail.html:167
+#: templates/game_detail.html:171
 msgid "Switch between 2D and 3D boxart"
 msgstr "Cambiar entre carátula 2D y 3D"
 
-#: templates/game_detail.html:186
+#: templates/game_detail.html:190
 msgid ""
 "Sharper images for this game are still being made. They'll appear on "
 "their own."
@@ -6058,279 +6062,279 @@ msgstr ""
 "Todavía se están creando imágenes más nítidas para este juego. Aparecerán"
 " solas."
 
-#: templates/game_detail.html:197
+#: templates/game_detail.html:201
 msgid "Player"
 msgstr "Jugador"
 
-#: templates/game_detail.html:202
+#: templates/game_detail.html:206
 #, python-format
 msgid "Critic Score (%(count)s reviews)"
 msgstr "Puntuación de la crítica (%(count)s reseñas)"
 
-#: templates/game_detail.html:207
+#: templates/game_detail.html:211
 #, python-format
 msgid "User Score (%(count)s ratings)"
 msgstr "Puntuación de usuarios (%(count)s valoraciones)"
 
-#: templates/game_detail.html:214
+#: templates/game_detail.html:218
 msgid "Completion status"
 msgstr "Estado de finalización"
 
-#: templates/game_detail.html:229
+#: templates/game_detail.html:233
 msgid "No description available. Click \"Scrape\" to fetch metadata."
 msgstr ""
 "No hay descripción disponible. Haz clic en \"Scrapear\" para obtener "
 "metadatos."
 
-#: templates/game_detail.html:300
+#: templates/game_detail.html:304
 msgid "View on RetroAchievements.org"
 msgstr "Ver en RetroAchievements.org"
 
-#: templates/game_detail.html:302
+#: templates/game_detail.html:306
 msgid "RA Site"
 msgstr "Sitio de RA"
 
-#: templates/game_detail.html:314 templates/steam_achievement_game.html:17
+#: templates/game_detail.html:318 templates/steam_achievement_game.html:17
 #: templates/steam_achievements.html:7 templates/steam_achievements.html:15
 #: templates/steam_achievements.html:21
 msgid "Steam Achievements"
 msgstr "Logros de Steam"
 
-#: templates/game_detail.html:330 templates/xbox_achievement_game.html:17
+#: templates/game_detail.html:334 templates/xbox_achievement_game.html:17
 #: templates/xbox_achievements.html:7 templates/xbox_achievements.html:15
 #: templates/xbox_achievements.html:21
 msgid "Xbox Achievements"
 msgstr "Logros de Xbox"
 
-#: templates/game_detail.html:345 templates/psn_trophies.html:6
+#: templates/game_detail.html:349 templates/psn_trophies.html:6
 #: templates/psn_trophies.html:15 templates/psn_trophy_detail.html:17
 msgid "PSN Trophies"
 msgstr "Trofeos de PSN"
 
-#: templates/game_detail.html:370 templates/local_trophy_detail.html:16
+#: templates/game_detail.html:374 templates/local_trophy_detail.html:16
 msgid "RPCS3 Trophies"
 msgstr "Trofeos de RPCS3"
 
-#: templates/game_detail.html:403
+#: templates/game_detail.html:407
 msgid "(cross-mapped)"
 msgstr "(mapeo cruzado)"
 
-#: templates/game_detail.html:416
+#: templates/game_detail.html:420
 #, python-format
 msgid "Screenshots (%(count)s)"
 msgstr "Capturas de pantalla (%(count)s)"
 
-#: templates/game_detail.html:418
+#: templates/game_detail.html:422
 msgid "Previous screenshots"
 msgstr "Capturas anteriores"
 
-#: templates/game_detail.html:424
+#: templates/game_detail.html:428
 msgid "Delete screenshot"
 msgstr "Eliminar captura"
 
-#: templates/game_detail.html:428
+#: templates/game_detail.html:432
 msgid "Next screenshots"
 msgstr "Capturas siguientes"
 
-#: templates/game_detail.html:447
+#: templates/game_detail.html:451
 msgid "Also Known As"
 msgstr "También conocido como"
 
-#: templates/game_detail.html:451
+#: templates/game_detail.html:455
 #, python-format
 msgid "Source: %(source)s"
 msgstr "Fuente: %(source)s"
 
-#: templates/game_detail.html:476
+#: templates/game_detail.html:480
 msgid "Loading recommendations..."
 msgstr "Cargando recomendaciones..."
 
-#: templates/game_detail.html:524
+#: templates/game_detail.html:528
 #, python-format
 msgid "%(pct)s%% match"
 msgstr "%(pct)s%% de coincidencia"
 
-#: templates/game_detail.html:565
+#: templates/game_detail.html:569
 msgid "Source:"
 msgstr "Fuente:"
 
-#: templates/game_detail.html:568
+#: templates/game_detail.html:572
 msgid "CLZ Games Import (No ROM file)"
 msgstr "Importación de CLZ Games (Sin archivo ROM)"
 
-#: templates/game_detail.html:570
+#: templates/game_detail.html:574
 msgid "Steam Import (No ROM file)"
 msgstr "Importación de Steam (Sin archivo ROM)"
 
-#: templates/game_detail.html:572
+#: templates/game_detail.html:576
 msgid "Xbox Import (No ROM file)"
 msgstr "Importación de Xbox (Sin archivo ROM)"
 
-#: templates/game_detail.html:574
+#: templates/game_detail.html:578
 msgid "PSN Import (No ROM file)"
 msgstr "Importación de PSN (Sin archivo ROM)"
 
-#: templates/game_detail.html:580
+#: templates/game_detail.html:584
 msgid "Original Title:"
 msgstr "Título original:"
 
-#: templates/game_detail.html:586
+#: templates/game_detail.html:590
 msgid "File:"
 msgstr "Archivo:"
 
-#: templates/game_detail.html:588
+#: templates/game_detail.html:592
 msgid "Rename ROM file"
 msgstr "Renombrar archivo ROM"
 
-#: templates/game_detail.html:591
+#: templates/game_detail.html:595
 msgid "Path:"
 msgstr "Ruta:"
 
-#: templates/game_detail.html:597
+#: templates/game_detail.html:601
 msgid "Edition:"
 msgstr "Edición:"
 
-#: templates/game_detail.html:604
+#: templates/game_detail.html:608
 msgid "Exclusive:"
 msgstr "Exclusivo:"
 
-#: templates/game_detail.html:607
+#: templates/game_detail.html:611
 msgid "Also On:"
 msgstr "También en:"
 
-#: templates/game_detail.html:614
+#: templates/game_detail.html:618
 msgid "Modes:"
 msgstr "Modos:"
 
-#: templates/game_detail.html:620
+#: templates/game_detail.html:624
 msgid "Players:"
 msgstr "Jugadores:"
 
-#: templates/game_detail.html:626
+#: templates/game_detail.html:630
 msgid "Campaign:"
 msgstr "Campaña:"
 
-#: templates/game_detail.html:632
+#: templates/game_detail.html:636
 msgid "Structure:"
 msgstr "Estructura:"
 
-#: templates/game_detail.html:638
+#: templates/game_detail.html:642
 msgid "Perspective:"
 msgstr "Perspectiva:"
 
-#: templates/game_detail.html:644
+#: templates/game_detail.html:648
 msgid "Dimension:"
 msgstr "Dimensión:"
 
-#: templates/game_detail.html:650
+#: templates/game_detail.html:654
 msgid "Save:"
 msgstr "Guardado:"
 
-#: templates/game_detail.html:656
+#: templates/game_detail.html:660
 msgid "Input:"
 msgstr "Entrada:"
 
-#: templates/game_detail.html:661
+#: templates/game_detail.html:665
 msgid "Scraped:"
 msgstr "Scrapeado:"
 
-#: templates/game_detail.html:670
+#: templates/game_detail.html:674
 msgid "Bonus Content"
 msgstr "Contenido extra"
 
-#: templates/game_detail.html:689
+#: templates/game_detail.html:693
 msgid "Emulator settings"
 msgstr "Ajustes del emulador"
 
-#: templates/_macros/nav_tabs.html:40 templates/game_detail.html:699
+#: templates/_macros/nav_tabs.html:40 templates/game_detail.html:703
 #: templates/rom_tools_hub.html:193 templates/versions_review.html:5
 #: templates/versions_review.html:80
 msgid "Regional Versions"
 msgstr "Versiones regionales"
 
-#: templates/game_detail.html:707 templates/museum_system.html:100
+#: templates/game_detail.html:711 templates/museum_system.html:100
 msgid "Released"
 msgstr "Lanzado"
 
-#: templates/game_detail.html:709
+#: templates/game_detail.html:713
 msgid "File size"
 msgstr "Tamaño del archivo"
 
-#: templates/game_detail.html:710
+#: templates/game_detail.html:714
 msgid "Revision"
 msgstr "Revisión"
 
-#: templates/game_detail.html:711
+#: templates/game_detail.html:715
 msgid "Languages"
 msgstr "Idiomas"
 
-#: templates/game_detail.html:712
+#: templates/game_detail.html:716
 msgid "Scores"
 msgstr "Puntuaciones"
 
-#: templates/game_detail.html:721
+#: templates/game_detail.html:725
 msgid "(this page)"
 msgstr "(esta página)"
 
-#: templates/game_detail.html:739
+#: templates/game_detail.html:743
 msgid "Known differences"
 msgstr "Diferencias conocidas"
 
-#: templates/game_detail.html:739
+#: templates/game_detail.html:743
 msgid "AI-written"
 msgstr "Escrito por IA"
 
-#: templates/game_detail.html:740
+#: templates/game_detail.html:744
 msgid "Written by AI from what it knows about these releases. It can be wrong."
 msgstr ""
 "Escrito por IA a partir de lo que sabe de estos lanzamientos. Puede "
 "equivocarse."
 
-#: templates/game_detail.html:742
+#: templates/game_detail.html:746
 msgid "The AI knows of no differences between these versions."
 msgstr "La IA no conoce diferencias entre estas versiones."
 
-#: templates/game_detail.html:745
+#: templates/game_detail.html:749
 msgid "No other regional versions are linked to this game."
 msgstr "No hay otras versiones regionales vinculadas a este juego."
 
-#: templates/game_detail.html:750
+#: templates/game_detail.html:754
 msgid "Unlink this version"
 msgstr "Desvincular esta versión"
 
-#: templates/game_detail.html:751
+#: templates/game_detail.html:755
 msgid "Summarise differences with AI"
 msgstr "Resumir diferencias con IA"
 
-#: templates/game_detail.html:753
+#: templates/game_detail.html:757
 msgid "Link a version"
 msgstr "Vincular una versión"
 
-#: templates/game_detail.html:754
+#: templates/game_detail.html:758
 msgid "Link a version: search this system"
 msgstr "Vincular una versión: buscar en este sistema"
 
-#: templates/game_detail.html:767
+#: templates/game_detail.html:771
 msgid "Scrape History"
 msgstr "Historial de scrapeo"
 
-#: templates/game_detail.html:793
+#: templates/game_detail.html:797
 msgid "Primary scraper"
 msgstr "Scraper principal"
 
-#: templates/game_detail.html:795
+#: templates/game_detail.html:799
 msgid "Fallback scraper"
 msgstr "Scraper de respaldo"
 
-#: templates/game_detail.html:802
+#: templates/game_detail.html:806
 msgid "Fields filled:"
 msgstr "Campos rellenados:"
 
-#: templates/game_detail.html:810
+#: templates/game_detail.html:814
 msgid "None"
 msgstr "Ninguno"
 
-#: templates/game_detail.html:815
+#: templates/game_detail.html:819
 msgid "Still missing:"
 msgstr "Aún ausentes:"
 

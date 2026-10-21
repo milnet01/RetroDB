@@ -551,6 +551,29 @@
             <li><strong>Feilsøking</strong> &mdash; Fjern fastlåst masse-scraping, tøm RA-synkroniseringskø, tøm PSN-oppdatering, tøm museumsgenerering, start server på nytt</li>
         </ul>
 
+        <h3 id="emulators-play">Emulatorer og spilling</h3>
+        <p>Administratorer setter opp emulatorer under <strong>Innstillinger &rarr; Emulatorer</strong>. Legg mappen der emulatorene dine ligger til i <strong>Emulatormapper</strong>. RetroDB finner hver emulator der (en AppImage, et portabelt skript eller en installert Flatpak) og knytter den til systemene den kjører. Tilordningstabellen viser for hvert system om emulatoren fungerer og om BIOS-filene er på plass. RetroDB leser bare BIOS-filer; den kopierer eller laster dem aldri ned.</p>
+        <p>Spill der emulatoren fungerer får en <strong>Spill</strong>-knapp på spillsiden, på biblioteksbrikker og på systemsider.</p>
+        <p>For DuckStation, PCSX2 og RPCS3 setter RetroDB også oppløsningsskala og sideforhold for hvert spill, i emulatorens egen innstillingsfil per spill, og om spillet starter i fullskjerm. Endre verdiene for et helt system med <strong>Innstillinger</strong>-knappen i tilordningstabellen, eller for ett spill i panelet <strong>Emulatorinnstillinger</strong> på spillsiden. De skrives når du trykker Spill. En innstilling du endrer inne i selve emulatoren gjelder alltid: RetroDB lar den være i fred fra da av. Kjør hver emulator én gang før du spiller, slik at den oppretter innstillingsmappen sin.</p>
+
+        <h4>RetroArch-taster</h4>
+        <p>Dette er RetroArchs egne standardtaster; du kan endre dem i menyen under <strong>Settings &rarr; Input &rarr; Hotkeys</strong>.</p>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>F1</kbd> <span>Åpne eller lukk RetroArch-menyen</span></div>
+            <div class="shortcut-item"><kbd>F2</kbd> <span>Lagre tilstand</span></div>
+            <div class="shortcut-item"><kbd>F4</kbd> <span>Last tilstand</span></div>
+            <div class="shortcut-item"><kbd>F6</kbd> <kbd>F7</kbd> <span>Forrige eller neste lagringsplass</span></div>
+            <div class="shortcut-item"><kbd>Space</kbd> <span>Hurtigspoling av eller på</span></div>
+            <div class="shortcut-item"><kbd>L</kbd> <span>Hurtigspoling mens du holder inne</span></div>
+            <div class="shortcut-item"><kbd>R</kbd> <span>Spol tilbake mens du holder inne, hvis tilbakespoling er på</span></div>
+            <div class="shortcut-item"><kbd>P</kbd> <span>Pause</span></div>
+            <div class="shortcut-item"><kbd>H</kbd> <span>Tilbakestill spillet</span></div>
+            <div class="shortcut-item"><kbd>F8</kbd> <span>Skjermbilde</span></div>
+            <div class="shortcut-item"><kbd>F</kbd> <span>Fullskjerm av eller på</span></div>
+            <div class="shortcut-item"><kbd>Esc</kbd> <span>Avslutt</span></div>
+        </div>
+        <p>Hjemmedatamaskinspill (Commodore 64, Amiga, ZX Spectrum og ZX81, MSX, DOS, Atari 8-bit og ST, Amstrad CPC, PC-98 og X68000) trenger hele tastaturet, så RetroDB starter dem med alle taster rettet mot spillet og tastene over slått av. Trykk <kbd>Scroll Lock</kbd> for å slå tastene over på igjen, og trykk igjen for å gi tastaturet tilbake til spillet. Spillsiden viser en påminnelse ved siden av <strong>Spill</strong> for disse spillene. På de fleste PlayStation- og Xbox-kontrollere åpner PS- eller Xbox-knappen også menyen.</p>
+
         <div class="help-tip">
             <strong>Tips:</strong> Deaktiverte skrapere vil ikke utløse "API offline"-varsler på Dashboardet. Hvis du ikke bruker en skraper, deaktiver den i Innstillinger &rarr; Scraping &rarr; Skraper i stedet for å slette API-nøkkelen.
         </div>
@@ -657,6 +680,7 @@
         <ul>
             <li><strong>Fill Missing Only</strong> &mdash; Fyll kun ut tomme metadatafelt, behold eksisterende data</li>
             <li><strong>Full Re-scrape</strong> &mdash; Erstatt alle felt inkludert medier (laster ned nye bilder og videoer)</li>
+            <li><strong>Behold eksisterende medier</strong> &mdash; Med Full reskraping beholdes bildene, videoene og manualene som allerede ligger på disken, i stedet for å lastes ned på nytt. Nye skjermbilder blir fortsatt lagt til.</li>
             <li><strong>Check RetroAchievements</strong> &mdash; Sjekk også etter RetroAchievements-prestasjonssett under scraping</li>
         </ul>
 

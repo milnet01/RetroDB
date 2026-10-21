@@ -362,6 +362,18 @@ def launch_checker():
     return can_launch
 
 
+def keyboard_core(system_id, emulator_override_id) -> bool:
+    """True when the game would launch in a RetroArch keyboard computer's
+    core, so its hotkeys wait behind Scroll Lock (PASS-59-152)."""
+    try:
+        emu, sys_emu = _pick_mapping(system_id, emulator_override_id)
+    except LaunchResolutionError:
+        return False
+    return bool(emu and emu.get('is_retroarch') and sys_emu
+                and (sys_emu.get('retroarch_core') or '').startswith(
+                    _KEYBOARD_CORE_PREFIXES))
+
+
 def resolve_launch_context(game_id: int) -> LaunchContext:
     game = query("""
         SELECT g.id, g.system_id, g.rom_path, g.emulator_override_id, g.launch_args_override,

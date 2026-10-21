@@ -551,6 +551,29 @@
             <li><strong>פתרון תקלות</strong> &mdash; ניקוי גירוד המוני תקוע, ניקוי תור סנכרון RA, ניקוי רענון PSN, ניקוי יצירת מוזיאון, הפעלה מחדש של השרת</li>
         </ul>
 
+        <h3 id="emulators-play">אמולטורים והפעלה</h3>
+        <p>מנהלים מגדירים אמולטורים ב-<strong>הגדרות &rarr; אמולטורים</strong>. הוסיפו את התיקייה שבה נמצאים האמולטורים שלכם אל <strong>תיקיות אמולטורים</strong>. RetroDB מוצא שם כל אמולטור (AppImage, סקריפט נייד או Flatpak מותקן) ומקשר אותו למערכות שהוא מריץ. טבלת המיפוי מראה, לכל מערכת, אם האמולטור שלה עובד ואם קובצי ה-BIOS שלה במקומם. RetroDB רק קורא קובצי BIOS; הוא לעולם לא מעתיק או מוריד אותם.</p>
+        <p>למשחקים שהאמולטור שלהם עובד יש כפתור <strong>שחק</strong> בעמוד המשחק, בכרטיסי הספרייה ובעמודי המערכות.</p>
+        <p>עבור DuckStation, PCSX2 ו-RPCS3, RetroDB קובע גם לכל משחק את קנה המידה של הרזולוציה ואת יחס הגובה-רוחב, בקובץ ההגדרות לכל משחק של האמולטור עצמו, וכן אם המשחק מתחיל במסך מלא. שנו את הערכים למערכת שלמה בכפתור <strong>הגדרות</strong> בטבלת המיפוי, או למשחק אחד בחלונית <strong>הגדרות אמולטור</strong> בעמוד שלו. הם נכתבים כשלוחצים על שחק. הגדרה ששניתם בתוך האמולטור עצמו תמיד גוברת: RetroDB לא נוגע בה מאותו רגע. הריצו כל אמולטור פעם אחת לפני המשחק, כדי שייצור את תיקיית ההגדרות שלו.</p>
+
+        <h4>מקשי RetroArch</h4>
+        <p>אלה מקשי ברירת המחדל של RetroArch עצמו; אפשר לשנות אותם בתפריט שלו תחת <strong>Settings &rarr; Input &rarr; Hotkeys</strong>.</p>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>F1</kbd> <span>פתיחה או סגירה של תפריט RetroArch</span></div>
+            <div class="shortcut-item"><kbd>F2</kbd> <span>שמירת מצב</span></div>
+            <div class="shortcut-item"><kbd>F4</kbd> <span>טעינת מצב</span></div>
+            <div class="shortcut-item"><kbd>F6</kbd> <kbd>F7</kbd> <span>משבצת שמירה קודמת או הבאה</span></div>
+            <div class="shortcut-item"><kbd>Space</kbd> <span>הפעלה או כיבוי של הרצה מהירה</span></div>
+            <div class="shortcut-item"><kbd>L</kbd> <span>הרצה מהירה כל עוד המקש לחוץ</span></div>
+            <div class="shortcut-item"><kbd>R</kbd> <span>הרצה לאחור כל עוד המקש לחוץ, אם הרצה לאחור פעילה</span></div>
+            <div class="shortcut-item"><kbd>P</kbd> <span>השהיה</span></div>
+            <div class="shortcut-item"><kbd>H</kbd> <span>איפוס המשחק</span></div>
+            <div class="shortcut-item"><kbd>F8</kbd> <span>צילום מסך</span></div>
+            <div class="shortcut-item"><kbd>F</kbd> <span>מסך מלא פועל או כבוי</span></div>
+            <div class="shortcut-item"><kbd>Esc</kbd> <span>יציאה</span></div>
+        </div>
+        <p>משחקי מחשבים ביתיים (Commodore 64, Amiga, ZX Spectrum ו-ZX81, MSX, DOS, Atari 8-bit ו-ST, Amstrad CPC, PC-98 ו-X68000) צריכים את המקלדת כולה, ולכן RetroDB מפעיל אותם כשכל מקש עובר למשחק והמקשים שלמעלה כבויים. לחצו <kbd>Scroll Lock</kbd> כדי להפעיל שוב את המקשים שלמעלה, ושוב כדי להחזיר את המקלדת למשחק. עמוד המשחק מציג תזכורת ליד <strong>שחק</strong> במשחקים אלה. ברוב בקרי PlayStation ו-Xbox, גם כפתור PS או Xbox פותח את התפריט.</p>
+
         <div class="help-tip">
             <strong>טיפ:</strong> גרדים מושבתים לא יפעילו אזהרות "API לא מקוון" בלוח הבקרה. אם אינכם משתמשים בגרד, השביתו אותו בהגדרות &rarr; גירוד &rarr; גרד במקום למחוק את מפתח ה-API.
         </div>
@@ -657,6 +680,7 @@
         <ul>
             <li><strong>מילוי חסרים בלבד</strong> &mdash; מלאו רק שדות מטא-נתונים ריקים, תוך שמירה על הנתונים הקיימים</li>
             <li><strong>איסוף מחדש מלא</strong> &mdash; החליפו את כל השדות כולל מדיה (מוריד תמונות וסרטונים חדשים)</li>
+            <li><strong>שמירת המדיה הקיימת</strong> &mdash; באיסוף מחדש מלא, שמרו את התמונות, הסרטונים והמדריכים שכבר נמצאים בדיסק במקום להוריד אותם שוב. צילומי מסך חדשים עדיין נוספים.</li>
             <li><strong>בדוק RetroAchievements</strong> &mdash; בדקו גם קיום סטים של הישגי RetroAchievements במהלך האיסוף</li>
         </ul>
 
