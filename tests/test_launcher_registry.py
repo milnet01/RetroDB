@@ -60,7 +60,7 @@ def test_gc_removes_exited_after_ttl(registry):
     t = 10_000.0
     registry.register(token='gone', proc=exited_proc, game_id=1, emulator_id=1,
                       started_at=t - 3.0)
-    registry._mark_exited('gone', exit_time=t - 2.0)  # 2s ago, ttl=1.0
+    registry.mark_exited('gone', exit_time=t - 2.0)  # 2s ago, ttl=1.0
 
     with patch('services.launcher.registry.time.time', return_value=t):
         registry.gc()
@@ -77,7 +77,7 @@ def test_gc_keeps_recent_exited(registry):
     t = 10_000.0
     registry.register(token='recent', proc=proc, game_id=1, emulator_id=1,
                       started_at=t)
-    registry._mark_exited('recent', exit_time=t)
+    registry.mark_exited('recent', exit_time=t)
     with patch('services.launcher.registry.time.time', return_value=t):
         registry.gc()
     assert registry.get('recent') is not None

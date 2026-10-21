@@ -17,8 +17,7 @@ from pathlib import Path
 from typing import Callable, Optional
 
 from services.launch_resolver import (LaunchResolutionError, _FLATPAK_RE,
-                                      _default_cores_dir, _resolve_binary)
-from settings_manager import get_setting
+                                      _resolve_binary, core_file)
 
 # (binary, data dir or None, system_emulators row) -> status dict
 BiosRule = Callable[[Path, Optional[Path], Optional[dict]], dict]
@@ -173,6 +172,13 @@ def retroarch_cfg(binary) -> Optional[tuple]:
     return None
 
 
+def retroarch_path(value: str, home: Path) -> str:
+    """A path from retroarch.cfg with a leading ~ expanded against `home`,
+    the one retroarch_cfg returned. An AppImage's own home is not the server
+    user's, so expanduser() would point at the wrong folder."""
+    return str(home) + value[1:] if value.startswith('~') else value
+
+
 def _retroarch_bios(binary, data_dir, sys_emu):
     found = retroarch_cfg(binary)
     if not found or not sys_emu or not sys_emu.get('retroarch_core'):
@@ -181,10 +187,8 @@ def _retroarch_bios(binary, data_dir, sys_emu):
     system_dir = _cfg(cfg_path).get('system_directory', '')
     if not system_dir or system_dir == 'default':
         return dict(_UNKNOWN)
-    if system_dir.startswith('~'):
-        system_dir = str(home) + system_dir[1:]
-    cores_dir = Path(get_setting('retroarch_cores_dir', '') or _default_cores_dir()).expanduser()
-    info_path = (cores_dir / sys_emu['retroarch_core']).with_suffix('.info')
+    system_dir = retroarch_path(system_dir, home)
+    info_path = core_file(sys_emu['retroarch_core']).with_suffix('.info')
     if not info_path.is_file():
         return dict(_UNKNOWN)
     info = _cfg(info_path)

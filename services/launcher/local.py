@@ -2,13 +2,14 @@
 # RETRODB - LocalLauncher: subprocess.Popen impl
 # =============================================================================
 # Launches emulator processes on the same host as the Flask worker. Always
-# shell=False; argv comes from the resolver pre-shell-quoted.
+# shell=False; argv comes from the resolver as literal, already-split words
+# (no shell quoting), so pass it to Popen unchanged.
 #
 # Lifecycle:
 #   launch()  -> Popen, register handle
 #   status()  -> proc.poll(); transition to 'exited' on first non-None
 #   kill()    -> SIGTERM (once per process), poll up to timeout_s, then SIGKILL
-#   wait()    -> block until the child exits (or timeout_s passes)
+#   wait()    -> block until the child exits; raises TimeoutExpired after timeout_s
 #
 # stderr is drained into a 4KB ring buffer (last bytes wins) so a quickly-
 # exiting emulator's failure can be surfaced to the user.
@@ -104,7 +105,7 @@ class LocalLauncher:
                     pass
 
         if entry.exit_time is None:
-            self._registry._mark_exited(token, exit_time=time.time())
+            self._registry.mark_exited(token, exit_time=time.time())
         return self._status_from_entry(entry)
 
     def wait(self, token: str, *, timeout_s: Optional[float] = None) -> LaunchStatus:
@@ -125,7 +126,7 @@ class LocalLauncher:
         # TTL, so the registry stays bounded (PASS-59-64 §4.3).
         now = time.time()
         for token in self._registry.newly_exited():
-            self._registry._mark_exited(token, exit_time=now)
+            self._registry.mark_exited(token, exit_time=now)
         self._registry.gc()
         return self._registry.active()
 
@@ -137,7 +138,7 @@ class LocalLauncher:
         if rc is None:
             return LaunchStatus(state='running', exit_code=None, runtime_s=runtime)
         if entry.exit_time is None:
-            self._registry._mark_exited(entry.handle.token, exit_time=time.time())
+            self._registry.mark_exited(entry.handle.token, exit_time=time.time())
         if entry.exit_time:
             runtime = entry.exit_time - entry.handle.started_at
         return LaunchStatus(state='exited', exit_code=rc, runtime_s=runtime,

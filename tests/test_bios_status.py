@@ -56,7 +56,6 @@ def test_retroarch_lists_only_required_firmware(tmp_path, monkeypatch):
     settings = {'retroarch_binary': str(app), 'retroarch_cores_dir': str(cores)}
     lookup = lambda key, default=None: settings.get(key, default)  # noqa: E731
     monkeypatch.setattr('services.launch_resolver.get_setting', lookup)
-    monkeypatch.setattr('services.emulator_adapters.get_setting', lookup)
     emu = {'is_retroarch': 1, 'binary_name': 'retroarch', 'binary_path_override': None}
 
     status = bios_status(emu, {'retroarch_core': 'probe_libretro.so'})

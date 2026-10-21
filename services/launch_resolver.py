@@ -2,7 +2,10 @@
 # RETRODB - LaunchResolver
 # =============================================================================
 # Turns a game_id into a fully-resolved LaunchContext (binary path + argv +
-# token). Pure DB reads + template substitution; no process spawn.
+# token). It spawns nothing, but it is not read-only: a RetroArch launch
+# writes data/retroarch-overrides*.cfg, and a VICE launch adds pad defaults to
+# the user's own core-options files. _mapping_resolves (the Play button's
+# check) runs `flatpak info`.
 #
 # Resolution algorithm (spec §Resolution algorithm):
 #   1. Load game; raise if missing.
@@ -64,6 +67,11 @@ _KEYBOARD_CORE_PREFIXES = (
 # Helpers
 # -----------------------------------------------------------------------------
 
+def _is_keyboard_core(core: str) -> bool:
+    """True for a keyboard computer's core; `core` is a file name or a path."""
+    return Path(core).name.startswith(_KEYBOARD_CORE_PREFIXES)
+
+
 def _retroarch_overrides(core_path: str) -> list:
     """Write the overrides file and return the argv words that load it, or
     [] when it cannot be written: a launch never fails for a settings reason.
@@ -83,7 +91,7 @@ def _retroarch_overrides(core_path: str) -> list:
         elif os.environ.get('DISPLAY'):
             lines.append('input_driver = "x"\n')
     path = _RETROARCH_OVERRIDES
-    if Path(core_path).name.startswith(_KEYBOARD_CORE_PREFIXES):
+    if _is_keyboard_core(core_path):
         lines.append('input_auto_game_focus = "1"\n')
         path = _RETROARCH_KEYBOARD_OVERRIDES
     text = ''.join(lines)
@@ -107,52 +115,62 @@ _VICE_PAD_DEFAULTS = {
 _OPT_LINE = re.compile(r'^\s*([A-Za-z0-9_]+)\s*=\s*"?([^"\n]*)"?\s*$')
 
 
-def _vice_pad_defaults(binary_str: str, core_path: str, rom_path: Path) -> None:
-    """Set _VICE_PAD_DEFAULTS in the core-options files RetroArch reads for a
-    VICE game, only where a key is absent or still "---", so a mapping the
-    user chose stays. Core options live outside retroarch.cfg, so
-    --appendconfig cannot carry them. Never fails a launch."""
+def _vice_option_files(binary_str: str, core_path: str, rom_path: Path) -> list:
+    """The core-options files RetroArch reads for a VICE game: the global
+    file when global_core_options is on, else the core's own file plus any
+    game or folder file that exists. [] for a non-VICE core or when
+    RetroArch's config cannot be found. May raise OSError."""
     m = re.match(r'vice_(\w+?)_libretro', Path(core_path).name)
     if not m:
-        return
-    from services.emulator_adapters import _cfg, retroarch_cfg
+        return []
+    # Imported here: emulator_adapters imports this module at load time.
+    from services.emulator_adapters import _cfg, retroarch_cfg, retroarch_path
     found = retroarch_cfg(binary_str)
     if not found:
-        return
+        return []
     home, cfg_path = found
+    cfg = _cfg(cfg_path)
+    if cfg.get('global_core_options') == 'true':
+        path = cfg.get('core_options_path') or str(cfg_path.parent / 'retroarch-core-options.cfg')
+        return [Path(retroarch_path(path, home))]
+    conf_dir = cfg.get('rgui_config_directory', '')
+    if not conf_dir or conf_dir == 'default':
+        conf_dir = str(cfg_path.parent / 'config')
+    core_dir = Path(retroarch_path(conf_dir, home)) / f'VICE {m.group(1)}'
+    # A game's own or its folder's options file wins over the core's
+    # when game_specific_options is on; map those too where they exist.
+    return [core_dir / f'VICE {m.group(1)}.opt'] + [
+        p for p in (core_dir / f'{rom_path.parent.name}.opt',
+                    core_dir / f'{rom_path.stem}.opt') if p.is_file()]
+
+
+def _merge_pad_defaults(target: Path) -> None:
+    """Add _VICE_PAD_DEFAULTS to one options file, only where a key is absent
+    or still "---"; write it only when that changed it."""
+    lines = target.read_text(encoding='utf-8').splitlines(True) if target.is_file() else []
+    todo = dict(_VICE_PAD_DEFAULTS)
+    for i, line in enumerate(lines):
+        km = _OPT_LINE.match(line)
+        if km and km.group(1) in todo:
+            value = todo.pop(km.group(1))
+            if km.group(2) == '---':
+                lines[i] = f'{km.group(1)} = "{value}"\n'
+    if lines and not lines[-1].endswith('\n'):
+        lines[-1] += '\n'
+    lines += [f'{k} = "{v}"\n' for k, v in todo.items()]
+    text = ''.join(lines)
+    if not target.is_file() or target.read_text(encoding='utf-8') != text:
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(text, encoding='utf-8')
+
+
+def _vice_pad_defaults(binary_str: str, core_path: str, rom_path: Path) -> None:
+    """Set _VICE_PAD_DEFAULTS in the core-options files RetroArch reads for a
+    VICE game, so a mapping the user chose stays. Core options live outside
+    retroarch.cfg, so --appendconfig cannot carry them. Never fails a launch."""
     try:
-        cfg = _cfg(cfg_path)
-        if cfg.get('global_core_options') == 'true':
-            path = cfg.get('core_options_path') or str(cfg_path.parent / 'retroarch-core-options.cfg')
-            targets = [Path(path.replace('~', str(home), 1) if path.startswith('~') else path)]
-        else:
-            conf_dir = cfg.get('rgui_config_directory', '')
-            if not conf_dir or conf_dir == 'default':
-                conf_dir = str(cfg_path.parent / 'config')
-            elif conf_dir.startswith('~'):
-                conf_dir = str(home) + conf_dir[1:]
-            core_dir = Path(conf_dir) / f'VICE {m.group(1)}'
-            # A game's own or its folder's options file wins over the core's
-            # when game_specific_options is on; map those too where they exist.
-            targets = [core_dir / f'VICE {m.group(1)}.opt'] + [
-                p for p in (core_dir / f'{rom_path.parent.name}.opt',
-                            core_dir / f'{rom_path.stem}.opt') if p.is_file()]
-        for target in targets:
-            lines = target.read_text(encoding='utf-8').splitlines(True) if target.is_file() else []
-            todo = dict(_VICE_PAD_DEFAULTS)
-            for i, line in enumerate(lines):
-                km = _OPT_LINE.match(line)
-                if km and km.group(1) in todo:
-                    value = todo.pop(km.group(1))
-                    if km.group(2) == '---':
-                        lines[i] = f'{km.group(1)} = "{value}"\n'
-            if lines and not lines[-1].endswith('\n'):
-                lines[-1] += '\n'
-            lines += [f'{k} = "{v}"\n' for k, v in todo.items()]
-            text = ''.join(lines)
-            if not target.is_file() or target.read_text(encoding='utf-8') != text:
-                target.parent.mkdir(parents=True, exist_ok=True)
-                target.write_text(text, encoding='utf-8')
+        for target in _vice_option_files(binary_str, core_path, rom_path):
+            _merge_pad_defaults(target)
     except OSError as e:
         logger.warning("VICE pad mapping not written (%s); launching without", e)
 
@@ -168,7 +186,7 @@ _FLATPAK_RE = re.compile(r'^flatpak run [A-Za-z0-9._\-]+$')
 
 def _flatpak_split(binary_str: str) -> list:
     """If binary_str is `flatpak run org.libretro.RetroArch`, return that as
-    a 3-element prefix. If it's an absolute path, return [path]."""
+    a 3-element prefix. Anything else is one program: return [binary_str]."""
     if _FLATPAK_RE.match(binary_str):
         return binary_str.split()
     return [binary_str]
@@ -202,6 +220,14 @@ def _default_cores_dir() -> str:
     return str(Path('~/.config/retroarch/cores/').expanduser())
 
 
+def core_file(retroarch_core: str) -> Path:
+    """Where a RetroArch core file lives: the `retroarch_cores_dir` setting,
+    else RetroArch's default cores folder. The launch, the Play button's
+    check and the BIOS check all find a core here."""
+    cores_dir = get_setting('retroarch_cores_dir', '') or _default_cores_dir()
+    return Path(cores_dir).expanduser() / retroarch_core
+
+
 def _split(value: str, field: str) -> list:
     """shlex.split, with a parse error reported against the field it came
     from so the route answers 422 instead of 500 (PASS-59-64 §4.1)."""
@@ -221,7 +247,8 @@ _FIX_HINT = (
 def _resolve_binary(emu_row, sys_emu_row) -> str:
     """Apply the resolver's binary lookup chain: the row's own override,
     then the `retroarch_binary` setting for RetroArch rows, then PATH
-    (PASS-59-64 INV-1)."""
+    (PASS-59-64 INV-1). Also called from emulator_adapters and
+    standalone_settings, despite the underscore."""
     if emu_row.get('binary_path_override'):
         path = emu_row['binary_path_override']
         if not os.access(path, os.X_OK):
@@ -243,7 +270,8 @@ def _resolve_binary(emu_row, sys_emu_row) -> str:
 def _pick_mapping(system_id, emulator_override_id, system_name=''):
     """Return (emulator row or None, system_emulators row or None): the game's
     override emulator with its system's row for it, else the system's default
-    row, else its lowest-id row. Raises when the system has no row at all."""
+    row, else its lowest-id row. Raises when the system has no row at all.
+    Also called from standalone_settings, despite the underscore."""
     if emulator_override_id:
         emu = query("SELECT * FROM emulators WHERE id = ?",
                     (emulator_override_id,), one=True)
@@ -299,8 +327,7 @@ def _mapping_resolves(emu, sys_emu) -> bool:
     if emu.get('is_retroarch'):
         if not sys_emu or not sys_emu.get('retroarch_core'):
             return False
-        cores_dir = get_setting('retroarch_cores_dir', '') or _default_cores_dir()
-        return (Path(cores_dir).expanduser() / sys_emu['retroarch_core']).exists()
+        return core_file(sys_emu['retroarch_core']).exists()
     return True
 
 
@@ -317,6 +344,58 @@ def _fullscreen_flag(emu, system_id) -> list:
         WHERE emulator_id = ? AND scope = 'system' AND scope_id = ? AND setting = 'fullscreen'
     """, (emu['id'], system_id), one=True)
     return flag_args(spec, row['value'] if row else None)
+
+
+def _build_args(emu, sys_emu, game, rom_path_obj: Path, core_path: str) -> list:
+    """The argv words after the program: emu's args_template with every
+    variable filled in.
+
+    {rom}, {rom_dir}, {rom_name} and {retroarch_core} substitute inside a
+    word. {system_extra_args}, {game_extra_args} and {fullscreen_flag} must
+    each be a whole word, and expand to zero or more words. The two extra-args
+    variables are appended at the end when the template does not name them;
+    {fullscreen_flag} never is (PASS-59-91 §4.6)."""
+    # Strategy: parse the template ONCE with shlex.split (outer quotes strip),
+    # then substitute literal values into each argv token via format_map.
+    # No re-splitting after substitution -> shell metacharacters in rom_path
+    # cannot escape into multiple argv tokens.  This is stronger than the
+    # shlex.quote-then-split round-trip suggested by the spec, which produced
+    # paths wrapped in literal single-quotes that confused emulators.
+    system_extra = (sys_emu.get('extra_args') if sys_emu else None) or ''
+    game_extra = game.get('launch_args_override') or ''
+
+    vars_dict = _SafeDict(
+        rom=str(rom_path_obj),
+        rom_dir=str(rom_path_obj.parent),
+        rom_name=rom_path_obj.stem,
+        retroarch_core=core_path,
+    )
+    # Appended when the template lacks them.
+    appendable = {
+        '{system_extra_args}': _split(system_extra, 'extra_args'),
+        '{game_extra_args}': _split(game_extra, 'launch_args_override'),
+    }
+    list_vars = dict(appendable)
+
+    template = emu['args_template']
+    if '{fullscreen_flag}' in template:
+        list_vars['{fullscreen_flag}'] = _fullscreen_flag(emu, game['system_id'])
+    substituted = []
+    for tok in _split(template, 'args_template'):
+        if tok in list_vars:
+            substituted.extend(list_vars[tok])
+            continue
+        for name in list_vars:
+            if name in tok:
+                raise LaunchResolutionError(
+                    f"{name} must be a whole argument in args_template, "
+                    f"not part of {tok!r}")
+        substituted.append(tok.format_map(vars_dict))
+
+    for name, words in appendable.items():
+        if name not in template:
+            substituted.extend(words)
+    return substituted
 
 
 # -----------------------------------------------------------------------------
@@ -372,11 +451,13 @@ def keyboard_core(system_id, emulator_override_id) -> bool:
     except LaunchResolutionError:
         return False
     return bool(emu and emu.get('is_retroarch') and sys_emu
-                and (sys_emu.get('retroarch_core') or '').startswith(
-                    _KEYBOARD_CORE_PREFIXES))
+                and _is_keyboard_core(sys_emu.get('retroarch_core') or ''))
 
 
 def resolve_launch_context(game_id: int) -> LaunchContext:
+    """Work out how to launch one game: the emulator, its program, the RetroArch
+    core and the full argv, as the header's algorithm sets out. Raises
+    LaunchResolutionError with a message for the user when it cannot."""
     game = query("""
         SELECT g.id, g.system_id, g.rom_path, g.emulator_override_id, g.launch_args_override,
                s.name AS system_name, s.folder AS system_folder
@@ -397,6 +478,8 @@ def resolve_launch_context(game_id: int) -> LaunchContext:
     # ---- binary --------------------------------------------------------------
     binary_str = _resolve_binary(emu, sys_emu)
     binary_argv_prefix = _flatpak_split(binary_str)
+    # The program argv[0] runs: for a Flatpak launch that is `flatpak`
+    # itself, not the emulator.
     binary_path = Path(binary_argv_prefix[0])
 
     # ---- core (RA only) -----------------------------------------------------
@@ -406,59 +489,14 @@ def resolve_launch_context(game_id: int) -> LaunchContext:
             raise LaunchResolutionError(
                 f"RetroArch emulator selected for system {game['system_name']!r} "
                 "but no retroarch_core configured on system_emulators row")
-        cores_dir_str = get_setting('retroarch_cores_dir', '') or _default_cores_dir()
-        core_path_obj = Path(cores_dir_str).expanduser() / sys_emu['retroarch_core']
+        core_path_obj = core_file(sys_emu['retroarch_core'])
         if not core_path_obj.exists():
             raise LaunchResolutionError(
                 f"RetroArch core not found: {core_path_obj}")
         core_path = str(core_path_obj)
 
-    # ---- template variables --------------------------------------------------
-    # Strategy: parse the template ONCE with shlex.split (outer quotes strip),
-    # then substitute literal values into each argv token via format_map.
-    # No re-splitting after substitution -> shell metacharacters in rom_path
-    # cannot escape into multiple argv tokens.  This is stronger than the
-    # shlex.quote-then-split round-trip suggested by the spec, which produced
-    # paths wrapped in literal single-quotes that confused emulators.
     rom_path_obj = Path(game['rom_path'])
-    system_extra = (sys_emu.get('extra_args') if sys_emu else None) or ''
-    game_extra = game.get('launch_args_override') or ''
-
-    vars_dict = _SafeDict(
-        rom=str(rom_path_obj),
-        rom_dir=str(rom_path_obj.parent),
-        rom_name=rom_path_obj.stem,
-        retroarch_core=core_path,
-    )
-    # List variables: a token that is exactly one expands to zero or more
-    # argv elements; inside a larger token it cannot, so it is refused.
-    list_vars = {
-        '{system_extra_args}': _split(system_extra, 'extra_args'),
-        '{game_extra_args}': _split(game_extra, 'launch_args_override'),
-    }
-
-    template = emu['args_template']
-    # PASS-59-91 §4.6 — never auto-appended; only a template naming it gets it.
-    if '{fullscreen_flag}' in template:
-        list_vars['{fullscreen_flag}'] = _fullscreen_flag(emu, game['system_id'])
-    substituted = []
-    for tok in _split(template, 'args_template'):
-        if tok in list_vars:
-            substituted.extend(list_vars[tok])
-            continue
-        for name in list_vars:
-            if name in tok:
-                raise LaunchResolutionError(
-                    f"{name} must be a whole argument in args_template, "
-                    f"not part of {tok!r}")
-        substituted.append(tok.format_map(vars_dict))
-
-    # Auto-append if template did NOT explicitly use the token
-    list_vars.pop('{fullscreen_flag}', None)
-    for name, words in list_vars.items():
-        if name not in template:
-            substituted.extend(words)
-
+    substituted = _build_args(emu, sys_emu, game, rom_path_obj, core_path)
     overrides = _retroarch_overrides(core_path) if emu.get('is_retroarch') else []
     argv = list(binary_argv_prefix) + overrides + substituted
 

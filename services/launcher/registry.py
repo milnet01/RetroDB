@@ -60,7 +60,7 @@ class ProcessRegistry:
             return [t for t, e in self._entries.items()
                     if e.exit_time is None and e.proc.poll() is not None]
 
-    def _mark_exited(self, token: str, *, exit_time: float):
+    def mark_exited(self, token: str, *, exit_time: float):
         with self._lock:
             entry = self._entries.get(token)
             if entry is not None and entry.exit_time is None:
