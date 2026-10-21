@@ -6702,7 +6702,14 @@ orchestrator, several by execution rather than reading.
   surfaces" paragraph enumerates four call sites and Analytics is not among
   them, so either the enumeration or the code is the wrong side.
 - **Verify**: switch locale and confirm chart labels translate.
-- **Status**: planned (2026-09-01). Lanes: i18n, analytics.
+- **Resolution** (2026-10-21): Shipped in v3.30.0 (1316616, 2026-10-21). Page-local fieldLabels()
+  over window.FIELD_LABELS in templates/analytics.html (tField() is
+  deferred and not yet defined when the charts build). i18n.md §7 now
+  names Analytics among the JS surfaces. Verified on a :5001 scratch
+  server with locale ru: all four charts render Russian labels. The
+  page's other chart text (completion states, dataset names, the
+  metadata radar axes) is still English: filed as PASS-59-141.
+- **Status**: done (2026-10-21). Lanes: i18n, analytics.
 - **Source**: review-code support-services lane 2026-09-01.
 
 ---
@@ -6723,7 +6730,12 @@ orchestrator, several by execution rather than reading.
 - **Plan**: change the three templates to `_('Actions')` (or use `pgettext`
   with a context) and re-extract, so `"Action"` has a single home.
 - **Verify**: `messages.pot` shows one source location for the msgid.
-- **Status**: planned (2026-09-01). Lanes: i18n.
+- **Resolution** (2026-10-21): Shipped in v3.30.0 (d5bdb3b, 2026-10-21). The four table headers use
+  the existing "Actions" msgid; messages.pot lists one source for
+  "Action" (services/i18n_labels.py). Every locale's "Action" already
+  matched its "Action-Adventure" genre form (checked all 21 catalogs),
+  so no msgstr changed.
+- **Status**: done (2026-10-21). Lanes: i18n.
 - **Source**: review-code support-services lane 2026-09-01.
 
 ---
@@ -8802,6 +8814,29 @@ were corrected in `2836bc3` and are not repeated here.
   their own route) and make them hold on X11 and Wayland. Works
   with any RetroArch; PASS-59-139 (ship a preset build) is the
   larger, separate option.
+
+---
+
+#### Pass 59.141 Analytics chart text other than canonical labels is English in every language (LOW, S).
+- **Resolution** (2026-10-21): Shipped in v3.30.0 (2026-10-21). Every chart label, dataset name and
+  axis title in templates/analytics.html goes through {{ _('...')|tojson
+  }}; 13 new msgids translated in all 20 catalogs. "Completeness %"
+  became _('Completeness') ~ ' %': a bare % in a msgid makes Jinja's
+  newstyle gettext raise "incomplete format" and the page fell back to
+  its error text. tests/test_i18n_labels.py::test_analytics_page_renders
+  now renders /analytics (no test did). Verified under ru on a :5001
+  scratch server.
+- **Status**: done
+- **Target**: `templates/analytics.html` — the completion doughnut's
+  labels (`'Not Started'`, `'In Progress'`, ...), the metadata radar's axis
+  labels (`'Description'`, `'Boxart'`, ...), and dataset names such as
+  `'Games'` and `'Completeness %'`.
+- **Why**: they are JS string literals in the page script, so neither the
+  catalog nor `FIELD_LABELS` reaches them. Seen with locale ru on
+  2026-10-21 while checking PASS-59-61.
+- **Plan**: wrap each with Jinja `{{ _('...')|tojson }}` (the script is a
+  nonced inline block, so the server can render them); re-extract catalogs.
+- **Verify**: /analytics under ru shows those labels translated.
 
 ## Done index
 

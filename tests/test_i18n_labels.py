@@ -88,3 +88,15 @@ def test_analytics_canonical_charts_map_labels_in_the_template():
     for var in ('genre_labels', 'persp_labels', 'dim_labels', 'mode_labels'):
         assert f'labels: fieldLabels({{{{ {var}|tojson }}}}),' in page, var
     assert 'window.FIELD_LABELS' in page
+
+
+def test_analytics_page_renders(admin_test_client):
+    """A bare `%` in a template `_()` msgid makes Jinja's newstyle gettext
+    raise "incomplete format", and /analytics swallowed it into an error
+    page (PASS-59-141). Render the page so that class of slip fails here."""
+    client, _csrf = admin_test_client()
+    resp = client.get('/analytics')
+    assert resp.status_code == 200
+    page = resp.get_data(as_text=True)
+    assert 'An error occurred loading analytics' not in page
+    assert 'fieldLabels(' in page

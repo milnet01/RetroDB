@@ -1581,7 +1581,7 @@ if (decadeCtx) {
         data: {
             labels: {{ decade_labels|tojson }},
             datasets: [{
-                label: 'Games',
+                label: {{ _('Games')|tojson }},
                 data: {{ decade_data|tojson }},
                 backgroundColor: chartColors.cyan,
                 borderColor: '#4cc9f0',
@@ -1622,7 +1622,7 @@ if (genreCtx) {
         data: {
             labels: fieldLabels({{ genre_labels|tojson }}),
             datasets: [{
-                label: 'Games',
+                label: {{ _('Games')|tojson }},
                 data: {{ genre_data|tojson }},
                 backgroundColor: colorArray,
                 borderWidth: 0,
@@ -1661,7 +1661,7 @@ if (completionCtx) {
     new Chart(completionCtx, {
         type: 'doughnut',
         data: {
-            labels: ['Not Started', 'In Progress', 'Played', 'Completed', '100%'],
+            labels: [{{ _('Not Started')|tojson }}, {{ _('In Progress')|tojson }}, {{ _('Played')|tojson }}, {{ _('Completed')|tojson }}, '100%'],
             datasets: [{
                 data: {{ completion_data|tojson }},
                 backgroundColor: [
@@ -1695,7 +1695,7 @@ if (yearTimelineCtx) {
         data: {
             labels: {{ year_labels|tojson }},
             datasets: [{
-                label: 'Games Released',
+                label: {{ _('Games Released')|tojson }},
                 data: {{ year_data|tojson }},
                 borderColor: '#4cc9f0',
                 backgroundColor: 'rgba(76, 201, 240, 0.15)',
@@ -1746,7 +1746,7 @@ if (storageCtx) {
         data: {
             labels: {{ storage_labels|tojson }},
             datasets: [{
-                label: 'Storage (GB)',
+                label: {{ _('Storage (GB)')|tojson }},
                 data: {{ storage_data|tojson }},
                 backgroundColor: chartColors.magenta,
                 borderColor: '#f72585',
@@ -1771,7 +1771,7 @@ if (storageCtx) {
                     },
                     title: {
                         display: true,
-                        text: 'Size (GB)'
+                        text: {{ _('Size (GB)')|tojson }}
                     }
                 },
                 y: {
@@ -1792,7 +1792,7 @@ if (raCtx) {
         data: {
             labels: {{ ra_system_labels|tojson }},
             datasets: [{
-                label: 'Games with RA',
+                label: {{ _('Games with RA')|tojson }},
                 data: {{ ra_system_data|tojson }},
                 backgroundColor: 'rgba(255, 193, 7, 0.7)',
                 borderColor: '#ffc107',
@@ -1843,7 +1843,7 @@ if (scoreDistCtx) {
         data: {
             labels: {{ score_dist_labels|tojson }},
             datasets: [{
-                label: 'Number of Games',
+                label: {{ _('Number of Games')|tojson }},
                 data: {{ score_dist_data|tojson }},
                 backgroundColor: [
                     'rgba(239, 68, 68, 0.7)',   // 0-9 (red)
@@ -1895,7 +1895,7 @@ if (scoreSystemCtx) {
             labels: {{ score_system_labels|tojson }},
             datasets: [
                 {
-                    label: 'Critic Score',
+                    label: {{ _('Critic Score')|tojson }},
                     data: {{ score_system_critic|tojson }},
                     backgroundColor: 'rgba(76, 201, 240, 0.7)',
                     borderColor: '#4cc9f0',
@@ -1903,7 +1903,7 @@ if (scoreSystemCtx) {
                     borderRadius: 4
                 },
                 {
-                    label: 'User Score',
+                    label: {{ _('User Score')|tojson }},
                     data: {{ score_system_user|tojson }},
                     backgroundColor: 'rgba(168, 85, 247, 0.7)',
                     borderColor: '#a855f7',
@@ -1944,7 +1944,7 @@ if (scoreScatterCtx) {
         type: 'scatter',
         data: {
             datasets: [{
-                label: 'Games',
+                label: {{ _('Games')|tojson }},
                 data: {{ score_scatter|tojson }},
                 backgroundColor: 'rgba(76, 201, 240, 0.5)',
                 borderColor: '#4cc9f0',
@@ -1962,7 +1962,7 @@ if (scoreScatterCtx) {
                     callbacks: {
                         label: function(context) {
                             const point = context.raw;
-                            return (point.title || '') + ' (Critic: ' + point.x + ', User: ' + point.y + ')';
+                            return (point.title || '') + ' (' + {{ _('Critic')|tojson }} + ': ' + point.x + ', ' + {{ _('User')|tojson }} + ': ' + point.y + ')';
                         }
                     }
                 }
@@ -1973,7 +1973,7 @@ if (scoreScatterCtx) {
                     max: 100,
                     title: {
                         display: true,
-                        text: 'Critic Score'
+                        text: {{ _('Critic Score')|tojson }}
                     },
                     grid: { color: 'rgba(42, 53, 66, 0.3)' }
                 },
@@ -1982,7 +1982,7 @@ if (scoreScatterCtx) {
                     max: 100,
                     title: {
                         display: true,
-                        text: 'User Score'
+                        text: {{ _('User Score')|tojson }}
                     },
                     grid: { color: 'rgba(42, 53, 66, 0.3)' }
                 }
@@ -2060,21 +2060,21 @@ if (ageSystemCtx) {
             labels: {{ rating_system_labels|tojson }},
             datasets: [
                 {
-                    label: 'Family Friendly',
+                    label: {{ _('Family Friendly')|tojson }},
                     data: {{ rating_system_family|tojson }},
                     backgroundColor: 'rgba(34, 197, 94, 0.7)',
                     borderColor: '#22c55e',
                     borderWidth: 1
                 },
                 {
-                    label: 'Teen',
+                    label: {{ _('Teen')|tojson }},
                     data: {{ rating_system_teen|tojson }},
                     backgroundColor: 'rgba(234, 179, 8, 0.7)',
                     borderColor: '#eab308',
                     borderWidth: 1
                 },
                 {
-                    label: 'Mature',
+                    label: {{ _('Mature')|tojson }},
                     data: {{ rating_system_mature|tojson }},
                     backgroundColor: 'rgba(239, 68, 68, 0.7)',
                     borderColor: '#ef4444',
@@ -2119,7 +2119,7 @@ if (devCtx) {
         data: {
             labels: {{ dev_labels|tojson }},
             datasets: [{
-                label: 'Games',
+                label: {{ _('Games')|tojson }},
                 data: {{ dev_data|tojson }},
                 backgroundColor: chartColors.cyan,
                 borderColor: '#4cc9f0',
@@ -2156,7 +2156,7 @@ if (pubCtx) {
         data: {
             labels: {{ pub_labels|tojson }},
             datasets: [{
-                label: 'Games',
+                label: {{ _('Games')|tojson }},
                 data: {{ pub_data|tojson }},
                 backgroundColor: chartColors.magenta,
                 borderColor: '#f72585',
@@ -2193,7 +2193,7 @@ if (franchiseCtx) {
         data: {
             labels: {{ franchise_labels|tojson }},
             datasets: [{
-                label: 'Games',
+                label: {{ _('Games')|tojson }},
                 data: {{ franchise_data|tojson }},
                 backgroundColor: chartColors.purple,
                 borderColor: '#7209b7',
@@ -2286,7 +2286,7 @@ if (modesCtx) {
         data: {
             labels: fieldLabels({{ mode_labels|tojson }}),
             datasets: [{
-                label: 'Games',
+                label: {{ _('Games')|tojson }},
                 data: {{ mode_data|tojson }},
                 backgroundColor: colorArray,
                 borderWidth: 0,
@@ -2321,7 +2321,7 @@ if (playerCtx) {
         data: {
             labels: {{ player_labels|tojson }},
             datasets: [{
-                label: 'Games',
+                label: {{ _('Games')|tojson }},
                 data: {{ player_data|tojson }},
                 backgroundColor: chartColors.teal,
                 borderColor: '#14b8a6',
@@ -2386,7 +2386,7 @@ if (lengthCtx) {
         data: {
             labels: {{ length_labels|tojson }},
             datasets: [{
-                label: 'Games',
+                label: {{ _('Games')|tojson }},
                 data: {{ length_data|tojson }},
                 backgroundColor: chartColors.orange,
                 borderColor: '#f59e0b',
@@ -2425,9 +2425,9 @@ if (metadataRadarCtx) {
     new Chart(metadataRadarCtx, {
         type: 'radar',
         data: {
-            labels: ['Description', 'Boxart', 'Genre', 'Developer', 'Publisher', 'Release Date', 'Screenshots', 'Fanart', 'Video', 'Manual', 'HLTB', 'Ratings', 'Modes', 'Region'],
+            labels: [{{ _('Description')|tojson }}, {{ _('Boxart')|tojson }}, {{ _('Genre')|tojson }}, {{ _('Developer')|tojson }}, {{ _('Publisher')|tojson }}, {{ _('Release Date')|tojson }}, {{ _('Screenshots')|tojson }}, {{ _('Fanart')|tojson }}, {{ _('Video')|tojson }}, {{ _('Manual')|tojson }}, {{ _('HLTB')|tojson }}, {{ _('Ratings')|tojson }}, {{ _('Modes')|tojson }}, {{ _('Region')|tojson }}],
             datasets: [{
-                label: 'Completeness %',
+                label: {{ (_('Completeness') ~ ' %')|tojson }},
                 data: [
                     mqData.description || 0,
                     mqData.boxart || 0,
@@ -2492,7 +2492,7 @@ if (saveTypeCtx) {
         data: {
             labels: {{ save_labels|tojson }},
             datasets: [{
-                label: 'Games',
+                label: {{ _('Games')|tojson }},
                 data: {{ save_data|tojson }},
                 backgroundColor: chartColors.blue,
                 borderColor: '#3b82f6',
@@ -2532,7 +2532,7 @@ if (growthCtx) {
         data: {
             labels: {{ growth_labels|tojson }},
             datasets: [{
-                label: 'Total Games',
+                label: {{ _('Total Games')|tojson }},
                 data: {{ growth_data|tojson }},
                 borderColor: '#22c55e',
                 backgroundColor: 'rgba(34, 197, 94, 0.15)',
