@@ -155,13 +155,13 @@ The hybrid orchestrator's UPDATE in `apply_hybrid_metadata` is the same pattern 
 
 `scraper/match_scorer.py::calculate_title_match_score(result_title, search_title) -> int` is the shared title scorer for every source. It runs both titles through `title_normalizer.strip_title_noise` (drops region tags, disc markers, edition tags, version tags), `services/game_utils.py::normalize_article_for_comparison` (moves a trailing article to the front: `Legend of Zelda, The` and `Legend of Zelda, The: Ocarina of Time` compare as `The Legend of Zelda…`; English `The`/`A`/`An` only) and `normalize_for_matching` (lowercases, strips possessive `'s`, drops apostrophe variants, replaces colons/dashes/slashes with spaces, normalises Roman numerals II/VII → 2/7) before comparing. A title left empty by that (it was only tags, such as `(USA)`) scores 0.
 
-Score ladder (pure title similarity, 0-340 typical range):
+Score ladder (pure title similarity, 0-350; the bands below are maxima, not floors):
 
 1. Raw exact match before noise strip → **350**
 2. Exact normalised match → **300** (+50 if raw exact)
-3. Search words ⊆ result words → **150-280** (depends on extras; "Rogue" finds "Assassin's Creed Rogue")
-4. Result words ⊆ search words → **30-100** (penalised — missing terms; "Assassin's Creed" should NOT beat "Assassin's Creed Rogue" when searching the latter)
-5. Partial overlap → **20-120** (Jaccard-weighted by search coverage)
+3. Search words ⊆ result words → up to **280** (fewer extras score higher; "Rogue" finds "Assassin's Creed Rogue")
+4. Result words ⊆ search words → up to **100** (penalised — missing terms; "Assassin's Creed" should NOT beat "Assassin's Creed Rogue" when searching the latter)
+5. Partial overlap → up to **120** (Jaccard-weighted by search coverage)
 6. + word-order LCS bonus → **0-40**
 
 Per-source extras layer on top via `calculate_<src>_score`:
