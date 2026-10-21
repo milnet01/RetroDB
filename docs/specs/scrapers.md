@@ -153,7 +153,7 @@ The hybrid orchestrator's UPDATE in `apply_hybrid_metadata` is the same pattern 
 
 ## 6. Match scoring
 
-`scraper/match_scorer.py::calculate_title_match_score(result_title, search_title) -> int` is the shared title scorer for every source. It runs both titles through `title_normalizer.strip_title_noise` (drops region tags, disc markers, edition tags, version tags), `services/game_utils.py::normalize_article_for_comparison` (moves a trailing article to the front: `Legend of Zelda, The` and `Legend of Zelda, The: Ocarina of Time` compare as `The Legend of Zelda…`; English `The`/`A`/`An` only) and `normalize_for_matching` (lowercases, strips possessive `'s`, drops apostrophe variants, replaces colons/dashes/slashes with spaces, normalises Roman numerals II/VII → 2/7) before comparing.
+`scraper/match_scorer.py::calculate_title_match_score(result_title, search_title) -> int` is the shared title scorer for every source. It runs both titles through `title_normalizer.strip_title_noise` (drops region tags, disc markers, edition tags, version tags), `services/game_utils.py::normalize_article_for_comparison` (moves a trailing article to the front: `Legend of Zelda, The` and `Legend of Zelda, The: Ocarina of Time` compare as `The Legend of Zelda…`; English `The`/`A`/`An` only) and `normalize_for_matching` (lowercases, strips possessive `'s`, drops apostrophe variants, replaces colons/dashes/slashes with spaces, normalises Roman numerals II/VII → 2/7) before comparing. A title left empty by that (it was only tags, such as `(USA)`) scores 0.
 
 Score ladder (pure title similarity, 0-340 typical range):
 
@@ -168,7 +168,7 @@ Per-source extras layer on top via `calculate_<src>_score`:
 
 - **+150 if `platform_match=True`** — the result's platform matched the system we searched on. This is the dominant signal; without it, even a perfect title from the wrong platform sits below a fuzzy match on the right platform.
 - **+10-20 if `release_date` present** — recency / completeness signal.
-- **+10-20 for region** — US/WORLD preferred (TGDB: `USA`/`WORLD` +20, `EUROPE`/`UK` +10; SS: `US`/`WOR` +20, `EU`/`UK` +10; IGDB has no region signal in search).
+- **+10-20 for region** — `match_scorer.region_bonus`: +20 for the user's `default_region` or World, +10 for the next region in `version_groups.preferred_regions()` (by default Europe for a USA user). TGDB names and ScreenScraper codes (`us`, `eu`, `uk`, `jp`, `wor`) map to the setting names first. IGDB has no region signal in search.
 - **RAWG only**: +15 if Metacritic present, +10 if image present.
 
 After per-source scoring, `ScraperManager.search_games` adds a **priority boost** based on the user's `priority` list: `boost = (len(priority) - idx) * 10` — first source +50, second +40, third +30, etc. for a five-source priority list. Meaningful enough to break ties, not large enough to override a clear title/platform mismatch.

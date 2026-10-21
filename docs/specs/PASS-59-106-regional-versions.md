@@ -129,7 +129,9 @@ Rank, lowest first, then `games.id`:
 
 ```
 0  region matches default_region (case-insensitive), or region is empty
-   and rom_path carries "(<default_region>" — so "(USA, Europe)" counts
+   and the ROM's file name (not its folders) carries "(<default_region>"
+   — so "(USA, Europe)" counts — or its GoodTools tag ("(U)", "(E)",
+   "(J)", "(W)")
 1  same test for "World"
 2  same test for each region_options entry, in list order
 3  anything else
@@ -206,8 +208,9 @@ same system, not already in one group, and not rejected, on any one signal:
 A pair whose filenames carry different disc numbers (`(Disc 1 of 2)`) is
 never suggested: that is one game's discs. Nor is a pair where only one
 filename, tags removed, carries a sequel number (a number, or a Roman
-numeral II to X). On the live library, wrong scrapes gave sequels their
-first game's ids (2026-10-19). Two numbered names still pair: a regional
+numeral II to X not joined to a hyphen, so "X-Men" has none). On the
+live library, wrong scrapes gave sequels their first game's ids
+(2026-10-19). Two numbered names still pair: a regional
 release can be renumbered (Final Fantasy III in the USA is Final Fantasy
 VI in Japan). Pairs join into groups through
 shared members. Each suggestion lists its members and the signals that

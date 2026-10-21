@@ -29,11 +29,15 @@ _REGION_ALIASES = {'usa': ('USA', 'North America'), 'north america': ('USA', 'No
 
 _DEFAULT_REGION_OPTIONS = ['USA', 'Europe', 'Japan', 'World']
 
+# GoodTools one-letter region tags, read as exact tags: "(U)" is USA.
+_GOODTOOLS_CODES = {'usa': 'U', 'europe': 'E', 'japan': 'J', 'world': 'W'}
+
 # One `(...)` or `[...]` tag in a ROM filename.
 _TAG_RE = re.compile(r'[(\[]([^()\[\]]*)[)\]]')
 
 # A sequel number in a title: a number, or a Roman numeral II to X.
-_SEQUEL_RE = re.compile(r'\b(?:\d+|II|III|IV|V|VI|VII|VIII|IX|X)\b')
+# A hyphen ends no numeral, so the X in "X-Men" is not one.
+_SEQUEL_RE = re.compile(r'\b\d+\b|(?<![\w-])(?:II|III|IV|V|VI|VII|VIII|IX|X)(?![\w-])')
 
 # Columns the game page's version list and comparison read (§4.4).
 _MEMBER_COLUMNS = """g.id, g.title, g.region, g.rom_path, g.release_date, g.publisher,
@@ -148,29 +152,45 @@ def reject(game_ids):
 # PREFERRED VERSION (§4.2)
 # =============================================================================
 
-def preferred_rank_sql(alias='g'):
-    """SQL ranking a games row for the preferred version, lowest first.
-
-    Tiers: the `default_region` setting, then World, then each
-    `region_options` entry in order, then anything else. A row matches a tier
-    when its stored region names it, or its region is empty and its ROM path
-    carries "(<region>" — so "(USA, Europe)" counts as USA. Computed at query
-    time, so a settings change shows on the next page load.
-
-    Returns (sql, params).
-    """
+def preferred_regions():
+    """Region names in preference order: the `default_region` setting, then
+    World, then each `region_options` entry. Shared by the preferred-version
+    rank and the scraper's region bonus."""
     settings = settings_manager.load_settings()
     default = (settings.get('default_region') or 'USA').strip()
     options = settings.get('region_options') or _DEFAULT_REGION_OPTIONS
-    tiers = list(dict.fromkeys(r.strip() for r in [default, 'World', *options] if r and r.strip()))
+    return list(dict.fromkeys(r.strip() for r in [default, 'World', *options] if r and r.strip()))
 
+
+def preferred_rank_sql(alias='g'):
+    """SQL ranking a games row for the preferred version, lowest first.
+
+    Tiers follow preferred_regions(), then anything else. A row matches a
+    tier when its stored region names it, or its region is empty and its ROM
+    file name carries "(<region>" — so "(USA, Europe)" counts as USA — or the
+    tier's GoodTools tag, such as "(U)". Folders are not read. Computed at
+    query time, so a settings change shows on the next page load.
+
+    Returns (sql, params).
+    """
+    tiers = preferred_regions()
     region = f"COALESCE({alias}.region, '')"
+    # The text after the last / or \ — SQLite has no basename().
+    path = f"{alias}.rom_path"
+    name = (f"SUBSTR({path}, LENGTH(RTRIM({path}, "
+            f"REPLACE(REPLACE({path}, '/', ''), '\\', ''))) + 1)")
     whens, params = [], []
     for rank, tier in enumerate(tiers):
-        for name in _REGION_ALIASES.get(tier.lower(), (tier,)):
-            whens.append(f"WHEN LOWER({region}) = LOWER(?) OR ({region} = '' AND "
-                         f"{alias}.rom_path LIKE ? ESCAPE '\\') THEN {rank}")
-            params.extend([name, f"%({escape_like(name)}%"])
+        names = _REGION_ALIASES.get(tier.lower(), (tier,))
+        patterns = [f"%({escape_like(n)}%" for n in names]
+        if tier.lower() in _GOODTOOLS_CODES:
+            patterns.append(f"%({_GOODTOOLS_CODES[tier.lower()]})%")
+        for n in names:
+            whens.append(f"WHEN LOWER({region}) = LOWER(?) THEN {rank}")
+            params.append(n)
+        for pattern in patterns:
+            whens.append(f"WHEN {region} = '' AND {name} LIKE ? ESCAPE '\\' THEN {rank}")
+            params.append(pattern)
     return f"CASE {' '.join(whens)} ELSE {len(tiers)} END", params
 
 

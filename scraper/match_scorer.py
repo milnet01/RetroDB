@@ -1,9 +1,9 @@
 # =============================================================================
 # RETRODB - Match Scoring
 # =============================================================================
-# Scores search results against the search query. Pure functions, no state —
-# extracted from scraper/scraper_manager.py so the orchestrator stays focused
-# on orchestration.
+# Scores search results against the search query. No state of its own; the
+# region bonus reads the region settings. Extracted from
+# scraper/scraper_manager.py so the orchestrator stays focused on orchestration.
 #
 # Score layout:
 #   calculate_title_match_score — pure title similarity (0-340)
@@ -12,7 +12,7 @@
 # Per-source bonuses follow the same shape:
 #   release_date  : +10-20  (TGDB/IGDB/RAWG/SS vary)
 #   platform_match: +150    (MAJOR — ensures correct-platform results top)
-#   region        : +10-20  (US/WORLD preferred; source-specific codes)
+#   region        : +10-20  (Default Region and World first; region_bonus)
 #   plus source-specific extras (RAWG +metacritic, +image)
 # =============================================================================
 
@@ -22,6 +22,28 @@ from scraper.title_normalizer import normalize_for_matching, strip_title_noise
 from services.game_utils import normalize_article_for_comparison
 
 logger = logging.getLogger(__name__)
+
+# Source region codes (ScreenScraper's lower-case codes, TGDB's names) read
+# as the names the region settings use.
+_SOURCE_REGIONS = {
+    'us': 'USA', 'usa': 'USA', 'north america': 'USA',
+    'eu': 'Europe', 'europe': 'Europe', 'uk': 'Europe',
+    'jp': 'Japan', 'japan': 'Japan',
+    'wor': 'World', 'world': 'World',
+}
+
+
+def region_bonus(region):
+    """+20 for the Default Region or World, +10 for the next preferred
+    region, else 0. Follows services.version_groups.preferred_regions()."""
+    from services.version_groups import preferred_regions
+    name = _SOURCE_REGIONS.get((region or '').strip().lower())
+    if not name:
+        return 0
+    order = [r.lower() for r in preferred_regions()]
+    if name.lower() in order[:2]:
+        return 20
+    return 10 if order[2:3] == [name.lower()] else 0
 
 
 def word_order_bonus(result_words_list, search_words_list):
@@ -86,6 +108,10 @@ def calculate_title_match_score(result_title, search_title):
             f"  WARN: Words match but strings differ! "
             f"result_repr={result_normalized!r} search_repr={search_normalized!r}"
         )
+
+    # A title that was only tags ("(USA)") has nothing left to compare.
+    if not result_normalized or not search_normalized:
+        return 0
 
     # Exact normalized match — already in correct word order, no bonus needed.
     if result_normalized == search_normalized:
@@ -155,12 +181,7 @@ def calculate_ss_score(result, search_title):
         score += 10
     if result.get('platform_match'):
         score += 150
-    region = (result.get('region') or '').upper()
-    if region in ('US', 'USA', 'WOR'):
-        score += 20
-    elif region in ('EU', 'UK'):
-        score += 10
-    return score
+    return score + region_bonus(result.get('region'))
 
 
 def calculate_tgdb_score(result, search_title):
@@ -171,12 +192,7 @@ def calculate_tgdb_score(result, search_title):
         score += 10
     if result.get('platform_match'):
         score += 150
-    region = result.get('region', '').upper() if result.get('region') else ''
-    if region in ('USA', 'WORLD'):
-        score += 20
-    elif region in ('EUROPE', 'EU', 'UK'):
-        score += 10
-    return score
+    return score + region_bonus(result.get('region'))
 
 
 def calculate_igdb_score(result, search_title):
