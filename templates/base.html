@@ -191,7 +191,7 @@
         <!-- About Modal: outside <nav>, whose backdrop-filter would make it the
          containing block for this fixed overlay and clip it to the sidebar -->
         {% from "_macros/legal_disclaimer.html" import legal_disclaimer %}
-        <div class="about-modal-overlay" id="aboutModalOverlay" data-on-click="hideAboutModal" data-self-only>
+        <div class="about-modal-overlay" id="aboutModalOverlay" data-on-click="hideAboutModal" data-self-only data-focus-trap data-focus-trap-content=".about-modal" data-focus-trap-onescape="hideAboutModal">
             <div class="about-modal glass-panel" role="dialog" aria-modal="true" aria-labelledby="aboutModalTitle">
                 <div class="about-modal-header">
                     <h2 id="aboutModalTitle">🎮 {{ _('About') }} RetroDB</h2>
@@ -430,26 +430,28 @@
         modalCallback = onConfirm;
         modalCancelCallback = onCancel;
 
-        // Add ESC/Enter key listener
+        // Enter confirms; the focus trap's onEscape cancels.
         document.addEventListener('keydown', modalKeyHandler);
 
         // Focus-trap inside the modal and restore focus on close (WCAG 2.4.3).
         if (window.ModalFocusTrap) {
             ModalFocusTrap.activate(customModal.querySelector('.custom-modal-content') || customModal,
-                                    document.activeElement);
+                                    document.activeElement,
+                                    { onEscape: () => closeModal() });
         }
     }
     
     function modalKeyHandler(e) {
-        if (e.key === 'Escape') {
-            closeModal();
-        } else if (e.key === 'Enter') {
+        if (e.key === 'Enter') {
             confirmModal();
         }
     }
     
     function closeModal() {
-        document.getElementById('customModal').classList.remove('active');
+        // Only when open: deactivating otherwise pops another modal's trap.
+        const modal = document.getElementById('customModal');
+        if (!modal.classList.contains('active')) return;
+        modal.classList.remove('active');
         document.removeEventListener('keydown', modalKeyHandler);
         if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
         if (modalCancelCallback) {
@@ -460,6 +462,7 @@
     }
 
     function confirmModal() {
+        if (!document.getElementById('customModal').classList.contains('active')) return;
         document.removeEventListener('keydown', modalKeyHandler);
         if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
         if (modalCallback) {
@@ -626,18 +629,10 @@
     // About Modal Functions
     function showAboutModal() {
         document.getElementById('aboutModalOverlay').classList.add('active');
-        document.addEventListener('keydown', aboutModalKeyHandler);
     }
     
     function hideAboutModal() {
         document.getElementById('aboutModalOverlay').classList.remove('active');
-        document.removeEventListener('keydown', aboutModalKeyHandler);
-    }
-    
-    function aboutModalKeyHandler(e) {
-        if (e.key === 'Escape') {
-            hideAboutModal();
-        }
     }
     
     </script>
@@ -939,7 +934,7 @@
 
     <!-- GDM Screenshot Lightbox -->
     <div id="gdmScreenshotLightbox" class="gdm-lightbox" data-on-click="GameDetailModal.closeLightbox" data-self-only role="dialog" aria-modal="true" aria-label="{{ _('Screenshot viewer') }}">
-        <span class="gdm-lightbox-close" data-on-click="GameDetailModal.closeLightbox" aria-label="{{ _('Close screenshot viewer') }}">&times;</span>
+        <button type="button" class="gdm-lightbox-close" data-on-click="GameDetailModal.closeLightbox" aria-label="{{ _('Close screenshot viewer') }}">&times;</button>
         <button type="button" class="gdm-lightbox-nav prev" data-on-click="GameDetailModal.navigateScreenshot" data-args='[-1]' data-stop aria-label="{{ _('Previous screenshot') }}">&#8249;</button>
         <img id="gdmLightboxImage" class="gdm-lightbox-image" alt="{{ _('Screenshot') }}">
         <button type="button" class="gdm-lightbox-nav next" data-on-click="GameDetailModal.navigateScreenshot" data-args='[1]' data-stop aria-label="{{ _('Next screenshot') }}">&#8250;</button>

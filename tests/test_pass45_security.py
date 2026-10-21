@@ -2530,50 +2530,70 @@ class TestPass45_17ModalFocusTrapRollout:
             "Pass 45.17: setup must run at DOMContentLoaded"
         )
 
-    def test_settings_modals_marked(self):
-        """userModal, confirmModal, editControllerModal on the settings page
-        must declare data-focus-trap. Pass 38.6 moved userModal into
-        _settings_tabs/account.html and editControllerModal into
-        _settings_tabs/customization.html — search across the union."""
-        body = read_settings_with_partials()
-        assert ('id="userModal" data-focus-trap' in body), (
-            "Pass 45.17: userModal must declare data-focus-trap"
-        )
-        assert ('id="confirmModal" class="confirm-modal" data-focus-trap'
-                in body), (
-            "Pass 45.17: confirmModal must declare data-focus-trap"
-        )
-        assert ('id="editControllerModal" data-focus-trap' in body), (
-            "Pass 45.17: editControllerModal must declare data-focus-trap"
-        )
+    # Each modal gets ONE trap: the data-focus-trap attribute, or a
+    # hand-written ModalFocusTrap.activate in its open function. Both on one
+    # modal pushed two traps per open (PASS-53-13), so the hand-wired ones
+    # must not carry the attribute.
+    _ATTRIBUTE_TRAPPED = {
+        'settings': ['id="confirmModal"'],
+        'reports.html': ['id="batchRenameModal"'],
+    }
+    _HAND_TRAPPED = {
+        'settings': ['userModal', 'editControllerModal'],
+        'tags.html': ['tagModal'],
+        'wishlist.html': ['wishlistModal'],
+        'lists.html': ['listModal'],
+        'list_detail.html': ['addGameModal'],
+        'compare_games.html': ['searchModal'],
+    }
 
-    def test_top_level_template_modals_marked(self):
-        """Top-level modal templates that didn't have a manual trap must
-        carry data-focus-trap."""
-        targets = {
-            'tags.html': 'id="tagModal"',
-            'wishlist.html': 'id="wishlistModal"',
-            'lists.html': 'id="listModal"',
-            'list_detail.html': 'id="addGameModal"',
-            'compare_games.html': 'id="searchModal"',
-            'reports.html': 'id="batchRenameModal"',
-        }
-        missing = []
-        for tpl, idstr in targets.items():
-            path = os.path.join(_REPO_ROOT, 'templates', tpl)
-            with open(path, encoding='utf-8') as f:
-                body = f.read()
-            # Find the modal opening tag and confirm data-focus-trap is in
-            # the same tag.
-            idx = body.find(idstr)
-            if idx == -1:
-                missing.append(f"{tpl}: {idstr} not found")
-                continue
-            tag_end = body.find('>', idx)
-            tag = body[idx:tag_end]
-            if 'data-focus-trap' not in tag:
-                missing.append(f"{tpl}: {idstr} tag missing data-focus-trap")
-        assert not missing, "\n".join(missing)
+    @staticmethod
+    def _page(name):
+        if name == 'settings':
+            return read_settings_with_partials()
+        with open(os.path.join(_REPO_ROOT, 'templates', name), encoding='utf-8') as f:
+            return f.read()
+
+    @staticmethod
+    def _opening_tag(body, idstr):
+        idx = body.find(idstr)
+        assert idx != -1, f"{idstr} not found"
+        return body[body.rfind('<', 0, idx):body.find('>', idx)]
+
+    def test_attribute_trapped_modals_marked(self):
+        for page, ids in self._ATTRIBUTE_TRAPPED.items():
+            body = self._page(page)
+            for idstr in ids:
+                assert 'data-focus-trap' in self._opening_tag(body, idstr), (
+                    f"{page}: {idstr} must declare data-focus-trap")
+
+    def test_hand_trapped_modals_trap_once(self):
+        for page, ids in self._HAND_TRAPPED.items():
+            body = self._page(page)
+            assert 'ModalFocusTrap.activate(' in body, page
+            for modal_id in ids:
+                tag = self._opening_tag(body, f'id="{modal_id}"')
+                assert 'data-focus-trap' not in tag, (
+                    f"{page}: {modal_id} is trapped by hand; the attribute "
+                    "would push a second trap")
+                assert f"getElementById('{modal_id}')" in body, (page, modal_id)
+
+    def test_only_the_top_trap_handles_keys(self):
+        """PASS-53-13: every trap's key handler sits on document, so without
+        a top-of-stack check one Escape closed each stacked modal at once."""
+        with open(os.path.join(_REPO_ROOT, 'static', 'js', 'utils.js'), encoding='utf-8') as f:
+            src = f.read()
+        assert 'top.keyHandler !== keyHandler' in src
+
+    def test_escape_fallback_never_force_closes(self):
+        """PASS-53-13: closeAnyModal stripped `.active` from every modal,
+        skipping their close functions and leaving traps and timers live."""
+        import re
+        with open(os.path.join(_REPO_ROOT, 'static', 'js', 'main.js'), encoding='utf-8') as f:
+            src = f.read()
+        body = re.search(r'function closeAnyModal\(\) \{(.+?)^\}', src, re.S | re.M).group(1)
+        assert "classList.remove('active')" not in body
+        assert 'ModalFocusTrap._stack.length' in body
 
     def test_modals_partials_marked(self):
         """The _modals/*.html partials included by game_detail.html must

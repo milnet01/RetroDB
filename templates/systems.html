@@ -114,11 +114,11 @@
 {% endif %}
 
 <!-- System Specs Modal -->
-<div id="specsModal" class="specs-modal">
-    <div class="specs-modal-content glass-panel">
+<div id="specsModal" class="specs-modal" data-focus-trap data-focus-trap-content=".specs-modal-content" data-focus-trap-onescape="closeSpecs">
+    <div class="specs-modal-content glass-panel" role="dialog" aria-modal="true" aria-labelledby="specsTitle">
         <div class="specs-modal-header">
             <h2 id="specsTitle">{{ _('System Specifications') }}</h2>
-            <button type="button" class="modal-close-btn" data-on-click="closeSpecs">×</button>
+            <button type="button" class="modal-close-btn" data-on-click="closeSpecs" aria-label="{{ _('Close') }}">×</button>
         </div>
         <div class="specs-modal-body" id="specsBody">
             <!-- Specs will be inserted here -->
@@ -838,10 +838,6 @@ document.getElementById('specsModal').addEventListener('click', function(e) {
     if (e.target === this) closeSpecs();
 });
 
-// Close on Escape
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closeSpecs();
-});
 
 // Search filter
 document.getElementById('systemSearch').addEventListener('input', function() {

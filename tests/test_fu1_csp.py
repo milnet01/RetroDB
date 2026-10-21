@@ -218,7 +218,10 @@ class TestDelegatedActionsResolve:
     function declared there is reachable only through `window.X = `; a
     top-level `function X` in a template or an unbundled file is a global."""
 
-    _ACTION = re.compile(r'data-on-(?!error\b)[a-z]+="([A-Za-z_$][\w$.]*)"')
+    # Also a modal's `data-focus-trap-onescape`, which main.js looks up on
+    # `window` the same way (PASS-53-13: a misspelt one left Escape dead).
+    _ACTION = re.compile(r'(?:data-on-(?!error\b)[a-z]+|data-focus-trap-onescape)'
+                         r'="([A-Za-z_$][\w$.]*)"')
 
     def _text(self, paths):
         return "\n".join(p.read_text(encoding='utf-8') for p in paths)

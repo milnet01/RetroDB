@@ -1581,17 +1581,14 @@ function focusSearch() {
 }
 
 function closeAnyModal() {
-    // Close screenshot modal if active (resets body overflow and state tracking)
+    // Escape reaches here only when no focus trap took it. An open modal's
+    // trap calls that modal's own close function and stops the event; a trap
+    // without an onEscape marks a modal that must stay open (a running sync).
+    // So with any trap open there is nothing to do: stripping `.active` here
+    // skipped each modal's close function and left its trap and timers running.
+    if (window.ModalFocusTrap && ModalFocusTrap._stack.length) return;
     if (RetroDBState.currentModal) {
         closeScreenshotModal();
-    }
-    // Close various modal types
-    document.querySelectorAll('.modal.active, .modal-overlay.active, .custom-modal.active').forEach(modal => {
-        modal.classList.remove('active');
-    });
-    // Try closeModal function if exists
-    if (typeof closeModal === 'function') {
-        try { closeModal(); } catch (e) {}
     }
 }
 
@@ -1869,11 +1866,13 @@ window.addEventListener('beforeunload', function() {
 // `data-focus-trap` to the modal root, with the trap mounted by a
 // MutationObserver that watches the `.active` class.
 //
-// Modals that already wire ModalFocusTrap.activate() manually (e.g.
-// gameDetailModal, gameEditModal, customModal, queueManagerModal,
-// folderBrowserModal, filter modal, bulk-edit/scrape modals, museum
-// lightboxes) are left alone — adding `data-focus-trap` to them would
-// double-attach. The opt-in attribute is the contract.
+// Modals that wire ModalFocusTrap.activate() by hand (gameDetailModal,
+// gameEditModal, customModal, queueManagerModal, folderBrowserModal, the
+// library filter modal, bulk-edit/scrape modals, museum lightboxes and the
+// wishlist / list / tag / search / add-game / user / controller dialogs) must
+// NOT also carry `data-focus-trap`: each would push its own trap. Every other
+// modal opts in with the attribute. `data-focus-trap-onescape` names its close
+// function; leave it off a modal Escape must not close (a running batch).
 // =============================================================================
 
 function _setupAutoFocusTraps() {
@@ -1883,6 +1882,8 @@ function _setupAutoFocusTraps() {
         let onEscape = null;
         if (onEscapeFn && typeof window[onEscapeFn] === 'function') {
             onEscape = window[onEscapeFn];
+        } else if (onEscapeFn) {
+            console.error(`data-focus-trap-onescape on #${modalEl.id}: no function "${onEscapeFn}"`);
         }
         const contentSelector = modalEl.getAttribute('data-focus-trap-content') || null;
         ModalFocusTrap.autoAttach(modalEl, {

@@ -165,10 +165,10 @@
 {% endif %}
 
 <!-- Scan Status Modal -->
-<div id="scanModal" class="modal">
-    <div class="modal-content glass-panel">
+<div id="scanModal" class="modal" data-focus-trap>
+    <div class="modal-content glass-panel" role="dialog" aria-modal="true" aria-labelledby="scanModalTitle">
         <div class="modal-header">
-            <h2>🔍 {{ _('Scanning Trophies') }}</h2>
+            <h2 id="scanModalTitle">🔍 {{ _('Scanning Trophies') }}</h2>
         </div>
         <div class="modal-body">
             <p id="scanStatus">{{ _('Scanning trophy folders...') }}</p>

@@ -13,6 +13,8 @@
     label: The About window's buttons are no longer cut off
   - type: accessibility
     label: Screen readers read the Platform Match Required switch by its visible name
+  - type: accessibility
+    label: Every pop-up window handles Escape, keyboard focus and screen readers the same way
   - type: deps
     label: Pillow 13 and other library updates
   body: |
@@ -83,6 +85,13 @@
         correctly in every language.</strong> The column header shared its
         wording with the Action game genre, so some languages showed the
         genre name there.</li>
+      <li><strong>Escape closes only the window on top.</strong> With a
+        question open over another window, Escape used to close both; some
+        windows also kept running after Escape hid them, and pressing Escape
+        on a game page could resume a bulk scrape you had paused. Every
+        window now closes through its own Close action, keeps keyboard focus
+        inside while open, and returns focus to the button that opened it.
+        Progress windows for running jobs stay open until the job ends.</li>
       <li><strong>Analytics charts are in your language.</strong> Genre,
         perspective, dimension and mode names, chart titles, axis names and
         legends were English in every language.</li>

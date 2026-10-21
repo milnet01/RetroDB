@@ -2,10 +2,10 @@
 <!-- Usage: include '_bulk_scrape_modal.html' in your template -->
 
 <div id="bulkScrapeModal" class="bulk-scrape-modal">
-    <div class="bulk-scrape-content glass-panel">
+    <div class="bulk-scrape-content glass-panel" role="dialog" aria-modal="true" aria-labelledby="bulkScrapeTitle">
         <div class="bulk-scrape-header">
-            <h2><span data-themed-icon="loading"></span> {{ _('Bulk Scraping') }}</h2>
-            <button type="button" class="modal-close-btn" data-on-click="closeBulkScrapeModal" id="bulkCloseBtn" style="display: none;">×</button>
+            <h2 id="bulkScrapeTitle"><span data-themed-icon="loading"></span> {{ _('Bulk Scraping') }}</h2>
+            <button type="button" class="modal-close-btn" data-on-click="closeBulkScrapeModal" id="bulkCloseBtn" style="display: none;" aria-label="{{ _('Close') }}">×</button>
         </div>
         <div class="bulk-scrape-body">
             <div class="bulk-progress-info">

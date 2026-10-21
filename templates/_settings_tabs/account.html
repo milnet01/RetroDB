@@ -41,7 +41,7 @@
             <div class="avatar-picker-modal" role="dialog" aria-modal="true" aria-label="{{ _('Choose avatar') }}">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                     <h3 style="margin: 0; font-family: var(--font-heading); color: var(--primary-cyan);">{{ _('Choose Avatar') }}</h3>
-                    <button type="button" data-on-click="closeAvatarPicker" style="background: none; border: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer;">&times;</button>
+                    <button type="button" data-on-click="closeAvatarPicker" aria-label="{{ _('Close') }}" style="background: none; border: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer;">&times;</button>
                 </div>
 
                 <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.9rem;">{{ _('Select a default avatar or upload your own image.') }}</p>
@@ -326,7 +326,7 @@
 </section>
 
 <!-- Add/Edit User Modal -->
-<div class="modal-overlay" id="userModal" data-focus-trap data-focus-trap-onescape="closeUserModal">
+<div class="modal-overlay" id="userModal">
     <div class="modal-content" style="max-width: 500px;" role="dialog" aria-modal="true" aria-labelledby="userModalTitle">
         <div class="modal-header">
             <h2 id="userModalTitle">{{ _('Add User') }}</h2>

@@ -1034,6 +1034,15 @@ function _isTypingTarget(target) {
     return false;
 }
 
+// The last element focused outside an auto-trapped modal: its trigger, when
+// the open path has already moved focus inside before the trap mounts.
+let _focusOutsideModal = null;
+document.addEventListener('focusin', (e) => {
+    if (e.target instanceof Element && !e.target.closest('[data-focus-trap]')) {
+        _focusOutsideModal = e.target;
+    }
+}, true);
+
 const ModalFocusTrap = {
     _stack: [],  // stack of { modalEl, triggerEl, keyHandler, onEscape }
 
@@ -1055,6 +1064,10 @@ const ModalFocusTrap = {
         const autoFocus = opts.autoFocus !== false;
 
         const keyHandler = (e) => {
+            // Every open trap listens on document; only the top one acts,
+            // or one Escape would also close each modal beneath it.
+            const top = this._stack[this._stack.length - 1];
+            if (!top || top.keyHandler !== keyHandler) return;
             if (e.key === 'Escape' && onEscape) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -1148,7 +1161,8 @@ const ModalFocusTrap = {
      * @param {Function} [opts.onEscape] - escape handler.
      * @param {string}   [opts.contentSelector] - CSS selector for the
      *     focus-trap target inside modalEl (defaults to `.modal-content`
-     *     or `.custom-modal-content`, falling back to modalEl itself).
+     *     or `.custom-modal-content`, falling back to modalEl itself);
+     *     `'self'` traps modalEl itself.
      */
     autoAttach(modalEl, opts = {}) {
         if (!modalEl || modalEl._focusTrapObserver) return;
@@ -1158,6 +1172,7 @@ const ModalFocusTrap = {
         // Pick the target each time it activates, since modal contents
         // can be re-rendered between opens.
         const _resolveTarget = () => {
+            if (contentSelector === 'self') return modalEl;
             if (contentSelector) {
                 return modalEl.querySelector(contentSelector) || modalEl;
             }
@@ -1172,12 +1187,14 @@ const ModalFocusTrap = {
                 const isActive = modalEl.classList.contains('active');
                 if (isActive && !modalEl._focusTrapActive) {
                     modalEl._focusTrapActive = true;
-                    // document.activeElement at this moment is whatever
-                    // had focus when the open path called classList.add
-                    // — typically the trigger button.
+                    // The trigger is what had focus when the open path
+                    // called classList.add, unless that path already
+                    // focused a field inside the modal.
+                    const trigger = modalEl.contains(document.activeElement)
+                        ? _focusOutsideModal : document.activeElement;
                     ModalFocusTrap.activate(
                         _resolveTarget(),
-                        document.activeElement,
+                        trigger,
                         { onEscape: onEscape },
                     );
                 } else if (!isActive && modalEl._focusTrapActive) {

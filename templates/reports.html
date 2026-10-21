@@ -465,11 +465,11 @@
 </div>
 
 <!-- Batch Rename Modal -->
-<div class="modal-overlay" id="batchRenameModal" data-focus-trap data-focus-trap-onescape="closeBatchRenameModal">
-    <div class="modal-content" style="max-width: 600px;">
+<div class="modal-overlay" id="batchRenameModal" data-focus-trap data-focus-trap-onescape="closeBatchModal">
+    <div class="modal-content" style="max-width: 600px;" role="dialog" aria-modal="true" aria-labelledby="batchModalTitle">
         <div class="modal-header">
             <h2 id="batchModalTitle">✏️ {{ _('Batch Rename') }}</h2>
-            <button type="button" class="modal-close" data-on-click="closeBatchModal" id="batchCloseBtn">&times;</button>
+            <button type="button" class="modal-close" data-on-click="closeBatchModal" id="batchCloseBtn" aria-label="{{ _('Close') }}">&times;</button>
         </div>
         <div class="modal-body">
             <!-- Confirmation View -->

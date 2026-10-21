@@ -61,8 +61,8 @@
 {% include "_settings_tabs/system.html" %}
 
 <!-- Confirm Modal -->
-<div id="confirmModal" class="confirm-modal" data-focus-trap data-focus-trap-content=".confirm-modal-content">
-    <div class="confirm-modal-content glass-panel">
+<div id="confirmModal" class="confirm-modal" data-focus-trap data-focus-trap-content=".confirm-modal-content" data-focus-trap-onescape="closeConfirmModal">
+    <div class="confirm-modal-content glass-panel" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
         <div class="confirm-modal-title" id="confirmTitle">{{ _('Confirm Action') }}</div>
         <div class="confirm-modal-message" id="confirmMessage">{{ _('Are you sure?') }}</div>
         <div class="confirm-modal-buttons">
@@ -2141,16 +2141,6 @@ function linkBonusToParent(bonusId, parentId) {
         }
     })
     .catch(e => showNotification('Error: ' + e, 'error'));
-}
-
-function closeModal() {
-    // Close custom modal from base.html
-    const customModal = document.getElementById('customModal');
-    if (customModal) customModal.classList.remove('active');
-    
-    // Also close any modal-overlay modals
-    const modalOverlay = document.querySelector('.modal-overlay.active');
-    if (modalOverlay) modalOverlay.classList.remove('active');
 }
 
 // =============================================================================
@@ -5388,14 +5378,5 @@ async function saveAvatarChoice() {
     }
 }
 
-// Close avatar picker on Escape
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        const overlay = document.getElementById('avatarPickerOverlay');
-        if (overlay && overlay.classList.contains('active')) {
-            closeAvatarPicker();
-        }
-    }
-});
 </script>
 {% endblock %}

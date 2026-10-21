@@ -240,9 +240,9 @@
 </div>
 
 <!-- Password Modal (every role signs in with a password, Pass 24.1) -->
-<div class="password-modal" id="passwordModal">
-    <div class="password-dialog">
-        <h3>🔐 {{ _('Login') }}</h3>
+<div class="password-modal" id="passwordModal" data-focus-trap data-focus-trap-content=".password-dialog" data-focus-trap-onescape="closePasswordModal">
+    <div class="password-dialog" role="dialog" aria-modal="true" aria-labelledby="passwordModalTitle">
+        <h3 id="passwordModalTitle">🔐 {{ _('Login') }}</h3>
         <form id="passwordForm">
             <input type="hidden" id="selectedUserId" name="user_id" value="">
             <div class="form-group">
@@ -330,12 +330,6 @@ function loginUser(userId, password) {
     });
 }
 
-// Close modal on escape key
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        closePasswordModal();
-    }
-});
 
 // Close modal on background click
 document.getElementById('passwordModal').addEventListener('click', function(e) {

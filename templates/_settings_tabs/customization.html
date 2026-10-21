@@ -217,11 +217,11 @@
 </section>
 
 <!-- Edit Controller Modal -->
-<div class="modal-overlay" id="editControllerModal" data-focus-trap data-focus-trap-onescape="closeEditControllerModal">
-    <div class="modal-content" style="max-width: 600px;">
+<div class="modal-overlay" id="editControllerModal">
+    <div class="modal-content" style="max-width: 600px;" role="dialog" aria-modal="true" aria-labelledby="editControllerTitle">
         <div class="modal-header">
-            <h2>✏️ {{ _('Edit Controller') }}</h2>
-            <button type="button" class="modal-close" data-on-click="closeEditControllerModal">×</button>
+            <h2 id="editControllerTitle">✏️ {{ _('Edit Controller') }}</h2>
+            <button type="button" class="modal-close" data-on-click="closeEditControllerModal" aria-label="{{ _('Close') }}">×</button>
         </div>
         <div class="modal-body">
             <input type="hidden" id="editControllerId">

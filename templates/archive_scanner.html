@@ -742,11 +742,11 @@
 </div>
 
 <!-- Archive Contents Modal -->
-<div class="archive-modal" id="archiveModal" data-on-click="closeArchiveModal" data-self-only>
-    <div class="archive-modal-content">
+<div class="archive-modal" id="archiveModal" data-on-click="closeArchiveModal" data-self-only data-focus-trap data-focus-trap-content=".archive-modal-content" data-focus-trap-onescape="closeArchiveModal">
+    <div class="archive-modal-content" role="dialog" aria-modal="true" aria-labelledby="archiveModalTitle">
         <div class="archive-modal-header">
             <h3 id="archiveModalTitle">📦 {{ _('Archive Contents') }}</h3>
-            <button type="button" class="archive-modal-close" data-on-click="closeArchiveModal">×</button>
+            <button type="button" class="archive-modal-close" data-on-click="closeArchiveModal" aria-label="{{ _('Close') }}">×</button>
         </div>
         <div class="archive-modal-body">
             <ul class="archive-file-list" id="archiveFileList">
@@ -763,8 +763,8 @@
 </div>
 
 <!-- Batch Progress Modal -->
-<div class="batch-progress-modal" id="batchProgressModal">
-    <div class="batch-progress-content">
+<div class="batch-progress-modal" id="batchProgressModal" data-focus-trap data-focus-trap-content=".batch-progress-content">
+    <div class="batch-progress-content" role="dialog" aria-modal="true" aria-labelledby="batchProgressTitle">
         <div class="batch-progress-header">
             <h3 id="batchProgressTitle">🧹 {{ _('Batch Processing') }}</h3>
         </div>
@@ -1782,13 +1782,8 @@ function resetUI() {
     isPaused = false;
 }
 
-// ESC to close modal
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        closeArchiveModal();
-        // Don't close batch modal with ESC - require explicit cancel
-    }
-});
+// Escape closes archiveModal through its focus trap; batchProgressModal's
+// trap has no onescape, so a running batch needs an explicit cancel.
 
 // Enter to add excluded path
 document.getElementById('newExcludedPath').addEventListener('keydown', function(e) {

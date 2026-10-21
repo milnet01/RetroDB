@@ -3776,12 +3776,6 @@ async function confirmRename() {
     }
 }
 
-// Close rename modal on Escape key
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && document.getElementById('renameModal').classList.contains('active')) {
-        closeRenameModal();
-    }
-});
 
 // ============================================
 // LOAD DYNAMIC DROPDOWNS
@@ -4772,9 +4766,9 @@ function showBulkScrapeConflictModal(gameId) {
     modal.className = 'confirm-modal active';
     modal.id = 'bulkConflictModal';
     modal.innerHTML = `
-        <div class="confirm-modal-content glass-panel">
+        <div class="confirm-modal-content glass-panel" role="dialog" aria-modal="true" aria-labelledby="bulkConflictTitle">
             <div class="confirm-modal-header">
-                <h2>⚠️ Game in Bulk Scrape Queue</h2>
+                <h2 id="bulkConflictTitle">⚠️ Game in Bulk Scrape Queue</h2>
             </div>
             <div class="confirm-modal-body">
                 <p>This game is currently queued in an active bulk scrape operation.</p>
@@ -4791,11 +4785,18 @@ function showBulkScrapeConflictModal(gameId) {
         </div>
     `;
     document.body.appendChild(modal);
+    if (window.ModalFocusTrap) {
+        ModalFocusTrap.activate(modal.querySelector('.confirm-modal-content'),
+                                document.activeElement,
+                                { onEscape: closeBulkConflictModal });
+    }
 }
 
 function closeBulkConflictModal() {
     const modal = document.getElementById('bulkConflictModal');
-    if (modal) modal.remove();
+    if (!modal) return;
+    modal.remove();
+    if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
 }
 
 function scrapeNowRemoveFromBulk(gameId) {
@@ -4875,15 +4876,8 @@ document.getElementById('scrapeModal')?.addEventListener('click', function(e) {
     if (e.target === this) closeScrapeModal();
 });
 
-// Close on Escape
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        closeScrapeModal();
-        closeModal();
-        closeEditModal();
-        closeHLTBModal();
-    }
-});
+// Escape: scrapeModal and editModal close through their focus traps
+// (data-focus-trap-onescape).
 
 // Perform search via AJAX
 async function performSearch(event) {
@@ -5305,12 +5299,6 @@ document.getElementById('filterModal')?.addEventListener('click', function(e) {
     if (e.target === this) closeGameDetailFilterModal();
 });
 
-// Close filter modal on Escape
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && document.getElementById('filterModal').classList.contains('active')) {
-        closeGameDetailFilterModal();
-    }
-});
 
 // ============================================
 // HLTB LOOKUP
@@ -5573,15 +5561,6 @@ function toggleBoxartView() {
     }
 }
 
-// Add ESC key support for boxart zoom
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        const boxartModal = document.getElementById('boxartZoomModal');
-        if (boxartModal && boxartModal.classList.contains('active')) {
-            boxartModal.classList.remove('active');
-        }
-    }
-});
 
 // FU.1 — per-page error handler for the 3D boxart. Two-step fallback (hide
 // 3D → swap to 2D if present → else show the shared placeholder) doesn't

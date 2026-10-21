@@ -935,6 +935,13 @@ function _isTypingTarget(target) {
     return false;
 }
 
+let _focusOutsideModal = null;
+document.addEventListener('focusin', (e) => {
+    if (e.target instanceof Element && !e.target.closest('[data-focus-trap]')) {
+        _focusOutsideModal = e.target;
+    }
+}, true);
+
 const ModalFocusTrap = {
     _stack: [],  // stack of { modalEl, triggerEl, keyHandler, onEscape }
 
@@ -956,6 +963,8 @@ const ModalFocusTrap = {
         const autoFocus = opts.autoFocus !== false;
 
         const keyHandler = (e) => {
+            const top = this._stack[this._stack.length - 1];
+            if (!top || top.keyHandler !== keyHandler) return;
             if (e.key === 'Escape' && onEscape) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -1044,7 +1053,8 @@ const ModalFocusTrap = {
      * @param {Function} [opts.onEscape] - escape handler.
      * @param {string}   [opts.contentSelector] - CSS selector for the
      *     focus-trap target inside modalEl (defaults to `.modal-content`
-     *     or `.custom-modal-content`, falling back to modalEl itself).
+     *     or `.custom-modal-content`, falling back to modalEl itself);
+     *     `'self'` traps modalEl itself.
      */
     autoAttach(modalEl, opts = {}) {
         if (!modalEl || modalEl._focusTrapObserver) return;
@@ -1052,6 +1062,7 @@ const ModalFocusTrap = {
         const contentSelector = opts.contentSelector || null;
 
         const _resolveTarget = () => {
+            if (contentSelector === 'self') return modalEl;
             if (contentSelector) {
                 return modalEl.querySelector(contentSelector) || modalEl;
             }
@@ -1066,9 +1077,11 @@ const ModalFocusTrap = {
                 const isActive = modalEl.classList.contains('active');
                 if (isActive && !modalEl._focusTrapActive) {
                     modalEl._focusTrapActive = true;
+                    const trigger = modalEl.contains(document.activeElement)
+                        ? _focusOutsideModal : document.activeElement;
                     ModalFocusTrap.activate(
                         _resolveTarget(),
-                        document.activeElement,
+                        trigger,
                         { onEscape: onEscape },
                     );
                 } else if (!isActive && modalEl._focusTrapActive) {
@@ -4135,14 +4148,9 @@ function focusSearch() {
 }
 
 function closeAnyModal() {
+    if (window.ModalFocusTrap && ModalFocusTrap._stack.length) return;
     if (RetroDBState.currentModal) {
         closeScreenshotModal();
-    }
-    document.querySelectorAll('.modal.active, .modal-overlay.active, .custom-modal.active').forEach(modal => {
-        modal.classList.remove('active');
-    });
-    if (typeof closeModal === 'function') {
-        try { closeModal(); } catch (e) {}
     }
 }
 
@@ -4366,6 +4374,8 @@ function _setupAutoFocusTraps() {
         let onEscape = null;
         if (onEscapeFn && typeof window[onEscapeFn] === 'function') {
             onEscape = window[onEscapeFn];
+        } else if (onEscapeFn) {
+            console.error(`data-focus-trap-onescape on #${modalEl.id}: no function "${onEscapeFn}"`);
         }
         const contentSelector = modalEl.getAttribute('data-focus-trap-content') || null;
         ModalFocusTrap.autoAttach(modalEl, {

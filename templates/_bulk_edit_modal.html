@@ -2,10 +2,10 @@
 <!-- Usage: include '_bulk_edit_modal.html' in your template -->
 
 <div id="bulkEditModal" class="bulk-scrape-modal">
-    <div class="bulk-scrape-content glass-panel" style="max-width: 600px;">
+    <div class="bulk-scrape-content glass-panel" style="max-width: 600px;" role="dialog" aria-modal="true" aria-labelledby="bulkEditTitle">
         <div class="bulk-scrape-header">
-            <h2>{{ _('Bulk Edit') }}</h2>
-            <button type="button" class="modal-close-btn" data-on-click="closeBulkEditModal">&times;</button>
+            <h2 id="bulkEditTitle">{{ _('Bulk Edit') }}</h2>
+            <button type="button" class="modal-close-btn" data-on-click="closeBulkEditModal" aria-label="{{ _('Close') }}">&times;</button>
         </div>
         <div class="bulk-scrape-body">
             <div class="bulk-progress-info" style="margin-bottom: var(--spacing-lg);">

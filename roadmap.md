@@ -672,7 +672,24 @@ message, so nothing flashes yet.
 - **Est.**: S — an inline error state hooked into the existing error paths.
 
 #### Pass 53.13 Unify the parallel modal systems (REFACTOR, M)
-- **Status**: planned.
+- **Resolution** (2026-10-21): Shipped in v3.30.0 (2026-10-21) as one behaviour contract, not one
+  markup primitive. Every modal now has exactly one focus trap (the
+  data-focus-trap attribute, or a hand-written ModalFocusTrap.activate),
+  closes on Escape through its own close function via the trap's
+  onEscape, and returns focus to its trigger. Fixed on the way: only the
+  top trap handles keys (one Escape closed every stacked modal);
+  closeAnyModal no longer strips .active from every modal; base
+  closeModal/confirmModal act only when customModal is open;
+  settings.html's closeModal override removed; game_detail's catch-all
+  Escape listener removed (it resumed a paused bulk scrape and called
+  the undefined closeHLTBModal); batchRenameModal's onescape named a
+  missing function; autoAttach restores focus to the real trigger; 7
+  double-trapped dialogs trap once; 9 page Escape listeners replaced by
+  traps; span close buttons became labelled buttons and 12 dialogs
+  gained role/aria-modal/aria-labelledby. Not done: merging the modal
+  CSS families into one style. That is a visual redesign, not a
+  behaviour fix, and nothing in the item says how they should look.
+- **Status**: done.
 - **Problem**: several independent modal systems coexist — generic `#customModal`
   (`base.html:294`), bespoke `#gameDetailModal` / `#gameEditModal`
   (`base.html:878,959`), and tool modals `folderBrowserModal` / `queueManagerModal`
