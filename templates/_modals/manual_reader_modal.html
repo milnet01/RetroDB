@@ -1,0 +1,20 @@
+{# PASS-59-148 — the game's PDF manual, read on the page (static/js/manual-reader.js). Inherits game_detail.html context. #}
+<div id="manualReaderModal" class="modal-overlay manual-reader-overlay" data-focus-trap data-focus-trap-content=".manual-reader" data-focus-trap-onescape="closeManualReader"
+     data-on-click="closeManualReader" data-self-only
+     data-pdfjs-url="{{ asset_url('js/vendor/pdfjs/pdf.min.mjs') }}"
+     data-worker-url="{{ asset_url('js/vendor/pdfjs/pdf.worker.min.mjs') }}"
+     data-vendor-url="{{ url_for('static', filename='js/vendor/pdfjs/') }}">
+    <div class="manual-reader" role="dialog" aria-modal="true" aria-labelledby="manualReaderTitle">
+        <div class="manual-reader-header">
+            <h2 id="manualReaderTitle">📖 {{ _('Manual') }} — {{ game.title }}</h2>
+            <a class="btn btn-secondary" href="{{ url_for('static', filename='images/manuals/' + game.manual) }}" target="_blank" rel="noopener noreferrer">{{ _('Open PDF in a new tab') }}</a>
+            <button type="button" class="modal-close" data-on-click="closeManualReader" aria-label="{{ _('Close') }}">×</button>
+        </div>
+        <div id="manualReaderStage" class="manual-reader-stage" tabindex="0" aria-label="{{ _('Manual page. Use the arrow keys to turn pages.') }}"></div>
+        <div class="manual-reader-controls">
+            <button type="button" id="manualReaderPrev" class="btn btn-secondary" data-on-click="ManualReader.turn" data-args='[-1]'>‹ {{ _('Previous') }}</button>
+            <span id="manualReaderPage" class="manual-reader-page" aria-live="polite"></span>
+            <button type="button" id="manualReaderNext" class="btn btn-secondary" data-on-click="ManualReader.turn" data-args='[1]'>{{ _('Next') }} ›</button>
+        </div>
+    </div>
+</div>

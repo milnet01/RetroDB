@@ -1,0 +1,127 @@
+/* =============================================================================
+   RETRODB - MANUAL READER (PASS-59-148)
+   The game page's PDF manual window: static/js/manual-reader.js
+   ============================================================================= */
+
+.manual-reader {
+    display: flex;
+    flex-direction: column;
+    width: min(96vw, 1400px);
+    height: 94vh;
+    background: var(--bg-medium);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+}
+
+.manual-reader-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-bottom: 1px solid var(--card-border);
+}
+
+.manual-reader-header h2 {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    color: var(--neon-cyan);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Sheets share one grid cell, so a turning sheet lies over the next. */
+.manual-reader-stage {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    place-items: center;
+    padding: var(--spacing-sm);
+    overflow: hidden;
+    perspective: 2400px;
+    touch-action: pan-y;
+    user-select: none;
+}
+
+.manual-reader-stage:focus-visible {
+    outline: 2px solid var(--primary-cyan);
+    outline-offset: -2px;
+}
+
+.manual-reader-sheet {
+    grid-area: 1 / 1;
+    max-width: 100%;
+    max-height: 100%;
+    box-shadow: var(--shadow-lg);
+    transform-origin: left center;
+    backface-visibility: hidden;
+}
+
+.manual-reader-sheet.turn-out {
+    z-index: 1;
+    animation: manual-turn-out 0.6s ease-in-out forwards;
+}
+
+.manual-reader-sheet.turn-in {
+    z-index: 1;
+    animation: manual-turn-in 0.6s ease-in-out forwards;
+}
+
+@keyframes manual-turn-out {
+    from { transform: rotateY(0deg); }
+    to { transform: rotateY(-180deg); }
+}
+
+@keyframes manual-turn-in {
+    from { transform: rotateY(-180deg); }
+    to { transform: rotateY(0deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .manual-reader-sheet.turn-out,
+    .manual-reader-sheet.turn-in {
+        animation: none;
+    }
+}
+
+.manual-reader-message {
+    grid-area: 1 / 1;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+.manual-reader-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-sm);
+    border-top: 1px solid var(--card-border);
+}
+
+.manual-reader-controls .btn {
+    white-space: nowrap;
+}
+
+.manual-reader-page {
+    min-width: 8em;
+    text-align: center;
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+}
+
+@media (max-width: 600px) {
+    .manual-reader {
+        width: 100vw;
+        height: 100dvh;
+        border-radius: 0;
+    }
+
+    .manual-reader-header .btn {
+        font-size: 0.75rem;
+    }
+}

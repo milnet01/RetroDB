@@ -49,6 +49,7 @@ CSS_ORDER = [
     'features/stat-boxes.css',
     'features/filters.css',
     'features/hltb.css',
+    'features/manual-reader.css',
 
     # 5. Pages
     'pages/game-list.css',

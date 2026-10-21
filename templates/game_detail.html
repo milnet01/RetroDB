@@ -86,7 +86,7 @@
         </button>
         {% endif %}
         {% if game.manual %}
-        <a href="{{ url_for('static', filename='images/manuals/' + game.manual) }}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" title="{{ _('View Manual (PDF)') }}">
+        <a href="{{ url_for('static', filename='images/manuals/' + game.manual) }}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" title="{{ _('View Manual (PDF)') }}" data-on-click="ManualReader.openFromLink" data-args='["$this", "$event"]'>
             <span class="btn-icon">📖</span>
             {{ _('Manual') }}
         </a>
@@ -128,6 +128,8 @@
     <div class="game-hero">
         <!-- Boxart -->
         <div class="hero-boxart">
+            {# The frame bounds the 2D/3D toggle, so the upscale note below it is not covered. #}
+            <div class="hero-boxart-frame">
             {% if game.boxart or game.boxart_3d %}
                 {% set prefer_3d = user_settings.get('preferred_boxart', '2d') == '3d' %}
                 {% set show_3d_initially = prefer_3d and game.boxart_3d %}
@@ -176,6 +178,7 @@
                     <span class="boxart-empty-icon">🎮</span>
                 </div>
             {% endif %}
+            </div>
             {% if upscale_pending %}
             {# PASS-59-153 — main.js reloads this game's images when it is done. #}
             <p class="upscale-game-note" id="upscaleGameNote" role="status" data-game-id="{{ game.id }}">
@@ -833,6 +836,8 @@
 {% include '_modals/edit_modal.html' %}
 
 {% include '_modals/boxart_zoom_modal.html' %}
+
+{% if game.manual %}{% include '_modals/manual_reader_modal.html' %}{% endif %}
 </div>
 {% endblock %}
 
@@ -5716,4 +5721,8 @@ document.querySelectorAll('.filter-link').forEach(link => {
 <script src="{{ asset_url('js/apply-progress.js') }}" defer></script>
 <!-- PASS-59-106 — link and unlink regional versions -->
 <script src="{{ asset_url('js/versions.js') }}" defer></script>
+{% if game.manual %}
+<!-- PASS-59-148 — read the manual on the page -->
+<script src="{{ asset_url('js/manual-reader.js') }}" defer></script>
+{% endif %}
 {% endblock %}
