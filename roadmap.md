@@ -8657,7 +8657,11 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.127 Scraper match scoring: region bonus ignores Default Region; tag-only titles score as exact; sequel check reads the X in X-Men (MEDIUM, S).
-- **Status**: todo
+- **Resolution** (2026-10-21): Shipped 2026-10-21 in d027e54 (v3.30.0). Region bonus follows
+  preferred_regions(); empty titles score 0; hyphen-joined numerals are
+  not sequels; rank reads the file name only, plus GoodTools tags.
+  Pinned by tests/test_pass59_127_match_scoring.py.
+- **Status**: done
 - **Region**: `scraper/match_scorer.py` `calculate_ss_score` and
   `calculate_tgdb_score` give the region bonus to US/World only; the
   `default_region` setting is not read. RetroDB ships to users outside the US.
@@ -8924,6 +8928,11 @@ were corrected in `2836bc3` and are not repeated here.
   watched folder) and whether the faces replace `boxart_3d`.
 - **Verify**: import a Slipcase box file; the three faces land as WebP
   for that game; a symlinked or oversized face is refused.
+- **Progress** (2026-10-21): 2026-10-21, Slipcase session: the box file format may move to v2
+  (SLIP-0106, per-system and per-region cases: second spine, per-region
+  sizes, case plastic). Build the importer on v1's current fields only
+  until Slipcase sends its spec for format review. v1 files stay
+  readable.
 
 ---
 

@@ -21,7 +21,8 @@ from services.database import query, get_db_with_context
 from services.game_query import escape_like
 from services.game_utils import derive_title_from_filename, parse_dump_tags
 
-# Signal names, in the order a suggestion lists them.
+# Signal names, in the order a suggestion lists them. Every signal
+# suggest_groups() records must be listed: one missing here is dropped.
 SIGNALS = ('igdb_id', 'screenscraper_id', 'title', 'alternate_title')
 
 # Region names that mean the same place for the preferred-version rank (§4.2).
@@ -197,8 +198,9 @@ def preferred_rank_sql(alias='g'):
 def members(game_id):
     """Every version in this game's group, preferred first; [] if ungrouped.
 
-    Each row gains `region_label` (stored region, else the filename's tag) and
-    `dump_tags` (revision, languages, disc from the filename).
+    Each row gains `region_label` (stored region, else the filename's tag),
+    `dump_tags` (revision, languages, disc from the filename) and
+    `file_size` (bytes, or None when the file is missing).
     """
     rank_sql, rank_params = preferred_rank_sql('g')
     rows = query(f"""
@@ -344,7 +346,7 @@ def suggest_groups(system_id=None):
                 for r in query("SELECT game_a, game_b FROM version_link_rejections")}
 
     for g in games.values():
-        g['key'] = derive_title_from_filename(g['rom_path'] or '').strip().lower()
+        g['file_title'] = derive_title_from_filename(g['rom_path'] or '').strip().lower()
         g['variant'] = _variant_tags(g['rom_path'])
         g['disc'] = parse_dump_tags(g['rom_path'])['disc']
         g['sequel'] = _has_sequel_number(g['rom_path'])
@@ -373,9 +375,10 @@ def suggest_groups(system_id=None):
 
         titles = {}
         for g in rows:
-            if g['key']:
-                titles.setdefault(g['key'], set()).add(g['id'])
-        # "Different region tags": both names carry tags, and they differ.
+            if g['file_title']:
+                titles.setdefault(g['file_title'], set()).add(g['id'])
+        # Same file title, different variant: both names carry non-disc tags
+        # (region, revision, language...), and the tag sets differ.
         for bucket in titles.values():
             add(bucket, 'title',
                 lambda a, b: a['variant'] and b['variant'] and a['variant'] != b['variant'])
@@ -385,7 +388,7 @@ def suggest_groups(system_id=None):
             for name in _regional_alt_names(g['alternate_titles']):
                 alt_index.setdefault(name, set()).add(g['id'])
         for g in rows:
-            names = {(g['title'] or '').strip().lower(), g['key']} - {''}
+            names = {(g['title'] or '').strip().lower(), g['file_title']} - {''}
             for name in names:
                 for other in alt_index.get(name, ()):
                     if other != g['id']:

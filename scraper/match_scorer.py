@@ -6,13 +6,14 @@
 # scraper/scraper_manager.py so the orchestrator stays focused on orchestration.
 #
 # Score layout:
-#   calculate_title_match_score — pure title similarity (0-340)
+#   calculate_title_match_score — pure title similarity (0-350)
 #   calculate_<source>_score    — title score + per-source bonuses
 #
 # Per-source bonuses follow the same shape:
 #   release_date  : +10-20  (TGDB/IGDB/RAWG/SS vary)
 #   platform_match: +150    (MAJOR — ensures correct-platform results top)
-#   region        : +10-20  (Default Region and World first; region_bonus)
+#   region        : +10-20  (Default Region and World first; region_bonus;
+#                            TGDB and SS only — IGDB and RAWG give none)
 #   plus source-specific extras (RAWG +metacritic, +image)
 # =============================================================================
 
@@ -74,9 +75,9 @@ def calculate_title_match_score(result_title, search_title):
     Scoring ladder:
       1. Raw exact match (before noise strip)   -> 350
       2. Exact normalized match                 -> 300
-      3. Search words ⊆ result words            -> 150-280 (depends on extras)
-      4. Result words ⊆ search words            -> 30-100 (penalised — missing terms)
-      5. Partial overlap                        -> 20-120 (Jaccard-weighted)
+      3. Search words ⊆ result words            -> up to 280 (fewer extras score higher)
+      4. Result words ⊆ search words            -> up to 100 (penalised — missing terms)
+      5. Partial overlap                        -> up to 120 (Jaccard-weighted)
       + word-order bonus (LCS)                  -> 0-40
     """
     if not result_title or not search_title:
@@ -105,7 +106,7 @@ def calculate_title_match_score(result_title, search_title):
     )
     if result_words == search_words and result_normalized != search_normalized:
         logger.info(
-            f"  WARN: Words match but strings differ! "
+            f"  Same words, different order: "
             f"result_repr={result_normalized!r} search_repr={search_normalized!r}"
         )
 
