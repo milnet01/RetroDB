@@ -104,7 +104,7 @@ has seen the raw output. Triage into new roadmap passes after.
 - Regional versions (PASS-59-106): only `services/version_groups.py` links rows through `games.version_group_id`. `_build_games_query` shows one row per group unless `group_versions=False`. Contract: `docs/specs/PASS-59-106-regional-versions.md`.
 
 ### Media handling
-- Media fields (boxart, boxart_3d, screenshots, fanart, video, manual) are never replaced during normal scraping — only filled when empty. Screenshots are always appended, never replaced. To get new media: clear it from the edit modal first, then re-scrape. Full Re-scrape mode overrides this and overwrites any field a source actually provides (and re-downloads media whose file is missing from disk); fields no source fills keep their existing value — hand-curated data is not blanked.
+- Media fields (boxart, boxart_3d, screenshots, fanart, video, manual) are never replaced during normal scraping — only filled when empty. Screenshots are always appended, never replaced. To get new media: clear it from the edit modal first, then re-scrape. Full Re-scrape mode overrides this and overwrites any field a source actually provides, media included, unless its "Keep existing media" option is ticked (then media whose file is on disk is kept); fields no source fills keep their existing value — hand-curated data is not blanked.
 - During pre-population, media files are validated on disk — stale DB references (file deleted, filename still in DB) are auto-cleared so scrapers can re-download.
 
 ### Scraper fill-only invariant

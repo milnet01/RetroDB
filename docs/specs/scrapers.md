@@ -41,12 +41,13 @@ Per-source disable + priority: `data/scraper_settings.json` → `enabled` + `pri
 
 ## 3. Hybrid orchestration
 
-Entry point: `scraper.hybrid_scraper.apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder, secondary_sources=None, fill_gaps=True, force_overwrite=False, primary_data=None, restrict_to_selected=False)`.
+Entry point: `scraper.hybrid_scraper.apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder, secondary_sources=None, fill_gaps=True, force_overwrite=False, primary_data=None, restrict_to_selected=False, keep_media=False)`.
 
 Two modes:
 
 - **Normal (default; `force_overwrite=False`)** — pre-populate `metadata` from the existing `games` row so every per-source merger sees the current state and only writes into still-empty fields. Stale media references (file deleted but DB still names it) are detected via `os.path.exists` and conditionally NULLed under a `WHERE id = ? AND <field> = ?` guard so a concurrent upload between stat and clear isn't wiped (Pass 40.15).
 - **Full Re-scrape (`force_overwrite=True`)** — `metadata` starts empty; ES-DE captures old media filenames for *deferred* cleanup (only delete if a replacement was actually found); every source applies as if the row were new. This is the only documented exception to fill-only.
+  - **Keep existing media (`keep_media=True`, bulk mode `full_rescrape_keep_media`)** — seeds each media field whose file is on disk (`_seed_kept_media`), so it is not downloaded again and ES-DE leaves it alone; new screenshots still append (PASS-59-133).
 
 Walk order:
 

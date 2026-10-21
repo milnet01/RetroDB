@@ -23,6 +23,9 @@ from services.jobs.base import (
 
 logger = logging.getLogger(__name__)
 
+# Full Re-scrape, and its variant that keeps media already on disk (PASS-59-133).
+FULL_RESCRAPE_MODES = ('full_rescrape', 'full_rescrape_keep_media')
+
 
 def _extract_year_from_result(result):
     """Extract release year from a search result (handles all scraper formats)."""
@@ -75,7 +78,7 @@ class BulkScrapeJob:
         self.system_id = None
         self.system_name = None
         self.return_url = None
-        self.scrape_mode = 'fill_missing'  # 'fill_missing' or 'full_rescrape'
+        self.scrape_mode = 'fill_missing'  # 'fill_missing' or one of FULL_RESCRAPE_MODES
         self.running = False
         self.paused = False
         self.cancelled = False
@@ -852,7 +855,7 @@ class BulkScrapeJob:
                     # All new timestamps are UTC-aware; treat pre-Pass-30 naive
                     # strings as UTC so legacy rows don't trip the aware-vs-naive
                     # TypeError on subtraction.
-                    if _scrape_mode != 'full_rescrape':
+                    if _scrape_mode not in FULL_RESCRAPE_MODES:
                         last_bulk = game_dict.get('last_bulk_scraped')
                         if last_bulk:
                             try:
@@ -971,7 +974,8 @@ class BulkScrapeJob:
                             primary_id=source_id,
                             system_folder=system_folder,
                             fill_gaps=True,
-                            force_overwrite=(_scrape_mode == 'full_rescrape'),
+                            force_overwrite=(_scrape_mode in FULL_RESCRAPE_MODES),
+                            keep_media=(_scrape_mode == 'full_rescrape_keep_media'),
                             primary_data=best_match,
                             secondary_sources=secondary_sources,
                         )

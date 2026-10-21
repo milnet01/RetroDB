@@ -17,6 +17,8 @@
     label: Every pop-up window handles Escape, keyboard focus and screen readers the same way
   - type: performance
     label: Scrapes finish sooner; small pictures are enlarged in the background
+  - type: feature
+    label: Full Re-scrape can keep the media you already have
   - type: deps
     label: Pillow 13 and other library updates
   body: |
@@ -221,6 +223,10 @@
         the main source leaves gaps, RetroDB now asks the other sources all
         at once instead of one after another. Their answers are still used
         in your Settings order, so the same source wins each field.</li>
+      <li><strong>Full Re-scrape can keep the media you already have.</strong>
+        Tick "Keep existing media" beside the Full Re-scrape switch. Text
+        details are still refreshed, but art, videos and manuals already on
+        disk stay as they are instead of downloading again.</li>
       <li><strong>Background jobs no longer lose or skip work.</strong> A
         RetroAchievements refresh that hit one bad game no longer throws away
         the games it had already updated. A resumed sync or refresh no longer

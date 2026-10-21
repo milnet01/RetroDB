@@ -163,7 +163,7 @@ const BulkScrapeController = {
      * Start a bulk scrape job
      * @param {Array<number>} gameIds - Array of game IDs to scrape
      * @param {number|null} systemId - Optional system ID (for games.html)
-     * @param {string} scrapeMode - 'fill_missing' or 'full_rescrape'
+     * @param {string} scrapeMode - 'fill_missing', 'full_rescrape' or 'full_rescrape_keep_media'
      */
     async start(gameIds, systemId = null, scrapeMode = 'fill_missing') {
         if (gameIds.length === 0) {

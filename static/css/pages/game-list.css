@@ -97,6 +97,20 @@
     text-shadow: 0 0 8px rgba(76, 201, 240, 0.5);
 }
 
+/* PASS-59-133 — applies to Full Re-scrape only, so hidden in Fill Missing */
+.keep-media-option {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.bulk-mode-selector:has(#scrapeModeToggle:checked) .keep-media-option {
+    display: none;
+}
+
 /* Toggle Switch - Inline version */
 .scrape-mode-toggle .toggle-switch {
     position: relative;

@@ -667,6 +667,18 @@ def source_game_id(data):
         return None
 
 
+_KEPT_MEDIA_FIELDS = ('boxart', 'boxart_3d', 'fanart', 'manual', 'video', 'screenshots')
+
+
+def _seed_kept_media(metadata, game, stale_fields):
+    """PASS-59-133 — Full Re-scrape with "keep existing media": seed each media
+    field whose file is still on disk, so the fill-only media checks skip its
+    download. New screenshots still append to the kept list."""
+    for field in _KEPT_MEDIA_FIELDS:
+        if game.get(field) and field not in stale_fields:
+            metadata[field] = game[field]
+
+
 def _save_source_ids(c, db_game_id, sources_data, force_overwrite=False):
     """PASS-59-106 §4.5 — store the IGDB and ScreenScraper game ids this scrape
     used; they are regional-version suggestion signals. A stored id is kept
@@ -1156,7 +1168,8 @@ def _run_ai_fallback(metadata, result, sources_data, db_game_id, lookup,
 
 def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                           secondary_sources=None, fill_gaps=True, force_overwrite=False,
-                          primary_data=None, restrict_to_selected=False):
+                          primary_data=None, restrict_to_selected=False,
+                          keep_media=False):
     """
     Apply metadata from primary source, then fill gaps from secondary sources.
 
@@ -1168,6 +1181,8 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
         secondary_sources: List of dicts with 'source' and 'id' for fallback
         fill_gaps: If True, automatically search other scrapers for missing data
         force_overwrite: If True, overwrite existing data (for full re-scrape)
+        keep_media: With force_overwrite, keep media whose file is on disk
+            instead of downloading it again (PASS-59-133)
         primary_data: Optional dict with the selected result's data (avoids re-fetching)
         restrict_to_selected: If True, only use scrapers present in secondary_sources
             (no fresh searches for unselected scrapers)
@@ -1383,6 +1398,10 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                     f"Force mode: cleared {len(_force_stale)} stale media reference(s): "
                     f"{[f for f, _ in _force_stale]}"
                 )
+            if keep_media:
+                _seed_kept_media(metadata, game, {f for f, _ in _force_stale})
+        # ES-DE replaces media only when this is set.
+        media_force = force_overwrite and not keep_media
 
         sources_data = {}
 
@@ -1465,11 +1484,11 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                     result['filled_fields'].append('players (ES-DE)')
 
                 # Now apply ES-DE media (boxart, screenshots, etc.) - pass existing metadata
-                # Pass force_overwrite to ensure media is replaced in full rescrape mode
+                # Pass media_force so Full Re-scrape replaces media unless kept
                 apply_esde(db_game_id, esde_details.get('esde_data', {}), system_folder,
                           existing_boxart=metadata.get('boxart'),
                           existing_screenshots=metadata.get('screenshots'),
-                          force_overwrite=force_overwrite)
+                          force_overwrite=media_force)
 
                 # Refresh game data from DB
                 c.execute("SELECT * FROM games WHERE id = ?", (db_game_id,))
@@ -1606,7 +1625,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
             _run_fallbacks(
                 metadata, result, sources_data, game, db_game_id,
                 primary_source, system_folder, secondary_sources,
-                restrict_to_selected, force_overwrite, c,
+                restrict_to_selected, media_force, c,
             )
 
         # =============================================

@@ -1268,7 +1268,9 @@ const AllGamesController = (function() {
             return;
         }
         const toggle = document.getElementById('scrapeModeToggle');
-        const mode = toggle && toggle.checked ? 'fill_missing' : 'full_rescrape';
+        const keepMedia = document.getElementById('keepMediaToggle')?.checked;
+        const mode = toggle && toggle.checked ? 'fill_missing'
+            : (keepMedia ? 'full_rescrape_keep_media' : 'full_rescrape');
         BulkScrapeController.start(Array.from(selectedGames), cfg.systemId || filters.system || null, mode);
     }
 

@@ -327,7 +327,8 @@ def _apply_single_source(db_game_id, game_data, source, normalized, system_folde
 def apply_hybrid_metadata_to_game(db_game_id, primary_source, primary_id, system_folder,
                                   all_results=None, explicit_secondary=None,
                                   secondary_sources=None, fill_gaps=True,
-                                  force_overwrite=False, primary_data=None):
+                                  force_overwrite=False, primary_data=None,
+                                  keep_media=False):
     """Apply primary-source metadata, then fill gaps from secondary scrapers.
 
     Unified entry point shared by every apply path:
@@ -353,6 +354,7 @@ def apply_hybrid_metadata_to_game(db_game_id, primary_source, primary_id, system
         fill_gaps: If True, search remaining scrapers for any field the
             primary left empty.
         force_overwrite: If True, overwrite existing fields (full-rescrape).
+        keep_media: With force_overwrite, keep media already on disk.
         primary_data: Optional pre-fetched primary-source result dict; saves
             a re-fetch round-trip.
 
@@ -413,6 +415,7 @@ def apply_hybrid_metadata_to_game(db_game_id, primary_source, primary_id, system
                 secondary_sources=secondary_sources or [],
                 fill_gaps=fill_gaps,
                 force_overwrite=force_overwrite,
+                keep_media=keep_media,
                 primary_data=primary_data,
                 restrict_to_selected=bool(explicit_secondary),
             )

@@ -76,6 +76,10 @@
                     </label>
                     <span class="mode-label mode-on">📝 {{ _('Fill Missing') }}</span>
                 </div>
+                <label class="keep-media-option" title="{{ _('Full Re-scrape keeps the art, videos and manuals already downloaded instead of fetching them again') }}">
+                    <input type="checkbox" id="keepMediaToggle" />
+                    {{ _('Keep existing media') }}
+                </label>
             </div>
             <button type="button" class="filter-btn bulk-scrape-btn" data-on-click="startBulkScrape" id="bulkScrapeBtn" style="display: none;">
                 <span class="filter-icon">⬇️</span> {{ _('Scrape Selected') }} (<span id="selectedCount">0</span>)
