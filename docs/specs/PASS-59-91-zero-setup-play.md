@@ -127,8 +127,9 @@ candidates, in order:
 | PCSX2 | binary's dir if `portable.txt` or `portable.ini` is there; `<AppImage>.home/.config/PCSX2`; `$XDG_CONFIG_HOME/PCSX2`; `~/.var/app/net.pcsx2.PCSX2/config/PCSX2` | `inis/PCSX2.ini` |
 | RPCS3 | `<AppImage>.home/.config/rpcs3`; `$XDG_CONFIG_HOME/rpcs3`; `~/.var/app/net.rpcs3.RPCS3/config/rpcs3` | `config.yml` |
 
-`$XDG_*_HOME` takes its XDG default when unset. For a `*-portable.sh`, the
-binary's dir is the script's dir and `<AppImage>` is the AppImage beside it.
+`$XDG_*_HOME` takes its XDG default when unset. For a `*-portable.sh`, or
+any other `.sh` launcher, the binary's dir is the script's dir and
+`<AppImage>` is the AppImage beside it.
 Verified on this machine: DuckStation's portable directory,
 `pcsx2.AppImage.home/.config/PCSX2` and `RPCS3.AppImage.home/.config/rpcs3`
 under `/mnt/Emulators`. The Flatpak and XDG rows are *unverified*: no
@@ -205,7 +206,7 @@ def bios_status(emu_row, sys_emu_row) -> dict
 | RetroArch | the core's `.info` file beside the core; the `system_directory` of the RetroArch config RetroDB reads | every `firmwareN_path` whose `firmwareN_opt` is `"false"` exists under the system directory |
 
 The RetroArch config is found from the binary `_resolve_binary` returns for
-the row. Where that binary is an AppImage, or a `*-portable.sh` beside one,
+the row. Where that binary is an AppImage, or a `.sh` launcher beside one,
 and `<AppImage>.home/.config/retroarch/retroarch.cfg` exists, that file is
 read; a `flatpak run` binary gives `unknown`; else
 `~/.config/retroarch/retroarch.cfg`. A leading `~` in

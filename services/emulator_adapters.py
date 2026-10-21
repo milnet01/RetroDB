@@ -45,11 +45,11 @@ def _xdg(var, default):
 
 
 def appimage_for(binary: Path) -> Optional[Path]:
-    """The AppImage a binary runs: itself, or the one beside a
-    `*-portable.sh` (§4.1)."""
+    """The AppImage a binary runs: itself, or the one beside a launcher
+    script such as `*-portable.sh` (§4.1)."""
     if binary.name.lower().endswith('.appimage'):
         return binary
-    if binary.name.endswith('-portable.sh'):
+    if binary.name.endswith('.sh'):
         try:
             return next((p for p in sorted(binary.parent.iterdir())
                          if p.name.lower().endswith('.appimage')), None)

@@ -492,3 +492,15 @@ def test_pass_59_150_game_options_file_is_mapped_too(tmpdb, monkeypatch, tmp_pat
     _vice_launch(tmpdb, monkeypatch, tmp_path, opt_text='')
 
     assert game_opt.read_text().startswith('vice_mapper_ru = "RETROK_UP"\n')
+
+
+def test_pass_59_150_any_script_beside_an_appimage_uses_its_home(tmp_path):
+    # The maintainer's retroarch-fork.sh sets HOME to the AppImage's .home,
+    # as retroarch-portable.sh does; both must find that retroarch.cfg.
+    from services.emulator_adapters import retroarch_cfg
+    (tmp_path / 'RetroArch.AppImage').write_text('')
+    cfg = tmp_path / 'RetroArch.AppImage.home/.config/retroarch/retroarch.cfg'
+    cfg.parent.mkdir(parents=True)
+    cfg.write_text('')
+    for script in ('retroarch-portable.sh', 'retroarch-fork.sh'):
+        assert retroarch_cfg(tmp_path / script) == (cfg.parents[2], cfg)
