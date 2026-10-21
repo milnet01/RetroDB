@@ -9096,7 +9096,11 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.148 Game manuals open in a window on the page, with a page-turn animation (MEDIUM, M).
-- **Status**: todo
+- **Resolution** (2026-10-21): Shipped 2026-10-21 in v3.30.0 (2be8d0d):
+  templates/_modals/manual_reader_modal.html +
+  static/js/manual-reader.js; PDF.js 6.4.299 vendored in
+  static/js/vendor/pdfjs/ with useWasm:false, CSP unchanged.
+- **Status**: done
 - **Where**: `templates/game_detail.html` 'View Manual (PDF)' links
   to `static/images/manuals/<file>` in a new tab.
 - **Do**: open a modal that renders the PDF's pages and turns them
