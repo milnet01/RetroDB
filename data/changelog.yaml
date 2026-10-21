@@ -193,6 +193,10 @@
         becomes "Chuckie Egg 2". A file name ending in "..zip" no longer
         leaves a stray dot. Scraper searches, resetting a game's data and
         Regional Versions suggestions use these cleaner names.</li>
+      <li><strong>A wrong title no longer repeats itself on re-scrape.</strong>
+        Bulk scraping now searches with the name from the ROM file, not the
+        title stored for the game. A game that once matched the wrong game
+        finds the right one when scraped again.</li>
       <li><strong>Background jobs no longer lose or skip work.</strong> A
         RetroAchievements refresh that hit one bad game no longer throws away
         the games it had already updated. A resumed sync or refresh no longer

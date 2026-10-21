@@ -699,6 +699,7 @@ class BulkScrapeJob:
         """Background thread that runs the actual scraping"""
         from scraper.scraper_manager import scraper_manager, load_scraper_settings, get_match_settings, passes_match_filter
         from services.game_metadata_service import apply_hybrid_metadata_to_game
+        from services.game_utils import derive_title_from_filename, get_system_type
 
         # Snapshot immutable job parameters at thread start — prevents corruption
         # if self is modified before this thread begins executing
@@ -887,14 +888,20 @@ class BulkScrapeJob:
 
                     # Search for metadata
                     system_name = game_dict.get('system_name', 'Unknown')
-                    logger.info(f"Scraping: {title} for {system_name}")
+                    # Search by the ROM filename, not the stored title: a wrong stored
+                    # title would otherwise be re-confirmed on every re-scrape.
+                    rom_path = game_dict.get('rom_path', '')
+                    search_title = title
+                    if rom_path:
+                        search_title = derive_title_from_filename(
+                            rom_path, get_system_type(system_folder) == 'computer')
+                    logger.info(f"Scraping: {search_title} for {system_name}")
 
-                    results = scraper_manager.search_games(title, system_name, system_folder)
+                    results = scraper_manager.search_games(search_title, system_name, system_folder)
 
                     # --- Filename-hint disambiguation ---
                     # When identical titles compete (e.g. two "Cabal" games on C64),
                     # use the year from the ROM filename to pick the correct edition.
-                    rom_path = game_dict.get('rom_path', '')
                     if rom_path and results:
                         from services.game_utils import extract_filename_hints
                         hints = extract_filename_hints(rom_path)
