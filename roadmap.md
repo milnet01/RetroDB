@@ -8750,7 +8750,7 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.131 Scrape speed: skip a fallback source that cannot fill any field still empty (MEDIUM, M).
-- **Status**: todo
+- **Status**: dropped
 - **Where**: `scraper/hybrid_scraper.py::_run_fallbacks` stops early only
   when every key of the ~40-field metadata dict is filled, including fields
   no source supplies (`edition`, `campaign`, `playtime_estimate`). So every
@@ -8763,11 +8763,23 @@ were corrected in `2836bc3` and are not repeated here.
   nothing. Manual still never queries an unticked source.
 - **Risk**: a wrong capability list silently drops data. Pin each list
   with a test against the source's apply function.
+- **Progress** (2026-10-21): Dropped 2026-10-21 (user). Every image fallback (TGDB, IGDB, RAWG,
+  ScreenScraper) appends screenshots with no cap, so none can be skipped
+  without losing screenshots; only AI could be skipped, and it nearly
+  always has an empty field. The speed-up moves to PASS-59-132 (parallel
+  fetch).
 
 ---
 
 #### Pass 59.132 Scrape speed: fetch fallback sources' details at the same time, then apply them in priority order (MEDIUM, M).
-- **Status**: todo
+- **Resolution** (2026-10-21): Shipped 2026-10-21. _run_fallbacks fetches every non-AI fallback on
+  its own thread and applies in priority order; AI stays at its turn.
+  One thread per source, as Pass 55.1's search, and the pool waits on
+  exit, so no host sees more requests at once. FF2 SNES (4542), fields
+  blanked on a scratch DB, one-thread pool as the serial baseline: apply
+  22.3s serial vs 19.4s parallel, identical saved row. Network noise is
+  larger than the gain (TGDB took 32s in one rerun).
+- **Status**: done
 - **Where**: after the parallel search (Pass 55.1), the lead fetch and
   each fallback in `_run_fallbacks` run one after another.
 - **Do**: fetch the detail records of the lead and the fallbacks on a
