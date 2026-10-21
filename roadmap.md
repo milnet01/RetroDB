@@ -8686,7 +8686,9 @@ were corrected in `2836bc3` and are not repeated here.
   the filename title (rename); `SIGNALS` must list every `add()` signal and
   nothing says so.
 - **Source**: review-readability draft trial, findings checked by hand.
-- **Status**: todo.
+- **Resolution** (2026-10-21): Shipped 2026-10-21 in 08a9bd9 and f720830 (scrapers.md ladder also
+  said 0-340).
+- **Status**: done.
 
 ---
 
