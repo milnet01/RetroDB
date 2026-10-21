@@ -14,7 +14,7 @@ import fnmatch
 import tempfile
 from pathlib import Path
 from datetime import datetime
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict, Any, Tuple
 from dataclasses import dataclass, field, asdict
 import logging
 
@@ -132,6 +132,34 @@ def convert_one_to_chd(
 
 # PASS-59-119 — the Temporary Path default before it became empty.
 _OLD_DEFAULT_TEMP_PATH = os.path.join(tempfile.gettempdir(), 'retrodb_romtools')
+
+
+# "Disk 1", "_Disk 2", "Disc 1 of 3", "Side A", "Tape 2" in a ROM file name.
+_DISK_MARKER = re.compile(
+    r'(?i)[\s_-]*(?<![a-z])(?:disk|disc|side|tape)[\s_-]*(?:\d+|[a-z])\b(?:\s*of\s*\d+)?')
+
+
+def _first_release(rom_files: List[str]) -> Tuple[List[str], List[str]]:
+    """PASS-59-138 — split an archive's disks by release and keep the first.
+
+    The release is the name up to the disk number's closing bracket, minus
+    the number, so "Game [Bonzai_Disk 1]" and "Game [X-Ray_Disk 1]" are two
+    releases while "Game (Disc 2) (Juice)" is one game's subtitled disk.
+    Returns (kept, skipped). Every file is kept unless each file has a disk
+    number and each release has two or more disks: otherwise the names
+    cannot say which disks belong together."""
+    releases: Dict[str, List[str]] = {}
+    for name in rom_files:
+        marks = list(_DISK_MARKER.finditer(name))  # "Tape 1 - Side 2" has two
+        if not marks:
+            return rom_files, []
+        key = (name[:marks[0].start()]
+               + re.match(r'[^\])]*', name[marks[-1].end():]).group())
+        releases.setdefault(key.lower(), []).append(name)
+    if len(releases) < 2 or min(len(v) for v in releases.values()) < 2:
+        return rom_files, []
+    first = releases[min(releases)]
+    return first, [f for f in rom_files if f not in first]
 
 
 def _safe_under_root(path: Path, root_resolved: Path) -> bool:
@@ -790,7 +818,8 @@ class ArchiveScanner:
         
         if len(rom_files) < 1:
             return {"success": False, "error": "No ROM files found in archive"}
-        
+        rom_files, skipped_files = _first_release(rom_files)
+
         # Create folder name from archive name (without extension)
         folder_name = path.stem
         extract_folder = path.parent / folder_name
@@ -904,7 +933,8 @@ class ArchiveScanner:
                 "file_count": len(m3u_entries),
                 "files": m3u_entries,
                 "archive_moved": archive_moved,
-                "moved_to": moved_to
+                "moved_to": moved_to,
+                "skipped_files": skipped_files,
             }
             
         except subprocess.TimeoutExpired:

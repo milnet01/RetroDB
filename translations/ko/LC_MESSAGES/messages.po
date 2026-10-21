@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-21 12:49+0200\n"
+"POT-Creation-Date: 2026-10-21 13:35+0200\n"
 "PO-Revision-Date: 2026-06-30 14:26+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ko\n"
@@ -58,8 +58,8 @@ msgstr "시스템을 찾을 수 없거나 업적이 있는 게임이 없습니�
 #: routes/achievements.py:171 routes/achievements.py:440
 #: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/collections.py:276
 #: routes/collections.py:531 routes/emulators.py:248 routes/emulators.py:262
-#: routes/games.py:347 routes/games.py:793 routes/games.py:914
-#: routes/games.py:971 routes/games_ai.py:46 routes/games_media.py:35
+#: routes/games.py:347 routes/games.py:790 routes/games.py:912
+#: routes/games.py:968 routes/games_ai.py:46 routes/games_media.py:35
 #: routes/games_media.py:82 routes/games_media.py:143 routes/reports.py:693
 #: routes/reports.py:818 routes/trophies.py:1278 services/hltb_service.py:125
 msgid "Game not found"
@@ -228,8 +228,8 @@ msgstr "상위 게임을 찾을 수 없습니다"
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "보너스 디스크와 상위 게임은 같은 시스템에 있어야 합니다"
 
-#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1223
-#: routes/games.py:1253 routes/platform_import.py:289
+#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1220
+#: routes/games.py:1250 routes/platform_import.py:289
 #: routes/platform_import.py:658 routes/platform_import.py:1024
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:200 routes/scraper.py:528
@@ -435,65 +435,65 @@ msgstr "제공된 ID가 없습니다"
 msgid "Provide 1-50 valid IDs"
 msgstr "유효한 ID를 1-50개 제공하세요"
 
-#: routes/games.py:501
+#: routes/games.py:498
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
 msgstr "동영상이 저장되지 않았습니다: 최대 %(mb)s MB의 MP4, WebM 또는 OGG 파일이어야 합니다."
 
-#: routes/games.py:627
+#: routes/games.py:624
 msgid "Game not found after update"
 msgstr "업데이트 후 게임을 찾을 수 없습니다"
 
-#: routes/games.py:918
+#: routes/games.py:916
 msgid "No game selected."
 msgstr "선택한 게임이 없습니다."
 
-#: routes/games.py:943
+#: routes/games.py:940
 msgid "This metadata apply is no longer running."
 msgstr "이 메타데이터 적용은 더 이상 실행 중이 아닙니다."
 
-#: routes/games.py:952
+#: routes/games.py:949
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
 " still missing)"
 msgstr "%(sources)s에서 메타데이터를 적용했습니다! (%(filled)d개 필드 입력, %(missing)d개 아직 누락)"
 
-#: routes/games.py:958
+#: routes/games.py:955
 msgid "Failed to apply metadata."
 msgstr "메타데이터 적용에 실패했습니다."
 
-#: routes/games.py:1001 routes/games.py:1045
+#: routes/games.py:998 routes/games.py:1042
 msgid "No fields to update"
 msgstr "업데이트할 필드가 없습니다"
 
-#: routes/games.py:1042 routes/platform_import.py:212
+#: routes/games.py:1039 routes/platform_import.py:212
 #: routes/platform_import.py:572 routes/platform_import.py:928
 #: routes/trophies.py:1852
 msgid "No games selected"
 msgstr "선택된 게임이 없습니다"
 
-#: routes/games.py:1052
+#: routes/games.py:1049
 msgid "Invalid completion status"
 msgstr "잘못된 완료 상태입니다"
 
-#: routes/games.py:1100
+#: routes/games.py:1097
 msgid "No valid fields to update"
 msgstr "업데이트할 유효한 필드가 없습니다"
 
-#: routes/games.py:1216
+#: routes/games.py:1213
 msgid "Invalid status"
 msgstr "잘못된 상태입니다"
 
-#: routes/games.py:1241
+#: routes/games.py:1238
 msgid "Not authenticated"
 msgstr "인증되지 않았습니다"
 
-#: routes/games.py:1272
+#: routes/games.py:1269
 msgid "Filter type and value required"
 msgstr "필터 유형과 값이 필요합니다"
 
-#: routes/games.py:1285
+#: routes/games.py:1282
 msgid "Invalid filter type"
 msgstr "잘못된 필터 유형입니다"
 
@@ -721,7 +721,7 @@ msgid "Missing required parameters"
 msgstr "필수 매개변수가 누락되었습니다"
 
 #: routes/reports.py:605 routes/tools.py:503 routes/tools.py:560
-#: routes/tools.py:595
+#: routes/tools.py:605
 msgid "Invalid path"
 msgstr "잘못된 경로입니다"
 
@@ -915,7 +915,7 @@ msgstr "관리자 권한이 필요합니다"
 msgid "Settings payload must be an object"
 msgstr "설정 페이로드는 객체여야 합니다"
 
-#: routes/tools.py:324 routes/tools.py:950
+#: routes/tools.py:324 routes/tools.py:965
 #, python-format
 msgid "Path does not exist: %(path)s"
 msgstr "경로가 존재하지 않습니다: %(path)s"
@@ -936,12 +936,12 @@ msgstr "작업을 찾을 수 없거나 실행 중이 아닙니다"
 msgid "Task not found or not paused"
 msgstr "작업을 찾을 수 없거나 일시정지되어 있지 않습니다"
 
-#: routes/tools.py:462 routes/tools.py:652 routes/tools.py:823
-#: routes/tools.py:939
+#: routes/tools.py:462 routes/tools.py:667 routes/tools.py:838
+#: routes/tools.py:954
 msgid "Invalid scan path"
 msgstr "잘못된 스캔 경로입니다"
 
-#: routes/tools.py:500 routes/tools.py:557 routes/tools.py:592
+#: routes/tools.py:500 routes/tools.py:557 routes/tools.py:602
 msgid "No path provided"
 msgstr "제공된 경로가 없습니다"
 
@@ -957,33 +957,33 @@ msgstr "잘못된 아카이브 경로입니다"
 msgid "No files to remove"
 msgstr "제거할 파일이 없습니다"
 
-#: routes/tools.py:623
+#: routes/tools.py:635
 msgid "No paths provided"
 msgstr "제공된 경로가 없습니다"
 
-#: routes/tools.py:629
+#: routes/tools.py:641
 #, python-format
 msgid "Invalid path: %(path)s"
 msgstr "잘못된 경로: %(path)s"
 
-#: routes/tools.py:701
+#: routes/tools.py:716
 msgid "chdman not found. Please install MAME tools."
 msgstr "chdman을 찾을 수 없습니다. MAME 도구를 설치하세요."
 
-#: routes/tools.py:846
+#: routes/tools.py:861
 msgid "chdman not found"
 msgstr "chdman을 찾을 수 없습니다"
 
-#: routes/tools.py:944
+#: routes/tools.py:959
 #, python-format
 msgid "Unknown duplicate method: %(method)s"
 msgstr "알 수 없는 중복 검사 방법: %(method)s"
 
-#: routes/tools.py:1152
+#: routes/tools.py:1167
 msgid "These scan results have expired. Scan again, then delete."
 msgstr "이 스캔 결과는 만료되었습니다. 다시 스캔한 후 삭제하세요."
 
-#: routes/tools.py:1157
+#: routes/tools.py:1172
 msgid "Keep at least one copy of each game. Nothing was deleted."
 msgstr "각 게임의 사본을 하나 이상 남겨 두세요. 아무것도 삭제되지 않았습니다."
 
@@ -3868,7 +3868,7 @@ msgstr "누락 채우기"
 msgid ""
 "Full Re-scrape keeps the art, videos and manuals already downloaded "
 "instead of fetching them again"
-msgstr ""
+msgstr "전체 다시 스크랩은 이미 다운로드한 아트, 동영상, 설명서를 다시 가져오지 않고 유지합니다"
 
 #: templates/all_games.html:81 templates/system_games.html:72
 #, fuzzy
@@ -4541,11 +4541,17 @@ msgstr "현재:"
 msgid "Waiting to start..."
 msgstr "시작 대기 중..."
 
-#: templates/archive_scanner.html:1658
+#: templates/archive_scanner.html:1460
+msgid ""
+"The archive holds more than one release. The playlist uses the first; "
+"these disks stay in the folder:"
+msgstr "아카이브에 릴리스가 둘 이상 있습니다. 재생 목록은 첫 번째를 사용하며, 다음 디스크는 폴더에 남습니다:"
+
+#: templates/archive_scanner.html:1662
 msgid "Have the original archive moved to the staging folder"
 msgstr "원본 아카이브를 스테이징 폴더로 이동"
 
-#: templates/archive_scanner.html:1761
+#: templates/archive_scanner.html:1765
 msgid "Original archives moved to:"
 msgstr "원본 아카이브 이동 위치:"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-21 12:49+0200\n"
+"POT-Creation-Date: 2026-10-21 13:35+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: id\n"
@@ -58,8 +58,8 @@ msgstr "Sistem tidak ditemukan atau tidak memiliki game achievement"
 #: routes/achievements.py:171 routes/achievements.py:440
 #: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/collections.py:276
 #: routes/collections.py:531 routes/emulators.py:248 routes/emulators.py:262
-#: routes/games.py:347 routes/games.py:793 routes/games.py:914
-#: routes/games.py:971 routes/games_ai.py:46 routes/games_media.py:35
+#: routes/games.py:347 routes/games.py:790 routes/games.py:912
+#: routes/games.py:968 routes/games_ai.py:46 routes/games_media.py:35
 #: routes/games_media.py:82 routes/games_media.py:143 routes/reports.py:693
 #: routes/reports.py:818 routes/trophies.py:1278 services/hltb_service.py:125
 msgid "Game not found"
@@ -230,8 +230,8 @@ msgstr "Game induk tidak ditemukan"
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "Disc bonus dan game induk harus berada di sistem yang sama"
 
-#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1223
-#: routes/games.py:1253 routes/platform_import.py:289
+#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1220
+#: routes/games.py:1250 routes/platform_import.py:289
 #: routes/platform_import.py:658 routes/platform_import.py:1024
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:200 routes/scraper.py:528
@@ -439,26 +439,26 @@ msgstr "Tidak ada ID yang diberikan"
 msgid "Provide 1-50 valid IDs"
 msgstr "Berikan 1-50 ID yang valid"
 
-#: routes/games.py:501
+#: routes/games.py:498
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
 msgstr ""
 "Video tidak disimpan: harus berupa berkas MP4, WebM, atau OGG maksimal "
 "%(mb)s MB."
 
-#: routes/games.py:627
+#: routes/games.py:624
 msgid "Game not found after update"
 msgstr "Game tidak ditemukan setelah pembaruan"
 
-#: routes/games.py:918
+#: routes/games.py:916
 msgid "No game selected."
 msgstr "Tidak ada game yang dipilih."
 
-#: routes/games.py:943
+#: routes/games.py:940
 msgid "This metadata apply is no longer running."
 msgstr "Penerapan metadata ini sudah tidak berjalan."
 
-#: routes/games.py:952
+#: routes/games.py:949
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
@@ -467,41 +467,41 @@ msgstr ""
 "Metadata diterapkan dari %(sources)s! (%(filled)d kolom terisi, "
 "%(missing)d masih kosong)"
 
-#: routes/games.py:958
+#: routes/games.py:955
 msgid "Failed to apply metadata."
 msgstr "Gagal menerapkan metadata."
 
-#: routes/games.py:1001 routes/games.py:1045
+#: routes/games.py:998 routes/games.py:1042
 msgid "No fields to update"
 msgstr "Tidak ada kolom untuk diperbarui"
 
-#: routes/games.py:1042 routes/platform_import.py:212
+#: routes/games.py:1039 routes/platform_import.py:212
 #: routes/platform_import.py:572 routes/platform_import.py:928
 #: routes/trophies.py:1852
 msgid "No games selected"
 msgstr "Tidak ada game yang dipilih"
 
-#: routes/games.py:1052
+#: routes/games.py:1049
 msgid "Invalid completion status"
 msgstr "Status penyelesaian tidak valid"
 
-#: routes/games.py:1100
+#: routes/games.py:1097
 msgid "No valid fields to update"
 msgstr "Tidak ada kolom valid untuk diperbarui"
 
-#: routes/games.py:1216
+#: routes/games.py:1213
 msgid "Invalid status"
 msgstr "Status tidak valid"
 
-#: routes/games.py:1241
+#: routes/games.py:1238
 msgid "Not authenticated"
 msgstr "Belum terautentikasi"
 
-#: routes/games.py:1272
+#: routes/games.py:1269
 msgid "Filter type and value required"
 msgstr "Jenis dan nilai filter wajib diisi"
 
-#: routes/games.py:1285
+#: routes/games.py:1282
 msgid "Invalid filter type"
 msgstr "Jenis filter tidak valid"
 
@@ -735,7 +735,7 @@ msgid "Missing required parameters"
 msgstr "Parameter yang diperlukan tidak ada"
 
 #: routes/reports.py:605 routes/tools.py:503 routes/tools.py:560
-#: routes/tools.py:595
+#: routes/tools.py:605
 msgid "Invalid path"
 msgstr "Jalur tidak valid"
 
@@ -931,7 +931,7 @@ msgstr "Diperlukan hak akses administrator"
 msgid "Settings payload must be an object"
 msgstr "Payload pengaturan harus berupa objek"
 
-#: routes/tools.py:324 routes/tools.py:950
+#: routes/tools.py:324 routes/tools.py:965
 #, python-format
 msgid "Path does not exist: %(path)s"
 msgstr "Jalur tidak ada: %(path)s"
@@ -952,12 +952,12 @@ msgstr "Tugas tidak ditemukan atau tidak sedang berjalan"
 msgid "Task not found or not paused"
 msgstr "Tugas tidak ditemukan atau tidak sedang dijeda"
 
-#: routes/tools.py:462 routes/tools.py:652 routes/tools.py:823
-#: routes/tools.py:939
+#: routes/tools.py:462 routes/tools.py:667 routes/tools.py:838
+#: routes/tools.py:954
 msgid "Invalid scan path"
 msgstr "Jalur pemindaian tidak valid"
 
-#: routes/tools.py:500 routes/tools.py:557 routes/tools.py:592
+#: routes/tools.py:500 routes/tools.py:557 routes/tools.py:602
 msgid "No path provided"
 msgstr "Tidak ada jalur yang diberikan"
 
@@ -973,33 +973,33 @@ msgstr "Jalur arsip tidak valid"
 msgid "No files to remove"
 msgstr "Tidak ada berkas untuk dihapus"
 
-#: routes/tools.py:623
+#: routes/tools.py:635
 msgid "No paths provided"
 msgstr "Tidak ada jalur yang diberikan"
 
-#: routes/tools.py:629
+#: routes/tools.py:641
 #, python-format
 msgid "Invalid path: %(path)s"
 msgstr "Jalur tidak valid: %(path)s"
 
-#: routes/tools.py:701
+#: routes/tools.py:716
 msgid "chdman not found. Please install MAME tools."
 msgstr "chdman tidak ditemukan. Silakan pasang MAME tools."
 
-#: routes/tools.py:846
+#: routes/tools.py:861
 msgid "chdman not found"
 msgstr "chdman tidak ditemukan"
 
-#: routes/tools.py:944
+#: routes/tools.py:959
 #, python-format
 msgid "Unknown duplicate method: %(method)s"
 msgstr "Metode duplikat tidak dikenal: %(method)s"
 
-#: routes/tools.py:1152
+#: routes/tools.py:1167
 msgid "These scan results have expired. Scan again, then delete."
 msgstr "Hasil pindaian ini sudah kedaluwarsa. Pindai lagi, lalu hapus."
 
-#: routes/tools.py:1157
+#: routes/tools.py:1172
 msgid "Keep at least one copy of each game. Nothing was deleted."
 msgstr "Sisakan setidaknya satu salinan setiap game. Tidak ada yang dihapus."
 
@@ -3923,6 +3923,8 @@ msgid ""
 "Full Re-scrape keeps the art, videos and manuals already downloaded "
 "instead of fetching them again"
 msgstr ""
+"Scrape Ulang Penuh mempertahankan gambar, video, dan manual yang sudah "
+"diunduh alih-alih mengambilnya lagi"
 
 #: templates/all_games.html:81 templates/system_games.html:72
 #, fuzzy
@@ -4597,11 +4599,19 @@ msgstr "Saat ini:"
 msgid "Waiting to start..."
 msgstr "Menunggu untuk mulai..."
 
-#: templates/archive_scanner.html:1658
+#: templates/archive_scanner.html:1460
+msgid ""
+"The archive holds more than one release. The playlist uses the first; "
+"these disks stay in the folder:"
+msgstr ""
+"Arsip berisi lebih dari satu rilis. Daftar putar memakai yang pertama; "
+"disk berikut tetap di folder:"
+
+#: templates/archive_scanner.html:1662
 msgid "Have the original archive moved to the staging folder"
 msgstr "Pindahkan arsip asli ke folder staging"
 
-#: templates/archive_scanner.html:1761
+#: templates/archive_scanner.html:1765
 msgid "Original archives moved to:"
 msgstr "Arsip asli dipindahkan ke:"
 

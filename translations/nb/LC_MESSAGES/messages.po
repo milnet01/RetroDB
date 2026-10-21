@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-21 12:49+0200\n"
+"POT-Creation-Date: 2026-10-21 13:35+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: nb\n"
@@ -59,8 +59,8 @@ msgstr "System ikke funnet eller har ingen spill med prestasjoner"
 #: routes/achievements.py:171 routes/achievements.py:440
 #: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/collections.py:276
 #: routes/collections.py:531 routes/emulators.py:248 routes/emulators.py:262
-#: routes/games.py:347 routes/games.py:793 routes/games.py:914
-#: routes/games.py:971 routes/games_ai.py:46 routes/games_media.py:35
+#: routes/games.py:347 routes/games.py:790 routes/games.py:912
+#: routes/games.py:968 routes/games_ai.py:46 routes/games_media.py:35
 #: routes/games_media.py:82 routes/games_media.py:143 routes/reports.py:693
 #: routes/reports.py:818 routes/trophies.py:1278 services/hltb_service.py:125
 msgid "Game not found"
@@ -233,8 +233,8 @@ msgstr "Overordnet spill ikke funnet"
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "Bonusplaten og det overordnede spillet må være i samme system"
 
-#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1223
-#: routes/games.py:1253 routes/platform_import.py:289
+#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1220
+#: routes/games.py:1250 routes/platform_import.py:289
 #: routes/platform_import.py:658 routes/platform_import.py:1024
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:200 routes/scraper.py:528
@@ -442,26 +442,26 @@ msgstr "Ingen IDer angitt"
 msgid "Provide 1-50 valid IDs"
 msgstr "Angi 1–50 gyldige IDer"
 
-#: routes/games.py:501
+#: routes/games.py:498
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
 msgstr ""
 "Videoen ble ikke lagret: den må være en MP4-, WebM- eller OGG-fil på "
 "opptil %(mb)s MB."
 
-#: routes/games.py:627
+#: routes/games.py:624
 msgid "Game not found after update"
 msgstr "Spillet ble ikke funnet etter oppdatering"
 
-#: routes/games.py:918
+#: routes/games.py:916
 msgid "No game selected."
 msgstr "Ingen spill valgt."
 
-#: routes/games.py:943
+#: routes/games.py:940
 msgid "This metadata apply is no longer running."
 msgstr "Denne metadatabehandlingen kjører ikke lenger."
 
-#: routes/games.py:952
+#: routes/games.py:949
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
@@ -470,41 +470,41 @@ msgstr ""
 "Metadata brukt fra %(sources)s! (%(filled)d felt fylt ut, %(missing)d "
 "mangler fortsatt)"
 
-#: routes/games.py:958
+#: routes/games.py:955
 msgid "Failed to apply metadata."
 msgstr "Kunne ikke bruke metadata."
 
-#: routes/games.py:1001 routes/games.py:1045
+#: routes/games.py:998 routes/games.py:1042
 msgid "No fields to update"
 msgstr "Ingen felt å oppdatere"
 
-#: routes/games.py:1042 routes/platform_import.py:212
+#: routes/games.py:1039 routes/platform_import.py:212
 #: routes/platform_import.py:572 routes/platform_import.py:928
 #: routes/trophies.py:1852
 msgid "No games selected"
 msgstr "Ingen spill valgt"
 
-#: routes/games.py:1052
+#: routes/games.py:1049
 msgid "Invalid completion status"
 msgstr "Ugyldig fullføringsstatus"
 
-#: routes/games.py:1100
+#: routes/games.py:1097
 msgid "No valid fields to update"
 msgstr "Ingen gyldige felt å oppdatere"
 
-#: routes/games.py:1216
+#: routes/games.py:1213
 msgid "Invalid status"
 msgstr "Ugyldig status"
 
-#: routes/games.py:1241
+#: routes/games.py:1238
 msgid "Not authenticated"
 msgstr "Ikke autentisert"
 
-#: routes/games.py:1272
+#: routes/games.py:1269
 msgid "Filter type and value required"
 msgstr "Filtertype og verdi kreves"
 
-#: routes/games.py:1285
+#: routes/games.py:1282
 msgid "Invalid filter type"
 msgstr "Ugyldig filtertype"
 
@@ -748,7 +748,7 @@ msgid "Missing required parameters"
 msgstr "Mangler nødvendige parametere"
 
 #: routes/reports.py:605 routes/tools.py:503 routes/tools.py:560
-#: routes/tools.py:595
+#: routes/tools.py:605
 msgid "Invalid path"
 msgstr "Ugyldig sti"
 
@@ -942,7 +942,7 @@ msgstr "Administratorrettigheter kreves"
 msgid "Settings payload must be an object"
 msgstr "Innstillingsdataene må være et objekt"
 
-#: routes/tools.py:324 routes/tools.py:950
+#: routes/tools.py:324 routes/tools.py:965
 #, python-format
 msgid "Path does not exist: %(path)s"
 msgstr "Stien finnes ikke: %(path)s"
@@ -963,12 +963,12 @@ msgstr "Oppgaven ble ikke funnet eller kjører ikke"
 msgid "Task not found or not paused"
 msgstr "Oppgaven ble ikke funnet eller er ikke satt på pause"
 
-#: routes/tools.py:462 routes/tools.py:652 routes/tools.py:823
-#: routes/tools.py:939
+#: routes/tools.py:462 routes/tools.py:667 routes/tools.py:838
+#: routes/tools.py:954
 msgid "Invalid scan path"
 msgstr "Ugyldig skannesti"
 
-#: routes/tools.py:500 routes/tools.py:557 routes/tools.py:592
+#: routes/tools.py:500 routes/tools.py:557 routes/tools.py:602
 msgid "No path provided"
 msgstr "Ingen sti angitt"
 
@@ -984,33 +984,33 @@ msgstr "Ugyldig arkivsti"
 msgid "No files to remove"
 msgstr "Ingen filer å fjerne"
 
-#: routes/tools.py:623
+#: routes/tools.py:635
 msgid "No paths provided"
 msgstr "Ingen stier angitt"
 
-#: routes/tools.py:629
+#: routes/tools.py:641
 #, python-format
 msgid "Invalid path: %(path)s"
 msgstr "Ugyldig sti: %(path)s"
 
-#: routes/tools.py:701
+#: routes/tools.py:716
 msgid "chdman not found. Please install MAME tools."
 msgstr "chdman ble ikke funnet. Installer MAME-verktøyene."
 
-#: routes/tools.py:846
+#: routes/tools.py:861
 msgid "chdman not found"
 msgstr "chdman ble ikke funnet"
 
-#: routes/tools.py:944
+#: routes/tools.py:959
 #, python-format
 msgid "Unknown duplicate method: %(method)s"
 msgstr "Ukjent duplikatmetode: %(method)s"
 
-#: routes/tools.py:1152
+#: routes/tools.py:1167
 msgid "These scan results have expired. Scan again, then delete."
 msgstr "Disse skanneresultatene er utløpt. Skann på nytt, og slett deretter."
 
-#: routes/tools.py:1157
+#: routes/tools.py:1172
 msgid "Keep at least one copy of each game. Nothing was deleted."
 msgstr "Behold minst én kopi av hvert spill. Ingenting ble slettet."
 
@@ -3934,6 +3934,8 @@ msgid ""
 "Full Re-scrape keeps the art, videos and manuals already downloaded "
 "instead of fetching them again"
 msgstr ""
+"Full ny skraping beholder bilder, videoer og manualer som allerede er "
+"lastet ned, i stedet for å hente dem på nytt"
 
 #: templates/all_games.html:81 templates/system_games.html:72
 #, fuzzy
@@ -4608,11 +4610,19 @@ msgstr "Gjeldende:"
 msgid "Waiting to start..."
 msgstr "Venter på å starte..."
 
-#: templates/archive_scanner.html:1658
+#: templates/archive_scanner.html:1460
+msgid ""
+"The archive holds more than one release. The playlist uses the first; "
+"these disks stay in the folder:"
+msgstr ""
+"Arkivet inneholder mer enn én utgivelse. Spillelisten bruker den første; "
+"disse diskene blir liggende i mappen:"
+
+#: templates/archive_scanner.html:1662
 msgid "Have the original archive moved to the staging folder"
 msgstr "Få det opprinnelige arkivet flyttet til mellomlagringsmappen"
 
-#: templates/archive_scanner.html:1761
+#: templates/archive_scanner.html:1765
 msgid "Original archives moved to:"
 msgstr "Opprinnelige arkiver flyttet til:"
 

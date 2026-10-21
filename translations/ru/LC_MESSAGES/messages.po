@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-21 12:49+0200\n"
+"POT-Creation-Date: 2026-10-21 13:35+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -59,8 +59,8 @@ msgstr "Система не найдена или не содержит игр �
 #: routes/achievements.py:171 routes/achievements.py:440
 #: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/collections.py:276
 #: routes/collections.py:531 routes/emulators.py:248 routes/emulators.py:262
-#: routes/games.py:347 routes/games.py:793 routes/games.py:914
-#: routes/games.py:971 routes/games_ai.py:46 routes/games_media.py:35
+#: routes/games.py:347 routes/games.py:790 routes/games.py:912
+#: routes/games.py:968 routes/games_ai.py:46 routes/games_media.py:35
 #: routes/games_media.py:82 routes/games_media.py:143 routes/reports.py:693
 #: routes/reports.py:818 routes/trophies.py:1278 services/hltb_service.py:125
 msgid "Game not found"
@@ -233,8 +233,8 @@ msgstr "Основная игра не найдена"
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "Бонусный диск и основная игра должны относиться к одной системе"
 
-#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1223
-#: routes/games.py:1253 routes/platform_import.py:289
+#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1220
+#: routes/games.py:1250 routes/platform_import.py:289
 #: routes/platform_import.py:658 routes/platform_import.py:1024
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:200 routes/scraper.py:528
@@ -442,26 +442,26 @@ msgstr "ID не предоставлены"
 msgid "Provide 1-50 valid IDs"
 msgstr "Укажите от 1 до 50 корректных ID"
 
-#: routes/games.py:501
+#: routes/games.py:498
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
 msgstr ""
 "Видео не сохранено: это должен быть файл MP4, WebM или OGG размером до "
 "%(mb)s МБ."
 
-#: routes/games.py:627
+#: routes/games.py:624
 msgid "Game not found after update"
 msgstr "Игра не найдена после обновления"
 
-#: routes/games.py:918
+#: routes/games.py:916
 msgid "No game selected."
 msgstr "Игра не выбрана."
 
-#: routes/games.py:943
+#: routes/games.py:940
 msgid "This metadata apply is no longer running."
 msgstr "Это применение метаданных больше не выполняется."
 
-#: routes/games.py:952
+#: routes/games.py:949
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
@@ -470,41 +470,41 @@ msgstr ""
 "Метаданные применены из %(sources)s! (заполнено полей: %(filled)d, ещё не"
 " хватает: %(missing)d)"
 
-#: routes/games.py:958
+#: routes/games.py:955
 msgid "Failed to apply metadata."
 msgstr "Не удалось применить метаданные."
 
-#: routes/games.py:1001 routes/games.py:1045
+#: routes/games.py:998 routes/games.py:1042
 msgid "No fields to update"
 msgstr "Нет полей для обновления"
 
-#: routes/games.py:1042 routes/platform_import.py:212
+#: routes/games.py:1039 routes/platform_import.py:212
 #: routes/platform_import.py:572 routes/platform_import.py:928
 #: routes/trophies.py:1852
 msgid "No games selected"
 msgstr "Игры не выбраны"
 
-#: routes/games.py:1052
+#: routes/games.py:1049
 msgid "Invalid completion status"
 msgstr "Недопустимый статус прохождения"
 
-#: routes/games.py:1100
+#: routes/games.py:1097
 msgid "No valid fields to update"
 msgstr "Нет допустимых полей для обновления"
 
-#: routes/games.py:1216
+#: routes/games.py:1213
 msgid "Invalid status"
 msgstr "Недопустимый статус"
 
-#: routes/games.py:1241
+#: routes/games.py:1238
 msgid "Not authenticated"
 msgstr "Не выполнена аутентификация"
 
-#: routes/games.py:1272
+#: routes/games.py:1269
 msgid "Filter type and value required"
 msgstr "Требуются тип и значение фильтра"
 
-#: routes/games.py:1285
+#: routes/games.py:1282
 msgid "Invalid filter type"
 msgstr "Недопустимый тип фильтра"
 
@@ -740,7 +740,7 @@ msgid "Missing required parameters"
 msgstr "Отсутствуют обязательные параметры"
 
 #: routes/reports.py:605 routes/tools.py:503 routes/tools.py:560
-#: routes/tools.py:595
+#: routes/tools.py:605
 msgid "Invalid path"
 msgstr "Недопустимый путь"
 
@@ -934,7 +934,7 @@ msgstr "Требуются права администратора"
 msgid "Settings payload must be an object"
 msgstr "Данные настроек должны быть объектом"
 
-#: routes/tools.py:324 routes/tools.py:950
+#: routes/tools.py:324 routes/tools.py:965
 #, python-format
 msgid "Path does not exist: %(path)s"
 msgstr "Путь не существует: %(path)s"
@@ -955,12 +955,12 @@ msgstr "Задача не найдена или не выполняется"
 msgid "Task not found or not paused"
 msgstr "Задача не найдена или не приостановлена"
 
-#: routes/tools.py:462 routes/tools.py:652 routes/tools.py:823
-#: routes/tools.py:939
+#: routes/tools.py:462 routes/tools.py:667 routes/tools.py:838
+#: routes/tools.py:954
 msgid "Invalid scan path"
 msgstr "Недопустимый путь сканирования"
 
-#: routes/tools.py:500 routes/tools.py:557 routes/tools.py:592
+#: routes/tools.py:500 routes/tools.py:557 routes/tools.py:602
 msgid "No path provided"
 msgstr "Путь не указан"
 
@@ -976,33 +976,33 @@ msgstr "Недопустимый путь к архиву"
 msgid "No files to remove"
 msgstr "Нет файлов для удаления"
 
-#: routes/tools.py:623
+#: routes/tools.py:635
 msgid "No paths provided"
 msgstr "Пути не предоставлены"
 
-#: routes/tools.py:629
+#: routes/tools.py:641
 #, python-format
 msgid "Invalid path: %(path)s"
 msgstr "Недопустимый путь: %(path)s"
 
-#: routes/tools.py:701
+#: routes/tools.py:716
 msgid "chdman not found. Please install MAME tools."
 msgstr "chdman не найден. Установите инструменты MAME."
 
-#: routes/tools.py:846
+#: routes/tools.py:861
 msgid "chdman not found"
 msgstr "chdman не найден"
 
-#: routes/tools.py:944
+#: routes/tools.py:959
 #, python-format
 msgid "Unknown duplicate method: %(method)s"
 msgstr "Неизвестный метод поиска дубликатов: %(method)s"
 
-#: routes/tools.py:1152
+#: routes/tools.py:1167
 msgid "These scan results have expired. Scan again, then delete."
 msgstr "Эти результаты сканирования устарели. Просканируйте снова, затем удаляйте."
 
-#: routes/tools.py:1157
+#: routes/tools.py:1172
 msgid "Keep at least one copy of each game. Nothing was deleted."
 msgstr "Оставьте хотя бы одну копию каждой игры. Ничего не удалено."
 
@@ -3935,6 +3935,8 @@ msgid ""
 "Full Re-scrape keeps the art, videos and manuals already downloaded "
 "instead of fetching them again"
 msgstr ""
+"Полный повторный сбор сохраняет уже загруженные изображения, видео и "
+"руководства, а не загружает их заново"
 
 #: templates/all_games.html:81 templates/system_games.html:72
 #, fuzzy
@@ -4609,11 +4611,19 @@ msgstr "Текущий:"
 msgid "Waiting to start..."
 msgstr "Ожидание запуска…"
 
-#: templates/archive_scanner.html:1658
+#: templates/archive_scanner.html:1460
+msgid ""
+"The archive holds more than one release. The playlist uses the first; "
+"these disks stay in the folder:"
+msgstr ""
+"В архиве больше одного издания. Плейлист использует первое; эти диски "
+"остаются в папке:"
+
+#: templates/archive_scanner.html:1662
 msgid "Have the original archive moved to the staging folder"
 msgstr "Переместить исходный архив в промежуточную папку"
 
-#: templates/archive_scanner.html:1761
+#: templates/archive_scanner.html:1765
 msgid "Original archives moved to:"
 msgstr "Исходные архивы перемещены в:"
 

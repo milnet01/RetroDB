@@ -1456,7 +1456,11 @@ async function createM3U(path) {
                     if (data.archive_moved) {
                         movedInfo = `<li>📦 Archive moved to: <code>${data.moved_to}</code></li>`;
                     }
-                    
+                    if (data.skipped_files && data.skipped_files.length) {
+                        movedInfo += `<li>${escapeHtml({{ _('The archive holds more than one release. The playlist uses the first; these disks stay in the folder:')|tojson }})}
+                            <code>${data.skipped_files.map(escapeHtml).join(', ')}</code></li>`;
+                    }
+
                     showModal('✅ M3U Created', 
                         `<p>Successfully created:</p>
                         <ul style="text-align: left; margin: 0.5rem 0; padding-left: 1.5rem;">
