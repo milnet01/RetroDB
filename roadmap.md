@@ -8352,7 +8352,15 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.115 Two Help sentences are stale in all 20 translated Help pages (LOW, S).
-- **Status**: todo
+- **Resolution** (2026-10-21): Shipped 2026-10-21 (v3.30.0). All 20 locale pages: theme and login
+  sentences, both Regional Versions entries (with the AI-summary
+  sentence), the Duplicate Finder filename-mode sentence. Also fixed in
+  English and all locales: Editor/Viewer need a password, new users (not
+  only admins) get a default password, 12-character minimum (was 8), all
+  passwords hashed. Verified: section ids identical to help.html, old
+  German claims gone, every template parses, help/i18n tests pass. The
+  Settings "Emulators and Play" heading stays owed under PASS-59-91.
+- **Status**: done
 - **Target**: `templates/help.<locale>.html`, the theme bullet in the
   Themes section and the login paragraph in the Users section (the same
   places as in `templates/help.html`).
@@ -8911,6 +8919,27 @@ were corrected in `2836bc3` and are not repeated here.
 - **Verify**: a game with imported faces shows a box that turns with
   drag and keyboard, has a transparent background, and falls back to
   the flat cover without faces.
+
+---
+
+#### Pass 59.144 Settings shows "Default Region" in English in every language (LOW, S).
+- **Status**: todo
+- **Target**: `templates/_settings_tabs/library.html` — the Default
+  Region label is not wrapped in `_()`, so no catalog has it.
+- **Plan**: wrap it, regenerate catalogs, translate in all 20.
+- **Verify**: `/settings` in de shows the German label.
+
+---
+
+#### Pass 59.145 The Settings "Scraping" tab reads as "scraping in progress" in several languages (LOW, S).
+- **Status**: todo
+- **Target**: the shared msgid `Scraping` (Settings tab, logs page,
+  wishlist). Its msgstr is a progress word in af, he, ja, ko, pt_BR, tr,
+  zh_Hans, zh_Hant, zu (e.g. tr "Kazınıyor", zh "抓取中").
+- **Plan**: give the tab its own `pgettext` context and translate it as
+  a noun; then align the Settings paths in `help.<locale>.html`, which
+  PASS-59-115 took from the catalog.
+- **Verify**: the tab and Help name agree and read as a noun.
 
 ## Done index
 
