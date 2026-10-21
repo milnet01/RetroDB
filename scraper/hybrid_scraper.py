@@ -4,11 +4,13 @@
 # Combines metadata from ES-DE, TheGamesDB, and IGDB to fill all gaps
 # =============================================================================
 
+import contextvars
 import json
 import logging
 import os
 import re
 import sys
+from concurrent.futures import ThreadPoolExecutor
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import IMAGE_PATH, STATIC_PATH
@@ -906,248 +908,251 @@ def _run_fallbacks(metadata, result, sources_data, game, db_game_id,
         logger.info(f"Searching other scrapers for: '{game_title}' on {system_name}")
 
         fallback_settings = load_scraper_settings()
-        fallback_api_keys = fallback_settings.get('api_keys', {})
         fallback_enabled = fallback_settings.get('enabled', {})
         fallback_scrapers = _fallback_order(
             primary_source, sources_data, restrict_to_selected, secondary_sources)
 
         logger.info(f"Primary source: {primary_source} -> Fallback scrapers in priority order: {fallback_scrapers}")
 
-        apply_progress.plan(len(fallback_scrapers))
-        for i, fallback_source in enumerate(fallback_scrapers):
-            # Re-check missing fields
-            missing = [k for k, v in metadata.items() if not v]
-            if not missing:
-                apply_progress.unplan(len(fallback_scrapers) - i)
-                break  # All fields filled
+        # PASS-59-132: every source but AI is searched and fetched at once,
+        # one thread per source, so no host gets more requests at a time than
+        # the parallel search (Pass 55.1) sends it. The applies below still run
+        # one by one in priority order, so field precedence is unchanged. AI is
+        # not prefetched: its prompt names the fields still empty at its turn.
+        lookup = {
+            'title': game_title,
+            'system_name': system_name,
+            'system_folder': system_folder,
+            'secondary_sources': secondary_sources or [],
+            'api_keys': fallback_settings.get('api_keys', {}),
+        }
+        fetchable = [s for s in fallback_scrapers if s in _FALLBACK_FETCHERS]
+        # One copied context per task: the progress tracker and step timer
+        # are ContextVars, which a pool thread does not inherit. Leaving the
+        # pool waits for every fetch, so none overlaps the next game's.
+        with ThreadPoolExecutor(max_workers=max(len(fetchable), 1),
+                                thread_name_prefix='fallback-fetch') as pool:
+            fetches = {s: pool.submit(contextvars.copy_context().run, _fetch_fallback, s, lookup)
+                       for s in fetchable}
+            apply_progress.plan(len(fallback_scrapers))
+            for i, fallback_source in enumerate(fallback_scrapers):
+                # Re-check missing fields
+                missing = [k for k, v in metadata.items() if not v]
+                if not missing:
+                    apply_progress.unplan(len(fallback_scrapers) - i)
+                    break  # All fields filled
 
-            # Skip if scraper is disabled
-            if not fallback_enabled.get(fallback_source, True):
-                logger.info(f"Fallback scraper {fallback_source} is disabled, skipping")
-                apply_progress.unplan(1)
-                continue
+                if fallback_source == 'ai':
+                    apply_progress.begin('ai')
+                else:
+                    apply_progress.begin(
+                        'search',
+                        source=_PROGRESS_SOURCE_LABELS.get(fallback_source, fallback_source),
+                    )
+                try:
+                    if fallback_source == 'ai':
+                        _run_ai_fallback(metadata, result, sources_data, db_game_id,
+                                         lookup, fallback_enabled)
+                    elif fallback_source in fetches:
+                        data = fetches[fallback_source].result()
+                        if data:
+                            _apply_fallback(fallback_source, data, metadata, result,
+                                            sources_data, db_game_id, system_folder,
+                                            force_overwrite)
+                except Exception as fallback_error:
+                    logger.warning(f"Fallback scraper {fallback_source} failed: {fallback_error}")
+                apply_progress.step_done()
 
-            if fallback_source == 'ai':
-                apply_progress.begin('ai')
-            else:
-                apply_progress.begin(
-                    'search',
-                    source=_PROGRESS_SOURCE_LABELS.get(fallback_source, fallback_source),
-                )
-            try:
-                if fallback_source == 'esde':
-                    # Try ES-DE fallback
-                    logger.info(f"Trying ES-DE fallback for: '{game_title}'")
-                    from scraper.scrape_esde import search_esde_games, fetch_esde_game_details, apply_esde_metadata as esde_apply
-                    esde_results = search_esde_games(game_title, system_folder, limit=5)
-                    esde_match = _pick_best_fallback(esde_results, game_title) if esde_results else None
-                    if esde_match:
-                        esde_path = esde_match.get('id')  # ES-DE uses 'id' which contains the path
-                        if esde_path:
-                            logger.info(f"Found ES-DE match: {esde_match.get('name')} (Path: {esde_path})")
 
-                            esde_data = fetch_esde_game_details(esde_path, system_folder)
-                            if esde_data:
-                                sources_data['esde'] = esde_data
-                                # Apply ES-DE metadata - pass force_overwrite for consistent behavior
-                                esde_apply(db_game_id, esde_data, system_folder,
-                                          existing_boxart=metadata.get('boxart'),
-                                          existing_screenshots=metadata.get('screenshots'),
-                                          force_overwrite=force_overwrite)
-                                if 'ES-DE' not in result['sources_used']:
-                                    result['sources_used'].append('ES-DE')
-                            else:
-                                logger.info("ES-DE fallback: failed to fetch game details")
-                        else:
-                            logger.info("ES-DE fallback: no path found in result")
-                    else:
-                        logger.info(f"ES-DE fallback: no results found for '{game_title}'")
+def _fetch_fallback(source, lookup):
+    """Search `source` for the game and fetch its detail record, or None.
+    Runs on a pool thread; touches no shared state."""
+    with apply_progress.timed(f"fetch {_PROGRESS_SOURCE_LABELS.get(source, source)}"):
+        try:
+            return _FALLBACK_FETCHERS[source](lookup)
+        except Exception as fallback_error:
+            logger.warning(f"Fallback scraper {source} failed: {fallback_error}")
+            return None
 
-                elif fallback_source == 'tgdb':
-                    logger.info(f"Trying TGDB fallback for: '{game_title}'")
-                    tgdb_id = None
 
-                    # First check if we have it in secondary_sources
-                    # Pick the best title match (not just the first result)
-                    if secondary_sources:
-                        tgdb_candidates = [s for s in secondary_sources if s['source'] == 'tgdb']
-                        tgdb_info = _pick_best_secondary(tgdb_candidates, game_title)
-                        if tgdb_info:
-                            tgdb_id = tgdb_info['id']
+def _fallback_id(source, label, lookup, search):
+    """The id to fetch from `source`: the best-matching of the user's search
+    results, else the best match of a fresh `search()`."""
+    title = lookup['title']
+    candidates = [s for s in lookup['secondary_sources'] if s['source'] == source]
+    picked = _pick_best_secondary(candidates, title)
+    if picked and picked['id']:
+        return picked['id']
+    match = _pick_best_fallback(search(), title)
+    if match:
+        logger.info(f"Found {label} match: {match.get('name')} (ID: {match.get('id')})")
+        return match.get('id')
+    logger.info(f"{label} fallback: no results found for '{title}'")
+    return None
 
-                    # If not, search for it (fetch multiple and pick best match)
-                    if not tgdb_id:
-                        from scraper.scrape_thegamesdb import search_games as search_tgdb
-                        tgdb_results = search_tgdb(game_title, system_name, limit=5)
-                        tgdb_match = _pick_best_fallback(tgdb_results, game_title)
-                        if tgdb_match:
-                            tgdb_id = tgdb_match.get('id')
-                            logger.info(f"Found TGDB match: {tgdb_match.get('name')} (ID: {tgdb_id})")
-                        else:
-                            logger.info(f"TGDB fallback: no results found for '{game_title}'")
 
-                    if tgdb_id:
-                        tgdb_data = fetch_tgdb_extended(tgdb_id)
-                        if tgdb_data:
-                            sources_data['tgdb'] = tgdb_data
-                            apply_tgdb_to_metadata(metadata, tgdb_data, db_game_id, result, fill_only=True)
-                            if 'TheGamesDB' not in result['sources_used']:
-                                result['sources_used'].append('TheGamesDB')
+def _fetch_esde(lookup):
+    from scraper.scrape_esde import search_esde_games, fetch_esde_game_details
+    title, folder = lookup['title'], lookup['system_folder']
+    logger.info(f"Trying ES-DE fallback for: '{title}'")
+    esde_results = search_esde_games(title, folder, limit=5)
+    esde_match = _pick_best_fallback(esde_results, title) if esde_results else None
+    if not esde_match:
+        logger.info(f"ES-DE fallback: no results found for '{title}'")
+        return None
+    esde_path = esde_match.get('id')  # ES-DE uses 'id' which contains the path
+    if not esde_path:
+        logger.info("ES-DE fallback: no path found in result")
+        return None
+    logger.info(f"Found ES-DE match: {esde_match.get('name')} (Path: {esde_path})")
+    esde_data = fetch_esde_game_details(esde_path, folder)
+    if not esde_data:
+        logger.info("ES-DE fallback: failed to fetch game details")
+    return esde_data
 
-                elif fallback_source == 'igdb':
-                    logger.info(f"Trying IGDB fallback for: '{game_title}'")
-                    igdb_id = None
 
-                    # First check if we have it in secondary_sources
-                    # Pick the best title match (not just the first result)
-                    if secondary_sources:
-                        igdb_candidates = [s for s in secondary_sources if s['source'] == 'igdb']
-                        igdb_info = _pick_best_secondary(igdb_candidates, game_title)
-                        if igdb_info:
-                            igdb_id = igdb_info['id']
+def _fetch_tgdb(lookup):
+    from scraper.scrape_thegamesdb import search_games as search_tgdb
+    title = lookup['title']
+    logger.info(f"Trying TGDB fallback for: '{title}'")
+    tgdb_id = _fallback_id('tgdb', 'TGDB', lookup,
+                           lambda: search_tgdb(title, lookup['system_name'], limit=5))
+    return fetch_tgdb_extended(tgdb_id) if tgdb_id else None
 
-                    # If not, search for it (fetch multiple and pick best match)
-                    if not igdb_id:
-                        from scraper.scrape_igdb import search_games as search_igdb
-                        igdb_results = search_igdb(game_title, system_name, limit=5)
-                        igdb_match = _pick_best_fallback(igdb_results, game_title)
-                        if igdb_match:
-                            igdb_id = igdb_match.get('id')
-                            logger.info(f"Found IGDB match: {igdb_match.get('name')} (ID: {igdb_id})")
-                        else:
-                            logger.info(f"IGDB fallback: no results found for '{game_title}'")
 
-                    if igdb_id:
-                        igdb_data = fetch_igdb_extended(igdb_id)
-                        if igdb_data:
-                            sources_data['igdb'] = igdb_data
-                            apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=True)
-                            if 'IGDB' not in result['sources_used']:
-                                result['sources_used'].append('IGDB')
+def _fetch_igdb(lookup):
+    from scraper.scrape_igdb import search_games as search_igdb
+    title = lookup['title']
+    logger.info(f"Trying IGDB fallback for: '{title}'")
+    igdb_id = _fallback_id('igdb', 'IGDB', lookup,
+                           lambda: search_igdb(title, lookup['system_name'], limit=5))
+    return fetch_igdb_extended(igdb_id) if igdb_id else None
 
-                elif fallback_source == 'screenscraper':
-                    ss_username = fallback_api_keys.get('screenscraper_username', '')
-                    ss_password = fallback_api_keys.get('screenscraper_password', '')
-                    ss_devid = fallback_api_keys.get('screenscraper_devid', '')
-                    ss_devpassword = fallback_api_keys.get('screenscraper_devpassword', '')
 
-                    if not ss_username or not ss_password:
-                        logger.info("ScreenScraper fallback skipped: missing credentials")
-                    else:
-                        logger.info(f"Trying ScreenScraper fallback for: '{game_title}'")
-                        from scraper.scrape_screenscraper import search_game, get_system_id
-                        ss_data = None
+def _fetch_rawg(lookup):
+    keys = lookup['api_keys']
+    if not (keys.get('rawg_api_key', '') or keys.get('rawg', '')):
+        logger.info("RAWG fallback skipped: missing API key")
+        return None
+    from scraper.scrape_rawg import search_games as search_rawg, get_game_details as fetch_rawg
+    title = lookup['title']
+    logger.info(f"Trying RAWG fallback for: '{title}'")
+    rawg_id = _fallback_id('rawg', 'RAWG', lookup,
+                           lambda: search_rawg(title, lookup['system_folder'], limit=5))
+    return fetch_rawg(rawg_id) if rawg_id else None
 
-                        # First check if we have a cached result from the initial search
-                        # Pick the best title match (not just the first result)
-                        if secondary_sources:
-                            ss_candidates = [s for s in secondary_sources if s['source'] == 'screenscraper']
-                            ss_info = _pick_best_secondary(ss_candidates, game_title)
-                            if ss_info and ss_info.get('id'):
-                                from scraper.scraper_manager import get_cached_screenscraper_result
-                                ss_id_parts = str(ss_info['id']).split(':')
-                                ss_cached = get_cached_screenscraper_result(
-                                    ss_id_parts[0],
-                                    ss_id_parts[1] if len(ss_id_parts) > 1 else None
-                                )
-                                if ss_cached:
-                                    ss_data = ss_cached
-                                    logger.info(f"Using cached ScreenScraper result from initial search (ID: {ss_info['id']})")
 
-                        # If no cached result, search for it
-                        if not ss_data:
-                            ss_system_id = get_system_id(system_folder)
-                            if not ss_system_id:
-                                logger.warning(f"ScreenScraper fallback: no system ID found for {system_folder}")
-                            else:
-                                ss_results = search_game(
-                                    game_title, system_folder,
-                                    ss_username, ss_password,
-                                    ss_devid, ss_devpassword
-                                )
-                                if ss_results:
-                                    # Score unconditionally: a single result
-                                    # used to be accepted with no score at all,
-                                    # bypassing the 80-point floor scrapers.md
-                                    # §6 exists to enforce — and ScreenScraper
-                                    # also supplies video and manual, which are
-                                    # fill-only and so survive a re-scrape
-                                    # (Pass 59.21).
-                                    ss_data = _pick_best_fallback(ss_results, game_title)
-                                else:
-                                    logger.info(f"ScreenScraper fallback: no results found for '{game_title}'")
+def _fetch_screenscraper(lookup):
+    keys = lookup['api_keys']
+    ss_username = keys.get('screenscraper_username', '')
+    ss_password = keys.get('screenscraper_password', '')
+    if not ss_username or not ss_password:
+        logger.info("ScreenScraper fallback skipped: missing credentials")
+        return None
+    from scraper.scrape_screenscraper import search_game, get_system_id
+    game_title, folder = lookup['title'], lookup['system_folder']
+    logger.info(f"Trying ScreenScraper fallback for: '{game_title}'")
 
-                        if ss_data:
-                            logger.info(f"Found ScreenScraper match: {ss_data.get('nom', 'Unknown')} (ID: {ss_data.get('id')})")
-                            sources_data['screenscraper'] = ss_data
-                            apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_only=True)
-                            if 'ScreenScraper' not in result['sources_used']:
-                                result['sources_used'].append('ScreenScraper')
+    # First check if we have a cached result from the initial search
+    # Pick the best title match (not just the first result)
+    ss_candidates = [s for s in lookup['secondary_sources'] if s['source'] == 'screenscraper']
+    ss_info = _pick_best_secondary(ss_candidates, game_title)
+    if ss_info and ss_info.get('id'):
+        from scraper.scraper_manager import get_cached_screenscraper_result
+        ss_id_parts = str(ss_info['id']).split(':')
+        ss_cached = get_cached_screenscraper_result(
+            ss_id_parts[0],
+            ss_id_parts[1] if len(ss_id_parts) > 1 else None
+        )
+        if ss_cached:
+            logger.info(f"Using cached ScreenScraper result from initial search (ID: {ss_info['id']})")
+            return ss_cached
 
-                elif fallback_source == 'rawg':
-                    rawg_api_key = fallback_api_keys.get('rawg_api_key', '') or fallback_api_keys.get('rawg', '')
-                    if not rawg_api_key:
-                        logger.info("RAWG fallback skipped: missing API key")
-                    else:
-                        logger.info(f"Trying RAWG fallback for: '{game_title}'")
-                        from scraper.scrape_rawg import search_games as search_rawg, get_game_details as fetch_rawg
-                        rawg_id = None
+    if not get_system_id(folder):
+        logger.warning(f"ScreenScraper fallback: no system ID found for {folder}")
+        return None
+    ss_results = search_game(
+        game_title, folder,
+        ss_username, ss_password,
+        keys.get('screenscraper_devid', ''), keys.get('screenscraper_devpassword', '')
+    )
+    if not ss_results:
+        logger.info(f"ScreenScraper fallback: no results found for '{game_title}'")
+        return None
+    # Score unconditionally: a single result used to be accepted with no
+    # score at all, bypassing the 80-point floor scrapers.md §6 exists to
+    # enforce — and ScreenScraper also supplies video and manual, which are
+    # fill-only and so survive a re-scrape (Pass 59.21).
+    return _pick_best_fallback(ss_results, game_title)
 
-                        # First check if we have it in secondary_sources
-                        # Pick the best title match (not just the first result)
-                        if secondary_sources:
-                            rawg_candidates = [s for s in secondary_sources if s['source'] == 'rawg']
-                            rawg_info = _pick_best_secondary(rawg_candidates, game_title)
-                            if rawg_info:
-                                rawg_id = rawg_info['id']
 
-                        rawg_match = None
-                        if not rawg_id:
-                            rawg_results = search_rawg(game_title, system_folder, limit=5)
-                            rawg_match = _pick_best_fallback(rawg_results, game_title)
-                            if rawg_match:
-                                rawg_id = rawg_match.get('id')
+_FALLBACK_FETCHERS = {
+    'esde': _fetch_esde,
+    'tgdb': _fetch_tgdb,
+    'igdb': _fetch_igdb,
+    'screenscraper': _fetch_screenscraper,
+    'rawg': _fetch_rawg,
+}
 
-                        if rawg_id:
-                            logger.info(f"Found RAWG match: {rawg_match.get('name') if rawg_match else 'from secondary'} (ID: {rawg_id})")
-                            rawg_details = fetch_rawg(rawg_id)
-                            if rawg_details:
-                                sources_data['rawg'] = rawg_details
-                                apply_rawg_to_metadata(metadata, rawg_details, db_game_id, result, fill_only=True)
-                                result['sources_used'].append('RAWG')
-                        else:
-                            logger.info(f"RAWG fallback: no results found for '{game_title}'")
 
-                elif fallback_source == 'ai':
-                    if not AI_AVAILABLE:
-                        logger.info("AI fallback skipped: module not available")
-                    elif not fallback_enabled.get('ai', False):
-                        logger.info("AI fallback skipped: disabled in settings")
-                    else:
-                        logger.info(f"Trying AI fallback for: '{game_title}'")
-                        # Build existing metadata snapshot for AI to know what's missing
-                        ai_existing = {k: v for k, v in metadata.items() if v}
-                        # Pass 26.3 — wrap AI call in the circuit breaker so
-                        # repeated provider failures skip the call entirely
-                        # for the recovery window instead of hitting the API
-                        # on every gap-fill attempt.
-                        from scraper.scraper_manager import _ai_breaker
-                        ai_data = _ai_breaker(fetch_ai_metadata)(
-                            db_game_id, game_title, system_name,
-                            system_folder, existing_metadata=ai_existing
-                        )
-                        if ai_data:
-                            sources_data['ai'] = ai_data
-                            apply_ai_to_metadata(metadata, ai_data, db_game_id, result, fill_only=True)
-                            if 'AI' not in result['sources_used']:
-                                result['sources_used'].append('AI')
-                        else:
-                            logger.info(f"AI fallback: no results for '{game_title}'")
+def _apply_fallback(source, data, metadata, result, sources_data, db_game_id,
+                    system_folder, force_overwrite):
+    """Apply one fetched fallback record, fill-only, on the caller's thread."""
+    sources_data[source] = data
+    if source == 'esde':
+        from scraper.scrape_esde import apply_esde_metadata as esde_apply
+        # Apply ES-DE metadata - pass force_overwrite for consistent behavior
+        esde_apply(db_game_id, data, system_folder,
+                   existing_boxart=metadata.get('boxart'),
+                   existing_screenshots=metadata.get('screenshots'),
+                   force_overwrite=force_overwrite)
+        label = 'ES-DE'
+    elif source == 'tgdb':
+        apply_tgdb_to_metadata(metadata, data, db_game_id, result, fill_only=True)
+        label = 'TheGamesDB'
+    elif source == 'igdb':
+        apply_igdb_to_metadata(metadata, data, db_game_id, result, fill_only=True)
+        label = 'IGDB'
+    elif source == 'screenscraper':
+        logger.info(f"Found ScreenScraper match: {data.get('nom', 'Unknown')} (ID: {data.get('id')})")
+        apply_screenscraper_to_metadata(metadata, data, db_game_id, result, fill_only=True)
+        label = 'ScreenScraper'
+    else:
+        apply_rawg_to_metadata(metadata, data, db_game_id, result, fill_only=True)
+        label = 'RAWG'
+    if label not in result['sources_used']:
+        result['sources_used'].append(label)
 
-            except Exception as fallback_error:
-                logger.warning(f"Fallback scraper {fallback_source} failed: {fallback_error}")
-            apply_progress.step_done()
 
+def _run_ai_fallback(metadata, result, sources_data, db_game_id, lookup,
+                     fallback_enabled):
+    """Gap-fill from AI with the fields still empty at its turn."""
+    game_title = lookup['title']
+    if not AI_AVAILABLE:
+        logger.info("AI fallback skipped: module not available")
+        return
+    if not fallback_enabled.get('ai', False):
+        logger.info("AI fallback skipped: disabled in settings")
+        return
+    logger.info(f"Trying AI fallback for: '{game_title}'")
+    # Build existing metadata snapshot for AI to know what's missing
+    ai_existing = {k: v for k, v in metadata.items() if v}
+    # Pass 26.3 — wrap AI call in the circuit breaker so
+    # repeated provider failures skip the call entirely
+    # for the recovery window instead of hitting the API
+    # on every gap-fill attempt.
+    from scraper.scraper_manager import _ai_breaker
+    ai_data = _ai_breaker(fetch_ai_metadata)(
+        db_game_id, game_title, lookup['system_name'],
+        lookup['system_folder'], existing_metadata=ai_existing
+    )
+    if ai_data:
+        sources_data['ai'] = ai_data
+        apply_ai_to_metadata(metadata, ai_data, db_game_id, result, fill_only=True)
+        if 'AI' not in result['sources_used']:
+            result['sources_used'].append('AI')
+    else:
+        logger.info(f"AI fallback: no results for '{game_title}'")
 
 def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                           secondary_sources=None, fill_gaps=True, force_overwrite=False,

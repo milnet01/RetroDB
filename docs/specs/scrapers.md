@@ -67,6 +67,7 @@ Priority is the user's configured scraper order (Settings -> Scrapers, `fallback
 
 1. The **primary** source applies first, wherever it sits in that list.
 2. The remaining enabled scrapers then run in the user's order, minus the primary and any disabled one (`_run_fallbacks`).
+   Every one but AI is searched and fetched at the same time, one thread per source; the records are then applied one by one in that order (PASS-59-132). AI runs at its turn, after the earlier records are applied, because its prompt names the fields still empty.
 3. Each per-source merger in `metadata_merger.py` writes a field only while it is still empty (`if not metadata['field']`), so the first source to supply a value keeps it.
 
 Which fields a source can fill is therefore decided by what that source's merger implements.
