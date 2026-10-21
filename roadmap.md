@@ -8737,6 +8737,10 @@ were corrected in `2836bc3` and are not repeated here.
 - **Keeps**: which duplicate survives stays the first in source order, so
   the priority rule in PASS-59-129 holds.
 - **Needs**: PASS-59-129's timings, to show upscaling is the cost.
+- **Progress** (2026-10-21): User decision 2026-10-21: upscale afterwards. A game saves with its
+  images as downloaded; a background pass upscales them after, and
+  unfinished work resumes after a restart. (Measured cost: 143.5s of
+  worker-thread image processing in a 70.1s scrape, PASS-59-129 note.)
 
 ---
 
@@ -8943,6 +8947,14 @@ were corrected in `2836bc3` and are not repeated here.
   sizes, case plastic). Build the importer on v1's current fields only
   until Slipcase sends its spec for format review. v1 files stay
   readable.
+- **Progress** (2026-10-21): 2026-10-21, Slipcase SLIP-0106 phase 1 (Slipcase commit ee8b3d5): the
+  format stays version 1, so the hold above is lifted. SLIP-0104 § 4.1
+  gains an optional fourth face, edge (S.edge.png, the opening side, on
+  the front's right). Null or absent means fill it with colours.edge,
+  and a named but missing file is refused. Run edge through the same
+  image checks as the other faces. Jewel-case fronts now include a tray
+  hinge strip, so never reuse the front face as a flat cover. Case sizes
+  vary by region and arrive through the existing case keys.
 
 ---
 
