@@ -8855,6 +8855,37 @@ were corrected in `2836bc3` and are not repeated here.
   nonced inline block, so the server can render them); re-extract catalogs.
 - **Verify**: /analytics under ru shows those labels translated.
 
+---
+
+#### Pass 59.142 Import Slipcase box files: front, spine and back faces for a game (FEATURE, M).
+- **Status**: todo
+- **Contract**: Slipcase repo, `docs/specs/SLIP-0104-turnable-3d-box.md`
+  § 4.1 (box-file format, `"version": 1`, approved by RetroDB
+  2026-10-15) and § 4.2 / INV-11 (2026-10-21: the case texture is baked
+  into the face PNGs; shading is not).
+- **RetroDB's checks** (§ 11): each image at most 10 MB; a real image
+  (Pillow verify plus the decompression-bomb guard); re-encoded to WebP
+  at 1080 px tall; no symlinks followed; fill-only unless the user asks
+  to overwrite.
+- **Open for the user**: where import starts (game page, bulk, or a
+  watched folder) and whether the faces replace `boxart_3d`.
+- **Verify**: import a Slipcase box file; the three faces land as WebP
+  for that game; a symlinked or oversized face is refused.
+
+---
+
+#### Pass 59.143 Turnable 3D box viewer for games with Slipcase faces (FEATURE, M).
+- **Status**: todo
+- **Contract**: SLIP-0104 (Slipcase repo) § 4.2 / INV-11 and INV-12.
+  Show the face images as-is (the case overlay is already baked in; do
+  not add one); apply lighting in the viewer; paint nothing outside the
+  box, so it sits on the page background.
+- **Plan**: CSS 3D transforms, no new dependency; uses the faces
+  imported by PASS-59-142.
+- **Verify**: a game with imported faces shows a box that turns with
+  drag and keyboard, has a transparent background, and falls back to
+  the flat cover without faces.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
