@@ -9033,7 +9033,11 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.147 Scrape matching: each source needs the title spelled its own way, so punctuation loses matches (MEDIUM, M).
-- **Status**: todo
+- **Resolution** (2026-10-21): Shipped 2026-10-21. Live probe: only ScreenScraper needed a change
+  (colon needs " : "; part before the colon as a second try). TGDB,
+  IGDB, RAWG and ES-DE matched every probed title as written; other
+  spellings lost matches. Probe script kept out of the tree.
+- **Status**: done
 - **Where**: every search sends one cleaned title.
   `scrape_screenscraper.search_game` strips only bracketed text;
   `scrape_igdb.search_games` strips apostrophes, quotes, colons and
