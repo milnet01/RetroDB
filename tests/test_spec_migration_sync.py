@@ -45,3 +45,27 @@ def test_spec_has_no_stale_migration_entries():
         f"retrodb.spec lists migration module(s) {sorted(stale)} that are not in "
         "services.migrations.MIGRATIONS — remove the stale entries."
     )
+
+
+def test_spec_bundles_every_shipped_data_file_the_app_reads():
+    """PASS-59-123: retrodb.spec bundled data/standalone_settings.json but not
+    data/emulator_seeds.json, so a standalone install seeded no emulators.
+    Every data/ file that is tracked in git (shipped, not written at run
+    time) and that app.py / services / routes / scraper names must be in the
+    spec's datas."""
+    import subprocess
+    root = _SPEC_PATH.parent
+    tracked = set(subprocess.run(
+        ['git', 'ls-files', 'data/*.json', 'data/*.yaml'], cwd=root,
+        capture_output=True, text=True, check=True).stdout.split())
+    code = "\n".join(
+        p.read_text(encoding="utf-8")
+        for pattern in ("app.py", "services/**/*.py", "routes/*.py", "scraper/*.py")
+        for p in root.glob(pattern))
+    read_by_app = {
+        f for f in tracked
+        if f.rsplit('/', 1)[1] in code and not f.startswith('data/changelog.')}
+    assert 'data/emulator_seeds.json' in read_by_app, "the scan is broken"
+    spec = _SPEC_PATH.read_text(encoding="utf-8")
+    missing = sorted(f for f in read_by_app if f"('{f}', 'data')" not in spec)
+    assert not missing, f"retrodb.spec does not bundle: {missing}"

@@ -122,6 +122,9 @@ DATAS = [
     # PASS-59-91 §4.6 — the per-game settings RetroDB manages for DuckStation,
     # PCSX2 and RPCS3; read at launch.
     ('data/standalone_settings.json', 'data'),
+    # Emulator definitions seeded into a fresh database at startup
+    # (app.py); without it a standalone install has no emulators (PASS-59-123).
+    ('data/emulator_seeds.json', 'data'),
     # Per-locale changelog translations (Pass 43.6) — the /changelog route merges
     # these over changelog.yaml by version; bundle them or non-English users see
     # English release notes. (help.<locale>.html ride the templates/ dir above.)

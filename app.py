@@ -1802,6 +1802,8 @@ try:
             seed_emulators_from_file(_seed_conn, _seed_path)
         finally:
             _seed_conn.close()
+    else:
+        logger.warning(f"Emulator seeds not found at {_seed_path}; no emulators seeded")
 except Exception as _e:
     logger.error(f"Emulator seed failed: {_e}", exc_info=True)
 
