@@ -13,11 +13,9 @@ class TestLaunchSettingsValidators:
     def test_launcher_backend_accepts_local(self):
         assert _ok('launcher_backend', 'local')
 
-    def test_launcher_backend_accepts_remote(self):
-        # Even though remote is NotImplementedError at runtime, the validator
-        # accepts it — the route raises later.  Setting validators are about
-        # data shape, not runtime feature gates.
-        assert _ok('launcher_backend', 'remote')
+    def test_launcher_backend_rejects_remote(self):
+        # PASS-59-64 INV-7: the remote backend is not planned (§3 item 19).
+        assert not _ok('launcher_backend', 'remote')
 
     def test_launcher_backend_rejects_unknown(self):
         assert not _ok('launcher_backend', 'spaceship')

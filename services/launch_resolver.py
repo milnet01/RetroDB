@@ -219,17 +219,19 @@ _FIX_HINT = (
 
 
 def _resolve_binary(emu_row, sys_emu_row) -> str:
-    """Apply the resolver's binary lookup chain."""
-    if emu_row['is_retroarch']:
-        ra_setting = get_setting('retroarch_binary', '')
-        if ra_setting:
-            return ra_setting
+    """Apply the resolver's binary lookup chain: the row's own override,
+    then the `retroarch_binary` setting for RetroArch rows, then PATH
+    (PASS-59-64 INV-1)."""
     if emu_row.get('binary_path_override'):
         path = emu_row['binary_path_override']
         if not os.access(path, os.X_OK):
             raise LaunchResolutionError(
                 f"binary_path_override not executable: {path}{_FIX_HINT}")
         return path
+    if emu_row['is_retroarch']:
+        ra_setting = get_setting('retroarch_binary', '')
+        if ra_setting:
+            return ra_setting
     found = shutil.which(emu_row['binary_name'])
     if not found:
         raise LaunchResolutionError(

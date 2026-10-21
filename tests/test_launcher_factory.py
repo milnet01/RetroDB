@@ -22,22 +22,26 @@ def test_factory_returns_local_when_setting_local(monkeypatch):
     assert isinstance(launcher, LocalLauncher)
 
 
-def test_factory_raises_for_remote_in_v1(monkeypatch):
+def test_factory_stored_remote_launches_locally(monkeypatch):
+    """PASS-59-64 INV-7: a `'remote'` saved before the validator dropped it
+    still launches locally instead of breaking every launch."""
     monkeypatch.setattr('services.launcher.get_setting',
                         lambda key, default=None: 'remote' if key == 'launcher_backend' else default)
     from services.launcher import get_launcher
-    # match= pins the user-facing error wording — a refactor to a bare
-    # `raise NotImplementedError()` would otherwise pass this test.
-    with pytest.raises(NotImplementedError, match=r"remote"):
-        get_launcher()
+    from services.launcher.local import LocalLauncher
+    assert isinstance(get_launcher(), LocalLauncher)
 
 
-def test_factory_raises_for_unknown(monkeypatch):
+def test_factory_unknown_backend_launches_locally(monkeypatch, caplog):
+    """PASS-59-64 §4.3: any stored backend other than 'local' is treated
+    as 'local', with a warning naming the value."""
     monkeypatch.setattr('services.launcher.get_setting',
                         lambda key, default=None: 'spaceship' if key == 'launcher_backend' else default)
     from services.launcher import get_launcher
-    with pytest.raises(ValueError, match=r"spaceship"):
-        get_launcher()
+    from services.launcher.local import LocalLauncher
+    with caplog.at_level('WARNING', logger='services.launcher'):
+        assert isinstance(get_launcher(), LocalLauncher)
+    assert 'spaceship' in caplog.text
 
 
 def test_factory_returns_singleton(monkeypatch):

@@ -7796,6 +7796,12 @@ were corrected in `2836bc3` and are not repeated here.
   (with PASS-59-152's key table) is now in every
   `help.<locale>.html`, so spec §11's help clause is met in all
   locales. xh and zu text is machine-drafted; a native read is owed.
+- **Progress** (2026-10-21): PASS-59-64 INV-1 (row override before
+  `retroarch_binary`), INV-7 (`'remote'` off the allowlist; any
+  non-`local` backend launches locally with a warning) and INV-15
+  (one SIGTERM per process, `ProcessEntry.term_sent_at`) built and
+  tested, in the open v3.30.0. Still unbuilt from PASS-59-64: the
+  player clauses (§4.4–4.6, migration 016) and §11's cross-doc edits.
 
 ---
 

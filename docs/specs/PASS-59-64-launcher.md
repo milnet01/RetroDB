@@ -596,13 +596,13 @@ No test here launches the fork's real player; the player-side behaviour
 
 | Rule | What catches a breach |
 |------|----------------------|
-| INV-1 | `tests/test_launch_resolver.py` (to add) |
-| INV-2 | `tests/test_routes_launch.py` (to add) |
-| INV-3 | `tests/test_launch_resolver.py` (to add) |
-| INV-4 | `tests/test_routes_launch.py` (to add) |
-| INV-5 | grep in §5 plus `tests/test_launch_resolver.py` (to add) |
-| INV-6 | `tests/test_launcher_registry.py` (to add) |
-| INV-7 | `tests/test_launch_settings_validators.py` (to add) |
+| INV-1 | `tests/test_launch_resolver.py` |
+| INV-2 | `tests/test_routes_launch.py` |
+| INV-3 | `tests/test_launch_resolver.py` |
+| INV-4 | `tests/test_routes_launch.py` |
+| INV-5 | grep in §5 plus `tests/test_launch_resolver.py` |
+| INV-6 | `tests/test_launcher_registry.py` |
+| INV-7 | `tests/test_launch_settings_validators.py`, `tests/test_launcher_factory.py` |
 | INV-8 | `tests/test_player_launch.py` (to add) |
 | INV-9 | `tests/test_player_launch.py` (to add) |
 | INV-10 | `tests/test_player_launch.py` (to add) |
@@ -610,7 +610,7 @@ No test here launches the fork's real player; the player-side behaviour
 | INV-12 | `tests/test_player_launch.py` (to add) |
 | INV-13 | `tests/test_launch_resolver.py` |
 | INV-14 | grep in §5 plus `tests/test_launcher_local.py` |
-| INV-15 | `tests/test_launcher_local.py` (to add) |
+| INV-15 | `tests/test_launcher_local.py` |
 | INV-16 | `tests/test_player_launch.py` (to add) |
 | INV-17 | `tests/test_player_launch.py` (to add) |
 | §4.4 base keys behave as described in the player | **Partial:** INV-9 proves RetroDB writes them; that RetroArch honours them is checked only by the fork session reading its source |

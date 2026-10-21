@@ -41,6 +41,8 @@
     label: Imported games without a ROM file no longer offer Play
   - type: fix
     label: Deleting a screenshot no longer reports a failure after it worked
+  - type: fix
+    label: A RetroArch path set on its emulator row is the one that launches
   - type: deps
     label: Pillow 13 and other library updates
   body: |
@@ -198,6 +200,14 @@
         now shows a message on the game page instead of replacing the page
         with plain text. A video that is refused (too big or the wrong file
         type) now says so instead of being dropped without a word.</li>
+      <li><strong>Launching follows the path you set.</strong> A Binary path
+        override on the RetroArch row in Settings &gt; Emulators now wins
+        over the RetroArch path at the top of that page; before, the row's
+        path was ignored. Pressing Stop twice no longer asks a game to quit
+        twice; on Linux, RetroArch takes a second request as "quit without
+        saving", so your in-game save could be lost.
+        A launcher setting left over from an unbuilt remote mode no longer
+        stops every game from starting.</li>
       <li><strong>Failed actions report their errors properly.</strong>
         When saving, importing, syncing or scanning fails, RetroDB now
         answers with a real error status and shows the reason in its

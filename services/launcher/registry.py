@@ -28,6 +28,7 @@ class ProcessEntry:
                                  # importing subprocess just for an annotation
     exit_time: Optional[float] = None
     stderr_tail: str = ''        # populated by LocalLauncher on reap
+    term_sent_at: Optional[float] = None  # first SIGTERM; kill() sends one
 
 
 class ProcessRegistry:

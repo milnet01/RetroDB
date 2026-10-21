@@ -134,3 +134,40 @@ def test_wait_times_out_on_running_child(local_launcher):
     with pytest.raises(subprocess.TimeoutExpired):
         local_launcher.wait('slow', timeout_s=0.05)
     assert local_launcher.status('slow').state == 'running'
+
+
+def test_inv15_sigterm_sent_at_most_once(local_launcher, tmp_path):
+    """PASS-59-64 INV-15: a second kill() during the first one's grace
+    sends no second SIGTERM; it waits out the grace, then SIGKILL."""
+    import sys
+    import threading
+    import time
+    from services.launcher.base import LaunchContext
+
+    hits, ready = tmp_path / 'hits', tmp_path / 'ready'
+    child = (
+        "import signal, sys, time, pathlib\n"
+        "hits = pathlib.Path(sys.argv[1])\n"
+        "signal.signal(signal.SIGTERM,"
+        " lambda *a: hits.open('a').write('TERM\\n'))\n"
+        "pathlib.Path(sys.argv[2]).touch()\n"
+        "while True: time.sleep(0.05)\n"
+    )
+    ctx = LaunchContext(game_id=1, emulator_id=1, binary=Path(sys.executable),
+                        argv=[sys.executable, '-c', child, str(hits), str(ready)],
+                        env=None, cwd=None, token='inv15')
+    local_launcher.launch(ctx)
+    deadline = time.time() + _WAIT_S
+    while not ready.exists() and time.time() < deadline:
+        time.sleep(0.05)
+    assert ready.exists(), 'stub child never installed its handler'
+
+    first = threading.Thread(
+        target=local_launcher.kill, args=('inv15',), kwargs={'timeout_s': 2.0})
+    first.start()
+    time.sleep(0.5)                      # inside the first call's grace
+    status = local_launcher.kill('inv15', timeout_s=2.0)
+    first.join(timeout=_WAIT_S)
+
+    assert status.state == 'exited'
+    assert hits.read_text().splitlines() == ['TERM']

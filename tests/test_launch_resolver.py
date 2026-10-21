@@ -522,3 +522,18 @@ def test_pass_59_152_keyboard_core_follows_the_picked_mapping(tmpdb):
     conn.commit()
     assert keyboard_core(1, None) is True                   # system default
     assert keyboard_core(99, None) is False                 # no mapping at all
+
+
+def test_inv1_binary_path_override_beats_retroarch_setting(tmpdb, tmp_path):
+    """PASS-59-64 INV-1: a RetroArch row's own binary_path_override wins
+    over the global `retroarch_binary` setting."""
+    from services.launch_resolver import resolve_launch_context
+    override = tmp_path / 'my-retroarch'
+    override.write_text('#!/bin/sh\n')
+    override.chmod(0o755)
+    tmpdb['conn'].execute(
+        "UPDATE emulators SET binary_path_override = ? WHERE id = 2",
+        (str(override),))
+    tmpdb['conn'].execute("UPDATE games SET emulator_override_id = 2 WHERE id = 1")
+    ctx = resolve_launch_context(game_id=1)
+    assert str(ctx.binary) == str(override)

@@ -40,7 +40,8 @@ _ALLOWED_NAMING_TAGS = {
 _ALLOWED_NOTIFICATION_LEVELS = {'success', 'info', 'warning', 'error'}
 
 # Pass 44 — multi-emulator launch.  Spec §Settings.
-_ALLOWED_LAUNCHER_BACKENDS = {'local', 'remote'}
+# 'remote' left the allowlist: that backend is not planned (PASS-59-64 §4.3).
+_ALLOWED_LAUNCHER_BACKENDS = {'local'}
 _ALLOWED_CONCURRENT_POLICIES = {'reject', 'kill_and_relaunch'}
 
 

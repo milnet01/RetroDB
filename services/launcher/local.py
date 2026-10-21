@@ -7,7 +7,7 @@
 # Lifecycle:
 #   launch()  -> Popen, register handle
 #   status()  -> proc.poll(); transition to 'exited' on first non-None
-#   kill()    -> SIGTERM, poll up to timeout_s, then SIGKILL
+#   kill()    -> SIGTERM (once per process), poll up to timeout_s, then SIGKILL
 #   wait()    -> block until the child exits (or timeout_s passes)
 #
 # stderr is drained into a 4KB ring buffer (last bytes wins) so a quickly-
@@ -38,6 +38,7 @@ class LocalLauncher:
     def __init__(self, registry: Optional[ProcessRegistry] = None):
         # `is None`, not `or`: an empty registry has len 0 and is falsy.
         self._registry = registry if registry is not None else ProcessRegistry()
+        self._term_lock = threading.Lock()
 
     # ---------------- Launcher protocol --------------------------------------
 
@@ -80,11 +81,16 @@ class LocalLauncher:
         proc = entry.proc
 
         if proc.poll() is None:
-            try:
-                proc.send_signal(signal.SIGTERM)
-            except OSError:
-                pass
-            deadline = time.time() + timeout_s
+            # SIGTERM at most once per process (PASS-59-64 INV-15): a repeat
+            # request only waits out the first one's grace, then escalates.
+            with self._term_lock:
+                if entry.term_sent_at is None:
+                    entry.term_sent_at = time.time()
+                    try:
+                        proc.send_signal(signal.SIGTERM)
+                    except OSError:
+                        pass
+            deadline = entry.term_sent_at + timeout_s
             while time.time() < deadline and proc.poll() is None:
                 time.sleep(0.1)
             if proc.poll() is None:

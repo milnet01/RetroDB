@@ -14,6 +14,7 @@
 # by an earlier /api/game/<id>/launch call.
 # =============================================================================
 
+import logging
 from threading import Lock
 from typing import Optional
 
@@ -32,6 +33,7 @@ __all__ = [
 ]
 
 
+logger = logging.getLogger(__name__)
 _singleton_lock = Lock()
 _singleton: Optional[Launcher] = None
 
@@ -45,13 +47,11 @@ def get_launcher() -> Launcher:
     with _singleton_lock:
         if _singleton is not None:
             return _singleton
+        # get_setting does not validate on read, so a value saved before
+        # 'remote' left the allowlist still arrives here (PASS-59-64 §4.3).
         backend = get_setting('launcher_backend', 'local')
-        if backend == 'local':
-            _singleton = LocalLauncher()
-        elif backend == 'remote':
-            raise NotImplementedError(
-                "remote launcher backend is spec §F5; not implemented in v1"
-            )
-        else:
-            raise ValueError(f"unknown launcher_backend: {backend!r}")
+        if backend != 'local':
+            logger.warning("launcher_backend %r is not supported; "
+                           "launching locally", backend)
+        _singleton = LocalLauncher()
         return _singleton
