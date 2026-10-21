@@ -8868,7 +8868,9 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.137 Create M3U leaves the game's library entry pointing at the moved archive (MEDIUM, S).
-- **Status**: todo
+- **Resolution** (2026-10-21): Shipped 2026-10-21: routes/tools.py `_repoint_to_m3u`, called by the
+  single and batch routes on success, archive moved or not.
+- **Status**: done
 - **Seen** (2026-10-20, code read): `scraper/rom_tools.py`
   `create_m3u_playlist` moves the archive to staging, and
   `routes/tools.py` `api_archive_scanner_create_m3u` updates no
@@ -8882,7 +8884,11 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.138 Create M3U puts every release in an archive into one playlist (LOW, S).
-- **Status**: todo
+- **Resolution** (2026-10-21): Shipped 2026-10-21: scraper/rom_tools.py `_first_release` keeps the
+  first release's disks automatically (no question, for a seamless
+  flow); result carries skipped_files and the success window lists them.
+  Checked against all 128 real multi-file playlists: none split.
+- **Status**: done
 - **Seen** (2026-10-20): C64 TMNT zips hold several releases, each
   split into disks (`[Bonzai_Disk 1].d64`, `[X-Ray_Disk 1].d64`,
   ...). `create_m3u_playlist` lists every ROM file sorted, so all
