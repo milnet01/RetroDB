@@ -23,6 +23,7 @@ from services.game_utils import (
     normalize_players_value,
 )
 from services.image_utils import boxart_srcset, boxart_dir_listing
+from services.upscale_queue import upscale_later
 
 logger = logging.getLogger(__name__)
 
@@ -298,23 +299,29 @@ def apply_metadata_to_game(db_game_id, game_data, source, system_folder=None):
     logger.info(f"Applying metadata from {source} to game {db_game_id}")
     normalized = _normalize_source(source)
     try:
-        if normalized == 'tgdb':
-            from scraper.scrape_thegamesdb import apply_metadata_to_game as apply_tgdb
-            return apply_tgdb(db_game_id, game_data)
-        if normalized == 'igdb':
-            from scraper.scrape_igdb import apply_metadata_to_game as apply_igdb
-            return apply_igdb(db_game_id, game_data)
-        if normalized == 'esde':
-            from scraper.scrape_esde import apply_esde_metadata
-            return apply_esde_metadata(db_game_id, game_data, system_folder)
-        if normalized in ('rawg', 'screenscraper'):
-            logger.info(f"{source} has no single-source apply — caller should use apply_hybrid_metadata_to_game")
-            return False
-        logger.error(f"Unknown source: {source}")
-        return False
+        with upscale_later(db_game_id):
+            return _apply_single_source(db_game_id, game_data, source, normalized, system_folder)
     except Exception as e:
         logger.error(f"Error applying metadata from {source}: {e}")
         return False
+
+
+def _apply_single_source(db_game_id, game_data, source, normalized, system_folder):
+    """apply_metadata_to_game's dispatch to the per-source apply function."""
+    if normalized == 'tgdb':
+        from scraper.scrape_thegamesdb import apply_metadata_to_game as apply_tgdb
+        return apply_tgdb(db_game_id, game_data)
+    if normalized == 'igdb':
+        from scraper.scrape_igdb import apply_metadata_to_game as apply_igdb
+        return apply_igdb(db_game_id, game_data)
+    if normalized == 'esde':
+        from scraper.scrape_esde import apply_esde_metadata
+        return apply_esde_metadata(db_game_id, game_data, system_folder)
+    if normalized in ('rawg', 'screenscraper'):
+        logger.info(f"{source} has no single-source apply — caller should use apply_hybrid_metadata_to_game")
+        return False
+    logger.error(f"Unknown source: {source}")
+    return False
 
 
 def apply_hybrid_metadata_to_game(db_game_id, primary_source, primary_id, system_folder,
@@ -397,17 +404,18 @@ def apply_hybrid_metadata_to_game(db_game_id, primary_source, primary_id, system
     # for an apply started on its own, such as the game page's Apply.
     owns_timer = apply_progress.timing_start(f"game {db_game_id}")
     try:
-        return hybrid_apply(
-            db_game_id=db_game_id,
-            primary_source=primary,
-            primary_id=primary_id,
-            system_folder=system_folder,
-            secondary_sources=secondary_sources or [],
-            fill_gaps=fill_gaps,
-            force_overwrite=force_overwrite,
-            primary_data=primary_data,
-            restrict_to_selected=bool(explicit_secondary),
-        )
+        with upscale_later(db_game_id):
+            return hybrid_apply(
+                db_game_id=db_game_id,
+                primary_source=primary,
+                primary_id=primary_id,
+                system_folder=system_folder,
+                secondary_sources=secondary_sources or [],
+                fill_gaps=fill_gaps,
+                force_overwrite=force_overwrite,
+                primary_data=primary_data,
+                restrict_to_selected=bool(explicit_secondary),
+            )
     except Exception as e:
         logger.error(f"Error in hybrid metadata apply: {e}")
         from scraper.scraper_manager import scraper_manager

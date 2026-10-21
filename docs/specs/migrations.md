@@ -534,6 +534,7 @@ your migration — not in the runner.
 | 016 | `016_version_groups.py` | Create `version_groups` and `version_link_rejections`; add `games.version_group_id`, `games.igdb_id`, `games.screenscraper_id`. | PASS-59-106. Additive. `foreign_keys` is never on, so three triggers keep the group rules on delete, bonus-disc flag and system change, and drop a deleted game's rejections. |
 | 017 | `017_version_ai_summary.py` | Add `ai_summary`, `ai_summary_members`, `ai_summary_at`, `ai_summary_provider` to `version_groups`. | PASS-59-107. Additive. `ai_summary_members` records the members a summary was written for, so it hides when they change. |
 | 018 | `018_standalone_settings.py` | Add `games.disc_serial`, `games.disc_crc`; create `emulator_setting_choices` and `emulator_written_settings`; move the seeded DuckStation and PCSX2 `args_template` onto `{fullscreen_flag}`. | PASS-59-91 §4.6. Additive. A trigger clears both disc ids when `rom_path` changes. The template moves only where it still equals the old seed exactly. |
+| 019 | `019_pending_upscales.py` | Create `pending_upscales` (`game_id` primary key, `queued_at`). | PASS-59-130; `image-pipeline.md` §5.1. Additive. |
 
 ---
 

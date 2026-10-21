@@ -68,6 +68,7 @@ with the primary, and standardized images that already sit in the
    finalize_downloaded_image(dest_path, image_type)
        1. _ensure_format_matches_extension       # WebP ⇄ JPEG ⇄ PNG
        2. standardize_downloaded_image            # ESRGAN ↑ / Lanczos ↓
+                                                  # (↑ deferred in a scrape, §5.1)
        3. _make_responsive_variants               # boxart -sm / -md
               │
               ▼
@@ -233,6 +234,36 @@ in obscure ways and CPU is the known-good baseline.
 A wedged session that never returns counts as a failure: `_gpu_run()`
 waits at most `_GPU_RUN_TIMEOUT` seconds per call, then raises
 `TimeoutError`, which trips the same breaker.
+
+### 5.1 Upscaling after the scrape (PASS-59-130)
+
+A scrape does not upscale. `game_metadata_service.apply_metadata_to_game`
+and `apply_hybrid_metadata_to_game` run inside
+`services/upscale_queue.py::upscale_later(game_id)`, which sets the
+`image_utils.defer_upscale` ContextVar. While it is set, `standardize_image`
+leaves an image below the upscale threshold as downloaded. Downscaling,
+format re-encoding and variants still run inline.
+
+When the apply ends, the game is listed in the `pending_upscales` table
+(migration 019). Screenshot dedup (§8) has already run by then, so a
+duplicate is never upscaled. The `upscale-queue` thread starts with the
+server, beside the PSN keep-alive. For each listed game it standardizes
+every boxart, 3D boxart and screenshot the game names, regenerates
+variants, and deletes the row. It logs one `Upscale queue:` line per game
+with the image count and seconds taken.
+
+- **Resume.** Rows live in the database, so games left listed at shutdown
+  are processed on the next start. A scrape run outside the server lists
+  games too; the server's worker picks them up within `_IDLE_SECONDS`.
+- **Re-listing.** Listing a game again stamps a new `queued_at`. The
+  worker deletes a row only when its `queued_at` is unchanged, so a game
+  re-scraped mid-run is processed again.
+- **Scope.** Only those two entry points defer. Admin uploads, museum
+  images and `ImageResizeJob` upscale inline as before. A thread started
+  without `contextvars.copy_context()` does not inherit the switch and
+  upscales inline, which is the old behaviour.
+
+Tests: `tests/test_upscale_queue.py`.
 
 ---
 

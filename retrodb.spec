@@ -49,6 +49,7 @@ _MIGRATION_SCRIPTS = [
     'services.migrations.scripts.016_version_groups',
     'services.migrations.scripts.017_version_ai_summary',
     'services.migrations.scripts.018_standalone_settings',
+    'services.migrations.scripts.019_pending_upscales',
 ]
 
 # Some pip packages have their own runtime imports that PyInstaller's

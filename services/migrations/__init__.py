@@ -43,6 +43,7 @@ MIGRATIONS = [
     '016_version_groups',
     '017_version_ai_summary',
     '018_standalone_settings',
+    '019_pending_upscales',
 ]
 
 

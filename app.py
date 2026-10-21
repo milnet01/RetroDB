@@ -1995,6 +1995,13 @@ if __name__ == '__main__':
             start_psn_keepalive_thread(app)
         except Exception as _ka_err:
             logger.warning(f"PSN keep-alive thread failed to start: {_ka_err}")
+        # PASS-59-130 — upscale the images scrapes saved small, resuming any
+        # game left listed when the server last stopped.
+        try:
+            from services.upscale_queue import start_upscale_worker
+            start_upscale_worker()
+        except Exception as _uq_err:
+            logger.warning(f"Upscale queue worker failed to start: {_uq_err}")
 
     host = config.SERVER_HOST
     local_ip = get_local_ip()

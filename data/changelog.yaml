@@ -15,6 +15,8 @@
     label: Screen readers read the Platform Match Required switch by its visible name
   - type: accessibility
     label: Every pop-up window handles Escape, keyboard focus and screen readers the same way
+  - type: performance
+    label: Scrapes finish sooner; small pictures are enlarged in the background
   - type: deps
     label: Pillow 13 and other library updates
   body: |
@@ -209,6 +211,12 @@
         After every game, RetroDB logs one line with the seconds spent
         searching, in each source, downloading, processing images, in AI
         and saving. It is the first step toward faster scrapes.</li>
+      <li><strong>Scrapes finish sooner: small pictures are sharpened
+        afterwards.</strong> A scrape now saves a game with its pictures as
+        downloaded. Small box art and screenshots are then enlarged in the
+        background, one game at a time. Duplicate screenshots are dropped
+        before any of that work. If RetroDB stops partway, it carries on
+        when it next starts.</li>
       <li><strong>Background jobs no longer lose or skip work.</strong> A
         RetroAchievements refresh that hit one bad game no longer throws away
         the games it had already updated. A resumed sync or refresh no longer

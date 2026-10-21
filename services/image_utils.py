@@ -6,6 +6,7 @@
 # download and via bulk tool for existing images.
 # =============================================================================
 
+import contextvars
 import os
 import logging
 import queue
@@ -15,6 +16,12 @@ import threading
 from services import apply_progress
 
 logger = logging.getLogger(__name__)
+
+# PASS-59-130 — set by services/upscale_queue.upscale_later() around a scrape:
+# standardize_image then leaves a small image as downloaded, and the queue's
+# background worker upscales it once the game is saved. A ContextVar, so only
+# the scrape's own thread (and pools started with copy_context) defers.
+defer_upscale = contextvars.ContextVar('defer_upscale', default=False)
 
 
 # Pass 45.6 — Pillow decompression-bomb cap. A 1 MB malicious PNG can
@@ -820,6 +827,8 @@ def standardize_image(path, image_type, target, preserve_rgba=False):
         # _upscale_image / _downscale_image always return a NEW PIL image and
         # never close their input, so close the source copy after reassigning.
         if ratio < config.IMAGE_UPSCALE_THRESHOLD:
+            if defer_upscale.get():
+                return
             resized = _upscale_image(img, image_type, target, preserve_rgba)
         else:
             resized = _downscale_image(img, image_type, target)
