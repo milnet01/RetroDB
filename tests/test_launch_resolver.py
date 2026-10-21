@@ -537,3 +537,16 @@ def test_inv1_binary_path_override_beats_retroarch_setting(tmpdb, tmp_path):
     tmpdb['conn'].execute("UPDATE games SET emulator_override_id = 2 WHERE id = 1")
     ctx = resolve_launch_context(game_id=1)
     assert str(ctx.binary) == str(override)
+
+
+def test_refused_retroarch_launch_writes_no_overrides(tmpdb, monkeypatch, tmp_path):
+    """A launch refused for its ROM writes no RetroArch settings file, as a
+    refused VICE launch writes no pad defaults."""
+    evil = tmp_path / 'evil.bin'
+    evil.write_text('x')
+    tmpdb['conn'].execute("UPDATE games SET rom_path = ? WHERE id = 1", (str(evil),))
+    tmpdb['conn'].commit()
+    from services.launcher.base import LaunchResolutionError
+    with pytest.raises(LaunchResolutionError, match='outside'):
+        _retroarch_argv(tmpdb, monkeypatch, {'DISPLAY': ':0'})
+    assert not tmpdb['overrides'].exists()

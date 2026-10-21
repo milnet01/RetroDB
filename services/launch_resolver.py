@@ -497,13 +497,14 @@ def resolve_launch_context(game_id: int) -> LaunchContext:
 
     rom_path_obj = Path(game['rom_path'])
     substituted = _build_args(emu, sys_emu, game, rom_path_obj, core_path)
-    overrides = _retroarch_overrides(core_path) if emu.get('is_retroarch') else []
-    argv = list(binary_argv_prefix) + overrides + substituted
 
     # ---- validate rom_path under scan roots ---------------------------------
+    # Before any settings file is written, so a refused launch writes none.
     problem = rom_launch_problem(rom_path_obj)
     if problem:
         raise LaunchResolutionError(problem)
+    overrides = _retroarch_overrides(core_path) if emu.get('is_retroarch') else []
+    argv = list(binary_argv_prefix) + overrides + substituted
     if core_path:
         _vice_pad_defaults(binary_str, core_path, rom_path_obj)
 

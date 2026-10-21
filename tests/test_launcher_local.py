@@ -171,3 +171,62 @@ def test_inv15_sigterm_sent_at_most_once(local_launcher, tmp_path):
 
     assert status.state == 'exited'
     assert hits.read_text().splitlines() == ['TERM']
+
+
+class _UnkillableProc:
+    """A child that survives SIGTERM and SIGKILL, as one stuck in the kernel
+    can."""
+    pid = 4242
+    stderr = None
+
+    def poll(self):
+        return None
+
+    def send_signal(self, sig):
+        pass
+
+    def kill(self):
+        pass
+
+    def wait(self, timeout=None):
+        import subprocess
+        raise subprocess.TimeoutExpired('stuck', timeout)
+
+
+def test_kill_does_not_mark_a_surviving_child_exited(local_launcher):
+    """A child still alive after SIGKILL stays running, so the registry
+    neither reports it exited nor clears it out while it runs."""
+    launcher = local_launcher
+    launcher._registry.register(token='stuck', proc=_UnkillableProc(),
+                                game_id=9, emulator_id=9, started_at=0.0)
+    st = launcher.kill('stuck', timeout_s=0.1)
+    assert st.state == 'running'
+    assert launcher._registry.get('stuck').exit_time is None
+    launcher._registry._entries.pop('stuck')  # the fixture cannot kill it
+
+
+def test_quick_exit_status_carries_stderr(local_launcher, monkeypatch):
+    """The first status read after a quick exit carries the error text, even
+    when the stderr reader finishes a moment after the process."""
+    import sys
+    import time
+    from services.launcher.base import LaunchContext
+    from services.launcher.local import LocalLauncher
+
+    original = LocalLauncher._drain_stderr
+
+    def slow_drain(self, token, proc):
+        time.sleep(0.3)
+        original(self, token, proc)
+
+    monkeypatch.setattr(LocalLauncher, '_drain_stderr', slow_drain)
+    launcher = local_launcher
+    ctx = LaunchContext(game_id=5, emulator_id=5, binary=Path(sys.executable),
+                        argv=[sys.executable, '-c',
+                              'import sys; sys.stderr.write("core missing"); sys.exit(2)'],
+                        token='err')
+    launcher.launch(ctx)
+    launcher.wait('err', timeout_s=_WAIT_S)
+    st = launcher.status('err')
+    assert st.state == 'exited'
+    assert 'core missing' in st.stderr_tail

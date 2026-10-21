@@ -33,6 +33,7 @@ logger = logging.getLogger(__name__)
 
 
 _STDERR_TAIL_BYTES = 4096
+_DRAIN_JOIN_S = 0.5
 
 
 class LocalLauncher:
@@ -62,8 +63,10 @@ class LocalLauncher:
             game_id=ctx.game_id, emulator_id=ctx.emulator_id,
             started_at=time.time(),
         )
-        threading.Thread(target=self._drain_stderr, args=(ctx.token, proc),
-                         daemon=True).start()
+        drain = threading.Thread(target=self._drain_stderr, args=(ctx.token, proc),
+                                 daemon=True)
+        self._registry.get(ctx.token).drain = drain
+        drain.start()
 
         logger.info("launched game=%s emulator=%s pid=%s argv=%s",
                     ctx.game_id, ctx.emulator_id, proc.pid, ctx.argv)
@@ -104,7 +107,9 @@ class LocalLauncher:
                 except subprocess.TimeoutExpired:
                     pass
 
-        if entry.exit_time is None:
+        # A child that outlived SIGKILL (stuck in the kernel) is still
+        # running; marking it exited would let gc() drop it while it runs.
+        if entry.exit_time is None and proc.poll() is not None:
             self._registry.mark_exited(token, exit_time=time.time())
         return self._status_from_entry(entry)
 
@@ -137,6 +142,12 @@ class LocalLauncher:
         runtime = time.time() - entry.handle.started_at
         if rc is None:
             return LaunchStatus(state='running', exit_code=None, runtime_s=runtime)
+        # The reader may still be on the last of stderr when the process is
+        # already gone; give it a moment so the first status read carries
+        # the error text. Bounded, because a grandchild that inherited
+        # stderr keeps the pipe open past the child's exit.
+        if entry.drain is not None:
+            entry.drain.join(timeout=_DRAIN_JOIN_S)
         if entry.exit_time is None:
             self._registry.mark_exited(entry.handle.token, exit_time=time.time())
         if entry.exit_time:

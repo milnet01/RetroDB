@@ -27,8 +27,9 @@ class ProcessEntry:
     proc: object                 # subprocess.Popen — typed as object to avoid
                                  # importing subprocess just for an annotation
     exit_time: Optional[float] = None
-    stderr_tail: str = ''        # populated by LocalLauncher on reap
+    stderr_tail: str = ''        # set by LocalLauncher's stderr reader at EOF
     term_sent_at: Optional[float] = None  # first SIGTERM; kill() sends one
+    drain: Optional[threading.Thread] = None  # that stderr reader
 
 
 class ProcessRegistry:

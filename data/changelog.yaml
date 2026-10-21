@@ -43,6 +43,8 @@
     label: Deleting a screenshot no longer reports a failure after it worked
   - type: fix
     label: A RetroArch path set on its emulator row is the one that launches
+  - type: fix
+    label: A game that will not close is no longer shown as closed
   - type: deps
     label: Pillow 13 and other library updates
   body: |
@@ -356,10 +358,16 @@
       <li>In other languages, Settings now translates "Default Region",
         and the Scraping tab reads as a name rather than "scraping in
         progress". The help pages use the same words.</li>
+      <li><strong>A game that will not close is no longer shown as
+        closed.</strong> If an emulator survives Stop, RetroDB keeps
+        showing it as running. A RetroArch launch that is refused no longer
+        writes its settings file first, and an emulator that fails at once
+        shows its error message on the first check.</li>
       <li>Updated libraries: Pillow 13 (image handling), numpy 2.5.4 and
         onnxruntime 1.31 (upscaling), plus the latest versions of the
         build and release tools.</li>
-      <li>Behind the scenes: unused code was removed (an API address, a
+      <li>Behind the scenes: the game-launch code was tidied so it is
+        easier to follow, unused code was removed (an API address, a
         PSN helper, a trophies script no page loaded, and a site-wide theme
         setting nothing read), the
         app's replies to the browser are built in one place, several design
