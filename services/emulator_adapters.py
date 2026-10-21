@@ -160,15 +160,24 @@ def _cfg(path: Path) -> dict:
     return out
 
 
+def retroarch_cfg(binary) -> Optional[tuple]:
+    """(home, retroarch.cfg) for the RetroArch a binary runs (§4.4): the
+    AppImage's own home when it holds the file, else ~. None for a Flatpak
+    or when neither file exists."""
+    if _FLATPAK_RE.match(str(binary)):
+        return None
+    for home in (_home_of(Path(binary)), Path.home()):
+        cfg_path = home / '.config/retroarch/retroarch.cfg' if home else None
+        if cfg_path and cfg_path.is_file():
+            return home, cfg_path
+    return None
+
+
 def _retroarch_bios(binary, data_dir, sys_emu):
-    if _FLATPAK_RE.match(str(binary)) or not sys_emu or not sys_emu.get('retroarch_core'):
+    found = retroarch_cfg(binary)
+    if not found or not sys_emu or not sys_emu.get('retroarch_core'):
         return dict(_UNKNOWN)
-    home = _home_of(binary)
-    cfg_path = home / '.config/retroarch/retroarch.cfg' if home else None
-    if not (cfg_path and cfg_path.is_file()):
-        home, cfg_path = Path.home(), Path.home() / '.config/retroarch/retroarch.cfg'
-    if not cfg_path.is_file():
-        return dict(_UNKNOWN)
+    home, cfg_path = found
     system_dir = _cfg(cfg_path).get('system_directory', '')
     if not system_dir or system_dir == 'default':
         return dict(_UNKNOWN)

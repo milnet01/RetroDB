@@ -97,6 +97,66 @@ def _retroarch_overrides(core_path: str) -> list:
     return ['--appendconfig', str(path)]
 
 
+# PASS-59-150 — VICE ships its right stick and Start unmapped, so a pad cannot
+# press the cursor keys or F1 that C64 menus ask for.
+_VICE_PAD_DEFAULTS = {
+    'vice_mapper_ru': 'RETROK_UP', 'vice_mapper_rd': 'RETROK_DOWN',
+    'vice_mapper_rl': 'RETROK_LEFT', 'vice_mapper_rr': 'RETROK_RIGHT',
+    'vice_mapper_start': 'RETROK_F1',
+}
+_OPT_LINE = re.compile(r'^\s*([A-Za-z0-9_]+)\s*=\s*"?([^"\n]*)"?\s*$')
+
+
+def _vice_pad_defaults(binary_str: str, core_path: str, rom_path: Path) -> None:
+    """Set _VICE_PAD_DEFAULTS in the core-options files RetroArch reads for a
+    VICE game, only where a key is absent or still "---", so a mapping the
+    user chose stays. Core options live outside retroarch.cfg, so
+    --appendconfig cannot carry them. Never fails a launch."""
+    m = re.match(r'vice_(\w+?)_libretro', Path(core_path).name)
+    if not m:
+        return
+    from services.emulator_adapters import _cfg, retroarch_cfg
+    found = retroarch_cfg(binary_str)
+    if not found:
+        return
+    home, cfg_path = found
+    try:
+        cfg = _cfg(cfg_path)
+        if cfg.get('global_core_options') == 'true':
+            path = cfg.get('core_options_path') or str(cfg_path.parent / 'retroarch-core-options.cfg')
+            targets = [Path(path.replace('~', str(home), 1) if path.startswith('~') else path)]
+        else:
+            conf_dir = cfg.get('rgui_config_directory', '')
+            if not conf_dir or conf_dir == 'default':
+                conf_dir = str(cfg_path.parent / 'config')
+            elif conf_dir.startswith('~'):
+                conf_dir = str(home) + conf_dir[1:]
+            core_dir = Path(conf_dir) / f'VICE {m.group(1)}'
+            # A game's own or its folder's options file wins over the core's
+            # when game_specific_options is on; map those too where they exist.
+            targets = [core_dir / f'VICE {m.group(1)}.opt'] + [
+                p for p in (core_dir / f'{rom_path.parent.name}.opt',
+                            core_dir / f'{rom_path.stem}.opt') if p.is_file()]
+        for target in targets:
+            lines = target.read_text(encoding='utf-8').splitlines(True) if target.is_file() else []
+            todo = dict(_VICE_PAD_DEFAULTS)
+            for i, line in enumerate(lines):
+                km = _OPT_LINE.match(line)
+                if km and km.group(1) in todo:
+                    value = todo.pop(km.group(1))
+                    if km.group(2) == '---':
+                        lines[i] = f'{km.group(1)} = "{value}"\n'
+            if lines and not lines[-1].endswith('\n'):
+                lines[-1] += '\n'
+            lines += [f'{k} = "{v}"\n' for k, v in todo.items()]
+            text = ''.join(lines)
+            if not target.is_file() or target.read_text(encoding='utf-8') != text:
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_text(text, encoding='utf-8')
+    except OSError as e:
+        logger.warning("VICE pad mapping not written (%s); launching without", e)
+
+
 class _SafeDict(dict):
     """str.format_map dict whose missing-key path raises a clear error."""
     def __missing__(self, key):
@@ -392,6 +452,8 @@ def resolve_launch_context(game_id: int) -> LaunchContext:
     problem = rom_launch_problem(rom_path_obj)
     if problem:
         raise LaunchResolutionError(problem)
+    if core_path:
+        _vice_pad_defaults(binary_str, core_path, rom_path_obj)
 
     return LaunchContext(
         game_id=game['id'],

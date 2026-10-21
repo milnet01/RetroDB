@@ -9152,6 +9152,20 @@ were corrected in `2836bc3` and are not repeated here.
   data/retroarch-overrides-keyboard.cfg, which adds
   `input_auto_game_focus = "1"`; INV-13 amended.
 
+---
+
+#### Pass 59.152 Tell players RetroArch's keyboard shortcuts (MEDIUM, S).
+- **Status**: todo
+- **Asked** (user, 2026-10-21): users must be told RetroArch's
+  keyboard shortcuts somewhere.
+- **Plan**: a key table in the "Emulators and Play" help section
+  (owed at v3.30.0): menu, save/load state, fast-forward,
+  fullscreen, quit; Scroll Lock and the PS-button menu for
+  home-computer games. Plus a one-line hint beside Play on
+  keyboard-core games, linking to that section.
+- **Check**: read the defaults from RetroArch's own config keys,
+  not memory.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history

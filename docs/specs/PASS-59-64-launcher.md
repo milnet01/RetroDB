@@ -477,10 +477,14 @@ Stopping a player, as the fork session read its source:
   `DISPLAY` says. A keyboard computer's core (`_KEYBOARD_CORE_PREFIXES`)
   gets `data/retroarch-overrides-keyboard.cfg` instead, which adds
   `input_auto_game_focus = "1"` (PASS-59-151, user 2026-10-21).
+  A VICE core's launch also sets `_VICE_PAD_DEFAULTS` (right stick to the
+  cursor keys, Start to F1) in the core-options files RetroArch reads,
+  only where a key is absent or `"---"` (PASS-59-150, user 2026-10-20).
   A file that cannot be written drops the flag, never the launch.
   *Test:* `tests/test_launch_resolver.py` (`test_inv13_*`) — resolve a game
   on the RetroArch row; assert no `--config`, the overrides file and its
-  keys, no flag when it cannot be written, none on other emulators.
+  keys, no flag when it cannot be written, none on other emulators;
+  `test_pass_59_150_*` for the VICE pad keys.
   *Breaks when:* player handling keys on `is_retroarch` rather than
   `is_player`.
 

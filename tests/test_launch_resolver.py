@@ -424,3 +424,71 @@ def test_inv13_unwritable_overrides_still_launch(tmpdb, monkeypatch, tmp_path):
 def test_inv13_other_emulators_get_no_overrides(tmpdb):
     from services.launch_resolver import resolve_launch_context
     assert '--appendconfig' not in resolve_launch_context(game_id=1).argv
+
+
+# PASS-59-150 — VICE ships the right stick and Start unmapped ("---"), so a
+# pad cannot press the cursor keys or F1 that C64 games ask for. A launch
+# maps them in the core's options file, keeping any mapping the user chose.
+
+def _vice_launch(tmpdb, monkeypatch, tmp_path, opt_text=None, core='vice_x64sc_libretro.so',
+                 cfg_extra=''):
+    home = tmp_path / 'home'
+    ra = home / '.config/retroarch'
+    ra.mkdir(parents=True, exist_ok=True)
+    (ra / 'retroarch.cfg').write_text(
+        'rgui_config_directory = "~/.config/retroarch/config"\n' + cfg_extra)
+    monkeypatch.setenv('HOME', str(home))
+    opt = ra / 'config/VICE x64sc/VICE x64sc.opt'
+    if opt_text is not None:
+        opt.parent.mkdir(parents=True, exist_ok=True)
+        opt.write_text(opt_text)
+    (tmpdb['cores_dir'] / core).write_bytes(b'\x7fELF')
+    tmpdb['conn'].execute("UPDATE system_emulators SET retroarch_core = ? "
+                          "WHERE emulator_id = 2", (core,))
+    monkeypatch.setattr('services.launch_resolver._RETROARCH_KEYBOARD_OVERRIDES',
+                        tmp_path / 'retroarch-overrides-keyboard.cfg')
+    _retroarch_argv(tmpdb, monkeypatch, {})
+    return opt
+
+
+def test_pass_59_150_vice_unmapped_pad_keys_are_mapped(tmpdb, monkeypatch, tmp_path):
+    opt = _vice_launch(tmpdb, monkeypatch, tmp_path,
+                       'vice_mapper_ru = "---"\nvice_mapper_rd = "RETROK_s"\n'
+                       'vice_mapper_x = "RETROK_SPACE"\n')
+
+    text = opt.read_text()
+    assert 'vice_mapper_ru = "RETROK_UP"\n' in text
+    assert 'vice_mapper_rd = "RETROK_s"\n' in text          # the user's choice stays
+    assert 'vice_mapper_x = "RETROK_SPACE"\n' in text
+    for key, value in (('rl', 'RETROK_LEFT'), ('rr', 'RETROK_RIGHT'),
+                       ('start', 'RETROK_F1')):
+        assert f'vice_mapper_{key} = "{value}"\n' in text
+
+
+def test_pass_59_150_vice_options_file_is_created(tmpdb, monkeypatch, tmp_path):
+    opt = _vice_launch(tmpdb, monkeypatch, tmp_path)
+
+    assert 'vice_mapper_start = "RETROK_F1"\n' in opt.read_text()
+
+
+def test_pass_59_150_global_core_options_file(tmpdb, monkeypatch, tmp_path):
+    _vice_launch(tmpdb, monkeypatch, tmp_path, cfg_extra='global_core_options = "true"\n')
+
+    text = (tmp_path / 'home/.config/retroarch/retroarch-core-options.cfg').read_text()
+    assert 'vice_mapper_ru = "RETROK_UP"\n' in text
+
+
+def test_pass_59_150_other_cores_untouched(tmpdb, monkeypatch, tmp_path):
+    _vice_launch(tmpdb, monkeypatch, tmp_path, core='mednafen_psx_hw_libretro.so')
+
+    assert not (tmp_path / 'home/.config/retroarch/config').exists()
+
+
+def test_pass_59_150_game_options_file_is_mapped_too(tmpdb, monkeypatch, tmp_path):
+    game_opt = (tmp_path / 'home/.config/retroarch/config/VICE x64sc'
+                / f"{tmpdb['rom_file'].stem}.opt")
+    game_opt.parent.mkdir(parents=True)
+    game_opt.write_text('vice_mapper_ru = "---"')
+    _vice_launch(tmpdb, monkeypatch, tmp_path, opt_text='')
+
+    assert game_opt.read_text().startswith('vice_mapper_ru = "RETROK_UP"\n')
