@@ -14,6 +14,11 @@ Usage:
 Multiple JSON files are merged in order (later keys win), so a translation may
 be produced in several safe-sized chunk files and applied in one call.
 
+It also tops up an existing catalog: an entry the JSON leaves out counts as
+missing only when it has no usable translation (empty, or marked fuzzy).
+A filled entry loses its `fuzzy` flag and `#|` previous msgid, since Babel does
+not compile a fuzzy entry.
+
 Each JSON maps each **singular** msgid to its translation:
   - regular entry  -> "translated string"
   - plural entry   -> ["form 0", "form 1", ...]  (a list, one per plural form)
@@ -43,6 +48,13 @@ def _placeholders(text):
     return sorted(_PLACEHOLDER_RE.findall(text or ''))
 
 
+def _usable(msg):
+    """An entry that already compiles to a translation: not fuzzy, and
+    every form non-empty."""
+    forms = msg.string if isinstance(msg.string, (list, tuple)) else (msg.string,)
+    return not msg.fuzzy and all(forms)
+
+
 def main():
     if len(sys.argv) < 3:
         sys.exit(__doc__)
@@ -66,8 +78,9 @@ def main():
         total += 1
         key = msg.id[0] if isinstance(msg.id, (list, tuple)) else msg.id
         if key not in translations or translations[key] in (None, '', []):
-            missing += 1
-            missing_ids.append(key)
+            if not _usable(msg):
+                missing += 1
+                missing_ids.append(key)
             continue
         value = translations[key]
 
@@ -87,6 +100,8 @@ def main():
             msg.string = value
             if set(_placeholders(msg.id)) - set(_placeholders(value)):
                 ph_bad.append((key, value))
+        msg.flags.discard('fuzzy')
+        msg.previous_id = []
         filled += 1
 
     with open(po_path, 'wb') as f:
