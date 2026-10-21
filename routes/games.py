@@ -445,14 +445,19 @@ def game_detail(game_id):
                     # Pass 44 — multi-emulator launch overrides. INTEGER column,
                     # parsed separately because normalize_game_edit() only
                     # handles strings.
+                    # PASS-59-149 — no Launch section (no ROM file to play)
+                    # sends neither field; keep what the game has.
+                    has_launch_section = 'edit_emulator_override_id' in request.form
                     emu_override_raw = request.form.get('edit_emulator_override_id', '').strip()
                     try:
                         emulator_override_id = int(emu_override_raw) if emu_override_raw else None
                     except ValueError:
                         emulator_override_id = None
+                    if not has_launch_section:
+                        emulator_override_id = game['emulator_override_id']
                     # PASS-59-53 — the args reach the emulator's argv, so only
                     # manage_settings may change them (PASS-59-64 §4.2).
-                    if has_permission('manage_settings'):
+                    if has_permission('manage_settings') and has_launch_section:
                         launch_args_override = _normalized.get('launch_args_override')
                     else:
                         launch_args_override = game['launch_args_override']
@@ -765,7 +770,10 @@ def game_detail(game_id):
                              achievement_progress=achievement_progress,
                              psn_progress=psn_progress,
                              steam_counts=steam_counts,
-                             xbox_counts=xbox_counts)
+                             xbox_counts=xbox_counts,
+                             # PASS-59-149 — the cards' rule: an imported game
+                             # with no ROM file has nothing to play.
+                             can_play=rom_launch_problem(game['rom_path']) is None)
     except Exception as e:
         logger.error(f"Game detail error: {e}", exc_info=True)
         return f"Error loading game: {e}", 500

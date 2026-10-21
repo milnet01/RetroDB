@@ -404,7 +404,8 @@
                     </div>
                 </div>
 
-                <!-- Pass 44 — multi-emulator launch overrides -->
+                <!-- Pass 44 — multi-emulator launch overrides; PASS-59-149: only with a ROM file -->
+                {% if can_play %}
                 <div class="edit-section">
                     <h3 class="edit-section-title">▶ {{ _('Launch') }}</h3>
                     <div class="edit-field">
@@ -422,6 +423,7 @@
                     </div>
                     {% endif %}
                 </div>
+                {% endif %}
 
             </form>
         </div>

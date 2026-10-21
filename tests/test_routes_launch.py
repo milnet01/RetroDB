@@ -146,8 +146,10 @@ class TestLaunchArgsOverrideNeedsManageSettings:
     An editor's `edit_metadata` POST leaves the stored value as it was."""
 
     @pytest.fixture
-    def seeded_game(self, app_module):
+    def seeded_game(self, app_module, monkeypatch):
         from services.database import execute, query
+        # The Launch section shows only for a playable ROM (PASS-59-149).
+        monkeypatch.setattr('routes.games.rom_launch_problem', lambda _path: None)
         sys_id = execute("INSERT INTO systems (name, folder) VALUES (?, ?)",
                          ('INV-2 System', 'inv2-system'))
         game_id = execute(
@@ -164,6 +166,7 @@ class TestLaunchArgsOverrideNeedsManageSettings:
         return client.post(f'/game/{game_id}', data={
             'action': 'edit_metadata',
             'edit_title': 'INV-2 Game',
+            'edit_emulator_override_id': '',
             'edit_launch_args_override': value,
         }, headers={'X-CSRF-Token': 'test-csrf-token'})
 

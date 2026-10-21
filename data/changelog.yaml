@@ -25,6 +25,8 @@
     label: Create M3U keeps the game in your library
   - type: fix
     label: RetroArch games start with a working keyboard and full-speed loading
+  - type: ui
+    label: Imported games without a ROM file no longer offer Play
   - type: deps
     label: Pillow 13 and other library updates
   body: |
@@ -242,6 +244,10 @@
         Nightmare" unless the colon had a space before it. RetroDB now
         searches it that way, then by the part before the colon if that
         still finds nothing.</li>
+      <li><strong>Games with nothing to play no longer offer Play.</strong>
+        A game added from a CLZ, Steam, Xbox or PSN import has no ROM file.
+        Its page now shows no Play button, no Emulator settings and no
+        Launch section when you edit it, matching the Library cards.</li>
       <li><strong>RetroArch games are protected from two bad settings.</strong>
         RetroDB now gives RetroArch a small settings file of its own each
         time it starts a game, on top of yours. It sets the keyboard to
