@@ -134,3 +134,20 @@ def test_seeder_is_idempotent(db):
 
     assert emu_after == emu_before
     assert se_after == se_before
+
+
+def test_every_seeded_and_adapter_folder_is_a_known_system():
+    """PASS-59-122: the seeds and the emulator adapters named folders no
+    library uses (gamecube, 3ds, superfamicom); ES-DE and config.py's
+    SYSTEM_NAME_MAP call them gc, n3ds and sfc, so those emulators were
+    never wired to a system."""
+    import json
+    import config
+    from services.emulator_adapters import ADAPTERS
+    # SYSTEM_NAME_MAP lacks scummvm, which ES-DE and the adapters both use.
+    known = set(config.SYSTEM_NAME_MAP) | {'scummvm'}
+    with open(_SEEDS_PATH, encoding='utf-8') as f:
+        seeds = json.load(f)
+    unknown = sorted({m['system_folder'] for m in seeds['system_emulators']} - known)
+    unknown += sorted({s for a in ADAPTERS.values() for s in a.systems} - known)
+    assert not unknown, f"folders not in config.SYSTEM_NAME_MAP: {unknown}"
