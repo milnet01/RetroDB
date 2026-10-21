@@ -1,3 +1,474 @@
+- version: 3.30.0
+  date: '2026-10-21'
+  tags:
+  - type: feature
+    label: Un gioco uscito in più regioni appare come un'unica scheda
+  - type: security
+    label: Riempimento AI e Strumenti ROM sono più difficili da usare in modo improprio
+  - type: security
+    label: Le pagine si rifiutano di eseguire script infilati al loro interno
+  - type: fix
+    label: Scraping, processi degli Strumenti ROM, sincronizzazione dei trofei e configurazione iniziale gestiscono correttamente gli errori
+  - type: ui
+    label: I pulsanti della finestra Informazioni non sono più tagliati
+  - type: accessibility
+    label: Gli screen reader leggono l'interruttore Platform Match Required con il suo nome visibile
+  - type: accessibility
+    label: Ogni finestra pop-up gestisce allo stesso modo Esc, il focus della tastiera e gli screen reader
+  - type: performance
+    label: Lo scraping finisce prima; le immagini piccole vengono ingrandite in background
+  - type: feature
+    label: La Riscansione completa può mantenere i media che hai già
+  - type: fix
+    label: ScreenScraper trova i giochi il cui titolo ha un sottotitolo
+  - type: fix
+    label: Create M3U mantiene il gioco nella tua libreria
+  - type: fix
+    label: Il collegamento Obiettivi apre il tuo ultimo sistema invece di una pagina vuota
+  - type: fix
+    label: I giochi RetroArch partono con una tastiera funzionante e il caricamento a piena velocità
+  - type: fix
+    label: I giochi per C64, Amiga, DOS e altri home computer ricevono ogni tasto che premi
+  - type: fix
+    label: Nei giochi C64 la levetta destra del controller preme i tasti cursore e Start preme F1
+  - type: ui
+    label: La barra laterale mostra quando le immagini sono ancora in fase di miglioramento in background, e le immagini più nitide di un gioco compaiono da sole
+  - type: feature
+    label: I manuali dei giochi si aprono nella pagina del gioco e si sfogliano come un libro
+  - type: docs
+    label: L'Aiuto elenca i tasti di RetroArch, e i giochi per computer con tastiera mostrano un promemoria per Scroll Lock accanto a Gioca
+  - type: ui
+    label: I giochi importati senza file ROM non offrono più Gioca
+  - type: fix
+    label: Eliminare uno screenshot non segnala più un errore dopo che è riuscito
+  - type: fix
+    label: Il percorso di RetroArch impostato sulla riga del suo emulatore è quello che viene avviato
+  - type: fix
+    label: Un gioco che non si chiude non viene più mostrato come chiuso
+  - type: deps
+    label: Pillow 13 e altri aggiornamenti delle librerie
+  body: |
+    <ul>
+      <li><strong>Le versioni regionali di un gioco appaiono come un unico
+        gioco.</strong> Collega le versioni che possiedi (per esempio le
+        edizioni USA, europea e giapponese) e la Libreria mostra un&rsquo;unica
+        scheda con un badge &#127760;. La scheda apre e avvia la versione della
+        tua Regione predefinita. La pagina del gioco elenca tutte le versioni
+        una accanto all&rsquo;altra e ti permette di passare dall&rsquo;una
+        all&rsquo;altra. Strumenti ROM &gt; Versioni regionali propone gruppi che
+        gli editor devono confermare; niente viene collegato senza di te. Non
+        propone mai un seguito come versione del primo gioco. Le versioni
+        collegate non vengono più segnalate come duplicati per nome. Esegui una
+        volta Recupera titoli alternativi per dare alle proposte più materiale
+        su cui lavorare.</li>
+      <li><strong>L&rsquo;AI può riassumere le differenze tra le versioni
+        regionali.</strong> In un gioco con versioni collegate, gli editor
+        possono premere Riassumi le differenze con l'AI nella sezione Versioni
+        regionali. L&rsquo;AI elenca le differenze note, come censura,
+        difficoltà o contenuti rimossi. L&rsquo;elenco è indicato come scritto
+        dall&rsquo;AI, compare nella pagina di ogni versione e si nasconde quando
+        colleghi o scolleghi una versione, finché non viene riscritto. Serve un
+        fornitore AI configurato in Impostazioni &gt; Scansione.</li>
+      <li><strong>I giochi PlayStation partono con buone impostazioni.</strong>
+        Per DuckStation, PCSX2 e RPCS3, quando premi Gioca RetroDB ora imposta
+        la scala di risoluzione e il formato dell&rsquo;immagine di ogni gioco
+        nel file di impostazioni per gioco dell&rsquo;emulatore stesso, e se il
+        gioco parte a schermo intero. Cambiale per un intero sistema con il
+        pulsante Impostazioni in Impostazioni &gt; Emulatori, o per un solo
+        gioco nel nuovo riquadro Impostazioni emulatore della sua pagina.
+        Un&rsquo;impostazione che cambi dentro l&rsquo;emulatore vince sempre.
+        RetroDB legge il numero di serie di ogni disco per trovare il file
+        giusto; i dischi CHD richiedono chdman installato.</li>
+      <li><strong>Il Riempimento AI non può più essere manovrato dal testo
+        scritto nei campi di un gioco.</strong> Quando il Riempimento AI
+        controlla editore, sviluppatore, edizione o altre piattaforme già
+        presenti in un gioco, ora ripulisce prima quel testo, come faceva già
+        con il titolo.</li>
+      <li><strong>Le scansioni degli Strumenti ROM restano dentro la tua
+        cartella ROM.</strong> Convertitore CHD e Verifica CHD non seguono più
+        un collegamento (symlink) che punta fuori da essa, e
+        l&rsquo;estrazione di un archivio multidisco ignora qualsiasi
+        collegamento contenuto nell&rsquo;archivio.</li>
+      <li><strong>Le pagine si rifiutano di eseguire script infilati al loro
+        interno.</strong> Il tuo browser ora blocca qualsiasi script che RetroDB
+        non abbia scritto da sé, quindi un testo che nasconde del codice nel
+        titolo di un gioco, in un&rsquo;etichetta o in una descrizione ottenuta
+        dallo scraping non può eseguirlo. Pulsanti e menu funzionano come
+        prima.</li>
+      <li><strong>Uno screenshot danneggiato non blocca più il controllo dei
+        duplicati di un gioco.</strong> Uno screenshot illeggibile viene messo
+        da parte e il controllo continua.</li>
+      <li><strong>I processi degli Strumenti ROM non restano più bloccati su
+        "in esecuzione".</strong> Un file eliminato dopo una scansione di
+        Verifica CHD viene contato come non valido, e qualsiasi errore imprevisto
+        in Conversione CHD, Verifica CHD o Cerca duplicati chiude il processo
+        come fallito, con l&rsquo;errore nel suo log.</li>
+      <li><strong>Prima che la configurazione sia completata, le richieste di
+        dati dell&rsquo;app ricevono una risposta chiara.</strong> Rispondono
+        "Configurazione richiesta" invece di restituire la pagina di
+        configurazione. Le pagine ti portano comunque alla procedura guidata di
+        configurazione.</li>
+      <li><strong>I seguiti non mostrano più gli obiettivi del primo
+        gioco.</strong> L&rsquo;abbinamento con RetroAchievements ignorava il
+        numero nel titolo, quindi Donkey Kong Country 2 e 3 venivano collegati a
+        Donkey Kong Country. Ora i numeri (2, II, 3, III e così via) contano. Per
+        correggere i giochi già collegati, esegui una volta l&rsquo;aggiornamento
+        di RetroAchievements per tutti i sistemi.</li>
+      <li><strong>Una sincronizzazione PlayStation non azzera più il conteggio
+        dei trofei.</strong> Quando la risposta di PlayStation non includeva i
+        totali dei trofei di un gioco, RetroDB salvava degli zeri al posto dei
+        conteggi che aveva già. Ora li mantiene, anche nell&rsquo;aggiornamento
+        dei trofei in blocco.</li>
+      <li><strong>Aprire un set di trofei che non è più sul disco mostra un
+        messaggio.</strong> La pagina Trofei andava in errore; ora dice che il
+        set non è stato trovato e ti riporta all&rsquo;elenco.</li>
+      <li><strong>Le tabelle degli Strumenti ROM danno il nome giusto alla
+        colonna dei pulsanti in ogni lingua.</strong> L&rsquo;intestazione della
+        colonna condivideva il testo con il genere Azione, quindi alcune lingue
+        mostravano lì il nome del genere.</li>
+      <li><strong>I giochi GameCube, 3DS e Super Famicom ricevono il loro
+        emulatore in automatico.</strong> RetroDB cercava questi sistemi con nomi
+        di cartella che le librerie non usano (gamecube, 3ds, superfamicom invece
+        di gc, n3ds, sfc), quindi Dolphin e Citra non venivano mai collegati.
+        Riavvia RetroDB una volta per applicare la correzione.</li>
+      <li><strong>Il download senza Python (standalone) configura di nuovo gli
+        emulatori.</strong> Gli mancava il file che li elenca.</li>
+      <li><strong>Circa 170 pulsanti, etichette e messaggi in più sono
+        tradotti</strong> in ogni lingua. Prima apparivano in inglese, e alcuni
+        mostravano una traduzione sbagliata (alcune lingue dicevano "backup non
+        riuscito" quando un gioco non si avviava).</li>
+      <li><strong>Esc chiude solo la finestra in primo piano.</strong> Con una
+        domanda aperta sopra un&rsquo;altra finestra, Esc le chiudeva entrambe;
+        alcune finestre continuavano anche a funzionare dopo che Esc le aveva
+        nascoste, e premere Esc nella pagina di un gioco poteva riprendere uno
+        scraping in blocco che avevi messo in pausa. Ora ogni finestra si chiude
+        con la propria azione Chiudi, mantiene il focus della tastiera al suo
+        interno mentre è aperta e lo restituisce al pulsante che l&rsquo;ha
+        aperta. Le finestre di avanzamento dei processi in corso restano aperte
+        finché il processo non termina.</li>
+      <li><strong>I grafici di Analisi sono nella tua lingua.</strong> I nomi di
+        generi, prospettive, dimensioni e modalità, i titoli dei grafici, i nomi
+        degli assi e le legende erano in inglese in ogni lingua.</li>
+      <li><strong>I dati di RetroAchievements sono più al sicuro.</strong> Se
+        l&rsquo;elenco dei giochi RetroAchievements di una console non si
+        carica, l&rsquo;aggiornamento RA ora lascia collegati i giochi di quella
+        console invece di scollegarli tutti. Cancella dati RA ora cancella solo
+        i progressi di RetroAchievements; i progressi di Steam e Xbox
+        restano.</li>
+      <li><strong>Le password devono avere almeno 12 caratteri
+        ovunque.</strong> La configurazione iniziale accettava una password di
+        amministratore di qualsiasi lunghezza, e le pagine del cambio password
+        obbligatorio e della configurazione dicevano che bastavano 4 caratteri.
+        Ora tutte e tre ne chiedono 12, come il resto dell&rsquo;app.</li>
+      <li><strong>I totali degli obiettivi sono giusti, e sono i
+        tuoi.</strong> Sincronizzare un solo gioco da RetroAchievements ora
+        salva quanti obiettivi ha, invece di 0. I totali degli obiettivi nella
+        dashboard contano solo i tuoi giochi, e i Trofei del collezionista non
+        contano più due volte ogni obiettivo di Steam o Xbox.</li>
+      <li><strong>Le sincronizzazioni in background usano i tuoi
+        account.</strong> Una sincronizzazione di sistema di RetroAchievements
+        accede con il tuo account RetroAchievements, se ne hai impostato uno.
+        L&rsquo;aggiornamento PlayStation in blocco riutilizza l&rsquo;accesso
+        salvato invece di accedere da zero ogni volta.</li>
+      <li><strong>Solo tu puoi fermare o riprendere la tua
+        sincronizzazione.</strong> Un altro utente non può più annullare la tua
+        sincronizzazione di RetroAchievements, Steam o Xbox, e riprendere un
+        processo interrotto richiede gli stessi permessi necessari per avviarlo.
+        Gli amministratori possono ancora fare entrambe le cose.</li>
+      <li><strong>La tua cartella dei trofei RPCS3 viene controllata quando la
+        salvi.</strong> Una cartella che non esiste, non è un percorso completo
+        o è una cartella di sistema viene rifiutata, come già avveniva nelle
+        impostazioni principali.</li>
+      <li><strong>"Recupera tutte le immagini" del Museo funziona in
+        background.</strong> La pagina non aspetta più minuti per ogni immagine
+        dei controller. Mostra a che punto è il recupero, ha un pulsante Annulla
+        e riprende a mostrare l&rsquo;avanzamento se lasci la pagina e ci
+        torni.</li>
+      <li><strong>Gli Strumenti ROM proteggono meglio i tuoi file.</strong> La
+        pulizia non svuota più un archivio: uno schema come <code>*</code> non
+        può essere salvato, e la pulizia si ferma se gli schemi rimuoverebbero
+        tutti i file. Il Convertitore CHD conserva l&rsquo;originale quando
+        "verifica" è disattivato, e lascia stare un CHD esistente quando "salta
+        esistenti" è attivo. Cerca duplicati conserva sempre una copia di ogni
+        gioco, anche se una richiesta le chiede tutte.</li>
+      <li><strong>I processi degli Strumenti ROM fanno quello che dicono i
+        pulsanti.</strong> Pausa ora mette in pausa Conversione CHD, Verifica
+        CHD, Cerca duplicati e Deduplicazione screenshot, e un processo in pausa
+        può essere annullato. Una scansione di Deduplicazione screenshot che
+        incontra un errore ora termina come fallita invece di continuare per
+        sempre.</li>
+      <li><strong>Create M3U non appoggia più gli archivi in una cartella
+        temporanea.</strong> Gli archivi spostati ora vanno nella cartella dati
+        di RetroDB, che non viene svuotata al riavvio. Lo scanner degli archivi
+        mostra dove sono finiti, e la conferma in blocco avvisa che verranno
+        spostati. Il ripristino delle impostazioni degli Strumenti ROM ora
+        ripristina tutte le opzioni.</li>
+      <li><strong>Cambia disco da RetroDB.</strong> Mentre è in esecuzione un
+        gioco RetroArch avviato da un elenco di dischi .m3u, l&rsquo;elenco
+        &#9654; In riproduzione in cima a ogni pagina mostra il titolo del gioco
+        e un pulsante Disco successivo, così un gioco che chiede il lato due
+        continua con un clic, dal browser o da un telefono. RetroArch deve avere
+        attivo Settings &gt; Network &gt; Network Commands (porta 55355); se è
+        disattivato, il pulsante lo dice.</li>
+      <li><strong>Lo script di avvio apre RetroDB quando è pronto.</strong>
+        start.sh, start.command e start.bat aprivano il browser dopo 3 secondi
+        fissi, spesso prima che il server potesse rispondere, quindi la pagina
+        non si caricava. Ora RetroDB la apre appena il server è in ascolto. Se
+        viene avviato da LocalWebServerManager, non apre nessuna pagina; usa il
+        pulsante Open del gestore.</li>
+      <li><strong>I video dei giochi possono arrivare a 500 MB.</strong> Il
+        limite era 50 MB, troppo poco per la maggior parte dei trailer. Un
+        caricamento troppo grande ora mostra un messaggio nella pagina del gioco
+        invece di sostituire la pagina con del testo semplice. Un video
+        rifiutato (troppo grande o del tipo sbagliato) ora lo dice invece di
+        essere scartato senza una parola.</li>
+      <li><strong>L&rsquo;avvio segue il percorso che hai impostato.</strong>
+        Un Binary path override sulla riga di RetroArch in Impostazioni &gt;
+        Emulatori ora vince sul percorso di RetroArch in cima alla stessa
+        pagina; prima il percorso della riga veniva ignorato. Premere due volte
+        Stop non chiede più due volte al gioco di chiudersi; su Linux RetroArch
+        interpreta una seconda richiesta come "esci senza salvare", quindi il
+        salvataggio nel gioco poteva andare perso. Un&rsquo;impostazione
+        dell&rsquo;avvio rimasta da una modalità remota mai realizzata non
+        impedisce più l&rsquo;avvio di tutti i giochi.</li>
+      <li><strong>Le azioni non riuscite segnalano correttamente i loro
+        errori.</strong> Quando un salvataggio, un&rsquo;importazione, una
+        sincronizzazione o una scansione falliscono, RetroDB ora risponde con un
+        vero stato di errore e mostra il motivo nel messaggio, invece di
+        rispondere come se avesse funzionato. Salvare un codice di accesso PSN
+        che non riesce a connettersi non mostra più dettagli interni
+        dell&rsquo;errore. Accesso, gestione utenti, profilo, obiettivi,
+        importazioni, Riempimento AI e ricerche su HowLongToBeat ora fanno lo
+        stesso, e una lingua che non può essere salvata dice perché invece di
+        "Errore di rete".</li>
+      <li><strong>Ora funziona lo scraping dei giochi con nomi in stile
+        No-Intro.</strong> Un titolo come "Legend of Zelda, The" o "Legend of
+        Zelda, The - Ocarina of Time" ora corrisponde ai risultati "The Legend of
+        Zelda" invece di essere scartato dal filtro di corrispondenza. Anche
+        Report ROM smette di segnalare quei nomi come non corrispondenti.</li>
+      <li><strong>I titoli presi dai nomi dei file perdono tutte le loro
+        etichette.</strong> Ora vengono rimosse anche una regione combinata come
+        "(USA, Europe)" e "(UK)". Sugli home computer come lo ZX Spectrum viene
+        tolto tutto dall&rsquo;anno in poi, quindi "Chuckie Egg 2 (UK) (1985)
+        (A'n'F Software) (tzx)" diventa "Chuckie Egg 2". Un nome di file che
+        finisce con "..zip" non lascia più un punto di troppo. Le ricerche degli
+        scraper, il ripristino dei dati di un gioco e le proposte di Versioni
+        regionali usano questi nomi più puliti.</li>
+      <li><strong>Un titolo sbagliato non si ripete più a ogni nuovo
+        scraping.</strong> Lo scraping in blocco ora cerca con il nome del file
+        ROM, non con il titolo salvato per il gioco. Un gioco che una volta era
+        stato abbinato al gioco sbagliato trova quello giusto al nuovo
+        scraping.</li>
+      <li><strong>Gli scraper preferiscono la tua Regione predefinita.</strong>
+        Quando due risultati sono alla pari, ora vince quello della tua Regione
+        predefinita o World, non sempre quello USA. Due titoli che sono solo
+        etichette di regione non contano più come corrispondenza perfetta.
+        Versioni regionali non scambia più la X di "X-Men" per il numero di un
+        seguito. La scelta della versione mostrata da una scheda ora legge solo
+        il nome del file ROM, non le cartelle sopra di esso, e capisce vecchie
+        etichette come "(U)" e "(E)".</li>
+      <li><strong>Il log mostra dove va il tempo di scraping di ogni
+        gioco.</strong> Dopo ogni gioco, RetroDB scrive nel log una riga con i
+        secondi spesi a cercare, in ogni fonte, a scaricare, a elaborare le
+        immagini, nell&rsquo;AI e a salvare. È il primo passo verso uno scraping
+        più veloce.</li>
+      <li><strong>Lo scraping finisce prima: le immagini piccole vengono rese
+        più nitide dopo.</strong> Uno scraping ora salva il gioco con le immagini
+        così come sono state scaricate. Le copertine e gli screenshot piccoli
+        vengono poi ingranditi in background, un gioco alla volta. Gli
+        screenshot duplicati vengono scartati prima di tutto questo lavoro. Se
+        RetroDB si ferma a metà, riprende al successivo avvio.</li>
+      <li><strong>Leggi il manuale di un gioco nella sua pagina.</strong> Il
+        pulsante Manuale ora apre il PDF in una finestra sopra la pagina del
+        gioco. Sfoglia le pagine con Precedente e Successiva, con i tasti
+        freccia, Home e End, o con uno scorrimento del dito sul telefono; ogni
+        pagina si gira come quella di un libro, o cambia semplicemente se il tuo
+        sistema chiede meno animazioni. "Apri il PDF in una nuova scheda" c'è
+        ancora, e Ctrl-clic su Manuale apre direttamente la scheda.</li>
+      <li><strong>La barra laterale mostra quando le immagini sono ancora in
+        fase di miglioramento.</strong> Mentre le immagini vengono rese più
+        nitide in background, la barra laterale indica "Miglioramento immagini —
+        Giochi rimanenti: N". Un gioco ancora in attesa lo dice nella sua
+        pagina, e le sue immagini più nitide compaiono lì da sole quando sono
+        pronte. L&rsquo;interruttore copertina 2D/3D non copre più quella
+        riga.</li>
+      <li><strong>Le fonti di riserva vengono interrogate tutte
+        insieme.</strong> Quando la fonte principale lascia dei vuoti, RetroDB
+        ora interroga le altre fonti contemporaneamente invece che una dopo
+        l&rsquo;altra. Le loro risposte vengono comunque usate nell&rsquo;ordine
+        delle tue Impostazioni, quindi per ogni campo vince la stessa
+        fonte.</li>
+      <li><strong>ES-DE legge il suo elenco dei giochi una volta sola.</strong>
+        Ogni scraping, compresi quelli in blocco, leggeva il gamelist.xml di
+        ES-DE di un sistema due volte per ogni gioco. Ora RetroDB lo legge una
+        volta e lo rilegge solo quando il file cambia.</li>
+      <li><strong>Applica in Cerca metadati non cerca più una seconda
+        volta.</strong> Nella pagina di un gioco, i risultati che hai spuntato
+        vengono presi direttamente dalla loro fonte invece di essere cercati di
+        nuovo. Senza nulla di spuntato, solo la fonte che hai applicato e
+        l&rsquo;AI riempiono i vuoti.</li>
+      <li><strong>ScreenScraper trova i giochi con un sottotitolo.</strong> Non
+        trovava nulla per un titolo come "Alone in the Dark: The New Nightmare"
+        a meno che prima dei due punti ci fosse uno spazio. Ora RetroDB lo cerca
+        in quel modo, e poi con la parte prima dei due punti se ancora non trova
+        nulla.</li>
+      <li><strong>I giochi senza nulla da avviare non offrono più
+        Gioca.</strong> Un gioco aggiunto da un&rsquo;importazione CLZ, Steam,
+        Xbox o PSN non ha un file ROM. La sua pagina ora non mostra il pulsante
+        Gioca, né Impostazioni emulatore, né la sezione Avvia quando lo
+        modifichi, come già le schede della Libreria.</li>
+      <li><strong>I giochi RetroArch sono protetti da due impostazioni
+        sbagliate.</strong> Ogni volta che avvia un gioco, RetroDB ora dà a
+        RetroArch un piccolo file di impostazioni tutto suo, in aggiunta al tuo.
+        Imposta la tastiera in base al tuo desktop (Wayland o X11), così la
+        tastiera non è mai inattiva, e lascia andare l&rsquo;avanzamento veloce
+        a piena velocità, che i giochi Commodore 64 usano per caricarsi in
+        fretta. Tutte le altre impostazioni di RetroArch restano come
+        sono.</li>
+      <li><strong>Create M3U mantiene il gioco nella tua libreria.</strong>
+        Trasformare un archivio multidisco in una playlist lasciava il gioco
+        puntato all&rsquo;archivio, che nel frattempo era stato spostato. Ora il
+        gioco punta alla nuova playlist e conserva i suoi dettagli e le sue
+        immagini. Quando un archivio contiene più edizioni di un gioco, ognuna
+        con i propri dischi, la playlist ora usa i dischi della prima edizione
+        invece di tutti, e dice quali dischi ha lasciato fuori.</li>
+      <li><strong>La Riscansione completa può mantenere i media che hai
+        già.</strong> Spunta "Mantieni i media esistenti" accanto
+        all&rsquo;interruttore Riscansione completa. I dettagli testuali vengono
+        comunque aggiornati, ma immagini, video e manuali già sul disco restano
+        come sono invece di essere scaricati di nuovo. Senza la spunta, una
+        Riscansione completa non scarta più gli screenshot che aveva scaricato
+        in precedenza.</li>
+      <li><strong>I processi in background non perdono né saltano più
+        lavoro.</strong> Un aggiornamento di RetroAchievements che incontrava un
+        gioco problematico non butta più via i giochi che aveva già aggiornato.
+        Una sincronizzazione o un aggiornamento ripresi non saltano più il gioco
+        su cui si erano fermati. Una sincronizzazione di RetroAchievements o
+        Steam ripresa da un&rsquo;istantanea molto vecchia ora si ferma con un
+        messaggio invece di segnalare un successo senza aver sincronizzato
+        nulla. La conversione WebP controlla un file WebP rimasto prima di
+        fidarsene, e non parte se non riesce a leggere lo spazio libero sul
+        disco.</li>
+      <li><strong>Aggiornare un&rsquo;installazione molto vecchia non può più
+        perdere dati in silenzio.</strong> Tre vecchi passaggi di aggiornamento
+        del database potevano eliminare righe in rari casi. Ora copiano le
+        righe, oppure si fermano con un errore chiaro invece di perderle.</li>
+      <li><strong>I pulsanti della finestra Informazioni non sono più
+        tagliati.</strong> La finestra è più larga e i suoi quattro pulsanti
+        stanno su due righe, così ogni etichetta si vede per intero; sul
+        telefono si impilano.</li>
+      <li><strong>Il tuo tema ti segue in un nuovo browser.</strong> Accedere da
+        un browser che non hai mai usato ora mostra il tema che hai salvato.
+        Prima la pagina di accesso memorizzava per primo Cyberpunk, e restava
+        quello.</li>
+      <li><strong>La finestra della password di accesso non dice più "Admin
+        Login".</strong> Ogni account accede con una password, quindi la
+        finestra ora dice semplicemente Accedi. Lo dicono anche la pagina
+        Account e la pagina Aiuto.</li>
+      <li><strong>L&rsquo;Aiuto è aggiornato in ogni lingua.</strong> Le pagine
+        di Aiuto tradotte ora descrivono le Versioni regionali, dicono che ogni
+        account ha bisogno di una password e che il tuo tema viene salvato con
+        il tuo account. L&rsquo;Aiuto in ogni lingua, inglese compreso, ora
+        indica il vero minimo di 12 caratteri per la password.</li>
+      <li><strong>Piccole correzioni:</strong> le fanart il cui nome di file
+        contiene un apostrofo ora compaiono nelle pagine dei giochi e dei
+        trofei; Impostazioni non mostra più un errore di script agli account non
+        amministratori, e gli screen reader ora sentono quale scheda delle
+        Impostazioni è selezionata; lasciare una pagina non riempie più la
+        console del browser di errori di richieste annullate; il modello di
+        upscaling viene scaricato prima da un indirizzo funzionante; e il
+        programma di installazione non va più in crash su Windows quando il suo
+        output viene salvato in un file.</li>
+      <li><strong>Un ampio giro di correzioni di affidabilità.</strong> Salvare
+        un gioco con il titolo vuoto non fa più perdere le altre modifiche.
+        Riavvia ora lascia prima terminare in modo pulito i processi in corso.
+        Create M3U si rifiuta di sovrascrivere una playlist o una cartella
+        esistente. Svuotare l&rsquo;elenco dei file indesiderati negli Strumenti
+        ROM ora significa "non eliminare nulla", e due schemi non colpiscono più
+        nomi di ROM reali come "Release of the Dragon". Un solo file di trofei
+        PS3 danneggiato non svuota più i trofei di tutti i giochi. Il
+        Riempimento AI scrive una sola regione. Analisi conta ogni gioco una
+        sola volta nel grafico delle valutazioni. Le importazioni CLZ usano i
+        nomi di genere standard. Nelle finestre di modifica, i generi e le altre
+        etichette si possono rimuovere in ogni lingua, e le scorciatoie da
+        tastiera non dirottano più Ctrl+D o Ctrl+G. Gli spettatori vedono lo
+        stato di completamento di un gioco ma non possono più cambiarlo, perché
+        è condiviso da tutti.</li>
+      <li><strong>Gli screen reader leggono l&rsquo;interruttore Platform Match
+        Required con il suo nome visibile</strong> in Impostazioni →
+        Scansione.</li>
+      <li>Nelle altre lingue, Impostazioni ora traduce "Regione predefinita", e
+        la scheda Scansione si legge come un nome invece che come "scansione in
+        corso". Le pagine di aiuto usano le stesse parole.</li>
+      <li><strong>Un gioco che non si chiude non viene più mostrato come
+        chiuso.</strong> Se un emulatore sopravvive a Stop, RetroDB continua a
+        mostrarlo in esecuzione. Un avvio di RetroArch rifiutato non scrive più
+        prima il suo file di impostazioni, e un emulatore che fallisce subito
+        mostra il suo messaggio di errore al primo controllo.</li>
+      <li>Librerie aggiornate: Pillow 13 (gestione delle immagini), numpy 2.5.4
+        e onnxruntime 1.31 (upscaling), più le ultime versioni degli strumenti di
+        build e di rilascio.</li>
+      <li>Dietro le quinte: il codice di avvio dei giochi è stato riordinato per
+        essere più facile da seguire, è stato rimosso codice inutilizzato (un
+        indirizzo API, una funzione di supporto PSN, uno script dei trofei che
+        nessuna pagina caricava e un&rsquo;impostazione del tema per tutto il
+        sito che nessuno leggeva), le risposte dell&rsquo;app al browser vengono
+        costruite in un unico punto, diversi documenti di progettazione sono
+        stati corretti per corrispondere al codice, la suite di test è stata
+        riordinata, e un nuovo controllo individua un errore di sintassi
+        JavaScript prima di un rilascio. Le voci più vecchie del changelog che
+        descrivevano il codice rimosso ora lo dicono.</li>
+    </ul>
+- version: 3.29.0
+  date: '2026-10-17'
+  tags:
+  - type: feature
+    label: Gli altri nomi di un gioco mostrano la regione da cui provengono
+  body: |
+    <ul>
+      <li><strong>Gli altri nomi di un gioco mostrano la regione da cui
+        provengono.</strong> La scheda Conosciuto anche come nella pagina del
+        gioco indica per ogni nome il paese o la regione, come Giappone per
+        "Rockman", nella tua lingua. I nomi con una regione vengono per primi,
+        raggruppati per regione. Passa il puntatore su un nome per vederne la
+        fonte e un&rsquo;eventuale nota, come "Titolo provvisorio".</li>
+      <li>I nomi da IGDB ora mantengono la loro regione. Prima ce
+        l&rsquo;avevano solo i nomi di ScreenScraper.</li>
+      <li>L&rsquo;etichetta "SS" di ScreenScraper non compare più come regione.
+        È il nome che ScreenScraper stesso dà al gioco, non un luogo.</li>
+      <li>Strumenti ROM → Recupera titoli alternativi ora controlla ogni gioco
+        sottoposto a scraping, così i nomi che hai già ricevono la loro regione.
+        Eseguilo una volta per etichettare la tua libreria esistente.</li>
+    </ul>
+- version: 3.28.0
+  date: '2026-10-17'
+  tags:
+  - type: feature
+    label: Indica a RetroDB la cartella dei tuoi emulatori e li configura lui
+  - type: fix
+    label: Correzioni alla pagina Impostazioni → Emulatori
+  body: |
+    <ul>
+      <li><strong>Indica a RetroDB la cartella dei tuoi emulatori e li
+        configura lui.</strong> Impostazioni → Emulatori ha un nuovo elenco
+        Cartelle degli emulatori. Aggiungi la cartella in cui si trovano i tuoi
+        emulatori e RetroDB trova ognuno di essi, come AppImage, script portatile
+        o Flatpak installato, e lo collega ai sistemi che fa girare. Un sistema
+        che ha già un emulatore funzionante lo mantiene.</li>
+      <li><strong>Guarda quali sistemi sono pronti per giocare.</strong> La
+        tabella Per-system mapping ora elenca gli emulatori di ogni sistema,
+        dice se ognuno funziona e ti permette di scegliere quello predefinito di
+        un sistema. Per DuckStation, PCSX2, RPCS3 e RetroArch dice anche se i
+        file del BIOS sono al loro posto, e nomina quelli che mancano. RetroDB
+        legge soltanto i file del BIOS; non ne copia né ne scarica mai
+        uno.</li>
+      <li>La ricerca degli emulatori ora trova tutti gli emulatori su un grande
+        disco di emulatori. Prima poteva fermarsi in anticipo dentro la cartella
+        delle impostazioni di un emulatore.</li>
+      <li>I pulsanti Auto-detect e Salva di RetroArch funzionano di nuovo, e la
+        finestra di modifica dell&rsquo;emulatore non compare più nella pagina
+        finché non premi Modifica.</li>
+    </ul>
 - version: 3.27.0
   date: '2026-10-17'
   tags:

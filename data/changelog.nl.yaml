@@ -1,3 +1,466 @@
+- version: 3.30.0
+  date: '2026-10-21'
+  tags:
+  - type: feature
+    label: Eén game uit meerdere regio's verschijnt als één kaart
+  - type: security
+    label: AI-aanvulling en ROM-tools zijn moeilijker te misbruiken
+  - type: security
+    label: Pagina's weigeren scripts die erin zijn gesmokkeld
+  - type: fix
+    label: Scrapes, ROM-tools-taken, trofeeënsynchronisatie en de eerste installatie gaan goed om met fouten
+  - type: ui
+    label: De knoppen van het venster Over worden niet meer afgesneden
+  - type: accessibility
+    label: Schermlezers lezen de schakelaar Platform Match Required voor met zijn zichtbare naam
+  - type: accessibility
+    label: Elk pop-upvenster gaat op dezelfde manier om met Escape, toetsenbordfocus en schermlezers
+  - type: performance
+    label: Scrapes zijn sneller klaar; kleine afbeeldingen worden op de achtergrond vergroot
+  - type: feature
+    label: Volledige herscrape kan de media die je al hebt behouden
+  - type: fix
+    label: ScreenScraper vindt games waarvan de titel een ondertitel heeft
+  - type: fix
+    label: M3U maken houdt de game in je bibliotheek
+  - type: fix
+    label: De link Prestaties opent je laatste systeem in plaats van een lege pagina
+  - type: fix
+    label: RetroArch-games starten met een werkend toetsenbord en laden op volle snelheid
+  - type: fix
+    label: C64-, Amiga-, DOS- en andere homecomputergames krijgen elke toets die je typt
+  - type: fix
+    label: Bij C64-games drukt de rechterstick van een controller op de cursortoetsen en Start op F1
+  - type: ui
+    label: De zijbalk laat zien wanneer afbeeldingen nog op de achtergrond worden verbeterd, en de scherpere afbeeldingen van een game verschijnen vanzelf
+  - type: feature
+    label: Gamehandleidingen openen op de gamepagina en bladeren als een boek
+  - type: docs
+    label: Help noemt de toetsen van RetroArch, en games voor toetsenbordcomputers tonen een Scroll Lock-herinnering naast Spelen
+  - type: ui
+    label: Geïmporteerde games zonder ROM-bestand bieden geen Spelen meer aan
+  - type: fix
+    label: Een screenshot verwijderen meldt geen fout meer nadat het gelukt is
+  - type: fix
+    label: Een RetroArch-pad dat op de emulatorregel is ingesteld, is het pad dat start
+  - type: fix
+    label: Een game die niet wil sluiten, wordt niet meer als gesloten getoond
+  - type: deps
+    label: Pillow 13 en andere bibliotheekupdates
+  body: |
+    <ul>
+      <li><strong>Regionale versies van een game verschijnen als één game.</strong>
+        Koppel de versies die je hebt (bijvoorbeeld de Amerikaanse, Europese
+        en Japanse uitgave) en de Bibliotheek toont één kaart met een
+        &#127760;-badge. De kaart opent en speelt de versie uit je
+        Standaardregio. De gamepagina zet alle versies naast elkaar en laat je
+        ertussen wisselen. ROM-tools &gt; Regionale versies stelt groepen voor
+        die bewerkers kunnen bevestigen; er wordt niets gekoppeld zonder jou.
+        Een vervolg wordt nooit voorgesteld als versie van het eerste deel.
+        Gekoppelde versies worden niet meer op naam als duplicaten gemeld.
+        Voer Alternatieve titels aanvullen één keer uit om de voorstellen meer
+        houvast te geven.</li>
+      <li><strong>AI kan samenvatten hoe regionale versies verschillen.</strong>
+        Bij een game met gekoppelde versies kunnen bewerkers in het onderdeel
+        Regionale versies op Verschillen samenvatten met AI drukken. De AI
+        noemt bekende verschillen, zoals censuur, moeilijkheid of verwijderde
+        inhoud. De lijst is gemarkeerd als door AI geschreven, staat op de
+        pagina van elke versie en verdwijnt wanneer je een versie koppelt of
+        ontkoppelt, tot hij opnieuw is geschreven. Hiervoor moet een
+        AI-aanbieder zijn ingesteld in Instellingen &gt; Scrapen.</li>
+      <li><strong>PlayStation-games starten met goede instellingen.</strong>
+        Voor DuckStation, PCSX2 en RPCS3 zet RetroDB nu bij het drukken op
+        Spelen de resolutieschaal en beeldverhouding van elke game in het
+        eigen instellingenbestand per game van de emulator, en of hij op
+        volledig scherm start. Wijzig ze voor een heel systeem met de knop
+        Instellingen in Instellingen &gt; Emulators, of voor één game in het
+        nieuwe paneel Emulatorinstellingen op de gamepagina. Een instelling
+        die je in de emulator zelf wijzigt, wint altijd. RetroDB leest het
+        serienummer van elke schijf om het juiste bestand te vinden; voor
+        CHD-schijven moet chdman zijn geïnstalleerd.</li>
+      <li><strong>AI-aanvulling laat zich niet meer sturen door tekst die in
+        de velden van een game is getypt.</strong> Wanneer AI-aanvulling de
+        bestaande uitgever, ontwikkelaar, editie of andere platforms van een
+        game controleert, maakt het die tekst nu eerst schoon, zoals het dat
+        al met de titel deed.</li>
+      <li><strong>Scans in ROM-tools blijven binnen je ROM-map.</strong>
+        CHD-converter en CHD verifiëren volgen geen snelkoppeling (symlink)
+        meer die daarbuiten wijst, en bij het uitpakken van een archief met
+        meerdere schijven wordt elke snelkoppeling in het archief
+        genegeerd.</li>
+      <li><strong>Pagina's weigeren scripts die erin zijn gesmokkeld.</strong>
+        Je browser blokkeert nu elk script dat RetroDB niet zelf heeft
+        geschreven, dus tekst die code binnensmokkelt in de titel van een
+        game, een tag of een gescrapete beschrijving kan die niet uitvoeren.
+        Knoppen en menu's werken als voorheen.</li>
+      <li><strong>Eén kapotte screenshot stopt de duplicaatcontrole voor een
+        game niet meer.</strong> Een onleesbare screenshot wordt overgeslagen
+        en de controle gaat door.</li>
+      <li><strong>Taken in ROM-tools blijven niet meer hangen op
+        "bezig".</strong> Een bestand dat na een scan van CHD verifiëren is
+        verwijderd, telt als ongeldig, en elke onverwachte fout in CHD-converter, CHD verifiëren of Duplicaten zoeken beëindigt de taak als
+        mislukt, met de fout in het logboek.</li>
+      <li><strong>Voordat de installatie klaar is, krijgen de gegevensverzoeken
+        van de app een duidelijk antwoord.</strong> Ze antwoorden "Installatie
+        vereist" in plaats van de installatiepagina terug te sturen. Pagina's
+        brengen je nog steeds naar de installatiewizard.</li>
+      <li><strong>Vervolgen tonen niet meer de prestaties van het eerste
+        deel.</strong> Bij het koppelen aan RetroAchievements werd het nummer
+        in een titel genegeerd, zodat Donkey Kong Country 2 en 3 aan Donkey
+        Kong Country werden gekoppeld. Nummers (2, II, 3, III enzovoort) tellen
+        nu mee. Voer om al gekoppelde games te corrigeren één keer de
+        RetroAchievements-vernieuwing voor alle systemen uit.</li>
+      <li><strong>Een PlayStation-synchronisatie wist je trofeeëntellingen niet
+        meer.</strong> Als het antwoord van PlayStation de trofeeëntotalen van
+        een game wegliet, schreef RetroDB nullen over de tellingen die het al
+        had. Nu blijven die behouden, ook bij het vernieuwen van alle trofeeën
+        tegelijk.</li>
+      <li><strong>Een trofeeënset openen die niet meer op schijf staat, toont
+        een bericht.</strong> De pagina Trofeeën gaf vroeger een fout; nu meldt
+        hij dat de set niet is gevonden en brengt hij je terug naar de
+        lijst.</li>
+      <li><strong>Tabellen in ROM-tools geven hun knoppenkolom in elke taal de
+        juiste naam.</strong> De kolomkop deelde zijn tekst met het
+        gamegenre Actie, dus sommige talen toonden daar de genrenaam.</li>
+      <li><strong>GameCube-, 3DS- en Super Famicom-games krijgen hun emulator
+        automatisch ingesteld.</strong> RetroDB zocht deze systemen onder
+        mapnamen die bibliotheken niet gebruiken (gamecube, 3ds, superfamicom
+        in plaats van gc, n3ds, sfc), dus Dolphin en Citra werden er nooit aan
+        gekoppeld. Start RetroDB één keer opnieuw om dit over te nemen.</li>
+      <li><strong>De download zonder Python (standalone) stelt weer emulators
+        in.</strong> Het bestand met de lijst ervan ontbrak.</li>
+      <li><strong>Ongeveer 170 extra knoppen, labels en berichten zijn
+        vertaald</strong> in elke taal. Ze stonden eerst in het Engels, en een
+        paar toonden een verkeerde gok (sommige talen zeiden "back-up mislukt"
+        als een game niet wilde starten).</li>
+      <li><strong>Escape sluit alleen het bovenste venster.</strong> Als er een
+        vraag open stond boven een ander venster, sloot Escape ze allebei;
+        sommige vensters bleven ook doorlopen nadat Escape ze had verborgen, en
+        Escape op een gamepagina kon een gepauzeerde bulkscrape hervatten. Elk
+        venster sluit nu via zijn eigen sluitactie, houdt de toetsenbordfocus
+        binnen zolang het open is en geeft de focus terug aan de knop die het
+        opende. Voortgangsvensters van lopende taken blijven open tot de taak
+        klaar is.</li>
+      <li><strong>Grafieken in Analyse staan in je eigen taal.</strong> Namen
+        van genres, perspectieven, dimensies en modi, grafiektitels, asnamen en
+        legenda's waren in elke taal Engels.</li>
+      <li><strong>RetroAchievements-gegevens zijn veiliger.</strong> Als de
+        RetroAchievements-gamelijst voor een console niet laadt, laat RA
+        Refresh de games van die console nu gekoppeld in plaats van ze
+        allemaal te ontkoppelen. RA-gegevens wissen wist nu alleen de
+        voortgang van RetroAchievements; de voortgang van Steam en Xbox blijft
+        staan.</li>
+      <li><strong>Wachtwoorden moeten overal minstens 12 tekens lang
+        zijn.</strong> De eerste installatie accepteerde een
+        beheerderswachtwoord van elke lengte, en de pagina's voor de verplichte
+        wachtwoordwijziging en de installatie zeiden dat 4 tekens genoeg was.
+        Alle drie vragen nu om 12, net als de rest van de app.</li>
+      <li><strong>Prestatietotalen kloppen, en zijn van jou.</strong> Eén game
+        synchroniseren vanuit RetroAchievements slaat nu op hoeveel prestaties
+        hij heeft, in plaats van 0. De prestatietotalen op het dashboard tellen
+        alleen je eigen games, en de verzamelaarstrofeeën tellen niet meer elke
+        Steam- of Xbox-prestatie dubbel.</li>
+      <li><strong>Synchronisaties op de achtergrond gebruiken je eigen
+        accounts.</strong> Een RetroAchievements-systeemsynchronisatie logt in
+        met je eigen RetroAchievements-account als je er een hebt ingesteld.
+        Het vernieuwen van alle PlayStation-trofeeën gebruikt je opgeslagen
+        aanmelding opnieuw in plaats van elke keer helemaal opnieuw in te
+        loggen.</li>
+      <li><strong>Alleen jij kunt je eigen synchronisatie stoppen of
+        hervatten.</strong> Een andere gebruiker kan je RetroAchievements-,
+        Steam- of Xbox-synchronisatie niet meer annuleren, en voor het hervatten
+        van een onderbroken taak zijn dezelfde rechten nodig als voor het
+        starten ervan. Beheerders kunnen nog steeds allebei.</li>
+      <li><strong>Je RPCS3-trofeeënmap wordt gecontroleerd als je hem
+        opslaat.</strong> Een map die niet bestaat, geen volledig pad is of een
+        systeemmap is, wordt geweigerd, zoals dat al gebeurde in de
+        hoofdinstellingen.</li>
+      <li><strong>"Alle afbeeldingen ophalen" in Museum draait op de
+        achtergrond.</strong> De pagina wacht niet meer minutenlang op elke
+        controllerafbeelding. Hij laat zien hoe ver het ophalen is, heeft een
+        knop Annuleren en pakt de voortgang weer op als je de pagina verlaat en
+        terugkomt.</li>
+      <li><strong>ROM-tools beschermen je bestanden beter.</strong> Opschonen
+        maakt een archief niet meer leeg: een patroon als <code>*</code> kan
+        niet worden opgeslagen, en Opschonen stopt als de patronen elk bestand
+        zouden verwijderen. CHD-converter houdt het origineel als "verifiëren"
+        uit staat, en laat een bestaand CHD-bestand met rust als "bestaande
+        overslaan" aan staat. Duplicaten zoeken houdt altijd één exemplaar van
+        elke game, ook als een verzoek om alle exemplaren vraagt.</li>
+      <li><strong>Taken in ROM-tools doen wat de knoppen zeggen.</strong>
+        Pauzeren pauzeert nu CHD-converter, CHD verifiëren, Duplicaten zoeken en
+        Screenshot-deduplicatie, en een gepauzeerde taak kan worden
+        geannuleerd. Een scan van Screenshot-deduplicatie die op een fout
+        stuit, eindigt nu als mislukt in plaats van eindeloos door te
+        lopen.</li>
+      <li><strong>M3U maken zet archieven niet meer in een tijdelijke
+        map.</strong> Verplaatste archieven gaan nu naar RetroDB's eigen
+        gegevensmap, die bij een herstart niet wordt leeggemaakt. De
+        archiefscanner laat zien waar ze naartoe zijn gegaan, en de
+        bevestiging voor een batch zegt dat ze worden verplaatst. De
+        instellingen van ROM-tools terugzetten zet nu elke optie terug.</li>
+      <li><strong>Wissel schijven vanuit RetroDB.</strong> Terwijl een
+        RetroArch-game die vanuit een .m3u-schijvenlijst is gestart draait,
+        toont de lijst &#9654; Nu aan het spelen boven aan elke pagina de titel
+        van de game en een knop Volgende schijf, zodat een game die om kant
+        twee vraagt met één klik verdergaat, vanuit de browser of een
+        telefoon. In RetroArch moet Settings &gt; Network &gt; Network Commands
+        aan staan (poort 55355); de knop zegt het als dat uit staat.</li>
+      <li><strong>Het opstartscript opent RetroDB zodra het klaar is.</strong>
+        start.sh, start.command en start.bat openden de browser na vaste 3
+        seconden, vaak voordat de server kon antwoorden, zodat de pagina niet
+        laadde. RetroDB opent hem nu zodra de server luistert. Gestart vanuit
+        LocalWebServerManager opent het helemaal geen pagina; gebruik dan de
+        knop Open van de manager.</li>
+      <li><strong>Gamevideo's mogen tot 500 MB groot zijn.</strong> De grens
+        was 50 MB, te klein voor de meeste gametrailers. Een upload die te groot
+        is, toont nu een bericht op de gamepagina in plaats van de pagina te
+        vervangen door platte tekst. Een video die wordt geweigerd (te groot of
+        het verkeerde bestandstype) meldt dat nu, in plaats van zonder een
+        woord te verdwijnen.</li>
+      <li><strong>Starten volgt het pad dat je instelt.</strong> Een Binary
+        path override op de RetroArch-regel in Instellingen &gt; Emulators wint
+        nu van het RetroArch-pad boven aan die pagina; eerst werd het pad van
+        de regel genegeerd. Twee keer op Stop drukken vraagt een game niet meer
+        twee keer om af te sluiten; op Linux vat RetroArch een tweede verzoek
+        op als "afsluiten zonder opslaan", zodat je opgeslagen spel verloren
+        kon gaan.
+        Een starterinstelling die was blijven staan van een nooit gebouwde
+        externe modus, houdt niet meer elke game tegen.</li>
+      <li><strong>Mislukte acties melden hun fouten goed.</strong> Als
+        opslaan, importeren, synchroniseren of scannen mislukt, antwoordt
+        RetroDB nu met een echte foutstatus en toont het de reden in het
+        bericht, in plaats van te antwoorden alsof het gelukt was. Een
+        PSN-aanmeldcode opslaan die geen verbinding kan maken, toont geen
+        interne foutdetails meer. Inloggen, gebruikersbeheer, je profiel,
+        prestaties, imports, AI-aanvulling en HowLongToBeat-opzoekingen doen
+        nu hetzelfde, en een taal die niet kan worden opgeslagen zegt waarom,
+        in plaats van "Netwerkfout".</li>
+      <li><strong>Games met een naam in No-Intro-stijl worden nu
+        gescrapet.</strong> Een titel als "Legend of Zelda, The" of "Legend of
+        Zelda, The - Ocarina of Time" komt nu overeen met resultaten voor "The
+        Legend of Zelda" in plaats van door het matchfilter te worden
+        afgewezen. ROM-rapporten markeert die namen ook niet meer als
+        afwijkend.</li>
+      <li><strong>Titels die uit bestandsnamen komen, verliezen al hun
+        tags.</strong> Een gecombineerde regio zoals "(USA, Europe)" en "(UK)"
+        worden nu verwijderd. Bij homecomputers zoals de ZX Spectrum verdwijnt
+        alles vanaf het jaartal, zodat "Chuckie Egg 2 (UK) (1985) (A'n'F
+        Software) (tzx)" "Chuckie Egg 2" wordt. Een bestandsnaam die eindigt
+        op "..zip" laat geen losse punt meer achter. Zoekopdrachten van
+        scrapers, het terugzetten van de gegevens van een game en de
+        voorstellen van Regionale versies gebruiken deze schonere namen.</li>
+      <li><strong>Een verkeerde titel herhaalt zich niet meer bij opnieuw
+        scrapen.</strong> Bulkscrapen zoekt nu met de naam uit het ROM-bestand,
+        niet met de titel die voor de game is opgeslagen. Een game die ooit
+        aan de verkeerde game werd gekoppeld, vindt de juiste als hij opnieuw
+        wordt gescrapet.</li>
+      <li><strong>Scrapers geven de voorkeur aan je Standaardregio.</strong>
+        Als twee resultaten gelijk eindigen, wint nu het resultaat uit je
+        Standaardregio of World, niet altijd het Amerikaanse. Twee titels die
+        alleen uit regiotags bestaan, tellen niet meer als perfecte match.
+        Regionale versies ziet de X in "X-Men" niet meer aan voor een
+        volgnummer. Bij het kiezen welke versie een kaart toont, wordt nu
+        alleen de bestandsnaam van de ROM gelezen, niet de mappen erboven, en
+        worden oude tags zoals "(U)" en "(E)" begrepen.</li>
+      <li><strong>Het logboek laat zien waar de scrapetijd van elke game naartoe
+        gaat.</strong> Na elke game schrijft RetroDB één regel met de seconden
+        die zijn besteed aan zoeken, per bron, downloaden, afbeeldingen
+        verwerken, AI en opslaan. Het is de eerste stap naar snellere
+        scrapes.</li>
+      <li><strong>Scrapes zijn sneller klaar: kleine afbeeldingen worden
+        achteraf scherper gemaakt.</strong> Een scrape slaat een game nu op met
+        de afbeeldingen zoals ze zijn gedownload. Kleine hoezen en screenshots
+        worden daarna op de achtergrond vergroot, één game tegelijk. Dubbele
+        screenshots worden vóór al dat werk weggegooid. Als RetroDB halverwege
+        stopt, gaat het verder bij de volgende start.</li>
+      <li><strong>Lees de handleiding van een game op zijn pagina.</strong> De
+        knop Handleiding opent de PDF nu in een venster boven de gamepagina.
+        Blader met Vorige en Volgende, de pijltjestoetsen, Home en End, of een
+        veegbeweging op een telefoon; elke pagina slaat om als in een boek, of
+        wisselt gewoon als je systeem om minder beweging vraagt. "PDF openen in
+        nieuw tabblad" is er nog steeds, en Ctrl-klik op Handleiding opent het
+        tabblad direct.</li>
+      <li><strong>De zijbalk laat zien wanneer afbeeldingen nog worden
+        verbeterd.</strong> Terwijl afbeeldingen op de achtergrond scherper
+        worden gemaakt, staat in de zijbalk "Afbeeldingen verbeteren —
+        Resterende games: N". Een game die nog wacht, meldt dat op zijn pagina,
+        en de scherpere afbeeldingen verschijnen daar vanzelf zodra ze klaar
+        zijn. De 2D/3D-hoesschakelaar bedekt die regel niet meer.</li>
+      <li><strong>Reservebronnen worden tegelijk gevraagd.</strong> Als de
+        hoofdbron gaten laat, vraagt RetroDB de andere bronnen nu allemaal
+        tegelijk in plaats van na elkaar. Hun antwoorden worden nog steeds in
+        de volgorde van je Instellingen gebruikt, dus dezelfde bron wint elk
+        veld.</li>
+      <li><strong>ES-DE leest zijn gamelijst één keer.</strong> Elke scrape,
+        ook bulkscrapes, las de ES-DE-gamelist.xml van een systeem vroeger twee
+        keer voor elke game. RetroDB leest hem nu één keer en pas opnieuw als
+        het bestand verandert.</li>
+      <li><strong>Toepassen in Metadata zoeken zoekt niet nog een keer.</strong>
+        Op een gamepagina worden de resultaten die je hebt aangevinkt direct
+        bij hun bron opgehaald, in plaats van een tweede keer te worden
+        opgezocht. Als er niets is aangevinkt, vullen alleen de bron die je
+        hebt toegepast en AI de gaten.</li>
+      <li><strong>ScreenScraper vindt games met een ondertitel.</strong> Het
+        vond niets voor een titel als "Alone in the Dark: The New Nightmare",
+        tenzij er een spatie vóór de dubbele punt stond. RetroDB zoekt nu op
+        die manier, en daarna op het deel vóór de dubbele punt als dat nog
+        steeds niets oplevert.</li>
+      <li><strong>Games zonder iets om te spelen bieden geen Spelen meer
+        aan.</strong> Een game die is toegevoegd via een import uit CLZ, Steam,
+        Xbox of PSN heeft geen ROM-bestand. Zijn pagina toont nu geen knop
+        Spelen, geen Emulatorinstellingen en geen onderdeel Starten als je hem
+        bewerkt, net als de kaarten in de Bibliotheek.</li>
+      <li><strong>RetroArch-games zijn beschermd tegen twee slechte
+        instellingen.</strong> RetroDB geeft RetroArch nu elke keer dat het een
+        game start een klein eigen instellingenbestand, bovenop het jouwe. Dat
+        stelt het toetsenbord in op je bureaublad (Wayland of X11), zodat het
+        toetsenbord nooit dood is, en laat vooruitspoelen op volle snelheid
+        lopen, wat Commodore 64-games gebruiken om snel te laden. Al je andere
+        RetroArch-instellingen blijven onaangeroerd.</li>
+      <li><strong>M3U maken houdt de game in je bibliotheek.</strong> Een
+        archief met meerdere schijven omzetten in een afspeellijst liet de game
+        vroeger wijzen naar het archief, dat al was verplaatst. De game wijst
+        nu naar de nieuwe afspeellijst en houdt zijn gegevens en afbeeldingen.
+        Als één archief meerdere uitgaven van een game bevat, elk met eigen
+        schijven, gebruikt de afspeellijst nu de schijven van de eerste uitgave
+        in plaats van allemaal, en zegt hij welke schijven zijn
+        weggelaten.</li>
+      <li><strong>Volledige herscrape kan de media die je al hebt
+        behouden.</strong> Vink "Bestaande media behouden" aan naast de
+        schakelaar Volledige herscrape. Tekstgegevens worden nog steeds
+        vernieuwd, maar afbeeldingen, video's en handleidingen die al op schijf
+        staan, blijven zoals ze zijn in plaats van opnieuw te worden
+        gedownload. Zonder het vinkje laat een volledige herscrape geen eerder
+        gedownloade screenshots meer vallen.</li>
+      <li><strong>Achtergrondtaken raken geen werk meer kwijt en slaan niets
+        meer over.</strong> Een RetroAchievements-vernieuwing die op één
+        slechte game stuitte, gooit de games die al waren bijgewerkt niet meer
+        weg. Een hervatte synchronisatie of vernieuwing slaat de game waar hij
+        was gestopt niet meer over. Een hervatte RetroAchievements- of
+        Steam-synchronisatie vanaf een heel oude momentopname stopt nu met een
+        bericht, in plaats van succes te melden zonder iets te hebben
+        gesynchroniseerd. De WebP-conversie controleert een achtergebleven
+        WebP-bestand voordat hij het vertrouwt, en start niet als hij de vrije
+        schijfruimte niet kan lezen.</li>
+      <li><strong>Een heel oude installatie bijwerken kan niet meer stilletjes
+        gegevens kwijtraken.</strong> Drie oude stappen voor het bijwerken van
+        de database konden in zeldzame situaties rijen laten vallen. Ze
+        kopiëren de rijen nu, of stoppen met een duidelijke fout in plaats van
+        ze kwijt te raken.</li>
+      <li><strong>De knoppen van het venster Over worden niet meer
+        afgesneden.</strong> Het venster is breder en de vier knoppen staan in
+        twee rijen, zodat elk label volledig te zien is; op een telefoon staan
+        ze onder elkaar.</li>
+      <li><strong>Je thema volgt je naar een nieuwe browser.</strong> Inloggen
+        in een browser die je nog niet eerder hebt gebruikt, toont nu je
+        opgeslagen thema. Eerst sloeg de inlogpagina Cyberpunk op en bleef dat
+        hangen.</li>
+      <li><strong>Het wachtwoordvenster bij het inloggen zegt niet meer "Admin
+        Login".</strong> Elk account logt in met een wachtwoord, dus het
+        venster zegt nu gewoon Inloggen. De pagina Account en de pagina Help
+        zeggen dat ook.</li>
+      <li><strong>Help is in elke taal bijgewerkt.</strong> De vertaalde
+        Help-pagina's beschrijven nu Regionale versies, zeggen dat elk account
+        een wachtwoord nodig heeft en dat je thema bij je account wordt
+        opgeslagen. Help in elke taal, ook het Engels, noemt nu het echte
+        minimum van 12 tekens voor een wachtwoord.</li>
+      <li><strong>Kleine verbeteringen:</strong> fanart met een apostrof in de
+        bestandsnaam verschijnt nu op game- en trofeeënpagina's; Instellingen
+        toont geen scriptfout meer voor accounts zonder beheerdersrechten, en
+        schermlezers horen nu welk tabblad van Instellingen is geselecteerd;
+        een pagina verlaten vult de browserconsole niet meer met fouten over
+        geannuleerde verzoeken; het upscalermodel wordt eerst van een werkend
+        adres gedownload; en het installatieprogramma loopt op Windows niet
+        meer vast als zijn uitvoer naar een bestand wordt opgeslagen.</li>
+      <li><strong>Een brede ronde betrouwbaarheidsverbeteringen.</strong> Een
+        game opslaan met een lege titel laat je andere wijzigingen niet meer
+        verloren gaan. Opnieuw starten laat lopende taken nu eerst netjes
+        stoppen. M3U maken weigert een bestaande afspeellijst of map te
+        overschrijven. De lijst met ongewenste bestanden in ROM-tools leegmaken
+        betekent nu "niets verwijderen", en twee patronen vangen geen echte
+        ROM-namen meer zoals "Release of the Dragon". Eén beschadigd
+        PS3-trofeeënbestand maakt de trofeeën van alle games niet meer leeg.
+        AI-aanvulling schrijft één regio. Analyse telt elke game één keer in de
+        beoordelingsgrafiek. CLZ-imports gebruiken de standaard genrenamen. In
+        bewerkvensters kunnen genre- en andere tags in elke taal worden
+        verwijderd, en sneltoetsen kapen Ctrl+D en Ctrl+G niet meer. Kijkers
+        zien de voltooiingsstatus van een game, maar kunnen die niet meer
+        wijzigen, omdat hij door iedereen wordt gedeeld.</li>
+      <li><strong>Schermlezers lezen de schakelaar Platform Match Required voor
+        met zijn zichtbare naam</strong> in Instellingen → Scrapen.</li>
+      <li>In andere talen vertaalt Instellingen nu "Default Region", en het
+        tabblad Scrapen leest als een naam in plaats van als "bezig met
+        scrapen". De helppagina's gebruiken dezelfde woorden.</li>
+      <li><strong>Een game die niet wil sluiten, wordt niet meer als gesloten
+        getoond.</strong> Als een emulator Stop overleeft, blijft RetroDB hem
+        als actief tonen. Een RetroArch-start die wordt geweigerd, schrijft niet
+        meer eerst zijn instellingenbestand, en een emulator die meteen
+        mislukt, toont zijn foutmelding bij de eerste controle.</li>
+      <li>Bijgewerkte bibliotheken: Pillow 13 (afbeeldingsverwerking), numpy
+        2.5.4 en onnxruntime 1.31 (upscaling), plus de nieuwste versies van de
+        build- en releasetools.</li>
+      <li>Achter de schermen: de code voor het starten van games is opgeruimd
+        zodat hij makkelijker te volgen is, ongebruikte code is verwijderd (een
+        API-adres, een PSN-hulpfunctie, een trofeeënscript dat geen pagina
+        laadde en een thema-instelling voor de hele site die niets las), de
+        antwoorden van de app aan de browser worden op één plek gemaakt,
+        verschillende ontwerpdocumenten zijn verbeterd zodat ze bij de code
+        passen, de testsuite is opgeruimd, en een nieuwe controle vangt een
+        JavaScript-syntaxfout vóór een release. De oudere
+        wijzigingslogboekitems die de verwijderde code beschreven, zeggen dat
+        nu ook.</li>
+    </ul>
+- version: 3.29.0
+  date: '2026-10-17'
+  tags:
+  - type: feature
+    label: De andere namen van een game tonen uit welke regio ze komen
+  body: |
+    <ul>
+      <li><strong>De andere namen van een game tonen uit welke regio ze
+        komen.</strong> De kaart Ook bekend als op de gamepagina zet bij elke
+        naam het land of de regio, zoals Japan bij "Rockman", in je eigen taal.
+        Namen met een regio komen eerst, gegroepeerd per regio. Houd de muis
+        boven een naam om de bron en een eventuele opmerking te zien, zoals
+        "Werktitel".</li>
+      <li>Namen van IGDB houden nu hun regio. Eerst hadden alleen namen van
+        ScreenScraper er een.</li>
+      <li>Het label "SS" van ScreenScraper wordt niet meer als regio getoond.
+        Het is ScreenScrapers eigen naam voor de game, geen plaats.</li>
+      <li>ROM-tools → Alternatieve titels aanvullen controleert nu elke
+        gescrapete game, zodat namen die je al hebt hun regio krijgen. Voer het
+        één keer uit om je bestaande bibliotheek van regio's te voorzien.</li>
+    </ul>
+- version: 3.28.0
+  date: '2026-10-17'
+  tags:
+  - type: feature
+    label: Wijs RetroDB je emulatormap aan en het stelt ze in
+  - type: fix
+    label: Verbeteringen aan de pagina Instellingen → Emulators
+  body: |
+    <ul>
+      <li><strong>Wijs RetroDB je emulatormap aan en het stelt ze
+        in.</strong> Instellingen → Emulators heeft een nieuwe lijst
+        Emulatormappen. Voeg de map toe waarin je emulators staan en RetroDB
+        vindt elke emulator erin, als AppImage, als draagbaar script of als
+        geïnstalleerde Flatpak, en koppelt hem aan de systemen die hij draait.
+        Een systeem dat al een werkende emulator heeft, houdt die.</li>
+      <li><strong>Zie welke systemen klaar zijn om te spelen.</strong> De tabel
+        Per-system mapping toont nu de emulators van elk systeem, zegt of elke
+        emulator werkt en laat je de standaard van een systeem kiezen. Voor
+        DuckStation, PCSX2, RPCS3 en RetroArch zegt hij ook of de
+        BIOS-bestanden aanwezig zijn, en noemt hij de bestanden die ontbreken.
+        RetroDB leest BIOS-bestanden alleen; het kopieert of downloadt er
+        nooit een.</li>
+      <li>De emulatorscan vindt nu elke emulator op een grote emulatorschijf.
+        Eerst kon hij te vroeg stoppen in de eigen instellingenmap van een
+        emulator.</li>
+      <li>De knoppen Auto-detect en Opslaan van RetroArch werken weer, en het
+        venster Edit emulator verschijnt niet meer op de pagina voordat je op
+        Bewerken drukt.</li>
+    </ul>
 - version: 3.27.0
   date: '2026-10-17'
   tags:

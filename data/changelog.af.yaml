@@ -1,3 +1,447 @@
+- version: 3.30.0
+  date: '2026-10-21'
+  tags:
+  - type: feature
+    label: "Een speletjie uit verskeie streke wys as een kaart"
+  - type: security
+    label: "AI-vul en ROM-gereedskap is moeiliker om te misbruik"
+  - type: security
+    label: "Bladsye weier om skripte te laat loop wat daarin ingesmokkel is"
+  - type: fix
+    label: "Skraap, ROM-gereedskap-take, trofeesinkronisering en die eerste opstelling hanteer foute behoorlik"
+  - type: ui
+    label: "Die Oor-venster se knoppies word nie meer afgesny nie"
+  - type: accessibility
+    label: "Skermlesers lees die Platform Match Required-skakelaar by sy sigbare naam"
+  - type: accessibility
+    label: "Elke opspringvenster hanteer Escape, sleutelbordfokus en skermlesers op dieselfde manier"
+  - type: performance
+    label: "Skraap is gouer klaar; klein prente word in die agtergrond vergroot"
+  - type: feature
+    label: "Volledige herskraap kan die media hou wat jy reeds het"
+  - type: fix
+    label: "ScreenScraper vind speletjies waarvan die titel 'n subtitel het"
+  - type: fix
+    label: "Create M3U hou die speletjie in jou biblioteek"
+  - type: fix
+    label: "Die Prestasies-skakel maak jou laaste stelsel oop in plaas van 'n leë bladsy"
+  - type: fix
+    label: "RetroArch-speletjies begin met 'n werkende sleutelbord en laai teen volle spoed"
+  - type: fix
+    label: "C64-, Amiga-, DOS- en ander tuisrekenaarspeletjies kry elke sleutel wat jy tik"
+  - type: fix
+    label: "In C64-speletjies druk 'n beheerder se regterstok die pyltjiesleutels en Start druk F1"
+  - type: ui
+    label: "Die sybalk wys wanneer prente nog in die agtergrond verbeter word, en 'n speletjie se skerper prente verskyn vanself"
+  - type: feature
+    label: "Speletjiehandleidings maak op die speletjiebladsy oop en blaai soos 'n boek"
+  - type: docs
+    label: "Hulp lys RetroArch se sleutels, en speletjies vir sleutelbordrekenaars wys 'n Scroll Lock-herinnering langs Speel"
+  - type: ui
+    label: "Ingevoerde speletjies sonder 'n ROM-lêer bied nie meer Speel aan nie"
+  - type: fix
+    label: "Om 'n skermskoot uit te vee, meld nie meer 'n mislukking nadat dit gewerk het nie"
+  - type: fix
+    label: "'n RetroArch-pad wat op sy emulatorry gestel is, is die een wat begin"
+  - type: fix
+    label: "'n Speletjie wat nie wil sluit nie, word nie meer as gesluit gewys nie"
+  - type: deps
+    label: "Pillow 13 en ander biblioteekopdaterings"
+  body: |
+    <ul>
+      <li><strong>Streeksweergawes van 'n speletjie wys as een speletjie.</strong>
+        Koppel die weergawes wat jy besit (byvoorbeeld die VSA-, Europese en
+        Japannese uitgawes) en die Biblioteek wys een kaart met 'n &#127760;-kenteken.
+        Die kaart maak die weergawe van jou Verstekstreek oop en speel dit. Die
+        speletjiebladsy lys elke weergawe langs mekaar en laat jou tussen hulle
+        wissel. ROM-gereedskap &gt; Streeksweergawes stel groepe voor wat
+        redigeerders moet bevestig; niks word sonder jou gekoppel nie. Dit stel
+        nooit 'n opvolger voor as 'n weergawe van die eerste speletjie nie.
+        Gekoppelde weergawes word nie meer volgens naam as duplikate aangemeld
+        nie. Laat Vul Alternatiewe Titels In een keer loop om die voorstelle
+        meer te gee om mee te werk.</li>
+      <li><strong>KI kan opsom hoe streeksweergawes verskil.</strong>
+        Op 'n speletjie met gekoppelde weergawes kan redigeerders Som verskille
+        op met KI in die Streeksweergawes-afdeling druk. Die KI lys bekende
+        verskille soos sensuur, moeilikheidsgraad of verwyderde inhoud. Die lys
+        is gemerk as deur KI geskryf, wys op elke weergawe se bladsy, en word
+        versteek wanneer jy 'n weergawe koppel of ontkoppel totdat dit weer
+        geskryf word. Dit het 'n KI-verskaffer nodig wat in Instellings &gt;
+        Skraap opgestel is.</li>
+      <li><strong>PlayStation-speletjies begin met goeie instellings.</strong> Vir
+        DuckStation, PCSX2 en RPCS3 stel RetroDB nou elke speletjie se
+        resolusieskaal en beeldverhouding in die emulator se eie
+        instellingslêer per speletjie wanneer jy Speel druk, en of dit
+        volskerm begin. Verander hulle vir 'n hele stelsel met die
+        Instellings-knoppie in Instellings &gt; Emulators, of vir een speletjie
+        in die nuwe Emulatorinstellings-paneel op sy speletjiebladsy. 'n
+        Instelling wat jy binne die emulator verander, wen altyd. RetroDB lees
+        elke skyf se reeksnommer om die regte lêer te vind; CHD-skywe het
+        chdman nodig.</li>
+      <li><strong>AI-vul kan nie meer gestuur word deur teks wat in 'n
+        speletjie se velde getik is nie.</strong> Wanneer AI-vul 'n speletjie se
+        bestaande uitgewer, ontwikkelaar, uitgawe of ander platforms
+        nagaan, maak dit daardie teks nou eers skoon, op dieselfde manier as
+        wat dit reeds die titel skoongemaak het.</li>
+      <li><strong>ROM-gereedskap se skanderings bly binne jou ROM-vouer.</strong>
+        CHD-omskakelaar en CHD-verifieer volg nie meer 'n kortpad (symlink)
+        wat daarbuite wys nie, en om 'n argief met verskeie skywe uit te pak,
+        ignoreer enige kortpad wat in die argief verpak is.</li>
+      <li><strong>Bladsye weier om skripte te laat loop wat daarin ingesmokkel
+        is.</strong> Jou blaaier blokkeer nou enige skrip wat RetroDB nie self
+        geskryf het nie, so teks wat kode in 'n speletjie se titel, 'n etiket of
+        'n geskraapte beskrywing insmokkel, kan dit nie laat loop nie. Knoppies
+        en spyskaarte werk soos voorheen.</li>
+      <li><strong>Een gebreekte skermskoot keer nie meer duplikaatkontroles vir
+        'n speletjie nie.</strong> 'n Onleesbare skermskoot word eenkant gesit en
+        die kontrole gaan voort.</li>
+      <li><strong>ROM-gereedskap-take bly nie meer op "loop" vassit nie.</strong>
+        'n Lêer wat ná 'n CHD-verifieer-skandering uitgevee is, word as ongeldig
+        getel, en enige onverwagte fout in CHD-omskakeling, CHD-verifieer of
+        Duplikaatvinder beëindig die taak as misluk, met die fout in sy
+        log.</li>
+      <li><strong>Voordat die opstelling klaar is, kry die app se dataversoeke 'n
+        duidelike antwoord.</strong> Hulle antwoord "Opstelling vereis" in plaas
+        daarvan om die opstellingsbladsy terug te stuur. Bladsye neem jou steeds
+        na die opstellingsassistent.</li>
+      <li><strong>Opvolgers wys nie meer die eerste speletjie se
+        prestasies nie.</strong> RetroAchievements-passing het 'n titel se
+        nommer geïgnoreer, so Donkey Kong Country 2 en 3 is aan Donkey Kong
+        Country gekoppel. Nommers (2, II, 3, III ensovoorts) tel nou. Om
+        speletjies reg te stel wat reeds gekoppel is, laat die
+        RetroAchievements-verfrissing vir alle stelsels een keer loop.</li>
+      <li><strong>'n PlayStation-sinkronisering vee nie meer jou trofeetellings uit nie.</strong>
+        Wanneer PlayStation se antwoord 'n speletjie se trofeetotale uitgelaat
+        het, het RetroDB nulle gestoor oor die tellings wat dit reeds gehad het.
+        Dit hou hulle nou, ook in die grootmaat-trofeeverfrissing.</li>
+      <li><strong>Om 'n trofeestel oop te maak wat nie meer op skyf is nie, wys 'n
+        boodskap.</strong> Die Trofeë-bladsy het vroeër met 'n fout misluk; dit
+        sê nou die stel is nie gevind nie en neem jou terug na die lys.</li>
+      <li><strong>ROM-gereedskap se tabelle benoem hul knoppieskolom
+        korrek in elke taal.</strong> Die kolomopskrif het sy bewoording met die
+        Aksie-speletjiegenre gedeel, so sommige tale het die genrenaam daar
+        gewys.</li>
+      <li><strong>GameCube-, 3DS- en Super Famicom-speletjies kry hul emulator
+        outomaties opgestel.</strong> RetroDB het vir hierdie stelsels gesoek
+        onder vouername wat biblioteke nie gebruik nie (gamecube, 3ds,
+        superfamicom in plaas van gc, n3ds, sfc), so Dolphin en Citra is nooit
+        aan hulle gekoppel nie. Herbegin RetroDB een keer om dit op te tel.</li>
+      <li><strong>Die aflaai sonder Python (selfstandig) stel weer emulators
+        op.</strong> Dit het die lêer gemis wat hulle lys.</li>
+      <li><strong>Omtrent 170 meer knoppies, etikette en boodskappe is
+        vertaal</strong> in elke taal. Hulle het voorheen in Engels gewys, en 'n
+        paar het 'n verkeerde raaiskoot gewys (sommige tale het "rugsteun het
+        misluk" gesê wanneer 'n speletjie nie wou begin nie).</li>
+      <li><strong>Escape sluit net die boonste venster.</strong> Met 'n
+        vraag oop bo-oor 'n ander venster het Escape vroeër albei gesluit; sommige
+        vensters het ook aangehou loop nadat Escape hulle versteek het, en om
+        Escape op 'n speletjiebladsy te druk, kon 'n grootmaatskraap wat jy
+        onderbreek het, laat voortgaan. Elke venster sluit nou deur sy eie
+        Sluit-aksie, hou sleutelbordfokus binne terwyl dit oop is, en gee fokus
+        terug aan die knoppie wat dit oopgemaak het. Vorderingsvensters vir
+        lopende take bly oop totdat die taak klaar is.</li>
+      <li><strong>Analise-grafieke is in jou taal.</strong> Genre-,
+        perspektief-, dimensie- en modusname, grafiektitels, asname en
+        legendes was in elke taal Engels.</li>
+      <li><strong>RetroAchievements-data is veiliger.</strong> As die
+        RetroAchievements-speletjielys vir 'n konsole nie wil laai nie, laat RA
+        Refresh nou daardie konsole se speletjies gekoppel in plaas daarvan om
+        hulle almal te ontkoppel. Vee RA-Data Uit vee nou net
+        RetroAchievements-vordering uit; Steam- en Xbox-vordering bly.</li>
+      <li><strong>Wagwoorde moet oral minstens 12 karakters
+        wees.</strong> Die eerste opstelling het 'n administrateurswagwoord van
+        enige lengte aanvaar, en die verpligte wagwoordverandering- en
+        opstellingsbladsye het gesê 4 karakters is genoeg. Al drie vra nou vir
+        12, dieselfde as die res van die app.</li>
+      <li><strong>Prestasietotale is reg, en jou eie.</strong>
+        Om een speletjie vanaf RetroAchievements te sinkroniseer, stoor nou
+        hoeveel prestasies dit het, in plaas van 0. Die kontrolebord se
+        prestasietotale tel net jou speletjies, en die Versamelaartrofeë tel nie
+        meer elke Steam- of Xbox-prestasie twee keer nie.</li>
+      <li><strong>Agtergrondsinkronisering gebruik jou eie rekeninge.</strong> 'n
+        RetroAchievements-stelselsinkronisering meld aan met jou eie
+        RetroAchievements-rekening wanneer jy een gestel het. Die PlayStation-
+        grootmaatverfrissing hergebruik jou gestoorde aanmelding in plaas daarvan
+        om elke keer van voor af aan te meld.</li>
+      <li><strong>Net jy kan jou eie sinkronisering stop of hervat.</strong>
+        'n Ander gebruiker kan nie meer jou RetroAchievements-, Steam- of
+        Xbox-sinkronisering kanselleer nie, en om 'n onderbroke taak te hervat,
+        het dieselfde regte nodig as om dit te begin. Administrateurs kan steeds
+        albei doen.</li>
+      <li><strong>Jou RPCS3-trofeevouer word nagegaan wanneer jy dit
+        stoor.</strong> 'n Vouer wat nie bestaan nie, nie 'n volle pad is nie, of
+        'n stelselvouer is, word geweier, soos dit reeds in die hoofinstellings
+        was.</li>
+      <li><strong>Museum se "Haal alle beelde" loop in die agtergrond.</strong>
+        Die bladsy wag nie meer minute lank vir elke beheerderprent nie. Dit
+        wys hoe ver die aflaai gevorder het, het 'n Kanselleer-knoppie, en tel
+        die vordering weer op as jy die bladsy verlaat en terugkom.</li>
+      <li><strong>ROM-gereedskap beskerm jou lêers beter.</strong> Clean maak nie
+        meer 'n argief leeg nie: 'n patroon soos <code>*</code> kan nie gestoor
+        word nie, en Clean stop as die patrone elke lêer sou verwyder.
+        CHD-omskakelaar hou die oorspronklike wanneer "verifieer" af is, en los
+        'n bestaande CHD uit wanneer "slaan bestaande oor" aan is.
+        Duplikaatvinder hou altyd een kopie van elke speletjie, selfs as 'n
+        versoek vir almal vra.</li>
+      <li><strong>ROM-gereedskap-take doen wat die knoppies sê.</strong> Pouseer
+        pouseer nou CHD-omskakeling, CHD-verifieer, Duplikaatvinder en
+        Skermkiekie-deduplisering, en 'n gepouseerde taak kan gekanselleer word.
+        'n Skermkiekie-deduplisering-skandering wat 'n fout teëkom, eindig nou
+        as misluk in plaas daarvan om vir ewig te loop.</li>
+      <li><strong>Create M3U berg nie meer argiewe in 'n tydelike vouer
+        nie.</strong> Geskuifde argiewe gaan nou na RetroDB se eie datavouer,
+        wat nie by herbegin skoongemaak word nie. Die argiefskandeerder wys
+        waarheen hulle gegaan het, en die groepbevestiging sê dat hulle geskuif
+        sal word. Om ROM-gereedskap-instellings terug te stel, stel nou elke
+        opsie terug.</li>
+      <li><strong>Ruil skywe vanuit RetroDB.</strong> Terwyl 'n RetroArch-speletjie
+        loop wat vanaf 'n .m3u-skyflys begin is, wys die &#9654; Speel
+        tans-lys bo-aan elke bladsy die speletjie se titel en 'n Volgende
+        skyf-knoppie, so 'n speletjie wat vir kant twee vra, gaan met een klik
+        voort, vanuit die blaaier of 'n foon. RetroArch moet Settings &gt;
+        Network &gt; Network Commands aangeskakel hê (poort 55355); die knoppie
+        sê so as dit af is.</li>
+      <li><strong>Die beginskrip maak RetroDB oop wanneer dit gereed is.</strong>
+        start.sh, start.command en start.bat het die blaaier ná 'n vaste 3
+        sekondes oopgemaak, dikwels voordat die bediener kon antwoord, so die
+        bladsy kon nie laai nie. RetroDB maak dit nou oop sodra die bediener
+        luister. As dit vanaf LocalWebServerManager begin is, maak dit glad nie
+        'n bladsy oop nie; gebruik die bestuurder se Open-knoppie.</li>
+      <li><strong>Speletjievideo's kan tot 500 MB groot wees.</strong> Die
+        limiet was 50 MB, te klein vir die meeste speletjielokprente. 'n
+        Oplaai wat te groot is, wys nou 'n boodskap op die speletjiebladsy in
+        plaas daarvan om die bladsy met gewone teks te vervang. 'n Video wat
+        geweier word (te groot of die verkeerde lêertipe) sê nou so in plaas
+        daarvan om sonder 'n woord weggegooi te word.</li>
+      <li><strong>Om te begin, volg die pad wat jy gestel het.</strong> 'n Binary
+        path override op die RetroArch-ry in Instellings &gt; Emulators wen nou
+        bo die RetroArch-pad bo-aan daardie bladsy; voorheen is die ry se pad
+        geïgnoreer. Om twee keer Stop te druk, vra nie meer 'n speletjie twee
+        keer om toe te maak nie; op Linux neem RetroArch 'n tweede versoek as
+        "maak toe sonder om te stoor", so jou stoorspel in die speletjie kon
+        verlore gaan.
+        'n Lanseerderinstelling wat oorgebly het van 'n ongeboude afstandmodus,
+        keer nie meer dat elke speletjie begin nie.</li>
+      <li><strong>Mislukte aksies meld hul foute behoorlik.</strong>
+        Wanneer stoor, invoer, sinkronisering of skandering misluk, antwoord
+        RetroDB nou met 'n regte foutstatus en wys die rede in sy boodskap, in
+        plaas daarvan om te antwoord asof dit gewerk het. Om 'n PSN-aanmeldkode
+        te stoor wat nie kan koppel nie, wys nie meer interne foutbesonderhede
+        nie. Aanmelding, gebruikersbestuur, jou profiel, prestasies, invoere,
+        AI-vul en HowLongToBeat-opsoeke doen nou dieselfde, en 'n taal wat nie
+        gestoor kan word nie, sê hoekom in plaas van "Netwerkfout".</li>
+      <li><strong>Speletjies wat op die No-Intro-manier benoem is, word nou
+        geskraap.</strong> 'n Titel soos "Legend of Zelda, The" of "Legend of
+        Zelda, The - Ocarina of Time" pas nou by "The Legend of Zelda"-resultate
+        in plaas daarvan om deur die passingsfilter verwerp te word.
+        ROM-verslae merk daardie name ook nie meer as wanpassings nie.</li>
+      <li><strong>Titels wat uit lêername geneem is, verloor al hul etikette.</strong>
+        'n Gekombineerde streek soos "(USA, Europe)" en "(UK)" word nou verwyder.
+        Op tuisrekenaars soos die ZX Spectrum gaan alles van die jaar af weg,
+        so "Chuckie Egg 2 (UK) (1985) (A'n'F Software) (tzx)" word "Chuckie Egg
+        2". 'n Lêernaam wat op "..zip" eindig, laat nie meer 'n verdwaalde punt
+        agter nie. Skraapsoektogte, die terugstel van 'n speletjie se data en
+        Streeksweergawes-voorstelle gebruik hierdie skoner name.</li>
+      <li><strong>'n Verkeerde titel herhaal hom nie meer by herskraap nie.</strong>
+        Grootmaatskraap soek nou met die naam van die ROM-lêer, nie die titel wat
+        vir die speletjie gestoor is nie. 'n Speletjie wat eens by die verkeerde
+        speletjie gepas het, vind die regte een wanneer dit weer geskraap word.</li>
+      <li><strong>Skrapers verkies jou Verstekstreek.</strong> Wanneer twee
+        resultate gelykop is, wen die een van jou Verstekstreek of World nou,
+        nie altyd die VSA-een nie. Twee titels wat net streeksetikette is, tel
+        nie meer as 'n perfekte passing nie. Streeksweergawes sien nie meer die
+        X in "X-Men" vir 'n opvolgnommer aan nie. Om te kies watter weergawe 'n
+        kaart wys, lees nou net die ROM se lêernaam, nie die vouers daarbo nie,
+        en verstaan ou etikette soos "(U)" en "(E)".</li>
+      <li><strong>Die log wys waarheen elke speletjie se skraaptyd gaan.</strong>
+        Ná elke speletjie log RetroDB een reël met die sekondes wat bestee is
+        aan soek, in elke bron, aflaai, prentverwerking, in KI en stoor. Dit is
+        die eerste stap na vinniger skraap.</li>
+      <li><strong>Skraap is gouer klaar: klein prente word daarna
+        skerper gemaak.</strong> 'n Skraap stoor nou 'n speletjie met sy prente
+        soos afgelaai. Klein boksprente en skermskote word dan in die
+        agtergrond vergroot, een speletjie op 'n slag. Duplikaatskermskote word
+        voor enige van daardie werk weggegooi. As RetroDB halfpad stop, gaan dit
+        voort wanneer dit weer begin.</li>
+      <li><strong>Lees 'n speletjie se handleiding op sy bladsy.</strong> Die
+        Handleiding-knoppie maak nou die PDF in 'n venster bo-oor die
+        speletjiebladsy oop. Blaai bladsye met Vorige en Volgende, die
+        pyltjiesleutels, Home en End, of 'n swiep op 'n foon; elke bladsy blaai
+        om soos 'n boek s'n, of verander bloot as jou stelsel vir minder
+        beweging vra. "Maak PDF in 'n nuwe oortjie oop" is steeds daar, en
+        Ctrl-klik op Handleiding maak die oortjie direk oop.</li>
+      <li><strong>Die sybalk wys wanneer prente nog verbeter
+        word.</strong> Terwyl prente in die agtergrond skerper gemaak word, lees
+        die sybalk "Prente word verbeter — Speletjies oor: N". 'n Speletjie wat
+        nog wag, sê so op sy bladsy, en sy skerper prente verskyn vanself daar
+        wanneer hulle gereed is. Die 2D/3D-omslagskakelaar bedek nie meer
+        daardie reël nie.</li>
+      <li><strong>Rugsteunbronne word gelyktydig gevra.</strong> Wanneer
+        die hoofbron gapings laat, vra RetroDB nou die ander bronne almal
+        tegelyk in plaas van een ná die ander. Hul antwoorde word steeds in jou
+        Instellings-volgorde gebruik, so dieselfde bron wen elke veld.</li>
+      <li><strong>ES-DE lees sy speletjielys een keer.</strong> Elke skraap,
+        grootmaatskrape ingesluit, het vroeër 'n stelsel se ES-DE-gamelist.xml
+        twee keer vir elke speletjie gelees. RetroDB lees dit nou een keer en
+        lees dit net weer wanneer die lêer verander.</li>
+      <li><strong>Soek Metadata se Pas toe soek nie meer weer nie.</strong>
+        Op 'n speletjiebladsy word die resultate wat jy gemerk het, reguit van
+        hul bron gehaal in plaas daarvan om 'n tweede keer opgesoek te word. Met
+        niks gemerk nie, vul net die bron wat jy toegepas het en KI die gapings
+        in.</li>
+      <li><strong>ScreenScraper vind speletjies met 'n subtitel.</strong> Dit
+        het niks gevind vir 'n titel soos "Alone in the Dark: The New
+        Nightmare" nie, tensy die dubbelpunt 'n spasie voor hom gehad het.
+        RetroDB soek dit nou so, en dan met die deel voor die dubbelpunt as dit
+        steeds niks vind nie.</li>
+      <li><strong>Speletjies met niks om te speel nie, bied nie meer Speel aan nie.</strong>
+        'n Speletjie wat uit 'n CLZ-, Steam-, Xbox- of PSN-invoer bygevoeg is,
+        het geen ROM-lêer nie. Sy bladsy wys nou geen Speel-knoppie, geen
+        Emulatorinstellings en geen Lanseer-afdeling wanneer jy dit wysig nie,
+        net soos die Biblioteek-kaarte.</li>
+      <li><strong>RetroArch-speletjies is beskerm teen twee slegte instellings.</strong>
+        RetroDB gee nou elke keer wat dit 'n speletjie begin, aan RetroArch 'n
+        klein instellingslêer van sy eie, bo-op joune. Dit stel die sleutelbord
+        om by jou werkskerm te pas (Wayland of X11), so die sleutelbord is nooit
+        dood nie, en laat vinnig-vorentoe teen volle spoed loop, wat Commodore
+        64-speletjies gebruik om vinnig te laai. Al jou ander
+        RetroArch-instellings bly onaangeraak.</li>
+      <li><strong>Create M3U hou die speletjie in jou biblioteek.</strong>
+        Om 'n argief met verskeie skywe in 'n snitlys te omskep, het die
+        speletjie vroeër laat wys na die argief, wat weggeskuif is. Die
+        speletjie wys nou na die nuwe snitlys en hou sy besonderhede en prente.
+        Wanneer een argief verskeie uitgawes van 'n speletjie bevat, elk op sy
+        eie stel skywe, gebruik die snitlys nou die eerste uitgawe se skywe in
+        plaas van almal, en sê watter skywe dit uitgelaat het.</li>
+      <li><strong>Volledige herskraap kan die media hou wat jy reeds het.</strong>
+        Merk "Behou bestaande media" langs die Volledige herskraap-skakelaar.
+        Teksbesonderhede word steeds verfris, maar kunswerk, video's en
+        handleidings wat reeds op skyf is, bly soos hulle is in plaas daarvan om
+        weer af te laai. Sonder die merkie gooi 'n Volledige herskraap nie meer
+        skermskote weg wat dit voorheen afgelaai het nie.</li>
+      <li><strong>Agtergrondtake verloor of slaan nie meer werk oor nie.</strong> 'n
+        RetroAchievements-verfrissing wat een slegte speletjie teëgekom het,
+        gooi nie meer die speletjies weg wat dit reeds bygewerk het nie. 'n
+        Hervatte sinkronisering of verfrissing slaan nie meer die speletjie oor
+        waarby dit was toe dit gestop het nie. 'n Hervatte RetroAchievements- of
+        Steam-sinkronisering vanaf 'n baie ou momentopname stop nou met 'n
+        boodskap in plaas daarvan om sukses te meld terwyl dit niks
+        gesinkroniseer het nie. Die WebP-omskakeling kontroleer 'n oorblywende
+        WebP-lêer voordat dit dit vertrou, en sal nie begin as dit nie die vrye
+        skyfspasie kan lees nie.</li>
+      <li><strong>Om 'n baie ou installasie op te gradeer, kan nie meer stilweg data
+        verloor nie.</strong> Drie ou databasis-opgraderingstappe kon in
+        seldsame toestande rye laat val. Hulle kopieer nou die rye, of stop met
+        'n duidelike fout in plaas daarvan om hulle te verloor.</li>
+      <li><strong>Die Oor-venster se knoppies word nie meer afgesny nie.</strong>
+        Die venster is wyer en sy vier knoppies sit in twee rye, so elke
+        etiket wys volledig; op 'n foon stapel hulle.</li>
+      <li><strong>Jou tema volg jou na 'n nuwe blaaier.</strong> Om aan te meld
+        op 'n blaaier wat jy nog nie gebruik het nie, wys nou jou gestoorde
+        tema. Voorheen het die aanmeldbladsy eers Cyberpunk gestoor en dit het
+        so gebly.</li>
+      <li><strong>Die aanmeld-wagwoordblok sê nie meer "Admin
+        Login" nie.</strong> Elke rekening meld met 'n wagwoord aan, so die
+        venster sê nou net Meld aan. Die Rekening-bladsy en die Hulp-bladsy sê
+        dit ook.</li>
+      <li><strong>Hulp is op datum in elke taal.</strong> Die vertaalde
+        Hulp-bladsye beskryf nou Streeksweergawes, sê elke rekening het 'n
+        wagwoord nodig, en sê jou tema word saam met jou rekening gestoor. Hulp
+        in elke taal, Engels ingesluit, gee nou die werklike minimum van 12
+        karakters vir wagwoorde.</li>
+      <li><strong>Klein regstellings:</strong> fanart waarvan die lêernaam 'n
+        apostrof het, wys nou op speletjie- en trofeebladsye; Instellings wys nie
+        meer 'n skripfout vir nie-administrateur-rekeninge nie, en skermlesers
+        hoor nou watter Instellings-oortjie gekies is; om 'n bladsy te verlaat,
+        vul nie meer die blaaierkonsole met foute oor gekanselleerde versoeke
+        nie; die vergroter-model laai eers van 'n werkende adres af; en die
+        installeerder breek nie meer op Windows wanneer sy uitvoer in 'n lêer
+        gestoor word nie.</li>
+      <li><strong>'n Breë rondte betroubaarheidsregstellings.</strong> Om 'n
+        speletjie met 'n leë titel te stoor, verloor nie meer jou ander
+        wysigings nie. Herbegin laat nou lopende take eers netjies stop. Create
+        M3U weier om 'n bestaande snitlys of vouer te oorskryf. Om die lys
+        ongewenste lêers in ROM-gereedskap leeg te maak, beteken nou "vee niks
+        uit nie", en twee patrone vang nie meer regte ROM-name soos "Release of
+        the Dragon" nie. Een beskadigde PS3-trofeelêer maak nie meer elke
+        speletjie se trofeë leeg nie. AI-vul skryf 'n enkele streek. Analise
+        tel elke speletjie een keer in die graderingsgrafiek. CLZ-invoere
+        gebruik die standaard genrename. In wysigingsvensters kan genre en
+        ander etikette in elke taal verwyder word, en sleutelbordkortpaaie kaap
+        nie meer Ctrl+D of Ctrl+G nie. Kykers sien 'n speletjie se
+        voltooiingstatus maar kan dit nie meer verander nie, aangesien dit deur
+        almal gedeel word.</li>
+      <li><strong>Skermlesers lees die Platform Match Required-skakelaar by
+        sy sigbare naam</strong> op Instellings → Skraap.</li>
+      <li>In ander tale vertaal Instellings nou "Default Region", en die
+        Skraap-oortjie lees as 'n naam eerder as "skraap tans". Die
+        hulpbladsye gebruik dieselfde woorde.</li>
+      <li><strong>'n Speletjie wat nie wil sluit nie, word nie meer as
+        gesluit gewys nie.</strong> As 'n emulator Stop oorleef, wys RetroDB
+        dit steeds as lopend. 'n RetroArch-begin wat geweier word, skryf nie
+        meer eers sy instellingslêer nie, en 'n emulator wat dadelik misluk,
+        wys sy foutboodskap by die eerste kontrole.</li>
+      <li>Opgedateerde biblioteke: Pillow 13 (prenthantering), numpy 2.5.4 en
+        onnxruntime 1.31 (vergroting), plus die nuutste weergawes van die
+        bou- en vrystellingsgereedskap.</li>
+      <li>Agter die skerms: die speletjie-beginkode is opgeruim sodat dit
+        makliker is om te volg, ongebruikte kode is verwyder ('n API-adres, 'n
+        PSN-helper, 'n trofeeskrip wat geen bladsy gelaai het nie, en 'n
+        werfwye tema-instelling wat niks gelees het nie), die
+        app se antwoorde aan die blaaier word op een plek gebou, verskeie
+        ontwerpdokumente is reggestel om by die kode te pas, die toetsreeks is
+        opgeruim, en 'n nuwe kontrole vang 'n JavaScript-sintaksfout voor 'n
+        vrystelling. Die ouer
+        veranderingslog-inskrywings wat die verwyderde kode beskryf het, sê dit
+        nou.</li>
+    </ul>
+- version: 3.29.0
+  date: '2026-10-17'
+  tags:
+  - type: feature
+    label: "'n Speletjie se ander name wys die streek waar hulle vandaan kom"
+  body: |
+    <ul>
+      <li><strong>'n Speletjie se ander name wys die streek waar hulle vandaan
+        kom.</strong> Die speletjiebladsy se Ook bekend as-kaart merk elke naam
+        met sy land of streek, soos Japan vir "Rockman", in jou eie taal.
+        Gemerkte name kom eerste, gegroepeer volgens streek. Hou die muis oor 'n
+        naam om sy bron en enige nota te sien, soos "Werkstitel".</li>
+      <li>Name van IGDB hou nou hul streek. Voorheen het net ScreenScraper-name
+        een gehad.</li>
+      <li>ScreenScraper se "SS"-etiket wys nie meer as 'n streek nie. Dit is
+        ScreenScraper se eie naam vir die speletjie, nie 'n plek nie.</li>
+      <li>ROM-gereedskap → Vul Alternatiewe Titels In kontroleer nou elke
+        geskraapte speletjie, so name wat jy reeds het, kry hul streke. Laat dit
+        een keer loop om jou bestaande biblioteek te merk.</li>
+    </ul>
+- version: 3.28.0
+  date: '2026-10-17'
+  tags:
+  - type: feature
+    label: "Wys RetroDB na jou emulatorvouer en dit stel hulle op"
+  - type: fix
+    label: "Regstellings op die Instellings → Emulators-bladsy"
+  body: |
+    <ul>
+      <li><strong>Wys RetroDB na jou emulatorvouer en dit stel hulle
+        op.</strong> Instellings → Emulators het 'n nuwe Emulatorvouers-lys.
+        Voeg die vouer by waarin jou emulators is en RetroDB vind elkeen
+        daarin, as 'n AppImage, 'n draagbare skrip of 'n geïnstalleerde
+        Flatpak, en koppel dit aan die stelsels wat dit laat loop. 'n Stelsel
+        wat reeds 'n werkende emulator het, hou dit.</li>
+      <li><strong>Sien watter stelsels gereed is om te speel.</strong> Die
+        toewysingstabel per stelsel lys nou elke stelsel se emulators, sê
+        of elkeen werk, en laat jou 'n stelsel se verstek kies. Vir
+        DuckStation, PCSX2, RPCS3 en RetroArch sê dit ook of die BIOS-lêers
+        op hul plek is, en noem enige wat ontbreek. RetroDB lees net
+        BIOS-lêers; dit kopieer of laai nooit een af nie.</li>
+      <li>Die emulatorskandering vind nou elke emulator op 'n groot
+        emulatorskyf. Voorheen kon dit vroeg stop binne 'n emulator se eie
+        instellingsvouer.</li>
+      <li>RetroArch se Outospoor- en Stoor-knoppies werk weer, en die Wysig
+        emulator-venster wys nie meer op die bladsy totdat jy Wysig druk nie.</li>
+    </ul>
 - version: 3.27.0
   date: '2026-10-17'
   tags:

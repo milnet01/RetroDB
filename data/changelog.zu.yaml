@@ -1,3 +1,499 @@
+- version: 3.30.0
+  date: '2026-10-21'
+  tags:
+  - type: feature
+    label: Umdlalo owodwa ovela ezifundeni eziningana uvela njengekhadi elilodwa
+  - type: security
+    label: Ukugcwalisa nge-AI namaThuluzi e-ROM kunzima kakhulu ukukusebenzisa kabi
+  - type: security
+    label: Amakhasi ayenqaba ukuqalisa izikripthi ezishushumbiselwe kuwo
+  - type: fix
+    label: Ukuscrapha, imisebenzi yamaThuluzi e-ROM, ukuvumelanisa izindondo nokusetha kokuqala kubhekana kahle namaphutha
+  - type: ui
+    label: Izinkinobho zewindi elithi Mayelana azisanqunywa
+  - type: accessibility
+    label: Izifundi-skrini zifunda iswishi ethi Platform Match Required ngegama layo elibonakalayo
+  - type: accessibility
+    label: Wonke amawindi aqhamukayo abhekana ne-Escape, ukugxila kwekhibhodi nezifundi-skrini ngendlela efanayo
+  - type: performance
+    label: Ukuscrapha kuqeda ngokushesha; izithombe ezincane zikhuliswa ngemuva
+  - type: feature
+    label: Ukuphinda Uscraphe Ngokugcwele kungagcina imidiya osuvele unayo
+  - type: fix
+    label: I-ScreenScraper ithola imidlalo enesihloko esinesihlokwana
+  - type: fix
+    label: I-Create M3U igcina umdlalo emtapweni wakho
+  - type: fix
+    label: Isixhumanisi sezimpumelelo sivula isistimu yakho yokugcina esikhundleni sekhasi elingenalutho
+  - type: fix
+    label: Imidlalo ye-RetroArch iqala nekhibhodi esebenzayo nokulayisha ngesivinini esigcwele
+  - type: fix
+    label: Imidlalo ye-C64, i-Amiga, i-DOS namanye amakhompyutha asekhaya ithola wonke ukhiye owuthayiphayo
+  - type: fix
+    label: Emidlalweni ye-C64 induku yesokudla yesilawuli icindezela okhiye bekhesa futhi i-Start icindezela i-F1
+  - type: ui
+    label: Ibha eseceleni ikhombisa uma izithombe zisathuthukiswa ngemuva, futhi izithombe ezicace kakhudlwana zomdlalo zivela ngokwazo
+  - type: feature
+    label: Izincwadi zokusebenzisa zemidlalo zivuleka ekhasini lomdlalo futhi amakhasi aphenduka njengencwadi
+  - type: docs
+    label: Usizo lubala okhiye be-RetroArch, futhi imidlalo yamakhompyutha anekhibhodi ikhombisa isikhumbuzo se-Scroll Lock eceleni kwethi Dlala
+  - type: ui
+    label: Imidlalo engenisiwe engenalo ifayela le-ROM ayisanikezi ngethi Dlala
+  - type: fix
+    label: Ukususa umfanekiso-skrini akusabiki ukwehluleka ngemva kokuba kuphumelele
+  - type: fix
+    label: Indlela ye-RetroArch esethwe emgqeni we-emulator yayo yiyona eqalisayo
+  - type: fix
+    label: Umdlalo ongavaleki awusakhonjiswa njengovaliwe
+  - type: deps
+    label: I-Pillow 13 nezinye izibuyekezo zemitapo yolwazi
+  body: |
+    <ul>
+      <li><strong>Izinguqulo zezifunda zomdlalo zivela njengomdlalo
+        owodwa.</strong> Xhumanisa izinguqulo onazo (isibonelo, ezikhishwe
+        e-USA, eYurophu naseJapane) bese uMtapo ukhombisa ikhadi elilodwa
+        elinebheji ethi &#127760;. Ikhadi livula futhi lidlala inguqulo
+        yeSifunda Esizenzakalelayo sakho. Ikhasi lomdlalo libala zonke
+        izinguqulo eceleni komunye futhi likuvumela ushintshe phakathi
+        kwazo. AmaThuluzi e-ROM &gt; Izinguqulo Zezifunda aphakamisa amaqembu
+        ukuze abahleli bawaqinisekise; akukho lutho oluxhunywayo ngaphandle
+        kwakho. Akaze aphakamise umdlalo olandelayo njengenguqulo yomdlalo
+        wokuqala. Izinguqulo ezixhunyiwe azisabikwa njengamaphindwa ngegama.
+        Qalisa i-Gcwalisa Izihloko Ezinye kanye ukuze iziphakamiso zibe
+        nokuningi kokusebenza ngakho.</li>
+      <li><strong>I-AI ingafinyeza ukuthi izinguqulo zezifunda zehluka
+        kanjani.</strong> Emdlalweni onezinguqulo ezixhunyiwe, abahleli
+        bangacindezela okuthi Finyeza umehluko nge-AI esigabeni seZinguqulo
+        Zezifunda. I-AI ibala umehluko owaziwayo njengokuhlolwa
+        (censorship), ubunzima noma okuqukethwe okususiwe. Uhlu lumakwa
+        njengolubhalwe yi-AI, luvela ekhasini lenguqulo ngayinye, futhi
+        luyacasha uma uxhumanisa noma uhlukanisa inguqulo kuze kube lubhalwa
+        futhi. Kudingeka umhlinzeki we-AI osethwe ku-Izilungiselelo &gt;
+        Ukuscrapha.</li>
+      <li><strong>Imidlalo ye-PlayStation iqala nezilungiselelo
+        ezinhle.</strong> Ku-DuckStation, PCSX2 no-RPCS3, i-RetroDB manje
+        isetha isikali sokucaca (resolution) nesilinganiso sesithombe somdlalo
+        ngamunye efayeleni lezilungiselelo ze-emulator lomdlalo ngamunye
+        uma ucindezela okuthi Dlala, kanye nokuthi iqala ngesikrini esigcwele
+        yini. Kushintshe kuyo yonke isistimu ngenkinobho yezilungiselelo
+        ku-Izilungiselelo &gt; Ama-emulator, noma kumdlalo owodwa kuphaneli
+        entsha ethi Izilungiselelo ze-emulator ekhasini lawo. Isilungiselelo
+        osishintsha ngaphakathi ku-emulator sihlala siphumelela. I-RetroDB
+        ifunda inombolo ye-serial yediski ngayinye ukuze ithole ifayela
+        elifanele; amadiski e-CHD adinga ukuthi i-chdman ifakwe.</li>
+      <li><strong>Ukugcwalisa nge-AI akusakwazi ukuqondiswa umbhalo
+        othayiphwe ezinkambini zomdlalo.</strong> Uma Ukugcwalisa nge-AI
+        kuhlola umshicileli, unjiniyela, uhlelo noma ezinye izinkundla
+        zomdlalo ezikhona kakade, manje kuhlanza lowo mbhalo kuqala,
+        ngendlela ebesekuhlanza ngayo isihloko.</li>
+      <li><strong>Ukuskena kwamaThuluzi e-ROM kuhlala ngaphakathi kwefolda
+        yakho ye-ROM.</strong> UMguquli we-CHD no-Qinisekisa i-CHD abasalandeli
+        isinqamuleli (symlink) esikhomba ngaphandle kwayo, futhi ukukhipha
+        i-archive yamadiski amaningi akunaki noma yisiphi isinqamuleli
+        esipakishwe ngaphakathi kwe-archive.</li>
+      <li><strong>Amakhasi ayenqaba ukuqalisa izikripthi ezishushumbiselwe
+        kuwo.</strong> I-browser yakho manje ivimba noma yisiphi isikripthi
+        i-RetroDB engazibhalelanga yona, ngakho umbhalo oshushumbisa ikhodi
+        esihlokweni somdlalo, kuthegi noma encazelweni escraphiwe
+        awukwazi ukuyiqalisa. Izinkinobho nemenyu zisebenza
+        njengangaphambili.</li>
+      <li><strong>Umfanekiso-skrini owodwa owonakele awusakumisi ukuhlolwa
+        kwamaphindwa omdlalo.</strong> Umfanekiso-skrini ongafundeki
+        ubekwa eceleni bese ukuhlola kuyaqhubeka.</li>
+      <li><strong>Imisebenzi yamaThuluzi e-ROM ayisabambeki ku-"iyasebenza".</strong>
+        Ifayela elisuswe ngemva kokuskena kuka-Qinisekisa i-CHD libalwa
+        njengelingavumelekile, futhi noma yiliphi iphutha elingalindelekile
+        kuMguquli we-CHD, ku-Qinisekisa i-CHD noma kuMtholi Wamaphindwa
+        liqeda umsebenzi njengowehlulekile, nephutha lisengxenyeni yelogi
+        yawo.</li>
+      <li><strong>Ngaphambi kokuba ukusetha kuqedwe, izicelo zedatha ze-app
+        zithola impendulo ecacile.</strong> Ziphendula ngokuthi "Kudingeka
+        ukusetha" esikhundleni sokubuyisa ikhasi lokusetha. Amakhasi
+        asakuyisa ku-wizard yokusetha.</li>
+      <li><strong>Imidlalo elandelayo (sequels) ayisakhombisi izimpumelelo
+        zomdlalo wokuqala.</strong> Ukufanisa kwe-RetroAchievements
+        bekungayinaki inombolo esesihlokweni, ngakho i-Donkey Kong Country 2
+        no-3 zazixhunywe ku-Donkey Kong Country. Izinombolo (2, II, 3, III
+        njalonjalo) manje ziyabalwa. Ukulungisa imidlalo esixhunyiwe kakade,
+        qalisa ukuvuselela kwe-RetroAchievements kwazo zonke izistimu
+        kanye.</li>
+      <li><strong>Ukuvumelanisa kwe-PlayStation akusazisuli izibalo zakho
+        zezindondo.</strong> Uma impendulo ye-PlayStation ishiya ngaphandle
+        izibalo eziphelele zezindondo zomdlalo, i-RetroDB yayilondoloza
+        oziro phezu kwezibalo ebisinazo. Manje iyazigcina, nasekuvuseleleni
+        izindondo ngobuningi.</li>
+      <li><strong>Ukuvula isethi yezindondo engasekho kudiski kukhombisa
+        umlayezo.</strong> Ikhasi lezindondo laliphela ngephutha; manje
+        lithi isethi ayitholakalanga bese likubuyisela ohlwini.</li>
+      <li><strong>Amathebula amaThuluzi e-ROM aqamba ikholomu yezinkinobho
+        kahle kuzo zonke izilimi.</strong> Isihloko sekholomu sasabelana
+        ngamagama nohlobo lomdlalo lwe-Action, ngakho ezinye izilimi
+        zazikhombisa igama lohlobo lapho.</li>
+      <li><strong>Imidlalo ye-GameCube, 3DS ne-Super Famicom ithola
+        i-emulator yayo isethwa ngokuzenzakalelayo.</strong> I-RetroDB
+        yayifuna lezi zistimu ngaphansi kwamagama amafolda angasetshenziswa
+        imitapo (gamecube, 3ds, superfamicom esikhundleni se-gc, n3ds, sfc),
+        ngakho i-Dolphin ne-Citra zazingakaze zixhunywe kuzo. Qala kabusha
+        i-RetroDB kanye ukuze ikuthole lokhu.</li>
+      <li><strong>Ukulanda okungadingi i-Python (standalone) kuyawasetha
+        ama-emulator futhi.</strong> Kwakushoda ifayela elibala wona.</li>
+      <li><strong>Cishe izinkinobho, amalebula nemilayezo engaba ngu-170
+        engeziwe kuhunyushiwe</strong> kuzo zonke izilimi. Kwakuvela
+        ngesiNgisi ngaphambili, futhi ezimbalwa zazikhombisa ukuqagela
+        okungalungile (ezinye izilimi zazithi "i-backup yehlulekile" uma
+        umdlalo wehluleka ukuqala).</li>
+      <li><strong>I-Escape ivala iwindi elingaphezulu kuphela.</strong> Uma
+        umbuzo uvulekile phezu kwelinye iwindi, i-Escape yayivala womabili;
+        amanye amawindi ayeqhubeka nokusebenza ngemva kokuba i-Escape
+        iwafihlile, futhi ukucindezela i-Escape ekhasini lomdlalo
+        kwakungaqhubekisa ukuscrapha ngobuningi obekumisile. Wonke amawindi
+        manje avalwa ngesenzo sawo sokuvala, agcina ukugxila kwekhibhodi
+        ngaphakathi uma evulekile, futhi abuyisela ukugxila enkinobhweni
+        eliwavulile. Amawindi enqubekela phambili emisebenzi esebenzayo
+        ahlala evulekile kuze kuphele umsebenzi.</li>
+      <li><strong>Amashadi oKuhlaziya asolimini lwakho.</strong> Amagama
+        ezinhlobo, ombono, obukhulu namamodi, izihloko zamashadi, amagama
+        ama-axis nezincazelo zamashadi (legends) ayesesiNgisini kuzo zonke
+        izilimi.</li>
+      <li><strong>Idatha ye-RetroAchievements iphephe kakhudlwana.</strong>
+        Uma uhlu lwemidlalo ye-RetroAchievements lwekhonsoli lwehluleka
+        ukulayisha, ukuvuselela kwe-RA manje kushiya imidlalo yaleyo khonsoli
+        ixhunyiwe esikhundleni sokuyihlukanisa yonke. I-Sula Idatha ye-RA
+        manje isula inqubekela phambili ye-RetroAchievements kuphela;
+        inqubekela phambili ye-Steam ne-Xbox iyahlala.</li>
+      <li><strong>Amaphasiwedi kumele abe nezinhlamvu eziyi-12 okungenani
+        yonke indawo.</strong> Ukusetha kokuqala kwakwamukela iphasiwedi
+        yomlawuli yanoma yibuphi ubude, futhi amakhasi okuphoqelelwa
+        ukushintsha iphasiwedi nokusetha ayethi izinhlamvu ezi-4 zanele.
+        Womathathu manje acela eziyi-12, njengayo yonke enye i-app.</li>
+      <li><strong>Izibalo zezimpumelelo zilungile, futhi ezakho.</strong>
+        Ukuvumelanisa umdlalo owodwa kusuka ku-RetroAchievements manje
+        kulondoloza ukuthi unezimpumelelo ezingaki, esikhundleni sika-0.
+        Izibalo zezimpumelelo kudeshibhodi zibala imidlalo yakho kuphela,
+        futhi Izindondo Zomqoqi azisabali impumelelo ngayinye ye-Steam noma
+        ye-Xbox kabili.</li>
+      <li><strong>Ukuvumelanisa ngemuva kusebenzisa ama-akhawunti
+        akho.</strong> Ukuvumelanisa kwesistimu ye-RetroAchievements
+        kungena nge-akhawunti yakho ye-RetroAchievements uma uyisethile.
+        Ukuvuselela ngobuningi kwe-PlayStation kusebenzisa futhi ukungena
+        kwakho okulondoloziwe esikhundleni sokungena kabusha njalo.</li>
+      <li><strong>Nguwe kuphela ongamisa noma uqhubekisele phambili
+        ukuvumelanisa kwakho.</strong> Omunye umsebenzisi akasakwazi ukukhansela
+        ukuvumelanisa kwakho kwe-RetroAchievements, i-Steam noma i-Xbox,
+        futhi ukuqhubekisela phambili umsebenzi ophazanyisiwe kudinga
+        amalungelo afanayo nokuwuqala. Abalawuli basengakwenza kokubili.</li>
+      <li><strong>Ifolda yakho yezindondo ze-RPCS3 iyahlolwa uma
+        uyilondoloza.</strong> Ifolda engekho, engeyona indlela ephelele,
+        noma eyifolda yesistimu iyenqatshwa, njengoba bekuvele kunjalo
+        ezilungiselelweni eziyinhloko.</li>
+      <li><strong>Okuthi "Landa Zonke Izithombe" kwiMnyuziyamu kusebenza
+        ngemuva.</strong> Ikhasi alisalindi imizuzu ngazo zonke izithombe
+        zezilawuli. Likhombisa ukuthi ukulanda sekufike kuphi, linenkinobho
+        ethi Khansela, futhi liphinde libonise inqubekela phambili uma
+        ushiya ikhasi bese ubuya.</li>
+      <li><strong>AmaThuluzi e-ROM avikela amafayela akho kangcono.</strong>
+        Ukuhlanza akusayithululi i-archive: iphethini efana no-<code>*</code>
+        ayikwazi ukulondolozwa, futhi Ukuhlanza kuyama uma amaphethini
+        engasusa wonke amafayela. UMguquli we-CHD ugcina okwangempela uma
+        okuthi "verify" kucishiwe, futhi ushiya i-CHD esikhona uma okuthi
+        "skip existing" kuvuliwe. UMtholi Wamaphindwa uhlala egcina ikhophi
+        eyodwa yomdlalo ngamunye, ngisho noma isicelo sicela zonke.</li>
+      <li><strong>Imisebenzi yamaThuluzi e-ROM iziphatha njengoba izinkinobho
+        zisho.</strong> Okuthi Misa manje kumisa uMguquli we-CHD,
+        u-Qinisekisa i-CHD, uMtholi Wamaphindwa noKususa Amaphindwa
+        Emifanekiso-skrini, futhi umsebenzi omisiwe ungakhanselwa. Ukuskena
+        kokuKususa Amaphindwa Emifanekiso-skrini okuhlangabezana nephutha
+        manje kuphela njengokwehlulekile esikhundleni sokusebenza
+        unomphela.</li>
+      <li><strong>I-Create M3U ayisabeki ama-archive efoldeni
+        yesikhashana.</strong> Ama-archive athuthiwe manje aya efoldeni
+        yedatha ye-RetroDB uqobo, engasulwa uma kuqalwa kabusha. Iskena
+        se-archive sikhombisa ukuthi aye kuphi, futhi ukuqinisekisa iqoqo
+        kuthi azothuthwa. Ukusetha kabusha izilungiselelo zamaThuluzi e-ROM
+        manje kusetha kabusha zonke izinketho.</li>
+      <li><strong>Shintsha amadiski kusuka ku-RetroDB.</strong> Ngesikhathi
+        umdlalo we-RetroArch oqalwe ohlwini lwamadiski lwe-.m3u usebenza,
+        uhlu oluthi &#9654; Kudlalwa manje phezulu ekhasini ngalinye
+        lukhombisa isihloko somdlalo nenkinobho ethi Idiski elandelayo,
+        ngakho umdlalo ocela uhlangothi lwesibili uqhubeka ngokuchofoza
+        kanye, kusuka ku-browser noma efonini. I-RetroArch kumele ibe ne-Settings
+        &gt; Network &gt; Network Commands evuliwe (iphothi 55355);
+        inkinobho iyakusho uma kucishiwe.</li>
+      <li><strong>Iskripthi sokuqalisa sivula i-RetroDB uma isilungile.</strong>
+        I-start.sh, i-start.command ne-start.bat zazivula i-browser ngemva
+        kwemizuzwana emi-3 engaguquki, kaningi ngaphambi kokuba iseva
+        iphendule, ngakho ikhasi lalehluleka ukulayisha. I-RetroDB manje
+        ilivula uma iseva isilalele. Uma iqalwe nge-LocalWebServerManager,
+        ayivuli khasi nhlobo; sebenzisa inkinobho ethi Open yomphathi.</li>
+      <li><strong>Amavidiyo emidlalo angafika ku-500 MB.</strong> Umkhawulo
+        wawungu-50 MB, omncane kakhulu kuma-trailer amaningi emidlalo.
+        Ukulayisha okukhulu kakhulu manje kukhombisa umlayezo ekhasini
+        lomdlalo esikhundleni sokushintsha ikhasi ngombhalo ongenalutho.
+        Ividiyo eyenqatshiwe (enkulu kakhulu noma enohlobo lwefayela
+        olungalungile) manje iyakusho esikhundleni sokulahlwa
+        ngokuthula.</li>
+      <li><strong>Ukuqalisa kulandela indlela oyisethile.</strong> I-Binary
+        path override emgqeni we-RetroArch ku-Izilungiselelo &gt;
+        Ama-emulator manje iphumelela ngaphezu kwendlela ye-RetroArch
+        phezulu kulelo khasi; ngaphambili, indlela yomugqa yayingananakwa.
+        Ukucindezela okuthi Misa kabili akusacelanga umdlalo ukuthi uphume
+        kabili; ku-Linux, i-RetroArch ithatha isicelo sesibili njengokuthi
+        "phuma ngaphandle kokulondoloza", ngakho ukulondoloza kwakho
+        ngaphakathi emdlalweni kwakungalahleka.
+        Isilungiselelo sesiqalisi esasala emodini ekude engakaze yakhiwe
+        asisavimbi yonke imidlalo ukuthi iqale.</li>
+      <li><strong>Izenzo ezehlulekayo zibika amaphutha azo kahle.</strong>
+        Uma ukulondoloza, ukungenisa, ukuvumelanisa noma ukuskena kwehluleka,
+        i-RetroDB manje iphendula ngesimo sangempela sephutha futhi
+        ikhombisa isizathu emlayezweni wayo, esikhundleni sokuphendula
+        sengathi kuphumelele. Ukulondoloza ikhodi yokungena ye-PSN engakwazi
+        ukuxhuma akusakhombisi imininingwane yangaphakathi yephutha.
+        Ukungena, ukuphatha abasebenzisi, iphrofayili yakho, izimpumelelo,
+        ukungenisa, Ukugcwalisa nge-AI nokusesha kwe-HowLongToBeat manje
+        kwenza okufanayo, futhi ulimi olungakwazi ukulondolozwa luyasho
+        isizathu esikhundleni sokuthi "Iphutha lenethiwekhi".</li>
+      <li><strong>Imidlalo eqanjwe ngendlela ye-No-Intro manje
+        iyascraphwa.</strong> Isihloko esifana no-"Legend of Zelda, The"
+        noma "Legend of Zelda, The - Ocarina of Time" manje sifana nemiphumela
+        ye-"The Legend of Zelda" esikhundleni sokwenqatshwa isihlungi
+        sokufanisa. Imibiko ye-ROM nayo ayisawamaki lawo magama
+        njengangafani.</li>
+      <li><strong>Izihloko ezithathwe emagameni amafayela zilahla wonke
+        amathegi azo.</strong> Isifunda esihlanganisiwe esifana no-"(USA,
+        Europe)" no-"(UK)" manje kuyasuswa. Kumakhompyutha asekhaya afana
+        ne-ZX Spectrum, konke kusukela onyakeni kuya phambili kuyasuswa,
+        ngakho "Chuckie Egg 2 (UK) (1985) (A'n'F Software) (tzx)" iba
+        "Chuckie Egg 2". Igama lefayela eliphela ngo-"..zip" alisashiyi
+        ichashazi elingadingekile. Usesho lwe-scraper, ukusetha kabusha
+        idatha yomdlalo neziphakamiso zeZinguqulo Zezifunda kusebenzisa
+        lawa magama ahlanzekile.</li>
+      <li><strong>Isihloko esingalungile asisaziphindi uma uphinda
+        uscraphe.</strong> Ukuscrapha ngobuningi manje kusesha ngegama
+        elivela efayeleni le-ROM, hhayi isihloko esilondolozwe emdlalweni.
+        Umdlalo owake wafaniswa nomdlalo ongalungile uthola ofanele uma
+        uscraphwa futhi.</li>
+      <li><strong>Ama-scraper akhetha iSifunda Esizenzakalelayo sakho.</strong>
+        Uma imiphumela emibili ilingana, lowo ovela eSifundeni
+        Esizenzakalelayo sakho noma ku-World manje uyaphumelela, hhayi
+        njalo owase-USA. Izihloko ezimbili eziyimathegi ezifunda kuphela
+        azisabalwa njengezifana ngokuphelele. Izinguqulo Zezifunda
+        azisayiphambanisi i-X ku-"X-Men" nenombolo yomdlalo olandelayo.
+        Ukukhetha ukuthi iyiphi inguqulo ekhonjiswa yikhadi manje kufunda
+        igama lefayela le-ROM kuphela, hhayi amafolda angaphezu kwalo, futhi
+        kuyawaqonda amathegi amadala afana no-"(U)" no-"(E)".</li>
+      <li><strong>Ilogi ikhombisa ukuthi isikhathi sokuscrapha umdlalo
+        ngamunye siya kuphi.</strong> Ngemva komdlalo ngamunye, i-RetroDB
+        ibhala umugqa owodwa onemizuzwana echithwe ekuseshweni, emthonjeni
+        ngamunye, ekulandeni, ekucubunguleni izithombe, ku-AI
+        nasekulondolozeni. Kuyisinyathelo sokuqala sokuscrapha
+        ngokushesha.</li>
+      <li><strong>Ukuscrapha kuqeda ngokushesha: izithombe ezincane zenziwa
+        zicace kamuva.</strong> Ukuscrapha manje kulondoloza umdlalo
+        nezithombe zawo njengoba zilandiwe. I-box art encane nemifanekiso-skrini
+        bese kukhuliswa ngemuva, umdlalo owodwa ngesikhathi. Imifanekiso-skrini
+        ephindiwe iyalahlwa ngaphambi kwanoma yimuphi walowo msebenzi. Uma
+        i-RetroDB ima phakathi, iyaqhubeka uma iqala futhi.</li>
+      <li><strong>Funda incwadi yokusebenzisa yomdlalo ekhasini lawo.</strong>
+        Inkinobho ethi Incwadi Yokusebenzisa manje ivula i-PDF ewindini
+        elingaphezu kwekhasi lomdlalo. Phenya amakhasi ngokuthi
+        Okwangaphambilini nokuthi Okulandelayo, okhiye bemicibisholo, i-Home
+        ne-End, noma ngokuswayipha efonini; ikhasi ngalinye liphenduka
+        njengelencwadi, noma lishintshe nje uma isistimu yakho icela
+        ukunyakaza okuncane. Okuthi "Vula i-PDF kuthebhu entsha" kusekhona,
+        futhi u-Ctrl-click kokuthi Incwadi Yokusebenzisa uvula ithebhu
+        ngqo.</li>
+      <li><strong>Ibha eseceleni ikhombisa uma izithombe zisathuthukiswa.</strong>
+        Ngesikhathi izithombe zenziwa zicace ngemuva, ibha eseceleni ithi
+        "Kuthuthukiswa izithombe — Imidlalo esele: N". Umdlalo osalindile
+        uyakusho ekhasini lawo, futhi izithombe zawo ezicace kakhudlwana
+        zivela lapho ngokwazo uma sezilungile. Iswishi yekhava ye-2D/3D
+        ayisawumbozi lowo mugqa.</li>
+      <li><strong>Imithombo esekelayo ibuzwa ngesikhathi esisodwa.</strong>
+        Uma umthombo oyinhloko ushiya izikhala, i-RetroDB manje ibuza
+        eminye imithombo yonke ngesikhathi esisodwa esikhundleni sokuyibuza
+        ngokulandelana. Izimpendulo zayo zisasetshenziswa ngokulandelana
+        kwakho kwe-Izilungiselelo, ngakho umthombo ofanayo uphumelela
+        enkundleni ngayinye.</li>
+      <li><strong>I-ES-DE ifunda uhlu lwayo lwemidlalo kanye.</strong>
+        Ukuscrapha ngakunye, kuhlanganise nokuscrapha ngobuningi, kwakufunda
+        i-gamelist.xml ye-ES-DE yesistimu kabili emdlalweni ngamunye.
+        I-RetroDB manje iyifunda kanye futhi iphinde iyifunde kuphela uma
+        ifayela lishintsha.</li>
+      <li><strong>Ukusebenzisa kwe-Sesha i-Metadata akusaseshi
+        futhi.</strong> Ekhasini lomdlalo, imiphumela oyikhethile ilandwa
+        ngqo emthonjeni wayo esikhundleni sokuseshwa okwesibili. Uma kungekho
+        okukhethiwe, kuphela umthombo owusebenzisile ne-AI egcwalisa
+        izikhala.</li>
+      <li><strong>I-ScreenScraper ithola imidlalo enesihlokwana.</strong>
+        Yayingatholi lutho esihlokweni esifana no-"Alone in the Dark: The
+        New Nightmare" ngaphandle uma ikholoni inesikhala ngaphambi kwayo.
+        I-RetroDB manje iyasesha ngaleyo ndlela, bese isesha ngengxenye
+        engaphambi kwekholoni uma ingakatholi lutho.</li>
+      <li><strong>Imidlalo engenalutho lokudlala ayisanikezi ngethi
+        Dlala.</strong> Umdlalo ongeniswe ku-CLZ, Steam, Xbox noma PSN
+        awunalo ifayela le-ROM. Ikhasi lawo manje alikhombisi nkinobho ethi
+        Dlala, azikho Izilungiselelo ze-emulator futhi asikho isigaba
+        sokuQalisa uma uwuhlela, kufana namakhadi oMtapo.</li>
+      <li><strong>Imidlalo ye-RetroArch ivikelwe ezilungiselelweni ezimbili
+        ezimbi.</strong> I-RetroDB manje inika i-RetroArch ifayela elincane
+        lezilungiselelo elingelayo njalo uma iqala umdlalo, ngaphezu
+        kwelakho. Lisetha ikhibhodi ukuthi ifane ne-desktop yakho (Wayland
+        noma X11), ngakho ikhibhodi ayilokothi ife, futhi livumela
+        ukusheshisa (fast-forward) kusebenze ngesivinini esigcwele, imidlalo
+        ye-Commodore 64 ekusebenzisayo ukulayisha ngokushesha. Zonke ezinye
+        izilungiselelo zakho ze-RetroArch azithintwa.</li>
+      <li><strong>I-Create M3U igcina umdlalo emtapweni wakho.</strong>
+        Ukuguqula i-archive yamadiski amaningi ibe yi-playlist kwakushiya
+        umdlalo ukhomba ku-archive, ebisithuthiwe. Umdlalo manje ukhomba
+        ku-playlist entsha futhi ugcina imininingwane nezithombe zawo. Uma
+        i-archive eyodwa iqukethe ukukhishwa okuningana komdlalo, ngakunye
+        kunesethi yako yamadiski, i-playlist manje isebenzisa amadiski
+        okukhishwa kokuqala esikhundleni sawo wonke, futhi isho ukuthi
+        yimaphi amadiski eyawashiya ngaphandle.</li>
+      <li><strong>Ukuphinda Uscraphe Ngokugcwele kungagcina imidiya osuvele
+        unayo.</strong> Khetha okuthi "Gcina imidiya ekhona" eceleni
+        kweswishi yokuPhinda Uscraphe Ngokugcwele. Imininingwane yombhalo
+        isavuselelwa, kodwa ubuciko, amavidiyo nezincwadi zokusebenzisa
+        osekukhona kudiski kuhlala kunjalo esikhundleni sokulandwa futhi.
+        Ngaphandle kokukhetha, Ukuphinda Uscraphe Ngokugcwele akusalahli
+        imifanekiso-skrini ebekuyilande ngaphambili.</li>
+      <li><strong>Imisebenzi yangemuva ayisalahli noma yeqe
+        umsebenzi.</strong> Ukuvuselela kwe-RetroAchievements okuhlangabezane
+        nomdlalo owodwa omubi akusayilahli imidlalo ebesekuyivuselele.
+        Ukuvumelanisa noma ukuvuselela okuqhubekiselwa phambili akusaweqi
+        umdlalo obekukuwo uma kume. Ukuvumelanisa kwe-RetroAchievements noma
+        kwe-Steam okuqhubekiselwa phambili kusuka ku-snapshot endala kakhulu
+        manje kuyama nomlayezo esikhundleni sokubika impumelelo kungavumelaniswanga
+        lutho. Ukuguqulwa kwe-WebP kuhlola ifayela le-WebP elisele ngaphambi
+        kokulithemba, futhi angeke kuqale uma kungakwazi ukufunda isikhala
+        esikhululekile kudiski.</li>
+      <li><strong>Ukuthuthukisa ukufakwa okudala kakhulu akusakwazi
+        ukulahlekelwa yidatha ngokuthula.</strong> Izinyathelo ezintathu
+        ezindala zokuthuthukisa isizindalwazi zazingalahla imigqa ezimeni
+        ezingavamile. Manje ziyayikopisha imigqa, noma zime ngephutha
+        elicacile esikhundleni sokuyilahla.</li>
+      <li><strong>Izinkinobho zewindi elithi Mayelana azisanqunywa.</strong>
+        Iwindi libanzi kakhudlwana futhi izinkinobho zalo ezine zihlala
+        emigqeni emibili, ngakho wonke amalebula avela ngokugcwele; efonini
+        zifakwa phezu komunye.</li>
+      <li><strong>Itimu yakho ikulandela ku-browser entsha.</strong> Ukungena
+        ku-browser ongakaze uyisebenzise ngaphambili manje kukhombisa itimu
+        yakho elondoloziwe. Ngaphambili, ikhasi lokungena lalilondoloza
+        i-Cyberpunk kuqala futhi yahlala.</li>
+      <li><strong>Ibhokisi lephasiwedi lokungena alisathi "Admin
+        Login".</strong> Wonke ama-akhawunti angena ngephasiwedi, ngakho
+        ingxoxo manje ithi nje Ngena. Ikhasi le-akhawunti nekhasi loSizo
+        nawo asho kanjalo.</li>
+      <li><strong>Usizo lusesikhathini kuzo zonke izilimi.</strong> Amakhasi
+        oSizo ahunyushiwe manje achaza Izinguqulo Zezifunda, athi wonke
+        ama-akhawunti adinga iphasiwedi, futhi athi itimu yakho ilondolozwa
+        ne-akhawunti yakho. Usizo kuzo zonke izilimi, kuhlanganise nesiNgisi,
+        manje lunikeza ubuncane bangempela bephasiwedi obuyizinhlamvu
+        eziyi-12.</li>
+      <li><strong>Ukulungiswa okuncane:</strong> i-fanart enegama lefayela
+        elinophawu lwe-apostrophe manje iyavela emakhasini emidlalo
+        nawezindondo; Izilungiselelo azisakhombisi iphutha lesikripthi
+        kuma-akhawunti angewona awabalawuli, futhi izifundi-skrini manje
+        zizwa ukuthi iyiphi ithebhu ye-Izilungiselelo ekhethiwe; ukushiya
+        ikhasi akusagcwalisi i-console ye-browser ngamaphutha ezicelo
+        ezikhanseliwe; imodeli yokukhulisa izithombe ilandwa ekhelini
+        elisebenzayo kuqala; futhi isifaki asisaphahlazeki ku-Windows uma
+        okukhishwa yiso kulondolozwa efayeleni.</li>
+      <li><strong>Umzuliswano obanzi wokulungiswa kokwethembeka.</strong>
+        Ukulondoloza umdlalo onesihloko esingenalutho akusazilahli ezinye
+        izinguquko zakho. Ukuqala kabusha manje kuvumela imisebenzi
+        esebenzayo ukuthi ime kahle kuqala. I-Create M3U iyenqaba ukubhala
+        phezu kwe-playlist noma ifolda esikhona. Ukusula uhlu lwamafayela
+        angadingekile kumaThuluzi e-ROM manje kusho ukuthi "ungasusi lutho",
+        futhi amaphethini amabili awasawabambi amagama angempela e-ROM afana
+        no-"Release of the Dragon". Ifayela elilodwa lezindondo ze-PS3
+        elonakele alisazisuli izindondo zayo yonke imidlalo. Ukugcwalisa
+        nge-AI kubhala isifunda esisodwa. Ukuhlaziya kubala umdlalo ngamunye
+        kanye eshadini lezilinganiso. Ukungenisa kwe-CLZ kusebenzisa amagama
+        ajwayelekile ezinhlobo. Ezingxoxweni zokuhlela, uhlobo namanye
+        amathegi angasuswa kuzo zonke izilimi, futhi izinqamuleli zekhibhodi
+        azisazithathi u-Ctrl+D noma u-Ctrl+G. Ababukeli babona isimo
+        sokuqedwa komdlalo kodwa abasakwazi ukusishintsha, ngoba sabelwana
+        ngaso yibo bonke.</li>
+      <li><strong>Izifundi-skrini zifunda iswishi ethi Platform Match
+        Required ngegama layo elibonakalayo</strong> ku-Izilungiselelo →
+        Ukuscrapha.</li>
+      <li>Kwezinye izilimi, Izilungiselelo manje zihumusha okuthi "Default
+        Region", futhi ithebhu yokuScrapha ifundeka njengegama esikhundleni
+        sokuthi "ukuscrapha kuyaqhubeka". Amakhasi osizo asebenzisa amagama
+        afanayo.</li>
+      <li><strong>Umdlalo ongavaleki awusakhonjiswa
+        njengovaliwe.</strong> Uma i-emulator isinda ku-Misa, i-RetroDB
+        iqhubeka nokuyikhombisa njengesebenzayo. Ukuqalisa kwe-RetroArch
+        okwenqatshiwe akusabhali ifayela layo lezilungiselelo kuqala, futhi
+        i-emulator ehluleka ngokushesha ikhombisa umlayezo wayo wephutha
+        ekuhloleni kokuqala.</li>
+      <li>Imitapo yolwazi ebuyekeziwe: i-Pillow 13 (ukuphathwa kwezithombe),
+        i-numpy 2.5.4 ne-onnxruntime 1.31 (ukukhulisa izithombe), kanye
+        nezinguqulo zakamuva zamathuluzi okwakha nokukhipha.</li>
+      <li>Ngemuva kwezigcawu: ikhodi yokuqalisa imidlalo ihlelwe kahle ukuze
+        kube lula ukuyilandela, ikhodi engasetshenziswa isusiwe (ikheli le-API,
+        umsizi we-PSN, isikripthi sezindondo esingazange silayishwe yinoma
+        yiliphi ikhasi, nesilungiselelo setimu yesayithi yonke esingazange
+        sifundwe yilutho), izimpendulo ze-app ku-browser zakhiwa endaweni
+        eyodwa, amadokhumenti amaningana omklamo alungisiwe ukuze afane
+        nekhodi, iqoqo lokuhlola lihlelwe kahle, futhi isihloli esisha
+        sibamba iphutha le-syntax ye-JavaScript ngaphambi kokukhishwa.
+        Okufakiwe okudala kwe-Ilogi Yezinguquko obekuchaza ikhodi esusiwe
+        manje kuyasho.</li>
+    </ul>
+- version: 3.29.0
+  date: '2026-10-17'
+  tags:
+  - type: feature
+    label: Amanye amagama omdlalo akhombisa isifunda avela kuso
+  body: |
+    <ul>
+      <li><strong>Amanye amagama omdlalo akhombisa isifunda avela
+        kuso.</strong> Ikhadi elithi Yaziwa nangokuthi ekhasini lomdlalo
+        limaka igama ngalinye ngezwe noma isifunda salo, njengeJapane
+        ku-"Rockman", ngolimi lwakho. Amagama amakiwe eza kuqala, ahlelwe
+        ngesifunda. Beka isikhombi phezu kwegama ukuze ubone umthombo walo
+        nanoma yiliphi inothi, njengokuthi "Working title".</li>
+      <li>Amagama avela ku-IGDB manje agcina isifunda sawo. Ngaphambili,
+        amagama e-ScreenScraper kuphela ayenaso.</li>
+      <li>Ilebula ethi "SS" ye-ScreenScraper ayisaveli njengesifunda.
+        Yigama le-ScreenScraper lomdlalo, hhayi indawo.</li>
+      <li>AmaThuluzi e-ROM → Gcwalisa Izihloko Ezinye manje ihlola yonke
+        imidlalo escraphiwe, ngakho amagama osuvele unawo athola izifunda
+        zawo. Yiqalise kanye ukuze umake umtapo wakho okhona.</li>
+    </ul>
+- version: 3.28.0
+  date: '2026-10-17'
+  tags:
+  - type: feature
+    label: Khombisa i-RetroDB ifolda yakho yama-emulator bese iyawasetha
+  - type: fix
+    label: Ukulungiswa kwekhasi le-Izilungiselelo → Ama-emulator
+  body: |
+    <ul>
+      <li><strong>Khombisa i-RetroDB ifolda yakho yama-emulator bese
+        iyawasetha.</strong> Izilungiselelo → Ama-emulator kunohlu olusha
+        oluthi Amafolda ama-emulator. Engeza ifolda ama-emulator akho
+        ahlala kuyo bese i-RetroDB ithola ngalinye kuyo, njenge-AppImage,
+        isikripthi esiphathekayo noma i-Flatpak efakiwe, futhi ilixhumanise
+        nezistimu elizisebenzisayo. Isistimu esivele ine-emulator esebenzayo
+        iyayigcina.</li>
+      <li><strong>Bona ukuthi yiziphi izistimu ezilungele ukudlalwa.</strong>
+        Ithebula lokuhlobanisa isistimu ngayinye manje libala wonke
+        ama-emulator esistimu ngayinye, lisho ukuthi ngalinye liyasebenza
+        yini, futhi likuvumela ukhethe i-emulator ezenzakalelayo yesistimu.
+        Ku-DuckStation, PCSX2, RPCS3 ne-RetroArch liphinde lisho ukuthi
+        amafayela e-BIOS akhona yini, futhi liqambe lawo angekho. I-RetroDB
+        ifunda kuphela amafayela e-BIOS; ayilokothi ikopishe noma ilande
+        elilodwa.</li>
+      <li>Ukuskena ama-emulator manje kuthola wonke ama-emulator kudrayivu
+        enkulu yama-emulator. Ngaphambili, kwakungama kusenesikhathi
+        ngaphakathi kwefolda yezilungiselelo ye-emulator uqobo.</li>
+      <li>Izinkinobho ze-RetroArch ezithi Auto-detect nethi Londoloza
+        ziyasebenza futhi, futhi iwindi lokuhlela i-emulator alisaveli
+        ekhasini uze ucindezele okuthi Hlela.</li>
+    </ul>
 - version: 3.27.0
   date: '2026-10-17'
   tags:

@@ -1,3 +1,466 @@
+- version: 3.30.0
+  date: '2026-10-21'
+  tags:
+  - type: feature
+    label: Satu game dari beberapa wilayah tampil sebagai satu kartu
+  - type: security
+    label: Isi dengan AI dan Alat ROM lebih sulit disalahgunakan
+  - type: security
+    label: Halaman menolak menjalankan skrip yang diselipkan ke dalamnya
+  - type: fix
+    label: Scrape, tugas Alat ROM, sinkronisasi trofi, dan penyiapan awal menangani kesalahan dengan benar
+  - type: ui
+    label: Tombol di jendela Tentang tidak lagi terpotong
+  - type: accessibility
+    label: Pembaca layar membacakan sakelar Platform Match Required dengan nama yang terlihat
+  - type: accessibility
+    label: Setiap jendela pop-up menangani Escape, fokus keyboard, dan pembaca layar dengan cara yang sama
+  - type: performance
+    label: Scrape selesai lebih cepat; gambar kecil diperbesar di latar belakang
+  - type: feature
+    label: Scrape Ulang Penuh bisa mempertahankan media yang sudah Anda punya
+  - type: fix
+    label: ScreenScraper menemukan game yang judulnya memiliki subjudul
+  - type: fix
+    label: Membuat M3U mempertahankan game di pustaka Anda
+  - type: fix
+    label: Tautan Achievement membuka sistem terakhir Anda, bukan halaman kosong
+  - type: fix
+    label: Game RetroArch dimulai dengan keyboard yang berfungsi dan pemuatan berkecepatan penuh
+  - type: fix
+    label: Game C64, Amiga, DOS, dan komputer rumahan lain menerima setiap tombol yang Anda ketik
+  - type: fix
+    label: Di game C64, stik kanan kontroler menekan tombol kursor dan Start menekan F1
+  - type: ui
+    label: Bilah samping menunjukkan saat gambar masih disempurnakan di latar belakang, dan gambar game yang lebih tajam muncul dengan sendirinya
+  - type: feature
+    label: Manual game terbuka di halaman game dan dibalik seperti buku
+  - type: docs
+    label: Bantuan mencantumkan tombol-tombol RetroArch, dan game komputer berkeyboard menampilkan pengingat Scroll Lock di samping Mainkan
+  - type: ui
+    label: Game hasil impor tanpa berkas ROM tidak lagi menawarkan Mainkan
+  - type: fix
+    label: Menghapus screenshot tidak lagi melaporkan kegagalan padahal berhasil
+  - type: fix
+    label: Path RetroArch yang diatur di baris emulatornya adalah yang dijalankan
+  - type: fix
+    label: Game yang tidak mau tertutup tidak lagi ditampilkan sebagai tertutup
+  - type: deps
+    label: Pillow 13 dan pembaruan pustaka lainnya
+  body: |
+    <ul>
+      <li><strong>Versi regional sebuah game tampil sebagai satu game.</strong>
+        Tautkan versi yang Anda miliki (misalnya rilis AS, Eropa, dan Jepang)
+        dan Pustaka menampilkan satu kartu dengan lencana &#127760;. Kartu itu
+        membuka dan memainkan versi dari Wilayah Bawaan Anda. Halaman game
+        mencantumkan setiap versi berdampingan dan memungkinkan Anda beralih di
+        antaranya. Alat ROM &gt; Versi Regional menyarankan kelompok untuk
+        dikonfirmasi editor; tidak ada yang ditautkan tanpa Anda. Fitur ini
+        tidak pernah menyarankan sekuel sebagai versi dari game pertamanya.
+        Versi yang tertaut tidak lagi dilaporkan sebagai duplikat berdasarkan
+        nama. Jalankan Isi Ulang Judul Alternatif sekali agar saran punya lebih
+        banyak bahan.</li>
+      <li><strong>AI bisa merangkum perbedaan antarversi regional.</strong> Pada
+        game dengan versi yang tertaut, editor dapat menekan Ringkas perbedaan
+        dengan AI di bagian Versi Regional. AI mencantumkan perbedaan yang
+        diketahui, seperti sensor, tingkat kesulitan, atau konten yang dihapus.
+        Daftar itu ditandai sebagai tulisan AI, tampil di halaman setiap versi,
+        dan disembunyikan saat Anda menautkan atau melepas tautan sebuah versi
+        sampai ditulis ulang. Memerlukan penyedia AI yang disiapkan di
+        Pengaturan &gt; Scraping.</li>
+      <li><strong>Game PlayStation dimulai dengan pengaturan yang baik.</strong>
+        Untuk DuckStation, PCSX2, dan RPCS3, RetroDB kini mengatur skala
+        resolusi dan rasio aspek setiap game di berkas pengaturan per-game milik
+        emulator itu sendiri saat Anda menekan Mainkan, serta apakah game
+        dimulai dalam layar penuh. Ubah pengaturan itu untuk seluruh sistem
+        dengan tombol Pengaturan di Pengaturan &gt; Emulator, atau untuk satu
+        game di panel Pengaturan emulator yang baru di halaman game-nya.
+        Pengaturan yang Anda ubah di dalam emulator selalu menang. RetroDB
+        membaca nomor seri setiap disk untuk menemukan berkas yang tepat; disk
+        CHD memerlukan chdman terpasang.</li>
+      <li><strong>Isi dengan AI tidak bisa lagi diarahkan oleh teks yang diketik
+        di kolom sebuah game.</strong> Saat Isi dengan AI memeriksa penerbit,
+        pengembang, edisi, atau platform lain yang sudah ada pada sebuah game,
+        teks itu kini dibersihkan terlebih dahulu, sama seperti judul yang
+        sudah dibersihkan sebelumnya.</li>
+      <li><strong>Pemindaian Alat ROM tetap berada di dalam folder ROM
+        Anda.</strong> Konverter CHD dan Verifikasi CHD tidak lagi mengikuti
+        pintasan (symlink) yang menunjuk ke luar folder itu, dan membongkar
+        arsip multi-disk mengabaikan pintasan apa pun yang dikemas di dalam
+        arsip.</li>
+      <li><strong>Halaman menolak menjalankan skrip yang diselipkan ke
+        dalamnya.</strong> Browser Anda kini memblokir skrip apa pun yang tidak
+        ditulis RetroDB sendiri, sehingga teks yang menyelundupkan kode ke judul
+        game, tag, atau deskripsi hasil scrape tidak bisa menjalankannya. Tombol
+        dan menu bekerja seperti sebelumnya.</li>
+      <li><strong>Satu screenshot rusak tidak lagi menghentikan pemeriksaan
+        duplikat untuk sebuah game.</strong> Screenshot yang tidak bisa dibaca
+        disisihkan dan pemeriksaan berlanjut.</li>
+      <li><strong>Tugas Alat ROM tidak lagi macet di "berjalan".</strong> Berkas
+        yang dihapus setelah pemindaian Verifikasi CHD dihitung tidak valid, dan
+        kesalahan tak terduga apa pun di Konversi CHD, Verifikasi CHD, atau
+        Pencari Duplikat mengakhiri tugas sebagai gagal, dengan kesalahannya di
+        log tugas.</li>
+      <li><strong>Sebelum penyiapan selesai, permintaan data aplikasi mendapat
+        jawaban yang jelas.</strong> Permintaan itu menjawab "Penyiapan
+        diperlukan" alih-alih mengembalikan halaman penyiapan. Halaman tetap
+        membawa Anda ke wizard penyiapan.</li>
+      <li><strong>Sekuel tidak lagi menampilkan achievement game
+        pertama.</strong> Pencocokan RetroAchievements mengabaikan angka pada
+        judul, sehingga Donkey Kong Country 2 dan 3 ditautkan ke Donkey Kong
+        Country. Angka (2, II, 3, III, dan seterusnya) kini diperhitungkan.
+        Untuk memperbaiki game yang sudah tertaut, jalankan Refresh
+        RetroAchievements untuk semua sistem sekali.</li>
+      <li><strong>Sinkronisasi PlayStation tidak lagi menghapus jumlah trofi
+        Anda.</strong> Saat balasan PlayStation tidak menyertakan total trofi
+        sebuah game, RetroDB menyimpan angka nol menimpa jumlah yang sudah ada.
+        Kini jumlah itu dipertahankan, termasuk pada refresh trofi massal.</li>
+      <li><strong>Membuka set trofi yang sudah tidak ada di disk menampilkan
+        pesan.</strong> Halaman Trofi dulu gagal dengan kesalahan; kini halaman
+        itu mengatakan set tidak ditemukan dan membawa Anda kembali ke
+        daftar.</li>
+      <li><strong>Tabel Alat ROM memberi label kolom tombolnya dengan benar di
+        setiap bahasa.</strong> Judul kolom itu berbagi kata dengan genre game
+        Action, sehingga beberapa bahasa menampilkan nama genre di sana.</li>
+      <li><strong>Game GameCube, 3DS, dan Super Famicom mendapat emulatornya
+        secara otomatis.</strong> RetroDB mencari sistem ini dengan nama folder
+        yang tidak dipakai pustaka (gamecube, 3ds, superfamicom alih-alih gc,
+        n3ds, sfc), sehingga Dolphin dan Citra tidak pernah terhubung ke
+        sistem itu. Mulai ulang RetroDB sekali agar perubahan ini
+        diterapkan.</li>
+      <li><strong>Unduhan tanpa Python (mandiri) kembali menyiapkan
+        emulator.</strong> Unduhan itu tidak memiliki berkas yang
+        mencantumkannya.</li>
+      <li><strong>Sekitar 170 tombol, label, dan pesan lagi kini
+        diterjemahkan</strong> di setiap bahasa. Sebelumnya semua itu tampil
+        dalam bahasa Inggris, dan beberapa menampilkan tebakan yang salah
+        (beberapa bahasa menulis "backup gagal" saat game gagal
+        dijalankan).</li>
+      <li><strong>Escape hanya menutup jendela paling atas.</strong> Saat
+        sebuah pertanyaan terbuka di atas jendela lain, Escape dulu menutup
+        keduanya; beberapa jendela juga tetap berjalan setelah Escape
+        menyembunyikannya, dan menekan Escape di halaman game bisa melanjutkan
+        scrape massal yang sudah Anda jeda. Setiap jendela kini ditutup lewat
+        aksi Tutup-nya sendiri, menjaga fokus keyboard di dalamnya selama
+        terbuka, dan mengembalikan fokus ke tombol yang membukanya. Jendela
+        progres untuk tugas yang sedang berjalan tetap terbuka sampai tugasnya
+        selesai.</li>
+      <li><strong>Grafik Analitik tampil dalam bahasa Anda.</strong> Nama genre,
+        perspektif, dimensi, dan mode, judul grafik, nama sumbu, serta legenda
+        sebelumnya berbahasa Inggris di setiap bahasa.</li>
+      <li><strong>Data RetroAchievements lebih aman.</strong> Jika daftar game
+        RetroAchievements untuk sebuah konsol gagal dimuat, Refresh RA kini
+        membiarkan game konsol itu tetap tertaut alih-alih melepas tautan
+        semuanya. Hapus Data RA kini hanya menghapus progres RetroAchievements;
+        progres Steam dan Xbox tetap ada.</li>
+      <li><strong>Kata sandi harus minimal 12 karakter di mana
+        pun.</strong> Penyiapan awal menerima kata sandi administrator dengan
+        panjang berapa pun, dan halaman ganti kata sandi wajib serta halaman
+        penyiapan mengatakan 4 karakter sudah cukup. Ketiganya kini meminta 12,
+        sama seperti bagian aplikasi lainnya.</li>
+      <li><strong>Total achievement kini benar, dan milik Anda sendiri.</strong>
+        Menyinkronkan satu game dari RetroAchievements kini menyimpan berapa
+        banyak achievement yang dimilikinya, bukan 0. Total achievement di
+        dasbor hanya menghitung game Anda, dan trofi Kolektor tidak lagi
+        menghitung setiap achievement Steam atau Xbox dua kali.</li>
+      <li><strong>Sinkronisasi latar belakang memakai akun Anda sendiri.</strong>
+        Sinkronisasi sistem RetroAchievements masuk dengan akun
+        RetroAchievements Anda sendiri bila Anda sudah mengaturnya. Refresh
+        massal PlayStation memakai ulang login Anda yang tersimpan alih-alih
+        masuk dari awal setiap kali.</li>
+      <li><strong>Hanya Anda yang bisa menghentikan atau melanjutkan
+        sinkronisasi Anda.</strong> Pengguna lain tidak lagi bisa membatalkan
+        sinkronisasi RetroAchievements, Steam, atau Xbox Anda, dan melanjutkan
+        tugas yang terputus memerlukan hak yang sama seperti memulainya. Admin
+        tetap bisa melakukan keduanya.</li>
+      <li><strong>Folder trofi RPCS3 Anda diperiksa saat Anda
+        menyimpannya.</strong> Folder yang tidak ada, bukan path lengkap, atau
+        merupakan folder sistem akan ditolak, seperti yang sudah berlaku di
+        pengaturan utama.</li>
+      <li><strong>"Ambil Semua Gambar" di Museum berjalan di latar
+        belakang.</strong> Halaman tidak lagi menunggu bermenit-menit untuk
+        setiap gambar kontroler. Halaman menunjukkan seberapa jauh pengambilan
+        berjalan, punya tombol Batal, dan melanjutkan tampilan progres jika Anda
+        meninggalkan halaman lalu kembali.</li>
+      <li><strong>Alat ROM melindungi berkas Anda dengan lebih baik.</strong>
+        Bersihkan tidak lagi mengosongkan arsip: pola seperti <code>*</code>
+        tidak bisa disimpan, dan Bersihkan berhenti jika pola akan menghapus
+        setiap berkas. Konverter CHD mempertahankan berkas asli saat "verifikasi"
+        mati, dan membiarkan CHD yang sudah ada saat "lewati yang sudah ada"
+        aktif. Pencari Duplikat selalu menyimpan satu salinan setiap game,
+        bahkan jika sebuah permintaan meminta semuanya.</li>
+      <li><strong>Tugas Alat ROM berperilaku sesuai tombolnya.</strong> Jeda
+        kini menjeda Konversi CHD, Verifikasi CHD, Pencari Duplikat, dan Dedup
+        Screenshot, dan tugas yang dijeda bisa dibatalkan. Pemindaian Dedup
+        Screenshot yang menemui kesalahan kini berakhir sebagai gagal alih-alih
+        berjalan selamanya.</li>
+      <li><strong>Membuat M3U tidak lagi menaruh arsip di folder
+        sementara.</strong> Arsip yang dipindahkan kini masuk ke folder data
+        milik RetroDB sendiri, yang tidak dikosongkan saat mulai ulang. Pemindai
+        arsip menunjukkan ke mana arsip itu dipindahkan, dan konfirmasi batch
+        mengatakan arsip akan dipindahkan. Mengatur ulang pengaturan Alat ROM
+        kini mengatur ulang setiap opsi.</li>
+      <li><strong>Ganti disk dari RetroDB.</strong> Saat game RetroArch yang
+        dimulai dari daftar disk .m3u sedang berjalan, daftar &#9654; Sedang
+        dimainkan di bagian atas setiap halaman menampilkan judul game dan
+        tombol Disk berikutnya, sehingga game yang meminta sisi kedua bisa
+        berlanjut dengan satu klik, dari browser atau ponsel. RetroArch harus
+        mengaktifkan Settings &gt; Network &gt; Network Commands (port 55355);
+        tombol akan memberi tahu jika opsi itu mati.</li>
+      <li><strong>Skrip start-up membuka RetroDB saat sudah siap.</strong>
+        start.sh, start.command, dan start.bat dulu membuka browser setelah 3
+        detik tetap, sering sebelum server bisa menjawab, sehingga halaman
+        gagal dimuat. RetroDB kini membukanya begitu server mendengarkan. Jika
+        dijalankan dari LocalWebServerManager, tidak ada halaman yang dibuka
+        sama sekali; gunakan tombol Open di manager itu.</li>
+      <li><strong>Video game bisa berukuran hingga 500 MB.</strong> Batasnya
+        dulu 50 MB, terlalu kecil untuk kebanyakan trailer game. Unggahan yang
+        terlalu besar kini menampilkan pesan di halaman game alih-alih
+        mengganti halaman dengan teks biasa. Video yang ditolak (terlalu besar
+        atau jenis berkas salah) kini memberi tahu alih-alih dibuang tanpa
+        sepatah kata.</li>
+      <li><strong>Peluncuran mengikuti path yang Anda atur.</strong> Path
+        binary pengganti di baris RetroArch di Pengaturan &gt; Emulator kini
+        menang atas path RetroArch di bagian atas halaman itu; dulu path baris
+        itu diabaikan. Menekan Stop dua kali tidak lagi meminta game keluar dua
+        kali; di Linux, RetroArch menganggap permintaan kedua sebagai "keluar
+        tanpa menyimpan", sehingga save dalam game Anda bisa hilang.
+        Pengaturan peluncur sisa dari mode jarak jauh yang tidak pernah dibuat
+        tidak lagi menghentikan setiap game untuk dimulai.</li>
+      <li><strong>Aksi yang gagal melaporkan kesalahannya dengan benar.</strong>
+        Saat menyimpan, mengimpor, menyinkronkan, atau memindai gagal, RetroDB
+        kini menjawab dengan status kesalahan yang sebenarnya dan menampilkan
+        alasannya di pesannya, alih-alih menjawab seolah-olah berhasil.
+        Menyimpan kode login PSN yang tidak bisa terhubung tidak lagi
+        menampilkan detail kesalahan internal. Login, pengelolaan pengguna,
+        profil Anda, achievement, impor, Isi dengan AI, dan pencarian
+        HowLongToBeat kini melakukan hal yang sama, dan bahasa yang tidak bisa
+        disimpan mengatakan alasannya alih-alih "Kesalahan jaringan".</li>
+      <li><strong>Game yang dinamai dengan gaya No-Intro kini bisa
+        di-scrape.</strong> Judul seperti "Legend of Zelda, The" atau "Legend
+        of Zelda, The - Ocarina of Time" kini cocok dengan hasil "The Legend of
+        Zelda" alih-alih ditolak oleh filter pencocokan. Laporan ROM juga
+        berhenti menandai nama seperti itu sebagai tidak cocok.</li>
+      <li><strong>Judul yang diambil dari nama berkas kehilangan semua
+        tagnya.</strong> Wilayah gabungan seperti "(USA, Europe)" dan "(UK)"
+        kini dihapus. Pada komputer rumahan seperti ZX Spectrum, semua mulai
+        dari tahun dan seterusnya dibuang, sehingga "Chuckie Egg 2 (UK) (1985)
+        (A'n'F Software) (tzx)" menjadi "Chuckie Egg 2". Nama berkas yang
+        diakhiri "..zip" tidak lagi menyisakan titik nyasar. Pencarian scraper,
+        pengaturan ulang data game, dan saran Versi Regional memakai nama yang
+        lebih bersih ini.</li>
+      <li><strong>Judul yang salah tidak lagi terulang saat scrape
+        ulang.</strong> Scrape massal kini mencari dengan nama dari berkas ROM,
+        bukan judul yang tersimpan untuk game itu. Game yang pernah cocok
+        dengan game yang salah akan menemukan yang benar saat di-scrape
+        lagi.</li>
+      <li><strong>Scraper mengutamakan Wilayah Bawaan Anda.</strong> Saat dua
+        hasil seri, hasil dari Wilayah Bawaan Anda atau World kini menang, tidak
+        selalu yang dari AS. Dua judul yang hanya berupa tag wilayah tidak lagi
+        dihitung sebagai cocok sempurna. Versi Regional tidak lagi mengira X di
+        "X-Men" sebagai nomor sekuel. Memilih versi yang ditampilkan kartu kini
+        hanya membaca nama berkas ROM, bukan folder di atasnya, dan memahami
+        tag lama seperti "(U)" dan "(E)".</li>
+      <li><strong>Log menunjukkan ke mana waktu scrape setiap game
+        terpakai.</strong> Setelah setiap game, RetroDB mencatat satu baris
+        berisi detik yang dihabiskan untuk mencari, di setiap sumber, mengunduh,
+        memproses gambar, di AI, dan menyimpan. Ini langkah pertama menuju
+        scrape yang lebih cepat.</li>
+      <li><strong>Scrape selesai lebih cepat: gambar kecil dipertajam
+        sesudahnya.</strong> Scrape kini menyimpan game dengan gambarnya apa
+        adanya seperti yang diunduh. Box art dan screenshot yang kecil lalu
+        diperbesar di latar belakang, satu game setiap kali. Screenshot
+        duplikat dibuang sebelum semua pekerjaan itu. Jika RetroDB berhenti di
+        tengah jalan, prosesnya berlanjut saat RetroDB dimulai lagi.</li>
+      <li><strong>Baca manual game di halamannya.</strong> Tombol Manual kini
+        membuka PDF di jendela di atas halaman game. Balik halaman dengan
+        Sebelumnya dan Berikutnya, tombol panah, Home dan End, atau geser di
+        ponsel; setiap halaman dibalik seperti halaman buku, atau langsung
+        berganti jika sistem Anda meminta lebih sedikit gerakan. "Buka PDF di
+        tab baru" masih ada, dan Ctrl-klik pada Manual langsung membuka
+        tab.</li>
+      <li><strong>Bilah samping menunjukkan saat gambar masih
+        disempurnakan.</strong> Selama gambar dipertajam di latar belakang,
+        bilah samping bertuliskan "Menyempurnakan gambar — Game tersisa: N".
+        Game yang masih menunggu memberi tahu di halamannya, dan gambarnya yang
+        lebih tajam muncul di sana dengan sendirinya saat sudah siap. Sakelar
+        sampul 2D/3D tidak lagi menutupi baris itu.</li>
+      <li><strong>Sumber cadangan ditanya secara bersamaan.</strong> Saat
+        sumber utama meninggalkan celah, RetroDB kini menanyai semua sumber
+        lain sekaligus alih-alih satu per satu. Jawaban mereka tetap dipakai
+        sesuai urutan di Pengaturan Anda, sehingga sumber yang sama menang di
+        setiap kolom.</li>
+      <li><strong>ES-DE membaca daftar game-nya sekali.</strong> Setiap scrape,
+        termasuk scrape massal, dulu membaca gamelist.xml ES-DE sebuah sistem
+        dua kali untuk setiap game. RetroDB kini membacanya sekali dan
+        membacanya lagi hanya saat berkas itu berubah.</li>
+      <li><strong>Terapkan di Cari Metadata tidak lagi mencari ulang.</strong>
+        Di halaman game, hasil yang Anda centang diambil langsung dari
+        sumbernya alih-alih dicari untuk kedua kalinya. Jika tidak ada yang
+        dicentang, hanya sumber yang Anda terapkan dan AI yang mengisi
+        celah.</li>
+      <li><strong>ScreenScraper menemukan game dengan subjudul.</strong>
+        ScreenScraper tidak menemukan apa pun untuk judul seperti "Alone in the
+        Dark: The New Nightmare" kecuali titik dua diawali spasi. RetroDB kini
+        mencarinya dengan cara itu, lalu dengan bagian sebelum titik dua jika
+        masih tidak ditemukan apa-apa.</li>
+      <li><strong>Game yang tidak punya apa pun untuk dimainkan tidak lagi
+        menawarkan Mainkan.</strong> Game yang ditambahkan dari impor CLZ,
+        Steam, Xbox, atau PSN tidak punya berkas ROM. Halamannya kini tidak
+        menampilkan tombol Mainkan, Pengaturan emulator, atau bagian
+        Peluncuran saat Anda mengeditnya, sama seperti kartu di Pustaka.</li>
+      <li><strong>Game RetroArch terlindung dari dua pengaturan
+        buruk.</strong> RetroDB kini memberi RetroArch berkas pengaturan kecil
+        miliknya sendiri setiap kali memulai game, di atas pengaturan Anda.
+        Berkas itu menyesuaikan keyboard dengan desktop Anda (Wayland atau X11),
+        sehingga keyboard tidak pernah mati, dan membiarkan fast-forward
+        berjalan dengan kecepatan penuh, yang dipakai game Commodore 64 untuk
+        memuat dengan cepat. Semua pengaturan RetroArch Anda yang lain tidak
+        disentuh.</li>
+      <li><strong>Membuat M3U mempertahankan game di pustaka Anda.</strong>
+        Mengubah arsip multi-disk menjadi playlist dulu membuat game tetap
+        menunjuk ke arsip, yang sudah dipindahkan. Game kini menunjuk ke
+        playlist baru dan mempertahankan detail serta gambarnya. Saat satu
+        arsip berisi beberapa rilis sebuah game, masing-masing dengan set
+        disknya sendiri, playlist kini memakai disk rilis pertama alih-alih
+        semuanya, dan memberi tahu disk mana yang ditinggalkan.</li>
+      <li><strong>Scrape Ulang Penuh bisa mempertahankan media yang sudah Anda
+        punya.</strong> Centang "Pertahankan media yang ada" di samping sakelar
+        Scrape Ulang Penuh. Detail teks tetap diperbarui, tetapi art, video, dan
+        manual yang sudah ada di disk tetap seperti apa adanya alih-alih
+        diunduh lagi. Tanpa centang itu, Scrape Ulang Penuh tidak lagi membuang
+        screenshot yang sudah diunduhnya sebelumnya.</li>
+      <li><strong>Tugas latar belakang tidak lagi kehilangan atau melewatkan
+        pekerjaan.</strong> Refresh RetroAchievements yang menemui satu game
+        bermasalah tidak lagi membuang game yang sudah diperbaruinya.
+        Sinkronisasi atau refresh yang dilanjutkan tidak lagi melewatkan game
+        yang sedang diproses saat berhenti. Sinkronisasi RetroAchievements atau
+        Steam yang dilanjutkan dari snapshot yang sangat lama kini berhenti
+        dengan pesan alih-alih melaporkan berhasil tanpa menyinkronkan apa pun.
+        Konversi WebP memeriksa berkas WebP sisa sebelum memercayainya, dan
+        tidak akan dimulai jika tidak bisa membaca ruang disk yang tersisa.</li>
+      <li><strong>Memperbarui instalasi yang sangat lama tidak lagi bisa
+        kehilangan data diam-diam.</strong> Tiga langkah pembaruan database
+        lama bisa membuang baris dalam keadaan langka. Kini langkah itu
+        menyalin baris, atau berhenti dengan kesalahan yang jelas alih-alih
+        kehilangannya.</li>
+      <li><strong>Tombol di jendela Tentang tidak lagi terpotong.</strong>
+        Jendelanya lebih lebar dan keempat tombolnya berada di dua baris,
+        sehingga setiap label tampil utuh; di ponsel tombol-tombol itu
+        bertumpuk.</li>
+      <li><strong>Tema Anda mengikuti Anda ke browser baru.</strong> Masuk di
+        browser yang belum pernah Anda pakai kini menampilkan tema tersimpan
+        Anda. Dulu halaman login menyimpan Cyberpunk lebih dulu dan tema itu
+        terus melekat.</li>
+      <li><strong>Kotak kata sandi login tidak lagi bertuliskan "Admin
+        Login".</strong> Setiap akun masuk dengan kata sandi, jadi dialognya
+        kini cukup bertuliskan Masuk. Halaman Akun dan halaman Bantuan juga
+        mengatakan demikian.</li>
+      <li><strong>Bantuan kini terbaru di setiap bahasa.</strong> Halaman
+        Bantuan yang diterjemahkan kini menjelaskan Versi Regional, mengatakan
+        setiap akun memerlukan kata sandi, dan mengatakan tema Anda disimpan
+        bersama akun Anda. Bantuan di setiap bahasa, termasuk bahasa Inggris,
+        kini menyebutkan batas minimum kata sandi 12 karakter yang
+        sebenarnya.</li>
+      <li><strong>Perbaikan kecil:</strong> fanart yang nama berkasnya memiliki
+        apostrof kini tampil di halaman game dan trofi; Pengaturan tidak lagi
+        menampilkan kesalahan skrip untuk akun non-admin, dan pembaca layar
+        kini mendengar tab Pengaturan mana yang dipilih; meninggalkan halaman
+        tidak lagi memenuhi konsol browser dengan kesalahan permintaan yang
+        dibatalkan; model upscaler diunduh dari alamat yang berfungsi lebih
+        dulu; dan installer tidak lagi crash di Windows saat keluarannya
+        disimpan ke berkas.</li>
+      <li><strong>Serangkaian luas perbaikan keandalan.</strong> Menyimpan game
+        dengan judul kosong tidak lagi menghilangkan editan Anda yang lain.
+        Mulai ulang kini membiarkan tugas yang berjalan berhenti dengan rapi
+        lebih dulu. Membuat M3U menolak menimpa playlist atau folder yang sudah
+        ada. Mengosongkan daftar berkas yang tidak diinginkan di Alat ROM kini
+        berarti "jangan hapus apa pun", dan dua pola tidak lagi menangkap nama
+        ROM sungguhan seperti "Release of the Dragon". Satu berkas trofi PS3
+        yang rusak tidak lagi mengosongkan trofi setiap game. Isi dengan AI
+        menulis satu wilayah. Analitik menghitung setiap game sekali di grafik
+        rating. Impor CLZ memakai nama genre standar. Di dialog edit, genre dan
+        tag lain bisa dihapus di setiap bahasa, dan pintasan keyboard tidak
+        lagi membajak Ctrl+D atau Ctrl+G. Viewer bisa melihat status
+        penyelesaian game tetapi tidak lagi bisa mengubahnya, karena status itu
+        dibagi oleh semua orang.</li>
+      <li><strong>Pembaca layar membacakan sakelar Platform Match Required
+        dengan nama yang terlihat</strong> di Pengaturan → Scraping.</li>
+      <li>Dalam bahasa lain, Pengaturan kini menerjemahkan "Wilayah Bawaan",
+        dan tab Scraping terbaca sebagai nama, bukan "scraping sedang
+        berlangsung". Halaman bantuan memakai kata-kata yang sama.</li>
+      <li><strong>Game yang tidak mau tertutup tidak lagi ditampilkan sebagai
+        tertutup.</strong> Jika emulator tetap hidup setelah Stop, RetroDB terus
+        menampilkannya sebagai berjalan. Peluncuran RetroArch yang ditolak
+        tidak lagi menulis berkas pengaturannya lebih dulu, dan emulator yang
+        langsung gagal menampilkan pesan kesalahannya pada pemeriksaan
+        pertama.</li>
+      <li>Pustaka yang diperbarui: Pillow 13 (penanganan gambar), numpy 2.5.4
+        dan onnxruntime 1.31 (upscaling), serta versi terbaru alat build dan
+        rilis.</li>
+      <li>Di balik layar: kode peluncuran game dirapikan agar lebih mudah
+        diikuti, kode yang tidak terpakai dihapus (sebuah alamat API, sebuah
+        helper PSN, skrip trofi yang tidak dimuat halaman mana pun, dan
+        pengaturan tema seluruh situs yang tidak dibaca apa pun), balasan
+        aplikasi ke browser dibuat di satu tempat, beberapa dokumen desain
+        dikoreksi agar sesuai dengan kode, rangkaian tes dirapikan, dan
+        pemeriksaan baru menangkap kesalahan sintaks JavaScript sebelum rilis.
+        Entri log perubahan lama yang menjelaskan kode yang dihapus kini
+        menyebutkannya.</li>
+    </ul>
+- version: 3.29.0
+  date: '2026-10-17'
+  tags:
+  - type: feature
+    label: Nama lain sebuah game menunjukkan wilayah asalnya
+  body: |
+    <ul>
+      <li><strong>Nama lain sebuah game menunjukkan wilayah
+        asalnya.</strong> Kartu Juga Dikenal Sebagai di halaman game menandai
+        setiap nama dengan negara atau wilayahnya, seperti Jepang untuk
+        "Rockman", dalam bahasa Anda sendiri. Nama yang bertanda tampil lebih
+        dulu, dikelompokkan per wilayah. Arahkan kursor ke sebuah nama untuk
+        melihat sumbernya dan catatan apa pun, seperti "Working title".</li>
+      <li>Nama dari IGDB kini mempertahankan wilayahnya. Sebelumnya hanya nama
+        dari ScreenScraper yang memilikinya.</li>
+      <li>Label "SS" milik ScreenScraper tidak lagi tampil sebagai wilayah. Itu
+        adalah nama ScreenScraper sendiri untuk game tersebut, bukan
+        tempat.</li>
+      <li>Alat ROM → Isi Ulang Judul Alternatif kini memeriksa setiap game yang
+        sudah di-scrape, sehingga nama yang sudah Anda miliki mendapat
+        wilayahnya. Jalankan sekali untuk menandai pustaka Anda yang
+        ada.</li>
+    </ul>
+- version: 3.28.0
+  date: '2026-10-17'
+  tags:
+  - type: feature
+    label: Arahkan RetroDB ke folder emulator Anda dan RetroDB akan menyiapkannya
+  - type: fix
+    label: Perbaikan halaman Pengaturan → Emulator
+  body: |
+    <ul>
+      <li><strong>Arahkan RetroDB ke folder emulator Anda dan RetroDB akan
+        menyiapkannya.</strong> Pengaturan → Emulator memiliki daftar Folder
+        emulator yang baru. Tambahkan folder tempat emulator Anda berada dan
+        RetroDB menemukan setiap emulator di dalamnya, sebagai AppImage, skrip
+        portabel, atau Flatpak yang terpasang, lalu menautkannya ke sistem yang
+        dijalankannya. Sistem yang sudah punya emulator yang berfungsi tetap
+        memakainya.</li>
+      <li><strong>Lihat sistem mana yang siap dimainkan.</strong> Tabel
+        pemetaan per sistem kini mencantumkan emulator setiap sistem,
+        mengatakan apakah masing-masing berfungsi, dan memungkinkan Anda
+        memilih emulator bawaan sebuah sistem. Untuk DuckStation, PCSX2, RPCS3,
+        dan RetroArch, tabel itu juga mengatakan apakah berkas BIOS sudah ada,
+        dan menyebutkan yang hilang. RetroDB hanya membaca berkas BIOS; RetroDB
+        tidak pernah menyalin atau mengunduhnya.</li>
+      <li>Pemindaian emulator kini menemukan setiap emulator di drive emulator
+        yang besar. Sebelumnya pemindaian bisa berhenti terlalu awal di dalam
+        folder pengaturan milik emulator itu sendiri.</li>
+      <li>Tombol Deteksi otomatis dan Simpan untuk RetroArch berfungsi lagi, dan
+        jendela Edit emulator tidak lagi tampil di halaman sampai Anda menekan
+        Edit.</li>
+    </ul>
 - version: 3.27.0
   date: '2026-10-17'
   tags:

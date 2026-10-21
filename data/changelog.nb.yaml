@@ -1,3 +1,431 @@
+- version: 3.30.0
+  date: '2026-10-21'
+  tags:
+  - type: feature
+    label: Ett spill fra flere regioner vises som ett kort
+  - type: security
+    label: AI-utfylling og ROM-verktøy er vanskeligere å misbruke
+  - type: security
+    label: Sider nekter å kjøre skript som er smuglet inn i dem
+  - type: fix
+    label: Skraping, ROM-verktøy-jobber, trofésynkronisering og førstegangsoppsettet håndterer feil riktig
+  - type: ui
+    label: Knappene i Om-vinduet kuttes ikke lenger av
+  - type: accessibility
+    label: Skjermlesere leser bryteren Platform Match Required med det synlige navnet
+  - type: accessibility
+    label: Alle popup-vinduer håndterer Escape, tastaturfokus og skjermlesere på samme måte
+  - type: performance
+    label: Skraping blir ferdig raskere; små bilder forstørres i bakgrunnen
+  - type: feature
+    label: Full reskraping kan beholde mediene du allerede har
+  - type: fix
+    label: ScreenScraper finner spill med undertittel
+  - type: fix
+    label: Opprett M3U beholder spillet i biblioteket ditt
+  - type: fix
+    label: Prestasjoner-lenken åpner det siste systemet ditt i stedet for en tom side
+  - type: fix
+    label: RetroArch-spill starter med et tastatur som virker og lasting i full fart
+  - type: fix
+    label: C64-, Amiga-, DOS- og andre hjemmedataspill får med seg hver tast du skriver
+  - type: fix
+    label: I C64-spill trykker høyre stikke på en kontroller piltastene, og Start trykker F1
+  - type: ui
+    label: Sidepanelet viser når bilder fortsatt forbedres i bakgrunnen, og et spills skarpere bilder dukker opp av seg selv
+  - type: feature
+    label: Spillmanualer åpnes på spillsiden og blas som en bok
+  - type: docs
+    label: Hjelp lister RetroArchs taster, og tastaturdataspill viser en Scroll Lock-påminnelse ved siden av Spill
+  - type: ui
+    label: Importerte spill uten ROM-fil tilbyr ikke lenger Spill
+  - type: fix
+    label: Sletting av et skjermbilde melder ikke lenger feil etter at det virket
+  - type: fix
+    label: En RetroArch-sti satt på emulatorens rad er den som starter
+  - type: fix
+    label: Et spill som ikke vil lukkes, vises ikke lenger som lukket
+  - type: deps
+    label: Pillow 13 og andre bibliotekoppdateringer
+  body: |
+    <ul>
+      <li><strong>Regionale versjoner av et spill vises som ett spill.</strong>
+        Koble sammen versjonene du har (for eksempel den amerikanske, europeiske
+        og japanske utgaven), så viser Bibliotek ett kort med et &#127760;-merke.
+        Kortet åpner og spiller versjonen fra Standardregion. Spillsiden viser
+        alle versjonene side om side og lar deg bytte mellom dem. ROM-verktøy
+        &gt; Regionale versjoner foreslår grupper som redaktører bekrefter;
+        ingenting kobles uten deg. Den foreslår aldri en oppfølger som en versjon
+        av det første spillet. Sammenkoblede versjoner rapporteres ikke lenger
+        som duplikater på grunn av navnet. Kjør Etterfyll alternative titler én
+        gang for å gi forslagene mer å jobbe med.</li>
+      <li><strong>AI kan oppsummere hvordan regionale versjoner er
+        forskjellige.</strong> På et spill med sammenkoblede versjoner kan
+        redaktører trykke Oppsummer forskjeller med AI i avsnittet Regionale
+        versjoner. AI-en lister kjente forskjeller som sensur, vanskelighetsgrad
+        eller fjernet innhold. Listen er merket som skrevet av AI, vises på
+        siden til hver versjon, og skjules når du kobler til eller fra en
+        versjon, til den er skrevet på nytt. Krever at en AI-leverandør er satt
+        opp i Innstillinger &gt; Skraping.</li>
+      <li><strong>PlayStation-spill starter med gode innstillinger.</strong> For
+        DuckStation, PCSX2 og RPCS3 setter RetroDB nå oppløsningsskala og
+        sideforhold for hvert spill i emulatorens egen innstillingsfil per spill
+        når du trykker Spill, og om spillet starter i fullskjerm. Endre dem for
+        et helt system med Settings-knappen i Innstillinger &gt; Emulatorer,
+        eller for ett spill i det nye panelet Emulatorinnstillinger på
+        spillsiden. En innstilling du endrer inne i emulatoren, vinner alltid.
+        RetroDB leser serienummeret på hver disk for å finne riktig fil;
+        CHD-disker krever at chdman er installert.</li>
+      <li><strong>AI-utfylling kan ikke lenger styres av tekst skrevet inn i et
+        spills felt.</strong> Når AI-utfylling sjekker et spills eksisterende
+        utgiver, utvikler, utgave eller andre plattformer, renser den nå teksten
+        først, slik den allerede renset tittelen.</li>
+      <li><strong>Skanninger i ROM-verktøy holder seg inne i ROM-mappen
+        din.</strong> CHD-konverterer og CHD-verifisering følger ikke lenger en
+        snarvei (symbolsk lenke) som peker ut av den, og utpakking av et
+        flerdiskarkiv ignorerer snarveier som er pakket inn i arkivet.</li>
+      <li><strong>Sider nekter å kjøre skript som er smuglet inn i
+        dem.</strong> Nettleseren din blokkerer nå alle skript RetroDB ikke har
+        skrevet selv, så tekst som sniker kode inn i et spills tittel, en
+        merkelapp eller en skrapet beskrivelse, kan ikke kjøre den. Knapper og
+        menyer virker som før.</li>
+      <li><strong>Ett ødelagt skjermbilde stopper ikke lenger duplikatsjekker
+        for et spill.</strong> Et skjermbilde som ikke kan leses, legges til side,
+        og sjekken fortsetter.</li>
+      <li><strong>ROM-verktøy-jobber blir ikke lenger hengende på
+        «kjører».</strong> En fil som er slettet etter en CHD-verifiseringsskanning,
+        telles som ugyldig, og enhver uventet feil i CHD-konvertering,
+        CHD-verifisering eller Duplikatsøker avslutter jobben som mislykket, med
+        feilen i loggen.</li>
+      <li><strong>Før oppsettet er ferdig, får appens dataforespørsler et tydelig
+        svar.</strong> De svarer «Oppsett kreves» i stedet for å sende tilbake
+        oppsettsiden. Sider tar deg fortsatt til oppsettveiviseren.</li>
+      <li><strong>Oppfølgere viser ikke lenger prestasjonene til det første
+        spillet.</strong> RetroAchievements-matchingen overså tallet i en tittel,
+        så Donkey Kong Country 2 og 3 ble koblet til Donkey Kong Country. Tall (2,
+        II, 3, III og så videre) teller nå. For å rette opp spill som allerede er
+        koblet, kjør Oppdater RetroAchievements for alle systemer én gang.</li>
+      <li><strong>En PlayStation-synkronisering visker ikke lenger ut
+        trofétallene dine.</strong> Når svaret fra PlayStation manglet et spills
+        trofétotaler, lagret RetroDB nuller over tallene den allerede hadde. Nå
+        beholder den dem, også i masseoppdateringen av trofeer.</li>
+      <li><strong>Å åpne et trofésett som ikke lenger finnes på disken, viser en
+        melding.</strong> Trofeer-siden feilet tidligere med en feil; nå sier den
+        at settet ikke ble funnet, og tar deg tilbake til listen.</li>
+      <li><strong>Tabellene i ROM-verktøy merker knappekolonnen riktig på alle
+        språk.</strong> Kolonneoverskriften delte ordlyd med spillsjangeren
+        Action, så noen språk viste sjangernavnet der.</li>
+      <li><strong>GameCube-, 3DS- og Super Famicom-spill får emulatoren satt opp
+        automatisk.</strong> RetroDB lette etter disse systemene under
+        mappenavn som biblioteker ikke bruker (gamecube, 3ds, superfamicom i
+        stedet for gc, n3ds, sfc), så Dolphin og Citra ble aldri koblet til dem.
+        Start RetroDB på nytt én gang for å ta dette i bruk.</li>
+      <li><strong>Nedlastingen uten Python (frittstående) setter opp emulatorer
+        igjen.</strong> Den manglet filen som lister dem.</li>
+      <li><strong>Rundt 170 flere knapper, etiketter og meldinger er
+        oversatt</strong> på alle språk. De ble vist på engelsk før, og noen få
+        viste en feil gjetning (noen språk sa «sikkerhetskopiering mislyktes» når
+        et spill ikke kunne startes).</li>
+      <li><strong>Escape lukker bare vinduet som ligger øverst.</strong> Med et
+        spørsmål åpent over et annet vindu lukket Escape tidligere begge; noen
+        vinduer fortsatte også å kjøre etter at Escape skjulte dem, og Escape på
+        en spillside kunne gjenoppta en masseskraping du hadde satt på pause.
+        Hvert vindu lukkes nå med sin egen Lukk-handling, holder tastaturfokus
+        inne i seg mens det er åpent, og gir fokus tilbake til knappen som åpnet
+        det. Fremdriftsvinduer for jobber som kjører, holder seg åpne til jobben
+        er ferdig.</li>
+      <li><strong>Diagrammene i Analyse er på ditt språk.</strong> Navn på
+        sjangre, perspektiver, dimensjoner og moduser, diagramtitler, aksenavn og
+        forklaringer var på engelsk på alle språk.</li>
+      <li><strong>RetroAchievements-data er tryggere.</strong> Hvis
+        RetroAchievements-spillisten for en konsoll ikke kan lastes, lar
+        RA-oppdatering nå den konsollens spill være koblet i stedet for å koble
+        fra alle. Fjern RA-data fjerner nå bare RetroAchievements-fremdrift;
+        fremdrift fra Steam og Xbox blir værende.</li>
+      <li><strong>Passord må være minst 12 tegn overalt.</strong>
+        Førstegangsoppsettet godtok et administratorpassord av hvilken som helst
+        lengde, og sidene for tvunget passordbytte og oppsett sa at 4 tegn var
+        nok. Alle tre ber nå om 12, som resten av appen.</li>
+      <li><strong>Prestasjonstotalene stemmer, og er dine egne.</strong> Når du
+        synkroniserer ett spill fra RetroAchievements, lagres nå hvor mange
+        prestasjoner det har, i stedet for 0. Prestasjonstotalene i Oversikt
+        teller bare spillene dine, og Samlertrofeer teller ikke lenger hver
+        Steam- eller Xbox-prestasjon to ganger.</li>
+      <li><strong>Synkroniseringer i bakgrunnen bruker dine egne
+        kontoer.</strong> En RetroAchievements-systemsynkronisering logger inn
+        med din egen RetroAchievements-konto når du har satt opp en.
+        Masseoppdateringen for PlayStation gjenbruker den lagrede innloggingen
+        din i stedet for å logge inn fra bunnen av hver gang.</li>
+      <li><strong>Bare du kan stoppe eller gjenoppta din egen
+        synkronisering.</strong> En annen bruker kan ikke lenger avbryte
+        RetroAchievements-, Steam- eller Xbox-synkroniseringen din, og å
+        gjenoppta en avbrutt jobb krever de samme rettighetene som å starte den.
+        Administratorer kan fortsatt gjøre begge deler.</li>
+      <li><strong>RPCS3-trofémappen din sjekkes når du lagrer den.</strong> En
+        mappe som ikke finnes, ikke er en full sti eller er en systemmappe, blir
+        avvist, slik den allerede ble i hovedinnstillingene.</li>
+      <li><strong>«Hent alle bilder» i Museum kjører i bakgrunnen.</strong> Siden
+        venter ikke lenger i minutter på hvert kontrollerbilde. Den viser hvor
+        langt hentingen har kommet, har en Avbryt-knapp og tar opp igjen
+        fremdriften hvis du forlater siden og kommer tilbake.</li>
+      <li><strong>ROM-verktøy beskytter filene dine bedre.</strong> Rydding
+        tømmer ikke lenger et arkiv: et mønster som <code>*</code> kan ikke
+        lagres, og ryddingen stopper hvis mønstrene ville fjerne alle filene.
+        CHD-konverterer beholder originalen når «verify» er av, og lar en
+        eksisterende CHD være i fred når «skip existing» er på. Duplikatsøker
+        beholder alltid én kopi av hvert spill, selv om en forespørsel ber om
+        alle.</li>
+      <li><strong>ROM-verktøy-jobber gjør det knappene sier.</strong> Pause setter
+        nå CHD-konvertering, CHD-verifisering, Duplikatsøker og
+        Skjermbildeduplikatfjerning på pause, og en jobb på pause kan avbrytes.
+        En skanning i Skjermbildeduplikatfjerning som får en feil, avsluttes nå
+        som mislykket i stedet for å kjøre for alltid.</li>
+      <li><strong>Opprett M3U legger ikke lenger arkiver i en midlertidig
+        mappe.</strong> Flyttede arkiver havner nå i RetroDBs egen datamappe,
+        som ikke tømmes ved omstart. Arkivskanner viser hvor de ble av, og
+        bekreftelsen for masseoppretting sier at de blir flyttet. Når du
+        tilbakestiller innstillingene for ROM-verktøy, tilbakestilles nå alle
+        valgene.</li>
+      <li><strong>Bytt disk fra RetroDB.</strong> Mens et RetroArch-spill som er
+        startet fra en .m3u-diskliste, kjører, viser &#9654; Spiller nå-listen
+        øverst på hver side spillets tittel og en Neste disk-knapp, så et spill
+        som ber om side to, fortsetter med ett klikk, fra nettleseren eller en
+        telefon. RetroArch må ha Settings &gt; Network &gt; Network Commands slått
+        på (port 55355); knappen sier fra hvis det er av.</li>
+      <li><strong>Oppstartsskriptet åpner RetroDB når den er klar.</strong>
+        start.sh, start.command og start.bat åpnet nettleseren etter faste 3
+        sekunder, ofte før serveren kunne svare, så siden ikke ble lastet.
+        RetroDB åpner den nå så snart serveren lytter. Startet fra
+        LocalWebServerManager åpner den ingen side i det hele tatt; bruk Open-knappen
+        i manageren.</li>
+      <li><strong>Spillvideoer kan være opptil 500 MB.</strong> Grensen var 50 MB,
+        for lite for de fleste spilltrailere. En opplasting som er for stor,
+        viser nå en melding på spillsiden i stedet for å erstatte siden med ren
+        tekst. En video som blir avvist (for stor eller feil filtype), sier nå fra
+        i stedet for å bli forkastet uten et ord.</li>
+      <li><strong>Oppstart følger stien du har satt.</strong> En Binary path
+        override på RetroArch-raden i Innstillinger &gt; Emulatorer vinner nå over
+        RetroArch-stien øverst på den siden; før ble radens sti oversett. Å trykke
+        Stopp to ganger ber ikke lenger et spill om å avslutte to ganger; på Linux
+        tolker RetroArch en ny forespørsel som «avslutt uten å lagre», så lagringen
+        din i spillet kunne gå tapt.
+        En oppstartsinnstilling som var igjen fra en fjernmodus som aldri ble
+        bygget, hindrer ikke lenger alle spill i å starte.</li>
+      <li><strong>Mislykkede handlinger melder feilene sine riktig.</strong> Når
+        lagring, import, synkronisering eller skanning mislykkes, svarer RetroDB
+        nå med en ekte feilstatus og viser årsaken i meldingen, i stedet for å
+        svare som om det hadde gått bra. Å lagre en PSN-innloggingskode som ikke
+        får kontakt, viser ikke lenger interne feildetaljer. Innlogging,
+        brukeradministrasjon, profilen din, prestasjoner, importer, AI-utfylling
+        og oppslag i HowLongToBeat gjør nå det samme, og et språk som ikke kan
+        lagres, sier hvorfor i stedet for «Nettverksfeil».</li>
+      <li><strong>Spill navngitt på No-Intro-måten skrapes nå.</strong> En tittel
+        som «Legend of Zelda, The» eller «Legend of Zelda, The - Ocarina of Time»
+        samsvarer nå med «The Legend of Zelda»-resultater i stedet for å bli
+        avvist av samsvarsfilteret. ROM-rapporter slutter også å merke disse
+        navnene som avvik.</li>
+      <li><strong>Titler hentet fra filnavn mister alle merkene sine.</strong> En
+        sammensatt region som «(USA, Europe)» og «(UK)» fjernes nå. På
+        hjemmedatamaskiner som ZX Spectrum forsvinner alt fra årstallet og
+        utover, så «Chuckie Egg 2 (UK) (1985) (A'n'F Software) (tzx)» blir til
+        «Chuckie Egg 2». Et filnavn som slutter på «..zip», etterlater ikke lenger
+        et løst punktum. Skrapesøk, tilbakestilling av et spills data og forslag i
+        Regionale versjoner bruker disse renere navnene.</li>
+      <li><strong>En feil tittel gjentar seg ikke ved ny skraping.</strong>
+        Masseskraping søker nå med navnet fra ROM-filen, ikke tittelen som er
+        lagret for spillet. Et spill som en gang ble matchet med feil spill,
+        finner det riktige når det skrapes igjen.</li>
+      <li><strong>Skraperne foretrekker Standardregion.</strong> Når to resultater
+        står likt, vinner nå det fra Standardregion eller World, ikke alltid det
+        amerikanske. To titler som bare er regionmerker, regnes ikke lenger som et
+        perfekt treff. Regionale versjoner forveksler ikke lenger X-en i «X-Men»
+        med et oppfølgernummer. Valget av hvilken versjon et kort viser, leser nå
+        bare ROM-filens navn, ikke mappene over den, og forstår gamle merker som
+        «(U)» og «(E)».</li>
+      <li><strong>Loggen viser hvor skrapetiden for hvert spill går.</strong>
+        Etter hvert spill logger RetroDB én linje med sekundene som gikk med til
+        søk, i hver kilde, til nedlasting, bildebehandling, AI og lagring. Det er
+        første steg mot raskere skraping.</li>
+      <li><strong>Skraping blir ferdig raskere: små bilder gjøres skarpere
+        etterpå.</strong> En skraping lagrer nå et spill med bildene slik de ble
+        lastet ned. Små omslagsbilder og skjermbilder forstørres deretter i
+        bakgrunnen, ett spill om gangen. Dupliserte skjermbilder fjernes før noe
+        av dette arbeidet. Hvis RetroDB stopper underveis, fortsetter den neste
+        gang den starter.</li>
+      <li><strong>Les et spills manual på spillsiden.</strong> Manual-knappen
+        åpner nå PDF-en i et vindu over spillsiden. Bla med Forrige og Neste,
+        piltastene, Home og End, eller et sveip på telefonen; hver side blas som i
+        en bok, eller byttes ganske enkelt hvis systemet ditt ber om mindre
+        bevegelse. «Åpne PDF i ny fane» finnes fortsatt, og Ctrl-klikk på Manual
+        åpner fanen direkte.</li>
+      <li><strong>Sidepanelet viser når bilder fortsatt forbedres.</strong> Mens
+        bilder gjøres skarpere i bakgrunnen, står det «Forbedrer bilder — Spill
+        igjen: N» i sidepanelet. Et spill som fortsatt venter, sier fra på siden
+        sin, og de skarpere bildene dukker opp der av seg selv når de er klare.
+        Bryteren for 2D/3D-omslag dekker ikke lenger den linjen.</li>
+      <li><strong>Reservekilder spørres samtidig.</strong> Når hovedkilden
+        etterlater hull, spør RetroDB nå de andre kildene alle på en gang i
+        stedet for én etter én. Svarene brukes fortsatt i rekkefølgen fra
+        Innstillinger, så den samme kilden vinner hvert felt.</li>
+      <li><strong>ES-DE leser spillisten sin én gang.</strong> Hver skraping,
+        masseskrapinger inkludert, leste tidligere et systems ES-DE gamelist.xml
+        to ganger for hvert spill. RetroDB leser den nå én gang, og leser den
+        på nytt bare når filen endres.</li>
+      <li><strong>Bruk i Søk metadata søker ikke lenger på nytt.</strong> På en
+        spillside hentes resultatene du krysset av, rett fra kilden sin i stedet
+        for å bli slått opp en gang til. Uten noe avkrysset fyller bare kilden du
+        brukte og AI hullene.</li>
+      <li><strong>ScreenScraper finner spill med undertittel.</strong> Den fant
+        ingenting for en tittel som «Alone in the Dark: The New Nightmare» med
+        mindre kolonet hadde et mellomrom foran seg. RetroDB søker nå på den
+        måten, og deretter på delen før kolonet hvis det fortsatt ikke finner
+        noe.</li>
+      <li><strong>Spill uten noe å spille tilbyr ikke lenger Spill.</strong> Et
+        spill som er lagt til fra en CLZ-, Steam-, Xbox- eller PSN-import, har
+        ingen ROM-fil. Siden til spillet viser nå ingen Spill-knapp, ingen
+        Emulatorinnstillinger og ingen Start-del når du redigerer det, slik
+        kortene i Bibliotek gjør.</li>
+      <li><strong>RetroArch-spill er beskyttet mot to dårlige
+        innstillinger.</strong> RetroDB gir nå RetroArch en liten egen
+        innstillingsfil hver gang den starter et spill, oppå dine egne. Den
+        stiller tastaturet etter skrivebordet ditt (Wayland eller X11), så
+        tastaturet aldri er dødt, og lar hurtigspoling gå i full fart, noe
+        Commodore 64-spill bruker for å laste raskt. Alle de andre
+        RetroArch-innstillingene dine er urørt.</li>
+      <li><strong>Opprett M3U beholder spillet i biblioteket ditt.</strong> Når
+        et flerdiskarkiv ble gjort om til en spilleliste, pekte spillet tidligere
+        fortsatt på arkivet, som var flyttet bort. Spillet peker nå på den nye
+        spillelisten og beholder detaljene og bildene sine. Når ett arkiv
+        inneholder flere utgivelser av et spill, hver med sitt eget sett med
+        disker, bruker spillelisten nå diskene fra den første utgivelsen i stedet
+        for alle, og sier hvilke disker den utelot.</li>
+      <li><strong>Full reskraping kan beholde mediene du allerede har.</strong>
+        Kryss av for «Behold eksisterende medier» ved siden av bryteren Full
+        reskraping. Tekstdetaljer oppdateres fortsatt, men bilder, videoer og
+        manualer som allerede ligger på disken, blir værende som de er i stedet
+        for å lastes ned på nytt. Uten avkrysningen mister en full reskraping ikke
+        lenger skjermbilder den har lastet ned før.</li>
+      <li><strong>Bakgrunnsjobber mister eller hopper ikke lenger over
+        arbeid.</strong> En RetroAchievements-oppdatering som traff ett dårlig
+        spill, kaster ikke lenger bort spillene den allerede hadde oppdatert. En
+        gjenopptatt synkronisering eller oppdatering hopper ikke lenger over
+        spillet den var på da den stoppet. En gjenopptatt RetroAchievements- eller
+        Steam-synkronisering fra et svært gammelt øyeblikksbilde stopper nå med en
+        melding i stedet for å melde suksess uten å ha synkronisert noe.
+        WebP-konverteringen sjekker en gjenværende WebP-fil før den stoler på den,
+        og starter ikke hvis den ikke kan lese hvor mye ledig diskplass det
+        er.</li>
+      <li><strong>Oppgradering av en svært gammel installasjon kan ikke lenger
+        miste data i det stille.</strong> Tre gamle trinn i
+        databaseoppgraderingen kunne miste rader i sjeldne tilstander. Nå kopierer
+        de radene, eller stopper med en tydelig feil i stedet for å miste
+        dem.</li>
+      <li><strong>Knappene i Om-vinduet kuttes ikke lenger av.</strong> Vinduet er
+        bredere og de fire knappene står i to rader, så hver etikett vises i sin
+        helhet; på en telefon stables de.</li>
+      <li><strong>Temaet ditt følger deg til en ny nettleser.</strong> Når du
+        logger inn i en nettleser du ikke har brukt før, vises nå det lagrede
+        temaet ditt. Før lagret innloggingssiden Cyberpunk først, og det ble
+        sittende.</li>
+      <li><strong>Passordboksen for innlogging sier ikke lenger «Admin
+        Login».</strong> Hver konto logger inn med passord, så dialogen sier nå
+        bare Logg inn. Konto-siden og Hjelp-siden sier det samme.</li>
+      <li><strong>Hjelp er oppdatert på alle språk.</strong> De oversatte
+        Hjelp-sidene beskriver nå Regionale versjoner, sier at hver konto trenger
+        et passord, og at temaet ditt lagres med kontoen din. Hjelp på alle språk,
+        engelsk inkludert, oppgir nå det reelle minstekravet på 12 tegn for
+        passord.</li>
+      <li><strong>Små rettelser:</strong> fanart med apostrof i filnavnet vises nå
+        på spill- og trofésider; Innstillinger viser ikke lenger en skriptfeil for
+        kontoer som ikke er administratorer, og skjermlesere hører nå hvilken fane
+        i Innstillinger som er valgt; når du forlater en side, fylles ikke
+        nettleserkonsollen lenger med feil om avbrutte forespørsler;
+        oppskaleringsmodellen lastes ned fra en adresse som virker først; og
+        installasjonsprogrammet krasjer ikke lenger på Windows når utdataene
+        lagres til en fil.</li>
+      <li><strong>En bred runde med pålitelighetsrettelser.</strong> Å lagre et
+        spill med tom tittel mister ikke lenger de andre endringene dine. Omstart
+        lar nå jobber som kjører, stoppe ryddig først. Opprett M3U nekter å
+        overskrive en eksisterende spilleliste eller mappe. Å tømme listen over
+        uønskede filer i ROM-verktøy betyr nå «slett ingenting», og to mønstre
+        fanger ikke lenger opp ekte ROM-navn som «Release of the Dragon». Én
+        skadet PS3-trofefil tømmer ikke lenger trofeene til alle spill.
+        AI-utfylling skriver én enkelt region. Analyse teller hvert spill én gang
+        i vurderingsdiagrammet. CLZ-importer bruker standard sjangernavn. I
+        redigeringsdialoger kan sjanger og andre merker fjernes på alle språk, og
+        hurtigtaster kaprer ikke lenger Ctrl+D eller Ctrl+G. Seere ser et spills
+        fullføringsstatus, men kan ikke lenger endre den, siden den deles av
+        alle.</li>
+      <li><strong>Skjermlesere leser bryteren Platform Match Required med det
+        synlige navnet</strong> under Innstillinger → Skraping.</li>
+      <li>På andre språk oversetter Innstillinger nå «Standardregion», og fanen
+        Skraping leses som et navn i stedet for «skraping pågår». Hjelp-sidene
+        bruker de samme ordene.</li>
+      <li><strong>Et spill som ikke vil lukkes, vises ikke lenger som
+        lukket.</strong> Hvis en emulator overlever Stopp, fortsetter RetroDB å
+        vise den som kjørende. En RetroArch-oppstart som blir avvist, skriver ikke
+        lenger innstillingsfilen sin først, og en emulator som feiler med en gang,
+        viser feilmeldingen sin ved første sjekk.</li>
+      <li>Oppdaterte biblioteker: Pillow 13 (bildehåndtering), numpy 2.5.4 og
+        onnxruntime 1.31 (oppskalering), pluss de nyeste versjonene av bygge- og
+        utgivelsesverktøyene.</li>
+      <li>Bak kulissene: koden for spilloppstart ble ryddet så den er lettere å
+        følge, ubrukt kode ble fjernet (en API-adresse, en PSN-hjelper, et
+        trofeskript ingen side lastet, og en tema-innstilling for hele nettstedet
+        som ingenting leste), appens svar til nettleseren bygges på ett sted,
+        flere designdokumenter ble rettet så de stemmer med koden,
+        testsamlingen ble ryddet, og en ny sjekk fanger opp en
+        JavaScript-syntaksfeil før en utgivelse. De eldre oppføringene i
+        endringsloggen som beskrev den fjernede koden, sier nå det.</li>
+    </ul>
+- version: 3.29.0
+  date: '2026-10-17'
+  tags:
+  - type: feature
+    label: Et spills andre navn viser regionen de kommer fra
+  body: |
+    <ul>
+      <li><strong>Et spills andre navn viser regionen de kommer fra.</strong>
+        Kortet Også kjent som på spillsiden merker hvert navn med landet eller
+        regionen sin, for eksempel Japan for «Rockman», på ditt eget språk.
+        Merkede navn kommer først, gruppert etter region. Hold pekeren over et
+        navn for å se kilden og eventuelle merknader, som «Arbeidstittel».</li>
+      <li>Navn fra IGDB beholder nå regionen sin. Før hadde bare navn fra
+        ScreenScraper en region.</li>
+      <li>ScreenScrapers «SS»-merke vises ikke lenger som en region. Det er
+        ScreenScrapers eget navn på spillet, ikke et sted.</li>
+      <li>ROM-verktøy → Etterfyll alternative titler sjekker nå hvert skrapet
+        spill, så navn du allerede har, får regionene sine. Kjør det én gang for
+        å merke biblioteket du har.</li>
+    </ul>
+- version: 3.28.0
+  date: '2026-10-17'
+  tags:
+  - type: feature
+    label: Pek RetroDB mot emulatormappen din, så setter den dem opp
+  - type: fix
+    label: Rettelser på siden Innstillinger → Emulatorer
+  body: |
+    <ul>
+      <li><strong>Pek RetroDB mot emulatormappen din, så setter den dem
+        opp.</strong> Innstillinger → Emulatorer har en ny liste,
+        Emulatormapper. Legg til mappen emulatorene dine ligger i, så finner
+        RetroDB hver av dem der, som AppImage, et portabelt skript eller en
+        installert Flatpak, og kobler den til systemene den kjører. Et system som
+        allerede har en emulator som virker, beholder den.</li>
+      <li><strong>Se hvilke systemer som er klare til å spilles.</strong>
+        Tabellen Per-system mapping lister nå alle emulatorene for hvert system,
+        sier om hver av dem virker, og lar deg velge standard for et system. For
+        DuckStation, PCSX2, RPCS3 og RetroArch sier den også om BIOS-filene er på
+        plass, og nevner dem som mangler. RetroDB leser bare BIOS-filer; den
+        kopierer eller laster aldri ned noen.</li>
+      <li>Emulatorskanningen finner nå hver emulator på en stor emulatordisk.
+        Før kunne den stoppe tidlig inne i en emulators egen
+        innstillingsmappe.</li>
+      <li>Knappene Auto-detect og Lagre for RetroArch virker igjen, og vinduet
+        for å redigere en emulator vises ikke lenger på siden før du trykker
+        Rediger.</li>
+    </ul>
 - version: 3.27.0
   date: '2026-10-17'
   tags:

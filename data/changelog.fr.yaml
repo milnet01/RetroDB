@@ -1,3 +1,500 @@
+- version: 3.30.0
+  date: '2026-10-21'
+  tags:
+  - type: feature
+    label: Un jeu publié dans plusieurs régions s'affiche sur une seule carte
+  - type: security
+    label: Remplissage IA et les Outils ROM sont plus difficiles à détourner
+  - type: security
+    label: Les pages refusent d'exécuter les scripts qu'on y glisse
+  - type: fix
+    label: Les récupérations, les tâches des Outils ROM, la synchronisation des trophées et la première configuration gèrent correctement les erreurs
+  - type: ui
+    label: Les boutons de la fenêtre À propos ne sont plus coupés
+  - type: accessibility
+    label: Les lecteurs d'écran lisent l'interrupteur Platform Match Required sous son nom visible
+  - type: accessibility
+    label: Chaque fenêtre surgissante gère de la même façon la touche Échap, le focus clavier et les lecteurs d'écran
+  - type: performance
+    label: Les récupérations se terminent plus tôt ; les petites images sont agrandies en arrière-plan
+  - type: feature
+    label: La Récupération complète peut conserver les médias que vous avez déjà
+  - type: fix
+    label: ScreenScraper trouve les jeux dont le titre comporte un sous-titre
+  - type: fix
+    label: Create M3U garde le jeu dans votre bibliothèque
+  - type: fix
+    label: Le lien Succès ouvre votre dernier système au lieu d'une page vide
+  - type: fix
+    label: Les jeux RetroArch démarrent avec un clavier qui fonctionne et un chargement à pleine vitesse
+  - type: fix
+    label: Les jeux C64, Amiga, DOS et autres ordinateurs familiaux reçoivent chaque touche que vous tapez
+  - type: fix
+    label: Sur les jeux C64, le stick droit de la manette appuie sur les touches fléchées et Start appuie sur F1
+  - type: ui
+    label: La barre latérale indique quand des images sont encore en cours d'amélioration en arrière-plan, et les images plus nettes d'un jeu apparaissent d'elles-mêmes
+  - type: feature
+    label: Les manuels de jeu s'ouvrent sur la page du jeu et se feuillettent comme un livre
+  - type: docs
+    label: L'Aide liste les touches de RetroArch, et les jeux d'ordinateurs à clavier affichent un rappel Arrêt défil à côté de Jouer
+  - type: ui
+    label: Les jeux importés sans fichier ROM ne proposent plus Jouer
+  - type: fix
+    label: Supprimer une capture d'écran ne signale plus d'échec alors qu'elle a réussi
+  - type: fix
+    label: Le chemin RetroArch indiqué sur sa ligne d'émulateur est celui qui est lancé
+  - type: fix
+    label: Un jeu qui refuse de se fermer n'est plus affiché comme fermé
+  - type: deps
+    label: Pillow 13 et d'autres mises à jour de bibliothèques
+  body: |
+    <ul>
+      <li><strong>Les versions régionales d'un jeu s'affichent comme un seul
+        jeu.</strong> Liez les versions que vous possédez (par exemple les
+        éditions américaine, européenne et japonaise) et la Bibliothèque
+        affiche une seule carte avec un badge &#127760;. La carte ouvre et
+        lance la version de votre Région par défaut. La page du jeu liste
+        toutes les versions côte à côte et vous permet de passer de l'une à
+        l'autre. Outils ROM &gt; Versions régionales propose des groupes que
+        les éditeurs confirment ; rien n'est lié sans vous. Il ne propose
+        jamais une suite comme version de son premier jeu. Les versions liées
+        ne sont plus signalées comme doublons d'après leur nom. Lancez une fois
+        Compléter les titres alternatifs pour donner plus de matière aux
+        propositions.</li>
+      <li><strong>L'IA peut résumer ce qui distingue les versions
+        régionales.</strong> Sur un jeu dont des versions sont liées, les
+        éditeurs peuvent cliquer sur Résumer les différences avec l'IA dans la
+        section Versions régionales. L'IA liste les différences connues, comme
+        la censure, la difficulté ou du contenu retiré. La liste est marquée
+        comme rédigée par l'IA, s'affiche sur la page de chaque version et se
+        masque quand vous liez ou déliez une version, jusqu'à ce qu'elle soit
+        rédigée de nouveau. Il faut un fournisseur d'IA configuré dans
+        Paramètres &gt; Récupération.</li>
+      <li><strong>Les jeux PlayStation démarrent avec de bons
+        réglages.</strong> Pour DuckStation, PCSX2 et RPCS3, RetroDB règle
+        désormais l'échelle de résolution et le format d'image de chaque jeu
+        dans le propre fichier de réglages par jeu de l'émulateur quand vous
+        cliquez sur Jouer, ainsi que le démarrage en plein écran ou non.
+        Modifiez-les pour tout un système avec le bouton Settings dans
+        Paramètres &gt; Emulators, ou pour un seul jeu dans le nouveau panneau
+        Paramètres de l'émulateur de sa page. Un réglage que vous modifiez dans
+        l'émulateur l'emporte toujours. RetroDB lit le numéro de série de
+        chaque disque pour trouver le bon fichier ; les disques CHD
+        nécessitent que chdman soit installé.</li>
+      <li><strong>Remplissage IA ne peut plus être manipulé par du texte saisi
+        dans les champs d'un jeu.</strong> Quand Remplissage IA vérifie
+        l'éditeur, le développeur, l'édition ou les autres plateformes déjà
+        renseignés d'un jeu, il nettoie désormais ce texte d'abord, comme il
+        le faisait déjà pour le titre.</li>
+      <li><strong>Les analyses des Outils ROM restent dans votre dossier de
+        ROMs.</strong> Convertisseur CHD et Vérification CHD ne suivent plus un
+        raccourci (lien symbolique) qui pointe en dehors, et la décompression
+        d'une archive multidisque ignore tout raccourci contenu dans
+        l'archive.</li>
+      <li><strong>Les pages refusent d'exécuter les scripts qu'on y
+        glisse.</strong> Votre navigateur bloque désormais tout script que
+        RetroDB n'a pas écrit lui-même : un texte qui glisse du code dans le
+        titre d'un jeu, une étiquette ou une description récupérée ne peut pas
+        l'exécuter. Les boutons et les menus fonctionnent comme avant.</li>
+      <li><strong>Une capture d'écran abîmée n'arrête plus la recherche de
+        doublons d'un jeu.</strong> Une capture illisible est mise de côté et
+        la vérification continue.</li>
+      <li><strong>Les tâches des Outils ROM ne restent plus bloquées sur « en
+        cours ».</strong> Un fichier supprimé après une analyse Vérification
+        CHD est compté comme invalide, et toute erreur inattendue dans
+        Convertisseur CHD, Vérification CHD ou Détecteur de doublons termine la
+        tâche en échec, avec l'erreur dans son journal.</li>
+      <li><strong>Avant la fin de la configuration, les requêtes de données de
+        l'application reçoivent une réponse claire.</strong> Elles répondent
+        « Configuration requise » au lieu de renvoyer la page de
+        configuration. Les pages vous mènent toujours à l'assistant de
+        configuration.</li>
+      <li><strong>Les suites n'affichent plus les succès du premier
+        jeu.</strong> La correspondance RetroAchievements ignorait le numéro
+        d'un titre, si bien que Donkey Kong Country 2 et 3 étaient liés à
+        Donkey Kong Country. Les numéros (2, II, 3, III, etc.) comptent
+        désormais. Pour corriger les jeux déjà liés, lancez une fois
+        l'actualisation RetroAchievements pour tous les systèmes.</li>
+      <li><strong>Une synchronisation PlayStation n'efface plus vos compteurs
+        de trophées.</strong> Quand la réponse de PlayStation omettait les
+        totaux de trophées d'un jeu, RetroDB enregistrait des zéros à la place
+        des compteurs qu'il avait déjà. Il les conserve désormais, y compris
+        lors de l'actualisation groupée des trophées.</li>
+      <li><strong>Ouvrir un ensemble de trophées qui n'est plus sur le disque
+        affiche un message.</strong> La page Trophées échouait avec une
+        erreur ; elle indique maintenant que l'ensemble est introuvable et vous
+        ramène à la liste.</li>
+      <li><strong>Les tableaux des Outils ROM nomment correctement leur
+        colonne de boutons dans toutes les langues.</strong> L'en-tête de la
+        colonne partageait son texte avec le genre de jeu Action, si bien que
+        certaines langues y affichaient le nom du genre.</li>
+      <li><strong>Les jeux GameCube, 3DS et Super Famicom ont leur émulateur
+        configuré automatiquement.</strong> RetroDB cherchait ces systèmes sous
+        des noms de dossier que les bibliothèques n'utilisent pas (gamecube,
+        3ds, superfamicom au lieu de gc, n3ds, sfc), si bien que Dolphin et
+        Citra ne leur étaient jamais associés. Redémarrez RetroDB une fois pour
+        en tenir compte.</li>
+      <li><strong>Le téléchargement sans Python (autonome) configure de
+        nouveau les émulateurs.</strong> Il lui manquait le fichier qui les
+        liste.</li>
+      <li><strong>Environ 170 boutons, libellés et messages de plus sont
+        traduits</strong> dans toutes les langues. Ils s'affichaient en anglais
+        auparavant, et quelques-uns affichaient une traduction erronée
+        (certaines langues disaient « la sauvegarde a échoué » quand un jeu ne
+        se lançait pas).</li>
+      <li><strong>Échap ne ferme que la fenêtre du dessus.</strong> Avec une
+        question ouverte par-dessus une autre fenêtre, Échap fermait les deux ;
+        certaines fenêtres continuaient aussi de tourner après qu'Échap les
+        avait masquées, et appuyer sur Échap sur la page d'un jeu pouvait
+        relancer une récupération groupée que vous aviez mise en pause.
+        Désormais, chaque fenêtre se ferme par sa propre action Fermer, garde
+        le focus clavier à l'intérieur tant qu'elle est ouverte, et rend le
+        focus au bouton qui l'a ouverte. Les fenêtres de progression des tâches
+        en cours restent ouvertes jusqu'à la fin de la tâche.</li>
+      <li><strong>Les graphiques d'Analyses sont dans votre langue.</strong>
+        Les noms de genres, de perspectives, de dimensions et de modes, les
+        titres des graphiques, les noms des axes et les légendes étaient en
+        anglais dans toutes les langues.</li>
+      <li><strong>Les données RetroAchievements sont mieux protégées.</strong>
+        Si la liste des jeux RetroAchievements d'une console ne se charge pas,
+        RA Refresh laisse désormais les jeux de cette console liés au lieu de
+        tous les délier. Effacer les données RA n'efface plus que la
+        progression RetroAchievements ; la progression Steam et Xbox est
+        conservée.</li>
+      <li><strong>Les mots de passe doivent compter au moins 12 caractères
+        partout.</strong> La première configuration acceptait un mot de passe
+        administrateur de n'importe quelle longueur, et les pages de
+        changement forcé du mot de passe et de configuration disaient que 4
+        caractères suffisaient. Les trois en demandent désormais 12, comme le
+        reste de l'application.</li>
+      <li><strong>Les totaux de succès sont justes, et ce sont les
+        vôtres.</strong> Synchroniser un seul jeu depuis RetroAchievements
+        enregistre désormais son nombre de succès, au lieu de 0. Les totaux de
+        succès du Tableau de bord ne comptent que vos jeux, et les Trophées de
+        collectionneur ne comptent plus deux fois chaque succès Steam ou
+        Xbox.</li>
+      <li><strong>Les synchronisations en arrière-plan utilisent vos propres
+        comptes.</strong> Une synchronisation de système RetroAchievements se
+        connecte avec votre propre compte RetroAchievements quand vous en avez
+        configuré un. L'actualisation groupée PlayStation réutilise votre
+        connexion enregistrée au lieu de se reconnecter de zéro à chaque
+        fois.</li>
+      <li><strong>Vous seul pouvez arrêter ou reprendre votre propre
+        synchronisation.</strong> Un autre utilisateur ne peut plus annuler
+        votre synchronisation RetroAchievements, Steam ou Xbox, et reprendre
+        une tâche interrompue demande les mêmes droits que la lancer. Les
+        administrateurs peuvent toujours faire les deux.</li>
+      <li><strong>Votre dossier de trophées RPCS3 est vérifié quand vous
+        l'enregistrez.</strong> Un dossier qui n'existe pas, qui n'est pas un
+        chemin complet ou qui est un dossier système est refusé, comme c'était
+        déjà le cas dans les paramètres principaux.</li>
+      <li><strong>« Récupérer toutes les images » du Musée s'exécute en
+        arrière-plan.</strong> La page n'attend plus pendant des minutes chaque
+        image de manette. Elle montre où en est le téléchargement, propose un
+        bouton Annuler et reprend l'affichage de la progression si vous quittez
+        la page puis revenez.</li>
+      <li><strong>Les Outils ROM protègent mieux vos fichiers.</strong> Clean
+        ne vide plus une archive : un motif comme <code>*</code> ne peut pas
+        être enregistré, et Clean s'arrête si les motifs supprimaient tous les
+        fichiers. Convertisseur CHD conserve l'original quand « verify » est
+        désactivé, et laisse tranquille un CHD existant quand « skip
+        existing » est activé. Détecteur de doublons garde toujours une copie
+        de chaque jeu, même si une requête les demande toutes.</li>
+      <li><strong>Les tâches des Outils ROM font ce que disent les
+        boutons.</strong> Pause met désormais en pause Convertisseur CHD,
+        Vérification CHD, Détecteur de doublons et Déduplication de captures,
+        et une tâche en pause peut être annulée. Une analyse Déduplication de
+        captures qui rencontre une erreur se termine désormais en échec au lieu
+        de tourner indéfiniment.</li>
+      <li><strong>Create M3U ne dépose plus les archives dans un dossier
+        temporaire.</strong> Les archives déplacées vont désormais dans le
+        dossier de données de RetroDB, qui n'est pas vidé au redémarrage.
+        L'analyseur d'archives indique où elles sont parties, et la
+        confirmation par lot précise qu'elles seront déplacées. Réinitialiser
+        les paramètres des Outils ROM réinitialise désormais toutes les
+        options.</li>
+      <li><strong>Changez de disque depuis RetroDB.</strong> Pendant qu'un jeu
+        RetroArch lancé depuis une liste de disques .m3u tourne, la liste
+        &#9654; En cours de lecture en haut de chaque page affiche le titre du
+        jeu et un bouton Disque suivant : un jeu qui réclame la face deux
+        continue en un clic, depuis le navigateur ou un téléphone. RetroArch
+        doit avoir Settings &gt; Network &gt; Network Commands activé (port
+        55355) ; le bouton le signale si ce n'est pas le cas.</li>
+      <li><strong>Le script de démarrage ouvre RetroDB quand il est
+        prêt.</strong> start.sh, start.command et start.bat ouvraient le
+        navigateur après 3 secondes fixes, souvent avant que le serveur puisse
+        répondre, si bien que la page ne se chargeait pas. RetroDB l'ouvre
+        désormais dès que le serveur écoute. Lancé depuis
+        LocalWebServerManager, il n'ouvre aucune page ; utilisez le bouton Open
+        du gestionnaire.</li>
+      <li><strong>Les vidéos de jeu peuvent atteindre 500 Mo.</strong> La
+        limite était de 50 Mo, trop peu pour la plupart des bandes-annonces. Un
+        envoi trop lourd affiche désormais un message sur la page du jeu au
+        lieu de remplacer la page par du texte brut. Une vidéo refusée (trop
+        lourde ou du mauvais type de fichier) le signale désormais au lieu
+        d'être écartée sans un mot.</li>
+      <li><strong>Le lancement suit le chemin que vous avez indiqué.</strong>
+        Un Binary path override sur la ligne RetroArch de Paramètres &gt;
+        Emulators l'emporte désormais sur le chemin RetroArch en haut de cette
+        page ; auparavant, le chemin de la ligne était ignoré. Appuyer deux
+        fois sur Stop ne demande plus deux fois au jeu de quitter ; sous Linux,
+        RetroArch comprend une seconde demande comme « quitter sans
+        sauvegarder », et votre sauvegarde en jeu pouvait être perdue.
+        Un réglage du lanceur resté d'un mode distant jamais terminé n'empêche
+        plus tous les jeux de démarrer.</li>
+      <li><strong>Les actions qui échouent signalent correctement leurs
+        erreurs.</strong> Quand un enregistrement, un import, une
+        synchronisation ou une analyse échoue, RetroDB répond désormais avec un
+        vrai statut d'erreur et donne la raison dans son message, au lieu de
+        répondre comme si tout avait fonctionné. Enregistrer un code de
+        connexion PSN qui ne parvient pas à se connecter n'affiche plus de
+        détails internes de l'erreur. La connexion, la gestion des
+        utilisateurs, votre profil, les succès, les imports, Remplissage IA et
+        les recherches HowLongToBeat font désormais de même, et une langue qui
+        ne peut pas être enregistrée explique pourquoi au lieu d'afficher
+        « Erreur réseau ».</li>
+      <li><strong>Les jeux nommés à la manière No-Intro sont désormais
+        récupérés.</strong> Un titre comme « Legend of Zelda, The » ou
+        « Legend of Zelda, The - Ocarina of Time » correspond désormais aux
+        résultats « The Legend of Zelda » au lieu d'être rejeté par le filtre
+        de correspondance. Rapports ROM cesse aussi de signaler ces noms comme
+        des incohérences.</li>
+      <li><strong>Les titres tirés des noms de fichier perdent toutes leurs
+        étiquettes.</strong> Les régions combinées comme « (USA, Europe) » et
+        « (UK) » sont désormais retirées. Sur les ordinateurs familiaux comme le
+        ZX Spectrum, tout ce qui suit l'année disparaît, année comprise : ainsi
+        « Chuckie Egg 2 (UK) (1985) (A'n'F Software) (tzx) » devient « Chuckie
+        Egg 2 ». Un nom de fichier qui se termine par « ..zip » ne laisse plus
+        de point en trop. Les recherches des récupérateurs, la réinitialisation
+        des données d'un jeu et les propositions de Versions régionales
+        utilisent ces noms plus propres.</li>
+      <li><strong>Un mauvais titre ne se répète plus à la
+        re-récupération.</strong> La récupération groupée cherche désormais
+        avec le nom du fichier ROM, et non avec le titre enregistré pour le
+        jeu. Un jeu qui avait un jour été associé au mauvais jeu trouve le bon
+        lors d'une nouvelle récupération.</li>
+      <li><strong>Les récupérateurs privilégient votre Région par
+        défaut.</strong> Quand deux résultats sont à égalité, celui de votre
+        Région par défaut ou de World l'emporte désormais, et plus toujours
+        celui des États-Unis. Deux titres qui ne sont que des étiquettes de
+        région ne comptent plus comme une correspondance parfaite. Versions
+        régionales ne prend plus le X de « X-Men » pour un numéro de suite.
+        Le choix de la version affichée par une carte ne lit désormais que le
+        nom du fichier ROM, et non les dossiers au-dessus, et comprend les
+        anciennes étiquettes comme « (U) » et « (E) ».</li>
+      <li><strong>Le journal montre où passe le temps de récupération de
+        chaque jeu.</strong> Après chaque jeu, RetroDB écrit une ligne avec les
+        secondes passées à chercher, dans chaque source, à télécharger, à
+        traiter les images, dans l'IA et à enregistrer. C'est la première étape
+        vers des récupérations plus rapides.</li>
+      <li><strong>Les récupérations se terminent plus tôt : les petites images
+        sont affinées ensuite.</strong> Une récupération enregistre désormais
+        le jeu avec ses images telles que téléchargées. Les petites jaquettes et
+        captures d'écran sont ensuite agrandies en arrière-plan, un jeu à la
+        fois. Les captures en double sont écartées avant tout ce travail. Si
+        RetroDB s'arrête en cours de route, il reprend à son prochain
+        démarrage.</li>
+      <li><strong>Lisez le manuel d'un jeu sur sa page.</strong> Le bouton
+        Manuel ouvre désormais le PDF dans une fenêtre par-dessus la page du
+        jeu. Tournez les pages avec Précédent et Suivant, les touches fléchées,
+        Début et Fin, ou d'un glissement du doigt sur un téléphone ; chaque
+        page se tourne comme celle d'un livre, ou change simplement si votre
+        système demande moins d'animations. « Ouvrir le PDF dans un nouvel
+        onglet » est toujours là, et Ctrl+clic sur Manuel ouvre directement
+        l'onglet.</li>
+      <li><strong>La barre latérale indique quand des images sont encore en
+        cours d'amélioration.</strong> Pendant que des images sont affinées en
+        arrière-plan, la barre latérale affiche « Amélioration des images —
+        Jeux restants : N ». Un jeu encore en attente l'indique sur sa page, et
+        ses images plus nettes y apparaissent d'elles-mêmes quand elles sont
+        prêtes. L'interrupteur de jaquette 2D/3D ne masque plus cette
+        ligne.</li>
+      <li><strong>Les sources de secours sont interrogées en même
+        temps.</strong> Quand la source principale laisse des trous, RetroDB
+        interroge désormais toutes les autres sources à la fois au lieu de
+        l'une après l'autre. Leurs réponses sont toujours utilisées dans l'ordre
+        de vos Paramètres : la même source l'emporte donc pour chaque
+        champ.</li>
+      <li><strong>ES-DE lit sa liste de jeux une seule fois.</strong> Chaque
+        récupération, groupée ou non, lisait le gamelist.xml ES-DE d'un système
+        deux fois pour chaque jeu. RetroDB le lit désormais une fois et ne le
+        relit que si le fichier change.</li>
+      <li><strong>Appliquer dans Rechercher des métadonnées ne relance plus la
+        recherche.</strong> Sur la page d'un jeu, les résultats que vous avez
+        cochés sont récupérés directement depuis leur source au lieu d'être
+        recherchés une seconde fois. Si rien n'est coché, seules la source que
+        vous avez appliquée et l'IA comblent les trous.</li>
+      <li><strong>ScreenScraper trouve les jeux avec un sous-titre.</strong> Il
+        ne trouvait rien pour un titre comme « Alone in the Dark: The New
+        Nightmare » à moins que les deux-points soient précédés d'une espace.
+        RetroDB le cherche désormais ainsi, puis avec la partie avant les
+        deux-points si cela ne donne toujours rien.</li>
+      <li><strong>Les jeux sans rien à lancer ne proposent plus
+        Jouer.</strong> Un jeu ajouté par un import CLZ, Steam, Xbox ou PSN n'a
+        pas de fichier ROM. Sa page n'affiche plus de bouton Jouer, ni
+        Paramètres de l'émulateur, ni de section Lancer quand vous le modifiez,
+        comme les cartes de la Bibliothèque.</li>
+      <li><strong>Les jeux RetroArch sont protégés contre deux mauvais
+        réglages.</strong> RetroDB donne désormais à RetroArch un petit fichier
+        de réglages à lui chaque fois qu'il lance un jeu, par-dessus le vôtre.
+        Il règle le clavier selon votre bureau (Wayland ou X11), pour que le
+        clavier ne soit jamais muet, et laisse l'avance rapide tourner à pleine
+        vitesse, ce dont les jeux Commodore 64 se servent pour charger vite.
+        Tous vos autres réglages RetroArch restent intacts.</li>
+      <li><strong>Create M3U garde le jeu dans votre bibliothèque.</strong>
+        Transformer une archive multidisque en liste de lecture laissait le jeu
+        pointer vers l'archive, qui avait été déplacée. Le jeu pointe désormais
+        vers la nouvelle liste de lecture et garde ses détails et ses images.
+        Quand une archive contient plusieurs éditions d'un jeu, chacune avec
+        son propre jeu de disques, la liste de lecture utilise désormais les
+        disques de la première édition au lieu de tous, et indique quels
+        disques elle a laissés de côté.</li>
+      <li><strong>La Récupération complète peut conserver les médias que vous
+        avez déjà.</strong> Cochez « Conserver les médias existants » à côté de
+        l'interrupteur Récupération complète. Les informations textuelles sont
+        toujours actualisées, mais les images, vidéos et manuels déjà sur le
+        disque restent tels quels au lieu d'être téléchargés de nouveau. Sans
+        cette case, une Récupération complète ne perd plus les captures d'écran
+        qu'elle avait téléchargées auparavant.</li>
+      <li><strong>Les tâches en arrière-plan ne perdent ni ne sautent plus de
+        travail.</strong> Une actualisation RetroAchievements qui tombait sur
+        un jeu problématique ne jette plus les jeux qu'elle avait déjà mis à
+        jour. Une synchronisation ou une actualisation reprise ne saute plus le
+        jeu sur lequel elle s'était arrêtée. Une synchronisation
+        RetroAchievements ou Steam reprise depuis un instantané très ancien
+        s'arrête désormais avec un message au lieu d'annoncer une réussite sans
+        avoir rien synchronisé. La conversion WebP vérifie un fichier WebP
+        restant avant de s'y fier, et ne démarre pas si elle ne peut pas lire
+        l'espace disque libre.</li>
+      <li><strong>Mettre à jour une installation très ancienne ne peut plus
+        faire perdre de données sans prévenir.</strong> Trois anciennes étapes
+        de mise à jour de la base de données pouvaient perdre des lignes dans
+        de rares cas. Elles copient désormais les lignes, ou s'arrêtent avec
+        une erreur claire au lieu de les perdre.</li>
+      <li><strong>Les boutons de la fenêtre À propos ne sont plus
+        coupés.</strong> La fenêtre est plus large et ses quatre boutons sont
+        sur deux rangées, si bien que chaque libellé s'affiche en entier ; sur
+        un téléphone, ils s'empilent.</li>
+      <li><strong>Votre thème vous suit sur un nouveau navigateur.</strong> Se
+        connecter depuis un navigateur que vous n'avez jamais utilisé affiche
+        désormais votre thème enregistré. Auparavant, la page de connexion
+        enregistrait d'abord Cyberpunk, et il restait.</li>
+      <li><strong>La fenêtre de mot de passe de connexion n'affiche plus
+        « Connexion administrateur ».</strong> Chaque compte se connecte avec
+        un mot de passe, donc la fenêtre indique désormais simplement
+        Connexion. La page Compte et la page d'Aide le disent aussi.</li>
+      <li><strong>L'Aide est à jour dans toutes les langues.</strong> Les pages
+        d'Aide traduites décrivent désormais Versions régionales, indiquent que
+        chaque compte a besoin d'un mot de passe et que votre thème est
+        enregistré avec votre compte. L'Aide dans toutes les langues, anglais
+        compris, donne désormais le vrai minimum de 12 caractères pour le mot
+        de passe.</li>
+      <li><strong>Petites corrections :</strong> le fanart dont le nom de
+        fichier contient une apostrophe s'affiche désormais sur les pages de
+        jeu et de trophées ; Paramètres n'affiche plus d'erreur de script pour
+        les comptes non administrateurs, et les lecteurs d'écran annoncent
+        désormais quel onglet des Paramètres est sélectionné ; quitter une page
+        ne remplit plus la console du navigateur d'erreurs de requêtes
+        annulées ; le modèle d'agrandissement d'images se télécharge d'abord
+        depuis une adresse qui fonctionne ; et l'installateur ne plante plus
+        sous Windows quand sa sortie est enregistrée dans un fichier.</li>
+      <li><strong>Une large série de corrections de fiabilité.</strong>
+        Enregistrer un jeu avec un titre vide ne fait plus perdre vos autres
+        modifications. Le redémarrage laisse désormais les tâches en cours
+        s'arrêter proprement d'abord. Create M3U refuse d'écraser une liste de
+        lecture ou un dossier existant. Vider la liste des fichiers indésirables
+        dans les Outils ROM signifie désormais « ne rien supprimer », et deux
+        motifs n'attrapent plus de vrais noms de ROM comme « Release of the
+        Dragon ». Un fichier de trophées PS3 abîmé ne vide plus les trophées de
+        tous les jeux. Remplissage IA écrit une seule région. Analyses compte
+        chaque jeu une seule fois dans le graphique des notes. Les imports CLZ
+        utilisent les noms de genre standard. Dans les fenêtres de
+        modification, les genres et autres étiquettes peuvent être retirés dans
+        toutes les langues, et les raccourcis clavier ne détournent plus Ctrl+D
+        ni Ctrl+G. Les spectateurs voient l'état d'avancement d'un jeu mais ne
+        peuvent plus le modifier, puisqu'il est partagé par tout le
+        monde.</li>
+      <li><strong>Les lecteurs d'écran lisent l'interrupteur Platform Match
+        Required sous son nom visible</strong> dans Paramètres →
+        Récupération.</li>
+      <li>Dans les autres langues, Paramètres traduit désormais « Région par
+        défaut », et l'onglet Récupération se lit comme un nom plutôt que
+        comme « récupération en cours ». Les pages d'aide utilisent les mêmes
+        mots.</li>
+      <li><strong>Un jeu qui refuse de se fermer n'est plus affiché comme
+        fermé.</strong> Si un émulateur survit à Stop, RetroDB continue de
+        l'afficher comme en cours d'exécution. Un lancement RetroArch refusé
+        n'écrit plus d'abord son fichier de réglages, et un émulateur qui
+        échoue aussitôt affiche son message d'erreur dès la première
+        vérification.</li>
+      <li>Bibliothèques mises à jour : Pillow 13 (traitement des images), numpy
+        2.5.4 et onnxruntime 1.31 (agrandissement des images), ainsi que les
+        dernières versions des outils de compilation et de publication.</li>
+      <li>En coulisses : le code de lancement des jeux a été remis en ordre
+        pour être plus facile à suivre, du code inutilisé a été retiré (une
+        adresse d'API, une fonction d'aide PSN, un script de trophées
+        qu'aucune page ne chargeait et un réglage de thème global que rien ne
+        lisait), les réponses de l'application au navigateur sont construites
+        à un seul endroit, plusieurs documents de conception ont été corrigés
+        pour correspondre au code, la suite de tests a été remise en ordre, et
+        une nouvelle vérification détecte une erreur de syntaxe JavaScript
+        avant une publication. Les anciennes entrées du journal des
+        modifications qui décrivaient le code retiré le signalent
+        désormais.</li>
+    </ul>
+- version: 3.29.0
+  date: '2026-10-17'
+  tags:
+  - type: feature
+    label: Les autres noms d'un jeu indiquent la région d'où ils viennent
+  body: |
+    <ul>
+      <li><strong>Les autres noms d'un jeu indiquent la région d'où ils
+        viennent.</strong> La carte Autres titres de la page du jeu marque
+        chaque nom de son pays ou de sa région, comme Japon pour « Rockman »,
+        dans votre propre langue. Les noms marqués viennent en premier,
+        regroupés par région. Survolez un nom pour voir sa source et une
+        éventuelle note, comme « Titre de travail ».</li>
+      <li>Les noms venant d'IGDB conservent désormais leur région. Auparavant,
+        seuls les noms de ScreenScraper en avaient une.</li>
+      <li>L'étiquette « SS » de ScreenScraper ne s'affiche plus comme une
+        région. C'est le nom propre de ScreenScraper pour le jeu, pas un
+        lieu.</li>
+      <li>Outils ROM → Compléter les titres alternatifs vérifie désormais
+        chaque jeu récupéré, si bien que les noms que vous avez déjà gagnent
+        leur région. Lancez-le une fois pour marquer votre bibliothèque
+        existante.</li>
+    </ul>
+- version: 3.28.0
+  date: '2026-10-17'
+  tags:
+  - type: feature
+    label: Indiquez à RetroDB votre dossier d'émulateurs et il les configure
+  - type: fix
+    label: Corrections de la page Paramètres → Emulators
+  body: |
+    <ul>
+      <li><strong>Indiquez à RetroDB votre dossier d'émulateurs et il les
+        configure.</strong> Paramètres → Emulators propose une nouvelle liste
+        Dossiers d'émulateurs. Ajoutez le dossier où se trouvent vos émulateurs
+        et RetroDB y trouve chacun d'eux, qu'il s'agisse d'un AppImage, d'un
+        script portable ou d'un Flatpak installé, et l'associe aux systèmes
+        qu'il fait tourner. Un système qui a déjà un émulateur fonctionnel le
+        garde.</li>
+      <li><strong>Voyez quels systèmes sont prêts à jouer.</strong> Le tableau
+        Per-system mapping liste désormais les émulateurs de chaque système,
+        indique si chacun fonctionne et vous permet de choisir l'émulateur par
+        défaut d'un système. Pour DuckStation, PCSX2, RPCS3 et RetroArch, il
+        indique aussi si les fichiers BIOS sont en place, et nomme ceux qui
+        manquent. RetroDB ne fait que lire les fichiers BIOS ; il n'en copie ni
+        n'en télécharge jamais.</li>
+      <li>L'analyse des émulateurs trouve désormais tous les émulateurs d'un
+        grand disque d'émulateurs. Auparavant, elle pouvait s'arrêter trop tôt
+        dans le propre dossier de réglages d'un émulateur.</li>
+      <li>Les boutons Auto-detect et Save de RetroArch fonctionnent de nouveau,
+        et la fenêtre Edit emulator ne s'affiche plus sur la page tant que vous
+        n'avez pas cliqué sur Edit.</li>
+    </ul>
 - version: 3.27.0
   date: '2026-10-17'
   tags:

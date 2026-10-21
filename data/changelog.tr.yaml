@@ -1,3 +1,467 @@
+- version: 3.30.0
+  date: '2026-10-21'
+  tags:
+  - type: feature
+    label: Birkaç bölgeden gelen tek bir oyun tek bir kart olarak görünüyor
+  - type: security
+    label: Yapay Zeka Doldur ve ROM Araçları kötüye kullanılmaya karşı daha dayanıklı
+  - type: security
+    label: Sayfalar içlerine sızdırılan betikleri çalıştırmıyor
+  - type: fix
+    label: Kazımalar, ROM Araçları işleri, kupa eşitleme ve ilk kurulum hataları doğru ele alıyor
+  - type: ui
+    label: Hakkında penceresinin düğmeleri artık kesilmiyor
+  - type: accessibility
+    label: Ekran okuyucular "Platform Match Required" anahtarını görünen adıyla okuyor
+  - type: accessibility
+    label: Her açılır pencere Escape tuşunu, klavye odağını ve ekran okuyucuları aynı biçimde ele alıyor
+  - type: performance
+    label: Kazımalar daha çabuk bitiyor; küçük resimler arka planda büyütülüyor
+  - type: feature
+    label: Tam Yeniden Kazıma elinizdeki medyayı koruyabiliyor
+  - type: fix
+    label: ScreenScraper alt başlığı olan oyunları buluyor
+  - type: fix
+    label: M3U Oluştur oyunu kütüphanenizde tutuyor
+  - type: fix
+    label: Başarımlar bağlantısı boş bir sayfa yerine son sisteminizi açıyor
+  - type: fix
+    label: RetroArch oyunları çalışan bir klavyeyle ve tam hızda yüklenerek başlıyor
+  - type: fix
+    label: C64, Amiga, DOS ve diğer ev bilgisayarı oyunları yazdığınız her tuşu alıyor
+  - type: fix
+    label: C64 oyunlarında oyun kumandasının sağ çubuğu imleç tuşlarına, Start ise F1'e basıyor
+  - type: ui
+    label: Kenar çubuğu görsellerin arka planda hâlâ iyileştirildiğini gösteriyor ve bir oyunun daha net görselleri kendiliğinden beliriyor
+  - type: feature
+    label: Oyun kılavuzları oyun sayfasında açılıyor ve bir kitap gibi sayfa çevriliyor
+  - type: docs
+    label: Yardım RetroArch'ın tuşlarını listeliyor ve klavyeli bilgisayar oyunları Oyna'nın yanında bir Scroll Lock hatırlatması gösteriyor
+  - type: ui
+    label: ROM dosyası olmayan içe aktarılmış oyunlar artık Oyna sunmuyor
+  - type: fix
+    label: Bir ekran görüntüsünü silmek, işe yaradıktan sonra artık hata bildirmiyor
+  - type: fix
+    label: RetroArch'ın emülatör satırında ayarlanan yol, başlatılan yoldur
+  - type: fix
+    label: Kapanmayan bir oyun artık kapanmış gibi gösterilmiyor
+  - type: deps
+    label: Pillow 13 ve diğer kütüphane güncellemeleri
+  body: |
+    <ul>
+      <li><strong>Bir oyunun bölgesel sürümleri tek bir oyun olarak
+        görünüyor.</strong> Sahip olduğunuz sürümleri (örneğin ABD, Avrupa ve
+        Japonya sürümlerini) birbirine bağlayın; Kütüphane &#127760; rozetli tek
+        bir kart gösterir. Kart, Varsayılan Bölge&rsquo;nizdeki sürümü açar ve
+        oynatır. Oyun sayfası her sürümü yan yana listeler ve aralarında geçiş
+        yapmanızı sağlar. ROM Araçları &gt; Bölgesel Sürümler, düzenleyicilerin
+        onaylaması için gruplar önerir; siz olmadan hiçbir şey bağlanmaz. Bir
+        devam oyununu asla ilk oyunun bir sürümü olarak önermez. Bağlı
+        sürümler artık ada göre kopya olarak bildirilmiyor. Önerilere daha çok
+        malzeme sağlamak için Alternatif Başlıkları Geriye Dönük Doldur&rsquo;u
+        bir kez çalıştırın.</li>
+      <li><strong>Yapay zeka bölgesel sürümlerin nasıl farklılaştığını
+        özetleyebiliyor.</strong> Bağlı sürümleri olan bir oyunda düzenleyiciler,
+        Bölgesel Sürümler bölümünde Farkları yapay zeka ile özetle düğmesine
+        basabilir. Yapay zeka sansür, zorluk ya da çıkarılmış içerik gibi
+        bilinen farkları listeler. Liste yapay zeka tarafından yazıldığı
+        belirtilerek işaretlenir, her sürümün sayfasında görünür ve bir sürümü
+        bağladığınızda ya da bağını kaldırdığınızda yeniden yazılana kadar
+        gizlenir. Ayarlar &gt; Kazıma&rsquo;da ayarlanmış bir yapay zeka
+        sağlayıcısı gerekir.</li>
+      <li><strong>PlayStation oyunları iyi ayarlarla başlıyor.</strong>
+        DuckStation, PCSX2 ve RPCS3 için RetroDB artık Oyna&rsquo;ya
+        bastığınızda her oyunun çözünürlük ölçeğini ve en boy oranını,
+        emülatörün kendi oyun başına ayar dosyasında ayarlıyor; oyunun tam
+        ekran başlayıp başlamayacağını da. Bunları bütün bir sistem için
+        Ayarlar &gt; Emülatörler&rsquo;deki Ayarlar düğmesiyle, tek bir oyun
+        için de oyun sayfasındaki yeni Emülatör ayarları panelinde
+        değiştirin. Emülatörün içinde değiştirdiğiniz bir ayar her zaman
+        önceliklidir. RetroDB doğru dosyayı bulmak için her diskin seri
+        numarasını okur; CHD diskler için chdman kurulu olmalıdır.</li>
+      <li><strong>Yapay Zeka Doldur artık bir oyunun alanlarına yazılan
+        metinle yönlendirilemiyor.</strong> Yapay Zeka Doldur bir oyunun
+        mevcut yayıncısını, geliştiricisini, baskısını ya da diğer
+        platformlarını denetlerken artık o metni önce temizliyor; başlığı
+        zaten temizlediği gibi.</li>
+      <li><strong>ROM Araçları taramaları ROM klasörünüzün içinde
+        kalıyor.</strong> CHD Dönüştürücü ve CHD Doğrulama artık klasörün
+        dışını gösteren bir kısayolu (sembolik bağlantıyı) izlemiyor; çok
+        diskli bir arşivi açmak da arşivin içine konmuş her kısayolu yok
+        sayıyor.</li>
+      <li><strong>Sayfalar içlerine sızdırılan betikleri çalıştırmıyor.</strong>
+        Tarayıcınız artık RetroDB&rsquo;nin kendisinin yazmadığı her betiği
+        engelliyor; böylece bir oyunun başlığına, bir etikete ya da kazınmış
+        bir açıklamaya kod sokan metin onu çalıştıramıyor. Düğmeler ve
+        menüler eskisi gibi çalışıyor.</li>
+      <li><strong>Bozuk tek bir ekran görüntüsü artık bir oyunun kopya
+        denetimlerini durdurmuyor.</strong> Okunamayan bir ekran görüntüsü bir
+        kenara ayrılıyor ve denetim sürüyor.</li>
+      <li><strong>ROM Araçları işleri artık "çalışıyor" durumunda
+        takılmıyor.</strong> Bir CHD Doğrulama taramasından sonra silinen bir
+        dosya geçersiz sayılıyor; CHD Dönüştürme, CHD Doğrulama ya da Kopya
+        Bulucu&rsquo;daki beklenmedik her hata da işi, hata günlüğüne
+        yazılarak başarısız olarak bitiriyor.</li>
+      <li><strong>Kurulum bitmeden önce uygulamanın veri isteklerine açık bir
+        yanıt veriliyor.</strong> Kurulum sayfasını döndürmek yerine "Kurulum
+        gerekli" yanıtını veriyorlar. Sayfalar sizi yine kurulum sihirbazına
+        götürüyor.</li>
+      <li><strong>Devam oyunları artık ilk oyunun başarımlarını
+        göstermiyor.</strong> RetroAchievements eşleştirmesi başlıktaki sayıyı
+        yok sayıyordu, bu yüzden Donkey Kong Country 2 ve 3, Donkey Kong
+        Country&rsquo;ye bağlanıyordu. Sayılar (2, II, 3, III vb.) artık
+        hesaba katılıyor. Önceden bağlanmış oyunları düzeltmek için tüm
+        sistemlerde RetroAchievements Yenileme&rsquo;yi bir kez
+        çalıştırın.</li>
+      <li><strong>Bir PlayStation eşitlemesi artık kupa sayılarınızı
+        silmiyor.</strong> PlayStation&rsquo;ın yanıtı bir oyunun kupa
+        toplamlarını içermediğinde RetroDB elindeki sayıların üzerine sıfır
+        yazıyordu. Artık onları koruyor; toplu kupa yenilemesinde de.</li>
+      <li><strong>Artık diskte olmayan bir kupa setini açmak bir ileti
+        gösteriyor.</strong> Kupalar sayfası eskiden bir hatayla
+        çöküyordu; artık setin bulunamadığını söylüyor ve sizi listeye geri
+        götürüyor.</li>
+      <li><strong>ROM Araçları tabloları düğme sütununu her dilde doğru
+        adlandırıyor.</strong> Sütun başlığı Aksiyon oyun türüyle aynı sözcüğü
+        paylaşıyordu, bu yüzden bazı diller orada tür adını gösteriyordu.</li>
+      <li><strong>GameCube, 3DS ve Super Famicom oyunlarının emülatörü
+        kendiliğinden ayarlanıyor.</strong> RetroDB bu sistemleri
+        kütüphanelerin kullanmadığı klasör adları altında arıyordu (gc, n3ds,
+        sfc yerine gamecube, 3ds, superfamicom), bu yüzden Dolphin ve Citra
+        onlara hiç bağlanmıyordu. Bunun etkili olması için RetroDB&rsquo;yi bir
+        kez yeniden başlatın.</li>
+      <li><strong>Python gerektirmeyen (bağımsız) indirme emülatörleri
+        yeniden ayarlıyor.</strong> Onları listeleyen dosya eksikti.</li>
+      <li><strong>Yaklaşık 170 düğme, etiket ve ileti daha her dilde
+        çevrildi.</strong> Önceden İngilizce görünüyorlardı, birkaçı da yanlış
+        bir tahmin gösteriyordu (bazı diller bir oyun başlatılamadığında
+        "yedekleme başarısız" diyordu).</li>
+      <li><strong>Escape yalnızca en üstteki pencereyi kapatıyor.</strong>
+        Başka bir pencerenin üzerinde bir soru açıkken Escape eskiden ikisini
+        de kapatıyordu; bazı pencereler Escape onları gizledikten sonra da
+        çalışmayı sürdürüyordu ve bir oyun sayfasında Escape&rsquo;e basmak
+        duraklattığınız bir toplu kazımayı devam ettirebiliyordu. Her pencere
+        artık kendi Kapat eylemiyle kapanıyor, açıkken klavye odağını içinde
+        tutuyor ve odağı onu açan düğmeye geri veriyor. Çalışan işlerin
+        ilerleme pencereleri iş bitene kadar açık kalıyor.</li>
+      <li><strong>Analitik grafikleri sizin dilinizde.</strong> Tür, bakış
+        açısı, boyut ve mod adları, grafik başlıkları, eksen adları ve
+        açıklamalar her dilde İngilizceydi.</li>
+      <li><strong>RetroAchievements verileri daha güvende.</strong> Bir konsol
+        için RetroAchievements oyun listesi yüklenemezse RA Yenileme artık o
+        konsolun oyunlarının hepsinin bağını kaldırmak yerine onları bağlı
+        bırakıyor. RA Verisini Temizle artık yalnızca RetroAchievements
+        ilerlemesini temizliyor; Steam ve Xbox ilerlemesi kalıyor.</li>
+      <li><strong>Parolalar her yerde en az 12 karakter olmalı.</strong> İlk
+        kurulum her uzunlukta bir yönetici parolasını kabul ediyordu, zorunlu
+        parola değişikliği ve kurulum sayfaları da 4 karakterin yeterli
+        olduğunu söylüyordu. Üçü de artık uygulamanın geri kalanı gibi 12
+        karakter istiyor.</li>
+      <li><strong>Başarım toplamları doğru ve size ait.</strong>
+        RetroAchievements&rsquo;tan tek bir oyunu eşitlemek artık 0 yerine o
+        oyunun kaç başarımı olduğunu kaydediyor. Kontrol Paneli&rsquo;nin
+        başarım toplamları yalnızca sizin oyunlarınızı sayıyor ve Koleksiyoncu
+        Kupaları artık her Steam ya da Xbox başarımını iki kez saymıyor.</li>
+      <li><strong>Arka plan eşitlemeleri sizin hesaplarınızı kullanıyor.</strong>
+        Bir RetroAchievements sistem eşitlemesi, bir hesap ayarladıysanız
+        kendi RetroAchievements hesabınızla oturum açıyor. PlayStation toplu
+        yenilemesi her seferinde baştan oturum açmak yerine kayıtlı oturum
+        açma bilgilerinizi yeniden kullanıyor.</li>
+      <li><strong>Kendi eşitlemenizi yalnızca siz durdurabilir ya da devam
+        ettirebilirsiniz.</strong> Başka bir kullanıcı artık sizin
+        RetroAchievements, Steam ya da Xbox eşitlemenizi iptal edemiyor;
+        yarıda kalmış bir işi devam ettirmek de onu başlatmakla aynı yetkiyi
+        gerektiriyor. Yöneticiler ikisini de yapabilmeyi sürdürüyor.</li>
+      <li><strong>RPCS3 kupa klasörünüz kaydettiğinizde denetleniyor.</strong>
+        Var olmayan, tam bir yol olmayan ya da bir sistem klasörü olan bir
+        klasör, ana ayarlarda zaten olduğu gibi reddediliyor.</li>
+      <li><strong>Müze&rsquo;nin "Tüm Resimleri Al" işlemi arka planda
+        çalışıyor.</strong> Sayfa artık her oyun kumandası görseli için
+        dakikalarca beklemiyor. İşlemin ne kadar ilerlediğini gösteriyor, bir
+        İptal düğmesi var ve sayfadan ayrılıp geri döndüğünüzde ilerlemeyi
+        kaldığı yerden yeniden gösteriyor.</li>
+      <li><strong>ROM Araçları dosyalarınızı daha iyi koruyor.</strong>
+        Temizle artık bir arşivi boşaltmıyor: <code>*</code> gibi bir desen
+        kaydedilemiyor ve desenler her dosyayı kaldıracaksa Temizle duruyor.
+        CHD Dönüştürücü "doğrula" kapalıyken orijinali saklıyor, "mevcutları
+        atla" açıkken de var olan bir CHD&rsquo;ye dokunmuyor. Kopya Bulucu,
+        bir istek hepsini istese bile her oyunun bir kopyasını her zaman
+        saklıyor.</li>
+      <li><strong>ROM Araçları işleri düğmelerin dediği gibi davranıyor.</strong>
+        Duraklat artık CHD Dönüştürme, CHD Doğrulama, Kopya Bulucu ve Ekran
+        Görüntüsü Kopya Temizleyici&rsquo;yi duraklatıyor; duraklatılmış bir iş
+        de iptal edilebiliyor. Hataya çarpan bir Ekran Görüntüsü Kopya
+        Temizleyici taraması artık sonsuza dek çalışmak yerine başarısız
+        olarak bitiyor.</li>
+      <li><strong>M3U Oluştur artık arşivleri geçici bir klasörde
+        bekletmiyor.</strong> Taşınan arşivler artık RetroDB&rsquo;nin
+        yeniden başlatmada temizlenmeyen kendi veri klasörüne gidiyor. Arşiv
+        tarayıcısı nereye gittiklerini gösteriyor, toplu onay da taşınacaklarını
+        söylüyor. ROM Araçları ayarlarını sıfırlamak artık her seçeneği
+        sıfırlıyor.</li>
+      <li><strong>Diskleri RetroDB&rsquo;den değiştirin.</strong> Bir .m3u
+        disk listesinden başlatılan bir RetroArch oyunu çalışırken, her
+        sayfanın üstündeki &#9654; Şu anda oynanıyor listesi oyunun başlığını
+        ve bir Sonraki disk düğmesini gösteriyor; böylece ikinci tarafı isteyen
+        bir oyun, tarayıcıdan ya da telefondan tek tıkla devam ediyor.
+        RetroArch&rsquo;ta Ayarlar &gt; Ağ &gt; Ağ Komutları açık olmalıdır
+        (bağlantı noktası 55355); kapalıysa düğme bunu söylüyor.</li>
+      <li><strong>Başlatma betiği RetroDB hazır olduğunda onu açıyor.</strong>
+        start.sh, start.command ve start.bat tarayıcıyı sabit 3 saniye sonra
+        açıyordu; bu çoğu zaman sunucu yanıt veremeden oluyordu ve sayfa
+        yüklenemiyordu. RetroDB artık sunucu dinlemeye başlar başlamaz sayfayı
+        açıyor. LocalWebServerManager&rsquo;dan başlatıldığında hiçbir sayfa
+        açmıyor; yöneticinin Aç düğmesini kullanın.</li>
+      <li><strong>Oyun videoları 500 MB&rsquo;a kadar olabiliyor.</strong>
+        Sınır 50 MB&rsquo;tı; çoğu oyun fragmanı için fazla küçüktü. Fazla
+        büyük bir yükleme artık sayfanın yerine düz metin koymak yerine oyun
+        sayfasında bir ileti gösteriyor. Reddedilen bir video (fazla büyük ya
+        da yanlış dosya türü) artık tek söz etmeden atılmak yerine bunu
+        söylüyor.</li>
+      <li><strong>Başlatma ayarladığınız yolu izliyor.</strong> Ayarlar &gt;
+        Emülatörler&rsquo;deki RetroArch satırında bir İkili dosya yolu
+        geçersiz kılması artık o sayfanın üstündeki RetroArch yolundan önce
+        geliyor; önceden satırın yolu yok sayılıyordu. Durdur&rsquo;a iki kez
+        basmak artık bir oyundan iki kez çıkmasını istemiyor; Linux&rsquo;ta
+        RetroArch ikinci isteği "kaydetmeden çık" olarak algılıyor, bu yüzden
+        oyun içi kaydınız kaybolabiliyordu.
+        Hiç yapılmamış bir uzak moddan kalan bir başlatıcı ayarı artık her
+        oyunun başlamasını engellemiyor.</li>
+      <li><strong>Başarısız eylemler hatalarını doğru bildiriyor.</strong>
+        Kaydetme, içe aktarma, eşitleme ya da tarama başarısız olduğunda
+        RetroDB artık işe yaramış gibi yanıt vermek yerine gerçek bir hata
+        durumuyla yanıt veriyor ve nedeni iletisinde gösteriyor. Bağlanamayan
+        bir PSN oturum açma kodunu kaydetmek artık iç hata ayrıntılarını
+        göstermiyor. Oturum açma, kullanıcı yönetimi, profiliniz, başarımlar,
+        içe aktarmalar, Yapay Zeka Doldur ve HowLongToBeat aramaları da artık
+        aynısını yapıyor; kaydedilemeyen bir dil de "Ağ hatası" yerine
+        nedenini söylüyor.</li>
+      <li><strong>No-Intro biçiminde adlandırılmış oyunlar artık
+        kazınıyor.</strong> "Legend of Zelda, The" ya da "Legend of Zelda,
+        The - Ocarina of Time" gibi bir başlık artık eşleşme filtresince
+        reddedilmek yerine "The Legend of Zelda" sonuçlarıyla eşleşiyor. ROM
+        Raporları da bu adları uyuşmazlık olarak işaretlemeyi bırakıyor.</li>
+      <li><strong>Dosya adlarından alınan başlıklar tüm etiketlerinden
+        arınıyor.</strong> "(USA, Europe)" gibi birleşik bir bölge ve "(UK)"
+        artık kaldırılıyor. ZX Spectrum gibi ev bilgisayarlarında yıldan
+        sonraki her şey gidiyor; böylece "Chuckie Egg 2 (UK) (1985) (A'n'F
+        Software) (tzx)", "Chuckie Egg 2" oluyor. "..zip" ile biten bir dosya
+        adı artık başıboş bir nokta bırakmıyor. Kazıyıcı aramaları, bir
+        oyunun verilerini sıfırlama ve Bölgesel Sürümler önerileri bu daha
+        temiz adları kullanıyor.</li>
+      <li><strong>Yanlış bir başlık yeniden kazımada artık kendini
+        tekrarlamıyor.</strong> Toplu kazıma artık oyun için kayıtlı başlıkla
+        değil, ROM dosyasındaki adla arıyor. Bir zamanlar yanlış oyunla
+        eşleşmiş bir oyun yeniden kazındığında doğrusunu buluyor.</li>
+      <li><strong>Kazıyıcılar Varsayılan Bölge&rsquo;nizi tercih
+        ediyor.</strong> İki sonuç berabere kaldığında artık her zaman ABD
+        sonucu değil, Varsayılan Bölge&rsquo;nizden ya da Dünya&rsquo;dan
+        olanı kazanıyor. Yalnızca bölge etiketlerinden oluşan iki başlık artık
+        kusursuz bir eşleşme sayılmıyor. Bölgesel Sürümler artık "X-Men"deki
+        X&rsquo;i bir devam oyunu numarası sanmıyor. Bir kartın hangi sürümü
+        göstereceğini seçmek artık yalnızca ROM&rsquo;un dosya adını okuyor,
+        üstündeki klasörleri değil; "(U)" ve "(E)" gibi eski etiketleri de
+        anlıyor.</li>
+      <li><strong>Günlük, her oyunun kazıma süresinin nereye gittiğini
+        gösteriyor.</strong> Her oyundan sonra RetroDB; aramaya, her kaynağa,
+        indirmeye, görsel işlemeye, yapay zekaya ve kaydetmeye harcanan
+        saniyeleri içeren tek bir satır günlüğe yazıyor. Bu, daha hızlı
+        kazımalara doğru ilk adım.</li>
+      <li><strong>Kazımalar daha çabuk bitiyor: küçük resimler sonradan
+        netleştiriliyor.</strong> Bir kazıma artık bir oyunu resimleriyle
+        birlikte indirildikleri gibi kaydediyor. Küçük kutu görselleri ve
+        ekran görüntüleri sonra arka planda, her seferinde bir oyun olmak
+        üzere büyütülüyor. Yinelenen ekran görüntüleri tüm bu işlerden önce
+        atılıyor. RetroDB yarıda durursa bir sonraki başlatılışında kaldığı
+        yerden sürdürüyor.</li>
+      <li><strong>Bir oyunun kılavuzunu kendi sayfasında okuyun.</strong>
+        Kılavuz düğmesi artık PDF&rsquo;yi oyun sayfasının üzerinde bir
+        pencerede açıyor. Sayfaları Önceki ve Sonraki ile, ok tuşlarıyla, Home
+        ve End ile ya da telefonda kaydırarak çevirin; her sayfa bir kitabınki
+        gibi çevriliyor, sisteminiz daha az hareket istiyorsa yalnızca
+        değişiyor. "PDF&rsquo;yi yeni sekmede aç" hâlâ orada, Kılavuz&rsquo;a
+        Ctrl ile tıklamak da sekmeyi doğrudan açıyor.</li>
+      <li><strong>Kenar çubuğu görsellerin hâlâ iyileştirildiğini
+        gösteriyor.</strong> Resimler arka planda netleştirilirken kenar
+        çubuğunda "Görüntüler iyileştiriliyor — Kalan oyun: N" yazıyor. Hâlâ
+        sırada bekleyen bir oyun bunu kendi sayfasında söylüyor ve daha net
+        görselleri hazır olduklarında orada kendiliğinden beliriyor. 2D/3D
+        kapak anahtarı artık o satırı örtmüyor.</li>
+      <li><strong>Yedek kaynaklara aynı anda soruluyor.</strong> Ana kaynak
+        boşluk bıraktığında RetroDB artık diğer kaynaklara birbiri ardına
+        değil, hepsine birden soruyor. Yanıtları yine Ayarlar&rsquo;daki
+        sıranızla kullanılıyor, bu yüzden her alanı yine aynı kaynak
+        kazanıyor.</li>
+      <li><strong>ES-DE oyun listesini bir kez okuyor.</strong> Toplu kazımalar
+        da dahil her kazıma, bir sistemin ES-DE gamelist.xml dosyasını her
+        oyun için iki kez okuyordu. RetroDB artık onu bir kez okuyor ve
+        yalnızca dosya değiştiğinde yeniden okuyor.</li>
+      <li><strong>Meta Veri Ara&rsquo;nın Uygula düğmesi artık yeniden
+        aramıyor.</strong> Bir oyun sayfasında işaretlediğiniz sonuçlar ikinci
+        kez aranmak yerine doğrudan kaynaklarından alınıyor. Hiçbir şey
+        işaretlenmemişse boşlukları yalnızca uyguladığınız kaynak ve yapay zeka
+        dolduruyor.</li>
+      <li><strong>ScreenScraper alt başlığı olan oyunları buluyor.</strong>
+        "Alone in the Dark: The New Nightmare" gibi bir başlık için, iki
+        noktadan önce bir boşluk olmadıkça hiçbir şey bulamıyordu. RetroDB
+        artık o biçimde arıyor; yine bir şey bulunmazsa iki noktadan önceki
+        kısımla arıyor.</li>
+      <li><strong>Oynanacak bir şeyi olmayan oyunlar artık Oyna
+        sunmuyor.</strong> CLZ, Steam, Xbox ya da PSN içe aktarmasıyla
+        eklenen bir oyunun ROM dosyası yoktur. Sayfası artık Kütüphane
+        kartlarıyla uyumlu olarak Oyna düğmesi, Emülatör ayarları ve onu
+        düzenlediğinizde Başlat bölümü göstermiyor.</li>
+      <li><strong>RetroArch oyunları iki kötü ayara karşı korunuyor.</strong>
+        RetroDB artık bir oyunu her başlattığında RetroArch&rsquo;a sizinkinin
+        üzerine eklenen küçük, kendine ait bir ayar dosyası veriyor. Bu dosya
+        klavyeyi masaüstünüze (Wayland ya da X11) uygun ayarlıyor, böylece
+        klavye hiç ölü kalmıyor; ayrıca Commodore 64 oyunlarının hızlı
+        yüklenmek için kullandığı hızlı ileri almanın tam hızda çalışmasına
+        izin veriyor. Diğer tüm RetroArch ayarlarınıza dokunulmuyor.</li>
+      <li><strong>M3U Oluştur oyunu kütüphanenizde tutuyor.</strong> Çok
+        diskli bir arşivi oynatma listesine dönüştürmek, oyunu başka yere
+        taşınmış olan arşivi gösterir hâlde bırakıyordu. Oyun artık yeni
+        oynatma listesini gösteriyor ve ayrıntılarını ve resimlerini koruyor.
+        Bir arşiv, her biri kendi disk setinde olan birkaç oyun sürümü
+        içerdiğinde, oynatma listesi artık hepsinin yerine ilk sürümün
+        disklerini kullanıyor ve hangi diskleri dışarıda bıraktığını
+        söylüyor.</li>
+      <li><strong>Tam Yeniden Kazıma elinizdeki medyayı koruyabiliyor.</strong>
+        Tam Yeniden Kazıma anahtarının yanındaki "Mevcut medyayı koru"
+        kutusunu işaretleyin. Metin ayrıntıları yine yenileniyor, ancak
+        diskte zaten bulunan görseller, videolar ve kılavuzlar yeniden
+        indirilmek yerine olduğu gibi kalıyor. İşaret olmadan da bir Tam
+        Yeniden Kazıma, önceden indirdiği ekran görüntülerini artık
+        atmıyor.</li>
+      <li><strong>Arka plan işleri artık iş kaybetmiyor ya da atlamıyor.</strong>
+        Kötü bir oyuna çarpan bir RetroAchievements yenilemesi artık önceden
+        güncellediği oyunları çöpe atmıyor. Devam ettirilen bir eşitleme ya da
+        yenileme artık durduğunda üzerinde olduğu oyunu atlamıyor. Çok eski
+        bir anlık görüntüden devam ettirilen bir RetroAchievements ya da
+        Steam eşitlemesi, hiçbir şey eşitlemeden başarı bildirmek yerine
+        artık bir iletiyle duruyor. WebP dönüştürmesi geride kalmış bir WebP
+        dosyasına güvenmeden önce onu denetliyor ve boş disk alanını
+        okuyamazsa başlamıyor.</li>
+      <li><strong>Çok eski bir kurulumu yükseltmek artık sessizce veri
+        kaybettiremiyor.</strong> Üç eski veritabanı yükseltme adımı nadir
+        durumlarda satırları düşürebiliyordu. Artık satırları kopyalıyor ya da
+        onları kaybetmek yerine açık bir hatayla duruyorlar.</li>
+      <li><strong>Hakkında penceresinin düğmeleri artık kesilmiyor.</strong>
+        Pencere daha geniş ve dört düğmesi iki sıra hâlinde duruyor, böylece
+        her etiket tam olarak görünüyor; telefonda alt alta diziliyorlar.</li>
+      <li><strong>Temanız sizi yeni bir tarayıcıya kadar izliyor.</strong>
+        Daha önce kullanmadığınız bir tarayıcıda oturum açmak artık kayıtlı
+        temanızı gösteriyor. Önceden giriş sayfası önce Cyberpunk&rsquo;ı
+        kaydediyordu ve o öyle kalıyordu.</li>
+      <li><strong>Giriş parola kutusu artık "Yönetici Girişi"
+        demiyor.</strong> Her hesap bir parolayla oturum açıyor, bu yüzden
+        pencere artık yalnızca Giriş Yap diyor. Hesap sayfası ve Yardım
+        sayfası da bunu söylüyor.</li>
+      <li><strong>Yardım her dilde güncel.</strong> Çevrilmiş Yardım sayfaları
+        artık Bölgesel Sürümler&rsquo;i anlatıyor, her hesabın bir parolaya
+        ihtiyacı olduğunu ve temanızın hesabınızla birlikte kaydedildiğini
+        söylüyor. İngilizce de dahil her dildeki Yardım artık gerçek 12
+        karakterlik parola alt sınırını veriyor.</li>
+      <li><strong>Küçük düzeltmeler:</strong> dosya adında kesme işareti olan
+        fanart artık oyun ve kupa sayfalarında görünüyor; Ayarlar yönetici
+        olmayan hesaplar için artık bir betik hatası göstermiyor, ekran
+        okuyucular da artık hangi Ayarlar sekmesinin seçili olduğunu duyuyor;
+        bir sayfadan ayrılmak artık tarayıcı konsolunu iptal edilmiş istek
+        hatalarıyla doldurmuyor; büyütme modeli önce çalışan bir adresten
+        indiriliyor; kurulum programı da Windows&rsquo;ta çıktısı bir dosyaya
+        kaydedildiğinde artık çökmüyor.</li>
+      <li><strong>Geniş kapsamlı bir güvenilirlik düzeltmeleri turu.</strong>
+        Boş başlıklı bir oyunu kaydetmek artık diğer düzenlemelerinizi
+        kaybettirmiyor. Yeniden başlatma artık çalışan işlerin önce düzgünce
+        durmasına izin veriyor. M3U Oluştur var olan bir oynatma listesinin ya
+        da klasörün üzerine yazmayı reddediyor. ROM Araçları&rsquo;nda
+        istenmeyen dosya listesini temizlemek artık "hiçbir şey silme"
+        anlamına geliyor ve iki desen artık "Release of the Dragon" gibi
+        gerçek ROM adlarını yakalamıyor. Hasarlı tek bir PS3 kupa dosyası
+        artık her oyunun kupalarını boşaltmıyor. Yapay Zeka Doldur tek bir
+        bölge yazıyor. Analitik, puan grafiğinde her oyunu bir kez sayıyor.
+        CLZ içe aktarmaları standart tür adlarını kullanıyor. Düzenleme
+        pencerelerinde tür ve diğer etiketler her dilde kaldırılabiliyor ve
+        klavye kısayolları artık Ctrl+D ya da Ctrl+G&rsquo;yi ele geçirmiyor.
+        İzleyiciler bir oyunun tamamlanma durumunu görüyor ama artık
+        değiştiremiyor, çünkü bu durum herkesle paylaşılıyor.</li>
+      <li><strong>Ekran okuyucular "Platform Match Required" anahtarını
+        görünen adıyla okuyor</strong>; Ayarlar → Kazıma&rsquo;da.</li>
+      <li>Diğer dillerde Ayarlar artık "Varsayılan Bölge"yi çeviriyor, Kazıma
+        sekmesi de "kazıma sürüyor" yerine bir ad olarak okunuyor. Yardım
+        sayfaları aynı sözcükleri kullanıyor.</li>
+      <li><strong>Kapanmayan bir oyun artık kapanmış gibi
+        gösterilmiyor.</strong> Bir emülatör Durdur&rsquo;dan sonra da
+        çalışmayı sürdürürse RetroDB onu çalışıyor olarak göstermeyi
+        sürdürüyor. Reddedilen bir RetroArch başlatması artık önce ayar
+        dosyasını yazmıyor; hemen başarısız olan bir emülatör de hata
+        iletisini ilk denetimde gösteriyor.</li>
+      <li>Güncellenen kütüphaneler: Pillow 13 (görsel işleme), numpy 2.5.4 ve
+        onnxruntime 1.31 (büyütme), ayrıca derleme ve sürüm araçlarının en son
+        sürümleri.</li>
+      <li>Perde arkasında: oyun başlatma kodu daha kolay izlenebilsin diye
+        toparlandı, kullanılmayan kodlar kaldırıldı (bir API adresi, bir PSN
+        yardımcısı, hiçbir sayfanın yüklemediği bir kupa betiği ve hiçbir
+        şeyin okumadığı site genelindeki bir tema ayarı), uygulamanın
+        tarayıcıya verdiği yanıtlar tek bir yerde oluşturuluyor, birkaç tasarım
+        belgesi kodla uyuşacak biçimde düzeltildi, test takımı toparlandı ve
+        yeni bir denetim bir sürümden önce JavaScript sözdizimi hatalarını
+        yakalıyor. Kaldırılan kodu anlatan eski değişiklik günlüğü girdileri
+        artık bunu belirtiyor.</li>
+    </ul>
+- version: 3.29.0
+  date: '2026-10-17'
+  tags:
+  - type: feature
+    label: Bir oyunun diğer adları geldikleri bölgeyi gösteriyor
+  body: |
+    <ul>
+      <li><strong>Bir oyunun diğer adları geldikleri bölgeyi
+        gösteriyor.</strong> Oyun sayfasındaki Diğer adları kartı her adı kendi
+        ülkesi ya da bölgesiyle, kendi dilinizde etiketliyor; örneğin
+        "Rockman" için Japonya. Etiketli adlar bölgeye göre gruplanarak önce
+        geliyor. Kaynağını ve "Çalışma başlığı" gibi bir notu görmek için
+        imleci bir adın üzerine getirin.</li>
+      <li>IGDB&rsquo;den gelen adlar artık bölgelerini koruyor. Önceden
+        yalnızca ScreenScraper adlarının bir bölgesi vardı.</li>
+      <li>ScreenScraper&rsquo;ın "SS" etiketi artık bir bölge olarak
+        görünmüyor. Bu, ScreenScraper&rsquo;ın oyun için kullandığı kendi
+        adıdır, bir yer değil.</li>
+      <li>ROM Araçları → Alternatif Başlıkları Geriye Dönük Doldur artık
+        kazınmış her oyunu denetliyor, böylece zaten sahip olduğunuz adlar
+        bölgelerini kazanıyor. Mevcut kütüphanenizi etiketlemek için bir kez
+        çalıştırın.</li>
+    </ul>
+- version: 3.28.0
+  date: '2026-10-17'
+  tags:
+  - type: feature
+    label: RetroDB'ye emülatör klasörünüzü gösterin, onları o ayarlasın
+  - type: fix
+    label: Ayarlar → Emülatörler sayfası düzeltmeleri
+  body: |
+    <ul>
+      <li><strong>RetroDB&rsquo;ye emülatör klasörünüzü gösterin, onları o
+        ayarlasın.</strong> Ayarlar → Emülatörler&rsquo;de yeni bir Emülatör
+        klasörleri listesi var. Emülatörlerinizin bulunduğu klasörü ekleyin;
+        RetroDB orada her birini bir AppImage, taşınabilir bir betik ya da
+        kurulu bir Flatpak olarak buluyor ve çalıştırdığı sistemlere
+        bağlıyor. Zaten çalışan bir emülatörü olan bir sistem onu
+        koruyor.</li>
+      <li><strong>Hangi sistemlerin oynamaya hazır olduğunu görün.</strong>
+        Sistem başına eşleme tablosu artık her sistemin emülatörlerini
+        listeliyor, her birinin çalışıp çalışmadığını söylüyor ve bir sistemin
+        varsayılanını seçmenizi sağlıyor. DuckStation, PCSX2, RPCS3 ve
+        RetroArch için BIOS dosyalarının yerinde olup olmadığını da söylüyor ve
+        eksik olanları adlandırıyor. RetroDB BIOS dosyalarını yalnızca okur;
+        hiçbirini asla kopyalamaz ya da indirmez.</li>
+      <li>Emülatör taraması artık büyük bir emülatör sürücüsündeki her
+        emülatörü buluyor. Önceden bir emülatörün kendi ayar klasörünün
+        içinde erkenden durabiliyordu.</li>
+      <li>RetroArch&rsquo;ın Otomatik algıla ve Kaydet düğmeleri yeniden
+        çalışıyor; Emülatörü düzenle penceresi de artık siz Düzenle&rsquo;ye
+        basana kadar sayfada görünmüyor.</li>
+    </ul>
 - version: 3.27.0
   date: '2026-10-17'
   tags:
