@@ -8821,7 +8821,10 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.134 Scrape speed: a manual scrape searches again for sources whose results are already on screen (MEDIUM, S).
-- **Status**: todo
+- **Resolution** (2026-10-21): Shipped f406929 (2026-10-21): Apply passes only the ticked results,
+  fetched by ID; none ticked leaves AI only. ES-DE fallback uses the
+  ticked path. Session field dropped.
+- **Status**: done
 - **Where**: the game page search (`/api/games/search`) shows one column
   per enabled source. Apply posts to `/api/game/<id>/apply-metadata`
   (`routes/games.py`) with the lead and the ticked results as
@@ -9026,6 +9029,41 @@ were corrected in `2836bc3` and are not repeated here.
   filename already on disk and, in force mode, do not add it back to
   the list. The skipped files stay on disk, unlisted.
 - **Fix**: add an existing file to the list instead of skipping it.
+
+---
+
+#### Pass 59.147 Scrape matching: each source needs the title spelled its own way, so punctuation loses matches (MEDIUM, M).
+- **Status**: todo
+- **Where**: every search sends one cleaned title.
+  `scrape_screenscraper.search_game` strips only bracketed text;
+  `scrape_igdb.search_games` strips apostrophes, quotes, colons and
+  other symbols; `scrape_thegamesdb.search_games` and
+  `scrape_rawg.search_games` send the title unchanged. ES-DE is a
+  local gamelist and is in scope too.
+- **Reported** (user, 2026-10-21): ScreenScraper finds nothing for
+  'Alone in the Dark: The New Nightmare'; it needs a space before the
+  colon. Other punctuation has nuances as well.
+- **Do**: probe each source live with a fixed set of tricky titles
+  (colon subtitle, apostrophe, &, hyphen, period, accent, roman
+  numeral, leading or trailing 'The') in several spellings; record
+  which spelling each source needs; then give each search an ordered
+  list of spellings to try until one returns a match. Pin each rule
+  with a test. Probe on a scratch DB; it spends ScreenScraper quota.
+- **Keeps**: the 80-point title-score floor (scrapers.md §6).
+
+---
+
+#### Pass 59.148 Game manuals open in a window on the page, with a page-turn animation (MEDIUM, M).
+- **Status**: todo
+- **Where**: `templates/game_detail.html` 'View Manual (PDF)' links
+  to `static/images/manuals/<file>` in a new tab.
+- **Do**: open a modal that renders the PDF's pages and turns them
+  with a page-flip animation (keyboard arrows, swipe, buttons). Needs
+  a PDF renderer that runs under the CSP (vendored, no inline
+  handlers); one focus trap; Escape closes; keep a link to the raw
+  PDF. Respect reduced-motion: no flip animation there.
+- **Open question for the user**: is 'the manual' the game's PDF
+  manual (assumed) or RetroDB's own help manual?
 
 ## Done index
 
