@@ -212,7 +212,7 @@
                 <button type="button" class="btn btn-sm btn-secondary" data-on-click="addRegionOption">Add</button>
             </div>
             <div style="margin-top: var(--spacing-sm);">
-                <label class="form-label" style="font-size:0.85rem;" for="defaultRegionSelect">Default Region</label>
+                <label class="form-label" style="font-size:0.85rem;" for="defaultRegionSelect">{{ _('Default Region') }}</label>
                 <select id="defaultRegionSelect" class="form-select" style="max-width: 200px;">
                     {% for r in user_settings.get('region_options', ['USA', 'Europe', 'Japan', 'World']) %}
                     <option value="{{ r }}"{% if r == user_settings.get('default_region', 'USA') %} selected{% endif %}>{{ r }}</option>

@@ -324,7 +324,7 @@ class TestRawgScreenshotsDoNotCollide:
         # duplicate of itself, and the name stayed in games.screenshots.
         assert 'start_num = len(existing_ss) + 1' in src
         assert '_rawg_ss{start_num + i}' in src
-        assert 'filename in existing_ss or os.path.exists(local_path)' in src
+        assert '_skip_screenshot(filename, local_path, existing_ss, relisted)' in src
 
 
 class TestBatchM3uHonoursDeleteArchives:

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-21 13:35+0200\n"
+"POT-Creation-Date: 2026-10-21 14:04+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -57,8 +57,8 @@ msgstr "システムが見つからないか、実績対応ゲームがありま
 #: routes/achievements.py:171 routes/achievements.py:440
 #: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/collections.py:276
 #: routes/collections.py:531 routes/emulators.py:248 routes/emulators.py:262
-#: routes/games.py:347 routes/games.py:790 routes/games.py:912
-#: routes/games.py:968 routes/games_ai.py:46 routes/games_media.py:35
+#: routes/games.py:347 routes/games.py:798 routes/games.py:920
+#: routes/games.py:976 routes/games_ai.py:46 routes/games_media.py:35
 #: routes/games_media.py:82 routes/games_media.py:143 routes/reports.py:693
 #: routes/reports.py:818 routes/trophies.py:1278 services/hltb_service.py:125
 msgid "Game not found"
@@ -227,8 +227,8 @@ msgstr "親ゲームが見つかりません"
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "ボーナスディスクと親ゲームは同じシステム内にある必要があります"
 
-#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1220
-#: routes/games.py:1250 routes/platform_import.py:289
+#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1228
+#: routes/games.py:1258 routes/platform_import.py:289
 #: routes/platform_import.py:658 routes/platform_import.py:1024
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:200 routes/scraper.py:528
@@ -434,65 +434,65 @@ msgstr "IDが指定されていません"
 msgid "Provide 1-50 valid IDs"
 msgstr "有効なIDを1〜50件指定してください"
 
-#: routes/games.py:498
+#: routes/games.py:503
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
 msgstr "動画は保存されませんでした: %(mb)s MB 以下の MP4、WebM、OGG ファイルである必要があります。"
 
-#: routes/games.py:624
+#: routes/games.py:629
 msgid "Game not found after update"
 msgstr "更新後にゲームが見つかりません"
 
-#: routes/games.py:916
+#: routes/games.py:924
 msgid "No game selected."
 msgstr "ゲームが選択されていません。"
 
-#: routes/games.py:940
+#: routes/games.py:948
 msgid "This metadata apply is no longer running."
 msgstr "このメタデータの適用はすでに実行されていません。"
 
-#: routes/games.py:949
+#: routes/games.py:957
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
 " still missing)"
 msgstr "%(sources)s からメタデータを適用しました！（%(filled)d 項目を入力、%(missing)d 項目が未入力）"
 
-#: routes/games.py:955
+#: routes/games.py:963
 msgid "Failed to apply metadata."
 msgstr "メタデータの適用に失敗しました。"
 
-#: routes/games.py:998 routes/games.py:1042
+#: routes/games.py:1006 routes/games.py:1050
 msgid "No fields to update"
 msgstr "更新するフィールドがありません"
 
-#: routes/games.py:1039 routes/platform_import.py:212
+#: routes/games.py:1047 routes/platform_import.py:212
 #: routes/platform_import.py:572 routes/platform_import.py:928
 #: routes/trophies.py:1852
 msgid "No games selected"
 msgstr "ゲームが選択されていません"
 
-#: routes/games.py:1049
+#: routes/games.py:1057
 msgid "Invalid completion status"
 msgstr "クリア状況が無効です"
 
-#: routes/games.py:1097
+#: routes/games.py:1105
 msgid "No valid fields to update"
 msgstr "更新できる有効なフィールドがありません"
 
-#: routes/games.py:1213
+#: routes/games.py:1221
 msgid "Invalid status"
 msgstr "ステータスが無効です"
 
-#: routes/games.py:1238
+#: routes/games.py:1246
 msgid "Not authenticated"
 msgstr "認証されていません"
 
-#: routes/games.py:1269
+#: routes/games.py:1277
 msgid "Filter type and value required"
 msgstr "フィルターの種類と値が必要です"
 
-#: routes/games.py:1282
+#: routes/games.py:1290
 msgid "Invalid filter type"
 msgstr "フィルターの種類が無効です"
 
@@ -2364,7 +2364,7 @@ msgstr "次のディスクへの切り替えに失敗しました"
 
 #: services/js_i18n_strings.py:620 templates/_bulk_edit_modal.html:171
 #: templates/_modals/edit_modal.html:139 templates/game_detail.html:652
-#: templates/game_detail.html:718
+#: templates/game_detail.html:720
 msgid "No"
 msgstr "いいえ"
 
@@ -2745,7 +2745,7 @@ msgid "Scraped {processed} / {total} - {percent}%"
 msgstr "取得済み {processed} / {total} - {percent}%"
 
 #: services/js_i18n_strings.py:708 templates/logs.html:710
-#: templates/settings.html:29 templates/wishlist.html:507
+#: templates/wishlist.html:507
 msgid "Scraping"
 msgstr "取得"
 
@@ -3109,7 +3109,7 @@ msgstr "変更される？"
 msgid "Works"
 msgstr "正常"
 
-#: services/js_i18n_strings.py:784 templates/game_detail.html:739
+#: services/js_i18n_strings.py:784 templates/game_detail.html:741
 msgid "Write again with AI"
 msgstr "AI で書き直す"
 
@@ -3119,7 +3119,7 @@ msgstr "Xboxインポート"
 
 #: services/js_i18n_strings.py:786 templates/_bulk_edit_modal.html:170
 #: templates/_modals/edit_modal.html:139 templates/game_detail.html:595
-#: templates/game_detail.html:652 templates/game_detail.html:718
+#: templates/game_detail.html:652 templates/game_detail.html:720
 msgid "Yes"
 msgstr "はい"
 
@@ -3355,7 +3355,7 @@ msgstr "追加"
 #: templates/analytics.html:483 templates/analytics.html:2428
 #: templates/base.html:897 templates/base.html:1088
 #: templates/compare_games.html:71 templates/game_detail.html:227
-#: templates/game_detail.html:696 templates/local_trophy_detail.html:87
+#: templates/game_detail.html:698 templates/local_trophy_detail.html:87
 #: templates/psn_trophy_detail.html:82 templates/steam_achievement_game.html:78
 #: templates/system_games.html:92 templates/xbox_achievement_game.html:67
 msgid "Publisher"
@@ -3430,7 +3430,7 @@ msgstr "PEGI 18"
 #: templates/_bulk_edit_modal.html:106 templates/_modals/edit_modal.html:81
 #: templates/analytics.html:492 templates/analytics.html:2428
 #: templates/base.html:1079 templates/compare_games.html:75
-#: templates/game_detail.html:693 templates/reports.html:444
+#: templates/game_detail.html:695 templates/reports.html:444
 msgid "Region"
 msgstr "地域"
 
@@ -3504,7 +3504,7 @@ msgstr "もっと読み込む"
 
 #: templates/achievement_game.html:17 templates/achievement_game.html:37
 #: templates/achievements_system.html:15 templates/game_detail.html:21
-#: templates/game_detail.html:282 templates/game_detail.html:701
+#: templates/game_detail.html:282 templates/game_detail.html:703
 #: templates/systems.html:43
 msgid "RetroAchievements"
 msgstr "RetroAchievements"
@@ -3837,7 +3837,7 @@ msgstr "すべて選択"
 msgid "Select Unscraped"
 msgstr "未取得を選択"
 
-#: templates/all_games.html:72 templates/game_detail.html:767
+#: templates/all_games.html:72 templates/game_detail.html:769
 #: templates/system_games.html:63
 msgid "Full Re-scrape"
 msgstr "完全再取得"
@@ -3846,7 +3846,7 @@ msgstr "完全再取得"
 msgid "Toggle between full re-scrape and fill missing mode"
 msgstr "完全再取得と欠落補完モードを切り替え"
 
-#: templates/all_games.html:77 templates/game_detail.html:767
+#: templates/all_games.html:77 templates/game_detail.html:769
 #: templates/system_games.html:68
 msgid "Fill Missing"
 msgstr "欠落を補完"
@@ -4812,7 +4812,7 @@ msgstr "プレイ時間データなし"
 #: templates/_modals/edit_modal.html:28 templates/_modals/filter_modal.html:13
 #: templates/base.html:1035 templates/dashboard.html:296
 #: templates/dashboard.html:355 templates/dashboard.html:432
-#: templates/dashboard.html:498 templates/game_detail.html:694
+#: templates/dashboard.html:498 templates/game_detail.html:696
 msgid "Title"
 msgstr "タイトル"
 
@@ -5880,7 +5880,7 @@ msgstr "地域版"
 msgid "Versions:"
 msgstr "バージョン:"
 
-#: templates/game_detail.html:77 templates/game_detail.html:708
+#: templates/game_detail.html:77 templates/game_detail.html:710
 msgid "Unknown region"
 msgstr "不明な地域"
 
@@ -6088,97 +6088,97 @@ msgstr "取得日:"
 msgid "Bonus Content"
 msgstr "ボーナスコンテンツ"
 
-#: templates/game_detail.html:678
+#: templates/game_detail.html:679
 msgid "Emulator settings"
 msgstr "エミュレーター設定"
 
-#: templates/_macros/nav_tabs.html:40 templates/game_detail.html:687
+#: templates/_macros/nav_tabs.html:40 templates/game_detail.html:689
 #: templates/rom_tools_hub.html:193 templates/versions_review.html:5
 #: templates/versions_review.html:80
 msgid "Regional Versions"
 msgstr "地域版"
 
-#: templates/game_detail.html:695 templates/museum_system.html:100
+#: templates/game_detail.html:697 templates/museum_system.html:100
 msgid "Released"
 msgstr "リリース"
 
-#: templates/game_detail.html:697
+#: templates/game_detail.html:699
 msgid "File size"
 msgstr "ファイルサイズ"
 
-#: templates/game_detail.html:698
+#: templates/game_detail.html:700
 msgid "Revision"
 msgstr "リビジョン"
 
-#: templates/game_detail.html:699
+#: templates/game_detail.html:701
 msgid "Languages"
 msgstr "言語"
 
-#: templates/game_detail.html:700
+#: templates/game_detail.html:702
 msgid "Scores"
 msgstr "スコア"
 
-#: templates/game_detail.html:709
+#: templates/game_detail.html:711
 msgid "(this page)"
 msgstr "（このページ）"
 
-#: templates/game_detail.html:727
+#: templates/game_detail.html:729
 msgid "Known differences"
 msgstr "既知の違い"
 
-#: templates/game_detail.html:727
+#: templates/game_detail.html:729
 msgid "AI-written"
 msgstr "AI 作成"
 
-#: templates/game_detail.html:728
+#: templates/game_detail.html:730
 msgid "Written by AI from what it knows about these releases. It can be wrong."
 msgstr "これらのリリースについて AI が知っている情報から作成されています。誤りがある可能性があります。"
 
-#: templates/game_detail.html:730
+#: templates/game_detail.html:732
 msgid "The AI knows of no differences between these versions."
 msgstr "AI はこれらのバージョン間の違いを把握していません。"
 
-#: templates/game_detail.html:733
+#: templates/game_detail.html:735
 msgid "No other regional versions are linked to this game."
 msgstr "このゲームにリンクされた他の地域版はありません。"
 
-#: templates/game_detail.html:738
+#: templates/game_detail.html:740
 msgid "Unlink this version"
 msgstr "このバージョンのリンクを解除"
 
-#: templates/game_detail.html:739
+#: templates/game_detail.html:741
 msgid "Summarise differences with AI"
 msgstr "AI で違いを要約"
 
-#: templates/game_detail.html:741
+#: templates/game_detail.html:743
 msgid "Link a version"
 msgstr "バージョンをリンク"
 
-#: templates/game_detail.html:742
+#: templates/game_detail.html:744
 msgid "Link a version: search this system"
 msgstr "バージョンをリンク: このシステムを検索"
 
-#: templates/game_detail.html:755
+#: templates/game_detail.html:757
 msgid "Scrape History"
 msgstr "取得履歴"
 
-#: templates/game_detail.html:781
+#: templates/game_detail.html:783
 msgid "Primary scraper"
 msgstr "プライマリスクレイパー"
 
-#: templates/game_detail.html:783
+#: templates/game_detail.html:785
 msgid "Fallback scraper"
 msgstr "フォールバックスクレイパー"
 
-#: templates/game_detail.html:790
+#: templates/game_detail.html:792
 msgid "Fields filled:"
 msgstr "補完されたフィールド:"
 
-#: templates/game_detail.html:798
+#: templates/game_detail.html:800
 msgid "None"
 msgstr "なし"
 
-#: templates/game_detail.html:803
+#: templates/game_detail.html:805
 msgid "Still missing:"
 msgstr "まだ欠落:"
 
@@ -7552,6 +7552,11 @@ msgstr "設定セクション"
 msgid "Account"
 msgstr "アカウント"
 
+#: templates/settings.html:29
+msgctxt "settings tab"
+msgid "Scraping"
+msgstr "スクレイピング"
+
 #: templates/settings.html:33
 msgid "Data"
 msgstr "データ"
@@ -8146,33 +8151,33 @@ msgstr "対応形式：MP4、WebM、OGG"
 msgid "Remove Video"
 msgstr "動画を削除"
 
-#: templates/_modals/edit_modal.html:409
+#: templates/_modals/edit_modal.html:410
 msgid "Launch"
 msgstr "起動"
 
-#: templates/_modals/edit_modal.html:411
+#: templates/_modals/edit_modal.html:412
 msgid "Emulator override"
 msgstr "エミュレーターの上書き"
 
-#: templates/_modals/edit_modal.html:413
+#: templates/_modals/edit_modal.html:414
 msgid "(use system default)"
 msgstr "（機種のデフォルトを使用）"
 
-#: templates/_modals/edit_modal.html:415
+#: templates/_modals/edit_modal.html:416
 msgid ""
 "Pick a specific emulator for this game.  Leave blank to use the per-"
 "system default."
 msgstr "このゲーム専用のエミュレーターを選択します。  空欄にすると機種ごとのデフォルトが使用されます。"
 
-#: templates/_modals/edit_modal.html:419
+#: templates/_modals/edit_modal.html:420
 msgid "Custom launch args"
 msgstr "カスタム起動引数"
 
-#: templates/_modals/edit_modal.html:420
+#: templates/_modals/edit_modal.html:421
 msgid "e.g.  --renderer vulkan"
 msgstr "例：  --renderer vulkan"
 
-#: templates/_modals/edit_modal.html:421
+#: templates/_modals/edit_modal.html:422
 msgid ""
 "Appended to the emulator's args template after substitution.  Use shell-"
 "quoted strings if values contain spaces."
@@ -9111,6 +9116,10 @@ msgid ""
 "Configure the available region values and default. The default region is "
 "used when scraping if no region is detected."
 msgstr "利用可能な地域の値とデフォルトを設定します。スクレイピング時に地域が検出されない場合、デフォルトの地域が使用されます。"
+
+#: templates/_settings_tabs/library.html:215
+msgid "Default Region"
+msgstr "デフォルト地域"
 
 #: templates/_settings_tabs/system.html:182
 msgid "Shut Down Server"

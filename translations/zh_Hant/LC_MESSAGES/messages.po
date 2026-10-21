@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-21 13:35+0200\n"
+"POT-Creation-Date: 2026-10-21 14:04+0200\n"
 "PO-Revision-Date: 2026-07-01 09:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hant\n"
@@ -57,8 +57,8 @@ msgstr "未找到系統，或該系統沒有包含成就的遊戲"
 #: routes/achievements.py:171 routes/achievements.py:440
 #: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/collections.py:276
 #: routes/collections.py:531 routes/emulators.py:248 routes/emulators.py:262
-#: routes/games.py:347 routes/games.py:790 routes/games.py:912
-#: routes/games.py:968 routes/games_ai.py:46 routes/games_media.py:35
+#: routes/games.py:347 routes/games.py:798 routes/games.py:920
+#: routes/games.py:976 routes/games_ai.py:46 routes/games_media.py:35
 #: routes/games_media.py:82 routes/games_media.py:143 routes/reports.py:693
 #: routes/reports.py:818 routes/trophies.py:1278 services/hltb_service.py:125
 msgid "Game not found"
@@ -227,8 +227,8 @@ msgstr "未找到父遊戲"
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "附贈光碟與主遊戲必須屬於同一系統"
 
-#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1220
-#: routes/games.py:1250 routes/platform_import.py:289
+#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1228
+#: routes/games.py:1258 routes/platform_import.py:289
 #: routes/platform_import.py:658 routes/platform_import.py:1024
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:200 routes/scraper.py:528
@@ -432,65 +432,65 @@ msgstr "未提供 ID"
 msgid "Provide 1-50 valid IDs"
 msgstr "請提供 1-50 個有效 ID"
 
-#: routes/games.py:498
+#: routes/games.py:503
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
 msgstr "影片未儲存：必須是不超過 %(mb)s MB 的 MP4、WebM 或 OGG 檔案。"
 
-#: routes/games.py:624
+#: routes/games.py:629
 msgid "Game not found after update"
 msgstr "更新後未找到該遊戲"
 
-#: routes/games.py:916
+#: routes/games.py:924
 msgid "No game selected."
 msgstr "未選擇遊戲。"
 
-#: routes/games.py:940
+#: routes/games.py:948
 msgid "This metadata apply is no longer running."
 msgstr "此中繼資料套用已不再執行。"
 
-#: routes/games.py:949
+#: routes/games.py:957
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
 " still missing)"
 msgstr "已從 %(sources)s 套用中繼資料！（已填寫 %(filled)d 個欄位，仍缺少 %(missing)d 個）"
 
-#: routes/games.py:955
+#: routes/games.py:963
 msgid "Failed to apply metadata."
 msgstr "套用中繼資料失敗。"
 
-#: routes/games.py:998 routes/games.py:1042
+#: routes/games.py:1006 routes/games.py:1050
 msgid "No fields to update"
 msgstr "沒有可更新的欄位"
 
-#: routes/games.py:1039 routes/platform_import.py:212
+#: routes/games.py:1047 routes/platform_import.py:212
 #: routes/platform_import.py:572 routes/platform_import.py:928
 #: routes/trophies.py:1852
 msgid "No games selected"
 msgstr "未選擇任何遊戲"
 
-#: routes/games.py:1049
+#: routes/games.py:1057
 msgid "Invalid completion status"
 msgstr "完成狀態無效"
 
-#: routes/games.py:1097
+#: routes/games.py:1105
 msgid "No valid fields to update"
 msgstr "沒有可更新的有效欄位"
 
-#: routes/games.py:1213
+#: routes/games.py:1221
 msgid "Invalid status"
 msgstr "狀態無效"
 
-#: routes/games.py:1238
+#: routes/games.py:1246
 msgid "Not authenticated"
 msgstr "未通過身分驗證"
 
-#: routes/games.py:1269
+#: routes/games.py:1277
 msgid "Filter type and value required"
 msgstr "需要篩選類型和值"
 
-#: routes/games.py:1282
+#: routes/games.py:1290
 msgid "Invalid filter type"
 msgstr "篩選類型無效"
 
@@ -2364,7 +2364,7 @@ msgstr "切換下一張光碟失敗"
 
 #: services/js_i18n_strings.py:620 templates/_bulk_edit_modal.html:171
 #: templates/_modals/edit_modal.html:139 templates/game_detail.html:652
-#: templates/game_detail.html:718
+#: templates/game_detail.html:720
 msgid "No"
 msgstr "否"
 
@@ -2745,7 +2745,7 @@ msgid "Scraped {processed} / {total} - {percent}%"
 msgstr "已抓取 {processed} / {total} - {percent}%"
 
 #: services/js_i18n_strings.py:708 templates/logs.html:710
-#: templates/settings.html:29 templates/wishlist.html:507
+#: templates/wishlist.html:507
 msgid "Scraping"
 msgstr "抓取中"
 
@@ -3111,7 +3111,7 @@ msgstr "會變更？"
 msgid "Works"
 msgstr "正常"
 
-#: services/js_i18n_strings.py:784 templates/game_detail.html:739
+#: services/js_i18n_strings.py:784 templates/game_detail.html:741
 msgid "Write again with AI"
 msgstr "用 AI 重新撰寫"
 
@@ -3121,7 +3121,7 @@ msgstr "Xbox 匯入"
 
 #: services/js_i18n_strings.py:786 templates/_bulk_edit_modal.html:170
 #: templates/_modals/edit_modal.html:139 templates/game_detail.html:595
-#: templates/game_detail.html:652 templates/game_detail.html:718
+#: templates/game_detail.html:652 templates/game_detail.html:720
 msgid "Yes"
 msgstr "是"
 
@@ -3357,7 +3357,7 @@ msgstr "追加"
 #: templates/analytics.html:483 templates/analytics.html:2428
 #: templates/base.html:897 templates/base.html:1088
 #: templates/compare_games.html:71 templates/game_detail.html:227
-#: templates/game_detail.html:696 templates/local_trophy_detail.html:87
+#: templates/game_detail.html:698 templates/local_trophy_detail.html:87
 #: templates/psn_trophy_detail.html:82 templates/steam_achievement_game.html:78
 #: templates/system_games.html:92 templates/xbox_achievement_game.html:67
 msgid "Publisher"
@@ -3432,7 +3432,7 @@ msgstr "PEGI 18"
 #: templates/_bulk_edit_modal.html:106 templates/_modals/edit_modal.html:81
 #: templates/analytics.html:492 templates/analytics.html:2428
 #: templates/base.html:1079 templates/compare_games.html:75
-#: templates/game_detail.html:693 templates/reports.html:444
+#: templates/game_detail.html:695 templates/reports.html:444
 msgid "Region"
 msgstr "地區"
 
@@ -3506,7 +3506,7 @@ msgstr "載入更多"
 
 #: templates/achievement_game.html:17 templates/achievement_game.html:37
 #: templates/achievements_system.html:15 templates/game_detail.html:21
-#: templates/game_detail.html:282 templates/game_detail.html:701
+#: templates/game_detail.html:282 templates/game_detail.html:703
 #: templates/systems.html:43
 msgid "RetroAchievements"
 msgstr "RetroAchievements"
@@ -3839,7 +3839,7 @@ msgstr "全選"
 msgid "Select Unscraped"
 msgstr "選擇未抓取的"
 
-#: templates/all_games.html:72 templates/game_detail.html:767
+#: templates/all_games.html:72 templates/game_detail.html:769
 #: templates/system_games.html:63
 msgid "Full Re-scrape"
 msgstr "完整重新抓取"
@@ -3848,7 +3848,7 @@ msgstr "完整重新抓取"
 msgid "Toggle between full re-scrape and fill missing mode"
 msgstr "在完整重新抓取與填補缺失模式之間切換"
 
-#: templates/all_games.html:77 templates/game_detail.html:767
+#: templates/all_games.html:77 templates/game_detail.html:769
 #: templates/system_games.html:68
 msgid "Fill Missing"
 msgstr "填充缺失項"
@@ -4814,7 +4814,7 @@ msgstr "無遊玩時長資料"
 #: templates/_modals/edit_modal.html:28 templates/_modals/filter_modal.html:13
 #: templates/base.html:1035 templates/dashboard.html:296
 #: templates/dashboard.html:355 templates/dashboard.html:432
-#: templates/dashboard.html:498 templates/game_detail.html:694
+#: templates/dashboard.html:498 templates/game_detail.html:696
 msgid "Title"
 msgstr "標題"
 
@@ -5882,7 +5882,7 @@ msgstr "地區版本"
 msgid "Versions:"
 msgstr "版本："
 
-#: templates/game_detail.html:77 templates/game_detail.html:708
+#: templates/game_detail.html:77 templates/game_detail.html:710
 msgid "Unknown region"
 msgstr "未知地區"
 
@@ -6090,97 +6090,97 @@ msgstr "已抓取："
 msgid "Bonus Content"
 msgstr "附贈內容"
 
-#: templates/game_detail.html:678
+#: templates/game_detail.html:679
 msgid "Emulator settings"
 msgstr "模擬器設定"
 
-#: templates/_macros/nav_tabs.html:40 templates/game_detail.html:687
+#: templates/_macros/nav_tabs.html:40 templates/game_detail.html:689
 #: templates/rom_tools_hub.html:193 templates/versions_review.html:5
 #: templates/versions_review.html:80
 msgid "Regional Versions"
 msgstr "地區版本"
 
-#: templates/game_detail.html:695 templates/museum_system.html:100
+#: templates/game_detail.html:697 templates/museum_system.html:100
 msgid "Released"
 msgstr "發行於"
 
-#: templates/game_detail.html:697
+#: templates/game_detail.html:699
 msgid "File size"
 msgstr "檔案大小"
 
-#: templates/game_detail.html:698
+#: templates/game_detail.html:700
 msgid "Revision"
 msgstr "修訂版"
 
-#: templates/game_detail.html:699
+#: templates/game_detail.html:701
 msgid "Languages"
 msgstr "語言"
 
-#: templates/game_detail.html:700
+#: templates/game_detail.html:702
 msgid "Scores"
 msgstr "評分"
 
-#: templates/game_detail.html:709
+#: templates/game_detail.html:711
 msgid "(this page)"
 msgstr "（本頁）"
 
-#: templates/game_detail.html:727
+#: templates/game_detail.html:729
 msgid "Known differences"
 msgstr "已知差異"
 
-#: templates/game_detail.html:727
+#: templates/game_detail.html:729
 msgid "AI-written"
 msgstr "AI 撰寫"
 
-#: templates/game_detail.html:728
+#: templates/game_detail.html:730
 msgid "Written by AI from what it knows about these releases. It can be wrong."
 msgstr "由 AI 根據其對這些發行版本的了解撰寫，可能有誤。"
 
-#: templates/game_detail.html:730
+#: templates/game_detail.html:732
 msgid "The AI knows of no differences between these versions."
 msgstr "AI 不知道這些版本之間有任何差異。"
 
-#: templates/game_detail.html:733
+#: templates/game_detail.html:735
 msgid "No other regional versions are linked to this game."
 msgstr "沒有其他地區版本連結到此遊戲。"
 
-#: templates/game_detail.html:738
+#: templates/game_detail.html:740
 msgid "Unlink this version"
 msgstr "取消連結此版本"
 
-#: templates/game_detail.html:739
+#: templates/game_detail.html:741
 msgid "Summarise differences with AI"
 msgstr "用 AI 總結差異"
 
-#: templates/game_detail.html:741
+#: templates/game_detail.html:743
 msgid "Link a version"
 msgstr "連結版本"
 
-#: templates/game_detail.html:742
+#: templates/game_detail.html:744
 msgid "Link a version: search this system"
 msgstr "連結版本：在此系統中搜尋"
 
-#: templates/game_detail.html:755
+#: templates/game_detail.html:757
 msgid "Scrape History"
 msgstr "抓取歷史"
 
-#: templates/game_detail.html:781
+#: templates/game_detail.html:783
 msgid "Primary scraper"
 msgstr "主抓取器"
 
-#: templates/game_detail.html:783
+#: templates/game_detail.html:785
 msgid "Fallback scraper"
 msgstr "備用抓取源"
 
-#: templates/game_detail.html:790
+#: templates/game_detail.html:792
 msgid "Fields filled:"
 msgstr "已填充欄位："
 
-#: templates/game_detail.html:798
+#: templates/game_detail.html:800
 msgid "None"
 msgstr "無"
 
-#: templates/game_detail.html:803
+#: templates/game_detail.html:805
 msgid "Still missing:"
 msgstr "仍缺失："
 
@@ -7553,6 +7553,11 @@ msgstr "設定分區"
 msgid "Account"
 msgstr "帳戶"
 
+#: templates/settings.html:29
+msgctxt "settings tab"
+msgid "Scraping"
+msgstr "抓取"
+
 #: templates/settings.html:33
 msgid "Data"
 msgstr "資料"
@@ -8146,33 +8151,33 @@ msgstr "支援的格式：MP4、WebM、OGG"
 msgid "Remove Video"
 msgstr "移除影片"
 
-#: templates/_modals/edit_modal.html:409
+#: templates/_modals/edit_modal.html:410
 msgid "Launch"
 msgstr "啟動"
 
-#: templates/_modals/edit_modal.html:411
+#: templates/_modals/edit_modal.html:412
 msgid "Emulator override"
 msgstr "模擬器覆蓋"
 
-#: templates/_modals/edit_modal.html:413
+#: templates/_modals/edit_modal.html:414
 msgid "(use system default)"
 msgstr "（使用系統預設）"
 
-#: templates/_modals/edit_modal.html:415
+#: templates/_modals/edit_modal.html:416
 msgid ""
 "Pick a specific emulator for this game.  Leave blank to use the per-"
 "system default."
 msgstr "為此遊戲選擇特定的模擬器。留空則使用各系統的預設設定。"
 
-#: templates/_modals/edit_modal.html:419
+#: templates/_modals/edit_modal.html:420
 msgid "Custom launch args"
 msgstr "自訂啟動參數"
 
-#: templates/_modals/edit_modal.html:420
+#: templates/_modals/edit_modal.html:421
 msgid "e.g.  --renderer vulkan"
 msgstr "例如  --renderer vulkan"
 
-#: templates/_modals/edit_modal.html:421
+#: templates/_modals/edit_modal.html:422
 msgid ""
 "Appended to the emulator's args template after substitution.  Use shell-"
 "quoted strings if values contain spaces."
@@ -9112,6 +9117,10 @@ msgid ""
 "Configure the available region values and default. The default region is "
 "used when scraping if no region is detected."
 msgstr "設定可用的地區值和預設地區。抓取時如果未偵測到地區，將使用預設地區。"
+
+#: templates/_settings_tabs/library.html:215
+msgid "Default Region"
+msgstr "預設地區"
 
 #: templates/_settings_tabs/system.html:182
 msgid "Shut Down Server"

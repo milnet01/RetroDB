@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-21 13:35+0200\n"
+"POT-Creation-Date: 2026-10-21 14:04+0200\n"
 "PO-Revision-Date: 2026-06-30 14:26+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ko\n"
@@ -58,8 +58,8 @@ msgstr "시스템을 찾을 수 없거나 업적이 있는 게임이 없습니�
 #: routes/achievements.py:171 routes/achievements.py:440
 #: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/collections.py:276
 #: routes/collections.py:531 routes/emulators.py:248 routes/emulators.py:262
-#: routes/games.py:347 routes/games.py:790 routes/games.py:912
-#: routes/games.py:968 routes/games_ai.py:46 routes/games_media.py:35
+#: routes/games.py:347 routes/games.py:798 routes/games.py:920
+#: routes/games.py:976 routes/games_ai.py:46 routes/games_media.py:35
 #: routes/games_media.py:82 routes/games_media.py:143 routes/reports.py:693
 #: routes/reports.py:818 routes/trophies.py:1278 services/hltb_service.py:125
 msgid "Game not found"
@@ -228,8 +228,8 @@ msgstr "상위 게임을 찾을 수 없습니다"
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "보너스 디스크와 상위 게임은 같은 시스템에 있어야 합니다"
 
-#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1220
-#: routes/games.py:1250 routes/platform_import.py:289
+#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1228
+#: routes/games.py:1258 routes/platform_import.py:289
 #: routes/platform_import.py:658 routes/platform_import.py:1024
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:200 routes/scraper.py:528
@@ -435,65 +435,65 @@ msgstr "제공된 ID가 없습니다"
 msgid "Provide 1-50 valid IDs"
 msgstr "유효한 ID를 1-50개 제공하세요"
 
-#: routes/games.py:498
+#: routes/games.py:503
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
 msgstr "동영상이 저장되지 않았습니다: 최대 %(mb)s MB의 MP4, WebM 또는 OGG 파일이어야 합니다."
 
-#: routes/games.py:624
+#: routes/games.py:629
 msgid "Game not found after update"
 msgstr "업데이트 후 게임을 찾을 수 없습니다"
 
-#: routes/games.py:916
+#: routes/games.py:924
 msgid "No game selected."
 msgstr "선택한 게임이 없습니다."
 
-#: routes/games.py:940
+#: routes/games.py:948
 msgid "This metadata apply is no longer running."
 msgstr "이 메타데이터 적용은 더 이상 실행 중이 아닙니다."
 
-#: routes/games.py:949
+#: routes/games.py:957
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
 " still missing)"
 msgstr "%(sources)s에서 메타데이터를 적용했습니다! (%(filled)d개 필드 입력, %(missing)d개 아직 누락)"
 
-#: routes/games.py:955
+#: routes/games.py:963
 msgid "Failed to apply metadata."
 msgstr "메타데이터 적용에 실패했습니다."
 
-#: routes/games.py:998 routes/games.py:1042
+#: routes/games.py:1006 routes/games.py:1050
 msgid "No fields to update"
 msgstr "업데이트할 필드가 없습니다"
 
-#: routes/games.py:1039 routes/platform_import.py:212
+#: routes/games.py:1047 routes/platform_import.py:212
 #: routes/platform_import.py:572 routes/platform_import.py:928
 #: routes/trophies.py:1852
 msgid "No games selected"
 msgstr "선택된 게임이 없습니다"
 
-#: routes/games.py:1049
+#: routes/games.py:1057
 msgid "Invalid completion status"
 msgstr "잘못된 완료 상태입니다"
 
-#: routes/games.py:1097
+#: routes/games.py:1105
 msgid "No valid fields to update"
 msgstr "업데이트할 유효한 필드가 없습니다"
 
-#: routes/games.py:1213
+#: routes/games.py:1221
 msgid "Invalid status"
 msgstr "잘못된 상태입니다"
 
-#: routes/games.py:1238
+#: routes/games.py:1246
 msgid "Not authenticated"
 msgstr "인증되지 않았습니다"
 
-#: routes/games.py:1269
+#: routes/games.py:1277
 msgid "Filter type and value required"
 msgstr "필터 유형과 값이 필요합니다"
 
-#: routes/games.py:1282
+#: routes/games.py:1290
 msgid "Invalid filter type"
 msgstr "잘못된 필터 유형입니다"
 
@@ -2367,7 +2367,7 @@ msgstr "다음 디스크 전환 실패"
 
 #: services/js_i18n_strings.py:620 templates/_bulk_edit_modal.html:171
 #: templates/_modals/edit_modal.html:139 templates/game_detail.html:652
-#: templates/game_detail.html:718
+#: templates/game_detail.html:720
 msgid "No"
 msgstr "아니요"
 
@@ -2748,7 +2748,7 @@ msgid "Scraped {processed} / {total} - {percent}%"
 msgstr "스크래핑됨 {processed} / {total} - {percent}%"
 
 #: services/js_i18n_strings.py:708 templates/logs.html:710
-#: templates/settings.html:29 templates/wishlist.html:507
+#: templates/wishlist.html:507
 msgid "Scraping"
 msgstr "스크래핑 중"
 
@@ -3122,7 +3122,7 @@ msgstr "변경 여부"
 msgid "Works"
 msgstr "작동"
 
-#: services/js_i18n_strings.py:784 templates/game_detail.html:739
+#: services/js_i18n_strings.py:784 templates/game_detail.html:741
 msgid "Write again with AI"
 msgstr "AI로 다시 작성"
 
@@ -3132,7 +3132,7 @@ msgstr "Xbox 가져오기"
 
 #: services/js_i18n_strings.py:786 templates/_bulk_edit_modal.html:170
 #: templates/_modals/edit_modal.html:139 templates/game_detail.html:595
-#: templates/game_detail.html:652 templates/game_detail.html:718
+#: templates/game_detail.html:652 templates/game_detail.html:720
 msgid "Yes"
 msgstr "예"
 
@@ -3368,7 +3368,7 @@ msgstr "추가"
 #: templates/analytics.html:483 templates/analytics.html:2428
 #: templates/base.html:897 templates/base.html:1088
 #: templates/compare_games.html:71 templates/game_detail.html:227
-#: templates/game_detail.html:696 templates/local_trophy_detail.html:87
+#: templates/game_detail.html:698 templates/local_trophy_detail.html:87
 #: templates/psn_trophy_detail.html:82 templates/steam_achievement_game.html:78
 #: templates/system_games.html:92 templates/xbox_achievement_game.html:67
 msgid "Publisher"
@@ -3443,7 +3443,7 @@ msgstr "PEGI 18"
 #: templates/_bulk_edit_modal.html:106 templates/_modals/edit_modal.html:81
 #: templates/analytics.html:492 templates/analytics.html:2428
 #: templates/base.html:1079 templates/compare_games.html:75
-#: templates/game_detail.html:693 templates/reports.html:444
+#: templates/game_detail.html:695 templates/reports.html:444
 msgid "Region"
 msgstr "지역"
 
@@ -3517,7 +3517,7 @@ msgstr "더 보기"
 
 #: templates/achievement_game.html:17 templates/achievement_game.html:37
 #: templates/achievements_system.html:15 templates/game_detail.html:21
-#: templates/game_detail.html:282 templates/game_detail.html:701
+#: templates/game_detail.html:282 templates/game_detail.html:703
 #: templates/systems.html:43
 msgid "RetroAchievements"
 msgstr "RetroAchievements"
@@ -3850,7 +3850,7 @@ msgstr "전체 선택"
 msgid "Select Unscraped"
 msgstr "미스크랩 선택"
 
-#: templates/all_games.html:72 templates/game_detail.html:767
+#: templates/all_games.html:72 templates/game_detail.html:769
 #: templates/system_games.html:63
 msgid "Full Re-scrape"
 msgstr "전체 재스크랩"
@@ -3859,7 +3859,7 @@ msgstr "전체 재스크랩"
 msgid "Toggle between full re-scrape and fill missing mode"
 msgstr "전체 재스크랩과 누락 채우기 모드 전환"
 
-#: templates/all_games.html:77 templates/game_detail.html:767
+#: templates/all_games.html:77 templates/game_detail.html:769
 #: templates/system_games.html:68
 msgid "Fill Missing"
 msgstr "누락 채우기"
@@ -4825,7 +4825,7 @@ msgstr "플레이 시간 데이터 없음"
 #: templates/_modals/edit_modal.html:28 templates/_modals/filter_modal.html:13
 #: templates/base.html:1035 templates/dashboard.html:296
 #: templates/dashboard.html:355 templates/dashboard.html:432
-#: templates/dashboard.html:498 templates/game_detail.html:694
+#: templates/dashboard.html:498 templates/game_detail.html:696
 msgid "Title"
 msgstr "제목"
 
@@ -5895,7 +5895,7 @@ msgstr "지역별 버전"
 msgid "Versions:"
 msgstr "버전:"
 
-#: templates/game_detail.html:77 templates/game_detail.html:708
+#: templates/game_detail.html:77 templates/game_detail.html:710
 msgid "Unknown region"
 msgstr "알 수 없는 지역"
 
@@ -6103,97 +6103,97 @@ msgstr "스크래핑됨:"
 msgid "Bonus Content"
 msgstr "보너스 콘텐츠"
 
-#: templates/game_detail.html:678
+#: templates/game_detail.html:679
 msgid "Emulator settings"
 msgstr "에뮬레이터 설정"
 
-#: templates/_macros/nav_tabs.html:40 templates/game_detail.html:687
+#: templates/_macros/nav_tabs.html:40 templates/game_detail.html:689
 #: templates/rom_tools_hub.html:193 templates/versions_review.html:5
 #: templates/versions_review.html:80
 msgid "Regional Versions"
 msgstr "지역별 버전"
 
-#: templates/game_detail.html:695 templates/museum_system.html:100
+#: templates/game_detail.html:697 templates/museum_system.html:100
 msgid "Released"
 msgstr "출시"
 
-#: templates/game_detail.html:697
+#: templates/game_detail.html:699
 msgid "File size"
 msgstr "파일 크기"
 
-#: templates/game_detail.html:698
+#: templates/game_detail.html:700
 msgid "Revision"
 msgstr "리비전"
 
-#: templates/game_detail.html:699
+#: templates/game_detail.html:701
 msgid "Languages"
 msgstr "언어"
 
-#: templates/game_detail.html:700
+#: templates/game_detail.html:702
 msgid "Scores"
 msgstr "점수"
 
-#: templates/game_detail.html:709
+#: templates/game_detail.html:711
 msgid "(this page)"
 msgstr "(이 페이지)"
 
-#: templates/game_detail.html:727
+#: templates/game_detail.html:729
 msgid "Known differences"
 msgstr "알려진 차이점"
 
-#: templates/game_detail.html:727
+#: templates/game_detail.html:729
 msgid "AI-written"
 msgstr "AI 작성"
 
-#: templates/game_detail.html:728
+#: templates/game_detail.html:730
 msgid "Written by AI from what it knows about these releases. It can be wrong."
 msgstr "AI가 이 출시판들에 대해 알고 있는 내용으로 작성했습니다. 틀릴 수 있습니다."
 
-#: templates/game_detail.html:730
+#: templates/game_detail.html:732
 msgid "The AI knows of no differences between these versions."
 msgstr "AI가 아는 이 버전들 간의 차이점은 없습니다."
 
-#: templates/game_detail.html:733
+#: templates/game_detail.html:735
 msgid "No other regional versions are linked to this game."
 msgstr "이 게임에 연결된 다른 지역별 버전이 없습니다."
 
-#: templates/game_detail.html:738
+#: templates/game_detail.html:740
 msgid "Unlink this version"
 msgstr "이 버전 연결 해제"
 
-#: templates/game_detail.html:739
+#: templates/game_detail.html:741
 msgid "Summarise differences with AI"
 msgstr "AI로 차이점 요약"
 
-#: templates/game_detail.html:741
+#: templates/game_detail.html:743
 msgid "Link a version"
 msgstr "버전 연결"
 
-#: templates/game_detail.html:742
+#: templates/game_detail.html:744
 msgid "Link a version: search this system"
 msgstr "버전 연결: 이 시스템에서 검색"
 
-#: templates/game_detail.html:755
+#: templates/game_detail.html:757
 msgid "Scrape History"
 msgstr "스크래핑 기록"
 
-#: templates/game_detail.html:781
+#: templates/game_detail.html:783
 msgid "Primary scraper"
 msgstr "기본 스크레이퍼"
 
-#: templates/game_detail.html:783
+#: templates/game_detail.html:785
 msgid "Fallback scraper"
 msgstr "대체 스크레이퍼"
 
-#: templates/game_detail.html:790
+#: templates/game_detail.html:792
 msgid "Fields filled:"
 msgstr "채워진 필드:"
 
-#: templates/game_detail.html:798
+#: templates/game_detail.html:800
 msgid "None"
 msgstr "없음"
 
-#: templates/game_detail.html:803
+#: templates/game_detail.html:805
 msgid "Still missing:"
 msgstr "여전히 누락됨:"
 
@@ -7575,6 +7575,11 @@ msgstr "설정 섹션"
 msgid "Account"
 msgstr "계정"
 
+#: templates/settings.html:29
+msgctxt "settings tab"
+msgid "Scraping"
+msgstr "스크래핑"
+
 #: templates/settings.html:33
 msgid "Data"
 msgstr "데이터"
@@ -8173,33 +8178,33 @@ msgstr "지원 형식: MP4, WebM, OGG"
 msgid "Remove Video"
 msgstr "동영상 제거"
 
-#: templates/_modals/edit_modal.html:409
+#: templates/_modals/edit_modal.html:410
 msgid "Launch"
 msgstr "실행"
 
-#: templates/_modals/edit_modal.html:411
+#: templates/_modals/edit_modal.html:412
 msgid "Emulator override"
 msgstr "에뮬레이터 재정의"
 
-#: templates/_modals/edit_modal.html:413
+#: templates/_modals/edit_modal.html:414
 msgid "(use system default)"
 msgstr "(시스템 기본값 사용)"
 
-#: templates/_modals/edit_modal.html:415
+#: templates/_modals/edit_modal.html:416
 msgid ""
 "Pick a specific emulator for this game.  Leave blank to use the per-"
 "system default."
 msgstr "이 게임에 사용할 특정 에뮬레이터를 선택하세요. 비워 두면 시스템별 기본값을 사용합니다."
 
-#: templates/_modals/edit_modal.html:419
+#: templates/_modals/edit_modal.html:420
 msgid "Custom launch args"
 msgstr "사용자 지정 실행 인수"
 
-#: templates/_modals/edit_modal.html:420
+#: templates/_modals/edit_modal.html:421
 msgid "e.g.  --renderer vulkan"
 msgstr "예: --renderer vulkan"
 
-#: templates/_modals/edit_modal.html:421
+#: templates/_modals/edit_modal.html:422
 msgid ""
 "Appended to the emulator's args template after substitution.  Use shell-"
 "quoted strings if values contain spaces."
@@ -9148,6 +9153,10 @@ msgid ""
 "Configure the available region values and default. The default region is "
 "used when scraping if no region is detected."
 msgstr "사용 가능한 지역 값과 기본값을 설정합니다. 기본 지역은 스크래핑 시 지역이 감지되지 않을 때 사용됩니다."
+
+#: templates/_settings_tabs/library.html:215
+msgid "Default Region"
+msgstr "기본 지역"
 
 #: templates/_settings_tabs/system.html:182
 msgid "Shut Down Server"

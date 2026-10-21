@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-21 13:35+0200\n"
+"POT-Creation-Date: 2026-10-21 14:04+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -59,8 +59,8 @@ msgstr "Sistema non trovato o senza giochi con obiettivi"
 #: routes/achievements.py:171 routes/achievements.py:440
 #: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/collections.py:276
 #: routes/collections.py:531 routes/emulators.py:248 routes/emulators.py:262
-#: routes/games.py:347 routes/games.py:790 routes/games.py:912
-#: routes/games.py:968 routes/games_ai.py:46 routes/games_media.py:35
+#: routes/games.py:347 routes/games.py:798 routes/games.py:920
+#: routes/games.py:976 routes/games_ai.py:46 routes/games_media.py:35
 #: routes/games_media.py:82 routes/games_media.py:143 routes/reports.py:693
 #: routes/reports.py:818 routes/trophies.py:1278 services/hltb_service.py:125
 msgid "Game not found"
@@ -233,8 +233,8 @@ msgstr "Gioco principale non trovato"
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "Il disco bonus e il gioco principale devono essere nello stesso sistema"
 
-#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1220
-#: routes/games.py:1250 routes/platform_import.py:289
+#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1228
+#: routes/games.py:1258 routes/platform_import.py:289
 #: routes/platform_import.py:658 routes/platform_import.py:1024
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:200 routes/scraper.py:528
@@ -442,26 +442,26 @@ msgstr "Nessun ID fornito"
 msgid "Provide 1-50 valid IDs"
 msgstr "Fornisci da 1 a 50 ID validi"
 
-#: routes/games.py:498
+#: routes/games.py:503
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
 msgstr ""
 "Video non salvato: deve essere un file MP4, WebM o OGG di massimo %(mb)s "
 "MB."
 
-#: routes/games.py:624
+#: routes/games.py:629
 msgid "Game not found after update"
 msgstr "Gioco non trovato dopo l'aggiornamento"
 
-#: routes/games.py:916
+#: routes/games.py:924
 msgid "No game selected."
 msgstr "Nessun gioco selezionato."
 
-#: routes/games.py:940
+#: routes/games.py:948
 msgid "This metadata apply is no longer running."
 msgstr "Questa applicazione dei metadati non è più in corso."
 
-#: routes/games.py:949
+#: routes/games.py:957
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
@@ -470,41 +470,41 @@ msgstr ""
 "Metadati applicati da %(sources)s! (%(filled)d campi compilati, "
 "%(missing)d ancora mancanti)"
 
-#: routes/games.py:955
+#: routes/games.py:963
 msgid "Failed to apply metadata."
 msgstr "Applicazione dei metadati non riuscita."
 
-#: routes/games.py:998 routes/games.py:1042
+#: routes/games.py:1006 routes/games.py:1050
 msgid "No fields to update"
 msgstr "Nessun campo da aggiornare"
 
-#: routes/games.py:1039 routes/platform_import.py:212
+#: routes/games.py:1047 routes/platform_import.py:212
 #: routes/platform_import.py:572 routes/platform_import.py:928
 #: routes/trophies.py:1852
 msgid "No games selected"
 msgstr "Nessun gioco selezionato"
 
-#: routes/games.py:1049
+#: routes/games.py:1057
 msgid "Invalid completion status"
 msgstr "Stato di completamento non valido"
 
-#: routes/games.py:1097
+#: routes/games.py:1105
 msgid "No valid fields to update"
 msgstr "Nessun campo valido da aggiornare"
 
-#: routes/games.py:1213
+#: routes/games.py:1221
 msgid "Invalid status"
 msgstr "Stato non valido"
 
-#: routes/games.py:1238
+#: routes/games.py:1246
 msgid "Not authenticated"
 msgstr "Non autenticato"
 
-#: routes/games.py:1269
+#: routes/games.py:1277
 msgid "Filter type and value required"
 msgstr "Tipo di filtro e valore obbligatori"
 
-#: routes/games.py:1282
+#: routes/games.py:1290
 msgid "Invalid filter type"
 msgstr "Tipo di filtro non valido"
 
@@ -2409,7 +2409,7 @@ msgstr "Cambio disco non riuscito"
 
 #: services/js_i18n_strings.py:620 templates/_bulk_edit_modal.html:171
 #: templates/_modals/edit_modal.html:139 templates/game_detail.html:652
-#: templates/game_detail.html:718
+#: templates/game_detail.html:720
 msgid "No"
 msgstr "No"
 
@@ -2796,7 +2796,7 @@ msgid "Scraped {processed} / {total} - {percent}%"
 msgstr "Scansionati {processed} / {total} - {percent}%"
 
 #: services/js_i18n_strings.py:708 templates/logs.html:710
-#: templates/settings.html:29 templates/wishlist.html:507
+#: templates/wishlist.html:507
 msgid "Scraping"
 msgstr "Scansione"
 
@@ -3182,7 +3182,7 @@ msgstr "Cambierà?"
 msgid "Works"
 msgstr "Funziona"
 
-#: services/js_i18n_strings.py:784 templates/game_detail.html:739
+#: services/js_i18n_strings.py:784 templates/game_detail.html:741
 msgid "Write again with AI"
 msgstr "Riscrivi con l'AI"
 
@@ -3192,7 +3192,7 @@ msgstr "Importazioni Xbox"
 
 #: services/js_i18n_strings.py:786 templates/_bulk_edit_modal.html:170
 #: templates/_modals/edit_modal.html:139 templates/game_detail.html:595
-#: templates/game_detail.html:652 templates/game_detail.html:718
+#: templates/game_detail.html:652 templates/game_detail.html:720
 msgid "Yes"
 msgstr "Sì"
 
@@ -3441,7 +3441,7 @@ msgstr "Aggiungi in coda"
 #: templates/analytics.html:483 templates/analytics.html:2428
 #: templates/base.html:897 templates/base.html:1088
 #: templates/compare_games.html:71 templates/game_detail.html:227
-#: templates/game_detail.html:696 templates/local_trophy_detail.html:87
+#: templates/game_detail.html:698 templates/local_trophy_detail.html:87
 #: templates/psn_trophy_detail.html:82 templates/steam_achievement_game.html:78
 #: templates/system_games.html:92 templates/xbox_achievement_game.html:67
 msgid "Publisher"
@@ -3516,7 +3516,7 @@ msgstr "PEGI 18"
 #: templates/_bulk_edit_modal.html:106 templates/_modals/edit_modal.html:81
 #: templates/analytics.html:492 templates/analytics.html:2428
 #: templates/base.html:1079 templates/compare_games.html:75
-#: templates/game_detail.html:693 templates/reports.html:444
+#: templates/game_detail.html:695 templates/reports.html:444
 msgid "Region"
 msgstr "Regione"
 
@@ -3590,7 +3590,7 @@ msgstr "Carica altro"
 
 #: templates/achievement_game.html:17 templates/achievement_game.html:37
 #: templates/achievements_system.html:15 templates/game_detail.html:21
-#: templates/game_detail.html:282 templates/game_detail.html:701
+#: templates/game_detail.html:282 templates/game_detail.html:703
 #: templates/systems.html:43
 msgid "RetroAchievements"
 msgstr "RetroAchievements"
@@ -3925,7 +3925,7 @@ msgstr "Seleziona tutto"
 msgid "Select Unscraped"
 msgstr "Seleziona non scansionati"
 
-#: templates/all_games.html:72 templates/game_detail.html:767
+#: templates/all_games.html:72 templates/game_detail.html:769
 #: templates/system_games.html:63
 msgid "Full Re-scrape"
 msgstr "Riscansione completa"
@@ -3936,7 +3936,7 @@ msgstr ""
 "Alterna tra riscansione completa e modalità di riempimento dei campi "
 "mancanti"
 
-#: templates/all_games.html:77 templates/game_detail.html:767
+#: templates/all_games.html:77 templates/game_detail.html:769
 #: templates/system_games.html:68
 msgid "Fill Missing"
 msgstr "Riempi mancanti"
@@ -4908,7 +4908,7 @@ msgstr "Nessun dato sul tempo di gioco"
 #: templates/_modals/edit_modal.html:28 templates/_modals/filter_modal.html:13
 #: templates/base.html:1035 templates/dashboard.html:296
 #: templates/dashboard.html:355 templates/dashboard.html:432
-#: templates/dashboard.html:498 templates/game_detail.html:694
+#: templates/dashboard.html:498 templates/game_detail.html:696
 msgid "Title"
 msgstr "Titolo"
 
@@ -5993,7 +5993,7 @@ msgstr "Versioni regionali"
 msgid "Versions:"
 msgstr "Versioni:"
 
-#: templates/game_detail.html:77 templates/game_detail.html:708
+#: templates/game_detail.html:77 templates/game_detail.html:710
 msgid "Unknown region"
 msgstr "Regione sconosciuta"
 
@@ -6203,99 +6203,99 @@ msgstr "Scansionato:"
 msgid "Bonus Content"
 msgstr "Contenuti bonus"
 
-#: templates/game_detail.html:678
+#: templates/game_detail.html:679
 msgid "Emulator settings"
 msgstr "Impostazioni emulatore"
 
-#: templates/_macros/nav_tabs.html:40 templates/game_detail.html:687
+#: templates/_macros/nav_tabs.html:40 templates/game_detail.html:689
 #: templates/rom_tools_hub.html:193 templates/versions_review.html:5
 #: templates/versions_review.html:80
 msgid "Regional Versions"
 msgstr "Versioni regionali"
 
-#: templates/game_detail.html:695 templates/museum_system.html:100
+#: templates/game_detail.html:697 templates/museum_system.html:100
 msgid "Released"
 msgstr "Uscita"
 
-#: templates/game_detail.html:697
+#: templates/game_detail.html:699
 msgid "File size"
 msgstr "Dimensione file"
 
-#: templates/game_detail.html:698
+#: templates/game_detail.html:700
 msgid "Revision"
 msgstr "Revisione"
 
-#: templates/game_detail.html:699
+#: templates/game_detail.html:701
 msgid "Languages"
 msgstr "Lingue"
 
-#: templates/game_detail.html:700
+#: templates/game_detail.html:702
 msgid "Scores"
 msgstr "Punteggi"
 
-#: templates/game_detail.html:709
+#: templates/game_detail.html:711
 msgid "(this page)"
 msgstr "(questa pagina)"
 
-#: templates/game_detail.html:727
+#: templates/game_detail.html:729
 msgid "Known differences"
 msgstr "Differenze note"
 
-#: templates/game_detail.html:727
+#: templates/game_detail.html:729
 msgid "AI-written"
 msgstr "Scritto dall'AI"
 
-#: templates/game_detail.html:728
+#: templates/game_detail.html:730
 msgid "Written by AI from what it knows about these releases. It can be wrong."
 msgstr ""
 "Scritto dall'AI in base a ciò che sa di queste uscite. Può essere "
 "sbagliato."
 
-#: templates/game_detail.html:730
+#: templates/game_detail.html:732
 msgid "The AI knows of no differences between these versions."
 msgstr "L'AI non conosce differenze tra queste versioni."
 
-#: templates/game_detail.html:733
+#: templates/game_detail.html:735
 msgid "No other regional versions are linked to this game."
 msgstr "Nessun'altra versione regionale è collegata a questo gioco."
 
-#: templates/game_detail.html:738
+#: templates/game_detail.html:740
 msgid "Unlink this version"
 msgstr "Scollega questa versione"
 
-#: templates/game_detail.html:739
+#: templates/game_detail.html:741
 msgid "Summarise differences with AI"
 msgstr "Riassumi le differenze con l'AI"
 
-#: templates/game_detail.html:741
+#: templates/game_detail.html:743
 msgid "Link a version"
 msgstr "Collega una versione"
 
-#: templates/game_detail.html:742
+#: templates/game_detail.html:744
 msgid "Link a version: search this system"
 msgstr "Collega una versione: cerca in questo sistema"
 
-#: templates/game_detail.html:755
+#: templates/game_detail.html:757
 msgid "Scrape History"
 msgstr "Cronologia delle scansioni"
 
-#: templates/game_detail.html:781
+#: templates/game_detail.html:783
 msgid "Primary scraper"
 msgstr "Scraper primario"
 
-#: templates/game_detail.html:783
+#: templates/game_detail.html:785
 msgid "Fallback scraper"
 msgstr "Scraper di riserva"
 
-#: templates/game_detail.html:790
+#: templates/game_detail.html:792
 msgid "Fields filled:"
 msgstr "Campi riempiti:"
 
-#: templates/game_detail.html:798
+#: templates/game_detail.html:800
 msgid "None"
 msgstr "Nessuno"
 
-#: templates/game_detail.html:803
+#: templates/game_detail.html:805
 msgid "Still missing:"
 msgstr "Ancora mancanti:"
 
@@ -7743,6 +7743,11 @@ msgstr "Sezioni delle impostazioni"
 msgid "Account"
 msgstr "Account"
 
+#: templates/settings.html:29
+msgctxt "settings tab"
+msgid "Scraping"
+msgstr "Scansione"
+
 #: templates/settings.html:33
 msgid "Data"
 msgstr "Dati"
@@ -8371,19 +8376,19 @@ msgstr "Formati supportati: MP4, WebM, OGG"
 msgid "Remove Video"
 msgstr "Rimuovi video"
 
-#: templates/_modals/edit_modal.html:409
+#: templates/_modals/edit_modal.html:410
 msgid "Launch"
 msgstr "Avvia"
 
-#: templates/_modals/edit_modal.html:411
+#: templates/_modals/edit_modal.html:412
 msgid "Emulator override"
 msgstr "Sovrascrivi emulatore"
 
-#: templates/_modals/edit_modal.html:413
+#: templates/_modals/edit_modal.html:414
 msgid "(use system default)"
 msgstr "(usa il valore predefinito del sistema)"
 
-#: templates/_modals/edit_modal.html:415
+#: templates/_modals/edit_modal.html:416
 msgid ""
 "Pick a specific emulator for this game.  Leave blank to use the per-"
 "system default."
@@ -8391,15 +8396,15 @@ msgstr ""
 "Scegli un emulatore specifico per questo gioco.  Lascia vuoto per usare "
 "il valore predefinito del sistema."
 
-#: templates/_modals/edit_modal.html:419
+#: templates/_modals/edit_modal.html:420
 msgid "Custom launch args"
 msgstr "Argomenti di avvio personalizzati"
 
-#: templates/_modals/edit_modal.html:420
+#: templates/_modals/edit_modal.html:421
 msgid "e.g.  --renderer vulkan"
 msgstr "es.  --renderer vulkan"
 
-#: templates/_modals/edit_modal.html:421
+#: templates/_modals/edit_modal.html:422
 msgid ""
 "Appended to the emulator's args template after substitution.  Use shell-"
 "quoted strings if values contain spaces."
@@ -9413,6 +9418,10 @@ msgstr ""
 "Configura i valori di regione disponibili e quello predefinito. La "
 "regione predefinita viene usata durante lo scraping se non viene rilevata"
 " alcuna regione."
+
+#: templates/_settings_tabs/library.html:215
+msgid "Default Region"
+msgstr "Regione predefinita"
 
 #: templates/_settings_tabs/system.html:182
 msgid "Shut Down Server"
