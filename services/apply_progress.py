@@ -15,6 +15,10 @@ The tracker lives in a ContextVar, which a new thread does not inherit: code
 that fans work out to a pool must submit through `contextvars.copy_context()`
 (see `_download_screenshots_parallel` in scraper/metadata_merger.py).
 
+The same marks drive a per-game step timer (PASS-59-129) that runs with or
+without a tracker: `timing_start` / `timing_end` log one line per game saying
+how many seconds each step took. See `StepTimer`.
+
 Tasks are in-memory only. A server restart mid-apply loses the task and the
 poll answers 404, which the page reports as a failure; this is a one-game
 action the user is watching, not a job that needs crash recovery.
@@ -30,6 +34,7 @@ import uuid
 logger = logging.getLogger(__name__)
 
 _current = contextvars.ContextVar('apply_progress', default=None)
+_timer = contextvars.ContextVar('apply_timer', default=None)
 
 # Media folder name -> the media kind the page labels ("Downloading video…").
 _MEDIA_KINDS = {
@@ -124,6 +129,112 @@ class ApplyTask:
             }
 
 
+class StepTimer:
+    """Seconds per step of one game's scrape.
+
+    Each second counts once, in the innermost step running: a download inside
+    the IGDB fallback is media download time, not IGDB time. Pool workers
+    (parallel screenshots) overlap the step that waits for them, so their
+    downloads and processing are totalled apart.
+    """
+
+    def __init__(self, label):
+        self.label = label
+        self._thread = threading.get_ident()
+        self._seconds = {}
+        self._stack = ['prepare']   # [top-level step, nested steps...]
+        self._workers = {}          # pool-thread seconds, by step
+        self._workers_lock = threading.Lock()
+        self._start = self._since = time.monotonic()
+
+    def _charge(self):
+        now = time.monotonic()
+        key = self._stack[-1]
+        self._seconds[key] = self._seconds.get(key, 0.0) + now - self._since
+        self._since = now
+
+    def _mine(self):
+        return threading.get_ident() == self._thread
+
+    def switch(self, name):
+        if self._mine():
+            self._charge()
+            self._stack[0] = name
+
+    def push(self, name):
+        if self._mine():
+            self._charge()
+            self._stack.append(name)
+
+    def pop(self, name, began):
+        """End a nested step pushed at `began` (time.monotonic())."""
+        if not self._mine():
+            with self._workers_lock:
+                self._workers[name] = self._workers.get(name, 0.0) + time.monotonic() - began
+        elif len(self._stack) > 1:
+            self._charge()
+            self._stack.pop()
+
+    def line(self):
+        self._charge()
+        line = (f"Scrape timing, {self.label}: "
+                f"{time.monotonic() - self._start:.1f}s total; {_seconds_list(self._seconds)}")
+        with self._workers_lock:
+            workers = _seconds_list(self._workers)
+        return f"{line}; worker threads, overlapping: {workers}" if workers else line
+
+
+def _seconds_list(seconds):
+    return ', '.join(f"{name} {secs:.1f}s" for name, secs in seconds.items() if secs >= 0.05)
+
+
+def _step_name(kind, params):
+    source = params.get('source')
+    if kind == 'fetch' and source:
+        return f"lead {source}"
+    if kind == 'search' and source:
+        return f"fallback {source}"
+    return 'AI' if kind == 'ai' else kind
+
+
+def timing_start(label):
+    """Start timing one game. Returns False, changing nothing, when a timer
+    is already running: the bulk job's timer, which includes the search,
+    wins over the apply's own."""
+    if _timer.get() is not None:
+        return False
+    _timer.set(StepTimer(label))
+    return True
+
+
+def timing_end():
+    """Log the running timer's line and stop it; a no-op when none runs."""
+    timer = _timer.get()
+    if timer is not None:
+        _timer.set(None)
+        logger.info(timer.line())
+
+
+class timed:
+    """Context manager timing a step that makes no progress mark (the bulk
+    job's search)."""
+
+    def __init__(self, name):
+        self._timer = _timer.get()
+        self._name = name
+
+    def __enter__(self):
+        if self._timer:
+            self._began = time.monotonic()
+            self._timer.push(self._name)
+        return self
+
+    def __exit__(self, *exc):
+        if self._timer:
+            self._timer.pop(self._name, self._began)
+        return False
+
+
 def plan(n):
     task = _current.get()
     if task:
@@ -140,12 +251,18 @@ def begin(kind, **params):
     task = _current.get()
     if task:
         task.begin(kind, **params)
+    timer = _timer.get()
+    if timer:
+        timer.switch(_step_name(kind, params))
 
 
 def step_done():
     task = _current.get()
     if task:
         task.step_done()
+    timer = _timer.get()
+    if timer:
+        timer.switch('other')
 
 
 class step:
@@ -155,6 +272,7 @@ class step:
 
     def __init__(self, kind, **params):
         self._task = _current.get()
+        self._timer = _timer.get()
         self._kind = kind
         self._params = params
 
@@ -162,11 +280,17 @@ class step:
         if self._task:
             self._task.plan(1)
             self._task.begin(self._kind, **self._params)
+        if self._timer:
+            self._name = 'image processing' if self._kind == 'process' else self._kind
+            self._began = time.monotonic()
+            self._timer.push(self._name)
         return self
 
     def __exit__(self, *exc):
         if self._task:
             self._task.step_done()
+        if self._timer:
+            self._timer.pop(self._name, self._began)
         return False
 
 
@@ -187,6 +311,7 @@ class download:
 
     def __init__(self, dest_path, total):
         self._task = _current.get()
+        self._timer = _timer.get()
         self._key = object()
         self._dest = dest_path
         self._total = total
@@ -194,6 +319,9 @@ class download:
     def __enter__(self):
         if self._task:
             self._task.download_start(self._key, media_kind(self._dest), self._total)
+        if self._timer:
+            self._began = time.monotonic()
+            self._timer.push('media download')
         return self
 
     def received(self, n):
@@ -203,6 +331,8 @@ class download:
     def __exit__(self, *exc):
         if self._task:
             self._task.download_end(self._key)
+        if self._timer:
+            self._timer.pop('media download', self._began)
         return False
 
 

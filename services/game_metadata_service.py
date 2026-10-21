@@ -15,6 +15,7 @@
 import logging
 from datetime import datetime
 
+from services import apply_progress
 from services.game_utils import (
     map_rating,
     RATING_SYSTEM_KEYS,
@@ -392,6 +393,9 @@ def apply_hybrid_metadata_to_game(db_game_id, primary_source, primary_id, system
                         'name': r.get('name', ''),
                     })
 
+    # A bulk job's timer already runs (it includes the search); this one is
+    # for an apply started on its own, such as the game page's Apply.
+    owns_timer = apply_progress.timing_start(f"game {db_game_id}")
     try:
         return hybrid_apply(
             db_game_id=db_game_id,
@@ -411,3 +415,6 @@ def apply_hybrid_metadata_to_game(db_game_id, primary_source, primary_id, system
         if game_data:
             return {'success': apply_metadata_to_game(db_game_id, game_data, primary_source, system_folder)}
         return {'success': False}
+    finally:
+        if owns_timer:
+            apply_progress.timing_end()

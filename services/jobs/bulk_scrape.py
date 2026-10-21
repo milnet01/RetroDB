@@ -12,6 +12,7 @@ import logging
 from collections import deque
 from datetime import datetime, timezone
 
+from services import apply_progress
 from services.jobs.base import (
     _get_conn, persist_job_start, persist_job_progress, persist_job_complete,
     persist_job_queued, remove_queued_job, resolve_terminal_status,
@@ -897,7 +898,9 @@ class BulkScrapeJob:
                             rom_path, get_system_type(system_folder) == 'computer')
                     logger.info(f"Scraping: {search_title} for {system_name}")
 
-                    results = scraper_manager.search_games(search_title, system_name, system_folder)
+                    apply_progress.timing_start(f"{search_title} (game {game_id})")
+                    with apply_progress.timed('search'):
+                        results = scraper_manager.search_games(search_title, system_name, system_folder)
 
                     # --- Filename-hint disambiguation ---
                     # When identical titles compete (e.g. two "Cabal" games on C64),
@@ -996,6 +999,8 @@ class BulkScrapeJob:
                     logger.error(f"Error scraping game {game_id}: {e}")
                     with self._lock:
                         self.failed_count += 1
+                finally:
+                    apply_progress.timing_end()
 
             # Job complete — release prefetched data to free memory
             _prefetched_games.clear()
