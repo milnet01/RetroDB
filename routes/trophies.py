@@ -412,7 +412,7 @@ def trophies():
 @login_required
 def trophy_game(npwr_id):
     """Individual game trophy page"""
-    trophy_sets, _ = get_trophy_data()
+    trophy_sets, _totals = get_trophy_data()
     
     if npwr_id not in trophy_sets:
         flash(_('Trophy set not found'), 'error')

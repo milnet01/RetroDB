@@ -212,3 +212,15 @@ def test_collector_stats_count_a_steam_earn_once(ra_db):  # noqa: F811
     finally:
         conn.execute("DELETE FROM steam_achievements WHERE game_id = ?", (ids['steam'],))
         conn.commit()
+
+
+def test_unknown_trophy_set_redirects_with_a_message(admin_test_client, monkeypatch):
+    """`trophy_sets, _ = get_trophy_data()` made `_` a local in trophy_game,
+    so `flash(_('Trophy set not found'))` called the tuple's dict: a 500
+    instead of a redirect for any set id not on disk."""
+    import routes.trophies as trophies
+    monkeypatch.setattr(trophies, 'get_trophy_data', lambda *a: ({}, {}))
+    client, _csrf = admin_test_client()
+    resp = client.get('/trophies/NPWR99999_00')
+    assert resp.status_code == 302
+    assert resp.headers['Location'].endswith('/trophies')
