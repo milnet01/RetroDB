@@ -9124,7 +9124,11 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.150 C64 games on RetroArch: a controller cannot press the cursor keys or F1 the games ask for (MEDIUM, S).
-- **Status**: todo
+- **Shipped** (2026-10-21): `_vice_pad_defaults` in
+  services/launch_resolver.py. Open: the maintainer's
+  `retroarch-fork.sh` is not a `*-portable.sh`, so its AppImage home
+  is not found and its own .opt is not touched.
+- **Status**: done
 - **Seen** (2026-10-20, maintainer's machine): VICE x64sc's core
   options ship `vice_mapper_ru/rd/rl/rr` and `vice_mapper_start` as
   `"---"`; fixed by hand to `RETROK_UP/DOWN/LEFT/RIGHT` and `RETROK_F1`
