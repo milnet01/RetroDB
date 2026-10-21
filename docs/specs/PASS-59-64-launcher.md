@@ -474,8 +474,10 @@ Stopping a player, as the fork session read its source:
   `data/retroarch-overrides.cfg` (PASS-59-140, user 2026-10-21): it sets
   `fastforward_ratio` to RetroArch's default `0`, and on Linux
   `input_driver` to `wayland` or `x` as the session's `WAYLAND_DISPLAY` or
-  `DISPLAY` says. A file that cannot be written drops the flag, never the
-  launch.
+  `DISPLAY` says. A keyboard computer's core (`_KEYBOARD_CORE_PREFIXES`)
+  gets `data/retroarch-overrides-keyboard.cfg` instead, which adds
+  `input_auto_game_focus = "1"` (PASS-59-151, user 2026-10-21).
+  A file that cannot be written drops the flag, never the launch.
   *Test:* `tests/test_launch_resolver.py` (`test_inv13_*`) — resolve a game
   on the RetroArch row; assert no `--config`, the overrides file and its
   keys, no flag when it cannot be written, none on other emulators.

@@ -9137,6 +9137,21 @@ were corrected in `2836bc3` and are not repeated here.
 
 ---
 
+#### Pass 59.151 C64 and other home-computer games ignore most keys: RetroArch's hotkeys and joystick binds take them first (MEDIUM, S).
+- **Status**: done
+- **Seen** (2026-10-21, Action Force on VICE x64sc): controller worked,
+  no key registered. retroarch-1c tested the fork headless: unbound keys
+  reach the core; keys bound to hotkeys (space, F1-F9, p r h l e k m n
+  i f, comma, escape) or to player 1's RetroPad never do. With game
+  focus on (Scroll Lock) every key typed.
+- **Decided** (user, 2026-10-21): keyboard-computer cores start in game
+  focus; Scroll Lock gives RetroArch's keyboard hotkeys back. Consoles
+  are unchanged.
+- **Resolution**: shipped in v3.30.0. `_KEYBOARD_CORE_PREFIXES` in
+  services/launch_resolver.py picks
+  data/retroarch-overrides-keyboard.cfg, which adds
+  `input_auto_game_focus = "1"`; INV-13 amended.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history

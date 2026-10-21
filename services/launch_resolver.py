@@ -46,13 +46,25 @@ logger = logging.getLogger(__name__)
 # PASS-59-140 — settings RetroDB lays over the user's own retroarch.cfg on
 # every RetroArch launch, so one bad local value cannot break games.
 _RETROARCH_OVERRIDES = Path(config.BASE_DIR) / 'data' / 'retroarch-overrides.cfg'
+_RETROARCH_KEYBOARD_OVERRIDES = (Path(config.BASE_DIR) / 'data'
+                                 / 'retroarch-overrides-keyboard.cfg')
+
+# Cores for home computers whose games are played from the keyboard (VICE C64
+# family, Amiga, ZX Spectrum/ZX81, MSX, DOS, Atari 8-bit/ST, Amstrad CPC, PC-98,
+# X68000). RetroArch's keyboard hotkeys and RetroPad binds would eat space,
+# return, the F-keys and many letters, so these launch in game focus: every key
+# goes to the core, and Scroll Lock gives the hotkeys back.
+_KEYBOARD_CORE_PREFIXES = (
+    'vice_', 'puae', 'fuse_', '81_', 'bluemsx_', 'fmsx_', 'dosbox',
+    'atari800_', 'hatari', 'cap32_', 'crocods_', 'np2kai_', 'px68k_',
+)
 
 
 # -----------------------------------------------------------------------------
 # Helpers
 # -----------------------------------------------------------------------------
 
-def _retroarch_overrides() -> list:
+def _retroarch_overrides(core_path: str) -> list:
     """Write the overrides file and return the argv words that load it, or
     [] when it cannot be written: a launch never fails for a settings reason.
 
@@ -60,16 +72,22 @@ def _retroarch_overrides() -> list:
       fast-forward, including a core's own load warp, at normal speed.
     - input_driver must match the window system RetroArch opens on; "x" on
       a Wayland session leaves the keyboard dead. RetroArch's automatic
-      video context picks Wayland whenever WAYLAND_DISPLAY is set."""
+      video context picks Wayland whenever WAYLAND_DISPLAY is set.
+    - A keyboard computer's core starts in game focus; its settings go to a
+      file of their own, so a console launched at the same moment never
+      reads them."""
     lines = ['fastforward_ratio = "0.000000"\n']
     if sys.platform.startswith('linux'):
         if os.environ.get('WAYLAND_DISPLAY'):
             lines.append('input_driver = "wayland"\n')
         elif os.environ.get('DISPLAY'):
             lines.append('input_driver = "x"\n')
+    path = _RETROARCH_OVERRIDES
+    if Path(core_path).name.startswith(_KEYBOARD_CORE_PREFIXES):
+        lines.append('input_auto_game_focus = "1"\n')
+        path = _RETROARCH_KEYBOARD_OVERRIDES
     text = ''.join(lines)
     try:
-        path = _RETROARCH_OVERRIDES
         if not path.is_file() or path.read_text(encoding='utf-8') != text:
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(text, encoding='utf-8')
@@ -367,7 +385,7 @@ def resolve_launch_context(game_id: int) -> LaunchContext:
         if name not in template:
             substituted.extend(words)
 
-    overrides = _retroarch_overrides() if emu.get('is_retroarch') else []
+    overrides = _retroarch_overrides(core_path) if emu.get('is_retroarch') else []
     argv = list(binary_argv_prefix) + overrides + substituted
 
     # ---- validate rom_path under scan roots ---------------------------------

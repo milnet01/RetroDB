@@ -1,6 +1,7 @@
 # Pass 44 — Resolver: game_id -> LaunchContext.
 import sqlite3
 import sys
+from pathlib import Path
 
 import pytest
 
@@ -380,6 +381,27 @@ def test_inv13_retroarch_gets_the_overrides_file(tmpdb, monkeypatch, env, driver
     assert 'fastforward_ratio = "0.000000"\n' in text
     if sys.platform.startswith('linux'):
         assert f'input_driver = "{driver}"\n' in text
+
+
+@pytest.mark.parametrize('core, focus', [
+    ('vice_x64sc_libretro.so', True),
+    ('mednafen_psx_hw_libretro.so', False),
+])
+def test_inv13_keyboard_computers_start_in_game_focus(tmpdb, monkeypatch, tmp_path,
+                                                      core, focus):
+    # RetroArch's keyboard hotkeys (space, enter, F1-F9, many letters) eat
+    # the keys a C64 game needs; game focus sends every key to the core.
+    monkeypatch.setattr('services.launch_resolver._RETROARCH_KEYBOARD_OVERRIDES',
+                        tmp_path / 'retroarch-overrides-keyboard.cfg', raising=False)
+    (tmpdb['cores_dir'] / core).write_bytes(b'\x7fELF')
+    tmpdb['conn'].execute("UPDATE system_emulators SET retroarch_core = ? "
+                          "WHERE emulator_id = 2", (core,))
+
+    argv = _retroarch_argv(tmpdb, monkeypatch, {'WAYLAND_DISPLAY': 'wayland-0'})
+
+    text = Path(argv[argv.index('--appendconfig') + 1]).read_text(encoding='utf-8')
+    assert 'fastforward_ratio = "0.000000"\n' in text
+    assert ('input_auto_game_focus = "1"\n' in text) is focus
 
 
 def test_inv13_no_display_sets_no_input_driver(tmpdb, monkeypatch):
