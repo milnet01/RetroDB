@@ -11,6 +11,7 @@ API Documentation: https://www.screenscraper.fr/webapi2.php
 import requests
 import logging
 import hashlib
+import re
 import os
 
 from .base_scraper import http_get, _http_session
@@ -277,19 +278,40 @@ def search_game(game_title, system_folder, username, password, dev_id=None, dev_
         logger.warning(f"ScreenScraper: Unknown system folder '{system_folder}' - no mapping found")
         return None
     
-    # Sanitize search query for ScreenScraper API
-    # Keep sanitization minimal — SS search is strict and over-cleaning kills matches
-    import re
-    # Remove parenthesized noise (region codes, disc indicators, etc.)
-    sanitized_title = re.sub(r'\([^)]*\)', '', game_title)
-    sanitized_title = re.sub(r'\[[^\]]*\]', '', sanitized_title)
-    # Remove backslashes (never in real titles)
-    sanitized_title = sanitized_title.replace('\\', ' ')
-    # Normalize multiple spaces and trim
-    sanitized_title = ' '.join(sanitized_title.split()).strip()
+    results = None
+    for query in search_queries(game_title):
+        logger.info(f"ScreenScraper: Searching for '{query}' (original: '{game_title}') on system {system_folder} (ID: {system_id})")
+        results = _search_once(query, system_id, username, password, dev_id, dev_password)
+        if results:
+            break
+    return results
 
-    logger.info(f"ScreenScraper: Searching for '{sanitized_title}' (original: '{game_title}') on system {system_folder} (ID: {system_id})")
-    
+
+def search_queries(game_title):
+    """The spellings to search ScreenScraper with, in order (PASS-59-147).
+
+    Its search is strict, so cleaning stays minimal: dropping an apostrophe,
+    hyphen, "&", "*" or accent makes it find nothing. A subtitle needs
+    " : " ("Alone in the Dark : The New Nightmare"); a spaced dash is taken
+    as one. Where the whole title finds nothing, the part before the colon
+    still finds the game, and the title score picks it from the results.
+    """
+    # Remove parenthesized noise (region codes, disc indicators, etc.)
+    title = re.sub(r'\([^)]*\)', '', game_title)
+    title = re.sub(r'\[[^\]]*\]', '', title)
+    # Remove backslashes (never in real titles)
+    title = title.replace('\\', ' ')
+    title = re.sub(r'\s*:\s*| - ', ' : ', title)
+    title = ' '.join(title.split())
+    queries = [title]
+    head = title.split(' : ')[0]
+    if head and head != title:
+        queries.append(head)
+    return queries
+
+
+def _search_once(sanitized_title, system_id, username, password, dev_id, dev_password):
+    """One ScreenScraper search for one spelling; the list of games, or None."""
     # Try with dev credentials first, then without if they fail
     for attempt, use_dev_creds in enumerate([(True, dev_id, dev_password), (False, None, None)]):
         use_dev, current_dev_id, current_dev_pass = use_dev_creds

@@ -19,6 +19,8 @@
     label: Scrapes finish sooner; small pictures are enlarged in the background
   - type: feature
     label: Full Re-scrape can keep the media you already have
+  - type: fix
+    label: ScreenScraper finds games whose title has a subtitle
   - type: deps
     label: Pillow 13 and other library updates
   body: |
@@ -227,6 +229,11 @@
         On a game page, the results you ticked are fetched straight from
         their source instead of being looked up a second time. With nothing
         ticked, only the source you applied and AI fill the gaps.</li>
+      <li><strong>ScreenScraper finds games with a subtitle.</strong> It
+        found nothing for a title such as "Alone in the Dark: The New
+        Nightmare" unless the colon had a space before it. RetroDB now
+        searches it that way, then by the part before the colon if that
+        still finds nothing.</li>
       <li><strong>Full Re-scrape can keep the media you already have.</strong>
         Tick "Keep existing media" beside the Full Re-scrape switch. Text
         details are still refreshed, but art, videos and manuals already on
