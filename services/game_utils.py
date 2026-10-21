@@ -1166,11 +1166,11 @@ def derive_title_from_filename(rom_path, is_computer_system=False):
     
     This reverses the ROM naming conventions:
     - Removes file extension
-    - Removes region tags: (USA), (Europe), (Japan), (World), etc.
+    - Removes region and language tags, alone or comma-joined: (USA), (USA, Europe), (En,Fr)
     - Removes revision/version tags: (Rev 1), (v1.1), etc.
     - Removes edition tags: (Greatest Hits), (Platinum), etc.
     - Converts ' - ' to ': ' (reversing the colon replacement)
-    - For computer systems: also removes (Year) (Publisher) tags
+    - For computer systems: also removes (Year) and every tag after it
     
     Args:
         rom_path: Full path to ROM file or just filename
@@ -1193,18 +1193,14 @@ def derive_title_from_filename(rom_path, is_computer_system=False):
     # Remove Disc indicators like (Disc 1 of 3) - must be done before general parentheses removal
     name = re.sub(r'\s*\(Disc\s*\d+(?:\s*of\s*\d+)?\)', '', name, flags=re.IGNORECASE)
     
-    # Region tags to remove
-    region_tags = [
-        r'\(USA\)', r'\(Europe\)', r'\(Japan\)', r'\(World\)', r'\(Germany\)',
-        r'\(France\)', r'\(Spain\)', r'\(Italy\)', r'\(Australia\)', r'\(Brazil\)',
-        r'\(Korea\)', r'\(China\)', r'\(Taiwan\)', r'\(Asia\)',
-        r'\(U\)', r'\(E\)', r'\(J\)', r'\(W\)',
-        r'\(En\)', r'\(Fr\)', r'\(De\)', r'\(Es\)', r'\(It\)', r'\(Ja\)',
-        r'\(En,Fr\)', r'\(En,De\)', r'\(En,Es\)', r'\(En,Fr,De\)', r'\(En,Fr,De,Es,It\)',
-    ]
-    
-    for tag in region_tags:
-        name = re.sub(r'\s*' + tag, '', name, flags=re.IGNORECASE)
+    # A double-dot extension ("Title (Pub)..zip") leaves a dot after the last tag
+    name = re.sub(r'(?<=\))\.+$', '', name)
+
+    # Region and language tags, alone or comma-joined: (USA), (USA, Europe), (En,Fr,De)
+    region = (r'(?:USA|Europe|Japan|World|UK|Germany|France|Spain|Italy|Australia'
+              r'|Brazil|Korea|China|Taiwan|Asia|U|E|J|W|En|Fr|De|Es|It|Ja)')
+    name = re.sub(r'\s*\(' + region + r'(?:,\s*' + region + r')*\)', '', name,
+                  flags=re.IGNORECASE)
     
     # Version/Revision tags to remove
     version_tags = [
@@ -1226,12 +1222,12 @@ def derive_title_from_filename(rom_path, is_computer_system=False):
     for tag in edition_tags:
         name = re.sub(r'\s*' + tag, '', name, flags=re.IGNORECASE)
     
-    # For computer systems, remove (Year) and (Publisher) tags
+    # For computer systems, remove (Year) and every tag after it (publisher, format)
     if is_computer_system:
-        # Remove year tag (4 digits in parentheses)
-        name = re.sub(r'\s*\(\d{4}\)', '', name)
-        # Remove remaining parenthetical tags (likely publisher)
-        name = re.sub(r'\s*\([^)]+\)$', '', name)
+        name, had_year = re.subn(r'\s*\(\d{4}\).*$', '', name)
+        if not had_year:
+            # No year: the last parenthetical tag is likely the publisher
+            name = re.sub(r'\s*\([^)]+\)$', '', name)
     
     # Convert ' - ' back to ': ' (reversing the naming standard)
     # But be careful: "The Legend of Zelda - A Link to the Past" should become
