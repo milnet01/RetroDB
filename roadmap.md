@@ -8693,7 +8693,15 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.129 Scrape speed: time each step of a game's scrape before changing anything (MEDIUM, S).
-- **Status**: todo
+- **Resolution** (2026-10-21): Shipped 2026-10-21 in 4a21f31 (v3.30.0): one "Scrape timing" log line
+  per game (services/apply_progress.py StepTimer). First measurement,
+  scratch DB, Final Fantasy II (SNES), fill-missing bulk: 70.1s total =
+  search 15.3, lead ScreenScraper 4.7, RAWG 1.0, TheGamesDB 18.2, IGDB
+  26.3, AI 3.8, save 0.1, achievements 0.7; worker threads, overlapping:
+  media download 0.7s, image processing 143.5s. Screenshot upscaling
+  (Real-ESRGAN on the ss-dl pool) dominates; the TGDB and IGDB fallback
+  time is mostly waiting on it. Weigh PASS-59-130 to -136 against this.
+- **Status**: done
 - **Source**: user request 2026-10-19, "roadmap any methods to help speed
   it up", made while the PASS-59-124 Full Re-scrape ran at 45-90 s a game.
 - **Seen** (2026-10-19, `~/.local/state/cc-job/retrodb-rescrape.log`, Lufia
