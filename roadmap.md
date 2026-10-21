@@ -8916,7 +8916,13 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.140 RetroArch launches use only the user's own settings, so a bad local setting breaks games for anyone (HIGH, M).
-- **Status**: todo
+- **Resolution** (2026-10-21): Shipped 2026-10-21 (user approved the overlay route):
+  `services/launch_resolver._retroarch_overrides` writes
+  data/retroarch-overrides.cfg (fastforward_ratio 0; Linux input_driver
+  wayland/x by session) and passes it with --appendconfig. PASS-59-64
+  INV-13 narrowed. Core options cannot go through --appendconfig: the
+  C64 controller mapping is PASS-59-150.
+- **Status**: done
 - **Seen** (2026-10-20): RetroDB launches RetroArch with
   `-L <core> <rom>` only (emulators row 1 `args_template`); no
   `--config` or `--appendconfig`, though the fork's player
@@ -9091,6 +9097,32 @@ were corrected in `2836bc3` and are not repeated here.
   PDF. Respect reduced-motion: no flip animation there.
 - **Open question for the user**: is 'the manual' the game's PDF
   manual (assumed) or RetroDB's own help manual?
+
+---
+
+#### Pass 59.149 Play and emulator settings show on games with no ROM file (MEDIUM, S).
+- **Status**: todo
+- **Seen** (user, 2026-10-21): imported games offer a play option and
+  emulator settings.
+- **Do**: show Play and the emulator / launch settings only for a game
+  whose `rom_path` is a real file (not a `clz_import/`, `steam_import/`,
+  `xbox_import/` or `psn_import/` path). Check every place they appear.
+
+---
+
+#### Pass 59.150 C64 games on RetroArch: a controller cannot press the cursor keys or F1 the games ask for (MEDIUM, S).
+- **Status**: todo
+- **Seen** (2026-10-20, maintainer's machine): VICE x64sc's core
+  options ship `vice_mapper_ru/rd/rl/rr` and `vice_mapper_start` as
+  `"---"`; fixed by hand to `RETROK_UP/DOWN/LEFT/RIGHT` and `RETROK_F1`
+  in `config/VICE x64sc/VICE x64sc.opt`.
+- **Why not PASS-59-140's overlay**: `--appendconfig` carries
+  retroarch.cfg keys only; core options live in the core's `.opt` file.
+- **Likely route**: find the RetroArch config as PASS-59-91 §4.4 does,
+  then before a VICE launch set those five keys only where they still
+  hold `"---"`, so a mapping the user chose is never replaced.
+
+---
 
 ## Done index
 
