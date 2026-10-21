@@ -76,3 +76,15 @@ def test_field_labels_map_covers_all_canonical_under_pseudolocale():
         fl = field_labels_map()
         assert len(fl) == len(CANONICAL_LABELS)
         assert all(BRACKET in v for v in fl.values())
+
+
+def test_analytics_canonical_charts_map_labels_in_the_template():
+    """PASS-59-61: the four canonical-field charts translate their labels in
+    the page (fieldLabels over window.FIELD_LABELS), never in
+    services/analytics.py, whose context cache is shared across locales."""
+    import pathlib
+    root = pathlib.Path(app_module.__file__).parent
+    page = (root / 'templates' / 'analytics.html').read_text(encoding='utf-8')
+    for var in ('genre_labels', 'persp_labels', 'dim_labels', 'mode_labels'):
+        assert f'labels: fieldLabels({{{{ {var}|tojson }}}}),' in page, var
+    assert 'window.FIELD_LABELS' in page

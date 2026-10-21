@@ -1517,6 +1517,14 @@ tr:nth-child(3) .rank-badge {
 {% block scripts %}
 <script src="{{ asset_url('js/vendor/chart.umd.min.js') }}"></script>
 <script nonce="{{ csp_nonce }}">
+// Canonical genre / perspective / dimension / mode values -> this locale's
+// labels (i18n.md §7). Reads window.FIELD_LABELS directly: these charts are
+// built while the page parses, before the deferred tField() is defined.
+function fieldLabels(values) {
+    const labels = window.FIELD_LABELS || {};
+    return values.map(value => labels[value] || value);
+}
+
 // Chart.js default config for cyberpunk theme
 Chart.defaults.color = '#9aa0a6';
 Chart.defaults.borderColor = 'rgba(42, 53, 66, 0.5)';
@@ -1612,7 +1620,7 @@ if (genreCtx) {
     new Chart(genreCtx, {
         type: 'bar',
         data: {
-            labels: {{ genre_labels|tojson }},
+            labels: fieldLabels({{ genre_labels|tojson }}),
             datasets: [{
                 label: 'Games',
                 data: {{ genre_data|tojson }},
@@ -2224,7 +2232,7 @@ if (perspCtx) {
     new Chart(perspCtx, {
         type: 'doughnut',
         data: {
-            labels: {{ persp_labels|tojson }},
+            labels: fieldLabels({{ persp_labels|tojson }}),
             datasets: [{
                 data: {{ persp_data|tojson }},
                 backgroundColor: colorArray,
@@ -2250,7 +2258,7 @@ if (dimCtx) {
     new Chart(dimCtx, {
         type: 'doughnut',
         data: {
-            labels: {{ dim_labels|tojson }},
+            labels: fieldLabels({{ dim_labels|tojson }}),
             datasets: [{
                 data: {{ dim_data|tojson }},
                 backgroundColor: [chartColors.cyan, chartColors.magenta, chartColors.green, chartColors.orange, chartColors.purple],
@@ -2276,7 +2284,7 @@ if (modesCtx) {
     new Chart(modesCtx, {
         type: 'bar',
         data: {
-            labels: {{ mode_labels|tojson }},
+            labels: fieldLabels({{ mode_labels|tojson }}),
             datasets: [{
                 label: 'Games',
                 data: {{ mode_data|tojson }},
