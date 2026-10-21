@@ -5642,26 +5642,11 @@ async function deleteScreenshot(filename) {
                         titleEl.textContent = `📸 Screenshots (${data.remaining})`;
                     }
 
-                    // Update the modal's screenshot array (RetroDBState, not RetroDB)
-                    const newScreenshots = data.screenshots.map(fn => `/static/images/screenshots/${fn}`);
-                    RetroDBState.screenshots = newScreenshots;
-
-                    // Clamp current index
-                    if (RetroDBState.screenshotIndex >= newScreenshots.length) {
-                        RetroDBState.screenshotIndex = Math.max(0, newScreenshots.length - 1);
-                    }
-
-                    // If the screenshot modal is open, update it immediately
-                    if (RetroDBState.currentModal?.id === 'screenshotModal') {
-                        if (newScreenshots.length === 0) {
-                            closeScreenshotModal();
-                        } else {
-                            updateScreenshotDisplay();
-                        }
-                    }
+                    // The viewer follows the thumbnails left (main.js).
+                    syncScreenshotModal();
 
                     // Hide screenshots section if none remain
-                    if (newScreenshots.length === 0) {
+                    if (data.remaining === 0) {
                         const section = document.querySelector('.screenshots-section');
                         if (section) section.style.display = 'none';
                     }

@@ -704,10 +704,7 @@ function initializeScreenshots() {
     }
 
     // Collect initial screenshots
-    const screenshotItems = document.querySelectorAll('.screenshot-thumb');
-    RetroDBState.screenshots = Array.from(screenshotItems).map(item => {
-        return item.querySelector('img')?.src || '';
-    });
+    RetroDBState.screenshots = thumbSources();
 
     // Navigation arrows
     document.querySelector('.modal-nav.prev')?.addEventListener('click', function(e) {
@@ -723,6 +720,23 @@ function initializeScreenshots() {
     // Pass 36.8 — arrow-key navigation now routes through the
     // ModalFocusTrap activated in openScreenshotModal (see below). That
     // removed the standalone document-level keydown handler formerly here.
+}
+
+function thumbSources() {
+    return Array.from(document.querySelectorAll('.screenshot-thumb'))
+        .map(item => item.querySelector('img')?.src || '');
+}
+
+// A page that removes a screenshot thumbnail calls this: the viewer's list
+// follows the thumbnails left, and an open viewer moves on or closes.
+function syncScreenshotModal() {
+    RetroDBState.screenshots = thumbSources();
+    const last = RetroDBState.screenshots.length - 1;
+    RetroDBState.screenshotIndex = Math.max(0, Math.min(RetroDBState.screenshotIndex, last));
+    if (RetroDBState.currentModal?.id === 'screenshotModal') {
+        if (last < 0) closeScreenshotModal();
+        else updateScreenshotDisplay();
+    }
 }
 
 function openScreenshotModal(index) {
@@ -1774,6 +1788,7 @@ window.clearRAData = clearRAData;
 window.confirmReset = confirmReset;
 window.openModal = openModal;
 window.closeScreenshotModal = closeScreenshotModal;
+window.syncScreenshotModal = syncScreenshotModal;
 window.filterSystems = filterSystems;
 window.filterGames = filterGames;
 window.sortItems = sortItems;

@@ -8,6 +8,7 @@ import json
 import re
 import shutil
 import subprocess
+from pathlib import Path
 
 import pytest
 
@@ -375,3 +376,43 @@ def test_boxart_fallback_is_a_data_attribute():
     src = _src('static/js/all-games-controller.js')
     line = next(ln for ln in src.splitlines() if 'data-on-error-src="/static/images/boxart/' in ln)
     assert '${esc(fallbackBoxart)}' in line, line.strip()
+
+
+@needs_node
+def test_deleting_a_screenshot_updates_the_open_viewer():
+    """The game page set `RetroDBState` after a delete, but the bundle
+    wraps main.js in its own scope, so the name never reaches the page:
+    the delete worked and the page still said it failed. main.js now
+    offers `syncScreenshotModal()`; this loads it the way the bundle does."""
+    got = _node(r"""
+const shot = make('div', {id: 'screenshotModal', class: 'modal'});
+make('img', {id: 'modalImage'}, shot);
+const counter = make('span', {class: 'modal-counter'}, shot);
+const row = make('div', {id: 'screenshotsRow'});
+const thumbs = ['/a.png', '/b.png', '/c.png'].map(src => {
+  const t = make('div', {class: 'screenshot-thumb'}, row);
+  make('img', {src}, t);
+  return t;
+});
+load('static/js/utils.js');
+vm.runInContext('(function(){' + fs.readFileSync('static/js/main.js', 'utf8') + '\n})();', ctx);
+ctx.document.fire('DOMContentLoaded', {});
+row.fire('click', {target: thumbs[2]});
+thumbs[2].remove();
+ctx.syncScreenshotModal();
+const afterOne = {src: g('document').getElementById('modalImage').src,
+                  open: shot.classList.contains('active')};
+thumbs[0].remove(); thumbs[1].remove();
+ctx.syncScreenshotModal();
+out({afterOne, afterAll: {open: shot.classList.contains('active')}});
+""")
+    assert got == {'afterOne': {'src': '/b.png', 'open': True},
+                   'afterAll': {'open': False}}, got
+
+
+def test_no_template_reaches_bundle_private_state():
+    """Bundled files run in their own scope; a template naming one of their
+    private constants throws at run time (the screenshot-delete defect)."""
+    hits = [p.name for p in (Path(REPO_ROOT) / 'templates').rglob('*.html')
+            if 'RetroDBState' in p.read_text(encoding='utf-8')]
+    assert hits == []

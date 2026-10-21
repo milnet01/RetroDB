@@ -3351,10 +3351,7 @@ function initializeScreenshots() {
         });
     }
 
-    const screenshotItems = document.querySelectorAll('.screenshot-thumb');
-    RetroDBState.screenshots = Array.from(screenshotItems).map(item => {
-        return item.querySelector('img')?.src || '';
-    });
+    RetroDBState.screenshots = thumbSources();
 
     document.querySelector('.modal-nav.prev')?.addEventListener('click', function(e) {
         e.stopPropagation();
@@ -3366,6 +3363,21 @@ function initializeScreenshots() {
         navigateScreenshots(1);
     });
 
+}
+
+function thumbSources() {
+    return Array.from(document.querySelectorAll('.screenshot-thumb'))
+        .map(item => item.querySelector('img')?.src || '');
+}
+
+function syncScreenshotModal() {
+    RetroDBState.screenshots = thumbSources();
+    const last = RetroDBState.screenshots.length - 1;
+    RetroDBState.screenshotIndex = Math.max(0, Math.min(RetroDBState.screenshotIndex, last));
+    if (RetroDBState.currentModal?.id === 'screenshotModal') {
+        if (last < 0) closeScreenshotModal();
+        else updateScreenshotDisplay();
+    }
 }
 
 function openScreenshotModal(index) {
@@ -4309,6 +4321,7 @@ window.clearRAData = clearRAData;
 window.confirmReset = confirmReset;
 window.openModal = openModal;
 window.closeScreenshotModal = closeScreenshotModal;
+window.syncScreenshotModal = syncScreenshotModal;
 window.filterSystems = filterSystems;
 window.filterGames = filterGames;
 window.sortItems = sortItems;
