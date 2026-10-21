@@ -8208,7 +8208,16 @@ were corrected in `2836bc3` and are not repeated here.
   "backup failed" in ko and ja, and "Sponsor RetroDB" / "Support RetroDB"
   carry stale text in several locales (found by the changelog
   translation agents).
-- **Status**: todo. Translate or confirm each entry, drop the flag, check
+- **Resolution** (2026-10-21): Shipped 2026-10-21: every fuzzy or empty msgid in the 20 catalogs
+  translated (163-181 per locale) and applied with
+  scripts/apply_po_translations.py, which now clears fuzzy and supports
+  top-ups (tests/test_apply_po_translations.py). Zero fuzzy left. NOT
+  done: the Gemini/DeepSeek cross-check (sends text off the machine;
+  needs the user's go-ahead). xh and zu want a native-speaker read.
+  Choices made: RetroArch's menu path "Settings > Network > Network
+  Commands" left English in most locales; "Maintenance" and "Kill" had
+  no prior catalog term.
+- **Status**: done. Translate or confirm each entry, drop the flag, check
   drafts with Gemini and DeepSeek. Lanes: i18n.
 - **Source**: changelog backlog translation, 2026-10-17.
 - **Note** (2026-10-17, PASS-59-108): `scripts/apply_po_translations.py`
