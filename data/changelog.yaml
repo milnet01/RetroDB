@@ -225,6 +225,10 @@
         the main source leaves gaps, RetroDB now asks the other sources all
         at once instead of one after another. Their answers are still used
         in your Settings order, so the same source wins each field.</li>
+      <li><strong>ES-DE reads its game list once.</strong> Each scrape,
+        bulk scrapes included, used to read a system's ES-DE gamelist.xml
+        twice for every game. RetroDB now reads it once and reads it again
+        only when the file changes.</li>
       <li><strong>Search Metadata's Apply no longer searches again.</strong>
         On a game page, the results you ticked are fetched straight from
         their source instead of being looked up a second time. With nothing

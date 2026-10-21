@@ -365,10 +365,32 @@ def _sanitize_xml(raw_xml):
     return raw_xml
 
 
+# Parsed gamelists keyed on path -> ((mtime_ns, size), games). A bulk scrape
+# searches ES-DE once per game, and each search would otherwise re-read the
+# whole file (PASS-59-136).
+_gamelist_cache = {}
+
+
 def parse_gamelist_xml(xml_path):
     """
-    Parse a gamelist.xml file and return list of game entries
+    Parse a gamelist.xml file and return list of game entries.
+    The parse is reused until the file's modified time or size changes.
     """
+    try:
+        st = os.stat(xml_path)
+        stamp = (st.st_mtime_ns, st.st_size)
+    except OSError:
+        stamp = None
+    cached = _gamelist_cache.get(xml_path)
+    if stamp and cached and cached[0] == stamp:
+        return list(cached[1])
+    games = _read_gamelist_xml(xml_path)
+    if stamp and games:
+        _gamelist_cache[xml_path] = (stamp, games)
+    return list(games)
+
+
+def _read_gamelist_xml(xml_path):
     games = []
 
     try:
