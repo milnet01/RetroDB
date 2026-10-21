@@ -54,7 +54,7 @@ def achievements():
 <html>
 <head><title>Redirecting...</title></head>
 <body>
-<script>
+<script nonce="{g.get('csp_nonce', '')}">
     const lastSystem = localStorage.getItem('retrodb_last_achievement_system');
     if (lastSystem) {{
         window.location.replace('/achievements/system/' + lastSystem);

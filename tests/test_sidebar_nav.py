@@ -119,3 +119,16 @@ def test_reports_page_highlights_rom_tools(client):
 def test_rom_tools_hub_has_a_rom_reports_card(client):
     soup = _soup(client, '/tools/')
     assert soup.select_one('a.tool-card[href="/reports"]') is not None
+
+
+def test_achievements_redirect_script_runs_under_the_csp(client, monkeypatch):
+    # /achievements answers with an inline script that reopens the last
+    # system; without the request's nonce the CSP blocks it and the page
+    # stays blank on "Redirecting...".
+    monkeypatch.setattr('routes.achievements.query', lambda *a, **k: {'id': 7})
+    resp = client.get('/achievements')
+    assert resp.status_code == 200
+    csp = resp.headers['Content-Security-Policy']
+    nonce = csp.split("'nonce-", 1)[1].split("'", 1)[0]
+    script = BeautifulSoup(resp.get_data(as_text=True), 'html.parser').script
+    assert script.get('nonce') == nonce
