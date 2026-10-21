@@ -21,6 +21,8 @@
     label: Full Re-scrape can keep the media you already have
   - type: fix
     label: ScreenScraper finds games whose title has a subtitle
+  - type: fix
+    label: Create M3U keeps the game in your library
   - type: deps
     label: Pillow 13 and other library updates
   body: |
@@ -238,6 +240,10 @@
         Nightmare" unless the colon had a space before it. RetroDB now
         searches it that way, then by the part before the colon if that
         still finds nothing.</li>
+      <li><strong>Create M3U keeps the game in your library.</strong>
+        Turning a multi-disk archive into a playlist used to leave the game
+        pointing at the archive, which had been moved away. The game now
+        points at the new playlist and keeps its details and pictures.</li>
       <li><strong>Full Re-scrape can keep the media you already have.</strong>
         Tick "Keep existing media" beside the Full Re-scrape switch. Text
         details are still refreshed, but art, videos and manuals already on

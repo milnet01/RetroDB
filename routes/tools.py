@@ -570,6 +570,16 @@ def api_archive_scanner_clean():
     
 
 
+def _repoint_to_m3u(archive_path, m3u_path):
+    """PASS-59-137 — the game that was the archive is now the playlist, so
+    its metadata and media stay with it whether or not the archive moved."""
+    if not m3u_path:
+        return
+    from services.database import execute
+    execute("UPDATE games SET rom_path = ?, file_size = ? WHERE rom_path = ?",
+            (m3u_path, os.path.getsize(m3u_path), archive_path))
+
+
 @tools_bp.route('/api/rom-tools/archive-scanner/create-m3u', methods=['POST'])
 @admin_required
 @handle_api_errors
@@ -599,6 +609,8 @@ def api_archive_scanner_create_m3u():
     # staging_folder intentionally omitted — the scanner falls back to its
     # own, under the saved temp_path (Pass 59.49).
     result = scanner.create_m3u_playlist(path, move_to_staging=move_to_staging)
+    if result.get('success'):
+        _repoint_to_m3u(path, result.get('m3u_path'))
 
     return jsonify(result)
 
@@ -632,6 +644,9 @@ def api_archive_scanner_batch_create_m3u():
     rom_config = _rom_tools_config()
     scanner = ArchiveScanner(rom_config)
     result = scanner.batch_create_m3u(valid_paths, delete_archives, scanner._staging_folder())
+    for detail in result['details']:
+        if detail.get('success'):
+            _repoint_to_m3u(detail['path'], detail.get('m3u_path'))
 
     return jsonify(result)
     
