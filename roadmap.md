@@ -8575,7 +8575,7 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.124 Some library games carry another game's title (LOW, S).
-- **Status**: todo
+- **Status**: done
 - **Seen** (live DB, 2026-10-19): `atari2600/Pitfall! - Pitfall Harry's
   Jungle Adventure (USA).zip` titled "Adventure"; `nes/...Hillsfar (USA).zip`
   titled "...DragonStrike"; `zxspectrum/Outrun (USA)...` titled "Auf
@@ -8612,6 +8612,9 @@ were corrected in `2836bc3` and are not repeated here.
   - **Still owed**: ask the user before deleting the scratch backups
   `roms-before-backfill.db` and `roms-before-title-fix.db` (and the
   `roms-suggest-check.db` copy) in `/mnt/Games/claude-scratch/`.
+- **Closed** (2026-10-21): user said delete the scratch backups;
+  `/mnt/Games/claude-scratch/` no longer exists and no copy was found on
+  disk, so nothing was left to delete.
 
 ---
 
@@ -8626,6 +8629,8 @@ were corrected in `2836bc3` and are not repeated here.
 - **Plan**: red test first; decide with the user whether bulk search uses
   the filename always or only in Full Re-scrape mode.
 - **Status**: todo.
+- **Decision** (user, 2026-10-21): bulk search uses the filename
+  always, in every mode.
 
 ---
 
@@ -8759,6 +8764,8 @@ were corrected in `2836bc3` and are not repeated here.
 - **Lead, unverified**: the IGDB, RAWG and ScreenScraper screenshot loops
   skip a filename that already exists and, in force mode, do not add it
   back to the list, so existing screenshots may drop off the game.
+- **Decision** (user, 2026-10-21): add a Full Re-scrape option "keep
+  existing media", off by default.
 
 ---
 
@@ -8776,6 +8783,8 @@ were corrected in `2836bc3` and are not repeated here.
   follow in Settings priority order.
 - **Open question for the user**: with no box ticked, should Apply still
   query every enabled source, or only the lead plus AI?
+- **Decision** (user, 2026-10-21): Apply with no box ticked queries
+  only the clicked source plus AI.
 
 ---
 
