@@ -57,10 +57,10 @@
 
 <!-- Sticky Tab Navigation -->
 <nav class="museum-nav" data-sticky-nav data-tabbar>
-    <a href="#history" class="museum-nav-item active" aria-current="page" data-on-click="switchMuseumTab" data-args='["$event", "history"]'>{{ _('History') }}</a>
-    <a href="#specifications" class="museum-nav-item" data-on-click="switchMuseumTab" data-args='["$event", "specifications"]'>{{ _('Specifications') }}</a>
-    <a href="#top-games" class="museum-nav-item" data-on-click="switchMuseumTab" data-args='["$event", "top-games"]'>{{ _('Top 10 Games') }}</a>
-    <a href="#controllers" class="museum-nav-item" data-on-click="switchMuseumTab" data-args='["$event", "controllers"]'>{{ _('Controllers') }}</a>
+    <a href="#history" class="museum-nav-item active" aria-current="page" data-on-click="switchMuseumTab" data-prevent data-args='["$this", "history"]'>{{ _('History') }}</a>
+    <a href="#specifications" class="museum-nav-item" data-on-click="switchMuseumTab" data-prevent data-args='["$this", "specifications"]'>{{ _('Specifications') }}</a>
+    <a href="#top-games" class="museum-nav-item" data-on-click="switchMuseumTab" data-prevent data-args='["$this", "top-games"]'>{{ _('Top 10 Games') }}</a>
+    <a href="#controllers" class="museum-nav-item" data-on-click="switchMuseumTab" data-prevent data-args='["$this", "controllers"]'>{{ _('Controllers') }}</a>
 </nav>
 
 <!-- History Section -->

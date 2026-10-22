@@ -643,15 +643,19 @@ function closeHardwareLightbox() {
 // TAB NAVIGATION (System Page)
 // =============================================================================
 
-function switchMuseumTab(event, tabId) {
-    if (event) event.preventDefault();
-
+// `tab` is the clicked link ("$this"). main.js delegates clicks from
+// document, so an event's currentTarget would be document, not the link.
+function switchMuseumTab(tab, tabId) {
     // Update nav active state
     var navItems = document.querySelectorAll('.museum-nav-item');
-    navItems.forEach(function (item) { item.classList.remove('active'); });
+    navItems.forEach(function (item) {
+        item.classList.remove('active');
+        item.removeAttribute('aria-current');
+    });
 
-    if (event && event.currentTarget) {
-        event.currentTarget.classList.add('active');
+    if (tab) {
+        tab.classList.add('active');
+        tab.setAttribute('aria-current', 'page');
     }
 
     // Show/hide sections
@@ -686,7 +690,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var navItems = document.querySelectorAll('.museum-nav-item');
         navItems.forEach(function (item) {
             if (item.getAttribute('href') === '#' + hash) {
-                switchMuseumTab({ preventDefault: function () {}, currentTarget: item }, hash);
+                switchMuseumTab(item, hash);
             }
         });
     }
