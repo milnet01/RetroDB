@@ -644,6 +644,10 @@ function initializeModals() {
     // wrong focus trap.
     const modal = document.getElementById('screenshotModal');
     if (!modal) return;
+    // The page's .content-wrapper (z-index 1) caps any z-index inside it,
+    // so left there the sidebar covers the viewer's left edge and its
+    // previous-screenshot button. At body level it stacks above the page.
+    document.body.appendChild(modal);
 
     // Close on backdrop click
     modal.addEventListener('click', function(e) {

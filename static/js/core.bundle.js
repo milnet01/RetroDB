@@ -3305,6 +3305,7 @@ function initializeModals() {
 
     const modal = document.getElementById('screenshotModal');
     if (!modal) return;
+    document.body.appendChild(modal);
 
     modal.addEventListener('click', function(e) {
         if (e.target === modal) {
