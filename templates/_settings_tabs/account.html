@@ -135,7 +135,10 @@
                     <span style="background: var(--primary-cyan); color: var(--bg-darkest); width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; flex-shrink: 0; margin-top: 2px;">1</span>
                     <div style="flex: 1;">
                         <div style="color: var(--text-primary); font-weight: 600; margin-bottom: 4px;">{{ _("Open Sony's account page") }}</div>
-                        <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0 0 8px;">{{ _('Log in with your PlayStation account (if not already), then the page will show your NPSSO token as JSON.') }}</p>
+                        <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0 0 8px;">{{ _('First sign in to PlayStation in this browser. Then open the account page: it shows your NPSSO token as JSON. If you are not signed in, it shows "Invalid login" instead.') }}</p>
+                        <button type="button" class="btn btn-secondary btn-sm" data-on-click="window.open" data-args='["https://store.playstation.com", "_blank"]'>
+                            {{ _('Sign in to PlayStation') }}
+                        </button>
                         <button type="button" class="btn btn-secondary btn-sm" data-on-click="window.open" data-args='["https://ca.account.sony.com/api/v1/ssocookie", "_blank"]'>
                             {{ _('Open Sony Account Page') }}
                         </button>
