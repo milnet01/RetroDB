@@ -75,6 +75,8 @@ guarded routes — never just one.
   (`PUT /api/games/<id>/emulator-settings`) except fullscreen, which is a
   command-line flag and so is set per system under `manage_settings`
   (`/api/systems/<sid>/emulator-settings/<eid>`; PASS-59-91 §4.6).
+- `edit` covers the player's Reset to recommended
+  (`POST /api/games/<id>/player-settings/reset`; PASS-59-64 §4.5).
 - `viewer` can read everything (`view`) and self-track (`track_progress`); no mutating perms — read-only with one self-mutation carve-out.
 
 ---

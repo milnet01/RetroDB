@@ -8,7 +8,7 @@
 # "exited 30s ago, exit code 1" before the entry GCs. Default 3600s (1h).
 #
 # v1 is process-scoped; multi-worker deployments need a DB-backed registry
-# (see spec §Future work F1).
+# (see docs/specs/2026-04-25-retrodb-multi-emulator-launch.md, Future work F1).
 # =============================================================================
 
 from __future__ import annotations

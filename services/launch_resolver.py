@@ -7,7 +7,7 @@
 # the user's own core-options files. _mapping_resolves (the Play button's
 # check) runs `flatpak info`.
 #
-# Resolution algorithm (spec §Resolution algorithm):
+# Resolution algorithm (PASS-59-64 §4.1):
 #   1. Load game; raise if missing.
 #   2. Pick emulator: per-game override > system default > first system mapping;
 #      the bundled player stands in where that mapping does not resolve and

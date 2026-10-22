@@ -5,7 +5,7 @@
 # serves, and the player's row itself, with no `system_emulators` rows. The
 # core installer (PASS-59-81) maps it to a system when it installs a core.
 # `args_template` is NOT NULL but unused: the player's argv is built by the
-# resolver, not from a template. The name is a placeholder (spec §3.10).
+# resolver, not from a template. The name is a placeholder (PASS-59-64 §3, item 10).
 # =============================================================================
 
 from services.migrations._helpers import _add_column_if_missing, _table_exists
