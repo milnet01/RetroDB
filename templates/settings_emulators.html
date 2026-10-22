@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% set adaptive_layout = true %}
 
-{% block title %}Emulators · Settings · RetroDB{% endblock %}
+{% block title %}{{ _('Emulators') }} · {{ _('Settings') }} · RetroDB{% endblock %}
 
 {% block content %}
 <div class="page-box form-page">
 <div class="page-header">
-    <h1 class="page-title">🎮 Emulators</h1>
-    <p class="page-subtitle">Manage emulator binaries and per-system mappings used by the ▶ Play button.</p>
+    <h1 class="page-title">🎮 {{ _('Emulators') }}</h1>
+    <p class="page-subtitle">{{ _('Manage emulator binaries and per-system mappings used by the ▶ Play button.') }}</p>
 </div>
 
 <!-- ================================================== -->
@@ -16,24 +16,24 @@
 <section class="settings-section">
     <h2 class="section-title">RetroArch</h2>
     <p class="text-muted" style="margin-bottom: var(--spacing-md);">
-        RetroArch needs explicit binary + cores-dir paths because they typically live in different prefixes (system package, ~/.local, or a Flatpak sandbox).
+        {{ _('RetroArch needs explicit binary + cores-dir paths because they typically live in different prefixes (system package, ~/.local, or a Flatpak sandbox).') }}
     </p>
 
     <div class="form-group mb-md">
-        <label class="form-label" for="ra-binary">Binary</label>
+        <label class="form-label" for="ra-binary">{{ _('Binary') }}</label>
         <input type="text" class="form-input" id="ra-binary"
                value="{{ retroarch_binary or '' }}"
                placeholder="/usr/bin/retroarch  or  flatpak run org.libretro.RetroArch">
     </div>
     <div class="form-group mb-md">
-        <label class="form-label" for="ra-cores-dir">Cores directory</label>
+        <label class="form-label" for="ra-cores-dir">{{ _('Cores directory') }}</label>
         <input type="text" class="form-input" id="ra-cores-dir"
                value="{{ retroarch_cores_dir or '' }}"
                placeholder="~/.config/retroarch/cores/">
     </div>
     <div style="display: flex; gap: var(--spacing-sm); margin-bottom: var(--spacing-md);">
-        <button id="ra-detect-btn" class="btn btn-secondary"><span class="btn-icon">🔍</span> Auto-detect</button>
-        <button id="ra-save-btn" class="btn btn-primary"><span class="btn-icon">💾</span> Save</button>
+        <button id="ra-detect-btn" class="btn btn-secondary"><span class="btn-icon">🔍</span> {{ _('Auto-detect') }}</button>
+        <button id="ra-save-btn" class="btn btn-primary"><span class="btn-icon">💾</span> {{ _('Save') }}</button>
     </div>
     <div id="ra-status" class="text-muted" style="font-size: 0.9rem;"></div>
 </section>
@@ -53,8 +53,8 @@
         <button id="emu-folder-add" class="btn btn-primary"><span class="btn-icon">➕</span> {{ _('Add folder') }}</button>
     </div>
     <div style="display: flex; gap: var(--spacing-sm); margin-bottom: var(--spacing-md);">
-        <button id="emu-detect-btn" class="btn btn-secondary"><span class="btn-icon">🔍</span> Scan</button>
-        <button id="emu-apply-btn" class="btn btn-primary" disabled><span class="btn-icon">💾</span> Apply all</button>
+        <button id="emu-detect-btn" class="btn btn-secondary"><span class="btn-icon">🔍</span> {{ _('Scan') }}</button>
+        <button id="emu-apply-btn" class="btn btn-primary" disabled><span class="btn-icon">💾</span> {{ _('Apply all') }}</button>
     </div>
     <div id="emu-detect-status" class="text-muted" style="font-size: 0.9rem;"></div>
     <div id="emu-detect-results" style="margin-top: var(--spacing-md);"></div>
@@ -64,25 +64,25 @@
 <!-- Emulators list -->
 <!-- ================================================== -->
 <section class="settings-section">
-    <h2 class="section-title">Registered emulators</h2>
+    <h2 class="section-title">{{ _('Registered emulators') }}</h2>
     <p class="text-muted" style="margin-bottom: var(--spacing-md);">
-        RetroDB ships with a default registry seeded on first run.  Add custom emulators or edit the seeded entries.
+        {{ _('RetroDB ships with a default registry seeded on first run. Add custom emulators or edit the seeded entries.') }}
     </p>
     <div style="overflow-x: auto;">
         <table class="data-table" id="emulator-table">
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Binary</th>
-                    <th>Path override</th>
-                    <th>Args template</th>
-                    <th>Type</th>
-                    <th>Enabled</th>
+                    <th>{{ _('Name') }}</th>
+                    <th>{{ _('Binary') }}</th>
+                    <th>{{ _('Path override') }}</th>
+                    <th>{{ _('Args template') }}</th>
+                    <th>{{ _('Type') }}</th>
+                    <th>{{ _('Enabled') }}</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody id="emu-tbody">
-                <tr><td colspan="7" class="text-muted">Loading…</td></tr>
+                <tr><td colspan="7" class="text-muted">{{ _('Loading…') }}</td></tr>
             </tbody>
         </table>
     </div>
@@ -94,50 +94,50 @@
 <div id="emuEditModal" class="custom-modal" data-focus-trap data-focus-trap-content=".custom-modal-content" data-focus-trap-onescape="closeEmuEditModal">
     <div class="custom-modal-content" style="max-width: 720px; max-height: 90vh; overflow-y: auto;" role="dialog" aria-modal="true" aria-labelledby="emuEditModalHeading">
         <div class="custom-modal-header">
-            <h3 id="emuEditModalHeading">Edit emulator</h3>
-            <button type="button" class="modal-close-btn" data-on-click="closeEmuEditModal" aria-label="Close emulator edit modal">×</button>
+            <h3 id="emuEditModalHeading">{{ _('Edit emulator') }}</h3>
+            <button type="button" class="modal-close-btn" data-on-click="closeEmuEditModal" aria-label="{{ _('Close emulator edit modal') }}">×</button>
         </div>
         <div class="custom-modal-body">
             <form id="emuEditForm" autocomplete="off">
                 <input type="hidden" name="id" id="emu_edit_id">
                 <div class="form-group mb-md">
-                    <label class="form-label" for="emu_edit_name">Name</label>
+                    <label class="form-label" for="emu_edit_name">{{ _('Name') }}</label>
                     <input type="text" class="form-input" id="emu_edit_name" name="name" required>
                 </div>
                 <div class="form-group mb-md">
-                    <label class="form-label" for="emu_edit_binary_name">Binary name (looked up on PATH)</label>
+                    <label class="form-label" for="emu_edit_binary_name">{{ _('Binary name (looked up on PATH)') }}</label>
                     <input type="text" class="form-input" id="emu_edit_binary_name" name="binary_name" required>
-                    <span class="field-tip">e.g. <code>retroarch</code>, <code>duckstation-qt</code>.  Used when no path override is set.</span>
+                    <span class="field-tip">{{ _('e.g.') }} <code>retroarch</code>, <code>duckstation-qt</code>. {{ _('Used when no path override is set.') }}</span>
                 </div>
                 <div class="form-group mb-md">
-                    <label class="form-label" for="emu_edit_binary_path_override">Binary path override</label>
-                    <input type="text" class="form-input" id="emu_edit_binary_path_override" name="binary_path_override" placeholder="(empty = look up binary_name on PATH)">
-                    <span class="field-tip">Absolute path to AppImage / portable script / system binary.  Wins over PATH lookup.</span>
+                    <label class="form-label" for="emu_edit_binary_path_override">{{ _('Binary path override') }}</label>
+                    <input type="text" class="form-input" id="emu_edit_binary_path_override" name="binary_path_override" placeholder="{{ _('(empty = look up the binary name on PATH)') }}">
+                    <span class="field-tip">{{ _('Absolute path to AppImage / portable script / system binary. Wins over PATH lookup.') }}</span>
                 </div>
                 <div class="form-group mb-md">
-                    <label class="form-label" for="emu_edit_args_template">Args template</label>
+                    <label class="form-label" for="emu_edit_args_template">{{ _('Args template') }}</label>
                     <textarea class="form-input" id="emu_edit_args_template" name="args_template" rows="2" required></textarea>
-                    <span class="field-tip">Tokens: <code>{rom}</code> <code>{rom_dir}</code> <code>{rom_name}</code> <code>{retroarch_core}</code> <code>{system_extra_args}</code> <code>{game_extra_args}</code></span>
+                    <span class="field-tip">{{ _('Tokens:') }} <code>{rom}</code> <code>{rom_dir}</code> <code>{rom_name}</code> <code>{retroarch_core}</code> <code>{system_extra_args}</code> <code>{game_extra_args}</code></span>
                 </div>
                 <div class="form-group mb-md">
-                    <label class="form-label" for="emu_edit_description">Description</label>
+                    <label class="form-label" for="emu_edit_description">{{ _('Description') }}</label>
                     <input type="text" class="form-input" id="emu_edit_description" name="description">
                 </div>
                 <div class="form-group mb-md">
                     <label style="display: flex; align-items: center; gap: 0.5rem;">
                         <input type="checkbox" id="emu_edit_is_retroarch" name="is_retroarch">
-                        <span>This is a RetroArch entry (uses cores from <code>retroarch_cores_dir</code>)</span>
+                        <span>{{ _('This is a RetroArch entry (uses the cores in the Cores directory above)') }}</span>
                     </label>
                 </div>
                 <div class="form-group mb-md">
                     <label style="display: flex; align-items: center; gap: 0.5rem;">
                         <input type="checkbox" id="emu_edit_enabled" name="enabled" checked>
-                        <span>Enabled (uncheck to hide from launch)</span>
+                        <span>{{ _('Enabled (uncheck to hide from launch)') }}</span>
                     </label>
                 </div>
                 <div style="display: flex; gap: var(--spacing-sm); justify-content: flex-end;">
-                    <button type="button" class="btn btn-secondary" data-on-click="closeEmuEditModal">Cancel</button>
-                    <button type="submit" class="btn btn-primary"><span class="btn-icon">💾</span> Save</button>
+                    <button type="button" class="btn btn-secondary" data-on-click="closeEmuEditModal">{{ _('Cancel') }}</button>
+                    <button type="submit" class="btn btn-primary"><span class="btn-icon">💾</span> {{ _('Save') }}</button>
                 </div>
             </form>
         </div>
@@ -148,11 +148,11 @@
 <!-- Per-system mapping -->
 <!-- ================================================== -->
 <section class="settings-section">
-    <h2 class="section-title">Per-system mapping</h2>
+    <h2 class="section-title">{{ _('Per-system mapping') }}</h2>
     <p class="text-muted" style="margin-bottom: var(--spacing-md);">
         {{ _('Pick the emulator each system uses by default. Per-game overrides live in the edit-game modal.') }}
     </p>
-    <div id="mapping-body"><span class="text-muted">Loading…</span></div>
+    <div id="mapping-body"><span class="text-muted">{{ _('Loading…') }}</span></div>
 </section>
 
 </div>

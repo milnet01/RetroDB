@@ -9211,7 +9211,12 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.154 Translate the Settings → Emulators page (MEDIUM, S).
-- **Status**: todo. Lanes: i18n, launch.
+- **Resolution** (2026-10-22): Shipped 2026-10-22 in v3.30.1. Template and its JS fully wrapped (31
+  new msgids), translated into all 20 locales; the unescaped error
+  message in the emulator list's failure row now goes through
+  escapeHtml. Checked: check_i18n_fresh.py OK; page viewed in German on
+  a scratch :5001 server, desktop and 375 px, no console errors.
+- **Status**: done. Lanes: i18n, launch.
 - **Found** (2026-10-21, PASS-59-152): most of
   `templates/settings_emulators.html` is bare English: the page
   title and heading, subtitle, RetroArch section, the registered-

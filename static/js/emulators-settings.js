@@ -53,7 +53,7 @@
                 $('#ra-cores-dir').value = out.cores_dir.path || '';
                 const bv = out.binary.version || out.binary.error || '';
                 const cn = out.cores_dir.core_count
-                    ? `${out.cores_dir.core_count} cores`
+                    ? t('{n} cores', {n: out.cores_dir.core_count})
                     : (out.cores_dir.error || '');
                 statusLine.textContent = `${bv} · ${cn}`;
             } catch (e) {
@@ -117,10 +117,10 @@
             const systems = document.createElement('td');
             systems.textContent = (s.systems || []).join(', ');
             const cur = document.createElement('td');
-            cur.textContent = s.current_override || '(not set)';
+            cur.textContent = s.current_override || t('(not set)');
             cur.style.color = 'var(--text-muted)';
             const chg = document.createElement('td');
-            chg.textContent = s.would_change ? 'Yes' : 'No (already set)';
+            chg.textContent = s.would_change ? t('Yes') : t('No (already set)');
             chg.style.color = s.would_change ? 'var(--neon-green)' : 'var(--text-muted)';
             tr.appendChild(name);
             tr.appendChild(path);
@@ -142,7 +142,8 @@
             emuApplyBtn.disabled = true;
             try {
                 const out = await fetchJSON('/api/settings/emulators/detect', {method: 'POST'});
-                emuDetectStatus.textContent = `Scanned ${(out.scanned_paths || []).length} paths · found ${out.found_count || 0} matches.`;
+                emuDetectStatus.textContent = t('Scanned {paths} paths · found {found} matches.',
+                    {paths: (out.scanned_paths || []).length, found: out.found_count || 0});
                 renderSuggestions(out.suggestions);
             } catch (e) {
                 emuDetectStatus.textContent = t('Scan failed: {error}', {error: e.message});
@@ -157,7 +158,7 @@
         emuDetectStatus.textContent = t('Applying…');
         try {
             const out = await fetchJSON('/api/settings/emulators/detect?apply=true', {method: 'POST'});
-            emuDetectStatus.textContent = `Applied ${(out.applied || []).length} update(s).`;
+            emuDetectStatus.textContent = t('Applied {n} update(s).', {n: (out.applied || []).length});
             renderSuggestions(out.suggestions);
             refreshEmulators();
             refreshMappings();
@@ -257,7 +258,7 @@
                 codeArgs.style.fontSize = '0.8rem';
                 args.appendChild(codeArgs);
                 const type = document.createElement('td');
-                type.textContent = e.is_retroarch ? 'RetroArch' : 'Standalone';
+                type.textContent = e.is_retroarch ? 'RetroArch' : t('Standalone');
                 const enabled = document.createElement('td');
                 enabled.textContent = e.enabled ? '✓' : '✗';
                 const actions = document.createElement('td');
@@ -277,7 +278,7 @@
                 tbody.appendChild(tr);
             }
         } catch (err) {
-            tbody.innerHTML = `<tr><td colspan="7" class="text-danger">Failed: ${err.message}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7" class="text-danger">${escapeHtml(t('Failed: {error}', {error: err.message}))}</td></tr>`;
         }
     }
 
