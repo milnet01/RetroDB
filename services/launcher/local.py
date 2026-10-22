@@ -8,7 +8,9 @@
 # Lifecycle:
 #   launch()  -> Popen, register handle
 #   status()  -> proc.poll(); transition to 'exited' on first non-None
-#   kill()    -> SIGTERM (once per process), poll up to timeout_s, then SIGKILL
+#   kill()    -> SIGTERM (once per process), poll up to timeout_s, then SIGKILL;
+#                a player with a quit_port gets a network QUIT instead (§4.6)
+#   exit      -> the call that first marks an entry exited runs its on_exit
 #   wait()    -> block until the child exits; raises TimeoutExpired after timeout_s
 #
 # stderr is drained into a 4KB ring buffer (last bytes wins) so a quickly-
@@ -28,6 +30,7 @@ from services.launcher.base import (
     LaunchContext, LaunchHandle, LaunchStatus, LauncherError,
 )
 from services.launcher.registry import ProcessEntry, ProcessRegistry
+from services.retroarch_command import send_quit
 
 logger = logging.getLogger(__name__)
 
@@ -65,7 +68,10 @@ class LocalLauncher:
         )
         drain = threading.Thread(target=self._drain_stderr, args=(ctx.token, proc),
                                  daemon=True)
-        self._registry.get(ctx.token).drain = drain
+        entry = self._registry.get(ctx.token)
+        entry.drain = drain
+        entry.on_exit = ctx.on_exit
+        entry.quit_port = ctx.quit_port
         drain.start()
 
         logger.info("launched game=%s emulator=%s pid=%s argv=%s",
@@ -88,14 +94,18 @@ class LocalLauncher:
             # SIGTERM at most once per process (PASS-59-64 INV-15): a repeat
             # request only waits out the first one's grace, then escalates.
             with self._term_lock:
-                if entry.term_sent_at is None:
+                first = entry.term_sent_at is None
+                if first:
                     entry.term_sent_at = time.time()
-                    try:
-                        proc.send_signal(signal.SIGTERM)
-                    except OSError:
-                        pass
+                    self._ask_to_quit(entry)
             deadline = entry.term_sent_at + timeout_s
+            resend_at = entry.term_sent_at + 1.0
             while time.time() < deadline and proc.poll() is None:
+                # The player drops a QUIT that lands as its menu opens or
+                # closes, so a still-running one gets one more (§4.6).
+                if first and entry.quit_port and resend_at and time.time() >= resend_at:
+                    resend_at = None
+                    send_quit(entry.quit_port)
                 time.sleep(0.1)
             if proc.poll() is None:
                 try:
@@ -110,7 +120,7 @@ class LocalLauncher:
         # A child that outlived SIGKILL (stuck in the kernel) is still
         # running; marking it exited would let gc() drop it while it runs.
         if entry.exit_time is None and proc.poll() is not None:
-            self._registry.mark_exited(token, exit_time=time.time())
+            self._mark_exited(entry, time.time())
         return self._status_from_entry(entry)
 
     def wait(self, token: str, *, timeout_s: Optional[float] = None) -> LaunchStatus:
@@ -131,11 +141,37 @@ class LocalLauncher:
         # TTL, so the registry stays bounded (PASS-59-64 §4.3).
         now = time.time()
         for token in self._registry.newly_exited():
-            self._registry.mark_exited(token, exit_time=now)
+            entry = self._registry.get(token)
+            if entry is not None:
+                self._mark_exited(entry, now)
         self._registry.gc()
         return self._registry.active()
 
     # ---------------- internals ---------------------------------------------
+
+    @staticmethod
+    def _ask_to_quit(entry: ProcessEntry) -> None:
+        """The first stop request: a network QUIT to a player that has a
+        command port (macOS, Windows), else one SIGTERM."""
+        if entry.quit_port:
+            send_quit(entry.quit_port)
+            return
+        try:
+            entry.proc.send_signal(signal.SIGTERM)
+        except OSError:
+            pass
+
+    def _mark_exited(self, entry: ProcessEntry, exit_time: float) -> None:
+        """Mark an entry exited; the one call that does runs its on_exit,
+        synchronously, so it has finished before the next launch resolves
+        (PASS-59-64 §4.5). A failing hook is logged, never raised."""
+        if not self._registry.mark_exited(entry.handle.token, exit_time=exit_time):
+            return
+        if entry.on_exit is not None:
+            try:
+                entry.on_exit()
+            except Exception:
+                logger.exception("post-exit hook failed for %s", entry.handle.token)
 
     def _status_from_entry(self, entry: ProcessEntry) -> LaunchStatus:
         rc = entry.proc.poll()
@@ -149,7 +185,7 @@ class LocalLauncher:
         if entry.drain is not None:
             entry.drain.join(timeout=_DRAIN_JOIN_S)
         if entry.exit_time is None:
-            self._registry.mark_exited(entry.handle.token, exit_time=time.time())
+            self._mark_exited(entry, time.time())
         if entry.exit_time:
             runtime = entry.exit_time - entry.handle.started_at
         return LaunchStatus(state='exited', exit_code=rc, runtime_s=runtime,

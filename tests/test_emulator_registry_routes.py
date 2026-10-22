@@ -74,6 +74,23 @@ class TestEmulatorCRUD:
         body = rv.get_json()
         assert body['success'] is True
 
+    def test_player_listed_only_once_found(self, admin_client, monkeypatch, tmp_path):
+        """The bundled player's row stays out of the list until its program
+        is found (user, 2026-10-22)."""
+        rows = [{'id': 1, 'name': 'RetroArch', 'is_player': 0},
+                {'id': 2, 'name': 'RetroDB Player', 'is_player': 1, 'is_retroarch': 0,
+                 'binary_name': 'retrodb-player-not-installed', 'binary_path_override': None}]
+        monkeypatch.setattr('routes.emulators.query', lambda *a, **kw: rows)
+        names = [e['name'] for e in admin_client.get('/api/emulators').get_json()['emulators']]
+        assert names == ['RetroArch']
+
+        binary = tmp_path / 'retrodb-player'
+        binary.write_text('#!/bin/sh\n')
+        binary.chmod(0o755)
+        rows[1]['binary_path_override'] = str(binary)
+        names = [e['name'] for e in admin_client.get('/api/emulators').get_json()['emulators']]
+        assert names == ['RetroArch', 'RetroDB Player']
+
     def test_admin_can_create(self, admin_client, monkeypatch):
         captured = {}
 

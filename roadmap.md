@@ -7530,6 +7530,10 @@ were corrected in `2836bc3` and are not repeated here.
   and where the core comes from) and a PASS-59-91 §4.6 note that its
   choices table and routes also serve the player.
   - **Blocked by** PASS-59-64's player clauses (unbuilt).
+- **Unblocked** (2026-10-22): PASS-59-64's player clauses are built
+  (v3.31.0). Anything a user can run still waits on the fork's player
+  build (RETR-0004); the core installer, ranking and settings can be
+  built and tested against a stub player now.
 
 ---
 
@@ -7802,6 +7806,17 @@ were corrected in `2836bc3` and are not repeated here.
   (one SIGTERM per process, `ProcessEntry.term_sent_at`) built and
   tested, in the open v3.30.0. Still unbuilt from PASS-59-64: the
   player clauses (§4.4–4.6, migration 016) and §11's cross-doc edits.
+- **Progress** (2026-10-22): PASS-59-64's player clauses (§4.4–4.6)
+  built in the open v3.31.0: migration 020 (`emulators.is_player`,
+  the `RetroDB Player` row), `services/player.py` (profile, base and
+  game cfgs, kept menu saves, reset), the resolver's player branch,
+  the launcher's post-exit hook and network QUIT, one player session
+  at a time (409), `POST /api/games/<id>/player-settings/reset`.
+  INV-8 to INV-12, INV-16 and INV-17 in `tests/test_player_launch.py`;
+  full suite 2109 passed. The row stays out of Settings > Emulators
+  until its program is found (user, 2026-10-22). Linux only tested;
+  macOS and Windows QUIT unverified. Still owed: §11's cross-doc
+  edits (api-contracts.md has no route list to extend).
 
 ---
 
@@ -9211,7 +9226,7 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.154 Translate the Settings → Emulators page (MEDIUM, S).
-- **Resolution** (2026-10-22): Shipped 2026-10-22 in v3.30.1. Template and its JS fully wrapped (31
+- **Resolution** (2026-10-22): Shipped 2026-10-22 in v3.31.0 (opened as v3.30.1). Template and its JS fully wrapped (31
   new msgids), translated into all 20 locales; the unescaped error
   message in the emulator list's failure row now goes through
   escapeHtml. Checked: check_i18n_fresh.py OK; page viewed in German on

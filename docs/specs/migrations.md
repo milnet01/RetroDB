@@ -535,6 +535,7 @@ your migration — not in the runner.
 | 017 | `017_version_ai_summary.py` | Add `ai_summary`, `ai_summary_members`, `ai_summary_at`, `ai_summary_provider` to `version_groups`. | PASS-59-107. Additive. `ai_summary_members` records the members a summary was written for, so it hides when they change. |
 | 018 | `018_standalone_settings.py` | Add `games.disc_serial`, `games.disc_crc`; create `emulator_setting_choices` and `emulator_written_settings`; move the seeded DuckStation and PCSX2 `args_template` onto `{fullscreen_flag}`. | PASS-59-91 §4.6. Additive. A trigger clears both disc ids when `rom_path` changes. The template moves only where it still equals the old seed exactly. |
 | 019 | `019_pending_upscales.py` | Create `pending_upscales` (`game_id` primary key, `queued_at`). | PASS-59-130; `image-pipeline.md` §5.1. Additive. |
+| 020 | `020_player.py` | Add `emulators.is_player`; insert the bundled player's row (`RetroDB Player`, `retrodb-player`) with no `system_emulators` rows. | PASS-59-64 §4.4. Additive. The row's `args_template` is unused: the resolver builds the player's argv. |
 
 ---
 

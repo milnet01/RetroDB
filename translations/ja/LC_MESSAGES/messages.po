@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-22 12:42+0200\n"
+"POT-Creation-Date: 2026-10-22 13:10+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -56,11 +56,12 @@ msgstr "システムが見つからないか、実績対応ゲームがありま
 
 #: routes/achievements.py:171 routes/achievements.py:440
 #: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/collections.py:276
-#: routes/collections.py:531 routes/emulators.py:248 routes/emulators.py:262
+#: routes/collections.py:531 routes/emulators.py:262 routes/emulators.py:276
 #: routes/games.py:347 routes/games.py:803 routes/games.py:925
 #: routes/games.py:981 routes/games_ai.py:46 routes/games_media.py:37
-#: routes/games_media.py:84 routes/games_media.py:145 routes/reports.py:693
-#: routes/reports.py:818 routes/trophies.py:1278 services/hltb_service.py:125
+#: routes/games_media.py:84 routes/games_media.py:145 routes/launch.py:138
+#: routes/reports.py:693 routes/reports.py:818 routes/trophies.py:1278
+#: services/hltb_service.py:125
 msgid "Game not found"
 msgstr "ゲームが見つかりません"
 
@@ -390,39 +391,39 @@ msgstr "コントローラーが見つかりません"
 msgid "Another controller named \"%(name)s\" already exists"
 msgstr "「%(name)s」という名前の別のコントローラーがすでに存在します"
 
-#: routes/emulators.py:81
+#: routes/emulators.py:95
 msgid "name, binary_name, args_template are required"
 msgstr "name、binary_name、args_templateが必要です"
 
-#: routes/emulators.py:128
+#: routes/emulators.py:142
 msgid "nothing to update"
 msgstr "更新する項目がありません"
 
-#: routes/emulators.py:186
+#: routes/emulators.py:200
 msgid "system_id and emulator_id required"
 msgstr "system_idとemulator_idが必要です"
 
-#: routes/emulators.py:224
+#: routes/emulators.py:238
 msgid "Send at least one setting."
 msgstr "設定を1つ以上送信してください。"
 
-#: routes/emulators.py:230
+#: routes/emulators.py:244
 msgid "RetroDB does not manage that setting for this emulator."
 msgstr "RetroDB はこのエミュレーターのその設定を管理していません。"
 
-#: routes/emulators.py:232
+#: routes/emulators.py:246
 msgid "Fullscreen is set per system, in Settings > Emulators."
 msgstr "フルスクリーンはシステムごとに 設定 > エミュレーター で設定します。"
 
-#: routes/emulators.py:234
+#: routes/emulators.py:248
 msgid "That value is not one of the choices."
 msgstr "その値は選択肢にありません。"
 
-#: routes/emulators.py:264 services/standalone_settings.py:258
+#: routes/emulators.py:278 services/standalone_settings.py:258
 msgid "RetroDB manages per-game settings for DuckStation, PCSX2 and RPCS3 only."
 msgstr "RetroDB がゲームごとの設定を管理するのは DuckStation、PCSX2、RPCS3 のみです。"
 
-#: routes/emulators.py:277 routes/emulators.py:288
+#: routes/emulators.py:291 routes/emulators.py:302
 msgid "Emulator not found"
 msgstr "エミュレーターが見つかりません"
 
@@ -551,29 +552,37 @@ msgstr "スクリーンショットが見つかりません"
 msgid "Title required"
 msgstr "タイトルが必要です"
 
-#: routes/launch.py:71
+#: routes/launch.py:73
 #, python-format
 msgid "This action requires the \"%(perm)s\" permission"
 msgstr "この操作には「%(perm)s」権限が必要です"
 
-#: routes/launch.py:83
+#: routes/launch.py:86
+msgid "The player is already running another game"
+msgstr "プレーヤーは別のゲームを実行中です"
+
+#: routes/launch.py:97
 msgid "This game is already running"
 msgstr "このゲームはすでに実行中です"
 
-#: routes/launch.py:89
+#: routes/launch.py:103
 #, python-format
 msgid "failed to kill prior instance: %(err)s"
 msgstr "以前のインスタンスの終了に失敗しました: %(err)s"
 
-#: routes/launch.py:184
+#: routes/launch.py:140
+msgid "Player settings reset to recommended"
+msgstr "プレーヤーの設定を推奨値に戻しました"
+
+#: routes/launch.py:215
 msgid "That game is no longer running"
 msgstr "そのゲームはもう実行されていません"
 
-#: routes/launch.py:186
+#: routes/launch.py:217
 msgid "This game has no disk list to swap through"
 msgstr "このゲームには切り替えるディスクリストがありません"
 
-#: routes/launch.py:191
+#: routes/launch.py:222
 #, python-format
 msgid ""
 "RetroArch is not accepting commands. In RetroArch, turn on Settings > "
@@ -582,7 +591,7 @@ msgstr ""
 "RetroArch がコマンドを受け付けていません。RetroArch で Settings > Network > Network "
 "Commands（ポート %(port)s）をオンにしてください。"
 
-#: routes/launch.py:194
+#: routes/launch.py:225
 msgid "Next disk inserted"
 msgstr "次のディスクを挿入しました"
 

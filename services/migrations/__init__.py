@@ -44,6 +44,7 @@ MIGRATIONS = [
     '017_version_ai_summary',
     '018_standalone_settings',
     '019_pending_upscales',
+    '020_player',
 ]
 
 

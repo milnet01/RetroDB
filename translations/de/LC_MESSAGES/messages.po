@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-22 12:42+0200\n"
+"POT-Creation-Date: 2026-10-22 13:10+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -58,11 +58,12 @@ msgstr "System nicht gefunden oder hat keine Spiele mit Achievements"
 
 #: routes/achievements.py:171 routes/achievements.py:440
 #: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/collections.py:276
-#: routes/collections.py:531 routes/emulators.py:248 routes/emulators.py:262
+#: routes/collections.py:531 routes/emulators.py:262 routes/emulators.py:276
 #: routes/games.py:347 routes/games.py:803 routes/games.py:925
 #: routes/games.py:981 routes/games_ai.py:46 routes/games_media.py:37
-#: routes/games_media.py:84 routes/games_media.py:145 routes/reports.py:693
-#: routes/reports.py:818 routes/trophies.py:1278 services/hltb_service.py:125
+#: routes/games_media.py:84 routes/games_media.py:145 routes/launch.py:138
+#: routes/reports.py:693 routes/reports.py:818 routes/trophies.py:1278
+#: services/hltb_service.py:125
 msgid "Game not found"
 msgstr "Spiel nicht gefunden"
 
@@ -398,41 +399,41 @@ msgstr "Controller nicht gefunden"
 msgid "Another controller named \"%(name)s\" already exists"
 msgstr "Ein anderer Controller mit dem Namen \"%(name)s\" existiert bereits"
 
-#: routes/emulators.py:81
+#: routes/emulators.py:95
 msgid "name, binary_name, args_template are required"
 msgstr "name, binary_name, args_template sind erforderlich"
 
-#: routes/emulators.py:128
+#: routes/emulators.py:142
 msgid "nothing to update"
 msgstr "nichts zu aktualisieren"
 
-#: routes/emulators.py:186
+#: routes/emulators.py:200
 msgid "system_id and emulator_id required"
 msgstr "system_id und emulator_id erforderlich"
 
-#: routes/emulators.py:224
+#: routes/emulators.py:238
 msgid "Send at least one setting."
 msgstr "Senden Sie mindestens eine Einstellung."
 
-#: routes/emulators.py:230
+#: routes/emulators.py:244
 msgid "RetroDB does not manage that setting for this emulator."
 msgstr "RetroDB verwaltet diese Einstellung für diesen Emulator nicht."
 
-#: routes/emulators.py:232
+#: routes/emulators.py:246
 msgid "Fullscreen is set per system, in Settings > Emulators."
 msgstr "Vollbild wird pro System festgelegt, unter Einstellungen > Emulatoren."
 
-#: routes/emulators.py:234
+#: routes/emulators.py:248
 msgid "That value is not one of the choices."
 msgstr "Dieser Wert gehört nicht zu den Auswahlmöglichkeiten."
 
-#: routes/emulators.py:264 services/standalone_settings.py:258
+#: routes/emulators.py:278 services/standalone_settings.py:258
 msgid "RetroDB manages per-game settings for DuckStation, PCSX2 and RPCS3 only."
 msgstr ""
 "RetroDB verwaltet spielbezogene Einstellungen nur für DuckStation, PCSX2 "
 "und RPCS3."
 
-#: routes/emulators.py:277 routes/emulators.py:288
+#: routes/emulators.py:291 routes/emulators.py:302
 msgid "Emulator not found"
 msgstr "Emulator nicht gefunden"
 
@@ -567,29 +568,37 @@ msgstr "Screenshot nicht gefunden"
 msgid "Title required"
 msgstr "Titel erforderlich"
 
-#: routes/launch.py:71
+#: routes/launch.py:73
 #, python-format
 msgid "This action requires the \"%(perm)s\" permission"
 msgstr "Diese Aktion erfordert die Berechtigung \"%(perm)s\""
 
-#: routes/launch.py:83
+#: routes/launch.py:86
+msgid "The player is already running another game"
+msgstr "Der Player spielt bereits ein anderes Spiel"
+
+#: routes/launch.py:97
 msgid "This game is already running"
 msgstr "Dieses Spiel läuft bereits"
 
-#: routes/launch.py:89
+#: routes/launch.py:103
 #, python-format
 msgid "failed to kill prior instance: %(err)s"
 msgstr "vorherige Instanz konnte nicht beendet werden: %(err)s"
 
-#: routes/launch.py:184
+#: routes/launch.py:140
+msgid "Player settings reset to recommended"
+msgstr "Player-Einstellungen auf die Empfehlung zurückgesetzt"
+
+#: routes/launch.py:215
 msgid "That game is no longer running"
 msgstr "Dieses Spiel läuft nicht mehr"
 
-#: routes/launch.py:186
+#: routes/launch.py:217
 msgid "This game has no disk list to swap through"
 msgstr "Dieses Spiel hat keine Disc-Liste zum Wechseln"
 
-#: routes/launch.py:191
+#: routes/launch.py:222
 #, python-format
 msgid ""
 "RetroArch is not accepting commands. In RetroArch, turn on Settings > "
@@ -598,7 +607,7 @@ msgstr ""
 "RetroArch nimmt keine Befehle an. Aktivieren Sie in RetroArch Settings > "
 "Network > Network Commands (Port %(port)s)."
 
-#: routes/launch.py:194
+#: routes/launch.py:225
 msgid "Next disk inserted"
 msgstr "Nächste Disc eingelegt"
 

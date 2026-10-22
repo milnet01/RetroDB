@@ -1,6 +1,6 @@
 # PASS-59-64 — Launch contract: resolving, spawning and the bundled player
 
-**Status:** accepted (2026-09-26).
+**Status:** accepted (2026-09-26). The player's clauses (§4.4–4.6) built in v3.31.0 (2026-10-22); only Linux is tested.
 **Kind:** implement.
 **Source:** ROADMAP PASS-59-64 (review-code launch lane 2026-09-01; scope
 widened by user decisions 2026-09-26, relayed with the RetroArch fork session).
@@ -189,8 +189,11 @@ data/player/
 `BASE_DIR` is `config.BASE_DIR`, which is writable in a frozen build too.
 
 **Row.** A new `emulators` row for the player, marked by a new column
-`is_player INTEGER NOT NULL DEFAULT 0` (the next free migration number;
-016 to 018 are taken). Author's choices,
+`is_player INTEGER NOT NULL DEFAULT 0` (migration 020). Its placeholder
+name is `RetroDB Player`, program `retrodb-player`, until §3.10's name is
+chosen. `GET /api/emulators` leaves the row out while its program is not
+found, so Settings > Emulators does not list software the user cannot
+have yet (user, 2026-10-22). Author's choices,
 because the resolver's RetroArch path cannot serve it:
 
 - `is_retroarch = 0`. The player never reads `retroarch_binary` or
@@ -532,9 +535,10 @@ Stopping a player, as the fork session read its source:
 - **Player crashes** → non-zero exit; the stderr tail is shown; the
   post-exit hook still runs, because a menu save before the crash is still
   the user's choice.
-- **Override file malformed** → the hook skips the keys it cannot parse,
+- **Override file malformed** → the hook absorbs none of its keys,
   logs a warning, moves the file to `<profile>/rejected/`, and does not
-  mark the game customised. Left in the config directory, the next
+  mark the game customised. A file with any line that is neither a
+  setting, a comment nor blank counts as malformed. Left in the config directory, the next
   session's scan would absorb it into whichever game ran next.
 - **Two sessions of one game** → prevented by `launch_concurrent_same_game`
   (`reject` by default). Under `kill_and_relaunch`, `kill()` runs the

@@ -14,7 +14,8 @@ from services.api_helpers import handle_api_errors, success, error
 from services.auth import login_required, admin_required, permission_required
 from services.database import query, execute
 from services.emulator_adapters import bios_status
-from services.launch_resolver import _mapping_resolves
+from services.launch_resolver import _mapping_resolves, _resolve_binary
+from services.launcher.base import LaunchResolutionError
 from services.standalone_settings import settings_for
 from settings_manager import get_setting
 
@@ -50,7 +51,20 @@ def page_emulators_settings():
 @handle_api_errors
 def api_list_emulators():
     rows = query("SELECT * FROM emulators ORDER BY name")
-    return success(emulators=[dict(r) for r in rows])
+    return success(emulators=[dict(r) for r in rows if _listed(r)])
+
+
+def _listed(emu) -> bool:
+    """Every row but the bundled player's while its program is not found:
+    an entry for software the user cannot have yet only confuses
+    (user, 2026-10-22)."""
+    if not emu.get('is_player'):
+        return True
+    try:
+        _resolve_binary(emu, None)
+    except LaunchResolutionError:
+        return False
+    return True
 
 
 @bp.route('/api/emulators/for-system/<int:system_id>', methods=['GET'])

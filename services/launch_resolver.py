@@ -12,7 +12,9 @@
 #   2. Pick emulator: per-game override > system default > first system mapping.
 #   3. Verify enabled.
 #   4. Resolve binary (RA-special-cased to read settings).
-#   5. Resolve RA core (only when is_retroarch=1).
+#   5. Resolve RA core (only when is_retroarch=1). The bundled player
+#      (is_player=1) branches here: its core lives in its own profile and
+#      services/player.py builds its argv (PASS-59-64 §4.4).
 #   6. shlex.split the template, then per token: {system_extra_args},
 #      {game_extra_args} and {fullscreen_flag} as a whole token expand to
 #      their words; {rom},
@@ -40,6 +42,7 @@ from typing import Optional
 
 from services.database import query
 from services.launcher.base import LaunchContext, LaunchResolutionError
+from services import player
 from services.rom_scanner import rom_type_problem
 import config
 from settings_manager import get_setting
@@ -324,10 +327,11 @@ def _mapping_resolves(emu, sys_emu) -> bool:
             return False
     elif not (os.path.isfile(binary_str) and os.access(binary_str, os.X_OK)):
         return False
-    if emu.get('is_retroarch'):
+    if emu.get('is_retroarch') or emu.get('is_player'):
         if not sys_emu or not sys_emu.get('retroarch_core'):
             return False
-        return core_file(sys_emu['retroarch_core']).exists()
+        cores = player.core_file if emu.get('is_player') else core_file
+        return cores(sys_emu['retroarch_core']).exists()
     return True
 
 
@@ -454,6 +458,48 @@ def keyboard_core(system_id, emulator_override_id) -> bool:
                 and _is_keyboard_core(sys_emu.get('retroarch_core') or ''))
 
 
+def _player_context(game, emu, sys_emu, binary_argv_prefix, rom_path_obj) -> LaunchContext:
+    """The player's launch (PASS-59-64 §4.4): its core from its profile, and
+    argv from services/player.py, never from args_template. The settings it
+    writes come after every check, so a refused launch writes none."""
+    if not sys_emu or not sys_emu.get('retroarch_core'):
+        raise LaunchResolutionError(
+            f"The player has no core set for system {game['system_name']!r}")
+    core_path_obj = player.core_file(sys_emu['retroarch_core'])
+    if not core_path_obj.exists():
+        raise LaunchResolutionError(f"Player core not found: {core_path_obj}")
+    problem = rom_launch_problem(rom_path_obj)
+    if problem:
+        raise LaunchResolutionError(problem)
+    token = secrets.token_urlsafe(12)
+    rom_abs = rom_path_obj.resolve()
+    words, port = player.launch_args(game, sys_emu, str(core_path_obj), rom_abs, token)
+    return LaunchContext(
+        game_id=game['id'],
+        emulator_id=emu['id'],
+        binary=Path(binary_argv_prefix[0]),
+        argv=list(binary_argv_prefix) + words,
+        token=token,
+        is_player=True,
+        quit_port=port,
+        on_exit=lambda: player.after_session(game['id'], rom_abs, token),
+    )
+
+
+def launches_on_player(game_id) -> bool:
+    """True when the game's launch would pick the bundled player, so the
+    route can hold it to one player session at a time (PASS-59-64 §4.5)."""
+    game = query("SELECT system_id, emulator_override_id FROM games WHERE id = ?",
+                 (game_id,), one=True)
+    if not game:
+        return False
+    try:
+        emu, _ = _pick_mapping(game['system_id'], game.get('emulator_override_id'))
+    except LaunchResolutionError:
+        return False
+    return bool(emu and emu.get('is_player'))
+
+
 def resolve_launch_context(game_id: int) -> LaunchContext:
     """Work out how to launch one game: the emulator, its program, the RetroArch
     core and the full argv, as the header's algorithm sets out. Raises
@@ -496,6 +542,8 @@ def resolve_launch_context(game_id: int) -> LaunchContext:
         core_path = str(core_path_obj)
 
     rom_path_obj = Path(game['rom_path'])
+    if emu.get('is_player'):
+        return _player_context(game, emu, sys_emu, binary_argv_prefix, rom_path_obj)
     substituted = _build_args(emu, sys_emu, game, rom_path_obj, core_path)
 
     # ---- validate rom_path under scan roots ---------------------------------

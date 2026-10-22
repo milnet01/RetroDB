@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-22 12:42+0200\n"
+"POT-Creation-Date: 2026-10-22 13:10+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: uk\n"
@@ -59,11 +59,12 @@ msgstr "Систему не знайдено або вона не має іго�
 
 #: routes/achievements.py:171 routes/achievements.py:440
 #: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/collections.py:276
-#: routes/collections.py:531 routes/emulators.py:248 routes/emulators.py:262
+#: routes/collections.py:531 routes/emulators.py:262 routes/emulators.py:276
 #: routes/games.py:347 routes/games.py:803 routes/games.py:925
 #: routes/games.py:981 routes/games_ai.py:46 routes/games_media.py:37
-#: routes/games_media.py:84 routes/games_media.py:145 routes/reports.py:693
-#: routes/reports.py:818 routes/trophies.py:1278 services/hltb_service.py:125
+#: routes/games_media.py:84 routes/games_media.py:145 routes/launch.py:138
+#: routes/reports.py:693 routes/reports.py:818 routes/trophies.py:1278
+#: services/hltb_service.py:125
 msgid "Game not found"
 msgstr "Гру не знайдено"
 
@@ -397,43 +398,43 @@ msgstr "Контролер не знайдено"
 msgid "Another controller named \"%(name)s\" already exists"
 msgstr "Уже існує інший контролер з назвою «%(name)s»"
 
-#: routes/emulators.py:81
+#: routes/emulators.py:95
 msgid "name, binary_name, args_template are required"
 msgstr "Потрібні name, binary_name, args_template"
 
-#: routes/emulators.py:128
+#: routes/emulators.py:142
 msgid "nothing to update"
 msgstr "нічого оновлювати"
 
-#: routes/emulators.py:186
+#: routes/emulators.py:200
 msgid "system_id and emulator_id required"
 msgstr "Потрібні system_id і emulator_id"
 
-#: routes/emulators.py:224
+#: routes/emulators.py:238
 msgid "Send at least one setting."
 msgstr "Надішліть принаймні одне налаштування."
 
-#: routes/emulators.py:230
+#: routes/emulators.py:244
 msgid "RetroDB does not manage that setting for this emulator."
 msgstr "RetroDB не керує цим налаштуванням для цього емулятора."
 
-#: routes/emulators.py:232
+#: routes/emulators.py:246
 msgid "Fullscreen is set per system, in Settings > Emulators."
 msgstr ""
 "Повноекранний режим задається для кожної системи в Налаштування > "
 "Емулятори."
 
-#: routes/emulators.py:234
+#: routes/emulators.py:248
 msgid "That value is not one of the choices."
 msgstr "Це значення не входить до списку варіантів."
 
-#: routes/emulators.py:264 services/standalone_settings.py:258
+#: routes/emulators.py:278 services/standalone_settings.py:258
 msgid "RetroDB manages per-game settings for DuckStation, PCSX2 and RPCS3 only."
 msgstr ""
 "RetroDB керує налаштуваннями окремих ігор лише для DuckStation, PCSX2 і "
 "RPCS3."
 
-#: routes/emulators.py:277 routes/emulators.py:288
+#: routes/emulators.py:291 routes/emulators.py:302
 msgid "Emulator not found"
 msgstr "Емулятор не знайдено"
 
@@ -566,29 +567,37 @@ msgstr "Знімок екрана не знайдено"
 msgid "Title required"
 msgstr "Потрібна назва"
 
-#: routes/launch.py:71
+#: routes/launch.py:73
 #, python-format
 msgid "This action requires the \"%(perm)s\" permission"
 msgstr "Ця дія потребує дозволу «%(perm)s»"
 
-#: routes/launch.py:83
+#: routes/launch.py:86
+msgid "The player is already running another game"
+msgstr "Плеєр уже запускає іншу гру"
+
+#: routes/launch.py:97
 msgid "This game is already running"
 msgstr "Ця гра вже запущена"
 
-#: routes/launch.py:89
+#: routes/launch.py:103
 #, python-format
 msgid "failed to kill prior instance: %(err)s"
 msgstr "не вдалося завершити попередній екземпляр: %(err)s"
 
-#: routes/launch.py:184
+#: routes/launch.py:140
+msgid "Player settings reset to recommended"
+msgstr "Налаштування плеєра скинуто до рекомендованих"
+
+#: routes/launch.py:215
 msgid "That game is no longer running"
 msgstr "Ця гра більше не запущена"
 
-#: routes/launch.py:186
+#: routes/launch.py:217
 msgid "This game has no disk list to swap through"
 msgstr "Ця гра не має списку дисків для зміни"
 
-#: routes/launch.py:191
+#: routes/launch.py:222
 #, python-format
 msgid ""
 "RetroArch is not accepting commands. In RetroArch, turn on Settings > "
@@ -597,7 +606,7 @@ msgstr ""
 "RetroArch не приймає команди. У RetroArch увімкніть Налаштування > Мережа"
 " > Мережеві команди (порт %(port)s)."
 
-#: routes/launch.py:194
+#: routes/launch.py:225
 msgid "Next disk inserted"
 msgstr "Вставлено наступний диск"
 

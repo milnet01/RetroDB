@@ -8,6 +8,7 @@
 #   POST /api/launch/<token>/kill    SIGTERM/SIGKILL
 #   GET  /api/launches/active        list of running tokens (for nav badge)
 #   POST /api/launch/<token>/disk-next  RetroArch: insert the next .m3u disk
+#   POST /api/games/<id>/player-settings/reset  the player's Reset to recommended
 #
 # Spec §Routes.
 # =============================================================================
@@ -22,7 +23,8 @@ from services.auth import login_required, has_permission, permission_required
 from services.database import query
 from services.launcher import get_launcher, LauncherError
 from services.launcher.base import LaunchResolutionError
-from services.launch_resolver import resolve_launch_context
+from services import player
+from services.launch_resolver import launches_on_player, resolve_launch_context
 from services.retroarch_command import (
     RETROARCH_COMMAND_PORT, RetroArchNotListening, next_disk,
 )
@@ -71,11 +73,23 @@ def api_launch_game(game_id):
         return error(_('This action requires the "%(perm)s" permission') % {'perm': required}, 403)
 
     launcher = get_launcher()
+    # active() runs a finished player session's hook before this launch
+    # writes any settings (PASS-59-64 §4.5).
+    running = launcher.active()
+
+    # One player session at a time: they share the player's config folder,
+    # so a second session's saves would land on the wrong game (§4.5).
+    if launches_on_player(game_id):
+        player_ids = {r['id'] for r in query("SELECT id FROM emulators WHERE is_player = 1")}
+        busy = next((h for h in running if h.emulator_id in player_ids), None)
+        if busy and busy.game_id != game_id:
+            return error(_('The player is already running another game'), 409,
+                         existing_token=busy.token)
 
     # 409 if same game already running and policy is reject
     policy = get_setting('launch_concurrent_same_game', 'reject')
     existing = None
-    for h in launcher.active():
+    for h in running:
         if h.game_id == game_id:
             existing = h
             break
@@ -107,6 +121,23 @@ def api_launch_game(game_id):
     payload = _handle_to_dict(h)
     payload['argv'] = ctx.argv
     return success(payload), 202
+
+
+# -----------------------------------------------------------------------------
+# The player's per-game settings
+# -----------------------------------------------------------------------------
+
+@bp.route('/api/games/<int:game_id>/player-settings/reset', methods=['POST'])
+@login_required
+@permission_required('edit')
+@handle_api_errors
+def api_player_settings_reset(game_id):
+    """Reset to recommended (PASS-59-64 §4.5): forget the settings kept
+    from the player's menu; the next launch writes fresh ones."""
+    if not query("SELECT 1 FROM games WHERE id = ?", (game_id,), one=True):
+        return error(_('Game not found'), 404)
+    player.reset(game_id)
+    return success(message=_('Player settings reset to recommended'))
 
 
 # -----------------------------------------------------------------------------

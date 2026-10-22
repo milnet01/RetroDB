@@ -33,3 +33,14 @@ def next_disk(port=RETROARCH_COMMAND_PORT, timeout_s=1.0):
         except OSError as e:
             raise RetroArchNotListening(str(e)) from e
         sock.send(b'DISK_NEXT')
+
+
+def send_quit(port):
+    """Ask the player on `port` to quit, as its quit key would (PASS-59-64
+    §4.6). Fire-and-forget: a closed port or a lost datagram is the
+    caller's grace timeout to handle."""
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+        try:
+            sock.sendto(b'QUIT', ('127.0.0.1', port))
+        except OSError:
+            pass

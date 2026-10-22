@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-22 12:42+0200\n"
+"POT-Creation-Date: 2026-10-22 13:10+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: eo\n"
@@ -51,11 +51,12 @@ msgstr "⟦Šýšţéɱ ñöţ ƒöüñð öŕ ĥàš ñö àçĥìéⱴéɱéñ
 
 #: routes/achievements.py:171 routes/achievements.py:440
 #: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/collections.py:276
-#: routes/collections.py:531 routes/emulators.py:248 routes/emulators.py:262
+#: routes/collections.py:531 routes/emulators.py:262 routes/emulators.py:276
 #: routes/games.py:347 routes/games.py:803 routes/games.py:925
 #: routes/games.py:981 routes/games_ai.py:46 routes/games_media.py:37
-#: routes/games_media.py:84 routes/games_media.py:145 routes/reports.py:693
-#: routes/reports.py:818 routes/trophies.py:1278 services/hltb_service.py:125
+#: routes/games_media.py:84 routes/games_media.py:145 routes/launch.py:138
+#: routes/reports.py:693 routes/reports.py:818 routes/trophies.py:1278
+#: services/hltb_service.py:125
 msgid "Game not found"
 msgstr "⟦Ĝàɱé ñöţ ƒöüñð⟧"
 
@@ -379,39 +380,39 @@ msgstr "⟦Çöñţŕöļļéŕ ñöţ ƒöüñð⟧"
 msgid "Another controller named \"%(name)s\" already exists"
 msgstr "⟦Àñöţĥéŕ çöñţŕöļļéŕ ñàɱéð \"%(name)s\" àļŕéàðý éжìšţš⟧"
 
-#: routes/emulators.py:81
+#: routes/emulators.py:95
 msgid "name, binary_name, args_template are required"
 msgstr "⟦ñàɱé, ƀìñàŕý_ñàɱé, àŕĝš_ţéɱþļàţé àŕé ŕéɋüìŕéð⟧"
 
-#: routes/emulators.py:128
+#: routes/emulators.py:142
 msgid "nothing to update"
 msgstr "⟦ñöţĥìñĝ ţö üþðàţé⟧"
 
-#: routes/emulators.py:186
+#: routes/emulators.py:200
 msgid "system_id and emulator_id required"
 msgstr "⟦šýšţéɱ_ìð àñð éɱüļàţöŕ_ìð ŕéɋüìŕéð⟧"
 
-#: routes/emulators.py:224
+#: routes/emulators.py:238
 msgid "Send at least one setting."
 msgstr "⟦Šéñð àţ ļéàšţ öñé šéţţìñĝ.⟧"
 
-#: routes/emulators.py:230
+#: routes/emulators.py:244
 msgid "RetroDB does not manage that setting for this emulator."
 msgstr "⟦ŔéţŕöÐƁ ðöéš ñöţ ɱàñàĝé ţĥàţ šéţţìñĝ ƒöŕ ţĥìš éɱüļàţöŕ.⟧"
 
-#: routes/emulators.py:232
+#: routes/emulators.py:246
 msgid "Fullscreen is set per system, in Settings > Emulators."
 msgstr "⟦Ƒüļļšçŕééñ ìš šéţ þéŕ šýšţéɱ, ìñ Šéţţìñĝš > Éɱüļàţöŕš.⟧"
 
-#: routes/emulators.py:234
+#: routes/emulators.py:248
 msgid "That value is not one of the choices."
 msgstr "⟦Ţĥàţ ⱴàļüé ìš ñöţ öñé öƒ ţĥé çĥöìçéš.⟧"
 
-#: routes/emulators.py:264 services/standalone_settings.py:258
+#: routes/emulators.py:278 services/standalone_settings.py:258
 msgid "RetroDB manages per-game settings for DuckStation, PCSX2 and RPCS3 only."
 msgstr "⟦ŔéţŕöÐƁ ɱàñàĝéš þéŕ-ĝàɱé šéţţìñĝš ƒöŕ ÐüçķŠţàţìöñ, ÞÇŠЖ2 àñð ŔÞÇŠ3 öñļý.⟧"
 
-#: routes/emulators.py:277 routes/emulators.py:288
+#: routes/emulators.py:291 routes/emulators.py:302
 msgid "Emulator not found"
 msgstr "⟦Éɱüļàţöŕ ñöţ ƒöüñð⟧"
 
@@ -538,34 +539,42 @@ msgstr "⟦Šçŕééñšĥöţ ñöţ ƒöüñð⟧"
 msgid "Title required"
 msgstr "⟦Ţìţļé ŕéɋüìŕéð⟧"
 
-#: routes/launch.py:71
+#: routes/launch.py:73
 #, python-format
 msgid "This action requires the \"%(perm)s\" permission"
 msgstr "⟦Ţĥìš àçţìöñ ŕéɋüìŕéš ţĥé \"%(perm)s\" þéŕɱìššìöñ⟧"
 
-#: routes/launch.py:83
+#: routes/launch.py:86
+msgid "The player is already running another game"
+msgstr "⟦Ţĥé þļàýéŕ ìš àļŕéàðý ŕüññìñĝ àñöţĥéŕ ĝàɱé⟧"
+
+#: routes/launch.py:97
 msgid "This game is already running"
 msgstr "⟦Ţĥìš ĝàɱé ìš àļŕéàðý ŕüññìñĝ⟧"
 
-#: routes/launch.py:89
+#: routes/launch.py:103
 #, python-format
 msgid "failed to kill prior instance: %(err)s"
 msgstr "⟦ƒàìļéð ţö ķìļļ þŕìöŕ ìñšţàñçé: %(err)s⟧"
 
-#: routes/launch.py:184
+#: routes/launch.py:140
+msgid "Player settings reset to recommended"
+msgstr "⟦Þļàýéŕ šéţţìñĝš ŕéšéţ ţö ŕéçöɱɱéñðéð⟧"
+
+#: routes/launch.py:215
 msgid "That game is no longer running"
 msgstr "⟦Ţĥàţ ĝàɱé ìš ñö ļöñĝéŕ ŕüññìñĝ⟧"
 
-#: routes/launch.py:186
+#: routes/launch.py:217
 msgid "This game has no disk list to swap through"
 msgstr "⟦Ţĥìš ĝàɱé ĥàš ñö ðìšķ ļìšţ ţö šŵàþ ţĥŕöüĝĥ⟧"
 
-#: routes/launch.py:191
+#: routes/launch.py:222
 #, python-format
 msgid "RetroArch is not accepting commands. In RetroArch, turn on Settings > Network > Network Commands (port %(port)s)."
 msgstr "⟦ŔéţŕöÀŕçĥ ìš ñöţ àççéþţìñĝ çöɱɱàñðš. Ìñ ŔéţŕöÀŕçĥ, ţüŕñ öñ Šéţţìñĝš > Ñéţŵöŕķ > Ñéţŵöŕķ Çöɱɱàñðš (þöŕţ %(port)s).⟧"
 
-#: routes/launch.py:194
+#: routes/launch.py:225
 msgid "Next disk inserted"
 msgstr "⟦Ñéжţ ðìšķ ìñšéŕţéð⟧"
 

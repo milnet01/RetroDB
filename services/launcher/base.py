@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Literal, Optional, Protocol
+from typing import Callable, Literal, Optional, Protocol
 
 
 # -----------------------------------------------------------------------------
@@ -49,6 +49,12 @@ class LaunchContext:
     token: str           # opaque caller-facing identifier (secrets.token_urlsafe)
     cwd: Optional[Path] = None
     env: Optional[dict] = None
+    # The bundled player (PASS-59-64 §4.5–4.6): one session at a time, a
+    # hook run once when the session ends, and on macOS and Windows the
+    # port its network QUIT goes to.
+    is_player: bool = False
+    on_exit: Optional[Callable[[], None]] = None
+    quit_port: Optional[int] = None
 
 
 @dataclass(frozen=True)

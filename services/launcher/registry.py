@@ -16,7 +16,7 @@ from __future__ import annotations
 import threading
 import time
 from dataclasses import dataclass
-from typing import Optional
+from typing import Callable, Optional
 
 from services.launcher.base import LaunchHandle
 
@@ -30,6 +30,8 @@ class ProcessEntry:
     stderr_tail: str = ''        # set by LocalLauncher's stderr reader at EOF
     term_sent_at: Optional[float] = None  # first SIGTERM; kill() sends one
     drain: Optional[threading.Thread] = None  # that stderr reader
+    on_exit: Optional[Callable[[], None]] = None  # LaunchContext.on_exit
+    quit_port: Optional[int] = None  # LaunchContext.quit_port
 
 
 class ProcessRegistry:
@@ -61,11 +63,14 @@ class ProcessRegistry:
             return [t for t, e in self._entries.items()
                     if e.exit_time is None and e.proc.poll() is not None]
 
-    def mark_exited(self, token: str, *, exit_time: float):
+    def mark_exited(self, token: str, *, exit_time: float) -> bool:
+        """Mark an entry exited; True only for the call that did it."""
         with self._lock:
             entry = self._entries.get(token)
             if entry is not None and entry.exit_time is None:
                 entry.exit_time = exit_time
+                return True
+            return False
 
     def gc(self) -> None:
         """Remove entries that exited more than ttl seconds ago."""
