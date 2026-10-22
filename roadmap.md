@@ -9319,6 +9319,25 @@ were corrected in `2836bc3` and are not repeated here.
   each have their own cheat format; not researched. Whether this needs
   a spec: likely yes (a contract with the fork, new UI, a download).
 
+---
+
+#### Pass 59.156 A hung GPU upscale holds the GPU until the server restarts (MEDIUM, M).
+- **Status**: todo
+- **Seen 2026-10-22**: at 17:01 `_gpu_run` timed out ("GPU inference
+  gave no result in 120s") and the breaker in `_upscale_image` moved to
+  CPU. 1.5 h later rocm-smi showed GPU use 99%, VRAM 99% (7.9 GB held
+  by the :5000 server), two server threads in `kfd_wait_on_events`,
+  CPU idle. No amdgpu error in the kernel log. Only a restart frees it.
+- **Where**: services/image_utils.py `_gpu_inference_worker` /
+  `_gpu_run`. The timeout stops the wait, not the `session.run`, and
+  nothing in-process can cancel a wedged ROCm kernel.
+- **Plan**: run GPU inference in a child process the server can kill
+  on timeout (killing it frees the card), then fall back to CPU as now.
+  Check first whether onnxruntime's RunOptions.terminate reaches a
+  running ROCm kernel; if it does, that is the smaller fix.
+- **Verify**: force a hang (a test hook that blocks in the child); after
+  the timeout the child is gone and rocm-smi shows the VRAM released.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
