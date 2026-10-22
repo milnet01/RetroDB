@@ -568,8 +568,13 @@ def _build_prompt(title, system_name, missing_fields, existing_values=None):
                 '"Standard Controller" or "Gamepad".'
             )
         elif field == 'save_type':
+            # Without the platform the AI described other ports: a Windows
+            # game came back "Memory Card" from its PS2 version.
             field_instructions.append(
-                '"save_type": one of: ' + ', '.join(FIELD_SCHEMAS['save_type'])
+                '"save_type": how the ' + system_name + ' release itself saves '
+                'progress, not a port on another platform. PCs, home computers '
+                'with a hard drive, and consoles from PS3 / Xbox 360 on save to '
+                'Internal Storage. Pick one of: ' + ', '.join(FIELD_SCHEMAS['save_type'])
             )
         elif field == 'game_structure':
             field_instructions.append(

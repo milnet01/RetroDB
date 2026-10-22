@@ -366,6 +366,19 @@ def test_ai_prompt_sanitises_existing_values():
     assert '"pwned"' not in line
 
 
+# --- The AI picks the save medium of THIS platform's release ---
+
+def test_ai_save_type_prompt_names_this_platform():
+    # Driver: Parallel Lines on Windows came back "Memory Card", the
+    # PS2 version's medium: the prompt never said whose release to describe.
+    from scraper.scrape_ai import _build_prompt
+
+    prompt = _build_prompt('Game', 'Microsoft Windows', ['save_type'])
+    line = next(l for l in prompt.splitlines() if '"save_type"' in l)
+    assert 'Microsoft Windows' in line
+    assert 'Internal Storage' in line.split('one of:')[0]
+
+
 # --- PASS-59-52: an unhashable screenshot does not poison the dedup list ---
 
 def test_unhashable_screenshot_does_not_break_later_dedup(tmp_path):

@@ -1,3 +1,18 @@
+- version: 3.30.1
+  date: 2026-10-22
+  tags:
+  - type: fix
+    label: AI Fill gives PC games a PC save type, not a console one
+  body: |
+    <ul>
+      <li><strong>AI Fill gives PC games a PC save type, not a console
+        one.</strong> A Windows game could get "Memory Card" because the AI
+        described its PlayStation 2 version. The AI is now told to describe
+        the release on your game's own platform. PCs, and consoles from
+        PlayStation 3 and Xbox 360 on, save to Internal Storage.</li>
+      <li>To fix a game that already has a wrong save type, scrape it again
+        or run AI Fill. Both ask the AI again and replace the old value.</li>
+    </ul>
 - version: 3.30.0
   date: 2026-10-21
   tags:
