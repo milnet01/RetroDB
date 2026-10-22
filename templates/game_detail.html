@@ -2647,6 +2647,15 @@ body:has(.game-fanart-bg.active)::before {
     display: flex;
 }
 
+/* The sidebar hides at this width (layout/responsive.css), so the modal
+   takes the whole screen. */
+@media (max-width: 992px) {
+    .scrape-modal {
+        left: 0;
+        width: 100%;
+    }
+}
+
 .scrape-modal-content {
     background: var(--bg-medium);
     border: 1px solid var(--card-border);
@@ -2886,6 +2895,13 @@ body:has(.game-fanart-bg.active)::before {
     padding: var(--spacing-sm);
     max-height: 400px;
     overflow-y: auto;
+    /* Every column keeps room for the scrollbar, so a column that scrolls
+       gives its titles the same width as one that does not. That room is
+       the right-hand spacing, so the padding there is dropped. */
+    padding-right: 0;
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-cyan) transparent;
 }
 
 .scrape-column-empty {
