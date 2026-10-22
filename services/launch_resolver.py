@@ -451,14 +451,15 @@ def _build_args(emu, sys_emu, game, rom_path_obj: Path, core_path: str) -> list:
 def rom_launch_problem(rom_path):
     """Why the ROM at `rom_path` cannot be launched, or None. The checks
     resolve_launch_context applies: the file exists, sits under a scan root,
-    and is a type its system lists (PASS-59-95). Shared with the library
-    cards' Play button, so a card offers Play only where the launch would
-    get past them."""
+    and is a type its system lists (PASS-59-95). A folder passes the same
+    type check, since a PS3 disc game is a `.PS3` folder (PASS-59-91).
+    Shared with the library cards' Play button, so a card offers Play only
+    where the launch would get past them."""
     rom_path_obj = Path(rom_path or '')
     if not rom_path or not rom_path_obj.exists():
         return f"ROM file not found: {rom_path_obj}"
-    if not rom_path_obj.is_file():
-        return f"ROM path is not a file: {rom_path_obj}"
+    if not (rom_path_obj.is_file() or rom_path_obj.is_dir()):
+        return f"ROM path is not a file or folder: {rom_path_obj}"
     roots = _allowed_rom_roots()
     if roots:
         root = next((r for r in roots if _resolve_under(rom_path_obj, [r])), None)

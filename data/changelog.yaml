@@ -6,6 +6,8 @@
   - type: fix
     label: The Museum's tabs switch again
   - type: fix
+    label: PlayStation 3 games stored as a folder can be played
+  - type: fix
     label: Search Metadata's columns line up, and it fits a phone
   - type: fix
     label: A new Windows or Mac install names RetroArch cores correctly
@@ -37,6 +39,11 @@
         Museum page, clicking Specifications, Top 10 Games or Controllers
         did nothing and showed an "Unexpected error" message, since
         version 3.30.0. Every tab now opens.</li>
+      <li><strong>PlayStation 3 games stored as a folder can be
+        played.</strong> A PS3 disc game is usually a folder ending in
+        ".PS3". RetroDB refused to launch it and showed no Play button,
+        because it expected a single file. It now hands the folder to the
+        emulator, as RPCS3 expects.</li>
       <li><strong>Search Metadata's columns line up, and it fits a
         phone.</strong> A source with more results than fit grew a scrollbar,
         which narrowed its titles, so the same title wrapped in one column and

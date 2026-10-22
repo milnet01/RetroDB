@@ -311,6 +311,31 @@ def test_rom_in_a_subfolder_uses_its_system_list(tmpdb):
     assert resolve_launch_context(game_id=1).argv[-1] == str(disc)
 
 
+def test_game_stored_as_a_folder_launches_with_the_folder(tmpdb):
+    """PASS-59-91: a PS3 disc game is a `.PS3` folder, which the scan admits
+    and RPCS3 boots; the launcher hands the emulator the folder."""
+    info = tmpdb['rom_file'].parent / 'systeminfo.txt'
+    info.write_text('Supported file extensions:\n.bin .ps3 .PS3\n')
+    game = tmpdb['rom_file'].parent / 'Crash (USA).PS3'
+    (game / 'PS3_GAME').mkdir(parents=True)
+    tmpdb['conn'].execute("UPDATE games SET rom_path = ? WHERE id = 1", (str(game),))
+    tmpdb['conn'].commit()
+    from services.launch_resolver import resolve_launch_context, rom_launch_problem
+    assert rom_launch_problem(str(game)) is None
+    assert resolve_launch_context(game_id=1).argv[-1] == str(game)
+
+
+def test_folder_of_a_type_the_system_does_not_list_is_refused(tmpdb):
+    folder = tmpdb['rom_file'].parent / 'Crash (Disc 1)'
+    folder.mkdir()
+    tmpdb['conn'].execute("UPDATE games SET rom_path = ? WHERE id = 1", (str(folder),))
+    tmpdb['conn'].commit()
+    from services.launch_resolver import resolve_launch_context
+    from services.launcher.base import LaunchResolutionError
+    with pytest.raises(LaunchResolutionError, match='not a ROM type'):
+        resolve_launch_context(game_id=1)
+
+
 def test_missing_type_list_is_refused_naming_the_file(tmpdb):
     """PASS-59-95, user decision 2026-10-15: no list, no launch."""
     info = tmpdb['rom_file'].parent / 'systeminfo.txt'
