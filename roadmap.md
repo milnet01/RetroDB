@@ -7778,7 +7778,25 @@ were corrected in `2836bc3` and are not repeated here.
   `launch_resolver.py` refuses a ROM path that is not a file. This predates
   Pass 59.95.
 - **Verify**: stages 2–4 by that spec's invariants.
-- **Status**: todo. Lanes: launch, docs.
+- **Progress** (2026-10-22): the last loose ends, in the open v3.31.0.
+  The PS3 gotcha is fixed (af7c2e8): a `.PS3` folder passes the same
+  file-type check as a file, and the folder goes to the emulator. Two
+  tests in `tests/test_launch_resolver.py`, red before the fix. A real
+  PS3 folder game on a scratch DB showed Play and its serial (BLUS-30623).
+  RPCS3 question settled from its source: `Utilities/Config.cpp` loads a
+  custom config incrementally, and keys it lacks keep the global
+  `config.yml` value, so RetroDB's partial file drops nothing. Browser
+  walk done on :5001 with a scratch DB, desktop and 375 px: the game-page
+  panel saves and reloads a choice, a system choice reaches the game, a
+  missing game answers 404, and the console shows no errors. No emulator
+  file was written. §11 done (bd4e862): auth.md names the reset route's
+  permission, and three code comments name their spec. Left, outside
+  this machine: a native read of the xh and zu help text, and the
+  player's QUIT on macOS and Windows once the player can be installed.
+  Seen on the walk: at 375 px every table on Settings > Emulators
+  scrolls sideways, so the Settings button sits off-screen. That is
+  the page's design, not this item's.
+- **Status**: done. Lanes: launch, docs.
 - **Source**: user request and decisions 2026-10-15; current state mapped
   from `routes/launch.py`, `services/launch_resolver.py` and
   `data/emulator_seeds.json` the same day.
@@ -8311,6 +8329,15 @@ were corrected in `2836bc3` and are not repeated here.
   what the walk finds. No design until the walk is done.
 - **Status**: todo. Lanes: psn, ui.
 - **Source**: user, 2026-10-17.
+- **Idea** (user, 2026-10-22): open Sony's sign-in from RetroDB and
+  collect the token automatically once the user has signed in. Not yet
+  tested against Sony's site: a sign-in page shown inside RetroDB likely
+  fails, since login pages usually refuse to be framed and a page cannot
+  read another site's cookies. Two shapes that can work: guided paste
+  (buttons open Sony's sign-in, then its token page, and the user pastes
+  the one-line reply whole), or a browser window RetroDB drives, which
+  only works on the machine running RetroDB and may meet Sony's bot
+  checks. Try guided paste first, during this item's walk.
 
 ---
 
