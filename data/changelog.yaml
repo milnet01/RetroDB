@@ -3,8 +3,14 @@
   tags:
   - type: fix
     label: AI Fill gives PC games a PC save type, not a console one
+  - type: fix
+    label: The Players box takes more than 16
   body: |
     <ul>
+      <li><strong>The Players box takes more than 16.</strong> Both edit
+        windows stopped at 16, so you could not enter MAG's 256 players.
+        A game a scraper had given more than 16 could not be saved at all
+        until you lowered the number. There is now no upper limit.</li>
       <li><strong>AI Fill gives PC games a PC save type, not a console
         one.</strong> A Windows game could get "Memory Card" because the AI
         described its PlayStation 2 version. The AI is now told to describe
