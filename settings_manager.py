@@ -94,6 +94,8 @@ DEFAULT_SETTINGS = {
     'launcher_backend':              'local',
     'launch_required_permission':    'launch',
     'launch_concurrent_same_game':   'reject',
+    # PASS-59-81 — Play may download the player's missing core (admin switch).
+    'player_core_downloads':         True,
     # Pass 44.1 — directories that the auto-detect probe walks for
     # standalone-emulator AppImages.  Defaults cover the common spots:
     # a top-level /mnt/Emulators tree (manual portable installs), the

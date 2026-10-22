@@ -9,12 +9,14 @@
 #
 # Resolution algorithm (spec §Resolution algorithm):
 #   1. Load game; raise if missing.
-#   2. Pick emulator: per-game override > system default > first system mapping.
+#   2. Pick emulator: per-game override > system default > first system mapping;
+#      the bundled player stands in where that mapping does not resolve and
+#      the system is in data/player_cores.json (PASS-59-81 §3.7).
 #   3. Verify enabled.
 #   4. Resolve binary (RA-special-cased to read settings).
 #   5. Resolve RA core (only when is_retroarch=1). The bundled player
-#      (is_player=1) branches here: its core lives in its own profile and
-#      services/player.py builds its argv (PASS-59-64 §4.4).
+#      (is_player=1) branches here: its core is PASS-59-81 §4.3's choice from
+#      its own profile, and services/player.py builds its argv (PASS-59-64 §4.4).
 #   6. shlex.split the template, then per token: {system_extra_args},
 #      {game_extra_args} and {fullscreen_flag} as a whole token expand to
 #      their words; {rom},
@@ -42,7 +44,7 @@ from typing import Optional
 
 from services.database import query
 from services.launcher.base import LaunchContext, LaunchResolutionError
-from services import player
+from services import player, player_cores
 from services.rom_scanner import rom_type_problem
 import config
 from settings_manager import get_setting
@@ -327,12 +329,52 @@ def _mapping_resolves(emu, sys_emu) -> bool:
             return False
     elif not (os.path.isfile(binary_str) and os.access(binary_str, os.X_OK)):
         return False
-    if emu.get('is_retroarch') or emu.get('is_player'):
+    if emu.get('is_player'):
+        return bool(sys_emu) and player_cores.can_serve(_system_folder(sys_emu['system_id']))
+    if emu.get('is_retroarch'):
         if not sys_emu or not sys_emu.get('retroarch_core'):
             return False
-        cores = player.core_file if emu.get('is_player') else core_file
-        return cores(sys_emu['retroarch_core']).exists()
+        return core_file(sys_emu['retroarch_core']).exists()
     return True
+
+
+def _system_folder(system_id) -> str:
+    row = query("SELECT folder FROM systems WHERE id = ?", (system_id,), one=True)
+    return (row or {}).get('folder') or ''
+
+
+def _player_serves(system_id):
+    """(player row, its system row or None) when the player can stand in for
+    this system: its row is enabled, its program is found and the system is
+    in the core table. None otherwise."""
+    if not player_cores.entry(_system_folder(system_id)):
+        return None
+    emu = player_cores.player_row()
+    if not emu or not emu.get('enabled'):
+        return None
+    try:
+        _resolve_binary(emu, None)
+    except LaunchResolutionError:
+        return None
+    sys_emu = query("SELECT * FROM system_emulators WHERE system_id = ? AND emulator_id = ?",
+                    (system_id, emu['id']), one=True)
+    return emu, sys_emu
+
+
+def pick_launch_mapping(system_id, emulator_override_id, system_name=''):
+    """_pick_mapping, with the player standing in where the game has no
+    override and the system's default does not resolve (PASS-59-81 §3.7,
+    §4.5). The player's system row may be None until a core is installed."""
+    try:
+        emu, sys_emu = _pick_mapping(system_id, emulator_override_id, system_name)
+    except LaunchResolutionError:
+        found = None if emulator_override_id else _player_serves(system_id)
+        if found:
+            return found
+        raise
+    if emulator_override_id or (emu and emu.get('is_player')) or _mapping_resolves(emu, sys_emu):
+        return emu, sys_emu
+    return _player_serves(system_id) or (emu, sys_emu)
 
 
 def _fullscreen_flag(emu, system_id) -> list:
@@ -439,8 +481,12 @@ def launch_checker():
         key = (system_id, emulator_override_id)
         if key not in cache:
             try:
-                cache[key] = _mapping_resolves(
-                    *_pick_mapping(system_id, emulator_override_id))
+                emu, sys_emu = pick_launch_mapping(system_id, emulator_override_id)
+                if emu and emu.get('is_player') and not sys_emu:
+                    cache[key] = (_player_serves(system_id) is not None
+                                  and player_cores.can_serve(_system_folder(system_id)))
+                else:
+                    cache[key] = _mapping_resolves(emu, sys_emu)
             except LaunchResolutionError:
                 cache[key] = False
         return cache[key]
@@ -459,21 +505,39 @@ def keyboard_core(system_id, emulator_override_id) -> bool:
 
 
 def _player_context(game, emu, sys_emu, binary_argv_prefix, rom_path_obj) -> LaunchContext:
-    """The player's launch (PASS-59-64 §4.4): its core from its profile, and
-    argv from services/player.py, never from args_template. The settings it
-    writes come after every check, so a refused launch writes none."""
-    if not sys_emu or not sys_emu.get('retroarch_core'):
+    """The player's launch (PASS-59-64 §4.4): the core PASS-59-81 §4.3 picks,
+    from the player's profile, and argv from services/player.py, never from
+    args_template. The settings it writes come after every check, so a
+    refused launch writes none. A core not installed yet raises CoreMissing,
+    which the route turns into a download (§4.5)."""
+    folder = game.get('system_folder') or ''
+    if not player_cores.entry(folder):
         raise LaunchResolutionError(
-            f"The player has no core set for system {game['system_name']!r}")
-    core_path_obj = player.core_file(sys_emu['retroarch_core'])
+            f"The player has no core for system {game['system_name']!r}")
+    core = player_cores.chosen_core(folder, game['system_id'], game['id'], emu['id'])
+    if core is None:
+        raise LaunchResolutionError(
+            f"No core for {game['system_name']} is built for this computer.")
+    core_path_obj = player.core_file(player_cores.core_file_name(core))
     if not core_path_obj.exists():
-        raise LaunchResolutionError(f"Player core not found: {core_path_obj}")
+        raise player_cores.CoreMissing(core, game['system_id'], game['system_name'],
+                                       core_path_obj)
     problem = rom_launch_problem(rom_path_obj)
     if problem:
         raise LaunchResolutionError(problem)
     token = secrets.token_urlsafe(12)
     rom_abs = rom_path_obj.resolve()
-    words, port = player.launch_args(game, sys_emu, str(core_path_obj), rom_abs, token)
+    try:
+        if not sys_emu:
+            # Installed for another folder sharing the core (same_as).
+            player_cores.map_system(game['system_id'], core)
+        player_cores.write_system_cfg(folder, game['system_id'], emu['id'])
+    except OSError as e:
+        raise LaunchResolutionError(
+            f"Cannot write the player's settings ({e.filename}): {e.strerror or e}") from e
+    recommended = player_cores.game_recommended(folder, game['id'], emu['id'], core)
+    words, port = player.launch_args(game, sys_emu, str(core_path_obj), rom_abs, token,
+                                     recommended)
     return LaunchContext(
         game_id=game['id'],
         emulator_id=emu['id'],
@@ -494,7 +558,7 @@ def launches_on_player(game_id) -> bool:
     if not game:
         return False
     try:
-        emu, _ = _pick_mapping(game['system_id'], game.get('emulator_override_id'))
+        emu, _ = pick_launch_mapping(game['system_id'], game.get('emulator_override_id'))
     except LaunchResolutionError:
         return False
     return bool(emu and emu.get('is_player'))
@@ -514,8 +578,8 @@ def resolve_launch_context(game_id: int) -> LaunchContext:
         raise LaunchResolutionError(f"game_id {game_id} not found")
 
     # ---- pick emulator -------------------------------------------------------
-    emu, sys_emu = _pick_mapping(game['system_id'], game.get('emulator_override_id'),
-                                 game['system_name'])
+    emu, sys_emu = pick_launch_mapping(game['system_id'], game.get('emulator_override_id'),
+                                       game['system_name'])
     if not emu:
         raise LaunchResolutionError("emulator row missing")
     if not emu.get('enabled'):

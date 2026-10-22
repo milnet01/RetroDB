@@ -43,6 +43,7 @@ can be resumed (or surfaced) on the next start.
 | `alt_titles_backfill.py` | `AltTitlesBackfillJob` | `alt_titles_backfill_job` | Walks scraped games to refresh `games.alternate_titles` without re-pulling other metadata. |
 | `hltb_bulk.py` | `HLTBBulkLookupJob` | `hltb_bulk_job` | Bulk HowLongToBeat lookup — auto-applies high-confidence primary matches, queues the rest into `hltb_pending_matches` for review. |
 | `museum_images.py` | `MuseumImageFetchJob` | `museum_images_job` | Fetches missing controller images for one system's Museum page (search, download, background removal). Not persisted. |
+| `player_cores.py` | `PlayerCoresJob` | `player_cores_job` | Downloads the bundled player's cores and the shader pack, from Play or Settings > Emulators (PASS-59-81 §4.4). A request for a queued core joins it. Not persisted. |
 | `webp_migrate.py` | `WebPMigrateJob` | `webp_migrate_job` | Bulk JPEG/PNG → WebP format migration for boxart / boxart_3d / fanart / screenshots (FU.3, v3.6.19). |
 
 ## 3. Lifecycle / states
@@ -194,6 +195,7 @@ Lock-name → DB column-name mapping (used in routes / `request_shutdown`):
 | `alt_titles_backfill.lock` | `alt_titles_backfill_job` |
 | `hltb_bulk.lock` | `hltb_bulk_job` |
 | `museum_images.lock` | `museum_images_job` |
+| `player_cores.lock` | `player_cores_job` |
 | `webp_migrate.lock` | `webp_migrate_job` |
 
 **Degradation notes** (`base.py:316-341`):
@@ -324,10 +326,12 @@ Anything not persisted in the last progress-tick window (≤ 10 items or
    `try_acquire_singleton_or_warn` helpers in `services/jobs/base.py`
    (search the symbol names; line numbers drift). The remaining
    singletons (`ImageResizeJob`, `AltTitlesBackfillJob`,
-   `HLTBBulkLookupJob`, `WebPMigrateJob`, `MuseumImageFetchJob`) have no
+   `HLTBBulkLookupJob`, `WebPMigrateJob`, `MuseumImageFetchJob`,
+   `PlayerCoresJob`) have no
    `resume_from_params` — they're idempotent and re-run from the top after
    `interrupted`. `MuseumImageFetchJob` writes no job row at all: a restart
-   loses one system's fetch, which a second click redoes.
+   loses one system's fetch, which a second click redoes. Nor does
+   `PlayerCoresJob`: a restart loses a download, and the next Play asks again.
 
 **`params` must include enough to resume.** Most jobs persist the full
 `game_ids` list in `params` so resume doesn't have to re-query — this

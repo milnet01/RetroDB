@@ -5,7 +5,8 @@
  * PCSX2, RPCS3) and where each value comes from. Editors pick a value for
  * this game, or "Use the system setting" to remove the game's choice.
  * Fullscreen is set per system only (Settings > Emulators). Nothing is
- * written to the emulator's folder until the next Play.
+ * written to the emulator's folder until the next Play. The bundled player's
+ * core and settings come through the same route (PASS-59-81 §4.6).
  *
  * Contract: docs/specs/PASS-59-91-zero-setup-play.md §4.6 Routes.
  */
@@ -16,6 +17,22 @@
         resolution_scale: t('Resolution scale'),
         aspect_ratio: t('Aspect ratio'),
         fullscreen: t('Fullscreen'),
+        core: t('Core'),
+        integer_scale: t('Integer scaling'),
+        shader: t('Screen effect'),
+        latency: t('Input lag reduction'),
+    });
+
+    // The player's values that are keys rather than words (PASS-59-81 §4.1).
+    const VALUE_LABELS = () => ({
+        'aspect_ratio:core': t('As the core sets it'),
+        'integer_scale:off': t('Off'),
+        'integer_scale:on': t('On'),
+        'shader:none': t('None'),
+        'shader:crt': t('CRT screen'),
+        'shader:lcd': t('Handheld LCD'),
+        'latency:off': t('Off'),
+        'latency:1': t('Run-ahead, 1 frame'),
     });
 
     function sourceText(source) {
@@ -33,6 +50,8 @@
         const canEdit = panel.dataset.canEdit === 'true';
         const gameId = panel.dataset.gameId;
         const labels = LABELS();
+        const valueLabels = VALUE_LABELS();
+        const valueText = (setting, v) => valueLabels[`${setting}:${v}`] || v;
 
         let text = view.supported
             ? t('Applied when you press Play, in the {emulator} settings for this game.',
@@ -57,7 +76,7 @@
             if (!s.per_game || !canEdit) {
                 const value = document.createElement('div');
                 value.id = id;
-                value.textContent = s.value;
+                value.textContent = valueText(s.setting, s.value);
                 if (!s.per_game) source.textContent = t('Set per system, in Settings > Emulators');
                 box.append(label, value, source);
                 return box;
@@ -73,7 +92,7 @@
             for (const v of s.values) {
                 const opt = document.createElement('option');
                 opt.value = v;
-                opt.textContent = v;
+                opt.textContent = valueText(s.setting, v);
                 select.appendChild(opt);
             }
             select.value = s.source === 'game' ? s.value : '';

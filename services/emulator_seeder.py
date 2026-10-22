@@ -8,12 +8,23 @@
 # scanned-in still get a clean seed.
 #
 # Invoked from app.py on startup, AFTER migration 010 has been applied.
+#
+# The seeds name cores with Linux's `_libretro.so`; a row is stored with the
+# host's suffix instead (PASS-59-81 §4.7). Rows already stored keep theirs.
 # =============================================================================
 
 import json
 import logging
+import re
 
 logger = logging.getLogger(__name__)
+
+
+def _host_core(name):
+    """`snes9x_libretro.so` as the host names it; other values unchanged."""
+    from services.player_cores import core_file_name
+    m = re.fullmatch(r'(.+)_libretro\.so', name or '')
+    return core_file_name(m.group(1)) if m else name
 
 
 def seed_emulators_from_file(conn, path):
@@ -53,7 +64,7 @@ def seed_emulators_from_file(conn, path):
             sys_row[0],
             emu_row[0],
             int(sm.get('is_default', 0)),
-            sm.get('retroarch_core'),
+            _host_core(sm.get('retroarch_core')),
             sm.get('extra_args'),
         ))
 

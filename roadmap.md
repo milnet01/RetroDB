@@ -7517,7 +7517,20 @@ were corrected in `2836bc3` and are not repeated here.
   options; player settings such as shader, aspect ratio and latency) per
   system, refined per game, and applies them at launch. The user can change
   any of them per system or per game.
-- **Status**: planned (2026-09-26). Lanes: launch, docs.
+- **Built** (2026-10-22, v3.31.0, against a stub player; Linux only):
+  `data/player_cores.json`, `services/player_cores.py` (ranking, index,
+  installer, settings files), `services/jobs/player_cores.py`, the 202
+  `installing` answer at Play and `/api/player/cores/{status,install,update}`,
+  the player in the settings panel's routes, host-suffixed seeds, and the
+  `player_core_downloads` switch. The player stands in at Play for a system
+  in the table whose default does not resolve. Browser-checked on a
+  scratch :5001: a real Handy download at Play, then the stub launched.
+  The table's `superfamicom` is `sfc` (spec loop log, impl row).
+  - **Still owed**: the `templates/help.html` Emulators paragraph (spec §11),
+  held until the player can be installed, because the help would describe
+  a hidden feature. Q5 (macOS unsigned `.dylib`) and Q6 (slang shaders)
+  stay with the fork session.
+- **Status**: done (2026-10-22). Lanes: launch, docs.
 - **Source**: user decision 2026-09-26, relayed with `retroarch-f5`.
 - **Spec** (2026-10-19): `docs/specs/PASS-59-81-player-cores-and-settings.md`,
   accepted (136805f, 9f3884a). User decisions 2026-10-19: no shipped
@@ -9245,6 +9258,39 @@ were corrected in `2836bc3` and are not repeated here.
 - **Check**: `scripts/check_i18n_fresh.py`; view the page in one
   non-English locale.
 - **Source**: session finding, 2026-10-21.
+
+---
+
+#### Pass 59.155 Cheats for games played in the player, and later the standalone emulators (MEDIUM, M).
+- **Status**: todo
+- **Ask** (user, 2026-10-22): handle cheats for the emulators, worked
+  out with the RetroArch fork session.
+- **Player mechanism** (retroarch-a4, from local/fixes-2026-09 source):
+  no CLI flag. At content load `command_event_init_cheats` (command.c)
+  loads `<cheat_database_path>/<core library_name>/<rom basename>.cht`
+  (`cheat_manager_get_game_specific_filename`, cheat_manager.c) and
+  applies it only when `apply_cheats_after_load = "true"` (default
+  false). So the appended cfg layer carries those two keys and RetroDB
+  writes the `.cht`; no fork change. The folder is the core's display
+  name (e.g. `Snes9x`), not its file name.
+- **Format**: `cheats = N` is required (0 or missing fails the load);
+  per cheat `cheatN_desc`, `cheatN_code`, `cheatN_enable`, plus optional
+  handler and memory-search keys.
+- **Write-back**: on exit `event_save_files` (save.c) rewrites that
+  `.cht` with every cheat's on/off state, so the file is the player's
+  after a launch. RetroDB copies (never symlinks) and reads state back.
+- **Source**: libretro-database `cht/` is per system, named by title;
+  RetroArch matches nothing, so RetroDB must match game to file. Pack
+  layout unverified; check `assets/frontend/cheats.zip`.
+- **Limits**: handler 0 cheats need the core's `retro_cheat_set`; cores
+  that stub it ignore them silently (which ones: unverified). Netplay and
+  BSV replay skip cheats. An applied cheat pauses RetroAchievements
+  hardcore for the session (`cheat_manager_pause_cheevos`), so the page
+  warns rather than greys out. The slim build (RETR-0004) must keep
+  HAVE_CHEATS.
+- **Open**: standalone emulators (DuckStation, PCSX2, PPSSPP, Dolphin)
+  each have their own cheat format; not researched. Whether this needs
+  a spec: likely yes (a contract with the fork, new UI, a download).
 
 ## Done index
 

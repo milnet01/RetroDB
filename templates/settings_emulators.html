@@ -38,6 +38,33 @@
     <div id="ra-status" class="text-muted" style="font-size: 0.9rem;"></div>
 </section>
 
+{% if player_found %}
+<!-- ================================================== -->
+<!-- PASS-59-81 — the bundled player's cores -->
+<!-- ================================================== -->
+<section class="settings-section" id="player-cores">
+    <h2 class="section-title">{{ _('RetroDB Player cores') }}</h2>
+    <p class="text-muted" style="margin-bottom: var(--spacing-md);">
+        {{ _('The player picks the best core for each system and downloads it from the libretro build server the first time you play. Installed cores are never updated by Play; update them here.') }}
+    </p>
+    <div class="form-group mb-md">
+        <label style="display: flex; align-items: center; gap: 0.5rem;">
+            <input type="checkbox" id="player-core-downloads" {% if player_core_downloads %}checked{% endif %}>
+            <span>{{ _('Download a missing core when Play is pressed') }}</span>
+        </label>
+    </div>
+    {% if player_platform_supported %}
+    <div style="display: flex; gap: var(--spacing-sm); flex-wrap: wrap; margin-bottom: var(--spacing-md);">
+        <button id="player-cores-install" class="btn btn-primary"><span class="btn-icon">⬇️</span> {{ _('Install cores for my systems') }}</button>
+        <button id="player-cores-update" class="btn btn-secondary"><span class="btn-icon">🔄</span> {{ _('Update cores') }}</button>
+    </div>
+    {% else %}
+    <p class="text-muted">{{ _('Cores are not built for this computer, so RetroDB cannot download them.') }}</p>
+    {% endif %}
+    <div id="player-cores-status" class="text-muted" style="font-size: 0.9rem;" aria-live="polite"></div>
+</section>
+{% endif %}
+
 <!-- ================================================== -->
 <!-- PASS-59-91 — Emulator folders (Pass 44.1B scanner below) -->
 <!-- ================================================== -->

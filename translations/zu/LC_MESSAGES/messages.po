@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-22 13:10+0200\n"
+"POT-Creation-Date: 2026-10-22 15:10+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zu\n"
@@ -58,10 +58,10 @@ msgstr "Isistimu ayitholakali noma ayinamidlalo yezimpumelelo"
 
 #: routes/achievements.py:171 routes/achievements.py:440
 #: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/collections.py:276
-#: routes/collections.py:531 routes/emulators.py:262 routes/emulators.py:276
+#: routes/collections.py:531 routes/emulators.py:267 routes/emulators.py:281
 #: routes/games.py:347 routes/games.py:803 routes/games.py:925
 #: routes/games.py:981 routes/games_ai.py:46 routes/games_media.py:37
-#: routes/games_media.py:84 routes/games_media.py:145 routes/launch.py:138
+#: routes/games_media.py:84 routes/games_media.py:145 routes/launch.py:224
 #: routes/reports.py:693 routes/reports.py:818 routes/trophies.py:1278
 #: services/hltb_service.py:125
 msgid "Game not found"
@@ -395,43 +395,43 @@ msgstr "Isilawuli asitholakali"
 msgid "Another controller named \"%(name)s\" already exists"
 msgstr "Esinye isilawuli esibizwa nge-\"%(name)s\" sesivele sikhona"
 
-#: routes/emulators.py:95
+#: routes/emulators.py:101
 msgid "name, binary_name, args_template are required"
 msgstr "i-name, i-binary_name, i-args_template ziyadingeka"
 
-#: routes/emulators.py:142
+#: routes/emulators.py:148
 msgid "nothing to update"
 msgstr "akukho okuzobuyekezwa"
 
-#: routes/emulators.py:200
+#: routes/emulators.py:206
 msgid "system_id and emulator_id required"
 msgstr "Kudingeka i-system_id ne-emulator_id"
 
-#: routes/emulators.py:238
+#: routes/emulators.py:244
 msgid "Send at least one setting."
 msgstr "Thumela okungenani isilungiselelo esisodwa."
 
-#: routes/emulators.py:244
+#: routes/emulators.py:249
 msgid "RetroDB does not manage that setting for this emulator."
 msgstr "I-RetroDB ayisiphathi lesi silungiselelo kule emulator."
 
-#: routes/emulators.py:246
+#: routes/emulators.py:251
 msgid "Fullscreen is set per system, in Settings > Emulators."
 msgstr ""
 "Isikrini esigcwele sisethwa ngesistimu ngayinye, ku-Izilungiselelo > Ama-"
 "emulator."
 
-#: routes/emulators.py:248
+#: routes/emulators.py:253
 msgid "That value is not one of the choices."
 msgstr "Lelo nani akulona olunye lokukhetha."
 
-#: routes/emulators.py:278 services/standalone_settings.py:258
+#: routes/emulators.py:283 services/standalone_settings.py:306
 msgid "RetroDB manages per-game settings for DuckStation, PCSX2 and RPCS3 only."
 msgstr ""
 "I-RetroDB iphatha izilungiselelo zomdlalo ngamunye ku-DuckStation, PCSX2 "
 "ne-RPCS3 kuphela."
 
-#: routes/emulators.py:291 routes/emulators.py:302
+#: routes/emulators.py:296 routes/emulators.py:307
 msgid "Emulator not found"
 msgstr "I-emulator ayitholakali"
 
@@ -566,37 +566,61 @@ msgstr "Umfanekiso-skrini awutholakali"
 msgid "Title required"
 msgstr "Kudingeka isihloko"
 
-#: routes/launch.py:73
+#: routes/launch.py:76
 #, python-format
 msgid "This action requires the \"%(perm)s\" permission"
 msgstr "Lesi senzo sidinga imvume ye-\"%(perm)s\""
 
-#: routes/launch.py:86
+#: routes/launch.py:89
 msgid "The player is already running another game"
 msgstr "Isidlali sesivele sidlala omunye umdlalo"
 
-#: routes/launch.py:97
+#: routes/launch.py:100
 msgid "This game is already running"
 msgstr "Lo mdlalo usuvele uyasebenza"
 
-#: routes/launch.py:103
+#: routes/launch.py:106
 #, python-format
 msgid "failed to kill prior instance: %(err)s"
 msgstr "yehlulekile ukubulala isimo sangaphambili: %(err)s"
 
-#: routes/launch.py:140
+#: routes/launch.py:177
+msgid "Cores are not built for this computer."
+msgstr "Ama-core awakhelwe le khompyutha."
+
+#: routes/launch.py:180
+msgid "The player is not installed."
+msgstr "Isidlali asifakiwe."
+
+#: routes/launch.py:189
+msgid "No system with games has a player core."
+msgstr "Ayikho isistimu enemidlalo ene-core yesidlali."
+
+#: routes/launch.py:202
+msgid ""
+"Could not fetch the list of cores. Check the internet connection and try "
+"again."
+msgstr ""
+"Asikwazanga ukuthola uhlu lwama-core. Hlola uxhumano lwe-inthanethi bese "
+"uzama futhi."
+
+#: routes/launch.py:207
+msgid "Every core is up to date."
+msgstr "Wonke ama-core asesikhathini."
+
+#: routes/launch.py:226
 msgid "Player settings reset to recommended"
 msgstr "Izilungiselelo zesidlali zibuyiselwe kwezinconyiwe"
 
-#: routes/launch.py:215
+#: routes/launch.py:301
 msgid "That game is no longer running"
 msgstr "Lo mdlalo awusasebenzi"
 
-#: routes/launch.py:217
+#: routes/launch.py:303
 msgid "This game has no disk list to swap through"
 msgstr "Lo mdlalo awunalo uhlu lwamadiski ongashintshana ngalo"
 
-#: routes/launch.py:222
+#: routes/launch.py:308
 #, python-format
 msgid ""
 "RetroArch is not accepting commands. In RetroArch, turn on Settings > "
@@ -605,7 +629,7 @@ msgstr ""
 "I-RetroArch ayamukeli imiyalo. Ku-RetroArch, vula i-Settings > Network > "
 "Network Commands (iphothi %(port)s)."
 
-#: routes/launch.py:225
+#: routes/launch.py:311
 msgid "Next disk inserted"
 msgstr "Idiski elandelayo ifakiwe"
 
@@ -672,7 +696,7 @@ msgstr "Asikho isithombe esizocutshungulwa"
 msgid "Image file not found"
 msgstr "Ifayela lesithombe alitholakali"
 
-#: routes/museum.py:740 routes/museum.py:744 services/js_i18n_strings.py:464
+#: routes/museum.py:740 routes/museum.py:744 services/js_i18n_strings.py:482
 msgid "Background removal failed"
 msgstr "Ukukhishwa kwesizinda kwehlulekile"
 
@@ -1478,19 +1502,19 @@ msgstr "Sandbox"
 msgid "Turn-Based"
 msgstr "Turn-Based"
 
-#: services/js_i18n_strings.py:429
+#: services/js_i18n_strings.py:446
 msgid "(Paused)"
 msgstr "(Kumisiwe)"
 
-#: services/js_i18n_strings.py:430
+#: services/js_i18n_strings.py:447
 msgid "(none)"
 msgstr "(akukho)"
 
-#: services/js_i18n_strings.py:431
+#: services/js_i18n_strings.py:448
 msgid "(not set)"
 msgstr "(akusethiwe)"
 
-#: services/js_i18n_strings.py:432 templates/_bulk_edit_modal.html:25
+#: services/js_i18n_strings.py:449 templates/_bulk_edit_modal.html:25
 #: templates/_bulk_edit_modal.html:38 templates/_bulk_edit_modal.html:83
 #: templates/_bulk_edit_modal.html:95 templates/_bulk_edit_modal.html:120
 #: templates/_bulk_edit_modal.html:137 templates/_bulk_edit_modal.html:153
@@ -1498,101 +1522,101 @@ msgstr "(akusethiwe)"
 msgid "-- Don't change --"
 msgstr "-- Ungashintshi --"
 
-#: services/js_i18n_strings.py:433
+#: services/js_i18n_strings.py:450
 msgid "-- Select log file --"
 msgstr "-- Khetha ifayela lelogi --"
 
-#: services/js_i18n_strings.py:434
+#: services/js_i18n_strings.py:451
 #, python-brace-format
 msgid "... and {n} more"
 msgstr "... nokunye okungu-{n}"
 
-#: services/js_i18n_strings.py:435 templates/_bulk_edit_modal.html:30
+#: services/js_i18n_strings.py:452 templates/_bulk_edit_modal.html:30
 #: templates/base.html:982
 msgid "100%"
 msgstr "100%"
 
-#: services/js_i18n_strings.py:436 templates/_settings_tabs/account.html:270
+#: services/js_i18n_strings.py:453 templates/_settings_tabs/account.html:270
 #: templates/archive_scanner.html:726 templates/multi_disc_organizer.html:217
 #: templates/reports.html:369 templates/reports.html:450
 msgid "Actions"
 msgstr "Izenzo"
 
-#: services/js_i18n_strings.py:437
+#: services/js_i18n_strings.py:454
 msgid "Added to queue - will start when current operation completes"
 msgstr "Kwengezwe kulayini - kuzoqala lapho umsebenzi wamanje uqeda"
 
-#: services/js_i18n_strings.py:438
+#: services/js_i18n_strings.py:455
 msgid "All ROMs accounted for!"
 msgstr "Wonke ama-ROM abaliwe!"
 
-#: services/js_i18n_strings.py:439 templates/logs.html:764
+#: services/js_i18n_strings.py:456 templates/logs.html:764
 msgid "All Sources"
 msgstr "Yonke Imithombo"
 
-#: services/js_i18n_strings.py:440 templates/all_games.html:42
+#: services/js_i18n_strings.py:457 templates/all_games.html:42
 #: templates/reports.html:328 templates/reports.html:407
 #: templates/reports.html:480
 msgid "All Systems"
 msgstr "Zonke Izistimu"
 
-#: services/js_i18n_strings.py:441
+#: services/js_i18n_strings.py:458
 msgid "Already Syncing"
 msgstr "Isivele Iyavumelanisa"
 
-#: services/js_i18n_strings.py:442
+#: services/js_i18n_strings.py:459
 #, python-brace-format
 msgid "Applied when you press Play, in the {emulator} settings for this game."
 msgstr ""
 "Kusetshenziswa uma ucindezela u-Dlala, ezilungiselelweni ze-{emulator} "
 "zalo mdlalo."
 
-#: services/js_i18n_strings.py:443
+#: services/js_i18n_strings.py:460
 #, python-brace-format
 msgid "Applied {n} update(s)."
 msgstr "Kufakwe izibuyekezo ezingu-{n}."
 
-#: services/js_i18n_strings.py:444 templates/_bulk_edit_modal.html:193
+#: services/js_i18n_strings.py:461 templates/_bulk_edit_modal.html:193
 msgid "Apply Changes"
 msgstr "Sebenzisa Izinguquko"
 
-#: services/js_i18n_strings.py:445
+#: services/js_i18n_strings.py:462
 msgid "Apply Normalization"
 msgstr "Sebenzisa Ukulinganisa"
 
-#: services/js_i18n_strings.py:446
+#: services/js_i18n_strings.py:463
 #, python-brace-format
 msgid "Apply failed: {error}"
 msgstr "Ukusebenzisa kwehlulekile: {error}"
 
-#: services/js_i18n_strings.py:447
+#: services/js_i18n_strings.py:464
 #, python-brace-format
 msgid "Apply {n} Selected"
 msgstr "Sebenzisa {n} Okukhethiwe"
 
-#: services/js_i18n_strings.py:448
+#: services/js_i18n_strings.py:465
 #, python-brace-format
 msgid "Apply {n} normalization rule?"
 msgstr "Sebenzisa umthetho ongu-{n} wokulinganisa?"
 
-#: services/js_i18n_strings.py:449
+#: services/js_i18n_strings.py:466
 #, python-brace-format
 msgid "Apply {n} normalization rules?"
 msgstr "Sebenzisa imithetho engu-{n} yokulinganisa?"
 
-#: services/js_i18n_strings.py:450
+#: services/js_i18n_strings.py:467
 msgid "Applying Metadata"
 msgstr "Kufakwa imethadatha"
 
-#: services/js_i18n_strings.py:451
+#: services/js_i18n_strings.py:468
 msgid "Applying..."
 msgstr "Iyasebenzisa..."
 
-#: services/js_i18n_strings.py:452
+#: services/js_i18n_strings.py:469
 msgid "Applying…"
 msgstr "Iyasebenzisa…"
 
-#: services/js_i18n_strings.py:453
+#: services/js_i18n_strings.py:470
 msgid ""
 "Are you sure you want to cancel the bulk scrape?\n"
 "\n"
@@ -1606,16 +1630,16 @@ msgstr ""
 "angu-10–60) ngaphambi kokuba ukukhansela kusebenze — ithoyisi lenqubekela"
 " phambili lizoqhubeka libuyekeza phakathi naleso sikhathi."
 
-#: services/js_i18n_strings.py:454
+#: services/js_i18n_strings.py:471
 msgid "Are you sure you want to cancel?"
 msgstr "Uqinisekile ukuthi ufuna ukukhansela?"
 
-#: services/js_i18n_strings.py:455
+#: services/js_i18n_strings.py:472
 #, python-brace-format
 msgid "Are you sure you want to delete \"{filename}\"?"
 msgstr "Uqinisekile ukuthi ufuna ukususa \"{filename}\"?"
 
-#: services/js_i18n_strings.py:456
+#: services/js_i18n_strings.py:473
 msgid ""
 "Are you sure you want to reset all metadata for this game? This will "
 "delete boxart and screenshots."
@@ -1623,11 +1647,11 @@ msgstr ""
 "Uqinisekile ukuthi ufuna ukusetha kabusha yonke i-metadata yalo mdlalo? "
 "Lokhu kuzosusa i-boxart nemifanekiso-skrini."
 
-#: services/js_i18n_strings.py:457
+#: services/js_i18n_strings.py:474
 msgid "Are you sure you want to restart the server?"
 msgstr "Uqinisekile ukuthi ufuna ukuqalisa kabusha iseva?"
 
-#: services/js_i18n_strings.py:458
+#: services/js_i18n_strings.py:475
 msgid ""
 "Are you sure you want to shut down the server? You will need to start it "
 "again manually."
@@ -1635,47 +1659,55 @@ msgstr ""
 "Uqinisekile ukuthi ufuna ukuvala iseva? Kuzodingeka uyiqalise futhi "
 "ngokwezandla."
 
-#: services/js_i18n_strings.py:459 templates/settings.html:67
+#: services/js_i18n_strings.py:476 templates/settings.html:67
 msgid "Are you sure?"
 msgstr "Uqinisekile?"
 
-#: services/js_i18n_strings.py:460
+#: services/js_i18n_strings.py:477
+msgid "As the core sets it"
+msgstr "Njengoba i-core iyisetha"
+
+#: services/js_i18n_strings.py:478
 msgid "Asking AI…"
 msgstr "Kubuzwa i-AI…"
 
-#: services/js_i18n_strings.py:461
+#: services/js_i18n_strings.py:479
 msgid "Asking the AI. This can take up to a minute."
 msgstr "Kubuzwa i-AI. Lokhu kungathatha kuze kube umzuzu."
 
-#: services/js_i18n_strings.py:462
+#: services/js_i18n_strings.py:480
 msgid "Aspect ratio"
 msgstr "Isilinganiso sesithombe"
 
-#: services/js_i18n_strings.py:463
+#: services/js_i18n_strings.py:481
 msgid "BIOS"
 msgstr "BIOS"
 
-#: services/js_i18n_strings.py:465
+#: services/js_i18n_strings.py:483
 msgid "Background removed"
 msgstr "Isizinda sisusiwe"
 
-#: services/js_i18n_strings.py:466
+#: services/js_i18n_strings.py:484
 msgid "Bulk fetch failed"
 msgstr "Ukulanda okuyisixuku kwehlulekile"
 
-#: services/js_i18n_strings.py:467
+#: services/js_i18n_strings.py:485
 msgid "Bulk fetch request failed"
 msgstr "Isicelo sokulanda okuyisixuku sehlulekile"
 
-#: services/js_i18n_strings.py:468
+#: services/js_i18n_strings.py:486
 msgid "Bulk scraping complete!"
 msgstr "Ukuscrape okuyisixuku kuqedile!"
 
-#: services/js_i18n_strings.py:469
+#: services/js_i18n_strings.py:487
 msgid "CLZ Imports"
 msgstr "Okungeniswe kwe-CLZ"
 
-#: services/js_i18n_strings.py:470 templates/_bulk_edit_modal.html:191
+#: services/js_i18n_strings.py:488
+msgid "CRT screen"
+msgstr "Isikrini se-CRT"
+
+#: services/js_i18n_strings.py:489 templates/_bulk_edit_modal.html:191
 #: templates/_bulk_scrape_modal.html:49 templates/_modals/edit_modal.html:12
 #: templates/_modals/rename_modal.html:19
 #: templates/_settings_tabs/account.html:72
@@ -1690,76 +1722,76 @@ msgstr "Okungeniswe kwe-CLZ"
 #: templates/psn_trophies.html:297 templates/psn_trophy_detail.html:182
 #: templates/psn_trophy_detail.html:325 templates/reports.html:521
 #: templates/screenshot_dedup.html:263 templates/settings.html:69
-#: templates/settings_emulators.html:139
+#: templates/settings_emulators.html:166
 #: templates/steam_achievement_game.html:138 templates/wishlist.html:114
 #: templates/xbox_achievement_game.html:131
 msgid "Cancel"
 msgstr "Khansela"
 
-#: services/js_i18n_strings.py:471
+#: services/js_i18n_strings.py:490
 msgid "Cancel Bulk Scrape"
 msgstr "Khansela i-Scrape eyisixuku"
 
-#: services/js_i18n_strings.py:472
+#: services/js_i18n_strings.py:491
 msgid "Cancel failed"
 msgstr "Ukukhansela kwehlulekile"
 
-#: services/js_i18n_strings.py:473
+#: services/js_i18n_strings.py:492
 msgid "Cancel request failed"
 msgstr "Isicelo sokukhansela sehlulekile"
 
-#: services/js_i18n_strings.py:474
+#: services/js_i18n_strings.py:493
 msgid "Cancellation requested"
 msgstr "Ukukhansela kuceliwe"
 
-#: services/js_i18n_strings.py:475
+#: services/js_i18n_strings.py:494
 msgid "Cancelled"
 msgstr "Kukhanseliwe"
 
-#: services/js_i18n_strings.py:476
+#: services/js_i18n_strings.py:495
 msgid "Cancelled by user"
 msgstr "Kukhanselwe umsebenzisi"
 
-#: services/js_i18n_strings.py:477
+#: services/js_i18n_strings.py:496
 msgid "Checking RetroAchievements…"
 msgstr "Kuhlolwa i-RetroAchievements…"
 
-#: services/js_i18n_strings.py:478
+#: services/js_i18n_strings.py:497
 msgid "Clean Missing ROMs"
 msgstr "Hlanza ama-ROM Angekho"
 
-#: services/js_i18n_strings.py:479
+#: services/js_i18n_strings.py:498
 msgid "Clear CLZ Imports"
 msgstr "Sula Okungeniswe kwe-CLZ"
 
-#: services/js_i18n_strings.py:480
+#: services/js_i18n_strings.py:499
 msgid "Clear HLTB data for this game?"
 msgstr "Sula idatha ye-HLTB yalo mdlalo?"
 
-#: services/js_i18n_strings.py:481 templates/achievements_system.html:109
+#: services/js_i18n_strings.py:500 templates/achievements_system.html:109
 msgid "Clear RA Data"
 msgstr "Sula Idatha ye-RA"
 
-#: services/js_i18n_strings.py:482
+#: services/js_i18n_strings.py:501
 msgid "Clear RetroAchievements Data"
 msgstr "Sula Idatha ye-RetroAchievements"
 
-#: services/js_i18n_strings.py:483
+#: services/js_i18n_strings.py:502
 #, python-brace-format
 msgid "Cleared RA data for {count} games in {system}"
 msgstr "Idatha ye-RA isuliwe emidlalweni engu-{count} ku-{system}"
 
-#: services/js_i18n_strings.py:484
+#: services/js_i18n_strings.py:503
 #, python-brace-format
 msgid "Cleared RA data for {n} games"
 msgstr "Idatha ye-RA isuliwe emidlalweni engu-{n}"
 
-#: services/js_i18n_strings.py:485
+#: services/js_i18n_strings.py:504
 #, python-brace-format
 msgid "Cleared RA data for {n} games in {system}"
 msgstr "Idatha ye-RA isuliwe emidlalweni engu-{n} ku-{system}"
 
-#: services/js_i18n_strings.py:486
+#: services/js_i18n_strings.py:505
 #, python-brace-format
 msgid ""
 "Cleared RetroAchievements data for {n} games. Run \"Refresh "
@@ -1769,15 +1801,15 @@ msgstr ""
 "\"Vuselela i-RetroAchievements\" ukuze uphinde uskene ngokufanisa "
 "okubuyekeziwe."
 
-#: services/js_i18n_strings.py:487
+#: services/js_i18n_strings.py:506
 msgid "Clearing..."
 msgstr "Iyasula..."
 
-#: services/js_i18n_strings.py:488
+#: services/js_i18n_strings.py:507
 msgid "Click again to remove"
 msgstr "Chofoza futhi ukuze ususe"
 
-#: services/js_i18n_strings.py:489 templates/_bulk_edit_modal.html:8
+#: services/js_i18n_strings.py:508 templates/_bulk_edit_modal.html:8
 #: templates/_bulk_scrape_modal.html:8
 #: templates/_modals/boxart_zoom_modal.html:3
 #: templates/_modals/manual_reader_modal.html:11
@@ -1791,38 +1823,38 @@ msgstr "Chofoza futhi ukuze ususe"
 msgid "Close"
 msgstr "Vala"
 
-#: services/js_i18n_strings.py:490
+#: services/js_i18n_strings.py:509
 msgid "Close keyboard shortcuts"
 msgstr "Vala izindlela ezisheshayo zekhibhodi"
 
-#: services/js_i18n_strings.py:491
+#: services/js_i18n_strings.py:510
 msgid "Close modal / cancel"
 msgstr "Vala iwindi / khansela"
 
-#: services/js_i18n_strings.py:492 templates/dashboard.html:155
+#: services/js_i18n_strings.py:511 templates/dashboard.html:155
 msgid "Complete"
 msgstr "Kuqediwe"
 
-#: services/js_i18n_strings.py:493
+#: services/js_i18n_strings.py:512
 msgid "Complete!"
 msgstr "Kuqediwe!"
 
-#: services/js_i18n_strings.py:494 templates/_bulk_edit_modal.html:29
+#: services/js_i18n_strings.py:513 templates/_bulk_edit_modal.html:29
 #: templates/analytics.html:1664 templates/base.html:981
 #: templates/dashboard.html:473 templates/game_detail.html:222
 msgid "Completed"
 msgstr "Kuqediwe"
 
-#: services/js_i18n_strings.py:495 templates/_bulk_edit_modal.html:23
+#: services/js_i18n_strings.py:514 templates/_bulk_edit_modal.html:23
 #: templates/analytics.html:137 templates/base.html:976
 msgid "Completion Status"
 msgstr "Isimo Sokuqeda"
 
-#: services/js_i18n_strings.py:496
+#: services/js_i18n_strings.py:515
 msgid "Completion status updated"
 msgstr "Isimo sokuqeda sibuyekeziwe"
 
-#: services/js_i18n_strings.py:497 templates/achievement_game.html:172
+#: services/js_i18n_strings.py:516 templates/achievement_game.html:172
 #: templates/achievement_game.html:197 templates/achievement_game.html:211
 #: templates/base.html:1018 templates/game_detail.html:512
 #: templates/game_detail.html:537 templates/game_detail.html:551
@@ -1835,340 +1867,363 @@ msgstr "Isimo sokuqeda sibuyekeziwe"
 msgid "Completionist"
 msgstr "Completionist"
 
-#: services/js_i18n_strings.py:498 templates/settings.html:66
+#: services/js_i18n_strings.py:517 templates/settings.html:66
 msgid "Confirm Action"
 msgstr "Qinisekisa Isenzo"
 
-#: services/js_i18n_strings.py:499
+#: services/js_i18n_strings.py:518
 msgid "Confirm Bulk Edit"
 msgstr "Qinisekisa Ukuhlela Okuyisixuku"
 
-#: services/js_i18n_strings.py:500
+#: services/js_i18n_strings.py:519
 msgid "Content generated successfully"
 msgstr "Okuqukethwe kukhiqizwe ngempumelelo"
 
-#: services/js_i18n_strings.py:501
+#: services/js_i18n_strings.py:520
 msgid "Controller"
 msgstr "Isilawuli"
 
-#: services/js_i18n_strings.py:502
+#: services/js_i18n_strings.py:521
 msgid "Controller image saved"
 msgstr "Isithombe sesilawuli silondoloziwe"
 
-#: services/js_i18n_strings.py:503
+#: services/js_i18n_strings.py:522
 msgid "Controller image uploaded"
 msgstr "Isithombe sesilawuli silayishiwe"
 
-#: services/js_i18n_strings.py:504
+#: services/js_i18n_strings.py:523
+msgid "Core"
+msgstr "I-core"
+
+#: services/js_i18n_strings.py:524
 msgid "Could not apply metadata."
 msgstr "Ayikwazanga ukufaka imethadatha."
 
-#: services/js_i18n_strings.py:505
+#: services/js_i18n_strings.py:525
+#, python-brace-format
+msgid ""
+"Could not download the {system} core. Check the internet connection and "
+"try again."
+msgstr ""
+"Asikwazanga ukudawuniloda i-core ye-{system}. Hlola uxhumano lwe-"
+"inthanethi bese uzama futhi."
+
+#: services/js_i18n_strings.py:526
 msgid "Could not link these versions."
 msgstr "Ayikwazanga ukuxhuma lezi zinguqulo."
 
-#: services/js_i18n_strings.py:506
+#: services/js_i18n_strings.py:527
 msgid "Could not load suggestions."
 msgstr "Ayikwazanga ukulayisha iziphakamiso."
 
-#: services/js_i18n_strings.py:507
+#: services/js_i18n_strings.py:528
 msgid "Could not open this manual. Use \"Open PDF in a new tab\" instead."
 msgstr ""
 "Asikwazanga ukuvula le ncwadi yemiyalelo. Sebenzisa u-\"Vula i-PDF "
 "kuthebhu entsha\" esikhundleni salokho."
 
-#: services/js_i18n_strings.py:508
+#: services/js_i18n_strings.py:529
 msgid "Could not reconnect to server. Please refresh manually."
 msgstr "Ayikwazanga ukuphinda ixhume kuseva. Sicela uvuselele ngokwezandla."
 
-#: services/js_i18n_strings.py:509
+#: services/js_i18n_strings.py:530
 msgid "Could not save that setting."
 msgstr "Ayikwazanga ukulondoloza leso silungiselelo."
 
-#: services/js_i18n_strings.py:510
+#: services/js_i18n_strings.py:531
 msgid "Could not save that."
 msgstr "Ayikwazanga ukulondoloza lokho."
 
-#: services/js_i18n_strings.py:511
+#: services/js_i18n_strings.py:532
 msgid "Could not show this page of the manual."
 msgstr "Asikwazanga ukubonisa leli khasi lencwadi yemiyalelo."
 
-#: services/js_i18n_strings.py:512
+#: services/js_i18n_strings.py:533
 msgid "Could not stop the running instance."
 msgstr "Ayikwazanga ukumisa inqubo esebenzayo."
 
-#: services/js_i18n_strings.py:513
+#: services/js_i18n_strings.py:534
 msgid "Could not unlink this version."
 msgstr "Ayikwazanga ukuyekisa ukuxhuma le nguqulo."
 
-#: services/js_i18n_strings.py:514
+#: services/js_i18n_strings.py:535
 msgid "Could not write the summary."
 msgstr "Ayikwazanga ukubhala isifinyezo."
 
-#: services/js_i18n_strings.py:515
+#: services/js_i18n_strings.py:536
 msgid "Currently set"
 msgstr "Okusethiwe manje"
 
-#: services/js_i18n_strings.py:516
+#: services/js_i18n_strings.py:537
 msgid "Default"
 msgstr "Okuzenzakalelayo"
 
-#: services/js_i18n_strings.py:517
+#: services/js_i18n_strings.py:538
 #, python-brace-format
 msgid "Default emulator for {system}"
 msgstr "I-emulator ezenzakalelayo ye-{system}"
 
-#: services/js_i18n_strings.py:518
+#: services/js_i18n_strings.py:539
 msgid "Delete Log File"
 msgstr "Susa Ifayela Lelogi"
 
-#: services/js_i18n_strings.py:519
+#: services/js_i18n_strings.py:540
 #, python-brace-format
 msgid "Detect failed: {error}"
 msgstr "Ukuthola kwehlulekile: {error}"
 
-#: services/js_i18n_strings.py:520
+#: services/js_i18n_strings.py:541
 msgid "Detected path"
 msgstr "Indlela etholakele"
 
-#: services/js_i18n_strings.py:521
+#: services/js_i18n_strings.py:542
 msgid "Detecting…"
 msgstr "Iyathola…"
 
-#: services/js_i18n_strings.py:522 templates/_bulk_scrape_modal.html:69
+#: services/js_i18n_strings.py:543 templates/_bulk_scrape_modal.html:69
 #: templates/psn_trophies.html:247 templates/psn_trophies.html:307
 #: templates/reports.html:525
 msgid "Done"
 msgstr "Kwenziwe"
 
-#: services/js_i18n_strings.py:523
+#: services/js_i18n_strings.py:544
 msgid "Downloading 3D box art…"
 msgstr "Kudawunilodwa i-box art ye-3D…"
 
-#: services/js_i18n_strings.py:524
+#: services/js_i18n_strings.py:545
 msgid "Downloading box art…"
 msgstr "Kudawunilodwa i-box art…"
 
-#: services/js_i18n_strings.py:525
+#: services/js_i18n_strings.py:546
 msgid "Downloading fan art…"
 msgstr "Kudawunilodwa i-fanart…"
 
-#: services/js_i18n_strings.py:526
+#: services/js_i18n_strings.py:547
 msgid "Downloading manual…"
 msgstr "Kudawunilodwa incwadi yokusebenzisa…"
 
-#: services/js_i18n_strings.py:527
+#: services/js_i18n_strings.py:548
 msgid "Downloading media…"
 msgstr "Kudawunilodwa imidiya…"
 
-#: services/js_i18n_strings.py:528
+#: services/js_i18n_strings.py:549
 msgid "Downloading screenshots…"
 msgstr "Kudawunilodwa imifanekiso-skrini…"
 
-#: services/js_i18n_strings.py:529
+#: services/js_i18n_strings.py:550
+#, python-brace-format
+msgid "Downloading the {system} core…"
+msgstr "Kudawunilodwa i-core ye-{system}…"
+
+#: services/js_i18n_strings.py:551
 msgid "Downloading video…"
 msgstr "Kudawunilodwa ividiyo…"
 
-#: services/js_i18n_strings.py:530 templates/_settings_tabs/account.html:315
+#: services/js_i18n_strings.py:552
+#, python-brace-format
+msgid "Downloading {core} ({done} of {total})…"
+msgstr "Kudawunilodwa i-{core} ({done} kokungu-{total})…"
+
+#: services/js_i18n_strings.py:553 templates/_settings_tabs/account.html:315
 #: templates/base.html:937 templates/game_detail.html:105
 #: templates/wishlist.html:641
 msgid "Edit"
 msgstr "Hlela"
 
-#: services/js_i18n_strings.py:531
+#: services/js_i18n_strings.py:554
 msgid "Edit game"
 msgstr "Hlela umdlalo"
 
-#: services/js_i18n_strings.py:532
+#: services/js_i18n_strings.py:555
 #, python-brace-format
 msgid "Edit: {title}"
 msgstr "Hlela: {title}"
 
-#: services/js_i18n_strings.py:533
+#: services/js_i18n_strings.py:556
 msgid "Emulator"
 msgstr "I-emulator"
 
-#: services/js_i18n_strings.py:534
+#: services/js_i18n_strings.py:557
 msgid "Enter one folder path."
 msgstr "Faka indlela eyodwa yefolda."
 
-#: services/js_i18n_strings.py:535
+#: services/js_i18n_strings.py:558
 msgid "Error"
 msgstr "Iphutha"
 
-#: services/js_i18n_strings.py:536
+#: services/js_i18n_strings.py:559
 msgid "Error clearing HLTB data"
 msgstr "Iphutha ekususeni idatha ye-HLTB"
 
-#: services/js_i18n_strings.py:537
+#: services/js_i18n_strings.py:560
 msgid "Error connecting to HowLongToBeat"
 msgstr "Iphutha ekuxhumeni ku-HowLongToBeat"
 
-#: services/js_i18n_strings.py:538
+#: services/js_i18n_strings.py:561
 msgid "Error deleting log file"
 msgstr "Iphutha ekususeni ifayela lelogi"
 
-#: services/js_i18n_strings.py:539
+#: services/js_i18n_strings.py:562
 msgid "Error loading file"
 msgstr "Iphutha ekulayisheni ifayela"
 
-#: services/js_i18n_strings.py:540
+#: services/js_i18n_strings.py:563
 msgid "Error loading log file"
 msgstr "Iphutha ekulayisheni ifayela lelogi"
 
-#: services/js_i18n_strings.py:541
+#: services/js_i18n_strings.py:564
 msgid "Error looking up HLTB"
 msgstr "Iphutha ekubhekeni i-HLTB"
 
-#: services/js_i18n_strings.py:542
+#: services/js_i18n_strings.py:565
 msgid "Error refreshing RetroAchievements: "
 msgstr "Iphutha ekuvuseleleni i-RetroAchievements: "
 
-#: services/js_i18n_strings.py:543
+#: services/js_i18n_strings.py:566
 msgid "Error saving HLTB data"
 msgstr "Iphutha ekulondolozeni idatha ye-HLTB"
 
-#: services/js_i18n_strings.py:544
+#: services/js_i18n_strings.py:567
 msgid "Error saving game: "
 msgstr "Iphutha ekulondolozeni umdlalo: "
 
-#: services/js_i18n_strings.py:545
+#: services/js_i18n_strings.py:568
 #, python-brace-format
 msgid "Error scanning library: {error}"
 msgstr "Iphutha ekuskeneni umtapo: {error}"
 
-#: services/js_i18n_strings.py:546
+#: services/js_i18n_strings.py:569
 msgid "Error updating completion status"
 msgstr "Iphutha ekubuyekezeni isimo sokuqeda"
 
-#: services/js_i18n_strings.py:547
+#: services/js_i18n_strings.py:570
 msgid "Error updating status"
 msgstr "Iphutha ekubuyekezeni isimo"
 
-#: services/js_i18n_strings.py:548 templates/_modals/edit_modal.html:219
+#: services/js_i18n_strings.py:571 templates/_modals/edit_modal.html:219
 #: templates/base.html:1205
 msgid "Exclusive"
 msgstr "Ekhethekile"
 
-#: services/js_i18n_strings.py:549
+#: services/js_i18n_strings.py:572
 msgid "Failed to apply bulk edit. Check console for details."
 msgstr ""
 "Yehlulekile ukusebenzisa ukuhlela okuyisixuku. Hlola i-console ukuze "
 "uthole imininingwane."
 
-#: services/js_i18n_strings.py:550
+#: services/js_i18n_strings.py:573
 msgid "Failed to apply normalization"
 msgstr "Yehlulekile ukusebenzisa ukulinganisa"
 
-#: services/js_i18n_strings.py:551
+#: services/js_i18n_strings.py:574
 msgid "Failed to clean missing ROMs"
 msgstr "Yehlulekile ukuhlanza ama-ROM angekho"
 
-#: services/js_i18n_strings.py:552
+#: services/js_i18n_strings.py:575
 msgid "Failed to clear CLZ imports"
 msgstr "Yehlulekile ukususa okungeniswe kwe-CLZ"
 
-#: services/js_i18n_strings.py:553
+#: services/js_i18n_strings.py:576
 msgid "Failed to clear HLTB: "
 msgstr "Yehlulekile ukususa i-HLTB: "
 
-#: services/js_i18n_strings.py:554
+#: services/js_i18n_strings.py:577
 msgid "Failed to clear RA data"
 msgstr "Yehlulekile ukususa idatha ye-RA"
 
-#: services/js_i18n_strings.py:555
+#: services/js_i18n_strings.py:578
 msgid "Failed to delete"
 msgstr "Yehlulekile ukususa"
 
-#: services/js_i18n_strings.py:556
+#: services/js_i18n_strings.py:579
 msgid "Failed to fetch controller image"
 msgstr "Yehlulekile ukulanda isithombe sesilawuli"
 
-#: services/js_i18n_strings.py:557
+#: services/js_i18n_strings.py:580
 msgid "Failed to fetch image"
 msgstr "Yehlulekile ukulanda isithombe"
 
-#: services/js_i18n_strings.py:558
+#: services/js_i18n_strings.py:581
 msgid "Failed to load game"
 msgstr "Yehlulekile ukulayisha umdlalo"
 
-#: services/js_i18n_strings.py:559
+#: services/js_i18n_strings.py:582
 msgid "Failed to load normalization data"
 msgstr "Yehlulekile ukulayisha idatha yokulinganisa"
 
-#: services/js_i18n_strings.py:560
+#: services/js_i18n_strings.py:583
 msgid "Failed to save HLTB: "
 msgstr "Yehlulekile ukulondoloza i-HLTB: "
 
-#: services/js_i18n_strings.py:561
+#: services/js_i18n_strings.py:584
 msgid "Failed to save: "
 msgstr "Yehlulekile ukulondoloza: "
 
-#: services/js_i18n_strings.py:562
+#: services/js_i18n_strings.py:585
 msgid "Failed to start RetroAchievements refresh"
 msgstr "Yehlulekile ukuqala ukuvuselela i-RetroAchievements"
 
-#: services/js_i18n_strings.py:563
+#: services/js_i18n_strings.py:586
 msgid "Failed to start bulk scrape"
 msgstr "Yehlulekile ukuqala i-scrape eyisixuku"
 
-#: services/js_i18n_strings.py:564
+#: services/js_i18n_strings.py:587
 msgid "Failed to start generation"
 msgstr "Yehlulekile ukuqala ukukhiqiza"
 
-#: services/js_i18n_strings.py:565
+#: services/js_i18n_strings.py:588
 msgid "Failed to update completion status: "
 msgstr "Yehlulekile ukubuyekeza isimo sokuqeda: "
 
-#: services/js_i18n_strings.py:566
+#: services/js_i18n_strings.py:589
 #, python-brace-format
 msgid "Failed to update status: {error}"
 msgstr "Yehlulekile ukubuyekeza isimo: {error}"
 
-#: services/js_i18n_strings.py:567
+#: services/js_i18n_strings.py:590
 #, python-brace-format
 msgid "Failed: {error}"
 msgstr "Kuhlulekile: {error}"
 
-#: services/js_i18n_strings.py:568
+#: services/js_i18n_strings.py:591
 msgid "Fetch All Controller Images"
 msgstr "Landa Zonke Izithombe Zezilawuli"
 
-#: services/js_i18n_strings.py:569
+#: services/js_i18n_strings.py:592
 #, python-brace-format
 msgid "Fetching from {source}…"
 msgstr "Kulandwa ku-{source}…"
 
-#: services/js_i18n_strings.py:570
+#: services/js_i18n_strings.py:593
 #, python-brace-format
 msgid "Fetching images: {done} of {total}"
 msgstr "Kulandwa izithombe: {done} kwezingu-{total}"
 
-#: services/js_i18n_strings.py:571
+#: services/js_i18n_strings.py:594
 msgid "Focus search box"
 msgstr "Gxila ebhokisini lokusesha"
 
-#: services/js_i18n_strings.py:572 templates/logs.html:743
+#: services/js_i18n_strings.py:595 templates/logs.html:743
 msgid "From"
 msgstr "Kusuka"
 
-#: services/js_i18n_strings.py:573
+#: services/js_i18n_strings.py:596
 msgid "From the system setting"
 msgstr "Kusukela esilungiselelweni sesistimu"
 
-#: services/js_i18n_strings.py:574
+#: services/js_i18n_strings.py:597
 msgid "Fullscreen"
 msgstr "Isikrini esigcwele"
 
-#: services/js_i18n_strings.py:575
+#: services/js_i18n_strings.py:598
 msgid "Game Page"
 msgstr "Ikhasi Lomdlalo"
 
-#: services/js_i18n_strings.py:576
+#: services/js_i18n_strings.py:599
 msgid "Game details updated successfully."
 msgstr "Imininingwane yomdlalo ibuyekezwe ngempumelelo."
 
-#: services/js_i18n_strings.py:577 templates/_settings_tabs/data.html:186
+#: services/js_i18n_strings.py:600 templates/_settings_tabs/data.html:186
 #: templates/achievements_system.html:119 templates/analytics.html:571
 #: templates/analytics.html:1584 templates/analytics.html:1625
 #: templates/analytics.html:1947 templates/analytics.html:2122
@@ -2178,27 +2233,27 @@ msgstr "Imininingwane yomdlalo ibuyekezwe ngempumelelo."
 msgid "Games"
 msgstr "Imidlalo"
 
-#: services/js_i18n_strings.py:578
+#: services/js_i18n_strings.py:601
 msgid "Generate All Museum Content"
 msgstr "Khiqiza Konke Okuqukethwe Kwemnyuziyamu"
 
-#: services/js_i18n_strings.py:579 templates/museum_system.html:45
+#: services/js_i18n_strings.py:602 templates/museum_system.html:45
 msgid "Generate Content"
 msgstr "Khiqiza Okuqukethwe"
 
-#: services/js_i18n_strings.py:580 templates/museum.html:28
+#: services/js_i18n_strings.py:603 templates/museum.html:28
 msgid "Generating content..."
 msgstr "Iyakhiqiza okuqukethwe..."
 
-#: services/js_i18n_strings.py:581
+#: services/js_i18n_strings.py:604
 msgid "Generating..."
 msgstr "Iyakhiqiza..."
 
-#: services/js_i18n_strings.py:582
+#: services/js_i18n_strings.py:605
 msgid "Generation cancelled"
 msgstr "Ukukhiqiza kukhanseliwe"
 
-#: services/js_i18n_strings.py:583
+#: services/js_i18n_strings.py:606
 #, python-brace-format
 msgid ""
 "Generation complete: {generated} generated, {skipped} skipped, {failed} "
@@ -2207,76 +2262,80 @@ msgstr ""
 "Ukukhiqiza kuqedile: {generated} kukhiqiziwe, {skipped} kweqiwe, {failed}"
 " kwehlulekile"
 
-#: services/js_i18n_strings.py:584
+#: services/js_i18n_strings.py:607
 msgid "Generation failed"
 msgstr "Ukukhiqiza kwehlulekile"
 
-#: services/js_i18n_strings.py:585
+#: services/js_i18n_strings.py:608
 msgid "Generation request failed"
 msgstr "Isicelo sokukhiqiza sehlulekile"
 
-#: services/js_i18n_strings.py:586
+#: services/js_i18n_strings.py:609
 msgid "Go to Analytics"
 msgstr "Iya Ekuhlaziyeni"
 
-#: services/js_i18n_strings.py:587
+#: services/js_i18n_strings.py:610
 msgid "Go to Changelog"
 msgstr "Iya Kulogi Yezinguquko"
 
-#: services/js_i18n_strings.py:588
+#: services/js_i18n_strings.py:611
 msgid "Go to Dashboard"
 msgstr "Iya Kudeshibhodi"
 
-#: services/js_i18n_strings.py:589
+#: services/js_i18n_strings.py:612
 msgid "Go to Help"
 msgstr "Iya Osizweni"
 
-#: services/js_i18n_strings.py:590
+#: services/js_i18n_strings.py:613
 msgid "Go to Library"
 msgstr "Iya Kumtapo"
 
-#: services/js_i18n_strings.py:591
+#: services/js_i18n_strings.py:614
 msgid "Go to Settings"
 msgstr "Iya Ezilungiselelweni"
 
-#: services/js_i18n_strings.py:592
+#: services/js_i18n_strings.py:615
 msgid "Go to Systems"
 msgstr "Iya Kuzistimu"
 
-#: services/js_i18n_strings.py:593
+#: services/js_i18n_strings.py:616
 msgid "HLTB data cleared"
 msgstr "Idatha ye-HLTB isuliwe"
 
-#: services/js_i18n_strings.py:594
+#: services/js_i18n_strings.py:617
 msgid "HLTB data saved"
 msgstr "Idatha ye-HLTB ilondoloziwe"
 
-#: services/js_i18n_strings.py:595
+#: services/js_i18n_strings.py:618
 msgid "HLTB lookup cancelled"
 msgstr "Ukubheka i-HLTB kukhanseliwe"
 
-#: services/js_i18n_strings.py:596 templates/all_games.html:122
+#: services/js_i18n_strings.py:619
+msgid "Handheld LCD"
+msgstr "I-LCD yedivayisi ephathwayo"
+
+#: services/js_i18n_strings.py:620 templates/all_games.html:122
 #: templates/system_games.html:113
 msgid "Has Achievements"
 msgstr "Inezimpumelelo"
 
-#: services/js_i18n_strings.py:597
+#: services/js_i18n_strings.py:621
 msgid "Hide Bonus"
 msgstr "Fihla Ibhonasi"
 
-#: services/js_i18n_strings.py:598 templates/logs.html:719
+#: services/js_i18n_strings.py:622 templates/logs.html:719
 msgid "Image Resize"
 msgstr "Ukushintsha Usayizi Wesithombe"
 
-#: services/js_i18n_strings.py:599
+#: services/js_i18n_strings.py:623
 msgid "Image fetch cancelled."
 msgstr "Ukulanda izithombe kukhanseliwe."
 
-#: services/js_i18n_strings.py:600
+#: services/js_i18n_strings.py:624
 msgid "Image must be under 10MB"
 msgstr "Isithombe kufanele sibe ngaphansi kuka-10MB"
 
-#: services/js_i18n_strings.py:601 templates/_bulk_edit_modal.html:27
+#: services/js_i18n_strings.py:625 templates/_bulk_edit_modal.html:27
 #: templates/achievements_system.html:151
 #: templates/achievements_system.html:170 templates/analytics.html:1664
 #: templates/base.html:979 templates/dashboard.html:329
@@ -2285,75 +2344,93 @@ msgstr "Isithombe kufanele sibe ngaphansi kuka-10MB"
 msgid "In Progress"
 msgstr "Kuyaqhubeka"
 
-#: services/js_i18n_strings.py:602
+#: services/js_i18n_strings.py:626
 msgid "Initializing bulk scrape..."
 msgstr "Iyaqalisa i-scrape eyisixuku..."
 
-#: services/js_i18n_strings.py:603 templates/_bulk_scrape_modal.html:23
+#: services/js_i18n_strings.py:627 templates/_bulk_scrape_modal.html:23
 #: templates/duplicate_finder.html:250 templates/screenshot_dedup.html:276
 msgid "Initializing..."
 msgstr "Iyaqalisa..."
 
-#: services/js_i18n_strings.py:604
+#: services/js_i18n_strings.py:628
+msgid "Input lag reduction"
+msgstr "Ukunciphisa ukubambezeleka kokufaka"
+
+#: services/js_i18n_strings.py:629
+#, python-brace-format
+msgid "Installed {n} cores."
+msgstr "Kufakwe ama-core angu-{n}."
+
+#: services/js_i18n_strings.py:630
+#, python-brace-format
+msgid "Installed {n} cores. Failed: {failed}"
+msgstr "Kufakwe ama-core angu-{n}. Ehlulekile: {failed}"
+
+#: services/js_i18n_strings.py:631
+msgid "Integer scaling"
+msgstr "Ukukala ngezinombolo eziphelele"
+
+#: services/js_i18n_strings.py:632
 msgid "Just synced"
 msgstr "Kusanda kuvumelaniswa"
 
-#: services/js_i18n_strings.py:605
+#: services/js_i18n_strings.py:633
 msgid "Keyboard Shortcuts"
 msgstr "Izindlela Ezisheshayo Zekhibhodi"
 
-#: services/js_i18n_strings.py:606
+#: services/js_i18n_strings.py:634
 msgid "Kill"
 msgstr "Bulala"
 
-#: services/js_i18n_strings.py:607
+#: services/js_i18n_strings.py:635
 #, python-brace-format
 msgid "Launch failed: {error}"
 msgstr "Ukuqalisa kwehlulekile: {error}"
 
-#: services/js_i18n_strings.py:608
+#: services/js_i18n_strings.py:636
 #, python-brace-format
 msgid "Launched (pid {pid})"
 msgstr "Iqalisiwe (pid {pid})"
 
-#: services/js_i18n_strings.py:609
+#: services/js_i18n_strings.py:637
 msgid "Launched (replaced previous instance)"
 msgstr "Iqalisiwe (ithathe indawo yenqubo yangaphambili)"
 
-#: services/js_i18n_strings.py:610
+#: services/js_i18n_strings.py:638
 msgid "Launching…"
 msgstr "Iyaqalisa…"
 
-#: services/js_i18n_strings.py:611
+#: services/js_i18n_strings.py:639
 #, python-brace-format
 msgid "Library scan complete! Found {n} new games."
 msgstr "Ukuskena umtapo kuqedile! Kutholakale imidlalo emisha engu-{n}."
 
-#: services/js_i18n_strings.py:612
+#: services/js_i18n_strings.py:640
 msgid "Link"
 msgstr "Xhuma"
 
-#: services/js_i18n_strings.py:613
+#: services/js_i18n_strings.py:641
 msgid "Link ticked games"
 msgstr "Xhuma imidlalo emakiwe"
 
-#: services/js_i18n_strings.py:614
+#: services/js_i18n_strings.py:642
 msgid "Loading log file..."
 msgstr "Iyalayisha ifayela lelogi..."
 
-#: services/js_i18n_strings.py:615
+#: services/js_i18n_strings.py:643
 msgid "Loading the manual…"
 msgstr "Ilayisha incwadi yemiyalelo…"
 
-#: services/js_i18n_strings.py:616
+#: services/js_i18n_strings.py:644
 msgid "Log file deleted"
 msgstr "Ifayela lelogi lisusiwe"
 
-#: services/js_i18n_strings.py:617
+#: services/js_i18n_strings.py:645
 msgid "Looking for versions…"
 msgstr "Ifuna izinguqulo…"
 
-#: services/js_i18n_strings.py:618 templates/achievement_game.html:168
+#: services/js_i18n_strings.py:646 templates/achievement_game.html:168
 #: templates/achievement_game.html:197 templates/achievement_game.html:207
 #: templates/base.html:1014 templates/game_detail.html:508
 #: templates/game_detail.html:537 templates/game_detail.html:547
@@ -2366,7 +2443,7 @@ msgstr "Ifuna izinguqulo…"
 msgid "Main + Extras"
 msgstr "Okuyinhloko + Okwengeziwe"
 
-#: services/js_i18n_strings.py:619 templates/achievement_game.html:164
+#: services/js_i18n_strings.py:647 templates/achievement_game.html:164
 #: templates/achievement_game.html:197 templates/achievement_game.html:203
 #: templates/base.html:1010 templates/game_detail.html:504
 #: templates/game_detail.html:537 templates/game_detail.html:543
@@ -2379,15 +2456,15 @@ msgstr "Okuyinhloko + Okwengeziwe"
 msgid "Main Story"
 msgstr "Indaba Eyinhloko"
 
-#: services/js_i18n_strings.py:620
+#: services/js_i18n_strings.py:648
 msgid "Marked as not versions."
 msgstr "Kumakwe njengokungezona izinguqulo."
 
-#: services/js_i18n_strings.py:621
+#: services/js_i18n_strings.py:649
 msgid "Match found - please confirm to save"
 msgstr "Kutholakale okufanayo - sicela uqinisekise ukuze ulondoloze"
 
-#: services/js_i18n_strings.py:622
+#: services/js_i18n_strings.py:650
 msgid ""
 "Matched using this alternate/regional title — confirm it refers to the "
 "same game before saving."
@@ -2395,7 +2472,7 @@ msgstr ""
 "Kufaniswe kusetshenziswa lesi sihloko esinye/sesifunda — qinisekisa "
 "ukuthi sibhekise emdlalweni ofanayo ngaphambi kokulondoloza."
 
-#: services/js_i18n_strings.py:623
+#: services/js_i18n_strings.py:651
 #, python-brace-format
 msgid ""
 "Matched via alternate title \"{term}\" — HLTB shows it as \"{match}\". "
@@ -2404,258 +2481,270 @@ msgstr ""
 "Kufaniswe ngesihloko esinye \"{term}\" — i-HLTB isibonisa "
 "njenge-\"{match}\". Qinisekisa ngaphambi kokulondoloza."
 
-#: services/js_i18n_strings.py:624
+#: services/js_i18n_strings.py:652
 #, python-brace-format
 msgid "Missing: {files}"
 msgstr "Ezingekho: {files}"
 
-#: services/js_i18n_strings.py:625
+#: services/js_i18n_strings.py:653
 msgid "Multi-System"
 msgstr "Izistimu Eziningi"
 
-#: services/js_i18n_strings.py:626
+#: services/js_i18n_strings.py:654
 msgid "Multi-platform"
 msgstr "Amapulatifomu Amaningi"
 
-#: services/js_i18n_strings.py:627
+#: services/js_i18n_strings.py:655
 msgid "Museum generation started"
 msgstr "Ukukhiqizwa kwemnyuziyamu kuqalile"
 
-#: services/js_i18n_strings.py:628
+#: services/js_i18n_strings.py:656
 msgid "NOT"
 msgstr "HHAYI"
 
-#: services/js_i18n_strings.py:629
+#: services/js_i18n_strings.py:657
 msgid "Navigation"
 msgstr "Ukunavigetha"
 
-#: services/js_i18n_strings.py:630
+#: services/js_i18n_strings.py:658
 msgid "Network error"
 msgstr "Iphutha lenethiwekhi"
 
-#: services/js_i18n_strings.py:631
+#: services/js_i18n_strings.py:659
 msgid "Network error starting bulk scrape"
 msgstr "Iphutha lenethiwekhi ekuqaleni i-scrape eyisixuku"
 
-#: services/js_i18n_strings.py:632
+#: services/js_i18n_strings.py:660
 msgid "Next disk"
 msgstr "Idiski elandelayo"
 
-#: services/js_i18n_strings.py:633
+#: services/js_i18n_strings.py:661
 msgid "Next disk failed"
 msgstr "Idiski elandelayo yehlulekile"
 
-#: services/js_i18n_strings.py:634 templates/_bulk_edit_modal.html:171
+#: services/js_i18n_strings.py:662 templates/_bulk_edit_modal.html:171
 #: templates/_modals/edit_modal.html:139 templates/game_detail.html:666
 #: templates/game_detail.html:734
 msgid "No"
 msgstr "Cha"
 
-#: services/js_i18n_strings.py:635
+#: services/js_i18n_strings.py:663
 msgid "No (already set)"
 msgstr "Cha (sekusethiwe)"
 
-#: services/js_i18n_strings.py:636
+#: services/js_i18n_strings.py:664
 msgid "No CLZ Import games found"
 msgstr "Ayikho imidlalo yokungenisa kwe-CLZ etholakele"
 
-#: services/js_i18n_strings.py:637
+#: services/js_i18n_strings.py:665
 msgid "No Changes"
 msgstr "Azikho Izinguquko"
 
-#: services/js_i18n_strings.py:638
+#: services/js_i18n_strings.py:666
 msgid "No Games Selected"
 msgstr "Ayikho Imidlalo Ekhethiwe"
 
-#: services/js_i18n_strings.py:639
+#: services/js_i18n_strings.py:667
 msgid "No HLTB data found"
 msgstr "Ayikho idatha ye-HLTB etholakele"
 
-#: services/js_i18n_strings.py:640
+#: services/js_i18n_strings.py:668
 msgid "No achievements found"
 msgstr "Azikho izimpumelelo ezitholakele"
 
-#: services/js_i18n_strings.py:641 templates/achievement_game.html:72
+#: services/js_i18n_strings.py:669 templates/achievement_game.html:72
 #: templates/steam_achievement_game.html:69
 #: templates/xbox_achievement_game.html:59
 msgid "No description available."
 msgstr "Asikho isichasiselo esitholakalayo."
 
-#: services/js_i18n_strings.py:642
+#: services/js_i18n_strings.py:670
 msgid "No emulator AppImages found in the scan paths."
 msgstr "Awekho ama-AppImage e-emulator atholakele ezindleleni zokuskena."
 
-#: services/js_i18n_strings.py:643
+#: services/js_i18n_strings.py:671
 msgid "No emulators registered."
 msgstr "Awekho ama-emulator abhalisiwe."
 
-#: services/js_i18n_strings.py:644
+#: services/js_i18n_strings.py:672
 msgid "No folders yet."
 msgstr "Awekho amafolda okwamanje."
 
-#: services/js_i18n_strings.py:645
+#: services/js_i18n_strings.py:673
 msgid "No log files in this category"
 msgstr "Awekho amafayela elogi kulesi sigaba"
 
-#: services/js_i18n_strings.py:646
+#: services/js_i18n_strings.py:674
 msgid "No log lines match current filters"
 msgstr "Ayikho imigqa yelogi ehambisana nezihlungi zamanje"
 
-#: services/js_i18n_strings.py:647
+#: services/js_i18n_strings.py:675
 msgid "No mappings yet. Add an emulator folder above."
 msgstr "Akukho ukuxhumanisa okwamanje. Engeza ifolda ye-emulator ngenhla."
 
-#: services/js_i18n_strings.py:648
+#: services/js_i18n_strings.py:676
 msgid "No matching games on this system."
 msgstr "Ayikho imidlalo efanayo kule sistimu."
 
-#: services/js_i18n_strings.py:649
+#: services/js_i18n_strings.py:677
 msgid "No missing ROM files found."
 msgstr "Awekho amafayela e-ROM angekho atholakele."
 
-#: services/js_i18n_strings.py:650
+#: services/js_i18n_strings.py:678
 msgid "No options available"
 msgstr "Azikho izinketho ezitholakalayo"
 
-#: services/js_i18n_strings.py:651
+#: services/js_i18n_strings.py:679
 msgid "No ratings available"
 msgstr "Azikho izilinganiso ezitholakalayo"
 
-#: services/js_i18n_strings.py:652
+#: services/js_i18n_strings.py:680
 msgid "No results"
 msgstr "Ayikho imiphumela"
 
-#: services/js_i18n_strings.py:653
+#: services/js_i18n_strings.py:681
 msgid "No results found"
 msgstr "Ayikho imiphumela etholakele"
 
-#: services/js_i18n_strings.py:654
+#: services/js_i18n_strings.py:682
 msgid "No results found on HowLongToBeat"
 msgstr "Ayikho imiphumela etholakele ku-HowLongToBeat"
 
-#: services/js_i18n_strings.py:655
+#: services/js_i18n_strings.py:683
 msgid "No sessions match current filters"
 msgstr "Ayikho imihlangano ehambisana nezihlungi zamanje"
 
-#: services/js_i18n_strings.py:656
+#: services/js_i18n_strings.py:684
 msgid "No suggestions. Run Backfill Alternate Titles in Maintenance to find more."
 msgstr ""
 "Azikho iziphakamiso. Qalisa i-Gcwalisa Izihloko Ezinye ku-Ukunakekela "
 "ukuze uthole ezengeziwe."
 
-#: services/js_i18n_strings.py:657
+#: services/js_i18n_strings.py:685 templates/game_detail.html:814
+msgid "None"
+msgstr "Lutho"
+
+#: services/js_i18n_strings.py:686
 #, python-brace-format
 msgid "Normalization applied: {games} games updated, {rules} rules saved"
 msgstr ""
 "Ukulinganisa kusetshenzisiwe: {games} imidlalo ibuyekeziwe, {rules} "
 "imithetho ilondoloziwe"
 
-#: services/js_i18n_strings.py:658
+#: services/js_i18n_strings.py:687
 msgid "Not versions"
 msgstr "Akuzona izinguqulo"
 
-#: services/js_i18n_strings.py:659 templates/base.html:1364
+#: services/js_i18n_strings.py:688 templates/base.html:1364
 msgid "Now playing"
 msgstr "Kudlalwa manje"
 
-#: services/js_i18n_strings.py:660 templates/base.html:307
+#: services/js_i18n_strings.py:689 templates/base.html:307
 msgid "OK"
 msgstr "KULUNGILE"
 
-#: services/js_i18n_strings.py:661
+#: services/js_i18n_strings.py:690
+msgid "Off"
+msgstr "Kuvaliwe"
+
+#: services/js_i18n_strings.py:691
+msgid "On"
+msgstr "Kuvuliwe"
+
+#: services/js_i18n_strings.py:692
 msgid "Operation completed"
 msgstr "Umsebenzi uqediwe"
 
-#: services/js_i18n_strings.py:662
+#: services/js_i18n_strings.py:693
 msgid "Operation failed"
 msgstr "Umsebenzi wehlulekile"
 
-#: services/js_i18n_strings.py:663
+#: services/js_i18n_strings.py:694
 msgid "Other"
 msgstr "Okunye"
 
-#: services/js_i18n_strings.py:664
+#: services/js_i18n_strings.py:695
 msgid "PSN Imports"
 msgstr "Okungeniswe kwe-PSN"
 
-#: services/js_i18n_strings.py:665
+#: services/js_i18n_strings.py:696
 msgid "Page:"
 msgstr "Ikhasi:"
 
-#: services/js_i18n_strings.py:666
+#: services/js_i18n_strings.py:697
 msgid "Part of a Series"
 msgstr "Ingxenye Yochungechunge"
 
-#: services/js_i18n_strings.py:667 templates/_bulk_scrape_modal.html:46
+#: services/js_i18n_strings.py:698 templates/_bulk_scrape_modal.html:46
 #: templates/archive_scanner.html:658 templates/archive_scanner.html:795
 #: templates/psn_trophies.html:294
 msgid "Pause"
 msgstr "Misa"
 
-#: services/js_i18n_strings.py:668
+#: services/js_i18n_strings.py:699
 msgid "Paused - Click Resume to continue"
 msgstr "Kumisiwe - Chofoza Qhubeka ukuze uqhubeke"
 
-#: services/js_i18n_strings.py:669
+#: services/js_i18n_strings.py:700
 msgid "Platform not found"
 msgstr "Ipulatifomu ayitholakali"
 
-#: services/js_i18n_strings.py:670 templates/game_detail.html:85
+#: services/js_i18n_strings.py:701 templates/game_detail.html:85
 msgid "Play"
 msgstr "Dlala"
 
-#: services/js_i18n_strings.py:671 templates/_bulk_edit_modal.html:28
+#: services/js_i18n_strings.py:702 templates/_bulk_edit_modal.html:28
 #: templates/analytics.html:1664 templates/base.html:980
 #: templates/dashboard.html:471 templates/game_detail.html:221
 msgid "Played"
 msgstr "Kudlaliwe"
 
-#: services/js_i18n_strings.py:672
+#: services/js_i18n_strings.py:703
 msgid "Please change at least one field before applying."
 msgstr "Sicela ushintshe okungenani inkambu eyodwa ngaphambi kokusebenzisa."
 
-#: services/js_i18n_strings.py:673
+#: services/js_i18n_strings.py:704
 msgid "Please enter a game title"
 msgstr "Sicela ufake isihloko somdlalo"
 
-#: services/js_i18n_strings.py:674
+#: services/js_i18n_strings.py:705
 msgid "Please select at least one game to edit."
 msgstr "Sicela ukhethe okungenani umdlalo owodwa ozowuhlela."
 
-#: services/js_i18n_strings.py:675
+#: services/js_i18n_strings.py:706
 msgid "Please select at least one game to scrape."
 msgstr "Sicela ukhethe okungenani umdlalo owodwa ozowuscrapha."
 
-#: services/js_i18n_strings.py:676
+#: services/js_i18n_strings.py:707
 msgid "Pre-session log entries"
 msgstr "Amafakwe elogi angaphambi kwesikhathi somsebenzi"
 
-#: services/js_i18n_strings.py:677
+#: services/js_i18n_strings.py:708
 msgid "Processing images…"
 msgstr "Kucutshungulwa izithombe…"
 
-#: services/js_i18n_strings.py:678 templates/game_imports.html:418
+#: services/js_i18n_strings.py:709 templates/game_imports.html:418
 msgid "Processing..."
 msgstr "Iyacubungula..."
 
-#: services/js_i18n_strings.py:679
+#: services/js_i18n_strings.py:710
 #, python-brace-format
 msgid "Processing: {file}"
 msgstr "Iyacubungula: {file}"
 
-#: services/js_i18n_strings.py:680
+#: services/js_i18n_strings.py:711
 msgid "Queued"
 msgstr "Kusekulayini"
 
-#: services/js_i18n_strings.py:681
+#: services/js_i18n_strings.py:712
 msgid "RA Data Cleared"
 msgstr "Idatha ye-RA Isuliwe"
 
-#: services/js_i18n_strings.py:682
+#: services/js_i18n_strings.py:713
 msgid "ROM Files"
 msgstr "Amafayela e-ROM"
 
-#: services/js_i18n_strings.py:683 templates/_macros/nav_tabs.html:34
+#: services/js_i18n_strings.py:714 templates/_macros/nav_tabs.html:34
 #: templates/archive_scanner.html:561 templates/base.html:144
 #: templates/chd_converter.html:64 templates/chd_verify.html:80
 #: templates/duplicate_finder.html:166 templates/logs.html:713
@@ -2664,373 +2753,381 @@ msgstr "Amafayela e-ROM"
 msgid "ROM Tools"
 msgstr "Amathuluzi e-ROM"
 
-#: services/js_i18n_strings.py:684
+#: services/js_i18n_strings.py:715
 msgid "Ready"
 msgstr "Kulungile"
 
-#: services/js_i18n_strings.py:685
+#: services/js_i18n_strings.py:716
 msgid "Refresh RetroAchievements"
 msgstr "Vuselela i-RetroAchievements"
 
-#: services/js_i18n_strings.py:686
+#: services/js_i18n_strings.py:717
 #, python-brace-format
 msgid "Refresh: {system}"
 msgstr "Vuselela: {system}"
 
-#: services/js_i18n_strings.py:687
+#: services/js_i18n_strings.py:718
 #, python-brace-format
 msgid "Refreshing RA for {system}..."
 msgstr "Iyavuselela i-RA ye-{system}..."
 
-#: services/js_i18n_strings.py:688
+#: services/js_i18n_strings.py:719
 msgid "Regional name matches"
 msgstr "Amagama esifunda afanayo"
 
-#: services/js_i18n_strings.py:689 templates/compare_games.html:24
+#: services/js_i18n_strings.py:720 templates/compare_games.html:24
 #: templates/compare_games.html:40
 msgid "Remove"
 msgstr "Susa"
 
-#: services/js_i18n_strings.py:690
+#: services/js_i18n_strings.py:721
 msgid "Remove background from the uploaded image?"
 msgstr "Susa isizinda esithombeni esilayishiwe?"
 
-#: services/js_i18n_strings.py:691
+#: services/js_i18n_strings.py:722
 msgid "Remove from queue"
 msgstr "Susa kulayini"
 
-#: services/js_i18n_strings.py:692
+#: services/js_i18n_strings.py:723
 #, python-brace-format
 msgid "Removed {n} CLZ Import games"
 msgstr "Kususwe imidlalo yokungenisa kwe-CLZ engu-{n}"
 
-#: services/js_i18n_strings.py:693
+#: services/js_i18n_strings.py:724
 #, python-brace-format
 msgid "Removed {n} CLZ Import games:"
 msgstr "Kususwe imidlalo yokungenisa kwe-CLZ engu-{n}:"
 
-#: services/js_i18n_strings.py:694
+#: services/js_i18n_strings.py:725
 #, python-brace-format
 msgid "Removed {n} games with missing ROMs"
 msgstr "Kususwe imidlalo engu-{n} enama-ROM angekho"
 
-#: services/js_i18n_strings.py:695
+#: services/js_i18n_strings.py:726
 #, python-brace-format
 msgid "Removed {n} games:"
 msgstr "Kususwe imidlalo engu-{n}:"
 
-#: services/js_i18n_strings.py:696
+#: services/js_i18n_strings.py:727
 msgid "Removing background…"
 msgstr "Iyasusa isizinda…"
 
-#: services/js_i18n_strings.py:697
+#: services/js_i18n_strings.py:728
 msgid "Removing..."
 msgstr "Iyasusa..."
 
-#: services/js_i18n_strings.py:698 templates/_bulk_edit_modal.html:42
+#: services/js_i18n_strings.py:729 templates/_bulk_edit_modal.html:42
 #: templates/_bulk_edit_modal.html:56 templates/_bulk_edit_modal.html:70
 #: templates/_bulk_edit_modal.html:124 templates/_bulk_edit_modal.html:140
 #: templates/_bulk_edit_modal.html:156 templates/_bulk_edit_modal.html:180
 msgid "Replace"
 msgstr "Faka esikhundleni"
 
-#: services/js_i18n_strings.py:699 templates/logs.html:716
+#: services/js_i18n_strings.py:730 templates/logs.html:716
 msgid "Reports"
 msgstr "Imibiko"
 
-#: services/js_i18n_strings.py:700
+#: services/js_i18n_strings.py:731
 msgid "Resolution scale"
 msgstr "Isikali sokulungeka"
 
-#: services/js_i18n_strings.py:701
+#: services/js_i18n_strings.py:732
 msgid "Restarting server..."
 msgstr "Iyaqalisa kabusha iseva..."
 
-#: services/js_i18n_strings.py:702
+#: services/js_i18n_strings.py:733
 msgid "Resume"
 msgstr "Qhubeka"
 
-#: services/js_i18n_strings.py:703
+#: services/js_i18n_strings.py:734
 msgid "RetroDB default"
 msgstr "Okuzenzakalelayo kwe-RetroDB"
 
-#: services/js_i18n_strings.py:704
+#: services/js_i18n_strings.py:735
+msgid "Run-ahead, 1 frame"
+msgstr "Run-ahead, ifreyimu engu-1"
+
+#: services/js_i18n_strings.py:736
 msgid "Running"
 msgstr "Iyasebenza"
 
-#: services/js_i18n_strings.py:705
+#: services/js_i18n_strings.py:737
 msgid "Running..."
 msgstr "Iyasebenza..."
 
-#: services/js_i18n_strings.py:706
+#: services/js_i18n_strings.py:738
 msgid "Same IGDB game"
 msgstr "Umdlalo ofanayo we-IGDB"
 
-#: services/js_i18n_strings.py:707
+#: services/js_i18n_strings.py:739
 msgid "Same ScreenScraper game"
 msgstr "Umdlalo ofanayo we-ScreenScraper"
 
-#: services/js_i18n_strings.py:708
+#: services/js_i18n_strings.py:740
 msgid "Same title, different region"
 msgstr "Isihloko esifanayo, isifunda esihlukile"
 
-#: services/js_i18n_strings.py:709
+#: services/js_i18n_strings.py:741
 msgid "Save Failed"
 msgstr "Ukulondoloza Kwehlulekile"
 
-#: services/js_i18n_strings.py:710
+#: services/js_i18n_strings.py:742
 #, python-brace-format
 msgid "Save failed: {error}"
 msgstr "Ukulondoloza kwehlulekile: {error}"
 
-#: services/js_i18n_strings.py:711
+#: services/js_i18n_strings.py:743
 msgid "Saved"
 msgstr "Kulondoloziwe"
 
-#: services/js_i18n_strings.py:712
+#: services/js_i18n_strings.py:744
 msgid "Saved."
 msgstr "Kulondoloziwe."
 
-#: services/js_i18n_strings.py:713
+#: services/js_i18n_strings.py:745
 msgid "Saved. It applies the next time you press Play."
 msgstr "Kulondoloziwe. Kuzosebenza ngokulandelayo uma ucindezela u-Dlala."
 
-#: services/js_i18n_strings.py:714
+#: services/js_i18n_strings.py:746
 msgid "Saving to the database…"
 msgstr "Kulondolozwa kudathabheyisi…"
 
-#: services/js_i18n_strings.py:715
+#: services/js_i18n_strings.py:747
 msgid "Saving..."
 msgstr "Iyalondoloza..."
 
-#: services/js_i18n_strings.py:716
+#: services/js_i18n_strings.py:748
 msgid "Saving…"
 msgstr "Iyalondoloza…"
 
-#: services/js_i18n_strings.py:717
+#: services/js_i18n_strings.py:749
 #, python-brace-format
 msgid "Scan failed (HTTP {status})"
 msgstr "Ukuskena kwehlulekile (HTTP {status})"
 
-#: services/js_i18n_strings.py:718
+#: services/js_i18n_strings.py:750
 #, python-brace-format
 msgid "Scan failed: {error}"
 msgstr "Ukuskena kwehlulekile: {error}"
 
-#: services/js_i18n_strings.py:719
+#: services/js_i18n_strings.py:751
 #, python-brace-format
 msgid "Scanned {paths} paths · found {found} matches."
 msgstr "Kuskenwe izindlela ezingu-{paths} · kutholwe ezifanayo ezingu-{found}."
 
-#: services/js_i18n_strings.py:720 templates/multi_disc_organizer.html:204
+#: services/js_i18n_strings.py:752 templates/multi_disc_organizer.html:204
 msgid "Scanning..."
 msgstr "Iyaskena..."
 
-#: services/js_i18n_strings.py:721
+#: services/js_i18n_strings.py:753
 msgid "Scanning…"
 msgstr "Iyaskena…"
 
-#: services/js_i18n_strings.py:722
+#: services/js_i18n_strings.py:754
 msgid "Scrape game"
 msgstr "Scrapha umdlalo"
 
-#: services/js_i18n_strings.py:723
+#: services/js_i18n_strings.py:755
 #, python-brace-format
 msgid "Scraped 0/{total} - 0%"
 msgstr "Kuscraphiwe 0/{total} - 0%"
 
-#: services/js_i18n_strings.py:724
+#: services/js_i18n_strings.py:756
 #, python-brace-format
 msgid "Scraped {processed} / {total} - {percent}%"
 msgstr "Kuscraphiwe {processed} / {total} - {percent}%"
 
-#: services/js_i18n_strings.py:725 templates/logs.html:710
+#: services/js_i18n_strings.py:757 templates/logs.html:710
 #: templates/wishlist.html:507
 msgid "Scraping"
 msgstr "Iyascrapha"
 
-#: services/js_i18n_strings.py:726 templates/logs.html:781
+#: services/js_i18n_strings.py:758
+msgid "Screen effect"
+msgstr "Umphumela wesikrini"
+
+#: services/js_i18n_strings.py:759 templates/logs.html:781
 #: templates/museum_system.html:197 templates/museum_system.html:204
 #: templates/psn_trophy_detail.html:320
 msgid "Search"
 msgstr "Sesha"
 
-#: services/js_i18n_strings.py:727
+#: services/js_i18n_strings.py:760
 msgid "Search failed."
 msgstr "Ukusesha kwehlulekile."
 
-#: services/js_i18n_strings.py:728
+#: services/js_i18n_strings.py:761
 msgid "Searching & removing background..."
 msgstr "Iyasesha futhi isusa isizinda..."
 
-#: services/js_i18n_strings.py:729
+#: services/js_i18n_strings.py:762
 #, python-brace-format
 msgid "Searching {source}…"
 msgstr "Kuseshwa ku-{source}…"
 
-#: services/js_i18n_strings.py:730 templates/all_games.html:62
+#: services/js_i18n_strings.py:763 templates/all_games.html:62
 #: templates/psn_trophies.html:160 templates/system_games.html:53
 msgid "Select"
 msgstr "Khetha"
 
-#: services/js_i18n_strings.py:731
+#: services/js_i18n_strings.py:764
 msgid "Select Developer"
 msgstr "Khetha Umqambi"
 
-#: services/js_i18n_strings.py:732
+#: services/js_i18n_strings.py:765
 msgid "Select Dimension"
 msgstr "Khetha Ubukhulu"
 
-#: services/js_i18n_strings.py:733
+#: services/js_i18n_strings.py:766
 #: templates/_modals/select_filter_modal.html:15
 msgid "Select Filter"
 msgstr "Khetha Isihlungi"
 
-#: services/js_i18n_strings.py:734
+#: services/js_i18n_strings.py:767
 msgid "Select Genre"
 msgstr "Khetha Uhlobo"
 
-#: services/js_i18n_strings.py:735
+#: services/js_i18n_strings.py:768
 msgid "Select Perspective"
 msgstr "Khetha Umbono"
 
-#: services/js_i18n_strings.py:736
+#: services/js_i18n_strings.py:769
 msgid "Select Play Mode"
 msgstr "Khetha Imodi Yokudlala"
 
-#: services/js_i18n_strings.py:737
+#: services/js_i18n_strings.py:770
 msgid "Select Publisher"
 msgstr "Khetha Umshicileli"
 
-#: services/js_i18n_strings.py:738
+#: services/js_i18n_strings.py:771
 msgid "Select Rating"
 msgstr "Khetha Isilinganiso"
 
-#: services/js_i18n_strings.py:739
+#: services/js_i18n_strings.py:772
 msgid "Select Series"
 msgstr "Khetha Uchungechunge"
 
-#: services/js_i18n_strings.py:740
+#: services/js_i18n_strings.py:773
 msgid "Select Source"
 msgstr "Khetha Umthombo"
 
-#: services/js_i18n_strings.py:741
+#: services/js_i18n_strings.py:774
 #, python-brace-format
 msgid "Selected {count} games across all pages"
 msgstr "Kukhethwe imidlalo engu-{count} kuwo wonke amakhasi"
 
-#: services/js_i18n_strings.py:742
+#: services/js_i18n_strings.py:775
 #, python-brace-format
 msgid "Selected {count} unscraped games across all pages"
 msgstr "Kukhethwe imidlalo engu-{count} engascraphiwe kuwo wonke amakhasi"
 
-#: services/js_i18n_strings.py:743
+#: services/js_i18n_strings.py:776
 msgid "Server restarted successfully!"
 msgstr "Iseva iqaliswe kabusha ngempumelelo!"
 
-#: services/js_i18n_strings.py:744
+#: services/js_i18n_strings.py:777
 msgid "Server stopped. You can close this tab."
 msgstr "Iseva imisiwe. Ungavala le thebhu."
 
-#: services/js_i18n_strings.py:745
+#: services/js_i18n_strings.py:778
 msgid "Set for this game"
 msgstr "Kusethelwe lo mdlalo"
 
-#: services/js_i18n_strings.py:746
+#: services/js_i18n_strings.py:779
 msgid "Set inside the emulator; RetroDB leaves it alone"
 msgstr "Kusethwa ngaphakathi ku-emulator; i-RetroDB ayikuthinti"
 
-#: services/js_i18n_strings.py:747
+#: services/js_i18n_strings.py:780
 msgid "Set per system, in Settings > Emulators"
 msgstr "Kusethwa ngesistimu ngayinye, ku-Izilungiselelo > Ama-emulator"
 
-#: services/js_i18n_strings.py:748 templates/_macros/nav_tabs.html:43
+#: services/js_i18n_strings.py:781 templates/_macros/nav_tabs.html:43
 #: templates/base.html:156 templates/rom_tools_hub.html:119
 #: templates/settings.html:5 templates/settings.html:12
 #: templates/settings_emulators.html:4
 msgid "Settings"
 msgstr "Izilungiselelo"
 
-#: services/js_i18n_strings.py:749 templates/all_games.html:125
+#: services/js_i18n_strings.py:782 templates/all_games.html:125
 #: templates/system_games.html:116
 msgid "Show Bonus"
 msgstr "Bonisa Ibhonasi"
 
-#: services/js_i18n_strings.py:750
+#: services/js_i18n_strings.py:783
 msgid "Show keyboard shortcuts"
 msgstr "Bonisa izindlela ezisheshayo zekhibhodi"
 
-#: services/js_i18n_strings.py:751
+#: services/js_i18n_strings.py:784
 msgid "Showing Bonus Discs"
 msgstr "Ibonisa Amadiski Ebhonasi"
 
-#: services/js_i18n_strings.py:752
+#: services/js_i18n_strings.py:785
 msgid "Shutting down server..."
 msgstr "Ivala iseva..."
 
-#: services/js_i18n_strings.py:753 templates/_modals/edit_modal.html:46
+#: services/js_i18n_strings.py:786 templates/_modals/edit_modal.html:46
 #: templates/base.html:1062
 msgid "Standalone"
 msgstr "Ezimele"
 
-#: services/js_i18n_strings.py:754
+#: services/js_i18n_strings.py:787
 msgid "Starting..."
 msgstr "Iyaqala..."
 
-#: services/js_i18n_strings.py:755
+#: services/js_i18n_strings.py:788
 msgid "Starting…"
 msgstr "Kuyaqalwa…"
 
-#: services/js_i18n_strings.py:756
+#: services/js_i18n_strings.py:789
 msgid "Steam Imports"
 msgstr "Okungeniswe kwe-Steam"
 
-#: services/js_i18n_strings.py:757
+#: services/js_i18n_strings.py:790
 #, python-brace-format
 msgid "Successfully updated {count} games"
 msgstr "Kubuyekezwe ngempumelelo imidlalo engu-{count}"
 
-#: services/js_i18n_strings.py:758
+#: services/js_i18n_strings.py:791
 msgid "Summary written."
 msgstr "Isifinyezo sibhaliwe."
 
-#: services/js_i18n_strings.py:759
+#: services/js_i18n_strings.py:792
 msgid "Sync In Progress"
 msgstr "Ukuvumelanisa Kuyaqhubeka"
 
-#: services/js_i18n_strings.py:760 templates/achievements_system.html:105
+#: services/js_i18n_strings.py:793 templates/achievements_system.html:105
 msgid "Sync Progress"
 msgstr "Inqubekela Phambili Yokuvumelanisa"
 
-#: services/js_i18n_strings.py:761
+#: services/js_i18n_strings.py:794
 msgid "Sync Queued"
 msgstr "Ukuvumelanisa Kusekulayini"
 
-#: services/js_i18n_strings.py:762
+#: services/js_i18n_strings.py:795
 msgid "Sync complete! Refresh page to see updated progress."
 msgstr ""
 "Ukuvumelanisa kuqedile! Vuselela ikhasi ukuze ubone inqubekela phambili "
 "ebuyekeziwe."
 
-#: services/js_i18n_strings.py:763
+#: services/js_i18n_strings.py:796
 msgid "Sync failed"
 msgstr "Ukuvumelanisa kwehlulekile"
 
-#: services/js_i18n_strings.py:764
+#: services/js_i18n_strings.py:797
 #, python-brace-format
 msgid "Sync: {system}"
 msgstr "Vumelanisa: {system}"
 
-#: services/js_i18n_strings.py:765
+#: services/js_i18n_strings.py:798
 msgid "Syncing..."
 msgstr "Iyavumelanisa..."
 
-#: services/js_i18n_strings.py:766
+#: services/js_i18n_strings.py:799
 #, python-brace-format
 msgid "Syncing: {processed} / {total}"
 msgstr "Iyavumelanisa: {processed} / {total}"
 
-#: services/js_i18n_strings.py:767
+#: services/js_i18n_strings.py:800
 #: templates/_settings_tabs/customization.html:299
 #: templates/achievement_game.html:228 templates/analytics.html:569
 #: templates/analytics.html:603 templates/compare_games.html:69
@@ -3044,7 +3141,7 @@ msgstr "Iyavumelanisa: {processed} / {total}"
 msgid "System"
 msgstr "Isistimu"
 
-#: services/js_i18n_strings.py:768
+#: services/js_i18n_strings.py:801
 #: templates/_settings_tabs/customization.html:153
 #: templates/_settings_tabs/customization.html:234
 #: templates/_settings_tabs/data.html:19 templates/achievements_system.html:49
@@ -3053,15 +3150,19 @@ msgstr "Isistimu"
 msgid "Systems"
 msgstr "Izistimu"
 
-#: services/js_i18n_strings.py:769
+#: services/js_i18n_strings.py:802
+msgid "The core installed but the game still cannot start."
+msgstr "I-core ifakiwe kodwa umdlalo usengakwazi ukuqala."
+
+#: services/js_i18n_strings.py:803
 msgid "This game is already running.  Kill the existing process and relaunch?"
 msgstr "Lo mdlalo usuvele uyasebenza.  Bulala inqubo ekhona bese uqalisa kabusha?"
 
-#: services/js_i18n_strings.py:770
+#: services/js_i18n_strings.py:804
 msgid "This system is already being synced."
 msgstr "Le sistimu isivele iyavumelaniswa."
 
-#: services/js_i18n_strings.py:771
+#: services/js_i18n_strings.py:805
 msgid ""
 "This will clear ALL RetroAchievements game IDs and progress data from "
 "your database. You will need to run \"Refresh RetroAchievements\" again "
@@ -3072,7 +3173,7 @@ msgstr ""
 "i-RetroAchievements\" futhi ngemva kwalokho ukuze uphinde uskene imidlalo"
 " yakho. Uqhubeke?"
 
-#: services/js_i18n_strings.py:772
+#: services/js_i18n_strings.py:806
 #, python-brace-format
 msgid ""
 "This will clear RetroAchievements game IDs and progress data for "
@@ -3081,12 +3182,12 @@ msgstr ""
 "Lokhu kuzosusa ama-ID emidlalo ye-RetroAchievements nedatha yenqubekela "
 "phambili ye-\"{system}\". Uqhubeke?"
 
-#: services/js_i18n_strings.py:773
+#: services/js_i18n_strings.py:807
 #, python-brace-format
 msgid "This will remove \"{system}\" from the Achievements page. Continue?"
 msgstr "Lokhu kuzosusa \"{system}\" ekhasini Lezimpumelelo. Uqhubeke?"
 
-#: services/js_i18n_strings.py:774
+#: services/js_i18n_strings.py:808
 msgid ""
 "This will remove ALL games imported via CLZ Games Import from the "
 "database. This cannot be undone. Continue?"
@@ -3094,7 +3195,7 @@ msgstr ""
 "Lokhu kuzosusa YONKE imidlalo engeniswe nge-CLZ Games Import ku-database."
 " Lokhu akukwazi ukuhlehliswa. Uqhubeke?"
 
-#: services/js_i18n_strings.py:775
+#: services/js_i18n_strings.py:809
 msgid ""
 "This will remove database entries for ROM files that no longer exist on "
 "disk. This cannot be undone. Continue?"
@@ -3102,7 +3203,7 @@ msgstr ""
 "Lokhu kuzosusa amafakwe e-database wamafayela e-ROM angasekho kudiski. "
 "Lokhu akukwazi ukuhlehliswa. Uqhubeke?"
 
-#: services/js_i18n_strings.py:776
+#: services/js_i18n_strings.py:810
 msgid ""
 "This will scan all games and update their RetroAchievements status. This "
 "may take several minutes for large collections. Continue?"
@@ -3111,7 +3212,7 @@ msgstr ""
 "RetroAchievements. Lokhu kungathatha imizuzu embalwa kumaqoqo amakhulu. "
 "Uqhubeke?"
 
-#: services/js_i18n_strings.py:777
+#: services/js_i18n_strings.py:811
 msgid ""
 "This will search for and download images for all controllers without "
 "images. Continue?"
@@ -3119,7 +3220,7 @@ msgstr ""
 "Lokhu kuzosesha bese kulanda izithombe zazo zonke izilawuli "
 "ezingenazithombe. Uqhubeke?"
 
-#: services/js_i18n_strings.py:778
+#: services/js_i18n_strings.py:812
 msgid ""
 "This will use your configured AI provider to generate history and top "
 "games for all systems. This may take several minutes and use API credits."
@@ -3129,45 +3230,45 @@ msgstr ""
 " umlando nemidlalo ephezulu yazo zonke izistimu. Lokhu kungathatha "
 "imizuzu embalwa futhi kusebenzise ama-API credits. Uqhubeke?"
 
-#: services/js_i18n_strings.py:779
+#: services/js_i18n_strings.py:813
 msgid "Tick at least two games."
 msgstr "Maka okungenani imidlalo emibili."
 
-#: services/js_i18n_strings.py:780 templates/logs.html:745
+#: services/js_i18n_strings.py:814 templates/logs.html:745
 msgid "To"
 msgstr "Kuya"
 
-#: services/js_i18n_strings.py:781
+#: services/js_i18n_strings.py:815
 msgid "Try adjusting your search or filters"
 msgstr "Zama ukushintsha usesho lwakho noma izihlungi"
 
-#: services/js_i18n_strings.py:782
+#: services/js_i18n_strings.py:816
 msgid "Unexpected error"
 msgstr "Iphutha elingalindelekile"
 
-#: services/js_i18n_strings.py:783
+#: services/js_i18n_strings.py:817
 msgid "Unhandled rejection"
 msgstr "Ukwenqatshwa okungaphathwanga"
 
-#: services/js_i18n_strings.py:784 templates/analytics.html:583
+#: services/js_i18n_strings.py:818 templates/analytics.html:583
 #: templates/base.html:1162 templates/local_trophy_detail.html:220
 #: templates/local_trophy_detail.html:224
 msgid "Unknown"
 msgstr "Akwaziwa"
 
-#: services/js_i18n_strings.py:785
+#: services/js_i18n_strings.py:819
 msgid "Unknown error"
 msgstr "Iphutha elingaziwa"
 
-#: services/js_i18n_strings.py:786
+#: services/js_i18n_strings.py:820
 msgid "Unknown error occurred."
 msgstr "Kwenzeke iphutha elingaziwa."
 
-#: services/js_i18n_strings.py:787
+#: services/js_i18n_strings.py:821
 msgid "Update Failed"
 msgstr "Ukubuyekeza Kwehlulekile"
 
-#: services/js_i18n_strings.py:788
+#: services/js_i18n_strings.py:822
 #, python-brace-format
 msgid ""
 "Update {count} game(s)?\n"
@@ -3178,36 +3279,36 @@ msgstr ""
 "\n"
 "Izinkambu: {fields}"
 
-#: services/js_i18n_strings.py:789 templates/museum_system.html:198
+#: services/js_i18n_strings.py:823 templates/museum_system.html:198
 #: templates/museum_system.html:205
 msgid "Upload"
 msgstr "Layisha"
 
-#: services/js_i18n_strings.py:790
+#: services/js_i18n_strings.py:824
 msgid "Upload Controller Image"
 msgstr "Layisha Isithombe Sesilawuli"
 
-#: services/js_i18n_strings.py:791
+#: services/js_i18n_strings.py:825
 msgid "Upload failed"
 msgstr "Ukulayisha kwehlulekile"
 
-#: services/js_i18n_strings.py:792
+#: services/js_i18n_strings.py:826
 msgid "Upload replacement image"
 msgstr "Layisha isithombe esizongena esikhundleni"
 
-#: services/js_i18n_strings.py:793
+#: services/js_i18n_strings.py:827
 msgid "Uploading & removing background…"
 msgstr "Iyalayisha futhi isusa isizinda…"
 
-#: services/js_i18n_strings.py:794
+#: services/js_i18n_strings.py:828
 msgid "Uploading…"
 msgstr "Iyalayisha…"
 
-#: services/js_i18n_strings.py:795
+#: services/js_i18n_strings.py:829
 msgid "Use the system setting"
 msgstr "Sebenzisa isilungiselelo sesistimu"
 
-#: services/js_i18n_strings.py:796
+#: services/js_i18n_strings.py:830
 #, python-brace-format
 msgid ""
 "Used for every {system} game unless the game sets its own. Applied when "
@@ -3216,37 +3317,37 @@ msgstr ""
 "Kusetshenziselwa wonke umdlalo we-{system} ngaphandle uma umdlalo usethe "
 "owawo. Kusetshenziswa uma ucindezela u-Dlala."
 
-#: services/js_i18n_strings.py:797
+#: services/js_i18n_strings.py:831
 msgid "Version unlinked."
 msgstr "Inguqulo ayisaxhunyiwe."
 
-#: services/js_i18n_strings.py:798
+#: services/js_i18n_strings.py:832
 msgid "Versions linked."
 msgstr "Izinguqulo zixhunyiwe."
 
-#: services/js_i18n_strings.py:799
+#: services/js_i18n_strings.py:833
 msgid "Will change?"
 msgstr "Kuzoshintsha?"
 
-#: services/js_i18n_strings.py:800
+#: services/js_i18n_strings.py:834
 msgid "Works"
 msgstr "Iyasebenza"
 
-#: services/js_i18n_strings.py:801 templates/game_detail.html:755
+#: services/js_i18n_strings.py:835 templates/game_detail.html:755
 msgid "Write again with AI"
 msgstr "Bhala futhi nge-AI"
 
-#: services/js_i18n_strings.py:802
+#: services/js_i18n_strings.py:836
 msgid "Xbox Imports"
 msgstr "Okungeniswe kwe-Xbox"
 
-#: services/js_i18n_strings.py:803 templates/_bulk_edit_modal.html:170
+#: services/js_i18n_strings.py:837 templates/_bulk_edit_modal.html:170
 #: templates/_modals/edit_modal.html:139 templates/game_detail.html:609
 #: templates/game_detail.html:666 templates/game_detail.html:734
 msgid "Yes"
 msgstr "Yebo"
 
-#: services/js_i18n_strings.py:804
+#: services/js_i18n_strings.py:838
 #, python-brace-format
 msgid ""
 "Your bulk scrape has been queued (position {position}). It will start "
@@ -3255,163 +3356,163 @@ msgstr ""
 "I-scrape yakho eyisixuku ifakwe kulayini (isikhundla {position}). Izoqala"
 " ngokuzenzakalela lapho i-scrape yamanje iqeda."
 
-#: services/js_i18n_strings.py:805
+#: services/js_i18n_strings.py:839
 msgid "found"
 msgstr "kutholakele"
 
-#: services/js_i18n_strings.py:806
+#: services/js_i18n_strings.py:840
 msgid "in queue"
 msgstr "kusekulayini"
 
-#: services/js_i18n_strings.py:807
+#: services/js_i18n_strings.py:841
 msgid "system"
 msgstr "isistimu"
 
-#: services/js_i18n_strings.py:808
+#: services/js_i18n_strings.py:842
 #, python-brace-format
 msgid "{confidence}% match"
 msgstr "{confidence}% kuyafana"
 
-#: services/js_i18n_strings.py:809
+#: services/js_i18n_strings.py:843
 #, python-brace-format
 msgid "{count} Achievements"
 msgstr "{count} Izimpumelelo"
 
-#: services/js_i18n_strings.py:810
+#: services/js_i18n_strings.py:844
 #, python-brace-format
 msgid "{count} regional versions"
 msgstr "Izinguqulo zezifunda ezingu-{count}"
 
-#: services/js_i18n_strings.py:811
+#: services/js_i18n_strings.py:845
 #, python-brace-format
 msgid "{count} suggested groups. Untick any game that does not belong, then link."
 msgstr ""
 "Amaqembu aphakanyisiwe angu-{count}. Susa uphawu kunoma yimuphi umdlalo "
 "ongangeni, bese uxhuma."
 
-#: services/js_i18n_strings.py:812
+#: services/js_i18n_strings.py:846
 #, python-brace-format
 msgid "{fetched} fetched, {skipped} skipped, {failed} failed"
 msgstr "{fetched} kulandiwe, {skipped} kweqiwe, {failed} kwehlulekile"
 
-#: services/js_i18n_strings.py:813
+#: services/js_i18n_strings.py:847
 #, python-brace-format
 msgid "{job} Queued (#{position})"
 msgstr "{job} Kusekulayini (#{position})"
 
-#: services/js_i18n_strings.py:814
+#: services/js_i18n_strings.py:848
 #, python-brace-format
 msgid "{job} cancelled"
 msgstr "{job} kukhanseliwe"
 
-#: services/js_i18n_strings.py:815
+#: services/js_i18n_strings.py:849
 #, python-brace-format
 msgid "{job} completed ({n} processed)"
 msgstr "{job} kuqediwe ({n} kucutshunguliwe)"
 
-#: services/js_i18n_strings.py:816
+#: services/js_i18n_strings.py:850
 #, python-brace-format
 msgid "{job} failed: {error}"
 msgstr "{job} kwehlulekile: {error}"
 
-#: services/js_i18n_strings.py:817
+#: services/js_i18n_strings.py:851
 #, python-brace-format
 msgid "{job}: {current} of {total} ({percent}%)"
 msgstr "{job}: {current} kwe-{total} ({percent}%)"
 
-#: services/js_i18n_strings.py:818
+#: services/js_i18n_strings.py:852
 #, python-brace-format
 msgid "{n} Player(s)"
 msgstr "{n} Abadlali"
 
-#: services/js_i18n_strings.py:819
+#: services/js_i18n_strings.py:853
 #, python-brace-format
 msgid "{n} cores"
 msgstr "ama-core angu-{n}"
 
-#: services/js_i18n_strings.py:820
+#: services/js_i18n_strings.py:854
 #, python-brace-format
 msgid "{n} games"
 msgstr "{n} imidlalo"
 
-#: services/js_i18n_strings.py:821
+#: services/js_i18n_strings.py:855
 #, python-brace-format
 msgid "{n} lines"
 msgstr "{n} imigqa"
 
-#: services/js_i18n_strings.py:822
+#: services/js_i18n_strings.py:856
 #, python-brace-format
 msgid "{points} pts"
 msgstr "{points} amaphuzu"
 
-#: services/js_i18n_strings.py:823
+#: services/js_i18n_strings.py:857
 #, python-brace-format
 msgid "{system} has been added to the sync queue."
 msgstr "{system} ifakwe kulayini lokuvumelanisa."
 
-#: services/js_i18n_strings.py:824
+#: services/js_i18n_strings.py:858
 #, python-brace-format
 msgid "{title} ({count} versions)"
 msgstr "{title} (izinguqulo ezingu-{count})"
 
-#: services/js_i18n_strings.py:825
+#: services/js_i18n_strings.py:859
 msgid "⏳ Searching..."
 msgstr "⏳ Iyasesha..."
 
-#: services/js_i18n_strings.py:826
+#: services/js_i18n_strings.py:860
 #, python-brace-format
 msgid "⚠️ Cancel {job}"
 msgstr "⚠️ Khansela {job}"
 
-#: services/js_i18n_strings.py:827
+#: services/js_i18n_strings.py:861
 msgid "⚠️ Confirm"
 msgstr "⚠️ Qinisekisa"
 
-#: services/js_i18n_strings.py:828
+#: services/js_i18n_strings.py:862
 msgid "⚡ via"
 msgstr "⚡ nge-"
 
-#: services/js_i18n_strings.py:829
+#: services/js_i18n_strings.py:863
 msgid "✕ Clear"
 msgstr "✕ Sula"
 
-#: services/js_i18n_strings.py:830
+#: services/js_i18n_strings.py:864
 msgid "🏆 Refresh RetroAchievements"
 msgstr "🏆 Vuselela i-RetroAchievements"
 
-#: services/js_i18n_strings.py:831
+#: services/js_i18n_strings.py:865
 msgid "📋 Clear CLZ Imports"
 msgstr "📋 Sula Okungeniswe kwe-CLZ"
 
-#: services/js_i18n_strings.py:832
+#: services/js_i18n_strings.py:866
 msgid "🔄 Restart Server"
 msgstr "🔄 Qalisa Kabusha Iseva"
 
-#: services/js_i18n_strings.py:833
+#: services/js_i18n_strings.py:867
 msgid "🔍 Lookup HLTB"
 msgstr "🔍 Bheka i-HLTB"
 
-#: services/js_i18n_strings.py:834
+#: services/js_i18n_strings.py:868
 msgid "🗑️ Clear HLTB Data"
 msgstr "🗑️ Sula Idatha ye-HLTB"
 
-#: services/js_i18n_strings.py:835
+#: services/js_i18n_strings.py:869
 msgid "🗑️ Clear RetroAchievements Data"
 msgstr "🗑️ Sula Idatha ye-RetroAchievements"
 
-#: services/js_i18n_strings.py:836
+#: services/js_i18n_strings.py:870
 msgid "🗑️ Reset Metadata"
 msgstr "🗑️ Setha Kabusha i-Metadata"
 
-#: services/js_i18n_strings.py:837
+#: services/js_i18n_strings.py:871
 msgid "🛑 Shut Down Server"
 msgstr "🛑 Vala Iseva"
 
-#: services/js_i18n_strings.py:838
+#: services/js_i18n_strings.py:872
 msgid "🧹 Clean Missing ROMs"
 msgstr "🧹 Hlanza ama-ROM Angekho"
 
-#: services/standalone_settings.py:205
+#: services/standalone_settings.py:248
 msgid ""
 "RetroDB could not read this disc's serial, so it cannot name the "
 "emulator's per-game settings file."
@@ -3419,7 +3520,7 @@ msgstr ""
 "I-RetroDB ayikwazanga ukufunda inombolo ye-serial yale diski, ngakho "
 "ayikwazi ukuqamba ifayela lezilungiselelo zomdlalo ngamunye le-emulator."
 
-#: services/standalone_settings.py:215
+#: services/standalone_settings.py:258
 msgid ""
 "PCSX2 has two or more settings files for this game; remove the ones you "
 "do not use."
@@ -3427,7 +3528,7 @@ msgstr ""
 "I-PCSX2 inamafayela ezilungiselelo amabili noma ngaphezulu alo mdlalo; "
 "susa lawo ongawasebenzisi."
 
-#: services/standalone_settings.py:223
+#: services/standalone_settings.py:266
 msgid ""
 "RetroDB could not read this disc's boot file, so it cannot name PCSX2's "
 "per-game settings file."
@@ -3435,20 +3536,24 @@ msgstr ""
 "I-RetroDB ayikwazanga ukufunda ifayela lokuqalisa lale diski, ngakho "
 "ayikwazi ukuqamba ifayela lezilungiselelo zomdlalo ngamunye le-PCSX2."
 
-#: services/standalone_settings.py:231
+#: services/standalone_settings.py:274
 msgid "Settings path outside the data folder."
 msgstr "Indlela yezilungiselelo ingaphandle kwefolda yedatha."
 
-#: services/standalone_settings.py:253
+#: services/standalone_settings.py:298
 msgid "No emulator is set up for this system."
 msgstr "Ayikho i-emulator esethelwe le sistimu."
 
-#: services/standalone_settings.py:268
+#: services/standalone_settings.py:316
 #, python-format
 msgid "Run %(name)s once so it creates its settings, then play again."
 msgstr ""
 "Qalisa i-%(name)s kanye ukuze idale izilungiselelo zayo, bese udlala "
 "futhi."
+
+#: services/standalone_settings.py:422
+msgid "The player has no core for this system."
+msgstr "Isidlali asinayo i-core yalesi sistimu."
 
 #: templates/_bulk_edit_modal.html:7
 msgid "Bulk Edit"
@@ -3714,7 +3819,7 @@ msgstr "Bheka i-HLTB"
 #: templates/achievement_game.html:253 templates/base.html:1022
 #: templates/game_detail.html:517 templates/local_trophy_detail.html:223
 #: templates/psn_trophy_detail.html:181 templates/psn_trophy_detail.html:270
-#: templates/settings_emulators.html:36 templates/settings_emulators.html:140
+#: templates/settings_emulators.html:36 templates/settings_emulators.html:167
 #: templates/steam_achievement_game.html:137
 #: templates/xbox_achievement_game.html:130
 msgid "Save"
@@ -4343,7 +4448,7 @@ msgstr "Ukuphelela Kwenkambu"
 #: templates/_settings_tabs/customization.html:259 templates/analytics.html:479
 #: templates/analytics.html:2428 templates/base.html:225
 #: templates/base.html:1316 templates/compare_games.html:97
-#: templates/settings_emulators.html:123
+#: templates/settings_emulators.html:150
 msgid "Description"
 msgstr "Isichasiselo"
 
@@ -4628,7 +4733,7 @@ msgid "Date & Time"
 msgstr "Usuku Nesikhathi"
 
 #: templates/_settings_tabs/customization.html:300
-#: templates/archive_scanner.html:723 templates/settings_emulators.html:79
+#: templates/archive_scanner.html:723 templates/settings_emulators.html:106
 msgid "Type"
 msgstr "Uhlobo"
 
@@ -5325,7 +5430,7 @@ msgid "Source Folder"
 msgstr "Ifolda Yomthombo"
 
 #: templates/chd_converter.html:92 templates/chd_verify.html:108
-#: templates/dashboard.html:226 templates/settings_emulators.html:56
+#: templates/dashboard.html:226 templates/settings_emulators.html:83
 msgid "Scan"
 msgstr "Skena"
 
@@ -6373,10 +6478,6 @@ msgstr "I-scraper yokusekela"
 #: templates/game_detail.html:806
 msgid "Fields filled:"
 msgstr "Izinkambu ezigcwalisiwe:"
-
-#: templates/game_detail.html:814
-msgid "None"
-msgstr "Lutho"
 
 #: templates/game_detail.html:819
 msgid "Still missing:"
@@ -7871,7 +7972,7 @@ msgstr ""
 "ngokuvamile zitholakala ezindaweni ezahlukene (iphakheji yesistimu, "
 "~/.local, noma i-sandbox ye-Flatpak)."
 
-#: templates/settings_emulators.html:23 templates/settings_emulators.html:76
+#: templates/settings_emulators.html:23 templates/settings_emulators.html:103
 msgid "Binary"
 msgstr "I-binary"
 
@@ -7883,11 +7984,43 @@ msgstr "Ifolda ye-cores"
 msgid "Auto-detect"
 msgstr "Thola ngokuzenzakalela"
 
-#: templates/settings_emulators.html:45
+#: templates/settings_emulators.html:46
+msgid "RetroDB Player cores"
+msgstr "Ama-core e-RetroDB Player"
+
+#: templates/settings_emulators.html:48
+msgid ""
+"The player picks the best core for each system and downloads it from the "
+"libretro build server the first time you play. Installed cores are never "
+"updated by Play; update them here."
+msgstr ""
+"Isidlali sikhetha i-core engcono kakhulu yesistimu ngayinye futhi "
+"siyidawunilode kuseva yokwakha ye-libretro okokuqala uma udlala. Ama-core"
+" afakiwe awalokothi abuyekezwe ngu-“Dlala”; wabuyekeze lapha."
+
+#: templates/settings_emulators.html:53
+msgid "Download a missing core when Play is pressed"
+msgstr "Dawuniloda i-core engekho uma kucindezelwa u-“Dlala”"
+
+#: templates/settings_emulators.html:58
+msgid "Install cores for my systems"
+msgstr "Faka ama-core ezistimu zami"
+
+#: templates/settings_emulators.html:59
+msgid "Update cores"
+msgstr "Buyekeza ama-core"
+
+#: templates/settings_emulators.html:62
+msgid "Cores are not built for this computer, so RetroDB cannot download them."
+msgstr ""
+"Ama-core awakhelwe le khompyutha, ngakho i-RetroDB ayikwazi "
+"ukuwadawuniloda."
+
+#: templates/settings_emulators.html:72
 msgid "Emulator folders"
 msgstr "Amafolda ama-emulator"
 
-#: templates/settings_emulators.html:47
+#: templates/settings_emulators.html:74
 msgid ""
 "Add the folder your emulators live in. RetroDB finds each emulator there,"
 " links it to the systems it runs and checks its BIOS files."
@@ -7896,23 +8029,23 @@ msgstr ""
 " ngayinye lapho, iyixhumanise namasistimu eyiqhubayo, futhi ihlole "
 "amafayela ayo e-BIOS."
 
-#: templates/settings_emulators.html:52
+#: templates/settings_emulators.html:79
 msgid "Emulator folder"
 msgstr "Ifolda ye-emulator"
 
-#: templates/settings_emulators.html:53
+#: templates/settings_emulators.html:80
 msgid "Add folder"
 msgstr "Engeza ifolda"
 
-#: templates/settings_emulators.html:57
+#: templates/settings_emulators.html:84
 msgid "Apply all"
 msgstr "Faka konke"
 
-#: templates/settings_emulators.html:67
+#: templates/settings_emulators.html:94
 msgid "Registered emulators"
 msgstr "Ama-emulator abhalisiwe"
 
-#: templates/settings_emulators.html:69
+#: templates/settings_emulators.html:96
 msgid ""
 "RetroDB ships with a default registry seeded on first run. Add custom "
 "emulators or edit the seeded entries."
@@ -7920,55 +8053,55 @@ msgstr ""
 "I-RetroDB iza nerejista eyisisekelo efakwa lapho iqala ukusebenza. Engeza"
 " ama-emulator akho noma uhlele lawo akhona."
 
-#: templates/settings_emulators.html:75 templates/settings_emulators.html:104
+#: templates/settings_emulators.html:102 templates/settings_emulators.html:131
 msgid "Name"
 msgstr "Igama"
 
-#: templates/settings_emulators.html:77
+#: templates/settings_emulators.html:104
 msgid "Path override"
 msgstr "Indlela ethatha indawo"
 
-#: templates/settings_emulators.html:78 templates/settings_emulators.html:118
+#: templates/settings_emulators.html:105 templates/settings_emulators.html:145
 msgid "Args template"
 msgstr "Ithempulethi yama-args"
 
-#: templates/settings_emulators.html:80
+#: templates/settings_emulators.html:107
 msgid "Enabled"
 msgstr "Kuvuliwe"
 
-#: templates/settings_emulators.html:85 templates/settings_emulators.html:155
+#: templates/settings_emulators.html:112 templates/settings_emulators.html:182
 msgid "Loading…"
 msgstr "Iyalayisha…"
 
-#: templates/settings_emulators.html:97
+#: templates/settings_emulators.html:124
 msgid "Edit emulator"
 msgstr "Hlela i-emulator"
 
-#: templates/settings_emulators.html:98
+#: templates/settings_emulators.html:125
 msgid "Close emulator edit modal"
 msgstr "Vala iwindi lokuhlela i-emulator"
 
-#: templates/settings_emulators.html:108
+#: templates/settings_emulators.html:135
 msgid "Binary name (looked up on PATH)"
 msgstr "Igama le-binary (libhekwa ku-PATH)"
 
-#: templates/settings_emulators.html:110
+#: templates/settings_emulators.html:137
 msgid "e.g."
 msgstr "isib."
 
-#: templates/settings_emulators.html:110
+#: templates/settings_emulators.html:137
 msgid "Used when no path override is set."
 msgstr "Kusetshenziswa uma ingekho indlela ethatha indawo esethiwe."
 
-#: templates/settings_emulators.html:113
+#: templates/settings_emulators.html:140
 msgid "Binary path override"
 msgstr "Indlela ye-binary ethatha indawo"
 
-#: templates/settings_emulators.html:114
+#: templates/settings_emulators.html:141
 msgid "(empty = look up the binary name on PATH)"
 msgstr "(akukho lutho = bheka igama le-binary ku-PATH)"
 
-#: templates/settings_emulators.html:115
+#: templates/settings_emulators.html:142
 msgid ""
 "Absolute path to AppImage / portable script / system binary. Wins over "
 "PATH lookup."
@@ -7976,25 +8109,25 @@ msgstr ""
 "Indlela ephelele eya ku-AppImage / iskripthi esiphathekayo / i-binary "
 "yesistimu. Ihamba phambili kunokubheka ku-PATH."
 
-#: templates/settings_emulators.html:120
+#: templates/settings_emulators.html:147
 msgid "Tokens:"
 msgstr "Amathokheni:"
 
-#: templates/settings_emulators.html:129
+#: templates/settings_emulators.html:156
 msgid "This is a RetroArch entry (uses the cores in the Cores directory above)"
 msgstr ""
 "Lokhu kungena kwe-RetroArch (kusebenzisa ama-core asefolda ye-cores "
 "ngenhla)"
 
-#: templates/settings_emulators.html:135
+#: templates/settings_emulators.html:162
 msgid "Enabled (uncheck to hide from launch)"
 msgstr "Kuvuliwe (susa umaka ukuze kufihlwe ekuqaliseni)"
 
-#: templates/settings_emulators.html:151
+#: templates/settings_emulators.html:178
 msgid "Per-system mapping"
 msgstr "Ukuhlelwa kwesistimu ngayinye"
 
-#: templates/settings_emulators.html:153
+#: templates/settings_emulators.html:180
 msgid ""
 "Pick the emulator each system uses by default. Per-game overrides live in"
 " the edit-game modal."

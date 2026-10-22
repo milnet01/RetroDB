@@ -4,6 +4,8 @@
   - type: feature
     label: RetroDB is ready for its own game player
   - type: fix
+    label: A new Windows or Mac install names RetroArch cores correctly
+  - type: fix
     label: AI Fill gives PC games a PC save type, not a console one
   - type: fix
     label: The Players box takes more than 16
@@ -18,9 +20,20 @@
         arrives, RetroDB will start games in it with settings chosen for
         each game, and keep any settings you change while you play. It
         will keep its saves and settings in its own folder, apart from
-        your own RetroArch. Nothing changes until the player is
+        your own RetroArch. It picks the best core for each console and
+        downloads it the first time you press Play; the button says
+        "Downloading the core…" meanwhile. It plays any console that has
+        no working emulator, and never replaces one you set up. Per game
+        you can choose another core, the screen effect, integer scaling
+        and input lag reduction. Admins can install or update every core
+        at once, or turn downloads off. Nothing changes until the player is
         installed; until then it is not listed under Settings &gt;
         Emulators.</li>
+      <li><strong>A new Windows or Mac install names RetroArch cores
+        correctly.</strong> RetroDB set up RetroArch with Linux core file
+        names everywhere, so on Windows and macOS no core was found. A new
+        install now uses each computer's own names. An existing install
+        keeps the names it has; change them in the mapping table.</li>
       <li><strong>The screenshot viewer shows both arrows, each inside its
         button.</strong> The sidebar covered the left arrow, so you could
         not go back to an earlier screenshot with the mouse. The right

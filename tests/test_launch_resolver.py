@@ -42,6 +42,8 @@ def tmpdb(monkeypatch, tmp_path):
         return [dict(r) for r in rows]
 
     monkeypatch.setattr('services.launch_resolver.query', _query, raising=False)
+    # The player's fallback (PASS-59-81) reads the same rows.
+    monkeypatch.setattr('services.player_cores.query', _query)
 
     # Cores dir + binary stubs
     cores_dir = tmp_path / 'cores'

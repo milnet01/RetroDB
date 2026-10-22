@@ -9,6 +9,9 @@
 #   GET  /api/launches/active        list of running tokens (for nav badge)
 #   POST /api/launch/<token>/disk-next  RetroArch: insert the next .m3u disk
 #   POST /api/games/<id>/player-settings/reset  the player's Reset to recommended
+#   GET  /api/player/cores/status    the core install job (PASS-59-81 §4.5)
+#   POST /api/player/cores/install   install cores for every system with games
+#   POST /api/player/cores/update    re-download cores whose build changed
 #
 # Spec §Routes.
 # =============================================================================
@@ -23,7 +26,7 @@ from services.auth import login_required, has_permission, permission_required
 from services.database import query
 from services.launcher import get_launcher, LauncherError
 from services.launcher.base import LaunchResolutionError
-from services import player
+from services import player, player_cores
 from services.launch_resolver import launches_on_player, resolve_launch_context
 from services.retroarch_command import (
     RETROARCH_COMMAND_PORT, RetroArchNotListening, next_disk,
@@ -105,8 +108,20 @@ def api_launch_game(game_id):
     # Resolve
     try:
         ctx = resolve_launch_context(game_id)
+    except player_cores.CoreMissing as e:
+        # PASS-59-81 §4.5 — download the core in the background and let the
+        # Play button send the launch again when it lands.
+        if not get_setting('player_core_downloads', True) or player_cores.buildbot_dir() is None:
+            return error(str(e), 422)
+        from services.jobs import player_cores_job
+        job_id = player_cores_job.request([(e.core, e.system_id)])
+        return success(installing={'core': e.core, 'system': e.system_name,
+                                   'bytes': player_cores.download_size(e.core),
+                                   'job_id': job_id}), 202
     except LaunchResolutionError as e:
         return error(str(e), 422)
+    if ctx.is_player:
+        _queue_shaders_if_needed(game_id)
 
     # PASS-59-91 §4.6 — write the per-game settings file before the emulator
     # reads it. Never raises; a settings problem does not stop the launch.
@@ -121,6 +136,77 @@ def api_launch_game(game_id):
     payload = _handle_to_dict(h)
     payload['argv'] = ctx.argv
     return success(payload), 202
+
+
+def _queue_shaders_if_needed(game_id):
+    """A shader chosen before the pack is on disk: this launch runs without
+    it, and the pack downloads for the next (PASS-59-81 §6)."""
+    game = query("""SELECT g.system_id, s.folder FROM games g JOIN systems s
+                     ON s.id = g.system_id WHERE g.id = ?""", (game_id,), one=True)
+    row = player_cores.player_row()
+    if (game and row and get_setting('player_core_downloads', True)
+            and player_cores.needs_shaders(game['folder'], game['system_id'], game_id, row['id'])):
+        from services.jobs import player_cores_job
+        from services.jobs.player_cores import SHADERS
+        player_cores_job.request([(SHADERS, None)])
+
+
+# -----------------------------------------------------------------------------
+# The player's cores (PASS-59-81 §4.5)
+# -----------------------------------------------------------------------------
+
+@bp.route('/api/player/cores/status', methods=['GET'])
+@login_required
+@permission_required('view')
+@handle_api_errors
+def api_player_cores_status():
+    from services.jobs import player_cores_job
+    return success(player_cores_job.get_status(),
+                   platform_supported=player_cores.buildbot_dir() is not None)
+
+
+@bp.route('/api/player/cores/install', methods=['POST'])
+@login_required
+@permission_required('manage_settings')
+@handle_api_errors
+def api_player_cores_install():
+    """Install the chosen core for every system with games and a table
+    entry; a core already on disk is only mapped."""
+    from services.jobs import player_cores_job
+    if player_cores.buildbot_dir() is None:
+        return error(_('Cores are not built for this computer.'), 400)
+    row = player_cores.player_row()
+    if not row:
+        return error(_('The player is not installed.'), 400)
+    items = []
+    for s in query("""SELECT DISTINCT s.id, s.folder FROM systems s
+                      JOIN games g ON g.system_id = s.id"""):
+        if player_cores.entry(s['folder']):
+            core = player_cores.chosen_core(s['folder'], s['id'], None, row['id'])
+            if core:
+                items.append((core, s['id']))
+    if not items:
+        return success(message=_('No system with games has a player core.'))
+    return success(job_id=player_cores_job.request(items), cores=[c for c, _s in items])
+
+
+@bp.route('/api/player/cores/update', methods=['POST'])
+@login_required
+@permission_required('manage_settings')
+@handle_api_errors
+def api_player_cores_update():
+    """Re-download every installed core whose index CRC has changed."""
+    from services.jobs import player_cores_job
+    idx = player_cores.index()
+    if idx is None:
+        return error(_('Could not fetch the list of cores. Check the internet connection and try again.'), 502)
+    stale = [core for core, rec in player_cores.installed().items()
+             if (idx.get(f'{player_cores.core_file_name(core)}.zip') or (None, rec['crc']))[1]
+             != rec['crc']]
+    if not stale:
+        return success(message=_('Every core is up to date.'), cores=[])
+    return success(job_id=player_cores_job.request([(c, None) for c in stale], force=True),
+                   cores=stale)
 
 
 # -----------------------------------------------------------------------------

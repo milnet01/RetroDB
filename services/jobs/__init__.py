@@ -39,6 +39,7 @@ from services.jobs.platform_sync import SteamSyncJob, XboxSyncJob
 from services.jobs.alt_titles_backfill import AltTitlesBackfillJob
 from services.jobs.hltb_bulk import HLTBBulkLookupJob
 from services.jobs.museum_images import MuseumImageFetchJob
+from services.jobs.player_cores import PlayerCoresJob
 
 # =============================================================================
 # GLOBAL JOB INSTANCES
@@ -57,6 +58,7 @@ xbox_sync_job = XboxSyncJob()
 alt_titles_backfill_job = AltTitlesBackfillJob()
 hltb_bulk_job = HLTBBulkLookupJob()
 museum_images_job = MuseumImageFetchJob()
+player_cores_job = PlayerCoresJob()
 
 __all__ = [
     # Helpers
@@ -87,6 +89,7 @@ __all__ = [
     'AltTitlesBackfillJob',
     'HLTBBulkLookupJob',
     'MuseumImageFetchJob',
+    'PlayerCoresJob',
     # Singleton instances
     'bulk_scrape_job',
     'ra_sync_job',
@@ -100,4 +103,5 @@ __all__ = [
     'alt_titles_backfill_job',
     'hltb_bulk_job',
     'museum_images_job',
+    'player_cores_job',
 ]

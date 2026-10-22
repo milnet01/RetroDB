@@ -32,8 +32,14 @@ bp = Blueprint('emulators', __name__)
 @login_required
 @admin_required
 def page_emulators_settings():
+    from services import player_cores
+    player_row = player_cores.player_row()
     return render_template(
         'settings_emulators.html',
+        # PASS-59-81 §4.5: the player's core panel, once its program is found.
+        player_found=bool(player_row) and _listed(player_row),
+        player_platform_supported=player_cores.buildbot_dir() is not None,
+        player_core_downloads=get_setting('player_core_downloads', True),
         retroarch_binary=get_setting('retroarch_binary', ''),
         retroarch_cores_dir=get_setting('retroarch_cores_dir', ''),
         emulator_scan_paths=get_setting(
@@ -236,8 +242,7 @@ def _put_choices(emulator_id, scope, scope_id, *, allow_flags):
     data = request.get_json(silent=True)
     if not isinstance(data, dict) or not data:
         return error(_('Send at least one setting.'), 400)
-    emu = query("SELECT binary_name FROM emulators WHERE id = ?", (emulator_id,), one=True)
-    table = standalone_settings.settings_for(emu['binary_name'] if emu else '')
+    table = standalone_settings.table_for(emulator_id, scope, scope_id)
     for setting, value in data.items():
         spec = table.get(setting)
         if not spec:

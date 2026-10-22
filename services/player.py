@@ -11,8 +11,7 @@
 #   after_session() absorb menu saves, mark user-set keys, drop the run layer
 #   reset()         Reset to recommended: delete the game's .cfg/.opt/.json
 #
-# Recommended settings are PASS-59-81's; until it lands a game cfg holds only
-# core_options_path.
+# The recommended settings come from services/player_cores.py (PASS-59-81).
 # =============================================================================
 
 from __future__ import annotations
@@ -176,6 +175,14 @@ def _regenerate(game_id: int, rec: dict, part: str, recommended: dict) -> None:
 def _compose(rec: dict, part: str) -> dict:
     """A game file's content: the user's keys, then RetroDB's."""
     return {**rec['user'][part], **rec['written'][part]}
+
+
+def release_keys(game_id: int, keys) -> None:
+    """A choice saved in RetroDB's panel wins these keys back from the
+    player's menu: the next launch writes RetroDB's value (PASS-59-81 §4.6)."""
+    rec = _record(game_id)
+    if [k for k in keys if rec['user']['cfg'].pop(k, None) is not None]:
+        _save_record(game_id, rec)
 
 
 def is_customised(game_id: int) -> bool:

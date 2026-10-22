@@ -530,6 +530,67 @@
         body.appendChild(wrap);
     }
 
+    // ----- PASS-59-81 — the player's cores ----------------------------------
+
+    const playerStatus = $('#player-cores-status');
+    const playerToggle = $('#player-core-downloads');
+
+    if (playerToggle) {
+        playerToggle.addEventListener('change', async () => {
+            try {
+                await fetchJSON('/api/settings', {
+                    method: 'POST',
+                    body: JSON.stringify({player_core_downloads: playerToggle.checked}),
+                });
+                playerStatus.textContent = t('Saved.');
+            } catch (e) {
+                playerToggle.checked = !playerToggle.checked;
+                playerStatus.textContent = t('Save failed: {error}', {error: e.message});
+            }
+        });
+    }
+
+    async function watchPlayerCores() {
+        for (;;) {
+            const out = await fetchJSON('/api/player/cores/status');
+            const st = out.data || {};
+            if (!st.running) {
+                const failed = Object.entries(st.errors || {})
+                    .map(([core, msg]) => `${core}: ${msg}`);
+                playerStatus.textContent = failed.length
+                    ? t('Installed {n} cores. Failed: {failed}', {n: (st.success || []).length, failed: failed.join('; ')})
+                    : t('Installed {n} cores.', {n: (st.success || []).length});
+                refreshMappings();
+                return;
+            }
+            playerStatus.textContent = t('Downloading {core} ({done} of {total})…',
+                {core: st.current_item || '…', done: st.processed, total: st.total});
+            await new Promise((r) => setTimeout(r, 1500));
+        }
+    }
+
+    for (const [id, url] of [['#player-cores-install', '/api/player/cores/install'],
+                             ['#player-cores-update', '/api/player/cores/update']]) {
+        const btn = $(id);
+        if (!btn) continue;
+        btn.addEventListener('click', async () => {
+            btn.disabled = true;
+            playerStatus.textContent = t('Starting…');
+            try {
+                const out = await fetchJSON(url, {method: 'POST'});
+                if (out.job_id) {
+                    await watchPlayerCores();
+                } else {
+                    playerStatus.textContent = out.message || '';
+                }
+            } catch (e) {
+                playerStatus.textContent = e.message;
+            } finally {
+                btn.disabled = false;
+            }
+        });
+    }
+
     refreshEmulators();
     refreshMappings();
 })();

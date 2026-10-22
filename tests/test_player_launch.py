@@ -25,6 +25,9 @@ def playerdb(tmpdb, tmp_path, monkeypatch):  # noqa: F811
     conn.execute("INSERT INTO emulators (name, binary_name, binary_path_override, args_template, "
                  "is_retroarch, is_player, enabled) VALUES ('RetroDB Player', 'retrodb-player', ?, 'unused', 0, 1, 1)",
                  (str(binary),))
+    conn.execute("CREATE TABLE emulator_setting_choices (id INTEGER PRIMARY KEY, emulator_id INTEGER, "
+                 "scope TEXT, scope_id INTEGER, setting TEXT, value TEXT, "
+                 "UNIQUE (emulator_id, scope, scope_id, setting))")
     conn.execute("UPDATE system_emulators SET is_default = 0")
     conn.execute("INSERT INTO system_emulators (system_id, emulator_id, retroarch_core, is_default) "
                  "VALUES (1, 3, 'mednafen_psx_hw_libretro.so', 1)")
@@ -38,6 +41,10 @@ def playerdb(tmpdb, tmp_path, monkeypatch):  # noqa: F811
     monkeypatch.setattr('services.player._user_system_dir',
                         lambda: str(tmp_path / 'ra-system'))
     tmpdb['profile'] = player.profile_dir()
+    # PASS-59-81: the buildbot's core list, without the network.
+    tmpdb['index'] = {'mednafen_psx_hw_libretro.so.zip': ('2026-10-19', '00000000'),
+                      'swanstation_libretro.so.zip': ('2026-10-19', '00000000')}
+    monkeypatch.setattr('services.player_cores.index', lambda: tmpdb['index'])
     return tmpdb
 
 
@@ -89,9 +96,13 @@ def test_inv8_argv_shape(playerdb, monkeypatch, platform, extras):
     assert ctx.is_player and ctx.on_exit is not None
 
 
-def test_inv8_missing_system_layer_left_out(playerdb):
+def test_inv8_system_layer_written_before_each_launch(playerdb):
+    # PASS-59-81 §4.6 writes the system cfg before every player launch, so
+    # the layer the system cfg once lacked is always there now.
     layers = _resolve().argv[4].split('|')
-    assert layers == [str(playerdb['profile'] / 'settings' / 'game' / '1.cfg')]
+    assert layers == [str(playerdb['profile'] / 'settings' / 'system' / 'psx.cfg'),
+                      str(playerdb['profile'] / 'settings' / 'game' / '1.cfg')]
+    assert _cfg(layers[0])['aspect_ratio_index'] == '22'
 
 
 # -----------------------------------------------------------------------------
@@ -253,11 +264,15 @@ def test_inv13_retroarch_row_writes_no_profile(playerdb, monkeypatch, tmp_path):
 # Play button check and failure modes
 # -----------------------------------------------------------------------------
 
-def test_play_check_finds_player_core(playerdb):
+def test_play_check_finds_player_core(playerdb, monkeypatch):
     from services.launch_resolver import launch_checker
     assert launch_checker()(1, None) is True
     from services import player
     player.core_file('mednafen_psx_hw_libretro.so').unlink()
+    # PASS-59-81 §4.5: a missing core is offered while it can be downloaded.
+    assert launch_checker()(1, None) is True
+    monkeypatch.setattr('settings_manager.get_setting',
+                        lambda key, default=None: False if key == 'player_core_downloads' else default)
     assert launch_checker()(1, None) is False
 
 
@@ -332,3 +347,86 @@ def test_migration_020_adds_player_row():
     mig.apply(conn)
     rows = conn.execute("SELECT name, is_player, is_retroarch FROM emulators ORDER BY id").fetchall()
     assert rows == [('RetroArch', 0, 1), ('RetroDB Player', 1, 0)]
+
+
+# -----------------------------------------------------------------------------
+# PASS-59-81 — which core runs, and what a missing one does
+# -----------------------------------------------------------------------------
+
+def _choose_core(playerdb, scope, scope_id, value):
+    playerdb['conn'].execute("INSERT INTO emulator_setting_choices (emulator_id, scope, scope_id, "
+                             "setting, value) VALUES (3, ?, ?, 'core', ?)", (scope, scope_id, value))
+    playerdb['conn'].commit()
+
+
+def test_81_inv9_game_core_choice_is_the_l_path(playerdb):
+    from services import player
+    player.core_file('swanstation_libretro.so').write_bytes(b'\x7fELF')
+    _choose_core(playerdb, 'game', 1, 'swanstation')
+    argv = _resolve().argv
+    assert argv[argv.index('-L') + 1].endswith('swanstation_libretro.so')
+
+
+def test_81_inv9_choice_outside_the_list_is_ignored(playerdb):
+    _choose_core(playerdb, 'system', 1, 'mame')
+    argv = _resolve().argv
+    assert argv[argv.index('-L') + 1].endswith('mednafen_psx_hw_libretro.so')
+
+
+def test_81_inv2_no_core_built_is_a_resolution_error(playerdb):
+    from services.launcher.base import LaunchResolutionError
+    playerdb['index'].clear()
+    with pytest.raises(LaunchResolutionError, match='No core for Sony PlayStation is built'):
+        _resolve()
+
+
+def test_81_missing_core_names_the_core(playerdb):
+    from services import player, player_cores
+    player.core_file('mednafen_psx_hw_libretro.so').unlink()
+    with pytest.raises(player_cores.CoreMissing) as info:
+        _resolve()
+    assert (info.value.core, info.value.system_id) == ('mednafen_psx_hw', 1)
+
+
+def test_81_inv7_launch_never_updates_an_installed_core(playerdb, monkeypatch):
+    calls = []
+    monkeypatch.setattr('services.player_cores._http_get', lambda *a, **k: calls.append(a))
+    monkeypatch.setattr('services.player_cores._http_head', lambda *a, **k: calls.append(a))
+    cores = playerdb['profile'] / 'cores'
+    (cores / 'installed.json').write_text('{"mednafen_psx_hw": {"crc": "11111111", "date": "2026-01-01"}}')
+    playerdb['index']['mednafen_psx_hw_libretro.so.zip'] = ('2026-10-19', '22222222')
+    ctx = _resolve()
+    assert ctx.is_player
+    assert calls == []
+    assert (cores / 'mednafen_psx_hw_libretro.so').read_bytes() == b'\x7fELF'
+
+
+@pytest.mark.parametrize('downloads, expected', [(True, 202), (False, 422)])
+def test_81_inv6_missing_core_downloads_or_422(launch_client, monkeypatch, tmp_path,
+                                               downloads, expected):
+    from services import player_cores
+    from services.jobs import player_cores_job
+    launcher = MagicMock()
+    launcher.active.return_value = []
+    monkeypatch.setattr('routes.launch.get_launcher', lambda: launcher)
+    monkeypatch.setattr('routes.launch.launches_on_player', lambda gid: False)
+
+    def missing(gid):
+        raise player_cores.CoreMissing('snes9x', 4, 'Super Nintendo', tmp_path / 'x')
+    monkeypatch.setattr('routes.launch.resolve_launch_context', missing)
+    monkeypatch.setattr('routes.launch.get_setting', lambda key, default=None:
+                        downloads if key == 'player_core_downloads' else default)
+    monkeypatch.setattr('services.player_cores.buildbot_dir', lambda: 'linux/x86_64')
+    monkeypatch.setattr('services.player_cores.download_size', lambda core: 917066)
+    asked = []
+    monkeypatch.setattr(player_cores_job, 'request', lambda items, **k: asked.append(items) or 'job-1')
+    rv = launch_client.post('/api/game/1/launch', headers={'X-CSRF-Token': 'test-csrf-token'})
+    assert rv.status_code == expected
+    launcher.launch.assert_not_called()
+    if downloads:
+        assert rv.get_json()['installing'] == {'core': 'snes9x', 'system': 'Super Nintendo',
+                                               'bytes': 917066, 'job_id': 'job-1'}
+        assert asked == [[('snes9x', 4)]]
+    else:
+        assert asked == []
+        assert 'Player core not found' in rv.get_json()['error']

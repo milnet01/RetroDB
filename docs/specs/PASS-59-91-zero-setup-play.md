@@ -386,6 +386,9 @@ first part is a top-level `Name:` line, the second a two-space-indented
 - `GET` and `PUT /api/systems/<system_id>/emulator-settings/<emulator_id>`
   (`manage_settings`), the system level, shown in the mapping table.
 
+The choices table and these routes also serve the bundled player, whose
+settings PASS-59-81 §4.6 defines.
+
 Compatibility fixes are not in the table: DuckStation, PCSX2 and RPCS3 apply
 their own game databases to every launch without RetroDB (§3.2).
 

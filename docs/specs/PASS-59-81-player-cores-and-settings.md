@@ -2,11 +2,12 @@
 # PASS-59-81 — Best core, core download and recommended settings for the player
 
 **Status:** accepted (2026-10-19; user answered §15 Q1 to Q3, Q4 checked).
+Built in v3.31.0 (2026-10-22) against a stub player; only Linux is tested.
 **Kind:** implement.
 **Source:** ROADMAP PASS-59-81 (user decisions 2026-09-26, relayed with
 `retroarch-f5`).
-**Blocked by:** PASS-59-64's player clauses (§4.4 to §4.6, unbuilt) and the
-fork's player build (RETR-0004). **Pairs with:** PASS-59-64 (launch
+**Blocked by:** the fork's player build (RETR-0004), for anything a user
+can run. PASS-59-64's player clauses are built (v3.31.0). **Pairs with:** PASS-59-64 (launch
 contract), PASS-59-91 (zero-setup play; its §4.6 choices table and settings
 routes are reused here).
 
@@ -82,7 +83,7 @@ beyond its core file names matching the host platform.
     "settings": {"aspect_ratio": "core", "integer_scale": "off",
                  "shader": "none", "latency": "1"}
   },
-  "superfamicom": {"same_as": "snes"},
+  "sfc": {"same_as": "snes"},
   "_settings": {
     "aspect_ratio":  {"values": {"core": {"aspect_ratio_index": "22"},
                                  "4:3":  {"aspect_ratio_index": "0"}}},
@@ -120,7 +121,7 @@ beyond its core file names matching the host platform.
 | Folders | Cores, best first | Default latency |
 |---|---|---|
 | nes, famicom | mesen, nestopia, fceumm | 1 |
-| snes, superfamicom | snes9x, bsnes | 1 |
+| snes, sfc | snes9x, bsnes | 1 |
 | n64 | mupen64plus_next, parallel_n64 | off |
 | gb, gbc | sameboy, gambatte | 1 |
 | gba | mgba | off |
@@ -180,7 +181,8 @@ core is the first of:
    `core`);
 2. the system's choice (scope `system`, setting `core`);
 3. the first core in the system's `cores` list that the platform's index
-   lists.
+   lists. When the index cannot be fetched, the first one already
+   installed, so a launch works offline.
 
 A choice must be in the system's `cores` list; any other value is refused
 on write (400) and ignored on read. The table PASS-59-91 §4.6 creates holds
@@ -220,6 +222,9 @@ def install(core: str) -> Path
   resolves (PASS-59-91 §4.3's test), and then every other row for the
   system gets `is_default = 0` (PASS-59-64 §4.4);
 - `<profile>/settings/system/<folder>.cfg` is written (§4.6).
+
+A launch whose core is installed but whose system has no player row (a
+`same_as` folder sharing another's core) writes the row the same way.
 
 **Jobs.** Installs run in one background job,
 `services/jobs/player_cores.py`, under `acquire_job_singleton_lock`, with
@@ -288,20 +293,20 @@ already stored keep their value; the Settings mapping table edits them.
 
 - **INV-1** — `core_file_name` gives `.so` on Linux, `.dll` on Windows and
   `.dylib` on macOS.
-  *Test:* `tests/test_player_cores.py` (to add) — monkeypatch
+  *Test:* `tests/test_player_cores.py` — monkeypatch
   `platform_utils` for each platform and assert the three names for
   `snes9x`.
   *Breaks when:* the suffix is hard-coded, or macOS falls through to `.so`.
 - **INV-2** — The automatic core for a system is the first table core the
   platform's index lists.
-  *Test:* `tests/test_player_cores.py` (to add) — fake index without
+  *Test:* `tests/test_player_cores.py` — fake index without
   `mesen`; `nes` resolves to `nestopia`; with an empty index it resolves to
   none and the launch answers 422.
   *Breaks when:* ranking ignores the index, so a core with no build for the
   platform is chosen.
 - **INV-3** — A download URL holds nothing but the fixed host, the
   platform directory and a core id from the table.
-  *Test:* `tests/test_player_cores.py` (to add) — `install('../x')` and
+  *Test:* `tests/test_player_cores.py` — `install('../x')` and
   `install('notacore')` raise without a request; the fake HTTP layer
   records no call.
   *Breaks when:* `install` builds the URL from a request field or a
@@ -309,7 +314,7 @@ already stored keep their value; the Settings mapping table edits them.
 - **INV-4** — A download whose extracted core's CRC-32 differs from the
   index, or whose zip lacks the core member, installs nothing and leaves an existing core file
   byte-identical.
-  *Test:* `tests/test_player_cores.py` (to add) — an existing core file,
+  *Test:* `tests/test_player_cores.py` — an existing core file,
   then a fake zip with a wrong CRC, then one with the member under a
   directory; the file's bytes are unchanged after each, and no `.part`
   file remains.
@@ -317,26 +322,26 @@ already stored keep their value; the Settings mapping table edits them.
   a member with a path is extracted.
 - **INV-5** — An install makes the player the default only for a system
   with no default mapping that resolves.
-  *Test:* `tests/test_player_cores.py` (to add) — system A with a
+  *Test:* `tests/test_player_cores.py` — system A with a
   resolving standalone default, system B with none; install for both; A's
   default is unchanged, B's is the player.
   *Breaks when:* PASS-59-64 §4.4's unconditional default is kept.
 - **INV-6** — Play with the core missing and `player_core_downloads` on
   answers 202 with `installing`, and spawns nothing; with it off, 422.
-  *Test:* `tests/test_player_launch.py` (to extend) — stub player, no core
+  *Test:* `tests/test_player_launch.py` — stub player, no core
   file, fake install job; assert 202 and no registry entry; flip the
   setting; assert 422.
   *Breaks when:* the launch spawns the player before the core exists, or
   downloads while the setting is off.
 - **INV-7** — A launch never downloads a core that is already installed.
-  *Test:* `tests/test_player_launch.py` (to extend) — core file present,
+  *Test:* `tests/test_player_launch.py` — core file present,
   index CRC changed; launch spawns, and the fake HTTP layer records no core
   request.
   *Breaks when:* the launch path compares CRCs and updates.
 - **INV-8** — A managed setting's written value is the game choice, else
   the system choice, else the table default, and lands in the game cfg or
   the system cfg accordingly.
-  *Test:* `tests/test_player_cores.py` (to add) — table default `latency`
+  *Test:* `tests/test_player_cores.py` — table default `latency`
   `1`; system choice `off`; game choice `1` on one game; the system cfg
   says `run_ahead_enabled = "false"`, that game's cfg `"true"`, another
   game's cfg has no `run_ahead_enabled`.
@@ -344,31 +349,31 @@ already stored keep their value; the Settings mapping table edits them.
   written to the system cfg.
 - **INV-9** — A game's `core` choice is used for `-L` and must be in the
   system's list.
-  *Test:* `tests/test_player_launch.py` (to extend) — game choice
+  *Test:* `tests/test_player_launch.py` — game choice
   `bsnes` on `snes`; argv's `-L` ends `bsnes_libretro.so`; a `PUT` of
   `core: "mame"` answers 400.
   *Breaks when:* the player branch reads only `system_emulators.retroarch_core`.
 - **INV-10** — A key the user set in the player's menu is not rewritten,
   until a RetroDB choice for that setting is saved.
-  *Test:* `tests/test_player_cores.py` (to add) — game `.json` marks
+  *Test:* `tests/test_player_cores.py` — game `.json` marks
   `aspect_ratio_index` user-set with `"0"`; a launch leaves it `"0"`; a
   `PUT` of `aspect_ratio: core` then writes `"22"` and drops the mark.
   *Breaks when:* RetroDB regenerates user-set keys, or a panel choice can
   never win back a key.
 - **INV-11** — Install and update routes refuse a caller without
   `manage_settings`; a viewer cannot `PUT` a choice.
-  *Test:* `tests/test_player_cores.py` (to add) — editor `POST`s to both
+  *Test:* `tests/test_player_cores.py` — editor `POST`s to both
   routes → 403; viewer `PUT` → 403; nothing written.
   *Breaks when:* a route is added without its permission decorator.
 - **INV-12** — The seeder writes `retroarch_core` with the host's suffix.
-  *Test:* `tests/test_emulator_seeder.py` (to add) — seed on a fake
+  *Test:* `tests/test_emulator_seeder.py` — seed on a fake
   Windows platform; the `snes` RetroArch row reads `snes9x_libretro.dll`.
   *Breaks when:* the seeder copies the `.so` name through.
 - **INV-13 (trust boundary)** — Downloaded code comes only from
   `https://buildbot.libretro.com`, over HTTPS, and is installed only into
   `<profile>/cores/` or `<profile>/shaders/`. A redirect to another host
   fails the install.
-  *Test:* `tests/test_player_cores.py` (to add) — fake response that
+  *Test:* `tests/test_player_cores.py` — fake response that
   redirects to `http://example.invalid/`; assert `CoreInstallError` and no
   file written.
   *Breaks when:* redirects are followed off-host, or the destination path
@@ -403,7 +408,7 @@ already stored keep their value; the Settings mapping table edits them.
   hand-built zips from `tmp_path`; no test reaches the network.
 - `tests/test_player_launch.py` (extend PASS-59-64's) — INV-6, INV-7,
   INV-9, with the stub player binary.
-- `tests/test_emulator_seeder.py` (new) — INV-12.
+- `tests/test_emulator_seeder.py` (extended) — INV-12.
 
 Each test is run red before its code lands. No test downloads a real core
 or starts a real player.
@@ -441,19 +446,19 @@ or starts a real player.
 
 | Rule | What catches a breach |
 |------|----------------------|
-| INV-1 | `tests/test_player_cores.py` (to add) |
-| INV-2 | `tests/test_player_cores.py` (to add) |
-| INV-3 | `tests/test_player_cores.py` (to add) |
-| INV-4 | `tests/test_player_cores.py` (to add) |
-| INV-5 | `tests/test_player_cores.py` (to add) |
-| INV-6 | `tests/test_player_launch.py` (to extend) |
-| INV-7 | `tests/test_player_launch.py` (to extend) |
-| INV-8 | `tests/test_player_cores.py` (to add) |
-| INV-9 | `tests/test_player_launch.py` (to extend) |
-| INV-10 | `tests/test_player_cores.py` (to add) |
-| INV-11 | `tests/test_player_cores.py` (to add) |
-| INV-12 | `tests/test_emulator_seeder.py` (to add) |
-| INV-13 | `tests/test_player_cores.py` (to add) |
+| INV-1 | `tests/test_player_cores.py` |
+| INV-2 | `tests/test_player_cores.py` |
+| INV-3 | `tests/test_player_cores.py` |
+| INV-4 | `tests/test_player_cores.py` |
+| INV-5 | `tests/test_player_cores.py` |
+| INV-6 | `tests/test_player_launch.py` |
+| INV-7 | `tests/test_player_launch.py` |
+| INV-8 | `tests/test_player_cores.py` |
+| INV-9 | `tests/test_player_launch.py` (argv), `tests/test_player_cores.py` (the `PUT`) |
+| INV-10 | `tests/test_player_cores.py` |
+| INV-11 | `tests/test_player_cores.py` |
+| INV-12 | `tests/test_emulator_seeder.py` |
+| INV-13 | `tests/test_player_cores.py` |
 | The ranking in §4.1 is the best choice per system | **nothing** — a preference call (§15 Q3) |
 | `_settings` keys have the effect named in the player | **Partial:** INV-8 proves RetroDB writes them; that the player honours them is checked by the fork session |
 | Windows and macOS installs | **nothing** — no build here; marked unverified |

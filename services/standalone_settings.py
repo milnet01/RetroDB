@@ -9,6 +9,9 @@
 # wrote (`emulator_written_settings`). Choices: the game's, else the system's,
 # else the table's default (data/standalone_settings.json).
 #
+# The bundled player's choices live in the same table and serve the same
+# routes (PASS-59-81 §4.6); its settings come from services/player_cores.py.
+#
 # Nothing here raises into a launch: a missing data dir, an unreadable serial
 # or two PCSX2 candidates leave the file alone and the launch goes ahead (§6).
 # =============================================================================
@@ -84,11 +87,46 @@ def effective(spec, chosen) -> tuple:
     return spec['default'], 'default'
 
 
+def _player_table(folder) -> dict:
+    """The player's settings in this module's shape: `core` from the
+    system's ranked list, then the managed settings the system has."""
+    from services import player_cores
+    cores = player_cores.cores_for(folder)
+    if not cores:
+        return {}
+    table = {'core': {'values': {c: c for c in cores},
+                      'default': player_cores.auto_core(folder) or cores[0]}}
+    for setting, default in player_cores.system_settings(folder).items():
+        table[setting] = {'values': {v: v for v in player_cores.setting_values(setting)},
+                          'default': default}
+    return table
+
+
+def _scope_folder(scope, scope_id) -> str:
+    """The folder of the system a choice's scope belongs to, or ''."""
+    if scope == 'game':
+        row = query("SELECT s.folder FROM games g JOIN systems s "
+                    "ON s.id = g.system_id WHERE g.id = ?", (scope_id,), one=True)
+    else:
+        row = query("SELECT folder FROM systems WHERE id = ?", (scope_id,), one=True)
+    return row['folder'] if row else ''
+
+
+def table_for(emulator_id, scope, scope_id) -> dict:
+    """{setting: spec} RetroDB manages for this emulator at this scope."""
+    emu = query("SELECT * FROM emulators WHERE id = ?", (emulator_id,), one=True)
+    if not emu:
+        return {}
+    if emu.get('is_player'):
+        return _player_table(_scope_folder(scope, scope_id))
+    return settings_for(emu['binary_name'])
+
+
 def set_choice(emulator_id, scope, scope_id, setting, value) -> None:
     """Record a choice; `value` None removes it. Raises ValueError for a
-    setting or value the table does not offer."""
-    emu = query("SELECT binary_name FROM emulators WHERE id = ?", (emulator_id,), one=True)
-    spec = settings_for(emu['binary_name'] if emu else '').get(setting)
+    setting or value the table does not offer. A player game choice wins
+    back the keys the user set in the player's menu (PASS-59-81 INV-10)."""
+    spec = table_for(emulator_id, scope, scope_id).get(setting)
     if not spec:
         raise ValueError(f'unknown setting {setting!r}')
     if value is not None and value not in choice_keys(spec):
@@ -105,6 +143,10 @@ def set_choice(emulator_id, scope, scope_id, setting, value) -> None:
                 ON CONFLICT (emulator_id, scope, scope_id, setting) DO UPDATE SET value = excluded.value
             """, (emulator_id, scope, scope_id, setting, value))
         conn.commit()
+    emu = query("SELECT * FROM emulators WHERE id = ?", (emulator_id,), one=True)
+    if scope == 'game' and emu.get('is_player') and setting != 'core':
+        from services import player, player_cores
+        player.release_keys(scope_id, player_cores.setting_keys(setting))
 
 
 # -----------------------------------------------------------------------------
@@ -236,7 +278,9 @@ def _context(game_id) -> dict:
     """Everything a view or a launch needs: the game, the emulator the
     resolver would pick, its settings table, data dir and file."""
     from services.emulator_adapters import adapter_for, find_data_dir
-    from services.launch_resolver import LaunchResolutionError, _pick_mapping, _resolve_binary
+    from services.launch_resolver import (
+        LaunchResolutionError, _resolve_binary, pick_launch_mapping,
+    )
     game = query("""
         SELECT g.id, g.system_id, g.rom_path, g.emulator_override_id, g.disc_serial,
                g.disc_crc, s.folder AS system_folder, s.name AS system_name
@@ -247,12 +291,15 @@ def _context(game_id) -> dict:
     ctx = {'game': game, 'emulator': None, 'table': {}, 'file': None,
            'reason': None, 'candidates': [], 'serial': game.get('disc_serial')}
     try:
-        emu, sys_emu = _pick_mapping(game['system_id'], game.get('emulator_override_id'),
-                                     game['system_name'])
+        emu, sys_emu = pick_launch_mapping(game['system_id'], game.get('emulator_override_id'),
+                                           game['system_name'])
     except LaunchResolutionError:
         ctx['reason'] = _('No emulator is set up for this system.')
         return ctx
     ctx['emulator'] = emu
+    if emu and emu.get('is_player'):
+        ctx['table'] = _player_table(game['system_folder'])
+        return ctx
     ctx['table'] = settings_for(emu['binary_name'] if emu else '')
     if not ctx['table']:
         ctx['reason'] = _('RetroDB manages per-game settings for DuckStation, '
@@ -340,12 +387,44 @@ def _labels(spec) -> dict:
     return {k: k for k in choice_keys(spec)}
 
 
+def _player_view(game, emu, table, game_id) -> list:
+    """The player's settings rows: game choice, else system choice, else the
+    table default; a key set in the player's menu shows as `emulator`."""
+    from services import player, player_cores
+    folder, sid = game['system_folder'], game['system_id']
+    chosen = _choices(emu['id'], sid, game_id)
+    user = player._record(game_id)['user']['cfg'] if game_id else {}
+    rows = []
+    for setting, spec in table.items():
+        value, source = effective(spec, chosen.get(setting))
+        if setting == 'core' and source == 'default':
+            value = player_cores.chosen_core(folder, sid, game_id, emu['id']) or value
+        elif setting != 'core':
+            mine = player_cores.value_of(setting, user)
+            if mine:
+                value, source = mine, 'emulator'
+        rows.append({'setting': setting, 'value': value, 'source': source,
+                     'values': choice_keys(spec), 'per_game': True})
+    return rows
+
+
 def game_view(game_id) -> Optional[dict]:
     """GET /api/games/<id>/emulator-settings; None when the game is missing."""
     ctx = _context(game_id)
     if not ctx.get('game'):
         return None
     emu = ctx['emulator']
+    if emu and emu.get('is_player'):
+        from services import player
+        return {
+            'supported': bool(ctx['table']),
+            'reason': None if ctx['table'] else str(_('The player has no core for this system.')),
+            'candidates': [], 'serial': None,
+            'emulator': {'id': emu['id'], 'name': emu['name']},
+            'file': str(player._game_file(game_id, 'cfg')),
+            'customised': player.is_customised(game_id),
+            'settings': _player_view(ctx['game'], emu, ctx['table'], game_id),
+        }
     settings = []
     if emu and ctx['table']:
         chosen = _choices(emu['id'], ctx['game']['system_id'], game_id)
@@ -373,11 +452,15 @@ def game_view(game_id) -> Optional[dict]:
 
 def system_view(system_id, emulator_id) -> Optional[dict]:
     """GET /api/systems/<sid>/emulator-settings/<eid>."""
-    emu = query("SELECT id, name, binary_name FROM emulators WHERE id = ?",
-                (emulator_id,), one=True)
+    emu = query("SELECT * FROM emulators WHERE id = ?", (emulator_id,), one=True)
     if not emu:
         return None
-    table = settings_for(emu['binary_name'])
+    table = table_for(emulator_id, 'system', system_id)
+    if emu.get('is_player'):
+        game = {'system_id': system_id, 'system_folder': _scope_folder('system', system_id)}
+        return {'supported': bool(table), 'emulator': {'id': emu['id'], 'name': emu['name']},
+                'settings': [{k: r[k] for k in ('setting', 'value', 'source', 'values')}
+                             for r in _player_view(game, emu, table, None)]}
     chosen = _choices(emulator_id, system_id, None)
     return {
         'supported': bool(table),

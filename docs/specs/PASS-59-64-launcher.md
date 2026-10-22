@@ -208,8 +208,10 @@ because the resolver's RetroArch path cannot serve it:
 **Who writes what.** Its migration inserts the player's `emulators` row,
 with no `system_emulators` rows. PASS-59-81's core installer owns the rest:
 when it installs a core for a system, it writes that system's player
-`system_emulators` row with `retroarch_core`, makes it the default, and
-writes `settings/system/<folder>.cfg`.
+`system_emulators` row with `retroarch_core`, makes it the default only
+where the system has no default mapping that resolves (PASS-59-81 §3.7),
+and writes `settings/system/<folder>.cfg`. Until then the player stands in
+at Play for a system in PASS-59-81's table whose default does not resolve.
 
 When the player row becomes `is_default = 1` in `system_emulators` for a
 system, the same write sets `is_default = 0` on that system's other rows.

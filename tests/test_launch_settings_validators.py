@@ -28,6 +28,12 @@ class TestLaunchSettingsValidators:
     def test_launch_concurrent_same_game_enum(self, value, expected):
         assert _ok('launch_concurrent_same_game', value) is expected
 
+    def test_player_core_downloads_is_a_real_bool(self):
+        # PASS-59-81 §3.6 — the admin switch for downloads at Play.
+        assert _ok('player_core_downloads', True)
+        assert _ok('player_core_downloads', False)
+        assert not _ok('player_core_downloads', 'yes')
+
     @pytest.mark.parametrize('permission', ['launch', 'view', 'edit'])
     def test_launch_required_permission_accepts_known(self, permission):
         assert _ok('launch_required_permission', permission)

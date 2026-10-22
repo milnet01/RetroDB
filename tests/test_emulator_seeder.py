@@ -151,3 +151,25 @@ def test_every_seeded_and_adapter_folder_is_a_known_system():
     unknown = sorted({m['system_folder'] for m in seeds['system_emulators']} - known)
     unknown += sorted({s for a in ADAPTERS.values() for s in a.systems} - known)
     assert not unknown, f"folders not in config.SYSTEM_NAME_MAP: {unknown}"
+
+
+def test_inv12_seeded_core_names_carry_the_host_suffix(db, monkeypatch):
+    """PASS-59-81 INV-12: the seeds' `.so` core names become `.dll` on
+    Windows, so a Windows install's RetroArch rows name real files."""
+    from services.emulator_seeder import seed_emulators_from_file
+    monkeypatch.setattr('platform_utils.IS_WINDOWS', True)
+    monkeypatch.setattr('platform_utils.IS_MACOS', False)
+    monkeypatch.setattr('platform_utils.IS_LINUX', False)
+    db.execute("INSERT INTO systems (name, folder) VALUES ('Super Nintendo', 'snes')")
+    try:
+        seed_emulators_from_file(db, _SEEDS_PATH)
+        row = db.execute("""SELECT se.retroarch_core FROM system_emulators se
+                            JOIN systems s ON s.id = se.system_id
+                            JOIN emulators e ON e.id = se.emulator_id
+                            WHERE s.folder = 'snes' AND e.name = 'RetroArch'""").fetchone()
+        assert row[0] == 'snes9x_libretro.dll'
+    finally:
+        db.execute("DELETE FROM system_emulators")
+        db.execute("DELETE FROM emulators")
+        db.execute("DELETE FROM systems WHERE folder = 'snes'")
+        db.commit()
