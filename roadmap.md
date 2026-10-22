@@ -9338,6 +9338,20 @@ were corrected in `2836bc3` and are not repeated here.
 - **Verify**: force a hang (a test hook that blocks in the child); after
   the timeout the child is gone and rocm-smi shows the VRAM released.
 
+---
+
+#### Pass 59.157 At 375 px every table on Settings > Emulators scrolls sideways (LOW, S).
+- **Status**: todo
+- **Seen 2026-10-22** on the PASS-59-91 walk: each table is wider than
+  a phone, so the row's Settings button sits off-screen.
+- **Where**: templates/_settings_tabs/emulators.html (or whichever
+  partial renders those tables) and its CSS under static/css/.
+- **Plan**: at narrow widths show each row as a stacked card, or hide
+  low-value columns, so the actions stay on screen. Fits PASS-59-113
+  step 5 (everyday-use UX); do it alongside PASS-53-10.
+- **Verify**: at 375 px no table scrolls sideways and every row's
+  Settings button is visible and opens its dialog.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
