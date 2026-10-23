@@ -571,6 +571,7 @@ def game_detail(game_id):
                     # full-rescrape if the user edited only via the form.
                     invalidate_filter_cache()
                     invalidate_analytics_cache()
+                    upscale_queue.forget_cleared()
 
                     game = query("""
                         SELECT g.*, s.name AS system_name, s.folder AS system_folder

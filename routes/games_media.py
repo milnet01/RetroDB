@@ -41,6 +41,7 @@ def api_delete_game(game_id):
     execute("UPDATE psn_games SET linked_game_id = NULL WHERE linked_game_id = ?", (game_id,))
 
     execute("DELETE FROM games WHERE id = ?", (game_id,))
+    upscale_queue.forget_cleared()
 
     invalidate_filter_cache()
     invalidate_analytics_cache()
@@ -155,6 +156,7 @@ def api_delete_screenshot(game_id):
 
     execute("UPDATE games SET screenshots = NULLIF(?, '') WHERE id = ?",
             (new_screenshots, game_id))
+    upscale_queue.forget_cleared()
 
     screenshot_path = os.path.join(config.IMAGE_PATH, 'screenshots', screenshot_to_delete)
     if os.path.exists(screenshot_path):

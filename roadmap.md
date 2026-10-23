@@ -9532,7 +9532,13 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.163 Clearing a game the image worker is processing leaves orphan image files (FIX, S).
-- **Status**: todo
+- **Shipped 2026-10-23** (3.32.0): `standardize_image` takes a
+  `still_wanted` check the worker answers before each save and before
+  variants; `upscale_queue.forget_cleared()` drops rows of games with no
+  images left, called from the Maintenance clear, edit-window save,
+  screenshot delete and game delete. Tests in
+  `tests/test_upscale_queue.py`, red on the old code.
+- **Status**: done
 - **Seen 2026-10-23** (user question): the queue lists games, not
   files; `services/upscale_queue.py::process_game` reads the game's
   media columns when it starts. A cleared game left in the queue is

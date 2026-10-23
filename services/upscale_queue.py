@@ -108,17 +108,26 @@ def _media_files(conn, game_id):
     return files
 
 
+def _still_named(conn, game_id, path):
+    """Whether `game_id` still names `path` and the file is still there."""
+    return os.path.exists(path) and any(p == path for p, _ in _media_files(conn, game_id))
+
+
 def process_game(game_id, queued_at):
     """Standardize every image `game_id` names, then drop its row unless a
-    newer scrape listed the game again meanwhile."""
+    newer scrape listed the game again meanwhile. An image the game stops
+    naming part-way (a clear) is not saved, so no orphan file is written."""
     started = time.monotonic()
     conn = _connect()
     try:
         files = [(p, t) for p, t in _media_files(conn, game_id) if os.path.exists(p)]
         for path, image_type in files:
+            def still_wanted(path=path):
+                return _still_named(conn, game_id, path)
             try:
-                standardize_downloaded_image(path, image_type)
-                _make_responsive_variants(path, image_type)
+                standardize_downloaded_image(path, image_type, still_wanted)
+                if still_wanted():
+                    _make_responsive_variants(path, image_type)
             except Exception as e:
                 logger.warning(f"Upscale queue: {path} failed: {e}")
         conn.execute("DELETE FROM pending_upscales WHERE game_id = ? AND queued_at = ?",
@@ -128,6 +137,23 @@ def process_game(game_id, queued_at):
         conn.close()
     logger.info(f"Upscale queue: game {game_id}, {len(files)} images, "
                 f"{time.monotonic() - started:.1f}s")
+
+
+def forget_cleared():
+    """Drop the rows of games that no longer name any image to upscale (a
+    clear or a delete), so the waiting count is right (PASS-59-163)."""
+    blank = " AND ".join(f"COALESCE({f}, '') = ''" for f in _MEDIA_FIELDS)
+    try:
+        conn = _connect()
+        try:
+            conn.execute(
+                "DELETE FROM pending_upscales WHERE game_id NOT IN "
+                f"(SELECT id FROM games WHERE NOT ({blank}))")
+            conn.commit()
+        finally:
+            conn.close()
+    except sqlite3.Error as e:
+        logger.warning(f"Upscale queue: could not drop cleared games: {e}")
 
 
 def _next_row():

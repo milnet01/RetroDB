@@ -258,6 +258,13 @@ with the image count and seconds taken.
 - **Re-listing.** Listing a game again stamps a new `queued_at`. The
   worker deletes a row only when its `queued_at` is unchanged, so a game
   re-scraped mid-run is processed again.
+- **Clears** (PASS-59-163). Just before saving an image or writing its
+  variants, the worker checks the game still names the file and the file
+  is still there; if not, it saves nothing, so a clear mid-upscale leaves
+  no orphan. `forget_cleared()` deletes the rows of games that name no
+  boxart, 3D boxart or screenshot, or no longer exist. Maintenance "Clear
+  scraped data", the edit window's save, screenshot delete and game
+  delete call it.
 - **Scope.** Only those two entry points defer. Admin uploads, museum
   images and `ImageResizeJob` upscale inline as before. A thread started
   without `contextvars.copy_context()` does not inherit the switch and

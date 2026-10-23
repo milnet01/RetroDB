@@ -95,6 +95,42 @@ def test_game_listed_again_mid_run_keeps_its_row(queue_env):
     assert [g for g, _ in _listed(connect)] == [GAME_ID]
 
 
+# PASS-59-163 — a game cleared while the worker resizes its image gets no file
+# written back, and a clear drops the game from the waiting list.
+
+def test_image_cleared_mid_upscale_is_not_saved(queue_env, monkeypatch):
+    tmp, connect = queue_env
+    shot = tmp / 'screenshots' / 'a.png'
+    _image(shot, 100)
+    upscale_queue.enqueue(GAME_ID)
+    real_upscale = image_utils._upscale_image
+
+    def clear_during_upscale(*args):
+        c = connect()
+        c.execute("UPDATE games SET screenshots = NULL WHERE id = ?", (GAME_ID,))
+        c.commit()
+        c.close()
+        shot.unlink()  # Maintenance clear with delete_images
+        return real_upscale(*args)
+
+    monkeypatch.setattr(image_utils, '_upscale_image', clear_during_upscale)
+    upscale_queue.run_pending()
+    assert list((tmp / 'screenshots').iterdir()) == []
+    assert _listed(connect) == []
+
+
+def test_forget_cleared_drops_only_games_without_images(queue_env):
+    _, connect = queue_env
+    c = connect()
+    c.execute("INSERT INTO games (id, boxart) VALUES (8, 'x.png'), (9, NULL)")
+    c.commit()
+    c.close()
+    for game_id in (GAME_ID, 8, 9, 10):  # 10 was deleted
+        upscale_queue.enqueue(game_id)
+    upscale_queue.forget_cleared()
+    assert sorted(g for g, _ in _listed(connect)) == [GAME_ID, 8]
+
+
 # PASS-59-153 — the sidebar counts games still waiting, and a waiting game's
 # page says so, so a player knows soft images are still being improved.
 

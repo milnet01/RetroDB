@@ -7,6 +7,8 @@
     label: Easier to get around on a phone or tablet
   - type: fix
     label: Settings > Emulators fits a phone
+  - type: fix
+    label: Clearing a game's images no longer leaves stray files
   body: |
     <ul>
       <li><strong>Search for any game or console from every page.</strong>
@@ -29,6 +31,12 @@
         were wider than a phone, so the Edit and Settings buttons sat off
         the screen. On a phone each row is now a card with its buttons
         inside.</li>
+      <li><strong>Clearing a game's images no longer leaves stray
+        files.</strong> If you cleared a game's images while RetroDB was
+        still sharpening them in the background, it could write them back
+        as files no game uses. It now checks first and skips them. The
+        "Improving images" count also drops the cleared game at
+        once.</li>
     </ul>
 - version: 3.31.0
   date: 2026-10-23

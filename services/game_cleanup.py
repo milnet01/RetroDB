@@ -14,6 +14,7 @@ import os
 from services.database import execute, get_db, get_db_with_context, query
 from services.game_utils import reset_game_title_from_filename
 from services.media_cleanup import delete_game_images
+from services import upscale_queue
 
 logger = logging.getLogger(__name__)
 
@@ -197,6 +198,7 @@ def clear_scraped_data(system_id=None, delete_images=False):
     else:
         execute(f"UPDATE games SET {set_clause} WHERE scraped = 1")
     cleared = len(game_ids_to_reset)
+    upscale_queue.forget_cleared()
 
     if delete_images:
         images_deleted = delete_game_images(games)

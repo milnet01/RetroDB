@@ -738,12 +738,13 @@ def boxart_dir_listing(image_type='boxart'):
     return listing
 
 
-def standardize_downloaded_image(path, image_type):
+def standardize_downloaded_image(path, image_type, still_wanted=None):
     """Convenience wrapper — standardize a freshly-downloaded image.
 
     Args:
         path: Absolute path to the image file.
         image_type: One of 'boxart', 'screenshots', 'boxart_3d', 'controllers', 'fanart'.
+        still_wanted: See standardize_image().
     """
     import config
 
@@ -760,10 +761,10 @@ def standardize_downloaded_image(path, image_type):
         target = config.IMAGE_TARGET_HEIGHT
         preserve_rgba = image_type == 'boxart_3d'  # 3D boxart often has transparency
 
-    standardize_image(path, image_type, target, preserve_rgba)
+    standardize_image(path, image_type, target, preserve_rgba, still_wanted)
 
 
-def standardize_image(path, image_type, target, preserve_rgba=False):
+def standardize_image(path, image_type, target, preserve_rgba=False, still_wanted=None):
     """Standardize a single image to the target size.
 
     For height-based types (boxart, screenshots, boxart_3d): target is the
@@ -779,6 +780,9 @@ def standardize_image(path, image_type, target, preserve_rgba=False):
         image_type: 'boxart', 'screenshots', 'boxart_3d', or 'controllers'.
         target: Target size in pixels.
         preserve_rgba: If True, handle alpha channel during upscale.
+        still_wanted: Optional callable, asked just before the save. False
+            skips the save: the file was cleared while it was being resized,
+            and saving would recreate it as an orphan (PASS-59-163).
     """
     import config
     from PIL import Image
@@ -837,6 +841,8 @@ def standardize_image(path, image_type, target, preserve_rgba=False):
         img = resized
 
         if img is not None:
+            if still_wanted is not None and not still_wanted():
+                return
             _save_image(img, path)
     finally:
         try:
