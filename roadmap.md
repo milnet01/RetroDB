@@ -9360,7 +9360,12 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.158 Library filter bar: every control has a fixed place (UX, M).
-- **Status**: in-progress
+- **Resolution** (2026-10-23): Shipped 2026-10-23 in 3.31.0. Measured on :5001: grid top unmoved
+  through Select, filtering and sort changes on /games and /system/84;
+  phone Filters drop-down opens over the page. Locale help files still
+  describe the old controls until the v4.0.0 translation step
+  (PASS-59-113 step 7).
+- **Status**: done
 - **Problem** (measured 2026-10-23, /games at 1350 px): pressing Select
   grows the filter panel by 83 px and shrinks the search box; the Clear
   button and the Active Filters row appear on filtering; the A-Z strip
