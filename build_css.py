@@ -63,7 +63,10 @@ CSS_ORDER = [
     # 7. Utilities
     'utilities.css',
 
-    # 8. Responsive (last)
+    # 8. Phone header and bottom bar (overrides fixed-bottom components)
+    'layout/mobile-nav.css',
+
+    # 9. Responsive (last)
     'layout/responsive.css',
 ]
 

@@ -1,0 +1,213 @@
+/* =============================================================================
+   RETRODB - MOBILE NAVIGATION (PASS-53-10)
+   Fixed header and bottom bar, shown where the sidebar slides away (992px).
+   Markup: templates/base.html; behaviour: initializeSidebar() in main.js.
+   ============================================================================= */
+
+.mobile-header,
+.mobile-bottom-bar,
+.sidebar-scrim {
+    display: none;
+}
+
+@media (max-width: 992px) {
+    /* =========================================================================
+       HEADER
+       ========================================================================= */
+
+    .mobile-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1001;
+        height: var(--mobile-header-height);
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        padding: 0 var(--spacing-sm);
+        background: var(--bg-medium);
+        border-bottom: 1px solid var(--card-border);
+    }
+
+    .mobile-header-logo {
+        flex: 1;
+    }
+
+    .mobile-header-logo .logo-text {
+        font-size: 1.25rem;
+    }
+
+    .mobile-menu-toggle,
+    .mobile-search-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        background: none;
+        border: none;
+        border-radius: var(--radius-md);
+        color: var(--text-primary);
+        cursor: pointer;
+    }
+
+    .mobile-menu-toggle {
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .mobile-menu-toggle span {
+        width: 24px;
+        height: 3px;
+        background: var(--text-primary);
+        border-radius: 2px;
+    }
+
+    .mobile-search-toggle {
+        font-size: 1.25rem;
+    }
+
+    .mobile-menu-toggle:focus-visible,
+    .mobile-search-toggle:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 2px var(--primary-cyan);
+    }
+
+    /* =========================================================================
+       SLIDE-IN SIDEBAR
+       Opaque here: over page content the desktop glass let the page show
+       through. Hidden when closed, so keyboard focus cannot reach it.
+       ========================================================================= */
+
+    .sidebar {
+        top: var(--mobile-header-height);
+        height: calc(100dvh - var(--mobile-header-height));
+        width: min(var(--sidebar-width), 85vw);
+        background: linear-gradient(180deg, var(--bg-medium) 0%, var(--bg-dark) 100%);
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        visibility: hidden;
+        transition: transform var(--transition-normal), visibility 0s var(--transition-normal);
+    }
+
+    .sidebar.open {
+        visibility: visible;
+        transition: transform var(--transition-normal);
+    }
+
+    /* The header already shows the logo */
+    .sidebar-header > .logo {
+        display: none;
+    }
+
+    .sidebar-header > .logo + * {
+        margin-top: 0;
+    }
+
+    /* The search results open below the box and stay on screen */
+    .global-search-list {
+        max-height: 50dvh;
+    }
+
+    .sidebar-nav {
+        overflow-y: auto;
+    }
+
+    .sidebar-scrim {
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 999;
+        background: rgba(0, 0, 0, 0.6);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity var(--transition-normal);
+    }
+
+    body.mobile-menu-open .sidebar-scrim {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    body.mobile-menu-open {
+        overflow: hidden;
+    }
+
+    /* =========================================================================
+       BOTTOM BAR
+       ========================================================================= */
+
+    .mobile-bottom-bar {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 998;
+        display: flex;
+        height: calc(var(--mobile-bar-height) + env(safe-area-inset-bottom, 0px));
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+        background: var(--bg-medium);
+        border-top: 1px solid var(--card-border);
+    }
+
+    .mobile-bottom-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        min-width: 0;
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-size: 0.75rem;
+    }
+
+    .mobile-bottom-icon {
+        font-size: 1.25rem;
+    }
+
+    .mobile-bottom-label {
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .mobile-bottom-item.active {
+        color: var(--primary-cyan);
+        box-shadow: inset 0 2px 0 var(--primary-cyan);
+    }
+
+    .mobile-bottom-item:focus-visible {
+        outline: none;
+        box-shadow: inset 0 0 0 2px var(--primary-cyan);
+    }
+
+    /* =========================================================================
+       ROOM FOR THE BARS
+       Page content and everything pinned to the bottom clear them.
+       ========================================================================= */
+
+    .main-content {
+        padding-top: calc(var(--mobile-header-height) + var(--spacing-md));
+        padding-bottom: calc(var(--mobile-bar-height) + env(safe-area-inset-bottom, 0px) + var(--spacing-md));
+    }
+
+    body:has(.mobile-bottom-bar) .back-to-top-btn {
+        bottom: calc(var(--mobile-bar-height) + 16px);
+    }
+
+    body:has(.mobile-bottom-bar) .unified-toast-container {
+        bottom: calc(var(--mobile-bar-height) + 12px);
+    }
+
+    body:has(.mobile-bottom-bar) .launch-indicator {
+        bottom: calc(var(--mobile-bar-height) + var(--spacing-sm));
+    }
+
+    body:has(.mobile-bottom-bar) .launch-indicator-popover {
+        bottom: calc(var(--mobile-bar-height) + var(--spacing-sm) + 2.5rem);
+    }
+}

@@ -35,6 +35,17 @@
         return body;
     };
 
+    // PASS-59-157 — on a phone a `stack-narrow` table shows each row as a
+    // card (tables.css); each cell names its column there. A row with fewer
+    // cells than columns (a message, a settings panel) spans the card.
+    const labelCells = (table) => {
+        const names = [...table.tHead.rows[0].cells].map(th => th.textContent.trim());
+        for (const tr of table.tBodies[0].rows) {
+            if (tr.cells.length !== names.length) continue;
+            [...tr.cells].forEach((td, i) => { if (names[i]) td.dataset.label = names[i]; });
+        }
+    };
+
     // ----- RetroArch panel ---------------------------------------------------
 
     const detectBtn = $('#ra-detect-btn');
@@ -130,6 +141,8 @@
             tbody.appendChild(tr);
         }
         wrap.appendChild(tbody);
+        wrap.classList.add('stack-narrow');
+        labelCells(wrap);
         emuDetectResults.innerHTML = '';
         emuDetectResults.appendChild(wrap);
         emuApplyBtn.disabled = !suggestions.some(s => s.would_change);
@@ -277,6 +290,7 @@
                 tr.appendChild(actions);
                 tbody.appendChild(tr);
             }
+            labelCells($('#emulator-table'));
         } catch (err) {
             tbody.innerHTML = `<tr><td colspan="7" class="text-danger">${escapeHtml(t('Failed: {error}', {error: err.message}))}</td></tr>`;
         }
@@ -523,6 +537,8 @@
             }
         }
         table.appendChild(tbody);
+        table.classList.add('stack-narrow');
+        labelCells(table);
         const wrap = document.createElement('div');
         wrap.style.overflowX = 'auto';
         wrap.appendChild(table);

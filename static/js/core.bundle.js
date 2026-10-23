@@ -3062,18 +3062,31 @@ function initializeSidebar() {
         if (mainContent) mainContent.classList.add('sidebar-collapsed');
     }
 
-    const mobileToggle = document.querySelector('.mobile-menu-toggle');
-    if (mobileToggle) {
-        mobileToggle.addEventListener('click', function() {
-            sidebar.classList.toggle('open');
-        });
-    }
+    const header = document.querySelector('.mobile-header');
+    if (!sidebar || !header) return;
+    const headerButtons = header.querySelectorAll('[aria-controls="appSidebar"]');
+    const setMobileSidebar = (open) => {
+        sidebar.classList.toggle('open', open);
+        document.body.classList.toggle('mobile-menu-open', open);
+        headerButtons.forEach(b => b.setAttribute('aria-expanded', String(open)));
+    };
+    header.querySelector('.mobile-menu-toggle').addEventListener('click', () => {
+        setMobileSidebar(!sidebar.classList.contains('open'));
+    });
+    header.querySelector('.mobile-search-toggle')?.addEventListener('click', () => {
+        setMobileSidebar(true);
+        document.getElementById('globalSearch')?.focus();
+    });
 
-    document.addEventListener('click', function(e) {
-        if (window.innerWidth <= 992) {
-            if (sidebar && !sidebar.contains(e.target) && !mobileToggle?.contains(e.target)) {
-                sidebar.classList.remove('open');
-            }
+    document.addEventListener('click', (e) => {
+        if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && !header.contains(e.target)) {
+            setMobileSidebar(false);
+        }
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && sidebar.classList.contains('open')) {
+            setMobileSidebar(false);
+            header.querySelector('.mobile-menu-toggle').focus();
         }
     });
 }

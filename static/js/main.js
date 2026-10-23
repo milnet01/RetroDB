@@ -375,20 +375,34 @@ function initializeSidebar() {
         if (mainContent) mainContent.classList.add('sidebar-collapsed');
     }
     
-    // Mobile sidebar toggle
-    const mobileToggle = document.querySelector('.mobile-menu-toggle');
-    if (mobileToggle) {
-        mobileToggle.addEventListener('click', function() {
-            sidebar.classList.toggle('open');
-        });
-    }
-    
-    // Close sidebar on outside click (mobile)
-    document.addEventListener('click', function(e) {
-        if (window.innerWidth <= 992) {
-            if (sidebar && !sidebar.contains(e.target) && !mobileToggle?.contains(e.target)) {
-                sidebar.classList.remove('open');
-            }
+    // PASS-53-10 — the phone header's menu and search buttons slide the
+    // sidebar in; the search button also puts the cursor in its search box.
+    const header = document.querySelector('.mobile-header');
+    if (!sidebar || !header) return;
+    const headerButtons = header.querySelectorAll('[aria-controls="appSidebar"]');
+    const setMobileSidebar = (open) => {
+        sidebar.classList.toggle('open', open);
+        document.body.classList.toggle('mobile-menu-open', open);
+        headerButtons.forEach(b => b.setAttribute('aria-expanded', String(open)));
+    };
+    header.querySelector('.mobile-menu-toggle').addEventListener('click', () => {
+        setMobileSidebar(!sidebar.classList.contains('open'));
+    });
+    header.querySelector('.mobile-search-toggle')?.addEventListener('click', () => {
+        setMobileSidebar(true);
+        document.getElementById('globalSearch')?.focus();
+    });
+
+    // Close on a tap outside it, or on Escape (which returns focus to the menu button)
+    document.addEventListener('click', (e) => {
+        if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && !header.contains(e.target)) {
+            setMobileSidebar(false);
+        }
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && sidebar.classList.contains('open')) {
+            setMobileSidebar(false);
+            header.querySelector('.mobile-menu-toggle').focus();
         }
     });
 }

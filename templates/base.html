@@ -41,7 +41,26 @@
     <div class="app-container">
         <!-- Sidebar Navigation -->
         {% if not setup_mode %}
-        <nav class="sidebar" aria-label="{{ _('Main navigation') }}">
+        {# PASS-53-10 — phone and tablet chrome, shown where the sidebar slides
+           away (layout/mobile-nav.css); main.js opens the sidebar from it. #}
+        <header class="mobile-header">
+            <button type="button" class="mobile-menu-toggle" aria-label="{{ _('Toggle menu') }}"
+                    aria-controls="appSidebar" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <a href="{{ url_for('dashboard') }}" class="logo mobile-header-logo">
+                <div class="logo-text">RETRO<span>DB</span></div>
+            </a>
+            {% if current_user %}
+            <button type="button" class="mobile-search-toggle" aria-label="{{ _('Search games and systems') }}"
+                    aria-controls="appSidebar" aria-expanded="false">
+                <span aria-hidden="true">🔍</span>
+            </button>
+            {% endif %}
+        </header>
+        <nav class="sidebar" id="appSidebar" aria-label="{{ _('Main navigation') }}">
             <div class="sidebar-header">
                 <a href="{{ url_for('dashboard') }}" class="logo">
                     <div class="logo-icon">🎮</div>
@@ -97,31 +116,31 @@
                requires aria-current on the link representing the current
                page; without it, assistive tech can't tell which sidebar
                item is the user's location. #}
-            {%- macro nav_active(cond) -%}
-            class="nav-item{% if cond %} active{% endif %}"{% if cond %} aria-current="page"{% endif %}
+            {%- macro nav_active(cond, cls='nav-item') -%}
+            class="{{ cls }}{% if cond %} active{% endif %}"{% if cond %} aria-current="page"{% endif %}
             {%- endmacro -%}
+            {# The most-used pages: the sidebar's first links and the phone
+               bottom bar (PASS-53-10). Achievements is one link for every
+               trophy platform; the pages share a tab strip
+               (_macros/nav_tabs.html) and the link reopens the last tab used. #}
+            {% if current_user %}
+            {% set main_nav = [
+                (url_for('dashboard'), request.endpoint == 'dashboard', '🏠', _('Dashboard')),
+                (url_for('games.all_games'), request.endpoint == 'games.all_games' or (request.endpoint == 'games.game_detail' and request.args.get('from') == 'library'), '📚', _('Library')),
+                (url_for('systems.systems'), request.endpoint in ['systems.systems', 'systems.system_games', 'games.game_detail'] and request.args.get('from') != 'library' and request.args.get('from') != 'achievements' and request.args.get('from') != 'rom_reports', '🖥️', _('Systems')),
+                (session.get('last_achievements_tab') or url_for('achievements.achievements'), request.blueprint in ['achievements', 'trophies', 'steam_achievements', 'xbox_achievements'], '🏆', _('Achievements')),
+            ] %}
+            {% endif %}
             <nav class="sidebar-nav">
                 {% if current_user %}
                 <div class="nav-section">
                     <div class="nav-section-title">{{ _('Main') }}</div>
-                    <a href="{{ url_for('dashboard') }}" {{ nav_active(request.endpoint == 'dashboard') }}>
-                        <span class="nav-icon">🏠</span>
-                        <span class="nav-text">{{ _('Dashboard') }}</span>
+                    {% for href, active, icon, label in main_nav %}
+                    <a href="{{ href }}" {{ nav_active(active) }}>
+                        <span class="nav-icon">{{ icon }}</span>
+                        <span class="nav-text">{{ label }}</span>
                     </a>
-                    <a href="{{ url_for('games.all_games') }}" {{ nav_active(request.endpoint == 'games.all_games' or (request.endpoint == 'games.game_detail' and request.args.get('from') == 'library')) }}>
-                        <span class="nav-icon">📚</span>
-                        <span class="nav-text">{{ _('Library') }}</span>
-                    </a>
-                    <a href="{{ url_for('systems.systems') }}" {{ nav_active(request.endpoint in ['systems.systems', 'systems.system_games', 'games.game_detail'] and request.args.get('from') != 'library' and request.args.get('from') != 'achievements' and request.args.get('from') != 'rom_reports') }}>
-                        <span class="nav-icon">🖥️</span>
-                        <span class="nav-text">{{ _('Systems') }}</span>
-                    </a>
-                    {# One link for every trophy platform; the pages share a tab strip
-                       (_macros/nav_tabs.html) and the link reopens the last tab used. #}
-                    <a href="{{ session.get('last_achievements_tab') or url_for('achievements.achievements') }}" {{ nav_active(request.blueprint in ['achievements', 'trophies', 'steam_achievements', 'xbox_achievements']) }}>
-                        <span class="nav-icon">🏆</span>
-                        <span class="nav-text">{{ _('Achievements') }}</span>
-                    </a>
+                    {% endfor %}
                     <a href="{{ url_for('analytics') }}" {{ nav_active(request.endpoint == 'analytics') }}>
                         <span class="nav-icon">📈</span>
                         <span class="nav-text">{{ _('Analytics') }}</span>
@@ -209,6 +228,17 @@
             </div>
             
         </nav>
+        <div class="sidebar-scrim" aria-hidden="true"></div>
+        {% if current_user %}
+        <nav class="mobile-bottom-bar" aria-label="{{ _('Quick links') }}">
+            {% for href, active, icon, label in main_nav %}
+            <a href="{{ href }}" {{ nav_active(active, 'mobile-bottom-item') }}>
+                <span class="mobile-bottom-icon" aria-hidden="true">{{ icon }}</span>
+                <span class="mobile-bottom-label">{{ label }}</span>
+            </a>
+            {% endfor %}
+        </nav>
+        {% endif %}
         <!-- About Modal: outside <nav>, whose backdrop-filter would make it the
          containing block for this fixed overlay and clip it to the sidebar -->
         {% from "_macros/legal_disclaimer.html" import legal_disclaimer %}
@@ -265,15 +295,6 @@
             <!-- Centered Content Wrapper. A page that sets adaptive_layout
                  sizes its own regions (design standards §7, PASS-59-104). -->
             <div class="content-wrapper{% if adaptive_layout %} adaptive{% endif %}">
-                <!-- Mobile Menu Toggle -->
-                {% if not setup_mode %}
-                <button class="mobile-menu-toggle" aria-label="{{ _('Toggle menu') }}">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-                {% endif %}
-                
                 <!-- Flash Messages -->
                 {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}

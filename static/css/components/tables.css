@@ -21,6 +21,58 @@
     }
 }
 
+/* PASS-59-157 — a table whose last column holds actions opts in with
+   `stack-narrow`: on a phone each row becomes a card, so the actions stay on
+   screen. Each cell carries its column name in `data-label`; a cell without
+   one (the actions) spans the card. */
+@media (max-width: 600px) {
+    .page-box .data-table.stack-narrow,
+    .data-table.stack-narrow tbody,
+    .data-table.stack-narrow tr,
+    .data-table.stack-narrow td {
+        display: block;
+        overflow-x: visible;
+    }
+
+    .data-table.stack-narrow thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+    }
+
+    .data-table.stack-narrow tr {
+        margin-bottom: var(--spacing-sm);
+        padding: var(--spacing-xs) 0;
+        border: 1px solid var(--card-border);
+        border-radius: var(--radius-md);
+    }
+
+    .data-table.stack-narrow tr[hidden] {
+        display: none;
+    }
+
+    .data-table.stack-narrow td {
+        padding: var(--spacing-xs) var(--spacing-sm);
+        border-bottom: none;
+        overflow-wrap: anywhere;
+    }
+
+    .data-table.stack-narrow td[data-label] {
+        display: flex;
+        gap: var(--spacing-sm);
+    }
+
+    .data-table.stack-narrow td[data-label]::before {
+        content: attr(data-label);
+        flex: 0 0 35%;
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+}
+
 .data-table th {
     background: var(--bg-darker, #0d1117);
     color: var(--text-secondary);

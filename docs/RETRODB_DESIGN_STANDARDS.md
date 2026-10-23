@@ -527,6 +527,10 @@ Tabs stretch to fill the available width.
 └──────────────────────────────────────────────────────────────┘
 ```
 
+At 992px and narrower the sidebar slides in instead. A fixed header holds the
+menu and search buttons, and a bottom bar links the first four sidebar pages
+(`main_nav` in `templates/base.html`). Styles: `static/css/layout/mobile-nav.css`.
+
 ### Page Width — adaptive (PASS-59-104)
 
 A page fits the browser window it is shown in, not the monitor: a desktop
@@ -571,7 +575,10 @@ The `page-box` caps its width with `--page-max`. Shared caps live in
 A reading page sets `--page-max` to about 75ch plus its card padding (Help,
 Changelog). No class leaves the box uncapped (Logs). On a phone, a
 `.data-table` inside a `page-box` scrolls sideways inside itself; nothing
-else may make the page scroll sideways.
+else may make the page scroll sideways. A table whose actions must stay on
+screen adds the class `stack-narrow`: at 600px and narrower each row becomes a
+card, and each cell carries its column name in `data-label`
+(`static/css/components/tables.css`).
 
 **What checks this:** nothing automatic. Each adapted page is walked in a
 browser at 375 px, at about half of a 1920 px window, and at a window of
