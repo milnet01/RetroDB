@@ -12,6 +12,7 @@
 #   GET  /api/player/cores/status    the core install job (PASS-59-81 §4.5)
 #   POST /api/player/cores/install   install cores for every system with games
 #   POST /api/player/cores/update    re-download cores whose build changed
+#   POST /api/player/retroarch/install  Get RetroArch for the player (PASS-59-139)
 #
 # Spec §Routes.
 # =============================================================================
@@ -165,6 +166,21 @@ def api_player_cores_status():
                    platform_supported=player_cores.buildbot_dir() is not None)
 
 
+@bp.route('/api/player/retroarch/install', methods=['POST'])
+@login_required
+@permission_required('manage_settings')
+@handle_api_errors
+def api_player_retroarch_install():
+    """Download official RetroArch into the player's folder, on the core
+    job's thread; poll /api/player/cores/status."""
+    from services import player_install
+    from services.jobs import player_cores_job
+    from services.jobs.player_cores import RETROARCH
+    if player_install.host() is None:
+        return error(_('RetroArch is not built for this computer.'), 400)
+    return success(job_id=player_cores_job.request([(RETROARCH, None)], force=True))
+
+
 @bp.route('/api/player/cores/install', methods=['POST'])
 @login_required
 @permission_required('manage_settings')
@@ -263,9 +279,10 @@ def api_launch_kill(token):
 # -----------------------------------------------------------------------------
 
 def _game_info(h):
-    """Title, and whether the run can swap disks: RetroArch given a .m3u."""
+    """Title, and whether the run can swap disks: RetroArch or the player
+    given a .m3u."""
     row = query("""
-        SELECT g.title, g.rom_path, e.is_retroarch
+        SELECT g.title, g.rom_path, e.is_retroarch, e.is_player
         FROM games g LEFT JOIN emulators e ON e.id = ?
         WHERE g.id = ?
     """, (h.emulator_id, h.game_id), one=True)
@@ -273,7 +290,7 @@ def _game_info(h):
         return {'title': '', 'disk_swap': False}
     return {
         'title': row['title'] or '',
-        'disk_swap': bool(row['is_retroarch'])
+        'disk_swap': bool(row['is_retroarch'] or row['is_player'])
                      and (row['rom_path'] or '').lower().endswith('.m3u'),
     }
 
@@ -302,7 +319,9 @@ def api_launch_disk_next(token):
     if not _game_info(handle)['disk_swap']:
         return error(_('This game has no disk list to swap through'), 409)
     try:
-        next_disk()
+        # The player listens on its launch's own port; the user's RetroArch
+        # on the default one, turned on by hand.
+        next_disk(port=get_launcher().command_port(token) or RETROARCH_COMMAND_PORT)
     except RetroArchNotListening:
         return error(_(
             'RetroArch is not accepting commands. In RetroArch, turn on '

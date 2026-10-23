@@ -71,9 +71,11 @@ def running(monkeypatch):
     handle = MagicMock(token='tok-1', pid=42, game_id=7, emulator_id=1, started_at=1.0)
     launcher = MagicMock()
     launcher.active.return_value = [handle]
+    launcher.command_port.return_value = None   # the user's own RetroArch
     monkeypatch.setattr('routes.launch.get_launcher', lambda: launcher)
 
     def set_info(**info):
+        set_info.launcher = launcher
         monkeypatch.setattr('routes.launch._game_info', lambda h: info)
     return set_info
 
@@ -81,17 +83,29 @@ def running(monkeypatch):
 def test_disk_next_route_sends(app_module, monkeypatch, running):
     running(title='TMNT', disk_swap=True)
     sent = []
-    monkeypatch.setattr('routes.launch.next_disk', lambda: sent.append(True))
+    monkeypatch.setattr('routes.launch.next_disk', lambda port: sent.append(port))
     client = _make_authed_client(app_module, monkeypatch, 'player')
     rv = client.post('/api/launch/tok-1/disk-next', headers=CSRF)
     assert rv.status_code == 200
-    assert sent == [True]
+    assert sent == [retroarch_command.RETROARCH_COMMAND_PORT]
+
+
+def test_disk_next_route_uses_the_players_port(app_module, monkeypatch, running):
+    # PASS-59-139: the player listens on the port its launch chose.
+    running(title='Crash', disk_swap=True)
+    running.launcher.command_port.return_value = 50123
+    sent = []
+    monkeypatch.setattr('routes.launch.next_disk', lambda port: sent.append(port))
+    client = _make_authed_client(app_module, monkeypatch, 'player')
+    assert client.post('/api/launch/tok-1/disk-next', headers=CSRF).status_code == 200
+    assert sent == [50123]
+    running.launcher.command_port.assert_called_once_with('tok-1')
 
 
 def test_disk_next_route_refuses_a_game_without_disk_list(app_module, monkeypatch, running):
     running(title='Pitfall', disk_swap=False)
     monkeypatch.setattr('routes.launch.next_disk',
-                        lambda: pytest.fail('must not send to RetroArch'))
+                        lambda port: pytest.fail('must not send to RetroArch'))
     client = _make_authed_client(app_module, monkeypatch, 'player')
     assert client.post('/api/launch/tok-1/disk-next', headers=CSRF).status_code == 409
 
@@ -105,7 +119,7 @@ def test_disk_next_route_unknown_token_is_404(app_module, monkeypatch, running):
 def test_disk_next_route_says_how_to_turn_commands_on(app_module, monkeypatch, running):
     running(title='TMNT', disk_swap=True)
 
-    def not_listening():
+    def not_listening(port):
         raise RetroArchNotListening('refused')
     monkeypatch.setattr('routes.launch.next_disk', not_listening)
     client = _make_authed_client(app_module, monkeypatch, 'player')
@@ -114,17 +128,20 @@ def test_disk_next_route_says_how_to_turn_commands_on(app_module, monkeypatch, r
     assert str(retroarch_command.RETROARCH_COMMAND_PORT) in rv.get_json()['error']
 
 
-@pytest.mark.parametrize('rom,is_retroarch,swap', [
-    ('/roms/c64/Game (1990).m3u', 1, True),
-    ('/roms/c64/Game (1990).M3U', 1, True),
-    ('/roms/c64/Game (1990).zip', 1, False),
-    ('/roms/psx/Game (1996).m3u', 0, False),   # a standalone emulator
+@pytest.mark.parametrize('rom,is_retroarch,is_player,swap', [
+    ('/roms/c64/Game (1990).m3u', 1, 0, True),
+    ('/roms/c64/Game (1990).M3U', 1, 0, True),
+    ('/roms/c64/Game (1990).zip', 1, 0, False),
+    ('/roms/psx/Game (1996).m3u', 0, 0, False),   # a standalone emulator
+    ('/roms/psx/Game (1996).m3u', 0, 1, True),    # the player (PASS-59-139)
+    ('/roms/psx/Game (1996).cue', 0, 1, False),
 ])
-def test_game_info_flags_retroarch_m3u_only(app_module, rom, is_retroarch, swap):
+def test_game_info_flags_retroarch_m3u_only(app_module, rom, is_retroarch, is_player, swap):
     from routes.launch import _game_info
     from services.database import execute
-    emu = execute("INSERT INTO emulators (name, binary_name, args_template, is_retroarch) "
-                  "VALUES (?, ?, ?, ?)", ('Disk Test Emu', 'disktest', '{rom}', is_retroarch))
+    emu = execute("INSERT INTO emulators (name, binary_name, args_template, is_retroarch, "
+                  "is_player) VALUES (?, ?, ?, ?, ?)",
+                  ('Disk Test Emu', 'disktest', '{rom}', is_retroarch, is_player))
     sys_id = execute("INSERT INTO systems (name, folder) VALUES (?, ?)",
                      ('Disk Test System', 'disk-test-system'))
     game = execute("INSERT INTO games (system_id, title, rom_path) VALUES (?, ?, ?)",

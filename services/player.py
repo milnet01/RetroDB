@@ -43,6 +43,9 @@ _BASE_KEYS = {
     'quit_on_close_content': '2',     # quit when launched from the CLI
     'confirm_quit': 'false',          # one QUIT must quit (§4.6)
     'ui_companion_start_on_boot': 'false',
+    # On only in a launch's run layer, where RetroDB sends a command: official
+    # RetroArch 1.22.2 listens on every network interface (PASS-59-139).
+    'network_cmd_enable': 'false',
 }
 # Keys a menu save may never bring back into a game's settings (§4.5).
 _PROTECTED_KEYS = set(_BASE_KEYS) | {
@@ -52,10 +55,16 @@ _PROTECTED_KEYS = set(_BASE_KEYS) | {
 }
 
 
-def _uses_network_quit() -> bool:
+def uses_network_quit() -> bool:
     """macOS and Windows stop the player with a network QUIT; Linux with
     one SIGTERM (§4.6)."""
     return sys.platform == 'darwin' or sys.platform.startswith('win')
+
+
+def needs_commands(rom_path: Path) -> bool:
+    """Whether a launch turns network commands on: for QUIT (macOS,
+    Windows), or for DISK_NEXT through a .m3u disc list (PASS-59-139)."""
+    return uses_network_quit() or rom_path.suffix.lower() == '.m3u'
 
 
 # -----------------------------------------------------------------------------
@@ -237,9 +246,7 @@ def launch_args(game: dict, sys_emu: Optional[dict], core_path: str,
                 input_remapping_directory=str(profile / 'remaps'),
                 libretro_directory=str(profile / 'cores'),
                 system_directory=_user_system_dir())
-    port = _free_port() if _uses_network_quit() else None
-    if port is not None:
-        keys['network_cmd_enable'] = 'true'
+    port = _free_port() if needs_commands(rom_path) else None
     rec_values = recommended or {}
     try:
         for sub in ('config', 'saves', 'states', 'remaps', 'cores'):
@@ -255,7 +262,8 @@ def launch_args(game: dict, sys_emu: Optional[dict], core_path: str,
         layers.append(str(game_cfg))
         if port is not None:
             run_cfg = profile / 'run' / f'{token}.cfg'
-            _write(run_cfg, {'network_cmd_port': str(port)})
+            _write(run_cfg, {'network_cmd_enable': 'true',
+                             'network_cmd_port': str(port)})
             layers.append(str(run_cfg))
     except OSError as e:
         raise LaunchResolutionError(

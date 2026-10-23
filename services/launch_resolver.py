@@ -44,7 +44,7 @@ from typing import Optional
 
 from services.database import query
 from services.launcher.base import LaunchContext, LaunchResolutionError
-from services import player, player_cores
+from services import player, player_cores, player_install
 from services.rom_scanner import rom_type_problem
 import config
 from settings_manager import get_setting
@@ -264,6 +264,10 @@ def _resolve_binary(emu_row, sys_emu_row) -> str:
         ra_setting = get_setting('retroarch_binary', '')
         if ra_setting:
             return ra_setting
+    if emu_row.get('is_player'):
+        installed = player_install.program()   # Get RetroArch (PASS-59-139)
+        if installed:
+            return str(installed)
     found = shutil.which(emu_row['binary_name'])
     if not found:
         raise LaunchResolutionError(
@@ -545,8 +549,10 @@ def _player_context(game, emu, sys_emu, binary_argv_prefix, rom_path_obj) -> Lau
         binary=Path(binary_argv_prefix[0]),
         argv=list(binary_argv_prefix) + words,
         token=token,
+        env=player_install.launch_env(binary_argv_prefix[0]),
         is_player=True,
-        quit_port=port,
+        quit_port=port if player.uses_network_quit() else None,
+        command_port=port,
         on_exit=lambda: player.after_session(game['id'], rom_abs, token),
     )
 

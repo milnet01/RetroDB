@@ -72,6 +72,7 @@ class LocalLauncher:
         entry.drain = drain
         entry.on_exit = ctx.on_exit
         entry.quit_port = ctx.quit_port
+        entry.command_port = ctx.command_port
         drain.start()
 
         logger.info("launched game=%s emulator=%s pid=%s argv=%s",
@@ -146,6 +147,11 @@ class LocalLauncher:
                 self._mark_exited(entry, now)
         self._registry.gc()
         return self._registry.active()
+
+    def command_port(self, token: str) -> Optional[int]:
+        """The port a player launch listens on for commands, else None."""
+        entry = self._registry.get(token)
+        return entry.command_port if entry else None
 
     # ---------------- internals ---------------------------------------------
 

@@ -32,10 +32,14 @@ bp = Blueprint('emulators', __name__)
 @login_required
 @admin_required
 def page_emulators_settings():
-    from services import player_cores
+    from services import player_cores, player_install
     player_row = player_cores.player_row()
     return render_template(
         'settings_emulators.html',
+        # PASS-59-139: Get RetroArch, where libretro builds it.
+        retroarch_install_supported=bool(player_row) and player_install.host() is not None,
+        retroarch_installed_version=(player_install.installed_version()
+                                     if player_install.program() else None),
         # PASS-59-81 §4.5: the player's core panel, once its program is found.
         player_found=bool(player_row) and _listed(player_row),
         player_platform_supported=player_cores.buildbot_dir() is not None,

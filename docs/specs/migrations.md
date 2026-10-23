@@ -537,6 +537,7 @@ your migration — not in the runner.
 | 019 | `019_pending_upscales.py` | Create `pending_upscales` (`game_id` primary key, `queued_at`). | PASS-59-130; `image-pipeline.md` §5.1. Additive. |
 | 020 | `020_player.py` | Add `emulators.is_player`; insert the bundled player's row (`RetroDB Player`, `retrodb-player`) with no `system_emulators` rows. | PASS-59-64 §4.4. Additive. The row's `args_template` is unused: the resolver builds the player's argv. |
 | 021 | `021_official_names.py` | Add `games.title_locked` (default 0); create `title_proposals`; trigger `trg_games_delete_title_proposal` removes a deleted game's proposal. | PASS-59-159 §4.1. Additive. |
+| 022 | `022_player_name.py` | Rename the player's row from migration 020's placeholder `RetroDB Player` to `RetroArch (RetroDB)`. | PASS-59-139. Renames only the placeholder, and only when the new name is free, so a name the user chose is kept. |
 
 ---
 

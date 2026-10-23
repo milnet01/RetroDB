@@ -51,10 +51,12 @@ class LaunchContext:
     env: Optional[dict] = None
     # The bundled player (PASS-59-64 §4.5–4.6): one session at a time, a
     # hook run once when the session ends, and on macOS and Windows the
-    # port its network QUIT goes to.
+    # port its network QUIT goes to. command_port is where the player listens
+    # for any command, QUIT or DISK_NEXT (PASS-59-139).
     is_player: bool = False
     on_exit: Optional[Callable[[], None]] = None
     quit_port: Optional[int] = None
+    command_port: Optional[int] = None
 
 
 @dataclass(frozen=True)
@@ -86,3 +88,4 @@ class Launcher(Protocol):
     def status(self, token: str) -> LaunchStatus: ...
     def kill(self, token: str, *, timeout_s: float = 5.0) -> LaunchStatus: ...
     def active(self) -> list: ...   # list[LaunchHandle]
+    def command_port(self, token: str) -> Optional[int]: ...

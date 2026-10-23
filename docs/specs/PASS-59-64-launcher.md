@@ -1,6 +1,10 @@
 # PASS-59-64 — Launch contract: resolving, spawning and the bundled player
 
 **Status:** accepted (2026-09-26). The player's clauses (§4.4–4.6) built in v3.31.0 (2026-10-22); only Linux is tested.
+Amended by PASS-59-139 (2026-10-23): the player is the official RetroArch,
+downloaded by Get RetroArch (`services/player_install.py`), and network
+commands are on only in a launch's run layer, where RetroDB sends a command.
+Linux and Windows installs tested; macOS untested.
 **Kind:** implement.
 **Source:** ROADMAP PASS-59-64 (review-code launch lane 2026-09-01; scope
 widened by user decisions 2026-09-26, relayed with the RetroArch fork session).
@@ -85,11 +89,14 @@ All 2026-09-26, by the user unless marked otherwise.
 8. **RetroAchievements login belongs to the player.**
 9. **Nothing flows back** beyond the exit code, the stderr tail, and the
    settings files §4.5 reads after a session.
-10. **The bundled player gets its own name**, described as "based on
-    RetroArch", with no RetroArch logo. The name is not chosen, so this spec
-    calls it *the player*.
-11. **Step 1 is the fork's normal build**; a slimmed build comes later. The
-    command-line contract in §4.4 does not change when it does.
+10. **The player is the official RetroArch**, downloaded from libretro by
+    Get RetroArch and named `RetroArch (RetroDB)`; RetroDB links and
+    downloads it and does not redistribute it, and shows no RetroArch logo
+    (user, 2026-10-23, PASS-59-139; this replaces the 2026-09-26 choice of
+    a renamed fork build). This spec calls it *the player*.
+11. **The player is a pinned official stable build**, moved to the next
+    stable when it ships (user, 2026-10-23). The command-line contract in
+    §4.4 does not change when it does.
 12. **RetroDB applies the best settings per game automatically; the user
     can change them.** The ranking and the presets are PASS-59-81's. This
     spec carries them to the player.
@@ -189,17 +196,20 @@ data/player/
 `BASE_DIR` is `config.BASE_DIR`, which is writable in a frozen build too.
 
 **Row.** A new `emulators` row for the player, marked by a new column
-`is_player INTEGER NOT NULL DEFAULT 0` (migration 020). Its placeholder
-name is `RetroDB Player`, program `retrodb-player`, until §3.10's name is
-chosen. `GET /api/emulators` leaves the row out while its program is not
+`is_player INTEGER NOT NULL DEFAULT 0` (migration 020). Its name is
+`RetroArch (RetroDB)` (migration 022, PASS-59-139), program `retrodb-player`. `GET /api/emulators` leaves the row out while its program is not
 found, so Settings > Emulators does not list software the user cannot
 have yet (user, 2026-10-22). Author's choices,
 because the resolver's RetroArch path cannot serve it:
 
 - `is_retroarch = 0`. The player never reads `retroarch_binary` or
   `retroarch_cores_dir`, which point at the user's own RetroArch.
-- **Binary:** the row's `binary_path_override`, else `binary_name` on
-  `PATH` — §3.18's order without the `retroarch_binary` step.
+- **Binary:** the row's `binary_path_override`, else the RetroArch that
+  Get RetroArch installed under `<profile>/app/` (PASS-59-139), else
+  `binary_name` on `PATH` — §3.18's order with that step in place of
+  `retroarch_binary`. The installed Linux program runs with `HOME` set to
+  the settings folder libretro ships beside its AppImage, as the AppImage
+  itself does.
 - **Core:** `<profile>/cores/<system_emulators.retroarch_core>`. The
   player reuses that column for the core file name.
 - **argv** is built by an `is_player` branch in `resolve_launch_context`,
@@ -252,10 +262,14 @@ an appended key behaves exactly like a base-cfg key (fork session,
 `configuration.c`). They stay in the base cfg because RetroDB resets them
 there before every launch.
 
-On macOS and Windows the base cfg also sets `network_cmd_enable = "true"`
-(§4.6). RetroDB never sets it anywhere the user's own RetroArch reads:
-upstream RetroArch binds that UDP port on every interface, while the fork
-binds loopback only.
+The base cfg also sets `network_cmd_enable = "false"`. A launch that
+sends a command turns it on in its run layer only: on macOS and Windows for
+QUIT (§4.6), and for a `.m3u` game on every platform for Next disc
+(PASS-59-139). RetroDB never sets it anywhere the user's own RetroArch
+reads. Official RetroArch 1.22.2 binds that UDP port on every interface;
+a later stable release adds `network_cmd_bind_address` (upstream
+`b5172edaa1`), which RetroDB will set to `127.0.0.1` once it pins that
+release.
 
 Verified by the fork session in `local/fixes-2026-09` as well:
 `quit_on_close_content = "2"` exits when a core or content was given on the
@@ -276,7 +290,8 @@ per-game settings PASS-59-81 recommends or the user chose.
          -L <absolute core path> <absolute content path>
 ```
 
-The run layer is present on macOS and Windows only (§4.6). Extra args,
+The run layer is present when the launch turns network commands on: on
+macOS and Windows, and for a `.m3u` game (§4.6). Extra args,
 when set, are `shlex.split` and placed before `-L`; the auto-append of
 §4.1 does not apply to the player.
 
@@ -360,9 +375,12 @@ Stopping a player, as the fork session read its source:
   `QUIT` is harmless (fork session, `runloop_check_state`).
 - **Windows:** the same `QUIT`, then `TerminateProcess`, which cannot flush.
   *Unverified.*
-- On macOS and Windows the port is chosen free per launch and written into
-  a last `--appendconfig` layer, `<profile>/run/<token>.cfg`, which is
-  deleted after the session. It comes after the game cfg, so a network key
+- When a launch turns network commands on (§4.4), the port is chosen free
+  per launch and written with `network_cmd_enable = "true"` into a last
+  `--appendconfig` layer, `<profile>/run/<token>.cfg`, which is deleted
+  after the session. The launch keeps the port, and Next disc sends
+  `DISK_NEXT` to it (PASS-59-139); only macOS and Windows also quit through
+  it. It comes after the game cfg, so a network key
   absorbed into a game's settings cannot override it. RetroArch reads
   an appended `network_cmd_port` like a base-cfg key and builds the command
   interface after loading settings (fork session, `input_driver.c`).
@@ -429,14 +447,15 @@ Stopping a player, as the fork session read its source:
 - **INV-8** — A player launch's argv is exactly
   `[player, '--config', base, '--appendconfig', layers, *extras, '-L', core,
   rom]`, with every path absolute. `layers` is the system cfg if it exists,
-  then the game cfg, then on macOS and Windows only the run cfg. `extras`
+  then the game cfg, then the run cfg on macOS and Windows and for a `.m3u`
+  game. `extras`
   is the system then game extra args, split, or nothing.
   *Test:* `tests/test_player_launch.py` — resolve a game whose default row
   is the player, on Linux and on a monkeypatched `darwin`, with and without
   extra args; assert the shape and `os.path.isabs` on every path.
   *Breaks when:* a relative core path, a missing game layer, a system layer
-  after the game layer, a run layer before the game layer or on Linux, or
-  extra args after the content path.
+  after the game layer, a run layer before the game layer or on a Linux
+  game with no `.m3u`, or extra args after the content path.
 
 - **INV-9** — Before every player launch, the base cfg holds every key in
   §4.4's base block with its stated value, whatever it held before.
@@ -509,14 +528,17 @@ Stopping a player, as the fork session read its source:
   *Breaks when:* each `kill()` call sends its own SIGTERM, as today's
   `LocalLauncher.kill` does whenever the process is still running.
 
-- **INV-16** — `network_cmd_enable = "true"` is written only inside the
-  player profile, and only on macOS and Windows.
+- **INV-16** — `network_cmd_enable = "true"` is written only in a player
+  launch's run layer, and only on macOS and Windows or for a `.m3u` game;
+  the base cfg holds `"false"` after every launch.
   *Test:* `tests/test_player_launch.py` — resolve on each platform
-  (monkeypatched `sys.platform`); assert the key appears only in the
-  macOS and Windows base cfg; resolve on the RetroArch row and assert the
-  user's RetroArch config directory is untouched.
-  *Breaks when:* the key is set on the user's own RetroArch, or on Linux
-  where nothing uses it.
+  (monkeypatched `sys.platform`), and on Linux with a `.m3u`, over a base
+  cfg holding `"true"`; assert the base reads `"false"` and the run layer
+  holds the key only where a command is sent; resolve on the RetroArch row
+  and assert the user's RetroArch config directory is untouched.
+  *Breaks when:* the key is set on the user's own RetroArch, left on in the
+  base cfg for a later launch, or set on a Linux launch that sends no
+  command.
 
 - **INV-17** — While one player session runs, a second player launch is
   refused with 409 and nothing is spawned.
@@ -592,8 +614,8 @@ No test here launches the fork's real player; the player-side behaviour
 
 - Which core runs a system, per-game presets, and core download —
   PASS-59-81.
-- The player's name, its bundle kit (licence text, source link, modified
-  notice) and its release channel — the fork's RETR-0004.
+- Which RetroArch the player downloads, and from where — PASS-59-139
+  (`services/player_install.py`): official stable, pinned by SHA-256.
 - The slim build — deferred; not yet queued.
 - A remote or multi-process launcher backend — not planned (§3.19).
 - `.lpl` playlists — RetroDB writes none.

@@ -237,14 +237,35 @@ def test_inv12_user_core_option_survives_until_reset(playerdb):
 # INV-13 the user's own RetroArch is unaffected; INV-16 network key placement
 # -----------------------------------------------------------------------------
 
-@pytest.mark.parametrize('platform,expected', [
-    ('linux', False), ('darwin', True), ('win32', True)])
-def test_inv16_network_cmd_only_on_mac_and_windows(playerdb, monkeypatch,
-                                                   platform, expected):
+def _use_m3u(playerdb):
+    m3u = playerdb['rom_file'].parent / 'Crash.m3u'
+    m3u.write_text('crash.bin\n')
+    playerdb['conn'].execute("UPDATE games SET rom_path = ? WHERE id = 1", (str(m3u),))
+    playerdb['conn'].commit()
+
+
+@pytest.mark.parametrize('platform,m3u,expected', [
+    ('linux', False, False), ('linux', True, True),
+    ('darwin', False, True), ('win32', False, True)])
+def test_inv16_network_cmd_only_where_used(playerdb, monkeypatch, platform, m3u, expected):
+    """Commands are on, in the run layer only, where RetroDB sends one: QUIT
+    on macOS and Windows, DISK_NEXT for a .m3u game (PASS-59-139)."""
     monkeypatch.setattr('services.player.sys.platform', platform)
-    _resolve()
-    cfg = _cfg(playerdb['profile'] / 'retroarch.cfg')
-    assert (cfg.get('network_cmd_enable') == 'true') is expected
+    if m3u:
+        _use_m3u(playerdb)
+    base = playerdb['profile'] / 'retroarch.cfg'
+    base.parent.mkdir(parents=True, exist_ok=True)
+    base.write_text('network_cmd_enable = "true"\n')   # left by an older launch
+    ctx = _resolve()
+    assert _cfg(base)['network_cmd_enable'] == 'false'
+    run = playerdb['profile'] / 'run' / f'{ctx.token}.cfg'
+    assert run.is_file() is expected
+    if expected:
+        assert _cfg(run) == {'network_cmd_enable': 'true',
+                             'network_cmd_port': str(ctx.command_port)}
+        assert ctx.argv[4].split('|')[-1] == str(run)
+    assert (ctx.command_port is not None) is expected
+    assert (ctx.quit_port is not None) is (platform != 'linux')
 
 
 def test_inv13_retroarch_row_writes_no_profile(playerdb, monkeypatch, tmp_path):
@@ -347,6 +368,25 @@ def test_migration_020_adds_player_row():
     mig.apply(conn)
     rows = conn.execute("SELECT name, is_player, is_retroarch FROM emulators ORDER BY id").fetchall()
     assert rows == [('RetroArch', 0, 1), ('RetroDB Player', 1, 0)]
+
+    # Migration 022 (PASS-59-139) renames the placeholder, once.
+    mig22 = importlib.import_module('services.migrations.scripts.022_player_name')
+    mig22.apply(conn)
+    mig22.apply(conn)
+    rows = conn.execute("SELECT name, is_player FROM emulators ORDER BY id").fetchall()
+    assert rows == [('RetroArch', 0), ('RetroArch (RetroDB)', 1)]
+
+
+def test_migration_022_keeps_a_name_the_user_chose():
+    import importlib
+    import sqlite3
+    mig22 = importlib.import_module('services.migrations.scripts.022_player_name')
+    conn = sqlite3.connect(':memory:')
+    conn.execute("CREATE TABLE emulators (id INTEGER PRIMARY KEY, name TEXT NOT NULL UNIQUE, "
+                 "is_player INTEGER, description TEXT, updated_at TEXT)")
+    conn.execute("INSERT INTO emulators (name, is_player) VALUES ('My Player', 1)")
+    mig22.apply(conn)
+    assert conn.execute("SELECT name FROM emulators").fetchone() == ('My Player',)
 
 
 # -----------------------------------------------------------------------------

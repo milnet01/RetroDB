@@ -32,6 +32,7 @@ class ProcessEntry:
     drain: Optional[threading.Thread] = None  # that stderr reader
     on_exit: Optional[Callable[[], None]] = None  # LaunchContext.on_exit
     quit_port: Optional[int] = None  # LaunchContext.quit_port
+    command_port: Optional[int] = None  # LaunchContext.command_port
 
 
 class ProcessRegistry:

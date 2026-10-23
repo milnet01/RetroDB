@@ -9008,7 +9008,16 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.139 Ship a ready-configured RetroArch build with RetroDB (MEDIUM, L).
-- **Status**: planned, not started.
+- **Shipped** (2026-10-23, v3.33.0): Settings > Emulators > Play in
+  RetroDB > Get RetroArch (`services/player_install.py`). Official
+  1.22.2, SHA-256 pinned; 7-Zip 26.05's stand-alone tool unpacks the
+  .7z. Real installs verified on Linux (this PC, and in-app on :5001)
+  and Windows (wintest); macOS is untested (no Mac here). Player row
+  renamed `RetroArch (RetroDB)` (migration 022). Network commands only
+  in a launch's run layer; Next disk works for the player (live: Driver
+  2 .m3u on Linux, DISK_NEXT accepted on the launch's port, clean
+  exit 0). Follow-up: PASS-59-168.
+- **Status**: done, not started.
 - **Why**: the Next disk button needs RetroArch's Network Commands on.
   Upstream RetroArch 1.22.2 (the official AppImage) listens for them on
   every network interface; the milnet01 fork binds 127.0.0.1 only
@@ -9024,6 +9033,22 @@ were corrected in `2836bc3` and are not repeated here.
   app (possibly in the same folder), configured and using its own
   settings folder. The user sees this mostly as a Linux / AppImage
   matter. Work it with the RetroArch fork session. PASS-59-113 step 5a.
+- **Decided** (user, 2026-10-23): a "Get RetroArch" download button
+  in RetroDB, not bundled in the zips. It fetches the OFFICIAL
+  RetroArch from libretro (not the fork) into a folder next to
+  RetroDB, set up with its own settings folder. Named "RetroArch"
+  (we link and download, we do not redistribute); no RetroArch logo,
+  since no libretro logo policy was found. Network commands, which
+  upstream binds on every interface, are turned on only for
+  multi-disc games. The fork's release and bundle kit are no longer
+  needed for v4.0.0.
+- **Confirmed** (user, 2026-10-23, after the RetroArch fork session's
+  advice): official stable 1.22.2, pinned by SHA-256; move to the next
+  stable when it ships. The fork's fixes reach RetroDB through upstream
+  PRs. Network commands: on for every player launch on Windows and
+  macOS (clean quit) and for .m3u games everywhere (Next disc), on a
+  random port; 1.22.2 binds every interface. Once a stable release has
+  upstream b5172edaa1, set network_cmd_bind_address = "127.0.0.1".
 
 ---
 
@@ -9116,6 +9141,9 @@ were corrected in `2836bc3` and are not repeated here.
   `colours.bottom`. Contract: Slipcase
   `docs/specs/SLIP-0104-turnable-3d-box.md` § 4.1. Import them when
   present.
+- **Decided** (user, 2026-10-23): import starts on the game's own
+  page (one box file per game); bulk import may follow later. The
+  faces are stored alongside `boxart_3d`; they do not replace it.
 
 ---
 
@@ -9136,6 +9164,10 @@ were corrected in `2836bc3` and are not repeated here.
   spine on the left; the top's picture has the back at its top edge,
   the bottom's has the front at its top edge. Contract: Slipcase
   `docs/specs/SLIP-0104-turnable-3d-box.md` § 4.1.
+- **Zoom behaviour** (user, 2026-10-23): when the player zooms the
+  cover, a game with only a 2D box shows the 2D box; one with only a
+  3D box picture shows that picture; one with the full set of faces
+  shows the turnable 3D box.
 
 ---
 
@@ -9374,6 +9406,12 @@ were corrected in `2836bc3` and are not repeated here.
   RPCS3 cheats are game patches (patch.yml), far more complex; the user
   is unsure how to handle them, so research before deciding — not
   committed to v4.0.0.
+- **Cheat sources** (user, 2026-10-23): use all of these as the
+  existing collection: `/mnt/Emulators/Cheats` (PSP / PPSSPP),
+  `/mnt/Emulators/Sony_PlayStation_2/Cheats` (PCSX2 collection and
+  tools), `/mnt/Emulators/Sony_PlayStation_1/DuckStation/cheats`,
+  `/mnt/Emulators/retroarch-config/cheats` and
+  `/mnt/Emulators/.harvested_cheats`.
 
 ---
 
@@ -9645,6 +9683,21 @@ were corrected in `2836bc3` and are not repeated here.
   collapses there.
 - **Verify**: scroll each page at phone width; the content keeps most
   of the screen.
+
+---
+
+#### Pass 59.168 Move Get RetroArch to the next stable release and bind network commands to 127.0.0.1 (MEDIUM, S).
+- **Status**: planned; waits on upstream's next stable release.
+- **Why**: official 1.22.2 binds network commands on every interface
+  while a player launch has them on (all launches on Windows and
+  macOS, .m3u games on Linux). Upstream b5172edaa1 adds
+  `network_cmd_bind_address`; no release tag holds it yet (checked
+  2026-10-23). The RetroArch fork session tells RetroDB when one does.
+- **Do**: bump `VERSION` and the three SHA-256 pins in
+  `services/player_install.py`; write `network_cmd_bind_address =
+  "127.0.0.1"` in the run layer; amend PASS-59-64 §4.4.
+- **Verify**: a fresh Get RetroArch installs the new version; `ss
+  -ulnp` shows the player's port on 127.0.0.1 only; Next disk works.
 
 ## Done index
 

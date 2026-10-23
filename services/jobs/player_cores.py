@@ -19,6 +19,7 @@ from services.jobs.base import acquire_job_singleton_lock, release_singleton_fd
 logger = logging.getLogger(__name__)
 
 SHADERS = '_shaders'   # the queue's name for the shader pack
+RETROARCH = '_retroarch'   # ...and for RetroArch itself (PASS-59-139)
 
 
 class PlayerCoresJob:
@@ -104,6 +105,9 @@ class PlayerCoresJob:
                         if core == SHADERS:
                             if force or not player_cores.shaders_ready():
                                 player_cores.install_shaders()
+                        elif core == RETROARCH:
+                            from services import player_install
+                            player_install.install()
                         else:
                             if force or not player_cores.is_installed(core):
                                 player_cores.install(core)

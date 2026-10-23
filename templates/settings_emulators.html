@@ -38,12 +38,32 @@
     <div id="ra-status" class="text-muted" style="font-size: 0.9rem;"></div>
 </section>
 
+{% if retroarch_install_supported %}
+<!-- ================================================== -->
+<!-- PASS-59-139 — Get RetroArch for the player -->
+<!-- ================================================== -->
+<section class="settings-section" id="player-retroarch">
+    <h2 class="section-title">{{ _('Play in RetroDB') }}</h2>
+    <p class="text-muted" style="margin-bottom: var(--spacing-md);">
+        {{ _('RetroDB can download the official RetroArch from libretro and set it up to play your games, with its own settings and saves, kept apart from any RetroArch you already use.') }}
+    </p>
+    {% if retroarch_installed_version %}
+    <p style="margin-bottom: var(--spacing-md);">{{ _('Installed: RetroArch %(version)s', version=retroarch_installed_version) }}</p>
+    {% endif %}
+    <div style="display: flex; gap: var(--spacing-sm); flex-wrap: wrap; margin-bottom: var(--spacing-md);">
+        <button id="player-retroarch-install" class="btn btn-primary"><span class="btn-icon">⬇️</span>
+            {% if retroarch_installed_version %}{{ _('Download RetroArch again') }}{% else %}{{ _('Get RetroArch') }}{% endif %}</button>
+    </div>
+    <div id="player-retroarch-status" class="text-muted" style="font-size: 0.9rem;" aria-live="polite"></div>
+</section>
+{% endif %}
+
 {% if player_found %}
 <!-- ================================================== -->
 <!-- PASS-59-81 — the bundled player's cores -->
 <!-- ================================================== -->
 <section class="settings-section" id="player-cores">
-    <h2 class="section-title">{{ _('RetroDB Player cores') }}</h2>
+    <h2 class="section-title">{{ _('Player cores') }}</h2>
     <p class="text-muted" style="margin-bottom: var(--spacing-md);">
         {{ _('The player picks the best core for each system and downloads it from the libretro build server the first time you play. Installed cores are never updated by Play; update them here.') }}
     </p>

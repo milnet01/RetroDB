@@ -546,6 +546,43 @@
         body.appendChild(wrap);
     }
 
+    // ----- PASS-59-139 — Get RetroArch for the player ------------------------
+
+    // The core job's queue name for RetroArch (services/jobs/player_cores.py).
+    const RETROARCH_ITEM = '_retroarch';
+    const raInstall = $('#player-retroarch-install');
+    const raStatus = $('#player-retroarch-status');
+    if (raInstall) {
+        raInstall.addEventListener('click', async () => {
+            raInstall.disabled = true;
+            raStatus.textContent = t('Downloading RetroArch… This can take a few minutes.');
+            try {
+                await fetchJSON('/api/player/retroarch/install', {method: 'POST'});
+                for (;;) {
+                    await new Promise((r) => setTimeout(r, 2000));
+                    const st = (await fetchJSON('/api/player/cores/status')).data || {};
+                    const failed = (st.errors || {})[RETROARCH_ITEM];
+                    if (failed) {
+                        raStatus.textContent = t('RetroArch was not installed: {error}', {error: failed});
+                        break;
+                    }
+                    if ((st.success || []).includes(RETROARCH_ITEM)) {
+                        raStatus.textContent = t('RetroArch is installed.');
+                        window.location.reload();
+                        return;
+                    }
+                    if (!st.running) {
+                        raStatus.textContent = t('RetroArch was not installed.');
+                        break;
+                    }
+                }
+            } catch (e) {
+                raStatus.textContent = e.message;
+            }
+            raInstall.disabled = false;
+        });
+    }
+
     // ----- PASS-59-81 — the player's cores ----------------------------------
 
     const playerStatus = $('#player-cores-status');
@@ -579,8 +616,9 @@
                 refreshMappings();
                 return;
             }
+            const item = st.current_item === RETROARCH_ITEM ? 'RetroArch' : st.current_item;
             playerStatus.textContent = t('Downloading {core} ({done} of {total})…',
-                {core: st.current_item || '…', done: st.processed, total: st.total});
+                {core: item || '…', done: st.processed, total: st.total});
             await new Promise((r) => setTimeout(r, 1500));
         }
     }

@@ -52,6 +52,7 @@ _MIGRATION_SCRIPTS = [
     'services.migrations.scripts.019_pending_upscales',
     'services.migrations.scripts.020_player',
     'services.migrations.scripts.021_official_names',
+    'services.migrations.scripts.022_player_name',
 ]
 
 # Some pip packages have their own runtime imports that PyInstaller's

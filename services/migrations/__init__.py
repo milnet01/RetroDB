@@ -46,6 +46,7 @@ MIGRATIONS = [
     '019_pending_upscales',
     '020_player',
     '021_official_names',
+    '022_player_name',
 ]
 
 
