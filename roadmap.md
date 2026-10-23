@@ -657,7 +657,10 @@ message, so nothing flashes yet.
 - **Est.**: M — mobile-specific chrome + breakpoints.
 
 #### Pass 53.11 Multi-value filters + discoverable exclude affordance (UX, M)
-- **Status**: planned.
+- **Shipped** 2026-10-23 (d9c3d97, in 3.31.0): tick several values,
+  Apply; any-of for IS and IS NOT; one tag per value. The exclude half
+  was already visible (IS / IS NOT switch, card tooltips).
+- **Status**: done.
 - **Problem**: Library filters are single-value — `applyFilter` overwrites
   `filters[type] = value` (`all-games-controller.js:788`), so you cannot pick
   "Action OR RPG"; combining means reopening a modal per category. The useful
@@ -9425,6 +9428,24 @@ were corrected in `2836bc3` and are not repeated here.
   today (scraper/scrape_ai.py). AI cost: batch many titles per call.
 - **Scope** (user, 2026-10-23): joins v4.0.0 (PASS-59-113), built
   before the translation step so its review screen is translated too.
+
+---
+
+#### Pass 59.160 Library filter "Action" also matches "Action-Adventure", so the window's count and the result disagree (LOW, S).
+- **Status**: todo
+- **Seen** 2026-10-23 on the live library copy: the Genre window says
+  Action (755 or 795 depending on version grouping), the filter
+  returns 935.
+- **Why**: services/game_query.py `_build_games_query` matches each
+  multi-value field with `LIKE '%value%'`, a substring. The window's
+  counts (`_get_filter_options`) split the comma lists into whole
+  values.
+- **Plan**: match whole comma-separated values, e.g. compare against
+  `',' || REPLACE(field, ', ', ',') || ','` with `'%,value,%'`, for
+  the IS and IS NOT branches alike. Check publisher/developer values
+  that contain a comma themselves before choosing.
+- **Verify**: count of `?genre=Action` equals the window's Action count
+  under the same grouping; a test pins Action vs Action-Adventure.
 
 ## Done index
 
