@@ -519,7 +519,12 @@ Resolved (2026-07-04, v3.17.0): find_missing_media_refs() + clear_missing_media_
   `/api/games`).
 
 #### Pass 53.2 Library grid: sort control + real empty state (UX, M)
-- **Status**: planned.
+- **Resolution** (2026-10-23): Shipped 2026-10-23 in 3.31.0 (23d2425): Sort by menu (GAME_SORTS in
+  services/game_query.py), empty state gated on a finished fresh fetch,
+  plus an Unscraped filter button (user request). The A-Z strip hides
+  under other sorts for now; the fixed-place layout item changes that to
+  greyed out.
+- **Status**: done.
 - **Problem**: the Library grid has (a) no sort control at all — the controller
   only renders the server default; the A–Z strip (`all_games.html:133`) jumps,
   it does not reorder — and (b) no empty state: a filter matching 0 games clears
@@ -9351,6 +9356,39 @@ were corrected in `2836bc3` and are not repeated here.
   step 5 (everyday-use UX); do it alongside PASS-53-10.
 - **Verify**: at 375 px no table scrolls sideways and every row's
   Settings button is visible and opens its dialog.
+
+---
+
+#### Pass 59.158 Library filter bar: every control has a fixed place (UX, M).
+- **Status**: in-progress
+- **Problem** (measured 2026-10-23, /games at 1350 px): pressing Select
+  grows the filter panel by 83 px and shrinks the search box; the Clear
+  button and the Active Filters row appear on filtering; the A-Z strip
+  hides under a non-name sort (PASS-53-2). The grid jumps each time. At
+  375 px the pinned panel plus A-Z strip cover over half the screen.
+- **Decided** (user, 2026-10-23): Select tools move to a bar floating
+  at the bottom of the window, shown only while selecting. Clear is
+  always shown, greyed when nothing is filtered. Active-filter tags sit
+  in the one-line count bar. The A-Z strip stays and greys out under
+  other sorts. On a phone the filter buttons fold behind one Filters
+  button.
+- **Pages**: all_games.html and system_games.html (AllGamesController).
+
+---
+
+#### Pass 59.159 AI proposes each game's official name; the user reviews before titles change (FEATURE, L).
+- **Status**: todo
+- **Request** (user, 2026-10-23): have the AI give the full, official
+  name of every game and update the title.
+- **Decided** (user, 2026-10-23): a review list (old -> new, tick to
+  accept); nothing changes until accepted. The name is the one used in
+  the ROM's own region (a Japanese ROM keeps Rockman). The old title is
+  kept as an alternate title.
+- **Risks to design for**: titles are a version-grouping signal
+  (services/version_groups.py SIGNALS), feed sort_title
+  (generate_sort_title) and scraper matching. AI Fill sets no title
+  today (scraper/scrape_ai.py). AI cost: batch many titles per call.
+- **Open**: whether this joins the v4.0.0 scope (PASS-59-113).
 
 ## Done index
 
