@@ -9346,6 +9346,13 @@ were corrected in `2836bc3` and are not repeated here.
   a spec: likely yes (a contract with the fork, new UI, a download).
 - **In v4.0.0** (user, 2026-10-23), after PASS-59-139 (PASS-59-113
   step 5a).
+- **Scope** (user, 2026-10-23): cheats must also work for DuckStation
+  and PCSX2 in v4.0.0, not later. The user has many cheat files
+  downloaded already (ask where before starting); more need online
+  research for sources. The cheat engine may be an additional download.
+  RPCS3 cheats are game patches (patch.yml), far more complex; the user
+  is unsure how to handle them, so research before deciding — not
+  committed to v4.0.0.
 
 ---
 
