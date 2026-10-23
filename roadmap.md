@@ -8387,6 +8387,10 @@ were corrected in `2836bc3` and are not repeated here.
   5. Easier everyday use: PASS-53-1, PASS-53-2, PASS-53-7, PASS-53-8,
      PASS-53-10, PASS-53-11; then PASS-59-159 (AI official names,
      added by the user 2026-10-23).
+  5a. Play in RetroDB's own RetroArch (user, 2026-10-23: v4.0.0 needs
+     something bigger): PASS-59-139 (ship RetroArch, or at least a
+     download link, set up next to RetroDB with its own settings
+     folder), then PASS-59-155 (cheats).
   6. Stricter browser security: PASS-60-1, after the template changes
      above, so inline scripts move once.
   7. Fully translated: PASS-52-1, PASS-59-109, PASS-57-6, PASS-59-93,
@@ -8983,7 +8987,7 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.139 Ship a ready-configured RetroArch build with RetroDB (MEDIUM, L).
-- **Status**: deferred, not started.
+- **Status**: planned, not started.
 - **Why**: the Next disk button needs RetroArch's Network Commands on.
   Upstream RetroArch 1.22.2 (the official AppImage) listens for them on
   every network interface; the milnet01 fork binds 127.0.0.1 only
@@ -8994,6 +8998,11 @@ were corrected in `2836bc3` and are not repeated here.
 - **Seen** (2026-10-20): the user's setup runs the fork through
   `/mnt/Emulators/Multi-System/RetroArch/retroarch-fork.sh` with the
   AppImage's settings folder as HOME.
+- **In v4.0.0** (user, 2026-10-23): ship RetroArch with RetroDB, or
+  at the very least a link to download it and place it alongside the
+  app (possibly in the same folder), configured and using its own
+  settings folder. The user sees this mostly as a Linux / AppImage
+  matter. Work it with the RetroArch fork session. PASS-59-113 step 5a.
 
 ---
 
@@ -9335,6 +9344,8 @@ were corrected in `2836bc3` and are not repeated here.
 - **Open**: standalone emulators (DuckStation, PCSX2, PPSSPP, Dolphin)
   each have their own cheat format; not researched. Whether this needs
   a spec: likely yes (a contract with the fork, new UI, a download).
+- **In v4.0.0** (user, 2026-10-23), after PASS-59-139 (PASS-59-113
+  step 5a).
 
 ---
 
