@@ -3521,8 +3521,8 @@ function confirmReset(form) {
     return false;
 }
 
-async function scanLibrary() {
-    const btn = document.getElementById('scanLibraryBtn');
+async function scanLibrary(btnArg) {
+    const btn = btnArg instanceof Element ? btnArg : document.getElementById('scanLibraryBtn');
     if (!btn) return;
 
     const originalText = btn.innerHTML;

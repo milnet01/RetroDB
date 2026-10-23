@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-23 08:47+0200\n"
+"POT-Creation-Date: 2026-10-23 09:29+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -1788,7 +1788,7 @@ msgstr "キーボードショートカットを閉じる"
 msgid "Close modal / cancel"
 msgstr "モーダルを閉じる / キャンセル"
 
-#: services/js_i18n_strings.py:509 templates/dashboard.html:155
+#: services/js_i18n_strings.py:509 templates/dashboard.html:175
 msgid "Complete"
 msgstr "完了"
 
@@ -1798,7 +1798,7 @@ msgstr "完了！"
 
 #: services/js_i18n_strings.py:511 templates/_bulk_edit_modal.html:29
 #: templates/analytics.html:1664 templates/base.html:981
-#: templates/dashboard.html:473 templates/game_detail.html:222
+#: templates/dashboard.html:493 templates/game_detail.html:222
 msgid "Completed"
 msgstr "クリア済み"
 
@@ -1934,7 +1934,7 @@ msgid "Detecting…"
 msgstr "検出しています…"
 
 #: services/js_i18n_strings.py:541 templates/_bulk_scrape_modal.html:69
-#: templates/all_games.html:212 templates/psn_trophies.html:247
+#: templates/all_games.html:223 templates/psn_trophies.html:247
 #: templates/psn_trophies.html:307 templates/reports.html:525
 #: templates/system_games.html:203
 msgid "Done"
@@ -2284,8 +2284,8 @@ msgstr "画像は10MB未満である必要があります"
 #: services/js_i18n_strings.py:622 templates/_bulk_edit_modal.html:27
 #: templates/achievements_system.html:151
 #: templates/achievements_system.html:170 templates/analytics.html:1664
-#: templates/base.html:979 templates/dashboard.html:329
-#: templates/dashboard.html:469 templates/game_detail.html:220
+#: templates/base.html:979 templates/dashboard.html:349
+#: templates/dashboard.html:489 templates/game_detail.html:220
 #: templates/steam_achievements.html:77 templates/xbox_achievements.html:77
 msgid "In Progress"
 msgstr "進行中"
@@ -2633,7 +2633,7 @@ msgstr "プレイ"
 
 #: services/js_i18n_strings.py:699 templates/_bulk_edit_modal.html:28
 #: templates/analytics.html:1664 templates/base.html:980
-#: templates/dashboard.html:471 templates/game_detail.html:221
+#: templates/dashboard.html:491 templates/game_detail.html:221
 msgid "Played"
 msgstr "プレイ済み"
 
@@ -3057,8 +3057,8 @@ msgstr "同期中: {processed} / {total}"
 #: templates/_settings_tabs/customization.html:299
 #: templates/achievement_game.html:228 templates/analytics.html:569
 #: templates/analytics.html:603 templates/compare_games.html:69
-#: templates/dashboard.html:297 templates/dashboard.html:356
-#: templates/dashboard.html:433 templates/dashboard.html:499
+#: templates/dashboard.html:317 templates/dashboard.html:376
+#: templates/dashboard.html:453 templates/dashboard.html:519
 #: templates/logs.html:722 templates/multi_disc_organizer.html:213
 #: templates/reports.html:360 templates/reports.html:435
 #: templates/settings.html:41 templates/steam_achievement_game.html:173
@@ -3469,7 +3469,7 @@ msgstr "「変更しない」から変更されたフィールドのみが更新
 
 #: templates/_bulk_edit_modal.html:26 templates/achievements_system.html:171
 #: templates/analytics.html:1664 templates/base.html:978
-#: templates/dashboard.html:467 templates/game_detail.html:219
+#: templates/dashboard.html:487 templates/game_detail.html:219
 #: templates/steam_achievements.html:78 templates/xbox_achievements.html:78
 msgid "Not Started"
 msgstr "未開始"
@@ -3479,7 +3479,7 @@ msgstr "未開始"
 #: templates/achievement_game.html:241 templates/all_games.html:72
 #: templates/analytics.html:481 templates/analytics.html:2428
 #: templates/base.html:908 templates/base.html:1112
-#: templates/compare_games.html:73 templates/dashboard.html:357
+#: templates/compare_games.html:73 templates/dashboard.html:377
 #: templates/game_detail.html:265 templates/local_trophy_detail.html:99
 #: templates/psn_trophy_detail.html:94 templates/psn_trophy_detail.html:258
 #: templates/steam_achievement_game.html:178 templates/system_games.html:63
@@ -3772,8 +3772,8 @@ msgstr "入力"
 
 #: templates/_macros/nav_tabs.html:24 templates/achievement_game.html:265
 #: templates/achievements_system.html:126 templates/analytics.html:17
-#: templates/base.html:112 templates/dashboard.html:100
-#: templates/dashboard.html:185 templates/steam_achievement_game.html:190
+#: templates/base.html:112 templates/dashboard.html:119
+#: templates/dashboard.html:205 templates/steam_achievement_game.html:190
 #: templates/xbox_achievement_game.html:177 templates/xbox_achievements.html:46
 msgid "Achievements"
 msgstr "実績"
@@ -3849,7 +3849,7 @@ msgstr "プロフィール設定"
 
 #: templates/_settings_tabs/data.html:23 templates/achievements_system.html:42
 #: templates/analytics.html:71 templates/analytics.html:2535
-#: templates/dashboard.html:131 templates/steam_achievements.html:39
+#: templates/dashboard.html:151 templates/steam_achievements.html:39
 #: templates/xbox_achievements.html:39
 msgid "Total Games"
 msgstr "ゲーム総数"
@@ -4072,63 +4072,78 @@ msgstr "最近追加"
 msgid "No games match these filters"
 msgstr "このフィルターに一致する項目はありません。"
 
-#: templates/all_games.html:170 templates/system_games.html:161
+#: templates/all_games.html:171 templates/dashboard.html:80
 #, fuzzy
-msgid "No games here yet"
-msgstr "ゲームが選択されていません"
+msgid "Your library is empty"
+msgstr "ROMライブラリのサイズ"
 
-#: templates/all_games.html:172 templates/system_games.html:163
+#: templates/all_games.html:173 templates/dashboard.html:82
+#, fuzzy
+msgid "Scan your ROM folder to add your games."
+msgstr "システムを追加するにはROMライブラリをスキャンしてください。"
+
+#: templates/_settings_tabs/library.html:42 templates/all_games.html:176
+#: templates/dashboard.html:71 templates/dashboard.html:86
+#: templates/systems.html:111
+msgid "Scan Library"
+msgstr "ライブラリをスキャン"
+
+#: templates/all_games.html:179 templates/dashboard.html:91
+msgid "Ask an admin to scan the ROM folder."
+msgstr ""
+
+#: templates/all_games.html:183 templates/system_games.html:163
 #, fuzzy
 msgid "Clear filters"
 msgstr "フィルターを閉じる"
 
-#: templates/_modals/filter_modal.html:18 templates/all_games.html:179
+#: templates/_modals/filter_modal.html:18 templates/all_games.html:190
 #: templates/psn_trophies.html:222 templates/system_games.html:170
 msgid "Loading games..."
 msgstr "ゲームを読み込んでいます..."
 
-#: templates/all_games.html:184 templates/system_games.html:175
+#: templates/all_games.html:195 templates/system_games.html:175
 #, fuzzy
 msgid "Selected games"
 msgstr "ゲーム2を選択"
 
-#: templates/all_games.html:186 templates/system_games.html:177
+#: templates/all_games.html:197 templates/system_games.html:177
 msgid "Select All"
 msgstr "すべて選択"
 
-#: templates/all_games.html:189 templates/system_games.html:180
+#: templates/all_games.html:200 templates/system_games.html:180
 msgid "Select Unscraped"
 msgstr "未取得を選択"
 
-#: templates/all_games.html:193 templates/game_detail.html:783
+#: templates/all_games.html:204 templates/game_detail.html:783
 #: templates/system_games.html:184
 msgid "Full Re-scrape"
 msgstr "完全再取得"
 
-#: templates/all_games.html:195 templates/system_games.html:186
+#: templates/all_games.html:206 templates/system_games.html:186
 msgid "Toggle between full re-scrape and fill missing mode"
 msgstr "完全再取得と欠落補完モードを切り替え"
 
-#: templates/all_games.html:198 templates/game_detail.html:783
+#: templates/all_games.html:209 templates/game_detail.html:783
 #: templates/system_games.html:189
 msgid "Fill Missing"
 msgstr "欠落を補完"
 
-#: templates/all_games.html:200 templates/system_games.html:191
+#: templates/all_games.html:211 templates/system_games.html:191
 msgid ""
 "Full Re-scrape keeps the art, videos and manuals already downloaded "
 "instead of fetching them again"
 msgstr "完全再スクレイプでは、ダウンロード済みのアート、動画、マニュアルを再取得せずに保持します"
 
-#: templates/all_games.html:202 templates/system_games.html:193
+#: templates/all_games.html:213 templates/system_games.html:193
 msgid "Keep existing media"
 msgstr "既存のメディアを保持"
 
-#: templates/all_games.html:206 templates/system_games.html:197
+#: templates/all_games.html:217 templates/system_games.html:197
 msgid "Scrape Selected"
 msgstr "選択を取得"
 
-#: templates/all_games.html:209 templates/system_games.html:200
+#: templates/all_games.html:220 templates/system_games.html:200
 msgid "Edit Selected"
 msgstr "選択を編集"
 
@@ -4149,8 +4164,8 @@ msgstr "デベロッパー"
 msgid "Gameplay"
 msgstr "ゲームプレイ"
 
-#: templates/analytics.html:14 templates/dashboard.html:200
-#: templates/dashboard.html:298 templates/game_imports.html:277
+#: templates/analytics.html:14 templates/dashboard.html:220
+#: templates/dashboard.html:318 templates/game_imports.html:277
 msgid "Playtime"
 msgstr "プレイ時間"
 
@@ -4222,15 +4237,15 @@ msgstr "スプレッドシート用データ"
 msgid "Refresh"
 msgstr "更新"
 
-#: templates/analytics.html:78 templates/dashboard.html:122
+#: templates/analytics.html:78 templates/dashboard.html:142
 msgid "Total Systems"
 msgstr "システム総数"
 
-#: templates/analytics.html:85 templates/dashboard.html:167
+#: templates/analytics.html:85 templates/dashboard.html:187
 msgid "Total Storage"
 msgstr "総ストレージ"
 
-#: templates/analytics.html:92 templates/dashboard.html:176
+#: templates/analytics.html:92 templates/dashboard.html:196
 msgid "Completion Rate"
 msgstr "達成率"
 
@@ -4419,9 +4434,9 @@ msgid "Description"
 msgstr "説明"
 
 #: templates/analytics.html:480 templates/analytics.html:2428
-#: templates/dashboard.html:98 templates/dashboard.html:295
-#: templates/dashboard.html:354 templates/dashboard.html:431
-#: templates/dashboard.html:497
+#: templates/dashboard.html:117 templates/dashboard.html:315
+#: templates/dashboard.html:374 templates/dashboard.html:451
+#: templates/dashboard.html:517
 msgid "Boxart"
 msgstr "ボックスアート"
 
@@ -4469,7 +4484,7 @@ msgstr "コレクションの成長"
 msgid "Storage by System"
 msgstr "システム別ストレージ"
 
-#: templates/analytics.html:563 templates/dashboard.html:249
+#: templates/analytics.html:563 templates/dashboard.html:269
 msgid "Top Systems by Game Count"
 msgstr "ゲーム数別トップシステム"
 
@@ -5034,9 +5049,9 @@ msgid "No playtime data"
 msgstr "プレイ時間データなし"
 
 #: templates/_modals/edit_modal.html:28 templates/_modals/filter_modal.html:13
-#: templates/base.html:1045 templates/dashboard.html:296
-#: templates/dashboard.html:355 templates/dashboard.html:432
-#: templates/dashboard.html:498 templates/game_detail.html:710
+#: templates/base.html:1045 templates/dashboard.html:316
+#: templates/dashboard.html:375 templates/dashboard.html:452
+#: templates/dashboard.html:518 templates/game_detail.html:710
 msgid "Title"
 msgstr "タイトル"
 
@@ -5384,7 +5399,7 @@ msgid "Source Folder"
 msgstr "ソースフォルダ"
 
 #: templates/chd_converter.html:92 templates/chd_verify.html:108
-#: templates/dashboard.html:226 templates/settings_emulators.html:83
+#: templates/dashboard.html:246 templates/settings_emulators.html:83
 msgid "Scan"
 msgstr "スキャン"
 
@@ -5669,7 +5684,7 @@ msgid "ROM Path"
 msgstr "ROMパス"
 
 #: templates/compare_games.html:95 templates/dashboard.html:20
-#: templates/dashboard.html:407 templates/dashboard.html:531
+#: templates/dashboard.html:427 templates/dashboard.html:551
 #: templates/wishlist.html:508
 msgid "Scraped"
 msgstr "取得済み"
@@ -5690,8 +5705,8 @@ msgstr "追加日"
 msgid "Viewed"
 msgstr "閲覧日"
 
-#: templates/dashboard.html:21 templates/dashboard.html:359
-#: templates/dashboard.html:500 templates/game_imports.html:224
+#: templates/dashboard.html:21 templates/dashboard.html:379
+#: templates/dashboard.html:520 templates/game_imports.html:224
 #: templates/game_imports.html:277 templates/game_imports.html:340
 #: templates/game_imports.html:403
 msgid "Status"
@@ -5719,7 +5734,7 @@ msgstr "すべて再開"
 msgid "Dismiss All"
 msgstr "すべて閉じる"
 
-#: templates/dashboard.html:51 templates/dashboard.html:1388
+#: templates/dashboard.html:51 templates/dashboard.html:1422
 msgid "Dismiss"
 msgstr "閉じる"
 
@@ -5735,201 +5750,201 @@ msgstr "ランダムにゲームを選択"
 msgid "Random Game"
 msgstr "ランダムゲーム"
 
-#: templates/_settings_tabs/library.html:42 templates/dashboard.html:71
-#: templates/systems.html:111
-msgid "Scan Library"
-msgstr "ライブラリをスキャン"
-
 #: templates/dashboard.html:88
+#, fuzzy
+msgid "Set ROM folder"
+msgstr "このフォルダを選択"
+
+#: templates/dashboard.html:107
 msgid "Collection Health"
 msgstr "コレクションの健全性"
 
-#: templates/dashboard.html:89
+#: templates/dashboard.html:108
 msgid "Metadata completeness across your library"
 msgstr "ライブラリ全体のメタデータの完全性"
 
-#: templates/dashboard.html:92
+#: templates/dashboard.html:111
 msgid "Excellent"
 msgstr "優秀"
 
-#: templates/dashboard.html:92
+#: templates/dashboard.html:111
 msgid "Good"
 msgstr "良好"
 
-#: templates/dashboard.html:92
+#: templates/dashboard.html:111
 msgid "Fair"
 msgstr "普通"
 
-#: templates/dashboard.html:92
+#: templates/dashboard.html:111
 msgid "Needs Work"
 msgstr "要改善"
 
-#: templates/dashboard.html:99
+#: templates/dashboard.html:118
 msgid "Descriptions"
 msgstr "説明"
 
-#: templates/dashboard.html:126
+#: templates/dashboard.html:146
 msgid "Gaming platforms"
 msgstr "ゲームプラットフォーム"
 
-#: templates/dashboard.html:135
+#: templates/dashboard.html:155
 msgid "ROMs in library"
 msgstr "ライブラリ内のROM"
 
-#: templates/_settings_tabs/data.html:31 templates/dashboard.html:140
+#: templates/_settings_tabs/data.html:31 templates/dashboard.html:160
 msgid "Missing Metadata"
 msgstr "メタデータ欠落"
 
-#: templates/dashboard.html:146
+#: templates/dashboard.html:166
 msgid "Action required"
 msgstr "対応が必要"
 
-#: templates/dashboard.html:148
+#: templates/dashboard.html:168
 msgid "All games scraped"
 msgstr "すべてのゲームを取得済み"
 
-#: templates/dashboard.html:159
+#: templates/dashboard.html:179
 msgid "Games with metadata"
 msgstr "メタデータのあるゲーム"
 
-#: templates/dashboard.html:171
+#: templates/dashboard.html:191
 msgid "ROM library size"
 msgstr "ROMライブラリのサイズ"
 
-#: templates/dashboard.html:180
+#: templates/dashboard.html:200
 #, python-format
 msgid "%(n)s game beaten"
 msgid_plural "%(n)s games beaten"
 msgstr[0] "%(n)s 本のゲームをクリア"
 
-#: templates/dashboard.html:191
+#: templates/dashboard.html:211
 #, python-format
 msgid "of %(n)s available"
 msgstr "%(n)s件中"
 
-#: templates/dashboard.html:193
+#: templates/dashboard.html:213
 msgid "RetroAchievements earned"
 msgstr "獲得したRetroAchievements"
 
-#: templates/dashboard.html:204
+#: templates/dashboard.html:224
 msgid "Estimated total (HLTB)"
 msgstr "推定合計（HLTB）"
 
-#: templates/dashboard.html:212
+#: templates/dashboard.html:232
 msgid "Quick Fixes"
 msgstr "クイック修正"
 
-#: templates/dashboard.html:219
+#: templates/dashboard.html:239
 msgid "Games missing box art"
 msgstr "ボックスアートがないゲーム"
 
-#: templates/dashboard.html:227
+#: templates/dashboard.html:247
 msgid "Find duplicate ROMs"
 msgstr "重複 ROM を探す"
 
-#: templates/dashboard.html:234
+#: templates/dashboard.html:254
 msgid "Check"
 msgstr "確認"
 
-#: templates/dashboard.html:235
+#: templates/dashboard.html:255
 msgid "Broken ROM paths"
 msgstr "壊れた ROM パス"
 
-#: templates/dashboard.html:250
+#: templates/dashboard.html:270
 msgid "View All Systems →"
 msgstr "すべてのシステムを表示 →"
 
-#: templates/dashboard.html:277
+#: templates/dashboard.html:297
 #, python-format
 msgid "%(pct)s%% scraped"
 msgstr "%(pct)s%% 取得済み"
 
-#: templates/dashboard.html:288
+#: templates/dashboard.html:308
 msgid "Continue Playing"
 msgstr "プレイを続ける"
 
-#: templates/dashboard.html:346
+#: templates/dashboard.html:366
 msgid "Recently Added"
 msgstr "最近追加"
 
-#: templates/dashboard.html:347
+#: templates/dashboard.html:367
 msgid "View All Games →"
 msgstr "すべてのゲームを表示 →"
 
-#: templates/dashboard.html:358 templates/reports.html:447
+#: templates/dashboard.html:378 templates/reports.html:447
 msgid "Year"
 msgstr "年"
 
-#: templates/dashboard.html:409
+#: templates/dashboard.html:429
 msgid "Missing"
 msgstr "欠落"
 
-#: templates/dashboard.html:424
+#: templates/dashboard.html:444
 msgid "Recently Viewed"
 msgstr "最近閲覧"
 
-#: templates/dashboard.html:434
+#: templates/dashboard.html:454
 msgid "Completion"
 msgstr "達成"
 
-#: templates/dashboard.html:490
+#: templates/dashboard.html:510
 msgid "Recently Scraped"
 msgstr "最近取得"
 
-#: templates/dashboard.html:544
+#: templates/dashboard.html:564
 msgid "System Status"
 msgstr "システムステータス"
 
-#: templates/dashboard.html:550
+#: templates/dashboard.html:570
 msgid "Database Service"
 msgstr "データベースサービス"
 
-#: templates/dashboard.html:552
+#: templates/dashboard.html:572
 msgid "Online"
 msgstr "オンライン"
 
-#: templates/dashboard.html:558
+#: templates/dashboard.html:578
 msgid "ES-DE Local Scraper"
 msgstr "ES-DEローカルスクレイパー"
 
-#: templates/dashboard.html:560
+#: templates/dashboard.html:580
 msgid "Available"
 msgstr "利用可能"
 
-#: templates/dashboard.html:569 templates/dashboard.html:579
-#: templates/dashboard.html:599 templates/dashboard.html:609
+#: templates/dashboard.html:589 templates/dashboard.html:599
+#: templates/dashboard.html:619 templates/dashboard.html:629
 #: templates/game_imports.html:368
 msgid "Checking..."
 msgstr "確認しています..."
 
-#: templates/dashboard.html:569 templates/dashboard.html:579
-#: templates/dashboard.html:599 templates/dashboard.html:609
+#: templates/dashboard.html:589 templates/dashboard.html:599
+#: templates/dashboard.html:619 templates/dashboard.html:629
 msgid "Disabled"
 msgstr "無効"
 
-#: templates/dashboard.html:569 templates/dashboard.html:579
 #: templates/dashboard.html:589 templates/dashboard.html:599
-#: templates/dashboard.html:609
+#: templates/dashboard.html:609 templates/dashboard.html:619
+#: templates/dashboard.html:629
 msgid "Not Configured"
 msgstr "未設定"
 
-#: templates/_settings_tabs/account.html:297 templates/dashboard.html:589
+#: templates/_settings_tabs/account.html:297 templates/dashboard.html:609
 msgid "Configured"
 msgstr "設定済み"
 
-#: templates/dashboard.html:1371
+#: templates/dashboard.html:1405
 msgid ""
 "Your PlayStation Network session has expired — re-link it to keep trophy "
 "and library sync working."
 msgstr "PlayStation Network のセッションの有効期限が切れました。トロフィーとライブラリの同期を続けるには再リンクしてください。"
 
-#: templates/dashboard.html:1374
+#: templates/dashboard.html:1408
 msgid ""
 "Your PlayStation Network session expires soon — re-link it to avoid an "
 "interruption."
 msgstr "PlayStation Network のセッションの有効期限がまもなく切れます。中断を避けるため再リンクしてください。"
 
-#: templates/dashboard.html:1387
+#: templates/dashboard.html:1421
 msgid "Re-link now"
 msgstr "今すぐ再リンク"
 
@@ -8032,6 +8047,11 @@ msgstr "コレクション内のゲーム"
 #: templates/system_games.html:47
 msgid "Refresh RetroAchievements data for this system"
 msgstr "このシステムのRetroAchievementsデータを更新"
+
+#: templates/system_games.html:161
+#, fuzzy
+msgid "No games here yet"
+msgstr "ゲームが選択されていません"
 
 #: templates/systems.html:11
 msgid "Gaming Systems"

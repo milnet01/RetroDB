@@ -167,7 +167,18 @@
 <!-- Empty state: shown by JS only once a fetch returns zero games -->
 <div class="empty-state" id="gamesEmpty" role="status" style="display: none;">
     <div class="empty-state-title" id="gamesEmptyFiltered">{{ _('No games match these filters') }}</div>
-    <div class="empty-state-title" id="gamesEmptyNone">{{ _('No games here yet') }}</div>
+    <div id="gamesEmptyNone">
+        <div class="empty-state-title">{{ _('Your library is empty') }}</div>
+        {% if current_user and current_user.role == 'admin' %}
+        <p class="empty-state-text">{{ _('Scan your ROM folder to add your games.') }}</p>
+        <button type="button" class="btn btn-primary" data-on-click="scanLibrary" data-args='["$this"]'>
+            <span class="btn-icon">🔍</span>
+            {{ _('Scan Library') }}
+        </button>
+        {% else %}
+        <p class="empty-state-text">{{ _('Ask an admin to scan the ROM folder.') }}</p>
+        {% endif %}
+    </div>
     <button type="button" class="filter-btn clear-btn" id="gamesEmptyClear" data-on-click="clearFilters">
         <span class="filter-icon">✕</span> {{ _('Clear filters') }}
     </button>

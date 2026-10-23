@@ -62,10 +62,12 @@
         <p class="page-subtitle">{{ _('Overview of your retro gaming collection') }}</p>
     </div>
     <div class="page-actions">
+        {% if stats.total_games %}
         <button type="button" class="btn btn-secondary" data-on-click="randomGame" title="{{ _('Pick a random game') }}">
             <span class="btn-icon">🎲</span>
             {{ _('Random Game') }}
         </button>
+        {% endif %}
         <button type="button" id="scanLibraryBtn" class="btn btn-primary" data-on-click="scanLibrary">
             <span class="btn-icon">🔍</span>
             {{ _('Scan Library') }}
@@ -73,6 +75,25 @@
     </div>
 </div>
 
+{% if stats.total_games == 0 %}
+<!-- Empty library: a welcome in place of a 0% health ring (PASS-53-7) -->
+<div class="empty-state empty-library-welcome" id="emptyLibraryWelcome">
+    <div class="empty-state-icon" aria-hidden="true">🎮</div>
+    <h2 class="empty-state-title">{{ _('Your library is empty') }}</h2>
+    {% if current_user and current_user.role == 'admin' %}
+    <p class="empty-state-text">{{ _('Scan your ROM folder to add your games.') }}</p>
+    <div class="empty-library-actions">
+        <button type="button" class="btn btn-primary" data-on-click="scanLibrary" data-args='["$this"]'>
+            <span class="btn-icon">🔍</span>
+            {{ _('Scan Library') }}
+        </button>
+        <a href="{{ url_for('settings.settings') }}#library" class="btn btn-secondary">{{ _('Set ROM folder') }}</a>
+    </div>
+    {% else %}
+    <p class="empty-state-text">{{ _('Ask an admin to scan the ROM folder.') }}</p>
+    {% endif %}
+</div>
+{% else %}
 <!-- Collection Health Score -->
 <div class="health-score-container">
     <div class="health-score-ring" data-score="{{ stats.health_score }}">
@@ -114,6 +135,7 @@
         {% endfor %}
     </div>
 </div>
+{% endif %}
 
 <!-- Primary Stats Grid (Row 1) -->
 <div class="stats-grid">
@@ -732,6 +754,20 @@
 .quick-fix.attention .quick-fix-value { color: var(--neon-orange); }
 .quick-fix-arrow { color: var(--text-muted); font-size: 1.2rem; flex-shrink: 0; }
 .quick-fix:hover .quick-fix-arrow { color: var(--primary-cyan); }
+
+/* Empty library welcome (PASS-53-7) */
+.empty-library-welcome {
+    background: var(--bg-medium);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--spacing-lg);
+}
+.empty-library-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+    flex-wrap: wrap;
+}
 
 /* Collection Health Score */
 .health-score-container {

@@ -27,6 +27,10 @@
     label: A filter that matches nothing says so
   - type: ui
     label: The Library's filter bar keeps everything in its place
+  - type: ui
+    label: An empty library shows a welcome with a Scan button
+  - type: fix
+    label: Scan Library works from the Systems page and Settings
   body: |
     <ul>
       <li><strong>RetroDB is ready for its own game player.</strong> A
@@ -105,6 +109,15 @@
         until a filter is on. Active filters show beside the game count.
         "Show Bonus" is now "Bonus Discs", lit up when on. On a phone, the
         filter buttons open from one Filters button over the page.</li>
+      <li><strong>An empty library shows a welcome with a Scan
+        button.</strong> A new install used to show a health score stuck
+        at 0% and a blank Library. Both pages now say the library is
+        empty and offer a Scan Library button. The Dashboard also links
+        to the ROM folder setting. Users who are not admins are told to ask an admin. Random
+        Game is hidden until there are games to pick from.</li>
+      <li><strong>Scan Library works from the Systems page and
+        Settings.</strong> Those two Scan Library buttons did nothing when
+        pressed. Only the Dashboard's worked.</li>
     </ul>
 - version: 3.30.0
   date: 2026-10-21

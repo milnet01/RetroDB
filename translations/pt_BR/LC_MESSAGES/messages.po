@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-23 08:47+0200\n"
+"POT-Creation-Date: 2026-10-23 09:29+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: pt_BR\n"
@@ -1834,7 +1834,7 @@ msgstr "Fechar atalhos de teclado"
 msgid "Close modal / cancel"
 msgstr "Fechar janela / cancelar"
 
-#: services/js_i18n_strings.py:509 templates/dashboard.html:155
+#: services/js_i18n_strings.py:509 templates/dashboard.html:175
 msgid "Complete"
 msgstr "Concluído"
 
@@ -1844,7 +1844,7 @@ msgstr "Concluído!"
 
 #: services/js_i18n_strings.py:511 templates/_bulk_edit_modal.html:29
 #: templates/analytics.html:1664 templates/base.html:981
-#: templates/dashboard.html:473 templates/game_detail.html:222
+#: templates/dashboard.html:493 templates/game_detail.html:222
 msgid "Completed"
 msgstr "Concluído"
 
@@ -1982,7 +1982,7 @@ msgid "Detecting…"
 msgstr "Detectando…"
 
 #: services/js_i18n_strings.py:541 templates/_bulk_scrape_modal.html:69
-#: templates/all_games.html:212 templates/psn_trophies.html:247
+#: templates/all_games.html:223 templates/psn_trophies.html:247
 #: templates/psn_trophies.html:307 templates/reports.html:525
 #: templates/system_games.html:203
 msgid "Done"
@@ -2334,8 +2334,8 @@ msgstr "A imagem deve ter menos de 10MB"
 #: services/js_i18n_strings.py:622 templates/_bulk_edit_modal.html:27
 #: templates/achievements_system.html:151
 #: templates/achievements_system.html:170 templates/analytics.html:1664
-#: templates/base.html:979 templates/dashboard.html:329
-#: templates/dashboard.html:469 templates/game_detail.html:220
+#: templates/base.html:979 templates/dashboard.html:349
+#: templates/dashboard.html:489 templates/game_detail.html:220
 #: templates/steam_achievements.html:77 templates/xbox_achievements.html:77
 msgid "In Progress"
 msgstr "Em Andamento"
@@ -2689,7 +2689,7 @@ msgstr "Jogar"
 
 #: services/js_i18n_strings.py:699 templates/_bulk_edit_modal.html:28
 #: templates/analytics.html:1664 templates/base.html:980
-#: templates/dashboard.html:471 templates/game_detail.html:221
+#: templates/dashboard.html:491 templates/game_detail.html:221
 msgid "Played"
 msgstr "Jogado"
 
@@ -3115,8 +3115,8 @@ msgstr "Sincronizando: {processed} / {total}"
 #: templates/_settings_tabs/customization.html:299
 #: templates/achievement_game.html:228 templates/analytics.html:569
 #: templates/analytics.html:603 templates/compare_games.html:69
-#: templates/dashboard.html:297 templates/dashboard.html:356
-#: templates/dashboard.html:433 templates/dashboard.html:499
+#: templates/dashboard.html:317 templates/dashboard.html:376
+#: templates/dashboard.html:453 templates/dashboard.html:519
 #: templates/logs.html:722 templates/multi_disc_organizer.html:213
 #: templates/reports.html:360 templates/reports.html:435
 #: templates/settings.html:41 templates/steam_achievement_game.html:173
@@ -3560,7 +3560,7 @@ msgstr "Apenas os campos alterados de \"Não alterar\" serão atualizados."
 
 #: templates/_bulk_edit_modal.html:26 templates/achievements_system.html:171
 #: templates/analytics.html:1664 templates/base.html:978
-#: templates/dashboard.html:467 templates/game_detail.html:219
+#: templates/dashboard.html:487 templates/game_detail.html:219
 #: templates/steam_achievements.html:78 templates/xbox_achievements.html:78
 msgid "Not Started"
 msgstr "Não Iniciado"
@@ -3570,7 +3570,7 @@ msgstr "Não Iniciado"
 #: templates/achievement_game.html:241 templates/all_games.html:72
 #: templates/analytics.html:481 templates/analytics.html:2428
 #: templates/base.html:908 templates/base.html:1112
-#: templates/compare_games.html:73 templates/dashboard.html:357
+#: templates/compare_games.html:73 templates/dashboard.html:377
 #: templates/game_detail.html:265 templates/local_trophy_detail.html:99
 #: templates/psn_trophy_detail.html:94 templates/psn_trophy_detail.html:258
 #: templates/steam_achievement_game.html:178 templates/system_games.html:63
@@ -3863,8 +3863,8 @@ msgstr "Entrada"
 
 #: templates/_macros/nav_tabs.html:24 templates/achievement_game.html:265
 #: templates/achievements_system.html:126 templates/analytics.html:17
-#: templates/base.html:112 templates/dashboard.html:100
-#: templates/dashboard.html:185 templates/steam_achievement_game.html:190
+#: templates/base.html:112 templates/dashboard.html:119
+#: templates/dashboard.html:205 templates/steam_achievement_game.html:190
 #: templates/xbox_achievement_game.html:177 templates/xbox_achievements.html:46
 msgid "Achievements"
 msgstr "Conquistas"
@@ -3942,7 +3942,7 @@ msgstr "Configurações do Perfil"
 
 #: templates/_settings_tabs/data.html:23 templates/achievements_system.html:42
 #: templates/analytics.html:71 templates/analytics.html:2535
-#: templates/dashboard.html:131 templates/steam_achievements.html:39
+#: templates/dashboard.html:151 templates/steam_achievements.html:39
 #: templates/xbox_achievements.html:39
 msgid "Total Games"
 msgstr "Total de Jogos"
@@ -4165,49 +4165,64 @@ msgstr "Adicionados Recentemente"
 msgid "No games match these filters"
 msgstr "Nenhum item corresponde a este filtro."
 
-#: templates/all_games.html:170 templates/system_games.html:161
+#: templates/all_games.html:171 templates/dashboard.html:80
 #, fuzzy
-msgid "No games here yet"
-msgstr "Nenhum Jogo Selecionado"
+msgid "Your library is empty"
+msgstr "Tamanho da biblioteca de ROMs"
 
-#: templates/all_games.html:172 templates/system_games.html:163
+#: templates/all_games.html:173 templates/dashboard.html:82
+#, fuzzy
+msgid "Scan your ROM folder to add your games."
+msgstr "Verifique sua biblioteca de ROMs para adicionar sistemas."
+
+#: templates/_settings_tabs/library.html:42 templates/all_games.html:176
+#: templates/dashboard.html:71 templates/dashboard.html:86
+#: templates/systems.html:111
+msgid "Scan Library"
+msgstr "Verificar Biblioteca"
+
+#: templates/all_games.html:179 templates/dashboard.html:91
+msgid "Ask an admin to scan the ROM folder."
+msgstr ""
+
+#: templates/all_games.html:183 templates/system_games.html:163
 #, fuzzy
 msgid "Clear filters"
 msgstr "Fechar filtro"
 
-#: templates/_modals/filter_modal.html:18 templates/all_games.html:179
+#: templates/_modals/filter_modal.html:18 templates/all_games.html:190
 #: templates/psn_trophies.html:222 templates/system_games.html:170
 msgid "Loading games..."
 msgstr "Carregando jogos..."
 
-#: templates/all_games.html:184 templates/system_games.html:175
+#: templates/all_games.html:195 templates/system_games.html:175
 #, fuzzy
 msgid "Selected games"
 msgstr "Selecionar Jogo 2"
 
-#: templates/all_games.html:186 templates/system_games.html:177
+#: templates/all_games.html:197 templates/system_games.html:177
 msgid "Select All"
 msgstr "Selecionar Todos"
 
-#: templates/all_games.html:189 templates/system_games.html:180
+#: templates/all_games.html:200 templates/system_games.html:180
 msgid "Select Unscraped"
 msgstr "Selecionar Sem Metadados"
 
-#: templates/all_games.html:193 templates/game_detail.html:783
+#: templates/all_games.html:204 templates/game_detail.html:783
 #: templates/system_games.html:184
 msgid "Full Re-scrape"
 msgstr "Rebusca Completa"
 
-#: templates/all_games.html:195 templates/system_games.html:186
+#: templates/all_games.html:206 templates/system_games.html:186
 msgid "Toggle between full re-scrape and fill missing mode"
 msgstr "Alternar entre rebusca completa e modo de preencher ausentes"
 
-#: templates/all_games.html:198 templates/game_detail.html:783
+#: templates/all_games.html:209 templates/game_detail.html:783
 #: templates/system_games.html:189
 msgid "Fill Missing"
 msgstr "Preencher Ausentes"
 
-#: templates/all_games.html:200 templates/system_games.html:191
+#: templates/all_games.html:211 templates/system_games.html:191
 msgid ""
 "Full Re-scrape keeps the art, videos and manuals already downloaded "
 "instead of fetching them again"
@@ -4215,15 +4230,15 @@ msgstr ""
 "O re-scrape completo mantém as imagens, vídeos e manuais já baixados em "
 "vez de buscá-los novamente"
 
-#: templates/all_games.html:202 templates/system_games.html:193
+#: templates/all_games.html:213 templates/system_games.html:193
 msgid "Keep existing media"
 msgstr "Manter mídias existentes"
 
-#: templates/all_games.html:206 templates/system_games.html:197
+#: templates/all_games.html:217 templates/system_games.html:197
 msgid "Scrape Selected"
 msgstr "Buscar Selecionados"
 
-#: templates/all_games.html:209 templates/system_games.html:200
+#: templates/all_games.html:220 templates/system_games.html:200
 msgid "Edit Selected"
 msgstr "Editar Selecionados"
 
@@ -4244,8 +4259,8 @@ msgstr "Desenvolvedoras"
 msgid "Gameplay"
 msgstr "Jogabilidade"
 
-#: templates/analytics.html:14 templates/dashboard.html:200
-#: templates/dashboard.html:298 templates/game_imports.html:277
+#: templates/analytics.html:14 templates/dashboard.html:220
+#: templates/dashboard.html:318 templates/game_imports.html:277
 msgid "Playtime"
 msgstr "Tempo de Jogo"
 
@@ -4317,15 +4332,15 @@ msgstr "Dados para planilhas"
 msgid "Refresh"
 msgstr "Atualizar"
 
-#: templates/analytics.html:78 templates/dashboard.html:122
+#: templates/analytics.html:78 templates/dashboard.html:142
 msgid "Total Systems"
 msgstr "Total de Sistemas"
 
-#: templates/analytics.html:85 templates/dashboard.html:167
+#: templates/analytics.html:85 templates/dashboard.html:187
 msgid "Total Storage"
 msgstr "Armazenamento Total"
 
-#: templates/analytics.html:92 templates/dashboard.html:176
+#: templates/analytics.html:92 templates/dashboard.html:196
 msgid "Completion Rate"
 msgstr "Taxa de Conclusão"
 
@@ -4514,9 +4529,9 @@ msgid "Description"
 msgstr "Descrição"
 
 #: templates/analytics.html:480 templates/analytics.html:2428
-#: templates/dashboard.html:98 templates/dashboard.html:295
-#: templates/dashboard.html:354 templates/dashboard.html:431
-#: templates/dashboard.html:497
+#: templates/dashboard.html:117 templates/dashboard.html:315
+#: templates/dashboard.html:374 templates/dashboard.html:451
+#: templates/dashboard.html:517
 msgid "Boxart"
 msgstr "Capa"
 
@@ -4564,7 +4579,7 @@ msgstr "Crescimento da Coleção"
 msgid "Storage by System"
 msgstr "Armazenamento por Sistema"
 
-#: templates/analytics.html:563 templates/dashboard.html:249
+#: templates/analytics.html:563 templates/dashboard.html:269
 msgid "Top Systems by Game Count"
 msgstr "Principais Sistemas por Número de Jogos"
 
@@ -5133,9 +5148,9 @@ msgid "No playtime data"
 msgstr "Sem dados de tempo de jogo"
 
 #: templates/_modals/edit_modal.html:28 templates/_modals/filter_modal.html:13
-#: templates/base.html:1045 templates/dashboard.html:296
-#: templates/dashboard.html:355 templates/dashboard.html:432
-#: templates/dashboard.html:498 templates/game_detail.html:710
+#: templates/base.html:1045 templates/dashboard.html:316
+#: templates/dashboard.html:375 templates/dashboard.html:452
+#: templates/dashboard.html:518 templates/game_detail.html:710
 msgid "Title"
 msgstr "Título"
 
@@ -5485,7 +5500,7 @@ msgid "Source Folder"
 msgstr "Pasta de Origem"
 
 #: templates/chd_converter.html:92 templates/chd_verify.html:108
-#: templates/dashboard.html:226 templates/settings_emulators.html:83
+#: templates/dashboard.html:246 templates/settings_emulators.html:83
 msgid "Scan"
 msgstr "Verificar"
 
@@ -5776,7 +5791,7 @@ msgid "ROM Path"
 msgstr "Caminho da ROM"
 
 #: templates/compare_games.html:95 templates/dashboard.html:20
-#: templates/dashboard.html:407 templates/dashboard.html:531
+#: templates/dashboard.html:427 templates/dashboard.html:551
 #: templates/wishlist.html:508
 msgid "Scraped"
 msgstr "Metadados Obtidos"
@@ -5797,8 +5812,8 @@ msgstr "Adicionado"
 msgid "Viewed"
 msgstr "Visualizado"
 
-#: templates/dashboard.html:21 templates/dashboard.html:359
-#: templates/dashboard.html:500 templates/game_imports.html:224
+#: templates/dashboard.html:21 templates/dashboard.html:379
+#: templates/dashboard.html:520 templates/game_imports.html:224
 #: templates/game_imports.html:277 templates/game_imports.html:340
 #: templates/game_imports.html:403
 msgid "Status"
@@ -5827,7 +5842,7 @@ msgstr "Retomar Todos"
 msgid "Dismiss All"
 msgstr "Dispensar Todos"
 
-#: templates/dashboard.html:51 templates/dashboard.html:1388
+#: templates/dashboard.html:51 templates/dashboard.html:1422
 msgid "Dismiss"
 msgstr "Dispensar"
 
@@ -5843,190 +5858,190 @@ msgstr "Escolher um jogo aleatório"
 msgid "Random Game"
 msgstr "Jogo Aleatório"
 
-#: templates/_settings_tabs/library.html:42 templates/dashboard.html:71
-#: templates/systems.html:111
-msgid "Scan Library"
-msgstr "Verificar Biblioteca"
-
 #: templates/dashboard.html:88
+#, fuzzy
+msgid "Set ROM folder"
+msgstr "Selecionar Esta Pasta"
+
+#: templates/dashboard.html:107
 msgid "Collection Health"
 msgstr "Saúde da Coleção"
 
-#: templates/dashboard.html:89
+#: templates/dashboard.html:108
 msgid "Metadata completeness across your library"
 msgstr "Completude dos metadados em toda a sua biblioteca"
 
-#: templates/dashboard.html:92
+#: templates/dashboard.html:111
 msgid "Excellent"
 msgstr "Excelente"
 
-#: templates/dashboard.html:92
+#: templates/dashboard.html:111
 msgid "Good"
 msgstr "Boa"
 
-#: templates/dashboard.html:92
+#: templates/dashboard.html:111
 msgid "Fair"
 msgstr "Razoável"
 
-#: templates/dashboard.html:92
+#: templates/dashboard.html:111
 msgid "Needs Work"
 msgstr "Precisa de Atenção"
 
-#: templates/dashboard.html:99
+#: templates/dashboard.html:118
 msgid "Descriptions"
 msgstr "Descrições"
 
-#: templates/dashboard.html:126
+#: templates/dashboard.html:146
 msgid "Gaming platforms"
 msgstr "Plataformas de jogos"
 
-#: templates/dashboard.html:135
+#: templates/dashboard.html:155
 msgid "ROMs in library"
 msgstr "ROMs na biblioteca"
 
-#: templates/_settings_tabs/data.html:31 templates/dashboard.html:140
+#: templates/_settings_tabs/data.html:31 templates/dashboard.html:160
 msgid "Missing Metadata"
 msgstr "Metadados Ausentes"
 
-#: templates/dashboard.html:146
+#: templates/dashboard.html:166
 msgid "Action required"
 msgstr "Ação necessária"
 
-#: templates/dashboard.html:148
+#: templates/dashboard.html:168
 msgid "All games scraped"
 msgstr "Todos os jogos com metadados"
 
-#: templates/dashboard.html:159
+#: templates/dashboard.html:179
 msgid "Games with metadata"
 msgstr "Jogos com metadados"
 
-#: templates/dashboard.html:171
+#: templates/dashboard.html:191
 msgid "ROM library size"
 msgstr "Tamanho da biblioteca de ROMs"
 
-#: templates/dashboard.html:180
+#: templates/dashboard.html:200
 #, python-format
 msgid "%(n)s game beaten"
 msgid_plural "%(n)s games beaten"
 msgstr[0] "%(n)s jogo zerado"
 msgstr[1] "%(n)s jogos zerados"
 
-#: templates/dashboard.html:191
+#: templates/dashboard.html:211
 #, python-format
 msgid "of %(n)s available"
 msgstr "de %(n)s disponíveis"
 
-#: templates/dashboard.html:193
+#: templates/dashboard.html:213
 msgid "RetroAchievements earned"
 msgstr "RetroAchievements conquistados"
 
-#: templates/dashboard.html:204
+#: templates/dashboard.html:224
 msgid "Estimated total (HLTB)"
 msgstr "Total estimado (HLTB)"
 
-#: templates/dashboard.html:212
+#: templates/dashboard.html:232
 msgid "Quick Fixes"
 msgstr "Correções Rápidas"
 
-#: templates/dashboard.html:219
+#: templates/dashboard.html:239
 msgid "Games missing box art"
 msgstr "Jogos sem capa"
 
-#: templates/dashboard.html:227
+#: templates/dashboard.html:247
 msgid "Find duplicate ROMs"
 msgstr "Encontrar ROMs duplicadas"
 
-#: templates/dashboard.html:234
+#: templates/dashboard.html:254
 msgid "Check"
 msgstr "Verificar"
 
-#: templates/dashboard.html:235
+#: templates/dashboard.html:255
 msgid "Broken ROM paths"
 msgstr "Caminhos de ROM quebrados"
 
-#: templates/dashboard.html:250
+#: templates/dashboard.html:270
 msgid "View All Systems →"
 msgstr "Ver Todos os Sistemas →"
 
-#: templates/dashboard.html:277
+#: templates/dashboard.html:297
 #, python-format
 msgid "%(pct)s%% scraped"
 msgstr "%(pct)s%% com metadados"
 
-#: templates/dashboard.html:288
+#: templates/dashboard.html:308
 msgid "Continue Playing"
 msgstr "Continuar Jogando"
 
-#: templates/dashboard.html:346
+#: templates/dashboard.html:366
 msgid "Recently Added"
 msgstr "Adicionados Recentemente"
 
-#: templates/dashboard.html:347
+#: templates/dashboard.html:367
 msgid "View All Games →"
 msgstr "Ver Todos os Jogos →"
 
-#: templates/dashboard.html:358 templates/reports.html:447
+#: templates/dashboard.html:378 templates/reports.html:447
 msgid "Year"
 msgstr "Ano"
 
-#: templates/dashboard.html:409
+#: templates/dashboard.html:429
 msgid "Missing"
 msgstr "Ausente"
 
-#: templates/dashboard.html:424
+#: templates/dashboard.html:444
 msgid "Recently Viewed"
 msgstr "Visualizados Recentemente"
 
-#: templates/dashboard.html:434
+#: templates/dashboard.html:454
 msgid "Completion"
 msgstr "Conclusão"
 
-#: templates/dashboard.html:490
+#: templates/dashboard.html:510
 msgid "Recently Scraped"
 msgstr "Metadados Obtidos Recentemente"
 
-#: templates/dashboard.html:544
+#: templates/dashboard.html:564
 msgid "System Status"
 msgstr "Status do Sistema"
 
-#: templates/dashboard.html:550
+#: templates/dashboard.html:570
 msgid "Database Service"
 msgstr "Serviço de Banco de Dados"
 
-#: templates/dashboard.html:552
+#: templates/dashboard.html:572
 msgid "Online"
 msgstr "Online"
 
-#: templates/dashboard.html:558
+#: templates/dashboard.html:578
 msgid "ES-DE Local Scraper"
 msgstr "Buscador Local ES-DE"
 
-#: templates/dashboard.html:560
+#: templates/dashboard.html:580
 msgid "Available"
 msgstr "Disponível"
 
-#: templates/dashboard.html:569 templates/dashboard.html:579
-#: templates/dashboard.html:599 templates/dashboard.html:609
+#: templates/dashboard.html:589 templates/dashboard.html:599
+#: templates/dashboard.html:619 templates/dashboard.html:629
 #: templates/game_imports.html:368
 msgid "Checking..."
 msgstr "Verificando..."
 
-#: templates/dashboard.html:569 templates/dashboard.html:579
-#: templates/dashboard.html:599 templates/dashboard.html:609
+#: templates/dashboard.html:589 templates/dashboard.html:599
+#: templates/dashboard.html:619 templates/dashboard.html:629
 msgid "Disabled"
 msgstr "Desativado"
 
-#: templates/dashboard.html:569 templates/dashboard.html:579
 #: templates/dashboard.html:589 templates/dashboard.html:599
-#: templates/dashboard.html:609
+#: templates/dashboard.html:609 templates/dashboard.html:619
+#: templates/dashboard.html:629
 msgid "Not Configured"
 msgstr "Não Configurado"
 
-#: templates/_settings_tabs/account.html:297 templates/dashboard.html:589
+#: templates/_settings_tabs/account.html:297 templates/dashboard.html:609
 msgid "Configured"
 msgstr "Configurado"
 
-#: templates/dashboard.html:1371
+#: templates/dashboard.html:1405
 msgid ""
 "Your PlayStation Network session has expired — re-link it to keep trophy "
 "and library sync working."
@@ -6034,7 +6049,7 @@ msgstr ""
 "Sua sessão da PlayStation Network expirou — vincule-a novamente para "
 "manter a sincronização de troféus e da biblioteca funcionando."
 
-#: templates/dashboard.html:1374
+#: templates/dashboard.html:1408
 msgid ""
 "Your PlayStation Network session expires soon — re-link it to avoid an "
 "interruption."
@@ -6042,7 +6057,7 @@ msgstr ""
 "Sua sessão da PlayStation Network expira em breve — vincule-a novamente "
 "para evitar uma interrupção."
 
-#: templates/dashboard.html:1387
+#: templates/dashboard.html:1421
 msgid "Re-link now"
 msgstr "Vincular novamente agora"
 
@@ -8247,6 +8262,11 @@ msgstr "jogos em sua coleção"
 #: templates/system_games.html:47
 msgid "Refresh RetroAchievements data for this system"
 msgstr "Atualizar dados de RetroAchievements deste sistema"
+
+#: templates/system_games.html:161
+#, fuzzy
+msgid "No games here yet"
+msgstr "Nenhum Jogo Selecionado"
 
 #: templates/systems.html:11
 msgid "Gaming Systems"

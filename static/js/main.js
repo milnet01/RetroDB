@@ -914,8 +914,10 @@ function confirmReset(form) {
 // API FUNCTIONS
 // =============================================================================
 
-async function scanLibrary() {
-    const btn = document.getElementById('scanLibraryBtn');
+// btnArg: the clicked button (data-args='["$this"]'), so every Scan
+// button works, not only the Dashboard's #scanLibraryBtn.
+async function scanLibrary(btnArg) {
+    const btn = btnArg instanceof Element ? btnArg : document.getElementById('scanLibraryBtn');
     if (!btn) return;
 
     const originalText = btn.innerHTML;
