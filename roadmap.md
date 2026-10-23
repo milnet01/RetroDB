@@ -609,7 +609,10 @@ message, so nothing flashes yet.
 - **Est.**: S — one setting + a branch in the nav redirect.
 
 #### Pass 53.7 First-run / empty-library welcome CTA (UX, S)
-- **Status**: planned.
+- **Shipped** 2026-10-23 (914f78f, in 3.31.0): welcome on Dashboard
+  and Library when there are no games; Random Game hidden; also fixed
+  the Systems-page and Settings Scan Library buttons, which did nothing.
+- **Status**: done.
 - **Problem**: a fresh, empty install looks broken, not welcoming — the
   Dashboard shows a health ring stuck at ~0% (`dashboard.html:75-83`) and the
   Library shows the full filter chrome over a blank grid. "Scan Library" is a
