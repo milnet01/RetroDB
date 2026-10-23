@@ -8403,8 +8403,10 @@ were corrected in `2836bc3` and are not repeated here.
      folder), then PASS-59-155 (cheats).
   5b. Turnable 3D box art (user, 2026-10-23): PASS-59-142 (import
      Slipcase box faces), then PASS-59-143 (the 3D viewer).
-  5c. Use everything the scrapers offer (user, 2026-10-23): PASS-59-162
-     investigation; the user picks which findings ship in v4.0.0.
+  5c. Scraper data, complete and correct (user, 2026-10-23): PASS-59-162
+     full investigation (unused data, and misused data); the user picks
+     which findings ship in v4.0.0. PASS-59-161 (screenshots true to
+     their system) ships in this step.
   6. Stricter browser security: PASS-60-1, after the template changes
      above, so inline scripts move once.
   7. Fully translated: PASS-52-1, PASS-59-109, PASS-57-6, PASS-59-93,
@@ -9491,7 +9493,7 @@ were corrected in `2836bc3` and are not repeated here.
 
 ---
 
-#### Pass 59.162 Investigate what each scraper offers that RetroDB does not use yet (INVESTIGATE, M).
+#### Pass 59.162 Full scraper investigation: what each source offers that RetroDB does not use, and whether what it does use is used correctly (INVESTIGATE, L).
 - **Status**: todo
 - **Request** (user, 2026-10-23, for v4.0.0): scrapers may offer more
   than RetroDB uses; check whether we use everything each one offers.
@@ -9500,6 +9502,14 @@ were corrected in `2836bc3` and are not repeated here.
   fields and media its API returns (from its documentation and a live
   response), against what scraper/scrape_*.py reads and what the games
   table stores.
+- **Widened** (user, 2026-10-23): "Even the data that scrapers offer
+  that we are using, are we using it correctly. A full investigation."
+  For every field and media type already used, check it is read from
+  the right place in the response, converted correctly (dates, scores
+  and their scales, ratings, players, genres to canonical forms,
+  regions, languages), tied to the right platform and region version
+  (see PASS-59-161 for screenshots), merged in the right priority
+  order, and stored in the right column without losing detail.
 - **Output**: a table per source of unused fields and media, each with
   what it would give a user, and the ones worth adding filed as their
   own roadmap items for the user to choose from. Respect each API's
