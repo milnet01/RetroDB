@@ -74,6 +74,17 @@
                     </div>
                     <a href="{{ url_for('auth.logout') }}" class="user-logout-btn" title="{{ _('Logout') }}" aria-label="{{ _('Logout') }}">🚪</a>
                 </div>
+                {# PASS-53-1 — global search; behaviour in static/js/global-search.js. #}
+                <div class="global-search" role="search">
+                    <input type="search" id="globalSearch" class="global-search-input"
+                           placeholder="{{ _('Search games and systems…') }}"
+                           aria-label="{{ _('Search games and systems') }}"
+                           role="combobox" aria-autocomplete="list" aria-expanded="false"
+                           aria-controls="globalSearchList" autocomplete="off" spellcheck="false">
+                    <div id="globalSearchList" class="global-search-list" role="listbox"
+                         aria-label="{{ _('Search results') }}" hidden></div>
+                    <div id="globalSearchStatus" class="visually-hidden" role="status" aria-live="polite"></div>
+                </div>
                 {% else %}
                 <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-sm" style="width: 100%; margin-top: var(--spacing-md);">
                     <span>🔐</span> {{ _('Login') }}

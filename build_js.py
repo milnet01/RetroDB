@@ -30,6 +30,7 @@ CORE_ORDER = [
     'utils.js',
     'toast-controller.js',
     'main.js',
+    'global-search.js',
 ]
 
 # Games bundle — game card interactions, bulk ops, detail/edit modals, and

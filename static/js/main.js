@@ -1592,8 +1592,10 @@ function focusSearch() {
             return;
         }
     }
-    // Try by class
-    const searchInput = document.querySelector('.search-input, input[type="search"]');
+    // Try by class; the sidebar's global search (PASS-53-1) comes last, so a
+    // page's own search box wins.
+    const searchInput = document.querySelector('.search-input, input[type="search"]:not(#globalSearch)')
+        || document.getElementById('globalSearch');
     if (searchInput) {
         searchInput.focus();
         searchInput.select();

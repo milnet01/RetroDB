@@ -1,0 +1,113 @@
+/* Global search (PASS-53-1) — the sidebar search box and its result list.
+   Markup: templates/base.html; behaviour: static/js/global-search.js. */
+
+.global-search {
+    position: relative;
+    margin-top: var(--spacing-md);
+}
+
+.global-search-input {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-darker);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-family: var(--font-primary);
+    font-size: 0.95rem;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.global-search-input::placeholder {
+    color: var(--text-muted);
+}
+
+.global-search-input:focus {
+    outline: none;
+    border-color: var(--primary-cyan);
+    box-shadow: var(--shadow-glow-cyan);
+}
+
+.global-search-list {
+    position: absolute;
+    top: calc(100% + var(--spacing-xs));
+    left: 0;
+    right: 0;
+    z-index: 1001;
+    max-height: 60vh;
+    overflow-y: auto;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border-hover);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    padding: var(--spacing-xs) 0;
+}
+
+.global-search-group {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.global-search-option {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    color: var(--text-primary);
+    text-decoration: none;
+    min-height: 36px;
+}
+
+.global-search-option:hover,
+.global-search-option[aria-selected="true"] {
+    background: var(--card-bg-hover);
+    color: var(--text-accent);
+}
+
+.global-search-thumb {
+    flex: 0 0 24px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.global-search-thumb img {
+    max-width: 24px;
+    max-height: 32px;
+    object-fit: contain;
+}
+
+.global-search-text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Two lines of title, then the system on its own line: the sidebar is too
+   narrow to put both side by side without cutting the title short. */
+.global-search-label {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+    line-height: 1.25;
+}
+
+.global-search-meta {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.global-search-empty {
+    padding: var(--spacing-sm);
+    color: var(--text-muted);
+}

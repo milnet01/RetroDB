@@ -264,8 +264,18 @@ const AllGamesController = (function() {
         // Setup infinite scroll
         setupInfiniteScroll();
 
-        // Restore state if available
-        restoreState();
+        // ?q= comes from the global search's "See all results" (PASS-53-1):
+        // a fresh search replaces the saved filters, which could hide its
+        // results. The parameter is then dropped so a reload restores state.
+        const urlSearch = (new URLSearchParams(window.location.search).get('q') || '').trim();
+        if (urlSearch && searchInput) {
+            filters.search = urlSearch;
+            searchInput.value = urlSearch;
+            history.replaceState(null, '', window.location.pathname);
+            saveState();
+        } else {
+            restoreState();
+        }
         // Sets Clear's enabled state from `filters`; a browser can restore
         // a stale `disabled` on reload, so the markup's value is not trusted.
         updateFilterDisplay();
