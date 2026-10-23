@@ -504,7 +504,11 @@ Resolved (2026-07-04, v3.17.0): find_missing_media_refs() + clear_missing_media_
 > owed once the app is running and the browser extension is connected.
 
 #### Pass 53.1 Global search in a persistent top bar (UX, M)
-- **Status**: planned.
+- **Shipped** 2026-10-23 in 3.32.0 (commit 66774ac): sidebar search box,
+  systems + up to 8 games, combobox keys, "See all results" opens the
+  Library via ?q=. Owed: the locale help.*.html copies of the new
+  "Search Anywhere" paragraph (with the other owed help translations).
+- **Status**: done.
 - **Problem**: there is no global search anywhere in the chrome — `base.html`
   has no topbar, and search only exists inside the Library page
   (`all_games.html:26`). From the Dashboard (or any other page) a user must
