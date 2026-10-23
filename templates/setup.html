@@ -14,13 +14,22 @@
     </div>
 
     <!-- Tab Navigation -->
+    {% set setup_steps = [
+        ('welcome', _('Welcome'), false), ('admin', _('Admin'), false),
+        ('library', _('Library'), false), ('esde', _('ES-DE'), true),
+        ('apikeys', _('API Keys'), true), ('complete', _('Complete'), false),
+    ] %}
+    <!-- Progress (PASS-53-8): showTab() fills in the step number -->
+    <p class="setup-step-count" id="setupStepCount" aria-live="polite"
+       data-template="{{ _('Step %(n)s of %(total)s', n='__N__', total=setup_steps|length) }}">{{ _('Step %(n)s of %(total)s', n=1, total=setup_steps|length) }}</p>
     <div class="setup-tabs" id="setupTabs">
-        <button type="button" class="setup-tab active" data-tab="welcome" data-on-click="showTab" data-args='["welcome"]'>Welcome</button>
-        <button type="button" class="setup-tab" data-tab="admin" data-on-click="showTab" data-args='["admin"]'>Admin</button>
-        <button type="button" class="setup-tab" data-tab="library" data-on-click="showTab" data-args='["library"]'>Library</button>
-        <button type="button" class="setup-tab" data-tab="esde" data-on-click="showTab" data-args='["esde"]'>ES-DE</button>
-        <button type="button" class="setup-tab" data-tab="apikeys" data-on-click="showTab" data-args='["apikeys"]'>API Keys</button>
-        <button type="button" class="setup-tab" data-tab="complete" data-on-click="showTab" data-args='["complete"]'>Complete</button>
+        {% for key, label, optional in setup_steps %}
+        <button type="button" class="setup-tab{% if loop.first %} active{% endif %}" data-tab="{{ key }}" data-on-click="showTab" data-args='["{{ key }}"]' aria-label="{{ label }}{% if optional %} ({{ _('Optional') }}){% endif %}"{% if loop.first %} aria-current="step"{% endif %}>
+            <span class="setup-tab-num" aria-hidden="true">{{ loop.index }}</span>
+            <span class="setup-tab-label">{{ label }}</span>
+            {% if optional %}<span class="setup-tab-optional">{{ _('Optional') }}</span>{% endif %}
+        </button>
+        {% endfor %}
     </div>
 
     <div id="error-banner" style="display: none; background: rgba(247, 37, 133, 0.15); border: 1px solid rgba(247, 37, 133, 0.4); border-radius: var(--radius-md); padding: var(--spacing-md); margin-bottom: var(--spacing-lg); color: var(--secondary-magenta);"></div>
@@ -305,9 +314,19 @@ function updateGetStartedBtn() {
 
 function showTab(name) {
     document.querySelectorAll('.setup-panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.setup-tab').forEach(t => t.classList.remove('active'));
+    // Steps before this one show a tick; the current one is marked for
+    // screen readers (PASS-53-8).
+    const current = tabs.indexOf(name);
+    document.querySelectorAll('.setup-tab').forEach(t => {
+        const i = tabs.indexOf(t.dataset.tab);
+        t.classList.toggle('active', i === current);
+        t.classList.toggle('done', i < current);
+        if (i === current) t.setAttribute('aria-current', 'step');
+        else t.removeAttribute('aria-current');
+    });
+    const count = document.getElementById('setupStepCount');
+    count.textContent = count.dataset.template.replace('__N__', current + 1);
     document.getElementById('panel-' + name).classList.add('active');
-    document.querySelector('[data-tab="' + name + '"]').classList.add('active');
     document.getElementById('error-banner').style.display = 'none';
 }
 
@@ -609,6 +628,58 @@ function useDetectedTzSetup() {
     color: var(--primary-cyan);
     background: var(--bg-lighter);
     border-bottom: 2px solid var(--primary-cyan);
+}
+
+/* Progress (PASS-53-8) */
+.setup-step-count {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+.setup-tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.setup-tab-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.3rem;
+    height: 1.3rem;
+    border-radius: 50%;
+    border: 1px solid currentColor;
+    font-size: 0.8rem;
+}
+
+.setup-tab.done .setup-tab-num {
+    font-size: 0;
+    color: var(--neon-green);
+}
+
+.setup-tab.done .setup-tab-num::after {
+    content: '✓';
+    font-size: 0.8rem;
+}
+
+.setup-tab-optional {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+@media (max-width: 600px) {
+    .setup-tab {
+        padding: var(--spacing-sm) 2px;
+    }
+    /* Too narrow for six names: show the numbers, and the current step's name */
+    .setup-tab:not(.active) .setup-tab-label {
+        display: none;
+    }
 }
 
 .setup-panel {

@@ -31,6 +31,8 @@
     label: An empty library shows a welcome with a Scan button
   - type: fix
     label: Scan Library works from the Systems page and Settings
+  - type: ui
+    label: The setup wizard shows which step you are on, and which are optional
   body: |
     <ul>
       <li><strong>RetroDB is ready for its own game player.</strong> A
@@ -117,7 +119,14 @@
         Game is hidden until there are games to pick from.</li>
       <li><strong>Scan Library works from the Systems page and
         Settings.</strong> Those two Scan Library buttons did nothing when
-        pressed. Only the Dashboard's worked.</li>
+        pressed. Only the Dashboard's worked. The Dashboard's own Scan
+        Library button now shows only to admins, who are the only users
+        allowed to scan.</li>
+      <li><strong>The setup wizard shows which step you are on, and which
+        are optional.</strong> It says "Step 3 of 6", numbers each step,
+        ticks the ones you have passed, and marks ES-DE and API Keys as
+        optional. On a phone it shows the numbers and the current step's
+        name.</li>
     </ul>
 - version: 3.30.0
   date: 2026-10-21

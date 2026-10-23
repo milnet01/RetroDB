@@ -68,10 +68,12 @@
             {{ _('Random Game') }}
         </button>
         {% endif %}
+        {% if current_user and current_user.role == 'admin' %}
         <button type="button" id="scanLibraryBtn" class="btn btn-primary" data-on-click="scanLibrary">
             <span class="btn-icon">🔍</span>
             {{ _('Scan Library') }}
         </button>
+        {% endif %}
     </div>
 </div>
 
