@@ -117,7 +117,7 @@ const ctx = vm.createContext(Object.assign(win, {
   localStorage: {getItem: () => null, setItem() {}, removeItem() {}},
   location: {pathname: '/', href: '/', hash: ''},
   navigator: {}, fetch: () => new Promise(() => {}),
-  scrollTo() {}, getComputedStyle: () => ({}), AbortController,
+  scrollTo() {}, getComputedStyle: () => ({getPropertyValue: () => ''}), AbortController,
   IntersectionObserver: class { observe() {} unobserve() {} disconnect() {} },
 }));
 ctx.window = ctx;

@@ -3011,10 +3011,13 @@ window.initDateMask = function(textId, pickerId) {
     input.addEventListener('blur', function() {
         const v = this.value;
         if (!v) return;
-        const m = v.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        const m = v.match(/^(\d{4})(?:-(\d{2})(?:-(\d{2}))?)?$/);
         if (!m) { this.value = ''; return; }
-        const d = new Date(parseInt(m[1]), parseInt(m[2]) - 1, parseInt(m[3]));
-        if (d.getFullYear() !== parseInt(m[1]) || d.getMonth() + 1 !== parseInt(m[2]) || d.getDate() !== parseInt(m[3])) {
+        const year = parseInt(m[1]);
+        const month = m[2] ? parseInt(m[2]) : 1;
+        const day = m[3] ? parseInt(m[3]) : 1;
+        const d = new Date(year, month - 1, day);
+        if (d.getFullYear() !== year || d.getMonth() + 1 !== month || d.getDate() !== day) {
             this.value = '';
         }
     });

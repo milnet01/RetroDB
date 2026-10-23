@@ -9571,7 +9571,18 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.164 The game page's edit window cannot be saved when the release date is a year only (FIX, S).
-- **Status**: todo
+- **Shipped 2026-10-23** (3.32.0). Worse than seen: the shared
+  `normalize_game_edit` turned `1985` into None, so the Library pop-up's
+  save (`/api/game/<id>/edit`) wrote the date as NULL, and both windows'
+  `initDateMask` blur emptied a year-only box. Now the server check, the
+  game page's `pattern` and the blur all take `YYYY`, `YYYY-MM` or
+  `YYYY-MM-DD`. Tests: `TestNormalizeReleaseDate` gained year, year-month
+  and bad-month cases (red before the fix). All 2729 dated games in a
+  copy of the library pass through unchanged. Browser, scratch DB: game
+  1 saved from its page and game 2 from the pop-up both kept `1985`.
+  Which live games lost a year is unknown: the edit log names fields
+  only, and no `game_edit` lines were in `logs/`. A scrape refills them.
+- **Status**: done
 - **Seen 2026-10-23** (PASS-59-159 browser check, scratch copy of the
   library): game 1's `release_date` is `1985`. The game page's edit
   form's `edit_release_date` input has `pattern="\d{4}-\d{2}-\d{2}"`,

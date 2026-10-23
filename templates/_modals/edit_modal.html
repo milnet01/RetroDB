@@ -74,12 +74,12 @@
                                 <input type="text" name="edit_release_date" id="edit_release_date"
                                        value="{{ game.release_date if game.release_date else '' }}"
                                        placeholder="YYYY-MM-DD"
-                                       pattern="\d{4}-\d{2}-\d{2}"
+                                       pattern="\d{4}(-\d{2}(-\d{2})?)?"
                                        style="flex:1;" />
                                 <input type="date" id="editReleaseDatePicker" tabindex="-1" aria-hidden="true" style="position:absolute; opacity:0; width:0; height:0; pointer-events:none;">
                                 <button type="button" class="btn btn-sm btn-secondary" data-on-click="openDatePicker" data-args='["editReleaseDatePicker", "edit_release_date"]' title="{{ _('Pick date') }}" style="padding:4px 8px; font-size:1rem;">📅</button>
                             </div>
-                            <span class="field-tip">{{ _('Format: YYYY-MM-DD (e.g., 1996-09-29)') }}</span>
+                            <span class="field-tip">{{ _('Format: YYYY-MM-DD, or the year alone (e.g., 1996-09-29 or 1996)') }}</span>
                         </div>
                         <div class="edit-field">
                             <label for="edit_region">{{ _('Region') }}</label>

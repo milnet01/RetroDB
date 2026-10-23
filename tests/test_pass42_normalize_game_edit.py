@@ -59,6 +59,20 @@ class TestNormalizeReleaseDate:
         out = normalize_game_edit({'release_date': '1996-02-30'})
         assert out['release_date'] is None
 
+    # PASS-59-164 — scrapers store a year alone (or a year and month) when
+    # that is all a source knows; an edit save must keep it, not blank it.
+    def test_accepts_year_only(self):
+        out = normalize_game_edit({'release_date': '1985'})
+        assert out['release_date'] == '1985'
+
+    def test_accepts_year_month(self):
+        out = normalize_game_edit({'release_date': '1985/09'})
+        assert out['release_date'] == '1985-09'
+
+    def test_invalid_month_to_none(self):
+        out = normalize_game_edit({'release_date': '1985-13'})
+        assert out['release_date'] is None
+
 
 class TestNormalizePlayers:
     """Pinned the Pass 40.6 invariant: players is INTEGER, weak typing

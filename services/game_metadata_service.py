@@ -84,7 +84,8 @@ def normalize_game_edit(payload):
 
     Behaviour:
         - Strips whitespace on every string value; the empty string maps to None.
-        - `release_date`: accepts `YYYY-MM-DD` or `YYYY/MM/DD`; junk → None.
+        - `release_date`: accepts `YYYY`, `YYYY-MM` or `YYYY-MM-DD`, with
+          `/` or `-`; junk → None.
         - `players`: routed through `normalize_players_value` so the INTEGER
           column stays well-typed (Pass 40.6 invariant).
         - Rating cross-map: fires only on the rating keys that are
@@ -114,15 +115,15 @@ def normalize_game_edit(payload):
             v = v.strip()
             out[k] = v if v != '' else None
 
-    # release_date — accept slashes, validate YYYY-MM-DD, junk → None.
+    # release_date — accept slashes; a year, or a year and month, is kept as
+    # scrapers store it when that is all a source knows (PASS-59-164).
     if out.get('release_date'):
-        rd = out['release_date']
-        if '/' in rd:
-            rd = rd.replace('/', '-')
+        rd = out['release_date'].replace('/', '-')
+        fmt = {4: '%Y', 7: '%Y-%m', 10: '%Y-%m-%d'}.get(len(rd))
         try:
-            datetime.strptime(rd, '%Y-%m-%d')
+            datetime.strptime(rd, fmt)
             out['release_date'] = rd
-        except ValueError:
+        except (TypeError, ValueError):
             out['release_date'] = None
 
     # players — INTEGER column; Pass 40.6 invariant.
