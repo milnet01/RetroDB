@@ -1,3 +1,159 @@
+- version: 3.31.0
+  date: '2026-10-23'
+  tags:
+  - type: feature
+    label: RetroDB siap untuk pemutar game-nya sendiri
+  - type: fix
+    label: Tab Museum kembali bisa berpindah
+  - type: fix
+    label: Game PlayStation 3 yang disimpan sebagai folder bisa dimainkan
+  - type: fix
+    label: Kolom Cari Metadata kini sejajar, dan muat di ponsel
+  - type: fix
+    label: Instalasi baru di Windows atau Mac memberi nama core RetroArch dengan benar
+  - type: fix
+    label: Isi dengan AI memberi game PC jenis save PC, bukan jenis save konsol
+  - type: fix
+    label: Kotak Pemain menerima lebih dari 16
+  - type: fix
+    label: Halaman pengaturan Emulator tampil dalam bahasa Anda
+  - type: ui
+    label: Penampil screenshot menampilkan kedua panah, masing-masing di dalam tombolnya
+  - type: fix
+    label: Menghubungkan PlayStation meminta Anda masuk terlebih dahulu
+  - type: feature
+    label: Urutkan Pustaka, dan tampilkan hanya game yang belum di-scrape
+  - type: ui
+    label: Filter yang tidak cocok dengan apa pun kini memberi tahu
+  - type: ui
+    label: Bilah filter Pustaka menjaga semuanya tetap di tempatnya
+  - type: ui
+    label: Pustaka kosong menampilkan sambutan dengan tombol Pindai
+  - type: fix
+    label: Pindai Pustaka berfungsi dari halaman Sistem dan Pengaturan
+  - type: ui
+    label: Wizard penyiapan menunjukkan langkah Anda saat ini, dan langkah mana yang opsional
+  - type: feature
+    label: Filter Pustaka berdasarkan beberapa genre, seri, atau penerbit sekaligus
+  body: |
+    <ul>
+      <li><strong>RetroDB siap untuk pemutar game-nya sendiri.</strong>
+        Sebuah pemutar berbasis RetroArch sedang dibuat untuk RetroDB. Saat
+        pemutar itu hadir, RetroDB akan memulai game di dalamnya dengan
+        pengaturan yang dipilih untuk setiap game, dan menyimpan pengaturan
+        apa pun yang Anda ubah saat bermain. Pemutar itu akan menyimpan save
+        dan pengaturannya di foldernya sendiri, terpisah dari RetroArch milik
+        Anda. Pemutar memilih core terbaik untuk setiap konsol dan
+        mengunduhnya saat pertama kali Anda menekan Mainkan; selama itu
+        tombolnya bertuliskan "Mengunduh core…". Pemutar memainkan konsol apa
+        pun yang tidak memiliki emulator yang berfungsi, dan tidak pernah
+        menggantikan emulator yang sudah Anda siapkan. Per game, Anda bisa
+        memilih core lain, efek layar, penskalaan bilangan bulat, dan
+        pengurangan jeda input. Admin dapat memasang atau memperbarui semua
+        core sekaligus, atau mematikan unduhan. Tidak ada yang berubah sampai
+        pemutar terpasang; sebelum itu, pemutar tidak tercantum di Pengaturan
+        &gt; Emulator.</li>
+      <li><strong>Tab Museum kembali bisa berpindah.</strong> Di halaman
+        Museum sebuah konsol, mengeklik Spesifikasi, 10 Game Teratas, atau
+        Kontroler tidak melakukan apa-apa dan menampilkan pesan "Kesalahan tak
+        terduga", sejak versi 3.30.0. Kini setiap tab terbuka.</li>
+      <li><strong>Game PlayStation 3 yang disimpan sebagai folder bisa
+        dimainkan.</strong> Game disk PS3 biasanya berupa folder yang namanya
+        berakhiran ".PS3". RetroDB menolak menjalankannya dan tidak
+        menampilkan tombol Mainkan, karena mengharapkan satu berkas. Kini
+        RetroDB menyerahkan folder itu ke emulator, seperti yang diharapkan
+        RPCS3.</li>
+      <li><strong>Kolom Cari Metadata kini sejajar, dan muat di
+        ponsel.</strong> Sumber dengan hasil lebih banyak dari yang muat
+        mendapat bilah gulir, yang mempersempit judulnya, sehingga judul yang
+        sama terlipat di satu kolom tetapi tidak di kolom sebelahnya. Kini
+        setiap kolom mendapat ruang yang sama, dengan bilah gulir tipis yang
+        mengikuti tema. Di ponsel atau jendela sempit, jendela pencarian
+        terjepit di samping bilah samping yang tersembunyi; kini jendela itu
+        memenuhi layar.</li>
+      <li><strong>Instalasi baru di Windows atau Mac memberi nama core
+        RetroArch dengan benar.</strong> RetroDB menyiapkan RetroArch dengan
+        nama berkas core Linux di semua sistem, sehingga di Windows dan macOS
+        tidak ada core yang ditemukan. Instalasi baru kini memakai nama milik
+        masing-masing komputer. Instalasi yang sudah ada tetap memakai nama
+        yang dimilikinya; ubah nama itu di tabel pemetaan.</li>
+      <li><strong>Penampil screenshot menampilkan kedua panah, masing-masing
+        di dalam tombolnya.</strong> Bilah samping menutupi panah kiri,
+        sehingga Anda tidak bisa kembali ke screenshot sebelumnya dengan
+        mouse. Panah kanan juga berada di bawah tombolnya. Kini keduanya
+        tampil, di tengah tombolnya masing-masing.</li>
+      <li><strong>Halaman pengaturan Emulator tampil dalam bahasa
+        Anda.</strong> Sebagian besar Pengaturan &gt; Emulator berbahasa
+        Inggris apa pun bahasa yang Anda pilih: judul-judulnya, tabel
+        emulator, hasil pindai, dan jendela Edit emulator. Kini semuanya sudah
+        diterjemahkan.</li>
+      <li><strong>Kotak Pemain menerima lebih dari 16.</strong> Kedua jendela
+        edit berhenti di 16, sehingga Anda tidak bisa memasukkan 256 pemain
+        MAG. Game yang diberi lebih dari 16 oleh scraper sama sekali tidak
+        bisa disimpan sampai Anda menurunkan angkanya. Kini tidak ada batas
+        atas.</li>
+      <li><strong>Isi dengan AI memberi game PC jenis save PC, bukan jenis
+        save konsol.</strong> Game Windows bisa mendapat "Kartu Memori" karena
+        AI menggambarkan versi PlayStation 2-nya. Kini AI diminta
+        menggambarkan rilis di platform game Anda sendiri. PC, dan konsol
+        mulai dari PlayStation 3 dan Xbox 360, menyimpan ke Penyimpanan
+        Internal.</li>
+      <li>Untuk memperbaiki game yang sudah telanjur punya jenis save yang
+        salah, scrape ulang game itu atau jalankan Isi dengan AI. Keduanya
+        bertanya lagi ke AI dan mengganti nilai lama.</li>
+      <li><strong>Menghubungkan PlayStation meminta Anda masuk terlebih
+        dahulu.</strong> Di Pengaturan &gt; Akun &gt; PSN, halaman akun Sony
+        hanya menampilkan "Invalid login" kecuali Anda sudah masuk ke
+        PlayStation, dan langkah-langkahnya tidak menyebutkan hal itu. Kini
+        Langkah 1 punya tombol "Masuk ke PlayStation" untuk ditekan lebih
+        dulu.</li>
+      <li><strong>Urutkan Pustaka, dan tampilkan hanya game yang belum
+        di-scrape.</strong> Pustaka dan setiap halaman sistem punya menu
+        Urutkan berdasarkan di samping jumlah game: nama, rilis terbaru atau
+        terlama, skor kritikus, skor pengguna, atau baru ditambahkan. Game
+        tanpa tanggal atau skor ditaruh paling akhir. Bilah A–Z berfungsi saat
+        mengurutkan berdasarkan nama dan tampak redup jika tidak. Tombol baru
+        Belum Di-scrape hanya menampilkan game yang belum diisi oleh scraper
+        mana pun.</li>
+      <li><strong>Filter yang tidak cocok dengan apa pun kini memberi
+        tahu.</strong> Dulu halamannya menjadi kosong. Kini halaman itu
+        menyatakan tidak ada game yang cocok, dengan tombol untuk menghapus
+        filter.</li>
+      <li><strong>Bilah filter Pustaka menjaga semuanya tetap di
+        tempatnya.</strong> Dulu menekan Pilih, memfilter, atau mengurutkan
+        mendorong game ke bawah halaman. Kini alat pilihan muncul di bilah
+        sepanjang bagian bawah jendela. Hapus selalu ada, redup sampai ada
+        filter yang aktif. Filter yang aktif tampil di samping jumlah game.
+        "Tampilkan Bonus" kini menjadi "Disc Bonus", menyala saat aktif. Di
+        ponsel, tombol-tombol filter terbuka dari satu tombol Filter di atas
+        halaman.</li>
+      <li><strong>Pustaka kosong menampilkan sambutan dengan tombol
+        Pindai.</strong> Dulu instalasi baru menampilkan skor kesehatan yang
+        macet di 0% dan Pustaka yang kosong. Kini kedua halaman menyatakan
+        pustaka kosong dan menawarkan tombol Pindai Pustaka. Dasbor juga
+        menautkan ke pengaturan folder ROM. Pengguna yang bukan admin diminta
+        menghubungi admin. Game Acak disembunyikan sampai ada game untuk
+        dipilih.</li>
+      <li><strong>Pindai Pustaka berfungsi dari halaman Sistem dan
+        Pengaturan.</strong> Kedua tombol Pindai Pustaka itu tidak melakukan
+        apa-apa saat ditekan. Hanya tombol di Dasbor yang berfungsi. Tombol
+        Pindai Pustaka milik Dasbor sendiri kini hanya tampil bagi admin,
+        satu-satunya pengguna yang boleh memindai.</li>
+      <li><strong>Wizard penyiapan menunjukkan langkah Anda saat ini, dan
+        langkah mana yang opsional.</strong> Wizard menampilkan "Langkah 3
+        dari 6", memberi nomor pada setiap langkah, mencentang langkah yang
+        sudah Anda lewati, dan menandai ES-DE serta Kunci API sebagai
+        opsional. Di ponsel, wizard menampilkan nomor-nomornya dan nama
+        langkah saat ini.</li>
+      <li><strong>Filter Pustaka berdasarkan beberapa genre, seri, atau
+        penerbit sekaligus.</strong> Di filter Genre, Seri, Penerbit,
+        Pengembang, Mode Permainan, Perspektif, dan Dimensi, centang nilai
+        sebanyak yang Anda mau lalu tekan Terapkan: sebuah game tampil jika
+        memiliki salah satunya. Ubah jendela ke BUKAN untuk menyembunyikan
+        game yang memiliki salah satu nilai yang dicentang. Setiap nilai
+        mendapat tagnya sendiri, dan ✕ pada tag itu hanya menghapus nilai
+        tersebut.</li>
+    </ul>
 - version: 3.30.0
   date: '2026-10-21'
   tags:

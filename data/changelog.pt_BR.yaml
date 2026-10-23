@@ -1,3 +1,156 @@
+- version: 3.31.0
+  date: '2026-10-23'
+  tags:
+  - type: feature
+    label: O RetroDB está pronto para o seu próprio reprodutor de jogos
+  - type: fix
+    label: As abas do Museu voltam a funcionar
+  - type: fix
+    label: Jogos de PlayStation 3 guardados como pasta podem ser jogados
+  - type: fix
+    label: As colunas de Buscar metadados ficam alinhadas, e a janela cabe num celular
+  - type: fix
+    label: Uma nova instalação no Windows ou no Mac dá os nomes certos aos cores do RetroArch
+  - type: fix
+    label: Preencher com AI dá aos jogos de PC um tipo de salvamento de PC, não de console
+  - type: fix
+    label: O campo Jogadores aceita mais de 16
+  - type: fix
+    label: A página de configurações Emuladores aparece no seu idioma
+  - type: ui
+    label: O visualizador de capturas de tela mostra as duas setas, cada uma dentro do seu botão
+  - type: fix
+    label: Conectar o PlayStation avisa que você precisa entrar primeiro
+  - type: feature
+    label: Ordene a Biblioteca e mostre só os jogos sem dados coletados
+  - type: ui
+    label: Um filtro sem resultados avisa isso
+  - type: ui
+    label: A barra de filtros da Biblioteca mantém tudo no lugar
+  - type: ui
+    label: Uma biblioteca vazia mostra uma tela de boas-vindas com um botão Verificar
+  - type: fix
+    label: Verificar Biblioteca funciona na página Sistemas e nas Configurações
+  - type: ui
+    label: O assistente de configuração mostra em que etapa você está e quais são opcionais
+  - type: feature
+    label: Filtre a Biblioteca por vários gêneros, séries ou distribuidoras de uma vez
+  body: |
+    <ul>
+      <li><strong>O RetroDB está pronto para o seu próprio reprodutor de
+        jogos.</strong> Um reprodutor baseado no RetroArch está sendo feito
+        para o RetroDB. Quando ele chegar, o RetroDB vai iniciar os jogos
+        nele com configurações escolhidas para cada jogo, e vai guardar as
+        configurações que você mudar enquanto joga. Ele vai guardar os seus
+        saves e configurações numa pasta própria, separada do seu
+        RetroArch. Ele escolhe o melhor core para cada console e baixa esse
+        core na primeira vez que você aperta Jogar; enquanto isso, o botão
+        diz "Baixando o core…". Ele roda qualquer console que não tenha um
+        emulador funcionando, e nunca substitui um que você configurou. Para
+        cada jogo você pode escolher outro core, o efeito de tela, a escala
+        inteira e a redução de atraso de entrada. Os administradores podem
+        instalar ou atualizar todos os cores de uma vez, ou desligar os
+        downloads. Nada muda até o reprodutor ser instalado; até lá ele não
+        aparece em Configurações &gt; Emuladores.</li>
+      <li><strong>As abas do Museu voltam a funcionar.</strong> Na página do
+        Museu de um console, clicar em Especificações, 10 Melhores Jogos ou
+        Controles não fazia nada e mostrava a mensagem "Erro inesperado",
+        desde a versão 3.30.0. Agora todas as abas abrem.</li>
+      <li><strong>Jogos de PlayStation 3 guardados como pasta podem ser
+        jogados.</strong> Um jogo de disco de PS3 costuma ser uma pasta que
+        termina em ".PS3". O RetroDB se recusava a iniciá-lo e não mostrava
+        o botão Jogar, porque esperava um único arquivo. Agora ele entrega a
+        pasta ao emulador, como o RPCS3 espera.</li>
+      <li><strong>As colunas de Buscar metadados ficam alinhadas, e a janela
+        cabe num celular.</strong> Uma fonte com mais resultados do que
+        cabiam ganhava uma barra de rolagem, que estreitava os títulos, e
+        assim o mesmo título quebrava a linha numa coluna e não na seguinte.
+        Agora todas as colunas têm o mesmo espaço, com uma barra de rolagem
+        fina no estilo do tema. Num celular ou numa janela estreita, a
+        janela de busca ficava espremida ao lado de uma barra lateral
+        escondida; agora ela ocupa a tela inteira.</li>
+      <li><strong>Uma nova instalação no Windows ou no Mac dá os nomes certos
+        aos cores do RetroArch.</strong> O RetroDB configurava o RetroArch
+        com os nomes de arquivo dos cores do Linux em todos os sistemas, e
+        por isso no Windows e no macOS nenhum core era encontrado. Uma nova
+        instalação agora usa os nomes do próprio computador. Uma instalação
+        existente mantém os nomes que tem; mude-os na tabela de
+        mapeamento.</li>
+      <li><strong>O visualizador de capturas de tela mostra as duas setas,
+        cada uma dentro do seu botão.</strong> A barra lateral cobria a seta
+        esquerda, e você não conseguia voltar para uma captura anterior com
+        o mouse. A seta direita também ficava abaixo do seu botão. Agora as
+        duas aparecem, centralizadas nos botões.</li>
+      <li><strong>A página de configurações Emuladores aparece no seu
+        idioma.</strong> Quase toda a página Configurações &gt; Emuladores
+        ficava em inglês, qualquer que fosse o idioma escolhido: os títulos,
+        a tabela de emuladores, os resultados da verificação e a janela
+        Editar emulador. Agora tudo está traduzido.</li>
+      <li><strong>O campo Jogadores aceita mais de 16.</strong> As duas
+        janelas de edição paravam em 16, e você não conseguia informar os
+        256 jogadores de MAG. Um jogo que um scraper tinha marcado com mais
+        de 16 não podia nem ser salvo até você diminuir o número. Agora não
+        há limite máximo.</li>
+      <li><strong>Preencher com AI dá aos jogos de PC um tipo de salvamento de
+        PC, não de console.</strong> Um jogo de Windows podia receber "Cartão
+        de memória" porque a AI descrevia a versão de PlayStation 2. Agora a
+        AI recebe a instrução de descrever o lançamento na própria
+        plataforma do seu jogo. PCs, e consoles a partir do PlayStation 3 e
+        do Xbox 360, salvam no Armazenamento interno.</li>
+      <li>Para corrigir um jogo que já tem um tipo de salvamento errado,
+        busque os metadados dele de novo ou execute Preencher com AI. Os dois
+        perguntam de novo à AI e substituem o valor antigo.</li>
+      <li><strong>Conectar o PlayStation avisa que você precisa entrar
+        primeiro.</strong> Em Configurações &gt; Conta &gt; PSN, a página da
+        conta Sony mostrava só "Invalid login" se você ainda não tivesse
+        entrado no PlayStation, e os passos não diziam isso. Agora o passo 1
+        tem um botão "Entrar no PlayStation" para apertar primeiro.</li>
+      <li><strong>Ordene a Biblioteca e mostre só os jogos sem dados
+        coletados.</strong> A Biblioteca e cada página de sistema têm um menu
+        Ordenar por ao lado da contagem de jogos: nome, lançamento mais novo
+        ou mais antigo, nota da crítica, nota dos usuários ou adicionados
+        recentemente. Jogos sem data ou nota ficam por último. A barra A–Z
+        funciona ao ordenar por nome e fica acinzentada nos outros casos. Um
+        novo botão Não Coletado mostra só os jogos que nenhum scraper
+        preencheu ainda.</li>
+      <li><strong>Um filtro sem resultados avisa isso.</strong> Antes a
+        página ficava em branco. Agora ela diz que nenhum jogo corresponde,
+        com um botão para limpar os filtros.</li>
+      <li><strong>A barra de filtros da Biblioteca mantém tudo no
+        lugar.</strong> Apertar Selecionar, filtrar ou ordenar empurrava os
+        jogos para baixo na página. As ferramentas de seleção agora aparecem
+        numa barra na parte de baixo da janela. Limpar está sempre lá,
+        acinzentado até um filtro estar ativo. Os filtros ativos aparecem ao
+        lado da contagem de jogos. "Mostrar Bônus" agora é "Discos Bônus", e
+        fica aceso quando ligado. Num celular, os botões de filtro abrem a
+        partir de um único botão Filtros sobre a página.</li>
+      <li><strong>Uma biblioteca vazia mostra uma tela de boas-vindas com um
+        botão Verificar.</strong> Uma nova instalação mostrava uma nota de
+        saúde parada em 0% e uma Biblioteca em branco. Agora as duas páginas
+        dizem que a biblioteca está vazia e oferecem um botão Verificar
+        Biblioteca. O Painel também tem um link para a configuração da pasta
+        de ROMs. Usuários que não são administradores são orientados a pedir
+        a um administrador. Jogo Aleatório fica escondido até haver jogos
+        para escolher.</li>
+      <li><strong>Verificar Biblioteca funciona na página Sistemas e nas
+        Configurações.</strong> Esses dois botões Verificar Biblioteca não
+        faziam nada quando apertados. Só o do Painel funcionava. O próprio
+        botão Verificar Biblioteca do Painel agora aparece só para
+        administradores, os únicos usuários que podem fazer a
+        verificação.</li>
+      <li><strong>O assistente de configuração mostra em que etapa você está e
+        quais são opcionais.</strong> Ele diz "Etapa 3 de 6", numera cada
+        etapa, marca as que você já passou e indica ES-DE e Chaves de API
+        como opcionais. Num celular, ele mostra os números e o nome da etapa
+        atual.</li>
+      <li><strong>Filtre a Biblioteca por vários gêneros, séries ou
+        distribuidoras de uma vez.</strong> Nos filtros Gênero, Série,
+        Distribuidora, Desenvolvedora, Modo de Jogo, Perspectiva e Dimensão,
+        marque quantos valores quiser e aperte Aplicar: um jogo aparece se
+        tiver qualquer um deles. Mude a janela para NÃO É para esconder os
+        jogos que tenham qualquer um dos valores marcados. Cada valor ganha
+        sua própria etiqueta, e o ✕ dela remove só aquele valor.</li>
+    </ul>
 - version: 3.30.0
   date: '2026-10-21'
   tags:

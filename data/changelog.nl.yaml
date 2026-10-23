@@ -1,3 +1,154 @@
+- version: 3.31.0
+  date: '2026-10-23'
+  tags:
+  - type: feature
+    label: RetroDB is klaar voor een eigen gamespeler
+  - type: fix
+    label: De tabbladen van het Museum wisselen weer
+  - type: fix
+    label: PlayStation 3-games die als map zijn opgeslagen, zijn speelbaar
+  - type: fix
+    label: De kolommen van Metadata zoeken staan gelijk, en het past op een telefoon
+  - type: fix
+    label: Een nieuwe installatie op Windows of Mac geeft RetroArch-cores de juiste naam
+  - type: fix
+    label: AI-aanvulling geeft pc-games een pc-opslagtype, geen consoletype
+  - type: fix
+    label: Het vak Spelers accepteert meer dan 16
+  - type: fix
+    label: De instellingenpagina Emulators verschijnt in je eigen taal
+  - type: ui
+    label: De screenshotviewer toont beide pijlen, elk in zijn eigen knop
+  - type: fix
+    label: PlayStation koppelen zegt dat je eerst moet inloggen
+  - type: feature
+    label: Sorteer de Bibliotheek en toon alleen niet-gescrapete games
+  - type: ui
+    label: Een filter zonder resultaten zegt dat ook
+  - type: ui
+    label: De filterbalk van de Bibliotheek houdt alles op zijn plek
+  - type: ui
+    label: Een lege bibliotheek toont een welkom met een knop Scannen
+  - type: fix
+    label: Bibliotheek scannen werkt vanaf de pagina Systemen en vanuit Instellingen
+  - type: ui
+    label: De installatiewizard toont bij welke stap je bent, en welke stappen optioneel zijn
+  - type: feature
+    label: Filter de Bibliotheek op meerdere genres, reeksen of uitgevers tegelijk
+  body: |
+    <ul>
+      <li><strong>RetroDB is klaar voor een eigen gamespeler.</strong> Er
+        wordt een speler op basis van RetroArch voor RetroDB gebouwd. Zodra
+        die er is, start RetroDB games daarin met instellingen die per game
+        zijn gekozen, en bewaart het de instellingen die je tijdens het
+        spelen wijzigt. De speler bewaart zijn saves en instellingen in een
+        eigen map, los van je eigen RetroArch. Hij kiest de beste core voor
+        elke console en downloadt die de eerste keer dat je op Spelen drukt;
+        de knop toont intussen "De core wordt gedownload…". Hij speelt elke
+        console waarvoor geen werkende emulator is, en vervangt nooit een
+        emulator die jij hebt ingesteld. Per game kun je een andere core
+        kiezen, het schermeffect, schalen met hele getallen en vermindering
+        van invoervertraging. Beheerders kunnen alle cores in één keer
+        installeren of bijwerken, of downloads uitzetten. Er verandert niets
+        tot de speler is geïnstalleerd; tot dan staat hij niet onder
+        Instellingen &gt; Emulators.</li>
+      <li><strong>De tabbladen van het Museum wisselen weer.</strong> Op de
+        Museum-pagina van een console deed klikken op Specificaties, Top 10
+        games of Controllers niets en verscheen de melding "Onverwachte
+        fout", sinds versie 3.30.0. Elk tabblad opent nu.</li>
+      <li><strong>PlayStation 3-games die als map zijn opgeslagen, zijn
+        speelbaar.</strong> Een PS3-discgame is meestal een map die eindigt op
+        ".PS3". RetroDB weigerde die te starten en toonde geen knop Spelen,
+        omdat het één bestand verwachtte. Het geeft de map nu aan de
+        emulator, zoals RPCS3 verwacht.</li>
+      <li><strong>De kolommen van Metadata zoeken staan gelijk, en het past op
+        een telefoon.</strong> Een bron met meer resultaten dan er pasten kreeg
+        een schuifbalk, waardoor de titels smaller werden, zodat dezelfde titel
+        in de ene kolom afbrak en in de volgende niet. Elke kolom houdt nu
+        evenveel ruimte, met een dunne schuifbalk in de stijl van het thema. Op
+        een telefoon of in een smal venster werd het zoekvenster naast een
+        verborgen zijbalk samengeperst; het vult nu het scherm.</li>
+      <li><strong>Een nieuwe installatie op Windows of Mac geeft RetroArch-cores
+        de juiste naam.</strong> RetroDB stelde RetroArch overal in met de
+        bestandsnamen van Linux-cores, dus op Windows en macOS werd geen core
+        gevonden. Een nieuwe installatie gebruikt nu de namen van de eigen
+        computer. Een bestaande installatie houdt de namen die ze heeft; wijzig
+        ze in de koppelingstabel.</li>
+      <li><strong>De screenshotviewer toont beide pijlen, elk in zijn eigen
+        knop.</strong> De zijbalk bedekte de linkerpijl, zodat je met de muis
+        niet terug kon naar een eerdere screenshot. De rechterpijl stond ook
+        onder zijn knop. Beide zijn nu zichtbaar, gecentreerd in hun
+        knoppen.</li>
+      <li><strong>De instellingenpagina Emulators verschijnt in je eigen
+        taal.</strong> Het grootste deel van Instellingen &gt; Emulators was
+        Engels, welke taal je ook koos: de koppen, de emulatortabel, de
+        scanresultaten en het venster Emulator bewerken. Alles is nu
+        vertaald.</li>
+      <li><strong>Het vak Spelers accepteert meer dan 16.</strong> Beide
+        bewerkvensters stopten bij 16, zodat je de 256 spelers van MAG niet
+        kon invullen. Een game waaraan een scraper meer dan 16 had gegeven,
+        kon helemaal niet worden opgeslagen tot je het getal verlaagde. Er is
+        nu geen bovengrens meer.</li>
+      <li><strong>AI-aanvulling geeft pc-games een pc-opslagtype, geen
+        consoletype.</strong> Een Windows-game kon "Geheugenkaart" krijgen
+        omdat de AI de PlayStation 2-versie beschreef. De AI krijgt nu de
+        opdracht om de uitgave op het eigen platform van je game te
+        beschrijven. Pc's, en consoles vanaf PlayStation 3 en Xbox 360,
+        slaan op in Interne opslag.</li>
+      <li>Om een game te herstellen die al een verkeerd opslagtype heeft,
+        scrape je hem opnieuw of voer je AI-aanvulling uit. Beide vragen het
+        de AI opnieuw en vervangen de oude waarde.</li>
+      <li><strong>PlayStation koppelen zegt dat je eerst moet
+        inloggen.</strong> Onder Instellingen &gt; Account &gt; PSN toonde de
+        Sony-accountpagina alleen "Invalid login" als je nog niet bij
+        PlayStation was ingelogd, en de stappen zeiden dat niet. Stap 1 heeft
+        nu een knop "Inloggen bij PlayStation" om eerst op te drukken.</li>
+      <li><strong>Sorteer de Bibliotheek en toon alleen niet-gescrapete
+        games.</strong> De Bibliotheek en elke systeempagina hebben een menu
+        Sorteren op naast het aantal games: naam, nieuwste of oudste
+        uitgave, criticusscore, gebruikersscore of onlangs toegevoegd. Games
+        zonder datum of score komen als laatste. De A–Z-balk werkt bij
+        sorteren op naam en is anders grijs. Een nieuwe knop Niet gescraped
+        toont alleen de games die nog door geen enkele scraper zijn
+        ingevuld.</li>
+      <li><strong>Een filter zonder resultaten zegt dat ook.</strong> De
+        pagina werd vroeger leeg. Nu staat er dat geen games overeenkomen,
+        met een knop om de filters te wissen.</li>
+      <li><strong>De filterbalk van de Bibliotheek houdt alles op zijn
+        plek.</strong> Op Selecteren drukken, filteren of sorteren duwde de
+        games vroeger omlaag. De selectiehulpmiddelen verschijnen nu in een
+        balk onder in het venster. Wissen is er altijd, grijs tot er een
+        filter aan staat. Actieve filters staan naast het aantal games.
+        "Bonus tonen" heet nu "Bonusschijven" en licht op als het aan staat.
+        Op een telefoon openen de filterknoppen vanuit één knop Filters over
+        de pagina.</li>
+      <li><strong>Een lege bibliotheek toont een welkom met een knop
+        Scannen.</strong> Een nieuwe installatie toonde vroeger een
+        gezondheidsscore die op 0% bleef staan en een lege Bibliotheek. Beide
+        pagina's zeggen nu dat de bibliotheek leeg is en bieden een knop
+        Bibliotheek scannen. Het Dashboard linkt ook naar de instelling voor
+        de ROM-map. Gebruikers die geen beheerder zijn, krijgen te horen dat
+        ze een beheerder moeten vragen. Willekeurige game is verborgen tot er
+        games zijn om uit te kiezen.</li>
+      <li><strong>Bibliotheek scannen werkt vanaf de pagina Systemen en vanuit
+        Instellingen.</strong> Die twee knoppen Bibliotheek scannen deden niets
+        als je erop drukte. Alleen die op het Dashboard werkte. De knop
+        Bibliotheek scannen op het Dashboard zelf is nu alleen zichtbaar voor
+        beheerders, de enige gebruikers die mogen scannen.</li>
+      <li><strong>De installatiewizard toont bij welke stap je bent, en welke
+        stappen optioneel zijn.</strong> Hij zegt "Stap 3 van 6", nummert
+        elke stap, vinkt de stappen af die je hebt gehad en markeert ES-DE en
+        API-sleutels als optioneel. Op een telefoon toont hij de nummers en
+        de naam van de huidige stap.</li>
+      <li><strong>Filter de Bibliotheek op meerdere genres, reeksen of
+        uitgevers tegelijk.</strong> Vink in de filters Genre, Reeks,
+        Uitgever, Ontwikkelaar, Spelmodus, Perspectief en Dimensie zoveel
+        waarden aan als je wilt en druk op Toepassen: een game verschijnt als
+        hij een van die waarden heeft. Zet het venster op IS NIET om games te
+        verbergen die een van de aangevinkte waarden hebben. Elke waarde
+        krijgt een eigen label, en het ✕ daarvan verwijdert alleen die
+        waarde.</li>
+    </ul>
 - version: 3.30.0
   date: '2026-10-21'
   tags:

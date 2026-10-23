@@ -1,3 +1,148 @@
+- version: 3.31.0
+  date: '2026-10-23'
+  tags:
+  - type: feature
+    label: RetroDB er klar for sin egen spillspiller
+  - type: fix
+    label: Fanene i Museum bytter igjen
+  - type: fix
+    label: PlayStation 3-spill lagret som en mappe kan spilles
+  - type: fix
+    label: Kolonnene i Søk metadata står på linje, og vinduet passer på en telefon
+  - type: fix
+    label: En ny installasjon på Windows eller Mac gir RetroArch-kjerner riktige navn
+  - type: fix
+    label: AI-utfylling gir PC-spill en lagringstype for PC, ikke for konsoll
+  - type: fix
+    label: Spillere-feltet tar imot mer enn 16
+  - type: fix
+    label: Innstillingssiden Emulatorer vises på ditt språk
+  - type: ui
+    label: Skjermbildeviseren viser begge pilene, hver inne i sin knapp
+  - type: fix
+    label: Tilkobling av PlayStation sier at du må logge inn først
+  - type: feature
+    label: Sorter Bibliotek, og vis bare uskrapede spill
+  - type: ui
+    label: Et filter uten treff sier fra
+  - type: ui
+    label: Filterlinjen i Bibliotek holder alt på plass
+  - type: ui
+    label: Et tomt bibliotek viser en velkomst med en Skann-knapp
+  - type: fix
+    label: Skann bibliotek virker fra Systemer-siden og Innstillinger
+  - type: ui
+    label: Oppsettsveiviseren viser hvilket trinn du er på, og hvilke som er valgfrie
+  - type: feature
+    label: Filtrer Bibliotek etter flere sjangre, serier eller utgivere samtidig
+  body: |
+    <ul>
+      <li><strong>RetroDB er klar for sin egen spillspiller.</strong> En
+        spiller basert på RetroArch blir laget for RetroDB. Når den kommer,
+        starter RetroDB spill i den med innstillinger valgt for hvert spill,
+        og beholder innstillinger du endrer mens du spiller. Den holder
+        lagringene og innstillingene sine i en egen mappe, atskilt fra din
+        egen RetroArch. Den velger den beste kjernen for hver konsoll og
+        laster den ned første gang du trykker Spill; imens står det
+        «Laster ned kjernen…» på knappen. Den spiller alle konsoller som
+        ikke har en emulator som virker, og erstatter aldri en du har satt
+        opp. Per spill kan du velge en annen kjerne, skjermeffekten,
+        heltallsskalering og reduksjon av inndataforsinkelse.
+        Administratorer kan installere eller oppdatere alle kjernene på en
+        gang, eller slå av nedlastinger. Ingenting endres før spilleren er
+        installert; inntil da står den ikke under Innstillinger &gt;
+        Emulatorer.</li>
+      <li><strong>Fanene i Museum bytter igjen.</strong> På en konsolls
+        Museum-side gjorde et klikk på Spesifikasjoner, Topp 10 spill eller
+        Kontrollere ingenting og viste meldingen «Uventet feil», siden
+        versjon 3.30.0. Alle fanene åpnes nå.</li>
+      <li><strong>PlayStation 3-spill lagret som en mappe kan
+        spilles.</strong> Et PS3-diskspill er vanligvis en mappe som slutter
+        på «.PS3». RetroDB nektet å starte det og viste ingen Spill-knapp,
+        fordi den ventet én enkelt fil. Nå gir den mappen til emulatoren,
+        slik RPCS3 forventer.</li>
+      <li><strong>Kolonnene i Søk metadata står på linje, og vinduet passer
+        på en telefon.</strong> En kilde med flere treff enn det var plass
+        til fikk et rullefelt, som gjorde titlene smalere, så den samme
+        tittelen brøt linjen i én kolonne og ikke i den neste. Nå har alle
+        kolonnene like mye plass, med et tynt rullefelt i temaets stil. På
+        en telefon eller i et smalt vindu ble søkevinduet klemt inntil et
+        skjult sidepanel; nå fyller det skjermen.</li>
+      <li><strong>En ny installasjon på Windows eller Mac gir RetroArch-kjerner
+        riktige navn.</strong> RetroDB satte opp RetroArch med Linux-filnavn
+        for kjernene overalt, så på Windows og macOS ble ingen kjerne
+        funnet. En ny installasjon bruker nå datamaskinens egne navn. En
+        eksisterende installasjon beholder navnene den har; endre dem i
+        tilordningstabellen.</li>
+      <li><strong>Skjermbildeviseren viser begge pilene, hver inne i sin
+        knapp.</strong> Sidepanelet dekket venstre pil, så du kunne ikke gå
+        tilbake til et tidligere skjermbilde med musen. Høyre pil satt også
+        under knappen sin. Begge vises nå, sentrert i knappene.</li>
+      <li><strong>Innstillingssiden Emulatorer vises på ditt språk.</strong>
+        Det meste av Innstillinger &gt; Emulatorer var på engelsk uansett
+        hvilket språk du valgte: overskriftene, emulatortabellen,
+        skanneresultatene og vinduet Rediger emulator. Alt er nå
+        oversatt.</li>
+      <li><strong>Spillere-feltet tar imot mer enn 16.</strong> Begge
+        redigeringsvinduene stoppet på 16, så du kunne ikke skrive inn MAGs
+        256 spillere. Et spill som en skraper hadde gitt mer enn 16, kunne
+        ikke lagres i det hele tatt før du satte ned tallet. Nå er det ingen
+        øvre grense.</li>
+      <li><strong>AI-utfylling gir PC-spill en lagringstype for PC, ikke for
+        konsoll.</strong> Et Windows-spill kunne få «Minnekort» fordi AI-en
+        beskrev PlayStation 2-versjonen. AI-en blir nå bedt om å beskrive
+        utgivelsen på spillets egen plattform. PC-er, og konsoller fra
+        PlayStation 3 og Xbox 360 og nyere, lagrer til Intern lagring.</li>
+      <li>For å rette et spill som allerede har feil lagringstype, skraper du
+        det på nytt eller kjører AI-utfylling. Begge spør AI-en på nytt og
+        erstatter den gamle verdien.</li>
+      <li><strong>Tilkobling av PlayStation sier at du må logge inn
+        først.</strong> Under Innstillinger &gt; Konto &gt; PSN viste Sonys
+        kontoside bare «Invalid login» hvis du ikke allerede var logget inn
+        på PlayStation, og trinnene sa ikke det. Trinn 1 har nå en knapp
+        «Logg inn på PlayStation» som du trykker først.</li>
+      <li><strong>Sorter Bibliotek, og vis bare uskrapede spill.</strong>
+        Bibliotek og hver systemside har en Sorter etter-meny ved siden av
+        antallet spill: navn, nyeste eller eldste utgivelse, kritikerscore,
+        brukerscore eller nylig lagt til. Spill uten dato eller score kommer
+        sist. A–Å-linjen virker når du sorterer etter navn og er grået ut
+        ellers. En ny Uskrapet-knapp viser bare spillene ingen skraper har
+        fylt ut ennå.</li>
+      <li><strong>Et filter uten treff sier fra.</strong> Siden pleide å bli
+        tom. Nå står det at ingen spill passer, med en knapp for å fjerne
+        filtrene.</li>
+      <li><strong>Filterlinjen i Bibliotek holder alt på plass.</strong> Et
+        trykk på Velg, filtrering eller sortering pleide å skyve spillene
+        nedover siden. Markeringsverktøyene vises nå i en linje nederst i
+        vinduet. Fjern er alltid der, grået ut til et filter er på. Aktive
+        filtre vises ved siden av antallet spill. «Vis bonus» heter nå
+        «Bonusplater», og lyser når det er på. På en telefon åpnes
+        filterknappene fra én Filtre-knapp over siden.</li>
+      <li><strong>Et tomt bibliotek viser en velkomst med en
+        Skann-knapp.</strong> En ny installasjon viste før en helsescore som
+        satt fast på 0 % og et tomt Bibliotek. Begge sidene sier nå at
+        biblioteket er tomt og tilbyr en Skann bibliotek-knapp. Oversikt
+        lenker også til innstillingen for ROM-mappen. Brukere som ikke er
+        administratorer, får beskjed om å spørre en administrator. Tilfeldig
+        spill er skjult til det finnes spill å velge blant.</li>
+      <li><strong>Skann bibliotek virker fra Systemer-siden og
+        Innstillinger.</strong> De to Skann bibliotek-knappene gjorde
+        ingenting når du trykket på dem. Bare den på Oversikt virket. Selve
+        Skann bibliotek-knappen på Oversikt vises nå bare for
+        administratorer, de eneste brukerne som har lov til å skanne.</li>
+      <li><strong>Oppsettsveiviseren viser hvilket trinn du er på, og hvilke
+        som er valgfrie.</strong> Den sier «Trinn 3 av 6», nummererer hvert
+        trinn, huker av dem du har passert og merker ES-DE og API-nøkler som
+        valgfrie. På en telefon viser den numrene og navnet på det gjeldende
+        trinnet.</li>
+      <li><strong>Filtrer Bibliotek etter flere sjangre, serier eller
+        utgivere samtidig.</strong> I filtrene Sjanger, Serie, Utgiver,
+        Utvikler, Spillmodus, Perspektiv og Dimensjon kan du huke av så mange
+        verdier du vil og trykke Bruk: et spill vises hvis det har noen av
+        dem. Bytt vinduet til ER IKKE for å skjule spill som har noen av de
+        avhukede verdiene. Hver verdi får sin egen etikett, og ✕-en på den
+        fjerner bare den verdien.</li>
+    </ul>
 - version: 3.30.0
   date: '2026-10-21'
   tags:

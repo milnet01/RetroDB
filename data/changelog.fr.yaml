@@ -1,3 +1,164 @@
+- version: 3.31.0
+  date: '2026-10-23'
+  tags:
+  - type: feature
+    label: RetroDB est prêt pour son propre lecteur de jeux
+  - type: fix
+    label: Les onglets du Musée changent de nouveau
+  - type: fix
+    label: Les jeux PlayStation 3 stockés sous forme de dossier se lancent
+  - type: fix
+    label: Les colonnes de Rechercher des métadonnées sont alignées, et la fenêtre tient sur un téléphone
+  - type: fix
+    label: Une nouvelle installation sous Windows ou Mac nomme correctement les cœurs RetroArch
+  - type: fix
+    label: Remplissage IA donne aux jeux PC un type de sauvegarde PC, et non celui d'une console
+  - type: fix
+    label: Le champ Joueurs accepte plus de 16
+  - type: fix
+    label: La page de paramètres Émulateurs s'affiche dans votre langue
+  - type: ui
+    label: La visionneuse de captures affiche les deux flèches, chacune dans son bouton
+  - type: fix
+    label: La connexion à PlayStation vous demande d'abord de vous identifier
+  - type: feature
+    label: Triez la Bibliothèque et n'affichez que les jeux non récupérés
+  - type: ui
+    label: Un filtre sans résultat le signale
+  - type: ui
+    label: La barre de filtres de la Bibliothèque garde chaque chose à sa place
+  - type: ui
+    label: Une bibliothèque vide affiche un accueil avec un bouton d'analyse
+  - type: fix
+    label: Analyser la bibliothèque fonctionne depuis la page Systèmes et les Paramètres
+  - type: ui
+    label: L'assistant de configuration indique l'étape en cours et les étapes facultatives
+  - type: feature
+    label: Filtrez la Bibliothèque par plusieurs genres, séries ou éditeurs à la fois
+  body: |
+    <ul>
+      <li><strong>RetroDB est prêt pour son propre lecteur de jeux.</strong>
+        Un lecteur basé sur RetroArch est en préparation pour RetroDB. Quand
+        il arrivera, RetroDB y lancera les jeux avec des réglages choisis pour
+        chaque jeu, et conservera les réglages que vous modifiez en jouant. Il
+        gardera ses sauvegardes et ses réglages dans son propre dossier, à
+        part de votre propre RetroArch. Il choisit le meilleur cœur pour chaque
+        console et le télécharge la première fois que vous appuyez sur Jouer ;
+        le bouton affiche alors « Téléchargement du cœur… ». Il fait tourner
+        toute console qui n'a pas d'émulateur fonctionnel, et ne remplace
+        jamais celui que vous avez configuré. Pour chaque jeu, vous pouvez
+        choisir un autre cœur, l'effet d'écran, la mise à l'échelle entière et
+        la réduction de la latence d'entrée. Les administrateurs peuvent
+        installer ou mettre à jour tous les cœurs d'un coup, ou désactiver les
+        téléchargements. Rien ne change tant que le lecteur n'est pas
+        installé ; d'ici là, il n'apparaît pas dans Paramètres &gt;
+        Émulateurs.</li>
+      <li><strong>Les onglets du Musée changent de nouveau.</strong> Sur la
+        page Musée d'une console, cliquer sur Caractéristiques, Top 10 des
+        jeux ou Manettes ne faisait rien et affichait le message « Erreur
+        inattendue », depuis la version 3.30.0. Chaque onglet s'ouvre
+        désormais.</li>
+      <li><strong>Les jeux PlayStation 3 stockés sous forme de dossier se
+        lancent.</strong> Un jeu PS3 sur disque est généralement un dossier
+        se terminant par « .PS3 ». RetroDB refusait de le lancer et
+        n'affichait pas de bouton Jouer, car il attendait un fichier unique.
+        Il transmet désormais le dossier à l'émulateur, comme RPCS3
+        l'attend.</li>
+      <li><strong>Les colonnes de Rechercher des métadonnées sont alignées, et
+        la fenêtre tient sur un téléphone.</strong> Une source avec plus de
+        résultats que la place disponible recevait une barre de défilement,
+        qui rétrécissait ses titres : le même titre passait à la ligne dans
+        une colonne et pas dans la suivante. Chaque colonne garde désormais la
+        même place, avec une fine barre de défilement assortie au thème. Sur
+        un téléphone ou une fenêtre étroite, la fenêtre de recherche était
+        écrasée à côté d'une barre latérale masquée ; elle remplit désormais
+        l'écran.</li>
+      <li><strong>Une nouvelle installation sous Windows ou Mac nomme
+        correctement les cœurs RetroArch.</strong> RetroDB configurait
+        RetroArch avec les noms de fichiers de cœurs de Linux partout, si bien
+        que sous Windows et macOS aucun cœur n'était trouvé. Une nouvelle
+        installation utilise désormais les noms propres à chaque ordinateur.
+        Une installation existante garde ses noms ; modifiez-les dans le
+        tableau de correspondance.</li>
+      <li><strong>La visionneuse de captures affiche les deux flèches,
+        chacune dans son bouton.</strong> La barre latérale masquait la flèche
+        gauche, si bien qu'on ne pouvait pas revenir à une capture précédente
+        avec la souris. La flèche droite se trouvait aussi sous son bouton.
+        Les deux s'affichent désormais, centrées dans leurs boutons.</li>
+      <li><strong>La page de paramètres Émulateurs s'affiche dans votre
+        langue.</strong> La plus grande partie de Paramètres &gt; Émulateurs
+        restait en anglais, quelle que soit la langue choisie : ses titres, le
+        tableau des émulateurs, les résultats d'analyse et la fenêtre Modifier
+        l'émulateur. Tout est désormais traduit.</li>
+      <li><strong>Le champ Joueurs accepte plus de 16.</strong> Les deux
+        fenêtres de modification s'arrêtaient à 16, si bien que vous ne
+        pouviez pas saisir les 256 joueurs de MAG. Un jeu auquel un
+        récupérateur avait donné plus de 16 ne pouvait pas du tout être
+        enregistré tant que vous n'aviez pas baissé le nombre. Il n'y a
+        désormais plus de limite haute.</li>
+      <li><strong>Remplissage IA donne aux jeux PC un type de sauvegarde PC,
+        et non celui d'une console.</strong> Un jeu Windows pouvait recevoir
+        « Carte mémoire » parce que l'IA décrivait sa version PlayStation 2.
+        L'IA est désormais invitée à décrire la sortie sur la plateforme de
+        votre jeu. Les PC, et les consoles à partir de la PlayStation 3 et de
+        la Xbox 360, sauvegardent dans le Stockage interne.</li>
+      <li>Pour corriger un jeu qui a déjà un mauvais type de sauvegarde,
+        récupérez-le à nouveau ou lancez Remplissage IA. Les deux
+        interrogent de nouveau l'IA et remplacent l'ancienne valeur.</li>
+      <li><strong>La connexion à PlayStation vous demande d'abord de vous
+        identifier.</strong> Dans Paramètres &gt; Compte &gt; PSN, la page du
+        compte Sony n'affichait que « Invalid login » si vous n'étiez pas
+        déjà connecté à PlayStation, et les étapes ne le disaient pas.
+        L'étape 1 a désormais un bouton « Se connecter à PlayStation » sur
+        lequel appuyer d'abord.</li>
+      <li><strong>Triez la Bibliothèque et n'affichez que les jeux non
+        récupérés.</strong> La Bibliothèque et chaque page de système ont un
+        menu Trier par à côté du nombre de jeux : nom, sortie la plus récente
+        ou la plus ancienne, note de la presse, note des joueurs, ou ajoutés
+        récemment. Les jeux sans date ni note viennent en dernier. La barre
+        A–Z fonctionne lors d'un tri par nom et est grisée sinon. Un nouveau
+        bouton « Non récupéré » n'affiche que les jeux qu'aucun récupérateur
+        n'a encore remplis.</li>
+      <li><strong>Un filtre sans résultat le signale.</strong> La page restait
+        vide auparavant. Elle indique désormais qu'aucun jeu ne correspond,
+        avec un bouton pour effacer les filtres.</li>
+      <li><strong>La barre de filtres de la Bibliothèque garde chaque chose à
+        sa place.</strong> Appuyer sur Sélectionner, filtrer ou trier
+        repoussait auparavant les jeux vers le bas de la page. Les outils de
+        sélection apparaissent désormais dans une barre en bas de la fenêtre.
+        Effacer est toujours là, grisé tant qu'aucun filtre n'est actif. Les
+        filtres actifs s'affichent à côté du nombre de jeux. « Afficher les
+        bonus » devient « Disques bonus », mis en évidence quand il est
+        activé. Sur un téléphone, les boutons de filtre s'ouvrent depuis un
+        seul bouton Filtres, par-dessus la page.</li>
+      <li><strong>Une bibliothèque vide affiche un accueil avec un bouton
+        d'analyse.</strong> Une nouvelle installation affichait auparavant un
+        score de santé bloqué à 0% et une Bibliothèque vide. Les deux pages
+        indiquent désormais que la bibliothèque est vide et proposent un
+        bouton Analyser la bibliothèque. Le Tableau de bord renvoie aussi au
+        réglage du dossier des ROM. Les utilisateurs qui ne sont pas
+        administrateurs sont invités à demander à un administrateur. Jeu
+        aléatoire est masqué tant qu'il n'y a pas de jeux parmi lesquels
+        choisir.</li>
+      <li><strong>Analyser la bibliothèque fonctionne depuis la page Systèmes
+        et les Paramètres.</strong> Ces deux boutons Analyser la bibliothèque
+        ne faisaient rien quand on appuyait dessus. Seul celui du Tableau de
+        bord fonctionnait. Le bouton Analyser la bibliothèque du Tableau de
+        bord ne s'affiche désormais qu'aux administrateurs, seuls
+        utilisateurs autorisés à lancer une analyse.</li>
+      <li><strong>L'assistant de configuration indique l'étape en cours et les
+        étapes facultatives.</strong> Il affiche « Étape 3 sur 6 », numérote
+        chaque étape, coche celles que vous avez passées et marque ES-DE et
+        Clés API comme facultatives. Sur un téléphone, il affiche les numéros
+        et le nom de l'étape en cours.</li>
+      <li><strong>Filtrez la Bibliothèque par plusieurs genres, séries ou
+        éditeurs à la fois.</strong> Dans les filtres Genre, Série, Éditeur,
+        Développeur, Modes de jeu, Perspective et Dimension, cochez autant de
+        valeurs que vous le souhaitez et appuyez sur Appliquer : un jeu
+        s'affiche s'il possède l'une d'elles. Passez la fenêtre sur N'EST PAS
+        pour masquer les jeux qui ont l'une des valeurs cochées. Chaque valeur
+        a sa propre étiquette, et son ✕ ne retire que cette valeur.</li>
+    </ul>
 - version: 3.30.0
   date: '2026-10-21'
   tags:

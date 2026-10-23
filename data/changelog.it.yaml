@@ -1,3 +1,156 @@
+- version: 3.31.0
+  date: '2026-10-23'
+  tags:
+  - type: feature
+    label: RetroDB è pronto per un proprio lettore di giochi
+  - type: fix
+    label: Le schede del Museo tornano a cambiare
+  - type: fix
+    label: I giochi PlayStation 3 salvati come cartella si possono giocare
+  - type: fix
+    label: Le colonne di Cerca metadati sono allineate, e la finestra entra in un telefono
+  - type: fix
+    label: Una nuova installazione su Windows o Mac dà il nome giusto ai core di RetroArch
+  - type: fix
+    label: Riempimento AI dà ai giochi PC un tipo di salvataggio da PC, non da console
+  - type: fix
+    label: Il campo Giocatori accetta più di 16
+  - type: fix
+    label: La pagina delle impostazioni Emulatori appare nella tua lingua
+  - type: ui
+    label: Il visualizzatore di screenshot mostra entrambe le frecce, ognuna dentro il suo pulsante
+  - type: fix
+    label: Collegare PlayStation ti chiede prima di accedere
+  - type: feature
+    label: Ordina la Libreria e mostra solo i giochi non elaborati
+  - type: ui
+    label: Un filtro senza risultati lo dice
+  - type: ui
+    label: La barra dei filtri della Libreria tiene tutto al suo posto
+  - type: ui
+    label: Una libreria vuota mostra un benvenuto con un pulsante Scansiona
+  - type: fix
+    label: Scansiona libreria funziona dalla pagina Sistemi e dalle Impostazioni
+  - type: ui
+    label: La procedura guidata mostra a che passo sei e quali passi sono facoltativi
+  - type: feature
+    label: Filtra la Libreria per più generi, serie o editori insieme
+  body: |
+    <ul>
+      <li><strong>RetroDB è pronto per un proprio lettore di giochi.</strong>
+        Per RetroDB si sta costruendo un lettore basato su RetroArch. Quando
+        arriverà, RetroDB avvierà i giochi al suo interno con impostazioni
+        scelte per ogni gioco, e manterrà le impostazioni che cambi mentre
+        giochi. Terrà i suoi salvataggi e le sue impostazioni in una cartella
+        propria, separata dal tuo RetroArch. Sceglie il core migliore per ogni
+        console e lo scarica la prima volta che premi Gioca; nel frattempo il
+        pulsante dice "Download del core…". Gioca qualsiasi console che non
+        ha un emulatore funzionante, e non sostituisce mai uno che hai
+        configurato tu. Per ogni gioco puoi scegliere un altro core,
+        l&rsquo;effetto schermo, il ridimensionamento intero e la riduzione
+        del ritardo di input. Gli amministratori possono installare o aggiornare tutti
+        i core in una volta, o disattivare i download. Non cambia nulla
+        finché il lettore non è installato; fino ad allora non compare in
+        Impostazioni &gt; Emulatori.</li>
+      <li><strong>Le schede del Museo tornano a cambiare.</strong> Nella
+        pagina Museo di una console, cliccare su Specifiche, Top 10 giochi o
+        Controller non faceva nulla e mostrava il messaggio "Errore
+        imprevisto", dalla versione 3.30.0. Ora ogni scheda si apre.</li>
+      <li><strong>I giochi PlayStation 3 salvati come cartella si possono
+        giocare.</strong> Un gioco PS3 su disco di solito è una cartella che
+        finisce con ".PS3". RetroDB si rifiutava di avviarlo e non mostrava
+        il pulsante Gioca, perché si aspettava un singolo file. Ora passa la
+        cartella all&rsquo;emulatore, come si aspetta RPCS3.</li>
+      <li><strong>Le colonne di Cerca metadati sono allineate, e la finestra
+        entra in un telefono.</strong> Una fonte con più risultati di quanti
+        ne entrassero riceveva una barra di scorrimento, che restringeva i
+        suoi titoli, così lo stesso titolo andava a capo in una colonna e non
+        nella successiva. Ora ogni colonna mantiene lo stesso spazio, con una
+        barra di scorrimento sottile in tinta con il tema. Su un telefono o in
+        una finestra stretta, la finestra di ricerca era schiacciata accanto a
+        una barra laterale nascosta; ora riempie lo schermo.</li>
+      <li><strong>Una nuova installazione su Windows o Mac dà il nome giusto
+        ai core di RetroArch.</strong> RetroDB configurava RetroArch con i
+        nomi dei file dei core di Linux ovunque, così su Windows e macOS non
+        si trovava nessun core. Una nuova installazione ora usa i nomi propri
+        di ogni computer. Un&rsquo;installazione esistente mantiene i nomi che
+        ha; cambiali nella tabella di associazione.</li>
+      <li><strong>Il visualizzatore di screenshot mostra entrambe le frecce,
+        ognuna dentro il suo pulsante.</strong> La barra laterale copriva la
+        freccia sinistra, così non potevi tornare a uno screenshot precedente
+        con il mouse. Anche la freccia destra stava sotto il suo pulsante. Ora
+        si vedono entrambe, centrate nei loro pulsanti.</li>
+      <li><strong>La pagina delle impostazioni Emulatori appare nella tua
+        lingua.</strong> Gran parte di Impostazioni &gt; Emulatori restava in
+        inglese, qualunque lingua avessi scelto: i titoli, la tabella degli
+        emulatori, i risultati della scansione e la finestra Modifica
+        emulatore. Ora è tutto tradotto.</li>
+      <li><strong>Il campo Giocatori accetta più di 16.</strong> Entrambe le
+        finestre di modifica si fermavano a 16, così non potevi inserire i 256
+        giocatori di MAG. Un gioco a cui uno scraper aveva dato più di 16 non
+        si poteva proprio salvare finché non abbassavi il numero. Ora non
+        c&rsquo;è un limite massimo.</li>
+      <li><strong>Riempimento AI dà ai giochi PC un tipo di salvataggio da PC,
+        non da console.</strong> Un gioco Windows poteva ricevere "Memory
+        Card" perché l&rsquo;AI descriveva la sua versione PlayStation 2. Ora
+        all&rsquo;AI viene chiesto di descrivere l&rsquo;edizione per la
+        piattaforma del tuo gioco. I PC, e le console da PlayStation 3 e Xbox
+        360 in poi, salvano nella Memoria interna.</li>
+      <li>Per correggere un gioco che ha già un tipo di salvataggio sbagliato,
+        fai di nuovo lo scraping o avvia Riempimento AI. Entrambi interrogano
+        di nuovo l&rsquo;AI e sostituiscono il vecchio valore.</li>
+      <li><strong>Collegare PlayStation ti chiede prima di accedere.</strong>
+        In Impostazioni &gt; Account &gt; PSN, la pagina dell&rsquo;account
+        Sony mostrava solo "Invalid login" se non avevi già effettuato
+        l&rsquo;accesso a PlayStation, e i passi non lo dicevano. Il passo 1
+        ora ha un pulsante "Accedi a PlayStation" da premere prima.</li>
+      <li><strong>Ordina la Libreria e mostra solo i giochi non
+        elaborati.</strong> La Libreria e ogni pagina di sistema hanno un menu
+        Ordina per accanto al numero di giochi: nome, uscita più recente o più
+        vecchia, voto della critica, voto degli utenti o aggiunti di recente.
+        I giochi senza data o voto vanno in fondo. La barra A–Z funziona
+        quando ordini per nome ed è disattivata negli altri casi. Un nuovo
+        pulsante "Non elaborato" mostra solo i giochi che nessuno scraper ha
+        ancora compilato.</li>
+      <li><strong>Un filtro senza risultati lo dice.</strong> Prima la pagina
+        restava vuota. Ora dice che nessun gioco corrisponde, con un pulsante
+        per cancellare i filtri.</li>
+      <li><strong>La barra dei filtri della Libreria tiene tutto al suo
+        posto.</strong> Premere Seleziona, filtrare o ordinare spingeva prima
+        i giochi più in basso nella pagina. Gli strumenti di selezione ora
+        compaiono in una barra lungo il bordo inferiore della finestra.
+        Cancella c&rsquo;è sempre, disattivato finché non è attivo un filtro.
+        I filtri attivi compaiono accanto al numero di giochi. "Mostra bonus"
+        ora è "Dischi bonus", illuminato quando è attivo. Su un telefono, i
+        pulsanti dei filtri si aprono da un unico pulsante Filtri sopra la
+        pagina.</li>
+      <li><strong>Una libreria vuota mostra un benvenuto con un pulsante
+        Scansiona.</strong> Una nuova installazione mostrava prima un
+        punteggio di salute fermo allo 0% e una Libreria vuota. Ora entrambe
+        le pagine dicono che la libreria è vuota e offrono un pulsante
+        Scansiona libreria. La Dashboard rimanda anche all&rsquo;impostazione
+        della cartella delle ROM. Agli utenti che non sono amministratori viene detto
+        di chiedere a un amministratore. Gioco casuale è nascosto finché non ci sono
+        giochi tra cui scegliere.</li>
+      <li><strong>Scansiona libreria funziona dalla pagina Sistemi e dalle
+        Impostazioni.</strong> Quei due pulsanti Scansiona libreria non
+        facevano nulla quando li premevi. Funzionava solo quello della
+        Dashboard. Il pulsante Scansiona libreria della Dashboard ora è
+        visibile solo agli amministratori, gli unici utenti autorizzati a
+        scansionare.</li>
+      <li><strong>La procedura guidata mostra a che passo sei e quali passi
+        sono facoltativi.</strong> Dice "Passo 3 di 6", numera ogni passo,
+        spunta quelli che hai superato e segna ES-DE e Chiavi API come
+        facoltativi. Su un telefono mostra i numeri e il nome del passo
+        corrente.</li>
+      <li><strong>Filtra la Libreria per più generi, serie o editori
+        insieme.</strong> Nei filtri Genere, Serie, Editore, Sviluppatore,
+        Modalità di gioco, Prospettiva e Dimensione, spunta tutti i valori che
+        vuoi e premi Applica: un gioco compare se ne ha uno qualsiasi. Porta
+        la finestra su NON È per nascondere i giochi che hanno uno qualsiasi
+        dei valori spuntati. Ogni valore ha il suo tag, e la sua ✕ rimuove
+        solo quel valore.</li>
+    </ul>
 - version: 3.30.0
   date: '2026-10-21'
   tags:

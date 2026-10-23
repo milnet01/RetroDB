@@ -1,3 +1,154 @@
+- version: 3.31.0
+  date: '2026-10-23'
+  tags:
+  - type: feature
+    label: RetroDB kendi oyun oynatıcısına hazır
+  - type: fix
+    label: Müze'nin sekmeleri yeniden geçiş yapıyor
+  - type: fix
+    label: Klasör olarak saklanan PlayStation 3 oyunları oynanabiliyor
+  - type: fix
+    label: Meta Veri Ara'nın sütunları hizalanıyor ve telefona sığıyor
+  - type: fix
+    label: Yeni bir Windows veya Mac kurulumu RetroArch çekirdeklerini doğru adlandırıyor
+  - type: fix
+    label: Yapay Zeka Doldur PC oyunlarına konsol değil PC kayıt türü veriyor
+  - type: fix
+    label: Oyuncular kutusu 16'dan büyük sayıları kabul ediyor
+  - type: fix
+    label: Emülatörler ayar sayfası sizin dilinizde görünüyor
+  - type: ui
+    label: Ekran görüntüsü görüntüleyici iki oku da her birini kendi düğmesinin içinde gösteriyor
+  - type: fix
+    label: PlayStation'ı bağlarken önce oturum açmanız söyleniyor
+  - type: feature
+    label: Kütüphaneyi sıralayın ve yalnızca kazınmamış oyunları gösterin
+  - type: ui
+    label: Hiçbir şeyle eşleşmeyen bir filtre bunu söylüyor
+  - type: ui
+    label: Kütüphane'nin filtre çubuğu her şeyi yerinde tutuyor
+  - type: ui
+    label: Boş bir kütüphane Tara düğmesiyle bir karşılama gösteriyor
+  - type: fix
+    label: Kütüphaneyi Tara, Sistemler sayfasından ve Ayarlar'dan çalışıyor
+  - type: ui
+    label: Kurulum sihirbazı hangi adımda olduğunuzu ve hangilerinin isteğe bağlı olduğunu gösteriyor
+  - type: feature
+    label: Kütüphaneyi aynı anda birkaç türe, seriye veya yayıncıya göre filtreleyin
+  body: |
+    <ul>
+      <li><strong>RetroDB kendi oyun oynatıcısına hazır.</strong> RetroDB
+        için RetroArch tabanlı bir oynatıcı geliştiriliyor. Geldiğinde
+        RetroDB oyunları onda her oyun için seçilmiş ayarlarla başlatacak ve
+        oynarken değiştirdiğiniz ayarları koruyacak. Kayıtlarını ve
+        ayarlarını kendi RetroArch&rsquo;ınızdan ayrı, kendi klasöründe
+        tutacak. Her konsol için en iyi çekirdeği seçer ve Oyna&rsquo;ya ilk
+        bastığınızda indirir; bu sırada düğmede "Çekirdek indiriliyor…"
+        yazar. Çalışan bir emülatörü olmayan her konsolu oynatır ve sizin
+        kurduğunuz bir emülatörün yerini asla almaz. Her oyun için başka bir
+        çekirdek, ekran efekti, tam sayı ölçekleme ve giriş gecikmesi azaltma
+        seçebilirsiniz. Yöneticiler tüm çekirdekleri tek seferde kurabilir
+        veya güncelleyebilir ya da indirmeleri kapatabilir. Oynatıcı kurulana
+        kadar hiçbir şey değişmez; o zamana kadar Ayarlar &gt; Emülatörler
+        altında listelenmez.</li>
+      <li><strong>Müze&rsquo;nin sekmeleri yeniden geçiş yapıyor.</strong>
+        3.30.0 sürümünden beri bir konsolun Müze sayfasında Teknik
+        Özellikler, En İyi 10 Oyun veya Kontrolcüler&rsquo;e tıklamak hiçbir
+        şey yapmıyor ve "Beklenmeyen hata" mesajı gösteriyordu. Artık her
+        sekme açılıyor.</li>
+      <li><strong>Klasör olarak saklanan PlayStation 3 oyunları
+        oynanabiliyor.</strong> Bir PS3 disk oyunu genellikle adı ".PS3" ile
+        biten bir klasördür. RetroDB tek bir dosya beklediği için onu
+        başlatmayı reddediyor ve Oyna düğmesi göstermiyordu. Artık klasörü,
+        RPCS3&rsquo;ün beklediği gibi emülatöre veriyor.</li>
+      <li><strong>Meta Veri Ara&rsquo;nın sütunları hizalanıyor ve telefona
+        sığıyor.</strong> Sığabileceğinden fazla sonucu olan bir kaynakta
+        kaydırma çubuğu çıkıyor, bu da başlıklarını daraltıyordu; böylece aynı
+        başlık bir sütunda alt satıra kayıyor, yanındakinde kaymıyordu. Artık
+        her sütun aynı genişliği koruyor ve temaya uygun ince bir kaydırma
+        çubuğu var. Telefonda veya dar bir pencerede arama penceresi gizli bir
+        kenar çubuğunun yanında sıkışıyordu; artık ekranı dolduruyor.</li>
+      <li><strong>Yeni bir Windows veya Mac kurulumu RetroArch çekirdeklerini
+        doğru adlandırıyor.</strong> RetroDB, RetroArch&rsquo;ı her yerde
+        Linux çekirdek dosya adlarıyla ayarlıyordu; bu yüzden Windows ve
+        macOS&rsquo;ta hiçbir çekirdek bulunamıyordu. Yeni bir kurulum artık
+        her bilgisayarın kendi adlarını kullanıyor. Mevcut bir kurulum
+        elindeki adları koruyor; bunları eşleme tablosundan
+        değiştirin.</li>
+      <li><strong>Ekran görüntüsü görüntüleyici iki oku da her birini kendi
+        düğmesinin içinde gösteriyor.</strong> Kenar çubuğu sol oku
+        örtüyordu; bu yüzden fareyle önceki bir ekran görüntüsüne
+        dönemiyordunuz. Sağ ok da düğmesinin altında duruyordu. Artık ikisi de
+        görünüyor ve düğmelerinin ortasında.</li>
+      <li><strong>Emülatörler ayar sayfası sizin dilinizde görünüyor.</strong>
+        Ayarlar &gt; Emülatörler&rsquo;in çoğu, hangi dili seçerseniz seçin
+        İngilizceydi: başlıkları, emülatör tablosu, tarama sonuçları ve
+        Emülatörü düzenle penceresi. Artık hepsi çevrildi.</li>
+      <li><strong>Oyuncular kutusu 16&rsquo;dan büyük sayıları kabul
+        ediyor.</strong> İki düzenleme penceresi de 16&rsquo;da duruyordu; bu
+        yüzden MAG&rsquo;in 256 oyuncusunu giremiyordunuz. Bir kazıyıcının
+        16&rsquo;dan fazla oyuncu verdiği bir oyun, sayıyı düşürene kadar hiç
+        kaydedilemiyordu. Artık üst sınır yok.</li>
+      <li><strong>Yapay Zeka Doldur PC oyunlarına konsol değil PC kayıt türü
+        veriyor.</strong> Bir Windows oyunu, yapay zeka onun PlayStation 2
+        sürümünü tarif ettiği için "Hafıza Kartı" alabiliyordu. Yapay zekaya
+        artık oyununuzun kendi platformundaki sürümü tarif etmesi söyleniyor.
+        PC&rsquo;ler ile PlayStation 3 ve Xbox 360&rsquo;tan itibaren
+        konsollar Dahili Depolama&rsquo;ya kaydeder.</li>
+      <li>Kayıt türü zaten yanlış olan bir oyunu düzeltmek için onu yeniden
+        kazıyın veya Yapay Zeka Doldur&rsquo;u çalıştırın. İkisi de yapay
+        zekaya yeniden sorar ve eski değeri değiştirir.</li>
+      <li><strong>PlayStation&rsquo;ı bağlarken önce oturum açmanız
+        söyleniyor.</strong> Ayarlar &gt; Hesap &gt; PSN altında, Sony hesap
+        sayfası PlayStation&rsquo;da zaten oturum açmış değilseniz yalnızca
+        "Invalid login" gösteriyordu ve adımlar bunu söylemiyordu. Artık 1.
+        adımda önce basmanız gereken bir "PlayStation&rsquo;da oturum aç"
+        düğmesi var.</li>
+      <li><strong>Kütüphaneyi sıralayın ve yalnızca kazınmamış oyunları
+        gösterin.</strong> Kütüphane ve her sistem sayfasında, oyun sayısının
+        yanında bir Sırala menüsü var: ad, en yeni veya en eski çıkış,
+        eleştirmen puanı, kullanıcı puanı ya da son eklenenler. Tarihi veya
+        puanı olmayan oyunlar en sona gider. A–Z çubuğu ada göre sıralarken
+        çalışır, diğer durumlarda soluk görünür. Yeni Kazınmamış düğmesi
+        yalnızca henüz hiçbir kazıyıcının doldurmadığı oyunları
+        gösterir.</li>
+      <li><strong>Hiçbir şeyle eşleşmeyen bir filtre bunu söylüyor.</strong>
+        Sayfa eskiden boş kalıyordu. Artık hiçbir oyunun eşleşmediğini
+        söylüyor ve filtreleri temizlemek için bir düğme sunuyor.</li>
+      <li><strong>Kütüphane&rsquo;nin filtre çubuğu her şeyi yerinde
+        tutuyor.</strong> Seç&rsquo;e basmak, filtrelemek veya sıralamak
+        eskiden oyunları sayfada aşağı itiyordu. Seçim araçları artık
+        pencerenin altı boyunca uzanan bir çubukta beliriyor. Temizle her
+        zaman orada, bir filtre açılana kadar soluk görünüyor. Etkin
+        filtreler oyun sayısının yanında görünüyor. "Bonusu Göster" artık
+        "Bonus Diskler" ve açıkken yanıyor. Telefonda filtre düğmeleri,
+        sayfanın üzerinde tek bir Filtreler düğmesinden açılıyor.</li>
+      <li><strong>Boş bir kütüphane Tara düğmesiyle bir karşılama
+        gösteriyor.</strong> Yeni bir kurulum eskiden %0&rsquo;da takılı bir
+        sağlık puanı ve boş bir Kütüphane gösteriyordu. Artık iki sayfa da
+        kütüphanenin boş olduğunu söylüyor ve bir Kütüphaneyi Tara düğmesi
+        sunuyor. Kontrol Paneli ayrıca ROM klasörü ayarına bağlantı veriyor.
+        Yönetici olmayan kullanıcılara bir yöneticiye sormaları söyleniyor.
+        Rastgele Oyun, seçilecek oyun olana kadar gizli.</li>
+      <li><strong>Kütüphaneyi Tara, Sistemler sayfasından ve Ayarlar&rsquo;dan
+        çalışıyor.</strong> Bu iki Kütüphaneyi Tara düğmesi basıldığında
+        hiçbir şey yapmıyordu. Yalnızca Kontrol Paneli&rsquo;ndeki
+        çalışıyordu. Kontrol Paneli&rsquo;nin kendi Kütüphaneyi Tara düğmesi
+        artık yalnızca yöneticilere görünüyor; tarama izni olan tek
+        kullanıcılar onlar.</li>
+      <li><strong>Kurulum sihirbazı hangi adımda olduğunuzu ve hangilerinin
+        isteğe bağlı olduğunu gösteriyor.</strong> "Adım 3 / 6" yazıyor, her
+        adımı numaralandırıyor, geçtiklerinizi işaretliyor ve ES-DE ile API
+        Anahtarları&rsquo;nı isteğe bağlı olarak gösteriyor. Telefonda
+        numaraları ve geçerli adımın adını gösteriyor.</li>
+      <li><strong>Kütüphaneyi aynı anda birkaç türe, seriye veya yayıncıya göre
+        filtreleyin.</strong> Tür, Seri, Yayıncı, Geliştirici, Oynanış Modu,
+        Bakış Açısı ve Boyut filtrelerinde istediğiniz kadar değeri işaretleyip
+        Uygula&rsquo;ya basın: bir oyun bunlardan herhangi birine sahipse
+        görünür. İşaretli değerlerden herhangi birine sahip oyunları gizlemek
+        için pencereyi EŞİT DEĞİLDİR&rsquo;e çevirin. Her değer kendi etiketini
+        alır ve etiketin ✕ işareti yalnızca o değeri kaldırır.</li>
+    </ul>
 - version: 3.30.0
   date: '2026-10-21'
   tags:

@@ -1,3 +1,157 @@
+- version: 3.31.0
+  date: '2026-10-23'
+  tags:
+  - type: feature
+    label: 'RetroDB ist bereit für einen eigenen Spiele-Player'
+  - type: fix
+    label: 'Die Reiter im Museum wechseln wieder'
+  - type: fix
+    label: 'PlayStation-3-Spiele, die als Ordner gespeichert sind, lassen sich spielen'
+  - type: fix
+    label: 'Die Spalten von „Metadaten suchen“ stehen bündig, und das Fenster passt auf ein Handy'
+  - type: fix
+    label: 'Eine neue Installation unter Windows oder Mac benennt RetroArch-Cores richtig'
+  - type: fix
+    label: 'AI-Auffüllen gibt PC-Spielen einen PC-Speichertyp, keinen von einer Konsole'
+  - type: fix
+    label: 'Das Feld Spieler nimmt mehr als 16 an'
+  - type: fix
+    label: 'Die Einstellungsseite Emulatoren erscheint in Ihrer Sprache'
+  - type: ui
+    label: 'Der Screenshot-Betrachter zeigt beide Pfeile, jeden in seiner Schaltfläche'
+  - type: fix
+    label: 'Beim Verbinden mit PlayStation werden Sie zuerst zum Anmelden aufgefordert'
+  - type: feature
+    label: 'Die Bibliothek sortieren und nur nicht gescrapte Spiele anzeigen'
+  - type: ui
+    label: 'Ein Filter ohne Treffer sagt das auch'
+  - type: ui
+    label: 'Die Filterleiste der Bibliothek hält alles an seinem Platz'
+  - type: ui
+    label: 'Eine leere Bibliothek zeigt eine Begrüßung mit einer Scan-Schaltfläche'
+  - type: fix
+    label: 'Bibliothek scannen funktioniert auf der Seite Systeme und in den Einstellungen'
+  - type: ui
+    label: 'Der Einrichtungsassistent zeigt, bei welchem Schritt Sie sind und welche Schritte optional sind'
+  - type: feature
+    label: 'Die Bibliothek nach mehreren Genres, Reihen oder Publishern zugleich filtern'
+  body: |
+    <ul>
+      <li><strong>RetroDB ist bereit für einen eigenen Spiele-Player.</strong>
+        Für RetroDB entsteht ein Player auf Basis von RetroArch. Sobald er
+        da ist, startet RetroDB Spiele darin mit Einstellungen, die für jedes
+        Spiel gewählt sind, und behält Einstellungen, die Sie beim Spielen
+        ändern. Er legt seine Spielstände und Einstellungen in einem eigenen
+        Ordner ab, getrennt von Ihrem eigenen RetroArch. Er wählt den besten
+        Core für jede Konsole und lädt ihn beim ersten Druck auf Spielen
+        herunter; die Schaltfläche zeigt währenddessen „Core wird
+        heruntergeladen…“. Er spielt jede Konsole, die keinen funktionierenden
+        Emulator hat, und ersetzt nie einen, den Sie eingerichtet haben. Pro
+        Spiel können Sie einen anderen Core, den Bildschirmeffekt, die
+        ganzzahlige Skalierung und die Verringerung der Eingabeverzögerung
+        wählen. Admins können alle Cores auf einmal installieren oder
+        aktualisieren oder Downloads abschalten. Bis der Player installiert
+        ist, ändert sich nichts; bis dahin steht er nicht unter Einstellungen
+        &gt; Emulatoren.</li>
+      <li><strong>Die Reiter im Museum wechseln wieder.</strong> Auf der
+        Museumsseite einer Konsole bewirkte ein Klick auf Spezifikationen,
+        Top 10 Spiele oder Controller seit Version 3.30.0 nichts und zeigte
+        die Meldung „Unerwarteter Fehler“. Jetzt öffnet sich jeder Reiter.</li>
+      <li><strong>PlayStation-3-Spiele, die als Ordner gespeichert sind,
+        lassen sich spielen.</strong> Ein PS3-Disc-Spiel ist meist ein Ordner,
+        der auf „.PS3“ endet. RetroDB verweigerte den Start und zeigte keine
+        Schaltfläche Spielen, weil es eine einzelne Datei erwartete. Jetzt
+        übergibt es den Ordner an den Emulator, so wie RPCS3 es erwartet.</li>
+      <li><strong>Die Spalten von „Metadaten suchen“ stehen bündig, und das
+        Fenster passt auf ein Handy.</strong> Eine Quelle mit mehr Treffern,
+        als Platz hatten, bekam eine Bildlaufleiste. Das machte ihre Titel
+        schmaler, sodass derselbe Titel in einer Spalte umbrach und in der
+        nächsten nicht. Jetzt behält jede Spalte gleich viel Platz, mit einer
+        schmalen Bildlaufleiste im Stil des Themes. Auf einem Handy oder in
+        einem schmalen Fenster wurde das Suchfenster neben eine ausgeblendete
+        Seitenleiste gequetscht; jetzt füllt es den Bildschirm.</li>
+      <li><strong>Eine neue Installation unter Windows oder Mac benennt
+        RetroArch-Cores richtig.</strong> RetroDB richtete RetroArch überall
+        mit den Core-Dateinamen von Linux ein, sodass unter Windows und macOS
+        kein Core gefunden wurde. Eine neue Installation verwendet jetzt die
+        Namen des jeweiligen Computers. Eine bestehende Installation behält
+        ihre Namen; ändern Sie sie in der Zuordnungstabelle.</li>
+      <li><strong>Der Screenshot-Betrachter zeigt beide Pfeile, jeden in
+        seiner Schaltfläche.</strong> Die Seitenleiste verdeckte den linken
+        Pfeil, sodass Sie mit der Maus nicht zu einem früheren Screenshot
+        zurückkonnten. Der rechte Pfeil saß außerdem unter seiner
+        Schaltfläche. Jetzt sind beide zu sehen, mittig in ihren
+        Schaltflächen.</li>
+      <li><strong>Die Einstellungsseite Emulatoren erscheint in Ihrer
+        Sprache.</strong> Der Großteil von Einstellungen &gt; Emulatoren war
+        Englisch, egal welche Sprache Sie gewählt hatten: die Überschriften,
+        die Emulatortabelle, die Scan-Ergebnisse und das Fenster Emulator
+        bearbeiten. Jetzt ist alles übersetzt.</li>
+      <li><strong>Das Feld Spieler nimmt mehr als 16 an.</strong> Beide
+        Bearbeitungsfenster hörten bei 16 auf, sodass Sie die 256 Spieler von
+        MAG nicht eingeben konnten. Ein Spiel, dem ein Scraper mehr als 16
+        gegeben hatte, ließ sich gar nicht speichern, bis Sie die Zahl
+        senkten. Jetzt gibt es keine Obergrenze mehr.</li>
+      <li><strong>AI-Auffüllen gibt PC-Spielen einen PC-Speichertyp, keinen
+        von einer Konsole.</strong> Ein Windows-Spiel konnte „Memory Card“
+        erhalten, weil die AI seine Version für PlayStation 2 beschrieb.
+        Jetzt wird die AI angewiesen, die Ausgabe für die Plattform Ihres
+        Spiels zu beschreiben. PCs und Konsolen ab PlayStation 3 und Xbox 360
+        speichern im internen Speicher.</li>
+      <li>Um ein Spiel zu korrigieren, das schon einen falschen Speichertyp
+        hat, scrapen Sie es erneut oder führen Sie AI-Auffüllen aus. Beides
+        fragt die AI erneut und ersetzt den alten Wert.</li>
+      <li><strong>Beim Verbinden mit PlayStation werden Sie zuerst zum
+        Anmelden aufgefordert.</strong> Unter Einstellungen &gt; Konto &gt;
+        PSN zeigte die Sony-Kontoseite nur „Invalid login“, wenn Sie nicht
+        schon bei PlayStation angemeldet waren, und die Schritte sagten das
+        nicht. Schritt 1 hat jetzt eine Schaltfläche „Bei PlayStation
+        anmelden“, die Sie zuerst drücken.</li>
+      <li><strong>Die Bibliothek sortieren und nur nicht gescrapte Spiele
+        anzeigen.</strong> Die Bibliothek und jede Systemseite haben neben der
+        Spielanzahl ein Menü „Sortieren nach“: Name, neueste oder älteste
+        Veröffentlichung, Kritikerwertung, Nutzerwertung oder kürzlich
+        hinzugefügt. Spiele ohne Datum oder Wertung kommen zuletzt. Die
+        A–Z-Leiste funktioniert beim Sortieren nach Name und ist sonst
+        ausgegraut. Eine neue Schaltfläche „Nicht gescrapt“ zeigt nur die
+        Spiele, die noch kein Scraper ausgefüllt hat.</li>
+      <li><strong>Ein Filter ohne Treffer sagt das auch.</strong> Die Seite
+        blieb früher leer. Jetzt steht dort, dass keine Spiele passen, mit
+        einer Schaltfläche zum Löschen der Filter.</li>
+      <li><strong>Die Filterleiste der Bibliothek hält alles an seinem
+        Platz.</strong> Auswählen, Filtern oder Sortieren schob die Spiele
+        früher nach unten. Die Auswahlwerkzeuge erscheinen jetzt in einer
+        Leiste am unteren Fensterrand. Löschen ist immer da und ausgegraut,
+        bis ein Filter aktiv ist. Aktive Filter stehen neben der Spielanzahl.
+        Aus „Bonus anzeigen“ wird „Bonus-Discs“, hervorgehoben, wenn es an
+        ist. Auf einem Handy öffnen sich die Filterschaltflächen über eine
+        Schaltfläche Filter über der Seite.</li>
+      <li><strong>Eine leere Bibliothek zeigt eine Begrüßung mit einer
+        Scan-Schaltfläche.</strong> Eine neue Installation zeigte früher eine
+        Gesundheitswertung, die bei 0% hing, und eine leere Bibliothek. Beide
+        Seiten sagen jetzt, dass die Bibliothek leer ist, und bieten eine
+        Schaltfläche „Bibliothek scannen“ an. Das Dashboard verlinkt außerdem
+        auf die Einstellung für den ROM-Ordner. Nutzer ohne Admin-Rechte
+        werden gebeten, einen Admin zu fragen. Zufälliges Spiel ist
+        ausgeblendet, bis es Spiele zur Auswahl gibt.</li>
+      <li><strong>Bibliothek scannen funktioniert auf der Seite Systeme und
+        in den Einstellungen.</strong> Diese beiden Schaltflächen „Bibliothek
+        scannen“ taten beim Drücken nichts. Nur die im Dashboard
+        funktionierte. Die Schaltfläche „Bibliothek scannen“ im Dashboard
+        sehen jetzt nur Admins, denn nur sie dürfen scannen.</li>
+      <li><strong>Der Einrichtungsassistent zeigt, bei welchem Schritt Sie
+        sind und welche Schritte optional sind.</strong> Er zeigt „Schritt 3
+        von 6“, nummeriert jeden Schritt, hakt die erledigten ab und
+        kennzeichnet ES-DE und API-Schlüssel als optional. Auf einem Handy
+        zeigt er die Nummern und den Namen des aktuellen Schritts.</li>
+      <li><strong>Die Bibliothek nach mehreren Genres, Reihen oder Publishern
+        zugleich filtern.</strong> In den Filtern Genre, Reihe, Publisher,
+        Entwickler, Spielmodi, Perspektive und Dimension haken Sie so viele
+        Werte an, wie Sie möchten, und drücken Anwenden: Ein Spiel erscheint,
+        wenn es einen davon hat. Stellen Sie das Fenster auf IST NICHT, um
+        Spiele auszublenden, die einen der angehakten Werte haben. Jeder Wert
+        bekommt ein eigenes Etikett, und sein ✕ entfernt nur diesen Wert.</li>
+    </ul>
 - version: 3.30.0
   date: '2026-10-21'
   tags:

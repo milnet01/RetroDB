@@ -1,3 +1,153 @@
+- version: 3.31.0
+  date: '2026-10-23'
+  tags:
+  - type: feature
+    label: RetroDB jest gotowy na własny odtwarzacz gier
+  - type: fix
+    label: Karty Muzeum znów się przełączają
+  - type: fix
+    label: Gry na PlayStation 3 zapisane jako folder można uruchomić
+  - type: fix
+    label: Kolumny okna Szukaj metadanych są wyrównane, a okno mieści się na telefonie
+  - type: fix
+    label: Nowa instalacja na Windows lub Mac poprawnie nazywa rdzenie RetroArch
+  - type: fix
+    label: Uzupełnianie AI daje grom na PC typ zapisu PC, a nie konsolowy
+  - type: fix
+    label: Pole Gracze przyjmuje więcej niż 16
+  - type: fix
+    label: Strona ustawień Emulatory wyświetla się w Twoim języku
+  - type: ui
+    label: Przeglądarka zrzutów ekranu pokazuje obie strzałki, każdą w jej przycisku
+  - type: fix
+    label: Łączenie z PlayStation mówi, że najpierw trzeba się zalogować
+  - type: feature
+    label: Sortuj Bibliotekę i pokazuj tylko gry bez pobranych danych
+  - type: ui
+    label: Filtr bez wyników mówi o tym
+  - type: ui
+    label: Pasek filtrów Biblioteki trzyma wszystko na swoim miejscu
+  - type: ui
+    label: Pusta biblioteka pokazuje powitanie z przyciskiem Skanuj
+  - type: fix
+    label: Skanuj bibliotekę działa na stronie Systemy i w Ustawieniach
+  - type: ui
+    label: Kreator konfiguracji pokazuje, na którym kroku jesteś i które kroki są opcjonalne
+  - type: feature
+    label: Filtruj Bibliotekę według kilku gatunków, serii lub wydawców naraz
+  body: |
+    <ul>
+      <li><strong>RetroDB jest gotowy na własny odtwarzacz gier.</strong>
+        Powstaje odtwarzacz dla RetroDB oparty na RetroArch. Gdy będzie
+        gotowy, RetroDB będzie uruchamiać w nim gry z ustawieniami dobranymi
+        dla każdej gry i zachowa ustawienia, które zmienisz podczas gry.
+        Odtwarzacz będzie trzymać zapisy i ustawienia we własnym folderze,
+        osobno od Twojego RetroArch. Wybiera najlepszy rdzeń dla każdej
+        konsoli i pobiera go przy pierwszym naciśnięciu Graj; w tym czasie
+        przycisk pokazuje „Pobieranie rdzenia…”. Uruchamia każdą konsolę,
+        która nie ma działającego emulatora, i nigdy nie zastępuje
+        emulatora, który skonfigurowałeś. Dla każdej gry możesz wybrać inny
+        rdzeń, efekt ekranu, skalowanie całkowite i redukcję opóźnienia
+        sterowania. Administratorzy mogą zainstalować lub zaktualizować
+        wszystkie rdzenie naraz albo wyłączyć pobieranie. Nic się nie
+        zmienia, dopóki odtwarzacz nie zostanie zainstalowany; do tego czasu
+        nie ma go w Ustawienia &gt; Emulatory.</li>
+      <li><strong>Karty Muzeum znów się przełączają.</strong> Na stronie
+        Muzeum konsoli kliknięcie Specyfikacje, 10 najlepszych gier lub
+        Kontrolery nic nie robiło i pokazywało komunikat „Nieoczekiwany
+        błąd”, od wersji 3.30.0. Teraz każda karta się otwiera.</li>
+      <li><strong>Gry na PlayStation 3 zapisane jako folder można
+        uruchomić.</strong> Gra z płyty PS3 to zwykle folder z końcówką
+        „.PS3”. RetroDB odmawiał jej uruchomienia i nie pokazywał przycisku
+        Graj, bo oczekiwał jednego pliku. Teraz przekazuje folder
+        emulatorowi, tak jak oczekuje RPCS3.</li>
+      <li><strong>Kolumny okna Szukaj metadanych są wyrównane, a okno mieści
+        się na telefonie.</strong> Źródło z większą liczbą wyników, niż się
+        mieściło, dostawało pasek przewijania, który zwężał jego tytuły, więc
+        ten sam tytuł łamał się w jednej kolumnie, a w następnej nie. Teraz
+        każda kolumna ma tyle samo miejsca, z cienkim paskiem przewijania w
+        stylu motywu. Na telefonie lub w wąskim oknie okno wyszukiwania było
+        ściśnięte obok ukrytego paska bocznego; teraz wypełnia ekran.</li>
+      <li><strong>Nowa instalacja na Windows lub Mac poprawnie nazywa rdzenie
+        RetroArch.</strong> RetroDB konfigurował RetroArch wszędzie z
+        linuksowymi nazwami plików rdzeni, więc na Windows i macOS nie
+        znajdowano żadnego rdzenia. Nowa instalacja używa teraz nazw
+        właściwych dla danego komputera. Istniejąca instalacja zachowuje
+        swoje nazwy; zmień je w tabeli przypisań.</li>
+      <li><strong>Przeglądarka zrzutów ekranu pokazuje obie strzałki, każdą w
+        jej przycisku.</strong> Pasek boczny zasłaniał lewą strzałkę, więc
+        nie dało się myszą wrócić do wcześniejszego zrzutu ekranu. Prawa
+        strzałka była też pod swoim przyciskiem. Teraz obie są widoczne,
+        wyśrodkowane w przyciskach.</li>
+      <li><strong>Strona ustawień Emulatory wyświetla się w Twoim
+        języku.</strong> Większość strony Ustawienia &gt; Emulatory była po
+        angielsku bez względu na wybrany język: nagłówki, tabela emulatorów,
+        wyniki skanowania i okno Edytuj emulator. Teraz wszystko jest
+        przetłumaczone.</li>
+      <li><strong>Pole Gracze przyjmuje więcej niż 16.</strong> Oba okna
+        edycji kończyły się na 16, więc nie dało się wpisać 256 graczy MAG.
+        Gry, której scraper przypisał więcej niż 16, nie dało się w ogóle
+        zapisać, dopóki nie zmniejszyłeś liczby. Teraz nie ma górnego
+        limitu.</li>
+      <li><strong>Uzupełnianie AI daje grom na PC typ zapisu PC, a nie
+        konsolowy.</strong> Gra na Windows mogła dostać „Karta pamięci”, bo
+        AI opisywała jej wersję na PlayStation 2. AI dostaje teraz
+        polecenie, by opisać wydanie na platformę Twojej gry. Komputery PC
+        oraz konsole od PlayStation 3 i Xbox 360 wzwyż zapisują w Pamięci
+        wewnętrznej.</li>
+      <li>Aby poprawić grę, która ma już zły typ zapisu, pobierz jej dane
+        ponownie albo uruchom Uzupełnianie AI. Oba sposoby pytają AI od nowa
+        i zastępują starą wartość.</li>
+      <li><strong>Łączenie z PlayStation mówi, że najpierw trzeba się
+        zalogować.</strong> W Ustawienia &gt; Konto &gt; PSN strona konta Sony
+        pokazywała tylko „Invalid login”, jeśli nie byłeś już zalogowany do
+        PlayStation, a kroki o tym nie mówiły. Krok 1 ma teraz przycisk
+        „Zaloguj się do PlayStation”, który trzeba nacisnąć najpierw.</li>
+      <li><strong>Sortuj Bibliotekę i pokazuj tylko gry bez pobranych
+        danych.</strong> Biblioteka i każda strona systemu mają menu Sortuj
+        według obok liczby gier: nazwa, najnowsze lub najstarsze wydanie,
+        ocena krytyków, ocena użytkowników albo ostatnio dodane. Gry bez daty
+        lub oceny są na końcu. Pasek A–Z działa przy sortowaniu według nazwy,
+        a w innych przypadkach jest wyszarzony. Nowy przycisk Bez pobranych
+        danych pokazuje tylko gry, których żaden scraper jeszcze nie
+        uzupełnił.</li>
+      <li><strong>Filtr bez wyników mówi o tym.</strong> Strona była wtedy
+        pusta. Teraz mówi, że żadna gra nie pasuje, i ma przycisk do
+        wyczyszczenia filtrów.</li>
+      <li><strong>Pasek filtrów Biblioteki trzyma wszystko na swoim
+        miejscu.</strong> Naciśnięcie Wybierz, filtrowanie czy sortowanie
+        spychało gry w dół strony. Narzędzia zaznaczania pojawiają się teraz
+        na pasku u dołu okna. Wyczyść jest zawsze widoczny, wyszarzony, dopóki
+        nie włączysz filtra. Aktywne filtry są widoczne obok liczby gier.
+        „Pokaż bonusy” to teraz „Płyty bonusowe”, podświetlone, gdy są
+        włączone. Na telefonie przyciski filtrów otwierają się z jednego
+        przycisku Filtry nad stroną.</li>
+      <li><strong>Pusta biblioteka pokazuje powitanie z przyciskiem
+        Skanuj.</strong> Nowa instalacja pokazywała wynik kondycji
+        zatrzymany na 0% i pustą Bibliotekę. Teraz obie strony mówią, że
+        biblioteka jest pusta, i oferują przycisk Skanuj bibliotekę. Panel
+        zawiera też odnośnik do ustawienia folderu ROM. Użytkownicy, którzy
+        nie są administratorami, dostają informację, by poprosić
+        administratora. Losowa gra jest ukryta, dopóki nie ma gier do
+        wyboru.</li>
+      <li><strong>Skanuj bibliotekę działa na stronie Systemy i w
+        Ustawieniach.</strong> Te dwa przyciski Skanuj bibliotekę nic nie
+        robiły po naciśnięciu. Działał tylko ten w Panelu. Sam przycisk
+        Skanuj bibliotekę w Panelu widzą teraz tylko administratorzy, jedyni
+        użytkownicy, którzy mogą skanować.</li>
+      <li><strong>Kreator konfiguracji pokazuje, na którym kroku jesteś i
+        które kroki są opcjonalne.</strong> Wyświetla „Krok 3 z 6”, numeruje
+        każdy krok, zaznacza te, które już przeszedłeś, i oznacza ES-DE oraz
+        Klucze API jako opcjonalne. Na telefonie pokazuje numery i nazwę
+        bieżącego kroku.</li>
+      <li><strong>Filtruj Bibliotekę według kilku gatunków, serii lub
+        wydawców naraz.</strong> W filtrach Gatunek, Seria, Wydawca,
+        Deweloper, Tryb gry, Perspektywa i Wymiar zaznacz dowolnie wiele
+        wartości i naciśnij Zastosuj: gra jest widoczna, jeśli ma którąkolwiek
+        z nich. Przełącz okno na NIE JEST, aby ukryć gry, które mają
+        którąkolwiek z zaznaczonych wartości. Każda wartość dostaje własny
+        znacznik, a jego ✕ usuwa tylko tę wartość.</li>
+    </ul>
 - version: 3.30.0
   date: '2026-10-21'
   tags:
