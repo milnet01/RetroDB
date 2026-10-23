@@ -18,12 +18,17 @@ const AllGamesController = (function() {
     let isLoading = false;
     let hasMore = true;
     const PER_PAGE = 100;
+    const ALPHABET_MIN_GAMES = 30;  // fewer games → no A–Z strip
 
     // Current filters (sent as query params)
     let filters = {};
 
     // Exclude filters (sent as not_* query params)
     let excludeFilters = {};
+
+    // PASS-53-2 — sort order (a GAME_SORTS key in services/game_query.py).
+    // Kept apart from `filters` so Clear filters leaves it alone.
+    let sortOrder = 'name';
 
     // Filter modal mode: false = IS (include), true = IS NOT (exclude)
     let filterModalExcludeMode = false;
@@ -232,6 +237,16 @@ const AllGamesController = (function() {
             });
         }
 
+        const sortSelect = document.getElementById('gamesSort');
+        if (sortSelect) {
+            sortSelect.addEventListener('change', () => {
+                clearLetterJump();
+                sortOrder = sortSelect.value;
+                updateAlphabetVisibility();
+                resetAndFetch();
+            });
+        }
+
         // Alphabet nav
         setupAlphabetNav();
 
@@ -263,7 +278,30 @@ const AllGamesController = (function() {
                 params.set('not_' + k, v);
             }
         }
+        if (sortOrder !== 'name') params.set('sort', sortOrder);
         return params.toString();
+    }
+
+    /** The A–Z strip jumps through a name-ordered grid; hide it for any
+     *  other sort, where letters are no longer grouped. */
+    function updateAlphabetVisibility() {
+        const nav = document.getElementById('alphabetNav');
+        if (!nav) return;
+        const show = sortOrder === 'name' && (window.TOTAL_GAMES || 0) >= ALPHABET_MIN_GAMES;
+        nav.style.display = show ? '' : 'none';
+    }
+
+    /** Show the "no games" panel, or hide it (show=false). Called only
+     *  once a fresh fetch has finished, never while one is in flight. */
+    function setEmptyState(show) {
+        const panel = document.getElementById('gamesEmpty');
+        if (!panel) return;
+        panel.style.display = show ? '' : 'none';
+        if (!show) return;
+        const filtered = hasActiveFilters();
+        document.getElementById('gamesEmptyFiltered').style.display = filtered ? '' : 'none';
+        document.getElementById('gamesEmptyNone').style.display = filtered ? 'none' : '';
+        document.getElementById('gamesEmptyClear').style.display = filtered ? '' : 'none';
     }
 
     async function fetchGames(page, append) {
@@ -295,6 +333,7 @@ const AllGamesController = (function() {
             hasMore = data.has_more;
 
             renderGames(data.games, append);
+            if (!append) setEmptyState(data.total === 0);
             loadedCount = append
                 ? loadedCount + data.games.length
                 : data.games.length;
@@ -322,6 +361,7 @@ const AllGamesController = (function() {
         hasMore = true;
         const grid = document.getElementById('gamesGrid');
         if (grid) grid.innerHTML = '';
+        setEmptyState(false);
         fetchGames(1, false);
         saveState();
         updateFilterDisplay();
@@ -898,6 +938,7 @@ const AllGamesController = (function() {
         // Reset RA and bonus button states
         document.querySelector('.ra-filter-btn')?.classList.remove('active');
         document.querySelector('.bonus-filter-btn')?.classList.remove('active');
+        document.querySelector('.unscraped-filter-btn')?.classList.remove('active');
         const bonusText = document.getElementById('bonusFilterText');
         if (bonusText) bonusText.textContent = t('Show Bonus');
 
@@ -936,21 +977,44 @@ const AllGamesController = (function() {
         resetAndFetch();
     }
 
+    function toggleUnscrapedFilter() {
+        clearLetterJump();
+        const btn = document.querySelector('.unscraped-filter-btn');
+        if (filters.unscraped === '1') {
+            delete filters.unscraped;
+            btn?.classList.remove('active');
+        } else {
+            filters.unscraped = '1';
+            btn?.classList.add('active');
+        }
+        resetAndFetch();
+    }
+
+    // Filters with their own toggle button (or implicit), so no tag is drawn
+    function displayedFilters() {
+        const hiddenKeys = ['show_bonus', 'ra_only', 'unscraped', 'letter'];
+        if (cfg.systemId) hiddenKeys.push('system');
+        return Object.entries(filters).filter(([k]) => !hiddenKeys.includes(k));
+    }
+
+    /** True when anything the user chose changes the grid. The letter
+     *  jump counts unless `letter: false` (it is navigation, so the
+     *  filter bar's Clear button ignores it). */
+    function hasActiveFilters({ letter = true } = {}) {
+        return displayedFilters().length > 0
+            || Object.keys(excludeFilters).length > 0
+            || filters.ra_only === '1' || filters.show_bonus === '1'
+            || filters.unscraped === '1' || (letter && !!filters.letter);
+    }
+
     function updateFilterDisplay() {
         const container = document.getElementById('activeFilters');
         const tags = document.getElementById('activeFilterTags');
         const clearBtn = document.getElementById('clearFiltersBtn');
 
-        // Count meaningful filters (exclude show_bonus, ra_only, letter nav, and locked system which have their own buttons/are implicit)
-        const hiddenKeys = ['show_bonus', 'ra_only', 'letter'];
-        if (cfg.systemId) hiddenKeys.push('system');
-        const displayFilters = Object.entries(filters).filter(
-            ([k]) => !hiddenKeys.includes(k)
-        );
+        const displayFilters = displayedFilters();
         const displayExcludeFilters = Object.entries(excludeFilters);
-        const hasRA = filters.ra_only === '1';
-        const hasBonus = filters.show_bonus === '1';
-        const hasAny = displayFilters.length > 0 || displayExcludeFilters.length > 0 || hasRA || hasBonus;
+        const hasAny = hasActiveFilters({ letter: false });
 
         if (clearBtn) clearBtn.style.display = hasAny ? '' : 'none';
 
@@ -981,14 +1045,18 @@ const AllGamesController = (function() {
                     </span>`
                 ).join('');
 
-                if (hasRA) {
+                if (filters.ra_only === '1') {
                     html += `<span class="filter-tag ra-tag">&#127942; ${esc(t('Has Achievements'))}
                         <span class="filter-tag-remove" data-on-click="AllGamesController.toggleRAFilter">&#215;</span></span>`;
                 }
-                if (hasBonus) {
+                if (filters.show_bonus === '1') {
                     html += `<span class="filter-tag" style="background:rgba(168,85,247,0.15);border-color:#a855f7;color:#a855f7;">
                         &#127873; ${esc(t('Showing Bonus Discs'))}
                         <span class="filter-tag-remove" data-on-click="AllGamesController.toggleBonusDiscFilter">&#215;</span></span>`;
+                }
+                if (filters.unscraped === '1') {
+                    html += `<span class="filter-tag">&#128237; ${esc(t('Unscraped'))}
+                        <span class="filter-tag-remove" data-on-click="AllGamesController.toggleUnscrapedFilter">&#215;</span></span>`;
                 }
 
                 tags.innerHTML = html;
@@ -1008,7 +1076,7 @@ const AllGamesController = (function() {
 
         // Only show alphabet nav when there are enough games to warrant it
         const totalGames = window.TOTAL_GAMES || 0;
-        if (totalGames < 30) {
+        if (totalGames < ALPHABET_MIN_GAMES) {
             nav.style.display = 'none';
             return;
         }
@@ -1297,6 +1365,7 @@ const AllGamesController = (function() {
             sessionStorage.setItem(getStateKey(), JSON.stringify({
                 filters: filters,
                 excludeFilters: excludeFilters,
+                sort: sortOrder,
                 scrollY: window.scrollY
             }));
         } catch (e) { /* ignore */ }
@@ -1333,6 +1402,9 @@ const AllGamesController = (function() {
                 if (filters.ra_only === '1') {
                     document.querySelector('.ra-filter-btn')?.classList.add('active');
                 }
+                if (filters.unscraped === '1') {
+                    document.querySelector('.unscraped-filter-btn')?.classList.add('active');
+                }
                 if (filters.show_bonus === '1') {
                     document.querySelector('.bonus-filter-btn')?.classList.add('active');
                     const bt = document.getElementById('bonusFilterText');
@@ -1345,6 +1417,13 @@ const AllGamesController = (function() {
                 }
 
                 updateFilterDisplay();
+            }
+
+            if (state.sort) {
+                const ss = document.getElementById('gamesSort');
+                // An unknown saved value leaves the select on Name; follow it
+                if (ss) { ss.value = state.sort; sortOrder = ss.value || 'name'; ss.value = sortOrder; }
+                updateAlphabetVisibility();
             }
 
             // Restore scroll after data loads
@@ -1420,6 +1499,7 @@ const AllGamesController = (function() {
     window.clearFilters = () => clearFilters();
     window.toggleRAFilter = () => toggleRAFilter();
     window.toggleBonusDiscFilter = () => toggleBonusDiscFilter();
+    window.toggleUnscrapedFilter = () => toggleUnscrapedFilter();
     window.clearSearch = () => {
         clearLetterJump();
         const si = document.getElementById('gameSearch');
@@ -1526,6 +1606,7 @@ const AllGamesController = (function() {
         removeExcludeFilter,
         toggleRAFilter,
         toggleBonusDiscFilter,
+        toggleUnscrapedFilter,
         toggleGameSelection,
         selectAllUnscraped,
         refreshCards,

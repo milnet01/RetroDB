@@ -131,3 +131,52 @@ class TestBuildGamesQuery:
         # SQL literal: ESCAPE '\' (single backslash — the LIKE escape char).
         assert f"g.{field} LIKE ? ESCAPE '\\'" in sql
         assert '%Value%' in vals
+
+
+class TestSortOrder:
+    """PASS-53-2 — the Library sort control. Runs the real SQL so the
+    order (missing values last, ties broken by name) is what is pinned,
+    not the text of the ORDER BY."""
+
+    @pytest.fixture
+    def db(self):
+        import sqlite3
+        conn = sqlite3.connect(':memory:')
+        conn.executescript("""
+            CREATE TABLE systems (id INTEGER PRIMARY KEY, system_type TEXT);
+            CREATE TABLE games (id INTEGER PRIMARY KEY, system_id INTEGER,
+                title TEXT, sort_title TEXT, is_bonus_disc INTEGER DEFAULT 0,
+                release_date TEXT, critic_score REAL, user_score REAL,
+                created_at TEXT);
+            INSERT INTO systems VALUES (1, 'Console');
+            INSERT INTO games (id, system_id, title, release_date, critic_score, user_score, created_at) VALUES
+                (1, 1, 'Bravo',   '1994-05-01', 70,   NULL, '2026-01-03'),
+                (2, 1, 'alpha',   '',           NULL, 90,   '2026-01-01'),
+                (3, 1, 'Charlie', '1991',       95,   60,   '2026-01-02'),
+                (4, 1, 'Delta',   NULL,         70,   60,   NULL);
+        """)
+        yield conn
+        conn.close()
+
+    def _ids(self, db, sort):
+        params = {'sort': sort} if sort is not None else {}
+        sql, vals = _build_games_query(params, ids_only=True, group_versions=False)
+        return [r[0] for r in db.execute(sql, vals)]
+
+    @pytest.mark.parametrize("sort, expected", [
+        (None,           [2, 1, 3, 4]),   # name, case-insensitive
+        ('name',         [2, 1, 3, 4]),
+        ('release_new',  [1, 3, 2, 4]),   # blank and NULL dates last
+        ('release_old',  [3, 1, 2, 4]),
+        ('critic_score', [3, 1, 4, 2]),   # tie at 70 broken by name
+        ('user_score',   [2, 3, 4, 1]),
+        ('added',        [1, 3, 2, 4]),   # newest first, no date last
+        ('bogus',        [2, 1, 3, 4]),   # unknown falls back to name
+        ('',             [2, 1, 3, 4]),
+    ])
+    def test_sort(self, db, sort, expected):
+        assert self._ids(db, sort) == expected
+
+    def test_data_query_uses_same_sort(self):
+        sql, _ = _build_games_query({'sort': 'critic_score'}, group_versions=False)
+        assert "g.critic_score DESC" in sql

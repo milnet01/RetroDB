@@ -165,6 +165,20 @@ VERSION_COLUMNS = """g.version_group_id,
                    END AS version_count"""
 
 
+# PASS-53-2 — the Library sort control's choices. A `sort` param not in this
+# map falls back to 'name'. Missing dates and scores sort last; `g.id` breaks
+# ties so LIMIT/OFFSET pages never repeat or skip a game.
+_NAME_ORDER = "COALESCE(g.sort_title, g.title) COLLATE NOCASE"
+GAME_SORTS = {
+    'name': f"{_NAME_ORDER}, g.id",
+    'release_new': f"NULLIF(g.release_date, '') IS NULL, NULLIF(g.release_date, '') DESC, {_NAME_ORDER}, g.id",
+    'release_old': f"NULLIF(g.release_date, '') IS NULL, NULLIF(g.release_date, '') ASC, {_NAME_ORDER}, g.id",
+    'critic_score': f"g.critic_score IS NULL, g.critic_score DESC, {_NAME_ORDER}, g.id",
+    'user_score': f"g.user_score IS NULL, g.user_score DESC, {_NAME_ORDER}, g.id",
+    'added': "g.created_at IS NULL, g.created_at DESC, g.id DESC",
+}
+
+
 def _build_games_query(params, count_only=False, ids_only=False, user_id=None,
                        group_versions=True):
     """Build dynamic WHERE clause for game queries from filter params.
@@ -294,10 +308,12 @@ def _build_games_query(params, count_only=False, ids_only=False, user_id=None,
             ) WHERE version_rank = 1)"""
         values = [*rank_values, *values]
 
+    order_by = GAME_SORTS.get(params.get('sort'), GAME_SORTS['name'])
+
     if count_only:
         sql = f"SELECT COUNT(*) as total FROM games g JOIN systems s ON g.system_id = s.id WHERE {where}"
     elif ids_only:
-        sql = f"SELECT g.id FROM games g JOIN systems s ON g.system_id = s.id WHERE {where} ORDER BY COALESCE(g.sort_title, g.title) COLLATE NOCASE"
+        sql = f"SELECT g.id FROM games g JOIN systems s ON g.system_id = s.id WHERE {where} ORDER BY {order_by}"
     else:
         # Pass 31.1 / 31.2 — psn and gap joins scope by user_id when the
         # caller passes one, so each user sees only their own library
@@ -346,7 +362,7 @@ def _build_games_query(params, count_only=False, ids_only=False, user_id=None,
                 GROUP BY pg.linked_game_id
             ) psn ON psn.linked_game_id = g.id
             WHERE {where}
-            ORDER BY COALESCE(g.sort_title, g.title) COLLATE NOCASE
+            ORDER BY {order_by}
         """
         if user_id is not None:
             # gap JOIN and psn subquery each consume one user_id bind; both

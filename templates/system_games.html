@@ -112,6 +112,9 @@
         <button type="button" class="filter-btn ra-filter-btn" data-on-click="toggleRAFilter">
             <span class="filter-icon">🏆</span> {{ _('Has Achievements') }}
         </button>
+        <button type="button" class="filter-btn unscraped-filter-btn" data-on-click="toggleUnscrapedFilter" title="{{ _('Show only games that have not been scraped yet') }}">
+            <span class="filter-icon">📭</span> {{ _('Unscraped') }}
+        </button>
         <button type="button" class="filter-btn bonus-filter-btn" data-on-click="toggleBonusDiscFilter" title="{{ _('Show/hide bonus discs (hidden by default)') }}">
             <span class="filter-icon">🎁</span> <span id="bonusFilterText">{{ _('Show Bonus') }}</span>
         </button>
@@ -164,10 +167,30 @@
 <!-- Games Count -->
 <div class="games-count-bar">
     <span class="showing-text">{{ _('SHOWING') }} <span id="visibleCount">0</span> {{ _('OF') }} <span id="totalFilteredCount">{{ total_games|format_number }}</span> {{ _('GAMES') }}</span>
+    <label class="sort-control">
+        <span class="sort-label">{{ _('Sort by') }}</span>
+        <select id="gamesSort" class="sort-select">
+            <option value="name">{{ _('Name') }}</option>
+            <option value="release_new">{{ _('Newest release') }}</option>
+            <option value="release_old">{{ _('Oldest release') }}</option>
+            <option value="critic_score">{{ _('Critic score') }}</option>
+            <option value="user_score">{{ _('User score') }}</option>
+            <option value="added">{{ _('Recently added') }}</option>
+        </select>
+    </label>
 </div>
 
 <!-- Games Grid (populated by JS) -->
 <div class="games-grid-new" id="gamesGrid"></div>
+
+<!-- Empty state: shown by JS only once a fetch returns zero games -->
+<div class="empty-state" id="gamesEmpty" role="status" style="display: none;">
+    <div class="empty-state-title" id="gamesEmptyFiltered">{{ _('No games match these filters') }}</div>
+    <div class="empty-state-title" id="gamesEmptyNone">{{ _('No games here yet') }}</div>
+    <button type="button" class="filter-btn clear-btn" id="gamesEmptyClear" data-on-click="clearFilters">
+        <span class="filter-icon">✕</span> {{ _('Clear filters') }}
+    </button>
+</div>
 
 <!-- Loading Indicator -->
 <div id="gamesLoading" class="games-loading" style="text-align: center; padding: 3rem;">

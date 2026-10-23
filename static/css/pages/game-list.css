@@ -1596,6 +1596,39 @@
     font-weight: 600;
 }
 
+/* PASS-53-2 — Library sort control, right of the count */
+.sort-control {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.sort-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.sort-select {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background-color: var(--bg-light);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.sort-select:focus-visible {
+    outline: 2px solid var(--primary-cyan);
+    outline-offset: 1px;
+}
+
+#gamesEmpty .clear-btn {
+    display: inline-flex;
+    margin-top: var(--spacing-md);
+}
+
 /* =============================================================================
    FILTER MODAL
    ============================================================================= */

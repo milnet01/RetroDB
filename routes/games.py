@@ -153,10 +153,13 @@ def api_games():
     params = {k: request.args.get(k) for k in
               ('system', 'system_type', 'genre', 'franchise', 'developer',
                'publisher', 'modes', 'perspective', 'dimension', 'rating', 'source', 'search', 'letter',
-               'show_bonus', 'ra_only',
+               'show_bonus', 'ra_only', 'sort',
                'not_genre', 'not_franchise', 'not_developer', 'not_publisher',
                'not_modes', 'not_perspective', 'not_dimension', 'not_rating')
               if request.args.get(k)}
+    # PASS-53-2 — the Unscraped filter button; same flag as /api/games/ids
+    if request.args.get('unscraped') == '1':
+        params['_unscraped'] = True
 
     # Count queries — PASS-59-106: `total` counts cards (one per version
     # group), `total_roms` every row, under the same filters.
