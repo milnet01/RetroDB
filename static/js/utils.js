@@ -900,6 +900,16 @@ const DateUtils = {
 
 const StickyScroll = {
     /**
+     * Where the first sticky bar stops: the `--sticky-top` CSS variable,
+     * the phone header's height where it shows, else 0 (PASS-59-165).
+     * @returns {number} Pixels
+     */
+    baseTop() {
+        return parseFloat(getComputedStyle(document.documentElement)
+            .getPropertyValue('--sticky-top')) || 0;
+    },
+
+    /**
      * Calculate the total height of stacked sticky navigation elements
      * that will be pinned above a given target when scrolled into view.
      * Uses each element's CSS `top` value + offsetHeight to correctly
@@ -908,7 +918,7 @@ const StickyScroll = {
      * @returns {number} Total sticky header height in pixels
      */
     getStickyOffset(targetEl) {
-        let maxBottom = 0;
+        let maxBottom = this.baseTop();
 
         document.querySelectorAll('[data-sticky-nav]').forEach(nav => {
             // Skip hidden elements (e.g. inside inactive tab panels)
@@ -963,12 +973,12 @@ const StickyScroll = {
     /**
      * Dynamically set CSS `top` values on all visible [data-sticky-nav]
      * elements so they stack without overlapping.  Processes elements in
-     * document order: the first gets top:0, each subsequent one sits
+     * document order: the first gets baseTop(), each subsequent one sits
      * directly below the previous.
      * Call on DOMContentLoaded and after tab/panel switches.
      */
     stackPositions() {
-        let runningTop = 0;
+        let runningTop = this.baseTop();
 
         document.querySelectorAll('[data-sticky-nav]').forEach(nav => {
             // Skip hidden elements (e.g. inside inactive tab panels)

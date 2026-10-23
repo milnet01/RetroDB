@@ -334,7 +334,7 @@
     border-radius: var(--radius-lg);
     margin-bottom: var(--spacing-lg);
     position: sticky;
-    top: 0;
+    top: var(--sticky-top);
     z-index: 100;
     background: color-mix(in srgb, var(--bg-medium) 92%, transparent);
     backdrop-filter: blur(12px);
@@ -804,7 +804,7 @@
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     position: sticky;
-    top: 80px;
+    top: calc(var(--sticky-top) + 80px);
     z-index: 99;
 }
 

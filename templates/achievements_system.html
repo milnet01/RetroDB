@@ -667,7 +667,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const systemTabs = document.getElementById('systemTabs');
         const alphaNav = document.getElementById('alphabetNav');
         if (systemTabs && alphaNav) {
-            alphaNav.style.top = (systemTabs.offsetHeight + 4) + 'px';
+            alphaNav.style.top = (StickyScroll.baseTop() + systemTabs.offsetHeight + 4) + 'px';
         }
     }
 
@@ -689,7 +689,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const systemTabs = document.getElementById('systemTabs');
         const alphaNav = document.getElementById('alphabetNav');
         if (systemTabs && alphaNav) {
-            alphaNav.style.top = (systemTabs.offsetHeight + 4) + 'px';
+            alphaNav.style.top = (StickyScroll.baseTop() + systemTabs.offsetHeight + 4) + 'px';
         }
     }
 });
@@ -928,7 +928,7 @@ window.addEventListener('beforeunload', () => {
 
 /* Alphabet nav sits below sticky system tabs */
 .alphabet-nav {
-    top: 55px;
+    top: calc(var(--sticky-top) + 55px);
 }
 </style>
 {% endblock %}

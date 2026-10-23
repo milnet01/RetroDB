@@ -127,6 +127,7 @@ Moved to `.claude/rules/ratings.md`, which loads when a matching file is read. R
 - Adaptive layout (PASS-59-104): a page opts in with `{% set adaptive_layout = true %}` (same placement as `needs_games_bundle`) and wraps its content in an element with class `page-box`; the rules are `docs/RETRODB_DESIGN_STANDARDS.md` §7 "Page Width — adaptive".
 - Cache-busting: `build_css.py` / `build_js.py` write `static/asset_manifest.json` with SHA-256 prefixes. Reference assets via `{{ asset_url('js/core.bundle.js') }}` (Jinja global from `services/assets.py`). Fallback is `?v={APP_VERSION}`.
 - CSS rules: never duplicate external classes inline; use variables from `core/variables.css` (no hardcoded colors); promote any style used on 2+ pages to external CSS.
+- Sticky bars: a page-level `position: sticky` bar sets `top: var(--sticky-top)`, or `calc()` from it, never `top: 0`. On a phone the fixed header covers the top of the window (PASS-59-165). A header that sticks inside its own scrolling box keeps `top: 0`. Nothing checks this.
 
 ---
 

@@ -193,7 +193,7 @@
     scrollbar-color: var(--primary-cyan) transparent;
     /* Sticky positioning */
     position: sticky;
-    top: 0;
+    top: var(--sticky-top);
     z-index: 70;
     background: var(--bg-primary);
 }
@@ -273,7 +273,7 @@
 
 .tab-subnav.sticky-subnav {
     position: sticky;
-    top: 0;  /* Dynamically set by StickyScroll.stackPositions() */
+    top: var(--sticky-top);  /* Dynamically set by StickyScroll.stackPositions() */
     z-index: 60;  /* Higher than system-controllers-sticky-nav */
     background: linear-gradient(135deg, rgba(20, 26, 35, 0.98), rgba(15, 20, 25, 0.98));
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -334,7 +334,7 @@
 
 .system-controllers-sticky-nav {
     position: sticky;
-    top: 0;  /* Dynamically set by StickyScroll.stackPositions() */
+    top: var(--sticky-top);  /* Dynamically set by StickyScroll.stackPositions() */
     z-index: 50;
     display: flex;
     align-items: center;

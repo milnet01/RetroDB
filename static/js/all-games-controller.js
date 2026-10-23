@@ -1173,7 +1173,7 @@ const AllGamesController = (function() {
         const filterBar = document.querySelector('.filter-bar-new');
         if (filterBar && nav) {
             const updateNavTop = () => {
-                nav.style.top = filterBar.offsetHeight + 'px';
+                nav.style.top = (StickyScroll.baseTop() + filterBar.offsetHeight) + 'px';
             };
             requestAnimationFrame(() => {
                 requestAnimationFrame(updateNavTop);

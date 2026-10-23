@@ -9589,7 +9589,16 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.165 On a phone, the ROM Tools tab bar slides under the new top bar and covers the page text (FIX, S).
-- **Status**: todo
+- **Shipped 2026-10-23** (3.32.0): a `--sticky-top` CSS variable is 0
+  on desktop and the phone header's height at 992px and below. Every
+  page-level sticky bar uses it, and `StickyScroll` starts its stack
+  from it, as do the three alphabet-bar positioners. Checked in Firefox
+  at 500px: ROM Tools, Settings, Dashboard, Library, Analytics,
+  Systems, Logs, Help, Museum and Achievements bars all stop at the
+  header's bottom edge; Settings and Library stack below it. Desktop
+  stays at 0. Table headers and the file list header stick inside
+  their own scrolling boxes and are unchanged.
+- **Status**: done
 - **Seen 2026-10-23** (PASS-59-159 browser check, Firefox at its
   500px minimum): on /tools/versions and /tools/official-names, scrolled
   down, the `.tool-tabs` nav (`position: sticky; top: 0`, about 130px
@@ -9601,6 +9610,30 @@ were corrected in `2836bc3` and are not repeated here.
 - **Scope**: PASS-53-10 is in the open 3.32.0, so fix before it ships.
 - **Verify**: scroll each ROM Tools page at phone width; the tab bar
   stays fully below the top bar or stops being sticky there.
+
+---
+
+#### Pass 59.166 On an achievements system page, the console tabs scroll under the section tabs (FIX, S).
+- **Status**: todo
+- **Seen 2026-10-23** (Firefox, 500px, /achievements/system/8): the
+  `.tool-tabs.achievement-tabs` bar and the `.system-tabs` bar are both
+  sticky with the same `top`, so the second sits under the first when
+  scrolled. `.system-tabs` is also taller than the screen there when
+  its consoles wrap. Same at desktop before PASS-59-165 (both `top: 0`).
+- **Verify**: scroll the page at 500px and desktop; no bar covers another.
+
+---
+
+#### Pass 59.167 On a phone, some sticky filter bars fill a third or more of the screen (UX, S).
+- **Status**: todo
+- **Seen 2026-10-23** (Firefox, 500x900): sticky bar heights at phone
+  width were Library filter bar 273px plus alphabet bar 61px, Logs
+  toolbar 384px, Systems filter bar 199px, ROM Tools tabs 130px. With
+  the phone header and bottom bar, little page is left on a real phone.
+- **Plan**: decide per bar whether it stays sticky on a phone, or
+  collapses there.
+- **Verify**: scroll each page at phone width; the content keeps most
+  of the screen.
 
 ## Done index
 
