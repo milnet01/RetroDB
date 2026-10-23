@@ -7290,6 +7290,10 @@ were corrected in `2836bc3` and are not repeated here.
   build ever left the machine, and chose to rotate the token. Waiting on the
   user. The v3.23.12 bundle built today contains no `docs/` tree and no
   `psn-npsso` file.
+- **Progress** (2026-10-23): the user got a new token and saved it in
+  docs/psn-npsso.env. A session then printed that file, so the new
+  token is exposed in a conversation log. Get one more token, enter
+  it in Settings and in that file, then check the app signs in.
 
 ---
 
