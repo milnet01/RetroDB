@@ -34,7 +34,7 @@ from services.launch_resolver import keyboard_core, launch_checker, rom_launch_p
 from services.game_metadata_service import (
     build_game_card,
     apply_hybrid_metadata_to_game,
-    normalize_game_edit, cross_map_ratings,
+    normalize_game_edit, cross_map_ratings, edit_title_lock,
 )
 from services import apply_progress, upscale_queue
 
@@ -549,7 +549,8 @@ def game_detail(game_id):
                             screenshots = NULLIF(?, ''),
                             video = NULLIF(?, ''),
                             emulator_override_id = ?,
-                            launch_args_override = ?
+                            launch_args_override = ?,
+                            title_locked = ?
                         WHERE id = ?
                     """, (
                         title or game['title'],
@@ -561,6 +562,8 @@ def game_detail(game_id):
                         save_type, similar_games, edition, description,
                         boxart_filename, boxart_3d_filename, fanart_filename, screenshots, video_filename,
                         emulator_override_id, launch_args_override,
+                        edit_title_lock(game['title'], game['title_locked'], title,
+                                        request.form.get('edit_title_locked') == '1'),
                         game_id
                     ))
 
@@ -602,7 +605,7 @@ def game_detail(game_id):
                             scrape_history = NULL, critic_score = NULL, critic_score_count = NULL,
                             user_score = NULL, user_score_count = NULL,
                             hltb_match_name = NULL, hltb_match_platform = NULL, hltb_match_confidence = NULL,
-                            scraped = 0
+                            scraped = 0, title_locked = 0
                         WHERE id = ?
                     """, (game_id,))
 
@@ -847,6 +850,7 @@ def api_game_detail(game_id):
         game={
             'id': game['id'],
             'title': game['title'],
+            'title_locked': bool(game['title_locked']),
             'sort_title': game['sort_title'],
             'system_id': game['system_id'],
             'system_name': game['system_name'],
@@ -978,7 +982,7 @@ def api_game_edit(game_id):
     """Save game edits from modal"""
     data = request.get_json() or {}
 
-    game = query("SELECT id, title FROM games WHERE id = ?", (game_id,), one=True)
+    game = query("SELECT id, title, title_locked FROM games WHERE id = ?", (game_id,), one=True)
     if not game:
         return error(_('Game not found'), 404)
 
@@ -1008,6 +1012,12 @@ def api_game_edit(game_id):
         if field in normalized:
             updates.append(f"{field} = ?")
             values.append(normalized[field])
+    if 'title' in normalized or 'title_locked' in data:
+        keep = data.get('title_locked')
+        updates.append("title_locked = ?")
+        values.append(edit_title_lock(game['title'], game['title_locked'],
+                                      normalized.get('title'),
+                                      None if keep is None else bool(keep)))
 
     if not updates:
         return error(_('No fields to update'), 400)

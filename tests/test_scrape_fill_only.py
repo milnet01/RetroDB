@@ -53,7 +53,7 @@ def _make_conn_with_existing_row(**values):
             screenshots TEXT, fanart TEXT,
             critic_score REAL, critic_score_count INTEGER,
             user_score REAL, user_score_count INTEGER,
-            scraped INTEGER DEFAULT 0
+            scraped INTEGER DEFAULT 0, title_locked INTEGER NOT NULL DEFAULT 0
         )
     """)
     cols = ', '.join(values.keys())

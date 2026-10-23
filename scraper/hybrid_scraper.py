@@ -724,10 +724,11 @@ def _save_game_row(c, metadata, scrape_history_json, db_game_id):
     # try/except fallback — a failure here means the metadata dict and the
     # UPDATE bindings have diverged (new field in merger, no column), and
     # the scraper must fail loudly so the drift is caught in review.
+    # A locked title (PASS-59-159) is never written, in either mode.
     c.execute("""
         UPDATE games SET
-            title = COALESCE(?, title),
-            sort_title = COALESCE(?, sort_title),
+            title = CASE WHEN title_locked = 1 THEN title ELSE COALESCE(?, title) END,
+            sort_title = CASE WHEN title_locked = 1 THEN sort_title ELSE COALESCE(?, sort_title) END,
             publisher = COALESCE(?, publisher),
             developer = COALESCE(?, developer),
             release_date = COALESCE(?, release_date),

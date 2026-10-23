@@ -52,7 +52,7 @@ Two modes:
 Walk order:
 
 1. **Primary fetch** — `_pick_best_secondary` if the user picked from search results, else freshly fetched via the source-specific `fetch_*_extended` / `fetch_*_game_details`. Each primary dispatch is wrapped in `try / except` (Pass 41.4.B) so a malformed response from one provider falls through to gap-fill rather than aborting the whole hybrid apply.
-2. **Apply primary** — call the matching `apply_<src>_to_metadata(metadata, data, db_game_id, result, fill_only=False)` from `metadata_merger.py`. `fill_only=False` lets the primary overwrite `title` only (other fields stay fill-only across both modes).
+2. **Apply primary** — call the matching `apply_<src>_to_metadata(metadata, data, db_game_id, result, fill_only=False)` from `metadata_merger.py`. `fill_only=False` lets the primary overwrite `title` only (other fields stay fill-only across both modes), unless the title is locked (§ Title lock below).
 3. **Gap fill** — compute `missing = [k for k, v in metadata.items() if not v]`. Walk user priority (skipping primary, disabled sources, and sources already applied). When `restrict_to_selected=True`, fallback is further restricted to `secondary_sources` (plus AI); an empty list leaves AI alone. The game page's Apply sets it, passing only the results the user ticked (PASS-59-134). Each fallback for **TGDB, IGDB, RAWG, ScreenScraper, and AI** runs under the per-source circuit breaker (`_<src>_breaker` in `scraper_manager`) — five consecutive failures opens the breaker for 120 s. ES-DE has no breaker (see §11). Steam, Xbox and HLTB are not part of the fallback walk; RetroAchievements runs only as the tail step (6).
 4. **Post-merge passes** — region inference from filename (`extract_region_from_filename`), region single-value reduction (`_normalize_region`), save-type detection (`detect_save_type`), controller support detection (`detect_controller_support`), curated DB-default controller override (`get_system_default_controller_name`), rating normalize + cross-map + content-inference (`_normalize_ratings`), `players` integer-coercion via `re.findall(r'\d+', ...)` + `max(...)`, sort-title regeneration.
 5. **Single fill-only UPDATE** — one statement with `COALESCE(?, col)` on every column (see §5 for the exact SQL).
@@ -122,7 +122,7 @@ overwrite (because the user opted into AI fill).
 
 ```sql
 UPDATE games SET
-    title       = COALESCE(?, title),
+    title       = CASE WHEN title_locked = 1 THEN title ELSE COALESCE(?, title) END,
     publisher   = COALESCE(?, publisher),
     developer   = COALESCE(?, developer),
     release_date= COALESCE(?, release_date),
@@ -141,7 +141,9 @@ UPDATE games SET
 WHERE id = ?
 ```
 
-The hybrid orchestrator's UPDATE in `apply_hybrid_metadata` is the same pattern across ~40 columns (lines 1432-1520 in `hybrid_scraper.py`). The same pattern repeats in `scrape_igdb.apply_metadata_to_game` and `scrape_thegamesdb.apply_metadata_to_game`.
+The hybrid orchestrator's UPDATE (`hybrid_scraper.py::_save_game_row`) is the same pattern across ~40 columns. The same pattern repeats in `scrape_igdb.apply_metadata_to_game` and `scrape_thegamesdb.apply_metadata_to_game`.
+
+**Title lock** (PASS-59-159 §4.3). `games.title_locked = 1` means no scraper writes `title` or `sort_title`, in normal or Full Re-scrape mode. All four sites above write `title` as `CASE WHEN title_locked = 1 THEN title ELSE COALESCE(?, title) END`; `_save_game_row` writes `sort_title` the same way. Scrapers still search with a locked title. The edit windows set the lock when a title is changed, and their "Keep this title when scraping" tick box sets or clears it; the per-game Reset clears it. `tests/test_official_names.py` pins it.
 
 **Exception:** Full Re-scrape mode in `hybrid_scraper` (`force_overwrite=True`) intentionally bypasses fill-only — the user opted in. ES-DE in this mode still defers media deletion until a replacement is confirmed found.
 

@@ -27,6 +27,10 @@
                         <div class="edit-field">
                             <label for="edit_title">{{ _('Title') }}</label>
                             <input type="text" name="edit_title" id="edit_title" value="{{ game.title }}" />
+                            <label class="title-lock-check">
+                                <input type="checkbox" name="edit_title_locked" value="1" {% if game.title_locked %}checked{% endif %}>
+                                <span>{{ _('Keep this title when scraping') }}</span>
+                            </label>
                         </div>
                         <div class="edit-field">
                             <label for="edit_sort_title">{{ _('Sort Title') }}</label>

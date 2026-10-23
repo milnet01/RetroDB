@@ -338,6 +338,29 @@ select option {
     font-style: italic;
 }
 
+/* PASS-59-159 — "Keep this title when scraping", under the Title box in
+   both edit windows. Overrides the block, uppercase field-label styles. */
+.edit-field .title-lock-check,
+.gem-field .title-lock-check {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    margin: var(--spacing-xs) 0 0;
+    font-size: 0.8rem;
+    font-weight: normal;
+    color: var(--text-muted);
+    text-transform: none;
+    letter-spacing: normal;
+    cursor: pointer;
+}
+
+.edit-field .title-lock-check input,
+.gem-field .title-lock-check input {
+    width: auto;
+    padding: 0;
+    margin: 0;
+}
+
 .edit-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);

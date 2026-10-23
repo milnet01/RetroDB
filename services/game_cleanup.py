@@ -152,6 +152,8 @@ def preview_scraped_data(system_id=None):
 
 def clear_scraped_data(system_id=None, delete_images=False):
     """Null scraped metadata columns and reset titles to their filename forms.
+    A locked title (PASS-59-159) keeps its value: reset_game_title_from_filename
+    skips it.
 
     If `delete_images` is set, also remove every boxart/boxart_3d/screenshot/
     fanart/video/manual file linked from the affected games.

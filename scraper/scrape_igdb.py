@@ -693,7 +693,7 @@ def apply_metadata_to_game(db_game_id, igdb_data):
         # the IGDB response is empty for a field. Matches scrape_esde's pattern.
         c.execute("""
             UPDATE games SET
-                title = COALESCE(?, title),
+                title = CASE WHEN title_locked = 1 THEN title ELSE COALESCE(?, title) END,
                 publisher = COALESCE(?, publisher),
                 developer = COALESCE(?, developer),
                 release_date = COALESCE(?, release_date),

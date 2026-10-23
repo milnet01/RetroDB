@@ -1259,8 +1259,11 @@ def reset_game_title_from_filename(game_id, conn=None):
         game_id: Database ID of the game
         conn: Optional database connection (creates one if not provided)
     
+    A locked title (PASS-59-159) is left alone; the per-game Reset unlocks
+    the game before calling this.
+
     Returns:
-        The new title, or None if failed
+        The new title, or None if failed or the title is locked
     """
     from services.database import get_db
     
@@ -1302,13 +1305,14 @@ def reset_game_title_from_filename(game_id, conn=None):
             
             # Update the game
             cursor.execute("""
-                UPDATE games SET title = ?, sort_title = ? WHERE id = ?
+                UPDATE games SET title = ?, sort_title = ?
+                WHERE id = ? AND title_locked = 0
             """, (new_title, new_sort_title, game_id))
             
             if close_conn:
                 conn.commit()
             
-            return new_title
+            return new_title if cursor.rowcount else None
         
         return None
     finally:

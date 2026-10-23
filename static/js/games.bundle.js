@@ -1821,6 +1821,7 @@ const GameEditModal = {
         this.updateHltbDisplay(game);
 
         document.getElementById('gemTitle_field').value = game.title || '';
+        document.getElementById('gemTitleLocked').checked = !!game.title_locked;
         document.getElementById('gemSortTitle').value = game.sort_title || '';
         document.getElementById('gemFranchise').value = game.franchise || '';
         this.initFranchiseToggle(game.franchise || '');
@@ -1946,6 +1947,7 @@ const GameEditModal = {
 
         const formData = {
             title: document.getElementById('gemTitle_field').value.trim(),
+            title_locked: document.getElementById('gemTitleLocked').checked,
             sort_title: document.getElementById('gemSortTitle').value.trim(),
             franchise: document.getElementById('gemFranchise').value.trim(),
             similar_games: document.getElementById('gemSimilarGames').value.trim(),

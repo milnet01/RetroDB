@@ -159,6 +159,20 @@ def normalize_game_edit(payload):
     return out
 
 
+def edit_title_lock(stored_title, stored_locked, new_title, keep):
+    """The `title_locked` value an edit-window save writes (PASS-59-159 §4.3).
+
+    A title different from the stored one locks it, whatever the tick box
+    says. Otherwise the "Keep this title when scraping" box decides; `keep`
+    is None when the save did not send it, and the stored value stays.
+    """
+    if new_title and new_title != stored_title:
+        return 1
+    if keep is None:
+        return 1 if stored_locked else 0
+    return 1 if keep else 0
+
+
 def import_source_for_rom_path(rom_path):
     """Classify a ROM path's import provenance.
 

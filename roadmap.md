@@ -9558,6 +9558,24 @@ were corrected in `2836bc3` and are not repeated here.
   clear.
 - **Scope** (user, 2026-10-23): joins the open 3.32.0 release.
 
+---
+
+#### Pass 59.164 The game page's edit window cannot be saved when the release date is a year only (FIX, S).
+- **Status**: todo
+- **Seen 2026-10-23** (PASS-59-159 browser check, scratch copy of the
+  library): game 1's `release_date` is `1985`. The game page's edit
+  form's `edit_release_date` input has `pattern="\d{4}-\d{2}-\d{2}"`,
+  so the browser blocks the submit; no POST reaches the server. 841
+  games in the user's library have a year-only date.
+- **Not checked**: whether the Library pop-up (`/api/game/<id>/edit`)
+  accepts a year, and what `normalize_game_edit`'s release_date
+  validation allows.
+- **Plan**: make the form accept what the stored data and the server's
+  validation accept (year, year-month, full date), one rule for both
+  edit windows.
+- **Verify**: save a year-only game from the game page; a test on the
+  shared validation.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history

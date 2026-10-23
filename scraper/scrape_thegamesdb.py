@@ -947,7 +947,7 @@ def apply_metadata_to_game(db_game_id, tgdb_data):
         modes_str = modes_from_player_count(players) or None
         c.execute("""
             UPDATE games SET
-                title = COALESCE(?, title),
+                title = CASE WHEN title_locked = 1 THEN title ELSE COALESCE(?, title) END,
                 publisher = COALESCE(?, publisher),
                 developer = COALESCE(?, developer),
                 release_date = COALESCE(?, release_date),

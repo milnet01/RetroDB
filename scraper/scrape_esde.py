@@ -1161,7 +1161,7 @@ def apply_esde_metadata(db_game_id, game_data, system_folder=None, existing_boxa
         # Update database - use COALESCE to preserve existing data if new data is empty
         c.execute("""
             UPDATE games SET
-                title = COALESCE(?, title),
+                title = CASE WHEN title_locked = 1 THEN title ELSE COALESCE(?, title) END,
                 publisher = COALESCE(?, publisher),
                 developer = COALESCE(?, developer),
                 release_date = COALESCE(?, release_date),

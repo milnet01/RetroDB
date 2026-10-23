@@ -536,6 +536,7 @@ your migration — not in the runner.
 | 018 | `018_standalone_settings.py` | Add `games.disc_serial`, `games.disc_crc`; create `emulator_setting_choices` and `emulator_written_settings`; move the seeded DuckStation and PCSX2 `args_template` onto `{fullscreen_flag}`. | PASS-59-91 §4.6. Additive. A trigger clears both disc ids when `rom_path` changes. The template moves only where it still equals the old seed exactly. |
 | 019 | `019_pending_upscales.py` | Create `pending_upscales` (`game_id` primary key, `queued_at`). | PASS-59-130; `image-pipeline.md` §5.1. Additive. |
 | 020 | `020_player.py` | Add `emulators.is_player`; insert the bundled player's row (`RetroDB Player`, `retrodb-player`) with no `system_emulators` rows. | PASS-59-64 §4.4. Additive. The row's `args_template` is unused: the resolver builds the player's argv. |
+| 021 | `021_official_names.py` | Add `games.title_locked` (default 0); create `title_proposals`; trigger `trg_games_delete_title_proposal` removes a deleted game's proposal. | PASS-59-159 §4.1. Additive. |
 
 ---
 

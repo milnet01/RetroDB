@@ -50,7 +50,8 @@ def connection(tmp_path):
     db_path = tmp_path / 'test.db'
     conn = sqlite3.connect(str(db_path))
     cols_sql = ', '.join(f'{c} TEXT' for c in _COLUMNS)
-    conn.execute(f"CREATE TABLE games (id INTEGER PRIMARY KEY, {cols_sql}, scraped INTEGER DEFAULT 0)")
+    conn.execute(f"CREATE TABLE games (id INTEGER PRIMARY KEY, {cols_sql}, scraped INTEGER DEFAULT 0, "
+                 "title_locked INTEGER NOT NULL DEFAULT 0)")
     try:
         yield conn
     finally:
