@@ -8403,6 +8403,8 @@ were corrected in `2836bc3` and are not repeated here.
      folder), then PASS-59-155 (cheats).
   5b. Turnable 3D box art (user, 2026-10-23): PASS-59-142 (import
      Slipcase box faces), then PASS-59-143 (the 3D viewer).
+  5c. Use everything the scrapers offer (user, 2026-10-23): PASS-59-162
+     investigation; the user picks which findings ship in v4.0.0.
   6. Stricter browser security: PASS-60-1, after the template changes
      above, so inline scripts move once.
   7. Fully translated: PASS-52-1, PASS-59-109, PASS-57-6, PASS-59-93,
@@ -9455,6 +9457,54 @@ were corrected in `2836bc3` and are not repeated here.
   that contain a comma themselves before choosing.
 - **Verify**: count of `?genre=Action` equals the window's Action count
   under the same grouping; a test pins Action vs Action-Adventure.
+
+---
+
+#### Pass 59.161 Screenshots must come from the game's own system, never another platform's version (FEATURE, M).
+- **Status**: todo
+- **Request** (user, 2026-10-23): screenshots shown for a system must be
+  true to that system. Seen: screenshots from a more colourful system
+  attached to ZX Spectrum games. The user knows ZX Spectrum and C64
+  graphics well and will judge the result.
+- **Likely cause** (read 2026-10-23): IGDB (scraper/scrape_igdb.py,
+  `screenshots.url`) and RAWG (scraper/scrape_rawg.py,
+  `games/{id}/screenshots`) return screenshots per game, not per
+  platform, so a multi-platform game gets every version's pictures.
+  ScreenScraper (per ROM system), TheGamesDB (per-platform entries) and
+  ES-DE (local files) are tied to one platform.
+- **Plan**:
+  1. Take screenshots only from platform-tied sources (ScreenScraper,
+     TheGamesDB, ES-DE). Use IGDB/RAWG shots only when that game exists
+     on this one platform alone.
+  2. A check for fixed-palette systems: every pixel of a real shot
+     falls near the system's own palette (ZX Spectrum 15 colours with
+     its attribute-cell limit, C64 16, Game Boy 4 shades, and so on)
+     and the image has the system's native shape (ZX 256x192 plus
+     border, C64 320x200 plus border). A shot that fails is refused.
+  3. A review screen for screenshots already in the library that fail
+     the check, with remove: the user decides, nothing is deleted
+     silently.
+- **Verify**: re-scrape a ZX Spectrum game also released on C64 and
+  Amiga: only Spectrum screenshots land; a C64 shot fed to the check is
+  refused; the review screen lists existing wrong shots.
+- **Source**: user, 2026-10-23.
+
+---
+
+#### Pass 59.162 Investigate what each scraper offers that RetroDB does not use yet (INVESTIGATE, M).
+- **Status**: todo
+- **Request** (user, 2026-10-23, for v4.0.0): scrapers may offer more
+  than RetroDB uses; check whether we use everything each one offers.
+- **Scope**: every source in scraper/ (ScreenScraper, IGDB, TheGamesDB,
+  RAWG, ES-DE, HLTB, RetroAchievements, the AI fill). For each: the
+  fields and media its API returns (from its documentation and a live
+  response), against what scraper/scrape_*.py reads and what the games
+  table stores.
+- **Output**: a table per source of unused fields and media, each with
+  what it would give a user, and the ones worth adding filed as their
+  own roadmap items for the user to choose from. Respect each API's
+  terms and rate limits.
+- **Source**: user, 2026-10-23.
 
 ## Done index
 
