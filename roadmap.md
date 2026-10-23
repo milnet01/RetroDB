@@ -8374,7 +8374,8 @@ were corrected in `2836bc3` and are not repeated here.
   3. One game, many versions: PASS-59-106, then PASS-59-107.
   4. Play out of the box: PASS-59-91 (remaining stages), PASS-59-81.
   5. Easier everyday use: PASS-53-1, PASS-53-2, PASS-53-7, PASS-53-8,
-     PASS-53-10, PASS-53-11.
+     PASS-53-10, PASS-53-11; then PASS-59-159 (AI official names,
+     added by the user 2026-10-23).
   6. Stricter browser security: PASS-60-1, after the template changes
      above, so inline scripts move once.
   7. Fully translated: PASS-52-1, PASS-59-109, PASS-57-6, PASS-59-93,
@@ -9393,7 +9394,8 @@ were corrected in `2836bc3` and are not repeated here.
   (services/version_groups.py SIGNALS), feed sort_title
   (generate_sort_title) and scraper matching. AI Fill sets no title
   today (scraper/scrape_ai.py). AI cost: batch many titles per call.
-- **Open**: whether this joins the v4.0.0 scope (PASS-59-113).
+- **Scope** (user, 2026-10-23): joins v4.0.0 (PASS-59-113), built
+  before the translation step so its review screen is translated too.
 
 ## Done index
 
