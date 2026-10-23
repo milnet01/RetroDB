@@ -654,7 +654,12 @@ message, so nothing flashes yet.
 - **Est.**: S — a targeted link in the failure message / toast.
 
 #### Pass 53.10 Mobile navigation: fixed header + bottom bar (UX, M)
-- **Status**: planned.
+- **Resolution** (2026-10-23): Shipped 2026-10-23 in 6b1d358 (v3.32.0). Fixed header (menu + search
+  button, at 992px and narrower), bottom bar Dashboard / Library /
+  Systems / Achievements (Achievements replaces Search, which moved to
+  the header), opaque slide-in sidebar over a dimmed page. Also fixed:
+  769-992px had no menu button.
+- **Status**: done.
 - **Problem**: on mobile the desktop sidebar simply slides in with all ~21 items
   (`base.html:257`, `main.js:246`), and the hamburger sits inside the content
   wrapper so it scrolls away with the page rather than staying fixed.
@@ -9392,7 +9397,11 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.157 At 375 px every table on Settings > Emulators scrolls sideways (LOW, S).
-- **Status**: todo
+- **Resolution** (2026-10-23): Shipped 2026-10-23 in 6b1d358 (v3.32.0). The three Emulators tables
+  use the new `stack-narrow` class (one card per row at 600px and
+  narrower). Verified in a 375px frame: no sideways scroll, all three
+  Settings buttons on screen, and one opened its panel.
+- **Status**: done
 - **Seen 2026-10-22** on the PASS-59-91 walk: each table is wider than
   a phone, so the row's Settings button sits off-screen.
 - **Where**: templates/_settings_tabs/emulators.html (or whichever
