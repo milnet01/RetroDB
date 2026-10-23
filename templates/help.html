@@ -641,7 +641,7 @@
         <h3>Starting a Bulk Scrape</h3>
         <ol>
             <li>Go to any System or Library page</li>
-            <li>Click <strong>"Select"</strong> to enter selection mode</li>
+            <li>Click <strong>"Select"</strong> to enter selection mode. The selection tools appear in a bar along the bottom of the window.</li>
             <li>Select games individually or use quick select:
                 <ul>
                     <li><strong>Select All</strong> &mdash; All visible games</li>
@@ -650,6 +650,7 @@
             </li>
             <li>Choose mode: <strong>Fill Missing</strong> or <strong>Full Re-scrape</strong></li>
             <li>Click <strong>"Scrape Selected"</strong></li>
+            <li>Click <strong>"Done"</strong> to leave selection mode</li>
         </ol>
 
         <h3>Controls</h3>
@@ -778,26 +779,32 @@
                 <tr><td><strong>Perspective</strong></td><td>First-Person, Top-Down, Isometric, Side-Scroller</td><td>Yes</td></tr>
                 <tr><td><strong>Dimension</strong></td><td>2D, 3D</td><td>Yes</td></tr>
                 <tr><td><strong>Rating</strong></td><td>Age rating (shows your preferred system)</td><td>No</td></tr>
-                <tr><td><strong>Has RA</strong></td><td>Games with RetroAchievements support</td><td>No</td></tr>
-                <tr><td><strong>Show Bonus</strong></td><td>Toggle bonus disc visibility</td><td>No</td></tr>
+                <tr><td><strong>Has Achievements</strong></td><td>Games with RetroAchievements support</td><td>No</td></tr>
+                <tr><td><strong>Unscraped</strong></td><td>Only games no scraper has filled in yet</td><td>No</td></tr>
+                <tr><td><strong>Bonus Discs</strong></td><td>Toggle bonus disc visibility</td><td>No</td></tr>
             </tbody>
         </table>
 
+        <p>A highlighted button is on. Active filters also show as tags beside the game count; click a tag's &times; to remove it. <strong>Clear</strong> removes them all. On a phone, the filter buttons open from the <strong>Filters</strong> button.</p>
+
         <h3>Sort Options</h3>
+        <p>Choose an order from <strong>Sort by</strong>, beside the game count:</p>
         <ul>
-            <li><strong>Title</strong> &mdash; Alphabetical by sort title (case-insensitive)</li>
-            <li><strong>Release Date</strong> &mdash; Chronological order (earliest first)</li>
-            <li><strong>Platform</strong> &mdash; Grouped by system name</li>
+            <li><strong>Name</strong> &mdash; Alphabetical by sort title (case-insensitive)</li>
+            <li><strong>Newest release</strong> / <strong>Oldest release</strong> &mdash; By release date</li>
+            <li><strong>Critic score</strong> / <strong>User score</strong> &mdash; Highest first</li>
+            <li><strong>Recently added</strong> &mdash; The games added to your library last come first</li>
         </ul>
+        <p>Games with no date or score come last. Clear keeps the sort you chose.</p>
 
         <h3>Alphabet Navigation</h3>
-        <p>Jump to games starting with a specific letter. Letters with no matching games are grayed out. Numbers and symbols are grouped under <strong>#</strong>.</p>
+        <p>Jump to games starting with a specific letter. Letters with no matching games are grayed out. Numbers and symbols are grouped under <strong>#</strong>. The bar works when sorting by name, and is grayed out for any other sort.</p>
 
         <h3>Infinite Scroll</h3>
         <p>Games load in batches of 100 as you scroll. New pages load automatically when you near the bottom. Changing filters or search instantly resets and reloads results.</p>
 
         <h3>State Persistence</h3>
-        <p>Your current filters, search term, and scroll position are saved in session storage. They are restored when you navigate back to the page or refresh.</p>
+        <p>Your current filters, search term, sort, and scroll position are saved in session storage. They are restored when you navigate back to the page or refresh.</p>
     </div>
 </section>
 
@@ -886,7 +893,7 @@
         <p>Set your preferred system in <strong>Settings &rarr; Library &rarr; Display</strong>. Official rating images are displayed on game cards, detail modals, and detail pages. Empty ratings are auto-filled from any available rating via maturity tier cross-mapping during scraping, AI Fill, and manual editing.</p>
 
         <h3>Bonus Discs</h3>
-        <p>RetroDB automatically detects bonus/extra discs (e.g. soundtrack CDs, extra content discs) and links them to their parent game. Bonus discs are hidden by default in the library &mdash; toggle <strong>"Show Bonus"</strong> in filters to display them. Linked bonus discs appear in the parent game's detail modal.</p>
+        <p>RetroDB automatically detects bonus/extra discs (e.g. soundtrack CDs, extra content discs) and links them to their parent game. Bonus discs are hidden by default in the library &mdash; toggle <strong>"Bonus Discs"</strong> in filters to display them. Linked bonus discs appear in the parent game's detail modal.</p>
 
         <h3>Regional Versions</h3>
         <p>When you own one game from several regions, link the versions and the Library shows them as one card with a &#127760; badge. The card opens and plays the version from your preferred region (<strong>Settings &rarr; Library &rarr; Default Region</strong>). The game page lists every version, compares them (release date, publisher, file size, revision, languages, scores, RetroAchievements) and links to each one. Editors can unlink a version there, or search the same system to link another. Editors can also press <strong>Summarise differences with AI</strong> for a list of known differences between the versions, such as censorship or removed content. It is marked AI-written and can be wrong; it needs an AI provider in <strong>Settings &rarr; Scraping</strong>. The page header counts games, with the number of ROMs beside it when the two differ.</p>

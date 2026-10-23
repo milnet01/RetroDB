@@ -436,6 +436,12 @@
     background: rgba(76, 201, 240, 0.1);
 }
 
+.filter-btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+    pointer-events: none;
+}
+
 .filter-btn.active {
     border-color: var(--primary-cyan);
     background: rgba(76, 201, 240, 0.2);
@@ -737,29 +743,22 @@
 }
 
 /* =============================================================================
-   ACTIVE FILTERS
+   ACTIVE FILTERS — tags sit in the count bar on one line and scroll
+   sideways when there are many (PASS-59-158: the bar never grows)
    ============================================================================= */
-
-.active-filters {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-md);
-    padding: var(--spacing-md);
-    background: rgba(76, 201, 240, 0.1);
-    border: 1px solid rgba(76, 201, 240, 0.3);
-    border-radius: var(--radius-md);
-    margin-bottom: var(--spacing-lg);
-}
-
-.active-filters-label {
-    color: var(--text-muted);
-    font-size: 0.85rem;
-}
 
 .active-filter-tags {
     display: flex;
     gap: var(--spacing-sm);
-    flex-wrap: wrap;
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: thin;
+}
+
+.active-filter-tags .filter-tag {
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 
 .filter-tag {
@@ -1580,12 +1579,15 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: var(--spacing-md);
+    min-height: 3rem;  /* holds a tag or the sort menu: the bar never grows */
     margin-bottom: var(--spacing-lg);
     padding: var(--spacing-sm) 0;
     border-bottom: 1px solid var(--card-border);
 }
 
 .showing-text {
+    flex-shrink: 0;
     font-size: 0.85rem;
     color: var(--text-muted);
     letter-spacing: 1px;
@@ -1627,6 +1629,40 @@
 #gamesEmpty .clear-btn {
     display: inline-flex;
     margin-top: var(--spacing-md);
+}
+
+/* PASS-59-158 — A–Z strip greys out in place under a non-name sort */
+.alphabet-nav.is-disabled {
+    opacity: 0.35;
+}
+
+/* PASS-59-158 — Select tools: stuck to the window's bottom edge while
+   selecting. It sits after the grid in the page, so showing it moves
+   nothing above. */
+.bulk-action-bar {
+    position: sticky;
+    bottom: var(--spacing-md);
+    z-index: 101;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    background: color-mix(in srgb, var(--bg-medium) 92%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.bulk-action-bar[hidden] {
+    display: none;
+}
+
+/* The Filters button exists for the phone layout only */
+.filters-toggle-btn {
+    display: none;
 }
 
 /* =============================================================================
@@ -1784,6 +1820,41 @@
     .filter-buttons {
         width: 100%;
         justify-content: flex-start;
+    }
+
+    /* PASS-59-158 — the filter buttons fold behind the Filters button
+       and open over the page below the panel, so nothing is pushed down */
+    .filters-toggle-btn {
+        display: flex;
+    }
+
+    .filter-bar-new .filter-buttons {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        margin-top: var(--spacing-xs);
+        padding: var(--spacing-md);
+        border: 1px solid var(--card-border);
+        border-radius: var(--radius-lg);
+        background: var(--bg-medium);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    }
+
+    .filter-bar-new.filters-open .filter-buttons {
+        display: flex;
+    }
+
+    /* Count + sort on one row, tags on a second row that is always there */
+    .games-count-bar {
+        flex-wrap: wrap;
+    }
+
+    .games-count-bar .active-filter-tags {
+        order: 3;
+        flex-basis: 100%;
+        min-height: 1.75rem;
     }
 
     .filter-btn {

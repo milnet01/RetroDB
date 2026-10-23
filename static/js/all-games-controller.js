@@ -255,6 +255,9 @@ const AllGamesController = (function() {
 
         // Restore state if available
         restoreState();
+        // Sets Clear's enabled state from `filters`; a browser can restore
+        // a stale `disabled` on reload, so the markup's value is not trusted.
+        updateFilterDisplay();
 
         // Load first page
         fetchGames(1, false);
@@ -282,13 +285,25 @@ const AllGamesController = (function() {
         return params.toString();
     }
 
-    /** The A–Z strip jumps through a name-ordered grid; hide it for any
-     *  other sort, where letters are no longer grouped. */
+    /** The A–Z strip jumps through a name-ordered grid, so under any other
+     *  sort it greys out in place (PASS-59-158: nothing moves). */
     function updateAlphabetVisibility() {
         const nav = document.getElementById('alphabetNav');
         if (!nav) return;
-        const show = sortOrder === 'name' && (window.TOTAL_GAMES || 0) >= ALPHABET_MIN_GAMES;
-        nav.style.display = show ? '' : 'none';
+        const off = sortOrder !== 'name';
+        nav.inert = off;
+        nav.classList.toggle('is-disabled', off);
+    }
+
+    /** Phone layout: the filter buttons fold behind one Filters button and
+     *  open over the page, not into it. */
+    function toggleFilterButtons(open) {
+        const bar = document.querySelector('.filter-bar-new');
+        const btn = document.getElementById('filtersToggleBtn');
+        if (!bar) return;
+        const isOpen = typeof open === 'boolean' ? open : !bar.classList.contains('filters-open');
+        bar.classList.toggle('filters-open', isOpen);
+        btn?.setAttribute('aria-expanded', String(isOpen));
     }
 
     /** Show the "no games" panel, or hide it (show=false). Called only
@@ -724,6 +739,7 @@ const AllGamesController = (function() {
     }
 
     function openFilterModal(filterType) {
+        toggleFilterButtons(false);
         const modal = document.getElementById('filterModal');
         const title = document.getElementById('filterModalTitle');
         const optionsEl = document.getElementById('filterOptions');
@@ -939,8 +955,6 @@ const AllGamesController = (function() {
         document.querySelector('.ra-filter-btn')?.classList.remove('active');
         document.querySelector('.bonus-filter-btn')?.classList.remove('active');
         document.querySelector('.unscraped-filter-btn')?.classList.remove('active');
-        const bonusText = document.getElementById('bonusFilterText');
-        if (bonusText) bonusText.textContent = t('Show Bonus');
 
         // Remove active alphabet button
         document.querySelectorAll('.alphabet-btn.active').forEach(b => b.classList.remove('active'));
@@ -964,15 +978,12 @@ const AllGamesController = (function() {
     function toggleBonusDiscFilter() {
         clearLetterJump();
         const btn = document.querySelector('.bonus-filter-btn');
-        const textEl = document.getElementById('bonusFilterText');
         if (filters.show_bonus === '1') {
             delete filters.show_bonus;
             btn?.classList.remove('active');
-            if (textEl) textEl.textContent = t('Show Bonus');
         } else {
             filters.show_bonus = '1';
             btn?.classList.add('active');
-            if (textEl) textEl.textContent = t('Hide Bonus');
         }
         resetAndFetch();
     }
@@ -1008,7 +1019,6 @@ const AllGamesController = (function() {
     }
 
     function updateFilterDisplay() {
-        const container = document.getElementById('activeFilters');
         const tags = document.getElementById('activeFilterTags');
         const clearBtn = document.getElementById('clearFiltersBtn');
 
@@ -1016,11 +1026,12 @@ const AllGamesController = (function() {
         const displayExcludeFilters = Object.entries(excludeFilters);
         const hasAny = hasActiveFilters({ letter: false });
 
-        if (clearBtn) clearBtn.style.display = hasAny ? '' : 'none';
+        // PASS-59-158 — Clear keeps its place, greyed out when there is
+        // nothing to clear; the tags sit in the one-line count bar.
+        if (clearBtn) clearBtn.disabled = !hasAny;
 
-        if (container && tags) {
+        if (tags) {
             if (hasAny) {
-                container.style.display = 'flex';
 
                 const icons = {
                     system: '&#128421;&#65039;', system_type: '&#128241;', genre: '&#127917;',
@@ -1061,7 +1072,7 @@ const AllGamesController = (function() {
 
                 tags.innerHTML = html;
             } else {
-                container.style.display = 'none';
+                tags.innerHTML = '';
             }
         }
     }
@@ -1181,34 +1192,21 @@ const AllGamesController = (function() {
         bulkMode = !bulkMode;
 
         const btn = document.getElementById('bulkModeBtn');
-        const text = document.getElementById('bulkModeText');
-        const selectAllBtn = document.getElementById('selectAllBtn');
-        const selectUnscrapedBtn = document.getElementById('selectUnscrapedBtn');
-        const bulkModeSelector = document.getElementById('bulkModeSelector');
-        const scrapeBtn = document.getElementById('bulkScrapeBtn');
-        const editBtn = document.getElementById('bulkEditBtn');
+        const bar = document.getElementById('bulkActionBar');
         const checkboxes = document.querySelectorAll('.bulk-select-checkbox');
         // The checkbox takes the Play button's corner while selecting.
         document.getElementById('gamesGrid')?.classList.toggle('bulk-mode', bulkMode);
 
+        // PASS-59-158 — the Select tools live in one bar stuck to the window's
+        // bottom edge, so the filter panel never changes size.
+        btn?.classList.toggle('active', bulkMode);
+        btn?.setAttribute('aria-pressed', String(bulkMode));
+        if (bar) bar.hidden = !bulkMode;
+
         if (bulkMode) {
-            btn?.classList.add('active');
-            if (text) text.textContent = t('Cancel');
             checkboxes.forEach(cb => cb.style.display = 'block');
-            if (selectAllBtn) selectAllBtn.style.display = 'flex';
-            if (selectUnscrapedBtn) selectUnscrapedBtn.style.display = 'flex';
-            if (bulkModeSelector) bulkModeSelector.style.display = 'flex';
-            if (scrapeBtn) scrapeBtn.style.display = 'flex';
-            if (editBtn) editBtn.style.display = 'flex';
         } else {
-            btn?.classList.remove('active');
-            if (text) text.textContent = t('Select');
             checkboxes.forEach(cb => cb.style.display = 'none');
-            if (selectAllBtn) selectAllBtn.style.display = 'none';
-            if (selectUnscrapedBtn) selectUnscrapedBtn.style.display = 'none';
-            if (bulkModeSelector) bulkModeSelector.style.display = 'none';
-            if (scrapeBtn) scrapeBtn.style.display = 'none';
-            if (editBtn) editBtn.style.display = 'none';
             selectedGames.clear();
             document.querySelectorAll('.game-card-wrapper.selected').forEach(w => w.classList.remove('selected'));
             document.querySelectorAll('.game-checkbox:checked').forEach(cb => { cb.checked = false; });
@@ -1407,8 +1405,6 @@ const AllGamesController = (function() {
                 }
                 if (filters.show_bonus === '1') {
                     document.querySelector('.bonus-filter-btn')?.classList.add('active');
-                    const bt = document.getElementById('bonusFilterText');
-                    if (bt) bt.textContent = t('Hide Bonus');
                 }
                 if (filters.letter) {
                     activeLetterJump = filters.letter;
@@ -1500,6 +1496,7 @@ const AllGamesController = (function() {
     window.toggleRAFilter = () => toggleRAFilter();
     window.toggleBonusDiscFilter = () => toggleBonusDiscFilter();
     window.toggleUnscrapedFilter = () => toggleUnscrapedFilter();
+    window.toggleFilterButtons = () => toggleFilterButtons();
     window.clearSearch = () => {
         clearLetterJump();
         const si = document.getElementById('gameSearch');
@@ -1528,6 +1525,8 @@ const AllGamesController = (function() {
     function _onFilterBackdropClick(e) {
         const modal = document.getElementById('filterModal');
         if (e.target === modal) closeFilterModal();
+        // A tap outside the filter panel closes the phone drop-down
+        if (!e.target.closest('.filter-bar-new')) toggleFilterButtons(false);
     }
     document.addEventListener('click', _onFilterBackdropClick);
 

@@ -49,39 +49,16 @@
         </button>
         {% endif %}
         <div class="bulk-controls">
-            <button type="button" class="filter-btn bulk-btn" data-on-click="toggleBulkMode" id="bulkModeBtn">
-                <span class="filter-icon">☑️</span> <span id="bulkModeText">{{ _('Select') }}</span>
+            <button type="button" class="filter-btn filters-toggle-btn" data-on-click="toggleFilterButtons" id="filtersToggleBtn" aria-expanded="false" aria-controls="filterButtons">
+                <span class="filter-icon">🎛️</span> {{ _('Filters') }}
             </button>
-            <button type="button" class="filter-btn bulk-action-btn" data-on-click="selectAllVisible" id="selectAllBtn" style="display: none;">
-                <span class="filter-icon">✅</span> {{ _('Select All') }}
-            </button>
-            <button type="button" class="filter-btn bulk-action-btn" data-on-click="selectAllUnscraped" id="selectUnscrapedBtn" style="display: none;">
-                <span class="filter-icon">📋</span> {{ _('Select Unscraped') }}
-            </button>
-            <div class="bulk-mode-selector" id="bulkModeSelector" style="display: none;">
-                <div class="scrape-mode-toggle">
-                    <span class="mode-label mode-off">🔄 {{ _('Full Re-scrape') }}</span>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="scrapeModeToggle" aria-label="{{ _('Toggle between full re-scrape and fill missing mode') }}" checked />
-                        <span class="toggle-slider"></span>
-                    </label>
-                    <span class="mode-label mode-on">📝 {{ _('Fill Missing') }}</span>
-                </div>
-                <label class="keep-media-option" title="{{ _('Full Re-scrape keeps the art, videos and manuals already downloaded instead of fetching them again') }}">
-                    <input type="checkbox" id="keepMediaToggle" />
-                    {{ _('Keep existing media') }}
-                </label>
-            </div>
-            <button type="button" class="filter-btn bulk-scrape-btn" data-on-click="startBulkScrape" id="bulkScrapeBtn" style="display: none;">
-                <span class="filter-icon">⬇️</span> {{ _('Scrape Selected') }} (<span id="selectedCount">0</span>)
-            </button>
-            <button type="button" class="filter-btn bulk-action-btn" data-on-click="startBulkEdit" id="bulkEditBtn" style="display: none;">
-                <span class="filter-icon">✏️</span> {{ _('Edit Selected') }} (<span id="selectedEditCount">0</span>)
+            <button type="button" class="filter-btn bulk-btn" data-on-click="toggleBulkMode" id="bulkModeBtn" aria-pressed="false">
+                <span class="filter-icon">☑️</span> {{ _('Select') }}
             </button>
         </div>
     </div>
 
-    <div class="filter-buttons">
+    <div class="filter-buttons" id="filterButtons">
         <button type="button" class="filter-btn" data-on-click="openFilterModal" data-args='["genre"]'>
             <span class="filter-icon">🎭</span> {{ _('Genre') }}
         </button>
@@ -116,18 +93,12 @@
             <span class="filter-icon">📭</span> {{ _('Unscraped') }}
         </button>
         <button type="button" class="filter-btn bonus-filter-btn" data-on-click="toggleBonusDiscFilter" title="{{ _('Show/hide bonus discs (hidden by default)') }}">
-            <span class="filter-icon">🎁</span> <span id="bonusFilterText">{{ _('Show Bonus') }}</span>
+            <span class="filter-icon">🎁</span> {{ _('Bonus Discs') }}
         </button>
-        <button type="button" class="filter-btn clear-btn" data-on-click="clearFilters" id="clearFiltersBtn" style="display: none;">
+        <button type="button" class="filter-btn clear-btn" data-on-click="clearFilters" id="clearFiltersBtn" disabled>
             <span class="filter-icon">✕</span> {{ _('Clear') }}
         </button>
     </div>
-</div>
-
-<!-- Active Filters Display -->
-<div class="active-filters" id="activeFilters" style="display: none;">
-    <span class="active-filters-label">{{ _('Active Filters:') }}</span>
-    <div class="active-filter-tags" id="activeFilterTags"></div>
 </div>
 
 <!-- Alphabet Jump Navigation -->
@@ -167,6 +138,7 @@
 <!-- Games Count -->
 <div class="games-count-bar">
     <span class="showing-text">{{ _('SHOWING') }} <span id="visibleCount">0</span> {{ _('OF') }} <span id="totalFilteredCount">{{ total_games|format_number }}</span> {{ _('GAMES') }}</span>
+    <div class="active-filter-tags" id="activeFilterTags" aria-label="{{ _('Active filters') }}"></div>
     <label class="sort-control">
         <span class="sort-label">{{ _('Sort by') }}</span>
         <select id="gamesSort" class="sort-select">
@@ -196,6 +168,40 @@
 <div id="gamesLoading" class="games-loading" style="text-align: center; padding: 3rem;">
     <div class="loading-spinner"></div>
     <p style="color: var(--text-muted); margin-top: 1rem;">{{ _('Loading games...') }}</p>
+</div>
+
+<!-- Select tools: sticks to the bottom of the window while selecting
+     (PASS-59-158), so nothing above it moves. -->
+<div class="bulk-action-bar glass-panel" id="bulkActionBar" role="toolbar" aria-label="{{ _('Selected games') }}" hidden>
+    <button type="button" class="filter-btn bulk-action-btn" data-on-click="selectAllVisible" id="selectAllBtn">
+        <span class="filter-icon">✅</span> {{ _('Select All') }}
+    </button>
+    <button type="button" class="filter-btn bulk-action-btn" data-on-click="selectAllUnscraped" id="selectUnscrapedBtn">
+        <span class="filter-icon">📋</span> {{ _('Select Unscraped') }}
+    </button>
+    <div class="bulk-mode-selector" id="bulkModeSelector">
+        <div class="scrape-mode-toggle">
+            <span class="mode-label mode-off">🔄 {{ _('Full Re-scrape') }}</span>
+            <label class="toggle-switch">
+                <input type="checkbox" id="scrapeModeToggle" aria-label="{{ _('Toggle between full re-scrape and fill missing mode') }}" checked />
+                <span class="toggle-slider"></span>
+            </label>
+            <span class="mode-label mode-on">📝 {{ _('Fill Missing') }}</span>
+        </div>
+        <label class="keep-media-option" title="{{ _('Full Re-scrape keeps the art, videos and manuals already downloaded instead of fetching them again') }}">
+            <input type="checkbox" id="keepMediaToggle" />
+            {{ _('Keep existing media') }}
+        </label>
+    </div>
+    <button type="button" class="filter-btn bulk-scrape-btn" data-on-click="startBulkScrape" id="bulkScrapeBtn">
+        <span class="filter-icon">⬇️</span> {{ _('Scrape Selected') }} (<span id="selectedCount">0</span>)
+    </button>
+    <button type="button" class="filter-btn bulk-action-btn" data-on-click="startBulkEdit" id="bulkEditBtn">
+        <span class="filter-icon">✏️</span> {{ _('Edit Selected') }} (<span id="selectedEditCount">0</span>)
+    </button>
+    <button type="button" class="filter-btn" data-on-click="toggleBulkMode">
+        <span class="filter-icon">✕</span> {{ _('Done') }}
+    </button>
 </div>
 
 <!-- Infinite Scroll Trigger -->
