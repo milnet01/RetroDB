@@ -9450,6 +9450,10 @@ were corrected in `2836bc3` and are not repeated here.
   today (scraper/scrape_ai.py). AI cost: batch many titles per call.
 - **Scope** (user, 2026-10-23): joins v4.0.0 (PASS-59-113), built
   before the translation step so its review screen is translated too.
+- **Spec** (2026-10-23): docs/specs/PASS-59-159-official-names.md.
+  User chose: accepted AI names and hand-typed titles survive every
+  scrape (a title lock); the AI tags the old title's region; a run
+  covers one system or all, in the background, from the review page.
 
 ---
 
@@ -9524,6 +9528,29 @@ were corrected in `2836bc3` and are not repeated here.
   own roadmap items for the user to choose from. Respect each API's
   terms and rate limits.
 - **Source**: user, 2026-10-23.
+
+---
+
+#### Pass 59.163 Clearing a game the image worker is processing leaves orphan image files (FIX, S).
+- **Status**: todo
+- **Seen 2026-10-23** (user question): the queue lists games, not
+  files; `services/upscale_queue.py::process_game` reads the game's
+  media columns when it starts. A cleared game left in the queue is
+  harmless: the worker finds no files and drops the row.
+- **Defect**: `services/image_utils.py::standardize_image` loads the
+  image, upscales (seconds with Real-ESRGAN), then `_save_image` writes
+  to the same path without checking the game still names it. A clear
+  (Maintenance bulk clear with delete_images, or the edit modal's
+  remove) in that window recreates the file, then
+  `_make_responsive_variants` writes its -sm/-md siblings: orphans.
+- **Plan**: before saving, `process_game` re-checks the game still
+  names the file (skip the save when not); `clear_scraped_data` and the
+  edit modal's media remove delete the game's `pending_upscales` row so
+  the "still processing" count is right.
+- **Verify**: a test that clears the game mid-process (stub the
+  upscale) and asserts no file is written; the row is gone after a
+  clear.
+- **Scope** (user, 2026-10-23): joins the open 3.32.0 release.
 
 ## Done index
 
