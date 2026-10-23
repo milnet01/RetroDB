@@ -87,9 +87,9 @@ BEGIN
 END;
 ```
 
-A trigger, not `ON DELETE CASCADE`: foreign keys are never switched on
-here, so cascade actions do nothing. `016_version_groups` uses
-triggers for the same reason (`trg_games_delete_version_rejections`).
+A trigger, not `ON DELETE CASCADE`, as `016_version_groups` does
+(`trg_games_delete_version_rejections`): it fires on every connection,
+whether or not that connection set `PRAGMA foreign_keys = ON`.
 
 Additive; existing rows get `title_locked = 0`. Accepted proposals are
 deleted, not kept: the change is recorded in `scrape_history` (§4.5).
