@@ -517,6 +517,9 @@ Resolved (2026-07-04, v3.17.0): find_missing_media_refs() + clear_missing_media_
   / full page. Keyboard-accessible (focus-trap primitive already exists).
 - **Est.**: M — a shared component + a lightweight suggest endpoint (or reuse
   `/api/games`).
+- **Decided** (user, 2026-10-23): the search box sits at the top of
+  the sidebar, under the logo, not in a new top bar; it finds games and
+  systems. On phones the PASS-53-10 header gets a button that opens it.
 
 #### Pass 53.2 Library grid: sort control + real empty state (UX, M)
 - **Resolution** (2026-10-23): Shipped 2026-10-23 in 3.31.0 (23d2425): Sort by menu (GAME_SORTS in
@@ -8394,6 +8397,8 @@ were corrected in `2836bc3` and are not repeated here.
      something bigger): PASS-59-139 (ship RetroArch, or at least a
      download link, set up next to RetroDB with its own settings
      folder), then PASS-59-155 (cheats).
+  5b. Turnable 3D box art (user, 2026-10-23): PASS-59-142 (import
+     Slipcase box faces), then PASS-59-143 (the 3D viewer).
   6. Stricter browser security: PASS-60-1, after the template changes
      above, so inline scripts move once.
   7. Fully translated: PASS-52-1, PASS-59-109, PASS-57-6, PASS-59-93,
