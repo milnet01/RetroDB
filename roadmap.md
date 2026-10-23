@@ -624,7 +624,11 @@ message, so nothing flashes yet.
 - **Est.**: S — an empty-branch in the dashboard + library templates.
 
 #### Pass 53.8 Setup wizard progress indicator + optional-step marking (UX, S)
-- **Status**: planned.
+- **Shipped** 2026-10-23 (8e2c5ea, in 3.31.0): "Step N of 6",
+  numbered tabs with ticks, ES-DE and API Keys marked Optional. The
+  bullet's premise was partly stale: the headings already said
+  "(Optional)" and a tab row existed; this added the rest.
+- **Status**: done.
 - **Problem**: the 6-step setup wizard (`setup.html`) navigates with bare
   "← Back / Next →" (`setup.html:119-145`) — no "Step 3 of 6" and no signal that
   the ES-DE and API-key steps are optional / skippable.
