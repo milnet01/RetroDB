@@ -393,7 +393,9 @@ def install(core: str) -> Path:
         if f'{crc:08x}' != line[1]:
             raise CoreInstallError(f'{name} failed its checksum')
         if not platform_utils.IS_WINDOWS:
-            os.chmod(tmp, 0o755)  # noqa: S103 — a core is a library the player must load
+            # A core is a library the player loads; the PASS-59-81 spec's
+            # install steps make it executable. 0o755 lets only the owner write.
+            os.chmod(tmp, 0o755)  # noqa: S103  # nosemgrep: python.lang.security.audit.insecure-file-permissions.insecure-file-permissions
         dest = cores / name
         os.replace(tmp, dest)
         tmp = None
