@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% set adaptive_layout = true %}
+{% from "_macros/nav_tabs.html" import rom_tool_tabs %}
+
+{% block title %}{{ _('Official Names') }} - RetroDB{% endblock %}
+
+{% block styles %}
+<style>
+/* PASS-59-159 — official names review list */
+/* .btn and the flex rows set a display that beats the hidden attribute. */
+#officialNamesReview [hidden] {
+    display: none;
+}
+
+.names-filter-row,
+.names-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    align-items: end;
+}
+
+.names-actions {
+    margin-top: var(--spacing-md);
+}
+
+.names-list {
+    list-style: none;
+    margin: var(--spacing-md) 0 0;
+    padding: 0;
+}
+
+.names-list li {
+    border-top: 1px solid var(--border-color);
+    padding: var(--spacing-sm) 0;
+}
+
+.names-list label {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: flex-start;
+    cursor: pointer;
+}
+
+.names-list input {
+    margin-top: 4px;
+}
+
+.names-change {
+    overflow-wrap: anywhere;
+}
+
+.names-new {
+    color: var(--neon-cyan);
+    font-weight: 600;
+}
+
+.names-meta {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    overflow-wrap: anywhere;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-box data-page" id="officialNamesReview">
+<div class="page-header">
+    <h1>🔧 {{ _('ROM Tools') }}</h1>
+    <p>{{ _('Manage, organize, and optimize your ROM collection.') }}</p>
+</div>
+
+{{ rom_tool_tabs('official_names') }}
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title"><span>🏷️</span> {{ _('Official Names') }}</h2>
+    </div>
+    <div class="card-body">
+        <p>{{ _("The AI suggests each game's full official name, as released in the region of its ROM: a Japanese ROM of Mega Man becomes Rockman. Tick the names you want and accept them. The old name is kept as an alternate title, and an accepted name is kept when scraping. Nothing changes until you accept it.") }}</p>
+        <div class="names-filter-row">
+            <div class="form-group">
+                <label for="namesSystem">{{ _('System') }}</label>
+                <select id="namesSystem" class="form-select">
+                    <option value="">{{ _('All systems') }}</option>
+                    {% for system in systems %}
+                    <option value="{{ system.id }}">{{ system.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="button" class="btn btn-primary" id="namesRunBtn">{{ _('Ask the AI') }}</button>
+            <button type="button" class="btn btn-secondary" id="namesCancelBtn" hidden>{{ _('Stop') }}</button>
+        </div>
+        <p id="namesRunStatus" class="text-muted" role="status" aria-live="polite"></p>
+
+        <h3>{{ _('Suggested names') }}</h3>
+        <p id="namesListStatus" class="text-muted" role="status" aria-live="polite"></p>
+        <div class="names-actions" id="namesActions" hidden>
+            <button type="button" class="btn btn-primary btn-sm" id="namesAcceptBtn">{{ _('Accept ticked') }}</button>
+            <button type="button" class="btn btn-secondary btn-sm" id="namesRejectBtn">{{ _('Reject ticked') }}</button>
+            <button type="button" class="btn btn-secondary btn-sm" id="namesTickAllBtn">{{ _('Tick all') }}</button>
+            <button type="button" class="btn btn-secondary btn-sm" id="namesTickNoneBtn">{{ _('Tick none') }}</button>
+        </div>
+        <ul id="namesList" class="names-list"></ul>
+    </div>
+</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ asset_url('js/official-names.js') }}" defer></script>
+{% endblock %}

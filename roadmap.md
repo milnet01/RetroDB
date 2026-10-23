@@ -9437,7 +9437,17 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.159 AI proposes each game's official name; the user reviews before titles change (FEATURE, L).
-- **Status**: todo
+- **Shipped 2026-10-23** (3.32.0), built from
+  `docs/specs/PASS-59-159-official-names.md`: the title lock (§4.3) in
+  commit "titles you type are kept when scraping"; the AI call
+  (`scrape_ai.propose_official_names`), `OfficialNamesJob`,
+  `services/official_names.py` and ROM Tools > Official Names in the
+  next. `tests/test_official_names.py` covers INV-1 to INV-9.
+  - **Owed**: the two help paragraphs in each `help.<locale>.html`
+  (v4.0.0 step 7). The run itself was not tried against a real AI
+  provider: it would send titles out and cost money; the stubbed tests
+  cover it.
+- **Status**: done
 - **Request** (user, 2026-10-23): have the AI give the full, official
   name of every game and update the title.
 - **Decided** (user, 2026-10-23): a review list (old -> new, tick to
@@ -9575,6 +9585,22 @@ were corrected in `2836bc3` and are not repeated here.
   edit windows.
 - **Verify**: save a year-only game from the game page; a test on the
   shared validation.
+
+---
+
+#### Pass 59.165 On a phone, the ROM Tools tab bar slides under the new top bar and covers the page text (FIX, S).
+- **Status**: todo
+- **Seen 2026-10-23** (PASS-59-159 browser check, Firefox at its
+  500px minimum): on /tools/versions and /tools/official-names, scrolled
+  down, the `.tool-tabs` nav (`position: sticky; top: 0`, about 130px
+  tall when its tabs wrap) sits partly behind the phone header bar
+  PASS-53-10 added, and its lower row covers the card text below.
+- **Likely cause** (not confirmed): the sticky `top` does not allow for
+  the phone header's height. Other pages with sticky tab bars may share
+  it; not checked.
+- **Scope**: PASS-53-10 is in the open 3.32.0, so fix before it ships.
+- **Verify**: scroll each ROM Tools page at phone width; the tab bar
+  stays fully below the top bar or stops being sticky there.
 
 ## Done index
 

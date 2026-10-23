@@ -196,3 +196,154 @@ def test_lock_set_and_cleared(db, admin_test_client):
     row = _row(db, gid2)
     assert row['title_locked'] == 0
     assert row['title'] != LOCKED_NAME
+
+
+# ---------------------------------------------------------------------------
+# INV-3 / INV-6 — the run stores proposals and never writes `games`
+# ---------------------------------------------------------------------------
+
+def _run(monkeypatch, system_id, answer):
+    """Run the job over one system with the AI call stubbed: `answer(game)`
+    gives the official title the stub proposes for each game."""
+    from scraper import scrape_ai
+    from services.jobs.official_names import OfficialNamesJob
+    monkeypatch.setattr(scrape_ai, 'propose_official_names', lambda system, games: [
+        {'official_title': answer(g), 'old_title_region': 'US'} for g in games])
+    job = OfficialNamesJob()
+    assert job.start(system_id)['success']
+    job._thread.join(10)
+    status = job.get_status()
+    assert status['completed'] and not status['error'], status
+    return status
+
+
+def _proposal(d, gid):
+    return d.conn.execute("SELECT * FROM title_proposals WHERE game_id = ?", (gid,)).fetchone()
+
+
+def test_run_changes_no_title(db, monkeypatch):
+    """INV-3."""
+    ids = [_game(db, f'Game {n}', rom=f'Game {n} (Japan).nes') for n in range(3)]
+    locked = _game(db, 'Locked', rom='Locked (Japan).nes', title_locked=1)
+    query = "SELECT * FROM games WHERE system_id = ? ORDER BY id"
+    before = [tuple(r) for r in db.conn.execute(query, (db.sid,))]
+    status = _run(monkeypatch, db.sid, lambda g: g['title'] + ' Official')
+    assert [tuple(r) for r in db.conn.execute(query, (db.sid,))] == before
+    assert status['proposals'] == 3
+    assert _proposal(db, ids[0])['proposed_title'] == 'Game 0 Official'
+    assert _proposal(db, locked) is None
+
+
+def test_rejected_not_reproposed(db, monkeypatch):
+    """INV-6."""
+    gid = _game(db, SCRAPED_NAME)
+    db.conn.execute("INSERT INTO title_proposals (game_id, old_title, proposed_title, status) "
+                    "VALUES (?, ?, ?, 'rejected')", (gid, SCRAPED_NAME, LOCKED_NAME))
+    db.conn.commit()
+    _run(monkeypatch, db.sid, lambda g: LOCKED_NAME)
+    assert _proposal(db, gid)['status'] == 'rejected'
+    _run(monkeypatch, db.sid, lambda g: 'Rockman World')
+    row = _proposal(db, gid)
+    assert (row['status'], row['proposed_title']) == ('pending', 'Rockman World')
+
+
+# ---------------------------------------------------------------------------
+# INV-4 / INV-5 — accept
+# ---------------------------------------------------------------------------
+
+def _propose(d, gid, old, new, region='US'):
+    d.conn.execute("INSERT INTO title_proposals (game_id, old_title, proposed_title, "
+                   "old_title_region) VALUES (?, ?, ?, ?)", (gid, old, new, region))
+    d.conn.commit()
+
+
+def _accept(client, csrf, ids):
+    resp = client.post('/api/official-names/accept', json={'game_ids': ids},
+                       headers={'X-CSRF-Token': csrf})
+    assert resp.status_code == 200, resp.get_data(as_text=True)[:300]
+    return resp.get_json()
+
+
+def test_accept_applies(db, admin_test_client):
+    """INV-4."""
+    import json
+    gid = _game(db, SCRAPED_NAME, alternate_titles=json.dumps([{'title': 'ROCKMAN'}]))
+    _propose(db, gid, SCRAPED_NAME, 'Rockman 2: Dr. Wily no Nazo')
+    client, csrf = admin_test_client()
+    assert _accept(client, csrf, [gid])['accepted'] == 1
+    row = _row(db, gid)
+    assert row['title'] == 'Rockman 2: Dr. Wily no Nazo'
+    assert row['sort_title'] and row['sort_title'] != SCRAPED_NAME
+    assert row['title_locked'] == 1
+    alts = json.loads(row['alternate_titles'])
+    assert {'title': SCRAPED_NAME, 'region': 'US', 'source': 'official_names'} in alts
+    assert _proposal(db, gid) is None
+    assert json.loads(row['scrape_history'])[-1]['primary_source'] == 'official_names'
+
+
+def test_accept_drops_alt_equal_to_new_title(db, admin_test_client):
+    """INV-4, last clause: a stored alt equal to the new title goes."""
+    import json
+    gid = _game(db, SCRAPED_NAME, alternate_titles=json.dumps([{'title': 'ROCKMAN'}]))
+    _propose(db, gid, SCRAPED_NAME, LOCKED_NAME)
+    client, csrf = admin_test_client()
+    _accept(client, csrf, [gid])
+    titles = [a['title'] for a in json.loads(_row(db, gid)['alternate_titles'])]
+    assert titles == [SCRAPED_NAME]
+
+
+def test_accept_skips_stale(db, admin_test_client):
+    """INV-5."""
+    gid = _game(db, 'Typed Since')
+    _propose(db, gid, SCRAPED_NAME, LOCKED_NAME)
+    client, csrf = admin_test_client()
+    assert _accept(client, csrf, [gid])['skipped'] == 1
+    assert _row(db, gid)['title'] == 'Typed Since'
+    assert _proposal(db, gid) is None
+
+
+# ---------------------------------------------------------------------------
+# INV-7 — model output is untrusted
+# ---------------------------------------------------------------------------
+
+def test_parse_rejects_bad_entries():
+    import json
+    from scraper.scrape_ai import _parse_official_names
+    reply = json.dumps([
+        {'i': 3, 'official_title': 'Fourth', 'old_title_region': 'Japan'},
+        {'i': 9, 'official_title': 'Out of range'},
+        {'i': '1', 'official_title': 'String index'},
+        {'i': True, 'official_title': 'Bool index'},
+        {'i': 0, 'official_title': 42},
+        {'i': 1, 'official_title': 'x' * 201},
+        {'i': 2, 'official_title': 'Bad\x07Title'},
+        {'official_title': 'No index'},
+    ])
+    answers = _parse_official_names('```json\n' + reply + '\n```', 4)
+    assert [a['official_title'] for a in answers] == [None, None, None, 'Fourth']
+    assert answers[3]['old_title_region'] == 'JP'
+    assert _parse_official_names('not json', 2) == [
+        {'official_title': None, 'old_title_region': None}] * 2
+
+
+# ---------------------------------------------------------------------------
+# INV-9 — every route needs an editor
+# ---------------------------------------------------------------------------
+
+VIEWER = {'id': 1, 'username': 'viewer-stub', 'role': 'viewer'}
+
+
+@pytest.mark.parametrize('method,url', [
+    ('get', '/tools/official-names'),
+    ('get', '/api/official-names/proposals'),
+    ('post', '/api/official-names/accept'),
+    ('post', '/api/official-names/reject'),
+    ('post', '/api/official-names/run'),
+    ('get', '/api/official-names/status'),
+    ('post', '/api/official-names/cancel'),
+])
+def test_routes_need_editor(method, url, admin_test_client):
+    client, csrf = admin_test_client(user=VIEWER)
+    resp = getattr(client, method)(url, json={}, headers={'X-CSRF-Token': csrf})
+    # A page redirects a non-editor away; an API refuses with 403.
+    assert resp.status_code in (302, 403), (url, resp.status_code)

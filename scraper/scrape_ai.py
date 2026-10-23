@@ -1190,6 +1190,116 @@ def summarize_version_differences(system_name, versions):
     return result
 
 
+# =============================================================================
+# OFFICIAL NAMES (PASS-59-159)
+# =============================================================================
+
+OFFICIAL_NAMES_BATCH = 25
+_MAX_OFFICIAL_TITLE_LEN = 200
+
+
+def _build_official_names_prompt(system_name, games):
+    """Prompt asking for each game's official title in its ROM's region."""
+    from scraper.scrape_esde import extract_region_from_filename
+    lines = []
+    for i, g in enumerate(games):
+        rom_file = os.path.basename(g.get('rom_file') or '')
+        region = extract_region_from_filename(rom_file) or g.get('region') or 'unknown'
+        lines.append(f'{i}. title: "{_sanitize_prompt_input(g.get("title"))}"; '
+                     f'ROM file: "{_sanitize_prompt_input(rom_file)}"; '
+                     f'region: {_sanitize_prompt_input(region)}')
+
+    return f"""These are games on {_sanitize_prompt_input(system_name)}, each with its current title,
+its ROM file name and the region of that ROM:
+{chr(10).join(lines)}
+
+For each game give its full official title as released in that region,
+written in Latin script the way that region's own release writes it
+(a Japanese ROM of Mega Man is "Rockman"). Also say which region the
+CURRENT title belongs to: "USA", "Europe", "Japan" or "World", or null
+when you are not sure. If you do not know the official title, give null.
+
+Respond with JSON only, one entry per game, in this shape:
+[{{"i": 0, "official_title": "...", "old_title_region": "Japan"}}]"""
+
+
+def _clean_official_title(value):
+    """A model-given title, normalized; None when it is not usable."""
+    if not isinstance(value, str):
+        return None
+    if any(ord(ch) < 0x20 or ord(ch) == 0x7f for ch in value):
+        return None
+    title = ' '.join(value.split())
+    if not title or len(title) > _MAX_OFFICIAL_TITLE_LEN:
+        return None
+    from scraper.metadata_normalizer import normalize_title
+    return normalize_title(title)
+
+
+def _parse_official_names(raw_text, count):
+    """`count` answers, in input order, from an AI reply. Entries are paired
+    by their `i`, never by position; a bad entry leaves that game None."""
+    from scraper.metadata_normalizer import alt_title_region
+    empty = {'official_title': None, 'old_title_region': None}
+    answers = [dict(empty) for _ in range(count)]
+    if not raw_text:
+        return answers
+    text = raw_text.strip()
+    if text.startswith('```'):
+        text = re.sub(r'^```(?:json)?\s*\n?', '', text)
+        text = re.sub(r'\n?```\s*$', '', text).strip()
+    try:
+        items = json.loads(text)
+    except json.JSONDecodeError:
+        match = re.search(r'\[.*\]', text, re.DOTALL)
+        try:
+            items = json.loads(match.group()) if match else None
+        except json.JSONDecodeError:
+            items = None
+    if not isinstance(items, list):
+        return answers
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        i = item.get('i')
+        if not isinstance(i, int) or isinstance(i, bool) or not 0 <= i < count:
+            continue
+        title = _clean_official_title(item.get('official_title'))
+        if title is None:
+            continue
+        region = item.get('old_title_region')
+        code = alt_title_region(region)[0] if isinstance(region, str) else None
+        answers[i] = {'official_title': title, 'old_title_region': code}
+    return answers
+
+
+def propose_official_names(system_name, games):
+    """Ask the configured AI for each game's official name.
+
+    games: [{'title': str, 'rom_file': str, 'region': str|None}], at most
+    OFFICIAL_NAMES_BATCH. Returns one dict per input, same order:
+    {'official_title': str|None, 'old_title_region': str|None}.
+    Raises RuntimeError when no provider is set up or the call fails; the
+    caller decides whether to stop.
+    """
+    provider_config = _get_active_provider()
+    if not provider_config:
+        raise RuntimeError('No AI provider is configured')
+    call_fn = {'gemini': _call_gemini, 'openai': _call_openai,
+               'claude': _call_claude}.get(provider_config['provider'])
+    if not call_fn:
+        raise RuntimeError(f"Unknown AI provider '{provider_config['provider']}'")
+    kwargs = {}
+    if provider_config.get('project_id'):
+        kwargs['project_id'] = provider_config['project_id']
+    rate_limit(delay=1.0)
+    raw_text = call_fn(_build_official_names_prompt(system_name, games),
+                       provider_config['api_key'], provider_config['model'], **kwargs)
+    if not raw_text:
+        raise RuntimeError(f"No reply from {provider_config['provider']}")
+    return _parse_official_names(raw_text, len(games))
+
+
 def check_api_status():
     """Validate the active AI provider's API key with a minimal test call.
 

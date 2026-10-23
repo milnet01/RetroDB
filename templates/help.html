@@ -630,7 +630,7 @@
         </ul>
 
         <h3>Keeping a Title</h3>
-        <p>When you type a new title in the edit window and save, scraping no longer changes it, Full Re-scrape included. The edit window's <strong>Keep this title when scraping</strong> box shows whether a title is kept; untick it to let scrapers rename the game again. <strong>Reset</strong> on a game's page also lets scrapers rename it, and <strong>Clear scraped data</strong> in Maintenance leaves kept titles as they are.</p>
+        <p>When you type a new title in the edit window and save, or accept an official name in ROM Tools, scraping no longer changes it, Full Re-scrape included. The edit window's <strong>Keep this title when scraping</strong> box shows whether a title is kept; untick it to let scrapers rename the game again. <strong>Reset</strong> on a game's page also lets scrapers rename it, and <strong>Clear scraped data</strong> in Maintenance leaves kept titles as they are.</p>
 
         <h3>Scraper Priority</h3>
         <p>Configure which scrapers run first and which are enabled/disabled in <strong>Settings &rarr; Scraping &rarr; Scraper</strong>. Drag-and-drop to reorder priority. Disabled scrapers won't be tried during scraping and won't trigger API status warnings on the Dashboard.</p>
@@ -1435,6 +1435,10 @@
         <h3>Regional Versions</h3>
         <p>Editors only. RetroDB suggests games that look like one game from different regions: the same IGDB or ScreenScraper game, the same title with a different region tag, or a regional name that matches. Untick any game that does not belong and click <strong>"Link ticked games"</strong>, or click <strong>"Not versions"</strong> so that group is never suggested again. Nothing is linked until you confirm it. Run <strong>Backfill Alternate Titles</strong> in Maintenance first: it fills the IGDB and ScreenScraper ids the suggestions use.</p>
         <p><em>No external dependencies</em></p>
+
+        <h3>Official Names</h3>
+        <p>Editors only. Pick one system or all systems and press <strong>"Ask the AI"</strong>. In the background, the AI suggests each game's full official name as released in the region of its ROM: a Japanese ROM of Mega Man becomes Rockman. The list shows each old name, the suggested name, and which region the old name comes from. Tick the names you want and press <strong>"Accept ticked"</strong>, or <strong>"Reject ticked"</strong> so that name is never suggested again. Nothing changes until you accept it. An accepted name keeps the old one as an alternate title, and scraping no longer changes it (see Keeping a Title). Games whose title you typed yourself are not asked about. The AI can be wrong, so read each name before accepting it.</p>
+        <p><em>Requires: an AI provider in <strong>Settings &rarr; Scraping</strong></em></p>
 
         <h3>Multi-Disc Organizer</h3>
         <p>Organize multi-disc games into subdirectories and generate M3U playlists for emulators that support them. Useful for systems like PlayStation and Saturn.</p>

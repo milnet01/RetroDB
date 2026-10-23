@@ -19,6 +19,7 @@ _SINGLETON_NAMES = (
     'bulk_scrape_job', 'ra_sync_job', 'ra_refresh_job', 'psn_refresh_job',
     'museum_generate_job', 'image_resize_job', 'steam_sync_job',
     'xbox_sync_job', 'alt_titles_backfill_job', 'hltb_bulk_job',
+    'official_names_job',
 )
 
 
