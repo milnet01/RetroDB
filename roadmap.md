@@ -9412,6 +9412,20 @@ were corrected in `2836bc3` and are not repeated here.
   tools), `/mnt/Emulators/Sony_PlayStation_1/DuckStation/cheats`,
   `/mnt/Emulators/retroarch-config/cheats` and
   `/mnt/Emulators/.harvested_cheats`.
+- **Design answers** (user, 2026-10-23): v4.0.0 covers the player,
+  DuckStation and PCSX2 only; PPSSPP and RPCS3 become later items.
+  Sources: RetroDB downloads the free public packs on request (the
+  libretro cheat pack, the PCSX2 community collection) and can import
+  the user's own folders. Import copies into RetroDB's data folder once;
+  originals are never touched; re-run to pick up new files. The game
+  page lists each cheat with its own on/off switch, and RetroDB sets up
+  the emulator before launch.
+  - **Found** (2026-10-23): `games.disc_serial` / `disc_crc` already
+  exist (migration 018); `standalone_settings.apply_for_launch` is the
+  pre-launch hook; the player knows only the core id, not the display
+  name RetroArch uses for the `.cht` folder. Serials are filled only for
+  standalone launches today. Existing PCSX2 files are named
+  `SERIAL_CRC.pnach` or `CRC.pnach`; DuckStation's are `SERIAL.cht`.
 
 ---
 
@@ -9698,6 +9712,33 @@ were corrected in `2836bc3` and are not repeated here.
   "127.0.0.1"` in the run layer; amend PASS-59-64 §4.4.
 - **Verify**: a fresh Get RetroArch installs the new version; `ss
   -ulnp` shows the player's port on 127.0.0.1 only; Next disk works.
+
+---
+
+#### Pass 59.169 Cheats for PSP games in PPSSPP (MEDIUM, S).
+- **Status**: todo
+- Deferred from PASS-59-155 (user, 2026-10-23: not in v4.0.0).
+- The user's PSP cheat database is in `/mnt/Emulators/Cheats/Sony
+  PlayStation Portable/PPSSPP` (`cheat.db`, and per-game `.ini` files
+  named by game id). PPSSPP's own enable mechanism: not researched.
+
+---
+
+#### Pass 59.170 Research RPCS3 game patches as cheats (LOW, S).
+- **Status**: todo
+- Deferred from PASS-59-155 (user, 2026-10-23: research before
+  deciding; not committed to v4.0.0).
+- RPCS3 cheats are game patches in `patch.yml`, a different and
+  larger format than the other emulators' cheat files.
+
+---
+
+#### Pass 59.171 Cheats when a game runs in the user's own RetroArch (LOW, S).
+- **Status**: todo
+- Deferred from PASS-59-155 (2026-10-23).
+- The user's RetroArch reads its own `cheat_database_path`; RetroDB
+  would write the `.cht` there through the overrides layer
+  (`services/launch_resolver.py::_retroarch_overrides`).
 
 ## Done index
 
