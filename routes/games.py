@@ -27,7 +27,7 @@ from services.game_utils import (
 from services.game_query import (
     escape_like, get_retroachievements_info, get_trophy_info_for_game,
     get_bonus_discs_for_game, _get_filter_options, _build_games_query,
-    invalidate_filter_cache, VERSION_COLUMNS,
+    invalidate_filter_cache, VERSION_COLUMNS, MULTI_FILTER_FIELDS,
 )
 from services.analytics import invalidate_analytics_cache
 from services.launch_resolver import keyboard_core, launch_checker, rom_launch_problem
@@ -139,6 +139,24 @@ def _add_can_launch(games, rows):
             and not rom_launch_problem(row['rom_path']))
 
 
+def _filter_params(extra=()):
+    """The Library's filters from the query string, shared by /api/games
+    and /api/games/ids. A multi-value field (PASS-53-11) arrives as a
+    repeated param, ?genre=A&genre=B, and becomes a list."""
+    single = ('system', 'system_type', 'rating', 'source', 'search', 'letter',
+              'show_bonus', 'ra_only', 'not_rating', *extra)
+    params = {k: request.args.get(k) for k in single if request.args.get(k)}
+    for field in MULTI_FILTER_FIELDS:
+        for key in (field, f'not_{field}'):
+            values = [v for v in request.args.getlist(key) if v]
+            if values:
+                params[key] = values
+    # PASS-53-2 — the Unscraped filter button
+    if request.args.get('unscraped') == '1':
+        params['_unscraped'] = True
+    return params
+
+
 @bp.route('/api/games')
 @login_required
 @handle_api_errors
@@ -150,16 +168,7 @@ def api_games():
     page = max(request.args.get('page', 1, type=int), 1)
     per_page = min(max(request.args.get('per_page', 100, type=int), 1), 200)
 
-    params = {k: request.args.get(k) for k in
-              ('system', 'system_type', 'genre', 'franchise', 'developer',
-               'publisher', 'modes', 'perspective', 'dimension', 'rating', 'source', 'search', 'letter',
-               'show_bonus', 'ra_only', 'sort',
-               'not_genre', 'not_franchise', 'not_developer', 'not_publisher',
-               'not_modes', 'not_perspective', 'not_dimension', 'not_rating')
-              if request.args.get(k)}
-    # PASS-53-2 — the Unscraped filter button; same flag as /api/games/ids
-    if request.args.get('unscraped') == '1':
-        params['_unscraped'] = True
+    params = _filter_params(extra=('sort',))
 
     # Count queries — PASS-59-106: `total` counts cards (one per version
     # group), `total_roms` every row, under the same filters.
@@ -206,18 +215,7 @@ def api_games():
 @handle_api_errors
 def api_games_ids():
     """Lightweight endpoint returning only IDs matching current filters (for bulk select)."""
-    params = {k: request.args.get(k) for k in
-              ('system', 'system_type', 'genre', 'franchise', 'developer',
-               'publisher', 'modes', 'perspective', 'dimension', 'rating', 'source', 'search', 'letter',
-               'show_bonus', 'ra_only',
-               'not_genre', 'not_franchise', 'not_developer', 'not_publisher',
-               'not_modes', 'not_perspective', 'not_dimension', 'not_rating')
-              if request.args.get(k)}
-
-    # For select-unscraped, add scraped=0 filter
-    if request.args.get('unscraped') == '1':
-        params['_unscraped'] = True
-
+    params = _filter_params()
     ids_sql, ids_vals = _build_games_query(params, ids_only=True)
 
     # Pass 25.8 — sanity LIMIT. This endpoint feeds bulk-select ("select every

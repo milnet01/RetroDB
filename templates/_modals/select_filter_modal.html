@@ -22,5 +22,11 @@
         <div class="filter-modal-body">
             <div class="filter-options" id="filterOptions"></div>
         </div>
+        {# PASS-53-11: multi-value filters tick options, then Apply #}
+        <div class="filter-modal-footer" id="filterModalFooter" hidden>
+            <span class="filter-modal-hint hint-include">{{ _('Tick any number; a game shows if it has any of them.') }}</span>
+            <span class="filter-modal-hint hint-exclude">{{ _('Tick any number; a game is hidden if it has any of them.') }}</span>
+            <button type="button" class="btn btn-primary" data-on-click="AllGamesController.applyFilterSelection">{{ _('Apply') }}</button>
+        </div>
     </div>
 </div>

@@ -26,6 +26,17 @@ const AllGamesController = (function() {
     // Exclude filters (sent as not_* query params)
     let excludeFilters = {};
 
+    // PASS-53-11 — these filters hold a list of values (any of them
+    // matches); MULTI_FILTER_FIELDS in services/game_query.py.
+    const MULTI_FIELDS = ['genre', 'franchise', 'developer', 'publisher', 'modes', 'perspective', 'dimension'];
+    const isMulti = type => MULTI_FIELDS.includes(type);
+    // A filter value as a list; a single value saved by an older build
+    // becomes a one-item list.
+    const asList = v => (Array.isArray(v) ? v : (v ? [v] : []));
+
+    // Ticks in the open filter window, per mode, kept until Apply.
+    let pendingPicks = null;  // {include: Set, exclude: Set}
+
     // PASS-53-2 — sort order (a GAME_SORTS key in services/game_query.py).
     // Kept apart from `filters` so Clear filters leaves it alone.
     let sortOrder = 'name';
@@ -267,20 +278,24 @@ const AllGamesController = (function() {
     // DATA FETCHING
     // =========================================================================
 
-    function buildQueryString(page) {
+    /** The filters as query params; a list becomes a repeated param
+     *  (?genre=A&genre=B), since a value may itself contain a comma. */
+    function filterParams() {
         const params = new URLSearchParams();
+        const add = (prefix, store) => {
+            for (const [k, v] of Object.entries(store)) {
+                for (const one of asList(v)) params.append(prefix + k, one);
+            }
+        };
+        add('', filters);
+        add('not_', excludeFilters);
+        return params;
+    }
+
+    function buildQueryString(page) {
+        const params = filterParams();
         params.set('page', page);
         params.set('per_page', PER_PAGE);
-        for (const [k, v] of Object.entries(filters)) {
-            if (v !== undefined && v !== null && v !== '') {
-                params.set(k, v);
-            }
-        }
-        for (const [k, v] of Object.entries(excludeFilters)) {
-            if (v !== undefined && v !== null && v !== '') {
-                params.set('not_' + k, v);
-            }
-        }
         if (sortOrder !== 'name') params.set('sort', sortOrder);
         return params.toString();
     }
@@ -734,7 +749,7 @@ const AllGamesController = (function() {
 
     function applyFilterDirect(type, value) {
         clearLetterJump();
-        filters[type] = value;
+        filters[type] = isMulti(type) ? [value] : value;
         resetAndFetch();
     }
 
@@ -749,6 +764,11 @@ const AllGamesController = (function() {
         filterModalExcludeMode = false;
         currentFilterType = filterType;
         modal.classList.remove('exclude-mode');
+        pendingPicks = isMulti(filterType)
+            ? {include: new Set(asList(filters[filterType])), exclude: new Set(asList(excludeFilters[filterType]))}
+            : null;
+        const footer = document.getElementById('filterModalFooter');
+        if (footer) footer.hidden = !pendingPicks;
 
         const titles = {
             genre: t('Select Genre'), franchise: t('Select Series'),
@@ -819,11 +839,12 @@ const AllGamesController = (function() {
             optionsEl.innerHTML = `<div class="filter-empty">${esc(t('No options available'))}</div>`;
         } else {
             optionsEl.innerHTML = opts.map(([val, cnt]) =>
-                `<div class="filter-option" data-on-click="AllGamesController.handleFilterOptionClick" data-args="${actionArgs(String(filterType), val)}">
+                `<button type="button" class="filter-option" role="checkbox" aria-checked="false" data-value="${esc(val)}" data-on-click="AllGamesController.handleFilterOptionClick" data-args="${actionArgs(String(filterType), val)}">
                     <span class="filter-option-name">${esc(tField(val))}</span>
                     <span class="filter-option-count">(${formatNumber(cnt)})</span>
-                </div>`
+                </button>`
             ).join('');
+            markPicks();
         }
         modal.classList.add('active');
         _activateFilterModalTrap(modal);
@@ -841,6 +862,7 @@ const AllGamesController = (function() {
     }
 
     function closeFilterModal() {
+        pendingPicks = null;  // closing without Apply drops the ticks
         const modal = document.getElementById('filterModal');
         if (modal) modal.classList.remove('active');
         // Pass 29.3: Deactivate the trap we activated in openFilterModal.
@@ -885,8 +907,41 @@ const AllGamesController = (function() {
     // EXCLUDE FILTER HANDLERS
     // =========================================================================
 
-    /** Route modal option clicks based on current mode (IS vs IS NOT) */
+    /** Tick the options chosen for the window's current mode (IS / IS NOT). */
+    function markPicks() {
+        if (!pendingPicks) return;
+        const picks = filterModalExcludeMode ? pendingPicks.exclude : pendingPicks.include;
+        document.querySelectorAll('#filterOptions .filter-option[data-value]').forEach(opt => {
+            opt.setAttribute('aria-checked', String(picks.has(opt.dataset.value)));
+        });
+    }
+
+    /** Apply: the window's ticks replace both lists for its filter. */
+    function applyFilterSelection() {
+        if (!pendingPicks) return;
+        const type = currentFilterType;
+        for (const [store, picks] of [[filters, pendingPicks.include], [excludeFilters, pendingPicks.exclude]]) {
+            if (picks.size) store[type] = [...picks];
+            else delete store[type];
+        }
+        clearLetterJump();
+        closeFilterModal();
+        resetAndFetch();
+    }
+
+    /** Route modal option clicks: a multi-value filter ticks the option
+     *  (a value is never both shown and hidden); others apply at once,
+     *  by the current mode (IS vs IS NOT). */
     function handleFilterOptionClick(type, value) {
+        if (pendingPicks) {
+            const [picks, other] = filterModalExcludeMode
+                ? [pendingPicks.exclude, pendingPicks.include]
+                : [pendingPicks.include, pendingPicks.exclude];
+            if (picks.has(value)) picks.delete(value);
+            else { picks.add(value); other.delete(value); }
+            markPicks();
+            return;
+        }
         if (filterModalExcludeMode) {
             applyExcludeFilter(type, value);
         } else {
@@ -906,6 +961,7 @@ const AllGamesController = (function() {
                 btn.classList.toggle('active', excludeMode ? isExcludeBtn : !isExcludeBtn);
             });
         }
+        markPicks();
     }
 
     function applyExcludeFilter(type, value) {
@@ -924,13 +980,23 @@ const AllGamesController = (function() {
 
     function applyExcludeFilterDirect(type, value) {
         clearLetterJump();
-        excludeFilters[type] = value;
+        excludeFilters[type] = isMulti(type) ? [value] : value;
         resetAndFetch();
     }
 
     function removeExcludeFilter(type) {
         clearLetterJump();
         delete excludeFilters[type];
+        resetAndFetch();
+    }
+
+    /** A filter tag's ✕ on a multi-value filter drops just that value. */
+    function removeFilterValue(type, value, exclude) {
+        const store = exclude ? excludeFilters : filters;
+        const left = asList(store[type]).filter(v => v !== value);
+        if (left.length) store[type] = left;
+        else delete store[type];
+        clearLetterJump();
         resetAndFetch();
     }
 
@@ -1041,20 +1107,20 @@ const AllGamesController = (function() {
                     search: '&#128269;', letter: '&#128289;'
                 };
 
-                let html = displayFilters.map(([k, v]) =>
-                    `<span class="filter-tag">
-                        ${icons[k] || ''} ${esc(String(v))}
-                        <span class="filter-tag-remove" data-on-click="AllGamesController.removeFilter" data-args="${actionArgs(String(k))}">&#215;</span>
-                    </span>`
-                ).join('');
-
-                // Exclude filter tags (red theme with NOT prefix)
-                html += displayExcludeFilters.map(([k, v]) =>
-                    `<span class="filter-tag filter-tag-exclude">
-                        ${icons[k] || ''} ${esc(t('NOT'))} ${esc(String(v))}
-                        <span class="filter-tag-remove" data-on-click="AllGamesController.removeExcludeFilter" data-args="${actionArgs(String(k))}">&#215;</span>
-                    </span>`
-                ).join('');
+                // One tag per value; a multi-value filter's ✕ drops one value
+                // (PASS-53-11). Exclude tags are red, with a NOT prefix.
+                const tagHtml = (entries, exclude) => entries.flatMap(([k, v]) => {
+                    const cls = exclude ? 'filter-tag filter-tag-exclude' : 'filter-tag';
+                    const not = exclude ? `${esc(t('NOT'))} ` : '';
+                    if (!isMulti(k)) {
+                        const fn = exclude ? 'removeExcludeFilter' : 'removeFilter';
+                        return [`<span class="${cls}">${icons[k] || ''} ${not}${esc(String(v))}
+                            <span class="filter-tag-remove" data-on-click="AllGamesController.${fn}" data-args="${actionArgs(String(k))}">&#215;</span></span>`];
+                    }
+                    return asList(v).map(one => `<span class="${cls}">${icons[k] || ''} ${not}${esc(tField(one))}
+                        <span class="filter-tag-remove" data-on-click="AllGamesController.removeFilterValue" data-args="${actionArgs(String(k), one, exclude)}">&#215;</span></span>`);
+                }).join('');
+                let html = tagHtml(displayFilters, false) + tagHtml(displayExcludeFilters, true);
 
                 if (filters.ra_only === '1') {
                     html += `<span class="filter-tag ra-tag">&#127942; ${esc(t('Has Achievements'))}
@@ -1235,13 +1301,7 @@ const AllGamesController = (function() {
         // Use the /api/games/ids endpoint to get ALL IDs matching current filters
         // (not just the ones loaded in the DOM via infinite scroll)
         try {
-            const params = new URLSearchParams();
-            for (const [k, v] of Object.entries(filters)) {
-                if (v !== undefined && v !== null && v !== '') params.set(k, v);
-            }
-            for (const [k, v] of Object.entries(excludeFilters)) {
-                if (v !== undefined && v !== null && v !== '') params.set('not_' + k, v);
-            }
+            const params = filterParams();
 
             const data = await API.get(`/api/games/ids?${params.toString()}`);
 
@@ -1278,13 +1338,7 @@ const AllGamesController = (function() {
     async function selectAllUnscraped() {
         // Use the /api/games/ids endpoint to get ALL unscraped IDs matching current filters
         try {
-            const params = new URLSearchParams();
-            for (const [k, v] of Object.entries(filters)) {
-                if (v !== undefined && v !== null && v !== '') params.set(k, v);
-            }
-            for (const [k, v] of Object.entries(excludeFilters)) {
-                if (v !== undefined && v !== null && v !== '') params.set('not_' + k, v);
-            }
+            const params = filterParams();
             params.set('unscraped', '1');
 
             const data = await API.get(`/api/games/ids?${params.toString()}`);
@@ -1603,6 +1657,8 @@ const AllGamesController = (function() {
         applyExcludeFilterDirect,
         metaFilterClick,
         removeExcludeFilter,
+        removeFilterValue,
+        applyFilterSelection,
         toggleRAFilter,
         toggleBonusDiscFilter,
         toggleUnscrapedFilter,

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-23 09:42+0200\n"
+"POT-Creation-Date: 2026-10-23 09:53+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -59,8 +59,8 @@ msgstr "Système introuvable ou sans jeux à succès"
 #: routes/achievements.py:171 routes/achievements.py:440
 #: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/collections.py:276
 #: routes/collections.py:531 routes/emulators.py:267 routes/emulators.py:281
-#: routes/games.py:350 routes/games.py:806 routes/games.py:928
-#: routes/games.py:984 routes/games_ai.py:46 routes/games_media.py:37
+#: routes/games.py:348 routes/games.py:804 routes/games.py:926
+#: routes/games.py:982 routes/games_ai.py:46 routes/games_media.py:37
 #: routes/games_media.py:84 routes/games_media.py:145 routes/launch.py:224
 #: routes/reports.py:693 routes/reports.py:818 routes/trophies.py:1278
 #: services/hltb_service.py:125
@@ -234,8 +234,8 @@ msgstr "Jeu parent introuvable"
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "Le disque bonus et le jeu parent doivent appartenir au même système"
 
-#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1236
-#: routes/games.py:1266 routes/platform_import.py:289
+#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1234
+#: routes/games.py:1264 routes/platform_import.py:289
 #: routes/platform_import.py:658 routes/platform_import.py:1024
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:200 routes/scraper.py:528
@@ -435,34 +435,34 @@ msgstr ""
 msgid "Emulator not found"
 msgstr "Émulateur introuvable"
 
-#: routes/games.py:242
+#: routes/games.py:240
 msgid "No IDs provided"
 msgstr "Aucun identifiant fourni"
 
-#: routes/games.py:250
+#: routes/games.py:248
 msgid "Provide 1-50 valid IDs"
 msgstr "Fournissez de 1 à 50 identifiants valides"
 
-#: routes/games.py:506
+#: routes/games.py:504
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
 msgstr ""
 "Vidéo non enregistrée : elle doit être un fichier MP4, WebM ou OGG de "
 "%(mb)s Mo maximum."
 
-#: routes/games.py:632
+#: routes/games.py:630
 msgid "Game not found after update"
 msgstr "Jeu introuvable après la mise à jour"
 
-#: routes/games.py:932
+#: routes/games.py:930
 msgid "No game selected."
 msgstr "Aucun jeu sélectionné."
 
-#: routes/games.py:956
+#: routes/games.py:954
 msgid "This metadata apply is no longer running."
 msgstr "Cette application de métadonnées n'est plus en cours d'exécution."
 
-#: routes/games.py:965
+#: routes/games.py:963
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
@@ -471,41 +471,41 @@ msgstr ""
 "Métadonnées appliquées depuis %(sources)s ! (%(filled)d champs remplis, "
 "%(missing)d encore manquants)"
 
-#: routes/games.py:971
+#: routes/games.py:969
 msgid "Failed to apply metadata."
 msgstr "Échec de l'application des métadonnées."
 
-#: routes/games.py:1014 routes/games.py:1058
+#: routes/games.py:1012 routes/games.py:1056
 msgid "No fields to update"
 msgstr "Aucun champ à mettre à jour"
 
-#: routes/games.py:1055 routes/platform_import.py:212
+#: routes/games.py:1053 routes/platform_import.py:212
 #: routes/platform_import.py:572 routes/platform_import.py:928
 #: routes/trophies.py:1852
 msgid "No games selected"
 msgstr "Aucun jeu sélectionné"
 
-#: routes/games.py:1065
+#: routes/games.py:1063
 msgid "Invalid completion status"
 msgstr "Statut d'achèvement invalide"
 
-#: routes/games.py:1113
+#: routes/games.py:1111
 msgid "No valid fields to update"
 msgstr "Aucun champ valide à mettre à jour"
 
-#: routes/games.py:1229
+#: routes/games.py:1227
 msgid "Invalid status"
 msgstr "Statut invalide"
 
-#: routes/games.py:1254
+#: routes/games.py:1252
 msgid "Not authenticated"
 msgstr "Non authentifié"
 
-#: routes/games.py:1285
+#: routes/games.py:1283
 msgid "Filter type and value required"
 msgstr "Type et valeur de filtre requis"
 
-#: routes/games.py:1298
+#: routes/games.py:1296
 msgid "Invalid filter type"
 msgstr "Type de filtre invalide"
 
@@ -8982,6 +8982,18 @@ msgstr "N'EST PAS"
 #: templates/_modals/select_filter_modal.html:20
 msgid "Close filter"
 msgstr "Fermer le filtre"
+
+#: templates/_modals/select_filter_modal.html:27
+msgid "Tick any number; a game shows if it has any of them."
+msgstr ""
+
+#: templates/_modals/select_filter_modal.html:28
+msgid "Tick any number; a game is hidden if it has any of them."
+msgstr ""
+
+#: templates/_modals/select_filter_modal.html:29
+msgid "Apply"
+msgstr ""
 
 #: templates/_settings_tabs/account.html:2
 msgid "Account settings"

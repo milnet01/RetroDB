@@ -16,10 +16,23 @@ from services.game_utils import RATING_SYSTEM_KEYS, RATING_SYSTEMS
 
 logger = logging.getLogger(__name__)
 
+# Text fields the Library filters on by substring. Each takes several values
+# (PASS-53-11): a game matches if it has any of them, and the not_ form
+# hides a game that has any of them.
+MULTI_FILTER_FIELDS = ('genre', 'franchise', 'developer', 'publisher',
+                       'modes', 'perspective', 'dimension')
+
 
 def escape_like(value):
     """Escape special SQL LIKE characters so %, _, \\ are matched literally."""
     return value.replace('\\', '\\\\').replace('%', '\\%').replace('_', '\\_')
+
+
+def _as_list(value):
+    """A filter value as a list: None/'' → [], 'x' → ['x'], a list as-is."""
+    if not value:
+        return []
+    return [v for v in value if v] if isinstance(value, (list, tuple)) else [value]
 
 
 def get_retroachievements_info(game_title, system_folder):
@@ -125,7 +138,7 @@ def _get_filter_options(system_id=None):
            OR dimension IS NOT NULL){system_filter}
     """, params)
 
-    field_counts = {f: {} for f in ('genre', 'franchise', 'developer', 'publisher', 'modes', 'perspective', 'dimension')}
+    field_counts = {f: {} for f in MULTI_FILTER_FIELDS}
     for row in rows:
         for field in field_counts:
             raw = row[field]
@@ -214,44 +227,23 @@ def _build_games_query(params, count_only=False, ids_only=False, user_id=None,
         conditions.append("s.system_type = ?")
         values.append(params['system_type'])
 
-    if params.get('genre'):
-        conditions.append("g.genre LIKE ? ESCAPE '\\'")
-        values.append(f"%{escape_like(params['genre'])}%")
-
-    if params.get('franchise'):
-        conditions.append("g.franchise LIKE ? ESCAPE '\\'")
-        values.append(f"%{escape_like(params['franchise'])}%")
-
-    if params.get('developer'):
-        conditions.append("g.developer LIKE ? ESCAPE '\\'")
-        values.append(f"%{escape_like(params['developer'])}%")
-
-    if params.get('publisher'):
-        conditions.append("g.publisher LIKE ? ESCAPE '\\'")
-        values.append(f"%{escape_like(params['publisher'])}%")
-
-    if params.get('modes'):
-        conditions.append("g.modes LIKE ? ESCAPE '\\'")
-        values.append(f"%{escape_like(params['modes'])}%")
-
-    if params.get('perspective'):
-        conditions.append("g.perspective LIKE ? ESCAPE '\\'")
-        values.append(f"%{escape_like(params['perspective'])}%")
-
-    if params.get('dimension'):
-        conditions.append("g.dimension LIKE ? ESCAPE '\\'")
-        values.append(f"%{escape_like(params['dimension'])}%")
+    # A value may be one string or a list of them (PASS-53-11).
+    for field in MULTI_FILTER_FIELDS:
+        wanted = _as_list(params.get(field))
+        if wanted:
+            conditions.append('(' + ' OR '.join(
+                [f"g.{field} LIKE ? ESCAPE '\\'"] * len(wanted)) + ')')
+            values.extend(f"%{escape_like(v)}%" for v in wanted)
+        unwanted = _as_list(params.get(f'not_{field}'))
+        if unwanted:
+            conditions.append(f"(g.{field} IS NULL OR (" + ' AND '.join(
+                [f"g.{field} NOT LIKE ? ESCAPE '\\'"] * len(unwanted)) + '))')
+            values.extend(f"%{escape_like(v)}%" for v in unwanted)
 
     if params.get('rating'):
         rating_clauses = ' OR '.join(f"g.{RATING_SYSTEMS[k]['db_column']} = ?" for k in RATING_SYSTEM_KEYS)
         conditions.append(f"({rating_clauses})")
         values.extend([params['rating']] * len(RATING_SYSTEM_KEYS))
-
-    for field in ('genre', 'franchise', 'developer', 'publisher', 'modes', 'perspective', 'dimension'):
-        not_val = params.get(f'not_{field}')
-        if not_val:
-            conditions.append(f"(g.{field} NOT LIKE ? ESCAPE '\\' OR g.{field} IS NULL)")
-            values.append(f"%{escape_like(not_val)}%")
 
     if params.get('not_rating'):
         for k in RATING_SYSTEM_KEYS:

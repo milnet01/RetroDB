@@ -1786,6 +1786,79 @@
     font-size: 0.85rem;
 }
 
+/* PASS-53-11 — tickable options (buttons) and the Apply footer */
+button.filter-option {
+    width: 100%;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+}
+
+.filter-option[aria-checked]::before {
+    content: '';
+    flex: 0 0 auto;
+    width: 1.1rem;
+    height: 1.1rem;
+    margin-right: var(--spacing-sm);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    line-height: 1.1rem;
+    text-align: center;
+}
+
+.filter-option[aria-checked] .filter-option-name {
+    flex: 1;
+}
+
+.filter-option[aria-checked="true"] {
+    border-color: var(--primary-cyan);
+    background: rgba(76, 201, 240, 0.15);
+}
+
+.filter-option[aria-checked="true"]::before {
+    content: '✓';
+    color: var(--primary-cyan);
+    border-color: var(--primary-cyan);
+}
+
+.filter-modal.exclude-mode .filter-option[aria-checked="true"] {
+    border-color: var(--neon-red);
+    background: rgba(239, 68, 68, 0.15);
+}
+
+.filter-modal.exclude-mode .filter-option[aria-checked="true"]::before {
+    content: '✕';
+    color: var(--neon-red);
+    border-color: var(--neon-red);
+}
+
+.filter-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-top: 1px solid var(--card-border);
+}
+
+.filter-modal-footer[hidden] {
+    display: none;
+}
+
+.filter-modal-hint {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.filter-modal .hint-exclude,
+.filter-modal.exclude-mode .hint-include {
+    display: none;
+}
+
+.filter-modal.exclude-mode .hint-exclude {
+    display: inline;
+}
+
 /* =============================================================================
    RESPONSIVE
    ============================================================================= */

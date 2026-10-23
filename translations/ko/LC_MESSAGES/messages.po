@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-23 09:42+0200\n"
+"POT-Creation-Date: 2026-10-23 09:53+0200\n"
 "PO-Revision-Date: 2026-06-30 14:26+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ko\n"
@@ -58,8 +58,8 @@ msgstr "시스템을 찾을 수 없거나 업적이 있는 게임이 없습니�
 #: routes/achievements.py:171 routes/achievements.py:440
 #: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/collections.py:276
 #: routes/collections.py:531 routes/emulators.py:267 routes/emulators.py:281
-#: routes/games.py:350 routes/games.py:806 routes/games.py:928
-#: routes/games.py:984 routes/games_ai.py:46 routes/games_media.py:37
+#: routes/games.py:348 routes/games.py:804 routes/games.py:926
+#: routes/games.py:982 routes/games_ai.py:46 routes/games_media.py:37
 #: routes/games_media.py:84 routes/games_media.py:145 routes/launch.py:224
 #: routes/reports.py:693 routes/reports.py:818 routes/trophies.py:1278
 #: services/hltb_service.py:125
@@ -229,8 +229,8 @@ msgstr "상위 게임을 찾을 수 없습니다"
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "보너스 디스크와 상위 게임은 같은 시스템에 있어야 합니다"
 
-#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1236
-#: routes/games.py:1266 routes/platform_import.py:289
+#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1234
+#: routes/games.py:1264 routes/platform_import.py:289
 #: routes/platform_import.py:658 routes/platform_import.py:1024
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:200 routes/scraper.py:528
@@ -428,73 +428,73 @@ msgstr "RetroDB는 DuckStation, PCSX2, RPCS3의 게임별 설정만 관리합니
 msgid "Emulator not found"
 msgstr "에뮬레이터를 찾을 수 없습니다"
 
-#: routes/games.py:242
+#: routes/games.py:240
 msgid "No IDs provided"
 msgstr "제공된 ID가 없습니다"
 
-#: routes/games.py:250
+#: routes/games.py:248
 msgid "Provide 1-50 valid IDs"
 msgstr "유효한 ID를 1-50개 제공하세요"
 
-#: routes/games.py:506
+#: routes/games.py:504
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
 msgstr "동영상이 저장되지 않았습니다: 최대 %(mb)s MB의 MP4, WebM 또는 OGG 파일이어야 합니다."
 
-#: routes/games.py:632
+#: routes/games.py:630
 msgid "Game not found after update"
 msgstr "업데이트 후 게임을 찾을 수 없습니다"
 
-#: routes/games.py:932
+#: routes/games.py:930
 msgid "No game selected."
 msgstr "선택한 게임이 없습니다."
 
-#: routes/games.py:956
+#: routes/games.py:954
 msgid "This metadata apply is no longer running."
 msgstr "이 메타데이터 적용은 더 이상 실행 중이 아닙니다."
 
-#: routes/games.py:965
+#: routes/games.py:963
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
 " still missing)"
 msgstr "%(sources)s에서 메타데이터를 적용했습니다! (%(filled)d개 필드 입력, %(missing)d개 아직 누락)"
 
-#: routes/games.py:971
+#: routes/games.py:969
 msgid "Failed to apply metadata."
 msgstr "메타데이터 적용에 실패했습니다."
 
-#: routes/games.py:1014 routes/games.py:1058
+#: routes/games.py:1012 routes/games.py:1056
 msgid "No fields to update"
 msgstr "업데이트할 필드가 없습니다"
 
-#: routes/games.py:1055 routes/platform_import.py:212
+#: routes/games.py:1053 routes/platform_import.py:212
 #: routes/platform_import.py:572 routes/platform_import.py:928
 #: routes/trophies.py:1852
 msgid "No games selected"
 msgstr "선택된 게임이 없습니다"
 
-#: routes/games.py:1065
+#: routes/games.py:1063
 msgid "Invalid completion status"
 msgstr "잘못된 완료 상태입니다"
 
-#: routes/games.py:1113
+#: routes/games.py:1111
 msgid "No valid fields to update"
 msgstr "업데이트할 유효한 필드가 없습니다"
 
-#: routes/games.py:1229
+#: routes/games.py:1227
 msgid "Invalid status"
 msgstr "잘못된 상태입니다"
 
-#: routes/games.py:1254
+#: routes/games.py:1252
 msgid "Not authenticated"
 msgstr "인증되지 않았습니다"
 
-#: routes/games.py:1285
+#: routes/games.py:1283
 msgid "Filter type and value required"
 msgstr "필터 유형과 값이 필요합니다"
 
-#: routes/games.py:1298
+#: routes/games.py:1296
 msgid "Invalid filter type"
 msgstr "잘못된 필터 유형입니다"
 
@@ -8727,6 +8727,18 @@ msgstr "아님"
 #: templates/_modals/select_filter_modal.html:20
 msgid "Close filter"
 msgstr "필터 닫기"
+
+#: templates/_modals/select_filter_modal.html:27
+msgid "Tick any number; a game shows if it has any of them."
+msgstr ""
+
+#: templates/_modals/select_filter_modal.html:28
+msgid "Tick any number; a game is hidden if it has any of them."
+msgstr ""
+
+#: templates/_modals/select_filter_modal.html:29
+msgid "Apply"
+msgstr ""
 
 #: templates/_settings_tabs/account.html:2
 msgid "Account settings"
