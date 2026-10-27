@@ -227,6 +227,17 @@ def api_update_user(user_id):
     if not user:
         return error(_('User not found'), code=404)
 
+    # The last active admin cannot be demoted or deactivated: nobody would be
+    # left who can manage users or settings (the delete route guards the same).
+    if user['role'] == 'admin' and user['is_active']:
+        demoted = 'role' in data and data['role'] in VALID_ROLES and data['role'] != 'admin'
+        deactivated = 'is_active' in data and not data['is_active']
+        if demoted or deactivated:
+            admin_count = query("SELECT COUNT(*) as count FROM users "
+                                "WHERE role = 'admin' AND is_active = 1", one=True)
+            if admin_count['count'] <= 1:
+                return error(_('Cannot delete the last admin user'), code=403)
+
     updates = []
     params = []
     

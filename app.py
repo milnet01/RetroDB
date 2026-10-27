@@ -1019,11 +1019,17 @@ def _get_collector_rank_safe():
     trophies module / table isn't ready yet (e.g. first boot before the
     table has been populated). The sidebar badge reads this on every
     render, so it must never raise."""
+    # inject_config runs for every render_template call in a request, so the
+    # rank is read once per request and reused.
+    if '_collector_rank' in g:
+        return g._collector_rank
     try:
         from routes.collector_trophies import get_current_rank
-        return get_current_rank()
+        rank = get_current_rank()
     except Exception:
-        return None
+        rank = None
+    g._collector_rank = rank
+    return rank
 
 
 # =============================================================================

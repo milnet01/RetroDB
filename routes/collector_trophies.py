@@ -20,7 +20,7 @@ from flask import Blueprint, render_template, jsonify, g
 
 from services.api_helpers import handle_api_errors, success
 from services.auth import login_required, permission_required
-from services.database import query, execute
+from services.database import get_request_db, query
 from services.formatters import get_manufacturer
 
 logger = logging.getLogger(__name__)
@@ -470,6 +470,17 @@ def _refresh_trophies(user_id=None):
     newly_earned = 0
     total_earned = 0
 
+    # One read of the caller's rows and one transaction for the writes; this
+    # was a SELECT plus a committed write per trophy (~140 round trips).
+    existing_rows = {
+        r['id']: r['earned_at'] for r in query(
+            "SELECT id, earned_at FROM collector_trophies WHERE user_id = ?",
+            (user_id,),
+        )
+    }
+    updates = []
+    inserts = []
+
     for trophy_def in TROPHY_DEFINITIONS:
         trophy_id = trophy_def['id']
         stat_key = trophy_def['stat']
@@ -478,65 +489,47 @@ def _refresh_trophies(user_id=None):
 
         progress = min(current_value, threshold)
         met = current_value >= threshold
+        definition = (trophy_def['name'], trophy_def['description'],
+                      trophy_def['icon'], trophy_def['tier'],
+                      trophy_def['category'], threshold)
 
-        existing = query(
-            "SELECT earned_at FROM collector_trophies WHERE id = ? AND user_id = ?",
-            (trophy_id, user_id), one=True
-        )
-
-        if existing is not None:
-            already_earned = existing['earned_at'] is not None
+        if trophy_id in existing_rows:
+            already_earned = existing_rows[trophy_id] is not None
+            if met:
+                total_earned += 1
+            # Stamp earned_at the first time the threshold is met; otherwise
+            # keep it. Definition fields are re-written every refresh so edits
+            # (name, description, icon, tier, threshold) propagate without a
+            # manual DELETE FROM collector_trophies.
+            earned_at = now if met and not already_earned else existing_rows[trophy_id]
             if met and not already_earned:
-                execute(
-                    """UPDATE collector_trophies
-                       SET progress = ?, earned_at = ?,
-                           name = ?, description = ?, icon = ?, tier = ?,
-                           category = ?, threshold = ?
-                       WHERE id = ? AND user_id = ?""",
-                    (progress, now, trophy_def['name'], trophy_def['description'],
-                     trophy_def['icon'], trophy_def['tier'], trophy_def['category'],
-                     threshold, trophy_id, user_id)
-                )
                 newly_earned += 1
-                total_earned += 1
-            elif met and already_earned:
-                # Re-write fields every refresh so definition edits (name,
-                # description, icon, tier, threshold) propagate without a
-                # manual DELETE FROM collector_trophies.
-                execute(
-                    """UPDATE collector_trophies
-                       SET progress = ?, name = ?, description = ?, icon = ?,
-                           tier = ?, category = ?, threshold = ?
-                       WHERE id = ? AND user_id = ?""",
-                    (progress, trophy_def['name'], trophy_def['description'],
-                     trophy_def['icon'], trophy_def['tier'], trophy_def['category'],
-                     threshold, trophy_id, user_id)
-                )
-                total_earned += 1
-            else:
-                execute(
-                    """UPDATE collector_trophies
-                       SET progress = ?, name = ?, description = ?, icon = ?,
-                           tier = ?, category = ?, threshold = ?
-                       WHERE id = ? AND user_id = ?""",
-                    (progress, trophy_def['name'], trophy_def['description'],
-                     trophy_def['icon'], trophy_def['tier'], trophy_def['category'],
-                     threshold, trophy_id, user_id)
-                )
+            updates.append((progress, earned_at, *definition, trophy_id, user_id))
         else:
             earned_at = now if met else None
             if met:
                 newly_earned += 1
                 total_earned += 1
-            execute(
+            inserts.append((trophy_id, user_id, *definition[:5], threshold,
+                            earned_at, progress))
+
+    conn = get_request_db()
+    with conn:
+        if updates:
+            conn.executemany(
+                """UPDATE collector_trophies
+                   SET progress = ?, earned_at = ?,
+                       name = ?, description = ?, icon = ?, tier = ?,
+                       category = ?, threshold = ?
+                   WHERE id = ? AND user_id = ?""",
+                updates,
+            )
+        if inserts:
+            conn.executemany(
                 """INSERT INTO collector_trophies
                    (id, user_id, name, description, icon, tier, category, threshold, earned_at, progress)
                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-                (
-                    trophy_id, user_id, trophy_def['name'], trophy_def['description'],
-                    trophy_def['icon'], trophy_def['tier'], trophy_def['category'],
-                    threshold, earned_at, progress,
-                )
+                inserts,
             )
 
     # Compute the rank after refresh so the API response reflects the new state

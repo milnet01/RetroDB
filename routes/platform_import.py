@@ -73,36 +73,43 @@ def _ensure_system_exists(folder, name=None):
     return None
 
 
-def _check_duplicate(title, system_id, platform_field=None, platform_value=None):
-    """Check if a game already exists by platform ID or normalized title.
+_PLATFORM_ID_FIELDS = ('steam_app_id', 'xbox_title_id', 'psn_npwr_id')
 
-    Args:
-        title: Game title to check
-        system_id: System ID to check against
-        platform_field: Column name for platform-specific ID (e.g. 'steam_app_id')
-        platform_value: Value of the platform-specific ID
 
-    Returns:
-        int or None: Existing game_id if found, else None
+class _DuplicateIndex:
+    """Duplicate lookup for a whole fetched library, built with one query.
+
+    Checking each fetched title with its own queries re-read and
+    re-normalised every game of the target system per title, so a
+    1 000-game Steam library against a 1 000-game Windows system cost a
+    million title normalisations and 2 000 queries.
+
+    `find()` answers as the per-title check did: the platform-ID match
+    anywhere in the library first, then a normalised-title match among the
+    games of the given system. The first row in rowid order wins.
     """
-    # 1. Exact platform ID match
-    if platform_field and platform_value:
-        allowed_fields = ('steam_app_id', 'xbox_title_id', 'psn_npwr_id')
-        if platform_field not in allowed_fields:
-            return None
-        row = query(f"SELECT id FROM games WHERE {platform_field} = ?", (platform_value,), one=True)
-        if row:
-            return row['id']
 
-    # 2. Normalized title match on same system
-    norm = normalize_title(title)
-    if norm and system_id:
-        games = query("SELECT id, title FROM games WHERE system_id = ?", (system_id,))
-        for game in games:
-            if normalize_title(game['title']) == norm:
-                return game['id']
+    def __init__(self, platform_field):
+        if platform_field not in _PLATFORM_ID_FIELDS:
+            raise ValueError(f"unknown platform field {platform_field!r}")
+        self._by_platform_id = {}
+        self._by_title = {}
+        for row in query(f"SELECT id, title, system_id, {platform_field} AS pid "
+                         f"FROM games ORDER BY id"):
+            if row['pid']:
+                self._by_platform_id.setdefault(row['pid'], row['id'])
+            norm = normalize_title(row['title'])
+            if norm:
+                self._by_title.setdefault((norm, row['system_id']), row['id'])
 
-    return None
+    def find(self, title, system_id, platform_value=None):
+        """Existing game_id for this title / platform ID, else None."""
+        if platform_value and platform_value in self._by_platform_id:
+            return self._by_platform_id[platform_value]
+        norm = normalize_title(title)
+        if norm and system_id:
+            return self._by_title.get((norm, system_id))
+        return None
 
 
 # =============================================================================
@@ -167,6 +174,7 @@ def api_steam_fetch_library():
     system_id = system['id'] if system else None
 
     # Check duplicates for each game
+    dupes = _DuplicateIndex('steam_app_id')
     result_games = []
     for game in games:
         app_id = str(game.get('appid', ''))
@@ -174,7 +182,7 @@ def api_steam_fetch_library():
         playtime = game.get('playtime_forever', 0)
         last_played = game.get('rtime_last_played', 0)
 
-        existing_id = _check_duplicate(name, system_id, 'steam_app_id', app_id)
+        existing_id = dupes.find(name, system_id, app_id)
 
         result_games.append({
             'appid': app_id,
@@ -501,6 +509,7 @@ def api_xbox_fetch_library():
     if windows_system:
         xbox_systems['windows'] = windows_system
 
+    dupes = _DuplicateIndex('xbox_title_id')
     result_games = []
     for title in titles:
         name = title.get('name', '')
@@ -517,7 +526,7 @@ def api_xbox_fetch_library():
         system_id = system['id'] if system else None
 
         # Check duplicates
-        existing_id = _check_duplicate(name, system_id, 'xbox_title_id', title_id)
+        existing_id = dupes.find(name, system_id, title_id)
 
         # Extract achievement summary from title data
         achievement = title.get('achievement', {})
@@ -833,6 +842,7 @@ def _build_psn_library_response(games_data, from_api=False):
         if system:
             psn_systems[platform_str] = system
 
+    dupes = _DuplicateIndex('psn_npwr_id')
     result_games = []
     for game in games_data:
         if from_api:
@@ -858,9 +868,7 @@ def _build_psn_library_response(games_data, from_api=False):
         system_id = system['id'] if system else None
 
         # Check duplicates
-        existing_id = linked_game_id or _check_duplicate(
-            name, system_id, 'psn_npwr_id', npwr_id
-        )
+        existing_id = linked_game_id or dupes.find(name, system_id, npwr_id)
 
         result_games.append({
             'npwr_id': npwr_id,
