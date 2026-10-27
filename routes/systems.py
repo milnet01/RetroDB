@@ -446,16 +446,17 @@ def api_calculate_storage():
     """Calculate and update file sizes for all games"""
     try:
         games = query("SELECT id, rom_path FROM games WHERE file_size IS NULL OR file_size = 0")
-        updated = 0
-
+        # One batched write (one commit) instead of a commit per game.
+        sizes = []
         for game in games:
             if game['rom_path'] and os.path.exists(game['rom_path']):
                 try:
-                    size = os.path.getsize(game['rom_path'])
-                    execute("UPDATE games SET file_size = ? WHERE id = ?", (size, game['id']))
-                    updated += 1
+                    sizes.append((os.path.getsize(game['rom_path']), game['id']))
                 except Exception as e:
                     logger.warning(f"Could not get size for {game['rom_path']}: {e}")
+        if sizes:
+            execute_many("UPDATE games SET file_size = ? WHERE id = ?", sizes)
+        updated = len(sizes)
 
         return success(
             updated=updated,

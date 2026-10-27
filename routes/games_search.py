@@ -82,7 +82,9 @@ def api_search_games():
 def api_local_search_games():
     """Search local game library by title. Used by lists, compare, etc."""
     q = request.args.get('q', '').strip()
-    limit = min(request.args.get('limit', 20, type=int), 50)
+    # Floor at 1: SQLite reads a negative LIMIT as "no limit", so
+    # ?limit=-1 returned the whole library.
+    limit = min(max(request.args.get('limit', 20, type=int), 1), 50)
 
     if not q or len(q) < 2:
         return success(games=[])
@@ -119,9 +121,9 @@ def api_similar_games(game_id):
                 matches = query("""
                     SELECT g.id, g.title, g.boxart, s.name AS system_name
                     FROM games g JOIN systems s ON g.system_id = s.id
-                    WHERE g.franchise LIKE ? AND g.id != ? AND g.is_bonus_disc = 0
+                    WHERE g.franchise LIKE ? ESCAPE '\\' AND g.id != ? AND g.is_bonus_disc = 0
                     ORDER BY g.title LIMIT 5
-                """, [f'%{franchise}%', game_id])
+                """, [f'%{escape_like(franchise)}%', game_id])
                 for m in matches:
                     if m['id'] not in seen_ids:
                         similar.append({'id': m['id'], 'title': m['title'], 'boxart': m['boxart'], 'system_name': m['system_name'], 'reason': f'Same franchise: {franchise}'})
@@ -135,9 +137,10 @@ def api_similar_games(game_id):
                 matches = query("""
                     SELECT g.id, g.title, g.boxart, s.name AS system_name
                     FROM games g JOIN systems s ON g.system_id = s.id
-                    WHERE g.genre LIKE ? AND g.developer LIKE ? AND g.id != ? AND g.is_bonus_disc = 0
+                    WHERE g.genre LIKE ? ESCAPE '\\' AND g.developer LIKE ? ESCAPE '\\'
+                      AND g.id != ? AND g.is_bonus_disc = 0
                     ORDER BY g.title LIMIT 5
-                """, [f'%{genres[0]}%', f'%{devs[0]}%', game_id])
+                """, [f'%{escape_like(genres[0])}%', f'%{escape_like(devs[0])}%', game_id])
                 for m in matches:
                     if m['id'] not in seen_ids:
                         similar.append({'id': m['id'], 'title': m['title'], 'boxart': m['boxart'], 'system_name': m['system_name'], 'reason': 'Same genre & developer'})
@@ -154,9 +157,9 @@ def api_similar_games(game_id):
                 matches = query(f"""
                     SELECT g.id, g.title, g.boxart, s.name AS system_name
                     FROM games g JOIN systems s ON g.system_id = s.id
-                    WHERE g.genre LIKE ? AND g.system_id = ? AND g.id NOT IN ({placeholders}) AND g.is_bonus_disc = 0
+                    WHERE g.genre LIKE ? ESCAPE '\\' AND g.system_id = ? AND g.id NOT IN ({placeholders}) AND g.is_bonus_disc = 0
                     ORDER BY RANDOM() LIMIT ?
-                """, [f'%{genres[0]}%', game['system_id']] + seen_ids_list + [8 - len(similar)])
+                """, [f'%{escape_like(genres[0])}%', game['system_id']] + seen_ids_list + [8 - len(similar)])
                 for m in matches:
                     if m['id'] not in seen_ids:
                         similar.append({'id': m['id'], 'title': m['title'], 'boxart': m['boxart'], 'system_name': m['system_name'], 'reason': 'Similar genre on same system'})

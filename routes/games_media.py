@@ -108,7 +108,9 @@ def api_rename_rom(game_id):
     if problem:
         return error(_('Cannot rename: %(reason)s') % {'reason': problem}, 400)
 
-    if os.path.exists(new_path) and new_path != old_path:
+    # samefile, not !=: on a case-insensitive filesystem (Windows,
+    # macOS) a case-only rename finds its own source "existing".
+    if os.path.exists(new_path) and not os.path.samefile(new_path, old_path):
         return error(_('A file with that name already exists'), 400)
 
     try:

@@ -224,10 +224,13 @@ def api_database_optimize():
     start_time = time.time()
 
     conn = get_db()
-    conn.execute("VACUUM")
-    conn.execute("ANALYZE")
-    conn.execute("PRAGMA optimize")
-    conn.close()
+    try:
+        conn.execute("VACUUM")
+        conn.execute("ANALYZE")
+        conn.execute("PRAGMA optimize")
+    finally:
+        # VACUUM raises "database is locked" while a job writes; close anyway.
+        conn.close()
 
     duration = time.time() - start_time
     size_after = os.path.getsize(db_path)

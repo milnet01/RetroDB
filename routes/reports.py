@@ -10,7 +10,6 @@ from flask_babel import gettext as _
 import os
 import shutil
 import re
-import glob
 import logging
 
 # Import configuration
@@ -387,6 +386,21 @@ def api_reports_name_mismatch():
 # API ROUTES - Multi-Disc Scan
 # =============================================================================
 
+def _disc_files_in(folder, extensions):
+    """Top-level files in `folder` whose extension is one of `extensions`,
+    matched case-insensitively, each listed once.
+
+    The old per-extension glob of `*.bin` plus `*.BIN` listed every file
+    twice where the filesystem ignores case (Windows, macOS), so one
+    "Game (Disc 1).bin" looked like a two-disc set.
+    """
+    wanted = {e.lower() for e in extensions}
+    with os.scandir(folder) as entries:
+        return [e.path for e in entries
+                if not e.name.startswith('.') and e.is_file()
+                and os.path.splitext(e.name)[1].lower() in wanted]
+
+
 @reports_bp.route('/api/reports/multidisc-scan', methods=['POST'])
 @login_required
 @handle_api_errors
@@ -441,15 +455,7 @@ def api_reports_multidisc_scan():
         scanned_systems.append(system)
         
         # Find all disc files in this system folder (top level only - not in subdirectories)
-        disc_files = []
-        for ext in disc_extensions:
-            # Only look at top level files
-            found = glob.glob(os.path.join(system_path, f'*{ext}'))
-            disc_files.extend(found)
-            # Also check case-insensitive
-            if ext != ext.upper():
-                found_upper = glob.glob(os.path.join(system_path, f'*{ext.upper()}'))
-                disc_files.extend(found_upper)
+        disc_files = _disc_files_in(system_path, disc_extensions)
         
         logger.info(f"Multi-disc scan: Found {len(disc_files)} top-level disc files in {system}")
         
@@ -463,13 +469,7 @@ def api_reports_multidisc_scan():
             m3u_exists = os.path.exists(os.path.join(system_path, f"{subfolder}.m3u"))
             
             # Count disc files in this subfolder
-            subfolder_disc_files = []
-            for ext in disc_extensions:
-                found = glob.glob(os.path.join(subfolder_path, f'*{ext}'))
-                subfolder_disc_files.extend(found)
-                if ext != ext.upper():
-                    found_upper = glob.glob(os.path.join(subfolder_path, f'*{ext.upper()}'))
-                    subfolder_disc_files.extend(found_upper)
+            subfolder_disc_files = _disc_files_in(subfolder_path, disc_extensions)
             
             # Check if any files look like multi-disc
             has_disc_indicator = False
@@ -725,7 +725,9 @@ def api_reports_rename_rom():
         return error(_('Cannot rename: %(reason)s') % {'reason': problem}, 400)
 
     # Check if new name already exists
-    if os.path.exists(new_path) and new_path != old_path:
+    # samefile, not !=: on a case-insensitive filesystem (Windows,
+    # macOS) a case-only rename finds its own source "existing".
+    if os.path.exists(new_path) and not os.path.samefile(new_path, old_path):
         return error(_('A file with that name already exists'), 400)
 
     # Check if this is an M3U file
@@ -747,7 +749,9 @@ def api_reports_rename_rom():
         # Check if associated folder exists
         if os.path.isdir(old_folder):
             # Check if new folder name already exists
-            if os.path.exists(new_folder) and new_folder != old_folder:
+            # samefile, not !=: on a case-insensitive filesystem (Windows,
+            # macOS) a case-only rename finds its own source "existing".
+            if os.path.exists(new_folder) and not os.path.samefile(new_folder, old_folder):
                 return error(_('A folder with the new name already exists'), 400)
 
             # Rename the folder first
@@ -892,7 +896,9 @@ def api_reports_rename_to_scraped():
         return error(_('Destination is outside the configured ROM root'), 400)
 
     # Check if new name already exists
-    if os.path.exists(new_path) and new_path != old_path:
+    # samefile, not !=: on a case-insensitive filesystem (Windows,
+    # macOS) a case-only rename finds its own source "existing".
+    if os.path.exists(new_path) and not os.path.samefile(new_path, old_path):
         return error(_('A file with that name already exists'), 400)
 
     # Handle M3U files specially - need to rename folder and update M3U contents
@@ -904,7 +910,9 @@ def api_reports_rename_to_scraped():
         # Check if associated folder exists
         if os.path.isdir(old_folder):
             # Check if new folder name already exists
-            if os.path.exists(new_folder) and new_folder != old_folder:
+            # samefile, not !=: on a case-insensitive filesystem (Windows,
+            # macOS) a case-only rename finds its own source "existing".
+            if os.path.exists(new_folder) and not os.path.samefile(new_folder, old_folder):
                 return error(_('A folder with the new name already exists'), 400)
             
             # Rename the folder first

@@ -155,19 +155,20 @@ def api_get_all_controllers():
         ORDER BY c.manufacturer COLLATE NOCASE, c.name COLLATE NOCASE
     """)
 
-    # For each controller, get all associated systems
+    # Every controller's systems in one query, not one query per controller.
+    systems_by_controller = {}
+    for row in query("""
+        SELECT sc.controller_id, s.id, s.name
+        FROM systems s
+        JOIN system_controllers sc ON s.id = sc.system_id
+        ORDER BY s.name COLLATE NOCASE
+    """):
+        systems_by_controller.setdefault(row['controller_id'], []).append(row)
+
     result = []
     for c in controllers:
         ctrl = dict(c)
-
-        # Get systems from junction table
-        systems = query("""
-            SELECT s.id, s.name
-            FROM systems s
-            JOIN system_controllers sc ON s.id = sc.system_id
-            WHERE sc.controller_id = ?
-            ORDER BY s.name COLLATE NOCASE
-        """, (ctrl['id'],))
+        systems = systems_by_controller.get(ctrl['id'], [])
 
         ctrl['system_ids'] = [s['id'] for s in systems]
         ctrl['system_names'] = [s['name'] for s in systems]
@@ -558,12 +559,18 @@ def api_assign_default_controllers():
         'xbox360': ['Xbox 360'],
     }
 
+    patterns_longest_first = sorted(controller_mappings, key=len, reverse=True)
+
     for system in systems:
         folder_lower = system['folder'].lower().replace('-', '').replace('_', '').replace(' ', '')
 
-        # Try to find a matching controller
+        # Try to find a matching controller. Longest pattern first: a bare
+        # substring scan in dict order typed 'snes' as 'nes', 'gba' as 'gb',
+        # 'wiiu' as 'wii' and 'xbox360' as 'xbox' (same bug Pass 48.5 fixed in
+        # systems.update_system_types).
         matched_controller = None
-        for folder_pattern, controller_names in controller_mappings.items():
+        for folder_pattern in patterns_longest_first:
+            controller_names = controller_mappings[folder_pattern]
             if folder_pattern in folder_lower:
                 # Search for any matching controller
                 for ctrl_name in controller_names:
