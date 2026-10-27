@@ -37,7 +37,7 @@ AI_FILLABLE_FIELDS = [
     'game_structure', 'perspective', 'dimension', 'campaign',
     'other_platforms', 'edition',
     'critic_score', 'critic_score_count', 'user_score', 'user_score_count',
-    'units_sold',
+    'units_sold', 'release_dates',
 ]
 
 # Schema constraints for validation (values AI must pick from)
@@ -478,6 +478,18 @@ def _build_prompt(title, system_name, missing_fields, existing_values=None):
         elif field == 'release_date':
             field_instructions.append(
                 '"release_date": release date for THIS specific platform in YYYY-MM-DD format'
+            )
+        elif field == 'release_dates':
+            field_instructions.append(
+                '"release_dates": a JSON object giving the date this game was released on '
+                + system_name + ' in each region where it came out, keyed by region code: '
+                'NA (North America), EU (Europe and other PAL regions), JP (Japan), '
+                'AU (Australia), KR (South Korea), CN (China), TW (Taiwan), BR (Brazil), '
+                'AS (Asia, only when no single country is known), WW (one worldwide release). '
+                'Dates in YYYY-MM-DD format, or YYYY-MM / YYYY when only that much is '
+                'known. Leave out regions where it was not released. Example: '
+                '{"JP": "2002-11-17", "NA": "2002-11-18", "EU": "2003-03-21"}. '
+                'Return {} if unknown.'
             )
         elif field == 'players':
             field_instructions.append(
@@ -980,6 +992,11 @@ def _validate_field(field_name, value):
     """
     if value is None:
         return ''
+
+    # An object, not text: stored as JSON, one date per region.
+    if field_name == 'release_dates':
+        from services.release_dates import release_dates_json
+        return release_dates_json(value) or ''
 
     # Convert to string
     value = str(value).strip()

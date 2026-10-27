@@ -25,7 +25,21 @@
         (game.system_name, url_for('systems.system_games', system_id=game.system_id)),
     ] %}
 {% endif %}
+<div class="game-page-topbar">
 {{ breadcrumb(_trail + [(game.title, None)]) }}
+{% if _from in (None, '', 'library', 'system') %}
+{# Previous / Next through the list the game was opened from: the Library, or
+   its console's page (the default, as for the breadcrumb). game-modals.js
+   fills the links from the list's filters and sort. #}
+<nav id="gameNav" class="game-nav" hidden aria-label="{{ _('Browse games') }}"
+     data-game-id="{{ game.id }}" data-system-id="{{ game.system_id }}"
+     data-from="{{ 'library' if _from == 'library' else 'system' }}">
+    <a class="game-nav-link" data-nav="prev" rel="prev" hidden>‹ {{ _('Previous') }}</a>
+    <span class="game-nav-position"></span>
+    <a class="game-nav-link" data-nav="next" rel="next" hidden>{{ _('Next') }} ›</a>
+</nav>
+{% endif %}
+</div>
 
 <!-- Message Display -->
 {% if message %}
@@ -297,6 +311,17 @@
                 <div class="kd-item">
                     <span class="kd-label">{{ _('Series') }}</span>
                     <a href="#" class="kd-value franchise filter-link" data-filter-type="franchise" data-filter-value="{{ game.franchise }}">{{ game.franchise }}</a>
+                </div>
+                {% endif %}
+                {% if release_dates %}
+                <div class="kd-item">
+                    <span class="kd-label">{{ _('Release dates') }}</span>
+                    <dl class="kd-value release-dates-list">
+                        {% for rd in release_dates %}
+                        <dt>{{ rd.region }}</dt>
+                        <dd><time datetime="{{ rd.iso }}">{{ rd.date }}</time></dd>
+                        {% endfor %}
+                    </dl>
                 </div>
                 {% endif %}
             </div>

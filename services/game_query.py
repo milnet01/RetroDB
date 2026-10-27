@@ -35,14 +35,30 @@ def _as_list(value):
     return [v for v in value if v] if isinstance(value, (list, tuple)) else [value]
 
 
-def get_retroachievements_info(game_title, system_folder):
-    """Get RetroAchievements info for a game."""
-    try:
-        from scraper.retroachievements import check_retroachievements
-        return check_retroachievements(game_title, system_folder)
-    except ImportError:
-        logger.debug("RetroAchievements module not available")
+def get_retroachievements_info(game):
+    """The RetroAchievements set a game is linked to, for its game page.
+
+    Read from the link the RA refresh or a scrape stored (`ra_game_id` and
+    its counts), the same link the Library's RA badge shows. A fresh title
+    search here missed games the refresh had matched by ROM name, so a game
+    with the badge had no RA card (Metroid Prime on GameCube). RA is asked
+    only when the stored link carries no achievement count.
+    """
+    ra_id = game.get('ra_game_id')
+    if not ra_id:
         return None
+    count = game.get('ra_achievement_count') or 0
+    if count:
+        return {
+            'id': ra_id,
+            'achievement_count': count,
+            'points': game.get('ra_points') or 0,
+            'has_achievements': True,
+            'url': f"https://retroachievements.org/game/{ra_id}",
+        }
+    try:
+        from scraper.retroachievements import get_game_info
+        return get_game_info(ra_id)
     except Exception as e:
         logger.debug(f"RetroAchievements lookup failed: {e}")
         return None

@@ -153,10 +153,66 @@ function gameDetailUrl(gameId) {
     const path = window.location.pathname;
     let from = '';
     if (path === '/games') from = 'library';
+    else if (path.startsWith('/system/')) from = 'system';
     else if (path.startsWith('/reports')) from = 'rom_reports';
     else if (path.startsWith('/achievements')) from = 'achievements';
     return `/game/${gameId}` + (from ? `?from=${from}` : '');
 }
+
+// =============================================================================
+// PREVIOUS / NEXT GAME (game page)
+// =============================================================================
+// The Library and each console page save their filters and sort for this tab
+// whenever they load; the game page reads the copy for the list it was opened
+// from and asks /api/games/neighbors for the games either side.
+
+function gameNavKey(from, systemId) {
+    return from === 'library' ? 'retrodb.gameNav.library' : `retrodb.gameNav.system.${systemId}`;
+}
+
+/** Called by AllGamesController with the list's filter and sort params. */
+function saveGameNavContext(systemId, params) {
+    try {
+        sessionStorage.setItem(gameNavKey(systemId ? 'system' : 'library', systemId), params.toString());
+    } catch (e) { /* storage blocked: the game page uses the unfiltered list */ }
+}
+
+async function initGameNav() {
+    const nav = document.getElementById('gameNav');
+    if (!nav) return;
+    const { gameId, systemId, from } = nav.dataset;
+    const fallback = from === 'library' ? '' : `system=${encodeURIComponent(systemId)}`;
+    let saved = null;
+    try { saved = sessionStorage.getItem(gameNavKey(from, systemId)); } catch (e) { /* blocked */ }
+
+    const neighbors = async (qs) => {
+        try {
+            const data = await API.get(`/api/games/neighbors?id=${encodeURIComponent(gameId)}${qs ? '&' + qs : ''}`);
+            return data && data.found ? data : null;
+        } catch (e) {
+            return null;
+        }
+    };
+    // A game outside the saved filters (opened from search, or edited out of
+    // them) steps through the whole list instead.
+    let data = await neighbors(saved ?? fallback);
+    if (!data && saved !== null && saved !== fallback) data = await neighbors(fallback);
+    if (!data || data.total < 2) return;
+
+    for (const dir of ['prev', 'next']) {
+        const link = nav.querySelector(`[data-nav="${dir}"]`);
+        const target = data[dir];
+        if (!link || !target) continue;
+        link.href = `/game/${target.id}?from=${from}`;
+        link.title = target.title;
+        link.hidden = false;
+    }
+    nav.querySelector('.game-nav-position').textContent =
+        `${formatNumber(data.position)} / ${formatNumber(data.total)}`;
+    nav.hidden = false;
+}
+
+document.addEventListener('DOMContentLoaded', initGameNav);
 
 // =============================================================================
 // GAME DETAIL MODAL
@@ -262,6 +318,13 @@ const GameDetailModal = {
         // Details
         document.getElementById('gdmDeveloper').textContent = game.developer || '-';
         document.getElementById('gdmPublisher').textContent = game.publisher || '-';
+
+        // Release date in each region, earliest first (written by the server
+        // in the user's language).
+        const releaseDates = game.release_dates || [];
+        document.getElementById('gdmReleaseDates').textContent =
+            releaseDates.map(rd => `${rd.region}: ${rd.date}`).join(' · ');
+        document.getElementById('gdmReleaseDatesRow').style.display = releaseDates.length ? '' : 'none';
         document.getElementById('gdmGenre').textContent = tField(game.genre) || '-';
         document.getElementById('gdmFranchise').textContent = game.franchise || '-';
 
@@ -2059,6 +2122,7 @@ RetroDB.GameDetailModal = GameDetailModal;
 RetroDB.GameEditModal = GameEditModal;
 RetroDB.HLTBManager = HLTBManager;
 RetroDB.gameDetailUrl = gameDetailUrl;
+RetroDB.saveGameNavContext = saveGameNavContext;
 
 // =============================================================================
 // LEGACY FUNCTION EXPORTS (Backward Compatibility)

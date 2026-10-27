@@ -30,7 +30,7 @@ _COLUMNS = [
     'video', 'manual', 'region', 'franchise', 'similar_games',
     'playtime_estimate', 'controller_support', 'save_type', 'game_structure',
     'perspective', 'dimension', 'edition', 'campaign', 'other_platforms',
-    'critic_score', 'critic_score_count', 'user_score', 'user_score_count', 'units_sold',
+    'critic_score', 'critic_score_count', 'user_score', 'user_score_count', 'units_sold', 'release_dates',
     'alternate_titles', 'scrape_history',
 ]
 

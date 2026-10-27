@@ -539,6 +539,7 @@ your migration — not in the runner.
 | 021 | `021_official_names.py` | Add `games.title_locked` (default 0); create `title_proposals`; trigger `trg_games_delete_title_proposal` removes a deleted game's proposal. | PASS-59-159 §4.1. Additive. |
 | 022 | `022_player_name.py` | Rename the player's row from migration 020's placeholder `RetroDB Player` to `RetroArch (RetroDB)`. | PASS-59-139. Renames only the placeholder, and only when the new name is free, so a name the user chose is kept. |
 | 023 | `023_games_units_sold.py` | Add `games.units_sold` (INTEGER, lifetime copies sold on the row's platform). | Additive. Filled only by the AI (scrape gap-fill and AI Fill); NULL = not known. |
+| 024 | `024_games_release_dates.py` | Add `games.release_dates` (TEXT, JSON object of region code → date). | Additive. Filled only by the AI (scrape gap-fill and AI Fill); NULL = not known. |
 
 ---
 

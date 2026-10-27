@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-27 14:31+0000\n"
+"POT-Creation-Date: 2026-10-27 15:30+0000\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: af\n"
@@ -59,8 +59,8 @@ msgstr "Stelsel nie gevind nie of het geen speletjies met prestasies nie"
 #: routes/achievements.py:171 routes/achievements.py:440
 #: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/collections.py:276
 #: routes/collections.py:531 routes/emulators.py:271 routes/emulators.py:285
-#: routes/games.py:351 routes/games.py:815 routes/games.py:941
-#: routes/games.py:997 routes/games_ai.py:46 routes/games_media.py:37
+#: routes/games.py:390 routes/games.py:864 routes/games.py:991
+#: routes/games.py:1047 routes/games_ai.py:46 routes/games_media.py:37
 #: routes/games_media.py:85 routes/games_media.py:146 routes/launch.py:240
 #: routes/reports.py:693 routes/reports.py:818 routes/trophies.py:1278
 #: services/hltb_service.py:125
@@ -89,7 +89,7 @@ msgstr "Kon nie prestasiedata verkry nie"
 
 #: routes/achievements.py:294 routes/controllers.py:412
 #: routes/controllers.py:462 routes/museum.py:309 routes/museum.py:381
-#: routes/ra_sync.py:98 routes/systems.py:220
+#: routes/ra_sync.py:98 routes/systems.py:223
 msgid "System not found"
 msgstr "Stelsel nie gevind nie"
 
@@ -234,15 +234,15 @@ msgstr "Ouerspeletjie nie gevind nie"
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "Bonusskyf en ouerspeletjie moet in dieselfde stelsel wees"
 
-#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1255
-#: routes/games.py:1285 routes/platform_import.py:289
+#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1305
+#: routes/games.py:1335 routes/platform_import.py:289
 #: routes/platform_import.py:658 routes/platform_import.py:1024
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:200 routes/scraper.py:528
 #: routes/scraper.py:917 routes/settings.py:317 routes/settings.py:341
 #: routes/settings.py:456 routes/settings.py:533 routes/settings.py:547
 #: routes/settings.py:591 routes/settings.py:607 routes/settings.py:643
-#: routes/steam_achievements.py:138 routes/systems.py:286 routes/systems.py:466
+#: routes/steam_achievements.py:138 routes/systems.py:289 routes/systems.py:469
 #: routes/trophies.py:498 routes/trophies.py:694 routes/trophies.py:742
 #: routes/trophies.py:1564 routes/trophies.py:1588 routes/trophies.py:1633
 #: routes/trophies.py:1661 routes/trophies.py:1703 routes/trophies.py:1770
@@ -435,34 +435,41 @@ msgstr ""
 msgid "Emulator not found"
 msgstr "Emulator nie gevind nie"
 
-#: routes/games.py:242
+#: routes/games.py:247 routes/games.py:281
 msgid "No IDs provided"
 msgstr "Geen ID's verskaf nie"
 
-#: routes/games.py:250
+#: routes/games.py:289
 msgid "Provide 1-50 valid IDs"
 msgstr "Verskaf 1-50 geldige ID's"
 
-#: routes/games.py:507
+#: routes/games.py:551
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
 msgstr ""
 "Video nie gestoor nie: dit moet 'n MP4-, WebM- of OGG-lêer van tot %(mb)s"
 " MB wees."
 
-#: routes/games.py:637
+#: routes/games.py:561
+#, python-format
+msgid ""
+"Screenshots not added because they match ones the game already has: "
+"%(count)s"
+msgstr ""
+
+#: routes/games.py:685
 msgid "Game not found after update"
 msgstr "Speletjie nie gevind na bywerking nie"
 
-#: routes/games.py:945
+#: routes/games.py:995
 msgid "No game selected."
 msgstr "Geen speletjie gekies nie."
 
-#: routes/games.py:969
+#: routes/games.py:1019
 msgid "This metadata apply is no longer running."
 msgstr "Hierdie metadata-toepassing loop nie meer nie."
 
-#: routes/games.py:978
+#: routes/games.py:1028
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
@@ -471,41 +478,41 @@ msgstr ""
 "Metadata toegepas vanaf %(sources)s! (%(filled)d velde ingevul, "
 "%(missing)d ontbreek steeds)"
 
-#: routes/games.py:984
+#: routes/games.py:1034
 msgid "Failed to apply metadata."
 msgstr "Kon nie metadata toepas nie."
 
-#: routes/games.py:1033 routes/games.py:1077
+#: routes/games.py:1083 routes/games.py:1127
 msgid "No fields to update"
 msgstr "Geen velde om by te werk nie"
 
-#: routes/games.py:1074 routes/platform_import.py:212
+#: routes/games.py:1124 routes/platform_import.py:212
 #: routes/platform_import.py:572 routes/platform_import.py:928
 #: routes/trophies.py:1852
 msgid "No games selected"
 msgstr "Geen speletjies gekies nie"
 
-#: routes/games.py:1084
+#: routes/games.py:1134
 msgid "Invalid completion status"
 msgstr "Ongeldige voltooiingstatus"
 
-#: routes/games.py:1132
+#: routes/games.py:1182
 msgid "No valid fields to update"
 msgstr "Geen geldige velde om by te werk nie"
 
-#: routes/games.py:1248
+#: routes/games.py:1298
 msgid "Invalid status"
 msgstr "Ongeldige status"
 
-#: routes/games.py:1273
+#: routes/games.py:1323
 msgid "Not authenticated"
 msgstr "Nie geverifieer nie"
 
-#: routes/games.py:1304
+#: routes/games.py:1354
 msgid "Filter type and value required"
 msgstr "Filtertipe en -waarde vereis"
 
-#: routes/games.py:1317
+#: routes/games.py:1367
 msgid "Invalid filter type"
 msgstr "Ongeldige filtertipe"
 
@@ -975,11 +982,11 @@ msgstr "Steam-geloofsbriewe nie opgestel nie"
 msgid "Game not found or not a Steam game"
 msgstr "Speletjie nie gevind nie of is nie 'n Steam-speletjie nie"
 
-#: routes/systems.py:310
+#: routes/systems.py:313
 msgid "System ID required"
 msgstr "Stelsel-ID vereis"
 
-#: routes/systems.py:438
+#: routes/systems.py:441
 msgid "ES-DE scraper not available"
 msgstr "ES-DE-skraper nie beskikbaar nie"
 
@@ -1544,7 +1551,7 @@ msgid "... and {n} more"
 msgstr "... en {n} meer"
 
 #: services/js_i18n_strings.py:496 templates/_bulk_edit_modal.html:30
-#: templates/base.html:1014
+#: templates/base.html:1015
 msgid "100%"
 msgstr "100%"
 
@@ -1724,7 +1731,7 @@ msgstr "CLZ-Invoere"
 msgid "CRT screen"
 msgstr "CRT-skerm"
 
-#: services/js_i18n_strings.py:534 templates/game_detail.html:222
+#: services/js_i18n_strings.py:534 templates/game_detail.html:236
 msgid "Can be completed with playable performance and no game-breaking glitches."
 msgstr ""
 
@@ -1736,9 +1743,9 @@ msgstr ""
 #: templates/_settings_tabs/customization.html:264
 #: templates/achievement_game.html:178 templates/archive_scanner.html:661
 #: templates/archive_scanner.html:798 templates/base.html:338
-#: templates/base.html:356 templates/base.html:1055
+#: templates/base.html:356 templates/base.html:1056
 #: templates/chd_converter.html:170 templates/chd_verify.html:126
-#: templates/game_detail.html:539 templates/login.html:254
+#: templates/game_detail.html:564 templates/login.html:254
 #: templates/museum.html:29 templates/museum_system.html:182
 #: templates/psn_trophies.html:297 templates/psn_trophy_detail.html:182
 #: templates/psn_trophy_detail.html:325 templates/reports.html:521
@@ -1837,7 +1844,7 @@ msgstr "Klik weer om te verwyder"
 #: templates/_settings_tabs/customization.html:224
 #: templates/archive_scanner.html:749 templates/archive_scanner.html:757
 #: templates/base.html:249 templates/base.html:332 templates/base.html:349
-#: templates/base.html:695 templates/base.html:971 templates/base.html:1365
+#: templates/base.html:695 templates/base.html:972 templates/base.html:1366
 #: templates/reports.html:472 templates/systems.html:121
 #: templates/wishlist.html:56
 msgid "Close"
@@ -1861,17 +1868,17 @@ msgid "Complete!"
 msgstr "Voltooi!"
 
 #: services/js_i18n_strings.py:559 templates/_bulk_edit_modal.html:29
-#: templates/analytics.html:1664 templates/base.html:1013
-#: templates/dashboard.html:497 templates/game_detail.html:243
+#: templates/analytics.html:1664 templates/base.html:1014
+#: templates/dashboard.html:497 templates/game_detail.html:257
 msgid "Completed"
 msgstr "Voltooid"
 
 #: services/js_i18n_strings.py:560 templates/_bulk_edit_modal.html:23
-#: templates/analytics.html:137 templates/base.html:1008
+#: templates/analytics.html:137 templates/base.html:1009
 msgid "Completion Status"
 msgstr "Voltooiingstatus"
 
-#: services/js_i18n_strings.py:561 templates/game_detail.html:239
+#: services/js_i18n_strings.py:561 templates/game_detail.html:253
 msgid "Completion status"
 msgstr "Voltooiingstatus"
 
@@ -1881,8 +1888,8 @@ msgstr "Voltooiingstatus opgedateer"
 
 #: services/js_i18n_strings.py:563 templates/achievement_game.html:172
 #: templates/achievement_game.html:197 templates/achievement_game.html:211
-#: templates/base.html:1050 templates/game_detail.html:533
-#: templates/game_detail.html:558 templates/game_detail.html:572
+#: templates/base.html:1051 templates/game_detail.html:558
+#: templates/game_detail.html:583 templates/game_detail.html:597
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:176
 #: templates/psn_trophy_detail.html:209
 #: templates/steam_achievement_game.html:134
@@ -2000,7 +2007,7 @@ msgid "Could not write the summary."
 msgstr "Kon nie die opsomming skryf nie."
 
 #: services/js_i18n_strings.py:589
-#, fuzzy, python-brace-format, python-format
+#, fuzzy, python-brace-format
 msgid "Critic Score ({count} reviews)"
 msgstr "Kritikuspunt (%(count)s resensies)"
 
@@ -2034,7 +2041,7 @@ msgstr "Bespeurde pad"
 msgid "Detecting…"
 msgstr "Bespeur tans…"
 
-#: services/js_i18n_strings.py:597 templates/game_detail.html:226
+#: services/js_i18n_strings.py:597 templates/game_detail.html:240
 msgid "Does not start, or crashes the emulator."
 msgstr ""
 
@@ -2093,7 +2100,7 @@ msgid "Downloading {core} ({done} of {total})…"
 msgstr "Laai tans {core} af ({done} van {total})…"
 
 #: services/js_i18n_strings.py:610 templates/_settings_tabs/account.html:318
-#: templates/base.html:969 templates/game_detail.html:105
+#: templates/base.html:970 templates/game_detail.html:119
 #: templates/wishlist.html:641
 msgid "Edit"
 msgstr "Wysig"
@@ -2173,7 +2180,7 @@ msgid "Europe"
 msgstr ""
 
 #: services/js_i18n_strings.py:629 templates/_modals/edit_modal.html:223
-#: templates/base.html:1241
+#: templates/base.html:1242
 msgid "Exclusive"
 msgstr "Eksklusief"
 
@@ -2340,7 +2347,7 @@ msgstr "Generering het misluk"
 msgid "Generation request failed"
 msgstr "Generingsversoek het misluk"
 
-#: services/js_i18n_strings.py:667 templates/game_detail.html:223
+#: services/js_i18n_strings.py:667 templates/game_detail.html:237
 msgid ""
 "Gets in game, but cannot be finished, has serious glitches or runs too "
 "slowly."
@@ -2410,8 +2417,8 @@ msgstr "Beeld moet onder 10MB wees"
 #: services/js_i18n_strings.py:683 templates/_bulk_edit_modal.html:27
 #: templates/achievements_system.html:151
 #: templates/achievements_system.html:170 templates/analytics.html:1664
-#: templates/base.html:1011 templates/dashboard.html:353
-#: templates/dashboard.html:493 templates/game_detail.html:241
+#: templates/base.html:1012 templates/dashboard.html:353
+#: templates/dashboard.html:493 templates/game_detail.html:255
 #: templates/steam_achievements.html:77 templates/xbox_achievements.html:77
 msgid "In Progress"
 msgstr "Aan Die Gang"
@@ -2518,8 +2525,8 @@ msgstr "Soek tans na weergawes…"
 
 #: services/js_i18n_strings.py:707 templates/achievement_game.html:168
 #: templates/achievement_game.html:197 templates/achievement_game.html:207
-#: templates/base.html:1046 templates/game_detail.html:529
-#: templates/game_detail.html:558 templates/game_detail.html:568
+#: templates/base.html:1047 templates/game_detail.html:554
+#: templates/game_detail.html:583 templates/game_detail.html:593
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:172
 #: templates/psn_trophy_detail.html:205
 #: templates/steam_achievement_game.html:133
@@ -2531,8 +2538,8 @@ msgstr "Hoofverhaal + Ekstras"
 
 #: services/js_i18n_strings.py:708 templates/achievement_game.html:164
 #: templates/achievement_game.html:197 templates/achievement_game.html:203
-#: templates/base.html:1042 templates/game_detail.html:525
-#: templates/game_detail.html:558 templates/game_detail.html:564
+#: templates/base.html:1043 templates/game_detail.html:550
+#: templates/game_detail.html:583 templates/game_detail.html:589
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:168
 #: templates/psn_trophy_detail.html:201
 #: templates/steam_achievement_game.html:132
@@ -2626,8 +2633,8 @@ msgid "Next disk failed"
 msgstr "Volgende skyf het misluk"
 
 #: services/js_i18n_strings.py:726 templates/_bulk_edit_modal.html:171
-#: templates/_modals/edit_modal.html:143 templates/game_detail.html:687
-#: templates/game_detail.html:755
+#: templates/_modals/edit_modal.html:143 templates/game_detail.html:712
+#: templates/game_detail.html:780
 msgid "No"
 msgstr "Nee"
 
@@ -2731,7 +2738,7 @@ msgstr ""
 "Geen voorstelle nie. Laat loop Vul Alternatiewe Titels In in "
 "Instandhouding om meer te vind."
 
-#: services/js_i18n_strings.py:751 templates/game_detail.html:835
+#: services/js_i18n_strings.py:751 templates/game_detail.html:860
 msgid "None"
 msgstr "Geen"
 
@@ -2746,7 +2753,7 @@ msgstr ""
 msgid "Not versions"
 msgstr "Nie weergawes nie"
 
-#: services/js_i18n_strings.py:754 templates/base.html:1400
+#: services/js_i18n_strings.py:754 templates/base.html:1401
 msgid "Now playing"
 msgstr "Speel tans"
 
@@ -2800,13 +2807,13 @@ msgstr "Gepouseer - Klik Hervat om voort te gaan"
 msgid "Platform not found"
 msgstr "Platform nie gevind nie"
 
-#: services/js_i18n_strings.py:767 templates/game_detail.html:85
+#: services/js_i18n_strings.py:767 templates/game_detail.html:99
 msgid "Play"
 msgstr "Speel"
 
 #: services/js_i18n_strings.py:768 templates/_bulk_edit_modal.html:28
-#: templates/analytics.html:1664 templates/base.html:1012
-#: templates/dashboard.html:495 templates/game_detail.html:242
+#: templates/analytics.html:1664 templates/base.html:1013
+#: templates/dashboard.html:495 templates/game_detail.html:256
 msgid "Played"
 msgstr "Gespeel"
 
@@ -2865,25 +2872,25 @@ msgstr "ROM-lêers"
 msgid "ROM Tools"
 msgstr "ROM-gereedskap"
 
-#: services/js_i18n_strings.py:781 templates/game_detail.html:223
+#: services/js_i18n_strings.py:781 templates/game_detail.html:237
 msgid "RPCS3: Ingame"
 msgstr ""
 
-#: services/js_i18n_strings.py:782 templates/game_detail.html:224
+#: services/js_i18n_strings.py:782 templates/game_detail.html:238
 #, fuzzy
 msgid "RPCS3: Intro"
 msgstr "RPCS3-trofeë"
 
-#: services/js_i18n_strings.py:783 templates/game_detail.html:225
+#: services/js_i18n_strings.py:783 templates/game_detail.html:239
 msgid "RPCS3: Loadable"
 msgstr ""
 
-#: services/js_i18n_strings.py:784 templates/game_detail.html:226
+#: services/js_i18n_strings.py:784 templates/game_detail.html:240
 #, fuzzy
 msgid "RPCS3: Nothing"
 msgstr "RPCS3-trofeë"
 
-#: services/js_i18n_strings.py:785 templates/game_detail.html:222
+#: services/js_i18n_strings.py:785 templates/game_detail.html:236
 msgid "RPCS3: Playable"
 msgstr ""
 
@@ -3207,11 +3214,11 @@ msgstr "Wys sleutelbordkortpaaie"
 msgid "Showing Bonus Discs"
 msgstr "Wys bonusskywe"
 
-#: services/js_i18n_strings.py:859 templates/game_detail.html:225
+#: services/js_i18n_strings.py:859 templates/game_detail.html:239
 msgid "Shows a black screen with a frame rate in the window title."
 msgstr ""
 
-#: services/js_i18n_strings.py:860 templates/game_detail.html:224
+#: services/js_i18n_strings.py:860 templates/game_detail.html:238
 msgid "Shows an image but does not get past the menus."
 msgstr ""
 
@@ -3220,7 +3227,7 @@ msgid "Shutting down server..."
 msgstr "Skakel bediener af..."
 
 #: services/js_i18n_strings.py:862 templates/_modals/edit_modal.html:50
-#: templates/base.html:1098
+#: templates/base.html:1099
 msgid "Standalone"
 msgstr "Alleenstaande"
 
@@ -3428,7 +3435,7 @@ msgid "Unhandled rejection"
 msgstr "Onhanteerde verwerping"
 
 #: services/js_i18n_strings.py:899 templates/analytics.html:583
-#: templates/base.html:1198 templates/local_trophy_detail.html:220
+#: templates/base.html:1199 templates/local_trophy_detail.html:220
 #: templates/local_trophy_detail.html:224
 msgid "Unknown"
 msgstr "Onbekend"
@@ -3500,7 +3507,7 @@ msgstr ""
 "Toegepas wanneer jy Speel druk."
 
 #: services/js_i18n_strings.py:913
-#, fuzzy, python-brace-format, python-format
+#, fuzzy, python-brace-format
 msgid "User Score ({count} ratings)"
 msgstr "Gebruikerspunt (%(count)s graderings)"
 
@@ -3524,7 +3531,7 @@ msgstr "Werk"
 msgid "World"
 msgstr ""
 
-#: services/js_i18n_strings.py:919 templates/game_detail.html:776
+#: services/js_i18n_strings.py:919 templates/game_detail.html:801
 msgid "Write again with AI"
 msgstr "Skryf weer met KI"
 
@@ -3533,8 +3540,8 @@ msgid "Xbox Imports"
 msgstr "Xbox-invoere"
 
 #: services/js_i18n_strings.py:921 templates/_bulk_edit_modal.html:170
-#: templates/_modals/edit_modal.html:143 templates/game_detail.html:630
-#: templates/game_detail.html:687 templates/game_detail.html:755
+#: templates/_modals/edit_modal.html:143 templates/game_detail.html:655
+#: templates/game_detail.html:712 templates/game_detail.html:780
 msgid "Yes"
 msgstr "Ja"
 
@@ -3781,8 +3788,8 @@ msgstr ""
 "word."
 
 #: templates/_bulk_edit_modal.html:26 templates/achievements_system.html:171
-#: templates/analytics.html:1664 templates/base.html:1010
-#: templates/dashboard.html:491 templates/game_detail.html:240
+#: templates/analytics.html:1664 templates/base.html:1011
+#: templates/dashboard.html:491 templates/game_detail.html:254
 #: templates/steam_achievements.html:78 templates/xbox_achievements.html:78
 msgid "Not Started"
 msgstr "Nie begin nie"
@@ -3791,9 +3798,9 @@ msgstr "Nie begin nie"
 #: templates/_settings_tabs/data.html:83 templates/_settings_tabs/data.html:156
 #: templates/achievement_game.html:241 templates/all_games.html:72
 #: templates/analytics.html:481 templates/analytics.html:2428
-#: templates/base.html:940 templates/base.html:1148
+#: templates/base.html:940 templates/base.html:1149
 #: templates/compare_games.html:73 templates/dashboard.html:381
-#: templates/game_detail.html:286 templates/local_trophy_detail.html:99
+#: templates/game_detail.html:300 templates/local_trophy_detail.html:99
 #: templates/psn_trophy_detail.html:94 templates/psn_trophy_detail.html:258
 #: templates/steam_achievement_game.html:178 templates/system_games.html:63
 #: templates/xbox_achievement_game.html:171
@@ -3810,9 +3817,9 @@ msgstr "Voeg by"
 #: templates/_bulk_edit_modal.html:53 templates/_modals/edit_modal.html:94
 #: templates/achievement_game.html:81 templates/all_games.html:78
 #: templates/analytics.html:483 templates/analytics.html:2428
-#: templates/base.html:939 templates/base.html:1134
-#: templates/compare_games.html:71 templates/game_detail.html:262
-#: templates/game_detail.html:733 templates/local_trophy_detail.html:87
+#: templates/base.html:939 templates/base.html:1135
+#: templates/compare_games.html:71 templates/game_detail.html:276
+#: templates/game_detail.html:758 templates/local_trophy_detail.html:87
 #: templates/psn_trophy_detail.html:82 templates/steam_achievement_game.html:78
 #: templates/system_games.html:69 templates/xbox_achievement_game.html:67
 msgid "Publisher"
@@ -3827,8 +3834,8 @@ msgstr "Moenie verander nie"
 #: templates/_bulk_edit_modal.html:67 templates/_modals/edit_modal.html:99
 #: templates/achievement_game.html:87 templates/all_games.html:81
 #: templates/analytics.html:482 templates/analytics.html:2428
-#: templates/base.html:938 templates/base.html:1138
-#: templates/compare_games.html:70 templates/game_detail.html:274
+#: templates/base.html:938 templates/base.html:1139
+#: templates/compare_games.html:70 templates/game_detail.html:288
 #: templates/local_trophy_detail.html:93 templates/psn_trophy_detail.html:88
 #: templates/steam_achievement_game.html:84 templates/system_games.html:72
 #: templates/xbox_achievement_game.html:73
@@ -3840,23 +3847,23 @@ msgid "ESRB Rating"
 msgstr "ESRB-gradering"
 
 #: templates/_bulk_edit_modal.html:84 templates/_modals/edit_modal.html:240
-#: templates/base.html:1251
+#: templates/base.html:1252
 msgid "E - Everyone"
 msgstr "E - Almal"
 
 #: templates/_bulk_edit_modal.html:85 templates/_modals/edit_modal.html:241
-#: templates/base.html:1252
+#: templates/base.html:1253
 msgid "E10+ - Everyone 10+"
 msgstr "E10+ - Almal 10+"
 
 #: templates/_bulk_edit_modal.html:86 templates/_modals/edit_modal.html:242
-#: templates/base.html:1253
+#: templates/base.html:1254
 msgid "T - Teen"
 msgstr "T - Tiener"
 
 #: templates/_bulk_edit_modal.html:87 templates/_modals/edit_modal.html:243
-#: templates/_modals/edit_modal.html:287 templates/base.html:1254
-#: templates/base.html:1298
+#: templates/_modals/edit_modal.html:287 templates/base.html:1255
+#: templates/base.html:1299
 msgid "M - Mature"
 msgstr "M - Volwasse"
 
@@ -3886,33 +3893,33 @@ msgstr "PEGI 18"
 
 #: templates/_bulk_edit_modal.html:106 templates/_modals/edit_modal.html:85
 #: templates/analytics.html:492 templates/analytics.html:2428
-#: templates/base.html:1125 templates/compare_games.html:75
-#: templates/game_detail.html:730 templates/reports.html:444
+#: templates/base.html:1126 templates/compare_games.html:75
+#: templates/game_detail.html:755 templates/reports.html:444
 msgid "Region"
 msgstr "Streek"
 
 #: templates/_bulk_edit_modal.html:112 templates/_modals/edit_modal.html:132
-#: templates/all_games.html:84 templates/base.html:1164
-#: templates/compare_games.html:76 templates/game_detail.html:201
+#: templates/all_games.html:84 templates/base.html:1165
+#: templates/compare_games.html:76 templates/game_detail.html:215
 #: templates/system_games.html:75
 msgid "Players"
 msgstr "Spelers"
 
 #: templates/_bulk_edit_modal.html:118 templates/_modals/edit_modal.html:149
-#: templates/_settings_tabs/data.html:93 templates/base.html:1168
+#: templates/_settings_tabs/data.html:93 templates/base.html:1169
 msgid "Game Structure"
 msgstr "Speletjiestruktuur"
 
 #: templates/_bulk_edit_modal.html:135 templates/_modals/edit_modal.html:162
 #: templates/_settings_tabs/data.html:103 templates/all_games.html:87
-#: templates/analytics.html:199 templates/base.html:1176
+#: templates/analytics.html:199 templates/base.html:1177
 #: templates/compare_games.html:78 templates/system_games.html:78
 msgid "Perspective"
 msgstr "Perspektief"
 
 #: templates/_bulk_edit_modal.html:151 templates/_modals/edit_modal.html:173
 #: templates/_settings_tabs/data.html:113 templates/all_games.html:90
-#: templates/analytics.html:207 templates/base.html:1184
+#: templates/analytics.html:207 templates/base.html:1185
 #: templates/compare_games.html:79 templates/system_games.html:81
 msgid "Dimension"
 msgstr "Dimensie"
@@ -3961,7 +3968,7 @@ msgstr "Laai meer"
 
 #: templates/achievement_game.html:17 templates/achievement_game.html:37
 #: templates/achievements_system.html:15 templates/game_detail.html:21
-#: templates/game_detail.html:317 templates/game_detail.html:738
+#: templates/game_detail.html:342 templates/game_detail.html:763
 #: templates/systems.html:43
 msgid "RetroAchievements"
 msgstr "RetroAchievements"
@@ -3977,7 +3984,7 @@ msgid "Refresh RA"
 msgstr "Verfris RA"
 
 #: templates/achievement_game.html:93 templates/all_games.html:75
-#: templates/game_detail.html:298 templates/system_games.html:66
+#: templates/game_detail.html:312 templates/system_games.html:66
 msgid "Series"
 msgstr "Reeks"
 
@@ -4004,23 +4011,23 @@ msgstr "Kon nie prestasiedata laai nie"
 msgid "Check your RetroAchievements credentials in Settings."
 msgstr "Kontroleer u RetroAchievements-geloofsbriewe in Instellings."
 
-#: templates/achievement_game.html:146 templates/game_detail.html:507
+#: templates/achievement_game.html:146 templates/game_detail.html:532
 #: templates/local_trophy_detail.html:158 templates/psn_trophy_detail.html:149
 #: templates/steam_achievement_game.html:123
 #: templates/xbox_achievement_game.html:116
 msgid "How Long to Beat"
 msgstr "How Long to Beat"
 
-#: templates/achievement_game.html:153 templates/base.html:1023
-#: templates/game_detail.html:514 templates/psn_trophy_detail.html:157
+#: templates/achievement_game.html:153 templates/base.html:1024
+#: templates/game_detail.html:539 templates/psn_trophy_detail.html:157
 #: templates/psn_trophy_detail.html:317
 #: templates/steam_achievement_game.html:126
 #: templates/xbox_achievement_game.html:119
 msgid "Search game title..."
 msgstr "Soek speletjietitel..."
 
-#: templates/achievement_game.html:156 templates/base.html:1026
-#: templates/game_detail.html:517 templates/local_trophy_detail.html:193
+#: templates/achievement_game.html:156 templates/base.html:1027
+#: templates/game_detail.html:542 templates/local_trophy_detail.html:193
 #: templates/psn_trophy_detail.html:160
 #: templates/steam_achievement_game.html:127
 #: templates/xbox_achievement_game.html:120
@@ -4028,8 +4035,8 @@ msgid "Lookup HLTB"
 msgstr "Soek HLTB op"
 
 #: templates/_settings_tabs/account.html:73 templates/achievement_game.html:177
-#: templates/achievement_game.html:253 templates/base.html:1054
-#: templates/game_detail.html:538 templates/local_trophy_detail.html:223
+#: templates/achievement_game.html:253 templates/base.html:1055
+#: templates/game_detail.html:563 templates/local_trophy_detail.html:223
 #: templates/psn_trophy_detail.html:181 templates/psn_trophy_detail.html:270
 #: templates/settings_emulators.html:36 templates/settings_emulators.html:187
 #: templates/steam_achievement_game.html:137
@@ -4038,8 +4045,8 @@ msgid "Save"
 msgstr "Stoor"
 
 #: templates/achievement_game.html:217 templates/all_games.html:108
-#: templates/base.html:1067 templates/duplicate_finder.html:301
-#: templates/game_detail.html:101 templates/game_detail.html:578
+#: templates/base.html:1068 templates/duplicate_finder.html:301
+#: templates/game_detail.html:115 templates/game_detail.html:603
 #: templates/local_trophy_detail.html:185 templates/psn_trophy_detail.html:214
 #: templates/reports.html:277 templates/screenshot_dedup.html:325
 #: templates/steam_achievement_game.html:163 templates/system_games.html:99
@@ -4047,7 +4054,7 @@ msgstr "Stoor"
 msgid "Clear"
 msgstr "Maak skoon"
 
-#: templates/achievement_game.html:225 templates/game_detail.html:586
+#: templates/achievement_game.html:225 templates/game_detail.html:611
 #: templates/local_trophy_detail.html:203 templates/psn_trophy_detail.html:234
 #: templates/steam_achievement_game.html:170
 #: templates/xbox_achievement_game.html:163
@@ -4430,7 +4437,7 @@ msgstr "Kies alles"
 msgid "Select Unscraped"
 msgstr "Kies ongeskraap"
 
-#: templates/all_games.html:204 templates/game_detail.html:804
+#: templates/all_games.html:204 templates/game_detail.html:829
 #: templates/system_games.html:184
 msgid "Full Re-scrape"
 msgstr "Volledige herskraap"
@@ -4439,7 +4446,7 @@ msgstr "Volledige herskraap"
 msgid "Toggle between full re-scrape and fill missing mode"
 msgstr "Wissel tussen volledige herskraap- en vul-ontbrekende-modus"
 
-#: templates/all_games.html:209 templates/game_detail.html:804
+#: templates/all_games.html:209 templates/game_detail.html:829
 #: templates/system_games.html:189
 msgid "Fill Missing"
 msgstr "Vul ontbrekende"
@@ -4477,7 +4484,7 @@ msgid "Developers"
 msgstr "Ontwikkelaars"
 
 #: templates/_modals/edit_modal.html:107 templates/analytics.html:13
-#: templates/base.html:998 templates/base.html:1145
+#: templates/base.html:999 templates/base.html:1146
 msgid "Gameplay"
 msgstr "Speelverloop"
 
@@ -4745,7 +4752,7 @@ msgstr "Veldvolledigheid"
 #: templates/_settings_tabs/customization.html:193
 #: templates/_settings_tabs/customization.html:259 templates/analytics.html:479
 #: templates/analytics.html:2428 templates/base.html:266
-#: templates/base.html:1352 templates/compare_games.html:97
+#: templates/base.html:1353 templates/compare_games.html:97
 #: templates/settings_emulators.html:170
 msgid "Description"
 msgstr "Beskrywing"
@@ -4759,7 +4766,7 @@ msgstr "Bokskuns"
 
 #: templates/_modals/edit_modal.html:72 templates/_modals/filter_modal.html:14
 #: templates/analytics.html:484 templates/analytics.html:2428
-#: templates/base.html:1117 templates/compare_games.html:72
+#: templates/base.html:1118 templates/compare_games.html:72
 msgid "Release Date"
 msgstr "Vrystellingsdatum"
 
@@ -4772,12 +4779,12 @@ msgid "Fanart"
 msgstr "Fankuns"
 
 #: templates/analytics.html:487 templates/analytics.html:2428
-#: templates/game_detail.html:460
+#: templates/game_detail.html:485
 msgid "Video"
 msgstr "Video"
 
 #: templates/_modals/manual_reader_modal.html:9 templates/analytics.html:488
-#: templates/analytics.html:2428 templates/game_detail.html:95
+#: templates/analytics.html:2428 templates/game_detail.html:109
 msgid "Manual"
 msgstr "Handleiding"
 
@@ -5197,7 +5204,7 @@ msgstr "Konfigurasie"
 msgid "Log Viewer"
 msgstr "Logbekyker"
 
-#: templates/base.html:198 templates/base.html:1000
+#: templates/base.html:198 templates/base.html:1001
 msgid "Info"
 msgstr "Inligting"
 
@@ -5297,271 +5304,276 @@ msgstr "Sluit speletjiebesonderhede"
 msgid "Loading game details..."
 msgstr "Laai speletjiebesonderhede tans..."
 
-#: templates/base.html:953 templates/game_detail.html:464
+#: templates/base.html:942 templates/game_detail.html:318
+#, fuzzy
+msgid "Release dates"
+msgstr "Vrystellingsdatum"
+
+#: templates/base.html:954 templates/game_detail.html:489
 msgid "Your browser does not support the video tag."
 msgstr "U blaaier ondersteun nie die video-etiket nie."
 
-#: templates/base.html:960
+#: templates/base.html:961
 msgid "View Full Page"
 msgstr "Bekyk volledige bladsy"
 
-#: templates/base.html:962 templates/game_detail.html:109
+#: templates/base.html:963 templates/game_detail.html:123
 msgid "Fill missing metadata with AI"
 msgstr "Vul ontbrekende metadata met AI in"
 
-#: templates/base.html:963 templates/game_detail.html:111
+#: templates/base.html:964 templates/game_detail.html:125
 msgid "AI Fill"
 msgstr "AI-vul"
 
-#: templates/base.html:966 templates/game_detail.html:116
+#: templates/base.html:967 templates/game_detail.html:130
 msgid "Scrape"
 msgstr "Skraap"
 
-#: templates/_modals/screenshot_modal.html:2 templates/base.html:978
+#: templates/_modals/screenshot_modal.html:2 templates/base.html:979
 msgid "Screenshot viewer"
 msgstr "Skermkiekiebekyker"
 
-#: templates/_modals/screenshot_modal.html:3 templates/base.html:979
+#: templates/_modals/screenshot_modal.html:3 templates/base.html:980
 msgid "Close screenshot viewer"
 msgstr "Sluit skermkiekiebekyker"
 
-#: templates/_modals/screenshot_modal.html:4 templates/base.html:980
+#: templates/_modals/screenshot_modal.html:4 templates/base.html:981
 msgid "Previous screenshot"
 msgstr "Vorige skermkiekie"
 
-#: templates/base.html:981
+#: templates/base.html:982
 msgid "Screenshot"
 msgstr "Skermkiekie"
 
-#: templates/_modals/screenshot_modal.html:6 templates/base.html:982
+#: templates/_modals/screenshot_modal.html:6 templates/base.html:983
 msgid "Next screenshot"
 msgstr "Volgende skermkiekie"
 
-#: templates/base.html:983
+#: templates/base.html:984
 msgid "Use &#8592; &#8594; arrow keys to navigate &bull; ESC to close"
 msgstr ""
 "Gebruik &#8592; &#8594; pyltjiesleutels om te navigeer &bull; ESC om te "
 "sluit"
 
-#: templates/_modals/edit_modal.html:7 templates/base.html:990
+#: templates/_modals/edit_modal.html:7 templates/base.html:991
 msgid "Close edit modal"
 msgstr "Sluit wysigingsvenster"
 
-#: templates/base.html:993
+#: templates/base.html:994
 msgid "Edit Game"
 msgstr "Wysig speletjie"
 
-#: templates/base.html:994
+#: templates/base.html:995
 msgid "Edit game sections"
 msgstr "Wysig speletjie-afdelings"
 
-#: templates/base.html:995
+#: templates/base.html:996
 msgid "Quick"
 msgstr "Vinnig"
 
-#: templates/_modals/edit_modal.html:25 templates/base.html:996
-#: templates/base.html:1074
+#: templates/_modals/edit_modal.html:25 templates/base.html:997
+#: templates/base.html:1075
 msgid "Identity"
 msgstr "Identiteit"
 
-#: templates/base.html:997
+#: templates/base.html:998
 msgid "Release"
 msgstr "Vrystelling"
 
-#: templates/_modals/edit_modal.html:187 templates/base.html:999
-#: templates/base.html:1206
+#: templates/_modals/edit_modal.html:187 templates/base.html:1000
+#: templates/base.html:1207
 msgid "Technical"
 msgstr "Tegnies"
 
-#: templates/base.html:1006
+#: templates/base.html:1007
 msgid "Quick edit"
 msgstr "Vinnige wysiging"
 
-#: templates/base.html:1019
+#: templates/base.html:1020
 msgid "HowLongToBeat"
 msgstr "HowLongToBeat"
 
-#: templates/base.html:1033
+#: templates/base.html:1034
 msgid "Searching HowLongToBeat..."
 msgstr "Deursoek HowLongToBeat..."
 
-#: templates/base.html:1064 templates/local_trophy_detail.html:189
+#: templates/base.html:1065 templates/local_trophy_detail.html:189
 msgid "No playtime data"
 msgstr "Geen speeltyddata nie"
 
 #: templates/_modals/edit_modal.html:28 templates/_modals/filter_modal.html:13
-#: templates/base.html:1077 templates/dashboard.html:320
+#: templates/base.html:1078 templates/dashboard.html:320
 #: templates/dashboard.html:379 templates/dashboard.html:456
-#: templates/dashboard.html:522 templates/game_detail.html:731
+#: templates/dashboard.html:522 templates/game_detail.html:756
 msgid "Title"
 msgstr "Titel"
 
-#: templates/_modals/edit_modal.html:32 templates/base.html:1081
+#: templates/_modals/edit_modal.html:32 templates/base.html:1082
 msgid "Keep this title when scraping"
 msgstr ""
 
-#: templates/_modals/edit_modal.html:36 templates/base.html:1085
+#: templates/_modals/edit_modal.html:36 templates/base.html:1086
 msgid "Sort Title"
 msgstr "Sorteertitel"
 
-#: templates/_modals/edit_modal.html:38 templates/base.html:1087
+#: templates/_modals/edit_modal.html:38 templates/base.html:1088
 msgid "Auto-generated from title"
 msgstr "Outomaties gegenereer vanaf titel"
 
-#: templates/_modals/edit_modal.html:44 templates/base.html:1092
+#: templates/_modals/edit_modal.html:44 templates/base.html:1093
 msgid "Franchise / Series"
 msgstr "Franchise / Reeks"
 
-#: templates/_modals/edit_modal.html:47 templates/base.html:1095
+#: templates/_modals/edit_modal.html:47 templates/base.html:1096
 msgid "Toggle franchise status"
 msgstr "Wissel franchise-status"
 
-#: templates/_modals/edit_modal.html:52 templates/base.html:1100
+#: templates/_modals/edit_modal.html:52 templates/base.html:1101
 msgid "e.g., Final Fantasy, Crash Bandicoot"
 msgstr "bv. Final Fantasy, Crash Bandicoot"
 
-#: templates/_modals/edit_modal.html:56 templates/base.html:1103
-#: templates/compare_games.html:96 templates/game_detail.html:492
+#: templates/_modals/edit_modal.html:56 templates/base.html:1104
+#: templates/compare_games.html:96 templates/game_detail.html:517
 msgid "Similar Games"
 msgstr "Soortgelyke speletjies"
 
-#: templates/_modals/edit_modal.html:57 templates/base.html:1104
+#: templates/_modals/edit_modal.html:57 templates/base.html:1105
 msgid "Game 1, Game 2, Game 3"
 msgstr "Speletjie 1, Speletjie 2, Speletjie 3"
 
-#: templates/_modals/edit_modal.html:61 templates/base.html:1107
+#: templates/_modals/edit_modal.html:61 templates/base.html:1108
 msgid "Edition"
 msgstr "Uitgawe"
 
-#: templates/base.html:1108
+#: templates/base.html:1109
 msgid "Standard, Collector&#39;s, GOTY"
 msgstr "Standaard, Versamelaar&#39;s, GOTY"
 
-#: templates/base.html:1114
+#: templates/base.html:1115
 msgid "Release info"
 msgstr "Vrystellingsinligting"
 
-#: templates/base.html:1119
+#: templates/base.html:1120
 msgid "YYYY-MM-DD"
 msgstr "JJJJ-MM-DD"
 
-#: templates/_modals/edit_modal.html:80 templates/base.html:1121
+#: templates/_modals/edit_modal.html:80 templates/base.html:1122
 msgid "Pick date"
 msgstr "Kies datum"
 
-#: templates/_modals/edit_modal.html:87 templates/base.html:1127
+#: templates/_modals/edit_modal.html:87 templates/base.html:1128
 msgid "— Select —"
 msgstr "— Kies —"
 
-#: templates/_modals/edit_modal.html:95 templates/base.html:1135
+#: templates/_modals/edit_modal.html:95 templates/base.html:1136
 msgid "Sony, Nintendo"
 msgstr "Sony, Nintendo"
 
-#: templates/base.html:1139
+#: templates/base.html:1140
 msgid "Naughty Dog, Insomniac"
 msgstr "Naughty Dog, Insomniac"
 
-#: templates/_modals/edit_modal.html:114 templates/base.html:1151
+#: templates/_modals/edit_modal.html:114 templates/base.html:1152
 msgid "Add genre"
 msgstr "Voeg genre by"
 
-#: templates/_modals/edit_modal.html:115 templates/base.html:1152
+#: templates/_modals/edit_modal.html:115 templates/base.html:1153
 msgid "+ Add genre..."
 msgstr "+ Voeg genre by..."
 
 #: templates/_modals/edit_modal.html:121 templates/_settings_tabs/data.html:123
-#: templates/base.html:1156
+#: templates/base.html:1157
 msgid "Play Modes"
 msgstr "Speelmodusse"
 
-#: templates/_modals/edit_modal.html:125 templates/base.html:1159
+#: templates/_modals/edit_modal.html:125 templates/base.html:1160
 msgid "Add play mode"
 msgstr "Voeg speelmodus by"
 
-#: templates/_modals/edit_modal.html:126 templates/base.html:1160
+#: templates/_modals/edit_modal.html:126 templates/base.html:1161
 msgid "+ Add mode..."
 msgstr "+ Voeg modus by..."
 
-#: templates/_modals/edit_modal.html:155 templates/base.html:1171
+#: templates/_modals/edit_modal.html:155 templates/base.html:1172
 msgid "Add game structure"
 msgstr "Voeg speletjiestruktuur by"
 
-#: templates/_modals/edit_modal.html:156 templates/base.html:1172
+#: templates/_modals/edit_modal.html:156 templates/base.html:1173
 msgid "+ Add structure..."
 msgstr "+ Voeg struktuur by..."
 
-#: templates/_modals/edit_modal.html:166 templates/base.html:1179
+#: templates/_modals/edit_modal.html:166 templates/base.html:1180
 msgid "Add perspective"
 msgstr "Voeg perspektief by"
 
-#: templates/_modals/edit_modal.html:167 templates/base.html:1180
+#: templates/_modals/edit_modal.html:167 templates/base.html:1181
 msgid "+ Add perspective..."
 msgstr "+ Voeg perspektief by..."
 
-#: templates/_modals/edit_modal.html:177 templates/base.html:1187
+#: templates/_modals/edit_modal.html:177 templates/base.html:1188
 msgid "Add dimension"
 msgstr "Voeg dimensie by"
 
-#: templates/_modals/edit_modal.html:178 templates/base.html:1188
+#: templates/_modals/edit_modal.html:178 templates/base.html:1189
 msgid "+ Add dimension..."
 msgstr "+ Voeg dimensie by..."
 
-#: templates/_modals/edit_modal.html:136 templates/base.html:1192
+#: templates/_modals/edit_modal.html:136 templates/base.html:1193
 msgid "Campaign Mode"
 msgstr "Veldtogmodus"
 
-#: templates/_modals/edit_modal.html:140 templates/base.html:1195
+#: templates/_modals/edit_modal.html:140 templates/base.html:1196
 msgid "Toggle campaign mode"
 msgstr "Wissel veldtogmodus"
 
-#: templates/_modals/edit_modal.html:190 templates/base.html:1209
+#: templates/_modals/edit_modal.html:190 templates/base.html:1210
 #: templates/compare_games.html:91
 msgid "Controller Support"
 msgstr "Beheerder-ondersteuning"
 
-#: templates/_modals/edit_modal.html:194 templates/base.html:1213
+#: templates/_modals/edit_modal.html:194 templates/base.html:1214
 msgid "Add controller"
 msgstr "Voeg beheerder by"
 
-#: templates/_modals/edit_modal.html:195 templates/base.html:1214
+#: templates/_modals/edit_modal.html:195 templates/base.html:1215
 msgid "+ Add controller..."
 msgstr "+ Voeg beheerder by..."
 
-#: templates/_modals/edit_modal.html:199 templates/base.html:1216
+#: templates/_modals/edit_modal.html:199 templates/base.html:1217
 msgid "Custom controller name"
 msgstr "Pasgemaakte beheerdernaam"
 
-#: templates/base.html:1216
+#: templates/base.html:1217
 msgid "Or type custom..."
 msgstr "Of tik pasgemaak..."
 
 #: templates/_modals/edit_modal.html:206 templates/_settings_tabs/data.html:133
-#: templates/base.html:1220 templates/compare_games.html:92
+#: templates/base.html:1221 templates/compare_games.html:92
 msgid "Save Type"
 msgstr "Stoortipe"
 
-#: templates/_modals/edit_modal.html:210 templates/base.html:1223
+#: templates/_modals/edit_modal.html:210 templates/base.html:1224
 msgid "Add save type"
 msgstr "Voeg stoortipe by"
 
-#: templates/_modals/edit_modal.html:211 templates/base.html:1224
+#: templates/_modals/edit_modal.html:211 templates/base.html:1225
 msgid "+ Add save type..."
 msgstr "+ Voeg stoortipe by..."
 
-#: templates/_modals/edit_modal.html:217 templates/base.html:1228
+#: templates/_modals/edit_modal.html:217 templates/base.html:1229
 msgid "Platform Availability"
 msgstr "Platformbeskikbaarheid"
 
-#: templates/_modals/edit_modal.html:220 templates/base.html:1238
+#: templates/_modals/edit_modal.html:220 templates/base.html:1239
 msgid "Toggle platform exclusivity"
 msgstr "Wissel platform-eksklusiwiteit"
 
-#: templates/base.html:1243
+#: templates/base.html:1244
 msgid "Xbox 360, PC, Switch"
 msgstr "Xbox 360, PC, Switch"
 
 #: templates/_modals/edit_modal.html:236
-#: templates/_settings_tabs/library.html:152 templates/base.html:1247
+#: templates/_settings_tabs/library.html:152 templates/base.html:1248
 msgid "ESRB (North America)"
 msgstr "ESRB (Noord-Amerika)"
 
@@ -5569,142 +5581,142 @@ msgstr "ESRB (Noord-Amerika)"
 #: templates/_modals/edit_modal.html:262 templates/_modals/edit_modal.html:273
 #: templates/_modals/edit_modal.html:284 templates/_modals/edit_modal.html:295
 #: templates/_modals/edit_modal.html:309 templates/_modals/edit_modal.html:319
-#: templates/_modals/edit_modal.html:331 templates/base.html:1249
-#: templates/base.html:1262 templates/base.html:1273 templates/base.html:1284
-#: templates/base.html:1295 templates/base.html:1306 templates/base.html:1320
-#: templates/base.html:1330 templates/base.html:1342
+#: templates/_modals/edit_modal.html:331 templates/base.html:1250
+#: templates/base.html:1263 templates/base.html:1274 templates/base.html:1285
+#: templates/base.html:1296 templates/base.html:1307 templates/base.html:1321
+#: templates/base.html:1331 templates/base.html:1343
 msgid "-- None --"
 msgstr "-- Geen --"
 
-#: templates/_modals/edit_modal.html:239 templates/base.html:1250
+#: templates/_modals/edit_modal.html:239 templates/base.html:1251
 msgid "EC - Early Childhood"
 msgstr "EC - Vroeë kindertyd"
 
-#: templates/_modals/edit_modal.html:244 templates/base.html:1255
+#: templates/_modals/edit_modal.html:244 templates/base.html:1256
 msgid "AO - Adults Only"
 msgstr "AO - Slegs volwassenes"
 
-#: templates/_modals/edit_modal.html:245 templates/base.html:1256
+#: templates/_modals/edit_modal.html:245 templates/base.html:1257
 msgid "RP - Rating Pending"
 msgstr "RP - Gradering hangende"
 
 #: templates/_modals/edit_modal.html:249
-#: templates/_settings_tabs/library.html:153 templates/base.html:1260
+#: templates/_settings_tabs/library.html:153 templates/base.html:1261
 msgid "PEGI (Europe)"
 msgstr "PEGI (Europa)"
 
 #: templates/_modals/edit_modal.html:260
-#: templates/_settings_tabs/library.html:154 templates/base.html:1271
+#: templates/_settings_tabs/library.html:154 templates/base.html:1272
 msgid "CERO (Japan)"
 msgstr "CERO (Japan)"
 
 #: templates/_modals/edit_modal.html:263 templates/_modals/edit_modal.html:296
-#: templates/base.html:1274 templates/base.html:1307
+#: templates/base.html:1275 templates/base.html:1308
 msgid "A - All Ages"
 msgstr "A - Alle ouderdomme"
 
-#: templates/_modals/edit_modal.html:264 templates/base.html:1275
+#: templates/_modals/edit_modal.html:264 templates/base.html:1276
 msgid "B - Ages 12+"
 msgstr "B - Ouderdomme 12+"
 
-#: templates/_modals/edit_modal.html:265 templates/base.html:1276
+#: templates/_modals/edit_modal.html:265 templates/base.html:1277
 msgid "C - Ages 15+"
 msgstr "C - Ouderdomme 15+"
 
-#: templates/_modals/edit_modal.html:266 templates/base.html:1277
+#: templates/_modals/edit_modal.html:266 templates/base.html:1278
 msgid "D - Ages 17+"
 msgstr "D - Ouderdomme 17+"
 
-#: templates/_modals/edit_modal.html:267 templates/base.html:1278
+#: templates/_modals/edit_modal.html:267 templates/base.html:1279
 msgid "Z - Ages 18+"
 msgstr "Z - Ouderdomme 18+"
 
 #: templates/_modals/edit_modal.html:271
-#: templates/_settings_tabs/library.html:155 templates/base.html:1282
+#: templates/_settings_tabs/library.html:155 templates/base.html:1283
 msgid "USK (Germany)"
 msgstr "USK (Duitsland)"
 
 #: templates/_modals/edit_modal.html:282
-#: templates/_settings_tabs/library.html:156 templates/base.html:1293
+#: templates/_settings_tabs/library.html:156 templates/base.html:1294
 msgid "ACB (Australia)"
 msgstr "ACB (Australië)"
 
-#: templates/_modals/edit_modal.html:285 templates/base.html:1296
+#: templates/_modals/edit_modal.html:285 templates/base.html:1297
 msgid "G - General"
 msgstr "G - Algemeen"
 
 #: templates/_modals/edit_modal.html:286 templates/_modals/edit_modal.html:297
-#: templates/base.html:1297
+#: templates/base.html:1298
 msgid "PG - Parental Guidance"
 msgstr "PG - Ouerleiding"
 
-#: templates/_modals/edit_modal.html:288 templates/base.html:1299
+#: templates/_modals/edit_modal.html:288 templates/base.html:1300
 msgid "MA15+ - Restricted"
 msgstr "MA15+ - Beperk"
 
-#: templates/_modals/edit_modal.html:289 templates/base.html:1300
+#: templates/_modals/edit_modal.html:289 templates/base.html:1301
 msgid "R18+ - Restricted"
 msgstr "R18+ - Beperk"
 
 #: templates/_modals/edit_modal.html:293
-#: templates/_settings_tabs/library.html:157 templates/base.html:1304
+#: templates/_settings_tabs/library.html:157 templates/base.html:1305
 msgid "FPB (South Africa)"
 msgstr "FPB (Suid-Afrika)"
 
 #: templates/_modals/edit_modal.html:307
-#: templates/_settings_tabs/library.html:158 templates/base.html:1318
+#: templates/_settings_tabs/library.html:158 templates/base.html:1319
 msgid "GRAC (South Korea)"
 msgstr "GRAC (Suid-Korea)"
 
-#: templates/_modals/edit_modal.html:310 templates/base.html:1321
+#: templates/_modals/edit_modal.html:310 templates/base.html:1322
 msgid "ALL - All Ages"
 msgstr "ALL - Alle ouderdomme"
 
 #: templates/_modals/edit_modal.html:317
-#: templates/_settings_tabs/library.html:159 templates/base.html:1328
+#: templates/_settings_tabs/library.html:159 templates/base.html:1329
 msgid "ClassInd (Brazil)"
 msgstr "ClassInd (Brasilië)"
 
-#: templates/_modals/edit_modal.html:320 templates/base.html:1331
+#: templates/_modals/edit_modal.html:320 templates/base.html:1332
 msgid "L - General"
 msgstr "L - Algemeen"
 
 #: templates/_modals/edit_modal.html:329
-#: templates/_settings_tabs/library.html:160 templates/base.html:1340
+#: templates/_settings_tabs/library.html:160 templates/base.html:1341
 msgid "CADPA (China)"
 msgstr "CADPA (China)"
 
-#: templates/_modals/edit_modal.html:332 templates/base.html:1343
+#: templates/_modals/edit_modal.html:332 templates/base.html:1344
 msgid "8+ - Ages 8 and up"
 msgstr "8+ - Ouderdomme 8 en ouer"
 
-#: templates/_modals/edit_modal.html:333 templates/base.html:1344
+#: templates/_modals/edit_modal.html:333 templates/base.html:1345
 msgid "12+ - Ages 12 and up"
 msgstr "12+ - Ouderdomme 12 en ouer"
 
-#: templates/_modals/edit_modal.html:334 templates/base.html:1345
+#: templates/_modals/edit_modal.html:334 templates/base.html:1346
 msgid "16+ - Ages 16 and up"
 msgstr "16+ - Ouderdomme 16 en ouer"
 
-#: templates/_modals/edit_modal.html:343 templates/base.html:1354
+#: templates/_modals/edit_modal.html:343 templates/base.html:1355
 msgid "Game Description"
 msgstr "Speletjiebeskrywing"
 
-#: templates/base.html:1355
+#: templates/base.html:1356
 msgid "Enter game description..."
 msgstr "Voer speletjiebeskrywing in..."
 
-#: templates/base.html:1362
+#: templates/base.html:1363
 msgid "Images/Video"
 msgstr "Beelde/Video"
 
 #: templates/_modals/edit_modal.html:15
-#: templates/_settings_tabs/customization.html:267 templates/base.html:1367
+#: templates/_settings_tabs/customization.html:267 templates/base.html:1368
 #: templates/wishlist.html:700
 msgid "Save Changes"
 msgstr "Stoor veranderinge"
 
-#: templates/base.html:1403
+#: templates/base.html:1404
 msgid "running"
 msgstr "loop"
 
@@ -6429,93 +6441,106 @@ msgstr "Stel nuwe wagwoord"
 msgid "ROM Reports"
 msgstr "ROM-verslae"
 
-#: templates/game_detail.html:49
+#: templates/game_detail.html:34
+#, fuzzy
+msgid "Browse games"
+msgstr "Blaai deur vouers"
+
+#: templates/_modals/manual_reader_modal.html:15 templates/game_detail.html:37
+msgid "Previous"
+msgstr "Vorige"
+
+#: templates/_modals/manual_reader_modal.html:17 templates/game_detail.html:39
+msgid "Next"
+msgstr "Volgende"
+
+#: templates/game_detail.html:63
 msgid "CLZ Import - No ROM file"
 msgstr "CLZ-invoer - Geen ROM-lêer nie"
 
-#: templates/game_detail.html:49 templates/game_imports.html:167
+#: templates/game_detail.html:63 templates/game_imports.html:167
 msgid "CLZ Import"
 msgstr "CLZ-invoer"
 
-#: templates/game_detail.html:51
+#: templates/game_detail.html:65
 msgid "Steam Import - No ROM file"
 msgstr "Steam-invoer - Geen ROM-lêer nie"
 
-#: templates/game_detail.html:51
+#: templates/game_detail.html:65
 msgid "Steam Import"
 msgstr "Steam-invoer"
 
-#: templates/game_detail.html:53
+#: templates/game_detail.html:67
 msgid "Xbox Import - No ROM file"
 msgstr "Xbox-invoer - Geen ROM-lêer nie"
 
-#: templates/game_detail.html:53
+#: templates/game_detail.html:67
 msgid "Xbox Import"
 msgstr "Xbox-invoer"
 
-#: templates/game_detail.html:55
+#: templates/game_detail.html:69
 msgid "PSN Import - No ROM file"
 msgstr "PSN-invoer - Geen ROM-lêer nie"
 
-#: templates/game_detail.html:55
+#: templates/game_detail.html:69
 msgid "PSN Import"
 msgstr "PSN-invoer"
 
-#: templates/game_detail.html:58
+#: templates/game_detail.html:72
 msgid "This is a bonus/extra disc"
 msgstr "Dit is 'n bonus-/ekstra skyf"
 
-#: templates/game_detail.html:58
+#: templates/game_detail.html:72
 msgid "Bonus Disc"
 msgstr "Bonusskyf"
 
-#: templates/game_detail.html:63
+#: templates/game_detail.html:77
 msgid "Part of:"
 msgstr "Deel van:"
 
-#: templates/game_detail.html:74
+#: templates/game_detail.html:88
 msgid "Regional versions"
 msgstr "Streeksweergawes"
 
-#: templates/game_detail.html:75
+#: templates/game_detail.html:89
 msgid "Versions:"
 msgstr "Weergawes:"
 
-#: templates/game_detail.html:77 templates/game_detail.html:745
+#: templates/game_detail.html:91 templates/game_detail.html:770
 msgid "Unknown region"
 msgstr "Onbekende streek"
 
-#: templates/game_detail.html:83
+#: templates/game_detail.html:97
 msgid "Launch this game in the configured emulator"
 msgstr "Loods hierdie speletjie in die gekonfigureerde emulator"
 
-#: templates/game_detail.html:89
+#: templates/game_detail.html:103
 msgid "Keyboard game: press Scroll Lock for RetroArch keys"
 msgstr "Sleutelbordspeletjie: druk Scroll Lock vir RetroArch se sleutels"
 
-#: templates/game_detail.html:93
+#: templates/game_detail.html:107
 msgid "View Manual (PDF)"
 msgstr "Bekyk handleiding (PDF)"
 
-#: templates/game_detail.html:118
+#: templates/game_detail.html:132
 msgid "Delete game from database"
 msgstr "Verwyder speletjie uit databasis"
 
-#: templates/_settings_tabs/account.html:320 templates/game_detail.html:120
+#: templates/_settings_tabs/account.html:320 templates/game_detail.html:134
 #: templates/logs.html:735 templates/settings.html:70
 #: templates/wishlist.html:642
 msgid "Delete"
 msgstr "Verwyder"
 
-#: templates/game_detail.html:154 templates/game_detail.html:166
+#: templates/game_detail.html:168 templates/game_detail.html:180
 msgid "Click to zoom"
 msgstr "Klik om te zoem"
 
-#: templates/game_detail.html:171
+#: templates/game_detail.html:185
 msgid "Switch between 2D and 3D boxart"
 msgstr "Wissel tussen 2D- en 3D-omslagkuns"
 
-#: templates/game_detail.html:190
+#: templates/game_detail.html:204
 msgid ""
 "Sharper images for this game are still being made. They'll appear on "
 "their own."
@@ -6523,294 +6548,294 @@ msgstr ""
 "Skerper prente vir hierdie speletjie word nog gemaak. Hulle sal vanself "
 "verskyn."
 
-#: templates/game_detail.html:201
+#: templates/game_detail.html:215
 msgid "Player"
 msgstr "Speler"
 
-#: templates/game_detail.html:206
+#: templates/game_detail.html:220
 #, python-format
 msgid "Critic Score (%(count)s reviews)"
 msgstr "Kritikuspunt (%(count)s resensies)"
 
-#: templates/game_detail.html:211
+#: templates/game_detail.html:225
 #, python-format
 msgid "User Score (%(count)s ratings)"
 msgstr "Gebruikerspunt (%(count)s graderings)"
 
-#: templates/game_detail.html:216
+#: templates/game_detail.html:230
 #, python-format
 msgid "Copies sold on %(system)s, from published sales figures"
 msgstr ""
 
-#: templates/game_detail.html:217
+#: templates/game_detail.html:231
 #, fuzzy, python-format
 msgid "%(count)s sold"
 msgstr "%(count)s totaal"
 
-#: templates/game_detail.html:228
+#: templates/game_detail.html:242
 #, fuzzy, python-format
 msgid "Last tested %(date)s."
 msgstr "Verdien %(date)s"
 
-#: templates/game_detail.html:232
+#: templates/game_detail.html:246
 msgid ""
 "RetroDB reads PS3 compatibility from your RPCS3. In RPCS3, choose Manage "
 "> Databases > Download Compatibility Database."
 msgstr ""
 
-#: templates/game_detail.html:233
+#: templates/game_detail.html:247
 msgid "RPCS3: no compatibility list"
 msgstr ""
 
-#: templates/game_detail.html:254
+#: templates/game_detail.html:268
 msgid "No description available. Click \"Scrape\" to fetch metadata."
 msgstr "Geen beskrywing beskikbaar nie. Klik \"Skraap\" om metadata te haal."
 
-#: templates/game_detail.html:325
+#: templates/game_detail.html:350
 msgid "View on RetroAchievements.org"
 msgstr "Bekyk op RetroAchievements.org"
 
-#: templates/game_detail.html:327
+#: templates/game_detail.html:352
 msgid "RA Site"
 msgstr "RA-webwerf"
 
-#: templates/game_detail.html:339 templates/steam_achievement_game.html:17
+#: templates/game_detail.html:364 templates/steam_achievement_game.html:17
 #: templates/steam_achievements.html:7 templates/steam_achievements.html:15
 #: templates/steam_achievements.html:21
 msgid "Steam Achievements"
 msgstr "Steam-prestasies"
 
-#: templates/game_detail.html:355 templates/xbox_achievement_game.html:17
+#: templates/game_detail.html:380 templates/xbox_achievement_game.html:17
 #: templates/xbox_achievements.html:7 templates/xbox_achievements.html:15
 #: templates/xbox_achievements.html:21
 msgid "Xbox Achievements"
 msgstr "Xbox-prestasies"
 
-#: templates/game_detail.html:370 templates/psn_trophies.html:6
+#: templates/game_detail.html:395 templates/psn_trophies.html:6
 #: templates/psn_trophies.html:15 templates/psn_trophy_detail.html:17
 msgid "PSN Trophies"
 msgstr "PSN-trofeë"
 
-#: templates/game_detail.html:395 templates/local_trophy_detail.html:16
+#: templates/game_detail.html:420 templates/local_trophy_detail.html:16
 msgid "RPCS3 Trophies"
 msgstr "RPCS3-trofeë"
 
-#: templates/game_detail.html:428
+#: templates/game_detail.html:453
 msgid "(cross-mapped)"
 msgstr "(kruis-gekarteer)"
 
-#: templates/game_detail.html:441
+#: templates/game_detail.html:466
 #, python-format
 msgid "Screenshots (%(count)s)"
 msgstr "Skermskote (%(count)s)"
 
-#: templates/game_detail.html:443
+#: templates/game_detail.html:468
 msgid "Previous screenshots"
 msgstr "Vorige skermskote"
 
-#: templates/game_detail.html:449
+#: templates/game_detail.html:474
 msgid "Delete screenshot"
 msgstr "Verwyder skermskoot"
 
-#: templates/game_detail.html:453
+#: templates/game_detail.html:478
 msgid "Next screenshots"
 msgstr "Volgende skermskote"
 
-#: templates/game_detail.html:472
+#: templates/game_detail.html:497
 msgid "Also Known As"
 msgstr "Ook bekend as"
 
-#: templates/game_detail.html:476
+#: templates/game_detail.html:501
 #, python-format
 msgid "Source: %(source)s"
 msgstr "Bron: %(source)s"
 
-#: templates/game_detail.html:501
+#: templates/game_detail.html:526
 msgid "Loading recommendations..."
 msgstr "Laai aanbevelings..."
 
-#: templates/game_detail.html:549
+#: templates/game_detail.html:574
 #, python-format
 msgid "%(pct)s%% match"
 msgstr "%(pct)s%% passing"
 
-#: templates/game_detail.html:590
+#: templates/game_detail.html:615
 msgid "Source:"
 msgstr "Bron:"
 
-#: templates/game_detail.html:593
+#: templates/game_detail.html:618
 msgid "CLZ Games Import (No ROM file)"
 msgstr "CLZ Games-invoer (Geen ROM-lêer nie)"
 
-#: templates/game_detail.html:595
+#: templates/game_detail.html:620
 msgid "Steam Import (No ROM file)"
 msgstr "Steam-invoer (Geen ROM-lêer nie)"
 
-#: templates/game_detail.html:597
+#: templates/game_detail.html:622
 msgid "Xbox Import (No ROM file)"
 msgstr "Xbox-invoer (Geen ROM-lêer nie)"
 
-#: templates/game_detail.html:599
+#: templates/game_detail.html:624
 msgid "PSN Import (No ROM file)"
 msgstr "PSN-invoer (Geen ROM-lêer nie)"
 
-#: templates/game_detail.html:605
+#: templates/game_detail.html:630
 msgid "Original Title:"
 msgstr "Oorspronklike titel:"
 
-#: templates/game_detail.html:611
+#: templates/game_detail.html:636
 msgid "File:"
 msgstr "Lêer:"
 
-#: templates/game_detail.html:613
+#: templates/game_detail.html:638
 msgid "Rename ROM file"
 msgstr "Hernoem ROM-lêer"
 
-#: templates/game_detail.html:616
+#: templates/game_detail.html:641
 msgid "Path:"
 msgstr "Pad:"
 
-#: templates/game_detail.html:622
+#: templates/game_detail.html:647
 msgid "Edition:"
 msgstr "Uitgawe:"
 
-#: templates/game_detail.html:629
+#: templates/game_detail.html:654
 msgid "Exclusive:"
 msgstr "Eksklusief:"
 
-#: templates/game_detail.html:632
+#: templates/game_detail.html:657
 msgid "Also On:"
 msgstr "Ook op:"
 
-#: templates/game_detail.html:639
+#: templates/game_detail.html:664
 msgid "Modes:"
 msgstr "Modusse:"
 
-#: templates/game_detail.html:645
+#: templates/game_detail.html:670
 msgid "Players:"
 msgstr "Spelers:"
 
-#: templates/game_detail.html:651
+#: templates/game_detail.html:676
 msgid "Campaign:"
 msgstr "Veldtog:"
 
-#: templates/game_detail.html:657
+#: templates/game_detail.html:682
 msgid "Structure:"
 msgstr "Struktuur:"
 
-#: templates/game_detail.html:663
+#: templates/game_detail.html:688
 msgid "Perspective:"
 msgstr "Perspektief:"
 
-#: templates/game_detail.html:669
+#: templates/game_detail.html:694
 msgid "Dimension:"
 msgstr "Dimensie:"
 
-#: templates/game_detail.html:675
+#: templates/game_detail.html:700
 msgid "Save:"
 msgstr "Stoor:"
 
-#: templates/game_detail.html:681
+#: templates/game_detail.html:706
 msgid "Input:"
 msgstr "Toevoer:"
 
-#: templates/game_detail.html:686
+#: templates/game_detail.html:711
 msgid "Scraped:"
 msgstr "Geskraap:"
 
-#: templates/game_detail.html:695
+#: templates/game_detail.html:720
 msgid "Bonus Content"
 msgstr "Bonusinhoud"
 
-#: templates/game_detail.html:714
+#: templates/game_detail.html:739
 msgid "Emulator settings"
 msgstr "Emulatorinstellings"
 
-#: templates/_macros/nav_tabs.html:40 templates/game_detail.html:724
+#: templates/_macros/nav_tabs.html:40 templates/game_detail.html:749
 #: templates/rom_tools_hub.html:193 templates/versions_review.html:5
 #: templates/versions_review.html:80
 msgid "Regional Versions"
 msgstr "Streeksweergawes"
 
-#: templates/game_detail.html:732 templates/museum_system.html:100
+#: templates/game_detail.html:757 templates/museum_system.html:100
 msgid "Released"
 msgstr "Vrygestel"
 
-#: templates/game_detail.html:734
+#: templates/game_detail.html:759
 msgid "File size"
 msgstr "Lêergrootte"
 
-#: templates/game_detail.html:735
+#: templates/game_detail.html:760
 msgid "Revision"
 msgstr "Hersiening"
 
-#: templates/game_detail.html:736
+#: templates/game_detail.html:761
 msgid "Languages"
 msgstr "Tale"
 
-#: templates/game_detail.html:737
+#: templates/game_detail.html:762
 msgid "Scores"
 msgstr "Tellings"
 
-#: templates/game_detail.html:746
+#: templates/game_detail.html:771
 msgid "(this page)"
 msgstr "(hierdie bladsy)"
 
-#: templates/game_detail.html:764
+#: templates/game_detail.html:789
 msgid "Known differences"
 msgstr "Bekende verskille"
 
-#: templates/game_detail.html:764
+#: templates/game_detail.html:789
 msgid "AI-written"
 msgstr "Deur KI geskryf"
 
-#: templates/game_detail.html:765
+#: templates/game_detail.html:790
 msgid "Written by AI from what it knows about these releases. It can be wrong."
 msgstr ""
 "Deur KI geskryf uit wat dit van hierdie vrystellings weet. Dit kan "
 "verkeerd wees."
 
-#: templates/game_detail.html:767
+#: templates/game_detail.html:792
 msgid "The AI knows of no differences between these versions."
 msgstr "Die KI weet van geen verskille tussen hierdie weergawes nie."
 
-#: templates/game_detail.html:770
+#: templates/game_detail.html:795
 msgid "No other regional versions are linked to this game."
 msgstr "Geen ander streeksweergawes is aan hierdie speletjie gekoppel nie."
 
-#: templates/game_detail.html:775
+#: templates/game_detail.html:800
 msgid "Unlink this version"
 msgstr "Ontkoppel hierdie weergawe"
 
-#: templates/game_detail.html:776
+#: templates/game_detail.html:801
 msgid "Summarise differences with AI"
 msgstr "Som verskille op met KI"
 
-#: templates/game_detail.html:778
+#: templates/game_detail.html:803
 msgid "Link a version"
 msgstr "Koppel 'n weergawe"
 
-#: templates/game_detail.html:779
+#: templates/game_detail.html:804
 msgid "Link a version: search this system"
 msgstr "Koppel 'n weergawe: soek in hierdie stelsel"
 
-#: templates/game_detail.html:792
+#: templates/game_detail.html:817
 msgid "Scrape History"
 msgstr "Skraapgeskiedenis"
 
-#: templates/game_detail.html:818
+#: templates/game_detail.html:843
 msgid "Primary scraper"
 msgstr "Primêre skraper"
 
-#: templates/game_detail.html:820
+#: templates/game_detail.html:845
 msgid "Fallback scraper"
 msgstr "Terugvalskraper"
 
-#: templates/game_detail.html:827
+#: templates/game_detail.html:852
 msgid "Fields filled:"
 msgstr "Velde ingevul:"
 
-#: templates/game_detail.html:840
+#: templates/game_detail.html:865
 msgid "Still missing:"
 msgstr "Steeds ontbrekend:"
 
@@ -9186,14 +9211,6 @@ msgstr "Maak PDF in 'n nuwe oortjie oop"
 #: templates/_modals/manual_reader_modal.html:13
 msgid "Manual page. Use the arrow keys to turn pages."
 msgstr "Handleidingbladsy. Gebruik die pyltjiesleutels om blaaie om te slaan."
-
-#: templates/_modals/manual_reader_modal.html:15
-msgid "Previous"
-msgstr "Vorige"
-
-#: templates/_modals/manual_reader_modal.html:17
-msgid "Next"
-msgstr "Volgende"
 
 #: templates/_modals/rename_modal.html:4
 msgid "Rename ROM File"

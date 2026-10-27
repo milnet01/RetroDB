@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-27 14:31+0000\n"
+"POT-Creation-Date: 2026-10-27 15:30+0000\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: uk\n"
@@ -60,8 +60,8 @@ msgstr "Систему не знайдено або вона не має іго�
 #: routes/achievements.py:171 routes/achievements.py:440
 #: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/collections.py:276
 #: routes/collections.py:531 routes/emulators.py:271 routes/emulators.py:285
-#: routes/games.py:351 routes/games.py:815 routes/games.py:941
-#: routes/games.py:997 routes/games_ai.py:46 routes/games_media.py:37
+#: routes/games.py:390 routes/games.py:864 routes/games.py:991
+#: routes/games.py:1047 routes/games_ai.py:46 routes/games_media.py:37
 #: routes/games_media.py:85 routes/games_media.py:146 routes/launch.py:240
 #: routes/reports.py:693 routes/reports.py:818 routes/trophies.py:1278
 #: services/hltb_service.py:125
@@ -90,7 +90,7 @@ msgstr "Не вдалося отримати дані про досягненн�
 
 #: routes/achievements.py:294 routes/controllers.py:412
 #: routes/controllers.py:462 routes/museum.py:309 routes/museum.py:381
-#: routes/ra_sync.py:98 routes/systems.py:220
+#: routes/ra_sync.py:98 routes/systems.py:223
 msgid "System not found"
 msgstr "Систему не знайдено"
 
@@ -235,15 +235,15 @@ msgstr "Батьківську гру не знайдено"
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "Бонусний диск і батьківська гра мають належати до однієї системи"
 
-#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1255
-#: routes/games.py:1285 routes/platform_import.py:289
+#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1305
+#: routes/games.py:1335 routes/platform_import.py:289
 #: routes/platform_import.py:658 routes/platform_import.py:1024
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:200 routes/scraper.py:528
 #: routes/scraper.py:917 routes/settings.py:317 routes/settings.py:341
 #: routes/settings.py:456 routes/settings.py:533 routes/settings.py:547
 #: routes/settings.py:591 routes/settings.py:607 routes/settings.py:643
-#: routes/steam_achievements.py:138 routes/systems.py:286 routes/systems.py:466
+#: routes/steam_achievements.py:138 routes/systems.py:289 routes/systems.py:469
 #: routes/trophies.py:498 routes/trophies.py:694 routes/trophies.py:742
 #: routes/trophies.py:1564 routes/trophies.py:1588 routes/trophies.py:1633
 #: routes/trophies.py:1661 routes/trophies.py:1703 routes/trophies.py:1770
@@ -438,34 +438,41 @@ msgstr ""
 msgid "Emulator not found"
 msgstr "Емулятор не знайдено"
 
-#: routes/games.py:242
+#: routes/games.py:247 routes/games.py:281
 msgid "No IDs provided"
 msgstr "ID не надано"
 
-#: routes/games.py:250
+#: routes/games.py:289
 msgid "Provide 1-50 valid IDs"
 msgstr "Надайте від 1 до 50 дійсних ID"
 
-#: routes/games.py:507
+#: routes/games.py:551
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
 msgstr ""
 "Відео не збережено: це має бути файл MP4, WebM або OGG розміром до %(mb)s"
 " МБ."
 
-#: routes/games.py:637
+#: routes/games.py:561
+#, python-format
+msgid ""
+"Screenshots not added because they match ones the game already has: "
+"%(count)s"
+msgstr ""
+
+#: routes/games.py:685
 msgid "Game not found after update"
 msgstr "Гру не знайдено після оновлення"
 
-#: routes/games.py:945
+#: routes/games.py:995
 msgid "No game selected."
 msgstr "Гру не вибрано."
 
-#: routes/games.py:969
+#: routes/games.py:1019
 msgid "This metadata apply is no longer running."
 msgstr "Це застосування метаданих більше не виконується."
 
-#: routes/games.py:978
+#: routes/games.py:1028
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
@@ -474,41 +481,41 @@ msgstr ""
 "Метадані застосовано з %(sources)s! (заповнено полів: %(filled)d, ще "
 "бракує: %(missing)d)"
 
-#: routes/games.py:984
+#: routes/games.py:1034
 msgid "Failed to apply metadata."
 msgstr "Не вдалося застосувати метадані."
 
-#: routes/games.py:1033 routes/games.py:1077
+#: routes/games.py:1083 routes/games.py:1127
 msgid "No fields to update"
 msgstr "Немає полів для оновлення"
 
-#: routes/games.py:1074 routes/platform_import.py:212
+#: routes/games.py:1124 routes/platform_import.py:212
 #: routes/platform_import.py:572 routes/platform_import.py:928
 #: routes/trophies.py:1852
 msgid "No games selected"
 msgstr "Не вибрано жодної гри"
 
-#: routes/games.py:1084
+#: routes/games.py:1134
 msgid "Invalid completion status"
 msgstr "Недійсний статус проходження"
 
-#: routes/games.py:1132
+#: routes/games.py:1182
 msgid "No valid fields to update"
 msgstr "Немає дійсних полів для оновлення"
 
-#: routes/games.py:1248
+#: routes/games.py:1298
 msgid "Invalid status"
 msgstr "Недійсний статус"
 
-#: routes/games.py:1273
+#: routes/games.py:1323
 msgid "Not authenticated"
 msgstr "Не автентифіковано"
 
-#: routes/games.py:1304
+#: routes/games.py:1354
 msgid "Filter type and value required"
 msgstr "Потрібні тип і значення фільтра"
 
-#: routes/games.py:1317
+#: routes/games.py:1367
 msgid "Invalid filter type"
 msgstr "Недійсний тип фільтра"
 
@@ -980,11 +987,11 @@ msgstr "Облікові дані Steam не налаштовано"
 msgid "Game not found or not a Steam game"
 msgstr "Гру не знайдено або це не гра Steam"
 
-#: routes/systems.py:310
+#: routes/systems.py:313
 msgid "System ID required"
 msgstr "Потрібен ID системи"
 
-#: routes/systems.py:438
+#: routes/systems.py:441
 msgid "ES-DE scraper not available"
 msgstr "Скрапер ES-DE недоступний"
 
@@ -1551,7 +1558,7 @@ msgid "... and {n} more"
 msgstr "... і ще {n}"
 
 #: services/js_i18n_strings.py:496 templates/_bulk_edit_modal.html:30
-#: templates/base.html:1014
+#: templates/base.html:1015
 msgid "100%"
 msgstr "100%"
 
@@ -1733,7 +1740,7 @@ msgstr "Імпорти CLZ"
 msgid "CRT screen"
 msgstr "CRT-екран"
 
-#: services/js_i18n_strings.py:534 templates/game_detail.html:222
+#: services/js_i18n_strings.py:534 templates/game_detail.html:236
 msgid "Can be completed with playable performance and no game-breaking glitches."
 msgstr ""
 
@@ -1745,9 +1752,9 @@ msgstr ""
 #: templates/_settings_tabs/customization.html:264
 #: templates/achievement_game.html:178 templates/archive_scanner.html:661
 #: templates/archive_scanner.html:798 templates/base.html:338
-#: templates/base.html:356 templates/base.html:1055
+#: templates/base.html:356 templates/base.html:1056
 #: templates/chd_converter.html:170 templates/chd_verify.html:126
-#: templates/game_detail.html:539 templates/login.html:254
+#: templates/game_detail.html:564 templates/login.html:254
 #: templates/museum.html:29 templates/museum_system.html:182
 #: templates/psn_trophies.html:297 templates/psn_trophy_detail.html:182
 #: templates/psn_trophy_detail.html:325 templates/reports.html:521
@@ -1846,7 +1853,7 @@ msgstr "Натисніть ще раз, щоб видалити"
 #: templates/_settings_tabs/customization.html:224
 #: templates/archive_scanner.html:749 templates/archive_scanner.html:757
 #: templates/base.html:249 templates/base.html:332 templates/base.html:349
-#: templates/base.html:695 templates/base.html:971 templates/base.html:1365
+#: templates/base.html:695 templates/base.html:972 templates/base.html:1366
 #: templates/reports.html:472 templates/systems.html:121
 #: templates/wishlist.html:56
 msgid "Close"
@@ -1870,17 +1877,17 @@ msgid "Complete!"
 msgstr "Завершено!"
 
 #: services/js_i18n_strings.py:559 templates/_bulk_edit_modal.html:29
-#: templates/analytics.html:1664 templates/base.html:1013
-#: templates/dashboard.html:497 templates/game_detail.html:243
+#: templates/analytics.html:1664 templates/base.html:1014
+#: templates/dashboard.html:497 templates/game_detail.html:257
 msgid "Completed"
 msgstr "Завершено"
 
 #: services/js_i18n_strings.py:560 templates/_bulk_edit_modal.html:23
-#: templates/analytics.html:137 templates/base.html:1008
+#: templates/analytics.html:137 templates/base.html:1009
 msgid "Completion Status"
 msgstr "Статус проходження"
 
-#: services/js_i18n_strings.py:561 templates/game_detail.html:239
+#: services/js_i18n_strings.py:561 templates/game_detail.html:253
 msgid "Completion status"
 msgstr "Статус проходження"
 
@@ -1890,8 +1897,8 @@ msgstr "Статус проходження оновлено"
 
 #: services/js_i18n_strings.py:563 templates/achievement_game.html:172
 #: templates/achievement_game.html:197 templates/achievement_game.html:211
-#: templates/base.html:1050 templates/game_detail.html:533
-#: templates/game_detail.html:558 templates/game_detail.html:572
+#: templates/base.html:1051 templates/game_detail.html:558
+#: templates/game_detail.html:583 templates/game_detail.html:597
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:176
 #: templates/psn_trophy_detail.html:209
 #: templates/steam_achievement_game.html:134
@@ -2009,7 +2016,7 @@ msgid "Could not write the summary."
 msgstr "Не вдалося написати підсумок."
 
 #: services/js_i18n_strings.py:589
-#, fuzzy, python-brace-format, python-format
+#, fuzzy, python-brace-format
 msgid "Critic Score ({count} reviews)"
 msgstr "Оцінка критиків (%(count)s рецензій)"
 
@@ -2043,7 +2050,7 @@ msgstr "Знайдений шлях"
 msgid "Detecting…"
 msgstr "Визначення…"
 
-#: services/js_i18n_strings.py:597 templates/game_detail.html:226
+#: services/js_i18n_strings.py:597 templates/game_detail.html:240
 msgid "Does not start, or crashes the emulator."
 msgstr ""
 
@@ -2102,7 +2109,7 @@ msgid "Downloading {core} ({done} of {total})…"
 msgstr "Завантаження {core} ({done} з {total})…"
 
 #: services/js_i18n_strings.py:610 templates/_settings_tabs/account.html:318
-#: templates/base.html:969 templates/game_detail.html:105
+#: templates/base.html:970 templates/game_detail.html:119
 #: templates/wishlist.html:641
 msgid "Edit"
 msgstr "Редагувати"
@@ -2182,7 +2189,7 @@ msgid "Europe"
 msgstr ""
 
 #: services/js_i18n_strings.py:629 templates/_modals/edit_modal.html:223
-#: templates/base.html:1241
+#: templates/base.html:1242
 msgid "Exclusive"
 msgstr "Ексклюзив"
 
@@ -2349,7 +2356,7 @@ msgstr "Помилка генерації"
 msgid "Generation request failed"
 msgstr "Помилка запиту генерації"
 
-#: services/js_i18n_strings.py:667 templates/game_detail.html:223
+#: services/js_i18n_strings.py:667 templates/game_detail.html:237
 msgid ""
 "Gets in game, but cannot be finished, has serious glitches or runs too "
 "slowly."
@@ -2419,8 +2426,8 @@ msgstr "Зображення має бути менше 10 МБ"
 #: services/js_i18n_strings.py:683 templates/_bulk_edit_modal.html:27
 #: templates/achievements_system.html:151
 #: templates/achievements_system.html:170 templates/analytics.html:1664
-#: templates/base.html:1011 templates/dashboard.html:353
-#: templates/dashboard.html:493 templates/game_detail.html:241
+#: templates/base.html:1012 templates/dashboard.html:353
+#: templates/dashboard.html:493 templates/game_detail.html:255
 #: templates/steam_achievements.html:77 templates/xbox_achievements.html:77
 msgid "In Progress"
 msgstr "У процесі"
@@ -2527,8 +2534,8 @@ msgstr "Пошук версій…"
 
 #: services/js_i18n_strings.py:707 templates/achievement_game.html:168
 #: templates/achievement_game.html:197 templates/achievement_game.html:207
-#: templates/base.html:1046 templates/game_detail.html:529
-#: templates/game_detail.html:558 templates/game_detail.html:568
+#: templates/base.html:1047 templates/game_detail.html:554
+#: templates/game_detail.html:583 templates/game_detail.html:593
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:172
 #: templates/psn_trophy_detail.html:205
 #: templates/steam_achievement_game.html:133
@@ -2540,8 +2547,8 @@ msgstr "Основний вміст + додатки"
 
 #: services/js_i18n_strings.py:708 templates/achievement_game.html:164
 #: templates/achievement_game.html:197 templates/achievement_game.html:203
-#: templates/base.html:1042 templates/game_detail.html:525
-#: templates/game_detail.html:558 templates/game_detail.html:564
+#: templates/base.html:1043 templates/game_detail.html:550
+#: templates/game_detail.html:583 templates/game_detail.html:589
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:168
 #: templates/psn_trophy_detail.html:201
 #: templates/steam_achievement_game.html:132
@@ -2635,8 +2642,8 @@ msgid "Next disk failed"
 msgstr "Не вдалося змінити диск"
 
 #: services/js_i18n_strings.py:726 templates/_bulk_edit_modal.html:171
-#: templates/_modals/edit_modal.html:143 templates/game_detail.html:687
-#: templates/game_detail.html:755
+#: templates/_modals/edit_modal.html:143 templates/game_detail.html:712
+#: templates/game_detail.html:780
 msgid "No"
 msgstr "Ні"
 
@@ -2740,7 +2747,7 @@ msgstr ""
 "Немає пропозицій. Запустіть «Заповнення альтернативних назв» у розділі "
 "«Обслуговування», щоб знайти більше."
 
-#: services/js_i18n_strings.py:751 templates/game_detail.html:835
+#: services/js_i18n_strings.py:751 templates/game_detail.html:860
 msgid "None"
 msgstr "Немає"
 
@@ -2755,7 +2762,7 @@ msgstr ""
 msgid "Not versions"
 msgstr "Не версії"
 
-#: services/js_i18n_strings.py:754 templates/base.html:1400
+#: services/js_i18n_strings.py:754 templates/base.html:1401
 msgid "Now playing"
 msgstr "Зараз грає"
 
@@ -2809,13 +2816,13 @@ msgstr "Призупинено - натисніть «Відновити», що
 msgid "Platform not found"
 msgstr "Платформу не знайдено"
 
-#: services/js_i18n_strings.py:767 templates/game_detail.html:85
+#: services/js_i18n_strings.py:767 templates/game_detail.html:99
 msgid "Play"
 msgstr "Грати"
 
 #: services/js_i18n_strings.py:768 templates/_bulk_edit_modal.html:28
-#: templates/analytics.html:1664 templates/base.html:1012
-#: templates/dashboard.html:495 templates/game_detail.html:242
+#: templates/analytics.html:1664 templates/base.html:1013
+#: templates/dashboard.html:495 templates/game_detail.html:256
 msgid "Played"
 msgstr "Зіграно"
 
@@ -2874,25 +2881,25 @@ msgstr "Файли ROM"
 msgid "ROM Tools"
 msgstr "Інструменти ROM"
 
-#: services/js_i18n_strings.py:781 templates/game_detail.html:223
+#: services/js_i18n_strings.py:781 templates/game_detail.html:237
 msgid "RPCS3: Ingame"
 msgstr ""
 
-#: services/js_i18n_strings.py:782 templates/game_detail.html:224
+#: services/js_i18n_strings.py:782 templates/game_detail.html:238
 #, fuzzy
 msgid "RPCS3: Intro"
 msgstr "Трофеї RPCS3"
 
-#: services/js_i18n_strings.py:783 templates/game_detail.html:225
+#: services/js_i18n_strings.py:783 templates/game_detail.html:239
 msgid "RPCS3: Loadable"
 msgstr ""
 
-#: services/js_i18n_strings.py:784 templates/game_detail.html:226
+#: services/js_i18n_strings.py:784 templates/game_detail.html:240
 #, fuzzy
 msgid "RPCS3: Nothing"
 msgstr "Трофеї RPCS3"
 
-#: services/js_i18n_strings.py:785 templates/game_detail.html:222
+#: services/js_i18n_strings.py:785 templates/game_detail.html:236
 msgid "RPCS3: Playable"
 msgstr ""
 
@@ -3216,11 +3223,11 @@ msgstr "Показати комбінації клавіш"
 msgid "Showing Bonus Discs"
 msgstr "Показ бонусних дисків"
 
-#: services/js_i18n_strings.py:859 templates/game_detail.html:225
+#: services/js_i18n_strings.py:859 templates/game_detail.html:239
 msgid "Shows a black screen with a frame rate in the window title."
 msgstr ""
 
-#: services/js_i18n_strings.py:860 templates/game_detail.html:224
+#: services/js_i18n_strings.py:860 templates/game_detail.html:238
 msgid "Shows an image but does not get past the menus."
 msgstr ""
 
@@ -3229,7 +3236,7 @@ msgid "Shutting down server..."
 msgstr "Вимкнення сервера..."
 
 #: services/js_i18n_strings.py:862 templates/_modals/edit_modal.html:50
-#: templates/base.html:1098
+#: templates/base.html:1099
 msgid "Standalone"
 msgstr "Окремо"
 
@@ -3433,7 +3440,7 @@ msgid "Unhandled rejection"
 msgstr "Необроблена відмова"
 
 #: services/js_i18n_strings.py:899 templates/analytics.html:583
-#: templates/base.html:1198 templates/local_trophy_detail.html:220
+#: templates/base.html:1199 templates/local_trophy_detail.html:220
 #: templates/local_trophy_detail.html:224
 msgid "Unknown"
 msgstr "Невідомо"
@@ -3505,7 +3512,7 @@ msgstr ""
 "налаштування. Застосовується, коли ви натискаєте «Грати»."
 
 #: services/js_i18n_strings.py:913
-#, fuzzy, python-brace-format, python-format
+#, fuzzy, python-brace-format
 msgid "User Score ({count} ratings)"
 msgstr "Оцінка користувачів (%(count)s оцінок)"
 
@@ -3529,7 +3536,7 @@ msgstr "Працює"
 msgid "World"
 msgstr ""
 
-#: services/js_i18n_strings.py:919 templates/game_detail.html:776
+#: services/js_i18n_strings.py:919 templates/game_detail.html:801
 msgid "Write again with AI"
 msgstr "Написати знову за допомогою ШІ"
 
@@ -3538,8 +3545,8 @@ msgid "Xbox Imports"
 msgstr "Імпорти Xbox"
 
 #: services/js_i18n_strings.py:921 templates/_bulk_edit_modal.html:170
-#: templates/_modals/edit_modal.html:143 templates/game_detail.html:630
-#: templates/game_detail.html:687 templates/game_detail.html:755
+#: templates/_modals/edit_modal.html:143 templates/game_detail.html:655
+#: templates/game_detail.html:712 templates/game_detail.html:780
 msgid "Yes"
 msgstr "Так"
 
@@ -3784,8 +3791,8 @@ msgid "Only fields changed from \"Don't change\" will be updated."
 msgstr "Оновляться лише поля, змінені з «Не змінювати»."
 
 #: templates/_bulk_edit_modal.html:26 templates/achievements_system.html:171
-#: templates/analytics.html:1664 templates/base.html:1010
-#: templates/dashboard.html:491 templates/game_detail.html:240
+#: templates/analytics.html:1664 templates/base.html:1011
+#: templates/dashboard.html:491 templates/game_detail.html:254
 #: templates/steam_achievements.html:78 templates/xbox_achievements.html:78
 msgid "Not Started"
 msgstr "Не розпочато"
@@ -3794,9 +3801,9 @@ msgstr "Не розпочато"
 #: templates/_settings_tabs/data.html:83 templates/_settings_tabs/data.html:156
 #: templates/achievement_game.html:241 templates/all_games.html:72
 #: templates/analytics.html:481 templates/analytics.html:2428
-#: templates/base.html:940 templates/base.html:1148
+#: templates/base.html:940 templates/base.html:1149
 #: templates/compare_games.html:73 templates/dashboard.html:381
-#: templates/game_detail.html:286 templates/local_trophy_detail.html:99
+#: templates/game_detail.html:300 templates/local_trophy_detail.html:99
 #: templates/psn_trophy_detail.html:94 templates/psn_trophy_detail.html:258
 #: templates/steam_achievement_game.html:178 templates/system_games.html:63
 #: templates/xbox_achievement_game.html:171
@@ -3813,9 +3820,9 @@ msgstr "Додати"
 #: templates/_bulk_edit_modal.html:53 templates/_modals/edit_modal.html:94
 #: templates/achievement_game.html:81 templates/all_games.html:78
 #: templates/analytics.html:483 templates/analytics.html:2428
-#: templates/base.html:939 templates/base.html:1134
-#: templates/compare_games.html:71 templates/game_detail.html:262
-#: templates/game_detail.html:733 templates/local_trophy_detail.html:87
+#: templates/base.html:939 templates/base.html:1135
+#: templates/compare_games.html:71 templates/game_detail.html:276
+#: templates/game_detail.html:758 templates/local_trophy_detail.html:87
 #: templates/psn_trophy_detail.html:82 templates/steam_achievement_game.html:78
 #: templates/system_games.html:69 templates/xbox_achievement_game.html:67
 msgid "Publisher"
@@ -3830,8 +3837,8 @@ msgstr "Не змінювати"
 #: templates/_bulk_edit_modal.html:67 templates/_modals/edit_modal.html:99
 #: templates/achievement_game.html:87 templates/all_games.html:81
 #: templates/analytics.html:482 templates/analytics.html:2428
-#: templates/base.html:938 templates/base.html:1138
-#: templates/compare_games.html:70 templates/game_detail.html:274
+#: templates/base.html:938 templates/base.html:1139
+#: templates/compare_games.html:70 templates/game_detail.html:288
 #: templates/local_trophy_detail.html:93 templates/psn_trophy_detail.html:88
 #: templates/steam_achievement_game.html:84 templates/system_games.html:72
 #: templates/xbox_achievement_game.html:73
@@ -3843,23 +3850,23 @@ msgid "ESRB Rating"
 msgstr "Рейтинг ESRB"
 
 #: templates/_bulk_edit_modal.html:84 templates/_modals/edit_modal.html:240
-#: templates/base.html:1251
+#: templates/base.html:1252
 msgid "E - Everyone"
 msgstr "E - Для всіх"
 
 #: templates/_bulk_edit_modal.html:85 templates/_modals/edit_modal.html:241
-#: templates/base.html:1252
+#: templates/base.html:1253
 msgid "E10+ - Everyone 10+"
 msgstr "E10+ - Для всіх від 10 років"
 
 #: templates/_bulk_edit_modal.html:86 templates/_modals/edit_modal.html:242
-#: templates/base.html:1253
+#: templates/base.html:1254
 msgid "T - Teen"
 msgstr "T - Для підлітків"
 
 #: templates/_bulk_edit_modal.html:87 templates/_modals/edit_modal.html:243
-#: templates/_modals/edit_modal.html:287 templates/base.html:1254
-#: templates/base.html:1298
+#: templates/_modals/edit_modal.html:287 templates/base.html:1255
+#: templates/base.html:1299
 msgid "M - Mature"
 msgstr "M - Для дорослих"
 
@@ -3889,33 +3896,33 @@ msgstr "PEGI 18"
 
 #: templates/_bulk_edit_modal.html:106 templates/_modals/edit_modal.html:85
 #: templates/analytics.html:492 templates/analytics.html:2428
-#: templates/base.html:1125 templates/compare_games.html:75
-#: templates/game_detail.html:730 templates/reports.html:444
+#: templates/base.html:1126 templates/compare_games.html:75
+#: templates/game_detail.html:755 templates/reports.html:444
 msgid "Region"
 msgstr "Регіон"
 
 #: templates/_bulk_edit_modal.html:112 templates/_modals/edit_modal.html:132
-#: templates/all_games.html:84 templates/base.html:1164
-#: templates/compare_games.html:76 templates/game_detail.html:201
+#: templates/all_games.html:84 templates/base.html:1165
+#: templates/compare_games.html:76 templates/game_detail.html:215
 #: templates/system_games.html:75
 msgid "Players"
 msgstr "Гравці"
 
 #: templates/_bulk_edit_modal.html:118 templates/_modals/edit_modal.html:149
-#: templates/_settings_tabs/data.html:93 templates/base.html:1168
+#: templates/_settings_tabs/data.html:93 templates/base.html:1169
 msgid "Game Structure"
 msgstr "Структура гри"
 
 #: templates/_bulk_edit_modal.html:135 templates/_modals/edit_modal.html:162
 #: templates/_settings_tabs/data.html:103 templates/all_games.html:87
-#: templates/analytics.html:199 templates/base.html:1176
+#: templates/analytics.html:199 templates/base.html:1177
 #: templates/compare_games.html:78 templates/system_games.html:78
 msgid "Perspective"
 msgstr "Перспектива"
 
 #: templates/_bulk_edit_modal.html:151 templates/_modals/edit_modal.html:173
 #: templates/_settings_tabs/data.html:113 templates/all_games.html:90
-#: templates/analytics.html:207 templates/base.html:1184
+#: templates/analytics.html:207 templates/base.html:1185
 #: templates/compare_games.html:79 templates/system_games.html:81
 msgid "Dimension"
 msgstr "Вимір"
@@ -3964,7 +3971,7 @@ msgstr "Завантажити ще"
 
 #: templates/achievement_game.html:17 templates/achievement_game.html:37
 #: templates/achievements_system.html:15 templates/game_detail.html:21
-#: templates/game_detail.html:317 templates/game_detail.html:738
+#: templates/game_detail.html:342 templates/game_detail.html:763
 #: templates/systems.html:43
 msgid "RetroAchievements"
 msgstr "RetroAchievements"
@@ -3980,7 +3987,7 @@ msgid "Refresh RA"
 msgstr "Оновити RA"
 
 #: templates/achievement_game.html:93 templates/all_games.html:75
-#: templates/game_detail.html:298 templates/system_games.html:66
+#: templates/game_detail.html:312 templates/system_games.html:66
 msgid "Series"
 msgstr "Серія"
 
@@ -4007,23 +4014,23 @@ msgstr "Не вдалося завантажити дані досягнень"
 msgid "Check your RetroAchievements credentials in Settings."
 msgstr "Перевірте свої облікові дані RetroAchievements у налаштуваннях."
 
-#: templates/achievement_game.html:146 templates/game_detail.html:507
+#: templates/achievement_game.html:146 templates/game_detail.html:532
 #: templates/local_trophy_detail.html:158 templates/psn_trophy_detail.html:149
 #: templates/steam_achievement_game.html:123
 #: templates/xbox_achievement_game.html:116
 msgid "How Long to Beat"
 msgstr "How Long to Beat"
 
-#: templates/achievement_game.html:153 templates/base.html:1023
-#: templates/game_detail.html:514 templates/psn_trophy_detail.html:157
+#: templates/achievement_game.html:153 templates/base.html:1024
+#: templates/game_detail.html:539 templates/psn_trophy_detail.html:157
 #: templates/psn_trophy_detail.html:317
 #: templates/steam_achievement_game.html:126
 #: templates/xbox_achievement_game.html:119
 msgid "Search game title..."
 msgstr "Пошук назви гри..."
 
-#: templates/achievement_game.html:156 templates/base.html:1026
-#: templates/game_detail.html:517 templates/local_trophy_detail.html:193
+#: templates/achievement_game.html:156 templates/base.html:1027
+#: templates/game_detail.html:542 templates/local_trophy_detail.html:193
 #: templates/psn_trophy_detail.html:160
 #: templates/steam_achievement_game.html:127
 #: templates/xbox_achievement_game.html:120
@@ -4031,8 +4038,8 @@ msgid "Lookup HLTB"
 msgstr "Пошук HowLongToBeat"
 
 #: templates/_settings_tabs/account.html:73 templates/achievement_game.html:177
-#: templates/achievement_game.html:253 templates/base.html:1054
-#: templates/game_detail.html:538 templates/local_trophy_detail.html:223
+#: templates/achievement_game.html:253 templates/base.html:1055
+#: templates/game_detail.html:563 templates/local_trophy_detail.html:223
 #: templates/psn_trophy_detail.html:181 templates/psn_trophy_detail.html:270
 #: templates/settings_emulators.html:36 templates/settings_emulators.html:187
 #: templates/steam_achievement_game.html:137
@@ -4041,8 +4048,8 @@ msgid "Save"
 msgstr "Зберегти"
 
 #: templates/achievement_game.html:217 templates/all_games.html:108
-#: templates/base.html:1067 templates/duplicate_finder.html:301
-#: templates/game_detail.html:101 templates/game_detail.html:578
+#: templates/base.html:1068 templates/duplicate_finder.html:301
+#: templates/game_detail.html:115 templates/game_detail.html:603
 #: templates/local_trophy_detail.html:185 templates/psn_trophy_detail.html:214
 #: templates/reports.html:277 templates/screenshot_dedup.html:325
 #: templates/steam_achievement_game.html:163 templates/system_games.html:99
@@ -4050,7 +4057,7 @@ msgstr "Зберегти"
 msgid "Clear"
 msgstr "Очистити"
 
-#: templates/achievement_game.html:225 templates/game_detail.html:586
+#: templates/achievement_game.html:225 templates/game_detail.html:611
 #: templates/local_trophy_detail.html:203 templates/psn_trophy_detail.html:234
 #: templates/steam_achievement_game.html:170
 #: templates/xbox_achievement_game.html:163
@@ -4433,7 +4440,7 @@ msgstr "Вибрати все"
 msgid "Select Unscraped"
 msgstr "Вибрати необроблені"
 
-#: templates/all_games.html:204 templates/game_detail.html:804
+#: templates/all_games.html:204 templates/game_detail.html:829
 #: templates/system_games.html:184
 msgid "Full Re-scrape"
 msgstr "Повторний скрапінг"
@@ -4442,7 +4449,7 @@ msgstr "Повторний скрапінг"
 msgid "Toggle between full re-scrape and fill missing mode"
 msgstr "Перемкнути між режимом повторного скрапінгу та заповнення відсутнього"
 
-#: templates/all_games.html:209 templates/game_detail.html:804
+#: templates/all_games.html:209 templates/game_detail.html:829
 #: templates/system_games.html:189
 msgid "Fill Missing"
 msgstr "Заповнити відсутнє"
@@ -4480,7 +4487,7 @@ msgid "Developers"
 msgstr "Розробники"
 
 #: templates/_modals/edit_modal.html:107 templates/analytics.html:13
-#: templates/base.html:998 templates/base.html:1145
+#: templates/base.html:999 templates/base.html:1146
 msgid "Gameplay"
 msgstr "Ігровий процес"
 
@@ -4748,7 +4755,7 @@ msgstr "Повнота полів"
 #: templates/_settings_tabs/customization.html:193
 #: templates/_settings_tabs/customization.html:259 templates/analytics.html:479
 #: templates/analytics.html:2428 templates/base.html:266
-#: templates/base.html:1352 templates/compare_games.html:97
+#: templates/base.html:1353 templates/compare_games.html:97
 #: templates/settings_emulators.html:170
 msgid "Description"
 msgstr "Опис"
@@ -4762,7 +4769,7 @@ msgstr "Обкладинка"
 
 #: templates/_modals/edit_modal.html:72 templates/_modals/filter_modal.html:14
 #: templates/analytics.html:484 templates/analytics.html:2428
-#: templates/base.html:1117 templates/compare_games.html:72
+#: templates/base.html:1118 templates/compare_games.html:72
 msgid "Release Date"
 msgstr "Дата випуску"
 
@@ -4775,12 +4782,12 @@ msgid "Fanart"
 msgstr "Фан-арт"
 
 #: templates/analytics.html:487 templates/analytics.html:2428
-#: templates/game_detail.html:460
+#: templates/game_detail.html:485
 msgid "Video"
 msgstr "Відео"
 
 #: templates/_modals/manual_reader_modal.html:9 templates/analytics.html:488
-#: templates/analytics.html:2428 templates/game_detail.html:95
+#: templates/analytics.html:2428 templates/game_detail.html:109
 msgid "Manual"
 msgstr "Інструкція"
 
@@ -5200,7 +5207,7 @@ msgstr "Конфігурація"
 msgid "Log Viewer"
 msgstr "Перегляд журналу"
 
-#: templates/base.html:198 templates/base.html:1000
+#: templates/base.html:198 templates/base.html:1001
 msgid "Info"
 msgstr "Інформація"
 
@@ -5300,271 +5307,276 @@ msgstr "Закрити деталі гри"
 msgid "Loading game details..."
 msgstr "Завантаження деталей гри..."
 
-#: templates/base.html:953 templates/game_detail.html:464
+#: templates/base.html:942 templates/game_detail.html:318
+#, fuzzy
+msgid "Release dates"
+msgstr "Дата випуску"
+
+#: templates/base.html:954 templates/game_detail.html:489
 msgid "Your browser does not support the video tag."
 msgstr "Ваш браузер не підтримує тег відео."
 
-#: templates/base.html:960
+#: templates/base.html:961
 msgid "View Full Page"
 msgstr "Переглянути повну сторінку"
 
-#: templates/base.html:962 templates/game_detail.html:109
+#: templates/base.html:963 templates/game_detail.html:123
 msgid "Fill missing metadata with AI"
 msgstr "Заповнити відсутні метадані за допомогою ШІ"
 
-#: templates/base.html:963 templates/game_detail.html:111
+#: templates/base.html:964 templates/game_detail.html:125
 msgid "AI Fill"
 msgstr "Заповнення ШІ"
 
-#: templates/base.html:966 templates/game_detail.html:116
+#: templates/base.html:967 templates/game_detail.html:130
 msgid "Scrape"
 msgstr "Скрапити"
 
-#: templates/_modals/screenshot_modal.html:2 templates/base.html:978
+#: templates/_modals/screenshot_modal.html:2 templates/base.html:979
 msgid "Screenshot viewer"
 msgstr "Переглядач знімків екрана"
 
-#: templates/_modals/screenshot_modal.html:3 templates/base.html:979
+#: templates/_modals/screenshot_modal.html:3 templates/base.html:980
 msgid "Close screenshot viewer"
 msgstr "Закрити переглядач знімків екрана"
 
-#: templates/_modals/screenshot_modal.html:4 templates/base.html:980
+#: templates/_modals/screenshot_modal.html:4 templates/base.html:981
 msgid "Previous screenshot"
 msgstr "Попередній знімок екрана"
 
-#: templates/base.html:981
+#: templates/base.html:982
 msgid "Screenshot"
 msgstr "Знімок екрана"
 
-#: templates/_modals/screenshot_modal.html:6 templates/base.html:982
+#: templates/_modals/screenshot_modal.html:6 templates/base.html:983
 msgid "Next screenshot"
 msgstr "Наступний знімок екрана"
 
-#: templates/base.html:983
+#: templates/base.html:984
 msgid "Use &#8592; &#8594; arrow keys to navigate &bull; ESC to close"
 msgstr ""
 "Використовуйте клавіші &#8592; &#8594; для навігації &bull; ESC для "
 "закриття"
 
-#: templates/_modals/edit_modal.html:7 templates/base.html:990
+#: templates/_modals/edit_modal.html:7 templates/base.html:991
 msgid "Close edit modal"
 msgstr "Закрити вікно редагування"
 
-#: templates/base.html:993
+#: templates/base.html:994
 msgid "Edit Game"
 msgstr "Редагувати гру"
 
-#: templates/base.html:994
+#: templates/base.html:995
 msgid "Edit game sections"
 msgstr "Розділи редагування гри"
 
-#: templates/base.html:995
+#: templates/base.html:996
 msgid "Quick"
 msgstr "Швидко"
 
-#: templates/_modals/edit_modal.html:25 templates/base.html:996
-#: templates/base.html:1074
+#: templates/_modals/edit_modal.html:25 templates/base.html:997
+#: templates/base.html:1075
 msgid "Identity"
 msgstr "Ідентифікація"
 
-#: templates/base.html:997
+#: templates/base.html:998
 msgid "Release"
 msgstr "Випуск"
 
-#: templates/_modals/edit_modal.html:187 templates/base.html:999
-#: templates/base.html:1206
+#: templates/_modals/edit_modal.html:187 templates/base.html:1000
+#: templates/base.html:1207
 msgid "Technical"
 msgstr "Технічні дані"
 
-#: templates/base.html:1006
+#: templates/base.html:1007
 msgid "Quick edit"
 msgstr "Швидке редагування"
 
-#: templates/base.html:1019
+#: templates/base.html:1020
 msgid "HowLongToBeat"
 msgstr "HowLongToBeat"
 
-#: templates/base.html:1033
+#: templates/base.html:1034
 msgid "Searching HowLongToBeat..."
 msgstr "Пошук на HowLongToBeat..."
 
-#: templates/base.html:1064 templates/local_trophy_detail.html:189
+#: templates/base.html:1065 templates/local_trophy_detail.html:189
 msgid "No playtime data"
 msgstr "Немає даних про тривалість гри"
 
 #: templates/_modals/edit_modal.html:28 templates/_modals/filter_modal.html:13
-#: templates/base.html:1077 templates/dashboard.html:320
+#: templates/base.html:1078 templates/dashboard.html:320
 #: templates/dashboard.html:379 templates/dashboard.html:456
-#: templates/dashboard.html:522 templates/game_detail.html:731
+#: templates/dashboard.html:522 templates/game_detail.html:756
 msgid "Title"
 msgstr "Назва"
 
-#: templates/_modals/edit_modal.html:32 templates/base.html:1081
+#: templates/_modals/edit_modal.html:32 templates/base.html:1082
 msgid "Keep this title when scraping"
 msgstr ""
 
-#: templates/_modals/edit_modal.html:36 templates/base.html:1085
+#: templates/_modals/edit_modal.html:36 templates/base.html:1086
 msgid "Sort Title"
 msgstr "Назва для сортування"
 
-#: templates/_modals/edit_modal.html:38 templates/base.html:1087
+#: templates/_modals/edit_modal.html:38 templates/base.html:1088
 msgid "Auto-generated from title"
 msgstr "Автоматично згенеровано з назви"
 
-#: templates/_modals/edit_modal.html:44 templates/base.html:1092
+#: templates/_modals/edit_modal.html:44 templates/base.html:1093
 msgid "Franchise / Series"
 msgstr "Франшиза / серія"
 
-#: templates/_modals/edit_modal.html:47 templates/base.html:1095
+#: templates/_modals/edit_modal.html:47 templates/base.html:1096
 msgid "Toggle franchise status"
 msgstr "Перемкнути статус франшизи"
 
-#: templates/_modals/edit_modal.html:52 templates/base.html:1100
+#: templates/_modals/edit_modal.html:52 templates/base.html:1101
 msgid "e.g., Final Fantasy, Crash Bandicoot"
 msgstr "напр., Final Fantasy, Crash Bandicoot"
 
-#: templates/_modals/edit_modal.html:56 templates/base.html:1103
-#: templates/compare_games.html:96 templates/game_detail.html:492
+#: templates/_modals/edit_modal.html:56 templates/base.html:1104
+#: templates/compare_games.html:96 templates/game_detail.html:517
 msgid "Similar Games"
 msgstr "Схожі ігри"
 
-#: templates/_modals/edit_modal.html:57 templates/base.html:1104
+#: templates/_modals/edit_modal.html:57 templates/base.html:1105
 msgid "Game 1, Game 2, Game 3"
 msgstr "Гра 1, Гра 2, Гра 3"
 
-#: templates/_modals/edit_modal.html:61 templates/base.html:1107
+#: templates/_modals/edit_modal.html:61 templates/base.html:1108
 msgid "Edition"
 msgstr "Видання"
 
-#: templates/base.html:1108
+#: templates/base.html:1109
 msgid "Standard, Collector&#39;s, GOTY"
 msgstr "Стандартне, Колекційне, GOTY"
 
-#: templates/base.html:1114
+#: templates/base.html:1115
 msgid "Release info"
 msgstr "Інформація про випуск"
 
-#: templates/base.html:1119
+#: templates/base.html:1120
 msgid "YYYY-MM-DD"
 msgstr "РРРР-ММ-ДД"
 
-#: templates/_modals/edit_modal.html:80 templates/base.html:1121
+#: templates/_modals/edit_modal.html:80 templates/base.html:1122
 msgid "Pick date"
 msgstr "Виберіть дату"
 
-#: templates/_modals/edit_modal.html:87 templates/base.html:1127
+#: templates/_modals/edit_modal.html:87 templates/base.html:1128
 msgid "— Select —"
 msgstr "— Вибрати —"
 
-#: templates/_modals/edit_modal.html:95 templates/base.html:1135
+#: templates/_modals/edit_modal.html:95 templates/base.html:1136
 msgid "Sony, Nintendo"
 msgstr "Sony, Nintendo"
 
-#: templates/base.html:1139
+#: templates/base.html:1140
 msgid "Naughty Dog, Insomniac"
 msgstr "Naughty Dog, Insomniac"
 
-#: templates/_modals/edit_modal.html:114 templates/base.html:1151
+#: templates/_modals/edit_modal.html:114 templates/base.html:1152
 msgid "Add genre"
 msgstr "Додати жанр"
 
-#: templates/_modals/edit_modal.html:115 templates/base.html:1152
+#: templates/_modals/edit_modal.html:115 templates/base.html:1153
 msgid "+ Add genre..."
 msgstr "+ Додати жанр..."
 
 #: templates/_modals/edit_modal.html:121 templates/_settings_tabs/data.html:123
-#: templates/base.html:1156
+#: templates/base.html:1157
 msgid "Play Modes"
 msgstr "Режими гри"
 
-#: templates/_modals/edit_modal.html:125 templates/base.html:1159
+#: templates/_modals/edit_modal.html:125 templates/base.html:1160
 msgid "Add play mode"
 msgstr "Додати режим гри"
 
-#: templates/_modals/edit_modal.html:126 templates/base.html:1160
+#: templates/_modals/edit_modal.html:126 templates/base.html:1161
 msgid "+ Add mode..."
 msgstr "+ Додати режим..."
 
-#: templates/_modals/edit_modal.html:155 templates/base.html:1171
+#: templates/_modals/edit_modal.html:155 templates/base.html:1172
 msgid "Add game structure"
 msgstr "Додати структуру гри"
 
-#: templates/_modals/edit_modal.html:156 templates/base.html:1172
+#: templates/_modals/edit_modal.html:156 templates/base.html:1173
 msgid "+ Add structure..."
 msgstr "+ Додати структуру..."
 
-#: templates/_modals/edit_modal.html:166 templates/base.html:1179
+#: templates/_modals/edit_modal.html:166 templates/base.html:1180
 msgid "Add perspective"
 msgstr "Додати перспективу"
 
-#: templates/_modals/edit_modal.html:167 templates/base.html:1180
+#: templates/_modals/edit_modal.html:167 templates/base.html:1181
 msgid "+ Add perspective..."
 msgstr "+ Додати перспективу..."
 
-#: templates/_modals/edit_modal.html:177 templates/base.html:1187
+#: templates/_modals/edit_modal.html:177 templates/base.html:1188
 msgid "Add dimension"
 msgstr "Додати вимір"
 
-#: templates/_modals/edit_modal.html:178 templates/base.html:1188
+#: templates/_modals/edit_modal.html:178 templates/base.html:1189
 msgid "+ Add dimension..."
 msgstr "+ Додати вимір..."
 
-#: templates/_modals/edit_modal.html:136 templates/base.html:1192
+#: templates/_modals/edit_modal.html:136 templates/base.html:1193
 msgid "Campaign Mode"
 msgstr "Режим кампанії"
 
-#: templates/_modals/edit_modal.html:140 templates/base.html:1195
+#: templates/_modals/edit_modal.html:140 templates/base.html:1196
 msgid "Toggle campaign mode"
 msgstr "Перемкнути режим кампанії"
 
-#: templates/_modals/edit_modal.html:190 templates/base.html:1209
+#: templates/_modals/edit_modal.html:190 templates/base.html:1210
 #: templates/compare_games.html:91
 msgid "Controller Support"
 msgstr "Підтримка контролерів"
 
-#: templates/_modals/edit_modal.html:194 templates/base.html:1213
+#: templates/_modals/edit_modal.html:194 templates/base.html:1214
 msgid "Add controller"
 msgstr "Додати контролер"
 
-#: templates/_modals/edit_modal.html:195 templates/base.html:1214
+#: templates/_modals/edit_modal.html:195 templates/base.html:1215
 msgid "+ Add controller..."
 msgstr "+ Додати контролер..."
 
-#: templates/_modals/edit_modal.html:199 templates/base.html:1216
+#: templates/_modals/edit_modal.html:199 templates/base.html:1217
 msgid "Custom controller name"
 msgstr "Власна назва контролера"
 
-#: templates/base.html:1216
+#: templates/base.html:1217
 msgid "Or type custom..."
 msgstr "Або введіть власний варіант..."
 
 #: templates/_modals/edit_modal.html:206 templates/_settings_tabs/data.html:133
-#: templates/base.html:1220 templates/compare_games.html:92
+#: templates/base.html:1221 templates/compare_games.html:92
 msgid "Save Type"
 msgstr "Тип збереження"
 
-#: templates/_modals/edit_modal.html:210 templates/base.html:1223
+#: templates/_modals/edit_modal.html:210 templates/base.html:1224
 msgid "Add save type"
 msgstr "Додати тип збереження"
 
-#: templates/_modals/edit_modal.html:211 templates/base.html:1224
+#: templates/_modals/edit_modal.html:211 templates/base.html:1225
 msgid "+ Add save type..."
 msgstr "+ Додати тип збереження..."
 
-#: templates/_modals/edit_modal.html:217 templates/base.html:1228
+#: templates/_modals/edit_modal.html:217 templates/base.html:1229
 msgid "Platform Availability"
 msgstr "Доступність на платформах"
 
-#: templates/_modals/edit_modal.html:220 templates/base.html:1238
+#: templates/_modals/edit_modal.html:220 templates/base.html:1239
 msgid "Toggle platform exclusivity"
 msgstr "Перемкнути ексклюзивність платформи"
 
-#: templates/base.html:1243
+#: templates/base.html:1244
 msgid "Xbox 360, PC, Switch"
 msgstr "Xbox 360, PC, Switch"
 
 #: templates/_modals/edit_modal.html:236
-#: templates/_settings_tabs/library.html:152 templates/base.html:1247
+#: templates/_settings_tabs/library.html:152 templates/base.html:1248
 msgid "ESRB (North America)"
 msgstr "ESRB (Північна Америка)"
 
@@ -5572,142 +5584,142 @@ msgstr "ESRB (Північна Америка)"
 #: templates/_modals/edit_modal.html:262 templates/_modals/edit_modal.html:273
 #: templates/_modals/edit_modal.html:284 templates/_modals/edit_modal.html:295
 #: templates/_modals/edit_modal.html:309 templates/_modals/edit_modal.html:319
-#: templates/_modals/edit_modal.html:331 templates/base.html:1249
-#: templates/base.html:1262 templates/base.html:1273 templates/base.html:1284
-#: templates/base.html:1295 templates/base.html:1306 templates/base.html:1320
-#: templates/base.html:1330 templates/base.html:1342
+#: templates/_modals/edit_modal.html:331 templates/base.html:1250
+#: templates/base.html:1263 templates/base.html:1274 templates/base.html:1285
+#: templates/base.html:1296 templates/base.html:1307 templates/base.html:1321
+#: templates/base.html:1331 templates/base.html:1343
 msgid "-- None --"
 msgstr "-- Немає --"
 
-#: templates/_modals/edit_modal.html:239 templates/base.html:1250
+#: templates/_modals/edit_modal.html:239 templates/base.html:1251
 msgid "EC - Early Childhood"
 msgstr "EC - Раннє дитинство"
 
-#: templates/_modals/edit_modal.html:244 templates/base.html:1255
+#: templates/_modals/edit_modal.html:244 templates/base.html:1256
 msgid "AO - Adults Only"
 msgstr "AO - Тільки для дорослих"
 
-#: templates/_modals/edit_modal.html:245 templates/base.html:1256
+#: templates/_modals/edit_modal.html:245 templates/base.html:1257
 msgid "RP - Rating Pending"
 msgstr "RP - Рейтинг очікується"
 
 #: templates/_modals/edit_modal.html:249
-#: templates/_settings_tabs/library.html:153 templates/base.html:1260
+#: templates/_settings_tabs/library.html:153 templates/base.html:1261
 msgid "PEGI (Europe)"
 msgstr "PEGI (Європа)"
 
 #: templates/_modals/edit_modal.html:260
-#: templates/_settings_tabs/library.html:154 templates/base.html:1271
+#: templates/_settings_tabs/library.html:154 templates/base.html:1272
 msgid "CERO (Japan)"
 msgstr "CERO (Японія)"
 
 #: templates/_modals/edit_modal.html:263 templates/_modals/edit_modal.html:296
-#: templates/base.html:1274 templates/base.html:1307
+#: templates/base.html:1275 templates/base.html:1308
 msgid "A - All Ages"
 msgstr "A - Для всіх віків"
 
-#: templates/_modals/edit_modal.html:264 templates/base.html:1275
+#: templates/_modals/edit_modal.html:264 templates/base.html:1276
 msgid "B - Ages 12+"
 msgstr "B - Від 12 років"
 
-#: templates/_modals/edit_modal.html:265 templates/base.html:1276
+#: templates/_modals/edit_modal.html:265 templates/base.html:1277
 msgid "C - Ages 15+"
 msgstr "C - Від 15 років"
 
-#: templates/_modals/edit_modal.html:266 templates/base.html:1277
+#: templates/_modals/edit_modal.html:266 templates/base.html:1278
 msgid "D - Ages 17+"
 msgstr "D - Від 17 років"
 
-#: templates/_modals/edit_modal.html:267 templates/base.html:1278
+#: templates/_modals/edit_modal.html:267 templates/base.html:1279
 msgid "Z - Ages 18+"
 msgstr "Z - Від 18 років"
 
 #: templates/_modals/edit_modal.html:271
-#: templates/_settings_tabs/library.html:155 templates/base.html:1282
+#: templates/_settings_tabs/library.html:155 templates/base.html:1283
 msgid "USK (Germany)"
 msgstr "USK (Німеччина)"
 
 #: templates/_modals/edit_modal.html:282
-#: templates/_settings_tabs/library.html:156 templates/base.html:1293
+#: templates/_settings_tabs/library.html:156 templates/base.html:1294
 msgid "ACB (Australia)"
 msgstr "ACB (Австралія)"
 
-#: templates/_modals/edit_modal.html:285 templates/base.html:1296
+#: templates/_modals/edit_modal.html:285 templates/base.html:1297
 msgid "G - General"
 msgstr "G - Загальний"
 
 #: templates/_modals/edit_modal.html:286 templates/_modals/edit_modal.html:297
-#: templates/base.html:1297
+#: templates/base.html:1298
 msgid "PG - Parental Guidance"
 msgstr "PG - Батьківський контроль"
 
-#: templates/_modals/edit_modal.html:288 templates/base.html:1299
+#: templates/_modals/edit_modal.html:288 templates/base.html:1300
 msgid "MA15+ - Restricted"
 msgstr "MA15+ - Обмежено"
 
-#: templates/_modals/edit_modal.html:289 templates/base.html:1300
+#: templates/_modals/edit_modal.html:289 templates/base.html:1301
 msgid "R18+ - Restricted"
 msgstr "R18+ - Обмежено"
 
 #: templates/_modals/edit_modal.html:293
-#: templates/_settings_tabs/library.html:157 templates/base.html:1304
+#: templates/_settings_tabs/library.html:157 templates/base.html:1305
 msgid "FPB (South Africa)"
 msgstr "FPB (Південна Африка)"
 
 #: templates/_modals/edit_modal.html:307
-#: templates/_settings_tabs/library.html:158 templates/base.html:1318
+#: templates/_settings_tabs/library.html:158 templates/base.html:1319
 msgid "GRAC (South Korea)"
 msgstr "GRAC (Південна Корея)"
 
-#: templates/_modals/edit_modal.html:310 templates/base.html:1321
+#: templates/_modals/edit_modal.html:310 templates/base.html:1322
 msgid "ALL - All Ages"
 msgstr "ALL - Для всіх віків"
 
 #: templates/_modals/edit_modal.html:317
-#: templates/_settings_tabs/library.html:159 templates/base.html:1328
+#: templates/_settings_tabs/library.html:159 templates/base.html:1329
 msgid "ClassInd (Brazil)"
 msgstr "ClassInd (Бразилія)"
 
-#: templates/_modals/edit_modal.html:320 templates/base.html:1331
+#: templates/_modals/edit_modal.html:320 templates/base.html:1332
 msgid "L - General"
 msgstr "L - Загальний"
 
 #: templates/_modals/edit_modal.html:329
-#: templates/_settings_tabs/library.html:160 templates/base.html:1340
+#: templates/_settings_tabs/library.html:160 templates/base.html:1341
 msgid "CADPA (China)"
 msgstr "CADPA (Китай)"
 
-#: templates/_modals/edit_modal.html:332 templates/base.html:1343
+#: templates/_modals/edit_modal.html:332 templates/base.html:1344
 msgid "8+ - Ages 8 and up"
 msgstr "8+ - Від 8 років"
 
-#: templates/_modals/edit_modal.html:333 templates/base.html:1344
+#: templates/_modals/edit_modal.html:333 templates/base.html:1345
 msgid "12+ - Ages 12 and up"
 msgstr "12+ - Від 12 років"
 
-#: templates/_modals/edit_modal.html:334 templates/base.html:1345
+#: templates/_modals/edit_modal.html:334 templates/base.html:1346
 msgid "16+ - Ages 16 and up"
 msgstr "16+ - Від 16 років"
 
-#: templates/_modals/edit_modal.html:343 templates/base.html:1354
+#: templates/_modals/edit_modal.html:343 templates/base.html:1355
 msgid "Game Description"
 msgstr "Опис гри"
 
-#: templates/base.html:1355
+#: templates/base.html:1356
 msgid "Enter game description..."
 msgstr "Введіть опис гри..."
 
-#: templates/base.html:1362
+#: templates/base.html:1363
 msgid "Images/Video"
 msgstr "Зображення/відео"
 
 #: templates/_modals/edit_modal.html:15
-#: templates/_settings_tabs/customization.html:267 templates/base.html:1367
+#: templates/_settings_tabs/customization.html:267 templates/base.html:1368
 #: templates/wishlist.html:700
 msgid "Save Changes"
 msgstr "Зберегти зміни"
 
-#: templates/base.html:1403
+#: templates/base.html:1404
 msgid "running"
 msgstr "виконується"
 
@@ -6433,386 +6445,399 @@ msgstr "Встановити новий пароль"
 msgid "ROM Reports"
 msgstr "Звіти ROM"
 
-#: templates/game_detail.html:49
+#: templates/game_detail.html:34
+#, fuzzy
+msgid "Browse games"
+msgstr "Огляд папок"
+
+#: templates/_modals/manual_reader_modal.html:15 templates/game_detail.html:37
+msgid "Previous"
+msgstr "Назад"
+
+#: templates/_modals/manual_reader_modal.html:17 templates/game_detail.html:39
+msgid "Next"
+msgstr "Далі"
+
+#: templates/game_detail.html:63
 msgid "CLZ Import - No ROM file"
 msgstr "Імпорт CLZ - немає файлу ROM"
 
-#: templates/game_detail.html:49 templates/game_imports.html:167
+#: templates/game_detail.html:63 templates/game_imports.html:167
 msgid "CLZ Import"
 msgstr "Імпорт CLZ"
 
-#: templates/game_detail.html:51
+#: templates/game_detail.html:65
 msgid "Steam Import - No ROM file"
 msgstr "Імпорт Steam - немає файлу ROM"
 
-#: templates/game_detail.html:51
+#: templates/game_detail.html:65
 msgid "Steam Import"
 msgstr "Імпорт Steam"
 
-#: templates/game_detail.html:53
+#: templates/game_detail.html:67
 msgid "Xbox Import - No ROM file"
 msgstr "Імпорт Xbox - немає файлу ROM"
 
-#: templates/game_detail.html:53
+#: templates/game_detail.html:67
 msgid "Xbox Import"
 msgstr "Імпорт Xbox"
 
-#: templates/game_detail.html:55
+#: templates/game_detail.html:69
 msgid "PSN Import - No ROM file"
 msgstr "Імпорт PSN - немає файлу ROM"
 
-#: templates/game_detail.html:55
+#: templates/game_detail.html:69
 msgid "PSN Import"
 msgstr "Імпорт PSN"
 
-#: templates/game_detail.html:58
+#: templates/game_detail.html:72
 msgid "This is a bonus/extra disc"
 msgstr "Це бонусний/додатковий диск"
 
-#: templates/game_detail.html:58
+#: templates/game_detail.html:72
 msgid "Bonus Disc"
 msgstr "Бонусний диск"
 
-#: templates/game_detail.html:63
+#: templates/game_detail.html:77
 msgid "Part of:"
 msgstr "Частина:"
 
-#: templates/game_detail.html:74
+#: templates/game_detail.html:88
 msgid "Regional versions"
 msgstr "Регіональні версії"
 
-#: templates/game_detail.html:75
+#: templates/game_detail.html:89
 msgid "Versions:"
 msgstr "Версії:"
 
-#: templates/game_detail.html:77 templates/game_detail.html:745
+#: templates/game_detail.html:91 templates/game_detail.html:770
 msgid "Unknown region"
 msgstr "Невідомий регіон"
 
-#: templates/game_detail.html:83
+#: templates/game_detail.html:97
 msgid "Launch this game in the configured emulator"
 msgstr "Запустити цю гру в налаштованому емуляторі"
 
-#: templates/game_detail.html:89
+#: templates/game_detail.html:103
 msgid "Keyboard game: press Scroll Lock for RetroArch keys"
 msgstr "Гра з клавіатури: натисніть Scroll Lock для клавіш RetroArch"
 
-#: templates/game_detail.html:93
+#: templates/game_detail.html:107
 msgid "View Manual (PDF)"
 msgstr "Переглянути інструкцію (PDF)"
 
-#: templates/game_detail.html:118
+#: templates/game_detail.html:132
 msgid "Delete game from database"
 msgstr "Видалити гру з бази даних"
 
-#: templates/_settings_tabs/account.html:320 templates/game_detail.html:120
+#: templates/_settings_tabs/account.html:320 templates/game_detail.html:134
 #: templates/logs.html:735 templates/settings.html:70
 #: templates/wishlist.html:642
 msgid "Delete"
 msgstr "Видалити"
 
-#: templates/game_detail.html:154 templates/game_detail.html:166
+#: templates/game_detail.html:168 templates/game_detail.html:180
 msgid "Click to zoom"
 msgstr "Натисніть, щоб збільшити"
 
-#: templates/game_detail.html:171
+#: templates/game_detail.html:185
 msgid "Switch between 2D and 3D boxart"
 msgstr "Перемкнути між обкладинкою 2D і 3D"
 
-#: templates/game_detail.html:190
+#: templates/game_detail.html:204
 msgid ""
 "Sharper images for this game are still being made. They'll appear on "
 "their own."
 msgstr "Чіткіші зображення для цієї гри ще створюються. Вони з'являться самі."
 
-#: templates/game_detail.html:201
+#: templates/game_detail.html:215
 msgid "Player"
 msgstr "Гравець"
 
-#: templates/game_detail.html:206
+#: templates/game_detail.html:220
 #, python-format
 msgid "Critic Score (%(count)s reviews)"
 msgstr "Оцінка критиків (%(count)s рецензій)"
 
-#: templates/game_detail.html:211
+#: templates/game_detail.html:225
 #, python-format
 msgid "User Score (%(count)s ratings)"
 msgstr "Оцінка користувачів (%(count)s оцінок)"
 
-#: templates/game_detail.html:216
+#: templates/game_detail.html:230
 #, python-format
 msgid "Copies sold on %(system)s, from published sales figures"
 msgstr ""
 
-#: templates/game_detail.html:217
+#: templates/game_detail.html:231
 #, fuzzy, python-format
 msgid "%(count)s sold"
 msgstr "%(count)s всього"
 
-#: templates/game_detail.html:228
+#: templates/game_detail.html:242
 #, fuzzy, python-format
 msgid "Last tested %(date)s."
 msgstr "Здобуто %(date)s"
 
-#: templates/game_detail.html:232
+#: templates/game_detail.html:246
 msgid ""
 "RetroDB reads PS3 compatibility from your RPCS3. In RPCS3, choose Manage "
 "> Databases > Download Compatibility Database."
 msgstr ""
 
-#: templates/game_detail.html:233
+#: templates/game_detail.html:247
 msgid "RPCS3: no compatibility list"
 msgstr ""
 
-#: templates/game_detail.html:254
+#: templates/game_detail.html:268
 msgid "No description available. Click \"Scrape\" to fetch metadata."
 msgstr "Опис недоступний. Натисніть «Скрапити», щоб отримати метадані."
 
-#: templates/game_detail.html:325
+#: templates/game_detail.html:350
 msgid "View on RetroAchievements.org"
 msgstr "Переглянути на RetroAchievements.org"
 
-#: templates/game_detail.html:327
+#: templates/game_detail.html:352
 msgid "RA Site"
 msgstr "Сайт RA"
 
-#: templates/game_detail.html:339 templates/steam_achievement_game.html:17
+#: templates/game_detail.html:364 templates/steam_achievement_game.html:17
 #: templates/steam_achievements.html:7 templates/steam_achievements.html:15
 #: templates/steam_achievements.html:21
 msgid "Steam Achievements"
 msgstr "Досягнення Steam"
 
-#: templates/game_detail.html:355 templates/xbox_achievement_game.html:17
+#: templates/game_detail.html:380 templates/xbox_achievement_game.html:17
 #: templates/xbox_achievements.html:7 templates/xbox_achievements.html:15
 #: templates/xbox_achievements.html:21
 msgid "Xbox Achievements"
 msgstr "Досягнення Xbox"
 
-#: templates/game_detail.html:370 templates/psn_trophies.html:6
+#: templates/game_detail.html:395 templates/psn_trophies.html:6
 #: templates/psn_trophies.html:15 templates/psn_trophy_detail.html:17
 msgid "PSN Trophies"
 msgstr "Трофеї PSN"
 
-#: templates/game_detail.html:395 templates/local_trophy_detail.html:16
+#: templates/game_detail.html:420 templates/local_trophy_detail.html:16
 msgid "RPCS3 Trophies"
 msgstr "Трофеї RPCS3"
 
-#: templates/game_detail.html:428
+#: templates/game_detail.html:453
 msgid "(cross-mapped)"
 msgstr "(перехресне зіставлення)"
 
-#: templates/game_detail.html:441
+#: templates/game_detail.html:466
 #, python-format
 msgid "Screenshots (%(count)s)"
 msgstr "Знімки екрана (%(count)s)"
 
-#: templates/game_detail.html:443
+#: templates/game_detail.html:468
 msgid "Previous screenshots"
 msgstr "Попередні знімки екрана"
 
-#: templates/game_detail.html:449
+#: templates/game_detail.html:474
 msgid "Delete screenshot"
 msgstr "Видалити знімок екрана"
 
-#: templates/game_detail.html:453
+#: templates/game_detail.html:478
 msgid "Next screenshots"
 msgstr "Наступні знімки екрана"
 
-#: templates/game_detail.html:472
+#: templates/game_detail.html:497
 msgid "Also Known As"
 msgstr "Інші назви"
 
-#: templates/game_detail.html:476
+#: templates/game_detail.html:501
 #, python-format
 msgid "Source: %(source)s"
 msgstr "Джерело: %(source)s"
 
-#: templates/game_detail.html:501
+#: templates/game_detail.html:526
 msgid "Loading recommendations..."
 msgstr "Завантаження рекомендацій..."
 
-#: templates/game_detail.html:549
+#: templates/game_detail.html:574
 #, python-format
 msgid "%(pct)s%% match"
 msgstr "%(pct)s%% збіг"
 
-#: templates/game_detail.html:590
+#: templates/game_detail.html:615
 msgid "Source:"
 msgstr "Джерело:"
 
-#: templates/game_detail.html:593
+#: templates/game_detail.html:618
 msgid "CLZ Games Import (No ROM file)"
 msgstr "Імпорт CLZ Games (немає файлу ROM)"
 
-#: templates/game_detail.html:595
+#: templates/game_detail.html:620
 msgid "Steam Import (No ROM file)"
 msgstr "Імпорт Steam (немає файлу ROM)"
 
-#: templates/game_detail.html:597
+#: templates/game_detail.html:622
 msgid "Xbox Import (No ROM file)"
 msgstr "Імпорт Xbox (немає файлу ROM)"
 
-#: templates/game_detail.html:599
+#: templates/game_detail.html:624
 msgid "PSN Import (No ROM file)"
 msgstr "Імпорт PSN (немає файлу ROM)"
 
-#: templates/game_detail.html:605
+#: templates/game_detail.html:630
 msgid "Original Title:"
 msgstr "Оригінальна назва:"
 
-#: templates/game_detail.html:611
+#: templates/game_detail.html:636
 msgid "File:"
 msgstr "Файл:"
 
-#: templates/game_detail.html:613
+#: templates/game_detail.html:638
 msgid "Rename ROM file"
 msgstr "Перейменувати файл ROM"
 
-#: templates/game_detail.html:616
+#: templates/game_detail.html:641
 msgid "Path:"
 msgstr "Шлях:"
 
-#: templates/game_detail.html:622
+#: templates/game_detail.html:647
 msgid "Edition:"
 msgstr "Видання:"
 
-#: templates/game_detail.html:629
+#: templates/game_detail.html:654
 msgid "Exclusive:"
 msgstr "Ексклюзив:"
 
-#: templates/game_detail.html:632
+#: templates/game_detail.html:657
 msgid "Also On:"
 msgstr "Також на:"
 
-#: templates/game_detail.html:639
+#: templates/game_detail.html:664
 msgid "Modes:"
 msgstr "Режими:"
 
-#: templates/game_detail.html:645
+#: templates/game_detail.html:670
 msgid "Players:"
 msgstr "Гравці:"
 
-#: templates/game_detail.html:651
+#: templates/game_detail.html:676
 msgid "Campaign:"
 msgstr "Кампанія:"
 
-#: templates/game_detail.html:657
+#: templates/game_detail.html:682
 msgid "Structure:"
 msgstr "Структура:"
 
-#: templates/game_detail.html:663
+#: templates/game_detail.html:688
 msgid "Perspective:"
 msgstr "Перспектива:"
 
-#: templates/game_detail.html:669
+#: templates/game_detail.html:694
 msgid "Dimension:"
 msgstr "Вимір:"
 
-#: templates/game_detail.html:675
+#: templates/game_detail.html:700
 msgid "Save:"
 msgstr "Збереження:"
 
-#: templates/game_detail.html:681
+#: templates/game_detail.html:706
 msgid "Input:"
 msgstr "Введення:"
 
-#: templates/game_detail.html:686
+#: templates/game_detail.html:711
 msgid "Scraped:"
 msgstr "Оброблено:"
 
-#: templates/game_detail.html:695
+#: templates/game_detail.html:720
 msgid "Bonus Content"
 msgstr "Бонусний вміст"
 
-#: templates/game_detail.html:714
+#: templates/game_detail.html:739
 msgid "Emulator settings"
 msgstr "Налаштування емулятора"
 
-#: templates/_macros/nav_tabs.html:40 templates/game_detail.html:724
+#: templates/_macros/nav_tabs.html:40 templates/game_detail.html:749
 #: templates/rom_tools_hub.html:193 templates/versions_review.html:5
 #: templates/versions_review.html:80
 msgid "Regional Versions"
 msgstr "Регіональні версії"
 
-#: templates/game_detail.html:732 templates/museum_system.html:100
+#: templates/game_detail.html:757 templates/museum_system.html:100
 msgid "Released"
 msgstr "Випущено"
 
-#: templates/game_detail.html:734
+#: templates/game_detail.html:759
 msgid "File size"
 msgstr "Розмір файлу"
 
-#: templates/game_detail.html:735
+#: templates/game_detail.html:760
 msgid "Revision"
 msgstr "Ревізія"
 
-#: templates/game_detail.html:736
+#: templates/game_detail.html:761
 msgid "Languages"
 msgstr "Мови"
 
-#: templates/game_detail.html:737
+#: templates/game_detail.html:762
 msgid "Scores"
 msgstr "Оцінки"
 
-#: templates/game_detail.html:746
+#: templates/game_detail.html:771
 msgid "(this page)"
 msgstr "(ця сторінка)"
 
-#: templates/game_detail.html:764
+#: templates/game_detail.html:789
 msgid "Known differences"
 msgstr "Відомі відмінності"
 
-#: templates/game_detail.html:764
+#: templates/game_detail.html:789
 msgid "AI-written"
 msgstr "Написано ШІ"
 
-#: templates/game_detail.html:765
+#: templates/game_detail.html:790
 msgid "Written by AI from what it knows about these releases. It can be wrong."
 msgstr ""
 "Написано ШІ на основі того, що він знає про ці випуски. Може містити "
 "помилки."
 
-#: templates/game_detail.html:767
+#: templates/game_detail.html:792
 msgid "The AI knows of no differences between these versions."
 msgstr "ШІ не знає відмінностей між цими версіями."
 
-#: templates/game_detail.html:770
+#: templates/game_detail.html:795
 msgid "No other regional versions are linked to this game."
 msgstr "З цією грою не пов'язано інших регіональних версій."
 
-#: templates/game_detail.html:775
+#: templates/game_detail.html:800
 msgid "Unlink this version"
 msgstr "Відв'язати цю версію"
 
-#: templates/game_detail.html:776
+#: templates/game_detail.html:801
 msgid "Summarise differences with AI"
 msgstr "Описати відмінності за допомогою ШІ"
 
-#: templates/game_detail.html:778
+#: templates/game_detail.html:803
 msgid "Link a version"
 msgstr "Пов'язати версію"
 
-#: templates/game_detail.html:779
+#: templates/game_detail.html:804
 msgid "Link a version: search this system"
 msgstr "Пов'язати версію: пошук у цій системі"
 
-#: templates/game_detail.html:792
+#: templates/game_detail.html:817
 msgid "Scrape History"
 msgstr "Історія скрапінгу"
 
-#: templates/game_detail.html:818
+#: templates/game_detail.html:843
 msgid "Primary scraper"
 msgstr "Основний скрапер"
 
-#: templates/game_detail.html:820
+#: templates/game_detail.html:845
 msgid "Fallback scraper"
 msgstr "Резервний скрапер"
 
-#: templates/game_detail.html:827
+#: templates/game_detail.html:852
 msgid "Fields filled:"
 msgstr "Заповнені поля:"
 
-#: templates/game_detail.html:840
+#: templates/game_detail.html:865
 msgid "Still missing:"
 msgstr "Все ще відсутнє:"
 
@@ -9187,14 +9212,6 @@ msgstr "Відкрити PDF у новій вкладці"
 #: templates/_modals/manual_reader_modal.html:13
 msgid "Manual page. Use the arrow keys to turn pages."
 msgstr "Сторінка посібника. Гортайте клавішами зі стрілками."
-
-#: templates/_modals/manual_reader_modal.html:15
-msgid "Previous"
-msgstr "Назад"
-
-#: templates/_modals/manual_reader_modal.html:17
-msgid "Next"
-msgstr "Далі"
 
 #: templates/_modals/rename_modal.html:4
 msgid "Rename ROM File"

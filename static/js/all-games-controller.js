@@ -372,6 +372,13 @@ const AllGamesController = (function() {
             totalFiltered = data.total;
             hasMore = data.has_more;
 
+            // The game page's Previous / Next links step through this list.
+            if (!append) {
+                const navParams = filterParams();
+                if (sortOrder !== 'name') navParams.set('sort', sortOrder);
+                window.RetroDB?.saveGameNavContext?.(cfg.systemId, navParams);
+            }
+
             renderGames(data.games, append);
             if (!append) setEmptyState(data.total === 0);
             loadedCount = append

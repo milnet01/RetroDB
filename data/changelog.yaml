@@ -1,3 +1,48 @@
+- version: 3.35.0
+  date: 2026-10-27
+  tags:
+  - type: feature
+    label: Release dates for every region
+  - type: feature
+    label: Previous and next game on the game page
+  - type: feature
+    label: Uploaded covers and screenshots are processed like scraped ones
+  - type: fix
+    label: RetroAchievements shows on the game page for every game that has it
+  - type: fix
+    label: The Systems page's unscraped count matches the Unscraped filter
+  body: |
+    <ul>
+      <li><strong>Release dates for every region.</strong> When the AI
+        fills gaps during a scrape, and when you press AI Fill, it is now
+        also asked for the date the game came out in each region, such as
+        North America, Europe and Japan. The game page and the quick view
+        list them, earliest first, with dates and region names in your
+        language. A game's own release date is unchanged.</li>
+      <li><strong>Previous and next game on the game page.</strong> Next
+        to the path at the top of a game page are Previous and Next links
+        and where the game sits in the list. They follow the page you came
+        from: opened from the Library they step through the Library, and
+        from a console page through that console, in the same order and
+        with the same filters and search you had there.</li>
+      <li><strong>Uploaded covers and screenshots are processed like
+        scraped ones.</strong> A cover, 3D box or screenshot you upload in
+        the edit window is now saved in the same image format as scraped
+        images, resized to the same size, and covers get the smaller
+        copies the Library uses. A screenshot that looks the same as one
+        the game already has is not added, and you are told how many were
+        left out. Uploading a new cover also removes the file it replaces.</li>
+      <li><strong>RetroAchievements shows on the game page for every game
+        that has it.</strong> Some games had the RA badge in the Library
+        but no RetroAchievements card on their page, such as Metroid Prime
+        and Metroid Prime 2 on GameCube. The page now uses the same
+        RetroAchievements link as the badge, and loads faster because it
+        no longer asks RetroAchievements each time.</li>
+      <li><strong>The Systems page's unscraped count matches the Unscraped
+        filter.</strong> The count included bonus discs, which the
+        console's game list never shows, so a console could say 2
+        unscraped while its Unscraped filter showed none.</li>
+    </ul>
 - version: 3.34.0
   date: 2026-10-27
   tags:

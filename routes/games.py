@@ -5,7 +5,7 @@
 # =============================================================================
 
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for, flash, g, make_response, abort
-from flask_babel import gettext as _
+from flask_babel import get_locale, gettext as _
 import hashlib
 import os
 import json
@@ -30,6 +30,7 @@ from services.game_query import (
     invalidate_filter_cache, VERSION_COLUMNS, MULTI_FILTER_FIELDS,
 )
 from services.analytics import invalidate_analytics_cache
+from services.release_dates import display_release_dates
 from services.launch_resolver import keyboard_core, launch_checker, rom_launch_problem
 from services.game_metadata_service import (
     build_game_card,
@@ -49,7 +50,7 @@ from services.achievement_linking import (
 )
 from services.game_media_service import (
     ALLOWED_IMAGE_EXT, ALLOWED_VIDEO_EXT, image_dir,
-    remove_media_file, save_upload, save_screenshots, try_standardize,
+    remove_media_file, save_upload, save_screenshots,
 )
 
 logger = logging.getLogger(__name__)
@@ -230,6 +231,44 @@ def api_games_ids():
     ids = [r['id'] for r in rows]
 
     return success(ids=ids, total=len(ids))
+
+
+@bp.route('/api/games/neighbors')
+@login_required
+@handle_api_errors
+def api_games_neighbors():
+    """The games before and after `id` in a Library or console list, under
+    that list's filters and sort (the same params as /api/games), for the
+    game page's Previous / Next links. A version the list folds into its
+    group's card is placed at that card. `found` is False when the game is
+    not in the list at all."""
+    game_id = request.args.get('id', type=int)
+    if not game_id:
+        return error(_('No IDs provided'), 400)
+    ids_sql, ids_vals = _build_games_query(_filter_params(extra=('sort',)), ids_only=True)
+    # Pass 25.8 — the same cap as /api/games/ids.
+    ids_sql += f" LIMIT {20 * int(getattr(config, 'MAX_LIST_ROWS', 500))}"
+    ids = [r['id'] for r in query(ids_sql, tuple(ids_vals))]
+
+    position = {gid: i for i, gid in enumerate(ids)}
+    index = position.get(game_id)
+    if index is None:
+        siblings = query("""
+            SELECT id FROM games
+            WHERE version_group_id = (SELECT version_group_id FROM games WHERE id = ?)
+        """, (game_id,))
+        index = min((position[r['id']] for r in siblings if r['id'] in position), default=None)
+    if index is None:
+        return success(found=False, total=len(ids))
+
+    def _neighbor(i):
+        if not 0 <= i < len(ids):
+            return None
+        row = query("SELECT id, title FROM games WHERE id = ?", (ids[i],), one=True)
+        return {'id': row['id'], 'title': row['title']} if row else None
+
+    return success(found=True, position=index + 1, total=len(ids),
+                   prev=_neighbor(index - 1), next=_neighbor(index + 1))
 
 
 @bp.route('/api/games/card-data')
@@ -485,19 +524,24 @@ def game_detail(game_id):
                         remove_media_file(video_filename, 'video')
                         video_filename = ''
 
-                    uploaded = save_upload(request.files.get('custom_boxart'), image_dir('boxart'), game_id, 'custom', ALLOWED_IMAGE_EXT)
-                    if uploaded:
-                        boxart_filename = uploaded
-                        try_standardize(os.path.join(image_dir('boxart'), uploaded), 'boxart')
+                    # Uploads go through the scraper's image pipeline
+                    # (format, size, responsive variants). The file an
+                    # upload replaces is removed when no other game uses it.
+                    def _upload(field, media_type, prefix, current):
+                        uploaded = save_upload(request.files.get(field), image_dir(media_type),
+                                               game_id, prefix, ALLOWED_IMAGE_EXT, image_type=media_type)
+                        if not uploaded:
+                            return current
+                        if current and current != uploaded and not query(
+                                f"SELECT 1 FROM games WHERE "
+                                f"{safe_column(media_type, ('boxart', 'boxart_3d', 'fanart'))} = ? AND id != ?",
+                                (current, game_id), one=True):
+                            remove_media_file(current, media_type)
+                        return uploaded
 
-                    uploaded = save_upload(request.files.get('custom_boxart_3d'), image_dir('boxart_3d'), game_id, 'custom_3d', ALLOWED_IMAGE_EXT)
-                    if uploaded:
-                        boxart_3d_filename = uploaded
-                        try_standardize(os.path.join(image_dir('boxart_3d'), uploaded), 'boxart_3d')
-
-                    uploaded = save_upload(request.files.get('custom_fanart'), image_dir('fanart'), game_id, 'custom_fanart', ALLOWED_IMAGE_EXT)
-                    if uploaded:
-                        fanart_filename = uploaded
+                    boxart_filename = _upload('custom_boxart', 'boxart', 'custom', boxart_filename)
+                    boxart_3d_filename = _upload('custom_boxart_3d', 'boxart_3d', 'custom_3d', boxart_3d_filename)
+                    fanart_filename = _upload('custom_fanart', 'fanart', 'custom_fanart', fanart_filename)
 
                     video_upload = request.files.get('custom_video')
                     uploaded = save_upload(video_upload, os.path.join(config.STATIC_PATH, 'videos'), game_id, 'custom', ALLOWED_VIDEO_EXT)
@@ -508,11 +552,14 @@ def game_detail(game_id):
                                 "of up to %(mb)s MB.",
                                 mb=config.MAX_VIDEO_SIZE // (1024 * 1024)), "error")
 
-                    screenshots = save_screenshots(
+                    screenshots, duplicate_shots = save_screenshots(
                         request.files.getlist('custom_screenshots'),
                         game_id,
                         screenshots,
                     )
+                    if duplicate_shots:
+                        flash(_("Screenshots not added because they match ones the game "
+                                "already has: %(count)s", count=duplicate_shots), "warning")
 
                     # Update database
                     execute("""
@@ -607,6 +654,7 @@ def game_detail(game_id):
                             playtime_estimate = NULL, controller_support = NULL, save_type = NULL,
                             scrape_history = NULL, critic_score = NULL, critic_score_count = NULL,
                             user_score = NULL, user_score_count = NULL, units_sold = NULL,
+                            release_dates = NULL,
                             hltb_match_name = NULL, hltb_match_platform = NULL, hltb_match_confidence = NULL,
                             scraped = 0, title_locked = 0
                         WHERE id = ?
@@ -746,12 +794,12 @@ def game_detail(game_id):
         # language, and list region-tagged names first, grouped by region.
         from scraper.metadata_normalizer import merge_alt_titles
         from services.i18n import region_display_name
-        from flask_babel import get_locale
         alternate_titles = merge_alt_titles(game_dict.get('alternate_titles'), [])
         for alt in alternate_titles:
             if alt.get('region'):
                 alt['region_label'] = region_display_name(alt['region'], get_locale())
         alternate_titles.sort(key=lambda a: (not a.get('region_label'), a.get('region_label') or ''))
+        release_dates = display_release_dates(game_dict.get('release_dates'), get_locale())
 
         # PASS-59-106 §4.4 — the other regional versions this game is linked to.
         from scraper.metadata_normalizer import alt_title_region
@@ -773,11 +821,12 @@ def game_detail(game_id):
                              versions=versions,
                              version_ai_summary=version_ai_summary,
                              alternate_titles=alternate_titles,
+                             release_dates=release_dates,
                              pref_rating={'value': pref_rating_val, 'image': pref_rating_img,
                                           'crossmapped': pref_rating_crossmapped, 'name': pref_rating_name,
                                           'region': pref_rating_region, 'system': pref_sys},
                              all_ratings=all_ratings,
-                             retroachievements=get_retroachievements_info(game['title'], game['system_folder']),
+                             retroachievements=get_retroachievements_info(game),
                              trophy_info=get_trophy_info_for_game(game['title'], game['system_name']),
                              achievement_progress=achievement_progress,
                              psn_progress=psn_progress,
@@ -897,6 +946,7 @@ def api_game_detail(game_id):
             'critic_score': game['critic_score'],
             'user_score': game['user_score'],
             'units_sold': game['units_sold'],
+            'release_dates': display_release_dates(game['release_dates'], get_locale()),
             'rpcs3_compat': rpcs3_compat.status_for_game(game),
             'players': game['players'],
             'completion_status': game['completion_status'],

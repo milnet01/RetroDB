@@ -1284,3 +1284,8 @@ def apply_ai_to_metadata(metadata, ai_data, db_game_id, result, fill_only=True):
                 result['filled_fields'].append(f'{field} (AI)')
             except (ValueError, TypeError):
                 pass
+
+    # Release dates by region — already JSON text from scrape_ai's validation.
+    if ai_data.get('release_dates') and _should_apply('release_dates'):
+        metadata['release_dates'] = ai_data['release_dates']
+        result['filled_fields'].append('release_dates (AI)')

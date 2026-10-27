@@ -282,6 +282,8 @@ Text-only. AI never returns images, screenshots, videos, or manuals — `AI_FILL
 
 **Sales (`units_sold`):** only the AI fills it, in the scrape's AI gap-fill and in AI Fill; no API scraper publishes sales. The prompt asks for lifetime copies sold on the row's platform from free published sources and for null when only a multi-platform total exists. `parse_units_sold()` turns what a model writes (`"2.4 million"`, `"~850k"`, `"2,400,000"`) into an integer and drops anything above 500 million.
 
+**Release dates by region (`release_dates`):** only the AI fills it, in the scrape's AI gap-fill and in AI Fill, fill-only like every other field. The prompt asks for an object keyed by region code (`NA`, `EU`, `JP`, `AU`, `KR`, `CN`, `TW`, `BR`, `AS`, `WW`) with `YYYY-MM-DD`, `YYYY-MM` or `YYYY` dates. `services/release_dates.parse_release_dates()` also takes region names (`"Japan"`, `"PAL"`) and a list of `{region, date}`, drops unknown regions and impossible dates, and the column stores compact JSON in region order. `release_date` stays the date of the row's own release.
+
 **Circuit breaker:** `_ai_breaker` (5 failures / 120 s recovery) wraps `fetch_ai_metadata` calls from `hybrid_scraper` so a repeatedly-failing provider doesn't burn a quota on every gap-fill attempt.
 
 ---
