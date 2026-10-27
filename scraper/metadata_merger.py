@@ -1194,6 +1194,29 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
 # AI METADATA
 # =============================================================================
 
+def _apply_ai_official_title(metadata, ai_data, result):
+    """Take the AI's official title over the scraped one (user request
+    2026-10-27), keeping the name it replaces as an alternate title.
+
+    The AI is asked only for games whose title is not locked
+    (scrape_ai._official_title_context), and _save_game_row never writes a
+    locked title, so a name the user chose still wins."""
+    official = ai_data.get('official_title')
+    current = metadata.get('title')
+    if not official or official == current:
+        return
+    if current and current.lower() != official.lower():
+        alts = merge_alt_titles(
+            metadata.get('alternate_titles'),
+            [alt_title_entry(current, region=ai_data.get('old_title_region'), source='ai')],
+            primary_title=official)
+        # merge_alt_titles keeps a stored entry equal to the new primary.
+        metadata['alternate_titles'] = [
+            a for a in alts if a['title'].lower() != official.lower()] or None
+    metadata['title'] = official
+    result['filled_fields'].append('title (AI official name)')
+
+
 def apply_ai_to_metadata(metadata, ai_data, db_game_id, result, fill_only=True):
     """Apply AI-generated data to metadata dict.
 
@@ -1227,6 +1250,8 @@ def apply_ai_to_metadata(metadata, ai_data, db_game_id, result, fill_only=True):
         which is where overwriting is the point.
         """
         return not metadata.get(field) or not fill_only
+
+    _apply_ai_official_title(metadata, ai_data, result)
 
     # Simple text fields — direct mapping
     simple_fields = [

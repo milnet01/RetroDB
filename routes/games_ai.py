@@ -17,6 +17,7 @@ from services.analytics import invalidate_analytics_cache
 from services.api_helpers import handle_api_errors, success, error
 from services.auth import editor_required
 from services.database import query, execute
+from services.game_query import invalidate_filter_cache
 from services.game_metadata_service import cross_map_ratings
 from services.game_utils import (
     generate_sort_title, infer_rating_from_content,
@@ -130,7 +131,25 @@ def api_game_ai_fill(game_id):
         # Post-fill fixups (merged into the same UPDATE)
         pending = dict(sets)
 
+        # The AI's official name replaces the title; the old one is kept as
+        # an alternate title. A locked title is never asked about
+        # (scrape_ai._official_title_context), so it is never replaced.
         title_val = (game.get('title', '') or '').strip()
+        official = ai_data.get('official_title')
+        if official and official != title_val and not game.get('title_locked'):
+            from scraper.metadata_normalizer import alt_title_entry, merge_alt_titles
+            if title_val and title_val.lower() != official.lower():
+                alts = merge_alt_titles(
+                    game.get('alternate_titles'),
+                    [alt_title_entry(title_val, region=ai_data.get('old_title_region'),
+                                     source='ai')],
+                    primary_title=official)
+                alts = [a for a in alts if a['title'].lower() != official.lower()]
+                sets['alternate_titles'] = json_lib.dumps(alts) if alts else None
+            logger.info(f"AI fill: official title '{title_val}' → '{official}'")
+            sets['title'] = official
+            filled_fields.append('title')
+            title_val = official
         if title_val:
             new_sort = generate_sort_title(title_val)
             if new_sort and new_sort != (game.get('sort_title', '') or ''):
@@ -243,6 +262,8 @@ def api_game_ai_fill(game_id):
             assignments = ', '.join(f'{col} = ?' for col in sets)
             execute(f"UPDATE games SET {assignments} WHERE id = ?", (*sets.values(), game_id))
             invalidate_analytics_cache()
+            if 'title' in sets:
+                invalidate_filter_cache()
 
             verify = query("SELECT esrb_rating, edition FROM games WHERE id = ?", (game_id,), one=True)
             if verify:
