@@ -5,6 +5,14 @@
 # Features: ROM scanning, metadata scraping, beautiful cyberpunk UI
 # =============================================================================
 
+import sys
+if len(sys.argv) > 1 and sys.argv[1] == '--apply-update':
+    # PASS-59-169 — the standalone binary is also the update helper. Hand
+    # over before anything else is imported: the rest of this module opens
+    # and migrates the database, which the helper must not do.
+    import updater_apply
+    sys.exit(updater_apply.main(sys.argv[1:]))
+
 from werkzeug.exceptions import HTTPException
 from flask import Flask, render_template, request, redirect, url_for, jsonify, session, g, send_from_directory, abort
 import gzip
@@ -342,6 +350,7 @@ from routes.game_imports import bp as game_imports_bp
 from routes.launch import bp as launch_bp
 from routes.emulators import bp as emulators_bp
 from routes.launch_settings import bp as launch_settings_bp
+from routes.updates import bp as updates_bp
 
 app.register_blueprint(clz_import_bp)
 app.register_blueprint(controllers_bp)
@@ -365,6 +374,7 @@ app.register_blueprint(museum_bp)
 app.register_blueprint(platform_import_bp)
 app.register_blueprint(steam_achievements_bp)
 app.register_blueprint(xbox_achievements_bp)
+app.register_blueprint(updates_bp)
 app.register_blueprint(game_imports_bp)
 app.register_blueprint(launch_bp)
 app.register_blueprint(emulators_bp)
@@ -1917,11 +1927,15 @@ def should_open_browser(environ, frozen):
 
     The standalone bundle always does (only the server knows the resolved
     port, Pass 59.10); a source install when start.sh / start.command /
-    start.bat set RETRODB_OPEN_BROWSER=1. Never under LocalWebServerManager
+    start.bat set RETRODB_OPEN_BROWSER=1; RETRODB_OPEN_BROWSER=0 turns it off
+    for both (the update helper's restart, PASS-59-169). Never under LocalWebServerManager
     (LWSM_MANAGED=1), which has its own Open button.
     scripts/retrodb_launcher.py opens the browser itself.
     """
     if environ.get('LWSM_MANAGED') == '1':
+        return False
+    # '0' — the update helper restarting RetroDB: the open tab reloads itself.
+    if environ.get('RETRODB_OPEN_BROWSER') == '0':
         return False
     return bool(frozen) or environ.get('RETRODB_OPEN_BROWSER') == '1'
 

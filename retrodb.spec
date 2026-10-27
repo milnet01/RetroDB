@@ -62,6 +62,9 @@ _RUNTIME_HIDDEN = [
     # default analyser may not follow the dynamic command-resolution path.
     'waitress',
     'waitress.runner',
+    # PASS-59-169 — the update helper; app.py imports it only under
+    # --apply-update, so name it rather than rely on the analyser.
+    'updater_apply',
     # PSNAWP uses pyrate-limiter via a string config knob; explicit.
     'pyrate_limiter',
     # PIL plugin auto-discovery (formats are loaded lazily by name).

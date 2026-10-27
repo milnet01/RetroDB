@@ -68,6 +68,8 @@ EXCLUDE_FILES = {
     'data/settings.json',
     'data/rom_tools_config.json',
     'data/psn_tokens.json',
+    'data/update_check.json',    # self-updater state (PASS-59-169)
+    'data/update_status.json',
     'data/xbox_tokens.json',
     'data/psn_tokens.json.migrated-015',
     'data/xbox_tokens.json.migrated-015',
@@ -84,6 +86,7 @@ EXCLUDE_DIRS = {
     '__pycache__', '.claude', '.git', '.vscode', '.idea',
     'demo', 'dist', 'venv', '.venv',
     'database', 'logs',  # .gitkeep files added explicitly
+    '.update',  # self-updater work folder (PASS-59-169)
 }
 
 # .db-shm joins .db-wal/.db-journal — WAL mode (v3.22.1) leaves all three behind.

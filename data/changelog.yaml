@@ -2,6 +2,8 @@
   date: 2026-10-27
   tags:
   - type: feature
+    label: RetroDB updates itself
+  - type: feature
     label: Get RetroArch from inside RetroDB
   - type: fix
     label: Next disk works for games played in RetroDB
@@ -25,6 +27,16 @@
     label: Faster trophies, library imports and maintenance tools
   body: |
     <ul>
+      <li><strong>RetroDB updates itself.</strong> When a new version is
+        out, admins see it on the dashboard and in Settings &gt; System &gt;
+        Updates, with what is new. Download fetches it and checks it is
+        exactly the published file; Install and restart backs up your
+        database, puts the new version in place and restarts. If the new
+        version does not start, RetroDB goes back to the old one by itself
+        and says why. Your games, settings, images and logs are not touched.
+        RetroDB looks for updates once a day; you can turn that off. A copy
+        run from git, or by a process manager, is told about updates but
+        not updated.</li>
       <li><strong>Get RetroArch from inside RetroDB.</strong> Settings &gt;
         Emulators has a new Play in RetroDB section. Press Get RetroArch
         and RetroDB downloads the official RetroArch from libretro, checks

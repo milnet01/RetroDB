@@ -58,6 +58,7 @@ EXCLUDED = [
     'museum.js',                # Page-specific
     'versions.js',              # Page-specific (game page + Regional Versions)
     'official-names.js',        # Page-specific (ROM Tools > Official Names)
+    'updates.js',               # Page-specific (Settings > Updates + dashboard banner)
 ]
 
 BUNDLES = [
