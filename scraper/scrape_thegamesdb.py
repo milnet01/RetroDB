@@ -304,6 +304,11 @@ def get_system_id(system_name):
 def search_games(title, system_name=None, limit=10):
     """Search games on TheGamesDB"""
     system_id = get_system_id(system_name)
+    # A system TheGamesDB does not list is not searched: games from other
+    # platforms would match instead (user, 2026-10-27).
+    if system_name and not system_id:
+        logger.info(f"TheGamesDB: no platform for '{system_name}' — not searched")
+        return []
 
     try:
         url = f"{TGDB_API_BASE}/v1.1/Games/ByGameName"

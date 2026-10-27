@@ -22,13 +22,17 @@ logger = logging.getLogger(__name__)
 
 BASE_URL = "https://api.rawg.io/api"
 
-# Platform mapping from ES-DE folder names to RAWG platform IDs
+# Platform mapping from ES-DE folder names to RAWG platform IDs.
 # Full list: https://api.rawg.io/api/platforms?key=YOUR_KEY
+# Only systems RAWG lists: a folder missing here (Intellivision, ColecoVision,
+# PC Engine, Commodore 64, Virtual Boy, arcade, DOS...) is not searched on
+# RAWG, so games from other platforms never match instead (user, 2026-10-27).
 PLATFORM_MAP = {
     # Nintendo
     'nes': 49,            # NES
     'famicom': 49,
     'snes': 79,           # SNES
+    'sfc': 79,
     'superfamicom': 79,
     'n64': 83,            # Nintendo 64
     'gc': 105,            # GameCube
@@ -43,8 +47,7 @@ PLATFORM_MAP = {
     'nds': 9,             # Nintendo DS
     'n3ds': 8,            # Nintendo 3DS
     '3ds': 8,
-    'virtualboy': 105,    # Virtual Boy (mapped to GameCube as fallback)
-    
+
     # Sony
     'psx': 27,            # PlayStation
     'ps1': 27,
@@ -56,13 +59,14 @@ PLATFORM_MAP = {
     'psp': 17,            # PlayStation Portable
     'psvita': 19,         # PlayStation Vita
     'vita': 19,
-    
+
     # Sega
     'genesis': 167,       # Sega Genesis/Mega Drive
     'megadrive': 167,
     'mastersystem': 74,   # Sega Master System
     'sms': 74,
     'segacd': 119,        # Sega CD
+    'megacd': 119,
     'sega32x': 117,       # Sega 32X
     '32x': 117,
     'saturn': 107,        # Sega Saturn
@@ -70,39 +74,37 @@ PLATFORM_MAP = {
     'dc': 106,
     'gamegear': 77,       # Sega Game Gear
     'gg': 77,
-    
+
     # Other
-    'pcengine': 55,       # PC Engine/TurboGrafx-16
-    'tg16': 55,
-    'turbografx16': 55,
     'neogeo': 12,         # Neo Geo
     'neogeocd': 12,
-    'arcade': 4,          # Arcade
-    'mame': 4,
-    'fbneo': 4,
     'atari2600': 23,      # Atari 2600
     'atari5200': 31,      # Atari 5200
     'atari7800': 28,      # Atari 7800
+    'atari800': 25,       # Atari 8-bit
+    'atarixe': 50,        # Atari XEGS
     'atarilynx': 46,      # Atari Lynx
     'lynx': 46,
     'atarijaguar': 112,   # Atari Jaguar
     'jaguar': 112,
-    'atarist': 25,        # Atari ST
-    'colecovision': 111,  # ColecoVision
-    'intellivision': 115, # Intellivision
-    '3do': 111,           # 3DO (mapped to ColecoVision as fallback - no direct 3DO in RAWG)
-    
+    'atarist': 34,        # Atari ST
+    '3do': 111,           # 3DO
+    'apple2': 41,         # Apple II
+    'macintosh': 55,      # Classic Macintosh
+    'amiga': 166,         # Commodore / Amiga
+    'c64': 166,           # RAWG files C64 games under Commodore / Amiga
+
     # Microsoft
     'xbox': 80,           # Xbox
     'xbox360': 14,        # Xbox 360
     'xboxone': 1,         # Xbox One
     'xboxseriesx': 186,   # Xbox Series X/S
-    
+
     # PC
     'pc': 4,              # PC
-    'dos': 171,           # DOS
-    'amiga': 166,         # Amiga
-    'c64': 75,            # Commodore 64
+    'windows': 4,
+    'steam': 4,
+    'dos': 4,             # RAWG files DOS games under PC
 }
 
 def _get_api_key():
@@ -149,28 +151,21 @@ def search_games(title, system_folder=None, limit=10):
         'exclude_additions': 'true',  # Exclude DLCs/editions from results
     }
     
-    # Add platform filter if available
-    if system_folder:
-        platform_id = PLATFORM_MAP.get(system_folder.lower())
-        if platform_id:
-            params['platforms'] = platform_id
-    
     platform_id = PLATFORM_MAP.get(system_folder.lower()) if system_folder else None
+    if system_folder and not platform_id:
+        logger.info(f"RAWG: no platform for system folder '{system_folder}' — not searched")
+        return results
+    if platform_id:
+        params['platforms'] = platform_id
     logger.info(f"RAWG: Searching with platform_id={platform_id} for system_folder={system_folder}")
 
     data = _make_request('games', params)
 
-    # Fallback 1: if precise search returns 0 results, retry without search_precise
+    # Fallback: if precise search returns 0 results, retry without search_precise.
+    # The platform filter stays: a match from another platform is the wrong game.
     if data and 'results' in data and len(data['results']) == 0:
         logger.info(f"RAWG precise search returned 0 results for '{title}', retrying with fuzzy search")
         params.pop('search_precise', None)
-        data = _make_request('games', params)
-
-    # Fallback 2: if platform-filtered search still returns 0, retry without platform filter
-    # RAWG has poor platform coverage for retro systems (e.g. C64 games listed under Amiga)
-    if data and 'results' in data and len(data['results']) == 0 and 'platforms' in params:
-        logger.info(f"RAWG platform-filtered search returned 0 results for '{title}', retrying without platform filter")
-        params.pop('platforms', None)
         data = _make_request('games', params)
 
     if not data or 'results' not in data:
