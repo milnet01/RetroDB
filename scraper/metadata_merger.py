@@ -165,6 +165,23 @@ def _download_and_finalize(url, local_path, image_type, *, timeout=15):
     return True
 
 
+# File extensions a ScreenScraper media URL may name in its path. Its media
+# URLs are usually `.../mediaJeu.php?devid=...&media=box-2D(us)`, so the text
+# after the last dot is "php?..." (query string, account credentials and all),
+# not a file type.
+_MEDIA_EXTS = frozenset({
+    'png', 'jpg', 'jpeg', 'webp', 'gif', 'bmp', 'mp4', 'webm', 'mkv', 'avi',
+    'mov', 'pdf', 'cbz', 'zip',
+})
+
+
+def _url_ext(url, default):
+    """The media file extension (no dot) a URL's path names, else `default`."""
+    from urllib.parse import urlparse
+    ext = os.path.splitext(urlparse(url).path)[1].lstrip('.').lower()
+    return ext if ext in _MEDIA_EXTS else default
+
+
 # Bounded concurrency for a game's screenshot downloads. ES-DE fetches a game's
 # media files all at once (Scraper.cpp / MediaDownloadHandle) rather than
 # one-by-one; this is the Python analogue. Capped so a burst never floods a
@@ -401,6 +418,83 @@ def apply_tgdb_to_metadata(metadata, tgdb_data, db_game_id, result, fill_only=Fa
 
 
 # =============================================================================
+# IGDB AGE RATINGS
+# =============================================================================
+# IGDB's legacy `category` enum names the board (1=ESRB, 2=PEGI, 3=CERO, 4=USK,
+# 5=GRAC, 6=CLASS_IND, 7=ACB); its `rating` enum is ONE global list across all
+# boards: 1-5 PEGI, 6-12 ESRB, 13-17 CERO, 18-22 USK, 23-27 GRAC, 28-33
+# CLASS_IND, 34-39 ACB. IGDB is replacing both with `organization` and
+# `rating_category` objects (fetched as organization.name and
+# rating_category.rating), so a record may carry only the new shape.
+_IGDB_RATING_BOARDS = {
+    1: 'esrb_rating', 2: 'pegi_rating', 3: 'cero_rating', 4: 'usk_rating',
+    5: 'grac_rating', 6: 'classind_rating', 7: 'acb_rating',
+}
+_IGDB_ORG_BOARDS = {
+    'ESRB': 'esrb_rating', 'PEGI': 'pegi_rating', 'CERO': 'cero_rating',
+    'USK': 'usk_rating', 'GRAC': 'grac_rating', 'CLASS_IND': 'classind_rating',
+    'CLASSIND': 'classind_rating', 'ACB': 'acb_rating',
+}
+_IGDB_RATING_ENUM = {
+    1: 'PEGI 3', 2: 'PEGI 7', 3: 'PEGI 12', 4: 'PEGI 16', 5: 'PEGI 18',
+    6: 'RP', 7: 'EC', 8: 'E', 9: 'E10+', 10: 'T', 11: 'M', 12: 'AO',
+    13: 'A', 14: 'B', 15: 'C', 16: 'D', 17: 'Z',
+    18: '0', 19: '6', 20: '12', 21: '16', 22: '18',
+    23: 'ALL', 24: '12', 25: '15', 26: '18',
+    28: 'L', 29: '10', 30: '12', 31: '14', 32: '16', 33: '18',
+    34: 'G', 35: 'PG', 36: 'M', 37: 'MA15+', 38: 'R18+',
+}
+# Which enum values belong to which board, so a mismatched pair is ignored.
+_IGDB_RATING_ENUM_RANGE = {
+    'pegi_rating': range(1, 6), 'esrb_rating': range(6, 13),
+    'cero_rating': range(13, 18), 'usk_rating': range(18, 23),
+    'grac_rating': range(23, 28), 'classind_rating': range(28, 34),
+    'acb_rating': range(34, 40),
+}
+_IGDB_RATING_WORDS = {
+    'THREE': '3', 'SEVEN': '7', 'TEN': '10', 'TWELVE': '12', 'FOURTEEN': '14',
+    'FIFTEEN': '15', 'SIXTEEN': '16', 'EIGHTEEN': '18',
+}
+# rating_category.rating text (after word → number and '+' removal) → value.
+_IGDB_RATING_TEXT = {
+    'esrb_rating': {'RP': 'RP', 'EC': 'EC', 'E': 'E', 'E10': 'E10+', 'T': 'T',
+                    'M': 'M', 'AO': 'AO'},
+    'pegi_rating': {n: f'PEGI {n}' for n in ('3', '7', '12', '16', '18')},
+    'cero_rating': {v: v for v in ('A', 'B', 'C', 'D', 'Z')},
+    'usk_rating': {v: v for v in ('0', '6', '12', '16', '18')},
+    'grac_rating': {'ALL': 'ALL', '12': '12', '15': '15', '18': '18'},
+    'classind_rating': {v: v for v in ('L', '10', '12', '14', '16', '18')},
+    'acb_rating': {'G': 'G', 'PG': 'PG', 'M': 'M', 'MA15': 'MA15+', 'R18': 'R18+'},
+}
+
+
+def _igdb_age_rating(rating):
+    """(metadata field, value) for one IGDB age_ratings entry, or (None, None)."""
+    if not isinstance(rating, dict):
+        return None, None
+    field = _IGDB_RATING_BOARDS.get(rating.get('category'))
+    if not field:
+        org = rating.get('organization')
+        org_name = org.get('name') if isinstance(org, dict) else None
+        field = _IGDB_ORG_BOARDS.get(str(org_name or '').strip().upper())
+    if not field:
+        return None, None
+
+    val = rating.get('rating')
+    if val in _IGDB_RATING_ENUM_RANGE[field]:
+        return field, _IGDB_RATING_ENUM.get(val)
+
+    rc = rating.get('rating_category')
+    text = rc.get('rating') if isinstance(rc, dict) else None
+    if not text:
+        return field, None
+    token = re.sub(r'^(?:ESRB|PEGI|CERO|USK|GRAC|CLASS_?IND|ACB)[\s_]*', '',
+                   str(text).strip().upper()).replace('+', '').strip()
+    token = _IGDB_RATING_WORDS.get(token, token)
+    return field, _IGDB_RATING_TEXT[field].get(token)
+
+
+# =============================================================================
 # IGDB METADATA APPLICATION
 # =============================================================================
 
@@ -486,30 +580,20 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
     if not metadata['players']:
         multi = igdb_data.get('multiplayer_modes', [])
         if multi:
-            max_p = max((m.get('offlinemax', 1) for m in multi), default=1)
-            metadata['players'] = max_p
-            result['filled_fields'].append('players (IGDB)')
+            # `or 0`: IGDB may send an explicit null, which max() cannot
+            # compare with an int. No offline count leaves the field open.
+            max_p = max(((m.get('offlinemax') or 0) for m in multi if isinstance(m, dict)),
+                        default=0)
+            if max_p:
+                metadata['players'] = max_p
+                result['filled_fields'].append('players (IGDB)')
 
-    # Age ratings — IGDB categories: 1=ESRB, 2=PEGI, 3=CERO, 4=USK, 5=GRAC, 6=CLASS_IND, 7=ACB
-    _igdb_rating_maps = {
-        1: ('esrb_rating',     {6: 'RP', 7: 'EC', 8: 'E', 9: 'E10+', 10: 'T', 11: 'M', 12: 'AO'}),
-        2: ('pegi_rating',     {1: 'PEGI 3', 2: 'PEGI 7', 3: 'PEGI 12', 4: 'PEGI 16', 5: 'PEGI 18'}),
-        3: ('cero_rating',     {1: 'A', 2: 'B', 3: 'C', 4: 'D', 5: 'Z'}),
-        4: ('usk_rating',      {1: '0', 2: '6', 3: '12', 4: '16', 5: '18'}),
-        5: ('grac_rating',     {1: 'ALL', 2: '12', 3: '15', 4: '18'}),
-        6: ('classind_rating', {1: 'L', 2: '10', 3: '12', 4: '14', 5: '16', 6: '18'}),
-        7: ('acb_rating',      {1: 'G', 2: 'PG', 3: 'M', 4: 'MA15+', 5: 'R18+'}),
-    }
-    for rating in igdb_data.get('age_ratings', []):
-        cat = rating.get('category')
-        val = rating.get('rating')
-        if cat in _igdb_rating_maps:
-            field, vmap = _igdb_rating_maps[cat]
-            if not metadata.get(field):
-                mapped = vmap.get(val)
-                if mapped:
-                    metadata[field] = mapped
-                    result['filled_fields'].append(f'{field} (IGDB)')
+    # Age ratings — see _igdb_age_rating for the two IGDB shapes.
+    for rating in igdb_data.get('age_ratings') or []:
+        field, mapped = _igdb_age_rating(rating)
+        if field and mapped and not metadata.get(field):
+            metadata[field] = mapped
+            result['filled_fields'].append(f'{field} (IGDB)')
 
     # Download cover (only if not already present)
     if not metadata['boxart']:
@@ -787,8 +871,12 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
             return items[0].get('text', '')
         return None
 
+    # `ss_data` is either a raw jeu record (search cache) or the flat dict
+    # scrape_screenscraper.parse_game_data returns (ROM lookup on a cache
+    # miss). Each text field below reads the raw key first, then the flat one.
+
     # Title - always set when primary source (fill_only=False), matching IGDB/RAWG
-    title = get_localized(ss_data.get('noms'))
+    title = get_localized(ss_data.get('noms')) or ss_data.get('title')
     if title and (not metadata['title'] or not fill_only):
         metadata['title'] = normalize_title(title)
         result['filled_fields'].append('title (ScreenScraper)')
@@ -817,30 +905,30 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
             result['filled_fields'].append(f'alternate_titles +{added} (ScreenScraper)')
 
     # Description - only fill if empty
-    desc = get_localized(ss_data.get('synopsis'))
+    desc = get_localized(ss_data.get('synopsis')) or ss_data.get('description')
     if desc and not metadata['description']:
         metadata['description'] = desc
         result['filled_fields'].append('description (ScreenScraper)')
 
     # Release date - only fill if empty
-    dates = ss_data.get('dates', [])
+    dates = ss_data.get('dates') or ss_data.get('release_date')
     if dates and not metadata['release_date']:
-        date_str = get_localized(dates)
+        date_str = dates if isinstance(dates, str) else get_localized(dates)
         if date_str:
             metadata['release_date'] = date_str[:10] if len(date_str) >= 10 else date_str
             result['filled_fields'].append('release_date (ScreenScraper)')
 
     # Developer/Publisher - only fill if empty
-    if ss_data.get('developpeur') and not metadata['developer']:
-        dev = ss_data['developpeur']
+    if (ss_data.get('developpeur') or ss_data.get('developer')) and not metadata['developer']:
+        dev = ss_data.get('developpeur') or ss_data['developer']
         if isinstance(dev, dict):
             metadata['developer'] = dev.get('text', '')
         else:
             metadata['developer'] = str(dev)
         result['filled_fields'].append('developer (ScreenScraper)')
 
-    if ss_data.get('editeur') and not metadata['publisher']:
-        pub = ss_data['editeur']
+    if (ss_data.get('editeur') or ss_data.get('publisher')) and not metadata['publisher']:
+        pub = ss_data.get('editeur') or ss_data['publisher']
         if isinstance(pub, dict):
             metadata['publisher'] = pub.get('text', '')
         else:
@@ -851,17 +939,20 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
     genres = ss_data.get('genres', [])
     if genres and not metadata['genre']:
         genre_names = []
-        for g in genres:
-            name = get_localized(g.get('noms', []))
-            if name:
-                genre_names.append(name)
+        if isinstance(genres, str):
+            genre_names.append(genres)
+        else:
+            for g in genres:
+                name = get_localized(g.get('noms', []))
+                if name:
+                    genre_names.append(name)
         if genre_names:
             metadata['genre'] = normalize_genre(', '.join(genre_names))
             result['filled_fields'].append('genre (ScreenScraper)')
 
     # Players - only fill if empty
-    if ss_data.get('joueurs') and not metadata['players']:
-        players = ss_data['joueurs']
+    if (ss_data.get('joueurs') or ss_data.get('players')) and not metadata['players']:
+        players = ss_data.get('joueurs') or ss_data['players']
         if isinstance(players, dict):
             metadata['players'] = players.get('text', '')
         else:
@@ -1050,7 +1141,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
             else:
                 ext = 'png'
         else:
-            ext = boxart_url.rsplit('.', 1)[-1] if '.' in boxart_url else 'png'
+            ext = _url_ext(boxart_url, 'png')
 
         if boxart_url:
             filename = f"{db_game_id}_ss_boxart{preferred_image_extension('boxart', '.' + ext)}"
@@ -1073,7 +1164,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
             else:
                 ext = 'png'
         else:
-            ext = boxart_3d_url.rsplit('.', 1)[-1] if '.' in boxart_3d_url else 'png'
+            ext = _url_ext(boxart_3d_url, 'png')
 
         if boxart_3d_url:
             filename = f"{db_game_id}_ss_boxart3d{preferred_image_extension('boxart_3d', '.' + ext)}"
@@ -1095,7 +1186,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
     _ss_candidates = []
     if parsed_media.get('screenshot'):
         _u = parsed_media['screenshot']
-        _ss_candidates.append((_u, _u.rsplit('.', 1)[-1] if '.' in _u else 'png'))
+        _ss_candidates.append((_u, _url_ext(_u, 'png')))
     for m in medias:
         if m.get('type') == 'ss' and m.get('url'):
             _ss_candidates.append((m['url'], m.get('format', 'png')))
@@ -1135,7 +1226,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
             else:
                 ext = 'jpg'
         else:
-            ext = fanart_url.rsplit('.', 1)[-1] if '.' in fanart_url else 'jpg'
+            ext = _url_ext(fanart_url, 'jpg')
 
         if fanart_url:
             filename = f"{db_game_id}_ss_fanart{preferred_image_extension('fanart', '.' + ext)}"
@@ -1157,7 +1248,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
             else:
                 ext = 'mp4'
         else:
-            ext = video_url.rsplit('.', 1)[-1] if '.' in video_url else 'mp4'
+            ext = _url_ext(video_url, 'mp4')
 
         if video_url:
             filename = f"{db_game_id}_ss_video.{ext}"
@@ -1180,7 +1271,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
             else:
                 ext = 'pdf'
         else:
-            ext = manual_url.rsplit('.', 1)[-1] if '.' in manual_url else 'pdf'
+            ext = _url_ext(manual_url, 'pdf')
 
         if manual_url:
             filename = f"{db_game_id}_ss_manual.{ext}"

@@ -170,10 +170,12 @@ def search_game_by_name(game_name, console_id):
         title = re.sub(r'\s*[\(\[].*?[\)\]]\s*', '', title)
         # Normalize punctuation - replace with space
         title = re.sub(r"[:\-\u2013\u2014/&]", ' ', title)
+        # Normalize apostrophe variants to standard - before the strip below,
+        # which would otherwise delete a curly one ("Kirby’s" -> "kirbys"
+        # while "Kirby's" -> "kirby's", so the two never matched)
+        title = re.sub(r"[\u2019\u2018\u02BC\u02BB`\u00B4\u2032\u02B9]", "'", title)
         # Remove remaining special chars except apostrophes
         title = re.sub(r"[^\w\s']", '', title)
-        # Normalize apostrophe variants to standard
-        title = re.sub(r"[\u2019\u2018\u02BC\u02BB`\u00B4\u2032\u02B9]", "'", title)
         # Collapse whitespace
         title = re.sub(r'\s+', ' ', title).strip()
         return title
@@ -189,12 +191,16 @@ def search_game_by_name(game_name, console_id):
         return set(w for w in words
                    if w not in stopwords and (len(w) > 1 or w.isdigit()))
     
-    def calculate_similarity(search_title, ra_title):
+    # The search side is the same for every RA title on the console (often
+    # 2,000+), so normalize it once rather than per comparison.
+    norm_search = normalize_title(game_name)
+    search_words = get_significant_words(game_name)
+
+    def calculate_similarity(ra_title):
         """
-        Calculate match score between search title and RA title
+        Calculate match score between the search title and an RA title
         Returns a score from 0-100
         """
-        norm_search = normalize_title(search_title)
         norm_ra = normalize_title(ra_title)
         
         # Exact match after normalization = perfect score
@@ -202,7 +208,6 @@ def search_game_by_name(game_name, console_id):
             return 100
         
         # Word-based comparison
-        search_words = get_significant_words(search_title)
         ra_words = get_significant_words(ra_title)
         
         if not search_words or not ra_words:
@@ -285,7 +290,7 @@ def search_game_by_name(game_name, console_id):
             
             for game in games:
                 ra_title = game.get('Title', '')
-                score = calculate_similarity(game_name, ra_title)
+                score = calculate_similarity(ra_title)
                 
                 if score > best_score:
                     best_score = score

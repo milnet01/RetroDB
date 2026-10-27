@@ -16,6 +16,7 @@ import settings_manager
 from config import SYSTEM_NAME_MAP
 from scraper.base_scraper import get_scraper_conn
 from services.rom_scanner import RomPathNotConfigured
+from services.game_utils import find_image_file
 
 logger = logging.getLogger(__name__)
 
@@ -146,11 +147,11 @@ def scan_roms():
         # Get system name from mapping or generate from folder name
         system_name = SYSTEM_NAME_MAP.get(folder, folder.replace('_', ' ').title())
         
-        # Check for system logo (folder.png in static/images/systems/)
-        logo_filename = f"{folder}.png"
-        logo_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
-                                  'static', 'images', 'systems', logo_filename)
-        system_logo = logo_filename if os.path.exists(logo_path) else None
+        # System logo in static/images/systems/, any supported extension: a
+        # PNG-only check set the logo of every SVG-only system (genesis, ...)
+        # to NULL on each scan.
+        system_logo, _ = find_image_file(
+            os.path.join(config.STATIC_PATH, 'images', 'systems'), folder)
         
         # Insert or update system
         c.execute("INSERT OR IGNORE INTO systems (name, folder, logo) VALUES (?, ?, ?)", 
@@ -164,8 +165,9 @@ def scan_roms():
         
         system_id = result[0]
         
-        # Update system name and logo
-        c.execute("UPDATE systems SET name = ?, logo = ? WHERE folder = ?", 
+        # Update system name and logo (a logo already set is kept when none
+        # is found on disk)
+        c.execute("UPDATE systems SET name = ?, logo = COALESCE(?, logo) WHERE folder = ?", 
                   (system_name, system_logo, folder))
         
         # Get supported extensions from systeminfo.txt

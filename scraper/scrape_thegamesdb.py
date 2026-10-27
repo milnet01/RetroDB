@@ -135,6 +135,7 @@ def clear_caches():
     _publishers_cache = None
     _developers_cache = None
     _genres_cache = None
+    _lookup_failed_at.clear()
     logger.info("TGDB lookup caches cleared")
 
 
@@ -142,78 +143,72 @@ def clear_caches():
 # CACHED LOOKUP TABLES
 # =============================================================================
 
-def _get_publishers():
-    """Fetch and cache all publisher names (single API call, reused across games)."""
-    global _publishers_cache
-    if _publishers_cache is not None:
-        return _publishers_cache
+# A failed lookup-table fetch is retried after this many seconds rather than
+# cached as an empty table for the life of the process.
+_LOOKUP_RETRY_SECONDS = 300
+_lookup_failed_at = {}
+
+
+def _get_lookup(kind):
+    """Fetch and cache one TGDB lookup table ('publishers', 'developers' or
+    'genres') — a single API call, reused across games.
+
+    A failed fetch returns {} without caching it, so one transient error does
+    not leave every later game in the process with unresolved IDs; retries
+    are spaced by _LOOKUP_RETRY_SECONDS.
+    """
+    cache_name = f'_{kind}_cache'
+    cached = globals()[cache_name]
+    if cached is not None:
+        return cached
+    if time.time() - _lookup_failed_at.get(kind, 0) < _LOOKUP_RETRY_SECONDS:
+        return {}
 
     try:
-        response = _tgdb_request(f"{TGDB_API_BASE}/v1/Publishers", params={}, timeout=15)
+        response = _tgdb_request(f"{TGDB_API_BASE}/v1/{kind.capitalize()}", params={}, timeout=15)
         if response and response.status_code == 200:
-            data = response.json()
-            _publishers_cache = data.get('data', {}).get('publishers', {})
-            logger.info(f"Cached {len(_publishers_cache)} TGDB publishers")
-            return _publishers_cache
+            table = response.json().get('data', {}).get(kind, {})
+            if isinstance(table, dict) and table:
+                globals()[cache_name] = table
+                logger.info(f"Cached {len(table)} TGDB {kind}")
+                return table
     except Exception as e:
-        logger.warning(f"Failed to fetch publishers: {e}")
+        logger.warning(f"Failed to fetch {kind}: {e}")
 
-    _publishers_cache = {}
-    return _publishers_cache
+    _lookup_failed_at[kind] = time.time()
+    return {}
+
+
+def _get_publishers():
+    """Cached TGDB publisher table."""
+    return _get_lookup('publishers')
 
 
 def _get_developers():
-    """Fetch and cache all developer names (single API call, reused across games)."""
-    global _developers_cache
-    if _developers_cache is not None:
-        return _developers_cache
-
-    try:
-        response = _tgdb_request(f"{TGDB_API_BASE}/v1/Developers", params={}, timeout=15)
-        if response and response.status_code == 200:
-            data = response.json()
-            _developers_cache = data.get('data', {}).get('developers', {})
-            logger.info(f"Cached {len(_developers_cache)} TGDB developers")
-            return _developers_cache
-    except Exception as e:
-        logger.warning(f"Failed to fetch developers: {e}")
-
-    _developers_cache = {}
-    return _developers_cache
+    """Cached TGDB developer table."""
+    return _get_lookup('developers')
 
 
 def _get_genres():
-    """Fetch and cache all genre names (single API call, reused across games)."""
-    global _genres_cache
-    if _genres_cache is not None:
-        return _genres_cache
-
-    try:
-        response = _tgdb_request(f"{TGDB_API_BASE}/v1/Genres", params={}, timeout=15)
-        if response and response.status_code == 200:
-            data = response.json()
-            _genres_cache = data.get('data', {}).get('genres', {})
-            logger.info(f"Cached {len(_genres_cache)} TGDB genres")
-            return _genres_cache
-    except Exception as e:
-        logger.warning(f"Failed to fetch genres: {e}")
-
-    _genres_cache = {}
-    return _genres_cache
+    """Cached TGDB genre table."""
+    return _get_lookup('genres')
 
 
 def _resolve_names(ids, cache_fn, entity_key='name'):
-    """Resolve a list of entity IDs to names using a cached lookup table."""
+    """Resolve a list of entity IDs to names using a cached lookup table.
+
+    An ID the table does not name is left out: writing the bare number as a
+    publisher/developer name would fill the field with junk that no later
+    source can replace (fill-only).
+    """
     if not ids:
         return ''
     lookup = cache_fn()
     names = []
     for eid in ids:
-        info = lookup.get(str(eid), {})
-        if info:
-            names.append(info.get(entity_key, str(eid)))
-        else:
-            names.append(str(eid))
+        info = lookup.get(str(eid))
+        if isinstance(info, dict) and info.get(entity_key):
+            names.append(info[entity_key])
     return ', '.join(names)
 
 
@@ -224,13 +219,16 @@ def _resolve_genre_names(genre_ids):
     lookup = _get_genres()
     names = []
     for gid in genre_ids:
-        info = lookup.get(str(gid), {})
-        if info:
-            names.append(info.get('name', str(gid)))
-        elif isinstance(gid, int) and gid in TGDB_GENRE_MAP:
-            names.append(TGDB_GENRE_MAP[gid])
-        else:
-            names.append(str(gid))
+        info = lookup.get(str(gid))
+        if isinstance(info, dict) and info.get('name'):
+            names.append(info['name'])
+            continue
+        try:
+            fallback = TGDB_GENRE_MAP.get(int(gid))
+        except (TypeError, ValueError):
+            fallback = None
+        if fallback:
+            names.append(fallback)
     return names
 
 
@@ -442,7 +440,7 @@ def fetch_game_details(game_id):
                         'publisher': publisher_str,
                         'developer': developer_str,
                         'genres': genre_names,
-                        'players': game.get('players', 1),
+                        'players': game.get('players'),
                         'rating': game.get('rating', ''),
                         'summary': game.get('overview', ''),
                         'boxart_url': boxart_url,
