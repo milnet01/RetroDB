@@ -109,7 +109,7 @@ has seen the raw output. Triage into new roadmap passes after.
 
 ### Scraper fill-only invariant
 - Every `apply_*_to_game()` UPDATE in `scraper/scrape_*.py` MUST wrap every `?` in `COALESCE(?, column_name)` so an empty response from IGDB/TGDB/RAWG/etc. preserves the existing scraped or curated value. Bare `publisher = ?, developer = ?` is a bug (Pass 30.4 fix). `scrape_esde.apply_esde_metadata` is the canonical pattern. `tests/test_scrape_fill_only.py` pins the contract for IGDB + TGDB.
-- Two exceptions. Full Re-scrape mode in `hybrid_scraper` overwrites any field a source provides (fields no source fills are preserved, not blanked). And the title runs the other way: with `games.title_locked = 1` no scrape writes `title` or `sort_title`, Full Re-scrape included — the four title writes are `CASE WHEN title_locked = 1 THEN title ELSE COALESCE(?, title) END` (PASS-59-159 §4.3).
+- Three exceptions. Full Re-scrape mode in `hybrid_scraper` overwrites any field a source provides (fields no source fills are preserved, not blanked). AI Fill renames a game to the official title the AI gives (`docs/specs/scrapers.md` §12), keeping the old name as an alternate title. And the title runs the other way: with `games.title_locked = 1` no scrape writes `title` or `sort_title`, Full Re-scrape included — the four title writes are `CASE WHEN title_locked = 1 THEN title ELSE COALESCE(?, title) END` (PASS-59-159 §4.3).
 
 ### Multi-rating system (9 systems)
 Moved to `.claude/rules/ratings.md`, which loads when a matching file is read. Read it before touching ratings, the edit modals or the scrapers.

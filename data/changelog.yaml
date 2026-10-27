@@ -1,10 +1,24 @@
 - version: 3.33.0
-  date: 2026-10-23
+  date: 2026-10-27
   tags:
   - type: feature
     label: Get RetroArch from inside RetroDB
   - type: fix
     label: Next disk works for games played in RetroDB
+  - type: feature
+    label: Library and system pages update live during Bulk Scrape
+  - type: feature
+    label: AI Fill gives each game its official name
+  - type: fix
+    label: Official Names suggests names again
+  - type: fix
+    label: Sources are searched only for systems they cover
+  - type: fix
+    label: The scrape progress ring no longer jumps back
+  - type: fix
+    label: Zoomed 3D box art has no square behind it
+  - type: fix
+    label: Messages no longer show HTML code
   body: |
     <ul>
       <li><strong>Get RetroArch from inside RetroDB.</strong> Settings &gt;
@@ -20,6 +34,35 @@
         own RetroArch with no setup. RetroArch listens for RetroDB's
         commands only while such a game runs, and on Windows and macOS
         while any game runs.</li>
+      <li><strong>Library and system pages update live during Bulk
+        Scrape.</strong> Each game's card refreshes as soon as it is scraped,
+        whether the Bulk Scrape window is open, closed or running in the
+        background.</li>
+      <li><strong>AI Fill gives each game its official name.</strong> When
+        AI fills gaps, in a single-game scrape, in Bulk Scrape and with the
+        AI Fill button, it also names the game's official title as released
+        in its ROM's region, and the game is renamed to it. The old name is
+        kept as an alternate title. A title you typed yourself or accepted in
+        Official Names is never renamed.</li>
+      <li><strong>Official Names suggests names again.</strong> With OpenAI,
+        and sometimes with Gemini, the AI's answers could not be read, so a
+        run ended with no names suggested.</li>
+      <li><strong>Sources are searched only for systems they cover.</strong>
+        RAWG has no Intellivision games, so it is no longer searched for
+        them; before, it found games from other platforms instead. IGDB,
+        TheGamesDB and RAWG now always search on the game's own system.
+        Several wrong RAWG platform links were corrected too (Atari ST,
+        ColecoVision, PC Engine, DOS).</li>
+      <li><strong>The scrape progress ring no longer jumps back.</strong>
+        After more than one search in the Search Metadata window, one Apply
+        started the scrape several times, and the ring jumped between
+        them.</li>
+      <li><strong>Zoomed 3D box art has no square behind it.</strong> The
+        box sits straight on the dimmed background.</li>
+      <li><strong>Messages no longer show HTML code.</strong> Some
+        confirmation and result windows in ROM Tools showed tags such as
+        &lt;br&gt; instead of line breaks. The log viewer and the bonus-disc
+        parent picker in Settings work again.</li>
     </ul>
 - version: 3.32.0
   date: 2026-10-23

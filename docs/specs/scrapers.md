@@ -35,6 +35,8 @@ See also: CLAUDE.md "Scraper fill-only invariant" and "Schema / data shapes"; [`
 | AI Fill           | `scraper/scrape_ai.py`            | AI              | One of: `ai_gemini_api_key`, `ai_openai_api_key`, `ai_anthropic_api_key` (+ optional `ai_gemini_project_id`) | Final gap-fill for text-only fields; never media (see §12)                                        |
 | HLTB              | `scraper/hltb_lookup.py`          | remote          | No (public site scrape)                                                   | Playtime estimates (main / extra / completionist) for HowLongToBeat                               |
 
+**Platform coverage** (user, 2026-10-27). A source is searched only when it maps the game's system to one of its platforms, and every query it sends keeps that platform filter: `scrape_rawg.PLATFORM_MAP` (only platforms RAWG lists; no Intellivision, ColecoVision, PC Engine, arcade, Virtual Boy), `scrape_igdb.get_platform_id`, `scrape_thegamesdb.get_system_id`, `scrape_screenscraper.get_system_id`. An unmapped system gets `[]` without a request: searching without the filter matched games from other platforms. Pinned by `tests/test_scraper_platform_coverage.py`.
+
 Per-source disable + priority: `data/scraper_settings.json` → `enabled` + `priority`. The first enabled source in priority order whose API key is configured wins as primary when the user picks one; the rest fall back in priority order (see §3).
 
 ---
@@ -279,6 +281,8 @@ Text-only. AI never returns images, screenshots, videos, or manuals — `AI_FILL
 **`PLATFORM_ALIASES`** maps non-canonical platform names the AI may produce (`ps1` → `PlayStation`, `playstation portable` → `PSP`).
 
 **Integer-column trap (Pass 45.3):** AI Fill writes through `routes/games_ai.py`. The integer columns (`players`, `critic_score`, `critic_score_count`, `user_score`, `user_score_count`) coerce via `int(float(value))`. If the AI returns `"0"`, that becomes `0` — and a bare `field = ?` UPDATE then clobbers a curated `players=4` with `0`. Fix: any integer coerce to `0` is **skipped** entirely from the UPDATE clause (chosen over `COALESCE(NULLIF(?, 0), col)` because the existing `should_apply` filter already guarantees we only reach the int-coerce on values worth writing). Regression tests in `tests/test_pass45_security.py::TestPass45_3*`.
+
+**Official title** (user, 2026-10-27). For a game with a ROM and an unlocked title, `get_game_details` also asks for `official_title` (the title as released in the ROM's region, as PASS-59-159 §4.2 asks the Official Names run) and `old_title_region`. Both are outside `AI_FILLABLE_FIELDS`; `_validate_all_fields` keeps them after `_clean_official_title`. `metadata_merger.apply_ai_to_metadata` (manual and bulk scrape) and `routes/games_ai.py` (the AI Fill button) rename the game to it, keeping the replaced name as an alternate title tagged with `old_title_region`. It is an exception to fill-only for `title`, as the user asked. A locked title is never asked about, and `_save_game_row` never writes one. Pinned by `tests/test_ai_official_title.py`.
 
 **Circuit breaker:** `_ai_breaker` (5 failures / 120 s recovery) wraps `fetch_ai_metadata` calls from `hybrid_scraper` so a repeatedly-failing provider doesn't burn a quota on every gap-fill attempt.
 

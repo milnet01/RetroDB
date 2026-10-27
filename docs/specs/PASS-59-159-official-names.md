@@ -63,6 +63,11 @@ Proposed by this spec and chosen by the user, 2026-10-23:
 - A run covers one system or all systems, started from the review page,
   running in the background (§4.4).
 
+Added by the user, 2026-10-27: AI Fill, during a single-game scrape, a
+Bulk Scrape and from the AI Fill button, also asks for the official title
+and renames the game to it straight away, without review. A locked title
+is not asked about. See `docs/specs/scrapers.md` §12.
+
 ## 4. Design
 
 ### 4.1 Schema — migration `021_official_names`
@@ -115,7 +120,11 @@ def propose_official_names(system_name, games):
   region, in Latin script as the region's own release uses it, and the
   region the *current* title belongs to (`USA`, `Europe`, `Japan`,
   `World`, or null when unsure). It asks for JSON only:
-  `[{"i": 0, "official_title": "...", "old_title_region": "Japan"}]`.
+  `{"games": [{"i": 0, "official_title": "...", "old_title_region": "Japan"}]}`.
+  An object, not a bare array (2026-10-27): OpenAI's JSON mode returns
+  objects only, so the array the first version asked for never arrived
+  and every run suggested nothing. The parser also reads a bare array, a
+  list under another key, and JSON with prose around it.
 - The reply is parsed like `_parse_differences`: an entry with a missing
   or out-of-range `i`, a non-string title, a title over 200 characters,
   or control characters is dropped (that game gets `None`). Titles run
