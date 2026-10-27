@@ -6,7 +6,7 @@
 {% block title %}{{ _('PSN Trophies') }} - RetroDB{% endblock %}
 
 {% block content %}
-<div class="page-box grid-4 psn-page">
+<div class="page-box grid-4 achievements-page psn-page">
 {{ achievement_tabs('psn') }}
 
 <!-- Page Header -->
@@ -592,11 +592,8 @@
 /* ============================================================
    PSN Game Cards Grid
    ============================================================ */
-/* PASS-59-104 — the page caps at 4 columns of this grid. */
-.psn-page {
-    --card-min: 300px;
-    --card-gap: var(--spacing-md);
-}
+/* PASS-59-104 — the page caps at 4 columns of this grid. Its card tokens
+   come from .achievements-page so every Achievements tab is the same width. */
 
 .psn-games-grid {
     display: grid;

@@ -36,7 +36,7 @@ from services.game_metadata_service import (
     apply_hybrid_metadata_to_game,
     normalize_game_edit, cross_map_ratings, edit_title_lock,
 )
-from services import apply_progress, upscale_queue
+from services import apply_progress, rpcs3_compat, upscale_queue
 
 # Single source of truth for the completion-status whitelist, shared by the
 # single-edit endpoint (api_update_completion) and bulk-edit (Pass 48.5 — bulk
@@ -197,6 +197,8 @@ def api_games():
         for row in rows
     ]
     _add_can_launch(games, rows)
+    if any(row['disc_serial'] is None and rpcs3_compat.applies_to(row) for row in rows):
+        rpcs3_compat.fill_missing_serials()
 
     return success(
         games=games,
@@ -262,7 +264,8 @@ def api_games_card_data():
     # includes per-user PSN + achievement progress (joins below), so a
     # globally-keyed ETag lets one user's browser serve another user's
     # progress as a 304.  CWE-524.
-    etag_payload = f"cd:{g.user['id']}:{','.join(str(i) for i in sorted_ids)}:{max_updated}"
+    etag_payload = (f"cd:{g.user['id']}:{','.join(str(i) for i in sorted_ids)}:{max_updated}"
+                    f":{rpcs3_compat.stamp()}")
     etag = f'W/"{hashlib.md5(etag_payload.encode(), usedforsecurity=False).hexdigest()}"'
     if request.headers.get('If-None-Match') == etag:
         resp = make_response('', 304)
@@ -280,7 +283,7 @@ def api_games_card_data():
                g.grac_rating, g.classind_rating, g.china_rating,
                g.critic_score, g.critic_score_count, g.user_score, g.user_score_count,
                g.completion_status, g.scraped, g.has_retroachievements,
-               g.is_bonus_disc, g.rom_path, g.ra_achievement_count,
+               g.is_bonus_disc, g.rom_path, g.disc_serial, g.ra_achievement_count,
                s.name AS system_name, s.folder AS system_folder, s.system_type,
                COALESCE(bc.bonus_count, 0) AS bonus_count,
                {VERSION_COLUMNS},
@@ -603,7 +606,7 @@ def game_detail(game_id):
                             region = NULL, franchise = NULL, similar_games = NULL,
                             playtime_estimate = NULL, controller_support = NULL, save_type = NULL,
                             scrape_history = NULL, critic_score = NULL, critic_score_count = NULL,
-                            user_score = NULL, user_score_count = NULL,
+                            user_score = NULL, user_score_count = NULL, units_sold = NULL,
                             hltb_match_name = NULL, hltb_match_platform = NULL, hltb_match_confidence = NULL,
                             scraped = 0, title_locked = 0
                         WHERE id = ?
@@ -635,6 +638,10 @@ def game_detail(game_id):
             return redirect(url_for('games.all_games'))
 
         game_dict = dict(game)
+        rpcs3_compat.ensure_serial(game_dict)
+        game_dict['rpcs3_compat'] = rpcs3_compat.status_for_game(game_dict)
+        game_dict['rpcs3_compat_missing'] = (rpcs3_compat.applies_to(game_dict)
+                                             and not rpcs3_compat.available())
         if game_dict.get('scrape_history'):
             try:
                 game_dict['scrape_history'] = json.loads(game_dict['scrape_history'])
@@ -833,6 +840,7 @@ def api_game_detail(game_id):
         rpcs3_info = lookup_rpcs3_info(game, build_rpcs3_trophy_map([game]))
     except Exception:
         rpcs3_info = None
+    rpcs3_compat.ensure_serial(game)
 
     screenshots = []
     if game['screenshots']:
@@ -888,6 +896,8 @@ def api_game_detail(game_id):
             'china_rating': game.get('china_rating'),
             'critic_score': game['critic_score'],
             'user_score': game['user_score'],
+            'units_sold': game['units_sold'],
+            'rpcs3_compat': rpcs3_compat.status_for_game(game),
             'players': game['players'],
             'completion_status': game['completion_status'],
             'has_retroachievements': game['has_retroachievements'],

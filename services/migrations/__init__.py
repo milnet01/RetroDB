@@ -47,6 +47,7 @@ MIGRATIONS = [
     '020_player',
     '021_official_names',
     '022_player_name',
+    '023_games_units_sold',
 ]
 
 

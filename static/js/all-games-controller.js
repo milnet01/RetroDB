@@ -626,19 +626,20 @@ const AllGamesController = (function() {
         }
         if (game.completion_status && game.completion_status !== 'not_started') {
             const csClass = game.completion_status === '100_percent' ? 'hundred-percent' : game.completion_status.replace(/_/g, '-');
-            const csLabels = { in_progress: '&#127918; In Progress', played: '&#128377;&#65039; Played', completed: '&#9989; Completed', '100_percent': '&#127942; 100%' };
-            ratingBadges += `<span class="game-badge completion ${csClass}" title="Completion Status">${csLabels[game.completion_status] || ''}</span>`;
+            const csLabels = { in_progress: '&#127918; ' + esc(t('In Progress')), played: '&#128377;&#65039; ' + esc(t('Played')), completed: '&#9989; ' + esc(t('Completed')), '100_percent': '&#127942; 100%' };
+            ratingBadges += `<span class="game-badge completion ${csClass}" title="${esc(t('Completion status'))}">${csLabels[game.completion_status] || ''}</span>`;
         }
         if (game.critic_score) {
             const cs = Math.round(game.critic_score);
             const csClass = cs >= 75 ? 'score-good' : cs >= 50 ? 'score-mixed' : 'score-bad';
-            ratingBadges += `<span class="game-badge score-badge critic-score ${csClass}" title="Critic Score (${game.critic_score_count || '?'} reviews)">&#11088; ${cs}</span>`;
+            ratingBadges += `<span class="game-badge score-badge critic-score ${csClass}" title="${esc(t('Critic Score ({count} reviews)', {count: game.critic_score_count || '?'}))}">&#11088; ${cs}</span>`;
         }
         if (game.user_score) {
             const us = Math.round(game.user_score);
             const usClass = us >= 75 ? 'score-good' : us >= 50 ? 'score-mixed' : 'score-bad';
-            ratingBadges += `<span class="game-badge score-badge user-score ${usClass}" title="User Score (${game.user_score_count || '?'} ratings)">&#128100; ${us}</span>`;
+            ratingBadges += `<span class="game-badge score-badge user-score ${usClass}" title="${esc(t('User Score ({count} ratings)', {count: game.user_score_count || '?'}))}">&#128100; ${us}</span>`;
         }
+        ratingBadges += window.rpcs3CompatBadgeHtml(game.rpcs3_compat);
         if (game.achievement_total > 0 && game.achievement_earned != null) {
             const earned = game.achievement_earned;
             const pct = Math.round((earned / game.achievement_total) * 100);

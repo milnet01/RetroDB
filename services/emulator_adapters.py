@@ -82,10 +82,16 @@ def _pcsx2_dirs(binary: Path) -> list:
 
 
 def _rpcs3_dirs(binary: Path) -> list:
+    # RPCS3's fs::get_config_dir(): a `portable` folder beside the program
+    # wins; Windows keeps everything beside rpcs3.exe; macOS uses
+    # Application Support; Linux XDG_CONFIG_HOME (or ~/.config).
     home = _home_of(binary)
-    dirs = [home / '.config' / 'rpcs3'] if home else []
+    dirs = [binary.parent / 'portable', binary.parent]
+    if home:
+        dirs.append(home / '.config' / 'rpcs3')
     return dirs + [_xdg('XDG_CONFIG_HOME', '.config') / 'rpcs3',
-                   Path.home() / '.var/app/net.rpcs3.RPCS3/config/rpcs3']
+                   Path.home() / '.var/app/net.rpcs3.RPCS3/config/rpcs3',
+                   Path.home() / 'Library' / 'Application Support' / 'rpcs3']
 
 
 def find_data_dir(adapter: EmulatorAdapter, binary: Path) -> Optional[Path]:

@@ -767,6 +767,7 @@ def _save_game_row(c, metadata, scrape_history_json, db_game_id):
             critic_score_count = COALESCE(?, critic_score_count),
             user_score = COALESCE(?, user_score),
             user_score_count = COALESCE(?, user_score_count),
+            units_sold = COALESCE(?, units_sold),
             alternate_titles = COALESCE(?, alternate_titles),
             scrape_history = ?,
             scraped = 1
@@ -812,6 +813,7 @@ def _save_game_row(c, metadata, scrape_history_json, db_game_id):
         metadata.get('critic_score_count'),
         metadata.get('user_score'),
         metadata.get('user_score_count'),
+        metadata.get('units_sold'),
         alt_titles_json,
         scrape_history_json,
         db_game_id
@@ -1254,6 +1256,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
             'critic_score_count': None,
             'user_score': None,
             'user_score_count': None,
+            'units_sold': None,
             'alternate_titles': None,
         }
 

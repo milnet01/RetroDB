@@ -101,6 +101,8 @@ has seen the raw output. Triage into new roadmap passes after.
 - `players` is INTEGER. Scraper/AI ranges like `"1-4"` are normalized to the max (4) before saving.
 - Sort title is auto-generated during scraping and AI Fill via `generate_sort_title()` in `services/game_utils.py`.
 - When a system has curated default controllers in the DB, they always override scraped/AI controller values.
+- `units_sold` (INTEGER, migration 023) is filled only by the AI — scrape gap-fill and AI Fill; `scrape_ai.parse_units_sold()` turns "2.4 million" etc. into an int.
+- RPCS3 compatibility (PS3) is never stored: `services/rpcs3_compat.py` reads the local RPCS3's `GuiConfigs/compat_database.dat` (re-read when it changes) and looks games up by `games.disc_serial`. Local ROMs only, never imported games.
 - Regional versions (PASS-59-106): only `services/version_groups.py` links rows through `games.version_group_id`. `_build_games_query` shows one row per group unless `group_versions=False`. Contract: `docs/specs/PASS-59-106-regional-versions.md`.
 
 ### Media handling
