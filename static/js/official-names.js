@@ -37,9 +37,12 @@
 
         async function loadProposals() {
             listStatus.textContent = t('Loading…');
+            const selected = systemSelect.value;
             try {
-                const qs = new URLSearchParams(systemSelect.value ? { system_id: systemSelect.value } : {});
+                const qs = new URLSearchParams(selected ? { system_id: selected } : {});
                 const data = await API.get(`/api/official-names/proposals?${qs}`);
+                // The system changed while this loaded; its own load follows.
+                if (systemSelect.value !== selected) return;
                 list.replaceChildren(...data.proposals.map(renderRow));
                 actions.hidden = data.proposals.length === 0;
                 listStatus.textContent = data.proposals.length

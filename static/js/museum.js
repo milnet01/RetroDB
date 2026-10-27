@@ -80,6 +80,9 @@ function _stopPolling() {
 function _pollStatus() {
     API.get('/api/museum/generate-status')
         .then(function (s) {
+            // A reply still in flight when an earlier one stopped polling
+            // would announce the finished run a second time.
+            if (!_pollTimer) return;
             // Update UI
             var pct = s.total_systems > 0
                 ? Math.round((s.current_index / s.total_systems) * 100)

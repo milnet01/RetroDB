@@ -50,7 +50,10 @@
         await fetch(`/api/launch/${token}/kill`, {
             method: 'POST',
             headers: {'X-CSRF-Token': csrfToken()},
-        });
+        }).catch(() => {});
+        // The open list still shows the killed game; close it so the next
+        // click rebuilds it from the refreshed list.
+        if (popover) { popover.remove(); popover = null; }
         await refresh();
     }
 

@@ -480,11 +480,26 @@ const AllGamesController = (function() {
             }
         }
 
-        items.forEach(wrapper => {
-            const card = wrapper.querySelector('.game-card-new');
-            if (!card) return;
+        // One column (the phone layout): the CSS stacks the cards with
+        // auto rows, which inline row lines would override, leaving a
+        // row-gap per 1px line between cards.
+        if (columns <= 1) {
+            items.forEach(w => {
+                w.style.gridColumn = w.style.gridRowStart = w.style.gridRowEnd = '';
+            });
+            return;
+        }
 
-            const h = card.getBoundingClientRect().height;
+        // Measure every card before placing any, so the loop forces one
+        // layout rather than one per card.
+        const heights = items.map(wrapper => {
+            const card = wrapper.querySelector('.game-card-new');
+            return card ? card.getBoundingClientRect().height : null;
+        });
+
+        items.forEach((wrapper, i) => {
+            const h = heights[i];
+            if (h === null) return;
             const span = h > 0 ? Math.ceil(h) + gap : 296;
 
             const col = masonryItemCount % columns;
@@ -496,6 +511,16 @@ const AllGamesController = (function() {
             masonryItemCount++;
         });
     }
+
+    // A resize that changes the column count re-places every card; the old
+    // inline columns would otherwise point past the grid's last column.
+    const _onResizeRelayout = debounce(() => {
+        const grid = document.getElementById('gamesGrid');
+        if (!grid || !grid.firstElementChild) return;
+        const columns = getComputedStyle(grid).gridTemplateColumns.split(' ').length;
+        if (columns !== masonryColumnEnds.length) window.relayoutMasonry();
+    }, 200);
+    window.addEventListener('resize', _onResizeRelayout, { passive: true });
 
     // Expose a full re-layout function for external use (e.g. after card edits)
     window.relayoutMasonry = function() {
@@ -1606,6 +1631,7 @@ const AllGamesController = (function() {
         clearTimeout(scrollSaveTimer);
         clearTimeout(_imageRelayoutTimer);
         window.removeEventListener('scroll', _onScrollSave);
+        window.removeEventListener('resize', _onResizeRelayout);
         document.removeEventListener('click', _onFilterBackdropClick);
         selectedGames.clear();
     }

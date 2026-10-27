@@ -81,6 +81,8 @@
             try {
                 const qs = new URLSearchParams({ system: systemId, search: term, per_page: 20 });
                 const data = await API.get(`/api/games?${qs}`);
+                // An older search can land after a newer one; keep the newest.
+                if (input.value.trim() !== term) return;
                 renderCandidates(data.games.filter(g => g.id !== gameId));
             } catch (err) {
                 showNotification(failMessage(err, t('Search failed.')), 'error');
