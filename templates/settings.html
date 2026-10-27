@@ -2104,7 +2104,7 @@ function showLinkOptions(gameId, systemId) {
                 let options = data.parents.map(p => 
                     `<div class="parent-option"
                          data-on-click="linkBonusToParent" data-args="${actionArgs(gameId, p.id)}">
-                        ${p.title}
+                        ${escapeHtml(p.title)}
                     </div>`
                 ).join('');
                 
@@ -2184,7 +2184,7 @@ function loadBackups() {
                 html += `
                     <div class="backup-item">
                         <div class="backup-info">
-                            <span class="backup-name">📁 ${backup.filename}</span>
+                            <span class="backup-name">📁 ${escapeHtml(backup.filename)}</span>
                             <span class="backup-meta">${backup.size} • ${backup.date}</span>
                         </div>
                         <button type="button" class="btn btn-sm btn-warning" data-on-click="restoreBackup" data-args="${actionArgs(String(backup.filename))}">
@@ -3168,7 +3168,7 @@ async function loadSystemControllersTable() {
             const defaultTags = defaultControllers.length > 0 
                 ? defaultControllers.map(c => `
                     <span class="badge badge-success" style="display: inline-flex; align-items: center; gap: 4px; font-size: 0.7rem;">
-                        ${c.name}
+                        ${escapeHtml(c.name)}
                         <span data-on-click="removeDefaultController" data-args="${actionArgs(system.id, c.id)}" style="cursor: pointer; opacity: 0.7;">×</span>
                     </span>
                 `).join('')
@@ -3178,7 +3178,7 @@ async function loadSystemControllersTable() {
             const defaultIds = defaultControllers.map(c => c.id);
             const dropdownOptions = availableControllers
                 .filter(c => !defaultIds.includes(c.id))
-                .map(c => `<option value="${c.id}">${c.manufacturer ? c.manufacturer + ' - ' : ''}${c.name}</option>`)
+                .map(c => `<option value="${c.id}">${c.manufacturer ? escapeHtml(c.manufacturer) + ' - ' : ''}${escapeHtml(c.name)}</option>`)
                 .join('');
             
             // Determine data-letter attribute
@@ -3186,9 +3186,9 @@ async function loadSystemControllersTable() {
             const dataLetter = /[A-Z]/.test(firstChar) ? firstChar : '#';
             
             return `
-                <div class="system-controller-card glass-panel" data-system-name="${system.name}" data-letter="${dataLetter}" style="padding: var(--spacing-md);">
+                <div class="system-controller-card glass-panel" data-system-name="${escapeHtml(system.name)}" data-letter="${dataLetter}" style="padding: var(--spacing-md);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-sm);">
-                        <strong style="font-size: 0.95rem; color: var(--text-primary);">${system.name}</strong>
+                        <strong style="font-size: 0.95rem; color: var(--text-primary);">${escapeHtml(system.name)}</strong>
                         <span style="color: ${statusColor}; font-size: 0.85rem;">${statusIcon}</span>
                     </div>
                     <div class="default-controller-tags" style="display: flex; flex-wrap: wrap; gap: 4px; min-height: 28px; margin-bottom: 8px;">
@@ -3337,11 +3337,11 @@ async function loadControllerLibrary() {
                 if (c.system_names && c.system_names.length > 0) {
                     if (c.system_names.length <= 2) {
                         return c.system_names.map(name => 
-                            `<span class="badge badge-secondary" style="font-size: 0.65rem; margin-left: 4px;">${name}</span>`
+                            `<span class="badge badge-secondary" style="font-size: 0.65rem; margin-left: 4px;">${escapeHtml(name)}</span>`
                         ).join('');
                     } else {
                         // Show first system + count
-                        return `<span class="badge badge-secondary" style="font-size: 0.65rem; margin-left: 4px;">${c.system_names[0]} +${c.system_names.length - 1}</span>`;
+                        return `<span class="badge badge-secondary" style="font-size: 0.65rem; margin-left: 4px;">${escapeHtml(c.system_names[0])} +${c.system_names.length - 1}</span>`;
                     }
                 }
                 return '<span class="badge badge-secondary" style="font-size: 0.65rem; margin-left: 4px; opacity: 0.6;">Universal</span>';
@@ -3349,9 +3349,9 @@ async function loadControllerLibrary() {
             
             // Generate HTML for each manufacturer group
             const groupsHtml = sortedManufacturers.map(mfg => `
-                <div class="controller-group glass-panel" data-manufacturer="${mfg}" style="padding: var(--spacing-md); margin-bottom: var(--spacing-md);">
+                <div class="controller-group glass-panel" data-manufacturer="${escapeHtml(mfg)}" style="padding: var(--spacing-md); margin-bottom: var(--spacing-md);">
                     <h5 style="color: var(--neon-cyan); margin-bottom: var(--spacing-sm); font-family: var(--font-heading); display: flex; align-items: center; gap: 8px;">
-                        ${getManufacturerIcon(mfg)} ${mfg}
+                        ${getManufacturerIcon(mfg)} ${escapeHtml(mfg)}
                         <span class="badge badge-secondary" style="font-size: 0.7rem;">${byManufacturer[mfg].length}</span>
                     </h5>
                     <div class="controller-list" style="display: flex; flex-direction: column; gap: 6px;">
@@ -3359,16 +3359,16 @@ async function loadControllerLibrary() {
                             <div class="controller-item" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: rgba(0,0,0,0.2); border-radius: var(--radius-sm); cursor: pointer;" 
                                  data-on-click="toggleControllerDetails" data-args="${actionArgs('$this')}" data-controller-id="${c.id}">
                                 <div style="flex: 1;">
-                                    <span style="font-size: 0.9rem; color: var(--text-primary);">${c.name}</span>
+                                    <span style="font-size: 0.9rem; color: var(--text-primary);">${escapeHtml(c.name)}</span>
                                     ${c.release_year ? `<span class="text-muted" style="font-size: 0.75rem; margin-left: 8px;">(${c.release_year})</span>` : ''}
                                     ${renderSystemBadges(c)}
                                 </div>
                                 <span class="expand-icon text-muted" style="font-size: 0.8rem;">▼</span>
                             </div>
                             <div class="controller-details" style="display: none; padding: 8px 12px; background: rgba(76, 201, 240, 0.05); border-radius: var(--radius-sm); margin-top: -4px; font-size: 0.85rem;">
-                                <p style="margin: 0 0 8px 0; color: var(--neon-cyan);"><strong>Systems:</strong> ${c.system_name || 'Universal'}</p>
-                                ${c.description ? `<p style="margin: 0 0 8px 0; color: var(--text-secondary);">${c.description}</p>` : ''}
-                                ${c.button_layout ? `<p style="margin: 0; color: var(--text-muted);"><strong>Buttons:</strong> ${c.button_layout}</p>` : ''}
+                                <p style="margin: 0 0 8px 0; color: var(--neon-cyan);"><strong>Systems:</strong> ${escapeHtml(c.system_name || 'Universal')}</p>
+                                ${c.description ? `<p style="margin: 0 0 8px 0; color: var(--text-secondary);">${escapeHtml(c.description)}</p>` : ''}
+                                ${c.button_layout ? `<p style="margin: 0; color: var(--text-muted);"><strong>Buttons:</strong> ${escapeHtml(c.button_layout)}</p>` : ''}
                                 <div style="margin-top: 8px; display: flex; gap: 8px;">
                                     <button type="button" class="btn btn-primary btn-sm" data-on-click="openEditControllerModal" data-args="${actionArgs(c.id)}" data-stop>
                                         ✏️ Edit
@@ -3560,7 +3560,7 @@ function renderSystemTags(mode) {
     
     container.innerHTML = selectedSystems.map(sys => `
         <span class="badge badge-secondary" style="display: inline-flex; align-items: center; gap: 6px;">
-            ${sys.name}
+            ${escapeHtml(sys.name)}
             <span data-on-click="removeSystemFromController" data-args="${actionArgs(String(mode), sys.id)}" style="cursor: pointer; opacity: 0.7; font-size: 1.1em;">×</span>
         </span>
     `).join('');

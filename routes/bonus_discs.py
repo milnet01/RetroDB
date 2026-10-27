@@ -273,7 +273,9 @@ def api_get_potential_parents(game_id):
 @handle_api_errors
 def api_link_bonus_disc():
     """Link a bonus disc to its parent game"""
-    data = request.get_json()
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return error(_('Request body must be a JSON object'), 400)
     bonus_id = data.get('bonus_id')
     parent_id = data.get('parent_id')
 
@@ -302,15 +304,22 @@ def api_unlink_bonus_disc(game_id):
 @handle_api_errors
 def api_mark_bonus_disc():
     """Manually mark a game as a bonus disc (without linking to parent)"""
-    data = request.get_json()
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return error(_('Request body must be a JSON object'), 400)
     game_id = data.get('game_id')
     is_bonus = data.get('is_bonus', True)
 
     if not game_id:
         return error(_('Missing game_id'), 400)
 
-    execute("UPDATE games SET is_bonus_disc = ? WHERE id = ?",
-           (1 if is_bonus else 0, game_id))
+    if is_bonus:
+        execute("UPDATE games SET is_bonus_disc = 1 WHERE id = ?", (game_id,))
+    else:
+        # Unmarking also detaches it: a kept parent_game_id still counts toward
+        # the parent's bonus discs (game detail counts by parent_game_id alone).
+        execute("UPDATE games SET is_bonus_disc = 0, parent_game_id = NULL WHERE id = ?",
+                (game_id,))
 
     return success()
 

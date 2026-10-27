@@ -211,16 +211,18 @@ def api_get_controllers_for_system(system_id):
 @handle_api_errors
 def api_add_controller():
     """Add a new controller to the global library"""
-    data = request.get_json()
-    name = data.get('name', '').strip()
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return error(_('Request body must be a JSON object'), 400)
+    name = str(data.get('name') or '').strip()
     # Support both single system_id and multiple system_ids
     system_ids = data.get('system_ids', [])
     if not system_ids and data.get('system_id'):
         system_ids = [data.get('system_id')]
-    manufacturer = data.get('manufacturer', '').strip() or 'Other'
+    manufacturer = str(data.get('manufacturer') or '').strip() or 'Other'
     release_year = data.get('release_year')
-    description = data.get('description', '').strip()
-    button_layout = data.get('button_layout', '').strip()
+    description = str(data.get('description') or '').strip()
+    button_layout = str(data.get('button_layout') or '').strip()
 
     if not name:
         return error(_('Controller name is required'), 400)
@@ -273,16 +275,18 @@ def api_delete_controller(controller_id):
 @handle_api_errors
 def api_update_controller(controller_id):
     """Update an existing controller"""
-    data = request.get_json()
-    name = data.get('name', '').strip()
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return error(_('Request body must be a JSON object'), 400)
+    name = str(data.get('name') or '').strip()
     # Support both single system_id and multiple system_ids
     system_ids = data.get('system_ids', [])
     if not system_ids and data.get('system_id'):
         system_ids = [data.get('system_id')]
-    manufacturer = data.get('manufacturer', '').strip() or 'Other'
+    manufacturer = str(data.get('manufacturer') or '').strip() or 'Other'
     release_year = data.get('release_year')
-    description = data.get('description', '').strip()
-    button_layout = data.get('button_layout', '').strip()
+    description = str(data.get('description') or '').strip()
+    button_layout = str(data.get('button_layout') or '').strip()
 
     if not name:
         return error(_('Controller name is required'), 400)
@@ -404,8 +408,10 @@ def api_get_system_controllers(system_id):
 @handle_api_errors
 def api_set_system_default_controllers(system_id):
     """Set multiple default controllers for a system"""
-    data = request.get_json()
-    controller_ids = data.get('controller_ids', [])
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return error(_('Request body must be a JSON object'), 400)
+    controller_ids = data.get('controller_ids') or []
 
     # Verify system exists
     system = query("SELECT id, name FROM systems WHERE id = ?", (system_id,), one=True)
@@ -454,7 +460,9 @@ def api_set_system_default_controllers(system_id):
 @handle_api_errors
 def api_set_system_default_controller(system_id):
     """Set the default controller for a system (legacy single-controller endpoint)"""
-    data = request.get_json()
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return error(_('Request body must be a JSON object'), 400)
     controller_id = data.get('controller_id')
 
     # Verify system exists
