@@ -32,6 +32,7 @@ def test_last_admin_cannot_be_demoted_or_deactivated(admin_test_client, monkeypa
     resp = client.post('/api/users/7/update', json=body, headers={'X-CSRF-Token': csrf})
     assert resp.status_code == 403
     assert resp.get_json()['success'] is False
+    assert resp.get_json()['error'] == 'The last admin must stay an active admin'
     assert writes == []
 
 
@@ -195,3 +196,47 @@ def test_screenscraper_passwords_are_masked():
     assert masked['screenscraper_username'] == 'player1'
     assert masked['screenscraper_password'] == '***cret'
     assert masked['screenscraper_devpassword'] == '***9876'
+
+
+@pytest.mark.parametrize('job_type,params,role,allowed', [
+    ('bulk_scrape', {'system_id': 3}, 'player', False),       # editor job
+    ('bulk_scrape', {'system_id': 3}, 'editor', True),
+    ('ra_refresh', {'system_id': None}, 'editor', False),     # admin-only job
+    ('psn_refresh', {'user_id': 1}, 'player', False),         # someone else's job
+    ('psn_refresh', {'user_id': 2}, 'player', True),          # the caller's own
+])
+def test_dismiss_job_needs_the_resume_rights(admin_test_client, monkeypatch,
+                                             job_type, params, role, allowed):
+    """Dismissing a recoverable job throws it away, so it takes the rights
+    resuming it does (it was open to any signed-in user)."""
+    import json as _json
+    import app as app_module
+    import services.jobs.base as base
+    real_query = app_module.query
+
+    def fake_query(sql, args=(), one=False):
+        if 'FROM job_queue' in sql:
+            return {'job_type': job_type, 'params': _json.dumps(params)}
+        return real_query(sql, args, one=one)
+
+    monkeypatch.setattr(app_module, 'query', fake_query)
+    dismissed = []
+    monkeypatch.setattr(base, 'dismiss_job', dismissed.append)
+    client, csrf = admin_test_client(user={'id': 2, 'username': 'u-stub', 'role': role})
+    resp = client.post('/api/jobs/dismiss/4242', headers={'X-CSRF-Token': csrf})
+    assert (resp.status_code, dismissed) == ((200, [4242]) if allowed else (403, []))
+
+
+@pytest.mark.parametrize('role,shown', [('player', False), ('editor', True)])
+def test_recovery_banner_hides_jobs_the_user_cannot_manage(admin_test_client, monkeypatch,
+                                                           role, shown):
+    """An interrupted bulk scrape is an editor job: a player is not shown it."""
+    import services.jobs.base as base
+    monkeypatch.setattr(base, 'get_recoverable_jobs', lambda: [{
+        'id': 4243, 'job_type': 'bulk_scrape', 'status': 'interrupted',
+        'params': {'system_id': 3, 'system_name': 'SNES', 'game_count': 9},
+        'progress': {'current': 4, 'total': 9}}])
+    client, _csrf = admin_test_client(user={'id': 2, 'username': 'u-stub', 'role': role})
+    resp = client.get('/dashboard')
+    assert resp.status_code == 200
+    assert ('recoveryItem4243' in resp.get_data(as_text=True)) is shown

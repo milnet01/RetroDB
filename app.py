@@ -1343,6 +1343,11 @@ def dashboard():
             jtype = rj['job_type']
             status = rj['status']
 
+            # A job the user may neither resume nor dismiss is not offered:
+            # the banner would show buttons that only answer 403.
+            if not _may_manage_job(jtype, params):
+                continue
+
             # Determine if this job had real progress (interrupted mid-run)
             # vs was just queued (no work done yet)
             has_progress = progress.get('current', 0) > 0
@@ -1415,6 +1420,16 @@ _RESUME_ROLES = {
 }
 
 
+def _may_manage_job(job_type, params):
+    """PASS-59-118 — resuming or dismissing a recoverable job needs the
+    rights starting it needed: the start route's role, and a per-user job
+    belongs to its user (admins excepted)."""
+    role = g.user['role']
+    owner = (params or {}).get('user_id')
+    return (role in _RESUME_ROLES.get(job_type, ('admin',))
+            and (owner is None or owner == g.user['id'] or role == 'admin'))
+
+
 @app.route('/api/jobs/resume/<int:job_id>', methods=['POST'])
 @login_required
 @handle_api_errors
@@ -1456,12 +1471,7 @@ def resume_job(job_id):
     if not handler or not hasattr(handler, 'resume_from_params'):
         return api_error(f"No handler for job type '{job['job_type']}'", 400)
 
-    # PASS-59-118 — resuming needs the rights starting needed: the start
-    # route's role, and a per-user job belongs to its user (admins excepted).
-    role = g.user['role']
-    need = _RESUME_ROLES.get(job['job_type'], ('admin',))
-    owner = (job.get('params') or {}).get('user_id')
-    if role not in need or (owner is not None and owner != g.user['id'] and role != 'admin'):
+    if not _may_manage_job(job['job_type'], job.get('params')):
         return api_error('You do not have permission to perform this action', 403)
 
     resumed = handler.resume_from_params(job['params'], progress=job.get('progress'))
@@ -1477,8 +1487,19 @@ def resume_job(job_id):
 @login_required
 @handle_api_errors
 def dismiss_job_route(job_id):
-    """Dismiss a recoverable job so it no longer appears on the dashboard."""
+    """Dismiss a recoverable job so it no longer appears on the dashboard.
+
+    The same rights as resuming it: dismissing throws the job away.
+    """
     from services.jobs.base import dismiss_job
+    row = query("SELECT job_type, params FROM job_queue WHERE id = ?", (job_id,), one=True)
+    if row:
+        try:
+            params = json.loads(row['params']) if row['params'] else {}
+        except (TypeError, ValueError):
+            params = {}
+        if not _may_manage_job(row['job_type'], params if isinstance(params, dict) else {}):
+            return api_error('You do not have permission to perform this action', 403)
     dismiss_job(job_id)
     return api_success()
 

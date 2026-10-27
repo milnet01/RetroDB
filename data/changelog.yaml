@@ -19,6 +19,8 @@
     label: Screenshot duplicate finder works in the downloaded app
   - type: fix
     label: ScreenScraper passwords are hidden, and the last admin stays admin
+  - type: fix
+    label: Interrupted jobs are only offered to people allowed to run them
   - type: performance
     label: Faster trophies, library imports and maintenance tools
   body: |
@@ -66,6 +68,11 @@
         passwords masked, like your other keys. The only admin account can
         no longer be switched to editor or turned off, which would have
         left nobody able to manage RetroDB.</li>
+      <li><strong>Interrupted jobs are only offered to people allowed to run
+        them.</strong> The dashboard's interrupted-job banner now shows a
+        job only to someone allowed to start it, for example a bulk scrape
+        only to editors and admins. Other accounts no longer see it and can
+        no longer dismiss it.</li>
       <li><strong>Faster trophies, library imports and maintenance
         tools.</strong> The Trophies page, Steam, Xbox and PlayStation
         library imports, collector trophies, Calculate storage and the

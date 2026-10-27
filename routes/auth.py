@@ -236,7 +236,7 @@ def api_update_user(user_id):
             admin_count = query("SELECT COUNT(*) as count FROM users "
                                 "WHERE role = 'admin' AND is_active = 1", one=True)
             if admin_count['count'] <= 1:
-                return error(_('Cannot delete the last admin user'), code=403)
+                return error(_('The last admin must stay an active admin'), code=403)
 
     updates = []
     params = []
