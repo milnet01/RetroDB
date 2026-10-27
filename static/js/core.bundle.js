@@ -1767,6 +1767,8 @@ const UnifiedToastController = {
             const callback = this.pollCallbacks.get(type);
             if (callback) callback(data);
 
+            document.dispatchEvent(new CustomEvent('retrodb:job-status', {detail: {type, data}}));
+
         } catch (e) {
             if (e.name === 'AbortError') return;  // Expected when aborting stale requests
             console.debug(`Toast poll error for ${type}:`, e.message || e);

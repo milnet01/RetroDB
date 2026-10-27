@@ -323,9 +323,9 @@
 function startAltTitlesBackfill() {
     showConfirm(
         '🌐 Backfill Alternate Titles',
-        'Scan every scraped game for alternate / regional titles using IGDB and ScreenScraper search results. ' +
-        '<br><br>No media is downloaded, no other metadata is touched — just alternate title lists are merged into the DB.' +
-        '<br><br>This may take a while for large libraries.',
+        'Scan every scraped game for alternate / regional titles using IGDB and ScreenScraper search results.\n\n' +
+        'No media is downloaded, no other metadata is touched — just alternate title lists are merged into the DB.\n\n' +
+        'This may take a while for large libraries.',
         function() {
             fetch('/api/maintenance/alt-titles-backfill/start', {
                 method: 'POST',
@@ -354,10 +354,10 @@ function startAltTitlesBackfill() {
 function startHltbBulk() {
     showConfirm(
         '⏱ Bulk HLTB Lookup',
-        'Fetch HowLongToBeat playtime for every game.<br><br>' +
-        '<strong>High-confidence primary-title matches</strong> apply automatically.<br>' +
-        '<strong>Alt-title matches</strong> and <strong>low-confidence</strong> matches queue for review on the <em>HLTB Pending Review</em> page.<br><br>' +
-        'By default only games without an existing HLTB match are processed. HLTB rate-limits, so this runs slowly in the background &mdash; you can leave the page.',
+        'Fetch HowLongToBeat playtime for every game.\n\n' +
+        'High-confidence primary-title matches apply automatically.\n' +
+        'Alt-title matches and low-confidence matches queue for review on the HLTB Pending Review page.\n\n' +
+        'By default only games without an existing HLTB match are processed. HLTB rate-limits, so this runs slowly in the background — you can leave the page.',
         function() {
             fetch('/api/hltb/bulk/start', {
                 method: 'POST',
@@ -408,11 +408,11 @@ document.addEventListener('DOMContentLoaded', refreshHltbPendingCount);
 function startImageResize() {
     showConfirm(
         '🖼️ Image Resizer',
-        'Standardize all images to consistent sizes:<br><br>' +
-        '<strong>Boxart, Screenshots, 3D Boxart:</strong> 1080px height<br>' +
-        '<strong>Controllers &amp; Hardware:</strong> 1280px longest edge<br><br>' +
+        'Standardize all images to consistent sizes:\n\n' +
+        'Boxart, Screenshots, 3D Boxart: 1080px height\n' +
+        'Controllers & Hardware: 1280px longest edge\n\n' +
         'Small images will be AI-upscaled (Real-ESRGAN), large images will be downscaled (Lanczos). ' +
-        'Images already within 80-120% of target size are skipped.<br><br>' +
+        'Images already within 80-120% of target size are skipped.\n\n' +
         'This may take a while for large collections.',
         function() {
             fetch('/api/maintenance/image-resize/start', {

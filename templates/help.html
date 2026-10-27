@@ -618,6 +618,8 @@
             <li>Images and media from secondary sources when the primary doesn't have them</li>
             <li>Automatic gap-filling across scrapers for maximum coverage</li>
             <li>Sort title is auto-generated from the game title during scraping</li>
+            <li>A source is searched only when it lists the game's system, and only on that system: RAWG has no Intellivision, so Intellivision games are not looked up on RAWG, where they would only match games from other platforms</li>
+            <li>When AI is on, it also gives the game's official title as released in its ROM's region, and the game is renamed to it, in a single-game scrape and in Bulk Scrape (see <a href="#ai-fill">AI Fill</a>)</li>
         </ul>
 
         <h3>Media Handling</h3>
@@ -731,6 +733,7 @@
             <li><strong>Similar games</strong> are always refreshed (AI data is more reliable for this field)</li>
             <li><strong>Cross-mapped ratings</strong> &mdash; If one rating system is known, empty ratings in other systems are automatically filled using maturity tier cross-mapping</li>
             <li><strong>Sort title</strong> is auto-generated when filled</li>
+            <li><strong>Official title</strong> &mdash; the AI also names the game's official title as released in its ROM's region, and the game is renamed to it, in AI Fill and whenever AI fills gaps during scraping. The old name is kept as an alternate title. A title you typed yourself or accepted in Official Names is never renamed</li>
             <li><strong>Players</strong> field normalizes ranges (e.g. "1-4" becomes 4)</li>
         </ul>
 

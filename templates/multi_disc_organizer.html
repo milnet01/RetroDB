@@ -341,19 +341,15 @@ async function organizeMultiDisc(index) {
     
     showConfirm(game.in_folder ? '📝 Create M3U' : '📁 Organize Multi-Disc', 
         game.in_folder 
-            ? `<p>This will create an M3U playlist for the existing folder:</p>
-               <ul style="text-align: left; margin: 0.5rem 0; padding-left: 1.5rem;">
-                   <li>Folder: <code>${escapeHtml(game.name)}/</code></li>
-                   <li>Create <code>${escapeHtml(game.name)}.m3u</code> playlist</li>
-                   <li>Add <code>noload.txt</code> if missing</li>
-               </ul>`
-            : `<p>This will:</p>
-               <ul style="text-align: left; margin: 0.5rem 0; padding-left: 1.5rem;">
-                   <li>Create folder: <code>${escapeHtml(game.name)}/</code></li>
-                   <li>Move ${game.disc_count} disc files into the folder</li>
-                   <li>Add <code>noload.txt</code></li>
-                   <li>Create <code>${escapeHtml(game.name)}.m3u</code> playlist</li>
-               </ul>`,
+            ? 'This will create an M3U playlist for the existing folder:\n'
+              + `• Folder: ${game.name}/\n`
+              + `• Create ${game.name}.m3u playlist\n`
+              + '• Add noload.txt if missing'
+            : 'This will:\n'
+              + `• Create folder: ${game.name}/\n`
+              + `• Move ${game.disc_count} disc files into the folder\n`
+              + '• Add noload.txt\n'
+              + `• Create ${game.name}.m3u playlist`,
         async function() {
             try {
                 const response = await fetch('/api/reports/organize-multidisc', {
@@ -389,8 +385,8 @@ async function organizeAllMultiDisc() {
     if (multiDiscGames.length === 0) return;
     
     showConfirm('📁 Organize All', 
-        `<p>Organize all ${multiDiscGames.length} multi-disc games?</p>
-        <p style="color: var(--text-secondary); margin-top: 0.5rem;">Each game will get its own folder with an M3U playlist.</p>`,
+        `Organize all ${formatNumber(multiDiscGames.length)} multi-disc games?\n\n`
+        + 'Each game will get its own folder with an M3U playlist.',
         async function() {
             let success = 0;
             let failed = 0;

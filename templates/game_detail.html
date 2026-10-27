@@ -4917,6 +4917,34 @@ document.getElementById('scrapeModal')?.addEventListener('click', function(e) {
 // Escape: scrapeModal and editModal close through their focus traps
 // (data-focus-trap-onescape).
 
+// Apply buttons and the one-tick-per-column boxes in the search results.
+// Bound once: performSearch runs per search, and a listener added there
+// fired once per search made, so one Apply click started several applies
+// whose gauges drew over each other (the bar went back and forth).
+document.addEventListener('DOMContentLoaded', function() {
+    const resultsDiv = document.getElementById('scrapeResults');
+    if (!resultsDiv) return;
+    resultsDiv.addEventListener('click', function(e) {
+        if (e.target.classList.contains('apply-btn')) {
+            const source = e.target.dataset.source;
+            const id = e.target.dataset.id;
+            applyMetadata(source + '_' + id);
+        }
+    });
+
+    // Radio-like behavior: only one checkbox per column
+    resultsDiv.addEventListener('change', function(e) {
+        if (e.target.classList.contains('scrape-select-input') && e.target.checked) {
+            const column = e.target.closest('.scrape-column');
+            if (column) {
+                column.querySelectorAll('.scrape-select-input').forEach(cb => {
+                    if (cb !== e.target) cb.checked = false;
+                });
+            }
+        }
+    });
+});
+
 // Perform search via AJAX
 async function performSearch(event) {
     event.preventDefault();
@@ -5098,27 +5126,6 @@ async function performSearch(event) {
                     `;
                 }).join('');
             };
-            
-            // Add click handler for apply buttons
-            resultsDiv.addEventListener('click', function(e) {
-                if (e.target.classList.contains('apply-btn')) {
-                    const source = e.target.dataset.source;
-                    const id = e.target.dataset.id;
-                    applyMetadata(source + '_' + id);
-                }
-            });
-
-            // Radio-like behavior: only one checkbox per column
-            resultsDiv.addEventListener('change', function(e) {
-                if (e.target.classList.contains('scrape-select-input') && e.target.checked) {
-                    const column = e.target.closest('.scrape-column');
-                    if (column) {
-                        column.querySelectorAll('.scrape-select-input').forEach(cb => {
-                            if (cb !== e.target) cb.checked = false;
-                        });
-                    }
-                }
-            });
             
             // Build columns dynamically based on priority and enabled status
             const enabledScrapers = priority.filter(s => enabled[s] && scraperConfig[s]);

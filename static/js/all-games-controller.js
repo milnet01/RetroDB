@@ -1612,6 +1612,22 @@ const AllGamesController = (function() {
 
     window.addEventListener('beforeunload', destroy);
 
+    // Bulk Scrape: re-render each card as its game finishes scraping, from
+    // the shared job poller (toast-controller.js), so the Library and system
+    // pages update live whether or not the Bulk Scrape window is open.
+    const _liveRefreshed = new Set();  // "<job id>:<game id>" already refreshed
+    document.addEventListener('retrodb:job-status', (e) => {
+        const {type, data} = e.detail || {};
+        if (type !== 'bulk-scrape' || !data || !Array.isArray(data.recently_scraped_ids)) return;
+        const fresh = data.recently_scraped_ids.filter(id => !_liveRefreshed.has(`${data.job_id}:${id}`));
+        if (!fresh.length) return;
+        // The server keeps the last 20 ids, so the set never needs more than
+        // a few hundred entries.
+        if (_liveRefreshed.size > 500) _liveRefreshed.clear();
+        fresh.forEach(id => _liveRefreshed.add(`${data.job_id}:${id}`));
+        refreshCards(fresh);
+    });
+
     /**
      * Refresh one or more game cards with fresh data from the server.
      * Fetches card-compatible data and fully re-renders each card in-place.
