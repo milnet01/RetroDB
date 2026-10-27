@@ -318,8 +318,10 @@ Anything not persisted in the last progress-tick window (≤ 10 items or
 2. `sweep_old_job_history()` — deletes terminal rows older than retention
    (§10).
 3. The dashboard reads `get_recoverable_jobs()` and offers a banner.
-   `BulkScrapeJob` deduplicates by `(system_id, scrape_mode)` and
-   auto-dismisses losers (`base.py:606`).
+   `BulkScrapeJob` deduplicates single-system scrapes by
+   `(system_id, scrape_mode)` and auto-dismisses losers (`base.py:606`).
+   Multi-system scrapes (`system_id` None) are distinct selections and are
+   never deduplicated.
 4. User clicks "Resume" → route calls `<job>.resume_from_params(params,
    progress)` which restarts the worker at `progress['current']`. **Seven
    classes implement resume**: `BulkScrapeJob`, `RASyncJob`, `RARefreshJob`,

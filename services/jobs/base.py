@@ -627,13 +627,16 @@ def get_recoverable_jobs():
                 })
 
             # Deduplicate: for bulk_scrape, keep only the best record per
-            # (system_id, scrape_mode) — prefer most progress, then newest
+            # (system_id, scrape_mode) — prefer most progress, then newest.
+            # A multi-system scrape (system_id None) is a hand-picked game
+            # selection, so two of them are different work, not duplicates:
+            # keying them all to (None, mode) auto-dismissed all but one.
             best = {}  # key -> job
             dismiss_ids = []
             jobs = []
 
             for job in all_jobs:
-                if job['job_type'] == 'bulk_scrape':
+                if job['job_type'] == 'bulk_scrape' and job['params'].get('system_id') is not None:
                     sid = job['params'].get('system_id')
                     mode = job['params'].get('scrape_mode', 'fill_missing')
                     key = (sid, mode)

@@ -71,8 +71,9 @@ class RARefreshJob:
                 'error': self.error_message
             }
 
-    def start(self, system_id=None):
-        """Start RA refresh scan"""
+    def start(self, system_id=None, system_name=None):
+        """Start RA refresh scan. `system_name` is shown until the worker
+        reads the name from the DB (routes/ra_sync.py passes it)."""
         with self._lock:
             if self.running:
                 return {'success': False, 'error': 'Refresh already running'}
@@ -88,6 +89,7 @@ class RARefreshJob:
             self._singleton_fd = singleton_fd
             self.job_id = f"ra_refresh_{int(time.time())}"
             self.system_id = system_id
+            self.system_name = system_name
             self.running = True
 
         # Start background thread

@@ -230,6 +230,13 @@ class HLTBBulkLookupJob:
                         last_persist = time.time()
 
                     try:
+                        # Commit the previous game's write before the network
+                        # lookup: an open write transaction holds SQLite's one
+                        # writer lock, and batching 25 games kept it across 25
+                        # HLTB round trips, stalling every other writer.
+                        if write_conn.in_transaction:
+                            _commit_with_retry(write_conn)
+
                         alt_titles = _extract_alt_titles_list(game.get('alternate_titles'))
 
                         result = lookup_playtime(
@@ -311,9 +318,6 @@ class HLTBBulkLookupJob:
                             ))
                             with self._lock:
                                 self.queued_count += 1
-
-                        if (i + 1) % 25 == 0:
-                            _commit_with_retry(write_conn)
 
                     except Exception as e:
                         logger.warning(f"HLTB bulk: failed for game {game['id']} ({game['title']}): {e}")
