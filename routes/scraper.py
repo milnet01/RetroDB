@@ -72,6 +72,8 @@ SECRET_API_KEY_FIELDS = frozenset({
     'ai_claude_api_key',
     'steam_api_key',
     'xbox_client_secret',
+    'screenscraper_password',
+    'screenscraper_devpassword',
 })
 
 MASKED_SENTINEL_PREFIX = '***'

@@ -180,3 +180,18 @@ def test_psn_games_api_clamps_paging(admin_test_client):
     assert resp.status_code == 200
     body = resp.get_json()
     assert body['per_page'] == 1 and body['page'] == 1
+
+
+def test_screenscraper_passwords_are_masked():
+    """The ScreenScraper account and developer passwords are secrets: masked
+    on GET /api/scraper-settings and the settings page, kept on a masked echo."""
+    from routes.scraper import SECRET_API_KEY_FIELDS, mask_api_keys_for_response
+    assert {'screenscraper_password', 'screenscraper_devpassword'} <= SECRET_API_KEY_FIELDS
+    masked = mask_api_keys_for_response({
+        'screenscraper_username': 'player1',
+        'screenscraper_password': 'hunter2secret',
+        'screenscraper_devpassword': 'devpass9876',
+    })
+    assert masked['screenscraper_username'] == 'player1'
+    assert masked['screenscraper_password'] == '***cret'
+    assert masked['screenscraper_devpassword'] == '***9876'
