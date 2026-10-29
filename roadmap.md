@@ -10013,6 +10013,44 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Status**: todo.
 - **Source**: user, 2026-10-29.
 
+---
+
+#### Pass 59.190 A Sales card on the Analytics page (feature, M).
+- **Target**: a Sales card on `templates/analytics.html` built from
+  `games.units_sold`: total copies sold, a bar chart of totals per
+  system, the 10 best-selling games (linked), and coverage (games
+  with a figure / all games).
+- **Why**: AI Fill and Bulk AI Fill now fill sales figures; nothing
+  shows them except the game page.
+- **Status**: todo.
+
+---
+
+#### Pass 59.191 Sort and filter the Library by copies sold (feature, S).
+- **Target**: a Copies sold sort option beside Critic score and User
+  score (`templates/system_games.html`, `AllGamesController`, so the
+  Library and system pages stay in sync), and a "has a sales figure"
+  filter.
+- **Status**: todo.
+
+---
+
+#### Pass 59.192 Sales totals by publisher, genre and decade (feature, M).
+- **Target**: tabs on the Analytics Sales card (PASS-59-190)
+  totalling `units_sold` by publisher, by genre (multi-value: a game
+  counts under each of its genres, and the card says so) and by
+  release decade.
+- **Blocked by**: PASS-59-190.
+- **Status**: todo.
+
+---
+
+#### Pass 59.193 Best-seller badges on a game's page (feature, S).
+- **Target**: a badge on the game page from `units_sold`: its rank
+  among the system's games with a figure ("#3 best seller on SNES in
+  your library"), shown only for the top 10.
+- **Status**: todo.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
