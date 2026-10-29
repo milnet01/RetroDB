@@ -684,7 +684,9 @@ def _build_prompt(title, system_name, missing_fields, existing_values=None,
                 'the press (USA), Wikipedia\'s list of best-selling games for the platform '
                 'and the game\'s own Wikipedia article, then VGChartz. When only a '
                 'total across several platforms is published, return null rather than '
-                'that total. Return null if no figure is published.'
+                'that total. Return null if no figure is published. If you have a '
+                'web search tool, search for this figure before answering; never give '
+                'it from memory.'
             )
 
     if official_title_for:
@@ -922,6 +924,9 @@ def _call_claude(prompt, api_key, model, web_search=False, **_kwargs):
         'system': 'You are a retro gaming metadata expert. Always respond with valid JSON only. No markdown, no code fences.',
     }
     if web_search:
+        # Lower effort means fewer tool calls: at low effort Claude answered
+        # without searching (GTA IV, 2026-10-29).
+        payload['output_config'] = {'effort': 'medium'}
         # The basic version: the newer ones default to being called from
         # code execution, which this request does not run.
         payload['tools'] = [{'type': 'web_search_20250305', 'name': 'web_search',

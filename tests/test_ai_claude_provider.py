@@ -134,6 +134,16 @@ def test_search_is_capped_per_game(monkeypatch):
     assert scrape_ai.CLAUDE_MAX_SEARCHES == 5
 
 
+def test_searching_claude_is_told_to_search_for_sales(monkeypatch):
+    """At low effort, with nothing in the prompt asking for a search, Claude
+    answered GTA IV without searching and left units_sold blank."""
+    sent = _reply(monkeypatch, {'content': [{'type': 'text', 'text': '{}'}]})
+    scrape_ai._call_claude('p', 'k', 'claude-haiku-5-5', web_search=True)
+    assert sent['output_config'] == {'effort': 'medium'}
+    prompt = scrape_ai._build_prompt('Grand Theft Auto IV', 'Microsoft Xbox 360', ['units_sold'])
+    assert 'search for this figure before answering' in prompt
+
+
 def test_answer_is_the_text_after_the_last_search(monkeypatch):
     """Claude writes a line before each search, and citations split the
     answer into several text blocks."""
