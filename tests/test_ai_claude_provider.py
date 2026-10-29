@@ -114,3 +114,107 @@ def test_settings_page_has_the_key_test_button(admin_test_client, setup_complete
     assert 'id="testAiKeyBtn"' in page and 'data-on-click="testAiKey"' in page
     assert 'window.testAiKey = testAiKey' in page
     assert 'The key works: {provider} answered, using {model}.' in page
+
+
+# Web search (PASS-59-186): without it Claude answers from memory, and the
+# prompt tells it to leave a sales figure blank unless one is published.
+# Each search is billed, so it is a switch, off unless the user turns it on.
+
+def test_no_search_unless_asked(monkeypatch):
+    sent = _reply(monkeypatch, {'content': [{'type': 'text', 'text': '{}'}]})
+    scrape_ai._call_claude('p', 'k', 'claude-haiku-5-5')
+    assert 'tools' not in sent
+
+
+def test_search_is_capped_per_game(monkeypatch):
+    sent = _reply(monkeypatch, {'content': [{'type': 'text', 'text': '{}'}]})
+    scrape_ai._call_claude('p', 'k', 'claude-haiku-5-5', web_search=True)
+    assert sent['tools'] == [{'type': 'web_search_20250305', 'name': 'web_search',
+                              'max_uses': scrape_ai.CLAUDE_MAX_SEARCHES}]
+    assert scrape_ai.CLAUDE_MAX_SEARCHES == 5
+
+
+def test_answer_is_the_text_after_the_last_search(monkeypatch):
+    """Claude writes a line before each search, and citations split the
+    answer into several text blocks."""
+    _reply(monkeypatch, {'stop_reason': 'end_turn', 'content': [
+        {'type': 'text', 'text': "I'll look up the sales."},
+        {'type': 'server_tool_use', 'id': 's1', 'name': 'web_search', 'input': {'query': 'q'}},
+        {'type': 'web_search_tool_result', 'tool_use_id': 's1', 'content': []},
+        {'type': 'text', 'text': '{"units_sold": '},
+        {'type': 'text', 'text': '"11000000"}', 'citations': [{'url': 'u'}]}]})
+    raw = scrape_ai._call_claude('p', 'k', 'claude-haiku-5-5', web_search=True)
+    assert raw == '{"units_sold": "11000000"}'
+
+
+def test_paused_search_turn_is_continued(monkeypatch):
+    calls = []
+    replies = [
+        {'stop_reason': 'pause_turn', 'content': [
+            {'type': 'server_tool_use', 'id': 's1', 'name': 'web_search', 'input': {}}]},
+        {'stop_reason': 'end_turn', 'content': [
+            {'type': 'web_search_tool_result', 'tool_use_id': 's1', 'content': []},
+            {'type': 'text', 'text': '{"genre": "Action"}'}]},
+    ]
+
+    class _Reply:
+        status_code = 200
+
+    def fake_post(url, json_data=None, **_kw):
+        calls.append([m['role'] for m in json_data['messages']])
+        return _Reply()
+
+    monkeypatch.setattr(scrape_ai, 'http_post', fake_post)
+    monkeypatch.setattr(scrape_ai, 'safe_json', lambda _r: replies[len(calls) - 1])
+    raw = scrape_ai._call_claude('p', 'k', 'claude-haiku-5-5', web_search=True)
+    assert raw == '{"genre": "Action"}'
+    assert calls == [['user'], ['user', 'assistant']]
+
+
+@pytest.mark.parametrize('saved,expected', [('on', True), ('', False), (None, False)])
+def test_switch_is_read_from_the_saved_settings(saved, expected, tmp_path, monkeypatch):
+    import json
+    keys = {'ai_provider': 'claude', 'ai_claude_api_key': 'k'}
+    if saved is not None:
+        keys['ai_claude_web_search'] = saved
+    path = tmp_path / 'scraper_settings.json'
+    path.write_text(json.dumps({'api_keys': keys}))
+    monkeypatch.setattr(scrape_ai, 'SCRAPER_SETTINGS_FILE', str(path))
+    assert scrape_ai._get_active_provider()['web_search'] is expected
+
+
+def test_switch_can_be_saved():
+    from services.scraper_settings_validators import validate_scraper_api_keys
+    ok, reason, clean = validate_scraper_api_keys({'ai_claude_web_search': 'on'})
+    assert ok, reason
+    assert clean['ai_claude_web_search'] == 'on'
+
+
+def test_settings_page_explains_the_switch(admin_test_client, setup_complete):
+    import copy
+    import settings_manager
+    settings = copy.deepcopy(settings_manager.DEFAULT_SETTINGS)
+    settings['setup_completed'] = True
+    client, _csrf = admin_test_client(settings=settings)
+    page = client.get('/settings').get_data(as_text=True)
+    assert 'id="apikey-ai-claude-web-search"' in page
+    assert 'aria-describedby="claudeWebSearchWhy"' in page
+    assert 'such as copies sold' in page
+    assert "ai_claude_web_search: document.getElementById('apikey-ai-claude-web-search')" in page
+
+
+@pytest.mark.parametrize('on', [True, False])
+def test_ai_fill_passes_the_switch_on(on, monkeypatch):
+    seen = {}
+
+    def fake_call(prompt, api_key, model, **kw):
+        seen.update(kw)
+        return '{"genre": "Action"}'
+
+    monkeypatch.setattr(scrape_ai, '_get_active_provider', lambda: {
+        'provider': 'claude', 'api_key': 'k', 'model': 'm', 'web_search': on})
+    monkeypatch.setattr(scrape_ai, 'rate_limit', lambda **k: None)
+    monkeypatch.setattr(scrape_ai, '_call_claude', fake_call)
+    scrape_ai.get_game_details(None, 'Grand Theft Auto IV', 'Microsoft Xbox 360',
+                               existing_metadata={'genre': ''})
+    assert seen.get('web_search', False) is on

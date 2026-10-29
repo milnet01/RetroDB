@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-29 14:21+0200\n"
+"POT-Creation-Date: 2026-10-29 17:10+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -244,10 +244,10 @@ msgstr "El disco extra y el juego principal deben estar en el mismo sistema"
 #: routes/games.py:1346 routes/platform_import.py:297
 #: routes/platform_import.py:667 routes/platform_import.py:1032
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
-#: routes/scrape_logs.py:219 routes/scraper.py:202 routes/scraper.py:530
-#: routes/scraper.py:931 routes/settings.py:319 routes/settings.py:343
-#: routes/settings.py:458 routes/settings.py:537 routes/settings.py:551
-#: routes/settings.py:595 routes/settings.py:611 routes/settings.py:647
+#: routes/scrape_logs.py:219 routes/scraper.py:203 routes/scraper.py:531
+#: routes/scraper.py:932 routes/settings.py:320 routes/settings.py:344
+#: routes/settings.py:459 routes/settings.py:538 routes/settings.py:552
+#: routes/settings.py:596 routes/settings.py:612 routes/settings.py:648
 #: routes/steam_achievements.py:138 routes/systems.py:292 routes/systems.py:482
 #: routes/trophies.py:508 routes/trophies.py:706 routes/trophies.py:754
 #: routes/trophies.py:1582 routes/trophies.py:1606 routes/trophies.py:1651
@@ -258,8 +258,8 @@ msgstr "Se produjo un error interno"
 
 #: routes/bonus_discs.py:278 routes/bonus_discs.py:309
 #: routes/controllers.py:216 routes/controllers.py:280
-#: routes/controllers.py:413 routes/controllers.py:465 routes/settings.py:223
-#: routes/settings.py:493 routes/settings.py:561 routes/systems.py:313
+#: routes/controllers.py:413 routes/controllers.py:465 routes/settings.py:224
+#: routes/settings.py:494 routes/settings.py:562 routes/systems.py:313
 msgid "Request body must be a JSON object"
 msgstr "El cuerpo de la solicitud debe ser un objeto JSON"
 
@@ -554,7 +554,7 @@ msgid "No filename provided"
 msgstr "No se proporcionó ningún nombre de archivo"
 
 #: routes/games_media.py:81 routes/reports.py:688 routes/scrape_logs.py:129
-#: routes/scrape_logs.py:154 routes/scrape_logs.py:203 routes/settings.py:352
+#: routes/scrape_logs.py:154 routes/scrape_logs.py:203 routes/settings.py:353
 msgid "Invalid filename"
 msgstr "Nombre de archivo no válido"
 
@@ -718,7 +718,7 @@ msgstr "Siguiente disco insertado"
 msgid "Unknown image type"
 msgstr "Tipo de imagen desconocido"
 
-#: routes/museum.py:385 routes/scraper.py:772
+#: routes/museum.py:385 routes/scraper.py:773
 msgid "No AI provider configured"
 msgstr "No hay ningún proveedor de IA configurado"
 
@@ -933,63 +933,63 @@ msgstr "Archivo no encontrado"
 msgid "Log file not found"
 msgstr "Archivo de registro no encontrado"
 
-#: routes/scraper.py:217
+#: routes/scraper.py:218
 #, python-format
 msgid "invalid scraper settings: %(reason)s"
 msgstr "ajustes del scraper no válidos: %(reason)s"
 
-#: routes/scraper.py:278
+#: routes/scraper.py:279
 #, python-format
 msgid "invalid api keys: %(reason)s"
 msgstr "claves de API no válidas: %(reason)s"
 
-#: routes/scraper.py:550
+#: routes/scraper.py:551
 msgid "No TGDB API key configured"
 msgstr "No hay ninguna clave de API de TGDB configurada"
 
-#: routes/scraper.py:657
+#: routes/scraper.py:658
 msgid "No ScreenScraper credentials configured"
 msgstr "No hay credenciales de ScreenScraper configuradas"
 
-#: routes/scraper.py:693
+#: routes/scraper.py:694
 msgid "Invalid JSON response from ScreenScraper"
 msgstr "Respuesta JSON no válida de ScreenScraper"
 
-#: routes/scraper.py:696
+#: routes/scraper.py:697
 msgid "Error parsing API response"
 msgstr "Error al analizar la respuesta de la API"
 
-#: routes/scraper.py:698
+#: routes/scraper.py:699
 #, python-format
 msgid "ScreenScraper answered HTTP %(code)s"
 msgstr "ScreenScraper respondió HTTP %(code)s"
 
-#: routes/scraper.py:713
+#: routes/scraper.py:714
 msgid "No RAWG API key configured"
 msgstr "No hay ninguna clave de API de RAWG configurada"
 
-#: routes/scraper.py:818
+#: routes/scraper.py:819
 #, python-format
 msgid "Unknown AI provider: %(provider)s"
 msgstr "Proveedor de IA desconocido: %(provider)s"
 
-#: routes/scraper.py:821
+#: routes/scraper.py:822
 msgid "No response from AI provider"
 msgstr "Sin respuesta del proveedor de IA"
 
-#: routes/scraper.py:826 routes/scraper.py:827
+#: routes/scraper.py:827 routes/scraper.py:828
 #, python-format
 msgid "%(provider)s refused the API key. Check the key and save it again."
 msgstr "%(provider)s rechazó la clave de API. Revisa la clave y guárdala de nuevo."
 
-#: routes/scraper.py:828
+#: routes/scraper.py:829
 #, python-format
 msgid "%(provider)s wants payment: the account has no credit or billing is off."
 msgstr ""
 "%(provider)s pide un pago: la cuenta no tiene crédito o la facturación "
 "está desactivada."
 
-#: routes/scraper.py:829
+#: routes/scraper.py:830
 #, python-format
 msgid ""
 "%(provider)s says a usage limit is reached. Try again later or check your"
@@ -998,79 +998,79 @@ msgstr ""
 "%(provider)s indica que se alcanzó un límite de uso. Inténtalo más tarde "
 "o revisa tu plan."
 
-#: routes/scraper.py:831
+#: routes/scraper.py:832
 #, python-format
 msgid "%(provider)s answered with error %(code)s."
 msgstr "%(provider)s respondió con el error %(code)s."
 
-#: routes/scraper.py:924
+#: routes/scraper.py:925
 #, python-format
 msgid "Connection error: %(error)s"
 msgstr "Error de conexión: %(error)s"
 
-#: routes/scraper.py:927
+#: routes/scraper.py:928
 #, python-format
 msgid "Allowance check not supported for %(scraper)s"
 msgstr "La comprobación de cuota no es compatible con %(scraper)s"
 
-#: routes/settings.py:227
+#: routes/settings.py:228
 msgid "Value is required"
 msgstr "El valor es obligatorio"
 
-#: routes/settings.py:249
+#: routes/settings.py:250
 msgid "Option already exists"
 msgstr "La opción ya existe"
 
-#: routes/settings.py:358
+#: routes/settings.py:359
 msgid "Backup file not found"
 msgstr "Archivo de copia de seguridad no encontrado"
 
-#: routes/settings.py:372
+#: routes/settings.py:373
 msgid "A background job is running. Wait for it to finish before restoring."
 msgstr ""
 "Hay una tarea en segundo plano en ejecución. Espera a que termine antes "
 "de restaurar."
 
-#: routes/settings.py:392
+#: routes/settings.py:393
 msgid "Backup failed its integrity check; restore aborted."
 msgstr ""
 "La copia de seguridad no superó la comprobación de integridad; "
 "restauración cancelada."
 
-#: routes/settings.py:514
+#: routes/settings.py:515
 #, python-format
 msgid "Invalid %(field)s: %(result)s"
 msgstr "%(field)s no válido: %(result)s"
 
-#: routes/settings.py:533 routes/settings.py:592 routes/settings.py:644
+#: routes/settings.py:534 routes/settings.py:593 routes/settings.py:645
 #: routes/tools.py:290 services/js_i18n_strings.py:720
 msgid "Failed to save settings"
 msgstr "No se pudieron guardar los ajustes"
 
-#: routes/settings.py:571 routes/tools.py:282
+#: routes/settings.py:572 routes/tools.py:282
 #, python-format
 msgid "Unknown setting key: %(key)s"
 msgstr "Clave de ajuste desconocida: %(key)s"
 
-#: routes/settings.py:577 routes/tools.py:285
+#: routes/settings.py:578 routes/tools.py:285
 #, python-format
 msgid "Invalid value for '%(key)s': %(reason)s"
 msgstr "Valor no válido para '%(key)s': %(reason)s"
 
-#: routes/settings.py:609
+#: routes/settings.py:610
 msgid "Failed to reset settings"
 msgstr "No se pudieron restablecer los ajustes"
 
-#: routes/settings.py:630
+#: routes/settings.py:631
 #, python-format
 msgid "invalid logging settings: %(reason)s"
 msgstr "ajustes de registro no válidos: %(reason)s"
 
-#: routes/settings.py:660 routes/settings.py:688
+#: routes/settings.py:661 routes/settings.py:689
 msgid "Invalid field. Must be \"genre\" or \"modes\""
 msgstr "Campo no válido. Debe ser \"genre\" o \"modes\""
 
-#: routes/settings.py:691
+#: routes/settings.py:692
 msgid "No mappings provided"
 msgstr "No se proporcionaron asignaciones"
 
@@ -10759,6 +10759,25 @@ msgstr "Región predeterminada"
 #: templates/_settings_tabs/scraping.html:511
 msgid "Test saved AI key"
 msgstr "Probar la clave de IA guardada"
+
+#: templates/_settings_tabs/scraping.html:594
+msgid "Let Claude search the web"
+msgstr "Dejar que Claude busque en la web"
+
+#: templates/_settings_tabs/scraping.html:600
+msgid ""
+"Without search, Claude answers from what it already knows, and leaves "
+"blank anything that needs a published figure, such as copies sold. With "
+"search on, Claude looks these up, but Anthropic charges for each search: "
+"at most 5 searches a game, up to 5 US cents, plus a little for reading "
+"the results. Turn it off before a big bulk scrape to keep the cost down."
+msgstr ""
+"Sin búsqueda, Claude responde con lo que ya sabe y deja en blanco todo lo"
+" que necesite una cifra publicada, como las copias vendidas. Con la "
+"búsqueda activada, Claude las consulta, pero Anthropic cobra cada "
+"búsqueda: como máximo 5 búsquedas por juego, hasta 5 centavos de dólar, "
+"más un poco por leer los resultados. Desactívala antes de un scrapeo "
+"masivo grande para mantener bajo el coste."
 
 #: templates/_settings_tabs/system.html:7
 #: templates/_settings_tabs/system.html:174

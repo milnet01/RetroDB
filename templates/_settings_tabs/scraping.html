@@ -589,6 +589,16 @@
                         <option value="claude-opus-5-5" {{ 'selected' if scraper_settings.api_keys.ai_claude_model == 'claude-opus-5-5' else '' }}>Claude Opus 5.5 — $4.00 in / $20.00 out per 1M tokens</option>
                     </select>
                 </div>
+                <div class="api-key-item">
+                    <div class="api-key-header">
+                        <span class="api-key-name" id="claudeWebSearchLabel">🔎 {{ _('Let Claude search the web') }}</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="apikey-ai-claude-web-search" aria-labelledby="claudeWebSearchLabel" aria-describedby="claudeWebSearchWhy" {{ 'checked' if scraper_settings.api_keys.ai_claude_web_search == 'on' else '' }}>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <span id="claudeWebSearchWhy" class="text-muted" style="font-size: 0.8rem; margin-top: 2px; display: block;">{{ _('Without search, Claude answers from what it already knows, and leaves blank anything that needs a published figure, such as copies sold. With search on, Claude looks these up, but Anthropic charges for each search: at most 5 searches a game, up to 5 US cents, plus a little for reading the results. Turn it off before a big bulk scrape to keep the cost down.') }}</span>
+                </div>
             </div>
         </div>
         

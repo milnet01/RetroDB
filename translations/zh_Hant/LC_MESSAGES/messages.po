@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-29 14:21+0200\n"
+"POT-Creation-Date: 2026-10-29 17:10+0200\n"
 "PO-Revision-Date: 2026-07-01 09:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hant\n"
@@ -238,10 +238,10 @@ msgstr "附贈光碟與主遊戲必須屬於同一系統"
 #: routes/games.py:1346 routes/platform_import.py:297
 #: routes/platform_import.py:667 routes/platform_import.py:1032
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
-#: routes/scrape_logs.py:219 routes/scraper.py:202 routes/scraper.py:530
-#: routes/scraper.py:931 routes/settings.py:319 routes/settings.py:343
-#: routes/settings.py:458 routes/settings.py:537 routes/settings.py:551
-#: routes/settings.py:595 routes/settings.py:611 routes/settings.py:647
+#: routes/scrape_logs.py:219 routes/scraper.py:203 routes/scraper.py:531
+#: routes/scraper.py:932 routes/settings.py:320 routes/settings.py:344
+#: routes/settings.py:459 routes/settings.py:538 routes/settings.py:552
+#: routes/settings.py:596 routes/settings.py:612 routes/settings.py:648
 #: routes/steam_achievements.py:138 routes/systems.py:292 routes/systems.py:482
 #: routes/trophies.py:508 routes/trophies.py:706 routes/trophies.py:754
 #: routes/trophies.py:1582 routes/trophies.py:1606 routes/trophies.py:1651
@@ -252,8 +252,8 @@ msgstr "發生內部錯誤"
 
 #: routes/bonus_discs.py:278 routes/bonus_discs.py:309
 #: routes/controllers.py:216 routes/controllers.py:280
-#: routes/controllers.py:413 routes/controllers.py:465 routes/settings.py:223
-#: routes/settings.py:493 routes/settings.py:561 routes/systems.py:313
+#: routes/controllers.py:413 routes/controllers.py:465 routes/settings.py:224
+#: routes/settings.py:494 routes/settings.py:562 routes/systems.py:313
 msgid "Request body must be a JSON object"
 msgstr "請求正文必須是 JSON 物件"
 
@@ -540,7 +540,7 @@ msgid "No filename provided"
 msgstr "未提供檔名"
 
 #: routes/games_media.py:81 routes/reports.py:688 routes/scrape_logs.py:129
-#: routes/scrape_logs.py:154 routes/scrape_logs.py:203 routes/settings.py:352
+#: routes/scrape_logs.py:154 routes/scrape_logs.py:203 routes/settings.py:353
 msgid "Invalid filename"
 msgstr "無效的檔案名稱"
 
@@ -700,7 +700,7 @@ msgstr "已插入下一張光碟"
 msgid "Unknown image type"
 msgstr "未知的圖片類型"
 
-#: routes/museum.py:385 routes/scraper.py:772
+#: routes/museum.py:385 routes/scraper.py:773
 msgid "No AI provider configured"
 msgstr "未配置 AI 提供方"
 
@@ -901,136 +901,136 @@ msgstr "未找到檔案"
 msgid "Log file not found"
 msgstr "未找到日誌檔案"
 
-#: routes/scraper.py:217
+#: routes/scraper.py:218
 #, python-format
 msgid "invalid scraper settings: %(reason)s"
 msgstr "抓取器設定無效：%(reason)s"
 
-#: routes/scraper.py:278
+#: routes/scraper.py:279
 #, python-format
 msgid "invalid api keys: %(reason)s"
 msgstr "API 金鑰無效：%(reason)s"
 
-#: routes/scraper.py:550
+#: routes/scraper.py:551
 msgid "No TGDB API key configured"
 msgstr "尚未設定 TGDB API 金鑰"
 
-#: routes/scraper.py:657
+#: routes/scraper.py:658
 msgid "No ScreenScraper credentials configured"
 msgstr "尚未設定 ScreenScraper 憑證"
 
-#: routes/scraper.py:693
+#: routes/scraper.py:694
 msgid "Invalid JSON response from ScreenScraper"
 msgstr "ScreenScraper 返回的 JSON 回應無效"
 
-#: routes/scraper.py:696
+#: routes/scraper.py:697
 msgid "Error parsing API response"
 msgstr "解析 API 回應時出錯"
 
-#: routes/scraper.py:698
+#: routes/scraper.py:699
 #, python-format
 msgid "ScreenScraper answered HTTP %(code)s"
 msgstr "ScreenScraper 回傳了 HTTP %(code)s"
 
-#: routes/scraper.py:713
+#: routes/scraper.py:714
 msgid "No RAWG API key configured"
 msgstr "未設定 RAWG API 金鑰"
 
-#: routes/scraper.py:818
+#: routes/scraper.py:819
 #, python-format
 msgid "Unknown AI provider: %(provider)s"
 msgstr "未知的 AI 提供方：%(provider)s"
 
-#: routes/scraper.py:821
+#: routes/scraper.py:822
 msgid "No response from AI provider"
 msgstr "AI 提供方無回應"
 
-#: routes/scraper.py:826 routes/scraper.py:827
+#: routes/scraper.py:827 routes/scraper.py:828
 #, python-format
 msgid "%(provider)s refused the API key. Check the key and save it again."
 msgstr "%(provider)s 拒絕了該 API 金鑰。請檢查金鑰並重新儲存。"
 
-#: routes/scraper.py:828
+#: routes/scraper.py:829
 #, python-format
 msgid "%(provider)s wants payment: the account has no credit or billing is off."
 msgstr "%(provider)s 要求付款：帳戶沒有餘額，或已關閉計費。"
 
-#: routes/scraper.py:829
+#: routes/scraper.py:830
 #, python-format
 msgid ""
 "%(provider)s says a usage limit is reached. Try again later or check your"
 " plan."
 msgstr "%(provider)s 表示已達使用上限。請稍後再試，或檢查您的方案。"
 
-#: routes/scraper.py:831
+#: routes/scraper.py:832
 #, python-format
 msgid "%(provider)s answered with error %(code)s."
 msgstr "%(provider)s 回傳錯誤 %(code)s。"
 
-#: routes/scraper.py:924
+#: routes/scraper.py:925
 #, python-format
 msgid "Connection error: %(error)s"
 msgstr "連接錯誤：%(error)s"
 
-#: routes/scraper.py:927
+#: routes/scraper.py:928
 #, python-format
 msgid "Allowance check not supported for %(scraper)s"
 msgstr "%(scraper)s 不支援配額檢查"
 
-#: routes/settings.py:227
+#: routes/settings.py:228
 msgid "Value is required"
 msgstr "此值為必填項"
 
-#: routes/settings.py:249
+#: routes/settings.py:250
 msgid "Option already exists"
 msgstr "選項已存在"
 
-#: routes/settings.py:358
+#: routes/settings.py:359
 msgid "Backup file not found"
 msgstr "未找到備份檔案"
 
-#: routes/settings.py:372
+#: routes/settings.py:373
 msgid "A background job is running. Wait for it to finish before restoring."
 msgstr "有背景任務正在執行。請等待其完成後再還原。"
 
-#: routes/settings.py:392
+#: routes/settings.py:393
 msgid "Backup failed its integrity check; restore aborted."
 msgstr "備份未通過完整性檢查；已中止還原。"
 
-#: routes/settings.py:514
+#: routes/settings.py:515
 #, python-format
 msgid "Invalid %(field)s: %(result)s"
 msgstr "無效的 %(field)s：%(result)s"
 
-#: routes/settings.py:533 routes/settings.py:592 routes/settings.py:644
+#: routes/settings.py:534 routes/settings.py:593 routes/settings.py:645
 #: routes/tools.py:290 services/js_i18n_strings.py:720
 msgid "Failed to save settings"
 msgstr "儲存設定失敗"
 
-#: routes/settings.py:571 routes/tools.py:282
+#: routes/settings.py:572 routes/tools.py:282
 #, python-format
 msgid "Unknown setting key: %(key)s"
 msgstr "未知的設定鍵：%(key)s"
 
-#: routes/settings.py:577 routes/tools.py:285
+#: routes/settings.py:578 routes/tools.py:285
 #, python-format
 msgid "Invalid value for '%(key)s': %(reason)s"
 msgstr "“%(key)s”的值無效：%(reason)s"
 
-#: routes/settings.py:609
+#: routes/settings.py:610
 msgid "Failed to reset settings"
 msgstr "重置設定失敗"
 
-#: routes/settings.py:630
+#: routes/settings.py:631
 #, python-format
 msgid "invalid logging settings: %(reason)s"
 msgstr "日誌設定無效：%(reason)s"
 
-#: routes/settings.py:660 routes/settings.py:688
+#: routes/settings.py:661 routes/settings.py:689
 msgid "Invalid field. Must be \"genre\" or \"modes\""
 msgstr "無效的欄位。必須為「genre」或「modes」"
 
-#: routes/settings.py:691
+#: routes/settings.py:692
 msgid "No mappings provided"
 msgstr "未提供對應"
 
@@ -10379,6 +10379,21 @@ msgstr "預設地區"
 #: templates/_settings_tabs/scraping.html:511
 msgid "Test saved AI key"
 msgstr "測試已儲存的 AI 金鑰"
+
+#: templates/_settings_tabs/scraping.html:594
+msgid "Let Claude search the web"
+msgstr "允許 Claude 上網搜尋"
+
+#: templates/_settings_tabs/scraping.html:600
+msgid ""
+"Without search, Claude answers from what it already knows, and leaves "
+"blank anything that needs a published figure, such as copies sold. With "
+"search on, Claude looks these up, but Anthropic charges for each search: "
+"at most 5 searches a game, up to 5 US cents, plus a little for reading "
+"the results. Turn it off before a big bulk scrape to keep the cost down."
+msgstr ""
+"不搜尋時，Claude 只根據已知資訊回答，凡是需要公開數據的內容（如銷量）都會留空。開啟搜尋後，Claude 會查找這些數據，但 "
+"Anthropic 按每次搜尋收費：每個遊戲最多搜尋 5 次，最多 5 美分，另加少量讀取結果的費用。進行大規模批次抓取前請關閉它，以降低費用。"
 
 #: templates/_settings_tabs/system.html:7
 #: templates/_settings_tabs/system.html:174

@@ -37,7 +37,7 @@ _ALLOWED_API_KEY_FIELDS = {
     'ai_provider',
     'ai_gemini_api_key', 'ai_gemini_model', 'ai_gemini_project_id',
     'ai_openai_api_key', 'ai_openai_model',
-    'ai_claude_api_key', 'ai_claude_model',
+    'ai_claude_api_key', 'ai_claude_model', 'ai_claude_web_search',
 }
 
 # Provider selector is enum, not freeform.

@@ -142,7 +142,8 @@ def settings():
                 'ai_openai_api_key': getattr(config, 'AI_OPENAI_API_KEY', ''),
                 'ai_openai_model': '',
                 'ai_claude_api_key': getattr(config, 'AI_CLAUDE_API_KEY', ''),
-                'ai_claude_model': ''
+                'ai_claude_model': '',
+                'ai_claude_web_search': ''
             }
         }
 

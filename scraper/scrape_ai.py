@@ -396,7 +396,12 @@ def _get_active_provider():
         # Gemini GCP project ID for billing (optional)
         project_id = api_keys.get('ai_gemini_project_id', '') if provider == 'gemini' else ''
 
-        return {'provider': provider, 'api_key': api_key, 'model': model, 'project_id': project_id}
+        # Claude searches the web only when the user turned it on: each
+        # search is billed (PASS-59-186).
+        web_search = provider == 'claude' and api_keys.get('ai_claude_web_search') == 'on'
+
+        return {'provider': provider, 'api_key': api_key, 'model': model,
+                'project_id': project_id, 'web_search': web_search}
 
     except Exception as e:
         logger.error(f"Failed to load AI provider settings: {e}")
@@ -870,8 +875,34 @@ def _call_openai(prompt, api_key, model, **_kwargs):
         return None
 
 
-def _call_claude(prompt, api_key, model, **_kwargs):
+# Each search is billed ($10 per 1,000, platform.claude.com web search tool
+# page, 2026-10-29), so a game gets at most this many.
+CLAUDE_MAX_SEARCHES = 5
+# A long search turn can come back paused; this many continuations at most.
+_CLAUDE_MAX_CONTINUATIONS = 2
+
+
+def _claude_answer_text(content):
+    """The answer in a Claude reply: the text after the last web search.
+
+    Thinking blocks come first and have no text. With web search, Claude
+    writes a line before each search, so only the text after the last search
+    result is the answer; citations can split that text into several blocks.
+    """
+    parts = []
+    for block in content:
+        kind = block.get('type')
+        if kind in ('server_tool_use', 'web_search_tool_result'):
+            parts = []
+        elif kind == 'text':
+            parts.append(block['text'])
+    return ''.join(parts)
+
+
+def _call_claude(prompt, api_key, model, web_search=False, **_kwargs):
     """Call Anthropic Claude API.
+
+    web_search lets Claude search the web, up to CLAUDE_MAX_SEARCHES times.
 
     Returns:
         str: Raw text response, or None on failure.
@@ -882,15 +913,19 @@ def _call_claude(prompt, api_key, model, **_kwargs):
     # all three accept (Sonnet and Opus 5.5 answer 400 to thinking
     # "disabled"). No temperature: Sonnet 5.5 answers 400 to it, and the
     # other 5.5 models say to leave it out.
+    messages = [{'role': 'user', 'content': prompt}]
     payload = {
         'model': model,
         'max_tokens': 8192,
         'output_config': {'effort': 'low'},
-        'messages': [
-            {'role': 'user', 'content': prompt}
-        ],
+        'messages': messages,
         'system': 'You are a retro gaming metadata expert. Always respond with valid JSON only. No markdown, no code fences.',
     }
+    if web_search:
+        # The basic version: the newer ones default to being called from
+        # code execution, which this request does not run.
+        payload['tools'] = [{'type': 'web_search_20250305', 'name': 'web_search',
+                             'max_uses': CLAUDE_MAX_SEARCHES}]
     headers = {
         'Content-Type': 'application/json',
         'x-api-key': api_key,
@@ -899,21 +934,36 @@ def _call_claude(prompt, api_key, model, **_kwargs):
 
     # Pass 32.14: cap Claude response size.
     max_bytes = getattr(config, 'MAX_API_RESPONSE_BYTES', 10 * 1024 * 1024)
-    response = http_post(url, json_data=payload, headers=headers, timeout=60, retries=1, max_bytes=max_bytes)
-    if response is None or response.status_code != 200:
-        status = response.status_code if response is not None else 'No response'
-        logger.error(f"Claude API error: {status}")
-        return None
+    content = []
+    for _turn in range(1 + _CLAUDE_MAX_CONTINUATIONS):
+        response = http_post(url, json_data=payload, headers=headers,
+                             timeout=120 if web_search else 60, retries=1,
+                             max_bytes=max_bytes)
+        if response is None or response.status_code != 200:
+            status = response.status_code if response is not None else 'No response'
+            logger.error(f"Claude API error: {status}")
+            return None
 
-    data = safe_json(response)
-    if not data:
-        return None
+        data = safe_json(response)
+        if not data:
+            return None
+        try:
+            content += data['content']
+        except (KeyError, TypeError) as e:
+            logger.error(f"Claude response parse error: {e}")
+            return None
+        if data.get('stop_reason') != 'pause_turn':
+            break
+        # A paused search turn goes back unchanged for Claude to carry on.
+        messages.append({'role': 'assistant', 'content': data['content']})
 
-    # Thinking blocks come before the text block, so take the text blocks.
+    searches = sum(1 for block in content if block.get('type') == 'server_tool_use')
+    if searches:
+        logger.info(f"Claude searched the web {searches} time(s)")
+
     try:
-        text = ''.join(block['text'] for block in data['content']
-                       if block.get('type') == 'text')
-    except (KeyError, TypeError) as e:
+        text = _claude_answer_text(content)
+    except (KeyError, TypeError, AttributeError) as e:
         logger.error(f"Claude response parse error: {e}")
         return None
     if not text:
@@ -1224,6 +1274,8 @@ def get_game_details(game_id, title, system_name, system_folder=None, existing_m
     kwargs = {}
     if provider == 'gemini' and provider_config.get('project_id'):
         kwargs['project_id'] = provider_config['project_id']
+    if provider == 'claude' and provider_config.get('web_search'):
+        kwargs['web_search'] = True
 
     raw_text = call_fn(prompt, api_key, model, **kwargs)
     if not raw_text:
@@ -1239,12 +1291,12 @@ def get_game_details(game_id, title, system_name, system_folder=None, existing_m
         result.pop('old_title_region', None)
 
     if result:
-        rejected_count = len(missing_fields) - len(result)
+        # official_title and old_title_region are extra answers, not asked
+        # fields, so count the rejects from the list.
+        rejected = [f for f in missing_fields if f not in result]
         msg = f"AI scraper: filled {len(result)}/{len(missing_fields)} fields: {list(result.keys())}"
-        if rejected_count > 0:
-            filled_set = set(result.keys())
-            rejected = [f for f in missing_fields if f not in filled_set]
-            msg += f" | {rejected_count} rejected/empty: {rejected}"
+        if rejected:
+            msg += f" | {len(rejected)} rejected/empty: {rejected}"
         logger.info(msg)
     else:
         logger.warning("AI scraper: no valid fields parsed from response")

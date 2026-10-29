@@ -17,6 +17,8 @@
     label: 'Die Verkaufszahl eines Spiels eintragen'
   - type: fix
     label: 'Den KI-Schlüssel in den Einstellungen testen'
+  - type: feature
+    label: 'Claude kann im Web nach Verkaufszahlen suchen'
   body: |
     <ul>
       <li><strong>Cheats für RetroArch (RetroDB), DuckStation und
@@ -63,6 +65,7 @@
       <li><strong>Claude-5.5-Modelle für die KI.</strong> Einstellungen &gt; Scraping listet Anthropics neueste Claude-Modelle: Haiku 5.5, die neue Voreinstellung und das günstigste, Sonnet 5.5 und Opus 5.5, mit ihren aktuellen Preisen. RetroDB sendet keine Einstellung mehr, die Sonnet 5.5 ablehnt.</li>
       <li><strong>Die Verkaufszahl eines Spiels eintragen.</strong> Beide Bearbeitungsfenster haben unter Entwickler ein Feld „Verkaufte Exemplare“. Eine eingetragene Zahl erscheint auf der Spielseite wie eine, die die KI gefunden hat. Leeren Sie das Feld, um sie zu entfernen.</li>
       <li><strong>Den KI-Schlüssel in den Einstellungen testen.</strong> Einstellungen &gt; Scraping hat unter dem KI-Anbieter die Schaltfläche „Gespeicherten KI-Schlüssel testen“. Sie zeigt, ob der Schlüssel funktioniert, und wenn nicht, warum: ein abgelehnter Schlüssel, kein Guthaben oder ein Nutzungslimit. Bisher sah ein abgelehnter Schlüssel wie ein funktionierender aus.</li>
+      <li><strong>Claude kann im Web nach Verkaufszahlen suchen.</strong> Einstellungen &gt; Scraping hat unter dem Claude-Modell den Schalter „Claude im Web suchen lassen“, anfangs aus. Ohne Suche antwortet Claude mit dem, was es schon weiß, und lässt verkaufte Exemplare leer. Ist er an, schlägt Claude Zahlen nach. Anthropic berechnet jede Suche, daher macht AI-Auffüllen höchstens 5 Suchen pro Spiel, bis zu 5 US-Cent; schalten Sie den Schalter vor einem großen Massen-Scraping aus.</li>
     </ul>
 - version: 3.33.0
   date: '2026-10-29'

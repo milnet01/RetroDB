@@ -2911,7 +2911,8 @@ async function saveApiKeys() {
         ai_openai_api_key: document.getElementById('apikey-ai-openai-key').value.trim(),
         ai_openai_model: document.getElementById('apikey-ai-openai-model').value,
         ai_claude_api_key: document.getElementById('apikey-ai-claude-key').value.trim(),
-        ai_claude_model: document.getElementById('apikey-ai-claude-model').value
+        ai_claude_model: document.getElementById('apikey-ai-claude-model').value,
+        ai_claude_web_search: document.getElementById('apikey-ai-claude-web-search').checked ? 'on' : ''
     };
     
     try {

@@ -131,6 +131,7 @@ def get_saved_api_keys():
         'ai_openai_model': '',
         'ai_claude_api_key': getattr(config, 'AI_CLAUDE_API_KEY', ''),
         'ai_claude_model': '',
+        'ai_claude_web_search': '',
         'steam_api_key': '',
         'steam_id': '',
         'xbox_client_id': '',
