@@ -9144,6 +9144,15 @@ were corrected in `2836bc3` and are not repeated here.
 - **Decided** (user, 2026-10-23): import starts on the game's own
   page (one box file per game); bulk import may follow later. The
   faces are stored alongside `boxart_3d`; they do not replace it.
+- **Built** (2026-10-29, in the open 3.34.0; commit e2f2b14): spec
+  `docs/specs/PASS-59-142-box-file-import.md` (fold-back in its loop
+  log). `services/box_faces.py`, migration 025 (`games.box_faces`),
+  POST/DELETE `/api/games/<id>/box-faces`, the Import 3D box line under
+  the game page's cover, the orphan sweep's `box_faces` folder. Tests:
+  `tests/test_box_faces.py`. Browser walk on :5001 with a scratch DB and
+  a box file from Slipcase's `write_box_file`: import, replace, a
+  missing-picture error and Remove all worked. **Still owed**: the 20
+  locale translations of the new strings and help line.
 
 ---
 
