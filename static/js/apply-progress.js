@@ -86,7 +86,20 @@
         showNotification(message || t('Could not apply metadata.'), 'error');
     }
 
+    // One apply at a time: a second run would poll into the same gauge.
+    let running = false;
+
     async function run(gameId, gameSource, secondarySelections) {
+        if (running) return;
+        running = true;
+        try {
+            await start(gameId, gameSource, secondarySelections);
+        } finally {
+            running = false;
+        }
+    }
+
+    async function start(gameId, gameSource, secondarySelections) {
         const el = overlay();
         render(el, 0, {kind: 'start'});
         el.classList.add('active');
@@ -109,7 +122,9 @@
             return fail(el);
         }
 
-        const poll = async () => {
+        const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+        for (;;) {
+            await sleep(POLL_MS);
             let body;
             try {
                 const rv = await fetch(`/api/apply-metadata/${taskId}`);
@@ -120,12 +135,12 @@
                 return fail(el);
             }
             render(el, body.percent, body.step);
-            if (!body.finished) return setTimeout(poll, POLL_MS);
+            if (!body.finished) continue;
             if (!body.applied) return fail(el, body.error);
             // A GET of the same page, so a reload never re-submits a form.
             window.location.assign(window.location.pathname + window.location.search);
-        };
-        setTimeout(poll, POLL_MS);
+            return;
+        }
     }
 
     window.ApplyProgress = {run};

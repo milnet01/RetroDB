@@ -249,9 +249,6 @@ const BulkScrapeController = {
     /**
      * Handle poll data received from the toast controller (single shared poller)
      */
-    _refreshedCardIds: new Set(),
-    _MAX_REFRESHED_IDS: 500,  // Prevent unbounded growth during long scrapes
-
     handlePollData(data) {
         const el = this.getElements();
         const isModalOpen = el.modal && el.modal.classList.contains('active');
@@ -265,25 +262,7 @@ const BulkScrapeController = {
             this.updateUI(data);
         }
 
-        if (data.recently_scraped_ids && data.recently_scraped_ids.length > 0 &&
-            typeof AllGamesController !== 'undefined' && AllGamesController.refreshCards) {
-            const newIds = data.recently_scraped_ids.filter(id => !this._refreshedCardIds.has(id));
-            if (newIds.length > 0) {
-                newIds.forEach(id => this._refreshedCardIds.add(id));
-                if (this._refreshedCardIds.size > this._MAX_REFRESHED_IDS) {
-                    const it = this._refreshedCardIds.values();
-                    for (let i = 0; i < 100; i++) it.next();
-                    const keep = [];
-                    let v = it.next();
-                    while (!v.done) { keep.push(v.value); v = it.next(); }
-                    this._refreshedCardIds = new Set(keep);
-                }
-                AllGamesController.refreshCards(newIds);
-            }
-        }
-
         if (data.completed) {
-            this._refreshedCardIds.clear();
             this.stopPolling();
             if (isModalOpen) {
                 this.showResults(data);

@@ -575,7 +575,7 @@ async function deleteSelected() {
 
     showConfirm(
         'Delete Duplicate Screenshots',
-        'Delete <strong>' + deletions.length + '</strong> duplicate screenshot(s)?<br><br>' +
+        'Delete ' + formatNumber(deletions.length) + ' duplicate screenshot(s)?\n\n' +
         'Files will be removed from disk and database references updated. This cannot be undone.',
         async function() {
             try {

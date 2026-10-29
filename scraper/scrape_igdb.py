@@ -210,17 +210,21 @@ def search_games(title, system_name=None, limit=10):
         import re
         search_title = re.sub(r'\s+', ' ', search_title).strip()
         
-        # Get platform ID if available
+        # Get platform ID if available. A system IGDB does not list is not
+        # searched: games from other platforms would match instead.
         platform_id = None
         if system_name:
             platform_id = get_platform_id(system_name)
-        
+            if not platform_id:
+                logger.info(f"IGDB: no platform for '{system_name}' — not searched")
+                return []
+        # Every query below keeps the platform filter (user, 2026-10-27).
+        platform_where = f' & platforms = ({platform_id})' if platform_id else ''
+
         # Use IGDB's dedicated search command (not name ~ regex)
         # The search command is designed to handle fuzzy matching better
-        where_clause = 'version_parent = null'
-        if platform_id:
-            where_clause += f' & platforms = ({platform_id})'
-        
+        where_clause = 'version_parent = null' + platform_where
+
         # Build query using search command
         body = f"""
         search "{search_title}";
@@ -230,23 +234,10 @@ def search_games(title, system_name=None, limit=10):
         where {where_clause};
         limit {limit};
         """
-        
+
         logger.info(f"Searching IGDB for: '{title}' (cleaned: '{search_title}') on platform: {system_name} (id: {platform_id})")
         logger.debug(f"IGDB query: {body}")
         results = igdb_request("games", body, token)
-
-        # If no results with platform filter, try without
-        if not results and platform_id:
-            logger.info("No IGDB results with platform filter, trying without...")
-            body = f"""
-            search "{search_title}";
-            fields id, name, first_release_date, platforms.id, platforms.name, platforms.abbreviation,
-                   release_dates.region, release_dates.platform, summary,
-                   alternative_names.name, alternative_names.comment;
-            where version_parent = null;
-            limit {limit};
-            """
-            results = igdb_request("games", body, token)
 
         # Remaster/remake fallback: version_parent = null excludes remasters
         # on IGDB (they're marked as versions of the original).  If the best
@@ -304,7 +295,7 @@ def search_games(title, system_name=None, limit=10):
             fields id, name, first_release_date, platforms.id, platforms.name, platforms.abbreviation,
                    release_dates.region, release_dates.platform, summary,
                    alternative_names.name, alternative_names.comment;
-            where name ~ *"{search_title}"* & version_parent = null;
+            where name ~ *"{search_title}"* & version_parent = null{platform_where};
             limit {limit};
             """
             results = igdb_request("games", body, token)
@@ -320,7 +311,7 @@ def search_games(title, system_name=None, limit=10):
                 fields id, name, first_release_date, platforms.id, platforms.name, platforms.abbreviation,
                        release_dates.region, release_dates.platform, summary,
                        alternative_names.name, alternative_names.comment;
-                where version_parent = null;
+                where version_parent = null{platform_where};
                 limit {limit};
                 """
                 results = igdb_request("games", body, token)

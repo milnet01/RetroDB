@@ -35,6 +35,8 @@ See also: CLAUDE.md "Scraper fill-only invariant" and "Schema / data shapes"; [`
 | AI Fill           | `scraper/scrape_ai.py`            | AI              | One of: `ai_gemini_api_key`, `ai_openai_api_key`, `ai_anthropic_api_key` (+ optional `ai_gemini_project_id`) | Final gap-fill for text-only fields; never media (see §12)                                        |
 | HLTB              | `scraper/hltb_lookup.py`          | remote          | No (public site scrape)                                                   | Playtime estimates (main / extra / completionist) for HowLongToBeat                               |
 
+**Platform coverage** (user, 2026-10-27). A source is searched only when it maps the game's system to one of its platforms, and every query it sends keeps that platform filter: `scrape_rawg.PLATFORM_MAP` (only platforms RAWG lists; no Intellivision, ColecoVision, PC Engine, arcade, Virtual Boy), `scrape_igdb.get_platform_id`, `scrape_thegamesdb.get_system_id`, `scrape_screenscraper.get_system_id`. An unmapped system gets `[]` without a request: searching without the filter matched games from other platforms. Pinned by `tests/test_scraper_platform_coverage.py`.
+
 Per-source disable + priority: `data/scraper_settings.json` → `enabled` + `priority`. The first enabled source in priority order whose API key is configured wins as primary when the user picks one; the rest fall back in priority order (see §3).
 
 ---
@@ -283,6 +285,8 @@ Text-only. AI never returns images, screenshots, videos, or manuals — `AI_FILL
 **Sales (`units_sold`):** only the AI fills it, in the scrape's AI gap-fill and in AI Fill; no API scraper publishes sales. The prompt asks for lifetime copies sold on the row's platform from free published sources and for null when only a multi-platform total exists. `parse_units_sold()` turns what a model writes (`"2.4 million"`, `"~850k"`, `"2,400,000"`) into an integer and drops anything above 500 million.
 
 **Release dates by region (`release_dates`):** only the AI fills it, in the scrape's AI gap-fill and in AI Fill, fill-only like every other field. The prompt asks for an object keyed by region code (`NA`, `EU`, `JP`, `AU`, `KR`, `CN`, `TW`, `BR`, `AS`, `WW`) with `YYYY-MM-DD`, `YYYY-MM` or `YYYY` dates. `services/release_dates.parse_release_dates()` also takes region names (`"Japan"`, `"PAL"`) and a list of `{region, date}`, drops unknown regions and impossible dates, and the column stores compact JSON in region order. `release_date` stays the date of the row's own release.
+
+**Official title** (user, 2026-10-27). For a game with a ROM and an unlocked title, `get_game_details` also asks for `official_title` (the title as released in the ROM's region, as PASS-59-159 §4.2 asks the Official Names run) and `old_title_region`. Both are outside `AI_FILLABLE_FIELDS`; `_validate_all_fields` keeps them after `_clean_official_title`. `metadata_merger.apply_ai_to_metadata` (manual and bulk scrape) and `routes/games_ai.py` (the AI Fill button) rename the game to it, keeping the replaced name as an alternate title tagged with `old_title_region`. It is an exception to fill-only for `title`, as the user asked. A locked title is never asked about, and `_save_game_row` never writes one. Pinned by `tests/test_ai_official_title.py`.
 
 **Circuit breaker:** `_ai_breaker` (5 failures / 120 s recovery) wraps `fetch_ai_metadata` calls from `hybrid_scraper` so a repeatedly-failing provider doesn't burn a quota on every gap-fill attempt.
 

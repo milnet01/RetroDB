@@ -1433,14 +1433,12 @@ async function createM3U(path) {
     const folderName = archiveName.replace(/\.[^.]+$/, '');
     
     showConfirm('💿 Create M3U', 
-        `<p>This will create an ES-DE compatible M3U playlist:</p>
-        <ul style="text-align: left; margin: 1rem 0; padding-left: 1.5rem;">
-            <li>Extract archive to <code>${folderName}/</code> folder</li>
-            <li>Add <code>noload.txt</code> to prevent ES-DE scanning</li>
-            <li>Create <code>${folderName}.m3u</code> playlist file</li>
-            <li>Move original archive to staging folder</li>
-        </ul>
-        <p>Continue?</p>`, 
+        'This will create an ES-DE compatible M3U playlist:\n'
+        + `• Extract archive to ${folderName}/ folder\n`
+        + '• Add noload.txt to prevent ES-DE scanning\n'
+        + `• Create ${folderName}.m3u playlist file\n`
+        + '• Move original archive to staging folder\n\n'
+        + 'Continue?',
         async function() {
             try {
                 const response = await fetch('/api/rom-tools/archive-scanner/create-m3u', {
@@ -1454,21 +1452,19 @@ async function createM3U(path) {
                 if (data.success) {
                     let movedInfo = '';
                     if (data.archive_moved) {
-                        movedInfo = `<li>📦 Archive moved to: <code>${data.moved_to}</code></li>`;
+                        movedInfo = `\n📦 Archive moved to: ${data.moved_to}`;
                     }
                     if (data.skipped_files && data.skipped_files.length) {
-                        movedInfo += `<li>${escapeHtml({{ _('The archive holds more than one release. The playlist uses the first; these disks stay in the folder:')|tojson }})}
-                            <code>${data.skipped_files.map(escapeHtml).join(', ')}</code></li>`;
+                        movedInfo += '\n• ' + {{ _('The archive holds more than one release. The playlist uses the first; these disks stay in the folder:')|tojson }}
+                            + ' ' + data.skipped_files.join(', ');
                     }
 
                     showModal('✅ M3U Created', 
-                        `<p>Successfully created:</p>
-                        <ul style="text-align: left; margin: 0.5rem 0; padding-left: 1.5rem;">
-                            <li>M3U: <code>${data.m3u_path}</code></li>
-                            <li>Folder: <code>${data.folder_path}</code></li>
-                            <li>Files: ${data.file_count} ROM file(s)</li>
-                            ${movedInfo}
-                        </ul>`);
+                        'Successfully created:\n'
+                        + `• M3U: ${data.m3u_path}\n`
+                        + `• Folder: ${data.folder_path}\n`
+                        + `• Files: ${formatNumber(data.file_count)} ROM file(s)`
+                        + movedInfo);
                     
                     // Remove from scan results since it's been processed
                     scanResults = scanResults.filter(r => r.path !== path);
@@ -1567,19 +1563,15 @@ async function processBatchRemove() {
     // Show completion message
     if (batchState.cancelled) {
         showModal('⚠️ Cancelled', 
-            `<p>Batch operation cancelled.</p>
-            <ul style="text-align: left; margin: 0.5rem 0; padding-left: 1.5rem;">
-                <li>✅ Processed: ${formatNumber(batchState.current)} / ${formatNumber(batchState.total)}</li>
-                <li>✅ Success: ${formatNumber(batchState.success)}</li>
-                <li>❌ Failed: ${formatNumber(batchState.failed)}</li>
-            </ul>`);
+            'Batch operation cancelled.\n'
+            + `✅ Processed: ${formatNumber(batchState.current)} / ${formatNumber(batchState.total)}\n`
+            + `✅ Success: ${formatNumber(batchState.success)}\n`
+            + `❌ Failed: ${formatNumber(batchState.failed)}`);
     } else {
         showModal('✅ Batch Complete',
-            `<p>Removed unwanted files from ${formatNumber(batchState.total)} archives:</p>
-            <ul style="text-align: left; margin: 0.5rem 0; padding-left: 1.5rem;">
-                <li>✅ Success: ${formatNumber(batchState.success)}</li>
-                <li>❌ Failed: ${formatNumber(batchState.failed)}</li>
-            </ul>`);
+            `Removed unwanted files from ${formatNumber(batchState.total)} archives:\n`
+            + `✅ Success: ${formatNumber(batchState.success)}\n`
+            + `❌ Failed: ${formatNumber(batchState.failed)}`);
     }
     
     // Update scan results - remove successful ones
@@ -1653,15 +1645,13 @@ async function batchCreateM3U() {
     }
     
     showConfirm('💿 Batch M3U', 
-        `<p>Create M3U playlists for <strong>${multiFileResults.length}</strong> multi-file archives?</p>
-        <p style="margin-top: 0.5rem;">Each archive will be:</p>
-        <ul style="text-align: left; margin: 0.5rem 0; padding-left: 1.5rem;">
-            <li>Extracted to its own folder</li>
-            <li>Have <code>noload.txt</code> added</li>
-            <li>Get an M3U playlist created</li>
-            <li>${ {{ _('Have the original archive moved to the staging folder')|tojson }} }</li>
-        </ul>
-        <p style="margin-top: 0.5rem; color: var(--text-secondary);">This may take a while for large archives.</p>`, 
+        `Create M3U playlists for ${formatNumber(multiFileResults.length)} multi-file archives?\n\n`
+        + 'Each archive will be:\n'
+        + '• Extracted to its own folder\n'
+        + '• Have noload.txt added\n'
+        + '• Get an M3U playlist created\n'
+        + '• ' + {{ _('Have the original archive moved to the staging folder')|tojson }} + '\n\n'
+        + 'This may take a while for large archives.',
         async function() {
             // Initialize batch state
             batchState = {
@@ -1746,24 +1736,18 @@ async function processBatchM3U() {
     // Show completion message
     if (batchState.cancelled) {
         showModal('⚠️ Cancelled', 
-            `<p>Batch operation cancelled.</p>
-            <ul style="text-align: left; margin: 0.5rem 0; padding-left: 1.5rem;">
-                <li>✅ Processed: ${formatNumber(batchState.current)} / ${formatNumber(batchState.total)}</li>
-                <li>✅ Success: ${formatNumber(batchState.success)}</li>
-                <li>❌ Failed: ${formatNumber(batchState.failed)}</li>
-                <li>📦 Archives moved to staging: ${formatNumber(movedCount)}</li>
-            </ul>`);
+            'Batch operation cancelled.\n'
+            + `✅ Processed: ${formatNumber(batchState.current)} / ${formatNumber(batchState.total)}\n`
+            + `✅ Success: ${formatNumber(batchState.success)}\n`
+            + `❌ Failed: ${formatNumber(batchState.failed)}\n`
+            + `📦 Archives moved to staging: ${formatNumber(movedCount)}`);
     } else {
         showModal('✅ Batch Complete',
-            `<p>Created M3U playlists for ${formatNumber(batchState.total)} archives:</p>
-            <ul style="text-align: left; margin: 0.5rem 0; padding-left: 1.5rem;">
-                <li>✅ Success: ${formatNumber(batchState.success)}</li>
-                <li>❌ Failed: ${formatNumber(batchState.failed)}</li>
-                <li>📦 Archives moved to staging: ${formatNumber(movedCount)}</li>
-            </ul>
-            ${movedFolder ? `<p style="margin-top: 0.5rem; color: var(--text-secondary); font-size: 0.85rem;">
-                ${ {{ _('Original archives moved to:')|tojson }} }<br><code>${escapeHtml(movedFolder)}</code>
-            </p>` : ''}`);
+            `Created M3U playlists for ${formatNumber(batchState.total)} archives:\n`
+            + `✅ Success: ${formatNumber(batchState.success)}\n`
+            + `❌ Failed: ${formatNumber(batchState.failed)}\n`
+            + `📦 Archives moved to staging: ${formatNumber(movedCount)}`
+            + (movedFolder ? '\n\n' + {{ _('Original archives moved to:')|tojson }} + '\n' + movedFolder : ''));
     }
     
     // Update scan results - remove successful ones

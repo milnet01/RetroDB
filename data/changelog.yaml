@@ -1,47 +1,51 @@
 - version: 3.35.0
-  date: 2026-10-27
+  date: 2026-10-29
   tags:
   - type: feature
-    label: Release dates for every region
+    label: Library and system pages update live during Bulk Scrape
   - type: feature
-    label: Previous and next game on the game page
-  - type: feature
-    label: Uploaded covers and screenshots are processed like scraped ones
+    label: AI Fill gives each game its official name
   - type: fix
-    label: RetroAchievements shows on the game page for every game that has it
+    label: Official Names suggests names again
   - type: fix
-    label: The Systems page's unscraped count matches the Unscraped filter
+    label: Sources are searched only for systems they cover
+  - type: fix
+    label: The scrape progress ring no longer jumps back
+  - type: fix
+    label: Zoomed 3D box art has no square behind it
+  - type: fix
+    label: Messages no longer show HTML code
   body: |
     <ul>
-      <li><strong>Release dates for every region.</strong> When the AI
-        fills gaps during a scrape, and when you press AI Fill, it is now
-        also asked for the date the game came out in each region, such as
-        North America, Europe and Japan. The game page and the quick view
-        list them, earliest first, with dates and region names in your
-        language. A game's own release date is unchanged.</li>
-      <li><strong>Previous and next game on the game page.</strong> Next
-        to the path at the top of a game page are Previous and Next links
-        and where the game sits in the list. They follow the page you came
-        from: opened from the Library they step through the Library, and
-        from a console page through that console, in the same order and
-        with the same filters and search you had there.</li>
-      <li><strong>Uploaded covers and screenshots are processed like
-        scraped ones.</strong> A cover, 3D box or screenshot you upload in
-        the edit window is now saved in the same image format as scraped
-        images, resized to the same size, and covers get the smaller
-        copies the Library uses. A screenshot that looks the same as one
-        the game already has is not added, and you are told how many were
-        left out. Uploading a new cover also removes the file it replaces.</li>
-      <li><strong>RetroAchievements shows on the game page for every game
-        that has it.</strong> Some games had the RA badge in the Library
-        but no RetroAchievements card on their page, such as Metroid Prime
-        and Metroid Prime 2 on GameCube. The page now uses the same
-        RetroAchievements link as the badge, and loads faster because it
-        no longer asks RetroAchievements each time.</li>
-      <li><strong>The Systems page's unscraped count matches the Unscraped
-        filter.</strong> The count included bonus discs, which the
-        console's game list never shows, so a console could say 2
-        unscraped while its Unscraped filter showed none.</li>
+      <li><strong>Library and system pages update live during Bulk
+        Scrape.</strong> Each game's card refreshes as soon as it is scraped,
+        whether the Bulk Scrape window is open, closed or running in the
+        background.</li>
+      <li><strong>AI Fill gives each game its official name.</strong> When
+        AI fills gaps, in a single-game scrape, in Bulk Scrape and with the
+        AI Fill button, it also names the game's official title as released
+        in its ROM's region, and the game is renamed to it. The old name is
+        kept as an alternate title. A title you typed yourself or accepted in
+        Official Names is never renamed.</li>
+      <li><strong>Official Names suggests names again.</strong> With OpenAI,
+        and sometimes with Gemini, the AI's answers could not be read, so a
+        run ended with no names suggested.</li>
+      <li><strong>Sources are searched only for systems they cover.</strong>
+        RAWG has no Intellivision games, so it is no longer searched for
+        them; before, it found games from other platforms instead. IGDB,
+        TheGamesDB and RAWG now always search on the game's own system.
+        Several wrong RAWG platform links were corrected too (Atari ST,
+        ColecoVision, PC Engine, DOS).</li>
+      <li><strong>The scrape progress ring no longer jumps back.</strong>
+        After more than one search in the Search Metadata window, one Apply
+        started the scrape several times, and the ring jumped between
+        them.</li>
+      <li><strong>Zoomed 3D box art has no square behind it.</strong> The
+        box sits straight on the dimmed background.</li>
+      <li><strong>Messages no longer show HTML code.</strong> Some
+        confirmation and result windows in ROM Tools showed tags such as
+        &lt;br&gt; instead of line breaks. The log viewer and the bonus-disc
+        parent picker in Settings work again.</li>
     </ul>
 - version: 3.34.0
   date: 2026-10-27
@@ -50,6 +54,12 @@
     label: See how well each PS3 game runs in RPCS3
   - type: feature
     label: Sales figures for your games
+  - type: feature
+    label: Release dates for every region
+  - type: feature
+    label: Previous and next game on the game page
+  - type: feature
+    label: Uploaded covers and screenshots are processed like scraped ones
   - type: fix
     label: The Franchise / Series switch works on the game page
   - type: fix
@@ -60,6 +70,10 @@
     label: AI Fill works for games with a score but no age rating
   - type: fix
     label: Game card labels follow your language
+  - type: fix
+    label: RetroAchievements shows on the game page for every game that has it
+  - type: fix
+    label: The Systems page's unscraped count matches the Unscraped filter
   body: |
     <ul>
       <li><strong>See how well each PS3 game runs in RPCS3.</strong> PS3
@@ -98,6 +112,35 @@
       <li><strong>Game card labels follow your language.</strong> The
         completion status and score tooltips on Library cards were always
         in English.</li>
+      <li><strong>Release dates for every region.</strong> When the AI
+        fills gaps during a scrape, and when you press AI Fill, it is now
+        also asked for the date the game came out in each region, such as
+        North America, Europe and Japan. The game page and the quick view
+        list them, earliest first, with dates and region names in your
+        language. A game's own release date is unchanged.</li>
+      <li><strong>Previous and next game on the game page.</strong> Next
+        to the path at the top of a game page are Previous and Next links
+        and where the game sits in the list. They follow the page you came
+        from: opened from the Library they step through the Library, and
+        from a console page through that console, in the same order and
+        with the same filters and search you had there.</li>
+      <li><strong>Uploaded covers and screenshots are processed like
+        scraped ones.</strong> A cover, 3D box or screenshot you upload in
+        the edit window is now saved in the same image format as scraped
+        images, resized to the same size, and covers get the smaller
+        copies the Library uses. A screenshot that looks the same as one
+        the game already has is not added, and you are told how many were
+        left out. Uploading a new cover also removes the file it replaces.</li>
+      <li><strong>RetroAchievements shows on the game page for every game
+        that has it.</strong> Some games had the RA badge in the Library
+        but no RetroAchievements card on their page, such as Metroid Prime
+        and Metroid Prime 2 on GameCube. The page now uses the same
+        RetroAchievements link as the badge, and loads faster because it
+        no longer asks RetroAchievements each time.</li>
+      <li><strong>The Systems page's unscraped count matches the Unscraped
+        filter.</strong> The count included bonus discs, which the
+        console's game list never shows, so a console could say 2
+        unscraped while its Unscraped filter showed none.</li>
     </ul>
 - version: 3.33.0
   date: 2026-10-27

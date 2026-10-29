@@ -2114,7 +2114,7 @@ function showLinkOptions(gameId, systemId) {
                     <div style="max-height: 300px; overflow-y: auto; border: 1px solid var(--card-border); border-radius: var(--radius-md);">
                         ${options}
                     </div>
-                `);
+                `, null, false, null, { allowHtml: true });
             } else if (data.success) {
                 // No parents found - could not extract base title
                 showNotification('No potential parent games found. Try using "Mark" instead to just hide this from listings.', 'warning');
@@ -5040,7 +5040,7 @@ async function viewLogFile(filename) {
             
             showModal('📋 Log: ' + filename, `
                 <div class="log-viewer-content">${formattedContent || '<em>Log file is empty</em>'}</div>
-            `, 'modal-xl');
+            `, null, false, null, { allowHtml: true });
         } else {
             showModal('❌ Error', data.error || 'Failed to load log file');
         }

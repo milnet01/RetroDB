@@ -434,7 +434,8 @@ def _sanitize_prompt_input(value, *, max_len=256):
     return cleaned[:max_len]
 
 
-def _build_prompt(title, system_name, missing_fields, existing_values=None):
+def _build_prompt(title, system_name, missing_fields, existing_values=None,
+                  official_title_for=None):
     """Build a structured JSON-requesting prompt for the AI provider.
 
     Uses the authoritative field schemas from the reference template.
@@ -445,6 +446,9 @@ def _build_prompt(title, system_name, missing_fields, existing_values=None):
         missing_fields: List of field names to request
         existing_values: Optional dict of field->current_value for validation mode.
                         Fields with existing values get a "verify and correct" prefix.
+        official_title_for: Optional {'rom_file', 'region'} of the game's ROM;
+                        when given, the prompt also asks for the official title
+                        as released in that region (see _official_title_context).
 
     Returns:
         str prompt
@@ -674,6 +678,24 @@ def _build_prompt(title, system_name, missing_fields, existing_values=None):
                 'total across several platforms is published, return null rather than '
                 'that total. Return null if no figure is published.'
             )
+
+    if official_title_for:
+        from scraper.scrape_esde import extract_region_from_filename
+        rom_file = os.path.basename(official_title_for.get('rom_file') or '')
+        region = (extract_region_from_filename(rom_file)
+                  or official_title_for.get('region') or 'unknown')
+        field_instructions.append(
+            '"official_title": the full official title of this game as released on '
+            + system_name + ' in the region of its ROM (ROM file: "'
+            + _sanitize_prompt_input(rom_file) + '"; region: '
+            + _sanitize_prompt_input(region) + '), written in Latin script the way '
+            'that region\'s own release writes it (a Japanese ROM of Mega Man is '
+            '"Rockman"). No region or platform after the title. Return "" if unsure.'
+        )
+        field_instructions.append(
+            '"old_title_region": the region the game title above belongs to: '
+            '"USA", "Europe", "Japan" or "World", or "" if unsure.'
+        )
 
     # Add validation prefix for fields with existing values
     final_instructions = []
@@ -981,6 +1003,13 @@ def _validate_all_fields(data):
             value = _validate_field(field, data[field])
             if value:
                 result[field] = value
+    official = _clean_official_title(data.get('official_title'))
+    if official:
+        from scraper.metadata_normalizer import alt_title_region
+        region = data.get('old_title_region')
+        result['official_title'] = official
+        result['old_title_region'] = (alt_title_region(region)[0]
+                                      if isinstance(region, str) else None)
     return result
 
 
@@ -1076,6 +1105,25 @@ def _validate_field(field_name, value):
 # PUBLIC INTERFACE
 # =============================================================================
 
+def _official_title_context(game_id):
+    """The ROM file and region AI Fill names the official title for, or None
+    when the game has no ROM or its title is locked (PASS-59-159 §4.3)."""
+    if not game_id:
+        return None
+    from services.database import get_db
+    conn = get_db()
+    try:
+        row = conn.execute(
+            "SELECT rom_path, region, title_locked FROM games WHERE id = ?",
+            (game_id,)).fetchone()
+    finally:
+        conn.close()
+    rom_path = row['rom_path'] if row else None
+    if not rom_path or row['title_locked'] or rom_path.startswith('clz_import/'):
+        return None
+    return {'rom_file': row['rom_path'], 'region': row['region']}
+
+
 def get_game_details(game_id, title, system_name, system_folder=None, existing_metadata=None):
     """Fetch AI-generated metadata for a game.
 
@@ -1109,7 +1157,8 @@ def get_game_details(game_id, title, system_name, system_folder=None, existing_m
     else:
         missing_fields = list(AI_FILLABLE_FIELDS)
 
-    if not missing_fields:
+    official_for = _official_title_context(game_id)
+    if not missing_fields and not official_for:
         logger.info(f"AI scraper: no missing fields for '{title}'")
         return {}
 
@@ -1121,7 +1170,8 @@ def get_game_details(game_id, title, system_name, system_folder=None, existing_m
     )
 
     # Build prompt and call provider
-    prompt = _build_prompt(title, system_name, missing_fields, existing_values=validate_existing)
+    prompt = _build_prompt(title, system_name, missing_fields, existing_values=validate_existing,
+                           official_title_for=official_for)
 
     provider = provider_config['provider']
     api_key = provider_config['api_key']
@@ -1292,8 +1342,8 @@ written in Latin script the way that region's own release writes it
 CURRENT title belongs to: "USA", "Europe", "Japan" or "World", or null
 when you are not sure. If you do not know the official title, give null.
 
-Respond with JSON only, one entry per game, in this shape:
-[{{"i": 0, "official_title": "...", "old_title_region": "Japan"}}]"""
+Respond with a JSON object only, with one entry per game, in this shape:
+{{"games": [{{"i": 0, "official_title": "...", "old_title_region": "Japan"}}]}}"""
 
 
 def _clean_official_title(value):
@@ -1309,6 +1359,29 @@ def _clean_official_title(value):
     return normalize_title(title)
 
 
+def _official_names_items(raw_text):
+    """The list of answer entries in an AI reply, or None.
+
+    The prompt asks for {"games": [...]}: OpenAI's JSON mode returns only
+    objects, so a bare array never arrived from it and every answer was
+    lost. A bare array, an object holding the list under another key, code
+    fences and prose around the JSON (Gemini's search grounding) are all
+    read too."""
+    decoder = json.JSONDecoder()
+    text = raw_text.strip()
+    for start in [0] + [m.start() for m in re.finditer(r'[\[{]', text)]:
+        try:
+            data, _end = decoder.raw_decode(text, start)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(data, dict):
+            data = data.get('games', next(
+                (v for v in data.values() if isinstance(v, list)), None))
+        if isinstance(data, list) and any(isinstance(x, dict) for x in data):
+            return data
+    return None
+
+
 def _parse_official_names(raw_text, count):
     """`count` answers, in input order, from an AI reply. Entries are paired
     by their `i`, never by position; a bad entry leaves that game None."""
@@ -1317,19 +1390,9 @@ def _parse_official_names(raw_text, count):
     answers = [dict(empty) for _ in range(count)]
     if not raw_text:
         return answers
-    text = raw_text.strip()
-    if text.startswith('```'):
-        text = re.sub(r'^```(?:json)?\s*\n?', '', text)
-        text = re.sub(r'\n?```\s*$', '', text).strip()
-    try:
-        items = json.loads(text)
-    except json.JSONDecodeError:
-        match = re.search(r'\[.*\]', text, re.DOTALL)
-        try:
-            items = json.loads(match.group()) if match else None
-        except json.JSONDecodeError:
-            items = None
-    if not isinstance(items, list):
+    items = _official_names_items(raw_text)
+    if items is None:
+        logger.warning(f"Official names: unreadable AI reply: {raw_text[:200]!r}")
         return answers
     for item in items:
         if not isinstance(item, dict):
