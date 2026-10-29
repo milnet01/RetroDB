@@ -88,6 +88,8 @@ def normalize_game_edit(payload):
           `/` or `-`; junk → None.
         - `players`: routed through `normalize_players_value` so the INTEGER
           column stays well-typed (Pass 40.6 invariant).
+        - `units_sold`: routed through `scrape_ai.parse_units_sold`; junk
+          or zero → None.
         - Rating cross-map: fires only on the rating keys that are
           actually present in the payload, so callers that pass a single
           rating field do not get the other systems written underneath them.
@@ -129,6 +131,12 @@ def normalize_game_edit(payload):
     # players — INTEGER column; Pass 40.6 invariant.
     if 'players' in out:
         out['players'] = normalize_players_value(out['players'])
+
+    # units_sold — INTEGER column; read like the AI's figures, so
+    # "2,400,000" and "2.4 million" both store 2400000.
+    if 'units_sold' in out:
+        from scraper.scrape_ai import parse_units_sold
+        out['units_sold'] = parse_units_sold(out['units_sold'])
 
     # similar_games — re-join with single space after comma, drop empties.
     if out.get('similar_games'):

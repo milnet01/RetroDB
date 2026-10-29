@@ -333,14 +333,17 @@ PROVIDERS = {
         },
         'default_model': 'gpt-4o-mini',
     },
+    # Claude prices checked 2026-10-29 (platform.claude.com pricing page).
+    # Haiku 5.5 costs more above 100,000 prompt tokens; a game prompt is
+    # far below that.
     'claude': {
         'name': 'Anthropic Claude',
         'models': {
-            'claude-haiku-4-5-20251001': 'Claude Haiku 4.5 — $1.00 / $5.00',
-            'claude-sonnet-4-5-20250929': 'Claude Sonnet 4.5 — $3.00 / $15.00',
-            'claude-opus-4-6': 'Claude Opus 4.6 — $15.00 / $75.00',
+            'claude-haiku-5-5': 'Claude Haiku 5.5 — $0.10 / $0.50',
+            'claude-sonnet-5-5': 'Claude Sonnet 5.5 — $2.00 / $10.00',
+            'claude-opus-5-5': 'Claude Opus 5.5 — $4.00 / $20.00',
         },
-        'default_model': 'claude-haiku-4-5-20251001',
+        'default_model': 'claude-haiku-5-5',
     },
 }
 
@@ -881,7 +884,8 @@ def _call_claude(prompt, api_key, model, **_kwargs):
             {'role': 'user', 'content': prompt}
         ],
         'system': 'You are a retro gaming metadata expert. Always respond with valid JSON only. No markdown, no code fences.',
-        'temperature': 0.2,
+        # No temperature: Sonnet 5.5 answers 400 to it, and the other 5.5
+        # models say to leave it out.
     }
     headers = {
         'Content-Type': 'application/json',

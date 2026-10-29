@@ -1898,6 +1898,7 @@ const GameEditModal = {
         document.getElementById('gemRegion').value = game.region || '';
         document.getElementById('gemPublisher').value = game.publisher || '';
         document.getElementById('gemDeveloper').value = game.developer || '';
+        document.getElementById('gemUnitsSold').value = game.units_sold || '';
 
         this.initGenreTags(game.genre || '');
         this.loadGenreDropdown();
@@ -2022,6 +2023,7 @@ const GameEditModal = {
             region: document.getElementById('gemRegion').value.trim(),
             publisher: document.getElementById('gemPublisher').value.trim(),
             developer: document.getElementById('gemDeveloper').value.trim(),
+            units_sold: document.getElementById('gemUnitsSold').value.trim(),
             genre: document.getElementById('gemGenreHidden').value.trim(),
             modes: document.getElementById('gemModesHidden').value.trim(),
             players: parseInt(document.getElementById('gemPlayers').value) || 1,

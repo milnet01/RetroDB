@@ -443,7 +443,7 @@ def game_detail(game_id):
                         'title', 'sort_title', 'publisher', 'developer',
                         'genre', 'release_date', 'region', 'franchise',
                         'other_platforms', 'modes', 'campaign', 'game_structure',
-                        'perspective', 'dimension', 'players',
+                        'perspective', 'dimension', 'players', 'units_sold',
                         'esrb_rating', 'pegi_rating', 'cero_rating', 'usk_rating',
                         'acb_rating', 'fpb_rating', 'grac_rating', 'classind_rating',
                         'china_rating',
@@ -472,6 +472,7 @@ def game_detail(game_id):
                     dimension = _normalized.get('dimension') or ''
                     controller_support = _normalized.get('controller_support') or ''
                     players = _normalized.get('players')
+                    units_sold = _normalized.get('units_sold')
                     esrb_rating = _normalized.get('esrb_rating') or ''
                     pegi_rating = _normalized.get('pegi_rating') or ''
                     cero_rating = _normalized.get('cero_rating') or ''
@@ -584,6 +585,7 @@ def game_detail(game_id):
                             dimension = NULLIF(?, ''),
                             controller_support = NULLIF(?, ''),
                             players = NULLIF(?, ''),
+                            units_sold = ?,
                             esrb_rating = NULLIF(?, ''),
                             pegi_rating = NULLIF(?, ''),
                             cero_rating = NULLIF(?, ''),
@@ -611,6 +613,7 @@ def game_detail(game_id):
                         sort_title,
                         publisher, developer, genre, release_date,
                         region, franchise, other_platforms, modes, campaign, game_structure, perspective, dimension, controller_support, players,
+                        units_sold,
                         esrb_rating, pegi_rating, cero_rating, usk_rating, acb_rating, fpb_rating, grac_rating, classind_rating,
                         china_rating,
                         save_type, similar_games, edition, description,
@@ -1057,7 +1060,7 @@ def api_game_edit(game_id):
     allowed_fields = [
         'title', 'sort_title', 'franchise', 'similar_games', 'edition',
         'release_date', 'region', 'publisher', 'developer',
-        'genre', 'modes', 'players', 'campaign', 'game_structure', 'perspective', 'dimension',
+        'genre', 'modes', 'players', 'units_sold', 'campaign', 'game_structure', 'perspective', 'dimension',
         'controller_support', 'save_type', 'other_platforms',
         'esrb_rating', 'pegi_rating', 'cero_rating', 'usk_rating',
         'acb_rating', 'fpb_rating', 'grac_rating', 'classind_rating', 'china_rating',

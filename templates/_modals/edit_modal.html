@@ -100,6 +100,11 @@
                             <input type="text" name="edit_developer" id="edit_developer" value="{{ game.developer or '' }}" placeholder="{{ _('Naughty Dog, Insomniac Games') }}" />
                             <span class="field-tip">{{ _('Comma-separated for multiple developers') }}</span>
                         </div>
+                        <div class="edit-field">
+                            <label for="edit_units_sold">{{ _('Copies sold') }}</label>
+                            <input type="number" name="edit_units_sold" id="edit_units_sold" value="{{ game.units_sold or '' }}" min="0" step="1" />
+                            <span class="field-tip">{{ _('Lifetime copies sold on this system, from published sales figures') }}</span>
+                        </div>
                     </div>
                 </div>
 

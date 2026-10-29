@@ -167,3 +167,57 @@ class TestNormalizeSimilarGames:
     def test_empty_to_none(self):
         out = normalize_game_edit({'similar_games': ''})
         assert out['similar_games'] is None
+
+
+class TestNormalizeUnitsSold:
+    """units_sold is INTEGER; the edit screens send it as typed text."""
+
+    @pytest.mark.parametrize("val,expected", [
+        ('2400000', 2400000),
+        ('2,400,000', 2400000),
+        ('2.4 million', 2400000),
+        (2400000, 2400000),
+        ('', None),        # empty → cleared
+        ('0', None),       # no copies is no figure
+        ('lots', None),    # junk → cleared
+    ])
+    def test_units_sold_coercion(self, val, expected):
+        assert normalize_game_edit({'units_sold': val})['units_sold'] == expected
+
+
+
+@pytest.fixture
+def sales_game(setup_complete):
+    from services.database import execute
+    sid = execute("INSERT INTO systems (name, folder) VALUES ('SalesProbe', 'salesprobe')")
+    gid = execute("INSERT INTO games (system_id, title, rom_path) VALUES (?, 'Probe', 'x.iso')",
+                  (sid,))
+    yield gid
+    execute("DELETE FROM games WHERE id = ?", (gid,))
+    execute("DELETE FROM systems WHERE id = ?", (sid,))
+
+
+def _units_sold(gid):
+    from services.database import query
+    return query("SELECT units_sold FROM games WHERE id = ?", (gid,), one=True)['units_sold']
+
+
+def test_json_edit_saves_and_clears_units_sold(sales_game, admin_test_client):
+    client, csrf = admin_test_client()
+    for sent, stored in (('2,400,000', 2400000), ('', None)):
+        r = client.post(f'/api/game/{sales_game}/edit', json={'units_sold': sent},
+                        headers={'X-CSRF-Token': csrf})
+        assert r.status_code == 200
+        assert _units_sold(sales_game) == stored
+
+
+def test_form_edit_saves_units_sold_and_shows_it(sales_game, admin_test_client):
+    client, csrf = admin_test_client()
+    r = client.post(f'/game/{sales_game}', data={
+        'action': 'edit_metadata', 'edit_title': 'Probe', 'edit_units_sold': '850000',
+        '_csrf_token': csrf}, headers={'X-CSRF-Token': csrf})
+    assert r.status_code in (200, 302)
+    assert _units_sold(sales_game) == 850000
+    page = client.get(f'/game/{sales_game}').get_data(as_text=True)
+    assert 'id="edit_units_sold"' in page and 'value="850000"' in page
+    assert 'sales-badge' in page

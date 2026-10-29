@@ -9996,6 +9996,23 @@ re-check fanart and other negative z-index backgrounds), or move each
 popup to body level. A phone-only `z-index: auto` was proved to fix
 the cover zoom in Firefox before being reverted for the local fix.
 
+---
+
+#### Pass 59.189 Tell the user when the AI service refuses a scrape's request (UX, S).
+- **Problem**: since 2026-10-23 Gemini has answered every scrape's AI
+  gap-fill with HTTP 402 (logs/scraping_*.log: "Gemini API error:
+  402"). `scraper/hybrid_scraper.py::_run_ai_fallback` logs "AI
+  fallback: no results" and the scrape reports missing fields. The
+  user saw no error, only empty sales figures, release dates,
+  Dimension and Game Structure, and asked why.
+- **Target**: a refused AI request (401, 402, 403, 429, or a
+  circuit-breaker trip) shows the user what happened and what to
+  check (key, billing, quota), on the scrape result and in bulk
+  jobs. One notice per job, not one per game.
+- **Related**: PASS-53-12 (lasting error state on the item).
+- **Status**: todo.
+- **Source**: user, 2026-10-29.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
