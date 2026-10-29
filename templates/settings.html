@@ -15,39 +15,7 @@
 </div>
 
 <!-- Tab Navigation -->
-<div class="settings-tabs" id="settingsTabs" role="tablist" aria-label="{{ _('Settings sections') }}" data-sticky-nav>
-    <button type="button" class="settings-tab active" data-tab="account" data-on-click="switchSettingsTab" data-args='["account"]' role="tab" aria-selected="true" aria-controls="tab-account">
-        <span class="tab-icon">👤</span>
-        <span class="tab-text">{{ _('Account') }}</span>
-    </button>
-    <button type="button" class="settings-tab" data-tab="library" data-on-click="switchSettingsTab" data-args='["library"]' role="tab" aria-selected="false" aria-controls="tab-library">
-        <span class="tab-icon">📁</span>
-        <span class="tab-text">{{ _('Library') }}</span>
-    </button>
-    <button type="button" class="settings-tab" data-tab="scraping" data-on-click="switchSettingsTab" data-args='["scraping"]' role="tab" aria-selected="false" aria-controls="tab-scraping">
-        <span class="tab-icon">🔍</span>
-        <span class="tab-text">{{ pgettext('settings tab', 'Scraping') }}</span>
-    </button>
-    <button type="button" class="settings-tab" data-tab="data" data-on-click="switchSettingsTab" data-args='["data"]' role="tab" aria-selected="false" aria-controls="tab-data">
-        <span class="tab-icon">📊</span>
-        <span class="tab-text">{{ _('Data') }}</span>
-    </button>
-    <button type="button" class="settings-tab" data-tab="customization" data-on-click="switchSettingsTab" data-args='["customization"]' role="tab" aria-selected="false" aria-controls="tab-customization">
-        <span class="tab-icon">🎨</span>
-        <span class="tab-text">{{ _('Customization') }}</span>
-    </button>
-    <button type="button" class="settings-tab" data-tab="system" data-on-click="switchSettingsTab" data-args='["system"]' role="tab" aria-selected="false" aria-controls="tab-system">
-        <span class="tab-icon">⚙️</span>
-        <span class="tab-text">{{ _('System') }}</span>
-    </button>
-    {% if current_user and current_user.role == 'admin' %}
-    {# Its own page, so a link rather than a tab: help and the game page send people to "Settings > Emulators". #}
-    <a class="settings-tab settings-tab-link" href="{{ url_for('emulators.page_emulators_settings') }}">
-        <span class="tab-icon">🎮</span>
-        <span class="tab-text">{{ _('Emulators') }}</span>
-    </a>
-    {% endif %}
-</div>
+{% include "_settings_tabs/_tab_bar.html" %}
 
 <!-- ==================== TAB: ACCOUNT ==================== -->
 {% include "_settings_tabs/account.html" %}

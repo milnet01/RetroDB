@@ -1,0 +1,42 @@
+{# Settings tab bar, shared by settings.html and settings_emulators.html.
+   On the settings page the tabs switch panels in place. With
+   `settings_tab_links` set (the Emulators page) every tab is a link back
+   to /settings#<tab>, so the other tabs stay one click away. #}
+{% set _tabs = [
+    ('account', '👤', _('Account')),
+    ('library', '📁', _('Library')),
+    ('scraping', '🔍', pgettext('settings tab', 'Scraping')),
+    ('data', '📊', _('Data')),
+    ('customization', '🎨', _('Customization')),
+    ('system', '⚙️', _('System')),
+] %}
+{% if settings_tab_links %}
+<nav class="settings-tabs" id="settingsTabs" aria-label="{{ _('Settings sections') }}" data-sticky-nav>
+    {% for tab_id, icon, label in _tabs %}
+    <a class="settings-tab" href="{{ url_for('settings.settings') }}#{{ tab_id }}">
+        <span class="tab-icon">{{ icon }}</span>
+        <span class="tab-text">{{ label }}</span>
+    </a>
+    {% endfor %}
+    <a class="settings-tab active" href="{{ url_for('emulators.page_emulators_settings') }}" aria-current="page">
+        <span class="tab-icon">🎮</span>
+        <span class="tab-text">{{ _('Emulators') }}</span>
+    </a>
+</nav>
+{% else %}
+<div class="settings-tabs" id="settingsTabs" role="tablist" aria-label="{{ _('Settings sections') }}" data-sticky-nav>
+    {% for tab_id, icon, label in _tabs %}
+    <button type="button" class="settings-tab{% if loop.first %} active{% endif %}" data-tab="{{ tab_id }}" data-on-click="switchSettingsTab" data-args='["{{ tab_id }}"]' role="tab" aria-selected="{{ 'true' if loop.first else 'false' }}" aria-controls="tab-{{ tab_id }}">
+        <span class="tab-icon">{{ icon }}</span>
+        <span class="tab-text">{{ label }}</span>
+    </button>
+    {% endfor %}
+    {% if current_user and current_user.role == 'admin' %}
+    {# Its own page, so a link rather than a tab: help and the game page send people to "Settings > Emulators". #}
+    <a class="settings-tab" href="{{ url_for('emulators.page_emulators_settings') }}">
+        <span class="tab-icon">🎮</span>
+        <span class="tab-text">{{ _('Emulators') }}</span>
+    </a>
+    {% endif %}
+</div>
+{% endif %}
