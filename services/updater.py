@@ -41,6 +41,7 @@ RELEASES_REPO = 'milnet01/RetroDB'
 LATEST_URL = f'https://api.github.com/repos/{RELEASES_REPO}/releases/latest'
 DOWNLOAD_PREFIX = f'https://github.com/{RELEASES_REPO}/releases/download/'
 CHECK_INTERVAL = 24 * 3600
+CHECK_RETRY = 3600          # after a failed check: try again sooner
 MAX_DOWNLOAD = 3 * 1024 ** 3
 MAX_UNPACKED = 8 * 1024 ** 3
 MAX_CHECKSUM_FILE = 64 * 1024
@@ -213,11 +214,21 @@ def _summarise(release) -> dict:
     }
 
 
+def _is_fresh(cached) -> bool:
+    """A cached check still stands: CHECK_INTERVAL after a success,
+    CHECK_RETRY after a failure (offline, rate limit), so a failed check
+    is retried within the hour rather than the next day."""
+    if not cached:
+        return False
+    wait = CHECK_RETRY if cached.get('error') else CHECK_INTERVAL
+    return time.time() - cached.get('checked_at', 0) < wait
+
+
 def check(force=False) -> dict:
-    """Ask GitHub for the latest release; cached for CHECK_INTERVAL."""
+    """Ask GitHub for the latest release; cached (see _is_fresh)."""
     with _check_lock:
         cached = _load_check()
-        if not force and cached and time.time() - cached.get('checked_at', 0) < CHECK_INTERVAL:
+        if not force and _is_fresh(cached):
             return cached
         data = {'checked_at': time.time(), 'release': None, 'error': None}
         try:
@@ -247,8 +258,7 @@ def _background_check_if_due():
             return
     except Exception:
         pass
-    cached = _load_check()
-    if cached and time.time() - cached.get('checked_at', 0) < CHECK_INTERVAL:
+    if _is_fresh(_load_check()):
         return
     if _check_lock.locked():
         return
@@ -375,6 +385,12 @@ class UpdateJob:
             logger.warning(f"update download failed: {e}")
             with self._lock:
                 self.state, self.error = 'error', str(e)
+        except Exception as e:
+            # Anything else (an encrypted zip member, a bad value) must still
+            # end the job, or it stays 'downloading' and refuses every retry.
+            logger.exception("update download failed unexpectedly")
+            with self._lock:
+                self.state, self.error = 'error', str(e) or type(e).__name__
 
     def _fetch_checksums(self) -> str:
         r = _http_get(self.asset['checksum_url'], stream=True)
@@ -438,6 +454,7 @@ def build_plan(tree, kind, version, port, db_backup) -> dict:
         'rollback_dir': os.path.join(p['root'], f'rollback-{config.APP_VERSION}'),
         'pid': os.getpid(), 'port': port,
         'restart_argv': argv, 'restart_cwd': cwd,
+        'host': config.SERVER_HOST,
         'db_path': config.DB_PATH, 'db_backup': db_backup,
         'status_path': p['status'], 'log_path': p['log'],
     }
@@ -516,9 +533,14 @@ def last_result() -> Optional[dict]:
     helper = result.get('helper_pid')
     if helper and helper != os.getpid():
         import updater_apply
-        if not updater_apply.pid_alive(helper):
-            shutil.rmtree(_paths()['staging'], ignore_errors=True)
-            shutil.rmtree(_paths()['download'], ignore_errors=True)
+        # Under the job's lock, and only while no job owns the folders: the
+        # outcome file outlives its update until dismissed, and a later
+        # download unpacks into these same folders.
+        with job._lock:
+            if job.state not in ('downloading', 'ready', 'installing') \
+                    and not updater_apply.pid_alive(helper):
+                shutil.rmtree(_paths()['staging'], ignore_errors=True)
+                shutil.rmtree(_paths()['download'], ignore_errors=True)
     return result
 
 

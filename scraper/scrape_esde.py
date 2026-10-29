@@ -1272,7 +1272,8 @@ def bulk_import_esde(system_folder=None):
                         'developer': esde_game.get('developer', ''),
                         'publisher': esde_game.get('publisher', ''),
                         'genre': esde_game.get('genre', ''),
-                        'players': esde_game.get('players', '1'),
+                        # None when absent: COALESCE keeps a curated count.
+                        'players': esde_game.get('players'),
                         'release_date': esde_game.get('releasedate', ''),
                         'image_path': esde_game.get('image', ''),
                         'screenshot_path': esde_game.get('screenshot', ''),

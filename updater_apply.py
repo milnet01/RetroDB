@@ -117,9 +117,28 @@ def spawn_detached(argv, cwd, log_path, env=None):
     return subprocess.Popen(argv, start_new_session=True, **kwargs)
 
 
-def healthy_version(port):
+def probe_host(bind):
+    """The address to reach a server bound to `bind` (RETRODB_HOST): loopback
+    for a wildcard or localhost, otherwise the bound address itself."""
+    bind = (bind or '').strip().strip('[]')
+    if bind in ('', '0.0.0.0', 'localhost'):
+        return '127.0.0.1'
+    if bind == '::':
+        return '::1'
+    return bind
+
+
+# Never through a proxy: http_proxy in the environment would send the probe
+# of a local server elsewhere.
+_NO_PROXY = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+
+
+def healthy_version(port, host=None):
+    host = probe_host(host)
+    if ':' in host:
+        host = f'[{host}]'
     try:
-        with urllib.request.urlopen(f'http://127.0.0.1:{port}/health', timeout=3) as r:
+        with _NO_PROXY.open(f'http://{host}:{port}/health', timeout=3) as r:
             if r.status != 200:
                 return None
             return json.loads(r.read().decode('utf-8')).get('version')
@@ -127,10 +146,10 @@ def healthy_version(port):
         return None
 
 
-def wait_healthy(port, version, proc, timeout=None):
+def wait_healthy(port, version, proc, timeout=None, host=None):
     deadline = time.monotonic() + (HEALTH_WAIT if timeout is None else timeout)
     while time.monotonic() < deadline:
-        if healthy_version(port) == version:
+        if healthy_version(port, host) == version:
             return True
         if proc is not None and proc.poll() is not None:
             return False  # exited before it came up
@@ -337,6 +356,13 @@ def write_status(plan, result, **extra):
     os.replace(tmp, path)
 
 
+def bind_host(plan):
+    """The address RetroDB binds: the plan's, or (a plan written by a
+    version before plans carried it) RETRODB_HOST, which the restarted
+    server inherits from this helper's environment."""
+    return plan.get('host') or os.environ.get('RETRODB_HOST')
+
+
 def start_app(plan):
     env = dict(os.environ)
     env['RETRODB_OPEN_BROWSER'] = '0'
@@ -382,7 +408,7 @@ def apply(plan):
             install_dependencies(plan, log)
         log('files swapped; starting the new version')
         proc = start_app(plan)
-        if not wait_healthy(plan['port'], plan['to_version'], proc):
+        if not wait_healthy(plan['port'], plan['to_version'], proc, host=bind_host(plan)):
             raise UpdateFailed('the new version did not start')
     except Exception as e:
         reason = str(e) or type(e).__name__
@@ -397,7 +423,7 @@ def apply(plan):
             log(f'database restore failed: {db_err}')
         try:
             old = start_app(plan)
-            ok = wait_healthy(plan['port'], plan['from_version'], old)
+            ok = wait_healthy(plan['port'], plan['from_version'], old, host=bind_host(plan))
             log('old version is running again' if ok else 'old version did not answer /health')
         except OSError as start_err:
             log(f'could not restart the old version: {start_err}')
