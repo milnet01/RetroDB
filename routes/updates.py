@@ -43,11 +43,11 @@ def api_update_check():
 @admin_required
 @handle_api_errors
 def api_update_download():
-    st = updater.status()
-    if not st['available']:
+    # A refreshed check that failed (offline, rate limit) carries no release.
+    release = updater.check().get('release')
+    if not release or not updater.is_newer(release.get('version'), config.APP_VERSION):
         return error(_('No newer version is available'), 409, reason='not_available')
-    cached = updater.check()
-    result = updater.job.start(cached['release'])
+    result = updater.job.start(release)
     if not result['success']:
         return error(_('This update cannot be installed here'), 409, reason=result['error'])
     return success(**updater.status())

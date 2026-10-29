@@ -147,3 +147,18 @@ def test_scan_finds_svg_only_system_logo_and_keeps_existing(tmp_path, monkeypatc
     logos = dict(conn.execute("SELECT folder, logo FROM systems").fetchall())
     conn.close()
     assert logos == {'genesis': 'genesis.svg', 'nes': 'custom.webp'}
+
+
+def test_esde_bulk_import_row_without_players_keeps_curated_values(esde_db, monkeypatch):
+    from scraper import scrape_esde
+    monkeypatch.setattr(scrape_esde, 'find_gamelist_xml', lambda folder: '/x/gamelist.xml')
+    monkeypatch.setattr(scrape_esde, 'parse_gamelist_xml', lambda p: [
+        {'path': './Contra (USA).nes', 'name': 'Contra', 'developer': 'Konami'}])
+    imported, _skipped = scrape_esde.bulk_import_esde('nes')
+    assert imported == 1
+    c = esde_db()
+    row = c.execute("SELECT players, modes, developer FROM games WHERE id = 1").fetchone()
+    c.close()
+    assert row['developer'] == 'Konami'
+    assert row['players'] == 2
+    assert row['modes'] == 'Single-Player, Local Multiplayer'
