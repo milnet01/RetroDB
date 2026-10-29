@@ -9715,7 +9715,47 @@ were corrected in `2836bc3` and are not repeated here.
 
 ---
 
-#### Pass 59.169 Cheats for PSP games in PPSSPP (MEDIUM, S).
+#### Pass 59.169 RetroDB updates itself from GitHub Releases (FEATURE, L).
+- **Status**: implemented in 3.33.0, not yet tried against a real
+  published release.
+- **Asked** (user, 2026-10-27): a self-updater. Decided the same day:
+  check plus one-click install (never unattended), GitHub Releases as
+  the source, source and standalone installs both, spec then straight
+  to code with the code as the review.
+- **Spec**: `docs/specs/PASS-59-169-self-updater.md`.
+- **Shape**: `services/updater.py` checks
+  `releases/latest` (drafts stay invisible until published, so
+  publishing is the switch), downloads the asset for this install,
+  checks it against the release's SHA-256 file and unpacks it safely.
+  Install backs up the database and starts the NEW version's helper
+  (`updater_apply.py`, or `retrodb --apply-update`), which swaps files
+  after RetroDB exits, restarts, waits for `/health` to report the new
+  version and otherwise rolls files and database back. Settings >
+  System > Updates and an admin dashboard banner (`static/js/updates.js`).
+- **Verify (still to do on real releases)**: publish a release after
+  this one ships, then update a source install and a standalone on
+  Linux and Windows from it; break one (a release whose program exits
+  at once) and see the rollback bring the old version back.
+
+---
+
+#### Pass 59.170 Verify release signatures before an update installs (SECURITY, M).
+- **Status**: todo
+- **Why**: PASS-59-169 checks downloads against the SHA-256 file
+  published in the same release, which catches corruption and a
+  swapped file on the way, but not a release whose files and checksums
+  were both replaced. `release.yml` already signs every zip with cosign
+  (keyless, GitHub OIDC); checking that signature would tie a download
+  to the repository's own release workflow.
+- **Do**: verify the `.cosign.bundle` beside each asset (the `sigstore`
+  package, identity = this repository's `release.yml` on a `v*` tag)
+  before unpacking; the standalone `-Standalone.zip` assets need
+  signing in the `build-standalone` job first.
+- **Verify**: a tampered zip with a matching checksum file is refused.
+
+---
+
+#### Pass 59.171 Cheats for PSP games in PPSSPP (MEDIUM, S).
 - **Status**: todo
 - Deferred from PASS-59-155 (user, 2026-10-23: not in v4.0.0).
 - The user's PSP cheat database is in `/mnt/Emulators/Cheats/Sony
@@ -9724,7 +9764,7 @@ were corrected in `2836bc3` and are not repeated here.
 
 ---
 
-#### Pass 59.170 Research RPCS3 game patches as cheats (LOW, S).
+#### Pass 59.172 Research RPCS3 game patches as cheats (LOW, S).
 - **Status**: todo
 - Deferred from PASS-59-155 (user, 2026-10-23: research before
   deciding; not committed to v4.0.0).
@@ -9733,7 +9773,7 @@ were corrected in `2836bc3` and are not repeated here.
 
 ---
 
-#### Pass 59.171 Cheats when a game runs in the user's own RetroArch (LOW, S).
+#### Pass 59.173 Cheats when a game runs in the user's own RetroArch (LOW, S).
 - **Status**: todo
 - Deferred from PASS-59-155 (2026-10-23).
 - The user's RetroArch reads its own `cheat_database_path`; RetroDB

@@ -58,6 +58,8 @@ DEFAULT_SETTINGS = {
 
     # Feature toggles
     'enable_animations': True,
+    # PASS-59-169 — check GitHub for a new RetroDB once a day (admins see it)
+    'update_check_auto': True,
     'enable_mist_effect': True,
     'enable_scanlines': True,
 

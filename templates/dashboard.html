@@ -29,6 +29,15 @@
     <button type="button" class="api-warning-close" data-on-click="hideParent" data-args='["$this"]'>✕</button>
 </div>
 
+{% if current_user and current_user.role == 'admin' %}
+<!-- Update banner (PASS-59-169); static/js/updates.js shows it when a newer RetroDB is out -->
+<div class="update-banner" data-update-banner hidden>
+    <span class="update-banner-text" data-update-banner-text></span>
+    <a href="{{ url_for('settings.settings') }}#updates" class="update-banner-link">{{ _('See what is new') }}</a>
+    <button type="button" class="update-banner-close" data-on-click="hideParent" data-args='["$this"]' aria-label="{{ _('Close') }}">✕</button>
+</div>
+{% endif %}
+
 <!-- Job Recovery Banner (shown when interrupted/queued jobs exist) -->
 {% if recoverable_jobs %}
 <div class="job-recovery-banner" id="jobRecoveryBanner">
@@ -1126,6 +1135,9 @@
 {% endblock %}
 
 {% block scripts %}
+{% if current_user and current_user.role == 'admin' %}
+<script src="{{ asset_url('js/updates.js') }}" defer></script>
+{% endif %}
 <script nonce="{{ csp_nonce }}">
 // Job Recovery Banner actions
 function resumeJob(jobId) {

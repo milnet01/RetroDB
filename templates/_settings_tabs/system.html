@@ -4,6 +4,7 @@
     {% call tab_subnav('system') %}
         {% if _is_admin %}
         {{ subnav_link('maintenance', '🛠️ Maintenance', active=True) }}
+        {{ subnav_link('updates', '⬆️ ' ~ _('Updates')) }}
         {{ subnav_link('server', '⚙️ Server') }}
         {% endif %}
         {{ subnav_link('logging', '📋 Logging', active=not _is_admin) }}
@@ -164,6 +165,36 @@
             </button>
         </div>
         <div id="optimizeDbResult" style="margin-top: var(--spacing-md); display: none;"></div>
+    </div>
+</section>
+
+<!-- Updates (PASS-59-169); filled in by static/js/updates.js -->
+<section class="card" id="updates" data-update-card>
+    <div class="card-header">
+        <h2 class="card-title">{{ _('Updates') }}</h2>
+    </div>
+    <div class="card-body">
+        <p>{{ _('This is RetroDB %(version)s.', version=config.APP_VERSION) }}
+           <span data-update-summary class="text-muted"></span></p>
+        <div data-update-result class="update-result" hidden></div>
+        <div data-update-release hidden>
+            <h3 class="section-title" data-update-title></h3>
+            <pre class="update-notes" data-update-notes></pre>
+            <a data-update-link href="#" target="_blank" rel="noopener noreferrer" hidden>{{ _('Release page') }}</a>
+        </div>
+        <div class="update-progress" data-update-progress hidden>
+            <div class="update-progress-bar" data-update-bar></div>
+        </div>
+        <p class="text-muted" data-update-note hidden></p>
+        <div class="update-actions">
+            <button type="button" class="btn btn-secondary" data-update-action="check">{{ _('Check for updates') }}</button>
+            <button type="button" class="btn btn-primary" data-update-action="download" hidden>{{ _('Download update') }}</button>
+            <button type="button" class="btn btn-warning" data-update-action="install" hidden>{{ _('Install and restart') }}</button>
+        </div>
+        <label class="checkbox-label update-auto">
+            <input type="checkbox" data-update-auto {% if settings.update_check_auto is not defined or settings.update_check_auto %}checked{% endif %}>
+            {{ _('Check for updates once a day') }}
+        </label>
     </div>
 </section>
 

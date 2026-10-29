@@ -240,6 +240,7 @@ _VALIDATORS = {
     'default_sort': _string_validator(max_len=64),
     'default_sort_order': _enum_validator(_ALLOWED_SORT_ORDERS, 'default_sort_order'),
     'show_unscraped_first': _bool_validator,
+    'update_check_auto': _bool_validator,
     'preferred_boxart': _enum_validator(_ALLOWED_BOXART_MODES, 'preferred_boxart'),
     'preferred_rating_system': _enum_validator(_ALLOWED_RATING_SYSTEMS, 'preferred_rating_system'),
     'enable_animations': _bool_validator,

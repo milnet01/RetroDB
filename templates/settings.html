@@ -1128,6 +1128,7 @@
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/settings-page.js') }}?v={{ config.APP_VERSION }}"></script>
+<script src="{{ asset_url('js/updates.js') }}" defer></script>
 <script nonce="{{ csp_nonce }}">
 // =============================================================================
 // SETTINGS TAB SYSTEM

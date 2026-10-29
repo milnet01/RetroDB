@@ -51,6 +51,7 @@ CSS_ORDER = [
     'features/filters.css',
     'features/hltb.css',
     'features/manual-reader.css',
+    'features/updates.css',
 
     # 5. Pages
     'pages/game-list.css',

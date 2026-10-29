@@ -363,11 +363,11 @@ automated here.
 
 ## 9. Out of scope
 
-- PPSSPP cheats (the user has a PSP database) — tracked by PASS-59-169.
+- PPSSPP cheats (the user has a PSP database) — tracked by PASS-59-171.
 - RPCS3 game patches (`patch.yml`), research first — tracked by
-  PASS-59-170.
+  PASS-59-172.
 - Cheats when a game runs in the user's own RetroArch rather than the
-  player — tracked by PASS-59-171.
+  player — tracked by PASS-59-173.
 - Searching memory for new cheats, or editing cheat codes in RetroDB.
 
 ## 10. What checks this

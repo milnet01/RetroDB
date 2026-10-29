@@ -92,6 +92,12 @@ Themes are [`specs/themes.md`](specs/themes.md).
 **Translation.** Flask-Babel catalogs, plus whole per-locale files for the
 help manual and changelog. That is [`specs/i18n.md`](specs/i18n.md).
 
+**Updates.** RetroDB checks GitHub Releases for a newer version, and an
+admin installs it with one click: the download is checked against the
+release's SHA-256, the database is backed up, and the new version's helper
+swaps the files, restarts, and rolls back if the new version does not come
+up. That is [`specs/PASS-59-169-self-updater.md`](specs/PASS-59-169-self-updater.md).
+
 ### Subsystems without a spec
 
 Recorded under PASS-59-66 (2026-10-17) so the next audit does not decide this
