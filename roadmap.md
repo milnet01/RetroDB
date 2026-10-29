@@ -9979,6 +9979,23 @@ the catalogs and translate the new msgids into every locale.
 - **Status**: todo.
 - **Source**: user, 2026-10-29.
 
+---
+
+#### Pass 59.188 Popups placed inside a page's content can sit under the sidebar and phone bars (LOW, S).
+- **Status**: todo
+`.content-wrapper` has `position: relative; z-index: 1` (layout.css,
+since the first commit, reason unrecorded). That caps the z-index of
+everything inside it, so a `position: fixed` popup in a page's content
+paints under the sidebar (z 1000) and the phone header and bottom bar.
+The screenshot viewer (PASS-59-63) and the cover zoom (2026-10-29) were
+each fixed by moving the popup to body level. Unchecked: the popups in
+local_trophies, psn_trophies, reports, settings account and
+customization tabs, rename/manual-reader modals, select_filter_modal.
+Choose one route: drop the wrapper's z-index (one rule, every page;
+re-check fanart and other negative z-index backgrounds), or move each
+popup to body level. A phone-only `z-index: auto` was proved to fix
+the cover zoom in Firefox before being reverted for the local fix.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
