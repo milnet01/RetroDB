@@ -8,7 +8,8 @@
 # changes the user made in the player's menu as that game's settings.
 #
 #   launch_args()   base cfg keys, game cfg/.opt, run layer -> argv after binary
-#   after_session() absorb menu saves, mark user-set keys, drop the run layer
+#   after_session() absorb menu saves, mark user-set keys, drop the run layer,
+#                   keep the in-game cheat switches (PASS-59-155)
 #   reset()         Reset to recommended: delete the game's .cfg/.opt/.json
 #
 # The recommended settings come from services/player_cores.py (PASS-59-81).
@@ -46,12 +47,14 @@ _BASE_KEYS = {
     # On only in a launch's run layer, where RetroDB sends a command: official
     # RetroArch 1.22.2 listens on every network interface (PASS-59-139).
     'network_cmd_enable': 'false',
+    # Load the game's cheat list, which RetroDB puts in place (PASS-59-155).
+    'apply_cheats_after_load': 'true',
 }
 # Keys a menu save may never bring back into a game's settings (§4.5).
 _PROTECTED_KEYS = set(_BASE_KEYS) | {
     'rgui_config_directory', 'savefile_directory', 'savestate_directory',
     'input_remapping_directory', 'libretro_directory', 'system_directory',
-    'core_options_path',
+    'core_options_path', 'cheat_database_path',
 }
 
 
@@ -215,11 +218,12 @@ def _free_port() -> int:
 
 
 def launch_args(game: dict, sys_emu: Optional[dict], core_path: str,
-                rom_path: Path, token: str, recommended: Optional[dict] = None
-                ) -> tuple:
+                rom_path: Path, token: str, recommended: Optional[dict] = None,
+                core: Optional[str] = None) -> tuple:
     """Write the profile's settings for one launch and return (argv words
     after the binary, network command port or None). `recommended` is
-    {'cfg': {...}, 'opt': {...}} from PASS-59-81. Raises
+    {'cfg': {...}, 'opt': {...}} from PASS-59-81; `core` (its id) names
+    the folder the game's cheats go in (PASS-59-155). Raises
     LaunchResolutionError when a file cannot be written (§6) or a path
     holds `|` (INV-10)."""
     profile = profile_dir()
@@ -245,7 +249,8 @@ def launch_args(game: dict, sys_emu: Optional[dict], core_path: str,
                 savestate_directory=str(profile / 'states'),
                 input_remapping_directory=str(profile / 'remaps'),
                 libretro_directory=str(profile / 'cores'),
-                system_directory=_user_system_dir())
+                system_directory=_user_system_dir(),
+                cheat_database_path=str(profile / 'cheats'))
     port = _free_port() if needs_commands(rom_path) else None
     rec_values = recommended or {}
     try:
@@ -269,6 +274,9 @@ def launch_args(game: dict, sys_emu: Optional[dict], core_path: str,
         raise LaunchResolutionError(
             f"Cannot write the player's settings ({e.filename or profile}): "
             f"{e.strerror or e}") from e
+    if core:
+        from services import cheats
+        cheats.place_for_launch(game['id'], core, rom_path, profile)
     return (['--config', str(base), '--appendconfig', '|'.join(layers),
              *extras, '-L', core_path, str(rom_path)], port)
 
@@ -296,6 +304,8 @@ def _overrides(rom_path: Path) -> list:
 def after_session(game_id: int, rom_path: Path, token: str) -> None:
     """Keep what the user changed during play as the game's settings. Runs
     once per player session, from the launcher, whatever the exit code."""
+    from services import cheats
+    cheats.take_back(game_id, rom_path, profile_dir())
     rec = _record(game_id)
     for part in ('cfg', 'opt'):
         current = _read(_game_file(game_id, part)) or {}

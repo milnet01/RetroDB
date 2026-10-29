@@ -224,6 +224,69 @@ def write_value(lines, spec, raw) -> list:
     return lines
 
 
+def _ini_section(lines, section) -> tuple:
+    """(index of the [section] line or None, index of the line after it)."""
+    start = None
+    for i, line in enumerate(lines):
+        stripped = line.strip()
+        if stripped.startswith('[') and stripped.endswith(']'):
+            if start is not None:
+                return start, i
+            if stripped[1:-1] == section:
+                start = i
+    return start, len(lines)
+
+
+def read_values(lines, section, key) -> list:
+    """Every value of a key that repeats in one ini section, such as
+    `[Cheats] Enable = <name>` (PASS-59-155 §4.5)."""
+    start, end = _ini_section(lines, section)
+    if start is None:
+        return []
+    key_re = re.compile(rf'^\s*{re.escape(key)}\s*=')
+    return [lines[i].split('=', 1)[1].strip() for i in range(start + 1, end)
+            if key_re.match(lines[i])]
+
+
+def write_values(lines, section, key, values) -> list:
+    """write_value's multi-line form: [section] ends up holding exactly one
+    `key = value` line per value, where the first old one was; every other
+    line stays."""
+    start, end = _ini_section(lines, section)
+    new = [f'{key} = {v}\n' for v in values]
+    lines = list(lines)
+    if start is None:
+        if not new:
+            return lines
+        if lines and not lines[-1].endswith('\n'):
+            lines[-1] += '\n'
+        if lines and lines[-1].strip():
+            lines.append('\n')
+        return lines + [f'[{section}]\n'] + new
+    key_re = re.compile(rf'^\s*{re.escape(key)}\s*=')
+    old = [i for i in range(start + 1, end) if key_re.match(lines[i])]
+    if old:
+        at = old[0]
+    else:
+        at = start + 1
+        for i in range(start + 1, end):
+            if lines[i].strip():
+                at = i + 1
+    if at == len(lines) and lines and not lines[-1].endswith('\n'):
+        lines[-1] += '\n'
+    kept = [ln for i, ln in enumerate(lines) if i not in old]
+    return kept[:at] + new + kept[at:]
+
+
+def write_lines(path: Path, lines) -> None:
+    """Replace a file the emulator owns in one step, so it never reads half."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(dir=path.parent, prefix='.retrodb-')
+    with os.fdopen(fd, 'w', encoding='utf-8') as f:
+        f.writelines(lines)
+    os.replace(tmp, path)
+
+
 # -----------------------------------------------------------------------------
 # Which file (§4.6 "Which file")
 # -----------------------------------------------------------------------------
@@ -282,7 +345,7 @@ def _context(game_id) -> dict:
         LaunchResolutionError, _resolve_binary, pick_launch_mapping,
     )
     game = query("""
-        SELECT g.id, g.system_id, g.rom_path, g.emulator_override_id, g.disc_serial,
+        SELECT g.id, g.system_id, g.title, g.rom_path, g.emulator_override_id, g.disc_serial,
                g.disc_crc, s.folder AS system_folder, s.name AS system_name
         FROM games g JOIN systems s ON s.id = g.system_id WHERE g.id = ?
     """, (game_id,), one=True)
@@ -315,8 +378,9 @@ def _context(game_id) -> dict:
         ctx['reason'] = _('Run %(name)s once so it creates its settings, '
                            'then play again.', name=emu['name'])
         return ctx
+    ctx['data_dir'] = data_dir
     serial, crc = disc_ids(game)
-    ctx['serial'] = serial
+    ctx['serial'], ctx['crc'] = serial, crc
     ctx.update(_target(emu['binary_name'], data_dir, serial, crc))
     return ctx
 
@@ -364,11 +428,7 @@ def apply_for_launch(game_id) -> Optional[str]:
                 lines = write_value(lines, spec, raw)
             records.append((setting, raw))
         if lines != before:
-            path.parent.mkdir(parents=True, exist_ok=True)
-            fd, tmp = tempfile.mkstemp(dir=path.parent, prefix='.retrodb-')
-            with os.fdopen(fd, 'w', encoding='utf-8') as f:
-                f.writelines(lines)
-            os.replace(tmp, path)
+            write_lines(path, lines)
         with get_db_with_context() as conn:
             conn.executemany("""
                 INSERT INTO emulator_written_settings (emulator_id, file_path, setting, written)

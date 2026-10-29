@@ -351,6 +351,7 @@ from routes.launch import bp as launch_bp
 from routes.emulators import bp as emulators_bp
 from routes.launch_settings import bp as launch_settings_bp
 from routes.updates import bp as updates_bp
+from routes.cheats import bp as cheats_bp
 
 app.register_blueprint(clz_import_bp)
 app.register_blueprint(controllers_bp)
@@ -375,6 +376,7 @@ app.register_blueprint(platform_import_bp)
 app.register_blueprint(steam_achievements_bp)
 app.register_blueprint(xbox_achievements_bp)
 app.register_blueprint(updates_bp)
+app.register_blueprint(cheats_bp)
 app.register_blueprint(game_imports_bp)
 app.register_blueprint(launch_bp)
 app.register_blueprint(emulators_bp)

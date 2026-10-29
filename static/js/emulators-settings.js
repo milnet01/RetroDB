@@ -583,6 +583,91 @@
         });
     }
 
+    // ----- PASS-59-155 — cheat packs and imports ----------------------------
+
+    // The core job's queue name for a pack (services/jobs/player_cores.py).
+    const CHEATS_ITEM = (pack) => `_cheats_${pack}`;
+    const PACK_LABELS = () => ({
+        retroarch: t('RetroArch cheats (libretro)'),
+        duckstation: t('DuckStation cheats'),
+        pcsx2: t('PCSX2 cheats (community collection)'),
+    });
+    const cheatPacks = $('#cheat-packs');
+    const cheatStatus = $('#cheat-status');
+
+    async function renderCheatPacks() {
+        const packs = (await fetchJSON('/api/cheats/packs')).packs || [];
+        const labels = PACK_LABELS();
+        cheatPacks.replaceChildren(...packs.map((p) => {
+            const row = document.createElement('div');
+            row.style.cssText = 'display: flex; gap: var(--spacing-sm); align-items: center; flex-wrap: wrap;';
+            const name = document.createElement('strong');
+            name.textContent = labels[p.pack] || p.pack;
+            const state = document.createElement('span');
+            state.className = 'text-muted';
+            state.textContent = p.downloaded_at
+                ? t('Downloaded {date}, {n} files', {date: p.downloaded_at, n: formatNumber(p.files)})
+                : t('Not downloaded');
+            const btn = document.createElement('button');
+            btn.className = 'btn btn-secondary btn-sm';
+            btn.textContent = p.downloaded_at ? t('Download again') : t('Download');
+            btn.addEventListener('click', () => downloadCheatPack(p.pack, btn));
+            row.append(name, state, btn);
+            return row;
+        }));
+    }
+
+    async function downloadCheatPack(pack, btn) {
+        btn.disabled = true;
+        cheatStatus.textContent = t('Downloading {pack}…', {pack: PACK_LABELS()[pack] || pack});
+        try {
+            await fetchJSON(`/api/cheats/packs/${pack}`, {method: 'POST'});
+            for (;;) {
+                await new Promise((r) => setTimeout(r, 2000));
+                const st = (await fetchJSON('/api/player/cores/status')).data || {};
+                const failed = (st.errors || {})[CHEATS_ITEM(pack)];
+                if (failed) {
+                    cheatStatus.textContent = t('The cheats were not downloaded: {error}', {error: failed});
+                    break;
+                }
+                if ((st.success || []).includes(CHEATS_ITEM(pack))) {
+                    cheatStatus.textContent = t('Cheats downloaded.');
+                    await renderCheatPacks();
+                    return;
+                }
+                if (!st.running) {
+                    cheatStatus.textContent = t('The cheats were not downloaded.');
+                    break;
+                }
+            }
+        } catch (e) {
+            cheatStatus.textContent = e.message;
+        }
+        btn.disabled = false;
+    }
+
+    const cheatImport = $('#cheat-import');
+    if (cheatPacks) {
+        renderCheatPacks().catch((e) => { cheatStatus.textContent = e.message; });
+        cheatImport.addEventListener('click', async () => {
+            cheatImport.disabled = true;
+            cheatStatus.textContent = t('Importing…');
+            try {
+                const out = (await fetchJSON('/api/cheats/import', {
+                    method: 'POST',
+                    body: JSON.stringify({path: $('#cheat-import-path').value}),
+                })).data;
+                const copied = Object.values(out.copied).reduce((a, b) => a + b, 0);
+                cheatStatus.textContent = t('Copied {copied} files; {unchanged} were already there; {skipped} skipped.',
+                    {copied: formatNumber(copied), unchanged: formatNumber(out.unchanged),
+                     skipped: formatNumber(out.skipped.length)});
+            } catch (e) {
+                cheatStatus.textContent = e.message;
+            }
+            cheatImport.disabled = false;
+        });
+    }
+
     // ----- PASS-59-81 — the player's cores ----------------------------------
 
     const playerStatus = $('#player-cores-status');

@@ -542,7 +542,7 @@ def _player_context(game, emu, sys_emu, binary_argv_prefix, rom_path_obj) -> Lau
             f"Cannot write the player's settings ({e.filename}): {e.strerror or e}") from e
     recommended = player_cores.game_recommended(folder, game['id'], emu['id'], core)
     words, port = player.launch_args(game, sys_emu, str(core_path_obj), rom_abs, token,
-                                     recommended)
+                                     recommended, core=core)
     return LaunchContext(
         game_id=game['id'],
         emulator_id=emu['id'],

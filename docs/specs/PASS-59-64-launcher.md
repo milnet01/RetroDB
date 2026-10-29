@@ -247,6 +247,8 @@ savestate_directory       = "<profile>/states"
 input_remapping_directory = "<profile>/remaps"
 libretro_directory        = "<profile>/cores"
 system_directory          = "<the user's RetroArch system dir>"
+cheat_database_path       = "<profile>/cheats"   # PASS-59-155 §4.5
+apply_cheats_after_load   = "true"               # PASS-59-155 §4.5
 ```
 
 Verified by the fork session in its `local/fixes-2026-09` source: with

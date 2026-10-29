@@ -1,7 +1,8 @@
 <!-- ants-spec-format: 1 -->
 # PASS-59-155 — Cheats for the player, DuckStation and PCSX2
 
-**Status:** spec draft (2026-10-23).
+**Status:** built 2026-10-29 for 3.34.0. The manual run in each emulator
+(§7) is still owed.
 **Kind:** feature.
 **Source:** ROADMAP PASS-59-155 (user asks and answers 2026-10-22 and
 2026-10-23).
@@ -90,13 +91,15 @@ API (§4.7).
 | `duckstation` | `https://github.com/duckstation/chtdb/releases/download/latest/cheats.zip` | every `*.cht` |
 | `pcsx2` | `https://github.com/xs1l3n7x/pcsx2_cheats_collection/archive/refs/heads/main.zip` | every `*.pnach` under `*/cheats/` |
 
-A download runs as a background job, and follows
-`services/player_cores.py::install_shaders`: stream to a `.part` file under
+A download runs on the player downloads job's queue as `_cheats_<pack>`,
+and follows `services/player_cores.py::install_shaders`: stream to a `.part` file under
 a size cap, unpack into a staging folder, refuse any member whose path
 resolves outside it, then swap the staging folder in with `os.replace`. The
 pack's old folder goes only after the swap. No checksum is published for
 any pack, so none is checked. Only files with the pack's own extension are
-kept.
+kept. Redirects are followed: GitHub serves both its packs from other
+hosts. The download fails unless it ends on a libretro or GitHub host
+(`services/cheats.py::_PACK_HOSTS`).
 
 ### 4.3 Import
 
@@ -106,10 +109,12 @@ sorted by what it is, not by where it sits:
 | File | Goes to | Name kept when |
 |------|---------|----------------|
 | `.cht` holding a `cheats = N` line | `own/retroarch/<folder>/` | its parent folder is a libretro system folder or a core library name (§4.4), mapped to the system folder |
-| `.cht` with `[name]` sections and no `cheats =` line | `own/duckstation/` | the name starts with a serial (`^[A-Z]{4}-\d{5}`) |
+| `.cht` with `[name]` sections and no `cheats =` line | `own/duckstation/` | the name starts with a serial (`^[A-Z]{3,4}-\d{4,5}`; the pack also names discs such as `SLP-86051`) |
 | `.pnach` | `own/pcsx2/` | the name is `SERIAL_CRC` or `CRC`; otherwise the first `gametitle=` line's `[SERIAL] [CRC]` names it |
 
-Any other file is skipped. The reply lists counts and each skipped file
+A core library name that serves several system folders (Gambatte: Game
+Boy and Game Boy Color) takes the one whose pack holds a file of the same
+name; with none or several, the file is skipped. Any other file is skipped. The reply lists counts and each skipped file
 with a reason. Re-importing a file that is already in `own/` with the same
 bytes changes nothing. A different file with the same name replaces it.
 The source folder is only read.
@@ -119,8 +124,11 @@ The source folder is only read.
 **Player.** `data/player_cores.json` gains two things. Each system entry
 gains `"cheats": "<libretro system folder>"`, for example
 `"psx": {"cheats": "Sony - PlayStation", ...}`. A new `"_library_names"`
-object maps each core id to the library name RetroArch reports, taken
-from that core's `.info` file in libretro's core-info repository. A
+object maps each core id to the library name RetroArch reports, read from
+each core's `retro_get_system_info` source (2026-10-29). The `.info` file's
+`corename` differs for `cap32`, `freeintv` and `same_cdi`. The `cheats` key
+is read from the system's own entry, never through `same_as`: Game Boy
+Color shares Game Boy's cores, not its cheats. A
 system with no `cheats` key has no Cheats panel.
 
 The candidates are the store files in that folder whose normalised name
@@ -144,7 +152,7 @@ name starts with the game's `games.disc_serial`.
 from `games.disc_serial` and `games.disc_crc`. These are the names PCSX2
 itself loads.
 
-Serial and CRC are read with `services/standalone_settings.py::_disc_ids`,
+Serial and CRC are read with `services/standalone_settings.py::disc_ids`,
 which reads the disc the first time and stores both.
 
 ### 4.5 Turning cheats on
@@ -179,7 +187,9 @@ For both, a switch on the page writes straight to the emulator's files:
    never overwritten.
 2. It rewrites the `Enable` lines in the per-game settings file, through
    `services/standalone_settings.py`'s line-level editor, gaining a
-   multi-line form of `write_value`. Every other line stays as it was.
+   multi-line form of `write_value` (`write_values`). An enabled name the
+   panel does not list, such as a DuckStation built-in cheat, stays on.
+   Every other line stays as it was.
 3. It sets `EnableCheats` to true while any cheat is on, else false.
 
 The cheats folder is `[Folders] Cheats` in the emulator's main settings
@@ -193,15 +203,17 @@ there. RetroDB keeps no table of switches.
 
 ### 4.6 The Cheats panel
 
-The panel sits in `templates/game_detail.html` after the Emulator settings
-panel. It is shown when the game's emulator is the player on a system with a
+The panel sits in `templates/game_detail.html`, full width under the row
+of cards that holds the Emulator settings panel, because a game can have
+hundreds of cheats. It is shown when the game's emulator is the player on a system with a
 `cheats` folder, or is DuckStation or PCSX2. Its script is
 `static/js/game-cheats.js`. It holds:
 
 - A list picker, player only, shown when there are two or more
   candidates. Changing it replaces the game's `.cht` after a confirm, which
   says the switches go back to the new file's defaults.
-- One switch per cheat, by its name. PCSX2's ungrouped lines appear as one
+- One switch per cheat, by its name, in a list that scrolls inside the
+  panel. Above twelve cheats a search box filters it. PCSX2's ungrouped lines appear as one
   locked row: "Always on while cheats are on".
 - A hardcore note. Player: a cheat pauses RetroAchievements hardcore for
   that session. DuckStation and PCSX2: the emulator ignores cheats in
@@ -222,6 +234,7 @@ GET  /api/games/<id>/cheats      view
       reason: str|null}
 PUT  /api/games/<id>/cheats      edit
   body {enabled: [name, ...], source?: str}
+  (with source alone, the new list keeps its own switches)
 GET  /api/cheats/packs           manage_settings
 POST /api/cheats/packs/<pack>    admin  (queues the download job)
 POST /api/cheats/import          admin  body {path}
@@ -266,7 +279,7 @@ one of the game's candidates. Errors use the project's usual
   other line alone. After a save turning on cheats A and C, the settings
   file has `Enable = A`, `Enable = C` under `[Cheats]` and nothing else
   changed. `EnableCheats` is under `[Cheats]` (DuckStation) or `[EmuCore]`
-  (PCSX2).
+  (PCSX2). An enabled name the panel does not list stays (2026-10-29).
   *Test:* `tests/test_cheats_standalone.py` — fixture inis with a
   `[Patches] Enable = Widescreen 16:9` line and a `[GPU]` block, both
   emulators.
@@ -355,6 +368,8 @@ automated here.
   emulator's menu would drift from it. The emulator's files are the record.
 - **A symlink instead of the player copy.** RetroArch rewrites the file on
   exit, and the item records "copies, never symlinks".
+- **Take the library name from each core's `.info` file.** Rejected
+  2026-10-29: three cores report another name in their source.
 - **Read the library name from the core binary with `ctypes`.** Loads
   native code into the web server process. A data entry, pinned by
   INV-3, does the same job.
@@ -386,9 +401,10 @@ automated here.
 - `CLAUDE.md`: the new route module, template panel, script and settings
   section (Mandatory Workflow step 7).
 - `templates/help.html` and each `help.<locale>.html`: a Cheats paragraph.
-- `data/changelog.yaml`: the v3.33.0 entry.
+- `data/changelog.yaml`: the v3.34.0 entry.
 - `docs/specs/PASS-59-81-player-cores-and-settings.md`: the two new
-  `player_cores.json` keys and the two new base keys.
+  `player_cores.json` keys.
+- `docs/specs/PASS-59-64-launcher.md`: the two new base keys.
 - `docs/specs/PASS-59-91-zero-setup-play.md`: the multi-line ini writer.
 
 ## 12. Cold-eyes loop log

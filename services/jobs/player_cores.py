@@ -2,7 +2,8 @@
 # RETRODB - The player's core installs (PASS-59-81 §4.4–4.5)
 # =============================================================================
 # One background job downloads every core the player is asked for: by Play,
-# when a game's core is missing, or by Settings > Emulators. A request for a
+# when a game's core is missing, or by Settings > Emulators; and the shader
+# pack, RetroArch itself and the cheat packs (PASS-59-155). A request for a
 # core already queued joins it. After each install for a system, the player's
 # system row and the system's cfg are written (player_cores.map_system).
 #
@@ -20,6 +21,7 @@ logger = logging.getLogger(__name__)
 
 SHADERS = '_shaders'   # the queue's name for the shader pack
 RETROARCH = '_retroarch'   # ...and for RetroArch itself (PASS-59-139)
+CHEATS = '_cheats_'        # ...and for a cheat pack: '_cheats_<pack>' (PASS-59-155)
 
 
 class PlayerCoresJob:
@@ -109,6 +111,9 @@ class PlayerCoresJob:
                         elif core == RETROARCH:
                             from services import player_install
                             player_install.install()
+                        elif core.startswith(CHEATS):
+                            from services import cheats
+                            cheats.download_pack(core[len(CHEATS):])
                         else:
                             if force or not player_cores.is_installed(core):
                                 player_cores.install(core)

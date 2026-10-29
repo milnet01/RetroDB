@@ -74,7 +74,9 @@ beyond its core file names matching the host platform.
 
 ### 4.1 The core table
 
-`data/player_cores.json`, keyed by system folder (`systems.folder`):
+`data/player_cores.json`, keyed by system folder (`systems.folder`). Each
+system's `cheats` key and the `_library_names` object are PASS-59-155's
+(§4.4 of that spec):
 
 ```json
 {

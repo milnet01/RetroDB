@@ -361,7 +361,8 @@ emulator has a settings adapter, for each file setting:
    system's choice, the table's `default`. It is written, and `written` is
    recorded.
 
-Files are edited line by line: only the managed keys change, every other line
+Files are edited line by line (`write_values`, the repeating-key form, is
+PASS-59-155's): only the managed keys change, every other line
 and comment stays, a missing section is appended, and the new file replaces
 the old with `os.replace` from a temporary file in the same directory.
 RPCS3's YAML is edited the same way, never loaded and dumped: the `path`'s

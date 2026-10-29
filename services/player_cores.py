@@ -92,6 +92,12 @@ def setting_values(setting) -> list:
     return list(_raw()['_settings'][setting]['values'])
 
 
+def library_name(core) -> Optional[str]:
+    """The name the core reports to RetroArch, which names its per-core
+    folders such as cheats/ (PASS-59-155 §4.4); None for an unknown core."""
+    return _raw().get('_library_names', {}).get(core)
+
+
 def system_settings(folder) -> dict:
     """{setting: table default} for the managed settings the system has."""
     return dict((entry(folder) or {}).get('settings', {}))
@@ -327,9 +333,10 @@ def download_size(core: str) -> Optional[int]:
         return None
 
 
-def _download(url: str, part: Path) -> None:
-    """Stream `url` to `part`; anything but a 200 under the cap fails."""
-    r = _http_get(url, stream=True)
+def _download(url: str, part: Path, get=None) -> None:
+    """Stream `url` to `part`; anything but a 200 under the cap fails.
+    `get` replaces _http_get (the cheat packs follow redirects)."""
+    r = (get or _http_get)(url, stream=True)
     try:
         if r.status_code != 200:
             raise CoreInstallError(f'HTTP {r.status_code}')

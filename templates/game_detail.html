@@ -808,6 +808,24 @@
         </div>
         {% endif %}
     </div>
+
+    {% if can_play %}
+    <!-- PASS-59-155 §4.6 — cheats, full width under the row: a game can
+     have hundreds. game-cheats.js fills it. -->
+    <div class="bottom-section cheats-section" id="cheatsPanel" data-game-id="{{ game.id }}"
+         data-can-edit="{{ 'true' if has_perm('edit') else 'false' }}"
+         data-settings-url="{{ url_for('emulators.page_emulators_settings') if current_user.role == 'admin' else '' }}" hidden>
+        <h2 class="section-title-sm">🎲 {{ _('Cheats') }}</h2>
+        <p class="cheats-note" id="cheatsNote"></p>
+        <div class="cheats-picker" id="cheatsPicker" hidden>
+            <label for="cheatsSource">{{ _('Cheat list') }}</label>
+            <select id="cheatsSource" class="form-input"></select>
+        </div>
+        <input type="search" class="form-input cheats-filter" id="cheatsFilter" placeholder="{{ _('Find a cheat') }}" aria-label="{{ _('Find a cheat') }}" hidden>
+        <ul class="cheats-list" id="cheatsList"></ul>
+        <p class="cheats-hardcore" id="cheatsHardcore"></p>
+    </div>
+    {% endif %}
     
     <!-- Scrape History -->
     {% if game.scrape_history %}
@@ -1284,6 +1302,73 @@ body:has(.game-fanart-bg.active)::before {
 .emu-setting-source {
     color: var(--text-secondary);
     font-size: 0.75rem;
+}
+
+/* PASS-59-155 §4.6 — cheats */
+.cheats-section {
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.cheats-section[hidden],
+.cheats-picker[hidden],
+.cheats-filter[hidden],
+.cheats-list li[hidden] {
+    display: none;
+}
+
+.cheats-filter {
+    width: 100%;
+    max-width: 24rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+.cheats-note,
+.cheats-hardcore {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin: 0 0 var(--spacing-sm);
+}
+
+.cheats-picker {
+    margin-bottom: var(--spacing-sm);
+}
+
+.cheats-picker label {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    margin-bottom: 2px;
+}
+
+.cheats-list {
+    list-style: none;
+    margin: 0 0 var(--spacing-sm);
+    padding: 0;
+    display: grid;
+    /* At most four columns, each at least 260px wide. */
+    grid-template-columns: repeat(auto-fill, minmax(max(260px, calc(25% - var(--spacing-md))), 1fr));
+    gap: var(--spacing-xs) var(--spacing-md);
+    /* A game can have hundreds of cheats: scroll inside the panel. */
+    max-height: 24rem;
+    overflow-y: auto;
+}
+
+.cheats-list li {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    min-width: 0;
+}
+
+.cheats-list .cheat-name {
+    overflow-wrap: anywhere;
+}
+
+.cheats-list .cheat-locked {
+    color: var(--text-secondary);
 }
 
 .versions-section {
@@ -5779,6 +5864,8 @@ document.querySelectorAll('.filter-link').forEach(link => {
 <script src="{{ asset_url('js/game-launch.js') }}" defer></script>
 <!-- PASS-59-91 §4.6 — per-game emulator settings panel -->
 <script src="{{ asset_url('js/game-emulator-settings.js') }}" defer></script>
+<!-- PASS-59-155 — the Cheats panel -->
+<script src="{{ asset_url('js/game-cheats.js') }}" defer></script>
 <!-- PASS-59-108 — Apply Metadata progress gauge -->
 <script src="{{ asset_url('js/apply-progress.js') }}" defer></script>
 <!-- PASS-59-106 — link and unlink regional versions -->

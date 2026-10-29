@@ -122,6 +122,11 @@ Moved to `.claude/rules/ratings.md`, which loads when a matching file is read. R
 - Install runs the NEW version's helper, so a change to the plan file (`plan_version`) or to which paths an update may write (`updater_apply.PROTECTED`) must stay readable from the previous release's `services/updater.py`.
 - The updater picks release assets by name (`RetroDB-v{V}-{Platform}.zip` + `SHA256SUMS.txt`, `RetroDB-v{V}-{Platform}[-CPU]-Standalone.zip` + `.sha256`); renaming them in `build_dist.py` / `release.yml` stops updates. Spec: `docs/specs/PASS-59-169-self-updater.md`.
 
+### Cheats (PASS-59-155)
+- `services/cheats.py` owns the store (`data/cheats/`, gitignored): `packs/` is replaced whole by a download, `own/` holds imports and wins on a name clash. Routes in `routes/cheats.py`; pack downloads ride the player downloads job as `_cheats_<pack>`.
+- The emulator's files are the record of which cheats are on; RetroDB keeps no table. Never overwrite a cheat file already in DuckStation's or PCSX2's cheats folder (INV-4).
+- The game page's Cheats panel (`static/js/game-cheats.js`) sits full width under the card row; Settings > Emulators has the Cheats section. Spec: `docs/specs/PASS-59-155-cheats.md`.
+
 ### Page wiring
 - Both `/games` (Library) and `/system/<id>` use `AllGamesController` — keep them in sync.
 - The game page's Previous / Next links follow the list it was opened from (`?from=library`, else its console). `AllGamesController` saves each list's filter and sort params per tab via `RetroDB.saveGameNavContext`; the game page sends them to `/api/games/neighbors`.
