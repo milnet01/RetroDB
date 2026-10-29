@@ -33,6 +33,59 @@
     gap: var(--spacing-sm);
 }
 
+/* The breadcrumb, with Previous / Next through the list the game was opened
+   from on the right. They wrap below it on a narrow screen. */
+.game-page-topbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+    position: relative;
+    z-index: 1;
+}
+
+.game-page-topbar .breadcrumb {
+    margin-bottom: 0;
+    min-width: 0;
+    flex-wrap: wrap;
+}
+
+.game-nav {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-left: auto;
+    font-size: 0.9rem;
+}
+
+.game-nav[hidden],
+.game-nav-link[hidden] {
+    display: none;
+}
+
+.game-nav-link {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.game-nav-link:hover,
+.game-nav-link:focus-visible {
+    color: var(--primary-cyan);
+    border-color: var(--primary-cyan);
+}
+
+.game-nav-position {
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+}
+
 /* PASS-59-152 — the Scroll Lock hint beside Play on keyboard-computer games. */
 .play-key-hint {
     align-self: center;
@@ -997,6 +1050,22 @@
 .kd-value {
     font-size: 0.9rem;
     color: var(--text-primary);
+}
+
+/* Release dates by region: one line per region, earliest first. */
+.release-dates-list {
+    display: grid;
+    grid-template-columns: auto auto;
+    column-gap: var(--spacing-sm);
+    margin: 0;
+}
+
+.release-dates-list dt {
+    color: var(--text-secondary);
+}
+
+.release-dates-list dd {
+    margin: 0;
 }
 
 /* Trophy/Achievement Progress Summary */

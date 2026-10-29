@@ -101,6 +101,9 @@ has seen the raw output. Triage into new roadmap passes after.
 - `players` is INTEGER. Scraper/AI ranges like `"1-4"` are normalized to the max (4) before saving.
 - Sort title is auto-generated during scraping and AI Fill via `generate_sort_title()` in `services/game_utils.py`.
 - When a system has curated default controllers in the DB, they always override scraped/AI controller values.
+- `units_sold` (INTEGER, migration 023) is filled only by the AI — scrape gap-fill and AI Fill; `scrape_ai.parse_units_sold()` turns "2.4 million" etc. into an int.
+- `release_dates` (TEXT, migration 024) is a JSON object of region code → date (`{"JP": "2002-11-17", "NA": "2002-11"}`), filled only by the AI — scrape gap-fill and AI Fill. `services/release_dates.py` parses, stores and displays it; `release_date` stays the row's own release.
+- RPCS3 compatibility (PS3) is never stored: `services/rpcs3_compat.py` reads the local RPCS3's `GuiConfigs/compat_database.dat` (re-read when it changes) and looks games up by `games.disc_serial`. Local ROMs only, never imported games.
 - Regional versions (PASS-59-106): only `services/version_groups.py` links rows through `games.version_group_id`. `_build_games_query` shows one row per group unless `group_versions=False`. Contract: `docs/specs/PASS-59-106-regional-versions.md`.
 
 ### Media handling
@@ -121,6 +124,7 @@ Moved to `.claude/rules/ratings.md`, which loads when a matching file is read. R
 
 ### Page wiring
 - Both `/games` (Library) and `/system/<id>` use `AllGamesController` — keep them in sync.
+- The game page's Previous / Next links follow the list it was opened from (`?from=library`, else its console). `AllGamesController` saves each list's filter and sort params per tab via `RetroDB.saveGameNavContext`; the game page sends them to `/api/games/neighbors`.
 
 ---
 

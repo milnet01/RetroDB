@@ -15,7 +15,7 @@
 import logging
 from datetime import datetime
 
-from services import apply_progress
+from services import apply_progress, rpcs3_compat
 from services.game_utils import (
     map_rating,
     RATING_SYSTEM_KEYS,
@@ -239,6 +239,7 @@ def build_game_card(row, rpcs3_info=None, include_source_flag=False):
         'psn_total': row['psn_total'],
         'rpcs3_earned': rpcs3_info['earned'] if rpcs3_info else None,
         'rpcs3_total': rpcs3_info['total'] if rpcs3_info else None,
+        'rpcs3_compat': rpcs3_compat.status_for_game(row),
     })
 
     # Pass FU.2 — emit pre-computed `srcset` strings so the JS card renderer

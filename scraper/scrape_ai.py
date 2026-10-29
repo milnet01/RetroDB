@@ -37,6 +37,7 @@ AI_FILLABLE_FIELDS = [
     'game_structure', 'perspective', 'dimension', 'campaign',
     'other_platforms', 'edition',
     'critic_score', 'critic_score_count', 'user_score', 'user_score_count',
+    'units_sold', 'release_dates',
 ]
 
 # Schema constraints for validation (values AI must pick from)
@@ -478,6 +479,18 @@ def _build_prompt(title, system_name, missing_fields, existing_values=None):
             field_instructions.append(
                 '"release_date": release date for THIS specific platform in YYYY-MM-DD format'
             )
+        elif field == 'release_dates':
+            field_instructions.append(
+                '"release_dates": a JSON object giving the date this game was released on '
+                + system_name + ' in each region where it came out, keyed by region code: '
+                'NA (North America), EU (Europe and other PAL regions), JP (Japan), '
+                'AU (Australia), KR (South Korea), CN (China), TW (Taiwan), BR (Brazil), '
+                'AS (Asia, only when no single country is known), WW (one worldwide release). '
+                'Dates in YYYY-MM-DD format, or YYYY-MM / YYYY when only that much is '
+                'known. Leave out regions where it was not released. Example: '
+                '{"JP": "2002-11-17", "NA": "2002-11-18", "EU": "2003-03-21"}. '
+                'Return {} if unknown.'
+            )
         elif field == 'players':
             field_instructions.append(
                 '"players": max player count as a string (e.g., "1", "2", "4", "1-2", "1-4")'
@@ -647,6 +660,20 @@ def _build_prompt(title, system_name, missing_fields, existing_values=None):
                 '"user_score_count": number of user ratings contributing to the user score '
                 '(from the same source as user_score). Return null if unknown.'
             )
+        elif field == 'units_sold':
+            field_instructions.append(
+                '"units_sold": lifetime number of copies this game sold worldwide on '
+                + system_name + ' (physical and digital), as a whole number with no '
+                'commas or words (e.g., 2400000 for "2.4 million"). Use figures that are '
+                'free to read online, in priority order: the publisher\'s or developer\'s '
+                'own reports (annual reports, investor briefings, press releases), '
+                'platform-holder best-seller lists (Nintendo, Sony, Microsoft), Famitsu '
+                'and Media Create sales charts (Japan), Circana/NPD figures as reported in '
+                'the press (USA), Wikipedia\'s list of best-selling games for the platform '
+                'and the game\'s own Wikipedia article, then VGChartz. When only a '
+                'total across several platforms is published, return null rather than '
+                'that total. Return null if no figure is published.'
+            )
 
     # Add validation prefix for fields with existing values
     final_instructions = []
@@ -683,6 +710,7 @@ Rules:
 - Return ONLY valid JSON. No markdown, no explanation, no code fences.
 - Use empty string "" for any field you are genuinely unsure about. Do not guess.
 - For comma-separated fields (genre, modes, perspective, dimension, game_structure), separate values with ", " (comma-space).
+- For units_sold, give a published sales figure, never an estimate of your own.
 - For review score fields (critic_score, user_score), search online for the most accurate aggregated scores. Prefer Metacritic, OpenCritic, and GameFAQs as primary sources. For classic/retro games where those sites have no coverage, MobyGames and AtariAge are excellent alternative sources.
 - Be accurate. Wrong data is worse than empty data.{validation_rule}
 """
@@ -904,6 +932,43 @@ def _parse_ai_response(raw_text):
     return {}
 
 
+_SALES_SCALE = {'thousand': 1_000, 'k': 1_000, 'million': 1_000_000,
+                'm': 1_000_000, 'mil': 1_000_000, 'billion': 1_000_000_000}
+_SALES_RE = re.compile(r'^~?\s*([\d.,]+)\s*([a-z]*)', re.IGNORECASE)
+# No single game has sold more than about 300 million copies on one platform.
+_MAX_UNITS_SOLD = 500_000_000
+
+
+def parse_units_sold(value):
+    """A sales figure as a whole number of copies, or None.
+
+    Takes what an AI writes despite being asked for a bare integer:
+    2400000, "2,400,000", "2.4 million", "2.4M", "~850k", "over 1 million".
+    """
+    if value is None or isinstance(value, bool):
+        return None
+    if isinstance(value, (int, float)):
+        number, scale = float(value), 1
+    else:
+        text = re.sub(r'^(over|about|around|approximately|approx\.?|more than|nearly)\s+',
+                      '', str(value).strip().lower())
+        m = _SALES_RE.match(text)
+        if not m:
+            return None
+        digits, unit = m.group(1), m.group(2)
+        scale = _SALES_SCALE.get(unit, 1) if unit else 1
+        if unit and unit not in _SALES_SCALE and unit not in ('copies', 'units'):
+            return None
+        # "2,400,000" groups thousands; "2.4" is a decimal.
+        digits = digits.replace(',', '') if scale == 1 or digits.count(',') > 1 else digits.replace(',', '.')
+        try:
+            number = float(digits)
+        except ValueError:
+            return None
+    count = int(round(number * scale))
+    return count if 0 < count <= _MAX_UNITS_SOLD else None
+
+
 def _validate_all_fields(data):
     """Validate all fields in the parsed AI response.
 
@@ -927,6 +992,11 @@ def _validate_field(field_name, value):
     """
     if value is None:
         return ''
+
+    # An object, not text: stored as JSON, one date per region.
+    if field_name == 'release_dates':
+        from services.release_dates import release_dates_json
+        return release_dates_json(value) or ''
 
     # Convert to string
     value = str(value).strip()
@@ -988,6 +1058,9 @@ def _validate_field(field_name, value):
             return str(count) if count > 0 else ''
         except (ValueError, TypeError):
             return ''
+    if field_name == 'units_sold':
+        count = parse_units_sold(value)
+        return str(count) if count else ''
 
     # Free-text fields — basic sanitization
     # Truncate extremely long values

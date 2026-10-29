@@ -6,7 +6,7 @@
 {% block title %}{{ _('Trophies') }} - RetroDB{% endblock %}
 
 {% block content %}
-<div class="page-box grid-4 local-trophies-page">
+<div class="page-box grid-4 achievements-page local-trophies-page">
 {{ achievement_tabs('rpcs3') }}
 
 <!-- Page Header -->
@@ -231,12 +231,8 @@
 .trophy-stat.silver .trophy-stat-value { color: #c0c0c0; }
 .trophy-stat.bronze .trophy-stat-value { color: #cd7f32; }
 
-/* PASS-59-104 — the page caps at 4 columns of this grid. */
-.local-trophies-page {
-    --card-min: 350px;
-    --card-gap: var(--spacing-lg);
-}
-
+/* PASS-59-104 — the page caps at 4 columns of this grid. Its card tokens
+   come from .achievements-page so every Achievements tab is the same width. */
 .trophy-games-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(var(--card-min), 100%), 1fr));

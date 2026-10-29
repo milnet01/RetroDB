@@ -182,6 +182,51 @@ def _sfb_title_id(data: bytes) -> str:
     return ''
 
 
+def _sfo_title_id(data: bytes) -> str:
+    """PARAM.SFO's TITLE_ID (`BLUS30443`) as `BLUS-30443`, or ''. A PSN or
+    installed game folder has no PS3_DISC.SFB, only this file."""
+    if data[:4] != b'\x00PSF' or len(data) < 0x14:
+        return ''
+    key_start, data_start, count = struct.unpack_from('<III', data, 0x08)
+    for i in range(min(count, 256)):
+        pos = 0x14 + i * 16
+        if pos + 16 > len(data):
+            break
+        key_off, _fmt, length, _max, data_off = struct.unpack_from('<HHIII', data, pos)
+        key_at = key_start + key_off
+        key = data[key_at:data.find(b'\x00', key_at)]
+        if key == b'TITLE_ID':
+            value = data[data_start + data_off:data_start + data_off + length]
+            return _dashed(value.rstrip(b'\x00').decode('ascii', 'replace'))
+    return ''
+
+
+_PS3_ID_RE = re.compile(r'(?<![A-Z0-9])([A-Z]{4})-?(\d{5})(?![0-9])')
+
+
+def _dashed(title_id: str) -> str:
+    """`BLUS30443` or `BLUS-30443` -> `BLUS-30443`; '' when neither."""
+    m = _PS3_ID_RE.fullmatch(title_id.strip().upper())
+    return f'{m.group(1)}-{m.group(2)}' if m else ''
+
+
+def _ps3_folder_id(path: Path) -> str:
+    sfb = path / 'PS3_DISC.SFB'
+    if sfb.is_file():
+        return _sfb_title_id(sfb.read_bytes())
+    for sfo in (path / 'PS3_GAME' / 'PARAM.SFO', path / 'PARAM.SFO'):
+        if sfo.is_file():
+            return _sfo_title_id(sfo.read_bytes())
+    return ''
+
+
+def ps3_id_from_name(name: str) -> str:
+    """A PS3 serial written in a file or folder name, as many dump sets do
+    (`Demon's Souls [BLUS30443].iso`), as `BLUS-30443`; else ''."""
+    m = _PS3_ID_RE.search(Path(name).name.upper())
+    return f'{m.group(1)}-{m.group(2)}' if m else ''
+
+
 # -----------------------------------------------------------------------------
 # Public
 # -----------------------------------------------------------------------------
@@ -192,8 +237,7 @@ def read_disc_ids(rom_path, system_folder: str) -> tuple:
     try:
         path = Path(rom_path)
         if path.is_dir():
-            sfb = path / 'PS3_DISC.SFB'
-            return (_sfb_title_id(sfb.read_bytes()) if sfb.is_file() else ''), None
+            return (_ps3_folder_id(path) or ps3_id_from_name(path.name)), None
         ext = path.suffix.lower()
         if ext == '.m3u':
             first = next((ln.strip() for ln in path.read_text(errors='replace').splitlines()
@@ -211,7 +255,7 @@ def read_disc_ids(rom_path, system_folder: str) -> tuple:
             return '', None
         if system_folder == 'ps3':
             sfb = _read_file(reader, 'PS3_DISC.SFB')
-            return (_sfb_title_id(sfb) if sfb else ''), None
+            return ((_sfb_title_id(sfb) if sfb else '') or ps3_id_from_name(path.name)), None
         return _from_iso(reader, system_folder)
     except Exception as e:  # noqa: BLE001 — the contract is "raises nothing"
         logger.info(f"disc serial: cannot read {rom_path}: {e}")

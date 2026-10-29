@@ -428,7 +428,13 @@ shown rows only.
 trust the client. New paginated routes must do the same — `min(value, ceiling)`
 inline, not after a "validate" call that might be skipped.
 
-Bulk-id endpoints (`/api/games/ids`, `/api/games/card-data`) use a different
+`/api/games/neighbors?id=N&<the /api/games filters and sort>` returns
+`{found, position, total, prev, next}` for the game page's Previous / Next
+links, `prev` / `next` being `{id, title}` or null. A version the list folds
+into its group's card is placed at that card; `found` is false when the game
+is not in the list.
+
+Bulk-id endpoints (`/api/games/ids`, `/api/games/neighbors`, `/api/games/card-data`) use a different
 cap pattern — see Pass 25.8: `LIMIT 20 * MAX_LIST_ROWS` (default 10 000) on
 id-only fetches, and a hard `[1, 50]` range on card-data ids. Match the
 relevant pattern by route shape; the rule is "always cap", not "always paginate".

@@ -1365,7 +1365,8 @@ def apply_ai_to_metadata(metadata, ai_data, db_game_id, result, fill_only=True):
             result['filled_fields'].append(f'{field} (AI)')
 
     # Score fields — convert to int before storing
-    score_fields = ['critic_score', 'critic_score_count', 'user_score', 'user_score_count']
+    score_fields = ['critic_score', 'critic_score_count', 'user_score', 'user_score_count',
+                    'units_sold']
     for field in score_fields:
         val = ai_data.get(field)
         if val and _should_apply(field):
@@ -1374,3 +1375,8 @@ def apply_ai_to_metadata(metadata, ai_data, db_game_id, result, fill_only=True):
                 result['filled_fields'].append(f'{field} (AI)')
             except (ValueError, TypeError):
                 pass
+
+    # Release dates by region — already JSON text from scrape_ai's validation.
+    if ai_data.get('release_dates') and _should_apply('release_dates'):
+        metadata['release_dates'] = ai_data['release_dates']
+        result['filled_fields'].append('release_dates (AI)')

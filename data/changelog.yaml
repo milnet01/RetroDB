@@ -1,3 +1,104 @@
+- version: 3.35.0
+  date: 2026-10-27
+  tags:
+  - type: feature
+    label: Release dates for every region
+  - type: feature
+    label: Previous and next game on the game page
+  - type: feature
+    label: Uploaded covers and screenshots are processed like scraped ones
+  - type: fix
+    label: RetroAchievements shows on the game page for every game that has it
+  - type: fix
+    label: The Systems page's unscraped count matches the Unscraped filter
+  body: |
+    <ul>
+      <li><strong>Release dates for every region.</strong> When the AI
+        fills gaps during a scrape, and when you press AI Fill, it is now
+        also asked for the date the game came out in each region, such as
+        North America, Europe and Japan. The game page and the quick view
+        list them, earliest first, with dates and region names in your
+        language. A game's own release date is unchanged.</li>
+      <li><strong>Previous and next game on the game page.</strong> Next
+        to the path at the top of a game page are Previous and Next links
+        and where the game sits in the list. They follow the page you came
+        from: opened from the Library they step through the Library, and
+        from a console page through that console, in the same order and
+        with the same filters and search you had there.</li>
+      <li><strong>Uploaded covers and screenshots are processed like
+        scraped ones.</strong> A cover, 3D box or screenshot you upload in
+        the edit window is now saved in the same image format as scraped
+        images, resized to the same size, and covers get the smaller
+        copies the Library uses. A screenshot that looks the same as one
+        the game already has is not added, and you are told how many were
+        left out. Uploading a new cover also removes the file it replaces.</li>
+      <li><strong>RetroAchievements shows on the game page for every game
+        that has it.</strong> Some games had the RA badge in the Library
+        but no RetroAchievements card on their page, such as Metroid Prime
+        and Metroid Prime 2 on GameCube. The page now uses the same
+        RetroAchievements link as the badge, and loads faster because it
+        no longer asks RetroAchievements each time.</li>
+      <li><strong>The Systems page's unscraped count matches the Unscraped
+        filter.</strong> The count included bonus discs, which the
+        console's game list never shows, so a console could say 2
+        unscraped while its Unscraped filter showed none.</li>
+    </ul>
+- version: 3.34.0
+  date: 2026-10-27
+  tags:
+  - type: feature
+    label: See how well each PS3 game runs in RPCS3
+  - type: feature
+    label: Sales figures for your games
+  - type: fix
+    label: The Franchise / Series switch works on the game page
+  - type: fix
+    label: Every Achievements tab is the same width
+  - type: fix
+    label: RetroDB finds RPCS3's settings on Windows and macOS
+  - type: fix
+    label: AI Fill works for games with a score but no age rating
+  - type: fix
+    label: Game card labels follow your language
+  body: |
+    <ul>
+      <li><strong>See how well each PS3 game runs in RPCS3.</strong> PS3
+        games in the Library, on the PlayStation 3 page and on the game
+        page show RPCS3's compatibility status: Playable, Ingame, Intro,
+        Loadable or Nothing, with the date it was last tested. RetroDB
+        reads it from the RPCS3 on your computer, so in RPCS3 choose
+        Manage &gt; Databases &gt; Download Compatibility Database once,
+        and again whenever you want newer results. Only games with a ROM
+        on disk are shown; imported games are not. RetroDB now also reads
+        the game ID of PSN and installed game folders, and of folders and
+        files whose name carries it, such as [BLUS30443].</li>
+      <li><strong>Sales figures for your games.</strong> When the AI fills
+        gaps during a scrape, and when you press AI Fill, it is now also
+        asked how many copies the game sold on its console, from free
+        published figures such as the publisher's reports, platform
+        best-seller lists, Famitsu, Wikipedia and VGChartz. The game page
+        shows the number. A game with no published figure stays blank
+        rather than getting a guess.</li>
+      <li><strong>The Franchise / Series switch works on the game
+        page.</strong> In the game page's edit window, clicking the
+        Franchise / Series switch of a game marked Standalone did nothing,
+        so it could not be put in a series. It now switches, and so does
+        the Platform Availability switch.</li>
+      <li><strong>Every Achievements tab is the same width.</strong>
+        RetroAchievements, RPCS3, PSN, Steam and Xbox each sized the page
+        to their own cards, so the page changed width as you moved between
+        tabs. They now share one width.</li>
+      <li><strong>RetroDB finds RPCS3's settings on Windows and
+        macOS.</strong> On Windows RPCS3 keeps its settings beside
+        rpcs3.exe, and RetroDB now looks there and in a portable folder,
+        so per-game settings and the compatibility list are found.</li>
+      <li><strong>AI Fill works for games with a score but no age
+        rating.</strong> AI Fill could fail with an error for such a
+        game while working out its age rating.</li>
+      <li><strong>Game card labels follow your language.</strong> The
+        completion status and score tooltips on Library cards were always
+        in English.</li>
+    </ul>
 - version: 3.33.0
   date: 2026-10-27
   tags:

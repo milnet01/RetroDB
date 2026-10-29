@@ -25,7 +25,21 @@
         (game.system_name, url_for('systems.system_games', system_id=game.system_id)),
     ] %}
 {% endif %}
+<div class="game-page-topbar">
 {{ breadcrumb(_trail + [(game.title, None)]) }}
+{% if _from in (None, '', 'library', 'system') %}
+{# Previous / Next through the list the game was opened from: the Library, or
+   its console's page (the default, as for the breadcrumb). game-modals.js
+   fills the links from the list's filters and sort. #}
+<nav id="gameNav" class="game-nav" hidden aria-label="{{ _('Browse games') }}"
+     data-game-id="{{ game.id }}" data-system-id="{{ game.system_id }}"
+     data-from="{{ 'library' if _from == 'library' else 'system' }}">
+    <a class="game-nav-link" data-nav="prev" rel="prev" hidden>‹ {{ _('Previous') }}</a>
+    <span class="game-nav-position"></span>
+    <a class="game-nav-link" data-nav="next" rel="next" hidden>{{ _('Next') }} ›</a>
+</nav>
+{% endif %}
+</div>
 
 <!-- Message Display -->
 {% if message %}
@@ -212,6 +226,27 @@
                     👤 {{ game.user_score|round|int }}
                 </span>
                 {% endif %}
+                {% if game.units_sold %}
+                <span class="game-badge sales-badge" title="{{ _('Copies sold on %(system)s, from published sales figures', system=game.system_name) }}">
+                    📈 {{ _('%(count)s sold', count=game.units_sold|format_number) }}
+                </span>
+                {% endif %}
+                {% if game.rpcs3_compat %}
+                {% set compat_text = {
+                    'playable': (_('RPCS3: Playable'), _('Can be completed with playable performance and no game-breaking glitches.')),
+                    'ingame': (_('RPCS3: Ingame'), _('Gets in game, but cannot be finished, has serious glitches or runs too slowly.')),
+                    'intro': (_('RPCS3: Intro'), _('Shows an image but does not get past the menus.')),
+                    'loadable': (_('RPCS3: Loadable'), _('Shows a black screen with a frame rate in the window title.')),
+                    'nothing': (_('RPCS3: Nothing'), _('Does not start, or crashes the emulator.')),
+                }[game.rpcs3_compat.status] %}
+                <span class="game-badge rpcs3-compat compat-{{ game.rpcs3_compat.status }}" title="{{ compat_text[1] }}{% if game.rpcs3_compat.date %} {{ _('Last tested %(date)s.', date=game.rpcs3_compat.date) }}{% endif %}">
+                    🧩 {{ compat_text[0] }}
+                </span>
+                {% elif game.rpcs3_compat_missing %}
+                <span class="game-badge rpcs3-compat" title="{{ _('RetroDB reads PS3 compatibility from your RPCS3. In RPCS3, choose Manage > Databases > Download Compatibility Database.') }}">
+                    🧩 {{ _('RPCS3: no compatibility list') }}
+                </span>
+                {% endif %}
                 
                 <!-- Completion Status Dropdown -->
                 <div class="completion-dropdown-wrapper">
@@ -276,6 +311,17 @@
                 <div class="kd-item">
                     <span class="kd-label">{{ _('Series') }}</span>
                     <a href="#" class="kd-value franchise filter-link" data-filter-type="franchise" data-filter-value="{{ game.franchise }}">{{ game.franchise }}</a>
+                </div>
+                {% endif %}
+                {% if release_dates %}
+                <div class="kd-item">
+                    <span class="kd-label">{{ _('Release dates') }}</span>
+                    <dl class="kd-value release-dates-list">
+                        {% for rd in release_dates %}
+                        <dt>{{ rd.region }}</dt>
+                        <dd><time datetime="{{ rd.iso }}">{{ rd.date }}</time></dd>
+                        {% endfor %}
+                    </dl>
                 </div>
                 {% endif %}
             </div>
@@ -3956,7 +4002,7 @@ function initEditExclusiveToggle() {
     const isExclusive = !currentValue || currentValue.toLowerCase() === 'exclusive';
 
     toggle.checked = isExclusive;
-    label.textContent = isExclusive ? 'Exclusive' : 'Multi-platform';
+    label.textContent = isExclusive ? t('Exclusive') : t('Multi-platform');
     input.style.display = isExclusive ? 'none' : 'block';
     if (isExclusive) input.value = 'Exclusive';
 }
@@ -3967,11 +4013,11 @@ function updateEditExclusiveToggle() {
     const input = document.getElementById('edit_other_platforms');
 
     if (toggle.checked) {
-        label.textContent = 'Exclusive';
+        label.textContent = t('Exclusive');
         input.style.display = 'none';
         input.value = 'Exclusive';
     } else {
-        label.textContent = 'Multi-platform';
+        label.textContent = t('Multi-platform');
         input.style.display = 'block';
         if (input.value.toLowerCase() === 'exclusive') {
             input.value = '';
@@ -3994,7 +4040,7 @@ function initEditFranchiseToggle() {
     const isStandalone = !currentValue || currentValue.toLowerCase() === 'standalone';
 
     toggle.checked = isStandalone;
-    label.textContent = isStandalone ? 'Standalone' : 'Part of a Series';
+    label.textContent = isStandalone ? t('Standalone') : t('Part of a Series');
     input.style.display = isStandalone ? 'none' : 'block';
     if (isStandalone) input.value = '';
 }
@@ -4005,11 +4051,11 @@ function updateEditFranchiseToggle() {
     const input = document.getElementById('edit_franchise');
 
     if (toggle.checked) {
-        label.textContent = 'Standalone';
+        label.textContent = t('Standalone');
         input.style.display = 'none';
         input.value = '';
     } else {
-        label.textContent = 'Part of a Series';
+        label.textContent = t('Part of a Series');
         input.style.display = 'block';
     }
 }

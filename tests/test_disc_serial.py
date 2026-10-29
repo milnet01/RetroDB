@@ -141,3 +141,49 @@ def test_ps3_folder_reads_sfb_title_id(tmp_path):
     sfb[0x100:0x10A] = b'BLUS-31024'
     (game / 'PS3_DISC.SFB').write_bytes(bytes(sfb))
     assert read_disc_ids(game, 'ps3') == ('BLUS-31024', None)
+
+
+def _param_sfo(title_id: bytes) -> bytes:
+    """A minimal PARAM.SFO: one CATEGORY entry, then TITLE_ID."""
+    keys = b'CATEGORY\x00TITLE_ID\x00'
+    data = b'DG\x00\x00' + title_id + b'\x00' * (16 - len(title_id))
+    key_start = 0x14 + 2 * 16
+    data_start = key_start + len(keys)
+    header = b'\x00PSF' + struct.pack('<IIII', 0x101, key_start, data_start, 2)
+    entries = (struct.pack('<HHIII', 0, 0x0204, 3, 4, 0)
+               + struct.pack('<HHIII', 9, 0x0204, len(title_id) + 1, 16, 4))
+    return header + entries + keys + data
+
+
+def test_ps3_folder_without_sfb_reads_param_sfo(tmp_path):
+    """A PSN or installed game folder has PARAM.SFO and no PS3_DISC.SFB."""
+    game = tmp_path / 'Some Game.PS3'
+    (game / 'PS3_GAME').mkdir(parents=True)
+    (game / 'PS3_GAME' / 'PARAM.SFO').write_bytes(_param_sfo(b'NPUB30123'))
+    assert read_disc_ids(game, 'ps3') == ('NPUB-30123', None)
+
+
+def test_ps3_installed_folder_param_sfo_at_root(tmp_path):
+    game = tmp_path / 'NPEB01234'
+    game.mkdir()
+    (game / 'PARAM.SFO').write_bytes(_param_sfo(b'NPEB01234'))
+    assert read_disc_ids(game, 'ps3') == ('NPEB-01234', None)
+
+
+def test_ps3_folder_serial_from_its_name(tmp_path):
+    """No SFB or SFO: a serial in the folder name is used."""
+    game = tmp_path / "Demon's Souls [BLUS30443].PS3"
+    game.mkdir()
+    assert read_disc_ids(game, 'ps3') == ('BLUS-30443', None)
+
+
+def test_ps3_iso_serial_from_its_name(tmp_path):
+    iso = tmp_path / 'Game (USA) [BCUS-98174].iso'
+    iso.write_bytes(b'\x00' * SECTOR * 20)
+    assert read_disc_ids(iso, 'ps3') == ('BCUS-98174', None)
+
+
+def test_ps3_name_without_serial_gives_nothing(tmp_path):
+    game = tmp_path / 'Game 123456.PS3'
+    game.mkdir()
+    assert read_disc_ids(game, 'ps3') == ('', None)

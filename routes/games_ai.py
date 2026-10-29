@@ -46,20 +46,14 @@ def api_game_ai_fill(game_id):
         if not game:
             return error(_('Game not found'), 404)
 
-        from scraper.scrape_ai import get_game_details as ai_get_details, VALIDATE_FIELDS
+        from scraper.scrape_ai import (
+            AI_FILLABLE_FIELDS, VALIDATE_FIELDS, get_game_details as ai_get_details,
+        )
         from scraper.hybrid_scraper import should_use_default_controller, get_system_default_controller_name
 
-        ai_fields = [
-            'genre', 'description', 'developer', 'publisher', 'release_date',
-            'players', 'modes', 'esrb_rating', 'pegi_rating', 'cero_rating',
-            'usk_rating', 'acb_rating', 'fpb_rating', 'grac_rating', 'classind_rating',
-            'china_rating',
-            'region', 'franchise', 'similar_games', 'controller_support', 'save_type',
-            'game_structure', 'perspective', 'dimension', 'campaign',
-            'other_platforms', 'edition',
-            'critic_score', 'critic_score_count', 'user_score', 'user_score_count',
-        ]
-        _int_fields = {'critic_score', 'critic_score_count', 'user_score', 'user_score_count', 'players'}
+        ai_fields = AI_FILLABLE_FIELDS
+        _int_fields = {'critic_score', 'critic_score_count', 'user_score', 'user_score_count',
+                       'units_sold', 'players'}
         existing_metadata = {}
         for field in ai_fields:
             existing_metadata[field] = str(game.get(field, '') or '') or ''
@@ -159,7 +153,7 @@ def api_game_ai_fill(game_id):
             for k in RATING_SYSTEM_KEYS
         )
         if not has_any_rating:
-            infer_data = {f: pending.get(f) or (game.get(f, '') or '').strip() for f in ai_fields}
+            infer_data = {f: pending.get(f) or str(game.get(f, '') or '').strip() for f in ai_fields}
             infer_data['system_folder'] = game.get('system_folder', '')
             inferred = infer_rating_from_content(infer_data)
             if inferred:

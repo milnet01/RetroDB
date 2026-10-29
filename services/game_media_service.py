@@ -125,19 +125,26 @@ def resolve_media_path(filename, media_type):
 
 
 def remove_media_file(filename, media_type):
-    """Delete a stored media file from disk; log-and-swallow OS errors."""
+    """Delete a stored media file from disk, with the `-sm` / `-md` variants
+    a boxart-family file carries; log-and-swallow OS errors."""
     if not filename:
         return
     path = resolve_media_path(filename, media_type)
-    if not path or not os.path.exists(path):
+    if not path:
         return
-    try:
-        os.remove(path)
-    except OSError as e:
-        logger.warning(f"Could not delete {media_type} {path}: {e}")
+    from services.image_utils import _RESPONSIVE_VARIANTS, _variant_path
+    paths = [path] + [_variant_path(path, suffix)
+                      for suffix, _w in _RESPONSIVE_VARIANTS.get(media_type, [])]
+    for p in paths:
+        if not os.path.exists(p):
+            continue
+        try:
+            os.remove(p)
+        except OSError as e:
+            logger.warning(f"Could not delete {media_type} {p}: {e}")
 
 
-def save_upload(file_storage, dest_dir, game_id, prefix, allowed_ext):
+def save_upload(file_storage, dest_dir, game_id, prefix, allowed_ext, image_type=None):
     """Persist an uploaded werkzeug FileStorage if present and valid.
 
     Validates extension, per-type size ceiling (MAX_IMAGE_SIZE for image
@@ -150,6 +157,10 @@ def save_upload(file_storage, dest_dir, game_id, prefix, allowed_ext):
         game_id: game row id, used to namespace the output filename.
         prefix: filename discriminator (e.g. 'custom', 'custom_3d').
         allowed_ext: iterable of allowed lowercase extensions (no dots).
+        image_type: media folder name ('boxart', 'boxart_3d', 'fanart'). An
+            image upload then goes through the scraper's pipeline: saved in
+            the configured image format, resized, and given its `-sm` / `-md`
+            versions (`finalize_upload`).
 
     Returns:
         str or None: saved filename (basename) on success, else None.
@@ -171,10 +182,12 @@ def save_upload(file_storage, dest_dir, game_id, prefix, allowed_ext):
         if not _validate_image_bytes(raw):
             return None
         os.makedirs(dest_dir, exist_ok=True)
-        new_filename = f"{game_id}_{prefix}.{ext}"
+        new_filename = f"{game_id}_{prefix}{_upload_extension(image_type, ext)}"
         # Pass 32.9: write via tmp + os.replace. On a mid-write OOM or I/O
         # error the destination path never exists in a truncated state.
         _atomic_write_bytes(os.path.join(dest_dir, new_filename), raw)
+        if image_type:
+            finalize_upload(os.path.join(dest_dir, new_filename), image_type)
     else:
         # Video branch — Pass 25.6. Reject oversize videos before
         # file_storage.save() writes them to disk. Prefer Content-Length
@@ -228,6 +241,27 @@ def save_upload(file_storage, dest_dir, game_id, prefix, allowed_ext):
     return new_filename
 
 
+def _upload_extension(image_type, ext):
+    """The extension an uploaded image is stored under: the one a scraped
+    image of `image_type` gets (config.IMAGE_FORMAT), so the pipeline
+    re-encodes it the same way. No type keeps the upload's own."""
+    if not image_type:
+        return f'.{ext}'
+    from services.image_utils import preferred_image_extension
+    return preferred_image_extension(image_type, f'.{ext}')
+
+
+def finalize_upload(path, image_type):
+    """Run an uploaded image through the scraper's post-download pipeline:
+    format matching its extension, size standardization and the responsive
+    variants (services.image_utils.finalize_downloaded_image)."""
+    try:
+        from services.image_utils import finalize_downloaded_image
+        finalize_downloaded_image(path, image_type)
+    except Exception as e:
+        logger.warning(f"Processing uploaded {image_type} {path} failed: {e}")
+
+
 def _atomic_write_bytes(path, raw):
     """Write `raw` bytes to `path` atomically.
 
@@ -243,15 +277,26 @@ def save_screenshots(file_storages, game_id, existing_csv):
     """Append uploaded screenshots to the existing CSV list, skipping invalid
     extensions. Indexing continues from where the existing list left off.
 
-    Returns the new comma-separated filename list (including prior entries).
+    Each one goes through the scraper's pipeline (format, size), then the
+    same perceptual-hash duplicate check scraped screenshots get: a shot
+    that looks like one the game already has, or an earlier one in the same
+    upload, is deleted and not listed.
+
+    Returns (csv, duplicates): the new comma-separated filename list
+    (including prior entries) and how many uploads were dropped as
+    duplicates.
     """
     existing = [s.strip() for s in (existing_csv or '').split(',') if s.strip()]
     valid = [f for f in (file_storages or []) if f and f.filename]
     if not valid:
-        return ','.join(existing)
+        return ','.join(existing), 0
+
+    from scraper.image_dedup import get_existing_screenshot_hashes, keep_screenshot_if_unique
 
     ss_dir = image_dir('screenshots')
     os.makedirs(ss_dir, exist_ok=True)
+    existing_hashes = get_existing_screenshot_hashes(existing)
+    duplicates = 0
     # Derive the next index from the HIGHEST existing index, not the list
     # length. A gapped CSV (e.g. after stale-ref pruning removed `<id>_ss2`)
     # would make len()+1 reuse an in-use index, overwriting a screenshot on
@@ -273,25 +318,16 @@ def save_screenshots(file_storages, game_id, existing_csv):
             continue
         if not _validate_image_bytes(raw):
             continue
-        ss_filename = f"{game_id}_ss{next_idx}.{ext}"
+        ss_filename = f"{game_id}_ss{next_idx}{_upload_extension('screenshots', ext)}"
+        ss_path = os.path.join(ss_dir, ss_filename)
         # Pass 32.9: atomic write so a mid-save failure never leaves a
         # truncated screenshot visible at its final path.
-        _atomic_write_bytes(os.path.join(ss_dir, ss_filename), raw)
+        _atomic_write_bytes(ss_path, raw)
+        finalize_upload(ss_path, 'screenshots')
+        if not keep_screenshot_if_unique(ss_path, ss_filename, existing_hashes, 'uploaded'):
+            duplicates += 1
+            continue
         existing.append(ss_filename)
         next_idx += 1
         logger.info(f"Saved screenshot: {ss_filename}")
-    return ','.join(existing)
-
-
-def try_standardize(path, media_type):
-    """Run the full post-download pipeline (format-matches-extension check,
-    size standardization, responsive variants). Pass 32.10 — what was
-    `standardize_downloaded_image` alone now goes through
-    `finalize_downloaded_image` so admin-uploaded PNG bytes inside a
-    `.webp` file get re-encoded to real WebP before they persist.
-    """
-    try:
-        from services.image_utils import finalize_downloaded_image
-        finalize_downloaded_image(path, media_type)
-    except Exception as e:
-        logger.warning(f"Auto-resize {media_type} failed: {e}")
+    return ','.join(existing), duplicates

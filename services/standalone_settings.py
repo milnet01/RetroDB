@@ -228,7 +228,7 @@ def write_value(lines, spec, raw) -> list:
 # Which file (§4.6 "Which file")
 # -----------------------------------------------------------------------------
 
-def _disc_ids(game) -> tuple:
+def disc_ids(game) -> tuple:
     """(serial, crc), read from the disc and stored the first time."""
     if game.get('disc_serial') is not None:
         return game['disc_serial'], game.get('disc_crc')
@@ -315,7 +315,7 @@ def _context(game_id) -> dict:
         ctx['reason'] = _('Run %(name)s once so it creates its settings, '
                            'then play again.', name=emu['name'])
         return ctx
-    serial, crc = _disc_ids(game)
+    serial, crc = disc_ids(game)
     ctx['serial'] = serial
     ctx.update(_target(emu['binary_name'], data_dir, serial, crc))
     return ctx

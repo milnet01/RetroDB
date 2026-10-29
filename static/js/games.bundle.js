@@ -1116,6 +1116,42 @@ function _getPreferredRatingFromGame(game) {
     return null;
 }
 
+/**
+ * Badge for a PS3 game's RPCS3 compatibility status ({status, date} from the
+ * server, read from the local RPCS3's list), or '' when there is none.
+ * The game page renders the same badge server-side.
+ */
+function rpcs3CompatBadgeHtml(compat) {
+    if (!compat || !compat.status) return '';
+    const text = {
+        playable: [t('RPCS3: Playable'), t('Can be completed with playable performance and no game-breaking glitches.')],
+        ingame: [t('RPCS3: Ingame'), t('Gets in game, but cannot be finished, has serious glitches or runs too slowly.')],
+        intro: [t('RPCS3: Intro'), t('Shows an image but does not get past the menus.')],
+        loadable: [t('RPCS3: Loadable'), t('Shows a black screen with a frame rate in the window title.')],
+        nothing: [t('RPCS3: Nothing'), t('Does not start, or crashes the emulator.')],
+    }[compat.status];
+    if (!text) return '';
+    const title = compat.date ? `${text[1]} ${t('Last tested {date}.', {date: compat.date})}` : text[1];
+    return `<span class="game-badge rpcs3-compat compat-${compat.status}" title="${escapeHtml(title)}">🧩 ${escapeHtml(text[0])}</span>`;
+}
+
+/** Score, sales and RPCS3 badges shown after the age ratings in the quick view. */
+function _buildScoreBadgesHtml(game) {
+    let html = '';
+    if (game.critic_score) {
+        const scoreClass = game.critic_score >= 75 ? 'score-good' : (game.critic_score >= 50 ? 'score-mixed' : 'score-bad');
+        html += `<span class="game-badge score-badge ${scoreClass}">⭐ ${Math.round(game.critic_score)}</span>`;
+    }
+    if (game.user_score) {
+        const userScoreClass = game.user_score >= 75 ? 'score-good' : (game.user_score >= 50 ? 'score-mixed' : 'score-bad');
+        html += `<span class="game-badge score-badge user-score ${userScoreClass}">👤 ${Math.round(game.user_score)}</span>`;
+    }
+    if (game.units_sold) {
+        html += `<span class="game-badge sales-badge">📈 ${escapeHtml(t('{count} sold', {count: formatNumber(game.units_sold)}))}</span>`;
+    }
+    return html + rpcs3CompatBadgeHtml(game.rpcs3_compat);
+}
+
 /** Build age-rating badge HTML (admin sees all, users see preferred only) */
 function _buildAgeRatingBadgesHtml(game) {
     let html = '';
@@ -1151,10 +1187,57 @@ function gameDetailUrl(gameId) {
     const path = window.location.pathname;
     let from = '';
     if (path === '/games') from = 'library';
+    else if (path.startsWith('/system/')) from = 'system';
     else if (path.startsWith('/reports')) from = 'rom_reports';
     else if (path.startsWith('/achievements')) from = 'achievements';
     return `/game/${gameId}` + (from ? `?from=${from}` : '');
 }
+
+function gameNavKey(from, systemId) {
+    return from === 'library' ? 'retrodb.gameNav.library' : `retrodb.gameNav.system.${systemId}`;
+}
+
+/** Called by AllGamesController with the list's filter and sort params. */
+function saveGameNavContext(systemId, params) {
+    try {
+        sessionStorage.setItem(gameNavKey(systemId ? 'system' : 'library', systemId), params.toString());
+    } catch (e) { /* storage blocked: the game page uses the unfiltered list */ }
+}
+
+async function initGameNav() {
+    const nav = document.getElementById('gameNav');
+    if (!nav) return;
+    const { gameId, systemId, from } = nav.dataset;
+    const fallback = from === 'library' ? '' : `system=${encodeURIComponent(systemId)}`;
+    let saved = null;
+    try { saved = sessionStorage.getItem(gameNavKey(from, systemId)); } catch (e) { /* blocked */ }
+
+    const neighbors = async (qs) => {
+        try {
+            const data = await API.get(`/api/games/neighbors?id=${encodeURIComponent(gameId)}${qs ? '&' + qs : ''}`);
+            return data && data.found ? data : null;
+        } catch (e) {
+            return null;
+        }
+    };
+    let data = await neighbors(saved ?? fallback);
+    if (!data && saved !== null && saved !== fallback) data = await neighbors(fallback);
+    if (!data || data.total < 2) return;
+
+    for (const dir of ['prev', 'next']) {
+        const link = nav.querySelector(`[data-nav="${dir}"]`);
+        const target = data[dir];
+        if (!link || !target) continue;
+        link.href = `/game/${target.id}?from=${from}`;
+        link.title = target.title;
+        link.hidden = false;
+    }
+    nav.querySelector('.game-nav-position').textContent =
+        `${formatNumber(data.position)} / ${formatNumber(data.total)}`;
+    nav.hidden = false;
+}
+
+document.addEventListener('DOMContentLoaded', initGameNav);
 
 const GameDetailModal = {
     cache: new Map(),
@@ -1251,20 +1334,16 @@ const GameDetailModal = {
 
         document.getElementById('gdmDeveloper').textContent = game.developer || '-';
         document.getElementById('gdmPublisher').textContent = game.publisher || '-';
+
+        const releaseDates = game.release_dates || [];
+        document.getElementById('gdmReleaseDates').textContent =
+            releaseDates.map(rd => `${rd.region}: ${rd.date}`).join(' · ');
+        document.getElementById('gdmReleaseDatesRow').style.display = releaseDates.length ? '' : 'none';
         document.getElementById('gdmGenre').textContent = tField(game.genre) || '-';
         document.getElementById('gdmFranchise').textContent = game.franchise || '-';
 
         const ratingsEl = document.getElementById('gdmRatings');
-        let ratingsHtml = _buildAgeRatingBadgesHtml(game);
-        if (game.critic_score) {
-            const scoreClass = game.critic_score >= 75 ? 'score-good' : (game.critic_score >= 50 ? 'score-mixed' : 'score-bad');
-            ratingsHtml += `<span class="game-badge score-badge ${scoreClass}">⭐ ${Math.round(game.critic_score)}</span>`;
-        }
-        if (game.user_score) {
-            const userScoreClass = game.user_score >= 75 ? 'score-good' : (game.user_score >= 50 ? 'score-mixed' : 'score-bad');
-            ratingsHtml += `<span class="game-badge score-badge user-score ${userScoreClass}">👤 ${Math.round(game.user_score)}</span>`;
-        }
-        ratingsEl.innerHTML = ratingsHtml;
+        ratingsEl.innerHTML = _buildAgeRatingBadgesHtml(game) + _buildScoreBadgesHtml(game);
 
         const completionEl = document.getElementById('gdmCompletion');
         if (game.completion_status && game.completion_status !== 'not_started') {
@@ -2012,12 +2091,8 @@ const GameEditModal = {
                 }
 
                 const ratingsEl = document.getElementById('gdmRatings');
-                let ratingsHtml = _buildAgeRatingBadgesHtml(formData);
-                if (this.currentData.critic_score) {
-                    const scoreClass = this.currentData.critic_score >= 75 ? 'score-good' : (this.currentData.critic_score >= 50 ? 'score-mixed' : 'score-bad');
-                    ratingsHtml += `<span class="game-badge score-badge ${scoreClass}">⭐ ${Math.round(this.currentData.critic_score)}</span>`;
-                }
-                ratingsEl.innerHTML = ratingsHtml;
+                ratingsEl.innerHTML = _buildAgeRatingBadgesHtml(formData)
+                    + _buildScoreBadgesHtml(this.currentData);
 
                 if (typeof AllGamesController !== 'undefined' && AllGamesController.refreshCards) {
                     AllGamesController.refreshCards(this.currentData.id);
@@ -2651,11 +2726,11 @@ const GameEditModal = {
         const input = document.getElementById('gemFranchise');
 
         if (toggle.checked) {
-            label.textContent = 'Standalone';
+            label.textContent = t('Standalone');
             input.style.display = 'none';
             input.value = '';
         } else {
-            label.textContent = 'Part of a Series';
+            label.textContent = t('Part of a Series');
             input.style.display = 'block';
         }
     },
@@ -2904,6 +2979,7 @@ RetroDB.GameDetailModal = GameDetailModal;
 RetroDB.GameEditModal = GameEditModal;
 RetroDB.HLTBManager = HLTBManager;
 RetroDB.gameDetailUrl = gameDetailUrl;
+RetroDB.saveGameNavContext = saveGameNavContext;
 
 window.gameDetailCache = GameDetailModal.cache;
 window.currentGameDetailId = null;
@@ -2912,6 +2988,7 @@ Object.defineProperty(window, 'currentGameDetailId', {
     set: (v) => { GameDetailModal.currentId = v; }
 });
 
+window.rpcs3CompatBadgeHtml = rpcs3CompatBadgeHtml;
 window.openGameDetailModal = (gameId) => GameDetailModal.open(gameId);
 window.populateGameDetailModal = (game) => GameDetailModal.populate(game);
 window.showGameDetailError = (message) => GameDetailModal.showError(message);

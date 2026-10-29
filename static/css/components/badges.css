@@ -245,6 +245,26 @@
     color: #3b82f6;
 }
 
+/* Copies sold */
+.game-badge.sales-badge {
+    background: var(--cyan-bg);
+    border-color: var(--neon-cyan);
+    color: var(--neon-cyan);
+}
+
+/* RPCS3 compatibility (PS3 games). The status class picks the colour. */
+.game-badge.rpcs3-compat {
+    --compat-color: var(--rpcs3-nothing);
+    background: color-mix(in srgb, var(--compat-color) 15%, transparent);
+    border-color: var(--compat-color);
+    color: var(--compat-color);
+}
+
+.game-badge.rpcs3-compat.compat-playable { --compat-color: var(--rpcs3-playable); }
+.game-badge.rpcs3-compat.compat-ingame { --compat-color: var(--rpcs3-ingame); }
+.game-badge.rpcs3-compat.compat-intro { --compat-color: var(--rpcs3-intro); }
+.game-badge.rpcs3-compat.compat-loadable { --compat-color: var(--rpcs3-loadable); }
+
 /* =============================================================================
    COMPLETION STATUS BADGES
    ============================================================================= */
