@@ -1109,10 +1109,12 @@ def _validate_field(field_name, value):
 
 def _official_title_context(game_id):
     """The ROM file and region AI Fill names the official title for, or None
-    when the game has no ROM or its title is locked (PASS-59-159 §4.3)."""
+    when the game has no ROM (an import's rom_path is a made-up key) or its
+    title is locked (PASS-59-159 §4.3)."""
     if not game_id:
         return None
     from services.database import get_db
+    from services.game_metadata_service import import_source_for_rom_path
     conn = get_db()
     try:
         row = conn.execute(
@@ -1121,9 +1123,22 @@ def _official_title_context(game_id):
     finally:
         conn.close()
     rom_path = row['rom_path'] if row else None
-    if not rom_path or row['title_locked'] or rom_path.startswith('clz_import/'):
+    if not rom_path or row['title_locked'] or import_source_for_rom_path(rom_path):
         return None
     return {'rom_file': row['rom_path'], 'region': row['region']}
+
+
+def _official_title_rejected(game_id, title):
+    """True when the user rejected `title` for this game in Official Names
+    (PASS-59-159 INV-6: a rejected name is not proposed again)."""
+    from services.database import get_db
+    conn = get_db()
+    try:
+        return conn.execute(
+            "SELECT 1 FROM title_proposals WHERE game_id = ? AND status = 'rejected' "
+            "AND proposed_title = ?", (game_id, title)).fetchone() is not None
+    finally:
+        conn.close()
 
 
 def get_game_details(game_id, title, system_name, system_folder=None, existing_metadata=None):
@@ -1202,6 +1217,12 @@ def get_game_details(game_id, title, system_name, system_folder=None, existing_m
         return None
 
     result = _parse_ai_response(raw_text)
+
+    # Keep an official title only when it was asked for and not rejected.
+    official = result.get('official_title') if result else None
+    if official and (not official_for or _official_title_rejected(game_id, official)):
+        result.pop('official_title')
+        result.pop('old_title_region', None)
 
     if result:
         rejected_count = len(missing_fields) - len(result)

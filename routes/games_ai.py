@@ -253,7 +253,15 @@ def api_game_ai_fill(game_id):
             sets['scrape_history'] = scrape_history_json
 
         if sets:
-            assignments = ', '.join(f'{col} = ?' for col in sets)
+            # The lock was read before the AI call; a title locked meanwhile
+            # keeps its name, sort title and alternates (PASS-59-159 §4.3).
+            locked_form = {
+                'title': 'CASE WHEN title_locked = 1 THEN title ELSE COALESCE(?, title) END',
+                'sort_title': 'CASE WHEN title_locked = 1 THEN sort_title '
+                              'ELSE COALESCE(?, sort_title) END',
+                'alternate_titles': 'CASE WHEN title_locked = 1 THEN alternate_titles ELSE ? END',
+            }
+            assignments = ', '.join(f'{col} = {locked_form.get(col, "?")}' for col in sets)
             execute(f"UPDATE games SET {assignments} WHERE id = ?", (*sets.values(), game_id))
             # AI fill writes genre/developer/publisher/franchise/modes/ratings,
             # all of which feed the Library filter dropdowns — same cache
