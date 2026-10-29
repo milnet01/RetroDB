@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-27 13:06+0000\n"
+"POT-Creation-Date: 2026-10-29 07:07+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: af\n"
@@ -59,8 +59,8 @@ msgstr "Stelsel nie gevind nie of het geen speletjies met prestasies nie"
 #: routes/achievements.py:171 routes/achievements.py:440
 #: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/collections.py:276
 #: routes/collections.py:531 routes/emulators.py:271 routes/emulators.py:285
-#: routes/games.py:348 routes/games.py:808 routes/games.py:931
-#: routes/games.py:987 routes/games_ai.py:47 routes/games_media.py:37
+#: routes/games.py:390 routes/games.py:864 routes/games.py:991
+#: routes/games.py:1047 routes/games_ai.py:47 routes/games_media.py:37
 #: routes/games_media.py:85 routes/games_media.py:148 routes/launch.py:240
 #: routes/reports.py:693 routes/reports.py:822 routes/trophies.py:1291
 #: services/hltb_service.py:125
@@ -87,9 +87,9 @@ msgstr "RetroAchievements is nie opgestel nie"
 msgid "Could not fetch achievement data"
 msgstr "Kon nie prestasiedata verkry nie"
 
-#: routes/achievements.py:294 routes/controllers.py:413
-#: routes/controllers.py:463 routes/museum.py:309 routes/museum.py:381
-#: routes/ra_sync.py:98 routes/systems.py:220
+#: routes/achievements.py:294 routes/controllers.py:419
+#: routes/controllers.py:471 routes/museum.py:309 routes/museum.py:381
+#: routes/ra_sync.py:98 routes/systems.py:223
 msgid "System not found"
 msgstr "Stelsel nie gevind nie"
 
@@ -238,15 +238,15 @@ msgstr "Ouerspeletjie nie gevind nie"
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "Bonusskyf en ouerspeletjie moet in dieselfde stelsel wees"
 
-#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1245
-#: routes/games.py:1275 routes/platform_import.py:297
+#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1305
+#: routes/games.py:1335 routes/platform_import.py:297
 #: routes/platform_import.py:667 routes/platform_import.py:1032
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:202 routes/scraper.py:530
-#: routes/scraper.py:919 routes/settings.py:317 routes/settings.py:341
-#: routes/settings.py:456 routes/settings.py:533 routes/settings.py:547
-#: routes/settings.py:591 routes/settings.py:607 routes/settings.py:643
-#: routes/steam_achievements.py:138 routes/systems.py:286 routes/systems.py:467
+#: routes/scraper.py:919 routes/settings.py:319 routes/settings.py:343
+#: routes/settings.py:458 routes/settings.py:537 routes/settings.py:551
+#: routes/settings.py:595 routes/settings.py:611 routes/settings.py:647
+#: routes/steam_achievements.py:138 routes/systems.py:289 routes/systems.py:479
 #: routes/trophies.py:508 routes/trophies.py:706 routes/trophies.py:754
 #: routes/trophies.py:1582 routes/trophies.py:1606 routes/trophies.py:1651
 #: routes/trophies.py:1679 routes/trophies.py:1721 routes/trophies.py:1788
@@ -254,11 +254,18 @@ msgstr "Bonusskyf en ouerspeletjie moet in dieselfde stelsel wees"
 msgid "An internal error occurred"
 msgstr "'n Interne fout het voorgekom"
 
-#: routes/bonus_discs.py:281
+#: routes/bonus_discs.py:278 routes/bonus_discs.py:309
+#: routes/controllers.py:216 routes/controllers.py:280
+#: routes/controllers.py:413 routes/controllers.py:465 routes/settings.py:223
+#: routes/settings.py:493 routes/settings.py:561 routes/systems.py:310
+msgid "Request body must be a JSON object"
+msgstr "Versoekliggaam moet 'n JSON-objek wees"
+
+#: routes/bonus_discs.py:283
 msgid "Missing bonus_id or parent_id"
 msgstr "bonus_id of parent_id ontbreek"
 
-#: routes/bonus_discs.py:310 routes/reports.py:810
+#: routes/bonus_discs.py:314 routes/reports.py:810
 msgid "Missing game_id"
 msgstr "game_id ontbreek"
 
@@ -381,22 +388,22 @@ msgstr "Hierdie speletjie is reeds op jou verlanglys"
 msgid "Wishlist item not found"
 msgstr "Verlanglys-item nie gevind nie"
 
-#: routes/controllers.py:226 routes/controllers.py:288
+#: routes/controllers.py:228 routes/controllers.py:292
 msgid "Controller name is required"
 msgstr "Beheerdernaam is vereis"
 
-#: routes/controllers.py:231
+#: routes/controllers.py:233
 #, python-format
 msgid "Controller \"%(name)s\" already exists"
 msgstr "Beheerder \"%(name)s\" bestaan reeds"
 
-#: routes/controllers.py:293 routes/controllers.py:335
-#: routes/controllers.py:420 routes/controllers.py:469 routes/museum.py:577
+#: routes/controllers.py:297 routes/controllers.py:339
+#: routes/controllers.py:426 routes/controllers.py:477 routes/museum.py:577
 #: routes/museum.py:653 routes/museum.py:723
 msgid "Controller not found"
 msgstr "Beheerder nie gevind nie"
 
-#: routes/controllers.py:298
+#: routes/controllers.py:302
 #, python-format
 msgid "Another controller named \"%(name)s\" already exists"
 msgstr "'n Ander beheerder met die naam \"%(name)s\" bestaan reeds"
@@ -439,34 +446,41 @@ msgstr ""
 msgid "Emulator not found"
 msgstr "Emulator nie gevind nie"
 
-#: routes/games.py:240
+#: routes/games.py:247 routes/games.py:281
 msgid "No IDs provided"
 msgstr "Geen ID's verskaf nie"
 
-#: routes/games.py:248
+#: routes/games.py:289
 msgid "Provide 1-50 valid IDs"
 msgstr "Verskaf 1-50 geldige ID's"
 
-#: routes/games.py:504
+#: routes/games.py:551
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
 msgstr ""
 "Video nie gestoor nie: dit moet 'n MP4-, WebM- of OGG-lêer van tot %(mb)s"
 " MB wees."
 
-#: routes/games.py:634
+#: routes/games.py:561
+#, python-format
+msgid ""
+"Screenshots not added because they match ones the game already has: "
+"%(count)s"
+msgstr ""
+
+#: routes/games.py:685
 msgid "Game not found after update"
 msgstr "Speletjie nie gevind na bywerking nie"
 
-#: routes/games.py:935
+#: routes/games.py:995
 msgid "No game selected."
 msgstr "Geen speletjie gekies nie."
 
-#: routes/games.py:959
+#: routes/games.py:1019
 msgid "This metadata apply is no longer running."
 msgstr "Hierdie metadata-toepassing loop nie meer nie."
 
-#: routes/games.py:968
+#: routes/games.py:1028
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
@@ -475,51 +489,51 @@ msgstr ""
 "Metadata toegepas vanaf %(sources)s! (%(filled)d velde ingevul, "
 "%(missing)d ontbreek steeds)"
 
-#: routes/games.py:974
+#: routes/games.py:1034
 msgid "Failed to apply metadata."
 msgstr "Kon nie metadata toepas nie."
 
-#: routes/games.py:1023 routes/games.py:1067
+#: routes/games.py:1083 routes/games.py:1127
 msgid "No fields to update"
 msgstr "Geen velde om by te werk nie"
 
-#: routes/games.py:1064 routes/platform_import.py:220
+#: routes/games.py:1124 routes/platform_import.py:220
 #: routes/platform_import.py:581 routes/platform_import.py:936
 #: routes/trophies.py:1870
 msgid "No games selected"
 msgstr "Geen speletjies gekies nie"
 
-#: routes/games.py:1074
+#: routes/games.py:1134
 msgid "Invalid completion status"
 msgstr "Ongeldige voltooiingstatus"
 
-#: routes/games.py:1122
+#: routes/games.py:1182
 msgid "No valid fields to update"
 msgstr "Geen geldige velde om by te werk nie"
 
-#: routes/games.py:1238
+#: routes/games.py:1298
 msgid "Invalid status"
 msgstr "Ongeldige status"
 
-#: routes/games.py:1263
+#: routes/games.py:1323
 msgid "Not authenticated"
 msgstr "Nie geverifieer nie"
 
-#: routes/games.py:1294
+#: routes/games.py:1354
 msgid "Filter type and value required"
 msgstr "Filtertipe en -waarde vereis"
 
-#: routes/games.py:1307
+#: routes/games.py:1367
 msgid "Invalid filter type"
 msgstr "Ongeldige filtertipe"
 
-#: routes/games_ai.py:84
+#: routes/games_ai.py:78
 msgid "AI returned no data. Check your API key and provider settings."
 msgstr ""
 "KI het geen data teruggestuur nie. Kontroleer jou API-sleutel en "
 "verskafferinstellings."
 
-#: routes/games_ai.py:305
+#: routes/games_ai.py:319
 msgid "AI scraper module not available"
 msgstr "KI-skrapermodule nie beskikbaar nie"
 
@@ -528,7 +542,7 @@ msgid "No filename provided"
 msgstr "Geen lêernaam verskaf nie"
 
 #: routes/games_media.py:81 routes/reports.py:688 routes/scrape_logs.py:129
-#: routes/scrape_logs.py:154 routes/scrape_logs.py:203 routes/settings.py:350
+#: routes/scrape_logs.py:154 routes/scrape_logs.py:203 routes/settings.py:352
 msgid "Invalid filename"
 msgstr "Ongeldige lêernaam"
 
@@ -704,7 +718,7 @@ msgstr "Geen beeld om te verwerk nie"
 msgid "Image file not found"
 msgstr "Beeldlêer nie gevind nie"
 
-#: routes/museum.py:740 routes/museum.py:744 services/js_i18n_strings.py:536
+#: routes/museum.py:740 routes/museum.py:744 services/js_i18n_strings.py:551
 msgid "Background removal failed"
 msgstr "Agtergrondverwydering het misluk"
 
@@ -910,64 +924,60 @@ msgstr "Verbindingsfout: %(error)s"
 msgid "Allowance check not supported for %(scraper)s"
 msgstr "Toelaagkontrole word nie vir %(scraper)s ondersteun nie"
 
-#: routes/settings.py:225
+#: routes/settings.py:227
 msgid "Value is required"
 msgstr "Waarde is vereis"
 
-#: routes/settings.py:247
+#: routes/settings.py:249
 msgid "Option already exists"
 msgstr "Opsie bestaan reeds"
 
-#: routes/settings.py:356
+#: routes/settings.py:358
 msgid "Backup file not found"
 msgstr "Rugsteunlêer nie gevind nie"
 
-#: routes/settings.py:370
+#: routes/settings.py:372
 msgid "A background job is running. Wait for it to finish before restoring."
 msgstr "'n Agtergrondtaak loop tans. Wag totdat dit klaar is voordat jy herstel."
 
-#: routes/settings.py:390
+#: routes/settings.py:392
 msgid "Backup failed its integrity check; restore aborted."
 msgstr "Rugsteun het sy integriteitstoets gedruip; herstel is gestaak."
 
-#: routes/settings.py:510
+#: routes/settings.py:514
 #, python-format
 msgid "Invalid %(field)s: %(result)s"
 msgstr "Ongeldige %(field)s: %(result)s"
 
-#: routes/settings.py:529 routes/settings.py:588 routes/settings.py:640
-#: routes/tools.py:290 services/js_i18n_strings.py:649
+#: routes/settings.py:533 routes/settings.py:592 routes/settings.py:644
+#: routes/tools.py:290 services/js_i18n_strings.py:668
 msgid "Failed to save settings"
 msgstr "Kon nie instellings stoor nie"
 
-#: routes/settings.py:557
-msgid "Request body must be a JSON object"
-msgstr "Versoekliggaam moet 'n JSON-objek wees"
-
-#: routes/settings.py:567 routes/tools.py:282
+#: routes/settings.py:571 routes/tools.py:282
 #, python-format
 msgid "Unknown setting key: %(key)s"
 msgstr "Onbekende instellingsleutel: %(key)s"
 
-#: routes/settings.py:573 routes/tools.py:285
+#: routes/settings.py:577 routes/tools.py:285
 #, python-format
 msgid "Invalid value for '%(key)s': %(reason)s"
 msgstr "Ongeldige waarde vir '%(key)s': %(reason)s"
 
-#: routes/settings.py:605
+#: routes/settings.py:609
 msgid "Failed to reset settings"
 msgstr "Kon nie instellings terugstel nie"
 
-#: routes/settings.py:626
+#: routes/settings.py:630
 #, python-format
 msgid "invalid logging settings: %(reason)s"
 msgstr "ongeldige loginstellings: %(reason)s"
 
-#: routes/settings.py:656 routes/settings.py:684
+#: routes/settings.py:660 routes/settings.py:688
 msgid "Invalid field. Must be \"genre\" or \"modes\""
 msgstr "Ongeldige veld. Moet \"genre\" of \"modes\" wees"
 
-#: routes/settings.py:687
+#: routes/settings.py:691
 msgid "No mappings provided"
 msgstr "Geen toewysings verskaf nie"
 
@@ -979,11 +989,11 @@ msgstr "Steam-geloofsbriewe nie opgestel nie"
 msgid "Game not found or not a Steam game"
 msgstr "Speletjie nie gevind nie of is nie 'n Steam-speletjie nie"
 
-#: routes/systems.py:310
+#: routes/systems.py:315
 msgid "System ID required"
 msgstr "Stelsel-ID vereis"
 
-#: routes/systems.py:438
+#: routes/systems.py:450
 msgid "ES-DE scraper not available"
 msgstr "ES-DE-skraper nie beskikbaar nie"
 
@@ -1527,19 +1537,19 @@ msgstr "Sandbox"
 msgid "Turn-Based"
 msgstr "Beurt-gebaseerd"
 
-#: services/js_i18n_strings.py:498
+#: services/js_i18n_strings.py:513
 msgid "(Paused)"
 msgstr "(Gepouseer)"
 
-#: services/js_i18n_strings.py:499
+#: services/js_i18n_strings.py:514
 msgid "(none)"
 msgstr "(geen)"
 
-#: services/js_i18n_strings.py:500
+#: services/js_i18n_strings.py:515
 msgid "(not set)"
 msgstr "(nie gestel nie)"
 
-#: services/js_i18n_strings.py:501 templates/_bulk_edit_modal.html:25
+#: services/js_i18n_strings.py:516 templates/_bulk_edit_modal.html:25
 #: templates/_bulk_edit_modal.html:38 templates/_bulk_edit_modal.html:83
 #: templates/_bulk_edit_modal.html:95 templates/_bulk_edit_modal.html:120
 #: templates/_bulk_edit_modal.html:137 templates/_bulk_edit_modal.html:153
@@ -1547,106 +1557,106 @@ msgstr "(nie gestel nie)"
 msgid "-- Don't change --"
 msgstr "-- Moenie verander nie --"
 
-#: services/js_i18n_strings.py:502
+#: services/js_i18n_strings.py:517
 msgid "-- Select log file --"
 msgstr "-- Kies loglêer --"
 
-#: services/js_i18n_strings.py:503
+#: services/js_i18n_strings.py:518
 #, python-brace-format
 msgid "... and {n} more"
 msgstr "... en {n} meer"
 
-#: services/js_i18n_strings.py:504 templates/_bulk_edit_modal.html:30
-#: templates/base.html:1014
+#: services/js_i18n_strings.py:519 templates/_bulk_edit_modal.html:30
+#: templates/base.html:1015
 msgid "100%"
 msgstr "100%"
 
-#: services/js_i18n_strings.py:505 templates/_settings_tabs/account.html:273
+#: services/js_i18n_strings.py:520 templates/_settings_tabs/account.html:273
 #: templates/archive_scanner.html:726 templates/multi_disc_organizer.html:217
 #: templates/reports.html:369 templates/reports.html:450
 msgid "Actions"
 msgstr "Aksies"
 
-#: services/js_i18n_strings.py:506
+#: services/js_i18n_strings.py:521
 msgid "Added to queue - will start when current operation completes"
 msgstr "By wagry gevoeg - sal begin sodra huidige bewerking klaar is"
 
-#: services/js_i18n_strings.py:507
+#: services/js_i18n_strings.py:522
 msgid "All ROMs accounted for!"
 msgstr "Alle ROM's is verantwoord!"
 
-#: services/js_i18n_strings.py:508 templates/logs.html:764
+#: services/js_i18n_strings.py:523 templates/logs.html:764
 msgid "All Sources"
 msgstr "Alle Bronne"
 
-#: services/js_i18n_strings.py:509 templates/all_games.html:42
+#: services/js_i18n_strings.py:524 templates/all_games.html:42
 #: templates/reports.html:328 templates/reports.html:407
 #: templates/reports.html:480
 msgid "All Systems"
 msgstr "Alle Stelsels"
 
-#: services/js_i18n_strings.py:510
+#: services/js_i18n_strings.py:525
 msgid "Already Syncing"
 msgstr "Reeds Aan Die Sinkroniseer"
 
-#: services/js_i18n_strings.py:511
+#: services/js_i18n_strings.py:526
 #, fuzzy
 msgid "An update is already being downloaded."
 msgstr "Hierdie stelsel word reeds gesinkroniseer."
 
-#: services/js_i18n_strings.py:512
+#: services/js_i18n_strings.py:527
 #, python-brace-format
 msgid "Applied when you press Play, in the {emulator} settings for this game."
 msgstr ""
 "Toegepas wanneer jy Speel druk, in die {emulator}-instellings vir hierdie"
 " speletjie."
 
-#: services/js_i18n_strings.py:513
+#: services/js_i18n_strings.py:528
 #, python-brace-format
 msgid "Applied {n} update(s)."
 msgstr "{n} opdatering(s) toegepas."
 
-#: services/js_i18n_strings.py:514 templates/_bulk_edit_modal.html:193
+#: services/js_i18n_strings.py:529 templates/_bulk_edit_modal.html:193
 msgid "Apply Changes"
 msgstr "Pas Veranderinge Toe"
 
-#: services/js_i18n_strings.py:515
+#: services/js_i18n_strings.py:530
 msgid "Apply Normalization"
 msgstr "Pas Normalisering Toe"
 
-#: services/js_i18n_strings.py:516
+#: services/js_i18n_strings.py:531
 #, python-brace-format
 msgid "Apply failed: {error}"
 msgstr "Toepassing het misluk: {error}"
 
-#: services/js_i18n_strings.py:517
+#: services/js_i18n_strings.py:532
 #, python-brace-format
 msgid "Apply {n} Selected"
 msgstr "Pas {n} Gekies Toe"
 
-#: services/js_i18n_strings.py:518
+#: services/js_i18n_strings.py:533
 #, python-brace-format
 msgid "Apply {n} normalization rule?"
 msgstr "Pas {n} normaliseringreël toe?"
 
-#: services/js_i18n_strings.py:519
+#: services/js_i18n_strings.py:534
 #, python-brace-format
 msgid "Apply {n} normalization rules?"
 msgstr "Pas {n} normaliseringreëls toe?"
 
-#: services/js_i18n_strings.py:520
+#: services/js_i18n_strings.py:535
 msgid "Applying Metadata"
 msgstr "Metadata word toegepas"
 
-#: services/js_i18n_strings.py:521
+#: services/js_i18n_strings.py:536
 msgid "Applying..."
 msgstr "Word Toegepas..."
 
-#: services/js_i18n_strings.py:522
+#: services/js_i18n_strings.py:537
 msgid "Applying…"
 msgstr "Word toegepas…"
 
-#: services/js_i18n_strings.py:523
+#: services/js_i18n_strings.py:538
 msgid ""
 "Are you sure you want to cancel the bulk scrape?\n"
 "\n"
@@ -1660,16 +1670,16 @@ msgstr ""
 "sekondes) voordat die kansellasie in werking tree — die "
 "vorderingskennisgewing sal steeds opdateer gedurende daardie tydperk."
 
-#: services/js_i18n_strings.py:524
+#: services/js_i18n_strings.py:539
 msgid "Are you sure you want to cancel?"
 msgstr "Is jy seker jy wil kanselleer?"
 
-#: services/js_i18n_strings.py:525
+#: services/js_i18n_strings.py:540
 #, python-brace-format
 msgid "Are you sure you want to delete \"{filename}\"?"
 msgstr "Is jy seker jy wil \"{filename}\" verwyder?"
 
-#: services/js_i18n_strings.py:526
+#: services/js_i18n_strings.py:541
 msgid ""
 "Are you sure you want to reset all metadata for this game? This will "
 "delete boxart and screenshots."
@@ -1677,72 +1687,76 @@ msgstr ""
 "Is jy seker jy wil alle metadata vir hierdie speletjie terugstel? Dit sal"
 " bokskuns en skermskote verwyder."
 
-#: services/js_i18n_strings.py:527
+#: services/js_i18n_strings.py:542
 msgid "Are you sure you want to restart the server?"
 msgstr "Is jy seker jy wil die bediener herbegin?"
 
-#: services/js_i18n_strings.py:528
+#: services/js_i18n_strings.py:543
 msgid ""
 "Are you sure you want to shut down the server? You will need to start it "
 "again manually."
 msgstr "Is jy seker jy wil die bediener afskakel? Jy sal dit weer self moet begin."
 
-#: services/js_i18n_strings.py:529 templates/settings.html:67
+#: services/js_i18n_strings.py:544 templates/settings.html:67
 msgid "Are you sure?"
 msgstr "Is jy seker?"
 
-#: services/js_i18n_strings.py:530
+#: services/js_i18n_strings.py:545
 msgid "As the core sets it"
 msgstr "Soos die core dit stel"
 
-#: services/js_i18n_strings.py:531
+#: services/js_i18n_strings.py:546
 msgid "Asking AI…"
 msgstr "Vra tans die KI…"
 
-#: services/js_i18n_strings.py:532
+#: services/js_i18n_strings.py:547
 msgid "Asking the AI. This can take up to a minute."
 msgstr "Vra tans die KI. Dit kan tot 'n minuut duur."
 
-#: services/js_i18n_strings.py:533
+#: services/js_i18n_strings.py:548
 #, python-brace-format
 msgid ""
 "Asking the AI: game {current} of {total}. Names suggested: {proposals}. "
 "{system}"
 msgstr ""
 
-#: services/js_i18n_strings.py:534
+#: services/js_i18n_strings.py:549
 msgid "Aspect ratio"
 msgstr "Beeldverhouding"
 
-#: services/js_i18n_strings.py:535
+#: services/js_i18n_strings.py:550
 msgid "BIOS"
 msgstr "BIOS"
 
-#: services/js_i18n_strings.py:537
+#: services/js_i18n_strings.py:552
 msgid "Background removed"
 msgstr "Agtergrond verwyder"
 
-#: services/js_i18n_strings.py:538
+#: services/js_i18n_strings.py:553
 msgid "Bulk fetch failed"
 msgstr "Massa-verkryging het misluk"
 
-#: services/js_i18n_strings.py:539
+#: services/js_i18n_strings.py:554
 msgid "Bulk fetch request failed"
 msgstr "Massa-verkrygingversoek het misluk"
 
-#: services/js_i18n_strings.py:540
+#: services/js_i18n_strings.py:555
 msgid "Bulk scraping complete!"
 msgstr "Massa-skraap voltooi!"
 
-#: services/js_i18n_strings.py:541
+#: services/js_i18n_strings.py:556
 msgid "CLZ Imports"
 msgstr "CLZ-Invoere"
 
-#: services/js_i18n_strings.py:542
+#: services/js_i18n_strings.py:557
 msgid "CRT screen"
 msgstr "CRT-skerm"
 
-#: services/js_i18n_strings.py:543 templates/_bulk_edit_modal.html:191
+#: services/js_i18n_strings.py:558 templates/game_detail.html:236
+msgid "Can be completed with playable performance and no game-breaking glitches."
+msgstr ""
+
+#: services/js_i18n_strings.py:559 templates/_bulk_edit_modal.html:191
 #: templates/_bulk_scrape_modal.html:49 templates/_modals/edit_modal.html:12
 #: templates/_modals/rename_modal.html:19
 #: templates/_settings_tabs/account.html:72
@@ -1750,9 +1764,9 @@ msgstr "CRT-skerm"
 #: templates/_settings_tabs/customization.html:264
 #: templates/achievement_game.html:178 templates/archive_scanner.html:661
 #: templates/archive_scanner.html:798 templates/base.html:338
-#: templates/base.html:356 templates/base.html:1055
+#: templates/base.html:356 templates/base.html:1056
 #: templates/chd_converter.html:170 templates/chd_verify.html:126
-#: templates/game_detail.html:518 templates/login.html:254
+#: templates/game_detail.html:564 templates/login.html:254
 #: templates/museum.html:29 templates/museum_system.html:182
 #: templates/psn_trophies.html:297 templates/psn_trophy_detail.html:182
 #: templates/psn_trophy_detail.html:325 templates/reports.html:521
@@ -1763,70 +1777,70 @@ msgstr "CRT-skerm"
 msgid "Cancel"
 msgstr "Kanselleer"
 
-#: services/js_i18n_strings.py:544
+#: services/js_i18n_strings.py:560
 msgid "Cancel Bulk Scrape"
 msgstr "Kanselleer Massa-Skraap"
 
-#: services/js_i18n_strings.py:545
+#: services/js_i18n_strings.py:561
 msgid "Cancel failed"
 msgstr "Kansellering het misluk"
 
-#: services/js_i18n_strings.py:546
+#: services/js_i18n_strings.py:562
 msgid "Cancel request failed"
 msgstr "Kansellasieversoek het misluk"
 
-#: services/js_i18n_strings.py:547
+#: services/js_i18n_strings.py:563
 msgid "Cancellation requested"
 msgstr "Kansellasie versoek"
 
-#: services/js_i18n_strings.py:548
+#: services/js_i18n_strings.py:564
 msgid "Cancelled"
 msgstr "Gekanselleer"
 
-#: services/js_i18n_strings.py:549
+#: services/js_i18n_strings.py:565
 msgid "Cancelled by user"
 msgstr "Deur gebruiker gekanselleer"
 
-#: services/js_i18n_strings.py:550
+#: services/js_i18n_strings.py:566
 msgid "Checking RetroAchievements…"
 msgstr "Kontroleer tans RetroAchievements…"
 
-#: services/js_i18n_strings.py:551
+#: services/js_i18n_strings.py:567
 msgid "Clean Missing ROMs"
 msgstr "Maak Vermiste ROM's Skoon"
 
-#: services/js_i18n_strings.py:552
+#: services/js_i18n_strings.py:568
 msgid "Clear CLZ Imports"
 msgstr "Vee CLZ-Invoere Uit"
 
-#: services/js_i18n_strings.py:553
+#: services/js_i18n_strings.py:569
 msgid "Clear HLTB data for this game?"
 msgstr "Vee HLTB-data vir hierdie speletjie uit?"
 
-#: services/js_i18n_strings.py:554 templates/achievements_system.html:109
+#: services/js_i18n_strings.py:570 templates/achievements_system.html:109
 msgid "Clear RA Data"
 msgstr "Vee RA-Data Uit"
 
-#: services/js_i18n_strings.py:555
+#: services/js_i18n_strings.py:571
 msgid "Clear RetroAchievements Data"
 msgstr "Vee RetroAchievements-Data Uit"
 
-#: services/js_i18n_strings.py:556
+#: services/js_i18n_strings.py:572
 #, python-brace-format
 msgid "Cleared RA data for {count} games in {system}"
 msgstr "RA-data uitgevee vir {count} speletjies in {system}"
 
-#: services/js_i18n_strings.py:557
+#: services/js_i18n_strings.py:573
 #, python-brace-format
 msgid "Cleared RA data for {n} games"
 msgstr "RA-data uitgevee vir {n} speletjies"
 
-#: services/js_i18n_strings.py:558
+#: services/js_i18n_strings.py:574
 #, python-brace-format
 msgid "Cleared RA data for {n} games in {system}"
 msgstr "RA-data uitgevee vir {n} speletjies in {system}"
 
-#: services/js_i18n_strings.py:559
+#: services/js_i18n_strings.py:575
 #, python-brace-format
 msgid ""
 "Cleared RetroAchievements data for {n} games. Run \"Refresh "
@@ -1835,15 +1849,15 @@ msgstr ""
 "RetroAchievements-data uitgevee vir {n} speletjies. Voer \"Verfris "
 "RetroAchievements\" uit om weer te skandeer met bygewerkte passing."
 
-#: services/js_i18n_strings.py:560
+#: services/js_i18n_strings.py:576
 msgid "Clearing..."
 msgstr "Word Uitgevee..."
 
-#: services/js_i18n_strings.py:561
+#: services/js_i18n_strings.py:577
 msgid "Click again to remove"
 msgstr "Klik weer om te verwyder"
 
-#: services/js_i18n_strings.py:562 templates/_bulk_edit_modal.html:8
+#: services/js_i18n_strings.py:578 templates/_bulk_edit_modal.html:8
 #: templates/_bulk_scrape_modal.html:8
 #: templates/_modals/boxart_zoom_modal.html:3
 #: templates/_modals/manual_reader_modal.html:11
@@ -1851,48 +1865,52 @@ msgstr "Klik weer om te verwyder"
 #: templates/_settings_tabs/customization.html:224
 #: templates/archive_scanner.html:749 templates/archive_scanner.html:757
 #: templates/base.html:249 templates/base.html:332 templates/base.html:349
-#: templates/base.html:695 templates/base.html:971 templates/base.html:1365
+#: templates/base.html:695 templates/base.html:972 templates/base.html:1366
 #: templates/dashboard.html:37 templates/reports.html:472
 #: templates/systems.html:121 templates/wishlist.html:56
 msgid "Close"
 msgstr "Sluit"
 
-#: services/js_i18n_strings.py:563
+#: services/js_i18n_strings.py:579
 msgid "Close keyboard shortcuts"
 msgstr "Sluit sleutelbordkortpaaie"
 
-#: services/js_i18n_strings.py:564
+#: services/js_i18n_strings.py:580
 msgid "Close modal / cancel"
 msgstr "Sluit venster / kanselleer"
 
-#: services/js_i18n_strings.py:565 templates/dashboard.html:188
+#: services/js_i18n_strings.py:581 templates/dashboard.html:188
 #: templates/setup.html:20
 msgid "Complete"
 msgstr "Voltooi"
 
-#: services/js_i18n_strings.py:566
+#: services/js_i18n_strings.py:582
 msgid "Complete!"
 msgstr "Voltooi!"
 
-#: services/js_i18n_strings.py:567 templates/_bulk_edit_modal.html:29
-#: templates/analytics.html:1664 templates/base.html:1013
-#: templates/dashboard.html:506 templates/game_detail.html:222
+#: services/js_i18n_strings.py:583 templates/_bulk_edit_modal.html:29
+#: templates/analytics.html:1664 templates/base.html:1014
+#: templates/dashboard.html:506 templates/game_detail.html:257
 msgid "Completed"
 msgstr "Voltooid"
 
-#: services/js_i18n_strings.py:568 templates/_bulk_edit_modal.html:23
-#: templates/analytics.html:137 templates/base.html:1008
+#: services/js_i18n_strings.py:584 templates/_bulk_edit_modal.html:23
+#: templates/analytics.html:137 templates/base.html:1009
 msgid "Completion Status"
 msgstr "Voltooiingstatus"
 
-#: services/js_i18n_strings.py:569
+#: services/js_i18n_strings.py:585 templates/game_detail.html:253
+msgid "Completion status"
+msgstr "Voltooiingstatus"
+
+#: services/js_i18n_strings.py:586
 msgid "Completion status updated"
 msgstr "Voltooiingstatus opgedateer"
 
-#: services/js_i18n_strings.py:570 templates/achievement_game.html:172
+#: services/js_i18n_strings.py:587 templates/achievement_game.html:172
 #: templates/achievement_game.html:197 templates/achievement_game.html:211
-#: templates/base.html:1050 templates/game_detail.html:512
-#: templates/game_detail.html:537 templates/game_detail.html:551
+#: templates/base.html:1051 templates/game_detail.html:558
+#: templates/game_detail.html:583 templates/game_detail.html:597
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:176
 #: templates/psn_trophy_detail.html:209
 #: templates/steam_achievement_game.html:134
@@ -1902,48 +1920,48 @@ msgstr "Voltooiingstatus opgedateer"
 msgid "Completionist"
 msgstr "Completionist"
 
-#: services/js_i18n_strings.py:571 templates/settings.html:66
+#: services/js_i18n_strings.py:588 templates/settings.html:66
 msgid "Confirm Action"
 msgstr "Bevestig Aksie"
 
-#: services/js_i18n_strings.py:572
+#: services/js_i18n_strings.py:589
 msgid "Confirm Bulk Edit"
 msgstr "Bevestig Massa-Redigering"
 
-#: services/js_i18n_strings.py:573
+#: services/js_i18n_strings.py:590
 msgid "Content generated successfully"
 msgstr "Inhoud suksesvol gegenereer"
 
-#: services/js_i18n_strings.py:574
+#: services/js_i18n_strings.py:591
 msgid "Controller"
 msgstr "Beheerder"
 
-#: services/js_i18n_strings.py:575
+#: services/js_i18n_strings.py:592
 msgid "Controller image saved"
 msgstr "Beheerderbeeld gestoor"
 
-#: services/js_i18n_strings.py:576
+#: services/js_i18n_strings.py:593
 msgid "Controller image uploaded"
 msgstr "Beheerderbeeld opgelaai"
 
-#: services/js_i18n_strings.py:577
+#: services/js_i18n_strings.py:594
 msgid "Core"
 msgstr "Core"
 
-#: services/js_i18n_strings.py:578
+#: services/js_i18n_strings.py:595
 msgid "Could not accept these names."
 msgstr ""
 
-#: services/js_i18n_strings.py:579
+#: services/js_i18n_strings.py:596
 msgid "Could not apply metadata."
 msgstr "Kon nie metadata toepas nie."
 
-#: services/js_i18n_strings.py:580
+#: services/js_i18n_strings.py:597
 #, fuzzy
 msgid "Could not check for updates."
 msgstr "Kon nie dit stoor nie."
 
-#: services/js_i18n_strings.py:581
+#: services/js_i18n_strings.py:598
 #, python-brace-format
 msgid ""
 "Could not download the {system} core. Check the internet connection and "
@@ -1952,358 +1970,367 @@ msgstr ""
 "Kon nie die {system}-core aflaai nie. Gaan die internetverbinding na en "
 "probeer weer."
 
-#: services/js_i18n_strings.py:582
+#: services/js_i18n_strings.py:599
 msgid "Could not link these versions."
 msgstr "Kon nie hierdie weergawes koppel nie."
 
-#: services/js_i18n_strings.py:583
+#: services/js_i18n_strings.py:600
 msgid "Could not load suggestions."
 msgstr "Kon nie voorstelle laai nie."
 
-#: services/js_i18n_strings.py:584
+#: services/js_i18n_strings.py:601
 msgid "Could not load the suggested names."
 msgstr ""
 
-#: services/js_i18n_strings.py:585
+#: services/js_i18n_strings.py:602
 msgid "Could not open this manual. Use \"Open PDF in a new tab\" instead."
 msgstr ""
 "Kon nie hierdie handleiding oopmaak nie. Gebruik eerder \"Maak PDF in 'n "
 "nuwe oortjie oop\"."
 
-#: services/js_i18n_strings.py:586
+#: services/js_i18n_strings.py:603
 msgid "Could not read the run status."
 msgstr ""
 
-#: services/js_i18n_strings.py:587
+#: services/js_i18n_strings.py:604
 msgid "Could not reconnect to server. Please refresh manually."
 msgstr "Kon nie herkoppel aan bediener nie. Verfris asseblief self."
 
-#: services/js_i18n_strings.py:588
+#: services/js_i18n_strings.py:605
 msgid "Could not reject these names."
 msgstr ""
 
-#: services/js_i18n_strings.py:589
+#: services/js_i18n_strings.py:606
 msgid "Could not save that setting."
 msgstr "Kon nie daardie instelling stoor nie."
 
-#: services/js_i18n_strings.py:590
+#: services/js_i18n_strings.py:607
 msgid "Could not save that."
 msgstr "Kon nie dit stoor nie."
 
-#: services/js_i18n_strings.py:591
+#: services/js_i18n_strings.py:608
 msgid "Could not show this page of the manual."
 msgstr "Kon nie hierdie bladsy van die handleiding wys nie."
 
-#: services/js_i18n_strings.py:592
+#: services/js_i18n_strings.py:609
 msgid "Could not start the run."
 msgstr ""
 
-#: services/js_i18n_strings.py:593
+#: services/js_i18n_strings.py:610
 msgid "Could not stop the run."
 msgstr ""
 
-#: services/js_i18n_strings.py:594
+#: services/js_i18n_strings.py:611
 msgid "Could not stop the running instance."
 msgstr "Kon nie die lopende instansie stop nie."
 
-#: services/js_i18n_strings.py:595
+#: services/js_i18n_strings.py:612
 msgid "Could not unlink this version."
 msgstr "Kon nie hierdie weergawe ontkoppel nie."
 
-#: services/js_i18n_strings.py:596
+#: services/js_i18n_strings.py:613
 msgid "Could not write the summary."
 msgstr "Kon nie die opsomming skryf nie."
 
-#: services/js_i18n_strings.py:597
+#: services/js_i18n_strings.py:614
+#, fuzzy, python-brace-format
+msgid "Critic Score ({count} reviews)"
+msgstr "Kritikuspunt (%(count)s resensies)"
+
+#: services/js_i18n_strings.py:615
 msgid "Currently set"
 msgstr "Tans gestel"
 
-#: services/js_i18n_strings.py:598
+#: services/js_i18n_strings.py:616
 msgid "Default"
 msgstr "Verstek"
 
-#: services/js_i18n_strings.py:599
+#: services/js_i18n_strings.py:617
 #, python-brace-format
 msgid "Default emulator for {system}"
 msgstr "Verstekemulator vir {system}"
 
-#: services/js_i18n_strings.py:600
+#: services/js_i18n_strings.py:618
 msgid "Delete Log File"
 msgstr "Verwyder Loglêer"
 
-#: services/js_i18n_strings.py:601
+#: services/js_i18n_strings.py:619
 #, python-brace-format
 msgid "Detect failed: {error}"
 msgstr "Bespeuring het misluk: {error}"
 
-#: services/js_i18n_strings.py:602
+#: services/js_i18n_strings.py:620
 msgid "Detected path"
 msgstr "Bespeurde pad"
 
-#: services/js_i18n_strings.py:603
+#: services/js_i18n_strings.py:621
 msgid "Detecting…"
 msgstr "Bespeur tans…"
 
-#: services/js_i18n_strings.py:604 templates/_bulk_scrape_modal.html:69
+#: services/js_i18n_strings.py:622 templates/game_detail.html:240
+msgid "Does not start, or crashes the emulator."
+msgstr ""
+
+#: services/js_i18n_strings.py:623 templates/_bulk_scrape_modal.html:69
 #: templates/all_games.html:223 templates/psn_trophies.html:247
 #: templates/psn_trophies.html:307 templates/reports.html:525
 #: templates/system_games.html:203
 msgid "Done"
 msgstr "Klaar"
 
-#: services/js_i18n_strings.py:605
+#: services/js_i18n_strings.py:624
 #, python-brace-format
 msgid "Done. Games asked: {total}. Names suggested: {proposals}."
 msgstr ""
 
-#: services/js_i18n_strings.py:606
+#: services/js_i18n_strings.py:625
 msgid "Download the update first."
 msgstr ""
 
-#: services/js_i18n_strings.py:607
+#: services/js_i18n_strings.py:626
 msgid "Downloading 3D box art…"
 msgstr "Laai tans 3D-bokskuns af…"
 
-#: services/js_i18n_strings.py:608
+#: services/js_i18n_strings.py:627
 msgid "Downloading RetroArch… This can take a few minutes."
 msgstr ""
 
-#: services/js_i18n_strings.py:609
+#: services/js_i18n_strings.py:628
 msgid "Downloading box art…"
 msgstr "Laai tans bokskuns af…"
 
-#: services/js_i18n_strings.py:610
+#: services/js_i18n_strings.py:629
 msgid "Downloading fan art…"
 msgstr "Laai tans fankuns af…"
 
-#: services/js_i18n_strings.py:611
+#: services/js_i18n_strings.py:630
 msgid "Downloading manual…"
 msgstr "Laai tans handleiding af…"
 
-#: services/js_i18n_strings.py:612
+#: services/js_i18n_strings.py:631
 msgid "Downloading media…"
 msgstr "Laai tans media af…"
 
-#: services/js_i18n_strings.py:613
+#: services/js_i18n_strings.py:632
 msgid "Downloading screenshots…"
 msgstr "Laai tans skermkiekies af…"
 
-#: services/js_i18n_strings.py:614
+#: services/js_i18n_strings.py:633
 #, python-brace-format
 msgid "Downloading the {system} core…"
 msgstr "Laai tans die {system}-core af…"
 
-#: services/js_i18n_strings.py:615
+#: services/js_i18n_strings.py:634
 msgid "Downloading video…"
 msgstr "Laai tans video af…"
 
-#: services/js_i18n_strings.py:616
+#: services/js_i18n_strings.py:635
 #, python-brace-format
 msgid "Downloading {core} ({done} of {total})…"
 msgstr "Laai tans {core} af ({done} van {total})…"
 
-#: services/js_i18n_strings.py:617 templates/_settings_tabs/account.html:318
-#: templates/base.html:969 templates/game_detail.html:105
+#: services/js_i18n_strings.py:636 templates/_settings_tabs/account.html:318
+#: templates/base.html:970 templates/game_detail.html:119
 #: templates/wishlist.html:641
 msgid "Edit"
 msgstr "Wysig"
 
-#: services/js_i18n_strings.py:618
+#: services/js_i18n_strings.py:637
 msgid "Edit game"
 msgstr "Wysig speletjie"
 
-#: services/js_i18n_strings.py:619
+#: services/js_i18n_strings.py:638
 #, python-brace-format
 msgid "Edit: {title}"
 msgstr "Redigeer: {title}"
 
-#: services/js_i18n_strings.py:620
+#: services/js_i18n_strings.py:639
 msgid "Emulator"
 msgstr "Emulator"
 
-#: services/js_i18n_strings.py:621
+#: services/js_i18n_strings.py:640
 msgid "Enter one folder path."
 msgstr "Tik een vouerpad in."
 
-#: services/js_i18n_strings.py:622
+#: services/js_i18n_strings.py:641
 msgid "Error"
 msgstr "Fout"
 
-#: services/js_i18n_strings.py:623
+#: services/js_i18n_strings.py:642
 msgid "Error clearing HLTB data"
 msgstr "Fout tydens uitvee van HLTB-data"
 
-#: services/js_i18n_strings.py:624
+#: services/js_i18n_strings.py:643
 msgid "Error connecting to HowLongToBeat"
 msgstr "Fout tydens koppel aan HowLongToBeat"
 
-#: services/js_i18n_strings.py:625
+#: services/js_i18n_strings.py:644
 msgid "Error deleting log file"
 msgstr "Fout tydens verwydering van loglêer"
 
-#: services/js_i18n_strings.py:626
+#: services/js_i18n_strings.py:645
 msgid "Error loading file"
 msgstr "Fout tydens laai van lêer"
 
-#: services/js_i18n_strings.py:627
+#: services/js_i18n_strings.py:646
 msgid "Error loading log file"
 msgstr "Fout tydens laai van loglêer"
 
-#: services/js_i18n_strings.py:628
+#: services/js_i18n_strings.py:647
 msgid "Error looking up HLTB"
 msgstr "Fout tydens opsoek van HLTB"
 
-#: services/js_i18n_strings.py:629
+#: services/js_i18n_strings.py:648
 msgid "Error refreshing RetroAchievements: "
 msgstr "Fout tydens verfris van RetroAchievements: "
 
-#: services/js_i18n_strings.py:630
+#: services/js_i18n_strings.py:649
 msgid "Error saving HLTB data"
 msgstr "Fout tydens stoor van HLTB-data"
 
-#: services/js_i18n_strings.py:631
+#: services/js_i18n_strings.py:650
 msgid "Error saving game: "
 msgstr "Fout tydens stoor van speletjie: "
 
-#: services/js_i18n_strings.py:632
+#: services/js_i18n_strings.py:651
 #, python-brace-format
 msgid "Error scanning library: {error}"
 msgstr "Fout tydens skandering van biblioteek: {error}"
 
-#: services/js_i18n_strings.py:633
+#: services/js_i18n_strings.py:652
 msgid "Error updating completion status"
 msgstr "Fout tydens bywerking van voltooiingstatus"
 
-#: services/js_i18n_strings.py:634
+#: services/js_i18n_strings.py:653
 msgid "Error updating status"
 msgstr "Fout tydens bywerking van status"
 
-#: services/js_i18n_strings.py:635
+#: services/js_i18n_strings.py:654
 msgid "Europe"
 msgstr ""
 
-#: services/js_i18n_strings.py:636 templates/_modals/edit_modal.html:223
-#: templates/base.html:1241
+#: services/js_i18n_strings.py:655 templates/_modals/edit_modal.html:223
+#: templates/base.html:1242
 msgid "Exclusive"
 msgstr "Eksklusief"
 
-#: services/js_i18n_strings.py:637
+#: services/js_i18n_strings.py:656
 msgid "Failed to apply bulk edit. Check console for details."
 msgstr "Kon nie massa-redigering toepas nie. Kontroleer konsole vir besonderhede."
 
-#: services/js_i18n_strings.py:638
+#: services/js_i18n_strings.py:657
 msgid "Failed to apply normalization"
 msgstr "Kon nie normalisering toepas nie"
 
-#: services/js_i18n_strings.py:639
+#: services/js_i18n_strings.py:658
 msgid "Failed to clean missing ROMs"
 msgstr "Kon nie vermiste ROM's skoonmaak nie"
 
-#: services/js_i18n_strings.py:640
+#: services/js_i18n_strings.py:659
 msgid "Failed to clear CLZ imports"
 msgstr "Kon nie CLZ-invoere uitvee nie"
 
-#: services/js_i18n_strings.py:641
+#: services/js_i18n_strings.py:660
 msgid "Failed to clear HLTB: "
 msgstr "Kon nie HLTB uitvee nie: "
 
-#: services/js_i18n_strings.py:642
+#: services/js_i18n_strings.py:661
 msgid "Failed to clear RA data"
 msgstr "Kon nie RA-data uitvee nie"
 
-#: services/js_i18n_strings.py:643
+#: services/js_i18n_strings.py:662
 msgid "Failed to delete"
 msgstr "Kon nie verwyder nie"
 
-#: services/js_i18n_strings.py:644
+#: services/js_i18n_strings.py:663
 msgid "Failed to fetch controller image"
 msgstr "Kon nie beheerderbeeld verkry nie"
 
-#: services/js_i18n_strings.py:645
+#: services/js_i18n_strings.py:664
 msgid "Failed to fetch image"
 msgstr "Kon nie beeld verkry nie"
 
-#: services/js_i18n_strings.py:646
+#: services/js_i18n_strings.py:665
 msgid "Failed to load game"
 msgstr "Kon nie speletjie laai nie"
 
-#: services/js_i18n_strings.py:647
+#: services/js_i18n_strings.py:666
 msgid "Failed to load normalization data"
 msgstr "Kon nie normaliseringdata laai nie"
 
-#: services/js_i18n_strings.py:648
+#: services/js_i18n_strings.py:667
 msgid "Failed to save HLTB: "
 msgstr "Kon nie HLTB stoor nie: "
 
-#: services/js_i18n_strings.py:650
+#: services/js_i18n_strings.py:669
 msgid "Failed to save: "
 msgstr "Kon nie stoor nie: "
 
-#: services/js_i18n_strings.py:651
+#: services/js_i18n_strings.py:670
 msgid "Failed to start RetroAchievements refresh"
 msgstr "Kon nie RetroAchievements-verfrissing begin nie"
 
-#: services/js_i18n_strings.py:652
+#: services/js_i18n_strings.py:671
 msgid "Failed to start bulk scrape"
 msgstr "Kon nie massa-skraap begin nie"
 
-#: services/js_i18n_strings.py:653
+#: services/js_i18n_strings.py:672
 msgid "Failed to start generation"
 msgstr "Kon nie generering begin nie"
 
-#: services/js_i18n_strings.py:654
+#: services/js_i18n_strings.py:673
 msgid "Failed to update completion status: "
 msgstr "Kon nie voltooiingstatus bywerk nie: "
 
-#: services/js_i18n_strings.py:655
+#: services/js_i18n_strings.py:674
 #, python-brace-format
 msgid "Failed to update status: {error}"
 msgstr "Kon nie status bywerk nie: {error}"
 
-#: services/js_i18n_strings.py:656
+#: services/js_i18n_strings.py:675
 #, python-brace-format
 msgid "Failed: {error}"
 msgstr "Het misluk: {error}"
 
-#: services/js_i18n_strings.py:657
+#: services/js_i18n_strings.py:676
 msgid "Fetch All Controller Images"
 msgstr "Verkry Alle Beheerderbeelde"
 
-#: services/js_i18n_strings.py:658
+#: services/js_i18n_strings.py:677
 #, python-brace-format
 msgid "Fetching from {source}…"
 msgstr "Haal tans van {source} af…"
 
-#: services/js_i18n_strings.py:659
+#: services/js_i18n_strings.py:678
 #, python-brace-format
 msgid "Fetching images: {done} of {total}"
 msgstr "Haal beelde: {done} van {total}"
 
-#: services/js_i18n_strings.py:660
+#: services/js_i18n_strings.py:679
 msgid "Focus search box"
 msgstr "Fokus soekblokkie"
 
-#: services/js_i18n_strings.py:661 templates/logs.html:743
+#: services/js_i18n_strings.py:680 templates/logs.html:743
 msgid "From"
 msgstr "Vanaf"
 
-#: services/js_i18n_strings.py:662
+#: services/js_i18n_strings.py:681
 msgid "From the system setting"
 msgstr "Uit die stelselinstelling"
 
-#: services/js_i18n_strings.py:663
+#: services/js_i18n_strings.py:682
 msgid "Fullscreen"
 msgstr "Volskerm"
 
-#: services/js_i18n_strings.py:664
+#: services/js_i18n_strings.py:683
 msgid "Game Page"
 msgstr "Speletjiebladsy"
 
-#: services/js_i18n_strings.py:665
+#: services/js_i18n_strings.py:684
 msgid "Game details updated successfully."
 msgstr "Speletjiebesonderhede suksesvol opgedateer."
 
-#: services/js_i18n_strings.py:666 templates/_settings_tabs/data.html:186
+#: services/js_i18n_strings.py:685 templates/_settings_tabs/data.html:186
 #: templates/achievements_system.html:119 templates/analytics.html:571
 #: templates/analytics.html:1584 templates/analytics.html:1625
 #: templates/analytics.html:1947 templates/analytics.html:2122
@@ -2313,27 +2340,27 @@ msgstr "Speletjiebesonderhede suksesvol opgedateer."
 msgid "Games"
 msgstr "Speletjies"
 
-#: services/js_i18n_strings.py:667
+#: services/js_i18n_strings.py:686
 msgid "Generate All Museum Content"
 msgstr "Genereer Alle Museum-Inhoud"
 
-#: services/js_i18n_strings.py:668 templates/museum_system.html:45
+#: services/js_i18n_strings.py:687 templates/museum_system.html:45
 msgid "Generate Content"
 msgstr "Genereer Inhoud"
 
-#: services/js_i18n_strings.py:669 templates/museum.html:28
+#: services/js_i18n_strings.py:688 templates/museum.html:28
 msgid "Generating content..."
 msgstr "Genereer Inhoud..."
 
-#: services/js_i18n_strings.py:670
+#: services/js_i18n_strings.py:689
 msgid "Generating..."
 msgstr "Genereer..."
 
-#: services/js_i18n_strings.py:671
+#: services/js_i18n_strings.py:690
 msgid "Generation cancelled"
 msgstr "Generering gekanselleer"
 
-#: services/js_i18n_strings.py:672
+#: services/js_i18n_strings.py:691
 #, python-brace-format
 msgid ""
 "Generation complete: {generated} generated, {skipped} skipped, {failed} "
@@ -2342,192 +2369,203 @@ msgstr ""
 "Generering voltooi: {generated} gegenereer, {skipped} oorgeslaan, "
 "{failed} misluk"
 
-#: services/js_i18n_strings.py:673
+#: services/js_i18n_strings.py:692
 msgid "Generation failed"
 msgstr "Generering het misluk"
 
-#: services/js_i18n_strings.py:674
+#: services/js_i18n_strings.py:693
 msgid "Generation request failed"
 msgstr "Generingsversoek het misluk"
 
-#: services/js_i18n_strings.py:675
+#: services/js_i18n_strings.py:694 templates/game_detail.html:237
+msgid ""
+"Gets in game, but cannot be finished, has serious glitches or runs too "
+"slowly."
+msgstr ""
+
+#: services/js_i18n_strings.py:695
 msgid "Go to Analytics"
 msgstr "Gaan na Analise"
 
-#: services/js_i18n_strings.py:676
+#: services/js_i18n_strings.py:696
 msgid "Go to Changelog"
 msgstr "Gaan na Veranderingslog"
 
-#: services/js_i18n_strings.py:677
+#: services/js_i18n_strings.py:697
 msgid "Go to Dashboard"
 msgstr "Gaan na Kontrolebord"
 
-#: services/js_i18n_strings.py:678
+#: services/js_i18n_strings.py:698
 msgid "Go to Help"
 msgstr "Gaan na Hulp"
 
-#: services/js_i18n_strings.py:679
+#: services/js_i18n_strings.py:699
 msgid "Go to Library"
 msgstr "Gaan na Biblioteek"
 
-#: services/js_i18n_strings.py:680
+#: services/js_i18n_strings.py:700
 msgid "Go to Settings"
 msgstr "Gaan na Instellings"
 
-#: services/js_i18n_strings.py:681
+#: services/js_i18n_strings.py:701
 msgid "Go to Systems"
 msgstr "Gaan na Stelsels"
 
-#: services/js_i18n_strings.py:682
+#: services/js_i18n_strings.py:702
 msgid "HLTB data cleared"
 msgstr "HLTB-data uitgevee"
 
-#: services/js_i18n_strings.py:683
+#: services/js_i18n_strings.py:703
 msgid "HLTB data saved"
 msgstr "HLTB-data gestoor"
 
-#: services/js_i18n_strings.py:684
+#: services/js_i18n_strings.py:704
 msgid "HLTB lookup cancelled"
 msgstr "HLTB-opsoek gekanselleer"
 
-#: services/js_i18n_strings.py:685
+#: services/js_i18n_strings.py:705
 msgid "Handheld LCD"
 msgstr "Draagbare LCD"
 
-#: services/js_i18n_strings.py:686 templates/all_games.html:99
+#: services/js_i18n_strings.py:706 templates/all_games.html:99
 #: templates/system_games.html:90
 msgid "Has Achievements"
 msgstr "Het Prestasies"
 
-#: services/js_i18n_strings.py:687 templates/logs.html:719
+#: services/js_i18n_strings.py:707 templates/logs.html:719
 msgid "Image Resize"
 msgstr "Beeldgrootte Verander"
 
-#: services/js_i18n_strings.py:688
+#: services/js_i18n_strings.py:708
 msgid "Image fetch cancelled."
 msgstr "Beeldaflaai gekanselleer."
 
-#: services/js_i18n_strings.py:689
+#: services/js_i18n_strings.py:709
 msgid "Image must be under 10MB"
 msgstr "Beeld moet onder 10MB wees"
 
-#: services/js_i18n_strings.py:690 templates/_bulk_edit_modal.html:27
+#: services/js_i18n_strings.py:710 templates/_bulk_edit_modal.html:27
 #: templates/achievements_system.html:151
 #: templates/achievements_system.html:170 templates/analytics.html:1664
-#: templates/base.html:1011 templates/dashboard.html:362
-#: templates/dashboard.html:502 templates/game_detail.html:220
+#: templates/base.html:1012 templates/dashboard.html:362
+#: templates/dashboard.html:502 templates/game_detail.html:255
 #: templates/steam_achievements.html:77 templates/xbox_achievements.html:77
 msgid "In Progress"
 msgstr "Aan Die Gang"
 
-#: services/js_i18n_strings.py:691
+#: services/js_i18n_strings.py:711
 msgid "Initializing bulk scrape..."
 msgstr "Inisialiseer Massa-Skraap..."
 
-#: services/js_i18n_strings.py:692 templates/_bulk_scrape_modal.html:23
+#: services/js_i18n_strings.py:712 templates/_bulk_scrape_modal.html:23
 #: templates/duplicate_finder.html:250 templates/screenshot_dedup.html:276
 msgid "Initializing..."
 msgstr "Inisialiseer..."
 
-#: services/js_i18n_strings.py:693
+#: services/js_i18n_strings.py:713
 msgid "Input lag reduction"
 msgstr "Vermindering van invoervertraging"
 
-#: services/js_i18n_strings.py:694
+#: services/js_i18n_strings.py:714
 #, fuzzy
 msgid "Install update"
 msgstr "Laas opgedateer"
 
-#: services/js_i18n_strings.py:695
+#: services/js_i18n_strings.py:715
 #, python-brace-format
 msgid "Installed {n} cores."
 msgstr "{n} cores geïnstalleer."
 
-#: services/js_i18n_strings.py:696
+#: services/js_i18n_strings.py:716
 #, python-brace-format
 msgid "Installed {n} cores. Failed: {failed}"
 msgstr "{n} cores geïnstalleer. Misluk: {failed}"
 
-#: services/js_i18n_strings.py:697
+#: services/js_i18n_strings.py:717
 msgid "Installing the update and restarting RetroDB…"
 msgstr ""
 
-#: services/js_i18n_strings.py:698
+#: services/js_i18n_strings.py:718
 msgid "Integer scaling"
 msgstr "Heelgetal-skalering"
 
-#: services/js_i18n_strings.py:699
+#: services/js_i18n_strings.py:719
 msgid "Japan"
 msgstr ""
 
-#: services/js_i18n_strings.py:700
+#: services/js_i18n_strings.py:720
 msgid "Just synced"
 msgstr "Pas Gesinkroniseer"
 
-#: services/js_i18n_strings.py:701
+#: services/js_i18n_strings.py:721
 msgid "Keyboard Shortcuts"
 msgstr "Sleutelbordkortpaaie"
 
-#: services/js_i18n_strings.py:702
+#: services/js_i18n_strings.py:722
 msgid "Kill"
 msgstr "Beëindig"
 
-#: services/js_i18n_strings.py:703
+#: services/js_i18n_strings.py:723
+#, fuzzy, python-brace-format
+msgid "Last tested {date}."
+msgstr "Bygevoeg {date}"
+
+#: services/js_i18n_strings.py:724
 #, python-brace-format
 msgid "Launch failed: {error}"
 msgstr "Lansering het misluk: {error}"
 
-#: services/js_i18n_strings.py:704
+#: services/js_i18n_strings.py:725
 #, python-brace-format
 msgid "Launched (pid {pid})"
 msgstr "Gelanseer (pid {pid})"
 
-#: services/js_i18n_strings.py:705
+#: services/js_i18n_strings.py:726
 msgid "Launched (replaced previous instance)"
 msgstr "Gelanseer (vorige instansie vervang)"
 
-#: services/js_i18n_strings.py:706
+#: services/js_i18n_strings.py:727
 msgid "Launching…"
 msgstr "Lanseer tans…"
 
-#: services/js_i18n_strings.py:707
+#: services/js_i18n_strings.py:728
 #, python-brace-format
 msgid "Library scan complete! Found {n} new games."
 msgstr "Biblioteekskandering voltooi! {n} nuwe speletjies gevind."
 
-#: services/js_i18n_strings.py:708
+#: services/js_i18n_strings.py:729
 msgid "Link"
 msgstr "Koppel"
 
-#: services/js_i18n_strings.py:709
+#: services/js_i18n_strings.py:730
 msgid "Link ticked games"
 msgstr "Koppel gemerkte speletjies"
 
-#: services/js_i18n_strings.py:710
+#: services/js_i18n_strings.py:731
 msgid "Loading log file..."
 msgstr "Laai Loglêer..."
 
-#: services/js_i18n_strings.py:711
+#: services/js_i18n_strings.py:732
 msgid "Loading the manual…"
 msgstr "Laai tans die handleiding…"
 
-#: services/js_i18n_strings.py:712 templates/settings_emulators.html:132
+#: services/js_i18n_strings.py:733 templates/settings_emulators.html:132
 #: templates/settings_emulators.html:202
 msgid "Loading…"
 msgstr "Laai tans…"
 
-#: services/js_i18n_strings.py:713
+#: services/js_i18n_strings.py:734
 msgid "Log file deleted"
 msgstr "Loglêer verwyder"
 
-#: services/js_i18n_strings.py:714
+#: services/js_i18n_strings.py:735
 msgid "Looking for versions…"
 msgstr "Soek tans na weergawes…"
 
-#: services/js_i18n_strings.py:715 templates/achievement_game.html:168
+#: services/js_i18n_strings.py:736 templates/achievement_game.html:168
 #: templates/achievement_game.html:197 templates/achievement_game.html:207
-#: templates/base.html:1046 templates/game_detail.html:508
-#: templates/game_detail.html:537 templates/game_detail.html:547
+#: templates/base.html:1047 templates/game_detail.html:554
+#: templates/game_detail.html:583 templates/game_detail.html:593
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:172
 #: templates/psn_trophy_detail.html:205
 #: templates/steam_achievement_game.html:133
@@ -2537,10 +2575,10 @@ msgstr "Soek tans na weergawes…"
 msgid "Main + Extras"
 msgstr "Hoofverhaal + Ekstras"
 
-#: services/js_i18n_strings.py:716 templates/achievement_game.html:164
+#: services/js_i18n_strings.py:737 templates/achievement_game.html:164
 #: templates/achievement_game.html:197 templates/achievement_game.html:203
-#: templates/base.html:1042 templates/game_detail.html:504
-#: templates/game_detail.html:537 templates/game_detail.html:543
+#: templates/base.html:1043 templates/game_detail.html:550
+#: templates/game_detail.html:583 templates/game_detail.html:589
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:168
 #: templates/psn_trophy_detail.html:201
 #: templates/steam_achievement_game.html:132
@@ -2550,15 +2588,15 @@ msgstr "Hoofverhaal + Ekstras"
 msgid "Main Story"
 msgstr "Hoofverhaal"
 
-#: services/js_i18n_strings.py:717
+#: services/js_i18n_strings.py:738
 msgid "Marked as not versions."
 msgstr "Gemerk as nie weergawes nie."
 
-#: services/js_i18n_strings.py:718
+#: services/js_i18n_strings.py:739
 msgid "Match found - please confirm to save"
 msgstr "Passing gevind - bevestig asseblief om te stoor"
 
-#: services/js_i18n_strings.py:719
+#: services/js_i18n_strings.py:740
 msgid ""
 "Matched using this alternate/regional title — confirm it refers to the "
 "same game before saving."
@@ -2566,7 +2604,7 @@ msgstr ""
 "Gepas met hierdie alternatiewe/streektitel — bevestig dat dit na "
 "dieselfde speletjie verwys voordat jy stoor."
 
-#: services/js_i18n_strings.py:720
+#: services/js_i18n_strings.py:741
 #, python-brace-format
 msgid ""
 "Matched via alternate title \"{term}\" — HLTB shows it as \"{match}\". "
@@ -2575,300 +2613,300 @@ msgstr ""
 "Gepas via alternatiewe titel \"{term}\" — HLTB wys dit as \"{match}\". "
 "Bevestig voordat jy stoor."
 
-#: services/js_i18n_strings.py:721
+#: services/js_i18n_strings.py:742
 #, python-brace-format
 msgid "Missing: {files}"
 msgstr "Ontbreek: {files}"
 
-#: services/js_i18n_strings.py:722
+#: services/js_i18n_strings.py:743
 msgid "Multi-System"
 msgstr "Multi-Stelsel"
 
-#: services/js_i18n_strings.py:723
+#: services/js_i18n_strings.py:744
 msgid "Multi-platform"
 msgstr "Multi-platform"
 
-#: services/js_i18n_strings.py:724
+#: services/js_i18n_strings.py:745
 msgid "Museum generation started"
 msgstr "Museum-generering begin"
 
-#: services/js_i18n_strings.py:725
+#: services/js_i18n_strings.py:746
 msgid "NOT"
 msgstr "NIE"
 
-#: services/js_i18n_strings.py:726
+#: services/js_i18n_strings.py:747
 #, python-brace-format
 msgid "Names changed: {accepted}."
 msgstr ""
 
-#: services/js_i18n_strings.py:727
+#: services/js_i18n_strings.py:748
 #, python-brace-format
 msgid ""
 "Names changed: {accepted}. Skipped because their title changed since: "
 "{skipped}."
 msgstr ""
 
-#: services/js_i18n_strings.py:728
+#: services/js_i18n_strings.py:749
 #, python-brace-format
 msgid "Names rejected: {rejected}. They will not be suggested again."
 msgstr ""
 
-#: services/js_i18n_strings.py:729
+#: services/js_i18n_strings.py:750
 msgid "Navigation"
 msgstr "Navigasie"
 
-#: services/js_i18n_strings.py:730
+#: services/js_i18n_strings.py:751
 msgid "Network error"
 msgstr "Netwerkfout"
 
-#: services/js_i18n_strings.py:731
+#: services/js_i18n_strings.py:752
 msgid "Network error starting bulk scrape"
 msgstr "Netwerkfout tydens begin van massa-skraap"
 
-#: services/js_i18n_strings.py:732
+#: services/js_i18n_strings.py:753
 msgid "Next disk"
 msgstr "Volgende skyf"
 
-#: services/js_i18n_strings.py:733
+#: services/js_i18n_strings.py:754
 msgid "Next disk failed"
 msgstr "Volgende skyf het misluk"
 
-#: services/js_i18n_strings.py:734 templates/_bulk_edit_modal.html:171
-#: templates/_modals/edit_modal.html:143 templates/game_detail.html:666
-#: templates/game_detail.html:734
+#: services/js_i18n_strings.py:755 templates/_bulk_edit_modal.html:171
+#: templates/_modals/edit_modal.html:143 templates/game_detail.html:712
+#: templates/game_detail.html:780
 msgid "No"
 msgstr "Nee"
 
-#: services/js_i18n_strings.py:735
+#: services/js_i18n_strings.py:756
 msgid "No (already set)"
 msgstr "Nee (reeds gestel)"
 
-#: services/js_i18n_strings.py:736
+#: services/js_i18n_strings.py:757
 msgid "No CLZ Import games found"
 msgstr "Geen CLZ-invoerspeletjies gevind nie"
 
-#: services/js_i18n_strings.py:737
+#: services/js_i18n_strings.py:758
 msgid "No Changes"
 msgstr "Geen Veranderinge Nie"
 
-#: services/js_i18n_strings.py:738
+#: services/js_i18n_strings.py:759
 msgid "No Games Selected"
 msgstr "Geen Speletjies Gekies Nie"
 
-#: services/js_i18n_strings.py:739
+#: services/js_i18n_strings.py:760
 msgid "No HLTB data found"
 msgstr "Geen HLTB-data gevind nie"
 
-#: services/js_i18n_strings.py:740
+#: services/js_i18n_strings.py:761
 msgid "No achievements found"
 msgstr "Geen prestasies gevind nie"
 
-#: services/js_i18n_strings.py:741 templates/achievement_game.html:72
+#: services/js_i18n_strings.py:762 templates/achievement_game.html:72
 #: templates/steam_achievement_game.html:69
 #: templates/xbox_achievement_game.html:59
 msgid "No description available."
 msgstr "Geen beskrywing beskikbaar nie."
 
-#: services/js_i18n_strings.py:742
+#: services/js_i18n_strings.py:763
 msgid "No emulator AppImages found in the scan paths."
 msgstr "Geen emulator-AppImages in die skanderingspaaie gevind nie."
 
-#: services/js_i18n_strings.py:743
+#: services/js_i18n_strings.py:764
 msgid "No emulators registered."
 msgstr "Geen emulators geregistreer nie."
 
-#: services/js_i18n_strings.py:744
+#: services/js_i18n_strings.py:765
 msgid "No folders yet."
 msgstr "Nog geen vouers nie."
 
-#: services/js_i18n_strings.py:745
+#: services/js_i18n_strings.py:766
 msgid "No games or systems match"
 msgstr ""
 
-#: services/js_i18n_strings.py:746
+#: services/js_i18n_strings.py:767
 msgid "No log files in this category"
 msgstr "Geen loglêers in hierdie kategorie nie"
 
-#: services/js_i18n_strings.py:747
+#: services/js_i18n_strings.py:768
 msgid "No log lines match current filters"
 msgstr "Geen loglyne stem ooreen met huidige filters nie"
 
-#: services/js_i18n_strings.py:748
+#: services/js_i18n_strings.py:769
 msgid "No mappings yet. Add an emulator folder above."
 msgstr "Nog geen koppelings nie. Voeg hierbo 'n emulatorvouer by."
 
-#: services/js_i18n_strings.py:749
+#: services/js_i18n_strings.py:770
 msgid "No matching games on this system."
 msgstr "Geen ooreenstemmende speletjies op hierdie stelsel nie."
 
-#: services/js_i18n_strings.py:750
+#: services/js_i18n_strings.py:771
 msgid "No missing ROM files found."
 msgstr "Geen ontbrekende ROM-lêers gevind nie."
 
-#: services/js_i18n_strings.py:751
+#: services/js_i18n_strings.py:772
 #, fuzzy
 msgid "No newer version is available."
 msgstr "Geen beskrywing beskikbaar nie."
 
-#: services/js_i18n_strings.py:752
+#: services/js_i18n_strings.py:773
 msgid "No options available"
 msgstr "Geen opsies beskikbaar nie"
 
-#: services/js_i18n_strings.py:753
+#: services/js_i18n_strings.py:774
 msgid "No ratings available"
 msgstr "Geen graderings beskikbaar nie"
 
-#: services/js_i18n_strings.py:754
+#: services/js_i18n_strings.py:775
 msgid "No results"
 msgstr "Geen resultate"
 
-#: services/js_i18n_strings.py:755
+#: services/js_i18n_strings.py:776
 msgid "No results found"
 msgstr "Geen resultate gevind nie"
 
-#: services/js_i18n_strings.py:756
+#: services/js_i18n_strings.py:777
 msgid "No results found on HowLongToBeat"
 msgstr "Geen resultate gevind op HowLongToBeat nie"
 
-#: services/js_i18n_strings.py:757
+#: services/js_i18n_strings.py:778
 msgid "No sessions match current filters"
 msgstr "Geen sessies stem ooreen met huidige filters nie"
 
-#: services/js_i18n_strings.py:758
+#: services/js_i18n_strings.py:779
 msgid "No suggested names waiting. Press Ask the AI to look for some."
 msgstr ""
 
-#: services/js_i18n_strings.py:759
+#: services/js_i18n_strings.py:780
 msgid "No suggestions. Run Backfill Alternate Titles in Maintenance to find more."
 msgstr ""
 "Geen voorstelle nie. Laat loop Vul Alternatiewe Titels In in "
 "Instandhouding om meer te vind."
 
-#: services/js_i18n_strings.py:760 templates/game_detail.html:814
+#: services/js_i18n_strings.py:781 templates/game_detail.html:860
 msgid "None"
 msgstr "Geen"
 
-#: services/js_i18n_strings.py:761
+#: services/js_i18n_strings.py:782
 #, python-brace-format
 msgid "Normalization applied: {games} games updated, {rules} rules saved"
 msgstr ""
 "Normalisering toegepas: {games} speletjies opgedateer, {rules} reëls "
 "gestoor"
 
-#: services/js_i18n_strings.py:762
+#: services/js_i18n_strings.py:783
 msgid "Not versions"
 msgstr "Nie weergawes nie"
 
-#: services/js_i18n_strings.py:763 templates/base.html:1400
+#: services/js_i18n_strings.py:784 templates/base.html:1401
 msgid "Now playing"
 msgstr "Speel tans"
 
-#: services/js_i18n_strings.py:764 templates/base.html:339
+#: services/js_i18n_strings.py:785 templates/base.html:339
 msgid "OK"
 msgstr "OK"
 
-#: services/js_i18n_strings.py:765
+#: services/js_i18n_strings.py:786
 msgid "Off"
 msgstr "Af"
 
-#: services/js_i18n_strings.py:766
+#: services/js_i18n_strings.py:787
 msgid "On"
 msgstr "Aan"
 
-#: services/js_i18n_strings.py:767
+#: services/js_i18n_strings.py:788
 msgid "Operation completed"
 msgstr "Bewerking voltooi"
 
-#: services/js_i18n_strings.py:768
+#: services/js_i18n_strings.py:789
 msgid "Operation failed"
 msgstr "Bewerking het misluk"
 
-#: services/js_i18n_strings.py:769
+#: services/js_i18n_strings.py:790
 msgid "Other"
 msgstr "Ander"
 
-#: services/js_i18n_strings.py:770
+#: services/js_i18n_strings.py:791
 msgid "PSN Imports"
 msgstr "PSN-invoere"
 
-#: services/js_i18n_strings.py:771
+#: services/js_i18n_strings.py:792
 msgid "Page:"
 msgstr "Bladsy:"
 
-#: services/js_i18n_strings.py:772
+#: services/js_i18n_strings.py:793
 msgid "Part of a Series"
 msgstr "Deel van 'n reeks"
 
-#: services/js_i18n_strings.py:773 templates/_bulk_scrape_modal.html:46
+#: services/js_i18n_strings.py:794 templates/_bulk_scrape_modal.html:46
 #: templates/archive_scanner.html:658 templates/archive_scanner.html:795
 #: templates/psn_trophies.html:294
 msgid "Pause"
 msgstr "Pouseer"
 
-#: services/js_i18n_strings.py:774
+#: services/js_i18n_strings.py:795
 msgid "Paused - Click Resume to continue"
 msgstr "Gepouseer - Klik Hervat om voort te gaan"
 
-#: services/js_i18n_strings.py:775
+#: services/js_i18n_strings.py:796
 msgid "Platform not found"
 msgstr "Platform nie gevind nie"
 
-#: services/js_i18n_strings.py:776 templates/game_detail.html:85
+#: services/js_i18n_strings.py:797 templates/game_detail.html:99
 msgid "Play"
 msgstr "Speel"
 
-#: services/js_i18n_strings.py:777 templates/_bulk_edit_modal.html:28
-#: templates/analytics.html:1664 templates/base.html:1012
-#: templates/dashboard.html:504 templates/game_detail.html:221
+#: services/js_i18n_strings.py:798 templates/_bulk_edit_modal.html:28
+#: templates/analytics.html:1664 templates/base.html:1013
+#: templates/dashboard.html:504 templates/game_detail.html:256
 msgid "Played"
 msgstr "Gespeel"
 
-#: services/js_i18n_strings.py:778
+#: services/js_i18n_strings.py:799
 msgid "Please change at least one field before applying."
 msgstr "Verander asseblief ten minste een veld voordat u toepas."
 
-#: services/js_i18n_strings.py:779
+#: services/js_i18n_strings.py:800
 msgid "Please enter a game title"
 msgstr "Voer asseblief 'n speletjietitel in"
 
-#: services/js_i18n_strings.py:780
+#: services/js_i18n_strings.py:801
 msgid "Please select at least one game to edit."
 msgstr "Kies asseblief ten minste een speletjie om te wysig."
 
-#: services/js_i18n_strings.py:781
+#: services/js_i18n_strings.py:802
 msgid "Please select at least one game to scrape."
 msgstr "Kies asseblief ten minste een speletjie om te skraap."
 
-#: services/js_i18n_strings.py:782
+#: services/js_i18n_strings.py:803
 msgid "Pre-session log entries"
 msgstr "Voor-sessie loginskrywings"
 
-#: services/js_i18n_strings.py:783
+#: services/js_i18n_strings.py:804
 msgid "Processing images…"
 msgstr "Verwerk tans beelde…"
 
-#: services/js_i18n_strings.py:784 templates/game_imports.html:418
+#: services/js_i18n_strings.py:805 templates/game_imports.html:418
 msgid "Processing..."
 msgstr "Verwerk tans..."
 
-#: services/js_i18n_strings.py:785
+#: services/js_i18n_strings.py:806
 #, python-brace-format
 msgid "Processing: {file}"
 msgstr "Verwerk tans: {file}"
 
-#: services/js_i18n_strings.py:786
+#: services/js_i18n_strings.py:807
 msgid "Queued"
 msgstr "In wagry"
 
-#: services/js_i18n_strings.py:787
+#: services/js_i18n_strings.py:808
 msgid "RA Data Cleared"
 msgstr "RA-data uitgevee"
 
-#: services/js_i18n_strings.py:788
+#: services/js_i18n_strings.py:809
 msgid "ROM Files"
 msgstr "ROM-lêers"
 
-#: services/js_i18n_strings.py:789 templates/_macros/nav_tabs.html:34
+#: services/js_i18n_strings.py:810 templates/_macros/nav_tabs.html:34
 #: templates/archive_scanner.html:561 templates/base.html:174
 #: templates/chd_converter.html:64 templates/chd_verify.html:80
 #: templates/duplicate_finder.html:166 templates/logs.html:713
@@ -2878,424 +2916,454 @@ msgstr "ROM-lêers"
 msgid "ROM Tools"
 msgstr "ROM-gereedskap"
 
-#: services/js_i18n_strings.py:790
+#: services/js_i18n_strings.py:811 templates/game_detail.html:237
+msgid "RPCS3: Ingame"
+msgstr ""
+
+#: services/js_i18n_strings.py:812 templates/game_detail.html:238
+#, fuzzy
+msgid "RPCS3: Intro"
+msgstr "RPCS3-trofeë"
+
+#: services/js_i18n_strings.py:813 templates/game_detail.html:239
+msgid "RPCS3: Loadable"
+msgstr ""
+
+#: services/js_i18n_strings.py:814 templates/game_detail.html:240
+#, fuzzy
+msgid "RPCS3: Nothing"
+msgstr "RPCS3-trofeë"
+
+#: services/js_i18n_strings.py:815 templates/game_detail.html:236
+msgid "RPCS3: Playable"
+msgstr ""
+
+#: services/js_i18n_strings.py:816
 msgid "Ready"
 msgstr "Gereed"
 
-#: services/js_i18n_strings.py:791
+#: services/js_i18n_strings.py:817
 msgid "Refresh RetroAchievements"
 msgstr "Verfris RetroAchievements"
 
-#: services/js_i18n_strings.py:792
+#: services/js_i18n_strings.py:818
 #, python-brace-format
 msgid "Refresh: {system}"
 msgstr "Verfris: {system}"
 
-#: services/js_i18n_strings.py:793
+#: services/js_i18n_strings.py:819
 #, python-brace-format
 msgid "Refreshing RA for {system}..."
 msgstr "Verfris RA vir {system}..."
 
-#: services/js_i18n_strings.py:794
+#: services/js_i18n_strings.py:820
 msgid "Regional name matches"
 msgstr "Streeksnaamooreenkomste"
 
-#: services/js_i18n_strings.py:795 templates/compare_games.html:24
+#: services/js_i18n_strings.py:821 templates/compare_games.html:24
 #: templates/compare_games.html:40
 msgid "Remove"
 msgstr "Verwyder"
 
-#: services/js_i18n_strings.py:796
+#: services/js_i18n_strings.py:822
 msgid "Remove background from the uploaded image?"
 msgstr "Verwyder agtergrond van die opgelaaide beeld?"
 
-#: services/js_i18n_strings.py:797
+#: services/js_i18n_strings.py:823
 msgid "Remove from queue"
 msgstr "Verwyder uit wagry"
 
-#: services/js_i18n_strings.py:798
+#: services/js_i18n_strings.py:824
 #, python-brace-format
 msgid "Removed {n} CLZ Import games"
 msgstr "{n} CLZ-invoerspeletjies verwyder"
 
-#: services/js_i18n_strings.py:799
+#: services/js_i18n_strings.py:825
 #, python-brace-format
 msgid "Removed {n} CLZ Import games:"
 msgstr "{n} CLZ-invoerspeletjies verwyder:"
 
-#: services/js_i18n_strings.py:800
+#: services/js_i18n_strings.py:826
 #, python-brace-format
 msgid "Removed {n} games with missing ROMs"
 msgstr "{n} speletjies met ontbrekende ROM's verwyder"
 
-#: services/js_i18n_strings.py:801
+#: services/js_i18n_strings.py:827
 #, python-brace-format
 msgid "Removed {n} games:"
 msgstr "{n} speletjies verwyder:"
 
-#: services/js_i18n_strings.py:802
+#: services/js_i18n_strings.py:828
 msgid "Removing background…"
 msgstr "Verwyder agtergrond…"
 
-#: services/js_i18n_strings.py:803
+#: services/js_i18n_strings.py:829
 msgid "Removing..."
 msgstr "Verwyder tans..."
 
-#: services/js_i18n_strings.py:804 templates/_bulk_edit_modal.html:42
+#: services/js_i18n_strings.py:830 templates/_bulk_edit_modal.html:42
 #: templates/_bulk_edit_modal.html:56 templates/_bulk_edit_modal.html:70
 #: templates/_bulk_edit_modal.html:124 templates/_bulk_edit_modal.html:140
 #: templates/_bulk_edit_modal.html:156 templates/_bulk_edit_modal.html:180
 msgid "Replace"
 msgstr "Vervang"
 
-#: services/js_i18n_strings.py:805 templates/logs.html:716
+#: services/js_i18n_strings.py:831 templates/logs.html:716
 msgid "Reports"
 msgstr "Verslae"
 
-#: services/js_i18n_strings.py:806
+#: services/js_i18n_strings.py:832
 msgid "Resolution scale"
 msgstr "Resolusieskaal"
 
-#: services/js_i18n_strings.py:807
+#: services/js_i18n_strings.py:833
 msgid "Restarting server..."
 msgstr "Herbegin bediener tans..."
 
-#: services/js_i18n_strings.py:808
+#: services/js_i18n_strings.py:834
 msgid "Resume"
 msgstr "Hervat"
 
-#: services/js_i18n_strings.py:809
+#: services/js_i18n_strings.py:835
 msgid "RetroArch is installed."
 msgstr ""
 
-#: services/js_i18n_strings.py:810
+#: services/js_i18n_strings.py:836
 msgid "RetroArch was not installed."
 msgstr ""
 
-#: services/js_i18n_strings.py:811
+#: services/js_i18n_strings.py:837
 #, python-brace-format
 msgid "RetroArch was not installed: {error}"
 msgstr ""
 
-#: services/js_i18n_strings.py:812
+#: services/js_i18n_strings.py:838
 msgid "RetroDB default"
 msgstr "RetroDB-verstek"
 
-#: services/js_i18n_strings.py:813
+#: services/js_i18n_strings.py:839
 msgid "RetroDB has not come back yet. See logs/update.log, then reload this page."
 msgstr ""
 
-#: services/js_i18n_strings.py:814
+#: services/js_i18n_strings.py:840
 msgid ""
 "RetroDB is run by a process manager here. Download the release and "
 "install it yourself."
 msgstr ""
 
-#: services/js_i18n_strings.py:815
+#: services/js_i18n_strings.py:841
 msgid ""
 "RetroDB will back up its database, install the update and restart. Anyone"
 " using it will be disconnected for a minute or two."
 msgstr ""
 
-#: services/js_i18n_strings.py:816
+#: services/js_i18n_strings.py:842
 #, fuzzy, python-brace-format
 msgid "RetroDB {version} is available."
 msgstr "Geen beskrywing beskikbaar nie."
 
-#: services/js_i18n_strings.py:817
+#: services/js_i18n_strings.py:843
 msgid "Run-ahead, 1 frame"
 msgstr "Run-ahead, 1 raam"
 
-#: services/js_i18n_strings.py:818
+#: services/js_i18n_strings.py:844
 msgid "Running"
 msgstr "Loop tans"
 
-#: services/js_i18n_strings.py:819
+#: services/js_i18n_strings.py:845
 msgid "Running..."
 msgstr "Loop tans..."
 
-#: services/js_i18n_strings.py:820
+#: services/js_i18n_strings.py:846
 msgid "Same IGDB game"
 msgstr "Dieselfde IGDB-speletjie"
 
-#: services/js_i18n_strings.py:821
+#: services/js_i18n_strings.py:847
 msgid "Same ScreenScraper game"
 msgstr "Dieselfde ScreenScraper-speletjie"
 
-#: services/js_i18n_strings.py:822
+#: services/js_i18n_strings.py:848
 msgid "Same title, different region"
 msgstr "Dieselfde titel, ander streek"
 
-#: services/js_i18n_strings.py:823
+#: services/js_i18n_strings.py:849
 msgid "Save Failed"
 msgstr "Stoor het misluk"
 
-#: services/js_i18n_strings.py:824
+#: services/js_i18n_strings.py:850
 #, python-brace-format
 msgid "Save failed: {error}"
 msgstr "Stoor het misluk: {error}"
 
-#: services/js_i18n_strings.py:825
+#: services/js_i18n_strings.py:851
 msgid "Saved"
 msgstr "Gestoor"
 
-#: services/js_i18n_strings.py:826
+#: services/js_i18n_strings.py:852
 msgid "Saved."
 msgstr "Gestoor."
 
-#: services/js_i18n_strings.py:827
+#: services/js_i18n_strings.py:853
 msgid "Saved. It applies the next time you press Play."
 msgstr "Gestoor. Dit word toegepas die volgende keer dat jy Speel druk."
 
-#: services/js_i18n_strings.py:828
+#: services/js_i18n_strings.py:854
 msgid "Saving to the database…"
 msgstr "Stoor tans in die databasis…"
 
-#: services/js_i18n_strings.py:829
+#: services/js_i18n_strings.py:855
 msgid "Saving..."
 msgstr "Stoor tans..."
 
-#: services/js_i18n_strings.py:830
+#: services/js_i18n_strings.py:856
 msgid "Saving…"
 msgstr "Stoor tans…"
 
-#: services/js_i18n_strings.py:831
+#: services/js_i18n_strings.py:857
 #, python-brace-format
 msgid "Scan failed (HTTP {status})"
 msgstr "Skandering het misluk (HTTP {status})"
 
-#: services/js_i18n_strings.py:832
+#: services/js_i18n_strings.py:858
 #, python-brace-format
 msgid "Scan failed: {error}"
 msgstr "Skandering het misluk: {error}"
 
-#: services/js_i18n_strings.py:833
+#: services/js_i18n_strings.py:859
 #, python-brace-format
 msgid "Scanned {paths} paths · found {found} matches."
 msgstr "{paths} paaie geskandeer · {found} treffers gevind."
 
-#: services/js_i18n_strings.py:834 templates/multi_disc_organizer.html:204
+#: services/js_i18n_strings.py:860 templates/multi_disc_organizer.html:204
 msgid "Scanning..."
 msgstr "Skandeer tans..."
 
-#: services/js_i18n_strings.py:835
+#: services/js_i18n_strings.py:861
 msgid "Scanning…"
 msgstr "Skandeer tans…"
 
-#: services/js_i18n_strings.py:836
+#: services/js_i18n_strings.py:862
 msgid "Scrape game"
 msgstr "Skraap speletjie"
 
-#: services/js_i18n_strings.py:837
+#: services/js_i18n_strings.py:863
 #, python-brace-format
 msgid "Scraped 0/{total} - 0%"
 msgstr "Geskraap 0/{total} - 0%"
 
-#: services/js_i18n_strings.py:838
+#: services/js_i18n_strings.py:864
 #, python-brace-format
 msgid "Scraped {processed} / {total} - {percent}%"
 msgstr "Geskraap {processed} / {total} - {percent}%"
 
-#: services/js_i18n_strings.py:839 templates/logs.html:710
+#: services/js_i18n_strings.py:865 templates/logs.html:710
 #: templates/wishlist.html:507
 msgid "Scraping"
 msgstr "Skraap tans"
 
-#: services/js_i18n_strings.py:840
+#: services/js_i18n_strings.py:866
 msgid "Screen effect"
 msgstr "Skermeffek"
 
-#: services/js_i18n_strings.py:841 templates/logs.html:781
+#: services/js_i18n_strings.py:867 templates/logs.html:781
 #: templates/museum_system.html:197 templates/museum_system.html:204
 #: templates/psn_trophy_detail.html:320
 msgid "Search"
 msgstr "Soek"
 
-#: services/js_i18n_strings.py:842
+#: services/js_i18n_strings.py:868
 msgid "Search failed."
 msgstr "Soektog het misluk."
 
-#: services/js_i18n_strings.py:843
+#: services/js_i18n_strings.py:869
 msgid "Search failed. Try again."
 msgstr ""
 
-#: services/js_i18n_strings.py:844
+#: services/js_i18n_strings.py:870
 msgid "Searching & removing background..."
 msgstr "Soek & verwyder agtergrond tans..."
 
-#: services/js_i18n_strings.py:845
+#: services/js_i18n_strings.py:871
 #, python-brace-format
 msgid "Searching {source}…"
 msgstr "Soek tans in {source}…"
 
-#: services/js_i18n_strings.py:846
+#: services/js_i18n_strings.py:872
 #, python-brace-format
 msgid "See all {n} results"
 msgstr ""
 
-#: services/js_i18n_strings.py:847
+#: services/js_i18n_strings.py:873
 msgid "Select Developer"
 msgstr "Kies ontwikkelaar"
 
-#: services/js_i18n_strings.py:848
+#: services/js_i18n_strings.py:874
 msgid "Select Dimension"
 msgstr "Kies dimensie"
 
-#: services/js_i18n_strings.py:849
+#: services/js_i18n_strings.py:875
 #: templates/_modals/select_filter_modal.html:15
 msgid "Select Filter"
 msgstr "Kies filter"
 
-#: services/js_i18n_strings.py:850
+#: services/js_i18n_strings.py:876
 msgid "Select Genre"
 msgstr "Kies genre"
 
-#: services/js_i18n_strings.py:851
+#: services/js_i18n_strings.py:877
 msgid "Select Perspective"
 msgstr "Kies perspektief"
 
-#: services/js_i18n_strings.py:852
+#: services/js_i18n_strings.py:878
 msgid "Select Play Mode"
 msgstr "Kies speelmodus"
 
-#: services/js_i18n_strings.py:853
+#: services/js_i18n_strings.py:879
 msgid "Select Publisher"
 msgstr "Kies uitgewer"
 
-#: services/js_i18n_strings.py:854
+#: services/js_i18n_strings.py:880
 msgid "Select Rating"
 msgstr "Kies gradering"
 
-#: services/js_i18n_strings.py:855
+#: services/js_i18n_strings.py:881
 msgid "Select Series"
 msgstr "Kies reeks"
 
-#: services/js_i18n_strings.py:856
+#: services/js_i18n_strings.py:882
 msgid "Select Source"
 msgstr "Kies bron"
 
-#: services/js_i18n_strings.py:857
+#: services/js_i18n_strings.py:883
 #, python-brace-format
 msgid "Selected {count} games across all pages"
 msgstr "{count} speletjies oor alle bladsye gekies"
 
-#: services/js_i18n_strings.py:858
+#: services/js_i18n_strings.py:884
 #, python-brace-format
 msgid "Selected {count} unscraped games across all pages"
 msgstr "{count} ongeskraapte speletjies oor alle bladsye gekies"
 
-#: services/js_i18n_strings.py:859
+#: services/js_i18n_strings.py:885
 msgid "Server restarted successfully!"
 msgstr "Bediener suksesvol herbegin!"
 
-#: services/js_i18n_strings.py:860
+#: services/js_i18n_strings.py:886
 msgid "Server stopped. You can close this tab."
 msgstr "Bediener gestop. Jy kan hierdie oortjie sluit."
 
-#: services/js_i18n_strings.py:861
+#: services/js_i18n_strings.py:887
 msgid "Set for this game"
 msgstr "Gestel vir hierdie speletjie"
 
-#: services/js_i18n_strings.py:862
+#: services/js_i18n_strings.py:888
 msgid "Set inside the emulator; RetroDB leaves it alone"
 msgstr "Word in die emulator gestel; RetroDB los dit uit"
 
-#: services/js_i18n_strings.py:863
+#: services/js_i18n_strings.py:889
 msgid "Set per system, in Settings > Emulators"
 msgstr "Per stelsel gestel, in Instellings > Emulators"
 
-#: services/js_i18n_strings.py:864 templates/_macros/nav_tabs.html:44
+#: services/js_i18n_strings.py:890 templates/_macros/nav_tabs.html:44
 #: templates/base.html:186 templates/rom_tools_hub.html:119
 #: templates/settings.html:5 templates/settings.html:12
 #: templates/settings_emulators.html:4
 msgid "Settings"
 msgstr "Instellings"
 
-#: services/js_i18n_strings.py:865
+#: services/js_i18n_strings.py:891
 msgid "Show keyboard shortcuts"
 msgstr "Wys sleutelbordkortpaaie"
 
-#: services/js_i18n_strings.py:866
+#: services/js_i18n_strings.py:892
 msgid "Showing Bonus Discs"
 msgstr "Wys bonusskywe"
 
-#: services/js_i18n_strings.py:867
+#: services/js_i18n_strings.py:893 templates/game_detail.html:239
+msgid "Shows a black screen with a frame rate in the window title."
+msgstr ""
+
+#: services/js_i18n_strings.py:894 templates/game_detail.html:238
+msgid "Shows an image but does not get past the menus."
+msgstr ""
+
+#: services/js_i18n_strings.py:895
 msgid "Shutting down server..."
 msgstr "Skakel bediener af..."
 
-#: services/js_i18n_strings.py:868 templates/_modals/edit_modal.html:50
-#: templates/base.html:1098
+#: services/js_i18n_strings.py:896 templates/_modals/edit_modal.html:50
+#: templates/base.html:1099
 msgid "Standalone"
 msgstr "Alleenstaande"
 
-#: services/js_i18n_strings.py:869
+#: services/js_i18n_strings.py:897
 msgid "Starting..."
 msgstr "Begin tans..."
 
-#: services/js_i18n_strings.py:870
+#: services/js_i18n_strings.py:898
 msgid "Starting…"
 msgstr "Begin tans…"
 
-#: services/js_i18n_strings.py:871
+#: services/js_i18n_strings.py:899
 msgid "Steam Imports"
 msgstr "Steam-invoere"
 
-#: services/js_i18n_strings.py:872
+#: services/js_i18n_strings.py:900
 #, python-brace-format
 msgid "Stopped. Names suggested: {proposals}."
 msgstr ""
 
-#: services/js_i18n_strings.py:873
+#: services/js_i18n_strings.py:901
 #, python-brace-format
 msgid "Successfully updated {count} games"
 msgstr "{count} speletjies suksesvol opgedateer"
 
-#: services/js_i18n_strings.py:874
+#: services/js_i18n_strings.py:902
 #, python-brace-format
 msgid "Suggested names waiting: {count}. Untick any you do not want, then accept."
 msgstr ""
 
-#: services/js_i18n_strings.py:875
+#: services/js_i18n_strings.py:903
 msgid "Summary written."
 msgstr "Opsomming geskryf."
 
-#: services/js_i18n_strings.py:876
+#: services/js_i18n_strings.py:904
 msgid "Sync In Progress"
 msgstr "Sinkronisasie aan die gang"
 
-#: services/js_i18n_strings.py:877 templates/achievements_system.html:105
+#: services/js_i18n_strings.py:905 templates/achievements_system.html:105
 msgid "Sync Progress"
 msgstr "Sinkronisasievordering"
 
-#: services/js_i18n_strings.py:878
+#: services/js_i18n_strings.py:906
 msgid "Sync Queued"
 msgstr "Sinkronisasie in wagry"
 
-#: services/js_i18n_strings.py:879
+#: services/js_i18n_strings.py:907
 msgid "Sync complete! Refresh page to see updated progress."
 msgstr ""
 "Sinkronisasie voltooi! Verfris die bladsy om opgedateerde vordering te "
 "sien."
 
-#: services/js_i18n_strings.py:880
+#: services/js_i18n_strings.py:908
 msgid "Sync failed"
 msgstr "Sinkronisasie het misluk"
 
-#: services/js_i18n_strings.py:881
+#: services/js_i18n_strings.py:909
 #, python-brace-format
 msgid "Sync: {system}"
 msgstr "Sinkroniseer: {system}"
 
-#: services/js_i18n_strings.py:882
+#: services/js_i18n_strings.py:910
 msgid "Syncing..."
 msgstr "Sinkroniseer tans..."
 
-#: services/js_i18n_strings.py:883
+#: services/js_i18n_strings.py:911
 #, python-brace-format
 msgid "Syncing: {processed} / {total}"
 msgstr "Sinkroniseer: {processed} / {total}"
 
-#: services/js_i18n_strings.py:884
+#: services/js_i18n_strings.py:912
 #: templates/_settings_tabs/customization.html:299
 #: templates/achievement_game.html:228 templates/analytics.html:569
 #: templates/analytics.html:603 templates/compare_games.html:69
@@ -3309,7 +3377,7 @@ msgstr "Sinkroniseer: {processed} / {total}"
 msgid "System"
 msgstr "Stelsel"
 
-#: services/js_i18n_strings.py:885
+#: services/js_i18n_strings.py:913
 #: templates/_settings_tabs/customization.html:153
 #: templates/_settings_tabs/customization.html:234
 #: templates/_settings_tabs/data.html:19 templates/achievements_system.html:49
@@ -3318,60 +3386,60 @@ msgstr "Stelsel"
 msgid "Systems"
 msgstr "Stelsels"
 
-#: services/js_i18n_strings.py:886
+#: services/js_i18n_strings.py:914
 msgid "The core installed but the game still cannot start."
 msgstr "Die core is geïnstalleer, maar die speletjie kan steeds nie begin nie."
 
-#: services/js_i18n_strings.py:887
+#: services/js_i18n_strings.py:915
 #, fuzzy, python-brace-format
 msgid "The download failed: {error}"
 msgstr "Lansering het misluk: {error}"
 
-#: services/js_i18n_strings.py:888
+#: services/js_i18n_strings.py:916
 #, python-brace-format
 msgid "The run stopped: {error}. Names already suggested are kept."
 msgstr ""
 
-#: services/js_i18n_strings.py:889
+#: services/js_i18n_strings.py:917
 msgid "The update could not be started. See logs/update.log."
 msgstr ""
 
-#: services/js_i18n_strings.py:890
+#: services/js_i18n_strings.py:918
 msgid "The update is downloaded and checked."
 msgstr ""
 
-#: services/js_i18n_strings.py:891
+#: services/js_i18n_strings.py:919
 #, python-brace-format
 msgid ""
 "The update to {to} did not work, so RetroDB went back to {from}. Reason: "
 "{reason}"
 msgstr ""
 
-#: services/js_i18n_strings.py:892
+#: services/js_i18n_strings.py:920
 msgid "This copy of RetroDB is a git checkout. Update it with git pull."
 msgstr ""
 
-#: services/js_i18n_strings.py:893
+#: services/js_i18n_strings.py:921
 msgid "This game is already running.  Kill the existing process and relaunch?"
 msgstr ""
 "Hierdie speletjie loop reeds.  Beëindig die bestaande proses en lanseer "
 "weer?"
 
-#: services/js_i18n_strings.py:894
+#: services/js_i18n_strings.py:922
 #, fuzzy
 msgid "This release has no download for this computer yet."
 msgstr "Cores word nie vir hierdie rekenaar gebou nie."
 
-#: services/js_i18n_strings.py:895
+#: services/js_i18n_strings.py:923
 msgid "This system is already being synced."
 msgstr "Hierdie stelsel word reeds gesinkroniseer."
 
-#: services/js_i18n_strings.py:896
+#: services/js_i18n_strings.py:924
 #, fuzzy
 msgid "This update cannot be installed here."
 msgstr "Daardie speletjies kan nie gekoppel word nie."
 
-#: services/js_i18n_strings.py:897
+#: services/js_i18n_strings.py:925
 msgid ""
 "This will clear ALL RetroAchievements game IDs and progress data from "
 "your database. You will need to run \"Refresh RetroAchievements\" again "
@@ -3381,7 +3449,7 @@ msgstr ""
 "databasis uitvee. U sal daarna weer \"Verfris RetroAchievements\" moet "
 "uitvoer om u speletjies te herskandeer. Gaan voort?"
 
-#: services/js_i18n_strings.py:898
+#: services/js_i18n_strings.py:926
 #, python-brace-format
 msgid ""
 "This will clear RetroAchievements game IDs and progress data for "
@@ -3390,12 +3458,12 @@ msgstr ""
 "Dit sal RetroAchievements-speletjie-ID's en vorderingsdata vir "
 "\"{system}\" uitvee. Gaan voort?"
 
-#: services/js_i18n_strings.py:899
+#: services/js_i18n_strings.py:927
 #, python-brace-format
 msgid "This will remove \"{system}\" from the Achievements page. Continue?"
 msgstr "Dit sal \"{system}\" van die Prestasies-bladsy verwyder. Gaan voort?"
 
-#: services/js_i18n_strings.py:900
+#: services/js_i18n_strings.py:928
 msgid ""
 "This will remove ALL games imported via CLZ Games Import from the "
 "database. This cannot be undone. Continue?"
@@ -3403,7 +3471,7 @@ msgstr ""
 "Dit sal ALLE speletjies wat via CLZ Games Import ingevoer is, uit die "
 "databasis verwyder. Dit kan nie ongedaan gemaak word nie. Gaan voort?"
 
-#: services/js_i18n_strings.py:901
+#: services/js_i18n_strings.py:929
 msgid ""
 "This will remove database entries for ROM files that no longer exist on "
 "disk. This cannot be undone. Continue?"
@@ -3411,7 +3479,7 @@ msgstr ""
 "Dit sal databasisinskrywings vir ROM-lêers wat nie meer op skyf bestaan "
 "nie, verwyder. Dit kan nie ongedaan gemaak word nie. Gaan voort?"
 
-#: services/js_i18n_strings.py:902
+#: services/js_i18n_strings.py:930
 msgid ""
 "This will scan all games and update their RetroAchievements status. This "
 "may take several minutes for large collections. Continue?"
@@ -3419,7 +3487,7 @@ msgstr ""
 "Dit sal alle speletjies skandeer en hul RetroAchievements-status "
 "opdateer. Dit kan etlike minute neem vir groot versamelings. Gaan voort?"
 
-#: services/js_i18n_strings.py:903
+#: services/js_i18n_strings.py:931
 msgid ""
 "This will search for and download images for all controllers without "
 "images. Continue?"
@@ -3427,7 +3495,7 @@ msgstr ""
 "Dit sal soek na en beelde aflaai vir alle beheerders sonder beelde. Gaan "
 "voort?"
 
-#: services/js_i18n_strings.py:904
+#: services/js_i18n_strings.py:932
 msgid ""
 "This will use your configured AI provider to generate history and top "
 "games for all systems. This may take several minutes and use API credits."
@@ -3437,58 +3505,58 @@ msgstr ""
 "topspeletjies vir alle stelsels te genereer. Dit kan etlike minute neem "
 "en API-krediete gebruik. Gaan voort?"
 
-#: services/js_i18n_strings.py:905
+#: services/js_i18n_strings.py:933
 msgid "Tick at least one name."
 msgstr ""
 
-#: services/js_i18n_strings.py:906
+#: services/js_i18n_strings.py:934
 msgid "Tick at least two games."
 msgstr "Merk ten minste twee speletjies."
 
-#: services/js_i18n_strings.py:907 templates/logs.html:745
+#: services/js_i18n_strings.py:935 templates/logs.html:745
 msgid "To"
 msgstr "Na"
 
-#: services/js_i18n_strings.py:908
+#: services/js_i18n_strings.py:936
 msgid "Try adjusting your search or filters"
 msgstr "Probeer om u soektog of filters aan te pas"
 
-#: services/js_i18n_strings.py:909
+#: services/js_i18n_strings.py:937
 msgid "USA"
 msgstr ""
 
-#: services/js_i18n_strings.py:910
+#: services/js_i18n_strings.py:938
 msgid "Unexpected error"
 msgstr "Onverwagte fout"
 
-#: services/js_i18n_strings.py:911
+#: services/js_i18n_strings.py:939
 msgid "Unhandled rejection"
 msgstr "Onhanteerde verwerping"
 
-#: services/js_i18n_strings.py:912 templates/analytics.html:583
-#: templates/base.html:1198 templates/local_trophy_detail.html:220
+#: services/js_i18n_strings.py:940 templates/analytics.html:583
+#: templates/base.html:1199 templates/local_trophy_detail.html:220
 #: templates/local_trophy_detail.html:224
 msgid "Unknown"
 msgstr "Onbekend"
 
-#: services/js_i18n_strings.py:913
+#: services/js_i18n_strings.py:941
 msgid "Unknown error"
 msgstr "Onbekende fout"
 
-#: services/js_i18n_strings.py:914
+#: services/js_i18n_strings.py:942
 msgid "Unknown error occurred."
 msgstr "'n Onbekende fout het voorgekom."
 
-#: services/js_i18n_strings.py:915 templates/all_games.html:102
+#: services/js_i18n_strings.py:943 templates/all_games.html:102
 #: templates/system_games.html:93 templates/wishlist.html:506
 msgid "Unscraped"
 msgstr "Ongeskraap"
 
-#: services/js_i18n_strings.py:916
+#: services/js_i18n_strings.py:944
 msgid "Update Failed"
 msgstr "Opdatering het misluk"
 
-#: services/js_i18n_strings.py:917
+#: services/js_i18n_strings.py:945
 #, python-brace-format
 msgid ""
 "Update {count} game(s)?\n"
@@ -3499,41 +3567,41 @@ msgstr ""
 "\n"
 "Velde: {fields}"
 
-#: services/js_i18n_strings.py:918
+#: services/js_i18n_strings.py:946
 #, python-brace-format
 msgid "Updated from {from} to {to}."
 msgstr ""
 
-#: services/js_i18n_strings.py:919 templates/museum_system.html:198
+#: services/js_i18n_strings.py:947 templates/museum_system.html:198
 #: templates/museum_system.html:205
 msgid "Upload"
 msgstr "Laai op"
 
-#: services/js_i18n_strings.py:920
+#: services/js_i18n_strings.py:948
 msgid "Upload Controller Image"
 msgstr "Laai beheerderbeeld op"
 
-#: services/js_i18n_strings.py:921
+#: services/js_i18n_strings.py:949
 msgid "Upload failed"
 msgstr "Oplaai het misluk"
 
-#: services/js_i18n_strings.py:922
+#: services/js_i18n_strings.py:950
 msgid "Upload replacement image"
 msgstr "Laai vervangingsbeeld op"
 
-#: services/js_i18n_strings.py:923
+#: services/js_i18n_strings.py:951
 msgid "Uploading & removing background…"
 msgstr "Laai op & verwyder agtergrond tans…"
 
-#: services/js_i18n_strings.py:924
+#: services/js_i18n_strings.py:952
 msgid "Uploading…"
 msgstr "Laai tans op…"
 
-#: services/js_i18n_strings.py:925
+#: services/js_i18n_strings.py:953
 msgid "Use the system setting"
 msgstr "Gebruik die stelselinstelling"
 
-#: services/js_i18n_strings.py:926
+#: services/js_i18n_strings.py:954
 #, python-brace-format
 msgid ""
 "Used for every {system} game unless the game sets its own. Applied when "
@@ -3542,60 +3610,65 @@ msgstr ""
 "Gebruik vir elke {system}-speletjie tensy die speletjie sy eie stel. "
 "Toegepas wanneer jy Speel druk."
 
-#: services/js_i18n_strings.py:927
+#: services/js_i18n_strings.py:955
+#, fuzzy, python-brace-format
+msgid "User Score ({count} ratings)"
+msgstr "Gebruikerspunt (%(count)s graderings)"
+
+#: services/js_i18n_strings.py:956
 msgid "Version unlinked."
 msgstr "Weergawe ontkoppel."
 
-#: services/js_i18n_strings.py:928
+#: services/js_i18n_strings.py:957
 #, python-brace-format
 msgid "Version {version} is available."
 msgstr ""
 
-#: services/js_i18n_strings.py:929
+#: services/js_i18n_strings.py:958
 msgid "Versions linked."
 msgstr "Weergawes gekoppel."
 
-#: services/js_i18n_strings.py:930
+#: services/js_i18n_strings.py:959
 #, python-brace-format
 msgid "What is new in {version}"
 msgstr ""
 
-#: services/js_i18n_strings.py:931
+#: services/js_i18n_strings.py:960
 #, python-brace-format
 msgid "What is new in {version} ({date})"
 msgstr ""
 
-#: services/js_i18n_strings.py:932
+#: services/js_i18n_strings.py:961
 msgid "Will change?"
 msgstr "Sal verander?"
 
-#: services/js_i18n_strings.py:933
+#: services/js_i18n_strings.py:962
 msgid "Works"
 msgstr "Werk"
 
-#: services/js_i18n_strings.py:934
+#: services/js_i18n_strings.py:963
 msgid "World"
 msgstr ""
 
-#: services/js_i18n_strings.py:935 templates/game_detail.html:755
+#: services/js_i18n_strings.py:964 templates/game_detail.html:801
 msgid "Write again with AI"
 msgstr "Skryf weer met KI"
 
-#: services/js_i18n_strings.py:936
+#: services/js_i18n_strings.py:965
 msgid "Xbox Imports"
 msgstr "Xbox-invoere"
 
-#: services/js_i18n_strings.py:937 templates/_bulk_edit_modal.html:170
-#: templates/_modals/edit_modal.html:143 templates/game_detail.html:609
-#: templates/game_detail.html:666 templates/game_detail.html:734
+#: services/js_i18n_strings.py:966 templates/_bulk_edit_modal.html:170
+#: templates/_modals/edit_modal.html:143 templates/game_detail.html:655
+#: templates/game_detail.html:712 templates/game_detail.html:780
 msgid "Yes"
 msgstr "Ja"
 
-#: services/js_i18n_strings.py:938
+#: services/js_i18n_strings.py:967
 msgid "You have the latest version."
 msgstr ""
 
-#: services/js_i18n_strings.py:939
+#: services/js_i18n_strings.py:968
 #, python-brace-format
 msgid ""
 "Your bulk scrape has been queued (position {position}). It will start "
@@ -3604,173 +3677,178 @@ msgstr ""
 "U grootmaatskraap is in die wagry geplaas (posisie {position}). Dit sal "
 "outomaties begin sodra die huidige skraap voltooi is."
 
-#: services/js_i18n_strings.py:940
+#: services/js_i18n_strings.py:969
 msgid "found"
 msgstr "gevind"
 
-#: services/js_i18n_strings.py:941
+#: services/js_i18n_strings.py:970
 msgid "in queue"
 msgstr "in wagry"
 
-#: services/js_i18n_strings.py:942
+#: services/js_i18n_strings.py:971
 msgid "system"
 msgstr "stelsel"
 
-#: services/js_i18n_strings.py:943
+#: services/js_i18n_strings.py:972
 msgid "unknown"
 msgstr ""
 
-#: services/js_i18n_strings.py:944
+#: services/js_i18n_strings.py:973
 #, python-brace-format
 msgid "{confidence}% match"
 msgstr "{confidence}% ooreenstemming"
 
-#: services/js_i18n_strings.py:945
+#: services/js_i18n_strings.py:974
 #, python-brace-format
 msgid "{count} Achievements"
 msgstr "{count} prestasies"
 
-#: services/js_i18n_strings.py:946
+#: services/js_i18n_strings.py:975
 #, python-brace-format
 msgid "{count} regional versions"
 msgstr "{count} streeksweergawes"
 
-#: services/js_i18n_strings.py:947
+#: services/js_i18n_strings.py:976
+#, fuzzy, python-brace-format
+msgid "{count} sold"
+msgstr "Konsole"
+
+#: services/js_i18n_strings.py:977
 #, python-brace-format
 msgid "{count} suggested groups. Untick any game that does not belong, then link."
 msgstr ""
 "{count} voorgestelde groepe. Ontmerk enige speletjie wat nie behoort nie,"
 " en koppel dan."
 
-#: services/js_i18n_strings.py:948
+#: services/js_i18n_strings.py:978
 #, python-brace-format
 msgid "{fetched} fetched, {skipped} skipped, {failed} failed"
 msgstr "{fetched} verkry, {skipped} oorgeslaan, {failed} misluk"
 
-#: services/js_i18n_strings.py:949
+#: services/js_i18n_strings.py:979
 #, python-brace-format
 msgid "{job} Queued (#{position})"
 msgstr "{job} in wagry (#{position})"
 
-#: services/js_i18n_strings.py:950
+#: services/js_i18n_strings.py:980
 #, python-brace-format
 msgid "{job} cancelled"
 msgstr "{job} gekanselleer"
 
-#: services/js_i18n_strings.py:951
+#: services/js_i18n_strings.py:981
 #, python-brace-format
 msgid "{job} completed ({n} processed)"
 msgstr "{job} voltooi ({n} verwerk)"
 
-#: services/js_i18n_strings.py:952
+#: services/js_i18n_strings.py:982
 #, python-brace-format
 msgid "{job} failed: {error}"
 msgstr "{job} het misluk: {error}"
 
-#: services/js_i18n_strings.py:953
+#: services/js_i18n_strings.py:983
 #, python-brace-format
 msgid "{job}: {current} of {total} ({percent}%)"
 msgstr "{job}: {current} van {total} ({percent}%)"
 
-#: services/js_i18n_strings.py:954
+#: services/js_i18n_strings.py:984
 #, python-brace-format
 msgid "{n} Player(s)"
 msgstr "{n} Speler(s)"
 
-#: services/js_i18n_strings.py:955
+#: services/js_i18n_strings.py:985
 #, python-brace-format
 msgid "{n} cores"
 msgstr "{n} cores"
 
-#: services/js_i18n_strings.py:956
+#: services/js_i18n_strings.py:986
 #, python-brace-format
 msgid "{n} games"
 msgstr "{n} speletjies"
 
-#: services/js_i18n_strings.py:957
+#: services/js_i18n_strings.py:987
 #, python-brace-format
 msgid "{n} lines"
 msgstr "{n} lyne"
 
-#: services/js_i18n_strings.py:958
+#: services/js_i18n_strings.py:988
 #, python-brace-format
 msgid "{n} results"
 msgstr ""
 
-#: services/js_i18n_strings.py:959
+#: services/js_i18n_strings.py:989
 #, python-brace-format
 msgid "{points} pts"
 msgstr "{points} pt"
 
-#: services/js_i18n_strings.py:960
+#: services/js_i18n_strings.py:990
 #, python-brace-format
 msgid "{system} has been added to the sync queue."
 msgstr "{system} is by die sinkronisasie-wagry gevoeg."
 
-#: services/js_i18n_strings.py:961
+#: services/js_i18n_strings.py:991
 #, python-brace-format
 msgid "{system} · {file} · old name from: {region}"
 msgstr ""
 
-#: services/js_i18n_strings.py:962
+#: services/js_i18n_strings.py:992
 #, python-brace-format
 msgid "{title} ({count} versions)"
 msgstr "{title} ({count} weergawes)"
 
-#: services/js_i18n_strings.py:963
+#: services/js_i18n_strings.py:993
 msgid "⏳ Searching..."
 msgstr "⏳ Soek tans..."
 
-#: services/js_i18n_strings.py:964
+#: services/js_i18n_strings.py:994
 #, python-brace-format
 msgid "⚠️ Cancel {job}"
 msgstr "⚠️ Kanselleer {job}"
 
-#: services/js_i18n_strings.py:965
+#: services/js_i18n_strings.py:995
 msgid "⚠️ Confirm"
 msgstr "⚠️ Bevestig"
 
-#: services/js_i18n_strings.py:966
+#: services/js_i18n_strings.py:996
 msgid "⚡ via"
 msgstr "⚡ via"
 
-#: services/js_i18n_strings.py:967
+#: services/js_i18n_strings.py:997
 msgid "✕ Clear"
 msgstr "✕ Maak skoon"
 
-#: services/js_i18n_strings.py:968
+#: services/js_i18n_strings.py:998
 msgid "🏆 Refresh RetroAchievements"
 msgstr "🏆 Verfris RetroAchievements"
 
-#: services/js_i18n_strings.py:969
+#: services/js_i18n_strings.py:999
 msgid "📋 Clear CLZ Imports"
 msgstr "📋 Maak CLZ-invoere skoon"
 
-#: services/js_i18n_strings.py:970
+#: services/js_i18n_strings.py:1000
 msgid "🔄 Restart Server"
 msgstr "🔄 Herbegin bediener"
 
-#: services/js_i18n_strings.py:971
+#: services/js_i18n_strings.py:1001
 msgid "🔍 Lookup HLTB"
 msgstr "🔍 Soek HLTB op"
 
-#: services/js_i18n_strings.py:972
+#: services/js_i18n_strings.py:1002
 msgid "🗑️ Clear HLTB Data"
 msgstr "🗑️ Maak HLTB-data skoon"
 
-#: services/js_i18n_strings.py:973
+#: services/js_i18n_strings.py:1003
 msgid "🗑️ Clear RetroAchievements Data"
 msgstr "🗑️ Maak RetroAchievements-data skoon"
 
-#: services/js_i18n_strings.py:974
+#: services/js_i18n_strings.py:1004
 msgid "🗑️ Reset Metadata"
 msgstr "🗑️ Stel metadata terug"
 
-#: services/js_i18n_strings.py:975
+#: services/js_i18n_strings.py:1005
 msgid "🛑 Shut Down Server"
 msgstr "🛑 Skakel bediener af"
 
-#: services/js_i18n_strings.py:976
+#: services/js_i18n_strings.py:1006
 msgid "🧹 Clean Missing ROMs"
 msgstr "🧹 Maak ontbrekende ROM's skoon"
 
@@ -3833,8 +3911,8 @@ msgstr ""
 "word."
 
 #: templates/_bulk_edit_modal.html:26 templates/achievements_system.html:171
-#: templates/analytics.html:1664 templates/base.html:1010
-#: templates/dashboard.html:500 templates/game_detail.html:219
+#: templates/analytics.html:1664 templates/base.html:1011
+#: templates/dashboard.html:500 templates/game_detail.html:254
 #: templates/steam_achievements.html:78 templates/xbox_achievements.html:78
 msgid "Not Started"
 msgstr "Nie begin nie"
@@ -3843,9 +3921,9 @@ msgstr "Nie begin nie"
 #: templates/_settings_tabs/data.html:83 templates/_settings_tabs/data.html:156
 #: templates/achievement_game.html:241 templates/all_games.html:72
 #: templates/analytics.html:481 templates/analytics.html:2428
-#: templates/base.html:940 templates/base.html:1148
+#: templates/base.html:940 templates/base.html:1149
 #: templates/compare_games.html:73 templates/dashboard.html:390
-#: templates/game_detail.html:265 templates/local_trophy_detail.html:99
+#: templates/game_detail.html:300 templates/local_trophy_detail.html:99
 #: templates/psn_trophy_detail.html:94 templates/psn_trophy_detail.html:258
 #: templates/steam_achievement_game.html:178 templates/system_games.html:63
 #: templates/xbox_achievement_game.html:171
@@ -3862,9 +3940,9 @@ msgstr "Voeg by"
 #: templates/_bulk_edit_modal.html:53 templates/_modals/edit_modal.html:94
 #: templates/achievement_game.html:81 templates/all_games.html:78
 #: templates/analytics.html:483 templates/analytics.html:2428
-#: templates/base.html:939 templates/base.html:1134
-#: templates/compare_games.html:71 templates/game_detail.html:241
-#: templates/game_detail.html:712 templates/local_trophy_detail.html:87
+#: templates/base.html:939 templates/base.html:1135
+#: templates/compare_games.html:71 templates/game_detail.html:276
+#: templates/game_detail.html:758 templates/local_trophy_detail.html:87
 #: templates/psn_trophy_detail.html:82 templates/steam_achievement_game.html:78
 #: templates/system_games.html:69 templates/xbox_achievement_game.html:67
 msgid "Publisher"
@@ -3879,8 +3957,8 @@ msgstr "Moenie verander nie"
 #: templates/_bulk_edit_modal.html:67 templates/_modals/edit_modal.html:99
 #: templates/achievement_game.html:87 templates/all_games.html:81
 #: templates/analytics.html:482 templates/analytics.html:2428
-#: templates/base.html:938 templates/base.html:1138
-#: templates/compare_games.html:70 templates/game_detail.html:253
+#: templates/base.html:938 templates/base.html:1139
+#: templates/compare_games.html:70 templates/game_detail.html:288
 #: templates/local_trophy_detail.html:93 templates/psn_trophy_detail.html:88
 #: templates/steam_achievement_game.html:84 templates/system_games.html:72
 #: templates/xbox_achievement_game.html:73
@@ -3892,23 +3970,23 @@ msgid "ESRB Rating"
 msgstr "ESRB-gradering"
 
 #: templates/_bulk_edit_modal.html:84 templates/_modals/edit_modal.html:240
-#: templates/base.html:1251
+#: templates/base.html:1252
 msgid "E - Everyone"
 msgstr "E - Almal"
 
 #: templates/_bulk_edit_modal.html:85 templates/_modals/edit_modal.html:241
-#: templates/base.html:1252
+#: templates/base.html:1253
 msgid "E10+ - Everyone 10+"
 msgstr "E10+ - Almal 10+"
 
 #: templates/_bulk_edit_modal.html:86 templates/_modals/edit_modal.html:242
-#: templates/base.html:1253
+#: templates/base.html:1254
 msgid "T - Teen"
 msgstr "T - Tiener"
 
 #: templates/_bulk_edit_modal.html:87 templates/_modals/edit_modal.html:243
-#: templates/_modals/edit_modal.html:287 templates/base.html:1254
-#: templates/base.html:1298
+#: templates/_modals/edit_modal.html:287 templates/base.html:1255
+#: templates/base.html:1299
 msgid "M - Mature"
 msgstr "M - Volwasse"
 
@@ -3938,33 +4016,33 @@ msgstr "PEGI 18"
 
 #: templates/_bulk_edit_modal.html:106 templates/_modals/edit_modal.html:85
 #: templates/analytics.html:492 templates/analytics.html:2428
-#: templates/base.html:1125 templates/compare_games.html:75
-#: templates/game_detail.html:709 templates/reports.html:444
+#: templates/base.html:1126 templates/compare_games.html:75
+#: templates/game_detail.html:755 templates/reports.html:444
 msgid "Region"
 msgstr "Streek"
 
 #: templates/_bulk_edit_modal.html:112 templates/_modals/edit_modal.html:132
-#: templates/all_games.html:84 templates/base.html:1164
-#: templates/compare_games.html:76 templates/game_detail.html:201
+#: templates/all_games.html:84 templates/base.html:1165
+#: templates/compare_games.html:76 templates/game_detail.html:215
 #: templates/system_games.html:75
 msgid "Players"
 msgstr "Spelers"
 
 #: templates/_bulk_edit_modal.html:118 templates/_modals/edit_modal.html:149
-#: templates/_settings_tabs/data.html:93 templates/base.html:1168
+#: templates/_settings_tabs/data.html:93 templates/base.html:1169
 msgid "Game Structure"
 msgstr "Speletjiestruktuur"
 
 #: templates/_bulk_edit_modal.html:135 templates/_modals/edit_modal.html:162
 #: templates/_settings_tabs/data.html:103 templates/all_games.html:87
-#: templates/analytics.html:199 templates/base.html:1176
+#: templates/analytics.html:199 templates/base.html:1177
 #: templates/compare_games.html:78 templates/system_games.html:78
 msgid "Perspective"
 msgstr "Perspektief"
 
 #: templates/_bulk_edit_modal.html:151 templates/_modals/edit_modal.html:173
 #: templates/_settings_tabs/data.html:113 templates/all_games.html:90
-#: templates/analytics.html:207 templates/base.html:1184
+#: templates/analytics.html:207 templates/base.html:1185
 #: templates/compare_games.html:79 templates/system_games.html:81
 msgid "Dimension"
 msgstr "Dimensie"
@@ -4013,7 +4091,7 @@ msgstr "Laai meer"
 
 #: templates/achievement_game.html:17 templates/achievement_game.html:37
 #: templates/achievements_system.html:15 templates/game_detail.html:21
-#: templates/game_detail.html:296 templates/game_detail.html:717
+#: templates/game_detail.html:342 templates/game_detail.html:763
 #: templates/systems.html:43
 msgid "RetroAchievements"
 msgstr "RetroAchievements"
@@ -4029,7 +4107,7 @@ msgid "Refresh RA"
 msgstr "Verfris RA"
 
 #: templates/achievement_game.html:93 templates/all_games.html:75
-#: templates/game_detail.html:277 templates/system_games.html:66
+#: templates/game_detail.html:312 templates/system_games.html:66
 msgid "Series"
 msgstr "Reeks"
 
@@ -4056,23 +4134,23 @@ msgstr "Kon nie prestasiedata laai nie"
 msgid "Check your RetroAchievements credentials in Settings."
 msgstr "Kontroleer u RetroAchievements-geloofsbriewe in Instellings."
 
-#: templates/achievement_game.html:146 templates/game_detail.html:486
+#: templates/achievement_game.html:146 templates/game_detail.html:532
 #: templates/local_trophy_detail.html:158 templates/psn_trophy_detail.html:149
 #: templates/steam_achievement_game.html:123
 #: templates/xbox_achievement_game.html:116
 msgid "How Long to Beat"
 msgstr "How Long to Beat"
 
-#: templates/achievement_game.html:153 templates/base.html:1023
-#: templates/game_detail.html:493 templates/psn_trophy_detail.html:157
+#: templates/achievement_game.html:153 templates/base.html:1024
+#: templates/game_detail.html:539 templates/psn_trophy_detail.html:157
 #: templates/psn_trophy_detail.html:317
 #: templates/steam_achievement_game.html:126
 #: templates/xbox_achievement_game.html:119
 msgid "Search game title..."
 msgstr "Soek speletjietitel..."
 
-#: templates/achievement_game.html:156 templates/base.html:1026
-#: templates/game_detail.html:496 templates/local_trophy_detail.html:193
+#: templates/achievement_game.html:156 templates/base.html:1027
+#: templates/game_detail.html:542 templates/local_trophy_detail.html:193
 #: templates/psn_trophy_detail.html:160
 #: templates/steam_achievement_game.html:127
 #: templates/xbox_achievement_game.html:120
@@ -4080,8 +4158,8 @@ msgid "Lookup HLTB"
 msgstr "Soek HLTB op"
 
 #: templates/_settings_tabs/account.html:73 templates/achievement_game.html:177
-#: templates/achievement_game.html:253 templates/base.html:1054
-#: templates/game_detail.html:517 templates/local_trophy_detail.html:223
+#: templates/achievement_game.html:253 templates/base.html:1055
+#: templates/game_detail.html:563 templates/local_trophy_detail.html:223
 #: templates/psn_trophy_detail.html:181 templates/psn_trophy_detail.html:270
 #: templates/settings_emulators.html:36 templates/settings_emulators.html:187
 #: templates/steam_achievement_game.html:137
@@ -4090,8 +4168,8 @@ msgid "Save"
 msgstr "Stoor"
 
 #: templates/achievement_game.html:217 templates/all_games.html:108
-#: templates/base.html:1067 templates/duplicate_finder.html:301
-#: templates/game_detail.html:101 templates/game_detail.html:557
+#: templates/base.html:1068 templates/duplicate_finder.html:301
+#: templates/game_detail.html:115 templates/game_detail.html:603
 #: templates/local_trophy_detail.html:185 templates/psn_trophy_detail.html:214
 #: templates/reports.html:277 templates/screenshot_dedup.html:325
 #: templates/steam_achievement_game.html:163 templates/system_games.html:99
@@ -4099,7 +4177,7 @@ msgstr "Stoor"
 msgid "Clear"
 msgstr "Maak skoon"
 
-#: templates/achievement_game.html:225 templates/game_detail.html:565
+#: templates/achievement_game.html:225 templates/game_detail.html:611
 #: templates/local_trophy_detail.html:203 templates/psn_trophy_detail.html:234
 #: templates/steam_achievement_game.html:170
 #: templates/xbox_achievement_game.html:163
@@ -4482,7 +4560,7 @@ msgstr "Kies alles"
 msgid "Select Unscraped"
 msgstr "Kies ongeskraap"
 
-#: templates/all_games.html:204 templates/game_detail.html:783
+#: templates/all_games.html:204 templates/game_detail.html:829
 #: templates/system_games.html:184
 msgid "Full Re-scrape"
 msgstr "Volledige herskraap"
@@ -4491,7 +4569,7 @@ msgstr "Volledige herskraap"
 msgid "Toggle between full re-scrape and fill missing mode"
 msgstr "Wissel tussen volledige herskraap- en vul-ontbrekende-modus"
 
-#: templates/all_games.html:209 templates/game_detail.html:783
+#: templates/all_games.html:209 templates/game_detail.html:829
 #: templates/system_games.html:189
 msgid "Fill Missing"
 msgstr "Vul ontbrekende"
@@ -4529,7 +4607,7 @@ msgid "Developers"
 msgstr "Ontwikkelaars"
 
 #: templates/_modals/edit_modal.html:107 templates/analytics.html:13
-#: templates/base.html:998 templates/base.html:1145
+#: templates/base.html:999 templates/base.html:1146
 msgid "Gameplay"
 msgstr "Speelverloop"
 
@@ -4797,7 +4875,7 @@ msgstr "Veldvolledigheid"
 #: templates/_settings_tabs/customization.html:193
 #: templates/_settings_tabs/customization.html:259 templates/analytics.html:479
 #: templates/analytics.html:2428 templates/base.html:266
-#: templates/base.html:1352 templates/compare_games.html:97
+#: templates/base.html:1353 templates/compare_games.html:97
 #: templates/settings_emulators.html:170
 msgid "Description"
 msgstr "Beskrywing"
@@ -4811,7 +4889,7 @@ msgstr "Bokskuns"
 
 #: templates/_modals/edit_modal.html:72 templates/_modals/filter_modal.html:14
 #: templates/analytics.html:484 templates/analytics.html:2428
-#: templates/base.html:1117 templates/compare_games.html:72
+#: templates/base.html:1118 templates/compare_games.html:72
 msgid "Release Date"
 msgstr "Vrystellingsdatum"
 
@@ -4824,12 +4902,12 @@ msgid "Fanart"
 msgstr "Fankuns"
 
 #: templates/analytics.html:487 templates/analytics.html:2428
-#: templates/game_detail.html:439
+#: templates/game_detail.html:485
 msgid "Video"
 msgstr "Video"
 
 #: templates/_modals/manual_reader_modal.html:9 templates/analytics.html:488
-#: templates/analytics.html:2428 templates/game_detail.html:95
+#: templates/analytics.html:2428 templates/game_detail.html:109
 msgid "Manual"
 msgstr "Handleiding"
 
@@ -5131,7 +5209,7 @@ msgstr "Huidig:"
 msgid "Waiting to start..."
 msgstr "Wag om te begin..."
 
-#: templates/archive_scanner.html:1460
+#: templates/archive_scanner.html:1458
 msgid ""
 "The archive holds more than one release. The playlist uses the first; "
 "these disks stay in the folder:"
@@ -5139,11 +5217,11 @@ msgstr ""
 "Die argief bevat meer as een uitgawe. Die snitlys gebruik die eerste; "
 "hierdie skywe bly in die vouer:"
 
-#: templates/archive_scanner.html:1662
+#: templates/archive_scanner.html:1653
 msgid "Have the original archive moved to the staging folder"
 msgstr "Laat die oorspronklike argief na die tussengids skuif"
 
-#: templates/archive_scanner.html:1765
+#: templates/archive_scanner.html:1750
 msgid "Original archives moved to:"
 msgstr "Oorspronklike argiewe geskuif na:"
 
@@ -5249,7 +5327,7 @@ msgstr "Konfigurasie"
 msgid "Log Viewer"
 msgstr "Logbekyker"
 
-#: templates/base.html:198 templates/base.html:1000
+#: templates/base.html:198 templates/base.html:1001
 msgid "Info"
 msgstr "Inligting"
 
@@ -5349,271 +5427,276 @@ msgstr "Sluit speletjiebesonderhede"
 msgid "Loading game details..."
 msgstr "Laai speletjiebesonderhede tans..."
 
-#: templates/base.html:953 templates/game_detail.html:443
+#: templates/base.html:942 templates/game_detail.html:318
+#, fuzzy
+msgid "Release dates"
+msgstr "Vrystellingsdatum"
+
+#: templates/base.html:954 templates/game_detail.html:489
 msgid "Your browser does not support the video tag."
 msgstr "U blaaier ondersteun nie die video-etiket nie."
 
-#: templates/base.html:960
+#: templates/base.html:961
 msgid "View Full Page"
 msgstr "Bekyk volledige bladsy"
 
-#: templates/base.html:962 templates/game_detail.html:109
+#: templates/base.html:963 templates/game_detail.html:123
 msgid "Fill missing metadata with AI"
 msgstr "Vul ontbrekende metadata met AI in"
 
-#: templates/base.html:963 templates/game_detail.html:111
+#: templates/base.html:964 templates/game_detail.html:125
 msgid "AI Fill"
 msgstr "AI-vul"
 
-#: templates/base.html:966 templates/game_detail.html:116
+#: templates/base.html:967 templates/game_detail.html:130
 msgid "Scrape"
 msgstr "Skraap"
 
-#: templates/_modals/screenshot_modal.html:2 templates/base.html:978
+#: templates/_modals/screenshot_modal.html:2 templates/base.html:979
 msgid "Screenshot viewer"
 msgstr "Skermkiekiebekyker"
 
-#: templates/_modals/screenshot_modal.html:3 templates/base.html:979
+#: templates/_modals/screenshot_modal.html:3 templates/base.html:980
 msgid "Close screenshot viewer"
 msgstr "Sluit skermkiekiebekyker"
 
-#: templates/_modals/screenshot_modal.html:4 templates/base.html:980
+#: templates/_modals/screenshot_modal.html:4 templates/base.html:981
 msgid "Previous screenshot"
 msgstr "Vorige skermkiekie"
 
-#: templates/base.html:981
+#: templates/base.html:982
 msgid "Screenshot"
 msgstr "Skermkiekie"
 
-#: templates/_modals/screenshot_modal.html:6 templates/base.html:982
+#: templates/_modals/screenshot_modal.html:6 templates/base.html:983
 msgid "Next screenshot"
 msgstr "Volgende skermkiekie"
 
-#: templates/base.html:983
+#: templates/base.html:984
 msgid "Use &#8592; &#8594; arrow keys to navigate &bull; ESC to close"
 msgstr ""
 "Gebruik &#8592; &#8594; pyltjiesleutels om te navigeer &bull; ESC om te "
 "sluit"
 
-#: templates/_modals/edit_modal.html:7 templates/base.html:990
+#: templates/_modals/edit_modal.html:7 templates/base.html:991
 msgid "Close edit modal"
 msgstr "Sluit wysigingsvenster"
 
-#: templates/base.html:993
+#: templates/base.html:994
 msgid "Edit Game"
 msgstr "Wysig speletjie"
 
-#: templates/base.html:994
+#: templates/base.html:995
 msgid "Edit game sections"
 msgstr "Wysig speletjie-afdelings"
 
-#: templates/base.html:995
+#: templates/base.html:996
 msgid "Quick"
 msgstr "Vinnig"
 
-#: templates/_modals/edit_modal.html:25 templates/base.html:996
-#: templates/base.html:1074
+#: templates/_modals/edit_modal.html:25 templates/base.html:997
+#: templates/base.html:1075
 msgid "Identity"
 msgstr "Identiteit"
 
-#: templates/base.html:997
+#: templates/base.html:998
 msgid "Release"
 msgstr "Vrystelling"
 
-#: templates/_modals/edit_modal.html:187 templates/base.html:999
-#: templates/base.html:1206
+#: templates/_modals/edit_modal.html:187 templates/base.html:1000
+#: templates/base.html:1207
 msgid "Technical"
 msgstr "Tegnies"
 
-#: templates/base.html:1006
+#: templates/base.html:1007
 msgid "Quick edit"
 msgstr "Vinnige wysiging"
 
-#: templates/base.html:1019
+#: templates/base.html:1020
 msgid "HowLongToBeat"
 msgstr "HowLongToBeat"
 
-#: templates/base.html:1033
+#: templates/base.html:1034
 msgid "Searching HowLongToBeat..."
 msgstr "Deursoek HowLongToBeat..."
 
-#: templates/base.html:1064 templates/local_trophy_detail.html:189
+#: templates/base.html:1065 templates/local_trophy_detail.html:189
 msgid "No playtime data"
 msgstr "Geen speeltyddata nie"
 
 #: templates/_modals/edit_modal.html:28 templates/_modals/filter_modal.html:13
-#: templates/base.html:1077 templates/dashboard.html:329
+#: templates/base.html:1078 templates/dashboard.html:329
 #: templates/dashboard.html:388 templates/dashboard.html:465
-#: templates/dashboard.html:531 templates/game_detail.html:710
+#: templates/dashboard.html:531 templates/game_detail.html:756
 msgid "Title"
 msgstr "Titel"
 
-#: templates/_modals/edit_modal.html:32 templates/base.html:1081
+#: templates/_modals/edit_modal.html:32 templates/base.html:1082
 msgid "Keep this title when scraping"
 msgstr ""
 
-#: templates/_modals/edit_modal.html:36 templates/base.html:1085
+#: templates/_modals/edit_modal.html:36 templates/base.html:1086
 msgid "Sort Title"
 msgstr "Sorteertitel"
 
-#: templates/_modals/edit_modal.html:38 templates/base.html:1087
+#: templates/_modals/edit_modal.html:38 templates/base.html:1088
 msgid "Auto-generated from title"
 msgstr "Outomaties gegenereer vanaf titel"
 
-#: templates/_modals/edit_modal.html:44 templates/base.html:1092
+#: templates/_modals/edit_modal.html:44 templates/base.html:1093
 msgid "Franchise / Series"
 msgstr "Franchise / Reeks"
 
-#: templates/_modals/edit_modal.html:47 templates/base.html:1095
+#: templates/_modals/edit_modal.html:47 templates/base.html:1096
 msgid "Toggle franchise status"
 msgstr "Wissel franchise-status"
 
-#: templates/_modals/edit_modal.html:52 templates/base.html:1100
+#: templates/_modals/edit_modal.html:52 templates/base.html:1101
 msgid "e.g., Final Fantasy, Crash Bandicoot"
 msgstr "bv. Final Fantasy, Crash Bandicoot"
 
-#: templates/_modals/edit_modal.html:56 templates/base.html:1103
-#: templates/compare_games.html:96 templates/game_detail.html:471
+#: templates/_modals/edit_modal.html:56 templates/base.html:1104
+#: templates/compare_games.html:96 templates/game_detail.html:517
 msgid "Similar Games"
 msgstr "Soortgelyke speletjies"
 
-#: templates/_modals/edit_modal.html:57 templates/base.html:1104
+#: templates/_modals/edit_modal.html:57 templates/base.html:1105
 msgid "Game 1, Game 2, Game 3"
 msgstr "Speletjie 1, Speletjie 2, Speletjie 3"
 
-#: templates/_modals/edit_modal.html:61 templates/base.html:1107
+#: templates/_modals/edit_modal.html:61 templates/base.html:1108
 msgid "Edition"
 msgstr "Uitgawe"
 
-#: templates/base.html:1108
+#: templates/base.html:1109
 msgid "Standard, Collector&#39;s, GOTY"
 msgstr "Standaard, Versamelaar&#39;s, GOTY"
 
-#: templates/base.html:1114
+#: templates/base.html:1115
 msgid "Release info"
 msgstr "Vrystellingsinligting"
 
-#: templates/base.html:1119
+#: templates/base.html:1120
 msgid "YYYY-MM-DD"
 msgstr "JJJJ-MM-DD"
 
-#: templates/_modals/edit_modal.html:80 templates/base.html:1121
+#: templates/_modals/edit_modal.html:80 templates/base.html:1122
 msgid "Pick date"
 msgstr "Kies datum"
 
-#: templates/_modals/edit_modal.html:87 templates/base.html:1127
+#: templates/_modals/edit_modal.html:87 templates/base.html:1128
 msgid "— Select —"
 msgstr "— Kies —"
 
-#: templates/_modals/edit_modal.html:95 templates/base.html:1135
+#: templates/_modals/edit_modal.html:95 templates/base.html:1136
 msgid "Sony, Nintendo"
 msgstr "Sony, Nintendo"
 
-#: templates/base.html:1139
+#: templates/base.html:1140
 msgid "Naughty Dog, Insomniac"
 msgstr "Naughty Dog, Insomniac"
 
-#: templates/_modals/edit_modal.html:114 templates/base.html:1151
+#: templates/_modals/edit_modal.html:114 templates/base.html:1152
 msgid "Add genre"
 msgstr "Voeg genre by"
 
-#: templates/_modals/edit_modal.html:115 templates/base.html:1152
+#: templates/_modals/edit_modal.html:115 templates/base.html:1153
 msgid "+ Add genre..."
 msgstr "+ Voeg genre by..."
 
 #: templates/_modals/edit_modal.html:121 templates/_settings_tabs/data.html:123
-#: templates/base.html:1156
+#: templates/base.html:1157
 msgid "Play Modes"
 msgstr "Speelmodusse"
 
-#: templates/_modals/edit_modal.html:125 templates/base.html:1159
+#: templates/_modals/edit_modal.html:125 templates/base.html:1160
 msgid "Add play mode"
 msgstr "Voeg speelmodus by"
 
-#: templates/_modals/edit_modal.html:126 templates/base.html:1160
+#: templates/_modals/edit_modal.html:126 templates/base.html:1161
 msgid "+ Add mode..."
 msgstr "+ Voeg modus by..."
 
-#: templates/_modals/edit_modal.html:155 templates/base.html:1171
+#: templates/_modals/edit_modal.html:155 templates/base.html:1172
 msgid "Add game structure"
 msgstr "Voeg speletjiestruktuur by"
 
-#: templates/_modals/edit_modal.html:156 templates/base.html:1172
+#: templates/_modals/edit_modal.html:156 templates/base.html:1173
 msgid "+ Add structure..."
 msgstr "+ Voeg struktuur by..."
 
-#: templates/_modals/edit_modal.html:166 templates/base.html:1179
+#: templates/_modals/edit_modal.html:166 templates/base.html:1180
 msgid "Add perspective"
 msgstr "Voeg perspektief by"
 
-#: templates/_modals/edit_modal.html:167 templates/base.html:1180
+#: templates/_modals/edit_modal.html:167 templates/base.html:1181
 msgid "+ Add perspective..."
 msgstr "+ Voeg perspektief by..."
 
-#: templates/_modals/edit_modal.html:177 templates/base.html:1187
+#: templates/_modals/edit_modal.html:177 templates/base.html:1188
 msgid "Add dimension"
 msgstr "Voeg dimensie by"
 
-#: templates/_modals/edit_modal.html:178 templates/base.html:1188
+#: templates/_modals/edit_modal.html:178 templates/base.html:1189
 msgid "+ Add dimension..."
 msgstr "+ Voeg dimensie by..."
 
-#: templates/_modals/edit_modal.html:136 templates/base.html:1192
+#: templates/_modals/edit_modal.html:136 templates/base.html:1193
 msgid "Campaign Mode"
 msgstr "Veldtogmodus"
 
-#: templates/_modals/edit_modal.html:140 templates/base.html:1195
+#: templates/_modals/edit_modal.html:140 templates/base.html:1196
 msgid "Toggle campaign mode"
 msgstr "Wissel veldtogmodus"
 
-#: templates/_modals/edit_modal.html:190 templates/base.html:1209
+#: templates/_modals/edit_modal.html:190 templates/base.html:1210
 #: templates/compare_games.html:91
 msgid "Controller Support"
 msgstr "Beheerder-ondersteuning"
 
-#: templates/_modals/edit_modal.html:194 templates/base.html:1213
+#: templates/_modals/edit_modal.html:194 templates/base.html:1214
 msgid "Add controller"
 msgstr "Voeg beheerder by"
 
-#: templates/_modals/edit_modal.html:195 templates/base.html:1214
+#: templates/_modals/edit_modal.html:195 templates/base.html:1215
 msgid "+ Add controller..."
 msgstr "+ Voeg beheerder by..."
 
-#: templates/_modals/edit_modal.html:199 templates/base.html:1216
+#: templates/_modals/edit_modal.html:199 templates/base.html:1217
 msgid "Custom controller name"
 msgstr "Pasgemaakte beheerdernaam"
 
-#: templates/base.html:1216
+#: templates/base.html:1217
 msgid "Or type custom..."
 msgstr "Of tik pasgemaak..."
 
 #: templates/_modals/edit_modal.html:206 templates/_settings_tabs/data.html:133
-#: templates/base.html:1220 templates/compare_games.html:92
+#: templates/base.html:1221 templates/compare_games.html:92
 msgid "Save Type"
 msgstr "Stoortipe"
 
-#: templates/_modals/edit_modal.html:210 templates/base.html:1223
+#: templates/_modals/edit_modal.html:210 templates/base.html:1224
 msgid "Add save type"
 msgstr "Voeg stoortipe by"
 
-#: templates/_modals/edit_modal.html:211 templates/base.html:1224
+#: templates/_modals/edit_modal.html:211 templates/base.html:1225
 msgid "+ Add save type..."
 msgstr "+ Voeg stoortipe by..."
 
-#: templates/_modals/edit_modal.html:217 templates/base.html:1228
+#: templates/_modals/edit_modal.html:217 templates/base.html:1229
 msgid "Platform Availability"
 msgstr "Platformbeskikbaarheid"
 
-#: templates/_modals/edit_modal.html:220 templates/base.html:1238
+#: templates/_modals/edit_modal.html:220 templates/base.html:1239
 msgid "Toggle platform exclusivity"
 msgstr "Wissel platform-eksklusiwiteit"
 
-#: templates/base.html:1243
+#: templates/base.html:1244
 msgid "Xbox 360, PC, Switch"
 msgstr "Xbox 360, PC, Switch"
 
 #: templates/_modals/edit_modal.html:236
-#: templates/_settings_tabs/library.html:152 templates/base.html:1247
+#: templates/_settings_tabs/library.html:152 templates/base.html:1248
 msgid "ESRB (North America)"
 msgstr "ESRB (Noord-Amerika)"
 
@@ -5621,142 +5704,142 @@ msgstr "ESRB (Noord-Amerika)"
 #: templates/_modals/edit_modal.html:262 templates/_modals/edit_modal.html:273
 #: templates/_modals/edit_modal.html:284 templates/_modals/edit_modal.html:295
 #: templates/_modals/edit_modal.html:309 templates/_modals/edit_modal.html:319
-#: templates/_modals/edit_modal.html:331 templates/base.html:1249
-#: templates/base.html:1262 templates/base.html:1273 templates/base.html:1284
-#: templates/base.html:1295 templates/base.html:1306 templates/base.html:1320
-#: templates/base.html:1330 templates/base.html:1342
+#: templates/_modals/edit_modal.html:331 templates/base.html:1250
+#: templates/base.html:1263 templates/base.html:1274 templates/base.html:1285
+#: templates/base.html:1296 templates/base.html:1307 templates/base.html:1321
+#: templates/base.html:1331 templates/base.html:1343
 msgid "-- None --"
 msgstr "-- Geen --"
 
-#: templates/_modals/edit_modal.html:239 templates/base.html:1250
+#: templates/_modals/edit_modal.html:239 templates/base.html:1251
 msgid "EC - Early Childhood"
 msgstr "EC - Vroeë kindertyd"
 
-#: templates/_modals/edit_modal.html:244 templates/base.html:1255
+#: templates/_modals/edit_modal.html:244 templates/base.html:1256
 msgid "AO - Adults Only"
 msgstr "AO - Slegs volwassenes"
 
-#: templates/_modals/edit_modal.html:245 templates/base.html:1256
+#: templates/_modals/edit_modal.html:245 templates/base.html:1257
 msgid "RP - Rating Pending"
 msgstr "RP - Gradering hangende"
 
 #: templates/_modals/edit_modal.html:249
-#: templates/_settings_tabs/library.html:153 templates/base.html:1260
+#: templates/_settings_tabs/library.html:153 templates/base.html:1261
 msgid "PEGI (Europe)"
 msgstr "PEGI (Europa)"
 
 #: templates/_modals/edit_modal.html:260
-#: templates/_settings_tabs/library.html:154 templates/base.html:1271
+#: templates/_settings_tabs/library.html:154 templates/base.html:1272
 msgid "CERO (Japan)"
 msgstr "CERO (Japan)"
 
 #: templates/_modals/edit_modal.html:263 templates/_modals/edit_modal.html:296
-#: templates/base.html:1274 templates/base.html:1307
+#: templates/base.html:1275 templates/base.html:1308
 msgid "A - All Ages"
 msgstr "A - Alle ouderdomme"
 
-#: templates/_modals/edit_modal.html:264 templates/base.html:1275
+#: templates/_modals/edit_modal.html:264 templates/base.html:1276
 msgid "B - Ages 12+"
 msgstr "B - Ouderdomme 12+"
 
-#: templates/_modals/edit_modal.html:265 templates/base.html:1276
+#: templates/_modals/edit_modal.html:265 templates/base.html:1277
 msgid "C - Ages 15+"
 msgstr "C - Ouderdomme 15+"
 
-#: templates/_modals/edit_modal.html:266 templates/base.html:1277
+#: templates/_modals/edit_modal.html:266 templates/base.html:1278
 msgid "D - Ages 17+"
 msgstr "D - Ouderdomme 17+"
 
-#: templates/_modals/edit_modal.html:267 templates/base.html:1278
+#: templates/_modals/edit_modal.html:267 templates/base.html:1279
 msgid "Z - Ages 18+"
 msgstr "Z - Ouderdomme 18+"
 
 #: templates/_modals/edit_modal.html:271
-#: templates/_settings_tabs/library.html:155 templates/base.html:1282
+#: templates/_settings_tabs/library.html:155 templates/base.html:1283
 msgid "USK (Germany)"
 msgstr "USK (Duitsland)"
 
 #: templates/_modals/edit_modal.html:282
-#: templates/_settings_tabs/library.html:156 templates/base.html:1293
+#: templates/_settings_tabs/library.html:156 templates/base.html:1294
 msgid "ACB (Australia)"
 msgstr "ACB (Australië)"
 
-#: templates/_modals/edit_modal.html:285 templates/base.html:1296
+#: templates/_modals/edit_modal.html:285 templates/base.html:1297
 msgid "G - General"
 msgstr "G - Algemeen"
 
 #: templates/_modals/edit_modal.html:286 templates/_modals/edit_modal.html:297
-#: templates/base.html:1297
+#: templates/base.html:1298
 msgid "PG - Parental Guidance"
 msgstr "PG - Ouerleiding"
 
-#: templates/_modals/edit_modal.html:288 templates/base.html:1299
+#: templates/_modals/edit_modal.html:288 templates/base.html:1300
 msgid "MA15+ - Restricted"
 msgstr "MA15+ - Beperk"
 
-#: templates/_modals/edit_modal.html:289 templates/base.html:1300
+#: templates/_modals/edit_modal.html:289 templates/base.html:1301
 msgid "R18+ - Restricted"
 msgstr "R18+ - Beperk"
 
 #: templates/_modals/edit_modal.html:293
-#: templates/_settings_tabs/library.html:157 templates/base.html:1304
+#: templates/_settings_tabs/library.html:157 templates/base.html:1305
 msgid "FPB (South Africa)"
 msgstr "FPB (Suid-Afrika)"
 
 #: templates/_modals/edit_modal.html:307
-#: templates/_settings_tabs/library.html:158 templates/base.html:1318
+#: templates/_settings_tabs/library.html:158 templates/base.html:1319
 msgid "GRAC (South Korea)"
 msgstr "GRAC (Suid-Korea)"
 
-#: templates/_modals/edit_modal.html:310 templates/base.html:1321
+#: templates/_modals/edit_modal.html:310 templates/base.html:1322
 msgid "ALL - All Ages"
 msgstr "ALL - Alle ouderdomme"
 
 #: templates/_modals/edit_modal.html:317
-#: templates/_settings_tabs/library.html:159 templates/base.html:1328
+#: templates/_settings_tabs/library.html:159 templates/base.html:1329
 msgid "ClassInd (Brazil)"
 msgstr "ClassInd (Brasilië)"
 
-#: templates/_modals/edit_modal.html:320 templates/base.html:1331
+#: templates/_modals/edit_modal.html:320 templates/base.html:1332
 msgid "L - General"
 msgstr "L - Algemeen"
 
 #: templates/_modals/edit_modal.html:329
-#: templates/_settings_tabs/library.html:160 templates/base.html:1340
+#: templates/_settings_tabs/library.html:160 templates/base.html:1341
 msgid "CADPA (China)"
 msgstr "CADPA (China)"
 
-#: templates/_modals/edit_modal.html:332 templates/base.html:1343
+#: templates/_modals/edit_modal.html:332 templates/base.html:1344
 msgid "8+ - Ages 8 and up"
 msgstr "8+ - Ouderdomme 8 en ouer"
 
-#: templates/_modals/edit_modal.html:333 templates/base.html:1344
+#: templates/_modals/edit_modal.html:333 templates/base.html:1345
 msgid "12+ - Ages 12 and up"
 msgstr "12+ - Ouderdomme 12 en ouer"
 
-#: templates/_modals/edit_modal.html:334 templates/base.html:1345
+#: templates/_modals/edit_modal.html:334 templates/base.html:1346
 msgid "16+ - Ages 16 and up"
 msgstr "16+ - Ouderdomme 16 en ouer"
 
-#: templates/_modals/edit_modal.html:343 templates/base.html:1354
+#: templates/_modals/edit_modal.html:343 templates/base.html:1355
 msgid "Game Description"
 msgstr "Speletjiebeskrywing"
 
-#: templates/base.html:1355
+#: templates/base.html:1356
 msgid "Enter game description..."
 msgstr "Voer speletjiebeskrywing in..."
 
-#: templates/base.html:1362
+#: templates/base.html:1363
 msgid "Images/Video"
 msgstr "Beelde/Video"
 
 #: templates/_modals/edit_modal.html:15
-#: templates/_settings_tabs/customization.html:267 templates/base.html:1367
+#: templates/_settings_tabs/customization.html:267 templates/base.html:1368
 #: templates/wishlist.html:700
 msgid "Save Changes"
 msgstr "Stoor veranderinge"
 
-#: templates/base.html:1403
+#: templates/base.html:1404
 msgid "running"
 msgstr "loop"
 
@@ -6486,93 +6569,106 @@ msgstr "Stel nuwe wagwoord"
 msgid "ROM Reports"
 msgstr "ROM-verslae"
 
-#: templates/game_detail.html:49
+#: templates/game_detail.html:34
+#, fuzzy
+msgid "Browse games"
+msgstr "Blaai deur vouers"
+
+#: templates/_modals/manual_reader_modal.html:15 templates/game_detail.html:37
+msgid "Previous"
+msgstr "Vorige"
+
+#: templates/_modals/manual_reader_modal.html:17 templates/game_detail.html:39
+msgid "Next"
+msgstr "Volgende"
+
+#: templates/game_detail.html:63
 msgid "CLZ Import - No ROM file"
 msgstr "CLZ-invoer - Geen ROM-lêer nie"
 
-#: templates/game_detail.html:49 templates/game_imports.html:167
+#: templates/game_detail.html:63 templates/game_imports.html:167
 msgid "CLZ Import"
 msgstr "CLZ-invoer"
 
-#: templates/game_detail.html:51
+#: templates/game_detail.html:65
 msgid "Steam Import - No ROM file"
 msgstr "Steam-invoer - Geen ROM-lêer nie"
 
-#: templates/game_detail.html:51
+#: templates/game_detail.html:65
 msgid "Steam Import"
 msgstr "Steam-invoer"
 
-#: templates/game_detail.html:53
+#: templates/game_detail.html:67
 msgid "Xbox Import - No ROM file"
 msgstr "Xbox-invoer - Geen ROM-lêer nie"
 
-#: templates/game_detail.html:53
+#: templates/game_detail.html:67
 msgid "Xbox Import"
 msgstr "Xbox-invoer"
 
-#: templates/game_detail.html:55
+#: templates/game_detail.html:69
 msgid "PSN Import - No ROM file"
 msgstr "PSN-invoer - Geen ROM-lêer nie"
 
-#: templates/game_detail.html:55
+#: templates/game_detail.html:69
 msgid "PSN Import"
 msgstr "PSN-invoer"
 
-#: templates/game_detail.html:58
+#: templates/game_detail.html:72
 msgid "This is a bonus/extra disc"
 msgstr "Dit is 'n bonus-/ekstra skyf"
 
-#: templates/game_detail.html:58
+#: templates/game_detail.html:72
 msgid "Bonus Disc"
 msgstr "Bonusskyf"
 
-#: templates/game_detail.html:63
+#: templates/game_detail.html:77
 msgid "Part of:"
 msgstr "Deel van:"
 
-#: templates/game_detail.html:74
+#: templates/game_detail.html:88
 msgid "Regional versions"
 msgstr "Streeksweergawes"
 
-#: templates/game_detail.html:75
+#: templates/game_detail.html:89
 msgid "Versions:"
 msgstr "Weergawes:"
 
-#: templates/game_detail.html:77 templates/game_detail.html:724
+#: templates/game_detail.html:91 templates/game_detail.html:770
 msgid "Unknown region"
 msgstr "Onbekende streek"
 
-#: templates/game_detail.html:83
+#: templates/game_detail.html:97
 msgid "Launch this game in the configured emulator"
 msgstr "Loods hierdie speletjie in die gekonfigureerde emulator"
 
-#: templates/game_detail.html:89
+#: templates/game_detail.html:103
 msgid "Keyboard game: press Scroll Lock for RetroArch keys"
 msgstr "Sleutelbordspeletjie: druk Scroll Lock vir RetroArch se sleutels"
 
-#: templates/game_detail.html:93
+#: templates/game_detail.html:107
 msgid "View Manual (PDF)"
 msgstr "Bekyk handleiding (PDF)"
 
-#: templates/game_detail.html:118
+#: templates/game_detail.html:132
 msgid "Delete game from database"
 msgstr "Verwyder speletjie uit databasis"
 
-#: templates/_settings_tabs/account.html:320 templates/game_detail.html:120
+#: templates/_settings_tabs/account.html:320 templates/game_detail.html:134
 #: templates/logs.html:735 templates/settings.html:70
 #: templates/wishlist.html:642
 msgid "Delete"
 msgstr "Verwyder"
 
-#: templates/game_detail.html:154 templates/game_detail.html:166
+#: templates/game_detail.html:168 templates/game_detail.html:180
 msgid "Click to zoom"
 msgstr "Klik om te zoem"
 
-#: templates/game_detail.html:171
+#: templates/game_detail.html:185
 msgid "Switch between 2D and 3D boxart"
 msgstr "Wissel tussen 2D- en 3D-omslagkuns"
 
-#: templates/game_detail.html:190
+#: templates/game_detail.html:204
 msgid ""
 "Sharper images for this game are still being made. They'll appear on "
 "their own."
@@ -6580,273 +6676,294 @@ msgstr ""
 "Skerper prente vir hierdie speletjie word nog gemaak. Hulle sal vanself "
 "verskyn."
 
-#: templates/game_detail.html:201
+#: templates/game_detail.html:215
 msgid "Player"
 msgstr "Speler"
 
-#: templates/game_detail.html:206
+#: templates/game_detail.html:220
 #, python-format
 msgid "Critic Score (%(count)s reviews)"
 msgstr "Kritikuspunt (%(count)s resensies)"
 
-#: templates/game_detail.html:211
+#: templates/game_detail.html:225
 #, python-format
 msgid "User Score (%(count)s ratings)"
 msgstr "Gebruikerspunt (%(count)s graderings)"
 
-#: templates/game_detail.html:218
-msgid "Completion status"
-msgstr "Voltooiingstatus"
+#: templates/game_detail.html:230
+#, python-format
+msgid "Copies sold on %(system)s, from published sales figures"
+msgstr ""
 
-#: templates/game_detail.html:233
+#: templates/game_detail.html:231
+#, fuzzy, python-format
+msgid "%(count)s sold"
+msgstr "%(count)s totaal"
+
+#: templates/game_detail.html:242
+#, fuzzy, python-format
+msgid "Last tested %(date)s."
+msgstr "Verdien %(date)s"
+
+#: templates/game_detail.html:246
+msgid ""
+"RetroDB reads PS3 compatibility from your RPCS3. In RPCS3, choose Manage "
+"> Databases > Download Compatibility Database."
+msgstr ""
+
+#: templates/game_detail.html:247
+msgid "RPCS3: no compatibility list"
+msgstr ""
+
+#: templates/game_detail.html:268
 msgid "No description available. Click \"Scrape\" to fetch metadata."
 msgstr "Geen beskrywing beskikbaar nie. Klik \"Skraap\" om metadata te haal."
 
-#: templates/game_detail.html:304
+#: templates/game_detail.html:350
 msgid "View on RetroAchievements.org"
 msgstr "Bekyk op RetroAchievements.org"
 
-#: templates/game_detail.html:306
+#: templates/game_detail.html:352
 msgid "RA Site"
 msgstr "RA-webwerf"
 
-#: templates/game_detail.html:318 templates/steam_achievement_game.html:17
+#: templates/game_detail.html:364 templates/steam_achievement_game.html:17
 #: templates/steam_achievements.html:7 templates/steam_achievements.html:15
 #: templates/steam_achievements.html:21
 msgid "Steam Achievements"
 msgstr "Steam-prestasies"
 
-#: templates/game_detail.html:334 templates/xbox_achievement_game.html:17
+#: templates/game_detail.html:380 templates/xbox_achievement_game.html:17
 #: templates/xbox_achievements.html:7 templates/xbox_achievements.html:15
 #: templates/xbox_achievements.html:21
 msgid "Xbox Achievements"
 msgstr "Xbox-prestasies"
 
-#: templates/game_detail.html:349 templates/psn_trophies.html:6
+#: templates/game_detail.html:395 templates/psn_trophies.html:6
 #: templates/psn_trophies.html:15 templates/psn_trophy_detail.html:17
 msgid "PSN Trophies"
 msgstr "PSN-trofeë"
 
-#: templates/game_detail.html:374 templates/local_trophy_detail.html:16
+#: templates/game_detail.html:420 templates/local_trophy_detail.html:16
 msgid "RPCS3 Trophies"
 msgstr "RPCS3-trofeë"
 
-#: templates/game_detail.html:407
+#: templates/game_detail.html:453
 msgid "(cross-mapped)"
 msgstr "(kruis-gekarteer)"
 
-#: templates/game_detail.html:420
+#: templates/game_detail.html:466
 #, python-format
 msgid "Screenshots (%(count)s)"
 msgstr "Skermskote (%(count)s)"
 
-#: templates/game_detail.html:422
+#: templates/game_detail.html:468
 msgid "Previous screenshots"
 msgstr "Vorige skermskote"
 
-#: templates/game_detail.html:428
+#: templates/game_detail.html:474
 msgid "Delete screenshot"
 msgstr "Verwyder skermskoot"
 
-#: templates/game_detail.html:432
+#: templates/game_detail.html:478
 msgid "Next screenshots"
 msgstr "Volgende skermskote"
 
-#: templates/game_detail.html:451
+#: templates/game_detail.html:497
 msgid "Also Known As"
 msgstr "Ook bekend as"
 
-#: templates/game_detail.html:455
+#: templates/game_detail.html:501
 #, python-format
 msgid "Source: %(source)s"
 msgstr "Bron: %(source)s"
 
-#: templates/game_detail.html:480
+#: templates/game_detail.html:526
 msgid "Loading recommendations..."
 msgstr "Laai aanbevelings..."
 
-#: templates/game_detail.html:528
+#: templates/game_detail.html:574
 #, python-format
 msgid "%(pct)s%% match"
 msgstr "%(pct)s%% passing"
 
-#: templates/game_detail.html:569
+#: templates/game_detail.html:615
 msgid "Source:"
 msgstr "Bron:"
 
-#: templates/game_detail.html:572
+#: templates/game_detail.html:618
 msgid "CLZ Games Import (No ROM file)"
 msgstr "CLZ Games-invoer (Geen ROM-lêer nie)"
 
-#: templates/game_detail.html:574
+#: templates/game_detail.html:620
 msgid "Steam Import (No ROM file)"
 msgstr "Steam-invoer (Geen ROM-lêer nie)"
 
-#: templates/game_detail.html:576
+#: templates/game_detail.html:622
 msgid "Xbox Import (No ROM file)"
 msgstr "Xbox-invoer (Geen ROM-lêer nie)"
 
-#: templates/game_detail.html:578
+#: templates/game_detail.html:624
 msgid "PSN Import (No ROM file)"
 msgstr "PSN-invoer (Geen ROM-lêer nie)"
 
-#: templates/game_detail.html:584
+#: templates/game_detail.html:630
 msgid "Original Title:"
 msgstr "Oorspronklike titel:"
 
-#: templates/game_detail.html:590
+#: templates/game_detail.html:636
 msgid "File:"
 msgstr "Lêer:"
 
-#: templates/game_detail.html:592
+#: templates/game_detail.html:638
 msgid "Rename ROM file"
 msgstr "Hernoem ROM-lêer"
 
-#: templates/game_detail.html:595
+#: templates/game_detail.html:641
 msgid "Path:"
 msgstr "Pad:"
 
-#: templates/game_detail.html:601
+#: templates/game_detail.html:647
 msgid "Edition:"
 msgstr "Uitgawe:"
 
-#: templates/game_detail.html:608
+#: templates/game_detail.html:654
 msgid "Exclusive:"
 msgstr "Eksklusief:"
 
-#: templates/game_detail.html:611
+#: templates/game_detail.html:657
 msgid "Also On:"
 msgstr "Ook op:"
 
-#: templates/game_detail.html:618
+#: templates/game_detail.html:664
 msgid "Modes:"
 msgstr "Modusse:"
 
-#: templates/game_detail.html:624
+#: templates/game_detail.html:670
 msgid "Players:"
 msgstr "Spelers:"
 
-#: templates/game_detail.html:630
+#: templates/game_detail.html:676
 msgid "Campaign:"
 msgstr "Veldtog:"
 
-#: templates/game_detail.html:636
+#: templates/game_detail.html:682
 msgid "Structure:"
 msgstr "Struktuur:"
 
-#: templates/game_detail.html:642
+#: templates/game_detail.html:688
 msgid "Perspective:"
 msgstr "Perspektief:"
 
-#: templates/game_detail.html:648
+#: templates/game_detail.html:694
 msgid "Dimension:"
 msgstr "Dimensie:"
 
-#: templates/game_detail.html:654
+#: templates/game_detail.html:700
 msgid "Save:"
 msgstr "Stoor:"
 
-#: templates/game_detail.html:660
+#: templates/game_detail.html:706
 msgid "Input:"
 msgstr "Toevoer:"
 
-#: templates/game_detail.html:665
+#: templates/game_detail.html:711
 msgid "Scraped:"
 msgstr "Geskraap:"
 
-#: templates/game_detail.html:674
+#: templates/game_detail.html:720
 msgid "Bonus Content"
 msgstr "Bonusinhoud"
 
-#: templates/game_detail.html:693
+#: templates/game_detail.html:739
 msgid "Emulator settings"
 msgstr "Emulatorinstellings"
 
-#: templates/_macros/nav_tabs.html:40 templates/game_detail.html:703
+#: templates/_macros/nav_tabs.html:40 templates/game_detail.html:749
 #: templates/rom_tools_hub.html:193 templates/versions_review.html:5
 #: templates/versions_review.html:80
 msgid "Regional Versions"
 msgstr "Streeksweergawes"
 
-#: templates/game_detail.html:711 templates/museum_system.html:100
+#: templates/game_detail.html:757 templates/museum_system.html:100
 msgid "Released"
 msgstr "Vrygestel"
 
-#: templates/game_detail.html:713
+#: templates/game_detail.html:759
 msgid "File size"
 msgstr "Lêergrootte"
 
-#: templates/game_detail.html:714
+#: templates/game_detail.html:760
 msgid "Revision"
 msgstr "Hersiening"
 
-#: templates/game_detail.html:715
+#: templates/game_detail.html:761
 msgid "Languages"
 msgstr "Tale"
 
-#: templates/game_detail.html:716
+#: templates/game_detail.html:762
 msgid "Scores"
 msgstr "Tellings"
 
-#: templates/game_detail.html:725
+#: templates/game_detail.html:771
 msgid "(this page)"
 msgstr "(hierdie bladsy)"
 
-#: templates/game_detail.html:743
+#: templates/game_detail.html:789
 msgid "Known differences"
 msgstr "Bekende verskille"
 
-#: templates/game_detail.html:743
+#: templates/game_detail.html:789
 msgid "AI-written"
 msgstr "Deur KI geskryf"
 
-#: templates/game_detail.html:744
+#: templates/game_detail.html:790
 msgid "Written by AI from what it knows about these releases. It can be wrong."
 msgstr ""
 "Deur KI geskryf uit wat dit van hierdie vrystellings weet. Dit kan "
 "verkeerd wees."
 
-#: templates/game_detail.html:746
+#: templates/game_detail.html:792
 msgid "The AI knows of no differences between these versions."
 msgstr "Die KI weet van geen verskille tussen hierdie weergawes nie."
 
-#: templates/game_detail.html:749
+#: templates/game_detail.html:795
 msgid "No other regional versions are linked to this game."
 msgstr "Geen ander streeksweergawes is aan hierdie speletjie gekoppel nie."
 
-#: templates/game_detail.html:754
+#: templates/game_detail.html:800
 msgid "Unlink this version"
 msgstr "Ontkoppel hierdie weergawe"
 
-#: templates/game_detail.html:755
+#: templates/game_detail.html:801
 msgid "Summarise differences with AI"
 msgstr "Som verskille op met KI"
 
-#: templates/game_detail.html:757
+#: templates/game_detail.html:803
 msgid "Link a version"
 msgstr "Koppel 'n weergawe"
 
-#: templates/game_detail.html:758
+#: templates/game_detail.html:804
 msgid "Link a version: search this system"
 msgstr "Koppel 'n weergawe: soek in hierdie stelsel"
 
-#: templates/game_detail.html:771
+#: templates/game_detail.html:817
 msgid "Scrape History"
 msgstr "Skraapgeskiedenis"
 
-#: templates/game_detail.html:797
+#: templates/game_detail.html:843
 msgid "Primary scraper"
 msgstr "Primêre skraper"
 
-#: templates/game_detail.html:799
+#: templates/game_detail.html:845
 msgid "Fallback scraper"
 msgstr "Terugvalskraper"
 
-#: templates/game_detail.html:806
+#: templates/game_detail.html:852
 msgid "Fields filled:"
 msgstr "Velde ingevul:"
 
-#: templates/game_detail.html:819
+#: templates/game_detail.html:865
 msgid "Still missing:"
 msgstr "Steeds ontbrekend:"
 
@@ -9223,14 +9340,6 @@ msgstr "Maak PDF in 'n nuwe oortjie oop"
 msgid "Manual page. Use the arrow keys to turn pages."
 msgstr "Handleidingbladsy. Gebruik die pyltjiesleutels om blaaie om te slaan."
 
-#: templates/_modals/manual_reader_modal.html:15
-msgid "Previous"
-msgstr "Vorige"
-
-#: templates/_modals/manual_reader_modal.html:17
-msgid "Next"
-msgstr "Volgende"
-
 #: templates/_modals/rename_modal.html:4
 msgid "Rename ROM File"
 msgstr "Hernoem ROM-lêer"
@@ -10296,112 +10405,6 @@ msgstr "Borg op GitHub"
 #: templates/_settings_tabs/system.html:487
 msgid "Support on Patreon"
 msgstr "Ondersteun op Patreon"
-
-#: routes/games.py:561
-#, python-format
-msgid ""
-"Screenshots not added because they match ones the game already has: "
-"%(count)s"
-msgstr ""
-
-#: services/js_i18n_strings.py:534 templates/game_detail.html:236
-msgid "Can be completed with playable performance and no game-breaking glitches."
-msgstr ""
-
-#: services/js_i18n_strings.py:589
-#, fuzzy, python-brace-format
-msgid "Critic Score ({count} reviews)"
-msgstr "Kritikuspunt (%(count)s resensies)"
-
-#: services/js_i18n_strings.py:597 templates/game_detail.html:240
-msgid "Does not start, or crashes the emulator."
-msgstr ""
-
-#: services/js_i18n_strings.py:667 templates/game_detail.html:237
-msgid ""
-"Gets in game, but cannot be finished, has serious glitches or runs too "
-"slowly."
-msgstr ""
-
-#: services/js_i18n_strings.py:694
-#, fuzzy, python-brace-format
-msgid "Last tested {date}."
-msgstr "Bygevoeg {date}"
-
-#: services/js_i18n_strings.py:781 templates/game_detail.html:237
-msgid "RPCS3: Ingame"
-msgstr ""
-
-#: services/js_i18n_strings.py:782 templates/game_detail.html:238
-#, fuzzy
-msgid "RPCS3: Intro"
-msgstr "RPCS3-trofeë"
-
-#: services/js_i18n_strings.py:783 templates/game_detail.html:239
-msgid "RPCS3: Loadable"
-msgstr ""
-
-#: services/js_i18n_strings.py:784 templates/game_detail.html:240
-#, fuzzy
-msgid "RPCS3: Nothing"
-msgstr "RPCS3-trofeë"
-
-#: services/js_i18n_strings.py:785 templates/game_detail.html:236
-msgid "RPCS3: Playable"
-msgstr ""
-
-#: services/js_i18n_strings.py:859 templates/game_detail.html:239
-msgid "Shows a black screen with a frame rate in the window title."
-msgstr ""
-
-#: services/js_i18n_strings.py:860 templates/game_detail.html:238
-msgid "Shows an image but does not get past the menus."
-msgstr ""
-
-#: services/js_i18n_strings.py:913
-#, fuzzy, python-brace-format
-msgid "User Score ({count} ratings)"
-msgstr "Gebruikerspunt (%(count)s graderings)"
-
-#: services/js_i18n_strings.py:930
-#, fuzzy, python-brace-format
-msgid "{count} sold"
-msgstr "Konsole"
-
-#: templates/base.html:942 templates/game_detail.html:318
-#, fuzzy
-msgid "Release dates"
-msgstr "Vrystellingsdatum"
-
-#: templates/game_detail.html:34
-#, fuzzy
-msgid "Browse games"
-msgstr "Blaai deur vouers"
-
-#: templates/game_detail.html:230
-#, python-format
-msgid "Copies sold on %(system)s, from published sales figures"
-msgstr ""
-
-#: templates/game_detail.html:231
-#, fuzzy, python-format
-msgid "%(count)s sold"
-msgstr "%(count)s totaal"
-
-#: templates/game_detail.html:242
-#, fuzzy, python-format
-msgid "Last tested %(date)s."
-msgstr "Verdien %(date)s"
-
-#: templates/game_detail.html:246
-msgid ""
-"RetroDB reads PS3 compatibility from your RPCS3. In RPCS3, choose Manage "
-"> Databases > Download Compatibility Database."
-msgstr ""
-
-#: templates/game_detail.html:247
-msgid "RPCS3: no compatibility list"
-msgstr ""
 
 #~ msgid "(auto-detect)"
 #~ msgstr "(outo-bespeur)"

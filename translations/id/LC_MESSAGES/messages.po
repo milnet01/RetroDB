@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-27 13:06+0000\n"
+"POT-Creation-Date: 2026-10-29 07:07+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: id\n"
@@ -58,8 +58,8 @@ msgstr "Sistem tidak ditemukan atau tidak memiliki game achievement"
 #: routes/achievements.py:171 routes/achievements.py:440
 #: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/collections.py:276
 #: routes/collections.py:531 routes/emulators.py:271 routes/emulators.py:285
-#: routes/games.py:348 routes/games.py:808 routes/games.py:931
-#: routes/games.py:987 routes/games_ai.py:47 routes/games_media.py:37
+#: routes/games.py:390 routes/games.py:864 routes/games.py:991
+#: routes/games.py:1047 routes/games_ai.py:47 routes/games_media.py:37
 #: routes/games_media.py:85 routes/games_media.py:148 routes/launch.py:240
 #: routes/reports.py:693 routes/reports.py:822 routes/trophies.py:1291
 #: services/hltb_service.py:125
@@ -86,9 +86,9 @@ msgstr "RetroAchievements belum dikonfigurasi"
 msgid "Could not fetch achievement data"
 msgstr "Tidak dapat mengambil data achievement"
 
-#: routes/achievements.py:294 routes/controllers.py:413
-#: routes/controllers.py:463 routes/museum.py:309 routes/museum.py:381
-#: routes/ra_sync.py:98 routes/systems.py:220
+#: routes/achievements.py:294 routes/controllers.py:419
+#: routes/controllers.py:471 routes/museum.py:309 routes/museum.py:381
+#: routes/ra_sync.py:98 routes/systems.py:223
 msgid "System not found"
 msgstr "Sistem tidak ditemukan"
 
@@ -235,15 +235,15 @@ msgstr "Game induk tidak ditemukan"
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "Disc bonus dan game induk harus berada di sistem yang sama"
 
-#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1245
-#: routes/games.py:1275 routes/platform_import.py:297
+#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1305
+#: routes/games.py:1335 routes/platform_import.py:297
 #: routes/platform_import.py:667 routes/platform_import.py:1032
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:202 routes/scraper.py:530
-#: routes/scraper.py:919 routes/settings.py:317 routes/settings.py:341
-#: routes/settings.py:456 routes/settings.py:533 routes/settings.py:547
-#: routes/settings.py:591 routes/settings.py:607 routes/settings.py:643
-#: routes/steam_achievements.py:138 routes/systems.py:286 routes/systems.py:467
+#: routes/scraper.py:919 routes/settings.py:319 routes/settings.py:343
+#: routes/settings.py:458 routes/settings.py:537 routes/settings.py:551
+#: routes/settings.py:595 routes/settings.py:611 routes/settings.py:647
+#: routes/steam_achievements.py:138 routes/systems.py:289 routes/systems.py:479
 #: routes/trophies.py:508 routes/trophies.py:706 routes/trophies.py:754
 #: routes/trophies.py:1582 routes/trophies.py:1606 routes/trophies.py:1651
 #: routes/trophies.py:1679 routes/trophies.py:1721 routes/trophies.py:1788
@@ -251,11 +251,18 @@ msgstr "Disc bonus dan game induk harus berada di sistem yang sama"
 msgid "An internal error occurred"
 msgstr "Terjadi kesalahan internal"
 
-#: routes/bonus_discs.py:281
+#: routes/bonus_discs.py:278 routes/bonus_discs.py:309
+#: routes/controllers.py:216 routes/controllers.py:280
+#: routes/controllers.py:413 routes/controllers.py:465 routes/settings.py:223
+#: routes/settings.py:493 routes/settings.py:561 routes/systems.py:310
+msgid "Request body must be a JSON object"
+msgstr "Isi permintaan harus berupa objek JSON"
+
+#: routes/bonus_discs.py:283
 msgid "Missing bonus_id or parent_id"
 msgstr "bonus_id atau parent_id tidak ada"
 
-#: routes/bonus_discs.py:310 routes/reports.py:810
+#: routes/bonus_discs.py:314 routes/reports.py:810
 msgid "Missing game_id"
 msgstr "game_id tidak ada"
 
@@ -378,22 +385,22 @@ msgstr "Game ini sudah ada di wishlist Anda"
 msgid "Wishlist item not found"
 msgstr "Item wishlist tidak ditemukan"
 
-#: routes/controllers.py:226 routes/controllers.py:288
+#: routes/controllers.py:228 routes/controllers.py:292
 msgid "Controller name is required"
 msgstr "Nama kontroler wajib diisi"
 
-#: routes/controllers.py:231
+#: routes/controllers.py:233
 #, python-format
 msgid "Controller \"%(name)s\" already exists"
 msgstr "Kontroler \"%(name)s\" sudah ada"
 
-#: routes/controllers.py:293 routes/controllers.py:335
-#: routes/controllers.py:420 routes/controllers.py:469 routes/museum.py:577
+#: routes/controllers.py:297 routes/controllers.py:339
+#: routes/controllers.py:426 routes/controllers.py:477 routes/museum.py:577
 #: routes/museum.py:653 routes/museum.py:723
 msgid "Controller not found"
 msgstr "Kontroler tidak ditemukan"
 
-#: routes/controllers.py:298
+#: routes/controllers.py:302
 #, python-format
 msgid "Another controller named \"%(name)s\" already exists"
 msgstr "Kontroler lain bernama \"%(name)s\" sudah ada"
@@ -436,34 +443,41 @@ msgstr ""
 msgid "Emulator not found"
 msgstr "Emulator tidak ditemukan"
 
-#: routes/games.py:240
+#: routes/games.py:247 routes/games.py:281
 msgid "No IDs provided"
 msgstr "Tidak ada ID yang diberikan"
 
-#: routes/games.py:248
+#: routes/games.py:289
 msgid "Provide 1-50 valid IDs"
 msgstr "Berikan 1-50 ID yang valid"
 
-#: routes/games.py:504
+#: routes/games.py:551
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
 msgstr ""
 "Video tidak disimpan: harus berupa berkas MP4, WebM, atau OGG maksimal "
 "%(mb)s MB."
 
-#: routes/games.py:634
+#: routes/games.py:561
+#, python-format
+msgid ""
+"Screenshots not added because they match ones the game already has: "
+"%(count)s"
+msgstr ""
+
+#: routes/games.py:685
 msgid "Game not found after update"
 msgstr "Game tidak ditemukan setelah pembaruan"
 
-#: routes/games.py:935
+#: routes/games.py:995
 msgid "No game selected."
 msgstr "Tidak ada game yang dipilih."
 
-#: routes/games.py:959
+#: routes/games.py:1019
 msgid "This metadata apply is no longer running."
 msgstr "Penerapan metadata ini sudah tidak berjalan."
 
-#: routes/games.py:968
+#: routes/games.py:1028
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
@@ -472,51 +486,51 @@ msgstr ""
 "Metadata diterapkan dari %(sources)s! (%(filled)d kolom terisi, "
 "%(missing)d masih kosong)"
 
-#: routes/games.py:974
+#: routes/games.py:1034
 msgid "Failed to apply metadata."
 msgstr "Gagal menerapkan metadata."
 
-#: routes/games.py:1023 routes/games.py:1067
+#: routes/games.py:1083 routes/games.py:1127
 msgid "No fields to update"
 msgstr "Tidak ada kolom untuk diperbarui"
 
-#: routes/games.py:1064 routes/platform_import.py:220
+#: routes/games.py:1124 routes/platform_import.py:220
 #: routes/platform_import.py:581 routes/platform_import.py:936
 #: routes/trophies.py:1870
 msgid "No games selected"
 msgstr "Tidak ada game yang dipilih"
 
-#: routes/games.py:1074
+#: routes/games.py:1134
 msgid "Invalid completion status"
 msgstr "Status penyelesaian tidak valid"
 
-#: routes/games.py:1122
+#: routes/games.py:1182
 msgid "No valid fields to update"
 msgstr "Tidak ada kolom valid untuk diperbarui"
 
-#: routes/games.py:1238
+#: routes/games.py:1298
 msgid "Invalid status"
 msgstr "Status tidak valid"
 
-#: routes/games.py:1263
+#: routes/games.py:1323
 msgid "Not authenticated"
 msgstr "Belum terautentikasi"
 
-#: routes/games.py:1294
+#: routes/games.py:1354
 msgid "Filter type and value required"
 msgstr "Jenis dan nilai filter wajib diisi"
 
-#: routes/games.py:1307
+#: routes/games.py:1367
 msgid "Invalid filter type"
 msgstr "Jenis filter tidak valid"
 
-#: routes/games_ai.py:84
+#: routes/games_ai.py:78
 msgid "AI returned no data. Check your API key and provider settings."
 msgstr ""
 "AI tidak mengembalikan data. Periksa kunci API dan pengaturan penyedia "
 "Anda."
 
-#: routes/games_ai.py:305
+#: routes/games_ai.py:319
 msgid "AI scraper module not available"
 msgstr "Modul scraper AI tidak tersedia"
 
@@ -525,7 +539,7 @@ msgid "No filename provided"
 msgstr "Nama berkas tidak diberikan"
 
 #: routes/games_media.py:81 routes/reports.py:688 routes/scrape_logs.py:129
-#: routes/scrape_logs.py:154 routes/scrape_logs.py:203 routes/settings.py:350
+#: routes/scrape_logs.py:154 routes/scrape_logs.py:203 routes/settings.py:352
 msgid "Invalid filename"
 msgstr "Nama berkas tidak valid"
 
@@ -701,7 +715,7 @@ msgstr "Tidak ada gambar untuk diproses"
 msgid "Image file not found"
 msgstr "Berkas gambar tidak ditemukan"
 
-#: routes/museum.py:740 routes/museum.py:744 services/js_i18n_strings.py:536
+#: routes/museum.py:740 routes/museum.py:744 services/js_i18n_strings.py:551
 msgid "Background removal failed"
 msgstr "Penghapusan latar belakang gagal"
 
@@ -901,66 +915,62 @@ msgstr "Kesalahan koneksi: %(error)s"
 msgid "Allowance check not supported for %(scraper)s"
 msgstr "Pemeriksaan kuota tidak didukung untuk %(scraper)s"
 
-#: routes/settings.py:225
+#: routes/settings.py:227
 msgid "Value is required"
 msgstr "Nilai wajib diisi"
 
-#: routes/settings.py:247
+#: routes/settings.py:249
 msgid "Option already exists"
 msgstr "Opsi sudah ada"
 
-#: routes/settings.py:356
+#: routes/settings.py:358
 msgid "Backup file not found"
 msgstr "Berkas backup tidak ditemukan"
 
-#: routes/settings.py:370
+#: routes/settings.py:372
 msgid "A background job is running. Wait for it to finish before restoring."
 msgstr ""
 "Tugas latar belakang sedang berjalan. Tunggu hingga selesai sebelum "
 "memulihkan."
 
-#: routes/settings.py:390
+#: routes/settings.py:392
 msgid "Backup failed its integrity check; restore aborted."
 msgstr "Backup gagal pemeriksaan integritas; pemulihan dibatalkan."
 
-#: routes/settings.py:510
+#: routes/settings.py:514
 #, python-format
 msgid "Invalid %(field)s: %(result)s"
 msgstr "%(field)s tidak valid: %(result)s"
 
-#: routes/settings.py:529 routes/settings.py:588 routes/settings.py:640
-#: routes/tools.py:290 services/js_i18n_strings.py:649
+#: routes/settings.py:533 routes/settings.py:592 routes/settings.py:644
+#: routes/tools.py:290 services/js_i18n_strings.py:668
 msgid "Failed to save settings"
 msgstr "Gagal menyimpan pengaturan"
 
-#: routes/settings.py:557
-msgid "Request body must be a JSON object"
-msgstr "Isi permintaan harus berupa objek JSON"
-
-#: routes/settings.py:567 routes/tools.py:282
+#: routes/settings.py:571 routes/tools.py:282
 #, python-format
 msgid "Unknown setting key: %(key)s"
 msgstr "Kunci pengaturan tidak dikenal: %(key)s"
 
-#: routes/settings.py:573 routes/tools.py:285
+#: routes/settings.py:577 routes/tools.py:285
 #, python-format
 msgid "Invalid value for '%(key)s': %(reason)s"
 msgstr "Nilai tidak valid untuk '%(key)s': %(reason)s"
 
-#: routes/settings.py:605
+#: routes/settings.py:609
 msgid "Failed to reset settings"
 msgstr "Gagal mengatur ulang pengaturan"
 
-#: routes/settings.py:626
+#: routes/settings.py:630
 #, python-format
 msgid "invalid logging settings: %(reason)s"
 msgstr "pengaturan logging tidak valid: %(reason)s"
 
-#: routes/settings.py:656 routes/settings.py:684
+#: routes/settings.py:660 routes/settings.py:688
 msgid "Invalid field. Must be \"genre\" or \"modes\""
 msgstr "Kolom tidak valid. Harus \"genre\" atau \"modes\""
 
-#: routes/settings.py:687
+#: routes/settings.py:691
 msgid "No mappings provided"
 msgstr "Tidak ada pemetaan yang diberikan"
 
@@ -972,11 +982,11 @@ msgstr "Kredensial Steam belum dikonfigurasi"
 msgid "Game not found or not a Steam game"
 msgstr "Game tidak ditemukan atau bukan game Steam"
 
-#: routes/systems.py:310
+#: routes/systems.py:315
 msgid "System ID required"
 msgstr "ID sistem diperlukan"
 
-#: routes/systems.py:438
+#: routes/systems.py:450
 msgid "ES-DE scraper not available"
 msgstr "Scraper ES-DE tidak tersedia"
 
@@ -1520,19 +1530,19 @@ msgstr "Sandbox"
 msgid "Turn-Based"
 msgstr "Turn-Based"
 
-#: services/js_i18n_strings.py:498
+#: services/js_i18n_strings.py:513
 msgid "(Paused)"
 msgstr "(Dijeda)"
 
-#: services/js_i18n_strings.py:499
+#: services/js_i18n_strings.py:514
 msgid "(none)"
 msgstr "(tidak ada)"
 
-#: services/js_i18n_strings.py:500
+#: services/js_i18n_strings.py:515
 msgid "(not set)"
 msgstr "(belum diatur)"
 
-#: services/js_i18n_strings.py:501 templates/_bulk_edit_modal.html:25
+#: services/js_i18n_strings.py:516 templates/_bulk_edit_modal.html:25
 #: templates/_bulk_edit_modal.html:38 templates/_bulk_edit_modal.html:83
 #: templates/_bulk_edit_modal.html:95 templates/_bulk_edit_modal.html:120
 #: templates/_bulk_edit_modal.html:137 templates/_bulk_edit_modal.html:153
@@ -1540,106 +1550,106 @@ msgstr "(belum diatur)"
 msgid "-- Don't change --"
 msgstr "-- Jangan ubah --"
 
-#: services/js_i18n_strings.py:502
+#: services/js_i18n_strings.py:517
 msgid "-- Select log file --"
 msgstr "-- Pilih berkas log --"
 
-#: services/js_i18n_strings.py:503
+#: services/js_i18n_strings.py:518
 #, python-brace-format
 msgid "... and {n} more"
 msgstr "... dan {n} lainnya"
 
-#: services/js_i18n_strings.py:504 templates/_bulk_edit_modal.html:30
-#: templates/base.html:1014
+#: services/js_i18n_strings.py:519 templates/_bulk_edit_modal.html:30
+#: templates/base.html:1015
 msgid "100%"
 msgstr "100%"
 
-#: services/js_i18n_strings.py:505 templates/_settings_tabs/account.html:273
+#: services/js_i18n_strings.py:520 templates/_settings_tabs/account.html:273
 #: templates/archive_scanner.html:726 templates/multi_disc_organizer.html:217
 #: templates/reports.html:369 templates/reports.html:450
 msgid "Actions"
 msgstr "Tindakan"
 
-#: services/js_i18n_strings.py:506
+#: services/js_i18n_strings.py:521
 msgid "Added to queue - will start when current operation completes"
 msgstr "Ditambahkan ke antrean - akan dimulai setelah operasi saat ini selesai"
 
-#: services/js_i18n_strings.py:507
+#: services/js_i18n_strings.py:522
 msgid "All ROMs accounted for!"
 msgstr "Semua ROM sudah terverifikasi!"
 
-#: services/js_i18n_strings.py:508 templates/logs.html:764
+#: services/js_i18n_strings.py:523 templates/logs.html:764
 msgid "All Sources"
 msgstr "Semua Sumber"
 
-#: services/js_i18n_strings.py:509 templates/all_games.html:42
+#: services/js_i18n_strings.py:524 templates/all_games.html:42
 #: templates/reports.html:328 templates/reports.html:407
 #: templates/reports.html:480
 msgid "All Systems"
 msgstr "Semua Sistem"
 
-#: services/js_i18n_strings.py:510
+#: services/js_i18n_strings.py:525
 msgid "Already Syncing"
 msgstr "Sedang Sinkronisasi"
 
-#: services/js_i18n_strings.py:511
+#: services/js_i18n_strings.py:526
 #, fuzzy
 msgid "An update is already being downloaded."
 msgstr "Sistem ini sedang disinkronkan."
 
-#: services/js_i18n_strings.py:512
+#: services/js_i18n_strings.py:527
 #, python-brace-format
 msgid "Applied when you press Play, in the {emulator} settings for this game."
 msgstr ""
 "Diterapkan saat Anda menekan Mainkan, di pengaturan {emulator} untuk game"
 " ini."
 
-#: services/js_i18n_strings.py:513
+#: services/js_i18n_strings.py:528
 #, python-brace-format
 msgid "Applied {n} update(s)."
 msgstr "{n} pembaruan diterapkan."
 
-#: services/js_i18n_strings.py:514 templates/_bulk_edit_modal.html:193
+#: services/js_i18n_strings.py:529 templates/_bulk_edit_modal.html:193
 msgid "Apply Changes"
 msgstr "Terapkan Perubahan"
 
-#: services/js_i18n_strings.py:515
+#: services/js_i18n_strings.py:530
 msgid "Apply Normalization"
 msgstr "Terapkan Normalisasi"
 
-#: services/js_i18n_strings.py:516
+#: services/js_i18n_strings.py:531
 #, python-brace-format
 msgid "Apply failed: {error}"
 msgstr "Gagal menerapkan: {error}"
 
-#: services/js_i18n_strings.py:517
+#: services/js_i18n_strings.py:532
 #, python-brace-format
 msgid "Apply {n} Selected"
 msgstr "Terapkan {n} yang Dipilih"
 
-#: services/js_i18n_strings.py:518
+#: services/js_i18n_strings.py:533
 #, python-brace-format
 msgid "Apply {n} normalization rule?"
 msgstr "Terapkan {n} aturan normalisasi?"
 
-#: services/js_i18n_strings.py:519
+#: services/js_i18n_strings.py:534
 #, python-brace-format
 msgid "Apply {n} normalization rules?"
 msgstr "Terapkan {n} aturan normalisasi?"
 
-#: services/js_i18n_strings.py:520
+#: services/js_i18n_strings.py:535
 msgid "Applying Metadata"
 msgstr "Menerapkan metadata"
 
-#: services/js_i18n_strings.py:521
+#: services/js_i18n_strings.py:536
 msgid "Applying..."
 msgstr "Menerapkan..."
 
-#: services/js_i18n_strings.py:522
+#: services/js_i18n_strings.py:537
 msgid "Applying…"
 msgstr "Menerapkan…"
 
-#: services/js_i18n_strings.py:523
+#: services/js_i18n_strings.py:538
 msgid ""
 "Are you sure you want to cancel the bulk scrape?\n"
 "\n"
@@ -1653,16 +1663,16 @@ msgstr ""
 "detik) sebelum pembatalan berlaku — notifikasi progres akan terus "
 "diperbarui selama jeda tersebut."
 
-#: services/js_i18n_strings.py:524
+#: services/js_i18n_strings.py:539
 msgid "Are you sure you want to cancel?"
 msgstr "Apakah Anda yakin ingin membatalkan?"
 
-#: services/js_i18n_strings.py:525
+#: services/js_i18n_strings.py:540
 #, python-brace-format
 msgid "Are you sure you want to delete \"{filename}\"?"
 msgstr "Apakah Anda yakin ingin menghapus \"{filename}\"?"
 
-#: services/js_i18n_strings.py:526
+#: services/js_i18n_strings.py:541
 msgid ""
 "Are you sure you want to reset all metadata for this game? This will "
 "delete boxart and screenshots."
@@ -1670,11 +1680,11 @@ msgstr ""
 "Apakah Anda yakin ingin mengatur ulang semua metadata untuk game ini? Ini"
 " akan menghapus boxart dan screenshot."
 
-#: services/js_i18n_strings.py:527
+#: services/js_i18n_strings.py:542
 msgid "Are you sure you want to restart the server?"
 msgstr "Apakah Anda yakin ingin memulai ulang server?"
 
-#: services/js_i18n_strings.py:528
+#: services/js_i18n_strings.py:543
 msgid ""
 "Are you sure you want to shut down the server? You will need to start it "
 "again manually."
@@ -1682,62 +1692,66 @@ msgstr ""
 "Apakah Anda yakin ingin mematikan server? Anda harus menyalakannya lagi "
 "secara manual."
 
-#: services/js_i18n_strings.py:529 templates/settings.html:67
+#: services/js_i18n_strings.py:544 templates/settings.html:67
 msgid "Are you sure?"
 msgstr "Apakah Anda yakin?"
 
-#: services/js_i18n_strings.py:530
+#: services/js_i18n_strings.py:545
 msgid "As the core sets it"
 msgstr "Sesuai pengaturan core"
 
-#: services/js_i18n_strings.py:531
+#: services/js_i18n_strings.py:546
 msgid "Asking AI…"
 msgstr "Bertanya ke AI…"
 
-#: services/js_i18n_strings.py:532
+#: services/js_i18n_strings.py:547
 msgid "Asking the AI. This can take up to a minute."
 msgstr "Menanyakan AI. Ini bisa memakan waktu hingga satu menit."
 
-#: services/js_i18n_strings.py:533
+#: services/js_i18n_strings.py:548
 #, python-brace-format
 msgid ""
 "Asking the AI: game {current} of {total}. Names suggested: {proposals}. "
 "{system}"
 msgstr ""
 
-#: services/js_i18n_strings.py:534
+#: services/js_i18n_strings.py:549
 msgid "Aspect ratio"
 msgstr "Rasio aspek"
 
-#: services/js_i18n_strings.py:535
+#: services/js_i18n_strings.py:550
 msgid "BIOS"
 msgstr "BIOS"
 
-#: services/js_i18n_strings.py:537
+#: services/js_i18n_strings.py:552
 msgid "Background removed"
 msgstr "Latar belakang dihapus"
 
-#: services/js_i18n_strings.py:538
+#: services/js_i18n_strings.py:553
 msgid "Bulk fetch failed"
 msgstr "Pengambilan massal gagal"
 
-#: services/js_i18n_strings.py:539
+#: services/js_i18n_strings.py:554
 msgid "Bulk fetch request failed"
 msgstr "Permintaan pengambilan massal gagal"
 
-#: services/js_i18n_strings.py:540
+#: services/js_i18n_strings.py:555
 msgid "Bulk scraping complete!"
 msgstr "Scrape massal selesai!"
 
-#: services/js_i18n_strings.py:541
+#: services/js_i18n_strings.py:556
 msgid "CLZ Imports"
 msgstr "Impor CLZ"
 
-#: services/js_i18n_strings.py:542
+#: services/js_i18n_strings.py:557
 msgid "CRT screen"
 msgstr "Layar CRT"
 
-#: services/js_i18n_strings.py:543 templates/_bulk_edit_modal.html:191
+#: services/js_i18n_strings.py:558 templates/game_detail.html:236
+msgid "Can be completed with playable performance and no game-breaking glitches."
+msgstr ""
+
+#: services/js_i18n_strings.py:559 templates/_bulk_edit_modal.html:191
 #: templates/_bulk_scrape_modal.html:49 templates/_modals/edit_modal.html:12
 #: templates/_modals/rename_modal.html:19
 #: templates/_settings_tabs/account.html:72
@@ -1745,9 +1759,9 @@ msgstr "Layar CRT"
 #: templates/_settings_tabs/customization.html:264
 #: templates/achievement_game.html:178 templates/archive_scanner.html:661
 #: templates/archive_scanner.html:798 templates/base.html:338
-#: templates/base.html:356 templates/base.html:1055
+#: templates/base.html:356 templates/base.html:1056
 #: templates/chd_converter.html:170 templates/chd_verify.html:126
-#: templates/game_detail.html:518 templates/login.html:254
+#: templates/game_detail.html:564 templates/login.html:254
 #: templates/museum.html:29 templates/museum_system.html:182
 #: templates/psn_trophies.html:297 templates/psn_trophy_detail.html:182
 #: templates/psn_trophy_detail.html:325 templates/reports.html:521
@@ -1758,70 +1772,70 @@ msgstr "Layar CRT"
 msgid "Cancel"
 msgstr "Batal"
 
-#: services/js_i18n_strings.py:544
+#: services/js_i18n_strings.py:560
 msgid "Cancel Bulk Scrape"
 msgstr "Batalkan Scrape Massal"
 
-#: services/js_i18n_strings.py:545
+#: services/js_i18n_strings.py:561
 msgid "Cancel failed"
 msgstr "Gagal membatalkan"
 
-#: services/js_i18n_strings.py:546
+#: services/js_i18n_strings.py:562
 msgid "Cancel request failed"
 msgstr "Permintaan pembatalan gagal"
 
-#: services/js_i18n_strings.py:547
+#: services/js_i18n_strings.py:563
 msgid "Cancellation requested"
 msgstr "Pembatalan diminta"
 
-#: services/js_i18n_strings.py:548
+#: services/js_i18n_strings.py:564
 msgid "Cancelled"
 msgstr "Dibatalkan"
 
-#: services/js_i18n_strings.py:549
+#: services/js_i18n_strings.py:565
 msgid "Cancelled by user"
 msgstr "Dibatalkan oleh pengguna"
 
-#: services/js_i18n_strings.py:550
+#: services/js_i18n_strings.py:566
 msgid "Checking RetroAchievements…"
 msgstr "Memeriksa RetroAchievements…"
 
-#: services/js_i18n_strings.py:551
+#: services/js_i18n_strings.py:567
 msgid "Clean Missing ROMs"
 msgstr "Bersihkan ROM yang Hilang"
 
-#: services/js_i18n_strings.py:552
+#: services/js_i18n_strings.py:568
 msgid "Clear CLZ Imports"
 msgstr "Hapus Impor CLZ"
 
-#: services/js_i18n_strings.py:553
+#: services/js_i18n_strings.py:569
 msgid "Clear HLTB data for this game?"
 msgstr "Hapus data HLTB untuk game ini?"
 
-#: services/js_i18n_strings.py:554 templates/achievements_system.html:109
+#: services/js_i18n_strings.py:570 templates/achievements_system.html:109
 msgid "Clear RA Data"
 msgstr "Hapus Data RA"
 
-#: services/js_i18n_strings.py:555
+#: services/js_i18n_strings.py:571
 msgid "Clear RetroAchievements Data"
 msgstr "Hapus Data RetroAchievements"
 
-#: services/js_i18n_strings.py:556
+#: services/js_i18n_strings.py:572
 #, python-brace-format
 msgid "Cleared RA data for {count} games in {system}"
 msgstr "Data RA dihapus untuk {count} game di {system}"
 
-#: services/js_i18n_strings.py:557
+#: services/js_i18n_strings.py:573
 #, python-brace-format
 msgid "Cleared RA data for {n} games"
 msgstr "Data RA dihapus untuk {n} game"
 
-#: services/js_i18n_strings.py:558
+#: services/js_i18n_strings.py:574
 #, python-brace-format
 msgid "Cleared RA data for {n} games in {system}"
 msgstr "Data RA dihapus untuk {n} game di {system}"
 
-#: services/js_i18n_strings.py:559
+#: services/js_i18n_strings.py:575
 #, python-brace-format
 msgid ""
 "Cleared RetroAchievements data for {n} games. Run \"Refresh "
@@ -1831,15 +1845,15 @@ msgstr ""
 "RetroAchievements\" untuk memindai ulang dengan pencocokan yang "
 "diperbarui."
 
-#: services/js_i18n_strings.py:560
+#: services/js_i18n_strings.py:576
 msgid "Clearing..."
 msgstr "Menghapus..."
 
-#: services/js_i18n_strings.py:561
+#: services/js_i18n_strings.py:577
 msgid "Click again to remove"
 msgstr "Klik sekali lagi untuk menghapus"
 
-#: services/js_i18n_strings.py:562 templates/_bulk_edit_modal.html:8
+#: services/js_i18n_strings.py:578 templates/_bulk_edit_modal.html:8
 #: templates/_bulk_scrape_modal.html:8
 #: templates/_modals/boxart_zoom_modal.html:3
 #: templates/_modals/manual_reader_modal.html:11
@@ -1847,48 +1861,52 @@ msgstr "Klik sekali lagi untuk menghapus"
 #: templates/_settings_tabs/customization.html:224
 #: templates/archive_scanner.html:749 templates/archive_scanner.html:757
 #: templates/base.html:249 templates/base.html:332 templates/base.html:349
-#: templates/base.html:695 templates/base.html:971 templates/base.html:1365
+#: templates/base.html:695 templates/base.html:972 templates/base.html:1366
 #: templates/dashboard.html:37 templates/reports.html:472
 #: templates/systems.html:121 templates/wishlist.html:56
 msgid "Close"
 msgstr "Tutup"
 
-#: services/js_i18n_strings.py:563
+#: services/js_i18n_strings.py:579
 msgid "Close keyboard shortcuts"
 msgstr "Tutup pintasan keyboard"
 
-#: services/js_i18n_strings.py:564
+#: services/js_i18n_strings.py:580
 msgid "Close modal / cancel"
 msgstr "Tutup modal / batal"
 
-#: services/js_i18n_strings.py:565 templates/dashboard.html:188
+#: services/js_i18n_strings.py:581 templates/dashboard.html:188
 #: templates/setup.html:20
 msgid "Complete"
 msgstr "Selesai"
 
-#: services/js_i18n_strings.py:566
+#: services/js_i18n_strings.py:582
 msgid "Complete!"
 msgstr "Selesai!"
 
-#: services/js_i18n_strings.py:567 templates/_bulk_edit_modal.html:29
-#: templates/analytics.html:1664 templates/base.html:1013
-#: templates/dashboard.html:506 templates/game_detail.html:222
+#: services/js_i18n_strings.py:583 templates/_bulk_edit_modal.html:29
+#: templates/analytics.html:1664 templates/base.html:1014
+#: templates/dashboard.html:506 templates/game_detail.html:257
 msgid "Completed"
 msgstr "Selesai"
 
-#: services/js_i18n_strings.py:568 templates/_bulk_edit_modal.html:23
-#: templates/analytics.html:137 templates/base.html:1008
+#: services/js_i18n_strings.py:584 templates/_bulk_edit_modal.html:23
+#: templates/analytics.html:137 templates/base.html:1009
 msgid "Completion Status"
 msgstr "Status Penyelesaian"
 
-#: services/js_i18n_strings.py:569
+#: services/js_i18n_strings.py:585 templates/game_detail.html:253
+msgid "Completion status"
+msgstr "Status penyelesaian"
+
+#: services/js_i18n_strings.py:586
 msgid "Completion status updated"
 msgstr "Status penyelesaian diperbarui"
 
-#: services/js_i18n_strings.py:570 templates/achievement_game.html:172
+#: services/js_i18n_strings.py:587 templates/achievement_game.html:172
 #: templates/achievement_game.html:197 templates/achievement_game.html:211
-#: templates/base.html:1050 templates/game_detail.html:512
-#: templates/game_detail.html:537 templates/game_detail.html:551
+#: templates/base.html:1051 templates/game_detail.html:558
+#: templates/game_detail.html:583 templates/game_detail.html:597
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:176
 #: templates/psn_trophy_detail.html:209
 #: templates/steam_achievement_game.html:134
@@ -1898,48 +1916,48 @@ msgstr "Status penyelesaian diperbarui"
 msgid "Completionist"
 msgstr "Completionist"
 
-#: services/js_i18n_strings.py:571 templates/settings.html:66
+#: services/js_i18n_strings.py:588 templates/settings.html:66
 msgid "Confirm Action"
 msgstr "Konfirmasi Tindakan"
 
-#: services/js_i18n_strings.py:572
+#: services/js_i18n_strings.py:589
 msgid "Confirm Bulk Edit"
 msgstr "Konfirmasi Edit Massal"
 
-#: services/js_i18n_strings.py:573
+#: services/js_i18n_strings.py:590
 msgid "Content generated successfully"
 msgstr "Konten berhasil dibuat"
 
-#: services/js_i18n_strings.py:574
+#: services/js_i18n_strings.py:591
 msgid "Controller"
 msgstr "Kontroler"
 
-#: services/js_i18n_strings.py:575
+#: services/js_i18n_strings.py:592
 msgid "Controller image saved"
 msgstr "Gambar kontroler disimpan"
 
-#: services/js_i18n_strings.py:576
+#: services/js_i18n_strings.py:593
 msgid "Controller image uploaded"
 msgstr "Gambar kontroler diunggah"
 
-#: services/js_i18n_strings.py:577
+#: services/js_i18n_strings.py:594
 msgid "Core"
 msgstr "Core"
 
-#: services/js_i18n_strings.py:578
+#: services/js_i18n_strings.py:595
 msgid "Could not accept these names."
 msgstr ""
 
-#: services/js_i18n_strings.py:579
+#: services/js_i18n_strings.py:596
 msgid "Could not apply metadata."
 msgstr "Tidak dapat menerapkan metadata."
 
-#: services/js_i18n_strings.py:580
+#: services/js_i18n_strings.py:597
 #, fuzzy
 msgid "Could not check for updates."
 msgstr "Tidak dapat menyimpannya."
 
-#: services/js_i18n_strings.py:581
+#: services/js_i18n_strings.py:598
 #, python-brace-format
 msgid ""
 "Could not download the {system} core. Check the internet connection and "
@@ -1948,358 +1966,367 @@ msgstr ""
 "Tidak dapat mengunduh core {system}. Periksa koneksi internet lalu coba "
 "lagi."
 
-#: services/js_i18n_strings.py:582
+#: services/js_i18n_strings.py:599
 msgid "Could not link these versions."
 msgstr "Tidak dapat menautkan versi-versi ini."
 
-#: services/js_i18n_strings.py:583
+#: services/js_i18n_strings.py:600
 msgid "Could not load suggestions."
 msgstr "Tidak dapat memuat saran."
 
-#: services/js_i18n_strings.py:584
+#: services/js_i18n_strings.py:601
 msgid "Could not load the suggested names."
 msgstr ""
 
-#: services/js_i18n_strings.py:585
+#: services/js_i18n_strings.py:602
 msgid "Could not open this manual. Use \"Open PDF in a new tab\" instead."
 msgstr ""
 "Manual ini tidak dapat dibuka. Gunakan \"Buka PDF di tab baru\" sebagai "
 "gantinya."
 
-#: services/js_i18n_strings.py:586
+#: services/js_i18n_strings.py:603
 msgid "Could not read the run status."
 msgstr ""
 
-#: services/js_i18n_strings.py:587
+#: services/js_i18n_strings.py:604
 msgid "Could not reconnect to server. Please refresh manually."
 msgstr "Tidak dapat menyambung ulang ke server. Silakan segarkan secara manual."
 
-#: services/js_i18n_strings.py:588
+#: services/js_i18n_strings.py:605
 msgid "Could not reject these names."
 msgstr ""
 
-#: services/js_i18n_strings.py:589
+#: services/js_i18n_strings.py:606
 msgid "Could not save that setting."
 msgstr "Tidak dapat menyimpan pengaturan itu."
 
-#: services/js_i18n_strings.py:590
+#: services/js_i18n_strings.py:607
 msgid "Could not save that."
 msgstr "Tidak dapat menyimpannya."
 
-#: services/js_i18n_strings.py:591
+#: services/js_i18n_strings.py:608
 msgid "Could not show this page of the manual."
 msgstr "Halaman manual ini tidak dapat ditampilkan."
 
-#: services/js_i18n_strings.py:592
+#: services/js_i18n_strings.py:609
 msgid "Could not start the run."
 msgstr ""
 
-#: services/js_i18n_strings.py:593
+#: services/js_i18n_strings.py:610
 msgid "Could not stop the run."
 msgstr ""
 
-#: services/js_i18n_strings.py:594
+#: services/js_i18n_strings.py:611
 msgid "Could not stop the running instance."
 msgstr "Tidak dapat menghentikan instans yang sedang berjalan."
 
-#: services/js_i18n_strings.py:595
+#: services/js_i18n_strings.py:612
 msgid "Could not unlink this version."
 msgstr "Tidak dapat melepas tautan versi ini."
 
-#: services/js_i18n_strings.py:596
+#: services/js_i18n_strings.py:613
 msgid "Could not write the summary."
 msgstr "Tidak dapat menulis ringkasan."
 
-#: services/js_i18n_strings.py:597
+#: services/js_i18n_strings.py:614
+#, fuzzy, python-brace-format
+msgid "Critic Score ({count} reviews)"
+msgstr "Skor Kritikus (%(count)s ulasan)"
+
+#: services/js_i18n_strings.py:615
 msgid "Currently set"
 msgstr "Pengaturan saat ini"
 
-#: services/js_i18n_strings.py:598
+#: services/js_i18n_strings.py:616
 msgid "Default"
 msgstr "Default"
 
-#: services/js_i18n_strings.py:599
+#: services/js_i18n_strings.py:617
 #, python-brace-format
 msgid "Default emulator for {system}"
 msgstr "Emulator default untuk {system}"
 
-#: services/js_i18n_strings.py:600
+#: services/js_i18n_strings.py:618
 msgid "Delete Log File"
 msgstr "Hapus Berkas Log"
 
-#: services/js_i18n_strings.py:601
+#: services/js_i18n_strings.py:619
 #, python-brace-format
 msgid "Detect failed: {error}"
 msgstr "Gagal mendeteksi: {error}"
 
-#: services/js_i18n_strings.py:602
+#: services/js_i18n_strings.py:620
 msgid "Detected path"
 msgstr "Jalur terdeteksi"
 
-#: services/js_i18n_strings.py:603
+#: services/js_i18n_strings.py:621
 msgid "Detecting…"
 msgstr "Mendeteksi…"
 
-#: services/js_i18n_strings.py:604 templates/_bulk_scrape_modal.html:69
+#: services/js_i18n_strings.py:622 templates/game_detail.html:240
+msgid "Does not start, or crashes the emulator."
+msgstr ""
+
+#: services/js_i18n_strings.py:623 templates/_bulk_scrape_modal.html:69
 #: templates/all_games.html:223 templates/psn_trophies.html:247
 #: templates/psn_trophies.html:307 templates/reports.html:525
 #: templates/system_games.html:203
 msgid "Done"
 msgstr "Selesai"
 
-#: services/js_i18n_strings.py:605
+#: services/js_i18n_strings.py:624
 #, python-brace-format
 msgid "Done. Games asked: {total}. Names suggested: {proposals}."
 msgstr ""
 
-#: services/js_i18n_strings.py:606
+#: services/js_i18n_strings.py:625
 msgid "Download the update first."
 msgstr ""
 
-#: services/js_i18n_strings.py:607
+#: services/js_i18n_strings.py:626
 msgid "Downloading 3D box art…"
 msgstr "Mengunduh boxart 3D…"
 
-#: services/js_i18n_strings.py:608
+#: services/js_i18n_strings.py:627
 msgid "Downloading RetroArch… This can take a few minutes."
 msgstr ""
 
-#: services/js_i18n_strings.py:609
+#: services/js_i18n_strings.py:628
 msgid "Downloading box art…"
 msgstr "Mengunduh boxart…"
 
-#: services/js_i18n_strings.py:610
+#: services/js_i18n_strings.py:629
 msgid "Downloading fan art…"
 msgstr "Mengunduh fanart…"
 
-#: services/js_i18n_strings.py:611
+#: services/js_i18n_strings.py:630
 msgid "Downloading manual…"
 msgstr "Mengunduh manual…"
 
-#: services/js_i18n_strings.py:612
+#: services/js_i18n_strings.py:631
 msgid "Downloading media…"
 msgstr "Mengunduh media…"
 
-#: services/js_i18n_strings.py:613
+#: services/js_i18n_strings.py:632
 msgid "Downloading screenshots…"
 msgstr "Mengunduh screenshot…"
 
-#: services/js_i18n_strings.py:614
+#: services/js_i18n_strings.py:633
 #, python-brace-format
 msgid "Downloading the {system} core…"
 msgstr "Mengunduh core {system}…"
 
-#: services/js_i18n_strings.py:615
+#: services/js_i18n_strings.py:634
 msgid "Downloading video…"
 msgstr "Mengunduh video…"
 
-#: services/js_i18n_strings.py:616
+#: services/js_i18n_strings.py:635
 #, python-brace-format
 msgid "Downloading {core} ({done} of {total})…"
 msgstr "Mengunduh {core} ({done} dari {total})…"
 
-#: services/js_i18n_strings.py:617 templates/_settings_tabs/account.html:318
-#: templates/base.html:969 templates/game_detail.html:105
+#: services/js_i18n_strings.py:636 templates/_settings_tabs/account.html:318
+#: templates/base.html:970 templates/game_detail.html:119
 #: templates/wishlist.html:641
 msgid "Edit"
 msgstr "Edit"
 
-#: services/js_i18n_strings.py:618
+#: services/js_i18n_strings.py:637
 msgid "Edit game"
 msgstr "Edit game"
 
-#: services/js_i18n_strings.py:619
+#: services/js_i18n_strings.py:638
 #, python-brace-format
 msgid "Edit: {title}"
 msgstr "Edit: {title}"
 
-#: services/js_i18n_strings.py:620
+#: services/js_i18n_strings.py:639
 msgid "Emulator"
 msgstr "Emulator"
 
-#: services/js_i18n_strings.py:621
+#: services/js_i18n_strings.py:640
 msgid "Enter one folder path."
 msgstr "Masukkan satu jalur folder."
 
-#: services/js_i18n_strings.py:622
+#: services/js_i18n_strings.py:641
 msgid "Error"
 msgstr "Kesalahan"
 
-#: services/js_i18n_strings.py:623
+#: services/js_i18n_strings.py:642
 msgid "Error clearing HLTB data"
 msgstr "Kesalahan saat menghapus data HLTB"
 
-#: services/js_i18n_strings.py:624
+#: services/js_i18n_strings.py:643
 msgid "Error connecting to HowLongToBeat"
 msgstr "Kesalahan saat menyambung ke HowLongToBeat"
 
-#: services/js_i18n_strings.py:625
+#: services/js_i18n_strings.py:644
 msgid "Error deleting log file"
 msgstr "Kesalahan saat menghapus berkas log"
 
-#: services/js_i18n_strings.py:626
+#: services/js_i18n_strings.py:645
 msgid "Error loading file"
 msgstr "Kesalahan saat memuat berkas"
 
-#: services/js_i18n_strings.py:627
+#: services/js_i18n_strings.py:646
 msgid "Error loading log file"
 msgstr "Kesalahan saat memuat berkas log"
 
-#: services/js_i18n_strings.py:628
+#: services/js_i18n_strings.py:647
 msgid "Error looking up HLTB"
 msgstr "Kesalahan saat mencari HLTB"
 
-#: services/js_i18n_strings.py:629
+#: services/js_i18n_strings.py:648
 msgid "Error refreshing RetroAchievements: "
 msgstr "Kesalahan saat menyegarkan RetroAchievements: "
 
-#: services/js_i18n_strings.py:630
+#: services/js_i18n_strings.py:649
 msgid "Error saving HLTB data"
 msgstr "Kesalahan saat menyimpan data HLTB"
 
-#: services/js_i18n_strings.py:631
+#: services/js_i18n_strings.py:650
 msgid "Error saving game: "
 msgstr "Kesalahan saat menyimpan game: "
 
-#: services/js_i18n_strings.py:632
+#: services/js_i18n_strings.py:651
 #, python-brace-format
 msgid "Error scanning library: {error}"
 msgstr "Kesalahan saat memindai pustaka: {error}"
 
-#: services/js_i18n_strings.py:633
+#: services/js_i18n_strings.py:652
 msgid "Error updating completion status"
 msgstr "Kesalahan saat memperbarui status penyelesaian"
 
-#: services/js_i18n_strings.py:634
+#: services/js_i18n_strings.py:653
 msgid "Error updating status"
 msgstr "Kesalahan saat memperbarui status"
 
-#: services/js_i18n_strings.py:635
+#: services/js_i18n_strings.py:654
 msgid "Europe"
 msgstr ""
 
-#: services/js_i18n_strings.py:636 templates/_modals/edit_modal.html:223
-#: templates/base.html:1241
+#: services/js_i18n_strings.py:655 templates/_modals/edit_modal.html:223
+#: templates/base.html:1242
 msgid "Exclusive"
 msgstr "Eksklusif"
 
-#: services/js_i18n_strings.py:637
+#: services/js_i18n_strings.py:656
 msgid "Failed to apply bulk edit. Check console for details."
 msgstr "Gagal menerapkan edit massal. Periksa konsol untuk detail."
 
-#: services/js_i18n_strings.py:638
+#: services/js_i18n_strings.py:657
 msgid "Failed to apply normalization"
 msgstr "Gagal menerapkan normalisasi"
 
-#: services/js_i18n_strings.py:639
+#: services/js_i18n_strings.py:658
 msgid "Failed to clean missing ROMs"
 msgstr "Gagal membersihkan ROM yang hilang"
 
-#: services/js_i18n_strings.py:640
+#: services/js_i18n_strings.py:659
 msgid "Failed to clear CLZ imports"
 msgstr "Gagal menghapus impor CLZ"
 
-#: services/js_i18n_strings.py:641
+#: services/js_i18n_strings.py:660
 msgid "Failed to clear HLTB: "
 msgstr "Gagal menghapus HLTB: "
 
-#: services/js_i18n_strings.py:642
+#: services/js_i18n_strings.py:661
 msgid "Failed to clear RA data"
 msgstr "Gagal menghapus data RA"
 
-#: services/js_i18n_strings.py:643
+#: services/js_i18n_strings.py:662
 msgid "Failed to delete"
 msgstr "Gagal menghapus"
 
-#: services/js_i18n_strings.py:644
+#: services/js_i18n_strings.py:663
 msgid "Failed to fetch controller image"
 msgstr "Gagal mengambil gambar kontroler"
 
-#: services/js_i18n_strings.py:645
+#: services/js_i18n_strings.py:664
 msgid "Failed to fetch image"
 msgstr "Gagal mengambil gambar"
 
-#: services/js_i18n_strings.py:646
+#: services/js_i18n_strings.py:665
 msgid "Failed to load game"
 msgstr "Gagal memuat game"
 
-#: services/js_i18n_strings.py:647
+#: services/js_i18n_strings.py:666
 msgid "Failed to load normalization data"
 msgstr "Gagal memuat data normalisasi"
 
-#: services/js_i18n_strings.py:648
+#: services/js_i18n_strings.py:667
 msgid "Failed to save HLTB: "
 msgstr "Gagal menyimpan HLTB: "
 
-#: services/js_i18n_strings.py:650
+#: services/js_i18n_strings.py:669
 msgid "Failed to save: "
 msgstr "Gagal menyimpan: "
 
-#: services/js_i18n_strings.py:651
+#: services/js_i18n_strings.py:670
 msgid "Failed to start RetroAchievements refresh"
 msgstr "Gagal memulai penyegaran RetroAchievements"
 
-#: services/js_i18n_strings.py:652
+#: services/js_i18n_strings.py:671
 msgid "Failed to start bulk scrape"
 msgstr "Gagal memulai scrape massal"
 
-#: services/js_i18n_strings.py:653
+#: services/js_i18n_strings.py:672
 msgid "Failed to start generation"
 msgstr "Gagal memulai pembuatan"
 
-#: services/js_i18n_strings.py:654
+#: services/js_i18n_strings.py:673
 msgid "Failed to update completion status: "
 msgstr "Gagal memperbarui status penyelesaian: "
 
-#: services/js_i18n_strings.py:655
+#: services/js_i18n_strings.py:674
 #, python-brace-format
 msgid "Failed to update status: {error}"
 msgstr "Gagal memperbarui status: {error}"
 
-#: services/js_i18n_strings.py:656
+#: services/js_i18n_strings.py:675
 #, python-brace-format
 msgid "Failed: {error}"
 msgstr "Gagal: {error}"
 
-#: services/js_i18n_strings.py:657
+#: services/js_i18n_strings.py:676
 msgid "Fetch All Controller Images"
 msgstr "Ambil Semua Gambar Kontroler"
 
-#: services/js_i18n_strings.py:658
+#: services/js_i18n_strings.py:677
 #, python-brace-format
 msgid "Fetching from {source}…"
 msgstr "Mengambil dari {source}…"
 
-#: services/js_i18n_strings.py:659
+#: services/js_i18n_strings.py:678
 #, python-brace-format
 msgid "Fetching images: {done} of {total}"
 msgstr "Mengambil gambar: {done} dari {total}"
 
-#: services/js_i18n_strings.py:660
+#: services/js_i18n_strings.py:679
 msgid "Focus search box"
 msgstr "Fokus ke kotak pencarian"
 
-#: services/js_i18n_strings.py:661 templates/logs.html:743
+#: services/js_i18n_strings.py:680 templates/logs.html:743
 msgid "From"
 msgstr "Dari"
 
-#: services/js_i18n_strings.py:662
+#: services/js_i18n_strings.py:681
 msgid "From the system setting"
 msgstr "Dari pengaturan sistem"
 
-#: services/js_i18n_strings.py:663
+#: services/js_i18n_strings.py:682
 msgid "Fullscreen"
 msgstr "Layar penuh"
 
-#: services/js_i18n_strings.py:664
+#: services/js_i18n_strings.py:683
 msgid "Game Page"
 msgstr "Halaman Game"
 
-#: services/js_i18n_strings.py:665
+#: services/js_i18n_strings.py:684
 msgid "Game details updated successfully."
 msgstr "Detail game berhasil diperbarui."
 
-#: services/js_i18n_strings.py:666 templates/_settings_tabs/data.html:186
+#: services/js_i18n_strings.py:685 templates/_settings_tabs/data.html:186
 #: templates/achievements_system.html:119 templates/analytics.html:571
 #: templates/analytics.html:1584 templates/analytics.html:1625
 #: templates/analytics.html:1947 templates/analytics.html:2122
@@ -2309,219 +2336,230 @@ msgstr "Detail game berhasil diperbarui."
 msgid "Games"
 msgstr "Game"
 
-#: services/js_i18n_strings.py:667
+#: services/js_i18n_strings.py:686
 msgid "Generate All Museum Content"
 msgstr "Buat Semua Konten Museum"
 
-#: services/js_i18n_strings.py:668 templates/museum_system.html:45
+#: services/js_i18n_strings.py:687 templates/museum_system.html:45
 msgid "Generate Content"
 msgstr "Buat Konten"
 
-#: services/js_i18n_strings.py:669 templates/museum.html:28
+#: services/js_i18n_strings.py:688 templates/museum.html:28
 msgid "Generating content..."
 msgstr "Membuat konten..."
 
-#: services/js_i18n_strings.py:670
+#: services/js_i18n_strings.py:689
 msgid "Generating..."
 msgstr "Membuat..."
 
-#: services/js_i18n_strings.py:671
+#: services/js_i18n_strings.py:690
 msgid "Generation cancelled"
 msgstr "Pembuatan dibatalkan"
 
-#: services/js_i18n_strings.py:672
+#: services/js_i18n_strings.py:691
 #, python-brace-format
 msgid ""
 "Generation complete: {generated} generated, {skipped} skipped, {failed} "
 "failed"
 msgstr "Pembuatan selesai: {generated} dibuat, {skipped} dilewati, {failed} gagal"
 
-#: services/js_i18n_strings.py:673
+#: services/js_i18n_strings.py:692
 msgid "Generation failed"
 msgstr "Pembuatan gagal"
 
-#: services/js_i18n_strings.py:674
+#: services/js_i18n_strings.py:693
 msgid "Generation request failed"
 msgstr "Permintaan pembuatan gagal"
 
-#: services/js_i18n_strings.py:675
+#: services/js_i18n_strings.py:694 templates/game_detail.html:237
+msgid ""
+"Gets in game, but cannot be finished, has serious glitches or runs too "
+"slowly."
+msgstr ""
+
+#: services/js_i18n_strings.py:695
 msgid "Go to Analytics"
 msgstr "Ke Analitik"
 
-#: services/js_i18n_strings.py:676
+#: services/js_i18n_strings.py:696
 msgid "Go to Changelog"
 msgstr "Ke Log Perubahan"
 
-#: services/js_i18n_strings.py:677
+#: services/js_i18n_strings.py:697
 msgid "Go to Dashboard"
 msgstr "Ke Dasbor"
 
-#: services/js_i18n_strings.py:678
+#: services/js_i18n_strings.py:698
 msgid "Go to Help"
 msgstr "Ke Bantuan"
 
-#: services/js_i18n_strings.py:679
+#: services/js_i18n_strings.py:699
 msgid "Go to Library"
 msgstr "Ke Pustaka"
 
-#: services/js_i18n_strings.py:680
+#: services/js_i18n_strings.py:700
 msgid "Go to Settings"
 msgstr "Ke Pengaturan"
 
-#: services/js_i18n_strings.py:681
+#: services/js_i18n_strings.py:701
 msgid "Go to Systems"
 msgstr "Ke Sistem"
 
-#: services/js_i18n_strings.py:682
+#: services/js_i18n_strings.py:702
 msgid "HLTB data cleared"
 msgstr "Data HLTB dihapus"
 
-#: services/js_i18n_strings.py:683
+#: services/js_i18n_strings.py:703
 msgid "HLTB data saved"
 msgstr "Data HLTB disimpan"
 
-#: services/js_i18n_strings.py:684
+#: services/js_i18n_strings.py:704
 msgid "HLTB lookup cancelled"
 msgstr "Pencarian HLTB dibatalkan"
 
-#: services/js_i18n_strings.py:685
+#: services/js_i18n_strings.py:705
 msgid "Handheld LCD"
 msgstr "LCD genggam"
 
-#: services/js_i18n_strings.py:686 templates/all_games.html:99
+#: services/js_i18n_strings.py:706 templates/all_games.html:99
 #: templates/system_games.html:90
 msgid "Has Achievements"
 msgstr "Memiliki Achievement"
 
-#: services/js_i18n_strings.py:687 templates/logs.html:719
+#: services/js_i18n_strings.py:707 templates/logs.html:719
 msgid "Image Resize"
 msgstr "Ubah Ukuran Gambar"
 
-#: services/js_i18n_strings.py:688
+#: services/js_i18n_strings.py:708
 msgid "Image fetch cancelled."
 msgstr "Pengambilan gambar dibatalkan."
 
-#: services/js_i18n_strings.py:689
+#: services/js_i18n_strings.py:709
 msgid "Image must be under 10MB"
 msgstr "Gambar harus di bawah 10MB"
 
-#: services/js_i18n_strings.py:690 templates/_bulk_edit_modal.html:27
+#: services/js_i18n_strings.py:710 templates/_bulk_edit_modal.html:27
 #: templates/achievements_system.html:151
 #: templates/achievements_system.html:170 templates/analytics.html:1664
-#: templates/base.html:1011 templates/dashboard.html:362
-#: templates/dashboard.html:502 templates/game_detail.html:220
+#: templates/base.html:1012 templates/dashboard.html:362
+#: templates/dashboard.html:502 templates/game_detail.html:255
 #: templates/steam_achievements.html:77 templates/xbox_achievements.html:77
 msgid "In Progress"
 msgstr "Sedang Berlangsung"
 
-#: services/js_i18n_strings.py:691
+#: services/js_i18n_strings.py:711
 msgid "Initializing bulk scrape..."
 msgstr "Menginisialisasi scrape massal..."
 
-#: services/js_i18n_strings.py:692 templates/_bulk_scrape_modal.html:23
+#: services/js_i18n_strings.py:712 templates/_bulk_scrape_modal.html:23
 #: templates/duplicate_finder.html:250 templates/screenshot_dedup.html:276
 msgid "Initializing..."
 msgstr "Menginisialisasi..."
 
-#: services/js_i18n_strings.py:693
+#: services/js_i18n_strings.py:713
 msgid "Input lag reduction"
 msgstr "Pengurangan jeda input"
 
-#: services/js_i18n_strings.py:694
+#: services/js_i18n_strings.py:714
 #, fuzzy
 msgid "Install update"
 msgstr "Terakhir Diperbarui"
 
-#: services/js_i18n_strings.py:695
+#: services/js_i18n_strings.py:715
 #, python-brace-format
 msgid "Installed {n} cores."
 msgstr "{n} core terpasang."
 
-#: services/js_i18n_strings.py:696
+#: services/js_i18n_strings.py:716
 #, python-brace-format
 msgid "Installed {n} cores. Failed: {failed}"
 msgstr "{n} core terpasang. Gagal: {failed}"
 
-#: services/js_i18n_strings.py:697
+#: services/js_i18n_strings.py:717
 msgid "Installing the update and restarting RetroDB…"
 msgstr ""
 
-#: services/js_i18n_strings.py:698
+#: services/js_i18n_strings.py:718
 msgid "Integer scaling"
 msgstr "Penskalaan bilangan bulat"
 
-#: services/js_i18n_strings.py:699
+#: services/js_i18n_strings.py:719
 msgid "Japan"
 msgstr ""
 
-#: services/js_i18n_strings.py:700
+#: services/js_i18n_strings.py:720
 msgid "Just synced"
 msgstr "Baru saja disinkronkan"
 
-#: services/js_i18n_strings.py:701
+#: services/js_i18n_strings.py:721
 msgid "Keyboard Shortcuts"
 msgstr "Pintasan Keyboard"
 
-#: services/js_i18n_strings.py:702
+#: services/js_i18n_strings.py:722
 msgid "Kill"
 msgstr "Paksa Berhenti"
 
-#: services/js_i18n_strings.py:703
+#: services/js_i18n_strings.py:723
+#, fuzzy, python-brace-format
+msgid "Last tested {date}."
+msgstr "Ditambahkan {date}"
+
+#: services/js_i18n_strings.py:724
 #, python-brace-format
 msgid "Launch failed: {error}"
 msgstr "Gagal menjalankan: {error}"
 
-#: services/js_i18n_strings.py:704
+#: services/js_i18n_strings.py:725
 #, python-brace-format
 msgid "Launched (pid {pid})"
 msgstr "Dijalankan (pid {pid})"
 
-#: services/js_i18n_strings.py:705
+#: services/js_i18n_strings.py:726
 msgid "Launched (replaced previous instance)"
 msgstr "Dijalankan (menggantikan instans sebelumnya)"
 
-#: services/js_i18n_strings.py:706
+#: services/js_i18n_strings.py:727
 msgid "Launching…"
 msgstr "Menjalankan…"
 
-#: services/js_i18n_strings.py:707
+#: services/js_i18n_strings.py:728
 #, python-brace-format
 msgid "Library scan complete! Found {n} new games."
 msgstr "Pemindaian pustaka selesai! Ditemukan {n} game baru."
 
-#: services/js_i18n_strings.py:708
+#: services/js_i18n_strings.py:729
 msgid "Link"
 msgstr "Tautkan"
 
-#: services/js_i18n_strings.py:709
+#: services/js_i18n_strings.py:730
 msgid "Link ticked games"
 msgstr "Tautkan game yang dicentang"
 
-#: services/js_i18n_strings.py:710
+#: services/js_i18n_strings.py:731
 msgid "Loading log file..."
 msgstr "Memuat berkas log..."
 
-#: services/js_i18n_strings.py:711
+#: services/js_i18n_strings.py:732
 msgid "Loading the manual…"
 msgstr "Memuat manual…"
 
-#: services/js_i18n_strings.py:712 templates/settings_emulators.html:132
+#: services/js_i18n_strings.py:733 templates/settings_emulators.html:132
 #: templates/settings_emulators.html:202
 msgid "Loading…"
 msgstr "Memuat…"
 
-#: services/js_i18n_strings.py:713
+#: services/js_i18n_strings.py:734
 msgid "Log file deleted"
 msgstr "Berkas log dihapus"
 
-#: services/js_i18n_strings.py:714
+#: services/js_i18n_strings.py:735
 msgid "Looking for versions…"
 msgstr "Mencari versi…"
 
-#: services/js_i18n_strings.py:715 templates/achievement_game.html:168
+#: services/js_i18n_strings.py:736 templates/achievement_game.html:168
 #: templates/achievement_game.html:197 templates/achievement_game.html:207
-#: templates/base.html:1046 templates/game_detail.html:508
-#: templates/game_detail.html:537 templates/game_detail.html:547
+#: templates/base.html:1047 templates/game_detail.html:554
+#: templates/game_detail.html:583 templates/game_detail.html:593
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:172
 #: templates/psn_trophy_detail.html:205
 #: templates/steam_achievement_game.html:133
@@ -2531,10 +2569,10 @@ msgstr "Mencari versi…"
 msgid "Main + Extras"
 msgstr "Utama + Tambahan"
 
-#: services/js_i18n_strings.py:716 templates/achievement_game.html:164
+#: services/js_i18n_strings.py:737 templates/achievement_game.html:164
 #: templates/achievement_game.html:197 templates/achievement_game.html:203
-#: templates/base.html:1042 templates/game_detail.html:504
-#: templates/game_detail.html:537 templates/game_detail.html:543
+#: templates/base.html:1043 templates/game_detail.html:550
+#: templates/game_detail.html:583 templates/game_detail.html:589
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:168
 #: templates/psn_trophy_detail.html:201
 #: templates/steam_achievement_game.html:132
@@ -2544,15 +2582,15 @@ msgstr "Utama + Tambahan"
 msgid "Main Story"
 msgstr "Cerita Utama"
 
-#: services/js_i18n_strings.py:717
+#: services/js_i18n_strings.py:738
 msgid "Marked as not versions."
 msgstr "Ditandai bukan versi."
 
-#: services/js_i18n_strings.py:718
+#: services/js_i18n_strings.py:739
 msgid "Match found - please confirm to save"
 msgstr "Kecocokan ditemukan - silakan konfirmasi untuk menyimpan"
 
-#: services/js_i18n_strings.py:719
+#: services/js_i18n_strings.py:740
 msgid ""
 "Matched using this alternate/regional title — confirm it refers to the "
 "same game before saving."
@@ -2560,7 +2598,7 @@ msgstr ""
 "Dicocokkan menggunakan judul alternatif/regional ini — konfirmasi bahwa "
 "ini merujuk ke game yang sama sebelum menyimpan."
 
-#: services/js_i18n_strings.py:720
+#: services/js_i18n_strings.py:741
 #, python-brace-format
 msgid ""
 "Matched via alternate title \"{term}\" — HLTB shows it as \"{match}\". "
@@ -2569,298 +2607,298 @@ msgstr ""
 "Dicocokkan melalui judul alternatif \"{term}\" — HLTB menampilkannya "
 "sebagai \"{match}\". Konfirmasi sebelum menyimpan."
 
-#: services/js_i18n_strings.py:721
+#: services/js_i18n_strings.py:742
 #, python-brace-format
 msgid "Missing: {files}"
 msgstr "Tidak ditemukan: {files}"
 
-#: services/js_i18n_strings.py:722
+#: services/js_i18n_strings.py:743
 msgid "Multi-System"
 msgstr "Multi-Sistem"
 
-#: services/js_i18n_strings.py:723
+#: services/js_i18n_strings.py:744
 msgid "Multi-platform"
 msgstr "Multi-platform"
 
-#: services/js_i18n_strings.py:724
+#: services/js_i18n_strings.py:745
 msgid "Museum generation started"
 msgstr "Pembuatan museum dimulai"
 
-#: services/js_i18n_strings.py:725
+#: services/js_i18n_strings.py:746
 msgid "NOT"
 msgstr "TIDAK"
 
-#: services/js_i18n_strings.py:726
+#: services/js_i18n_strings.py:747
 #, python-brace-format
 msgid "Names changed: {accepted}."
 msgstr ""
 
-#: services/js_i18n_strings.py:727
+#: services/js_i18n_strings.py:748
 #, python-brace-format
 msgid ""
 "Names changed: {accepted}. Skipped because their title changed since: "
 "{skipped}."
 msgstr ""
 
-#: services/js_i18n_strings.py:728
+#: services/js_i18n_strings.py:749
 #, python-brace-format
 msgid "Names rejected: {rejected}. They will not be suggested again."
 msgstr ""
 
-#: services/js_i18n_strings.py:729
+#: services/js_i18n_strings.py:750
 msgid "Navigation"
 msgstr "Navigasi"
 
-#: services/js_i18n_strings.py:730
+#: services/js_i18n_strings.py:751
 msgid "Network error"
 msgstr "Kesalahan jaringan"
 
-#: services/js_i18n_strings.py:731
+#: services/js_i18n_strings.py:752
 msgid "Network error starting bulk scrape"
 msgstr "Kesalahan jaringan saat memulai scrape massal"
 
-#: services/js_i18n_strings.py:732
+#: services/js_i18n_strings.py:753
 msgid "Next disk"
 msgstr "Disk berikutnya"
 
-#: services/js_i18n_strings.py:733
+#: services/js_i18n_strings.py:754
 msgid "Next disk failed"
 msgstr "Gagal ganti ke disk berikutnya"
 
-#: services/js_i18n_strings.py:734 templates/_bulk_edit_modal.html:171
-#: templates/_modals/edit_modal.html:143 templates/game_detail.html:666
-#: templates/game_detail.html:734
+#: services/js_i18n_strings.py:755 templates/_bulk_edit_modal.html:171
+#: templates/_modals/edit_modal.html:143 templates/game_detail.html:712
+#: templates/game_detail.html:780
 msgid "No"
 msgstr "Tidak"
 
-#: services/js_i18n_strings.py:735
+#: services/js_i18n_strings.py:756
 msgid "No (already set)"
 msgstr "Tidak (sudah diatur)"
 
-#: services/js_i18n_strings.py:736
+#: services/js_i18n_strings.py:757
 msgid "No CLZ Import games found"
 msgstr "Tidak ada game Impor CLZ yang ditemukan"
 
-#: services/js_i18n_strings.py:737
+#: services/js_i18n_strings.py:758
 msgid "No Changes"
 msgstr "Tidak Ada Perubahan"
 
-#: services/js_i18n_strings.py:738
+#: services/js_i18n_strings.py:759
 msgid "No Games Selected"
 msgstr "Tidak Ada Game yang Dipilih"
 
-#: services/js_i18n_strings.py:739
+#: services/js_i18n_strings.py:760
 msgid "No HLTB data found"
 msgstr "Tidak ada data HLTB yang ditemukan"
 
-#: services/js_i18n_strings.py:740
+#: services/js_i18n_strings.py:761
 msgid "No achievements found"
 msgstr "Tidak ada achievement yang ditemukan"
 
-#: services/js_i18n_strings.py:741 templates/achievement_game.html:72
+#: services/js_i18n_strings.py:762 templates/achievement_game.html:72
 #: templates/steam_achievement_game.html:69
 #: templates/xbox_achievement_game.html:59
 msgid "No description available."
 msgstr "Tidak ada deskripsi yang tersedia."
 
-#: services/js_i18n_strings.py:742
+#: services/js_i18n_strings.py:763
 msgid "No emulator AppImages found in the scan paths."
 msgstr "Tidak ada AppImage emulator yang ditemukan di jalur pindai."
 
-#: services/js_i18n_strings.py:743
+#: services/js_i18n_strings.py:764
 msgid "No emulators registered."
 msgstr "Belum ada emulator yang terdaftar."
 
-#: services/js_i18n_strings.py:744
+#: services/js_i18n_strings.py:765
 msgid "No folders yet."
 msgstr "Belum ada folder."
 
-#: services/js_i18n_strings.py:745
+#: services/js_i18n_strings.py:766
 msgid "No games or systems match"
 msgstr ""
 
-#: services/js_i18n_strings.py:746
+#: services/js_i18n_strings.py:767
 msgid "No log files in this category"
 msgstr "Tidak ada berkas log dalam kategori ini"
 
-#: services/js_i18n_strings.py:747
+#: services/js_i18n_strings.py:768
 msgid "No log lines match current filters"
 msgstr "Tidak ada baris log yang cocok dengan filter saat ini"
 
-#: services/js_i18n_strings.py:748
+#: services/js_i18n_strings.py:769
 msgid "No mappings yet. Add an emulator folder above."
 msgstr "Belum ada pemetaan. Tambahkan folder emulator di atas."
 
-#: services/js_i18n_strings.py:749
+#: services/js_i18n_strings.py:770
 msgid "No matching games on this system."
 msgstr "Tidak ada game yang cocok di sistem ini."
 
-#: services/js_i18n_strings.py:750
+#: services/js_i18n_strings.py:771
 msgid "No missing ROM files found."
 msgstr "Tidak ada berkas ROM yang hilang ditemukan."
 
-#: services/js_i18n_strings.py:751
+#: services/js_i18n_strings.py:772
 #, fuzzy
 msgid "No newer version is available."
 msgstr "Tidak ada deskripsi yang tersedia."
 
-#: services/js_i18n_strings.py:752
+#: services/js_i18n_strings.py:773
 msgid "No options available"
 msgstr "Tidak ada opsi yang tersedia"
 
-#: services/js_i18n_strings.py:753
+#: services/js_i18n_strings.py:774
 msgid "No ratings available"
 msgstr "Tidak ada rating yang tersedia"
 
-#: services/js_i18n_strings.py:754
+#: services/js_i18n_strings.py:775
 msgid "No results"
 msgstr "Tidak ada hasil"
 
-#: services/js_i18n_strings.py:755
+#: services/js_i18n_strings.py:776
 msgid "No results found"
 msgstr "Tidak ada hasil yang ditemukan"
 
-#: services/js_i18n_strings.py:756
+#: services/js_i18n_strings.py:777
 msgid "No results found on HowLongToBeat"
 msgstr "Tidak ada hasil yang ditemukan di HowLongToBeat"
 
-#: services/js_i18n_strings.py:757
+#: services/js_i18n_strings.py:778
 msgid "No sessions match current filters"
 msgstr "Tidak ada sesi yang cocok dengan filter saat ini"
 
-#: services/js_i18n_strings.py:758
+#: services/js_i18n_strings.py:779
 msgid "No suggested names waiting. Press Ask the AI to look for some."
 msgstr ""
 
-#: services/js_i18n_strings.py:759
+#: services/js_i18n_strings.py:780
 msgid "No suggestions. Run Backfill Alternate Titles in Maintenance to find more."
 msgstr ""
 "Tidak ada saran. Jalankan Isi Ulang Judul Alternatif di Pemeliharaan "
 "untuk menemukan lebih banyak."
 
-#: services/js_i18n_strings.py:760 templates/game_detail.html:814
+#: services/js_i18n_strings.py:781 templates/game_detail.html:860
 msgid "None"
 msgstr "Tidak Ada"
 
-#: services/js_i18n_strings.py:761
+#: services/js_i18n_strings.py:782
 #, python-brace-format
 msgid "Normalization applied: {games} games updated, {rules} rules saved"
 msgstr "Normalisasi diterapkan: {games} game diperbarui, {rules} aturan disimpan"
 
-#: services/js_i18n_strings.py:762
+#: services/js_i18n_strings.py:783
 msgid "Not versions"
 msgstr "Bukan versi"
 
-#: services/js_i18n_strings.py:763 templates/base.html:1400
+#: services/js_i18n_strings.py:784 templates/base.html:1401
 msgid "Now playing"
 msgstr "Sedang dimainkan"
 
-#: services/js_i18n_strings.py:764 templates/base.html:339
+#: services/js_i18n_strings.py:785 templates/base.html:339
 msgid "OK"
 msgstr "OK"
 
-#: services/js_i18n_strings.py:765
+#: services/js_i18n_strings.py:786
 msgid "Off"
 msgstr "Mati"
 
-#: services/js_i18n_strings.py:766
+#: services/js_i18n_strings.py:787
 msgid "On"
 msgstr "Nyala"
 
-#: services/js_i18n_strings.py:767
+#: services/js_i18n_strings.py:788
 msgid "Operation completed"
 msgstr "Operasi selesai"
 
-#: services/js_i18n_strings.py:768
+#: services/js_i18n_strings.py:789
 msgid "Operation failed"
 msgstr "Operasi gagal"
 
-#: services/js_i18n_strings.py:769
+#: services/js_i18n_strings.py:790
 msgid "Other"
 msgstr "Lainnya"
 
-#: services/js_i18n_strings.py:770
+#: services/js_i18n_strings.py:791
 msgid "PSN Imports"
 msgstr "Impor PSN"
 
-#: services/js_i18n_strings.py:771
+#: services/js_i18n_strings.py:792
 msgid "Page:"
 msgstr "Halaman:"
 
-#: services/js_i18n_strings.py:772
+#: services/js_i18n_strings.py:793
 msgid "Part of a Series"
 msgstr "Bagian dari Seri"
 
-#: services/js_i18n_strings.py:773 templates/_bulk_scrape_modal.html:46
+#: services/js_i18n_strings.py:794 templates/_bulk_scrape_modal.html:46
 #: templates/archive_scanner.html:658 templates/archive_scanner.html:795
 #: templates/psn_trophies.html:294
 msgid "Pause"
 msgstr "Jeda"
 
-#: services/js_i18n_strings.py:774
+#: services/js_i18n_strings.py:795
 msgid "Paused - Click Resume to continue"
 msgstr "Dijeda - Klik Lanjutkan untuk melanjutkan"
 
-#: services/js_i18n_strings.py:775
+#: services/js_i18n_strings.py:796
 msgid "Platform not found"
 msgstr "Platform tidak ditemukan"
 
-#: services/js_i18n_strings.py:776 templates/game_detail.html:85
+#: services/js_i18n_strings.py:797 templates/game_detail.html:99
 msgid "Play"
 msgstr "Mainkan"
 
-#: services/js_i18n_strings.py:777 templates/_bulk_edit_modal.html:28
-#: templates/analytics.html:1664 templates/base.html:1012
-#: templates/dashboard.html:504 templates/game_detail.html:221
+#: services/js_i18n_strings.py:798 templates/_bulk_edit_modal.html:28
+#: templates/analytics.html:1664 templates/base.html:1013
+#: templates/dashboard.html:504 templates/game_detail.html:256
 msgid "Played"
 msgstr "Dimainkan"
 
-#: services/js_i18n_strings.py:778
+#: services/js_i18n_strings.py:799
 msgid "Please change at least one field before applying."
 msgstr "Silakan ubah setidaknya satu kolom sebelum menerapkan."
 
-#: services/js_i18n_strings.py:779
+#: services/js_i18n_strings.py:800
 msgid "Please enter a game title"
 msgstr "Silakan masukkan judul game"
 
-#: services/js_i18n_strings.py:780
+#: services/js_i18n_strings.py:801
 msgid "Please select at least one game to edit."
 msgstr "Silakan pilih setidaknya satu game untuk diedit."
 
-#: services/js_i18n_strings.py:781
+#: services/js_i18n_strings.py:802
 msgid "Please select at least one game to scrape."
 msgstr "Silakan pilih setidaknya satu game untuk di-scrape."
 
-#: services/js_i18n_strings.py:782
+#: services/js_i18n_strings.py:803
 msgid "Pre-session log entries"
 msgstr "Entri log pra-sesi"
 
-#: services/js_i18n_strings.py:783
+#: services/js_i18n_strings.py:804
 msgid "Processing images…"
 msgstr "Memproses gambar…"
 
-#: services/js_i18n_strings.py:784 templates/game_imports.html:418
+#: services/js_i18n_strings.py:805 templates/game_imports.html:418
 msgid "Processing..."
 msgstr "Memproses..."
 
-#: services/js_i18n_strings.py:785
+#: services/js_i18n_strings.py:806
 #, python-brace-format
 msgid "Processing: {file}"
 msgstr "Memproses: {file}"
 
-#: services/js_i18n_strings.py:786
+#: services/js_i18n_strings.py:807
 msgid "Queued"
 msgstr "Dalam Antrean"
 
-#: services/js_i18n_strings.py:787
+#: services/js_i18n_strings.py:808
 msgid "RA Data Cleared"
 msgstr "Data RA Dihapus"
 
-#: services/js_i18n_strings.py:788
+#: services/js_i18n_strings.py:809
 msgid "ROM Files"
 msgstr "Berkas ROM"
 
-#: services/js_i18n_strings.py:789 templates/_macros/nav_tabs.html:34
+#: services/js_i18n_strings.py:810 templates/_macros/nav_tabs.html:34
 #: templates/archive_scanner.html:561 templates/base.html:174
 #: templates/chd_converter.html:64 templates/chd_verify.html:80
 #: templates/duplicate_finder.html:166 templates/logs.html:713
@@ -2870,422 +2908,452 @@ msgstr "Berkas ROM"
 msgid "ROM Tools"
 msgstr "Alat ROM"
 
-#: services/js_i18n_strings.py:790
+#: services/js_i18n_strings.py:811 templates/game_detail.html:237
+msgid "RPCS3: Ingame"
+msgstr ""
+
+#: services/js_i18n_strings.py:812 templates/game_detail.html:238
+#, fuzzy
+msgid "RPCS3: Intro"
+msgstr "Trofi RPCS3"
+
+#: services/js_i18n_strings.py:813 templates/game_detail.html:239
+msgid "RPCS3: Loadable"
+msgstr ""
+
+#: services/js_i18n_strings.py:814 templates/game_detail.html:240
+#, fuzzy
+msgid "RPCS3: Nothing"
+msgstr "Trofi RPCS3"
+
+#: services/js_i18n_strings.py:815 templates/game_detail.html:236
+msgid "RPCS3: Playable"
+msgstr ""
+
+#: services/js_i18n_strings.py:816
 msgid "Ready"
 msgstr "Siap"
 
-#: services/js_i18n_strings.py:791
+#: services/js_i18n_strings.py:817
 msgid "Refresh RetroAchievements"
 msgstr "Segarkan RetroAchievements"
 
-#: services/js_i18n_strings.py:792
+#: services/js_i18n_strings.py:818
 #, python-brace-format
 msgid "Refresh: {system}"
 msgstr "Segarkan: {system}"
 
-#: services/js_i18n_strings.py:793
+#: services/js_i18n_strings.py:819
 #, python-brace-format
 msgid "Refreshing RA for {system}..."
 msgstr "Menyegarkan RA untuk {system}..."
 
-#: services/js_i18n_strings.py:794
+#: services/js_i18n_strings.py:820
 msgid "Regional name matches"
 msgstr "Nama regional cocok"
 
-#: services/js_i18n_strings.py:795 templates/compare_games.html:24
+#: services/js_i18n_strings.py:821 templates/compare_games.html:24
 #: templates/compare_games.html:40
 msgid "Remove"
 msgstr "Hapus"
 
-#: services/js_i18n_strings.py:796
+#: services/js_i18n_strings.py:822
 msgid "Remove background from the uploaded image?"
 msgstr "Hapus latar belakang dari gambar yang diunggah?"
 
-#: services/js_i18n_strings.py:797
+#: services/js_i18n_strings.py:823
 msgid "Remove from queue"
 msgstr "Hapus dari antrean"
 
-#: services/js_i18n_strings.py:798
+#: services/js_i18n_strings.py:824
 #, python-brace-format
 msgid "Removed {n} CLZ Import games"
 msgstr "{n} game Impor CLZ dihapus"
 
-#: services/js_i18n_strings.py:799
+#: services/js_i18n_strings.py:825
 #, python-brace-format
 msgid "Removed {n} CLZ Import games:"
 msgstr "{n} game Impor CLZ dihapus:"
 
-#: services/js_i18n_strings.py:800
+#: services/js_i18n_strings.py:826
 #, python-brace-format
 msgid "Removed {n} games with missing ROMs"
 msgstr "{n} game dengan ROM hilang dihapus"
 
-#: services/js_i18n_strings.py:801
+#: services/js_i18n_strings.py:827
 #, python-brace-format
 msgid "Removed {n} games:"
 msgstr "{n} game dihapus:"
 
-#: services/js_i18n_strings.py:802
+#: services/js_i18n_strings.py:828
 msgid "Removing background…"
 msgstr "Menghapus latar belakang…"
 
-#: services/js_i18n_strings.py:803
+#: services/js_i18n_strings.py:829
 msgid "Removing..."
 msgstr "Menghapus..."
 
-#: services/js_i18n_strings.py:804 templates/_bulk_edit_modal.html:42
+#: services/js_i18n_strings.py:830 templates/_bulk_edit_modal.html:42
 #: templates/_bulk_edit_modal.html:56 templates/_bulk_edit_modal.html:70
 #: templates/_bulk_edit_modal.html:124 templates/_bulk_edit_modal.html:140
 #: templates/_bulk_edit_modal.html:156 templates/_bulk_edit_modal.html:180
 msgid "Replace"
 msgstr "Ganti"
 
-#: services/js_i18n_strings.py:805 templates/logs.html:716
+#: services/js_i18n_strings.py:831 templates/logs.html:716
 msgid "Reports"
 msgstr "Laporan"
 
-#: services/js_i18n_strings.py:806
+#: services/js_i18n_strings.py:832
 msgid "Resolution scale"
 msgstr "Skala resolusi"
 
-#: services/js_i18n_strings.py:807
+#: services/js_i18n_strings.py:833
 msgid "Restarting server..."
 msgstr "Memulai ulang server..."
 
-#: services/js_i18n_strings.py:808
+#: services/js_i18n_strings.py:834
 msgid "Resume"
 msgstr "Lanjutkan"
 
-#: services/js_i18n_strings.py:809
+#: services/js_i18n_strings.py:835
 msgid "RetroArch is installed."
 msgstr ""
 
-#: services/js_i18n_strings.py:810
+#: services/js_i18n_strings.py:836
 msgid "RetroArch was not installed."
 msgstr ""
 
-#: services/js_i18n_strings.py:811
+#: services/js_i18n_strings.py:837
 #, python-brace-format
 msgid "RetroArch was not installed: {error}"
 msgstr ""
 
-#: services/js_i18n_strings.py:812
+#: services/js_i18n_strings.py:838
 msgid "RetroDB default"
 msgstr "Bawaan RetroDB"
 
-#: services/js_i18n_strings.py:813
+#: services/js_i18n_strings.py:839
 msgid "RetroDB has not come back yet. See logs/update.log, then reload this page."
 msgstr ""
 
-#: services/js_i18n_strings.py:814
+#: services/js_i18n_strings.py:840
 msgid ""
 "RetroDB is run by a process manager here. Download the release and "
 "install it yourself."
 msgstr ""
 
-#: services/js_i18n_strings.py:815
+#: services/js_i18n_strings.py:841
 msgid ""
 "RetroDB will back up its database, install the update and restart. Anyone"
 " using it will be disconnected for a minute or two."
 msgstr ""
 
-#: services/js_i18n_strings.py:816
+#: services/js_i18n_strings.py:842
 #, fuzzy, python-brace-format
 msgid "RetroDB {version} is available."
 msgstr "Tidak ada deskripsi yang tersedia."
 
-#: services/js_i18n_strings.py:817
+#: services/js_i18n_strings.py:843
 msgid "Run-ahead, 1 frame"
 msgstr "Run-ahead, 1 frame"
 
-#: services/js_i18n_strings.py:818
+#: services/js_i18n_strings.py:844
 msgid "Running"
 msgstr "Berjalan"
 
-#: services/js_i18n_strings.py:819
+#: services/js_i18n_strings.py:845
 msgid "Running..."
 msgstr "Berjalan..."
 
-#: services/js_i18n_strings.py:820
+#: services/js_i18n_strings.py:846
 msgid "Same IGDB game"
 msgstr "Game IGDB yang sama"
 
-#: services/js_i18n_strings.py:821
+#: services/js_i18n_strings.py:847
 msgid "Same ScreenScraper game"
 msgstr "Game ScreenScraper yang sama"
 
-#: services/js_i18n_strings.py:822
+#: services/js_i18n_strings.py:848
 msgid "Same title, different region"
 msgstr "Judul sama, wilayah berbeda"
 
-#: services/js_i18n_strings.py:823
+#: services/js_i18n_strings.py:849
 msgid "Save Failed"
 msgstr "Penyimpanan Gagal"
 
-#: services/js_i18n_strings.py:824
+#: services/js_i18n_strings.py:850
 #, python-brace-format
 msgid "Save failed: {error}"
 msgstr "Gagal menyimpan: {error}"
 
-#: services/js_i18n_strings.py:825
+#: services/js_i18n_strings.py:851
 msgid "Saved"
 msgstr "Disimpan"
 
-#: services/js_i18n_strings.py:826
+#: services/js_i18n_strings.py:852
 msgid "Saved."
 msgstr "Tersimpan."
 
-#: services/js_i18n_strings.py:827
+#: services/js_i18n_strings.py:853
 msgid "Saved. It applies the next time you press Play."
 msgstr "Tersimpan. Berlaku saat Anda menekan Mainkan berikutnya."
 
-#: services/js_i18n_strings.py:828
+#: services/js_i18n_strings.py:854
 msgid "Saving to the database…"
 msgstr "Menyimpan ke database…"
 
-#: services/js_i18n_strings.py:829
+#: services/js_i18n_strings.py:855
 msgid "Saving..."
 msgstr "Menyimpan..."
 
-#: services/js_i18n_strings.py:830
+#: services/js_i18n_strings.py:856
 msgid "Saving…"
 msgstr "Menyimpan…"
 
-#: services/js_i18n_strings.py:831
+#: services/js_i18n_strings.py:857
 #, python-brace-format
 msgid "Scan failed (HTTP {status})"
 msgstr "Pemindaian gagal (HTTP {status})"
 
-#: services/js_i18n_strings.py:832
+#: services/js_i18n_strings.py:858
 #, python-brace-format
 msgid "Scan failed: {error}"
 msgstr "Gagal memindai: {error}"
 
-#: services/js_i18n_strings.py:833
+#: services/js_i18n_strings.py:859
 #, python-brace-format
 msgid "Scanned {paths} paths · found {found} matches."
 msgstr "Memindai {paths} jalur · menemukan {found} kecocokan."
 
-#: services/js_i18n_strings.py:834 templates/multi_disc_organizer.html:204
+#: services/js_i18n_strings.py:860 templates/multi_disc_organizer.html:204
 msgid "Scanning..."
 msgstr "Memindai..."
 
-#: services/js_i18n_strings.py:835
+#: services/js_i18n_strings.py:861
 msgid "Scanning…"
 msgstr "Memindai…"
 
-#: services/js_i18n_strings.py:836
+#: services/js_i18n_strings.py:862
 msgid "Scrape game"
 msgstr "Scrape game"
 
-#: services/js_i18n_strings.py:837
+#: services/js_i18n_strings.py:863
 #, python-brace-format
 msgid "Scraped 0/{total} - 0%"
 msgstr "Di-scrape 0/{total} - 0%"
 
-#: services/js_i18n_strings.py:838
+#: services/js_i18n_strings.py:864
 #, python-brace-format
 msgid "Scraped {processed} / {total} - {percent}%"
 msgstr "Di-scrape {processed} / {total} - {percent}%"
 
-#: services/js_i18n_strings.py:839 templates/logs.html:710
+#: services/js_i18n_strings.py:865 templates/logs.html:710
 #: templates/wishlist.html:507
 msgid "Scraping"
 msgstr "Scraping"
 
-#: services/js_i18n_strings.py:840
+#: services/js_i18n_strings.py:866
 msgid "Screen effect"
 msgstr "Efek layar"
 
-#: services/js_i18n_strings.py:841 templates/logs.html:781
+#: services/js_i18n_strings.py:867 templates/logs.html:781
 #: templates/museum_system.html:197 templates/museum_system.html:204
 #: templates/psn_trophy_detail.html:320
 msgid "Search"
 msgstr "Cari"
 
-#: services/js_i18n_strings.py:842
+#: services/js_i18n_strings.py:868
 msgid "Search failed."
 msgstr "Pencarian gagal."
 
-#: services/js_i18n_strings.py:843
+#: services/js_i18n_strings.py:869
 msgid "Search failed. Try again."
 msgstr ""
 
-#: services/js_i18n_strings.py:844
+#: services/js_i18n_strings.py:870
 msgid "Searching & removing background..."
 msgstr "Mencari & menghapus latar belakang..."
 
-#: services/js_i18n_strings.py:845
+#: services/js_i18n_strings.py:871
 #, python-brace-format
 msgid "Searching {source}…"
 msgstr "Mencari di {source}…"
 
-#: services/js_i18n_strings.py:846
+#: services/js_i18n_strings.py:872
 #, python-brace-format
 msgid "See all {n} results"
 msgstr ""
 
-#: services/js_i18n_strings.py:847
+#: services/js_i18n_strings.py:873
 msgid "Select Developer"
 msgstr "Pilih Pengembang"
 
-#: services/js_i18n_strings.py:848
+#: services/js_i18n_strings.py:874
 msgid "Select Dimension"
 msgstr "Pilih Dimensi"
 
-#: services/js_i18n_strings.py:849
+#: services/js_i18n_strings.py:875
 #: templates/_modals/select_filter_modal.html:15
 msgid "Select Filter"
 msgstr "Pilih Filter"
 
-#: services/js_i18n_strings.py:850
+#: services/js_i18n_strings.py:876
 msgid "Select Genre"
 msgstr "Pilih Genre"
 
-#: services/js_i18n_strings.py:851
+#: services/js_i18n_strings.py:877
 msgid "Select Perspective"
 msgstr "Pilih Perspektif"
 
-#: services/js_i18n_strings.py:852
+#: services/js_i18n_strings.py:878
 msgid "Select Play Mode"
 msgstr "Pilih Mode Permainan"
 
-#: services/js_i18n_strings.py:853
+#: services/js_i18n_strings.py:879
 msgid "Select Publisher"
 msgstr "Pilih Penerbit"
 
-#: services/js_i18n_strings.py:854
+#: services/js_i18n_strings.py:880
 msgid "Select Rating"
 msgstr "Pilih Rating"
 
-#: services/js_i18n_strings.py:855
+#: services/js_i18n_strings.py:881
 msgid "Select Series"
 msgstr "Pilih Seri"
 
-#: services/js_i18n_strings.py:856
+#: services/js_i18n_strings.py:882
 msgid "Select Source"
 msgstr "Pilih Sumber"
 
-#: services/js_i18n_strings.py:857
+#: services/js_i18n_strings.py:883
 #, python-brace-format
 msgid "Selected {count} games across all pages"
 msgstr "{count} game dipilih di semua halaman"
 
-#: services/js_i18n_strings.py:858
+#: services/js_i18n_strings.py:884
 #, python-brace-format
 msgid "Selected {count} unscraped games across all pages"
 msgstr "{count} game yang belum di-scrape dipilih di semua halaman"
 
-#: services/js_i18n_strings.py:859
+#: services/js_i18n_strings.py:885
 msgid "Server restarted successfully!"
 msgstr "Server berhasil dimulai ulang!"
 
-#: services/js_i18n_strings.py:860
+#: services/js_i18n_strings.py:886
 msgid "Server stopped. You can close this tab."
 msgstr "Server berhenti. Anda dapat menutup tab ini."
 
-#: services/js_i18n_strings.py:861
+#: services/js_i18n_strings.py:887
 msgid "Set for this game"
 msgstr "Diatur untuk game ini"
 
-#: services/js_i18n_strings.py:862
+#: services/js_i18n_strings.py:888
 msgid "Set inside the emulator; RetroDB leaves it alone"
 msgstr "Diatur di dalam emulator; RetroDB tidak mengubahnya"
 
-#: services/js_i18n_strings.py:863
+#: services/js_i18n_strings.py:889
 msgid "Set per system, in Settings > Emulators"
 msgstr "Diatur per sistem, di Pengaturan > Emulator"
 
-#: services/js_i18n_strings.py:864 templates/_macros/nav_tabs.html:44
+#: services/js_i18n_strings.py:890 templates/_macros/nav_tabs.html:44
 #: templates/base.html:186 templates/rom_tools_hub.html:119
 #: templates/settings.html:5 templates/settings.html:12
 #: templates/settings_emulators.html:4
 msgid "Settings"
 msgstr "Pengaturan"
 
-#: services/js_i18n_strings.py:865
+#: services/js_i18n_strings.py:891
 msgid "Show keyboard shortcuts"
 msgstr "Tampilkan pintasan keyboard"
 
-#: services/js_i18n_strings.py:866
+#: services/js_i18n_strings.py:892
 msgid "Showing Bonus Discs"
 msgstr "Menampilkan Disc Bonus"
 
-#: services/js_i18n_strings.py:867
+#: services/js_i18n_strings.py:893 templates/game_detail.html:239
+msgid "Shows a black screen with a frame rate in the window title."
+msgstr ""
+
+#: services/js_i18n_strings.py:894 templates/game_detail.html:238
+msgid "Shows an image but does not get past the menus."
+msgstr ""
+
+#: services/js_i18n_strings.py:895
 msgid "Shutting down server..."
 msgstr "Mematikan server..."
 
-#: services/js_i18n_strings.py:868 templates/_modals/edit_modal.html:50
-#: templates/base.html:1098
+#: services/js_i18n_strings.py:896 templates/_modals/edit_modal.html:50
+#: templates/base.html:1099
 msgid "Standalone"
 msgstr "Standalone"
 
-#: services/js_i18n_strings.py:869
+#: services/js_i18n_strings.py:897
 msgid "Starting..."
 msgstr "Memulai..."
 
-#: services/js_i18n_strings.py:870
+#: services/js_i18n_strings.py:898
 msgid "Starting…"
 msgstr "Memulai…"
 
-#: services/js_i18n_strings.py:871
+#: services/js_i18n_strings.py:899
 msgid "Steam Imports"
 msgstr "Impor Steam"
 
-#: services/js_i18n_strings.py:872
+#: services/js_i18n_strings.py:900
 #, python-brace-format
 msgid "Stopped. Names suggested: {proposals}."
 msgstr ""
 
-#: services/js_i18n_strings.py:873
+#: services/js_i18n_strings.py:901
 #, python-brace-format
 msgid "Successfully updated {count} games"
 msgstr "Berhasil memperbarui {count} game"
 
-#: services/js_i18n_strings.py:874
+#: services/js_i18n_strings.py:902
 #, python-brace-format
 msgid "Suggested names waiting: {count}. Untick any you do not want, then accept."
 msgstr ""
 
-#: services/js_i18n_strings.py:875
+#: services/js_i18n_strings.py:903
 msgid "Summary written."
 msgstr "Ringkasan ditulis."
 
-#: services/js_i18n_strings.py:876
+#: services/js_i18n_strings.py:904
 msgid "Sync In Progress"
 msgstr "Sinkronisasi Sedang Berlangsung"
 
-#: services/js_i18n_strings.py:877 templates/achievements_system.html:105
+#: services/js_i18n_strings.py:905 templates/achievements_system.html:105
 msgid "Sync Progress"
 msgstr "Progres Sinkronisasi"
 
-#: services/js_i18n_strings.py:878
+#: services/js_i18n_strings.py:906
 msgid "Sync Queued"
 msgstr "Sinkronisasi Dalam Antrean"
 
-#: services/js_i18n_strings.py:879
+#: services/js_i18n_strings.py:907
 msgid "Sync complete! Refresh page to see updated progress."
 msgstr "Sinkronisasi selesai! Segarkan halaman untuk melihat progres terbaru."
 
-#: services/js_i18n_strings.py:880
+#: services/js_i18n_strings.py:908
 msgid "Sync failed"
 msgstr "Sinkronisasi gagal"
 
-#: services/js_i18n_strings.py:881
+#: services/js_i18n_strings.py:909
 #, python-brace-format
 msgid "Sync: {system}"
 msgstr "Sinkronisasi: {system}"
 
-#: services/js_i18n_strings.py:882
+#: services/js_i18n_strings.py:910
 msgid "Syncing..."
 msgstr "Menyinkronkan..."
 
-#: services/js_i18n_strings.py:883
+#: services/js_i18n_strings.py:911
 #, python-brace-format
 msgid "Syncing: {processed} / {total}"
 msgstr "Menyinkronkan: {processed} / {total}"
 
-#: services/js_i18n_strings.py:884
+#: services/js_i18n_strings.py:912
 #: templates/_settings_tabs/customization.html:299
 #: templates/achievement_game.html:228 templates/analytics.html:569
 #: templates/analytics.html:603 templates/compare_games.html:69
@@ -3299,7 +3367,7 @@ msgstr "Menyinkronkan: {processed} / {total}"
 msgid "System"
 msgstr "Sistem"
 
-#: services/js_i18n_strings.py:885
+#: services/js_i18n_strings.py:913
 #: templates/_settings_tabs/customization.html:153
 #: templates/_settings_tabs/customization.html:234
 #: templates/_settings_tabs/data.html:19 templates/achievements_system.html:49
@@ -3308,58 +3376,58 @@ msgstr "Sistem"
 msgid "Systems"
 msgstr "Sistem"
 
-#: services/js_i18n_strings.py:886
+#: services/js_i18n_strings.py:914
 msgid "The core installed but the game still cannot start."
 msgstr "Core sudah terpasang, tetapi game masih tidak dapat dimulai."
 
-#: services/js_i18n_strings.py:887
+#: services/js_i18n_strings.py:915
 #, fuzzy, python-brace-format
 msgid "The download failed: {error}"
 msgstr "Gagal menjalankan: {error}"
 
-#: services/js_i18n_strings.py:888
+#: services/js_i18n_strings.py:916
 #, python-brace-format
 msgid "The run stopped: {error}. Names already suggested are kept."
 msgstr ""
 
-#: services/js_i18n_strings.py:889
+#: services/js_i18n_strings.py:917
 msgid "The update could not be started. See logs/update.log."
 msgstr ""
 
-#: services/js_i18n_strings.py:890
+#: services/js_i18n_strings.py:918
 msgid "The update is downloaded and checked."
 msgstr ""
 
-#: services/js_i18n_strings.py:891
+#: services/js_i18n_strings.py:919
 #, python-brace-format
 msgid ""
 "The update to {to} did not work, so RetroDB went back to {from}. Reason: "
 "{reason}"
 msgstr ""
 
-#: services/js_i18n_strings.py:892
+#: services/js_i18n_strings.py:920
 msgid "This copy of RetroDB is a git checkout. Update it with git pull."
 msgstr ""
 
-#: services/js_i18n_strings.py:893
+#: services/js_i18n_strings.py:921
 msgid "This game is already running.  Kill the existing process and relaunch?"
 msgstr "Game ini sudah berjalan. Hentikan proses yang ada dan jalankan ulang?"
 
-#: services/js_i18n_strings.py:894
+#: services/js_i18n_strings.py:922
 #, fuzzy
 msgid "This release has no download for this computer yet."
 msgstr "Core tidak dibuat untuk komputer ini."
 
-#: services/js_i18n_strings.py:895
+#: services/js_i18n_strings.py:923
 msgid "This system is already being synced."
 msgstr "Sistem ini sedang disinkronkan."
 
-#: services/js_i18n_strings.py:896
+#: services/js_i18n_strings.py:924
 #, fuzzy
 msgid "This update cannot be installed here."
 msgstr "Game-game itu tidak dapat ditautkan."
 
-#: services/js_i18n_strings.py:897
+#: services/js_i18n_strings.py:925
 msgid ""
 "This will clear ALL RetroAchievements game IDs and progress data from "
 "your database. You will need to run \"Refresh RetroAchievements\" again "
@@ -3369,7 +3437,7 @@ msgstr ""
 "database Anda. Anda perlu menjalankan \"Segarkan RetroAchievements\" lagi"
 " setelahnya untuk memindai ulang game Anda. Lanjutkan?"
 
-#: services/js_i18n_strings.py:898
+#: services/js_i18n_strings.py:926
 #, python-brace-format
 msgid ""
 "This will clear RetroAchievements game IDs and progress data for "
@@ -3378,12 +3446,12 @@ msgstr ""
 "Ini akan menghapus ID game dan data progres RetroAchievements untuk "
 "\"{system}\". Lanjutkan?"
 
-#: services/js_i18n_strings.py:899
+#: services/js_i18n_strings.py:927
 #, python-brace-format
 msgid "This will remove \"{system}\" from the Achievements page. Continue?"
 msgstr "Ini akan menghapus \"{system}\" dari halaman Achievement. Lanjutkan?"
 
-#: services/js_i18n_strings.py:900
+#: services/js_i18n_strings.py:928
 msgid ""
 "This will remove ALL games imported via CLZ Games Import from the "
 "database. This cannot be undone. Continue?"
@@ -3391,7 +3459,7 @@ msgstr ""
 "Ini akan menghapus SEMUA game yang diimpor melalui Impor CLZ Games dari "
 "database. Ini tidak dapat dibatalkan. Lanjutkan?"
 
-#: services/js_i18n_strings.py:901
+#: services/js_i18n_strings.py:929
 msgid ""
 "This will remove database entries for ROM files that no longer exist on "
 "disk. This cannot be undone. Continue?"
@@ -3399,7 +3467,7 @@ msgstr ""
 "Ini akan menghapus entri database untuk berkas ROM yang sudah tidak ada "
 "di disk. Ini tidak dapat dibatalkan. Lanjutkan?"
 
-#: services/js_i18n_strings.py:902
+#: services/js_i18n_strings.py:930
 msgid ""
 "This will scan all games and update their RetroAchievements status. This "
 "may take several minutes for large collections. Continue?"
@@ -3408,7 +3476,7 @@ msgstr ""
 "mereka. Ini mungkin memerlukan beberapa menit untuk koleksi besar. "
 "Lanjutkan?"
 
-#: services/js_i18n_strings.py:903
+#: services/js_i18n_strings.py:931
 msgid ""
 "This will search for and download images for all controllers without "
 "images. Continue?"
@@ -3416,7 +3484,7 @@ msgstr ""
 "Ini akan mencari dan mengunduh gambar untuk semua kontroler tanpa gambar."
 " Lanjutkan?"
 
-#: services/js_i18n_strings.py:904
+#: services/js_i18n_strings.py:932
 msgid ""
 "This will use your configured AI provider to generate history and top "
 "games for all systems. This may take several minutes and use API credits."
@@ -3426,58 +3494,58 @@ msgstr ""
 "sejarah dan game teratas untuk semua sistem. Ini mungkin memerlukan "
 "beberapa menit dan menggunakan kredit API. Lanjutkan?"
 
-#: services/js_i18n_strings.py:905
+#: services/js_i18n_strings.py:933
 msgid "Tick at least one name."
 msgstr ""
 
-#: services/js_i18n_strings.py:906
+#: services/js_i18n_strings.py:934
 msgid "Tick at least two games."
 msgstr "Centang setidaknya dua game."
 
-#: services/js_i18n_strings.py:907 templates/logs.html:745
+#: services/js_i18n_strings.py:935 templates/logs.html:745
 msgid "To"
 msgstr "Ke"
 
-#: services/js_i18n_strings.py:908
+#: services/js_i18n_strings.py:936
 msgid "Try adjusting your search or filters"
 msgstr "Coba sesuaikan pencarian atau filter Anda"
 
-#: services/js_i18n_strings.py:909
+#: services/js_i18n_strings.py:937
 msgid "USA"
 msgstr ""
 
-#: services/js_i18n_strings.py:910
+#: services/js_i18n_strings.py:938
 msgid "Unexpected error"
 msgstr "Kesalahan tak terduga"
 
-#: services/js_i18n_strings.py:911
+#: services/js_i18n_strings.py:939
 msgid "Unhandled rejection"
 msgstr "Penolakan tidak tertangani"
 
-#: services/js_i18n_strings.py:912 templates/analytics.html:583
-#: templates/base.html:1198 templates/local_trophy_detail.html:220
+#: services/js_i18n_strings.py:940 templates/analytics.html:583
+#: templates/base.html:1199 templates/local_trophy_detail.html:220
 #: templates/local_trophy_detail.html:224
 msgid "Unknown"
 msgstr "Tidak Diketahui"
 
-#: services/js_i18n_strings.py:913
+#: services/js_i18n_strings.py:941
 msgid "Unknown error"
 msgstr "Kesalahan tidak dikenal"
 
-#: services/js_i18n_strings.py:914
+#: services/js_i18n_strings.py:942
 msgid "Unknown error occurred."
 msgstr "Terjadi kesalahan yang tidak dikenal."
 
-#: services/js_i18n_strings.py:915 templates/all_games.html:102
+#: services/js_i18n_strings.py:943 templates/all_games.html:102
 #: templates/system_games.html:93 templates/wishlist.html:506
 msgid "Unscraped"
 msgstr "Belum Di-scrape"
 
-#: services/js_i18n_strings.py:916
+#: services/js_i18n_strings.py:944
 msgid "Update Failed"
 msgstr "Pembaruan Gagal"
 
-#: services/js_i18n_strings.py:917
+#: services/js_i18n_strings.py:945
 #, python-brace-format
 msgid ""
 "Update {count} game(s)?\n"
@@ -3488,41 +3556,41 @@ msgstr ""
 "\n"
 "Kolom: {fields}"
 
-#: services/js_i18n_strings.py:918
+#: services/js_i18n_strings.py:946
 #, python-brace-format
 msgid "Updated from {from} to {to}."
 msgstr ""
 
-#: services/js_i18n_strings.py:919 templates/museum_system.html:198
+#: services/js_i18n_strings.py:947 templates/museum_system.html:198
 #: templates/museum_system.html:205
 msgid "Upload"
 msgstr "Unggah"
 
-#: services/js_i18n_strings.py:920
+#: services/js_i18n_strings.py:948
 msgid "Upload Controller Image"
 msgstr "Unggah Gambar Kontroler"
 
-#: services/js_i18n_strings.py:921
+#: services/js_i18n_strings.py:949
 msgid "Upload failed"
 msgstr "Unggah gagal"
 
-#: services/js_i18n_strings.py:922
+#: services/js_i18n_strings.py:950
 msgid "Upload replacement image"
 msgstr "Unggah gambar pengganti"
 
-#: services/js_i18n_strings.py:923
+#: services/js_i18n_strings.py:951
 msgid "Uploading & removing background…"
 msgstr "Mengunggah & menghapus latar belakang…"
 
-#: services/js_i18n_strings.py:924
+#: services/js_i18n_strings.py:952
 msgid "Uploading…"
 msgstr "Mengunggah…"
 
-#: services/js_i18n_strings.py:925
+#: services/js_i18n_strings.py:953
 msgid "Use the system setting"
 msgstr "Gunakan pengaturan sistem"
 
-#: services/js_i18n_strings.py:926
+#: services/js_i18n_strings.py:954
 #, python-brace-format
 msgid ""
 "Used for every {system} game unless the game sets its own. Applied when "
@@ -3531,60 +3599,65 @@ msgstr ""
 "Dipakai untuk setiap game {system} kecuali game itu punya pengaturan "
 "sendiri. Diterapkan saat Anda menekan Mainkan."
 
-#: services/js_i18n_strings.py:927
+#: services/js_i18n_strings.py:955
+#, fuzzy, python-brace-format
+msgid "User Score ({count} ratings)"
+msgstr "Skor Pengguna (%(count)s rating)"
+
+#: services/js_i18n_strings.py:956
 msgid "Version unlinked."
 msgstr "Tautan versi dilepas."
 
-#: services/js_i18n_strings.py:928
+#: services/js_i18n_strings.py:957
 #, python-brace-format
 msgid "Version {version} is available."
 msgstr ""
 
-#: services/js_i18n_strings.py:929
+#: services/js_i18n_strings.py:958
 msgid "Versions linked."
 msgstr "Versi ditautkan."
 
-#: services/js_i18n_strings.py:930
+#: services/js_i18n_strings.py:959
 #, python-brace-format
 msgid "What is new in {version}"
 msgstr ""
 
-#: services/js_i18n_strings.py:931
+#: services/js_i18n_strings.py:960
 #, python-brace-format
 msgid "What is new in {version} ({date})"
 msgstr ""
 
-#: services/js_i18n_strings.py:932
+#: services/js_i18n_strings.py:961
 msgid "Will change?"
 msgstr "Akan berubah?"
 
-#: services/js_i18n_strings.py:933
+#: services/js_i18n_strings.py:962
 msgid "Works"
 msgstr "Berfungsi"
 
-#: services/js_i18n_strings.py:934
+#: services/js_i18n_strings.py:963
 msgid "World"
 msgstr ""
 
-#: services/js_i18n_strings.py:935 templates/game_detail.html:755
+#: services/js_i18n_strings.py:964 templates/game_detail.html:801
 msgid "Write again with AI"
 msgstr "Tulis ulang dengan AI"
 
-#: services/js_i18n_strings.py:936
+#: services/js_i18n_strings.py:965
 msgid "Xbox Imports"
 msgstr "Impor Xbox"
 
-#: services/js_i18n_strings.py:937 templates/_bulk_edit_modal.html:170
-#: templates/_modals/edit_modal.html:143 templates/game_detail.html:609
-#: templates/game_detail.html:666 templates/game_detail.html:734
+#: services/js_i18n_strings.py:966 templates/_bulk_edit_modal.html:170
+#: templates/_modals/edit_modal.html:143 templates/game_detail.html:655
+#: templates/game_detail.html:712 templates/game_detail.html:780
 msgid "Yes"
 msgstr "Ya"
 
-#: services/js_i18n_strings.py:938
+#: services/js_i18n_strings.py:967
 msgid "You have the latest version."
 msgstr ""
 
-#: services/js_i18n_strings.py:939
+#: services/js_i18n_strings.py:968
 #, python-brace-format
 msgid ""
 "Your bulk scrape has been queued (position {position}). It will start "
@@ -3593,173 +3666,178 @@ msgstr ""
 "Scrape massal Anda telah dimasukkan ke antrean (posisi {position}). Ini "
 "akan dimulai otomatis setelah scrape saat ini selesai."
 
-#: services/js_i18n_strings.py:940
+#: services/js_i18n_strings.py:969
 msgid "found"
 msgstr "ditemukan"
 
-#: services/js_i18n_strings.py:941
+#: services/js_i18n_strings.py:970
 msgid "in queue"
 msgstr "dalam antrean"
 
-#: services/js_i18n_strings.py:942
+#: services/js_i18n_strings.py:971
 msgid "system"
 msgstr "sistem"
 
-#: services/js_i18n_strings.py:943
+#: services/js_i18n_strings.py:972
 msgid "unknown"
 msgstr ""
 
-#: services/js_i18n_strings.py:944
+#: services/js_i18n_strings.py:973
 #, python-brace-format
 msgid "{confidence}% match"
 msgstr "{confidence}% cocok"
 
-#: services/js_i18n_strings.py:945
+#: services/js_i18n_strings.py:974
 #, python-brace-format
 msgid "{count} Achievements"
 msgstr "{count} Achievement"
 
-#: services/js_i18n_strings.py:946
+#: services/js_i18n_strings.py:975
 #, python-brace-format
 msgid "{count} regional versions"
 msgstr "{count} versi regional"
 
-#: services/js_i18n_strings.py:947
+#: services/js_i18n_strings.py:976
+#, fuzzy, python-brace-format
+msgid "{count} sold"
+msgstr "Konsol"
+
+#: services/js_i18n_strings.py:977
 #, python-brace-format
 msgid "{count} suggested groups. Untick any game that does not belong, then link."
 msgstr ""
 "{count} grup disarankan. Hapus centang game yang tidak termasuk, lalu "
 "tautkan."
 
-#: services/js_i18n_strings.py:948
+#: services/js_i18n_strings.py:978
 #, python-brace-format
 msgid "{fetched} fetched, {skipped} skipped, {failed} failed"
 msgstr "{fetched} diambil, {skipped} dilewati, {failed} gagal"
 
-#: services/js_i18n_strings.py:949
+#: services/js_i18n_strings.py:979
 #, python-brace-format
 msgid "{job} Queued (#{position})"
 msgstr "{job} Dalam Antrean (#{position})"
 
-#: services/js_i18n_strings.py:950
+#: services/js_i18n_strings.py:980
 #, python-brace-format
 msgid "{job} cancelled"
 msgstr "{job} dibatalkan"
 
-#: services/js_i18n_strings.py:951
+#: services/js_i18n_strings.py:981
 #, python-brace-format
 msgid "{job} completed ({n} processed)"
 msgstr "{job} selesai ({n} diproses)"
 
-#: services/js_i18n_strings.py:952
+#: services/js_i18n_strings.py:982
 #, python-brace-format
 msgid "{job} failed: {error}"
 msgstr "{job} gagal: {error}"
 
-#: services/js_i18n_strings.py:953
+#: services/js_i18n_strings.py:983
 #, python-brace-format
 msgid "{job}: {current} of {total} ({percent}%)"
 msgstr "{job}: {current} dari {total} ({percent}%)"
 
-#: services/js_i18n_strings.py:954
+#: services/js_i18n_strings.py:984
 #, python-brace-format
 msgid "{n} Player(s)"
 msgstr "{n} Pemain"
 
-#: services/js_i18n_strings.py:955
+#: services/js_i18n_strings.py:985
 #, python-brace-format
 msgid "{n} cores"
 msgstr "{n} core"
 
-#: services/js_i18n_strings.py:956
+#: services/js_i18n_strings.py:986
 #, python-brace-format
 msgid "{n} games"
 msgstr "{n} game"
 
-#: services/js_i18n_strings.py:957
+#: services/js_i18n_strings.py:987
 #, python-brace-format
 msgid "{n} lines"
 msgstr "{n} baris"
 
-#: services/js_i18n_strings.py:958
+#: services/js_i18n_strings.py:988
 #, python-brace-format
 msgid "{n} results"
 msgstr ""
 
-#: services/js_i18n_strings.py:959
+#: services/js_i18n_strings.py:989
 #, python-brace-format
 msgid "{points} pts"
 msgstr "{points} poin"
 
-#: services/js_i18n_strings.py:960
+#: services/js_i18n_strings.py:990
 #, python-brace-format
 msgid "{system} has been added to the sync queue."
 msgstr "{system} telah ditambahkan ke antrean sinkronisasi."
 
-#: services/js_i18n_strings.py:961
+#: services/js_i18n_strings.py:991
 #, python-brace-format
 msgid "{system} · {file} · old name from: {region}"
 msgstr ""
 
-#: services/js_i18n_strings.py:962
+#: services/js_i18n_strings.py:992
 #, python-brace-format
 msgid "{title} ({count} versions)"
 msgstr "{title} ({count} versi)"
 
-#: services/js_i18n_strings.py:963
+#: services/js_i18n_strings.py:993
 msgid "⏳ Searching..."
 msgstr "⏳ Mencari..."
 
-#: services/js_i18n_strings.py:964
+#: services/js_i18n_strings.py:994
 #, python-brace-format
 msgid "⚠️ Cancel {job}"
 msgstr "⚠️ Batalkan {job}"
 
-#: services/js_i18n_strings.py:965
+#: services/js_i18n_strings.py:995
 msgid "⚠️ Confirm"
 msgstr "⚠️ Konfirmasi"
 
-#: services/js_i18n_strings.py:966
+#: services/js_i18n_strings.py:996
 msgid "⚡ via"
 msgstr "⚡ melalui"
 
-#: services/js_i18n_strings.py:967
+#: services/js_i18n_strings.py:997
 msgid "✕ Clear"
 msgstr "✕ Hapus"
 
-#: services/js_i18n_strings.py:968
+#: services/js_i18n_strings.py:998
 msgid "🏆 Refresh RetroAchievements"
 msgstr "🏆 Segarkan RetroAchievements"
 
-#: services/js_i18n_strings.py:969
+#: services/js_i18n_strings.py:999
 msgid "📋 Clear CLZ Imports"
 msgstr "📋 Hapus Impor CLZ"
 
-#: services/js_i18n_strings.py:970
+#: services/js_i18n_strings.py:1000
 msgid "🔄 Restart Server"
 msgstr "🔄 Mulai Ulang Server"
 
-#: services/js_i18n_strings.py:971
+#: services/js_i18n_strings.py:1001
 msgid "🔍 Lookup HLTB"
 msgstr "🔍 Cari HLTB"
 
-#: services/js_i18n_strings.py:972
+#: services/js_i18n_strings.py:1002
 msgid "🗑️ Clear HLTB Data"
 msgstr "🗑️ Hapus Data HLTB"
 
-#: services/js_i18n_strings.py:973
+#: services/js_i18n_strings.py:1003
 msgid "🗑️ Clear RetroAchievements Data"
 msgstr "🗑️ Hapus Data RetroAchievements"
 
-#: services/js_i18n_strings.py:974
+#: services/js_i18n_strings.py:1004
 msgid "🗑️ Reset Metadata"
 msgstr "🗑️ Atur Ulang Metadata"
 
-#: services/js_i18n_strings.py:975
+#: services/js_i18n_strings.py:1005
 msgid "🛑 Shut Down Server"
 msgstr "🛑 Matikan Server"
 
-#: services/js_i18n_strings.py:976
+#: services/js_i18n_strings.py:1006
 msgid "🧹 Clean Missing ROMs"
 msgstr "🧹 Bersihkan ROM yang Hilang"
 
@@ -3818,8 +3896,8 @@ msgid "Only fields changed from \"Don't change\" will be updated."
 msgstr "Hanya kolom yang diubah dari \"Jangan ubah\" yang akan diperbarui."
 
 #: templates/_bulk_edit_modal.html:26 templates/achievements_system.html:171
-#: templates/analytics.html:1664 templates/base.html:1010
-#: templates/dashboard.html:500 templates/game_detail.html:219
+#: templates/analytics.html:1664 templates/base.html:1011
+#: templates/dashboard.html:500 templates/game_detail.html:254
 #: templates/steam_achievements.html:78 templates/xbox_achievements.html:78
 msgid "Not Started"
 msgstr "Belum Dimulai"
@@ -3828,9 +3906,9 @@ msgstr "Belum Dimulai"
 #: templates/_settings_tabs/data.html:83 templates/_settings_tabs/data.html:156
 #: templates/achievement_game.html:241 templates/all_games.html:72
 #: templates/analytics.html:481 templates/analytics.html:2428
-#: templates/base.html:940 templates/base.html:1148
+#: templates/base.html:940 templates/base.html:1149
 #: templates/compare_games.html:73 templates/dashboard.html:390
-#: templates/game_detail.html:265 templates/local_trophy_detail.html:99
+#: templates/game_detail.html:300 templates/local_trophy_detail.html:99
 #: templates/psn_trophy_detail.html:94 templates/psn_trophy_detail.html:258
 #: templates/steam_achievement_game.html:178 templates/system_games.html:63
 #: templates/xbox_achievement_game.html:171
@@ -3847,9 +3925,9 @@ msgstr "Tambahkan"
 #: templates/_bulk_edit_modal.html:53 templates/_modals/edit_modal.html:94
 #: templates/achievement_game.html:81 templates/all_games.html:78
 #: templates/analytics.html:483 templates/analytics.html:2428
-#: templates/base.html:939 templates/base.html:1134
-#: templates/compare_games.html:71 templates/game_detail.html:241
-#: templates/game_detail.html:712 templates/local_trophy_detail.html:87
+#: templates/base.html:939 templates/base.html:1135
+#: templates/compare_games.html:71 templates/game_detail.html:276
+#: templates/game_detail.html:758 templates/local_trophy_detail.html:87
 #: templates/psn_trophy_detail.html:82 templates/steam_achievement_game.html:78
 #: templates/system_games.html:69 templates/xbox_achievement_game.html:67
 msgid "Publisher"
@@ -3864,8 +3942,8 @@ msgstr "Jangan ubah"
 #: templates/_bulk_edit_modal.html:67 templates/_modals/edit_modal.html:99
 #: templates/achievement_game.html:87 templates/all_games.html:81
 #: templates/analytics.html:482 templates/analytics.html:2428
-#: templates/base.html:938 templates/base.html:1138
-#: templates/compare_games.html:70 templates/game_detail.html:253
+#: templates/base.html:938 templates/base.html:1139
+#: templates/compare_games.html:70 templates/game_detail.html:288
 #: templates/local_trophy_detail.html:93 templates/psn_trophy_detail.html:88
 #: templates/steam_achievement_game.html:84 templates/system_games.html:72
 #: templates/xbox_achievement_game.html:73
@@ -3877,23 +3955,23 @@ msgid "ESRB Rating"
 msgstr "Rating ESRB"
 
 #: templates/_bulk_edit_modal.html:84 templates/_modals/edit_modal.html:240
-#: templates/base.html:1251
+#: templates/base.html:1252
 msgid "E - Everyone"
 msgstr "E - Untuk Semua Umur"
 
 #: templates/_bulk_edit_modal.html:85 templates/_modals/edit_modal.html:241
-#: templates/base.html:1252
+#: templates/base.html:1253
 msgid "E10+ - Everyone 10+"
 msgstr "E10+ - Untuk Semua Umur 10+"
 
 #: templates/_bulk_edit_modal.html:86 templates/_modals/edit_modal.html:242
-#: templates/base.html:1253
+#: templates/base.html:1254
 msgid "T - Teen"
 msgstr "T - Remaja"
 
 #: templates/_bulk_edit_modal.html:87 templates/_modals/edit_modal.html:243
-#: templates/_modals/edit_modal.html:287 templates/base.html:1254
-#: templates/base.html:1298
+#: templates/_modals/edit_modal.html:287 templates/base.html:1255
+#: templates/base.html:1299
 msgid "M - Mature"
 msgstr "M - Dewasa"
 
@@ -3923,33 +4001,33 @@ msgstr "PEGI 18"
 
 #: templates/_bulk_edit_modal.html:106 templates/_modals/edit_modal.html:85
 #: templates/analytics.html:492 templates/analytics.html:2428
-#: templates/base.html:1125 templates/compare_games.html:75
-#: templates/game_detail.html:709 templates/reports.html:444
+#: templates/base.html:1126 templates/compare_games.html:75
+#: templates/game_detail.html:755 templates/reports.html:444
 msgid "Region"
 msgstr "Wilayah"
 
 #: templates/_bulk_edit_modal.html:112 templates/_modals/edit_modal.html:132
-#: templates/all_games.html:84 templates/base.html:1164
-#: templates/compare_games.html:76 templates/game_detail.html:201
+#: templates/all_games.html:84 templates/base.html:1165
+#: templates/compare_games.html:76 templates/game_detail.html:215
 #: templates/system_games.html:75
 msgid "Players"
 msgstr "Pemain"
 
 #: templates/_bulk_edit_modal.html:118 templates/_modals/edit_modal.html:149
-#: templates/_settings_tabs/data.html:93 templates/base.html:1168
+#: templates/_settings_tabs/data.html:93 templates/base.html:1169
 msgid "Game Structure"
 msgstr "Struktur Game"
 
 #: templates/_bulk_edit_modal.html:135 templates/_modals/edit_modal.html:162
 #: templates/_settings_tabs/data.html:103 templates/all_games.html:87
-#: templates/analytics.html:199 templates/base.html:1176
+#: templates/analytics.html:199 templates/base.html:1177
 #: templates/compare_games.html:78 templates/system_games.html:78
 msgid "Perspective"
 msgstr "Perspektif"
 
 #: templates/_bulk_edit_modal.html:151 templates/_modals/edit_modal.html:173
 #: templates/_settings_tabs/data.html:113 templates/all_games.html:90
-#: templates/analytics.html:207 templates/base.html:1184
+#: templates/analytics.html:207 templates/base.html:1185
 #: templates/compare_games.html:79 templates/system_games.html:81
 msgid "Dimension"
 msgstr "Dimensi"
@@ -3998,7 +4076,7 @@ msgstr "Muat Lebih Banyak"
 
 #: templates/achievement_game.html:17 templates/achievement_game.html:37
 #: templates/achievements_system.html:15 templates/game_detail.html:21
-#: templates/game_detail.html:296 templates/game_detail.html:717
+#: templates/game_detail.html:342 templates/game_detail.html:763
 #: templates/systems.html:43
 msgid "RetroAchievements"
 msgstr "RetroAchievements"
@@ -4014,7 +4092,7 @@ msgid "Refresh RA"
 msgstr "Segarkan RA"
 
 #: templates/achievement_game.html:93 templates/all_games.html:75
-#: templates/game_detail.html:277 templates/system_games.html:66
+#: templates/game_detail.html:312 templates/system_games.html:66
 msgid "Series"
 msgstr "Seri"
 
@@ -4041,23 +4119,23 @@ msgstr "Tidak dapat memuat data achievement"
 msgid "Check your RetroAchievements credentials in Settings."
 msgstr "Periksa kredensial RetroAchievements Anda di Pengaturan."
 
-#: templates/achievement_game.html:146 templates/game_detail.html:486
+#: templates/achievement_game.html:146 templates/game_detail.html:532
 #: templates/local_trophy_detail.html:158 templates/psn_trophy_detail.html:149
 #: templates/steam_achievement_game.html:123
 #: templates/xbox_achievement_game.html:116
 msgid "How Long to Beat"
 msgstr "How Long to Beat"
 
-#: templates/achievement_game.html:153 templates/base.html:1023
-#: templates/game_detail.html:493 templates/psn_trophy_detail.html:157
+#: templates/achievement_game.html:153 templates/base.html:1024
+#: templates/game_detail.html:539 templates/psn_trophy_detail.html:157
 #: templates/psn_trophy_detail.html:317
 #: templates/steam_achievement_game.html:126
 #: templates/xbox_achievement_game.html:119
 msgid "Search game title..."
 msgstr "Cari judul game..."
 
-#: templates/achievement_game.html:156 templates/base.html:1026
-#: templates/game_detail.html:496 templates/local_trophy_detail.html:193
+#: templates/achievement_game.html:156 templates/base.html:1027
+#: templates/game_detail.html:542 templates/local_trophy_detail.html:193
 #: templates/psn_trophy_detail.html:160
 #: templates/steam_achievement_game.html:127
 #: templates/xbox_achievement_game.html:120
@@ -4065,8 +4143,8 @@ msgid "Lookup HLTB"
 msgstr "Cari HLTB"
 
 #: templates/_settings_tabs/account.html:73 templates/achievement_game.html:177
-#: templates/achievement_game.html:253 templates/base.html:1054
-#: templates/game_detail.html:517 templates/local_trophy_detail.html:223
+#: templates/achievement_game.html:253 templates/base.html:1055
+#: templates/game_detail.html:563 templates/local_trophy_detail.html:223
 #: templates/psn_trophy_detail.html:181 templates/psn_trophy_detail.html:270
 #: templates/settings_emulators.html:36 templates/settings_emulators.html:187
 #: templates/steam_achievement_game.html:137
@@ -4075,8 +4153,8 @@ msgid "Save"
 msgstr "Simpan"
 
 #: templates/achievement_game.html:217 templates/all_games.html:108
-#: templates/base.html:1067 templates/duplicate_finder.html:301
-#: templates/game_detail.html:101 templates/game_detail.html:557
+#: templates/base.html:1068 templates/duplicate_finder.html:301
+#: templates/game_detail.html:115 templates/game_detail.html:603
 #: templates/local_trophy_detail.html:185 templates/psn_trophy_detail.html:214
 #: templates/reports.html:277 templates/screenshot_dedup.html:325
 #: templates/steam_achievement_game.html:163 templates/system_games.html:99
@@ -4084,7 +4162,7 @@ msgstr "Simpan"
 msgid "Clear"
 msgstr "Hapus"
 
-#: templates/achievement_game.html:225 templates/game_detail.html:565
+#: templates/achievement_game.html:225 templates/game_detail.html:611
 #: templates/local_trophy_detail.html:203 templates/psn_trophy_detail.html:234
 #: templates/steam_achievement_game.html:170
 #: templates/xbox_achievement_game.html:163
@@ -4467,7 +4545,7 @@ msgstr "Pilih Semua"
 msgid "Select Unscraped"
 msgstr "Pilih yang Belum Di-scrape"
 
-#: templates/all_games.html:204 templates/game_detail.html:783
+#: templates/all_games.html:204 templates/game_detail.html:829
 #: templates/system_games.html:184
 msgid "Full Re-scrape"
 msgstr "Scrape Ulang Penuh"
@@ -4476,7 +4554,7 @@ msgstr "Scrape Ulang Penuh"
 msgid "Toggle between full re-scrape and fill missing mode"
 msgstr "Beralih antara mode scrape ulang penuh dan isi yang hilang"
 
-#: templates/all_games.html:209 templates/game_detail.html:783
+#: templates/all_games.html:209 templates/game_detail.html:829
 #: templates/system_games.html:189
 msgid "Fill Missing"
 msgstr "Isi yang Hilang"
@@ -4514,7 +4592,7 @@ msgid "Developers"
 msgstr "Pengembang"
 
 #: templates/_modals/edit_modal.html:107 templates/analytics.html:13
-#: templates/base.html:998 templates/base.html:1145
+#: templates/base.html:999 templates/base.html:1146
 msgid "Gameplay"
 msgstr "Gameplay"
 
@@ -4782,7 +4860,7 @@ msgstr "Kelengkapan Kolom"
 #: templates/_settings_tabs/customization.html:193
 #: templates/_settings_tabs/customization.html:259 templates/analytics.html:479
 #: templates/analytics.html:2428 templates/base.html:266
-#: templates/base.html:1352 templates/compare_games.html:97
+#: templates/base.html:1353 templates/compare_games.html:97
 #: templates/settings_emulators.html:170
 msgid "Description"
 msgstr "Deskripsi"
@@ -4796,7 +4874,7 @@ msgstr "Boxart"
 
 #: templates/_modals/edit_modal.html:72 templates/_modals/filter_modal.html:14
 #: templates/analytics.html:484 templates/analytics.html:2428
-#: templates/base.html:1117 templates/compare_games.html:72
+#: templates/base.html:1118 templates/compare_games.html:72
 msgid "Release Date"
 msgstr "Tanggal Rilis"
 
@@ -4809,12 +4887,12 @@ msgid "Fanart"
 msgstr "Fanart"
 
 #: templates/analytics.html:487 templates/analytics.html:2428
-#: templates/game_detail.html:439
+#: templates/game_detail.html:485
 msgid "Video"
 msgstr "Video"
 
 #: templates/_modals/manual_reader_modal.html:9 templates/analytics.html:488
-#: templates/analytics.html:2428 templates/game_detail.html:95
+#: templates/analytics.html:2428 templates/game_detail.html:109
 msgid "Manual"
 msgstr "Manual"
 
@@ -5116,7 +5194,7 @@ msgstr "Saat ini:"
 msgid "Waiting to start..."
 msgstr "Menunggu untuk mulai..."
 
-#: templates/archive_scanner.html:1460
+#: templates/archive_scanner.html:1458
 msgid ""
 "The archive holds more than one release. The playlist uses the first; "
 "these disks stay in the folder:"
@@ -5124,11 +5202,11 @@ msgstr ""
 "Arsip berisi lebih dari satu rilis. Daftar putar memakai yang pertama; "
 "disk berikut tetap di folder:"
 
-#: templates/archive_scanner.html:1662
+#: templates/archive_scanner.html:1653
 msgid "Have the original archive moved to the staging folder"
 msgstr "Pindahkan arsip asli ke folder staging"
 
-#: templates/archive_scanner.html:1765
+#: templates/archive_scanner.html:1750
 msgid "Original archives moved to:"
 msgstr "Arsip asli dipindahkan ke:"
 
@@ -5234,7 +5312,7 @@ msgstr "Konfigurasi"
 msgid "Log Viewer"
 msgstr "Penampil Log"
 
-#: templates/base.html:198 templates/base.html:1000
+#: templates/base.html:198 templates/base.html:1001
 msgid "Info"
 msgstr "Info"
 
@@ -5334,271 +5412,276 @@ msgstr "Tutup detail game"
 msgid "Loading game details..."
 msgstr "Memuat detail game..."
 
-#: templates/base.html:953 templates/game_detail.html:443
+#: templates/base.html:942 templates/game_detail.html:318
+#, fuzzy
+msgid "Release dates"
+msgstr "Tanggal Rilis"
+
+#: templates/base.html:954 templates/game_detail.html:489
 msgid "Your browser does not support the video tag."
 msgstr "Browser Anda tidak mendukung tag video."
 
-#: templates/base.html:960
+#: templates/base.html:961
 msgid "View Full Page"
 msgstr "Lihat Halaman Penuh"
 
-#: templates/base.html:962 templates/game_detail.html:109
+#: templates/base.html:963 templates/game_detail.html:123
 msgid "Fill missing metadata with AI"
 msgstr "Isi metadata yang hilang dengan AI"
 
-#: templates/base.html:963 templates/game_detail.html:111
+#: templates/base.html:964 templates/game_detail.html:125
 msgid "AI Fill"
 msgstr "Isi dengan AI"
 
-#: templates/base.html:966 templates/game_detail.html:116
+#: templates/base.html:967 templates/game_detail.html:130
 msgid "Scrape"
 msgstr "Scrape"
 
-#: templates/_modals/screenshot_modal.html:2 templates/base.html:978
+#: templates/_modals/screenshot_modal.html:2 templates/base.html:979
 msgid "Screenshot viewer"
 msgstr "Penampil screenshot"
 
-#: templates/_modals/screenshot_modal.html:3 templates/base.html:979
+#: templates/_modals/screenshot_modal.html:3 templates/base.html:980
 msgid "Close screenshot viewer"
 msgstr "Tutup penampil screenshot"
 
-#: templates/_modals/screenshot_modal.html:4 templates/base.html:980
+#: templates/_modals/screenshot_modal.html:4 templates/base.html:981
 msgid "Previous screenshot"
 msgstr "Screenshot sebelumnya"
 
-#: templates/base.html:981
+#: templates/base.html:982
 msgid "Screenshot"
 msgstr "Screenshot"
 
-#: templates/_modals/screenshot_modal.html:6 templates/base.html:982
+#: templates/_modals/screenshot_modal.html:6 templates/base.html:983
 msgid "Next screenshot"
 msgstr "Screenshot berikutnya"
 
-#: templates/base.html:983
+#: templates/base.html:984
 msgid "Use &#8592; &#8594; arrow keys to navigate &bull; ESC to close"
 msgstr ""
 "Gunakan tombol panah &#8592; &#8594; untuk menavigasi &bull; ESC untuk "
 "menutup"
 
-#: templates/_modals/edit_modal.html:7 templates/base.html:990
+#: templates/_modals/edit_modal.html:7 templates/base.html:991
 msgid "Close edit modal"
 msgstr "Tutup modal edit"
 
-#: templates/base.html:993
+#: templates/base.html:994
 msgid "Edit Game"
 msgstr "Edit Game"
 
-#: templates/base.html:994
+#: templates/base.html:995
 msgid "Edit game sections"
 msgstr "Edit bagian game"
 
-#: templates/base.html:995
+#: templates/base.html:996
 msgid "Quick"
 msgstr "Cepat"
 
-#: templates/_modals/edit_modal.html:25 templates/base.html:996
-#: templates/base.html:1074
+#: templates/_modals/edit_modal.html:25 templates/base.html:997
+#: templates/base.html:1075
 msgid "Identity"
 msgstr "Identitas"
 
-#: templates/base.html:997
+#: templates/base.html:998
 msgid "Release"
 msgstr "Rilis"
 
-#: templates/_modals/edit_modal.html:187 templates/base.html:999
-#: templates/base.html:1206
+#: templates/_modals/edit_modal.html:187 templates/base.html:1000
+#: templates/base.html:1207
 msgid "Technical"
 msgstr "Teknis"
 
-#: templates/base.html:1006
+#: templates/base.html:1007
 msgid "Quick edit"
 msgstr "Edit cepat"
 
-#: templates/base.html:1019
+#: templates/base.html:1020
 msgid "HowLongToBeat"
 msgstr "HowLongToBeat"
 
-#: templates/base.html:1033
+#: templates/base.html:1034
 msgid "Searching HowLongToBeat..."
 msgstr "Mencari di HowLongToBeat..."
 
-#: templates/base.html:1064 templates/local_trophy_detail.html:189
+#: templates/base.html:1065 templates/local_trophy_detail.html:189
 msgid "No playtime data"
 msgstr "Tidak ada data waktu bermain"
 
 #: templates/_modals/edit_modal.html:28 templates/_modals/filter_modal.html:13
-#: templates/base.html:1077 templates/dashboard.html:329
+#: templates/base.html:1078 templates/dashboard.html:329
 #: templates/dashboard.html:388 templates/dashboard.html:465
-#: templates/dashboard.html:531 templates/game_detail.html:710
+#: templates/dashboard.html:531 templates/game_detail.html:756
 msgid "Title"
 msgstr "Judul"
 
-#: templates/_modals/edit_modal.html:32 templates/base.html:1081
+#: templates/_modals/edit_modal.html:32 templates/base.html:1082
 msgid "Keep this title when scraping"
 msgstr ""
 
-#: templates/_modals/edit_modal.html:36 templates/base.html:1085
+#: templates/_modals/edit_modal.html:36 templates/base.html:1086
 msgid "Sort Title"
 msgstr "Judul Urutan"
 
-#: templates/_modals/edit_modal.html:38 templates/base.html:1087
+#: templates/_modals/edit_modal.html:38 templates/base.html:1088
 msgid "Auto-generated from title"
 msgstr "Dibuat otomatis dari judul"
 
-#: templates/_modals/edit_modal.html:44 templates/base.html:1092
+#: templates/_modals/edit_modal.html:44 templates/base.html:1093
 msgid "Franchise / Series"
 msgstr "Waralaba / Seri"
 
-#: templates/_modals/edit_modal.html:47 templates/base.html:1095
+#: templates/_modals/edit_modal.html:47 templates/base.html:1096
 msgid "Toggle franchise status"
 msgstr "Alihkan status waralaba"
 
-#: templates/_modals/edit_modal.html:52 templates/base.html:1100
+#: templates/_modals/edit_modal.html:52 templates/base.html:1101
 msgid "e.g., Final Fantasy, Crash Bandicoot"
 msgstr "mis., Final Fantasy, Crash Bandicoot"
 
-#: templates/_modals/edit_modal.html:56 templates/base.html:1103
-#: templates/compare_games.html:96 templates/game_detail.html:471
+#: templates/_modals/edit_modal.html:56 templates/base.html:1104
+#: templates/compare_games.html:96 templates/game_detail.html:517
 msgid "Similar Games"
 msgstr "Game Serupa"
 
-#: templates/_modals/edit_modal.html:57 templates/base.html:1104
+#: templates/_modals/edit_modal.html:57 templates/base.html:1105
 msgid "Game 1, Game 2, Game 3"
 msgstr "Game 1, Game 2, Game 3"
 
-#: templates/_modals/edit_modal.html:61 templates/base.html:1107
+#: templates/_modals/edit_modal.html:61 templates/base.html:1108
 msgid "Edition"
 msgstr "Edisi"
 
-#: templates/base.html:1108
+#: templates/base.html:1109
 msgid "Standard, Collector&#39;s, GOTY"
 msgstr "Standard, Collector&#39;s, GOTY"
 
-#: templates/base.html:1114
+#: templates/base.html:1115
 msgid "Release info"
 msgstr "Info rilis"
 
-#: templates/base.html:1119
+#: templates/base.html:1120
 msgid "YYYY-MM-DD"
 msgstr "YYYY-MM-DD"
 
-#: templates/_modals/edit_modal.html:80 templates/base.html:1121
+#: templates/_modals/edit_modal.html:80 templates/base.html:1122
 msgid "Pick date"
 msgstr "Pilih tanggal"
 
-#: templates/_modals/edit_modal.html:87 templates/base.html:1127
+#: templates/_modals/edit_modal.html:87 templates/base.html:1128
 msgid "— Select —"
 msgstr "— Pilih —"
 
-#: templates/_modals/edit_modal.html:95 templates/base.html:1135
+#: templates/_modals/edit_modal.html:95 templates/base.html:1136
 msgid "Sony, Nintendo"
 msgstr "Sony, Nintendo"
 
-#: templates/base.html:1139
+#: templates/base.html:1140
 msgid "Naughty Dog, Insomniac"
 msgstr "Naughty Dog, Insomniac"
 
-#: templates/_modals/edit_modal.html:114 templates/base.html:1151
+#: templates/_modals/edit_modal.html:114 templates/base.html:1152
 msgid "Add genre"
 msgstr "Tambah genre"
 
-#: templates/_modals/edit_modal.html:115 templates/base.html:1152
+#: templates/_modals/edit_modal.html:115 templates/base.html:1153
 msgid "+ Add genre..."
 msgstr "+ Tambah genre..."
 
 #: templates/_modals/edit_modal.html:121 templates/_settings_tabs/data.html:123
-#: templates/base.html:1156
+#: templates/base.html:1157
 msgid "Play Modes"
 msgstr "Mode Permainan"
 
-#: templates/_modals/edit_modal.html:125 templates/base.html:1159
+#: templates/_modals/edit_modal.html:125 templates/base.html:1160
 msgid "Add play mode"
 msgstr "Tambah mode permainan"
 
-#: templates/_modals/edit_modal.html:126 templates/base.html:1160
+#: templates/_modals/edit_modal.html:126 templates/base.html:1161
 msgid "+ Add mode..."
 msgstr "+ Tambah mode..."
 
-#: templates/_modals/edit_modal.html:155 templates/base.html:1171
+#: templates/_modals/edit_modal.html:155 templates/base.html:1172
 msgid "Add game structure"
 msgstr "Tambah struktur game"
 
-#: templates/_modals/edit_modal.html:156 templates/base.html:1172
+#: templates/_modals/edit_modal.html:156 templates/base.html:1173
 msgid "+ Add structure..."
 msgstr "+ Tambah struktur..."
 
-#: templates/_modals/edit_modal.html:166 templates/base.html:1179
+#: templates/_modals/edit_modal.html:166 templates/base.html:1180
 msgid "Add perspective"
 msgstr "Tambah perspektif"
 
-#: templates/_modals/edit_modal.html:167 templates/base.html:1180
+#: templates/_modals/edit_modal.html:167 templates/base.html:1181
 msgid "+ Add perspective..."
 msgstr "+ Tambah perspektif..."
 
-#: templates/_modals/edit_modal.html:177 templates/base.html:1187
+#: templates/_modals/edit_modal.html:177 templates/base.html:1188
 msgid "Add dimension"
 msgstr "Tambah dimensi"
 
-#: templates/_modals/edit_modal.html:178 templates/base.html:1188
+#: templates/_modals/edit_modal.html:178 templates/base.html:1189
 msgid "+ Add dimension..."
 msgstr "+ Tambah dimensi..."
 
-#: templates/_modals/edit_modal.html:136 templates/base.html:1192
+#: templates/_modals/edit_modal.html:136 templates/base.html:1193
 msgid "Campaign Mode"
 msgstr "Mode Kampanye"
 
-#: templates/_modals/edit_modal.html:140 templates/base.html:1195
+#: templates/_modals/edit_modal.html:140 templates/base.html:1196
 msgid "Toggle campaign mode"
 msgstr "Alihkan mode kampanye"
 
-#: templates/_modals/edit_modal.html:190 templates/base.html:1209
+#: templates/_modals/edit_modal.html:190 templates/base.html:1210
 #: templates/compare_games.html:91
 msgid "Controller Support"
 msgstr "Dukungan Kontroler"
 
-#: templates/_modals/edit_modal.html:194 templates/base.html:1213
+#: templates/_modals/edit_modal.html:194 templates/base.html:1214
 msgid "Add controller"
 msgstr "Tambah kontroler"
 
-#: templates/_modals/edit_modal.html:195 templates/base.html:1214
+#: templates/_modals/edit_modal.html:195 templates/base.html:1215
 msgid "+ Add controller..."
 msgstr "+ Tambah kontroler..."
 
-#: templates/_modals/edit_modal.html:199 templates/base.html:1216
+#: templates/_modals/edit_modal.html:199 templates/base.html:1217
 msgid "Custom controller name"
 msgstr "Nama kontroler khusus"
 
-#: templates/base.html:1216
+#: templates/base.html:1217
 msgid "Or type custom..."
 msgstr "Atau ketik khusus..."
 
 #: templates/_modals/edit_modal.html:206 templates/_settings_tabs/data.html:133
-#: templates/base.html:1220 templates/compare_games.html:92
+#: templates/base.html:1221 templates/compare_games.html:92
 msgid "Save Type"
 msgstr "Jenis Save"
 
-#: templates/_modals/edit_modal.html:210 templates/base.html:1223
+#: templates/_modals/edit_modal.html:210 templates/base.html:1224
 msgid "Add save type"
 msgstr "Tambah jenis save"
 
-#: templates/_modals/edit_modal.html:211 templates/base.html:1224
+#: templates/_modals/edit_modal.html:211 templates/base.html:1225
 msgid "+ Add save type..."
 msgstr "+ Tambah jenis save..."
 
-#: templates/_modals/edit_modal.html:217 templates/base.html:1228
+#: templates/_modals/edit_modal.html:217 templates/base.html:1229
 msgid "Platform Availability"
 msgstr "Ketersediaan Platform"
 
-#: templates/_modals/edit_modal.html:220 templates/base.html:1238
+#: templates/_modals/edit_modal.html:220 templates/base.html:1239
 msgid "Toggle platform exclusivity"
 msgstr "Alihkan eksklusivitas platform"
 
-#: templates/base.html:1243
+#: templates/base.html:1244
 msgid "Xbox 360, PC, Switch"
 msgstr "Xbox 360, PC, Switch"
 
 #: templates/_modals/edit_modal.html:236
-#: templates/_settings_tabs/library.html:152 templates/base.html:1247
+#: templates/_settings_tabs/library.html:152 templates/base.html:1248
 msgid "ESRB (North America)"
 msgstr "ESRB (Amerika Utara)"
 
@@ -5606,142 +5689,142 @@ msgstr "ESRB (Amerika Utara)"
 #: templates/_modals/edit_modal.html:262 templates/_modals/edit_modal.html:273
 #: templates/_modals/edit_modal.html:284 templates/_modals/edit_modal.html:295
 #: templates/_modals/edit_modal.html:309 templates/_modals/edit_modal.html:319
-#: templates/_modals/edit_modal.html:331 templates/base.html:1249
-#: templates/base.html:1262 templates/base.html:1273 templates/base.html:1284
-#: templates/base.html:1295 templates/base.html:1306 templates/base.html:1320
-#: templates/base.html:1330 templates/base.html:1342
+#: templates/_modals/edit_modal.html:331 templates/base.html:1250
+#: templates/base.html:1263 templates/base.html:1274 templates/base.html:1285
+#: templates/base.html:1296 templates/base.html:1307 templates/base.html:1321
+#: templates/base.html:1331 templates/base.html:1343
 msgid "-- None --"
 msgstr "-- Tidak Ada --"
 
-#: templates/_modals/edit_modal.html:239 templates/base.html:1250
+#: templates/_modals/edit_modal.html:239 templates/base.html:1251
 msgid "EC - Early Childhood"
 msgstr "EC - Anak Usia Dini"
 
-#: templates/_modals/edit_modal.html:244 templates/base.html:1255
+#: templates/_modals/edit_modal.html:244 templates/base.html:1256
 msgid "AO - Adults Only"
 msgstr "AO - Khusus Dewasa"
 
-#: templates/_modals/edit_modal.html:245 templates/base.html:1256
+#: templates/_modals/edit_modal.html:245 templates/base.html:1257
 msgid "RP - Rating Pending"
 msgstr "RP - Rating Tertunda"
 
 #: templates/_modals/edit_modal.html:249
-#: templates/_settings_tabs/library.html:153 templates/base.html:1260
+#: templates/_settings_tabs/library.html:153 templates/base.html:1261
 msgid "PEGI (Europe)"
 msgstr "PEGI (Eropa)"
 
 #: templates/_modals/edit_modal.html:260
-#: templates/_settings_tabs/library.html:154 templates/base.html:1271
+#: templates/_settings_tabs/library.html:154 templates/base.html:1272
 msgid "CERO (Japan)"
 msgstr "CERO (Jepang)"
 
 #: templates/_modals/edit_modal.html:263 templates/_modals/edit_modal.html:296
-#: templates/base.html:1274 templates/base.html:1307
+#: templates/base.html:1275 templates/base.html:1308
 msgid "A - All Ages"
 msgstr "A - Semua Usia"
 
-#: templates/_modals/edit_modal.html:264 templates/base.html:1275
+#: templates/_modals/edit_modal.html:264 templates/base.html:1276
 msgid "B - Ages 12+"
 msgstr "B - Usia 12+"
 
-#: templates/_modals/edit_modal.html:265 templates/base.html:1276
+#: templates/_modals/edit_modal.html:265 templates/base.html:1277
 msgid "C - Ages 15+"
 msgstr "C - Usia 15+"
 
-#: templates/_modals/edit_modal.html:266 templates/base.html:1277
+#: templates/_modals/edit_modal.html:266 templates/base.html:1278
 msgid "D - Ages 17+"
 msgstr "D - Usia 17+"
 
-#: templates/_modals/edit_modal.html:267 templates/base.html:1278
+#: templates/_modals/edit_modal.html:267 templates/base.html:1279
 msgid "Z - Ages 18+"
 msgstr "Z - Usia 18+"
 
 #: templates/_modals/edit_modal.html:271
-#: templates/_settings_tabs/library.html:155 templates/base.html:1282
+#: templates/_settings_tabs/library.html:155 templates/base.html:1283
 msgid "USK (Germany)"
 msgstr "USK (Jerman)"
 
 #: templates/_modals/edit_modal.html:282
-#: templates/_settings_tabs/library.html:156 templates/base.html:1293
+#: templates/_settings_tabs/library.html:156 templates/base.html:1294
 msgid "ACB (Australia)"
 msgstr "ACB (Australia)"
 
-#: templates/_modals/edit_modal.html:285 templates/base.html:1296
+#: templates/_modals/edit_modal.html:285 templates/base.html:1297
 msgid "G - General"
 msgstr "G - Umum"
 
 #: templates/_modals/edit_modal.html:286 templates/_modals/edit_modal.html:297
-#: templates/base.html:1297
+#: templates/base.html:1298
 msgid "PG - Parental Guidance"
 msgstr "PG - Bimbingan Orang Tua"
 
-#: templates/_modals/edit_modal.html:288 templates/base.html:1299
+#: templates/_modals/edit_modal.html:288 templates/base.html:1300
 msgid "MA15+ - Restricted"
 msgstr "MA15+ - Terbatas"
 
-#: templates/_modals/edit_modal.html:289 templates/base.html:1300
+#: templates/_modals/edit_modal.html:289 templates/base.html:1301
 msgid "R18+ - Restricted"
 msgstr "R18+ - Terbatas"
 
 #: templates/_modals/edit_modal.html:293
-#: templates/_settings_tabs/library.html:157 templates/base.html:1304
+#: templates/_settings_tabs/library.html:157 templates/base.html:1305
 msgid "FPB (South Africa)"
 msgstr "FPB (Afrika Selatan)"
 
 #: templates/_modals/edit_modal.html:307
-#: templates/_settings_tabs/library.html:158 templates/base.html:1318
+#: templates/_settings_tabs/library.html:158 templates/base.html:1319
 msgid "GRAC (South Korea)"
 msgstr "GRAC (Korea Selatan)"
 
-#: templates/_modals/edit_modal.html:310 templates/base.html:1321
+#: templates/_modals/edit_modal.html:310 templates/base.html:1322
 msgid "ALL - All Ages"
 msgstr "ALL - Semua Usia"
 
 #: templates/_modals/edit_modal.html:317
-#: templates/_settings_tabs/library.html:159 templates/base.html:1328
+#: templates/_settings_tabs/library.html:159 templates/base.html:1329
 msgid "ClassInd (Brazil)"
 msgstr "ClassInd (Brasil)"
 
-#: templates/_modals/edit_modal.html:320 templates/base.html:1331
+#: templates/_modals/edit_modal.html:320 templates/base.html:1332
 msgid "L - General"
 msgstr "L - Umum"
 
 #: templates/_modals/edit_modal.html:329
-#: templates/_settings_tabs/library.html:160 templates/base.html:1340
+#: templates/_settings_tabs/library.html:160 templates/base.html:1341
 msgid "CADPA (China)"
 msgstr "CADPA (Tiongkok)"
 
-#: templates/_modals/edit_modal.html:332 templates/base.html:1343
+#: templates/_modals/edit_modal.html:332 templates/base.html:1344
 msgid "8+ - Ages 8 and up"
 msgstr "8+ - Usia 8 tahun ke atas"
 
-#: templates/_modals/edit_modal.html:333 templates/base.html:1344
+#: templates/_modals/edit_modal.html:333 templates/base.html:1345
 msgid "12+ - Ages 12 and up"
 msgstr "12+ - Usia 12 tahun ke atas"
 
-#: templates/_modals/edit_modal.html:334 templates/base.html:1345
+#: templates/_modals/edit_modal.html:334 templates/base.html:1346
 msgid "16+ - Ages 16 and up"
 msgstr "16+ - Usia 16 tahun ke atas"
 
-#: templates/_modals/edit_modal.html:343 templates/base.html:1354
+#: templates/_modals/edit_modal.html:343 templates/base.html:1355
 msgid "Game Description"
 msgstr "Deskripsi Game"
 
-#: templates/base.html:1355
+#: templates/base.html:1356
 msgid "Enter game description..."
 msgstr "Masukkan deskripsi game..."
 
-#: templates/base.html:1362
+#: templates/base.html:1363
 msgid "Images/Video"
 msgstr "Gambar/Video"
 
 #: templates/_modals/edit_modal.html:15
-#: templates/_settings_tabs/customization.html:267 templates/base.html:1367
+#: templates/_settings_tabs/customization.html:267 templates/base.html:1368
 #: templates/wishlist.html:700
 msgid "Save Changes"
 msgstr "Simpan Perubahan"
 
-#: templates/base.html:1403
+#: templates/base.html:1404
 msgid "running"
 msgstr "berjalan"
 
@@ -6469,93 +6552,106 @@ msgstr "Atur Kata Sandi Baru"
 msgid "ROM Reports"
 msgstr "Laporan ROM"
 
-#: templates/game_detail.html:49
+#: templates/game_detail.html:34
+#, fuzzy
+msgid "Browse games"
+msgstr "Jelajahi Folder"
+
+#: templates/_modals/manual_reader_modal.html:15 templates/game_detail.html:37
+msgid "Previous"
+msgstr "Sebelumnya"
+
+#: templates/_modals/manual_reader_modal.html:17 templates/game_detail.html:39
+msgid "Next"
+msgstr "Berikutnya"
+
+#: templates/game_detail.html:63
 msgid "CLZ Import - No ROM file"
 msgstr "Impor CLZ - Tidak ada berkas ROM"
 
-#: templates/game_detail.html:49 templates/game_imports.html:167
+#: templates/game_detail.html:63 templates/game_imports.html:167
 msgid "CLZ Import"
 msgstr "Impor CLZ"
 
-#: templates/game_detail.html:51
+#: templates/game_detail.html:65
 msgid "Steam Import - No ROM file"
 msgstr "Impor Steam - Tidak ada berkas ROM"
 
-#: templates/game_detail.html:51
+#: templates/game_detail.html:65
 msgid "Steam Import"
 msgstr "Impor Steam"
 
-#: templates/game_detail.html:53
+#: templates/game_detail.html:67
 msgid "Xbox Import - No ROM file"
 msgstr "Impor Xbox - Tidak ada berkas ROM"
 
-#: templates/game_detail.html:53
+#: templates/game_detail.html:67
 msgid "Xbox Import"
 msgstr "Impor Xbox"
 
-#: templates/game_detail.html:55
+#: templates/game_detail.html:69
 msgid "PSN Import - No ROM file"
 msgstr "Impor PSN - Tidak ada berkas ROM"
 
-#: templates/game_detail.html:55
+#: templates/game_detail.html:69
 msgid "PSN Import"
 msgstr "Impor PSN"
 
-#: templates/game_detail.html:58
+#: templates/game_detail.html:72
 msgid "This is a bonus/extra disc"
 msgstr "Ini adalah disc bonus/tambahan"
 
-#: templates/game_detail.html:58
+#: templates/game_detail.html:72
 msgid "Bonus Disc"
 msgstr "Disc Bonus"
 
-#: templates/game_detail.html:63
+#: templates/game_detail.html:77
 msgid "Part of:"
 msgstr "Bagian dari:"
 
-#: templates/game_detail.html:74
+#: templates/game_detail.html:88
 msgid "Regional versions"
 msgstr "Versi regional"
 
-#: templates/game_detail.html:75
+#: templates/game_detail.html:89
 msgid "Versions:"
 msgstr "Versi:"
 
-#: templates/game_detail.html:77 templates/game_detail.html:724
+#: templates/game_detail.html:91 templates/game_detail.html:770
 msgid "Unknown region"
 msgstr "Wilayah tidak diketahui"
 
-#: templates/game_detail.html:83
+#: templates/game_detail.html:97
 msgid "Launch this game in the configured emulator"
 msgstr "Jalankan game ini di emulator yang dikonfigurasi"
 
-#: templates/game_detail.html:89
+#: templates/game_detail.html:103
 msgid "Keyboard game: press Scroll Lock for RetroArch keys"
 msgstr "Game keyboard: tekan Scroll Lock untuk tombol RetroArch"
 
-#: templates/game_detail.html:93
+#: templates/game_detail.html:107
 msgid "View Manual (PDF)"
 msgstr "Lihat Manual (PDF)"
 
-#: templates/game_detail.html:118
+#: templates/game_detail.html:132
 msgid "Delete game from database"
 msgstr "Hapus game dari database"
 
-#: templates/_settings_tabs/account.html:320 templates/game_detail.html:120
+#: templates/_settings_tabs/account.html:320 templates/game_detail.html:134
 #: templates/logs.html:735 templates/settings.html:70
 #: templates/wishlist.html:642
 msgid "Delete"
 msgstr "Hapus"
 
-#: templates/game_detail.html:154 templates/game_detail.html:166
+#: templates/game_detail.html:168 templates/game_detail.html:180
 msgid "Click to zoom"
 msgstr "Klik untuk memperbesar"
 
-#: templates/game_detail.html:171
+#: templates/game_detail.html:185
 msgid "Switch between 2D and 3D boxart"
 msgstr "Beralih antara boxart 2D dan 3D"
 
-#: templates/game_detail.html:190
+#: templates/game_detail.html:204
 msgid ""
 "Sharper images for this game are still being made. They'll appear on "
 "their own."
@@ -6563,275 +6659,296 @@ msgstr ""
 "Gambar yang lebih tajam untuk game ini masih dibuat. Gambar akan muncul "
 "dengan sendirinya."
 
-#: templates/game_detail.html:201
+#: templates/game_detail.html:215
 msgid "Player"
 msgstr "Pemain"
 
-#: templates/game_detail.html:206
+#: templates/game_detail.html:220
 #, python-format
 msgid "Critic Score (%(count)s reviews)"
 msgstr "Skor Kritikus (%(count)s ulasan)"
 
-#: templates/game_detail.html:211
+#: templates/game_detail.html:225
 #, python-format
 msgid "User Score (%(count)s ratings)"
 msgstr "Skor Pengguna (%(count)s rating)"
 
-#: templates/game_detail.html:218
-msgid "Completion status"
-msgstr "Status penyelesaian"
+#: templates/game_detail.html:230
+#, python-format
+msgid "Copies sold on %(system)s, from published sales figures"
+msgstr ""
 
-#: templates/game_detail.html:233
+#: templates/game_detail.html:231
+#, fuzzy, python-format
+msgid "%(count)s sold"
+msgstr "%(count)s total"
+
+#: templates/game_detail.html:242
+#, fuzzy, python-format
+msgid "Last tested %(date)s."
+msgstr "Didapatkan %(date)s"
+
+#: templates/game_detail.html:246
+msgid ""
+"RetroDB reads PS3 compatibility from your RPCS3. In RPCS3, choose Manage "
+"> Databases > Download Compatibility Database."
+msgstr ""
+
+#: templates/game_detail.html:247
+msgid "RPCS3: no compatibility list"
+msgstr ""
+
+#: templates/game_detail.html:268
 msgid "No description available. Click \"Scrape\" to fetch metadata."
 msgstr ""
 "Tidak ada deskripsi yang tersedia. Klik \"Scrape\" untuk mengambil "
 "metadata."
 
-#: templates/game_detail.html:304
+#: templates/game_detail.html:350
 msgid "View on RetroAchievements.org"
 msgstr "Lihat di RetroAchievements.org"
 
-#: templates/game_detail.html:306
+#: templates/game_detail.html:352
 msgid "RA Site"
 msgstr "Situs RA"
 
-#: templates/game_detail.html:318 templates/steam_achievement_game.html:17
+#: templates/game_detail.html:364 templates/steam_achievement_game.html:17
 #: templates/steam_achievements.html:7 templates/steam_achievements.html:15
 #: templates/steam_achievements.html:21
 msgid "Steam Achievements"
 msgstr "Achievement Steam"
 
-#: templates/game_detail.html:334 templates/xbox_achievement_game.html:17
+#: templates/game_detail.html:380 templates/xbox_achievement_game.html:17
 #: templates/xbox_achievements.html:7 templates/xbox_achievements.html:15
 #: templates/xbox_achievements.html:21
 msgid "Xbox Achievements"
 msgstr "Achievement Xbox"
 
-#: templates/game_detail.html:349 templates/psn_trophies.html:6
+#: templates/game_detail.html:395 templates/psn_trophies.html:6
 #: templates/psn_trophies.html:15 templates/psn_trophy_detail.html:17
 msgid "PSN Trophies"
 msgstr "Trofi PSN"
 
-#: templates/game_detail.html:374 templates/local_trophy_detail.html:16
+#: templates/game_detail.html:420 templates/local_trophy_detail.html:16
 msgid "RPCS3 Trophies"
 msgstr "Trofi RPCS3"
 
-#: templates/game_detail.html:407
+#: templates/game_detail.html:453
 msgid "(cross-mapped)"
 msgstr "(dipetakan silang)"
 
-#: templates/game_detail.html:420
+#: templates/game_detail.html:466
 #, python-format
 msgid "Screenshots (%(count)s)"
 msgstr "Screenshot (%(count)s)"
 
-#: templates/game_detail.html:422
+#: templates/game_detail.html:468
 msgid "Previous screenshots"
 msgstr "Screenshot sebelumnya"
 
-#: templates/game_detail.html:428
+#: templates/game_detail.html:474
 msgid "Delete screenshot"
 msgstr "Hapus screenshot"
 
-#: templates/game_detail.html:432
+#: templates/game_detail.html:478
 msgid "Next screenshots"
 msgstr "Screenshot berikutnya"
 
-#: templates/game_detail.html:451
+#: templates/game_detail.html:497
 msgid "Also Known As"
 msgstr "Juga dikenal sebagai"
 
-#: templates/game_detail.html:455
+#: templates/game_detail.html:501
 #, python-format
 msgid "Source: %(source)s"
 msgstr "Sumber: %(source)s"
 
-#: templates/game_detail.html:480
+#: templates/game_detail.html:526
 msgid "Loading recommendations..."
 msgstr "Memuat rekomendasi..."
 
-#: templates/game_detail.html:528
+#: templates/game_detail.html:574
 #, python-format
 msgid "%(pct)s%% match"
 msgstr "%(pct)s%% cocok"
 
-#: templates/game_detail.html:569
+#: templates/game_detail.html:615
 msgid "Source:"
 msgstr "Sumber:"
 
-#: templates/game_detail.html:572
+#: templates/game_detail.html:618
 msgid "CLZ Games Import (No ROM file)"
 msgstr "Impor CLZ Games (Tidak ada berkas ROM)"
 
-#: templates/game_detail.html:574
+#: templates/game_detail.html:620
 msgid "Steam Import (No ROM file)"
 msgstr "Impor Steam (Tidak ada berkas ROM)"
 
-#: templates/game_detail.html:576
+#: templates/game_detail.html:622
 msgid "Xbox Import (No ROM file)"
 msgstr "Impor Xbox (Tidak ada berkas ROM)"
 
-#: templates/game_detail.html:578
+#: templates/game_detail.html:624
 msgid "PSN Import (No ROM file)"
 msgstr "Impor PSN (Tidak ada berkas ROM)"
 
-#: templates/game_detail.html:584
+#: templates/game_detail.html:630
 msgid "Original Title:"
 msgstr "Judul Asli:"
 
-#: templates/game_detail.html:590
+#: templates/game_detail.html:636
 msgid "File:"
 msgstr "Berkas:"
 
-#: templates/game_detail.html:592
+#: templates/game_detail.html:638
 msgid "Rename ROM file"
 msgstr "Ganti nama berkas ROM"
 
-#: templates/game_detail.html:595
+#: templates/game_detail.html:641
 msgid "Path:"
 msgstr "Jalur:"
 
-#: templates/game_detail.html:601
+#: templates/game_detail.html:647
 msgid "Edition:"
 msgstr "Edisi:"
 
-#: templates/game_detail.html:608
+#: templates/game_detail.html:654
 msgid "Exclusive:"
 msgstr "Eksklusif:"
 
-#: templates/game_detail.html:611
+#: templates/game_detail.html:657
 msgid "Also On:"
 msgstr "Juga Ada di:"
 
-#: templates/game_detail.html:618
+#: templates/game_detail.html:664
 msgid "Modes:"
 msgstr "Mode:"
 
-#: templates/game_detail.html:624
+#: templates/game_detail.html:670
 msgid "Players:"
 msgstr "Pemain:"
 
-#: templates/game_detail.html:630
+#: templates/game_detail.html:676
 msgid "Campaign:"
 msgstr "Kampanye:"
 
-#: templates/game_detail.html:636
+#: templates/game_detail.html:682
 msgid "Structure:"
 msgstr "Struktur:"
 
-#: templates/game_detail.html:642
+#: templates/game_detail.html:688
 msgid "Perspective:"
 msgstr "Perspektif:"
 
-#: templates/game_detail.html:648
+#: templates/game_detail.html:694
 msgid "Dimension:"
 msgstr "Dimensi:"
 
-#: templates/game_detail.html:654
+#: templates/game_detail.html:700
 msgid "Save:"
 msgstr "Save:"
 
-#: templates/game_detail.html:660
+#: templates/game_detail.html:706
 msgid "Input:"
 msgstr "Input:"
 
-#: templates/game_detail.html:665
+#: templates/game_detail.html:711
 msgid "Scraped:"
 msgstr "Di-scrape:"
 
-#: templates/game_detail.html:674
+#: templates/game_detail.html:720
 msgid "Bonus Content"
 msgstr "Konten Bonus"
 
-#: templates/game_detail.html:693
+#: templates/game_detail.html:739
 msgid "Emulator settings"
 msgstr "Pengaturan emulator"
 
-#: templates/_macros/nav_tabs.html:40 templates/game_detail.html:703
+#: templates/_macros/nav_tabs.html:40 templates/game_detail.html:749
 #: templates/rom_tools_hub.html:193 templates/versions_review.html:5
 #: templates/versions_review.html:80
 msgid "Regional Versions"
 msgstr "Versi Regional"
 
-#: templates/game_detail.html:711 templates/museum_system.html:100
+#: templates/game_detail.html:757 templates/museum_system.html:100
 msgid "Released"
 msgstr "Dirilis"
 
-#: templates/game_detail.html:713
+#: templates/game_detail.html:759
 msgid "File size"
 msgstr "Ukuran berkas"
 
-#: templates/game_detail.html:714
+#: templates/game_detail.html:760
 msgid "Revision"
 msgstr "Revisi"
 
-#: templates/game_detail.html:715
+#: templates/game_detail.html:761
 msgid "Languages"
 msgstr "Bahasa"
 
-#: templates/game_detail.html:716
+#: templates/game_detail.html:762
 msgid "Scores"
 msgstr "Skor"
 
-#: templates/game_detail.html:725
+#: templates/game_detail.html:771
 msgid "(this page)"
 msgstr "(halaman ini)"
 
-#: templates/game_detail.html:743
+#: templates/game_detail.html:789
 msgid "Known differences"
 msgstr "Perbedaan yang diketahui"
 
-#: templates/game_detail.html:743
+#: templates/game_detail.html:789
 msgid "AI-written"
 msgstr "Ditulis AI"
 
-#: templates/game_detail.html:744
+#: templates/game_detail.html:790
 msgid "Written by AI from what it knows about these releases. It can be wrong."
 msgstr ""
 "Ditulis oleh AI dari apa yang diketahuinya tentang rilis-rilis ini. Bisa "
 "saja keliru."
 
-#: templates/game_detail.html:746
+#: templates/game_detail.html:792
 msgid "The AI knows of no differences between these versions."
 msgstr "AI tidak mengetahui perbedaan apa pun antara versi-versi ini."
 
-#: templates/game_detail.html:749
+#: templates/game_detail.html:795
 msgid "No other regional versions are linked to this game."
 msgstr "Tidak ada versi regional lain yang ditautkan ke game ini."
 
-#: templates/game_detail.html:754
+#: templates/game_detail.html:800
 msgid "Unlink this version"
 msgstr "Lepas tautan versi ini"
 
-#: templates/game_detail.html:755
+#: templates/game_detail.html:801
 msgid "Summarise differences with AI"
 msgstr "Ringkas perbedaan dengan AI"
 
-#: templates/game_detail.html:757
+#: templates/game_detail.html:803
 msgid "Link a version"
 msgstr "Tautkan versi"
 
-#: templates/game_detail.html:758
+#: templates/game_detail.html:804
 msgid "Link a version: search this system"
 msgstr "Tautkan versi: cari di sistem ini"
 
-#: templates/game_detail.html:771
+#: templates/game_detail.html:817
 msgid "Scrape History"
 msgstr "Riwayat Scrape"
 
-#: templates/game_detail.html:797
+#: templates/game_detail.html:843
 msgid "Primary scraper"
 msgstr "Scraper utama"
 
-#: templates/game_detail.html:799
+#: templates/game_detail.html:845
 msgid "Fallback scraper"
 msgstr "Scraper cadangan"
 
-#: templates/game_detail.html:806
+#: templates/game_detail.html:852
 msgid "Fields filled:"
 msgstr "Kolom terisi:"
 
-#: templates/game_detail.html:819
+#: templates/game_detail.html:865
 msgid "Still missing:"
 msgstr "Masih hilang:"
 
@@ -9202,14 +9319,6 @@ msgstr "Buka PDF di tab baru"
 msgid "Manual page. Use the arrow keys to turn pages."
 msgstr "Halaman manual. Gunakan tombol panah untuk membalik halaman."
 
-#: templates/_modals/manual_reader_modal.html:15
-msgid "Previous"
-msgstr "Sebelumnya"
-
-#: templates/_modals/manual_reader_modal.html:17
-msgid "Next"
-msgstr "Berikutnya"
-
 #: templates/_modals/rename_modal.html:4
 msgid "Rename ROM File"
 msgstr "Ganti Nama Berkas ROM"
@@ -10274,112 +10383,6 @@ msgstr "Sponsor di GitHub"
 #: templates/_settings_tabs/system.html:487
 msgid "Support on Patreon"
 msgstr "Dukung di Patreon"
-
-#: routes/games.py:561
-#, python-format
-msgid ""
-"Screenshots not added because they match ones the game already has: "
-"%(count)s"
-msgstr ""
-
-#: services/js_i18n_strings.py:534 templates/game_detail.html:236
-msgid "Can be completed with playable performance and no game-breaking glitches."
-msgstr ""
-
-#: services/js_i18n_strings.py:589
-#, fuzzy, python-brace-format
-msgid "Critic Score ({count} reviews)"
-msgstr "Skor Kritikus (%(count)s ulasan)"
-
-#: services/js_i18n_strings.py:597 templates/game_detail.html:240
-msgid "Does not start, or crashes the emulator."
-msgstr ""
-
-#: services/js_i18n_strings.py:667 templates/game_detail.html:237
-msgid ""
-"Gets in game, but cannot be finished, has serious glitches or runs too "
-"slowly."
-msgstr ""
-
-#: services/js_i18n_strings.py:694
-#, fuzzy, python-brace-format
-msgid "Last tested {date}."
-msgstr "Ditambahkan {date}"
-
-#: services/js_i18n_strings.py:781 templates/game_detail.html:237
-msgid "RPCS3: Ingame"
-msgstr ""
-
-#: services/js_i18n_strings.py:782 templates/game_detail.html:238
-#, fuzzy
-msgid "RPCS3: Intro"
-msgstr "Trofi RPCS3"
-
-#: services/js_i18n_strings.py:783 templates/game_detail.html:239
-msgid "RPCS3: Loadable"
-msgstr ""
-
-#: services/js_i18n_strings.py:784 templates/game_detail.html:240
-#, fuzzy
-msgid "RPCS3: Nothing"
-msgstr "Trofi RPCS3"
-
-#: services/js_i18n_strings.py:785 templates/game_detail.html:236
-msgid "RPCS3: Playable"
-msgstr ""
-
-#: services/js_i18n_strings.py:859 templates/game_detail.html:239
-msgid "Shows a black screen with a frame rate in the window title."
-msgstr ""
-
-#: services/js_i18n_strings.py:860 templates/game_detail.html:238
-msgid "Shows an image but does not get past the menus."
-msgstr ""
-
-#: services/js_i18n_strings.py:913
-#, fuzzy, python-brace-format
-msgid "User Score ({count} ratings)"
-msgstr "Skor Pengguna (%(count)s rating)"
-
-#: services/js_i18n_strings.py:930
-#, fuzzy, python-brace-format
-msgid "{count} sold"
-msgstr "Konsol"
-
-#: templates/base.html:942 templates/game_detail.html:318
-#, fuzzy
-msgid "Release dates"
-msgstr "Tanggal Rilis"
-
-#: templates/game_detail.html:34
-#, fuzzy
-msgid "Browse games"
-msgstr "Jelajahi Folder"
-
-#: templates/game_detail.html:230
-#, python-format
-msgid "Copies sold on %(system)s, from published sales figures"
-msgstr ""
-
-#: templates/game_detail.html:231
-#, fuzzy, python-format
-msgid "%(count)s sold"
-msgstr "%(count)s total"
-
-#: templates/game_detail.html:242
-#, fuzzy, python-format
-msgid "Last tested %(date)s."
-msgstr "Didapatkan %(date)s"
-
-#: templates/game_detail.html:246
-msgid ""
-"RetroDB reads PS3 compatibility from your RPCS3. In RPCS3, choose Manage "
-"> Databases > Download Compatibility Database."
-msgstr ""
-
-#: templates/game_detail.html:247
-msgid "RPCS3: no compatibility list"
-msgstr ""
 
 #~ msgid "(auto-detect)"
 #~ msgstr "(deteksi otomatis)"
