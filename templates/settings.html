@@ -40,6 +40,13 @@
         <span class="tab-icon">⚙️</span>
         <span class="tab-text">{{ _('System') }}</span>
     </button>
+    {% if current_user and current_user.role == 'admin' %}
+    {# Its own page, so a link rather than a tab: help and the game page send people to "Settings > Emulators". #}
+    <a class="settings-tab settings-tab-link" href="{{ url_for('emulators.page_emulators_settings') }}">
+        <span class="tab-icon">🎮</span>
+        <span class="tab-text">{{ _('Emulators') }}</span>
+    </a>
+    {% endif %}
 </div>
 
 <!-- ==================== TAB: ACCOUNT ==================== -->
@@ -310,7 +317,8 @@
 /* Responsive tab adjustments */
 @media (max-width: 768px) {
     .settings-tab {
-        padding: 0.6rem 1rem;
+        /* Narrow sides so all seven icon-only tabs fit one row on a phone. */
+        padding: 0.6rem 0.5rem;
         font-size: 0.85rem;
     }
     
@@ -1141,7 +1149,7 @@ function switchSettingsTab(tabId, skipScroll) {
     if (!tabId || !document.getElementById('tab-' + tabId)) return false;
 
     // Update tab buttons
-    document.querySelectorAll('.settings-tab').forEach(tab => {
+    document.querySelectorAll('.settings-tab[data-tab]').forEach(tab => {
         const selected = tab.dataset.tab === tabId;
         tab.classList.toggle('active', selected);
         tab.setAttribute('aria-selected', selected ? 'true' : 'false');  // PASS-59-80
