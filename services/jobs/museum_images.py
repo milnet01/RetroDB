@@ -94,12 +94,15 @@ class MuseumImageFetchJob:
             return {'success': False, 'error': 'No running image fetch to cancel'}
 
     def _worker(self, system_id):
-        # Lazy import: the fetch helpers live with the Museum routes.
-        from routes.museum import (
-            _fetch_and_process_image, _get_removebg_key, _propagate_controller_image,
-        )
-        conn = _get_conn()
+        # The import and connect sit inside the try, so a failure in either
+        # still ends the job instead of leaving it `running` with the lock held.
+        conn = None
         try:
+            # Lazy import: the fetch helpers live with the Museum routes.
+            from routes.museum import (
+                _fetch_and_process_image, _get_removebg_key, _propagate_controller_image,
+            )
+            conn = _get_conn()
             controllers = conn.execute(
                 """SELECT c.id, c.name, c.manufacturer, c.image FROM controllers c
                    JOIN system_controllers sc ON c.id = sc.controller_id
@@ -146,7 +149,8 @@ class MuseumImageFetchJob:
             with self._lock:
                 self.error_message = str(e)
         finally:
-            conn.close()
+            if conn is not None:
+                conn.close()
             with self._lock:
                 self.completed = True
                 self.running = False

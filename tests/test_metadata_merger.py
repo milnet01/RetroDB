@@ -210,8 +210,13 @@ class TestApplyIgdb:
             'age_ratings': [
                 {'category': 1, 'rating': 11},  # ESRB M
                 {'category': 2, 'rating': 5},   # PEGI 18
-                {'category': 3, 'rating': 5},   # CERO Z
-                {'category': 4, 'rating': 5},   # USK 18
+                # IGDB's rating enum is one global list across boards:
+                # CERO is 13-17, USK 18-22, GRAC 23-27, CLASS_IND 28-33, ACB 34-39.
+                {'category': 3, 'rating': 17},  # CERO Z
+                {'category': 4, 'rating': 22},  # USK 18
+                {'category': 5, 'rating': 25},  # GRAC 15
+                {'category': 6, 'rating': 31},  # CLASS_IND 14
+                {'category': 7, 'rating': 37},  # ACB MA15+
             ],
         }
         apply_igdb_to_metadata(meta, igdb, db_game_id=1, result=result)
@@ -219,6 +224,46 @@ class TestApplyIgdb:
         assert meta['pegi_rating'] == 'PEGI 18'
         assert meta['cero_rating'] == 'Z'
         assert meta['usk_rating'] == '18'
+        assert meta['grac_rating'] == '15'
+        assert meta['classind_rating'] == '14'
+        assert meta['acb_rating'] == 'MA15+'
+
+    def test_age_rating_board_value_mismatch_ignored(self, blank):
+        meta, result = blank
+        # CERO with a PEGI-range value is not a CERO rating; the old per-board
+        # 1-5 maps read it as CERO Z.
+        apply_igdb_to_metadata(meta, {'age_ratings': [{'category': 3, 'rating': 5}]},
+                               db_game_id=1, result=result)
+        assert meta['cero_rating'] == ''
+
+    def test_age_rating_organization_shape(self, blank):
+        meta, result = blank
+        igdb = {
+            'age_ratings': [
+                {'organization': {'name': 'ESRB'}, 'rating_category': {'rating': 'E10'}},
+                {'organization': {'name': 'PEGI'}, 'rating_category': {'rating': 'Twelve'}},
+                {'organization': {'name': 'CERO'}, 'rating_category': {'rating': 'B'}},
+                {'organization': {'name': 'ACB'}, 'rating_category': {'rating': 'R18'}},
+            ],
+        }
+        apply_igdb_to_metadata(meta, igdb, db_game_id=1, result=result)
+        assert meta['esrb_rating'] == 'E10+'
+        assert meta['pegi_rating'] == 'PEGI 12'
+        assert meta['cero_rating'] == 'B'
+        assert meta['acb_rating'] == 'R18+'
+
+    def test_players_null_offlinemax_not_raising(self, blank):
+        meta, result = blank
+        apply_igdb_to_metadata(
+            meta, {'multiplayer_modes': [{'offlinemax': None}, {'offlinemax': 2}]},
+            db_game_id=1, result=result)
+        assert meta['players'] == 2
+
+    def test_players_without_offline_count_left_empty(self, blank):
+        meta, result = blank
+        apply_igdb_to_metadata(meta, {'multiplayer_modes': [{'onlinemax': 8}]},
+                               db_game_id=1, result=result)
+        assert meta['players'] == ''
 
     def test_unknown_rating_category_ignored(self, blank):
         meta, result = blank
@@ -395,6 +440,34 @@ class TestApplyScreenScraper:
         assert meta['cero_rating'] == 'B'
         assert meta['usk_rating'] == '12'
         assert meta['acb_rating'] == 'M'
+
+    def test_parsed_record_shape_applies_text_fields(self, blank):
+        # A cache miss on the primary path falls back to get_game_info, which
+        # returns parse_game_data's flat dict (genres as a string). Iterating
+        # that string raised AttributeError and lost the whole record.
+        meta, result = blank
+        parsed = {
+            'title': 'Sonic the Hedgehog', 'description': 'Gotta go fast.',
+            'release_date': '1991-06-23', 'developer': 'Sonic Team',
+            'publisher': 'Sega', 'genres': 'Platform', 'players': '1',
+            'media': {},
+        }
+        apply_screenscraper_to_metadata(meta, parsed, db_game_id=1, result=result)
+        assert meta['title'] == 'Sonic the Hedgehog'
+        assert meta['description'] == 'Gotta go fast.'
+        assert meta['release_date'] == '1991-06-23'
+        assert meta['developer'] == 'Sonic Team'
+        assert meta['publisher'] == 'Sega'
+        assert meta['genre']
+        assert meta['players'] == '1'
+
+    def test_media_url_extension_ignores_query_string(self):
+        from scraper.metadata_merger import _url_ext
+        url = ('https://neoclone.screenscraper.fr/api2/mediaVideoJeu.php'
+               '?devid=x&devpassword=y&ssid=u&sspassword=p&media=video-normalized')
+        assert _url_ext(url, 'mp4') == 'mp4'
+        assert _url_ext('https://cdn.example/x/manual.PDF?x=1', 'pdf') == 'pdf'
+        assert _url_ext('https://cdn.example/x/cover.png', 'jpg') == 'png'
 
     def test_note_converted_0_20_to_0_100(self, blank):
         meta, result = blank

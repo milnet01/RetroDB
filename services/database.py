@@ -128,6 +128,17 @@ def get_request_db():
     return g.db
 
 
+def _borrow_db():
+    """(connection, owned) for one helper call. Outside an app context
+    get_request_db() hands out a fresh connection nobody else holds; the
+    helper must close it (`owned`), or every background-job query leaves an
+    unclosed connection for the garbage collector (a ResourceWarning on
+    Python 3.13+)."""
+    if has_app_context():
+        return get_request_db(), False
+    return get_db(), True
+
+
 def query(sql, args=(), one=False):
     """
     Execute a SELECT query and return results as dictionaries.
@@ -155,11 +166,14 @@ def query(sql, args=(), one=False):
         games = query("SELECT * FROM games WHERE system_id = ? AND title LIKE ?", 
                      (system_id, f"%{search}%"))
     """
-    conn = get_request_db()
-    _t0 = time.perf_counter()
-    cur = conn.execute(sql, args)
-    rows = cur.fetchall()
-    _log_if_slow(sql, args, _t0)
+    conn, owned = _borrow_db()
+    try:
+        _t0 = time.perf_counter()
+        rows = conn.execute(sql, args).fetchall()
+        _log_if_slow(sql, args, _t0)
+    finally:
+        if owned:
+            conn.close()
 
     # Convert sqlite3.Row objects to dicts so .get() works
     if one:
@@ -196,7 +210,7 @@ def execute(sql, args=()):
         # Delete a game
         execute("DELETE FROM games WHERE id = ?", (game_id,))
     """
-    conn = get_request_db()
+    conn, owned = _borrow_db()
     _t0 = time.perf_counter()
     try:
         cur = conn.execute(sql, args)
@@ -213,6 +227,9 @@ def execute(sql, args=()):
         except Exception:
             pass
         raise
+    finally:
+        if owned:
+            conn.close()
     _log_if_slow(sql, args, _t0)
     return cur.lastrowid
 
@@ -243,7 +260,7 @@ def execute_many(sql, args_list):
             games_data
         )
     """
-    conn = get_request_db()
+    conn, owned = _borrow_db()
     _t0 = time.perf_counter()
     try:
         cur = conn.executemany(sql, args_list)
@@ -257,6 +274,9 @@ def execute_many(sql, args_list):
         except Exception:
             pass
         raise
+    finally:
+        if owned:
+            conn.close()
     _log_if_slow(sql, args_list, _t0)
     return cur.rowcount
 
@@ -282,7 +302,7 @@ def execute_script(sql_script):
             CREATE INDEX IF NOT EXISTS idx_new ON new_table(id);
         ''')
     """
-    conn = get_request_db()
+    conn, owned = _borrow_db()
     try:
         conn.executescript(sql_script)
         conn.commit()
@@ -298,6 +318,9 @@ def execute_script(sql_script):
         except Exception:
             pass
         raise
+    finally:
+        if owned:
+            conn.close()
 
 
 def _fsync_path(path):

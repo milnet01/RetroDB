@@ -1162,6 +1162,7 @@ const GameDetailModal = {
     maxCacheSize: 50,
     _screenshots: [],
     _screenshotIndex: 0,
+    _loadingHtml: null,
 
     /**
      * Open the game detail modal
@@ -1176,6 +1177,10 @@ const GameDetailModal = {
         const wasOpen = modal.classList.contains('active');
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
+        if (this._loadingHtml) {
+            loading.innerHTML = this._loadingHtml;
+            this._loadingHtml = null;
+        }
         loading.style.display = 'flex';
         content.style.display = 'none';
 
@@ -1188,6 +1193,7 @@ const GameDetailModal = {
             return;
         }
 
+        const isCurrent = () => this.currentId === gameId;
         API.get(`/api/game/${gameId}/detail`)
             .then(data => {
                 if (data.success) {
@@ -1196,12 +1202,12 @@ const GameDetailModal = {
                         const firstKey = this.cache.keys().next().value;
                         this.cache.delete(firstKey);
                     }
-                    this.populate(data.game);
-                } else {
+                    if (isCurrent()) this.populate(data.game);
+                } else if (isCurrent()) {
                     this.showError(data.error || t('Failed to load game'));
                 }
             })
-            .catch(err => this.showError(t('Network error')));
+            .catch(err => { if (isCurrent()) this.showError(t('Network error')); });
     },
 
     /**
@@ -1372,7 +1378,9 @@ const GameDetailModal = {
      * @param {string} message - The error message
      */
     showError(message) {
-        document.getElementById('gameDetailLoading').innerHTML =
+        const loading = document.getElementById('gameDetailLoading');
+        if (!this._loadingHtml) this._loadingHtml = loading.innerHTML;
+        loading.innerHTML =
             `<p style="color: var(--neon-red);">${escapeHtml(message)}</p>
              <button class="btn btn-secondary" data-on-click="closeGameDetailModal">${escapeHtml(t('Close'))}</button>`;
     },
@@ -3062,7 +3070,7 @@ window.triggerAiFill = function() {
                 if (count > 0) {
                     showNotification(`AI filled ${count} field${count !== 1 ? 's' : ''}: ${data.filled_fields.join(', ')}`, 'success');
                     GameDetailModal.cache.delete(gameId);
-                    GameDetailModal.open(gameId);
+                    if (GameDetailModal.currentId === gameId) GameDetailModal.open(gameId);
                     if (typeof AllGamesController !== 'undefined' && AllGamesController.refreshCards) {
                         AllGamesController.refreshCards(gameId);
                     }

@@ -646,16 +646,27 @@ const UnifiedToastController = {
      * Poll status for a specific type
      */
     async pollStatus(type, endpoint) {
+        // One request per type at a time. A tick that finds one in flight
+        // lets it land (its reply is just as fresh): aborting it instead
+        // meant a status reply slower than the poll interval never arrived
+        // and the toast froze. Only a request stuck past 10 s is replaced.
+        const prevAbort = this._pollAbortControllers.get(type);
+        if (prevAbort) {
+            if (Date.now() - prevAbort._startedAt < 10000) return;
+            prevAbort.abort();
+        }
+        const ac = new AbortController();
+        ac._startedAt = Date.now();
+        this._pollAbortControllers.set(type, ac);
         try {
-            // Abort any previous in-flight request for this type to prevent pileup
-            const prevAbort = this._pollAbortControllers.get(type);
-            if (prevAbort) prevAbort.abort();
-
-            const ac = new AbortController();
-            this._pollAbortControllers.set(type, ac);
-
-            const data = await API.get(endpoint, { signal: ac.signal });
-            this._pollAbortControllers.delete(type);
+            let data;
+            try {
+                data = await API.get(endpoint, { signal: ac.signal });
+            } finally {
+                if (this._pollAbortControllers.get(type) === ac) {
+                    this._pollAbortControllers.delete(type);
+                }
+            }
 
             // Different endpoints have different response formats
             // bulk-scrape-job/status returns { success: true, running: ..., ... }

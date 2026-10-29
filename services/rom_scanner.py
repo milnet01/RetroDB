@@ -138,7 +138,9 @@ def run_inline_scan():
                 logger.warning(f"System not found for folder: {folder}")
                 continue
             system_id = row[0]
-            c.execute("UPDATE systems SET name = ?, logo = ? WHERE folder = ?",
+            # Keep a logo already set when none is bundled (an imported ES-DE
+            # logo lives under IMAGE_PATH, not STATIC_PATH).
+            c.execute("UPDATE systems SET name = ?, logo = COALESCE(?, logo) WHERE folder = ?",
                       (system_name, system_logo, folder))
 
             extensions = parse_systeminfo(system_path)

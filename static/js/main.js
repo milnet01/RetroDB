@@ -1056,7 +1056,7 @@ async function cleanMissingRoms() {
                     if (resultDiv) {
                         if (data.removed > 0) {
                             let html = `<div class="glass-panel" style="padding: var(--spacing-md); background: rgba(239, 68, 68, 0.1);">`;
-                            html += `<strong style="color: var(--danger-red);">${escapeHtml(t('Removed {n} games:', {n: formatNumber(data.removed)}))}</strong>`;
+                            html += `<strong style="color: var(--neon-red);">${escapeHtml(t('Removed {n} games:', {n: formatNumber(data.removed)}))}</strong>`;
                             html += `<ul style="margin-top: var(--spacing-sm); font-size: 0.9rem;">`;
                             for (const game of data.removed_games) {
                                 html += `<li>${escapeHtml(game.title)}</li>`;
@@ -1113,7 +1113,7 @@ async function clearClzImports() {
                     if (resultDiv) {
                         if (data.removed > 0) {
                             let html = `<div class="glass-panel" style="padding: var(--spacing-md); background: rgba(239, 68, 68, 0.1);">`;
-                            html += `<strong style="color: var(--danger-red);">${escapeHtml(t('Removed {n} CLZ Import games:', {n: formatNumber(data.removed)}))}</strong>`;
+                            html += `<strong style="color: var(--neon-red);">${escapeHtml(t('Removed {n} CLZ Import games:', {n: formatNumber(data.removed)}))}</strong>`;
                             html += `<ul style="margin-top: var(--spacing-sm); font-size: 0.9rem;">`;
                             for (const game of data.removed_games) {
                                 html += `<li>${escapeHtml(game.title)}</li>`;

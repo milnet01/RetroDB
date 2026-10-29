@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-23 15:00+0200\n"
+"POT-Creation-Date: 2026-10-27 12:31+0000\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -42,8 +42,8 @@ msgstr "Configurazione richiesta"
 msgid "Password change required"
 msgstr "Cambio password richiesto"
 
-#: app.py:1668 routes/auth.py:202 routes/auth.py:251 routes/auth.py:436
-#: routes/auth.py:481 templates/force_change_password.html:49
+#: app.py:1695 routes/auth.py:202 routes/auth.py:262 routes/auth.py:447
+#: routes/auth.py:492 templates/force_change_password.html:49
 #: templates/setup.html:469
 msgid "Password must be at least 12 characters"
 msgstr "La password deve contenere almeno 12 caratteri"
@@ -60,9 +60,9 @@ msgstr "Sistema non trovato o senza giochi con obiettivi"
 #: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/collections.py:276
 #: routes/collections.py:531 routes/emulators.py:271 routes/emulators.py:285
 #: routes/games.py:348 routes/games.py:808 routes/games.py:931
-#: routes/games.py:987 routes/games_ai.py:46 routes/games_media.py:37
-#: routes/games_media.py:85 routes/games_media.py:146 routes/launch.py:240
-#: routes/reports.py:693 routes/reports.py:818 routes/trophies.py:1278
+#: routes/games.py:987 routes/games_ai.py:47 routes/games_media.py:37
+#: routes/games_media.py:85 routes/games_media.py:148 routes/launch.py:240
+#: routes/reports.py:693 routes/reports.py:822 routes/trophies.py:1291
 #: services/hltb_service.py:125
 msgid "Game not found"
 msgstr "Gioco non trovato"
@@ -87,8 +87,8 @@ msgstr "RetroAchievements non configurato"
 msgid "Could not fetch achievement data"
 msgstr "Impossibile recuperare i dati degli obiettivi"
 
-#: routes/achievements.py:294 routes/controllers.py:412
-#: routes/controllers.py:462 routes/museum.py:309 routes/museum.py:381
+#: routes/achievements.py:294 routes/controllers.py:413
+#: routes/controllers.py:463 routes/museum.py:309 routes/museum.py:381
 #: routes/ra_sync.py:98 routes/systems.py:220
 msgid "System not found"
 msgstr "Sistema non trovato"
@@ -102,8 +102,8 @@ msgstr "Nessun gioco con RetroAchievements in questo sistema"
 msgid "Sync already in progress for %(name)s"
 msgstr "Sincronizzazione già in corso per %(name)s"
 
-#: routes/achievements.py:367 routes/platform_import.py:326
-#: routes/platform_import.py:693
+#: routes/achievements.py:367 routes/platform_import.py:334
+#: routes/platform_import.py:702
 msgid "That job belongs to another user"
 msgstr "Questa operazione appartiene a un altro utente"
 
@@ -119,7 +119,7 @@ msgstr "Troppi tentativi di accesso. Riprova più tardi."
 msgid "No user selected"
 msgstr "Nessun utente selezionato"
 
-#: routes/auth.py:68 routes/auth.py:228 routes/auth.py:276
+#: routes/auth.py:68 routes/auth.py:228 routes/auth.py:287
 msgid "User not found"
 msgstr "Utente non trovato"
 
@@ -153,64 +153,68 @@ msgstr "Ruolo non valido"
 msgid "Username already exists"
 msgstr "Il nome utente esiste già"
 
-#: routes/auth.py:280
+#: routes/auth.py:239
+msgid "The last admin must stay an active admin"
+msgstr ""
+
+#: routes/auth.py:291
 msgid "Cannot delete your own account"
 msgstr "Impossibile eliminare il proprio account"
 
-#: routes/auth.py:285
+#: routes/auth.py:296
 msgid "Cannot delete the last admin user"
 msgstr "Impossibile eliminare l'ultimo utente amministratore"
 
-#: routes/auth.py:343 routes/auth.py:412 routes/auth.py:468
+#: routes/auth.py:354 routes/auth.py:423 routes/auth.py:479
 msgid "Not logged in"
 msgstr "Non hai effettuato l'accesso"
 
-#: routes/auth.py:380
+#: routes/auth.py:391
 msgid "Invalid locale"
 msgstr "Lingua non valida"
 
-#: routes/auth.py:385
+#: routes/auth.py:396
 msgid "Invalid theme"
 msgstr "Tema non valido"
 
-#: routes/auth.py:391
+#: routes/auth.py:402
 #, python-format
 msgid "Invalid RPCS3 trophy folder: %(reason)s"
 msgstr "Cartella trofei RPCS3 non valida: %(reason)s"
 
-#: routes/auth.py:424
+#: routes/auth.py:435
 msgid "Too many attempts. Please try again later."
 msgstr "Troppi tentativi. Riprova più tardi."
 
-#: routes/auth.py:431 routes/auth.py:477
+#: routes/auth.py:442 routes/auth.py:488
 msgid "New password is required"
 msgstr "La nuova password è obbligatoria"
 
-#: routes/auth.py:442
+#: routes/auth.py:453
 msgid "Current password is incorrect"
 msgstr "La password attuale non è corretta"
 
-#: routes/auth.py:471
+#: routes/auth.py:482
 msgid "Password change not required"
 msgstr "Cambio password non necessario"
 
-#: routes/auth.py:523
+#: routes/auth.py:534
 msgid "No file provided"
 msgstr "Nessun file fornito"
 
-#: routes/auth.py:527 routes/museum.py:660
+#: routes/auth.py:538 routes/museum.py:660
 msgid "No file selected"
 msgstr "Nessun file selezionato"
 
-#: routes/auth.py:532
+#: routes/auth.py:543
 msgid "Invalid file type. Allowed: jpg, png, gif, webp"
 msgstr "Tipo di file non valido. Consentiti: jpg, png, gif, webp"
 
-#: routes/auth.py:537
+#: routes/auth.py:548
 msgid "File too large. Maximum size is 2MB"
 msgstr "File troppo grande. La dimensione massima è 2MB"
 
-#: routes/auth.py:555
+#: routes/auth.py:566
 msgid ""
 "Avatar uploads require Pillow; please ask the operator to install the "
 "project requirements."
@@ -218,7 +222,7 @@ msgstr ""
 "Il caricamento degli avatar richiede Pillow; chiedi all'operatore di "
 "installare i requisiti del progetto."
 
-#: routes/auth.py:571 routes/museum.py:692
+#: routes/auth.py:582 routes/museum.py:692
 msgid "Invalid image file"
 msgstr "File immagine non valido"
 
@@ -235,17 +239,17 @@ msgid "Bonus disc and parent game must be in the same system"
 msgstr "Il disco bonus e il gioco principale devono essere nello stesso sistema"
 
 #: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1245
-#: routes/games.py:1275 routes/platform_import.py:289
-#: routes/platform_import.py:658 routes/platform_import.py:1024
+#: routes/games.py:1275 routes/platform_import.py:297
+#: routes/platform_import.py:667 routes/platform_import.py:1032
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
-#: routes/scrape_logs.py:219 routes/scraper.py:200 routes/scraper.py:528
-#: routes/scraper.py:917 routes/settings.py:317 routes/settings.py:341
+#: routes/scrape_logs.py:219 routes/scraper.py:202 routes/scraper.py:530
+#: routes/scraper.py:919 routes/settings.py:317 routes/settings.py:341
 #: routes/settings.py:456 routes/settings.py:533 routes/settings.py:547
 #: routes/settings.py:591 routes/settings.py:607 routes/settings.py:643
-#: routes/steam_achievements.py:138 routes/systems.py:286 routes/systems.py:466
-#: routes/trophies.py:498 routes/trophies.py:694 routes/trophies.py:742
-#: routes/trophies.py:1564 routes/trophies.py:1588 routes/trophies.py:1633
-#: routes/trophies.py:1661 routes/trophies.py:1703 routes/trophies.py:1770
+#: routes/steam_achievements.py:138 routes/systems.py:286 routes/systems.py:467
+#: routes/trophies.py:508 routes/trophies.py:706 routes/trophies.py:754
+#: routes/trophies.py:1582 routes/trophies.py:1606 routes/trophies.py:1651
+#: routes/trophies.py:1679 routes/trophies.py:1721 routes/trophies.py:1788
 #: routes/xbox_achievements.py:157 services/api_helpers.py:46
 msgid "An internal error occurred"
 msgstr "Si è verificato un errore interno"
@@ -254,7 +258,7 @@ msgstr "Si è verificato un errore interno"
 msgid "Missing bonus_id or parent_id"
 msgstr "bonus_id o parent_id mancante"
 
-#: routes/bonus_discs.py:310 routes/reports.py:806
+#: routes/bonus_discs.py:310 routes/reports.py:810
 msgid "Missing game_id"
 msgstr "game_id mancante"
 
@@ -377,22 +381,22 @@ msgstr "Questo gioco è già nella tua lista dei desideri"
 msgid "Wishlist item not found"
 msgstr "Elemento della lista dei desideri non trovato"
 
-#: routes/controllers.py:225 routes/controllers.py:287
+#: routes/controllers.py:226 routes/controllers.py:288
 msgid "Controller name is required"
 msgstr "Il nome del controller è obbligatorio"
 
-#: routes/controllers.py:230
+#: routes/controllers.py:231
 #, python-format
 msgid "Controller \"%(name)s\" already exists"
 msgstr "Il controller \"%(name)s\" esiste già"
 
-#: routes/controllers.py:292 routes/controllers.py:334
-#: routes/controllers.py:419 routes/controllers.py:468 routes/museum.py:577
+#: routes/controllers.py:293 routes/controllers.py:335
+#: routes/controllers.py:420 routes/controllers.py:469 routes/museum.py:577
 #: routes/museum.py:653 routes/museum.py:723
 msgid "Controller not found"
 msgstr "Controller non trovato"
 
-#: routes/controllers.py:297
+#: routes/controllers.py:298
 #, python-format
 msgid "Another controller named \"%(name)s\" already exists"
 msgstr "Esiste già un altro controller di nome \"%(name)s\""
@@ -479,9 +483,9 @@ msgstr "Applicazione dei metadati non riuscita."
 msgid "No fields to update"
 msgstr "Nessun campo da aggiornare"
 
-#: routes/games.py:1064 routes/platform_import.py:212
-#: routes/platform_import.py:572 routes/platform_import.py:928
-#: routes/trophies.py:1852
+#: routes/games.py:1064 routes/platform_import.py:220
+#: routes/platform_import.py:581 routes/platform_import.py:936
+#: routes/trophies.py:1870
 msgid "No games selected"
 msgstr "Nessun gioco selezionato"
 
@@ -509,13 +513,13 @@ msgstr "Tipo di filtro e valore obbligatori"
 msgid "Invalid filter type"
 msgstr "Tipo di filtro non valido"
 
-#: routes/games_ai.py:83
+#: routes/games_ai.py:84
 msgid "AI returned no data. Check your API key and provider settings."
 msgstr ""
 "L'AI non ha restituito dati. Controlla la tua chiave API e le "
 "impostazioni del provider."
 
-#: routes/games_ai.py:300
+#: routes/games_ai.py:305
 msgid "AI scraper module not available"
 msgstr "Modulo scraper AI non disponibile"
 
@@ -533,7 +537,7 @@ msgstr "Nome file non valido"
 msgid "ROM file not found on disk: %(path)s"
 msgstr "File ROM non trovato su disco: %(path)s"
 
-#: routes/games_media.py:105 routes/reports.py:721 routes/reports.py:892
+#: routes/games_media.py:105 routes/reports.py:721 routes/reports.py:896
 msgid "Destination is outside the configured ROM root"
 msgstr "La destinazione è al di fuori della cartella ROM configurata"
 
@@ -542,23 +546,23 @@ msgstr "La destinazione è al di fuori della cartella ROM configurata"
 msgid "Cannot rename: %(reason)s"
 msgstr "Impossibile rinominare: %(reason)s"
 
-#: routes/games_media.py:112 routes/reports.py:729 routes/reports.py:896
+#: routes/games_media.py:114 routes/reports.py:731 routes/reports.py:902
 msgid "A file with that name already exists"
 msgstr "Esiste già un file con quel nome"
 
-#: routes/games_media.py:119
+#: routes/games_media.py:121
 msgid "Failed to rename file"
 msgstr "Impossibile rinominare il file"
 
-#: routes/games_media.py:139
+#: routes/games_media.py:141
 msgid "No screenshot specified"
 msgstr "Nessuno screenshot specificato"
 
-#: routes/games_media.py:142
+#: routes/games_media.py:144
 msgid "Invalid screenshot filename"
 msgstr "Nome file dello screenshot non valido"
 
-#: routes/games_media.py:152
+#: routes/games_media.py:154
 msgid "Screenshot not found"
 msgstr "Screenshot non trovato"
 
@@ -637,11 +641,11 @@ msgstr ""
 msgid "Next disk inserted"
 msgstr "Disco successivo inserito"
 
-#: routes/maintenance.py:260
+#: routes/maintenance.py:263
 msgid "Unknown image type"
 msgstr "Tipo di immagine sconosciuto"
 
-#: routes/museum.py:385 routes/scraper.py:770
+#: routes/museum.py:385 routes/scraper.py:772
 msgid "No AI provider configured"
 msgstr "Nessun provider AI configurato"
 
@@ -720,15 +724,15 @@ msgstr ""
 msgid "No official names run to cancel."
 msgstr ""
 
-#: routes/platform_import.py:146
+#: routes/platform_import.py:153
 msgid "Steam API key not configured. Add it in Settings → API Keys."
 msgstr "Chiave API Steam non configurata. Aggiungila in Impostazioni → Chiavi API."
 
-#: routes/platform_import.py:148
+#: routes/platform_import.py:155
 msgid "Steam ID not configured. Add it in Settings → API Keys."
 msgstr "Steam ID non configurato. Aggiungilo in Impostazioni → Chiavi API."
 
-#: routes/platform_import.py:154
+#: routes/platform_import.py:161
 #, python-format
 msgid ""
 "Could not resolve Steam vanity URL \"%(steam_id)s\". Use your 17-digit "
@@ -737,7 +741,7 @@ msgstr ""
 "Impossibile risolvere l'URL personalizzato Steam \"%(steam_id)s\". Usa "
 "invece il tuo Steam ID a 17 cifre."
 
-#: routes/platform_import.py:160
+#: routes/platform_import.py:167
 msgid ""
 "No games found. Check that your Steam profile and game details are set to"
 " Public."
@@ -745,31 +749,31 @@ msgstr ""
 "Nessun gioco trovato. Verifica che il tuo profilo Steam e i dettagli dei "
 "giochi siano impostati come pubblici."
 
-#: routes/platform_import.py:217
+#: routes/platform_import.py:225
 msgid "Could not create Windows system entry"
 msgstr "Impossibile creare la voce di sistema Windows"
 
-#: routes/platform_import.py:344
+#: routes/platform_import.py:352
 msgid "Xbox Client ID not configured. Add it in Settings → API Keys."
 msgstr "Xbox Client ID non configurato. Aggiungilo in Impostazioni → Chiavi API."
 
-#: routes/platform_import.py:482
+#: routes/platform_import.py:490
 msgid "Xbox credentials not configured. Add them in Settings → API Keys."
 msgstr "Credenziali Xbox non configurate. Aggiungile in Impostazioni → Chiavi API."
 
-#: routes/platform_import.py:486
+#: routes/platform_import.py:494
 msgid "Xbox authentication failed. Please re-connect your Xbox account."
 msgstr "Autenticazione Xbox non riuscita. Riconnetti il tuo account Xbox."
 
-#: routes/platform_import.py:490
+#: routes/platform_import.py:498
 msgid "No games found in Xbox title history."
 msgstr "Nessun gioco trovato nella cronologia dei titoli Xbox."
 
-#: routes/platform_import.py:768
+#: routes/platform_import.py:777
 msgid "PSN NPSSO not configured. Add it in Settings → API Keys."
 msgstr "NPSSO PSN non configurato. Aggiungilo in Impostazioni → Chiavi API."
 
-#: routes/platform_import.py:795
+#: routes/platform_import.py:804
 msgid "Failed to fetch PSN game list. Try syncing trophies first."
 msgstr ""
 "Impossibile recuperare la lista dei giochi PSN. Prova prima a "
@@ -780,11 +784,11 @@ msgstr ""
 msgid "System %(name)s does not support RetroAchievements"
 msgstr "Il sistema %(name)s non supporta RetroAchievements"
 
-#: routes/reports.py:413
+#: routes/reports.py:427
 msgid "Unknown system"
 msgstr "Sistema sconosciuto"
 
-#: routes/reports.py:434 routes/reports.py:599
+#: routes/reports.py:448 routes/reports.py:599
 msgid "ROM path not configured. Go to Settings → Paths to set it."
 msgstr ""
 "Percorso ROM non configurato. Vai in Impostazioni → Percorsi per "
@@ -794,8 +798,8 @@ msgstr ""
 msgid "Missing required parameters"
 msgstr "Parametri obbligatori mancanti"
 
-#: routes/reports.py:605 routes/tools.py:503 routes/tools.py:560
-#: routes/tools.py:605
+#: routes/reports.py:605 routes/tools.py:511 routes/tools.py:568
+#: routes/tools.py:613
 msgid "Invalid path"
 msgstr "Percorso non valido"
 
@@ -808,31 +812,31 @@ msgstr "La cartella non esiste: %(folder_path)s"
 msgid "Missing game_id or new_name"
 msgstr "game_id o new_name mancante"
 
-#: routes/reports.py:697 routes/reports.py:822
+#: routes/reports.py:697 routes/reports.py:826
 msgid "No ROM path set"
 msgstr "Nessun percorso ROM impostato"
 
-#: routes/reports.py:712 routes/reports.py:827
+#: routes/reports.py:712 routes/reports.py:831
 msgid "ROM file not found"
 msgstr "File ROM non trovato"
 
-#: routes/reports.py:738
+#: routes/reports.py:740
 msgid "M3U files must keep the .m3u extension"
 msgstr "I file M3U devono mantenere l'estensione .m3u"
 
-#: routes/reports.py:751 routes/reports.py:908
+#: routes/reports.py:755 routes/reports.py:916
 msgid "A folder with the new name already exists"
 msgstr "Esiste già una cartella con il nuovo nome"
 
-#: routes/reports.py:831
+#: routes/reports.py:835
 msgid "No scraped title available"
 msgstr "Nessun titolo recuperato disponibile"
 
-#: routes/reports.py:849
+#: routes/reports.py:853
 msgid "Title is empty after sanitization"
 msgstr "Il titolo è vuoto dopo la sanificazione"
 
-#: routes/reports.py:872
+#: routes/reports.py:876
 msgid "Generated filename contains invalid characters"
 msgstr "Il nome file generato contiene caratteri non validi"
 
@@ -841,7 +845,7 @@ msgstr "Il nome file generato contiene caratteri non validi"
 msgid "Invalid log file"
 msgstr "File di log non valido"
 
-#: routes/scrape_logs.py:101 routes/tools.py:506
+#: routes/scrape_logs.py:101 routes/tools.py:514
 msgid "File not found"
 msgstr "File non trovato"
 
@@ -850,56 +854,56 @@ msgstr "File non trovato"
 msgid "Log file not found"
 msgstr "File di log non trovato"
 
-#: routes/scraper.py:215
+#: routes/scraper.py:217
 #, python-format
 msgid "invalid scraper settings: %(reason)s"
 msgstr "impostazioni dello scraper non valide: %(reason)s"
 
-#: routes/scraper.py:276
+#: routes/scraper.py:278
 #, python-format
 msgid "invalid api keys: %(reason)s"
 msgstr "chiavi API non valide: %(reason)s"
 
-#: routes/scraper.py:548
+#: routes/scraper.py:550
 msgid "No TGDB API key configured"
 msgstr "Nessuna chiave API TGDB configurata"
 
-#: routes/scraper.py:655
+#: routes/scraper.py:657
 msgid "No ScreenScraper credentials configured"
 msgstr "Nessuna credenziale ScreenScraper configurata"
 
-#: routes/scraper.py:691
+#: routes/scraper.py:693
 msgid "Invalid JSON response from ScreenScraper"
 msgstr "Risposta JSON non valida da ScreenScraper"
 
-#: routes/scraper.py:694
+#: routes/scraper.py:696
 msgid "Error parsing API response"
 msgstr "Errore nell'analisi della risposta API"
 
-#: routes/scraper.py:696
+#: routes/scraper.py:698
 #, python-format
 msgid "ScreenScraper answered HTTP %(code)s"
 msgstr "ScreenScraper ha risposto HTTP %(code)s"
 
-#: routes/scraper.py:711
+#: routes/scraper.py:713
 msgid "No RAWG API key configured"
 msgstr "Nessuna chiave API RAWG configurata"
 
-#: routes/scraper.py:816
+#: routes/scraper.py:818
 #, python-format
 msgid "Unknown AI provider: %(provider)s"
 msgstr "Provider AI sconosciuto: %(provider)s"
 
-#: routes/scraper.py:819
+#: routes/scraper.py:821
 msgid "No response from AI provider"
 msgstr "Nessuna risposta dal provider AI"
 
-#: routes/scraper.py:910
+#: routes/scraper.py:912
 #, python-format
 msgid "Connection error: %(error)s"
 msgstr "Errore di connessione: %(error)s"
 
-#: routes/scraper.py:913
+#: routes/scraper.py:915
 #, python-format
 msgid "Allowance check not supported for %(scraper)s"
 msgstr "Controllo del limite non supportato per %(scraper)s"
@@ -932,7 +936,7 @@ msgid "Invalid %(field)s: %(result)s"
 msgstr "%(field)s non valido: %(result)s"
 
 #: routes/settings.py:529 routes/settings.py:588 routes/settings.py:640
-#: routes/tools.py:289
+#: routes/tools.py:290
 msgid "Failed to save settings"
 msgstr "Impossibile salvare le impostazioni"
 
@@ -940,12 +944,12 @@ msgstr "Impossibile salvare le impostazioni"
 msgid "Request body must be a JSON object"
 msgstr "Il corpo della richiesta deve essere un oggetto JSON"
 
-#: routes/settings.py:567 routes/tools.py:281
+#: routes/settings.py:567 routes/tools.py:282
 #, python-format
 msgid "Unknown setting key: %(key)s"
 msgstr "Chiave di impostazione sconosciuta: %(key)s"
 
-#: routes/settings.py:573 routes/tools.py:284
+#: routes/settings.py:573 routes/tools.py:285
 #, python-format
 msgid "Invalid value for '%(key)s': %(reason)s"
 msgstr "Valore non valido per '%(key)s': %(reason)s"
@@ -983,89 +987,89 @@ msgstr "ID sistema obbligatorio"
 msgid "ES-DE scraper not available"
 msgstr "Scraper ES-DE non disponibile"
 
-#: routes/tools.py:271
+#: routes/tools.py:272
 msgid "Administrator privileges required"
 msgstr "Privilegi di amministratore richiesti"
 
-#: routes/tools.py:275
+#: routes/tools.py:276
 msgid "Settings payload must be an object"
 msgstr "Il payload delle impostazioni deve essere un oggetto"
 
-#: routes/tools.py:324 routes/tools.py:965
+#: routes/tools.py:325 routes/tools.py:973
 #, python-format
 msgid "Path does not exist: %(path)s"
 msgstr "Il percorso non esiste: %(path)s"
 
-#: routes/tools.py:354
+#: routes/tools.py:362
 msgid "Permission denied"
 msgstr "Autorizzazione negata"
 
-#: routes/tools.py:382
+#: routes/tools.py:390
 msgid "Task not found"
 msgstr "Attività non trovata"
 
-#: routes/tools.py:405 routes/tools.py:425
+#: routes/tools.py:413 routes/tools.py:433
 msgid "Task not found or not running"
 msgstr "Attività non trovata o non in esecuzione"
 
-#: routes/tools.py:445
+#: routes/tools.py:453
 msgid "Task not found or not paused"
 msgstr "Attività non trovata o non in pausa"
 
-#: routes/tools.py:462 routes/tools.py:667 routes/tools.py:838
-#: routes/tools.py:954
+#: routes/tools.py:470 routes/tools.py:675 routes/tools.py:846
+#: routes/tools.py:962
 msgid "Invalid scan path"
 msgstr "Percorso di scansione non valido"
 
-#: routes/tools.py:500 routes/tools.py:557 routes/tools.py:602
+#: routes/tools.py:508 routes/tools.py:565 routes/tools.py:610
 msgid "No path provided"
 msgstr "Nessun percorso fornito"
 
-#: routes/tools.py:528
+#: routes/tools.py:536
 msgid "No archive path provided"
 msgstr "Nessun percorso di archivio fornito"
 
-#: routes/tools.py:531
+#: routes/tools.py:539
 msgid "Invalid archive path"
 msgstr "Percorso di archivio non valido"
 
-#: routes/tools.py:534
+#: routes/tools.py:542
 msgid "No files to remove"
 msgstr "Nessun file da rimuovere"
 
-#: routes/tools.py:635
+#: routes/tools.py:643
 msgid "No paths provided"
 msgstr "Nessun percorso fornito"
 
-#: routes/tools.py:641
+#: routes/tools.py:649
 #, python-format
 msgid "Invalid path: %(path)s"
 msgstr "Percorso non valido: %(path)s"
 
-#: routes/tools.py:716
+#: routes/tools.py:724
 msgid "chdman not found. Please install MAME tools."
 msgstr "chdman non trovato. Installa gli strumenti MAME."
 
-#: routes/tools.py:861
+#: routes/tools.py:869
 msgid "chdman not found"
 msgstr "chdman non trovato"
 
-#: routes/tools.py:959
+#: routes/tools.py:967
 #, python-format
 msgid "Unknown duplicate method: %(method)s"
 msgstr "Metodo duplicati sconosciuto: %(method)s"
 
-#: routes/tools.py:1167
+#: routes/tools.py:1175
 msgid "These scan results have expired. Scan again, then delete."
 msgstr ""
 "Questi risultati della scansione sono scaduti. Esegui di nuovo la "
 "scansione, poi elimina."
 
-#: routes/tools.py:1172
+#: routes/tools.py:1180
 msgid "Keep at least one copy of each game. Nothing was deleted."
 msgstr "Conserva almeno una copia di ogni gioco. Non è stato eliminato nulla."
 
-#: routes/trophies.py:387
+#: routes/trophies.py:396
 msgid ""
 "Please configure your RPCS3 Trophy Path in your profile settings to view "
 "trophies"
@@ -1073,60 +1077,60 @@ msgstr ""
 "Configura il percorso dei trofei RPCS3 nelle impostazioni del profilo per"
 " visualizzare i trofei"
 
-#: routes/trophies.py:418
+#: routes/trophies.py:428
 msgid "Trophy set not found"
 msgstr "Set di trofei non trovato"
 
-#: routes/trophies.py:462
+#: routes/trophies.py:472
 msgid "RPCS3_TROPHY_PATH not configured"
 msgstr "RPCS3_TROPHY_PATH non configurato"
 
-#: routes/trophies.py:465
+#: routes/trophies.py:475
 #, python-format
 msgid "Trophy path not found: %(path)s"
 msgstr "Percorso dei trofei non trovato: %(path)s"
 
-#: routes/trophies.py:755 routes/trophies.py:1686
+#: routes/trophies.py:767 routes/trophies.py:1704
 msgid "PSN game not found"
 msgstr "Gioco PSN non trovato"
 
-#: routes/trophies.py:1046
+#: routes/trophies.py:1058
 msgid "Sync already in progress"
 msgstr "Sincronizzazione già in corso"
 
-#: routes/trophies.py:1296
+#: routes/trophies.py:1309
 msgid "Game not found in your PSN trophy list"
 msgstr "Gioco non trovato nella tua lista dei trofei PSN"
 
-#: routes/trophies.py:1561
+#: routes/trophies.py:1579
 msgid "Game not found on PSN"
 msgstr "Gioco non trovato su PSN"
 
-#: routes/trophies.py:1576 routes/trophies.py:1649
+#: routes/trophies.py:1594 routes/trophies.py:1667
 msgid "Missing npwr_id"
 msgstr "npwr_id mancante"
 
-#: routes/trophies.py:1674
+#: routes/trophies.py:1692
 msgid "Missing npwr_id or group_id"
 msgstr "npwr_id o group_id mancante"
 
-#: routes/trophies.py:1677
+#: routes/trophies.py:1695
 msgid "Name cannot be empty"
 msgstr "Il nome non può essere vuoto"
 
-#: routes/trophies.py:1715
+#: routes/trophies.py:1733
 msgid "PSNAWP library not installed. Run: pip install psnawp"
 msgstr "Libreria PSNAWP non installata. Esegui: pip install psnawp"
 
-#: routes/trophies.py:1809
+#: routes/trophies.py:1827
 msgid "No NPSSO token provided"
 msgstr "Nessun token NPSSO fornito"
 
-#: routes/trophies.py:1834
+#: routes/trophies.py:1852
 msgid "Could not connect to PSN"
 msgstr "Impossibile connettersi a PSN"
 
-#: routes/trophies.py:1861
+#: routes/trophies.py:1879
 msgid "PSN NPSSO not configured"
 msgstr "NPSSO PSN non configurato"
 

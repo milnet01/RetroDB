@@ -1026,7 +1026,9 @@ def _save_image(img, path):
             else:
                 _atomic_save(img, path, 'WEBP', quality=85)
         elif ext in ('.jpg', '.jpeg'):
-            if img.mode == 'RGBA':
+            # JPEG holds only RGB / L / CMYK; a palette or alpha PNG (P, LA,
+            # PA, RGBA...) otherwise raises "cannot write mode P as JPEG".
+            if img.mode not in ('RGB', 'L', 'CMYK'):
                 img = img.convert('RGB')
             _atomic_save(img, path, 'JPEG', quality=90)
         elif ext == '.png':

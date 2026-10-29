@@ -268,8 +268,10 @@ def get_game_details(game_id):
     if screenshots_data and 'results' in screenshots_data:
         screenshot_urls = [s.get('image') for s in screenshots_data['results'][:5] if s.get('image')]
     
-    # Determine player count from tags
-    players = 1
+    # Determine player count from tags. None when no tag says, so the
+    # fill-only merge leaves `players` open for a source that knows
+    # (a default of 1 filled it with a guess no later source could replace).
+    players = None
     if game.get('tags'):
         for tag in game['tags']:
             tag_name = tag.get('name', '').lower()

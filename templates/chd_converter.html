@@ -281,9 +281,9 @@ function renderFileList() {
         html += `
             <div class="file-list-item">
                 <input type="checkbox" checked data-index="${i}">
-                <span class="filename" title="${f.path}">${f.name}</span>
+                <span class="filename" title="${escapeHtml(f.path)}">${escapeHtml(f.name)}</span>
                 <span class="filesize">${formatBytes(f.size)}</span>
-                <span class="filetype">${f.type}</span>
+                <span class="filetype">${escapeHtml(f.type)}</span>
                 <span class="status-pending">Pending</span>
             </div>
         `;

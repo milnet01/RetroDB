@@ -1234,13 +1234,24 @@ class TestPass45_9CollectorTrophies:
 
         executes = []
 
-        def fake_execute(sql, params=()):
-            executes.append((sql, params))
-            return None
+        class _RecordingConn:
+            """Stands in for the request connection _refresh_trophies writes
+            through; records every statement."""
+            def execute(self, sql, params=()):
+                executes.append((sql, params))
+
+            def executemany(self, sql, rows):
+                executes.append((sql, rows))
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *exc):
+                return False
 
         # Stub the DB layer at the module level. _trophies_sorted reads
         # via query() so we stub that to return [] (empty).
-        monkeypatch.setattr(ct, 'execute', fake_execute)
+        monkeypatch.setattr(ct, 'get_request_db', lambda: _RecordingConn())
         monkeypatch.setattr(ct, 'query',
                             lambda sql, params=(), one=False: None if one else [])
 

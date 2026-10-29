@@ -218,8 +218,10 @@ def api_get_dropdown_options(category):
 def api_add_dropdown_option(category):
     """Add a new dropdown option"""
     try:
-        data = request.get_json()
-        value = data.get('value', '').strip()
+        data = request.get_json(silent=True)
+        if not isinstance(data, dict):
+            return error(_('Request body must be a JSON object'), 400)
+        value = str(data.get('value') or '').strip()
 
         if not value:
             return error(_('Value is required'), 400)
@@ -486,7 +488,9 @@ def api_get_paths():
 def api_update_paths():
     """Update path settings using settings_manager"""
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True)
+        if not isinstance(data, dict):
+            return error(_('Request body must be a JSON object'), 400)
         current_settings = settings_manager.load_settings()
         changed_keys = []
 

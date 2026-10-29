@@ -12,7 +12,7 @@ import requests
 import threading
 
 import config
-from services.database import query, execute
+from services.database import query, execute, execute_many
 from services.api_helpers import success, error
 from services.auth import login_required, admin_required, editor_required, get_user_settings
 from services.jobs.base import _download_psn_trophy_image as download_psn_trophy_image
@@ -326,8 +326,31 @@ def get_trophy_data(trophy_path=None):
         return {}, {'P': (0, 0), 'G': (0, 0), 'S': (0, 0), 'B': (0, 0)}
 
 
-def find_matching_game(trophy_title):
-    """Find a matching game in RetroDB by title (local RPCS3 trophies = PS3)"""
+_PS_FOLDERS_SQL = "('ps3', 'ps4', 'ps5', 'psvita', 'psx', 'ps2')"
+
+
+def _ps_match_candidates():
+    """Every PlayStation-family game with its cleaned title, read once.
+
+    `find_matching_game` runs once per trophy set on /trophies; reading and
+    re-cleaning the PlayStation games inside it cost two full queries and
+    every title cleaned twice per set.
+    """
+    rows = query(f"""
+        SELECT g.*, s.name AS system_name, s.folder
+        FROM games g
+        JOIN systems s ON g.system_id = s.id
+        WHERE s.folder IN {_PS_FOLDERS_SQL}
+    """)
+    return [(row, _clean_title_for_matching(row['title'])) for row in rows]
+
+
+def find_matching_game(trophy_title, candidates=None):
+    """Find a matching game in RetroDB by title (local RPCS3 trophies = PS3).
+
+    `candidates` is `_ps_match_candidates()`; pass it when matching many
+    titles so the games are read once.
+    """
     # Title aliases for common abbreviated names in trophy data
     title_aliases = {
         'MGSV:TPP': 'Metal Gear Solid V: The Phantom Pain',
@@ -342,37 +365,23 @@ def find_matching_game(trophy_title):
     search_title = title_aliases.get(trophy_title, trophy_title)
     clean_title = _clean_title_for_matching(search_title)
 
-    # Pass 1: Exact cleaned match on PS3 only
-    ps3_games = query("""
-        SELECT g.*, s.name AS system_name, s.folder
-        FROM games g
-        JOIN systems s ON g.system_id = s.id
-        WHERE s.folder = 'ps3'
-    """)
+    if candidates is None:
+        candidates = _ps_match_candidates()
 
-    if ps3_games:
-        for game in ps3_games:
-            if _clean_title_for_matching(game['title']) == clean_title:
-                return dict(game)
+    # Pass 1: Exact cleaned match on PS3 only
+    for game, db_clean in candidates:
+        if game['folder'] == 'ps3' and db_clean == clean_title:
+            return dict(game)
 
     # Pass 2: Exact cleaned match across all PlayStation systems
-    all_ps_games = query("""
-        SELECT g.*, s.name AS system_name, s.folder
-        FROM games g
-        JOIN systems s ON g.system_id = s.id
-        WHERE s.folder IN ('ps3', 'ps4', 'ps5', 'psvita', 'psx', 'ps2')
-    """)
+    for game, db_clean in candidates:
+        if db_clean == clean_title:
+            return dict(game)
 
-    if all_ps_games:
-        for game in all_ps_games:
-            if _clean_title_for_matching(game['title']) == clean_title:
-                return dict(game)
-
-        # Pass 3: Substring match (one contains the other)
-        for game in all_ps_games:
-            db_clean = _clean_title_for_matching(game['title'])
-            if clean_title and db_clean and (clean_title in db_clean or db_clean in clean_title):
-                return dict(game)
+    # Pass 3: Substring match (one contains the other)
+    for game, db_clean in candidates:
+        if clean_title and db_clean and (clean_title in db_clean or db_clean in clean_title):
+            return dict(game)
 
     return None
 
@@ -395,8 +404,9 @@ def trophies():
     
     # Match trophy sets with RetroDB games
     games_data = {}
+    candidates = _ps_match_candidates() if trophy_sets else []
     for npwr_id, ts in trophy_sets.items():
-        game = find_matching_game(ts.title)
+        game = find_matching_game(ts.title, candidates)
         games_data[npwr_id] = game
     
     # Sort trophy sets alphabetically by title
@@ -604,8 +614,10 @@ def psn_trophies():
 def api_psn_games():
     """Paginated PSN games API for the PSN trophies page"""
     try:
-        page = request.args.get('page', 1, type=int)
-        per_page = min(request.args.get('per_page', 60, type=int), 200)
+        # Clamped: per_page=0 divided by zero below (500), and a page < 1
+        # produced a negative OFFSET.
+        page = max(request.args.get('page', 1, type=int), 1)
+        per_page = max(min(request.args.get('per_page', 60, type=int), 200), 1)
         search = request.args.get('search', '').strip()
         letter = request.args.get('letter', '').strip()
         sort = request.args.get('sort', 'name-asc').strip()
@@ -836,11 +848,11 @@ def psn_trophy_detail(npwr_id):
         for t in trophies_list
     )
     locked_count = sum(1 for t in trophies_list if not bool(t.get('earned')))
-    logger.info(f"PSN Trophy Detail - platinum_earned: {platinum_earned}, total: {len(trophies_list)}, locked: {locked_count}")
+    logger.debug(f"PSN Trophy Detail - platinum_earned: {platinum_earned}, total: {len(trophies_list)}, locked: {locked_count}")
     
     # Debug: log first few trophies to understand data format
     for i, t in enumerate(trophies_list[:5]):
-        logger.info(f"  Trophy {i}: type={t.get('trophy_type')!r}, earned={t.get('earned')!r}, group_id={t.get('group_id')!r}, group_name={t.get('group_name')!r}")
+        logger.debug(f"  Trophy {i}: type={t.get('trophy_type')!r}, earned={t.get('earned')!r}, group_id={t.get('group_id')!r}, group_name={t.get('group_name')!r}")
     
     for t in trophies_list:
         if not bool(t.get('earned')):
@@ -908,10 +920,10 @@ def psn_trophy_detail(npwr_id):
         (platinum_earned and len(locked_trophies) > 0)
     )
     
-    logger.info(f"PSN Trophy Detail - has_dlc: {has_dlc}, groups_list: {len(groups_list)}, dlc_inferred in locked: {'dlc_inferred' in locked_by_group}")
-    logger.info(f"  locked_by_group keys: {list(locked_by_group.keys())}")
+    logger.debug(f"PSN Trophy Detail - has_dlc: {has_dlc}, groups_list: {len(groups_list)}, dlc_inferred in locked: {'dlc_inferred' in locked_by_group}")
+    logger.debug(f"  locked_by_group keys: {list(locked_by_group.keys())}")
     for gid, gdata in locked_by_group.items():
-        logger.info(f"  Group '{gid}': name='{gdata['name']}', count={len(gdata['trophies'])}")
+        logger.debug(f"  Group '{gid}': name='{gdata['name']}', count={len(gdata['trophies'])}")
     
     # Get HLTB data from linked game (shared data source)
     hltb_data = None
@@ -1156,11 +1168,13 @@ def _run_psn_full_sync(psnawp, user_id):
             # sync threads have no request context, so `g` would surface
             # only as a typing/IDE hazard, but the shadow is fragile under
             # future refactors that move this body into a request handler.
+            # Each title is cleaned once here, not once per trophy title in
+            # the loop below (that was trophy titles x PS games cleanings).
+            all_ps_games = [(ps_game['id'], ps_game['folder'],
+                             _clean_title_for_matching(ps_game['title']))
+                            for ps_game in all_ps_games]
             for ps_game in all_ps_games:
-                folder = ps_game['folder']
-                if folder not in ps_by_folder:
-                    ps_by_folder[folder] = []
-                ps_by_folder[folder].append(ps_game)
+                ps_by_folder.setdefault(ps_game[1], []).append(ps_game)
 
             platform_map = {'PS3': 'ps3', 'PS4': 'ps4', 'PS5': 'ps5', 'PSVITA': 'psvita', 'PS Vita': 'psvita'}
 
@@ -1186,22 +1200,21 @@ def _run_psn_full_sync(psnawp, user_id):
                         # shadowing flask.g (mirrors the loop above and
                         # the existing_groups comprehension at :1384).
                         if sf and sf in ps_by_folder:
-                            for ps_game in ps_by_folder[sf]:
-                                if _clean_title_for_matching(ps_game['title']) == clean_title:
-                                    linked_game_id = ps_game['id']
+                            for game_id, _folder, db_clean in ps_by_folder[sf]:
+                                if db_clean == clean_title:
+                                    linked_game_id = game_id
                                     break
 
                         if not linked_game_id:
-                            for ps_game in all_ps_games:
-                                if _clean_title_for_matching(ps_game['title']) == clean_title:
-                                    linked_game_id = ps_game['id']
+                            for game_id, _folder, db_clean in all_ps_games:
+                                if db_clean == clean_title:
+                                    linked_game_id = game_id
                                     break
 
                         if not linked_game_id:
-                            for ps_game in all_ps_games:
-                                db_clean = _clean_title_for_matching(ps_game['title'])
+                            for game_id, _folder, db_clean in all_ps_games:
                                 if db_clean and (clean_title in db_clean or db_clean in clean_title):
-                                    linked_game_id = ps_game['id']
+                                    linked_game_id = game_id
                                     break
 
                     _upsert_psn_title(conn, user_id, title, platform, icon_url, linked_game_id)
@@ -1391,7 +1404,10 @@ def api_psn_sync_game(npwr_id):
             """, (psn_game['id'],))
             # Pass 41.8 — `tg` instead of `g` to avoid shadowing flask.g.
             custom_group_names = {tg['group_id']: tg['group_name'] for tg in existing_groups} if existing_groups else {}
-            
+
+            # Rows are written in one batch after the loop: one commit per
+            # trophy made a 100-trophy game 100 separate transactions.
+            trophy_rows = []
             for trophy in trophies:
                 try:
                     # Extract trophy data
@@ -1400,7 +1416,7 @@ def api_psn_sync_game(npwr_id):
                         continue
                     
                     # Debug: log trophy attributes for first trophy
-                    if trophies_synced == 0:
+                    if not trophy_rows:
                         logger.info(f"Trophy object type: {type(trophy)}")
                         logger.info(f"Trophy attributes: {[a for a in dir(trophy) if not a.startswith('_')]}")
                     
@@ -1408,7 +1424,7 @@ def api_psn_sync_game(npwr_id):
                     group_id = getattr(trophy, 'trophy_group_id', None) or 'default'
                     
                     # Debug: log group info for first 5 trophies
-                    if trophies_synced < 5:
+                    if len(trophy_rows) < 5:
                         api_name = group_names_from_api.get(group_id, 'NOT_FOUND')
                         logger.info(f"Trophy {trophy_id}: group_id={group_id!r}, api_name={api_name!r}")
                     
@@ -1471,7 +1487,7 @@ def api_psn_sync_game(npwr_id):
                         earned = False
                     
                     # Debug log for first few trophies - show trophy type details
-                    if trophies_synced < 3:
+                    if len(trophy_rows) < 3:
                         logger.info(f"Trophy {trophy_id}: name='{trophy_name}', raw_type={type(trophy_type_raw).__name__}:{trophy_type_raw}, str={trophy_type_str}, letter={trophy_type}, earned={earned}")
                     
                     earned_date = None
@@ -1495,7 +1511,28 @@ def api_psn_sync_game(npwr_id):
                     # direct filtering. The psn_game_id already cascades owner
                     # via psn_games.user_id, so user_id on psn_trophies is a
                     # denormalised lookup aid.
-                    execute("""
+                    trophy_rows.append((
+                        psn_game['id'],
+                        user_id,
+                        trophy_id,
+                        group_id,
+                        group_name,
+                        trophy_name,
+                        trophy_detail,
+                        trophy_type,
+                        trophy_icon,
+                        rarity,
+                        rarity_label,
+                        1 if earned else 0,
+                        earned_date
+                    ))
+                    
+                except Exception as te:
+                    logger.warning(f"Error syncing trophy: {te}")
+                    continue
+            
+            if trophy_rows:
+                execute_many("""
                         INSERT INTO psn_trophies (
                             psn_game_id, user_id, trophy_id, group_id, group_name,
                             name, description, trophy_type, icon_url,
@@ -1512,28 +1549,9 @@ def api_psn_sync_game(npwr_id):
                             rarity_label = excluded.rarity_label,
                             earned = excluded.earned,
                             earned_date = excluded.earned_date
-                    """, (
-                        psn_game['id'],
-                        user_id,
-                        trophy_id,
-                        group_id,
-                        group_name,
-                        trophy_name,
-                        trophy_detail,
-                        trophy_type,
-                        trophy_icon,
-                        rarity,
-                        rarity_label,
-                        1 if earned else 0,
-                        earned_date
-                    ))
-                    
-                    trophies_synced += 1
-                    
-                except Exception as te:
-                    logger.warning(f"Error syncing trophy: {te}")
-                    continue
-            
+                    """, trophy_rows)
+            trophies_synced = len(trophy_rows)
+
             # Update first and last trophy dates if we found any
             if first_trophy_date or last_trophy_date:
                 execute("""

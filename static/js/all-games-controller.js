@@ -464,8 +464,18 @@ const AllGamesController = (function() {
     function layoutMasonryItems(items, append) {
         const grid = document.getElementById('gamesGrid');
         if (!grid || items.length === 0) return;
+        if (_gridResizeObserver) _gridResizeObserver.observe(grid);
 
         const gap = 16;
+        // The computed track list includes implicit columns that the cards'
+        // own inline placement created (overlapping row lines spill into
+        // extra columns too), so a full layout clears it first; otherwise a
+        // grid narrowed to one column still reads as two.
+        if (!append) {
+            items.forEach(w => {
+                w.style.gridColumn = w.style.gridRowStart = w.style.gridRowEnd = '';
+            });
+        }
         const columns = getComputedStyle(grid).gridTemplateColumns.split(' ').length;
 
         // Reset on fresh render or column count change
@@ -480,11 +490,26 @@ const AllGamesController = (function() {
             }
         }
 
-        items.forEach(wrapper => {
-            const card = wrapper.querySelector('.game-card-new');
-            if (!card) return;
+        // One column (the phone layout): the CSS stacks the cards with
+        // auto rows, which inline row lines would override, leaving a
+        // row-gap per 1px line between cards.
+        if (columns <= 1) {
+            items.forEach(w => {
+                w.style.gridColumn = w.style.gridRowStart = w.style.gridRowEnd = '';
+            });
+            return;
+        }
 
-            const h = card.getBoundingClientRect().height;
+        // Measure every card before placing any, so the loop forces one
+        // layout rather than one per card.
+        const heights = items.map(wrapper => {
+            const card = wrapper.querySelector('.game-card-new');
+            return card ? card.getBoundingClientRect().height : null;
+        });
+
+        items.forEach((wrapper, i) => {
+            const h = heights[i];
+            if (h === null) return;
             const span = h > 0 ? Math.ceil(h) + gap : 296;
 
             const col = masonryItemCount % columns;
@@ -496,6 +521,26 @@ const AllGamesController = (function() {
             masonryItemCount++;
         });
     }
+
+    // A grid width change re-places every card: the old inline columns
+    // would otherwise point past the grid's last column. The column count
+    // can't be compared first (the implicit tracks above keep the old
+    // count), so any width change re-lays out. The grid itself is observed,
+    // not the window: the sidebar animates across a breakpoint, and a
+    // layout taken mid-animation reads the wrong column count; the observer
+    // fires every frame, so the timer settles only once the width does.
+    let _resizeRelayoutTimer;
+    let _observedGridWidth = null;
+    const _gridResizeObserver = typeof ResizeObserver === 'undefined' ? null
+        : new ResizeObserver(entries => {
+            const width = Math.round(entries[0].contentRect.width);
+            const first = _observedGridWidth === null;
+            if (width === _observedGridWidth) return;
+            _observedGridWidth = width;
+            if (first) return;
+            clearTimeout(_resizeRelayoutTimer);
+            _resizeRelayoutTimer = setTimeout(() => window.relayoutMasonry(), 150);
+        });
 
     // Expose a full re-layout function for external use (e.g. after card edits)
     window.relayoutMasonry = function() {
@@ -1606,6 +1651,9 @@ const AllGamesController = (function() {
         clearTimeout(scrollSaveTimer);
         clearTimeout(_imageRelayoutTimer);
         window.removeEventListener('scroll', _onScrollSave);
+        clearTimeout(_resizeRelayoutTimer);
+        if (_gridResizeObserver) _gridResizeObserver.disconnect();
+        _observedGridWidth = null;
         document.removeEventListener('click', _onFilterBackdropClick);
         selectedGames.clear();
     }

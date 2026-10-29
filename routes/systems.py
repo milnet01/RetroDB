@@ -302,9 +302,11 @@ def api_systems_list():
 @handle_api_errors
 def api_update_system_type():
     """Update system type for a system"""
-    data = request.get_json()
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return error(_('Request body must be a JSON object'), 400)
     system_id = data.get('system_id')
-    system_type = data.get('system_type', '').strip()
+    system_type = str(data.get('system_type') or '').strip()
 
     if not system_id:
         return error(_('System ID required'), 400)
@@ -373,11 +375,18 @@ def api_refresh_system_logos():
     updated = 0
 
     systems = query("SELECT id, folder, logo FROM systems")
-    logo_dir = os.path.join(config.STATIC_PATH, 'images', 'systems')
+    # User-imported logos (ES-DE import) live under IMAGE_PATH and win over
+    # the bundled set; /static/images/<path> serves both roots in that order.
+    logo_dirs = (os.path.join(config.IMAGE_PATH, 'systems'),
+                 os.path.join(config.STATIC_PATH, 'images', 'systems'))
 
     updates_list = []
     for system in systems:
-        logo_filename, logo_path = find_image_file(logo_dir, system['folder'])
+        logo_filename = None
+        for logo_dir in logo_dirs:
+            logo_filename, _path = find_image_file(logo_dir, system['folder'])
+            if logo_filename:
+                break
 
         if logo_filename:
             # Logo file exists - update database if not already set
@@ -446,16 +455,17 @@ def api_calculate_storage():
     """Calculate and update file sizes for all games"""
     try:
         games = query("SELECT id, rom_path FROM games WHERE file_size IS NULL OR file_size = 0")
-        updated = 0
-
+        # One batched write (one commit) instead of a commit per game.
+        sizes = []
         for game in games:
             if game['rom_path'] and os.path.exists(game['rom_path']):
                 try:
-                    size = os.path.getsize(game['rom_path'])
-                    execute("UPDATE games SET file_size = ? WHERE id = ?", (size, game['id']))
-                    updated += 1
+                    sizes.append((os.path.getsize(game['rom_path']), game['id']))
                 except Exception as e:
                     logger.warning(f"Could not get size for {game['rom_path']}: {e}")
+        if sizes:
+            execute_many("UPDATE games SET file_size = ? WHERE id = ?", sizes)
+        updated = len(sizes)
 
         return success(
             updated=updated,

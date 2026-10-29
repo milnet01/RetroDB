@@ -17,6 +17,7 @@ from services.analytics import invalidate_analytics_cache
 from services.api_helpers import handle_api_errors, success, error
 from services.auth import editor_required
 from services.database import query, execute
+from services.game_query import invalidate_filter_cache
 from services.game_metadata_service import cross_map_ratings
 from services.game_utils import (
     generate_sort_title, infer_rating_from_content,
@@ -242,6 +243,10 @@ def api_game_ai_fill(game_id):
         if sets:
             assignments = ', '.join(f'{col} = ?' for col in sets)
             execute(f"UPDATE games SET {assignments} WHERE id = ?", (*sets.values(), game_id))
+            # AI fill writes genre/developer/publisher/franchise/modes/ratings,
+            # all of which feed the Library filter dropdowns — same cache
+            # discipline as the edit paths in routes/games.py.
+            invalidate_filter_cache()
             invalidate_analytics_cache()
 
             verify = query("SELECT esrb_rating, edition FROM games WHERE id = ?", (game_id,), one=True)

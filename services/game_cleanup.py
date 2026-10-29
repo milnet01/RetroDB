@@ -212,6 +212,9 @@ def clear_scraped_data(system_id=None, delete_images=False):
         try:
             for game_id in game_ids_to_reset:
                 reset_game_title_from_filename(game_id, conn)
+            # A caller-supplied connection is never committed by the reset
+            # itself; without this the close() rolled every title back.
+            conn.commit()
         finally:
             conn.close()
 

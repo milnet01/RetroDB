@@ -94,6 +94,7 @@ class PlayerCoresJob:
                 self.queue, self.running, self.current_item = [], False, ''
             return
         self._singleton_fd = fd
+        drained = False
         try:
             with self.app.app_context():
                 while True:
@@ -120,10 +121,20 @@ class PlayerCoresJob:
                         logger.warning("player core %s not installed: %s", core, e)
                         with self._lock:
                             self.errors[core] = str(e)
+            drained = True
         finally:
-            with self._lock:
-                self.running, self.current_item = False, ''
             release_singleton_fd(self)
+            # A request() between the empty queue above and here saw
+            # `running` and only queued its core; run it rather than strand
+            # it. The lock is released first so the new worker can take it.
+            with self._lock:
+                again = drained and bool(self.queue)
+                self.current_item = ''
+                if not again:
+                    self.running = False
+        if again:
+            self._thread = threading.Thread(target=self._worker, name='player-cores', daemon=True)
+            self._thread.start()
 
     def _shaders_for(self, player_cores, system_id):
         """The first install for a system whose chosen shader is not `none`

@@ -324,11 +324,21 @@ class InstallerApp:
 
         self.install_btn.configure(state='disabled', bg=TEXT_MUTED, cursor='arrow')
 
-        thread = threading.Thread(target=self._install_worker, daemon=True)
+        thread = threading.Thread(target=self._run_install_worker, daemon=True)
         thread.start()
         self._poll_queue()
 
     # ── Install worker (background thread) ───────────────────────────────
+
+    def _run_install_worker(self):
+        """Run the worker so an unexpected error (an unwritable config copy or
+        directory, say) still reaches the UI. Uncaught, it ended the thread
+        before 'done' was queued, and the window sat with Install disabled."""
+        try:
+            self._install_worker()
+        except Exception as e:
+            self._log(f'Installer error: {e}', 'error')
+            self._finish(False)
 
     def _install_worker(self):
         base_dir = self.base_dir

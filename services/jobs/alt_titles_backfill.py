@@ -186,6 +186,13 @@ class AltTitlesBackfillJob:
                         last_persist = time.time()
 
                     try:
+                        # Commit the previous game's writes before the network
+                        # search: an open write transaction holds SQLite's one
+                        # writer lock, and batching 25 games kept it across 25
+                        # scraper round trips, stalling every other writer.
+                        if write_conn.in_transaction:
+                            _commit_with_retry(write_conn)
+
                         existing = []
                         if game.get('alternate_titles'):
                             try:
@@ -273,9 +280,6 @@ class AltTitlesBackfillJob:
                         with self._lock:
                             self.updated_count += 1
                             self.alts_added += added
-
-                        if (i + 1) % 25 == 0:
-                            _commit_with_retry(write_conn)
 
                     except Exception as e:
                         logger.warning(f"Alt-titles backfill: failed for game {game['id']} ({game['title']}): {e}")

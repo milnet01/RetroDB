@@ -155,19 +155,20 @@ def api_get_all_controllers():
         ORDER BY c.manufacturer COLLATE NOCASE, c.name COLLATE NOCASE
     """)
 
-    # For each controller, get all associated systems
+    # Every controller's systems in one query, not one query per controller.
+    systems_by_controller = {}
+    for row in query("""
+        SELECT sc.controller_id, s.id, s.name
+        FROM systems s
+        JOIN system_controllers sc ON s.id = sc.system_id
+        ORDER BY s.name COLLATE NOCASE
+    """):
+        systems_by_controller.setdefault(row['controller_id'], []).append(row)
+
     result = []
     for c in controllers:
         ctrl = dict(c)
-
-        # Get systems from junction table
-        systems = query("""
-            SELECT s.id, s.name
-            FROM systems s
-            JOIN system_controllers sc ON s.id = sc.system_id
-            WHERE sc.controller_id = ?
-            ORDER BY s.name COLLATE NOCASE
-        """, (ctrl['id'],))
+        systems = systems_by_controller.get(ctrl['id'], [])
 
         ctrl['system_ids'] = [s['id'] for s in systems]
         ctrl['system_names'] = [s['name'] for s in systems]
@@ -210,16 +211,18 @@ def api_get_controllers_for_system(system_id):
 @handle_api_errors
 def api_add_controller():
     """Add a new controller to the global library"""
-    data = request.get_json()
-    name = data.get('name', '').strip()
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return error(_('Request body must be a JSON object'), 400)
+    name = str(data.get('name') or '').strip()
     # Support both single system_id and multiple system_ids
     system_ids = data.get('system_ids', [])
     if not system_ids and data.get('system_id'):
         system_ids = [data.get('system_id')]
-    manufacturer = data.get('manufacturer', '').strip() or 'Other'
+    manufacturer = str(data.get('manufacturer') or '').strip() or 'Other'
     release_year = data.get('release_year')
-    description = data.get('description', '').strip()
-    button_layout = data.get('button_layout', '').strip()
+    description = str(data.get('description') or '').strip()
+    button_layout = str(data.get('button_layout') or '').strip()
 
     if not name:
         return error(_('Controller name is required'), 400)
@@ -272,16 +275,18 @@ def api_delete_controller(controller_id):
 @handle_api_errors
 def api_update_controller(controller_id):
     """Update an existing controller"""
-    data = request.get_json()
-    name = data.get('name', '').strip()
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return error(_('Request body must be a JSON object'), 400)
+    name = str(data.get('name') or '').strip()
     # Support both single system_id and multiple system_ids
     system_ids = data.get('system_ids', [])
     if not system_ids and data.get('system_id'):
         system_ids = [data.get('system_id')]
-    manufacturer = data.get('manufacturer', '').strip() or 'Other'
+    manufacturer = str(data.get('manufacturer') or '').strip() or 'Other'
     release_year = data.get('release_year')
-    description = data.get('description', '').strip()
-    button_layout = data.get('button_layout', '').strip()
+    description = str(data.get('description') or '').strip()
+    button_layout = str(data.get('button_layout') or '').strip()
 
     if not name:
         return error(_('Controller name is required'), 400)
@@ -403,8 +408,10 @@ def api_get_system_controllers(system_id):
 @handle_api_errors
 def api_set_system_default_controllers(system_id):
     """Set multiple default controllers for a system"""
-    data = request.get_json()
-    controller_ids = data.get('controller_ids', [])
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return error(_('Request body must be a JSON object'), 400)
+    controller_ids = data.get('controller_ids') or []
 
     # Verify system exists
     system = query("SELECT id, name FROM systems WHERE id = ?", (system_id,), one=True)
@@ -453,7 +460,9 @@ def api_set_system_default_controllers(system_id):
 @handle_api_errors
 def api_set_system_default_controller(system_id):
     """Set the default controller for a system (legacy single-controller endpoint)"""
-    data = request.get_json()
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return error(_('Request body must be a JSON object'), 400)
     controller_id = data.get('controller_id')
 
     # Verify system exists
@@ -558,12 +567,18 @@ def api_assign_default_controllers():
         'xbox360': ['Xbox 360'],
     }
 
+    patterns_longest_first = sorted(controller_mappings, key=len, reverse=True)
+
     for system in systems:
         folder_lower = system['folder'].lower().replace('-', '').replace('_', '').replace(' ', '')
 
-        # Try to find a matching controller
+        # Try to find a matching controller. Longest pattern first: a bare
+        # substring scan in dict order typed 'snes' as 'nes', 'gba' as 'gb',
+        # 'wiiu' as 'wii' and 'xbox360' as 'xbox' (same bug Pass 48.5 fixed in
+        # systems.update_system_types).
         matched_controller = None
-        for folder_pattern, controller_names in controller_mappings.items():
+        for folder_pattern in patterns_longest_first:
+            controller_names = controller_mappings[folder_pattern]
             if folder_pattern in folder_lower:
                 # Search for any matching controller
                 for ctrl_name in controller_names:

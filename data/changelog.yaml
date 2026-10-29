@@ -1,10 +1,30 @@
 - version: 3.33.0
-  date: 2026-10-23
+  date: 2026-10-27
   tags:
   - type: feature
     label: Get RetroArch from inside RetroDB
   - type: fix
     label: Next disk works for games played in RetroDB
+  - type: fix
+    label: Game cards line up on a phone and after resizing the window
+  - type: fix
+    label: Scraped ratings and player counts are more accurate
+  - type: fix
+    label: ScreenScraper keeps its details when it is the main source
+  - type: fix
+    label: Clear scraped data puts the file name back as the title
+  - type: fix
+    label: RetroAchievements refresh for one console works again
+  - type: fix
+    label: Screenshot duplicate finder works in the downloaded app
+  - type: fix
+    label: ScreenScraper passwords are hidden, and the last admin stays admin
+  - type: fix
+    label: Interrupted jobs are only offered to people allowed to run them
+  - type: fix
+    label: Imported console logos, odd names in Settings and bonus discs
+  - type: performance
+    label: Faster trophies, library imports and maintenance tools
   body: |
     <ul>
       <li><strong>Get RetroArch from inside RetroDB.</strong> Settings &gt;
@@ -20,6 +40,55 @@
         own RetroArch with no setup. RetroArch listens for RetroDB's
         commands only while such a game runs, and on Windows and macOS
         while any game runs.</li>
+      <li><strong>Game cards line up on a phone and after resizing the
+        window.</strong> On a phone the Library and console pages showed one
+        card and then a long empty gap; cards now stack one under another.
+        Making the window narrower or wider re-arranges the cards instead of
+        leaving them in the old columns.</li>
+      <li><strong>Scraped ratings and player counts are more accurate.</strong>
+        Age ratings from IGDB for CERO, USK, GRAC, ClassInd and ACB are now
+        read correctly, so a game rated CERO Z or USK 18 gets that rating.
+        TheGamesDB, RAWG, IGDB and ES-DE no longer guess "1 player" when
+        they don't know; an ES-DE import no longer overwrites a player count
+        or game modes you set. TheGamesDB no longer saves a number in place
+        of a publisher or developer name after a failed lookup.</li>
+      <li><strong>ScreenScraper keeps its details when it is the main
+        source.</strong> Its title, description, date, developer, publisher
+        and players are kept on every scrape, not only the first few
+        minutes after a search. Downloaded videos and manuals get a proper
+        file name.</li>
+      <li><strong>Clear scraped data puts the file name back as the
+        title.</strong> It cleared the details but left the scraped
+        title.</li>
+      <li><strong>RetroAchievements refresh for one console works
+        again.</strong> It failed with an error every time.</li>
+      <li><strong>Screenshot duplicate finder works in the downloaded
+        app.</strong> It found no screenshots there, and deleting a
+        duplicate left the file on disk.</li>
+      <li><strong>ScreenScraper passwords are hidden, and the last admin
+        stays admin.</strong> Settings now shows your ScreenScraper
+        passwords masked, like your other keys. The only admin account can
+        no longer be switched to editor or turned off, which would have
+        left nobody able to manage RetroDB.</li>
+      <li><strong>Interrupted jobs are only offered to people allowed to run
+        them.</strong> The dashboard's interrupted-job banner now shows a
+        job only to someone allowed to start it, for example a bulk scrape
+        only to editors and admins. Other accounts no longer see it and can
+        no longer dismiss it.</li>
+      <li><strong>Imported console logos, odd names in Settings and bonus
+        discs.</strong> In the downloaded app, Refresh logos now finds the
+        console logos brought in by Import from ES-DE, and prefers them to
+        the built-in ones. A controller, console or backup name with
+        characters such as &lt; or a quote no longer breaks the Settings
+        page. Unmarking a bonus disc fully detaches it, so it no longer
+        counts as a bonus disc of its old game.</li>
+      <li><strong>Faster trophies, library imports and maintenance
+        tools.</strong> The Trophies page, Steam, Xbox and PlayStation
+        library imports, collector trophies, Calculate storage and the
+        unused-media scan all do far less work on a large library. Job
+        progress pop-ups keep updating when the server is busy, and the
+        HowLongToBeat and alternate-title jobs no longer hold up other
+        changes while they run.</li>
     </ul>
 - version: 3.32.0
   date: 2026-10-23

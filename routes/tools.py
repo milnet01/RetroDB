@@ -60,7 +60,8 @@ def _cleanup_completed_tasks():
     """Remove completed/failed/cancelled tasks older than 30 minutes."""
     now = datetime.now()
     to_remove = []
-    for task_id, task in _rom_tool_tasks.items():
+    # Snapshot: request threads may add tasks while this iterates.
+    for task_id, task in list(_rom_tool_tasks.items()):
         status = task.get('status')
         if status in ('completed', 'failed', 'cancelled'):
             end_time = task.get('end_time')
@@ -70,7 +71,7 @@ def _cleanup_completed_tasks():
                 # No end_time recorded — stamp it now so it gets cleaned up next cycle
                 task['end_time'] = now
     for task_id in to_remove:
-        del _rom_tool_tasks[task_id]
+        _rom_tool_tasks.pop(task_id, None)
 
 
 def _wait_if_paused(task):
@@ -337,9 +338,16 @@ def api_rom_tools_browse_folders():
         for item in sorted(os.listdir(current_path)):
             item_path = os.path.join(current_path, item)
             if os.path.isdir(item_path) and not item.startswith('.'):
+                # One scandir pass (d_type, no per-entry stat on most
+                # filesystems) instead of two listdir + isfile/isdir walks.
+                file_count = subfolder_count = 0
                 try:
-                    file_count = len([f for f in os.listdir(item_path) if os.path.isfile(os.path.join(item_path, f))])
-                    subfolder_count = len([f for f in os.listdir(item_path) if os.path.isdir(os.path.join(item_path, f))])
+                    with os.scandir(item_path) as entries:
+                        for entry in entries:
+                            if entry.is_file():
+                                file_count += 1
+                            elif entry.is_dir():
+                                subfolder_count += 1
                 except PermissionError:
                     file_count = 0
                     subfolder_count = 0
@@ -1253,7 +1261,9 @@ def _visual_group(file_data, threshold):
 
 def _run_screenshot_dedup_scan(task, method, threshold):
     """Background task: scan games for duplicate screenshots"""
-    screenshots_dir = os.path.join(config.STATIC_PATH, 'images', 'screenshots')
+    # Scraped media lives under IMAGE_PATH (the writable data root), not the
+    # read-only bundle STATIC_PATH — they differ in a frozen build.
+    screenshots_dir = os.path.join(config.IMAGE_PATH, 'screenshots')
 
     games = query("""
         SELECT g.id, g.title, g.screenshots, s.name as system_name
@@ -1415,7 +1425,9 @@ def api_screenshot_dedup_delete():
     data = request.get_json() or {}
     deletions = data.get('deletions', [])  # [{game_id, filename}, ...]
 
-    screenshots_dir = os.path.join(config.STATIC_PATH, 'images', 'screenshots')
+    # Scraped media lives under IMAGE_PATH (the writable data root), not the
+    # read-only bundle STATIC_PATH — they differ in a frozen build.
+    screenshots_dir = os.path.join(config.IMAGE_PATH, 'screenshots')
     results = {'deleted': 0, 'failed': 0, 'freed_space': 0, 'db_updated': 0}
 
     # Group by game_id

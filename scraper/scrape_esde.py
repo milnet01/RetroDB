@@ -655,48 +655,41 @@ def fetch_esde_game_details(game_path, system_folder=None):
     for i, g in enumerate(games[:5]):
         logger.info(f"  [{i}] {g.get('path', 'NO PATH')}")
     
-    # Try to match the game by path
+    # Try to match the game by path. A full-path match wins over a bare
+    # filename match: games kept in their own folders can share a filename
+    # ("./Game A/disc1.chd", "./Game B/disc1.chd"), and returning the first
+    # filename hit picked whichever came first in the gamelist.
+    search_normalized = decoded_game_path.replace('./', '').strip()
+    search_filename = os.path.basename(decoded_game_path)
+    match = None
+    filename_match = None
     for game in games:
-        stored_path = game.get('path', '')
-        
-        # Normalize paths for comparison
+        stored_path = game.get('path') or ''
         stored_normalized = stored_path.replace('./', '').strip()
-        search_normalized = decoded_game_path.replace('./', '').strip()
-        
-        # Also try with just the filename
-        stored_filename = os.path.basename(stored_path)
-        search_filename = os.path.basename(decoded_game_path)
-        
-        # Try multiple matching strategies
-        matched = False
-        if stored_path == decoded_game_path:
-            logger.info(f"Found exact match for path: {decoded_game_path}")
-            matched = True
-        elif stored_normalized == search_normalized:
-            logger.info(f"Found match after normalizing: {search_normalized}")
-            matched = True
-        elif stored_filename == search_filename:
-            logger.info(f"Found match by filename: {search_filename}")
-            matched = True
-        elif stored_normalized.lower() == search_normalized.lower():
-            logger.info(f"Found case-insensitive match: {search_normalized}")
-            matched = True
-        
-        if not matched:
-            continue
-        
-        # Found a match - format and return
+        if (stored_path == decoded_game_path
+                or stored_normalized.lower() == search_normalized.lower()):
+            logger.info(f"Found path match: {decoded_game_path}")
+            match = game
+            break
+        if filename_match is None and os.path.basename(stored_path) == search_filename:
+            filename_match = game
+    if match is None and filename_match is not None:
+        logger.info(f"Found match by filename: {search_filename}")
+        match = filename_match
+
+    if match is not None:
+        game = match
         release_date = game.get('releasedate', '')
         if release_date and len(release_date) >= 8:
             release_date = f"{release_date[:4]}-{release_date[4:6]}-{release_date[6:8]}"
-        
+
         return {
             'name': game.get('name', ''),
             'description': game.get('desc', ''),
             'developer': game.get('developer', ''),
             'publisher': game.get('publisher', ''),
             'genre': game.get('genre', ''),
-            'players': game.get('players', '1'),
+            'players': game.get('players', ''),
             'release_date': release_date,
             'rating': game.get('rating', ''),
             'image_path': game.get('image', ''),
@@ -704,7 +697,7 @@ def fetch_esde_game_details(game_path, system_folder=None):
             'video_path': game.get('video', ''),
             'esde_data': game
         }
-    
+
     logger.error(f"No matching game found for path: {game_path} (decoded: {decoded_game_path}) in {system_folder}")
     return None
 
@@ -932,7 +925,10 @@ def apply_esde_metadata(db_game_id, game_data, system_folder=None, existing_boxa
         from services.normalization import normalize_genre
         from services.game_utils import normalize_players_value
         genre = normalize_genre(esde_data.get('genre', '') or game_data.get('genre', ''))
-        players = normalize_players_value(esde_data.get('players', '1') or game_data.get('players', '1'))
+        # No default: a gamelist row without <players> must leave the column
+        # alone. A '1' default wrote players=1 / modes='Single-Player' through
+        # COALESCE over curated values on every ES-DE import (Pass 40.6 class).
+        players = normalize_players_value(esde_data.get('players') or game_data.get('players'))
         
         # Format release date
         release_date = esde_data.get('releasedate', '') or game_data.get('release_date', '')
@@ -1142,8 +1138,9 @@ def apply_esde_metadata(db_game_id, game_data, system_folder=None, existing_boxa
         # Extract region from ROM filename
         region = extract_region_from_filename(rom_filename)
         
-        # Derive game modes from players
-        modes = derive_game_modes(players)
+        # Derive game modes from players (only when the gamelist gave a count)
+        from services.normalization import modes_from_player_count
+        modes = modes_from_player_count(players) or None
 
         # Pass 48.3 — only flip `scraped = 1` when ES-DE actually filled at least
         # one metadata/media field. `region` is excluded from the test: it's

@@ -175,6 +175,8 @@ const LogViewer = {
 
         try {
             const data = await API.get(`/api/logs/content/${encodeURIComponent(filename)}`);
+            // Another file was picked while this one loaded; it owns the view.
+            if (this.currentFile !== filename) return;
             if (!data.success) {
                 container.innerHTML = `<div class="log-empty"><div class="log-empty-icon">${escapeHtml(data.error || t('Error loading file'))}</div></div>`;
                 return;
@@ -187,6 +189,7 @@ const LogViewer = {
             this.applySmartViewMode();
             this.render();
         } catch (e) {
+            if (this.currentFile !== filename) return;
             container.innerHTML = `<div class="log-empty"><div class="log-empty-icon">${t('Error loading log file')}</div></div>`;
             console.error('Error loading log file:', e);
         }

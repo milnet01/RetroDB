@@ -31,7 +31,13 @@ def _get_analytics_stats():
         FROM games
         GROUP BY completion_status
     """)
-    completion_map = {row['completion_status'] or 'not_started': row['count'] for row in completion_counts}
+    # NULL / '' statuses count as not started. Summed, not assigned: they
+    # group apart from 'not_started', and a dict comprehension let the
+    # later group overwrite the earlier one's count.
+    completion_map = {}
+    for row in completion_counts:
+        status = row['completion_status'] or 'not_started'
+        completion_map[status] = completion_map.get(status, 0) + row['count']
     completed = completion_map.get('completed', 0) + completion_map.get('100_percent', 0)
     completion_rate = round((completed / total_games * 100) if total_games > 0 else 0, 1)
 
@@ -43,7 +49,7 @@ def _get_analytics_stats():
     }
 
     completion_data = [
-        completion_map.get('not_started', 0) + completion_map.get(None, 0),
+        completion_map.get('not_started', 0),
         completion_map.get('in_progress', 0),
         completion_map.get('played', 0),
         completion_map.get('completed', 0),

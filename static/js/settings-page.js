@@ -204,7 +204,7 @@ const NormalizationManager = {
         // interpolated value goes through escapeHtml (PASS-59-63).
         let msg = '<div style="max-height: 300px; overflow-y: auto; margin-bottom: var(--spacing-sm);">';
         msg += '<table style="width: 100%; font-size: 0.85rem;">';
-        msg += `<tr style="border-bottom: 1px solid var(--border-subtle);"><th style="text-align:left; padding: 4px;">${escapeHtml(t('From'))}</th><th style="text-align:left; padding: 4px;">${escapeHtml(t('To'))}</th><th style="text-align:right; padding: 4px;">${escapeHtml(t('Games'))}</th></tr>`;
+        msg += `<tr style="border-bottom: 1px solid var(--border-color);"><th style="text-align:left; padding: 4px;">${escapeHtml(t('From'))}</th><th style="text-align:left; padding: 4px;">${escapeHtml(t('To'))}</th><th style="text-align:right; padding: 4px;">${escapeHtml(t('Games'))}</th></tr>`;
         mappings.forEach(m => {
             msg += `<tr><td style="padding: 4px;"><code>${escapeHtml(m.old)}</code></td>`;
             msg += `<td style="padding: 4px;"><code>${escapeHtml(m.new)}</code></td>`;

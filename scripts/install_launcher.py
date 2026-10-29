@@ -12,6 +12,24 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
+# Characters that make an Exec argument need quoting (Desktop Entry spec,
+# "The Exec key").
+_EXEC_RESERVED = set(' \t\n"\'\\><~|&;$*?#()`')
+
+
+def exec_arg(arg: str) -> str:
+    """Quote one Exec argument per the Desktop Entry spec, so an install
+    path with a space (~/My Games/RetroDB) is not split into two arguments.
+    Inside quotes, `"`, `` ` ``, `$` and `\\` are backslash-escaped; the key
+    file's own string escaping then doubles every backslash; `%` is a field
+    code prefix and is written `%%`."""
+    arg = arg.replace('%', '%%')
+    if not any(c in _EXEC_RESERVED for c in arg):
+        return arg
+    for ch in ('\\', '"', '`', '$'):
+        arg = arg.replace(ch, '\\' + ch)
+    return '"' + arg.replace('\\', '\\\\') + '"'
+
 
 def main() -> None:
     if sys.platform != 'linux':
@@ -28,7 +46,7 @@ def main() -> None:
     shutil.copyfile(src_icon, dst_icon)
 
     launcher = ROOT / 'scripts' / 'retrodb_launcher.py'
-    exec_line = f'{sys.executable} {launcher}'
+    exec_line = f'{exec_arg(sys.executable)} {exec_arg(str(launcher))}'
 
     template = (ROOT / 'packaging' / 'RetroDB.desktop').read_text()
     desktop = template.replace('__EXEC__', exec_line).replace('__ICON__', str(dst_icon))

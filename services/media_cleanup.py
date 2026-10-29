@@ -182,6 +182,9 @@ def find_orphaned_media(games):
 
     game_ids = {g['id'] for g in games}
     referenced_files = _collect_referenced_files(games)
+    # Pass 48.2 matches orphans on basename; a set keeps that one lookup per
+    # file instead of a walk over every reference (orphans x references).
+    referenced_basenames = {os.path.basename(ref) for ref in referenced_files}
 
     # Pass 48.4 — each entry carries the base its rel_path is computed
     # against, instead of inferring it from a ``'static' in dir_path``
@@ -238,17 +241,14 @@ def find_orphaned_media(games):
                 rel_path = os.path.relpath(filepath, rel_base)
                 if filename in referenced_files or rel_path in referenced_files:
                     is_orphaned = False
-                else:
-                    # Pass 48.2 — match on basename, not a substring. A DB
-                    # value may store a path (e.g. ``images/boxart/42.png``);
-                    # comparing basenames keeps that protected without the old
-                    # ``filename in ref`` test also sparing unrelated refs that
-                    # merely contain the name as a substring (e.g. ``42.png``
-                    # inside ``442.png`` or ``42.png.bak``).
-                    for ref in referenced_files:
-                        if os.path.basename(ref) == filename:
-                            is_orphaned = False
-                            break
+                # Pass 48.2 — match on basename, not a substring. A DB
+                # value may store a path (e.g. ``images/boxart/42.png``);
+                # comparing basenames keeps that protected without the old
+                # ``filename in ref`` test also sparing unrelated refs that
+                # merely contain the name as a substring (e.g. ``42.png``
+                # inside ``442.png`` or ``42.png.bak``).
+                elif filename in referenced_basenames:
+                    is_orphaned = False
 
             if is_orphaned:
                 try:

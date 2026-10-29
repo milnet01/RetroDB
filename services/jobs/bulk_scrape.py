@@ -413,6 +413,11 @@ class BulkScrapeJob:
 
             logger.info(f"Swapping running job {self.job_id} with queued job {job_id}")
 
+        # The promoted job leaves the queue here, not via _start_next_queued,
+        # so drop its 'queued' job_queue row too — left behind, a restart
+        # turned it into a recoverable "interrupted" scrape that had already run.
+        remove_queued_job(new_running_job.get('db_queue_id'))
+
         # Wait for the old worker to actually exit its current iteration
         # before we mutate state for the new job.  A bare `time.sleep(0.5)`
         # used to race here: the worker could wake after reset() and treat
@@ -494,6 +499,9 @@ class BulkScrapeJob:
             self._handoff_thread = old_thread
 
             logger.info(f"Demoting running job {self.job_id}, promoting {new_running_job['job_id']}")
+
+        # As in swap_with_running: the promoted job's 'queued' row goes too.
+        remove_queued_job(new_running_job.get('db_queue_id'))
 
         # Same race as swap_with_running — wait for the worker to exit
         # before we mutate state for the new job.
@@ -764,12 +772,14 @@ class BulkScrapeJob:
             except sqlite3.Error as e:
                 logger.warning(f"Pre-fetch failed, will fall back to per-game queries: {e}")
 
-        # Load scraper settings once before the loop
-        scraper_settings = load_scraper_settings()
-        enabled_scrapers = scraper_settings.get('enabled', {})
-        match_settings = get_match_settings()
-
         try:
+            # Load scraper settings once before the loop. Inside the try: a
+            # raise here used to kill the thread with `running` still True,
+            # the job_queue row 'running' and the singleton lock held.
+            scraper_settings = load_scraper_settings()
+            enabled_scrapers = scraper_settings.get('enabled', {})
+            match_settings = get_match_settings()
+
             for i, game_id in enumerate(_game_ids):
                 # Check for cancel
                 with self._lock:
