@@ -21,6 +21,8 @@
     label: Claude can search the web for sales figures
   - type: feature
     label: AI Fill a whole system at once
+  - type: fix
+    label: Job toasts take your theme's colours
   body: |
     <ul>
       <li><strong>Cheats for RetroArch (RetroDB), DuckStation and
@@ -63,7 +65,8 @@
       <li><strong>Type in a game's sales figure.</strong> Both edit screens have a Copies sold box under Developer. A figure you type shows on the game page, like one the AI found. Clear the box to remove it.</li>
       <li><strong>Test your AI key in Settings.</strong> Settings &gt; Scraping has a Test saved AI key button under the AI provider. It says whether the key works and, if not, why: a refused key, no credit, or a usage limit. Before, a refused key looked like a working one.</li>
       <li><strong>Claude can search the web for sales figures.</strong> Settings &gt; Scraping has a Let Claude search the web switch under the Claude model, off at first. Without search, Claude answers from what it already knows and leaves copies sold blank. With it on, Claude looks figures up. Anthropic charges for each search, so AI Fill makes at most 5 searches a game, up to 5 US cents; turn the switch off before a big bulk scrape.</li>
-      <li><strong>AI Fill a whole system at once.</strong> ROM Tools &gt; Official Names has a new Fill empty fields with AI card. Pick a system, or All systems, and press Fill with AI: RetroDB runs AI Fill on each game, the same as the AI Fill button on a game's page, and saves the answers straight to the game. It shows how many games it will fill and asks first, because your AI provider charges for each game. Games AI Fill has already done are skipped, and the run stops by itself if the AI stops answering.</li>
+      <li><strong>AI Fill a whole system at once.</strong> ROM Tools has a new Bulk AI Fill page, which also holds Official Names. Pick a system, or All systems, switch on the fields you want filled, and press Fill with AI: RetroDB runs AI Fill on each game, the same as the AI Fill button on a game's page, and saves the answers straight to the game. A progress bar and an AI Fill toast show how far it has got, and you can leave the page while it runs. It shows how many games it will fill and asks first, because your AI provider charges for each game. Games AI Fill has already done are skipped unless you switch them back in, and the run stops by itself if the AI stops answering.</li>
+      <li><strong>Job toasts take your theme's colours.</strong> The boxes that show a running job, such as Bulk Scrape and RA Sync, and the progress bars now use the colours of the theme you picked. A job that cannot pause no longer shows its title in the paused colour.</li>
     </ul>
 - version: 3.33.0
   date: 2026-10-29

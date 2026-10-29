@@ -21,6 +21,8 @@
     label: 'Claude może szukać danych o sprzedaży w internecie'
   - type: feature
     label: 'Uzupełnianie AI dla całego systemu naraz'
+  - type: fix
+    label: "Powiadomienia o zadaniach przejmują kolory motywu"
   body: |
     <ul>
       <li><strong>Kody do RetroArch (RetroDB), DuckStation i
@@ -62,7 +64,8 @@
       <li><strong>Wpisz sprzedaż gry.</strong> Oba ekrany edycji mają pole „Sprzedane egzemplarze” pod polem Deweloper. Wpisana liczba pojawia się na stronie gry, tak jak liczba znaleziona przez AI. Wyczyść pole, aby ją usunąć.</li>
       <li><strong>Przetestuj klucz AI w Ustawieniach.</strong> Ustawienia &gt; Pobieranie danych ma przycisk „Testuj zapisany klucz AI” pod dostawcą AI. Pokazuje, czy klucz działa, a jeśli nie, dlaczego: klucz odrzucony, brak środków lub limit użycia. Wcześniej odrzucony klucz wyglądał na działający.</li>
       <li><strong>Claude może szukać danych o sprzedaży w internecie.</strong> Ustawienia &gt; Pobieranie danych ma pod modelem Claude przełącznik „Pozwól Claude szukać w internecie”, na początku wyłączony. Bez wyszukiwania Claude odpowiada na podstawie tego, co już wie, i zostawia puste pole „Sprzedane egzemplarze”. Gdy przełącznik jest włączony, Claude sprawdza liczby. Anthropic pobiera opłatę za każde wyszukiwanie, więc Uzupełnianie AI wykonuje najwyżej 5 wyszukiwań na grę, do 5 centów amerykańskich; wyłącz przełącznik przed dużym masowym pobieraniem danych.</li>
-      <li><strong>Uzupełnianie AI dla całego systemu naraz.</strong> Narzędzia ROM &gt; Oficjalne nazwy ma nową kartę Uzupełnij puste pola przez AI. Wybierz system lub Wszystkie systemy i naciśnij Uzupełnij przez AI: RetroDB uruchamia Uzupełnianie AI dla każdej gry, tak samo jak przycisk Uzupełnianie AI na stronie gry, i zapisuje odpowiedzi od razu w grze. Pokazuje, ile gier uzupełni, i najpierw pyta, bo dostawca AI pobiera opłatę za każdą grę. Gry, które przeszły już Uzupełnianie AI, są pomijane, a przebieg sam się zatrzymuje, gdy AI przestaje odpowiadać.</li>
+      <li><strong>Uzupełnianie AI dla całego systemu naraz.</strong> Narzędzia ROM mają nową stronę Masowe uzupełnianie AI, na której są też Oficjalne nazwy. Wybierz system lub Wszystkie systemy, włącz pola, które chcesz uzupełnić, i naciśnij Uzupełnij przez AI: RetroDB uruchamia Uzupełnianie AI dla każdej gry, tak samo jak przycisk Uzupełnianie AI na stronie gry, i zapisuje odpowiedzi od razu w grze. Pasek postępu i powiadomienie Uzupełniania AI pokazują, jak daleko zaszło, a podczas działania możesz opuścić stronę. Pokazuje, ile gier uzupełni, i najpierw pyta, bo dostawca AI pobiera opłatę za każdą grę. Gry, które przeszły już Uzupełnianie AI, są pomijane, chyba że je z powrotem włączysz, a przebieg sam się zatrzymuje, gdy AI przestaje odpowiadać.</li>
+      <li><strong>Powiadomienia o zadaniach przejmują kolory motywu.</strong> Okna pokazujące uruchomione zadanie, takie jak Masowe pobieranie i RA Sync, oraz paski postępu używają teraz kolorów wybranego motywu. Zadanie, którego nie można wstrzymać, nie pokazuje już tytułu w kolorze wstrzymania.</li>
     </ul>
 - version: 3.33.0
   date: '2026-10-29'

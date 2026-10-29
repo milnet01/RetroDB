@@ -1150,7 +1150,8 @@ window.ModalFocusTrap = ModalFocusTrap;
 (function(){
 /**
  * RetroDB Unified Toast Controller
- * Handles all toast notifications: Bulk Scrape, RA Sync, RA Refresh, PSN Refresh
+ * Handles all toast notifications: Bulk Scrape, RA Sync, RA Refresh, PSN Refresh,
+ * Image Resize, AI Fill. Their colours are the theme's (CSS variables).
  * Version: 1.21.0
  *
  * Polling strategy (v1.21.0):
@@ -1167,53 +1168,62 @@ const ToastTypes = {
         id: 'bulk-scrape',
         name: 'Bulk Scrape',
         icon: '⏳',
-        activeColor: '#4cc9f0',     // Cyan
-        queuedColor: '#3a9fc2',      // Darker cyan
-        completedColor: '#22c55e',   // Green
-        pausedColor: '#f59e0b'       // Orange
+        activeColor: 'var(--neon-cyan)',
+        queuedColor: 'var(--primary-cyan-dark)',
+        completedColor: 'var(--neon-green)',
+        pausedColor: 'var(--neon-orange)'
     },
     RA_SYNC: {
         id: 'ra-sync',
         name: 'RA Sync',
         icon: '🏆',
-        activeColor: '#f59e0b',      // Orange
-        queuedColor: '#c47d09',      // Darker orange
-        completedColor: '#22c55e',   // Green
-        pausedColor: '#f59e0b'       // Orange
+        activeColor: 'var(--neon-orange)',
+        queuedColor: 'color-mix(in srgb, var(--neon-orange) 80%, black)',
+        completedColor: 'var(--neon-green)',
+        pausedColor: 'var(--neon-orange)'
     },
     RA_REFRESH: {
         id: 'ra-refresh',
         name: 'RA Refresh',
         icon: '🔄',
-        activeColor: '#a855f7',      // Purple
-        queuedColor: '#8b46d4',      // Darker purple
-        completedColor: '#22c55e',   // Green
-        pausedColor: '#f59e0b'       // Orange
+        activeColor: 'var(--neon-purple)',
+        queuedColor: 'color-mix(in srgb, var(--neon-purple) 80%, black)',
+        completedColor: 'var(--neon-green)',
+        pausedColor: 'var(--neon-orange)'
     },
     PSN_REFRESH: {
         id: 'psn-refresh',
         name: 'PSN Refresh',
         icon: '🏆',
-        activeColor: '#0070d1',      // PlayStation blue
-        queuedColor: '#00439c',      // Darker PS blue
-        completedColor: '#22c55e',   // Green
-        pausedColor: '#f59e0b'       // Orange
+        activeColor: 'var(--accent-psn)',
+        queuedColor: 'color-mix(in srgb, var(--accent-psn) 70%, black)',
+        completedColor: 'var(--neon-green)',
+        pausedColor: 'var(--neon-orange)'
     },
     IMAGE_RESIZE: {
         id: 'image-resize',
         name: 'Image Resize',
         icon: '🖼️',
-        activeColor: '#22c55e',      // Green
-        queuedColor: '#16a34a',      // Darker green
-        completedColor: '#22c55e',   // Green
-        pausedColor: '#f59e0b'       // Orange
+        activeColor: 'var(--neon-green)',
+        queuedColor: 'color-mix(in srgb, var(--neon-green) 80%, black)',
+        completedColor: 'var(--neon-green)',
+        pausedColor: 'var(--neon-orange)'
+    },
+    AI_FILL: {
+        id: 'ai-fill',
+        name: 'AI Fill',
+        icon: '🤖',
+        activeColor: 'var(--secondary-magenta)',
+        queuedColor: 'var(--secondary-magenta-dark)',
+        completedColor: 'var(--neon-green)',
+        pausedColor: 'var(--neon-orange)'
     }
 };
 
 const ThemeIcons = {
     cyberpunk: {
         'bulk-scrape': '⏳', 'ra-sync': '🏆', 'ra-refresh': '🔄',
-        'psn-refresh': '🏆', 'image-resize': '🖼️',
+        'psn-refresh': '🏆', 'image-resize': '🖼️', 'ai-fill': '🤖',
         paused: '⏸️', resume: '▶️', complete: '✅', queued: '📋',
         cancelled: '❌', background: '🔽',
         success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️',
@@ -1223,7 +1233,7 @@ const ThemeIcons = {
     },
     matrix: {
         'bulk-scrape': '⟩⟩', 'ra-sync': '◈', 'ra-refresh': '⟳',
-        'psn-refresh': '◈', 'image-resize': '⊞',
+        'psn-refresh': '◈', 'image-resize': '⊞', 'ai-fill': '◎',
         paused: '▮▮', resume: '▶', complete: '✓', queued: '≡',
         cancelled: '✗', background: '▼',
         success: '✓', error: '✗', warning: '▲', info: '◆',
@@ -1233,7 +1243,7 @@ const ThemeIcons = {
     },
     amber: {
         'bulk-scrape': '►', 'ra-sync': '★', 'ra-refresh': '↻',
-        'psn-refresh': '★', 'image-resize': '▦',
+        'psn-refresh': '★', 'image-resize': '▦', 'ai-fill': '◘',
         paused: '‖', resume: '►', complete: '●', queued: '░',
         cancelled: '■', background: '▾',
         success: '●', error: '■', warning: '▲', info: '◦',
@@ -1243,7 +1253,7 @@ const ThemeIcons = {
     },
     ocean: {
         'bulk-scrape': '≋', 'ra-sync': '⚓', 'ra-refresh': '↺',
-        'psn-refresh': '⚓', 'image-resize': '◇',
+        'psn-refresh': '⚓', 'image-resize': '◇', 'ai-fill': '❂',
         paused: '∿', resume: '▶', complete: '◉', queued: '⊕',
         cancelled: '⊘', background: '▿',
         success: '◉', error: '⊘', warning: '◈', info: '◎',
@@ -1253,7 +1263,7 @@ const ThemeIcons = {
     },
     christian: {
         'bulk-scrape': '✦', 'ra-sync': '☩', 'ra-refresh': '❋',
-        'psn-refresh': '☩', 'image-resize': '✥',
+        'psn-refresh': '☩', 'image-resize': '✥', 'ai-fill': '✺',
         paused: '◆', resume: '▶', complete: '✧', queued: '⚜',
         cancelled: '✘', background: '▽',
         success: '✧', error: '✘', warning: '◈', info: '✦',
@@ -1263,7 +1273,7 @@ const ThemeIcons = {
     },
     bladerunner: {
         'bulk-scrape': '▸▸', 'ra-sync': '◆', 'ra-refresh': '⟲',
-        'psn-refresh': '◆', 'image-resize': '⬡',
+        'psn-refresh': '◆', 'image-resize': '⬡', 'ai-fill': '◬',
         paused: '▪▪', resume: '▶', complete: '◉', queued: '▫',
         cancelled: '✕', background: '▾',
         success: '◉', error: '✕', warning: '◈', info: '◇',
@@ -1273,7 +1283,7 @@ const ThemeIcons = {
     },
     elite: {
         'bulk-scrape': '>>>', 'ra-sync': '*', 'ra-refresh': '~',
-        'psn-refresh': '*', 'image-resize': '#',
+        'psn-refresh': '*', 'image-resize': '#', 'ai-fill': 'AI',
         paused: '||', resume: '>', complete: 'OK', queued: '...',
         cancelled: 'X', background: 'v',
         success: 'OK', error: 'X', warning: '!', info: '>',
@@ -1617,12 +1627,14 @@ const UnifiedToastController = {
         this.pollingEndpoints.set('ra-refresh', '/api/refresh-retroachievements/status');
         this.pollingEndpoints.set('psn-refresh', '/api/psn/bulk-refresh/status');
         this.pollingEndpoints.set('image-resize', '/api/maintenance/image-resize/status');
+        this.pollingEndpoints.set('ai-fill', '/api/ai-fill-bulk/status');
 
         this.activeOperations.set('bulk-scrape', false);
         this.activeOperations.set('ra-sync', false);
         this.activeOperations.set('ra-refresh', false);
         this.activeOperations.set('psn-refresh', false);
         this.activeOperations.set('image-resize', false);
+        this.activeOperations.set('ai-fill', false);
 
         this._burstPollAll();
     },
@@ -2108,6 +2120,7 @@ const UnifiedToastController = {
             case 'ra-refresh': return ToastTypes.RA_REFRESH;
             case 'psn-refresh': return ToastTypes.PSN_REFRESH;
             case 'image-resize': return ToastTypes.IMAGE_RESIZE;
+            case 'ai-fill': return ToastTypes.AI_FILL;
             default: return null;
         }
     },
@@ -2138,7 +2151,7 @@ const UnifiedToastController = {
         const toast = document.createElement('div');
         toast.className = `unified-toast active-toast ${type}-toast`;
         toast.dataset.type = type;
-        const priority = type === 'bulk-scrape' ? '100' : (type === 'ra-sync' ? '101' : (type === 'ra-refresh' ? '102' : (type === 'image-resize' ? '104' : '103')));
+        const priority = type === 'bulk-scrape' ? '100' : (type === 'ra-sync' ? '101' : (type === 'ra-refresh' ? '102' : (type === 'image-resize' ? '104' : (type === 'ai-fill' ? '105' : '103'))));
         toast.dataset.priority = priority;
         toast.style.order = 100 - parseInt(priority);
 
@@ -2154,10 +2167,10 @@ const UnifiedToastController = {
      * Get HTML for active toast
      */
     getActiveToastHTML(type, config, data) {
-        const isPaused = data.paused;
+        const isPaused = !!data.paused;  // classList.toggle flips on undefined
         const percent = data.percent || 0;
         const total = data.total || 0;
-        const current = type === 'bulk-scrape' ? (data.processing || 1) : (data.current || 0);
+        const current = (type === 'bulk-scrape' || type === 'ai-fill') ? (data.processing || 1) : (data.current || 0);
 
         let currentItem;
         if (type === 'image-resize') {
@@ -2185,7 +2198,7 @@ const UnifiedToastController = {
                     <span class="stat success">${getThemedIcon('ra-sync')} <span class="stat-value" data-stat="success">${fmt(data.success)}</span> ${this.escapeHtml(t('found'))}</span>
                 </div>
             `;
-        } else if (type === 'psn-refresh') {
+        } else if (type === 'psn-refresh' || type === 'ai-fill') {
             statsHTML = `
                 <div class="toast-stats">
                     <span class="stat success">${si.s} <span class="stat-value" data-stat="success">${fmt(data.success)}</span></span>
@@ -2214,7 +2227,7 @@ const UnifiedToastController = {
         let systemNameValue = '';
         if (type === 'bulk-scrape' && data.system_name) {
             systemNameValue = data.system_name;
-        } else if (type === 'ra-sync' && data.system_name) {
+        } else if ((type === 'ra-sync' || type === 'ai-fill') && data.system_name) {
             systemNameValue = data.system_name;
         } else if (type === 'ra-refresh' && data.current_system) {
             systemNameValue = data.current_system;
@@ -2271,10 +2284,10 @@ const UnifiedToastController = {
         }
         toast.dataset.lastState = stateSignature;
 
-        const isPaused = data.paused;
+        const isPaused = !!data.paused;  // classList.toggle flips on undefined
         const percent = data.percent || 0;
         const total = data.total || 0;
-        const current = type === 'bulk-scrape' ? (data.processing || 1) : (data.current || 0);
+        const current = (type === 'bulk-scrape' || type === 'ai-fill') ? (data.processing || 1) : (data.current || 0);
 
         let currentItem;
         if (type === 'image-resize') {
@@ -2306,7 +2319,7 @@ const UnifiedToastController = {
         let systemNameValue = '';
         if (type === 'bulk-scrape' && data.system_name) {
             systemNameValue = data.system_name;
-        } else if (type === 'ra-sync' && data.system_name) {
+        } else if ((type === 'ra-sync' || type === 'ai-fill') && data.system_name) {
             systemNameValue = data.system_name;
         } else if (type === 'ra-refresh' && data.current_system) {
             systemNameValue = data.current_system;
@@ -2360,12 +2373,12 @@ const UnifiedToastController = {
         const percentEl = toast.querySelector('[data-percent]');
         if (percentEl) percentEl.textContent = percent;
 
-        if (type === 'bulk-scrape' || type === 'ra-sync' || type === 'ra-refresh' || type === 'psn-refresh') {
+        if (type === 'bulk-scrape' || type === 'ra-sync' || type === 'ra-refresh' || type === 'psn-refresh' || type === 'ai-fill') {
             const successEl = toast.querySelector('[data-stat="success"]');
             if (successEl) successEl.textContent = this.fmtNum(this.successCount(data));
         }
 
-        if (type === 'bulk-scrape' || type === 'ra-sync' || type === 'psn-refresh') {
+        if (type === 'bulk-scrape' || type === 'ra-sync' || type === 'psn-refresh' || type === 'ai-fill') {
             const failedEl = toast.querySelector('[data-stat="failed"]');
             if (failedEl) failedEl.textContent = this.fmtNum(data.failed);
 
@@ -2598,6 +2611,9 @@ const UnifiedToastController = {
                     break;
                 case 'image-resize':
                     endpoint = '/api/maintenance/image-resize/cancel';
+                    break;
+                case 'ai-fill':
+                    endpoint = '/api/ai-fill-bulk/cancel';
                     break;
             }
 

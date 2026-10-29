@@ -8,18 +8,18 @@
    ============================================================================= */
 
 .progress-container {
-    background: #1a1a3e;
+    background: var(--bg-darker);
     border: 2px solid var(--neon-cyan);
     border-radius: var(--radius-md);
     height: 36px;
     overflow: hidden;
     position: relative;
-    box-shadow: 0 0 15px rgba(76, 201, 240, 0.3);
+    box-shadow: 0 0 15px color-mix(in srgb, var(--neon-cyan) 30%, transparent);
 }
 
 .progress-bar {
     height: 100%;
-    background: linear-gradient(90deg, var(--neon-cyan), #7209b3);
+    background: linear-gradient(90deg, var(--neon-cyan), var(--accent-purple));
     border-radius: calc(var(--radius-md) - 2px);
     display: flex;
     align-items: center;
@@ -303,7 +303,7 @@
    ============================================================================= */
 
 .progress-bar-container {
-    background: #1a1a3e;
+    background: var(--bg-darker);
     border: 2px solid var(--neon-cyan);
     border-radius: var(--radius-md);
     height: 36px;
@@ -314,7 +314,7 @@
 
 .progress-bar-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--neon-cyan), #7209b3);
+    background: linear-gradient(90deg, var(--neon-cyan), var(--accent-purple));
     width: 0%;
     transition: width 0.3s ease;
     display: flex;

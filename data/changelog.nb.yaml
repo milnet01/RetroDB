@@ -21,6 +21,8 @@
     label: 'Claude kan søke på nettet etter salgstall'
   - type: feature
     label: 'AI-utfylling for et helt system på en gang'
+  - type: fix
+    label: 'Jobbvarslene bruker temaets farger'
   body: |
     <ul>
       <li><strong>Juksekoder for RetroArch (RetroDB), DuckStation og
@@ -62,7 +64,8 @@
       <li><strong>Skriv inn salgstallet for et spill.</strong> Begge redigeringsvinduene har et felt for Solgte eksemplarer under Utvikler. Et tall du skriver inn, vises på spillsiden på samme måte som et KI-en har funnet. Tøm feltet for å fjerne det.</li>
       <li><strong>Test KI-nøkkelen i Innstillinger.</strong> Innstillinger &gt; Skraper har en knapp, «Test lagret KI-nøkkel», under KI-leverandøren. Den viser om nøkkelen virker, og hvis ikke, hvorfor: en avvist nøkkel, ingen kreditt eller en bruksgrense. Før så en avvist nøkkel ut som en som virket.</li>
       <li><strong>Claude kan søke på nettet etter salgstall.</strong> Innstillinger &gt; Skraper har en bryter, «La Claude søke på nettet», under Claude-modellen, av til å begynne med. Uten søk svarer Claude ut fra det den allerede vet og lar solgte eksemplarer stå tomt. Med bryteren på slår Claude opp tallene. Anthropic tar betalt for hvert søk, så AI-utfylling gjør høyst 5 søk per spill, opptil 5 amerikanske cent; slå av bryteren før en stor masseskraping.</li>
-      <li><strong>AI-utfylling for et helt system på en gang.</strong> ROM-verktøy &gt; Offisielle navn har et nytt kort Fyll tomme felt med KI. Velg et system, eller Alle systemer, og trykk Fyll med KI: RetroDB kjører AI-utfylling på hvert spill, på samme måte som AI-utfylling-knappen på et spills side, og lagrer svarene rett i spillet. Det viser hvor mange spill det skal fylle og spør først, fordi KI-leverandøren din tar betalt for hvert spill. Spill som AI-utfylling allerede har gjort, hoppes over, og kjøringen stopper av seg selv hvis KI-en slutter å svare.</li>
+      <li><strong>AI-utfylling for et helt system på en gang.</strong> ROM-verktøy har en ny side, Mass-AI-utfylling, som også rommer Offisielle navn. Velg et system, eller Alle systemer, slå på feltene du vil ha fylt, og trykk Fyll med KI: RetroDB kjører AI-utfylling på hvert spill, på samme måte som AI-utfylling-knappen på et spills side, og lagrer svarene rett i spillet. En fremdriftslinje og en varselboks for AI-utfylling viser hvor langt det har kommet, og du kan forlate siden mens det kjører. Det viser hvor mange spill det vil fylle og spør først, fordi KI-leverandøren din tar betalt for hvert spill. Spill som AI-utfylling allerede har gjort, hoppes over med mindre du slår dem på igjen, og kjøringen stopper av seg selv hvis KI-en slutter å svare.</li>
+      <li><strong>Jobbvarslene bruker temaets farger.</strong> Boksene som viser en jobb som kjører, som masseskraping og RA Sync, og fremdriftslinjene bruker nå fargene til temaet du valgte. En jobb som ikke kan settes på pause, viser ikke lenger tittelen i pausefargen.</li>
     </ul>
 - version: 3.33.0
   date: '2026-10-29'

@@ -2,12 +2,15 @@
 # RETRODB - Bulk AI Fill Job
 # =============================================================================
 # Runs AI Fill (services/ai_fill.fill_game) on every game of one system, or
-# of all systems, from ROM Tools > Official Names. Like the game page's AI
-# Fill button it writes straight to the games, under the same fill rules.
+# of all systems, from ROM Tools > Bulk AI Fill. Like the game page's AI
+# Fill button it writes straight to the games, under the same fill rules,
+# but only to the fields whose switches are on (ai_fill.FIELD_GROUPS).
 #
-# Games it fills: every game AI Fill has not done yet (no "ai_fill" entry in
-# its scrape history). So a re-run, or a run resumed after a restart, skips
-# the games already done, and nobody pays twice for the same game.
+# Games it fills: games with at least one chosen field empty, that AI Fill
+# has not done yet (no "ai_fill" entry in their scrape history). So a re-run,
+# or a run resumed after a restart, skips the games already done, and nobody
+# pays twice for the same game. include_done takes them in again, for a
+# field added since, such as sales figures.
 # =============================================================================
 
 import logging
@@ -34,23 +37,41 @@ _NOT_DONE = """(g.scrape_history IS NULL
                 OR g.scrape_history NOT LIKE '%"scrape_mode": "ai_fill"%')"""
 
 
-def games_to_fill(conn, system_id):
-    """Ids and titles of the games the run fills, in system then title order."""
-    where_system = "AND g.system_id = ?" if system_id else ""
-    params = (system_id,) if system_id else ()
+def _empty(col):
+    # col comes from FIELD_GROUPS, never from a request. A 0 in a number
+    # column is "unknown" too (ai_fill skips a 0 answer).
+    return f"COALESCE(TRIM(g.{col}), '') IN ('', '0')"
+
+
+def games_to_fill(conn, system_id, groups=None, include_done=False):
+    """The games the run fills, in system then title order.
+
+    groups: the switch keys that are on (ai_fill.FIELD_GROUPS); None for all.
+    A game whose title the AI may rename is always a candidate when the
+    official-name switch is on: its name is never empty.
+    """
+    from services.ai_fill import FIELD_GROUPS
+    where = [] if include_done else [_NOT_DONE]
+    params = []
+    if system_id:
+        where.append("g.system_id = ?")
+        params.append(system_id)
+    if groups is not None and 'title' not in groups:
+        cols = [c for g in groups for c in FIELD_GROUPS[g]]
+        where.append('(' + ' OR '.join(_empty(c) for c in cols) + ')' if cols else '0')
     return [dict(r) for r in conn.execute(f"""
-        SELECT g.id, g.title
+        SELECT g.id, g.title, s.name AS system_name
         FROM games g
         JOIN systems s ON g.system_id = s.id
-        WHERE {_NOT_DONE} {where_system}
+        WHERE {' AND '.join(where) or '1'}
         ORDER BY s.name, s.id, g.title, g.id
     """, params).fetchall()]
 
 
-def count_games_to_fill(system_id):
+def count_games_to_fill(system_id, groups=None, include_done=False):
     conn = _get_conn()
     try:
-        return len(games_to_fill(conn, system_id))
+        return len(games_to_fill(conn, system_id, groups, include_done))
     finally:
         conn.close()
 
@@ -74,11 +95,13 @@ class AiFillBulkJob:
         self.failed_count = 0    # games the AI gave no answer for
         self.skipped_count = 0   # games the AI answered with nothing new
         self.current_title = ""
+        self.system_name = ""
         self.start_time = None
         self.error_message = None
 
-    def start(self, system_id=None):
-        """Start a run over one system, or every system when None."""
+    def start(self, system_id=None, groups=None, include_done=False):
+        """Start a run over one system, or every system when None, filling
+        the fields under the switch keys `groups` (None: every field)."""
         with self._lock:
             if self.running:
                 return {'success': False, 'error': 'An AI fill run is already running'}
@@ -92,13 +115,15 @@ class AiFillBulkJob:
             self.running = True
             self.start_time = datetime.now(timezone.utc).isoformat()
 
-        self._thread = threading.Thread(target=self._worker, args=(system_id,), daemon=True)
+        self._thread = threading.Thread(target=self._worker, args=(system_id, groups, include_done), daemon=True)
         self._thread.start()
         return {'success': True, 'job_id': self.job_id}
 
     def resume_from_params(self, params, progress=None):
         """Restart an interrupted run. Games already filled are skipped."""
-        return self.start((params or {}).get('system_id')).get('success', False)
+        params = params or {}
+        return self.start(params.get('system_id'), params.get('groups'),
+                          params.get('include_done', False)).get('success', False)
 
     def cancel(self):
         with self._lock:
@@ -123,24 +148,28 @@ class AiFillBulkJob:
                 'success': self.success_count,
                 'failed': self.failed_count,
                 'skipped': self.skipped_count,
-                'current_title': self.current_title,
+                'current_game': self.current_title,
+                'system_name': self.system_name,
+                'return_url': '/tools/official-names',
                 'error': self.error_message,
             }
 
-    def _worker(self, system_id):
+    def _worker(self, system_id, groups, include_done):
         persist_id = None
         status, error = 'completed', None
         try:
-            from services.ai_fill import fill_game, load_game
+            from services.ai_fill import columns_for, fill_game, load_game
+            fields = columns_for(groups)
             conn = _get_conn()
             try:
-                games = games_to_fill(conn, system_id)
+                games = games_to_fill(conn, system_id, groups, include_done)
             finally:
                 conn.close()
             with self._lock:
                 self.total = len(games)
             persist_id = persist_job_start('ai_fill_bulk', {
-                'system_id': system_id, 'total': len(games)})
+                'system_id': system_id, 'groups': groups,
+                'include_done': include_done, 'total': len(games)})
 
             in_a_row = 0
             for game in games:
@@ -148,8 +177,9 @@ class AiFillBulkJob:
                     if self.cancelled:
                         break
                     self.current_title = game['title']
+                    self.system_name = game['system_name']
                 row = load_game(game['id'])
-                filled = fill_game(row) if row else []
+                filled = fill_game(row, fields) if row else []
                 with self._lock:
                     if filled is None:
                         self.failed_count += 1

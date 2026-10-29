@@ -21,6 +21,8 @@
     label: 'Claude peut chercher les chiffres de ventes sur le web'
   - type: feature
     label: 'Remplissage IA d''un système entier en une fois'
+  - type: fix
+    label: 'Les boîtes de notification des tâches prennent les couleurs de votre thème'
   body: |
     <ul>
       <li><strong>Des codes de triche pour RetroArch (RetroDB), DuckStation
@@ -71,7 +73,8 @@
       <li><strong>Saisir les ventes d'un jeu.</strong> Les deux écrans de modification ont un champ « Exemplaires vendus » sous Développeur. Le chiffre saisi s'affiche sur la page du jeu, comme un chiffre trouvé par l'IA. Videz le champ pour le retirer.</li>
       <li><strong>Testez votre clé IA dans les paramètres.</strong> Paramètres &gt; Récupération a un bouton « Tester la clé IA enregistrée » sous le fournisseur d’IA. Il indique si la clé fonctionne et, sinon, pourquoi : clé refusée, plus de crédit ou limite d’utilisation atteinte. Avant, une clé refusée semblait fonctionner.</li>
       <li><strong>Claude peut chercher les chiffres de ventes sur le web.</strong> Paramètres &gt; Récupération a un interrupteur « Laisser Claude chercher sur le web » sous le modèle Claude, désactivé au départ. Sans recherche, Claude répond avec ce qu'il sait déjà et laisse vides les exemplaires vendus. Activé, Claude cherche les chiffres. Anthropic facture chaque recherche, donc Remplissage IA fait au plus 5 recherches par jeu, jusqu'à 5 cents US ; désactivez l'interrupteur avant une grosse récupération groupée.</li>
-      <li><strong>Remplissage IA d'un système entier en une fois.</strong> Outils ROM &gt; Noms officiels a une nouvelle carte Remplir les champs vides avec l'IA. Choisissez un système, ou Tous les systèmes, et appuyez sur Remplir avec l'IA : RetroDB lance le Remplissage IA sur chaque jeu, comme le bouton Remplissage IA sur la page d'un jeu, et enregistre les réponses directement dans le jeu. Il indique combien de jeux il va remplir et demande d'abord, car votre fournisseur d'IA facture chaque jeu. Les jeux que le Remplissage IA a déjà traités sont ignorés, et le passage s'arrête de lui-même si l'IA ne répond plus.</li>
+      <li><strong>Remplissage IA d'un système entier en une fois.</strong> Outils ROM a une nouvelle page Remplissage IA en masse, qui contient aussi Noms officiels. Choisissez un système, ou Tous les systèmes, activez les champs à remplir et appuyez sur Remplir avec l'IA : RetroDB lance le Remplissage IA sur chaque jeu, comme le bouton Remplissage IA de la page d'un jeu, et enregistre les réponses directement dans le jeu. Une barre de progression et une boîte de notification du Remplissage IA montrent où il en est, et vous pouvez quitter la page pendant qu'il tourne. Il indique combien de jeux il va remplir et demande d'abord, car votre fournisseur d'IA facture chaque jeu. Les jeux que le Remplissage IA a déjà traités sont ignorés sauf si vous les réactivez, et le passage s'arrête de lui-même si l'IA ne répond plus.</li>
+      <li><strong>Les boîtes de notification des tâches prennent les couleurs de votre thème.</strong> Les boîtes qui montrent une tâche en cours, comme le scraping en masse et RA Sync, et les barres de progression utilisent maintenant les couleurs du thème que vous avez choisi. Une tâche qui ne peut pas être mise en pause n'affiche plus son titre dans la couleur de pause.</li>
     </ul>
 - version: 3.33.0
   date: '2026-10-29'

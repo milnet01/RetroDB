@@ -21,6 +21,8 @@
     label: 'O Claude pode pesquisar números de vendas na web'
   - type: feature
     label: 'Preencher com AI um sistema inteiro de uma vez'
+  - type: fix
+    label: "Os avisos de tarefas usam as cores do seu tema"
   body: |
     <ul>
       <li><strong>Trapaças para RetroArch (RetroDB), DuckStation e
@@ -67,7 +69,8 @@
       <li><strong>Digite as vendas de um jogo.</strong> As duas telas de edição têm um campo "Cópias vendidas" abaixo de Desenvolvedora. O número digitado aparece na página do jogo, como um encontrado pela IA. Esvazie o campo para removê-lo.</li>
       <li><strong>Teste sua chave de IA nas Configurações.</strong> Configurações &gt; Busca de metadados tem um botão "Testar a chave de IA salva" abaixo do provedor de IA. Ele mostra se a chave funciona e, se não, por quê: chave recusada, sem crédito ou limite de uso. Antes, uma chave recusada parecia funcionar.</li>
       <li><strong>O Claude pode pesquisar números de vendas na web.</strong> Configurações &gt; Busca de metadados tem uma chave "Deixar o Claude pesquisar na web" abaixo do modelo Claude, desligada no início. Sem pesquisa, o Claude responde com o que já sabe e deixa "Cópias vendidas" em branco. Com a chave ligada, o Claude busca os números. A Anthropic cobra por cada pesquisa, então o Preencher com AI faz no máximo 5 pesquisas por jogo, até 5 centavos de dólar; desligue a chave antes de um scraping em massa grande.</li>
-      <li><strong>Preencher com AI um sistema inteiro de uma vez.</strong> Ferramentas de ROM &gt; Nomes Oficiais tem um novo cartão Preencher campos vazios com IA. Escolha um sistema, ou Todos os Sistemas, e clique em Preencher com IA: o RetroDB roda o Preencher com AI em cada jogo, igual ao botão Preencher com AI na página de um jogo, e salva as respostas direto no jogo. Ele mostra quantos jogos vai preencher e pergunta antes, porque seu provedor de IA cobra por cada jogo. Jogos que já passaram pelo Preencher com AI são pulados, e a execução para sozinha se a IA parar de responder.</li>
+      <li><strong>Preencher com AI um sistema inteiro de uma vez.</strong> Ferramentas de ROM tem uma nova página Preenchimento em Lote com AI, que também abriga Nomes Oficiais. Escolha um sistema, ou Todos os Sistemas, ative os campos que quer preencher e clique em Preencher com IA: o RetroDB roda o Preencher com AI em cada jogo, igual ao botão Preencher com AI na página de um jogo, e salva as respostas direto no jogo. Uma barra de progresso e um aviso do Preencher com AI mostram até onde foi, e você pode sair da página enquanto ele roda. Ele mostra quantos jogos vai preencher e pergunta antes, porque seu provedor de IA cobra por cada jogo. Jogos que já passaram pelo Preencher com AI são pulados, a menos que você os inclua de volta, e a execução para sozinha se a IA parar de responder.</li>
+      <li><strong>Os avisos de tarefas usam as cores do seu tema.</strong> As caixas que mostram uma tarefa em andamento, como Coleta em Lote e RA Sync, e as barras de progresso agora usam as cores do tema que você escolheu. Uma tarefa que não pode ser pausada não mostra mais o título na cor de pausa.</li>
     </ul>
 - version: 3.33.0
   date: '2026-10-29'

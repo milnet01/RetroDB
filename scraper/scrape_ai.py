@@ -1210,7 +1210,8 @@ def _official_title_rejected(game_id, title):
         conn.close()
 
 
-def get_game_details(game_id, title, system_name, system_folder=None, existing_metadata=None):
+def get_game_details(game_id, title, system_name, system_folder=None, existing_metadata=None,
+                     only_fields=None):
     """Fetch AI-generated metadata for a game.
 
     Args:
@@ -1219,6 +1220,8 @@ def get_game_details(game_id, title, system_name, system_folder=None, existing_m
         system_name: Full system name
         system_folder: ES-DE system folder (unused, for interface compat)
         existing_metadata: Dict of current field values (to determine gaps)
+        only_fields: Columns the AI may be asked about ('title' for the
+            official name); None asks about every field
 
     Returns:
         dict of metadata fields filled by AI, or None on failure.
@@ -1242,8 +1245,12 @@ def get_game_details(game_id, title, system_name, system_folder=None, existing_m
                 validate_existing[field] = val.strip() if isinstance(val, str) else str(val)
     else:
         missing_fields = list(AI_FILLABLE_FIELDS)
+    if only_fields is not None:
+        missing_fields = [f for f in missing_fields if f in only_fields]
+        validate_existing = {f: v for f, v in validate_existing.items() if f in only_fields}
 
-    official_for = _official_title_context(game_id)
+    official_for = (_official_title_context(game_id)
+                    if only_fields is None or 'title' in only_fields else None)
     if not missing_fields and not official_for:
         logger.info(f"AI scraper: no missing fields for '{title}'")
         return {}
@@ -1279,7 +1286,9 @@ def get_game_details(game_id, title, system_name, system_folder=None, existing_m
     kwargs = {}
     if provider == 'gemini' and provider_config.get('project_id'):
         kwargs['project_id'] = provider_config['project_id']
-    if provider == 'claude' and provider_config.get('web_search'):
+    # Search only for what needs it: a game whose sales figure is not asked
+    # for pays for no searches.
+    if provider == 'claude' and provider_config.get('web_search') and 'units_sold' in missing_fields:
         kwargs['web_search'] = True
 
     raw_text = call_fn(prompt, api_key, model, **kwargs)

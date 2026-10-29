@@ -2,7 +2,7 @@
 {% set adaptive_layout = true %}
 {% from "_macros/nav_tabs.html" import rom_tool_tabs %}
 
-{% block title %}{{ _('Official Names') }} - RetroDB{% endblock %}
+{% block title %}{{ _('Bulk AI Fill') }} - RetroDB{% endblock %}
 
 {% block styles %}
 <style>
@@ -55,6 +55,24 @@
     font-weight: 600;
 }
 
+.fill-switches {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+    gap: var(--spacing-xs) var(--spacing-md);
+    margin: var(--spacing-sm) 0 var(--spacing-md);
+}
+
+.fill-switch {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    cursor: pointer;
+}
+
+.fill-progress {
+    margin-top: var(--spacing-sm);
+}
+
 .names-meta {
     display: block;
     color: var(--text-secondary);
@@ -72,6 +90,62 @@
 </div>
 
 {{ rom_tool_tabs('official_names') }}
+
+<div class="card" id="aiFillBulk">
+    <div class="card-header">
+        <h2 class="card-title"><span>🤖</span> {{ _('Fill empty fields with AI') }}</h2>
+    </div>
+    <div class="card-body">
+        <p>{{ _("AI Fill for many games at once. The AI fills each game's empty fields, such as genre, release dates and copies sold, the same way the AI Fill button on a game's page does, and saves them straight to the game. Games AI Fill has already done are skipped, so a second run only does the rest.") }}</p>
+        <p class="text-muted">{{ _('Your AI provider charges for each game. With Claude Haiku 5.5 and web search on, a game costs at most about 5 US cents.') }}</p>
+
+        <h3 id="fillSwitchesTitle">{{ _('Fields to fill') }}</h3>
+        <p class="text-muted">{{ _('Only the fields switched on are filled, and only games with one of them empty are counted. Fewer fields cost less.') }}</p>
+        <div class="names-actions">
+            <button type="button" class="btn btn-secondary btn-sm" id="fillAllOnBtn">{{ _('All on') }}</button>
+            <button type="button" class="btn btn-secondary btn-sm" id="fillAllOffBtn">{{ _('All off') }}</button>
+        </div>
+        <div class="fill-switches" id="fillSwitches" role="group" aria-labelledby="fillSwitchesTitle">
+            {% for key, label in fill_switches %}
+            <label class="fill-switch">
+                <span class="toggle-switch">
+                    <input type="checkbox" value="{{ key }}" checked>
+                    <span class="toggle-slider"></span>
+                </span>
+                <span>{{ label }}</span>
+            </label>
+            {% endfor %}
+        </div>
+        <label class="fill-switch">
+            <span class="toggle-switch">
+                <input type="checkbox" id="fillIncludeDone" aria-describedby="fillIncludeDoneWhy">
+                <span class="toggle-slider"></span>
+            </span>
+            <span>{{ _('Include games AI Fill has already done') }}</span>
+        </label>
+        <p id="fillIncludeDoneWhy" class="text-muted">{{ _('Turn this on to fill a field in games done before, such as copies sold after turning on web search. Those games are charged again.') }}</p>
+
+        <div class="names-filter-row">
+            <div class="form-group">
+                <label for="fillSystem">{{ _('System') }}</label>
+                <select id="fillSystem" class="form-select" aria-describedby="fillCount">
+                    <option value="">{{ _('All systems') }}</option>
+                    {% for system in systems %}
+                    <option value="{{ system.id }}">{{ system.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="button" class="btn btn-primary" id="fillRunBtn">{{ _('Fill with AI') }}</button>
+            <button type="button" class="btn btn-secondary" id="fillCancelBtn" hidden>{{ _('Stop') }}</button>
+        </div>
+        <p id="fillCount" class="text-muted"></p>
+        <div class="progress-container progress-container-sm fill-progress" id="fillProgress" hidden>
+            <div class="progress-bar" id="fillProgressBar" role="progressbar" aria-label="{{ _('Fill with AI') }}"
+                 aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-percent="0" style="width: 0%">0%</div>
+        </div>
+        <p id="fillRunStatus" class="text-muted" role="status" aria-live="polite"></p>
+    </div>
+</div>
 
 <div class="card">
     <div class="card-header">
@@ -106,30 +180,6 @@
     </div>
 </div>
 
-<div class="card" id="aiFillBulk">
-    <div class="card-header">
-        <h2 class="card-title"><span>🤖</span> {{ _('Fill empty fields with AI') }}</h2>
-    </div>
-    <div class="card-body">
-        <p>{{ _("AI Fill for many games at once. The AI fills each game's empty fields, such as genre, release dates and copies sold, the same way the AI Fill button on a game's page does, and saves them straight to the game. Games AI Fill has already done are skipped, so a second run only does the rest.") }}</p>
-        <p class="text-muted">{{ _('Your AI provider charges for each game. With Claude Haiku 5.5 and web search on, a game costs at most about 5 US cents.') }}</p>
-        <div class="names-filter-row">
-            <div class="form-group">
-                <label for="fillSystem">{{ _('System') }}</label>
-                <select id="fillSystem" class="form-select" aria-describedby="fillCount">
-                    <option value="">{{ _('All systems') }}</option>
-                    {% for system in systems %}
-                    <option value="{{ system.id }}">{{ system.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <button type="button" class="btn btn-primary" id="fillRunBtn">{{ _('Fill with AI') }}</button>
-            <button type="button" class="btn btn-secondary" id="fillCancelBtn" hidden>{{ _('Stop') }}</button>
-        </div>
-        <p id="fillCount" class="text-muted"></p>
-        <p id="fillRunStatus" class="text-muted" role="status" aria-live="polite"></p>
-    </div>
-</div>
 </div>
 {% endblock %}
 

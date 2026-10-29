@@ -88,7 +88,7 @@ body:has(.sidebar.collapsed) .unified-toast-container {
     background: linear-gradient(135deg, var(--toast-bg-from, rgba(20, 26, 35, 0.95)), var(--toast-bg-to, rgba(30, 40, 55, 0.95)));
     border: 2px solid var(--toast-color, var(--primary-cyan));
     border-radius: var(--radius-lg);
-    box-shadow: 0 0 20px rgba(var(--toast-color-rgb, 76, 201, 240), 0.3),
+    box-shadow: 0 0 20px color-mix(in srgb, var(--toast-color, var(--primary-cyan)) 30%, transparent),
                 0 4px 20px rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(10px);
 }
@@ -120,7 +120,7 @@ body:has(.sidebar.collapsed) .unified-toast-container {
 }
 
 .toast-main:hover {
-    background: rgba(var(--toast-color-rgb, 76, 201, 240), 0.08);
+    background: color-mix(in srgb, var(--toast-color, var(--primary-cyan)) 8%, transparent);
 }
 
 /* =============================================================================
@@ -186,7 +186,7 @@ body:has(.sidebar.collapsed) .unified-toast-container {
 
 .toast-progress-bar {
     height: 4px;
-    background: rgba(var(--toast-color-rgb, 76, 201, 240), 0.2);
+    background: color-mix(in srgb, var(--toast-color, var(--primary-cyan)) 20%, transparent);
     border-radius: 2px;
     overflow: hidden;
     margin: 4px 0;
@@ -262,7 +262,7 @@ body:has(.sidebar.collapsed) .unified-toast-container {
 .toast-controls {
     display: flex;
     flex-direction: column;
-    border-left: 1px solid rgba(var(--toast-color-rgb, 76, 201, 240), 0.2);
+    border-left: 1px solid color-mix(in srgb, var(--toast-color, var(--primary-cyan)) 20%, transparent);
     flex-shrink: 0;
 }
 
@@ -284,25 +284,25 @@ body:has(.sidebar.collapsed) .unified-toast-container {
 
 .toast-btn:hover,
 .toast-ctrl-btn:hover {
-    background: rgba(var(--toast-color-rgb, 76, 201, 240), 0.15);
+    background: color-mix(in srgb, var(--toast-color, var(--primary-cyan)) 15%, transparent);
     color: var(--toast-color, var(--primary-cyan));
 }
 
 .toast-btn.pause:hover,
 .toast-btn.pause.is-paused,
 .toast-ctrl-btn.pause:hover {
-    background: rgba(245, 158, 11, 0.2);
+    background: color-mix(in srgb, var(--neon-orange) 20%, transparent);
     color: var(--neon-orange);
 }
 
 .toast-btn.pause.is-paused {
-    background: rgba(34, 197, 94, 0.15);
+    background: color-mix(in srgb, var(--neon-green) 15%, transparent);
     color: var(--neon-green);
 }
 
 .toast-btn.cancel:hover,
 .toast-ctrl-btn.cancel:hover {
-    background: rgba(239, 68, 68, 0.2);
+    background: color-mix(in srgb, var(--neon-red) 20%, transparent);
     color: var(--neon-red);
 }
 
@@ -310,63 +310,21 @@ body:has(.sidebar.collapsed) .unified-toast-container {
    TOAST TYPE VARIANTS
    ============================================================================= */
 
-/* Bulk Scrape - Cyan */
-.bulk-scrape-toast {
-    --toast-color: var(--primary-cyan);
-    --toast-color-rgb: 76, 201, 240;
-}
-
-/* RA Sync - Orange */
-.ra-sync-toast {
-    --toast-color: var(--neon-orange);
-    --toast-color-rgb: 245, 158, 11;
-}
-
-.ra-sync-toast .toast-main:hover {
-    background: rgba(245, 158, 11, 0.08);
-}
-
-/* RA Refresh - Purple */
-.ra-refresh-toast {
-    --toast-color: var(--neon-purple);
-    --toast-color-rgb: 168, 85, 247;
-}
-
-.ra-refresh-toast .toast-main:hover {
-    background: rgba(168, 85, 247, 0.08);
-}
+/* Each job's colour comes from the theme, so a theme recolours its toasts. */
+.bulk-scrape-toast { --toast-color: var(--neon-cyan); }
+.ra-sync-toast { --toast-color: var(--neon-orange); }
+.ra-refresh-toast { --toast-color: var(--neon-purple); }
+.psn-refresh-toast { --toast-color: var(--accent-psn); }
+.image-resize-toast { --toast-color: var(--neon-green); }
+.ai-fill-toast { --toast-color: var(--secondary-magenta); }
 
 /* Queued Toast Variants */
-.bulk-scrape-queued-toast {
-    --toast-color: var(--primary-cyan-dark);
-    --toast-color-rgb: 58, 159, 194;
-}
-
-.ra-sync-queued-toast {
-    --toast-color: #c47d09;
-    --toast-color-rgb: 196, 125, 9;
-}
-
-.ra-refresh-queued-toast {
-    --toast-color: #8b46d4;
-    --toast-color-rgb: 139, 70, 212;
-}
-
-/* Image Resize - Green */
-.image-resize-toast {
-    --toast-color: var(--neon-green);
-    --toast-color-rgb: 34, 197, 94;
-}
-
-.image-resize-toast .toast-main:hover {
-    background: rgba(34, 197, 94, 0.08);
-}
+.bulk-scrape-queued-toast { --toast-color: var(--primary-cyan-dark); }
+.ra-sync-queued-toast { --toast-color: color-mix(in srgb, var(--neon-orange) 80%, black); }
+.ra-refresh-queued-toast { --toast-color: color-mix(in srgb, var(--neon-purple) 80%, black); }
 
 /* Completed Toast */
-.toast-completed {
-    --toast-color: var(--neon-green);
-    --toast-color-rgb: 34, 197, 94;
-}
+.toast-completed { --toast-color: var(--neon-green); }
 
 /* =============================================================================
    QUEUED TOAST COMPACT STYLES
@@ -469,20 +427,20 @@ body:has(.sidebar.collapsed) .unified-toast-container {
 /* Notification Variants */
 .notification-success {
     border-color: var(--neon-green);
-    box-shadow: var(--shadow-lg), 0 0 15px rgba(34, 197, 94, 0.2);
+    box-shadow: var(--shadow-lg), 0 0 15px color-mix(in srgb, var(--neon-green) 20%, transparent);
 }
 
 .notification-error {
     border-color: var(--neon-red);
-    box-shadow: var(--shadow-lg), 0 0 15px rgba(239, 68, 68, 0.2);
+    box-shadow: var(--shadow-lg), 0 0 15px color-mix(in srgb, var(--neon-red) 20%, transparent);
 }
 
 .notification-warning {
     border-color: var(--neon-orange);
-    box-shadow: var(--shadow-lg), 0 0 15px rgba(245, 158, 11, 0.2);
+    box-shadow: var(--shadow-lg), 0 0 15px color-mix(in srgb, var(--neon-orange) 20%, transparent);
 }
 
 .notification-info {
     border-color: var(--primary-cyan);
-    box-shadow: var(--shadow-lg), 0 0 15px rgba(76, 201, 240, 0.2);
+    box-shadow: var(--shadow-lg), 0 0 15px color-mix(in srgb, var(--primary-cyan) 20%, transparent);
 }

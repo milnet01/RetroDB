@@ -23,6 +23,43 @@ from services.game_utils import (
 
 logger = logging.getLogger(__name__)
 
+# The bulk run's on/off switches: switch key -> the columns it covers, in the
+# order the page shows them. 'title' is the official name. Every column of
+# scrape_ai.AI_FILLABLE_FIELDS is under one switch (tests/test_ai_fill_bulk.py).
+FIELD_GROUPS = {
+    'title': ['title'],
+    'description': ['description'],
+    'genre': ['genre'],
+    'developer': ['developer'],
+    'publisher': ['publisher'],
+    'release_date': ['release_date'],
+    'release_dates': ['release_dates'],
+    'units_sold': ['units_sold'],
+    'players': ['players'],
+    'modes': ['modes'],
+    'region': ['region'],
+    'franchise': ['franchise'],
+    'similar_games': ['similar_games'],
+    'other_platforms': ['other_platforms'],
+    'controller_support': ['controller_support'],
+    'save_type': ['save_type'],
+    'game_structure': ['game_structure'],
+    'perspective': ['perspective'],
+    'dimension': ['dimension'],
+    'campaign': ['campaign'],
+    'edition': ['edition'],
+    'ratings': [RATING_SYSTEMS[k]['db_column'] for k in RATING_SYSTEM_KEYS],
+    'critic_score': ['critic_score', 'critic_score_count'],
+    'user_score': ['user_score', 'user_score_count'],
+}
+
+
+def columns_for(groups):
+    """The columns under the switch keys `groups`; None (every field) for None."""
+    if groups is None:
+        return None
+    return {col for g in groups for col in FIELD_GROUPS[g]}
+
 
 def load_game(game_id):
     """The game row with its system's name and folder, or None."""
@@ -34,10 +71,12 @@ def load_game(game_id):
     """, (game_id,), one=True)
 
 
-def fill_game(game):
+def fill_game(game, fields=None):
     """Ask the AI about one game (a load_game() row) and save what it fills.
 
-    Returns the list of fields filled, or None when the AI gave no data.
+    `fields` is the set of columns it may fill (see columns_for); None fills
+    every field. Returns the list of fields filled, or None when the AI gave
+    no data.
     """
     game_id = game['id']
     from scraper.scrape_ai import (
@@ -64,7 +103,8 @@ def fill_game(game):
 
     ai_data = ai_get_details(
         game_id, game['title'], game['system_name'],
-        game['system_folder'], existing_metadata=existing_metadata
+        game['system_folder'], existing_metadata=existing_metadata,
+        only_fields=fields,
     )
 
     if not ai_data:
@@ -204,6 +244,14 @@ def fill_game(game):
         sets['edition'] = 'Standard Edition'
         if 'edition' not in filled_fields:
             filled_fields.append('edition')
+
+    # The fixups above can touch any column; keep only the chosen ones.
+    if fields is not None:
+        allowed = set(fields)
+        if 'title' in fields:
+            allowed |= {'sort_title', 'alternate_titles'}
+        sets = {col: val for col, val in sets.items() if col in allowed}
+        filled_fields = [f for f in filled_fields if f in allowed]
 
     scrape_history_json = None
     if filled_fields:
