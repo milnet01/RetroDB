@@ -9426,6 +9426,14 @@ were corrected in `2836bc3` and are not repeated here.
   name RetroArch uses for the `.cht` folder. Serials are filled only for
   standalone launches today. Existing PCSX2 files are named
   `SERIAL_CRC.pnach` or `CRC.pnach`; DuckStation's are `SERIAL.cht`.
+- **Built** (2026-10-29, in the open 3.34.0): `services/cheats.py`,
+  `routes/cheats.py`, the game page's Cheats panel and Settings >
+  Emulators' Cheats section, per the spec (fold-back in its loop
+  log). Tests: `tests/test_cheats_*.py`. Browser walk on :5001 with a
+  scratch DB: Bully (PS2) listed its PCSX2 cheats, a save wrote
+  `[Cheats] Enable` (file restored after), the PCSX2 pack downloaded.
+  **Still owed**: the manual run in the player, DuckStation and PCSX2
+  (spec §7), and §14's question on RetroArch's exit rewrite.
 
 ---
 
@@ -9849,6 +9857,109 @@ DATA FUNCTIONS: preview text, confirm title, button reset, the
 "Failed to refresh logos" error) uses bare string literals. Wrap them
 with _() / t(), check the rest of that tab for the same, regenerate
 the catalogs and translate the new msgids into every locale.
+
+---
+
+#### Pass 59.180 A game series timeline: what changed from game to game, and between regions and consoles (FEATURE, L).
+- **Target**: a timeline of a series showing what each game changed,
+  and how its regional and console versions differ, graphics too.
+- **Mockups**: HTML mockups under `docs/mockups/series-timeline/`,
+  for the user to choose from.
+- **Open**: where the change data comes from (AI, scraped, typed in);
+  how it ties to franchise/series fields and regional versions
+  (PASS-59-106).
+- **Status**: todo.
+- **Source**: user, 2026-10-29.
+
+---
+
+#### Pass 59.181 Console museum: three new presentations to choose from (UX, M).
+- **Target**: three mockups of how the console museum could be
+  presented, by Claude's own design; the user picks one.
+- **Mockups**: `docs/mockups/museum/`. Building waits for the pick.
+- **Status**: todo.
+- **Source**: user, 2026-10-29.
+
+---
+
+#### Pass 59.182 A missing emulator falls back to a RetroArch that can play the game (ENHANCEMENT, S).
+- **Report**: Tomb Raider (GBC) failed with "Emulator binary not
+  found on PATH: 'mgba-qt'". The user expects RetroArch to play it.
+- **Found** (2026-10-29): gb, gbc and gba default to mGBA, not
+  installed. `launch_resolver.pick_launch_mapping` already falls back
+  to the player when the default does not resolve, but
+  `_player_serves` needs the player's program, and RetroArch
+  (RetroDB) is not downloaded yet (no `data/player/`). The user's own
+  RetroArch row is never tried.
+- **Target**: (1) the error offers Get RetroArch where the player
+  could serve the system; (2) consider the user's own RetroArch with
+  a core for the system as a further fallback.
+- **Status**: todo.
+- **Source**: user, 2026-10-29.
+
+---
+
+#### Pass 59.183 MobyGames as a scrape source (FEATURE, M).
+- **Target**: RetroDB fetches game details from MobyGames. The user
+  has no API key.
+- **Research first** (unverified): whether MobyGames' API needs a
+  paid or approved key, its rate limits and terms, and whether any
+  keyless route is allowed. Scraping its web pages may breach its
+  terms. Fits PASS-59-162's source review.
+- **Status**: todo.
+- **Source**: user, 2026-10-29.
+
+---
+
+#### Pass 59.184 3D box art matches the ROM's region (ENHANCEMENT, M).
+- **Target**: a game's 3D box shows its own region's case; many
+  regions' cases look different.
+- **Open**: which sources give region-tagged 3D boxes, and how the
+  region is read (the `region` field, the ROM name's tags). Related:
+  PASS-59-162, PASS-59-143.
+- **Status**: todo.
+- **Source**: user, 2026-10-29.
+
+---
+
+#### Pass 59.185 One AI Fill tool in ROM Tools, with a switch for each kind of fill (UX, M).
+- **Target**: ROM Tools shows two AI tools today, Official Names and
+  Backfill Alternate Titles. Merge them into one AI Fill with an
+  on/off switch per kind, plus release dates for all regions.
+- **Status**: todo.
+- **Source**: user, 2026-10-29.
+
+---
+
+#### Pass 59.186 Claude API as an AI provider (FEATURE, M).
+- **Target**: AI Fill and the other AI features can use Anthropic's
+  Claude with the user's API key.
+- **Note**: the key goes in the settings store the other AI keys
+  use, never a tracked file. Default to the newest Claude models.
+- **Status**: todo.
+- **Source**: user, 2026-10-29.
+
+---
+
+#### Pass 59.187 One place to update RetroDB's RetroArch and its cores, with a dashboard reminder when they are out of date (ENHANCEMENT, M).
+- **Ask** (user, 2026-10-29): RetroArch downloaded beside RetroDB
+  needs a way to stay updated: a dedicated place to run updates, and
+  a dashboard note when RetroArch has not been updated in a while.
+- **Today** (read 2026-10-29): RetroArch is pinned per RetroDB
+  release (`services/player_install.py` VERSION + SHA-256); "Download
+  RetroArch again" reinstalls the pin. "Update cores" in Settings >
+  Emulators re-downloads cores whose buildbot CRC changed. Nothing
+  says either is due. RetroArch's own Online Updater inside the
+  player is untested (it would bypass `cores/installed.json`).
+- **Target**: one Updates card (beside Settings > System > Updates,
+  or in Settings > Emulators) showing the installed RetroArch against
+  the pin this RetroDB carries, and how many cores have newer builds;
+  one button runs both. The dashboard shows a note when the pin is
+  newer than the install or cores were last checked long ago.
+- **Open**: how long "a while" is; whether the core check runs
+  daily like the RetroDB update check (PASS-59-169).
+- **Status**: todo.
+- **Source**: user, 2026-10-29.
 
 ## Done index
 

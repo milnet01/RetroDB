@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Series progression, idea 3: comparison table with timeline strip (RetroDB mockup)</title>
+<style>
+:root {
+  --bg: #0a0e17; --bg2: #0f1419; --panel: #141a23; --panel2: #1a222d; --panel3: #212b38;
+  --line: #2a3542; --line2: #3a4552;
+  --text: #e8eaed; --text2: #c3c8ce;
+  --cyan: #4cc9f0; --cyan-l: #7dd8f5; --magenta: #f72585; --magenta-l: #f95fa3;
+  --green: #22c55e; --orange: #f59e0b; --purple: #a855f7;
+  --cyan-bg: rgba(76,201,240,.15); --magenta-bg: rgba(247,37,133,.15);
+  --green-bg: rgba(34,197,94,.14); --orange-bg: rgba(245,158,11,.15);
+  --font: 'Rajdhani', 'Segoe UI', 'Noto Sans', system-ui, sans-serif;
+  --font-head: 'Orbitron', 'Rajdhani', 'Segoe UI', system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+html { font-size: 112.5%; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font); line-height: 1.5; }
+:focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; }
+.mock-note { margin: 0; padding: .7rem 1.25rem; background: var(--magenta-bg); border-bottom: 2px solid var(--magenta); font-size: 1rem; }
+.page { max-width: 1600px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+.crumb { margin: 0; font-size: 1rem; color: var(--text2); }
+h1 { font-family: var(--font-head); font-size: clamp(1.8rem, 4.5vw, 2.8rem); letter-spacing: 1px; margin: .3rem 0 .4rem; }
+.lede { font-size: 1.2rem; color: var(--text2); max-width: 64ch; margin: 0 0 1.25rem; }
+
+/* Timeline strip */
+.strip { position: relative; height: 12rem; margin: 0 1.5rem 1.5rem; }
+.axis { position: absolute; left: 0; right: 0; top: 50%; height: 4px; background: linear-gradient(90deg, var(--cyan), var(--purple), var(--magenta)); border-radius: 2px; }
+.tick { position: absolute; top: calc(50% + .6rem); transform: translateX(-50%); font-family: var(--font-head); font-size: 1rem; color: var(--text2); }
+.tick::before { content: ""; position: absolute; left: 50%; top: -.75rem; height: .6rem; border-left: 2px solid var(--line2); }
+.pin { position: absolute; transform: translateX(calc(var(--p) * -1%)); font: inherit; font-size: 1rem; font-weight: 700; color: var(--text); background: var(--panel2); border: 2px solid var(--cyan); border-radius: 8px; padding: .2rem .55rem; cursor: pointer; white-space: nowrap; min-height: 40px; }
+.pin.up { bottom: calc(50% + 1rem); }
+.pin.down { top: calc(50% + 2.4rem); border-color: var(--magenta); }
+.pin::after { content: ""; position: absolute; left: calc(var(--p) * 1%); width: 2px; height: 1rem; background: currentColor; opacity: .5; }
+.pin.up::after { top: 100%; }
+.pin.up.hi { bottom: calc(50% + 3.6rem); } .pin.up.hi::after { height: 3.6rem; } .pin.down::after { bottom: 100%; height: 2.4rem; }
+.pin[aria-pressed="true"] { background: var(--cyan); color: #04121a; }
+.pin.down[aria-pressed="true"] { background: var(--magenta); color: #fff; }
+
+.controls { display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: 1rem; }
+.toggle { font: inherit; font-size: 1rem; font-weight: 700; min-height: 44px; padding: .45rem 1rem; border-radius: 999px; border: 2px solid var(--line2); background: var(--panel); color: var(--text); cursor: pointer; }
+.toggle[aria-pressed="true"] { border-color: var(--cyan); background: var(--cyan-bg); }
+.toggle::before { content: "○ "; } .toggle[aria-pressed="true"]::before { content: "● "; }
+.key { display: inline-flex; gap: .5rem; align-items: center; font-size: 1rem; margin-left: auto; }
+.key i { display: inline-block; width: 1.4rem; height: 1.1rem; border-left: 5px solid var(--green); background: var(--green-bg); }
+
+/* Matrix */
+.matrix-wrap { overflow-x: auto; border: 2px solid var(--line); border-radius: 12px; }
+table { border-collapse: separate; border-spacing: 0; min-width: 100%; font-size: 1rem; }
+th, td { padding: .7rem .85rem; border-bottom: 1px solid var(--line); border-right: 1px solid var(--line); vertical-align: top; text-align: left; }
+thead th { background: var(--panel2); position: sticky; top: 0; min-width: 13rem; z-index: 1; }
+thead th .yr { display: block; font-family: var(--font-head); font-size: 1.1rem; color: var(--cyan-l); }
+thead th.handheld .yr { color: var(--magenta-l); }
+thead th .nm { display: block; font-size: 1.15rem; line-height: 1.25; }
+thead th .box { display: block; height: 3.6rem; margin-bottom: .5rem; border-radius: 6px; font-size: .9rem; padding: .25rem .4rem; color: #fff; }
+tbody th { position: sticky; left: 0; background: var(--panel); min-width: 10rem; font-size: 1.1rem; z-index: 2; }
+thead th:first-child { left: 0; z-index: 3; min-width: 10rem; }
+tbody th small { display: block; font-weight: 400; color: var(--text2); font-size: .95rem; }
+td { background: var(--bg2); }
+td.changed.marking { border-left: 5px solid var(--green); background: var(--green-bg); }
+td .badge { display: none; font-size: .9rem; font-weight: 700; color: var(--green); }
+td.changed.marking .badge { display: block; }
+td ul { margin: 0; padding-left: 1.1rem; }
+.col-on { box-shadow: inset 0 0 0 3px var(--cyan); }
+.handheld-col[hidden] { display: none; }
+.foot { color: var(--text2); font-size: 1rem; margin-top: .75rem; }
+
+@media (max-width: 700px) {
+  html { font-size: 106.25%; }
+  .page { padding: 1rem .9rem 3rem; }
+  .strip { height: auto; margin: 0 0 1rem; display: flex; flex-wrap: wrap; gap: .5rem; }
+  .axis, .tick { display: none; }
+  .pin { position: static; transform: none; }
+  .pin::after { display: none; }
+  thead th { min-width: 11rem; }
+  tbody th, thead th:first-child { min-width: 7.5rem; }
+  .key { margin-left: 0; }
+}
+</style>
+</head>
+<body>
+<p class="mock-note"><strong>Design mockup, idea 3 of 3.</strong> Sample data: the Tomb Raider facts are illustrative and not checked.</p>
+<main class="page">
+  <p class="crumb">Library &rsaquo; Franchises &rsaquo; Tomb Raider</p>
+  <h1>Tomb Raider, side by side</h1>
+  <p class="lede">Every game in one table. Read across a row to follow one thing, such as the graphics, through the whole series. A green edge marks a cell that changed from the game before it.</p>
+
+  <div class="strip" id="strip" aria-label="Release timeline: pick a game to jump to its column">
+    <div class="axis"></div>
+  </div>
+
+  <div class="controls">
+    <button type="button" class="toggle" id="tMark" aria-pressed="true">Mark what changed</button>
+    <button type="button" class="toggle" id="tHand" aria-pressed="false">Include Game Boy Color games</button>
+    <button type="button" class="toggle" id="tRows" aria-pressed="false">Hide rows with no change</button>
+    <span class="key"><i aria-hidden="true"></i> Changed from the previous game</span>
+  </div>
+
+  <div class="matrix-wrap" id="wrap"><table id="matrix"></table></div>
+  <p class="foot">On a phone the table scrolls sideways inside its box; the row names stay in view.</p>
+</main>
+
+<script>
+const ROWS = [
+  ['platforms', 'Platforms', 'Where it came out'],
+  ['graphics', 'Graphics', 'Look and engine'],
+  ['moves', 'Lara’s moves', 'What she can do'],
+  ['tools', 'Tools and vehicles', ''],
+  ['story', 'Story and places', ''],
+  ['saving', 'Saving', ''],
+  ['regions', 'Regional differences', '']
+];
+const GAMES = [
+  { id: 'tr1', year: 1996, title: 'Tomb Raider', hue: 30,
+    platforms: ['Saturn', 'PlayStation', 'PC'], graphics: 'First 3D engine; blocky textures. 3dfx patch smooths the PC picture.', moves: 'Run, jump, climb ledges, swim', tools: 'Twin pistols, shotgun', story: 'Peru, Greece, Egypt, Atlantis', saving: 'Save crystals on consoles; anywhere on PC', regions: 'Japan a year later, with Japanese voices' },
+  { id: 'tr2', year: 1997, title: 'Tomb Raider II', hue: 200,
+    platforms: ['PlayStation', 'PC', 'Mac'], graphics: 'Same engine, bigger outdoor areas; smoothed on PC', moves: 'Adds ladders and climbing walls', tools: 'Adds flares, speedboat, snowmobile', story: 'Venice, Great Wall, Tibet', saving: 'Save anywhere on every platform', regions: 'No Saturn version' },
+  { id: 'gbc1', year: 2000, title: 'Tomb Raider (GBC)', hue: 320, handheld: true,
+    platforms: ['Game Boy Color'], graphics: '2D pixel art, side view', moves: 'Run, jump, climb in 2D', tools: 'Pistols', story: 'A new story in South America', saving: 'Saves on the cartridge', regions: 'Same in every region' },
+  { id: 'tr3', year: 1998, title: 'Tomb Raider III', hue: 110,
+    platforms: ['PlayStation', 'PC', 'Mac'], graphics: 'Sloped floors; coloured light and weather on PC', moves: 'Adds crawl, sprint, monkey swing', tools: 'Adds quad bike, kayak', story: 'Pick the order of India, Nevada, the South Pacific, London', saving: 'Crystals on PlayStation; anywhere on PC', regions: 'Saving differs by platform' },
+  { id: 'tr4', year: 1999, title: 'The Last Revelation', hue: 45,
+    platforms: ['PlayStation', 'PC', 'Dreamcast', 'Mac'], graphics: 'Torch-lit rooms; sharper on Dreamcast', moves: 'Adds rope and pole swings', tools: 'Combine items; revolver with sight', story: 'One long story in Egypt', saving: 'Save anywhere on every platform', regions: 'Dreamcast four months later' },
+  { id: 'tr5', year: 2000, title: 'Chronicles', hue: 260,
+    platforms: ['PlayStation', 'PC', 'Dreamcast', 'Mac'], graphics: 'Torch-lit rooms; sharper on Dreamcast', moves: 'Adds tightrope walking', tools: 'Adds grappling gun', story: 'Four flashbacks: Rome, Russia, Ireland, New York', saving: 'Save anywhere on every platform', regions: 'PC box adds the level editor' },
+  { id: 'gbc2', year: 2001, title: 'Curse of the Sword (GBC)', hue: 340, handheld: true,
+    platforms: ['Game Boy Color'], graphics: '2D pixel art, darker colours', moves: 'Run, jump, climb in 2D', tools: 'Pistols, more weapons', story: 'New Orleans', saving: 'Saves on the cartridge', regions: 'Same in every region' },
+  { id: 'tr6', year: 2003, title: 'The Angel of Darkness', hue: 0,
+    platforms: ['PlayStation 2', 'PC', 'Mac'], graphics: 'New engine with soft shadows; sharpest on PC', moves: 'Free movement; adds stealth and strength upgrades', tools: 'Second hero, Kurtis', story: 'Modern day Paris and Prague', saving: 'Save anywhere on PC; save points on PS2', regions: 'PC patch fixed bugs; consoles not patched' }
+].sort((a, b) => a.year - b.year);
+
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const val = (g, k) => Array.isArray(g[k]) ? g[k].join(', ') : g[k];
+
+/* Timeline strip: pins placed by year */
+const strip = document.getElementById('strip'), y0 = 1996, y1 = 2003;
+const pos = y => ((y - y0) / (y1 - y0)) * 100;
+for (let y = y0; y <= y1; y++) strip.insertAdjacentHTML('beforeend', `<span class="tick" style="left:${pos(y)}%">${y}</span>`);
+let mi = 0;
+GAMES.forEach(g => strip.insertAdjacentHTML('beforeend',
+  `<button type="button" class="pin ${g.handheld ? 'down handheld-col' : 'up' + (mi++ % 2 ? ' hi' : '')}" style="left:${pos(g.year)}%;--p:${pos(g.year)}" data-col="${g.id}" aria-pressed="false" ${g.handheld ? 'hidden' : ''}>${esc(g.title.replace(' (GBC)', ''))}</button>`));
+
+function build() {
+  const showHand = document.getElementById('tHand').getAttribute('aria-pressed') === 'true';
+  const marking = document.getElementById('tMark').getAttribute('aria-pressed') === 'true';
+  const hideSame = document.getElementById('tRows').getAttribute('aria-pressed') === 'true';
+  const cols = GAMES.filter(g => showHand || !g.handheld);
+  /* "changed" compares with the previous game of the same kind */
+  const prevOf = g => { const same = cols.filter(c => !!c.handheld === !!g.handheld); return same[same.indexOf(g) - 1]; };
+  let h = '<thead><tr><th scope="col">Aspect</th>' + cols.map(g =>
+    `<th scope="col" id="c-${g.id}" class="${g.handheld ? 'handheld' : ''}"><span class="box" style="background:linear-gradient(135deg,hsl(${g.hue} 60% 30%),hsl(${(g.hue + 40) % 360} 70% 12%))">Box art</span><span class="yr">${g.year}</span><span class="nm">${esc(g.title)}</span></th>`).join('') + '</tr></thead><tbody>';
+  ROWS.forEach(([k, label, hint]) => {
+    const cells = cols.map(g => { const p = prevOf(g); return { g, changed: !!p && val(p, k) !== val(g, k) }; });
+    if (hideSame && !cells.some(c => c.changed)) return;
+    h += `<tr><th scope="row">${label}${hint ? `<small>${hint}</small>` : ''}</th>` + cells.map(({ g, changed }) =>
+      `<td data-col="${g.id}" class="${changed ? 'changed' : ''} ${marking ? 'marking' : ''}"><span class="badge">Changed</span>${esc(val(g, k))}</td>`).join('') + '</tr>';
+  });
+  document.getElementById('matrix').innerHTML = h + '</tbody>';
+  document.querySelectorAll('.pin.handheld-col').forEach(p => p.hidden = !showHand);
+}
+document.querySelectorAll('.toggle').forEach(t => t.addEventListener('click', () => {
+  t.setAttribute('aria-pressed', t.getAttribute('aria-pressed') !== 'true'); build();
+}));
+strip.addEventListener('click', e => {
+  const p = e.target.closest('.pin'); if (!p) return;
+  document.querySelectorAll('.pin').forEach(x => x.setAttribute('aria-pressed', x === p));
+  document.querySelectorAll('.col-on').forEach(x => x.classList.remove('col-on'));
+  document.querySelectorAll(`[data-col="${p.dataset.col}"], #c-${p.dataset.col}`).forEach(x => { if (x.tagName !== 'BUTTON') x.classList.add('col-on'); });
+  const th = document.getElementById('c-' + p.dataset.col), wrap = document.getElementById('wrap');
+  wrap.scrollTo({ left: th.offsetLeft - wrap.querySelector('tbody th').offsetWidth - 8, behavior: 'smooth' });
+});
+build();
+</script>
+</body>
+</html>

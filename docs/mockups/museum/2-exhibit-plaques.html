@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Museum, idea 2: exhibits and plaques (RetroDB mockup)</title>
+<style>
+:root {
+  --bg: #0a0e17; --wall: #10151e; --wall2: #141b26; --panel: #141a23; --line: #2a3542; --line2: #3a4552;
+  --text: #e8eaed; --text2: #c3c8ce;
+  --plaque: #eef1f4; --plaque-ink: #121821; --plaque-ink2: #3a4350; --plaque-rule: #c6ccd4;
+  --cyan: #4cc9f0; --cyan-l: #7dd8f5; --cyan-ink: #0b5f7d; --magenta: #f72585;
+  --orange: #f59e0b; --magenta-bg: rgba(247,37,133,.15);
+  --font: 'Rajdhani', 'Segoe UI', 'Noto Sans', system-ui, sans-serif;
+  --font-head: 'Orbitron', 'Rajdhani', 'Segoe UI', system-ui, sans-serif;
+  --serif: 'Noto Serif', 'Georgia', 'DejaVu Serif', serif;
+  --scale: 1;
+}
+* { box-sizing: border-box; }
+html { font-size: calc(112.5% * var(--scale)); }
+body { margin: 0; color: var(--text); font-family: var(--font); line-height: 1.55;
+  background: repeating-linear-gradient(90deg, var(--wall) 0 160px, var(--wall2) 160px 162px); }
+:focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; }
+[hidden] { display: none !important; }
+.mock-note { margin: 0; padding: .7rem 1.25rem; background: var(--magenta-bg); border-bottom: 2px solid var(--magenta); font-size: 1rem; background-color: #1a0f18; }
+.new { display: inline-block; font-family: var(--font); font-size: .9rem; font-weight: 700; padding: 0 .45rem; border-radius: 4px; border: 1.5px dashed var(--orange); color: #ffd28a; vertical-align: middle; line-height: 1.5; }
+.plaque .new, .label .new { color: #7a4a00; border-color: #b26b00; }
+.viewbar { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; padding: .75rem 1.25rem; background: #0b0f16; border-bottom: 1px solid var(--line); }
+.viewbar .label-t { font-weight: 700; }
+.btn { font: inherit; font-size: 1rem; font-weight: 700; min-height: 44px; padding: .45rem 1rem; border-radius: 8px; border: 2px solid var(--line2); background: var(--panel); color: var(--text); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: .4rem; }
+.btn[aria-selected="true"], .btn[aria-pressed="true"] { border-color: var(--cyan); background: rgba(76,201,240,.15); }
+.btn.primary { background: var(--cyan); border-color: var(--cyan); color: #04121a; }
+.btn.dark { background: var(--plaque-ink); color: #fff; border-color: var(--plaque-ink); }
+.btn.light { background: #fff; color: var(--plaque-ink); border-color: var(--plaque-ink2); }
+.page { max-width: 1320px; margin: 0 auto; padding: 1.75rem 1.25rem 4rem; }
+h1 { font-family: var(--font-head); font-size: clamp(1.9rem, 4.5vw, 3rem); letter-spacing: 1px; margin: 0 0 .3rem; }
+.lede { font-size: 1.2rem; color: var(--text2); max-width: 60ch; margin: 0 0 1.5rem; }
+h2 { font-family: var(--font-head); font-size: 1.45rem; margin: 0 0 1rem; }
+
+/* Spotlight: the one bold element */
+.spot { display: grid; grid-template-columns: 1.3fr 1fr; gap: 0; border-radius: 16px; overflow: hidden; border: 2px solid var(--line); margin-bottom: 2.5rem; background: #070a10; }
+.spot-stage { position: relative; min-height: 360px; display: grid; place-items: end center; padding-bottom: 2.5rem;
+  background: radial-gradient(ellipse 45% 85% at 50% 0%, rgba(255,250,235,.32), rgba(255,250,235,.06) 60%, transparent 75%), linear-gradient(#090c12, #05070b); }
+.spot-stage svg.machine { width: min(70%, 360px); position: relative; z-index: 1; filter: drop-shadow(0 18px 18px rgba(0,0,0,.8)); }
+.plinth-top { position: absolute; bottom: 1.2rem; left: 50%; transform: translateX(-50%); width: min(78%, 420px); height: 2.6rem; border-radius: 50%; background: radial-gradient(ellipse, #2c3644, #141a23 70%); }
+.spot-stage .photo { position: absolute; top: .7rem; left: .9rem; font-size: .95rem; color: var(--text2); }
+.spot .plaque { border-radius: 0; margin: 0; }
+
+.plaque { background: var(--plaque); color: var(--plaque-ink); border-radius: 4px; padding: 1.4rem 1.5rem; font-family: var(--serif); box-shadow: 0 6px 18px rgba(0,0,0,.5); position: relative; }
+.plaque::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 8px; background: var(--maker, var(--cyan)); }
+.plaque h3 { font-family: var(--font-head); font-size: 1.5rem; margin: 0; line-height: 1.2; letter-spacing: .5px; }
+.plaque .made { font-family: var(--font); font-size: 1.1rem; font-weight: 700; color: var(--plaque-ink2); margin: .15rem 0 .8rem; }
+.plaque p { margin: 0 0 .9rem; font-size: 1.1rem; line-height: 1.65; }
+.plaque .rule { border-top: 2px solid var(--plaque-rule); margin: .9rem 0; }
+.plaque .own { font-family: var(--font); font-weight: 700; font-size: 1.05rem; }
+.plaque .row { display: flex; flex-wrap: wrap; gap: .5rem; }
+.plaque .btn { font-family: var(--font); }
+
+/* Wings and the wall of plaques */
+.wings { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin-bottom: 1rem; }
+.tools { display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: 1.5rem; }
+input[type=search], select { font: inherit; font-size: 1.05rem; min-height: 48px; padding: .4rem .8rem; background: #0d121a; color: var(--text); border: 2px solid var(--line2); border-radius: 8px; }
+input[type=search] { flex: 1 1 16rem; }
+.wall { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 2.25rem 1.75rem; max-width: calc(4 * 310px + 3 * 1.75rem); }
+.exhibit { display: flex; flex-direction: column; gap: .9rem; text-decoration: none; color: inherit; }
+.frame { aspect-ratio: 4 / 3; border-radius: 6px; display: grid; place-items: center; border: 6px solid #232c39; outline: 1px solid #000;
+  background: radial-gradient(ellipse 60% 90% at 50% 0%, rgba(255,250,235,.18), transparent 70%), #0a0d13; }
+.frame svg { width: 70%; }
+.exhibit .plaque { padding: 1rem 1.1rem 1rem 1.4rem; }
+.exhibit .plaque h3 { font-size: 1.2rem; }
+.exhibit .plaque p { font-size: 1.02rem; margin-bottom: .5rem; }
+.exhibit:hover .frame, .exhibit:focus-visible .frame { border-color: var(--cyan); }
+.missing { font-family: var(--font); font-size: 1rem; font-weight: 700; color: #7a4a00; }
+
+/* Console page */
+.back { color: var(--cyan-l); font-size: 1.05rem; display: inline-block; margin-bottom: 1rem; }
+.room { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(320px, 1fr); gap: 2rem; margin-bottom: 2.5rem; align-items: start; }
+.room .spot-stage { border-radius: 16px; border: 2px solid var(--line); min-height: 420px; }
+.listen { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .5rem; }
+.chapter { max-width: 68ch; margin: 0 0 2rem; }
+.chapter h2 { margin-bottom: .5rem; }
+.chapter p { font-family: var(--serif); font-size: 1.15rem; line-height: 1.75; margin: 0 0 1rem; }
+.story-wrap { display: grid; grid-template-columns: minmax(0, 68ch) minmax(260px, 1fr); gap: 2.5rem; align-items: start; }
+.aside-label { position: sticky; top: 1rem; }
+.label { background: var(--plaque); color: var(--plaque-ink); border-radius: 4px; padding: 1.1rem 1.25rem; box-shadow: 0 6px 18px rgba(0,0,0,.5); }
+.label h3 { font-family: var(--font-head); margin: 0 0 .6rem; font-size: 1.15rem; }
+.label dl { margin: 0; display: grid; gap: .45rem; }
+.label dt { font-weight: 700; font-size: .98rem; color: var(--plaque-ink2); }
+.label dd { margin: 0 0 .25rem; font-size: 1.08rem; font-family: var(--serif); }
+.gen-by { font-size: 1rem; color: var(--text2); }
+
+.case { border: 2px solid rgba(125,216,245,.45); border-radius: 14px; padding: 1.5rem; margin-bottom: 2.5rem;
+  background: linear-gradient(160deg, rgba(125,216,245,.10), rgba(125,216,245,.02) 40%, rgba(125,216,245,.07)), #0a0f16; }
+.case-items { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.5rem; }
+.case-item { display: grid; gap: .6rem; }
+.case-item .obj { height: 140px; display: grid; place-items: center; }
+.case-item .obj svg { width: 62%; filter: drop-shadow(0 10px 10px rgba(0,0,0,.7)); }
+.case-item .plaque { padding: .8rem 1rem .8rem 1.3rem; }
+.case-item .plaque h3 { font-size: 1.05rem; }
+.case-item .plaque p { font-size: 1rem; margin: .2rem 0 0; }
+.case-item details { font-family: var(--font); margin-top: .4rem; }
+.case-item summary { cursor: pointer; font-weight: 700; }
+
+.dyk { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin-bottom: 2.5rem; }
+.dyk article { background: var(--panel); border: 2px solid var(--line2); border-left: 6px solid var(--cyan); border-radius: 8px; padding: 1rem 1.2rem; font-size: 1.08rem; }
+.shelf { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1.25rem 1rem; padding-bottom: 1rem; border-bottom: 10px solid #232c39; margin-bottom: 2.5rem; }
+.box { display: grid; gap: .4rem; text-decoration: none; color: var(--text); }
+.box .cover { aspect-ratio: 3 / 4; border-radius: 4px; display: grid; place-items: end start; padding: .4rem; font-size: .9rem; color: #fff; box-shadow: 0 8px 12px rgba(0,0,0,.6); position: relative; }
+.box .cover b { position: absolute; top: .3rem; left: .3rem; font-family: var(--font-head); font-size: 1rem; background: rgba(0,0,0,.75); padding: 0 .4rem; border-radius: 4px; }
+.box .t { font-weight: 700; font-size: 1.02rem; line-height: 1.3; }
+.box .s { font-size: .98rem; color: var(--text2); }
+.box .ai { font-size: .9rem; font-weight: 700; color: #d7b8ff; }
+
+@media (max-width: 900px) {
+  .spot, .room, .story-wrap { grid-template-columns: 1fr; }
+  .aside-label { position: static; }
+}
+@media (max-width: 600px) {
+  html { font-size: calc(106.25% * var(--scale)); }
+  .page { padding: 1rem .9rem 3rem; }
+  .spot-stage, .room .spot-stage { min-height: 260px; }
+  .shelf { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+<p class="mock-note"><strong>Design mockup, museum idea 2 of 3.</strong> Sample data, not checked. A dashed orange <span class="new">New</span> label marks something RetroDB does not store today.</p>
+
+<div class="viewbar" role="tablist" aria-label="Which page to preview">
+  <span class="label-t">Preview:</span>
+  <button type="button" class="btn" role="tab" aria-selected="true" data-view="browse">Museum browse page</button>
+  <button type="button" class="btn" role="tab" aria-selected="false" data-view="system">A console’s page</button>
+</div>
+
+<!-- ============ BROWSE ============ -->
+<main class="page" id="view-browse">
+  <h1>Museum</h1>
+  <p class="lede">Every system in your library, shown as an exhibit with its own plaque. One machine is in the spotlight each time you visit.</p>
+
+  <section class="spot" aria-labelledby="spot-name">
+    <div class="spot-stage" id="spot-stage"><span class="photo">Hardware photo goes here</span><div class="plinth-top"></div></div>
+    <div class="plaque" id="spot-plaque" style="--maker:#1f6fd1"></div>
+  </section>
+
+  <h2>Galleries</h2>
+  <div class="wings" role="group" aria-label="Choose a gallery" id="wings"></div>
+  <div class="tools">
+    <input type="search" id="q" placeholder="Search exhibits, for example Nintendo" aria-label="Search exhibits">
+    <select id="sort" aria-label="Order of exhibits">
+      <option value="old">Oldest first</option><option value="new">Newest first</option>
+      <option value="maker">By maker</option><option value="games">Most games in my library</option>
+    </select>
+  </div>
+  <div class="wall" id="wall"></div>
+</main>
+
+<!-- ============ CONSOLE PAGE ============ -->
+<main class="page" id="view-system" hidden>
+  <a href="#" class="back" data-goto="browse">Back to the Museum</a>
+  <div class="room">
+    <div class="spot-stage" id="room-stage"><span class="photo">Hardware photo goes here</span><div class="plinth-top"></div></div>
+    <div>
+      <div class="plaque" style="--maker:#1f6fd1">
+        <h3>Sega Dreamcast</h3>
+        <p class="made">Sega, 1998 (JP), 1999 (NA, EU)</p>
+        <p id="read-me">Sega’s last home console, and the first with a modem built in. It led the sixth generation by more than a year, but sales could not hold off the PlayStation 2, and Sega left the hardware business in 2001.</p>
+        <div class="rule"></div>
+        <p class="own">260 of my games run on it.</p>
+        <div class="row">
+          <a href="#" class="btn dark">Open my Dreamcast games</a>
+          <button type="button" class="btn light">Rewrite history</button>
+        </div>
+      </div>
+      <div class="listen" role="group" aria-label="Reading help">
+        <button type="button" class="btn" id="speak">Read the plaque aloud <span class="new">New</span></button>
+        <button type="button" class="btn" data-scale="1" aria-pressed="true">Normal text</button>
+        <button type="button" class="btn" data-scale="1.25" aria-pressed="false">Larger text</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="story-wrap">
+    <div>
+      <p class="gen-by">History written by AI on 2026-09-14.</p>
+      <section class="chapter"><h2>Before the Dreamcast</h2>
+        <p>The Saturn had sold poorly outside Japan, and Sega needed a clean start. Two teams, one in Japan and one in the United States, competed to design the next machine.</p></section>
+      <section class="chapter"><h2>Launch</h2>
+        <p>The Dreamcast launched in Japan in November 1998 and in North America on 9 September 1999. Its American launch broke sales records, helped by Soulcalibur and Sonic Adventure.</p></section>
+      <section class="chapter"><h2>Legacy</h2>
+        <p>Online play, a memory card with its own screen, and games such as Shenmue and Jet Set Radio made it a favourite long after it left the shops. Fans kept releasing new games for it for years.</p></section>
+    </div>
+    <aside class="aside-label">
+      <div class="label">
+        <h3>Exhibit label</h3>
+        <dl id="label"></dl>
+      </div>
+    </aside>
+  </div>
+
+  <section class="case" aria-labelledby="case-t">
+    <h2 id="case-t">Display case: controllers and add-ons</h2>
+    <div class="case-items" id="case"></div>
+  </section>
+
+  <h2>Did you know? <span class="new">New</span></h2>
+  <div class="dyk">
+    <article>The memory card, called the VMU, had its own small screen and could play mini-games on its own.</article>
+    <article>The orange swirl logo is blue on European consoles.</article>
+    <article>Sega’s online service let players race and chat across the internet in 1999.</article>
+  </div>
+
+  <h2>On show from my library: the top 10</h2>
+  <div class="shelf" id="shelf"></div>
+
+  <h2>Launch games <span class="new">New</span></h2>
+  <p class="lede">Sonic Adventure, Soulcalibur, House of the Dead 2, NFL 2K, Power Stone, Hydro Thunder.</p>
+</main>
+
+<script>
+const MAKER = { Atari: '#d35400', Nintendo: '#e0303a', Sega: '#1f6fd1', Sony: '#7b5cd6', Commodore: '#2e9e6b', SNK: '#c79a1a', NEC: '#e07b00' };
+/* RetroDB fields: name, manufacturer, released, system_type, summary, has_content, game count. */
+const SYSTEMS = [
+  { name: 'Atari 2600', m: 'Atari', rel: '1977', y: 1977, type: 'Console', why: 'Brought cartridge games into millions of homes.', doc: 1, games: 230, shape: 'cart', col: '#8a5a2b' },
+  { name: 'NES', m: 'Nintendo', rel: '1983 (JP), 1985 (NA)', y: 1983, type: 'Console', why: 'Revived home gaming after the 1983 crash.', doc: 1, games: 680, shape: 'cart', col: '#bfbfbf' },
+  { name: 'Mega Drive', m: 'Sega', rel: '1988 (JP), 1989 (NA)', y: 1988, type: 'Console', why: 'Sega’s 16-bit console and the home of Sonic.', doc: 1, games: 820, shape: 'cart', col: '#1a1a1a' },
+  { name: 'PC Engine', m: 'NEC', rel: '1987', y: 1987, type: 'Console', why: 'A tiny console that beat the Famicom in Japan for a time.', doc: 0, games: 280, shape: 'cart', col: '#e8e8e8' },
+  { name: 'Super Nintendo', m: 'Nintendo', rel: '1990 (JP), 1991 (NA)', y: 1990, type: 'Console', why: 'Mode 7 and some of the best 2D games ever made.', doc: 1, games: 760, shape: 'cart', col: '#cfcfd8' },
+  { name: 'PlayStation', m: 'Sony', rel: '1994 (JP), 1995 (NA, EU)', y: 1994, type: 'Console', why: 'Took 3D gaming mainstream on CD.', doc: 1, games: 412, shape: 'disc', col: '#c8c8c8' },
+  { name: 'Nintendo 64', m: 'Nintendo', rel: '1996', y: 1996, type: 'Console', why: 'Made the analogue stick standard.', doc: 1, games: 300, shape: 'cart', col: '#2a2a2a' },
+  { name: 'Dreamcast', m: 'Sega', rel: '1998 (JP), 1999 (NA)', y: 1998, type: 'Console', why: 'The first console with a modem built in.', doc: 1, games: 260, shape: 'disc', col: '#eeeeee' },
+  { name: 'PlayStation 2', m: 'Sony', rel: '2000', y: 2000, type: 'Console', why: 'The best-selling console of all time.', doc: 1, games: 1200, shape: 'tower', col: '#1b1b2a' },
+  { name: 'Game Boy', m: 'Nintendo', rel: '1989', y: 1989, type: 'Handheld', why: 'The grey brick that made gaming portable.', doc: 1, games: 410, shape: 'handheld', col: '#b9b9a8' },
+  { name: 'Game Gear', m: 'Sega', rel: '1990', y: 1990, type: 'Handheld', why: 'A colour screen, but hungry for batteries.', doc: 1, games: 250, shape: 'handheld', col: '#222' },
+  { name: 'Game Boy Advance', m: 'Nintendo', rel: '2001', y: 2001, type: 'Handheld', why: 'A pocket 16-bit console with a wide screen.', doc: 1, games: 900, shape: 'handheld', col: '#4b3f9a' },
+  { name: 'Commodore 64', m: 'Commodore', rel: '1982', y: 1982, type: 'Computer', why: 'The best-selling single home computer model.', doc: 1, games: 1500, shape: 'computer', col: '#a89f8a' },
+  { name: 'Neo Geo MVS', m: 'SNK', rel: '1990', y: 1990, type: 'Arcade', why: 'One cabinet, many games on cartridges.', doc: 0, games: 150, shape: 'arcade', col: '#c0392b' }
+];
+function art(shape, col, cls = '') {
+  const st = 'stroke="#05070b" stroke-width="3"';
+  const d = {
+    cart: `<rect x="20" y="60" width="160" height="60" rx="8" fill="${col}" ${st}/><rect x="60" y="48" width="80" height="16" rx="3" fill="#444" ${st}/><circle cx="40" cy="100" r="6" fill="#e33"/>`,
+    disc: `<rect x="20" y="55" width="160" height="65" rx="12" fill="${col}" ${st}/><circle cx="100" cy="82" r="22" fill="#999" ${st}/><path d="M150 102 a8 8 0 1 1 -8 -8" stroke="#f60" stroke-width="4" fill="none"/>`,
+    tower: `<rect x="40" y="25" width="120" height="100" rx="4" fill="${col}" ${st}/><line x1="40" y1="55" x2="160" y2="55" stroke="#4cc9f0" stroke-width="3"/>`,
+    handheld: `<rect x="60" y="15" width="80" height="125" rx="10" fill="${col}" ${st}/><rect x="72" y="28" width="56" height="46" fill="#8bac0f" ${st}/><path d="M78 98h18M87 89v18" stroke="#333" stroke-width="6"/><circle cx="120" cy="95" r="6" fill="#a0225a"/>`,
+    computer: `<path d="M15 110 L35 65 H165 L185 110 Z" fill="${col}" ${st}/><g fill="#5a4f3c">${Array.from({ length: 10 }, (_, i) => `<rect x="${46 + i * 11}" y="74" width="8" height="8"/><rect x="${42 + i * 12}" y="88" width="9" height="8"/>`).join('')}</g>`,
+    arcade: `<path d="M65 10 H135 V140 H65 Z" fill="${col}" ${st}/><rect x="74" y="30" width="52" height="40" fill="#111" ${st}/><circle cx="85" cy="87" r="4" fill="#f5c400"/><circle cx="110" cy="87" r="4" fill="#4cc9f0"/>`
+  };
+  return `<svg class="${cls}" viewBox="0 0 200 150" aria-hidden="true">${d[shape]}</svg>`;
+}
+const WINGS = [['Console', 'Home consoles'], ['Handheld', 'Handhelds'], ['Computer', 'Computers'], ['Arcade', 'Arcade']];
+let wing = 'Console';
+
+function spotlight(s) {
+  const stage = document.getElementById('spot-stage');
+  stage.querySelector('svg')?.remove();
+  stage.insertAdjacentHTML('beforeend', art(s.shape, s.col, 'machine'));
+  const p = document.getElementById('spot-plaque');
+  p.style.setProperty('--maker', MAKER[s.m]);
+  p.innerHTML = `<h3 id="spot-name">${s.name}</h3><p class="made">${s.m}, ${s.rel}</p><p>${s.why} The spotlight picks a different system each visit, so the whole collection gets its turn.</p><div class="rule"></div><p class="own">${s.games} of my games run on it.</p><div class="row"><a href="#" class="btn dark" data-sys>Visit this exhibit</a><button type="button" class="btn light" id="another">Show another</button></div>`;
+}
+let spotIdx = SYSTEMS.findIndex(s => s.name === 'Dreamcast');
+spotlight(SYSTEMS[spotIdx]);
+document.addEventListener('click', e => { if (e.target.id === 'another') { spotIdx = (spotIdx + 5) % SYSTEMS.length; spotlight(SYSTEMS[spotIdx]); } });
+
+function renderWings() {
+  document.getElementById('wings').innerHTML = WINGS.map(([k, n]) => `<button type="button" class="btn" aria-pressed="${k === wing}" data-wing="${k}">${n} (${SYSTEMS.filter(s => s.type === k).length})</button>`).join('');
+}
+function renderWall() {
+  const q = document.getElementById('q').value.toLowerCase(), sort = document.getElementById('sort').value;
+  let list = SYSTEMS.filter(s => (q ? (s.name + s.m).toLowerCase().includes(q) : s.type === wing));
+  const by = { old: (a, b) => a.y - b.y, new: (a, b) => b.y - a.y, maker: (a, b) => a.m.localeCompare(b.m) || a.y - b.y, games: (a, b) => b.games - a.games };
+  list.sort(by[sort]);
+  document.getElementById('wall').innerHTML = list.map(s => `
+    <a href="#" class="exhibit" data-sys>
+      <div class="frame">${art(s.shape, s.col)}</div>
+      <div class="plaque" style="--maker:${MAKER[s.m]}">
+        <h3>${s.name}</h3><p class="made">${s.m}, ${s.rel}</p><p>${s.why}</p>
+        <p class="own">${s.games} games in my library</p>
+        ${s.doc ? '' : '<p class="missing">History not written yet</p>'}
+      </div>
+    </a>`).join('') || '<p class="lede">No exhibit matches that search. Clear the search box to walk the galleries again.</p>';
+}
+renderWings(); renderWall();
+document.getElementById('wings').onclick = e => { const b = e.target.closest('[data-wing]'); if (!b) return; wing = b.dataset.wing; document.getElementById('q').value = ''; renderWings(); renderWall(); };
+document.getElementById('q').oninput = renderWall;
+document.getElementById('sort').onchange = renderWall;
+
+/* Console page */
+document.getElementById('room-stage').insertAdjacentHTML('beforeend', art('disc', '#eeeeee', 'machine'));
+const LABEL = [['Manufacturer', 'Sega'], ['Released', '1998 (JP), 1999 (NA, EU)'], ['Generation', '6th Generation'], ['CPU', 'Hitachi SH-4 @ 200 MHz'], ['GPU', 'NEC PowerVR2 @ 100 MHz'], ['RAM', '16 MB'], ['VRAM', '8 MB'], ['Resolution', '640×480'], ['Sound', 'Yamaha AICA, 64 channels'], ['Media', 'GD-ROM (1.2 GB)'], ['Storage', 'VMU memory card, 128 KB'], ['Units sold <span class="new">New</span>', '9.1 million'], ['On sale until <span class="new">New</span>', 'March 2001']];
+document.getElementById('label').innerHTML = LABEL.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+const PAD = `<path d="M30 20 Q100 0 170 20 L160 110 Q150 130 130 110 L115 80 H85 L70 110 Q50 130 40 110 Z" fill="#e8e8e8" stroke="#05070b" stroke-width="3"/><rect x="80" y="25" width="40" height="30" rx="4" fill="#333"/><circle cx="60" cy="60" r="10" fill="#bbb"/><circle cx="140" cy="45" r="6" fill="#e33"/><circle cx="152" cy="57" r="6" fill="#3a3"/>`;
+const VMU = `<rect x="60" y="10" width="80" height="120" rx="12" fill="#e8e8e8" stroke="#05070b" stroke-width="3"/><rect x="72" y="24" width="56" height="42" fill="#7a9" stroke="#05070b" stroke-width="2"/><path d="M80 92h18M89 83v18" stroke="#555" stroke-width="5"/><circle cx="118" cy="92" r="6" fill="#555"/>`;
+const CASE = [['Dreamcast Controller', 'HKT-7700, 1998', 'Analogue stick, two slots for memory cards or a rumble pack.', 'D-pad, analogue stick; A, B, X, Y; two analogue triggers; Start', PAD],
+  ['Visual Memory Unit (VMU)', 'HKT-7000, 1998', 'A memory card with its own screen; it shows hints while you play.', 'D-pad; A, B; Mode and Sleep buttons', VMU],
+  ['Arcade Stick', 'HKT-7300, 1999', 'Arcade-style stick for fighting games.', 'Stick; six face buttons; Start', `<rect x="25" y="60" width="150" height="60" rx="8" fill="#e8e8e8" stroke="#05070b" stroke-width="3"/><line x1="60" y1="70" x2="60" y2="30" stroke="#333" stroke-width="6"/><circle cx="60" cy="28" r="12" fill="#e33"/><g fill="#555"><circle cx="110" cy="80" r="7"/><circle cx="130" cy="80" r="7"/><circle cx="150" cy="80" r="7"/><circle cx="110" cy="100" r="7"/><circle cx="130" cy="100" r="7"/><circle cx="150" cy="100" r="7"/></g>`]];
+document.getElementById('case').innerHTML = CASE.map(([n, m, d, b, svg]) => `<div class="case-item"><div class="obj"><svg viewBox="0 0 200 140" aria-hidden="true">${svg}</svg></div><div class="plaque" style="--maker:#1f6fd1"><h3>${n}</h3><p class="made" style="margin:0">Sega, ${m}</p><p>${d}</p><details><summary>Button layout</summary><p>${b}</p></details></div></div>`).join('');
+const TOP = [['Soulcalibur', 98, 1], ['Jet Set Radio', 94, 1], ['Shenmue', 88, 1], ['Skies of Arcadia', 93, 1], ['Crazy Taxi', 90, 1], ['Sonic Adventure', 87, 1], ['Power Stone 2', 90, 0], ['Marvel vs. Capcom 2', 90, 1], ['Ikaruga', 85, 0], ['Phantasy Star Online', 89, 1]];
+document.getElementById('shelf').innerHTML = TOP.map(([t, s, own], i) => `<a href="#" class="box"><span class="cover" style="background:linear-gradient(160deg,hsl(${200 + i * 17} 55% 34%),hsl(${230 + i * 17} 60% 14%))"><b>${i + 1}</b>Box art</span><span class="t">${t}</span><span class="s">Critic score ${s}</span>${own ? '' : '<span class="ai">AI suggested, not in my library</span>'}</a>`).join('');
+
+document.getElementById('speak').onclick = () => {
+  if (!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  speechSynthesis.speak(new SpeechSynthesisUtterance('Sega Dreamcast. ' + document.getElementById('read-me').textContent));
+};
+document.querySelectorAll('[data-scale]').forEach(b => b.onclick = () => {
+  document.documentElement.style.setProperty('--scale', b.dataset.scale);
+  document.querySelectorAll('[data-scale]').forEach(x => x.setAttribute('aria-pressed', x === b));
+});
+
+function view(v) {
+  document.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-selected', b.dataset.view === v));
+  document.getElementById('view-browse').hidden = v !== 'browse';
+  document.getElementById('view-system').hidden = v !== 'system';
+  window.scrollTo(0, 0);
+}
+document.querySelectorAll('[data-view]').forEach(b => b.onclick = () => view(b.dataset.view));
+document.addEventListener('click', e => {
+  if (e.target.closest('[data-sys]')) { e.preventDefault(); view('system'); }
+  const g = e.target.closest('[data-goto]'); if (g) { e.preventDefault(); view(g.dataset.goto); }
+});
+if (location.hash === '#system') view('system');
+</script>
+</body>
+</html>

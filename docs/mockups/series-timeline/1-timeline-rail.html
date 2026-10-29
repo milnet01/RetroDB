@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Series progression, idea 1: the timeline rail (RetroDB mockup)</title>
+<style>
+:root {
+  --bg: #0a0e17; --bg2: #0f1419; --panel: #141a23; --panel2: #1a222d; --panel3: #212b38;
+  --line: #2a3542; --line2: #3a4552;
+  --text: #e8eaed; --text2: #c3c8ce;
+  --cyan: #4cc9f0; --cyan-l: #7dd8f5; --magenta: #f72585; --magenta-l: #f95fa3;
+  --green: #22c55e; --orange: #f59e0b; --purple: #a855f7;
+  --cyan-bg: rgba(76,201,240,.15); --magenta-bg: rgba(247,37,133,.15);
+  --green-bg: rgba(34,197,94,.15); --orange-bg: rgba(245,158,11,.15);
+  --font: 'Rajdhani', 'Segoe UI', 'Noto Sans', system-ui, sans-serif;
+  --font-head: 'Orbitron', 'Rajdhani', 'Segoe UI', system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+html { font-size: 112.5%; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font); line-height: 1.55; }
+:focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; }
+a { color: var(--cyan-l); }
+.mock-note { margin: 0; padding: .7rem 1.25rem; background: var(--magenta-bg); border-bottom: 2px solid var(--magenta); font-size: 1rem; }
+.page { max-width: 1500px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+.crumb { margin: 0; font-size: 1rem; color: var(--text2); }
+h1 { font-family: var(--font-head); font-size: clamp(1.8rem, 4.5vw, 2.8rem); letter-spacing: 1px; margin: .3rem 0 .4rem; text-shadow: 0 0 18px rgba(76,201,240,.35); }
+.lede { font-size: 1.2rem; color: var(--text2); max-width: 62ch; margin: 0 0 1.5rem; }
+
+.controls { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; margin-bottom: 1rem; }
+.controls-label { font-weight: 700; margin-right: .25rem; }
+.toggle, .btn { font: inherit; font-size: 1rem; font-weight: 700; min-height: 44px; padding: .45rem 1rem; border-radius: 999px; border: 2px solid var(--line2); background: var(--panel); color: var(--text); cursor: pointer; }
+.toggle[aria-pressed="true"] { border-color: var(--cyan); background: var(--cyan-bg); }
+.toggle[data-kind="handheld"][aria-pressed="true"] { border-color: var(--magenta); background: var(--magenta-bg); }
+.btn:hover, .toggle:hover { border-color: var(--cyan-l); }
+
+.legend { display: flex; flex-wrap: wrap; gap: .5rem 1rem; list-style: none; padding: 0; margin: 0 0 1.25rem; }
+.chip { display: inline-flex; gap: .45rem; align-items: baseline; padding: .2rem .65rem; border-radius: 6px; border: 2px solid; font-size: 1rem; font-weight: 600; line-height: 1.35; }
+.chip .sym { font-family: var(--font-head); font-weight: 800; }
+.chip.add { border-color: var(--green); background: var(--green-bg); }
+.chip.chg { border-color: var(--cyan); background: var(--cyan-bg); }
+.chip.rem { border-color: var(--orange); background: var(--orange-bg); }
+
+.rail-head { display: flex; justify-content: space-between; align-items: end; gap: 1rem; flex-wrap: wrap; }
+.rail-head h2 { font-family: var(--font-head); font-size: 1.35rem; margin: 0; }
+.rail-nav { display: flex; gap: .5rem; }
+.rail { list-style: none; margin: .5rem 0 0; padding: 0 0 1.25rem; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(300px, 340px); overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-color: var(--cyan) var(--panel); }
+.entry { scroll-snap-align: start; padding-right: 1.25rem; }
+.entry[hidden] { display: none; }
+.when { position: relative; height: 3.4rem; }
+.when::before { content: ""; position: absolute; left: 0; right: 0; top: 1.05rem; height: 4px; background: var(--cyan); opacity: .7; }
+.entry.handheld .when::before { background: var(--magenta); }
+.dot { position: absolute; left: 1rem; top: .45rem; width: 1.2rem; height: 1.2rem; border-radius: 50%; background: var(--bg); border: 4px solid var(--cyan); box-shadow: 0 0 12px var(--cyan); }
+.entry.handheld .dot { border-color: var(--magenta); box-shadow: 0 0 12px var(--magenta); border-radius: 3px; }
+.year { position: absolute; left: 2.8rem; top: -.15rem; font-family: var(--font-head); font-size: 1.5rem; font-weight: 800; background: var(--bg); padding: 0 .5rem; }
+
+.card { background: var(--panel); border: 2px solid var(--line); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; height: 100%; }
+.entry.selected .card { border-color: var(--cyan); box-shadow: 0 0 0 2px var(--cyan), 0 0 24px rgba(76,201,240,.3); }
+.entry.handheld.selected .card { border-color: var(--magenta); box-shadow: 0 0 0 2px var(--magenta), 0 0 24px rgba(247,37,133,.3); }
+.boxart { aspect-ratio: 16 / 7; display: grid; place-items: end start; padding: .75rem 1rem; position: relative; }
+.boxart b { font-family: var(--font-head); font-size: 1.15rem; line-height: 1.2; text-shadow: 0 2px 6px #000; max-width: 85%; }
+.boxart small { position: absolute; top: .5rem; right: .6rem; font-size: .9rem; background: rgba(0,0,0,.6); padding: 0 .4rem; border-radius: 4px; }
+.card-body { padding: .9rem 1rem 1rem; display: flex; flex-direction: column; gap: .75rem; flex: 1; }
+.card h3 { margin: 0; font-size: 1.35rem; line-height: 1.2; }
+.card .dev { margin: 0; color: var(--text2); font-size: 1rem; }
+.changes { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: .4rem; }
+.branch-title { margin: 0; font-weight: 700; font-size: 1.05rem; }
+.branch { list-style: none; margin: 0; padding: 0 0 0 1rem; border-left: 3px solid var(--line2); }
+.branch li { position: relative; padding: .3rem 0 .3rem .6rem; font-size: 1rem; }
+.branch li::before { content: ""; position: absolute; left: -1rem; top: 1rem; width: 1.2rem; border-top: 3px solid var(--line2); }
+.branch strong { display: block; }
+.branch span { color: var(--text2); }
+.card .btn { margin-top: auto; align-self: start; border-radius: 8px; }
+
+.detail { margin-top: 1.5rem; background: var(--bg2); border: 2px solid var(--line); border-top: 4px solid var(--cyan); border-radius: 12px; padding: 1.25rem 1.5rem 1.5rem; }
+.detail.handheld { border-top-color: var(--magenta); }
+.detail h2 { font-family: var(--font-head); font-size: 1.5rem; margin: 0 0 .25rem; }
+.detail .sub { margin: 0 0 1.25rem; color: var(--text2); font-size: 1.1rem; }
+.detail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 1.5rem; }
+.detail h3 { font-size: 1.2rem; margin: 0 0 .6rem; }
+.change-list { list-style: none; padding: 0; margin: 0; display: grid; gap: .5rem; }
+.table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; }
+table { border-collapse: collapse; width: 100%; font-size: 1rem; }
+th, td { text-align: left; padding: .55rem .75rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+thead th { background: var(--panel2); }
+tbody th { white-space: nowrap; }
+.region-list { margin: 0; padding-left: 1.2rem; }
+.region-list li { margin-bottom: .4rem; }
+
+@media (max-width: 600px) {
+  html { font-size: 106.25%; }
+  .page { padding: 1rem .9rem 3rem; }
+  .rail { grid-auto-columns: 86vw; }
+  .detail { padding: 1rem; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<p class="mock-note"><strong>Design mockup, idea 1 of 3.</strong> Sample data: the Tomb Raider facts here are illustrative and have not been checked.</p>
+<main class="page">
+  <p class="crumb">Library &rsaquo; Franchises &rsaquo; Tomb Raider</p>
+  <h1>Tomb Raider</h1>
+  <p class="lede">How the series changed from game to game, 1996 to 2003. Each game shows what changed since the one before, and below it the consoles and regions it came out on.</p>
+
+  <div class="controls" role="group" aria-label="Which games to show">
+    <span class="controls-label">Show:</span>
+    <button type="button" class="toggle" data-kind="main" aria-pressed="true">Main series</button>
+    <button type="button" class="toggle" data-kind="handheld" aria-pressed="true">Game Boy Color games</button>
+  </div>
+
+  <ul class="legend" aria-label="What the change labels mean">
+    <li><span class="chip add"><span class="sym" aria-hidden="true">+</span>Added</span></li>
+    <li><span class="chip chg"><span class="sym" aria-hidden="true">~</span>Changed</span></li>
+    <li><span class="chip rem"><span class="sym" aria-hidden="true">&minus;</span>Removed</span></li>
+  </ul>
+
+  <div class="rail-head">
+    <h2>Timeline</h2>
+    <div class="rail-nav">
+      <button type="button" class="btn" id="prev" aria-label="Scroll timeline back">&lsaquo; Earlier</button>
+      <button type="button" class="btn" id="next" aria-label="Scroll timeline forward">Later &rsaquo;</button>
+    </div>
+  </div>
+  <ol class="rail" id="rail" aria-label="Tomb Raider games in release order"></ol>
+
+  <section class="detail" id="detail" aria-live="polite"></section>
+</main>
+
+<script>
+const GAMES = [
+  { id: 'tr1', title: 'Tomb Raider', year: 1996, kind: 'main', dev: 'Core Design, published by Eidos', hue: 30,
+    changes: [['add', 'Full 3D tombs to explore'], ['add', 'Lara Croft’s first game'], ['add', 'Grid-based jumps and climbing'], ['add', 'Save crystals on consoles']],
+    versions: [['Sega Saturn', 'Europe, North America, October 1996', 'First to come out'], ['PlayStation', 'Europe, North America, November 1996', ''], ['PC (DOS)', 'Worldwide, November 1996', 'Save anywhere'], ['PlayStation', 'Japan, 1997', 'Japanese text and voices']],
+    gfx: [['Sega Saturn', '320×224', 'Blocky, unsmoothed', 'Darker rooms'], ['PlayStation', '512×240', 'Blocky, some wobble', 'Brighter rooms'], ['PC (DOS)', '320×200 to 640×480', 'Blocky, unsmoothed', 'Like PlayStation'], ['PC with 3dfx patch', '640×480', 'Smoothed', 'Like PlayStation']],
+    regions: ['Japan got the game a year later, with Japanese voices.', 'The Saturn version came out a few weeks before the PlayStation one.'] },
+  { id: 'tr2', title: 'Tomb Raider II', year: 1997, kind: 'main', dev: 'Core Design, published by Eidos', hue: 200,
+    changes: [['add', 'Vehicles: speedboat and snowmobile'], ['add', 'Flares to light dark places'], ['add', 'Ladders and climbing walls'], ['chg', 'Big outdoor levels: Venice, the Great Wall'], ['rem', 'Save crystals: save anywhere now']],
+    versions: [['PlayStation', 'Europe, North America, November 1997', ''], ['PC (Windows)', 'Worldwide, November 1997', 'Smoothed 3D graphics'], ['Mac', 'North America, 1998', ''], ['PlayStation', 'Japan, 1998', 'Japanese text']],
+    gfx: [['PlayStation', '512×240', 'Blocky, some wobble', 'Simple lighting'], ['PC (Windows)', 'Up to 1024×768', 'Smoothed', 'Simple lighting'], ['Mac', 'Up to 1024×768', 'Smoothed', 'Simple lighting']],
+    regions: ['The Saturn version was cancelled, so Sega fans missed this one.', 'The Japanese release came several months later.'] },
+  { id: 'tr3', title: 'Tomb Raider III', year: 1998, kind: 'main', dev: 'Core Design, published by Eidos', hue: 110,
+    changes: [['add', 'Crawling, sprinting, monkey swing'], ['chg', 'Pick the order of the middle locations'], ['chg', 'Sloped floors and coloured light'], ['add', 'Save crystals return on PlayStation']],
+    versions: [['PlayStation', 'Europe, North America, November 1998', 'Save crystals only'], ['PC (Windows)', 'Worldwide, November 1998', 'Save anywhere'], ['Mac', 'North America, 1999', ''], ['PlayStation', 'Japan, 1999', 'Japanese text']],
+    gfx: [['PlayStation', '512×240', 'Blocky, some wobble', 'Plain light, little weather'], ['PC (Windows)', 'Up to 1024×768', 'Smoothed', 'Coloured light, rain and snow']],
+    regions: ['Saving works differently by platform: crystals on PlayStation, anywhere on PC.'] },
+  { id: 'gbc1', title: 'Tomb Raider (Game Boy Color)', year: 2000, kind: 'handheld', dev: 'Core Design, published by THQ', hue: 320,
+    changes: [['chg', 'Side-on 2D platform game'], ['add', 'Hand-drawn animation for Lara'], ['chg', 'A new story of its own']],
+    versions: [['Game Boy Color', 'Europe, North America, June 2000', 'Saves on the cartridge']],
+    gfx: [['Game Boy Color', '160×144', 'Pixel art', '56 colours on screen']],
+    regions: ['One version for every region.'] },
+  { id: 'tr4', title: 'Tomb Raider: The Last Revelation', year: 1999, kind: 'main', dev: 'Core Design, published by Eidos', hue: 45,
+    changes: [['add', 'Rope and pole swings'], ['add', 'Combine items in the inventory'], ['chg', 'One long story set in Egypt'], ['chg', 'New inventory ring'], ['rem', 'Travel between continents']],
+    versions: [['PlayStation', 'Worldwide, November 1999', ''], ['PC (Windows)', 'Worldwide, November 1999', ''], ['Dreamcast', 'Worldwide, March 2000', 'Sharper picture'], ['Mac', 'North America, 2000', '']],
+    gfx: [['PlayStation', '512×240', 'Blocky, some wobble', 'Torch-lit rooms'], ['PC (Windows)', 'Up to 1024×768', 'Smoothed', 'Torch-lit rooms'], ['Dreamcast', '640×480', 'Smoothed', 'Torch-lit rooms']],
+    regions: ['Dreamcast owners waited about four months.'] },
+  { id: 'tr5', title: 'Tomb Raider Chronicles', year: 2000, kind: 'main', dev: 'Core Design, published by Eidos', hue: 260,
+    changes: [['add', 'Grappling gun and tightrope walking'], ['add', 'A stealth section'], ['chg', 'Told as four flashback stories'], ['add', 'Level editor on PC']],
+    versions: [['PlayStation', 'Worldwide, November 2000', ''], ['PC (Windows)', 'Worldwide, November 2000', 'Includes the level editor'], ['Dreamcast', 'Worldwide, November 2000', ''], ['Mac', 'North America, 2001', '']],
+    gfx: [['PlayStation', '512×240', 'Blocky, some wobble', 'Same engine as before'], ['PC (Windows)', 'Up to 1024×768', 'Smoothed', 'Same engine as before'], ['Dreamcast', '640×480', 'Smoothed', 'Same engine as before']],
+    regions: ['Only the PC box has the level editor.'] },
+  { id: 'gbc2', title: 'Tomb Raider: Curse of the Sword', year: 2001, kind: 'handheld', dev: 'Core Design, published by THQ', hue: 340,
+    changes: [['add', 'New Orleans setting'], ['chg', 'Faster fights'], ['chg', 'Sequel to the first Game Boy Color game']],
+    versions: [['Game Boy Color', 'Europe, North America, June 2001', '']],
+    gfx: [['Game Boy Color', '160×144', 'Pixel art', 'Darker colour palette']],
+    regions: ['One version for every region.'] },
+  { id: 'tr6', title: 'Tomb Raider: The Angel of Darkness', year: 2003, kind: 'main', dev: 'Core Design, published by Eidos', hue: 0,
+    changes: [['chg', 'New engine with free movement'], ['add', 'Stealth and strength upgrades'], ['add', 'A second hero: Kurtis'], ['chg', 'Modern day Paris and Prague'], ['rem', 'Grid-based moves']],
+    versions: [['PlayStation 2', 'Europe, North America, June 2003', ''], ['PC (Windows)', 'Worldwide, June 2003', 'Sharper shadows'], ['Mac', 'North America, 2003', '']],
+    gfx: [['PlayStation 2', '640×448', 'Smoothed', 'Soft shadows'], ['PC (Windows)', 'Up to 1600×1200', 'Smoothed, sharper', 'Real-time shadows']],
+    regions: ['The PC version got a patch that fixed many bugs; consoles did not.'] }
+].sort((a, b) => a.year - b.year);
+
+const SYM = { add: '+', chg: '~', rem: '−' };
+const WORD = { add: 'Added', chg: 'Changed', rem: 'Removed' };
+const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const chip = ([t, x]) => `<span class="chip ${t}"><span class="sym" aria-hidden="true">${SYM[t]}</span><span class="visually-hidden" style="position:absolute;left:-9999px">${WORD[t]}: </span>${esc(x)}</span>`;
+
+const rail = document.getElementById('rail');
+rail.innerHTML = GAMES.map(g => `
+  <li class="entry ${g.kind}" id="e-${g.id}" data-kind="${g.kind}">
+    <div class="when"><span class="dot"></span><span class="year">${g.year}</span></div>
+    <article class="card">
+      <div class="boxart" style="background:linear-gradient(135deg,hsl(${g.hue} 60% 28%),hsl(${(g.hue + 40) % 360} 70% 12%))">
+        <small>Box art</small><b>${esc(g.title)}</b>
+      </div>
+      <div class="card-body">
+        <div><h3>${esc(g.title)}</h3><p class="dev">${esc(g.dev)}</p></div>
+        <ul class="changes" aria-label="What changed">${g.changes.slice(0, 3).map(c => `<li>${chip(c)}</li>`).join('')}</ul>
+        <p class="branch-title">Platforms and regions</p>
+        <ul class="branch">${g.versions.map(v => `<li><strong>${esc(v[0])}</strong><span>${esc(v[1])}${v[2] ? '. ' + esc(v[2]) : ''}</span></li>`).join('')}</ul>
+        <button type="button" class="btn" data-open="${g.id}">See all changes</button>
+      </div>
+    </article>
+  </li>`).join('');
+
+function show(id) {
+  const i = GAMES.findIndex(g => g.id === id), g = GAMES[i];
+  const prev = GAMES.slice(0, i).reverse().find(p => p.kind === g.kind);
+  document.querySelectorAll('.entry').forEach(e => e.classList.toggle('selected', e.id === 'e-' + id));
+  const d = document.getElementById('detail');
+  d.className = 'detail ' + g.kind;
+  d.innerHTML = `
+    <h2>${esc(g.title)} (${g.year})</h2>
+    <p class="sub">${prev ? 'Compared with ' + esc(prev.title) + ' (' + prev.year + ')' : 'The first game in this line'}</p>
+    <div class="detail-grid">
+      <div><h3>What changed</h3><ul class="change-list">${g.changes.map(c => `<li>${chip(c)}</li>`).join('')}</ul></div>
+      <div><h3>How each version looks</h3>
+        <div class="table-scroll"><table><thead><tr><th scope="col">Platform</th><th scope="col">Picture size</th><th scope="col">Textures</th><th scope="col">Lighting</th></tr></thead>
+        <tbody>${g.gfx.map(r => `<tr><th scope="row">${esc(r[0])}</th><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${esc(r[3])}</td></tr>`).join('')}</tbody></table></div></div>
+      <div><h3>Differences between regions and platforms</h3><ul class="region-list">${g.regions.map(r => `<li>${esc(r)}</li>`).join('')}</ul></div>
+    </div>`;
+}
+rail.addEventListener('click', e => { const b = e.target.closest('[data-open]'); if (b) { show(b.dataset.open); document.getElementById('detail').scrollIntoView({ block: 'nearest' }); } });
+document.querySelectorAll('.toggle').forEach(t => t.addEventListener('click', () => {
+  const on = t.getAttribute('aria-pressed') !== 'true';
+  t.setAttribute('aria-pressed', on);
+  document.querySelectorAll('.entry[data-kind="' + t.dataset.kind + '"]').forEach(e => e.hidden = !on);
+}));
+const step = () => rail.querySelector('.entry:not([hidden])').offsetWidth;
+document.getElementById('prev').onclick = () => rail.scrollBy({ left: -step() });
+document.getElementById('next').onclick = () => rail.scrollBy({ left: step() });
+show('tr2');
+</script>
+</body>
+</html>
