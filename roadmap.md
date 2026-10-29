@@ -9177,6 +9177,15 @@ were corrected in `2836bc3` and are not repeated here.
   cover, a game with only a 2D box shows the 2D box; one with only a
   3D box picture shows that picture; one with the full set of faces
   shows the turnable 3D box.
+- **Built** (2026-10-29, in the open 3.34.0; commit 4771a8b):
+  `static/js/box-viewer.js` in the cover zoom
+  (`templates/_modals/boxart_zoom_modal.html`), CSS in
+  `components/modals.css`. Browser walk on :5001 with a scratch DB: a
+  labelled six-face box matched SLIP-0104 § 4.1's orientation on every
+  face; nothing painted behind the box; 2D-only and 3D-only games zoom
+  to their pictures; Remove and re-import update the zoom without a
+  reload. **Still owed**: a real mouse drag by eye (only keys were
+  driven); the 20 locale translations of the two new strings.
 
 ---
 
