@@ -5710,6 +5710,11 @@ async function clearHLTB() {
 function openBoxartZoom(imageUrl) {
     const modal = document.getElementById('boxartZoomModal');
     const img = document.getElementById('boxartZoomImage');
+    // The page's .content-wrapper (z-index 1) caps any z-index inside it, so
+    // left there the sidebar and the phone bars cover the zoom and its close
+    // button. At body level it stacks above the page, as the screenshot
+    // viewer does (main.js).
+    document.body.appendChild(modal);
     modal.classList.add('active');
     const showsBox = window.BoxViewer ? BoxViewer.show() : false;
     img.style.display = showsBox ? 'none' : '';
