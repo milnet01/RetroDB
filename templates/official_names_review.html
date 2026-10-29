@@ -105,6 +105,31 @@
         <ul id="namesList" class="names-list"></ul>
     </div>
 </div>
+
+<div class="card" id="aiFillBulk">
+    <div class="card-header">
+        <h2 class="card-title"><span>🤖</span> {{ _('Fill empty fields with AI') }}</h2>
+    </div>
+    <div class="card-body">
+        <p>{{ _("AI Fill for many games at once. The AI fills each game's empty fields, such as genre, release dates and copies sold, the same way the AI Fill button on a game's page does, and saves them straight to the game. Games AI Fill has already done are skipped, so a second run only does the rest.") }}</p>
+        <p class="text-muted">{{ _('Your AI provider charges for each game. With Claude Haiku 5.5 and web search on, a game costs at most about 5 US cents.') }}</p>
+        <div class="names-filter-row">
+            <div class="form-group">
+                <label for="fillSystem">{{ _('System') }}</label>
+                <select id="fillSystem" class="form-select" aria-describedby="fillCount">
+                    <option value="">{{ _('All systems') }}</option>
+                    {% for system in systems %}
+                    <option value="{{ system.id }}">{{ system.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="button" class="btn btn-primary" id="fillRunBtn">{{ _('Fill with AI') }}</button>
+            <button type="button" class="btn btn-secondary" id="fillCancelBtn" hidden>{{ _('Stop') }}</button>
+        </div>
+        <p id="fillCount" class="text-muted"></p>
+        <p id="fillRunStatus" class="text-muted" role="status" aria-live="polite"></p>
+    </div>
+</div>
 </div>
 {% endblock %}
 

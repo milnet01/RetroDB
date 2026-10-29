@@ -209,7 +209,7 @@ class TestPass45_3AiFillIntFields:
         """Drive routes.games_ai.api_game_ai_fill end-to-end with stubbed I/O
         and return the (sql, values) tuple passed to ``execute``."""
 
-        import routes.games_ai as ga
+        import services.ai_fill as ga
         import scraper.scrape_ai as scrape_ai
         import scraper.hybrid_scraper as hybrid
 

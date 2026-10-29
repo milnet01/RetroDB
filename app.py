@@ -421,6 +421,7 @@ if limiter:
     _rate_limit('games_ai.api_game_ai_fill', "10 per minute")
     _rate_limit('versions.api_versions_ai_summary', "10 per minute")
     _rate_limit('official_names.api_official_names_run', "5 per minute")
+    _rate_limit('official_names.api_ai_fill_bulk_run', "5 per minute")
     _rate_limit('bulk_scrape.api_bulk_scrape_job_start', "5 per minute")
     # Login brute force protection (supplements existing IP-based rate limiting)
     _rate_limit('auth.api_login', "10 per minute")
@@ -1248,6 +1249,7 @@ def index():
 _RESUMABLE_JOB_TYPES = {
     'bulk_scrape', 'ra_refresh', 'ra_sync', 'psn_refresh',
     'steam_sync', 'xbox_sync', 'museum_generate', 'official_names',
+    'ai_fill_bulk',
 }
 
 
@@ -1390,6 +1392,8 @@ def dashboard():
                 desc = "Alternate titles backfill was interrupted" if has_progress else "Alternate titles backfill was queued"
             elif jtype == 'official_names':
                 desc = "Official names run was interrupted"
+            elif jtype == 'ai_fill_bulk':
+                desc = "AI fill run was interrupted"
             else:
                 desc = f"{jtype} job was {status}"
 
@@ -1427,6 +1431,7 @@ _EDITORS = ('admin', 'editor')
 _RESUME_ROLES = {
     'bulk_scrape': _EDITORS, 'ra_sync': _EDITORS, 'steam_sync': _EDITORS,
     'xbox_sync': _EDITORS, 'museum_generate': _EDITORS, 'official_names': _EDITORS,
+    'ai_fill_bulk': _EDITORS,
     'ra_refresh': ('admin',),
     'psn_refresh': VALID_ROLES,  # login_required: any signed-in role
 }
@@ -1456,7 +1461,7 @@ def resume_job(job_id):
     from services.jobs.base import get_recoverable_jobs, persist_job_complete
     from services.jobs import bulk_scrape_job, ra_sync_job, ra_refresh_job, psn_refresh_job
     from services.jobs import steam_sync_job, xbox_sync_job, museum_generate_job
-    from services.jobs import official_names_job
+    from services.jobs import official_names_job, ai_fill_bulk_job
 
     # Find the job
     recoverable = get_recoverable_jobs()
@@ -1478,6 +1483,7 @@ def resume_job(job_id):
         'xbox_sync': xbox_sync_job,
         'museum_generate': museum_generate_job,
         'official_names': official_names_job,
+        'ai_fill_bulk': ai_fill_bulk_job,
     }
     handler = handler_map.get(job['job_type'])
     if not handler or not hasattr(handler, 'resume_from_params'):

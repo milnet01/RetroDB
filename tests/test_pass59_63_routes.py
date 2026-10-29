@@ -60,7 +60,7 @@ def test_json_edit_blank_title_keeps_title(db, admin_test_client):
 
 # 2 — AI fill assigns each column once.
 def test_ai_fill_sets_each_column_once(db, admin_test_client, monkeypatch):
-    import routes.games_ai as games_ai
+    import services.ai_fill as games_ai
     import scraper.scrape_ai as scrape_ai
     gid = _game(db, 'Lonely Game')
     monkeypatch.setattr(scrape_ai, 'get_game_details',

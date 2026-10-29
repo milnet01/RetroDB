@@ -109,7 +109,7 @@ of the current code base that means `scrape_history = ?` and
 `scraped = 1` in the hybrid UPDATE, and `scraped = 1` in
 `scrape_igdb.apply_metadata_to_game`. Leave those bare.
 
-**AI Fill is a separate path.** `routes/games_ai.py` does **not** use the
+**AI Fill is a separate path.** `services/ai_fill.py` does **not** use the
 COALESCE wrapper. It builds the `UPDATE games` with bare `field = ?`
 clauses and protects the fill-only contract one layer up via a
 `should_apply` pre-filter plus the Pass 45.3 "skip int=0" guard
@@ -280,7 +280,7 @@ Text-only. AI never returns images, screenshots, videos, or manuals — `AI_FILL
 
 **`PLATFORM_ALIASES`** maps non-canonical platform names the AI may produce (`ps1` → `PlayStation`, `playstation portable` → `PSP`).
 
-**Integer-column trap (Pass 45.3):** AI Fill writes through `routes/games_ai.py`. The integer columns (`players`, `critic_score`, `critic_score_count`, `user_score`, `user_score_count`, `units_sold`) coerce via `int(float(value))`. If the AI returns `"0"`, that becomes `0` — and a bare `field = ?` UPDATE then clobbers a curated `players=4` with `0`. Fix: any integer coerce to `0` is **skipped** entirely from the UPDATE clause (chosen over `COALESCE(NULLIF(?, 0), col)` because the existing `should_apply` filter already guarantees we only reach the int-coerce on values worth writing). Regression tests in `tests/test_pass45_security.py::TestPass45_3*`.
+**Integer-column trap (Pass 45.3):** AI Fill writes through `services/ai_fill.py`. The integer columns (`players`, `critic_score`, `critic_score_count`, `user_score`, `user_score_count`, `units_sold`) coerce via `int(float(value))`. If the AI returns `"0"`, that becomes `0` — and a bare `field = ?` UPDATE then clobbers a curated `players=4` with `0`. Fix: any integer coerce to `0` is **skipped** entirely from the UPDATE clause (chosen over `COALESCE(NULLIF(?, 0), col)` because the existing `should_apply` filter already guarantees we only reach the int-coerce on values worth writing). Regression tests in `tests/test_pass45_security.py::TestPass45_3*`.
 
 **Sales (`units_sold`):** only the AI fills it, in the scrape's AI gap-fill and in AI Fill; no API scraper publishes sales. The prompt asks for lifetime copies sold on the row's platform from free published sources and for null when only a multi-platform total exists. `parse_units_sold()` turns what a model writes (`"2.4 million"`, `"~850k"`, `"2,400,000"`) into an integer and drops anything above 500 million.
 

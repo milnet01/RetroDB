@@ -19,6 +19,8 @@
     label: 'Den KI-Schlüssel in den Einstellungen testen'
   - type: feature
     label: 'Claude kann im Web nach Verkaufszahlen suchen'
+  - type: feature
+    label: 'AI-Auffüllen für ein ganzes System auf einmal'
   body: |
     <ul>
       <li><strong>Cheats für RetroArch (RetroDB), DuckStation und
@@ -66,6 +68,7 @@
       <li><strong>Die Verkaufszahl eines Spiels eintragen.</strong> Beide Bearbeitungsfenster haben unter Entwickler ein Feld „Verkaufte Exemplare“. Eine eingetragene Zahl erscheint auf der Spielseite wie eine, die die KI gefunden hat. Leeren Sie das Feld, um sie zu entfernen.</li>
       <li><strong>Den KI-Schlüssel in den Einstellungen testen.</strong> Einstellungen &gt; Scraping hat unter dem KI-Anbieter die Schaltfläche „Gespeicherten KI-Schlüssel testen“. Sie zeigt, ob der Schlüssel funktioniert, und wenn nicht, warum: ein abgelehnter Schlüssel, kein Guthaben oder ein Nutzungslimit. Bisher sah ein abgelehnter Schlüssel wie ein funktionierender aus.</li>
       <li><strong>Claude kann im Web nach Verkaufszahlen suchen.</strong> Einstellungen &gt; Scraping hat unter dem Claude-Modell den Schalter „Claude im Web suchen lassen“, anfangs aus. Ohne Suche antwortet Claude mit dem, was es schon weiß, und lässt verkaufte Exemplare leer. Ist er an, schlägt Claude Zahlen nach. Anthropic berechnet jede Suche, daher macht AI-Auffüllen höchstens 5 Suchen pro Spiel, bis zu 5 US-Cent; schalten Sie den Schalter vor einem großen Massen-Scraping aus.</li>
+      <li><strong>AI-Auffüllen für ein ganzes System auf einmal.</strong> ROM-Werkzeuge &gt; Offizielle Namen hat eine neue Karte Leere Felder mit KI auffüllen. Wählen Sie ein System oder Alle Systeme und drücken Sie Mit KI auffüllen: RetroDB führt AI-Auffüllen für jedes Spiel aus, genauso wie die Schaltfläche AI-Auffüllen auf der Seite eines Spiels, und speichert die Antworten direkt im Spiel. Es zeigt, wie viele Spiele es auffüllen wird, und fragt vorher, denn Ihr KI-Anbieter berechnet jedes Spiel. Spiele, die AI-Auffüllen schon erledigt hat, werden übersprungen, und der Durchlauf hält von selbst an, wenn die KI nicht mehr antwortet.</li>
     </ul>
 - version: 3.33.0
   date: '2026-10-29'

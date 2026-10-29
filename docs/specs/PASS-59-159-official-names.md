@@ -225,6 +225,12 @@ Reject sets `status = 'rejected'`.
 
 A link to the page sits in the Tools menu beside Regional Versions.
 
+The page also carries a second card, Fill empty fields with AI: a bulk
+AI Fill with its own system picker, outside this spec's invariants. It
+writes straight to the games through `services/ai_fill.fill_game`, the
+game page's AI Fill; nothing on it goes through `title_proposals`. Its
+job and routes are in `docs/specs/jobs.md` and `routes/official_names.py`.
+
 ### 4.6 Effect on version grouping
 
 `services/version_groups.py::suggest_groups` uses `file_title` (from the

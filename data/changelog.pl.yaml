@@ -19,6 +19,8 @@
     label: 'Przetestuj klucz AI w Ustawieniach'
   - type: feature
     label: 'Claude może szukać danych o sprzedaży w internecie'
+  - type: feature
+    label: 'Uzupełnianie AI dla całego systemu naraz'
   body: |
     <ul>
       <li><strong>Kody do RetroArch (RetroDB), DuckStation i
@@ -60,6 +62,7 @@
       <li><strong>Wpisz sprzedaż gry.</strong> Oba ekrany edycji mają pole „Sprzedane egzemplarze” pod polem Deweloper. Wpisana liczba pojawia się na stronie gry, tak jak liczba znaleziona przez AI. Wyczyść pole, aby ją usunąć.</li>
       <li><strong>Przetestuj klucz AI w Ustawieniach.</strong> Ustawienia &gt; Pobieranie danych ma przycisk „Testuj zapisany klucz AI” pod dostawcą AI. Pokazuje, czy klucz działa, a jeśli nie, dlaczego: klucz odrzucony, brak środków lub limit użycia. Wcześniej odrzucony klucz wyglądał na działający.</li>
       <li><strong>Claude może szukać danych o sprzedaży w internecie.</strong> Ustawienia &gt; Pobieranie danych ma pod modelem Claude przełącznik „Pozwól Claude szukać w internecie”, na początku wyłączony. Bez wyszukiwania Claude odpowiada na podstawie tego, co już wie, i zostawia puste pole „Sprzedane egzemplarze”. Gdy przełącznik jest włączony, Claude sprawdza liczby. Anthropic pobiera opłatę za każde wyszukiwanie, więc Uzupełnianie AI wykonuje najwyżej 5 wyszukiwań na grę, do 5 centów amerykańskich; wyłącz przełącznik przed dużym masowym pobieraniem danych.</li>
+      <li><strong>Uzupełnianie AI dla całego systemu naraz.</strong> Narzędzia ROM &gt; Oficjalne nazwy ma nową kartę Uzupełnij puste pola przez AI. Wybierz system lub Wszystkie systemy i naciśnij Uzupełnij przez AI: RetroDB uruchamia Uzupełnianie AI dla każdej gry, tak samo jak przycisk Uzupełnianie AI na stronie gry, i zapisuje odpowiedzi od razu w grze. Pokazuje, ile gier uzupełni, i najpierw pyta, bo dostawca AI pobiera opłatę za każdą grę. Gry, które przeszły już Uzupełnianie AI, są pomijane, a przebieg sam się zatrzymuje, gdy AI przestaje odpowiadać.</li>
     </ul>
 - version: 3.33.0
   date: '2026-10-29'

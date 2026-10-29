@@ -92,7 +92,7 @@ def test_hltb_no_match_is_a_404(admin_test_client, monkeypatch):
 
 
 def test_ai_fill_with_no_data_is_a_502(admin_test_client, monkeypatch):
-    import routes.games_ai as games_ai
+    import services.ai_fill as games_ai
     import scraper.scrape_ai as scrape_ai
     import scraper.hybrid_scraper as hybrid_scraper
     monkeypatch.setattr(games_ai, 'query', lambda *a, **k: {

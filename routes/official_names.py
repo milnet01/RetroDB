@@ -4,7 +4,8 @@
 # ROM Tools > Official Names: start an AI run that proposes each game's
 # official name, then accept or reject the proposals. The rules live in
 # services/official_names.py and services/jobs/official_names.py; the
-# contract is docs/specs/PASS-59-159-official-names.md §4.5.
+# contract is docs/specs/PASS-59-159-official-names.md §4.5. The same page
+# starts a bulk AI Fill (routes at the end of this file).
 # =============================================================================
 
 from flask import Blueprint, render_template, request
@@ -101,4 +102,60 @@ def api_official_names_cancel():
     result = official_names_job.cancel()
     if not result.get('success'):
         return error(_('No official names run to cancel.'), 400)
+    return success()
+
+
+# Bulk AI Fill: the game page's AI Fill run on every game of a system, or of
+# all systems, written straight to the games (services/jobs/ai_fill_bulk.py).
+
+def _system_id_arg(value):
+    """A system id, None for all systems, or False when it is neither."""
+    if value is None:
+        return None
+    if isinstance(value, int) and not isinstance(value, bool):
+        return value
+    return False
+
+
+@bp.route('/api/ai-fill-bulk/count')
+@editor_required
+@handle_api_errors
+def api_ai_fill_bulk_count():
+    from services.jobs.ai_fill_bulk import count_games_to_fill
+    return success(count=count_games_to_fill(request.args.get('system_id', type=int)))
+
+
+@bp.route('/api/ai-fill-bulk/run', methods=['POST'])
+@editor_required
+@handle_api_errors
+def api_ai_fill_bulk_run():
+    from scraper import scrape_ai
+    from services.jobs import ai_fill_bulk_job
+    if not scrape_ai.active_provider_name():
+        return error(_('Set up an AI provider in Settings > Scraping first.'), 400)
+    system_id = _system_id_arg((request.get_json(silent=True) or {}).get('system_id'))
+    if system_id is False:
+        return error(_('Pick a system, or all systems.'), 400)
+    result = ai_fill_bulk_job.start(system_id)
+    if not result.get('success'):
+        return error(_('An AI fill run is already running.'), 409)
+    return success(job_id=result['job_id'])
+
+
+@bp.route('/api/ai-fill-bulk/status')
+@editor_required
+@handle_api_errors
+def api_ai_fill_bulk_status():
+    from services.jobs import ai_fill_bulk_job
+    return success(status=ai_fill_bulk_job.get_status())
+
+
+@bp.route('/api/ai-fill-bulk/cancel', methods=['POST'])
+@editor_required
+@handle_api_errors
+def api_ai_fill_bulk_cancel():
+    from services.jobs import ai_fill_bulk_job
+    result = ai_fill_bulk_job.cancel()
+    if not result.get('success'):
+        return error(_('No AI fill run to cancel.'), 400)
     return success()

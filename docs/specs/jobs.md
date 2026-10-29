@@ -45,6 +45,7 @@ can be resumed (or surfaced) on the next start.
 | `museum_images.py` | `MuseumImageFetchJob` | `museum_images_job` | Fetches missing controller images for one system's Museum page (search, download, background removal). Not persisted. |
 | `player_cores.py` | `PlayerCoresJob` | `player_cores_job` | Downloads the bundled player's cores and the shader pack, from Play or Settings > Emulators (PASS-59-81 §4.4). A request for a queued core joins it. Not persisted. |
 | `official_names.py` | `OfficialNamesJob` | `official_names_job` | Asks the AI for each game's official name in batches and stores proposals in `title_proposals` for review; never writes `games` (PASS-59-159 §4.4). Resumable: a restarted run skips games with a pending proposal. |
+| `ai_fill_bulk.py` | `AiFillBulkJob` | `ai_fill_bulk_job` | Bulk AI Fill from ROM Tools > Official Names: runs `services/ai_fill.fill_game` on every game of one system or all systems, written straight to the games. Resumable: a restarted run skips games whose scrape history has an `ai_fill` entry. Stops after `MAX_FAILURES_IN_A_ROW` games in a row get no answer. |
 | `webp_migrate.py` | `WebPMigrateJob` | `webp_migrate_job` | Bulk JPEG/PNG → WebP format migration for boxart / boxart_3d / fanart / screenshots (FU.3, v3.6.19). |
 
 ## 3. Lifecycle / states
@@ -198,6 +199,7 @@ Lock-name → DB column-name mapping (used in routes / `request_shutdown`):
 | `museum_images.lock` | `museum_images_job` |
 | `player_cores.lock` | `player_cores_job` |
 | `official_names.lock` | `official_names_job` |
+| `ai_fill_bulk.lock` | `ai_fill_bulk_job` |
 | `webp_migrate.lock` | `webp_migrate_job` |
 
 **Degradation notes** (`base.py:316-341`):
@@ -296,7 +298,7 @@ two-zone progress layout and the toast detail-line table.
    `bulk_scrape_job`, `ra_sync_job`, `ra_refresh_job`, `psn_refresh_job`,
    `museum_generate_job`, `image_resize_job`, `steam_sync_job`,
    `xbox_sync_job`, `alt_titles_backfill_job`, `hltb_bulk_job`,
-   `museum_images_job`, `official_names_job`. **Note:**
+   `museum_images_job`, `official_names_job`, `ai_fill_bulk_job`. **Note:**
    `webp_migrate_job` is intentionally absent today — SIGTERM mid-WebP
    migration leaves the row `running` until `mark_jobs_interrupted` flips
    it on next start, then the user re-runs the job from the top

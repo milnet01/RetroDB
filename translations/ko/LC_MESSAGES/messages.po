@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-29 17:10+0200\n"
+"POT-Creation-Date: 2026-10-29 17:40+0200\n"
 "PO-Revision-Date: 2026-06-30 14:26+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ko\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: app.py:692
+#: app.py:693
 #, python-format
 msgid ""
 "Upload exceeds the %(total)s MB limit. Each image may be up to %(image)s "
@@ -29,19 +29,19 @@ msgstr ""
 "MB까지 가능합니다. 한 번에 더 적은 파일을 업로드하세요. 운영자는 RETRODB_MAX_UPLOAD_MB로 전체 한도를 늘릴 수"
 " 있습니다."
 
-#: app.py:723
+#: app.py:724
 msgid "Too many requests. Please wait and try again."
 msgstr "요청이 너무 많습니다. 잠시 후 다시 시도하세요."
 
-#: app.py:832
+#: app.py:833
 msgid "Setup required"
 msgstr "설정이 필요합니다"
 
-#: app.py:853
+#: app.py:854
 msgid "Password change required"
 msgstr "비밀번호 변경이 필요합니다"
 
-#: app.py:1707 routes/auth.py:202 routes/auth.py:262 routes/auth.py:447
+#: app.py:1713 routes/auth.py:202 routes/auth.py:262 routes/auth.py:447
 #: routes/auth.py:492 templates/force_change_password.html:49
 #: templates/setup.html:469
 msgid "Password must be at least 12 characters"
@@ -60,7 +60,7 @@ msgstr "시스템을 찾을 수 없거나 업적이 있는 게임이 없습니�
 #: routes/cheats.py:51 routes/collections.py:276 routes/collections.py:531
 #: routes/emulators.py:271 routes/emulators.py:285 routes/games.py:391
 #: routes/games.py:875 routes/games.py:1002 routes/games.py:1058
-#: routes/games_ai.py:47 routes/games_media.py:37 routes/games_media.py:85
+#: routes/games_ai.py:31 routes/games_media.py:37 routes/games_media.py:85
 #: routes/games_media.py:148 routes/games_media.py:197
 #: routes/games_media.py:230 routes/launch.py:240 routes/reports.py:693
 #: routes/reports.py:822 routes/trophies.py:1291 services/cheats.py:617
@@ -530,11 +530,11 @@ msgstr "필터 유형과 값이 필요합니다"
 msgid "Invalid filter type"
 msgstr "잘못된 필터 유형입니다"
 
-#: routes/games_ai.py:78
+#: routes/games_ai.py:37
 msgid "AI returned no data. Check your API key and provider settings."
 msgstr "AI가 데이터를 반환하지 않았습니다. API 키와 공급자 설정을 확인하세요."
 
-#: routes/games_ai.py:327
+#: routes/games_ai.py:80
 msgid "AI scraper module not available"
 msgstr "AI 스크레이퍼 모듈을 사용할 수 없습니다"
 
@@ -622,7 +622,7 @@ msgstr "이 게임에는 이미 3D 박스 면이 있습니다."
 msgid "The faces could not be saved. Check the disk has space."
 msgstr "면을 저장할 수 없습니다. 디스크에 공간이 있는지 확인하세요."
 
-#: routes/games_media.py:201 services/js_i18n_strings.py:978
+#: routes/games_media.py:201 services/js_i18n_strings.py:996
 msgid "The box file could not be imported."
 msgstr "박스 파일을 가져올 수 없습니다."
 
@@ -762,25 +762,34 @@ msgstr "처리할 이미지가 없습니다"
 msgid "Image file not found"
 msgstr "이미지 파일을 찾을 수 없습니다"
 
-#: routes/museum.py:740 routes/museum.py:744 services/js_i18n_strings.py:591
+#: routes/museum.py:740 routes/museum.py:744 services/js_i18n_strings.py:601
 msgid "Background removal failed"
 msgstr "배경 제거에 실패했습니다"
 
-#: routes/official_names.py:77 routes/versions.py:92
+#: routes/official_names.py:78 routes/official_names.py:135
+#: routes/versions.py:92
 msgid "Set up an AI provider in Settings > Scraping first."
 msgstr "먼저 설정 > 스크래핑에서 AI 공급자를 설정하세요."
 
-#: routes/official_names.py:81
+#: routes/official_names.py:82 routes/official_names.py:138
 msgid "Pick a system, or all systems."
 msgstr "시스템 하나 또는 모든 시스템을 고르세요."
 
-#: routes/official_names.py:84
+#: routes/official_names.py:85
 msgid "An official names run is already running."
 msgstr "공식 이름 작업이 이미 실행 중입니다."
 
-#: routes/official_names.py:103
+#: routes/official_names.py:104
 msgid "No official names run to cancel."
 msgstr "취소할 공식 이름 작업이 없습니다."
+
+#: routes/official_names.py:141
+msgid "An AI fill run is already running."
+msgstr "AI 채우기 작업이 이미 실행 중입니다."
+
+#: routes/official_names.py:160
+msgid "No AI fill run to cancel."
+msgstr "취소할 AI 채우기 작업이 없습니다."
 
 #: routes/platform_import.py:153
 msgid "Steam API key not configured. Add it in Settings → API Keys."
@@ -1006,7 +1015,7 @@ msgid "Invalid %(field)s: %(result)s"
 msgstr "잘못된 %(field)s: %(result)s"
 
 #: routes/settings.py:534 routes/settings.py:593 routes/settings.py:645
-#: routes/tools.py:290 services/js_i18n_strings.py:720
+#: routes/tools.py:290 services/js_i18n_strings.py:733
 msgid "Failed to save settings"
 msgstr "설정 저장에 실패했습니다"
 
@@ -1636,19 +1645,19 @@ msgstr "샌드박스"
 msgid "Turn-Based"
 msgstr "턴제"
 
-#: services/js_i18n_strings.py:549
+#: services/js_i18n_strings.py:559
 msgid "(Paused)"
 msgstr "(일시정지됨)"
 
-#: services/js_i18n_strings.py:550
+#: services/js_i18n_strings.py:560
 msgid "(none)"
 msgstr "(없음)"
 
-#: services/js_i18n_strings.py:551
+#: services/js_i18n_strings.py:561
 msgid "(not set)"
 msgstr "(설정 안 됨)"
 
-#: services/js_i18n_strings.py:552 templates/_bulk_edit_modal.html:25
+#: services/js_i18n_strings.py:562 templates/_bulk_edit_modal.html:25
 #: templates/_bulk_edit_modal.html:38 templates/_bulk_edit_modal.html:83
 #: templates/_bulk_edit_modal.html:95 templates/_bulk_edit_modal.html:120
 #: templates/_bulk_edit_modal.html:137 templates/_bulk_edit_modal.html:153
@@ -1656,121 +1665,121 @@ msgstr "(설정 안 됨)"
 msgid "-- Don't change --"
 msgstr "-- 변경 안 함 --"
 
-#: services/js_i18n_strings.py:553
+#: services/js_i18n_strings.py:563
 msgid "-- Select log file --"
 msgstr "-- 로그 파일 선택 --"
 
-#: services/js_i18n_strings.py:554
+#: services/js_i18n_strings.py:564
 #, python-brace-format
 msgid "... and {n} more"
 msgstr "... 외 {n}개 더"
 
-#: services/js_i18n_strings.py:555 templates/_bulk_edit_modal.html:30
+#: services/js_i18n_strings.py:565 templates/_bulk_edit_modal.html:30
 #: templates/base.html:1015
 msgid "100%"
 msgstr "100%"
 
-#: services/js_i18n_strings.py:556
+#: services/js_i18n_strings.py:566
 msgid "3D box imported."
 msgstr "3D 박스를 가져왔습니다."
 
-#: services/js_i18n_strings.py:557
+#: services/js_i18n_strings.py:567
 msgid "3D box removed."
 msgstr "3D 박스를 제거했습니다."
 
-#: services/js_i18n_strings.py:558
+#: services/js_i18n_strings.py:568
 msgid ""
 "A cheat that is on pauses RetroAchievements hardcore mode for that "
 "session."
 msgstr "켜진 치트가 있으면 그 세션 동안 RetroAchievements 하드코어 모드가 일시 중지됩니다."
 
-#: services/js_i18n_strings.py:559 templates/_settings_tabs/account.html:273
+#: services/js_i18n_strings.py:569 templates/_settings_tabs/account.html:273
 #: templates/archive_scanner.html:726 templates/multi_disc_organizer.html:217
 #: templates/reports.html:369 templates/reports.html:450
 msgid "Actions"
 msgstr "작업"
 
-#: services/js_i18n_strings.py:560
+#: services/js_i18n_strings.py:570
 msgid "Added to queue - will start when current operation completes"
 msgstr "대기열에 추가됨 - 현재 작업이 완료되면 시작됩니다"
 
-#: services/js_i18n_strings.py:561
+#: services/js_i18n_strings.py:571
 msgid "All ROMs accounted for!"
 msgstr "모든 ROM이 확인되었습니다!"
 
-#: services/js_i18n_strings.py:562 templates/logs.html:764
+#: services/js_i18n_strings.py:572 templates/logs.html:764
 msgid "All Sources"
 msgstr "모든 소스"
 
-#: services/js_i18n_strings.py:563 templates/all_games.html:42
+#: services/js_i18n_strings.py:573 templates/all_games.html:42
 #: templates/reports.html:328 templates/reports.html:407
 #: templates/reports.html:480
 msgid "All Systems"
 msgstr "모든 시스템"
 
-#: services/js_i18n_strings.py:564
+#: services/js_i18n_strings.py:574
 msgid "Already Syncing"
 msgstr "이미 동기화 중"
 
-#: services/js_i18n_strings.py:565
+#: services/js_i18n_strings.py:575
 msgid "Always on while cheats are on"
 msgstr "치트가 켜져 있는 동안 항상 켜짐"
 
-#: services/js_i18n_strings.py:566
+#: services/js_i18n_strings.py:576
 msgid "An update is already being downloaded."
 msgstr "업데이트를 이미 다운로드하는 중입니다."
 
-#: services/js_i18n_strings.py:567
+#: services/js_i18n_strings.py:577
 #, python-brace-format
 msgid "Applied when you press Play, in the {emulator} settings for this game."
 msgstr "실행을 누르면 이 게임의 {emulator} 설정에 적용됩니다."
 
-#: services/js_i18n_strings.py:568
+#: services/js_i18n_strings.py:578
 #, python-brace-format
 msgid "Applied {n} update(s)."
 msgstr "업데이트 {n}개를 적용했습니다."
 
-#: services/js_i18n_strings.py:569 templates/_bulk_edit_modal.html:193
+#: services/js_i18n_strings.py:579 templates/_bulk_edit_modal.html:193
 msgid "Apply Changes"
 msgstr "변경 사항 적용"
 
-#: services/js_i18n_strings.py:570
+#: services/js_i18n_strings.py:580
 msgid "Apply Normalization"
 msgstr "정규화 적용"
 
-#: services/js_i18n_strings.py:571
+#: services/js_i18n_strings.py:581
 #, python-brace-format
 msgid "Apply failed: {error}"
 msgstr "적용 실패: {error}"
 
-#: services/js_i18n_strings.py:572
+#: services/js_i18n_strings.py:582
 #, python-brace-format
 msgid "Apply {n} Selected"
 msgstr "선택한 {n}개 적용"
 
-#: services/js_i18n_strings.py:573
+#: services/js_i18n_strings.py:583
 #, python-brace-format
 msgid "Apply {n} normalization rule?"
 msgstr "정규화 규칙 {n}개를 적용하시겠습니까?"
 
-#: services/js_i18n_strings.py:574
+#: services/js_i18n_strings.py:584
 #, python-brace-format
 msgid "Apply {n} normalization rules?"
 msgstr "정규화 규칙 {n}개를 적용하시겠습니까?"
 
-#: services/js_i18n_strings.py:575
+#: services/js_i18n_strings.py:585
 msgid "Applying Metadata"
 msgstr "메타데이터 적용 중"
 
-#: services/js_i18n_strings.py:576
+#: services/js_i18n_strings.py:586
 msgid "Applying..."
 msgstr "적용 중..."
 
-#: services/js_i18n_strings.py:577
+#: services/js_i18n_strings.py:587
 msgid "Applying…"
 msgstr "적용 중…"
 
-#: services/js_i18n_strings.py:578
+#: services/js_i18n_strings.py:588
 msgid ""
 "Are you sure you want to cancel the bulk scrape?\n"
 "\n"
@@ -1782,91 +1791,91 @@ msgstr ""
 "\n"
 "참고: 취소가 적용되기 전에 현재 게임의 스크래핑이 완료됩니다(보통 10~60초). 그동안 진행 상황 알림은 계속 업데이트됩니다."
 
-#: services/js_i18n_strings.py:579
+#: services/js_i18n_strings.py:589
 msgid "Are you sure you want to cancel?"
 msgstr "취소하시겠습니까?"
 
-#: services/js_i18n_strings.py:580
+#: services/js_i18n_strings.py:590
 #, python-brace-format
 msgid "Are you sure you want to delete \"{filename}\"?"
 msgstr "\"{filename}\"을(를) 삭제하시겠습니까?"
 
-#: services/js_i18n_strings.py:581
+#: services/js_i18n_strings.py:591
 msgid ""
 "Are you sure you want to reset all metadata for this game? This will "
 "delete boxart and screenshots."
 msgstr "이 게임의 모든 메타데이터를 초기화하시겠습니까? 박스아트와 스크린샷이 삭제됩니다."
 
-#: services/js_i18n_strings.py:582
+#: services/js_i18n_strings.py:592
 msgid "Are you sure you want to restart the server?"
 msgstr "서버를 재시작하시겠습니까?"
 
-#: services/js_i18n_strings.py:583
+#: services/js_i18n_strings.py:593
 msgid ""
 "Are you sure you want to shut down the server? You will need to start it "
 "again manually."
 msgstr "서버를 종료하시겠습니까? 다시 수동으로 시작해야 합니다."
 
-#: services/js_i18n_strings.py:584 templates/settings.html:42
+#: services/js_i18n_strings.py:594 templates/settings.html:42
 msgid "Are you sure?"
 msgstr "확실합니까?"
 
-#: services/js_i18n_strings.py:585
+#: services/js_i18n_strings.py:595
 msgid "As the core sets it"
 msgstr "코어 설정에 따름"
 
-#: services/js_i18n_strings.py:586
+#: services/js_i18n_strings.py:596
 msgid "Asking AI…"
 msgstr "AI에 문의하는 중…"
 
-#: services/js_i18n_strings.py:587
+#: services/js_i18n_strings.py:597
 msgid "Asking the AI. This can take up to a minute."
 msgstr "AI에 요청하는 중입니다. 최대 1분 정도 걸릴 수 있습니다."
 
-#: services/js_i18n_strings.py:588
+#: services/js_i18n_strings.py:598
 #, python-brace-format
 msgid ""
 "Asking the AI: game {current} of {total}. Names suggested: {proposals}. "
 "{system}"
 msgstr "AI에게 묻는 중: 게임 {total}개 중 {current}번째. 제안된 이름: {proposals}. {system}"
 
-#: services/js_i18n_strings.py:589
+#: services/js_i18n_strings.py:599
 msgid "Aspect ratio"
 msgstr "화면 비율"
 
-#: services/js_i18n_strings.py:590
+#: services/js_i18n_strings.py:600
 msgid "BIOS"
 msgstr "BIOS"
 
-#: services/js_i18n_strings.py:592
+#: services/js_i18n_strings.py:602
 msgid "Background removed"
 msgstr "배경이 제거되었습니다"
 
-#: services/js_i18n_strings.py:593
+#: services/js_i18n_strings.py:603
 msgid "Bulk fetch failed"
 msgstr "대량 가져오기 실패"
 
-#: services/js_i18n_strings.py:594
+#: services/js_i18n_strings.py:604
 msgid "Bulk fetch request failed"
 msgstr "대량 가져오기 요청 실패"
 
-#: services/js_i18n_strings.py:595
+#: services/js_i18n_strings.py:605
 msgid "Bulk scraping complete!"
 msgstr "대량 스크래핑이 완료되었습니다!"
 
-#: services/js_i18n_strings.py:596
+#: services/js_i18n_strings.py:606
 msgid "CLZ Imports"
 msgstr "CLZ 가져오기"
 
-#: services/js_i18n_strings.py:597
+#: services/js_i18n_strings.py:607
 msgid "CRT screen"
 msgstr "CRT 화면"
 
-#: services/js_i18n_strings.py:598 templates/game_detail.html:254
+#: services/js_i18n_strings.py:608 templates/game_detail.html:254
 msgid "Can be completed with playable performance and no game-breaking glitches."
 msgstr "플레이 가능한 성능으로, 진행을 막는 결함 없이 끝까지 할 수 있습니다."
 
-#: services/js_i18n_strings.py:599 templates/_bulk_edit_modal.html:191
+#: services/js_i18n_strings.py:609 templates/_bulk_edit_modal.html:191
 #: templates/_bulk_scrape_modal.html:49 templates/_modals/edit_modal.html:12
 #: templates/_modals/rename_modal.html:19
 #: templates/_settings_tabs/account.html:72
@@ -1887,82 +1896,82 @@ msgstr "플레이 가능한 성능으로, 진행을 막는 결함 없이 끝까�
 msgid "Cancel"
 msgstr "취소"
 
-#: services/js_i18n_strings.py:600
+#: services/js_i18n_strings.py:610
 msgid "Cancel Bulk Scrape"
 msgstr "대량 스크래핑 취소"
 
-#: services/js_i18n_strings.py:601
+#: services/js_i18n_strings.py:611
 msgid "Cancel failed"
 msgstr "취소 실패"
 
-#: services/js_i18n_strings.py:602
+#: services/js_i18n_strings.py:612
 msgid "Cancel request failed"
 msgstr "취소 요청 실패"
 
-#: services/js_i18n_strings.py:603
+#: services/js_i18n_strings.py:613
 msgid "Cancellation requested"
 msgstr "취소가 요청되었습니다"
 
-#: services/js_i18n_strings.py:604
+#: services/js_i18n_strings.py:614
 msgid "Cancelled"
 msgstr "취소됨"
 
-#: services/js_i18n_strings.py:605
+#: services/js_i18n_strings.py:615
 msgid "Cancelled by user"
 msgstr "사용자에 의해 취소됨"
 
-#: services/js_i18n_strings.py:606
+#: services/js_i18n_strings.py:616
 msgid "Cheat list changed."
 msgstr "치트 목록을 바꿨습니다."
 
-#: services/js_i18n_strings.py:607
+#: services/js_i18n_strings.py:617
 msgid "Cheats downloaded."
 msgstr "치트를 다운로드했습니다."
 
-#: services/js_i18n_strings.py:608
+#: services/js_i18n_strings.py:618
 msgid "Cheats saved."
 msgstr "치트를 저장했습니다."
 
-#: services/js_i18n_strings.py:609
+#: services/js_i18n_strings.py:619
 msgid "Checking RetroAchievements…"
 msgstr "RetroAchievements 확인 중…"
 
-#: services/js_i18n_strings.py:610
+#: services/js_i18n_strings.py:620
 msgid "Clean Missing ROMs"
 msgstr "누락된 ROM 정리"
 
-#: services/js_i18n_strings.py:611
+#: services/js_i18n_strings.py:621
 msgid "Clear CLZ Imports"
 msgstr "CLZ 가져오기 지우기"
 
-#: services/js_i18n_strings.py:612
+#: services/js_i18n_strings.py:622
 msgid "Clear HLTB data for this game?"
 msgstr "이 게임의 HLTB 데이터를 지우시겠습니까?"
 
-#: services/js_i18n_strings.py:613 templates/achievements_system.html:109
+#: services/js_i18n_strings.py:623 templates/achievements_system.html:109
 msgid "Clear RA Data"
 msgstr "RA 데이터 지우기"
 
-#: services/js_i18n_strings.py:614
+#: services/js_i18n_strings.py:624
 msgid "Clear RetroAchievements Data"
 msgstr "RetroAchievements 데이터 지우기"
 
-#: services/js_i18n_strings.py:615
+#: services/js_i18n_strings.py:625
 #, python-brace-format
 msgid "Cleared RA data for {count} games in {system}"
 msgstr "{system}의 게임 {count}개에서 RA 데이터를 지웠습니다"
 
-#: services/js_i18n_strings.py:616
+#: services/js_i18n_strings.py:626
 #, python-brace-format
 msgid "Cleared RA data for {n} games"
 msgstr "게임 {n}개에서 RA 데이터를 지웠습니다"
 
-#: services/js_i18n_strings.py:617
+#: services/js_i18n_strings.py:627
 #, python-brace-format
 msgid "Cleared RA data for {n} games in {system}"
 msgstr "{system}의 게임 {n}개에서 RA 데이터를 지웠습니다"
 
-#: services/js_i18n_strings.py:618
+#: services/js_i18n_strings.py:628
 #, python-brace-format
 msgid ""
 "Cleared RetroAchievements data for {n} games. Run \"Refresh "
@@ -1971,15 +1980,15 @@ msgstr ""
 "게임 {n}개에서 RetroAchievements 데이터를 지웠습니다. 업데이트된 매칭으로 다시 스캔하려면 "
 "\"RetroAchievements 새로 고침\"을 실행하세요."
 
-#: services/js_i18n_strings.py:619
+#: services/js_i18n_strings.py:629
 msgid "Clearing..."
 msgstr "지우는 중..."
 
-#: services/js_i18n_strings.py:620
+#: services/js_i18n_strings.py:630
 msgid "Click again to remove"
 msgstr "제거하려면 다시 클릭하세요"
 
-#: services/js_i18n_strings.py:621 templates/_bulk_edit_modal.html:8
+#: services/js_i18n_strings.py:631 templates/_bulk_edit_modal.html:8
 #: templates/_bulk_scrape_modal.html:8
 #: templates/_modals/boxart_zoom_modal.html:5
 #: templates/_modals/manual_reader_modal.html:11
@@ -1993,43 +2002,43 @@ msgstr "제거하려면 다시 클릭하세요"
 msgid "Close"
 msgstr "닫기"
 
-#: services/js_i18n_strings.py:622
+#: services/js_i18n_strings.py:632
 msgid "Close keyboard shortcuts"
 msgstr "키보드 단축키 닫기"
 
-#: services/js_i18n_strings.py:623
+#: services/js_i18n_strings.py:633
 msgid "Close modal / cancel"
 msgstr "모달 닫기 / 취소"
 
-#: services/js_i18n_strings.py:624 templates/dashboard.html:188
+#: services/js_i18n_strings.py:634 templates/dashboard.html:188
 #: templates/setup.html:20
 msgid "Complete"
 msgstr "완료"
 
-#: services/js_i18n_strings.py:625
+#: services/js_i18n_strings.py:635
 msgid "Complete!"
 msgstr "완료!"
 
-#: services/js_i18n_strings.py:626 templates/_bulk_edit_modal.html:29
+#: services/js_i18n_strings.py:636 templates/_bulk_edit_modal.html:29
 #: templates/analytics.html:1664 templates/base.html:1014
 #: templates/dashboard.html:506 templates/game_detail.html:275
 msgid "Completed"
 msgstr "완료됨"
 
-#: services/js_i18n_strings.py:627 templates/_bulk_edit_modal.html:23
+#: services/js_i18n_strings.py:637 templates/_bulk_edit_modal.html:23
 #: templates/analytics.html:137 templates/base.html:1009
 msgid "Completion Status"
 msgstr "완료 상태"
 
-#: services/js_i18n_strings.py:628 templates/game_detail.html:271
+#: services/js_i18n_strings.py:638 templates/game_detail.html:271
 msgid "Completion status"
 msgstr "완료 상태"
 
-#: services/js_i18n_strings.py:629
+#: services/js_i18n_strings.py:639
 msgid "Completion status updated"
 msgstr "완료 상태가 업데이트되었습니다"
 
-#: services/js_i18n_strings.py:630 templates/achievement_game.html:172
+#: services/js_i18n_strings.py:640 templates/achievement_game.html:172
 #: templates/achievement_game.html:197 templates/achievement_game.html:211
 #: templates/base.html:1051 templates/game_detail.html:576
 #: templates/game_detail.html:601 templates/game_detail.html:615
@@ -2042,451 +2051,477 @@ msgstr "완료 상태가 업데이트되었습니다"
 msgid "Completionist"
 msgstr "컴플리셔니스트"
 
-#: services/js_i18n_strings.py:631 templates/settings.html:41
+#: services/js_i18n_strings.py:641 templates/settings.html:41
 msgid "Confirm Action"
 msgstr "작업 확인"
 
-#: services/js_i18n_strings.py:632
+#: services/js_i18n_strings.py:642
 msgid "Confirm Bulk Edit"
 msgstr "대량 편집 확인"
 
-#: services/js_i18n_strings.py:633
+#: services/js_i18n_strings.py:643
 msgid "Content generated successfully"
 msgstr "콘텐츠가 성공적으로 생성되었습니다"
 
-#: services/js_i18n_strings.py:634
+#: services/js_i18n_strings.py:644
 msgid "Controller"
 msgstr "컨트롤러"
 
-#: services/js_i18n_strings.py:635
+#: services/js_i18n_strings.py:645
 msgid "Controller image saved"
 msgstr "컨트롤러 이미지가 저장되었습니다"
 
-#: services/js_i18n_strings.py:636
+#: services/js_i18n_strings.py:646
 msgid "Controller image uploaded"
 msgstr "컨트롤러 이미지가 업로드되었습니다"
 
-#: services/js_i18n_strings.py:637
+#: services/js_i18n_strings.py:647
 #, python-brace-format
 msgid "Copied {copied} files; {unchanged} were already there; {skipped} skipped."
 msgstr "파일 {copied}개를 복사했습니다. {unchanged}개는 이미 있었고, {skipped}개는 건너뛰었습니다."
 
-#: services/js_i18n_strings.py:638
+#: services/js_i18n_strings.py:648
 msgid "Core"
 msgstr "코어"
 
-#: services/js_i18n_strings.py:639
+#: services/js_i18n_strings.py:649
 msgid "Could not accept these names."
 msgstr "이 이름들을 수락할 수 없습니다."
 
-#: services/js_i18n_strings.py:640
+#: services/js_i18n_strings.py:650
 msgid "Could not apply metadata."
 msgstr "메타데이터를 적용할 수 없습니다."
 
-#: services/js_i18n_strings.py:641
+#: services/js_i18n_strings.py:651
 msgid "Could not change the cheat list."
 msgstr "치트 목록을 바꿀 수 없습니다."
 
-#: services/js_i18n_strings.py:642
+#: services/js_i18n_strings.py:652
 msgid "Could not check for updates."
 msgstr "업데이트를 확인할 수 없습니다."
 
-#: services/js_i18n_strings.py:643
+#: services/js_i18n_strings.py:653
+msgid "Could not count the games."
+msgstr "게임 수를 셀 수 없습니다."
+
+#: services/js_i18n_strings.py:654
 #, python-brace-format
 msgid ""
 "Could not download the {system} core. Check the internet connection and "
 "try again."
 msgstr "{system} 코어를 다운로드할 수 없습니다. 인터넷 연결을 확인한 후 다시 시도하세요."
 
-#: services/js_i18n_strings.py:644
+#: services/js_i18n_strings.py:655
 msgid "Could not link these versions."
 msgstr "이 버전들을 연결할 수 없습니다."
 
-#: services/js_i18n_strings.py:645
+#: services/js_i18n_strings.py:656
 msgid "Could not load suggestions."
 msgstr "추천 항목을 불러올 수 없습니다."
 
-#: services/js_i18n_strings.py:646
+#: services/js_i18n_strings.py:657
 msgid "Could not load the suggested names."
 msgstr "제안된 이름을 불러올 수 없습니다."
 
-#: services/js_i18n_strings.py:647
+#: services/js_i18n_strings.py:658
 msgid "Could not open this manual. Use \"Open PDF in a new tab\" instead."
 msgstr "이 설명서를 열 수 없습니다. 대신 \"새 탭에서 PDF 열기\"를 사용하세요."
 
-#: services/js_i18n_strings.py:648
+#: services/js_i18n_strings.py:659
 msgid "Could not read the run status."
 msgstr "작업 상태를 읽을 수 없습니다."
 
-#: services/js_i18n_strings.py:649
+#: services/js_i18n_strings.py:660
 msgid "Could not reconnect to server. Please refresh manually."
 msgstr "서버에 다시 연결할 수 없습니다. 수동으로 새로 고침하세요."
 
-#: services/js_i18n_strings.py:650
+#: services/js_i18n_strings.py:661
 msgid "Could not reject these names."
 msgstr "이 이름들을 거절할 수 없습니다."
 
-#: services/js_i18n_strings.py:651
+#: services/js_i18n_strings.py:662
 msgid "Could not save that setting."
 msgstr "해당 설정을 저장할 수 없습니다."
 
-#: services/js_i18n_strings.py:652
+#: services/js_i18n_strings.py:663
 msgid "Could not save that."
 msgstr "저장할 수 없습니다."
 
-#: services/js_i18n_strings.py:653
+#: services/js_i18n_strings.py:664
 msgid "Could not save the cheats."
 msgstr "치트를 저장할 수 없습니다."
 
-#: services/js_i18n_strings.py:654
+#: services/js_i18n_strings.py:665
 msgid "Could not show this page of the manual."
 msgstr "설명서의 이 페이지를 표시할 수 없습니다."
 
-#: services/js_i18n_strings.py:655
+#: services/js_i18n_strings.py:666
 msgid "Could not start the run."
 msgstr "작업을 시작할 수 없습니다."
 
-#: services/js_i18n_strings.py:656
+#: services/js_i18n_strings.py:667
 msgid "Could not stop the run."
 msgstr "작업을 중지할 수 없습니다."
 
-#: services/js_i18n_strings.py:657
+#: services/js_i18n_strings.py:668
 msgid "Could not stop the running instance."
 msgstr "실행 중인 인스턴스를 중지할 수 없습니다."
 
-#: services/js_i18n_strings.py:658
+#: services/js_i18n_strings.py:669
 msgid "Could not unlink this version."
 msgstr "이 버전의 연결을 해제할 수 없습니다."
 
-#: services/js_i18n_strings.py:659
+#: services/js_i18n_strings.py:670
 msgid "Could not write the summary."
 msgstr "요약을 작성할 수 없습니다."
 
-#: services/js_i18n_strings.py:660
+#: services/js_i18n_strings.py:671
 #, python-brace-format
 msgid "Critic Score ({count} reviews)"
 msgstr "평론가 점수 (리뷰 {count}개)"
 
-#: services/js_i18n_strings.py:661
+#: services/js_i18n_strings.py:672
 msgid "Currently set"
 msgstr "현재 설정"
 
-#: services/js_i18n_strings.py:662
+#: services/js_i18n_strings.py:673
 msgid "Default"
 msgstr "기본값"
 
-#: services/js_i18n_strings.py:663
+#: services/js_i18n_strings.py:674
 #, python-brace-format
 msgid "Default emulator for {system}"
 msgstr "{system}의 기본 에뮬레이터"
 
-#: services/js_i18n_strings.py:664
+#: services/js_i18n_strings.py:675
 msgid "Delete Log File"
 msgstr "로그 파일 삭제"
 
-#: services/js_i18n_strings.py:665
+#: services/js_i18n_strings.py:676
 #, python-brace-format
 msgid "Detect failed: {error}"
 msgstr "감지 실패: {error}"
 
-#: services/js_i18n_strings.py:666
+#: services/js_i18n_strings.py:677
 msgid "Detected path"
 msgstr "감지된 경로"
 
-#: services/js_i18n_strings.py:667
+#: services/js_i18n_strings.py:678
 msgid "Detecting…"
 msgstr "감지 중…"
 
-#: services/js_i18n_strings.py:668 templates/game_detail.html:258
+#: services/js_i18n_strings.py:679 templates/game_detail.html:258
 msgid "Does not start, or crashes the emulator."
 msgstr "시작되지 않거나 에뮬레이터가 충돌합니다."
 
-#: services/js_i18n_strings.py:669 templates/_bulk_scrape_modal.html:69
+#: services/js_i18n_strings.py:680 templates/_bulk_scrape_modal.html:69
 #: templates/all_games.html:223 templates/psn_trophies.html:247
 #: templates/psn_trophies.html:307 templates/reports.html:525
 #: templates/system_games.html:203
 msgid "Done"
 msgstr "완료"
 
-#: services/js_i18n_strings.py:670
+#: services/js_i18n_strings.py:681
+msgid "Done."
+msgstr "완료."
+
+#: services/js_i18n_strings.py:682
 #, python-brace-format
 msgid "Done. Games asked: {total}. Names suggested: {proposals}."
 msgstr "완료. 물어본 게임: {total}. 제안된 이름: {proposals}."
 
-#: services/js_i18n_strings.py:671 templates/logs.html:734
+#: services/js_i18n_strings.py:683 templates/logs.html:734
 msgid "Download"
 msgstr "다운로드"
 
-#: services/js_i18n_strings.py:672
+#: services/js_i18n_strings.py:684
 msgid "Download again"
 msgstr "다시 다운로드"
 
-#: services/js_i18n_strings.py:673
+#: services/js_i18n_strings.py:685
 msgid "Download the update first."
 msgstr "먼저 업데이트를 다운로드하세요."
 
-#: services/js_i18n_strings.py:674
+#: services/js_i18n_strings.py:686
 #, python-brace-format
 msgid "Downloaded {date}, {n} files"
 msgstr "{date}에 다운로드함, 파일 {n}개"
 
-#: services/js_i18n_strings.py:675
+#: services/js_i18n_strings.py:687
 msgid "Downloading 3D box art…"
 msgstr "3D 박스아트 다운로드 중…"
 
-#: services/js_i18n_strings.py:676
+#: services/js_i18n_strings.py:688
 msgid "Downloading RetroArch… This can take a few minutes."
 msgstr "RetroArch를 다운로드하는 중… 몇 분 걸릴 수 있습니다."
 
-#: services/js_i18n_strings.py:677
+#: services/js_i18n_strings.py:689
 msgid "Downloading box art…"
 msgstr "박스아트 다운로드 중…"
 
-#: services/js_i18n_strings.py:678
+#: services/js_i18n_strings.py:690
 msgid "Downloading fan art…"
 msgstr "팬아트 다운로드 중…"
 
-#: services/js_i18n_strings.py:679
+#: services/js_i18n_strings.py:691
 msgid "Downloading manual…"
 msgstr "설명서 다운로드 중…"
 
-#: services/js_i18n_strings.py:680
+#: services/js_i18n_strings.py:692
 msgid "Downloading media…"
 msgstr "미디어 다운로드 중…"
 
-#: services/js_i18n_strings.py:681
+#: services/js_i18n_strings.py:693
 msgid "Downloading screenshots…"
 msgstr "스크린샷 다운로드 중…"
 
-#: services/js_i18n_strings.py:682
+#: services/js_i18n_strings.py:694
 #, python-brace-format
 msgid "Downloading the {system} core…"
 msgstr "{system} 코어 다운로드 중…"
 
-#: services/js_i18n_strings.py:683
+#: services/js_i18n_strings.py:695
 msgid "Downloading video…"
 msgstr "동영상 다운로드 중…"
 
-#: services/js_i18n_strings.py:684
+#: services/js_i18n_strings.py:696
 #, python-brace-format
 msgid "Downloading {core} ({done} of {total})…"
 msgstr "{core} 다운로드 중({done}/{total})…"
 
-#: services/js_i18n_strings.py:685
+#: services/js_i18n_strings.py:697
 #, python-brace-format
 msgid "Downloading {pack}…"
 msgstr "{pack} 다운로드 중…"
 
-#: services/js_i18n_strings.py:686
+#: services/js_i18n_strings.py:698
 msgid "DuckStation cheats"
 msgstr "DuckStation 치트"
 
-#: services/js_i18n_strings.py:687
+#: services/js_i18n_strings.py:699
 msgid "DuckStation ignores cheats in hardcore mode."
 msgstr "DuckStation은 하드코어 모드에서 치트를 무시합니다."
 
-#: services/js_i18n_strings.py:688 templates/_settings_tabs/account.html:318
+#: services/js_i18n_strings.py:700 templates/_settings_tabs/account.html:318
 #: templates/base.html:970 templates/game_detail.html:119
 #: templates/wishlist.html:641
 msgid "Edit"
 msgstr "편집"
 
-#: services/js_i18n_strings.py:689
+#: services/js_i18n_strings.py:701
 msgid "Edit game"
 msgstr "게임 편집"
 
-#: services/js_i18n_strings.py:690
+#: services/js_i18n_strings.py:702
 #, python-brace-format
 msgid "Edit: {title}"
 msgstr "편집: {title}"
 
-#: services/js_i18n_strings.py:691
+#: services/js_i18n_strings.py:703
 msgid "Emulator"
 msgstr "에뮬레이터"
 
-#: services/js_i18n_strings.py:692
+#: services/js_i18n_strings.py:704
 msgid "Enter one folder path."
 msgstr "폴더 경로를 하나 입력하세요."
 
-#: services/js_i18n_strings.py:693
+#: services/js_i18n_strings.py:705
 msgid "Error"
 msgstr "오류"
 
-#: services/js_i18n_strings.py:694
+#: services/js_i18n_strings.py:706
 msgid "Error clearing HLTB data"
 msgstr "HLTB 데이터를 지우는 중 오류가 발생했습니다"
 
-#: services/js_i18n_strings.py:695
+#: services/js_i18n_strings.py:707
 msgid "Error connecting to HowLongToBeat"
 msgstr "HowLongToBeat 연결 중 오류가 발생했습니다"
 
-#: services/js_i18n_strings.py:696
+#: services/js_i18n_strings.py:708
 msgid "Error deleting log file"
 msgstr "로그 파일 삭제 중 오류가 발생했습니다"
 
-#: services/js_i18n_strings.py:697
+#: services/js_i18n_strings.py:709
 msgid "Error loading file"
 msgstr "파일 불러오기 오류"
 
-#: services/js_i18n_strings.py:698
+#: services/js_i18n_strings.py:710
 msgid "Error loading log file"
 msgstr "로그 파일 불러오기 오류"
 
-#: services/js_i18n_strings.py:699
+#: services/js_i18n_strings.py:711
 msgid "Error looking up HLTB"
 msgstr "HLTB 조회 중 오류가 발생했습니다"
 
-#: services/js_i18n_strings.py:700
+#: services/js_i18n_strings.py:712
 msgid "Error refreshing RetroAchievements: "
 msgstr "RetroAchievements 새로 고침 중 오류: "
 
-#: services/js_i18n_strings.py:701
+#: services/js_i18n_strings.py:713
 msgid "Error saving HLTB data"
 msgstr "HLTB 데이터 저장 중 오류가 발생했습니다"
 
-#: services/js_i18n_strings.py:702
+#: services/js_i18n_strings.py:714
 msgid "Error saving game: "
 msgstr "게임 저장 중 오류: "
 
-#: services/js_i18n_strings.py:703
+#: services/js_i18n_strings.py:715
 #, python-brace-format
 msgid "Error scanning library: {error}"
 msgstr "라이브러리 스캔 중 오류: {error}"
 
-#: services/js_i18n_strings.py:704
+#: services/js_i18n_strings.py:716
 msgid "Error updating completion status"
 msgstr "완료 상태 업데이트 중 오류가 발생했습니다"
 
-#: services/js_i18n_strings.py:705
+#: services/js_i18n_strings.py:717
 msgid "Error updating status"
 msgstr "상태 업데이트 중 오류가 발생했습니다"
 
-#: services/js_i18n_strings.py:706
+#: services/js_i18n_strings.py:718
 msgid "Europe"
 msgstr "유럽"
 
-#: services/js_i18n_strings.py:707 templates/_modals/edit_modal.html:228
+#: services/js_i18n_strings.py:719
+msgid "Every game here has had AI Fill already."
+msgstr "여기 있는 모든 게임은 이미 AI 채우기를 거쳤습니다."
+
+#: services/js_i18n_strings.py:720 templates/_modals/edit_modal.html:228
 #: templates/base.html:1246
 msgid "Exclusive"
 msgstr "독점"
 
-#: services/js_i18n_strings.py:708
+#: services/js_i18n_strings.py:721
 msgid "Failed to apply bulk edit. Check console for details."
 msgstr "대량 편집 적용에 실패했습니다. 자세한 내용은 콘솔을 확인하세요."
 
-#: services/js_i18n_strings.py:709
+#: services/js_i18n_strings.py:722
 msgid "Failed to apply normalization"
 msgstr "정규화 적용에 실패했습니다"
 
-#: services/js_i18n_strings.py:710
+#: services/js_i18n_strings.py:723
 msgid "Failed to clean missing ROMs"
 msgstr "누락된 ROM 정리에 실패했습니다"
 
-#: services/js_i18n_strings.py:711
+#: services/js_i18n_strings.py:724
 msgid "Failed to clear CLZ imports"
 msgstr "CLZ 가져오기 지우기에 실패했습니다"
 
-#: services/js_i18n_strings.py:712
+#: services/js_i18n_strings.py:725
 msgid "Failed to clear HLTB: "
 msgstr "HLTB 지우기 실패: "
 
-#: services/js_i18n_strings.py:713
+#: services/js_i18n_strings.py:726
 msgid "Failed to clear RA data"
 msgstr "RA 데이터 지우기에 실패했습니다"
 
-#: services/js_i18n_strings.py:714
+#: services/js_i18n_strings.py:727
 msgid "Failed to delete"
 msgstr "삭제에 실패했습니다"
 
-#: services/js_i18n_strings.py:715
+#: services/js_i18n_strings.py:728
 msgid "Failed to fetch controller image"
 msgstr "컨트롤러 이미지를 가져오지 못했습니다"
 
-#: services/js_i18n_strings.py:716
+#: services/js_i18n_strings.py:729
 msgid "Failed to fetch image"
 msgstr "이미지를 가져오지 못했습니다"
 
-#: services/js_i18n_strings.py:717
+#: services/js_i18n_strings.py:730
 msgid "Failed to load game"
 msgstr "게임을 불러오지 못했습니다"
 
-#: services/js_i18n_strings.py:718
+#: services/js_i18n_strings.py:731
 msgid "Failed to load normalization data"
 msgstr "정규화 데이터를 불러오지 못했습니다"
 
-#: services/js_i18n_strings.py:719
+#: services/js_i18n_strings.py:732
 msgid "Failed to save HLTB: "
 msgstr "HLTB 저장 실패: "
 
-#: services/js_i18n_strings.py:721
+#: services/js_i18n_strings.py:734
 msgid "Failed to save: "
 msgstr "저장 실패: "
 
-#: services/js_i18n_strings.py:722
+#: services/js_i18n_strings.py:735
 msgid "Failed to start RetroAchievements refresh"
 msgstr "RetroAchievements 새로 고침 시작에 실패했습니다"
 
-#: services/js_i18n_strings.py:723
+#: services/js_i18n_strings.py:736
 msgid "Failed to start bulk scrape"
 msgstr "대량 스크래핑 시작에 실패했습니다"
 
-#: services/js_i18n_strings.py:724
+#: services/js_i18n_strings.py:737
 msgid "Failed to start generation"
 msgstr "생성 시작에 실패했습니다"
 
-#: services/js_i18n_strings.py:725
+#: services/js_i18n_strings.py:738
 msgid "Failed to update completion status: "
 msgstr "완료 상태 업데이트 실패: "
 
-#: services/js_i18n_strings.py:726
+#: services/js_i18n_strings.py:739
 #, python-brace-format
 msgid "Failed to update status: {error}"
 msgstr "상태 업데이트 실패: {error}"
 
-#: services/js_i18n_strings.py:727
+#: services/js_i18n_strings.py:740
 #, python-brace-format
 msgid "Failed: {error}"
 msgstr "실패: {error}"
 
-#: services/js_i18n_strings.py:728
+#: services/js_i18n_strings.py:741
 msgid "Fetch All Controller Images"
 msgstr "모든 컨트롤러 이미지 가져오기"
 
-#: services/js_i18n_strings.py:729
+#: services/js_i18n_strings.py:742
 #, python-brace-format
 msgid "Fetching from {source}…"
 msgstr "{source}에서 가져오는 중…"
 
-#: services/js_i18n_strings.py:730
+#: services/js_i18n_strings.py:743
 #, python-brace-format
 msgid "Fetching images: {done} of {total}"
 msgstr "이미지 가져오는 중: {done} / {total}"
 
-#: services/js_i18n_strings.py:731
+#: services/js_i18n_strings.py:744 templates/official_names_review.html:126
+msgid "Fill with AI"
+msgstr "AI로 채우기"
+
+#: services/js_i18n_strings.py:745
+#, python-brace-format
+msgid "Fill {count} games with AI? Your AI provider charges for each game."
+msgstr "게임 {count}개를 AI로 채울까요? AI 제공업체는 게임마다 요금을 청구합니다."
+
+#: services/js_i18n_strings.py:746
+#, python-brace-format
+msgid "Filling game {current} of {total}: {title}. Filled so far: {filled}."
+msgstr "게임 {current}/{total} 채우는 중: {title}. 지금까지 채운 수: {filled}."
+
+#: services/js_i18n_strings.py:747
 msgid "Focus search box"
 msgstr "검색창에 포커스"
 
-#: services/js_i18n_strings.py:732 templates/logs.html:743
+#: services/js_i18n_strings.py:748 templates/logs.html:743
 msgid "From"
 msgstr "시작"
 
-#: services/js_i18n_strings.py:733
+#: services/js_i18n_strings.py:749
 msgid "From the system setting"
 msgstr "시스템 설정에서"
 
-#: services/js_i18n_strings.py:734
+#: services/js_i18n_strings.py:750
 msgid "Fullscreen"
 msgstr "전체 화면"
 
-#: services/js_i18n_strings.py:735
+#: services/js_i18n_strings.py:751
 msgid "Game Page"
 msgstr "게임 페이지"
 
-#: services/js_i18n_strings.py:736
+#: services/js_i18n_strings.py:752
 msgid "Game details updated successfully."
 msgstr "게임 정보가 성공적으로 업데이트되었습니다."
 
-#: services/js_i18n_strings.py:737 templates/_settings_tabs/data.html:186
+#: services/js_i18n_strings.py:753 templates/_settings_tabs/data.html:186
 #: templates/achievements_system.html:119 templates/analytics.html:571
 #: templates/analytics.html:1584 templates/analytics.html:1625
 #: templates/analytics.html:1947 templates/analytics.html:2122
@@ -2496,117 +2531,122 @@ msgstr "게임 정보가 성공적으로 업데이트되었습니다."
 msgid "Games"
 msgstr "게임"
 
-#: services/js_i18n_strings.py:738
+#: services/js_i18n_strings.py:754
+#, python-brace-format
+msgid "Games to fill: {count}."
+msgstr "채울 게임: {count}개."
+
+#: services/js_i18n_strings.py:755
 msgid "Generate All Museum Content"
 msgstr "모든 박물관 콘텐츠 생성"
 
-#: services/js_i18n_strings.py:739 templates/museum_system.html:45
+#: services/js_i18n_strings.py:756 templates/museum_system.html:45
 msgid "Generate Content"
 msgstr "콘텐츠 생성"
 
-#: services/js_i18n_strings.py:740 templates/museum.html:28
+#: services/js_i18n_strings.py:757 templates/museum.html:28
 msgid "Generating content..."
 msgstr "콘텐츠 생성 중..."
 
-#: services/js_i18n_strings.py:741
+#: services/js_i18n_strings.py:758
 msgid "Generating..."
 msgstr "생성 중..."
 
-#: services/js_i18n_strings.py:742
+#: services/js_i18n_strings.py:759
 msgid "Generation cancelled"
 msgstr "생성이 취소되었습니다"
 
-#: services/js_i18n_strings.py:743
+#: services/js_i18n_strings.py:760
 #, python-brace-format
 msgid ""
 "Generation complete: {generated} generated, {skipped} skipped, {failed} "
 "failed"
 msgstr "생성 완료: {generated}개 생성, {skipped}개 건너뜀, {failed}개 실패"
 
-#: services/js_i18n_strings.py:744
+#: services/js_i18n_strings.py:761
 msgid "Generation failed"
 msgstr "생성에 실패했습니다"
 
-#: services/js_i18n_strings.py:745
+#: services/js_i18n_strings.py:762
 msgid "Generation request failed"
 msgstr "생성 요청 실패"
 
-#: services/js_i18n_strings.py:746
+#: services/js_i18n_strings.py:763
 msgid "Get cheats in Settings > Emulators"
 msgstr "설정 > 에뮬레이터에서 치트를 받으세요"
 
-#: services/js_i18n_strings.py:747 templates/game_detail.html:255
+#: services/js_i18n_strings.py:764 templates/game_detail.html:255
 msgid ""
 "Gets in game, but cannot be finished, has serious glitches or runs too "
 "slowly."
 msgstr "게임에 들어가지만 끝까지 할 수 없거나, 심각한 결함이 있거나, 너무 느립니다."
 
-#: services/js_i18n_strings.py:748
+#: services/js_i18n_strings.py:765
 msgid "Go to Analytics"
 msgstr "분석으로 이동"
 
-#: services/js_i18n_strings.py:749
+#: services/js_i18n_strings.py:766
 msgid "Go to Changelog"
 msgstr "변경 이력으로 이동"
 
-#: services/js_i18n_strings.py:750
+#: services/js_i18n_strings.py:767
 msgid "Go to Dashboard"
 msgstr "대시보드로 이동"
 
-#: services/js_i18n_strings.py:751
+#: services/js_i18n_strings.py:768
 msgid "Go to Help"
 msgstr "도움말로 이동"
 
-#: services/js_i18n_strings.py:752
+#: services/js_i18n_strings.py:769
 msgid "Go to Library"
 msgstr "라이브러리로 이동"
 
-#: services/js_i18n_strings.py:753
+#: services/js_i18n_strings.py:770
 msgid "Go to Settings"
 msgstr "설정으로 이동"
 
-#: services/js_i18n_strings.py:754
+#: services/js_i18n_strings.py:771
 msgid "Go to Systems"
 msgstr "시스템으로 이동"
 
-#: services/js_i18n_strings.py:755
+#: services/js_i18n_strings.py:772
 msgid "HLTB data cleared"
 msgstr "HLTB 데이터가 지워졌습니다"
 
-#: services/js_i18n_strings.py:756
+#: services/js_i18n_strings.py:773
 msgid "HLTB data saved"
 msgstr "HLTB 데이터가 저장되었습니다"
 
-#: services/js_i18n_strings.py:757
+#: services/js_i18n_strings.py:774
 msgid "HLTB lookup cancelled"
 msgstr "HLTB 조회가 취소되었습니다"
 
-#: services/js_i18n_strings.py:758
+#: services/js_i18n_strings.py:775
 msgid "Handheld LCD"
 msgstr "휴대용 LCD"
 
-#: services/js_i18n_strings.py:759 templates/all_games.html:99
+#: services/js_i18n_strings.py:776 templates/all_games.html:99
 #: templates/system_games.html:90
 msgid "Has Achievements"
 msgstr "업적 있음"
 
-#: services/js_i18n_strings.py:760 templates/logs.html:719
+#: services/js_i18n_strings.py:777 templates/logs.html:719
 msgid "Image Resize"
 msgstr "이미지 크기 조정"
 
-#: services/js_i18n_strings.py:761
+#: services/js_i18n_strings.py:778
 msgid "Image fetch cancelled."
 msgstr "이미지 가져오기가 취소되었습니다."
 
-#: services/js_i18n_strings.py:762
+#: services/js_i18n_strings.py:779
 msgid "Image must be under 10MB"
 msgstr "이미지는 10MB 미만이어야 합니다"
 
-#: services/js_i18n_strings.py:763
+#: services/js_i18n_strings.py:780
 msgid "Importing…"
 msgstr "가져오는 중…"
 
-#: services/js_i18n_strings.py:764 templates/_bulk_edit_modal.html:27
+#: services/js_i18n_strings.py:781 templates/_bulk_edit_modal.html:27
 #: templates/achievements_system.html:151
 #: templates/achievements_system.html:170 templates/analytics.html:1664
 #: templates/base.html:1012 templates/dashboard.html:362
@@ -2615,115 +2655,115 @@ msgstr "가져오는 중…"
 msgid "In Progress"
 msgstr "진행 중"
 
-#: services/js_i18n_strings.py:765
+#: services/js_i18n_strings.py:782
 msgid "Initializing bulk scrape..."
 msgstr "대량 스크래핑 초기화 중..."
 
-#: services/js_i18n_strings.py:766 templates/_bulk_scrape_modal.html:23
+#: services/js_i18n_strings.py:783 templates/_bulk_scrape_modal.html:23
 #: templates/duplicate_finder.html:250 templates/screenshot_dedup.html:276
 msgid "Initializing..."
 msgstr "초기화 중..."
 
-#: services/js_i18n_strings.py:767
+#: services/js_i18n_strings.py:784
 msgid "Input lag reduction"
 msgstr "입력 지연 감소"
 
-#: services/js_i18n_strings.py:768
+#: services/js_i18n_strings.py:785
 msgid "Install update"
 msgstr "업데이트 설치"
 
-#: services/js_i18n_strings.py:769
+#: services/js_i18n_strings.py:786
 #, python-brace-format
 msgid "Installed {n} cores."
 msgstr "코어 {n}개를 설치했습니다."
 
-#: services/js_i18n_strings.py:770
+#: services/js_i18n_strings.py:787
 #, python-brace-format
 msgid "Installed {n} cores. Failed: {failed}"
 msgstr "코어 {n}개를 설치했습니다. 실패: {failed}"
 
-#: services/js_i18n_strings.py:771
+#: services/js_i18n_strings.py:788
 msgid "Installing the update and restarting RetroDB…"
 msgstr "업데이트를 설치하고 RetroDB를 다시 시작하는 중…"
 
-#: services/js_i18n_strings.py:772
+#: services/js_i18n_strings.py:789
 msgid "Integer scaling"
 msgstr "정수배 스케일링"
 
-#: services/js_i18n_strings.py:773
+#: services/js_i18n_strings.py:790
 msgid "Japan"
 msgstr "일본"
 
-#: services/js_i18n_strings.py:774
+#: services/js_i18n_strings.py:791
 msgid "Just synced"
 msgstr "방금 동기화됨"
 
-#: services/js_i18n_strings.py:775
+#: services/js_i18n_strings.py:792
 msgid "Keyboard Shortcuts"
 msgstr "키보드 단축키"
 
-#: services/js_i18n_strings.py:776
+#: services/js_i18n_strings.py:793
 msgid "Kill"
 msgstr "강제 종료"
 
-#: services/js_i18n_strings.py:777
+#: services/js_i18n_strings.py:794
 #, python-brace-format
 msgid "Last tested {date}."
 msgstr "마지막 테스트: {date}."
 
-#: services/js_i18n_strings.py:778
+#: services/js_i18n_strings.py:795
 #, python-brace-format
 msgid "Launch failed: {error}"
 msgstr "실행 실패: {error}"
 
-#: services/js_i18n_strings.py:779
+#: services/js_i18n_strings.py:796
 #, python-brace-format
 msgid "Launched (pid {pid})"
 msgstr "실행됨 (pid {pid})"
 
-#: services/js_i18n_strings.py:780
+#: services/js_i18n_strings.py:797
 msgid "Launched (replaced previous instance)"
 msgstr "실행됨 (이전 인스턴스를 대체함)"
 
-#: services/js_i18n_strings.py:781
+#: services/js_i18n_strings.py:798
 msgid "Launching…"
 msgstr "실행 중…"
 
-#: services/js_i18n_strings.py:782
+#: services/js_i18n_strings.py:799
 #, python-brace-format
 msgid "Library scan complete! Found {n} new games."
 msgstr "라이브러리 스캔 완료! 새 게임 {n}개를 찾았습니다."
 
-#: services/js_i18n_strings.py:783
+#: services/js_i18n_strings.py:800
 msgid "Link"
 msgstr "연결"
 
-#: services/js_i18n_strings.py:784
+#: services/js_i18n_strings.py:801
 msgid "Link ticked games"
 msgstr "선택한 게임 연결"
 
-#: services/js_i18n_strings.py:785
+#: services/js_i18n_strings.py:802
 msgid "Loading log file..."
 msgstr "로그 파일 불러오는 중..."
 
-#: services/js_i18n_strings.py:786
+#: services/js_i18n_strings.py:803
 msgid "Loading the manual…"
 msgstr "설명서를 불러오는 중…"
 
-#: services/js_i18n_strings.py:787 templates/settings_emulators.html:157
+#: services/js_i18n_strings.py:804 templates/settings_emulators.html:157
 #: templates/settings_emulators.html:227
 msgid "Loading…"
 msgstr "불러오는 중…"
 
-#: services/js_i18n_strings.py:788
+#: services/js_i18n_strings.py:805
 msgid "Log file deleted"
 msgstr "로그 파일이 삭제되었습니다"
 
-#: services/js_i18n_strings.py:789
+#: services/js_i18n_strings.py:806
 msgid "Looking for versions…"
 msgstr "버전을 찾는 중…"
 
-#: services/js_i18n_strings.py:790 templates/achievement_game.html:168
+#: services/js_i18n_strings.py:807 templates/achievement_game.html:168
 #: templates/achievement_game.html:197 templates/achievement_game.html:207
 #: templates/base.html:1047 templates/game_detail.html:572
 #: templates/game_detail.html:601 templates/game_detail.html:611
@@ -2736,7 +2776,7 @@ msgstr "버전을 찾는 중…"
 msgid "Main + Extras"
 msgstr "메인 + 부가 요소"
 
-#: services/js_i18n_strings.py:791 templates/achievement_game.html:164
+#: services/js_i18n_strings.py:808 templates/achievement_game.html:164
 #: templates/achievement_game.html:197 templates/achievement_game.html:203
 #: templates/base.html:1043 templates/game_detail.html:568
 #: templates/game_detail.html:601 templates/game_detail.html:607
@@ -2749,332 +2789,332 @@ msgstr "메인 + 부가 요소"
 msgid "Main Story"
 msgstr "메인 스토리"
 
-#: services/js_i18n_strings.py:792
+#: services/js_i18n_strings.py:809
 msgid "Marked as not versions."
 msgstr "버전 아님으로 표시했습니다."
 
-#: services/js_i18n_strings.py:793
+#: services/js_i18n_strings.py:810
 msgid "Match found - please confirm to save"
 msgstr "일치 항목을 찾았습니다 - 저장하려면 확인하세요"
 
-#: services/js_i18n_strings.py:794
+#: services/js_i18n_strings.py:811
 msgid ""
 "Matched using this alternate/regional title — confirm it refers to the "
 "same game before saving."
 msgstr "이 대체/지역 제목으로 일치했습니다 — 저장하기 전에 같은 게임을 가리키는지 확인하세요."
 
-#: services/js_i18n_strings.py:795
+#: services/js_i18n_strings.py:812
 #, python-brace-format
 msgid ""
 "Matched via alternate title \"{term}\" — HLTB shows it as \"{match}\". "
 "Confirm before saving."
 msgstr "대체 제목 \"{term}\"(으)로 일치했습니다 — HLTB에는 \"{match}\"(으)로 표시됩니다. 저장하기 전에 확인하세요."
 
-#: services/js_i18n_strings.py:796
+#: services/js_i18n_strings.py:813
 #, python-brace-format
 msgid "Missing: {files}"
 msgstr "누락: {files}"
 
-#: services/js_i18n_strings.py:797
+#: services/js_i18n_strings.py:814
 msgid "Multi-System"
 msgstr "멀티 시스템"
 
-#: services/js_i18n_strings.py:798
+#: services/js_i18n_strings.py:815
 msgid "Multi-platform"
 msgstr "멀티 플랫폼"
 
-#: services/js_i18n_strings.py:799
+#: services/js_i18n_strings.py:816
 msgid "Museum generation started"
 msgstr "박물관 생성이 시작되었습니다"
 
-#: services/js_i18n_strings.py:800
+#: services/js_i18n_strings.py:817
 msgid "NOT"
 msgstr "아님"
 
-#: services/js_i18n_strings.py:801
+#: services/js_i18n_strings.py:818
 #, python-brace-format
 msgid "Names changed: {accepted}."
 msgstr "바뀐 이름: {accepted}."
 
-#: services/js_i18n_strings.py:802
+#: services/js_i18n_strings.py:819
 #, python-brace-format
 msgid ""
 "Names changed: {accepted}. Skipped because their title changed since: "
 "{skipped}."
 msgstr "바뀐 이름: {accepted}. 그사이 제목이 바뀌어 건너뜀: {skipped}."
 
-#: services/js_i18n_strings.py:803
+#: services/js_i18n_strings.py:820
 #, python-brace-format
 msgid "Names rejected: {rejected}. They will not be suggested again."
 msgstr "거절한 이름: {rejected}. 다시 제안되지 않습니다."
 
-#: services/js_i18n_strings.py:804
+#: services/js_i18n_strings.py:821
 msgid "Navigation"
 msgstr "탐색"
 
-#: services/js_i18n_strings.py:805
+#: services/js_i18n_strings.py:822
 msgid "Network error"
 msgstr "네트워크 오류"
 
-#: services/js_i18n_strings.py:806
+#: services/js_i18n_strings.py:823
 msgid "Network error starting bulk scrape"
 msgstr "대량 스크래핑 시작 중 네트워크 오류"
 
-#: services/js_i18n_strings.py:807
+#: services/js_i18n_strings.py:824
 msgid "Next disk"
 msgstr "다음 디스크"
 
-#: services/js_i18n_strings.py:808
+#: services/js_i18n_strings.py:825
 msgid "Next disk failed"
 msgstr "다음 디스크 전환 실패"
 
-#: services/js_i18n_strings.py:809 templates/_bulk_edit_modal.html:171
+#: services/js_i18n_strings.py:826 templates/_bulk_edit_modal.html:171
 #: templates/_modals/edit_modal.html:148 templates/game_detail.html:730
 #: templates/game_detail.html:798
 msgid "No"
 msgstr "아니요"
 
-#: services/js_i18n_strings.py:810
+#: services/js_i18n_strings.py:827
 msgid "No (already set)"
 msgstr "아니요(이미 설정됨)"
 
-#: services/js_i18n_strings.py:811
+#: services/js_i18n_strings.py:828
 msgid "No CLZ Import games found"
 msgstr "CLZ 가져오기 게임을 찾을 수 없습니다"
 
-#: services/js_i18n_strings.py:812
+#: services/js_i18n_strings.py:829
 msgid "No Changes"
 msgstr "변경 사항 없음"
 
-#: services/js_i18n_strings.py:813
+#: services/js_i18n_strings.py:830
 msgid "No Games Selected"
 msgstr "선택된 게임 없음"
 
-#: services/js_i18n_strings.py:814
+#: services/js_i18n_strings.py:831
 msgid "No HLTB data found"
 msgstr "HLTB 데이터를 찾을 수 없습니다"
 
-#: services/js_i18n_strings.py:815
+#: services/js_i18n_strings.py:832
 msgid "No achievements found"
 msgstr "업적을 찾을 수 없습니다"
 
-#: services/js_i18n_strings.py:816 templates/achievement_game.html:72
+#: services/js_i18n_strings.py:833 templates/achievement_game.html:72
 #: templates/steam_achievement_game.html:69
 #: templates/xbox_achievement_game.html:59
 msgid "No description available."
 msgstr "사용 가능한 설명이 없습니다."
 
-#: services/js_i18n_strings.py:817
+#: services/js_i18n_strings.py:834
 msgid "No emulator AppImages found in the scan paths."
 msgstr "스캔 경로에서 에뮬레이터 AppImage를 찾을 수 없습니다."
 
-#: services/js_i18n_strings.py:818
+#: services/js_i18n_strings.py:835
 msgid "No emulators registered."
 msgstr "등록된 에뮬레이터가 없습니다."
 
-#: services/js_i18n_strings.py:819
+#: services/js_i18n_strings.py:836
 msgid "No folders yet."
 msgstr "아직 폴더가 없습니다."
 
-#: services/js_i18n_strings.py:820
+#: services/js_i18n_strings.py:837
 msgid "No games or systems match"
 msgstr "일치하는 게임이나 시스템이 없습니다"
 
-#: services/js_i18n_strings.py:821
+#: services/js_i18n_strings.py:838
 msgid "No log files in this category"
 msgstr "이 카테고리에 로그 파일이 없습니다"
 
-#: services/js_i18n_strings.py:822
+#: services/js_i18n_strings.py:839
 msgid "No log lines match current filters"
 msgstr "현재 필터와 일치하는 로그 줄이 없습니다"
 
-#: services/js_i18n_strings.py:823
+#: services/js_i18n_strings.py:840
 msgid "No mappings yet. Add an emulator folder above."
 msgstr "아직 연결된 항목이 없습니다. 위에서 에뮬레이터 폴더를 추가하세요."
 
-#: services/js_i18n_strings.py:824
+#: services/js_i18n_strings.py:841
 msgid "No matching games on this system."
 msgstr "이 시스템에 일치하는 게임이 없습니다."
 
-#: services/js_i18n_strings.py:825
+#: services/js_i18n_strings.py:842
 msgid "No missing ROM files found."
 msgstr "누락된 ROM 파일을 찾을 수 없습니다."
 
-#: services/js_i18n_strings.py:826
+#: services/js_i18n_strings.py:843
 msgid "No newer version is available."
 msgstr "새 버전이 없습니다."
 
-#: services/js_i18n_strings.py:827
+#: services/js_i18n_strings.py:844
 msgid "No options available"
 msgstr "사용 가능한 옵션이 없습니다"
 
-#: services/js_i18n_strings.py:828
+#: services/js_i18n_strings.py:845
 msgid "No ratings available"
 msgstr "사용 가능한 등급이 없습니다"
 
-#: services/js_i18n_strings.py:829
+#: services/js_i18n_strings.py:846
 msgid "No results"
 msgstr "결과 없음"
 
-#: services/js_i18n_strings.py:830
+#: services/js_i18n_strings.py:847
 msgid "No results found"
 msgstr "결과를 찾을 수 없습니다"
 
-#: services/js_i18n_strings.py:831
+#: services/js_i18n_strings.py:848
 msgid "No results found on HowLongToBeat"
 msgstr "HowLongToBeat에서 결과를 찾을 수 없습니다"
 
-#: services/js_i18n_strings.py:832
+#: services/js_i18n_strings.py:849
 msgid "No sessions match current filters"
 msgstr "현재 필터와 일치하는 세션이 없습니다"
 
-#: services/js_i18n_strings.py:833
+#: services/js_i18n_strings.py:850
 msgid "No suggested names waiting. Press Ask the AI to look for some."
 msgstr "대기 중인 제안 이름이 없습니다. \"AI에게 묻기\"를 눌러 찾아보세요."
 
-#: services/js_i18n_strings.py:834
+#: services/js_i18n_strings.py:851
 msgid "No suggestions. Run Backfill Alternate Titles in Maintenance to find more."
 msgstr "추천 항목이 없습니다. 유지 관리에서 대체 제목 백필을 실행하면 더 찾을 수 있습니다."
 
-#: services/js_i18n_strings.py:835 templates/game_detail.html:896
+#: services/js_i18n_strings.py:852 templates/game_detail.html:896
 msgid "None"
 msgstr "없음"
 
-#: services/js_i18n_strings.py:836
+#: services/js_i18n_strings.py:853
 #, python-brace-format
 msgid "Normalization applied: {games} games updated, {rules} rules saved"
 msgstr "정규화 적용됨: 게임 {games}개 업데이트, 규칙 {rules}개 저장됨"
 
-#: services/js_i18n_strings.py:837
+#: services/js_i18n_strings.py:854
 msgid "Not downloaded"
 msgstr "다운로드하지 않음"
 
-#: services/js_i18n_strings.py:838
+#: services/js_i18n_strings.py:855
 msgid "Not versions"
 msgstr "버전 아님"
 
-#: services/js_i18n_strings.py:839 templates/base.html:1405
+#: services/js_i18n_strings.py:856 templates/base.html:1405
 msgid "Now playing"
 msgstr "플레이 중"
 
-#: services/js_i18n_strings.py:840 templates/base.html:339
+#: services/js_i18n_strings.py:857 templates/base.html:339
 msgid "OK"
 msgstr "확인"
 
-#: services/js_i18n_strings.py:841
+#: services/js_i18n_strings.py:858
 msgid "Off"
 msgstr "끔"
 
-#: services/js_i18n_strings.py:842
+#: services/js_i18n_strings.py:859
 msgid "On"
 msgstr "켬"
 
-#: services/js_i18n_strings.py:843
+#: services/js_i18n_strings.py:860
 msgid "Operation completed"
 msgstr "작업이 완료되었습니다"
 
-#: services/js_i18n_strings.py:844
+#: services/js_i18n_strings.py:861
 msgid "Operation failed"
 msgstr "작업이 실패했습니다"
 
-#: services/js_i18n_strings.py:845
+#: services/js_i18n_strings.py:862
 msgid "Other"
 msgstr "기타"
 
-#: services/js_i18n_strings.py:846
+#: services/js_i18n_strings.py:863
 msgid "PCSX2 applies these lines whenever any cheat is on."
 msgstr "PCSX2는 치트가 하나라도 켜져 있으면 항상 이 줄들을 적용합니다."
 
-#: services/js_i18n_strings.py:847
+#: services/js_i18n_strings.py:864
 msgid "PCSX2 cheats (community collection)"
 msgstr "PCSX2 치트(커뮤니티 모음)"
 
-#: services/js_i18n_strings.py:848
+#: services/js_i18n_strings.py:865
 msgid "PCSX2 ignores cheats in hardcore mode."
 msgstr "PCSX2는 하드코어 모드에서 치트를 무시합니다."
 
-#: services/js_i18n_strings.py:849
+#: services/js_i18n_strings.py:866
 msgid "PSN Imports"
 msgstr "PSN 가져오기"
 
-#: services/js_i18n_strings.py:850
+#: services/js_i18n_strings.py:867
 msgid "Page:"
 msgstr "페이지:"
 
-#: services/js_i18n_strings.py:851
+#: services/js_i18n_strings.py:868
 msgid "Part of a Series"
 msgstr "시리즈의 일부"
 
-#: services/js_i18n_strings.py:852 templates/_bulk_scrape_modal.html:46
+#: services/js_i18n_strings.py:869 templates/_bulk_scrape_modal.html:46
 #: templates/archive_scanner.html:658 templates/archive_scanner.html:795
 #: templates/psn_trophies.html:294
 msgid "Pause"
 msgstr "일시정지"
 
-#: services/js_i18n_strings.py:853
+#: services/js_i18n_strings.py:870
 msgid "Paused - Click Resume to continue"
 msgstr "일시정지됨 - 계속하려면 재개를 클릭하세요"
 
-#: services/js_i18n_strings.py:854
+#: services/js_i18n_strings.py:871
 msgid "Platform not found"
 msgstr "플랫폼을 찾을 수 없습니다"
 
-#: services/js_i18n_strings.py:855 templates/game_detail.html:99
+#: services/js_i18n_strings.py:872 templates/game_detail.html:99
 msgid "Play"
 msgstr "실행"
 
-#: services/js_i18n_strings.py:856 templates/_bulk_edit_modal.html:28
+#: services/js_i18n_strings.py:873 templates/_bulk_edit_modal.html:28
 #: templates/analytics.html:1664 templates/base.html:1013
 #: templates/dashboard.html:504 templates/game_detail.html:274
 msgid "Played"
 msgstr "플레이함"
 
-#: services/js_i18n_strings.py:857
+#: services/js_i18n_strings.py:874
 msgid "Please change at least one field before applying."
 msgstr "적용하기 전에 하나 이상의 필드를 변경하세요."
 
-#: services/js_i18n_strings.py:858
+#: services/js_i18n_strings.py:875
 msgid "Please enter a game title"
 msgstr "게임 제목을 입력하세요"
 
-#: services/js_i18n_strings.py:859
+#: services/js_i18n_strings.py:876
 msgid "Please select at least one game to edit."
 msgstr "편집할 게임을 하나 이상 선택하세요."
 
-#: services/js_i18n_strings.py:860
+#: services/js_i18n_strings.py:877
 msgid "Please select at least one game to scrape."
 msgstr "스크래핑할 게임을 하나 이상 선택하세요."
 
-#: services/js_i18n_strings.py:861
+#: services/js_i18n_strings.py:878
 msgid "Pre-session log entries"
 msgstr "세션 시작 전 로그 항목"
 
-#: services/js_i18n_strings.py:862
+#: services/js_i18n_strings.py:879
 msgid "Processing images…"
 msgstr "이미지 처리 중…"
 
-#: services/js_i18n_strings.py:863 templates/game_imports.html:418
+#: services/js_i18n_strings.py:880 templates/game_imports.html:418
 msgid "Processing..."
 msgstr "처리 중..."
 
-#: services/js_i18n_strings.py:864
+#: services/js_i18n_strings.py:881
 #, python-brace-format
 msgid "Processing: {file}"
 msgstr "처리 중: {file}"
 
-#: services/js_i18n_strings.py:865
+#: services/js_i18n_strings.py:882
 msgid "Queued"
 msgstr "대기 중"
 
-#: services/js_i18n_strings.py:866
+#: services/js_i18n_strings.py:883
 msgid "RA Data Cleared"
 msgstr "RA 데이터 삭제됨"
 
-#: services/js_i18n_strings.py:867
+#: services/js_i18n_strings.py:884
 msgid "ROM Files"
 msgstr "ROM 파일"
 
-#: services/js_i18n_strings.py:868 templates/_macros/nav_tabs.html:34
+#: services/js_i18n_strings.py:885 templates/_macros/nav_tabs.html:34
 #: templates/archive_scanner.html:561 templates/base.html:174
 #: templates/chd_converter.html:64 templates/chd_verify.html:80
 #: templates/duplicate_finder.html:166 templates/logs.html:713
@@ -3084,486 +3124,491 @@ msgstr "ROM 파일"
 msgid "ROM Tools"
 msgstr "ROM 도구"
 
-#: services/js_i18n_strings.py:869 templates/game_detail.html:255
+#: services/js_i18n_strings.py:886 templates/game_detail.html:255
 msgid "RPCS3: Ingame"
 msgstr "RPCS3: 게임 내"
 
-#: services/js_i18n_strings.py:870 templates/game_detail.html:256
+#: services/js_i18n_strings.py:887 templates/game_detail.html:256
 msgid "RPCS3: Intro"
 msgstr "RPCS3: 인트로"
 
-#: services/js_i18n_strings.py:871 templates/game_detail.html:257
+#: services/js_i18n_strings.py:888 templates/game_detail.html:257
 msgid "RPCS3: Loadable"
 msgstr "RPCS3: 로드 가능"
 
-#: services/js_i18n_strings.py:872 templates/game_detail.html:258
+#: services/js_i18n_strings.py:889 templates/game_detail.html:258
 msgid "RPCS3: Nothing"
 msgstr "RPCS3: 작동 안 함"
 
-#: services/js_i18n_strings.py:873 templates/game_detail.html:254
+#: services/js_i18n_strings.py:890 templates/game_detail.html:254
 msgid "RPCS3: Playable"
 msgstr "RPCS3: 플레이 가능"
 
-#: services/js_i18n_strings.py:874
+#: services/js_i18n_strings.py:891
 msgid "Ready"
 msgstr "준비됨"
 
-#: services/js_i18n_strings.py:875
+#: services/js_i18n_strings.py:892
 msgid "Refresh RetroAchievements"
 msgstr "RetroAchievements 새로고침"
 
-#: services/js_i18n_strings.py:876
+#: services/js_i18n_strings.py:893
 #, python-brace-format
 msgid "Refresh: {system}"
 msgstr "새로고침: {system}"
 
-#: services/js_i18n_strings.py:877
+#: services/js_i18n_strings.py:894
 #, python-brace-format
 msgid "Refreshing RA for {system}..."
 msgstr "{system}의 RA를 새로고침하는 중..."
 
-#: services/js_i18n_strings.py:878
+#: services/js_i18n_strings.py:895
 msgid "Regional name matches"
 msgstr "지역별 이름 일치"
 
-#: services/js_i18n_strings.py:879 templates/compare_games.html:24
+#: services/js_i18n_strings.py:896 templates/compare_games.html:24
 #: templates/compare_games.html:40 templates/game_detail.html:213
 msgid "Remove"
 msgstr "제거"
 
-#: services/js_i18n_strings.py:880
+#: services/js_i18n_strings.py:897
 msgid "Remove background from the uploaded image?"
 msgstr "업로드한 이미지에서 배경을 제거하시겠습니까?"
 
-#: services/js_i18n_strings.py:881
+#: services/js_i18n_strings.py:898
 msgid "Remove from queue"
 msgstr "대기열에서 제거"
 
-#: services/js_i18n_strings.py:882
+#: services/js_i18n_strings.py:899
 msgid "Remove the 3D box?"
 msgstr "3D 박스를 제거할까요?"
 
-#: services/js_i18n_strings.py:883
+#: services/js_i18n_strings.py:900
 #, python-brace-format
 msgid "Removed {n} CLZ Import games"
 msgstr "CLZ 가져오기 게임 {n}개를 제거했습니다"
 
-#: services/js_i18n_strings.py:884
+#: services/js_i18n_strings.py:901
 #, python-brace-format
 msgid "Removed {n} CLZ Import games:"
 msgstr "CLZ 가져오기 게임 {n}개를 제거했습니다:"
 
-#: services/js_i18n_strings.py:885
+#: services/js_i18n_strings.py:902
 #, python-brace-format
 msgid "Removed {n} games with missing ROMs"
 msgstr "ROM이 누락된 게임 {n}개를 제거했습니다"
 
-#: services/js_i18n_strings.py:886
+#: services/js_i18n_strings.py:903
 #, python-brace-format
 msgid "Removed {n} games:"
 msgstr "게임 {n}개를 제거했습니다:"
 
-#: services/js_i18n_strings.py:887
+#: services/js_i18n_strings.py:904
 msgid "Removing background…"
 msgstr "배경 제거 중…"
 
-#: services/js_i18n_strings.py:888
+#: services/js_i18n_strings.py:905
 msgid "Removing..."
 msgstr "제거 중..."
 
-#: services/js_i18n_strings.py:889 templates/_bulk_edit_modal.html:42
+#: services/js_i18n_strings.py:906 templates/_bulk_edit_modal.html:42
 #: templates/_bulk_edit_modal.html:56 templates/_bulk_edit_modal.html:70
 #: templates/_bulk_edit_modal.html:124 templates/_bulk_edit_modal.html:140
 #: templates/_bulk_edit_modal.html:156 templates/_bulk_edit_modal.html:180
 msgid "Replace"
 msgstr "교체"
 
-#: services/js_i18n_strings.py:890
+#: services/js_i18n_strings.py:907
 msgid "Replace the 3D box?"
 msgstr "3D 박스를 바꿀까요?"
 
-#: services/js_i18n_strings.py:891 templates/logs.html:716
+#: services/js_i18n_strings.py:908 templates/logs.html:716
 msgid "Reports"
 msgstr "보고서"
 
-#: services/js_i18n_strings.py:892
+#: services/js_i18n_strings.py:909
 msgid "Resolution scale"
 msgstr "해상도 배율"
 
-#: services/js_i18n_strings.py:893
+#: services/js_i18n_strings.py:910
 msgid "Restarting server..."
 msgstr "서버를 다시 시작하는 중..."
 
-#: services/js_i18n_strings.py:894
+#: services/js_i18n_strings.py:911
 msgid "Resume"
 msgstr "재개"
 
-#: services/js_i18n_strings.py:895
+#: services/js_i18n_strings.py:912
 msgid "RetroArch cheats (libretro)"
 msgstr "RetroArch 치트(libretro)"
 
-#: services/js_i18n_strings.py:896
+#: services/js_i18n_strings.py:913
 msgid "RetroArch is installed."
 msgstr "RetroArch가 설치되었습니다."
 
-#: services/js_i18n_strings.py:897
+#: services/js_i18n_strings.py:914
 msgid "RetroArch was not installed."
 msgstr "RetroArch가 설치되지 않았습니다."
 
-#: services/js_i18n_strings.py:898
+#: services/js_i18n_strings.py:915
 #, python-brace-format
 msgid "RetroArch was not installed: {error}"
 msgstr "RetroArch가 설치되지 않았습니다: {error}"
 
-#: services/js_i18n_strings.py:899
+#: services/js_i18n_strings.py:916
 msgid "RetroDB default"
 msgstr "RetroDB 기본값"
 
-#: services/js_i18n_strings.py:900
+#: services/js_i18n_strings.py:917
 msgid "RetroDB has not come back yet. See logs/update.log, then reload this page."
 msgstr "RetroDB가 아직 돌아오지 않았습니다. logs/update.log를 확인한 뒤 이 페이지를 새로고침하세요."
 
-#: services/js_i18n_strings.py:901
+#: services/js_i18n_strings.py:918
 msgid ""
 "RetroDB is run by a process manager here. Download the release and "
 "install it yourself."
 msgstr "여기서는 RetroDB가 프로세스 관리자로 실행됩니다. 릴리스를 다운로드해 직접 설치하세요."
 
-#: services/js_i18n_strings.py:902
+#: services/js_i18n_strings.py:919
 msgid ""
 "RetroDB will back up its database, install the update and restart. Anyone"
 " using it will be disconnected for a minute or two."
 msgstr "RetroDB가 데이터베이스를 백업하고, 업데이트를 설치한 뒤 다시 시작합니다. 사용 중인 사람은 1~2분 동안 연결이 끊깁니다."
 
-#: services/js_i18n_strings.py:903
+#: services/js_i18n_strings.py:920
 #, python-brace-format
 msgid "RetroDB {version} is available."
 msgstr "RetroDB {version}을(를) 사용할 수 있습니다."
 
-#: services/js_i18n_strings.py:904
+#: services/js_i18n_strings.py:921
 msgid "Run-ahead, 1 frame"
 msgstr "런어헤드, 1프레임"
 
-#: services/js_i18n_strings.py:905
+#: services/js_i18n_strings.py:922
 msgid "Running"
 msgstr "실행 중"
 
-#: services/js_i18n_strings.py:906
+#: services/js_i18n_strings.py:923
 msgid "Running..."
 msgstr "실행 중..."
 
-#: services/js_i18n_strings.py:907
+#: services/js_i18n_strings.py:924
 msgid "Same IGDB game"
 msgstr "같은 IGDB 게임"
 
-#: services/js_i18n_strings.py:908
+#: services/js_i18n_strings.py:925
 msgid "Same ScreenScraper game"
 msgstr "같은 ScreenScraper 게임"
 
-#: services/js_i18n_strings.py:909
+#: services/js_i18n_strings.py:926
 msgid "Same title, different region"
 msgstr "같은 제목, 다른 지역"
 
-#: services/js_i18n_strings.py:910
+#: services/js_i18n_strings.py:927
 msgid "Save Failed"
 msgstr "저장 실패"
 
-#: services/js_i18n_strings.py:911
+#: services/js_i18n_strings.py:928
 #, python-brace-format
 msgid "Save failed: {error}"
 msgstr "저장 실패: {error}"
 
-#: services/js_i18n_strings.py:912
+#: services/js_i18n_strings.py:929
 msgid "Saved"
 msgstr "저장됨"
 
-#: services/js_i18n_strings.py:913
+#: services/js_i18n_strings.py:930
 msgid ""
 "Saved in the emulator's settings for this game. Changes made inside the "
 "emulator show here."
 msgstr "이 게임에 대한 에뮬레이터 설정에 저장됩니다. 에뮬레이터 안에서 바꾼 내용도 여기에 표시됩니다."
 
-#: services/js_i18n_strings.py:914
+#: services/js_i18n_strings.py:931
 msgid "Saved."
 msgstr "저장했습니다."
 
-#: services/js_i18n_strings.py:915
+#: services/js_i18n_strings.py:932
 msgid "Saved. It applies the next time you press Play."
 msgstr "저장했습니다. 다음에 실행을 누를 때 적용됩니다."
 
-#: services/js_i18n_strings.py:916
+#: services/js_i18n_strings.py:933
 msgid "Saving to the database…"
 msgstr "데이터베이스에 저장하는 중…"
 
-#: services/js_i18n_strings.py:917
+#: services/js_i18n_strings.py:934
 msgid "Saving..."
 msgstr "저장 중..."
 
-#: services/js_i18n_strings.py:918
+#: services/js_i18n_strings.py:935
 msgid "Saving…"
 msgstr "저장 중…"
 
-#: services/js_i18n_strings.py:919
+#: services/js_i18n_strings.py:936
 #, python-brace-format
 msgid "Scan failed (HTTP {status})"
 msgstr "스캔 실패 (HTTP {status})"
 
-#: services/js_i18n_strings.py:920
+#: services/js_i18n_strings.py:937
 #, python-brace-format
 msgid "Scan failed: {error}"
 msgstr "스캔 실패: {error}"
 
-#: services/js_i18n_strings.py:921
+#: services/js_i18n_strings.py:938
 #, python-brace-format
 msgid "Scanned {paths} paths · found {found} matches."
 msgstr "경로 {paths}개 스캔 · 일치 항목 {found}개 발견."
 
-#: services/js_i18n_strings.py:922 templates/multi_disc_organizer.html:204
+#: services/js_i18n_strings.py:939 templates/multi_disc_organizer.html:204
 msgid "Scanning..."
 msgstr "스캔 중..."
 
-#: services/js_i18n_strings.py:923
+#: services/js_i18n_strings.py:940
 msgid "Scanning…"
 msgstr "스캔 중…"
 
-#: services/js_i18n_strings.py:924
+#: services/js_i18n_strings.py:941
 msgid "Scrape game"
 msgstr "게임 스크래핑"
 
-#: services/js_i18n_strings.py:925
+#: services/js_i18n_strings.py:942
 #, python-brace-format
 msgid "Scraped 0/{total} - 0%"
 msgstr "스크래핑됨 0/{total} - 0%"
 
-#: services/js_i18n_strings.py:926
+#: services/js_i18n_strings.py:943
 #, python-brace-format
 msgid "Scraped {processed} / {total} - {percent}%"
 msgstr "스크래핑됨 {processed} / {total} - {percent}%"
 
-#: services/js_i18n_strings.py:927 templates/logs.html:710
+#: services/js_i18n_strings.py:944 templates/logs.html:710
 #: templates/wishlist.html:507
 msgid "Scraping"
 msgstr "스크래핑 중"
 
-#: services/js_i18n_strings.py:928
+#: services/js_i18n_strings.py:945
 msgid "Screen effect"
 msgstr "화면 효과"
 
-#: services/js_i18n_strings.py:929 templates/logs.html:781
+#: services/js_i18n_strings.py:946 templates/logs.html:781
 #: templates/museum_system.html:197 templates/museum_system.html:204
 #: templates/psn_trophy_detail.html:320
 msgid "Search"
 msgstr "검색"
 
-#: services/js_i18n_strings.py:930
+#: services/js_i18n_strings.py:947
 msgid "Search failed."
 msgstr "검색 실패."
 
-#: services/js_i18n_strings.py:931
+#: services/js_i18n_strings.py:948
 msgid "Search failed. Try again."
 msgstr "검색에 실패했습니다. 다시 시도하세요."
 
-#: services/js_i18n_strings.py:932
+#: services/js_i18n_strings.py:949
 msgid "Searching & removing background..."
 msgstr "배경 검색 및 제거 중..."
 
-#: services/js_i18n_strings.py:933
+#: services/js_i18n_strings.py:950
 #, python-brace-format
 msgid "Searching {source}…"
 msgstr "{source} 검색 중…"
 
-#: services/js_i18n_strings.py:934
+#: services/js_i18n_strings.py:951
 #, python-brace-format
 msgid "See all {n} results"
 msgstr "결과 {n}개 모두 보기"
 
-#: services/js_i18n_strings.py:935
+#: services/js_i18n_strings.py:952
 msgid "Select Developer"
 msgstr "개발사 선택"
 
-#: services/js_i18n_strings.py:936
+#: services/js_i18n_strings.py:953
 msgid "Select Dimension"
 msgstr "차원 선택"
 
-#: services/js_i18n_strings.py:937
+#: services/js_i18n_strings.py:954
 #: templates/_modals/select_filter_modal.html:15
 msgid "Select Filter"
 msgstr "필터 선택"
 
-#: services/js_i18n_strings.py:938
+#: services/js_i18n_strings.py:955
 msgid "Select Genre"
 msgstr "장르 선택"
 
-#: services/js_i18n_strings.py:939
+#: services/js_i18n_strings.py:956
 msgid "Select Perspective"
 msgstr "시점 선택"
 
-#: services/js_i18n_strings.py:940
+#: services/js_i18n_strings.py:957
 msgid "Select Play Mode"
 msgstr "플레이 모드 선택"
 
-#: services/js_i18n_strings.py:941
+#: services/js_i18n_strings.py:958
 msgid "Select Publisher"
 msgstr "배급사 선택"
 
-#: services/js_i18n_strings.py:942
+#: services/js_i18n_strings.py:959
 msgid "Select Rating"
 msgstr "등급 선택"
 
-#: services/js_i18n_strings.py:943
+#: services/js_i18n_strings.py:960
 msgid "Select Series"
 msgstr "시리즈 선택"
 
-#: services/js_i18n_strings.py:944
+#: services/js_i18n_strings.py:961
 msgid "Select Source"
 msgstr "소스 선택"
 
-#: services/js_i18n_strings.py:945
+#: services/js_i18n_strings.py:962
 #, python-brace-format
 msgid "Selected {count} games across all pages"
 msgstr "모든 페이지에서 게임 {count}개 선택됨"
 
-#: services/js_i18n_strings.py:946
+#: services/js_i18n_strings.py:963
 #, python-brace-format
 msgid "Selected {count} unscraped games across all pages"
 msgstr "모든 페이지에서 스크래핑되지 않은 게임 {count}개 선택됨"
 
-#: services/js_i18n_strings.py:947
+#: services/js_i18n_strings.py:964
 msgid "Server restarted successfully!"
 msgstr "서버가 성공적으로 다시 시작되었습니다!"
 
-#: services/js_i18n_strings.py:948
+#: services/js_i18n_strings.py:965
 msgid "Server stopped. You can close this tab."
 msgstr "서버가 중지되었습니다. 이 탭을 닫아도 됩니다."
 
-#: services/js_i18n_strings.py:949
+#: services/js_i18n_strings.py:966
 msgid "Set for this game"
 msgstr "이 게임에 설정"
 
-#: services/js_i18n_strings.py:950
+#: services/js_i18n_strings.py:967
 msgid "Set inside the emulator; RetroDB leaves it alone"
 msgstr "에뮬레이터 안에서 설정합니다. RetroDB는 건드리지 않습니다"
 
-#: services/js_i18n_strings.py:951
+#: services/js_i18n_strings.py:968
 msgid "Set per system, in Settings > Emulators"
 msgstr "시스템별로 설정 > 에뮬레이터에서 지정"
 
-#: services/js_i18n_strings.py:952 templates/_macros/nav_tabs.html:44
+#: services/js_i18n_strings.py:969 templates/_macros/nav_tabs.html:44
 #: templates/base.html:186 templates/rom_tools_hub.html:119
 #: templates/settings.html:5 templates/settings.html:12
 #: templates/settings_emulators.html:4
 msgid "Settings"
 msgstr "설정"
 
-#: services/js_i18n_strings.py:953
+#: services/js_i18n_strings.py:970
 msgid "Show keyboard shortcuts"
 msgstr "키보드 단축키 보기"
 
-#: services/js_i18n_strings.py:954
+#: services/js_i18n_strings.py:971
 msgid "Showing Bonus Discs"
 msgstr "보너스 디스크 표시 중"
 
-#: services/js_i18n_strings.py:955 templates/game_detail.html:257
+#: services/js_i18n_strings.py:972 templates/game_detail.html:257
 msgid "Shows a black screen with a frame rate in the window title."
 msgstr "검은 화면이 나오고 창 제목에 프레임 속도가 표시됩니다."
 
-#: services/js_i18n_strings.py:956 templates/game_detail.html:256
+#: services/js_i18n_strings.py:973 templates/game_detail.html:256
 msgid "Shows an image but does not get past the menus."
 msgstr "화면은 나오지만 메뉴를 넘어가지 못합니다."
 
-#: services/js_i18n_strings.py:957
+#: services/js_i18n_strings.py:974
 msgid "Shutting down server..."
 msgstr "서버를 종료하는 중..."
 
-#: services/js_i18n_strings.py:958 templates/_modals/edit_modal.html:50
+#: services/js_i18n_strings.py:975 templates/_modals/edit_modal.html:50
 #: templates/base.html:1099
 msgid "Standalone"
 msgstr "독립 실행형"
 
-#: services/js_i18n_strings.py:959
+#: services/js_i18n_strings.py:976
 msgid "Starting..."
 msgstr "시작하는 중..."
 
-#: services/js_i18n_strings.py:960
+#: services/js_i18n_strings.py:977
 msgid "Starting…"
 msgstr "시작하는 중…"
 
-#: services/js_i18n_strings.py:961
+#: services/js_i18n_strings.py:978
 msgid "Steam Imports"
 msgstr "Steam 가져오기"
 
-#: services/js_i18n_strings.py:962
+#: services/js_i18n_strings.py:979
+msgid "Stopped."
+msgstr "중지됨."
+
+#: services/js_i18n_strings.py:980
 #, python-brace-format
 msgid "Stopped. Names suggested: {proposals}."
 msgstr "중지됨. 제안된 이름: {proposals}."
 
-#: services/js_i18n_strings.py:963
+#: services/js_i18n_strings.py:981
 #, python-brace-format
 msgid "Successfully updated {count} games"
 msgstr "게임 {count}개를 성공적으로 업데이트했습니다"
 
-#: services/js_i18n_strings.py:964
+#: services/js_i18n_strings.py:982
 #, python-brace-format
 msgid "Suggested names waiting: {count}. Untick any you do not want, then accept."
 msgstr "대기 중인 제안 이름: {count}. 원하지 않는 것은 체크를 해제한 뒤 수락하세요."
 
-#: services/js_i18n_strings.py:965
+#: services/js_i18n_strings.py:983
 msgid "Summary written."
 msgstr "요약을 작성했습니다."
 
-#: services/js_i18n_strings.py:966
+#: services/js_i18n_strings.py:984
 msgid "Switched-on cheats apply the next time you press Play."
 msgstr "켠 치트는 다음에 실행을 누를 때 적용됩니다."
 
-#: services/js_i18n_strings.py:967
+#: services/js_i18n_strings.py:985
 msgid "Sync In Progress"
 msgstr "동기화 진행 중"
 
-#: services/js_i18n_strings.py:968 templates/achievements_system.html:105
+#: services/js_i18n_strings.py:986 templates/achievements_system.html:105
 msgid "Sync Progress"
 msgstr "동기화 진행률"
 
-#: services/js_i18n_strings.py:969
+#: services/js_i18n_strings.py:987
 msgid "Sync Queued"
 msgstr "동기화 대기 중"
 
-#: services/js_i18n_strings.py:970
+#: services/js_i18n_strings.py:988
 msgid "Sync complete! Refresh page to see updated progress."
 msgstr "동기화 완료! 업데이트된 진행률을 보려면 페이지를 새로고침하세요."
 
-#: services/js_i18n_strings.py:971
+#: services/js_i18n_strings.py:989
 msgid "Sync failed"
 msgstr "동기화 실패"
 
-#: services/js_i18n_strings.py:972
+#: services/js_i18n_strings.py:990
 #, python-brace-format
 msgid "Sync: {system}"
 msgstr "동기화: {system}"
 
-#: services/js_i18n_strings.py:973
+#: services/js_i18n_strings.py:991
 msgid "Syncing..."
 msgstr "동기화 중..."
 
-#: services/js_i18n_strings.py:974
+#: services/js_i18n_strings.py:992
 #, python-brace-format
 msgid "Syncing: {processed} / {total}"
 msgstr "동기화 중: {processed} / {total}"
 
-#: services/js_i18n_strings.py:975 templates/_settings_tabs/_tab_bar.html:11
+#: services/js_i18n_strings.py:993 templates/_settings_tabs/_tab_bar.html:11
 #: templates/_settings_tabs/customization.html:299
 #: templates/achievement_game.html:228 templates/analytics.html:569
 #: templates/analytics.html:603 templates/compare_games.html:69
 #: templates/dashboard.html:330 templates/dashboard.html:389
 #: templates/dashboard.html:466 templates/dashboard.html:532
 #: templates/logs.html:722 templates/multi_disc_organizer.html:213
-#: templates/official_names_review.html:84 templates/reports.html:360
+#: templates/official_names_review.html:84
+#: templates/official_names_review.html:118 templates/reports.html:360
 #: templates/reports.html:435 templates/steam_achievement_game.html:173
 #: templates/versions_review.html:86 templates/wishlist.html:66
 #: templates/xbox_achievement_game.html:166
 msgid "System"
 msgstr "시스템"
 
-#: services/js_i18n_strings.py:976
+#: services/js_i18n_strings.py:994
 #: templates/_settings_tabs/customization.html:153
 #: templates/_settings_tabs/customization.html:234
 #: templates/_settings_tabs/data.html:19 templates/achievements_system.html:49
@@ -3572,85 +3617,94 @@ msgstr "시스템"
 msgid "Systems"
 msgstr "시스템"
 
-#: services/js_i18n_strings.py:977
+#: services/js_i18n_strings.py:995
 msgid "The 3D box could not be removed."
 msgstr "3D 박스를 제거할 수 없습니다."
 
-#: services/js_i18n_strings.py:979
+#: services/js_i18n_strings.py:997
 msgid "The cheats were not downloaded."
 msgstr "치트를 다운로드하지 못했습니다."
 
-#: services/js_i18n_strings.py:980
+#: services/js_i18n_strings.py:998
 #, python-brace-format
 msgid "The cheats were not downloaded: {error}"
 msgstr "치트를 다운로드하지 못했습니다: {error}"
 
-#: services/js_i18n_strings.py:981
+#: services/js_i18n_strings.py:999
 msgid "The core installed but the game still cannot start."
 msgstr "코어는 설치되었지만 게임을 여전히 시작할 수 없습니다."
 
-#: services/js_i18n_strings.py:982
+#: services/js_i18n_strings.py:1000
 #, python-brace-format
 msgid "The download failed: {error}"
 msgstr "다운로드 실패: {error}"
 
-#: services/js_i18n_strings.py:983
+#: services/js_i18n_strings.py:1001
 msgid "The imported faces are deleted. Your Slipcase files are not touched."
 msgstr "가져온 면이 삭제됩니다. Slipcase 파일은 건드리지 않습니다."
 
-#: services/js_i18n_strings.py:984
+#: services/js_i18n_strings.py:1002
+#, python-brace-format
+msgid ""
+"The run stopped: {error}. Check your AI key with Test saved AI key in "
+"Settings > Scraping. Games already filled keep what they got."
+msgstr ""
+"작업이 중지되었습니다: {error}. 설정 > 스크래핑의 저장된 AI 키 테스트로 AI 키를 확인하세요. 이미 채운 게임은 받은 "
+"내용을 그대로 유지합니다."
+
+#: services/js_i18n_strings.py:1003
 #, python-brace-format
 msgid "The run stopped: {error}. Names already suggested are kept."
 msgstr "작업이 중지되었습니다: {error}. 이미 제안된 이름은 유지됩니다."
 
-#: services/js_i18n_strings.py:985
+#: services/js_i18n_strings.py:1004
 msgid "The switches go back to the new list's own settings."
 msgstr "스위치가 새 목록의 기본 설정으로 돌아갑니다."
 
-#: services/js_i18n_strings.py:986
+#: services/js_i18n_strings.py:1005
 msgid "The update could not be started. See logs/update.log."
 msgstr "업데이트를 시작할 수 없습니다. logs/update.log를 확인하세요."
 
-#: services/js_i18n_strings.py:987
+#: services/js_i18n_strings.py:1006
 msgid "The update is downloaded and checked."
 msgstr "업데이트를 다운로드하고 확인했습니다."
 
-#: services/js_i18n_strings.py:988
+#: services/js_i18n_strings.py:1007
 #, python-brace-format
 msgid ""
 "The update to {to} did not work, so RetroDB went back to {from}. Reason: "
 "{reason}"
 msgstr "{to}(으)로의 업데이트가 작동하지 않아 RetroDB가 {from}(으)로 돌아갔습니다. 이유: {reason}"
 
-#: services/js_i18n_strings.py:989
+#: services/js_i18n_strings.py:1008
 msgid "This copy of RetroDB is a git checkout. Update it with git pull."
 msgstr "이 RetroDB는 git 체크아웃입니다. git pull로 업데이트하세요."
 
-#: services/js_i18n_strings.py:990
+#: services/js_i18n_strings.py:1009
 msgid "This game already has 3D box faces. Replace them with the ones you picked?"
 msgstr "이 게임에는 이미 3D 박스 면이 있습니다. 선택한 것으로 바꿀까요?"
 
-#: services/js_i18n_strings.py:991
+#: services/js_i18n_strings.py:1010
 msgid "This game is already running.  Kill the existing process and relaunch?"
 msgstr "이 게임은 이미 실행 중입니다. 기존 프로세스를 종료하고 다시 실행하시겠습니까?"
 
-#: services/js_i18n_strings.py:992
+#: services/js_i18n_strings.py:1011
 msgid "This name holds \"=\", which the emulator's settings cannot hold."
 msgstr "이 이름에 \"=\"가 들어 있는데, 에뮬레이터 설정에는 이 문자를 쓸 수 없습니다."
 
-#: services/js_i18n_strings.py:993
+#: services/js_i18n_strings.py:1012
 msgid "This release has no download for this computer yet."
 msgstr "이 릴리스에는 아직 이 컴퓨터용 다운로드가 없습니다."
 
-#: services/js_i18n_strings.py:994
+#: services/js_i18n_strings.py:1013
 msgid "This system is already being synced."
 msgstr "이 시스템은 이미 동기화되고 있습니다."
 
-#: services/js_i18n_strings.py:995
+#: services/js_i18n_strings.py:1014
 msgid "This update cannot be installed here."
 msgstr "이 업데이트는 여기에서 설치할 수 없습니다."
 
-#: services/js_i18n_strings.py:996
+#: services/js_i18n_strings.py:1015
 msgid ""
 "This will clear ALL RetroAchievements game IDs and progress data from "
 "your database. You will need to run \"Refresh RetroAchievements\" again "
@@ -3659,19 +3713,19 @@ msgstr ""
 "이 작업은 데이터베이스에서 모든 RetroAchievements 게임 ID와 진행 데이터를 삭제합니다. 이후 게임을 다시 스캔하려면"
 " \"RetroAchievements 새로고침\"을 다시 실행해야 합니다. 계속하시겠습니까?"
 
-#: services/js_i18n_strings.py:997
+#: services/js_i18n_strings.py:1016
 #, python-brace-format
 msgid ""
 "This will clear RetroAchievements game IDs and progress data for "
 "\"{system}\". Continue?"
 msgstr "이 작업은 \"{system}\"의 RetroAchievements 게임 ID와 진행 데이터를 삭제합니다. 계속하시겠습니까?"
 
-#: services/js_i18n_strings.py:998
+#: services/js_i18n_strings.py:1017
 #, python-brace-format
 msgid "This will remove \"{system}\" from the Achievements page. Continue?"
 msgstr "이 작업은 업적 페이지에서 \"{system}\"을(를) 제거합니다. 계속하시겠습니까?"
 
-#: services/js_i18n_strings.py:999
+#: services/js_i18n_strings.py:1018
 msgid ""
 "This will remove ALL games imported via CLZ Games Import from the "
 "database. This cannot be undone. Continue?"
@@ -3679,7 +3733,7 @@ msgstr ""
 "이 작업은 CLZ Games Import를 통해 가져온 모든 게임을 데이터베이스에서 제거합니다. 이 작업은 취소할 수 없습니다. "
 "계속하시겠습니까?"
 
-#: services/js_i18n_strings.py:1000
+#: services/js_i18n_strings.py:1019
 msgid ""
 "This will remove database entries for ROM files that no longer exist on "
 "disk. This cannot be undone. Continue?"
@@ -3687,7 +3741,7 @@ msgstr ""
 "이 작업은 디스크에 더 이상 존재하지 않는 ROM 파일의 데이터베이스 항목을 제거합니다. 이 작업은 취소할 수 없습니다. "
 "계속하시겠습니까?"
 
-#: services/js_i18n_strings.py:1001
+#: services/js_i18n_strings.py:1020
 msgid ""
 "This will scan all games and update their RetroAchievements status. This "
 "may take several minutes for large collections. Continue?"
@@ -3695,13 +3749,13 @@ msgstr ""
 "이 작업은 모든 게임을 스캔하여 RetroAchievements 상태를 업데이트합니다. 대규모 컬렉션의 경우 몇 분이 걸릴 수 "
 "있습니다. 계속하시겠습니까?"
 
-#: services/js_i18n_strings.py:1002
+#: services/js_i18n_strings.py:1021
 msgid ""
 "This will search for and download images for all controllers without "
 "images. Continue?"
 msgstr "이 작업은 이미지가 없는 모든 컨트롤러의 이미지를 검색하고 다운로드합니다. 계속하시겠습니까?"
 
-#: services/js_i18n_strings.py:1003
+#: services/js_i18n_strings.py:1022
 msgid ""
 "This will use your configured AI provider to generate history and top "
 "games for all systems. This may take several minutes and use API credits."
@@ -3710,58 +3764,58 @@ msgstr ""
 "이 작업은 구성된 AI 제공자를 사용하여 모든 시스템의 역사와 인기 게임을 생성합니다. 몇 분이 걸릴 수 있으며 API 크레딧을 "
 "사용합니다. 계속하시겠습니까?"
 
-#: services/js_i18n_strings.py:1004
+#: services/js_i18n_strings.py:1023
 msgid "Tick at least one name."
 msgstr "이름을 하나 이상 선택하세요."
 
-#: services/js_i18n_strings.py:1005
+#: services/js_i18n_strings.py:1024
 msgid "Tick at least two games."
 msgstr "게임을 두 개 이상 선택하세요."
 
-#: services/js_i18n_strings.py:1006 templates/logs.html:745
+#: services/js_i18n_strings.py:1025 templates/logs.html:745
 msgid "To"
 msgstr "받는 사람"
 
-#: services/js_i18n_strings.py:1007
+#: services/js_i18n_strings.py:1026
 msgid "Try adjusting your search or filters"
 msgstr "검색어나 필터를 조정해 보세요"
 
-#: services/js_i18n_strings.py:1008
+#: services/js_i18n_strings.py:1027
 msgid "USA"
 msgstr "미국"
 
-#: services/js_i18n_strings.py:1009
+#: services/js_i18n_strings.py:1028
 msgid "Unexpected error"
 msgstr "예기치 않은 오류"
 
-#: services/js_i18n_strings.py:1010
+#: services/js_i18n_strings.py:1029
 msgid "Unhandled rejection"
 msgstr "처리되지 않은 거부"
 
-#: services/js_i18n_strings.py:1011 templates/analytics.html:583
+#: services/js_i18n_strings.py:1030 templates/analytics.html:583
 #: templates/base.html:1203 templates/local_trophy_detail.html:220
 #: templates/local_trophy_detail.html:224
 msgid "Unknown"
 msgstr "알 수 없음"
 
-#: services/js_i18n_strings.py:1012
+#: services/js_i18n_strings.py:1031
 msgid "Unknown error"
 msgstr "알 수 없는 오류"
 
-#: services/js_i18n_strings.py:1013
+#: services/js_i18n_strings.py:1032
 msgid "Unknown error occurred."
 msgstr "알 수 없는 오류가 발생했습니다."
 
-#: services/js_i18n_strings.py:1014 templates/all_games.html:102
+#: services/js_i18n_strings.py:1033 templates/all_games.html:102
 #: templates/system_games.html:93 templates/wishlist.html:506
 msgid "Unscraped"
 msgstr "미스크래핑"
 
-#: services/js_i18n_strings.py:1015
+#: services/js_i18n_strings.py:1034
 msgid "Update Failed"
 msgstr "업데이트 실패"
 
-#: services/js_i18n_strings.py:1016
+#: services/js_i18n_strings.py:1035
 #, python-brace-format
 msgid ""
 "Update {count} game(s)?\n"
@@ -3772,286 +3826,293 @@ msgstr ""
 "\n"
 "필드: {fields}"
 
-#: services/js_i18n_strings.py:1017
+#: services/js_i18n_strings.py:1036
 #, python-brace-format
 msgid "Updated from {from} to {to}."
 msgstr "{from}에서 {to}(으)로 업데이트했습니다."
 
-#: services/js_i18n_strings.py:1018 templates/museum_system.html:198
+#: services/js_i18n_strings.py:1037 templates/museum_system.html:198
 #: templates/museum_system.html:205
 msgid "Upload"
 msgstr "업로드"
 
-#: services/js_i18n_strings.py:1019
+#: services/js_i18n_strings.py:1038
 msgid "Upload Controller Image"
 msgstr "컨트롤러 이미지 업로드"
 
-#: services/js_i18n_strings.py:1020
+#: services/js_i18n_strings.py:1039
 msgid "Upload failed"
 msgstr "업로드 실패"
 
-#: services/js_i18n_strings.py:1021
+#: services/js_i18n_strings.py:1040
 msgid "Upload replacement image"
 msgstr "대체 이미지 업로드"
 
-#: services/js_i18n_strings.py:1022
+#: services/js_i18n_strings.py:1041
 msgid "Uploading & removing background…"
 msgstr "업로드 및 배경 제거 중…"
 
-#: services/js_i18n_strings.py:1023
+#: services/js_i18n_strings.py:1042
 msgid "Uploading…"
 msgstr "업로드 중…"
 
-#: services/js_i18n_strings.py:1024
+#: services/js_i18n_strings.py:1043
 msgid "Use another cheat list?"
 msgstr "다른 치트 목록을 사용할까요?"
 
-#: services/js_i18n_strings.py:1025
+#: services/js_i18n_strings.py:1044
 msgid "Use the system setting"
 msgstr "시스템 설정 사용"
 
-#: services/js_i18n_strings.py:1026
+#: services/js_i18n_strings.py:1045
 #, python-brace-format
 msgid ""
 "Used for every {system} game unless the game sets its own. Applied when "
 "you press Play."
 msgstr "게임에 자체 설정이 없으면 모든 {system} 게임에 사용됩니다. 실행을 누르면 적용됩니다."
 
-#: services/js_i18n_strings.py:1027
+#: services/js_i18n_strings.py:1046
 #, python-brace-format
 msgid "User Score ({count} ratings)"
 msgstr "사용자 점수 (평가 {count}개)"
 
-#: services/js_i18n_strings.py:1028
+#: services/js_i18n_strings.py:1047
 msgid "Version unlinked."
 msgstr "버전 연결을 해제했습니다."
 
-#: services/js_i18n_strings.py:1029
+#: services/js_i18n_strings.py:1048
 #, python-brace-format
 msgid "Version {version} is available."
 msgstr "버전 {version}을(를) 사용할 수 있습니다."
 
-#: services/js_i18n_strings.py:1030
+#: services/js_i18n_strings.py:1049
 msgid "Versions linked."
 msgstr "버전을 연결했습니다."
 
-#: services/js_i18n_strings.py:1031
+#: services/js_i18n_strings.py:1050
 #, python-brace-format
 msgid "What is new in {version}"
 msgstr "{version}의 새로운 기능"
 
-#: services/js_i18n_strings.py:1032
+#: services/js_i18n_strings.py:1051
 #, python-brace-format
 msgid "What is new in {version} ({date})"
 msgstr "{version}의 새로운 기능 ({date})"
 
-#: services/js_i18n_strings.py:1033
+#: services/js_i18n_strings.py:1052
 msgid "Will change?"
 msgstr "변경 여부"
 
-#: services/js_i18n_strings.py:1034
+#: services/js_i18n_strings.py:1053
 msgid "Works"
 msgstr "작동"
 
-#: services/js_i18n_strings.py:1035
+#: services/js_i18n_strings.py:1054
 msgid "World"
 msgstr "전 세계"
 
-#: services/js_i18n_strings.py:1036 templates/game_detail.html:819
+#: services/js_i18n_strings.py:1055 templates/game_detail.html:819
 msgid "Write again with AI"
 msgstr "AI로 다시 작성"
 
-#: services/js_i18n_strings.py:1037
+#: services/js_i18n_strings.py:1056
 msgid "Xbox Imports"
 msgstr "Xbox 가져오기"
 
-#: services/js_i18n_strings.py:1038 templates/_bulk_edit_modal.html:170
+#: services/js_i18n_strings.py:1057 templates/_bulk_edit_modal.html:170
 #: templates/_modals/edit_modal.html:148 templates/game_detail.html:673
 #: templates/game_detail.html:730 templates/game_detail.html:798
 msgid "Yes"
 msgstr "예"
 
-#: services/js_i18n_strings.py:1039
+#: services/js_i18n_strings.py:1058
 msgid "You have the latest version."
 msgstr "최신 버전입니다."
 
-#: services/js_i18n_strings.py:1040
+#: services/js_i18n_strings.py:1059
 #, python-brace-format
 msgid ""
 "Your bulk scrape has been queued (position {position}). It will start "
 "automatically when the current scrape finishes."
 msgstr "대량 스크래핑이 대기열에 추가되었습니다 (순번 {position}). 현재 스크래핑이 끝나면 자동으로 시작됩니다."
 
-#: services/js_i18n_strings.py:1041
+#: services/js_i18n_strings.py:1060
 msgid "found"
 msgstr "찾음"
 
-#: services/js_i18n_strings.py:1042
+#: services/js_i18n_strings.py:1061
 msgid "in queue"
 msgstr "대기열 내"
 
-#: services/js_i18n_strings.py:1043
+#: services/js_i18n_strings.py:1062
 msgid "system"
 msgstr "시스템"
 
-#: services/js_i18n_strings.py:1044
+#: services/js_i18n_strings.py:1063
 msgid "unknown"
 msgstr "알 수 없음"
 
-#: services/js_i18n_strings.py:1045
+#: services/js_i18n_strings.py:1064
 #, python-brace-format
 msgid "{confidence}% match"
 msgstr "{confidence}% 일치"
 
-#: services/js_i18n_strings.py:1046
+#: services/js_i18n_strings.py:1065
 #, python-brace-format
 msgid "{count} Achievements"
 msgstr "업적 {count}개"
 
-#: services/js_i18n_strings.py:1047
+#: services/js_i18n_strings.py:1066
 #, python-brace-format
 msgid "{count} regional versions"
 msgstr "지역별 버전 {count}개"
 
-#: services/js_i18n_strings.py:1048
+#: services/js_i18n_strings.py:1067
 #, python-brace-format
 msgid "{count} sold"
 msgstr "{count}장 판매"
 
-#: services/js_i18n_strings.py:1049
+#: services/js_i18n_strings.py:1068
 #, python-brace-format
 msgid "{count} suggested groups. Untick any game that does not belong, then link."
 msgstr "추천 그룹 {count}개. 속하지 않는 게임은 선택을 해제한 후 연결하세요."
 
-#: services/js_i18n_strings.py:1050
+#: services/js_i18n_strings.py:1069
 #, python-brace-format
 msgid "{fetched} fetched, {skipped} skipped, {failed} failed"
 msgstr "{fetched}개 가져옴, {skipped}개 건너뜀, {failed}개 실패"
 
-#: services/js_i18n_strings.py:1051
+#: services/js_i18n_strings.py:1070
 #, python-brace-format
 msgid "{job} Queued (#{position})"
 msgstr "{job} 대기 중 (#{position})"
 
-#: services/js_i18n_strings.py:1052
+#: services/js_i18n_strings.py:1071
 #, python-brace-format
 msgid "{job} cancelled"
 msgstr "{job} 취소됨"
 
-#: services/js_i18n_strings.py:1053
+#: services/js_i18n_strings.py:1072
 #, python-brace-format
 msgid "{job} completed ({n} processed)"
 msgstr "{job} 완료됨 ({n}개 처리됨)"
 
-#: services/js_i18n_strings.py:1054
+#: services/js_i18n_strings.py:1073
 #, python-brace-format
 msgid "{job} failed: {error}"
 msgstr "{job} 실패: {error}"
 
-#: services/js_i18n_strings.py:1055
+#: services/js_i18n_strings.py:1074
 #, python-brace-format
 msgid "{job}: {current} of {total} ({percent}%)"
 msgstr "{job}: {total}개 중 {current}개 ({percent}%)"
 
-#: services/js_i18n_strings.py:1056
+#: services/js_i18n_strings.py:1075
 #, python-brace-format
 msgid "{n} Player(s)"
 msgstr "플레이어 {n}명"
 
-#: services/js_i18n_strings.py:1057
+#: services/js_i18n_strings.py:1076
 #, python-brace-format
 msgid "{n} cores"
 msgstr "코어 {n}개"
 
-#: services/js_i18n_strings.py:1058
+#: services/js_i18n_strings.py:1077
 #, python-brace-format
 msgid "{n} games"
 msgstr "게임 {n}개"
 
-#: services/js_i18n_strings.py:1059
+#: services/js_i18n_strings.py:1078
 #, python-brace-format
 msgid "{n} lines"
 msgstr "{n}줄"
 
-#: services/js_i18n_strings.py:1060
+#: services/js_i18n_strings.py:1079
 #, python-brace-format
 msgid "{n} results"
 msgstr "결과 {n}개"
 
-#: services/js_i18n_strings.py:1061
+#: services/js_i18n_strings.py:1080
 #, python-brace-format
 msgid "{points} pts"
 msgstr "{points}점"
 
-#: services/js_i18n_strings.py:1062
+#: services/js_i18n_strings.py:1081
+#, python-brace-format
+msgid ""
+"{state} Games filled: {filled}. Nothing new: {skipped}. No answer: "
+"{failed}."
+msgstr "{state} 채운 게임: {filled}. 새 정보 없음: {skipped}. 응답 없음: {failed}."
+
+#: services/js_i18n_strings.py:1082
 #, python-brace-format
 msgid "{system} has been added to the sync queue."
 msgstr "{system}이(가) 동기화 대기열에 추가되었습니다."
 
-#: services/js_i18n_strings.py:1063
+#: services/js_i18n_strings.py:1083
 #, python-brace-format
 msgid "{system} · {file} · old name from: {region}"
 msgstr "{system} · {file} · 예전 이름의 지역: {region}"
 
-#: services/js_i18n_strings.py:1064
+#: services/js_i18n_strings.py:1084
 #, python-brace-format
 msgid "{title} ({count} versions)"
 msgstr "{title} (버전 {count}개)"
 
-#: services/js_i18n_strings.py:1065
+#: services/js_i18n_strings.py:1085
 msgid "⏳ Searching..."
 msgstr "⏳ 검색 중..."
 
-#: services/js_i18n_strings.py:1066
+#: services/js_i18n_strings.py:1086
 #, python-brace-format
 msgid "⚠️ Cancel {job}"
 msgstr "⚠️ {job} 취소"
 
-#: services/js_i18n_strings.py:1067
+#: services/js_i18n_strings.py:1087
 msgid "⚠️ Confirm"
 msgstr "⚠️ 확인"
 
-#: services/js_i18n_strings.py:1068
+#: services/js_i18n_strings.py:1088
 msgid "⚡ via"
 msgstr "⚡ 출처"
 
-#: services/js_i18n_strings.py:1069
+#: services/js_i18n_strings.py:1089
 msgid "✕ Clear"
 msgstr "✕ 지우기"
 
-#: services/js_i18n_strings.py:1070
+#: services/js_i18n_strings.py:1090
 msgid "🏆 Refresh RetroAchievements"
 msgstr "🏆 RetroAchievements 새로고침"
 
-#: services/js_i18n_strings.py:1071
+#: services/js_i18n_strings.py:1091
 msgid "📋 Clear CLZ Imports"
 msgstr "📋 CLZ 가져오기 삭제"
 
-#: services/js_i18n_strings.py:1072
+#: services/js_i18n_strings.py:1092
 msgid "🔄 Restart Server"
 msgstr "🔄 서버 다시 시작"
 
-#: services/js_i18n_strings.py:1073
+#: services/js_i18n_strings.py:1093
 msgid "🔍 Lookup HLTB"
 msgstr "🔍 HLTB 조회"
 
-#: services/js_i18n_strings.py:1074
+#: services/js_i18n_strings.py:1094
 msgid "🗑️ Clear HLTB Data"
 msgstr "🗑️ HLTB 데이터 삭제"
 
-#: services/js_i18n_strings.py:1075
+#: services/js_i18n_strings.py:1095
 msgid "🗑️ Clear RetroAchievements Data"
 msgstr "🗑️ RetroAchievements 데이터 삭제"
 
-#: services/js_i18n_strings.py:1076
+#: services/js_i18n_strings.py:1096
 msgid "🗑️ Reset Metadata"
 msgstr "🗑️ 메타데이터 재설정"
 
-#: services/js_i18n_strings.py:1077
+#: services/js_i18n_strings.py:1097
 msgid "🛑 Shut Down Server"
 msgstr "🛑 서버 종료"
 
-#: services/js_i18n_strings.py:1078
+#: services/js_i18n_strings.py:1098
 msgid "🧹 Clean Missing ROMs"
 msgstr "🧹 누락된 ROM 정리"
 
@@ -7951,7 +8012,8 @@ msgstr ""
 " 됩니다. 원하는 이름을 체크해 수락하세요. 예전 이름은 대체 제목으로 남고, 수락한 이름은 스크래핑할 때 유지됩니다. 수락하기 "
 "전까지는 아무것도 바뀌지 않습니다."
 
-#: templates/official_names_review.html:86 templates/versions_review.html:88
+#: templates/official_names_review.html:86
+#: templates/official_names_review.html:120 templates/versions_review.html:88
 msgid "All systems"
 msgstr "모든 시스템"
 
@@ -7960,6 +8022,7 @@ msgid "Ask the AI"
 msgstr "AI에게 묻기"
 
 #: templates/official_names_review.html:93
+#: templates/official_names_review.html:127
 msgid "Stop"
 msgstr "중지"
 
@@ -7982,6 +8045,29 @@ msgstr "모두 선택"
 #: templates/official_names_review.html:103
 msgid "Tick none"
 msgstr "모두 선택 해제"
+
+#: templates/official_names_review.html:111
+msgid "Fill empty fields with AI"
+msgstr "빈 항목을 AI로 채우기"
+
+#: templates/official_names_review.html:114
+msgid ""
+"AI Fill for many games at once. The AI fills each game's empty fields, "
+"such as genre, release dates and copies sold, the same way the AI Fill "
+"button on a game's page does, and saves them straight to the game. Games "
+"AI Fill has already done are skipped, so a second run only does the rest."
+msgstr ""
+"여러 게임에 한 번에 AI 채우기를 합니다. AI가 각 게임의 빈 항목(장르, 출시일, 판매량 등)을 게임 페이지의 AI 채우기 "
+"버튼과 같은 방식으로 채우고 게임에 바로 저장합니다. 이미 AI 채우기를 거친 게임은 건너뛰므로 두 번째 작업은 나머지만 "
+"처리합니다."
+
+#: templates/official_names_review.html:115
+msgid ""
+"Your AI provider charges for each game. With Claude Haiku 5.5 and web "
+"search on, a game costs at most about 5 US cents."
+msgstr ""
+"AI 제공업체는 게임마다 요금을 청구합니다. Claude Haiku 5.5와 웹 검색을 켜면 게임 하나에 최대 약 5미국 센트가 "
+"듭니다."
 
 #: templates/_settings_tabs/account.html:111 templates/psn_trophies.html:16
 msgid "PlayStation Network"

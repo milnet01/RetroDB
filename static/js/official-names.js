@@ -2,7 +2,8 @@
  * PASS-59-159 — ROM Tools > Official Names.
  *
  * Starts the AI run that proposes each game's official name, shows its
- * progress, and lists the proposals to accept or reject.
+ * progress, and lists the proposals to accept or reject. Also starts the
+ * bulk AI Fill (initFill) on the same page.
  *
  * Contract: docs/specs/PASS-59-159-official-names.md §4.5.
  */
@@ -177,7 +178,105 @@
         poll();
     }
 
+    // Bulk AI Fill: the game page's AI Fill on every game of one system, or
+    // of all systems, saved straight to the games.
+    function initFill() {
+        const systemSelect = document.getElementById('fillSystem');
+        const runBtn = document.getElementById('fillRunBtn');
+        const cancelBtn = document.getElementById('fillCancelBtn');
+        const countLine = document.getElementById('fillCount');
+        const runStatus = document.getElementById('fillRunStatus');
+        let pollTimer = null;
+        let count = 0;
+
+        function systemId() {
+            return systemSelect.value ? Number(systemSelect.value) : null;
+        }
+
+        async function loadCount() {
+            const selected = systemSelect.value;
+            countLine.textContent = t('Loading…');
+            try {
+                const qs = new URLSearchParams(selected ? { system_id: selected } : {});
+                const data = await API.get(`/api/ai-fill-bulk/count?${qs}`);
+                if (systemSelect.value !== selected) return;
+                count = data.count;
+                countLine.textContent = count
+                    ? t('Games to fill: {count}.', { count: count })
+                    : t('Every game here has had AI Fill already.');
+            } catch (err) {
+                countLine.textContent = failMessage(err, t('Could not count the games.'));
+            }
+        }
+
+        function showRun(status) {
+            const running = status.running;
+            runBtn.disabled = running;
+            cancelBtn.hidden = !running;
+            if (running) {
+                runStatus.textContent = t('Filling game {current} of {total}: {title}. Filled so far: {filled}.',
+                    { current: status.processing, total: status.total,
+                      title: status.current_title || '', filled: status.success });
+            } else if (status.error) {
+                runStatus.textContent = t('The run stopped: {error}. Check your AI key with Test saved AI key in Settings > Scraping. Games already filled keep what they got.',
+                    { error: status.error });
+            } else if (status.completed) {
+                runStatus.textContent = t('{state} Games filled: {filled}. Nothing new: {skipped}. No answer: {failed}.', {
+                    state: status.cancelled ? t('Stopped.') : t('Done.'),
+                    filled: status.success, skipped: status.skipped, failed: status.failed });
+            }
+            return running;
+        }
+
+        async function poll() {
+            clearTimeout(pollTimer);
+            try {
+                const data = await API.get('/api/ai-fill-bulk/status');
+                if (showRun(data.status)) {
+                    pollTimer = setTimeout(poll, 2000);
+                } else if (data.status.completed) {
+                    loadCount();
+                }
+            } catch (err) {
+                runStatus.textContent = failMessage(err, t('Could not read the run status.'));
+            }
+        }
+
+        async function start() {
+            runBtn.disabled = true;
+            try {
+                await API.post('/api/ai-fill-bulk/run', { system_id: systemId() });
+                poll();
+            } catch (err) {
+                showNotification(failMessage(err, t('Could not start the run.')), 'error');
+                runBtn.disabled = false;
+            }
+        }
+
+        runBtn.addEventListener('click', () => {
+            if (!count) {
+                showNotification(t('Every game here has had AI Fill already.'), 'info');
+                return;
+            }
+            showConfirm(t('Fill with AI'),
+                t('Fill {count} games with AI? Your AI provider charges for each game.', { count: count }),
+                start);
+        });
+        cancelBtn.addEventListener('click', async () => {
+            try {
+                await API.post('/api/ai-fill-bulk/cancel');
+            } catch (err) {
+                showNotification(failMessage(err, t('Could not stop the run.')), 'error');
+            }
+        });
+        systemSelect.addEventListener('change', loadCount);
+
+        loadCount();
+        poll();
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         if (document.getElementById('officialNamesReview')) init();
+        if (document.getElementById('aiFillBulk')) initFill();
     });
 })();

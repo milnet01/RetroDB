@@ -42,8 +42,8 @@ def test_ai_is_asked_for_sales():
 
 
 def test_ai_fill_uses_the_shared_field_list():
-    from routes import games_ai
-    src = inspect.getsource(games_ai.api_game_ai_fill)
+    from services import ai_fill
+    src = inspect.getsource(ai_fill.fill_game)
     assert 'ai_fields = AI_FILLABLE_FIELDS' in src
     assert "'units_sold'" in src  # stored as an integer
 

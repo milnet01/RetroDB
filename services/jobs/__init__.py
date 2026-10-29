@@ -41,6 +41,7 @@ from services.jobs.hltb_bulk import HLTBBulkLookupJob
 from services.jobs.museum_images import MuseumImageFetchJob
 from services.jobs.player_cores import PlayerCoresJob
 from services.jobs.official_names import OfficialNamesJob
+from services.jobs.ai_fill_bulk import AiFillBulkJob
 
 # =============================================================================
 # GLOBAL JOB INSTANCES
@@ -61,6 +62,7 @@ hltb_bulk_job = HLTBBulkLookupJob()
 museum_images_job = MuseumImageFetchJob()
 player_cores_job = PlayerCoresJob()
 official_names_job = OfficialNamesJob()
+ai_fill_bulk_job = AiFillBulkJob()
 
 __all__ = [
     # Helpers
@@ -93,6 +95,7 @@ __all__ = [
     'MuseumImageFetchJob',
     'PlayerCoresJob',
     'OfficialNamesJob',
+    'AiFillBulkJob',
     # Singleton instances
     'bulk_scrape_job',
     'ra_sync_job',
@@ -108,4 +111,5 @@ __all__ = [
     'museum_images_job',
     'player_cores_job',
     'official_names_job',
+    'ai_fill_bulk_job',
 ]

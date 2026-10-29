@@ -60,6 +60,7 @@ def request_shutdown(timeout=5.0):
         getattr(_jobs_pkg, 'hltb_bulk_job', None),
         getattr(_jobs_pkg, 'museum_images_job', None),
         getattr(_jobs_pkg, 'official_names_job', None),
+        getattr(_jobs_pkg, 'ai_fill_bulk_job', None),
     ]
 
     cancelled = 0
