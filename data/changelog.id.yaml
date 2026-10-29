@@ -1,3 +1,259 @@
+- version: 3.33.0
+  date: '2026-10-29'
+  tags:
+  - type: feature
+    label: RetroDB memperbarui dirinya sendiri
+  - type: feature
+    label: Dapatkan RetroArch dari dalam RetroDB
+  - type: feature
+    label: Lihat seberapa baik setiap game PS3 berjalan di RPCS3
+  - type: feature
+    label: Angka penjualan untuk game Anda
+  - type: feature
+    label: Tanggal rilis untuk setiap wilayah
+  - type: feature
+    label: Game sebelumnya dan berikutnya di halaman game
+  - type: feature
+    label: Sampul dan tangkapan layar yang diunggah diproses seperti hasil scrape
+  - type: feature
+    label: Halaman Pustaka dan sistem diperbarui langsung selama Scrape Massal
+  - type: feature
+    label: Isi dengan AI memberi setiap game nama resminya
+  - type: performance
+    label: Trofi, impor pustaka, dan alat pemeliharaan lebih cepat
+  - type: fix
+    label: Disk berikutnya berfungsi untuk game yang dimainkan di RetroDB
+  - type: fix
+    label: Kartu game tersusun rapi di ponsel dan setelah jendela diubah ukurannya
+  - type: fix
+    label: Rating dan jumlah pemain hasil scrape lebih akurat
+  - type: fix
+    label: ScreenScraper mempertahankan detailnya saat menjadi sumber utama
+  - type: fix
+    label: Menghapus data hasil scrape mengembalikan nama berkas sebagai judul
+  - type: fix
+    label: Penyegaran RetroAchievements untuk satu konsol berfungsi lagi
+  - type: fix
+    label: Pencari tangkapan layar duplikat berfungsi di aplikasi yang diunduh
+  - type: fix
+    label: Kata sandi ScreenScraper disembunyikan, dan admin terakhir tetap admin
+  - type: fix
+    label: Tugas yang terputus hanya ditawarkan kepada yang boleh menjalankannya
+  - type: fix
+    label: Logo konsol yang diimpor, nama aneh di Pengaturan, dan disc bonus
+  - type: fix
+    label: Sakelar Waralaba / Seri berfungsi di halaman game
+  - type: fix
+    label: Setiap tab Achievement sama lebarnya
+  - type: fix
+    label: RetroDB menemukan pengaturan RPCS3 di Windows dan macOS
+  - type: fix
+    label: Isi dengan AI berfungsi untuk game yang punya skor tetapi tanpa rating usia
+  - type: fix
+    label: Label kartu game mengikuti bahasa Anda
+  - type: fix
+    label: RetroAchievements tampil di halaman game untuk setiap game yang memilikinya
+  - type: fix
+    label: Jumlah belum di-scrape di halaman Sistem sesuai dengan filter Belum Di-scrape
+  - type: fix
+    label: Nama Resmi menyarankan nama lagi
+  - type: fix
+    label: Sumber hanya dicari untuk sistem yang dicakupnya
+  - type: fix
+    label: Cincin progres scrape tidak lagi melompat mundur
+  - type: fix
+    label: Box art 3D yang diperbesar tidak punya kotak di belakangnya
+  - type: fix
+    label: Pesan tidak lagi menampilkan kode HTML
+  body: |
+    <ul>
+      <li><strong>RetroDB memperbarui dirinya sendiri.</strong> Saat versi
+        baru keluar, admin melihatnya di dasbor dan di Pengaturan &gt;
+        Sistem &gt; Pembaruan, beserta apa saja yang baru. Unduh pembaruan
+        mengambilnya dan memeriksa bahwa berkasnya persis sama dengan yang
+        dipublikasikan; Pasang dan mulai ulang mencadangkan database Anda,
+        memasang versi baru, lalu memulai ulang. Jika versi baru tidak mau
+        berjalan, RetroDB kembali ke versi lama dengan sendirinya dan
+        memberi tahu alasannya. Game, pengaturan, gambar, dan log Anda tidak
+        disentuh. RetroDB memeriksa pembaruan sekali sehari; Anda bisa
+        mematikannya. Salinan yang dijalankan dari git, atau oleh pengelola
+        proses, diberi tahu tentang pembaruan tetapi tidak diperbarui.</li>
+      <li><strong>Dapatkan RetroArch dari dalam RetroDB.</strong> Pengaturan
+        &gt; Emulator punya bagian baru, Main di RetroDB. Tekan Dapatkan
+        RetroArch dan RetroDB akan mengunduh RetroArch resmi dari libretro,
+        memeriksa bahwa unduhannya persis berkas yang diharapkan, lalu
+        menyiapkannya sebagai RetroArch (RetroDB), dengan pengaturan dan
+        save sendiri, terpisah dari RetroArch mana pun yang sudah Anda
+        pakai. Setelah itu RetroDB mengambil core terbaik untuk setiap
+        sistem saat pertama kali Anda bermain. Berfungsi di Linux dan
+        Windows; macOS belum diuji.</li>
+      <li><strong>Disk berikutnya berfungsi untuk game yang dimainkan di
+        RetroDB.</strong> Untuk game multi-disc, tombol Disk berikutnya kini
+        menjangkau RetroArch milik RetroDB sendiri tanpa pengaturan apa pun.
+        RetroArch hanya mendengarkan perintah RetroDB selama game seperti
+        itu berjalan, dan di Windows dan macOS selama game apa pun
+        berjalan.</li>
+      <li><strong>Kartu game tersusun rapi di ponsel dan setelah jendela
+        diubah ukurannya.</strong> Di ponsel, halaman Pustaka dan konsol
+        menampilkan satu kartu lalu celah kosong yang panjang; kini kartu
+        tersusun satu di bawah yang lain. Mempersempit atau memperlebar
+        jendela menyusun ulang kartu alih-alih membiarkannya di kolom
+        lama.</li>
+      <li><strong>Rating dan jumlah pemain hasil scrape lebih
+        akurat.</strong> Rating usia dari IGDB untuk CERO, USK, GRAC,
+        ClassInd, dan ACB kini dibaca dengan benar, sehingga game dengan
+        rating CERO Z atau USK 18 mendapat rating tersebut. TheGamesDB,
+        RAWG, IGDB, dan ES-DE tidak lagi menebak "1 pemain" saat tidak tahu;
+        impor ES-DE tidak lagi menimpa jumlah pemain atau mode game yang
+        Anda atur. TheGamesDB tidak lagi menyimpan angka sebagai pengganti
+        nama penerbit atau pengembang setelah pencarian gagal.</li>
+      <li><strong>ScreenScraper mempertahankan detailnya saat menjadi sumber
+        utama.</strong> Judul, deskripsi, tanggal, pengembang, penerbit, dan
+        jumlah pemain darinya dipertahankan di setiap scrape, bukan hanya
+        beberapa menit pertama setelah pencarian. Video dan manual yang
+        diunduh mendapat nama berkas yang layak.</li>
+      <li><strong>Menghapus data hasil scrape mengembalikan nama berkas
+        sebagai judul.</strong> Sebelumnya detailnya dihapus tetapi judul
+        hasil scrape dibiarkan.</li>
+      <li><strong>Penyegaran RetroAchievements untuk satu konsol berfungsi
+        lagi.</strong> Sebelumnya selalu gagal dengan galat.</li>
+      <li><strong>Pencari tangkapan layar duplikat berfungsi di aplikasi
+        yang diunduh.</strong> Sebelumnya tidak menemukan tangkapan layar
+        apa pun di sana, dan menghapus duplikat membiarkan berkasnya tetap
+        di disk.</li>
+      <li><strong>Kata sandi ScreenScraper disembunyikan, dan admin terakhir
+        tetap admin.</strong> Pengaturan kini menampilkan kata sandi
+        ScreenScraper Anda tersamar, seperti kunci Anda yang lain.
+        Satu-satunya akun admin tidak bisa lagi diubah menjadi editor atau
+        dinonaktifkan, yang akan membuat tidak ada seorang pun yang bisa
+        mengelola RetroDB.</li>
+      <li><strong>Tugas yang terputus hanya ditawarkan kepada yang boleh
+        menjalankannya.</strong> Spanduk tugas terputus di dasbor kini hanya
+        menampilkan tugas kepada orang yang boleh memulainya, misalnya
+        scrape massal hanya untuk editor dan admin. Akun lain tidak lagi
+        melihatnya dan tidak bisa lagi menutupnya.</li>
+      <li><strong>Logo konsol yang diimpor, nama aneh di Pengaturan, dan
+        disc bonus.</strong> Di aplikasi yang diunduh, penyegaran logo kini
+        menemukan logo konsol yang dibawa oleh impor dari ES-DE, dan lebih
+        mengutamakannya daripada logo bawaan. Nama controller, konsol, atau
+        cadangan dengan karakter seperti &lt; atau tanda kutip tidak lagi
+        merusak halaman Pengaturan. Membatalkan tanda disc bonus melepasnya
+        sepenuhnya, sehingga tidak lagi dihitung sebagai disc bonus dari
+        game lamanya.</li>
+      <li><strong>Trofi, impor pustaka, dan alat pemeliharaan lebih
+        cepat.</strong> Halaman Trofi, impor pustaka Steam, Xbox, dan
+        PlayStation, trofi kolektor, penghitungan penyimpanan, dan
+        pemindaian media yang tidak terpakai semuanya bekerja jauh lebih
+        ringan pada pustaka besar. Pop-up progres tugas tetap diperbarui
+        saat server sibuk, dan tugas HowLongToBeat serta judul alternatif
+        tidak lagi menahan perubahan lain selama berjalan.</li>
+      <li><strong>Lihat seberapa baik setiap game PS3 berjalan di
+        RPCS3.</strong> Game PS3 di Pustaka, di halaman PlayStation 3, dan
+        di halaman game menampilkan status kompatibilitas RPCS3: Dapat
+        dimainkan, Dalam game, Intro, Dapat dimuat, atau Tidak berjalan,
+        beserta tanggal terakhir diuji. RetroDB membacanya dari RPCS3 di
+        komputer Anda, jadi di RPCS3 pilih Manage &gt; Databases &gt;
+        Download Compatibility Database sekali, dan lagi kapan pun Anda
+        ingin hasil yang lebih baru. Hanya game dengan ROM di disk yang
+        ditampilkan; game yang diimpor tidak. RetroDB kini juga membaca ID
+        game dari PSN dan folder game yang terpasang, serta dari folder dan
+        berkas yang namanya memuat ID itu, seperti [BLUS30443].</li>
+      <li><strong>Angka penjualan untuk game Anda.</strong> Saat AI mengisi
+        kekosongan selama scrape, dan saat Anda menekan Isi dengan AI, AI
+        kini juga ditanya berapa kopi game itu terjual di konsolnya, dari
+        angka gratis yang dipublikasikan seperti laporan penerbit, daftar
+        terlaris platform, Famitsu, Wikipedia, dan VGChartz. Halaman game
+        menampilkan angkanya. Game tanpa angka yang dipublikasikan tetap
+        kosong alih-alih diberi tebakan.</li>
+      <li><strong>Sakelar Waralaba / Seri berfungsi di halaman
+        game.</strong> Di jendela edit halaman game, mengklik sakelar
+        Waralaba / Seri pada game yang ditandai Standalone tidak berbuat
+        apa-apa, sehingga game itu tidak bisa dimasukkan ke dalam seri. Kini
+        sakelarnya berpindah, begitu pula sakelar Ketersediaan
+        Platform.</li>
+      <li><strong>Setiap tab Achievement sama lebarnya.</strong>
+        RetroAchievements, RPCS3, PSN, Steam, dan Xbox masing-masing
+        mengatur lebar halaman sesuai kartunya sendiri, sehingga lebar
+        halaman berubah saat Anda berpindah tab. Kini semuanya memakai satu
+        lebar yang sama.</li>
+      <li><strong>RetroDB menemukan pengaturan RPCS3 di Windows dan
+        macOS.</strong> Di Windows, RPCS3 menyimpan pengaturannya di samping
+        rpcs3.exe, dan RetroDB kini mencarinya di sana dan di folder
+        portable, sehingga pengaturan per game dan daftar kompatibilitas
+        ditemukan.</li>
+      <li><strong>Isi dengan AI berfungsi untuk game yang punya skor tetapi
+        tanpa rating usia.</strong> Isi dengan AI bisa gagal dengan galat
+        untuk game seperti itu saat menentukan rating usianya.</li>
+      <li><strong>Label kartu game mengikuti bahasa Anda.</strong> Status
+        penyelesaian dan tooltip skor pada kartu Pustaka selalu dalam bahasa
+        Inggris.</li>
+      <li><strong>Tanggal rilis untuk setiap wilayah.</strong> Saat AI
+        mengisi kekosongan selama scrape, dan saat Anda menekan Isi dengan
+        AI, AI kini juga ditanya tanggal game itu keluar di setiap wilayah,
+        seperti Amerika Utara, Eropa, dan Jepang. Halaman game dan tampilan
+        cepat mencantumkannya, dari yang paling awal, dengan tanggal dan
+        nama wilayah dalam bahasa Anda. Tanggal rilis game itu sendiri tidak
+        berubah.</li>
+      <li><strong>Game sebelumnya dan berikutnya di halaman game.</strong>
+        Di samping jalur di bagian atas halaman game ada tautan Sebelumnya
+        dan Berikutnya serta posisi game itu dalam daftar. Tautan ini
+        mengikuti halaman asal Anda: dibuka dari Pustaka, tautan ini
+        menelusuri Pustaka, dan dari halaman konsol menelusuri konsol itu,
+        dengan urutan yang sama serta filter dan pencarian yang sama seperti
+        yang Anda gunakan di sana.</li>
+      <li><strong>Sampul dan tangkapan layar yang diunggah diproses seperti
+        hasil scrape.</strong> Sampul, kotak 3D, atau tangkapan layar yang
+        Anda unggah di jendela edit kini disimpan dalam format gambar yang
+        sama dengan gambar hasil scrape, diubah ke ukuran yang sama, dan
+        sampul mendapat salinan kecil yang dipakai Pustaka. Tangkapan layar
+        yang terlihat sama dengan yang sudah dimiliki game tidak
+        ditambahkan, dan Anda diberi tahu berapa banyak yang dilewati.
+        Mengunggah sampul baru juga menghapus berkas yang
+        digantikannya.</li>
+      <li><strong>RetroAchievements tampil di halaman game untuk setiap game
+        yang memilikinya.</strong> Beberapa game punya lencana RA di Pustaka
+        tetapi tidak punya kartu RetroAchievements di halamannya, seperti
+        Metroid Prime dan Metroid Prime 2 di GameCube. Halaman itu kini
+        memakai tautan RetroAchievements yang sama dengan lencananya, dan
+        dimuat lebih cepat karena tidak lagi bertanya ke RetroAchievements
+        setiap kali.</li>
+      <li><strong>Jumlah belum di-scrape di halaman Sistem sesuai dengan
+        filter Belum Di-scrape.</strong> Hitungannya termasuk disc bonus,
+        yang tidak pernah ditampilkan dalam daftar game konsol, sehingga
+        sebuah konsol bisa menyebut 2 belum di-scrape sementara filter Belum
+        Di-scrape-nya tidak menampilkan apa pun.</li>
+      <li><strong>Halaman Pustaka dan sistem diperbarui langsung selama
+        Scrape Massal.</strong> Kartu setiap game langsung disegarkan begitu
+        game itu selesai di-scrape, baik jendela Scrape Massal terbuka,
+        tertutup, atau berjalan di latar belakang.</li>
+      <li><strong>Isi dengan AI memberi setiap game nama resminya.</strong>
+        Saat AI mengisi kekosongan, dalam scrape satu game, dalam Scrape
+        Massal, dan dengan tombol Isi dengan AI, AI juga menyebutkan judul
+        resmi game itu sesuai rilisnya di wilayah ROM-nya, dan game itu
+        diganti namanya menjadi judul tersebut. Nama lama disimpan sebagai
+        judul alternatif. Judul yang Anda ketik sendiri atau Anda terima di
+        Nama Resmi tidak pernah diganti.</li>
+      <li><strong>Nama Resmi menyarankan nama lagi.</strong> Dengan OpenAI,
+        dan kadang dengan Gemini, jawaban AI tidak bisa dibaca, sehingga
+        sebuah proses berakhir tanpa nama yang disarankan.</li>
+      <li><strong>Sumber hanya dicari untuk sistem yang dicakupnya.</strong>
+        RAWG tidak punya game Intellivision, jadi RAWG tidak lagi dicari
+        untuk game tersebut; sebelumnya RAWG malah menemukan game dari
+        platform lain. IGDB, TheGamesDB, dan RAWG kini selalu mencari di
+        sistem game itu sendiri. Beberapa tautan platform RAWG yang salah
+        juga diperbaiki (Atari ST, ColecoVision, PC Engine, DOS).</li>
+      <li><strong>Cincin progres scrape tidak lagi melompat mundur.</strong>
+        Setelah lebih dari satu pencarian di jendela Cari Metadata, satu
+        kali Terapkan memulai scrape beberapa kali, dan cincinnya melompat
+        di antara semuanya.</li>
+      <li><strong>Box art 3D yang diperbesar tidak punya kotak di
+        belakangnya.</strong> Kotaknya langsung berada di atas latar
+        belakang yang diredupkan.</li>
+      <li><strong>Pesan tidak lagi menampilkan kode HTML.</strong> Beberapa
+        jendela konfirmasi dan hasil di Alat ROM menampilkan tag seperti
+        &lt;br&gt; alih-alih baris baru. Penampil log dan pemilih game induk
+        disc bonus di Pengaturan berfungsi lagi.</li>
+    </ul>
 - version: 3.32.0
   date: '2026-10-23'
   tags:

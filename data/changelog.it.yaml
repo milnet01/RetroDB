@@ -1,3 +1,258 @@
+- version: 3.33.0
+  date: '2026-10-29'
+  tags:
+  - type: feature
+    label: RetroDB si aggiorna da solo
+  - type: feature
+    label: Ottieni RetroArch direttamente da RetroDB
+  - type: feature
+    label: Scopri quanto bene gira ogni gioco PS3 in RPCS3
+  - type: feature
+    label: Dati di vendita per i tuoi giochi
+  - type: feature
+    label: Date di uscita per ogni regione
+  - type: feature
+    label: Gioco precedente e successivo nella pagina del gioco
+  - type: feature
+    label: Copertine e screenshot caricati vengono elaborati come quelli scansionati
+  - type: feature
+    label: Le pagine della Libreria e dei sistemi si aggiornano in tempo reale durante la Scansione in blocco
+  - type: feature
+    label: Riempimento AI dà a ogni gioco il suo nome ufficiale
+  - type: performance
+    label: Trofei, importazioni della libreria e strumenti di manutenzione più veloci
+  - type: fix
+    label: Disco successivo funziona per i giochi avviati in RetroDB
+  - type: fix
+    label: Le schede dei giochi si allineano su un telefono e dopo aver ridimensionato la finestra
+  - type: fix
+    label: Classificazioni e numero di giocatori scansionati sono più precisi
+  - type: fix
+    label: ScreenScraper mantiene i suoi dati quando è la fonte principale
+  - type: fix
+    label: Cancella dati scansionati rimette il nome del file come titolo
+  - type: fix
+    label: L'aggiornamento di RetroAchievements per una console funziona di nuovo
+  - type: fix
+    label: La ricerca di screenshot duplicati funziona nell'app scaricata
+  - type: fix
+    label: Le password di ScreenScraper sono nascoste, e l'ultimo amministratore resta amministratore
+  - type: fix
+    label: Le attività interrotte vengono proposte solo a chi può eseguirle
+  - type: fix
+    label: Logo delle console importati, nomi strani in Impostazioni e dischi bonus
+  - type: fix
+    label: L'interruttore Franchise / Serie funziona nella pagina del gioco
+  - type: fix
+    label: Tutte le schede Obiettivi hanno la stessa larghezza
+  - type: fix
+    label: RetroDB trova le impostazioni di RPCS3 su Windows e macOS
+  - type: fix
+    label: Riempimento AI funziona per i giochi con un voto ma senza classificazione per età
+  - type: fix
+    label: Le etichette delle schede dei giochi seguono la tua lingua
+  - type: fix
+    label: RetroAchievements appare nella pagina di ogni gioco che lo ha
+  - type: fix
+    label: Il conteggio dei non elaborati nella pagina Sistemi corrisponde al filtro Non elaborato
+  - type: fix
+    label: Nomi ufficiali suggerisce di nuovo i nomi
+  - type: fix
+    label: Le fonti vengono interrogate solo per i sistemi che coprono
+  - type: fix
+    label: L'anello di avanzamento della scansione non torna più indietro
+  - type: fix
+    label: La boxart 3D ingrandita non ha più un quadrato dietro
+  - type: fix
+    label: I messaggi non mostrano più codice HTML
+  body: |
+    <ul>
+      <li><strong>RetroDB si aggiorna da solo.</strong> Quando esce una nuova
+        versione, gli amministratori la vedono nella Dashboard e in
+        Impostazioni &gt; Sistema &gt; Aggiornamenti, con le novità. Scarica
+        aggiornamento la scarica e controlla che sia esattamente il file
+        pubblicato; Installa e riavvia fa un backup del tuo database, mette al
+        suo posto la nuova versione e riavvia. Se la nuova versione non si
+        avvia, RetroDB torna da solo a quella vecchia e spiega perché. I tuoi
+        giochi, impostazioni, immagini e log non vengono toccati. RetroDB
+        controlla gli aggiornamenti una volta al giorno; puoi disattivarlo.
+        Una copia avviata da git, o da un gestore di processi, viene avvisata
+        degli aggiornamenti ma non aggiornata.</li>
+      <li><strong>Ottieni RetroArch direttamente da RetroDB.</strong>
+        Impostazioni &gt; Emulatori ha una nuova sezione Gioca in RetroDB.
+        Premi Ottieni RetroArch e RetroDB scarica il RetroArch ufficiale da
+        libretro, controlla che il download sia esattamente il file atteso e
+        lo configura come RetroArch (RetroDB), con impostazioni e salvataggi
+        propri, separato da qualsiasi RetroArch tu usi già. Poi scarica il
+        core migliore per ogni sistema la prima volta che giochi. Funziona su
+        Linux e Windows; macOS non è ancora stato testato.</li>
+      <li><strong>Disco successivo funziona per i giochi avviati in
+        RetroDB.</strong> Per un gioco su più dischi, il pulsante Disco
+        successivo ora raggiunge il RetroArch di RetroDB senza alcuna
+        configurazione. RetroArch ascolta i comandi di RetroDB solo mentre è
+        in esecuzione un gioco del genere, e su Windows e macOS mentre è in
+        esecuzione un gioco qualsiasi.</li>
+      <li><strong>Le schede dei giochi si allineano su un telefono e dopo aver
+        ridimensionato la finestra.</strong> Su un telefono, la Libreria e le
+        pagine delle console mostravano una scheda e poi un lungo spazio
+        vuoto; ora le schede si impilano una sotto l'altra. Restringere o
+        allargare la finestra ridispone le schede invece di lasciarle nelle
+        vecchie colonne.</li>
+      <li><strong>Classificazioni e numero di giocatori scansionati sono più
+        precisi.</strong> Le classificazioni per età di IGDB per CERO, USK,
+        GRAC, ClassInd e ACB ora vengono lette correttamente, quindi un gioco
+        classificato CERO Z o USK 18 riceve quella classificazione.
+        TheGamesDB, RAWG, IGDB ed ES-DE non ipotizzano più "1 giocatore"
+        quando non lo sanno; un'importazione da ES-DE non sovrascrive più il
+        numero di giocatori o le modalità di gioco che hai impostato.
+        TheGamesDB non salva più un numero al posto del nome di un editore o
+        sviluppatore dopo una ricerca non riuscita.</li>
+      <li><strong>ScreenScraper mantiene i suoi dati quando è la fonte
+        principale.</strong> Titolo, descrizione, data, sviluppatore, editore
+        e giocatori vengono mantenuti a ogni scansione, non solo nei primi
+        minuti dopo una ricerca. Video e manuali scaricati ricevono un nome di
+        file corretto.</li>
+      <li><strong>Cancella dati scansionati rimette il nome del file come
+        titolo.</strong> Cancellava i dati ma lasciava il titolo
+        scansionato.</li>
+      <li><strong>L'aggiornamento di RetroAchievements per una console
+        funziona di nuovo.</strong> Falliva ogni volta con un errore.</li>
+      <li><strong>La ricerca di screenshot duplicati funziona nell'app
+        scaricata.</strong> Lì non trovava nessuno screenshot, ed eliminare un
+        duplicato lasciava il file sul disco.</li>
+      <li><strong>Le password di ScreenScraper sono nascoste, e l'ultimo
+        amministratore resta amministratore.</strong> Impostazioni ora mostra
+        le tue password di ScreenScraper mascherate, come le altre chiavi.
+        L'unico account amministratore non può più essere trasformato in
+        editor o disattivato, cosa che avrebbe lasciato RetroDB senza nessuno
+        in grado di gestirlo.</li>
+      <li><strong>Le attività interrotte vengono proposte solo a chi può
+        eseguirle.</strong> Il banner delle attività interrotte nella
+        Dashboard ora mostra un'attività solo a chi può avviarla, per esempio
+        una scansione in blocco solo a editor e amministratori. Gli altri
+        account non lo vedono più e non possono più ignorarlo.</li>
+      <li><strong>Logo delle console importati, nomi strani in Impostazioni e
+        dischi bonus.</strong> Nell'app scaricata, Aggiorna logo ora trova i
+        logo delle console portati da Importa da ES-DE e li preferisce a
+        quelli integrati. Un nome di controller, console o backup con
+        caratteri come &lt; o una virgoletta non rompe più la pagina
+        Impostazioni. Togliere il segno a un disco bonus lo stacca del tutto,
+        così non conta più come disco bonus del suo vecchio gioco.</li>
+      <li><strong>Trofei, importazioni della libreria e strumenti di
+        manutenzione più veloci.</strong> La pagina Trofei, le importazioni
+        della libreria da Steam, Xbox e PlayStation, i trofei del
+        collezionista, Calcola spazio e la scansione dei media inutilizzati
+        lavorano molto meno su una libreria grande. Le finestre di
+        avanzamento delle attività continuano ad aggiornarsi quando il server
+        è occupato, e le attività di HowLongToBeat e dei titoli alternativi
+        non bloccano più altre modifiche mentre sono in esecuzione.</li>
+      <li><strong>Scopri quanto bene gira ogni gioco PS3 in RPCS3.</strong> I
+        giochi PS3 nella Libreria, nella pagina PlayStation 3 e nella pagina
+        del gioco mostrano lo stato di compatibilità di RPCS3: Giocabile,
+        In gioco, Intro, Caricabile o Niente, con la data dell'ultimo test.
+        RetroDB lo legge dall'RPCS3 sul tuo computer, quindi in RPCS3 scegli
+        Manage &gt; Databases &gt; Download Compatibility Database una volta,
+        e di nuovo quando vuoi risultati più recenti. Vengono mostrati solo i
+        giochi con una ROM sul disco; quelli importati no. RetroDB ora legge
+        anche l'ID del gioco delle cartelle PSN e dei giochi installati, e di
+        cartelle e file il cui nome lo contiene, come [BLUS30443].</li>
+      <li><strong>Dati di vendita per i tuoi giochi.</strong> Quando l'AI
+        riempie i vuoti durante una scansione, e quando premi Riempimento AI,
+        ora le viene chiesto anche quante copie ha venduto il gioco sulla sua
+        console, da dati pubblicati e gratuiti come i rapporti dell'editore,
+        le classifiche dei più venduti delle piattaforme, Famitsu, Wikipedia e
+        VGChartz. La pagina del gioco mostra il numero. Un gioco senza dati
+        pubblicati resta vuoto invece di ricevere una stima.</li>
+      <li><strong>L'interruttore Franchise / Serie funziona nella pagina del
+        gioco.</strong> Nella finestra di modifica della pagina del gioco,
+        fare clic sull'interruttore Franchise / Serie di un gioco segnato come
+        Autonomo non faceva nulla, quindi non lo si poteva inserire in una
+        serie. Ora si attiva, e lo stesso vale per l'interruttore
+        Disponibilità sulle piattaforme.</li>
+      <li><strong>Tutte le schede Obiettivi hanno la stessa
+        larghezza.</strong> RetroAchievements, RPCS3, PSN, Steam e Xbox
+        dimensionavano la pagina sulle proprie schede, quindi la pagina
+        cambiava larghezza passando da una scheda all'altra. Ora condividono
+        un'unica larghezza.</li>
+      <li><strong>RetroDB trova le impostazioni di RPCS3 su Windows e
+        macOS.</strong> Su Windows RPCS3 tiene le sue impostazioni accanto a
+        rpcs3.exe, e RetroDB ora cerca lì e in una cartella portatile, così
+        vengono trovate le impostazioni per gioco e l'elenco di
+        compatibilità.</li>
+      <li><strong>Riempimento AI funziona per i giochi con un voto ma senza
+        classificazione per età.</strong> Riempimento AI poteva fallire con un
+        errore per un gioco del genere mentre ne calcolava la classificazione
+        per età.</li>
+      <li><strong>Le etichette delle schede dei giochi seguono la tua
+        lingua.</strong> Lo stato di completamento e i suggerimenti dei voti
+        sulle schede della Libreria erano sempre in inglese.</li>
+      <li><strong>Date di uscita per ogni regione.</strong> Quando l'AI
+        riempie i vuoti durante una scansione, e quando premi Riempimento AI,
+        ora le viene chiesta anche la data in cui il gioco è uscito in ogni
+        regione, come Nord America, Europa e Giappone. La pagina del gioco e
+        la vista rapida le elencano, dalla più vecchia, con date e nomi delle
+        regioni nella tua lingua. La data di uscita propria del gioco non
+        cambia.</li>
+      <li><strong>Gioco precedente e successivo nella pagina del
+        gioco.</strong> Accanto al percorso in cima alla pagina di un gioco ci
+        sono i link Precedente e Successiva e la posizione del gioco
+        nell'elenco. Seguono la pagina da cui arrivi: aperti dalla Libreria
+        scorrono la Libreria, e da una pagina di console quella console, nello
+        stesso ordine e con gli stessi filtri e la stessa ricerca che avevi
+        lì.</li>
+      <li><strong>Copertine e screenshot caricati vengono elaborati come
+        quelli scansionati.</strong> Una copertina, una scatola 3D o uno
+        screenshot che carichi nella finestra di modifica ora viene salvato
+        nello stesso formato di immagine delle immagini scansionate,
+        ridimensionato alla stessa misura, e le copertine ricevono le copie
+        più piccole che usa la Libreria. Uno screenshot uguale a uno che il
+        gioco ha già non viene aggiunto, e ti viene detto quanti sono stati
+        esclusi. Caricare una nuova copertina rimuove anche il file che
+        sostituisce.</li>
+      <li><strong>RetroAchievements appare nella pagina di ogni gioco che lo
+        ha.</strong> Alcuni giochi avevano il badge RA nella Libreria ma
+        nessuna scheda RetroAchievements nella loro pagina, come Metroid Prime
+        e Metroid Prime 2 su GameCube. La pagina ora usa lo stesso
+        collegamento a RetroAchievements del badge, e si carica più in fretta
+        perché non interroga più RetroAchievements ogni volta.</li>
+      <li><strong>Il conteggio dei non elaborati nella pagina Sistemi
+        corrisponde al filtro Non elaborato.</strong> Il conteggio includeva i
+        dischi bonus, che l'elenco dei giochi della console non mostra mai,
+        quindi una console poteva indicare 2 non elaborati mentre il suo
+        filtro Non elaborato non ne mostrava nessuno.</li>
+      <li><strong>Le pagine della Libreria e dei sistemi si aggiornano in
+        tempo reale durante la Scansione in blocco.</strong> La scheda di ogni
+        gioco si aggiorna appena il gioco viene scansionato, che la finestra
+        della Scansione in blocco sia aperta, chiusa o in background.</li>
+      <li><strong>Riempimento AI dà a ogni gioco il suo nome
+        ufficiale.</strong> Quando l'AI riempie i vuoti, nella scansione di un
+        singolo gioco, nella Scansione in blocco e con il pulsante Riempimento
+        AI, indica anche il titolo ufficiale del gioco come è uscito nella
+        regione della sua ROM, e il gioco viene rinominato così. Il vecchio
+        nome resta come titolo alternativo. Un titolo che hai scritto tu o
+        accettato in Nomi ufficiali non viene mai rinominato.</li>
+      <li><strong>Nomi ufficiali suggerisce di nuovo i nomi.</strong> Con
+        OpenAI, e a volte con Gemini, le risposte dell'AI non si potevano
+        leggere, quindi una ricerca finiva senza nessun nome suggerito.</li>
+      <li><strong>Le fonti vengono interrogate solo per i sistemi che
+        coprono.</strong> RAWG non ha giochi Intellivision, quindi non viene
+        più interrogato per loro; prima trovava invece giochi di altre
+        piattaforme. IGDB, TheGamesDB e RAWG ora cercano sempre sul sistema
+        del gioco. Sono stati corretti anche diversi collegamenti errati alle
+        piattaforme di RAWG (Atari ST, ColecoVision, PC Engine, DOS).</li>
+      <li><strong>L'anello di avanzamento della scansione non torna più
+        indietro.</strong> Dopo più di una ricerca nella finestra Cerca
+        metadati, un solo Applica avviava la scansione più volte, e l'anello
+        saltava dall'una all'altra.</li>
+      <li><strong>La boxart 3D ingrandita non ha più un quadrato
+        dietro.</strong> La scatola poggia direttamente sullo sfondo
+        oscurato.</li>
+      <li><strong>I messaggi non mostrano più codice HTML.</strong> Alcune
+        finestre di conferma e di risultato in Strumenti ROM mostravano tag
+        come &lt;br&gt; invece degli a capo. Il visualizzatore dei log e il
+        selettore del gioco principale dei dischi bonus in Impostazioni
+        funzionano di nuovo.</li>
+    </ul>
 - version: 3.32.0
   date: '2026-10-23'
   tags:

@@ -9839,6 +9839,17 @@ were corrected in `2836bc3` and are not repeated here.
 - **Status**: todo. Lanes: routes.
 - **Source**: code review of PR #23, 2026-10-29.
 
+---
+
+#### Pass 59.179 Settings > System maintenance tools are wrapped for translation (LOW, S).
+- **Status**: todo
+templates/_settings_tabs/system.html has "Clear Scraped Data" as bare
+text, and the maintenance JS in templates/settings.html (CLEAR SCRAPED
+DATA FUNCTIONS: preview text, confirm title, button reset, the
+"Failed to refresh logos" error) uses bare string literals. Wrap them
+with _() / t(), check the rest of that tab for the same, regenerate
+the catalogs and translate the new msgids into every locale.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history

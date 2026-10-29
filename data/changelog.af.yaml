@@ -1,3 +1,251 @@
+- version: 3.33.0
+  date: '2026-10-29'
+  tags:
+  - type: feature
+    label: "RetroDB dateer homself op"
+  - type: feature
+    label: "Kry RetroArch van binne RetroDB"
+  - type: feature
+    label: "Sien hoe goed elke PS3-speletjie in RPCS3 loop"
+  - type: feature
+    label: "Verkoopsyfers vir jou speletjies"
+  - type: feature
+    label: "Vrystellingsdatums vir elke streek"
+  - type: feature
+    label: "Vorige en volgende speletjie op die speletjiebladsy"
+  - type: feature
+    label: "Opgelaaide omslae en skermkiekies word soos geskraapte verwerk"
+  - type: feature
+    label: "Biblioteek- en stelselbladsye werk regstreeks by tydens Massa-Skraap"
+  - type: feature
+    label: "AI-vul gee elke speletjie sy amptelike naam"
+  - type: performance
+    label: "Vinniger trofeë, biblioteekinvoere en onderhoudsgereedskap"
+  - type: fix
+    label: "Volgende skyf werk vir speletjies wat in RetroDB gespeel word"
+  - type: fix
+    label: "Speletjiekaarte staan reg op 'n foon en nadat die venster se grootte verander is"
+  - type: fix
+    label: "Geskraapte graderings en spelertellings is akkurater"
+  - type: fix
+    label: "ScreenScraper behou sy besonderhede wanneer dit die hoofbron is"
+  - type: fix
+    label: "Maak geskraapte data skoon sit die lêernaam terug as die titel"
+  - type: fix
+    label: "RetroAchievements-verfrissing vir een konsole werk weer"
+  - type: fix
+    label: "Skermkiekie-duplikaatsoeker werk in die afgelaaide toep"
+  - type: fix
+    label: "ScreenScraper-wagwoorde is versteek, en die laaste admin bly admin"
+  - type: fix
+    label: "Onderbreekte take word net aangebied aan mense wat dit mag laat loop"
+  - type: fix
+    label: "Ingevoerde konsole-logo's, vreemde name in Instellings en bonusskywe"
+  - type: fix
+    label: "Die Franchise / Reeks-skakelaar werk op die speletjiebladsy"
+  - type: fix
+    label: "Elke Prestasies-oortjie is ewe wyd"
+  - type: fix
+    label: "RetroDB vind RPCS3 se instellings op Windows en macOS"
+  - type: fix
+    label: "AI-vul werk vir speletjies met 'n punt maar geen ouderdomsgradering nie"
+  - type: fix
+    label: "Speletjiekaart-etikette volg jou taal"
+  - type: fix
+    label: "RetroAchievements wys op die speletjiebladsy vir elke speletjie wat dit het"
+  - type: fix
+    label: "Die Stelsels-bladsy se ongeskraapte telling stem ooreen met die Ongeskraap-filter"
+  - type: fix
+    label: "Amptelike name stel weer name voor"
+  - type: fix
+    label: "Bronne word net deursoek vir stelsels wat hulle dek"
+  - type: fix
+    label: "Die skraapvorderingsring spring nie meer terug nie"
+  - type: fix
+    label: "Vergrote 3D-boksprent het geen vierkant agter dit nie"
+  - type: fix
+    label: "Boodskappe wys nie meer HTML-kode nie"
+  body: |
+    <ul>
+      <li><strong>RetroDB dateer homself op.</strong> Wanneer 'n nuwe weergawe
+        uit is, sien admins dit op die Kontrolebord en in Instellings &gt;
+        Stelsel &gt; Opdaterings, saam met wat nuut is. Laai opdatering af
+        haal dit en kyk dat dit presies die gepubliseerde lêer is; Installeer
+        en herbegin rugsteun jou databasis, sit die nuwe weergawe in plek en
+        herbegin. As die nuwe weergawe nie begin nie, gaan RetroDB vanself
+        terug na die oue en sê hoekom. Jou speletjies, instellings, prente en
+        logs word nie aangeraak nie. RetroDB kyk een keer per dag vir
+        opdaterings; jy kan dit afskakel. 'n Kopie wat uit git of deur 'n
+        prosesbestuurder loop, word van opdaterings vertel maar nie
+        opgedateer nie.</li>
+      <li><strong>Kry RetroArch van binne RetroDB.</strong> Instellings &gt;
+        Emulators het 'n nuwe afdeling Speel in RetroDB. Druk Kry RetroArch
+        en RetroDB laai die amptelike RetroArch van libretro af, kyk dat die
+        aflaai presies die verwagte lêer is, en stel dit op as RetroArch
+        (RetroDB), met sy eie instellings en stoorlêers, apart gehou van
+        enige RetroArch wat jy reeds gebruik. Dit haal dan die beste core
+        vir elke stelsel die eerste keer dat jy speel. Werk op Linux en
+        Windows; macOS is nog nie getoets nie.</li>
+      <li><strong>Volgende skyf werk vir speletjies wat in RetroDB gespeel
+        word.</strong> Vir 'n speletjie met meer as een skyf bereik die
+        Volgende skyf-knoppie nou RetroDB se eie RetroArch sonder enige
+        opstelling. RetroArch luister net na RetroDB se opdragte terwyl so 'n
+        speletjie loop, en op Windows en macOS terwyl enige speletjie
+        loop.</li>
+      <li><strong>Speletjiekaarte staan reg op 'n foon en nadat die venster
+        se grootte verander is.</strong> Op 'n foon het die Biblioteek- en
+        konsolebladsye een kaart gewys en dan 'n lang leë gaping; kaarte
+        stapel nou een onder die ander. As jy die venster smaller of wyer
+        maak, word die kaarte herrangskik in plaas daarvan dat hulle in die
+        ou kolomme bly.</li>
+      <li><strong>Geskraapte graderings en spelertellings is
+        akkurater.</strong> Ouderdomsgraderings van IGDB vir CERO, USK, GRAC,
+        ClassInd en ACB word nou korrek gelees, so 'n speletjie wat CERO Z of
+        USK 18 gegradeer is, kry daardie gradering. TheGamesDB, RAWG, IGDB en
+        ES-DE raai nie meer "1 speler" wanneer hulle nie weet nie; 'n
+        ES-DE-invoer oorskryf nie meer 'n spelertelling of spelmodusse wat jy
+        gestel het nie. TheGamesDB stoor nie meer 'n nommer in plaas van 'n
+        uitgewer- of ontwikkelaarnaam ná 'n mislukte opsoek nie.</li>
+      <li><strong>ScreenScraper behou sy besonderhede wanneer dit die
+        hoofbron is.</strong> Sy titel, beskrywing, datum, ontwikkelaar,
+        uitgewer en spelers word by elke skraap behou, nie net die eerste
+        paar minute ná 'n soektog nie. Afgelaaide video's en handleidings
+        kry 'n behoorlike lêernaam.</li>
+      <li><strong>Maak geskraapte data skoon sit die lêernaam terug as die
+        titel.</strong> Dit het die besonderhede skoongemaak maar die
+        geskraapte titel gelos.</li>
+      <li><strong>RetroAchievements-verfrissing vir een konsole werk
+        weer.</strong> Dit het elke keer met 'n fout misluk.</li>
+      <li><strong>Skermkiekie-duplikaatsoeker werk in die afgelaaide
+        toep.</strong> Dit het geen skermkiekies daar gevind nie, en om 'n
+        duplikaat uit te vee het die lêer op skyf gelos.</li>
+      <li><strong>ScreenScraper-wagwoorde is versteek, en die laaste admin
+        bly admin.</strong> Instellings wys nou jou ScreenScraper-wagwoorde
+        gemasker, soos jou ander sleutels. Die enigste admin-rekening kan nie
+        meer na redigeerder verander of afgeskakel word nie, wat niemand sou
+        gelaat het wat RetroDB kan bestuur nie.</li>
+      <li><strong>Onderbreekte take word net aangebied aan mense wat dit mag
+        laat loop.</strong> Die Kontrolebord se banier vir onderbreekte take
+        wys nou 'n taak net aan iemand wat dit mag begin, byvoorbeeld 'n
+        massa-skraap net aan redigeerders en admins. Ander rekeninge sien dit
+        nie meer nie en kan dit nie meer wegwys nie.</li>
+      <li><strong>Ingevoerde konsole-logo's, vreemde name in Instellings en
+        bonusskywe.</strong> In die afgelaaide toep vind Verfris logo's nou
+        die konsole-logo's wat deur Invoer uit ES-DE ingebring is, en verkies
+        hulle bo die ingeboude. 'n Beheerder-, konsole- of rugsteunnaam met
+        karakters soos &lt; of 'n aanhalingsteken breek nie meer die
+        Instellings-bladsy nie. Om 'n bonusskyf te ontmerk, maak dit heeltemal
+        los, so dit tel nie meer as 'n bonusskyf van sy ou speletjie nie.</li>
+      <li><strong>Vinniger trofeë, biblioteekinvoere en
+        onderhoudsgereedskap.</strong> Die Trofeë-bladsy, Steam-, Xbox- en
+        PlayStation-biblioteekinvoere, versamelaartrofeë, Bereken berging en
+        die skandering vir ongebruikte media doen almal baie minder werk op
+        'n groot biblioteek. Opspringvensters vir taakvordering hou aan
+        bywerk wanneer die bediener besig is, en die HowLongToBeat- en
+        alternatiewe-titel-take hou nie meer ander veranderinge op terwyl
+        hulle loop nie.</li>
+      <li><strong>Sien hoe goed elke PS3-speletjie in RPCS3 loop.</strong>
+        PS3-speletjies in die Biblioteek, op die PlayStation 3-bladsy en op
+        die speletjiebladsy wys RPCS3 se versoenbaarheidstatus: Speelbaar,
+        In speletjie, Intro, Laaibaar of Niks, met die datum waarop dit laas
+        getoets is. RetroDB lees dit uit die RPCS3 op jou rekenaar, so kies
+        in RPCS3 een keer Manage &gt; Databases &gt; Download Compatibility
+        Database, en weer wanneer jy nuwer resultate wil hê. Net speletjies
+        met 'n ROM op skyf word gewys; ingevoerde speletjies nie. RetroDB
+        lees nou ook die speletjie-ID van PSN- en geïnstalleerde
+        speletjievouers, en van vouers en lêers wie se naam dit dra, soos
+        [BLUS30443].</li>
+      <li><strong>Verkoopsyfers vir jou speletjies.</strong> Wanneer die KI
+        gapings tydens 'n skraap vul, en wanneer jy AI-vul druk, word dit nou
+        ook gevra hoeveel kopieë die speletjie op sy konsole verkoop het,
+        volgens vrylik gepubliseerde syfers soos die uitgewer se verslae,
+        platforms se topverkoperlyste, Famitsu, Wikipedia en VGChartz. Die
+        speletjiebladsy wys die getal. 'n Speletjie sonder 'n gepubliseerde
+        syfer bly leeg eerder as om 'n raaiskoot te kry.</li>
+      <li><strong>Die Franchise / Reeks-skakelaar werk op die
+        speletjiebladsy.</strong> In die speletjiebladsy se wysigvenster het
+        'n klik op die Franchise / Reeks-skakelaar van 'n speletjie wat as
+        Alleenstaande gemerk is niks gedoen nie, so dit kon nie in 'n reeks
+        geplaas word nie. Dit skakel nou, en die
+        Platformbeskikbaarheid-skakelaar ook.</li>
+      <li><strong>Elke Prestasies-oortjie is ewe wyd.</strong>
+        RetroAchievements, RPCS3, PSN, Steam en Xbox het elk die bladsy na
+        hul eie kaarte gegrootte, so die bladsy het van wydte verander soos
+        jy tussen oortjies beweeg het. Hulle deel nou een wydte.</li>
+      <li><strong>RetroDB vind RPCS3 se instellings op Windows en
+        macOS.</strong> Op Windows hou RPCS3 sy instellings langs rpcs3.exe,
+        en RetroDB kyk nou daar en in 'n draagbare vouer, so instellings per
+        speletjie en die versoenbaarheidslys word gevind.</li>
+      <li><strong>AI-vul werk vir speletjies met 'n punt maar geen
+        ouderdomsgradering nie.</strong> AI-vul kon vir so 'n speletjie met
+        'n fout misluk terwyl dit sy ouderdomsgradering uitwerk.</li>
+      <li><strong>Speletjiekaart-etikette volg jou taal.</strong> Die
+        voltooiingstatus- en punt-wenke op Biblioteekkaarte was altyd in
+        Engels.</li>
+      <li><strong>Vrystellingsdatums vir elke streek.</strong> Wanneer die
+        KI gapings tydens 'n skraap vul, en wanneer jy AI-vul druk, word dit
+        nou ook gevra vir die datum waarop die speletjie in elke streek
+        uitgekom het, soos Noord-Amerika, Europa en Japan. Die
+        speletjiebladsy en die vinnige aansig lys hulle, vroegste eerste, met
+        datums en streekname in jou taal. 'n Speletjie se eie
+        vrystellingsdatum bly onveranderd.</li>
+      <li><strong>Vorige en volgende speletjie op die
+        speletjiebladsy.</strong> Langs die pad bo-aan 'n speletjiebladsy is
+        Vorige- en Volgende-skakels en waar die speletjie in die lys staan.
+        Hulle volg die bladsy waarvandaan jy gekom het: oopgemaak vanuit die
+        Biblioteek stap hulle deur die Biblioteek, en vanuit 'n
+        konsolebladsy deur daardie konsole, in dieselfde volgorde en met
+        dieselfde filters en soektog wat jy daar gehad het.</li>
+      <li><strong>Opgelaaide omslae en skermkiekies word soos geskraapte
+        verwerk.</strong> 'n Omslag, 3D-boks of skermkiekie wat jy in die
+        wysigvenster oplaai, word nou in dieselfde beeldformaat as geskraapte
+        prente gestoor, na dieselfde grootte verander, en omslae kry die
+        kleiner kopieë wat die Biblioteek gebruik. 'n Skermkiekie wat
+        dieselfde lyk as een wat die speletjie reeds het, word nie bygevoeg
+        nie, en jy word vertel hoeveel uitgelaat is. Om 'n nuwe omslag op te
+        laai, verwyder ook die lêer wat dit vervang.</li>
+      <li><strong>RetroAchievements wys op die speletjiebladsy vir elke
+        speletjie wat dit het.</strong> Sommige speletjies het die RA-kenteken
+        in die Biblioteek gehad maar geen RetroAchievements-kaart op hul
+        bladsy nie, soos Metroid Prime en Metroid Prime 2 op GameCube. Die
+        bladsy gebruik nou dieselfde RetroAchievements-skakel as die
+        kenteken, en laai vinniger omdat dit nie meer elke keer by
+        RetroAchievements navraag doen nie.</li>
+      <li><strong>Die Stelsels-bladsy se ongeskraapte telling stem ooreen met
+        die Ongeskraap-filter.</strong> Die telling het bonusskywe ingesluit,
+        wat die konsole se speletjielys nooit wys nie, so 'n konsole kon 2
+        ongeskraap sê terwyl sy Ongeskraap-filter geen gewys het nie.</li>
+      <li><strong>Biblioteek- en stelselbladsye werk regstreeks by tydens
+        Massa-Skraap.</strong> Elke speletjie se kaart verfris sodra dit
+        geskraap is, of die Massa-Skraap-venster oop, toe of in die agtergrond
+        loop.</li>
+      <li><strong>AI-vul gee elke speletjie sy amptelike naam.</strong>
+        Wanneer die KI gapings vul, in 'n skraap van een speletjie, in
+        Massa-Skraap en met die AI-vul-knoppie, noem dit ook die speletjie se
+        amptelike titel soos vrygestel in sy ROM se streek, en die speletjie
+        word daarna hernoem. Die ou naam word as 'n alternatiewe titel
+        behou. 'n Titel wat jy self getik het of in Amptelike name aanvaar
+        het, word nooit hernoem nie.</li>
+      <li><strong>Amptelike name stel weer name voor.</strong> Met OpenAI,
+        en soms met Gemini, kon die KI se antwoorde nie gelees word nie, so 'n
+        lopie het geëindig sonder dat name voorgestel is.</li>
+      <li><strong>Bronne word net deursoek vir stelsels wat hulle
+        dek.</strong> RAWG het geen Intellivision-speletjies nie, so dit word
+        nie meer daarvoor deursoek nie; voorheen het dit eerder speletjies van
+        ander platforms gevind. IGDB, TheGamesDB en RAWG soek nou altyd op die
+        speletjie se eie stelsel. Verskeie verkeerde RAWG-platformskakels is
+        ook reggestel (Atari ST, ColecoVision, PC Engine, DOS).</li>
+      <li><strong>Die skraapvorderingsring spring nie meer terug
+        nie.</strong> Ná meer as een soektog in die Soek Metadata-venster het
+        een Pas toe die skraap verskeie kere begin, en die ring het tussen
+        hulle gespring.</li>
+      <li><strong>Vergrote 3D-boksprent het geen vierkant agter dit
+        nie.</strong> Die boks sit reguit op die verdofte agtergrond.</li>
+      <li><strong>Boodskappe wys nie meer HTML-kode nie.</strong> Sommige
+        bevestigings- en resultaatvensters in ROM-gereedskap het etikette
+        soos &lt;br&gt; gewys in plaas van reëlbreuke. Die Logbekyker en die
+        ouerkieser vir bonusskywe in Instellings werk weer.</li>
+    </ul>
 - version: 3.32.0
   date: '2026-10-23'
   tags:

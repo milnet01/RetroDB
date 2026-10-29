@@ -1,3 +1,246 @@
+- version: 3.33.0
+  date: '2026-10-29'
+  tags:
+  - type: feature
+    label: RetroDB oppdaterer seg selv
+  - type: feature
+    label: Hent RetroArch fra RetroDB
+  - type: feature
+    label: Se hvor godt hvert PS3-spill kjører i RPCS3
+  - type: feature
+    label: Salgstall for spillene dine
+  - type: feature
+    label: Utgivelsesdatoer for hver region
+  - type: feature
+    label: Forrige og neste spill på spillsiden
+  - type: feature
+    label: Opplastede omslag og skjermbilder behandles som skrapede
+  - type: feature
+    label: Bibliotek- og systemsidene oppdateres fortløpende under masseskraping
+  - type: feature
+    label: AI-utfylling gir hvert spill det offisielle navnet
+  - type: performance
+    label: Raskere trofeer, bibliotekimporter og vedlikeholdsverktøy
+  - type: fix
+    label: Neste disk fungerer for spill som spilles i RetroDB
+  - type: fix
+    label: Spillkortene står riktig på en telefon og etter at vinduet endrer størrelse
+  - type: fix
+    label: Skrapede aldersgrenser og spillerantall er mer nøyaktige
+  - type: fix
+    label: ScreenScraper beholder detaljene sine når den er hovedkilden
+  - type: fix
+    label: Fjern skrapede data setter filnavnet tilbake som tittel
+  - type: fix
+    label: RetroAchievements-oppdatering for én konsoll fungerer igjen
+  - type: fix
+    label: Duplikatsøk for skjermbilder fungerer i den nedlastede appen
+  - type: fix
+    label: ScreenScraper-passord er skjult, og den siste administratoren forblir administrator
+  - type: fix
+    label: Avbrutte jobber tilbys bare til dem som har lov til å kjøre dem
+  - type: fix
+    label: Importerte konsollogoer, rare navn i Innstillinger og bonusplater
+  - type: fix
+    label: Bryteren Franchise / serie fungerer på spillsiden
+  - type: fix
+    label: Alle Prestasjoner-fanene er like brede
+  - type: fix
+    label: RetroDB finner innstillingene til RPCS3 på Windows og macOS
+  - type: fix
+    label: AI-utfylling fungerer for spill med poeng, men uten aldersgrense
+  - type: fix
+    label: Etikettene på spillkortene følger språket ditt
+  - type: fix
+    label: RetroAchievements vises på spillsiden for alle spill som har det
+  - type: fix
+    label: Antallet uskrapede på Systemer-siden samsvarer med Uskrapet-filteret
+  - type: fix
+    label: Offisielle navn foreslår navn igjen
+  - type: fix
+    label: Kilder søkes bare for systemer de dekker
+  - type: fix
+    label: Fremdriftsringen for skraping hopper ikke lenger tilbake
+  - type: fix
+    label: Forstørret 3D-omslag har ikke lenger en firkant bak seg
+  - type: fix
+    label: Meldinger viser ikke lenger HTML-kode
+  body: |
+    <ul>
+      <li><strong>RetroDB oppdaterer seg selv.</strong> Når en ny versjon er
+        ute, ser administratorer det på Oversikt og i Innstillinger &gt;
+        System &gt; Oppdateringer, sammen med hva som er nytt. Last ned
+        oppdatering henter den og kontrollerer at den er nøyaktig den
+        publiserte filen; Installer og start på nytt tar sikkerhetskopi av
+        databasen, setter den nye versjonen på plass og starter på nytt. Hvis
+        den nye versjonen ikke starter, går RetroDB tilbake til den gamle av
+        seg selv og sier hvorfor. Spillene, innstillingene, bildene og
+        loggene dine blir ikke rørt. RetroDB ser etter oppdateringer én gang
+        om dagen; du kan slå det av. En kopi som kjøres fra git eller av en
+        prosessbehandler, får beskjed om oppdateringer, men blir ikke
+        oppdatert.</li>
+      <li><strong>Hent RetroArch fra RetroDB.</strong> Innstillinger &gt;
+        Emulatorer har en ny del, Spill i RetroDB. Trykk Hent RetroArch, så
+        laster RetroDB ned den offisielle RetroArch fra libretro, kontrollerer
+        at nedlastingen er nøyaktig den forventede filen, og setter den opp
+        som RetroArch (RetroDB), med egne innstillinger og lagringer, holdt
+        atskilt fra en RetroArch du allerede bruker. Deretter henter den den
+        beste kjernen for hvert system første gang du spiller. Fungerer på
+        Linux og Windows; macOS er ikke testet ennå.</li>
+      <li><strong>Neste disk fungerer for spill som spilles i
+        RetroDB.</strong> For et spill med flere plater når knappen Neste disk
+        nå RetroDBs egen RetroArch uten oppsett. RetroArch lytter etter
+        kommandoer fra RetroDB bare mens et slikt spill kjører, og på Windows
+        og macOS mens et hvilket som helst spill kjører.</li>
+      <li><strong>Spillkortene står riktig på en telefon og etter at vinduet
+        endrer størrelse.</strong> På en telefon viste Bibliotek og
+        konsollsidene ett kort og deretter et langt tomt mellomrom; nå legger
+        kortene seg under hverandre. Gjør du vinduet smalere eller bredere,
+        ordnes kortene på nytt i stedet for å bli stående i de gamle
+        kolonnene.</li>
+      <li><strong>Skrapede aldersgrenser og spillerantall er mer
+        nøyaktige.</strong> Aldersgrenser fra IGDB for CERO, USK, GRAC,
+        ClassInd og ACB leses nå riktig, så et spill merket CERO Z eller USK
+        18 får den aldersgrensen. TheGamesDB, RAWG, IGDB og ES-DE gjetter ikke
+        lenger «1 spiller» når de ikke vet; en ES-DE-import overskriver ikke
+        lenger et spillerantall eller spillmoduser du har angitt. TheGamesDB
+        lagrer ikke lenger et tall i stedet for navnet på en utgiver eller
+        utvikler etter et mislykket oppslag.</li>
+      <li><strong>ScreenScraper beholder detaljene sine når den er
+        hovedkilden.</strong> Tittel, beskrivelse, dato, utvikler, utgiver og
+        spillere fra den beholdes ved hver skraping, ikke bare de første
+        minuttene etter et søk. Nedlastede videoer og manualer får et ordentlig
+        filnavn.</li>
+      <li><strong>Fjern skrapede data setter filnavnet tilbake som
+        tittel.</strong> Den fjernet detaljene, men lot den skrapede tittelen
+        stå.</li>
+      <li><strong>RetroAchievements-oppdatering for én konsoll fungerer
+        igjen.</strong> Den mislyktes med en feil hver gang.</li>
+      <li><strong>Duplikatsøk for skjermbilder fungerer i den nedlastede
+        appen.</strong> Den fant ingen skjermbilder der, og å slette et
+        duplikat lot filen ligge igjen på disken.</li>
+      <li><strong>ScreenScraper-passord er skjult, og den siste
+        administratoren forblir administrator.</strong> Innstillinger viser nå
+        ScreenScraper-passordene dine maskert, som de andre nøklene dine. Den
+        eneste administratorkontoen kan ikke lenger gjøres om til redaktør
+        eller slås av, noe som ville ha latt ingen kunne administrere
+        RetroDB.</li>
+      <li><strong>Avbrutte jobber tilbys bare til dem som har lov til å kjøre
+        dem.</strong> Banneret for avbrutte jobber på Oversikt viser nå en
+        jobb bare til noen som har lov til å starte den, for eksempel en
+        masseskraping bare til redaktører og administratorer. Andre kontoer
+        ser den ikke lenger og kan ikke lenger avvise den.</li>
+      <li><strong>Importerte konsollogoer, rare navn i Innstillinger og
+        bonusplater.</strong> I den nedlastede appen finner Oppdater logoer nå
+        konsollogoene som ble hentet inn med Importer fra ES-DE, og foretrekker
+        dem framfor de innebygde. Et kontroller-, konsoll- eller
+        sikkerhetskopinavn med tegn som &lt; eller et anførselstegn ødelegger
+        ikke lenger Innstillinger-siden. Å fjerne merket for en bonusplate
+        kobler den helt løs, så den ikke lenger teller som bonusplate for det
+        gamle spillet sitt.</li>
+      <li><strong>Raskere trofeer, bibliotekimporter og
+        vedlikeholdsverktøy.</strong> Trofeer-siden, bibliotekimportene fra
+        Steam, Xbox og PlayStation, samlertrofeer, Beregn lagringsplass og
+        skanningen etter ubrukte medier gjør alle langt mindre arbeid på et
+        stort bibliotek. Fremdriftsvinduer for jobber fortsetter å oppdateres
+        når serveren er opptatt, og jobbene for HowLongToBeat og alternative
+        titler holder ikke lenger igjen andre endringer mens de kjører.</li>
+      <li><strong>Se hvor godt hvert PS3-spill kjører i RPCS3.</strong>
+        PS3-spill i Bibliotek, på PlayStation 3-siden og på spillsiden viser
+        kompatibilitetsstatusen fra RPCS3: Spillbar, I spillet, Intro, Kan
+        lastes eller Ingenting, med datoen det sist ble testet. RetroDB leser
+        den fra RPCS3 på datamaskinen din, så i RPCS3 velger du Manage &gt;
+        Databases &gt; Download Compatibility Database én gang, og igjen når
+        du vil ha nyere resultater. Bare spill med en ROM på disken vises;
+        importerte spill gjør ikke det. RetroDB leser nå også spill-ID-en for
+        PSN- og installerte spillmapper, og for mapper og filer der navnet
+        inneholder den, som [BLUS30443].</li>
+      <li><strong>Salgstall for spillene dine.</strong> Når AI-en fyller hull
+        under en skraping, og når du trykker AI-utfylling, blir den nå også
+        spurt hvor mange eksemplarer spillet solgte på konsollen sin, ut fra
+        fritt publiserte tall som utgiverens rapporter, plattformenes
+        bestselgerlister, Famitsu, Wikipedia og VGChartz. Spillsiden viser
+        tallet. Et spill uten publisert tall forblir tomt i stedet for å få en
+        gjetning.</li>
+      <li><strong>Bryteren Franchise / serie fungerer på spillsiden.</strong>
+        I redigeringsvinduet på spillsiden skjedde det ingenting når du
+        klikket på bryteren Franchise / serie for et spill merket Frittstående,
+        så det kunne ikke legges i en serie. Nå bytter den, og det gjør også
+        bryteren Plattformtilgjengelighet.</li>
+      <li><strong>Alle Prestasjoner-fanene er like brede.</strong>
+        RetroAchievements, RPCS3, PSN, Steam og Xbox tilpasset hver siden til
+        sine egne kort, så siden endret bredde når du gikk mellom fanene. Nå
+        deler de én bredde.</li>
+      <li><strong>RetroDB finner innstillingene til RPCS3 på Windows og
+        macOS.</strong> På Windows lagrer RPCS3 innstillingene sine ved siden
+        av rpcs3.exe, og RetroDB ser nå der og i en portabel mappe, så
+        innstillinger per spill og kompatibilitetslisten blir funnet.</li>
+      <li><strong>AI-utfylling fungerer for spill med poeng, men uten
+        aldersgrense.</strong> AI-utfylling kunne mislykkes med en feil for et
+        slikt spill mens den fant ut aldersgrensen.</li>
+      <li><strong>Etikettene på spillkortene følger språket ditt.</strong>
+        Fullføringsstatus og verktøytips for poeng på kortene i Bibliotek var
+        alltid på engelsk.</li>
+      <li><strong>Utgivelsesdatoer for hver region.</strong> Når AI-en fyller
+        hull under en skraping, og når du trykker AI-utfylling, blir den nå
+        også spurt om datoen spillet kom ut i hver region, som Nord-Amerika,
+        Europa og Japan. Spillsiden og hurtigvisningen lister dem, tidligste
+        først, med datoer og regionnavn på ditt språk. Spillets egen
+        utgivelsesdato er uendret.</li>
+      <li><strong>Forrige og neste spill på spillsiden.</strong> Ved siden av
+        stien øverst på en spillside er det lenkene Forrige og Neste og hvor
+        spillet står i listen. De følger siden du kom fra: åpnet fra Bibliotek
+        går de gjennom Bibliotek, og fra en konsollside gjennom den konsollen,
+        i samme rekkefølge og med de samme filtrene og søket du hadde der.</li>
+      <li><strong>Opplastede omslag og skjermbilder behandles som
+        skrapede.</strong> Et omslag, en 3D-eske eller et skjermbilde du
+        laster opp i redigeringsvinduet, lagres nå i samme bildeformat som
+        skrapede bilder, skaleres til samme størrelse, og omslag får de mindre
+        kopiene som Bibliotek bruker. Et skjermbilde som ser likt ut som et
+        spillet allerede har, legges ikke til, og du får vite hvor mange som
+        ble utelatt. Når du laster opp et nytt omslag, fjernes også filen det
+        erstatter.</li>
+      <li><strong>RetroAchievements vises på spillsiden for alle spill som
+        har det.</strong> Noen spill hadde RA-merket i Bibliotek, men ikke noe
+        RetroAchievements-kort på siden sin, som Metroid Prime og Metroid
+        Prime 2 på GameCube. Siden bruker nå den samme
+        RetroAchievements-koblingen som merket, og lastes raskere fordi den
+        ikke lenger spør RetroAchievements hver gang.</li>
+      <li><strong>Antallet uskrapede på Systemer-siden samsvarer med
+        Uskrapet-filteret.</strong> Antallet tok med bonusplater, som
+        konsollens spilliste aldri viser, så en konsoll kunne si 2 uskrapet
+        mens Uskrapet-filteret viste ingen.</li>
+      <li><strong>Bibliotek- og systemsidene oppdateres fortløpende under
+        masseskraping.</strong> Kortet til hvert spill oppdateres så snart det
+        er skrapet, enten masseskrapingsvinduet er åpent, lukket eller kjører i
+        bakgrunnen.</li>
+      <li><strong>AI-utfylling gir hvert spill det offisielle navnet.</strong>
+        Når AI-en fyller hull, ved skraping av ett spill, ved masseskraping og
+        med knappen AI-utfylling, oppgir den også spillets offisielle tittel
+        slik det ble utgitt i ROM-ens region, og spillet får nytt navn etter
+        den. Det gamle navnet beholdes som alternativ tittel. En tittel du har
+        skrevet selv eller godtatt i Offisielle navn, får aldri nytt
+        navn.</li>
+      <li><strong>Offisielle navn foreslår navn igjen.</strong> Med OpenAI, og
+        noen ganger med Gemini, kunne ikke svarene fra AI-en leses, så en
+        kjøring endte uten foreslåtte navn.</li>
+      <li><strong>Kilder søkes bare for systemer de dekker.</strong> RAWG har
+        ingen Intellivision-spill, så det søkes ikke lenger der etter dem;
+        før fant den spill fra andre plattformer i stedet. IGDB, TheGamesDB og
+        RAWG søker nå alltid på spillets eget system. Flere feil
+        plattformkoblinger i RAWG ble også rettet (Atari ST, ColecoVision, PC
+        Engine, DOS).</li>
+      <li><strong>Fremdriftsringen for skraping hopper ikke lenger
+        tilbake.</strong> Etter mer enn ett søk i vinduet Søk metadata startet
+        ett trykk på Bruk skrapingen flere ganger, og ringen hoppet mellom
+        dem.</li>
+      <li><strong>Forstørret 3D-omslag har ikke lenger en firkant bak
+        seg.</strong> Esken står rett på den dempede bakgrunnen.</li>
+      <li><strong>Meldinger viser ikke lenger HTML-kode.</strong> Noen
+        bekreftelses- og resultatvinduer i ROM-verktøy viste koder som
+        &lt;br&gt; i stedet for linjeskift. Loggviseren og velgeren for
+        hovedspill til bonusplater i Innstillinger fungerer igjen.</li>
+    </ul>
 - version: 3.32.0
   date: '2026-10-23'
   tags:

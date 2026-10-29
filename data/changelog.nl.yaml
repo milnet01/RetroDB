@@ -1,3 +1,256 @@
+- version: 3.33.0
+  date: '2026-10-29'
+  tags:
+  - type: feature
+    label: RetroDB werkt zichzelf bij
+  - type: feature
+    label: Haal RetroArch op vanuit RetroDB
+  - type: feature
+    label: Zie hoe goed elke PS3-game draait in RPCS3
+  - type: feature
+    label: Verkoopcijfers voor je games
+  - type: feature
+    label: Releasedata voor elke regio
+  - type: feature
+    label: Vorige en volgende game op de gamepagina
+  - type: feature
+    label: Geüploade covers en screenshots worden verwerkt zoals gescrapete
+  - type: feature
+    label: Bibliotheek- en systeempagina's werken live bij tijdens Bulkscrape
+  - type: feature
+    label: AI-aanvulling geeft elke game zijn officiële naam
+  - type: performance
+    label: Snellere trofeeën, bibliotheekimports en onderhoudstools
+  - type: fix
+    label: Volgende schijf werkt voor games die in RetroDB worden gespeeld
+  - type: fix
+    label: Gamekaarten staan netjes op een telefoon en na het aanpassen van het venster
+  - type: fix
+    label: Gescrapete classificaties en aantallen spelers zijn nauwkeuriger
+  - type: fix
+    label: ScreenScraper behoudt zijn gegevens als het de hoofdbron is
+  - type: fix
+    label: Gescrapete gegevens wissen zet de bestandsnaam terug als titel
+  - type: fix
+    label: RetroAchievements vernieuwen voor één console werkt weer
+  - type: fix
+    label: De zoeker voor dubbele screenshots werkt in de gedownloade app
+  - type: fix
+    label: ScreenScraper-wachtwoorden zijn verborgen, en de laatste beheerder blijft beheerder
+  - type: fix
+    label: Onderbroken taken worden alleen aangeboden aan wie ze mag uitvoeren
+  - type: fix
+    label: Geïmporteerde consolelogo's, vreemde namen in Instellingen en bonusschijven
+  - type: fix
+    label: De schakelaar Franchise / reeks werkt op de gamepagina
+  - type: fix
+    label: Elk tabblad van Prestaties is even breed
+  - type: fix
+    label: RetroDB vindt de instellingen van RPCS3 op Windows en macOS
+  - type: fix
+    label: AI-aanvulling werkt voor games met een score maar zonder leeftijdsclassificatie
+  - type: fix
+    label: Labels op gamekaarten volgen je taal
+  - type: fix
+    label: RetroAchievements staat op de gamepagina van elke game die het heeft
+  - type: fix
+    label: Het aantal niet-gescrapete games op de pagina Systemen klopt met het filter Niet gescraped
+  - type: fix
+    label: Officiële namen stelt weer namen voor
+  - type: fix
+    label: Bronnen worden alleen doorzocht voor systemen die ze dekken
+  - type: fix
+    label: De voortgangsring van het scrapen springt niet meer terug
+  - type: fix
+    label: Ingezoomde 3D-boxart heeft geen vierkant meer erachter
+  - type: fix
+    label: Berichten tonen geen HTML-code meer
+  body: |
+    <ul>
+      <li><strong>RetroDB werkt zichzelf bij.</strong> Als er een nieuwe
+        versie uit is, zien beheerders die op het dashboard en in Instellingen
+        &gt; Systeem &gt; Updates, met wat er nieuw is. Update downloaden haalt hem
+        op en controleert of het precies het gepubliceerde bestand is;
+        Installeren en herstarten maakt een back-up van je database, zet de
+        nieuwe versie op zijn plaats en start opnieuw. Als de nieuwe versie
+        niet start, gaat RetroDB vanzelf terug naar de oude en zegt waarom. Je
+        games, instellingen, afbeeldingen en logs worden niet aangeraakt.
+        RetroDB zoekt één keer per dag naar updates; dat kun je uitzetten. Een
+        kopie die vanuit git of door een procesbeheerder draait, krijgt te
+        horen dat er updates zijn, maar wordt niet bijgewerkt.</li>
+      <li><strong>Haal RetroArch op vanuit RetroDB.</strong> Instellingen &gt;
+        Emulators heeft een nieuw onderdeel Spelen in RetroDB. Druk op
+        RetroArch ophalen en RetroDB downloadt de officiële RetroArch van
+        libretro, controleert of de download precies het verwachte bestand is,
+        en stelt hem in als RetroArch (RetroDB), met eigen instellingen en
+        opslagbestanden, gescheiden van elke RetroArch die je al gebruikt.
+        Daarna haalt het de beste core voor elk systeem op de eerste keer dat
+        je speelt. Werkt op Linux en Windows; macOS is nog niet getest.</li>
+      <li><strong>Volgende schijf werkt voor games die in RetroDB worden
+        gespeeld.</strong> Bij een game met meerdere schijven bereikt de knop
+        Volgende schijf nu de eigen RetroArch van RetroDB zonder instellen.
+        RetroArch luistert alleen naar de opdrachten van RetroDB terwijl zo'n
+        game draait, en op Windows en macOS terwijl er een game draait.</li>
+      <li><strong>Gamekaarten staan netjes op een telefoon en na het aanpassen
+        van het venster.</strong> Op een telefoon toonden de Bibliotheek en de
+        consolepagina's één kaart en daarna een lange lege ruimte; nu staan de
+        kaarten onder elkaar. Als je het venster smaller of breder maakt,
+        worden de kaarten opnieuw geschikt in plaats van in de oude kolommen
+        te blijven staan.</li>
+      <li><strong>Gescrapete classificaties en aantallen spelers zijn
+        nauwkeuriger.</strong> Leeftijdsclassificaties van IGDB voor CERO,
+        USK, GRAC, ClassInd en ACB worden nu correct gelezen, zodat een game
+        met CERO Z of USK 18 die classificatie krijgt. TheGamesDB, RAWG, IGDB
+        en ES-DE gokken niet meer op "1 speler" als ze het niet weten; een
+        ES-DE-import overschrijft niet langer een aantal spelers of spelmodi
+        die je hebt ingesteld. TheGamesDB slaat na een mislukte opzoeking geen
+        getal meer op in plaats van de naam van een uitgever of
+        ontwikkelaar.</li>
+      <li><strong>ScreenScraper behoudt zijn gegevens als het de hoofdbron
+        is.</strong> De titel, beschrijving, datum, ontwikkelaar, uitgever en
+        spelers blijven bij elke scrape behouden, niet alleen in de eerste
+        paar minuten na een zoekopdracht. Gedownloade video's en handleidingen
+        krijgen een goede bestandsnaam.</li>
+      <li><strong>Gescrapete gegevens wissen zet de bestandsnaam terug als
+        titel.</strong> Het wiste de gegevens, maar liet de gescrapete titel
+        staan.</li>
+      <li><strong>RetroAchievements vernieuwen voor één console werkt
+        weer.</strong> Het mislukte elke keer met een fout.</li>
+      <li><strong>De zoeker voor dubbele screenshots werkt in de gedownloade
+        app.</strong> Hij vond daar geen screenshots, en het verwijderen van
+        een duplicaat liet het bestand op de schijf staan.</li>
+      <li><strong>ScreenScraper-wachtwoorden zijn verborgen, en de laatste
+        beheerder blijft beheerder.</strong> Instellingen toont je
+        ScreenScraper-wachtwoorden nu gemaskeerd, net als je andere sleutels.
+        Het enige beheerdersaccount kan niet meer worden omgezet naar
+        redacteur of worden uitgeschakeld, waardoor niemand RetroDB meer had
+        kunnen beheren.</li>
+      <li><strong>Onderbroken taken worden alleen aangeboden aan wie ze mag
+        uitvoeren.</strong> De banner voor onderbroken taken op het dashboard
+        toont een taak nu alleen aan iemand die hem mag starten, bijvoorbeeld
+        een bulkscrape alleen aan redacteuren en beheerders. Andere accounts
+        zien hem niet meer en kunnen hem niet meer wegklikken.</li>
+      <li><strong>Geïmporteerde consolelogo's, vreemde namen in Instellingen
+        en bonusschijven.</strong> In de gedownloade app vindt het vernieuwen
+        van logo's nu de consolelogo's die via de import uit ES-DE zijn
+        binnengehaald, en geeft het daar de voorkeur aan boven de ingebouwde.
+        Een naam van een controller, console of back-up met tekens zoals &lt;
+        of een aanhalingsteken breekt de pagina Instellingen niet meer. Een
+        bonusschijf die je niet langer als bonus markeert, wordt volledig
+        losgekoppeld, zodat hij niet meer telt als bonusschijf van zijn oude
+        game.</li>
+      <li><strong>Snellere trofeeën, bibliotheekimports en
+        onderhoudstools.</strong> De pagina Trofeeën, de bibliotheekimports
+        van Steam, Xbox en PlayStation, verzameltrofeeën, het berekenen van
+        opslag en de scan op ongebruikte media doen allemaal veel minder werk
+        bij een grote bibliotheek. Voortgangsvensters van taken blijven
+        bijwerken als de server het druk heeft, en de taken voor HowLongToBeat
+        en alternatieve titels houden andere wijzigingen niet meer op terwijl
+        ze lopen.</li>
+      <li><strong>Zie hoe goed elke PS3-game draait in RPCS3.</strong>
+        PS3-games in de Bibliotheek, op de pagina van de PlayStation 3 en op
+        de gamepagina tonen de compatibiliteitsstatus van RPCS3: Speelbaar,
+        In het spel, Intro, Laadbaar of Niets, met de datum waarop het voor het
+        laatst is getest. RetroDB leest dit uit de RPCS3 op je computer, dus
+        kies in RPCS3 één keer Manage &gt; Databases &gt; Download
+        Compatibility Database, en opnieuw wanneer je nieuwere resultaten
+        wilt. Alleen games met een ROM op de schijf worden getoond;
+        geïmporteerde games niet. RetroDB leest nu ook de game-ID van PSN- en
+        geïnstalleerde gamemappen, en van mappen en bestanden waarvan de naam
+        die bevat, zoals [BLUS30443].</li>
+      <li><strong>Verkoopcijfers voor je games.</strong> Als de AI tijdens een
+        scrape gaten opvult, en als je op AI-aanvulling drukt, wordt nu ook
+        gevraagd hoeveel exemplaren de game op zijn console heeft verkocht,
+        uit vrij gepubliceerde cijfers zoals de rapporten van de uitgever,
+        bestsellerlijsten van platforms, Famitsu, Wikipedia en VGChartz. De
+        gamepagina toont het aantal. Een game zonder gepubliceerd cijfer
+        blijft leeg in plaats van een gok te krijgen.</li>
+      <li><strong>De schakelaar Franchise / reeks werkt op de
+        gamepagina.</strong> In het bewerkvenster van de gamepagina deed
+        klikken op de schakelaar Franchise / reeks van een game die als
+        Standalone was gemarkeerd niets, zodat hij niet in een reeks kon
+        worden gezet. Nu schakelt hij, en de schakelaar
+        Platformbeschikbaarheid ook.</li>
+      <li><strong>Elk tabblad van Prestaties is even breed.</strong>
+        RetroAchievements, RPCS3, PSN, Steam en Xbox maakten de pagina elk zo
+        breed als hun eigen kaarten, zodat de pagina van breedte veranderde
+        als je tussen tabbladen wisselde. Nu delen ze één breedte.</li>
+      <li><strong>RetroDB vindt de instellingen van RPCS3 op Windows en
+        macOS.</strong> Op Windows bewaart RPCS3 zijn instellingen naast
+        rpcs3.exe, en RetroDB kijkt nu daar en in een draagbare map, zodat
+        instellingen per game en de compatibiliteitslijst worden
+        gevonden.</li>
+      <li><strong>AI-aanvulling werkt voor games met een score maar zonder
+        leeftijdsclassificatie.</strong> AI-aanvulling kon bij zo'n game met
+        een fout mislukken terwijl het de leeftijdsclassificatie
+        bepaalde.</li>
+      <li><strong>Labels op gamekaarten volgen je taal.</strong> De tooltips
+        voor voltooiingsstatus en score op kaarten in de Bibliotheek waren
+        altijd in het Engels.</li>
+      <li><strong>Releasedata voor elke regio.</strong> Als de AI tijdens een
+        scrape gaten opvult, en als je op AI-aanvulling drukt, wordt nu ook
+        gevraagd naar de datum waarop de game in elke regio uitkwam, zoals
+        Noord-Amerika, Europa en Japan. De gamepagina en de snelle weergave
+        tonen ze, de vroegste eerst, met data en regionamen in je taal. De
+        eigen releasedatum van een game blijft ongewijzigd.</li>
+      <li><strong>Vorige en volgende game op de gamepagina.</strong> Naast het
+        pad bovenaan een gamepagina staan de links Vorige en Volgende en de
+        plaats van de game in de lijst. Ze volgen de pagina waar je vandaan
+        kwam: geopend vanuit de Bibliotheek lopen ze door de Bibliotheek, en
+        vanuit een consolepagina door die console, in dezelfde volgorde en met
+        dezelfde filters en zoekopdracht die je daar had.</li>
+      <li><strong>Geüploade covers en screenshots worden verwerkt zoals
+        gescrapete.</strong> Een cover, 3D-box of screenshot die je in het
+        bewerkvenster uploadt, wordt nu opgeslagen in hetzelfde
+        afbeeldingsformaat als gescrapete afbeeldingen, verkleind tot dezelfde
+        grootte, en covers krijgen de kleinere kopieën die de Bibliotheek
+        gebruikt. Een screenshot die er hetzelfde uitziet als een die de game
+        al heeft, wordt niet toegevoegd, en je krijgt te horen hoeveel er zijn
+        weggelaten. Het uploaden van een nieuwe cover verwijdert ook het
+        bestand dat hij vervangt.</li>
+      <li><strong>RetroAchievements staat op de gamepagina van elke game die
+        het heeft.</strong> Sommige games hadden de RA-badge in de
+        Bibliotheek, maar geen RetroAchievements-kaart op hun pagina, zoals
+        Metroid Prime en Metroid Prime 2 op GameCube. De pagina gebruikt nu
+        dezelfde RetroAchievements-koppeling als de badge, en laadt sneller
+        omdat hij RetroAchievements niet meer elke keer raadpleegt.</li>
+      <li><strong>Het aantal niet-gescrapete games op de pagina Systemen klopt
+        met het filter Niet gescraped.</strong> Het aantal telde bonusschijven
+        mee, die de gamelijst van de console nooit toont, zodat een console 2
+        niet-gescrapete games kon melden terwijl het filter Niet gescraped er
+        geen toonde.</li>
+      <li><strong>Bibliotheek- en systeempagina's werken live bij tijdens
+        Bulkscrape.</strong> De kaart van elke game wordt vernieuwd zodra die
+        is gescraped, of het Bulkscrape-venster nu open is, gesloten of op de
+        achtergrond loopt.</li>
+      <li><strong>AI-aanvulling geeft elke game zijn officiële naam.</strong>
+        Als de AI gaten opvult, bij een scrape van één game, bij Bulkscrape en
+        met de knop AI-aanvulling, noemt hij ook de officiële titel van de
+        game zoals die is uitgebracht in de regio van de ROM, en krijgt de
+        game die naam. De oude naam blijft bewaard als alternatieve titel. Een
+        titel die je zelf hebt getypt of in Officiële namen hebt geaccepteerd,
+        wordt nooit hernoemd.</li>
+      <li><strong>Officiële namen stelt weer namen voor.</strong> Met OpenAI,
+        en soms met Gemini, konden de antwoorden van de AI niet worden
+        gelezen, zodat een ronde eindigde zonder voorgestelde namen.</li>
+      <li><strong>Bronnen worden alleen doorzocht voor systemen die ze
+        dekken.</strong> RAWG heeft geen Intellivision-games, dus wordt het
+        daar niet meer voor doorzocht; eerder vond het in plaats daarvan games
+        van andere platforms. IGDB, TheGamesDB en RAWG zoeken nu altijd op het
+        eigen systeem van de game. Ook zijn een aantal verkeerde
+        platformkoppelingen van RAWG gecorrigeerd (Atari ST, ColecoVision, PC
+        Engine, DOS).</li>
+      <li><strong>De voortgangsring van het scrapen springt niet meer
+        terug.</strong> Na meer dan één zoekopdracht in het venster Metadata
+        zoeken startte één keer Toepassen de scrape meerdere keren, en sprong
+        de ring tussen die scrapes heen en weer.</li>
+      <li><strong>Ingezoomde 3D-boxart heeft geen vierkant meer
+        erachter.</strong> De box staat direct op de gedimde achtergrond.</li>
+      <li><strong>Berichten tonen geen HTML-code meer.</strong> Sommige
+        bevestigings- en resultaatvensters in ROM-tools toonden tags zoals
+        &lt;br&gt; in plaats van regeleinden. De logviewer en de keuze van de
+        hoofdgame voor bonusschijven in Instellingen werken weer.</li>
+    </ul>
 - version: 3.32.0
   date: '2026-10-23'
   tags:

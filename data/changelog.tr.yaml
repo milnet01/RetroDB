@@ -1,3 +1,260 @@
+- version: 3.33.0
+  date: '2026-10-29'
+  tags:
+  - type: feature
+    label: RetroDB kendini güncelliyor
+  - type: feature
+    label: RetroArch'ı doğrudan RetroDB içinden edinin
+  - type: feature
+    label: Her PS3 oyununun RPCS3'te ne kadar iyi çalıştığını görün
+  - type: feature
+    label: Oyunlarınızın satış rakamları
+  - type: feature
+    label: Her bölge için çıkış tarihleri
+  - type: feature
+    label: Oyun sayfasında önceki ve sonraki oyun
+  - type: feature
+    label: Yüklenen kapaklar ve ekran görüntüleri kazınanlar gibi işleniyor
+  - type: feature
+    label: Kütüphane ve sistem sayfaları Toplu Kazıma sırasında canlı güncelleniyor
+  - type: feature
+    label: Yapay Zeka Doldur her oyuna resmi adını veriyor
+  - type: performance
+    label: Daha hızlı kupalar, kütüphane içe aktarmaları ve bakım araçları
+  - type: fix
+    label: Sonraki disk, RetroDB'de oynanan oyunlarda çalışıyor
+  - type: fix
+    label: Oyun kartları telefonda ve pencere boyutu değiştikten sonra hizalanıyor
+  - type: fix
+    label: Kazınan derecelendirmeler ve oyuncu sayıları daha doğru
+  - type: fix
+    label: ScreenScraper ana kaynak olduğunda bilgilerini koruyor
+  - type: fix
+    label: Kazınmış verileri temizlemek dosya adını yeniden başlık yapıyor
+  - type: fix
+    label: Tek bir konsol için RetroAchievements yenilemesi yeniden çalışıyor
+  - type: fix
+    label: Ekran görüntüsü kopya bulucu indirilen uygulamada çalışıyor
+  - type: fix
+    label: ScreenScraper şifreleri gizleniyor ve son yönetici yönetici kalıyor
+  - type: fix
+    label: Yarıda kalan işler yalnızca onları çalıştırma izni olanlara sunuluyor
+  - type: fix
+    label: İçe aktarılan konsol logoları, Ayarlar'daki tuhaf adlar ve bonus diskler
+  - type: fix
+    label: Seri / Franchise anahtarı oyun sayfasında çalışıyor
+  - type: fix
+    label: Tüm Başarımlar sekmeleri aynı genişlikte
+  - type: fix
+    label: RetroDB, RPCS3'ün ayarlarını Windows ve macOS'ta buluyor
+  - type: fix
+    label: Yapay Zeka Doldur, puanı olan ama yaş derecelendirmesi olmayan oyunlarda çalışıyor
+  - type: fix
+    label: Oyun kartı etiketleri dilinizi izliyor
+  - type: fix
+    label: RetroAchievements, sahip olan her oyunun sayfasında görünüyor
+  - type: fix
+    label: Sistemler sayfasındaki kazınmamış sayısı Kazınmamış filtresiyle eşleşiyor
+  - type: fix
+    label: Resmi Adlar yeniden ad öneriyor
+  - type: fix
+    label: Kaynaklarda yalnızca kapsadıkları sistemler için arama yapılıyor
+  - type: fix
+    label: Kazıma ilerleme halkası artık geri sıçramıyor
+  - type: fix
+    label: Yakınlaştırılmış 3D kutu görselinin arkasında kare yok
+  - type: fix
+    label: Mesajlar artık HTML kodu göstermiyor
+  body: |
+    <ul>
+      <li><strong>RetroDB kendini güncelliyor.</strong> Yeni bir sürüm
+        çıktığında yöneticiler bunu Kontrol Paneli'nde ve Ayarlar &gt;
+        Sistem &gt; Güncellemeler bölümünde yenilikleriyle birlikte görür.
+        Güncellemeyi indir onu getirir ve tam olarak yayımlanan dosya
+        olduğunu denetler; Kur ve yeniden başlat veritabanınızı yedekler,
+        yeni sürümü yerine koyar ve yeniden başlatır. Yeni sürüm
+        başlamazsa RetroDB kendiliğinden eskisine döner ve nedenini
+        söyler. Oyunlarınıza, ayarlarınıza, görsellerinize ve
+        günlüklerinize dokunulmaz. RetroDB günde bir kez güncellemeleri
+        denetler; bunu kapatabilirsiniz. git'ten veya bir süreç yöneticisi
+        tarafından çalıştırılan bir kopyaya güncellemeler bildirilir ama
+        kopya güncellenmez.</li>
+      <li><strong>RetroArch'ı doğrudan RetroDB içinden edinin.</strong>
+        Ayarlar &gt; Emülatörler'de yeni bir RetroDB'de oyna bölümü var.
+        RetroArch'ı edin düğmesine basın; RetroDB resmi RetroArch'ı
+        libretro'dan indirir, indirilenin tam olarak beklenen dosya
+        olduğunu denetler ve onu kendi ayarları ve kayıtlarıyla, zaten
+        kullandığınız RetroArch'tan ayrı tutulan RetroArch (RetroDB)
+        olarak kurar. Ardından her sistem için en iyi çekirdeği ilk
+        oynadığınızda getirir. Linux ve Windows'ta çalışır; macOS henüz
+        test edilmedi.</li>
+      <li><strong>Sonraki disk, RetroDB'de oynanan oyunlarda
+        çalışıyor.</strong> Çok diskli bir oyunda Sonraki disk düğmesi
+        artık hiçbir kurulum gerekmeden RetroDB'nin kendi RetroArch'ına
+        ulaşıyor. RetroArch, RetroDB'nin komutlarını yalnızca böyle bir
+        oyun çalışırken, Windows ve macOS'ta ise herhangi bir oyun
+        çalışırken dinler.</li>
+      <li><strong>Oyun kartları telefonda ve pencere boyutu değiştikten
+        sonra hizalanıyor.</strong> Telefonda Kütüphane ve konsol sayfaları
+        bir kart ve ardından uzun bir boşluk gösteriyordu; kartlar artık
+        alt alta diziliyor. Pencereyi daraltmak veya genişletmek kartları
+        eski sütunlarda bırakmak yerine yeniden düzenliyor.</li>
+      <li><strong>Kazınan derecelendirmeler ve oyuncu sayıları daha
+        doğru.</strong> IGDB'den gelen CERO, USK, GRAC, ClassInd ve ACB yaş
+        derecelendirmeleri artık doğru okunuyor; böylece CERO Z veya USK 18
+        derecelendirmeli bir oyun bu derecelendirmeyi alıyor. TheGamesDB,
+        RAWG, IGDB ve ES-DE bilmediklerinde artık "1 oyuncu" tahmin
+        etmiyor; bir ES-DE içe aktarması artık ayarladığınız oyuncu
+        sayısının veya oyun modlarının üzerine yazmıyor. TheGamesDB
+        başarısız bir aramadan sonra artık yayıncı veya geliştirici adı
+        yerine bir sayı kaydetmiyor.</li>
+      <li><strong>ScreenScraper ana kaynak olduğunda bilgilerini
+        koruyor.</strong> Başlığı, açıklaması, tarihi, geliştiricisi,
+        yayıncısı ve oyuncu sayısı yalnızca bir aramadan sonraki ilk birkaç
+        dakika değil, her kazımada korunuyor. İndirilen videolar ve
+        kılavuzlar düzgün bir dosya adı alıyor.</li>
+      <li><strong>Kazınmış verileri temizlemek dosya adını yeniden başlık
+        yapıyor.</strong> Clear Scraped Data bilgileri temizliyor ama
+        kazınmış başlığı bırakıyordu.</li>
+      <li><strong>Tek bir konsol için RetroAchievements yenilemesi yeniden
+        çalışıyor.</strong> Her seferinde bir hatayla başarısız
+        oluyordu.</li>
+      <li><strong>Ekran görüntüsü kopya bulucu indirilen uygulamada
+        çalışıyor.</strong> Orada hiç ekran görüntüsü bulamıyordu ve bir
+        kopyayı silmek dosyayı diskte bırakıyordu.</li>
+      <li><strong>ScreenScraper şifreleri gizleniyor ve son yönetici
+        yönetici kalıyor.</strong> Ayarlar artık ScreenScraper şifrelerinizi
+        diğer anahtarlarınız gibi maskelenmiş gösteriyor. Tek yönetici
+        hesabı artık editöre çevrilemiyor veya kapatılamıyor; bu,
+        RetroDB'yi yönetebilecek kimseyi bırakmazdı.</li>
+      <li><strong>Yarıda kalan işler yalnızca onları çalıştırma izni
+        olanlara sunuluyor.</strong> Kontrol Paneli'ndeki yarıda kalan iş
+        başlığı artık bir işi yalnızca onu başlatma izni olan birine
+        gösteriyor; örneğin toplu kazımayı yalnızca editörlere ve
+        yöneticilere. Diğer hesaplar artık onu görmüyor ve
+        kapatamıyor.</li>
+      <li><strong>İçe aktarılan konsol logoları, Ayarlar'daki tuhaf adlar ve
+        bonus diskler.</strong> İndirilen uygulamada Sistem Logolarını
+        Yenile artık ES-DE'den içe aktarılan konsol logolarını buluyor ve
+        onları yerleşik olanlara tercih ediyor. &lt; veya tırnak gibi
+        karakterler içeren bir kontrolcü, konsol ya da yedek adı artık
+        Ayarlar sayfasını bozmuyor. Bir bonus diskin işaretini kaldırmak
+        onu tamamen ayırıyor; böylece artık eski oyununun bonus diski
+        sayılmıyor.</li>
+      <li><strong>Daha hızlı kupalar, kütüphane içe aktarmaları ve bakım
+        araçları.</strong> Kupalar sayfası, Steam, Xbox ve PlayStation
+        kütüphane içe aktarmaları, koleksiyoncu kupaları, depolama alanı
+        hesaplama ve kullanılmayan medya taraması büyük bir kütüphanede çok
+        daha az iş yapıyor. İş ilerleme pencereleri sunucu meşgulken de
+        güncellenmeye devam ediyor; HowLongToBeat ve alternatif başlık
+        işleri çalışırken artık diğer değişiklikleri bekletmiyor.</li>
+      <li><strong>Her PS3 oyununun RPCS3'te ne kadar iyi çalıştığını
+        görün.</strong> Kütüphane'de, PlayStation 3 sayfasında ve oyun
+        sayfasındaki PS3 oyunları RPCS3'ün uyumluluk durumunu gösteriyor:
+        Oynanabilir, Oyun içi, Giriş, Yüklenebilir veya Çalışmıyor; son
+        test tarihiyle birlikte. RetroDB bunu bilgisayarınızdaki RPCS3'ten
+        okur; bu yüzden RPCS3'te bir kez Manage &gt; Databases &gt;
+        Download Compatibility Database seçeneğini seçin ve daha yeni
+        sonuçlar istediğinizde tekrarlayın. Yalnızca diskte ROM'u olan
+        oyunlar gösterilir; içe aktarılan oyunlar gösterilmez. RetroDB
+        artık PSN ve kurulu oyun klasörlerinin, ayrıca adında oyun kimliği
+        bulunan klasör ve dosyaların (örneğin [BLUS30443]) oyun kimliğini
+        de okuyor.</li>
+      <li><strong>Oyunlarınızın satış rakamları.</strong> Yapay zeka bir
+        kazıma sırasında boşlukları doldururken ve Yapay Zeka Doldur'a
+        bastığınızda, artık ona oyunun kendi konsolunda kaç kopya sattığı
+        da soruluyor; yayıncı raporları, platform en çok satanlar
+        listeleri, Famitsu, Wikipedia ve VGChartz gibi ücretsiz yayımlanmış
+        rakamlardan. Oyun sayfası bu sayıyı gösteriyor. Yayımlanmış rakamı
+        olmayan bir oyun tahmin almak yerine boş kalıyor.</li>
+      <li><strong>Seri / Franchise anahtarı oyun sayfasında
+        çalışıyor.</strong> Oyun sayfasının düzenleme penceresinde,
+        Bağımsız olarak işaretlenmiş bir oyunun Seri / Franchise anahtarına
+        tıklamak hiçbir şey yapmıyordu, bu yüzden oyun bir seriye
+        eklenemiyordu. Artık geçiş yapıyor; Platform Uygunluğu anahtarı da
+        öyle.</li>
+      <li><strong>Tüm Başarımlar sekmeleri aynı genişlikte.</strong>
+        RetroAchievements, RPCS3, PSN, Steam ve Xbox sayfayı her biri kendi
+        kartlarına göre boyutlandırıyordu, bu yüzden sekmeler arasında
+        geçerken sayfanın genişliği değişiyordu. Artık tek bir genişliği
+        paylaşıyorlar.</li>
+      <li><strong>RetroDB, RPCS3'ün ayarlarını Windows ve macOS'ta
+        buluyor.</strong> Windows'ta RPCS3 ayarlarını rpcs3.exe'nin yanında
+        tutar; RetroDB artık oraya ve taşınabilir bir klasöre bakıyor,
+        böylece oyun başına ayarlar ve uyumluluk listesi bulunuyor.</li>
+      <li><strong>Yapay Zeka Doldur, puanı olan ama yaş derecelendirmesi
+        olmayan oyunlarda çalışıyor.</strong> Yapay Zeka Doldur böyle bir
+        oyunun yaş derecelendirmesini belirlerken bir hatayla başarısız
+        olabiliyordu.</li>
+      <li><strong>Oyun kartı etiketleri dilinizi izliyor.</strong> Kütüphane
+        kartlarındaki tamamlanma durumu ve puan ipuçları her zaman
+        İngilizceydi.</li>
+      <li><strong>Her bölge için çıkış tarihleri.</strong> Yapay zeka bir
+        kazıma sırasında boşlukları doldururken ve Yapay Zeka Doldur'a
+        bastığınızda, artık ona oyunun Kuzey Amerika, Avrupa ve Japonya
+        gibi her bölgede çıktığı tarih de soruluyor. Oyun sayfası ve hızlı
+        görünüm bunları en eskiden başlayarak, tarihler ve bölge adları
+        sizin dilinizde olacak şekilde listeliyor. Oyunun kendi çıkış
+        tarihi değişmiyor.</li>
+      <li><strong>Oyun sayfasında önceki ve sonraki oyun.</strong> Oyun
+        sayfasının üstündeki yolun yanında Önceki ve Sonraki bağlantıları
+        ile oyunun listedeki yeri var. Bunlar geldiğiniz sayfayı izler:
+        Kütüphane'den açıldıysa Kütüphane'de, bir konsol sayfasından
+        açıldıysa o konsolda, oradaki aynı sırayla ve aynı filtreler ve
+        aramayla ilerler.</li>
+      <li><strong>Yüklenen kapaklar ve ekran görüntüleri kazınanlar gibi
+        işleniyor.</strong> Düzenleme penceresinde yüklediğiniz bir kapak,
+        3D kutu veya ekran görüntüsü artık kazınan görsellerle aynı görsel
+        biçiminde kaydediliyor, aynı boyuta getiriliyor ve kapaklar
+        Kütüphane'nin kullandığı küçük kopyaları alıyor. Oyunda zaten olan
+        biriyle aynı görünen bir ekran görüntüsü eklenmiyor ve kaç tanesinin
+        dışarıda bırakıldığı size söyleniyor. Yeni bir kapak yüklemek,
+        yerini aldığı dosyayı da kaldırıyor.</li>
+      <li><strong>RetroAchievements, sahip olan her oyunun sayfasında
+        görünüyor.</strong> Bazı oyunlarda Kütüphane'de RA rozeti vardı ama
+        kendi sayfalarında RetroAchievements kartı yoktu; örneğin
+        GameCube'deki Metroid Prime ve Metroid Prime 2. Sayfa artık rozetle
+        aynı RetroAchievements bağlantısını kullanıyor ve her seferinde
+        RetroAchievements'a sormadığı için daha hızlı yükleniyor.</li>
+      <li><strong>Sistemler sayfasındaki kazınmamış sayısı Kazınmamış
+        filtresiyle eşleşiyor.</strong> Sayıya, konsolun oyun listesinin hiç
+        göstermediği bonus diskler de dahildi; bu yüzden bir konsol 2
+        kazınmamış diyebiliyor, Kazınmamış filtresi ise hiçbirini
+        göstermiyordu.</li>
+      <li><strong>Kütüphane ve sistem sayfaları Toplu Kazıma sırasında
+        canlı güncelleniyor.</strong> Her oyunun kartı, Toplu Kazıma
+        penceresi açık, kapalı veya arka planda çalışıyor olsun, oyun
+        kazınır kazınmaz yenileniyor.</li>
+      <li><strong>Yapay Zeka Doldur her oyuna resmi adını veriyor.</strong>
+        Yapay zeka boşlukları doldururken, tek oyunluk kazımada, Toplu
+        Kazıma'da ve Yapay Zeka Doldur düğmesiyle, oyunun ROM'unun
+        bölgesinde çıktığı haliyle resmi başlığını da veriyor ve oyun bu
+        adla yeniden adlandırılıyor. Eski ad alternatif başlık olarak
+        korunuyor. Kendiniz yazdığınız veya Resmi Adlar'da kabul ettiğiniz
+        bir başlık asla yeniden adlandırılmıyor.</li>
+      <li><strong>Resmi Adlar yeniden ad öneriyor.</strong> OpenAI ile, bazen
+        de Gemini ile yapay zekanın yanıtları okunamıyordu, bu yüzden bir
+        tarama hiç ad önerilmeden bitiyordu.</li>
+      <li><strong>Kaynaklarda yalnızca kapsadıkları sistemler için arama
+        yapılıyor.</strong> RAWG'de Intellivision oyunu yok, bu yüzden artık
+        bu oyunlar için RAWG'de arama yapılmıyor; önceden bunların yerine
+        başka platformlardan oyunlar buluyordu. IGDB, TheGamesDB ve RAWG
+        artık her zaman oyunun kendi sisteminde arıyor. Birkaç yanlış RAWG
+        platform bağlantısı da düzeltildi (Atari ST, ColecoVision, PC
+        Engine, DOS).</li>
+      <li><strong>Kazıma ilerleme halkası artık geri sıçramıyor.</strong>
+        Meta Veri Ara penceresinde birden fazla aramadan sonra tek bir
+        Uygula kazımayı birkaç kez başlatıyordu ve halka bunlar arasında
+        sıçrıyordu.</li>
+      <li><strong>Yakınlaştırılmış 3D kutu görselinin arkasında kare
+        yok.</strong> Kutu doğrudan karartılmış arka planın üzerinde
+        duruyor.</li>
+      <li><strong>Mesajlar artık HTML kodu göstermiyor.</strong> ROM
+        Araçları'ndaki bazı onay ve sonuç pencereleri satır sonları yerine
+        &lt;br&gt; gibi etiketler gösteriyordu. Ayarlar'daki Günlük
+        Görüntüleyici ve bonus disk ana oyun seçicisi yeniden
+        çalışıyor.</li>
+    </ul>
 - version: 3.32.0
   date: '2026-10-23'
   tags:

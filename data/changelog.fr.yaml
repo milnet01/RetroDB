@@ -1,3 +1,268 @@
+- version: 3.33.0
+  date: '2026-10-29'
+  tags:
+  - type: feature
+    label: RetroDB se met à jour tout seul
+  - type: feature
+    label: Obtenez RetroArch depuis RetroDB
+  - type: feature
+    label: Voyez à quel point chaque jeu PS3 tourne bien dans RPCS3
+  - type: feature
+    label: Les chiffres de ventes de vos jeux
+  - type: feature
+    label: Des dates de sortie pour chaque région
+  - type: feature
+    label: Jeu précédent et suivant sur la page d'un jeu
+  - type: feature
+    label: Les jaquettes et captures téléversées sont traitées comme celles récupérées
+  - type: feature
+    label: La Bibliothèque et les pages de système se mettent à jour en direct pendant la Récupération groupée
+  - type: feature
+    label: Remplissage IA donne à chaque jeu son nom officiel
+  - type: performance
+    label: Trophées, imports de bibliothèque et outils de maintenance plus rapides
+  - type: fix
+    label: Disque suivant fonctionne pour les jeux lancés dans RetroDB
+  - type: fix
+    label: Les cartes de jeu s'alignent sur un téléphone et après un redimensionnement de la fenêtre
+  - type: fix
+    label: Les classifications et nombres de joueurs récupérés sont plus exacts
+  - type: fix
+    label: ScreenScraper garde ses informations quand il est la source principale
+  - type: fix
+    label: « Effacer les données récupérées » remet le nom du fichier comme titre
+  - type: fix
+    label: L'actualisation RetroAchievements pour une seule console fonctionne de nouveau
+  - type: fix
+    label: La recherche de captures en double fonctionne dans l'application téléchargée
+  - type: fix
+    label: Les mots de passe ScreenScraper sont masqués, et le dernier administrateur reste administrateur
+  - type: fix
+    label: Les tâches interrompues ne sont proposées qu'aux personnes autorisées à les lancer
+  - type: fix
+    label: Logos de consoles importés, noms inhabituels dans les Paramètres et disques bonus
+  - type: fix
+    label: Le commutateur Franchise / Série fonctionne sur la page d'un jeu
+  - type: fix
+    label: Tous les onglets Succès ont la même largeur
+  - type: fix
+    label: RetroDB trouve les paramètres de RPCS3 sous Windows et macOS
+  - type: fix
+    label: Remplissage IA fonctionne pour les jeux avec une note mais sans classification d'âge
+  - type: fix
+    label: Les libellés des cartes de jeu suivent votre langue
+  - type: fix
+    label: RetroAchievements s'affiche sur la page de chaque jeu qui en dispose
+  - type: fix
+    label: Le nombre de jeux non récupérés de la page Systèmes correspond au filtre Non récupéré
+  - type: fix
+    label: Noms officiels propose de nouveau des noms
+  - type: fix
+    label: Les sources ne sont interrogées que pour les systèmes qu'elles couvrent
+  - type: fix
+    label: L'anneau de progression de la récupération ne revient plus en arrière
+  - type: fix
+    label: Les boîtes 3D agrandies n'ont plus de carré derrière elles
+  - type: fix
+    label: Les messages n'affichent plus de code HTML
+  body: |
+    <ul>
+      <li><strong>RetroDB se met à jour tout seul.</strong> Quand une nouvelle
+        version sort, les administrateurs la voient sur le tableau de bord et
+        dans Paramètres &gt; Système &gt; Mises à jour, avec ses nouveautés. «
+        Télécharger la mise à jour » la récupère et vérifie qu'elle correspond
+        exactement au fichier publié ; « Installer et redémarrer » sauvegarde
+        votre base de données, met la nouvelle version en place et redémarre.
+        Si la nouvelle version ne démarre pas, RetroDB revient tout seul à
+        l'ancienne et en indique la raison. Vos jeux, paramètres, images et
+        journaux ne sont pas touchés. RetroDB recherche des mises à jour une
+        fois par jour ; vous pouvez le désactiver. Une copie lancée depuis
+        git, ou par un gestionnaire de processus, est informée des mises à
+        jour mais n'est pas mise à jour.</li>
+      <li><strong>Obtenez RetroArch depuis RetroDB.</strong> Paramètres &gt;
+        Émulateurs a une nouvelle section « Jouer dans RetroDB ». Appuyez sur
+        « Obtenir RetroArch » et RetroDB télécharge le RetroArch officiel
+        depuis libretro, vérifie que le téléchargement correspond exactement
+        au fichier attendu, et l'installe sous le nom RetroArch (RetroDB),
+        avec ses propres paramètres et sauvegardes, séparés de tout RetroArch
+        que vous utilisez déjà. Il récupère ensuite le meilleur cœur pour
+        chaque système la première fois que vous jouez. Fonctionne sous Linux
+        et Windows ; macOS n'est pas encore testé.</li>
+      <li><strong>Disque suivant fonctionne pour les jeux lancés dans
+        RetroDB.</strong> Pour un jeu sur plusieurs disques, le bouton «
+        Disque suivant » atteint désormais le RetroArch propre à RetroDB sans
+        configuration. RetroArch n'écoute les commandes de RetroDB que pendant
+        qu'un tel jeu tourne, et sous Windows et macOS pendant que n'importe
+        quel jeu tourne.</li>
+      <li><strong>Les cartes de jeu s'alignent sur un téléphone et après un
+        redimensionnement de la fenêtre.</strong> Sur un téléphone, la
+        Bibliothèque et les pages de console affichaient une carte puis un
+        long espace vide ; les cartes s'empilent désormais les unes sous les
+        autres. Rendre la fenêtre plus étroite ou plus large réorganise les
+        cartes au lieu de les laisser dans les anciennes colonnes.</li>
+      <li><strong>Les classifications et nombres de joueurs récupérés sont
+        plus exacts.</strong> Les classifications d'âge d'IGDB pour CERO, USK,
+        GRAC, ClassInd et ACB sont désormais lues correctement, si bien qu'un
+        jeu classé CERO Z ou USK 18 reçoit cette classification. TheGamesDB,
+        RAWG, IGDB et ES-DE ne devinent plus « 1 joueur » quand ils ne savent
+        pas ; un import ES-DE n'écrase plus un nombre de joueurs ou des modes
+        de jeu que vous avez définis. TheGamesDB n'enregistre plus un nombre à
+        la place d'un nom d'éditeur ou de développeur après une recherche
+        échouée.</li>
+      <li><strong>ScreenScraper garde ses informations quand il est la source
+        principale.</strong> Son titre, sa description, sa date, son
+        développeur, son éditeur et ses joueurs sont conservés à chaque
+        récupération, et pas seulement dans les premières minutes après une
+        recherche. Les vidéos et manuels téléchargés reçoivent un vrai nom de
+        fichier.</li>
+      <li><strong>« Effacer les données récupérées » remet le nom du fichier
+        comme titre.</strong> Il effaçait les informations mais laissait le
+        titre récupéré.</li>
+      <li><strong>L'actualisation RetroAchievements pour une seule console
+        fonctionne de nouveau.</strong> Elle échouait avec une erreur à chaque
+        fois.</li>
+      <li><strong>La recherche de captures en double fonctionne dans
+        l'application téléchargée.</strong> Elle n'y trouvait aucune capture,
+        et supprimer un doublon laissait le fichier sur le disque.</li>
+      <li><strong>Les mots de passe ScreenScraper sont masqués, et le dernier
+        administrateur reste administrateur.</strong> Les Paramètres affichent
+        désormais vos mots de passe ScreenScraper masqués, comme vos autres
+        clés. Le seul compte administrateur ne peut plus être passé en éditeur
+        ni désactivé, ce qui n'aurait laissé personne capable de gérer
+        RetroDB.</li>
+      <li><strong>Les tâches interrompues ne sont proposées qu'aux personnes
+        autorisées à les lancer.</strong> Le bandeau des tâches interrompues
+        du tableau de bord n'affiche désormais une tâche qu'à quelqu'un
+        autorisé à la lancer, par exemple une récupération groupée seulement
+        aux éditeurs et aux administrateurs. Les autres comptes ne le voient
+        plus et ne peuvent plus le fermer.</li>
+      <li><strong>Logos de consoles importés, noms inhabituels dans les
+        Paramètres et disques bonus.</strong> Dans l'application téléchargée,
+        « Actualiser les logos de systèmes » trouve désormais les logos de
+        consoles apportés par l'import depuis ES-DE, et les préfère aux logos
+        intégrés. Un nom de manette, de console ou de sauvegarde contenant des
+        caractères comme &lt; ou un guillemet ne casse plus la page
+        Paramètres. Retirer la marque de disque bonus détache entièrement le
+        disque, qui ne compte plus comme disque bonus de son ancien jeu.</li>
+      <li><strong>Trophées, imports de bibliothèque et outils de maintenance
+        plus rapides.</strong> La page Trophées, les imports de bibliothèque
+        Steam, Xbox et PlayStation, les trophées de collection, le calcul de
+        l'espace de stockage et l'analyse des médias inutilisés travaillent
+        tous beaucoup moins sur une grande bibliothèque. Les fenêtres de
+        progression des tâches continuent de se mettre à jour quand le serveur
+        est occupé, et les tâches HowLongToBeat et titres alternatifs ne
+        bloquent plus les autres modifications pendant qu'elles tournent.</li>
+      <li><strong>Voyez à quel point chaque jeu PS3 tourne bien dans
+        RPCS3.</strong> Les jeux PS3 de la Bibliothèque, de la page
+        PlayStation 3 et de la page d'un jeu affichent l'état de compatibilité
+        RPCS3 : Jouable, En jeu, Intro, Chargeable ou Rien, avec la date du
+        dernier test. RetroDB le lit depuis le RPCS3 de votre ordinateur ;
+        dans RPCS3, choisissez donc une fois Manage &gt; Databases &gt;
+        Download Compatibility Database, puis de nouveau chaque fois que vous
+        voulez des résultats plus récents. Seuls les jeux ayant une ROM sur le
+        disque sont affichés ; les jeux importés ne le sont pas. RetroDB lit
+        aussi désormais l'identifiant de jeu des dossiers PSN et des dossiers
+        de jeux installés, ainsi que des dossiers et fichiers dont le nom le
+        contient, comme [BLUS30443].</li>
+      <li><strong>Les chiffres de ventes de vos jeux.</strong> Quand l'IA
+        comble les lacunes pendant une récupération, et quand vous appuyez sur
+        Remplissage IA, on lui demande désormais aussi combien d'exemplaires
+        le jeu s'est vendu sur sa console, d'après des chiffres publiés
+        librement comme les rapports de l'éditeur, les classements des
+        meilleures ventes des plateformes, Famitsu, Wikipédia et VGChartz. La
+        page du jeu affiche ce nombre. Un jeu sans chiffre publié reste vide
+        plutôt que de recevoir une estimation.</li>
+      <li><strong>Le commutateur Franchise / Série fonctionne sur la page d'un
+        jeu.</strong> Dans la fenêtre de modification de la page d'un jeu,
+        cliquer sur le commutateur Franchise / Série d'un jeu marqué Autonome
+        ne faisait rien, si bien qu'il ne pouvait pas être placé dans une
+        série. Il bascule désormais, tout comme le commutateur Disponibilité
+        des plateformes.</li>
+      <li><strong>Tous les onglets Succès ont la même largeur.</strong>
+        RetroAchievements, RPCS3, PSN, Steam et Xbox dimensionnaient chacun la
+        page selon leurs propres cartes, si bien que la page changeait de
+        largeur quand vous passiez d'un onglet à l'autre. Ils partagent
+        désormais une même largeur.</li>
+      <li><strong>RetroDB trouve les paramètres de RPCS3 sous Windows et
+        macOS.</strong> Sous Windows, RPCS3 garde ses paramètres à côté de
+        rpcs3.exe, et RetroDB cherche désormais là et dans un dossier
+        portable, si bien que les paramètres par jeu et la liste de
+        compatibilité sont trouvés.</li>
+      <li><strong>Remplissage IA fonctionne pour les jeux avec une note mais
+        sans classification d'âge.</strong> Remplissage IA pouvait échouer
+        avec une erreur pour un tel jeu en déterminant sa classification
+        d'âge.</li>
+      <li><strong>Les libellés des cartes de jeu suivent votre
+        langue.</strong> Le statut d'achèvement et les infobulles de note sur
+        les cartes de la Bibliothèque étaient toujours en anglais.</li>
+      <li><strong>Des dates de sortie pour chaque région.</strong> Quand l'IA
+        comble les lacunes pendant une récupération, et quand vous appuyez sur
+        Remplissage IA, on lui demande désormais aussi la date de sortie du
+        jeu dans chaque région, comme l'Amérique du Nord, l'Europe et le
+        Japon. La page du jeu et l'aperçu rapide les listent, la plus ancienne
+        en premier, avec les dates et les noms de régions dans votre langue.
+        La date de sortie propre au jeu reste inchangée.</li>
+      <li><strong>Jeu précédent et suivant sur la page d'un jeu.</strong> À
+        côté du chemin en haut de la page d'un jeu se trouvent des liens
+        Précédent et Suivant et la position du jeu dans la liste. Ils suivent
+        la page d'où vous venez : ouverts depuis la Bibliothèque, ils
+        parcourent la Bibliothèque, et depuis une page de console, cette
+        console, dans le même ordre et avec les mêmes filtres et la même
+        recherche que là-bas.</li>
+      <li><strong>Les jaquettes et captures téléversées sont traitées comme
+        celles récupérées.</strong> Une jaquette, une boîte 3D ou une capture
+        d'écran que vous téléversez dans la fenêtre de modification est
+        désormais enregistrée dans le même format d'image que les images
+        récupérées, redimensionnée à la même taille, et les jaquettes
+        reçoivent les copies plus petites qu'utilise la Bibliothèque. Une
+        capture identique à une capture que le jeu a déjà n'est pas ajoutée,
+        et on vous indique combien ont été écartées. Téléverser une nouvelle
+        jaquette supprime aussi le fichier qu'elle remplace.</li>
+      <li><strong>RetroAchievements s'affiche sur la page de chaque jeu qui en
+        dispose.</strong> Certains jeux avaient le badge RA dans la
+        Bibliothèque mais aucune carte RetroAchievements sur leur page, comme
+        Metroid Prime et Metroid Prime 2 sur GameCube. La page utilise
+        désormais le même lien RetroAchievements que le badge, et se charge
+        plus vite car elle n'interroge plus RetroAchievements à chaque fois.</li>
+      <li><strong>Le nombre de jeux non récupérés de la page Systèmes
+        correspond au filtre Non récupéré.</strong> Le nombre incluait les
+        disques bonus, que la liste des jeux de la console n'affiche jamais,
+        si bien qu'une console pouvait indiquer 2 jeux non récupérés alors que
+        son filtre Non récupéré n'en montrait aucun.</li>
+      <li><strong>La Bibliothèque et les pages de système se mettent à jour en
+        direct pendant la Récupération groupée.</strong> La carte de chaque
+        jeu s'actualise dès qu'il est récupéré, que la fenêtre de Récupération
+        groupée soit ouverte, fermée ou tourne en arrière-plan.</li>
+      <li><strong>Remplissage IA donne à chaque jeu son nom officiel.</strong>
+        Quand l'IA comble les lacunes, lors de la récupération d'un seul jeu,
+        pendant la Récupération groupée et avec le bouton Remplissage IA, elle
+        donne aussi le titre officiel du jeu tel qu'il est sorti dans la
+        région de sa ROM, et le jeu est renommé ainsi. L'ancien nom est
+        conservé comme titre alternatif. Un titre que vous avez saisi
+        vous-même ou accepté dans Noms officiels n'est jamais renommé.</li>
+      <li><strong>Noms officiels propose de nouveau des noms.</strong> Avec
+        OpenAI, et parfois avec Gemini, les réponses de l'IA ne pouvaient pas
+        être lues, si bien qu'une recherche se terminait sans aucun nom
+        proposé.</li>
+      <li><strong>Les sources ne sont interrogées que pour les systèmes
+        qu'elles couvrent.</strong> RAWG n'a aucun jeu Intellivision, il n'est
+        donc plus interrogé pour eux ; auparavant, il trouvait à la place des
+        jeux d'autres plateformes. IGDB, TheGamesDB et RAWG cherchent
+        désormais toujours sur le système propre au jeu. Plusieurs liens de
+        plateforme RAWG erronés ont aussi été corrigés (Atari ST,
+        ColecoVision, PC Engine, DOS).</li>
+      <li><strong>L'anneau de progression de la récupération ne revient plus
+        en arrière.</strong> Après plus d'une recherche dans la fenêtre «
+        Rechercher des métadonnées », un seul clic sur Appliquer lançait la
+        récupération plusieurs fois, et l'anneau sautait de l'une à l'autre.</li>
+      <li><strong>Les boîtes 3D agrandies n'ont plus de carré derrière
+        elles.</strong> La boîte repose directement sur le fond assombri.</li>
+      <li><strong>Les messages n'affichent plus de code HTML.</strong>
+        Certaines fenêtres de confirmation et de résultat des Outils ROM
+        affichaient des balises comme &lt;br&gt; au lieu de retours à la
+        ligne. La visionneuse de journaux et le choix du jeu parent d'un
+        disque bonus dans les Paramètres fonctionnent de nouveau.</li>
+    </ul>
 - version: 3.32.0
   date: '2026-10-23'
   tags:

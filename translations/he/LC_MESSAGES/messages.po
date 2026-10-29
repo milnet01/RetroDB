@@ -152,7 +152,7 @@ msgstr "שם המשתמש כבר קיים"
 
 #: routes/auth.py:239
 msgid "The last admin must stay an active admin"
-msgstr ""
+msgstr "המנהל האחרון חייב להישאר מנהל פעיל"
 
 #: routes/auth.py:291
 msgid "Cannot delete your own account"
@@ -457,7 +457,7 @@ msgstr "הסרטון לא נשמר: עליו להיות קובץ MP4, WebM או 
 msgid ""
 "Screenshots not added because they match ones the game already has: "
 "%(count)s"
-msgstr ""
+msgstr "צילומי מסך שלא נוספו כי הם זהים לאלה שכבר יש למשחק: %(count)s"
 
 #: routes/games.py:685
 msgid "Game not found after update"
@@ -593,7 +593,7 @@ msgstr "נכשל בסגירת המופע הקודם: %(err)s"
 
 #: routes/launch.py:180
 msgid "RetroArch is not built for this computer."
-msgstr ""
+msgstr "RetroArch אינו בנוי עבור מחשב זה."
 
 #: routes/launch.py:193
 msgid "Cores are not built for this computer."
@@ -715,15 +715,15 @@ msgstr "הגדר תחילה ספק AI בהגדרות > גירוד."
 
 #: routes/official_names.py:81
 msgid "Pick a system, or all systems."
-msgstr ""
+msgstr "בחר מערכת, או את כל המערכות."
 
 #: routes/official_names.py:84
 msgid "An official names run is already running."
-msgstr ""
+msgstr "הרצה של שמות רשמיים כבר פועלת."
 
 #: routes/official_names.py:103
 msgid "No official names run to cancel."
-msgstr ""
+msgstr "אין הרצה של שמות רשמיים לביטול."
 
 #: routes/platform_import.py:153
 msgid "Steam API key not configured. Add it in Settings → API Keys."
@@ -1120,13 +1120,12 @@ msgid "PSN NPSSO not configured"
 msgstr "ה-NPSSO של PSN לא הוגדר"
 
 #: routes/updates.py:48
-#, fuzzy
 msgid "No newer version is available"
-msgstr "אין דירוגים זמינים"
+msgstr "אין גרסה חדשה יותר זמינה"
 
 #: routes/updates.py:52 routes/updates.py:64
 msgid "This update cannot be installed here"
-msgstr ""
+msgstr "לא ניתן להתקין עדכון זה כאן"
 
 #: routes/versions.py:23
 msgid "Pick at least two games."
@@ -1577,9 +1576,8 @@ msgid "Already Syncing"
 msgstr "כבר מסנכרן"
 
 #: services/js_i18n_strings.py:526
-#, fuzzy
 msgid "An update is already being downloaded."
-msgstr "מערכת זו כבר מסונכרנת."
+msgstr "עדכון כבר נמצא בהורדה."
 
 #: services/js_i18n_strings.py:527
 #, python-brace-format
@@ -1693,6 +1691,8 @@ msgid ""
 "Asking the AI: game {current} of {total}. Names suggested: {proposals}. "
 "{system}"
 msgstr ""
+"שואל את ה-AI: משחק {current} מתוך {total}. שמות שהוצעו: {proposals}. "
+"{system}"
 
 #: services/js_i18n_strings.py:549
 msgid "Aspect ratio"
@@ -1728,7 +1728,7 @@ msgstr "מסך CRT"
 
 #: services/js_i18n_strings.py:558 templates/game_detail.html:236
 msgid "Can be completed with playable performance and no game-breaking glitches."
-msgstr ""
+msgstr "ניתן לסיים אותו בביצועים שמאפשרים משחק וללא תקלות ששוברות את המשחק."
 
 #: services/js_i18n_strings.py:559 templates/_bulk_edit_modal.html:191
 #: templates/_bulk_scrape_modal.html:49 templates/_modals/edit_modal.html:12
@@ -1924,16 +1924,15 @@ msgstr "ליבה"
 
 #: services/js_i18n_strings.py:595
 msgid "Could not accept these names."
-msgstr ""
+msgstr "לא ניתן היה לקבל את השמות האלה."
 
 #: services/js_i18n_strings.py:596
 msgid "Could not apply metadata."
 msgstr "לא ניתן היה להחיל את המטא-נתונים."
 
 #: services/js_i18n_strings.py:597
-#, fuzzy
 msgid "Could not check for updates."
-msgstr "לא ניתן לשמור."
+msgstr "לא ניתן היה לבדוק אם יש עדכונים."
 
 #: services/js_i18n_strings.py:598
 #, python-brace-format
@@ -1952,7 +1951,7 @@ msgstr "לא ניתן לטעון הצעות."
 
 #: services/js_i18n_strings.py:601
 msgid "Could not load the suggested names."
-msgstr ""
+msgstr "לא ניתן היה לטעון את השמות המוצעים."
 
 #: services/js_i18n_strings.py:602
 msgid "Could not open this manual. Use \"Open PDF in a new tab\" instead."
@@ -1962,7 +1961,7 @@ msgstr ""
 
 #: services/js_i18n_strings.py:603
 msgid "Could not read the run status."
-msgstr ""
+msgstr "לא ניתן היה לקרוא את מצב ההרצה."
 
 #: services/js_i18n_strings.py:604
 msgid "Could not reconnect to server. Please refresh manually."
@@ -1970,7 +1969,7 @@ msgstr "לא ניתן להתחבר מחדש לשרת. רענן ידנית."
 
 #: services/js_i18n_strings.py:605
 msgid "Could not reject these names."
-msgstr ""
+msgstr "לא ניתן היה לדחות את השמות האלה."
 
 #: services/js_i18n_strings.py:606
 msgid "Could not save that setting."
@@ -1986,11 +1985,11 @@ msgstr "לא ניתן להציג את העמוד הזה של המדריך."
 
 #: services/js_i18n_strings.py:609
 msgid "Could not start the run."
-msgstr ""
+msgstr "לא ניתן היה להתחיל את ההרצה."
 
 #: services/js_i18n_strings.py:610
 msgid "Could not stop the run."
-msgstr ""
+msgstr "לא ניתן היה לעצור את ההרצה."
 
 #: services/js_i18n_strings.py:611
 msgid "Could not stop the running instance."
@@ -2005,9 +2004,9 @@ msgid "Could not write the summary."
 msgstr "לא ניתן לכתוב את הסיכום."
 
 #: services/js_i18n_strings.py:614
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Critic Score ({count} reviews)"
-msgstr "ציון מבקרים (%(count)s ביקורות)"
+msgstr "ציון מבקרים ({count} ביקורות)"
 
 #: services/js_i18n_strings.py:615
 msgid "Currently set"
@@ -2041,7 +2040,7 @@ msgstr "מזהה…"
 
 #: services/js_i18n_strings.py:622 templates/game_detail.html:240
 msgid "Does not start, or crashes the emulator."
-msgstr ""
+msgstr "לא נפתח, או גורם לקריסת האמולטור."
 
 #: services/js_i18n_strings.py:623 templates/_bulk_scrape_modal.html:69
 #: templates/all_games.html:223 templates/psn_trophies.html:247
@@ -2053,11 +2052,11 @@ msgstr "בוצע"
 #: services/js_i18n_strings.py:624
 #, python-brace-format
 msgid "Done. Games asked: {total}. Names suggested: {proposals}."
-msgstr ""
+msgstr "בוצע. משחקים שנשאלו: {total}. שמות שהוצעו: {proposals}."
 
 #: services/js_i18n_strings.py:625
 msgid "Download the update first."
-msgstr ""
+msgstr "הורד תחילה את העדכון."
 
 #: services/js_i18n_strings.py:626
 msgid "Downloading 3D box art…"
@@ -2065,7 +2064,7 @@ msgstr "מוריד עטיפת קופסה בתלת-ממד…"
 
 #: services/js_i18n_strings.py:627
 msgid "Downloading RetroArch… This can take a few minutes."
-msgstr ""
+msgstr "מוריד את RetroArch… הדבר עשוי להימשך כמה דקות."
 
 #: services/js_i18n_strings.py:628
 msgid "Downloading box art…"
@@ -2179,7 +2178,7 @@ msgstr "שגיאה בעדכון הסטטוס"
 
 #: services/js_i18n_strings.py:654
 msgid "Europe"
-msgstr ""
+msgstr "אירופה"
 
 #: services/js_i18n_strings.py:655 templates/_modals/edit_modal.html:223
 #: templates/base.html:1242
@@ -2351,7 +2350,7 @@ msgstr "בקשת היצירה נכשלה"
 msgid ""
 "Gets in game, but cannot be finished, has serious glitches or runs too "
 "slowly."
-msgstr ""
+msgstr "נכנס למשחק, אבל לא ניתן לסיים אותו, יש בו תקלות חמורות או שהוא רץ לאט מדי."
 
 #: services/js_i18n_strings.py:695
 msgid "Go to Analytics"
@@ -2437,9 +2436,8 @@ msgid "Input lag reduction"
 msgstr "הפחתת השהיית קלט"
 
 #: services/js_i18n_strings.py:714
-#, fuzzy
 msgid "Install update"
-msgstr "עודכן לאחרונה"
+msgstr "התקן עדכון"
 
 #: services/js_i18n_strings.py:715
 #, python-brace-format
@@ -2453,7 +2451,7 @@ msgstr "הותקנו {n} ליבות. נכשלו: {failed}"
 
 #: services/js_i18n_strings.py:717
 msgid "Installing the update and restarting RetroDB…"
-msgstr ""
+msgstr "מתקין את העדכון ומפעיל מחדש את RetroDB…"
 
 #: services/js_i18n_strings.py:718
 msgid "Integer scaling"
@@ -2461,7 +2459,7 @@ msgstr "שינוי קנה מידה בכפולות שלמות"
 
 #: services/js_i18n_strings.py:719
 msgid "Japan"
-msgstr ""
+msgstr "יפן"
 
 #: services/js_i18n_strings.py:720
 msgid "Just synced"
@@ -2476,9 +2474,9 @@ msgid "Kill"
 msgstr "סיים תהליך"
 
 #: services/js_i18n_strings.py:723
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Last tested {date}."
-msgstr "נוסף ב-{date}"
+msgstr "נבדק לאחרונה ב-{date}."
 
 #: services/js_i18n_strings.py:724
 #, python-brace-format
@@ -2607,19 +2605,19 @@ msgstr "לא"
 #: services/js_i18n_strings.py:747
 #, python-brace-format
 msgid "Names changed: {accepted}."
-msgstr ""
+msgstr "שמות ששונו: {accepted}."
 
 #: services/js_i18n_strings.py:748
 #, python-brace-format
 msgid ""
 "Names changed: {accepted}. Skipped because their title changed since: "
 "{skipped}."
-msgstr ""
+msgstr "שמות ששונו: {accepted}. דולגו כי הכותרת שלהם השתנתה מאז: {skipped}."
 
 #: services/js_i18n_strings.py:749
 #, python-brace-format
 msgid "Names rejected: {rejected}. They will not be suggested again."
-msgstr ""
+msgstr "שמות שנדחו: {rejected}. הם לא יוצעו שוב."
 
 #: services/js_i18n_strings.py:750
 msgid "Navigation"
@@ -2691,7 +2689,7 @@ msgstr "אין עדיין תיקיות."
 
 #: services/js_i18n_strings.py:766
 msgid "No games or systems match"
-msgstr ""
+msgstr "אין משחקים או מערכות תואמים"
 
 #: services/js_i18n_strings.py:767
 msgid "No log files in this category"
@@ -2714,9 +2712,8 @@ msgid "No missing ROM files found."
 msgstr "לא נמצאו קובצי ROM חסרים."
 
 #: services/js_i18n_strings.py:772
-#, fuzzy
 msgid "No newer version is available."
-msgstr "אין תיאור זמין."
+msgstr "אין גרסה חדשה יותר זמינה."
 
 #: services/js_i18n_strings.py:773
 msgid "No options available"
@@ -2744,7 +2741,7 @@ msgstr "אין הפעלות התואמות לסינון הנוכחי"
 
 #: services/js_i18n_strings.py:779
 msgid "No suggested names waiting. Press Ask the AI to look for some."
-msgstr ""
+msgstr "אין שמות מוצעים שממתינים. לחץ על שאל את ה-AI כדי לחפש."
 
 #: services/js_i18n_strings.py:780
 msgid "No suggestions. Run Backfill Alternate Titles in Maintenance to find more."
@@ -2884,25 +2881,23 @@ msgstr "כלי ROM"
 
 #: services/js_i18n_strings.py:811 templates/game_detail.html:237
 msgid "RPCS3: Ingame"
-msgstr ""
+msgstr "RPCS3: בתוך המשחק"
 
 #: services/js_i18n_strings.py:812 templates/game_detail.html:238
-#, fuzzy
 msgid "RPCS3: Intro"
-msgstr "גביעי RPCS3"
+msgstr "RPCS3: פתיח"
 
 #: services/js_i18n_strings.py:813 templates/game_detail.html:239
 msgid "RPCS3: Loadable"
-msgstr ""
+msgstr "RPCS3: ניתן לטעינה"
 
 #: services/js_i18n_strings.py:814 templates/game_detail.html:240
-#, fuzzy
 msgid "RPCS3: Nothing"
-msgstr "גביעי RPCS3"
+msgstr "RPCS3: כלום"
 
 #: services/js_i18n_strings.py:815 templates/game_detail.html:236
 msgid "RPCS3: Playable"
-msgstr ""
+msgstr "RPCS3: ניתן לשחק"
 
 #: services/js_i18n_strings.py:816
 msgid "Ready"
@@ -2992,16 +2987,16 @@ msgstr "המשך"
 
 #: services/js_i18n_strings.py:835
 msgid "RetroArch is installed."
-msgstr ""
+msgstr "RetroArch מותקן."
 
 #: services/js_i18n_strings.py:836
 msgid "RetroArch was not installed."
-msgstr ""
+msgstr "RetroArch לא הותקן."
 
 #: services/js_i18n_strings.py:837
 #, python-brace-format
 msgid "RetroArch was not installed: {error}"
-msgstr ""
+msgstr "RetroArch לא הותקן: {error}"
 
 #: services/js_i18n_strings.py:838
 msgid "RetroDB default"
@@ -3009,24 +3004,26 @@ msgstr "ברירת המחדל של RetroDB"
 
 #: services/js_i18n_strings.py:839
 msgid "RetroDB has not come back yet. See logs/update.log, then reload this page."
-msgstr ""
+msgstr "RetroDB עדיין לא חזר לפעול. עיין ב-logs/update.log, ואז טען מחדש את הדף."
 
 #: services/js_i18n_strings.py:840
 msgid ""
 "RetroDB is run by a process manager here. Download the release and "
 "install it yourself."
-msgstr ""
+msgstr "כאן RetroDB מופעל על ידי מנהל תהליכים. הורד את הגרסה והתקן אותה בעצמך."
 
 #: services/js_i18n_strings.py:841
 msgid ""
 "RetroDB will back up its database, install the update and restart. Anyone"
 " using it will be disconnected for a minute or two."
 msgstr ""
+"RetroDB יגבה את מסד הנתונים שלו, יתקין את העדכון ויופעל מחדש. כל מי "
+"שמשתמש בו ינותק לדקה או שתיים."
 
 #: services/js_i18n_strings.py:842
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "RetroDB {version} is available."
-msgstr "אין תיאור זמין."
+msgstr "RetroDB {version} זמין."
 
 #: services/js_i18n_strings.py:843
 msgid "Run-ahead, 1 frame"
@@ -3143,7 +3140,7 @@ msgstr "החיפוש נכשל."
 
 #: services/js_i18n_strings.py:869
 msgid "Search failed. Try again."
-msgstr ""
+msgstr "החיפוש נכשל. נסה שוב."
 
 #: services/js_i18n_strings.py:870
 msgid "Searching & removing background..."
@@ -3157,7 +3154,7 @@ msgstr "מחפש ב-{source}…"
 #: services/js_i18n_strings.py:872
 #, python-brace-format
 msgid "See all {n} results"
-msgstr ""
+msgstr "הצג את כל {n} התוצאות"
 
 #: services/js_i18n_strings.py:873
 msgid "Select Developer"
@@ -3247,11 +3244,11 @@ msgstr "מציג דיסקי בונוס"
 
 #: services/js_i18n_strings.py:893 templates/game_detail.html:239
 msgid "Shows a black screen with a frame rate in the window title."
-msgstr ""
+msgstr "מציג מסך שחור עם קצב פריימים בכותרת החלון."
 
 #: services/js_i18n_strings.py:894 templates/game_detail.html:238
 msgid "Shows an image but does not get past the menus."
-msgstr ""
+msgstr "מציג תמונה אבל לא עובר את התפריטים."
 
 #: services/js_i18n_strings.py:895
 msgid "Shutting down server..."
@@ -3277,7 +3274,7 @@ msgstr "ייבוא Steam"
 #: services/js_i18n_strings.py:900
 #, python-brace-format
 msgid "Stopped. Names suggested: {proposals}."
-msgstr ""
+msgstr "נעצר. שמות שהוצעו: {proposals}."
 
 #: services/js_i18n_strings.py:901
 #, python-brace-format
@@ -3287,7 +3284,7 @@ msgstr "עודכנו בהצלחה {count} משחקים"
 #: services/js_i18n_strings.py:902
 #, python-brace-format
 msgid "Suggested names waiting: {count}. Untick any you do not want, then accept."
-msgstr ""
+msgstr "שמות מוצעים שממתינים: {count}. בטל את הסימון של מה שאינך רוצה, ואז קבל."
 
 #: services/js_i18n_strings.py:903
 msgid "Summary written."
@@ -3355,51 +3352,49 @@ msgid "The core installed but the game still cannot start."
 msgstr "הליבה הותקנה, אבל המשחק עדיין לא יכול להתחיל."
 
 #: services/js_i18n_strings.py:915
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "The download failed: {error}"
-msgstr "ההפעלה נכשלה: {error}"
+msgstr "ההורדה נכשלה: {error}"
 
 #: services/js_i18n_strings.py:916
 #, python-brace-format
 msgid "The run stopped: {error}. Names already suggested are kept."
-msgstr ""
+msgstr "ההרצה נעצרה: {error}. שמות שכבר הוצעו נשמרים."
 
 #: services/js_i18n_strings.py:917
 msgid "The update could not be started. See logs/update.log."
-msgstr ""
+msgstr "לא ניתן היה להתחיל את העדכון. עיין ב-logs/update.log."
 
 #: services/js_i18n_strings.py:918
 msgid "The update is downloaded and checked."
-msgstr ""
+msgstr "העדכון הורד ונבדק."
 
 #: services/js_i18n_strings.py:919
 #, python-brace-format
 msgid ""
 "The update to {to} did not work, so RetroDB went back to {from}. Reason: "
 "{reason}"
-msgstr ""
+msgstr "העדכון ל-{to} לא עבד, ולכן RetroDB חזר ל-{from}. סיבה: {reason}"
 
 #: services/js_i18n_strings.py:920
 msgid "This copy of RetroDB is a git checkout. Update it with git pull."
-msgstr ""
+msgstr "עותק זה של RetroDB הוא git checkout. עדכן אותו בעזרת git pull."
 
 #: services/js_i18n_strings.py:921
 msgid "This game is already running.  Kill the existing process and relaunch?"
 msgstr "משחק זה כבר פועל.  לסיים את התהליך הקיים ולהפעיל מחדש?"
 
 #: services/js_i18n_strings.py:922
-#, fuzzy
 msgid "This release has no download for this computer yet."
-msgstr "ליבות אינן נבנות עבור מחשב זה."
+msgstr "לגרסה זו עדיין אין הורדה עבור מחשב זה."
 
 #: services/js_i18n_strings.py:923
 msgid "This system is already being synced."
 msgstr "מערכת זו כבר מסונכרנת."
 
 #: services/js_i18n_strings.py:924
-#, fuzzy
 msgid "This update cannot be installed here."
-msgstr "לא ניתן לקשר משחקים אלה."
+msgstr "לא ניתן להתקין עדכון זה כאן."
 
 #: services/js_i18n_strings.py:925
 msgid ""
@@ -3467,7 +3462,7 @@ msgstr ""
 
 #: services/js_i18n_strings.py:933
 msgid "Tick at least one name."
-msgstr ""
+msgstr "סמן לפחות שם אחד."
 
 #: services/js_i18n_strings.py:934
 msgid "Tick at least two games."
@@ -3483,7 +3478,7 @@ msgstr "נסה להתאים את החיפוש או המסננים שלך"
 
 #: services/js_i18n_strings.py:937
 msgid "USA"
-msgstr ""
+msgstr "ארה\"ב"
 
 #: services/js_i18n_strings.py:938
 msgid "Unexpected error"
@@ -3530,7 +3525,7 @@ msgstr ""
 #: services/js_i18n_strings.py:946
 #, python-brace-format
 msgid "Updated from {from} to {to}."
-msgstr ""
+msgstr "עודכן מ-{from} ל-{to}."
 
 #: services/js_i18n_strings.py:947 templates/museum_system.html:198
 #: templates/museum_system.html:205
@@ -3571,9 +3566,9 @@ msgstr ""
 "שחק."
 
 #: services/js_i18n_strings.py:955
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "User Score ({count} ratings)"
-msgstr "ציון משתמשים (%(count)s דירוגים)"
+msgstr "ציון משתמשים ({count} דירוגים)"
 
 #: services/js_i18n_strings.py:956
 msgid "Version unlinked."
@@ -3582,7 +3577,7 @@ msgstr "קישור הגרסה בוטל."
 #: services/js_i18n_strings.py:957
 #, python-brace-format
 msgid "Version {version} is available."
-msgstr ""
+msgstr "גרסה {version} זמינה."
 
 #: services/js_i18n_strings.py:958
 msgid "Versions linked."
@@ -3591,12 +3586,12 @@ msgstr "הגרסאות קושרו."
 #: services/js_i18n_strings.py:959
 #, python-brace-format
 msgid "What is new in {version}"
-msgstr ""
+msgstr "מה חדש ב-{version}"
 
 #: services/js_i18n_strings.py:960
 #, python-brace-format
 msgid "What is new in {version} ({date})"
-msgstr ""
+msgstr "מה חדש ב-{version} ({date})"
 
 #: services/js_i18n_strings.py:961
 msgid "Will change?"
@@ -3608,7 +3603,7 @@ msgstr "עובד"
 
 #: services/js_i18n_strings.py:963
 msgid "World"
-msgstr ""
+msgstr "עולם"
 
 #: services/js_i18n_strings.py:964 templates/game_detail.html:801
 msgid "Write again with AI"
@@ -3626,7 +3621,7 @@ msgstr "כן"
 
 #: services/js_i18n_strings.py:967
 msgid "You have the latest version."
-msgstr ""
+msgstr "יש לך את הגרסה העדכנית ביותר."
 
 #: services/js_i18n_strings.py:968
 #, python-brace-format
@@ -3651,7 +3646,7 @@ msgstr "מערכת"
 
 #: services/js_i18n_strings.py:972
 msgid "unknown"
-msgstr ""
+msgstr "לא ידוע"
 
 #: services/js_i18n_strings.py:973
 #, python-brace-format
@@ -3669,9 +3664,9 @@ msgid "{count} regional versions"
 msgstr "{count} גרסאות אזוריות"
 
 #: services/js_i18n_strings.py:976
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{count} sold"
-msgstr "קונסולה"
+msgstr "{count} נמכרו"
 
 #: services/js_i18n_strings.py:977
 #, python-brace-format
@@ -3731,7 +3726,7 @@ msgstr "{n} שורות"
 #: services/js_i18n_strings.py:988
 #, python-brace-format
 msgid "{n} results"
-msgstr ""
+msgstr "{n} תוצאות"
 
 #: services/js_i18n_strings.py:989
 #, python-brace-format
@@ -3746,7 +3741,7 @@ msgstr "{system} נוסף לתור הסנכרון."
 #: services/js_i18n_strings.py:991
 #, python-brace-format
 msgid "{system} · {file} · old name from: {region}"
-msgstr ""
+msgstr "{system} · {file} · שם ישן מ: {region}"
 
 #: services/js_i18n_strings.py:992
 #, python-brace-format
@@ -4372,9 +4367,8 @@ msgid "Engine"
 msgstr "מנוע"
 
 #: templates/all_games.html:62 templates/system_games.html:53
-#, fuzzy
 msgid "Filters"
-msgstr "קבצים"
+msgstr "מסננים"
 
 #: templates/all_games.html:65 templates/psn_trophies.html:160
 #: templates/system_games.html:56
@@ -4393,7 +4387,7 @@ msgstr "מקור"
 
 #: templates/all_games.html:101 templates/system_games.html:92
 msgid "Show only games that have not been scraped yet"
-msgstr ""
+msgstr "הצג רק משחקים שעדיין לא נגרדו"
 
 #: templates/all_games.html:104 templates/system_games.html:95
 msgid "Show/hide bonus discs (hidden by default)"
@@ -4425,14 +4419,12 @@ msgid "GAMES"
 msgstr "משחקים"
 
 #: templates/all_games.html:150 templates/system_games.html:141
-#, fuzzy
 msgid "Active filters"
-msgstr "מסננים פעילים:"
+msgstr "מסננים פעילים"
 
 #: templates/all_games.html:152 templates/system_games.html:143
-#, fuzzy
 msgid "Sort by"
-msgstr "מיין לפי:"
+msgstr "מיין לפי"
 
 #: templates/all_games.html:154 templates/settings_emulators.html:122
 #: templates/settings_emulators.html:151 templates/system_games.html:145
@@ -4440,44 +4432,36 @@ msgid "Name"
 msgstr "שם"
 
 #: templates/all_games.html:155 templates/system_games.html:146
-#, fuzzy
 msgid "Newest release"
-msgstr "משחקים שיצאו"
+msgstr "ההשקה החדשה ביותר"
 
 #: templates/all_games.html:156 templates/system_games.html:147
-#, fuzzy
 msgid "Oldest release"
-msgstr "משחקים שיצאו"
+msgstr "ההשקה הישנה ביותר"
 
 #: templates/all_games.html:157 templates/system_games.html:148
-#, fuzzy
 msgid "Critic score"
 msgstr "ציון מבקרים"
 
 #: templates/all_games.html:158 templates/system_games.html:149
-#, fuzzy
 msgid "User score"
 msgstr "ציון משתמשים"
 
 #: templates/all_games.html:159 templates/system_games.html:150
-#, fuzzy
 msgid "Recently added"
 msgstr "נוספו לאחרונה"
 
 #: templates/all_games.html:169 templates/system_games.html:160
-#, fuzzy
 msgid "No games match these filters"
-msgstr "אין פריטים התואמים למסנן זה."
+msgstr "אין משחקים התואמים למסננים אלה"
 
 #: templates/all_games.html:171 templates/dashboard.html:93
-#, fuzzy
 msgid "Your library is empty"
-msgstr "גודל ספריית ה-ROM"
+msgstr "הספרייה שלך ריקה"
 
 #: templates/all_games.html:173 templates/dashboard.html:95
-#, fuzzy
 msgid "Scan your ROM folder to add your games."
-msgstr "סרוק את ספריית ה-ROM שלך כדי להוסיף מערכות."
+msgstr "סרוק את תיקיית ה-ROM שלך כדי להוסיף את המשחקים שלך."
 
 #: templates/_settings_tabs/library.html:42 templates/all_games.html:176
 #: templates/dashboard.html:83 templates/dashboard.html:99
@@ -4487,12 +4471,11 @@ msgstr "סרוק ספרייה"
 
 #: templates/all_games.html:179 templates/dashboard.html:104
 msgid "Ask an admin to scan the ROM folder."
-msgstr ""
+msgstr "בקש ממנהל לסרוק את תיקיית ה-ROM."
 
 #: templates/all_games.html:183 templates/system_games.html:163
-#, fuzzy
 msgid "Clear filters"
-msgstr "סגור מסנן"
+msgstr "נקה מסננים"
 
 #: templates/_modals/filter_modal.html:18 templates/all_games.html:190
 #: templates/psn_trophies.html:222 templates/system_games.html:170
@@ -4500,9 +4483,8 @@ msgid "Loading games..."
 msgstr "טוען משחקים..."
 
 #: templates/all_games.html:195 templates/system_games.html:175
-#, fuzzy
 msgid "Selected games"
-msgstr "בחר משחק 2"
+msgstr "משחקים שנבחרו"
 
 #: templates/all_games.html:197 templates/system_games.html:177
 msgid "Select All"
@@ -5185,7 +5167,7 @@ msgstr "החלף תפריט"
 
 #: templates/base.html:57 templates/base.html:100
 msgid "Search games and systems"
-msgstr ""
+msgstr "חפש משחקים ומערכות"
 
 #: templates/base.html:63
 msgid "Main navigation"
@@ -5211,11 +5193,11 @@ msgstr "התנתק"
 
 #: templates/base.html:99
 msgid "Search games and systems…"
-msgstr ""
+msgstr "חפש משחקים ומערכות…"
 
 #: templates/base.html:104
 msgid "Search results"
-msgstr ""
+msgstr "תוצאות חיפוש"
 
 #: templates/base.html:109 templates/login.html:4 templates/login.html:245
 #: templates/login.html:255
@@ -5307,7 +5289,7 @@ msgstr "לחץ למידע נוסף"
 
 #: templates/base.html:233
 msgid "Quick links"
-msgstr ""
+msgstr "קישורים מהירים"
 
 #: templates/base.html:248
 msgid "About"
@@ -5378,9 +5360,8 @@ msgid "Loading game details..."
 msgstr "טוען את פרטי המשחק..."
 
 #: templates/base.html:942 templates/game_detail.html:318
-#, fuzzy
 msgid "Release dates"
-msgstr "תאריך השקה"
+msgstr "תאריכי השקה"
 
 #: templates/base.html:954 templates/game_detail.html:489
 msgid "Your browser does not support the video tag."
@@ -5481,7 +5462,7 @@ msgstr "כותרת"
 
 #: templates/_modals/edit_modal.html:32 templates/base.html:1082
 msgid "Keep this title when scraping"
-msgstr ""
+msgstr "שמור על כותרת זו בזמן גירוד"
 
 #: templates/_modals/edit_modal.html:36 templates/base.html:1086
 msgid "Sort Title"
@@ -6153,9 +6134,8 @@ msgid "Check Settings →"
 msgstr "בדוק הגדרות ←"
 
 #: templates/dashboard.html:36
-#, fuzzy
 msgid "See what is new"
-msgstr "בחר את כל החדשים"
+msgstr "ראה מה חדש"
 
 #: templates/dashboard.html:46
 #, python-format
@@ -6189,9 +6169,8 @@ msgid "Random Game"
 msgstr "משחק אקראי"
 
 #: templates/dashboard.html:101
-#, fuzzy
 msgid "Set ROM folder"
-msgstr "בחר תיקייה זו"
+msgstr "הגדר תיקיית ROM"
 
 #: templates/dashboard.html:120
 msgid "Collection Health"
@@ -6515,9 +6494,8 @@ msgid "ROM Reports"
 msgstr "דוחות ROM"
 
 #: templates/game_detail.html:34
-#, fuzzy
 msgid "Browse games"
-msgstr "עיין בתיקיות"
+msgstr "עיין במשחקים"
 
 #: templates/_modals/manual_reader_modal.html:15 templates/game_detail.html:37
 msgid "Previous"
@@ -6636,27 +6614,29 @@ msgstr "ציון משתמשים (%(count)s דירוגים)"
 #: templates/game_detail.html:230
 #, python-format
 msgid "Copies sold on %(system)s, from published sales figures"
-msgstr ""
+msgstr "עותקים שנמכרו ב-%(system)s, לפי נתוני מכירות שפורסמו"
 
 #: templates/game_detail.html:231
-#, fuzzy, python-format
+#, python-format
 msgid "%(count)s sold"
-msgstr "%(count)s בסך הכול"
+msgstr "%(count)s נמכרו"
 
 #: templates/game_detail.html:242
-#, fuzzy, python-format
+#, python-format
 msgid "Last tested %(date)s."
-msgstr "הושג ב-%(date)s"
+msgstr "נבדק לאחרונה ב-%(date)s."
 
 #: templates/game_detail.html:246
 msgid ""
 "RetroDB reads PS3 compatibility from your RPCS3. In RPCS3, choose Manage "
 "> Databases > Download Compatibility Database."
 msgstr ""
+"RetroDB קורא את תאימות ה-PS3 מה-RPCS3 שלך. ב-RPCS3, בחר Manage > "
+"Databases > Download Compatibility Database."
 
 #: templates/game_detail.html:247
 msgid "RPCS3: no compatibility list"
-msgstr ""
+msgstr "RPCS3: אין רשימת תאימות"
 
 #: templates/game_detail.html:268
 msgid "No description available. Click \"Scrape\" to fetch metadata."
@@ -7715,7 +7695,7 @@ msgstr "ESC לסגירה"
 #: templates/_macros/nav_tabs.html:41 templates/official_names_review.html:5
 #: templates/official_names_review.html:78 templates/rom_tools_hub.html:206
 msgid "Official Names"
-msgstr ""
+msgstr "שמות רשמיים"
 
 #: templates/official_names_review.html:81
 msgid ""
@@ -7725,6 +7705,10 @@ msgid ""
 " an accepted name is kept when scraping. Nothing changes until you accept"
 " it."
 msgstr ""
+"ה-AI מציע לכל משחק את שמו הרשמי המלא, כפי שיצא באזור של ה-ROM שלו: ROM "
+"יפני של Mega Man הופך ל-Rockman. סמן את השמות שאתה רוצה וקבל אותם. השם "
+"הישן נשמר ככותרת חלופית, ושם שהתקבל נשמר בזמן גירוד. שום דבר לא משתנה עד "
+"שתקבל אותו."
 
 #: templates/official_names_review.html:86 templates/versions_review.html:88
 msgid "All systems"
@@ -7732,31 +7716,31 @@ msgstr "כל המערכות"
 
 #: templates/official_names_review.html:92
 msgid "Ask the AI"
-msgstr ""
+msgstr "שאל את ה-AI"
 
 #: templates/official_names_review.html:93
 msgid "Stop"
-msgstr ""
+msgstr "עצור"
 
 #: templates/official_names_review.html:97
 msgid "Suggested names"
-msgstr ""
+msgstr "שמות מוצעים"
 
 #: templates/official_names_review.html:100
 msgid "Accept ticked"
-msgstr ""
+msgstr "קבל את המסומנים"
 
 #: templates/official_names_review.html:101
 msgid "Reject ticked"
-msgstr ""
+msgstr "דחה את המסומנים"
 
 #: templates/official_names_review.html:102
 msgid "Tick all"
-msgstr ""
+msgstr "סמן הכול"
 
 #: templates/official_names_review.html:103
 msgid "Tick none"
-msgstr ""
+msgstr "בטל סימון של הכול"
 
 #: templates/_settings_tabs/account.html:111 templates/psn_trophies.html:16
 msgid "PlayStation Network"
@@ -8203,10 +8187,12 @@ msgid ""
 "Ask the AI for each game's full official name in its ROM's own region, "
 "then tick the new names you want. Nothing changes until you accept it."
 msgstr ""
+"שאל את ה-AI מהו השם הרשמי המלא של כל משחק באזור של ה-ROM שלו, ואז סמן את "
+"השמות החדשים שאתה רוצה. שום דבר לא משתנה עד שתקבל אותו."
 
 #: templates/rom_tools_hub.html:212
 msgid "Needs an AI provider (Settings > Scraping)"
-msgstr ""
+msgstr "נדרש ספק AI (הגדרות > גירוד)"
 
 #: templates/_macros/nav_tabs.html:38 templates/rom_tools_hub.html:220
 msgid "Multi-Disc Organizer"
@@ -8435,7 +8421,7 @@ msgstr "זיהוי אוטומטי"
 
 #: templates/settings_emulators.html:46
 msgid "Play in RetroDB"
-msgstr ""
+msgstr "שחק ב-RetroDB"
 
 #: templates/settings_emulators.html:48
 msgid ""
@@ -8443,23 +8429,26 @@ msgid ""
 "to play your games, with its own settings and saves, kept apart from any "
 "RetroArch you already use."
 msgstr ""
+"RetroDB יכול להוריד את RetroArch הרשמי מ-libretro ולהגדיר אותו כדי לשחק "
+"במשחקים שלך, עם הגדרות ושמירות משלו, בנפרד מכל RetroArch שאתה כבר משתמש "
+"בו."
 
 #: templates/settings_emulators.html:51
 #, python-format
 msgid "Installed: RetroArch %(version)s"
-msgstr ""
+msgstr "מותקן: RetroArch %(version)s"
 
 #: templates/settings_emulators.html:55
 msgid "Download RetroArch again"
-msgstr ""
+msgstr "הורד את RetroArch שוב"
 
 #: templates/settings_emulators.html:55
 msgid "Get RetroArch"
-msgstr ""
+msgstr "קבל את RetroArch"
 
 #: templates/settings_emulators.html:66
 msgid "Player cores"
-msgstr ""
+msgstr "ליבות הנגן"
 
 #: templates/settings_emulators.html:68
 msgid ""
@@ -8597,28 +8586,28 @@ msgstr ""
 
 #: templates/setup.html:18
 msgid "Welcome"
-msgstr ""
+msgstr "ברוכים הבאים"
 
 #: templates/setup.html:18
 msgid "Admin"
-msgstr ""
+msgstr "מנהל"
 
 #: templates/setup.html:19
 msgid "ES-DE"
-msgstr ""
+msgstr "ES-DE"
 
 #: templates/setup.html:20
 msgid "API Keys"
-msgstr ""
+msgstr "מפתחות API"
 
 #: templates/setup.html:24
 #, python-format
 msgid "Step %(n)s of %(total)s"
-msgstr ""
+msgstr "שלב %(n)s מתוך %(total)s"
 
 #: templates/setup.html:27 templates/setup.html:30
 msgid "Optional"
-msgstr ""
+msgstr "אופציונלי"
 
 #: templates/steam_achievement_game.html:36
 msgid "Steam Store"
@@ -8684,9 +8673,8 @@ msgid "Refresh RetroAchievements data for this system"
 msgstr "רענן נתוני RetroAchievements עבור מערכת זו"
 
 #: templates/system_games.html:161
-#, fuzzy
 msgid "No games here yet"
-msgstr "לא נבחרו משחקים"
+msgstr "אין כאן משחקים עדיין"
 
 #: templates/systems.html:11
 msgid "Gaming Systems"
@@ -9051,7 +9039,7 @@ msgstr "פרטי השקה"
 
 #: templates/_modals/edit_modal.html:82
 msgid "Format: YYYY-MM-DD, or the year alone (e.g., 1996-09-29 or 1996)"
-msgstr ""
+msgstr "תבנית: YYYY-MM-DD, או השנה בלבד (לדוגמה, 1996-09-29 או 1996)"
 
 #: templates/_modals/edit_modal.html:96
 msgid "Comma-separated for multiple publishers"
@@ -9309,15 +9297,15 @@ msgstr "סגור מסנן"
 
 #: templates/_modals/select_filter_modal.html:27
 msgid "Tick any number; a game shows if it has any of them."
-msgstr ""
+msgstr "סמן כמה שתרצה; משחק מוצג אם יש לו אחד מהם."
 
 #: templates/_modals/select_filter_modal.html:28
 msgid "Tick any number; a game is hidden if it has any of them."
-msgstr ""
+msgstr "סמן כמה שתרצה; משחק מוסתר אם יש לו אחד מהם."
 
 #: templates/_modals/select_filter_modal.html:29
 msgid "Apply"
-msgstr ""
+msgstr "החל"
 
 #: templates/_settings_tabs/account.html:2
 msgid "Account settings"
@@ -9453,11 +9441,13 @@ msgid ""
 " it shows your NPSSO token as JSON. If you are not signed in, it shows "
 "\"Invalid login\" instead."
 msgstr ""
+"התחבר תחילה ל-PlayStation בדפדפן זה. לאחר מכן פתח את דף החשבון: הוא מציג "
+"את אסימון ה-NPSSO שלך כ-JSON. אם אינך מחובר, הוא מציג במקום זאת \"Invalid"
+" login\"."
 
 #: templates/_settings_tabs/account.html:140
-#, fuzzy
 msgid "Sign in to PlayStation"
-msgstr "Sony PlayStation 3"
+msgstr "התחבר ל-PlayStation"
 
 #: templates/_settings_tabs/account.html:143
 msgid "Open Sony Account Page"
@@ -10204,37 +10194,33 @@ msgstr "אזור ברירת מחדל"
 
 #: templates/_settings_tabs/system.html:7
 #: templates/_settings_tabs/system.html:174
-#, fuzzy
 msgid "Updates"
-msgstr "עדכן ליבות"
+msgstr "עדכונים"
 
 #: templates/_settings_tabs/system.html:177
-#, fuzzy, python-format
+#, python-format
 msgid "This is RetroDB %(version)s."
-msgstr "מדריך מלא ל-RetroDB v%(version)s"
+msgstr "זהו RetroDB %(version)s."
 
 #: templates/_settings_tabs/system.html:183
-#, fuzzy
 msgid "Release page"
-msgstr "תאריך השקה"
+msgstr "דף הגרסה"
 
 #: templates/_settings_tabs/system.html:190
 msgid "Check for updates"
-msgstr ""
+msgstr "בדוק אם יש עדכונים"
 
 #: templates/_settings_tabs/system.html:191
-#, fuzzy
 msgid "Download update"
-msgstr "הורד"
+msgstr "הורד עדכון"
 
 #: templates/_settings_tabs/system.html:192
-#, fuzzy
 msgid "Install and restart"
-msgstr "הותקנו {n} ליבות."
+msgstr "התקן והפעל מחדש"
 
 #: templates/_settings_tabs/system.html:196
 msgid "Check for updates once a day"
-msgstr ""
+msgstr "בדוק אם יש עדכונים פעם ביום"
 
 #: templates/_settings_tabs/system.html:213
 msgid "Shut Down Server"

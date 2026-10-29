@@ -1,3 +1,105 @@
+- version: 3.33.0
+  date: '2026-10-29'
+  tags:
+  - type: feature
+    label: RetroDB 可以自行更新
+  - type: feature
+    label: 在 RetroDB 内获取 RetroArch
+  - type: feature
+    label: 查看每个 PS3 游戏在 RPCS3 中的运行情况
+  - type: feature
+    label: 你的游戏的销量数据
+  - type: feature
+    label: 每个地区的发行日期
+  - type: feature
+    label: 游戏页面上的上一个和下一个游戏
+  - type: feature
+    label: 上传的封面和截图会像抓取的一样被处理
+  - type: feature
+    label: 批量抓取期间游戏库和系统页面实时更新
+  - type: feature
+    label: AI 填充为每个游戏提供官方名称
+  - type: performance
+    label: 奖杯、游戏库导入和维护工具更快了
+  - type: fix
+    label: 在 RetroDB 中游玩的游戏可以使用“下一张光盘”
+  - type: fix
+    label: 在手机上和调整窗口大小后，游戏卡片排列整齐
+  - type: fix
+    label: 抓取的评级和玩家人数更准确
+  - type: fix
+    label: ScreenScraper 作为主要来源时会保留其详细信息
+  - type: fix
+    label: “清除抓取数据”会把文件名恢复为标题
+  - type: fix
+    label: 单个主机的 RetroAchievements 刷新又能用了
+  - type: fix
+    label: 截图重复查找器在下载版应用中可用
+  - type: fix
+    label: ScreenScraper 密码已隐藏，最后一个管理员会保持管理员身份
+  - type: fix
+    label: 中断的任务只提供给有权运行它们的人
+  - type: fix
+    label: 导入的主机徽标、设置中的特殊名称和附赠光盘
+  - type: fix
+    label: 游戏页面上的“系列 / 子系列”开关可以使用了
+  - type: fix
+    label: 所有成就标签页宽度相同
+  - type: fix
+    label: RetroDB 能在 Windows 和 macOS 上找到 RPCS3 的设置
+  - type: fix
+    label: AI 填充适用于有评分但没有年龄分级的游戏
+  - type: fix
+    label: 游戏卡片标签跟随你的语言
+  - type: fix
+    label: 每个有 RetroAchievements 的游戏，其游戏页面都会显示它
+  - type: fix
+    label: 系统页面的未抓取数量与“未抓取”筛选一致
+  - type: fix
+    label: “官方名称”又能建议名称了
+  - type: fix
+    label: 只在来源覆盖的系统中搜索该来源
+  - type: fix
+    label: 抓取进度环不再往回跳
+  - type: fix
+    label: 放大的 3D 盒装图后面不再有方块
+  - type: fix
+    label: 消息不再显示 HTML 代码
+  body: |
+    <ul>
+      <li><strong>RetroDB 可以自行更新。</strong>当有新版本发布时，管理员会在仪表盘和 设置 &gt; 系统 &gt; 更新 中看到它以及新内容。“下载更新”会获取新版本，并检查它与发布的文件完全一致；“安装并重启”会备份你的数据库、放入新版本并重启。如果新版本无法启动，RetroDB 会自行回到旧版本并说明原因。你的游戏、设置、图片和日志不会被改动。RetroDB 每天检查一次更新；你可以关闭此功能。从 git 运行或由进程管理器运行的副本会收到更新通知，但不会被更新。</li>
+      <li><strong>在 RetroDB 内获取 RetroArch。</strong>设置 &gt; 模拟器 中有一个新的“在 RetroDB 中游玩”部分。按下“获取 RetroArch”，RetroDB 就会从 libretro 下载官方 RetroArch，检查下载的文件与预期完全一致，并将其设置为 RetroArch (RetroDB)，它有自己的设置和存档，与你已在使用的任何 RetroArch 互不干扰。之后，每个系统在你第一次游玩时，它会获取最合适的核心。适用于 Linux 和 Windows；macOS 尚未测试。</li>
+      <li><strong>在 RetroDB 中游玩的游戏可以使用“下一张光盘”。</strong>对于多光盘游戏，“下一张光盘”按钮现在无需任何设置即可控制 RetroDB 自己的 RetroArch。RetroArch 只在这类游戏运行时监听 RetroDB 的命令；在 Windows 和 macOS 上则是在任何游戏运行时。</li>
+      <li><strong>在手机上和调整窗口大小后，游戏卡片排列整齐。</strong>在手机上，游戏库和主机页面曾经只显示一张卡片，然后是一大段空白；现在卡片一张接一张地往下排列。把窗口变窄或变宽时，卡片会重新排列，而不是停留在原来的列中。</li>
+      <li><strong>抓取的评级和玩家人数更准确。</strong>现在能正确读取 IGDB 中 CERO、USK、GRAC、ClassInd 和 ACB 的年龄分级，所以被评为 CERO Z 或 USK 18 的游戏会得到该分级。TheGamesDB、RAWG、IGDB 和 ES-DE 在不知道时不再猜测为“1 名玩家”；ES-DE 导入不再覆盖你设置的玩家人数或游戏模式。TheGamesDB 在查找失败后不再用一个数字代替发行商或开发商名称保存。</li>
+      <li><strong>ScreenScraper 作为主要来源时会保留其详细信息。</strong>它的标题、简介、日期、开发商、发行商和玩家人数在每次抓取时都会保留，而不仅仅是在搜索后的最初几分钟内。下载的视频和说明书会得到正确的文件名。</li>
+      <li><strong>“清除抓取数据”会把文件名恢复为标题。</strong>它以前会清除详细信息，但保留抓取到的标题。</li>
+      <li><strong>单个主机的 RetroAchievements 刷新又能用了。</strong>它以前每次都会出错。</li>
+      <li><strong>截图重复查找器在下载版应用中可用。</strong>它以前在那里找不到任何截图，而且删除重复截图后文件仍留在磁盘上。</li>
+      <li><strong>ScreenScraper 密码已隐藏，最后一个管理员会保持管理员身份。</strong>设置现在会像你的其他密钥一样，以遮盖方式显示你的 ScreenScraper 密码。唯一的管理员账户不能再被改为编辑者或停用，否则将没有人能管理 RetroDB。</li>
+      <li><strong>中断的任务只提供给有权运行它们的人。</strong>仪表盘上的中断任务横幅现在只向有权启动该任务的人显示它，例如批量抓取只向编辑者和管理员显示。其他账户不再看到它，也不能再关闭它。</li>
+      <li><strong>导入的主机徽标、设置中的特殊名称和附赠光盘。</strong>在下载版应用中，刷新徽标现在能找到通过从 ES-DE 导入带来的主机徽标，并优先使用它们而不是内置徽标。含有 &lt; 或引号等字符的控制器、主机或备份名称不再导致设置页面出错。取消附赠光盘标记会将其完全分离，因此它不再被算作原游戏的附赠光盘。</li>
+      <li><strong>奖杯、游戏库导入和维护工具更快了。</strong>奖杯页面、Steam、Xbox 和 PlayStation 游戏库导入、收藏家奖杯、计算存储空间以及未使用媒体扫描，在大型游戏库上的工作量都大大减少。服务器繁忙时，任务进度弹窗会持续更新；HowLongToBeat 和别名标题任务在运行时不再阻挡其他更改。</li>
+      <li><strong>查看每个 PS3 游戏在 RPCS3 中的运行情况。</strong>游戏库、PlayStation 3 页面和游戏页面上的 PS3 游戏会显示 RPCS3 的兼容性状态：可游玩、可进入游戏、仅片头、可加载或无法运行，以及最近一次测试的日期。RetroDB 从你电脑上的 RPCS3 读取这些信息，所以请在 RPCS3 中选择一次 Manage &gt; Databases &gt; Download Compatibility Database，之后想要更新结果时再选择一次。只显示磁盘上有 ROM 的游戏；导入的游戏不显示。RetroDB 现在还会读取 PSN 和已安装游戏文件夹的游戏 ID，以及名称中带有游戏 ID 的文件夹和文件，例如 [BLUS30443]。</li>
+      <li><strong>你的游戏的销量数据。</strong>当 AI 在抓取过程中填补空缺时，以及当你按下“AI 填充”时，现在还会询问它该游戏在其主机上售出了多少份，数据来自免费公开的数字，例如发行商报告、平台畅销榜、Famitsu、Wikipedia 和 VGChartz。游戏页面会显示这个数字。没有公开数据的游戏会保持空白，而不会得到一个猜测值。</li>
+      <li><strong>游戏页面上的“系列 / 子系列”开关可以使用了。</strong>在游戏页面的编辑窗口中，点击标记为“独立版”的游戏的“系列 / 子系列”开关没有任何反应，所以无法把它归入系列。现在它可以切换了，“平台可用性”开关也一样。</li>
+      <li><strong>所有成就标签页宽度相同。</strong>RetroAchievements、RPCS3、PSN、Steam 和 Xbox 各自按自己的卡片调整页面大小，所以在标签页之间切换时页面宽度会变化。现在它们共用同一宽度。</li>
+      <li><strong>RetroDB 能在 Windows 和 macOS 上找到 RPCS3 的设置。</strong>在 Windows 上，RPCS3 把设置放在 rpcs3.exe 旁边，RetroDB 现在会在那里以及便携文件夹中查找，因此能找到单个游戏的设置和兼容性列表。</li>
+      <li><strong>AI 填充适用于有评分但没有年龄分级的游戏。</strong>对于这类游戏，AI 填充在推算其年龄分级时可能出错失败。</li>
+      <li><strong>游戏卡片标签跟随你的语言。</strong>游戏库卡片上的完成状态和评分提示以前总是英文。</li>
+      <li><strong>每个地区的发行日期。</strong>当 AI 在抓取过程中填补空缺时，以及当你按下“AI 填充”时，现在还会询问它该游戏在每个地区的发行日期，例如北美、欧洲和日本。游戏页面和快速查看会按从早到晚列出这些日期，日期和地区名称使用你的语言。游戏本身的发行日期不变。</li>
+      <li><strong>游戏页面上的上一个和下一个游戏。</strong>游戏页面顶部的路径旁边有“上一页”和“下一页”链接，以及该游戏在列表中的位置。它们跟随你来的页面：从游戏库打开时会在游戏库中逐个切换，从主机页面打开时会在该主机中切换，顺序、筛选条件和搜索都与你在那里时相同。</li>
+      <li><strong>上传的封面和截图会像抓取的一样被处理。</strong>你在编辑窗口中上传的封面、3D 盒装图或截图，现在会以与抓取图片相同的图片格式保存，缩放到相同的尺寸，封面还会生成游戏库使用的较小副本。与该游戏已有截图看起来相同的截图不会被添加，并且会告诉你有多少张被略过。上传新封面也会删除它所替换的文件。</li>
+      <li><strong>每个有 RetroAchievements 的游戏，其游戏页面都会显示它。</strong>有些游戏在游戏库中有 RA 徽章，但其页面上没有 RetroAchievements 卡片，例如 GameCube 上的 Metroid Prime 和 Metroid Prime 2。页面现在使用与徽章相同的 RetroAchievements 链接，而且加载更快，因为它不再每次都询问 RetroAchievements。</li>
+      <li><strong>系统页面的未抓取数量与“未抓取”筛选一致。</strong>该数量曾包括附赠光盘，而主机的游戏列表从不显示附赠光盘，所以一个主机可能显示 2 个未抓取，而它的“未抓取”筛选却什么也不显示。</li>
+      <li><strong>批量抓取期间游戏库和系统页面实时更新。</strong>每个游戏的卡片在抓取完成后立即刷新，无论批量抓取窗口是打开、关闭还是在后台运行。</li>
+      <li><strong>AI 填充为每个游戏提供官方名称。</strong>当 AI 填补空缺时，无论是在单个游戏抓取、批量抓取还是使用“AI 填充”按钮，它还会给出该游戏在其 ROM 所属地区发行时的官方标题，游戏会被改为这个名称。旧名称会保留为别名标题。你自己输入的标题或在“官方名称”中接受的标题永远不会被改名。</li>
+      <li><strong>“官方名称”又能建议名称了。</strong>使用 OpenAI 时，以及有时使用 Gemini 时，AI 的回答无法被读取，所以一次任务结束时没有任何建议名称。</li>
+      <li><strong>只在来源覆盖的系统中搜索该来源。</strong>RAWG 没有 Intellivision 游戏，所以不再为它们搜索 RAWG；以前它会找到其他平台的游戏。IGDB、TheGamesDB 和 RAWG 现在始终在游戏自己的系统上搜索。几个错误的 RAWG 平台链接也已更正（Atari ST、ColecoVision、PC Engine、DOS）。</li>
+      <li><strong>抓取进度环不再往回跳。</strong>在“搜索元数据”窗口中进行多次搜索后，按一次“应用”会多次启动抓取，进度环会在它们之间来回跳动。</li>
+      <li><strong>放大的 3D 盒装图后面不再有方块。</strong>盒子直接显示在变暗的背景上。</li>
+      <li><strong>消息不再显示 HTML 代码。</strong>ROM 工具中的一些确认和结果窗口显示了 &lt;br&gt; 之类的标签，而不是换行。设置中的日志查看器和附赠光盘主游戏选择器又能用了。</li>
+    </ul>
 - version: 3.32.0
   date: '2026-10-23'
   tags:

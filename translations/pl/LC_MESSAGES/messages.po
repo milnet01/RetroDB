@@ -155,7 +155,7 @@ msgstr "Nazwa użytkownika już istnieje"
 
 #: routes/auth.py:239
 msgid "The last admin must stay an active admin"
-msgstr ""
+msgstr "Ostatni administrator musi pozostać aktywnym administratorem"
 
 #: routes/auth.py:291
 msgid "Cannot delete your own account"
@@ -468,7 +468,7 @@ msgstr ""
 msgid ""
 "Screenshots not added because they match ones the game already has: "
 "%(count)s"
-msgstr ""
+msgstr "Zrzuty ekranu niedodane, bo pasują do tych, które gra już ma: %(count)s"
 
 #: routes/games.py:685
 msgid "Game not found after update"
@@ -606,7 +606,7 @@ msgstr "nie udało się zakończyć poprzedniej instancji: %(err)s"
 
 #: routes/launch.py:180
 msgid "RetroArch is not built for this computer."
-msgstr ""
+msgstr "RetroArch nie jest budowany dla tego komputera."
 
 #: routes/launch.py:193
 msgid "Cores are not built for this computer."
@@ -730,15 +730,15 @@ msgstr "Najpierw skonfiguruj dostawcę AI w Ustawienia > Pobieranie danych."
 
 #: routes/official_names.py:81
 msgid "Pick a system, or all systems."
-msgstr ""
+msgstr "Wybierz system lub wszystkie systemy."
 
 #: routes/official_names.py:84
 msgid "An official names run is already running."
-msgstr ""
+msgstr "Wyszukiwanie oficjalnych nazw już trwa."
 
 #: routes/official_names.py:103
 msgid "No official names run to cancel."
-msgstr ""
+msgstr "Brak wyszukiwania oficjalnych nazw do anulowania."
 
 #: routes/platform_import.py:153
 msgid "Steam API key not configured. Add it in Settings → API Keys."
@@ -1155,13 +1155,12 @@ msgid "PSN NPSSO not configured"
 msgstr "Token PSN NPSSO nie jest skonfigurowany"
 
 #: routes/updates.py:48
-#, fuzzy
 msgid "No newer version is available"
-msgstr "Brak dostępnych ocen"
+msgstr "Nie ma nowszej wersji"
 
 #: routes/updates.py:52 routes/updates.py:64
 msgid "This update cannot be installed here"
-msgstr ""
+msgstr "Tej aktualizacji nie można tu zainstalować"
 
 #: routes/versions.py:23
 msgid "Pick at least two games."
@@ -1612,9 +1611,8 @@ msgid "Already Syncing"
 msgstr "Synchronizacja już trwa"
 
 #: services/js_i18n_strings.py:526
-#, fuzzy
 msgid "An update is already being downloaded."
-msgstr "Ten system jest już synchronizowany."
+msgstr "Aktualizacja jest już pobierana."
 
 #: services/js_i18n_strings.py:527
 #, python-brace-format
@@ -1731,6 +1729,8 @@ msgid ""
 "Asking the AI: game {current} of {total}. Names suggested: {proposals}. "
 "{system}"
 msgstr ""
+"Pytanie AI: gra {current} z {total}. Zaproponowane nazwy: {proposals}. "
+"{system}"
 
 #: services/js_i18n_strings.py:549
 msgid "Aspect ratio"
@@ -1767,6 +1767,8 @@ msgstr "Ekran CRT"
 #: services/js_i18n_strings.py:558 templates/game_detail.html:236
 msgid "Can be completed with playable performance and no game-breaking glitches."
 msgstr ""
+"Można ją ukończyć przy grywalnej wydajności i bez błędów "
+"uniemożliwiających grę."
 
 #: services/js_i18n_strings.py:559 templates/_bulk_edit_modal.html:191
 #: templates/_bulk_scrape_modal.html:49 templates/_modals/edit_modal.html:12
@@ -1963,16 +1965,15 @@ msgstr "Rdzeń"
 
 #: services/js_i18n_strings.py:595
 msgid "Could not accept these names."
-msgstr ""
+msgstr "Nie udało się zaakceptować tych nazw."
 
 #: services/js_i18n_strings.py:596
 msgid "Could not apply metadata."
 msgstr "Nie można zastosować metadanych."
 
 #: services/js_i18n_strings.py:597
-#, fuzzy
 msgid "Could not check for updates."
-msgstr "Nie udało się zapisać."
+msgstr "Nie udało się sprawdzić aktualizacji."
 
 #: services/js_i18n_strings.py:598
 #, python-brace-format
@@ -1993,7 +1994,7 @@ msgstr "Nie udało się wczytać sugestii."
 
 #: services/js_i18n_strings.py:601
 msgid "Could not load the suggested names."
-msgstr ""
+msgstr "Nie udało się wczytać proponowanych nazw."
 
 #: services/js_i18n_strings.py:602
 msgid "Could not open this manual. Use \"Open PDF in a new tab\" instead."
@@ -2003,7 +2004,7 @@ msgstr ""
 
 #: services/js_i18n_strings.py:603
 msgid "Could not read the run status."
-msgstr ""
+msgstr "Nie udało się odczytać stanu wyszukiwania."
 
 #: services/js_i18n_strings.py:604
 msgid "Could not reconnect to server. Please refresh manually."
@@ -2011,7 +2012,7 @@ msgstr "Nie udało się ponownie połączyć z serwerem. Odśwież stronę ręcz
 
 #: services/js_i18n_strings.py:605
 msgid "Could not reject these names."
-msgstr ""
+msgstr "Nie udało się odrzucić tych nazw."
 
 #: services/js_i18n_strings.py:606
 msgid "Could not save that setting."
@@ -2027,11 +2028,11 @@ msgstr "Nie udało się wyświetlić tej strony instrukcji."
 
 #: services/js_i18n_strings.py:609
 msgid "Could not start the run."
-msgstr ""
+msgstr "Nie udało się rozpocząć wyszukiwania."
 
 #: services/js_i18n_strings.py:610
 msgid "Could not stop the run."
-msgstr ""
+msgstr "Nie udało się zatrzymać wyszukiwania."
 
 #: services/js_i18n_strings.py:611
 msgid "Could not stop the running instance."
@@ -2046,9 +2047,9 @@ msgid "Could not write the summary."
 msgstr "Nie udało się napisać podsumowania."
 
 #: services/js_i18n_strings.py:614
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Critic Score ({count} reviews)"
-msgstr "Ocena krytyków (%(count)s recenzji)"
+msgstr "Ocena krytyków (recenzje: {count})"
 
 #: services/js_i18n_strings.py:615
 msgid "Currently set"
@@ -2082,7 +2083,7 @@ msgstr "Wykrywanie…"
 
 #: services/js_i18n_strings.py:622 templates/game_detail.html:240
 msgid "Does not start, or crashes the emulator."
-msgstr ""
+msgstr "Nie uruchamia się lub zawiesza emulator."
 
 #: services/js_i18n_strings.py:623 templates/_bulk_scrape_modal.html:69
 #: templates/all_games.html:223 templates/psn_trophies.html:247
@@ -2094,11 +2095,11 @@ msgstr "Gotowe"
 #: services/js_i18n_strings.py:624
 #, python-brace-format
 msgid "Done. Games asked: {total}. Names suggested: {proposals}."
-msgstr ""
+msgstr "Gotowe. Sprawdzone gry: {total}. Zaproponowane nazwy: {proposals}."
 
 #: services/js_i18n_strings.py:625
 msgid "Download the update first."
-msgstr ""
+msgstr "Najpierw pobierz aktualizację."
 
 #: services/js_i18n_strings.py:626
 msgid "Downloading 3D box art…"
@@ -2106,7 +2107,7 @@ msgstr "Pobieranie okładki 3D…"
 
 #: services/js_i18n_strings.py:627
 msgid "Downloading RetroArch… This can take a few minutes."
-msgstr ""
+msgstr "Pobieranie RetroArch… Może to potrwać kilka minut."
 
 #: services/js_i18n_strings.py:628
 msgid "Downloading box art…"
@@ -2220,7 +2221,7 @@ msgstr "Błąd podczas aktualizacji statusu"
 
 #: services/js_i18n_strings.py:654
 msgid "Europe"
-msgstr ""
+msgstr "Europa"
 
 #: services/js_i18n_strings.py:655 templates/_modals/edit_modal.html:223
 #: templates/base.html:1242
@@ -2397,6 +2398,8 @@ msgid ""
 "Gets in game, but cannot be finished, has serious glitches or runs too "
 "slowly."
 msgstr ""
+"Dochodzi do rozgrywki, ale nie da się jej ukończyć, ma poważne błędy lub "
+"działa zbyt wolno."
 
 #: services/js_i18n_strings.py:695
 msgid "Go to Analytics"
@@ -2482,9 +2485,8 @@ msgid "Input lag reduction"
 msgstr "Redukcja opóźnienia sterowania"
 
 #: services/js_i18n_strings.py:714
-#, fuzzy
 msgid "Install update"
-msgstr "Ostatnia aktualizacja"
+msgstr "Zainstaluj aktualizację"
 
 #: services/js_i18n_strings.py:715
 #, python-brace-format
@@ -2498,7 +2500,7 @@ msgstr "Zainstalowane rdzenie: {n}. Niepowodzenia: {failed}"
 
 #: services/js_i18n_strings.py:717
 msgid "Installing the update and restarting RetroDB…"
-msgstr ""
+msgstr "Instalowanie aktualizacji i ponowne uruchamianie RetroDB…"
 
 #: services/js_i18n_strings.py:718
 msgid "Integer scaling"
@@ -2506,7 +2508,7 @@ msgstr "Skalowanie całkowite"
 
 #: services/js_i18n_strings.py:719
 msgid "Japan"
-msgstr ""
+msgstr "Japonia"
 
 #: services/js_i18n_strings.py:720
 msgid "Just synced"
@@ -2521,9 +2523,9 @@ msgid "Kill"
 msgstr "Zakończ"
 
 #: services/js_i18n_strings.py:723
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Last tested {date}."
-msgstr "Dodano {date}"
+msgstr "Ostatni test: {date}."
 
 #: services/js_i18n_strings.py:724
 #, python-brace-format
@@ -2652,7 +2654,7 @@ msgstr "NIE"
 #: services/js_i18n_strings.py:747
 #, python-brace-format
 msgid "Names changed: {accepted}."
-msgstr ""
+msgstr "Zmienione nazwy: {accepted}."
 
 #: services/js_i18n_strings.py:748
 #, python-brace-format
@@ -2660,11 +2662,13 @@ msgid ""
 "Names changed: {accepted}. Skipped because their title changed since: "
 "{skipped}."
 msgstr ""
+"Zmienione nazwy: {accepted}. Pominięte, bo ich tytuł się od tego czasu "
+"zmienił: {skipped}."
 
 #: services/js_i18n_strings.py:749
 #, python-brace-format
 msgid "Names rejected: {rejected}. They will not be suggested again."
-msgstr ""
+msgstr "Odrzucone nazwy: {rejected}. Nie będą proponowane ponownie."
 
 #: services/js_i18n_strings.py:750
 msgid "Navigation"
@@ -2736,7 +2740,7 @@ msgstr "Nie ma jeszcze folderów."
 
 #: services/js_i18n_strings.py:766
 msgid "No games or systems match"
-msgstr ""
+msgstr "Brak pasujących gier lub systemów"
 
 #: services/js_i18n_strings.py:767
 msgid "No log files in this category"
@@ -2759,9 +2763,8 @@ msgid "No missing ROM files found."
 msgstr "Nie znaleziono brakujących plików ROM."
 
 #: services/js_i18n_strings.py:772
-#, fuzzy
 msgid "No newer version is available."
-msgstr "Brak dostępnego opisu."
+msgstr "Nie ma nowszej wersji."
 
 #: services/js_i18n_strings.py:773
 msgid "No options available"
@@ -2790,6 +2793,8 @@ msgstr "Żadne sesje nie pasują do bieżących filtrów"
 #: services/js_i18n_strings.py:779
 msgid "No suggested names waiting. Press Ask the AI to look for some."
 msgstr ""
+"Brak oczekujących proponowanych nazw. Naciśnij Zapytaj AI, aby jakichś "
+"poszukać."
 
 #: services/js_i18n_strings.py:780
 msgid "No suggestions. Run Backfill Alternate Titles in Maintenance to find more."
@@ -2933,25 +2938,23 @@ msgstr "Narzędzia ROM"
 
 #: services/js_i18n_strings.py:811 templates/game_detail.html:237
 msgid "RPCS3: Ingame"
-msgstr ""
+msgstr "RPCS3: W grze"
 
 #: services/js_i18n_strings.py:812 templates/game_detail.html:238
-#, fuzzy
 msgid "RPCS3: Intro"
-msgstr "Trofea RPCS3"
+msgstr "RPCS3: Intro"
 
 #: services/js_i18n_strings.py:813 templates/game_detail.html:239
 msgid "RPCS3: Loadable"
-msgstr ""
+msgstr "RPCS3: Wczytuje się"
 
 #: services/js_i18n_strings.py:814 templates/game_detail.html:240
-#, fuzzy
 msgid "RPCS3: Nothing"
-msgstr "Trofea RPCS3"
+msgstr "RPCS3: Nic"
 
 #: services/js_i18n_strings.py:815 templates/game_detail.html:236
 msgid "RPCS3: Playable"
-msgstr ""
+msgstr "RPCS3: Grywalna"
 
 #: services/js_i18n_strings.py:816
 msgid "Ready"
@@ -3041,16 +3044,16 @@ msgstr "Wznów"
 
 #: services/js_i18n_strings.py:835
 msgid "RetroArch is installed."
-msgstr ""
+msgstr "RetroArch jest zainstalowany."
 
 #: services/js_i18n_strings.py:836
 msgid "RetroArch was not installed."
-msgstr ""
+msgstr "RetroArch nie został zainstalowany."
 
 #: services/js_i18n_strings.py:837
 #, python-brace-format
 msgid "RetroArch was not installed: {error}"
-msgstr ""
+msgstr "RetroArch nie został zainstalowany: {error}"
 
 #: services/js_i18n_strings.py:838
 msgid "RetroDB default"
@@ -3059,23 +3062,30 @@ msgstr "Domyślne RetroDB"
 #: services/js_i18n_strings.py:839
 msgid "RetroDB has not come back yet. See logs/update.log, then reload this page."
 msgstr ""
+"RetroDB jeszcze nie wrócił. Sprawdź logs/update.log, a potem odśwież tę "
+"stronę."
 
 #: services/js_i18n_strings.py:840
 msgid ""
 "RetroDB is run by a process manager here. Download the release and "
 "install it yourself."
 msgstr ""
+"Tutaj RetroDB jest uruchamiany przez menedżera procesów. Pobierz wydanie "
+"i zainstaluj je samodzielnie."
 
 #: services/js_i18n_strings.py:841
 msgid ""
 "RetroDB will back up its database, install the update and restart. Anyone"
 " using it will be disconnected for a minute or two."
 msgstr ""
+"RetroDB utworzy kopię zapasową bazy danych, zainstaluje aktualizację i "
+"uruchomi się ponownie. Wszyscy użytkownicy zostaną rozłączeni na minutę "
+"lub dwie."
 
 #: services/js_i18n_strings.py:842
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "RetroDB {version} is available."
-msgstr "Brak dostępnego opisu."
+msgstr "Dostępny jest RetroDB {version}."
 
 #: services/js_i18n_strings.py:843
 msgid "Run-ahead, 1 frame"
@@ -3192,7 +3202,7 @@ msgstr "Wyszukiwanie nie powiodło się."
 
 #: services/js_i18n_strings.py:869
 msgid "Search failed. Try again."
-msgstr ""
+msgstr "Wyszukiwanie nie powiodło się. Spróbuj ponownie."
 
 #: services/js_i18n_strings.py:870
 msgid "Searching & removing background..."
@@ -3206,7 +3216,7 @@ msgstr "Wyszukiwanie w {source}…"
 #: services/js_i18n_strings.py:872
 #, python-brace-format
 msgid "See all {n} results"
-msgstr ""
+msgstr "Zobacz wszystkie wyniki ({n})"
 
 #: services/js_i18n_strings.py:873
 msgid "Select Developer"
@@ -3296,11 +3306,11 @@ msgstr "Wyświetlanie płyt bonusowych"
 
 #: services/js_i18n_strings.py:893 templates/game_detail.html:239
 msgid "Shows a black screen with a frame rate in the window title."
-msgstr ""
+msgstr "Pokazuje czarny ekran z liczbą klatek na sekundę w tytule okna."
 
 #: services/js_i18n_strings.py:894 templates/game_detail.html:238
 msgid "Shows an image but does not get past the menus."
-msgstr ""
+msgstr "Pokazuje obraz, ale nie wychodzi poza menu."
 
 #: services/js_i18n_strings.py:895
 msgid "Shutting down server..."
@@ -3326,7 +3336,7 @@ msgstr "Importy Steam"
 #: services/js_i18n_strings.py:900
 #, python-brace-format
 msgid "Stopped. Names suggested: {proposals}."
-msgstr ""
+msgstr "Zatrzymano. Zaproponowane nazwy: {proposals}."
 
 #: services/js_i18n_strings.py:901
 #, python-brace-format
@@ -3337,6 +3347,8 @@ msgstr "Pomyślnie zaktualizowano {count} gier"
 #, python-brace-format
 msgid "Suggested names waiting: {count}. Untick any you do not want, then accept."
 msgstr ""
+"Oczekujące proponowane nazwy: {count}. Odznacz te, których nie chcesz, a "
+"potem zaakceptuj."
 
 #: services/js_i18n_strings.py:903
 msgid "Summary written."
@@ -3406,22 +3418,24 @@ msgid "The core installed but the game still cannot start."
 msgstr "Rdzeń został zainstalowany, ale gry nadal nie można uruchomić."
 
 #: services/js_i18n_strings.py:915
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "The download failed: {error}"
-msgstr "Uruchomienie nie powiodło się: {error}"
+msgstr "Pobieranie nie powiodło się: {error}"
 
 #: services/js_i18n_strings.py:916
 #, python-brace-format
 msgid "The run stopped: {error}. Names already suggested are kept."
 msgstr ""
+"Wyszukiwanie zatrzymało się: {error}. Już zaproponowane nazwy zostają "
+"zachowane."
 
 #: services/js_i18n_strings.py:917
 msgid "The update could not be started. See logs/update.log."
-msgstr ""
+msgstr "Nie udało się rozpocząć aktualizacji. Sprawdź logs/update.log."
 
 #: services/js_i18n_strings.py:918
 msgid "The update is downloaded and checked."
-msgstr ""
+msgstr "Aktualizacja jest pobrana i sprawdzona."
 
 #: services/js_i18n_strings.py:919
 #, python-brace-format
@@ -3429,10 +3443,12 @@ msgid ""
 "The update to {to} did not work, so RetroDB went back to {from}. Reason: "
 "{reason}"
 msgstr ""
+"Aktualizacja do {to} nie zadziałała, więc RetroDB wrócił do {from}. "
+"Powód: {reason}"
 
 #: services/js_i18n_strings.py:920
 msgid "This copy of RetroDB is a git checkout. Update it with git pull."
-msgstr ""
+msgstr "Ta kopia RetroDB jest klonem git. Zaktualizuj ją poleceniem git pull."
 
 #: services/js_i18n_strings.py:921
 msgid "This game is already running.  Kill the existing process and relaunch?"
@@ -3441,18 +3457,16 @@ msgstr ""
 "ponownie?"
 
 #: services/js_i18n_strings.py:922
-#, fuzzy
 msgid "This release has no download for this computer yet."
-msgstr "Rdzenie nie są budowane dla tego komputera."
+msgstr "To wydanie nie ma jeszcze pliku do pobrania dla tego komputera."
 
 #: services/js_i18n_strings.py:923
 msgid "This system is already being synced."
 msgstr "Ten system jest już synchronizowany."
 
 #: services/js_i18n_strings.py:924
-#, fuzzy
 msgid "This update cannot be installed here."
-msgstr "Tych gier nie można połączyć."
+msgstr "Tej aktualizacji nie można tu zainstalować."
 
 #: services/js_i18n_strings.py:925
 msgid ""
@@ -3524,7 +3538,7 @@ msgstr ""
 
 #: services/js_i18n_strings.py:933
 msgid "Tick at least one name."
-msgstr ""
+msgstr "Zaznacz co najmniej jedną nazwę."
 
 #: services/js_i18n_strings.py:934
 msgid "Tick at least two games."
@@ -3540,7 +3554,7 @@ msgstr "Spróbuj dostosować wyszukiwanie lub filtry"
 
 #: services/js_i18n_strings.py:937
 msgid "USA"
-msgstr ""
+msgstr "USA"
 
 #: services/js_i18n_strings.py:938
 msgid "Unexpected error"
@@ -3587,7 +3601,7 @@ msgstr ""
 #: services/js_i18n_strings.py:946
 #, python-brace-format
 msgid "Updated from {from} to {to}."
-msgstr ""
+msgstr "Zaktualizowano z {from} do {to}."
 
 #: services/js_i18n_strings.py:947 templates/museum_system.html:198
 #: templates/museum_system.html:205
@@ -3628,9 +3642,9 @@ msgstr ""
 "Stosowane po naciśnięciu Graj."
 
 #: services/js_i18n_strings.py:955
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "User Score ({count} ratings)"
-msgstr "Ocena użytkowników (%(count)s ocen)"
+msgstr "Ocena użytkowników (oceny: {count})"
 
 #: services/js_i18n_strings.py:956
 msgid "Version unlinked."
@@ -3639,7 +3653,7 @@ msgstr "Wersja odłączona."
 #: services/js_i18n_strings.py:957
 #, python-brace-format
 msgid "Version {version} is available."
-msgstr ""
+msgstr "Dostępna jest wersja {version}."
 
 #: services/js_i18n_strings.py:958
 msgid "Versions linked."
@@ -3648,12 +3662,12 @@ msgstr "Wersje połączone."
 #: services/js_i18n_strings.py:959
 #, python-brace-format
 msgid "What is new in {version}"
-msgstr ""
+msgstr "Co nowego w {version}"
 
 #: services/js_i18n_strings.py:960
 #, python-brace-format
 msgid "What is new in {version} ({date})"
-msgstr ""
+msgstr "Co nowego w {version} ({date})"
 
 #: services/js_i18n_strings.py:961
 msgid "Will change?"
@@ -3665,7 +3679,7 @@ msgstr "Działa"
 
 #: services/js_i18n_strings.py:963
 msgid "World"
-msgstr ""
+msgstr "Świat"
 
 #: services/js_i18n_strings.py:964 templates/game_detail.html:801
 msgid "Write again with AI"
@@ -3683,7 +3697,7 @@ msgstr "Tak"
 
 #: services/js_i18n_strings.py:967
 msgid "You have the latest version."
-msgstr ""
+msgstr "Masz najnowszą wersję."
 
 #: services/js_i18n_strings.py:968
 #, python-brace-format
@@ -3709,7 +3723,7 @@ msgstr "system"
 
 #: services/js_i18n_strings.py:972
 msgid "unknown"
-msgstr ""
+msgstr "nieznana"
 
 #: services/js_i18n_strings.py:973
 #, python-brace-format
@@ -3727,9 +3741,9 @@ msgid "{count} regional versions"
 msgstr "Wersje regionalne: {count}"
 
 #: services/js_i18n_strings.py:976
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{count} sold"
-msgstr "Konsola"
+msgstr "Sprzedane egzemplarze: {count}"
 
 #: services/js_i18n_strings.py:977
 #, python-brace-format
@@ -3789,7 +3803,7 @@ msgstr "{n} wierszy"
 #: services/js_i18n_strings.py:988
 #, python-brace-format
 msgid "{n} results"
-msgstr ""
+msgstr "Wyniki: {n}"
 
 #: services/js_i18n_strings.py:989
 #, python-brace-format
@@ -3804,7 +3818,7 @@ msgstr "{system} został dodany do kolejki synchronizacji."
 #: services/js_i18n_strings.py:991
 #, python-brace-format
 msgid "{system} · {file} · old name from: {region}"
-msgstr ""
+msgstr "{system} · {file} · stara nazwa z: {region}"
 
 #: services/js_i18n_strings.py:992
 #, python-brace-format
@@ -4434,9 +4448,8 @@ msgid "Engine"
 msgstr "Silnik"
 
 #: templates/all_games.html:62 templates/system_games.html:53
-#, fuzzy
 msgid "Filters"
-msgstr "Pliki"
+msgstr "Filtry"
 
 #: templates/all_games.html:65 templates/psn_trophies.html:160
 #: templates/system_games.html:56
@@ -4455,7 +4468,7 @@ msgstr "Źródło"
 
 #: templates/all_games.html:101 templates/system_games.html:92
 msgid "Show only games that have not been scraped yet"
-msgstr ""
+msgstr "Pokaż tylko gry, dla których nie pobrano jeszcze danych"
 
 #: templates/all_games.html:104 templates/system_games.html:95
 msgid "Show/hide bonus discs (hidden by default)"
@@ -4487,14 +4500,12 @@ msgid "GAMES"
 msgstr "GIER"
 
 #: templates/all_games.html:150 templates/system_games.html:141
-#, fuzzy
 msgid "Active filters"
-msgstr "Aktywne filtry:"
+msgstr "Aktywne filtry"
 
 #: templates/all_games.html:152 templates/system_games.html:143
-#, fuzzy
 msgid "Sort by"
-msgstr "Sortuj według:"
+msgstr "Sortuj według"
 
 #: templates/all_games.html:154 templates/settings_emulators.html:122
 #: templates/settings_emulators.html:151 templates/system_games.html:145
@@ -4502,44 +4513,36 @@ msgid "Name"
 msgstr "Nazwa"
 
 #: templates/all_games.html:155 templates/system_games.html:146
-#, fuzzy
 msgid "Newest release"
-msgstr "Wydane gry"
+msgstr "Najnowsze wydanie"
 
 #: templates/all_games.html:156 templates/system_games.html:147
-#, fuzzy
 msgid "Oldest release"
-msgstr "Wydane gry"
+msgstr "Najstarsze wydanie"
 
 #: templates/all_games.html:157 templates/system_games.html:148
-#, fuzzy
 msgid "Critic score"
 msgstr "Ocena krytyków"
 
 #: templates/all_games.html:158 templates/system_games.html:149
-#, fuzzy
 msgid "User score"
 msgstr "Ocena użytkowników"
 
 #: templates/all_games.html:159 templates/system_games.html:150
-#, fuzzy
 msgid "Recently added"
 msgstr "Ostatnio dodane"
 
 #: templates/all_games.html:169 templates/system_games.html:160
-#, fuzzy
 msgid "No games match these filters"
-msgstr "Żadne pozycje nie pasują do tego filtra."
+msgstr "Żadna gra nie pasuje do tych filtrów"
 
 #: templates/all_games.html:171 templates/dashboard.html:93
-#, fuzzy
 msgid "Your library is empty"
-msgstr "Rozmiar biblioteki ROM"
+msgstr "Twoja biblioteka jest pusta"
 
 #: templates/all_games.html:173 templates/dashboard.html:95
-#, fuzzy
 msgid "Scan your ROM folder to add your games."
-msgstr "Przeskanuj bibliotekę ROM-ów, aby dodać systemy."
+msgstr "Przeskanuj folder ROM-ów, aby dodać swoje gry."
 
 #: templates/_settings_tabs/library.html:42 templates/all_games.html:176
 #: templates/dashboard.html:83 templates/dashboard.html:99
@@ -4549,12 +4552,11 @@ msgstr "Skanuj bibliotekę"
 
 #: templates/all_games.html:179 templates/dashboard.html:104
 msgid "Ask an admin to scan the ROM folder."
-msgstr ""
+msgstr "Poproś administratora o przeskanowanie folderu ROM-ów."
 
 #: templates/all_games.html:183 templates/system_games.html:163
-#, fuzzy
 msgid "Clear filters"
-msgstr "Zamknij filtr"
+msgstr "Wyczyść filtry"
 
 #: templates/_modals/filter_modal.html:18 templates/all_games.html:190
 #: templates/psn_trophies.html:222 templates/system_games.html:170
@@ -4562,9 +4564,8 @@ msgid "Loading games..."
 msgstr "Wczytywanie gier..."
 
 #: templates/all_games.html:195 templates/system_games.html:175
-#, fuzzy
 msgid "Selected games"
-msgstr "Wybierz Grę 2"
+msgstr "Zaznaczone gry"
 
 #: templates/all_games.html:197 templates/system_games.html:177
 msgid "Select All"
@@ -5249,7 +5250,7 @@ msgstr "Przełącz menu"
 
 #: templates/base.html:57 templates/base.html:100
 msgid "Search games and systems"
-msgstr ""
+msgstr "Szukaj gier i systemów"
 
 #: templates/base.html:63
 msgid "Main navigation"
@@ -5275,11 +5276,11 @@ msgstr "Wyloguj"
 
 #: templates/base.html:99
 msgid "Search games and systems…"
-msgstr ""
+msgstr "Szukaj gier i systemów…"
 
 #: templates/base.html:104
 msgid "Search results"
-msgstr ""
+msgstr "Wyniki wyszukiwania"
 
 #: templates/base.html:109 templates/login.html:4 templates/login.html:245
 #: templates/login.html:255
@@ -5371,7 +5372,7 @@ msgstr "Kliknij, aby uzyskać więcej informacji"
 
 #: templates/base.html:233
 msgid "Quick links"
-msgstr ""
+msgstr "Szybkie łącza"
 
 #: templates/base.html:248
 msgid "About"
@@ -5442,9 +5443,8 @@ msgid "Loading game details..."
 msgstr "Wczytywanie szczegółów gry..."
 
 #: templates/base.html:942 templates/game_detail.html:318
-#, fuzzy
 msgid "Release dates"
-msgstr "Data wydania"
+msgstr "Daty wydania"
 
 #: templates/base.html:954 templates/game_detail.html:489
 msgid "Your browser does not support the video tag."
@@ -5547,7 +5547,7 @@ msgstr "Tytuł"
 
 #: templates/_modals/edit_modal.html:32 templates/base.html:1082
 msgid "Keep this title when scraping"
-msgstr ""
+msgstr "Zachowaj ten tytuł przy pobieraniu danych"
 
 #: templates/_modals/edit_modal.html:36 templates/base.html:1086
 msgid "Sort Title"
@@ -6222,9 +6222,8 @@ msgid "Check Settings →"
 msgstr "Sprawdź Ustawienia →"
 
 #: templates/dashboard.html:36
-#, fuzzy
 msgid "See what is new"
-msgstr "Zaznacz wszystkie nowe"
+msgstr "Zobacz, co nowego"
 
 #: templates/dashboard.html:46
 #, python-format
@@ -6259,9 +6258,8 @@ msgid "Random Game"
 msgstr "Losowa gra"
 
 #: templates/dashboard.html:101
-#, fuzzy
 msgid "Set ROM folder"
-msgstr "Wybierz ten folder"
+msgstr "Ustaw folder ROM-ów"
 
 #: templates/dashboard.html:120
 msgid "Collection Health"
@@ -6586,9 +6584,8 @@ msgid "ROM Reports"
 msgstr "Raporty ROM"
 
 #: templates/game_detail.html:34
-#, fuzzy
 msgid "Browse games"
-msgstr "Przeglądaj foldery"
+msgstr "Przeglądaj gry"
 
 #: templates/_modals/manual_reader_modal.html:15 templates/game_detail.html:37
 msgid "Previous"
@@ -6708,26 +6705,30 @@ msgstr "Ocena użytkowników (%(count)s ocen)"
 #, python-format
 msgid "Copies sold on %(system)s, from published sales figures"
 msgstr ""
+"Egzemplarze sprzedane na %(system)s według opublikowanych danych o "
+"sprzedaży"
 
 #: templates/game_detail.html:231
-#, fuzzy, python-format
+#, python-format
 msgid "%(count)s sold"
-msgstr "%(count)s łącznie"
+msgstr "Sprzedane egzemplarze: %(count)s"
 
 #: templates/game_detail.html:242
-#, fuzzy, python-format
+#, python-format
 msgid "Last tested %(date)s."
-msgstr "Zdobyto %(date)s"
+msgstr "Ostatni test: %(date)s."
 
 #: templates/game_detail.html:246
 msgid ""
 "RetroDB reads PS3 compatibility from your RPCS3. In RPCS3, choose Manage "
 "> Databases > Download Compatibility Database."
 msgstr ""
+"RetroDB odczytuje zgodność gier PS3 z Twojego RPCS3. W RPCS3 wybierz "
+"Manage > Databases > Download Compatibility Database."
 
 #: templates/game_detail.html:247
 msgid "RPCS3: no compatibility list"
-msgstr ""
+msgstr "RPCS3: brak listy zgodności"
 
 #: templates/game_detail.html:268
 msgid "No description available. Click \"Scrape\" to fetch metadata."
@@ -7802,7 +7803,7 @@ msgstr "ESC, aby zamknąć"
 #: templates/_macros/nav_tabs.html:41 templates/official_names_review.html:5
 #: templates/official_names_review.html:78 templates/rom_tools_hub.html:206
 msgid "Official Names"
-msgstr ""
+msgstr "Oficjalne nazwy"
 
 #: templates/official_names_review.html:81
 msgid ""
@@ -7812,6 +7813,11 @@ msgid ""
 " an accepted name is kept when scraping. Nothing changes until you accept"
 " it."
 msgstr ""
+"AI proponuje pełną oficjalną nazwę każdej gry, pod którą wyszła w "
+"regionie jej ROM-u: japoński ROM Mega Man staje się Rockman. Zaznacz "
+"nazwy, które chcesz, i je zaakceptuj. Stara nazwa zostaje jako tytuł "
+"alternatywny, a zaakceptowana nazwa jest zachowywana podczas pobierania "
+"danych. Nic się nie zmienia, dopóki jej nie zaakceptujesz."
 
 #: templates/official_names_review.html:86 templates/versions_review.html:88
 msgid "All systems"
@@ -7819,31 +7825,31 @@ msgstr "Wszystkie systemy"
 
 #: templates/official_names_review.html:92
 msgid "Ask the AI"
-msgstr ""
+msgstr "Zapytaj AI"
 
 #: templates/official_names_review.html:93
 msgid "Stop"
-msgstr ""
+msgstr "Zatrzymaj"
 
 #: templates/official_names_review.html:97
 msgid "Suggested names"
-msgstr ""
+msgstr "Proponowane nazwy"
 
 #: templates/official_names_review.html:100
 msgid "Accept ticked"
-msgstr ""
+msgstr "Zaakceptuj zaznaczone"
 
 #: templates/official_names_review.html:101
 msgid "Reject ticked"
-msgstr ""
+msgstr "Odrzuć zaznaczone"
 
 #: templates/official_names_review.html:102
 msgid "Tick all"
-msgstr ""
+msgstr "Zaznacz wszystkie"
 
 #: templates/official_names_review.html:103
 msgid "Tick none"
-msgstr ""
+msgstr "Odznacz wszystkie"
 
 #: templates/_settings_tabs/account.html:111 templates/psn_trophies.html:16
 msgid "PlayStation Network"
@@ -8297,10 +8303,13 @@ msgid ""
 "Ask the AI for each game's full official name in its ROM's own region, "
 "then tick the new names you want. Nothing changes until you accept it."
 msgstr ""
+"Zapytaj AI o pełną oficjalną nazwę każdej gry w regionie jej ROM-u, a "
+"potem zaznacz nowe nazwy, które chcesz. Nic się nie zmienia, dopóki tego "
+"nie zaakceptujesz."
 
 #: templates/rom_tools_hub.html:212
 msgid "Needs an AI provider (Settings > Scraping)"
-msgstr ""
+msgstr "Wymaga dostawcy AI (Ustawienia > Pobieranie danych)"
 
 #: templates/_macros/nav_tabs.html:38 templates/rom_tools_hub.html:220
 msgid "Multi-Disc Organizer"
@@ -8536,7 +8545,7 @@ msgstr "Wykryj automatycznie"
 
 #: templates/settings_emulators.html:46
 msgid "Play in RetroDB"
-msgstr ""
+msgstr "Graj w RetroDB"
 
 #: templates/settings_emulators.html:48
 msgid ""
@@ -8544,23 +8553,26 @@ msgid ""
 "to play your games, with its own settings and saves, kept apart from any "
 "RetroArch you already use."
 msgstr ""
+"RetroDB może pobrać oficjalny RetroArch z libretro i skonfigurować go do "
+"grania w Twoje gry, z własnymi ustawieniami i zapisami, oddzielonymi od "
+"RetroArch, którego już używasz."
 
 #: templates/settings_emulators.html:51
 #, python-format
 msgid "Installed: RetroArch %(version)s"
-msgstr ""
+msgstr "Zainstalowano: RetroArch %(version)s"
 
 #: templates/settings_emulators.html:55
 msgid "Download RetroArch again"
-msgstr ""
+msgstr "Pobierz RetroArch ponownie"
 
 #: templates/settings_emulators.html:55
 msgid "Get RetroArch"
-msgstr ""
+msgstr "Pobierz RetroArch"
 
 #: templates/settings_emulators.html:66
 msgid "Player cores"
-msgstr ""
+msgstr "Rdzenie odtwarzacza"
 
 #: templates/settings_emulators.html:68
 msgid ""
@@ -8701,28 +8713,28 @@ msgstr ""
 
 #: templates/setup.html:18
 msgid "Welcome"
-msgstr ""
+msgstr "Witaj"
 
 #: templates/setup.html:18
 msgid "Admin"
-msgstr ""
+msgstr "Administrator"
 
 #: templates/setup.html:19
 msgid "ES-DE"
-msgstr ""
+msgstr "ES-DE"
 
 #: templates/setup.html:20
 msgid "API Keys"
-msgstr ""
+msgstr "Klucze API"
 
 #: templates/setup.html:24
 #, python-format
 msgid "Step %(n)s of %(total)s"
-msgstr ""
+msgstr "Krok %(n)s z %(total)s"
 
 #: templates/setup.html:27 templates/setup.html:30
 msgid "Optional"
-msgstr ""
+msgstr "Opcjonalne"
 
 #: templates/steam_achievement_game.html:36
 msgid "Steam Store"
@@ -8790,9 +8802,8 @@ msgid "Refresh RetroAchievements data for this system"
 msgstr "Odśwież dane RetroAchievements dla tego systemu"
 
 #: templates/system_games.html:161
-#, fuzzy
 msgid "No games here yet"
-msgstr "Nie wybrano gier"
+msgstr "Nie ma tu jeszcze gier"
 
 #: templates/systems.html:11
 msgid "Gaming Systems"
@@ -9165,7 +9176,7 @@ msgstr "Informacje o wydaniu"
 
 #: templates/_modals/edit_modal.html:82
 msgid "Format: YYYY-MM-DD, or the year alone (e.g., 1996-09-29 or 1996)"
-msgstr ""
+msgstr "Format: RRRR-MM-DD lub sam rok (np. 1996-09-29 lub 1996)"
 
 #: templates/_modals/edit_modal.html:96
 msgid "Comma-separated for multiple publishers"
@@ -9428,15 +9439,15 @@ msgstr "Zamknij filtr"
 
 #: templates/_modals/select_filter_modal.html:27
 msgid "Tick any number; a game shows if it has any of them."
-msgstr ""
+msgstr "Zaznacz dowolną liczbę; gra jest widoczna, jeśli ma którąkolwiek z nich."
 
 #: templates/_modals/select_filter_modal.html:28
 msgid "Tick any number; a game is hidden if it has any of them."
-msgstr ""
+msgstr "Zaznacz dowolną liczbę; gra jest ukryta, jeśli ma którąkolwiek z nich."
 
 #: templates/_modals/select_filter_modal.html:29
 msgid "Apply"
-msgstr ""
+msgstr "Zastosuj"
 
 #: templates/_settings_tabs/account.html:2
 msgid "Account settings"
@@ -9578,11 +9589,13 @@ msgid ""
 " it shows your NPSSO token as JSON. If you are not signed in, it shows "
 "\"Invalid login\" instead."
 msgstr ""
+"Najpierw zaloguj się do PlayStation w tej przeglądarce. Potem otwórz "
+"stronę konta: pokazuje ona Twój token NPSSO w formacie JSON. Jeśli nie "
+"jesteś zalogowany, zamiast tego pokazuje \"Invalid login\"."
 
 #: templates/_settings_tabs/account.html:140
-#, fuzzy
 msgid "Sign in to PlayStation"
-msgstr "Sony PlayStation 3"
+msgstr "Zaloguj się do PlayStation"
 
 #: templates/_settings_tabs/account.html:143
 msgid "Open Sony Account Page"
@@ -10355,37 +10368,33 @@ msgstr "Domyślny region"
 
 #: templates/_settings_tabs/system.html:7
 #: templates/_settings_tabs/system.html:174
-#, fuzzy
 msgid "Updates"
-msgstr "Aktualizuj rdzenie"
+msgstr "Aktualizacje"
 
 #: templates/_settings_tabs/system.html:177
-#, fuzzy, python-format
+#, python-format
 msgid "This is RetroDB %(version)s."
-msgstr "Pełny przewodnik po RetroDB v%(version)s"
+msgstr "To jest RetroDB %(version)s."
 
 #: templates/_settings_tabs/system.html:183
-#, fuzzy
 msgid "Release page"
-msgstr "Data wydania"
+msgstr "Strona wydania"
 
 #: templates/_settings_tabs/system.html:190
 msgid "Check for updates"
-msgstr ""
+msgstr "Sprawdź aktualizacje"
 
 #: templates/_settings_tabs/system.html:191
-#, fuzzy
 msgid "Download update"
-msgstr "Pobierz"
+msgstr "Pobierz aktualizację"
 
 #: templates/_settings_tabs/system.html:192
-#, fuzzy
 msgid "Install and restart"
-msgstr "Zainstalowane rdzenie: {n}."
+msgstr "Zainstaluj i uruchom ponownie"
 
 #: templates/_settings_tabs/system.html:196
 msgid "Check for updates once a day"
-msgstr ""
+msgstr "Sprawdzaj aktualizacje raz dziennie"
 
 #: templates/_settings_tabs/system.html:213
 msgid "Shut Down Server"
