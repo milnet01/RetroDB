@@ -179,3 +179,53 @@ def api_upscale_queue_status():
     whether `game_id` is one of them."""
     pending, game_pending = upscale_queue.pending_status(request.args.get('game_id', type=int))
     return success(pending=pending, game_pending=game_pending)
+
+
+# PASS-59-142 — a Slipcase box file's faces for one game.
+def _box_import_message(code, detail):
+    """The editor-facing message for a BoxImportError code."""
+    messages = {
+        'no_box_file': _('Pick the .box.json file Slipcase saved, together with its pictures.'),
+        'two_box_files': _('Pick only one .box.json file at a time.'),
+        'bad_json': _('The .box.json file could not be read.'),
+        'bad_box_file': _('This is not a Slipcase box file RetroDB can read.'),
+        'bad_face_name': _('The box file names a picture RetroDB will not open.'),
+        'missing_face': _('Some pictures the box file needs were not picked: %(names)s',
+                          names=detail),
+        'face_too_large': _('A picture is larger than 10 MB.'),
+        'bad_image': _('A picture is not a readable image.'),
+        'not_found': _('Game not found'),
+        'exists': _('This game already has 3D box faces.'),
+        'write_failed': _('The faces could not be saved. Check the disk has space.'),
+    }
+    return messages.get(code, _('The box file could not be imported.'))
+
+
+@bp.route('/api/games/<int:game_id>/box-faces', methods=['POST'])
+@editor_required
+@handle_api_errors
+def api_import_box_faces(game_id):
+    """Import a Slipcase box file and its pictures onto the game."""
+    from services.box_faces import BoxImportError, import_box_file
+    uploads = {os.path.basename(f.filename): f
+               for f in request.files.getlist('files') if f and f.filename}
+    replace = request.form.get('replace') == '1'
+    try:
+        record = import_box_file(game_id, uploads, replace=replace)
+    except BoxImportError as e:
+        code = {'exists': 409, 'not_found': 404}.get(e.code, 400)
+        return error(_box_import_message(e.code, e.detail), code=code, reason=e.code)
+    return success({'box_faces': record})
+
+
+@bp.route('/api/games/<int:game_id>/box-faces', methods=['DELETE'])
+@editor_required
+@handle_api_errors
+def api_remove_box_faces(game_id):
+    """Remove the game's 3D box faces."""
+    from services.box_faces import BoxImportError, remove_box_faces
+    try:
+        removed = remove_box_faces(game_id)
+    except BoxImportError:
+        return error(_('Game not found'), code=404, reason='not_found')
+    return success({'removed': removed})

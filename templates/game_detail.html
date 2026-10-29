@@ -197,6 +197,23 @@
                 </div>
             {% endif %}
             </div>
+            {# PASS-59-142 — Slipcase box faces: editors import and remove them here
+               (game-box-faces.js); the turnable box itself is PASS-59-143. #}
+            {% set _box_editor = current_user and current_user.role in ('admin', 'editor') %}
+            {% if box_faces or _box_editor %}
+            <div class="box-faces-note" id="boxFacesNote">
+                <span id="boxFacesStatus" role="status"{% if not box_faces %} hidden{% endif %}>
+                    <span aria-hidden="true">📦</span>
+                    {{ _('3D box imported:') }} <span id="boxFacesCase">{{ box_faces.case.name if box_faces else '' }}</span>
+                </span>
+                {% if _box_editor %}
+                <button type="button" class="btn btn-sm btn-secondary" id="boxFacesImportBtn" data-game-id="{{ game.id }}"
+                        title="{{ _('Pick the .box.json file Slipcase saved, together with its pictures.') }}">{{ _('Import 3D box') }}</button>
+                <button type="button" class="btn btn-sm btn-secondary" id="boxFacesRemoveBtn" data-game-id="{{ game.id }}"{% if not box_faces %} hidden{% endif %}>{{ _('Remove') }}</button>
+                <input type="file" id="boxFacesInput" multiple accept=".json,.png,.webp,.jpg,.jpeg" hidden>
+                {% endif %}
+            </div>
+            {% endif %}
             {% if upscale_pending %}
             {# PASS-59-153 — main.js reloads this game's images when it is done. #}
             <p class="upscale-game-note" id="upscaleGameNote" role="status" data-game-id="{{ game.id }}">
@@ -5866,6 +5883,8 @@ document.querySelectorAll('.filter-link').forEach(link => {
 <script src="{{ asset_url('js/game-emulator-settings.js') }}" defer></script>
 <!-- PASS-59-155 — the Cheats panel -->
 <script src="{{ asset_url('js/game-cheats.js') }}" defer></script>
+<!-- PASS-59-142 — import a Slipcase box file -->
+<script src="{{ asset_url('js/game-box-faces.js') }}" defer></script>
 <!-- PASS-59-108 — Apply Metadata progress gauge -->
 <script src="{{ asset_url('js/apply-progress.js') }}" defer></script>
 <!-- PASS-59-106 — link and unlink regional versions -->

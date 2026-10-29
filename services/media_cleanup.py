@@ -203,6 +203,10 @@ def find_orphaned_media(games):
         # Manuals live under IMAGE_PATH/manuals (matches every scraper output
         # and _media_layout). Was STATIC_PATH/manuals, which never existed.
         (os.path.join(config.IMAGE_PATH, 'manuals'),     'manual',      image_base),
+        # PASS-59-142 — Slipcase box faces, named <game_id>_<face>_<token>.
+        # The prefix rule below sweeps a deleted game's; an import deletes
+        # the files it replaces, so none is referenced only by the column.
+        (os.path.join(config.IMAGE_PATH, 'box_faces'),   'box_faces',   image_base),
     )
 
     orphaned = []

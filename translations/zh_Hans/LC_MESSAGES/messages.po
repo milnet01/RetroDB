@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-29 11:00+0200\n"
+"POT-Creation-Date: 2026-10-29 11:50+0200\n"
 "PO-Revision-Date: 2026-07-01 09:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hans\n"
@@ -57,11 +57,12 @@ msgstr "未找到系统，或该系统没有包含成就的游戏"
 #: routes/achievements.py:171 routes/achievements.py:440
 #: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/cheats.py:32
 #: routes/cheats.py:51 routes/collections.py:276 routes/collections.py:531
-#: routes/emulators.py:271 routes/emulators.py:285 routes/games.py:390
-#: routes/games.py:869 routes/games.py:996 routes/games.py:1052
+#: routes/emulators.py:271 routes/emulators.py:285 routes/games.py:391
+#: routes/games.py:872 routes/games.py:999 routes/games.py:1055
 #: routes/games_ai.py:47 routes/games_media.py:37 routes/games_media.py:85
-#: routes/games_media.py:148 routes/launch.py:240 routes/reports.py:693
-#: routes/reports.py:822 routes/trophies.py:1291 services/cheats.py:600
+#: routes/games_media.py:148 routes/games_media.py:197
+#: routes/games_media.py:230 routes/launch.py:240 routes/reports.py:693
+#: routes/reports.py:822 routes/trophies.py:1291 services/cheats.py:617
 #: services/hltb_service.py:125
 msgid "Game not found"
 msgstr "未找到游戏"
@@ -233,8 +234,8 @@ msgstr "未找到父游戏"
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "附赠光盘与主游戏必须属于同一系统"
 
-#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1310
-#: routes/games.py:1340 routes/platform_import.py:297
+#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1313
+#: routes/games.py:1343 routes/platform_import.py:297
 #: routes/platform_import.py:667 routes/platform_import.py:1032
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:202 routes/scraper.py:530
@@ -280,7 +281,7 @@ msgstr "未找到匹配项"
 msgid "No game IDs provided"
 msgstr "未提供游戏 ID"
 
-#: routes/cheats.py:49 services/cheats.py:545
+#: routes/cheats.py:49 services/cheats.py:562
 msgid "Send the names of the cheats to switch on."
 msgstr ""
 
@@ -450,80 +451,80 @@ msgstr "RetroDB 仅为 DuckStation、PCSX2 和 RPCS3 管理单个游戏的设置
 msgid "Emulator not found"
 msgstr "未找到模拟器"
 
-#: routes/games.py:247 routes/games.py:281
+#: routes/games.py:248 routes/games.py:282
 msgid "No IDs provided"
 msgstr "未提供 ID"
 
-#: routes/games.py:289
+#: routes/games.py:290
 msgid "Provide 1-50 valid IDs"
 msgstr "请提供 1-50 个有效 ID"
 
-#: routes/games.py:554
+#: routes/games.py:555
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
 msgstr "视频未保存：必须是不超过 %(mb)s MB 的 MP4、WebM 或 OGG 文件。"
 
-#: routes/games.py:564
+#: routes/games.py:565
 #, python-format
 msgid ""
 "Screenshots not added because they match ones the game already has: "
 "%(count)s"
 msgstr "因与该游戏已有的截图相同而未添加的截图：%(count)s"
 
-#: routes/games.py:690
+#: routes/games.py:691
 msgid "Game not found after update"
 msgstr "更新后未找到该游戏"
 
-#: routes/games.py:1000
+#: routes/games.py:1003
 msgid "No game selected."
 msgstr "未选择游戏。"
 
-#: routes/games.py:1024
+#: routes/games.py:1027
 msgid "This metadata apply is no longer running."
 msgstr "此元数据应用已不再运行。"
 
-#: routes/games.py:1033
+#: routes/games.py:1036
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
 " still missing)"
 msgstr "已从 %(sources)s 应用元数据！（已填写 %(filled)d 个字段，仍缺少 %(missing)d 个）"
 
-#: routes/games.py:1039
+#: routes/games.py:1042
 msgid "Failed to apply metadata."
 msgstr "应用元数据失败。"
 
-#: routes/games.py:1088 routes/games.py:1132
+#: routes/games.py:1091 routes/games.py:1135
 msgid "No fields to update"
 msgstr "没有可更新的字段"
 
-#: routes/games.py:1129 routes/platform_import.py:220
+#: routes/games.py:1132 routes/platform_import.py:220
 #: routes/platform_import.py:581 routes/platform_import.py:936
 #: routes/trophies.py:1870
 msgid "No games selected"
 msgstr "未选择任何游戏"
 
-#: routes/games.py:1139
+#: routes/games.py:1142
 msgid "Invalid completion status"
 msgstr "完成状态无效"
 
-#: routes/games.py:1187
+#: routes/games.py:1190
 msgid "No valid fields to update"
 msgstr "没有可更新的有效字段"
 
-#: routes/games.py:1303
+#: routes/games.py:1306
 msgid "Invalid status"
 msgstr "状态无效"
 
-#: routes/games.py:1328
+#: routes/games.py:1331
 msgid "Not authenticated"
 msgstr "未通过身份验证"
 
-#: routes/games.py:1359
+#: routes/games.py:1362
 msgid "Filter type and value required"
 msgstr "需要筛选类型和值"
 
-#: routes/games.py:1372
+#: routes/games.py:1375
 msgid "Invalid filter type"
 msgstr "筛选类型无效"
 
@@ -577,6 +578,53 @@ msgstr "截图文件名无效"
 #: routes/games_media.py:154
 msgid "Screenshot not found"
 msgstr "未找到截图"
+
+#: routes/games_media.py:188 templates/game_detail.html:135
+msgid "Pick the .box.json file Slipcase saved, together with its pictures."
+msgstr ""
+
+#: routes/games_media.py:189
+msgid "Pick only one .box.json file at a time."
+msgstr ""
+
+#: routes/games_media.py:190
+msgid "The .box.json file could not be read."
+msgstr ""
+
+#: routes/games_media.py:191
+msgid "This is not a Slipcase box file RetroDB can read."
+msgstr ""
+
+#: routes/games_media.py:192
+msgid "The box file names a picture RetroDB will not open."
+msgstr ""
+
+#: routes/games_media.py:193
+#, python-format
+msgid "Some pictures the box file needs were not picked: %(names)s"
+msgstr ""
+
+#: routes/games_media.py:195
+msgid "A picture is larger than 10 MB."
+msgstr ""
+
+#: routes/games_media.py:196
+#, fuzzy
+msgid "A picture is not a readable image."
+msgstr "另存为可分享图片"
+
+#: routes/games_media.py:198
+msgid "This game already has 3D box faces."
+msgstr ""
+
+#: routes/games_media.py:199
+#, fuzzy
+msgid "The faces could not be saved. Check the disk has space."
+msgstr "无法开始更新。请查看 logs/update.log。"
+
+#: routes/games_media.py:201 services/js_i18n_strings.py:978
+msgid "The box file could not be imported."
+msgstr ""
 
 #: routes/games_search.py:42
 msgid "Title required"
@@ -714,7 +762,7 @@ msgstr "没有可处理的图片"
 msgid "Image file not found"
 msgstr "未找到图片文件"
 
-#: routes/museum.py:740 routes/museum.py:744 services/js_i18n_strings.py:581
+#: routes/museum.py:740 routes/museum.py:744 services/js_i18n_strings.py:591
 msgid "Background removal failed"
 msgstr "背景移除失败"
 
@@ -936,7 +984,7 @@ msgid "Invalid %(field)s: %(result)s"
 msgstr "无效的 %(field)s：%(result)s"
 
 #: routes/settings.py:533 routes/settings.py:592 routes/settings.py:644
-#: routes/tools.py:290 services/js_i18n_strings.py:710
+#: routes/tools.py:290 services/js_i18n_strings.py:720
 msgid "Failed to save settings"
 msgstr "保存设置失败"
 
@@ -1174,53 +1222,53 @@ msgstr "Xbox 身份验证失败 — 请重新连接你的账户"
 msgid "Game not found or not an Xbox game"
 msgstr "未找到该游戏，或它不是 Xbox 游戏"
 
-#: services/cheats.py:123
+#: services/cheats.py:140
 #, python-format
 msgid "%(name)s is too large to be a cheat file."
 msgstr ""
 
-#: services/cheats.py:252 services/cheats.py:272
+#: services/cheats.py:269 services/cheats.py:289
 msgid "Not a cheat file."
 msgstr ""
 
-#: services/cheats.py:259
+#: services/cheats.py:276
 msgid "A PCSX2 file with no CRC in its name or its gametitle line."
 msgstr ""
 
-#: services/cheats.py:266
+#: services/cheats.py:283
 msgid "A RetroArch file whose folder names no single system."
 msgstr ""
 
-#: services/cheats.py:271
+#: services/cheats.py:288
 msgid "A DuckStation file not named by its serial."
 msgstr ""
 
-#: services/cheats.py:280
+#: services/cheats.py:297
 #, fuzzy
 msgid "That folder was not found."
 msgstr "未找到平台"
 
-#: services/cheats.py:283
+#: services/cheats.py:300
 msgid "That folder is RetroDB's own cheat store."
 msgstr ""
 
-#: services/cheats.py:418 services/cheats.py:436
+#: services/cheats.py:435 services/cheats.py:453
 #, fuzzy
 msgid "The player has no cheats for this system."
 msgstr "播放器没有此系统的核心。"
 
-#: services/cheats.py:427 services/cheats.py:450 services/cheats.py:543
-#: services/cheats.py:582 services/cheats.py:589
+#: services/cheats.py:444 services/cheats.py:467 services/cheats.py:560
+#: services/cheats.py:599 services/cheats.py:606
 #, fuzzy
 msgid "No cheats were found for this game."
 msgstr "未找到该游戏的 RetroAchievements 成就"
 
-#: services/cheats.py:442
+#: services/cheats.py:459
 #, fuzzy
 msgid "That cheat list is not one of this game's."
 msgstr "该值不在可选项中。"
 
-#: services/cheats.py:578 services/cheats.py:606
+#: services/cheats.py:595 services/cheats.py:623
 msgid "Cheats work in the player, DuckStation and PCSX2."
 msgstr ""
 
@@ -1570,19 +1618,19 @@ msgstr "沙盒"
 msgid "Turn-Based"
 msgstr "回合制"
 
-#: services/js_i18n_strings.py:541
+#: services/js_i18n_strings.py:549
 msgid "(Paused)"
 msgstr "（已暂停）"
 
-#: services/js_i18n_strings.py:542
+#: services/js_i18n_strings.py:550
 msgid "(none)"
 msgstr "（无）"
 
-#: services/js_i18n_strings.py:543
+#: services/js_i18n_strings.py:551
 msgid "(not set)"
 msgstr "（未设置）"
 
-#: services/js_i18n_strings.py:544 templates/_bulk_edit_modal.html:25
+#: services/js_i18n_strings.py:552 templates/_bulk_edit_modal.html:25
 #: templates/_bulk_edit_modal.html:38 templates/_bulk_edit_modal.html:83
 #: templates/_bulk_edit_modal.html:95 templates/_bulk_edit_modal.html:120
 #: templates/_bulk_edit_modal.html:137 templates/_bulk_edit_modal.html:153
@@ -1590,113 +1638,123 @@ msgstr "（未设置）"
 msgid "-- Don't change --"
 msgstr "-- 不更改 --"
 
-#: services/js_i18n_strings.py:545
+#: services/js_i18n_strings.py:553
 msgid "-- Select log file --"
 msgstr "-- 选择日志文件 --"
 
-#: services/js_i18n_strings.py:546
+#: services/js_i18n_strings.py:554
 #, python-brace-format
 msgid "... and {n} more"
 msgstr "……还有 {n} 项"
 
-#: services/js_i18n_strings.py:547 templates/_bulk_edit_modal.html:30
+#: services/js_i18n_strings.py:555 templates/_bulk_edit_modal.html:30
 #: templates/base.html:1015
 msgid "100%"
 msgstr "100%"
 
-#: services/js_i18n_strings.py:548
+#: services/js_i18n_strings.py:556
+#, fuzzy
+msgid "3D box imported."
+msgstr "Xbox 导入"
+
+#: services/js_i18n_strings.py:557
+#, fuzzy
+msgid "3D box removed."
+msgstr "移除失败。"
+
+#: services/js_i18n_strings.py:558
 msgid ""
 "A cheat that is on pauses RetroAchievements hardcore mode for that "
 "session."
 msgstr ""
 
-#: services/js_i18n_strings.py:549 templates/_settings_tabs/account.html:273
+#: services/js_i18n_strings.py:559 templates/_settings_tabs/account.html:273
 #: templates/archive_scanner.html:726 templates/multi_disc_organizer.html:217
 #: templates/reports.html:369 templates/reports.html:450
 msgid "Actions"
 msgstr "操作"
 
-#: services/js_i18n_strings.py:550
+#: services/js_i18n_strings.py:560
 msgid "Added to queue - will start when current operation completes"
 msgstr "已加入队列——将在当前操作完成后开始"
 
-#: services/js_i18n_strings.py:551
+#: services/js_i18n_strings.py:561
 msgid "All ROMs accounted for!"
 msgstr "所有 ROM 均已核对！"
 
-#: services/js_i18n_strings.py:552 templates/logs.html:764
+#: services/js_i18n_strings.py:562 templates/logs.html:764
 msgid "All Sources"
 msgstr "所有来源"
 
-#: services/js_i18n_strings.py:553 templates/all_games.html:42
+#: services/js_i18n_strings.py:563 templates/all_games.html:42
 #: templates/reports.html:328 templates/reports.html:407
 #: templates/reports.html:480
 msgid "All Systems"
 msgstr "所有系统"
 
-#: services/js_i18n_strings.py:554
+#: services/js_i18n_strings.py:564
 msgid "Already Syncing"
 msgstr "正在同步中"
 
-#: services/js_i18n_strings.py:555
+#: services/js_i18n_strings.py:565
 msgid "Always on while cheats are on"
 msgstr ""
 
-#: services/js_i18n_strings.py:556
+#: services/js_i18n_strings.py:566
 msgid "An update is already being downloaded."
 msgstr "已有一个更新正在下载。"
 
-#: services/js_i18n_strings.py:557
+#: services/js_i18n_strings.py:567
 #, python-brace-format
 msgid "Applied when you press Play, in the {emulator} settings for this game."
 msgstr "按下游玩时，应用到此游戏的 {emulator} 设置中。"
 
-#: services/js_i18n_strings.py:558
+#: services/js_i18n_strings.py:568
 #, python-brace-format
 msgid "Applied {n} update(s)."
 msgstr "已应用 {n} 项更新。"
 
-#: services/js_i18n_strings.py:559 templates/_bulk_edit_modal.html:193
+#: services/js_i18n_strings.py:569 templates/_bulk_edit_modal.html:193
 msgid "Apply Changes"
 msgstr "应用更改"
 
-#: services/js_i18n_strings.py:560
+#: services/js_i18n_strings.py:570
 msgid "Apply Normalization"
 msgstr "应用规范化"
 
-#: services/js_i18n_strings.py:561
+#: services/js_i18n_strings.py:571
 #, python-brace-format
 msgid "Apply failed: {error}"
 msgstr "应用失败：{error}"
 
-#: services/js_i18n_strings.py:562
+#: services/js_i18n_strings.py:572
 #, python-brace-format
 msgid "Apply {n} Selected"
 msgstr "应用已选的 {n} 项"
 
-#: services/js_i18n_strings.py:563
+#: services/js_i18n_strings.py:573
 #, python-brace-format
 msgid "Apply {n} normalization rule?"
 msgstr "要应用 {n} 条规范化规则吗？"
 
-#: services/js_i18n_strings.py:564
+#: services/js_i18n_strings.py:574
 #, python-brace-format
 msgid "Apply {n} normalization rules?"
 msgstr "应用 {n} 条归一化规则？"
 
-#: services/js_i18n_strings.py:565
+#: services/js_i18n_strings.py:575
 msgid "Applying Metadata"
 msgstr "正在应用元数据"
 
-#: services/js_i18n_strings.py:566
+#: services/js_i18n_strings.py:576
 msgid "Applying..."
 msgstr "正在应用……"
 
-#: services/js_i18n_strings.py:567
+#: services/js_i18n_strings.py:577
 msgid "Applying…"
 msgstr "正在应用…"
 
-#: services/js_i18n_strings.py:568
+#: services/js_i18n_strings.py:578
 msgid ""
 "Are you sure you want to cancel the bulk scrape?\n"
 "\n"
@@ -1708,91 +1766,91 @@ msgstr ""
 "\n"
 "注意：当前游戏会先完成抓取（通常需要 10–60 秒）后，取消才会生效——在此期间进度提示会持续更新。"
 
-#: services/js_i18n_strings.py:569
+#: services/js_i18n_strings.py:579
 msgid "Are you sure you want to cancel?"
 msgstr "确定要取消吗？"
 
-#: services/js_i18n_strings.py:570
+#: services/js_i18n_strings.py:580
 #, python-brace-format
 msgid "Are you sure you want to delete \"{filename}\"?"
 msgstr "确定要删除“{filename}”吗？"
 
-#: services/js_i18n_strings.py:571
+#: services/js_i18n_strings.py:581
 msgid ""
 "Are you sure you want to reset all metadata for this game? This will "
 "delete boxart and screenshots."
 msgstr "确定要重置此游戏的所有元数据吗？这将删除封面和截图。"
 
-#: services/js_i18n_strings.py:572
+#: services/js_i18n_strings.py:582
 msgid "Are you sure you want to restart the server?"
 msgstr "确定要重启服务器吗？"
 
-#: services/js_i18n_strings.py:573
+#: services/js_i18n_strings.py:583
 msgid ""
 "Are you sure you want to shut down the server? You will need to start it "
 "again manually."
 msgstr "确定要关闭服务器吗？之后需要手动重新启动。"
 
-#: services/js_i18n_strings.py:574 templates/settings.html:67
+#: services/js_i18n_strings.py:584 templates/settings.html:42
 msgid "Are you sure?"
 msgstr "确定吗？"
 
-#: services/js_i18n_strings.py:575
+#: services/js_i18n_strings.py:585
 msgid "As the core sets it"
 msgstr "按核心设置"
 
-#: services/js_i18n_strings.py:576
+#: services/js_i18n_strings.py:586
 msgid "Asking AI…"
 msgstr "正在询问 AI…"
 
-#: services/js_i18n_strings.py:577
+#: services/js_i18n_strings.py:587
 msgid "Asking the AI. This can take up to a minute."
 msgstr "正在询问 AI。最多可能需要一分钟。"
 
-#: services/js_i18n_strings.py:578
+#: services/js_i18n_strings.py:588
 #, python-brace-format
 msgid ""
 "Asking the AI: game {current} of {total}. Names suggested: {proposals}. "
 "{system}"
 msgstr "正在询问 AI：第 {current} 个游戏，共 {total} 个。已建议名称：{proposals}。{system}"
 
-#: services/js_i18n_strings.py:579
+#: services/js_i18n_strings.py:589
 msgid "Aspect ratio"
 msgstr "宽高比"
 
-#: services/js_i18n_strings.py:580
+#: services/js_i18n_strings.py:590
 msgid "BIOS"
 msgstr "BIOS"
 
-#: services/js_i18n_strings.py:582
+#: services/js_i18n_strings.py:592
 msgid "Background removed"
 msgstr "背景已移除"
 
-#: services/js_i18n_strings.py:583
+#: services/js_i18n_strings.py:593
 msgid "Bulk fetch failed"
 msgstr "批量获取失败"
 
-#: services/js_i18n_strings.py:584
+#: services/js_i18n_strings.py:594
 msgid "Bulk fetch request failed"
 msgstr "批量获取请求失败"
 
-#: services/js_i18n_strings.py:585
+#: services/js_i18n_strings.py:595
 msgid "Bulk scraping complete!"
 msgstr "批量抓取完成！"
 
-#: services/js_i18n_strings.py:586
+#: services/js_i18n_strings.py:596
 msgid "CLZ Imports"
 msgstr "CLZ 导入"
 
-#: services/js_i18n_strings.py:587
+#: services/js_i18n_strings.py:597
 msgid "CRT screen"
 msgstr "CRT 屏幕"
 
-#: services/js_i18n_strings.py:588 templates/game_detail.html:236
+#: services/js_i18n_strings.py:598 templates/game_detail.html:253
 msgid "Can be completed with playable performance and no game-breaking glitches."
 msgstr "可以通关，性能可玩，且没有影响游戏的严重故障。"
 
-#: services/js_i18n_strings.py:589 templates/_bulk_edit_modal.html:191
+#: services/js_i18n_strings.py:599 templates/_bulk_edit_modal.html:191
 #: templates/_bulk_scrape_modal.html:49 templates/_modals/edit_modal.html:12
 #: templates/_modals/rename_modal.html:19
 #: templates/_settings_tabs/account.html:72
@@ -1802,111 +1860,111 @@ msgstr "可以通关，性能可玩，且没有影响游戏的严重故障。"
 #: templates/archive_scanner.html:798 templates/base.html:338
 #: templates/base.html:356 templates/base.html:1056
 #: templates/chd_converter.html:170 templates/chd_verify.html:126
-#: templates/game_detail.html:564 templates/login.html:254
+#: templates/game_detail.html:581 templates/login.html:254
 #: templates/museum.html:29 templates/museum_system.html:182
 #: templates/psn_trophies.html:297 templates/psn_trophy_detail.html:182
 #: templates/psn_trophy_detail.html:325 templates/reports.html:521
-#: templates/screenshot_dedup.html:263 templates/settings.html:69
-#: templates/settings_emulators.html:208
+#: templates/screenshot_dedup.html:263 templates/settings.html:44
+#: templates/settings_emulators.html:211
 #: templates/steam_achievement_game.html:138 templates/wishlist.html:114
 #: templates/xbox_achievement_game.html:131
 msgid "Cancel"
 msgstr "取消"
 
-#: services/js_i18n_strings.py:590
+#: services/js_i18n_strings.py:600
 msgid "Cancel Bulk Scrape"
 msgstr "取消批量抓取"
 
-#: services/js_i18n_strings.py:591
+#: services/js_i18n_strings.py:601
 msgid "Cancel failed"
 msgstr "取消失败"
 
-#: services/js_i18n_strings.py:592
+#: services/js_i18n_strings.py:602
 msgid "Cancel request failed"
 msgstr "取消请求失败"
 
-#: services/js_i18n_strings.py:593
+#: services/js_i18n_strings.py:603
 msgid "Cancellation requested"
 msgstr "已请求取消"
 
-#: services/js_i18n_strings.py:594
+#: services/js_i18n_strings.py:604
 msgid "Cancelled"
 msgstr "已取消"
 
-#: services/js_i18n_strings.py:595
+#: services/js_i18n_strings.py:605
 msgid "Cancelled by user"
 msgstr "已被用户取消"
 
-#: services/js_i18n_strings.py:596
+#: services/js_i18n_strings.py:606
 #, fuzzy
 msgid "Cheat list changed."
 msgstr "选择所有更改项"
 
-#: services/js_i18n_strings.py:597
+#: services/js_i18n_strings.py:607
 #, fuzzy
 msgid "Cheats downloaded."
 msgstr "更新已下载并通过校验。"
 
-#: services/js_i18n_strings.py:598
+#: services/js_i18n_strings.py:608
 #, fuzzy
 msgid "Cheats saved."
 msgstr "HowLongToBeat 数据已保存"
 
-#: services/js_i18n_strings.py:599
+#: services/js_i18n_strings.py:609
 msgid "Checking RetroAchievements…"
 msgstr "正在检查 RetroAchievements…"
 
-#: services/js_i18n_strings.py:600
+#: services/js_i18n_strings.py:610
 msgid "Clean Missing ROMs"
 msgstr "清理缺失的 ROM"
 
-#: services/js_i18n_strings.py:601
+#: services/js_i18n_strings.py:611
 msgid "Clear CLZ Imports"
 msgstr "清除 CLZ 导入"
 
-#: services/js_i18n_strings.py:602
+#: services/js_i18n_strings.py:612
 msgid "Clear HLTB data for this game?"
 msgstr "清除该游戏的 HLTB 数据？"
 
-#: services/js_i18n_strings.py:603 templates/achievements_system.html:109
+#: services/js_i18n_strings.py:613 templates/achievements_system.html:109
 msgid "Clear RA Data"
 msgstr "清除 RA 数据"
 
-#: services/js_i18n_strings.py:604
+#: services/js_i18n_strings.py:614
 msgid "Clear RetroAchievements Data"
 msgstr "清除 RetroAchievements 数据"
 
-#: services/js_i18n_strings.py:605
+#: services/js_i18n_strings.py:615
 #, python-brace-format
 msgid "Cleared RA data for {count} games in {system}"
 msgstr "已清除 {system} 中 {count} 个游戏的 RA 数据"
 
-#: services/js_i18n_strings.py:606
+#: services/js_i18n_strings.py:616
 #, python-brace-format
 msgid "Cleared RA data for {n} games"
 msgstr "已清除 {n} 个游戏的 RA 数据"
 
-#: services/js_i18n_strings.py:607
+#: services/js_i18n_strings.py:617
 #, python-brace-format
 msgid "Cleared RA data for {n} games in {system}"
 msgstr "已清除 {system} 中 {n} 个游戏的 RA 数据"
 
-#: services/js_i18n_strings.py:608
+#: services/js_i18n_strings.py:618
 #, python-brace-format
 msgid ""
 "Cleared RetroAchievements data for {n} games. Run \"Refresh "
 "RetroAchievements\" to re-scan with updated matching."
 msgstr "已清除 {n} 个游戏的 RetroAchievements 数据。运行“刷新 RetroAchievements”即可使用更新后的匹配重新扫描。"
 
-#: services/js_i18n_strings.py:609
+#: services/js_i18n_strings.py:619
 msgid "Clearing..."
 msgstr "正在清除…"
 
-#: services/js_i18n_strings.py:610
+#: services/js_i18n_strings.py:620
 msgid "Click again to remove"
 msgstr "再次点击以移除"
 
-#: services/js_i18n_strings.py:611 templates/_bulk_edit_modal.html:8
+#: services/js_i18n_strings.py:621 templates/_bulk_edit_modal.html:8
 #: templates/_bulk_scrape_modal.html:8
 #: templates/_modals/boxart_zoom_modal.html:3
 #: templates/_modals/manual_reader_modal.html:11
@@ -1920,46 +1978,46 @@ msgstr "再次点击以移除"
 msgid "Close"
 msgstr "关闭"
 
-#: services/js_i18n_strings.py:612
+#: services/js_i18n_strings.py:622
 msgid "Close keyboard shortcuts"
 msgstr "关闭键盘快捷键"
 
-#: services/js_i18n_strings.py:613
+#: services/js_i18n_strings.py:623
 msgid "Close modal / cancel"
 msgstr "关闭对话框 / 取消"
 
-#: services/js_i18n_strings.py:614 templates/dashboard.html:188
+#: services/js_i18n_strings.py:624 templates/dashboard.html:188
 #: templates/setup.html:20
 msgid "Complete"
 msgstr "完成"
 
-#: services/js_i18n_strings.py:615
+#: services/js_i18n_strings.py:625
 msgid "Complete!"
 msgstr "完成！"
 
-#: services/js_i18n_strings.py:616 templates/_bulk_edit_modal.html:29
+#: services/js_i18n_strings.py:626 templates/_bulk_edit_modal.html:29
 #: templates/analytics.html:1664 templates/base.html:1014
-#: templates/dashboard.html:506 templates/game_detail.html:257
+#: templates/dashboard.html:506 templates/game_detail.html:274
 msgid "Completed"
 msgstr "已完成"
 
-#: services/js_i18n_strings.py:617 templates/_bulk_edit_modal.html:23
+#: services/js_i18n_strings.py:627 templates/_bulk_edit_modal.html:23
 #: templates/analytics.html:137 templates/base.html:1009
 msgid "Completion Status"
 msgstr "完成状态"
 
-#: services/js_i18n_strings.py:618 templates/game_detail.html:253
+#: services/js_i18n_strings.py:628 templates/game_detail.html:270
 msgid "Completion status"
 msgstr "完成状态"
 
-#: services/js_i18n_strings.py:619
+#: services/js_i18n_strings.py:629
 msgid "Completion status updated"
 msgstr "完成状态已更新"
 
-#: services/js_i18n_strings.py:620 templates/achievement_game.html:172
+#: services/js_i18n_strings.py:630 templates/achievement_game.html:172
 #: templates/achievement_game.html:197 templates/achievement_game.html:211
-#: templates/base.html:1051 templates/game_detail.html:558
-#: templates/game_detail.html:583 templates/game_detail.html:597
+#: templates/base.html:1051 templates/game_detail.html:575
+#: templates/game_detail.html:600 templates/game_detail.html:614
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:176
 #: templates/psn_trophy_detail.html:209
 #: templates/steam_achievement_game.html:134
@@ -1969,455 +2027,455 @@ msgstr "完成状态已更新"
 msgid "Completionist"
 msgstr "全成就达成者"
 
-#: services/js_i18n_strings.py:621 templates/settings.html:66
+#: services/js_i18n_strings.py:631 templates/settings.html:41
 msgid "Confirm Action"
 msgstr "确认操作"
 
-#: services/js_i18n_strings.py:622
+#: services/js_i18n_strings.py:632
 msgid "Confirm Bulk Edit"
 msgstr "确认批量编辑"
 
-#: services/js_i18n_strings.py:623
+#: services/js_i18n_strings.py:633
 msgid "Content generated successfully"
 msgstr "内容生成成功"
 
-#: services/js_i18n_strings.py:624
+#: services/js_i18n_strings.py:634
 msgid "Controller"
 msgstr "手柄"
 
-#: services/js_i18n_strings.py:625
+#: services/js_i18n_strings.py:635
 msgid "Controller image saved"
 msgstr "手柄图片已保存"
 
-#: services/js_i18n_strings.py:626
+#: services/js_i18n_strings.py:636
 msgid "Controller image uploaded"
 msgstr "手柄图片已上传"
 
-#: services/js_i18n_strings.py:627
+#: services/js_i18n_strings.py:637
 #, python-brace-format
 msgid "Copied {copied} files; {unchanged} were already there; {skipped} skipped."
 msgstr ""
 
-#: services/js_i18n_strings.py:628
+#: services/js_i18n_strings.py:638
 msgid "Core"
 msgstr "核心"
 
-#: services/js_i18n_strings.py:629
+#: services/js_i18n_strings.py:639
 msgid "Could not accept these names."
 msgstr "无法接受这些名称。"
 
-#: services/js_i18n_strings.py:630
+#: services/js_i18n_strings.py:640
 msgid "Could not apply metadata."
 msgstr "无法应用元数据。"
 
-#: services/js_i18n_strings.py:631
+#: services/js_i18n_strings.py:641
 #, fuzzy
 msgid "Could not change the cheat list."
 msgstr "无法保存该设置。"
 
-#: services/js_i18n_strings.py:632
+#: services/js_i18n_strings.py:642
 msgid "Could not check for updates."
 msgstr "无法检查更新。"
 
-#: services/js_i18n_strings.py:633
+#: services/js_i18n_strings.py:643
 #, python-brace-format
 msgid ""
 "Could not download the {system} core. Check the internet connection and "
 "try again."
 msgstr "无法下载 {system} 核心。请检查网络连接后重试。"
 
-#: services/js_i18n_strings.py:634
+#: services/js_i18n_strings.py:644
 msgid "Could not link these versions."
 msgstr "无法关联这些版本。"
 
-#: services/js_i18n_strings.py:635
+#: services/js_i18n_strings.py:645
 msgid "Could not load suggestions."
 msgstr "无法加载建议。"
 
-#: services/js_i18n_strings.py:636
+#: services/js_i18n_strings.py:646
 msgid "Could not load the suggested names."
 msgstr "无法加载建议的名称。"
 
-#: services/js_i18n_strings.py:637
+#: services/js_i18n_strings.py:647
 msgid "Could not open this manual. Use \"Open PDF in a new tab\" instead."
 msgstr "无法打开此手册。请改用“在新标签页中打开 PDF”。"
 
-#: services/js_i18n_strings.py:638
+#: services/js_i18n_strings.py:648
 msgid "Could not read the run status."
 msgstr "无法读取任务状态。"
 
-#: services/js_i18n_strings.py:639
+#: services/js_i18n_strings.py:649
 msgid "Could not reconnect to server. Please refresh manually."
 msgstr "无法重新连接服务器。请手动刷新。"
 
-#: services/js_i18n_strings.py:640
+#: services/js_i18n_strings.py:650
 msgid "Could not reject these names."
 msgstr "无法拒绝这些名称。"
 
-#: services/js_i18n_strings.py:641
+#: services/js_i18n_strings.py:651
 msgid "Could not save that setting."
 msgstr "无法保存该设置。"
 
-#: services/js_i18n_strings.py:642
+#: services/js_i18n_strings.py:652
 msgid "Could not save that."
 msgstr "无法保存。"
 
-#: services/js_i18n_strings.py:643
+#: services/js_i18n_strings.py:653
 #, fuzzy
 msgid "Could not save the cheats."
 msgstr "无法保存。"
 
-#: services/js_i18n_strings.py:644
+#: services/js_i18n_strings.py:654
 msgid "Could not show this page of the manual."
 msgstr "无法显示手册的这一页。"
 
-#: services/js_i18n_strings.py:645
+#: services/js_i18n_strings.py:655
 msgid "Could not start the run."
 msgstr "无法启动任务。"
 
-#: services/js_i18n_strings.py:646
+#: services/js_i18n_strings.py:656
 msgid "Could not stop the run."
 msgstr "无法停止任务。"
 
-#: services/js_i18n_strings.py:647
+#: services/js_i18n_strings.py:657
 msgid "Could not stop the running instance."
 msgstr "无法停止正在运行的实例。"
 
-#: services/js_i18n_strings.py:648
+#: services/js_i18n_strings.py:658
 msgid "Could not unlink this version."
 msgstr "无法取消关联此版本。"
 
-#: services/js_i18n_strings.py:649
+#: services/js_i18n_strings.py:659
 msgid "Could not write the summary."
 msgstr "无法撰写摘要。"
 
-#: services/js_i18n_strings.py:650
+#: services/js_i18n_strings.py:660
 #, python-brace-format
 msgid "Critic Score ({count} reviews)"
 msgstr "媒体评分（{count} 篇评测）"
 
-#: services/js_i18n_strings.py:651
+#: services/js_i18n_strings.py:661
 msgid "Currently set"
 msgstr "当前设置"
 
-#: services/js_i18n_strings.py:652
+#: services/js_i18n_strings.py:662
 msgid "Default"
 msgstr "默认"
 
-#: services/js_i18n_strings.py:653
+#: services/js_i18n_strings.py:663
 #, python-brace-format
 msgid "Default emulator for {system}"
 msgstr "{system} 的默认模拟器"
 
-#: services/js_i18n_strings.py:654
+#: services/js_i18n_strings.py:664
 msgid "Delete Log File"
 msgstr "删除日志文件"
 
-#: services/js_i18n_strings.py:655
+#: services/js_i18n_strings.py:665
 #, python-brace-format
 msgid "Detect failed: {error}"
 msgstr "检测失败：{error}"
 
-#: services/js_i18n_strings.py:656
+#: services/js_i18n_strings.py:666
 msgid "Detected path"
 msgstr "检测到的路径"
 
-#: services/js_i18n_strings.py:657
+#: services/js_i18n_strings.py:667
 msgid "Detecting…"
 msgstr "正在检测…"
 
-#: services/js_i18n_strings.py:658 templates/game_detail.html:240
+#: services/js_i18n_strings.py:668 templates/game_detail.html:257
 msgid "Does not start, or crashes the emulator."
 msgstr "无法启动，或导致模拟器崩溃。"
 
-#: services/js_i18n_strings.py:659 templates/_bulk_scrape_modal.html:69
+#: services/js_i18n_strings.py:669 templates/_bulk_scrape_modal.html:69
 #: templates/all_games.html:223 templates/psn_trophies.html:247
 #: templates/psn_trophies.html:307 templates/reports.html:525
 #: templates/system_games.html:203
 msgid "Done"
 msgstr "完成"
 
-#: services/js_i18n_strings.py:660
+#: services/js_i18n_strings.py:670
 #, python-brace-format
 msgid "Done. Games asked: {total}. Names suggested: {proposals}."
 msgstr "完成。已询问的游戏：{total}。已建议名称：{proposals}。"
 
-#: services/js_i18n_strings.py:661 templates/logs.html:734
+#: services/js_i18n_strings.py:671 templates/logs.html:734
 msgid "Download"
 msgstr "下载"
 
-#: services/js_i18n_strings.py:662
+#: services/js_i18n_strings.py:672
 #, fuzzy
 msgid "Download again"
 msgstr "重新下载 RetroArch"
 
-#: services/js_i18n_strings.py:663
+#: services/js_i18n_strings.py:673
 msgid "Download the update first."
 msgstr "请先下载更新。"
 
-#: services/js_i18n_strings.py:664
+#: services/js_i18n_strings.py:674
 #, fuzzy, python-brace-format
 msgid "Downloaded {date}, {n} files"
 msgstr "请先下载更新。"
 
-#: services/js_i18n_strings.py:665
+#: services/js_i18n_strings.py:675
 msgid "Downloading 3D box art…"
 msgstr "正在下载 3D 封面…"
 
-#: services/js_i18n_strings.py:666
+#: services/js_i18n_strings.py:676
 msgid "Downloading RetroArch… This can take a few minutes."
 msgstr "正在下载 RetroArch… 这可能需要几分钟。"
 
-#: services/js_i18n_strings.py:667
+#: services/js_i18n_strings.py:677
 msgid "Downloading box art…"
 msgstr "正在下载封面…"
 
-#: services/js_i18n_strings.py:668
+#: services/js_i18n_strings.py:678
 msgid "Downloading fan art…"
 msgstr "正在下载同人图…"
 
-#: services/js_i18n_strings.py:669
+#: services/js_i18n_strings.py:679
 msgid "Downloading manual…"
 msgstr "正在下载说明书…"
 
-#: services/js_i18n_strings.py:670
+#: services/js_i18n_strings.py:680
 msgid "Downloading media…"
 msgstr "正在下载媒体…"
 
-#: services/js_i18n_strings.py:671
+#: services/js_i18n_strings.py:681
 msgid "Downloading screenshots…"
 msgstr "正在下载截图…"
 
-#: services/js_i18n_strings.py:672
+#: services/js_i18n_strings.py:682
 #, python-brace-format
 msgid "Downloading the {system} core…"
 msgstr "正在下载 {system} 核心…"
 
-#: services/js_i18n_strings.py:673
+#: services/js_i18n_strings.py:683
 msgid "Downloading video…"
 msgstr "正在下载视频…"
 
-#: services/js_i18n_strings.py:674
+#: services/js_i18n_strings.py:684
 #, python-brace-format
 msgid "Downloading {core} ({done} of {total})…"
 msgstr "正在下载 {core}（{done}/{total}）…"
 
-#: services/js_i18n_strings.py:675
+#: services/js_i18n_strings.py:685
 #, fuzzy, python-brace-format
 msgid "Downloading {pack}…"
 msgstr "正在下载媒体…"
 
-#: services/js_i18n_strings.py:676
+#: services/js_i18n_strings.py:686
 #, fuzzy
 msgid "DuckStation cheats"
 msgstr "教育"
 
-#: services/js_i18n_strings.py:677
+#: services/js_i18n_strings.py:687
 msgid "DuckStation ignores cheats in hardcore mode."
 msgstr ""
 
-#: services/js_i18n_strings.py:678 templates/_settings_tabs/account.html:318
+#: services/js_i18n_strings.py:688 templates/_settings_tabs/account.html:318
 #: templates/base.html:970 templates/game_detail.html:119
 #: templates/wishlist.html:641
 msgid "Edit"
 msgstr "编辑"
 
-#: services/js_i18n_strings.py:679
+#: services/js_i18n_strings.py:689
 msgid "Edit game"
 msgstr "编辑游戏"
 
-#: services/js_i18n_strings.py:680
+#: services/js_i18n_strings.py:690
 #, python-brace-format
 msgid "Edit: {title}"
 msgstr "编辑：{title}"
 
-#: services/js_i18n_strings.py:681
+#: services/js_i18n_strings.py:691
 msgid "Emulator"
 msgstr "模拟器"
 
-#: services/js_i18n_strings.py:682
+#: services/js_i18n_strings.py:692
 msgid "Enter one folder path."
 msgstr "请输入一个文件夹路径。"
 
-#: services/js_i18n_strings.py:683
+#: services/js_i18n_strings.py:693
 msgid "Error"
 msgstr "错误"
 
-#: services/js_i18n_strings.py:684
+#: services/js_i18n_strings.py:694
 msgid "Error clearing HLTB data"
 msgstr "清除 HLTB 数据时出错"
 
-#: services/js_i18n_strings.py:685
+#: services/js_i18n_strings.py:695
 msgid "Error connecting to HowLongToBeat"
 msgstr "连接 HowLongToBeat 时出错"
 
-#: services/js_i18n_strings.py:686
+#: services/js_i18n_strings.py:696
 msgid "Error deleting log file"
 msgstr "删除日志文件时出错"
 
-#: services/js_i18n_strings.py:687
+#: services/js_i18n_strings.py:697
 msgid "Error loading file"
 msgstr "加载文件出错"
 
-#: services/js_i18n_strings.py:688
+#: services/js_i18n_strings.py:698
 msgid "Error loading log file"
 msgstr "加载日志文件出错"
 
-#: services/js_i18n_strings.py:689
+#: services/js_i18n_strings.py:699
 msgid "Error looking up HLTB"
 msgstr "查询 HowLongToBeat 出错"
 
-#: services/js_i18n_strings.py:690
+#: services/js_i18n_strings.py:700
 msgid "Error refreshing RetroAchievements: "
 msgstr "刷新 RetroAchievements 时出错："
 
-#: services/js_i18n_strings.py:691
+#: services/js_i18n_strings.py:701
 msgid "Error saving HLTB data"
 msgstr "保存 HLTB 数据时出错"
 
-#: services/js_i18n_strings.py:692
+#: services/js_i18n_strings.py:702
 msgid "Error saving game: "
 msgstr "保存游戏时出错："
 
-#: services/js_i18n_strings.py:693
+#: services/js_i18n_strings.py:703
 #, python-brace-format
 msgid "Error scanning library: {error}"
 msgstr "扫描游戏库时出错：{error}"
 
-#: services/js_i18n_strings.py:694
+#: services/js_i18n_strings.py:704
 msgid "Error updating completion status"
 msgstr "更新完成状态出错"
 
-#: services/js_i18n_strings.py:695
+#: services/js_i18n_strings.py:705
 msgid "Error updating status"
 msgstr "更新状态出错"
 
-#: services/js_i18n_strings.py:696
+#: services/js_i18n_strings.py:706
 msgid "Europe"
 msgstr "欧洲"
 
-#: services/js_i18n_strings.py:697 templates/_modals/edit_modal.html:223
+#: services/js_i18n_strings.py:707 templates/_modals/edit_modal.html:223
 #: templates/base.html:1242
 msgid "Exclusive"
 msgstr "独占"
 
-#: services/js_i18n_strings.py:698
+#: services/js_i18n_strings.py:708
 msgid "Failed to apply bulk edit. Check console for details."
 msgstr "批量编辑应用失败。请查看控制台了解详情。"
 
-#: services/js_i18n_strings.py:699
+#: services/js_i18n_strings.py:709
 msgid "Failed to apply normalization"
 msgstr "应用归一化失败"
 
-#: services/js_i18n_strings.py:700
+#: services/js_i18n_strings.py:710
 msgid "Failed to clean missing ROMs"
 msgstr "清理缺失的 ROM 失败"
 
-#: services/js_i18n_strings.py:701
+#: services/js_i18n_strings.py:711
 msgid "Failed to clear CLZ imports"
 msgstr "清除 CLZ 导入失败"
 
-#: services/js_i18n_strings.py:702
+#: services/js_i18n_strings.py:712
 msgid "Failed to clear HLTB: "
 msgstr "清除 HLTB 失败："
 
-#: services/js_i18n_strings.py:703
+#: services/js_i18n_strings.py:713
 msgid "Failed to clear RA data"
 msgstr "清除 RA 数据失败"
 
-#: services/js_i18n_strings.py:704
+#: services/js_i18n_strings.py:714
 msgid "Failed to delete"
 msgstr "删除失败"
 
-#: services/js_i18n_strings.py:705
+#: services/js_i18n_strings.py:715
 msgid "Failed to fetch controller image"
 msgstr "获取手柄图片失败"
 
-#: services/js_i18n_strings.py:706
+#: services/js_i18n_strings.py:716
 msgid "Failed to fetch image"
 msgstr "获取图片失败"
 
-#: services/js_i18n_strings.py:707
+#: services/js_i18n_strings.py:717
 msgid "Failed to load game"
 msgstr "加载游戏失败"
 
-#: services/js_i18n_strings.py:708
+#: services/js_i18n_strings.py:718
 msgid "Failed to load normalization data"
 msgstr "加载规范化数据失败"
 
-#: services/js_i18n_strings.py:709
+#: services/js_i18n_strings.py:719
 msgid "Failed to save HLTB: "
 msgstr "保存 HLTB 失败："
 
-#: services/js_i18n_strings.py:711
+#: services/js_i18n_strings.py:721
 msgid "Failed to save: "
 msgstr "保存失败："
 
-#: services/js_i18n_strings.py:712
+#: services/js_i18n_strings.py:722
 msgid "Failed to start RetroAchievements refresh"
 msgstr "启动 RetroAchievements 刷新失败"
 
-#: services/js_i18n_strings.py:713
+#: services/js_i18n_strings.py:723
 msgid "Failed to start bulk scrape"
 msgstr "启动批量抓取失败"
 
-#: services/js_i18n_strings.py:714
+#: services/js_i18n_strings.py:724
 msgid "Failed to start generation"
 msgstr "启动生成失败"
 
-#: services/js_i18n_strings.py:715
+#: services/js_i18n_strings.py:725
 msgid "Failed to update completion status: "
 msgstr "更新完成状态失败："
 
-#: services/js_i18n_strings.py:716
+#: services/js_i18n_strings.py:726
 #, python-brace-format
 msgid "Failed to update status: {error}"
 msgstr "更新状态失败：{error}"
 
-#: services/js_i18n_strings.py:717
+#: services/js_i18n_strings.py:727
 #, python-brace-format
 msgid "Failed: {error}"
 msgstr "失败：{error}"
 
-#: services/js_i18n_strings.py:718
+#: services/js_i18n_strings.py:728
 msgid "Fetch All Controller Images"
 msgstr "获取全部手柄图片"
 
-#: services/js_i18n_strings.py:719
+#: services/js_i18n_strings.py:729
 #, python-brace-format
 msgid "Fetching from {source}…"
 msgstr "正在从 {source} 获取…"
 
-#: services/js_i18n_strings.py:720
+#: services/js_i18n_strings.py:730
 #, python-brace-format
 msgid "Fetching images: {done} of {total}"
 msgstr "正在获取图片：{done} / {total}"
 
-#: services/js_i18n_strings.py:721
+#: services/js_i18n_strings.py:731
 msgid "Focus search box"
 msgstr "聚焦搜索框"
 
-#: services/js_i18n_strings.py:722 templates/logs.html:743
+#: services/js_i18n_strings.py:732 templates/logs.html:743
 msgid "From"
 msgstr "从"
 
-#: services/js_i18n_strings.py:723
+#: services/js_i18n_strings.py:733
 msgid "From the system setting"
 msgstr "来自系统设置"
 
-#: services/js_i18n_strings.py:724
+#: services/js_i18n_strings.py:734
 msgid "Fullscreen"
 msgstr "全屏"
 
-#: services/js_i18n_strings.py:725
+#: services/js_i18n_strings.py:735
 msgid "Game Page"
 msgstr "游戏页面"
 
-#: services/js_i18n_strings.py:726
+#: services/js_i18n_strings.py:736
 msgid "Game details updated successfully."
 msgstr "游戏详情已成功更新。"
 
-#: services/js_i18n_strings.py:727 templates/_settings_tabs/data.html:186
+#: services/js_i18n_strings.py:737 templates/_settings_tabs/data.html:186
 #: templates/achievements_system.html:119 templates/analytics.html:571
 #: templates/analytics.html:1584 templates/analytics.html:1625
 #: templates/analytics.html:1947 templates/analytics.html:2122
@@ -2427,239 +2485,239 @@ msgstr "游戏详情已成功更新。"
 msgid "Games"
 msgstr "游戏"
 
-#: services/js_i18n_strings.py:728
+#: services/js_i18n_strings.py:738
 msgid "Generate All Museum Content"
 msgstr "生成全部博物馆内容"
 
-#: services/js_i18n_strings.py:729 templates/museum_system.html:45
+#: services/js_i18n_strings.py:739 templates/museum_system.html:45
 msgid "Generate Content"
 msgstr "生成内容"
 
-#: services/js_i18n_strings.py:730 templates/museum.html:28
+#: services/js_i18n_strings.py:740 templates/museum.html:28
 msgid "Generating content..."
 msgstr "正在生成内容…"
 
-#: services/js_i18n_strings.py:731
+#: services/js_i18n_strings.py:741
 msgid "Generating..."
 msgstr "正在生成……"
 
-#: services/js_i18n_strings.py:732
+#: services/js_i18n_strings.py:742
 msgid "Generation cancelled"
 msgstr "生成已取消"
 
-#: services/js_i18n_strings.py:733
+#: services/js_i18n_strings.py:743
 #, python-brace-format
 msgid ""
 "Generation complete: {generated} generated, {skipped} skipped, {failed} "
 "failed"
 msgstr "生成完成：已生成 {generated} 项，已跳过 {skipped} 项，失败 {failed} 项"
 
-#: services/js_i18n_strings.py:734
+#: services/js_i18n_strings.py:744
 msgid "Generation failed"
 msgstr "生成失败"
 
-#: services/js_i18n_strings.py:735
+#: services/js_i18n_strings.py:745
 msgid "Generation request failed"
 msgstr "生成请求失败"
 
-#: services/js_i18n_strings.py:736
+#: services/js_i18n_strings.py:746
 #, fuzzy
 msgid "Get cheats in Settings > Emulators"
 msgstr "按系统设置，位于 设置 > 模拟器"
 
-#: services/js_i18n_strings.py:737 templates/game_detail.html:237
+#: services/js_i18n_strings.py:747 templates/game_detail.html:254
 msgid ""
 "Gets in game, but cannot be finished, has serious glitches or runs too "
 "slowly."
 msgstr "能进入游戏，但无法通关、有严重故障或运行太慢。"
 
-#: services/js_i18n_strings.py:738
+#: services/js_i18n_strings.py:748
 msgid "Go to Analytics"
 msgstr "前往分析"
 
-#: services/js_i18n_strings.py:739
+#: services/js_i18n_strings.py:749
 msgid "Go to Changelog"
 msgstr "前往更新日志"
 
-#: services/js_i18n_strings.py:740
+#: services/js_i18n_strings.py:750
 msgid "Go to Dashboard"
 msgstr "前往仪表盘"
 
-#: services/js_i18n_strings.py:741
+#: services/js_i18n_strings.py:751
 msgid "Go to Help"
 msgstr "前往帮助"
 
-#: services/js_i18n_strings.py:742
+#: services/js_i18n_strings.py:752
 msgid "Go to Library"
 msgstr "前往游戏库"
 
-#: services/js_i18n_strings.py:743
+#: services/js_i18n_strings.py:753
 msgid "Go to Settings"
 msgstr "前往设置"
 
-#: services/js_i18n_strings.py:744
+#: services/js_i18n_strings.py:754
 msgid "Go to Systems"
 msgstr "前往系统"
 
-#: services/js_i18n_strings.py:745
+#: services/js_i18n_strings.py:755
 msgid "HLTB data cleared"
 msgstr "HLTB 数据已清除"
 
-#: services/js_i18n_strings.py:746
+#: services/js_i18n_strings.py:756
 msgid "HLTB data saved"
 msgstr "HowLongToBeat 数据已保存"
 
-#: services/js_i18n_strings.py:747
+#: services/js_i18n_strings.py:757
 msgid "HLTB lookup cancelled"
 msgstr "已取消 HLTB 查询"
 
-#: services/js_i18n_strings.py:748
+#: services/js_i18n_strings.py:758
 msgid "Handheld LCD"
 msgstr "掌机 LCD"
 
-#: services/js_i18n_strings.py:749 templates/all_games.html:99
+#: services/js_i18n_strings.py:759 templates/all_games.html:99
 #: templates/system_games.html:90
 msgid "Has Achievements"
 msgstr "有成就"
 
-#: services/js_i18n_strings.py:750 templates/logs.html:719
+#: services/js_i18n_strings.py:760 templates/logs.html:719
 msgid "Image Resize"
 msgstr "图片缩放"
 
-#: services/js_i18n_strings.py:751
+#: services/js_i18n_strings.py:761
 msgid "Image fetch cancelled."
 msgstr "已取消图片获取。"
 
-#: services/js_i18n_strings.py:752
+#: services/js_i18n_strings.py:762
 msgid "Image must be under 10MB"
 msgstr "图片大小必须小于 10MB"
 
-#: services/js_i18n_strings.py:753
+#: services/js_i18n_strings.py:763
 #, fuzzy
 msgid "Importing…"
 msgstr "正在启动…"
 
-#: services/js_i18n_strings.py:754 templates/_bulk_edit_modal.html:27
+#: services/js_i18n_strings.py:764 templates/_bulk_edit_modal.html:27
 #: templates/achievements_system.html:151
 #: templates/achievements_system.html:170 templates/analytics.html:1664
 #: templates/base.html:1012 templates/dashboard.html:362
-#: templates/dashboard.html:502 templates/game_detail.html:255
+#: templates/dashboard.html:502 templates/game_detail.html:272
 #: templates/steam_achievements.html:77 templates/xbox_achievements.html:77
 msgid "In Progress"
 msgstr "进行中"
 
-#: services/js_i18n_strings.py:755
+#: services/js_i18n_strings.py:765
 msgid "Initializing bulk scrape..."
 msgstr "正在初始化批量抓取…"
 
-#: services/js_i18n_strings.py:756 templates/_bulk_scrape_modal.html:23
+#: services/js_i18n_strings.py:766 templates/_bulk_scrape_modal.html:23
 #: templates/duplicate_finder.html:250 templates/screenshot_dedup.html:276
 msgid "Initializing..."
 msgstr "正在初始化…"
 
-#: services/js_i18n_strings.py:757
+#: services/js_i18n_strings.py:767
 msgid "Input lag reduction"
 msgstr "降低输入延迟"
 
-#: services/js_i18n_strings.py:758
+#: services/js_i18n_strings.py:768
 msgid "Install update"
 msgstr "安装更新"
 
-#: services/js_i18n_strings.py:759
+#: services/js_i18n_strings.py:769
 #, python-brace-format
 msgid "Installed {n} cores."
 msgstr "已安装 {n} 个核心。"
 
-#: services/js_i18n_strings.py:760
+#: services/js_i18n_strings.py:770
 #, python-brace-format
 msgid "Installed {n} cores. Failed: {failed}"
 msgstr "已安装 {n} 个核心。失败：{failed}"
 
-#: services/js_i18n_strings.py:761
+#: services/js_i18n_strings.py:771
 msgid "Installing the update and restarting RetroDB…"
 msgstr "正在安装更新并重启 RetroDB…"
 
-#: services/js_i18n_strings.py:762
+#: services/js_i18n_strings.py:772
 msgid "Integer scaling"
 msgstr "整数缩放"
 
-#: services/js_i18n_strings.py:763
+#: services/js_i18n_strings.py:773
 msgid "Japan"
 msgstr "日本"
 
-#: services/js_i18n_strings.py:764
+#: services/js_i18n_strings.py:774
 msgid "Just synced"
 msgstr "刚刚已同步"
 
-#: services/js_i18n_strings.py:765
+#: services/js_i18n_strings.py:775
 msgid "Keyboard Shortcuts"
 msgstr "键盘快捷键"
 
-#: services/js_i18n_strings.py:766
+#: services/js_i18n_strings.py:776
 msgid "Kill"
 msgstr "强制结束"
 
-#: services/js_i18n_strings.py:767
+#: services/js_i18n_strings.py:777
 #, python-brace-format
 msgid "Last tested {date}."
 msgstr "最近测试于 {date}。"
 
-#: services/js_i18n_strings.py:768
+#: services/js_i18n_strings.py:778
 #, python-brace-format
 msgid "Launch failed: {error}"
 msgstr "启动失败：{error}"
 
-#: services/js_i18n_strings.py:769
+#: services/js_i18n_strings.py:779
 #, python-brace-format
 msgid "Launched (pid {pid})"
 msgstr "已启动（pid {pid}）"
 
-#: services/js_i18n_strings.py:770
+#: services/js_i18n_strings.py:780
 msgid "Launched (replaced previous instance)"
 msgstr "已启动（已替换之前的实例）"
 
-#: services/js_i18n_strings.py:771
+#: services/js_i18n_strings.py:781
 msgid "Launching…"
 msgstr "正在启动…"
 
-#: services/js_i18n_strings.py:772
+#: services/js_i18n_strings.py:782
 #, python-brace-format
 msgid "Library scan complete! Found {n} new games."
 msgstr "游戏库扫描完成！找到 {n} 个新游戏。"
 
-#: services/js_i18n_strings.py:773
+#: services/js_i18n_strings.py:783
 msgid "Link"
 msgstr "关联"
 
-#: services/js_i18n_strings.py:774
+#: services/js_i18n_strings.py:784
 msgid "Link ticked games"
 msgstr "关联已勾选的游戏"
 
-#: services/js_i18n_strings.py:775
+#: services/js_i18n_strings.py:785
 msgid "Loading log file..."
 msgstr "正在加载日志文件…"
 
-#: services/js_i18n_strings.py:776
+#: services/js_i18n_strings.py:786
 msgid "Loading the manual…"
 msgstr "正在加载手册…"
 
-#: services/js_i18n_strings.py:777 templates/settings_emulators.html:154
-#: templates/settings_emulators.html:224
+#: services/js_i18n_strings.py:787 templates/settings_emulators.html:157
+#: templates/settings_emulators.html:227
 msgid "Loading…"
 msgstr "加载中…"
 
-#: services/js_i18n_strings.py:778
+#: services/js_i18n_strings.py:788
 msgid "Log file deleted"
 msgstr "日志文件已删除"
 
-#: services/js_i18n_strings.py:779
+#: services/js_i18n_strings.py:789
 msgid "Looking for versions…"
 msgstr "正在查找版本…"
 
-#: services/js_i18n_strings.py:780 templates/achievement_game.html:168
+#: services/js_i18n_strings.py:790 templates/achievement_game.html:168
 #: templates/achievement_game.html:197 templates/achievement_game.html:207
-#: templates/base.html:1047 templates/game_detail.html:554
-#: templates/game_detail.html:583 templates/game_detail.html:593
+#: templates/base.html:1047 templates/game_detail.html:571
+#: templates/game_detail.html:600 templates/game_detail.html:610
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:172
 #: templates/psn_trophy_detail.html:205
 #: templates/steam_achievement_game.html:133
@@ -2669,10 +2727,10 @@ msgstr "正在查找版本…"
 msgid "Main + Extras"
 msgstr "主线 + 额外"
 
-#: services/js_i18n_strings.py:781 templates/achievement_game.html:164
+#: services/js_i18n_strings.py:791 templates/achievement_game.html:164
 #: templates/achievement_game.html:197 templates/achievement_game.html:203
-#: templates/base.html:1043 templates/game_detail.html:550
-#: templates/game_detail.html:583 templates/game_detail.html:589
+#: templates/base.html:1043 templates/game_detail.html:567
+#: templates/game_detail.html:600 templates/game_detail.html:606
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:168
 #: templates/psn_trophy_detail.html:201
 #: templates/steam_achievement_game.html:132
@@ -2682,334 +2740,334 @@ msgstr "主线 + 额外"
 msgid "Main Story"
 msgstr "主线"
 
-#: services/js_i18n_strings.py:782
+#: services/js_i18n_strings.py:792
 msgid "Marked as not versions."
 msgstr "已标记为非版本。"
 
-#: services/js_i18n_strings.py:783
+#: services/js_i18n_strings.py:793
 msgid "Match found - please confirm to save"
 msgstr "已找到匹配 - 请确认后保存"
 
-#: services/js_i18n_strings.py:784
+#: services/js_i18n_strings.py:794
 msgid ""
 "Matched using this alternate/regional title — confirm it refers to the "
 "same game before saving."
 msgstr "使用此别名/地区标题匹配 — 保存前请确认它指向同一游戏。"
 
-#: services/js_i18n_strings.py:785
+#: services/js_i18n_strings.py:795
 #, python-brace-format
 msgid ""
 "Matched via alternate title \"{term}\" — HLTB shows it as \"{match}\". "
 "Confirm before saving."
 msgstr "通过别名标题“{term}”匹配 — HLTB 将其显示为“{match}”。保存前请确认。"
 
-#: services/js_i18n_strings.py:786
+#: services/js_i18n_strings.py:796
 #, python-brace-format
 msgid "Missing: {files}"
 msgstr "缺少：{files}"
 
-#: services/js_i18n_strings.py:787
+#: services/js_i18n_strings.py:797
 msgid "Multi-System"
 msgstr "多系统"
 
-#: services/js_i18n_strings.py:788
+#: services/js_i18n_strings.py:798
 msgid "Multi-platform"
 msgstr "多平台"
 
-#: services/js_i18n_strings.py:789
+#: services/js_i18n_strings.py:799
 msgid "Museum generation started"
 msgstr "博物馆生成已开始"
 
-#: services/js_i18n_strings.py:790
+#: services/js_i18n_strings.py:800
 msgid "NOT"
 msgstr "非"
 
-#: services/js_i18n_strings.py:791
+#: services/js_i18n_strings.py:801
 #, python-brace-format
 msgid "Names changed: {accepted}."
 msgstr "已更改的名称：{accepted}。"
 
-#: services/js_i18n_strings.py:792
+#: services/js_i18n_strings.py:802
 #, python-brace-format
 msgid ""
 "Names changed: {accepted}. Skipped because their title changed since: "
 "{skipped}."
 msgstr "已更改的名称：{accepted}。因标题此后已更改而跳过：{skipped}。"
 
-#: services/js_i18n_strings.py:793
+#: services/js_i18n_strings.py:803
 #, python-brace-format
 msgid "Names rejected: {rejected}. They will not be suggested again."
 msgstr "已拒绝的名称：{rejected}。它们不会再被建议。"
 
-#: services/js_i18n_strings.py:794
+#: services/js_i18n_strings.py:804
 msgid "Navigation"
 msgstr "导航"
 
-#: services/js_i18n_strings.py:795
+#: services/js_i18n_strings.py:805
 msgid "Network error"
 msgstr "网络错误"
 
-#: services/js_i18n_strings.py:796
+#: services/js_i18n_strings.py:806
 msgid "Network error starting bulk scrape"
 msgstr "启动批量抓取时发生网络错误"
 
-#: services/js_i18n_strings.py:797
+#: services/js_i18n_strings.py:807
 msgid "Next disk"
 msgstr "下一张光盘"
 
-#: services/js_i18n_strings.py:798
+#: services/js_i18n_strings.py:808
 msgid "Next disk failed"
 msgstr "切换下一张光盘失败"
 
-#: services/js_i18n_strings.py:799 templates/_bulk_edit_modal.html:171
-#: templates/_modals/edit_modal.html:143 templates/game_detail.html:712
-#: templates/game_detail.html:795
+#: services/js_i18n_strings.py:809 templates/_bulk_edit_modal.html:171
+#: templates/_modals/edit_modal.html:143 templates/game_detail.html:729
+#: templates/game_detail.html:797
 msgid "No"
 msgstr "否"
 
-#: services/js_i18n_strings.py:800
+#: services/js_i18n_strings.py:810
 msgid "No (already set)"
 msgstr "否（已设置）"
 
-#: services/js_i18n_strings.py:801
+#: services/js_i18n_strings.py:811
 msgid "No CLZ Import games found"
 msgstr "未找到 CLZ 导入的游戏"
 
-#: services/js_i18n_strings.py:802
+#: services/js_i18n_strings.py:812
 msgid "No Changes"
 msgstr "无更改"
 
-#: services/js_i18n_strings.py:803
+#: services/js_i18n_strings.py:813
 msgid "No Games Selected"
 msgstr "未选择任何游戏"
 
-#: services/js_i18n_strings.py:804
+#: services/js_i18n_strings.py:814
 msgid "No HLTB data found"
 msgstr "未找到 HowLongToBeat 数据"
 
-#: services/js_i18n_strings.py:805
+#: services/js_i18n_strings.py:815
 msgid "No achievements found"
 msgstr "未找到成就"
 
-#: services/js_i18n_strings.py:806 templates/achievement_game.html:72
+#: services/js_i18n_strings.py:816 templates/achievement_game.html:72
 #: templates/steam_achievement_game.html:69
 #: templates/xbox_achievement_game.html:59
 msgid "No description available."
 msgstr "暂无描述。"
 
-#: services/js_i18n_strings.py:807
+#: services/js_i18n_strings.py:817
 msgid "No emulator AppImages found in the scan paths."
 msgstr "在扫描路径中未找到模拟器 AppImage。"
 
-#: services/js_i18n_strings.py:808
+#: services/js_i18n_strings.py:818
 msgid "No emulators registered."
 msgstr "尚未登记任何模拟器。"
 
-#: services/js_i18n_strings.py:809
+#: services/js_i18n_strings.py:819
 msgid "No folders yet."
 msgstr "还没有文件夹。"
 
-#: services/js_i18n_strings.py:810
+#: services/js_i18n_strings.py:820
 msgid "No games or systems match"
 msgstr "没有匹配的游戏或系统"
 
-#: services/js_i18n_strings.py:811
+#: services/js_i18n_strings.py:821
 msgid "No log files in this category"
 msgstr "此类别中没有日志文件"
 
-#: services/js_i18n_strings.py:812
+#: services/js_i18n_strings.py:822
 msgid "No log lines match current filters"
 msgstr "没有日志行匹配当前筛选条件"
 
-#: services/js_i18n_strings.py:813
+#: services/js_i18n_strings.py:823
 msgid "No mappings yet. Add an emulator folder above."
 msgstr "还没有关联。请在上方添加模拟器文件夹。"
 
-#: services/js_i18n_strings.py:814
+#: services/js_i18n_strings.py:824
 msgid "No matching games on this system."
 msgstr "此系统中没有匹配的游戏。"
 
-#: services/js_i18n_strings.py:815
+#: services/js_i18n_strings.py:825
 msgid "No missing ROM files found."
 msgstr "未发现缺失的 ROM 文件。"
 
-#: services/js_i18n_strings.py:816
+#: services/js_i18n_strings.py:826
 msgid "No newer version is available."
 msgstr "没有可用的新版本。"
 
-#: services/js_i18n_strings.py:817
+#: services/js_i18n_strings.py:827
 msgid "No options available"
 msgstr "没有可用选项"
 
-#: services/js_i18n_strings.py:818
+#: services/js_i18n_strings.py:828
 msgid "No ratings available"
 msgstr "无可用分级"
 
-#: services/js_i18n_strings.py:819
+#: services/js_i18n_strings.py:829
 msgid "No results"
 msgstr "无结果"
 
-#: services/js_i18n_strings.py:820
+#: services/js_i18n_strings.py:830
 msgid "No results found"
 msgstr "未找到结果"
 
-#: services/js_i18n_strings.py:821
+#: services/js_i18n_strings.py:831
 msgid "No results found on HowLongToBeat"
 msgstr "在 HowLongToBeat 上未找到结果"
 
-#: services/js_i18n_strings.py:822
+#: services/js_i18n_strings.py:832
 msgid "No sessions match current filters"
 msgstr "没有会话符合当前筛选条件"
 
-#: services/js_i18n_strings.py:823
+#: services/js_i18n_strings.py:833
 msgid "No suggested names waiting. Press Ask the AI to look for some."
 msgstr "没有待处理的建议名称。按“询问 AI”来查找。"
 
-#: services/js_i18n_strings.py:824
+#: services/js_i18n_strings.py:834
 msgid "No suggestions. Run Backfill Alternate Titles in Maintenance to find more."
 msgstr "没有建议。在维护中运行“回填别名标题”可以找到更多。"
 
-#: services/js_i18n_strings.py:825 templates/game_detail.html:875
+#: services/js_i18n_strings.py:835 templates/game_detail.html:895
 msgid "None"
 msgstr "无"
 
-#: services/js_i18n_strings.py:826
+#: services/js_i18n_strings.py:836
 #, python-brace-format
 msgid "Normalization applied: {games} games updated, {rules} rules saved"
 msgstr "已应用规范化：更新了 {games} 个游戏，保存了 {rules} 条规则"
 
-#: services/js_i18n_strings.py:827
+#: services/js_i18n_strings.py:837
 #, fuzzy
 msgid "Not downloaded"
 msgstr "下载"
 
-#: services/js_i18n_strings.py:828
+#: services/js_i18n_strings.py:838
 msgid "Not versions"
 msgstr "非版本"
 
-#: services/js_i18n_strings.py:829 templates/base.html:1401
+#: services/js_i18n_strings.py:839 templates/base.html:1401
 msgid "Now playing"
 msgstr "正在游玩"
 
-#: services/js_i18n_strings.py:830 templates/base.html:339
+#: services/js_i18n_strings.py:840 templates/base.html:339
 msgid "OK"
 msgstr "确定"
 
-#: services/js_i18n_strings.py:831
+#: services/js_i18n_strings.py:841
 msgid "Off"
 msgstr "关"
 
-#: services/js_i18n_strings.py:832
+#: services/js_i18n_strings.py:842
 msgid "On"
 msgstr "开"
 
-#: services/js_i18n_strings.py:833
+#: services/js_i18n_strings.py:843
 msgid "Operation completed"
 msgstr "操作已完成"
 
-#: services/js_i18n_strings.py:834
+#: services/js_i18n_strings.py:844
 msgid "Operation failed"
 msgstr "操作失败"
 
-#: services/js_i18n_strings.py:835
+#: services/js_i18n_strings.py:845
 msgid "Other"
 msgstr "其他"
 
-#: services/js_i18n_strings.py:836
+#: services/js_i18n_strings.py:846
 msgid "PCSX2 applies these lines whenever any cheat is on."
 msgstr ""
 
-#: services/js_i18n_strings.py:837
+#: services/js_i18n_strings.py:847
 #, fuzzy
 msgid "PCSX2 cheats (community collection)"
 msgstr "RPCS3 奖杯合集"
 
-#: services/js_i18n_strings.py:838
+#: services/js_i18n_strings.py:848
 msgid "PCSX2 ignores cheats in hardcore mode."
 msgstr ""
 
-#: services/js_i18n_strings.py:839
+#: services/js_i18n_strings.py:849
 msgid "PSN Imports"
 msgstr "PSN 导入"
 
-#: services/js_i18n_strings.py:840
+#: services/js_i18n_strings.py:850
 msgid "Page:"
 msgstr "页面："
 
-#: services/js_i18n_strings.py:841
+#: services/js_i18n_strings.py:851
 msgid "Part of a Series"
 msgstr "系列作品之一"
 
-#: services/js_i18n_strings.py:842 templates/_bulk_scrape_modal.html:46
+#: services/js_i18n_strings.py:852 templates/_bulk_scrape_modal.html:46
 #: templates/archive_scanner.html:658 templates/archive_scanner.html:795
 #: templates/psn_trophies.html:294
 msgid "Pause"
 msgstr "暂停"
 
-#: services/js_i18n_strings.py:843
+#: services/js_i18n_strings.py:853
 msgid "Paused - Click Resume to continue"
 msgstr "已暂停 - 点击“继续”以恢复"
 
-#: services/js_i18n_strings.py:844
+#: services/js_i18n_strings.py:854
 msgid "Platform not found"
 msgstr "未找到平台"
 
-#: services/js_i18n_strings.py:845 templates/game_detail.html:99
+#: services/js_i18n_strings.py:855 templates/game_detail.html:99
 msgid "Play"
 msgstr "游玩"
 
-#: services/js_i18n_strings.py:846 templates/_bulk_edit_modal.html:28
+#: services/js_i18n_strings.py:856 templates/_bulk_edit_modal.html:28
 #: templates/analytics.html:1664 templates/base.html:1013
-#: templates/dashboard.html:504 templates/game_detail.html:256
+#: templates/dashboard.html:504 templates/game_detail.html:273
 msgid "Played"
 msgstr "已游玩"
 
-#: services/js_i18n_strings.py:847
+#: services/js_i18n_strings.py:857
 msgid "Please change at least one field before applying."
 msgstr "请在应用前至少更改一个字段。"
 
-#: services/js_i18n_strings.py:848
+#: services/js_i18n_strings.py:858
 msgid "Please enter a game title"
 msgstr "请输入游戏标题"
 
-#: services/js_i18n_strings.py:849
+#: services/js_i18n_strings.py:859
 msgid "Please select at least one game to edit."
 msgstr "请至少选择一个要编辑的游戏。"
 
-#: services/js_i18n_strings.py:850
+#: services/js_i18n_strings.py:860
 msgid "Please select at least one game to scrape."
 msgstr "请至少选择一个游戏进行抓取。"
 
-#: services/js_i18n_strings.py:851
+#: services/js_i18n_strings.py:861
 msgid "Pre-session log entries"
 msgstr "会话前日志条目"
 
-#: services/js_i18n_strings.py:852
+#: services/js_i18n_strings.py:862
 msgid "Processing images…"
 msgstr "正在处理图像…"
 
-#: services/js_i18n_strings.py:853 templates/game_imports.html:418
+#: services/js_i18n_strings.py:863 templates/game_imports.html:418
 msgid "Processing..."
 msgstr "正在处理…"
 
-#: services/js_i18n_strings.py:854
+#: services/js_i18n_strings.py:864
 #, python-brace-format
 msgid "Processing: {file}"
 msgstr "正在处理：{file}"
 
-#: services/js_i18n_strings.py:855
+#: services/js_i18n_strings.py:865
 msgid "Queued"
 msgstr "已排队"
 
-#: services/js_i18n_strings.py:856
+#: services/js_i18n_strings.py:866
 msgid "RA Data Cleared"
 msgstr "RA 数据已清除"
 
-#: services/js_i18n_strings.py:857
+#: services/js_i18n_strings.py:867
 msgid "ROM Files"
 msgstr "ROM 文件"
 
-#: services/js_i18n_strings.py:858 templates/_macros/nav_tabs.html:34
+#: services/js_i18n_strings.py:868 templates/_macros/nav_tabs.html:34
 #: templates/archive_scanner.html:561 templates/base.html:174
 #: templates/chd_converter.html:64 templates/chd_verify.html:80
 #: templates/duplicate_finder.html:166 templates/logs.html:713
@@ -3019,465 +3077,475 @@ msgstr "ROM 文件"
 msgid "ROM Tools"
 msgstr "ROM 工具"
 
-#: services/js_i18n_strings.py:859 templates/game_detail.html:237
+#: services/js_i18n_strings.py:869 templates/game_detail.html:254
 msgid "RPCS3: Ingame"
 msgstr "RPCS3：可进入游戏"
 
-#: services/js_i18n_strings.py:860 templates/game_detail.html:238
+#: services/js_i18n_strings.py:870 templates/game_detail.html:255
 msgid "RPCS3: Intro"
 msgstr "RPCS3：仅片头"
 
-#: services/js_i18n_strings.py:861 templates/game_detail.html:239
+#: services/js_i18n_strings.py:871 templates/game_detail.html:256
 msgid "RPCS3: Loadable"
 msgstr "RPCS3：可加载"
 
-#: services/js_i18n_strings.py:862 templates/game_detail.html:240
+#: services/js_i18n_strings.py:872 templates/game_detail.html:257
 msgid "RPCS3: Nothing"
 msgstr "RPCS3：无法运行"
 
-#: services/js_i18n_strings.py:863 templates/game_detail.html:236
+#: services/js_i18n_strings.py:873 templates/game_detail.html:253
 msgid "RPCS3: Playable"
 msgstr "RPCS3：可游玩"
 
-#: services/js_i18n_strings.py:864
+#: services/js_i18n_strings.py:874
 msgid "Ready"
 msgstr "就绪"
 
-#: services/js_i18n_strings.py:865
+#: services/js_i18n_strings.py:875
 msgid "Refresh RetroAchievements"
 msgstr "刷新 RetroAchievements"
 
-#: services/js_i18n_strings.py:866
+#: services/js_i18n_strings.py:876
 #, python-brace-format
 msgid "Refresh: {system}"
 msgstr "刷新：{system}"
 
-#: services/js_i18n_strings.py:867
+#: services/js_i18n_strings.py:877
 #, python-brace-format
 msgid "Refreshing RA for {system}..."
 msgstr "正在为 {system} 刷新 RA…"
 
-#: services/js_i18n_strings.py:868
+#: services/js_i18n_strings.py:878
 msgid "Regional name matches"
 msgstr "地区名称匹配"
 
-#: services/js_i18n_strings.py:869 templates/compare_games.html:24
-#: templates/compare_games.html:40
+#: services/js_i18n_strings.py:879 templates/compare_games.html:24
+#: templates/compare_games.html:40 templates/game_detail.html:214
 msgid "Remove"
 msgstr "移除"
 
-#: services/js_i18n_strings.py:870
+#: services/js_i18n_strings.py:880
 msgid "Remove background from the uploaded image?"
 msgstr "是否从上传的图片中移除背景？"
 
-#: services/js_i18n_strings.py:871
+#: services/js_i18n_strings.py:881
 msgid "Remove from queue"
 msgstr "从队列移除"
 
-#: services/js_i18n_strings.py:872
+#: services/js_i18n_strings.py:882
+#, fuzzy
+msgid "Remove the 3D box?"
+msgstr "删除 3D 封面"
+
+#: services/js_i18n_strings.py:883
 #, python-brace-format
 msgid "Removed {n} CLZ Import games"
 msgstr "已移除 {n} 个 CLZ 导入游戏"
 
-#: services/js_i18n_strings.py:873
+#: services/js_i18n_strings.py:884
 #, python-brace-format
 msgid "Removed {n} CLZ Import games:"
 msgstr "已移除 {n} 个 CLZ 导入游戏："
 
-#: services/js_i18n_strings.py:874
+#: services/js_i18n_strings.py:885
 #, python-brace-format
 msgid "Removed {n} games with missing ROMs"
 msgstr "已移除 {n} 个缺失 ROM 的游戏"
 
-#: services/js_i18n_strings.py:875
+#: services/js_i18n_strings.py:886
 #, python-brace-format
 msgid "Removed {n} games:"
 msgstr "已移除 {n} 个游戏："
 
-#: services/js_i18n_strings.py:876
+#: services/js_i18n_strings.py:887
 msgid "Removing background…"
 msgstr "正在移除背景…"
 
-#: services/js_i18n_strings.py:877
+#: services/js_i18n_strings.py:888
 msgid "Removing..."
 msgstr "正在移除……"
 
-#: services/js_i18n_strings.py:878 templates/_bulk_edit_modal.html:42
+#: services/js_i18n_strings.py:889 templates/_bulk_edit_modal.html:42
 #: templates/_bulk_edit_modal.html:56 templates/_bulk_edit_modal.html:70
 #: templates/_bulk_edit_modal.html:124 templates/_bulk_edit_modal.html:140
 #: templates/_bulk_edit_modal.html:156 templates/_bulk_edit_modal.html:180
 msgid "Replace"
 msgstr "替换"
 
-#: services/js_i18n_strings.py:879 templates/logs.html:716
+#: services/js_i18n_strings.py:890
+#, fuzzy
+msgid "Replace the 3D box?"
+msgstr "删除 3D 封面"
+
+#: services/js_i18n_strings.py:891 templates/logs.html:716
 msgid "Reports"
 msgstr "报告"
 
-#: services/js_i18n_strings.py:880
+#: services/js_i18n_strings.py:892
 msgid "Resolution scale"
 msgstr "分辨率缩放"
 
-#: services/js_i18n_strings.py:881
+#: services/js_i18n_strings.py:893
 msgid "Restarting server..."
 msgstr "正在重启服务器..."
 
-#: services/js_i18n_strings.py:882
+#: services/js_i18n_strings.py:894
 msgid "Resume"
 msgstr "继续"
 
-#: services/js_i18n_strings.py:883
+#: services/js_i18n_strings.py:895
 msgid "RetroArch cheats (libretro)"
 msgstr ""
 
-#: services/js_i18n_strings.py:884
+#: services/js_i18n_strings.py:896
 msgid "RetroArch is installed."
 msgstr "RetroArch 已安装。"
 
-#: services/js_i18n_strings.py:885
+#: services/js_i18n_strings.py:897
 msgid "RetroArch was not installed."
 msgstr "RetroArch 未安装。"
 
-#: services/js_i18n_strings.py:886
+#: services/js_i18n_strings.py:898
 #, python-brace-format
 msgid "RetroArch was not installed: {error}"
 msgstr "RetroArch 未安装：{error}"
 
-#: services/js_i18n_strings.py:887
+#: services/js_i18n_strings.py:899
 msgid "RetroDB default"
 msgstr "RetroDB 默认值"
 
-#: services/js_i18n_strings.py:888
+#: services/js_i18n_strings.py:900
 msgid "RetroDB has not come back yet. See logs/update.log, then reload this page."
 msgstr "RetroDB 尚未恢复。请查看 logs/update.log，然后重新加载此页面。"
 
-#: services/js_i18n_strings.py:889
+#: services/js_i18n_strings.py:901
 msgid ""
 "RetroDB is run by a process manager here. Download the release and "
 "install it yourself."
 msgstr "此处的 RetroDB 由进程管理器运行。请下载该版本并自行安装。"
 
-#: services/js_i18n_strings.py:890
+#: services/js_i18n_strings.py:902
 msgid ""
 "RetroDB will back up its database, install the update and restart. Anyone"
 " using it will be disconnected for a minute or two."
 msgstr "RetroDB 将备份其数据库、安装更新并重启。正在使用它的人会断开连接一两分钟。"
 
-#: services/js_i18n_strings.py:891
+#: services/js_i18n_strings.py:903
 #, python-brace-format
 msgid "RetroDB {version} is available."
 msgstr "RetroDB {version} 已可用。"
 
-#: services/js_i18n_strings.py:892
+#: services/js_i18n_strings.py:904
 msgid "Run-ahead, 1 frame"
 msgstr "预运行（Run-ahead），1 帧"
 
-#: services/js_i18n_strings.py:893
+#: services/js_i18n_strings.py:905
 msgid "Running"
 msgstr "运行中"
 
-#: services/js_i18n_strings.py:894
+#: services/js_i18n_strings.py:906
 msgid "Running..."
 msgstr "运行中…"
 
-#: services/js_i18n_strings.py:895
+#: services/js_i18n_strings.py:907
 msgid "Same IGDB game"
 msgstr "相同的 IGDB 游戏"
 
-#: services/js_i18n_strings.py:896
+#: services/js_i18n_strings.py:908
 msgid "Same ScreenScraper game"
 msgstr "相同的 ScreenScraper 游戏"
 
-#: services/js_i18n_strings.py:897
+#: services/js_i18n_strings.py:909
 msgid "Same title, different region"
 msgstr "同名，不同地区"
 
-#: services/js_i18n_strings.py:898
+#: services/js_i18n_strings.py:910
 msgid "Save Failed"
 msgstr "保存失败"
 
-#: services/js_i18n_strings.py:899
+#: services/js_i18n_strings.py:911
 #, python-brace-format
 msgid "Save failed: {error}"
 msgstr "保存失败：{error}"
 
-#: services/js_i18n_strings.py:900
+#: services/js_i18n_strings.py:912
 msgid "Saved"
 msgstr "已保存"
 
-#: services/js_i18n_strings.py:901
+#: services/js_i18n_strings.py:913
 msgid ""
 "Saved in the emulator's settings for this game. Changes made inside the "
 "emulator show here."
 msgstr ""
 
-#: services/js_i18n_strings.py:902
+#: services/js_i18n_strings.py:914
 msgid "Saved."
 msgstr "已保存。"
 
-#: services/js_i18n_strings.py:903
+#: services/js_i18n_strings.py:915
 msgid "Saved. It applies the next time you press Play."
 msgstr "已保存。下次按下游玩时生效。"
 
-#: services/js_i18n_strings.py:904
+#: services/js_i18n_strings.py:916
 msgid "Saving to the database…"
 msgstr "正在保存到数据库…"
 
-#: services/js_i18n_strings.py:905
+#: services/js_i18n_strings.py:917
 msgid "Saving..."
 msgstr "正在保存…"
 
-#: services/js_i18n_strings.py:906
+#: services/js_i18n_strings.py:918
 msgid "Saving…"
 msgstr "正在保存…"
 
-#: services/js_i18n_strings.py:907
+#: services/js_i18n_strings.py:919
 #, python-brace-format
 msgid "Scan failed (HTTP {status})"
 msgstr "扫描失败（HTTP {status}）"
 
-#: services/js_i18n_strings.py:908
+#: services/js_i18n_strings.py:920
 #, python-brace-format
 msgid "Scan failed: {error}"
 msgstr "扫描失败：{error}"
 
-#: services/js_i18n_strings.py:909
+#: services/js_i18n_strings.py:921
 #, python-brace-format
 msgid "Scanned {paths} paths · found {found} matches."
 msgstr "已扫描 {paths} 个路径 · 找到 {found} 个匹配项。"
 
-#: services/js_i18n_strings.py:910 templates/multi_disc_organizer.html:204
+#: services/js_i18n_strings.py:922 templates/multi_disc_organizer.html:204
 msgid "Scanning..."
 msgstr "正在扫描..."
 
-#: services/js_i18n_strings.py:911
+#: services/js_i18n_strings.py:923
 msgid "Scanning…"
 msgstr "正在扫描…"
 
-#: services/js_i18n_strings.py:912
+#: services/js_i18n_strings.py:924
 msgid "Scrape game"
 msgstr "抓取游戏"
 
-#: services/js_i18n_strings.py:913
+#: services/js_i18n_strings.py:925
 #, python-brace-format
 msgid "Scraped 0/{total} - 0%"
 msgstr "已抓取 0/{total} - 0%"
 
-#: services/js_i18n_strings.py:914
+#: services/js_i18n_strings.py:926
 #, python-brace-format
 msgid "Scraped {processed} / {total} - {percent}%"
 msgstr "已抓取 {processed} / {total} - {percent}%"
 
-#: services/js_i18n_strings.py:915 templates/logs.html:710
+#: services/js_i18n_strings.py:927 templates/logs.html:710
 #: templates/wishlist.html:507
 msgid "Scraping"
 msgstr "抓取中"
 
-#: services/js_i18n_strings.py:916
+#: services/js_i18n_strings.py:928
 msgid "Screen effect"
 msgstr "屏幕效果"
 
-#: services/js_i18n_strings.py:917 templates/logs.html:781
+#: services/js_i18n_strings.py:929 templates/logs.html:781
 #: templates/museum_system.html:197 templates/museum_system.html:204
 #: templates/psn_trophy_detail.html:320
 msgid "Search"
 msgstr "搜索"
 
-#: services/js_i18n_strings.py:918
+#: services/js_i18n_strings.py:930
 msgid "Search failed."
 msgstr "搜索失败。"
 
-#: services/js_i18n_strings.py:919
+#: services/js_i18n_strings.py:931
 msgid "Search failed. Try again."
 msgstr "搜索失败。请重试。"
 
-#: services/js_i18n_strings.py:920
+#: services/js_i18n_strings.py:932
 msgid "Searching & removing background..."
 msgstr "正在搜索并移除背景……"
 
-#: services/js_i18n_strings.py:921
+#: services/js_i18n_strings.py:933
 #, python-brace-format
 msgid "Searching {source}…"
 msgstr "正在搜索 {source}…"
 
-#: services/js_i18n_strings.py:922
+#: services/js_i18n_strings.py:934
 #, python-brace-format
 msgid "See all {n} results"
 msgstr "查看全部 {n} 个结果"
 
-#: services/js_i18n_strings.py:923
+#: services/js_i18n_strings.py:935
 msgid "Select Developer"
 msgstr "选择开发商"
 
-#: services/js_i18n_strings.py:924
+#: services/js_i18n_strings.py:936
 msgid "Select Dimension"
 msgstr "选择维度"
 
-#: services/js_i18n_strings.py:925
+#: services/js_i18n_strings.py:937
 #: templates/_modals/select_filter_modal.html:15
 msgid "Select Filter"
 msgstr "选择筛选"
 
-#: services/js_i18n_strings.py:926
+#: services/js_i18n_strings.py:938
 msgid "Select Genre"
 msgstr "选择类型"
 
-#: services/js_i18n_strings.py:927
+#: services/js_i18n_strings.py:939
 msgid "Select Perspective"
 msgstr "选择视角"
 
-#: services/js_i18n_strings.py:928
+#: services/js_i18n_strings.py:940
 msgid "Select Play Mode"
 msgstr "选择游玩模式"
 
-#: services/js_i18n_strings.py:929
+#: services/js_i18n_strings.py:941
 msgid "Select Publisher"
 msgstr "选择发行商"
 
-#: services/js_i18n_strings.py:930
+#: services/js_i18n_strings.py:942
 msgid "Select Rating"
 msgstr "选择分级"
 
-#: services/js_i18n_strings.py:931
+#: services/js_i18n_strings.py:943
 msgid "Select Series"
 msgstr "选择系列"
 
-#: services/js_i18n_strings.py:932
+#: services/js_i18n_strings.py:944
 msgid "Select Source"
 msgstr "选择来源"
 
-#: services/js_i18n_strings.py:933
+#: services/js_i18n_strings.py:945
 #, python-brace-format
 msgid "Selected {count} games across all pages"
 msgstr "已跨所有页面选择 {count} 个游戏"
 
-#: services/js_i18n_strings.py:934
+#: services/js_i18n_strings.py:946
 #, python-brace-format
 msgid "Selected {count} unscraped games across all pages"
 msgstr "已选择所有页面中 {count} 个未抓取的游戏"
 
-#: services/js_i18n_strings.py:935
+#: services/js_i18n_strings.py:947
 msgid "Server restarted successfully!"
 msgstr "服务器重启成功！"
 
-#: services/js_i18n_strings.py:936
+#: services/js_i18n_strings.py:948
 msgid "Server stopped. You can close this tab."
 msgstr "服务器已停止。可以关闭此标签页。"
 
-#: services/js_i18n_strings.py:937
+#: services/js_i18n_strings.py:949
 msgid "Set for this game"
 msgstr "为此游戏设置"
 
-#: services/js_i18n_strings.py:938
+#: services/js_i18n_strings.py:950
 msgid "Set inside the emulator; RetroDB leaves it alone"
 msgstr "在模拟器内设置；RetroDB 不会更改"
 
-#: services/js_i18n_strings.py:939
+#: services/js_i18n_strings.py:951
 msgid "Set per system, in Settings > Emulators"
 msgstr "按系统设置，位于 设置 > 模拟器"
 
-#: services/js_i18n_strings.py:940 templates/_macros/nav_tabs.html:44
+#: services/js_i18n_strings.py:952 templates/_macros/nav_tabs.html:44
 #: templates/base.html:186 templates/rom_tools_hub.html:119
 #: templates/settings.html:5 templates/settings.html:12
 #: templates/settings_emulators.html:4
 msgid "Settings"
 msgstr "设置"
 
-#: services/js_i18n_strings.py:941
+#: services/js_i18n_strings.py:953
 msgid "Show keyboard shortcuts"
 msgstr "显示键盘快捷键"
 
-#: services/js_i18n_strings.py:942
+#: services/js_i18n_strings.py:954
 msgid "Showing Bonus Discs"
 msgstr "显示附赠光盘"
 
-#: services/js_i18n_strings.py:943 templates/game_detail.html:239
+#: services/js_i18n_strings.py:955 templates/game_detail.html:256
 msgid "Shows a black screen with a frame rate in the window title."
 msgstr "显示黑屏，窗口标题中显示帧率。"
 
-#: services/js_i18n_strings.py:944 templates/game_detail.html:238
+#: services/js_i18n_strings.py:956 templates/game_detail.html:255
 msgid "Shows an image but does not get past the menus."
 msgstr "能显示画面，但无法越过菜单。"
 
-#: services/js_i18n_strings.py:945
+#: services/js_i18n_strings.py:957
 msgid "Shutting down server..."
 msgstr "正在关闭服务器..."
 
-#: services/js_i18n_strings.py:946 templates/_modals/edit_modal.html:50
+#: services/js_i18n_strings.py:958 templates/_modals/edit_modal.html:50
 #: templates/base.html:1099
 msgid "Standalone"
 msgstr "独立版"
 
-#: services/js_i18n_strings.py:947
+#: services/js_i18n_strings.py:959
 msgid "Starting..."
 msgstr "正在启动……"
 
-#: services/js_i18n_strings.py:948
+#: services/js_i18n_strings.py:960
 msgid "Starting…"
 msgstr "正在启动…"
 
-#: services/js_i18n_strings.py:949
+#: services/js_i18n_strings.py:961
 msgid "Steam Imports"
 msgstr "Steam 导入"
 
-#: services/js_i18n_strings.py:950
+#: services/js_i18n_strings.py:962
 #, python-brace-format
 msgid "Stopped. Names suggested: {proposals}."
 msgstr "已停止。已建议名称：{proposals}。"
 
-#: services/js_i18n_strings.py:951
+#: services/js_i18n_strings.py:963
 #, python-brace-format
 msgid "Successfully updated {count} games"
 msgstr "已成功更新 {count} 个游戏"
 
-#: services/js_i18n_strings.py:952
+#: services/js_i18n_strings.py:964
 #, python-brace-format
 msgid "Suggested names waiting: {count}. Untick any you do not want, then accept."
 msgstr "待处理的建议名称：{count}。取消勾选你不想要的，然后接受。"
 
-#: services/js_i18n_strings.py:953
+#: services/js_i18n_strings.py:965
 msgid "Summary written."
 msgstr "摘要已撰写。"
 
-#: services/js_i18n_strings.py:954
+#: services/js_i18n_strings.py:966
 #, fuzzy
 msgid "Switched-on cheats apply the next time you press Play."
 msgstr "已保存。下次按下游玩时生效。"
 
-#: services/js_i18n_strings.py:955
+#: services/js_i18n_strings.py:967
 msgid "Sync In Progress"
 msgstr "同步进行中"
 
-#: services/js_i18n_strings.py:956 templates/achievements_system.html:105
+#: services/js_i18n_strings.py:968 templates/achievements_system.html:105
 msgid "Sync Progress"
 msgstr "同步进度"
 
-#: services/js_i18n_strings.py:957
+#: services/js_i18n_strings.py:969
 msgid "Sync Queued"
 msgstr "同步已加入队列"
 
-#: services/js_i18n_strings.py:958
+#: services/js_i18n_strings.py:970
 msgid "Sync complete! Refresh page to see updated progress."
 msgstr "同步完成！刷新页面以查看更新后的进度。"
 
-#: services/js_i18n_strings.py:959
+#: services/js_i18n_strings.py:971
 msgid "Sync failed"
 msgstr "同步失败"
 
-#: services/js_i18n_strings.py:960
+#: services/js_i18n_strings.py:972
 #, python-brace-format
 msgid "Sync: {system}"
 msgstr "同步：{system}"
 
-#: services/js_i18n_strings.py:961
+#: services/js_i18n_strings.py:973
 msgid "Syncing..."
 msgstr "正在同步……"
 
-#: services/js_i18n_strings.py:962
+#: services/js_i18n_strings.py:974
 #, python-brace-format
 msgid "Syncing: {processed} / {total}"
 msgstr "同步中：{processed} / {total}"
 
-#: services/js_i18n_strings.py:963
+#: services/js_i18n_strings.py:975 templates/_settings_tabs/_tab_bar.html:11
 #: templates/_settings_tabs/customization.html:299
 #: templates/achievement_game.html:228 templates/analytics.html:569
 #: templates/analytics.html:603 templates/compare_games.html:69
@@ -3485,13 +3553,13 @@ msgstr "同步中：{processed} / {total}"
 #: templates/dashboard.html:466 templates/dashboard.html:532
 #: templates/logs.html:722 templates/multi_disc_organizer.html:213
 #: templates/official_names_review.html:84 templates/reports.html:360
-#: templates/reports.html:435 templates/settings.html:41
-#: templates/steam_achievement_game.html:173 templates/versions_review.html:86
-#: templates/wishlist.html:66 templates/xbox_achievement_game.html:166
+#: templates/reports.html:435 templates/steam_achievement_game.html:173
+#: templates/versions_review.html:86 templates/wishlist.html:66
+#: templates/xbox_achievement_game.html:166
 msgid "System"
 msgstr "系统"
 
-#: services/js_i18n_strings.py:964
+#: services/js_i18n_strings.py:976
 #: templates/_settings_tabs/customization.html:153
 #: templates/_settings_tabs/customization.html:234
 #: templates/_settings_tabs/data.html:19 templates/achievements_system.html:49
@@ -3500,73 +3568,86 @@ msgstr "系统"
 msgid "Systems"
 msgstr "系统"
 
-#: services/js_i18n_strings.py:965
+#: services/js_i18n_strings.py:977
+#, fuzzy
+msgid "The 3D box could not be removed."
+msgstr "找不到请求的系统。"
+
+#: services/js_i18n_strings.py:979
 msgid "The cheats were not downloaded."
 msgstr ""
 
-#: services/js_i18n_strings.py:966
+#: services/js_i18n_strings.py:980
 #, fuzzy, python-brace-format
 msgid "The cheats were not downloaded: {error}"
 msgstr "下载失败：{error}"
 
-#: services/js_i18n_strings.py:967
+#: services/js_i18n_strings.py:981
 msgid "The core installed but the game still cannot start."
 msgstr "核心已安装，但游戏仍无法启动。"
 
-#: services/js_i18n_strings.py:968
+#: services/js_i18n_strings.py:982
 #, python-brace-format
 msgid "The download failed: {error}"
 msgstr "下载失败：{error}"
 
-#: services/js_i18n_strings.py:969
+#: services/js_i18n_strings.py:983
+msgid "The imported faces are deleted. Your Slipcase files are not touched."
+msgstr ""
+
+#: services/js_i18n_strings.py:984
 #, python-brace-format
 msgid "The run stopped: {error}. Names already suggested are kept."
 msgstr "任务已停止：{error}。已建议的名称会保留。"
 
-#: services/js_i18n_strings.py:970
+#: services/js_i18n_strings.py:985
 msgid "The switches go back to the new list's own settings."
 msgstr ""
 
-#: services/js_i18n_strings.py:971
+#: services/js_i18n_strings.py:986
 msgid "The update could not be started. See logs/update.log."
 msgstr "无法开始更新。请查看 logs/update.log。"
 
-#: services/js_i18n_strings.py:972
+#: services/js_i18n_strings.py:987
 msgid "The update is downloaded and checked."
 msgstr "更新已下载并通过校验。"
 
-#: services/js_i18n_strings.py:973
+#: services/js_i18n_strings.py:988
 #, python-brace-format
 msgid ""
 "The update to {to} did not work, so RetroDB went back to {from}. Reason: "
 "{reason}"
 msgstr "更新到 {to} 未成功，因此 RetroDB 已回到 {from}。原因：{reason}"
 
-#: services/js_i18n_strings.py:974
+#: services/js_i18n_strings.py:989
 msgid "This copy of RetroDB is a git checkout. Update it with git pull."
 msgstr "这份 RetroDB 是 git 检出副本。请用 git pull 更新。"
 
-#: services/js_i18n_strings.py:975
+#: services/js_i18n_strings.py:990
+msgid "This game already has 3D box faces. Replace them with the ones you picked?"
+msgstr ""
+
+#: services/js_i18n_strings.py:991
 msgid "This game is already running.  Kill the existing process and relaunch?"
 msgstr "此游戏已在运行。要结束现有进程并重新启动吗？"
 
-#: services/js_i18n_strings.py:976
+#: services/js_i18n_strings.py:992
 msgid "This name holds \"=\", which the emulator's settings cannot hold."
 msgstr ""
 
-#: services/js_i18n_strings.py:977
+#: services/js_i18n_strings.py:993
 msgid "This release has no download for this computer yet."
 msgstr "此版本暂时没有适用于这台电脑的下载。"
 
-#: services/js_i18n_strings.py:978
+#: services/js_i18n_strings.py:994
 msgid "This system is already being synced."
 msgstr "此系统正在同步中。"
 
-#: services/js_i18n_strings.py:979
+#: services/js_i18n_strings.py:995
 msgid "This update cannot be installed here."
 msgstr "此更新无法在这里安装。"
 
-#: services/js_i18n_strings.py:980
+#: services/js_i18n_strings.py:996
 msgid ""
 "This will clear ALL RetroAchievements game IDs and progress data from "
 "your database. You will need to run \"Refresh RetroAchievements\" again "
@@ -3575,101 +3656,101 @@ msgstr ""
 "这将从数据库中清除所有 RetroAchievements 游戏 ID 和进度数据。之后你需要再次运行“刷新 "
 "RetroAchievements”以重新扫描游戏。是否继续？"
 
-#: services/js_i18n_strings.py:981
+#: services/js_i18n_strings.py:997
 #, python-brace-format
 msgid ""
 "This will clear RetroAchievements game IDs and progress data for "
 "\"{system}\". Continue?"
 msgstr "这将清除“{system}”的 RetroAchievements 游戏 ID 和进度数据。是否继续？"
 
-#: services/js_i18n_strings.py:982
+#: services/js_i18n_strings.py:998
 #, python-brace-format
 msgid "This will remove \"{system}\" from the Achievements page. Continue?"
 msgstr "这将从成就页面移除“{system}”。是否继续？"
 
-#: services/js_i18n_strings.py:983
+#: services/js_i18n_strings.py:999
 msgid ""
 "This will remove ALL games imported via CLZ Games Import from the "
 "database. This cannot be undone. Continue?"
 msgstr "此操作将从数据库中移除所有通过 CLZ Games Import 导入的游戏。此操作无法撤销。是否继续？"
 
-#: services/js_i18n_strings.py:984
+#: services/js_i18n_strings.py:1000
 msgid ""
 "This will remove database entries for ROM files that no longer exist on "
 "disk. This cannot be undone. Continue?"
 msgstr "此操作将移除磁盘上已不存在的 ROM 文件对应的数据库条目。此操作无法撤销。是否继续？"
 
-#: services/js_i18n_strings.py:985
+#: services/js_i18n_strings.py:1001
 msgid ""
 "This will scan all games and update their RetroAchievements status. This "
 "may take several minutes for large collections. Continue?"
 msgstr "此操作将扫描所有游戏并更新其 RetroAchievements 状态。对于大型收藏，可能需要几分钟。是否继续？"
 
-#: services/js_i18n_strings.py:986
+#: services/js_i18n_strings.py:1002
 msgid ""
 "This will search for and download images for all controllers without "
 "images. Continue?"
 msgstr "此操作将为所有没有图片的手柄搜索并下载图片。是否继续？"
 
-#: services/js_i18n_strings.py:987
+#: services/js_i18n_strings.py:1003
 msgid ""
 "This will use your configured AI provider to generate history and top "
 "games for all systems. This may take several minutes and use API credits."
 " Continue?"
 msgstr "这将使用您配置的 AI 服务商为所有系统生成历史和热门游戏。此过程可能需要几分钟并消耗 API 额度。是否继续？"
 
-#: services/js_i18n_strings.py:988
+#: services/js_i18n_strings.py:1004
 msgid "Tick at least one name."
 msgstr "请至少勾选一个名称。"
 
-#: services/js_i18n_strings.py:989
+#: services/js_i18n_strings.py:1005
 msgid "Tick at least two games."
 msgstr "请至少勾选两个游戏。"
 
-#: services/js_i18n_strings.py:990 templates/logs.html:745
+#: services/js_i18n_strings.py:1006 templates/logs.html:745
 msgid "To"
 msgstr "到"
 
-#: services/js_i18n_strings.py:991
+#: services/js_i18n_strings.py:1007
 msgid "Try adjusting your search or filters"
 msgstr "尝试调整你的搜索或筛选条件"
 
-#: services/js_i18n_strings.py:992
+#: services/js_i18n_strings.py:1008
 msgid "USA"
 msgstr "美国"
 
-#: services/js_i18n_strings.py:993
+#: services/js_i18n_strings.py:1009
 msgid "Unexpected error"
 msgstr "意外错误"
 
-#: services/js_i18n_strings.py:994
+#: services/js_i18n_strings.py:1010
 msgid "Unhandled rejection"
 msgstr "未处理的拒绝"
 
-#: services/js_i18n_strings.py:995 templates/analytics.html:583
+#: services/js_i18n_strings.py:1011 templates/analytics.html:583
 #: templates/base.html:1199 templates/local_trophy_detail.html:220
 #: templates/local_trophy_detail.html:224
 msgid "Unknown"
 msgstr "未知"
 
-#: services/js_i18n_strings.py:996
+#: services/js_i18n_strings.py:1012
 msgid "Unknown error"
 msgstr "未知错误"
 
-#: services/js_i18n_strings.py:997
+#: services/js_i18n_strings.py:1013
 msgid "Unknown error occurred."
 msgstr "发生未知错误。"
 
-#: services/js_i18n_strings.py:998 templates/all_games.html:102
+#: services/js_i18n_strings.py:1014 templates/all_games.html:102
 #: templates/system_games.html:93 templates/wishlist.html:506
 msgid "Unscraped"
 msgstr "未抓取"
 
-#: services/js_i18n_strings.py:999
+#: services/js_i18n_strings.py:1015
 msgid "Update Failed"
 msgstr "更新失败"
 
-#: services/js_i18n_strings.py:1000
+#: services/js_i18n_strings.py:1016
 #, python-brace-format
 msgid ""
 "Update {count} game(s)?\n"
@@ -3680,286 +3761,286 @@ msgstr ""
 "\n"
 "字段：{fields}"
 
-#: services/js_i18n_strings.py:1001
+#: services/js_i18n_strings.py:1017
 #, python-brace-format
 msgid "Updated from {from} to {to}."
 msgstr "已从 {from} 更新到 {to}。"
 
-#: services/js_i18n_strings.py:1002 templates/museum_system.html:198
+#: services/js_i18n_strings.py:1018 templates/museum_system.html:198
 #: templates/museum_system.html:205
 msgid "Upload"
 msgstr "上传"
 
-#: services/js_i18n_strings.py:1003
+#: services/js_i18n_strings.py:1019
 msgid "Upload Controller Image"
 msgstr "上传手柄图片"
 
-#: services/js_i18n_strings.py:1004
+#: services/js_i18n_strings.py:1020
 msgid "Upload failed"
 msgstr "上传失败"
 
-#: services/js_i18n_strings.py:1005
+#: services/js_i18n_strings.py:1021
 msgid "Upload replacement image"
 msgstr "上传替换图片"
 
-#: services/js_i18n_strings.py:1006
+#: services/js_i18n_strings.py:1022
 msgid "Uploading & removing background…"
 msgstr "正在上传并移除背景…"
 
-#: services/js_i18n_strings.py:1007
+#: services/js_i18n_strings.py:1023
 msgid "Uploading…"
 msgstr "正在上传…"
 
-#: services/js_i18n_strings.py:1008
+#: services/js_i18n_strings.py:1024
 msgid "Use another cheat list?"
 msgstr ""
 
-#: services/js_i18n_strings.py:1009
+#: services/js_i18n_strings.py:1025
 msgid "Use the system setting"
 msgstr "使用系统设置"
 
-#: services/js_i18n_strings.py:1010
+#: services/js_i18n_strings.py:1026
 #, python-brace-format
 msgid ""
 "Used for every {system} game unless the game sets its own. Applied when "
 "you press Play."
 msgstr "除非游戏自行设置，否则用于所有 {system} 游戏。按下游玩时生效。"
 
-#: services/js_i18n_strings.py:1011
+#: services/js_i18n_strings.py:1027
 #, python-brace-format
 msgid "User Score ({count} ratings)"
 msgstr "用户评分（{count} 个评分）"
 
-#: services/js_i18n_strings.py:1012
+#: services/js_i18n_strings.py:1028
 msgid "Version unlinked."
 msgstr "已取消关联版本。"
 
-#: services/js_i18n_strings.py:1013
+#: services/js_i18n_strings.py:1029
 #, python-brace-format
 msgid "Version {version} is available."
 msgstr "版本 {version} 已可用。"
 
-#: services/js_i18n_strings.py:1014
+#: services/js_i18n_strings.py:1030
 msgid "Versions linked."
 msgstr "已关联版本。"
 
-#: services/js_i18n_strings.py:1015
+#: services/js_i18n_strings.py:1031
 #, python-brace-format
 msgid "What is new in {version}"
 msgstr "{version} 的新内容"
 
-#: services/js_i18n_strings.py:1016
+#: services/js_i18n_strings.py:1032
 #, python-brace-format
 msgid "What is new in {version} ({date})"
 msgstr "{version} 的新内容（{date}）"
 
-#: services/js_i18n_strings.py:1017
+#: services/js_i18n_strings.py:1033
 msgid "Will change?"
 msgstr "会更改？"
 
-#: services/js_i18n_strings.py:1018
+#: services/js_i18n_strings.py:1034
 msgid "Works"
 msgstr "正常"
 
-#: services/js_i18n_strings.py:1019
+#: services/js_i18n_strings.py:1035
 msgid "World"
 msgstr "全球"
 
-#: services/js_i18n_strings.py:1020 templates/game_detail.html:816
+#: services/js_i18n_strings.py:1036 templates/game_detail.html:818
 msgid "Write again with AI"
 msgstr "用 AI 重新撰写"
 
-#: services/js_i18n_strings.py:1021
+#: services/js_i18n_strings.py:1037
 msgid "Xbox Imports"
 msgstr "Xbox 导入"
 
-#: services/js_i18n_strings.py:1022 templates/_bulk_edit_modal.html:170
-#: templates/_modals/edit_modal.html:143 templates/game_detail.html:655
-#: templates/game_detail.html:712 templates/game_detail.html:795
+#: services/js_i18n_strings.py:1038 templates/_bulk_edit_modal.html:170
+#: templates/_modals/edit_modal.html:143 templates/game_detail.html:672
+#: templates/game_detail.html:729 templates/game_detail.html:797
 msgid "Yes"
 msgstr "是"
 
-#: services/js_i18n_strings.py:1023
+#: services/js_i18n_strings.py:1039
 msgid "You have the latest version."
 msgstr "你使用的是最新版本。"
 
-#: services/js_i18n_strings.py:1024
+#: services/js_i18n_strings.py:1040
 #, python-brace-format
 msgid ""
 "Your bulk scrape has been queued (position {position}). It will start "
 "automatically when the current scrape finishes."
 msgstr "您的批量抓取已加入队列（位置 {position}）。当前抓取完成后将自动开始。"
 
-#: services/js_i18n_strings.py:1025
+#: services/js_i18n_strings.py:1041
 msgid "found"
 msgstr "已找到"
 
-#: services/js_i18n_strings.py:1026
+#: services/js_i18n_strings.py:1042
 msgid "in queue"
 msgstr "在队列中"
 
-#: services/js_i18n_strings.py:1027
+#: services/js_i18n_strings.py:1043
 msgid "system"
 msgstr "系统"
 
-#: services/js_i18n_strings.py:1028
+#: services/js_i18n_strings.py:1044
 msgid "unknown"
 msgstr "未知"
 
-#: services/js_i18n_strings.py:1029
+#: services/js_i18n_strings.py:1045
 #, python-brace-format
 msgid "{confidence}% match"
 msgstr "匹配度 {confidence}%"
 
-#: services/js_i18n_strings.py:1030
+#: services/js_i18n_strings.py:1046
 #, python-brace-format
 msgid "{count} Achievements"
 msgstr "{count} 项成就"
 
-#: services/js_i18n_strings.py:1031
+#: services/js_i18n_strings.py:1047
 #, python-brace-format
 msgid "{count} regional versions"
 msgstr "{count} 个地区版本"
 
-#: services/js_i18n_strings.py:1032
+#: services/js_i18n_strings.py:1048
 #, python-brace-format
 msgid "{count} sold"
 msgstr "售出 {count} 份"
 
-#: services/js_i18n_strings.py:1033
+#: services/js_i18n_strings.py:1049
 #, python-brace-format
 msgid "{count} suggested groups. Untick any game that does not belong, then link."
 msgstr "{count} 个建议分组。取消勾选不属于该组的游戏，然后关联。"
 
-#: services/js_i18n_strings.py:1034
+#: services/js_i18n_strings.py:1050
 #, python-brace-format
 msgid "{fetched} fetched, {skipped} skipped, {failed} failed"
 msgstr "已获取 {fetched} 项，已跳过 {skipped} 项，失败 {failed} 项"
 
-#: services/js_i18n_strings.py:1035
+#: services/js_i18n_strings.py:1051
 #, python-brace-format
 msgid "{job} Queued (#{position})"
 msgstr "{job} 已排队（第 {position} 位）"
 
-#: services/js_i18n_strings.py:1036
+#: services/js_i18n_strings.py:1052
 #, python-brace-format
 msgid "{job} cancelled"
 msgstr "{job} 已取消"
 
-#: services/js_i18n_strings.py:1037
+#: services/js_i18n_strings.py:1053
 #, python-brace-format
 msgid "{job} completed ({n} processed)"
 msgstr "{job} 已完成（已处理 {n} 个）"
 
-#: services/js_i18n_strings.py:1038
+#: services/js_i18n_strings.py:1054
 #, python-brace-format
 msgid "{job} failed: {error}"
 msgstr "{job} 失败：{error}"
 
-#: services/js_i18n_strings.py:1039
+#: services/js_i18n_strings.py:1055
 #, python-brace-format
 msgid "{job}: {current} of {total} ({percent}%)"
 msgstr "{job}：{total}个中的{current}个 ({percent}%)"
 
-#: services/js_i18n_strings.py:1040
+#: services/js_i18n_strings.py:1056
 #, python-brace-format
 msgid "{n} Player(s)"
 msgstr "{n} 名玩家"
 
-#: services/js_i18n_strings.py:1041
+#: services/js_i18n_strings.py:1057
 #, python-brace-format
 msgid "{n} cores"
 msgstr "{n} 个核心"
 
-#: services/js_i18n_strings.py:1042
+#: services/js_i18n_strings.py:1058
 #, python-brace-format
 msgid "{n} games"
 msgstr "{n} 个游戏"
 
-#: services/js_i18n_strings.py:1043
+#: services/js_i18n_strings.py:1059
 #, python-brace-format
 msgid "{n} lines"
 msgstr "{n} 行"
 
-#: services/js_i18n_strings.py:1044
+#: services/js_i18n_strings.py:1060
 #, python-brace-format
 msgid "{n} results"
 msgstr "{n} 个结果"
 
-#: services/js_i18n_strings.py:1045
+#: services/js_i18n_strings.py:1061
 #, python-brace-format
 msgid "{points} pts"
 msgstr "{points} 分"
 
-#: services/js_i18n_strings.py:1046
+#: services/js_i18n_strings.py:1062
 #, python-brace-format
 msgid "{system} has been added to the sync queue."
 msgstr "{system} 已加入同步队列。"
 
-#: services/js_i18n_strings.py:1047
+#: services/js_i18n_strings.py:1063
 #, python-brace-format
 msgid "{system} · {file} · old name from: {region}"
 msgstr "{system} · {file} · 旧名称来自：{region}"
 
-#: services/js_i18n_strings.py:1048
+#: services/js_i18n_strings.py:1064
 #, python-brace-format
 msgid "{title} ({count} versions)"
 msgstr "{title}（{count} 个版本）"
 
-#: services/js_i18n_strings.py:1049
+#: services/js_i18n_strings.py:1065
 msgid "⏳ Searching..."
 msgstr "⏳ 正在搜索……"
 
-#: services/js_i18n_strings.py:1050
+#: services/js_i18n_strings.py:1066
 #, python-brace-format
 msgid "⚠️ Cancel {job}"
 msgstr "⚠️ 取消 {job}"
 
-#: services/js_i18n_strings.py:1051
+#: services/js_i18n_strings.py:1067
 msgid "⚠️ Confirm"
 msgstr "⚠️ 确认"
 
-#: services/js_i18n_strings.py:1052
+#: services/js_i18n_strings.py:1068
 msgid "⚡ via"
 msgstr "⚡ 通过"
 
-#: services/js_i18n_strings.py:1053
+#: services/js_i18n_strings.py:1069
 msgid "✕ Clear"
 msgstr "✕ 清除"
 
-#: services/js_i18n_strings.py:1054
+#: services/js_i18n_strings.py:1070
 msgid "🏆 Refresh RetroAchievements"
 msgstr "🏆 刷新 RetroAchievements"
 
-#: services/js_i18n_strings.py:1055
+#: services/js_i18n_strings.py:1071
 msgid "📋 Clear CLZ Imports"
 msgstr "📋 清除 CLZ 导入"
 
-#: services/js_i18n_strings.py:1056
+#: services/js_i18n_strings.py:1072
 msgid "🔄 Restart Server"
 msgstr "🔄 重启服务器"
 
-#: services/js_i18n_strings.py:1057
+#: services/js_i18n_strings.py:1073
 msgid "🔍 Lookup HLTB"
 msgstr "🔍 查询 HLTB"
 
-#: services/js_i18n_strings.py:1058
+#: services/js_i18n_strings.py:1074
 msgid "🗑️ Clear HLTB Data"
 msgstr "🗑️ 清除 HLTB 数据"
 
-#: services/js_i18n_strings.py:1059
+#: services/js_i18n_strings.py:1075
 msgid "🗑️ Clear RetroAchievements Data"
 msgstr "🗑️ 清除 RetroAchievements 数据"
 
-#: services/js_i18n_strings.py:1060
+#: services/js_i18n_strings.py:1076
 msgid "🗑️ Reset Metadata"
 msgstr "🗑️ 重置元数据"
 
-#: services/js_i18n_strings.py:1061
+#: services/js_i18n_strings.py:1077
 msgid "🛑 Shut Down Server"
 msgstr "🛑 关闭服务器"
 
-#: services/js_i18n_strings.py:1062
+#: services/js_i18n_strings.py:1078
 msgid "🧹 Clean Missing ROMs"
 msgstr "🧹 清理缺失的 ROM"
 
@@ -4013,7 +4094,7 @@ msgstr "只有从“不更改”改动过的字段才会被更新。"
 
 #: templates/_bulk_edit_modal.html:26 templates/achievements_system.html:171
 #: templates/analytics.html:1664 templates/base.html:1011
-#: templates/dashboard.html:500 templates/game_detail.html:254
+#: templates/dashboard.html:500 templates/game_detail.html:271
 #: templates/steam_achievements.html:78 templates/xbox_achievements.html:78
 msgid "Not Started"
 msgstr "未开始"
@@ -4024,7 +4105,7 @@ msgstr "未开始"
 #: templates/analytics.html:481 templates/analytics.html:2428
 #: templates/base.html:940 templates/base.html:1149
 #: templates/compare_games.html:73 templates/dashboard.html:390
-#: templates/game_detail.html:300 templates/local_trophy_detail.html:99
+#: templates/game_detail.html:317 templates/local_trophy_detail.html:99
 #: templates/psn_trophy_detail.html:94 templates/psn_trophy_detail.html:258
 #: templates/steam_achievement_game.html:178 templates/system_games.html:63
 #: templates/xbox_achievement_game.html:171
@@ -4042,8 +4123,8 @@ msgstr "追加"
 #: templates/achievement_game.html:81 templates/all_games.html:78
 #: templates/analytics.html:483 templates/analytics.html:2428
 #: templates/base.html:939 templates/base.html:1135
-#: templates/compare_games.html:71 templates/game_detail.html:276
-#: templates/game_detail.html:773 templates/local_trophy_detail.html:87
+#: templates/compare_games.html:71 templates/game_detail.html:293
+#: templates/game_detail.html:775 templates/local_trophy_detail.html:87
 #: templates/psn_trophy_detail.html:82 templates/steam_achievement_game.html:78
 #: templates/system_games.html:69 templates/xbox_achievement_game.html:67
 msgid "Publisher"
@@ -4059,7 +4140,7 @@ msgstr "不更改"
 #: templates/achievement_game.html:87 templates/all_games.html:81
 #: templates/analytics.html:482 templates/analytics.html:2428
 #: templates/base.html:938 templates/base.html:1139
-#: templates/compare_games.html:70 templates/game_detail.html:288
+#: templates/compare_games.html:70 templates/game_detail.html:305
 #: templates/local_trophy_detail.html:93 templates/psn_trophy_detail.html:88
 #: templates/steam_achievement_game.html:84 templates/system_games.html:72
 #: templates/xbox_achievement_game.html:73
@@ -4118,13 +4199,13 @@ msgstr "PEGI 18"
 #: templates/_bulk_edit_modal.html:106 templates/_modals/edit_modal.html:85
 #: templates/analytics.html:492 templates/analytics.html:2428
 #: templates/base.html:1126 templates/compare_games.html:75
-#: templates/game_detail.html:770 templates/reports.html:444
+#: templates/game_detail.html:772 templates/reports.html:444
 msgid "Region"
 msgstr "地区"
 
 #: templates/_bulk_edit_modal.html:112 templates/_modals/edit_modal.html:132
 #: templates/all_games.html:84 templates/base.html:1165
-#: templates/compare_games.html:76 templates/game_detail.html:215
+#: templates/compare_games.html:76 templates/game_detail.html:232
 #: templates/system_games.html:75
 msgid "Players"
 msgstr "玩家人数"
@@ -4192,7 +4273,7 @@ msgstr "加载更多"
 
 #: templates/achievement_game.html:17 templates/achievement_game.html:37
 #: templates/achievements_system.html:15 templates/game_detail.html:21
-#: templates/game_detail.html:342 templates/game_detail.html:778
+#: templates/game_detail.html:359 templates/game_detail.html:780
 #: templates/systems.html:43
 msgid "RetroAchievements"
 msgstr "RetroAchievements"
@@ -4208,7 +4289,7 @@ msgid "Refresh RA"
 msgstr "刷新 RA"
 
 #: templates/achievement_game.html:93 templates/all_games.html:75
-#: templates/game_detail.html:312 templates/system_games.html:66
+#: templates/game_detail.html:329 templates/system_games.html:66
 msgid "Series"
 msgstr "系列"
 
@@ -4235,7 +4316,7 @@ msgstr "无法加载成就数据"
 msgid "Check your RetroAchievements credentials in Settings."
 msgstr "请在设置中检查你的 RetroAchievements 凭据。"
 
-#: templates/achievement_game.html:146 templates/game_detail.html:532
+#: templates/achievement_game.html:146 templates/game_detail.html:549
 #: templates/local_trophy_detail.html:158 templates/psn_trophy_detail.html:149
 #: templates/steam_achievement_game.html:123
 #: templates/xbox_achievement_game.html:116
@@ -4243,7 +4324,7 @@ msgid "How Long to Beat"
 msgstr "通关时长"
 
 #: templates/achievement_game.html:153 templates/base.html:1024
-#: templates/game_detail.html:539 templates/psn_trophy_detail.html:157
+#: templates/game_detail.html:556 templates/psn_trophy_detail.html:157
 #: templates/psn_trophy_detail.html:317
 #: templates/steam_achievement_game.html:126
 #: templates/xbox_achievement_game.html:119
@@ -4251,7 +4332,7 @@ msgid "Search game title..."
 msgstr "搜索游戏标题…"
 
 #: templates/achievement_game.html:156 templates/base.html:1027
-#: templates/game_detail.html:542 templates/local_trophy_detail.html:193
+#: templates/game_detail.html:559 templates/local_trophy_detail.html:193
 #: templates/psn_trophy_detail.html:160
 #: templates/steam_achievement_game.html:127
 #: templates/xbox_achievement_game.html:120
@@ -4260,9 +4341,9 @@ msgstr "查询 HLTB"
 
 #: templates/_settings_tabs/account.html:73 templates/achievement_game.html:177
 #: templates/achievement_game.html:253 templates/base.html:1055
-#: templates/game_detail.html:563 templates/local_trophy_detail.html:223
+#: templates/game_detail.html:580 templates/local_trophy_detail.html:223
 #: templates/psn_trophy_detail.html:181 templates/psn_trophy_detail.html:270
-#: templates/settings_emulators.html:36 templates/settings_emulators.html:209
+#: templates/settings_emulators.html:39 templates/settings_emulators.html:212
 #: templates/steam_achievement_game.html:137
 #: templates/xbox_achievement_game.html:130
 msgid "Save"
@@ -4270,7 +4351,7 @@ msgstr "保存"
 
 #: templates/achievement_game.html:217 templates/all_games.html:108
 #: templates/base.html:1068 templates/duplicate_finder.html:301
-#: templates/game_detail.html:115 templates/game_detail.html:603
+#: templates/game_detail.html:115 templates/game_detail.html:620
 #: templates/local_trophy_detail.html:185 templates/psn_trophy_detail.html:214
 #: templates/reports.html:277 templates/screenshot_dedup.html:325
 #: templates/steam_achievement_game.html:163 templates/system_games.html:99
@@ -4278,7 +4359,7 @@ msgstr "保存"
 msgid "Clear"
 msgstr "清除"
 
-#: templates/achievement_game.html:225 templates/game_detail.html:611
+#: templates/achievement_game.html:225 templates/game_detail.html:628
 #: templates/local_trophy_detail.html:203 templates/psn_trophy_detail.html:234
 #: templates/steam_achievement_game.html:170
 #: templates/xbox_achievement_game.html:163
@@ -4578,8 +4659,8 @@ msgstr "当前筛选条件"
 msgid "Sort by"
 msgstr "排序方式"
 
-#: templates/all_games.html:154 templates/settings_emulators.html:144
-#: templates/settings_emulators.html:173 templates/system_games.html:145
+#: templates/all_games.html:154 templates/settings_emulators.html:147
+#: templates/settings_emulators.html:176 templates/system_games.html:145
 msgid "Name"
 msgstr "名称"
 
@@ -4646,7 +4727,7 @@ msgstr "全选"
 msgid "Select Unscraped"
 msgstr "选择未抓取的"
 
-#: templates/all_games.html:204 templates/game_detail.html:844
+#: templates/all_games.html:204 templates/game_detail.html:864
 #: templates/system_games.html:184
 msgid "Full Re-scrape"
 msgstr "完整重新抓取"
@@ -4655,7 +4736,7 @@ msgstr "完整重新抓取"
 msgid "Toggle between full re-scrape and fill missing mode"
 msgstr "在完整重新抓取与填补缺失模式之间切换"
 
-#: templates/all_games.html:209 templates/game_detail.html:844
+#: templates/all_games.html:209 templates/game_detail.html:864
 #: templates/system_games.html:189
 msgid "Fill Missing"
 msgstr "填充缺失项"
@@ -4960,7 +5041,7 @@ msgstr "字段完整度"
 #: templates/_settings_tabs/customization.html:259 templates/analytics.html:479
 #: templates/analytics.html:2428 templates/base.html:266
 #: templates/base.html:1353 templates/compare_games.html:97
-#: templates/settings_emulators.html:192
+#: templates/settings_emulators.html:195
 msgid "Description"
 msgstr "简介"
 
@@ -4986,7 +5067,7 @@ msgid "Fanart"
 msgstr "同人图"
 
 #: templates/analytics.html:487 templates/analytics.html:2428
-#: templates/game_detail.html:485
+#: templates/game_detail.html:502
 msgid "Video"
 msgstr "视频"
 
@@ -5242,7 +5323,7 @@ msgid "Date & Time"
 msgstr "日期与时间"
 
 #: templates/_settings_tabs/customization.html:300
-#: templates/archive_scanner.html:723 templates/settings_emulators.html:148
+#: templates/archive_scanner.html:723 templates/settings_emulators.html:151
 msgid "Type"
 msgstr "类型"
 
@@ -5356,9 +5437,9 @@ msgstr "登录"
 msgid "Dashboard"
 msgstr "仪表盘"
 
+#: templates/_settings_tabs/_tab_bar.html:7
 #: templates/_settings_tabs/customization.html:8 templates/base.html:129
-#: templates/game_detail.html:17 templates/settings.html:25
-#: templates/setup.html:19
+#: templates/game_detail.html:17 templates/setup.html:19
 msgid "Library"
 msgstr "游戏库"
 
@@ -5507,11 +5588,11 @@ msgstr "关闭游戏详情"
 msgid "Loading game details..."
 msgstr "正在加载游戏详情…"
 
-#: templates/base.html:942 templates/game_detail.html:318
+#: templates/base.html:942 templates/game_detail.html:335
 msgid "Release dates"
 msgstr "发行日期"
 
-#: templates/base.html:954 templates/game_detail.html:489
+#: templates/base.html:954 templates/game_detail.html:506
 msgid "Your browser does not support the video tag."
 msgstr "你的浏览器不支持 video 标签。"
 
@@ -5604,7 +5685,7 @@ msgstr "无游玩时长数据"
 #: templates/_modals/edit_modal.html:28 templates/_modals/filter_modal.html:13
 #: templates/base.html:1078 templates/dashboard.html:329
 #: templates/dashboard.html:388 templates/dashboard.html:465
-#: templates/dashboard.html:531 templates/game_detail.html:771
+#: templates/dashboard.html:531 templates/game_detail.html:773
 msgid "Title"
 msgstr "标题"
 
@@ -5633,7 +5714,7 @@ msgid "e.g., Final Fantasy, Crash Bandicoot"
 msgstr "例如：Final Fantasy、Crash Bandicoot"
 
 #: templates/_modals/edit_modal.html:56 templates/base.html:1104
-#: templates/compare_games.html:96 templates/game_detail.html:517
+#: templates/compare_games.html:96 templates/game_detail.html:534
 msgid "Similar Games"
 msgstr "相似游戏"
 
@@ -5956,7 +6037,7 @@ msgid "Source Folder"
 msgstr "源文件夹"
 
 #: templates/chd_converter.html:92 templates/chd_verify.html:108
-#: templates/dashboard.html:259 templates/settings_emulators.html:125
+#: templates/dashboard.html:259 templates/settings_emulators.html:128
 msgid "Scan"
 msgstr "扫描"
 
@@ -6691,7 +6772,7 @@ msgstr "地区版本"
 msgid "Versions:"
 msgstr "版本："
 
-#: templates/game_detail.html:91 templates/game_detail.html:785
+#: templates/game_detail.html:91 templates/game_detail.html:787
 msgid "Unknown region"
 msgstr "未知地区"
 
@@ -6707,60 +6788,70 @@ msgstr "键盘游戏：按 Scroll Lock 使用 RetroArch 快捷键"
 msgid "View Manual (PDF)"
 msgstr "查看说明书（PDF）"
 
-#: templates/game_detail.html:132
+#: templates/game_detail.html:137
+#, fuzzy
+msgid "Import 3D box"
+msgstr "模拟器文件夹"
+
+#: templates/game_detail.html:141
 msgid "Delete game from database"
 msgstr "从数据库删除游戏"
 
-#: templates/_settings_tabs/account.html:320 templates/game_detail.html:134
-#: templates/logs.html:735 templates/settings.html:70
+#: templates/_settings_tabs/account.html:320 templates/game_detail.html:143
+#: templates/logs.html:735 templates/settings.html:45
 #: templates/wishlist.html:642
 msgid "Delete"
 msgstr "删除"
 
-#: templates/game_detail.html:168 templates/game_detail.html:180
+#: templates/game_detail.html:177 templates/game_detail.html:189
 msgid "Click to zoom"
 msgstr "点击放大"
 
-#: templates/game_detail.html:185
+#: templates/game_detail.html:194
 msgid "Switch between 2D and 3D boxart"
 msgstr "在 2D 和 3D 封面之间切换"
 
-#: templates/game_detail.html:204
+#: templates/game_detail.html:212
+#, fuzzy
+msgid "3D box imported:"
+msgstr "Xbox 导入"
+
+#: templates/game_detail.html:221
 msgid ""
 "Sharper images for this game are still being made. They'll appear on "
 "their own."
 msgstr "正在为此游戏生成更清晰的图片。完成后会自动显示。"
 
-#: templates/game_detail.html:215
+#: templates/game_detail.html:232
 msgid "Player"
 msgstr "玩家"
 
-#: templates/game_detail.html:220
+#: templates/game_detail.html:237
 #, python-format
 msgid "Critic Score (%(count)s reviews)"
 msgstr "媒体评分（%(count)s 条评论）"
 
-#: templates/game_detail.html:225
+#: templates/game_detail.html:242
 #, python-format
 msgid "User Score (%(count)s ratings)"
 msgstr "用户评分（%(count)s 条评价）"
 
-#: templates/game_detail.html:230
+#: templates/game_detail.html:247
 #, python-format
 msgid "Copies sold on %(system)s, from published sales figures"
 msgstr "在 %(system)s 上的销量，来自公开的销售数据"
 
-#: templates/game_detail.html:231
+#: templates/game_detail.html:248
 #, python-format
 msgid "%(count)s sold"
 msgstr "售出 %(count)s 份"
 
-#: templates/game_detail.html:242
+#: templates/game_detail.html:259
 #, python-format
 msgid "Last tested %(date)s."
 msgstr "最近测试于 %(date)s。"
 
-#: templates/game_detail.html:246
+#: templates/game_detail.html:263
 msgid ""
 "RetroDB reads PS3 compatibility from your RPCS3. In RPCS3, choose Manage "
 "> Databases > Download Compatibility Database."
@@ -6768,272 +6859,272 @@ msgstr ""
 "RetroDB 从你的 RPCS3 读取 PS3 兼容性。请在 RPCS3 中选择 Manage > Databases > Download "
 "Compatibility Database。"
 
-#: templates/game_detail.html:247
+#: templates/game_detail.html:264
 msgid "RPCS3: no compatibility list"
 msgstr "RPCS3：没有兼容性列表"
 
-#: templates/game_detail.html:268
+#: templates/game_detail.html:285
 msgid "No description available. Click \"Scrape\" to fetch metadata."
 msgstr "暂无描述。点击“抓取”以获取元数据。"
 
-#: templates/game_detail.html:350
+#: templates/game_detail.html:367
 msgid "View on RetroAchievements.org"
 msgstr "在 RetroAchievements.org 上查看"
 
-#: templates/game_detail.html:352
+#: templates/game_detail.html:369
 msgid "RA Site"
 msgstr "RA 网站"
 
-#: templates/game_detail.html:364 templates/steam_achievement_game.html:17
+#: templates/game_detail.html:381 templates/steam_achievement_game.html:17
 #: templates/steam_achievements.html:7 templates/steam_achievements.html:15
 #: templates/steam_achievements.html:21
 msgid "Steam Achievements"
 msgstr "Steam 成就"
 
-#: templates/game_detail.html:380 templates/xbox_achievement_game.html:17
+#: templates/game_detail.html:397 templates/xbox_achievement_game.html:17
 #: templates/xbox_achievements.html:7 templates/xbox_achievements.html:15
 #: templates/xbox_achievements.html:21
 msgid "Xbox Achievements"
 msgstr "Xbox 成就"
 
-#: templates/game_detail.html:395 templates/psn_trophies.html:6
+#: templates/game_detail.html:412 templates/psn_trophies.html:6
 #: templates/psn_trophies.html:15 templates/psn_trophy_detail.html:17
 msgid "PSN Trophies"
 msgstr "PSN 奖杯"
 
-#: templates/game_detail.html:420 templates/local_trophy_detail.html:16
+#: templates/game_detail.html:437 templates/local_trophy_detail.html:16
 msgid "RPCS3 Trophies"
 msgstr "RPCS3 奖杯"
 
-#: templates/game_detail.html:453
+#: templates/game_detail.html:470
 msgid "(cross-mapped)"
 msgstr "（交叉映射）"
 
-#: templates/game_detail.html:466
+#: templates/game_detail.html:483
 #, python-format
 msgid "Screenshots (%(count)s)"
 msgstr "截图（%(count)s）"
 
-#: templates/game_detail.html:468
+#: templates/game_detail.html:485
 msgid "Previous screenshots"
 msgstr "上一批截图"
 
-#: templates/game_detail.html:474
+#: templates/game_detail.html:491
 msgid "Delete screenshot"
 msgstr "删除截图"
 
-#: templates/game_detail.html:478
+#: templates/game_detail.html:495
 msgid "Next screenshots"
 msgstr "下一批截图"
 
-#: templates/game_detail.html:497
+#: templates/game_detail.html:514
 msgid "Also Known As"
 msgstr "又名"
 
-#: templates/game_detail.html:501
+#: templates/game_detail.html:518
 #, python-format
 msgid "Source: %(source)s"
 msgstr "来源：%(source)s"
 
-#: templates/game_detail.html:526
+#: templates/game_detail.html:543
 msgid "Loading recommendations..."
 msgstr "正在加载推荐…"
 
-#: templates/game_detail.html:574
+#: templates/game_detail.html:591
 #, python-format
 msgid "%(pct)s%% match"
 msgstr "匹配度 %(pct)s%%"
 
-#: templates/game_detail.html:615
+#: templates/game_detail.html:632
 msgid "Source:"
 msgstr "来源："
 
-#: templates/game_detail.html:618
+#: templates/game_detail.html:635
 msgid "CLZ Games Import (No ROM file)"
 msgstr "CLZ 游戏导入（无 ROM 文件）"
 
-#: templates/game_detail.html:620
+#: templates/game_detail.html:637
 msgid "Steam Import (No ROM file)"
 msgstr "Steam 导入（无 ROM 文件）"
 
-#: templates/game_detail.html:622
+#: templates/game_detail.html:639
 msgid "Xbox Import (No ROM file)"
 msgstr "Xbox 导入（无 ROM 文件）"
 
-#: templates/game_detail.html:624
+#: templates/game_detail.html:641
 msgid "PSN Import (No ROM file)"
 msgstr "PSN 导入（无 ROM 文件）"
 
-#: templates/game_detail.html:630
+#: templates/game_detail.html:647
 msgid "Original Title:"
 msgstr "原始标题："
 
-#: templates/game_detail.html:636
+#: templates/game_detail.html:653
 msgid "File:"
 msgstr "文件："
 
-#: templates/game_detail.html:638
+#: templates/game_detail.html:655
 msgid "Rename ROM file"
 msgstr "重命名 ROM 文件"
 
-#: templates/game_detail.html:641
+#: templates/game_detail.html:658
 msgid "Path:"
 msgstr "路径："
 
-#: templates/game_detail.html:647
+#: templates/game_detail.html:664
 msgid "Edition:"
 msgstr "版本："
 
-#: templates/game_detail.html:654
+#: templates/game_detail.html:671
 msgid "Exclusive:"
 msgstr "独占："
 
-#: templates/game_detail.html:657
+#: templates/game_detail.html:674
 msgid "Also On:"
 msgstr "同样支持："
 
-#: templates/game_detail.html:664
+#: templates/game_detail.html:681
 msgid "Modes:"
 msgstr "模式："
 
-#: templates/game_detail.html:670
+#: templates/game_detail.html:687
 msgid "Players:"
 msgstr "玩家人数："
 
-#: templates/game_detail.html:676
+#: templates/game_detail.html:693
 msgid "Campaign:"
 msgstr "战役："
 
-#: templates/game_detail.html:682
+#: templates/game_detail.html:699
 msgid "Structure:"
 msgstr "结构："
 
-#: templates/game_detail.html:688
+#: templates/game_detail.html:705
 msgid "Perspective:"
 msgstr "视角："
 
-#: templates/game_detail.html:694
+#: templates/game_detail.html:711
 msgid "Dimension:"
 msgstr "维度："
 
-#: templates/game_detail.html:700
+#: templates/game_detail.html:717
 msgid "Save:"
 msgstr "保存："
 
-#: templates/game_detail.html:706
+#: templates/game_detail.html:723
 msgid "Input:"
 msgstr "输入："
 
-#: templates/game_detail.html:711
+#: templates/game_detail.html:728
 msgid "Scraped:"
 msgstr "已抓取："
 
-#: templates/game_detail.html:720
+#: templates/game_detail.html:737
 msgid "Bonus Content"
 msgstr "附赠内容"
 
-#: templates/game_detail.html:739
+#: templates/game_detail.html:756
 msgid "Emulator settings"
 msgstr "模拟器设置"
 
-#: templates/game_detail.html:748 templates/settings_emulators.html:92
-#, fuzzy
-msgid "Cheats"
-msgstr "图表"
-
-#: templates/game_detail.html:751
-#, fuzzy
-msgid "Cheat list"
-msgstr "图表"
-
-#: templates/game_detail.html:754
-#, fuzzy
-msgid "Find a cheat"
-msgstr "压缩包路径无效"
-
-#: templates/_macros/nav_tabs.html:40 templates/game_detail.html:764
+#: templates/_macros/nav_tabs.html:40 templates/game_detail.html:766
 #: templates/rom_tools_hub.html:193 templates/versions_review.html:5
 #: templates/versions_review.html:80
 msgid "Regional Versions"
 msgstr "地区版本"
 
-#: templates/game_detail.html:772 templates/museum_system.html:100
+#: templates/game_detail.html:774 templates/museum_system.html:100
 msgid "Released"
 msgstr "发行于"
 
-#: templates/game_detail.html:774
+#: templates/game_detail.html:776
 msgid "File size"
 msgstr "文件大小"
 
-#: templates/game_detail.html:775
+#: templates/game_detail.html:777
 msgid "Revision"
 msgstr "修订版"
 
-#: templates/game_detail.html:776
+#: templates/game_detail.html:778
 msgid "Languages"
 msgstr "语言"
 
-#: templates/game_detail.html:777
+#: templates/game_detail.html:779
 msgid "Scores"
 msgstr "评分"
 
-#: templates/game_detail.html:786
+#: templates/game_detail.html:788
 msgid "(this page)"
 msgstr "（本页）"
 
-#: templates/game_detail.html:804
+#: templates/game_detail.html:806
 msgid "Known differences"
 msgstr "已知差异"
 
-#: templates/game_detail.html:804
+#: templates/game_detail.html:806
 msgid "AI-written"
 msgstr "AI 撰写"
 
-#: templates/game_detail.html:805
+#: templates/game_detail.html:807
 msgid "Written by AI from what it knows about these releases. It can be wrong."
 msgstr "由 AI 根据其对这些发行版本的了解撰写，可能有误。"
 
-#: templates/game_detail.html:807
+#: templates/game_detail.html:809
 msgid "The AI knows of no differences between these versions."
 msgstr "AI 不知道这些版本之间有任何差异。"
 
-#: templates/game_detail.html:810
+#: templates/game_detail.html:812
 msgid "No other regional versions are linked to this game."
 msgstr "没有其他地区版本关联到此游戏。"
 
-#: templates/game_detail.html:815
+#: templates/game_detail.html:817
 msgid "Unlink this version"
 msgstr "取消关联此版本"
 
-#: templates/game_detail.html:816
+#: templates/game_detail.html:818
 msgid "Summarise differences with AI"
 msgstr "用 AI 总结差异"
 
-#: templates/game_detail.html:818
+#: templates/game_detail.html:820
 msgid "Link a version"
 msgstr "关联版本"
 
-#: templates/game_detail.html:819
+#: templates/game_detail.html:821
 msgid "Link a version: search this system"
 msgstr "关联版本：在此系统中搜索"
 
-#: templates/game_detail.html:832
+#: templates/game_detail.html:835 templates/settings_emulators.html:95
+#, fuzzy
+msgid "Cheats"
+msgstr "图表"
+
+#: templates/game_detail.html:838
+#, fuzzy
+msgid "Cheat list"
+msgstr "图表"
+
+#: templates/game_detail.html:841
+#, fuzzy
+msgid "Find a cheat"
+msgstr "压缩包路径无效"
+
+#: templates/game_detail.html:852
 msgid "Scrape History"
 msgstr "抓取历史"
 
-#: templates/game_detail.html:858
+#: templates/game_detail.html:878
 msgid "Primary scraper"
 msgstr "主抓取器"
 
-#: templates/game_detail.html:860
+#: templates/game_detail.html:880
 msgid "Fallback scraper"
 msgstr "备用抓取源"
 
-#: templates/game_detail.html:867
+#: templates/game_detail.html:887
 msgid "Fields filled:"
 msgstr "已填充字段："
 
-#: templates/game_detail.html:880
+#: templates/game_detail.html:900
 msgid "Still missing:"
 msgstr "仍缺失："
 
@@ -8452,35 +8543,16 @@ msgstr "保留最大的"
 msgid "Configure your RetroDB installation"
 msgstr "配置您的 RetroDB 安装"
 
-#: templates/settings.html:18
-msgid "Settings sections"
-msgstr "设置分区"
-
-#: templates/settings.html:21
-msgid "Account"
-msgstr "账户"
-
-#: templates/settings.html:29
-msgctxt "settings tab"
-msgid "Scraping"
-msgstr "抓取"
-
-#: templates/settings.html:33
-msgid "Data"
-msgstr "数据"
-
-#: templates/settings.html:37
-msgid "Customization"
-msgstr "自定义"
-
-#: templates/settings.html:1405
+#: templates/settings.html:1381
 msgid "Failed to save language"
 msgstr "保存语言失败"
 
-#: templates/settings.html:1411
+#: templates/settings.html:1387
 msgid "Network error saving language"
 msgstr "保存语言时发生网络错误"
 
+#: templates/_settings_tabs/_tab_bar.html:23
+#: templates/_settings_tabs/_tab_bar.html:38
 #: templates/settings_emulators.html:4 templates/settings_emulators.html:9
 msgid "Emulators"
 msgstr "模拟器"
@@ -8491,30 +8563,30 @@ msgid ""
 "button."
 msgstr "管理 ▶ 游玩按钮使用的模拟器程序和按系统映射。"
 
-#: templates/settings_emulators.html:19
+#: templates/settings_emulators.html:22
 msgid ""
 "RetroArch needs explicit binary + cores-dir paths because they typically "
 "live in different prefixes (system package, ~/.local, or a Flatpak "
 "sandbox)."
 msgstr "RetroArch 需要明确指定程序和核心目录的路径，因为它们通常位于不同位置（系统软件包、~/.local 或 Flatpak 沙盒）。"
 
-#: templates/settings_emulators.html:23 templates/settings_emulators.html:145
+#: templates/settings_emulators.html:26 templates/settings_emulators.html:148
 msgid "Binary"
 msgstr "程序文件"
 
-#: templates/settings_emulators.html:29
+#: templates/settings_emulators.html:32
 msgid "Cores directory"
 msgstr "核心目录"
 
-#: templates/settings_emulators.html:35
+#: templates/settings_emulators.html:38
 msgid "Auto-detect"
 msgstr "自动检测"
 
-#: templates/settings_emulators.html:46
+#: templates/settings_emulators.html:49
 msgid "Play in RetroDB"
 msgstr "在 RetroDB 中游玩"
 
-#: templates/settings_emulators.html:48
+#: templates/settings_emulators.html:51
 msgid ""
 "RetroDB can download the official RetroArch from libretro and set it up "
 "to play your games, with its own settings and saves, kept apart from any "
@@ -8523,164 +8595,164 @@ msgstr ""
 "RetroDB 可以从 libretro 下载官方 RetroArch 并将其设置好来玩你的游戏。它有自己的设置和存档，与你已在使用的任何 "
 "RetroArch 互不干扰。"
 
-#: templates/settings_emulators.html:51
+#: templates/settings_emulators.html:54
 #, python-format
 msgid "Installed: RetroArch %(version)s"
 msgstr "已安装：RetroArch %(version)s"
 
-#: templates/settings_emulators.html:55
+#: templates/settings_emulators.html:58
 msgid "Download RetroArch again"
 msgstr "重新下载 RetroArch"
 
-#: templates/settings_emulators.html:55
+#: templates/settings_emulators.html:58
 msgid "Get RetroArch"
 msgstr "获取 RetroArch"
 
-#: templates/settings_emulators.html:66
+#: templates/settings_emulators.html:69
 msgid "Player cores"
 msgstr "播放器核心"
 
-#: templates/settings_emulators.html:68
+#: templates/settings_emulators.html:71
 msgid ""
 "The player picks the best core for each system and downloads it from the "
 "libretro build server the first time you play. Installed cores are never "
 "updated by Play; update them here."
 msgstr "播放器会为每个系统选择最合适的核心，并在首次游玩时从 libretro 构建服务器下载。“游玩”从不更新已安装的核心；请在此处更新。"
 
-#: templates/settings_emulators.html:73
+#: templates/settings_emulators.html:76
 msgid "Download a missing core when Play is pressed"
 msgstr "按下“游玩”时下载缺少的核心"
 
-#: templates/settings_emulators.html:78
+#: templates/settings_emulators.html:81
 msgid "Install cores for my systems"
 msgstr "为我的系统安装核心"
 
-#: templates/settings_emulators.html:79
+#: templates/settings_emulators.html:82
 msgid "Update cores"
 msgstr "更新核心"
 
-#: templates/settings_emulators.html:82
+#: templates/settings_emulators.html:85
 msgid "Cores are not built for this computer, so RetroDB cannot download them."
 msgstr "没有为这台电脑构建的核心，因此 RetroDB 无法下载。"
 
-#: templates/settings_emulators.html:94
+#: templates/settings_emulators.html:97
 msgid ""
 "Download the free public cheat packs, or import cheat folders you already"
 " have. Each game's page then lists its cheats, each with an on/off "
 "switch, for games played in RetroDB's RetroArch, DuckStation or PCSX2."
 msgstr ""
 
-#: templates/settings_emulators.html:98
+#: templates/settings_emulators.html:101
 #, fuzzy
 msgid "Import a folder"
 msgstr "模拟器文件夹"
 
-#: templates/settings_emulators.html:101
+#: templates/settings_emulators.html:104
 #, fuzzy
 msgid "Import"
 msgstr "PSN 导入"
 
-#: templates/settings_emulators.html:104
+#: templates/settings_emulators.html:107
 msgid ""
 "RetroDB copies the cheat files it recognises and never changes the "
 "folder. Import again to pick up new files."
 msgstr ""
 
-#: templates/settings_emulators.html:114
+#: templates/settings_emulators.html:117
 msgid "Emulator folders"
 msgstr "模拟器文件夹"
 
-#: templates/settings_emulators.html:116
+#: templates/settings_emulators.html:119
 msgid ""
 "Add the folder your emulators live in. RetroDB finds each emulator there,"
 " links it to the systems it runs and checks its BIOS files."
 msgstr "添加存放模拟器的文件夹。RetroDB 会在其中找到每个模拟器，将其关联到它运行的系统，并检查它的 BIOS 文件。"
 
-#: templates/settings_emulators.html:121
+#: templates/settings_emulators.html:124
 msgid "Emulator folder"
 msgstr "模拟器文件夹"
 
-#: templates/settings_emulators.html:122
+#: templates/settings_emulators.html:125
 msgid "Add folder"
 msgstr "添加文件夹"
 
-#: templates/settings_emulators.html:126
+#: templates/settings_emulators.html:129
 msgid "Apply all"
 msgstr "全部应用"
 
-#: templates/settings_emulators.html:136
+#: templates/settings_emulators.html:139
 msgid "Registered emulators"
 msgstr "已注册的模拟器"
 
-#: templates/settings_emulators.html:138
+#: templates/settings_emulators.html:141
 msgid ""
 "RetroDB ships with a default registry seeded on first run. Add custom "
 "emulators or edit the seeded entries."
 msgstr "RetroDB 自带一份在首次运行时生成的默认注册表。你可以添加自定义模拟器或编辑默认条目。"
 
-#: templates/settings_emulators.html:146
+#: templates/settings_emulators.html:149
 msgid "Path override"
 msgstr "路径覆盖"
 
-#: templates/settings_emulators.html:147 templates/settings_emulators.html:187
+#: templates/settings_emulators.html:150 templates/settings_emulators.html:190
 msgid "Args template"
 msgstr "参数模板"
 
-#: templates/settings_emulators.html:149
+#: templates/settings_emulators.html:152
 msgid "Enabled"
 msgstr "启用"
 
-#: templates/settings_emulators.html:166
+#: templates/settings_emulators.html:169
 msgid "Edit emulator"
 msgstr "编辑模拟器"
 
-#: templates/settings_emulators.html:167
+#: templates/settings_emulators.html:170
 msgid "Close emulator edit modal"
 msgstr "关闭模拟器编辑窗口"
 
-#: templates/settings_emulators.html:177
+#: templates/settings_emulators.html:180
 msgid "Binary name (looked up on PATH)"
 msgstr "程序名称（在 PATH 中查找）"
 
-#: templates/settings_emulators.html:179
+#: templates/settings_emulators.html:182
 msgid "e.g."
 msgstr "例如"
 
-#: templates/settings_emulators.html:179
+#: templates/settings_emulators.html:182
 msgid "Used when no path override is set."
 msgstr "未设置路径覆盖时使用。"
 
-#: templates/settings_emulators.html:182
+#: templates/settings_emulators.html:185
 msgid "Binary path override"
 msgstr "程序路径覆盖"
 
-#: templates/settings_emulators.html:183
+#: templates/settings_emulators.html:186
 msgid "(empty = look up the binary name on PATH)"
 msgstr "（留空 = 在 PATH 中查找程序名称）"
 
-#: templates/settings_emulators.html:184
+#: templates/settings_emulators.html:187
 msgid ""
 "Absolute path to AppImage / portable script / system binary. Wins over "
 "PATH lookup."
 msgstr "AppImage / 便携脚本 / 系统程序的绝对路径。优先于 PATH 查找。"
 
-#: templates/settings_emulators.html:189
+#: templates/settings_emulators.html:192
 msgid "Tokens:"
 msgstr "占位符："
 
-#: templates/settings_emulators.html:198
+#: templates/settings_emulators.html:201
 msgid "This is a RetroArch entry (uses the cores in the Cores directory above)"
 msgstr "这是 RetroArch 条目（使用上方核心目录中的核心）"
 
-#: templates/settings_emulators.html:204
+#: templates/settings_emulators.html:207
 msgid "Enabled (uncheck to hide from launch)"
 msgstr "启用（取消勾选则不在启动中显示）"
 
-#: templates/settings_emulators.html:220
+#: templates/settings_emulators.html:223
 msgid "Per-system mapping"
 msgstr "按系统映射"
 
-#: templates/settings_emulators.html:222
+#: templates/settings_emulators.html:225
 msgid ""
 "Pick the emulator each system uses by default. Per-game overrides live in"
 " the edit-game modal."
@@ -9398,6 +9470,28 @@ msgstr "可勾选任意多项；游戏只要有其中任一项就会被隐藏。
 #: templates/_modals/select_filter_modal.html:29
 msgid "Apply"
 msgstr "应用"
+
+#: templates/_settings_tabs/_tab_bar.html:6
+msgid "Account"
+msgstr "账户"
+
+#: templates/_settings_tabs/_tab_bar.html:8
+msgctxt "settings tab"
+msgid "Scraping"
+msgstr "抓取"
+
+#: templates/_settings_tabs/_tab_bar.html:9
+msgid "Data"
+msgstr "数据"
+
+#: templates/_settings_tabs/_tab_bar.html:10
+msgid "Customization"
+msgstr "自定义"
+
+#: templates/_settings_tabs/_tab_bar.html:14
+#: templates/_settings_tabs/_tab_bar.html:27
+msgid "Settings sections"
+msgstr "设置分区"
 
 #: templates/_settings_tabs/account.html:2
 msgid "Account settings"

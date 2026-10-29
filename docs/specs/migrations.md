@@ -540,6 +540,7 @@ your migration — not in the runner.
 | 022 | `022_player_name.py` | Rename the player's row from migration 020's placeholder `RetroDB Player` to `RetroArch (RetroDB)`. | PASS-59-139. Renames only the placeholder, and only when the new name is free, so a name the user chose is kept. |
 | 023 | `023_games_units_sold.py` | Add `games.units_sold` (INTEGER, lifetime copies sold on the row's platform). | Additive. Filled only by the AI (scrape gap-fill and AI Fill); NULL = not known. |
 | 024 | `024_games_release_dates.py` | Add `games.release_dates` (TEXT, JSON object of region code → date). | Additive. Filled only by the AI (scrape gap-fill and AI Fill); NULL = not known. |
+| 025 | `025_games_box_faces.py` | Add `games.box_faces` (TEXT, JSON record of an imported Slipcase box: case, colours, face files). | PASS-59-142 §4.1. Additive. Filled only by an editor's import; NULL = no faces. |
 
 ---
 

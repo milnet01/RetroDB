@@ -252,3 +252,21 @@ class TestPass48_3PruneStaleVariant:
 
 if __name__ == '__main__':
     raise SystemExit(pytest.main([__file__, '-v']))
+
+
+# -----------------------------------------------------------------------------
+# PASS-59-142 §4.6 — the orphan sweep covers the box-faces folder
+# -----------------------------------------------------------------------------
+class TestBoxFacesOrphans:
+    def test_a_deleted_games_faces_are_orphans_and_a_live_games_are_not(self, tmp_path, monkeypatch):
+        _layout_split(tmp_path, monkeypatch)
+        from services import media_cleanup
+
+        folder = tmp_path / 'images' / 'box_faces'
+        folder.mkdir()
+        (folder / '7_front_ab12cd34.webp').write_bytes(b'live')
+        (folder / '8_front_ab12cd34.webp').write_bytes(b'gone')
+
+        orphaned, _ = media_cleanup.find_orphaned_media([_empty_game(id=7)])
+        names = {o['filename']: o['type'] for o in orphaned}
+        assert names == {'8_front_ab12cd34.webp': 'box_faces'}

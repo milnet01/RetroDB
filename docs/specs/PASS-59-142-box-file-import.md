@@ -82,7 +82,9 @@ parse, or the front or spine file is missing on disk.
 
 `services/box_faces.py::import_box_file(game_id, uploads, replace) -> dict`
 runs every check below before it writes anything. `uploads` maps each
-uploaded file's base name to its bytes. It raises `BoxImportError(code,
+uploaded file's base name to its bytes or file object. Only the box file and
+the pictures it names are read, each only up to its size cap plus one byte,
+so an editor may pick a whole folder. It raises `BoxImportError(code,
 detail)` on the first failure.
 
 1. **Exactly one upload ends in `.box.json`**, at most 64 KB, and parses as
@@ -123,14 +125,17 @@ Conversion, still before any write:
 
 After every check passes:
 
-1. Each face is written with `services/image_utils.py::_atomic_save` to its
-   new name in `<IMAGE_PATH>/box_faces/`. If any write fails, the faces
+1. Each face is already encoded in memory, and is written with
+   `services/atomic_io.py::atomic_write_bytes` to its new name in
+   `<IMAGE_PATH>/box_faces/`. If any write fails, the faces
    already written are deleted and the error is raised. The row is
    unchanged.
 2. One `UPDATE games SET box_faces = ? WHERE id = ?` stores the record.
-3. Only then are the previous import's files deleted. Each one is resolved
-   with `services/security.py::safe_path` against the `box_faces` folder.
-   A name that escapes it, or a symlink, is skipped and logged.
+3. Only then are the previous import's files deleted. A name that is a
+   symlink is skipped first, since `services/security.py::safe_path`
+   resolves a link to its target. The rest is resolved with `safe_path`
+   against the `box_faces` folder, and a name that escapes it is skipped
+   and logged.
 
 `remove_box_faces(game_id)` sets the column to NULL first, then deletes the
 files the old record named, with the same `safe_path` and symlink rule.
@@ -156,17 +161,20 @@ replies with 400.
 
 ### 4.5 The game page
 
-- The action bar in `templates/game_detail.html` gains an **Import 3D box**
-  button. It opens a hidden `<input type="file" multiple
+- Under the cover in `templates/game_detail.html`, an editor sees an
+  **Import 3D box** button. It opens a hidden `<input type="file" multiple
   accept=".json,.png,.webp,.jpg,.jpeg">`. Its title tells the editor to pick
-  the `.box.json` file and its pictures together.
+  the `.box.json` file and its pictures together. It is not in the action
+  bar, which it pushed onto a second row.
 - On a 409 reply, `showConfirm` asks whether to replace the existing faces.
   Yes resends with `replace=1`.
-- When `faces_for` returns a record, a line under the cover says the 3D box
-  faces are imported. It names the case and has a **Remove** button. Until
-  PASS-59-143 ships, this line is the only place the faces show.
-- The script is `static/js/game-box-faces.js`, a games-bundle file. Its
-  strings use `t()`. Template strings use `_()`.
+- When `faces_for` returns a record, the same line says the 3D box is
+  imported, names the case, and shows editors a **Remove** button. A viewer
+  sees the line only when there are faces. Until PASS-59-143 ships, this
+  line is the only place the faces show.
+- The script is `static/js/game-box-faces.js`, loaded by its own `<script>`
+  tag like `game-cheats.js`. Its strings use `t()`; `build_js.py` scans
+  every `static/js/*.js` for them. Template strings use `_()`.
 
 ### 4.6 What else learns the folder
 
@@ -214,8 +222,10 @@ replies with 400.
   *Test:* `tests/test_box_faces.py`. A record with `../boxart/x.webp`, and
   one with a symlinked face, are removed. The outside file and the symlink's
   target both survive.
+  A third case: a symlink to another face inside the folder is not
+  followed.
   *Breaks when:* a face name is joined without `safe_path`, or `islink` is
-  not checked.
+  checked only after `safe_path` has resolved the link.
 
 - **INV-6** — `boxart_3d` is never read or written by import or removal.
   *Test:* `tests/test_box_faces.py`, a game with `boxart_3d` set is
@@ -297,7 +307,8 @@ Manual: in the browser, import a box file Slipcase wrote, at desktop and
 ## 11. Cross-doc impact
 
 - `CLAUDE.md` § Media handling: a line on `games.box_faces` and its folder.
-- `docs/specs/migrations.md`: nothing, since 025 is additive like 024.
+- `docs/specs/migrations.md` § 13: a row for 025. `retrodb.spec` lists the
+  module so the standalone build bundles it.
 - `templates/help.html`: a paragraph on importing a 3D box, mirrored into
   each `help.<locale>.html`.
 - `data/changelog.yaml`: an item in the open 3.34.0.

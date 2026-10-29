@@ -30,6 +30,7 @@ from services.game_query import (
     invalidate_filter_cache, VERSION_COLUMNS, MULTI_FILTER_FIELDS,
 )
 from services.analytics import invalidate_analytics_cache
+from services.box_faces import faces_for
 from services.release_dates import display_release_dates
 from services.launch_resolver import keyboard_core, launch_checker, rom_launch_problem
 from services.game_metadata_service import (
@@ -844,7 +845,9 @@ def game_detail(game_id):
                              keyboard_play=keyboard_core(game['system_id'],
                                                          game['emulator_override_id']),
                              # PASS-59-153 — its images still await upscaling.
-                             upscale_pending=upscale_queue.pending_status(game_id)[1])
+                             upscale_pending=upscale_queue.pending_status(game_id)[1],
+                             # PASS-59-142 — imported Slipcase faces, or None.
+                             box_faces=faces_for(game))
     except Exception as e:
         logger.error(f"Game detail error: {e}", exc_info=True)
         return f"Error loading game: {e}", 500
