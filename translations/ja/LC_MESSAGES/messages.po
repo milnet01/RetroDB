@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-29 13:48+0200\n"
+"POT-Creation-Date: 2026-10-29 14:21+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -239,7 +239,7 @@ msgstr "ボーナスディスクと親ゲームは同じシステム内にある
 #: routes/platform_import.py:667 routes/platform_import.py:1032
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:202 routes/scraper.py:530
-#: routes/scraper.py:919 routes/settings.py:319 routes/settings.py:343
+#: routes/scraper.py:931 routes/settings.py:319 routes/settings.py:343
 #: routes/settings.py:458 routes/settings.py:537 routes/settings.py:551
 #: routes/settings.py:595 routes/settings.py:611 routes/settings.py:647
 #: routes/steam_achievements.py:138 routes/systems.py:292 routes/systems.py:482
@@ -947,12 +947,34 @@ msgstr "不明なAIプロバイダーです: %(provider)s"
 msgid "No response from AI provider"
 msgstr "AIプロバイダーからの応答がありません"
 
-#: routes/scraper.py:912
+#: routes/scraper.py:826 routes/scraper.py:827
+#, python-format
+msgid "%(provider)s refused the API key. Check the key and save it again."
+msgstr "%(provider)s が API キーを拒否しました。キーを確認して保存し直してください。"
+
+#: routes/scraper.py:828
+#, python-format
+msgid "%(provider)s wants payment: the account has no credit or billing is off."
+msgstr "%(provider)s が支払いを求めています。アカウントにクレジットがないか、請求が無効です。"
+
+#: routes/scraper.py:829
+#, python-format
+msgid ""
+"%(provider)s says a usage limit is reached. Try again later or check your"
+" plan."
+msgstr "%(provider)s によると使用上限に達しました。後でもう一度試すか、プランを確認してください。"
+
+#: routes/scraper.py:831
+#, python-format
+msgid "%(provider)s answered with error %(code)s."
+msgstr "%(provider)s がエラー %(code)s を返しました。"
+
+#: routes/scraper.py:924
 #, python-format
 msgid "Connection error: %(error)s"
 msgstr "接続エラー: %(error)s"
 
-#: routes/scraper.py:915
+#: routes/scraper.py:927
 #, python-format
 msgid "Allowance check not supported for %(scraper)s"
 msgstr "%(scraper)sでは利用上限の確認はサポートされていません"
@@ -8531,6 +8553,19 @@ msgstr "言語の保存に失敗しました"
 msgid "Network error saving language"
 msgstr "言語の保存中にネットワークエラーが発生しました"
 
+#: templates/settings.html:2548
+msgid "Testing…"
+msgstr "テスト中…"
+
+#: templates/settings.html:2553
+#, python-format
+msgid "The key works: %(provider)s answered, using %(model)s."
+msgstr "キーは有効です：%(provider)s が %(model)s で応答しました。"
+
+#: templates/settings.html:2558
+msgid "The key test failed."
+msgstr "キーのテストに失敗しました。"
+
 #: templates/_settings_tabs/_tab_bar.html:23
 #: templates/_settings_tabs/_tab_bar.html:38
 #: templates/settings_emulators.html:4 templates/settings_emulators.html:9
@@ -10345,6 +10380,10 @@ msgstr "利用可能な地域の値とデフォルトを設定します。スク
 #: templates/_settings_tabs/library.html:215
 msgid "Default Region"
 msgstr "デフォルト地域"
+
+#: templates/_settings_tabs/scraping.html:511
+msgid "Test saved AI key"
+msgstr "保存済みの AI キーをテスト"
 
 #: templates/_settings_tabs/system.html:7
 #: templates/_settings_tabs/system.html:174

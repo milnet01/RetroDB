@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-29 13:48+0200\n"
+"POT-Creation-Date: 2026-10-29 14:21+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: nb\n"
@@ -245,7 +245,7 @@ msgstr "Bonusplaten og det overordnede spillet må være i samme system"
 #: routes/platform_import.py:667 routes/platform_import.py:1032
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:202 routes/scraper.py:530
-#: routes/scraper.py:919 routes/settings.py:319 routes/settings.py:343
+#: routes/scraper.py:931 routes/settings.py:319 routes/settings.py:343
 #: routes/settings.py:458 routes/settings.py:537 routes/settings.py:551
 #: routes/settings.py:595 routes/settings.py:611 routes/settings.py:647
 #: routes/steam_achievements.py:138 routes/systems.py:292 routes/systems.py:482
@@ -979,12 +979,38 @@ msgstr "Ukjent AI-leverandør: %(provider)s"
 msgid "No response from AI provider"
 msgstr "Ingen respons fra AI-leverandøren"
 
-#: routes/scraper.py:912
+#: routes/scraper.py:826 routes/scraper.py:827
+#, python-format
+msgid "%(provider)s refused the API key. Check the key and save it again."
+msgstr "%(provider)s avviste API-nøkkelen. Sjekk nøkkelen og lagre den på nytt."
+
+#: routes/scraper.py:828
+#, python-format
+msgid "%(provider)s wants payment: the account has no credit or billing is off."
+msgstr ""
+"%(provider)s krever betaling: kontoen har ingen kreditt, eller "
+"fakturering er slått av."
+
+#: routes/scraper.py:829
+#, python-format
+msgid ""
+"%(provider)s says a usage limit is reached. Try again later or check your"
+" plan."
+msgstr ""
+"%(provider)s sier at en bruksgrense er nådd. Prøv igjen senere eller "
+"sjekk abonnementet ditt."
+
+#: routes/scraper.py:831
+#, python-format
+msgid "%(provider)s answered with error %(code)s."
+msgstr "%(provider)s svarte med feil %(code)s."
+
+#: routes/scraper.py:924
 #, python-format
 msgid "Connection error: %(error)s"
 msgstr "Tilkoblingsfeil: %(error)s"
 
-#: routes/scraper.py:915
+#: routes/scraper.py:927
 #, python-format
 msgid "Allowance check not supported for %(scraper)s"
 msgstr "Kvotesjekk støttes ikke for %(scraper)s"
@@ -8735,6 +8761,19 @@ msgstr "Kunne ikke lagre språk"
 msgid "Network error saving language"
 msgstr "Nettverksfeil ved lagring av språk"
 
+#: templates/settings.html:2548
+msgid "Testing…"
+msgstr "Tester…"
+
+#: templates/settings.html:2553
+#, python-format
+msgid "The key works: %(provider)s answered, using %(model)s."
+msgstr "Nøkkelen virker: %(provider)s svarte med %(model)s."
+
+#: templates/settings.html:2558
+msgid "The key test failed."
+msgstr "Testen av nøkkelen mislyktes."
+
 #: templates/_settings_tabs/_tab_bar.html:23
 #: templates/_settings_tabs/_tab_bar.html:38
 #: templates/settings_emulators.html:4 templates/settings_emulators.html:9
@@ -10637,6 +10676,10 @@ msgstr ""
 #: templates/_settings_tabs/library.html:215
 msgid "Default Region"
 msgstr "Standardregion"
+
+#: templates/_settings_tabs/scraping.html:511
+msgid "Test saved AI key"
+msgstr "Test lagret KI-nøkkel"
 
 #: templates/_settings_tabs/system.html:7
 #: templates/_settings_tabs/system.html:174

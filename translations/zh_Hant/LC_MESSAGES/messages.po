@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-29 13:48+0200\n"
+"POT-Creation-Date: 2026-10-29 14:21+0200\n"
 "PO-Revision-Date: 2026-07-01 09:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hant\n"
@@ -239,7 +239,7 @@ msgstr "附贈光碟與主遊戲必須屬於同一系統"
 #: routes/platform_import.py:667 routes/platform_import.py:1032
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:202 routes/scraper.py:530
-#: routes/scraper.py:919 routes/settings.py:319 routes/settings.py:343
+#: routes/scraper.py:931 routes/settings.py:319 routes/settings.py:343
 #: routes/settings.py:458 routes/settings.py:537 routes/settings.py:551
 #: routes/settings.py:595 routes/settings.py:611 routes/settings.py:647
 #: routes/steam_achievements.py:138 routes/systems.py:292 routes/systems.py:482
@@ -945,12 +945,34 @@ msgstr "未知的 AI 提供方：%(provider)s"
 msgid "No response from AI provider"
 msgstr "AI 提供方無回應"
 
-#: routes/scraper.py:912
+#: routes/scraper.py:826 routes/scraper.py:827
+#, python-format
+msgid "%(provider)s refused the API key. Check the key and save it again."
+msgstr "%(provider)s 拒絕了該 API 金鑰。請檢查金鑰並重新儲存。"
+
+#: routes/scraper.py:828
+#, python-format
+msgid "%(provider)s wants payment: the account has no credit or billing is off."
+msgstr "%(provider)s 要求付款：帳戶沒有餘額，或已關閉計費。"
+
+#: routes/scraper.py:829
+#, python-format
+msgid ""
+"%(provider)s says a usage limit is reached. Try again later or check your"
+" plan."
+msgstr "%(provider)s 表示已達使用上限。請稍後再試，或檢查您的方案。"
+
+#: routes/scraper.py:831
+#, python-format
+msgid "%(provider)s answered with error %(code)s."
+msgstr "%(provider)s 回傳錯誤 %(code)s。"
+
+#: routes/scraper.py:924
 #, python-format
 msgid "Connection error: %(error)s"
 msgstr "連接錯誤：%(error)s"
 
-#: routes/scraper.py:915
+#: routes/scraper.py:927
 #, python-format
 msgid "Allowance check not supported for %(scraper)s"
 msgstr "%(scraper)s 不支援配額檢查"
@@ -8532,6 +8554,19 @@ msgstr "儲存語言失敗"
 msgid "Network error saving language"
 msgstr "儲存語言時發生網路錯誤"
 
+#: templates/settings.html:2548
+msgid "Testing…"
+msgstr "正在測試…"
+
+#: templates/settings.html:2553
+#, python-format
+msgid "The key works: %(provider)s answered, using %(model)s."
+msgstr "金鑰有效：%(provider)s 已使用 %(model)s 回應。"
+
+#: templates/settings.html:2558
+msgid "The key test failed."
+msgstr "金鑰測試失敗。"
+
 #: templates/_settings_tabs/_tab_bar.html:23
 #: templates/_settings_tabs/_tab_bar.html:38
 #: templates/settings_emulators.html:4 templates/settings_emulators.html:9
@@ -10340,6 +10375,10 @@ msgstr "設定可用的地區值和預設地區。抓取時如果未偵測到地
 #: templates/_settings_tabs/library.html:215
 msgid "Default Region"
 msgstr "預設地區"
+
+#: templates/_settings_tabs/scraping.html:511
+msgid "Test saved AI key"
+msgstr "測試已儲存的 AI 金鑰"
 
 #: templates/_settings_tabs/system.html:7
 #: templates/_settings_tabs/system.html:174

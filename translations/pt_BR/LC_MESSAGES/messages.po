@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-29 13:48+0200\n"
+"POT-Creation-Date: 2026-10-29 14:21+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: pt_BR\n"
@@ -244,7 +244,7 @@ msgstr "O disco bônus e o jogo principal devem estar no mesmo sistema"
 #: routes/platform_import.py:667 routes/platform_import.py:1032
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:202 routes/scraper.py:530
-#: routes/scraper.py:919 routes/settings.py:319 routes/settings.py:343
+#: routes/scraper.py:931 routes/settings.py:319 routes/settings.py:343
 #: routes/settings.py:458 routes/settings.py:537 routes/settings.py:551
 #: routes/settings.py:595 routes/settings.py:611 routes/settings.py:647
 #: routes/steam_achievements.py:138 routes/systems.py:292 routes/systems.py:482
@@ -982,12 +982,38 @@ msgstr "Provedor de IA desconhecido: %(provider)s"
 msgid "No response from AI provider"
 msgstr "Nenhuma resposta do provedor de IA"
 
-#: routes/scraper.py:912
+#: routes/scraper.py:826 routes/scraper.py:827
+#, python-format
+msgid "%(provider)s refused the API key. Check the key and save it again."
+msgstr "%(provider)s recusou a chave de API. Confira a chave e salve-a de novo."
+
+#: routes/scraper.py:828
+#, python-format
+msgid "%(provider)s wants payment: the account has no credit or billing is off."
+msgstr ""
+"%(provider)s pede pagamento: a conta está sem crédito ou o faturamento "
+"está desativado."
+
+#: routes/scraper.py:829
+#, python-format
+msgid ""
+"%(provider)s says a usage limit is reached. Try again later or check your"
+" plan."
+msgstr ""
+"%(provider)s informa que um limite de uso foi atingido. Tente mais tarde "
+"ou confira seu plano."
+
+#: routes/scraper.py:831
+#, python-format
+msgid "%(provider)s answered with error %(code)s."
+msgstr "%(provider)s respondeu com o erro %(code)s."
+
+#: routes/scraper.py:924
 #, python-format
 msgid "Connection error: %(error)s"
 msgstr "Erro de conexão: %(error)s"
 
-#: routes/scraper.py:915
+#: routes/scraper.py:927
 #, python-format
 msgid "Allowance check not supported for %(scraper)s"
 msgstr "Verificação de cota não suportada para %(scraper)s"
@@ -8773,6 +8799,19 @@ msgstr "Falha ao salvar idioma"
 msgid "Network error saving language"
 msgstr "Erro de rede ao salvar idioma"
 
+#: templates/settings.html:2548
+msgid "Testing…"
+msgstr "Testando…"
+
+#: templates/settings.html:2553
+#, python-format
+msgid "The key works: %(provider)s answered, using %(model)s."
+msgstr "A chave funciona: %(provider)s respondeu usando %(model)s."
+
+#: templates/settings.html:2558
+msgid "The key test failed."
+msgstr "O teste da chave falhou."
+
 #: templates/_settings_tabs/_tab_bar.html:23
 #: templates/_settings_tabs/_tab_bar.html:38
 #: templates/settings_emulators.html:4 templates/settings_emulators.html:9
@@ -10698,6 +10737,10 @@ msgstr ""
 #: templates/_settings_tabs/library.html:215
 msgid "Default Region"
 msgstr "Região padrão"
+
+#: templates/_settings_tabs/scraping.html:511
+msgid "Test saved AI key"
+msgstr "Testar a chave de IA salva"
 
 #: templates/_settings_tabs/system.html:7
 #: templates/_settings_tabs/system.html:174

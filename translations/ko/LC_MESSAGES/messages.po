@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-29 13:48+0200\n"
+"POT-Creation-Date: 2026-10-29 14:21+0200\n"
 "PO-Revision-Date: 2026-06-30 14:26+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ko\n"
@@ -240,7 +240,7 @@ msgstr "보너스 디스크와 상위 게임은 같은 시스템에 있어야 �
 #: routes/platform_import.py:667 routes/platform_import.py:1032
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:202 routes/scraper.py:530
-#: routes/scraper.py:919 routes/settings.py:319 routes/settings.py:343
+#: routes/scraper.py:931 routes/settings.py:319 routes/settings.py:343
 #: routes/settings.py:458 routes/settings.py:537 routes/settings.py:551
 #: routes/settings.py:595 routes/settings.py:611 routes/settings.py:647
 #: routes/steam_achievements.py:138 routes/systems.py:292 routes/systems.py:482
@@ -948,12 +948,34 @@ msgstr "알 수 없는 AI 공급자: %(provider)s"
 msgid "No response from AI provider"
 msgstr "AI 공급자로부터 응답이 없습니다"
 
-#: routes/scraper.py:912
+#: routes/scraper.py:826 routes/scraper.py:827
+#, python-format
+msgid "%(provider)s refused the API key. Check the key and save it again."
+msgstr "%(provider)s에서 API 키를 거부했습니다. 키를 확인하고 다시 저장하세요."
+
+#: routes/scraper.py:828
+#, python-format
+msgid "%(provider)s wants payment: the account has no credit or billing is off."
+msgstr "%(provider)s에서 결제를 요구합니다: 계정에 크레딧이 없거나 결제가 꺼져 있습니다."
+
+#: routes/scraper.py:829
+#, python-format
+msgid ""
+"%(provider)s says a usage limit is reached. Try again later or check your"
+" plan."
+msgstr "%(provider)s에서 사용 한도에 도달했다고 합니다. 나중에 다시 시도하거나 요금제를 확인하세요."
+
+#: routes/scraper.py:831
+#, python-format
+msgid "%(provider)s answered with error %(code)s."
+msgstr "%(provider)s에서 오류 %(code)s로 응답했습니다."
+
+#: routes/scraper.py:924
 #, python-format
 msgid "Connection error: %(error)s"
 msgstr "연결 오류: %(error)s"
 
-#: routes/scraper.py:915
+#: routes/scraper.py:927
 #, python-format
 msgid "Allowance check not supported for %(scraper)s"
 msgstr "%(scraper)s에 대해서는 허용량 확인이 지원되지 않습니다"
@@ -8557,6 +8579,19 @@ msgstr "언어 저장에 실패했습니다"
 msgid "Network error saving language"
 msgstr "언어 저장 중 네트워크 오류"
 
+#: templates/settings.html:2548
+msgid "Testing…"
+msgstr "테스트 중…"
+
+#: templates/settings.html:2553
+#, python-format
+msgid "The key works: %(provider)s answered, using %(model)s."
+msgstr "키가 작동합니다: %(provider)s에서 %(model)s(으)로 응답했습니다."
+
+#: templates/settings.html:2558
+msgid "The key test failed."
+msgstr "키 테스트에 실패했습니다."
+
 #: templates/_settings_tabs/_tab_bar.html:23
 #: templates/_settings_tabs/_tab_bar.html:38
 #: templates/settings_emulators.html:4 templates/settings_emulators.html:9
@@ -10383,6 +10418,10 @@ msgstr "사용 가능한 지역 값과 기본값을 설정합니다. 기본 지�
 #: templates/_settings_tabs/library.html:215
 msgid "Default Region"
 msgstr "기본 지역"
+
+#: templates/_settings_tabs/scraping.html:511
+msgid "Test saved AI key"
+msgstr "저장된 AI 키 테스트"
 
 #: templates/_settings_tabs/system.html:7
 #: templates/_settings_tabs/system.html:174

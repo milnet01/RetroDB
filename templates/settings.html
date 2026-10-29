@@ -2540,6 +2540,28 @@ function buildBar(remaining, max, color) {
 }
 
 // Check rate limits for scrapers
+// Tests the AI key as saved, with one tiny request to the chosen provider.
+async function testAiKey() {
+    const btn = document.getElementById('testAiKeyBtn');
+    const resultEl = document.getElementById('testAiKeyResult');
+    btn.disabled = true;
+    resultEl.innerHTML = `<div class="alert alert-info">${escapeHtml({{ _('Testing…')|tojson }})}</div>`;
+    try {
+        // A refused key comes back as an error reply, which API.get throws
+        // with the server's message.
+        const d = await API.get('/api/scraper-allowance/ai');
+        const works = {{ _('The key works: %(provider)s answered, using %(model)s.', provider='{provider}', model='{model}')|tojson }};
+        resultEl.innerHTML = `<div class="alert alert-success">${escapeHtml(
+            works.replace('{provider}', d.provider).replace('{model}', d.model))}</div>`;
+    } catch (e) {
+        resultEl.innerHTML = `<div class="alert alert-error">${escapeHtml(
+            e.message || {{ _('The key test failed.')|tojson }})}</div>`;
+    } finally {
+        btn.disabled = false;
+    }
+}
+window.testAiKey = testAiKey;
+
 async function checkRateLimits() {
     const btn = document.getElementById('checkRateLimitsBtn');
     const resultEl = document.getElementById('rateLimitsResult');

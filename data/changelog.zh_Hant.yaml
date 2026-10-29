@@ -15,6 +15,8 @@
     label: 'AI 可用 Claude 5.5 模型'
   - type: feature
     label: '手動填寫遊戲銷量'
+  - type: fix
+    label: '在設定中測試 AI 金鑰'
   body: |
     <ul>
       <li><strong>RetroArch (RetroDB)、DuckStation 和 PCSX2 的金手指。</strong>設定 &gt; 模擬器 中有一個新的「金手指」區塊。你可以在那裡下載免費的公開金手指包，或匯入你已有的金手指資料夾；RetroDB 會複製檔案，絕不改動你的資料夾。之後，遊戲頁面會列出它的金手指，每個都有開／關切換，金手指很多時還有搜尋框。在 RetroArch (RetroDB) 中，你開啟的金手指會在你下次按下遊玩時生效，而你在遊玩時於 RetroArch 選單中所做的變更會被保留。對於 DuckStation 和 PCSX2，開關會儲存在模擬器自己為該遊戲建立的設定中，所以在模擬器內所做的變更也會顯示在頁面上。RetroDB 絕不覆寫模擬器已有的金手指檔案。開啟金手指會暫停 RetroAchievements 硬核模式。</li>
@@ -24,6 +26,7 @@
       <li><strong>封面放大不再被選單遮住。</strong>在手機上，頂部和底部的列會蓋住放大的封面並遮住它的關閉按鈕；在電腦上，側邊欄會蓋住它的左側。現在放大畫面會顯示在所有內容之上。</li>
       <li><strong>AI 可用 Claude 5.5 模型.</strong> 設定 &gt; 抓取中 列出 Anthropic 最新的 Claude 模型：新的預設且最便宜的 Haiku 5.5、Sonnet 5.5 和 Opus 5.5，並附目前價格。RetroDB 不再傳送 Sonnet 5.5 會拒絕的設定。</li>
       <li><strong>手動填寫遊戲銷量.</strong> 兩個編輯畫面的「開發商」下方都有「銷量」欄位。填寫的數字會像 AI 找到的一樣顯示在遊戲頁面上。清空該欄位即可刪除。</li>
+      <li><strong>在設定中測試 AI 金鑰.</strong> 設定 &gt; 抓取中 的 AI 提供者下方新增「測試已儲存的 AI 金鑰」按鈕。它會顯示金鑰是否有效；若無效，會說明原因：金鑰遭拒、沒有餘額或達到使用上限。以前，遭拒的金鑰看起來也像是有效的。</li>
     </ul>
 - version: 3.33.0
   date: '2026-10-29'

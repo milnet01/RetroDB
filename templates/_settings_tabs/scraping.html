@@ -506,6 +506,11 @@
                     <option value="claude" {{ 'selected' if scraper_settings.api_keys.ai_provider == 'claude' else '' }}>Anthropic Claude</option>
                 </select>
                 <span class="text-muted" style="font-size: 0.8rem; margin-top: 2px; display: block;">AI fills text-only fields (genre, structure, perspective, etc.). API usage costs apply.</span>
+                <button type="button" data-on-click="testAiKey" class="btn btn-secondary" id="testAiKeyBtn" style="margin-top: var(--spacing-sm);">
+                    <span class="btn-icon">🔌</span>
+                    {{ _('Test saved AI key') }}
+                </button>
+                <div id="testAiKeyResult" role="status" aria-live="polite" style="margin-top: var(--spacing-sm);"></div>
             </div>
 
             <!-- Gemini fields -->

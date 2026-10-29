@@ -877,15 +877,19 @@ def _call_claude(prompt, api_key, model, **_kwargs):
         str: Raw text response, or None on failure.
     """
     url = 'https://api.anthropic.com/v1/messages'
+    # The 5.5 models think before answering, and thinking counts toward
+    # max_tokens. Low effort keeps the thinking short; it is the one control
+    # all three accept (Sonnet and Opus 5.5 answer 400 to thinking
+    # "disabled"). No temperature: Sonnet 5.5 answers 400 to it, and the
+    # other 5.5 models say to leave it out.
     payload = {
         'model': model,
-        'max_tokens': 2048,
+        'max_tokens': 8192,
+        'output_config': {'effort': 'low'},
         'messages': [
             {'role': 'user', 'content': prompt}
         ],
         'system': 'You are a retro gaming metadata expert. Always respond with valid JSON only. No markdown, no code fences.',
-        # No temperature: Sonnet 5.5 answers 400 to it, and the other 5.5
-        # models say to leave it out.
     }
     headers = {
         'Content-Type': 'application/json',
@@ -905,11 +909,17 @@ def _call_claude(prompt, api_key, model, **_kwargs):
     if not data:
         return None
 
+    # Thinking blocks come before the text block, so take the text blocks.
     try:
-        return data['content'][0]['text']
-    except (KeyError, IndexError, TypeError) as e:
+        text = ''.join(block['text'] for block in data['content']
+                       if block.get('type') == 'text')
+    except (KeyError, TypeError) as e:
         logger.error(f"Claude response parse error: {e}")
         return None
+    if not text:
+        logger.error(f"Claude gave no answer text (stop_reason: {data.get('stop_reason')})")
+        return None
+    return text
 
 
 # =============================================================================

@@ -819,6 +819,18 @@ def api_scraper_allowance(scraper):
 
                 if response is None:
                     return error(_('No response from AI provider'), 502)
+                # A refused key is not a working one: say what the provider
+                # answered, so a 402 (no credit) does not look like success.
+                if response.status_code != 200:
+                    refused = {
+                        401: _('%(provider)s refused the API key. Check the key and save it again.'),
+                        403: _('%(provider)s refused the API key. Check the key and save it again.'),
+                        402: _('%(provider)s wants payment: the account has no credit or billing is off.'),
+                        429: _('%(provider)s says a usage limit is reached. Try again later or check your plan.'),
+                    }.get(response.status_code,
+                          _('%(provider)s answered with error %(code)s.'))
+                    return error(refused % {'provider': provider_name,
+                                            'code': response.status_code}, 502)
 
                 h = response.headers
                 result = {
