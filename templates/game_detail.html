@@ -198,7 +198,8 @@
             {% endif %}
             </div>
             {# PASS-59-142 — Slipcase box faces: editors import and remove them here
-               (game-box-faces.js); the turnable box itself is PASS-59-143. #}
+               (game-box-faces.js). Clicking the cover turns them into a box
+               (PASS-59-143, box-viewer.js). #}
             {% set _box_editor = current_user and current_user.role in ('admin', 'editor') %}
             {% if box_faces or _box_editor %}
             <div class="box-faces-note" id="boxFacesNote">
@@ -5704,11 +5705,15 @@ async function clearHLTB() {
 // BOXART ZOOM
 // ============================================
 
+// A game with Slipcase faces zooms to the turnable box, whichever cover was
+// clicked; otherwise the clicked picture (PASS-59-143, user 2026-10-23).
 function openBoxartZoom(imageUrl) {
     const modal = document.getElementById('boxartZoomModal');
     const img = document.getElementById('boxartZoomImage');
-    img.src = imageUrl;
     modal.classList.add('active');
+    const showsBox = window.BoxViewer ? BoxViewer.show() : false;
+    img.style.display = showsBox ? 'none' : '';
+    if (!showsBox) img.src = imageUrl;
 }
 
 function closeBoxartZoom(event) {
@@ -5885,6 +5890,8 @@ document.querySelectorAll('.filter-link').forEach(link => {
 <script src="{{ asset_url('js/game-cheats.js') }}" defer></script>
 <!-- PASS-59-142 — import a Slipcase box file -->
 <script src="{{ asset_url('js/game-box-faces.js') }}" defer></script>
+<!-- PASS-59-143 — the turnable 3D box in the cover zoom -->
+<script src="{{ asset_url('js/box-viewer.js') }}" defer></script>
 <!-- PASS-59-108 — Apply Metadata progress gauge -->
 <script src="{{ asset_url('js/apply-progress.js') }}" defer></script>
 <!-- PASS-59-106 — link and unlink regional versions -->

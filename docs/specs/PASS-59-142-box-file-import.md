@@ -170,8 +170,7 @@ replies with 400.
   Yes resends with `replace=1`.
 - When `faces_for` returns a record, the same line says the 3D box is
   imported, names the case, and shows editors a **Remove** button. A viewer
-  sees the line only when there are faces. Until PASS-59-143 ships, this
-  line is the only place the faces show.
+  sees the line only when there are faces.
 - The script is `static/js/game-box-faces.js`, loaded by its own `<script>`
   tag like `game-cheats.js`. Its strings use `t()`; `build_js.py` scans
   every `static/js/*.js` for them. Template strings use `_()`.

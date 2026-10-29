@@ -154,6 +154,66 @@
     box-shadow: none;
 }
 
+/* PASS-59-143 — the turnable 3D box (static/js/box-viewer.js). Only the
+   faces paint, so the box sits on the backdrop (SLIP-0104 INV-12). The
+   stage stops short of the window's edges, so a click beside it still
+   closes the zoom. */
+.box-viewer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.box-viewer[hidden] {
+    display: none;
+}
+
+.box-viewer-stage {
+    position: relative;
+    width: min(90vw, 80vh);
+    height: 80vh;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+}
+
+.box-viewer-stage:active {
+    cursor: grabbing;
+}
+
+.box-viewer-stage:focus-visible {
+    outline: 2px solid var(--primary-cyan);
+    outline-offset: 4px;
+}
+
+.box-viewer-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform-style: preserve-3d;
+}
+
+.box-viewer-face {
+    position: absolute;
+    background-size: 100% 100%;
+    backface-visibility: hidden;
+}
+
+/* Lighting: a black layer whose opacity box-viewer.js sets per face. */
+.box-viewer-face::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: #000;
+    opacity: var(--box-shade, 0);
+}
+
+.box-viewer-hint {
+    margin: var(--spacing-sm) 0 0;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
 /* =============================================================================
    MODAL NAVIGATION (Gallery)
    ============================================================================= */

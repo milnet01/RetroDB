@@ -1,5 +1,14 @@
-{# Boxart zoom / lightbox — inherits game_detail.html context. #}
+{# Boxart zoom / lightbox — inherits game_detail.html context. A game with
+   Slipcase faces zooms to the turnable box instead (PASS-59-143,
+   static/js/box-viewer.js); the faces record rides on #boxViewer. #}
 <div id="boxartZoomModal" class="modal" role="dialog" aria-modal="true" aria-label="{{ _('Game Cover') }}" data-focus-trap data-focus-trap-content="self" data-focus-trap-onescape="closeBoxartZoom" data-on-click="closeBoxartZoom" data-args='["$event"]'>
     <button type="button" class="modal-close" data-on-click="closeBoxartZoom" data-args='["$event"]' aria-label="{{ _('Close') }}">×</button>
     <img class="modal-content boxart-zoom-image" id="boxartZoomImage" src="" alt="Game Cover">
+    <div class="box-viewer" id="boxViewer" data-record='{{ box_faces|tojson }}' hidden>
+        <div class="box-viewer-stage" tabindex="0" role="img"
+             aria-label="{{ _('3D box. Drag or use the arrow keys to turn it.') }}">
+            <div class="box-viewer-box"></div>
+        </div>
+        <p class="box-viewer-hint">{{ _('Drag to turn. Scroll or press + and - to zoom. Double-click to reset.') }}</p>
+    </div>
 </div>

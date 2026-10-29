@@ -5,7 +5,8 @@
  * Slipcase saved together with its pictures (picking the whole folder is
  * fine: only the files the box file names are read). A game that already
  * has faces asks before replacing them. The same line then shows the case
- * and a Remove button. The turnable box itself is PASS-59-143.
+ * and a Remove button, and hands the record to the turnable box in the
+ * cover zoom (box-viewer.js, PASS-59-143).
  *
  * Contract: docs/specs/PASS-59-142-box-file-import.md §4.4, §4.5.
  */
@@ -28,6 +29,7 @@
     }
 
     function showNote(record) {
+        if (window.BoxViewer) BoxViewer.setRecord(record);
         const status = document.getElementById('boxFacesStatus');
         if (!status) return;
         document.getElementById('boxFacesCase').textContent = record ? record.case.name : '';
