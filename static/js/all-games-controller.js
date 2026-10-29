@@ -1677,10 +1677,14 @@ const AllGamesController = (function() {
         if (type !== 'bulk-scrape' || !data || !Array.isArray(data.recently_scraped_ids)) return;
         const fresh = data.recently_scraped_ids.filter(id => !_liveRefreshed.has(`${data.job_id}:${id}`));
         if (!fresh.length) return;
-        // The server keeps the last 20 ids, so the set never needs more than
-        // a few hundred entries.
-        if (_liveRefreshed.size > 500) _liveRefreshed.clear();
         fresh.forEach(id => _liveRefreshed.add(`${data.job_id}:${id}`));
+        // The server keeps the last 20 ids. Drop only the oldest entries
+        // (a Set iterates in insertion order): clearing it all would make
+        // the ids still in that list look new and re-render their cards.
+        for (const key of _liveRefreshed) {
+            if (_liveRefreshed.size <= 500) break;
+            _liveRefreshed.delete(key);
+        }
         refreshCards(fresh);
     });
 

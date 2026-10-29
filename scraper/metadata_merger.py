@@ -1285,16 +1285,20 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
 # AI METADATA
 # =============================================================================
 
-def _apply_ai_official_title(metadata, ai_data, result):
+def _apply_ai_official_title(metadata, ai_data, db_game_id, result):
     """Take the AI's official title over the scraped one (user request
     2026-10-27), keeping the name it replaces as an alternate title.
 
     The AI is asked only for games whose title is not locked
-    (scrape_ai._official_title_context), and _save_game_row never writes a
-    locked title, so a name the user chose still wins."""
+    (scrape_ai._official_title_context). The lock is read again here: a
+    title locked while the AI answered is kept by _save_game_row, so no
+    alternate title or history line may claim a rename either."""
     official = ai_data.get('official_title')
     current = metadata.get('title')
     if not official or official == current:
+        return
+    from scraper.scrape_ai import _official_title_context
+    if not _official_title_context(db_game_id):
         return
     if current and current.lower() != official.lower():
         alts = merge_alt_titles(
@@ -1312,13 +1316,13 @@ def apply_ai_to_metadata(metadata, ai_data, db_game_id, result, fill_only=True):
     """Apply AI-generated data to metadata dict.
 
     AI only fills text fields — never images, screenshots, video, or manuals.
-    fill_only=True by default: AI never overwrites existing data, EXCEPT for
-    fill_only is honoured for every field, with no exceptions.
+    fill_only=True by default: AI never overwrites existing data, except the
+    title, which the AI's official name replaces (_apply_ai_official_title).
 
     Args:
         metadata: The unified metadata dict being built.
         ai_data: Dict returned by scrape_ai.get_game_details().
-        db_game_id: Database game ID (unused, kept for interface consistency).
+        db_game_id: Database game ID (its title lock is read before a rename).
         result: The result tracking dict with 'filled_fields' list.
         fill_only: If True (default), only fill empty fields.
     """
@@ -1333,8 +1337,8 @@ def apply_ai_to_metadata(metadata, ai_data, db_game_id, result, fill_only=True):
         save_type, the nine rating columns and more. The hybrid scraper's only
         call is fill_only=True on a NORMAL scrape, so a gap-fill silently
         replaced hand-curated values in all of them: a second, undocumented
-        exception to the fill-only invariant that docs/specs/scrapers.md and
-        CLAUDE.md both state has exactly one (force_overwrite).
+        exception to the fill-only invariant beyond the ones
+        docs/specs/scrapers.md and CLAUDE.md document.
 
         The user-invoked AI Fill path is unaffected -- routes/games_ai.py does
         not call this function and applies its own VALIDATE_FIELDS handling,
@@ -1342,7 +1346,7 @@ def apply_ai_to_metadata(metadata, ai_data, db_game_id, result, fill_only=True):
         """
         return not metadata.get(field) or not fill_only
 
-    _apply_ai_official_title(metadata, ai_data, result)
+    _apply_ai_official_title(metadata, ai_data, db_game_id, result)
 
     # Simple text fields — direct mapping
     simple_fields = [
