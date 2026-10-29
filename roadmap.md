@@ -9780,6 +9780,65 @@ were corrected in `2836bc3` and are not repeated here.
   would write the `.cht` there through the overrides layer
   (`services/launch_resolver.py::_retroarch_overrides`).
 
+---
+
+#### Pass 59.174 A failed update rolls back packages and keeps writes made after its backup (MEDIUM, M).
+- **Why**: `updater_apply.py::install_dependencies` runs pip into the
+  shared interpreter before the health check, and rollback never
+  reverts it, so old code can restart against upgraded packages. The
+  pre-update DB backup (`services/updater.py::install`) is taken
+  before the job drain, and rollback restores it even when the new
+  version never opened the DB, losing writes made in between.
+- `services/updater.py::UpdateJob._download` and `host_platform()`
+  duplicate `services/player_install.py`'s capped download and host
+  detection.
+- **Status**: todo. Lanes: updater.
+- **Source**: code review of PR #23, 2026-10-29.
+
+---
+
+#### Pass 59.175 Edit-form uploads stop blocking the request, and media removals wait for the save (MEDIUM, S).
+- **Why**: each uploaded screenshot or fanart runs
+  `finalize_downloaded_image` (upscaling included) inside the edit
+  POST (`services/game_media_service.py`), so several small
+  screenshots can take minutes. The remove_boxart / remove_boxart_3d /
+  remove_fanart / remove_video checkboxes in `routes/games.py::game_detail`
+  still delete files before the games UPDATE; uploads now wait.
+- **Status**: todo. Lanes: routes, media.
+- **Source**: code review of PR #25, 2026-10-29.
+
+---
+
+#### Pass 59.176 Game page follow-ups: one RPCS3 label table, console missing-metadata count per group (LOW, S).
+- **Why**: the RPCS3 status labels are written twice, in
+  `templates/game_detail.html` and `static/js/game-modals.js`
+  (`rpcs3CompatBadgeHtml`). The console page's missing-metadata header
+  (`routes/systems.py::system_games`, `total_missing`) counts rows,
+  while its Unscraped filter and the Systems page count version groups.
+- **Status**: todo. Lanes: ui, routes.
+- **Source**: code review of PR #25, 2026-10-29.
+
+---
+
+#### Pass 59.177 Translation catalogs: drop obsolete duplicates that msgfmt rejects (LOW, S).
+- **Why**: `msgfmt --statistics` fails on every
+  `translations/*/messages.po` with duplicate definitions: obsolete
+  `#~` copies of active msgids ("Loading…", "(not set)", "Apply").
+  Some active entries are empty while their obsolete copy holds a
+  translation (German "Apply"). Already on main before the PR merge
+  of 2026-10-29.
+- **Status**: todo. Lanes: i18n.
+- **Source**: found while merging PRs, 2026-10-29.
+
+---
+
+#### Pass 59.178 Library-import duplicate check reads only the systems it matches (LOW, S).
+- **Why**: `routes/platform_import.py::_DuplicateIndex` normalises every
+  game title in the library on each fetch-library request; before
+  PR #21 it read only the target system.
+- **Status**: todo. Lanes: routes.
+- **Source**: code review of PR #23, 2026-10-29.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
