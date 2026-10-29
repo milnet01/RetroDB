@@ -184,9 +184,12 @@ def systems():
             SELECT s.*,
                    COUNT(g.id) AS rom_count,
                    -- Bonus discs are left out, as on the console page and in
-                   -- its Unscraped filter, which never list them.
-                   SUM(CASE WHEN g.scraped = 0 AND (g.is_bonus_disc = 0 OR g.is_bonus_disc IS NULL)
-                            THEN 1 ELSE 0 END) AS missing_count
+                   -- its Unscraped filter, which never list them. That filter
+                   -- shows one card per version group (PASS-59-106), so count
+                   -- groups, not rows.
+                   COUNT(DISTINCT CASE WHEN g.scraped = 0
+                                        AND (g.is_bonus_disc = 0 OR g.is_bonus_disc IS NULL)
+                                       THEN COALESCE(g.version_group_id, -g.id) END) AS missing_count
             FROM systems s
             LEFT JOIN games g ON s.id = g.system_id
             GROUP BY s.id

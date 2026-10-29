@@ -41,27 +41,21 @@ def get_retroachievements_info(game):
     Read from the link the RA refresh or a scrape stored (`ra_game_id` and
     its counts), the same link the Library's RA badge shows. A fresh title
     search here missed games the refresh had matched by ROM name, so a game
-    with the badge had no RA card (Metroid Prime on GameCube). RA is asked
-    only when the stored link carries no achievement count.
+    with the badge had no RA card (Metroid Prime on GameCube). RA is never
+    asked here: a link with no stored count shows no card until an RA
+    refresh fills the count.
     """
     ra_id = game.get('ra_game_id')
-    if not ra_id:
-        return None
     count = game.get('ra_achievement_count') or 0
-    if count:
-        return {
-            'id': ra_id,
-            'achievement_count': count,
-            'points': game.get('ra_points') or 0,
-            'has_achievements': True,
-            'url': f"https://retroachievements.org/game/{ra_id}",
-        }
-    try:
-        from scraper.retroachievements import get_game_info
-        return get_game_info(ra_id)
-    except Exception as e:
-        logger.debug(f"RetroAchievements lookup failed: {e}")
+    if not ra_id or not count:
         return None
+    return {
+        'id': ra_id,
+        'achievement_count': count,
+        'points': game.get('ra_points') or 0,
+        'has_achievements': True,
+        'url': f"https://retroachievements.org/game/{ra_id}",
+    }
 
 
 def get_trophy_info_for_game(game_title, system_name):

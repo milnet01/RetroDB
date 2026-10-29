@@ -19,6 +19,10 @@ from scraper.scrape_ai import parse_units_sold
     ('~850k', 850000),
     ('over 1 million', 1000000),
     ('3.5 million copies', 3500000),
+    ('2,400 thousand', 2400000),
+    ('1,500k', 1500000),
+    ('1,5 million', 1500000),
+    ('1,234.5 thousand', 1234500),
 ])
 def test_parses_what_an_ai_writes(raw, expected):
     assert parse_units_sold(raw) == expected

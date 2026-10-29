@@ -7,6 +7,8 @@ import stat
 import struct
 import sys
 
+import pytest
+
 from services.disc_serial import read_disc_ids
 
 SECTOR = 2048
@@ -187,3 +189,21 @@ def test_ps3_name_without_serial_gives_nothing(tmp_path):
     game = tmp_path / 'Game 123456.PS3'
     game.mkdir()
     assert read_disc_ids(game, 'ps3') == ('', None)
+
+
+@pytest.mark.parametrize('name', ['Game [BLUS30443].pkg', 'Game [BLUS30443].chd'])
+def test_ps3_name_serial_when_the_image_cannot_be_opened(tmp_path, monkeypatch, name):
+    """An unsupported extension, or a CHD with no chdman, still gives the
+    serial in the file name."""
+    monkeypatch.setattr('shutil.which', lambda _cmd: None)
+    rom = tmp_path / name
+    rom.write_bytes(b'\x00' * 16)
+    assert read_disc_ids(rom, 'ps3') == ('BLUS-30443', None)
+
+
+def test_ps3_folder_with_bad_sfb_reads_param_sfo(tmp_path):
+    game = tmp_path / 'Some Game.PS3'
+    (game / 'PS3_GAME').mkdir(parents=True)
+    (game / 'PS3_DISC.SFB').write_bytes(b'not an sfb')
+    (game / 'PS3_GAME' / 'PARAM.SFO').write_bytes(_param_sfo(b'BLES00001'))
+    assert read_disc_ids(game, 'ps3') == ('BLES-00001', None)

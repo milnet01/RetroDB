@@ -526,7 +526,10 @@ def game_detail(game_id):
 
                     # Uploads go through the scraper's image pipeline
                     # (format, size, responsive variants). The file an
-                    # upload replaces is removed when no other game uses it.
+                    # upload replaces is removed when no other game uses it,
+                    # once the UPDATE below no longer points at it.
+                    replaced = []
+
                     def _upload(field, media_type, prefix, current):
                         uploaded = save_upload(request.files.get(field), image_dir(media_type),
                                                game_id, prefix, ALLOWED_IMAGE_EXT, image_type=media_type)
@@ -536,7 +539,7 @@ def game_detail(game_id):
                                 f"SELECT 1 FROM games WHERE "
                                 f"{safe_column(media_type, ('boxart', 'boxart_3d', 'fanart'))} = ? AND id != ?",
                                 (current, game_id), one=True):
-                            remove_media_file(current, media_type)
+                            replaced.append((current, media_type))
                         return uploaded
 
                     boxart_filename = _upload('custom_boxart', 'boxart', 'custom', boxart_filename)
@@ -616,6 +619,8 @@ def game_detail(game_id):
                                         request.form.get('edit_title_locked') == '1'),
                         game_id
                     ))
+                    for old_file, media_type in replaced:
+                        remove_media_file(old_file, media_type)
 
                     message = "Metadata updated successfully!"
 

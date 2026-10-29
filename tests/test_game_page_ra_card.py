@@ -19,13 +19,13 @@ def test_stored_link_is_used_without_asking_ra():
                     'url': 'https://retroachievements.org/game/3711'}
 
 
-def test_link_without_a_count_is_looked_up_by_id():
-    game = {'ra_game_id': 3711, 'ra_achievement_count': None}
-    found = {'id': 3711, 'achievement_count': 54, 'has_achievements': True,
-             'url': 'https://retroachievements.org/game/3711'}
-    with patch('scraper.retroachievements.get_game_info', return_value=found) as by_id:
-        assert get_retroachievements_info(game) == found
-    by_id.assert_called_once_with(3711)
+def test_link_without_a_count_asks_ra_nothing():
+    # A page render makes no network call; the RA refresh jobs fill the count.
+    for count in (None, 0):
+        game = {'ra_game_id': 3711, 'ra_achievement_count': count}
+        with patch('scraper.retroachievements.get_game_info') as by_id:
+            assert get_retroachievements_info(game) is None
+        by_id.assert_not_called()
 
 
 def test_unlinked_game_has_no_card():

@@ -211,12 +211,17 @@ def _dashed(title_id: str) -> str:
 
 
 def _ps3_folder_id(path: Path) -> str:
+    """PS3_DISC.SFB's title ID, else PARAM.SFO's; '' when neither parses."""
     sfb = path / 'PS3_DISC.SFB'
     if sfb.is_file():
-        return _sfb_title_id(sfb.read_bytes())
+        found = _sfb_title_id(sfb.read_bytes())
+        if found:
+            return found
     for sfo in (path / 'PS3_GAME' / 'PARAM.SFO', path / 'PARAM.SFO'):
         if sfo.is_file():
-            return _sfo_title_id(sfo.read_bytes())
+            found = _sfo_title_id(sfo.read_bytes())
+            if found:
+                return found
     return ''
 
 
@@ -233,7 +238,15 @@ def ps3_id_from_name(name: str) -> str:
 
 def read_disc_ids(rom_path, system_folder: str) -> tuple:
     """(serial, crc). serial is 'AAAA-NNNNN' or ''. crc is 8 upper-case hex
-    digits for ps2, else None. Raises nothing; any failure gives ('', None)."""
+    digits for ps2, else None. Raises nothing; any failure gives ('', None).
+    A PS3 game whose disc gives no serial falls back to one in its name."""
+    serial, crc = _read_disc_ids(rom_path, system_folder)
+    if not serial and system_folder == 'ps3' and rom_path:
+        serial = ps3_id_from_name(str(rom_path))
+    return serial, crc
+
+
+def _read_disc_ids(rom_path, system_folder: str) -> tuple:
     try:
         path = Path(rom_path)
         if path.is_dir():
@@ -255,7 +268,7 @@ def read_disc_ids(rom_path, system_folder: str) -> tuple:
             return '', None
         if system_folder == 'ps3':
             sfb = _read_file(reader, 'PS3_DISC.SFB')
-            return ((_sfb_title_id(sfb) if sfb else '') or ps3_id_from_name(path.name)), None
+            return (_sfb_title_id(sfb) if sfb else ''), None
         return _from_iso(reader, system_folder)
     except Exception as e:  # noqa: BLE001 — the contract is "raises nothing"
         logger.info(f"disc serial: cannot read {rom_path}: {e}")

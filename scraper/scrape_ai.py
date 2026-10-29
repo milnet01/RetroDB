@@ -981,8 +981,10 @@ def parse_units_sold(value):
         scale = _SALES_SCALE.get(unit, 1) if unit else 1
         if unit and unit not in _SALES_SCALE and unit not in ('copies', 'units'):
             return None
-        # "2,400,000" groups thousands; "2.4" is a decimal.
-        digits = digits.replace(',', '') if scale == 1 or digits.count(',') > 1 else digits.replace(',', '.')
+        # "2,400,000" and "2,400 thousand" group thousands (a comma before
+        # exactly three digits); "2.4" and "2,4 million" are decimals.
+        grouped = scale == 1 or re.fullmatch(r'\d{1,3}(,\d{3})+(\.\d*)?', digits)
+        digits = digits.replace(',', '') if grouped else digits.replace(',', '.')
         try:
             number = float(digits)
         except ValueError:

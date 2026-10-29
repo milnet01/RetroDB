@@ -51,7 +51,9 @@ def _candidate_dirs() -> list:
             dirs += adapter.data_dirs(Path(_resolve_binary(dict(row), None)))
         except (LaunchResolutionError, OSError):
             continue
-    return dirs + adapter.data_dirs(Path('rpcs3'))
+    # No row: only the fixed per-user places. A bare 'rpcs3' would make the
+    # program's folder the server's working directory.
+    return dirs + [d for d in adapter.data_dirs(Path('rpcs3')) if d.is_absolute()]
 
 
 def compat_file() -> Optional[Path]:
@@ -143,11 +145,17 @@ def status_for_game(game) -> Optional[dict]:
 
 def ensure_serial(game) -> None:
     """Read and store the serial of one PS3 game that has none yet (the game
-    page). A list page calls fill_missing_serials instead."""
-    if not applies_to(game) or game.get('disc_serial') is not None:
+    page). A list page calls fill_missing_serials instead. Does nothing when
+    RPCS3 has no list (the badge could not show), and never raises: a locked
+    database or an unreadable disc must not break the page."""
+    if not applies_to(game) or game.get('disc_serial') is not None or not available():
         return
     from services.standalone_settings import disc_ids
-    serial, _crc = disc_ids(game)
+    try:
+        serial, _crc = disc_ids(game)
+    except Exception as e:  # noqa: BLE001 — a page must render without it
+        logger.warning(f"RPCS3 compatibility: cannot store the serial of game {game.get('id')}: {e}")
+        return
     game['disc_serial'] = serial
 
 
