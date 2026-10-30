@@ -10051,6 +10051,22 @@ the cover zoom in Firefox before being reverted for the local fix.
   your library"), shown only for the top 10.
 - **Status**: todo.
 
+---
+
+#### Pass 59.194 RetroAchievements sign-in for DuckStation and PCSX2 (feature, M).
+- **Target**: hand the token services/ra_sign_in.py keeps to DuckStation's and
+  PCSX2's own settings, as 3.34.0 does for RetroDB's RetroArch. Their settings
+  files are not yet researched.
+- **Status**: todo. Deferred by the user 2026-10-30 so 3.34.0 is not held up.
+
+---
+
+#### Pass 59.195 A translation script run once per release (chore, M).
+- **Target**: a script that translates each release's new catalog strings and
+  changelog items into every locale, with Sonnet via the user's Claude key and
+  a word list per locale so terms stay the same.
+- **Status**: todo. The user chose after 3.34.0 on 2026-10-30.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history

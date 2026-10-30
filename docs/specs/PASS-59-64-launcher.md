@@ -189,7 +189,7 @@ data/player/
   settings/game/<game_id>.json   # RetroDB's record of what it wrote (§4.5)
   config/                # the player's config_directory (its own files)
   rejected/              # override files §6 could not parse
-  run/                   # per-launch layers, macOS and Windows (§4.6)
+  run/                   # per-launch layers (§4.6)
   saves/  states/  remaps/
 ```
 
@@ -293,7 +293,9 @@ per-game settings PASS-59-81 recommends or the user chose.
 ```
 
 The run layer is present when the launch turns network commands on: on
-macOS and Windows, and for a `.m3u` game (§4.6). Extra args,
+macOS and Windows, and for a `.m3u` game (§4.6). It is also present when the
+launching user has signed in to RetroAchievements, and holds their sign-in for
+this launch alone (`services/ra_sign_in.py`). Extra args,
 when set, are `shlex.split` and placed before `-L`; the auto-append of
 §4.1 does not apply to the player.
 

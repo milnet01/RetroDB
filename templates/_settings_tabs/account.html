@@ -112,6 +112,25 @@
             <span class="field-tip">{% trans %}Get your API key from <a href="https://retroachievements.org/controlpanel.php" target="_blank" rel="noopener noreferrer" style="color: var(--primary-cyan);">RetroAchievements Control Panel</a>{% endtrans %}</span>
         </div>
         
+        <div class="form-group mb-lg" id="raPlay" style="display: none;">
+            <div class="form-label">{{ _("Earn achievements in RetroDB's RetroArch") }}</div>
+            <p class="text-muted" id="raPlayIntro">{{ _("Sign in once and your achievements unlock as you play. Your password goes only to RetroAchievements and is not kept; RetroDB keeps the sign-in token it returns.") }}</p>
+            <p id="raPlaySignedIn" style="display: none;"></p>
+            <div class="path-input-row" id="raPlayForm">
+                <input type="password" class="form-input" id="raPlayPassword" autocomplete="off" aria-label="{{ _('Your RetroAchievements password') }}" placeholder="{{ _('Your RetroAchievements password') }}">
+                <button type="button" class="btn btn-primary" id="raPlaySignIn"><span class="btn-icon">🔑</span> {{ _('Sign in') }}</button>
+            </div>
+            <button type="button" class="btn btn-secondary" id="raPlaySignOut" style="display: none;">{{ _('Sign out') }}</button>
+            <p class="download-status" id="raPlayStatus" aria-live="polite"></p>
+            <div id="raPlayHardcoreRow" style="display: none;">
+                <label style="display: flex; align-items: center; gap: 0.5rem;">
+                    <input type="checkbox" id="raPlayHardcore">
+                    <span>{{ _('Hardcore mode') }}</span>
+                </label>
+                <span class="field-tip">{{ _('Counts toward mastery, but turns off save states and rewind, and a cheat that is on pauses it.') }}</span>
+            </div>
+        </div>
+
         <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">🎮 {{ _('PlayStation Network') }}</h3>
         <p class="text-muted" style="margin-bottom: var(--spacing-md);">
             {{ _('Connect your PSN account to sync trophies from PS3, PS4, PS5, and PS Vita games.') }}

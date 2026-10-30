@@ -42,9 +42,11 @@ import sys
 from pathlib import Path
 from typing import Optional
 
+from flask import g, has_request_context
+
 from services.database import query
 from services.launcher.base import LaunchContext, LaunchResolutionError
-from services import player, player_cores, player_install
+from services import player, player_cores, player_install, ra_sign_in
 from services.rom_scanner import rom_type_problem
 import config
 from settings_manager import get_setting
@@ -509,6 +511,12 @@ def keyboard_core(system_id, emulator_override_id) -> bool:
                 and _is_keyboard_core(sys_emu.get('retroarch_core') or ''))
 
 
+def _launching_user_id():
+    """Who pressed Play: None outside a request."""
+    user = getattr(g, 'user', None) if has_request_context() else None
+    return user['id'] if user else None
+
+
 def _player_context(game, emu, sys_emu, binary_argv_prefix, rom_path_obj) -> LaunchContext:
     """The player's launch (PASS-59-64 §4.4): the core PASS-59-81 §4.3 picks,
     from the player's profile, and argv from services/player.py, never from
@@ -542,7 +550,8 @@ def _player_context(game, emu, sys_emu, binary_argv_prefix, rom_path_obj) -> Lau
             f"Cannot write the player's settings ({e.filename}): {e.strerror or e}") from e
     recommended = player_cores.game_recommended(folder, game['id'], emu['id'], core)
     words, port = player.launch_args(game, sys_emu, str(core_path_obj), rom_abs, token,
-                                     recommended, core=core)
+                                     recommended, core=core,
+                                     session_keys=ra_sign_in.launch_keys(_launching_user_id()))
     return LaunchContext(
         game_id=game['id'],
         emulator_id=emu['id'],

@@ -50,11 +50,19 @@ _BASE_KEYS = {
     # Load the game's cheat list, which RetroDB puts in place (PASS-59-155).
     'apply_cheats_after_load': 'true',
 }
+# The left stick works as the D-pad. Value 1 rather than the forced 3: RetroArch
+# drops the mapping when a core asks for analog input, so a game that uses the
+# stick keeps it, and no system needs listing.
+_BASE_KEYS.update({f'input_player{port}_analog_dpad_mode': '1' for port in range(1, 9)})
 # Keys a menu save may never bring back into a game's settings (§4.5).
 _PROTECTED_KEYS = set(_BASE_KEYS) | {
     'rgui_config_directory', 'savefile_directory', 'savestate_directory',
     'input_remapping_directory', 'libretro_directory', 'system_directory',
     'core_options_path', 'cheat_database_path',
+    # The launching user's RetroAchievements sign-in lives in the run layer
+    # only, so a menu save can never copy a token into a game's settings.
+    'cheevos_enable', 'cheevos_username', 'cheevos_password', 'cheevos_token',
+    'cheevos_hardcore_mode_enable',
 }
 
 
@@ -219,11 +227,12 @@ def _free_port() -> int:
 
 def launch_args(game: dict, sys_emu: Optional[dict], core_path: str,
                 rom_path: Path, token: str, recommended: Optional[dict] = None,
-                core: Optional[str] = None) -> tuple:
+                core: Optional[str] = None, session_keys: Optional[dict] = None) -> tuple:
     """Write the profile's settings for one launch and return (argv words
     after the binary, network command port or None). `recommended` is
     {'cfg': {...}, 'opt': {...}} from PASS-59-81; `core` (its id) names
-    the folder the game's cheats go in (PASS-59-155). Raises
+    the folder the game's cheats go in (PASS-59-155); `session_keys` are for
+    this launch alone and go only in the run layer. Raises
     LaunchResolutionError when a file cannot be written (§6) or a path
     holds `|` (INV-10)."""
     profile = profile_dir()
@@ -265,10 +274,14 @@ def launch_args(game: dict, sys_emu: Optional[dict], core_path: str,
         _save_record(game['id'], rec)
         layers = [str(system_cfg)] if system_cfg.is_file() else []
         layers.append(str(game_cfg))
+        run_keys = dict(session_keys or {})
         if port is not None:
+            run_keys.update(network_cmd_enable='true', network_cmd_port=str(port))
+        if run_keys:
             run_cfg = profile / 'run' / f'{token}.cfg'
-            _write(run_cfg, {'network_cmd_enable': 'true',
-                             'network_cmd_port': str(port)})
+            run_cfg.parent.mkdir(parents=True, exist_ok=True)
+            run_cfg.touch(mode=0o600)   # it can hold a sign-in token
+            _write(run_cfg, run_keys)
             layers.append(str(run_cfg))
     except OSError as e:
         raise LaunchResolutionError(

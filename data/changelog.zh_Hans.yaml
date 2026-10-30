@@ -31,6 +31,10 @@
     label: '从列表中为每个系统选择模拟器'
   - type: feature
     label: '每个路径框都有“浏览”按钮'
+  - type: feature
+    label: '在 RetroDB 的 RetroArch 中，左摇杆可当方向键使用'
+  - type: feature
+    label: '从设置登录 RetroAchievements'
   body: |
     <ul>
       <li><strong>适用于 RetroArch (RetroDB)、DuckStation 和 PCSX2 的金手指。</strong>设置 &gt; 模拟器 中有一个新的“金手指”部分。你可以在那里下载免费的公开金手指包，或导入你已有的金手指文件夹；RetroDB 会复制这些文件，绝不会改动你的文件夹。之后，游戏页面会列出该游戏的金手指，每个都有开关，金手指很多时还有搜索框。在 RetroArch (RetroDB) 中，你开启的金手指会在你下次按下游玩时生效，你在游玩时通过 RetroArch 菜单所做的更改也会保留。对于 DuckStation 和 PCSX2，开关保存在模拟器自己的该游戏设置中，因此在模拟器内所做的更改也会显示在页面上。RetroDB 绝不会覆盖模拟器已有的金手指文件。开启金手指会暂停 RetroAchievements 硬核模式。</li>
@@ -48,6 +52,8 @@
       <li><strong>按钮旁显示下载进度。</strong>下载 RetroArch、播放器核心或金手指包时，按钮旁的提示会以百分比显示进度。以前，按钮下方会出现一行文字，把页面其余部分往下推。</li>
       <li><strong>从列表中为每个系统选择模拟器。</strong>设置 &gt; 模拟器中的“按系统映射”现在每个系统只显示一次，并附有与之关联的模拟器列表。你选中的模拟器就是“游玩”在该系统游戏中使用的模拟器，除非某个游戏设置了自己的模拟器。RetroDB 找不到的模拟器会标记为“未找到”。以前，每个系统的每个模拟器各占一行，用一个小圆点选择默认模拟器。RetroDB 自带的 RetroArch 现在会出现在它能运行的每个已列出系统的列表中，包括还没有游戏的系统。</li>
       <li><strong>每个路径框都有“浏览”按钮。</strong>管理员现在可以逐级点击电脑上的文件夹来选择文件夹或程序，无需输入路径：设置 &gt; 模拟器、游戏库、抓取和账户，以及 ROM 工具的设置。需要程序的框还会显示文件。<code>.config</code> 等隐藏文件夹排在最后。</li>
+      <li><strong>在 RetroDB 的 RetroArch 中，左摇杆可当方向键使用。</strong>在没有摇杆的系统（如 NES 或 Mega Drive）的游戏中，现在除了方向键，也可以用左摇杆移动。当游戏的模拟器核心自行读取摇杆时（如 Nintendo 64），摇杆仍是真正的摇杆。</li>
+      <li><strong>从设置登录 RetroAchievements。</strong>设置 &gt; 账户现在可以为 RetroDB 的 RetroArch 登录，这样游玩时成就就会解锁，无需在模拟器内登录。你的密码只发送给 RetroAchievements，不会保存。每个 RetroDB 用户都有自己的登录和硬核模式开关，默认关闭。DuckStation 和 PCSX2 仍从各自的菜单登录。</li>
     </ul>
 - version: 3.33.0
   date: '2026-10-29'

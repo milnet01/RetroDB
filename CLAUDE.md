@@ -128,6 +128,10 @@ Moved to `.claude/rules/ratings.md`, which loads when a matching file is read. R
 - The emulator's files are the record of which cheats are on; RetroDB keeps no table. Never overwrite a cheat file already in DuckStation's or PCSX2's cheats folder (INV-4).
 - The game page's Cheats panel (`static/js/game-cheats.js`) sits full width under the card row; Settings > Emulators has the Cheats section. Spec: `docs/specs/PASS-59-155-cheats.md`.
 
+### RetroAchievements sign-in
+- `services/ra_sign_in.py` owns it: the password is sent once and dropped, and the token lives in `user_platform_tokens` under `retroachievements`, per user. The web API key cannot sign RetroArch in.
+- A token reaches RetroArch only in a launch's run layer (`session_keys`), never the base cfg or a game's cfg; `_PROTECTED_KEYS` holds the `cheevos_*` keys so a menu save cannot copy one.
+
 ### Page wiring
 - A box that takes a path gets `browse_button()` from `_macros/browse_button.html` beside it, in a `.path-input-row`, and a row in `tests/test_path_browser.py`. The button shows for admins only: `/api/settings/browse-paths` can list any folder on the computer.
 - Both `/games` (Library) and `/system/<id>` use `AllGamesController` — keep them in sync.

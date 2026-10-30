@@ -4,7 +4,7 @@
 # Handles RetroAchievements integration and synchronization.
 # =============================================================================
 
-from flask import Blueprint, render_template, redirect, url_for, jsonify, flash, g
+from flask import Blueprint, render_template, redirect, url_for, jsonify, flash, g, request
 from flask_babel import gettext as _
 import logging
 
@@ -13,6 +13,7 @@ from services.database import query, execute
 from services.auth import login_required, editor_required, get_user_ra_credentials
 from services.api_helpers import handle_api_errors, success, error
 from services.jobs import ra_sync_job, ra_refresh_job
+from services import ra_sign_in
 
 logger = logging.getLogger('scraper')
 
@@ -201,6 +202,44 @@ def achievement_game(game_id):
                          ra_username=username,
                          first_achievement_date=first_achievement_date,
                          last_achievement_date=last_achievement_date)
+
+@bp.route('/api/retroachievements/sign-in', methods=['GET'])
+@login_required
+@handle_api_errors
+def api_ra_sign_in_status():
+    return success(**ra_sign_in.status(g.user['id']))
+
+
+@bp.route('/api/retroachievements/sign-in', methods=['POST'])
+@login_required
+@handle_api_errors
+def api_ra_sign_in():
+    """Swap a password for a token. The password is not stored or logged."""
+    data = request.get_json(silent=True) or {}
+    try:
+        return success(**ra_sign_in.sign_in(g.user['id'], data.get('username'),
+                                            data.get('password')))
+    except ra_sign_in.SignInError as e:
+        return error(str(e), 400)
+
+
+@bp.route('/api/retroachievements/sign-in', methods=['DELETE'])
+@login_required
+@handle_api_errors
+def api_ra_sign_out():
+    return success(**ra_sign_in.sign_out(g.user['id']))
+
+
+@bp.route('/api/retroachievements/hardcore', methods=['PUT'])
+@login_required
+@handle_api_errors
+def api_ra_hardcore():
+    data = request.get_json(silent=True) or {}
+    try:
+        return success(**ra_sign_in.set_hardcore(g.user['id'], data.get('on')))
+    except ra_sign_in.SignInError as e:
+        return error(str(e), 400)
+
 
 @bp.route('/api/achievements/<int:game_id>')
 @login_required

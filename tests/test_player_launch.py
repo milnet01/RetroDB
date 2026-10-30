@@ -121,6 +121,72 @@ def test_inv9_base_keys_reset_other_lines_kept(playerdb):
     assert cfg['libretro_directory'] == str(playerdb['profile'] / 'cores')
 
 
+def test_left_stick_works_as_the_d_pad_for_every_player(playerdb):
+    """Value 1, not the forced 3: RetroArch drops the mapping when a core asks
+    for analog input, so a game that uses the stick keeps it."""
+    _resolve()
+    cfg = _cfg(playerdb['profile'] / 'retroarch.cfg')
+    for port in range(1, 9):
+        assert cfg[f'input_player{port}_analog_dpad_mode'] == '1'
+
+
+# -----------------------------------------------------------------------------
+# RetroAchievements: the launching user's sign-in, for this launch only
+# -----------------------------------------------------------------------------
+
+_RA_KEYS = {'cheevos_enable': 'true', 'cheevos_username': 'Ants',
+            'cheevos_token': 'secret-token', 'cheevos_hardcore_mode_enable': 'false'}
+
+
+def _run_layer(ctx):
+    words = ctx.argv[ctx.argv.index('--appendconfig') + 1].split('|')
+    return next((w for w in words if '/run/' in w), None)
+
+
+def test_signed_in_user_gets_achievements_in_the_run_layer_only(playerdb, monkeypatch):
+    monkeypatch.setattr('services.launch_resolver.ra_sign_in.launch_keys', lambda uid: _RA_KEYS)
+    ctx = _resolve()
+    layer = Path(_run_layer(ctx))
+    assert {k: _cfg(layer)[k] for k in _RA_KEYS} == _RA_KEYS
+    assert layer.stat().st_mode & 0o077 == 0
+    profile = playerdb['profile']
+    # On its command line and in every lasting settings file: no token.
+    assert 'secret-token' not in ' '.join(ctx.argv)
+    for path in profile.rglob('*'):
+        if path.is_file() and path != layer:
+            assert 'secret-token' not in path.read_text(errors='replace'), path
+
+
+def test_run_layer_is_deleted_after_the_session(playerdb, monkeypatch):
+    monkeypatch.setattr('services.launch_resolver.ra_sign_in.launch_keys', lambda uid: _RA_KEYS)
+    ctx = _resolve()
+    layer = Path(_run_layer(ctx))
+    ctx.on_exit()
+    assert not layer.exists()
+
+
+def test_signed_out_launch_says_nothing_about_achievements(playerdb, monkeypatch):
+    monkeypatch.setattr('services.launch_resolver.ra_sign_in.launch_keys', lambda uid: {})
+    ctx = _resolve()
+    layer = _run_layer(ctx)
+    assert layer is None or not any(k.startswith('cheevos_') for k in _cfg(layer))
+
+
+def test_launch_uses_the_user_who_pressed_play(playerdb, monkeypatch):
+    from flask import Flask, g
+    from services.launch_resolver import _launching_user_id
+    assert _launching_user_id() is None
+    with Flask(__name__).test_request_context():
+        assert _launching_user_id() is None
+        g.user = {'id': 42}
+        assert _launching_user_id() == 42
+
+
+def test_menu_save_cannot_copy_a_sign_in_into_game_settings():
+    from services.player import _PROTECTED_KEYS
+    assert set(_RA_KEYS) | {'cheevos_password'} <= _PROTECTED_KEYS
+
+
 def test_base_cfg_recreated_when_deleted(playerdb):
     _resolve()
     base = playerdb['profile'] / 'retroarch.cfg'
