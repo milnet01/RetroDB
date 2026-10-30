@@ -98,8 +98,8 @@
             <span class="btn-icon">▶</span>
             {{ _('Play') }}
         </button>
-        {# PASS-59-197 — which emulator Play starts, or why it has none. #}
-        <span class="play-emulator">{{ _('Launches in: %(name)s', name=play_emulator) if play_emulator else _('No emulator is set up for this system.') }}</span>
+        {# PASS-59-197 — why Play has no emulator. The Emulator settings heading names one it has. #}
+        {% if not play_emulator %}<span class="play-emulator">{{ _('No emulator is set up for this system.') }}</span>{% endif %}
         {% if keyboard_play %}
         {# PASS-59-152 — keyboard computers start in game focus. #}
         <a href="{{ url_for('help_page') }}#emulators-play" class="play-key-hint">⌨ {{ _('Keyboard game: press Scroll Lock for RetroArch keys') }}</a>
@@ -746,7 +746,7 @@
         <!-- PASS-59-91 §4.6 — per-game emulator settings; game-emulator-settings.js fills it -->
         {% if can_play %}
         <div class="bottom-section emu-settings-section" id="emuSettingsPanel" data-game-id="{{ game.id }}" data-can-edit="{{ 'true' if has_perm('edit') else 'false' }}" hidden>
-            <h2 class="section-title-sm">🎛️ {{ _('Emulator settings') }}</h2>
+            <h2 class="section-title-sm">🎛️ {{ _('Emulator settings') }}{% if play_emulator %} <span class="emu-settings-name">{{ play_emulator }}</span>{% endif %}</h2>
             <p class="emu-settings-note" id="emuSettingsNote"></p>
             <div class="emu-settings-grid" id="emuSettingsGrid"></div>
         </div>
@@ -1284,6 +1284,12 @@ body:has(.game-fanart-bg.active)::before {
 
 .emu-settings-section[hidden] {
     display: none;
+}
+
+.emu-settings-name {
+    display: block;
+    color: var(--primary-cyan);
+    font-size: 0.85em;
 }
 
 .emu-settings-note {

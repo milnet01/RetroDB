@@ -10119,6 +10119,11 @@ the cover zoom in Firefox before being reverted for the local fix.
   serve. Walked in headless Chrome at desktop and 375 px on five kinds
   of game.
 - **Status**: done (2026-10-30, v3.34.0).
+- **Progress** (2026-10-30): Moved 2026-10-30 (user): the emulator's name now sits under the
+  Emulator settings card's heading, not beside Play. 'No emulator is set
+  up for this system.' stays beside Play. A game whose emulator has no
+  settings RetroDB manages hides that card, so its page names no
+  emulator.
 
 ---
 

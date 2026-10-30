@@ -847,7 +847,7 @@ def game_detail(game_id):
                              # PASS-59-152 — its hotkeys wait behind Scroll Lock.
                              keyboard_play=keyboard_core(game['system_id'],
                                                          game['emulator_override_id']),
-                             # PASS-59-197 — named beside Play.
+                             # PASS-59-197 — named on the Emulator settings card.
                              play_emulator=launch_emulator_name(game['system_id'],
                                                                 game['emulator_override_id'],
                                                                 game['system_name']),
