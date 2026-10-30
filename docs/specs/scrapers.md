@@ -84,7 +84,7 @@ Fields no scraper supplies:
 Tie-breakers:
 
 - **Boxart**: ScreenScraper and RAWG ship system-specific covers (Saturn JP boxart for a Saturn ROM) where IGDB ships the generic global cover, so order IGDB last if regional covers matter. ES-DE first means the cover the user already curated wins.
-- **Screenshots**: never replaced, always *appended*, then deduped via `image_dedup.compute_dhash` with Hamming-distance threshold 10. Each per-source merger reads existing filenames + their hashes once, then calls `keep_screenshot_if_unique` on each new download. Visual dupes (re-encodes / resizes) are dropped before they reach the UPDATE.
+- **Screenshots**: never replaced, always *appended*, then deduped via `image_dedup.compute_dhash` with Hamming-distance threshold 10. Each per-source merger reads existing filenames + their hashes once, then calls `keep_screenshot_if_unique` on each new download. Visual dupes (re-encodes / resizes) are dropped before they reach the UPDATE. IGDB and RAWG attach screenshots to the game, not to one platform's version, so theirs are taken only when the game lists exactly one platform (`base_scraper.on_one_platform`, PASS-59-161).
 - **Empty values never win**: the fill-only invariant (§5) means a later high-priority source filling an empty field always wins, but an empty response from a high-priority source never wipes what came from a lower-priority source.
 - **Curated DB defaults always win for controllers**: `get_system_default_controller_name` runs after gap-fill and overrides whatever was scraped/inferred.
 

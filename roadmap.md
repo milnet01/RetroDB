@@ -9570,7 +9570,7 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.161 Screenshots must come from the game's own system, never another platform's version (FEATURE, M).
-- **Status**: todo
+- **Status**: in-progress
 - **Request** (user, 2026-10-23): screenshots shown for a system must be
   true to that system. Seen: screenshots from a more colourful system
   attached to ZX Spectrum games. The user knows ZX Spectrum and C64
@@ -9597,6 +9597,14 @@ were corrected in `2836bc3` and are not repeated here.
   Amiga: only Spectrum screenshots land; a C64 shot fed to the check is
   refused; the review screen lists existing wrong shots.
 - **Source**: user, 2026-10-23.
+- **Progress** (2026-10-30): Plan step 1 built 2026-10-30, in the open 3.34.1:
+  `base_scraper.on_one_platform` gates IGDB and RAWG screenshots on the
+  game listing exactly one platform. Tests:
+  `tests/test_pass59_161_screenshots_own_system.py`,
+  `tests/test_scrape_fill_only.py`. Not run against the live IGDB or
+  RAWG services. Screenshots already in a library are unchanged. Steps 2
+  (the palette check) and 3 (the review screen) are still to do; the
+  user judges the palette results on ZX Spectrum and C64.
 
 ---
 

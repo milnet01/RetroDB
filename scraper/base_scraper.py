@@ -419,6 +419,13 @@ def download_image(url, dest_path, timeout=15):
                 pass
 
 
+def on_one_platform(data):
+    """True when an IGDB or RAWG game lists exactly one platform. Both attach
+    screenshots to the game, not to one platform's version, so a game on
+    several platforms may carry another system's pictures (PASS-59-161)."""
+    return len(data.get('platforms') or []) == 1
+
+
 def rate_limit(delay=0.5):
     """
     Simple sleep-based rate limiter.

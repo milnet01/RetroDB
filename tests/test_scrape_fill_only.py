@@ -208,6 +208,7 @@ def test_igdb_apply_does_not_overwrite_curated_media_and_appends_screenshots(mak
         'name': 'Curated Game',
         'cover': {'url': '//img/t_thumb/box.jpg'},
         'screenshots': [{'url': '//img/t_thumb/s1.jpg'}, {'url': '//img/t_thumb/s2.jpg'}],
+        'platforms': [{'id': 26}],
         'artworks': [{'url': '//img/t_thumb/a1.jpg'}],
     }
     assert scrape_igdb.apply_metadata_to_game(1, igdb_data) is True
@@ -218,6 +219,23 @@ def test_igdb_apply_does_not_overwrite_curated_media_and_appends_screenshots(mak
     ss = row['screenshots'].split(',')
     assert ss[0] == 'old_ss.webp'                   # existing kept, first
     assert len(ss) == 3                             # two new appended
+
+
+def test_igdb_apply_skips_screenshots_of_a_game_on_several_platforms(make_conn_with_existing_row, monkeypatch, tmp_path):
+    """PASS-59-161: the direct path, as metadata_merger's."""
+    conn = make_conn_with_existing_row(screenshots='old_ss.webp')
+    monkeypatch.setattr(scrape_igdb, 'get_scraper_conn', lambda: conn)
+    monkeypatch.setattr(scrape_igdb, 'download_image', lambda *a, **kw: True)
+    monkeypatch.setattr(scrape_igdb, 'IMAGE_PATH', str(tmp_path), raising=False)
+
+    igdb_data = {
+        'name': 'Curated Game',
+        'screenshots': [{'url': '//img/t_thumb/s1.jpg'}],
+        'platforms': [{'id': 26}, {'id': 15}],
+    }
+    assert scrape_igdb.apply_metadata_to_game(1, igdb_data) is True
+    row = conn.execute("SELECT screenshots FROM games WHERE id=1").fetchone()
+    assert row['screenshots'] == 'old_ss.webp'
 
 
 def test_tgdb_apply_does_not_overwrite_curated_media_and_appends_screenshots(make_conn_with_existing_row, monkeypatch, tmp_path):
@@ -260,6 +278,7 @@ def test_igdb_apply_fills_media_when_empty(make_conn_with_existing_row, monkeypa
         'name': 'Blank Game',
         'cover': {'url': '//img/t_thumb/box.jpg'},
         'screenshots': [{'url': '//img/t_thumb/s1.jpg'}],
+        'platforms': [{'id': 26}],
     }
     assert scrape_igdb.apply_metadata_to_game(1, igdb_data) is True
     row = conn.execute("SELECT boxart, screenshots FROM games WHERE id=1").fetchone()

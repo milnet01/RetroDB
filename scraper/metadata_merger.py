@@ -32,6 +32,7 @@ from services.image_utils import (
     finalize_downloaded_image,
 )
 from services.normalization import normalize_genre, normalize_modes
+from scraper.base_scraper import on_one_platform
 from scraper.image_dedup import (
     compute_dhash,
     get_existing_screenshot_hashes,
@@ -611,7 +612,7 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
 
     # Download screenshots (append to existing)
     screenshots = igdb_data.get('screenshots', [])
-    if screenshots:
+    if screenshots and on_one_platform(igdb_data):
         existing_screenshots = metadata['screenshots'].split(',') if metadata['screenshots'] else []
         existing_screenshots = [s.strip() for s in existing_screenshots if s.strip()]
         existing_hashes = get_existing_screenshot_hashes(existing_screenshots)
@@ -800,7 +801,7 @@ def apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result, fill_only=Fa
             result['filled_fields'].append('fanart (RAWG)')
 
     # Screenshots (always append, never replace)
-    if rawg_data.get('screenshot_urls'):
+    if rawg_data.get('screenshot_urls') and on_one_platform(rawg_data):
         screenshot_dir = os.path.join(IMAGE_PATH, 'screenshots')
         os.makedirs(screenshot_dir, exist_ok=True)
 

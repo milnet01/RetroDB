@@ -15,7 +15,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import IMAGE_PATH, IGDB_PLATFORM_MAP
 import config as _config
 
-from scraper.base_scraper import http_post, download_image, get_scraper_conn
+from scraper.base_scraper import http_post, download_image, get_scraper_conn, on_one_platform
 
 logger = logging.getLogger(__name__)
 
@@ -421,7 +421,7 @@ def fetch_game_details(game_id):
                multiplayer_modes.campaigncoop, multiplayer_modes.splitscreen,
                summary, storyline, cover.url, screenshots.url, artworks.url,
                videos.video_id, alternative_names.name, alternative_names.comment,
-               rating, rating_count, aggregated_rating, aggregated_rating_count;
+               platforms.name, rating, rating_count, aggregated_rating, aggregated_rating_count;
         where id = {game_id};
         """
         
@@ -619,7 +619,7 @@ def apply_metadata_to_game(db_game_id, igdb_data):
         
         # Download screenshots
         screenshots = []
-        if 'screenshots' in igdb_data:
+        if 'screenshots' in igdb_data and on_one_platform(igdb_data):
             screenshot_dir = os.path.join(IMAGE_PATH, 'screenshots')
             os.makedirs(screenshot_dir, exist_ok=True)
             

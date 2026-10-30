@@ -334,6 +334,7 @@ def get_game_details(game_id):
         'boxart_url': game.get('background_image'),
         'fanart_url': game.get('background_image_additional'),  # Secondary image for fanart
         'screenshot_urls': screenshot_urls,
+        'platforms': game.get('platforms') or [],
         'metacritic': game.get('metacritic'),  # Critic score (0-100)
         'user_score': user_score,  # Converted to 0-100 scale
         'user_score_count': user_score_count,

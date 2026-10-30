@@ -39,7 +39,8 @@ def _result():
 def test_igdb_relists_its_screenshot(image_dir):
     name = _on_disk(image_dir, f'{GAME_ID}_igdb_ss1', '.jpg')
     metadata = _empty_metadata()
-    data = {'screenshots': [{'url': '//img/t_thumb/a.jpg'}, {'url': '//img/t_thumb/b.jpg'}]}
+    data = {'screenshots': [{'url': '//img/t_thumb/a.jpg'}, {'url': '//img/t_thumb/b.jpg'}],
+            'platforms': [{'id': 26}]}
     mod.apply_igdb_to_metadata(metadata, data, GAME_ID, _result())
     assert metadata['screenshots'] == name
 
@@ -47,7 +48,7 @@ def test_igdb_relists_its_screenshot(image_dir):
 def test_rawg_relists_its_screenshot(image_dir):
     name = _on_disk(image_dir, f'{GAME_ID}_rawg_ss1', '.jpg')
     metadata = _empty_metadata()
-    data = {'screenshot_urls': ['https://img/a.jpg', 'https://img/b.jpg']}
+    data = {'screenshot_urls': ['https://img/a.jpg', 'https://img/b.jpg'], 'platforms': [{'id': 26}]}
     mod.apply_rawg_to_metadata(metadata, data, GAME_ID, _result())
     assert metadata['screenshots'] == name
 
@@ -65,6 +66,6 @@ def test_listed_screenshot_is_not_listed_twice(image_dir):
     name = _on_disk(image_dir, f'{GAME_ID}_rawg_ss1', '.jpg')
     metadata = _empty_metadata()
     metadata['screenshots'] = name
-    data = {'screenshot_urls': ['https://img/a.jpg']}
+    data = {'screenshot_urls': ['https://img/a.jpg'], 'platforms': [{'id': 26}]}
     mod.apply_rawg_to_metadata(metadata, data, GAME_ID, _result())
     assert metadata['screenshots'] == name
