@@ -1,10 +1,11 @@
 # =============================================================================
-# RETRODB - RetroAchievements sign-in for RetroDB's RetroArch
+# RETRODB - RetroAchievements sign-in
 # =============================================================================
 # RetroArch cannot use the web API key in Settings > Account: it signs in with
 # a token, and only a password earns one. The user types the password once; it
 # goes to retroachievements.org and is dropped, and the token is kept per user.
-# Each launch hands the launching user's token to RetroArch (launch_keys).
+# Each launch hands the launching user's token to RetroArch (launch_keys);
+# services/ra_standalone.py hands it to DuckStation and PCSX2.
 # =============================================================================
 
 import logging
@@ -79,7 +80,11 @@ def sign_in(user_id, username, password) -> dict:
 
 
 def sign_out(user_id) -> dict:
+    from services import ra_standalone
+    rec = _record(user_id)
     platform_tokens.clear_tokens(user_id, PLATFORM)
+    if rec:
+        ra_standalone.sign_out(rec['username'])
     return status(user_id)
 
 

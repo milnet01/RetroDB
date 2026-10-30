@@ -346,3 +346,15 @@ def test_admin_sets_system_level(seed, admin_test_client):
     assert by['fullscreen']['value'] == 'off' and by['fullscreen']['source'] == 'system'
     assert client.put(url, json={'fullscreen': 'sideways'},
                       headers={'X-CSRF-Token': csrf}).status_code == 400
+
+
+# PASS-59-194 -------------------------------------------------------------------
+
+def test_play_signs_pcsx2_in_as_whoever_pressed_it(seed, launch, monkeypatch):
+    row = seed('pcsx2-qt')
+    monkeypatch.setattr('services.ra_sign_in._record',
+                        lambda _uid: {'username': 'Ants', 'token': 'tok-1', 'hardcore': False})
+    launch(row['gid'])
+    text = (row['data'] / 'inis' / 'PCSX2.ini').read_text()
+    assert 'Username = Ants' in text and 'Token = tok-1' in text and 'Enabled = true' in text
+    launch.launcher.launch.assert_called_once()

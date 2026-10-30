@@ -1,4 +1,4 @@
-"""RetroAchievements sign-in for RetroDB's RetroArch: the password goes once to
+"""RetroAchievements sign-in: the password goes once to
 retroachievements.org and only the token it returns is kept, per user. No test
 reaches the network.
 """

@@ -1,5 +1,5 @@
 // =============================================================================
-// RETRODB - Settings > Account: RetroAchievements sign-in for RetroDB's RetroArch
+// RETRODB - Settings > Account: RetroAchievements sign-in
 // =============================================================================
 // The password goes to /api/retroachievements/sign-in and the box is cleared at
 // once. Page-specific JS (not bundled).

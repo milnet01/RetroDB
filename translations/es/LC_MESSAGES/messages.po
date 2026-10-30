@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-30 13:02+0200\n"
+"POT-Creation-Date: 2026-10-30 13:19+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -63,7 +63,7 @@ msgstr "Sistema no encontrado o sin juegos con logros"
 #: routes/games.py:879 routes/games.py:1006 routes/games.py:1062
 #: routes/games_ai.py:31 routes/games_media.py:37 routes/games_media.py:85
 #: routes/games_media.py:148 routes/games_media.py:197
-#: routes/games_media.py:230 routes/launch.py:240 routes/reports.py:693
+#: routes/games_media.py:230 routes/launch.py:242 routes/reports.py:693
 #: routes/reports.py:822 routes/trophies.py:1291 services/cheats.py:617
 #: services/hltb_service.py:125
 msgid "Game not found"
@@ -643,41 +643,41 @@ msgstr "No se pudo importar el archivo de caja."
 msgid "Title required"
 msgstr "Se requiere un título"
 
-#: routes/launch.py:77
+#: routes/launch.py:78
 #, python-format
 msgid "This action requires the \"%(perm)s\" permission"
 msgstr "Esta acción requiere el permiso \"%(perm)s\""
 
-#: routes/launch.py:90
+#: routes/launch.py:91
 msgid "The player is already running another game"
 msgstr "El reproductor ya está ejecutando otro juego"
 
-#: routes/launch.py:101
+#: routes/launch.py:102
 msgid "This game is already running"
 msgstr "Este juego ya está en ejecución"
 
-#: routes/launch.py:107
+#: routes/launch.py:108
 #, python-format
 msgid "failed to kill prior instance: %(err)s"
 msgstr "no se pudo finalizar la instancia anterior: %(err)s"
 
-#: routes/launch.py:180
+#: routes/launch.py:182
 msgid "RetroArch is not built for this computer."
 msgstr "RetroArch no está compilado para este equipo."
 
-#: routes/launch.py:193
+#: routes/launch.py:195
 msgid "Cores are not built for this computer."
 msgstr "Los núcleos no están compilados para este equipo."
 
-#: routes/launch.py:196
+#: routes/launch.py:198
 msgid "The player is not installed."
 msgstr "El reproductor no está instalado."
 
-#: routes/launch.py:205
+#: routes/launch.py:207
 msgid "No system with games has a player core."
 msgstr "Ningún sistema con juegos tiene un núcleo para el reproductor."
 
-#: routes/launch.py:218
+#: routes/launch.py:220
 msgid ""
 "Could not fetch the list of cores. Check the internet connection and try "
 "again."
@@ -685,23 +685,23 @@ msgstr ""
 "No se pudo obtener la lista de núcleos. Comprueba la conexión a Internet "
 "e inténtalo de nuevo."
 
-#: routes/launch.py:223
+#: routes/launch.py:225
 msgid "Every core is up to date."
 msgstr "Todos los núcleos están actualizados."
 
-#: routes/launch.py:242
+#: routes/launch.py:244
 msgid "Player settings reset to recommended"
 msgstr "Ajustes del reproductor restablecidos a los recomendados"
 
-#: routes/launch.py:318
+#: routes/launch.py:320
 msgid "That game is no longer running"
 msgstr "Ese juego ya no se está ejecutando"
 
-#: routes/launch.py:320
+#: routes/launch.py:322
 msgid "This game has no disk list to swap through"
 msgstr "Este juego no tiene lista de discos que cambiar"
 
-#: routes/launch.py:327
+#: routes/launch.py:329
 #, python-format
 msgid ""
 "RetroArch is not accepting commands. In RetroArch, turn on Settings > "
@@ -710,7 +710,7 @@ msgstr ""
 "RetroArch no acepta comandos. En RetroArch, activa Settings > Network > "
 "Network Commands (puerto %(port)s)."
 
-#: routes/launch.py:330
+#: routes/launch.py:332
 msgid "Next disk inserted"
 msgstr "Siguiente disco insertado"
 
@@ -4409,19 +4409,19 @@ msgstr "🛑 Apagar servidor"
 msgid "🧹 Clean Missing ROMs"
 msgstr "🧹 Limpiar ROMs ausentes"
 
-#: services/ra_sign_in.py:53
+#: services/ra_sign_in.py:54
 msgid "Could not reach RetroAchievements. Try again later."
 msgstr "No se pudo contactar con RetroAchievements. Inténtalo de nuevo más tarde."
 
-#: services/ra_sign_in.py:66
+#: services/ra_sign_in.py:67
 msgid "RetroAchievements did not sign you in."
 msgstr "RetroAchievements no ha iniciado tu sesión."
 
-#: services/ra_sign_in.py:74
+#: services/ra_sign_in.py:75
 msgid "Enter your RetroAchievements username and password."
 msgstr "Introduce tu nombre de usuario y tu contraseña de RetroAchievements."
 
-#: services/ra_sign_in.py:89
+#: services/ra_sign_in.py:94
 msgid "Sign in to RetroAchievements first."
 msgstr "Inicia sesión primero en RetroAchievements."
 
@@ -10171,8 +10171,8 @@ msgstr ""
 "de control de RetroAchievements</a>"
 
 #: templates/_settings_tabs/account.html:116
-msgid "Earn achievements in RetroDB's RetroArch"
-msgstr "Consigue logros en el RetroArch de RetroDB"
+msgid "Earn achievements in RetroArch, DuckStation and PCSX2"
+msgstr "Consigue logros en RetroArch, DuckStation y PCSX2"
 
 #: templates/_settings_tabs/account.html:117
 msgid ""
@@ -10183,6 +10183,16 @@ msgstr ""
 "Inicia sesión una vez y tus logros se desbloquearán mientras juegas. Tu "
 "contraseña solo se envía a RetroAchievements y no se guarda; RetroDB "
 "conserva el token de sesión que devuelve."
+
+#: templates/_settings_tabs/account.html:117
+msgid ""
+"When you press Play in DuckStation or PCSX2, RetroDB writes your sign-in "
+"to that emulator's own settings file. A sign-in you made in the "
+"emulator's own menu is left alone."
+msgstr ""
+"Al pulsar Jugar en DuckStation o PCSX2, RetroDB escribe tu inicio de "
+"sesión en el archivo de ajustes de ese emulador. Un inicio de sesión "
+"hecho en el menú del propio emulador no se toca."
 
 #: templates/_settings_tabs/account.html:120
 msgid "Your RetroAchievements password"
@@ -11390,4 +11400,7 @@ msgstr "Apoyar en Patreon"
 
 #~ msgid "Default"
 #~ msgstr "Predeterminado"
+
+#~ msgid "Earn achievements in RetroDB's RetroArch"
+#~ msgstr "Consigue logros en el RetroArch de RetroDB"
 

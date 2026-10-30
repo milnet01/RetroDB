@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-30 13:02+0200\n"
+"POT-Creation-Date: 2026-10-30 13:19+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: id\n"
@@ -62,7 +62,7 @@ msgstr "Sistem tidak ditemukan atau tidak memiliki game achievement"
 #: routes/games.py:879 routes/games.py:1006 routes/games.py:1062
 #: routes/games_ai.py:31 routes/games_media.py:37 routes/games_media.py:85
 #: routes/games_media.py:148 routes/games_media.py:197
-#: routes/games_media.py:230 routes/launch.py:240 routes/reports.py:693
+#: routes/games_media.py:230 routes/launch.py:242 routes/reports.py:693
 #: routes/reports.py:822 routes/trophies.py:1291 services/cheats.py:617
 #: services/hltb_service.py:125
 msgid "Game not found"
@@ -644,41 +644,41 @@ msgstr "File kotak tidak dapat diimpor."
 msgid "Title required"
 msgstr "Judul wajib diisi"
 
-#: routes/launch.py:77
+#: routes/launch.py:78
 #, python-format
 msgid "This action requires the \"%(perm)s\" permission"
 msgstr "Tindakan ini memerlukan izin \"%(perm)s\""
 
-#: routes/launch.py:90
+#: routes/launch.py:91
 msgid "The player is already running another game"
 msgstr "Pemutar sedang menjalankan game lain"
 
-#: routes/launch.py:101
+#: routes/launch.py:102
 msgid "This game is already running"
 msgstr "Game ini sudah berjalan"
 
-#: routes/launch.py:107
+#: routes/launch.py:108
 #, python-format
 msgid "failed to kill prior instance: %(err)s"
 msgstr "gagal menghentikan instance sebelumnya: %(err)s"
 
-#: routes/launch.py:180
+#: routes/launch.py:182
 msgid "RetroArch is not built for this computer."
 msgstr "RetroArch tidak tersedia untuk komputer ini."
 
-#: routes/launch.py:193
+#: routes/launch.py:195
 msgid "Cores are not built for this computer."
 msgstr "Core tidak dibuat untuk komputer ini."
 
-#: routes/launch.py:196
+#: routes/launch.py:198
 msgid "The player is not installed."
 msgstr "Pemutar belum terpasang."
 
-#: routes/launch.py:205
+#: routes/launch.py:207
 msgid "No system with games has a player core."
 msgstr "Tidak ada sistem dengan game yang memiliki core pemutar."
 
-#: routes/launch.py:218
+#: routes/launch.py:220
 msgid ""
 "Could not fetch the list of cores. Check the internet connection and try "
 "again."
@@ -686,23 +686,23 @@ msgstr ""
 "Tidak dapat mengambil daftar core. Periksa koneksi internet lalu coba "
 "lagi."
 
-#: routes/launch.py:223
+#: routes/launch.py:225
 msgid "Every core is up to date."
 msgstr "Semua core sudah terbaru."
 
-#: routes/launch.py:242
+#: routes/launch.py:244
 msgid "Player settings reset to recommended"
 msgstr "Pengaturan pemutar dikembalikan ke yang disarankan"
 
-#: routes/launch.py:318
+#: routes/launch.py:320
 msgid "That game is no longer running"
 msgstr "Game itu sudah tidak berjalan"
 
-#: routes/launch.py:320
+#: routes/launch.py:322
 msgid "This game has no disk list to swap through"
 msgstr "Game ini tidak memiliki daftar disk untuk diganti"
 
-#: routes/launch.py:327
+#: routes/launch.py:329
 #, python-format
 msgid ""
 "RetroArch is not accepting commands. In RetroArch, turn on Settings > "
@@ -711,7 +711,7 @@ msgstr ""
 "RetroArch tidak menerima perintah. Di RetroArch, aktifkan Settings > "
 "Network > Network Commands (port %(port)s)."
 
-#: routes/launch.py:330
+#: routes/launch.py:332
 msgid "Next disk inserted"
 msgstr "Disk berikutnya dimasukkan"
 
@@ -4385,19 +4385,19 @@ msgstr "🛑 Matikan Server"
 msgid "🧹 Clean Missing ROMs"
 msgstr "🧹 Bersihkan ROM yang Hilang"
 
-#: services/ra_sign_in.py:53
+#: services/ra_sign_in.py:54
 msgid "Could not reach RetroAchievements. Try again later."
 msgstr "Tidak dapat menghubungi RetroAchievements. Coba lagi nanti."
 
-#: services/ra_sign_in.py:66
+#: services/ra_sign_in.py:67
 msgid "RetroAchievements did not sign you in."
 msgstr "RetroAchievements tidak memasukkan Anda."
 
-#: services/ra_sign_in.py:74
+#: services/ra_sign_in.py:75
 msgid "Enter your RetroAchievements username and password."
 msgstr "Masukkan nama pengguna dan kata sandi RetroAchievements Anda."
 
-#: services/ra_sign_in.py:89
+#: services/ra_sign_in.py:94
 msgid "Sign in to RetroAchievements first."
 msgstr "Masuk ke RetroAchievements terlebih dahulu."
 
@@ -10126,8 +10126,8 @@ msgstr ""
 "cyan);\">RetroAchievements Control Panel</a>"
 
 #: templates/_settings_tabs/account.html:116
-msgid "Earn achievements in RetroDB's RetroArch"
-msgstr "Raih achievement di RetroArch milik RetroDB"
+msgid "Earn achievements in RetroArch, DuckStation and PCSX2"
+msgstr "Raih pencapaian di RetroArch, DuckStation, dan PCSX2"
 
 #: templates/_settings_tabs/account.html:117
 msgid ""
@@ -10138,6 +10138,16 @@ msgstr ""
 "Masuk sekali dan achievement Anda terbuka saat bermain. Kata sandi Anda "
 "hanya dikirim ke RetroAchievements dan tidak disimpan; RetroDB menyimpan "
 "token masuk yang dikembalikannya."
+
+#: templates/_settings_tabs/account.html:117
+msgid ""
+"When you press Play in DuckStation or PCSX2, RetroDB writes your sign-in "
+"to that emulator's own settings file. A sign-in you made in the "
+"emulator's own menu is left alone."
+msgstr ""
+"Saat Anda menekan Main di DuckStation atau PCSX2, RetroDB menulis info "
+"masuk Anda ke file pengaturan emulator itu. Info masuk yang Anda buat di "
+"menu emulator itu sendiri tidak diubah."
 
 #: templates/_settings_tabs/account.html:120
 msgid "Your RetroAchievements password"
@@ -11324,4 +11334,7 @@ msgstr "Dukung di Patreon"
 
 #~ msgid "Default"
 #~ msgstr "Default"
+
+#~ msgid "Earn achievements in RetroDB's RetroArch"
+#~ msgstr "Raih achievement di RetroArch milik RetroDB"
 

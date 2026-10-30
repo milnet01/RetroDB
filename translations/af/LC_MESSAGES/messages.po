@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-30 13:02+0200\n"
+"POT-Creation-Date: 2026-10-30 13:19+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: af\n"
@@ -63,7 +63,7 @@ msgstr "Stelsel nie gevind nie of het geen speletjies met prestasies nie"
 #: routes/games.py:879 routes/games.py:1006 routes/games.py:1062
 #: routes/games_ai.py:31 routes/games_media.py:37 routes/games_media.py:85
 #: routes/games_media.py:148 routes/games_media.py:197
-#: routes/games_media.py:230 routes/launch.py:240 routes/reports.py:693
+#: routes/games_media.py:230 routes/launch.py:242 routes/reports.py:693
 #: routes/reports.py:822 routes/trophies.py:1291 services/cheats.py:617
 #: services/hltb_service.py:125
 msgid "Game not found"
@@ -645,41 +645,41 @@ msgstr "Die bokslêer kon nie ingevoer word nie."
 msgid "Title required"
 msgstr "Titel vereis"
 
-#: routes/launch.py:77
+#: routes/launch.py:78
 #, python-format
 msgid "This action requires the \"%(perm)s\" permission"
 msgstr "Hierdie aksie vereis die \"%(perm)s\"-toestemming"
 
-#: routes/launch.py:90
+#: routes/launch.py:91
 msgid "The player is already running another game"
 msgstr "Die speler speel reeds 'n ander speletjie"
 
-#: routes/launch.py:101
+#: routes/launch.py:102
 msgid "This game is already running"
 msgstr "Hierdie speletjie loop reeds"
 
-#: routes/launch.py:107
+#: routes/launch.py:108
 #, python-format
 msgid "failed to kill prior instance: %(err)s"
 msgstr "kon nie vorige instansie beëindig nie: %(err)s"
 
-#: routes/launch.py:180
+#: routes/launch.py:182
 msgid "RetroArch is not built for this computer."
 msgstr "RetroArch word nie vir hierdie rekenaar gebou nie."
 
-#: routes/launch.py:193
+#: routes/launch.py:195
 msgid "Cores are not built for this computer."
 msgstr "Cores word nie vir hierdie rekenaar gebou nie."
 
-#: routes/launch.py:196
+#: routes/launch.py:198
 msgid "The player is not installed."
 msgstr "Die speler is nie geïnstalleer nie."
 
-#: routes/launch.py:205
+#: routes/launch.py:207
 msgid "No system with games has a player core."
 msgstr "Geen stelsel met speletjies het 'n speler-core nie."
 
-#: routes/launch.py:218
+#: routes/launch.py:220
 msgid ""
 "Could not fetch the list of cores. Check the internet connection and try "
 "again."
@@ -687,23 +687,23 @@ msgstr ""
 "Kon nie die lys van cores haal nie. Gaan die internetverbinding na en "
 "probeer weer."
 
-#: routes/launch.py:223
+#: routes/launch.py:225
 msgid "Every core is up to date."
 msgstr "Elke core is op datum."
 
-#: routes/launch.py:242
+#: routes/launch.py:244
 msgid "Player settings reset to recommended"
 msgstr "Speler-instellings is teruggestel na die aanbevole"
 
-#: routes/launch.py:318
+#: routes/launch.py:320
 msgid "That game is no longer running"
 msgstr "Daardie speletjie loop nie meer nie"
 
-#: routes/launch.py:320
+#: routes/launch.py:322
 msgid "This game has no disk list to swap through"
 msgstr "Hierdie speletjie het geen skyflys om deur te wissel nie"
 
-#: routes/launch.py:327
+#: routes/launch.py:329
 #, python-format
 msgid ""
 "RetroArch is not accepting commands. In RetroArch, turn on Settings > "
@@ -712,7 +712,7 @@ msgstr ""
 "RetroArch aanvaar nie opdragte nie. Skakel in RetroArch Settings > "
 "Network > Network Commands aan (poort %(port)s)."
 
-#: routes/launch.py:330
+#: routes/launch.py:332
 msgid "Next disk inserted"
 msgstr "Volgende skyf ingesit"
 
@@ -4399,19 +4399,19 @@ msgstr "🛑 Skakel bediener af"
 msgid "🧹 Clean Missing ROMs"
 msgstr "🧹 Maak ontbrekende ROM's skoon"
 
-#: services/ra_sign_in.py:53
+#: services/ra_sign_in.py:54
 msgid "Could not reach RetroAchievements. Try again later."
 msgstr "Kon nie RetroAchievements bereik nie. Probeer later weer."
 
-#: services/ra_sign_in.py:66
+#: services/ra_sign_in.py:67
 msgid "RetroAchievements did not sign you in."
 msgstr "RetroAchievements het jou nie aangemeld nie."
 
-#: services/ra_sign_in.py:74
+#: services/ra_sign_in.py:75
 msgid "Enter your RetroAchievements username and password."
 msgstr "Voer jou RetroAchievements-gebruikersnaam en -wagwoord in."
 
-#: services/ra_sign_in.py:89
+#: services/ra_sign_in.py:94
 msgid "Sign in to RetroAchievements first."
 msgstr "Meld eers by RetroAchievements aan."
 
@@ -10146,8 +10146,8 @@ msgstr ""
 ");\">RetroAchievements-beheerpaneel</a>"
 
 #: templates/_settings_tabs/account.html:116
-msgid "Earn achievements in RetroDB's RetroArch"
-msgstr "Verdien prestasies in RetroDB se RetroArch"
+msgid "Earn achievements in RetroArch, DuckStation and PCSX2"
+msgstr "Verdien prestasies in RetroArch, DuckStation en PCSX2"
 
 #: templates/_settings_tabs/account.html:117
 msgid ""
@@ -10158,6 +10158,16 @@ msgstr ""
 "Meld een keer aan en jou prestasies word ontsluit terwyl jy speel. Jou "
 "wagwoord gaan net na RetroAchievements en word nie gehou nie; RetroDB hou"
 " die aanmeldtoken wat dit terugstuur."
+
+#: templates/_settings_tabs/account.html:117
+msgid ""
+"When you press Play in DuckStation or PCSX2, RetroDB writes your sign-in "
+"to that emulator's own settings file. A sign-in you made in the "
+"emulator's own menu is left alone."
+msgstr ""
+"Wanneer jy Speel in DuckStation of PCSX2 druk, skryf RetroDB jou "
+"aanmelding na daardie emulator se eie instellingslêer. 'n Aanmelding wat "
+"jy in die emulator se eie kieslys gedoen het, bly onaangeraak."
 
 #: templates/_settings_tabs/account.html:120
 msgid "Your RetroAchievements password"
@@ -11348,4 +11358,7 @@ msgstr "Ondersteun op Patreon"
 
 #~ msgid "Default"
 #~ msgstr "Verstek"
+
+#~ msgid "Earn achievements in RetroDB's RetroArch"
+#~ msgstr "Verdien prestasies in RetroDB se RetroArch"
 

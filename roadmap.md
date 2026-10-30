@@ -10063,7 +10063,16 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Target**: hand the token services/ra_sign_in.py keeps to DuckStation's and
   PCSX2's own settings, as 3.34.0 does for RetroDB's RetroArch. Their settings
   files are not yet researched.
-- **Status**: todo. Deferred by the user 2026-10-30 so 3.34.0 is not held up.
+- **Resolution** (2026-10-30): In the open 3.34.1 entry, not yet released.
+  `services/ra_standalone.py` writes the launching user's sign-in to
+  DuckStation's `settings.ini` `[Cheevos]` and PCSX2's `inis/PCSX2.ini`
+  `[Achievements]` at Play, and takes it back at sign-out or when a signed-out
+  user plays. A sign-in from an emulator's own menu is left alone. DuckStation's
+  token is AES-128-CBC encrypted as its `EncryptLoginToken` does, read from its
+  master source 2026-10-30. Checked by tests with an openssl-made value.
+  **Not run against a real DuckStation or PCSX2 with a real account.** Windows
+  MachineGuid handling is read from the source only, not run.
+- **Status**: done. Deferred by the user 2026-10-30 so 3.34.0 is not held up.
 
 ---
 

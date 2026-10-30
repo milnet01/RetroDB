@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-30 13:02+0200\n"
+"POT-Creation-Date: 2026-10-30 13:19+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: tr\n"
@@ -63,7 +63,7 @@ msgstr "Sistem bulunamadı veya başarım içeren oyunu yok"
 #: routes/games.py:879 routes/games.py:1006 routes/games.py:1062
 #: routes/games_ai.py:31 routes/games_media.py:37 routes/games_media.py:85
 #: routes/games_media.py:148 routes/games_media.py:197
-#: routes/games_media.py:230 routes/launch.py:240 routes/reports.py:693
+#: routes/games_media.py:230 routes/launch.py:242 routes/reports.py:693
 #: routes/reports.py:822 routes/trophies.py:1291 services/cheats.py:617
 #: services/hltb_service.py:125
 msgid "Game not found"
@@ -645,41 +645,41 @@ msgstr "Kutu dosyası içe aktarılamadı."
 msgid "Title required"
 msgstr "Başlık gerekli"
 
-#: routes/launch.py:77
+#: routes/launch.py:78
 #, python-format
 msgid "This action requires the \"%(perm)s\" permission"
 msgstr "Bu eylem \"%(perm)s\" iznini gerektirir"
 
-#: routes/launch.py:90
+#: routes/launch.py:91
 msgid "The player is already running another game"
 msgstr "Oynatıcı zaten başka bir oyun çalıştırıyor"
 
-#: routes/launch.py:101
+#: routes/launch.py:102
 msgid "This game is already running"
 msgstr "Bu oyun zaten çalışıyor"
 
-#: routes/launch.py:107
+#: routes/launch.py:108
 #, python-format
 msgid "failed to kill prior instance: %(err)s"
 msgstr "önceki örnek sonlandırılamadı: %(err)s"
 
-#: routes/launch.py:180
+#: routes/launch.py:182
 msgid "RetroArch is not built for this computer."
 msgstr "RetroArch bu bilgisayar için derlenmemiş."
 
-#: routes/launch.py:193
+#: routes/launch.py:195
 msgid "Cores are not built for this computer."
 msgstr "Çekirdekler bu bilgisayar için derlenmiyor."
 
-#: routes/launch.py:196
+#: routes/launch.py:198
 msgid "The player is not installed."
 msgstr "Oynatıcı kurulu değil."
 
-#: routes/launch.py:205
+#: routes/launch.py:207
 msgid "No system with games has a player core."
 msgstr "Oyunu olan hiçbir sistemde oynatıcı çekirdeği yok."
 
-#: routes/launch.py:218
+#: routes/launch.py:220
 msgid ""
 "Could not fetch the list of cores. Check the internet connection and try "
 "again."
@@ -687,23 +687,23 @@ msgstr ""
 "Çekirdek listesi alınamadı. İnternet bağlantısını kontrol edip tekrar "
 "deneyin."
 
-#: routes/launch.py:223
+#: routes/launch.py:225
 msgid "Every core is up to date."
 msgstr "Tüm çekirdekler güncel."
 
-#: routes/launch.py:242
+#: routes/launch.py:244
 msgid "Player settings reset to recommended"
 msgstr "Oynatıcı ayarları önerilenlere sıfırlandı"
 
-#: routes/launch.py:318
+#: routes/launch.py:320
 msgid "That game is no longer running"
 msgstr "Bu oyun artık çalışmıyor"
 
-#: routes/launch.py:320
+#: routes/launch.py:322
 msgid "This game has no disk list to swap through"
 msgstr "Bu oyunun değiştirilecek bir disk listesi yok"
 
-#: routes/launch.py:327
+#: routes/launch.py:329
 #, python-format
 msgid ""
 "RetroArch is not accepting commands. In RetroArch, turn on Settings > "
@@ -712,7 +712,7 @@ msgstr ""
 "RetroArch komut kabul etmiyor. RetroArch'ta Ayarlar > Ağ > Ağ Komutları "
 "seçeneğini açın (bağlantı noktası %(port)s)."
 
-#: routes/launch.py:330
+#: routes/launch.py:332
 msgid "Next disk inserted"
 msgstr "Sonraki disk takıldı"
 
@@ -4402,19 +4402,19 @@ msgstr "🛑 Sunucuyu Kapat"
 msgid "🧹 Clean Missing ROMs"
 msgstr "🧹 Eksik ROM'ları Temizle"
 
-#: services/ra_sign_in.py:53
+#: services/ra_sign_in.py:54
 msgid "Could not reach RetroAchievements. Try again later."
 msgstr "RetroAchievements'a ulaşılamadı. Daha sonra tekrar deneyin."
 
-#: services/ra_sign_in.py:66
+#: services/ra_sign_in.py:67
 msgid "RetroAchievements did not sign you in."
 msgstr "RetroAchievements oturumunuzu açmadı."
 
-#: services/ra_sign_in.py:74
+#: services/ra_sign_in.py:75
 msgid "Enter your RetroAchievements username and password."
 msgstr "RetroAchievements kullanıcı adınızı ve şifrenizi girin."
 
-#: services/ra_sign_in.py:89
+#: services/ra_sign_in.py:94
 msgid "Sign in to RetroAchievements first."
 msgstr "Önce RetroAchievements'a giriş yapın."
 
@@ -10157,8 +10157,8 @@ msgstr ""
 "cyan);\">RetroAchievements Kontrol Paneli</a>'nden alın"
 
 #: templates/_settings_tabs/account.html:116
-msgid "Earn achievements in RetroDB's RetroArch"
-msgstr "RetroDB'nin RetroArch'ında başarım kazanın"
+msgid "Earn achievements in RetroArch, DuckStation and PCSX2"
+msgstr "RetroArch, DuckStation ve PCSX2'de başarım kazanın"
 
 #: templates/_settings_tabs/account.html:117
 msgid ""
@@ -10169,6 +10169,16 @@ msgstr ""
 "Bir kez giriş yapın, başarımlarınız siz oynarken açılsın. Şifreniz "
 "yalnızca RetroAchievements'a gider ve saklanmaz; RetroDB, geri dönen "
 "oturum belirtecini saklar."
+
+#: templates/_settings_tabs/account.html:117
+msgid ""
+"When you press Play in DuckStation or PCSX2, RetroDB writes your sign-in "
+"to that emulator's own settings file. A sign-in you made in the "
+"emulator's own menu is left alone."
+msgstr ""
+"DuckStation veya PCSX2'de Oyna'ya bastığınızda RetroDB oturumunuzu o "
+"emülatörün ayar dosyasına yazar. Emülatörün kendi menüsünden açtığınız "
+"oturum değiştirilmez."
 
 #: templates/_settings_tabs/account.html:120
 msgid "Your RetroAchievements password"
@@ -11360,4 +11370,7 @@ msgstr "Patreon'da Destekle"
 
 #~ msgid "Default"
 #~ msgstr "Varsayılan"
+
+#~ msgid "Earn achievements in RetroDB's RetroArch"
+#~ msgstr "RetroDB'nin RetroArch'ında başarım kazanın"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-30 13:02+0200\n"
+"POT-Creation-Date: 2026-10-30 13:19+0200\n"
 "PO-Revision-Date: 2026-07-01 09:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hans\n"
@@ -61,7 +61,7 @@ msgstr "未找到系统，或该系统没有包含成就的游戏"
 #: routes/games.py:879 routes/games.py:1006 routes/games.py:1062
 #: routes/games_ai.py:31 routes/games_media.py:37 routes/games_media.py:85
 #: routes/games_media.py:148 routes/games_media.py:197
-#: routes/games_media.py:230 routes/launch.py:240 routes/reports.py:693
+#: routes/games_media.py:230 routes/launch.py:242 routes/reports.py:693
 #: routes/reports.py:822 routes/trophies.py:1291 services/cheats.py:617
 #: services/hltb_service.py:125
 msgid "Game not found"
@@ -627,63 +627,63 @@ msgstr "无法导入该盒子文件。"
 msgid "Title required"
 msgstr "必须填写标题"
 
-#: routes/launch.py:77
+#: routes/launch.py:78
 #, python-format
 msgid "This action requires the \"%(perm)s\" permission"
 msgstr "此操作需要“%(perm)s”权限"
 
-#: routes/launch.py:90
+#: routes/launch.py:91
 msgid "The player is already running another game"
 msgstr "播放器正在运行另一个游戏"
 
-#: routes/launch.py:101
+#: routes/launch.py:102
 msgid "This game is already running"
 msgstr "该游戏已在运行中"
 
-#: routes/launch.py:107
+#: routes/launch.py:108
 #, python-format
 msgid "failed to kill prior instance: %(err)s"
 msgstr "无法终止先前实例：%(err)s"
 
-#: routes/launch.py:180
+#: routes/launch.py:182
 msgid "RetroArch is not built for this computer."
 msgstr "RetroArch 没有适用于这台电脑的版本。"
 
-#: routes/launch.py:193
+#: routes/launch.py:195
 msgid "Cores are not built for this computer."
 msgstr "没有为这台电脑构建的核心。"
 
-#: routes/launch.py:196
+#: routes/launch.py:198
 msgid "The player is not installed."
 msgstr "播放器未安装。"
 
-#: routes/launch.py:205
+#: routes/launch.py:207
 msgid "No system with games has a player core."
 msgstr "没有任何有游戏的系统拥有播放器核心。"
 
-#: routes/launch.py:218
+#: routes/launch.py:220
 msgid ""
 "Could not fetch the list of cores. Check the internet connection and try "
 "again."
 msgstr "无法获取核心列表。请检查网络连接后重试。"
 
-#: routes/launch.py:223
+#: routes/launch.py:225
 msgid "Every core is up to date."
 msgstr "所有核心均为最新。"
 
-#: routes/launch.py:242
+#: routes/launch.py:244
 msgid "Player settings reset to recommended"
 msgstr "播放器设置已重置为推荐值"
 
-#: routes/launch.py:318
+#: routes/launch.py:320
 msgid "That game is no longer running"
 msgstr "该游戏已不在运行"
 
-#: routes/launch.py:320
+#: routes/launch.py:322
 msgid "This game has no disk list to swap through"
 msgstr "此游戏没有可切换的光盘列表"
 
-#: routes/launch.py:327
+#: routes/launch.py:329
 #, python-format
 msgid ""
 "RetroArch is not accepting commands. In RetroArch, turn on Settings > "
@@ -692,7 +692,7 @@ msgstr ""
 "RetroArch 未接受命令。请在 RetroArch 中打开 Settings > Network > Network Commands（端口"
 " %(port)s）。"
 
-#: routes/launch.py:330
+#: routes/launch.py:332
 msgid "Next disk inserted"
 msgstr "已插入下一张光盘"
 
@@ -4278,19 +4278,19 @@ msgstr "🛑 关闭服务器"
 msgid "🧹 Clean Missing ROMs"
 msgstr "🧹 清理缺失的 ROM"
 
-#: services/ra_sign_in.py:53
+#: services/ra_sign_in.py:54
 msgid "Could not reach RetroAchievements. Try again later."
 msgstr "无法连接 RetroAchievements。请稍后重试。"
 
-#: services/ra_sign_in.py:66
+#: services/ra_sign_in.py:67
 msgid "RetroAchievements did not sign you in."
 msgstr "RetroAchievements 未能让你登录。"
 
-#: services/ra_sign_in.py:74
+#: services/ra_sign_in.py:75
 msgid "Enter your RetroAchievements username and password."
 msgstr "请输入你的 RetroAchievements 用户名和密码。"
 
-#: services/ra_sign_in.py:89
+#: services/ra_sign_in.py:94
 msgid "Sign in to RetroAchievements first."
 msgstr "请先登录 RetroAchievements。"
 
@@ -9829,8 +9829,8 @@ msgstr ""
 "(--primary-cyan);\">RetroAchievements 控制面板</a> 获取你的 API 密钥"
 
 #: templates/_settings_tabs/account.html:116
-msgid "Earn achievements in RetroDB's RetroArch"
-msgstr "在 RetroDB 的 RetroArch 中获得成就"
+msgid "Earn achievements in RetroArch, DuckStation and PCSX2"
+msgstr "在 RetroArch、DuckStation 和 PCSX2 中赢取成就"
 
 #: templates/_settings_tabs/account.html:117
 msgid ""
@@ -9838,6 +9838,15 @@ msgid ""
 " only to RetroAchievements and is not kept; RetroDB keeps the sign-in "
 "token it returns."
 msgstr "只需登录一次，成就就会在游玩时解锁。你的密码只发送给 RetroAchievements，不会保存；RetroDB 保存其返回的登录令牌。"
+
+#: templates/_settings_tabs/account.html:117
+msgid ""
+"When you press Play in DuckStation or PCSX2, RetroDB writes your sign-in "
+"to that emulator's own settings file. A sign-in you made in the "
+"emulator's own menu is left alone."
+msgstr ""
+"在 DuckStation 或 PCSX2 中按“开始游戏”时，RetroDB "
+"会把你的登录信息写入该模拟器的设置文件。你在模拟器自身菜单中完成的登录不会被改动。"
 
 #: templates/_settings_tabs/account.html:120
 msgid "Your RetroAchievements password"
@@ -10955,4 +10964,7 @@ msgstr "在 Patreon 上支持"
 
 #~ msgid "Default"
 #~ msgstr "默认"
+
+#~ msgid "Earn achievements in RetroDB's RetroArch"
+#~ msgstr "在 RetroDB 的 RetroArch 中获得成就"
 

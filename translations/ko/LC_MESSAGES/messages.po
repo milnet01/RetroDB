@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-30 13:02+0200\n"
+"POT-Creation-Date: 2026-10-30 13:19+0200\n"
 "PO-Revision-Date: 2026-06-30 14:26+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ko\n"
@@ -62,7 +62,7 @@ msgstr "시스템을 찾을 수 없거나 업적이 있는 게임이 없습니�
 #: routes/games.py:879 routes/games.py:1006 routes/games.py:1062
 #: routes/games_ai.py:31 routes/games_media.py:37 routes/games_media.py:85
 #: routes/games_media.py:148 routes/games_media.py:197
-#: routes/games_media.py:230 routes/launch.py:240 routes/reports.py:693
+#: routes/games_media.py:230 routes/launch.py:242 routes/reports.py:693
 #: routes/reports.py:822 routes/trophies.py:1291 services/cheats.py:617
 #: services/hltb_service.py:125
 msgid "Game not found"
@@ -630,63 +630,63 @@ msgstr "박스 파일을 가져올 수 없습니다."
 msgid "Title required"
 msgstr "제목이 필요합니다"
 
-#: routes/launch.py:77
+#: routes/launch.py:78
 #, python-format
 msgid "This action requires the \"%(perm)s\" permission"
 msgstr "이 작업에는 \"%(perm)s\" 권한이 필요합니다"
 
-#: routes/launch.py:90
+#: routes/launch.py:91
 msgid "The player is already running another game"
 msgstr "플레이어가 이미 다른 게임을 실행 중입니다"
 
-#: routes/launch.py:101
+#: routes/launch.py:102
 msgid "This game is already running"
 msgstr "이 게임은 이미 실행 중입니다"
 
-#: routes/launch.py:107
+#: routes/launch.py:108
 #, python-format
 msgid "failed to kill prior instance: %(err)s"
 msgstr "이전 인스턴스 종료에 실패했습니다: %(err)s"
 
-#: routes/launch.py:180
+#: routes/launch.py:182
 msgid "RetroArch is not built for this computer."
 msgstr "이 컴퓨터용으로 빌드된 RetroArch가 없습니다."
 
-#: routes/launch.py:193
+#: routes/launch.py:195
 msgid "Cores are not built for this computer."
 msgstr "이 컴퓨터용으로 빌드된 코어가 없습니다."
 
-#: routes/launch.py:196
+#: routes/launch.py:198
 msgid "The player is not installed."
 msgstr "플레이어가 설치되어 있지 않습니다."
 
-#: routes/launch.py:205
+#: routes/launch.py:207
 msgid "No system with games has a player core."
 msgstr "게임이 있는 시스템 중 플레이어 코어가 있는 시스템이 없습니다."
 
-#: routes/launch.py:218
+#: routes/launch.py:220
 msgid ""
 "Could not fetch the list of cores. Check the internet connection and try "
 "again."
 msgstr "코어 목록을 가져올 수 없습니다. 인터넷 연결을 확인한 후 다시 시도하세요."
 
-#: routes/launch.py:223
+#: routes/launch.py:225
 msgid "Every core is up to date."
 msgstr "모든 코어가 최신 상태입니다."
 
-#: routes/launch.py:242
+#: routes/launch.py:244
 msgid "Player settings reset to recommended"
 msgstr "플레이어 설정을 권장값으로 재설정했습니다"
 
-#: routes/launch.py:318
+#: routes/launch.py:320
 msgid "That game is no longer running"
 msgstr "해당 게임은 더 이상 실행 중이 아닙니다"
 
-#: routes/launch.py:320
+#: routes/launch.py:322
 msgid "This game has no disk list to swap through"
 msgstr "이 게임에는 전환할 디스크 목록이 없습니다"
 
-#: routes/launch.py:327
+#: routes/launch.py:329
 #, python-format
 msgid ""
 "RetroArch is not accepting commands. In RetroArch, turn on Settings > "
@@ -695,7 +695,7 @@ msgstr ""
 "RetroArch가 명령을 받지 않습니다. RetroArch에서 Settings > Network > Network "
 "Commands(포트 %(port)s)를 켜세요."
 
-#: routes/launch.py:330
+#: routes/launch.py:332
 msgid "Next disk inserted"
 msgstr "다음 디스크를 넣었습니다"
 
@@ -4293,19 +4293,19 @@ msgstr "🛑 서버 종료"
 msgid "🧹 Clean Missing ROMs"
 msgstr "🧹 누락된 ROM 정리"
 
-#: services/ra_sign_in.py:53
+#: services/ra_sign_in.py:54
 msgid "Could not reach RetroAchievements. Try again later."
 msgstr "RetroAchievements에 연결할 수 없습니다. 나중에 다시 시도하세요."
 
-#: services/ra_sign_in.py:66
+#: services/ra_sign_in.py:67
 msgid "RetroAchievements did not sign you in."
 msgstr "RetroAchievements에서 로그인하지 못했습니다."
 
-#: services/ra_sign_in.py:74
+#: services/ra_sign_in.py:75
 msgid "Enter your RetroAchievements username and password."
 msgstr "RetroAchievements 사용자 이름과 비밀번호를 입력하세요."
 
-#: services/ra_sign_in.py:89
+#: services/ra_sign_in.py:94
 msgid "Sign in to RetroAchievements first."
 msgstr "먼저 RetroAchievements에 로그인하세요."
 
@@ -9872,8 +9872,8 @@ msgstr ""
 "(--primary-cyan);\">RetroAchievements 제어판</a>에서 API 키를 받으세요"
 
 #: templates/_settings_tabs/account.html:116
-msgid "Earn achievements in RetroDB's RetroArch"
-msgstr "RetroDB의 RetroArch에서 업적 획득"
+msgid "Earn achievements in RetroArch, DuckStation and PCSX2"
+msgstr "RetroArch, DuckStation, PCSX2에서 업적 달성"
 
 #: templates/_settings_tabs/account.html:117
 msgid ""
@@ -9883,6 +9883,15 @@ msgid ""
 msgstr ""
 "한 번 로그인하면 플레이하는 동안 업적이 해제됩니다. 비밀번호는 RetroAchievements로만 전송되며 저장되지 않습니다. "
 "RetroDB는 반환된 로그인 토큰을 보관합니다."
+
+#: templates/_settings_tabs/account.html:117
+msgid ""
+"When you press Play in DuckStation or PCSX2, RetroDB writes your sign-in "
+"to that emulator's own settings file. A sign-in you made in the "
+"emulator's own menu is left alone."
+msgstr ""
+"DuckStation 또는 PCSX2에서 플레이를 누르면 RetroDB가 로그인 정보를 해당 에뮬레이터의 설정 파일에 기록합니다. "
+"에뮬레이터 자체 메뉴에서 한 로그인은 그대로 둡니다."
 
 #: templates/_settings_tabs/account.html:120
 msgid "Your RetroAchievements password"
@@ -11011,4 +11020,7 @@ msgstr "Patreon에서 후원하기"
 
 #~ msgid "Default"
 #~ msgstr "기본값"
+
+#~ msgid "Earn achievements in RetroDB's RetroArch"
+#~ msgstr "RetroDB의 RetroArch에서 업적 획득"
 

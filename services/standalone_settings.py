@@ -378,7 +378,7 @@ def _context(game_id) -> dict:
         ctx['reason'] = _('Run %(name)s once so it creates its settings, '
                            'then play again.', name=emu['name'])
         return ctx
-    ctx['data_dir'] = data_dir
+    ctx['data_dir'], ctx['binary'] = data_dir, binary
     serial, crc = disc_ids(game)
     ctx['serial'], ctx['crc'] = serial, crc
     ctx.update(_target(emu['binary_name'], data_dir, serial, crc))

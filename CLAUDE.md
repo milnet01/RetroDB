@@ -131,6 +131,7 @@ Moved to `.claude/rules/ratings.md`, which loads when a matching file is read. R
 ### RetroAchievements sign-in
 - `services/ra_sign_in.py` owns it: the password is sent once and dropped, and the token lives in `user_platform_tokens` under `retroachievements`, per user. The web API key cannot sign RetroArch in.
 - A token reaches RetroArch only in a launch's run layer (`session_keys`), never the base cfg or a game's cfg; `_PROTECTED_KEYS` holds the `cheevos_*` keys so a menu save cannot copy one.
+- DuckStation and PCSX2 take no sign-in for one launch, so `services/ra_standalone.py` writes it to their main settings files at Play and takes it back when that user signs out or a signed-out user plays. A sign-in from an emulator's own menu is never overwritten. `emulator_written_settings` holds a hash of the token, never the token. DuckStation's token is encrypted as its `EncryptLoginToken` does; if DuckStation changes that, it asks the user to sign in again.
 
 ### Page wiring
 - A box that takes a path gets `browse_button()` from `_macros/browse_button.html` beside it, in a `.path-input-row`, and a row in `tests/test_path_browser.py`. The button shows for admins only: `/api/settings/browse-paths` can list any folder on the computer.

@@ -32,6 +32,7 @@ from services.launch_resolver import launches_on_player, resolve_launch_context
 from services.retroarch_command import (
     RETROARCH_COMMAND_PORT, RetroArchNotListening, next_disk,
 )
+from services import ra_standalone
 from services.standalone_settings import apply_for_launch
 from settings_manager import get_setting
 
@@ -127,6 +128,7 @@ def api_launch_game(game_id):
     # PASS-59-91 §4.6 — write the per-game settings file before the emulator
     # reads it. Never raises; a settings problem does not stop the launch.
     apply_for_launch(game_id)
+    ra_standalone.apply_for_launch(game_id)
 
     # Launch
     try:

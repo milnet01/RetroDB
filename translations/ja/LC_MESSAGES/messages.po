@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-30 13:02+0200\n"
+"POT-Creation-Date: 2026-10-30 13:19+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -61,7 +61,7 @@ msgstr "システムが見つからないか、実績対応ゲームがありま
 #: routes/games.py:879 routes/games.py:1006 routes/games.py:1062
 #: routes/games_ai.py:31 routes/games_media.py:37 routes/games_media.py:85
 #: routes/games_media.py:148 routes/games_media.py:197
-#: routes/games_media.py:230 routes/launch.py:240 routes/reports.py:693
+#: routes/games_media.py:230 routes/launch.py:242 routes/reports.py:693
 #: routes/reports.py:822 routes/trophies.py:1291 services/cheats.py:617
 #: services/hltb_service.py:125
 msgid "Game not found"
@@ -629,63 +629,63 @@ msgstr "ボックスファイルをインポートできませんでした。"
 msgid "Title required"
 msgstr "タイトルが必要です"
 
-#: routes/launch.py:77
+#: routes/launch.py:78
 #, python-format
 msgid "This action requires the \"%(perm)s\" permission"
 msgstr "この操作には「%(perm)s」権限が必要です"
 
-#: routes/launch.py:90
+#: routes/launch.py:91
 msgid "The player is already running another game"
 msgstr "プレーヤーは別のゲームを実行中です"
 
-#: routes/launch.py:101
+#: routes/launch.py:102
 msgid "This game is already running"
 msgstr "このゲームはすでに実行中です"
 
-#: routes/launch.py:107
+#: routes/launch.py:108
 #, python-format
 msgid "failed to kill prior instance: %(err)s"
 msgstr "以前のインスタンスの終了に失敗しました: %(err)s"
 
-#: routes/launch.py:180
+#: routes/launch.py:182
 msgid "RetroArch is not built for this computer."
 msgstr "このコンピューター向けの RetroArch はビルドされていません。"
 
-#: routes/launch.py:193
+#: routes/launch.py:195
 msgid "Cores are not built for this computer."
 msgstr "このコンピューター向けのコアはビルドされていません。"
 
-#: routes/launch.py:196
+#: routes/launch.py:198
 msgid "The player is not installed."
 msgstr "プレーヤーがインストールされていません。"
 
-#: routes/launch.py:205
+#: routes/launch.py:207
 msgid "No system with games has a player core."
 msgstr "ゲームのあるシステムに、プレーヤー用のコアがありません。"
 
-#: routes/launch.py:218
+#: routes/launch.py:220
 msgid ""
 "Could not fetch the list of cores. Check the internet connection and try "
 "again."
 msgstr "コアの一覧を取得できませんでした。インターネット接続を確認して、もう一度お試しください。"
 
-#: routes/launch.py:223
+#: routes/launch.py:225
 msgid "Every core is up to date."
 msgstr "すべてのコアは最新です。"
 
-#: routes/launch.py:242
+#: routes/launch.py:244
 msgid "Player settings reset to recommended"
 msgstr "プレーヤーの設定を推奨値に戻しました"
 
-#: routes/launch.py:318
+#: routes/launch.py:320
 msgid "That game is no longer running"
 msgstr "そのゲームはもう実行されていません"
 
-#: routes/launch.py:320
+#: routes/launch.py:322
 msgid "This game has no disk list to swap through"
 msgstr "このゲームには切り替えるディスクリストがありません"
 
-#: routes/launch.py:327
+#: routes/launch.py:329
 #, python-format
 msgid ""
 "RetroArch is not accepting commands. In RetroArch, turn on Settings > "
@@ -694,7 +694,7 @@ msgstr ""
 "RetroArch がコマンドを受け付けていません。RetroArch で Settings > Network > Network "
 "Commands（ポート %(port)s）をオンにしてください。"
 
-#: routes/launch.py:330
+#: routes/launch.py:332
 msgid "Next disk inserted"
 msgstr "次のディスクを挿入しました"
 
@@ -4280,19 +4280,19 @@ msgstr "🛑 サーバーをシャットダウン"
 msgid "🧹 Clean Missing ROMs"
 msgstr "🧹 欠落したROMをクリーンアップ"
 
-#: services/ra_sign_in.py:53
+#: services/ra_sign_in.py:54
 msgid "Could not reach RetroAchievements. Try again later."
 msgstr "RetroAchievements に接続できませんでした。後でもう一度お試しください。"
 
-#: services/ra_sign_in.py:66
+#: services/ra_sign_in.py:67
 msgid "RetroAchievements did not sign you in."
 msgstr "RetroAchievements にサインインできませんでした。"
 
-#: services/ra_sign_in.py:74
+#: services/ra_sign_in.py:75
 msgid "Enter your RetroAchievements username and password."
 msgstr "RetroAchievements のユーザー名とパスワードを入力してください。"
 
-#: services/ra_sign_in.py:89
+#: services/ra_sign_in.py:94
 msgid "Sign in to RetroAchievements first."
 msgstr "先に RetroAchievements にサインインしてください。"
 
@@ -9837,8 +9837,8 @@ msgstr ""
 "(--primary-cyan);\">RetroAchievementsコントロールパネル</a>から取得してください"
 
 #: templates/_settings_tabs/account.html:116
-msgid "Earn achievements in RetroDB's RetroArch"
-msgstr "RetroDB の RetroArch で実績を獲得"
+msgid "Earn achievements in RetroArch, DuckStation and PCSX2"
+msgstr "RetroArch、DuckStation、PCSX2 で実績を獲得"
 
 #: templates/_settings_tabs/account.html:117
 msgid ""
@@ -9848,6 +9848,15 @@ msgid ""
 msgstr ""
 "一度サインインすれば、プレイ中に実績が解除されます。パスワードは RetroAchievements "
 "にのみ送信され、保存されません。RetroDB は返されたサインイントークンを保持します。"
+
+#: templates/_settings_tabs/account.html:117
+msgid ""
+"When you press Play in DuckStation or PCSX2, RetroDB writes your sign-in "
+"to that emulator's own settings file. A sign-in you made in the "
+"emulator's own menu is left alone."
+msgstr ""
+"DuckStation または PCSX2 でプレイを押すと、RetroDB "
+"はサインイン情報をそのエミュレーターの設定ファイルに書き込みます。エミュレーター自身のメニューで行ったサインインは変更しません。"
 
 #: templates/_settings_tabs/account.html:120
 msgid "Your RetroAchievements password"
@@ -10970,4 +10979,7 @@ msgstr "Patreon で支援"
 
 #~ msgid "Default"
 #~ msgstr "既定"
+
+#~ msgid "Earn achievements in RetroDB's RetroArch"
+#~ msgstr "RetroDB の RetroArch で実績を獲得"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-30 13:02+0200\n"
+"POT-Creation-Date: 2026-10-30 13:19+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: nb\n"
@@ -63,7 +63,7 @@ msgstr "System ikke funnet eller har ingen spill med prestasjoner"
 #: routes/games.py:879 routes/games.py:1006 routes/games.py:1062
 #: routes/games_ai.py:31 routes/games_media.py:37 routes/games_media.py:85
 #: routes/games_media.py:148 routes/games_media.py:197
-#: routes/games_media.py:230 routes/launch.py:240 routes/reports.py:693
+#: routes/games_media.py:230 routes/launch.py:242 routes/reports.py:693
 #: routes/reports.py:822 routes/trophies.py:1291 services/cheats.py:617
 #: services/hltb_service.py:125
 msgid "Game not found"
@@ -645,41 +645,41 @@ msgstr "Kunne ikke importere boksfilen."
 msgid "Title required"
 msgstr "Tittel kreves"
 
-#: routes/launch.py:77
+#: routes/launch.py:78
 #, python-format
 msgid "This action requires the \"%(perm)s\" permission"
 msgstr "Denne handlingen krever tillatelsen «%(perm)s»"
 
-#: routes/launch.py:90
+#: routes/launch.py:91
 msgid "The player is already running another game"
 msgstr "Spilleren kjører allerede et annet spill"
 
-#: routes/launch.py:101
+#: routes/launch.py:102
 msgid "This game is already running"
 msgstr "Dette spillet kjører allerede"
 
-#: routes/launch.py:107
+#: routes/launch.py:108
 #, python-format
 msgid "failed to kill prior instance: %(err)s"
 msgstr "kunne ikke avslutte forrige instans: %(err)s"
 
-#: routes/launch.py:180
+#: routes/launch.py:182
 msgid "RetroArch is not built for this computer."
 msgstr "RetroArch bygges ikke for denne datamaskinen."
 
-#: routes/launch.py:193
+#: routes/launch.py:195
 msgid "Cores are not built for this computer."
 msgstr "Kjerner bygges ikke for denne datamaskinen."
 
-#: routes/launch.py:196
+#: routes/launch.py:198
 msgid "The player is not installed."
 msgstr "Spilleren er ikke installert."
 
-#: routes/launch.py:205
+#: routes/launch.py:207
 msgid "No system with games has a player core."
 msgstr "Ingen systemer med spill har en kjerne for spilleren."
 
-#: routes/launch.py:218
+#: routes/launch.py:220
 msgid ""
 "Could not fetch the list of cores. Check the internet connection and try "
 "again."
@@ -687,23 +687,23 @@ msgstr ""
 "Kunne ikke hente listen over kjerner. Sjekk internettforbindelsen og prøv"
 " igjen."
 
-#: routes/launch.py:223
+#: routes/launch.py:225
 msgid "Every core is up to date."
 msgstr "Alle kjerner er oppdatert."
 
-#: routes/launch.py:242
+#: routes/launch.py:244
 msgid "Player settings reset to recommended"
 msgstr "Spillerinnstillingene er tilbakestilt til anbefalte"
 
-#: routes/launch.py:318
+#: routes/launch.py:320
 msgid "That game is no longer running"
 msgstr "Det spillet kjører ikke lenger"
 
-#: routes/launch.py:320
+#: routes/launch.py:322
 msgid "This game has no disk list to swap through"
 msgstr "Dette spillet har ingen diskliste å bytte mellom"
 
-#: routes/launch.py:327
+#: routes/launch.py:329
 #, python-format
 msgid ""
 "RetroArch is not accepting commands. In RetroArch, turn on Settings > "
@@ -712,7 +712,7 @@ msgstr ""
 "RetroArch tar ikke imot kommandoer. Slå på Settings > Network > Network "
 "Commands i RetroArch (port %(port)s)."
 
-#: routes/launch.py:330
+#: routes/launch.py:332
 msgid "Next disk inserted"
 msgstr "Neste disk satt inn"
 
@@ -4390,19 +4390,19 @@ msgstr "🛑 Slå av server"
 msgid "🧹 Clean Missing ROMs"
 msgstr "🧹 Rydd opp manglende ROM-er"
 
-#: services/ra_sign_in.py:53
+#: services/ra_sign_in.py:54
 msgid "Could not reach RetroAchievements. Try again later."
 msgstr "Kunne ikke nå RetroAchievements. Prøv igjen senere."
 
-#: services/ra_sign_in.py:66
+#: services/ra_sign_in.py:67
 msgid "RetroAchievements did not sign you in."
 msgstr "RetroAchievements logget deg ikke inn."
 
-#: services/ra_sign_in.py:74
+#: services/ra_sign_in.py:75
 msgid "Enter your RetroAchievements username and password."
 msgstr "Skriv inn brukernavnet og passordet ditt for RetroAchievements."
 
-#: services/ra_sign_in.py:89
+#: services/ra_sign_in.py:94
 msgid "Sign in to RetroAchievements first."
 msgstr "Logg inn på RetroAchievements først."
 
@@ -10110,8 +10110,8 @@ msgstr ""
 "cyan);\">RetroAchievements Control Panel</a>"
 
 #: templates/_settings_tabs/account.html:116
-msgid "Earn achievements in RetroDB's RetroArch"
-msgstr "Tjen prestasjoner i RetroDBs RetroArch"
+msgid "Earn achievements in RetroArch, DuckStation and PCSX2"
+msgstr "Tjen prestasjoner i RetroArch, DuckStation og PCSX2"
 
 #: templates/_settings_tabs/account.html:117
 msgid ""
@@ -10122,6 +10122,16 @@ msgstr ""
 "Logg inn én gang, så låses prestasjonene opp mens du spiller. Passordet "
 "ditt går bare til RetroAchievements og lagres ikke; RetroDB beholder "
 "innloggingstokenet som returneres."
+
+#: templates/_settings_tabs/account.html:117
+msgid ""
+"When you press Play in DuckStation or PCSX2, RetroDB writes your sign-in "
+"to that emulator's own settings file. A sign-in you made in the "
+"emulator's own menu is left alone."
+msgstr ""
+"Når du trykker Spill i DuckStation eller PCSX2, skriver RetroDB "
+"påloggingen din til den emulatorens innstillingsfil. En pålogging du "
+"gjorde i emulatorens egen meny, blir ikke endret."
 
 #: templates/_settings_tabs/account.html:120
 msgid "Your RetroAchievements password"
@@ -11303,4 +11313,7 @@ msgstr "Støtt på Patreon"
 
 #~ msgid "Default"
 #~ msgstr "Standard"
+
+#~ msgid "Earn achievements in RetroDB's RetroArch"
+#~ msgstr "Tjen prestasjoner i RetroDBs RetroArch"
 
