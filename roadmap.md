@@ -10067,6 +10067,25 @@ the cover zoom in Firefox before being reverted for the local fix.
   a word list per locale so terms stay the same.
 - **Status**: todo. The user chose after 3.34.0 on 2026-10-30.
 
+---
+
+#### Pass 59.196 Fewer Claude web searches per game, and log how many each uses (perf, S).
+- **Target**: lower CLAUDE_MAX_SEARCHES in scraper/scrape_ai.py from 5 to 2, and
+  log each game's search count from the reply. The changelog's '5 searches, 5
+  US cents' wording and test_search_is_capped_per_game move with it.
+- **Why**: nothing records real use. A system with no published sales figures
+  probably spends the whole cap and finds nothing (Atari 5200 found none).
+- **Status**: deferred to the user 2026-10-30, recommended, not yet answered.
+
+---
+
+#### Pass 59.197 Say which emulator Play uses, and why the Cheats panel is missing (ux, S).
+- **Target**: a 'Launches in: <emulator>' line by the Play button. The Cheats
+  panel shows its existing reason instead of staying hidden:
+  static/js/game-cheats.js returns early when view.emulator is empty, so
+  'Cheats work in the player, DuckStation and PCSX2.' never shows.
+- **Status**: deferred to the user 2026-10-30, recommended, not yet answered.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
