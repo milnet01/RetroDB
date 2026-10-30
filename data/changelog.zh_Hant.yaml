@@ -1,5 +1,5 @@
 - version: 3.34.0
-  date: '2026-10-29'
+  date: '2026-10-30'
   tags:
   - type: feature
     label: RetroArch (RetroDB)、DuckStation 和 PCSX2 的金手指
@@ -35,6 +35,12 @@
     label: '在 RetroDB 的 RetroArch 中，左搖桿可當方向鍵使用'
   - type: feature
     label: '從設定登入 RetroAchievements'
+  - type: feature
+    label: "查看「遊玩」將使用哪個模擬器"
+  - type: fix
+    label: "金手指面板會說明遊戲為何沒有金手指"
+  - type: fix
+    label: "長資料夾路徑可在手機上正常顯示"
   body: |
     <ul>
       <li><strong>RetroArch (RetroDB)、DuckStation 和 PCSX2 的金手指。</strong>設定 &gt; 模擬器 中有一個新的「金手指」區塊。你可以在那裡下載免費的公開金手指包，或匯入你已有的金手指資料夾；RetroDB 會複製檔案，絕不改動你的資料夾。之後，遊戲頁面會列出它的金手指，每個都有開／關切換，金手指很多時還有搜尋框。在 RetroArch (RetroDB) 中，你開啟的金手指會在你下次按下遊玩時生效，而你在遊玩時於 RetroArch 選單中所做的變更會被保留。對於 DuckStation 和 PCSX2，開關會儲存在模擬器自己為該遊戲建立的設定中，所以在模擬器內所做的變更也會顯示在頁面上。RetroDB 絕不覆寫模擬器已有的金手指檔案。開啟金手指會暫停 RetroAchievements 硬核模式。</li>
@@ -54,6 +60,9 @@
       <li><strong>每個路徑框都有「瀏覽」按鈕。</strong>管理員現在可以逐層點選電腦上的資料夾來選擇資料夾或程式，不必輸入路徑：設定 &gt; 模擬器、遊戲庫、抓取和帳戶，以及 ROM 工具的設定。需要程式的框也會顯示檔案。<code>.config</code> 等隱藏資料夾排在最後。</li>
       <li><strong>在 RetroDB 的 RetroArch 中，左搖桿可當方向鍵使用。</strong>在沒有搖桿的系統（如 NES 或 Mega Drive）的遊戲中，現在除了方向鍵，也可以用左搖桿移動。當遊戲的模擬器核心自行讀取搖桿時（如 Nintendo 64），搖桿仍是真正的搖桿。</li>
       <li><strong>從設定登入 RetroAchievements。</strong>設定 &gt; 帳戶現在可以為 RetroDB 的 RetroArch 登入，這樣遊玩時成就就會解鎖，無需在模擬器內登入。你的密碼只會傳送給 RetroAchievements，不會保存。每個 RetroDB 使用者都有自己的登入和硬核模式開關，預設關閉。DuckStation 和 PCSX2 仍從各自的選單登入。</li>
+      <li><strong>查看「遊玩」將使用哪個模擬器.</strong> 遊戲頁面現在會在「遊玩」按鈕旁顯示「啟動方式：」和模擬器名稱，或提示尚未設定模擬器。</li>
+      <li><strong>金手指面板會說明遊戲為何沒有金手指.</strong> 當遊戲的模擬器無法使用金手指時，面板現在會說明原因，而不再隱藏。</li>
+      <li><strong>長資料夾路徑可在手機上正常顯示.</strong> 設定中的長資料夾路徑不再使頁面左右捲動。</li>
     </ul>
 - version: 3.33.0
   date: '2026-10-29'

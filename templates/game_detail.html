@@ -98,6 +98,8 @@
             <span class="btn-icon">▶</span>
             {{ _('Play') }}
         </button>
+        {# PASS-59-197 — which emulator Play starts, or why it has none. #}
+        <span class="play-emulator">{{ _('Launches in: %(name)s', name=play_emulator) if play_emulator else _('No emulator is set up for this system.') }}</span>
         {% if keyboard_play %}
         {# PASS-59-152 — keyboard computers start in game focus. #}
         <a href="{{ url_for('help_page') }}#emulators-play" class="play-key-hint">⌨ {{ _('Keyboard game: press Scroll Lock for RetroArch keys') }}</a>

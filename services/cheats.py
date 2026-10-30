@@ -580,7 +580,7 @@ def _standalone_save(ctx, kind, enabled) -> None:
 
 def game_view(game_id) -> Optional[dict]:
     """GET /api/games/<id>/cheats; None when the game is missing. `emulator`
-    is None where the panel does not show."""
+    is None where the panel shows only `reason`."""
     from services import standalone_settings as ss
     ctx = ss._context(game_id)
     if not ctx.get('game'):

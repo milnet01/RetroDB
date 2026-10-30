@@ -511,6 +511,16 @@ def keyboard_core(system_id, emulator_override_id) -> bool:
                 and _is_keyboard_core(sys_emu.get('retroarch_core') or ''))
 
 
+def launch_emulator_name(system_id, emulator_override_id, system_name='') -> Optional[str]:
+    """The name of the emulator Play would use; None when none is set up
+    (PASS-59-197)."""
+    try:
+        emu, _sys_emu = pick_launch_mapping(system_id, emulator_override_id, system_name)
+    except LaunchResolutionError:
+        return None
+    return emu['name'] if emu else None
+
+
 def _launching_user_id():
     """Who pressed Play: None outside a request."""
     user = getattr(g, 'user', None) if has_request_context() else None

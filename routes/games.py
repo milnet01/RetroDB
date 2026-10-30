@@ -32,7 +32,7 @@ from services.game_query import (
 from services.analytics import invalidate_analytics_cache
 from services.box_faces import faces_for
 from services.release_dates import display_release_dates
-from services.launch_resolver import keyboard_core, launch_checker, rom_launch_problem
+from services.launch_resolver import keyboard_core, launch_checker, launch_emulator_name, rom_launch_problem
 from services.game_metadata_service import (
     build_game_card,
     apply_hybrid_metadata_to_game,
@@ -847,6 +847,10 @@ def game_detail(game_id):
                              # PASS-59-152 — its hotkeys wait behind Scroll Lock.
                              keyboard_play=keyboard_core(game['system_id'],
                                                          game['emulator_override_id']),
+                             # PASS-59-197 — named beside Play.
+                             play_emulator=launch_emulator_name(game['system_id'],
+                                                                game['emulator_override_id'],
+                                                                game['system_name']),
                              # PASS-59-153 — its images still await upscaling.
                              upscale_pending=upscale_queue.pending_status(game_id)[1],
                              # PASS-59-142 — imported Slipcase faces, or None.

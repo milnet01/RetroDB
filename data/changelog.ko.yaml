@@ -1,5 +1,5 @@
 - version: 3.34.0
-  date: '2026-10-29'
+  date: '2026-10-30'
   tags:
   - type: feature
     label: RetroArch (RetroDB), DuckStation, PCSX2용 치트
@@ -35,6 +35,12 @@
     label: 'RetroDB의 RetroArch에서 왼쪽 스틱이 D-Pad로 작동'
   - type: feature
     label: '설정에서 RetroAchievements에 로그인'
+  - type: feature
+    label: "실행 버튼이 사용할 에뮬레이터 확인"
+  - type: fix
+    label: "치트 패널이 치트가 없는 이유를 표시"
+  - type: fix
+    label: "긴 폴더 경로가 휴대폰 화면에 맞게 표시"
   body: |
     <ul>
       <li><strong>RetroArch (RetroDB), DuckStation, PCSX2용 치트.</strong> 설정 &gt; 에뮬레이터에 새 치트 섹션이 있습니다. 그곳에서 무료 공개 치트 팩을 다운로드하거나, 이미 가지고 있는 치트 폴더를 가져오세요. RetroDB는 파일을 복사하며 사용자의 폴더는 절대 바꾸지 않습니다. 그러면 게임 페이지에 그 게임의 치트가 각각 켜기/끄기 스위치와 함께 표시되고, 치트가 많을 때는 검색 상자도 나타납니다. RetroArch (RetroDB)에서는 켠 치트가 다음에 실행을 누를 때 적용되며, 플레이 중에 RetroArch 메뉴에서 바꾼 내용도 유지됩니다. DuckStation과 PCSX2에서는 스위치가 그 게임에 대한 에뮬레이터 자체 설정에 저장되므로, 에뮬레이터 안에서 바꾼 내용도 페이지에 표시됩니다. RetroDB는 에뮬레이터에 이미 있는 치트 파일을 절대 덮어쓰지 않습니다. 켜진 치트가 있으면 RetroAchievements 하드코어 모드가 일시 중지됩니다.</li>
@@ -54,6 +60,9 @@
       <li><strong>모든 경로 입력란에 찾아보기 버튼.</strong> 관리자는 이제 경로를 입력하는 대신 컴퓨터의 폴더를 클릭해 가며 폴더나 프로그램을 선택할 수 있습니다: 설정 &gt; 에뮬레이터, 라이브러리, 스크래핑, 계정, 그리고 ROM 도구 설정. 프로그램을 지정하는 입력란에는 파일도 표시됩니다. <code>.config</code> 같은 숨김 폴더는 맨 마지막에 표시됩니다.</li>
       <li><strong>RetroDB의 RetroArch에서 왼쪽 스틱이 D-Pad로 작동.</strong> NES나 Mega Drive처럼 스틱이 없는 시스템의 게임에서 이제 D-Pad뿐 아니라 왼쪽 스틱으로도 움직일 수 있습니다. Nintendo 64처럼 게임의 에뮬레이터 코어가 스틱을 직접 읽는 경우에는 스틱이 실제 스틱으로 유지됩니다.</li>
       <li><strong>설정에서 RetroAchievements에 로그인.</strong> 설정 &gt; 계정에서 이제 RetroDB의 RetroArch용으로 로그인할 수 있어, 에뮬레이터 안에서 로그인하지 않아도 플레이하는 동안 업적이 해제됩니다. 비밀번호는 RetroAchievements로만 전송되며 저장되지 않습니다. RetroDB 사용자마다 자신의 로그인과 하드코어 모드 스위치가 있으며, 처음에는 꺼져 있습니다. DuckStation과 PCSX2는 여전히 자체 메뉴에서 로그인합니다.</li>
+      <li><strong>실행 버튼이 사용할 에뮬레이터 확인.</strong> 게임 페이지의 실행 버튼 옆에 "실행 에뮬레이터:"와 에뮬레이터 이름을 표시합니다. 에뮬레이터가 설정되지 않았으면 그렇게 알려 줍니다.</li>
+      <li><strong>치트 패널이 치트가 없는 이유를 표시.</strong> 게임의 에뮬레이터가 치트를 사용할 수 없으면 패널을 숨기는 대신 이유를 표시합니다.</li>
+      <li><strong>긴 폴더 경로가 휴대폰 화면에 맞게 표시.</strong> 설정의 긴 폴더 경로 때문에 페이지가 옆으로 스크롤되지 않습니다.</li>
     </ul>
 - version: 3.33.0
   date: '2026-10-29'

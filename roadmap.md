@@ -8250,6 +8250,9 @@ were corrected in `2836bc3` and are not repeated here.
   so this summary would have almost nothing to work on. Recommended to
   the user: hold it and go on to PASS-59-91's remaining stages. Ask
   before building it.
+- **Update** (2026-10-30): the 'Awaiting the user' note above is out
+  of date; the item's status is done and
+  tests/test_version_ai_summary.py covers it.
 
 #### Pass 59.108 Apply Metadata shows a percentage gauge, not a spinner (MEDIUM, M)
 - **Target**: the game page's Search Metadata apply (`routes/games.py`
@@ -8282,6 +8285,9 @@ were corrected in `2836bc3` and are not repeated here.
   published as a GitHub release; the website session has not been told.
   Recommended to the user: hold it and bundle with the next release, as
   v3.24.2 to v3.26.0 were. Awaiting the user's answer.
+- **Update** (2026-10-30): the release question above is out of date.
+  No v3.27.0 tag or GitHub release exists; the commit first shipped in
+  the v3.30.0 tag.
 
 ---
 
@@ -10075,7 +10081,9 @@ the cover zoom in Firefox before being reverted for the local fix.
   US cents' wording and test_search_is_capped_per_game move with it.
 - **Why**: nothing records real use. A system with no published sales figures
   probably spends the whole cap and finds nothing (Atari 5200 found none).
-- **Status**: deferred to the user 2026-10-30, recommended, not yet answered.
+- **Status**: dropped; declined by the user 2026-10-30.
+- **Decision** (user, 2026-10-30): declined. The limit stays at 5
+  searches per game and no per-game count is logged.
 
 ---
 
@@ -10084,7 +10092,21 @@ the cover zoom in Firefox before being reverted for the local fix.
   panel shows its existing reason instead of staying hidden:
   static/js/game-cheats.js returns early when view.emulator is empty, so
   'Cheats work in the player, DuckStation and PCSX2.' never shows.
-- **Status**: deferred to the user 2026-10-30, recommended, not yet answered.
+- **Resolution** (user approved 2026-10-30, v3.34.0):
+  launch_emulator_name() names the emulator beside Play, or says none is
+  set up. The Cheats panel now shows its reason for every game it cannot
+  serve. Walked in headless Chrome at desktop and 375 px on five kinds
+  of game.
+- **Status**: done (2026-10-30, v3.34.0).
+
+---
+
+#### Pass 59.198 The regional versions section can widen a game's page on desktop (ux, S).
+- **Target**: the game page's versions section (`.versions-section`).
+- **Why**: in a 1600 px Chrome window, games 1 and 2865 of the live library's
+  copy measured wider than the window (1650 and 1617 px); the section's right
+  edge passes the window. Removing the new Play line did not change it.
+- **Status**: todo. Measured 2026-10-30 in headless Chrome. Not in 3.34.0.
 
 ## Done index
 

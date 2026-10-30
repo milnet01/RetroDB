@@ -577,3 +577,11 @@ def test_refused_retroarch_launch_writes_no_overrides(tmpdb, monkeypatch, tmp_pa
     with pytest.raises(LaunchResolutionError, match='outside'):
         _retroarch_argv(tmpdb, monkeypatch, {'DISPLAY': ':0'})
     assert not tmpdb['overrides'].exists()
+
+
+# PASS-59-197 — the game page names the emulator Play would use.
+def test_pass_59_197_launch_emulator_name_follows_the_picked_mapping(tmpdb):
+    from services.launch_resolver import launch_emulator_name
+    assert launch_emulator_name(1, None) == 'DuckStation'   # system default
+    assert launch_emulator_name(1, 2) == 'RetroArch'        # per-game override
+    assert launch_emulator_name(999, None) is None          # nothing set up

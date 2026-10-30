@@ -65,3 +65,18 @@ def test_unknown_pack_is_refused(admin_test_client, setup_complete):
     client, csrf = admin_test_client()
     resp = client.post('/api/cheats/packs/nope', headers={'X-CSRF-Token': csrf})
     assert resp.status_code == 404
+
+
+def test_pass_59_197_game_page_names_the_emulator(player_game, admin_test_client):
+    client, _csrf = admin_test_client()
+    page = client.get(f'/game/{player_game}').get_data(as_text=True)
+    assert 'Launches in: CheatsProbe Player' in page
+
+
+def test_pass_59_197_an_unsupported_emulator_gets_a_reason(player_game, admin_test_client):
+    execute("UPDATE emulators SET is_player = 0, binary_name = 'mednafen' "
+            "WHERE name = 'CheatsProbe Player'")
+    client, _csrf = admin_test_client()
+    data = client.get(f'/api/games/{player_game}/cheats').get_json()['data']
+    assert data['emulator'] is None
+    assert data['reason'] == 'Cheats work in the player, DuckStation and PCSX2.'

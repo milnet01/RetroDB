@@ -6,8 +6,8 @@
  * list, copied in place at the next Play; for DuckStation and PCSX2 it
  * writes straight into the emulator's settings for this game. The panel
  * re-reads those files each time, so a switch flipped inside the emulator
- * shows here. Shown only for the player on a system with cheats, DuckStation
- * and PCSX2.
+ * shows here. Switches only for the player on a system with cheats, DuckStation
+ * and PCSX2; any other game gets the reason alone (PASS-59-197).
  *
  * Contract: docs/specs/PASS-59-155-cheats.md §4.6, §4.7.
  */
@@ -65,7 +65,7 @@
         note.replaceChildren();
         if (view.reason) {
             note.append(view.reason);
-            if (!view.cheats.length && panel.dataset.settingsUrl) {
+            if (view.emulator && !view.cheats.length && panel.dataset.settingsUrl) {
                 const link = document.createElement('a');
                 link.href = `${panel.dataset.settingsUrl}#cheats`;
                 link.textContent = t('Get cheats in Settings > Emulators');
@@ -160,7 +160,6 @@
         if (!panel) return;
         try {
             const data = await API.get(`/api/games/${panel.dataset.gameId}/cheats`);
-            if (!data.data.emulator) return;   // no cheats for this emulator
             render(panel, data.data);
             panel.hidden = false;
         } catch (err) {
