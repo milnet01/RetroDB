@@ -10135,7 +10135,13 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Why**: the Hub website session reports (2026-10-30, not checked here) that
   Slipcase v1.3.1, its newest release, cannot save a `.box.json`; only its
   unreleased main can. The notes tell users to pick the file Slipcase saved.
-- **Status**: todo. Confirm the claim, then name the first Slipcase release that
+- **Resolution** (2026-10-30): Done 2026-10-30. Claim confirmed: Slipcase v1.3.1 has no
+  `core/box_file.py`. Slipcase v1.4.0, released 2026-10-30, saves box
+  files by default. A box file written by v1.4.0's `write_box_file`,
+  with all six faces, passed RetroDB's `_parse_box_file` and
+  `_encode_faces`. The help manual and the 3.34.0 notes now name 1.4.0,
+  in every language.
+- **Status**: done. Confirm the claim, then name the first Slipcase release that
   saves one once it ships.
 
 ---
