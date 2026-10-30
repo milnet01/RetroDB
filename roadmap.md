@@ -10080,7 +10080,11 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Target**: a script that translates each release's new catalog strings and
   changelog items into every locale, with Sonnet via the user's Claude key and
   a word list per locale so terms stay the same.
-- **Status**: todo. The user chose after 3.34.0 on 2026-10-30.
+- **Resolution** (2026-10-30): scripts/translate_release.py, with a word list per locale in
+  scripts/translation_terms/. Tested against a stand-in for Claude and
+  copies of the real files; no call to Claude has been made yet, so the
+  first real run is at the next release.
+- **Status**: done. The user chose after 3.34.0 on 2026-10-30.
 
 ---
 
