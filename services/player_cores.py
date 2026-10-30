@@ -54,6 +54,24 @@ _CHUNK = 1024 * 1024
 _CORE_ID = re.compile(r'^[a-z0-9_]+$')
 
 
+# Called after each chunk of a download with (bytes so far, size or None).
+# The core job sets it so Settings > Emulators can show a percentage.
+progress = None
+
+
+def report_progress(done: int, size: Optional[int]) -> None:
+    if progress:
+        progress(done, size)
+
+
+def content_length(r) -> Optional[int]:
+    """A response's size from its Content-Length, or None."""
+    try:
+        return int(r.headers['Content-Length']) or None
+    except (KeyError, ValueError):
+        return None
+
+
 class CoreInstallError(Exception):
     """An install that put nothing in place."""
 
@@ -340,13 +358,14 @@ def _download(url: str, part: Path, get=None) -> None:
     try:
         if r.status_code != 200:
             raise CoreInstallError(f'HTTP {r.status_code}')
-        total = 0
+        total, size = 0, content_length(r)
         with open(part, 'wb') as f:
             for chunk in r.iter_content(_CHUNK):
                 total += len(chunk)
                 if total > MAX_BYTES:
                     raise CoreInstallError('the download is larger than 256 MiB')
                 f.write(chunk)
+                report_progress(total, size)
     finally:
         r.close()
 

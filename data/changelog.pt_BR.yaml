@@ -23,6 +23,12 @@
     label: 'Preencher com AI um sistema inteiro de uma vez'
   - type: fix
     label: "Os avisos de tarefas usam as cores do seu tema"
+  - type: fix
+    label: 'A página Emuladores se parece com as outras abas de Configurações'
+  - type: feature
+    label: 'Progresso do download ao lado do botão'
+  - type: feature
+    label: 'Escolha o emulador de cada sistema em uma lista'
   body: |
     <ul>
       <li><strong>Trapaças para RetroArch (RetroDB), DuckStation e
@@ -71,6 +77,9 @@
       <li><strong>O Claude pode pesquisar números de vendas na web.</strong> Configurações &gt; Busca de metadados tem uma chave "Deixar o Claude pesquisar na web" abaixo do modelo Claude, desligada no início. Sem pesquisa, o Claude responde com o que já sabe e deixa "Cópias vendidas" em branco. Com a chave ligada, o Claude busca os números. A Anthropic cobra por cada pesquisa, então o Preencher com AI faz no máximo 5 pesquisas por jogo, até 5 centavos de dólar; desligue a chave antes de um scraping em massa grande.</li>
       <li><strong>Preencher com AI um sistema inteiro de uma vez.</strong> Ferramentas de ROM tem uma nova página Preenchimento em Lote com AI, que também abriga Nomes Oficiais. Escolha um sistema, ou Todos os Sistemas, ative os campos que quer preencher e clique em Preencher com IA: o RetroDB roda o Preencher com AI em cada jogo, igual ao botão Preencher com AI na página de um jogo, e salva as respostas direto no jogo. Uma barra de progresso e um aviso do Preencher com AI mostram até onde foi, e você pode sair da página enquanto ele roda. Ele mostra quantos jogos vai preencher e pergunta antes, porque seu provedor de IA cobra por cada jogo. Jogos que já passaram pelo Preencher com AI são pulados, a menos que você os inclua de volta, e a execução para sozinha se a IA parar de responder.</li>
       <li><strong>Os avisos de tarefas usam as cores do seu tema.</strong> As caixas que mostram uma tarefa em andamento, como Coleta em Lote e RA Sync, e as barras de progresso agora usam as cores do tema que você escolheu. Uma tarefa que não pode ser pausada não mostra mais o título na cor de pausa.</li>
+      <li><strong>A página Emuladores se parece com as outras abas de Configurações.</strong> Configurações &gt; Emuladores agora é dividida em cartões, e uma barra abaixo das abas leva a cada um: RetroArch, Jogar no RetroDB, Cores, Trapaças, Pastas, Emuladores e Mapeamento. A barra fica no topo enquanto você rola e marca a seção em que você está.</li>
+      <li><strong>Progresso do download ao lado do botão.</strong> Ao baixar o RetroArch, os cores do player ou um pacote de trapaças, uma nota ao lado do botão mostra em porcentagem quanto já foi baixado. Antes, uma linha aparecia abaixo dos botões e empurrava o resto da página para baixo.</li>
+      <li><strong>Escolha o emulador de cada sistema em uma lista.</strong> Mapeamento por sistema em Configurações &gt; Emuladores agora mostra cada sistema uma vez, com uma lista dos emuladores vinculados a ele. O que você escolher é o que Jogar usa para os jogos desse sistema, a menos que um jogo defina o próprio. Um emulador que o RetroDB não consegue encontrar aparece marcado como "não encontrado". Antes, cada sistema tinha uma linha por emulador, com um pontinho para escolher o padrão.</li>
     </ul>
 - version: 3.33.0
   date: '2026-10-29'

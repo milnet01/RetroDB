@@ -23,6 +23,12 @@
     label: 'AI-Auffüllen für ein ganzes System auf einmal'
   - type: fix
     label: 'Benachrichtigungsfelder für Aufträge übernehmen die Farben Ihres Designs'
+  - type: fix
+    label: 'Die Emulatoren-Seite sieht aus wie die anderen Einstellungs-Tabs'
+  - type: feature
+    label: 'Download-Fortschritt neben der Schaltfläche'
+  - type: feature
+    label: 'Den Emulator jedes Systems aus einer Liste wählen'
   body: |
     <ul>
       <li><strong>Cheats für RetroArch (RetroDB), DuckStation und
@@ -72,6 +78,9 @@
       <li><strong>Claude kann im Web nach Verkaufszahlen suchen.</strong> Einstellungen &gt; Scraping hat unter dem Claude-Modell den Schalter „Claude im Web suchen lassen“, anfangs aus. Ohne Suche antwortet Claude mit dem, was es schon weiß, und lässt verkaufte Exemplare leer. Ist er an, schlägt Claude Zahlen nach. Anthropic berechnet jede Suche, daher macht AI-Auffüllen höchstens 5 Suchen pro Spiel, bis zu 5 US-Cent; schalten Sie den Schalter vor einem großen Massen-Scraping aus.</li>
       <li><strong>AI-Auffüllen für ein ganzes System auf einmal.</strong> ROM-Werkzeuge hat eine neue Seite Massen-AI-Auffüllen, die auch Offizielle Namen enthält. Wählen Sie ein System oder Alle Systeme, schalten Sie die Felder ein, die gefüllt werden sollen, und drücken Sie Mit KI auffüllen: RetroDB führt AI-Auffüllen für jedes Spiel aus, genauso wie die Schaltfläche AI-Auffüllen auf der Seite eines Spiels, und speichert die Antworten direkt im Spiel. Ein Fortschrittsbalken und ein AI-Auffüllen-Benachrichtigungsfeld zeigen, wie weit es ist, und Sie können die Seite verlassen, während es läuft. Es zeigt, wie viele Spiele es auffüllen wird, und fragt vorher, denn Ihr KI-Anbieter berechnet jedes Spiel. Spiele, die AI-Auffüllen schon erledigt hat, werden übersprungen, sofern Sie sie nicht wieder einschalten, und der Durchlauf hält von selbst an, wenn die KI nicht mehr antwortet.</li>
       <li><strong>Benachrichtigungsfelder für Aufträge übernehmen die Farben Ihres Designs.</strong> Die Benachrichtigungsfelder, die einen laufenden Auftrag zeigen, etwa Massen-Scraping und RA Sync, und die Fortschrittsbalken nutzen jetzt die Farben des gewählten Designs. Ein Auftrag, der sich nicht pausieren lässt, zeigt seinen Titel nicht mehr in der Pausenfarbe.</li>
+      <li><strong>Die Emulatoren-Seite sieht aus wie die anderen Einstellungs-Tabs.</strong> Einstellungen &gt; Emulatoren ist jetzt in Karten aufgeteilt, und eine Leiste unter den Tabs springt zu jeder davon: RetroArch, In RetroDB spielen, Cores, Cheats, Ordner, Emulatoren und Zuordnung. Die Leiste bleibt beim Scrollen oben und markiert den Bereich, in dem Sie sich befinden.</li>
+      <li><strong>Download-Fortschritt neben der Schaltfläche.</strong> Wenn Sie RetroArch, die Cores des Players oder ein Cheat-Paket herunterladen, zeigt ein Hinweis neben der Schaltfläche in Prozent, wie weit der Download ist. Bisher erschien eine Zeile unter den Schaltflächen und schob den Rest der Seite nach unten.</li>
+      <li><strong>Den Emulator jedes Systems aus einer Liste wählen.</strong> Zuordnung pro System unter Einstellungen &gt; Emulatoren zeigt jetzt jedes System einmal, mit einer Liste der damit verknüpften Emulatoren. Den gewählten verwendet Spielen für die Spiele dieses Systems, sofern ein Spiel keinen eigenen festlegt. Ein Emulator, den RetroDB nicht finden kann, ist als „nicht gefunden“ markiert. Bisher hatte jedes System eine Zeile pro Emulator, mit einem kleinen Punkt zur Wahl des Standards.</li>
     </ul>
 - version: 3.33.0
   date: '2026-10-29'

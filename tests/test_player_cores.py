@@ -485,3 +485,37 @@ def test_every_table_folder_is_a_known_system():
         table = json.load(f)
     unknown = sorted(k for k in table if not k.startswith('_') and k not in config.SYSTEM_NAME_MAP)
     assert not unknown, f"folders not in config.SYSTEM_NAME_MAP: {unknown}"
+
+
+# -----------------------------------------------------------------------------
+# Download progress, shown beside the buttons in Settings > Emulators
+# -----------------------------------------------------------------------------
+
+def test_download_reports_its_progress(pc, monkeypatch, tmp_path):
+    seen = []
+    monkeypatch.setattr(pc, 'progress', lambda done, size: seen.append((done, size)))
+    monkeypatch.setattr(pc, '_CHUNK', 4)
+    pc.http.routes['u'] = _Resp(body=b'x' * 10)
+    pc._download('u', tmp_path / 'part')
+    assert seen == [(4, 10), (8, 10), (10, 10)]
+
+
+def test_download_without_a_size_reports_bytes_only(pc, monkeypatch, tmp_path):
+    seen = []
+    monkeypatch.setattr(pc, 'progress', lambda done, size: seen.append((done, size)))
+    pc.http.routes['u'] = _Resp(body=b'x' * 10, headers={'Content-Type': 'application/zip'})
+    pc._download('u', tmp_path / 'part')
+    assert seen == [(10, None)]
+
+
+def test_job_status_carries_the_current_download():
+    from services.jobs.player_cores import PlayerCoresJob
+    job = PlayerCoresJob()
+    job._bytes(5, 10)
+    st = job.get_status()
+    assert (st['item_bytes'], st['item_size']) == (5, 10)
+    # The next item starts from nothing.
+    job.queue = [('snes9x', None, False)]
+    job._next()
+    st = job.get_status()
+    assert (st['item_bytes'], st['item_size']) == (0, None)

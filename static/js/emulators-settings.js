@@ -11,6 +11,9 @@
 // PASS-59-91 stage 2 — the Emulator folders list (the editable form of the
 // emulator_scan_paths setting; adding one scans with apply=true) and the
 // per-system mapping table, filled from GET /api/system_emulators.
+//
+// The section bar under the tabs scrolls to a card and marks the one in view,
+// as on the Settings tabs. Each download's progress shows beside its button.
 // =============================================================================
 
 (function () {
@@ -457,49 +460,60 @@
         const table = document.createElement('table');
         table.className = 'data-table';
         table.innerHTML = '<thead><tr><th>' + escapeHtml(t('System')) + '</th><th>'
-            + escapeHtml(t('Emulator')) + '</th><th>' + escapeHtml(t('Default'))
-            + '</th><th>' + escapeHtml(t('Works')) + '</th><th>' + escapeHtml(t('BIOS'))
-            + '</th><th></th></tr></thead>';
+            + escapeHtml(t('Emulator')) + '</th><th>' + escapeHtml(t('Works'))
+            + '</th><th>' + escapeHtml(t('BIOS')) + '</th><th></th></tr></thead>';
         const tbody = document.createElement('tbody');
+        // One row per system. Its dropdown lists the emulators linked to it
+        // (a folder scan links them); the one chosen is the system's default.
+        const bySystem = new Map();
         for (const m of mappings) {
+            if (!bySystem.has(m.system_id)) bySystem.set(m.system_id, []);
+            bySystem.get(m.system_id).push(m);
+        }
+        for (const group of bySystem.values()) {
+            const m = group.find((g) => g.is_default) || group[0];
             const tr = document.createElement('tr');
-            const cells = [m.system_name, m.emulator_name || '?'].map((text) => {
-                const td = document.createElement('td');
-                td.textContent = text;
-                return td;
-            });
-            const def = document.createElement('td');
-            const radio = document.createElement('input');
-            radio.type = 'radio';
-            radio.name = `default-${m.system_id}`;
-            radio.checked = !!m.is_default;
-            radio.setAttribute('aria-label',
+            const name = document.createElement('td');
+            name.textContent = m.system_name;
+            const pick = document.createElement('td');
+            const select = document.createElement('select');
+            select.className = 'form-input';
+            select.setAttribute('aria-label',
                 t('Default emulator for {system}', {system: m.system_name}));
-            radio.addEventListener('change', async () => {
+            for (const g of group) {
+                const opt = document.createElement('option');
+                opt.value = String(g.emulator_id);
+                opt.textContent = g.resolves ? (g.emulator_name || '?')
+                    : t('{emulator} (not found)', {emulator: g.emulator_name || '?'});
+                select.appendChild(opt);
+            }
+            select.value = String(m.emulator_id);
+            select.addEventListener('change', async () => {
+                const chosen = group.find((g) => String(g.emulator_id) === select.value);
                 try {
                     await fetchJSON('/api/system_emulators', {
                         method: 'POST',
                         body: JSON.stringify({
-                            system_id: m.system_id,
-                            emulator_id: m.emulator_id,
+                            system_id: chosen.system_id,
+                            emulator_id: chosen.emulator_id,
                             is_default: true,
-                            retroarch_core: m.retroarch_core,
-                            extra_args: m.extra_args,
+                            retroarch_core: chosen.retroarch_core,
+                            extra_args: chosen.extra_args,
                         }),
                     });
                 } catch (e) {
-                    body.prepend(document.createTextNode(
-                        t('Save failed: {error}', {error: e.message})));
+                    showNotification(t('Save failed: {error}', {error: e.message}), 'error');
                 }
                 refreshMappings();
             });
-            def.appendChild(radio);
+            pick.appendChild(select);
             const works = document.createElement('td');
             works.textContent = m.resolves ? t('Yes') : t('No');
             works.style.color = m.resolves ? 'var(--neon-green)' : 'var(--text-muted)';
             const bios = document.createElement('td');
             bios.textContent = biosText(m.bios);
             if (m.bios && m.bios.state === 'missing') bios.className = 'text-danger';
+            // Remove unlinks the chosen emulator from this system.
             const actions = document.createElement('td');
             const btn = document.createElement('button');
             btn.className = 'btn btn-sm btn-secondary';
@@ -514,14 +528,14 @@
                 refreshMappings();
             });
             actions.appendChild(btn);
-            for (const td of [...cells, def, works, bios, actions]) tr.appendChild(td);
+            for (const td of [name, pick, works, bios, actions]) tr.appendChild(td);
             tbody.appendChild(tr);
             if (m.has_settings) {
                 // PASS-59-91 §4.6 — the system-level choices for this emulator.
                 const settingsRow = document.createElement('tr');
                 settingsRow.hidden = true;
                 const cell = document.createElement('td');
-                cell.colSpan = 6;
+                cell.colSpan = 5;
                 settingsRow.appendChild(cell);
                 const toggle = document.createElement('button');
                 toggle.className = 'btn btn-sm btn-secondary';
@@ -550,17 +564,38 @@
 
     // The core job's queue name for RetroArch (services/jobs/player_cores.py).
     const RETROARCH_ITEM = '_retroarch';
+
+    // How far the core job has got: the items finished plus the share of
+    // the current download, where the server sent its size.
+    function jobPercent(st) {
+        const part = st.item_size ? Math.min(st.item_bytes / st.item_size, 1) : 0;
+        return st.total ? Math.floor((st.processed + part) / st.total * 100) : 0;
+    }
+
+    // One line for the note beside a download button. A single file sent
+    // without a size (GitHub's cheat zips) shows the amount so far instead.
+    function progressText(st, item) {
+        if (st.item_size && st.item_bytes >= st.item_size && st.total === 1) {
+            return t('Unpacking {item}…', {item});
+        }
+        if (!st.item_size && st.total === 1) {
+            return t('Downloading {item}… {size}', {item, size: formatBytes(st.item_bytes || 0)});
+        }
+        return t('Downloading {item}… {percent}%', {item, percent: jobPercent(st)});
+    }
+
     const raInstall = $('#player-retroarch-install');
     const raStatus = $('#player-retroarch-status');
     if (raInstall) {
         raInstall.addEventListener('click', async () => {
             raInstall.disabled = true;
-            raStatus.textContent = t('Downloading RetroArch… This can take a few minutes.');
+            raStatus.textContent = t('Starting…');
             try {
                 await fetchJSON('/api/player/retroarch/install', {method: 'POST'});
                 for (;;) {
-                    await new Promise((r) => setTimeout(r, 2000));
+                    await new Promise((r) => setTimeout(r, 1000));
                     const st = (await fetchJSON('/api/player/cores/status')).data || {};
+                    raStatus.textContent = progressText(st, 'RetroArch');
                     const failed = (st.errors || {})[RETROARCH_ITEM];
                     if (failed) {
                         raStatus.textContent = t('RetroArch was not installed: {error}', {error: failed});
@@ -611,37 +646,40 @@
             const btn = document.createElement('button');
             btn.className = 'btn btn-secondary btn-sm';
             btn.textContent = p.downloaded_at ? t('Download again') : t('Download');
-            btn.addEventListener('click', () => downloadCheatPack(p.pack, btn));
-            row.append(name, state, btn);
+            const note = document.createElement('span');
+            note.className = 'download-status';
+            note.setAttribute('aria-live', 'polite');
+            btn.addEventListener('click', () => downloadCheatPack(p.pack, btn, note));
+            row.append(name, state, btn, note);
             return row;
         }));
     }
 
-    async function downloadCheatPack(pack, btn) {
+    async function downloadCheatPack(pack, btn, note) {
         btn.disabled = true;
-        cheatStatus.textContent = t('Downloading {pack}…', {pack: PACK_LABELS()[pack] || pack});
+        note.textContent = t('Starting…');
         try {
             await fetchJSON(`/api/cheats/packs/${pack}`, {method: 'POST'});
             for (;;) {
-                await new Promise((r) => setTimeout(r, 2000));
+                await new Promise((r) => setTimeout(r, 1000));
                 const st = (await fetchJSON('/api/player/cores/status')).data || {};
+                note.textContent = progressText(st, PACK_LABELS()[pack] || pack);
                 const failed = (st.errors || {})[CHEATS_ITEM(pack)];
                 if (failed) {
-                    cheatStatus.textContent = t('The cheats were not downloaded: {error}', {error: failed});
+                    note.textContent = t('The cheats were not downloaded: {error}', {error: failed});
                     break;
                 }
                 if ((st.success || []).includes(CHEATS_ITEM(pack))) {
-                    cheatStatus.textContent = t('Cheats downloaded.');
                     await renderCheatPacks();
                     return;
                 }
                 if (!st.running) {
-                    cheatStatus.textContent = t('The cheats were not downloaded.');
+                    note.textContent = t('The cheats were not downloaded.');
                     break;
                 }
             }
         } catch (e) {
-            cheatStatus.textContent = e.message;
+            note.textContent = e.message;
         }
         btn.disabled = false;
     }
@@ -702,9 +740,9 @@
                 return;
             }
             const item = st.current_item === RETROARCH_ITEM ? 'RetroArch' : st.current_item;
-            playerStatus.textContent = t('Downloading {core} ({done} of {total})…',
-                {core: item || '…', done: st.processed, total: st.total});
-            await new Promise((r) => setTimeout(r, 1500));
+            playerStatus.textContent = t('Downloading {core} ({done} of {total})… {percent}%',
+                {core: item || '…', done: st.processed, total: st.total, percent: jobPercent(st)});
+            await new Promise((r) => setTimeout(r, 1000));
         }
     }
 
@@ -729,6 +767,43 @@
             }
         });
     }
+
+    // ----- The section bar ----------------------------------------------------
+
+    const sectionLinks = [...document.querySelectorAll('#subnav-emulators .subnav-link')];
+    const markSection = (id) => sectionLinks.forEach(
+        (a) => a.classList.toggle('active', a.getAttribute('href') === `#${id}`));
+
+    // The subnav_link macro calls this by name.
+    window.scrollToSection = (id) => {
+        const section = document.getElementById(id);
+        if (!section) return;
+        markSection(id);
+        StickyScroll.to(section);
+    };
+
+    // The section in view is the last one whose top has reached the bar.
+    // Measured from the bar itself, because the bars above it are taller
+    // on a phone.
+    const sections = sectionLinks
+        .map((a) => document.getElementById(a.getAttribute('href').slice(1)))
+        .filter(Boolean);
+    const subnav = $('#subnav-emulators');
+    function markSectionInView() {
+        const line = subnav.getBoundingClientRect().bottom + 30;
+        let current = sections[0];
+        for (const s of sections) {
+            if (s.getBoundingClientRect().top <= line) current = s;
+        }
+        if (current) markSection(current.id);
+    }
+    // Once per frame, and always after the last scroll event.
+    let queued = false;
+    if (subnav) window.addEventListener('scroll', () => {
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(() => { queued = false; markSectionInView(); });
+    }, {passive: true});
 
     refreshEmulators();
     refreshMappings();

@@ -33,7 +33,7 @@ from typing import Optional
 import requests
 
 import platform_utils
-from services import player
+from services import player, player_cores
 
 logger = logging.getLogger(__name__)
 
@@ -150,7 +150,7 @@ def _download(url: str, sha256: str, dest: Path) -> None:
     try:
         if r.status_code != 200:
             raise InstallError(f'HTTP {r.status_code} from {url}')
-        digest, total = hashlib.sha256(), 0
+        digest, total, size = hashlib.sha256(), 0, player_cores.content_length(r)
         with open(dest, 'wb') as f:
             for chunk in r.iter_content(_CHUNK):
                 total += len(chunk)
@@ -158,6 +158,7 @@ def _download(url: str, sha256: str, dest: Path) -> None:
                     raise InstallError('the download is larger than 512 MiB')
                 digest.update(chunk)
                 f.write(chunk)
+                player_cores.report_progress(total, size)
     finally:
         r.close()
     if digest.hexdigest() != sha256:

@@ -32,6 +32,7 @@ def _serve(monkeypatch, tmp_path, members):
     class Resp:
         status_code = 200
         url = 'https://codeload.github.com/served.zip'
+        headers = {}   # GitHub's zips are sent without a size
 
         def iter_content(self, size):
             yield zpath.read_bytes()

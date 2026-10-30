@@ -13,11 +13,25 @@
 {% set settings_tab_links = true %}
 {% include "_settings_tabs/_tab_bar.html" %}
 
+{% from "_macros/sticky_subnav.html" import tab_subnav, subnav_link %}
+{% call tab_subnav('emulators') %}
+    {{ subnav_link('retroarch', '🕹️ RetroArch', active=True) }}
+    {% if retroarch_install_supported %}{{ subnav_link('player-retroarch', '▶️ ' ~ _('Play in RetroDB')) }}{% endif %}
+    {% if player_found %}{{ subnav_link('player-cores', '🧩 ' ~ _('Cores')) }}{% endif %}
+    {{ subnav_link('cheats', '🎲 ' ~ _('Cheats')) }}
+    {{ subnav_link('emulator-folders', '📂 ' ~ _('Folders')) }}
+    {{ subnav_link('registered-emulators', '📋 ' ~ _('Emulators')) }}
+    {{ subnav_link('system-mapping', '🗺️ ' ~ _('Mapping')) }}
+{% endcall %}
+
 <!-- ================================================== -->
 <!-- RetroArch installation panel -->
 <!-- ================================================== -->
-<section class="settings-section">
-    <h2 class="section-title">RetroArch</h2>
+<section class="card mb-xl" id="retroarch">
+<div class="card-header">
+    <h2 class="card-title">RetroArch</h2>
+</div>
+<div class="card-body">
     <p class="text-muted" style="margin-bottom: var(--spacing-md);">
         {{ _('RetroArch needs explicit binary + cores-dir paths because they typically live in different prefixes (system package, ~/.local, or a Flatpak sandbox).') }}
     </p>
@@ -39,14 +53,18 @@
         <button id="ra-save-btn" class="btn btn-primary"><span class="btn-icon">💾</span> {{ _('Save') }}</button>
     </div>
     <div id="ra-status" class="text-muted" style="font-size: 0.9rem;"></div>
+</div>
 </section>
 
 {% if retroarch_install_supported %}
 <!-- ================================================== -->
 <!-- PASS-59-139 — Get RetroArch for the player -->
 <!-- ================================================== -->
-<section class="settings-section" id="player-retroarch">
-    <h2 class="section-title">{{ _('Play in RetroDB') }}</h2>
+<section class="card mb-xl" id="player-retroarch">
+<div class="card-header">
+    <h2 class="card-title">{{ _('Play in RetroDB') }}</h2>
+</div>
+<div class="card-body">
     <p class="text-muted" style="margin-bottom: var(--spacing-md);">
         {{ _('RetroDB can download the official RetroArch from libretro and set it up to play your games, with its own settings and saves, kept apart from any RetroArch you already use.') }}
     </p>
@@ -56,8 +74,9 @@
     <div style="display: flex; gap: var(--spacing-sm); flex-wrap: wrap; margin-bottom: var(--spacing-md);">
         <button id="player-retroarch-install" class="btn btn-primary"><span class="btn-icon">⬇️</span>
             {% if retroarch_installed_version %}{{ _('Download RetroArch again') }}{% else %}{{ _('Get RetroArch') }}{% endif %}</button>
+        <span id="player-retroarch-status" class="download-status" aria-live="polite"></span>
     </div>
-    <div id="player-retroarch-status" class="text-muted" style="font-size: 0.9rem;" aria-live="polite"></div>
+</div>
 </section>
 {% endif %}
 
@@ -65,8 +84,11 @@
 <!-- ================================================== -->
 <!-- PASS-59-81 — the bundled player's cores -->
 <!-- ================================================== -->
-<section class="settings-section" id="player-cores">
-    <h2 class="section-title">{{ _('Player cores') }}</h2>
+<section class="card mb-xl" id="player-cores">
+<div class="card-header">
+    <h2 class="card-title">{{ _('Player cores') }}</h2>
+</div>
+<div class="card-body">
     <p class="text-muted" style="margin-bottom: var(--spacing-md);">
         {{ _('The player picks the best core for each system and downloads it from the libretro build server the first time you play. Installed cores are never updated by Play; update them here.') }}
     </p>
@@ -80,19 +102,24 @@
     <div style="display: flex; gap: var(--spacing-sm); flex-wrap: wrap; margin-bottom: var(--spacing-md);">
         <button id="player-cores-install" class="btn btn-primary"><span class="btn-icon">⬇️</span> {{ _('Install cores for my systems') }}</button>
         <button id="player-cores-update" class="btn btn-secondary"><span class="btn-icon">🔄</span> {{ _('Update cores') }}</button>
+        <span id="player-cores-status" class="download-status" aria-live="polite"></span>
     </div>
     {% else %}
     <p class="text-muted">{{ _('Cores are not built for this computer, so RetroDB cannot download them.') }}</p>
+    <span id="player-cores-status" class="download-status" aria-live="polite"></span>
     {% endif %}
-    <div id="player-cores-status" class="text-muted" style="font-size: 0.9rem;" aria-live="polite"></div>
+</div>
 </section>
 {% endif %}
 
 <!-- ================================================== -->
 <!-- PASS-59-155 — cheat packs and imports -->
 <!-- ================================================== -->
-<section class="settings-section" id="cheats">
-    <h2 class="section-title">{{ _('Cheats') }}</h2>
+<section class="card mb-xl" id="cheats">
+<div class="card-header">
+    <h2 class="card-title">{{ _('Cheats') }}</h2>
+</div>
+<div class="card-body">
     <p class="text-muted" style="margin-bottom: var(--spacing-md);">
         {{ _("Download the free public cheat packs, or import cheat folders you already have. Each game's page then lists its cheats, each with an on/off switch, for games played in RetroDB's RetroArch, DuckStation or PCSX2.") }}
     </p>
@@ -108,13 +135,17 @@
         </p>
     </div>
     <div id="cheat-status" class="text-muted" style="font-size: 0.9rem;" aria-live="polite"></div>
+</div>
 </section>
 
 <!-- ================================================== -->
 <!-- PASS-59-91 — Emulator folders (Pass 44.1B scanner below) -->
 <!-- ================================================== -->
-<section class="settings-section">
-    <h2 class="section-title">{{ _('Emulator folders') }}</h2>
+<section class="card mb-xl" id="emulator-folders">
+<div class="card-header">
+    <h2 class="card-title">{{ _('Emulator folders') }}</h2>
+</div>
+<div class="card-body">
     <p class="text-muted" style="margin-bottom: var(--spacing-md);">
         {{ _('Add the folder your emulators live in. RetroDB finds each emulator there, links it to the systems it runs and checks its BIOS files.') }}
     </p>
@@ -130,13 +161,17 @@
     </div>
     <div id="emu-detect-status" class="text-muted" style="font-size: 0.9rem;"></div>
     <div id="emu-detect-results" style="margin-top: var(--spacing-md);"></div>
+</div>
 </section>
 
 <!-- ================================================== -->
 <!-- Emulators list -->
 <!-- ================================================== -->
-<section class="settings-section">
-    <h2 class="section-title">{{ _('Registered emulators') }}</h2>
+<section class="card mb-xl" id="registered-emulators">
+<div class="card-header">
+    <h2 class="card-title">{{ _('Registered emulators') }}</h2>
+</div>
+<div class="card-body">
     <p class="text-muted" style="margin-bottom: var(--spacing-md);">
         {{ _('RetroDB ships with a default registry seeded on first run. Add custom emulators or edit the seeded entries.') }}
     </p>
@@ -158,6 +193,22 @@
             </tbody>
         </table>
     </div>
+</div>
+</section>
+
+<!-- ================================================== -->
+<!-- Per-system mapping -->
+<!-- ================================================== -->
+<section class="card mb-xl" id="system-mapping">
+<div class="card-header">
+    <h2 class="card-title">{{ _('Per-system mapping') }}</h2>
+</div>
+<div class="card-body">
+    <p class="text-muted" style="margin-bottom: var(--spacing-md);">
+        {{ _('Pick the emulator each system uses by default. Per-game overrides live in the edit-game modal.') }}
+    </p>
+    <div id="mapping-body"><span class="text-muted">{{ _('Loading…') }}</span></div>
+</div>
 </section>
 
 <!-- ================================================== -->
@@ -215,17 +266,6 @@
         </div>
     </div>
 </div>
-
-<!-- ================================================== -->
-<!-- Per-system mapping -->
-<!-- ================================================== -->
-<section class="settings-section">
-    <h2 class="section-title">{{ _('Per-system mapping') }}</h2>
-    <p class="text-muted" style="margin-bottom: var(--spacing-md);">
-        {{ _('Pick the emulator each system uses by default. Per-game overrides live in the edit-game modal.') }}
-    </p>
-    <div id="mapping-body"><span class="text-muted">{{ _('Loading…') }}</span></div>
-</section>
 
 </div>
 {% endblock %}

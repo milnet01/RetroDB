@@ -182,8 +182,8 @@ detection sets only RetroArch's binary.
 A new `GET /api/system_emulators` (admin) returns every mapping, joined to
 its system and emulator names, with `resolves` (bool) and `bios` (§4.4).
 `static/js/emulators-settings.js` fills `#mapping-body` from it: one row per
-mapping, a default radio per system, and the existing POST and DELETE routes
-behind them.
+system, with a dropdown of the emulators mapped to it that sets the default,
+and the existing POST and DELETE routes behind them.
 
 The same file reads `api_retroarch_detect`'s top-level `binary` and
 `cores_dir`, fixing §2.6.

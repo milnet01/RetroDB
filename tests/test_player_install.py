@@ -14,6 +14,7 @@ from services import player_install
 class _Response:
     def __init__(self, body, status=200):
         self.body, self.status_code = body, status
+        self.headers = {'Content-Length': str(len(body))}
 
     def iter_content(self, size):
         for i in range(0, len(self.body), size):
@@ -60,6 +61,16 @@ def test_install_puts_the_program_in_place(linux, monkeypatch):
     assert player_install.program() == prog
     assert player_install.installed_version() == player_install.VERSION
     assert _leftovers() == []
+
+
+def test_download_reports_its_progress(linux, monkeypatch):
+    from services import player_cores
+    seen = []
+    monkeypatch.setattr(player_cores, 'progress', lambda done, size: seen.append((done, size)))
+    monkeypatch.setattr(player_install, '_unpack', _fake_unpack)
+    player_install.install()
+    size = len(linux['body'])
+    assert seen == [(size, size)]
 
 
 def test_checksum_mismatch_installs_nothing(linux, monkeypatch):

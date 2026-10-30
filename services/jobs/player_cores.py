@@ -35,6 +35,7 @@ class PlayerCoresJob:
         self.running = False
         self.queue = []          # [(core, system_id or None, force)]
         self.current_item = ''
+        self.item_bytes, self.item_size = 0, None   # the current download
         self.done = []
         self.errors = {}         # {core: message}
         self.app = None
@@ -48,6 +49,8 @@ class PlayerCoresJob:
                 'running': self.running,
                 'completed': not self.running and self.job_id is not None,
                 'current_item': self.current_item,
+                'item_bytes': self.item_bytes,
+                'item_size': self.item_size,
                 'queued': [c for c, _s, _f in self.queue],
                 'processed': processed,
                 'total': total,
@@ -84,7 +87,13 @@ class PlayerCoresJob:
                 return None
             item = self.queue.pop(0)
             self.current_item = item[0]
+            self.item_bytes, self.item_size = 0, None
             return item
+
+    def _bytes(self, done, size):
+        """player_cores.progress while this job runs."""
+        with self._lock:
+            self.item_bytes, self.item_size = done, size
 
     def _worker(self):
         from services import player_cores
@@ -96,6 +105,7 @@ class PlayerCoresJob:
                 self.queue, self.running, self.current_item = [], False, ''
             return
         self._singleton_fd = fd
+        player_cores.progress = self._bytes
         drained = False
         try:
             with self.app.app_context():

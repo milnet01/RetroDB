@@ -23,6 +23,12 @@
     label: 'Rellenar con AI un sistema entero de una vez'
   - type: fix
     label: 'Los cuadros de aviso de tareas toman los colores de tu tema'
+  - type: fix
+    label: 'La página de Emuladores se parece a las demás pestañas de Ajustes'
+  - type: feature
+    label: 'Progreso de la descarga junto al botón'
+  - type: feature
+    label: 'Elige el emulador de cada sistema en una lista'
   body: |
     <ul>
       <li><strong>Trucos para RetroArch (RetroDB), DuckStation y
@@ -72,6 +78,9 @@
       <li><strong>Claude puede buscar cifras de ventas en la web.</strong> Ajustes &gt; Scrapeo tiene un interruptor «Dejar que Claude busque en la web» bajo el modelo de Claude, desactivado al principio. Sin búsqueda, Claude responde con lo que ya sabe y deja en blanco las copias vendidas. Con él activado, Claude consulta las cifras. Anthropic cobra cada búsqueda, así que Rellenar con AI hace como máximo 5 búsquedas por juego, hasta 5 centavos de dólar; desactiva el interruptor antes de un scrapeo masivo grande.</li>
       <li><strong>Rellenar con AI un sistema entero de una vez.</strong> Herramientas ROM tiene una nueva página de Rellenado masivo con AI, que también contiene Nombres oficiales. Elige un sistema, o Todos los sistemas, activa los campos que quieres rellenar y pulsa Rellenar con IA: RetroDB ejecuta Rellenar con AI en cada juego, igual que el botón Rellenar con AI de la página de un juego, y guarda las respuestas directamente en el juego. Una barra de progreso y un cuadro de aviso de Rellenar con AI muestran cuánto lleva, y puedes salir de la página mientras se ejecuta. Muestra cuántos juegos va a rellenar y pregunta antes, porque tu proveedor de IA cobra por cada juego. Los juegos que ya han pasado por Rellenar con AI se omiten salvo que los vuelvas a incluir, y la pasada se detiene sola si la IA deja de responder.</li>
       <li><strong>Los cuadros de aviso de tareas toman los colores de tu tema.</strong> Los cuadros que muestran una tarea en curso, como el scraping masivo y RA Sync, y las barras de progreso usan ahora los colores del tema que elegiste. Una tarea que no se puede pausar ya no muestra su título con el color de pausa.</li>
+      <li><strong>La página de Emuladores se parece a las demás pestañas de Ajustes.</strong> Ajustes &gt; Emuladores ahora está dividido en tarjetas, y una barra bajo las pestañas salta a cada una: RetroArch, Jugar en RetroDB, Núcleos, Trucos, Carpetas, Emuladores y Asignación. La barra se queda arriba al desplazarte y marca la sección en la que estás.</li>
+      <li><strong>Progreso de la descarga junto al botón.</strong> Al descargar RetroArch, los núcleos del reproductor o un paquete de trucos, una nota junto al botón muestra en porcentaje cuánto ha avanzado. Antes aparecía una línea bajo los botones que empujaba el resto de la página hacia abajo.</li>
+      <li><strong>Elige el emulador de cada sistema en una lista.</strong> Asignación por sistema en Ajustes &gt; Emuladores ahora muestra cada sistema una sola vez, con una lista de los emuladores vinculados a él. El que elijas es el que usa Jugar para los juegos de ese sistema, salvo que un juego defina el suyo. Un emulador que RetroDB no encuentra aparece marcado como «no encontrado». Antes, cada sistema tenía una fila por emulador, con un pequeño punto para elegir el predeterminado.</li>
     </ul>
 - version: 3.33.0
   date: '2026-10-29'

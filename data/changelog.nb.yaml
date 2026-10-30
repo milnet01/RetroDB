@@ -23,6 +23,12 @@
     label: 'AI-utfylling for et helt system på en gang'
   - type: fix
     label: 'Jobbvarslene bruker temaets farger'
+  - type: fix
+    label: 'Emulatorsiden ser ut som de andre fanene i Innstillinger'
+  - type: feature
+    label: 'Nedlastingsfremdrift ved siden av knappen'
+  - type: feature
+    label: 'Velg emulatoren for hvert system fra en liste'
   body: |
     <ul>
       <li><strong>Juksekoder for RetroArch (RetroDB), DuckStation og
@@ -66,6 +72,9 @@
       <li><strong>Claude kan søke på nettet etter salgstall.</strong> Innstillinger &gt; Skraper har en bryter, «La Claude søke på nettet», under Claude-modellen, av til å begynne med. Uten søk svarer Claude ut fra det den allerede vet og lar solgte eksemplarer stå tomt. Med bryteren på slår Claude opp tallene. Anthropic tar betalt for hvert søk, så AI-utfylling gjør høyst 5 søk per spill, opptil 5 amerikanske cent; slå av bryteren før en stor masseskraping.</li>
       <li><strong>AI-utfylling for et helt system på en gang.</strong> ROM-verktøy har en ny side, Mass-AI-utfylling, som også rommer Offisielle navn. Velg et system, eller Alle systemer, slå på feltene du vil ha fylt, og trykk Fyll med KI: RetroDB kjører AI-utfylling på hvert spill, på samme måte som AI-utfylling-knappen på et spills side, og lagrer svarene rett i spillet. En fremdriftslinje og en varselboks for AI-utfylling viser hvor langt det har kommet, og du kan forlate siden mens det kjører. Det viser hvor mange spill det vil fylle og spør først, fordi KI-leverandøren din tar betalt for hvert spill. Spill som AI-utfylling allerede har gjort, hoppes over med mindre du slår dem på igjen, og kjøringen stopper av seg selv hvis KI-en slutter å svare.</li>
       <li><strong>Jobbvarslene bruker temaets farger.</strong> Boksene som viser en jobb som kjører, som masseskraping og RA Sync, og fremdriftslinjene bruker nå fargene til temaet du valgte. En jobb som ikke kan settes på pause, viser ikke lenger tittelen i pausefargen.</li>
+      <li><strong>Emulatorsiden ser ut som de andre fanene i Innstillinger.</strong> Innstillinger &gt; Emulatorer er nå delt inn i kort, og en linje under fanene hopper til hvert av dem: RetroArch, Spill i RetroDB, Kjerner, Juksekoder, Mapper, Emulatorer og Tilordning. Linjen blir værende øverst når du ruller, og markerer delen du er i.</li>
+      <li><strong>Nedlastingsfremdrift ved siden av knappen.</strong> Når du laster ned RetroArch, spillerens kjerner eller en juksekodepakke, viser en merknad ved siden av knappen hvor langt nedlastingen har kommet i prosent. Før dukket det opp en linje under knappene som dyttet resten av siden nedover.</li>
+      <li><strong>Velg emulatoren for hvert system fra en liste.</strong> Tilordning per system under Innstillinger &gt; Emulatorer viser nå hvert system én gang, med en liste over emulatorene som er knyttet til det. Den du velger, er den Spill bruker for spillene til det systemet, med mindre et spill har sin egen. En emulator RetroDB ikke finner, er merket «ikke funnet». Før hadde hvert system én rad per emulator, med en liten prikk for å velge standarden.</li>
     </ul>
 - version: 3.33.0
   date: '2026-10-29'

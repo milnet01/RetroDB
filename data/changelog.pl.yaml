@@ -23,6 +23,12 @@
     label: 'Uzupełnianie AI dla całego systemu naraz'
   - type: fix
     label: "Powiadomienia o zadaniach przejmują kolory motywu"
+  - type: fix
+    label: 'Strona Emulatory wygląda jak pozostałe karty Ustawień'
+  - type: feature
+    label: 'Postęp pobierania obok przycisku'
+  - type: feature
+    label: 'Wybór emulatora dla każdego systemu z listy'
   body: |
     <ul>
       <li><strong>Kody do RetroArch (RetroDB), DuckStation i
@@ -66,6 +72,9 @@
       <li><strong>Claude może szukać danych o sprzedaży w internecie.</strong> Ustawienia &gt; Pobieranie danych ma pod modelem Claude przełącznik „Pozwól Claude szukać w internecie”, na początku wyłączony. Bez wyszukiwania Claude odpowiada na podstawie tego, co już wie, i zostawia puste pole „Sprzedane egzemplarze”. Gdy przełącznik jest włączony, Claude sprawdza liczby. Anthropic pobiera opłatę za każde wyszukiwanie, więc Uzupełnianie AI wykonuje najwyżej 5 wyszukiwań na grę, do 5 centów amerykańskich; wyłącz przełącznik przed dużym masowym pobieraniem danych.</li>
       <li><strong>Uzupełnianie AI dla całego systemu naraz.</strong> Narzędzia ROM mają nową stronę Masowe uzupełnianie AI, na której są też Oficjalne nazwy. Wybierz system lub Wszystkie systemy, włącz pola, które chcesz uzupełnić, i naciśnij Uzupełnij przez AI: RetroDB uruchamia Uzupełnianie AI dla każdej gry, tak samo jak przycisk Uzupełnianie AI na stronie gry, i zapisuje odpowiedzi od razu w grze. Pasek postępu i powiadomienie Uzupełniania AI pokazują, jak daleko zaszło, a podczas działania możesz opuścić stronę. Pokazuje, ile gier uzupełni, i najpierw pyta, bo dostawca AI pobiera opłatę za każdą grę. Gry, które przeszły już Uzupełnianie AI, są pomijane, chyba że je z powrotem włączysz, a przebieg sam się zatrzymuje, gdy AI przestaje odpowiadać.</li>
       <li><strong>Powiadomienia o zadaniach przejmują kolory motywu.</strong> Okna pokazujące uruchomione zadanie, takie jak Masowe pobieranie i RA Sync, oraz paski postępu używają teraz kolorów wybranego motywu. Zadanie, którego nie można wstrzymać, nie pokazuje już tytułu w kolorze wstrzymania.</li>
+      <li><strong>Strona Emulatory wygląda jak pozostałe karty Ustawień.</strong> Ustawienia &gt; Emulatory są teraz podzielone na panele, a pasek pod kartami przenosi do każdego z nich: RetroArch, Graj w RetroDB, Rdzenie, Kody, Foldery, Emulatory i Przypisanie. Pasek zostaje u góry podczas przewijania i zaznacza sekcję, w której jesteś.</li>
+      <li><strong>Postęp pobierania obok przycisku.</strong> Gdy pobierasz RetroArch, rdzenie odtwarzacza lub pakiet kodów, notka obok przycisku pokazuje w procentach, jak daleko zaszło pobieranie. Wcześniej pod przyciskami pojawiał się wiersz, który spychał resztę strony w dół.</li>
+      <li><strong>Wybór emulatora dla każdego systemu z listy.</strong> Przypisanie do systemów w Ustawienia &gt; Emulatory pokazuje teraz każdy system raz, z listą powiązanych z nim emulatorów. Wybrany emulator jest używany przez Graj dla gier tego systemu, chyba że gra ustawia własny. Emulator, którego RetroDB nie może znaleźć, jest oznaczony jako „nie znaleziono”. Wcześniej każdy system miał osobny wiersz dla każdego emulatora, z małą kropką do wyboru domyślnego.</li>
     </ul>
 - version: 3.33.0
   date: '2026-10-29'

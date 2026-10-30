@@ -23,6 +23,12 @@
     label: AI Fill a whole system at once
   - type: fix
     label: Job toasts take your theme's colours
+  - type: fix
+    label: The Emulators page looks like the other Settings tabs
+  - type: feature
+    label: Download progress beside the button
+  - type: feature
+    label: Pick each system's emulator from a list
   body: |
     <ul>
       <li><strong>Cheats for RetroArch (RetroDB), DuckStation and
@@ -67,6 +73,9 @@
       <li><strong>Claude can search the web for sales figures.</strong> Settings &gt; Scraping has a Let Claude search the web switch under the Claude model, off at first. Without search, Claude answers from what it already knows and leaves copies sold blank. With it on, Claude looks figures up. Anthropic charges for each search, so AI Fill makes at most 5 searches a game, up to 5 US cents; turn the switch off before a big bulk scrape.</li>
       <li><strong>AI Fill a whole system at once.</strong> ROM Tools has a new Bulk AI Fill page, which also holds Official Names. Pick a system, or All systems, switch on the fields you want filled, and press Fill with AI: RetroDB runs AI Fill on each game, the same as the AI Fill button on a game's page, and saves the answers straight to the game. A progress bar and an AI Fill toast show how far it has got, and you can leave the page while it runs. It shows how many games it will fill and asks first, because your AI provider charges for each game. Games AI Fill has already done are skipped unless you switch them back in, and the run stops by itself if the AI stops answering.</li>
       <li><strong>Job toasts take your theme's colours.</strong> The boxes that show a running job, such as Bulk Scrape and RA Sync, and the progress bars now use the colours of the theme you picked. A job that cannot pause no longer shows its title in the paused colour.</li>
+      <li><strong>The Emulators page looks like the other Settings tabs.</strong> Settings &gt; Emulators is now split into cards, and a bar under the tabs jumps to each one: RetroArch, Play in RetroDB, Cores, Cheats, Folders, Emulators and Mapping. The bar stays at the top as you scroll and marks the section you are in.</li>
+      <li><strong>Download progress beside the button.</strong> When you download RetroArch, the player's cores or a cheat pack, a note beside the button shows how far it has got as a percentage. Before, a line appeared under the buttons and pushed the rest of the page down.</li>
+      <li><strong>Pick each system's emulator from a list.</strong> Per-system mapping on Settings &gt; Emulators now shows each system once, with a list of the emulators linked to it. The one you pick is what Play uses for that system's games, unless a game sets its own. An emulator RetroDB cannot find is marked "not found". Before, each system had a row per emulator, with a small dot to pick the default.</li>
     </ul>
 - version: 3.33.0
   date: 2026-10-29

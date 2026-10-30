@@ -213,22 +213,35 @@
    SETTINGS PAGE
    ============================================================================= */
 
-/* Settings Tabs - Bordered Pill Style */
+/* Settings tabs: the tab bar on Settings and on Settings > Emulators */
 .settings-tabs {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--spacing-sm);
-    margin-bottom: var(--spacing-lg);
-    padding: var(--spacing-sm);
-    background: color-mix(in srgb, var(--card-bg) 90%, transparent);
+    gap: 0.5rem;
+    padding: 1rem 0;
+    margin-bottom: 1.5rem;
+    background: var(--bg-darkest);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid var(--card-border);
+    border-bottom-width: 2px;
     border-radius: var(--radius-lg);
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-cyan) transparent;
     /* Sticky positioning */
     position: sticky;
     top: var(--sticky-top);
-    z-index: 100;
+    z-index: 70;
+}
+
+.settings-tabs::-webkit-scrollbar {
+    height: 4px;
+}
+
+.settings-tabs::-webkit-scrollbar-thumb {
+    background: var(--primary-cyan);
+    border-radius: 2px;
 }
 
 .settings-tab {
@@ -237,8 +250,8 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    padding: 0.75rem 1rem;
-    background: transparent;
+    padding: 0.75rem 1.25rem;
+    background: rgba(0, 0, 0, 0.2);
     border: 1px solid var(--card-border);
     border-radius: var(--radius-md);
     color: var(--text-secondary);
@@ -246,26 +259,86 @@
     font-size: 0.9rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition: all 0.2s ease;
     text-decoration: none;
     text-align: center;
     white-space: nowrap;
 }
 
 .settings-tab:hover {
-    background: rgba(76, 201, 240, 0.05);
+    background: rgba(76, 201, 240, 0.1);
     border-color: rgba(76, 201, 240, 0.3);
-    color: var(--text-primary);
+    color: var(--primary-cyan);
 }
 
 .settings-tab.active {
     background: rgba(76, 201, 240, 0.15);
     border-color: var(--primary-cyan);
     color: var(--primary-cyan);
+    box-shadow: 0 0 15px rgba(76, 201, 240, 0.3);
 }
 
 .settings-tab .tab-icon {
     font-size: 1.1rem;
+}
+
+/* Tab sub-navigation: the section bar on each Settings tab and on Settings > Emulators */
+.tab-subnav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, rgba(20, 26, 35, 0.95), rgba(15, 20, 25, 0.95));
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    overflow-x: auto;
+    scrollbar-width: thin;
+    backdrop-filter: blur(10px);
+}
+
+.tab-subnav.sticky-subnav {
+    position: sticky;
+    top: var(--sticky-top);  /* Dynamically set by StickyScroll.stackPositions() */
+    z-index: 60;  /* Higher than system-controllers-sticky-nav */
+    background: linear-gradient(135deg, rgba(20, 26, 35, 0.98), rgba(15, 20, 25, 0.98));
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.subnav-link {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 0.875rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    text-align: center;
+}
+
+.subnav-link:hover {
+    color: var(--primary-cyan);
+    background: rgba(76, 201, 240, 0.1);
+}
+
+.subnav-link.active {
+    color: var(--primary-cyan);
+    background: rgba(76, 201, 240, 0.15);
+    border-color: rgba(76, 201, 240, 0.3);
+}
+
+/* A download's progress, beside the button that started it, so the page
+   below does not move while it runs (Settings > Emulators). */
+.download-status {
+    align-self: center;
+    font-size: 0.9rem;
+    color: var(--text-muted);
 }
 
 .settings-tab-panel {
@@ -303,41 +376,6 @@
 
 .parent-option:hover {
     background: rgba(76, 201, 240, 0.1);
-}
-
-/* Tab Sub-navigation */
-.tab-subnav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--spacing-sm);
-    margin-bottom: var(--spacing-lg);
-    padding: var(--spacing-sm);
-    background: rgba(0, 0, 0, 0.75);
-    border-radius: var(--radius-md);
-    /* Sticky positioning - sits below the main tabs */
-    position: sticky;
-    top: calc(var(--sticky-top) + 54px); /* Height of main tabs (1rem padding + content + border) */
-    z-index: 99;
-    backdrop-filter: blur(10px);
-}
-
-.subnav-link {
-    padding: var(--spacing-xs) var(--spacing-md);
-    color: var(--text-secondary);
-    text-decoration: none;
-    font-size: 0.85rem;
-    border-radius: var(--radius-sm);
-    transition: all var(--transition-fast);
-}
-
-.subnav-link:hover {
-    background: rgba(76, 201, 240, 0.1);
-    color: var(--text-primary);
-}
-
-.subnav-link.active {
-    background: rgba(76, 201, 240, 0.15);
-    color: var(--primary-cyan);
 }
 
 /* =============================================================================
@@ -862,7 +900,6 @@
    ============================================================================= */
 
 @media (max-width: 768px) {
-    .settings-tabs,
     .report-tabs {
         gap: var(--spacing-xs);
         padding: var(--spacing-xs);
@@ -871,8 +908,8 @@
     /* Settings tabs - show only icons on mobile; narrow sides so all
        seven fit one row on a phone. */
     .settings-tab {
-        padding: 0.5rem 0.5rem;
-        font-size: 0.8rem;
+        padding: 0.6rem 0.5rem;
+        font-size: 0.85rem;
     }
 
     .settings-tab .tab-text {
