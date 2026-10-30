@@ -2238,6 +2238,7 @@ body:has(.game-fanart-bg.active)::before {
 /* Bottom Row */
 .bottom-row {
     display: flex;
+    flex-wrap: wrap;
     gap: var(--spacing-lg);
     margin-bottom: var(--spacing-lg);
 }
@@ -2251,6 +2252,13 @@ body:has(.game-fanart-bg.active)::before {
     border: 1px solid var(--card-border);
     border-radius: var(--radius-lg);
     padding: var(--spacing-md);
+}
+
+/* The comparison table's cells don't wrap: it gets a line of its own and
+   scrolls inside itself if that is still too narrow. */
+.bottom-row .versions-section:has(.versions-table-wrap) {
+    flex-basis: 100%;
+    min-width: 0;
 }
 
 .section-title-sm {
@@ -2341,6 +2349,11 @@ body:has(.game-fanart-bg.active)::before {
     
     .media-row, .bottom-row {
         flex-direction: column;
+    }
+
+    /* Wrapping a column would size it to its widest panel, not the page. */
+    .bottom-row {
+        flex-wrap: nowrap;
     }
     
     .screenshots-row {

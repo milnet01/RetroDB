@@ -10106,7 +10106,13 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Why**: in a 1600 px Chrome window, games 1 and 2865 of the live library's
   copy measured wider than the window (1650 and 1617 px); the section's right
   edge passes the window. Removing the new Play line did not change it.
-- **Status**: todo. Measured 2026-10-30 in headless Chrome. Not in 3.34.0.
+- **Resolution** (2026-10-30): Fixed in the open 3.34.1 entry, not yet released. The cause was the
+  whole `.bottom-row`, which could not wrap, not the versions section
+  alone. The row now wraps on desktop and stays a single column at 900
+  px and below. A section with the comparison table takes a full line,
+  and the table scrolls inside it. Measured in headless Chrome
+  2026-10-30 on a scratch copy.
+- **Status**: done. Measured 2026-10-30 in headless Chrome. Not in 3.34.0.
 
 ---
 
