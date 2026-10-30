@@ -10125,6 +10125,23 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Status**: todo. Confirm the claim, then name the first Slipcase release that
   saves one once it ships.
 
+---
+
+#### Pass 59.200 The 3D box import moves to the Edit window (ux, S).
+- **Target**: `templates/_modals/edit_modal.html`, Custom Images; the hint
+  under the cover in `templates/game_detail.html`. Spec: PASS-59-142 § 4.5.
+- **Decided** (user, 2026-10-30): the import belongs on the edit screen,
+  which replaces the 2026-10-23 choice of the game page.
+- **Resolution** (2026-10-30, commit b2b6aa6): In the open 3.34.1 entry, not
+  yet released. Walked in headless Chrome on a scratch copy at desktop and
+  375 px: a refused import, import, replace (the question sits on top of
+  Edit), Cancel keeping the import, Save Changes keeping it, Remove, and the
+  cover opening the box.
+- **Status**: done. Measured 2026-10-30.
+- **Source**: user, 2026-10-30.
+
+---
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
