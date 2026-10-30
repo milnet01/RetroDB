@@ -10108,6 +10108,17 @@ the cover zoom in Firefox before being reverted for the local fix.
   edge passes the window. Removing the new Play line did not change it.
 - **Status**: todo. Measured 2026-10-30 in headless Chrome. Not in 3.34.0.
 
+---
+
+#### Pass 59.199 Say which Slipcase version can save a box file (doc, S).
+- **Target**: the 3.34.0 changelog item 'Import a Slipcase 3D box onto a game'
+  and the help manual's import steps.
+- **Why**: the Hub website session reports (2026-10-30, not checked here) that
+  Slipcase v1.3.1, its newest release, cannot save a `.box.json`; only its
+  unreleased main can. The notes tell users to pick the file Slipcase saved.
+- **Status**: todo. Confirm the claim, then name the first Slipcase release that
+  saves one once it ships.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
