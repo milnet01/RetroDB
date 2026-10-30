@@ -129,6 +129,7 @@ Moved to `.claude/rules/ratings.md`, which loads when a matching file is read. R
 - The game page's Cheats panel (`static/js/game-cheats.js`) sits full width under the card row; Settings > Emulators has the Cheats section. Spec: `docs/specs/PASS-59-155-cheats.md`.
 
 ### Page wiring
+- A box that takes a path gets `browse_button()` from `_macros/browse_button.html` beside it, in a `.path-input-row`, and a row in `tests/test_path_browser.py`. The button shows for admins only: `/api/settings/browse-paths` can list any folder on the computer.
 - Both `/games` (Library) and `/system/<id>` use `AllGamesController` — keep them in sync.
 - The game page's Previous / Next links follow the list it was opened from (`?from=library`, else its console). `AllGamesController` saves each list's filter and sort params per tab via `RetroDB.saveGameNavContext`; the game page sends them to `/api/games/neighbors`.
 

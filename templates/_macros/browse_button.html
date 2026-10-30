@@ -1,0 +1,16 @@
+{# The Browse button beside a path field.
+
+    Usage:
+        {% from "_macros/browse_button.html" import browse_button with context %}
+        <div class="path-input-row">
+            <input type="text" id="tempPath" class="form-input">
+            {{ browse_button('tempPath', 'folder') }}
+        </div>
+
+    `scope` is 'folder', or 'file' for a program's path. The listing can reach
+    any folder on the computer, so only an admin gets the button; everyone
+    else still types the path.
+#}
+{%- macro browse_button(input_id, scope) -%}
+{% if current_user and current_user.role == 'admin' %}<button type="button" class="btn btn-secondary" data-on-click="openFolderBrowser" data-args='{{ [input_id, none, scope]|tojson }}'><span class="btn-icon">{{ '📄' if scope == 'file' else '📁' }}</span> {{ _('Browse') }}</button>{% endif %}
+{%- endmacro -%}

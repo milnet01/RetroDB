@@ -354,7 +354,7 @@
             </div>
             <div class="custom-modal-footer">
                 <button type="button" class="btn btn-secondary" data-on-click="closeFolderBrowser">{{ _('Cancel') }}</button>
-                <button type="button" class="btn btn-primary" data-on-click="selectFolderPath">{{ _('Select This Folder') }}</button>
+                <button type="button" class="btn btn-primary" id="folderBrowserSelect" data-on-click="selectFolderPath">{{ _('Select This Folder') }}</button>
             </div>
         </div>
     </div>
@@ -542,9 +542,27 @@
     let folderBrowserCallback = null;
     let folderBrowserCurrentPath = null;
     let folderBrowserBasePath = null;
-    
-    async function openFolderBrowser(inputId, basePath = null) {
+    let folderBrowserScope = null;
+
+    // POST to the listing for this opening of the browser. With no scope it
+    // stays inside the ROM folder. 'folder' or 'file' (admin pages) can go
+    // anywhere on the computer, and 'file' also lists files to pick.
+    function folderBrowserFetch(path) {
+        const url = folderBrowserScope ? '/api/settings/browse-paths' : '/api/rom-tools/browse-folders';
+        return fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ path: path, files: folderBrowserScope === 'file' })
+        });
+    }
+
+    async function openFolderBrowser(inputId, basePath = null, scope = null) {
         folderBrowserCallback = inputId;
+        folderBrowserScope = scope;
+        document.getElementById('folderBrowserTitle').textContent = scope === 'file'
+            ? '📄 ' + {{ _('Choose a File')|tojson }}
+            : '📁 ' + {{ _('Browse Folders')|tojson }};
+        document.getElementById('folderBrowserSelect').style.display = scope === 'file' ? 'none' : '';
         
         const modal = document.getElementById('folderBrowserModal');
         const list = document.getElementById('folderBrowserList');
@@ -565,11 +583,7 @@
         }
         
         try {
-            const response = await fetch('/api/rom-tools/browse-folders', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ path: startPath || basePath })
-            });
+            const response = await folderBrowserFetch(startPath || basePath);
             const data = await response.json();
             
             if (data.success) {
@@ -592,7 +606,17 @@
         folderBrowserCurrentPath = data.current_path;
         
         let html = '';
-        
+
+        // Windows' other drives: a drive's root has no parent to go up to.
+        for (const drive of data.drives || []) {
+            html += `
+                <button type="button" class="folder-item folder-parent" data-path="${escapeHtml(drive)}" data-on-click="navigateFolder" data-args="${actionArgs('$this.dataset.path')}">
+                    <span class="folder-icon">💽</span>
+                    <span class="folder-name">${escapeHtml(drive)}</span>
+                </button>
+            `;
+        }
+
         // Parent folder link (if not at root)
         if (data.parent_path) {
             html += `
@@ -624,7 +648,16 @@
                 </button>
             `;
         }
-        
+
+        for (const file of data.files || []) {
+            html += `
+                <button type="button" class="folder-item" data-path="${escapeHtml(file.path)}" data-on-click="selectFilePath" data-args="${actionArgs('$this.dataset.path')}">
+                    <span class="folder-icon">📄</span>
+                    <span class="folder-name">${escapeHtml(file.name)}</span>
+                </button>
+            `;
+        }
+
         list.innerHTML = html;
     }
     
@@ -633,11 +666,7 @@
         list.innerHTML = '<div style="padding: 2rem; text-align: center; color: var(--text-muted);">Loading...</div>';
         
         try {
-            const response = await fetch('/api/rom-tools/browse-folders', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ path: path })
-            });
+            const response = await folderBrowserFetch(path);
             const data = await response.json();
             
             if (data.success) {
@@ -651,10 +680,14 @@
     }
 
     function selectFolderPath() {
-        if (folderBrowserCallback && folderBrowserCurrentPath) {
+        selectFilePath(folderBrowserCurrentPath);
+    }
+
+    function selectFilePath(path) {
+        if (folderBrowserCallback && path) {
             const inputEl = document.getElementById(folderBrowserCallback);
             if (inputEl) {
-                inputEl.value = folderBrowserCurrentPath;
+                inputEl.value = path;
                 // Trigger change event
                 inputEl.dispatchEvent(new Event('change', { bubbles: true }));
             }

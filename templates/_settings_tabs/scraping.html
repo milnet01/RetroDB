@@ -1,3 +1,4 @@
+{% from "_macros/browse_button.html" import browse_button with context %}
 {% from "_macros/sticky_subnav.html" import tab_subnav, subnav_link %}
 <div class="settings-tab-panel" id="tab-scraping" role="tabpanel" aria-label="Scraping settings">
     {% call tab_subnav('scraping') %}
@@ -16,25 +17,34 @@
     <div class="card-body">
         <div class="form-group mb-lg">
             <label class="form-label" for="esdeGamelistsInput">ES-DE Gamelists Path</label>
-            <input type="text" id="esdeGamelistsInput" class="form-input"
+            <div class="path-input-row">
+                <input type="text" id="esdeGamelistsInput" class="form-input"
                    placeholder="e.g. /home/user/.es-de/gamelists"
                    style="font-family: var(--font-mono);">
+                {{ browse_button('esdeGamelistsInput', 'folder') }}
+            </div>
             <span class="form-hint" id="esdeGamelistsDefault"></span>
         </div>
         
         <div class="form-group mb-lg">
             <label class="form-label" for="esdeMediaInput">ES-DE Downloaded Media Path</label>
-            <input type="text" id="esdeMediaInput" class="form-input"
+            <div class="path-input-row">
+                <input type="text" id="esdeMediaInput" class="form-input"
                    placeholder="Leave blank to auto-detect from gamelists path"
                    style="font-family: var(--font-mono);">
+                {{ browse_button('esdeMediaInput', 'folder') }}
+            </div>
             <span class="form-hint" id="esdeMediaDefault">Default: Loading...</span>
         </div>
         
         <div class="form-group mb-lg">
             <label class="form-label" for="rpcs3TrophyInput">RPCS3 Trophy Path</label>
-            <input type="text" id="rpcs3TrophyInput" class="form-input"
+            <div class="path-input-row">
+                <input type="text" id="rpcs3TrophyInput" class="form-input"
                    placeholder="e.g. /home/user/.config/rpcs3/dev_hdd0/home/00000001/trophy"
                    style="font-family: var(--font-mono);">
+                {{ browse_button('rpcs3TrophyInput', 'folder') }}
+            </div>
             <span class="form-hint" id="rpcs3TrophyDefault"></span>
         </div>
         

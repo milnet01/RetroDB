@@ -14,6 +14,7 @@
 {% include "_settings_tabs/_tab_bar.html" %}
 
 {% from "_macros/sticky_subnav.html" import tab_subnav, subnav_link %}
+{% from "_macros/browse_button.html" import browse_button with context %}
 {% call tab_subnav('emulators') %}
     {{ subnav_link('retroarch', '🕹️ RetroArch', active=True) }}
     {% if retroarch_install_supported %}{{ subnav_link('player-retroarch', '▶️ ' ~ _('Play in RetroDB')) }}{% endif %}
@@ -38,15 +39,21 @@
 
     <div class="form-group mb-md">
         <label class="form-label" for="ra-binary">{{ _('Binary') }}</label>
-        <input type="text" class="form-input" id="ra-binary"
+        <div class="path-input-row">
+            <input type="text" class="form-input" id="ra-binary"
                value="{{ retroarch_binary or '' }}"
                placeholder="/usr/bin/retroarch  or  flatpak run org.libretro.RetroArch">
+            {{ browse_button('ra-binary', 'file') }}
+        </div>
     </div>
     <div class="form-group mb-md">
         <label class="form-label" for="ra-cores-dir">{{ _('Cores directory') }}</label>
-        <input type="text" class="form-input" id="ra-cores-dir"
+        <div class="path-input-row">
+            <input type="text" class="form-input" id="ra-cores-dir"
                value="{{ retroarch_cores_dir or '' }}"
                placeholder="~/.config/retroarch/cores/">
+            {{ browse_button('ra-cores-dir', 'folder') }}
+        </div>
     </div>
     <div style="display: flex; gap: var(--spacing-sm); margin-bottom: var(--spacing-md);">
         <button id="ra-detect-btn" class="btn btn-secondary"><span class="btn-icon">🔍</span> {{ _('Auto-detect') }}</button>
@@ -128,6 +135,7 @@
         <label for="cheat-import-path">{{ _('Import a folder') }}</label>
         <div style="display: flex; gap: var(--spacing-sm); flex-wrap: wrap;">
             <input type="text" id="cheat-import-path" class="form-input" style="flex: 1; min-width: 14rem;" autocomplete="off">
+            {{ browse_button('cheat-import-path', 'folder') }}
             <button id="cheat-import" class="btn btn-secondary"><span class="btn-icon">📂</span> {{ _('Import') }}</button>
         </div>
         <p class="text-muted" style="font-size: 0.85rem; margin-top: var(--spacing-xs);">
@@ -153,6 +161,7 @@
     <div class="emu-folder-add">
         <input type="text" class="form-input" id="emu-folder-input"
                placeholder="/mnt/Emulators" aria-label="{{ _('Emulator folder') }}">
+        {{ browse_button('emu-folder-input', 'folder') }}
         <button id="emu-folder-add" class="btn btn-primary"><span class="btn-icon">➕</span> {{ _('Add folder') }}</button>
     </div>
     <div style="display: flex; gap: var(--spacing-sm); margin-bottom: var(--spacing-md);">
@@ -234,7 +243,10 @@
                 </div>
                 <div class="form-group mb-md">
                     <label class="form-label" for="emu_edit_binary_path_override">{{ _('Binary path override') }}</label>
-                    <input type="text" class="form-input" id="emu_edit_binary_path_override" name="binary_path_override" placeholder="{{ _('(empty = look up the binary name on PATH)') }}">
+                    <div class="path-input-row">
+                        <input type="text" class="form-input" id="emu_edit_binary_path_override" name="binary_path_override" placeholder="{{ _('(empty = look up the binary name on PATH)') }}">
+                        {{ browse_button('emu_edit_binary_path_override', 'file') }}
+                    </div>
                     <span class="field-tip">{{ _('Absolute path to AppImage / portable script / system binary. Wins over PATH lookup.') }}</span>
                 </div>
                 <div class="form-group mb-md">

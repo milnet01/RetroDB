@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-30 09:15+0200\n"
+"POT-Creation-Date: 2026-10-30 09:43+0200\n"
 "PO-Revision-Date: 2026-07-01 09:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hans\n"
@@ -40,7 +40,7 @@ msgstr "需要初始设置"
 msgid "Password change required"
 msgstr "需要更改密码"
 
-#: app.py:1713 routes/auth.py:202 routes/auth.py:262 routes/auth.py:447
+#: app.py:1682 routes/auth.py:202 routes/auth.py:262 routes/auth.py:447
 #: routes/auth.py:492 templates/force_change_password.html:49
 #: templates/setup.html:469
 msgid "Password must be at least 12 characters"
@@ -57,7 +57,7 @@ msgstr "未找到系统，或该系统没有包含成就的游戏"
 #: routes/achievements.py:171 routes/achievements.py:440
 #: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/cheats.py:32
 #: routes/cheats.py:51 routes/collections.py:276 routes/collections.py:531
-#: routes/emulators.py:271 routes/emulators.py:285 routes/games.py:391
+#: routes/emulators.py:304 routes/emulators.py:318 routes/games.py:391
 #: routes/games.py:875 routes/games.py:1002 routes/games.py:1058
 #: routes/games_ai.py:31 routes/games_media.py:37 routes/games_media.py:85
 #: routes/games_media.py:148 routes/games_media.py:197
@@ -240,8 +240,8 @@ msgstr "附赠光盘与主游戏必须属于同一系统"
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:203 routes/scraper.py:531
 #: routes/scraper.py:932 routes/settings.py:320 routes/settings.py:344
-#: routes/settings.py:459 routes/settings.py:538 routes/settings.py:552
-#: routes/settings.py:596 routes/settings.py:612 routes/settings.py:648
+#: routes/settings.py:459 routes/settings.py:538 routes/settings.py:567
+#: routes/settings.py:611 routes/settings.py:627 routes/settings.py:663
 #: routes/steam_achievements.py:138 routes/systems.py:292 routes/systems.py:482
 #: routes/trophies.py:508 routes/trophies.py:706 routes/trophies.py:754
 #: routes/trophies.py:1582 routes/trophies.py:1606 routes/trophies.py:1651
@@ -253,7 +253,7 @@ msgstr "发生内部错误"
 #: routes/bonus_discs.py:278 routes/bonus_discs.py:309
 #: routes/controllers.py:216 routes/controllers.py:280
 #: routes/controllers.py:413 routes/controllers.py:465 routes/settings.py:224
-#: routes/settings.py:494 routes/settings.py:562 routes/systems.py:313
+#: routes/settings.py:494 routes/settings.py:577 routes/systems.py:313
 msgid "Request body must be a JSON object"
 msgstr "请求正文必须是 JSON 对象"
 
@@ -414,39 +414,39 @@ msgstr "未找到手柄"
 msgid "Another controller named \"%(name)s\" already exists"
 msgstr "已存在另一个名为“%(name)s”的手柄"
 
-#: routes/emulators.py:105
+#: routes/emulators.py:106
 msgid "name, binary_name, args_template are required"
 msgstr "name、binary_name、args_template 为必填项"
 
-#: routes/emulators.py:152
+#: routes/emulators.py:153
 msgid "nothing to update"
 msgstr "无内容可更新"
 
-#: routes/emulators.py:210
+#: routes/emulators.py:243
 msgid "system_id and emulator_id required"
 msgstr "需要 system_id 和 emulator_id"
 
-#: routes/emulators.py:248
+#: routes/emulators.py:281
 msgid "Send at least one setting."
 msgstr "请至少发送一项设置。"
 
-#: routes/emulators.py:253
+#: routes/emulators.py:286
 msgid "RetroDB does not manage that setting for this emulator."
 msgstr "RetroDB 不管理此模拟器的该项设置。"
 
-#: routes/emulators.py:255
+#: routes/emulators.py:288
 msgid "Fullscreen is set per system, in Settings > Emulators."
 msgstr "全屏按系统设置，位于 设置 > 模拟器。"
 
-#: routes/emulators.py:257
+#: routes/emulators.py:290
 msgid "That value is not one of the choices."
 msgstr "该值不在可选项中。"
 
-#: routes/emulators.py:287 services/standalone_settings.py:368
+#: routes/emulators.py:320 services/standalone_settings.py:368
 msgid "RetroDB manages per-game settings for DuckStation, PCSX2 and RPCS3 only."
 msgstr "RetroDB 仅为 DuckStation、PCSX2 和 RPCS3 管理单个游戏的设置。"
 
-#: routes/emulators.py:300 routes/emulators.py:311
+#: routes/emulators.py:333 routes/emulators.py:344
 msgid "Emulator not found"
 msgstr "未找到模拟器"
 
@@ -785,7 +785,7 @@ msgid "Official name"
 msgstr "官方名称"
 
 #: routes/official_names.py:118 templates/_modals/edit_modal.html:348
-#: templates/base.html:1359
+#: templates/base.html:1392
 msgid "Game Description"
 msgstr "游戏描述"
 
@@ -793,8 +793,8 @@ msgstr "游戏描述"
 #: templates/_modals/edit_modal.html:115 templates/_settings_tabs/data.html:83
 #: templates/_settings_tabs/data.html:156 templates/achievement_game.html:241
 #: templates/all_games.html:72 templates/analytics.html:481
-#: templates/analytics.html:2428 templates/base.html:940
-#: templates/base.html:1153 templates/compare_games.html:73
+#: templates/analytics.html:2428 templates/base.html:973
+#: templates/base.html:1186 templates/compare_games.html:73
 #: templates/dashboard.html:390 templates/game_detail.html:318
 #: templates/local_trophy_detail.html:99 templates/psn_trophy_detail.html:94
 #: templates/psn_trophy_detail.html:258
@@ -806,8 +806,8 @@ msgstr "类型"
 #: routes/official_names.py:120 templates/_bulk_edit_modal.html:67
 #: templates/_modals/edit_modal.html:99 templates/achievement_game.html:87
 #: templates/all_games.html:81 templates/analytics.html:482
-#: templates/analytics.html:2428 templates/base.html:938
-#: templates/base.html:1139 templates/compare_games.html:70
+#: templates/analytics.html:2428 templates/base.html:971
+#: templates/base.html:1172 templates/compare_games.html:70
 #: templates/game_detail.html:306 templates/local_trophy_detail.html:93
 #: templates/psn_trophy_detail.html:88 templates/steam_achievement_game.html:84
 #: templates/system_games.html:72 templates/xbox_achievement_game.html:73
@@ -817,8 +817,8 @@ msgstr "开发商"
 #: routes/official_names.py:121 templates/_bulk_edit_modal.html:53
 #: templates/_modals/edit_modal.html:94 templates/achievement_game.html:81
 #: templates/all_games.html:78 templates/analytics.html:483
-#: templates/analytics.html:2428 templates/base.html:939
-#: templates/base.html:1135 templates/compare_games.html:71
+#: templates/analytics.html:2428 templates/base.html:972
+#: templates/base.html:1168 templates/compare_games.html:71
 #: templates/game_detail.html:294 templates/game_detail.html:776
 #: templates/local_trophy_detail.html:87 templates/psn_trophy_detail.html:82
 #: templates/steam_achievement_game.html:78 templates/system_games.html:69
@@ -828,78 +828,78 @@ msgstr "发行商"
 
 #: routes/official_names.py:122 templates/_modals/edit_modal.html:72
 #: templates/_modals/filter_modal.html:14 templates/analytics.html:484
-#: templates/analytics.html:2428 templates/base.html:1118
+#: templates/analytics.html:2428 templates/base.html:1151
 #: templates/compare_games.html:72
 msgid "Release Date"
 msgstr "发行日期"
 
-#: routes/official_names.py:123 templates/base.html:942
+#: routes/official_names.py:123 templates/base.html:975
 #: templates/game_detail.html:336
 msgid "Release dates"
 msgstr "发行日期"
 
 #: routes/official_names.py:124 templates/_modals/edit_modal.html:104
-#: templates/base.html:1143
+#: templates/base.html:1176
 msgid "Copies sold"
 msgstr "销量"
 
 #: routes/official_names.py:125 templates/_bulk_edit_modal.html:112
 #: templates/_modals/edit_modal.html:137 templates/all_games.html:84
-#: templates/base.html:1169 templates/compare_games.html:76
+#: templates/base.html:1202 templates/compare_games.html:76
 #: templates/game_detail.html:233 templates/system_games.html:75
 msgid "Players"
 msgstr "玩家人数"
 
 #: routes/official_names.py:126 templates/_modals/edit_modal.html:126
-#: templates/_settings_tabs/data.html:123 templates/base.html:1161
+#: templates/_settings_tabs/data.html:123 templates/base.html:1194
 msgid "Play Modes"
 msgstr "游玩模式"
 
 #: routes/official_names.py:127 templates/_bulk_edit_modal.html:106
 #: templates/_modals/edit_modal.html:85 templates/analytics.html:492
-#: templates/analytics.html:2428 templates/base.html:1126
+#: templates/analytics.html:2428 templates/base.html:1159
 #: templates/compare_games.html:75 templates/game_detail.html:773
 #: templates/reports.html:444
 msgid "Region"
 msgstr "地区"
 
 #: routes/official_names.py:128 templates/_modals/edit_modal.html:44
-#: templates/base.html:1093
+#: templates/base.html:1126
 msgid "Franchise / Series"
 msgstr "系列 / 子系列"
 
 #: routes/official_names.py:129 templates/_modals/edit_modal.html:56
-#: templates/base.html:1104 templates/compare_games.html:96
+#: templates/base.html:1137 templates/compare_games.html:96
 #: templates/game_detail.html:535
 msgid "Similar Games"
 msgstr "相似游戏"
 
 #: routes/official_names.py:130 templates/_modals/edit_modal.html:222
-#: templates/base.html:1233
+#: templates/base.html:1266
 msgid "Platform Availability"
 msgstr "平台可用性"
 
 #: routes/official_names.py:131 templates/_modals/edit_modal.html:195
-#: templates/base.html:1214 templates/compare_games.html:91
+#: templates/base.html:1247 templates/compare_games.html:91
 msgid "Controller Support"
 msgstr "手柄支持"
 
 #: routes/official_names.py:132 templates/_modals/edit_modal.html:211
-#: templates/_settings_tabs/data.html:133 templates/base.html:1225
+#: templates/_settings_tabs/data.html:133 templates/base.html:1258
 #: templates/compare_games.html:92
 msgid "Save Type"
 msgstr "存档类型"
 
 #: routes/official_names.py:133 templates/_bulk_edit_modal.html:118
 #: templates/_modals/edit_modal.html:154 templates/_settings_tabs/data.html:93
-#: templates/base.html:1173
+#: templates/base.html:1206
 msgid "Game Structure"
 msgstr "游戏结构"
 
 #: routes/official_names.py:134 templates/_bulk_edit_modal.html:135
 #: templates/_modals/edit_modal.html:167 templates/_settings_tabs/data.html:103
 #: templates/all_games.html:87 templates/analytics.html:199
-#: templates/base.html:1181 templates/compare_games.html:78
+#: templates/base.html:1214 templates/compare_games.html:78
 #: templates/system_games.html:78
 msgid "Perspective"
 msgstr "视角"
@@ -907,7 +907,7 @@ msgstr "视角"
 #: routes/official_names.py:135 templates/_bulk_edit_modal.html:151
 #: templates/_modals/edit_modal.html:178 templates/_settings_tabs/data.html:113
 #: templates/all_games.html:90 templates/analytics.html:207
-#: templates/base.html:1189 templates/compare_games.html:79
+#: templates/base.html:1222 templates/compare_games.html:79
 #: templates/system_games.html:81
 msgid "Dimension"
 msgstr "维度"
@@ -917,7 +917,7 @@ msgid "Campaign"
 msgstr "战役"
 
 #: routes/official_names.py:137 templates/_modals/edit_modal.html:61
-#: templates/base.html:1108
+#: templates/base.html:1141
 msgid "Edition"
 msgstr "版本"
 
@@ -1175,35 +1175,39 @@ msgstr "备份未通过完整性检查；已中止还原。"
 msgid "Invalid %(field)s: %(result)s"
 msgstr "无效的 %(field)s：%(result)s"
 
-#: routes/settings.py:534 routes/settings.py:593 routes/settings.py:645
+#: routes/settings.py:534 routes/settings.py:608 routes/settings.py:660
 #: routes/tools.py:290 services/js_i18n_strings.py:731
 msgid "Failed to save settings"
 msgstr "保存设置失败"
 
-#: routes/settings.py:572 routes/tools.py:282
+#: routes/settings.py:553 routes/tools.py:362
+msgid "Permission denied"
+msgstr "权限被拒绝"
+
+#: routes/settings.py:587 routes/tools.py:282
 #, python-format
 msgid "Unknown setting key: %(key)s"
 msgstr "未知的设置键：%(key)s"
 
-#: routes/settings.py:578 routes/tools.py:285
+#: routes/settings.py:593 routes/tools.py:285
 #, python-format
 msgid "Invalid value for '%(key)s': %(reason)s"
 msgstr "“%(key)s”的值无效：%(reason)s"
 
-#: routes/settings.py:610
+#: routes/settings.py:625
 msgid "Failed to reset settings"
 msgstr "重置设置失败"
 
-#: routes/settings.py:631
+#: routes/settings.py:646
 #, python-format
 msgid "invalid logging settings: %(reason)s"
 msgstr "日志设置无效：%(reason)s"
 
-#: routes/settings.py:661 routes/settings.py:689
+#: routes/settings.py:676 routes/settings.py:704
 msgid "Invalid field. Must be \"genre\" or \"modes\""
 msgstr "无效的字段。必须为“genre”或“modes”"
 
-#: routes/settings.py:692
+#: routes/settings.py:707
 msgid "No mappings provided"
 msgstr "未提供映射"
 
@@ -1235,10 +1239,6 @@ msgstr "设置数据必须为对象"
 #, python-format
 msgid "Path does not exist: %(path)s"
 msgstr "路径不存在：%(path)s"
-
-#: routes/tools.py:362
-msgid "Permission denied"
-msgstr "权限被拒绝"
 
 #: routes/tools.py:390
 msgid "Task not found"
@@ -1836,7 +1836,7 @@ msgid "... and {n} more"
 msgstr "……还有 {n} 项"
 
 #: services/js_i18n_strings.py:566 templates/_bulk_edit_modal.html:30
-#: templates/base.html:1015
+#: templates/base.html:1048
 msgid "100%"
 msgstr "100%"
 
@@ -1854,7 +1854,7 @@ msgid ""
 "session."
 msgstr "开启金手指会在本次游玩中暂停 RetroAchievements 硬核模式。"
 
-#: services/js_i18n_strings.py:570 templates/_settings_tabs/account.html:273
+#: services/js_i18n_strings.py:570 templates/_settings_tabs/account.html:277
 #: templates/archive_scanner.html:726 templates/multi_disc_organizer.html:217
 #: templates/reports.html:369 templates/reports.html:450
 msgid "Actions"
@@ -2039,19 +2039,19 @@ msgstr "可以通关，性能可玩，且没有影响游戏的严重故障。"
 #: services/js_i18n_strings.py:610 templates/_bulk_edit_modal.html:191
 #: templates/_bulk_scrape_modal.html:49 templates/_modals/edit_modal.html:12
 #: templates/_modals/rename_modal.html:19
-#: templates/_settings_tabs/account.html:72
-#: templates/_settings_tabs/account.html:368
+#: templates/_settings_tabs/account.html:73
+#: templates/_settings_tabs/account.html:372
 #: templates/_settings_tabs/customization.html:264
 #: templates/achievement_game.html:178 templates/archive_scanner.html:661
 #: templates/archive_scanner.html:798 templates/base.html:338
-#: templates/base.html:356 templates/base.html:1056
+#: templates/base.html:356 templates/base.html:1089
 #: templates/chd_converter.html:170 templates/chd_verify.html:126
 #: templates/game_detail.html:582 templates/login.html:254
 #: templates/museum.html:29 templates/museum_system.html:182
 #: templates/psn_trophies.html:297 templates/psn_trophy_detail.html:182
 #: templates/psn_trophy_detail.html:325 templates/reports.html:521
 #: templates/screenshot_dedup.html:263 templates/settings.html:44
-#: templates/settings_emulators.html:262
+#: templates/settings_emulators.html:274
 #: templates/steam_achievement_game.html:138 templates/wishlist.html:114
 #: templates/xbox_achievement_game.html:131
 msgid "Cancel"
@@ -2147,11 +2147,11 @@ msgstr "再次点击以移除"
 #: templates/_bulk_scrape_modal.html:8
 #: templates/_modals/boxart_zoom_modal.html:5
 #: templates/_modals/manual_reader_modal.html:11
-#: templates/_settings_tabs/account.html:44
+#: templates/_settings_tabs/account.html:45
 #: templates/_settings_tabs/customization.html:224
 #: templates/archive_scanner.html:749 templates/archive_scanner.html:757
 #: templates/base.html:249 templates/base.html:332 templates/base.html:349
-#: templates/base.html:695 templates/base.html:972 templates/base.html:1370
+#: templates/base.html:728 templates/base.html:1005 templates/base.html:1403
 #: templates/dashboard.html:37 templates/reports.html:472
 #: templates/systems.html:121 templates/wishlist.html:56
 msgid "Close"
@@ -2175,13 +2175,13 @@ msgid "Complete!"
 msgstr "完成！"
 
 #: services/js_i18n_strings.py:636 templates/_bulk_edit_modal.html:29
-#: templates/analytics.html:1664 templates/base.html:1014
+#: templates/analytics.html:1664 templates/base.html:1047
 #: templates/dashboard.html:506 templates/game_detail.html:275
 msgid "Completed"
 msgstr "已完成"
 
 #: services/js_i18n_strings.py:637 templates/_bulk_edit_modal.html:23
-#: templates/analytics.html:137 templates/base.html:1009
+#: templates/analytics.html:137 templates/base.html:1042
 msgid "Completion Status"
 msgstr "完成状态"
 
@@ -2195,7 +2195,7 @@ msgstr "完成状态已更新"
 
 #: services/js_i18n_strings.py:640 templates/achievement_game.html:172
 #: templates/achievement_game.html:197 templates/achievement_game.html:211
-#: templates/base.html:1051 templates/game_detail.html:576
+#: templates/base.html:1084 templates/game_detail.html:576
 #: templates/game_detail.html:601 templates/game_detail.html:615
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:176
 #: templates/psn_trophy_detail.html:209
@@ -2454,8 +2454,8 @@ msgstr "DuckStation 金手指"
 msgid "DuckStation ignores cheats in hardcore mode."
 msgstr "DuckStation 在硬核模式下会忽略金手指。"
 
-#: services/js_i18n_strings.py:699 templates/_settings_tabs/account.html:318
-#: templates/base.html:970 templates/game_detail.html:119
+#: services/js_i18n_strings.py:699 templates/_settings_tabs/account.html:322
+#: templates/base.html:1003 templates/game_detail.html:119
 #: templates/wishlist.html:641
 msgid "Edit"
 msgstr "编辑"
@@ -2535,7 +2535,7 @@ msgid "Europe"
 msgstr "欧洲"
 
 #: services/js_i18n_strings.py:718 templates/_modals/edit_modal.html:228
-#: templates/base.html:1246
+#: templates/base.html:1279
 msgid "Exclusive"
 msgstr "独占"
 
@@ -2798,7 +2798,7 @@ msgstr "正在导入…"
 #: services/js_i18n_strings.py:779 templates/_bulk_edit_modal.html:27
 #: templates/achievements_system.html:151
 #: templates/achievements_system.html:170 templates/analytics.html:1664
-#: templates/base.html:1012 templates/dashboard.html:362
+#: templates/base.html:1045 templates/dashboard.html:362
 #: templates/dashboard.html:502 templates/game_detail.html:273
 #: templates/steam_achievements.html:77 templates/xbox_achievements.html:77
 msgid "In Progress"
@@ -2899,8 +2899,8 @@ msgstr "正在加载日志文件…"
 msgid "Loading the manual…"
 msgstr "正在加载手册…"
 
-#: services/js_i18n_strings.py:802 templates/settings_emulators.html:192
-#: templates/settings_emulators.html:210
+#: services/js_i18n_strings.py:802 templates/settings_emulators.html:201
+#: templates/settings_emulators.html:219
 msgid "Loading…"
 msgstr "加载中…"
 
@@ -2914,7 +2914,7 @@ msgstr "正在查找版本…"
 
 #: services/js_i18n_strings.py:805 templates/achievement_game.html:168
 #: templates/achievement_game.html:197 templates/achievement_game.html:207
-#: templates/base.html:1047 templates/game_detail.html:572
+#: templates/base.html:1080 templates/game_detail.html:572
 #: templates/game_detail.html:601 templates/game_detail.html:611
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:172
 #: templates/psn_trophy_detail.html:205
@@ -2927,7 +2927,7 @@ msgstr "主线 + 额外"
 
 #: services/js_i18n_strings.py:806 templates/achievement_game.html:164
 #: templates/achievement_game.html:197 templates/achievement_game.html:203
-#: templates/base.html:1043 templates/game_detail.html:568
+#: templates/base.html:1076 templates/game_detail.html:568
 #: templates/game_detail.html:601 templates/game_detail.html:607
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:168
 #: templates/psn_trophy_detail.html:201
@@ -3146,7 +3146,7 @@ msgstr "未下载"
 msgid "Not versions"
 msgstr "非版本"
 
-#: services/js_i18n_strings.py:855 templates/base.html:1405
+#: services/js_i18n_strings.py:855 templates/base.html:1438
 msgid "Now playing"
 msgstr "正在游玩"
 
@@ -3217,7 +3217,7 @@ msgid "Play"
 msgstr "游玩"
 
 #: services/js_i18n_strings.py:872 templates/_bulk_edit_modal.html:28
-#: templates/analytics.html:1664 templates/base.html:1013
+#: templates/analytics.html:1664 templates/base.html:1046
 #: templates/dashboard.html:504 templates/game_detail.html:274
 msgid "Played"
 msgstr "已游玩"
@@ -3669,7 +3669,7 @@ msgid "Shutting down server..."
 msgstr "正在关闭服务器..."
 
 #: services/js_i18n_strings.py:974 templates/_modals/edit_modal.html:50
-#: templates/base.html:1099
+#: templates/base.html:1132
 msgid "Standalone"
 msgstr "独立版"
 
@@ -3936,7 +3936,7 @@ msgid "Unhandled rejection"
 msgstr "未处理的拒绝"
 
 #: services/js_i18n_strings.py:1030 templates/analytics.html:583
-#: templates/base.html:1203 templates/local_trophy_detail.html:220
+#: templates/base.html:1236 templates/local_trophy_detail.html:220
 #: templates/local_trophy_detail.html:224
 msgid "Unknown"
 msgstr "未知"
@@ -4318,7 +4318,7 @@ msgid "Only fields changed from \"Don't change\" will be updated."
 msgstr "只有从“不更改”改动过的字段才会被更新。"
 
 #: templates/_bulk_edit_modal.html:26 templates/achievements_system.html:171
-#: templates/analytics.html:1664 templates/base.html:1011
+#: templates/analytics.html:1664 templates/base.html:1044
 #: templates/dashboard.html:500 templates/game_detail.html:272
 #: templates/steam_achievements.html:78 templates/xbox_achievements.html:78
 msgid "Not Started"
@@ -4342,23 +4342,23 @@ msgid "ESRB Rating"
 msgstr "ESRB 分级"
 
 #: templates/_bulk_edit_modal.html:84 templates/_modals/edit_modal.html:245
-#: templates/base.html:1256
+#: templates/base.html:1289
 msgid "E - Everyone"
 msgstr "E - 所有人"
 
 #: templates/_bulk_edit_modal.html:85 templates/_modals/edit_modal.html:246
-#: templates/base.html:1257
+#: templates/base.html:1290
 msgid "E10+ - Everyone 10+"
 msgstr "E10+ - 10 岁以上人群"
 
 #: templates/_bulk_edit_modal.html:86 templates/_modals/edit_modal.html:247
-#: templates/base.html:1258
+#: templates/base.html:1291
 msgid "T - Teen"
 msgstr "T - 青少年"
 
 #: templates/_bulk_edit_modal.html:87 templates/_modals/edit_modal.html:248
-#: templates/_modals/edit_modal.html:292 templates/base.html:1259
-#: templates/base.html:1303
+#: templates/_modals/edit_modal.html:292 templates/base.html:1292
+#: templates/base.html:1336
 msgid "M - Mature"
 msgstr "M - 成人"
 
@@ -4386,7 +4386,7 @@ msgstr "PEGI 16"
 msgid "PEGI 18"
 msgstr "PEGI 18"
 
-#: templates/_bulk_edit_modal.html:177 templates/base.html:941
+#: templates/_bulk_edit_modal.html:177 templates/base.html:974
 #: templates/compare_games.html:74 templates/local_trophy_detail.html:105
 #: templates/psn_trophy_detail.html:100
 msgid "Franchise"
@@ -4476,7 +4476,7 @@ msgstr "请在设置中检查你的 RetroAchievements 凭据。"
 msgid "How Long to Beat"
 msgstr "通关时长"
 
-#: templates/achievement_game.html:153 templates/base.html:1024
+#: templates/achievement_game.html:153 templates/base.html:1057
 #: templates/game_detail.html:557 templates/psn_trophy_detail.html:157
 #: templates/psn_trophy_detail.html:317
 #: templates/steam_achievement_game.html:126
@@ -4484,7 +4484,7 @@ msgstr "通关时长"
 msgid "Search game title..."
 msgstr "搜索游戏标题…"
 
-#: templates/achievement_game.html:156 templates/base.html:1027
+#: templates/achievement_game.html:156 templates/base.html:1060
 #: templates/game_detail.html:560 templates/local_trophy_detail.html:193
 #: templates/psn_trophy_detail.html:160
 #: templates/steam_achievement_game.html:127
@@ -4492,18 +4492,18 @@ msgstr "搜索游戏标题…"
 msgid "Lookup HLTB"
 msgstr "查询 HLTB"
 
-#: templates/_settings_tabs/account.html:73 templates/achievement_game.html:177
-#: templates/achievement_game.html:253 templates/base.html:1055
+#: templates/_settings_tabs/account.html:74 templates/achievement_game.html:177
+#: templates/achievement_game.html:253 templates/base.html:1088
 #: templates/game_detail.html:581 templates/local_trophy_detail.html:223
 #: templates/psn_trophy_detail.html:181 templates/psn_trophy_detail.html:270
-#: templates/settings_emulators.html:53 templates/settings_emulators.html:263
+#: templates/settings_emulators.html:60 templates/settings_emulators.html:275
 #: templates/steam_achievement_game.html:137
 #: templates/xbox_achievement_game.html:130
 msgid "Save"
 msgstr "保存"
 
 #: templates/achievement_game.html:217 templates/all_games.html:108
-#: templates/base.html:1068 templates/duplicate_finder.html:301
+#: templates/base.html:1101 templates/duplicate_finder.html:301
 #: templates/game_detail.html:115 templates/game_detail.html:621
 #: templates/local_trophy_detail.html:185 templates/psn_trophy_detail.html:214
 #: templates/reports.html:277 templates/screenshot_dedup.html:325
@@ -4523,7 +4523,7 @@ msgstr "更多详情"
 msgid "First Achievement"
 msgstr "首个成就"
 
-#: templates/_settings_tabs/account.html:313
+#: templates/_settings_tabs/account.html:317
 #: templates/achievement_game.html:233 templates/achievement_game.html:237
 #: templates/local_trophy_detail.html:211
 #: templates/local_trophy_detail.html:215 templates/psn_trophies.html:76
@@ -4812,8 +4812,8 @@ msgstr "当前筛选条件"
 msgid "Sort by"
 msgstr "排序方式"
 
-#: templates/all_games.html:154 templates/settings_emulators.html:182
-#: templates/settings_emulators.html:227 templates/system_games.html:145
+#: templates/all_games.html:154 templates/settings_emulators.html:191
+#: templates/settings_emulators.html:236 templates/system_games.html:145
 msgid "Name"
 msgstr "名称"
 
@@ -4849,7 +4849,7 @@ msgstr "你的游戏库是空的"
 msgid "Scan your ROM folder to add your games."
 msgstr "扫描你的 ROM 文件夹以添加游戏。"
 
-#: templates/_settings_tabs/library.html:42 templates/all_games.html:176
+#: templates/_settings_tabs/library.html:46 templates/all_games.html:176
 #: templates/dashboard.html:83 templates/dashboard.html:99
 #: templates/systems.html:111
 msgid "Scan Library"
@@ -4925,7 +4925,7 @@ msgid "Developers"
 msgstr "开发商"
 
 #: templates/_modals/edit_modal.html:112 templates/analytics.html:13
-#: templates/base.html:999 templates/base.html:1150
+#: templates/base.html:1032 templates/base.html:1183
 msgid "Gameplay"
 msgstr "玩法"
 
@@ -5189,8 +5189,8 @@ msgstr "字段完整度"
 #: templates/_settings_tabs/customization.html:193
 #: templates/_settings_tabs/customization.html:259 templates/analytics.html:479
 #: templates/analytics.html:2428 templates/base.html:266
-#: templates/base.html:1357 templates/compare_games.html:97
-#: templates/settings_emulators.html:246
+#: templates/base.html:1390 templates/compare_games.html:97
+#: templates/settings_emulators.html:258
 msgid "Description"
 msgstr "简介"
 
@@ -5295,7 +5295,7 @@ msgstr "游戏数量"
 msgid "Critic"
 msgstr "媒体"
 
-#: templates/_settings_tabs/account.html:268 templates/analytics.html:1965
+#: templates/_settings_tabs/account.html:272 templates/analytics.html:1965
 msgid "User"
 msgstr "用户"
 
@@ -5341,9 +5341,9 @@ msgstr "ROM 文件夹路径"
 msgid "subfolder (optional)"
 msgstr "子文件夹（可选）"
 
-#: templates/archive_scanner.html:581 templates/archive_scanner.html:592
-#: templates/chd_converter.html:91 templates/chd_verify.html:107
-#: templates/duplicate_finder.html:194
+#: templates/_macros/browse_button.html:15 templates/archive_scanner.html:581
+#: templates/archive_scanner.html:592 templates/chd_converter.html:91
+#: templates/chd_verify.html:107 templates/duplicate_finder.html:194
 msgid "Browse"
 msgstr "浏览"
 
@@ -5458,7 +5458,7 @@ msgid "Date & Time"
 msgstr "日期与时间"
 
 #: templates/_settings_tabs/customization.html:300
-#: templates/archive_scanner.html:723 templates/settings_emulators.html:186
+#: templates/archive_scanner.html:723 templates/settings_emulators.html:195
 msgid "Type"
 msgstr "类型"
 
@@ -5623,7 +5623,7 @@ msgstr "配置"
 msgid "Log Viewer"
 msgstr "日志查看器"
 
-#: templates/base.html:198 templates/base.html:1001
+#: templates/base.html:198 templates/base.html:1034
 msgid "Info"
 msgstr "信息"
 
@@ -5695,7 +5695,7 @@ msgstr "返回顶部"
 msgid "Alert"
 msgstr "提示"
 
-#: templates/base.html:348
+#: templates/base.html:348 templates/base.html:564
 msgid "Browse Folders"
 msgstr "浏览文件夹"
 
@@ -5703,261 +5703,265 @@ msgstr "浏览文件夹"
 msgid "Select This Folder"
 msgstr "选择此文件夹"
 
-#: templates/base.html:688
+#: templates/base.html:563
+msgid "Choose a File"
+msgstr "选择文件"
+
+#: templates/base.html:721
 msgid "Queue Manager"
 msgstr "队列管理器"
 
-#: templates/base.html:689
+#: templates/base.html:722
 msgid "Close queue manager"
 msgstr "关闭队列管理器"
 
-#: templates/base.html:905
+#: templates/base.html:938
 msgid "Game details"
 msgstr "游戏详情"
 
-#: templates/base.html:906
+#: templates/base.html:939
 msgid "Close game details"
 msgstr "关闭游戏详情"
 
-#: templates/base.html:911
+#: templates/base.html:944
 msgid "Loading game details..."
 msgstr "正在加载游戏详情…"
 
-#: templates/base.html:954 templates/game_detail.html:507
+#: templates/base.html:987 templates/game_detail.html:507
 msgid "Your browser does not support the video tag."
 msgstr "你的浏览器不支持 video 标签。"
 
-#: templates/base.html:961
+#: templates/base.html:994
 msgid "View Full Page"
 msgstr "查看完整页面"
 
-#: templates/base.html:963 templates/game_detail.html:123
+#: templates/base.html:996 templates/game_detail.html:123
 msgid "Fill missing metadata with AI"
 msgstr "使用 AI 填充缺失的元数据"
 
-#: templates/base.html:964 templates/game_detail.html:125
+#: templates/base.html:997 templates/game_detail.html:125
 msgid "AI Fill"
 msgstr "AI 填充"
 
-#: templates/base.html:967 templates/game_detail.html:130
+#: templates/base.html:1000 templates/game_detail.html:130
 msgid "Scrape"
 msgstr "抓取"
 
-#: templates/_modals/screenshot_modal.html:2 templates/base.html:979
+#: templates/_modals/screenshot_modal.html:2 templates/base.html:1012
 msgid "Screenshot viewer"
 msgstr "截图查看器"
 
-#: templates/_modals/screenshot_modal.html:3 templates/base.html:980
+#: templates/_modals/screenshot_modal.html:3 templates/base.html:1013
 msgid "Close screenshot viewer"
 msgstr "关闭截图查看器"
 
-#: templates/_modals/screenshot_modal.html:4 templates/base.html:981
+#: templates/_modals/screenshot_modal.html:4 templates/base.html:1014
 msgid "Previous screenshot"
 msgstr "上一张截图"
 
-#: templates/base.html:982
+#: templates/base.html:1015
 msgid "Screenshot"
 msgstr "截图"
 
-#: templates/_modals/screenshot_modal.html:6 templates/base.html:983
+#: templates/_modals/screenshot_modal.html:6 templates/base.html:1016
 msgid "Next screenshot"
 msgstr "下一张截图"
 
-#: templates/base.html:984
+#: templates/base.html:1017
 msgid "Use &#8592; &#8594; arrow keys to navigate &bull; ESC to close"
 msgstr "使用 &#8592; &#8594; 方向键导航 &bull; 按 ESC 关闭"
 
-#: templates/_modals/edit_modal.html:7 templates/base.html:991
+#: templates/_modals/edit_modal.html:7 templates/base.html:1024
 msgid "Close edit modal"
 msgstr "关闭编辑窗口"
 
-#: templates/base.html:994
+#: templates/base.html:1027
 msgid "Edit Game"
 msgstr "编辑游戏"
 
-#: templates/base.html:995
+#: templates/base.html:1028
 msgid "Edit game sections"
 msgstr "编辑游戏栏目"
 
-#: templates/base.html:996
+#: templates/base.html:1029
 msgid "Quick"
 msgstr "快速"
 
-#: templates/_modals/edit_modal.html:25 templates/base.html:997
-#: templates/base.html:1075
+#: templates/_modals/edit_modal.html:25 templates/base.html:1030
+#: templates/base.html:1108
 msgid "Identity"
 msgstr "身份"
 
-#: templates/base.html:998
+#: templates/base.html:1031
 msgid "Release"
 msgstr "发行"
 
-#: templates/_modals/edit_modal.html:192 templates/base.html:1000
-#: templates/base.html:1211
+#: templates/_modals/edit_modal.html:192 templates/base.html:1033
+#: templates/base.html:1244
 msgid "Technical"
 msgstr "技术信息"
 
-#: templates/base.html:1007
+#: templates/base.html:1040
 msgid "Quick edit"
 msgstr "快速编辑"
 
-#: templates/base.html:1020
+#: templates/base.html:1053
 msgid "HowLongToBeat"
 msgstr "HowLongToBeat"
 
-#: templates/base.html:1034
+#: templates/base.html:1067
 msgid "Searching HowLongToBeat..."
 msgstr "正在搜索 HowLongToBeat…"
 
-#: templates/base.html:1065 templates/local_trophy_detail.html:189
+#: templates/base.html:1098 templates/local_trophy_detail.html:189
 msgid "No playtime data"
 msgstr "无游玩时长数据"
 
 #: templates/_modals/edit_modal.html:28 templates/_modals/filter_modal.html:13
-#: templates/base.html:1078 templates/dashboard.html:329
+#: templates/base.html:1111 templates/dashboard.html:329
 #: templates/dashboard.html:388 templates/dashboard.html:465
 #: templates/dashboard.html:531 templates/game_detail.html:774
 msgid "Title"
 msgstr "标题"
 
-#: templates/_modals/edit_modal.html:32 templates/base.html:1082
+#: templates/_modals/edit_modal.html:32 templates/base.html:1115
 msgid "Keep this title when scraping"
 msgstr "抓取时保留此标题"
 
-#: templates/_modals/edit_modal.html:36 templates/base.html:1086
+#: templates/_modals/edit_modal.html:36 templates/base.html:1119
 msgid "Sort Title"
 msgstr "排序标题"
 
-#: templates/_modals/edit_modal.html:38 templates/base.html:1088
+#: templates/_modals/edit_modal.html:38 templates/base.html:1121
 msgid "Auto-generated from title"
 msgstr "根据标题自动生成"
 
-#: templates/_modals/edit_modal.html:47 templates/base.html:1096
+#: templates/_modals/edit_modal.html:47 templates/base.html:1129
 msgid "Toggle franchise status"
 msgstr "切换系列作品状态"
 
-#: templates/_modals/edit_modal.html:52 templates/base.html:1101
+#: templates/_modals/edit_modal.html:52 templates/base.html:1134
 msgid "e.g., Final Fantasy, Crash Bandicoot"
 msgstr "例如：Final Fantasy、Crash Bandicoot"
 
-#: templates/_modals/edit_modal.html:57 templates/base.html:1105
+#: templates/_modals/edit_modal.html:57 templates/base.html:1138
 msgid "Game 1, Game 2, Game 3"
 msgstr "游戏 1、游戏 2、游戏 3"
 
-#: templates/base.html:1109
+#: templates/base.html:1142
 msgid "Standard, Collector&#39;s, GOTY"
 msgstr "标准版、收藏版、年度版"
 
-#: templates/base.html:1115
+#: templates/base.html:1148
 msgid "Release info"
 msgstr "发行信息"
 
-#: templates/base.html:1120
+#: templates/base.html:1153
 msgid "YYYY-MM-DD"
 msgstr "YYYY-MM-DD"
 
-#: templates/_modals/edit_modal.html:80 templates/base.html:1122
+#: templates/_modals/edit_modal.html:80 templates/base.html:1155
 msgid "Pick date"
 msgstr "选择日期"
 
-#: templates/_modals/edit_modal.html:87 templates/base.html:1128
+#: templates/_modals/edit_modal.html:87 templates/base.html:1161
 msgid "— Select —"
 msgstr "— 选择 —"
 
-#: templates/_modals/edit_modal.html:95 templates/base.html:1136
+#: templates/_modals/edit_modal.html:95 templates/base.html:1169
 msgid "Sony, Nintendo"
 msgstr "Sony、Nintendo"
 
-#: templates/base.html:1140
+#: templates/base.html:1173
 msgid "Naughty Dog, Insomniac"
 msgstr "Naughty Dog、Insomniac"
 
-#: templates/_modals/edit_modal.html:106 templates/base.html:1144
+#: templates/_modals/edit_modal.html:106 templates/base.html:1177
 msgid "Lifetime copies sold on this system, from published sales figures"
 msgstr "在此系统上的累计销量（依据已公布的销售数据）"
 
-#: templates/_modals/edit_modal.html:119 templates/base.html:1156
+#: templates/_modals/edit_modal.html:119 templates/base.html:1189
 msgid "Add genre"
 msgstr "添加类型"
 
-#: templates/_modals/edit_modal.html:120 templates/base.html:1157
+#: templates/_modals/edit_modal.html:120 templates/base.html:1190
 msgid "+ Add genre..."
 msgstr "+ 添加类型…"
 
-#: templates/_modals/edit_modal.html:130 templates/base.html:1164
+#: templates/_modals/edit_modal.html:130 templates/base.html:1197
 msgid "Add play mode"
 msgstr "添加游玩模式"
 
-#: templates/_modals/edit_modal.html:131 templates/base.html:1165
+#: templates/_modals/edit_modal.html:131 templates/base.html:1198
 msgid "+ Add mode..."
 msgstr "+ 添加模式…"
 
-#: templates/_modals/edit_modal.html:160 templates/base.html:1176
+#: templates/_modals/edit_modal.html:160 templates/base.html:1209
 msgid "Add game structure"
 msgstr "添加游戏结构"
 
-#: templates/_modals/edit_modal.html:161 templates/base.html:1177
+#: templates/_modals/edit_modal.html:161 templates/base.html:1210
 msgid "+ Add structure..."
 msgstr "+ 添加结构……"
 
-#: templates/_modals/edit_modal.html:171 templates/base.html:1184
+#: templates/_modals/edit_modal.html:171 templates/base.html:1217
 msgid "Add perspective"
 msgstr "添加视角"
 
-#: templates/_modals/edit_modal.html:172 templates/base.html:1185
+#: templates/_modals/edit_modal.html:172 templates/base.html:1218
 msgid "+ Add perspective..."
 msgstr "+ 添加视角…"
 
-#: templates/_modals/edit_modal.html:182 templates/base.html:1192
+#: templates/_modals/edit_modal.html:182 templates/base.html:1225
 msgid "Add dimension"
 msgstr "添加维度"
 
-#: templates/_modals/edit_modal.html:183 templates/base.html:1193
+#: templates/_modals/edit_modal.html:183 templates/base.html:1226
 msgid "+ Add dimension..."
 msgstr "+ 添加维度……"
 
-#: templates/_modals/edit_modal.html:141 templates/base.html:1197
+#: templates/_modals/edit_modal.html:141 templates/base.html:1230
 msgid "Campaign Mode"
 msgstr "战役模式"
 
-#: templates/_modals/edit_modal.html:145 templates/base.html:1200
+#: templates/_modals/edit_modal.html:145 templates/base.html:1233
 msgid "Toggle campaign mode"
 msgstr "切换战役模式"
 
-#: templates/_modals/edit_modal.html:199 templates/base.html:1218
+#: templates/_modals/edit_modal.html:199 templates/base.html:1251
 msgid "Add controller"
 msgstr "添加手柄"
 
-#: templates/_modals/edit_modal.html:200 templates/base.html:1219
+#: templates/_modals/edit_modal.html:200 templates/base.html:1252
 msgid "+ Add controller..."
 msgstr "+ 添加手柄……"
 
-#: templates/_modals/edit_modal.html:204 templates/base.html:1221
+#: templates/_modals/edit_modal.html:204 templates/base.html:1254
 msgid "Custom controller name"
 msgstr "自定义手柄名称"
 
-#: templates/base.html:1221
+#: templates/base.html:1254
 msgid "Or type custom..."
 msgstr "或输入自定义…"
 
-#: templates/_modals/edit_modal.html:215 templates/base.html:1228
+#: templates/_modals/edit_modal.html:215 templates/base.html:1261
 msgid "Add save type"
 msgstr "添加存档类型"
 
-#: templates/_modals/edit_modal.html:216 templates/base.html:1229
+#: templates/_modals/edit_modal.html:216 templates/base.html:1262
 msgid "+ Add save type..."
 msgstr "+ 添加存档类型……"
 
-#: templates/_modals/edit_modal.html:225 templates/base.html:1243
+#: templates/_modals/edit_modal.html:225 templates/base.html:1276
 msgid "Toggle platform exclusivity"
 msgstr "切换平台独占"
 
-#: templates/base.html:1248
+#: templates/base.html:1281
 msgid "Xbox 360, PC, Switch"
 msgstr "Xbox 360、PC、Switch"
 
 #: templates/_modals/edit_modal.html:241
-#: templates/_settings_tabs/library.html:152 templates/base.html:1252
+#: templates/_settings_tabs/library.html:156 templates/base.html:1285
 msgid "ESRB (North America)"
 msgstr "ESRB（北美）"
 
@@ -5965,138 +5969,138 @@ msgstr "ESRB（北美）"
 #: templates/_modals/edit_modal.html:267 templates/_modals/edit_modal.html:278
 #: templates/_modals/edit_modal.html:289 templates/_modals/edit_modal.html:300
 #: templates/_modals/edit_modal.html:314 templates/_modals/edit_modal.html:324
-#: templates/_modals/edit_modal.html:336 templates/base.html:1254
-#: templates/base.html:1267 templates/base.html:1278 templates/base.html:1289
-#: templates/base.html:1300 templates/base.html:1311 templates/base.html:1325
-#: templates/base.html:1335 templates/base.html:1347
+#: templates/_modals/edit_modal.html:336 templates/base.html:1287
+#: templates/base.html:1300 templates/base.html:1311 templates/base.html:1322
+#: templates/base.html:1333 templates/base.html:1344 templates/base.html:1358
+#: templates/base.html:1368 templates/base.html:1380
 msgid "-- None --"
 msgstr "-- 无 --"
 
-#: templates/_modals/edit_modal.html:244 templates/base.html:1255
+#: templates/_modals/edit_modal.html:244 templates/base.html:1288
 msgid "EC - Early Childhood"
 msgstr "EC - 幼儿"
 
-#: templates/_modals/edit_modal.html:249 templates/base.html:1260
+#: templates/_modals/edit_modal.html:249 templates/base.html:1293
 msgid "AO - Adults Only"
 msgstr "AO - 仅限成人"
 
-#: templates/_modals/edit_modal.html:250 templates/base.html:1261
+#: templates/_modals/edit_modal.html:250 templates/base.html:1294
 msgid "RP - Rating Pending"
 msgstr "RP - 分级待定"
 
 #: templates/_modals/edit_modal.html:254
-#: templates/_settings_tabs/library.html:153 templates/base.html:1265
+#: templates/_settings_tabs/library.html:157 templates/base.html:1298
 msgid "PEGI (Europe)"
 msgstr "PEGI（欧洲）"
 
 #: templates/_modals/edit_modal.html:265
-#: templates/_settings_tabs/library.html:154 templates/base.html:1276
+#: templates/_settings_tabs/library.html:158 templates/base.html:1309
 msgid "CERO (Japan)"
 msgstr "CERO（日本）"
 
 #: templates/_modals/edit_modal.html:268 templates/_modals/edit_modal.html:301
-#: templates/base.html:1279 templates/base.html:1312
+#: templates/base.html:1312 templates/base.html:1345
 msgid "A - All Ages"
 msgstr "A - 全年龄"
 
-#: templates/_modals/edit_modal.html:269 templates/base.html:1280
+#: templates/_modals/edit_modal.html:269 templates/base.html:1313
 msgid "B - Ages 12+"
 msgstr "B - 12 岁以上"
 
-#: templates/_modals/edit_modal.html:270 templates/base.html:1281
+#: templates/_modals/edit_modal.html:270 templates/base.html:1314
 msgid "C - Ages 15+"
 msgstr "C - 15 岁以上"
 
-#: templates/_modals/edit_modal.html:271 templates/base.html:1282
+#: templates/_modals/edit_modal.html:271 templates/base.html:1315
 msgid "D - Ages 17+"
 msgstr "D - 17 岁以上"
 
-#: templates/_modals/edit_modal.html:272 templates/base.html:1283
+#: templates/_modals/edit_modal.html:272 templates/base.html:1316
 msgid "Z - Ages 18+"
 msgstr "Z - 18 岁以上"
 
 #: templates/_modals/edit_modal.html:276
-#: templates/_settings_tabs/library.html:155 templates/base.html:1287
+#: templates/_settings_tabs/library.html:159 templates/base.html:1320
 msgid "USK (Germany)"
 msgstr "USK（德国）"
 
 #: templates/_modals/edit_modal.html:287
-#: templates/_settings_tabs/library.html:156 templates/base.html:1298
+#: templates/_settings_tabs/library.html:160 templates/base.html:1331
 msgid "ACB (Australia)"
 msgstr "ACB（澳大利亚）"
 
-#: templates/_modals/edit_modal.html:290 templates/base.html:1301
+#: templates/_modals/edit_modal.html:290 templates/base.html:1334
 msgid "G - General"
 msgstr "G - 普遍级"
 
 #: templates/_modals/edit_modal.html:291 templates/_modals/edit_modal.html:302
-#: templates/base.html:1302
+#: templates/base.html:1335
 msgid "PG - Parental Guidance"
 msgstr "PG - 建议家长指导"
 
-#: templates/_modals/edit_modal.html:293 templates/base.html:1304
+#: templates/_modals/edit_modal.html:293 templates/base.html:1337
 msgid "MA15+ - Restricted"
 msgstr "MA15+ - 限制级"
 
-#: templates/_modals/edit_modal.html:294 templates/base.html:1305
+#: templates/_modals/edit_modal.html:294 templates/base.html:1338
 msgid "R18+ - Restricted"
 msgstr "R18+ - 限制级"
 
 #: templates/_modals/edit_modal.html:298
-#: templates/_settings_tabs/library.html:157 templates/base.html:1309
+#: templates/_settings_tabs/library.html:161 templates/base.html:1342
 msgid "FPB (South Africa)"
 msgstr "FPB（南非）"
 
 #: templates/_modals/edit_modal.html:312
-#: templates/_settings_tabs/library.html:158 templates/base.html:1323
+#: templates/_settings_tabs/library.html:162 templates/base.html:1356
 msgid "GRAC (South Korea)"
 msgstr "GRAC（韩国）"
 
-#: templates/_modals/edit_modal.html:315 templates/base.html:1326
+#: templates/_modals/edit_modal.html:315 templates/base.html:1359
 msgid "ALL - All Ages"
 msgstr "ALL - 全年龄"
 
 #: templates/_modals/edit_modal.html:322
-#: templates/_settings_tabs/library.html:159 templates/base.html:1333
+#: templates/_settings_tabs/library.html:163 templates/base.html:1366
 msgid "ClassInd (Brazil)"
 msgstr "ClassInd（巴西）"
 
-#: templates/_modals/edit_modal.html:325 templates/base.html:1336
+#: templates/_modals/edit_modal.html:325 templates/base.html:1369
 msgid "L - General"
 msgstr "L - 大众级"
 
 #: templates/_modals/edit_modal.html:334
-#: templates/_settings_tabs/library.html:160 templates/base.html:1345
+#: templates/_settings_tabs/library.html:164 templates/base.html:1378
 msgid "CADPA (China)"
 msgstr "CADPA（中国）"
 
-#: templates/_modals/edit_modal.html:337 templates/base.html:1348
+#: templates/_modals/edit_modal.html:337 templates/base.html:1381
 msgid "8+ - Ages 8 and up"
 msgstr "8+ - 8 岁及以上"
 
-#: templates/_modals/edit_modal.html:338 templates/base.html:1349
+#: templates/_modals/edit_modal.html:338 templates/base.html:1382
 msgid "12+ - Ages 12 and up"
 msgstr "12+ - 12 岁及以上"
 
-#: templates/_modals/edit_modal.html:339 templates/base.html:1350
+#: templates/_modals/edit_modal.html:339 templates/base.html:1383
 msgid "16+ - Ages 16 and up"
 msgstr "16+ - 16 岁及以上"
 
-#: templates/base.html:1360
+#: templates/base.html:1393
 msgid "Enter game description..."
 msgstr "输入游戏描述…"
 
-#: templates/base.html:1367
+#: templates/base.html:1400
 msgid "Images/Video"
 msgstr "图片/视频"
 
 #: templates/_modals/edit_modal.html:15
-#: templates/_settings_tabs/customization.html:267 templates/base.html:1372
+#: templates/_settings_tabs/customization.html:267 templates/base.html:1405
 #: templates/wishlist.html:700
 msgid "Save Changes"
 msgstr "保存更改"
 
-#: templates/base.html:1408
+#: templates/base.html:1441
 msgid "running"
 msgstr "运行中"
 
@@ -6136,7 +6140,7 @@ msgid "Source Folder"
 msgstr "源文件夹"
 
 #: templates/chd_converter.html:92 templates/chd_verify.html:108
-#: templates/dashboard.html:259 templates/settings_emulators.html:159
+#: templates/dashboard.html:259 templates/settings_emulators.html:168
 msgid "Scan"
 msgstr "扫描"
 
@@ -6668,7 +6672,7 @@ msgstr "已禁用"
 msgid "Not Configured"
 msgstr "未配置"
 
-#: templates/_settings_tabs/account.html:297 templates/dashboard.html:622
+#: templates/_settings_tabs/account.html:301 templates/dashboard.html:622
 msgid "Configured"
 msgstr "已配置"
 
@@ -6789,7 +6793,7 @@ msgid ""
 "new password before continuing."
 msgstr "你正在使用默认管理员密码。出于安全考虑，继续操作前你必须设置新密码。"
 
-#: templates/_settings_tabs/account.html:210
+#: templates/_settings_tabs/account.html:214
 #: templates/force_change_password.html:20
 msgid "New Password"
 msgstr "新密码"
@@ -6891,7 +6895,7 @@ msgstr "查看说明书（PDF）"
 msgid "Delete game from database"
 msgstr "从数据库删除游戏"
 
-#: templates/_settings_tabs/account.html:320 templates/game_detail.html:134
+#: templates/_settings_tabs/account.html:324 templates/game_detail.html:134
 #: templates/logs.html:735 templates/settings.html:45
 #: templates/wishlist.html:642
 msgid "Delete"
@@ -7190,8 +7194,8 @@ msgstr "关联版本"
 msgid "Link a version: search this system"
 msgstr "关联版本：在此系统中搜索"
 
-#: templates/game_detail.html:836 templates/settings_emulators.html:21
-#: templates/settings_emulators.html:120
+#: templates/game_detail.html:836 templates/settings_emulators.html:22
+#: templates/settings_emulators.html:127
 msgid "Cheats"
 msgstr "金手指"
 
@@ -8112,7 +8116,7 @@ msgstr "全部勾选"
 msgid "Tick none"
 msgstr "全部取消"
 
-#: templates/_settings_tabs/account.html:111 templates/psn_trophies.html:16
+#: templates/_settings_tabs/account.html:115 templates/psn_trophies.html:16
 msgid "PlayStation Network"
 msgstr "PlayStation Network"
 
@@ -8639,11 +8643,11 @@ msgid ""
 "preferences shared across all ROM tools."
 msgstr "配置所有 ROM 工具共享的路径、外部工具位置、压缩包类型及其他偏好设置。"
 
-#: templates/rom_tools_settings.html:304
+#: templates/rom_tools_settings.html:309
 msgid "Empty: RetroDB's data folder"
 msgstr "留空：RetroDB 的数据文件夹"
 
-#: templates/rom_tools_settings.html:305
+#: templates/rom_tools_settings.html:312
 msgid ""
 "Where Create M3U moves original archives. Leave empty to use RetroDB's "
 "data folder."
@@ -8717,7 +8721,7 @@ msgstr "密钥测试失败。"
 #: templates/_settings_tabs/_tab_bar.html:23
 #: templates/_settings_tabs/_tab_bar.html:38
 #: templates/settings_emulators.html:4 templates/settings_emulators.html:9
-#: templates/settings_emulators.html:23
+#: templates/settings_emulators.html:24
 msgid "Emulators"
 msgstr "模拟器"
 
@@ -8727,42 +8731,42 @@ msgid ""
 "button."
 msgstr "管理 ▶ 游玩按钮使用的模拟器程序和按系统映射。"
 
-#: templates/settings_emulators.html:19 templates/settings_emulators.html:65
+#: templates/settings_emulators.html:20 templates/settings_emulators.html:72
 msgid "Play in RetroDB"
 msgstr "在 RetroDB 中游玩"
 
-#: templates/settings_emulators.html:20
+#: templates/settings_emulators.html:21
 msgid "Cores"
 msgstr "核心"
 
-#: templates/settings_emulators.html:22
+#: templates/settings_emulators.html:23
 msgid "Folders"
 msgstr "文件夹"
 
-#: templates/settings_emulators.html:24
+#: templates/settings_emulators.html:25
 msgid "Mapping"
 msgstr "映射"
 
-#: templates/settings_emulators.html:36
+#: templates/settings_emulators.html:37
 msgid ""
 "RetroArch needs explicit binary + cores-dir paths because they typically "
 "live in different prefixes (system package, ~/.local, or a Flatpak "
 "sandbox)."
 msgstr "RetroArch 需要明确指定程序和核心目录的路径，因为它们通常位于不同位置（系统软件包、~/.local 或 Flatpak 沙盒）。"
 
-#: templates/settings_emulators.html:40 templates/settings_emulators.html:183
+#: templates/settings_emulators.html:41 templates/settings_emulators.html:192
 msgid "Binary"
 msgstr "程序文件"
 
-#: templates/settings_emulators.html:46
+#: templates/settings_emulators.html:50
 msgid "Cores directory"
 msgstr "核心目录"
 
-#: templates/settings_emulators.html:52
+#: templates/settings_emulators.html:59
 msgid "Auto-detect"
 msgstr "自动检测"
 
-#: templates/settings_emulators.html:69
+#: templates/settings_emulators.html:76
 msgid ""
 "RetroDB can download the official RetroArch from libretro and set it up "
 "to play your games, with its own settings and saves, kept apart from any "
@@ -8771,47 +8775,47 @@ msgstr ""
 "RetroDB 可以从 libretro 下载官方 RetroArch 并将其设置好来玩你的游戏。它有自己的设置和存档，与你已在使用的任何 "
 "RetroArch 互不干扰。"
 
-#: templates/settings_emulators.html:72
+#: templates/settings_emulators.html:79
 #, python-format
 msgid "Installed: RetroArch %(version)s"
 msgstr "已安装：RetroArch %(version)s"
 
-#: templates/settings_emulators.html:76
+#: templates/settings_emulators.html:83
 msgid "Download RetroArch again"
 msgstr "重新下载 RetroArch"
 
-#: templates/settings_emulators.html:76
+#: templates/settings_emulators.html:83
 msgid "Get RetroArch"
 msgstr "获取 RetroArch"
 
-#: templates/settings_emulators.html:89
+#: templates/settings_emulators.html:96
 msgid "Player cores"
 msgstr "播放器核心"
 
-#: templates/settings_emulators.html:93
+#: templates/settings_emulators.html:100
 msgid ""
 "The player picks the best core for each system and downloads it from the "
 "libretro build server the first time you play. Installed cores are never "
 "updated by Play; update them here."
 msgstr "播放器会为每个系统选择最合适的核心，并在首次游玩时从 libretro 构建服务器下载。“游玩”从不更新已安装的核心；请在此处更新。"
 
-#: templates/settings_emulators.html:98
+#: templates/settings_emulators.html:105
 msgid "Download a missing core when Play is pressed"
 msgstr "按下“游玩”时下载缺少的核心"
 
-#: templates/settings_emulators.html:103
+#: templates/settings_emulators.html:110
 msgid "Install cores for my systems"
 msgstr "为我的系统安装核心"
 
-#: templates/settings_emulators.html:104
+#: templates/settings_emulators.html:111
 msgid "Update cores"
 msgstr "更新核心"
 
-#: templates/settings_emulators.html:108
+#: templates/settings_emulators.html:115
 msgid "Cores are not built for this computer, so RetroDB cannot download them."
 msgstr "没有为这台电脑构建的核心，因此 RetroDB 无法下载。"
 
-#: templates/settings_emulators.html:124
+#: templates/settings_emulators.html:131
 msgid ""
 "Download the free public cheat packs, or import cheat folders you already"
 " have. Each game's page then lists its cheats, each with an on/off "
@@ -8820,117 +8824,117 @@ msgstr ""
 "下载免费的公开金手指包，或导入你已有的金手指文件夹。之后，在 RetroDB 的 RetroArch、DuckStation 或 PCSX2 "
 "中游玩的游戏，其游戏页面会列出它的金手指，每个都有开关。"
 
-#: templates/settings_emulators.html:128
+#: templates/settings_emulators.html:135
 msgid "Import a folder"
 msgstr "导入文件夹"
 
-#: templates/settings_emulators.html:131
+#: templates/settings_emulators.html:139
 msgid "Import"
 msgstr "导入"
 
-#: templates/settings_emulators.html:134
+#: templates/settings_emulators.html:142
 msgid ""
 "RetroDB copies the cheat files it recognises and never changes the "
 "folder. Import again to pick up new files."
 msgstr "RetroDB 会复制它能识别的金手指文件，绝不会改动该文件夹。再次导入即可获取新文件。"
 
-#: templates/settings_emulators.html:146
+#: templates/settings_emulators.html:154
 msgid "Emulator folders"
 msgstr "模拟器文件夹"
 
-#: templates/settings_emulators.html:150
+#: templates/settings_emulators.html:158
 msgid ""
 "Add the folder your emulators live in. RetroDB finds each emulator there,"
 " links it to the systems it runs and checks its BIOS files."
 msgstr "添加存放模拟器的文件夹。RetroDB 会在其中找到每个模拟器，将其关联到它运行的系统，并检查它的 BIOS 文件。"
 
-#: templates/settings_emulators.html:155
+#: templates/settings_emulators.html:163
 msgid "Emulator folder"
 msgstr "模拟器文件夹"
 
-#: templates/settings_emulators.html:156
+#: templates/settings_emulators.html:165
 msgid "Add folder"
 msgstr "添加文件夹"
 
-#: templates/settings_emulators.html:160
+#: templates/settings_emulators.html:169
 msgid "Apply all"
 msgstr "全部应用"
 
-#: templates/settings_emulators.html:172
+#: templates/settings_emulators.html:181
 msgid "Registered emulators"
 msgstr "已注册的模拟器"
 
-#: templates/settings_emulators.html:176
+#: templates/settings_emulators.html:185
 msgid ""
 "RetroDB ships with a default registry seeded on first run. Add custom "
 "emulators or edit the seeded entries."
 msgstr "RetroDB 自带一份在首次运行时生成的默认注册表。你可以添加自定义模拟器或编辑默认条目。"
 
-#: templates/settings_emulators.html:184
+#: templates/settings_emulators.html:193
 msgid "Path override"
 msgstr "路径覆盖"
 
-#: templates/settings_emulators.html:185 templates/settings_emulators.html:241
+#: templates/settings_emulators.html:194 templates/settings_emulators.html:253
 msgid "Args template"
 msgstr "参数模板"
 
-#: templates/settings_emulators.html:187
+#: templates/settings_emulators.html:196
 msgid "Enabled"
 msgstr "启用"
 
-#: templates/settings_emulators.html:204
+#: templates/settings_emulators.html:213
 msgid "Per-system mapping"
 msgstr "按系统映射"
 
-#: templates/settings_emulators.html:208
+#: templates/settings_emulators.html:217
 msgid ""
 "Pick the emulator each system uses by default. Per-game overrides live in"
 " the edit-game modal."
 msgstr "为每个系统选择默认使用的模拟器。单个游戏的例外设置在游戏的编辑窗口中进行。"
 
-#: templates/settings_emulators.html:220
+#: templates/settings_emulators.html:229
 msgid "Edit emulator"
 msgstr "编辑模拟器"
 
-#: templates/settings_emulators.html:221
+#: templates/settings_emulators.html:230
 msgid "Close emulator edit modal"
 msgstr "关闭模拟器编辑窗口"
 
-#: templates/settings_emulators.html:231
+#: templates/settings_emulators.html:240
 msgid "Binary name (looked up on PATH)"
 msgstr "程序名称（在 PATH 中查找）"
 
-#: templates/settings_emulators.html:233
+#: templates/settings_emulators.html:242
 msgid "e.g."
 msgstr "例如"
 
-#: templates/settings_emulators.html:233
+#: templates/settings_emulators.html:242
 msgid "Used when no path override is set."
 msgstr "未设置路径覆盖时使用。"
 
-#: templates/settings_emulators.html:236
+#: templates/settings_emulators.html:245
 msgid "Binary path override"
 msgstr "程序路径覆盖"
 
-#: templates/settings_emulators.html:237
+#: templates/settings_emulators.html:247
 msgid "(empty = look up the binary name on PATH)"
 msgstr "（留空 = 在 PATH 中查找程序名称）"
 
-#: templates/settings_emulators.html:238
+#: templates/settings_emulators.html:250
 msgid ""
 "Absolute path to AppImage / portable script / system binary. Wins over "
 "PATH lookup."
 msgstr "AppImage / 便携脚本 / 系统程序的绝对路径。优先于 PATH 查找。"
 
-#: templates/settings_emulators.html:243
+#: templates/settings_emulators.html:255
 msgid "Tokens:"
 msgstr "占位符："
 
-#: templates/settings_emulators.html:252
+#: templates/settings_emulators.html:264
 msgid "This is a RetroArch entry (uses the cores in the Cores directory above)"
 msgstr "这是 RetroArch 条目（使用上方核心目录中的核心）"
 
-#: templates/settings_emulators.html:258
+#: templates/settings_emulators.html:270
 msgid "Enabled (uncheck to hide from launch)"
 msgstr "启用（取消勾选则不在启动中显示）"
 
@@ -9677,97 +9681,97 @@ msgstr "自定义"
 msgid "Settings sections"
 msgstr "设置分区"
 
-#: templates/_settings_tabs/account.html:2
+#: templates/_settings_tabs/account.html:3
 msgid "Account settings"
 msgstr "账户设置"
 
-#: templates/_settings_tabs/account.html:4
+#: templates/_settings_tabs/account.html:5
 msgid "My Profile"
 msgstr "我的资料"
 
-#: templates/_settings_tabs/account.html:5
-#: templates/_settings_tabs/account.html:227
-#: templates/_settings_tabs/account.html:234
+#: templates/_settings_tabs/account.html:6
+#: templates/_settings_tabs/account.html:231
+#: templates/_settings_tabs/account.html:238
 msgid "Timezone"
 msgstr "时区"
 
-#: templates/_settings_tabs/account.html:7
+#: templates/_settings_tabs/account.html:8
 msgid "Users"
 msgstr "用户"
 
-#: templates/_settings_tabs/account.html:19
+#: templates/_settings_tabs/account.html:20
 msgid "Change avatar"
 msgstr "更换头像"
 
-#: templates/_settings_tabs/account.html:41
+#: templates/_settings_tabs/account.html:42
 msgid "Choose avatar"
 msgstr "选择头像"
 
-#: templates/_settings_tabs/account.html:43
+#: templates/_settings_tabs/account.html:44
 msgid "Choose Avatar"
 msgstr "选择头像"
 
-#: templates/_settings_tabs/account.html:47
+#: templates/_settings_tabs/account.html:48
 msgid "Select a default avatar or upload your own image."
 msgstr "选择默认头像或上传你自己的图片。"
 
-#: templates/_settings_tabs/account.html:52
+#: templates/_settings_tabs/account.html:53
 msgid "Avatar"
 msgstr "头像"
 
-#: templates/_settings_tabs/account.html:61
+#: templates/_settings_tabs/account.html:62
 msgid "Click to upload custom image"
 msgstr "点击上传自定义图片"
 
-#: templates/_settings_tabs/account.html:62
+#: templates/_settings_tabs/account.html:63
 msgid "JPG, PNG, GIF, WebP &mdash; Max 2MB"
 msgstr "JPG、PNG、GIF、WebP &mdash; 最大 2MB"
 
-#: templates/_settings_tabs/account.html:68
+#: templates/_settings_tabs/account.html:69
 msgid "Remove avatar"
 msgstr "移除头像"
 
-#: templates/_settings_tabs/account.html:78
+#: templates/_settings_tabs/account.html:79
 msgid "Trophy Settings"
 msgstr "奖杯设置"
 
-#: templates/_settings_tabs/account.html:80
+#: templates/_settings_tabs/account.html:81
 msgid "Configure your personal RPCS3 trophy path to view your PS3 trophies."
 msgstr "配置您的个人 RPCS3 奖杯路径以查看您的 PS3 奖杯。"
 
-#: templates/_settings_tabs/account.html:84
+#: templates/_settings_tabs/account.html:85
 msgid "Your RPCS3 Trophy Path"
 msgstr "你的 RPCS3 奖杯路径"
 
-#: templates/_settings_tabs/account.html:88
+#: templates/_settings_tabs/account.html:92
 msgid ""
 "Path to your RPCS3 trophy folder (e.g., "
 "/home/user/RPCS3/dev_hdd0/home/00000001/trophy)"
 msgstr "您的 RPCS3 奖杯文件夹的路径（例如 /home/user/RPCS3/dev_hdd0/home/00000001/trophy）"
 
-#: templates/_settings_tabs/account.html:91
+#: templates/_settings_tabs/account.html:95
 msgid "RetroAchievements Settings"
 msgstr "RetroAchievements 设置"
 
-#: templates/_settings_tabs/account.html:93
+#: templates/_settings_tabs/account.html:97
 msgid ""
 "Configure your RetroAchievements credentials to view your achievement "
 "progress."
 msgstr "配置你的 RetroAchievements 凭据以查看你的成就进度。"
 
-#: templates/_settings_tabs/account.html:97
+#: templates/_settings_tabs/account.html:101
 msgid "Your RA Username"
 msgstr "您的 RA 用户名"
 
-#: templates/_settings_tabs/account.html:104
+#: templates/_settings_tabs/account.html:108
 msgid "Your RA API Key"
 msgstr "你的 RA API 密钥"
 
-#: templates/_settings_tabs/account.html:107
+#: templates/_settings_tabs/account.html:111
 msgid "Your RetroAchievements API Key"
 msgstr "您的 RetroAchievements API 密钥"
 
-#: templates/_settings_tabs/account.html:108
+#: templates/_settings_tabs/account.html:112
 msgid ""
 "Get your API key from <a "
 "href=\"https://retroachievements.org/controlpanel.php\" target=\"_blank\""
@@ -9778,29 +9782,29 @@ msgstr ""
 "target=\"_blank\" rel=\"noopener noreferrer\" style=\"color: var"
 "(--primary-cyan);\">RetroAchievements 控制面板</a> 获取你的 API 密钥"
 
-#: templates/_settings_tabs/account.html:113
+#: templates/_settings_tabs/account.html:117
 msgid ""
 "Connect your PSN account to sync trophies from PS3, PS4, PS5, and PS Vita"
 " games."
 msgstr "连接你的 PSN 账户以同步 PS3、PS4、PS5 和 PS Vita 游戏的奖杯。"
 
-#: templates/_settings_tabs/account.html:121
+#: templates/_settings_tabs/account.html:125
 msgid "PSN Username"
 msgstr "PSN 用户名"
 
-#: templates/_settings_tabs/account.html:125
+#: templates/_settings_tabs/account.html:129
 msgid "Your PlayStation Network Online ID (auto-detected on connection)"
 msgstr "你的 PlayStation Network 在线 ID（连接时自动检测）"
 
-#: templates/_settings_tabs/account.html:130
+#: templates/_settings_tabs/account.html:134
 msgid "NPSSO Token Setup"
 msgstr "NPSSO 令牌设置"
 
-#: templates/_settings_tabs/account.html:137
+#: templates/_settings_tabs/account.html:141
 msgid "Open Sony's account page"
 msgstr "打开 Sony 账户页面"
 
-#: templates/_settings_tabs/account.html:138
+#: templates/_settings_tabs/account.html:142
 msgid ""
 "First sign in to PlayStation in this browser. Then open the account page:"
 " it shows your NPSSO token as JSON. If you are not signed in, it shows "
@@ -9809,30 +9813,30 @@ msgstr ""
 "先在此浏览器中登录 PlayStation。然后打开账户页面：它会以 JSON 显示你的 NPSSO 令牌。如果你没有登录，它会显示 "
 "\"Invalid login\"。"
 
-#: templates/_settings_tabs/account.html:140
+#: templates/_settings_tabs/account.html:144
 msgid "Sign in to PlayStation"
 msgstr "登录 PlayStation"
 
-#: templates/_settings_tabs/account.html:143
+#: templates/_settings_tabs/account.html:147
 msgid "Open Sony Account Page"
 msgstr "打开 Sony 账户页面"
 
-#: templates/_settings_tabs/account.html:150
+#: templates/_settings_tabs/account.html:154
 msgid ""
 "Optional shortcut: drag the button below to your browser's bookmarks bar."
 " Then, on the Sony JSON page, click the bookmark to copy your NPSSO in "
 "one click."
 msgstr "可选快捷方式：将下方按钮拖到浏览器的书签栏。然后在 Sony JSON 页面点击该书签，即可一键复制你的 NPSSO。"
 
-#: templates/_settings_tabs/account.html:151
+#: templates/_settings_tabs/account.html:155
 msgid "Copy NPSSO"
 msgstr "复制 NPSSO"
 
-#: templates/_settings_tabs/account.html:160
+#: templates/_settings_tabs/account.html:164
 msgid "Copy the page content"
 msgstr "复制页面内容"
 
-#: templates/_settings_tabs/account.html:161
+#: templates/_settings_tabs/account.html:165
 msgid ""
 "Select all (<kbd style=\"background: var(--bg-medium); padding: 1px 6px; "
 "border-radius: 3px; border: 1px solid var(--card-border); font-size: "
@@ -9848,161 +9852,161 @@ msgstr ""
 "border); font-size: 0.8rem;\">Ctrl+C</kbd>）。你可以复制整个 JSON &mdash; "
 "我们会自动提取其中的令牌。"
 
-#: templates/_settings_tabs/account.html:169
+#: templates/_settings_tabs/account.html:173
 msgid "Paste the token"
 msgstr "粘贴令牌"
 
-#: templates/_settings_tabs/account.html:173
+#: templates/_settings_tabs/account.html:177
 msgid "Paste JSON or token here"
 msgstr "在此粘贴 JSON 或令牌"
 
-#: templates/_settings_tabs/account.html:176
+#: templates/_settings_tabs/account.html:180
 msgid "Read from clipboard"
 msgstr "从剪贴板读取"
 
-#: templates/_settings_tabs/account.html:177
+#: templates/_settings_tabs/account.html:181
 msgid "Paste &amp; Detect"
 msgstr "粘贴 &amp; 检测"
 
-#: templates/_settings_tabs/account.html:188
+#: templates/_settings_tabs/account.html:192
 msgid "Save &amp; Test Connection"
 msgstr "保存&amp;测试连接"
 
-#: templates/_settings_tabs/account.html:195
+#: templates/_settings_tabs/account.html:199
 msgid "Save My Settings"
 msgstr "保存我的设置"
 
-#: templates/_settings_tabs/account.html:199
-#: templates/_settings_tabs/account.html:215
+#: templates/_settings_tabs/account.html:203
+#: templates/_settings_tabs/account.html:219
 msgid "Change Password"
 msgstr "更改密码"
 
-#: templates/_settings_tabs/account.html:201
+#: templates/_settings_tabs/account.html:205
 msgid "Every account needs a password to log in."
 msgstr "每个账户都需要密码才能登录。"
 
-#: templates/_settings_tabs/account.html:205
+#: templates/_settings_tabs/account.html:209
 msgid "Current Password"
 msgstr "当前密码"
 
-#: templates/_settings_tabs/account.html:206
+#: templates/_settings_tabs/account.html:210
 msgid "Enter current password"
 msgstr "输入当前密码"
 
-#: templates/_settings_tabs/account.html:211
+#: templates/_settings_tabs/account.html:215
 msgid "Enter new password"
 msgstr "输入新密码"
 
-#: templates/_settings_tabs/account.html:219
+#: templates/_settings_tabs/account.html:223
 msgid "Please log in to view your profile settings."
 msgstr "请登录以查看你的个人资料设置。"
 
-#: templates/_settings_tabs/account.html:231
+#: templates/_settings_tabs/account.html:235
 msgid "Set your timezone to ensure all dates and times display correctly."
 msgstr "设置您的时区以确保所有日期和时间正确显示。"
 
-#: templates/_settings_tabs/account.html:236
+#: templates/_settings_tabs/account.html:240
 msgid "Search timezones..."
 msgstr "搜索时区..."
 
-#: templates/_settings_tabs/account.html:240
+#: templates/_settings_tabs/account.html:244
 msgid "Browser detected:"
 msgstr "检测到的浏览器："
 
-#: templates/_settings_tabs/account.html:241
+#: templates/_settings_tabs/account.html:245
 msgid "Use detected"
 msgstr "使用检测到的值"
 
-#: templates/_settings_tabs/account.html:244
+#: templates/_settings_tabs/account.html:248
 msgid "Save Timezone"
 msgstr "保存时区"
 
-#: templates/_settings_tabs/account.html:252
+#: templates/_settings_tabs/account.html:256
 msgid "User Management"
 msgstr "用户管理"
 
-#: templates/_settings_tabs/account.html:256
+#: templates/_settings_tabs/account.html:260
 msgid ""
 "Manage users who can access RetroDB. Admin users require a password to "
 "login, while Editor and Viewer users can login with a single click."
 msgstr "管理可访问 RetroDB 的用户。管理员用户登录需要密码，而编辑者和查看者用户只需单击即可登录。"
 
-#: templates/_settings_tabs/account.html:261
-#: templates/_settings_tabs/account.html:335
+#: templates/_settings_tabs/account.html:265
+#: templates/_settings_tabs/account.html:339
 msgid "Add User"
 msgstr "添加用户"
 
-#: templates/_settings_tabs/account.html:269
+#: templates/_settings_tabs/account.html:273
 msgid "Role"
 msgstr "角色"
 
-#: templates/_settings_tabs/account.html:270
+#: templates/_settings_tabs/account.html:274
 msgid "Trophy Path"
 msgstr "奖杯路径"
 
-#: templates/_settings_tabs/account.html:271
+#: templates/_settings_tabs/account.html:275
 msgid "RA Username"
 msgstr "RA 用户名"
 
-#: templates/_settings_tabs/account.html:272
+#: templates/_settings_tabs/account.html:276
 msgid "Last Login"
 msgstr "最近登录"
 
-#: templates/_settings_tabs/account.html:299
-#: templates/_settings_tabs/account.html:306
+#: templates/_settings_tabs/account.html:303
+#: templates/_settings_tabs/account.html:310
 msgid "Not Set"
 msgstr "未设置"
 
-#: templates/_settings_tabs/account.html:336
+#: templates/_settings_tabs/account.html:340
 msgid "Close user modal"
 msgstr "关闭用户弹窗"
 
-#: templates/_settings_tabs/account.html:342
+#: templates/_settings_tabs/account.html:346
 msgid "Username *"
 msgstr "用户名 *"
 
-#: templates/_settings_tabs/account.html:343
+#: templates/_settings_tabs/account.html:347
 msgid "username"
 msgstr "用户名"
 
-#: templates/_settings_tabs/account.html:347
-#: templates/_settings_tabs/account.html:348
+#: templates/_settings_tabs/account.html:351
+#: templates/_settings_tabs/account.html:352
 msgid "Display Name"
 msgstr "显示名称"
 
-#: templates/_settings_tabs/account.html:352
+#: templates/_settings_tabs/account.html:356
 msgid "Role *"
 msgstr "角色 *"
 
-#: templates/_settings_tabs/account.html:354
+#: templates/_settings_tabs/account.html:358
 msgid "Viewer - Read only access"
 msgstr "查看者 - 只读访问"
 
-#: templates/_settings_tabs/account.html:355
+#: templates/_settings_tabs/account.html:359
 msgid "Player - Can launch and track progress"
 msgstr "玩家 - 可启动并追踪进度"
 
-#: templates/_settings_tabs/account.html:356
+#: templates/_settings_tabs/account.html:360
 msgid "Editor - Can edit games and scrape"
 msgstr "编辑者 - 可编辑游戏并抓取"
 
-#: templates/_settings_tabs/account.html:357
+#: templates/_settings_tabs/account.html:361
 msgid "Admin - Full access"
 msgstr "管理员 - 完全访问"
 
-#: templates/_settings_tabs/account.html:362
+#: templates/_settings_tabs/account.html:366
 msgid "Reset Password"
 msgstr "重置密码"
 
-#: templates/_settings_tabs/account.html:363
+#: templates/_settings_tabs/account.html:367
 msgid "Leave blank to keep current"
 msgstr "留空则保留当前值"
 
-#: templates/_settings_tabs/account.html:364
+#: templates/_settings_tabs/account.html:368
 msgid "Only for admin accounts"
 msgstr "仅适用于管理员账户"
 
-#: templates/_settings_tabs/account.html:369
+#: templates/_settings_tabs/account.html:373
 msgid "Save User"
 msgstr "保存用户"
 
@@ -10352,143 +10356,143 @@ msgid ""
 "metadata."
 msgstr "未找到该字段的任何值。请确保您的游戏库中有带元数据的游戏。"
 
-#: templates/_settings_tabs/library.html:3
+#: templates/_settings_tabs/library.html:4
 msgid "Library settings"
 msgstr "游戏库设置"
 
-#: templates/_settings_tabs/library.html:5
+#: templates/_settings_tabs/library.html:6
 msgid "Paths"
 msgstr "路径"
 
-#: templates/_settings_tabs/library.html:6
+#: templates/_settings_tabs/library.html:7
 msgid "Display"
 msgstr "显示"
 
-#: templates/_settings_tabs/library.html:7
+#: templates/_settings_tabs/library.html:8
 msgid "ROM Naming"
 msgstr "ROM 命名"
 
-#: templates/_settings_tabs/library.html:8
+#: templates/_settings_tabs/library.html:9
 msgid "Backup"
 msgstr "备份"
 
-#: templates/_settings_tabs/library.html:14
+#: templates/_settings_tabs/library.html:15
 msgid "Library Settings"
 msgstr "游戏库设置"
 
-#: templates/_settings_tabs/library.html:18
+#: templates/_settings_tabs/library.html:19
 msgid ""
 "Configure the paths to your ROM library, ES-DE data, and other "
 "integrations."
 msgstr "配置您的 ROM 游戏库、ES-DE 数据及其他集成的路径。"
 
-#: templates/_settings_tabs/library.html:22
+#: templates/_settings_tabs/library.html:23
 msgid "ROM Library Path"
 msgstr "ROM 库路径"
 
-#: templates/_settings_tabs/library.html:24
+#: templates/_settings_tabs/library.html:26
 msgid "e.g. /home/user/ROMS"
 msgstr "例如 /home/user/ROMS"
 
-#: templates/_settings_tabs/library.html:30
+#: templates/_settings_tabs/library.html:34
 msgid "Database Location"
 msgstr "数据库位置"
 
-#: templates/_settings_tabs/library.html:32
+#: templates/_settings_tabs/library.html:36
 msgid "Database path cannot be changed via UI"
 msgstr "数据库路径无法通过界面更改"
 
-#: templates/_settings_tabs/library.html:38
+#: templates/_settings_tabs/library.html:42
 msgid "Save Path Settings"
 msgstr "保存路径设置"
 
-#: templates/_settings_tabs/library.html:46
+#: templates/_settings_tabs/library.html:50
 msgid "Changes to ROM path require a restart to take full effect"
 msgstr "ROM 路径的更改需要重启才能完全生效"
 
-#: templates/_settings_tabs/library.html:55
+#: templates/_settings_tabs/library.html:59
 msgid "Display Preferences"
 msgstr "显示偏好"
 
-#: templates/_settings_tabs/library.html:59
+#: templates/_settings_tabs/library.html:63
 msgid "Theme"
 msgstr "主题"
 
-#: templates/_settings_tabs/library.html:67
+#: templates/_settings_tabs/library.html:71
 msgid "Cyberpunk"
 msgstr "赛博朋克"
 
-#: templates/_settings_tabs/library.html:75
+#: templates/_settings_tabs/library.html:79
 msgid "Matrix"
 msgstr "Matrix"
 
-#: templates/_settings_tabs/library.html:83
+#: templates/_settings_tabs/library.html:87
 msgid "Retro Amber"
 msgstr "复古琥珀"
 
-#: templates/_settings_tabs/library.html:91
+#: templates/_settings_tabs/library.html:95
 msgid "Midnight Ocean"
 msgstr "午夜海洋"
 
-#: templates/_settings_tabs/library.html:99
+#: templates/_settings_tabs/library.html:103
 msgid "Cathedral"
 msgstr "Cathedral"
 
-#: templates/_settings_tabs/library.html:107
+#: templates/_settings_tabs/library.html:111
 msgid "Blade Runner"
 msgstr "Blade Runner"
 
-#: templates/_settings_tabs/library.html:115
+#: templates/_settings_tabs/library.html:119
 msgid "Elite"
 msgstr "Elite"
 
-#: templates/_settings_tabs/library.html:118
+#: templates/_settings_tabs/library.html:122
 msgid "Theme applies instantly. Changes are saved automatically."
 msgstr "主题即时生效。更改会自动保存。"
 
-#: templates/_settings_tabs/library.html:126
+#: templates/_settings_tabs/library.html:130
 msgid "Language"
 msgstr "语言"
 
-#: templates/_settings_tabs/library.html:137
+#: templates/_settings_tabs/library.html:141
 msgid "Changes the interface language. The page reloads when you switch."
 msgstr "更改界面语言。切换时页面将重新加载。"
 
-#: templates/_settings_tabs/library.html:141
+#: templates/_settings_tabs/library.html:145
 msgid "Preferred Boxart Style"
 msgstr "首选封面样式"
 
-#: templates/_settings_tabs/library.html:143
+#: templates/_settings_tabs/library.html:147
 msgid "2D Boxart (Standard)"
 msgstr "2D 封面（标准）"
 
-#: templates/_settings_tabs/library.html:144
+#: templates/_settings_tabs/library.html:148
 msgid "3D Boxart (with 2D fallback)"
 msgstr "3D 封面（回退为 2D）"
 
-#: templates/_settings_tabs/library.html:146
+#: templates/_settings_tabs/library.html:150
 msgid "When 3D is selected, 2D boxart will be shown if no 3D version exists"
 msgstr "选择 3D 时，若不存在 3D 版本，将显示 2D 封面"
 
-#: templates/_settings_tabs/library.html:150
+#: templates/_settings_tabs/library.html:154
 msgid "Preferred Age Rating System"
 msgstr "首选年龄分级系统"
 
-#: templates/_settings_tabs/library.html:162
+#: templates/_settings_tabs/library.html:166
 msgid ""
 "Ratings from other systems are cross-mapped when the preferred system's "
 "rating is unavailable"
 msgstr "当首选系统的分级不可用时，将交叉映射来自其他系统的分级"
 
-#: templates/_settings_tabs/library.html:168
+#: templates/_settings_tabs/library.html:172
 msgid "Save Display Settings"
 msgstr "保存显示设置"
 
-#: templates/_settings_tabs/library.html:177
+#: templates/_settings_tabs/library.html:181
 msgid "ROM Naming Conventions"
 msgstr "ROM 命名规范"
 
-#: templates/_settings_tabs/library.html:181
+#: templates/_settings_tabs/library.html:185
 msgid ""
 "Configure the filename pattern for each system type. Title is always "
 "first.\n"
@@ -10498,53 +10502,53 @@ msgstr ""
 "为每种系统类型配置文件名格式。标题始终排在最前。\n"
 "            按标签应在文件名中出现的顺序添加它们（例如 <code>Title (Region).zip</code>）。"
 
-#: templates/_settings_tabs/library.html:186
+#: templates/_settings_tabs/library.html:190
 msgid "Article Placement"
 msgstr "冠词位置"
 
-#: templates/_settings_tabs/library.html:188
+#: templates/_settings_tabs/library.html:192
 msgid ""
 "Controls where articles (A, An, The) appear in game titles and ROM "
 "filenames."
 msgstr "控制冠词（A、An、The）在游戏标题和 ROM 文件名中的出现位置。"
 
-#: templates/_settings_tabs/library.html:191
+#: templates/_settings_tabs/library.html:195
 msgid "Beginning (natural) — \"The Legend of Zelda\""
 msgstr "开头（自然）—“The Legend of Zelda”"
 
-#: templates/_settings_tabs/library.html:192
+#: templates/_settings_tabs/library.html:196
 msgid "End (sort-friendly) — \"Legend of Zelda, The\""
 msgstr "置于末尾（便于排序）— “Legend of Zelda, The”"
 
-#: templates/_settings_tabs/library.html:194
+#: templates/_settings_tabs/library.html:198
 msgid ""
 "Applies to new scrapes and rename suggestions. Existing titles are not "
 "changed automatically."
 msgstr "适用于新的抓取和重命名建议。现有标题不会自动更改。"
 
-#: templates/_settings_tabs/library.html:198
+#: templates/_settings_tabs/library.html:202
 msgid "Region Options"
 msgstr "地区选项"
 
-#: templates/_settings_tabs/library.html:200
+#: templates/_settings_tabs/library.html:204
 msgid ""
 "Configure the available region values and default. The default region is "
 "used when scraping if no region is detected."
 msgstr "配置可用的地区值和默认地区。抓取时如果未检测到地区，将使用默认地区。"
 
-#: templates/_settings_tabs/library.html:215
+#: templates/_settings_tabs/library.html:219
 msgid "Default Region"
 msgstr "默认地区"
 
-#: templates/_settings_tabs/scraping.html:511
+#: templates/_settings_tabs/scraping.html:521
 msgid "Test saved AI key"
 msgstr "测试已保存的 AI 密钥"
 
-#: templates/_settings_tabs/scraping.html:594
+#: templates/_settings_tabs/scraping.html:604
 msgid "Let Claude search the web"
 msgstr "允许 Claude 联网搜索"
 
-#: templates/_settings_tabs/scraping.html:600
+#: templates/_settings_tabs/scraping.html:610
 msgid ""
 "Without search, Claude answers from what it already knows, and leaves "
 "blank anything that needs a published figure, such as copies sold. With "

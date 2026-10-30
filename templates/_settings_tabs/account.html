@@ -1,3 +1,4 @@
+{% from "_macros/browse_button.html" import browse_button with context %}
 {% from "_macros/sticky_subnav.html" import tab_subnav, subnav_link %}
 <div class="settings-tab-panel active" id="tab-account" role="tabpanel" aria-label="{{ _('Account settings') }}">
     {% call tab_subnav('account') %}
@@ -82,9 +83,12 @@
         
         <div class="form-group mb-lg">
             <label class="form-label" for="userTrophyPath">{{ _('Your RPCS3 Trophy Path') }}</label>
-            <input type="text" class="form-input" id="userTrophyPath"
+            <div class="path-input-row">
+                <input type="text" class="form-input" id="userTrophyPath"
                    value="{{ current_user_settings.rpcs3_trophy_path if current_user_settings else '' }}"
                    placeholder="/path/to/your/RPCS3/dev_hdd0/home/00000001/trophy">
+                {{ browse_button('userTrophyPath', 'folder') }}
+            </div>
             <span class="field-tip">{{ _('Path to your RPCS3 trophy folder (e.g., /home/user/RPCS3/dev_hdd0/home/00000001/trophy)') }}</span>
         </div>
         

@@ -1,3 +1,4 @@
+{% from "_macros/browse_button.html" import browse_button with context %}
 {% from "_macros/sticky_subnav.html" import tab_subnav, subnav_link %}
 {% from "_macros/legal_disclaimer.html" import legal_disclaimer %}
 <div class="settings-tab-panel" id="tab-library" role="tabpanel" aria-label="{{ _('Library settings') }}">
@@ -20,9 +21,12 @@
 
         <div class="form-group mb-lg">
             <label class="form-label" for="romPathInput">{{ _('ROM Library Path') }}</label>
-            <input type="text" id="romPathInput" class="form-input"
+            <div class="path-input-row">
+                <input type="text" id="romPathInput" class="form-input"
                    placeholder="{{ _('e.g. /home/user/ROMS') }}"
                    style="font-family: var(--font-mono);">
+                {{ browse_button('romPathInput', 'folder') }}
+            </div>
             <span class="form-hint" id="romPathDefault"></span>
         </div>
         

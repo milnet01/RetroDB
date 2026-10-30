@@ -1643,43 +1643,12 @@ def setup_browse_folders():
     if not os.path.exists(current_path) or not os.path.isdir(current_path):
         current_path = home_dir
 
-    # Parent path (allow navigating up to filesystem root)
-    parent_path = None
-    parent = os.path.dirname(current_path)
-    if parent != current_path:  # Not at filesystem root
-        parent_path = parent
-
-    folders = []
+    from services import path_browser
     try:
-        for item in sorted(os.listdir(current_path)):
-            if item.startswith('.'):
-                continue
-            item_path = os.path.join(current_path, item)
-            if not os.path.isdir(item_path):
-                continue
-            try:
-                contents = os.listdir(item_path)
-                file_count = sum(1 for f in contents if os.path.isfile(os.path.join(item_path, f)))
-                subfolder_count = sum(1 for f in contents if os.path.isdir(os.path.join(item_path, f)))
-            except PermissionError:
-                file_count = 0
-                subfolder_count = 0
-            folders.append({
-                'name': item,
-                'path': item_path,
-                'file_count': file_count,
-                'subfolder_count': subfolder_count
-            })
+        view = path_browser.list_path(current_path, include_hidden=False)
     except PermissionError:
         return api_error('Permission denied', 403)
-
-    return api_success(
-        base_path=home_dir,
-        current_path=current_path,
-        parent_path=parent_path,
-        folders=folders,
-        is_root=parent == current_path,
-    )
+    return api_success(**view)
 
 
 @app.route('/api/setup', methods=['POST'])

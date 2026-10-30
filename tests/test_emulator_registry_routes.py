@@ -81,6 +81,8 @@ class TestEmulatorCRUD:
                 {'id': 2, 'name': 'RetroDB Player', 'is_player': 1, 'is_retroarch': 0,
                  'binary_name': 'retrodb-player-not-installed', 'binary_path_override': None}]
         monkeypatch.setattr('routes.emulators.query', lambda *a, **kw: rows)
+        # This computer's own Get RetroArch install must not count as found.
+        monkeypatch.setattr('services.player_install.program', lambda: None)
         names = [e['name'] for e in admin_client.get('/api/emulators').get_json()['emulators']]
         assert names == ['RetroArch']
 
@@ -206,3 +208,84 @@ def test_admin_lists_mappings_with_resolves_and_bios(monkeypatch, mapping):
 
 def test_viewer_cannot_list_mappings(monkeypatch, mapping):
     assert _role_client(monkeypatch, 'viewer').get('/api/system_emulators').status_code == 403
+
+
+# The dropdown offers the player on a system it can run but no scan or core
+# install has linked: an empty system never gets linked otherwise.
+
+@pytest.fixture
+def unlinked_system(setup_complete, monkeypatch, tmp_path):
+    """A system on the core table with one mapping, not to the player, and
+    the player's program found."""
+    from services import player_cores
+    from services.database import execute, query
+    binary = tmp_path / 'retrodb-player'
+    binary.write_text('#!/bin/sh\n')
+    binary.chmod(0o755)
+    monkeypatch.setattr('services.player_install.program', lambda: binary)
+    monkeypatch.setattr(player_cores, 'is_installed', lambda core: True)
+    table = dict(player_cores._raw(), maplistprobe={'same_as': 'nes'})
+    monkeypatch.setattr(player_cores, '_raw', lambda: table)
+    sys_id = execute("INSERT INTO systems (name, folder) VALUES (?, ?)",
+                     (f'{PROBE} Sys', 'maplistprobe'))
+    emu_id = execute(
+        "INSERT INTO emulators (name, binary_name, args_template, is_retroarch, enabled) "
+        "VALUES (?, 'maplistprobe-not-installed', '\"{rom}\"', 0, 1)", (f'{PROBE} Emu',))
+    map_id = execute("INSERT INTO system_emulators (system_id, emulator_id, is_default) "
+                     "VALUES (?, ?, 1)", (sys_id, emu_id))
+    yield {'system': sys_id, 'mapping': map_id, 'player': player_cores.player_row()['id']}
+    execute("DELETE FROM system_emulators WHERE system_id = ?", (sys_id,))
+    execute("DELETE FROM emulators WHERE id = ?", (emu_id,))
+    execute("DELETE FROM systems WHERE id = ?", (sys_id,))
+    assert not query("SELECT 1 FROM systems WHERE id = ?", (sys_id,))
+
+
+def _system_rows(client, sys_id):
+    rows = client.get('/api/system_emulators').get_json()['mappings']
+    return [m for m in rows if m['system_id'] == sys_id]
+
+
+def test_unlinked_system_is_offered_the_player(monkeypatch, unlinked_system):
+    client = _role_client(monkeypatch, 'admin')
+    rows = _system_rows(client, unlinked_system['system'])
+    assert [m['id'] for m in rows] == [unlinked_system['mapping'], None]
+    offered = rows[1]
+    assert offered['emulator_id'] == unlinked_system['player']
+    assert offered['is_default'] == 0
+    assert offered['resolves'] is True
+    # Offered only: nothing was written.
+    from services.database import query
+    assert len(query("SELECT 1 FROM system_emulators WHERE system_id = ?",
+                     (unlinked_system['system'],))) == 1
+
+
+def test_choosing_the_offered_player_links_it(monkeypatch, unlinked_system):
+    client = _make_client(monkeypatch, 'admin')
+    offered = _system_rows(client, unlinked_system['system'])[1]
+    rv = client.post('/api/system_emulators', headers={'X-CSRF-Token': _CSRF_TOKEN}, json={
+        'system_id': offered['system_id'], 'emulator_id': offered['emulator_id'],
+        'is_default': True, 'retroarch_core': offered['retroarch_core'],
+        'extra_args': offered['extra_args']})
+    assert rv.status_code == 201, rv.data
+    rows = _system_rows(client, unlinked_system['system'])
+    assert len(rows) == 2 and all(m['id'] is not None for m in rows)
+    assert rows[0]['emulator_id'] == unlinked_system['player'] and rows[0]['is_default'] == 1
+
+
+def test_player_is_not_offered_where_it_cannot_run(monkeypatch, mapping):
+    from services import player_cores
+    client = _role_client(monkeypatch, 'admin')
+    sys_id = next(m['system_id'] for m in client.get('/api/system_emulators').get_json()['mappings']
+                  if m['id'] == mapping)
+    assert player_cores.entry('maplistprobe') is None
+    assert [m['id'] for m in _system_rows(client, sys_id)] == [mapping]
+
+
+def test_player_is_not_offered_until_its_program_is_found(monkeypatch, unlinked_system):
+    from services import player_cores
+    row = dict(player_cores.player_row(), binary_name='retrodb-player-not-installed',
+               binary_path_override=None)
+    monkeypatch.setattr('services.player_install.program', lambda: None)
+    monkeypatch.setattr(player_cores, 'player_row', lambda: row)
+    rows = _system_rows(_role_client(monkeypatch, 'admin'), unlinked_system['system'])
+    assert [m['id'] for m in rows] == [unlinked_system['mapping']]

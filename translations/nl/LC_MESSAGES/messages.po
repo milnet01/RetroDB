@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-30 09:15+0200\n"
+"POT-Creation-Date: 2026-10-30 09:43+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: nl\n"
@@ -42,7 +42,7 @@ msgstr "Installatie vereist"
 msgid "Password change required"
 msgstr "Wachtwoord wijzigen vereist"
 
-#: app.py:1713 routes/auth.py:202 routes/auth.py:262 routes/auth.py:447
+#: app.py:1682 routes/auth.py:202 routes/auth.py:262 routes/auth.py:447
 #: routes/auth.py:492 templates/force_change_password.html:49
 #: templates/setup.html:469
 msgid "Password must be at least 12 characters"
@@ -59,7 +59,7 @@ msgstr "Systeem niet gevonden of heeft geen games met prestaties"
 #: routes/achievements.py:171 routes/achievements.py:440
 #: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/cheats.py:32
 #: routes/cheats.py:51 routes/collections.py:276 routes/collections.py:531
-#: routes/emulators.py:271 routes/emulators.py:285 routes/games.py:391
+#: routes/emulators.py:304 routes/emulators.py:318 routes/games.py:391
 #: routes/games.py:875 routes/games.py:1002 routes/games.py:1058
 #: routes/games_ai.py:31 routes/games_media.py:37 routes/games_media.py:85
 #: routes/games_media.py:148 routes/games_media.py:197
@@ -246,8 +246,8 @@ msgstr "Bonusschijf en hoofdgame moeten in hetzelfde systeem staan"
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:203 routes/scraper.py:531
 #: routes/scraper.py:932 routes/settings.py:320 routes/settings.py:344
-#: routes/settings.py:459 routes/settings.py:538 routes/settings.py:552
-#: routes/settings.py:596 routes/settings.py:612 routes/settings.py:648
+#: routes/settings.py:459 routes/settings.py:538 routes/settings.py:567
+#: routes/settings.py:611 routes/settings.py:627 routes/settings.py:663
 #: routes/steam_achievements.py:138 routes/systems.py:292 routes/systems.py:482
 #: routes/trophies.py:508 routes/trophies.py:706 routes/trophies.py:754
 #: routes/trophies.py:1582 routes/trophies.py:1606 routes/trophies.py:1651
@@ -259,7 +259,7 @@ msgstr "Er is een interne fout opgetreden"
 #: routes/bonus_discs.py:278 routes/bonus_discs.py:309
 #: routes/controllers.py:216 routes/controllers.py:280
 #: routes/controllers.py:413 routes/controllers.py:465 routes/settings.py:224
-#: routes/settings.py:494 routes/settings.py:562 routes/systems.py:313
+#: routes/settings.py:494 routes/settings.py:577 routes/systems.py:313
 msgid "Request body must be a JSON object"
 msgstr "Aanvraagtekst moet een JSON-object zijn"
 
@@ -422,41 +422,41 @@ msgstr "Controller niet gevonden"
 msgid "Another controller named \"%(name)s\" already exists"
 msgstr "Er bestaat al een andere controller met de naam \"%(name)s\""
 
-#: routes/emulators.py:105
+#: routes/emulators.py:106
 msgid "name, binary_name, args_template are required"
 msgstr "name, binary_name, args_template zijn vereist"
 
-#: routes/emulators.py:152
+#: routes/emulators.py:153
 msgid "nothing to update"
 msgstr "niets om bij te werken"
 
-#: routes/emulators.py:210
+#: routes/emulators.py:243
 msgid "system_id and emulator_id required"
 msgstr "system_id en emulator_id vereist"
 
-#: routes/emulators.py:248
+#: routes/emulators.py:281
 msgid "Send at least one setting."
 msgstr "Stuur ten minste één instelling."
 
-#: routes/emulators.py:253
+#: routes/emulators.py:286
 msgid "RetroDB does not manage that setting for this emulator."
 msgstr "RetroDB beheert die instelling niet voor deze emulator."
 
-#: routes/emulators.py:255
+#: routes/emulators.py:288
 msgid "Fullscreen is set per system, in Settings > Emulators."
 msgstr "Volledig scherm wordt per systeem ingesteld, in Instellingen > Emulators."
 
-#: routes/emulators.py:257
+#: routes/emulators.py:290
 msgid "That value is not one of the choices."
 msgstr "Die waarde is geen van de keuzes."
 
-#: routes/emulators.py:287 services/standalone_settings.py:368
+#: routes/emulators.py:320 services/standalone_settings.py:368
 msgid "RetroDB manages per-game settings for DuckStation, PCSX2 and RPCS3 only."
 msgstr ""
 "RetroDB beheert instellingen per game alleen voor DuckStation, PCSX2 en "
 "RPCS3."
 
-#: routes/emulators.py:300 routes/emulators.py:311
+#: routes/emulators.py:333 routes/emulators.py:344
 msgid "Emulator not found"
 msgstr "Emulator niet gevonden"
 
@@ -811,7 +811,7 @@ msgid "Official name"
 msgstr "Officiële naam"
 
 #: routes/official_names.py:118 templates/_modals/edit_modal.html:348
-#: templates/base.html:1359
+#: templates/base.html:1392
 msgid "Game Description"
 msgstr "Gamebeschrijving"
 
@@ -819,8 +819,8 @@ msgstr "Gamebeschrijving"
 #: templates/_modals/edit_modal.html:115 templates/_settings_tabs/data.html:83
 #: templates/_settings_tabs/data.html:156 templates/achievement_game.html:241
 #: templates/all_games.html:72 templates/analytics.html:481
-#: templates/analytics.html:2428 templates/base.html:940
-#: templates/base.html:1153 templates/compare_games.html:73
+#: templates/analytics.html:2428 templates/base.html:973
+#: templates/base.html:1186 templates/compare_games.html:73
 #: templates/dashboard.html:390 templates/game_detail.html:318
 #: templates/local_trophy_detail.html:99 templates/psn_trophy_detail.html:94
 #: templates/psn_trophy_detail.html:258
@@ -832,8 +832,8 @@ msgstr "Genre"
 #: routes/official_names.py:120 templates/_bulk_edit_modal.html:67
 #: templates/_modals/edit_modal.html:99 templates/achievement_game.html:87
 #: templates/all_games.html:81 templates/analytics.html:482
-#: templates/analytics.html:2428 templates/base.html:938
-#: templates/base.html:1139 templates/compare_games.html:70
+#: templates/analytics.html:2428 templates/base.html:971
+#: templates/base.html:1172 templates/compare_games.html:70
 #: templates/game_detail.html:306 templates/local_trophy_detail.html:93
 #: templates/psn_trophy_detail.html:88 templates/steam_achievement_game.html:84
 #: templates/system_games.html:72 templates/xbox_achievement_game.html:73
@@ -843,8 +843,8 @@ msgstr "Ontwikkelaar"
 #: routes/official_names.py:121 templates/_bulk_edit_modal.html:53
 #: templates/_modals/edit_modal.html:94 templates/achievement_game.html:81
 #: templates/all_games.html:78 templates/analytics.html:483
-#: templates/analytics.html:2428 templates/base.html:939
-#: templates/base.html:1135 templates/compare_games.html:71
+#: templates/analytics.html:2428 templates/base.html:972
+#: templates/base.html:1168 templates/compare_games.html:71
 #: templates/game_detail.html:294 templates/game_detail.html:776
 #: templates/local_trophy_detail.html:87 templates/psn_trophy_detail.html:82
 #: templates/steam_achievement_game.html:78 templates/system_games.html:69
@@ -854,78 +854,78 @@ msgstr "Uitgever"
 
 #: routes/official_names.py:122 templates/_modals/edit_modal.html:72
 #: templates/_modals/filter_modal.html:14 templates/analytics.html:484
-#: templates/analytics.html:2428 templates/base.html:1118
+#: templates/analytics.html:2428 templates/base.html:1151
 #: templates/compare_games.html:72
 msgid "Release Date"
 msgstr "Releasedatum"
 
-#: routes/official_names.py:123 templates/base.html:942
+#: routes/official_names.py:123 templates/base.html:975
 #: templates/game_detail.html:336
 msgid "Release dates"
 msgstr "Releasedata"
 
 #: routes/official_names.py:124 templates/_modals/edit_modal.html:104
-#: templates/base.html:1143
+#: templates/base.html:1176
 msgid "Copies sold"
 msgstr "Verkochte exemplaren"
 
 #: routes/official_names.py:125 templates/_bulk_edit_modal.html:112
 #: templates/_modals/edit_modal.html:137 templates/all_games.html:84
-#: templates/base.html:1169 templates/compare_games.html:76
+#: templates/base.html:1202 templates/compare_games.html:76
 #: templates/game_detail.html:233 templates/system_games.html:75
 msgid "Players"
 msgstr "Spelers"
 
 #: routes/official_names.py:126 templates/_modals/edit_modal.html:126
-#: templates/_settings_tabs/data.html:123 templates/base.html:1161
+#: templates/_settings_tabs/data.html:123 templates/base.html:1194
 msgid "Play Modes"
 msgstr "Spelmodi"
 
 #: routes/official_names.py:127 templates/_bulk_edit_modal.html:106
 #: templates/_modals/edit_modal.html:85 templates/analytics.html:492
-#: templates/analytics.html:2428 templates/base.html:1126
+#: templates/analytics.html:2428 templates/base.html:1159
 #: templates/compare_games.html:75 templates/game_detail.html:773
 #: templates/reports.html:444
 msgid "Region"
 msgstr "Regio"
 
 #: routes/official_names.py:128 templates/_modals/edit_modal.html:44
-#: templates/base.html:1093
+#: templates/base.html:1126
 msgid "Franchise / Series"
 msgstr "Franchise / reeks"
 
 #: routes/official_names.py:129 templates/_modals/edit_modal.html:56
-#: templates/base.html:1104 templates/compare_games.html:96
+#: templates/base.html:1137 templates/compare_games.html:96
 #: templates/game_detail.html:535
 msgid "Similar Games"
 msgstr "Vergelijkbare games"
 
 #: routes/official_names.py:130 templates/_modals/edit_modal.html:222
-#: templates/base.html:1233
+#: templates/base.html:1266
 msgid "Platform Availability"
 msgstr "Platformbeschikbaarheid"
 
 #: routes/official_names.py:131 templates/_modals/edit_modal.html:195
-#: templates/base.html:1214 templates/compare_games.html:91
+#: templates/base.html:1247 templates/compare_games.html:91
 msgid "Controller Support"
 msgstr "Controllerondersteuning"
 
 #: routes/official_names.py:132 templates/_modals/edit_modal.html:211
-#: templates/_settings_tabs/data.html:133 templates/base.html:1225
+#: templates/_settings_tabs/data.html:133 templates/base.html:1258
 #: templates/compare_games.html:92
 msgid "Save Type"
 msgstr "Save-type"
 
 #: routes/official_names.py:133 templates/_bulk_edit_modal.html:118
 #: templates/_modals/edit_modal.html:154 templates/_settings_tabs/data.html:93
-#: templates/base.html:1173
+#: templates/base.html:1206
 msgid "Game Structure"
 msgstr "Gamestructuur"
 
 #: routes/official_names.py:134 templates/_bulk_edit_modal.html:135
 #: templates/_modals/edit_modal.html:167 templates/_settings_tabs/data.html:103
 #: templates/all_games.html:87 templates/analytics.html:199
-#: templates/base.html:1181 templates/compare_games.html:78
+#: templates/base.html:1214 templates/compare_games.html:78
 #: templates/system_games.html:78
 msgid "Perspective"
 msgstr "Perspectief"
@@ -933,7 +933,7 @@ msgstr "Perspectief"
 #: routes/official_names.py:135 templates/_bulk_edit_modal.html:151
 #: templates/_modals/edit_modal.html:178 templates/_settings_tabs/data.html:113
 #: templates/all_games.html:90 templates/analytics.html:207
-#: templates/base.html:1189 templates/compare_games.html:79
+#: templates/base.html:1222 templates/compare_games.html:79
 #: templates/system_games.html:81
 msgid "Dimension"
 msgstr "Dimensie"
@@ -943,7 +943,7 @@ msgid "Campaign"
 msgstr "Campagne"
 
 #: routes/official_names.py:137 templates/_modals/edit_modal.html:61
-#: templates/base.html:1108
+#: templates/base.html:1141
 msgid "Edition"
 msgstr "Editie"
 
@@ -1227,35 +1227,39 @@ msgstr "Back-up heeft de integriteitscontrole niet doorstaan; herstel afgebroken
 msgid "Invalid %(field)s: %(result)s"
 msgstr "Ongeldig(e) %(field)s: %(result)s"
 
-#: routes/settings.py:534 routes/settings.py:593 routes/settings.py:645
+#: routes/settings.py:534 routes/settings.py:608 routes/settings.py:660
 #: routes/tools.py:290 services/js_i18n_strings.py:731
 msgid "Failed to save settings"
 msgstr "Opslaan van instellingen mislukt"
 
-#: routes/settings.py:572 routes/tools.py:282
+#: routes/settings.py:553 routes/tools.py:362
+msgid "Permission denied"
+msgstr "Toegang geweigerd"
+
+#: routes/settings.py:587 routes/tools.py:282
 #, python-format
 msgid "Unknown setting key: %(key)s"
 msgstr "Onbekende instellingssleutel: %(key)s"
 
-#: routes/settings.py:578 routes/tools.py:285
+#: routes/settings.py:593 routes/tools.py:285
 #, python-format
 msgid "Invalid value for '%(key)s': %(reason)s"
 msgstr "Ongeldige waarde voor '%(key)s': %(reason)s"
 
-#: routes/settings.py:610
+#: routes/settings.py:625
 msgid "Failed to reset settings"
 msgstr "Resetten van instellingen mislukt"
 
-#: routes/settings.py:631
+#: routes/settings.py:646
 #, python-format
 msgid "invalid logging settings: %(reason)s"
 msgstr "ongeldige logginginstellingen: %(reason)s"
 
-#: routes/settings.py:661 routes/settings.py:689
+#: routes/settings.py:676 routes/settings.py:704
 msgid "Invalid field. Must be \"genre\" or \"modes\""
 msgstr "Ongeldig veld. Moet \"genre\" of \"modes\" zijn"
 
-#: routes/settings.py:692
+#: routes/settings.py:707
 msgid "No mappings provided"
 msgstr "Geen mappings opgegeven"
 
@@ -1287,10 +1291,6 @@ msgstr "Instellingen-payload moet een object zijn"
 #, python-format
 msgid "Path does not exist: %(path)s"
 msgstr "Pad bestaat niet: %(path)s"
-
-#: routes/tools.py:362
-msgid "Permission denied"
-msgstr "Toegang geweigerd"
 
 #: routes/tools.py:390
 msgid "Task not found"
@@ -1890,7 +1890,7 @@ msgid "... and {n} more"
 msgstr "... en nog {n}"
 
 #: services/js_i18n_strings.py:566 templates/_bulk_edit_modal.html:30
-#: templates/base.html:1015
+#: templates/base.html:1048
 msgid "100%"
 msgstr "100%"
 
@@ -1910,7 +1910,7 @@ msgstr ""
 "Een cheat die aan staat, pauzeert de hardcore-modus van RetroAchievements"
 " voor die sessie."
 
-#: services/js_i18n_strings.py:570 templates/_settings_tabs/account.html:273
+#: services/js_i18n_strings.py:570 templates/_settings_tabs/account.html:277
 #: templates/archive_scanner.html:726 templates/multi_disc_organizer.html:217
 #: templates/reports.html:369 templates/reports.html:450
 msgid "Actions"
@@ -2107,19 +2107,19 @@ msgstr ""
 #: services/js_i18n_strings.py:610 templates/_bulk_edit_modal.html:191
 #: templates/_bulk_scrape_modal.html:49 templates/_modals/edit_modal.html:12
 #: templates/_modals/rename_modal.html:19
-#: templates/_settings_tabs/account.html:72
-#: templates/_settings_tabs/account.html:368
+#: templates/_settings_tabs/account.html:73
+#: templates/_settings_tabs/account.html:372
 #: templates/_settings_tabs/customization.html:264
 #: templates/achievement_game.html:178 templates/archive_scanner.html:661
 #: templates/archive_scanner.html:798 templates/base.html:338
-#: templates/base.html:356 templates/base.html:1056
+#: templates/base.html:356 templates/base.html:1089
 #: templates/chd_converter.html:170 templates/chd_verify.html:126
 #: templates/game_detail.html:582 templates/login.html:254
 #: templates/museum.html:29 templates/museum_system.html:182
 #: templates/psn_trophies.html:297 templates/psn_trophy_detail.html:182
 #: templates/psn_trophy_detail.html:325 templates/reports.html:521
 #: templates/screenshot_dedup.html:263 templates/settings.html:44
-#: templates/settings_emulators.html:262
+#: templates/settings_emulators.html:274
 #: templates/steam_achievement_game.html:138 templates/wishlist.html:114
 #: templates/xbox_achievement_game.html:131
 msgid "Cancel"
@@ -2218,11 +2218,11 @@ msgstr "Klik nogmaals om te verwijderen"
 #: templates/_bulk_scrape_modal.html:8
 #: templates/_modals/boxart_zoom_modal.html:5
 #: templates/_modals/manual_reader_modal.html:11
-#: templates/_settings_tabs/account.html:44
+#: templates/_settings_tabs/account.html:45
 #: templates/_settings_tabs/customization.html:224
 #: templates/archive_scanner.html:749 templates/archive_scanner.html:757
 #: templates/base.html:249 templates/base.html:332 templates/base.html:349
-#: templates/base.html:695 templates/base.html:972 templates/base.html:1370
+#: templates/base.html:728 templates/base.html:1005 templates/base.html:1403
 #: templates/dashboard.html:37 templates/reports.html:472
 #: templates/systems.html:121 templates/wishlist.html:56
 msgid "Close"
@@ -2246,13 +2246,13 @@ msgid "Complete!"
 msgstr "Voltooid!"
 
 #: services/js_i18n_strings.py:636 templates/_bulk_edit_modal.html:29
-#: templates/analytics.html:1664 templates/base.html:1014
+#: templates/analytics.html:1664 templates/base.html:1047
 #: templates/dashboard.html:506 templates/game_detail.html:275
 msgid "Completed"
 msgstr "Voltooid"
 
 #: services/js_i18n_strings.py:637 templates/_bulk_edit_modal.html:23
-#: templates/analytics.html:137 templates/base.html:1009
+#: templates/analytics.html:137 templates/base.html:1042
 msgid "Completion Status"
 msgstr "Voltooiingsstatus"
 
@@ -2266,7 +2266,7 @@ msgstr "Voltooiingsstatus bijgewerkt"
 
 #: services/js_i18n_strings.py:640 templates/achievement_game.html:172
 #: templates/achievement_game.html:197 templates/achievement_game.html:211
-#: templates/base.html:1051 templates/game_detail.html:576
+#: templates/base.html:1084 templates/game_detail.html:576
 #: templates/game_detail.html:601 templates/game_detail.html:615
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:176
 #: templates/psn_trophy_detail.html:209
@@ -2531,8 +2531,8 @@ msgstr "DuckStation-cheats"
 msgid "DuckStation ignores cheats in hardcore mode."
 msgstr "DuckStation negeert cheats in de hardcore-modus."
 
-#: services/js_i18n_strings.py:699 templates/_settings_tabs/account.html:318
-#: templates/base.html:970 templates/game_detail.html:119
+#: services/js_i18n_strings.py:699 templates/_settings_tabs/account.html:322
+#: templates/base.html:1003 templates/game_detail.html:119
 #: templates/wishlist.html:641
 msgid "Edit"
 msgstr "Bewerken"
@@ -2612,7 +2612,7 @@ msgid "Europe"
 msgstr "Europa"
 
 #: services/js_i18n_strings.py:718 templates/_modals/edit_modal.html:228
-#: templates/base.html:1246
+#: templates/base.html:1279
 msgid "Exclusive"
 msgstr "Exclusief"
 
@@ -2881,7 +2881,7 @@ msgstr "Bezig met importeren…"
 #: services/js_i18n_strings.py:779 templates/_bulk_edit_modal.html:27
 #: templates/achievements_system.html:151
 #: templates/achievements_system.html:170 templates/analytics.html:1664
-#: templates/base.html:1012 templates/dashboard.html:362
+#: templates/base.html:1045 templates/dashboard.html:362
 #: templates/dashboard.html:502 templates/game_detail.html:273
 #: templates/steam_achievements.html:77 templates/xbox_achievements.html:77
 msgid "In Progress"
@@ -2982,8 +2982,8 @@ msgstr "Logbestand laden..."
 msgid "Loading the manual…"
 msgstr "Handleiding laden…"
 
-#: services/js_i18n_strings.py:802 templates/settings_emulators.html:192
-#: templates/settings_emulators.html:210
+#: services/js_i18n_strings.py:802 templates/settings_emulators.html:201
+#: templates/settings_emulators.html:219
 msgid "Loading…"
 msgstr "Laden…"
 
@@ -2997,7 +2997,7 @@ msgstr "Zoeken naar versies…"
 
 #: services/js_i18n_strings.py:805 templates/achievement_game.html:168
 #: templates/achievement_game.html:197 templates/achievement_game.html:207
-#: templates/base.html:1047 templates/game_detail.html:572
+#: templates/base.html:1080 templates/game_detail.html:572
 #: templates/game_detail.html:601 templates/game_detail.html:611
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:172
 #: templates/psn_trophy_detail.html:205
@@ -3010,7 +3010,7 @@ msgstr "Hoofdgame + extra's"
 
 #: services/js_i18n_strings.py:806 templates/achievement_game.html:164
 #: templates/achievement_game.html:197 templates/achievement_game.html:203
-#: templates/base.html:1043 templates/game_detail.html:568
+#: templates/base.html:1076 templates/game_detail.html:568
 #: templates/game_detail.html:601 templates/game_detail.html:607
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:168
 #: templates/psn_trophy_detail.html:201
@@ -3243,7 +3243,7 @@ msgstr "Niet gedownload"
 msgid "Not versions"
 msgstr "Geen versies"
 
-#: services/js_i18n_strings.py:855 templates/base.html:1405
+#: services/js_i18n_strings.py:855 templates/base.html:1438
 msgid "Now playing"
 msgstr "Nu aan het spelen"
 
@@ -3314,7 +3314,7 @@ msgid "Play"
 msgstr "Spelen"
 
 #: services/js_i18n_strings.py:872 templates/_bulk_edit_modal.html:28
-#: templates/analytics.html:1664 templates/base.html:1013
+#: templates/analytics.html:1664 templates/base.html:1046
 #: templates/dashboard.html:504 templates/game_detail.html:274
 msgid "Played"
 msgstr "Gespeeld"
@@ -3775,7 +3775,7 @@ msgid "Shutting down server..."
 msgstr "Server wordt afgesloten..."
 
 #: services/js_i18n_strings.py:974 templates/_modals/edit_modal.html:50
-#: templates/base.html:1099
+#: templates/base.html:1132
 msgid "Standalone"
 msgstr "Standalone"
 
@@ -4071,7 +4071,7 @@ msgid "Unhandled rejection"
 msgstr "Onafgehandelde afwijzing"
 
 #: services/js_i18n_strings.py:1030 templates/analytics.html:583
-#: templates/base.html:1203 templates/local_trophy_detail.html:220
+#: templates/base.html:1236 templates/local_trophy_detail.html:220
 #: templates/local_trophy_detail.html:224
 msgid "Unknown"
 msgstr "Onbekend"
@@ -4471,7 +4471,7 @@ msgstr ""
 "worden bijgewerkt."
 
 #: templates/_bulk_edit_modal.html:26 templates/achievements_system.html:171
-#: templates/analytics.html:1664 templates/base.html:1011
+#: templates/analytics.html:1664 templates/base.html:1044
 #: templates/dashboard.html:500 templates/game_detail.html:272
 #: templates/steam_achievements.html:78 templates/xbox_achievements.html:78
 msgid "Not Started"
@@ -4495,23 +4495,23 @@ msgid "ESRB Rating"
 msgstr "ESRB-classificatie"
 
 #: templates/_bulk_edit_modal.html:84 templates/_modals/edit_modal.html:245
-#: templates/base.html:1256
+#: templates/base.html:1289
 msgid "E - Everyone"
 msgstr "E - Iedereen"
 
 #: templates/_bulk_edit_modal.html:85 templates/_modals/edit_modal.html:246
-#: templates/base.html:1257
+#: templates/base.html:1290
 msgid "E10+ - Everyone 10+"
 msgstr "E10+ - Iedereen 10+"
 
 #: templates/_bulk_edit_modal.html:86 templates/_modals/edit_modal.html:247
-#: templates/base.html:1258
+#: templates/base.html:1291
 msgid "T - Teen"
 msgstr "T - Tieners"
 
 #: templates/_bulk_edit_modal.html:87 templates/_modals/edit_modal.html:248
-#: templates/_modals/edit_modal.html:292 templates/base.html:1259
-#: templates/base.html:1303
+#: templates/_modals/edit_modal.html:292 templates/base.html:1292
+#: templates/base.html:1336
 msgid "M - Mature"
 msgstr "M - Volwassenen"
 
@@ -4539,7 +4539,7 @@ msgstr "PEGI 16"
 msgid "PEGI 18"
 msgstr "PEGI 18"
 
-#: templates/_bulk_edit_modal.html:177 templates/base.html:941
+#: templates/_bulk_edit_modal.html:177 templates/base.html:974
 #: templates/compare_games.html:74 templates/local_trophy_detail.html:105
 #: templates/psn_trophy_detail.html:100
 msgid "Franchise"
@@ -4629,7 +4629,7 @@ msgstr "Controleer je RetroAchievements-inloggegevens bij Instellingen."
 msgid "How Long to Beat"
 msgstr "How Long to Beat"
 
-#: templates/achievement_game.html:153 templates/base.html:1024
+#: templates/achievement_game.html:153 templates/base.html:1057
 #: templates/game_detail.html:557 templates/psn_trophy_detail.html:157
 #: templates/psn_trophy_detail.html:317
 #: templates/steam_achievement_game.html:126
@@ -4637,7 +4637,7 @@ msgstr "How Long to Beat"
 msgid "Search game title..."
 msgstr "Gametitel zoeken..."
 
-#: templates/achievement_game.html:156 templates/base.html:1027
+#: templates/achievement_game.html:156 templates/base.html:1060
 #: templates/game_detail.html:560 templates/local_trophy_detail.html:193
 #: templates/psn_trophy_detail.html:160
 #: templates/steam_achievement_game.html:127
@@ -4645,18 +4645,18 @@ msgstr "Gametitel zoeken..."
 msgid "Lookup HLTB"
 msgstr "HLTB opzoeken"
 
-#: templates/_settings_tabs/account.html:73 templates/achievement_game.html:177
-#: templates/achievement_game.html:253 templates/base.html:1055
+#: templates/_settings_tabs/account.html:74 templates/achievement_game.html:177
+#: templates/achievement_game.html:253 templates/base.html:1088
 #: templates/game_detail.html:581 templates/local_trophy_detail.html:223
 #: templates/psn_trophy_detail.html:181 templates/psn_trophy_detail.html:270
-#: templates/settings_emulators.html:53 templates/settings_emulators.html:263
+#: templates/settings_emulators.html:60 templates/settings_emulators.html:275
 #: templates/steam_achievement_game.html:137
 #: templates/xbox_achievement_game.html:130
 msgid "Save"
 msgstr "Opslaan"
 
 #: templates/achievement_game.html:217 templates/all_games.html:108
-#: templates/base.html:1068 templates/duplicate_finder.html:301
+#: templates/base.html:1101 templates/duplicate_finder.html:301
 #: templates/game_detail.html:115 templates/game_detail.html:621
 #: templates/local_trophy_detail.html:185 templates/psn_trophy_detail.html:214
 #: templates/reports.html:277 templates/screenshot_dedup.html:325
@@ -4676,7 +4676,7 @@ msgstr "Meer details"
 msgid "First Achievement"
 msgstr "Eerste prestatie"
 
-#: templates/_settings_tabs/account.html:313
+#: templates/_settings_tabs/account.html:317
 #: templates/achievement_game.html:233 templates/achievement_game.html:237
 #: templates/local_trophy_detail.html:211
 #: templates/local_trophy_detail.html:215 templates/psn_trophies.html:76
@@ -4967,8 +4967,8 @@ msgstr "Actieve filters"
 msgid "Sort by"
 msgstr "Sorteren op"
 
-#: templates/all_games.html:154 templates/settings_emulators.html:182
-#: templates/settings_emulators.html:227 templates/system_games.html:145
+#: templates/all_games.html:154 templates/settings_emulators.html:191
+#: templates/settings_emulators.html:236 templates/system_games.html:145
 msgid "Name"
 msgstr "Naam"
 
@@ -5004,7 +5004,7 @@ msgstr "Je bibliotheek is leeg"
 msgid "Scan your ROM folder to add your games."
 msgstr "Scan je ROM-map om je games toe te voegen."
 
-#: templates/_settings_tabs/library.html:42 templates/all_games.html:176
+#: templates/_settings_tabs/library.html:46 templates/all_games.html:176
 #: templates/dashboard.html:83 templates/dashboard.html:99
 #: templates/systems.html:111
 msgid "Scan Library"
@@ -5084,7 +5084,7 @@ msgid "Developers"
 msgstr "Ontwikkelaars"
 
 #: templates/_modals/edit_modal.html:112 templates/analytics.html:13
-#: templates/base.html:999 templates/base.html:1150
+#: templates/base.html:1032 templates/base.html:1183
 msgid "Gameplay"
 msgstr "Gameplay"
 
@@ -5348,8 +5348,8 @@ msgstr "Veldvolledigheid"
 #: templates/_settings_tabs/customization.html:193
 #: templates/_settings_tabs/customization.html:259 templates/analytics.html:479
 #: templates/analytics.html:2428 templates/base.html:266
-#: templates/base.html:1357 templates/compare_games.html:97
-#: templates/settings_emulators.html:246
+#: templates/base.html:1390 templates/compare_games.html:97
+#: templates/settings_emulators.html:258
 msgid "Description"
 msgstr "Beschrijving"
 
@@ -5454,7 +5454,7 @@ msgstr "Aantal games"
 msgid "Critic"
 msgstr "Recensent"
 
-#: templates/_settings_tabs/account.html:268 templates/analytics.html:1965
+#: templates/_settings_tabs/account.html:272 templates/analytics.html:1965
 msgid "User"
 msgstr "Gebruiker"
 
@@ -5500,9 +5500,9 @@ msgstr "ROM's-mappad"
 msgid "subfolder (optional)"
 msgstr "submap (optioneel)"
 
-#: templates/archive_scanner.html:581 templates/archive_scanner.html:592
-#: templates/chd_converter.html:91 templates/chd_verify.html:107
-#: templates/duplicate_finder.html:194
+#: templates/_macros/browse_button.html:15 templates/archive_scanner.html:581
+#: templates/archive_scanner.html:592 templates/chd_converter.html:91
+#: templates/chd_verify.html:107 templates/duplicate_finder.html:194
 msgid "Browse"
 msgstr "Bladeren"
 
@@ -5617,7 +5617,7 @@ msgid "Date & Time"
 msgstr "Datum & tijd"
 
 #: templates/_settings_tabs/customization.html:300
-#: templates/archive_scanner.html:723 templates/settings_emulators.html:186
+#: templates/archive_scanner.html:723 templates/settings_emulators.html:195
 msgid "Type"
 msgstr "Type"
 
@@ -5786,7 +5786,7 @@ msgstr "Configuratie"
 msgid "Log Viewer"
 msgstr "Logviewer"
 
-#: templates/base.html:198 templates/base.html:1001
+#: templates/base.html:198 templates/base.html:1034
 msgid "Info"
 msgstr "Info"
 
@@ -5858,7 +5858,7 @@ msgstr "Terug naar boven"
 msgid "Alert"
 msgstr "Melding"
 
-#: templates/base.html:348
+#: templates/base.html:348 templates/base.html:564
 msgid "Browse Folders"
 msgstr "Mappen doorbladeren"
 
@@ -5866,265 +5866,269 @@ msgstr "Mappen doorbladeren"
 msgid "Select This Folder"
 msgstr "Deze map selecteren"
 
-#: templates/base.html:688
+#: templates/base.html:563
+msgid "Choose a File"
+msgstr "Kies een bestand"
+
+#: templates/base.html:721
 msgid "Queue Manager"
 msgstr "Wachtrijbeheer"
 
-#: templates/base.html:689
+#: templates/base.html:722
 msgid "Close queue manager"
 msgstr "Wachtrijbeheer sluiten"
 
-#: templates/base.html:905
+#: templates/base.html:938
 msgid "Game details"
 msgstr "Gamedetails"
 
-#: templates/base.html:906
+#: templates/base.html:939
 msgid "Close game details"
 msgstr "Gamedetails sluiten"
 
-#: templates/base.html:911
+#: templates/base.html:944
 msgid "Loading game details..."
 msgstr "Gamedetails laden..."
 
-#: templates/base.html:954 templates/game_detail.html:507
+#: templates/base.html:987 templates/game_detail.html:507
 msgid "Your browser does not support the video tag."
 msgstr "Je browser ondersteunt de video-tag niet."
 
-#: templates/base.html:961
+#: templates/base.html:994
 msgid "View Full Page"
 msgstr "Volledige pagina bekijken"
 
-#: templates/base.html:963 templates/game_detail.html:123
+#: templates/base.html:996 templates/game_detail.html:123
 msgid "Fill missing metadata with AI"
 msgstr "Ontbrekende metadata aanvullen met AI"
 
-#: templates/base.html:964 templates/game_detail.html:125
+#: templates/base.html:997 templates/game_detail.html:125
 msgid "AI Fill"
 msgstr "AI-aanvulling"
 
-#: templates/base.html:967 templates/game_detail.html:130
+#: templates/base.html:1000 templates/game_detail.html:130
 msgid "Scrape"
 msgstr "Scrapen"
 
-#: templates/_modals/screenshot_modal.html:2 templates/base.html:979
+#: templates/_modals/screenshot_modal.html:2 templates/base.html:1012
 msgid "Screenshot viewer"
 msgstr "Screenshotviewer"
 
-#: templates/_modals/screenshot_modal.html:3 templates/base.html:980
+#: templates/_modals/screenshot_modal.html:3 templates/base.html:1013
 msgid "Close screenshot viewer"
 msgstr "Screenshotviewer sluiten"
 
-#: templates/_modals/screenshot_modal.html:4 templates/base.html:981
+#: templates/_modals/screenshot_modal.html:4 templates/base.html:1014
 msgid "Previous screenshot"
 msgstr "Vorige screenshot"
 
-#: templates/base.html:982
+#: templates/base.html:1015
 msgid "Screenshot"
 msgstr "Screenshot"
 
-#: templates/_modals/screenshot_modal.html:6 templates/base.html:983
+#: templates/_modals/screenshot_modal.html:6 templates/base.html:1016
 msgid "Next screenshot"
 msgstr "Volgende screenshot"
 
-#: templates/base.html:984
+#: templates/base.html:1017
 msgid "Use &#8592; &#8594; arrow keys to navigate &bull; ESC to close"
 msgstr ""
 "Gebruik de pijltjestoetsen &#8592; &#8594; om te navigeren &bull; ESC om "
 "te sluiten"
 
-#: templates/_modals/edit_modal.html:7 templates/base.html:991
+#: templates/_modals/edit_modal.html:7 templates/base.html:1024
 msgid "Close edit modal"
 msgstr "Bewerkvenster sluiten"
 
-#: templates/base.html:994
+#: templates/base.html:1027
 msgid "Edit Game"
 msgstr "Game bewerken"
 
-#: templates/base.html:995
+#: templates/base.html:1028
 msgid "Edit game sections"
 msgstr "Gamesecties bewerken"
 
-#: templates/base.html:996
+#: templates/base.html:1029
 msgid "Quick"
 msgstr "Snel"
 
-#: templates/_modals/edit_modal.html:25 templates/base.html:997
-#: templates/base.html:1075
+#: templates/_modals/edit_modal.html:25 templates/base.html:1030
+#: templates/base.html:1108
 msgid "Identity"
 msgstr "Identiteit"
 
-#: templates/base.html:998
+#: templates/base.html:1031
 msgid "Release"
 msgstr "Release"
 
-#: templates/_modals/edit_modal.html:192 templates/base.html:1000
-#: templates/base.html:1211
+#: templates/_modals/edit_modal.html:192 templates/base.html:1033
+#: templates/base.html:1244
 msgid "Technical"
 msgstr "Technisch"
 
-#: templates/base.html:1007
+#: templates/base.html:1040
 msgid "Quick edit"
 msgstr "Snel bewerken"
 
-#: templates/base.html:1020
+#: templates/base.html:1053
 msgid "HowLongToBeat"
 msgstr "HowLongToBeat"
 
-#: templates/base.html:1034
+#: templates/base.html:1067
 msgid "Searching HowLongToBeat..."
 msgstr "HowLongToBeat doorzoeken..."
 
-#: templates/base.html:1065 templates/local_trophy_detail.html:189
+#: templates/base.html:1098 templates/local_trophy_detail.html:189
 msgid "No playtime data"
 msgstr "Geen speeltijdgegevens"
 
 #: templates/_modals/edit_modal.html:28 templates/_modals/filter_modal.html:13
-#: templates/base.html:1078 templates/dashboard.html:329
+#: templates/base.html:1111 templates/dashboard.html:329
 #: templates/dashboard.html:388 templates/dashboard.html:465
 #: templates/dashboard.html:531 templates/game_detail.html:774
 msgid "Title"
 msgstr "Titel"
 
-#: templates/_modals/edit_modal.html:32 templates/base.html:1082
+#: templates/_modals/edit_modal.html:32 templates/base.html:1115
 msgid "Keep this title when scraping"
 msgstr "Deze titel behouden bij scrapen"
 
-#: templates/_modals/edit_modal.html:36 templates/base.html:1086
+#: templates/_modals/edit_modal.html:36 templates/base.html:1119
 msgid "Sort Title"
 msgstr "Sorteertitel"
 
-#: templates/_modals/edit_modal.html:38 templates/base.html:1088
+#: templates/_modals/edit_modal.html:38 templates/base.html:1121
 msgid "Auto-generated from title"
 msgstr "Automatisch gegenereerd op basis van titel"
 
-#: templates/_modals/edit_modal.html:47 templates/base.html:1096
+#: templates/_modals/edit_modal.html:47 templates/base.html:1129
 msgid "Toggle franchise status"
 msgstr "Franchisestatus wisselen"
 
-#: templates/_modals/edit_modal.html:52 templates/base.html:1101
+#: templates/_modals/edit_modal.html:52 templates/base.html:1134
 msgid "e.g., Final Fantasy, Crash Bandicoot"
 msgstr "bijv. Final Fantasy, Crash Bandicoot"
 
-#: templates/_modals/edit_modal.html:57 templates/base.html:1105
+#: templates/_modals/edit_modal.html:57 templates/base.html:1138
 msgid "Game 1, Game 2, Game 3"
 msgstr "Game 1, Game 2, Game 3"
 
-#: templates/base.html:1109
+#: templates/base.html:1142
 msgid "Standard, Collector&#39;s, GOTY"
 msgstr "Standaard, Collector&#39;s, GOTY"
 
-#: templates/base.html:1115
+#: templates/base.html:1148
 msgid "Release info"
 msgstr "Release-info"
 
-#: templates/base.html:1120
+#: templates/base.html:1153
 msgid "YYYY-MM-DD"
 msgstr "JJJJ-MM-DD"
 
-#: templates/_modals/edit_modal.html:80 templates/base.html:1122
+#: templates/_modals/edit_modal.html:80 templates/base.html:1155
 msgid "Pick date"
 msgstr "Datum kiezen"
 
-#: templates/_modals/edit_modal.html:87 templates/base.html:1128
+#: templates/_modals/edit_modal.html:87 templates/base.html:1161
 msgid "— Select —"
 msgstr "— Selecteren —"
 
-#: templates/_modals/edit_modal.html:95 templates/base.html:1136
+#: templates/_modals/edit_modal.html:95 templates/base.html:1169
 msgid "Sony, Nintendo"
 msgstr "Sony, Nintendo"
 
-#: templates/base.html:1140
+#: templates/base.html:1173
 msgid "Naughty Dog, Insomniac"
 msgstr "Naughty Dog, Insomniac"
 
-#: templates/_modals/edit_modal.html:106 templates/base.html:1144
+#: templates/_modals/edit_modal.html:106 templates/base.html:1177
 msgid "Lifetime copies sold on this system, from published sales figures"
 msgstr ""
 "Totaal verkochte exemplaren op dit systeem, volgens gepubliceerde "
 "verkoopcijfers"
 
-#: templates/_modals/edit_modal.html:119 templates/base.html:1156
+#: templates/_modals/edit_modal.html:119 templates/base.html:1189
 msgid "Add genre"
 msgstr "Genre toevoegen"
 
-#: templates/_modals/edit_modal.html:120 templates/base.html:1157
+#: templates/_modals/edit_modal.html:120 templates/base.html:1190
 msgid "+ Add genre..."
 msgstr "+ Genre toevoegen..."
 
-#: templates/_modals/edit_modal.html:130 templates/base.html:1164
+#: templates/_modals/edit_modal.html:130 templates/base.html:1197
 msgid "Add play mode"
 msgstr "Spelmodus toevoegen"
 
-#: templates/_modals/edit_modal.html:131 templates/base.html:1165
+#: templates/_modals/edit_modal.html:131 templates/base.html:1198
 msgid "+ Add mode..."
 msgstr "+ Modus toevoegen..."
 
-#: templates/_modals/edit_modal.html:160 templates/base.html:1176
+#: templates/_modals/edit_modal.html:160 templates/base.html:1209
 msgid "Add game structure"
 msgstr "Gamestructuur toevoegen"
 
-#: templates/_modals/edit_modal.html:161 templates/base.html:1177
+#: templates/_modals/edit_modal.html:161 templates/base.html:1210
 msgid "+ Add structure..."
 msgstr "+ Structuur toevoegen..."
 
-#: templates/_modals/edit_modal.html:171 templates/base.html:1184
+#: templates/_modals/edit_modal.html:171 templates/base.html:1217
 msgid "Add perspective"
 msgstr "Perspectief toevoegen"
 
-#: templates/_modals/edit_modal.html:172 templates/base.html:1185
+#: templates/_modals/edit_modal.html:172 templates/base.html:1218
 msgid "+ Add perspective..."
 msgstr "+ Perspectief toevoegen..."
 
-#: templates/_modals/edit_modal.html:182 templates/base.html:1192
+#: templates/_modals/edit_modal.html:182 templates/base.html:1225
 msgid "Add dimension"
 msgstr "Dimensie toevoegen"
 
-#: templates/_modals/edit_modal.html:183 templates/base.html:1193
+#: templates/_modals/edit_modal.html:183 templates/base.html:1226
 msgid "+ Add dimension..."
 msgstr "+ Dimensie toevoegen..."
 
-#: templates/_modals/edit_modal.html:141 templates/base.html:1197
+#: templates/_modals/edit_modal.html:141 templates/base.html:1230
 msgid "Campaign Mode"
 msgstr "Campagnemodus"
 
-#: templates/_modals/edit_modal.html:145 templates/base.html:1200
+#: templates/_modals/edit_modal.html:145 templates/base.html:1233
 msgid "Toggle campaign mode"
 msgstr "Campagnemodus wisselen"
 
-#: templates/_modals/edit_modal.html:199 templates/base.html:1218
+#: templates/_modals/edit_modal.html:199 templates/base.html:1251
 msgid "Add controller"
 msgstr "Controller toevoegen"
 
-#: templates/_modals/edit_modal.html:200 templates/base.html:1219
+#: templates/_modals/edit_modal.html:200 templates/base.html:1252
 msgid "+ Add controller..."
 msgstr "+ Controller toevoegen..."
 
-#: templates/_modals/edit_modal.html:204 templates/base.html:1221
+#: templates/_modals/edit_modal.html:204 templates/base.html:1254
 msgid "Custom controller name"
 msgstr "Aangepaste controllernaam"
 
-#: templates/base.html:1221
+#: templates/base.html:1254
 msgid "Or type custom..."
 msgstr "Of typ aangepast..."
 
-#: templates/_modals/edit_modal.html:215 templates/base.html:1228
+#: templates/_modals/edit_modal.html:215 templates/base.html:1261
 msgid "Add save type"
 msgstr "Save-type toevoegen"
 
-#: templates/_modals/edit_modal.html:216 templates/base.html:1229
+#: templates/_modals/edit_modal.html:216 templates/base.html:1262
 msgid "+ Add save type..."
 msgstr "+ Save-type toevoegen..."
 
-#: templates/_modals/edit_modal.html:225 templates/base.html:1243
+#: templates/_modals/edit_modal.html:225 templates/base.html:1276
 msgid "Toggle platform exclusivity"
 msgstr "Platformexclusiviteit wisselen"
 
-#: templates/base.html:1248
+#: templates/base.html:1281
 msgid "Xbox 360, PC, Switch"
 msgstr "Xbox 360, PC, Switch"
 
 #: templates/_modals/edit_modal.html:241
-#: templates/_settings_tabs/library.html:152 templates/base.html:1252
+#: templates/_settings_tabs/library.html:156 templates/base.html:1285
 msgid "ESRB (North America)"
 msgstr "ESRB (Noord-Amerika)"
 
@@ -6132,138 +6136,138 @@ msgstr "ESRB (Noord-Amerika)"
 #: templates/_modals/edit_modal.html:267 templates/_modals/edit_modal.html:278
 #: templates/_modals/edit_modal.html:289 templates/_modals/edit_modal.html:300
 #: templates/_modals/edit_modal.html:314 templates/_modals/edit_modal.html:324
-#: templates/_modals/edit_modal.html:336 templates/base.html:1254
-#: templates/base.html:1267 templates/base.html:1278 templates/base.html:1289
-#: templates/base.html:1300 templates/base.html:1311 templates/base.html:1325
-#: templates/base.html:1335 templates/base.html:1347
+#: templates/_modals/edit_modal.html:336 templates/base.html:1287
+#: templates/base.html:1300 templates/base.html:1311 templates/base.html:1322
+#: templates/base.html:1333 templates/base.html:1344 templates/base.html:1358
+#: templates/base.html:1368 templates/base.html:1380
 msgid "-- None --"
 msgstr "-- Geen --"
 
-#: templates/_modals/edit_modal.html:244 templates/base.html:1255
+#: templates/_modals/edit_modal.html:244 templates/base.html:1288
 msgid "EC - Early Childhood"
 msgstr "EC - Peuters"
 
-#: templates/_modals/edit_modal.html:249 templates/base.html:1260
+#: templates/_modals/edit_modal.html:249 templates/base.html:1293
 msgid "AO - Adults Only"
 msgstr "AO - Alleen volwassenen"
 
-#: templates/_modals/edit_modal.html:250 templates/base.html:1261
+#: templates/_modals/edit_modal.html:250 templates/base.html:1294
 msgid "RP - Rating Pending"
 msgstr "RP - Classificatie in behandeling"
 
 #: templates/_modals/edit_modal.html:254
-#: templates/_settings_tabs/library.html:153 templates/base.html:1265
+#: templates/_settings_tabs/library.html:157 templates/base.html:1298
 msgid "PEGI (Europe)"
 msgstr "PEGI (Europa)"
 
 #: templates/_modals/edit_modal.html:265
-#: templates/_settings_tabs/library.html:154 templates/base.html:1276
+#: templates/_settings_tabs/library.html:158 templates/base.html:1309
 msgid "CERO (Japan)"
 msgstr "CERO (Japan)"
 
 #: templates/_modals/edit_modal.html:268 templates/_modals/edit_modal.html:301
-#: templates/base.html:1279 templates/base.html:1312
+#: templates/base.html:1312 templates/base.html:1345
 msgid "A - All Ages"
 msgstr "A - Alle leeftijden"
 
-#: templates/_modals/edit_modal.html:269 templates/base.html:1280
+#: templates/_modals/edit_modal.html:269 templates/base.html:1313
 msgid "B - Ages 12+"
 msgstr "B - 12+"
 
-#: templates/_modals/edit_modal.html:270 templates/base.html:1281
+#: templates/_modals/edit_modal.html:270 templates/base.html:1314
 msgid "C - Ages 15+"
 msgstr "C - 15+"
 
-#: templates/_modals/edit_modal.html:271 templates/base.html:1282
+#: templates/_modals/edit_modal.html:271 templates/base.html:1315
 msgid "D - Ages 17+"
 msgstr "D - 17+"
 
-#: templates/_modals/edit_modal.html:272 templates/base.html:1283
+#: templates/_modals/edit_modal.html:272 templates/base.html:1316
 msgid "Z - Ages 18+"
 msgstr "Z - 18+"
 
 #: templates/_modals/edit_modal.html:276
-#: templates/_settings_tabs/library.html:155 templates/base.html:1287
+#: templates/_settings_tabs/library.html:159 templates/base.html:1320
 msgid "USK (Germany)"
 msgstr "USK (Duitsland)"
 
 #: templates/_modals/edit_modal.html:287
-#: templates/_settings_tabs/library.html:156 templates/base.html:1298
+#: templates/_settings_tabs/library.html:160 templates/base.html:1331
 msgid "ACB (Australia)"
 msgstr "ACB (Australië)"
 
-#: templates/_modals/edit_modal.html:290 templates/base.html:1301
+#: templates/_modals/edit_modal.html:290 templates/base.html:1334
 msgid "G - General"
 msgstr "G - Algemeen"
 
 #: templates/_modals/edit_modal.html:291 templates/_modals/edit_modal.html:302
-#: templates/base.html:1302
+#: templates/base.html:1335
 msgid "PG - Parental Guidance"
 msgstr "PG - Ouderlijk toezicht"
 
-#: templates/_modals/edit_modal.html:293 templates/base.html:1304
+#: templates/_modals/edit_modal.html:293 templates/base.html:1337
 msgid "MA15+ - Restricted"
 msgstr "MA15+ - Beperkt"
 
-#: templates/_modals/edit_modal.html:294 templates/base.html:1305
+#: templates/_modals/edit_modal.html:294 templates/base.html:1338
 msgid "R18+ - Restricted"
 msgstr "R18+ - Beperkt"
 
 #: templates/_modals/edit_modal.html:298
-#: templates/_settings_tabs/library.html:157 templates/base.html:1309
+#: templates/_settings_tabs/library.html:161 templates/base.html:1342
 msgid "FPB (South Africa)"
 msgstr "FPB (Zuid-Afrika)"
 
 #: templates/_modals/edit_modal.html:312
-#: templates/_settings_tabs/library.html:158 templates/base.html:1323
+#: templates/_settings_tabs/library.html:162 templates/base.html:1356
 msgid "GRAC (South Korea)"
 msgstr "GRAC (Zuid-Korea)"
 
-#: templates/_modals/edit_modal.html:315 templates/base.html:1326
+#: templates/_modals/edit_modal.html:315 templates/base.html:1359
 msgid "ALL - All Ages"
 msgstr "ALL - Alle leeftijden"
 
 #: templates/_modals/edit_modal.html:322
-#: templates/_settings_tabs/library.html:159 templates/base.html:1333
+#: templates/_settings_tabs/library.html:163 templates/base.html:1366
 msgid "ClassInd (Brazil)"
 msgstr "ClassInd (Brazilië)"
 
-#: templates/_modals/edit_modal.html:325 templates/base.html:1336
+#: templates/_modals/edit_modal.html:325 templates/base.html:1369
 msgid "L - General"
 msgstr "L - Algemeen"
 
 #: templates/_modals/edit_modal.html:334
-#: templates/_settings_tabs/library.html:160 templates/base.html:1345
+#: templates/_settings_tabs/library.html:164 templates/base.html:1378
 msgid "CADPA (China)"
 msgstr "CADPA (China)"
 
-#: templates/_modals/edit_modal.html:337 templates/base.html:1348
+#: templates/_modals/edit_modal.html:337 templates/base.html:1381
 msgid "8+ - Ages 8 and up"
 msgstr "8+ - 8 jaar en ouder"
 
-#: templates/_modals/edit_modal.html:338 templates/base.html:1349
+#: templates/_modals/edit_modal.html:338 templates/base.html:1382
 msgid "12+ - Ages 12 and up"
 msgstr "12+ - 12 jaar en ouder"
 
-#: templates/_modals/edit_modal.html:339 templates/base.html:1350
+#: templates/_modals/edit_modal.html:339 templates/base.html:1383
 msgid "16+ - Ages 16 and up"
 msgstr "16+ - 16 jaar en ouder"
 
-#: templates/base.html:1360
+#: templates/base.html:1393
 msgid "Enter game description..."
 msgstr "Voer gamebeschrijving in..."
 
-#: templates/base.html:1367
+#: templates/base.html:1400
 msgid "Images/Video"
 msgstr "Afbeeldingen/video"
 
 #: templates/_modals/edit_modal.html:15
-#: templates/_settings_tabs/customization.html:267 templates/base.html:1372
+#: templates/_settings_tabs/customization.html:267 templates/base.html:1405
 #: templates/wishlist.html:700
 msgid "Save Changes"
 msgstr "Wijzigingen opslaan"
 
-#: templates/base.html:1408
+#: templates/base.html:1441
 msgid "running"
 msgstr "actief"
 
@@ -6304,7 +6308,7 @@ msgid "Source Folder"
 msgstr "Bronmap"
 
 #: templates/chd_converter.html:92 templates/chd_verify.html:108
-#: templates/dashboard.html:259 templates/settings_emulators.html:159
+#: templates/dashboard.html:259 templates/settings_emulators.html:168
 msgid "Scan"
 msgstr "Scannen"
 
@@ -6842,7 +6846,7 @@ msgstr "Uitgeschakeld"
 msgid "Not Configured"
 msgstr "Niet geconfigureerd"
 
-#: templates/_settings_tabs/account.html:297 templates/dashboard.html:622
+#: templates/_settings_tabs/account.html:301 templates/dashboard.html:622
 msgid "Configured"
 msgstr "Geconfigureerd"
 
@@ -6972,7 +6976,7 @@ msgstr ""
 "Je gebruikt het standaard beheerderswachtwoord. Om veiligheidsredenen "
 "moet je een nieuw wachtwoord instellen voordat je verdergaat."
 
-#: templates/_settings_tabs/account.html:210
+#: templates/_settings_tabs/account.html:214
 #: templates/force_change_password.html:20
 msgid "New Password"
 msgstr "Nieuw wachtwoord"
@@ -7074,7 +7078,7 @@ msgstr "Handleiding bekijken (PDF)"
 msgid "Delete game from database"
 msgstr "Game verwijderen uit database"
 
-#: templates/_settings_tabs/account.html:320 templates/game_detail.html:134
+#: templates/_settings_tabs/account.html:324 templates/game_detail.html:134
 #: templates/logs.html:735 templates/settings.html:45
 #: templates/wishlist.html:642
 msgid "Delete"
@@ -7379,8 +7383,8 @@ msgstr "Een versie koppelen"
 msgid "Link a version: search this system"
 msgstr "Een versie koppelen: zoek in dit systeem"
 
-#: templates/game_detail.html:836 templates/settings_emulators.html:21
-#: templates/settings_emulators.html:120
+#: templates/game_detail.html:836 templates/settings_emulators.html:22
+#: templates/settings_emulators.html:127
 msgid "Cheats"
 msgstr "Cheats"
 
@@ -8342,7 +8346,7 @@ msgstr "Alles aanvinken"
 msgid "Tick none"
 msgstr "Niets aanvinken"
 
-#: templates/_settings_tabs/account.html:111 templates/psn_trophies.html:16
+#: templates/_settings_tabs/account.html:115 templates/psn_trophies.html:16
 msgid "PlayStation Network"
 msgstr "PlayStation Network"
 
@@ -8918,11 +8922,11 @@ msgstr ""
 "Configureer paden, locaties van externe tools, archieftypen en andere "
 "voorkeuren die worden gedeeld door alle ROM-tools."
 
-#: templates/rom_tools_settings.html:304
+#: templates/rom_tools_settings.html:309
 msgid "Empty: RetroDB's data folder"
 msgstr "Leeg: de gegevensmap van RetroDB"
 
-#: templates/rom_tools_settings.html:305
+#: templates/rom_tools_settings.html:312
 msgid ""
 "Where Create M3U moves original archives. Leave empty to use RetroDB's "
 "data folder."
@@ -8998,7 +9002,7 @@ msgstr "De sleuteltest is mislukt."
 #: templates/_settings_tabs/_tab_bar.html:23
 #: templates/_settings_tabs/_tab_bar.html:38
 #: templates/settings_emulators.html:4 templates/settings_emulators.html:9
-#: templates/settings_emulators.html:23
+#: templates/settings_emulators.html:24
 msgid "Emulators"
 msgstr "Emulators"
 
@@ -9010,23 +9014,23 @@ msgstr ""
 "Beheer emulatorprogramma's en de koppelingen per systeem die de ▶ Spelen-"
 "knop gebruikt."
 
-#: templates/settings_emulators.html:19 templates/settings_emulators.html:65
+#: templates/settings_emulators.html:20 templates/settings_emulators.html:72
 msgid "Play in RetroDB"
 msgstr "Spelen in RetroDB"
 
-#: templates/settings_emulators.html:20
+#: templates/settings_emulators.html:21
 msgid "Cores"
 msgstr "Cores"
 
-#: templates/settings_emulators.html:22
+#: templates/settings_emulators.html:23
 msgid "Folders"
 msgstr "Mappen"
 
-#: templates/settings_emulators.html:24
+#: templates/settings_emulators.html:25
 msgid "Mapping"
 msgstr "Koppeling"
 
-#: templates/settings_emulators.html:36
+#: templates/settings_emulators.html:37
 msgid ""
 "RetroArch needs explicit binary + cores-dir paths because they typically "
 "live in different prefixes (system package, ~/.local, or a Flatpak "
@@ -9036,19 +9040,19 @@ msgstr ""
 "nodig, omdat die meestal op verschillende plekken staan (systeempakket, "
 "~/.local of een Flatpak-sandbox)."
 
-#: templates/settings_emulators.html:40 templates/settings_emulators.html:183
+#: templates/settings_emulators.html:41 templates/settings_emulators.html:192
 msgid "Binary"
 msgstr "Programma"
 
-#: templates/settings_emulators.html:46
+#: templates/settings_emulators.html:50
 msgid "Cores directory"
 msgstr "Cores-map"
 
-#: templates/settings_emulators.html:52
+#: templates/settings_emulators.html:59
 msgid "Auto-detect"
 msgstr "Automatisch detecteren"
 
-#: templates/settings_emulators.html:69
+#: templates/settings_emulators.html:76
 msgid ""
 "RetroDB can download the official RetroArch from libretro and set it up "
 "to play your games, with its own settings and saves, kept apart from any "
@@ -9058,24 +9062,24 @@ msgstr ""
 "om je games te spelen, met eigen instellingen en opslagbestanden, "
 "gescheiden van elke RetroArch die je al gebruikt."
 
-#: templates/settings_emulators.html:72
+#: templates/settings_emulators.html:79
 #, python-format
 msgid "Installed: RetroArch %(version)s"
 msgstr "Geïnstalleerd: RetroArch %(version)s"
 
-#: templates/settings_emulators.html:76
+#: templates/settings_emulators.html:83
 msgid "Download RetroArch again"
 msgstr "RetroArch opnieuw downloaden"
 
-#: templates/settings_emulators.html:76
+#: templates/settings_emulators.html:83
 msgid "Get RetroArch"
 msgstr "RetroArch ophalen"
 
-#: templates/settings_emulators.html:89
+#: templates/settings_emulators.html:96
 msgid "Player cores"
 msgstr "Cores voor de speler"
 
-#: templates/settings_emulators.html:93
+#: templates/settings_emulators.html:100
 msgid ""
 "The player picks the best core for each system and downloads it from the "
 "libretro build server the first time you play. Installed cores are never "
@@ -9085,25 +9089,25 @@ msgstr ""
 "libretro-buildserver wanneer je voor het eerst speelt. Geïnstalleerde "
 "cores worden nooit bijgewerkt door ‘Spelen’; werk ze hier bij."
 
-#: templates/settings_emulators.html:98
+#: templates/settings_emulators.html:105
 msgid "Download a missing core when Play is pressed"
 msgstr "Een ontbrekende core downloaden wanneer op ‘Spelen’ wordt gedrukt"
 
-#: templates/settings_emulators.html:103
+#: templates/settings_emulators.html:110
 msgid "Install cores for my systems"
 msgstr "Cores voor mijn systemen installeren"
 
-#: templates/settings_emulators.html:104
+#: templates/settings_emulators.html:111
 msgid "Update cores"
 msgstr "Cores bijwerken"
 
-#: templates/settings_emulators.html:108
+#: templates/settings_emulators.html:115
 msgid "Cores are not built for this computer, so RetroDB cannot download them."
 msgstr ""
 "Er worden geen cores gebouwd voor deze computer, dus RetroDB kan ze niet "
 "downloaden."
 
-#: templates/settings_emulators.html:124
+#: templates/settings_emulators.html:131
 msgid ""
 "Download the free public cheat packs, or import cheat folders you already"
 " have. Each game's page then lists its cheats, each with an on/off "
@@ -9114,15 +9118,15 @@ msgstr ""
 "/uit-schakelaar, voor spellen die u speelt in de RetroArch van RetroDB, "
 "DuckStation of PCSX2."
 
-#: templates/settings_emulators.html:128
+#: templates/settings_emulators.html:135
 msgid "Import a folder"
 msgstr "Een map importeren"
 
-#: templates/settings_emulators.html:131
+#: templates/settings_emulators.html:139
 msgid "Import"
 msgstr "Importeren"
 
-#: templates/settings_emulators.html:134
+#: templates/settings_emulators.html:142
 msgid ""
 "RetroDB copies the cheat files it recognises and never changes the "
 "folder. Import again to pick up new files."
@@ -9130,11 +9134,11 @@ msgstr ""
 "RetroDB kopieert de cheatbestanden die het herkent en wijzigt de map "
 "nooit. Importeer opnieuw om nieuwe bestanden op te halen."
 
-#: templates/settings_emulators.html:146
+#: templates/settings_emulators.html:154
 msgid "Emulator folders"
 msgstr "Emulatormappen"
 
-#: templates/settings_emulators.html:150
+#: templates/settings_emulators.html:158
 msgid ""
 "Add the folder your emulators live in. RetroDB finds each emulator there,"
 " links it to the systems it runs and checks its BIOS files."
@@ -9143,23 +9147,23 @@ msgstr ""
 "emulator, koppelt hem aan de systemen die hij draait en controleert zijn "
 "BIOS-bestanden."
 
-#: templates/settings_emulators.html:155
+#: templates/settings_emulators.html:163
 msgid "Emulator folder"
 msgstr "Emulatormap"
 
-#: templates/settings_emulators.html:156
+#: templates/settings_emulators.html:165
 msgid "Add folder"
 msgstr "Map toevoegen"
 
-#: templates/settings_emulators.html:160
+#: templates/settings_emulators.html:169
 msgid "Apply all"
 msgstr "Alles toepassen"
 
-#: templates/settings_emulators.html:172
+#: templates/settings_emulators.html:181
 msgid "Registered emulators"
 msgstr "Geregistreerde emulators"
 
-#: templates/settings_emulators.html:176
+#: templates/settings_emulators.html:185
 msgid ""
 "RetroDB ships with a default registry seeded on first run. Add custom "
 "emulators or edit the seeded entries."
@@ -9167,23 +9171,23 @@ msgstr ""
 "RetroDB bevat een standaardregister dat bij de eerste start wordt "
 "aangemaakt. Voeg eigen emulators toe of bewerk de bestaande items."
 
-#: templates/settings_emulators.html:184
+#: templates/settings_emulators.html:193
 msgid "Path override"
 msgstr "Pad overschrijven"
 
-#: templates/settings_emulators.html:185 templates/settings_emulators.html:241
+#: templates/settings_emulators.html:194 templates/settings_emulators.html:253
 msgid "Args template"
 msgstr "Argumentsjabloon"
 
-#: templates/settings_emulators.html:187
+#: templates/settings_emulators.html:196
 msgid "Enabled"
 msgstr "Ingeschakeld"
 
-#: templates/settings_emulators.html:204
+#: templates/settings_emulators.html:213
 msgid "Per-system mapping"
 msgstr "Koppeling per systeem"
 
-#: templates/settings_emulators.html:208
+#: templates/settings_emulators.html:217
 msgid ""
 "Pick the emulator each system uses by default. Per-game overrides live in"
 " the edit-game modal."
@@ -9191,35 +9195,35 @@ msgstr ""
 "Kies de emulator die elk systeem standaard gebruikt. Uitzonderingen per "
 "spel stel je in via het bewerkvenster van het spel."
 
-#: templates/settings_emulators.html:220
+#: templates/settings_emulators.html:229
 msgid "Edit emulator"
 msgstr "Emulator bewerken"
 
-#: templates/settings_emulators.html:221
+#: templates/settings_emulators.html:230
 msgid "Close emulator edit modal"
 msgstr "Bewerkvenster van emulator sluiten"
 
-#: templates/settings_emulators.html:231
+#: templates/settings_emulators.html:240
 msgid "Binary name (looked up on PATH)"
 msgstr "Programmanaam (wordt gezocht in PATH)"
 
-#: templates/settings_emulators.html:233
+#: templates/settings_emulators.html:242
 msgid "e.g."
 msgstr "bijv."
 
-#: templates/settings_emulators.html:233
+#: templates/settings_emulators.html:242
 msgid "Used when no path override is set."
 msgstr "Gebruikt als er geen eigen pad is ingesteld."
 
-#: templates/settings_emulators.html:236
+#: templates/settings_emulators.html:245
 msgid "Binary path override"
 msgstr "Eigen programmapad"
 
-#: templates/settings_emulators.html:237
+#: templates/settings_emulators.html:247
 msgid "(empty = look up the binary name on PATH)"
 msgstr "(leeg = programmanaam zoeken in PATH)"
 
-#: templates/settings_emulators.html:238
+#: templates/settings_emulators.html:250
 msgid ""
 "Absolute path to AppImage / portable script / system binary. Wins over "
 "PATH lookup."
@@ -9227,15 +9231,15 @@ msgstr ""
 "Absoluut pad naar AppImage / draagbaar script / systeemprogramma. Gaat "
 "voor op zoeken in PATH."
 
-#: templates/settings_emulators.html:243
+#: templates/settings_emulators.html:255
 msgid "Tokens:"
 msgstr "Tokens:"
 
-#: templates/settings_emulators.html:252
+#: templates/settings_emulators.html:264
 msgid "This is a RetroArch entry (uses the cores in the Cores directory above)"
 msgstr "Dit is een RetroArch-item (gebruikt de cores in de cores-map hierboven)"
 
-#: templates/settings_emulators.html:258
+#: templates/settings_emulators.html:270
 msgid "Enabled (uncheck to hide from launch)"
 msgstr "Ingeschakeld (uitvinken om te verbergen bij starten)"
 
@@ -10024,71 +10028,71 @@ msgstr "Aanpassing"
 msgid "Settings sections"
 msgstr "Instellingensecties"
 
-#: templates/_settings_tabs/account.html:2
+#: templates/_settings_tabs/account.html:3
 msgid "Account settings"
 msgstr "Accountinstellingen"
 
-#: templates/_settings_tabs/account.html:4
+#: templates/_settings_tabs/account.html:5
 msgid "My Profile"
 msgstr "Mijn profiel"
 
-#: templates/_settings_tabs/account.html:5
-#: templates/_settings_tabs/account.html:227
-#: templates/_settings_tabs/account.html:234
+#: templates/_settings_tabs/account.html:6
+#: templates/_settings_tabs/account.html:231
+#: templates/_settings_tabs/account.html:238
 msgid "Timezone"
 msgstr "Tijdzone"
 
-#: templates/_settings_tabs/account.html:7
+#: templates/_settings_tabs/account.html:8
 msgid "Users"
 msgstr "Gebruikers"
 
-#: templates/_settings_tabs/account.html:19
+#: templates/_settings_tabs/account.html:20
 msgid "Change avatar"
 msgstr "Avatar wijzigen"
 
-#: templates/_settings_tabs/account.html:41
+#: templates/_settings_tabs/account.html:42
 msgid "Choose avatar"
 msgstr "Avatar kiezen"
 
-#: templates/_settings_tabs/account.html:43
+#: templates/_settings_tabs/account.html:44
 msgid "Choose Avatar"
 msgstr "Avatar kiezen"
 
-#: templates/_settings_tabs/account.html:47
+#: templates/_settings_tabs/account.html:48
 msgid "Select a default avatar or upload your own image."
 msgstr "Selecteer een standaardavatar of upload je eigen afbeelding."
 
-#: templates/_settings_tabs/account.html:52
+#: templates/_settings_tabs/account.html:53
 msgid "Avatar"
 msgstr "Avatar"
 
-#: templates/_settings_tabs/account.html:61
+#: templates/_settings_tabs/account.html:62
 msgid "Click to upload custom image"
 msgstr "Klik om aangepaste afbeelding te uploaden"
 
-#: templates/_settings_tabs/account.html:62
+#: templates/_settings_tabs/account.html:63
 msgid "JPG, PNG, GIF, WebP &mdash; Max 2MB"
 msgstr "JPG, PNG, GIF, WebP &mdash; max. 2 MB"
 
-#: templates/_settings_tabs/account.html:68
+#: templates/_settings_tabs/account.html:69
 msgid "Remove avatar"
 msgstr "Avatar verwijderen"
 
-#: templates/_settings_tabs/account.html:78
+#: templates/_settings_tabs/account.html:79
 msgid "Trophy Settings"
 msgstr "Trofee-instellingen"
 
-#: templates/_settings_tabs/account.html:80
+#: templates/_settings_tabs/account.html:81
 msgid "Configure your personal RPCS3 trophy path to view your PS3 trophies."
 msgstr ""
 "Configureer je persoonlijke RPCS3-trofeeënpad om je PS3-trofeeën te "
 "bekijken."
 
-#: templates/_settings_tabs/account.html:84
+#: templates/_settings_tabs/account.html:85
 msgid "Your RPCS3 Trophy Path"
 msgstr "Je RPCS3-trofeeënpad"
 
-#: templates/_settings_tabs/account.html:88
+#: templates/_settings_tabs/account.html:92
 msgid ""
 "Path to your RPCS3 trophy folder (e.g., "
 "/home/user/RPCS3/dev_hdd0/home/00000001/trophy)"
@@ -10096,11 +10100,11 @@ msgstr ""
 "Pad naar je RPCS3-trofeeënmap (bijv. "
 "/home/user/RPCS3/dev_hdd0/home/00000001/trophy)"
 
-#: templates/_settings_tabs/account.html:91
+#: templates/_settings_tabs/account.html:95
 msgid "RetroAchievements Settings"
 msgstr "RetroAchievements-instellingen"
 
-#: templates/_settings_tabs/account.html:93
+#: templates/_settings_tabs/account.html:97
 msgid ""
 "Configure your RetroAchievements credentials to view your achievement "
 "progress."
@@ -10108,19 +10112,19 @@ msgstr ""
 "Configureer je RetroAchievements-inloggegevens om je prestatievoortgang "
 "te bekijken."
 
-#: templates/_settings_tabs/account.html:97
+#: templates/_settings_tabs/account.html:101
 msgid "Your RA Username"
 msgstr "Je RA-gebruikersnaam"
 
-#: templates/_settings_tabs/account.html:104
+#: templates/_settings_tabs/account.html:108
 msgid "Your RA API Key"
 msgstr "Je RA API-sleutel"
 
-#: templates/_settings_tabs/account.html:107
+#: templates/_settings_tabs/account.html:111
 msgid "Your RetroAchievements API Key"
 msgstr "Je RetroAchievements API-sleutel"
 
-#: templates/_settings_tabs/account.html:108
+#: templates/_settings_tabs/account.html:112
 msgid ""
 "Get your API key from <a "
 "href=\"https://retroachievements.org/controlpanel.php\" target=\"_blank\""
@@ -10132,7 +10136,7 @@ msgstr ""
 " rel=\"noopener noreferrer\" style=\"color: var(--primary-cyan"
 ");\">RetroAchievements-configuratiescherm</a>"
 
-#: templates/_settings_tabs/account.html:113
+#: templates/_settings_tabs/account.html:117
 msgid ""
 "Connect your PSN account to sync trophies from PS3, PS4, PS5, and PS Vita"
 " games."
@@ -10140,23 +10144,23 @@ msgstr ""
 "Koppel je PSN-account om trofeeën van PS3-, PS4-, PS5- en PS Vita-games "
 "te synchroniseren."
 
-#: templates/_settings_tabs/account.html:121
+#: templates/_settings_tabs/account.html:125
 msgid "PSN Username"
 msgstr "PSN-gebruikersnaam"
 
-#: templates/_settings_tabs/account.html:125
+#: templates/_settings_tabs/account.html:129
 msgid "Your PlayStation Network Online ID (auto-detected on connection)"
 msgstr "Je PlayStation Network Online-ID (automatisch gedetecteerd bij verbinding)"
 
-#: templates/_settings_tabs/account.html:130
+#: templates/_settings_tabs/account.html:134
 msgid "NPSSO Token Setup"
 msgstr "NPSSO-token instellen"
 
-#: templates/_settings_tabs/account.html:137
+#: templates/_settings_tabs/account.html:141
 msgid "Open Sony's account page"
 msgstr "Open Sony's accountpagina"
 
-#: templates/_settings_tabs/account.html:138
+#: templates/_settings_tabs/account.html:142
 msgid ""
 "First sign in to PlayStation in this browser. Then open the account page:"
 " it shows your NPSSO token as JSON. If you are not signed in, it shows "
@@ -10166,15 +10170,15 @@ msgstr ""
 "accountpagina: die toont je NPSSO-token als JSON. Ben je niet aangemeld, "
 "dan toont hij in plaats daarvan \"Invalid login\"."
 
-#: templates/_settings_tabs/account.html:140
+#: templates/_settings_tabs/account.html:144
 msgid "Sign in to PlayStation"
 msgstr "Aanmelden bij PlayStation"
 
-#: templates/_settings_tabs/account.html:143
+#: templates/_settings_tabs/account.html:147
 msgid "Open Sony Account Page"
 msgstr "Sony-accountpagina openen"
 
-#: templates/_settings_tabs/account.html:150
+#: templates/_settings_tabs/account.html:154
 msgid ""
 "Optional shortcut: drag the button below to your browser's bookmarks bar."
 " Then, on the Sony JSON page, click the bookmark to copy your NPSSO in "
@@ -10184,15 +10188,15 @@ msgstr ""
 "bladwijzerbalk van je browser. Klik vervolgens op de Sony JSON-pagina op "
 "de bladwijzer om je NPSSO met één klik te kopiëren."
 
-#: templates/_settings_tabs/account.html:151
+#: templates/_settings_tabs/account.html:155
 msgid "Copy NPSSO"
 msgstr "NPSSO kopiëren"
 
-#: templates/_settings_tabs/account.html:160
+#: templates/_settings_tabs/account.html:164
 msgid "Copy the page content"
 msgstr "Paginainhoud kopiëren"
 
-#: templates/_settings_tabs/account.html:161
+#: templates/_settings_tabs/account.html:165
 msgid ""
 "Select all (<kbd style=\"background: var(--bg-medium); padding: 1px 6px; "
 "border-radius: 3px; border: 1px solid var(--card-border); font-size: "
@@ -10208,82 +10212,82 @@ msgstr ""
 "(--card-border); font-size: 0.8rem;\">Ctrl+C</kbd>). Je kunt de volledige"
 " JSON kopiëren &mdash; we halen het token er automatisch uit."
 
-#: templates/_settings_tabs/account.html:169
+#: templates/_settings_tabs/account.html:173
 msgid "Paste the token"
 msgstr "Plak het token"
 
-#: templates/_settings_tabs/account.html:173
+#: templates/_settings_tabs/account.html:177
 msgid "Paste JSON or token here"
 msgstr "Plak hier JSON of token"
 
-#: templates/_settings_tabs/account.html:176
+#: templates/_settings_tabs/account.html:180
 msgid "Read from clipboard"
 msgstr "Lezen vanaf klembord"
 
-#: templates/_settings_tabs/account.html:177
+#: templates/_settings_tabs/account.html:181
 msgid "Paste &amp; Detect"
 msgstr "Plakken &amp; detecteren"
 
-#: templates/_settings_tabs/account.html:188
+#: templates/_settings_tabs/account.html:192
 msgid "Save &amp; Test Connection"
 msgstr "Opslaan &amp; verbinding testen"
 
-#: templates/_settings_tabs/account.html:195
+#: templates/_settings_tabs/account.html:199
 msgid "Save My Settings"
 msgstr "Mijn instellingen opslaan"
 
-#: templates/_settings_tabs/account.html:199
-#: templates/_settings_tabs/account.html:215
+#: templates/_settings_tabs/account.html:203
+#: templates/_settings_tabs/account.html:219
 msgid "Change Password"
 msgstr "Wachtwoord wijzigen"
 
-#: templates/_settings_tabs/account.html:201
+#: templates/_settings_tabs/account.html:205
 msgid "Every account needs a password to log in."
 msgstr "Elk account heeft een wachtwoord nodig om in te loggen."
 
-#: templates/_settings_tabs/account.html:205
+#: templates/_settings_tabs/account.html:209
 msgid "Current Password"
 msgstr "Huidig wachtwoord"
 
-#: templates/_settings_tabs/account.html:206
+#: templates/_settings_tabs/account.html:210
 msgid "Enter current password"
 msgstr "Voer huidig wachtwoord in"
 
-#: templates/_settings_tabs/account.html:211
+#: templates/_settings_tabs/account.html:215
 msgid "Enter new password"
 msgstr "Voer nieuw wachtwoord in"
 
-#: templates/_settings_tabs/account.html:219
+#: templates/_settings_tabs/account.html:223
 msgid "Please log in to view your profile settings."
 msgstr "Log in om je profielinstellingen te bekijken."
 
-#: templates/_settings_tabs/account.html:231
+#: templates/_settings_tabs/account.html:235
 msgid "Set your timezone to ensure all dates and times display correctly."
 msgstr ""
 "Stel je tijdzone in zodat alle datums en tijden correct worden "
 "weergegeven."
 
-#: templates/_settings_tabs/account.html:236
+#: templates/_settings_tabs/account.html:240
 msgid "Search timezones..."
 msgstr "Tijdzones zoeken..."
 
-#: templates/_settings_tabs/account.html:240
+#: templates/_settings_tabs/account.html:244
 msgid "Browser detected:"
 msgstr "Browser gedetecteerd:"
 
-#: templates/_settings_tabs/account.html:241
+#: templates/_settings_tabs/account.html:245
 msgid "Use detected"
 msgstr "Gedetecteerde gebruiken"
 
-#: templates/_settings_tabs/account.html:244
+#: templates/_settings_tabs/account.html:248
 msgid "Save Timezone"
 msgstr "Tijdzone opslaan"
 
-#: templates/_settings_tabs/account.html:252
+#: templates/_settings_tabs/account.html:256
 msgid "User Management"
 msgstr "Gebruikersbeheer"
 
-#: templates/_settings_tabs/account.html:256
+#: templates/_settings_tabs/account.html:260
 msgid ""
 "Manage users who can access RetroDB. Admin users require a password to "
 "login, while Editor and Viewer users can login with a single click."
@@ -10292,82 +10296,82 @@ msgstr ""
 "wachtwoord nodig om in te loggen, terwijl Bewerkers en Kijkers met één "
 "klik kunnen inloggen."
 
-#: templates/_settings_tabs/account.html:261
-#: templates/_settings_tabs/account.html:335
+#: templates/_settings_tabs/account.html:265
+#: templates/_settings_tabs/account.html:339
 msgid "Add User"
 msgstr "Gebruiker toevoegen"
 
-#: templates/_settings_tabs/account.html:269
+#: templates/_settings_tabs/account.html:273
 msgid "Role"
 msgstr "Rol"
 
-#: templates/_settings_tabs/account.html:270
+#: templates/_settings_tabs/account.html:274
 msgid "Trophy Path"
 msgstr "Trofeeënpad"
 
-#: templates/_settings_tabs/account.html:271
+#: templates/_settings_tabs/account.html:275
 msgid "RA Username"
 msgstr "RA-gebruikersnaam"
 
-#: templates/_settings_tabs/account.html:272
+#: templates/_settings_tabs/account.html:276
 msgid "Last Login"
 msgstr "Laatste login"
 
-#: templates/_settings_tabs/account.html:299
-#: templates/_settings_tabs/account.html:306
+#: templates/_settings_tabs/account.html:303
+#: templates/_settings_tabs/account.html:310
 msgid "Not Set"
 msgstr "Niet ingesteld"
 
-#: templates/_settings_tabs/account.html:336
+#: templates/_settings_tabs/account.html:340
 msgid "Close user modal"
 msgstr "Gebruikersvenster sluiten"
 
-#: templates/_settings_tabs/account.html:342
+#: templates/_settings_tabs/account.html:346
 msgid "Username *"
 msgstr "Gebruikersnaam *"
 
-#: templates/_settings_tabs/account.html:343
+#: templates/_settings_tabs/account.html:347
 msgid "username"
 msgstr "gebruikersnaam"
 
-#: templates/_settings_tabs/account.html:347
-#: templates/_settings_tabs/account.html:348
+#: templates/_settings_tabs/account.html:351
+#: templates/_settings_tabs/account.html:352
 msgid "Display Name"
 msgstr "Weergavenaam"
 
-#: templates/_settings_tabs/account.html:352
+#: templates/_settings_tabs/account.html:356
 msgid "Role *"
 msgstr "Rol *"
 
-#: templates/_settings_tabs/account.html:354
+#: templates/_settings_tabs/account.html:358
 msgid "Viewer - Read only access"
 msgstr "Kijker - alleen-lezen toegang"
 
-#: templates/_settings_tabs/account.html:355
+#: templates/_settings_tabs/account.html:359
 msgid "Player - Can launch and track progress"
 msgstr "Speler - kan starten en voortgang bijhouden"
 
-#: templates/_settings_tabs/account.html:356
+#: templates/_settings_tabs/account.html:360
 msgid "Editor - Can edit games and scrape"
 msgstr "Bewerker - kan games bewerken en scrapen"
 
-#: templates/_settings_tabs/account.html:357
+#: templates/_settings_tabs/account.html:361
 msgid "Admin - Full access"
 msgstr "Beheerder - volledige toegang"
 
-#: templates/_settings_tabs/account.html:362
+#: templates/_settings_tabs/account.html:366
 msgid "Reset Password"
 msgstr "Wachtwoord resetten"
 
-#: templates/_settings_tabs/account.html:363
+#: templates/_settings_tabs/account.html:367
 msgid "Leave blank to keep current"
 msgstr "Laat leeg om huidig wachtwoord te behouden"
 
-#: templates/_settings_tabs/account.html:364
+#: templates/_settings_tabs/account.html:368
 msgid "Only for admin accounts"
 msgstr "Alleen voor beheerdersaccounts"
 
-#: templates/_settings_tabs/account.html:369
+#: templates/_settings_tabs/account.html:373
 msgid "Save User"
 msgstr "Gebruiker opslaan"
 
@@ -10744,31 +10748,31 @@ msgstr ""
 "Geen waarden gevonden voor dit veld. Zorg dat je bibliotheek games met "
 "metadata bevat."
 
-#: templates/_settings_tabs/library.html:3
+#: templates/_settings_tabs/library.html:4
 msgid "Library settings"
 msgstr "Bibliotheekinstellingen"
 
-#: templates/_settings_tabs/library.html:5
+#: templates/_settings_tabs/library.html:6
 msgid "Paths"
 msgstr "Paden"
 
-#: templates/_settings_tabs/library.html:6
+#: templates/_settings_tabs/library.html:7
 msgid "Display"
 msgstr "Weergave"
 
-#: templates/_settings_tabs/library.html:7
+#: templates/_settings_tabs/library.html:8
 msgid "ROM Naming"
 msgstr "ROM-naamgeving"
 
-#: templates/_settings_tabs/library.html:8
+#: templates/_settings_tabs/library.html:9
 msgid "Backup"
 msgstr "Back-up"
 
-#: templates/_settings_tabs/library.html:14
+#: templates/_settings_tabs/library.html:15
 msgid "Library Settings"
 msgstr "Bibliotheekinstellingen"
 
-#: templates/_settings_tabs/library.html:18
+#: templates/_settings_tabs/library.html:19
 msgid ""
 "Configure the paths to your ROM library, ES-DE data, and other "
 "integrations."
@@ -10776,105 +10780,105 @@ msgstr ""
 "Configureer de paden naar je ROM-bibliotheek, ES-DE-gegevens en andere "
 "integraties."
 
-#: templates/_settings_tabs/library.html:22
+#: templates/_settings_tabs/library.html:23
 msgid "ROM Library Path"
 msgstr "Pad ROM-bibliotheek"
 
-#: templates/_settings_tabs/library.html:24
+#: templates/_settings_tabs/library.html:26
 msgid "e.g. /home/user/ROMS"
 msgstr "bijv. /home/user/ROMS"
 
-#: templates/_settings_tabs/library.html:30
+#: templates/_settings_tabs/library.html:34
 msgid "Database Location"
 msgstr "Databaselocatie"
 
-#: templates/_settings_tabs/library.html:32
+#: templates/_settings_tabs/library.html:36
 msgid "Database path cannot be changed via UI"
 msgstr "Databasepad kan niet via de interface worden gewijzigd"
 
-#: templates/_settings_tabs/library.html:38
+#: templates/_settings_tabs/library.html:42
 msgid "Save Path Settings"
 msgstr "Padinstellingen opslaan"
 
-#: templates/_settings_tabs/library.html:46
+#: templates/_settings_tabs/library.html:50
 msgid "Changes to ROM path require a restart to take full effect"
 msgstr ""
 "Wijzigingen aan het ROM-pad vereisen een herstart om volledig van kracht "
 "te worden"
 
-#: templates/_settings_tabs/library.html:55
+#: templates/_settings_tabs/library.html:59
 msgid "Display Preferences"
 msgstr "Weergavevoorkeuren"
 
-#: templates/_settings_tabs/library.html:59
+#: templates/_settings_tabs/library.html:63
 msgid "Theme"
 msgstr "Thema"
 
-#: templates/_settings_tabs/library.html:67
+#: templates/_settings_tabs/library.html:71
 msgid "Cyberpunk"
 msgstr "Cyberpunk"
 
-#: templates/_settings_tabs/library.html:75
+#: templates/_settings_tabs/library.html:79
 msgid "Matrix"
 msgstr "Matrix"
 
-#: templates/_settings_tabs/library.html:83
+#: templates/_settings_tabs/library.html:87
 msgid "Retro Amber"
 msgstr "Retro Amber"
 
-#: templates/_settings_tabs/library.html:91
+#: templates/_settings_tabs/library.html:95
 msgid "Midnight Ocean"
 msgstr "Midnight Ocean"
 
-#: templates/_settings_tabs/library.html:99
+#: templates/_settings_tabs/library.html:103
 msgid "Cathedral"
 msgstr "Cathedral"
 
-#: templates/_settings_tabs/library.html:107
+#: templates/_settings_tabs/library.html:111
 msgid "Blade Runner"
 msgstr "Blade Runner"
 
-#: templates/_settings_tabs/library.html:115
+#: templates/_settings_tabs/library.html:119
 msgid "Elite"
 msgstr "Elite"
 
-#: templates/_settings_tabs/library.html:118
+#: templates/_settings_tabs/library.html:122
 msgid "Theme applies instantly. Changes are saved automatically."
 msgstr "Thema wordt direct toegepast. Wijzigingen worden automatisch opgeslagen."
 
-#: templates/_settings_tabs/library.html:126
+#: templates/_settings_tabs/library.html:130
 msgid "Language"
 msgstr "Taal"
 
-#: templates/_settings_tabs/library.html:137
+#: templates/_settings_tabs/library.html:141
 msgid "Changes the interface language. The page reloads when you switch."
 msgstr ""
 "Wijzigt de taal van de interface. De pagina wordt opnieuw geladen bij het"
 " wisselen."
 
-#: templates/_settings_tabs/library.html:141
+#: templates/_settings_tabs/library.html:145
 msgid "Preferred Boxart Style"
 msgstr "Voorkeursstijl boxart"
 
-#: templates/_settings_tabs/library.html:143
+#: templates/_settings_tabs/library.html:147
 msgid "2D Boxart (Standard)"
 msgstr "2D-boxart (standaard)"
 
-#: templates/_settings_tabs/library.html:144
+#: templates/_settings_tabs/library.html:148
 msgid "3D Boxart (with 2D fallback)"
 msgstr "3D-boxart (met 2D-terugval)"
 
-#: templates/_settings_tabs/library.html:146
+#: templates/_settings_tabs/library.html:150
 msgid "When 3D is selected, 2D boxart will be shown if no 3D version exists"
 msgstr ""
 "Als 3D is geselecteerd, wordt 2D-boxart getoond als er geen 3D-versie "
 "bestaat"
 
-#: templates/_settings_tabs/library.html:150
+#: templates/_settings_tabs/library.html:154
 msgid "Preferred Age Rating System"
 msgstr "Voorkeurssysteem voor leeftijdsclassificatie"
 
-#: templates/_settings_tabs/library.html:162
+#: templates/_settings_tabs/library.html:166
 msgid ""
 "Ratings from other systems are cross-mapped when the preferred system's "
 "rating is unavailable"
@@ -10882,15 +10886,15 @@ msgstr ""
 "Classificaties van andere systemen worden kruislings toegepast als de "
 "classificatie van het voorkeurssysteem niet beschikbaar is"
 
-#: templates/_settings_tabs/library.html:168
+#: templates/_settings_tabs/library.html:172
 msgid "Save Display Settings"
 msgstr "Weergave-instellingen opslaan"
 
-#: templates/_settings_tabs/library.html:177
+#: templates/_settings_tabs/library.html:181
 msgid "ROM Naming Conventions"
 msgstr "ROM-naamgevingsconventies"
 
-#: templates/_settings_tabs/library.html:181
+#: templates/_settings_tabs/library.html:185
 msgid ""
 "Configure the filename pattern for each system type. Title is always "
 "first.\n"
@@ -10902,11 +10906,11 @@ msgstr ""
 "            Voeg tags toe in de volgorde waarin ze in bestandsnamen "
 "moeten verschijnen (bijv. <code>Title (Region).zip</code>)."
 
-#: templates/_settings_tabs/library.html:186
+#: templates/_settings_tabs/library.html:190
 msgid "Article Placement"
 msgstr "Plaatsing lidwoord"
 
-#: templates/_settings_tabs/library.html:188
+#: templates/_settings_tabs/library.html:192
 msgid ""
 "Controls where articles (A, An, The) appear in game titles and ROM "
 "filenames."
@@ -10914,15 +10918,15 @@ msgstr ""
 "Bepaalt waar lidwoorden (A, An, The) verschijnen in gametitels en ROM-"
 "bestandsnamen."
 
-#: templates/_settings_tabs/library.html:191
+#: templates/_settings_tabs/library.html:195
 msgid "Beginning (natural) — \"The Legend of Zelda\""
 msgstr "Begin (natuurlijk) — \"The Legend of Zelda\""
 
-#: templates/_settings_tabs/library.html:192
+#: templates/_settings_tabs/library.html:196
 msgid "End (sort-friendly) — \"Legend of Zelda, The\""
 msgstr "Einde (sorteervriendelijk) — \"Legend of Zelda, The\""
 
-#: templates/_settings_tabs/library.html:194
+#: templates/_settings_tabs/library.html:198
 msgid ""
 "Applies to new scrapes and rename suggestions. Existing titles are not "
 "changed automatically."
@@ -10930,11 +10934,11 @@ msgstr ""
 "Geldt voor nieuwe scrapes en hernoemsuggesties. Bestaande titels worden "
 "niet automatisch gewijzigd."
 
-#: templates/_settings_tabs/library.html:198
+#: templates/_settings_tabs/library.html:202
 msgid "Region Options"
 msgstr "Regio-opties"
 
-#: templates/_settings_tabs/library.html:200
+#: templates/_settings_tabs/library.html:204
 msgid ""
 "Configure the available region values and default. The default region is "
 "used when scraping if no region is detected."
@@ -10943,19 +10947,19 @@ msgstr ""
 "standaardregio wordt gebruikt bij het scrapen als er geen regio wordt "
 "gedetecteerd."
 
-#: templates/_settings_tabs/library.html:215
+#: templates/_settings_tabs/library.html:219
 msgid "Default Region"
 msgstr "Standaardregio"
 
-#: templates/_settings_tabs/scraping.html:511
+#: templates/_settings_tabs/scraping.html:521
 msgid "Test saved AI key"
 msgstr "Opgeslagen AI-sleutel testen"
 
-#: templates/_settings_tabs/scraping.html:594
+#: templates/_settings_tabs/scraping.html:604
 msgid "Let Claude search the web"
 msgstr "Laat Claude op het web zoeken"
 
-#: templates/_settings_tabs/scraping.html:600
+#: templates/_settings_tabs/scraping.html:610
 msgid ""
 "Without search, Claude answers from what it already knows, and leaves "
 "blank anything that needs a published figure, such as copies sold. With "

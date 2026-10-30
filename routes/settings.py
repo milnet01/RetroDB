@@ -538,6 +538,21 @@ def api_update_paths():
         return error(_('An internal error occurred'), 500)
 
 
+@bp.route('/api/settings/browse-paths', methods=['POST'])
+@admin_required
+@handle_api_errors
+def api_browse_paths():
+    """List a folder for a path field's Browse button. Any folder on the
+    computer, which is why this is admin-only."""
+    from services import path_browser
+    data = request.get_json(silent=True) or {}
+    folder = path_browser.start_folder(data.get('path'))
+    try:
+        return success(**path_browser.list_path(folder, include_files=bool(data.get('files'))))
+    except PermissionError:
+        return error(_('Permission denied'), 403)
+
+
 @bp.route('/api/settings', methods=['GET'])
 @admin_required
 def api_get_all_settings():

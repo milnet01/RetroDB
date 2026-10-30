@@ -6,6 +6,7 @@
 # =============================================================================
 
 import logging
+from itertools import groupby
 
 from flask import Blueprint, render_template, request
 from flask_babel import gettext as _
@@ -170,6 +171,38 @@ def api_delete_emulator(emulator_id):
 # system_emulators mapping (admin-only)
 # -----------------------------------------------------------------------------
 
+def _with_player_offers(mappings):
+    """Add the player, as a row with no id, to each listed system it can run
+    and nothing has linked it to: scans and core installs link only systems
+    with games. Choosing it in the dropdown saves the link."""
+    from services import player_cores
+    player_row = player_cores.player_row()
+    if not player_row or not _listed(player_row):
+        return mappings
+    out = []
+    for system_id, group in groupby(mappings, key=lambda m: m['system_id']):
+        group = list(group)
+        out += group
+        first = group[0]
+        if (not any(m['emulator_id'] == player_row['id'] for m in group)
+                and player_cores.entry(first['system_folder'])):
+            offer = {'system_id': system_id, 'emulator_id': player_row['id']}
+            out.append(dict(
+                offer,
+                id=None,
+                is_default=0,
+                retroarch_core=None,
+                extra_args=None,
+                system_name=first['system_name'],
+                system_folder=first['system_folder'],
+                emulator_name=player_row['name'],
+                resolves=_mapping_resolves(player_row, offer),
+                bios=bios_status(player_row, offer),
+                has_settings=False,
+            ))
+    return out
+
+
 @bp.route('/api/system_emulators', methods=['GET'])
 @login_required
 @admin_required
@@ -194,7 +227,7 @@ def api_list_system_emulators():
             bios=bios_status(emu, r),
             has_settings=bool(settings_for(emu['binary_name'] if emu else '')),
         ))
-    return success(mappings=mappings)
+    return success(mappings=_with_player_offers(mappings))
 
 
 @bp.route('/api/system_emulators', methods=['POST'])
