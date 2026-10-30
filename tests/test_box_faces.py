@@ -317,3 +317,33 @@ def test_inv7_a_viewer_is_refused(game, images, admin_test_client):
     assert client.delete(f'/api/games/{game}/box-faces',
                          headers={'X-CSRF-Token': csrf}).status_code == 403
     assert _stored_files(images) == []
+
+
+# --- §4.5: the import is in the Edit window, the hint under the cover -----------
+
+def _modal_and_cover(client, gid):
+    html = client.get(f'/game/{gid}').get_data(as_text=True)
+    modal_start = html.index('id="editModal"')
+    return html[modal_start:html.index('id="boxartZoomModal"')], html[:modal_start]
+
+
+def test_the_import_button_is_in_the_edit_window_for_an_editor(game, images, admin_test_client):
+    client, _ = admin_test_client()
+    modal, cover = _modal_and_cover(client, game)
+    assert 'id="boxFacesImportBtn"' in modal
+    assert 'id="boxFacesImportBtn"' not in cover
+
+
+def test_a_viewer_gets_no_import_button(game, images, admin_test_client):
+    client, _ = admin_test_client(user={'id': 2, 'username': 'viewer-stub', 'role': 'viewer'})
+    modal, _cover = _modal_and_cover(client, game)
+    assert 'id="boxFacesImportBtn"' not in modal
+
+
+def test_the_cover_hint_shows_only_once_the_game_has_faces(game, images, admin_test_client):
+    client, _ = admin_test_client(user={'id': 2, 'username': 'viewer-stub', 'role': 'viewer'})
+    _modal, cover = _modal_and_cover(client, game)
+    assert 'id="boxFacesHint" hidden' in cover
+    box_faces.import_box_file(game, _uploads())
+    _modal, cover = _modal_and_cover(client, game)
+    assert 'id="boxFacesHint">' in cover

@@ -199,23 +199,13 @@
                 </div>
             {% endif %}
             </div>
-            {# PASS-59-142 — Slipcase box faces: editors import and remove them here
-               (game-box-faces.js). Clicking the cover turns them into a box
-               (PASS-59-143, box-viewer.js). #}
-            {% set _box_editor = current_user and current_user.role in ('admin', 'editor') %}
-            {% if box_faces or _box_editor %}
-            <div class="box-faces-note" id="boxFacesNote">
-                <span id="boxFacesStatus" role="status"{% if not box_faces %} hidden{% endif %}>
-                    <span aria-hidden="true">📦</span>
-                    {{ _('3D box imported:') }} <span id="boxFacesCase">{{ box_faces.case.name if box_faces else '' }}</span>
-                </span>
-                {% if _box_editor %}
-                <button type="button" class="btn btn-sm btn-secondary" id="boxFacesImportBtn" data-game-id="{{ game.id }}"
-                        title="{{ _('Pick the .box.json file Slipcase saved, together with its pictures.') }}">{{ _('Import 3D box') }}</button>
-                <button type="button" class="btn btn-sm btn-secondary" id="boxFacesRemoveBtn" data-game-id="{{ game.id }}"{% if not box_faces %} hidden{% endif %}>{{ _('Remove') }}</button>
-                <input type="file" id="boxFacesInput" multiple accept=".json,.png,.webp,.jpg,.jpeg" hidden>
-                {% endif %}
-            </div>
+            {# PASS-59-142 — Slipcase box faces: clicking the cover turns them into a
+               box (PASS-59-143, box-viewer.js). Editors import and remove them in
+               the edit modal (game-box-faces.js). #}
+            {% if game.boxart or game.boxart_3d %}
+            <p class="box-faces-note" id="boxFacesHint"{% if not box_faces %} hidden{% endif %}>
+                <span><span aria-hidden="true">📦</span> {{ _('Click the cover to turn the 3D box') }}</span>
+            </p>
             {% endif %}
             {% if upscale_pending %}
             {# PASS-59-153 — main.js reloads this game's images when it is done. #}

@@ -6,13 +6,13 @@
 **Source:** ROADMAP PASS-59-142 (user decisions 2026-10-23).
 **Blocker for:** PASS-59-143 (the turnable 3D box viewer reads what this stores).
 
-Layman: on a game's page you pick the box file Slipcase saved, together with
-its pictures, and RetroDB keeps those pictures for that game, ready for the
-turnable 3D box.
+Layman: in a game's Edit window you pick the box file Slipcase saved, together
+with its pictures, and RetroDB keeps those pictures for that game, ready for
+the turnable 3D box.
 
 ## 1. Goal
 
-After this ships, an editor on a game's page can press **Import 3D box**, pick
+After this ships, an editor in a game's Edit window can press **Import 3D box**, pick
 a Slipcase `S.box.json` and its face pictures in one file dialog, and RetroDB
 stores the faces for that game as WebP with the box's sizes and colours. A
 game that already has faces keeps them unless the editor agrees to replace
@@ -35,8 +35,9 @@ never touched.
 
 ## 3. Scope decisions (agreed with the user)
 
-- **Import starts on the game's own page, one box file per game** (user,
-  2026-10-23). Bulk import is out of scope (§ 9).
+- **Import starts in the game's Edit window, one box file per game** (user,
+  2026-10-30; it first sat under the cover on the game page, user 2026-10-23).
+  Bulk import is out of scope (§ 9).
 - **The faces are stored alongside `boxart_3d` and do not replace it** (user,
   2026-10-23).
 - **Format version 1 only, every optional face read** (Slipcase sessions,
@@ -159,18 +160,21 @@ DELETE /api/games/<int:game_id>/box-faces
 `exists` replies with 409. `not_found` replies with 404. Every other code
 replies with 400.
 
-### 4.5 The game page
+### 4.5 The Edit window and the game page
 
-- Under the cover in `templates/game_detail.html`, an editor sees an
-  **Import 3D box** button. It opens a hidden `<input type="file" multiple
-  accept=".json,.png,.webp,.jpg,.jpeg">`. Its title tells the editor to pick
-  the `.box.json` file and its pictures together. It is not in the action
-  bar, which it pushed onto a second row.
+- In the Custom Images section of `templates/_modals/edit_modal.html`, an
+  editor sees an **Import 3D box** button. It opens a hidden
+  `<input type="file" multiple accept=".json,.png,.webp,.jpg,.jpeg">` with no
+  `name`, so the form never sends it. A tip tells the editor to pick the
+  `.box.json` file and its pictures together, and that the import saves
+  straight away, without Save Changes. Cancel does not undo it.
 - On a 409 reply, `showConfirm` asks whether to replace the existing faces.
   Yes resends with `replace=1`.
-- When `faces_for` returns a record, the same line says the 3D box is
-  imported, names the case, and shows editors a **Remove** button. A viewer
-  sees the line only when there are faces.
+- When `faces_for` returns a record, the same field says the 3D box is
+  imported, names the case, and shows a **Remove** button.
+- Under the cover in `templates/game_detail.html`, anyone sees a one-line hint
+  that clicking the cover turns the 3D box. It shows only when the game has
+  faces and a cover to click.
 - The script is `static/js/game-box-faces.js`, loaded by its own `<script>`
   tag like `game-cheats.js`. Its strings use `t()`; `build_js.py` scans
   every `static/js/*.js` for them. Template strings use `_()`.

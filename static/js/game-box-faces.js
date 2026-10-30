@@ -1,12 +1,12 @@
 /**
- * PASS-59-142 — import a Slipcase box file onto the game page.
+ * PASS-59-142 — import a Slipcase box file onto a game.
  *
- * "Import 3D box", under the cover, opens a file picker; the editor picks the .box.json file
+ * "Import 3D box", in the edit modal, opens a file picker; the editor picks the .box.json file
  * Slipcase saved together with its pictures (picking the whole folder is
  * fine: only the files the box file names are read). A game that already
- * has faces asks before replacing them. The same line then shows the case
- * and a Remove button, and hands the record to the turnable box in the
- * cover zoom (box-viewer.js, PASS-59-143).
+ * has faces asks before replacing them. The modal then shows the case and a
+ * Remove button, the game page's hint appears, and the record goes to the
+ * turnable box in the cover zoom (box-viewer.js, PASS-59-143).
  *
  * Contract: docs/specs/PASS-59-142-box-file-import.md §4.4, §4.5.
  */
@@ -30,6 +30,8 @@
 
     function showNote(record) {
         if (window.BoxViewer) BoxViewer.setRecord(record);
+        const hint = document.getElementById('boxFacesHint');
+        if (hint) hint.hidden = !record;
         const status = document.getElementById('boxFacesStatus');
         if (!status) return;
         document.getElementById('boxFacesCase').textContent = record ? record.case.name : '';

@@ -367,6 +367,7 @@
                         <div class="edit-field">
                             <label for="custom_boxart_3d">{{ _('Custom 3D Boxart') }}</label>
                             <input id="custom_boxart_3d" type="file" name="custom_boxart_3d" accept="image/*" />
+                            <span class="field-tip">{{ _('One flat picture of the box.') }}</span>
                             {% if game.boxart_3d %}
                             <span class="current-file">{% trans filename=game.boxart_3d %}Current: {{ filename }}{% endtrans %}</span>
                             <button type="button" class="btn btn-sm btn-danger" style="margin-top: 8px;" data-on-click="confirmRemoveMedia" data-args='["remove_boxart_3d", "🗑️ Delete 3D Boxart", "Delete 3D boxart? You can re-scrape to get a new one."]'>
@@ -375,6 +376,20 @@
                             <input type="hidden" name="remove_boxart_3d" value="" />
                             {% endif %}
                         </div>
+                        {# PASS-59-142 — takes effect at once, not on Save (game-box-faces.js).
+                           The file input has no name, so the form never sends it. #}
+                        {% if current_user and current_user.role in ('admin', 'editor') %}
+                        <div class="edit-field">
+                            <label for="boxFacesImportBtn">{{ _('3D box from Slipcase') }}</label>
+                            <div class="box-faces-note">
+                                <button type="button" class="btn btn-sm btn-secondary" id="boxFacesImportBtn" data-game-id="{{ game.id }}">{{ _('Import 3D box') }}</button>
+                                <button type="button" class="btn btn-sm btn-danger" id="boxFacesRemoveBtn" data-game-id="{{ game.id }}"{% if not box_faces %} hidden{% endif %}>🗑️ {{ _('Remove') }}</button>
+                                <input type="file" id="boxFacesInput" multiple accept=".json,.png,.webp,.jpg,.jpeg" hidden>
+                            </div>
+                            <span class="field-tip">{{ _('Pick the .box.json file Slipcase saved, together with its pictures.') }} {{ _('This saves straight away, without Save Changes.') }}</span>
+                            <span class="current-file" id="boxFacesStatus" role="status"{% if not box_faces %} hidden{% endif %}>{{ _('3D box imported:') }} <span id="boxFacesCase">{{ box_faces.case.name if box_faces else '' }}</span></span>
+                        </div>
+                        {% endif %}
                         <div class="edit-field">
                             <label for="custom_fanart">{{ _('Custom Fanart') }}</label>
                             <input id="custom_fanart" type="file" name="custom_fanart" accept="image/*" />
