@@ -8415,9 +8415,12 @@ were corrected in `2836bc3` and are not repeated here.
   5b. Turnable 3D box art (user, 2026-10-23): PASS-59-142 (import
      Slipcase box faces), then PASS-59-143 (the 3D viewer).
   5c. Scraper data, complete and correct (user, 2026-10-23): PASS-59-162
-     full investigation (unused data, and misused data); the user picks
-     which findings ship in v4.0.0. PASS-59-161 (screenshots true to
-     their system) ships in this step.
+     investigation done 2026-10-31; the user chose every group for
+     v4.0.0, in this order: PASS-59-201 to PASS-59-214 (wrong data),
+     PASS-59-215 (service limits), PASS-59-216 and PASS-59-217 (extra
+     data, identifying by file), PASS-59-218 (Steam and Xbox).
+     PASS-59-219 (leftovers) goes alongside. PASS-59-161 (screenshots
+     true to their system) ships in this step.
   6. Stricter browser security: PASS-60-1, after the template changes
      above, so inline scripts move once.
   7. Fully translated: PASS-52-1, PASS-59-109, PASS-57-6, PASS-59-93,
@@ -9632,7 +9635,9 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.162 Full scraper investigation: what each source offers that RetroDB does not use, and whether what it does use is used correctly (INVESTIGATE, L).
-- **Status**: todo
+- **Resolution** (2026-10-31): **Done** (2026-10-31): the user chose all groups for v4.0.0; order in
+  PASS-59-113 step 5c.
+- **Status**: done
 - **Request** (user, 2026-10-23, for v4.0.0): scrapers may offer more
   than RetroDB uses; check whether we use everything each one offers.
 - **Scope**: every source in scraper/ (ScreenScraper, IGDB, TheGamesDB,
