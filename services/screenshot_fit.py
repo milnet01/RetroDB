@@ -33,6 +33,35 @@ _EXACT_FORMATS = {'PNG', 'GIF', 'BMP'}
 
 _SCORE_MAX_SIDE = 480
 
+# 8-bit and 16-bit systems (systems.folder). A game's versions on these look
+# plainly different, so IGDB and RAWG shots, which are per game and not per
+# version, count only for a game on one platform. Newer systems' versions look
+# much alike and keep those shots: the user chose that trade on 2026-10-31,
+# when the rule on every system left multi-platform games with 1 or 2 shots.
+# Arcade folders are left out: their hardware spans generations.
+EIGHT_AND_SIXTEEN_BIT = frozenset({
+    # Nintendo
+    'nes', 'famicom', 'fds', 'snes', 'sfc', 'snesna', 'gb', 'gbc', 'sgb', 'satellaview', 'sufami',
+    # Sega
+    'sg-1000', 'sc-3000', 'mark3', 'mastersystem', 'gamegear', 'genesis', 'megadrive', 'megadrivejp',
+    'segacd', 'megacd', 'megacdjp',
+    # NEC and SNK
+    'pcengine', 'pcenginecd', 'supergrafx', 'tg16', 'tg-cd', 'pc88', 'pc98',
+    'neogeo', 'neogeocd', 'neogeocdjp', 'ngp', 'ngpc',
+    # Atari
+    'atari2600', 'atari5200', 'atari7800', 'atari800', 'atarixe', 'atarilynx', 'atarist',
+    # Commodore
+    'c64', 'vic20', 'plus4', 'amiga', 'amiga600', 'amiga1200', 'cdtv',
+    # Sinclair, Amstrad, Acorn, MSX and Apple
+    'zxspectrum', 'zx81', 'zxnext', 'samcoupe', 'amstradcpc', 'gx4000', 'electron', 'bbcmicro',
+    'msx', 'msx1', 'msx2', 'msxturbor', 'apple2', 'apple2gs',
+    # Other home computers, consoles and handhelds
+    'oric', 'coco', 'dragon32', 'trs-80', 'ti99', 'moto', 'to8', 'fm7', 'x1', 'x68000', 'spectravideo',
+    'adam', 'colecovision', 'intellivision', 'channelf', 'odyssey2', 'videopac', 'astrocade', 'astrocde',
+    'arcadia', 'crvision', 'scv', 'pv1000', 'multivision', 'gamate', 'gmaster', 'megaduck', 'supervision',
+    'wonderswan', 'wonderswancolor',
+})
+
 
 def has_impossible_colours(path, folder):
     """True only when the original at `path` cannot be from system `folder`."""

@@ -225,6 +225,7 @@ def test_igdb_apply_skips_screenshots_of_a_game_on_several_platforms(make_conn_w
     """PASS-59-161: the direct path, as metadata_merger's."""
     conn = make_conn_with_existing_row(screenshots='old_ss.webp')
     monkeypatch.setattr(scrape_igdb, 'get_scraper_conn', lambda: conn)
+    monkeypatch.setattr('scraper.base_scraper._game_system_folder', lambda game_id: 'zxspectrum')
     monkeypatch.setattr(scrape_igdb, 'download_image', lambda *a, **kw: True)
     monkeypatch.setattr(scrape_igdb, 'IMAGE_PATH', str(tmp_path), raising=False)
 

@@ -15,7 +15,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import IMAGE_PATH, IGDB_PLATFORM_MAP
 import config as _config
 
-from scraper.base_scraper import http_post, download_image, get_scraper_conn, on_one_platform
+from scraper.base_scraper import http_post, download_image, get_scraper_conn, per_game_screenshots_fit
 
 logger = logging.getLogger(__name__)
 
@@ -619,7 +619,7 @@ def apply_metadata_to_game(db_game_id, igdb_data):
         
         # Download screenshots
         screenshots = []
-        if 'screenshots' in igdb_data and on_one_platform(igdb_data):
+        if 'screenshots' in igdb_data and per_game_screenshots_fit(igdb_data, db_game_id):
             screenshot_dir = os.path.join(IMAGE_PATH, 'screenshots')
             os.makedirs(screenshot_dir, exist_ok=True)
             

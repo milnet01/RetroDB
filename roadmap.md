@@ -9610,6 +9610,14 @@ were corrected in `2836bc3` and are not repeated here.
   Built: `services/screenshot_fit.py` refuses an unscaled lossless original with far more exact colours than the machine shows, before finalizing. ScreenScraper, TheGamesDB, IGDB and RAWG downloads go through it; ES-DE copies and manual uploads do not. ROM Tools > Screenshot Review ranks stored shots by how badly they fit the machine's colour count; only an editor's Remove deletes. Tests: `tests/test_pass59_161_screenshot_fit.py`. Page walked on a scratch copy.
   Limits: the ranking is uneven. It worked best on Game Boy, was mixed on C64, and on ZX Spectrum real OutRun shots ranked above wrong ones while orange Duggy shots ranked low. A shot judged real is listed again on the next scan.
   Still to do: try the refusal on real downloads (originals are not kept, so the rule has only met test pictures); the user judges the ZX Spectrum and C64 results.
+- **Progress** (2026-10-31): **Plan step 1 narrowed** (2026-10-31, user decision): the rule cut
+  multi-platform games to 1 or 2 shots (scrape of 2026-10-30: Colin
+  McRae Rally 3, 04 and 2005, Burn Zombie Burn! got no IGDB or RAWG
+  shots). It now applies only to 8-bit and 16-bit systems,
+  `screenshot_fit.EIGHT_AND_SIXTEEN_BIT`; other systems take IGDB and
+  RAWG shots again and may show another version's pictures. Arcade
+  folders are left out. Games scraped under the wider rule need
+  re-scraping to get the shots back.
 
 ---
 

@@ -7,6 +7,7 @@ import pytest
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from scraper import base_scraper
 from scraper import metadata_merger as mod
 from scraper import scrape_igdb, scrape_rawg
 
@@ -29,6 +30,8 @@ def downloads(tmp_path, monkeypatch):
 
     monkeypatch.setattr(mod, '_download_and_finalize', fake_download)
     monkeypatch.setattr(mod, 'keep_screenshot_if_unique', lambda *a, **kw: True)
+    monkeypatch.setattr(mod, 'screenshot_impossible_for_game', lambda *a: False)
+    monkeypatch.setattr(base_scraper, '_game_system_folder', lambda game_id: 'zxspectrum')
     return urls
 
 
@@ -59,6 +62,30 @@ def test_rawg_screenshots_need_one_platform(downloads, platforms, kept):
     mod.apply_rawg_to_metadata(metadata, data, 1, {'filled_fields': []})
     assert bool(downloads) is kept
     assert bool(metadata['screenshots']) is kept
+
+
+@pytest.mark.parametrize('folder, kept', [
+    ('zxspectrum', False), ('snes', False), ('amiga', False),  # 8/16-bit: versions look different
+    ('ps2', True), ('ps3', True), ('psx', True),               # newer: versions look much alike
+])
+def test_a_game_on_several_platforms_depends_on_its_system(downloads, monkeypatch, folder, kept):
+    monkeypatch.setattr(base_scraper, '_game_system_folder', lambda game_id: folder)
+    igdb_metadata = _metadata()
+    mod.apply_igdb_to_metadata(igdb_metadata, {'screenshots': IGDB_SHOTS, 'platforms': SEVERAL},
+                               1, {'filled_fields': []})
+    assert bool(igdb_metadata['screenshots']) is kept
+    rawg_metadata = _metadata()
+    mod.apply_rawg_to_metadata(rawg_metadata, {'screenshot_urls': RAWG_SHOTS, 'platforms': SEVERAL},
+                               1, {'filled_fields': []})
+    assert bool(rawg_metadata['screenshots']) is kept
+
+
+def test_a_game_with_no_known_system_keeps_its_shots(downloads, monkeypatch):
+    monkeypatch.setattr(base_scraper, '_game_system_folder', lambda game_id: None)
+    metadata = _metadata()
+    mod.apply_igdb_to_metadata(metadata, {'screenshots': IGDB_SHOTS, 'platforms': SEVERAL},
+                               1, {'filled_fields': []})
+    assert metadata['screenshots']
 
 
 def test_rawg_details_report_the_platforms(monkeypatch):

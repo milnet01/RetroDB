@@ -430,10 +430,8 @@ def on_one_platform(data):
     return len(data.get('platforms') or []) == 1
 
 
-def screenshot_impossible_for_game(path, game_id):
-    """True when the downloaded original at `path` cannot be from the game's
-    system. Runs on the original: finalizing re-encodes and upscales it."""
-    from services.screenshot_fit import has_impossible_colours
+def _game_system_folder(game_id):
+    """The game's systems.folder, or None when the game or system is gone."""
     conn = get_scraper_conn()
     try:
         row = conn.execute(
@@ -441,8 +439,23 @@ def screenshot_impossible_for_game(path, game_id):
             (game_id,)).fetchone()
     finally:
         conn.close()
-    if row and has_impossible_colours(path, row['folder']):
-        logger.info(f"Refused a screenshot for game {game_id}: too many colours for {row['folder']}")
+    return row['folder'] if row else None
+
+
+def per_game_screenshots_fit(data, game_id):
+    """May this IGDB or RAWG game's screenshots go on `game_id`? Not when the
+    game spans platforms and its system is one where versions look different."""
+    from services.screenshot_fit import EIGHT_AND_SIXTEEN_BIT
+    return on_one_platform(data) or _game_system_folder(game_id) not in EIGHT_AND_SIXTEEN_BIT
+
+
+def screenshot_impossible_for_game(path, game_id):
+    """True when the downloaded original at `path` cannot be from the game's
+    system. Runs on the original: finalizing re-encodes and upscales it."""
+    from services.screenshot_fit import has_impossible_colours
+    folder = _game_system_folder(game_id)
+    if folder and has_impossible_colours(path, folder):
+        logger.info(f"Refused a screenshot for game {game_id}: too many colours for {folder}")
         return True
     return False
 
