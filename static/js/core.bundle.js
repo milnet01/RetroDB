@@ -1087,12 +1087,13 @@ const ModalFocusTrap = {
                 const isActive = modalEl.classList.contains('active');
                 if (isActive && !modalEl._focusTrapActive) {
                     modalEl._focusTrapActive = true;
-                    const trigger = modalEl.contains(document.activeElement)
+                    const focusedInside = modalEl.contains(document.activeElement);
+                    const trigger = focusedInside
                         ? _focusOutsideModal : document.activeElement;
                     ModalFocusTrap.activate(
                         _resolveTarget(),
                         trigger,
-                        { onEscape: onEscape },
+                        { onEscape: onEscape, autoFocus: !focusedInside },
                     );
                 } else if (!isActive && modalEl._focusTrapActive) {
                     modalEl._focusTrapActive = false;

@@ -9618,6 +9618,16 @@ were corrected in `2836bc3` and are not repeated here.
   RAWG shots again and may show another version's pictures. Arcade
   folders are left out. Games scraped under the wider rule need
   re-scraping to get the shots back.
+- **Progress** (2026-10-31): **Refusal narrowed to Game Boy** (2026-10-31): tested on ES-DE's
+  original files, in `downloaded_media` under
+  `/mnt/Emulators/Multi-System/ES-DE`. The rule as first shipped would
+  have refused 113 of 314 countable C64 originals and 29 of 145 ZX
+  Spectrum ones, and the samples viewed were nearly all real shots: real
+  originals hold up to thousands of colours. A redraw-fit test on the
+  same originals overlaps Mega Drive, SNES, NES and Game Boy Color
+  shots, so no certain test exists there yet. Game Boy separates: real
+  originals hold 4 shades. No refusal had been logged before the change.
+  This corrects the earlier note that the rule had met no originals.
 
 ---
 

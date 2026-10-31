@@ -346,7 +346,7 @@ End-to-end checklist for a new remote source `foo`:
 - Every `?` in a scraper UPDATE is wrapped in `COALESCE(?, column)` (Pass 30.4 / 40.6 / 45.3).
 - Fill-only across every source; the only documented exception is `force_overwrite=True` in `hybrid_scraper` (Full Re-scrape).
 - Screenshots are always *appended*, never replaced. Dedup via dHash with Hamming threshold 10.
-- ScreenScraper, TheGamesDB, IGDB and RAWG downloads pass the game id as `screenshot_of`; `services/screenshot_fit.py` refuses an original that cannot be from a fixed-palette system (PASS-59-161). It decides by exact colour count, only on an unscaled lossless original, and before finalizing. ES-DE copies and manual uploads are not checked.
+- ScreenScraper, TheGamesDB, IGDB and RAWG downloads pass the game id as `screenshot_of`; `services/screenshot_fit.py` refuses a Game Boy original with too many colours (PASS-59-161). It decides by exact colour count, only on an unscaled lossless original, and before finalizing. ZX Spectrum and C64 are not refused: real originals overlap other systems' shots. ES-DE copies and manual uploads are not checked.
 - Media fields (`boxart`, `boxart_3d`, `fanart`, `video`, `manual`) are filled only when empty; clear them via the edit modal to force a re-fetch.
 - Stale media references (file deleted, filename still in DB) are detected pre-merge and conditionally NULLed under `WHERE id = ? AND <field> = ?` (Pass 40.15).
 - Every image download MUST go through `base_scraper.download_image` or `metadata_merger._download_and_finalize` — both gate on SSRF, walk the redirect chain, pin the resolved IP, stream with `MAX_MEDIA_DOWNLOAD_BYTES` cap (50 MB default), and write atomically (Pass 25.7, 32.6, 32.7, 40.7, 40.15, 45.2).

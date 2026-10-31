@@ -1200,12 +1200,15 @@ const ModalFocusTrap = {
                     // The trigger is what had focus when the open path
                     // called classList.add, unless that path already
                     // focused a field inside the modal.
-                    const trigger = modalEl.contains(document.activeElement)
+                    const focusedInside = modalEl.contains(document.activeElement);
+                    const trigger = focusedInside
                         ? _focusOutsideModal : document.activeElement;
+                    // A field the open path focused keeps the focus; the first
+                    // focusable is usually the header's close button.
                     ModalFocusTrap.activate(
                         _resolveTarget(),
                         trigger,
-                        { onEscape: onEscape },
+                        { onEscape: onEscape, autoFocus: !focusedInside },
                     );
                 } else if (!isActive && modalEl._focusTrapActive) {
                     modalEl._focusTrapActive = false;

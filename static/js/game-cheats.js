@@ -23,6 +23,9 @@
     // Above this many cheats the panel offers a search box.
     const FILTER_FROM = 12;
 
+    // Open or folded, remembered across games.
+    const OPEN_KEY = 'cheatsPanelOpen';
+
     const csrfToken = () => {
         const m = document.querySelector('meta[name="csrf-token"]');
         return m ? m.getAttribute('content') : '';
@@ -155,9 +158,21 @@
             view.cheats.length ? HARDCORE()[view.emulator] || '' : '';
     }
 
+    function setOpen(open) {
+        document.getElementById('cheatsBody').hidden = !open;
+        document.getElementById('cheatsArrow').textContent = open ? '▼' : '▶';
+        document.getElementById('cheatsToggle').setAttribute('aria-expanded', String(open));
+    }
+
     document.addEventListener('DOMContentLoaded', async () => {
         const panel = document.getElementById('cheatsPanel');
         if (!panel) return;
+        setOpen(Storage.get(OPEN_KEY) === true);
+        document.getElementById('cheatsToggle').addEventListener('click', () => {
+            const open = document.getElementById('cheatsBody').hidden;
+            setOpen(open);
+            Storage.set(OPEN_KEY, open);
+        });
         try {
             const data = await API.get(`/api/games/${panel.dataset.gameId}/cheats`);
             render(panel, data.data);

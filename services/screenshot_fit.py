@@ -4,7 +4,8 @@ Fixed-palette machines only. Exact colour values cannot decide it: emulators
 show the same machine in different colours, and stored shots are lossy and
 upscaled. Two palette-free tests are used instead, keyed by systems.folder:
 
-- At download, the original's exact colour count. Refuses only what is certain.
+- At download, the original's exact colour count. Refuses only what is certain,
+  which so far means Game Boy alone.
 - For stored shots, how badly the picture fits the machine's colour count. A
   ranking for a person to judge, never a verdict: real shots with heavy dither
   score high too.
@@ -19,10 +20,12 @@ logger = logging.getLogger(__name__)
 # Colours the machine shows at once; the stored-shot score fits to this many.
 FIT_COLOURS = {'zxspectrum': 15, 'c64': 16, 'gb': 4}
 
-# Above this many exact colours an original is not this machine. Twice the
-# machine's own colours, leaving room for a captured border or a flicker blend;
-# Game Boy allows a blend of each of its 4 shades with each other.
-REFUSE_ABOVE = {'zxspectrum': 32, 'c64': 32, 'gb': 16}
+# Above this many exact colours an original is not this machine. Allows a blend
+# of each of the 4 shades with each other. Measured 2026-10-31 on ES-DE's
+# original files: real Game Boy shots hold 4 shades. ZX Spectrum and C64 are left
+# out on purpose: real originals there hold up to thousands of colours from how
+# they were saved, overlapping other systems' shots, so no count is certain.
+REFUSE_ABOVE = {'gb': 16}
 
 # Larger than any of these machines' screens with border. A bigger original was
 # scaled, and a scaling filter invents colours, so its count proves nothing.

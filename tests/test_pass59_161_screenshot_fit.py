@@ -28,14 +28,12 @@ def _picture(path, colours, size=(256, 192), fmt='PNG'):
 
 
 @pytest.mark.parametrize('folder, colours, refused', [
-    ('zxspectrum', 15, False),
-    ('zxspectrum', 32, False),   # the limit itself is allowed
-    ('zxspectrum', 33, True),
-    ('c64', 16, False),
-    ('c64', 300, True),
     ('gb', 4, False),
-    ('gb', 16, False),
+    ('gb', 16, False),   # the limit itself is allowed
     ('gb', 17, True),
+    # Real originals on these hold up to thousands of colours: never refused.
+    ('zxspectrum', 2408, False),
+    ('c64', 300, False),
 ])
 def test_exact_colour_count_decides(tmp_path, folder, colours, refused):
     path = _picture(tmp_path / 'shot.png', colours)
@@ -48,7 +46,7 @@ def test_exact_colour_count_decides(tmp_path, folder, colours, refused):
 ])
 def test_uncertain_originals_are_kept(tmp_path, name, kwargs):
     path = _picture(tmp_path / 'shot.img', 300, **kwargs)
-    assert fit.has_impossible_colours(path, 'zxspectrum') is False, name
+    assert fit.has_impossible_colours(path, 'gb') is False, name
 
 
 def test_unchecked_system_and_unreadable_file_are_kept(tmp_path):
@@ -56,7 +54,7 @@ def test_unchecked_system_and_unreadable_file_are_kept(tmp_path):
     assert fit.has_impossible_colours(many, 'snes') is False
     junk = tmp_path / 'junk.png'
     junk.write_bytes(b'not an image')
-    assert fit.has_impossible_colours(str(junk), 'zxspectrum') is False
+    assert fit.has_impossible_colours(str(junk), 'gb') is False
 
 
 class _FakeConn:
@@ -72,8 +70,8 @@ class _FakeConn:
 
 
 @pytest.mark.parametrize('folder, colours, refused', [
-    ('zxspectrum', 300, True),
-    ('zxspectrum', 15, False),
+    ('gb', 300, True),
+    ('gb', 4, False),
     ('snes', 300, False),
     (None, 300, False),   # game row gone: nothing to judge against
 ])
@@ -102,7 +100,7 @@ class _FakeResponse:
 
 @pytest.fixture
 def served_picture(tmp_path, monkeypatch):
-    """Serve a 300-colour PNG to the download helpers, offline, for a Spectrum game."""
+    """Serve a 300-colour PNG to the download helpers, offline, for a Game Boy game."""
     import contextlib
     import services.ssrf as ssrf
     source = _picture(tmp_path / 'source.png', 300)
@@ -112,7 +110,7 @@ def served_picture(tmp_path, monkeypatch):
     monkeypatch.setattr(ssrf, 'validate_and_pin_url', lambda s, url, **kw: (url, '1.1.1.1', None))
     monkeypatch.setattr(ssrf, 'pin_host_ip', lambda *a: contextlib.nullcontext())
     monkeypatch.setattr(base_scraper._http_session, 'get', lambda *a, **kw: _FakeResponse(body))
-    monkeypatch.setattr(base_scraper, 'get_scraper_conn', lambda: _FakeConn('zxspectrum'))
+    monkeypatch.setattr(base_scraper, 'get_scraper_conn', lambda: _FakeConn('gb'))
     # Finalizing can start the upscaler; these tests are about what comes before.
     import services.image_utils as image_utils
     from scraper import metadata_merger as merger

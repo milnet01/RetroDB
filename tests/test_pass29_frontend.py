@@ -95,3 +95,15 @@ def test_29_3_lightbox_activates_focus_trap():
 # test_29_5_global_search_uses_abort_controller retired (Pass 59.39):
 # performGlobalSearch called a route that does not exist, keyed on an element
 # no template renders, and had no caller, so it was deleted.
+
+
+def test_auto_focus_trap_leaves_a_field_the_open_path_focused():
+    """The trap used to move focus to the first focusable a frame later, so the
+    Scrape window opened on its close button instead of its title box."""
+    assert 'autoFocus: !focusedInside' in read_source('static/js/utils.js')
+
+
+def test_cheats_panel_folds_and_remembers():
+    assert 'aria-controls="cheatsBody"' in read_source('templates/game_detail.html')
+    src = read_source('static/js/game-cheats.js')
+    assert 'Storage.get(OPEN_KEY)' in src and 'Storage.set(OPEN_KEY, open)' in src

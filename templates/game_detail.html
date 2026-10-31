@@ -825,7 +825,13 @@
     <div class="bottom-section cheats-section" id="cheatsPanel" data-game-id="{{ game.id }}"
          data-can-edit="{{ 'true' if has_perm('edit') else 'false' }}"
          data-settings-url="{{ url_for('emulators.page_emulators_settings') if current_user.role == 'admin' else '' }}" hidden>
-        <h2 class="section-title-sm">🎲 {{ _('Cheats') }}</h2>
+        <h2 class="section-title-sm">
+            <button type="button" class="cheats-toggle" id="cheatsToggle" aria-expanded="false" aria-controls="cheatsBody">
+                🎲 {{ _('Cheats') }} <span id="cheatsArrow" aria-hidden="true">▶</span>
+            </button>
+        </h2>
+        {# Starts folded; game-cheats.js remembers the last choice (user, 2026-10-31). #}
+        <div id="cheatsBody" hidden>
         <p class="cheats-note" id="cheatsNote"></p>
         <div class="cheats-picker" id="cheatsPicker" hidden>
             <label for="cheatsSource">{{ _('Cheat list') }}</label>
@@ -834,6 +840,7 @@
         <input type="search" class="form-input cheats-filter" id="cheatsFilter" placeholder="{{ _('Find a cheat') }}" aria-label="{{ _('Find a cheat') }}" hidden>
         <ul class="cheats-list" id="cheatsList"></ul>
         <p class="cheats-hardcore" id="cheatsHardcore"></p>
+        </div>
     </div>
     {% endif %}
     
@@ -3589,7 +3596,8 @@ body:has(.game-fanart-bg.active)::before {
     margin-bottom: 1rem;
 }
 
-.scrape-history-section .scrape-history-toggle {
+.scrape-history-section .scrape-history-toggle,
+.cheats-section .cheats-toggle {
     display: flex;
     justify-content: space-between;
     align-items: center;

@@ -207,7 +207,7 @@ The panel sits in `templates/game_detail.html`, full width under the row
 of cards that holds the Emulator settings panel, because a game can have
 hundreds of cheats. Where the game's emulator is not the player on a system with a
 `cheats` folder, DuckStation or PCSX2, it shows only the reason (PASS-59-197). Its script is
-`static/js/game-cheats.js`. Otherwise it holds:
+`static/js/game-cheats.js`. It starts folded and remembers open or folded across games, in the browser. Otherwise it holds:
 
 - A list picker, player only, shown when there are two or more
   candidates. Changing it replaces the game's `.cht` after a confirm, which
