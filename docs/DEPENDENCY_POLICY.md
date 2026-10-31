@@ -34,6 +34,7 @@ Every one of these is in scope:
 | Surface | Where it lives | Who bumps it |
 |---|---|---|
 | Python packages | `requirements.txt` (ranges) + `requirements.lock` (exact + hashes) | Dependabot `pip` group, weekly |
+| CI tools | `requirements-ci.txt` (exact; GitHub and the local gate install from it) | Dependabot `pip` group, weekly |
 | GitHub Actions | `.github/workflows/*.yml` (SHA-pinned + `# vX.Y.Z` comment) | Dependabot `github-actions` group, weekly |
 | pre-commit hooks | `.pre-commit-config.yaml` (ruff, gitleaks, …) | Dependabot `pre-commit` group, weekly |
 | CI runner images | `runs-on:` in the workflows (e.g. `ubuntu-latest`) | manual — see §5 |
@@ -54,8 +55,8 @@ Dependabot config: `.github/dependabot.yml` (weekly Monday scan, grouped PRs,
    (`--universal` keeps Windows-only deps in a lock compiled on Linux, Pass 59.99).
    (Pass 57.3 — was `pip-compile`; pip-tools imports a pip internal that pip 26
    removed, so it dies on any current pip. uv reproduces the lock byte-for-byte.)
-3. **CI gates** (`.github/workflows/ci.yml`, mirrored locally by
-   `scripts/ci_local.sh`):
+3. **CI gates** (`scripts/ci_local.sh`, which `.github/workflows/ci.yml` calls
+   and the pre-push hook runs):
    - `pip-audit --requirement requirements.lock --strict` — fails on any known CVE.
    - `lockfile-drift` — fails if `requirements.txt` changed without recompiling the lock.
 4. **Sweep posture** (global §5c): at the start of a release cycle, or whenever
@@ -178,6 +179,7 @@ A CVE against a pinned dependency is not subject to the normal weekly cadence:
 - Global policy: `~/.claude/CLAUDE.md` §5 / §5a / §5b / §5c
 - Version-bump + lockfile step: project `CLAUDE.md` → Mandatory Workflow
 - Dependabot config: `.github/dependabot.yml`
-- CI gates: `.github/workflows/ci.yml` (`pip-audit`, `lockfile-drift`) and the
-  local mirror `scripts/ci_local.sh`
+- CI gates: `scripts/ci_local.sh` (`pip-audit`, `lockfile-drift`), called by
+  `.github/workflows/ci.yml`
+- CI tool versions: `requirements-ci.txt`
 - Lockfile: `requirements.lock` (exact pins + hashes)

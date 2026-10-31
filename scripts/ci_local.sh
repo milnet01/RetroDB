@@ -1,52 +1,46 @@
 #!/usr/bin/env bash
 #
-# scripts/ci_local.sh — run the GitHub Actions CI checks locally.
+# scripts/ci_local.sh — the CI checks. One list, used in both places.
 #
-# Mirrors every job in .github/workflows/ci.yml 1:1 — ruff, JS syntax, import smoke,
-# pytest, i18n freshness, semgrep, pip-audit, and lockfile-drift — against the
-# LOCAL interpreter and installed tools, so a push that would go red in CI fails
-# here first. Adds ONE local-only extra: a lint of the workflow files themselves
-# (ci.yml + release.yml). That extra is deliberately NOT a CI gate — GitHub
-# validates workflow YAML natively when it loads a run, and the release
-# pipeline's keyless cosign signing needs a GitHub OIDC token and can't run
-# locally, so linting the workflows before push is a pre-push nicety, not part
-# of the CI-parity contract.
+# .github/workflows/ci.yml sets up a machine and calls this script once per job,
+# so GitHub and the local gate cannot disagree about what runs:
 #
-# CI-only differences that can't be reproduced on one local box (environmental,
-# NOT check-logic gaps): the 3.12/3.13 interpreter matrix and the coverage-XML
-# upload. Every pass/fail check itself is mirrored, with CI's exact invocation.
+#     ./scripts/ci_local.sh                 # every job, every Python version
+#     ./scripts/ci_local.sh --job semgrep   # one job (ci.yml calls this form)
+#     ./scripts/ci_local.sh --job lint-and-smoke --python <version>
+#     ./scripts/ci_local.sh --docs          # the documentation checks only
 #
-# Run by the git PRE-PUSH hook (.githooks/pre-push, installed by
-# scripts/setup-hooks.sh), which hands off to the machine-wide hook: that runs
-# the secret scan, then this script inside a fresh checkout of the pushed
-# commit, with --docs when every pushed file is prose. Also runnable by hand:
+# The Python versions are read from ci.yml's matrix. Tool versions come from
+# requirements.lock and requirements-ci.txt. Locally, each job runs in its own
+# throwaway environment built the way GitHub builds it, kept under
+# ~/.cache/retrodb-ci (RETRODB_CI_ENVS moves it) and rebuilt when a version
+# changes. It never touches the Python packages the app itself runs on.
 #
-#     ./scripts/ci_local.sh            # every check
-#     ./scripts/ci_local.sh --docs     # the documentation checks only
+# What stays different from GitHub, because one computer cannot reproduce it:
+# the operating system (Ubuntu there) and the Python and Node patch versions.
+# GitHub also measures test coverage, a report that cannot fail the run. One check
+# runs locally only: the workflow lint.
+#
+# The git PRE-PUSH hook (.githooks/pre-push, installed by scripts/setup-hooks.sh)
+# hands off to the machine-wide hook, which runs the secret scan and then this
+# script inside a fresh checkout of the pushed commit, with --docs when every
+# pushed file is prose.
 #
 # Exit 0 = every check passed (safe to push). Nonzero = a check failed; the
 # failing checks are listed at the end. Skipping the gate is commits.md § 2.3's
 # call (SKIP_LOCAL_CI=1, or git push --no-verify), not this script's.
 #
 # Design notes:
-#   - No dependency (re)install — unlike CI's fresh runner, your box already has
-#     the deps.
-#   - A CI-mirrored check whose tool is MISSING or BROKEN is a FAILURE, not a
-#     skip. It used to be a skip, on the reasoning that a missing tool is the
-#     box's problem rather than the branch's. That reasoning is wrong: CI will
-#     run the check regardless, so a locally-skipped check is precisely a check
-#     whose CI verdict you have not seen — which is the one thing this script
-#     exists to prevent. Learned the hard way on 2026-08-06: pip-compile was
-#     broken locally (skip, "safe to push") and broken identically on the
-#     runner (hard fail, red main). The install hint is printed with the
-#     failure; `--no-verify` is still there for when you mean it.
+#   - A check whose tool is MISSING or BROKEN is a FAILURE, not a skip: a
+#     locally-skipped check is precisely one whose CI verdict you have not seen.
+#     Learned on 2026-08-06, when pip-compile was broken locally (skip, "safe to
+#     push") and broken identically on the runner (hard fail, red main).
 #   - Docs-only pushes run documentation mode (see below), never nothing.
-#   - pytest uses CI's exact `-n 4 --dist=loadfile` invocation. Without the
-#     per-file isolation, cross-file order-pollution (test_pass48_media_cleanup
-#     et al.) produces false failures that CI never sees.
+#   - pytest uses `-n 4 --dist=loadfile`. Without the per-file isolation,
+#     cross-file order-pollution (test_pass48_media_cleanup et al.) produces
+#     false failures.
 #   - The import smoke runs against a THROWAWAY temp DB via RETRODB_DB_PATH, so
-#     it never touches your real database/roms.db (CI gets the same isolation
-#     from a fresh config.py on the runner).
+#     it never touches a real database/roms.db.
 
 set -uo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.." || { echo "cannot cd to repo root"; exit 2; }
@@ -57,15 +51,77 @@ step() { printf '\n%s▶ %s%s\n' "$BOLD" "$1" "$RST"; }
 ok()   { printf '%s  ✓ %s%s\n' "$GREEN" "$1" "$RST"; }
 fail() { printf '%s  ✗ %s%s\n' "$RED" "$1" "$RST"; FAILED+=("$1"); }
 have() { command -v "$1" >/dev/null 2>&1; }
-# A CI-mirrored check whose tool is absent is a failure, not a skip — see the
-# header. `hint` is the install line, shown with the failure.
+# A check whose tool is absent is a failure, not a skip — see the header.
 missing() { fail "$1 not installed  ($2)"; }
 
+WORKFLOW=.github/workflows/ci.yml
+read -r -a PYTHONS <<< "$(sed -n 's/^ *python-version: *\[\(.*\)\]/\1/p' "$WORKFLOW" | tr ',"' '  ')"
+PRIMARY="$(sed -n 's/^ *PRIMARY_PYTHON: *"\(.*\)"/\1/p' "$WORKFLOW")"
+if [ "${#PYTHONS[@]}" -eq 0 ] || [ -z "$PRIMARY" ]; then
+  echo "cannot read the Python versions from $WORKFLOW"; exit 2
+fi
+
 # A fresh checkout has no config.py (it holds the user's own settings and is
-# untracked). CI copies the example into place; the pre-push hook gates a fresh
-# worktree of the pushed commit, so it needs the same step. Both modes need it:
-# some markdown-reading tests import config (tests/test_backup_rotation.py).
+# untracked). The example stands in, on GitHub and in the pre-push hook's fresh
+# worktree. Every mode needs it: tests/test_backup_rotation.py imports config.
 if [ ! -f config.py ]; then cp config.example.py config.py; fi
+
+# Environments ----------------------------------------------------------------
+# The tools each job installs; requirements-ci.txt holds their versions.
+packages_for() {
+  case "$1" in
+    lint-and-smoke) echo "ruff pytest pytest-cov pytest-xdist pytest-randomly beautifulsoup4" ;;
+    semgrep)        echo "semgrep" ;;
+    pip-audit)      echo "pip-audit" ;;
+    lockfile-drift) echo "uv" ;;
+    i18n-fresh)     echo "" ;;
+  esac
+}
+
+install_job() {
+  local tools
+  case "$1" in
+    # --require-hashes: fail-closed install under PyPI tamper or MITM, matching
+    # install.py's secure path (Pass 39.4).
+    lint-and-smoke|i18n-fresh)
+      uv pip install --quiet --require-hashes -r requirements.lock || return 1 ;;
+  esac
+  tools="$(packages_for "$1")"
+  [ -z "$tools" ] && return 0
+  # shellcheck disable=SC2086  # the list is meant to split into package names
+  uv pip install --quiet -c requirements-ci.txt $tools
+}
+
+BASE_PATH="$PATH"
+ENV_ROOT="${RETRODB_CI_ENVS:-${XDG_CACHE_HOME:-$HOME/.cache}/retrodb-ci}"
+
+# Build the job's environment, or reuse it while no version has changed, and
+# put it first on PATH. On GitHub the runner is the environment.
+enter_env() {
+  local job="$1" python="$2" key dir
+  if [ "${GITHUB_ACTIONS:-}" = "true" ]; then
+    UV_SYSTEM_PYTHON=1 install_job "$job"
+    return
+  fi
+  PATH="$BASE_PATH"; unset VIRTUAL_ENV
+  if ! have uv; then missing "uv" "pip install uv"; return 1; fi
+  key="$(cat requirements.lock requirements-ci.txt <(declare -f packages_for) | sha256sum | cut -c1-12)"
+  dir="$ENV_ROOT/$job-py$python-$key"
+  mkdir -p "$ENV_ROOT"
+  (
+    # Two pushes at once must not build the same environment together.
+    flock 9
+    [ -f "$dir/.ready" ] && exit 0
+    step "Building the $job environment (Python $python)"
+    # Older environments for this job and Python are stale: a version changed.
+    rm -rf "$ENV_ROOT/$job-py$python-"*
+    uv venv --quiet --seed --python "$python" "$dir" \
+      && VIRTUAL_ENV="$dir" install_job "$job" \
+      && touch "$dir/.ready"
+  ) 9> "$ENV_ROOT/.lock" || { fail "$job environment (Python $python) did not build"; return 1; }
+  export VIRTUAL_ENV="$dir"
+  export PATH="$dir/bin:$BASE_PATH"
+}
 
 # Documentation mode ----------------------------------------------------------
 # `--docs` is for a push whose every file is prose: *.md and LICENSE, the
@@ -81,9 +137,10 @@ if [ ! -f config.py ]; then cp config.example.py config.py; fi
 if [ "${1:-}" = "--docs" ]; then
   step "Pytest (documentation mode)  ·  tests that read markdown"
   mapfile -t DOC_TESTS < <(grep -lE "\.md['\"]" tests/test_*.py)
-  if ! have pytest; then missing "pytest" "pip install pytest pytest-xdist"
-  elif [ "${#DOC_TESTS[@]}" -eq 0 ]; then fail "no markdown-reading tests found"
-  else pytest -q "${DOC_TESTS[@]}" && ok "pytest (${#DOC_TESTS[@]} files)" || fail "pytest"; fi
+  if enter_env lint-and-smoke "$PRIMARY"; then
+    if [ "${#DOC_TESTS[@]}" -eq 0 ]; then fail "no markdown-reading tests found"
+    else pytest -q "${DOC_TESTS[@]}" && ok "pytest (${#DOC_TESTS[@]} files)" || fail "pytest"; fi
+  fi
   if [ "${#FAILED[@]}" -gt 0 ]; then
     printf '\n%s%sDocumentation checks FAILED:%s %s\n' "$BOLD" "$RED" "$RST" "${FAILED[*]}"
     exit 1
@@ -92,101 +149,137 @@ if [ "${1:-}" = "--docs" ]; then
   exit 0
 fi
 
-# 1. Ruff (bugs only — E, F, B, S; config in pyproject.toml) -----------------
-step "Ruff lint  ·  ruff check ."
-if have ruff; then ruff check . && ok "ruff" || fail "ruff"
-else missing "ruff" "pip install ruff"; fi
+# The jobs ---------------------------------------------------------------------
+job_lint_and_smoke() {
+  local py="$1" smoke_dir js_bad=0
+  # Ruff (bugs only — E, F, B, S; config in pyproject.toml)
+  step "Ruff lint  ·  Python $py  ·  ruff check ."
+  ruff check . && ok "ruff (Python $py)" || fail "ruff (Python $py)"
 
-# 1b. JS syntax (PASS-58-1) — no linter covers static/js, so catch syntax errors
-step "JS syntax  ·  node --check static/js/*.js"
-if have node; then
-  JS_BAD=0
-  for f in static/js/*.js; do node --check "$f" || JS_BAD=1; done
-  [ "$JS_BAD" -eq 0 ] && ok "node --check" || fail "node --check"
-else missing "node" "install Node.js"; fi
+  # PASS-58-1: no linter covers static/js, so at least catch a syntax error.
+  step "JS syntax  ·  node --check static/js/*.js"
+  if have node; then
+    for f in static/js/*.js; do node --check "$f" || js_bad=1; done
+    [ "$js_bad" -eq 0 ] && ok "node --check" || fail "node --check"
+  else missing "node" "install Node.js"; fi
 
-# 2. Import smoke — catch import-time errors against an isolated temp DB ------
-step "Import smoke  ·  python -c 'import app'"
-SMOKE_DIR="$(mktemp -d)"
-if RETRODB_DB_PATH="$SMOKE_DIR/smoke.db" RETRODB_DEBUG=false \
-     python3 -c "import app; print('app imports cleanly')"; then ok "import smoke"
-else fail "import smoke"; fi
-rm -rf "$SMOKE_DIR"
+  step "Import smoke  ·  Python $py  ·  import app"
+  smoke_dir="$(mktemp -d)"
+  if RETRODB_DB_PATH="$smoke_dir/smoke.db" RETRODB_DEBUG=false \
+       python -c "import app; print('app imports cleanly')"; then ok "import smoke (Python $py)"
+  else fail "import smoke (Python $py)"; fi
+  rm -rf "$smoke_dir"
 
-# 3. Pytest — CI's exact invocation (xdist + per-file dist + durations) -------
-# `--durations=20` matches ci.yml so the slowest-20 report is identical; `-q`
-# is a local readability choice (verbosity only, no pass/fail impact). CI also
-# layers coverage on the primary interpreter — reporting-only, omitted here.
-step "Pytest  ·  -n 4 --dist=loadfile --durations=20"
-if have pytest; then pytest -n 4 --dist=loadfile --durations=20 -q && ok "pytest" || fail "pytest"
-else missing "pytest" "pip install pytest pytest-xdist"; fi
-
-# 4. i18n freshness gate — mirrors ci.yml's `i18n-fresh` job (CLAUDE.md step 8) -
-step "i18n freshness  ·  scripts/check_i18n_fresh.py"
-if python3 scripts/check_i18n_fresh.py; then ok "i18n freshness"
-else fail "i18n freshness  (regenerate catalogs — see CLAUDE.md step 8)"; fi
-
-# 5. Semgrep — calibrated via .semgrep-excludes.txt --------------------------
-step "Semgrep  ·  calibrated security scan"
-if have semgrep; then
-  # Same array construction as ci.yml's semgrep step — the flags must arrive as
-  # separate words, and an array says so without relying on word-splitting an
-  # unquoted expansion (SC2086).
-  mapfile -t RULE_IDS < <(grep -vE '^\s*(#|$)' .semgrep-excludes.txt | awk '{print $1}')
-  if [ ${#RULE_IDS[@]} -eq 0 ]; then fail "semgrep — .semgrep-excludes.txt yielded no rule IDs"
-  else
-    EXCLUDES=()
-    for id in "${RULE_IDS[@]}"; do EXCLUDES+=(--exclude-rule "$id"); done
-    if semgrep --config p/security-audit --config p/python --config p/flask --config .semgrep.yml \
-         --error --timeout 60 --metrics=off \
-         --exclude logs --exclude data --exclude database --exclude static/images --exclude static/videos \
-         "${EXCLUDES[@]}" . ; then ok "semgrep"
-    else fail "semgrep"; fi
+  # `-n 4 --dist=loadfile` keeps a file's tests on one worker, so module-scoped
+  # fixtures stay correct. pytest-randomly logs its seed at the top of the
+  # output: `pytest --randomly-seed=<N>` reproduces a flake. Coverage is a report
+  # with no pass mark, so only GitHub produces it, on the primary Python.
+  step "Pytest  ·  Python $py  ·  -n 4 --dist=loadfile --durations=20"
+  local args=(-n 4 --dist=loadfile --durations=20)
+  if [ "${GITHUB_ACTIONS:-}" = "true" ] && [ "$py" = "$PRIMARY" ]; then
+    args+=(--cov=services --cov=scraper --cov=routes --cov-report=term-missing --cov-report=xml)
   fi
-else missing "semgrep" "pip install semgrep"; fi
+  pytest "${args[@]}" && ok "pytest (Python $py)" || fail "pytest (Python $py)"
+}
 
-# 6. pip-audit — CVEs in the pinned lockfile ---------------------------------
-step "pip-audit  ·  requirements.lock --strict"
-if have pip-audit; then pip-audit --requirement requirements.lock --strict && ok "pip-audit" || fail "pip-audit"
-else missing "pip-audit" "pip install pip-audit"; fi
+# Mirrors CLAUDE.md step 8. Needs the LOCKED Babel and Jinja2: a newer Babel can
+# extract a slightly different msgid set and fail against the committed
+# messages.pot.
+job_i18n_fresh() {
+  step "i18n freshness  ·  scripts/check_i18n_fresh.py"
+  if python scripts/check_i18n_fresh.py; then ok "i18n freshness"
+  else fail "i18n freshness  (regenerate catalogs — see CLAUDE.md step 8)"; fi
+}
 
-# 7. Lockfile drift — requirements.txt vs requirements.lock ------------------
-step "Lockfile drift  ·  uv pip compile round-trip"
-if have uv; then
-  FRESH="$(mktemp)"; ERRLOG="$(mktemp)"
-  # The output file must already exist for the compiler to reuse its pins, so
-  # the scratch file starts as a copy of the lock. That makes a *crashed*
-  # compile indistinguishable from a clean round-trip — the diff below would
-  # compare the lock against itself and report "in sync". So check the exit
-  # status first and fail loudly, never pass silently. This is not
-  # hypothetical: pip-compile broke exactly this way against pip 26 (Pass
-  # 57.3), the gate reported green, and CI went red on the same check.
-  cp requirements.lock "$FRESH"
+# Security scan. Hard-fail since v2.98.1 (Pass 30): green should mean zero. A new
+# finding is a real bug, or noise needing a documented exclusion, with its
+# rationale in .semgrep.yml and its ID in .semgrep-excludes.txt.
+job_semgrep() {
+  local rule_ids excludes=()
+  step "Semgrep  ·  calibrated security scan"
+  mapfile -t rule_ids < <(grep -vE '^\s*(#|$)' .semgrep-excludes.txt | awk '{print $1}')
+  # An empty list means the file was renamed or emptied, not that nothing is
+  # excluded.
+  if [ ${#rule_ids[@]} -eq 0 ]; then fail "semgrep — .semgrep-excludes.txt yielded no rule IDs"; return; fi
+  for id in "${rule_ids[@]}"; do excludes+=(--exclude-rule "$id"); done
+  if semgrep --config p/security-audit --config p/python --config p/flask --config .semgrep.yml \
+       --error --timeout 60 --metrics=off \
+       --exclude logs --exclude data --exclude database --exclude static/images --exclude static/videos \
+       "${excludes[@]}" . ; then ok "semgrep"
+  else fail "semgrep"; fi
+}
+
+# CVEs in the pinned lockfile. Hard-fail since Pass 39.3.
+job_pip_audit() {
+  step "pip-audit  ·  requirements.lock --strict"
+  pip-audit --requirement requirements.lock --strict && ok "pip-audit" || fail "pip-audit"
+}
+
+# Catches "added a dep to requirements.txt but forgot to recompile the lock", not
+# "upstream released something newer" (Dependabot's job). The compiler keeps the
+# pins already in its output file unless the input forces a change, so a clean
+# tree gives an identical body; the header names the output path, so it is
+# stripped before comparing.
+job_lockfile_drift() {
+  local fresh errlog
+  step "Lockfile drift  ·  uv pip compile round-trip"
+  fresh="$(mktemp)"; errlog="$(mktemp)"
+  # The scratch file starts as a copy of the lock, which makes a *crashed* compile
+  # look like a clean round-trip: the diff would compare the lock against itself.
+  # So check the exit status first. pip-compile broke exactly this way against
+  # pip 26 (Pass 57.3): the gate reported green and CI went red on the same check.
+  cp requirements.lock "$fresh"
   if uv pip compile requirements.txt --strip-extras --generate-hashes --universal \
-       --quiet -o "$FRESH" >/dev/null 2>"$ERRLOG"; then
-    if diff -u <(grep -v '^#' requirements.lock) <(grep -v '^#' "$FRESH") >/dev/null; then ok "lockfile in sync"
+       --quiet -o "$fresh" >/dev/null 2>"$errlog"; then
+    if diff -u <(grep -v '^#' requirements.lock) <(grep -v '^#' "$fresh"); then ok "lockfile in sync"
     else fail "lockfile drift — run: uv pip compile requirements.txt --strip-extras --generate-hashes --universal -o requirements.lock"; fi
   else
-    tail -n 3 "$ERRLOG"
+    tail -n 3 "$errlog"
     fail "uv pip compile failed to run — drift NOT checked (see error above)"
   fi
-  rm -f "$FRESH" "$ERRLOG"
-else missing "uv" "pip install uv"; fi
+  rm -f "$fresh" "$errlog"
+}
 
-# 8. Workflow lint — .github/workflows/*.yml (ci.yml + release.yml) -----------
-# LOCAL-ONLY extra (not a CI gate — see the header note). The release pipeline
-# (release.yml) isn't exercised by the CI mirror above and can't be fully run
-# locally (its keyless cosign signing needs a GitHub OIDC token), but a linter
-# still catches workflow-config bugs — bad expressions, shell-quoting, unknown
-# keys — before they reach GitHub. Prefer actionlint (deep checks); fall back to
-# a YAML-parse of each workflow so this step ALWAYS runs without a new tool.
-step "Workflow lint  ·  .github/workflows/*.yml"
-if have actionlint; then
-  actionlint && ok "actionlint" || fail "actionlint"
-elif python3 -c "import yaml,glob; [yaml.safe_load(open(f)) for f in glob.glob('.github/workflows/*.yml')]" 2>/dev/null; then
-  ok "workflow YAML valid  (install actionlint for expression/shell checks: https://github.com/rhysd/actionlint)"
+# Local only. GitHub validates workflow YAML itself when it loads a run. A linter
+# catches bad expressions, shell-quoting and unknown keys before they reach
+# GitHub, release.yml included. Falls back to a YAML parse, so this always runs.
+workflow_lint() {
+  PATH="$BASE_PATH"; unset VIRTUAL_ENV
+  step "Workflow lint  ·  .github/workflows/*.yml"
+  if have actionlint; then
+    actionlint && ok "actionlint" || fail "actionlint"
+  elif python3 -c "import yaml,glob; [yaml.safe_load(open(f)) for f in glob.glob('.github/workflows/*.yml')]" 2>/dev/null; then
+    ok "workflow YAML valid  (install actionlint for expression/shell checks: https://github.com/rhysd/actionlint)"
+  else
+    fail "workflow YAML invalid in .github/workflows/"
+  fi
+}
+
+run_job() {
+  local job="$1" py="$2"
+  enter_env "$job" "$py" || { fail "$job: could not set up its tools"; return; }
+  case "$job" in
+    lint-and-smoke) job_lint_and_smoke "$py" ;;
+    i18n-fresh)     job_i18n_fresh ;;
+    semgrep)        job_semgrep ;;
+    pip-audit)      job_pip_audit ;;
+    lockfile-drift) job_lockfile_drift ;;
+    *) fail "unknown job: $job" ;;
+  esac
+}
+
+# Choose what to run -----------------------------------------------------------
+if [ "${1:-}" = "--job" ]; then
+  JOB="${2:-}"
+  # `--python` names the matrix leg; without it, the primary Python.
+  if [ "${3:-}" = "--python" ]; then JOB_PYTHON="${4:-}"; else JOB_PYTHON="$PRIMARY"; fi
+  run_job "$JOB" "$JOB_PYTHON"
+elif [ "$#" -gt 0 ]; then
+  echo "unknown option: $1  (see the top of this script)"; exit 2
 else
-  fail "workflow YAML invalid in .github/workflows/"
+  for py in "${PYTHONS[@]}"; do run_job lint-and-smoke "$py"; done
+  for job in i18n-fresh semgrep pip-audit lockfile-drift; do run_job "$job" "$PRIMARY"; done
+  workflow_lint
 fi
 
 # Summary --------------------------------------------------------------------

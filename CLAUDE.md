@@ -68,8 +68,7 @@ proofs. Never mark a task complete just because those tests pass.
 
 ### Contract Reviews (Global Rule 14)
 Rule 14's contract gate is **cancelled for this project** (user,
-2026-10-17); record each such edit as "no gate: cancelled by RetroDB
-CLAUDE.md". The practice kept instead: run `review-contract` on a spec, plan
+2026-10-17). The practice kept instead: run `review-contract` on a spec, plan
 or standard only when its author is unsure of details in the planned work,
 and say which details. Otherwise the code and the user's viewing of the result
 are the review.

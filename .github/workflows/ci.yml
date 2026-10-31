@@ -31,11 +31,15 @@ concurrency:
 permissions:
   contents: read
 
+# Each job only sets up a machine and calls scripts/ci_local.sh, which holds the
+# checks themselves and is also the local pre-push gate. So the two run one list
+# and cannot drift apart (tests/test_ci_gate_parity.py pins this). The script
+# reads python-version and PRIMARY_PYTHON from this file, and tool versions come
+# from requirements.lock and requirements-ci.txt.
 jobs:
   # ---------------------------------------------------------------------------
-  # lint-and-smoke — per-interpreter ruff + import smoke + pytest. Heavy
-  # checks (semgrep / pip-audit / lockfile-drift) moved to dedicated jobs
-  # below so the matrix lanes can finish faster on the critical path.
+  # lint-and-smoke — per-interpreter ruff + JS syntax + import smoke + pytest.
+  # Heavy checks have dedicated jobs below, so the matrix lanes finish faster.
   # ---------------------------------------------------------------------------
   lint-and-smoke:
     runs-on: ubuntu-latest
@@ -64,8 +68,8 @@ jobs:
           # `actions/cache` step below. setup-python's pip-cache layer would
           # never be read by uv anyway.
 
-      # uv cache, keyed on the exact lockfile. Same lockfile → instant warm
-      # cache, near-zero install time. Lockfile change → cold install (still
+      # uv cache, keyed on the exact versions. Same versions → instant warm
+      # cache, near-zero install time. A version change → cold install (still
       # uv-fast). The `lint-and-smoke-v2` suffix isolates this cache from the
       # dedicated audit-job caches that install a different (much smaller)
       # tool set under the same lockfile hash.
@@ -74,67 +78,19 @@ jobs:
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
         with:
           path: ~/.cache/uv
-          key: uv-lint-${{ runner.os }}-py${{ matrix.python-version }}-${{ hashFiles('requirements.lock') }}-v2
+          key: uv-lint-${{ runner.os }}-py${{ matrix.python-version }}-${{ hashFiles('requirements.lock', 'requirements-ci.txt') }}-v2
           restore-keys: |
             uv-lint-${{ runner.os }}-py${{ matrix.python-version }}-
 
-      - name: Install runtime + test deps (uv)
+      - name: Install uv
         run: |
-          # uv is ~10–30× faster than pip's resolver. Install once into the
-          # system Python that setup-python provisioned (no separate venv —
-          # all subsequent steps `python -m <x>` against the same interpreter).
-          #
-          # --require-hashes against requirements.lock: fail-closed install
-          # under PyPI tamper / MITM. Matches install.py's secure-path
-          # preference (Pass 39.4). requirements.txt is unpinned ranges and
-          # would force a resolver round-trip; the lock is exact.
-          python -m pip install --upgrade pip uv
-          uv pip install --system --require-hashes -r requirements.lock
-          # Test-only tooling (not user-shipped). semgrep/pip-audit/pip-tools
-          # moved to the dedicated jobs below, so this install stays lean.
-          # beautifulsoup4: tests/test_i18n.py parses rendered HTML with bs4 to
-          # assert pseudolocalization coverage (Pass 43.x); the dep was missed
-          # here, keeping the pytest job red since v3.7.0.
-          uv pip install --system \
-            ruff pytest pytest-cov pytest-xdist pytest-randomly beautifulsoup4
+          python -m pip install --upgrade pip
+          python -m pip install -c requirements-ci.txt uv
 
-      - name: Ruff (bugs only — E, F, B, S)
-        run: ruff check .
-
-      # PASS-58-1: no linter covers the browser JS (no package.json), so at
-      # least catch a syntax error before a user does. The runner ships node.
-      - name: JS syntax check (node --check)
-        run: for f in static/js/*.js; do node --check "$f" || exit 1; done
-
-      - name: Import smoke test
+      - name: Ruff, JS syntax, import smoke, pytest
         env:
-          RETRODB_DEBUG: "false"
-        run: |
-          cp config.example.py config.py
-          python -c "import app; print('app imports cleanly')"
-
-      - name: Pytest (+ coverage on primary interpreter)
-        run: |
-          # `-n 4 --dist=loadfile` parallelises across 4 workers, keeping all
-          #   tests from a single file on the same worker. Module-scoped
-          #   fixtures stay correct (loadbalance would split them and break).
-          # `--durations=20` surfaces the slowest 20 tests in the CI log so a
-          #   suite-slowdown regression is visible at a glance.
-          # pytest-randomly is auto-enabled by being installed; its random
-          #   seed is logged at the top of the pytest output so a flake can
-          #   be reproduced locally with `pytest --randomly-seed=<N>`.
-          # Array, not a string: the flags must reach pytest as separate
-          #   words, and an unquoted "$XDIST" would get there by way of
-          #   word-splitting (SC2086) — same result, one glob away from a
-          #   surprise.
-          XDIST=(-n 4 --dist=loadfile --durations=20)
-          if [ "${{ matrix.python-version }}" = "${{ env.PRIMARY_PYTHON }}" ]; then
-            pytest "${XDIST[@]}" \
-              --cov=services --cov=scraper --cov=routes \
-              --cov-report=term-missing --cov-report=xml
-          else
-            pytest "${XDIST[@]}"
-          fi
+          PYTHON_LEG: ${{ matrix.python-version }}
+        run: ./scripts/ci_local.sh --job lint-and-smoke --python "$PYTHON_LEG"
 
       - name: Upload coverage artifact
         if: matrix.python-version == env.PRIMARY_PYTHON
@@ -178,55 +134,17 @@ jobs:
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
         with:
           path: ~/.cache/uv
-          # Tool-only cache; no project lockfile in the key because semgrep
-          # doesn't read the lockfile, only the tool's own pins matter.
-          key: uv-semgrep-${{ runner.os }}-py${{ env.PRIMARY_PYTHON }}-v2
+          # Tool-only cache: semgrep doesn't read the project lockfile, so only
+          # the tool's own pin is in the key.
+          key: uv-semgrep-${{ runner.os }}-py${{ env.PRIMARY_PYTHON }}-${{ hashFiles('requirements-ci.txt') }}-v2
 
-      - name: Install semgrep (uv)
+      - name: Install uv
         run: |
-          python -m pip install --upgrade pip uv
-          uv pip install --system semgrep
+          python -m pip install --upgrade pip
+          python -m pip install -c requirements-ci.txt uv
 
       - name: Semgrep (calibrated via .semgrep-excludes.txt)
-        run: |
-          # .semgrep-excludes.txt is the structured source of the upstream rule
-          # IDs documented as noise-only on this codebase (Pass 48.4 — replaced
-          # the awk-scrape of .semgrep.yml comment prose, which a reformat could
-          # silently empty). One ID per line; blank lines and `#` comments
-          # ignored. The per-rule rationale still lives in .semgrep.yml.
-          mapfile -t RULE_IDS < <(grep -vE '^\s*(#|$)' .semgrep-excludes.txt \
-                                  | awk '{print $1}')
-          # Fail loudly if the exclusion list came back empty — that means the
-          # file was renamed/emptied, not that there's nothing to exclude.
-          if [ ${#RULE_IDS[@]} -eq 0 ]; then
-            echo "::error::.semgrep-excludes.txt yielded no rule IDs"; exit 1
-          fi
-          # One `--exclude-rule <id>` pair per ID, held as array elements so
-          # they reach semgrep as separate words without relying on
-          # word-splitting an unquoted expansion (SC2086).
-          EXCLUDES=()
-          for id in "${RULE_IDS[@]}"; do EXCLUDES+=(--exclude-rule "$id"); done
-          echo "Applying exclusions:"; printf '%s\n' "${RULE_IDS[@]}"
-          semgrep \
-            --config p/security-audit \
-            --config p/python \
-            --config p/flask \
-            --config .semgrep.yml \
-            --error \
-            --timeout 60 \
-            --metrics=off \
-            --exclude logs \
-            --exclude data \
-            --exclude database \
-            --exclude static/images \
-            --exclude static/videos \
-            "${EXCLUDES[@]}" \
-            .
-        # Hard-fail since v2.98.1 (Pass 30 debt sweep): with the calibrated
-        # exclusion list in .semgrep.yml, CI runs at 0 findings. If a new
-        # finding lands it's either a real bug or a new noise pattern that
-        # needs a documented exclusion — either way, green CI should mean
-        # zero.
+        run: ./scripts/ci_local.sh --job semgrep
 
       # local-gate.md § 9: save even when the job fails or times out, so
       # the next run still starts warm.
@@ -261,18 +179,15 @@ jobs:
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
         with:
           path: ~/.cache/uv
-          key: uv-audit-${{ runner.os }}-py${{ env.PRIMARY_PYTHON }}-v2
+          key: uv-audit-${{ runner.os }}-py${{ env.PRIMARY_PYTHON }}-${{ hashFiles('requirements-ci.txt') }}-v2
 
-      - name: Install pip-audit (uv)
+      - name: Install uv
         run: |
-          python -m pip install --upgrade pip uv
-          uv pip install --system pip-audit
+          python -m pip install --upgrade pip
+          python -m pip install -c requirements-ci.txt uv
 
       - name: pip-audit (CVEs in pinned lockfile)
-        run: pip-audit --requirement requirements.lock --strict
-        # Hard-fail since Pass 39.3 (v3.5.40): lockfile clean, six audit
-        # cycles at 0/N actionable. New CVE surfacing means real action
-        # required (Dependabot bump or pin rationale), not silent warning.
+        run: ./scripts/ci_local.sh --job pip-audit
 
       # local-gate.md § 9: save even when the job fails or times out, so
       # the next run still starts warm.
@@ -284,7 +199,7 @@ jobs:
           key: ${{ steps.uv-cache.outputs.cache-primary-key }}
 
   # ---------------------------------------------------------------------------
-  # lockfile-drift — pip-compile round-trip to catch "added a dep to
+  # lockfile-drift — compile round-trip to catch "added a dep to
   # requirements.txt but forgot to recompile the lock".
   # ---------------------------------------------------------------------------
 
@@ -307,47 +222,15 @@ jobs:
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
         with:
           path: ~/.cache/uv
-          key: uv-drift-${{ runner.os }}-py${{ env.PRIMARY_PYTHON }}-v2
+          key: uv-drift-${{ runner.os }}-py${{ env.PRIMARY_PYTHON }}-${{ hashFiles('requirements-ci.txt') }}-v2
 
       - name: Install uv
-        run: python -m pip install --upgrade pip uv
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -c requirements-ci.txt uv
 
       - name: Lockfile drift check
-        run: |
-          # CLAUDE.md says "regenerate lockfile if requirements.txt was edited"
-          # — this step turns that honor-system rule into a hard check.
-          #
-          # Semantic intent: catch "someone added a dep to requirements.txt
-          # but forgot to recompile the lock", NOT "upstream released a point
-          # version newer than what we've pinned" (that's Dependabot's job).
-          #
-          # Implementation: seed /tmp/fresh.lock with the existing lock, then
-          # recompile. The compiler honors the pins already in the output file
-          # unless the input constraints actually force a change, so a clean PR
-          # produces an identical body. The auto-generated header differs by
-          # output path between the two runs — strip it before diffing.
-          cp requirements.lock /tmp/fresh.lock
-          # Pass 39.4 — `--generate-hashes` so the regenerated lockfile carries
-          # per-package SHA256s; installers use `pip install --require-hashes`
-          # for fail-closed install on MITM / PyPI tamper. Diff stays apples-
-          # to-apples since the seed lockfile already has hashes.
-          #
-          # Pass 57.3 — `uv pip compile`, not `pip-compile`. pip-tools (7.6.0,
-          # latest) imports `stdlib_pkgs` from pip's internals, which pip 26
-          # removed, so pip-compile dies on import against any current pip.
-          # uv is a drop-in for this invocation: seeded with the same lock it
-          # reproduces the body byte-for-byte, and it does not reach into pip.
-          uv pip compile requirements.txt --strip-extras --generate-hashes --universal \
-            --quiet -o /tmp/fresh.lock
-          # Strip leading `# ...` header lines (both compilers emit a small
-          # provenance block naming the output path). Per-package `# via` lines
-          # are indented with spaces so they don't match ^#.
-          if ! diff -u <(grep -v '^#' requirements.lock) <(grep -v '^#' /tmp/fresh.lock); then
-            echo ""
-            echo "::error::requirements.lock is out of sync with requirements.txt."
-            echo "Run: uv pip compile requirements.txt --strip-extras --generate-hashes --universal -o requirements.lock"
-            exit 1
-          fi
+        run: ./scripts/ci_local.sh --job lockfile-drift
 
       # local-gate.md § 9: save even when the job fails or times out, so
       # the next run still starts warm.
@@ -361,11 +244,9 @@ jobs:
   # ---------------------------------------------------------------------------
   # i18n-fresh — the catalog-freshness gate documented in CLAUDE.md step 8.
   # Fails when a t('...')/`_()` string was wrapped but the catalog was not
-  # re-extracted, or build_js.py was not re-run after a JS msgid changed. The
-  # local pre-push mirror (scripts/ci_local.sh) already runs this; wiring it
-  # into CI too means a `git push --no-verify` can't ship stale translations —
-  # exactly the "a fully-translated UI still pops English toasts" seam Pass 52
-  # is closing. Interpreter-independent; runs in parallel with the matrix.
+  # re-extracted, or build_js.py was not re-run after a JS msgid changed. Running
+  # it here too means a `git push --no-verify` can't ship stale translations.
+  # Interpreter-independent; runs in parallel with the matrix.
   # ---------------------------------------------------------------------------
 
   i18n-fresh:
@@ -391,19 +272,13 @@ jobs:
           restore-keys: |
             uv-i18n-${{ runner.os }}-py${{ env.PRIMARY_PYTHON }}-
 
-      - name: Install runtime deps (uv)
+      - name: Install uv
         run: |
-          # check_i18n_fresh.py shells out to `pybabel extract` and imports
-          # build_js + services.js_i18n_strings. It MUST run against the LOCKED
-          # Babel/Jinja2 (2.18.0 / 3.1.6) — a newer Babel can extract a slightly
-          # different msgid set and red-light this gate spuriously against the
-          # committed messages.pot. So install the exact lockfile, same as
-          # lint-and-smoke (build_js is stdlib-only; the lock covers babel+jinja2).
-          python -m pip install --upgrade pip uv
-          uv pip install --system --require-hashes -r requirements.lock
+          python -m pip install --upgrade pip
+          python -m pip install -c requirements-ci.txt uv
 
       - name: i18n freshness gate
-        run: python scripts/check_i18n_fresh.py
+        run: ./scripts/ci_local.sh --job i18n-fresh
 
       # local-gate.md § 9: save even when the job fails or times out, so
       # the next run still starts warm.

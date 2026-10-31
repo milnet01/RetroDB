@@ -40,11 +40,11 @@ class TestPass39_4LockfileHashes:
     LOCKFILE = os.path.join(_REPO_ROOT, 'requirements.lock')
     INSTALL_CLI = os.path.join(_REPO_ROOT, 'install.py')
     INSTALL_GUI = os.path.join(_REPO_ROOT, 'install_gui.py')
-    CI_WORKFLOW = os.path.join(_REPO_ROOT, '.github', 'workflows', 'ci.yml')
+    CI_GATE = os.path.join(_REPO_ROOT, 'scripts', 'ci_local.sh')
 
     def _read(self, path):
         # Existence-check before open so a fresh checkout missing one of
-        # LOCKFILE/INSTALL_CLI/INSTALL_GUI/CI_WORKFLOW surfaces a clean
+        # LOCKFILE/INSTALL_CLI/INSTALL_GUI/CI_GATE surfaces a clean
         # assertion error rather than a raw FileNotFoundError traceback
         # (test-audit c-005 LOW error_handling).
         assert os.path.exists(path), (
@@ -147,25 +147,25 @@ class TestPass39_4LockfileHashes:
             )
 
     def test_ci_drift_check_uses_generate_hashes(self):
-        """The CI workflow's lockfile-drift step regenerates a fresh lock
+        """The CI gate's lockfile-drift job regenerates a fresh lock
         for diffing. It must use `--generate-hashes` so the regenerated
         lock is comparable to the committed one (which carries hashes).
         Otherwise the diff false-positives on every PR."""
-        src = _join_continuations(self._read(self.CI_WORKFLOW))
+        src = _join_continuations(self._read(self.CI_GATE))
         # Grab the invocation that recompiles into the scratch lock. Pass 57.3
         # moved the compiler from pip-compile to `uv pip compile`; match either
         # so this pins the FLAG, which is the invariant, not the tool.
         compile_lines = [
             ln for ln in src.splitlines()
-            if ('pip-compile' in ln or 'pip compile' in ln) and '/tmp/fresh.lock' in ln
+            if ('pip-compile' in ln or 'pip compile' in ln) and '"$fresh"' in ln
         ]
         assert compile_lines, (
-            "ci.yml lockfile-drift step doesn't recompile into "
-            "/tmp/fresh.lock anymore — update this test."
+            "ci_local.sh lockfile-drift job doesn't recompile into "
+            "its scratch lock anymore — update this test."
         )
         for ln in compile_lines:
             assert '--generate-hashes' in ln, (
-                f"ci.yml drift recompile must include --generate-hashes "
+                f"ci_local.sh drift recompile must include --generate-hashes "
                 f"(line: {ln.strip()})"
             )
 
@@ -262,7 +262,6 @@ class TestPass59_99UniversalLockfile:
 
     LOCKFILE = os.path.join(_REPO_ROOT, 'requirements.lock')
     COMPILE_SITES = (
-        os.path.join(_REPO_ROOT, '.github', 'workflows', 'ci.yml'),
         os.path.join(_REPO_ROOT, '.github', 'workflows', 'dependabot-lockfile.yml'),
         os.path.join(_REPO_ROOT, 'CLAUDE.md'),
         os.path.join(_REPO_ROOT, 'scripts', 'ci_local.sh'),

@@ -10366,6 +10366,25 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Source**: PASS-59-162, 2026-10-31. Notes: screenscraper 13; tgdb 17; hltb_ra H8, R12; esde 14; ai_steam_xbox S7; igdb F21; merge_and_stored 25.
 - **Items**: `scrape_screenscraper.get_game_by_id` has no callers and sends `jeuid`, which the service refuses with 400; `gameid` works (tried live). Correct the claims in `docs/specs/scrapers.md`. `routes/tools.py` `api_rom_tools_browse_folders` answers 500 when it has no current path (seen 2026-10-31 by calling `openFolderBrowser` with a made-up name; not seen from a real button).
 
+---
+
+#### Pass 59.220 Sales figures for 8-bit games: cited numbers and period sources (enhancement, M).
+- **Status**: todo
+- **Request** (user, 2026-10-31): a Gemini answer listed sources for 8-bit sales figures; see if it can be used.
+- **Measured 2026-10-31**: `units_sold` is empty on every Commodore 64, ZX Spectrum and Atari 5200 game in one library, and on most Atari 2600 games. Only the AI fills it, and `_build_prompt` already names Wikipedia's lists and VGChartz, with nothing for 8-bit computers.
+- **Treat the answer as leads, not data**: checked against Wikipedia, its Pitfall! and Asteroids figures differ (about 4.5m and 4.3m against 4,000,000 and 3,832,886), and Sensible Soccer is not listed for Spectrum or C64.
+- **Plan**: 1. A small shipped table of cited figures, each with its source link, starting with Wikipedia's Atari 2600 list (24 games, each row referenced; text CC BY-SA 4.0, so credit it). It fills `units_sold` fill-only, without paying for AI. 2. For 8-bit systems, add to the AI prompt: the C64 Wiki, Spectrum Computing, World of Spectrum, AtariAge and period magazines on archive.org. Keep "a published figure, never your own estimate", and accept a stated milestone only as that game's figure. 3. Show the source beside the number, with PASS-59-211.
+- **Not planned**: scraping VGChartz, forums or magazine scans; no API, and terms not checked. A forum estimate is not a published figure.
+- **Limit**: most 8-bit games have no published figure, so most stay empty, which is the true answer.
+
+---
+
+#### Pass 59.221 The slowest test runs real image work: speed up test_screenshot_duplicates_are_dropped (test, S).
+- **Status**: todo
+- **Source**: measured 2026-10-31, while aligning the local gate with GitHub CI.
+- **Problem**: in the gate's environment, which has the CPU onnxruntime from the lockfile, `tests/test_upload_image_pipeline.py::test_screenshot_duplicates_are_dropped` took 66 to 148 s of a suite that takes 79 to 198 s, depending on machine load. The whole suite on the system Python took 61 s. `test_fu1_csp.py::test_every_action_is_defined` is next, at 37 to 55 s.
+- **Fix**: find what makes it slow; a duplicate check should not need a real upscale. Every push and both GitHub Python versions run it, so this is the largest saving available in the gate.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
