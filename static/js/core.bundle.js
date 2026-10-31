@@ -4093,6 +4093,8 @@ const KeyboardShortcuts = {
     gameShortcuts: {
         'e': { action: () => { if (typeof openEditModal === 'function') openEditModal(); }, description: t('Edit game'), category: t('Game Page') },
         's': { action: () => { if (typeof openScrapeModal === 'function') openScrapeModal(); }, description: t('Scrape game'), category: t('Game Page') },
+        'ArrowLeft': { action: () => goToNeighborGame('prev'), skipIf: arrowKeyInUse, description: t('Previous game'), category: t('Game Page') },
+        'ArrowRight': { action: () => goToNeighborGame('next'), skipIf: arrowKeyInUse, description: t('Next game'), category: t('Game Page') },
     },
 
     init() {
@@ -4138,9 +4140,10 @@ const KeyboardShortcuts = {
         }
 
         if (window.location.pathname.includes('/game/')) {
-            if (this.gameShortcuts[key]) {
+            const shortcut = this.gameShortcuts[key];
+            if (shortcut && !shortcut.skipIf?.(e)) {
                 e.preventDefault();
-                this.gameShortcuts[key].action();
+                shortcut.action();
                 return;
             }
         }
@@ -4192,6 +4195,17 @@ const KeyboardShortcuts = {
         if (indicator) indicator.style.display = 'none';
     }
 };
+
+function arrowKeyInUse(e) {
+    return e.defaultPrevented || e.shiftKey
+        || ModalFocusTrap._stack.length > 0
+        || !!e.target.closest('video, audio');
+}
+
+function goToNeighborGame(direction) {
+    const link = document.querySelector(`#gameNav [data-nav="${direction}"]`);
+    if (link && !link.hidden) link.click();
+}
 
 function focusSearch() {
     const searchIds = ['gameSearch', 'systemSearch', 'searchInput'];

@@ -1485,6 +1485,8 @@ const KeyboardShortcuts = {
     gameShortcuts: {
         'e': { action: () => { if (typeof openEditModal === 'function') openEditModal(); }, description: t('Edit game'), category: t('Game Page') },
         's': { action: () => { if (typeof openScrapeModal === 'function') openScrapeModal(); }, description: t('Scrape game'), category: t('Game Page') },
+        'ArrowLeft': { action: () => goToNeighborGame('prev'), skipIf: arrowKeyInUse, description: t('Previous game'), category: t('Game Page') },
+        'ArrowRight': { action: () => goToNeighborGame('next'), skipIf: arrowKeyInUse, description: t('Next game'), category: t('Game Page') },
     },
     
     init() {
@@ -1540,9 +1542,10 @@ const KeyboardShortcuts = {
         
         // Check game page shortcuts
         if (window.location.pathname.includes('/game/')) {
-            if (this.gameShortcuts[key]) {
+            const shortcut = this.gameShortcuts[key];
+            if (shortcut && !shortcut.skipIf?.(e)) {
                 e.preventDefault();
-                this.gameShortcuts[key].action();
+                shortcut.action();
                 return;
             }
         }
@@ -1594,6 +1597,23 @@ const KeyboardShortcuts = {
         if (indicator) indicator.style.display = 'none';
     }
 };
+
+// An arrow key steps to another game only when nothing else wants it. Leaving
+// the page would lose an open window's unsaved edits; the 3D box viewer has
+// already used the key (defaultPrevented); a focused player seeks with it;
+// Shift + arrow selects text.
+function arrowKeyInUse(e) {
+    return e.defaultPrevented || e.shiftKey
+        || ModalFocusTrap._stack.length > 0
+        || !!e.target.closest('video, audio');
+}
+
+// Follows the game page's own Previous / Next link, so the key goes where the
+// link does. initGameNav leaves a link hidden when there is no game that side.
+function goToNeighborGame(direction) {
+    const link = document.querySelector(`#gameNav [data-nav="${direction}"]`);
+    if (link && !link.hidden) link.click();
+}
 
 function focusSearch() {
     // Try various search input IDs

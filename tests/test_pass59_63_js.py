@@ -82,10 +82,12 @@ function simple(el, s) {
     if (p[0] === '.' && !el.classList.contains(p.slice(1))) return false;
   }
   for (const a of (m[3].match(/\[[^\]]+\]/g) || [])) {
-    const name = a.slice(1, -1).split('=')[0];
+    const [name, rawValue] = a.slice(1, -1).split('=');
+    const value = rawValue === undefined ? undefined : rawValue.replace(/^["']|["']$/g, '');
     if (name.startsWith('data-')) {
       const key = name.slice(5).replace(/-([a-z])/g, (_, c) => c.toUpperCase());
       if (!(key in el.dataset)) return false;
+      if (value !== undefined && el.dataset[key] !== value) return false;
     } else if (!(name in el.attrs)) return false;
   }
   return true;
@@ -316,6 +318,79 @@ out({{gPrevented: gEv.defaultPrevented, dPrevented: dEv.defaultPrevented, ran,
 """)
     assert got == {'gPrevented': False, 'dPrevented': False, 'ran': 0,
                    'pending': None, 'plainStillWorks': 1}, got
+
+
+# The arrow keys step to the previous / next game, the links the game page
+# shows, unless something else on the page has a use for the key.
+_GAME_NAV = _MAIN + r"""
+ctx.location.pathname = '/game/7';
+const nav = make('nav', {id: 'gameNav'});
+const clicks = [];
+for (const dir of ['prev', 'next']) {
+  const link = make('a', {dataset: {nav: dir}, hidden: false}, nav);
+  link.click = () => clicks.push(dir);
+}
+const K = g('KeyboardShortcuts');
+const press = (key, m) => {
+  const ev = Object.assign({key, target: ctx.document.body, shiftKey: false,
+    defaultPrevented: false, preventDefault() { this.defaultPrevented = true; }}, m);
+  K.handleKeydown(ev);
+  return ev;
+};
+"""
+
+
+@needs_node
+def test_arrow_keys_step_to_the_previous_and_next_game():
+    got = _node(_GAME_NAV + r"""
+const left = press('ArrowLeft');
+const right = press('ArrowRight');
+out({clicks, prevented: [left.defaultPrevented, right.defaultPrevented]});
+""")
+    assert got == {'clicks': ['prev', 'next'], 'prevented': [True, True]}, got
+
+
+@needs_node
+def test_arrow_key_at_the_end_of_the_list_does_nothing():
+    """The link for a side with no game stays hidden."""
+    got = _node(_GAME_NAV + r"""
+ctx.document.querySelector('#gameNav [data-nav="next"]').hidden = true;
+press('ArrowRight');
+out({clicks});
+""")
+    assert got == {'clicks': []}, got
+
+
+@needs_node
+@pytest.mark.parametrize('case, setup, event', [
+    # Leaving the page would lose what is typed in an open Edit window.
+    ('window open', "g('ModalFocusTrap')._stack.push({});", '{}'),
+    # The 3D box viewer turns the box with these keys and marks them used.
+    ('box viewer', '', '{defaultPrevented: true}'),
+    # A focused video skips forward and back, which needs the key left alone.
+    ('video', '', "{target: make('video', {})}"),
+    ('audio', '', "{target: make('audio', {})}"),
+    # Shift + arrow extends a text selection.
+    ('shift', '', '{shiftKey: true}'),
+    ('typing', '', "{target: make('input', {})}"),
+])
+def test_arrow_keys_leave_the_game_alone_when_the_key_is_needed(case, setup, event):
+    got = _node(_GAME_NAV + setup + f"""
+const before = {event}.defaultPrevented === true;
+const ev = press('ArrowRight', {event});
+out({{clicks, keptDefault: ev.defaultPrevented === before}});
+""")
+    assert got == {'clicks': [], 'keptDefault': True}, (case, got)
+
+
+@needs_node
+def test_arrow_keys_do_not_step_games_off_a_game_page():
+    got = _node(_GAME_NAV + r"""
+ctx.location.pathname = '/systems';
+const ev = press('ArrowRight');
+out({clicks, prevented: ev.defaultPrevented});
+""")
+    assert got == {'clicks': [], 'prevented': False}, got
 
 
 @needs_node
