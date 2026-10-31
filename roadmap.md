@@ -9653,6 +9653,19 @@ were corrected in `2836bc3` and are not repeated here.
   own roadmap items for the user to choose from. Respect each API's
   terms and rate limits.
 - **Source**: user, 2026-10-23.
+- **Progress** (2026-10-31): **Progress** (2026-10-31): Investigation done. Unused data, per
+  source: `docs/reviews/PASS-59-162-scraper-investigation.md`. Fixes and
+  additions filed as PASS-59-201 to PASS-59-219, for the user to choose
+  what ships in v4.0.0. Full working notes are local only, in
+  `docs/reviews/PASS-59-162-notes/` (excluded through
+  `.git/info/exclude`, because they quote a private library). Serious
+  claims re-checked by hand against code, library and live services:
+  Lynx platform number, region against file name, 31 December dates,
+  perspective labels, first-listed box, RAWG covers, shared
+  RetroAchievements IDs, ES-DE fallback branch. The rest are as the
+  reviewers reported them, each marked proven or suspected. Not checked:
+  the keyed lookups the notes list under what could not be checked; Xbox
+  had no real reply.
 
 ---
 
@@ -10196,6 +10209,157 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Source**: user, 2026-10-30.
 
 ---
+
+#### Pass 59.201 Each scraper searches the right console: wrong platform numbers and loose name matching (fix, S).
+- **Status**: todo
+- **Source**: PASS-59-162, 2026-10-31. Notes: tgdb 1, 2, 9, 10; igdb F14; hltb_ra R2, R3, H7; screenscraper 12.
+- **Problem**: TheGamesDB searches Atari Lynx under 29, which is Jaguar CD (checked against its live platform list: Lynx is 4924), and SuperGrafx under Game & Watch. `scrape_thegamesdb.get_system_id` and `scrape_igdb.get_platform_id` accept part of a name, so Cps1 is searched as PlayStation and Super Famicom as NES. RetroAchievements has wrong numbers for wii, neogeo and pc98.
+- **Fix**: correct the numbers, remove the partial match, and map names outright. A system with no exact entry is not searched, as `docs/specs/scrapers.md` Platform coverage already says. Check that an existing install's `config.py` picks the corrected map up.
+
+---
+
+#### Pass 59.202 Boxes, manuals, titles and dates follow the game's own region (fix, M).
+- **Status**: todo
+- **Source**: PASS-59-162, 2026-10-31. Notes: screenscraper 1, 2, 6.
+- **Problem**: `metadata_merger.py` takes the first `box-2D`, `box-3D` and `manuel` in ScreenScraper's alphabetical region list, so a USA game can get a European box or a Portuguese manual. Title and date always prefer the USA.
+- **Fix**: one helper ordering by the game's region, then preferred regions, then the rest. Existing rows need a repair job, because media is fill-only.
+- **Verify**: a USA game with several regional boxes gets the USA box.
+
+---
+
+#### Pass 59.203 RAWG background pictures stop being used as box art, and RetroDB credits RAWG (fix, S).
+- **Status**: todo
+- **Source**: PASS-59-162, 2026-10-31. Notes: rawg 1, 3.
+- **Problem**: `scrape_rawg.py` saves `background_image`, often a screenshot, as the cover. Measured: most RAWG covers are landscape. Because media is fill-only, the picture also blocks a real cover. RAWG asks for a link back, and no page gives one.
+- **Fix**: stop filling `boxart` from RAWG, keep the picture as fanart, correct `docs/specs/scrapers.md`, offer a clean-up so those games can get real covers, and add a RAWG credit link.
+
+---
+
+#### Pass 59.204 The ROM's file name decides its region, ahead of the AI's guess (fix, S).
+- **Status**: todo
+- **Source**: PASS-59-162, 2026-10-31. Notes: ai_steam_xbox A1; merge_and_stored 1.
+- **Problem**: `hybrid_scraper.py` reads the file name only when region is still empty, after the AI has answered. Hundreds of `(USA)` files are stored as Europe or Japan.
+- **Fix**: read the file name first and do not ask the AI when it gives a region. Add a clean-up for rows whose history says the AI wrote the region and whose file name has a tag.
+
+---
+
+#### Pass 59.205 ES-DE as a fallback source goes through the normal merge (fix, M).
+- **Status**: todo
+- **Source**: PASS-59-162, 2026-10-31. Notes: esde 1, 2, 3, 7, 8, 12, 13; merge_and_stored 2, 6.
+- **Problem**: `_apply_fallback` calls `apply_esde_metadata`, which writes to the database but not to `metadata`. Fields stay marked as missing, so later sources and paid AI replace them, against the priority order. Fallback screenshots are dropped, and copied fan art, video and manuals can be discarded. The row is picked by title, not ROM file, and folder ROMs miss their media.
+- **Fix**: share the primary path's merge block with the fallback. Check whether screenshots a user removed on purpose would come back before any repair.
+
+---
+
+#### Pass 59.206 Every source's genres, perspectives and modes reach the canonical forms (fix, M).
+- **Status**: todo
+- **Source**: PASS-59-162, 2026-10-31. Notes: igdb F3, F4, F11; screenscraper 4, 5; tgdb 5, 6; rawg 10; esde 5, 9; merge_and_stored 3, 4, 11, 16.
+- **Problem**: raw IGDB labels such as `Third person` and `Side view` are stored, so one perspective appears under two names and a filter misses games. Genres pass through outside `FIELD_SCHEMAS`. One IGDB label is hidden only by a rule in this library, so a new install gets it raw. TheGamesDB's backup genre table has wrong numbers.
+- **Fix**: one conversion step after the merge for all sources, plus a clean-up of stored rows. `Text`, `Auditory` and `Virtual Reality` need a decision. New canonical values also go in `services/i18n_labels.py`.
+
+---
+
+#### Pass 59.207 Release dates stay as exact as the source and belong to this console and region (fix, M).
+- **Status**: todo
+- **Source**: PASS-59-162, 2026-10-31. Notes: igdb F1, F2; esde 6; tgdb 13; rawg 8; ai_steam_xbox A6, A11; merge_and_stored 9, 10.
+- **Problem**: an IGDB date known only by year is stored as 31 December. ES-DE pads to 1 January. `first_release_date` is the earliest for any console or region. `release_date` and `release_dates` can disagree.
+- **Fix**: read IGDB's `release_dates` by platform and region, and store `YYYY` or `YYYY-MM` when that is all a source knows. Fill `release_dates` from IGDB and ScreenScraper, not only the AI.
+
+---
+
+#### Pass 59.208 Scraping stops accepting the wrong game: sequels, mods and other versions (fix, M).
+- **Status**: todo
+- **Source**: PASS-59-162, 2026-10-31. Notes: merge_and_stored 19; rawg 5, 6, 11, 12; igdb F10, F13; screenscraper 7, 8.
+- **Problem**: `_pick_best_fallback` accepts a sequel at score 80 and ignores platform. Bulk mode can reach its bar with no title match. IGDB mods can match. RAWG's developer, ratings, players and modes mix every version.
+- **Fix**: sequel numbers must agree, reusing `canonical_ra_word` and `ra_sequel_numbers` from `services/achievement_linking.py`; require a title score in bulk; use IGDB `game_type`. Stored rows cannot all be traced, so a fix applies to new scrapes first.
+
+---
+
+#### Pass 59.209 HowLongToBeat: right game, right platform, and minutes counted as minutes (fix, M).
+- **Status**: todo
+- **Source**: PASS-59-162, 2026-10-31. Notes: hltb_ra H1 to H8.
+- **Problem**: `app.py`, `routes/collector_trophies.py` and `services/analytics.py` read `Main: 36 mins` as 36 hours, so totals are far too high. The bulk job ignores `platform_mismatch`. A sequel can pass the 95% bar. The year is never passed, and `Game Boy` is found inside `Game Boy Advance`.
+- **Fix**: one shared time parser or numeric columns; queue mismatches for review; numbers must agree; pass the year; compare whole platform names. Send affected stored rows to the review queue.
+
+---
+
+#### Pass 59.210 RetroAchievements: clear wrong links and match more of the right games (fix, M).
+- **Status**: todo
+- **Source**: PASS-59-162, 2026-10-31. Notes: hltb_ra R1, R4, R5, R6, R7, R9, R10, R11.
+- **Problem**: GameCube rows such as Resident Evil 2 and 4, and Pikmin and Pikmin 2, share one RetroAchievements game (checked), so a game shows another's achievements. A scrape that finds no match leaves the old link. One-letter words are dropped, so X-Men equals G-Men. Alternate titles are not tried.
+- **Fix**: a one-time repair at upgrade, clearing a link on a true miss but not on a failed fetch, and storing RetroAchievements' own title so a wrong link can be seen. Follows PASS-59-110.
+
+---
+
+#### Pass 59.211 AI answers are checked and labelled, not shown as official facts (fix, M).
+- **Status**: todo
+- **Source**: PASS-59-162, 2026-10-31. Notes: ai_steam_xbox A2, A3, A4, A5, A7, A8, A9, A10, A12, A13, A14, A15; merge_and_stored 7, 12.
+- **Problem**: age ratings are inferred and look official, even before a board existed. A score count from the AI can sit beside another site's score. A 0-10 score is stored as 7/100. `1-2 million` parses to 1 copy. Lists can be stored as Python text. Citations are thrown away, and Claude is told to search with no search tool. AI Fill overwrites scraped values, which `CLAUDE.md` does not list.
+- **Decision for the user**: mark AI values on the game page, or stop asking for ratings and scores the AI cannot know.
+- **Fix**: range and scale checks, paired score and count, a source mark per value.
+
+---
+
+#### Pass 59.212 Franchise comes from real data, not guessed from the title (fix, S).
+- **Status**: todo
+- **Source**: PASS-59-162, 2026-10-31. Notes: tgdb 3; rawg 2; igdb F5; merge_and_stored 17.
+- **Problem**: TheGamesDB's franchise is cut from the title, giving `Mission`. RAWG's is a letter-by-letter common prefix, giving `Need` or `Men`. IGDB's reads the removed `collection` field. A guess also blocks a real answer later, because the field is no longer empty.
+- **Fix**: remove both guesses, read IGDB `collections`, and clean up stored guesses so they can be re-filled.
+
+---
+
+#### Pass 59.213 Descriptions and text arrive clean and in the right language (fix, S).
+- **Status**: todo
+- **Source**: PASS-59-162, 2026-10-31. Notes: screenscraper 3, 9; rawg 7, 9, 13; tgdb 8, 18; igdb F6, F15; esde 10, 11; merge_and_stored 8, 13, 14, 15, 18, 21, 23.
+- **Problem**: web codes such as `&quot;` and heading marks such as `###` show in descriptions. IGDB's alternate titles can include `dosbox.exe`. Some descriptions are in another language. Company names vary. Digits-only `989` is dropped.
+- **Fix**: a shared text clean-up on the way in and for stored rows. Company variants may become a normalization rule.
+
+---
+
+#### Pass 59.214 Full Re-scrape and the second update path keep hand-set values (fix, M).
+- **Status**: todo
+- **Source**: PASS-59-162, 2026-10-31. Notes: merge_and_stored 5, 6, 22, 24; esde 4; tgdb 11. All from reading code; none run.
+- **Problem**: in force mode only `region` and `save_type` are protected, so a guessed controller or an inferred rating can replace a hand-set one. Full Re-scrape may delete box art it has just downloaded. TheGamesDB's `apply_metadata_to_game` can overwrite curated values and leaves no history.
+- **Fix**: first reproduce each on a scratch database, then seed these values from the row when no source filled them.
+
+---
+
+#### Pass 59.215 RetroDB keeps to each service's limits and stops when told to (fix, M).
+- **Status**: todo
+- **Source**: PASS-59-162, 2026-10-31. Notes: screenscraper Terms; tgdb 12, 16; rawg 14, Terms; igdb Terms, F12; hltb_ra Terms.
+- **Problem**: ScreenScraper's docs require quota handling, and its 430 and 431 replies look like not found, so bulk runs keep calling. TheGamesDB has no stop at zero allowance and its status check spends paid calls when `/v1/API/Limit` is free. RAWG's monthly limit is untracked. IGDB has no throttle for its limit of 4 requests a second. The HowLongToBeat bulk job has no delay.
+- **Fix**: a quota-exhausted result distinct from not found, a stop for that source in the job with a clear message, and a shared per-source pace.
+
+---
+
+#### Pass 59.216 Free extra data from the sources: real regional dates, title screens, more titles (enhancement, M).
+- **Status**: todo
+- **Source**: PASS-59-162, 2026-10-31. Table: `docs/reviews/PASS-59-162-scraper-investigation.md`.
+- **Candidates**, each a small change: ScreenScraper `dates[]` per region and `sstitle`; TheGamesDB `alternates` and `titlescreen`; ES-DE `rating` as a user score; IGDB `game_localizations` titles and its platform list for `other_platforms`; HowLongToBeat sample sizes and game ID; RetroAchievements players and rarity; source IDs so a re-scrape need not search again.
+- **Larger**: `box-2D-back` and arcade flyers need somewhere to show them.
+
+---
+
+#### Pass 59.217 Identify games from the ROM file itself, using checksums and disc serials (enhancement, L).
+- **Status**: todo
+- **Source**: PASS-59-162, 2026-10-31. Notes: screenscraper 8, Table 1; hltb_ra R8; tgdb Table 1.
+- **Idea**: normal matching is by title. ScreenScraper's `roms[]`, `rom` and `serialnum`, TheGamesDB's `ByGameHash` and RetroAchievements' hashes can name the exact game, region and language of a file, and say whether achievements work with this copy. `games.disc_serial` already holds serials, and discs over 100 MB are not checksummed today.
+- **Needs**: a spec, because it changes how every scrape picks its game. Would remove many wrong matches at the root (PASS-59-208).
+
+---
+
+#### Pass 59.218 Steam and Xbox imports keep what the services already send (enhancement, M).
+- **Status**: todo
+- **Source**: PASS-59-162, 2026-10-31. Notes: ai_steam_xbox S1 to S7, X1 to X7. The library has no Steam or Xbox rows, and Xbox has no real reply, so the Xbox claims are unproven.
+- **Problem**: `get_app_details` has no callers, so imports stay nearly empty. A title match never links the Steam ID, so no achievements. Play time is fetched then dropped. Xbox may stop at 100 games, and phone and PC titles may be filed as Xbox One.
+- **Needs**: one real Xbox sign-in to test. Steam store data has real board ratings and a Metacritic score.
+
+---
+
+#### Pass 59.219 Small scraper leftovers: dead code, spec drift, and a folder-browser server error (chore, S).
+- **Status**: todo
+- **Source**: PASS-59-162, 2026-10-31. Notes: screenscraper 13; tgdb 17; hltb_ra H8, R12; esde 14; ai_steam_xbox S7; igdb F21; merge_and_stored 25.
+- **Items**: `scrape_screenscraper.get_game_by_id` has no callers and sends `jeuid`, which the service refuses with 400; `gameid` works (tried live). Correct the claims in `docs/specs/scrapers.md`. `routes/tools.py` `api_rom_tools_browse_folders` answers 500 when it has no current path (seen 2026-10-31 by calling `openFolderBrowser` with a made-up name; not seen from a real button).
 
 ## Done index
 
