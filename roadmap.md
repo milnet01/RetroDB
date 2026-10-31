@@ -10216,7 +10216,12 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.201 Each scraper searches the right console: wrong platform numbers and loose name matching (fix, S).
-- **Status**: todo
+- **Resolution** (2026-10-31): Done 2026-10-31. Exact lookups only; TheGamesDB and IGDB maps moved from config.py to the scraper modules, because an update never rewrites an installed config.py.
+  Finding tgdb 9 changed: TheGamesDB ignores a comma-separated platform filter and returns every platform (tried live), so Mega Drive and Genesis search their own list, then the other only if that finds nothing.
+  Sources: TheGamesDB's public list; rc_consoles.h for RetroAchievements; Skyscraper's id map for ScreenScraper and RomM's lists for IGDB and HowLongToBeat, none of those three checked with the service itself.
+  Left out, no source found: ScreenScraper electron, sgb, stv, laserdisc, uzebox; HowLongToBeat gp32, fds. The doubted ScreenScraper numbers for naomi, atomiswave, pc and ports are unchanged.
+  New searches on more systems and the Mega Drive second request spend more of the TheGamesDB allowance; see PASS-59-215.
+- **Status**: done
 - **Source**: PASS-59-162, 2026-10-31. Notes: tgdb 1, 2, 9, 10; igdb F14; hltb_ra R2, R3, H7; screenscraper 12.
 - **Problem**: TheGamesDB searches Atari Lynx under 29, which is Jaguar CD (checked against its live platform list: Lynx is 4924), and SuperGrafx under Game & Watch. `scrape_thegamesdb.get_system_id` and `scrape_igdb.get_platform_id` accept part of a name, so Cps1 is searched as PlayStation and Super Famicom as NES. RetroAchievements has wrong numbers for wii, neogeo and pc98.
 - **Fix**: correct the numbers, remove the partial match, and map names outright. A system with no exact entry is not searched, as `docs/specs/scrapers.md` Platform coverage already says. Check that an existing install's `config.py` picks the corrected map up.

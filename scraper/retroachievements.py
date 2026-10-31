@@ -26,14 +26,14 @@ def get_ra_credentials():
     api_key = get_api_key('ra_apikey', 'RETROACHIEVEMENTS_API_KEY')
     return username, api_key
 
-# RetroAchievements Console IDs mapping to ES-DE folder names
+# RetroAchievements console ids (rcheevos rc_consoles.h) by ES-DE folder name
 RA_CONSOLE_MAP = {
     'nes': 7,           # Nintendo Entertainment System
     'snes': 3,          # Super Nintendo Entertainment System
     'n64': 2,           # Nintendo 64
     'gamecube': 16,     # Nintendo GameCube
     'gc': 16,           # Nintendo GameCube (alternate folder name)
-    'wii': 78,          # Nintendo Wii
+    'wii': 19,          # Nintendo Wii
     'gb': 4,            # Game Boy
     'gbc': 6,           # Game Boy Color
     'gba': 5,           # Game Boy Advance
@@ -53,7 +53,9 @@ RA_CONSOLE_MAP = {
     'tg16': 8,
     'tg-16': 8,
     'pcenginecd': 76,   # PC Engine CD
-    'neogeo': 14,       # Neo Geo
+    # No 'neogeo': RA lists no such console, and 14 is the Neo Geo Pocket.
+    'neogeocd': 56,     # Neo Geo CD
+    'neogeocdjp': 56,
     # MAME/Arcade (ID 27) excluded - limited RA support, causes over-matching
     'atari2600': 25,    # Atari 2600
     'atari7800': 51,    # Atari 7800
@@ -70,12 +72,28 @@ RA_CONSOLE_MAP = {
     'pokemini': 24,     # Pokemon Mini
     '3do': 43,          # 3DO
     'pc88': 47,         # PC-8800
-    'pc98': 49,         # PC-9800
+    'pc98': 48,         # PC-9800
+    'pcfx': 49,         # PC-FX
     'amstradcpc': 37,   # Amstrad CPC
     'apple2': 38,       # Apple II
     'msx': 29,          # MSX
     'sg-1000': 33,      # Sega SG-1000
     'sg1000': 33,
+    'fds': 81,          # Famicom Disk System
+    'channelf': 57,     # Fairchild Channel F
+    'odyssey2': 23,     # Magnavox Odyssey 2
+    'videopac': 23,
+    'atarijaguarcd': 77,# Atari Jaguar CD
+    'megaduck': 69,     # Mega Duck
+    'supervision': 63,  # Watara Supervision
+    'wasm4': 72,        # WASM-4
+    'arduboy': 71,      # Arduboy
+    # Other folder names for the same consoles
+    'sfc': 3, 'snesna': 3, 'famicom': 7,
+    'megacd': 9, 'megacdjp': 9, 'megadrivejp': 1,
+    'saturnjp': 39, 'sega32xjp': 10, 'sega32xna': 10,
+    'mark3': 11, 'tg-cd': 76, 'supergrafx': 8,
+    'msx1': 29, 'msx2': 29,
 }
 
 

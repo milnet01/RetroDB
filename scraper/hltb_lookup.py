@@ -64,6 +64,24 @@ SYSTEM_TO_HLTB_PLATFORM = {
     '3do': '3DO',
     # Mobile
     'ngage': 'N-Gage',
+    # Other folder names for the same machines
+    'sfc': 'Super Nintendo', 'snesna': 'Super Nintendo',
+    'megacd': 'Sega CD', 'megacdjp': 'Sega CD',
+    'megadrivejp': 'Sega Mega Drive/Genesis', 'saturnjp': 'Sega Saturn',
+    'sega32xjp': 'Sega 32X', 'sega32xna': 'Sega 32X', 'mark3': 'Sega Master System',
+    'tg-cd': 'TurboGrafx-CD', 'supergrafx': 'TurboGrafx-16', 'neogeocdjp': 'Neo Geo CD',
+    # Systems with their own platform on HowLongToBeat
+    'intellivision': 'Intellivision', 'colecovision': 'ColecoVision',
+    'cdimono1': 'Philips CD-i', 'vectrex': 'Vectrex',
+    'atari800': 'Atari 8-bit Family', 'atarixe': 'Atari 8-bit Family',
+    'atarijaguarcd': 'Atari Jaguar CD', 'pcfx': 'NEC PC-FX',
+    'pc88': 'NEC PC-88', 'pc98': 'NEC PC-98',
+    'wonderswan': 'WonderSwan', 'wonderswancolor': 'WonderSwan',
+    'odyssey2': 'Odyssey 2', 'videopac': 'Odyssey 2',
+    'gameandwatch': 'Game & Watch', 'sg-1000': 'SG-1000',
+    'x68000': 'Sharp X68000', 'x1': 'Sharp X1', 'fmtowns': 'FM Towns', 'fm7': 'FM-7',
+    'bbcmicro': 'BBC Micro', 'archimedes': 'Acorn Archimedes',
+    'vic20': 'Commodore VIC-20', 'zx81': 'ZX81',
 }
 
 HLTB_BASE_URL = "https://howlongtobeat.com"

@@ -13,7 +13,7 @@ import time
 
 # Add parent directory to path for config import
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from config import IMAGE_PATH, TGDB_SYSTEM_MAP, TGDB_GENRE_MAP
+from config import IMAGE_PATH, TGDB_GENRE_MAP
 
 from scraper.base_scraper import http_get, get_scraper_conn, download_image
 import config as _config
@@ -265,35 +265,248 @@ def extract_region_from_title(title):
 # SYSTEM ID MAPPING
 # =============================================================================
 
+# System folder or display name -> TheGamesDB platform id, from its public list
+# (https://thegamesdb.net/list_platforms.php). Lives here, not in config.py,
+# because an update never rewrites an installed config.py.
+#
+# A tuple is one machine TheGamesDB files under several platforms: search_games
+# tries them in order. They cannot go in one request. The API documents
+# filter[platform] as a comma-separated list, but a list is ignored and every
+# platform comes back (tried against the live service 2026-10-31).
+MEGA_DRIVE_LISTS = (36, 18)
+GENESIS_LISTS = (18, 36)
+THOMSON_LISTS = (5022, 5023)
+
+TGDB_SYSTEM_MAP = {
+    # Nintendo Entertainment System
+    'nes': 7, 'nintendo entertainment system': 7, 'famicom': 7, 'nintendo famicom': 7,
+    # Famicom Disk System
+    'fds': 4936, 'famicom disk system': 4936,
+    # Super Nintendo
+    'snes': 6, 'super nintendo entertainment system': 6, 'sfc': 6, 'super famicom': 6,
+    'snesna': 6, 'super nintendo': 6,
+    # Nintendo 64
+    'n64': 3, 'nintendo 64': 3,
+    # Game Boy
+    'gb': 4, 'game boy': 4,
+    # Game Boy Color
+    'gbc': 41, 'game boy color': 41,
+    # Game Boy Advance
+    'gba': 5, 'game boy advance': 5,
+    # Nintendo DS
+    'nds': 8, 'nintendo ds': 8,
+    # Nintendo 3DS
+    'n3ds': 4912, 'nintendo 3ds': 4912,
+    # GameCube
+    'gc': 2, 'nintendo gamecube': 2, 'gamecube': 2,
+    # Wii
+    'wii': 9, 'nintendo wii': 9,
+    # Wii U
+    'wiiu': 38, 'nintendo wii u': 38,
+    # Switch
+    'switch': 4971, 'nintendo switch': 4971,
+    # Virtual Boy
+    'virtualboy': 4918, 'virtual boy': 4918,
+    # Game & Watch
+    'gameandwatch': 4950, 'game & watch': 4950,
+    # Pokemon Mini
+    'pokemini': 4957, 'pokemon mini': 4957,
+    # PlayStation
+    'psx': 10, 'sony playstation': 10, 'playstation': 10, 'ps1': 10,
+    # PlayStation 2
+    'ps2': 11, 'sony playstation 2': 11, 'playstation 2': 11,
+    # PlayStation 3
+    'ps3': 12, 'sony playstation 3': 12, 'playstation 3': 12,
+    # PlayStation 4
+    'ps4': 4919, 'sony playstation 4': 4919, 'playstation 4': 4919,
+    # PlayStation 5
+    'ps5': 4980, 'sony playstation 5': 4980, 'playstation 5': 4980,
+    # PlayStation Portable
+    'psp': 13, 'sony playstation portable': 13, 'playstation portable': 13,
+    # PlayStation Vita
+    'psvita': 39, 'sony playstation vita': 39, 'playstation vita': 39,
+    # Sega Genesis and Sega Mega Drive: one console, two lists
+    'genesis': GENESIS_LISTS, 'sega genesis': GENESIS_LISTS,
+    'megadrive': MEGA_DRIVE_LISTS, 'sega mega drive': MEGA_DRIVE_LISTS,
+    'megadrivejp': MEGA_DRIVE_LISTS, 'sega mega drive (japan)': MEGA_DRIVE_LISTS,
+    # Sega Master System
+    'mastersystem': 35, 'sega master system': 35, 'mark3': 35,
+    # Sega CD
+    'segacd': 21, 'sega cd': 21, 'megacd': 21, 'megacdjp': 21,
+    # Sega 32X
+    'sega32x': 33, 'sega 32x': 33, 'sega32xjp': 33, 'sega 32x (japan)': 33,
+    'sega32xna': 33, 'sega 32x (north america)': 33,
+    # Sega Saturn
+    'saturn': 17, 'sega saturn': 17, 'saturnjp': 17, 'sega saturn (japan)': 17,
+    # Dreamcast
+    'dreamcast': 16, 'sega dreamcast': 16,
+    # Game Gear
+    'gamegear': 20, 'sega game gear': 20,
+    # SG-1000
+    'sg-1000': 4949, 'sega sg-1000': 4949,
+    # Xbox
+    'xbox': 14, 'microsoft xbox': 14,
+    # Xbox 360
+    'xbox360': 15, 'microsoft xbox 360': 15, 'xbox 360': 15,
+    # Xbox One
+    'xboxone': 4920, 'microsoft xbox one': 4920, 'xbox one': 4920,
+    # Atari 2600
+    'atari2600': 22, 'atari 2600': 22,
+    # Atari 5200
+    'atari5200': 26, 'atari 5200': 26,
+    # Atari 7800
+    'atari7800': 27, 'atari 7800': 27,
+    # Atari 800
+    'atari800': 4943, 'atari 800': 4943,
+    # Atari XE
+    'atarixe': 30, 'atari xe': 30,
+    # Atari Jaguar
+    'atarijaguar': 28, 'atari jaguar': 28,
+    # Atari Jaguar CD
+    'atarijaguarcd': 29, 'atari jaguar cd': 29,
+    # Atari Lynx
+    'atarilynx': 4924, 'atari lynx': 4924,
+    # Atari ST
+    'atarist': 4937, 'atari st': 4937,
+    # TurboGrafx 16 / PC Engine
+    'pcengine': 34, 'pc engine': 34, 'tg16': 34, 'turbografx-16': 34,
+    # TurboGrafx CD
+    'pcenginecd': 4955, 'pc engine cd': 4955, 'tg-cd': 4955, 'turbografx-cd': 4955,
+    # PC-FX
+    'pcfx': 4930, 'pc-fx': 4930,
+    # Neo Geo
+    'neogeo': 24, 'snk neo geo': 24, 'neo geo': 24,
+    # Neo Geo CD
+    'neogeocd': 4956, 'snk neo geo cd': 4956, 'neogeocdjp': 4956,
+    'snk neo geo cd (japan)': 4956, 'neo geo cd': 4956,
+    # Neo Geo Pocket
+    'ngp': 4922, 'neo geo pocket': 4922,
+    # Neo Geo Pocket Color
+    'ngpc': 4923, 'neo geo pocket color': 4923,
+    # Arcade
+    'arcade': 23, 'mame': 23, 'mame-advmame': 23, 'fba': 23, 'fbneo': 23,
+    'finalburn neo': 23, 'cps': 23, 'cps1': 23, 'cps2': 23, 'cps3': 23, 'model2': 23,
+    'sega model 2': 23, 'model3': 23, 'sega model 3': 23, 'naomi': 23,
+    'sega naomi': 23, 'naomi2': 23, 'sega naomi 2': 23, 'naomigd': 23,
+    'atomiswave': 23, 'stv': 23, 'sega titan video': 23,
+    # PC
+    'dos': 1, 'ms-dos': 1, 'pc': 1, 'ibm pc': 1, 'windows': 1, 'microsoft windows': 1,
+    'windows3x': 1, 'windows 3.x': 1, 'windows9x': 1, 'windows 9x': 1,
+    # Commodore 64
+    'c64': 40, 'commodore 64': 40,
+    # Amiga
+    'amiga': 4911, 'commodore amiga': 4911, 'amiga600': 4911, 'amiga1200': 4911,
+    # Amiga CD32
+    'amigacd32': 4947, 'commodore amiga cd32': 4947,
+    # Amstrad CPC
+    'amstradcpc': 4914, 'amstrad cpc': 4914,
+    # Amstrad GX4000
+    'gx4000': 4999, 'amstrad gx4000': 4999,
+    # MSX
+    'msx': 4929, 'msx1': 4929, 'msx2': 4929,
+    # ZX Spectrum
+    'zxspectrum': 4913, 'zx spectrum': 4913,
+    # ZX81
+    'zx81': 5010, 'sinclair zx81': 5010,
+    # Apple II
+    'apple2': 4942, 'apple ii': 4942,
+    # Mac OS
+    'macintosh': 37, 'apple macintosh': 37,
+    # Acorn Archimedes
+    'archimedes': 4944, 'acorn archimedes': 4944,
+    # Acorn Electron
+    'electron': 4954, 'acorn electron': 4954,
+    # BBC Micro
+    'bbcmicro': 5013, 'bbc micro': 5013,
+    # Commodore VIC-20
+    'vic20': 4945, 'commodore vic-20': 4945,
+    # Commodore Plus/4
+    'plus4': 5007, 'commodore plus/4': 5007,
+    # Dragon 32/64
+    'dragon32': 4952,
+    # TRS-80 Color Computer
+    'coco': 4941, 'trs-80 color computer': 4941,
+    # TI-99/4A
+    'ti99': 4953, 'texas instruments ti-99/4a': 4953,
+    # Fujitsu FM-7
+    'fm7': 4978, 'fujitsu fm-7': 4978,
+    # FM Towns Marty
+    'fmtowns': 4932,
+    # Sharp X1
+    'x1': 4977, 'sharp x1': 4977,
+    # Sharp X68000
+    'x68000': 4931, 'sharp x68000': 4931,
+    # PC-88
+    'pc88': 4933, 'nec pc-8801': 4933,
+    # PC-98
+    'pc98': 4934, 'nec pc-9801': 4934,
+    # SAM Coupe
+    'samcoupe': 4979,
+    # Oric
+    'oric': 4986,
+    # Thomson TO7 and MO5
+    'moto': THOMSON_LISTS, 'thomson mo/to': THOMSON_LISTS,
+    # J2ME
+    'j2me': 5018,
+    # 3DO
+    '3do': 25, '3do interactive multiplayer': 25,
+    # ColecoVision
+    'colecovision': 31,
+    # Intellivision
+    'intellivision': 32, 'mattel intellivision': 32,
+    # Vectrex
+    'vectrex': 4939,
+    # WonderSwan
+    'wonderswan': 4925, 'bandai wonderswan': 4925,
+    # WonderSwan Color
+    'wonderswancolor': 4926, 'bandai wonderswan color': 4926,
+    'wonderswan color': 4926,
+    # Philips CD-i
+    'cdimono1': 4917, 'philips cd-i': 4917,
+    # GP32
+    'gp32': 5015, 'gamepark gp32': 5015,
+    # N-Gage
+    'ngage': 4938, 'nokia n-gage': 4938,
+    # Magnavox Odyssey 2
+    'odyssey2': 4927, 'magnavox odyssey 2': 4927, 'videopac': 4927,
+    'philips videopac': 4927,
+    # Fairchild Channel F
+    'channelf': 4928, 'fairchild channel f': 4928,
+    # Bally Astrocade
+    'astrocde': 4968, 'bally astrocade': 4968, 'astrocade': 4968,
+    # Arcadia 2001
+    'arcadia': 4963, 'emerson arcadia 2001': 4963,
+    # Super Cassette Vision
+    'scv': 4966, 'epoch super cassette vision': 4966,
+    # Gamate
+    'gamate': 5004, 'bit corporation gamate': 5004,
+    # Game.com
+    'gamecom': 4940, 'tiger game.com': 4940,
+    # Watara Supervision
+    'supervision': 4959, 'watara supervision': 4959,
+    # Mega Duck
+    'megaduck': 4948,
+    # CreatiVision
+    'crvision': 5005, 'vtech creativision': 5005,
+    # V.Smile
+    'vsmile': 4988, 'vtech v.smile': 4988,
+    # Casio PV-1000
+    'pv1000': 4964,
+}
+
+
 def get_system_id(system_name):
-    """Get TheGamesDB system ID from system name"""
+    """TheGamesDB platform for this system, or None if it has no exact entry.
+
+    Exact only: matching part of a name searched "Cps1" as PlayStation, because
+    "ps1" is inside it, and a system's search then took another console's games.
+    """
     if not system_name:
         return None
-
-    # Clean the system name
-    system_lower = system_name.lower().strip()
-
-    logger.debug(f"Looking up system ID for: '{system_name}' -> '{system_lower}'")
-
-    # Direct mapping
-    if system_lower in TGDB_SYSTEM_MAP:
-        return TGDB_SYSTEM_MAP[system_lower]
-
-    # Try removing common prefixes
-    prefixes = ['sony ', 'microsoft ', 'nintendo ', 'sega ', 'atari ', 'snk ']
-    for prefix in prefixes:
-        if system_lower.startswith(prefix):
-            cleaned = system_lower[len(prefix):].strip()
-            if cleaned in TGDB_SYSTEM_MAP:
-                return TGDB_SYSTEM_MAP[cleaned]
-
-    # Try partial match
-    for key, value in TGDB_SYSTEM_MAP.items():
-        if key in system_lower or system_lower in key:
-            return value
-
-    logger.warning(f"Could not find system ID for: {system_name}")
-    return None
+    system_id = TGDB_SYSTEM_MAP.get(system_name.lower().strip())
+    if system_id is None:
+        logger.debug(f"TheGamesDB lists no platform for: {system_name}")
+    return system_id
 
 # =============================================================================
 # SEARCH GAMES
@@ -308,6 +521,17 @@ def search_games(title, system_name=None, limit=10):
         logger.info(f"TheGamesDB: no platform for '{system_name}' — not searched")
         return []
 
+    # A later list is asked only if the one before found nothing, because each
+    # request spends the monthly allowance.
+    for platform in system_id if isinstance(system_id, tuple) else (system_id,):
+        results = _search_platform(title, system_name, platform, limit)
+        if results:
+            return results
+    return []
+
+
+def _search_platform(title, system_name, system_id, limit):
+    """One ByGameName request, on one platform when system_id is given."""
     try:
         url = f"{TGDB_API_BASE}/v1.1/Games/ByGameName"
         params = {

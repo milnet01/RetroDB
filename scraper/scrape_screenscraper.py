@@ -170,6 +170,17 @@ SYSTEM_ID_MAP = {
     # Other
     "scummvm": 123,
     "ports": 137,
+    # Other folder names for the same machines
+    "megacd": 20, "megacdjp": 20, "ngage": 30, "x1": 220, "neogeocdjp": 70,
+    "naomigd": 56, "snesna": 4, "mark3": 2, "videopac": 104,
+    "amiga600": 64, "amiga1200": 64, "cps": 75,
+    # Numbers from Skyscraper's platforms_idmap.csv (PASS-59-201)
+    "amigacd32": 130, "cdtv": 129, "apple2": 86, "apple2gs": 217, "zx81": 77,
+    "ti99": 205, "samcoupe": 213, "oric": 131, "trs-80": 144, "coco": 144,
+    "macintosh": 146, "bbcmicro": 37, "dragon32": 91, "plus4": 99, "moto": 141,
+    "daphne": 49, "supervision": 207, "gamecom": 121, "tic80": 222,
+    "arcadia": 94, "crvision": 241, "scv": 67, "vsmile": 120, "pv1000": 74,
+    "megaduck": 90, "palm": 219,
 }
 
 # Region priority for media selection (prefer English/US/World)
