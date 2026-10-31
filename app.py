@@ -454,6 +454,7 @@ if limiter:
     _rate_limit('tools.api_chd_verify_scan', "5 per minute")
     _rate_limit('tools.api_duplicate_finder_scan', "5 per minute")
     _rate_limit('tools.api_screenshot_dedup_scan', "5 per minute")
+    _rate_limit('tools.api_screenshot_review_scan', "5 per minute")
     # Pass 39.7 — same family as Pass 41.10.D: walks the filesystem under
     # @login_required only (non-editor users can hit it), one cap per minute
     # since a single scan can take seconds on large libraries.

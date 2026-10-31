@@ -109,6 +109,7 @@ has seen the raw output. Triage into new roadmap passes after.
 ### Media handling
 - Media fields (boxart, boxart_3d, screenshots, fanart, video, manual) are never replaced during normal scraping — only filled when empty. Screenshots are always appended, never replaced. To get new media: clear it from the edit modal first, then re-scrape. Full Re-scrape mode overrides this and overwrites any field a source actually provides, media included, unless its "Keep existing media" option is ticked (then media whose file is on disk is kept); fields no source fills keep their existing value — hand-curated data is not blanked.
 - Slipcase box faces (PASS-59-142) are not a media field: `games.box_faces` holds a JSON record and `<IMAGE_PATH>/box_faces/` the WebP faces. Only `services/box_faces.py` writes them (an editor's import, fill-only unless replaced); scraping, Clear and the image jobs never touch them, and `boxart_3d` is separate. Spec: `docs/specs/PASS-59-142-box-file-import.md`.
+- Screenshot truth (PASS-59-161): exact palettes cannot judge a shot, because emulators differ and stored shots are lossy and upscaled. `services/screenshot_fit.py` refuses at download only on an original's exact colour count; stored shots are only ranked, for a person to judge in Screenshot Review.
 - During pre-population, media files are validated on disk — stale DB references (file deleted, filename still in DB) are auto-cleared so scrapers can re-download.
 
 ### Scraper fill-only invariant

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-30 15:32+0200\n"
+"POT-Creation-Date: 2026-10-31 08:13+0200\n"
 "PO-Revision-Date: 2026-07-01 09:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hans\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: app.py:693
+#: app.py:694
 #, python-format
 msgid ""
 "Upload exceeds the %(total)s MB limit. Each image may be up to %(image)s "
@@ -28,19 +28,19 @@ msgstr ""
 "上传超过了 %(total)s MB 的上限。每张图片最大 %(image)s MB，视频最大 %(video)s "
 "MB；请减少一次上传的文件数。管理员可通过 RETRODB_MAX_UPLOAD_MB 提高总上限。"
 
-#: app.py:724
+#: app.py:725
 msgid "Too many requests. Please wait and try again."
 msgstr "请求过多。请稍候再试。"
 
-#: app.py:833
+#: app.py:834
 msgid "Setup required"
 msgstr "需要初始设置"
 
-#: app.py:854
+#: app.py:855
 msgid "Password change required"
 msgstr "需要更改密码"
 
-#: app.py:1682 routes/auth.py:202 routes/auth.py:262 routes/auth.py:447
+#: app.py:1683 routes/auth.py:202 routes/auth.py:262 routes/auth.py:447
 #: routes/auth.py:492 templates/force_change_password.html:49
 #: templates/setup.html:469
 msgid "Password must be at least 12 characters"
@@ -1018,8 +1018,8 @@ msgstr "未配置 ROM 路径。请前往“设置 → 路径”进行设置。"
 msgid "Missing required parameters"
 msgstr "缺少必填参数"
 
-#: routes/reports.py:605 routes/tools.py:511 routes/tools.py:568
-#: routes/tools.py:613
+#: routes/reports.py:605 routes/tools.py:512 routes/tools.py:569
+#: routes/tools.py:614
 msgid "Invalid path"
 msgstr "路径无效"
 
@@ -1065,7 +1065,7 @@ msgstr "生成的文件名包含无效字符"
 msgid "Invalid log file"
 msgstr "日志文件无效"
 
-#: routes/scrape_logs.py:101 routes/tools.py:514
+#: routes/scrape_logs.py:101 routes/tools.py:515
 msgid "File not found"
 msgstr "未找到文件"
 
@@ -1176,20 +1176,20 @@ msgid "Invalid %(field)s: %(result)s"
 msgstr "无效的 %(field)s：%(result)s"
 
 #: routes/settings.py:534 routes/settings.py:608 routes/settings.py:660
-#: routes/tools.py:290 services/js_i18n_strings.py:733
+#: routes/tools.py:291 services/js_i18n_strings.py:733
 msgid "Failed to save settings"
 msgstr "保存设置失败"
 
-#: routes/settings.py:553 routes/tools.py:362
+#: routes/settings.py:553 routes/tools.py:363
 msgid "Permission denied"
 msgstr "权限被拒绝"
 
-#: routes/settings.py:587 routes/tools.py:282
+#: routes/settings.py:587 routes/tools.py:283
 #, python-format
 msgid "Unknown setting key: %(key)s"
 msgstr "未知的设置键：%(key)s"
 
-#: routes/settings.py:593 routes/tools.py:285
+#: routes/settings.py:593 routes/tools.py:286
 #, python-format
 msgid "Invalid value for '%(key)s': %(reason)s"
 msgstr "“%(key)s”的值无效：%(reason)s"
@@ -1227,81 +1227,85 @@ msgstr "需要系统 ID"
 msgid "ES-DE scraper not available"
 msgstr "ES-DE 抓取器不可用"
 
-#: routes/tools.py:272
+#: routes/tools.py:273
 msgid "Administrator privileges required"
 msgstr "需要管理员权限"
 
-#: routes/tools.py:276
+#: routes/tools.py:277
 msgid "Settings payload must be an object"
 msgstr "设置数据必须为对象"
 
-#: routes/tools.py:325 routes/tools.py:973
+#: routes/tools.py:326 routes/tools.py:974
 #, python-format
 msgid "Path does not exist: %(path)s"
 msgstr "路径不存在：%(path)s"
 
-#: routes/tools.py:390
+#: routes/tools.py:391
 msgid "Task not found"
 msgstr "未找到任务"
 
-#: routes/tools.py:413 routes/tools.py:433
+#: routes/tools.py:414 routes/tools.py:434
 msgid "Task not found or not running"
 msgstr "未找到任务或任务未运行"
 
-#: routes/tools.py:453
+#: routes/tools.py:454
 msgid "Task not found or not paused"
 msgstr "未找到任务或任务未暂停"
 
-#: routes/tools.py:470 routes/tools.py:675 routes/tools.py:846
-#: routes/tools.py:962
+#: routes/tools.py:471 routes/tools.py:676 routes/tools.py:847
+#: routes/tools.py:963
 msgid "Invalid scan path"
 msgstr "扫描路径无效"
 
-#: routes/tools.py:508 routes/tools.py:565 routes/tools.py:610
+#: routes/tools.py:509 routes/tools.py:566 routes/tools.py:611
 msgid "No path provided"
 msgstr "未提供路径"
 
-#: routes/tools.py:536
+#: routes/tools.py:537
 msgid "No archive path provided"
 msgstr "未提供归档路径"
 
-#: routes/tools.py:539
+#: routes/tools.py:540
 msgid "Invalid archive path"
 msgstr "压缩包路径无效"
 
-#: routes/tools.py:542
+#: routes/tools.py:543
 msgid "No files to remove"
 msgstr "没有可移除的文件"
 
-#: routes/tools.py:643
+#: routes/tools.py:644
 msgid "No paths provided"
 msgstr "未提供路径"
 
-#: routes/tools.py:649
+#: routes/tools.py:650
 #, python-format
 msgid "Invalid path: %(path)s"
 msgstr "路径无效：%(path)s"
 
-#: routes/tools.py:724
+#: routes/tools.py:725
 msgid "chdman not found. Please install MAME tools."
 msgstr "未找到 chdman。请安装 MAME 工具。"
 
-#: routes/tools.py:869
+#: routes/tools.py:870
 msgid "chdman not found"
 msgstr "未找到 chdman"
 
-#: routes/tools.py:967
+#: routes/tools.py:968
 #, python-format
 msgid "Unknown duplicate method: %(method)s"
 msgstr "未知的重复检测方式：%(method)s"
 
-#: routes/tools.py:1175
+#: routes/tools.py:1176
 msgid "These scan results have expired. Scan again, then delete."
 msgstr "这些扫描结果已过期。请重新扫描后再删除。"
 
-#: routes/tools.py:1180
+#: routes/tools.py:1181
 msgid "Keep at least one copy of each game. Nothing was deleted."
 msgstr "每个游戏至少保留一份副本。未删除任何内容。"
+
+#: routes/tools.py:1432
+msgid "This system has no screenshot check"
+msgstr ""
 
 #: routes/trophies.py:396
 msgid ""
@@ -3273,7 +3277,8 @@ msgstr "ROM 文件"
 #: templates/duplicate_finder.html:166 templates/logs.html:713
 #: templates/multi_disc_organizer.html:159
 #: templates/official_names_review.html:88 templates/rom_tools_hub.html:114
-#: templates/screenshot_dedup.html:227 templates/versions_review.html:72
+#: templates/screenshot_dedup.html:227 templates/screenshot_review.html:56
+#: templates/versions_review.html:72
 msgid "ROM Tools"
 msgstr "ROM 工具"
 
@@ -3641,7 +3646,7 @@ msgstr "在模拟器内设置；RetroDB 不会更改"
 msgid "Set per system, in Settings > Emulators"
 msgstr "按系统设置，位于 设置 > 模拟器"
 
-#: services/js_i18n_strings.py:970 templates/_macros/nav_tabs.html:44
+#: services/js_i18n_strings.py:970 templates/_macros/nav_tabs.html:45
 #: templates/base.html:186 templates/rom_tools_hub.html:119
 #: templates/settings.html:5 templates/settings.html:12
 #: templates/settings_emulators.html:4
@@ -3764,9 +3769,9 @@ msgstr "同步中：{processed} / {total}"
 #: templates/logs.html:722 templates/multi_disc_organizer.html:213
 #: templates/official_names_review.html:130
 #: templates/official_names_review.html:158 templates/reports.html:360
-#: templates/reports.html:435 templates/steam_achievement_game.html:173
-#: templates/versions_review.html:86 templates/wishlist.html:66
-#: templates/xbox_achievement_game.html:166
+#: templates/reports.html:435 templates/screenshot_review.html:71
+#: templates/steam_achievement_game.html:173 templates/versions_review.html:86
+#: templates/wishlist.html:66 templates/xbox_achievement_game.html:166
 msgid "System"
 msgstr "系统"
 
@@ -5348,7 +5353,7 @@ msgstr "完整度"
 #: templates/chd_verify.html:81 templates/duplicate_finder.html:167
 #: templates/multi_disc_organizer.html:160
 #: templates/official_names_review.html:89 templates/screenshot_dedup.html:228
-#: templates/versions_review.html:73
+#: templates/screenshot_review.html:57 templates/versions_review.html:73
 msgid "Manage, organize, and optimize your ROM collection."
 msgstr "管理、整理并优化您的 ROM 合集。"
 
@@ -5449,7 +5454,7 @@ msgid "Unwanted"
 msgstr "不需要"
 
 #: templates/archive_scanner.html:655 templates/duplicate_finder.html:210
-#: templates/screenshot_dedup.html:260
+#: templates/screenshot_dedup.html:260 templates/screenshot_review.html:80
 msgid "Start Scan"
 msgstr "开始扫描"
 
@@ -5640,7 +5645,7 @@ msgstr "工具"
 msgid "Game Imports"
 msgstr "游戏导入"
 
-#: templates/base.html:183 templates/rom_tools_hub.html:317
+#: templates/base.html:183 templates/rom_tools_hub.html:332
 msgid "Configuration"
 msgstr "配置"
 
@@ -6776,6 +6781,7 @@ msgid "files processed"
 msgstr "个文件已处理"
 
 #: templates/duplicate_finder.html:258 templates/screenshot_dedup.html:284
+#: templates/screenshot_review.html:98
 msgid "Scan Results"
 msgstr "扫描结果"
 
@@ -6831,8 +6837,8 @@ msgstr "确认密码"
 msgid "Set New Password"
 msgstr "设置新密码"
 
-#: templates/_macros/nav_tabs.html:43 templates/game_detail.html:19
-#: templates/reports.html:268 templates/rom_tools_hub.html:246
+#: templates/_macros/nav_tabs.html:44 templates/game_detail.html:19
+#: templates/reports.html:268 templates/rom_tools_hub.html:261
 msgid "ROM Reports"
 msgstr "ROM 报告"
 
@@ -8333,7 +8339,7 @@ msgstr "关联到 RetroDB 游戏"
 msgid "No description"
 msgstr "无描述"
 
-#: templates/reports.html:269 templates/rom_tools_hub.html:249
+#: templates/reports.html:269 templates/rom_tools_hub.html:264
 msgid "Analyze ROM filenames against naming standards and scraped metadata"
 msgstr "对照命名规范和已抓取的元数据分析 ROM 文件名"
 
@@ -8546,7 +8552,8 @@ msgstr "按哈希值、文件名或两者查找重复的 ROM。识别地区版�
 
 #: templates/rom_tools_hub.html:185 templates/rom_tools_hub.html:199
 #: templates/rom_tools_hub.html:226 templates/rom_tools_hub.html:239
-#: templates/rom_tools_hub.html:252 templates/rom_tools_hub.html:265
+#: templates/rom_tools_hub.html:253 templates/rom_tools_hub.html:267
+#: templates/rom_tools_hub.html:280
 msgid "No dependencies required"
 msgstr "无需依赖项"
 
@@ -8589,11 +8596,24 @@ msgid ""
 "library."
 msgstr "使用精确文件哈希或视觉相似度匹配，查找并删除每个游戏的重复截图。释放存储空间，清理你的媒体库。"
 
-#: templates/rom_tools_hub.html:259
+#: templates/_macros/nav_tabs.html:43 templates/rom_tools_hub.html:247
+#: templates/screenshot_review.html:5 templates/screenshot_review.html:64
+#, fuzzy
+msgid "Screenshot Review"
+msgstr "截图查看器"
+
+#: templates/rom_tools_hub.html:250
+msgid ""
+"Find screenshots that may show another system’s version of a game. ZX "
+"Spectrum, Commodore 64 and Game Boy shots are listed with the most "
+"suspicious first, and you decide what to remove."
+msgstr ""
+
+#: templates/rom_tools_hub.html:274
 msgid "Image Resizer"
 msgstr "图片尺寸调整"
 
-#: templates/rom_tools_hub.html:262
+#: templates/rom_tools_hub.html:277
 msgid ""
 "Standardize all images to consistent sizes using AI upscaling (Real-"
 "ESRGAN) for small images and Lanczos downscaling for large ones. Targets "
@@ -8603,11 +8623,11 @@ msgstr ""
 "使用 AI 放大（Real-ESRGAN）处理小图、Lanczos 缩小处理大图，将所有图片标准化为一致的尺寸。封面/截图目标高度为 "
 "1080px，手柄/硬件图目标最长边为 1280px。"
 
-#: templates/rom_tools_hub.html:272
+#: templates/rom_tools_hub.html:287
 msgid "Backfill Alternate Titles"
 msgstr "回填别名标题"
 
-#: templates/rom_tools_hub.html:275
+#: templates/rom_tools_hub.html:290
 msgid ""
 "Scan your library for regional / alternate game titles (e.g. "
 "&ldquo;Action in New York&rdquo; = &ldquo;S.C.A.T.&rdquo; = &ldquo;Final "
@@ -8619,15 +8639,15 @@ msgstr ""
 "&ldquo;S.C.A.T.&rdquo; = &ldquo;Final "
 "Mission&rdquo;），无需重新抓取媒体。使用抓取时会触发的相同 IGDB 和 ScreenScraper 搜索结果，仅提取别名。"
 
-#: templates/rom_tools_hub.html:278
+#: templates/rom_tools_hub.html:293
 msgid "Metadata only &middot; no media downloads"
 msgstr "仅元数据 &middot; 不下载媒体"
 
-#: templates/rom_tools_hub.html:285
+#: templates/rom_tools_hub.html:300
 msgid "Bulk HLTB Lookup"
 msgstr "批量 HLTB 查询"
 
-#: templates/rom_tools_hub.html:288
+#: templates/rom_tools_hub.html:303
 msgid ""
 "Fetch HowLongToBeat playtime for every game. High-confidence primary-"
 "title matches apply automatically; alt-title matches and low-confidence "
@@ -8636,29 +8656,29 @@ msgstr ""
 "为每个游戏获取 HowLongToBeat "
 "的游玩时长。高置信度的主标题匹配将自动应用；别名标题匹配和低置信度结果将加入待审核队列，以便您批量批准或拒绝。"
 
-#: templates/rom_tools_hub.html:291
+#: templates/rom_tools_hub.html:306
 msgid "Uses stored alternate titles"
 msgstr "使用已存储的别名标题"
 
-#: templates/rom_tools_hub.html:298
+#: templates/rom_tools_hub.html:313
 msgid "HLTB Pending Review"
 msgstr "HLTB 待审核"
 
-#: templates/rom_tools_hub.html:301
+#: templates/rom_tools_hub.html:316
 msgid ""
 "Review and approve HLTB matches that were flagged during a bulk lookup "
 "&mdash; alt-title matches and anything below the confidence threshold."
 msgstr "审核并批准批量查询中被标记的 HLTB 匹配结果 &mdash; 包括别名标题匹配以及置信度低于阈值的项。"
 
-#: templates/rom_tools_hub.html:304
+#: templates/rom_tools_hub.html:319
 msgid "Requires review"
 msgstr "需要审核"
 
-#: templates/rom_tools_hub.html:311
+#: templates/rom_tools_hub.html:326
 msgid "Tool Settings"
 msgstr "工具设置"
 
-#: templates/rom_tools_hub.html:314
+#: templates/rom_tools_hub.html:329
 msgid ""
 "Configure paths, external tool locations, archive types, and other "
 "preferences shared across all ROM tools."
@@ -8713,6 +8733,23 @@ msgstr "可回收空间"
 #: templates/screenshot_dedup.html:312
 msgid "Keep Largest"
 msgstr "保留最大的"
+
+#: templates/screenshot_review.html:67
+msgid ""
+"These machines could show only a few colours at once, so a picture that "
+"needs many more may be from another version of the game. Shots that fit "
+"worst come first. Real shots with heavy shading can rank high too, so "
+"look before you remove. Nothing is removed unless you press Remove."
+msgstr ""
+
+#: templates/screenshot_review.html:91
+msgid "Your library has no ZX Spectrum, Commodore 64 or Game Boy games to check."
+msgstr ""
+
+#: templates/screenshot_review.html:104
+#, fuzzy
+msgid "Show more"
+msgstr "加载更多"
 
 #: templates/settings.html:13
 msgid "Configure your RetroDB installation"

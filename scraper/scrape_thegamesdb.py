@@ -1039,7 +1039,8 @@ def _download_tgdb_image(db_game_id, image_url, image_type, suffix=''):
         logger.info(f"Downloading image from: {image_url}")
         # download_image: SSRF-gated, redirect-validated, size-capped,
         # auto-finalizes (format normalize + responsive variants).
-        if download_image(image_url, local_path, timeout=30):
+        screenshot_of = db_game_id if image_type == 'screenshots' else None
+        if download_image(image_url, local_path, timeout=30, screenshot_of=screenshot_of):
             logger.info(f"Downloaded {image_type} for game {db_game_id}: {filename}")
             return filename
         return None

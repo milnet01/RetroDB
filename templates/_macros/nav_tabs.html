@@ -40,6 +40,7 @@
     {% if has_perm('edit') %}{{ _tab(url_for('versions.versions_review'), '🌐', _('Regional Versions'), active == 'versions') }}{% endif %}
     {% if has_perm('edit') %}{{ _tab(url_for('official_names.official_names_review'), '🤖', _('Bulk AI Fill'), active == 'official_names') }}{% endif %}
     {{ _tab(url_for('tools.screenshot_dedup'), '📸', _('Screenshot Dedup'), active == 'screenshot_dedup') }}
+    {% if has_perm('edit') %}{{ _tab(url_for('tools.screenshot_review'), '🎨', _('Screenshot Review'), active == 'screenshot_review') }}{% endif %}
     {{ _tab(url_for('reports.reports'), '📊', _('ROM Reports'), active == 'reports') }}
     {{ _tab(url_for('tools.rom_tools_settings'), '⚙️', _('Settings'), active == 'rom_tools_settings') }}
 </nav>

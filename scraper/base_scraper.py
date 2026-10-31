@@ -256,7 +256,7 @@ def http_post(url, data=None, json_data=None, headers=None, timeout=30, retries=
     return None
 
 
-def download_image(url, dest_path, timeout=15):
+def download_image(url, dest_path, timeout=15, screenshot_of=None):
     """
     Download an image from a URL to a local path. Skips download if the
     destination file already exists.
@@ -265,6 +265,8 @@ def download_image(url, dest_path, timeout=15):
         url: The image URL to download.
         dest_path: Local filesystem path to save the image.
         timeout: Request timeout in seconds (default 15).
+        screenshot_of: Game id when this is that game's screenshot; a shot that
+            cannot be from the game's system is refused (PASS-59-161).
 
     Returns:
         True if the image was downloaded (or already exists), False on failure.
@@ -374,6 +376,8 @@ def download_image(url, dest_path, timeout=15):
                     os.fsync(f.fileno())
                 except OSError:
                     pass
+        if screenshot_of and screenshot_impossible_for_game(tmp_path, screenshot_of):
+            return False  # the finally below drops the tempfile
         # Atomic promote — between this point and the next line, dest_path
         # either stays absent or contains the complete tempfile bytes;
         # never a half-written body.
@@ -424,6 +428,23 @@ def on_one_platform(data):
     screenshots to the game, not to one platform's version, so a game on
     several platforms may carry another system's pictures (PASS-59-161)."""
     return len(data.get('platforms') or []) == 1
+
+
+def screenshot_impossible_for_game(path, game_id):
+    """True when the downloaded original at `path` cannot be from the game's
+    system. Runs on the original: finalizing re-encodes and upscales it."""
+    from services.screenshot_fit import has_impossible_colours
+    conn = get_scraper_conn()
+    try:
+        row = conn.execute(
+            "SELECT s.folder FROM games g JOIN systems s ON s.id = g.system_id WHERE g.id = ?",
+            (game_id,)).fetchone()
+    finally:
+        conn.close()
+    if row and has_impossible_colours(path, row['folder']):
+        logger.info(f"Refused a screenshot for game {game_id}: too many colours for {row['folder']}")
+        return True
+    return False
 
 
 def rate_limit(delay=0.5):

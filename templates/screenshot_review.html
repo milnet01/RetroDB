@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+{% set adaptive_layout = true %}
+{% from "_macros/nav_tabs.html" import rom_tool_tabs %}
+
+{% block title %}{{ _('Screenshot Review') }} - RetroDB{% endblock %}
+
+{% block styles %}
+<style>
+.review-scan-row {
+    display: flex;
+    gap: 1rem;
+    align-items: end;
+    flex-wrap: wrap;
+}
+
+.review-grid {
+    display: grid;
+    /* At most four columns, however wide the window. */
+    grid-template-columns: repeat(auto-fill, minmax(max(240px, 24%), 1fr));
+    gap: 1rem;
+}
+
+.review-shot {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+}
+
+.review-shot img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: contain;
+    background: var(--bg-darkest);
+    display: block;
+}
+
+.review-shot-score {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.review-more {
+    margin-top: 1rem;
+    text-align: center;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-box data-page">
+<div class="page-header">
+    <h1>{{ _('ROM Tools') }}</h1>
+    <p>{{ _('Manage, organize, and optimize your ROM collection.') }}</p>
+</div>
+
+{{ rom_tool_tabs('screenshot_review') }}
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title"><span>🎨</span> {{ _('Screenshot Review') }}</h2>
+    </div>
+    <div class="card-body">
+        <p>{{ _('These machines could show only a few colours at once, so a picture that needs many more may be from another version of the game. Shots that fit worst come first. Real shots with heavy shading can rank high too, so look before you remove. Nothing is removed unless you press Remove.') }}</p>
+        {% if systems %}
+        <div class="review-scan-row">
+            <div class="form-group">
+                <label for="reviewSystem">{{ _('System') }}</label>
+                <select class="styled-select" id="reviewSystem">
+                    {% for system in systems %}
+                    <option value="{{ system.folder }}">{{ system.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" id="scanBtn" data-on-click="startReviewScan">
+                    <span class="btn-icon" data-themed-icon="running"></span> {{ _('Start Scan') }}
+                </button>
+            </div>
+        </div>
+        <div class="progress-section" id="progressSection" hidden>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progressBar">0%</div>
+            </div>
+            <div id="progressAction"></div>
+        </div>
+        {% else %}
+        <p>{{ _('Your library has no ZX Spectrum, Commodore 64 or Game Boy games to check.') }}</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card" id="resultsCard" hidden>
+    <div class="card-header">
+        <h2 class="card-title"><span data-themed-icon="stat-success"></span> {{ _('Scan Results') }}</h2>
+    </div>
+    <div class="card-body">
+        <p id="resultsSummary" aria-live="polite"></p>
+        <div class="review-grid" id="reviewGrid"></div>
+        <div class="review-more">
+            <button type="button" class="btn" id="showMoreBtn" data-on-click="showMoreShots" hidden>{{ _('Show more') }}</button>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/rom-tools.js') }}?v={{ config.APP_VERSION }}"></script>
+<script nonce="{{ csp_nonce }}">
+const REVIEW_PAGE_SIZE = 40;
+let reviewShots = [];
+let reviewShown = 0;
+
+function endReviewScan() {
+    document.getElementById('scanBtn').disabled = false;
+    document.getElementById('progressSection').hidden = true;
+}
+
+async function startReviewScan() {
+    document.getElementById('scanBtn').disabled = true;
+    document.getElementById('progressSection').hidden = false;
+    document.getElementById('resultsCard').hidden = true;
+    try {
+        const data = await API.post('/api/rom-tools/screenshot-review/scan',
+            { system: document.getElementById('reviewSystem').value });
+        if (!data.success) {
+            showNotification(data.error, 'error');
+            endReviewScan();
+            return;
+        }
+        TaskPoller.start(data.task_id, {
+            onProgress(task) {
+                const percent = task.percent || 0;
+                document.getElementById('progressBar').style.width = percent + '%';
+                document.getElementById('progressBar').textContent = percent + '%';
+                document.getElementById('progressAction').textContent = task.current_file || '';
+            },
+            onComplete(task) {
+                endReviewScan();
+                reviewShots = task.results.shots;
+                reviewShown = 0;
+                document.getElementById('reviewGrid').innerHTML = '';
+                document.getElementById('resultsCard').hidden = false;
+                updateReviewSummary(task.results.unreadable);
+                showMoreShots();
+            },
+            onError(task) {
+                endReviewScan();
+                showNotification(task.error || t('Scan failed'), 'error');
+            },
+            onCancel: endReviewScan
+        }, 500);
+    } catch (err) {
+        endReviewScan();
+        showNotification(err.message, 'error');
+    }
+}
+
+function updateReviewSummary(unreadable) {
+    let text = reviewShots.length
+        ? t('{count} screenshots, most suspicious first.', { count: formatNumber(reviewShots.length) })
+        : t('No screenshots to review for this system.');
+    if (unreadable) {
+        text += ' ' + t('{count} could not be read.', { count: formatNumber(unreadable) });
+    }
+    document.getElementById('resultsSummary').textContent = text;
+}
+
+function showMoreShots() {
+    const grid = document.getElementById('reviewGrid');
+    const next = reviewShots.slice(reviewShown, reviewShown + REVIEW_PAGE_SIZE);
+    grid.insertAdjacentHTML('beforeend', next.map(shot => {
+        const src = '/static/images/screenshots/' + encodeURIComponent(shot.filename);
+        const args = escapeHtml(JSON.stringify([shot.game_id, shot.filename, '$this']));
+        return '<div class="review-shot">' +
+            '<a href="' + src + '" target="_blank" rel="noopener noreferrer" title="' + escapeHtml(t('Open full size')) + '">' +
+            '<img src="' + src + '" alt="' + escapeHtml(shot.title) + '" loading="lazy"></a>' +
+            '<a href="/game/' + shot.game_id + '">' + escapeHtml(shot.title) + '</a>' +
+            '<span class="review-shot-score">' + escapeHtml(t('Colour misfit: {score}', { score: shot.score })) + '</span>' +
+            '<button type="button" class="btn btn-sm btn-danger" data-on-click="removeReviewShot" data-args="' + args + '">' +
+            escapeHtml(t('Remove')) + '</button></div>';
+    }).join(''));
+    reviewShown += next.length;
+    document.getElementById('showMoreBtn').hidden = reviewShown >= reviewShots.length;
+}
+
+function removeReviewShot(gameId, filename, button) {
+    showConfirm(t('Remove Screenshot'), t('Remove this screenshot from the game and delete its file? This cannot be undone.'), async function() {
+        try {
+            const data = await API.post('/api/delete-screenshot/' + gameId, { screenshot: filename });
+            if (!data.success) {
+                showNotification(data.error, 'error');
+                return;
+            }
+            button.closest('.review-shot').remove();
+            reviewShots = reviewShots.filter(shot => shot.filename !== filename);
+            reviewShown -= 1;
+            updateReviewSummary(0);
+            showNotification(t('Screenshot removed'), 'success');
+        } catch (err) {
+            showNotification(err.message, 'error');
+        }
+    });
+}
+</script>
+{% endblock %}

@@ -633,7 +633,7 @@ def apply_metadata_to_game(db_game_id, igdb_data):
                     screenshot_filename = f"{db_game_id}_ss{i+1}{preferred_image_extension('screenshots', '.jpg')}"
                     local_path = os.path.join(screenshot_dir, screenshot_filename)
                     
-                    if download_image(screenshot_url, local_path, timeout=10):
+                    if download_image(screenshot_url, local_path, timeout=10, screenshot_of=db_game_id):
                         screenshots.append(screenshot_filename)
                         logger.info(f"Downloaded screenshot {i+1} for game {db_game_id}")
                     else:

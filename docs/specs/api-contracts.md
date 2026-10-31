@@ -312,7 +312,7 @@ Current registrations (read `app.py:303-367` for the live list):
 | Heavy AI / scrape | 5–10/min | `games_ai.api_game_ai_fill`, `bulk_scrape.api_bulk_scrape_job_start` |
 | Login brute-force | 10/min | `auth.api_login` (supplements the custom IP bucket) |
 | Admin destructive | 2–3/min | `maintenance.api_restart`, `maintenance.api_scan`, `maintenance.api_database_optimize`, `maintenance.api_image_resize_start`, `settings.api_backup` |
-| Long-running scans | 5/min | `tools.api_archive_scanner_scan`, `tools.api_chd_converter_scan`, `tools.api_chd_verify_scan`, `tools.api_duplicate_finder_scan`, `tools.api_screenshot_dedup_scan`, `reports.api_reports_multidisc_scan` (Pass 39.7, 41.10.D) |
+| Long-running scans | 5/min | `tools.api_archive_scanner_scan`, `tools.api_chd_converter_scan`, `tools.api_chd_verify_scan`, `tools.api_duplicate_finder_scan`, `tools.api_screenshot_dedup_scan`, `tools.api_screenshot_review_scan`, `reports.api_reports_multidisc_scan` (Pass 39.7, 41.10.D) |
 | HLTB | 60/hour lookup/search, 5/hour bulk | `games_hltb.api_hltb_lookup`, `…api_hltb_search`, `…api_hltb_bulk_start` |
 | Museum / trophy refresh | 2–20/hour | `museum.generate_system`, `museum.generate_all`, `collector_trophies.refresh_trophies` |
 | Third-party fan-out (Pass 45.8) | 5/min library, 2/hour bulk-sync | `platform_import.api_{steam,xbox,psn}_fetch_library` / `…_import`, `…_sync_achievements`, `steam_achievements.api_steam_sync_all`, `xbox_achievements.api_xbox_sync_all`, `trophies.api_psn_sync_all`, `trophies.api_psn_bulk_refresh_start`, `collections.api_scrape_all_wishlist` |

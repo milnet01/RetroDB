@@ -26,6 +26,7 @@ from services.database import query
 from services.api_helpers import handle_api_errors, success, error
 from services.auth import login_required, admin_required, editor_required
 from services.security import safe_path
+from services import screenshot_fit
 from services.rom_tools_validators import (
     validate_rom_tools_value,
     known_rom_tools_keys,
@@ -1368,6 +1369,89 @@ def _run_screenshot_dedup_scan(task, method, threshold):
         f"{results['games_with_dupes']} games with duplicates, "
         f"{results['total_duplicates']} total duplicates"
     )
+
+
+def _run_screenshot_review_scan(task, folder):
+    """Background task: rank one system's stored screenshots, worst fit first."""
+    screenshots_dir = os.path.join(config.IMAGE_PATH, 'screenshots')
+    colours = screenshot_fit.FIT_COLOURS[folder]
+    games = query("""
+        SELECT g.id, g.title, g.screenshots
+        FROM games g JOIN systems s ON g.system_id = s.id
+        WHERE s.folder = ? AND g.screenshots IS NOT NULL AND g.screenshots != ''
+        ORDER BY g.title COLLATE NOCASE
+    """, (folder,))
+    task['total'] = len(games)
+
+    shots = []
+    unreadable = 0
+    for i, game in enumerate(games):
+        _wait_if_paused(task)
+        if task['status'] == 'cancelled':
+            break
+        task['progress'] = i + 1
+        task['current_file'] = game['title']
+        task['percent'] = round((i + 1) / len(games) * 100, 1)
+        for filename in (s.strip() for s in game['screenshots'].split(',')):
+            if not filename:
+                continue
+            try:
+                error_score = screenshot_fit.fit_error(os.path.join(screenshots_dir, filename), colours)
+            except (OSError, ValueError):
+                unreadable += 1
+                continue
+            shots.append({'game_id': game['id'], 'title': game['title'],
+                          'filename': filename, 'score': round(error_score, 1)})
+
+    shots.sort(key=lambda shot: -shot['score'])
+    # Filled only at the end: a poll carries this whole list.
+    task['results'] = {'shots': shots, 'unreadable': unreadable}
+    task['status'] = 'completed' if task['status'] != 'cancelled' else 'cancelled'
+    task['end_time'] = datetime.now()
+    task['current_file'] = ''
+
+
+@tools_bp.route('/tools/screenshot-review')
+@editor_required
+def screenshot_review():
+    """Screenshot Review page: shots most likely from the wrong system (PASS-59-161)."""
+    folders = sorted(screenshot_fit.FIT_COLOURS)
+    systems = query(
+        f"SELECT name, folder FROM systems WHERE folder IN ({','.join('?' * len(folders))}) ORDER BY name",
+        folders)
+    return render_template('screenshot_review.html', systems=systems)
+
+
+@tools_bp.route('/api/rom-tools/screenshot-review/scan', methods=['POST'])
+@editor_required  # heavy image reads; rate-limited in app.py
+@handle_api_errors
+def api_screenshot_review_scan():
+    """Start ranking one system's stored screenshots."""
+    folder = (request.get_json(silent=True) or {}).get('system')
+    if folder not in screenshot_fit.FIT_COLOURS:
+        return error(_('This system has no screenshot check'), 400)
+
+    _cleanup_completed_tasks()
+    task_id = str(uuid.uuid4())
+    task = {
+        'task_id': task_id,
+        'task_type': 'screenshot_review',
+        'status': 'running',
+        'progress': 0,
+        'total': 0,
+        'current_file': '',
+        'percent': 0,
+        'results': {},
+        'logs': [],
+    }
+    _rom_tool_tasks[task_id] = task
+
+    thread = threading.Thread(target=_guarded_worker(
+        task, lambda: _run_screenshot_review_scan(task, folder)))
+    thread.daemon = True
+    thread.start()
+
+    return success(task_id=task_id)
 
 
 @tools_bp.route('/tools/screenshot-dedup')

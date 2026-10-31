@@ -19,7 +19,7 @@ app = app_module.app
 TROPHY_PAGES = ['/trophies', '/psn-trophies', '/steam-achievements', '/xbox-achievements']
 TOOL_PAGES = ['/tools/archive-scanner', '/tools/chd-converter', '/tools/chd-verify',
               '/tools/duplicate-finder', '/tools/multi-disc-organizer',
-              '/tools/screenshot-dedup', '/tools/settings']
+              '/tools/screenshot-dedup', '/tools/screenshot-review', '/tools/settings']
 
 
 @pytest.fixture

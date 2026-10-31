@@ -2430,7 +2430,7 @@ class TestPass45_16AriaCurrentRollout:
         templates = [
             'archive_scanner.html', 'chd_converter.html', 'chd_verify.html',
             'duplicate_finder.html', 'multi_disc_organizer.html',
-            'rom_tools_settings.html', 'screenshot_dedup.html',
+            'rom_tools_settings.html', 'screenshot_dedup.html', 'screenshot_review.html',
         ]
         # Pass 53.3: the strip is the shared rom_tool_tabs macro, which
         # emits the attribute; each page must call it with its own key.
@@ -2460,7 +2460,7 @@ class TestPass45_16AriaCurrentRollout:
             'settings.html',
             'archive_scanner.html', 'chd_converter.html', 'chd_verify.html',
             'duplicate_finder.html', 'multi_disc_organizer.html',
-            'rom_tools_settings.html', 'screenshot_dedup.html',
+            'rom_tools_settings.html', 'screenshot_dedup.html', 'screenshot_review.html',
             # Pass 41.13.A baseline (sidebar) — covered by base.html.
             'base.html',
         ]

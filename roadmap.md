@@ -9605,6 +9605,11 @@ were corrected in `2836bc3` and are not repeated here.
   RAWG services. Screenshots already in a library are unchanged. Steps 2
   (the palette check) and 3 (the review screen) are still to do; the
   user judges the palette results on ZX Spectrum and C64.
+- **Progress** (2026-10-31): **Progress** (2026-10-31): Plan steps 2 and 3 built, in the open 3.34.1, with step 2 changed by a survey. Measured on stored shots: all ZX Spectrum, all Game Boy, a sample of C64. Exact palettes wrongly flag real games, because emulators show colours differently and stored shots are lossy and upscaled.
+  User decisions 2026-10-31: refuse a new shot only when certain; review list covers ZX Spectrum, C64 and Game Boy.
+  Built: `services/screenshot_fit.py` refuses an unscaled lossless original with far more exact colours than the machine shows, before finalizing. ScreenScraper, TheGamesDB, IGDB and RAWG downloads go through it; ES-DE copies and manual uploads do not. ROM Tools > Screenshot Review ranks stored shots by how badly they fit the machine's colour count; only an editor's Remove deletes. Tests: `tests/test_pass59_161_screenshot_fit.py`. Page walked on a scratch copy.
+  Limits: the ranking is uneven. It worked best on Game Boy, was mixed on C64, and on ZX Spectrum real OutRun shots ranked above wrong ones while orange Duggy shots ranked low. A shot judged real is listed again on the next scan.
+  Still to do: try the refusal on real downloads (originals are not kept, so the rule has only met test pictures); the user judges the ZX Spectrum and C64 results.
 
 ---
 

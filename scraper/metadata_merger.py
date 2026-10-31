@@ -32,7 +32,7 @@ from services.image_utils import (
     finalize_downloaded_image,
 )
 from services.normalization import normalize_genre, normalize_modes
-from scraper.base_scraper import on_one_platform
+from scraper.base_scraper import on_one_platform, screenshot_impossible_for_game
 from scraper.image_dedup import (
     compute_dhash,
     get_existing_screenshot_hashes,
@@ -55,7 +55,7 @@ from scraper.scraper_manager import load_scraper_settings
 logger = logging.getLogger(__name__)
 
 
-def _download_and_finalize(url, local_path, image_type, *, timeout=15):
+def _download_and_finalize(url, local_path, image_type, *, timeout=15, screenshot_of=None):
     """Pass 32.15 — hardened image download helper.
 
     Downstream of every TGDB / IGDB / RAWG / SS / ESDE boxart+screenshot+
@@ -77,6 +77,8 @@ def _download_and_finalize(url, local_path, image_type, *, timeout=15):
       - writes atomically (tmp + os.replace)
       - runs finalize_downloaded_image; if it fails, deletes the file and
         returns False so the caller does NOT set metadata[field]
+      - with `screenshot_of` (a game id), refuses a shot that cannot be from
+        that game's system (PASS-59-161)
 
     Returns True on success, False on any failure.
     """
@@ -140,6 +142,9 @@ def _download_and_finalize(url, local_path, image_type, *, timeout=15):
                         return False
                     f.write(chunk)
                     dl.received(written)
+        if screenshot_of and screenshot_impossible_for_game(tmp_path, screenshot_of):
+            os.remove(tmp_path)
+            return False
         os.replace(tmp_path, local_path)
     except Exception as e:
         logger.warning(f"Download error for {url}: {e}")
@@ -634,7 +639,7 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
 
                 _jobs.append(
                     lambda u=url, p=local_path, f=filename:
-                        f if _download_and_finalize(u, p, 'screenshots', timeout=10) else None
+                        f if _download_and_finalize(u, p, 'screenshots', timeout=10, screenshot_of=db_game_id) else None
                 )
 
         # Fetch all screenshots concurrently, then dedup in order.
@@ -828,7 +833,7 @@ def apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result, fill_only=Fa
                     continue
                 _jobs.append(
                     lambda u=url, p=local_path, f=filename:
-                        f if _download_and_finalize(u, p, 'screenshots', timeout=15) else None
+                        f if _download_and_finalize(u, p, 'screenshots', timeout=15, screenshot_of=db_game_id) else None
                 )
 
         # Fetch all screenshots concurrently, then dedup in order.
@@ -1066,7 +1071,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
     medias = ss_data.get('medias', [])
     parsed_media = ss_data.get('media', {})
 
-    def _download_ss_media(url, dest_path, timeout=15, image_type=None):
+    def _download_ss_media(url, dest_path, timeout=15, image_type=None, screenshot_of=None):
         """Download a media file from ScreenScraper URL.
 
         Pass 32.15: routes through the hardened _download_and_finalize
@@ -1076,7 +1081,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
         apply the SSRF gate and streaming size cap.
         """
         if image_type:
-            return _download_and_finalize(url, dest_path, image_type, timeout=timeout)
+            return _download_and_finalize(url, dest_path, image_type, timeout=timeout, screenshot_of=screenshot_of)
 
         # Non-image media (manuals, videos) — still SSRF-validate and stream.
         from services.ssrf import validate_outbound_url, validate_and_pin_url, pin_host_ip
@@ -1202,7 +1207,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
             continue
         _jobs.append(
             lambda u=url, p=local_path, f=filename:
-                f if _download_ss_media(u, p, timeout=10, image_type='screenshots') else None
+                f if _download_ss_media(u, p, timeout=10, image_type='screenshots', screenshot_of=db_game_id) else None
         )
 
     # Fetch all screenshots concurrently, then dedup in order.

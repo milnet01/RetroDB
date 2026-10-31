@@ -71,6 +71,7 @@ The 2026-09-01 review found defects in ROM Tools that could only be phrased as
 | CHD verify | `/tools/chd-verify` | Runs `chdman verify`. Changes nothing. |
 | Duplicate finder | `/tools/duplicate-finder` | Groups ROM files by hash, name or both; the delete call removes the files the user picked. |
 | Screenshot dedup | `/tools/screenshot-dedup` | Groups a game's screenshots by MD5 or perceptual hash; the delete call removes files and rewrites `games.screenshots`. |
+| Screenshot review | `/tools/screenshot-review` | Ranks one fixed-palette system's stored screenshots by `screenshot_fit.fit_error`, worst fit first. A ranking, not a verdict: only the editor's Remove deletes, one shot at a time, through `/api/delete-screenshot/<game_id>`. |
 
 The Multi-Disc Organizer page is served from `routes/tools.py`, but its API is
 `routes/reports.py` (`/api/reports/multidisc-scan`,
@@ -115,7 +116,7 @@ Decorators are from `services/auth.py`.
 | Role | Endpoints |
 |---|---|
 | `login_required` | Every `/tools/*` page; `GET /api/rom-tools/settings`; `/api/rom-tools/status`; `/api/rom-tools/browse-folders`; `GET /api/rom-tools/task/<id>`; `/api/rom-tools/archive-scanner/contents` |
-| `editor_required` | The five scan endpoints: archive scanner, CHD converter, CHD verify, duplicate finder, screenshot dedup |
+| `editor_required` | The scan endpoints: archive scanner, CHD converter, CHD verify, duplicate finder, screenshot dedup, screenshot review |
 | `admin_required` | Task cancel, pause and resume; archive `remove-files`, `clean`, `create-m3u`, `batch-create-m3u`; `chd-converter/convert`; `chd-verify/verify`; `duplicate-finder/delete`; `screenshot-dedup/delete` |
 | admin, checked in the handler | `POST /api/rom-tools/settings` |
 

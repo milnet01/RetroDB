@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-30 15:32+0200\n"
+"POT-Creation-Date: 2026-10-31 08:13+0200\n"
 "PO-Revision-Date: 2026-06-30 14:26+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ko\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: app.py:693
+#: app.py:694
 #, python-format
 msgid ""
 "Upload exceeds the %(total)s MB limit. Each image may be up to %(image)s "
@@ -29,19 +29,19 @@ msgstr ""
 "MB까지 가능합니다. 한 번에 더 적은 파일을 업로드하세요. 운영자는 RETRODB_MAX_UPLOAD_MB로 전체 한도를 늘릴 수"
 " 있습니다."
 
-#: app.py:724
+#: app.py:725
 msgid "Too many requests. Please wait and try again."
 msgstr "요청이 너무 많습니다. 잠시 후 다시 시도하세요."
 
-#: app.py:833
+#: app.py:834
 msgid "Setup required"
 msgstr "설정이 필요합니다"
 
-#: app.py:854
+#: app.py:855
 msgid "Password change required"
 msgstr "비밀번호 변경이 필요합니다"
 
-#: app.py:1682 routes/auth.py:202 routes/auth.py:262 routes/auth.py:447
+#: app.py:1683 routes/auth.py:202 routes/auth.py:262 routes/auth.py:447
 #: routes/auth.py:492 templates/force_change_password.html:49
 #: templates/setup.html:469
 msgid "Password must be at least 12 characters"
@@ -1021,8 +1021,8 @@ msgstr "ROM 경로가 설정되지 않았습니다. 설정 → 경로에서 설�
 msgid "Missing required parameters"
 msgstr "필수 매개변수가 누락되었습니다"
 
-#: routes/reports.py:605 routes/tools.py:511 routes/tools.py:568
-#: routes/tools.py:613
+#: routes/reports.py:605 routes/tools.py:512 routes/tools.py:569
+#: routes/tools.py:614
 msgid "Invalid path"
 msgstr "잘못된 경로입니다"
 
@@ -1068,7 +1068,7 @@ msgstr "생성된 파일 이름에 잘못된 문자가 포함되어 있습니다
 msgid "Invalid log file"
 msgstr "잘못된 로그 파일입니다"
 
-#: routes/scrape_logs.py:101 routes/tools.py:514
+#: routes/scrape_logs.py:101 routes/tools.py:515
 msgid "File not found"
 msgstr "파일을 찾을 수 없습니다"
 
@@ -1179,20 +1179,20 @@ msgid "Invalid %(field)s: %(result)s"
 msgstr "잘못된 %(field)s: %(result)s"
 
 #: routes/settings.py:534 routes/settings.py:608 routes/settings.py:660
-#: routes/tools.py:290 services/js_i18n_strings.py:733
+#: routes/tools.py:291 services/js_i18n_strings.py:733
 msgid "Failed to save settings"
 msgstr "설정 저장에 실패했습니다"
 
-#: routes/settings.py:553 routes/tools.py:362
+#: routes/settings.py:553 routes/tools.py:363
 msgid "Permission denied"
 msgstr "권한이 거부되었습니다"
 
-#: routes/settings.py:587 routes/tools.py:282
+#: routes/settings.py:587 routes/tools.py:283
 #, python-format
 msgid "Unknown setting key: %(key)s"
 msgstr "알 수 없는 설정 키: %(key)s"
 
-#: routes/settings.py:593 routes/tools.py:285
+#: routes/settings.py:593 routes/tools.py:286
 #, python-format
 msgid "Invalid value for '%(key)s': %(reason)s"
 msgstr "'%(key)s'에 대한 잘못된 값: %(reason)s"
@@ -1230,81 +1230,85 @@ msgstr "시스템 ID가 필요합니다"
 msgid "ES-DE scraper not available"
 msgstr "ES-DE 스크레이퍼를 사용할 수 없습니다"
 
-#: routes/tools.py:272
+#: routes/tools.py:273
 msgid "Administrator privileges required"
 msgstr "관리자 권한이 필요합니다"
 
-#: routes/tools.py:276
+#: routes/tools.py:277
 msgid "Settings payload must be an object"
 msgstr "설정 페이로드는 객체여야 합니다"
 
-#: routes/tools.py:325 routes/tools.py:973
+#: routes/tools.py:326 routes/tools.py:974
 #, python-format
 msgid "Path does not exist: %(path)s"
 msgstr "경로가 존재하지 않습니다: %(path)s"
 
-#: routes/tools.py:390
+#: routes/tools.py:391
 msgid "Task not found"
 msgstr "작업을 찾을 수 없습니다"
 
-#: routes/tools.py:413 routes/tools.py:433
+#: routes/tools.py:414 routes/tools.py:434
 msgid "Task not found or not running"
 msgstr "작업을 찾을 수 없거나 실행 중이 아닙니다"
 
-#: routes/tools.py:453
+#: routes/tools.py:454
 msgid "Task not found or not paused"
 msgstr "작업을 찾을 수 없거나 일시정지되어 있지 않습니다"
 
-#: routes/tools.py:470 routes/tools.py:675 routes/tools.py:846
-#: routes/tools.py:962
+#: routes/tools.py:471 routes/tools.py:676 routes/tools.py:847
+#: routes/tools.py:963
 msgid "Invalid scan path"
 msgstr "잘못된 스캔 경로입니다"
 
-#: routes/tools.py:508 routes/tools.py:565 routes/tools.py:610
+#: routes/tools.py:509 routes/tools.py:566 routes/tools.py:611
 msgid "No path provided"
 msgstr "제공된 경로가 없습니다"
 
-#: routes/tools.py:536
+#: routes/tools.py:537
 msgid "No archive path provided"
 msgstr "제공된 아카이브 경로가 없습니다"
 
-#: routes/tools.py:539
+#: routes/tools.py:540
 msgid "Invalid archive path"
 msgstr "잘못된 아카이브 경로입니다"
 
-#: routes/tools.py:542
+#: routes/tools.py:543
 msgid "No files to remove"
 msgstr "제거할 파일이 없습니다"
 
-#: routes/tools.py:643
+#: routes/tools.py:644
 msgid "No paths provided"
 msgstr "제공된 경로가 없습니다"
 
-#: routes/tools.py:649
+#: routes/tools.py:650
 #, python-format
 msgid "Invalid path: %(path)s"
 msgstr "잘못된 경로: %(path)s"
 
-#: routes/tools.py:724
+#: routes/tools.py:725
 msgid "chdman not found. Please install MAME tools."
 msgstr "chdman을 찾을 수 없습니다. MAME 도구를 설치하세요."
 
-#: routes/tools.py:869
+#: routes/tools.py:870
 msgid "chdman not found"
 msgstr "chdman을 찾을 수 없습니다"
 
-#: routes/tools.py:967
+#: routes/tools.py:968
 #, python-format
 msgid "Unknown duplicate method: %(method)s"
 msgstr "알 수 없는 중복 검사 방법: %(method)s"
 
-#: routes/tools.py:1175
+#: routes/tools.py:1176
 msgid "These scan results have expired. Scan again, then delete."
 msgstr "이 스캔 결과는 만료되었습니다. 다시 스캔한 후 삭제하세요."
 
-#: routes/tools.py:1180
+#: routes/tools.py:1181
 msgid "Keep at least one copy of each game. Nothing was deleted."
 msgstr "각 게임의 사본을 하나 이상 남겨 두세요. 아무것도 삭제되지 않았습니다."
+
+#: routes/tools.py:1432
+msgid "This system has no screenshot check"
+msgstr ""
 
 #: routes/trophies.py:396
 msgid ""
@@ -3278,7 +3282,8 @@ msgstr "ROM 파일"
 #: templates/duplicate_finder.html:166 templates/logs.html:713
 #: templates/multi_disc_organizer.html:159
 #: templates/official_names_review.html:88 templates/rom_tools_hub.html:114
-#: templates/screenshot_dedup.html:227 templates/versions_review.html:72
+#: templates/screenshot_dedup.html:227 templates/screenshot_review.html:56
+#: templates/versions_review.html:72
 msgid "ROM Tools"
 msgstr "ROM 도구"
 
@@ -3646,7 +3651,7 @@ msgstr "에뮬레이터 안에서 설정합니다. RetroDB는 건드리지 않�
 msgid "Set per system, in Settings > Emulators"
 msgstr "시스템별로 설정 > 에뮬레이터에서 지정"
 
-#: services/js_i18n_strings.py:970 templates/_macros/nav_tabs.html:44
+#: services/js_i18n_strings.py:970 templates/_macros/nav_tabs.html:45
 #: templates/base.html:186 templates/rom_tools_hub.html:119
 #: templates/settings.html:5 templates/settings.html:12
 #: templates/settings_emulators.html:4
@@ -3769,9 +3774,9 @@ msgstr "동기화 중: {processed} / {total}"
 #: templates/logs.html:722 templates/multi_disc_organizer.html:213
 #: templates/official_names_review.html:130
 #: templates/official_names_review.html:158 templates/reports.html:360
-#: templates/reports.html:435 templates/steam_achievement_game.html:173
-#: templates/versions_review.html:86 templates/wishlist.html:66
-#: templates/xbox_achievement_game.html:166
+#: templates/reports.html:435 templates/screenshot_review.html:71
+#: templates/steam_achievement_game.html:173 templates/versions_review.html:86
+#: templates/wishlist.html:66 templates/xbox_achievement_game.html:166
 msgid "System"
 msgstr "시스템"
 
@@ -5363,7 +5368,7 @@ msgstr "완성도"
 #: templates/chd_verify.html:81 templates/duplicate_finder.html:167
 #: templates/multi_disc_organizer.html:160
 #: templates/official_names_review.html:89 templates/screenshot_dedup.html:228
-#: templates/versions_review.html:73
+#: templates/screenshot_review.html:57 templates/versions_review.html:73
 msgid "Manage, organize, and optimize your ROM collection."
 msgstr "ROM 컬렉션을 관리, 정리, 최적화하세요."
 
@@ -5464,7 +5469,7 @@ msgid "Unwanted"
 msgstr "불필요"
 
 #: templates/archive_scanner.html:655 templates/duplicate_finder.html:210
-#: templates/screenshot_dedup.html:260
+#: templates/screenshot_dedup.html:260 templates/screenshot_review.html:80
 msgid "Start Scan"
 msgstr "스캔 시작"
 
@@ -5655,7 +5660,7 @@ msgstr "도구"
 msgid "Game Imports"
 msgstr "게임 가져오기"
 
-#: templates/base.html:183 templates/rom_tools_hub.html:317
+#: templates/base.html:183 templates/rom_tools_hub.html:332
 msgid "Configuration"
 msgstr "구성"
 
@@ -6793,6 +6798,7 @@ msgid "files processed"
 msgstr "개 파일 처리됨"
 
 #: templates/duplicate_finder.html:258 templates/screenshot_dedup.html:284
+#: templates/screenshot_review.html:98
 msgid "Scan Results"
 msgstr "스캔 결과"
 
@@ -6848,8 +6854,8 @@ msgstr "비밀번호 확인"
 msgid "Set New Password"
 msgstr "새 비밀번호 설정"
 
-#: templates/_macros/nav_tabs.html:43 templates/game_detail.html:19
-#: templates/reports.html:268 templates/rom_tools_hub.html:246
+#: templates/_macros/nav_tabs.html:44 templates/game_detail.html:19
+#: templates/reports.html:268 templates/rom_tools_hub.html:261
 msgid "ROM Reports"
 msgstr "ROM 리포트"
 
@@ -8357,7 +8363,7 @@ msgstr "RetroDB 게임에 연결"
 msgid "No description"
 msgstr "설명 없음"
 
-#: templates/reports.html:269 templates/rom_tools_hub.html:249
+#: templates/reports.html:269 templates/rom_tools_hub.html:264
 msgid "Analyze ROM filenames against naming standards and scraped metadata"
 msgstr "ROM 파일명을 명명 규칙 및 스크래핑된 메타데이터와 대조하여 분석"
 
@@ -8572,7 +8578,8 @@ msgstr "해시, 파일명 또는 둘 다로 중복 ROM을 찾습니다. 지역 �
 
 #: templates/rom_tools_hub.html:185 templates/rom_tools_hub.html:199
 #: templates/rom_tools_hub.html:226 templates/rom_tools_hub.html:239
-#: templates/rom_tools_hub.html:252 templates/rom_tools_hub.html:265
+#: templates/rom_tools_hub.html:253 templates/rom_tools_hub.html:267
+#: templates/rom_tools_hub.html:280
 msgid "No dependencies required"
 msgstr "필요한 의존성 없음"
 
@@ -8621,11 +8628,24 @@ msgstr ""
 "정확한 파일 해시 또는 시각적 유사성 매칭을 사용하여 게임별 중복 스크린샷을 찾아 제거합니다. 저장 공간을 확보하고 미디어 "
 "라이브러리를 정리하세요."
 
-#: templates/rom_tools_hub.html:259
+#: templates/_macros/nav_tabs.html:43 templates/rom_tools_hub.html:247
+#: templates/screenshot_review.html:5 templates/screenshot_review.html:64
+#, fuzzy
+msgid "Screenshot Review"
+msgstr "스크린샷 뷰어"
+
+#: templates/rom_tools_hub.html:250
+msgid ""
+"Find screenshots that may show another system’s version of a game. ZX "
+"Spectrum, Commodore 64 and Game Boy shots are listed with the most "
+"suspicious first, and you decide what to remove."
+msgstr ""
+
+#: templates/rom_tools_hub.html:274
 msgid "Image Resizer"
 msgstr "이미지 크기 조정"
 
-#: templates/rom_tools_hub.html:262
+#: templates/rom_tools_hub.html:277
 msgid ""
 "Standardize all images to consistent sizes using AI upscaling (Real-"
 "ESRGAN) for small images and Lanczos downscaling for large ones. Targets "
@@ -8635,11 +8655,11 @@ msgstr ""
 "AI 업스케일링(Real-ESRGAN)으로 작은 이미지를, Lanczos 다운스케일링으로 큰 이미지를 처리하여 모든 이미지를 일관된"
 " 크기로 표준화합니다. 박스아트/스크린샷은 높이 1080px, 컨트롤러/하드웨어는 긴 변 1280px를 목표로 합니다."
 
-#: templates/rom_tools_hub.html:272
+#: templates/rom_tools_hub.html:287
 msgid "Backfill Alternate Titles"
 msgstr "대체 제목 백필"
 
-#: templates/rom_tools_hub.html:275
+#: templates/rom_tools_hub.html:290
 msgid ""
 "Scan your library for regional / alternate game titles (e.g. "
 "&ldquo;Action in New York&rdquo; = &ldquo;S.C.A.T.&rdquo; = &ldquo;Final "
@@ -8651,15 +8671,15 @@ msgstr ""
 "York&rdquo; = &ldquo;S.C.A.T.&rdquo; = &ldquo;Final Mission&rdquo;)을 "
 "스캔합니다. 스크래핑 시 사용되는 동일한 IGDB 및 ScreenScraper 검색 결과를 사용하여 대체 이름만 추출합니다."
 
-#: templates/rom_tools_hub.html:278
+#: templates/rom_tools_hub.html:293
 msgid "Metadata only &middot; no media downloads"
 msgstr "메타데이터만 &middot; 미디어 다운로드 없음"
 
-#: templates/rom_tools_hub.html:285
+#: templates/rom_tools_hub.html:300
 msgid "Bulk HLTB Lookup"
 msgstr "HLTB 일괄 조회"
 
-#: templates/rom_tools_hub.html:288
+#: templates/rom_tools_hub.html:303
 msgid ""
 "Fetch HowLongToBeat playtime for every game. High-confidence primary-"
 "title matches apply automatically; alt-title matches and low-confidence "
@@ -8668,29 +8688,29 @@ msgstr ""
 "모든 게임의 HowLongToBeat 플레이 시간을 가져옵니다. 신뢰도가 높은 기본 제목 일치 항목은 자동으로 적용되며, 대체 제목"
 " 일치 및 신뢰도가 낮은 항목은 일괄적으로 승인하거나 거부할 수 있도록 검토 대기열에 추가됩니다."
 
-#: templates/rom_tools_hub.html:291
+#: templates/rom_tools_hub.html:306
 msgid "Uses stored alternate titles"
 msgstr "저장된 대체 제목 사용"
 
-#: templates/rom_tools_hub.html:298
+#: templates/rom_tools_hub.html:313
 msgid "HLTB Pending Review"
 msgstr "HLTB 검토 대기 중"
 
-#: templates/rom_tools_hub.html:301
+#: templates/rom_tools_hub.html:316
 msgid ""
 "Review and approve HLTB matches that were flagged during a bulk lookup "
 "&mdash; alt-title matches and anything below the confidence threshold."
 msgstr "일괄 조회 중 표시된 HLTB 일치 항목&mdash;대체 제목 일치 및 신뢰도 임계값 미만의 항목을 검토하고 승인합니다."
 
-#: templates/rom_tools_hub.html:304
+#: templates/rom_tools_hub.html:319
 msgid "Requires review"
 msgstr "검토 필요"
 
-#: templates/rom_tools_hub.html:311
+#: templates/rom_tools_hub.html:326
 msgid "Tool Settings"
 msgstr "도구 설정"
 
-#: templates/rom_tools_hub.html:314
+#: templates/rom_tools_hub.html:329
 msgid ""
 "Configure paths, external tool locations, archive types, and other "
 "preferences shared across all ROM tools."
@@ -8745,6 +8765,23 @@ msgstr "확보 가능한 공간"
 #: templates/screenshot_dedup.html:312
 msgid "Keep Largest"
 msgstr "가장 큰 항목 유지"
+
+#: templates/screenshot_review.html:67
+msgid ""
+"These machines could show only a few colours at once, so a picture that "
+"needs many more may be from another version of the game. Shots that fit "
+"worst come first. Real shots with heavy shading can rank high too, so "
+"look before you remove. Nothing is removed unless you press Remove."
+msgstr ""
+
+#: templates/screenshot_review.html:91
+msgid "Your library has no ZX Spectrum, Commodore 64 or Game Boy games to check."
+msgstr ""
+
+#: templates/screenshot_review.html:104
+#, fuzzy
+msgid "Show more"
+msgstr "더 보기"
 
 #: templates/settings.html:13
 msgid "Configure your RetroDB installation"
