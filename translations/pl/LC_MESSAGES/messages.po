@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-31 09:57+0200\n"
+"POT-Creation-Date: 2026-11-01 19:46+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: pl\n"
@@ -42,7 +42,7 @@ msgstr "Wymagana konfiguracja"
 msgid "Password change required"
 msgstr "Wymagana zmiana hasła"
 
-#: app.py:1683 routes/auth.py:202 routes/auth.py:262 routes/auth.py:447
+#: app.py:1685 routes/auth.py:202 routes/auth.py:262 routes/auth.py:447
 #: routes/auth.py:492 templates/force_change_password.html:49
 #: templates/setup.html:469
 msgid "Password must be at least 12 characters"
@@ -719,6 +719,15 @@ msgstr "Włożono następny dysk"
 #: routes/maintenance.py:263
 msgid "Unknown image type"
 msgstr "Nieznany typ obrazu"
+
+#: routes/maintenance.py:381
+msgid "Add your ScreenScraper account in Settings first."
+msgstr ""
+
+#: routes/maintenance.py:382
+#, fuzzy
+msgid "This fix is already running."
+msgstr "Ta gra jest już uruchomiona"
 
 #: routes/museum.py:385 routes/scraper.py:773
 msgid "No AI provider configured"
@@ -5805,7 +5814,7 @@ msgstr "Narzędzia"
 msgid "Game Imports"
 msgstr "Importy gier"
 
-#: templates/base.html:183 templates/rom_tools_hub.html:332
+#: templates/base.html:183 templates/rom_tools_hub.html:345
 msgid "Configuration"
 msgstr "Konfiguracja"
 
@@ -8911,11 +8920,28 @@ msgstr ""
 msgid "Metadata only &middot; no media downloads"
 msgstr "Tylko metadane &middot; bez pobierania mediów"
 
-#: templates/rom_tools_hub.html:300
+#: templates/rom_tools_hub.html:300 templates/rom_tools_hub.html:383
+msgid "Fix Box and Manual Regions"
+msgstr ""
+
+#: templates/rom_tools_hub.html:303
+msgid ""
+"Older ScreenScraper scrapes could give a game another region's box or "
+"manual, such as a European box on a USA game. This looks each one up "
+"again and swaps it for the right region. Pictures from anywhere else are "
+"left alone."
+msgstr ""
+
+#: templates/rom_tools_hub.html:306
+#, fuzzy
+msgid "Needs a ScreenScraper account"
+msgstr "Ta sama gra w ScreenScraper"
+
+#: templates/rom_tools_hub.html:313
 msgid "Bulk HLTB Lookup"
 msgstr "Masowe wyszukiwanie HLTB"
 
-#: templates/rom_tools_hub.html:303
+#: templates/rom_tools_hub.html:316
 msgid ""
 "Fetch HowLongToBeat playtime for every game. High-confidence primary-"
 "title matches apply automatically; alt-title matches and low-confidence "
@@ -8926,15 +8952,15 @@ msgstr ""
 "tytułów alternatywnych i wyniki o niskiej pewności trafiają do kolejki "
 "przeglądu, dzięki czemu możesz je masowo zatwierdzić lub odrzucić."
 
-#: templates/rom_tools_hub.html:306
+#: templates/rom_tools_hub.html:319
 msgid "Uses stored alternate titles"
 msgstr "Wykorzystuje zapisane tytuły alternatywne"
 
-#: templates/rom_tools_hub.html:313
+#: templates/rom_tools_hub.html:326
 msgid "HLTB Pending Review"
 msgstr "HLTB oczekujące na przegląd"
 
-#: templates/rom_tools_hub.html:316
+#: templates/rom_tools_hub.html:329
 msgid ""
 "Review and approve HLTB matches that were flagged during a bulk lookup "
 "&mdash; alt-title matches and anything below the confidence threshold."
@@ -8943,21 +8969,76 @@ msgstr ""
 "wyszukiwania &mdash; dopasowania tytułów alternatywnych i wszystko "
 "poniżej progu pewności."
 
-#: templates/rom_tools_hub.html:319
+#: templates/rom_tools_hub.html:332
 msgid "Requires review"
 msgstr "Wymaga przeglądu"
 
-#: templates/rom_tools_hub.html:326
+#: templates/rom_tools_hub.html:339
 msgid "Tool Settings"
 msgstr "Ustawienia narzędzi"
 
-#: templates/rom_tools_hub.html:329
+#: templates/rom_tools_hub.html:342
 msgid ""
 "Configure paths, external tool locations, archive types, and other "
 "preferences shared across all ROM tools."
 msgstr ""
 "Skonfiguruj ścieżki, lokalizacje narzędzi zewnętrznych, typy archiwów i "
 "inne preferencje współdzielone przez wszystkie narzędzia ROM."
+
+#: templates/rom_tools_hub.html:384
+msgid ""
+"Each game with a ScreenScraper box or manual is looked up again. Where "
+"another region suits it better, the file is downloaded and the old one is"
+" deleted.\n"
+"\n"
+"Games you have changed by hand are not touched. This uses your daily "
+"ScreenScraper allowance and can take a long time. You can leave the page,"
+" and press this card again to stop."
+msgstr ""
+
+#: templates/rom_tools_hub.html:385
+#, fuzzy
+msgid "Could not start the fix"
+msgstr "Nie udało się rozpocząć wyszukiwania."
+
+#: templates/rom_tools_hub.html:386
+msgid ""
+"Stop the fix? Files already swapped stay as they are, and a later run "
+"carries on with the rest."
+msgstr ""
+
+#: templates/rom_tools_hub.html:387
+#, fuzzy, python-brace-format
+msgid "Stopped. Files swapped: {replaced}."
+msgstr "Zatrzymano. Zaproponowane nazwy: {proposals}."
+
+#: templates/rom_tools_hub.html:388
+#, python-brace-format
+msgid ""
+"The fix stopped with an error. Files swapped: {replaced}. The log has the"
+" details."
+msgstr ""
+
+#: templates/rom_tools_hub.html:389
+#, fuzzy, python-brace-format
+msgid "Checked {current} of {total} games. Files swapped: {replaced}."
+msgstr ""
+"Uzupełnianie gry {current} z {total}: {title}. Uzupełniono dotąd: "
+"{filled}."
+
+#: templates/rom_tools_hub.html:390
+#, python-brace-format
+msgid ""
+"Finished. Files swapped: {replaced}. Games not found: {no_match}. Could "
+"not download: {failed}."
+msgstr ""
+
+#: templates/rom_tools_hub.html:391
+#, python-brace-format
+msgid ""
+"Stopped: ScreenScraper stopped answering, so your daily allowance may be "
+"spent. Files swapped: {replaced}. Run it again tomorrow."
+msgstr ""
 
 #: templates/rom_tools_settings.html:309
 msgid "Empty: RetroDB's data folder"

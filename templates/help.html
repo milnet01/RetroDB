@@ -1476,6 +1476,10 @@
         <p>Sweep every scraped game and fetch its <strong>alternate titles</strong> from IGDB / TGDB / ScreenScraper, tagged with the region each name comes from. Names you already have gain their region. Useful after importing a large catalogue or migrating from another tool that did not store regional / Japanese / sub-titles. Runs in the background; progress is shown on the tool card.</p>
         <p><em>Requires at least one scraper API key (IGDB / TGDB / ScreenScraper)</em></p>
 
+        <h3>Fix Box and Manual Regions</h3>
+        <p>Older ScreenScraper scrapes took the first box, 3D box and manual in an alphabetical list of regions, so a USA game could show a European box or carry a Portuguese manual. This tool looks each of those games up again. Where another region suits the game better, it downloads that file and deletes the old one. Boxes and manuals from anywhere else are left alone, as are games whose file already fits. Press the card again to stop; a later run carries on with the rest.</p>
+        <p><em>Requires a ScreenScraper account. It uses your daily ScreenScraper allowance</em></p>
+
         <h3>Bulk HLTB Lookup</h3>
         <p>Run a HowLongToBeat lookup for every game missing a playtime estimate. Each match is scored by title + platform + release year; high-confidence matches are saved automatically. Anything below the confidence threshold (or with conflicting platforms) is parked for human review.</p>
         <p><em>No external dependencies (uses the bundled offline HLTB dataset)</em></p>

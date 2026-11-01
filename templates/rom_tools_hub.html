@@ -294,6 +294,19 @@
         </div>
     </button>
 
+    <button type="button" class="tool-card" data-on-click="startSsRegionRepair">
+        <div class="tool-card-header">
+            <div class="tool-card-icon">&#128230;</div>
+            <div class="tool-card-title">{{ _('Fix Box and Manual Regions') }}</div>
+        </div>
+        <div class="tool-card-desc">
+            {{ _('Older ScreenScraper scrapes could give a game another region\'s box or manual, such as a European box on a USA game. This looks each one up again and swaps it for the right region. Pictures from anywhere else are left alone.') }}
+        </div>
+        <div class="tool-card-status" id="ssRegionRepairStatus">
+            <span class="status-dot no-deps"></span> {{ _('Needs a ScreenScraper account') }}
+        </div>
+    </button>
+
     <button type="button" class="tool-card" data-on-click="startHltbBulk">
         <div class="tool-card-header">
             <div class="tool-card-icon">&#9201;</div>
@@ -365,6 +378,65 @@ function startAltTitlesBackfill() {
         }
     );
 }
+
+const SS_REGION_REPAIR_TEXT = {
+    confirmTitle: {{ _('Fix Box and Manual Regions')|tojson }},
+    confirm: {{ _('Each game with a ScreenScraper box or manual is looked up again. Where another region suits it better, the file is downloaded and the old one is deleted.\n\nGames you have changed by hand are not touched. This uses your daily ScreenScraper allowance and can take a long time. You can leave the page, and press this card again to stop.')|tojson }},
+    startFailed: {{ _('Could not start the fix')|tojson }},
+    stopConfirm: {{ _('Stop the fix? Files already swapped stay as they are, and a later run carries on with the rest.')|tojson }},
+    cancelled: {{ _('Stopped. Files swapped: {replaced}.')|tojson }},
+    failed: {{ _('The fix stopped with an error. Files swapped: {replaced}. The log has the details.')|tojson }},
+    running: {{ _('Checked {current} of {total} games. Files swapped: {replaced}.')|tojson }},
+    done: {{ _('Finished. Files swapped: {replaced}. Games not found: {no_match}. Could not download: {failed}.')|tojson }},
+    stopped: {{ _('Stopped: ScreenScraper stopped answering, so your daily allowance may be spent. Files swapped: {replaced}. Run it again tomorrow.')|tojson }},
+};
+
+let _ssRegionRepairRunning = false;
+
+function _ssRegionRepairShow(status) {
+    const box = document.getElementById('ssRegionRepairStatus');
+    if (!box) return;
+    const template = status.running ? SS_REGION_REPAIR_TEXT.running
+        : status.error ? SS_REGION_REPAIR_TEXT.failed
+        : status.stopped_no_reply ? SS_REGION_REPAIR_TEXT.stopped
+        : status.cancelled ? SS_REGION_REPAIR_TEXT.cancelled : SS_REGION_REPAIR_TEXT.done;
+    box.textContent = template.replace(/\{(\w+)\}/g, (_m, key) => formatNumber(status[key] || 0));
+}
+
+function _ssRegionRepairPoll() {
+    fetch('/api/maintenance/ss-region-repair/status')
+        .then(r => r.json())
+        .then(status => {
+            _ssRegionRepairRunning = status.running;
+            if (status.running || status.completed) _ssRegionRepairShow(status);
+            if (status.running) setTimeout(_ssRegionRepairPoll, 3000);
+        })
+        .catch(() => {});
+}
+
+function startSsRegionRepair() {
+    const headers = { 'Content-Type': 'application/json' };
+    if (_ssRegionRepairRunning) {
+        showConfirm(SS_REGION_REPAIR_TEXT.confirmTitle, SS_REGION_REPAIR_TEXT.stopConfirm, function() {
+            fetch('/api/maintenance/ss-region-repair/cancel', { method: 'POST', headers, body: '{}' });
+        });
+        return;
+    }
+    showConfirm(SS_REGION_REPAIR_TEXT.confirmTitle, SS_REGION_REPAIR_TEXT.confirm, function() {
+        fetch('/api/maintenance/ss-region-repair/start', { method: 'POST', headers, body: '{}' })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    _ssRegionRepairPoll();
+                } else {
+                    showNotification(data.error || SS_REGION_REPAIR_TEXT.startFailed, 'error');
+                }
+            })
+            .catch(() => showNotification(SS_REGION_REPAIR_TEXT.startFailed, 'error'));
+    });
+}
+
+document.addEventListener('DOMContentLoaded', _ssRegionRepairPoll);
 
 function startHltbBulk() {
     showConfirm(

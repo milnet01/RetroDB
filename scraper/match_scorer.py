@@ -176,7 +176,11 @@ def calculate_title_match_score(result_title, search_title):
 
 def calculate_ss_score(result, search_title):
     """ScreenScraper relevance score. Mutates result['title_score']."""
-    score = calculate_title_match_score(result.get('name', ''), search_title)
+    # Every regional name counts: a ROM may carry its Japanese title while the
+    # result's main name follows the user's preferred region.
+    names = [result.get('name', '')]
+    names += [a.get('title', '') for a in result.get('alternate_titles') or []]
+    score = max(calculate_title_match_score(n, search_title) for n in names)
     result['title_score'] = score
     if result.get('release_date'):
         score += 10

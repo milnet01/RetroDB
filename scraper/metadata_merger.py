@@ -51,6 +51,7 @@ from scraper.metadata_normalizer import (
 # loader that returned an empty `enabled: {}` on miss, so upstream
 # enabled-lookups silently disagreed with scraper_manager's view.
 from scraper.scraper_manager import load_scraper_settings
+from scraper.ss_regions import by_region
 
 logger = logging.getLogger(__name__)
 
@@ -849,15 +850,101 @@ def apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result, fill_only=Fa
 # SCREENSCRAPER METADATA APPLICATION
 # =============================================================================
 
-def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_only=False):
+def download_ss_media(url, dest_path, timeout=15, image_type=None, screenshot_of=None):
+    """Download a media file from ScreenScraper URL.
+
+    Pass 32.15: routes through the hardened _download_and_finalize
+    helper (SSRF gate, streamed size cap, atomic write, rollback on
+    finalize failure) when `image_type` is provided. For manual/video
+    downloads (image_type=None) we keep the legacy behaviour but still
+    apply the SSRF gate and streaming size cap.
+    """
+    if image_type:
+        return _download_and_finalize(url, dest_path, image_type, timeout=timeout, screenshot_of=screenshot_of)
+
+    # Non-image media (manuals, videos) — still SSRF-validate and stream.
+    from services.ssrf import validate_outbound_url, validate_and_pin_url, pin_host_ip
+    from scraper.base_scraper import _http_session
+    from urllib.parse import urlparse as _urlparse
+    ok, _, _ = validate_outbound_url(url)
+    if not ok:
+        logger.warning(f"SSRF block: refusing to fetch {url}")
+        return False
+    # Pass 45.2: walk redirect chain + capture IP for DNS-rebinding pin.
+    safe_url, pinned_ip, err = validate_and_pin_url(
+        _http_session, url, max_redirects=3, timeout=5,
+    )
+    if err:
+        logger.warning(f"SSRF block: redirect chain rejected for {url} ({err})")
+        return False
+    pinned_host = _urlparse(safe_url).hostname
+    try:
+        import config as _config
+        max_bytes = getattr(_config, 'MAX_MEDIA_DOWNLOAD_BYTES', 50 * 1024 * 1024)
+    except Exception:
+        max_bytes = 50 * 1024 * 1024
+    try:
+        os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+        with pin_host_ip(pinned_host, pinned_ip), _http_session.get(safe_url, timeout=timeout, stream=True, allow_redirects=False) as r:
+            if r.status_code != 200:
+                return False
+            declared = int(r.headers.get('Content-Length', 0) or 0)
+            if declared and declared > max_bytes:
+                logger.warning(f"ScreenScraper media rejected: declared {declared} > {max_bytes}")
+                return False
+            written = 0
+            with open(dest_path, 'wb') as f, apply_progress.download(dest_path, declared) as dl:
+                for chunk in r.iter_content(chunk_size=8192):
+                    if not chunk:
+                        continue
+                    written += len(chunk)
+                    if written > max_bytes:
+                        logger.warning(f"ScreenScraper media aborted: exceeded {max_bytes} bytes")
+                        try:
+                            f.close()
+                            os.remove(dest_path)
+                        except OSError:
+                            pass
+                        return False
+                    f.write(chunk)
+                    dl.received(written)
+        return True
+    except Exception as e:
+        logger.warning(f"Failed to download ScreenScraper media: {e}")
+    return False
+
+
+def _pick_media(medias, types, default_ext, own_region):
+    """The (url, format) of the entry of `types` nearest the game's region."""
+    matches = [m for m in medias if m.get('type') in types and m.get('url')]
+    for m in by_region(matches, own_region):
+        return m['url'], m.get('format', default_ext)
+    return None, default_ext
+
+
+def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_only=False,
+                                    own_region=None):
     """
     Apply ScreenScraper data to metadata dict.
+
+    `own_region` is this copy's region (`ss_regions.own_region`); titles, dates
+    and regional media follow it, then the stored region, then the user's
+    preferred regions.
 
     IMPORTANT: This function follows the "augment, don't replace" principle:
     - Text fields are only filled if currently empty
     - Screenshots are always appended, never replaced
     - Boxart/fanart only downloaded if not already present
     """
+
+    own_region = own_region or metadata.get('region')
+
+    def get_regional(items):
+        """The text of the entry nearest the game's region."""
+        for item in by_region(items, own_region):
+            if item.get('text'):
+                return item['text']
+        return None
 
     def get_localized(items, lang='en'):
         """Get localized text from ScreenScraper format"""
@@ -882,7 +969,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
     # miss). Each text field below reads the raw key first, then the flat one.
 
     # Title - always set when primary source (fill_only=False), matching IGDB/RAWG
-    title = get_localized(ss_data.get('noms')) or ss_data.get('title')
+    title = get_regional(ss_data.get('noms')) or ss_data.get('title')
     if title and (not metadata['title'] or not fill_only):
         metadata['title'] = normalize_title(title)
         result['filled_fields'].append('title (ScreenScraper)')
@@ -919,7 +1006,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
     # Release date - only fill if empty
     dates = ss_data.get('dates') or ss_data.get('release_date')
     if dates and not metadata['release_date']:
-        date_str = dates if isinstance(dates, str) else get_localized(dates)
+        date_str = dates if isinstance(dates, str) else get_regional(dates)
         if date_str:
             metadata['release_date'] = date_str[:10] if len(date_str) >= 10 else date_str
             result['filled_fields'].append('release_date (ScreenScraper)')
@@ -1071,88 +1158,18 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
     medias = ss_data.get('medias', [])
     parsed_media = ss_data.get('media', {})
 
-    def _download_ss_media(url, dest_path, timeout=15, image_type=None, screenshot_of=None):
-        """Download a media file from ScreenScraper URL.
-
-        Pass 32.15: routes through the hardened _download_and_finalize
-        helper (SSRF gate, streamed size cap, atomic write, rollback on
-        finalize failure) when `image_type` is provided. For manual/video
-        downloads (image_type=None) we keep the legacy behaviour but still
-        apply the SSRF gate and streaming size cap.
-        """
-        if image_type:
-            return _download_and_finalize(url, dest_path, image_type, timeout=timeout, screenshot_of=screenshot_of)
-
-        # Non-image media (manuals, videos) — still SSRF-validate and stream.
-        from services.ssrf import validate_outbound_url, validate_and_pin_url, pin_host_ip
-        from scraper.base_scraper import _http_session
-        from urllib.parse import urlparse as _urlparse
-        ok, _, _ = validate_outbound_url(url)
-        if not ok:
-            logger.warning(f"SSRF block: refusing to fetch {url}")
-            return False
-        # Pass 45.2: walk redirect chain + capture IP for DNS-rebinding pin.
-        safe_url, pinned_ip, err = validate_and_pin_url(
-            _http_session, url, max_redirects=3, timeout=5,
-        )
-        if err:
-            logger.warning(f"SSRF block: redirect chain rejected for {url} ({err})")
-            return False
-        pinned_host = _urlparse(safe_url).hostname
-        try:
-            import config as _config
-            max_bytes = getattr(_config, 'MAX_MEDIA_DOWNLOAD_BYTES', 50 * 1024 * 1024)
-        except Exception:
-            max_bytes = 50 * 1024 * 1024
-        try:
-            os.makedirs(os.path.dirname(dest_path), exist_ok=True)
-            with pin_host_ip(pinned_host, pinned_ip), _http_session.get(safe_url, timeout=timeout, stream=True, allow_redirects=False) as r:
-                if r.status_code != 200:
-                    return False
-                declared = int(r.headers.get('Content-Length', 0) or 0)
-                if declared and declared > max_bytes:
-                    logger.warning(f"ScreenScraper media rejected: declared {declared} > {max_bytes}")
-                    return False
-                written = 0
-                with open(dest_path, 'wb') as f, apply_progress.download(dest_path, declared) as dl:
-                    for chunk in r.iter_content(chunk_size=8192):
-                        if not chunk:
-                            continue
-                        written += len(chunk)
-                        if written > max_bytes:
-                            logger.warning(f"ScreenScraper media aborted: exceeded {max_bytes} bytes")
-                            try:
-                                f.close()
-                                os.remove(dest_path)
-                            except OSError:
-                                pass
-                            return False
-                        f.write(chunk)
-                        dl.received(written)
-            return True
-        except Exception as e:
-            logger.warning(f"Failed to download ScreenScraper media: {e}")
-        return False
-
     # Boxart (2D) - only download if not already present (never replace existing)
     if not metadata['boxart']:
         boxart_url = parsed_media.get('boxart_front')
-        if not boxart_url:
-            for m in medias:
-                if m.get('type') in ['box-2D', 'boite-2D']:
-                    boxart_url = m.get('url')
-                    if boxart_url:
-                        ext = m.get('format', 'png')
-                        break
-            else:
-                ext = 'png'
-        else:
+        if boxart_url:
             ext = _url_ext(boxart_url, 'png')
+        else:
+            boxart_url, ext = _pick_media(medias, ('box-2D', 'boite-2D'), 'png', own_region)
 
         if boxart_url:
             filename = f"{db_game_id}_ss_boxart{preferred_image_extension('boxart', '.' + ext)}"
             local_path = os.path.join(IMAGE_PATH, 'boxart', filename)
-            if _download_ss_media(boxart_url, local_path, image_type='boxart'):
+            if download_ss_media(boxart_url, local_path, image_type='boxart'):
                 metadata['boxart'] = filename
                 metadata['_boxart_source'] = 'screenscraper'
                 result['filled_fields'].append('boxart (ScreenScraper)')
@@ -1160,22 +1177,15 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
     # 3D Boxart - only download if not already present
     if not metadata.get('boxart_3d'):
         boxart_3d_url = parsed_media.get('boxart_3d')
-        if not boxart_3d_url:
-            for m in medias:
-                if m.get('type') == 'box-3D':
-                    boxart_3d_url = m.get('url')
-                    if boxart_3d_url:
-                        ext = m.get('format', 'png')
-                        break
-            else:
-                ext = 'png'
-        else:
+        if boxart_3d_url:
             ext = _url_ext(boxart_3d_url, 'png')
+        else:
+            boxart_3d_url, ext = _pick_media(medias, ('box-3D',), 'png', own_region)
 
         if boxart_3d_url:
             filename = f"{db_game_id}_ss_boxart3d{preferred_image_extension('boxart_3d', '.' + ext)}"
             local_path = os.path.join(IMAGE_PATH, 'boxart_3d', filename)
-            if _download_ss_media(boxart_3d_url, local_path, image_type='boxart_3d'):
+            if download_ss_media(boxart_3d_url, local_path, image_type='boxart_3d'):
                 metadata['boxart_3d'] = filename
                 result['filled_fields'].append('boxart_3d (ScreenScraper)')
 
@@ -1207,7 +1217,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
             continue
         _jobs.append(
             lambda u=url, p=local_path, f=filename:
-                f if _download_ss_media(u, p, timeout=10, image_type='screenshots', screenshot_of=db_game_id) else None
+                f if download_ss_media(u, p, timeout=10, image_type='screenshots', screenshot_of=db_game_id) else None
         )
 
     # Fetch all screenshots concurrently, then dedup in order.
@@ -1237,52 +1247,42 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
         if fanart_url:
             filename = f"{db_game_id}_ss_fanart{preferred_image_extension('fanart', '.' + ext)}"
             local_path = os.path.join(IMAGE_PATH, 'fanart', filename)
-            if _download_ss_media(fanart_url, local_path, image_type='fanart'):
+            if download_ss_media(fanart_url, local_path, image_type='fanart'):
                 metadata['fanart'] = filename
                 result['filled_fields'].append('fanart (ScreenScraper)')
 
     # Video - only download if not already present
     if not metadata['video']:
-        video_url = parsed_media.get('video')
-        if not video_url:
-            for m in medias:
-                if m.get('type') in ['video', 'video-normalized']:
-                    video_url = m.get('url')
-                    if video_url:
-                        ext = m.get('format', 'mp4')
-                        break
-            else:
-                ext = 'mp4'
+        # The smaller `video-normalized` first; the full `video` only if that
+        # one cannot be had, such as over the download size cap.
+        if parsed_media.get('video'):
+            video_choices = [(parsed_media['video'], _url_ext(parsed_media['video'], 'mp4'))]
         else:
-            ext = _url_ext(video_url, 'mp4')
-
-        if video_url:
+            video_choices = [_pick_media(medias, (kind,), 'mp4', own_region)
+                             for kind in ('video-normalized', 'video')]
+        video_dir = os.path.join(STATIC_PATH, 'videos')
+        for video_url, ext in video_choices:
+            if not video_url:
+                continue
             filename = f"{db_game_id}_ss_video.{ext}"
-            video_dir = os.path.join(STATIC_PATH, 'videos')
             local_path = os.path.join(video_dir, filename)
-            if _download_ss_media(video_url, local_path, timeout=60):
+            if download_ss_media(video_url, local_path, timeout=60):
                 metadata['video'] = filename
                 result['filled_fields'].append('video (ScreenScraper)')
+                break
 
     # Manual - only download if not already present
     if not metadata['manual']:
         manual_url = parsed_media.get('manual')
-        if not manual_url:
-            for m in medias:
-                if m.get('type') == 'manuel':
-                    manual_url = m.get('url')
-                    if manual_url:
-                        ext = m.get('format', 'pdf')
-                        break
-            else:
-                ext = 'pdf'
-        else:
+        if manual_url:
             ext = _url_ext(manual_url, 'pdf')
+        else:
+            manual_url, ext = _pick_media(medias, ('manuel',), 'pdf', own_region)
 
         if manual_url:
             filename = f"{db_game_id}_ss_manual.{ext}"
             local_path = os.path.join(IMAGE_PATH, 'manuals', filename)
-            if _download_ss_media(manual_url, local_path, timeout=60):
+            if download_ss_media(manual_url, local_path, timeout=60):
                 metadata['manual'] = filename
                 result['filled_fields'].append('manual (ScreenScraper)')
 

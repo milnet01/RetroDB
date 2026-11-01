@@ -364,6 +364,44 @@ def api_alt_titles_backfill_cancel():
     return jsonify(result)
 
 
+# =============================================================================
+# SCREENSCRAPER REGION REPAIR JOB (PASS-59-202)
+# =============================================================================
+
+@bp.route('/api/maintenance/ss-region-repair/start', methods=['POST'])
+@admin_required
+@handle_api_errors
+def api_ss_region_repair_start():
+    """Start swapping ScreenScraper boxes and manuals from the wrong region."""
+    from services.jobs import ss_region_repair_job
+    result = ss_region_repair_job.start()
+    if result['success']:
+        return jsonify(result)
+    if result['error'] == 'no_account':
+        return error(_('Add your ScreenScraper account in Settings first.'), 400)
+    return error(_('This fix is already running.'), 409)
+
+
+@bp.route('/api/maintenance/ss-region-repair/status', methods=['GET'])
+@login_required
+@handle_api_errors
+def api_ss_region_repair_status():
+    """Poll the region repair job."""
+    from services.jobs import ss_region_repair_job
+    status = ss_region_repair_job.get_status()
+    status['success'] = True
+    return jsonify(status)
+
+
+@bp.route('/api/maintenance/ss-region-repair/cancel', methods=['POST'])
+@admin_required
+@handle_api_errors
+def api_ss_region_repair_cancel():
+    """Stop the region repair job after the game it is on."""
+    from services.jobs import ss_region_repair_job
+    return jsonify(ss_region_repair_job.cancel())
+
+
 @bp.route('/api/restart', methods=['POST'])
 @admin_required
 def api_restart():

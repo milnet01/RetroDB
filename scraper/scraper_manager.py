@@ -556,7 +556,6 @@ class ScraperManager:
         ss_system_id = system_info.get('id', '')
         ss_system_name = system_info.get('text', '')
 
-        # Region (English-preferred only — don't fall back to FR/DE/ES/IT).
         region, region_text = self._pick_ss_region(result.get('dates', []))
 
         # Platform match: did ScreenScraper return a result whose system ID
@@ -571,7 +570,6 @@ class ScraperManager:
         game_id = result.get('id')
         cache_screenscraper_result(game_id, ss_system_id, result)
 
-        # Primary name — prefer English / US region.
         name = self._get_ss_localized_text(result.get('noms', []), 'text')
 
         # Alternate names — every regional release except the one used as primary.
@@ -604,35 +602,18 @@ class ScraperManager:
 
     @staticmethod
     def _pick_ss_region(dates):
-        """Pick the best English-preferred region/date pair from a SS `dates` list."""
-        region_priority = ['us', 'wor', 'eu', 'uk', 'au', 'en']
-        for pref_region in region_priority:
-            for d in dates:
-                if d.get('region', '').lower() == pref_region:
-                    return pref_region.upper(), d.get('text', '')
-        if dates:
-            first_region = dates[0].get('region', '').lower()
-            if first_region in ('us', 'usa', 'wor', 'world', 'eu', 'eur', 'uk', 'au', 'en'):
-                return first_region.upper(), dates[0].get('text', '')
+        """The region and date nearest the user's preferred regions."""
+        from scraper.ss_regions import by_region
+        for d in by_region(dates):
+            return (d.get('region') or '').upper() or None, d.get('text', '')
         return None, None
 
     def _get_ss_localized_text(self, items, text_key='text'):
-        """Get localized text from ScreenScraper result, preferring English"""
-        if not items:
-            return ''
-
-        # Priority: en/us, then wor (world), then first available
-        for region in ['us', 'eu', 'wor', 'ss']:
-            for item in items:
-                if isinstance(item, dict) and item.get('region', '').lower() == region:
-                    result = item.get(text_key, '')
-                    if result:
-                        return result
-
-        # Fallback to first item
-        if items and isinstance(items[0], dict):
-            return items[0].get(text_key, '')
-
+        """The first non-empty text, nearest the user's preferred regions."""
+        from scraper.ss_regions import by_region
+        for item in by_region(items):
+            if item.get(text_key):
+                return item[text_key]
         return ''
 
     def fetch_game_details(self, game_id, source, system_folder=None):

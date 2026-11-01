@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-31 09:57+0200\n"
+"POT-Creation-Date: 2026-11-01 19:46+0200\n"
 "PO-Revision-Date: 2026-07-01 09:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hant\n"
@@ -40,7 +40,7 @@ msgstr "需要初始設定"
 msgid "Password change required"
 msgstr "需要變更密碼"
 
-#: app.py:1683 routes/auth.py:202 routes/auth.py:262 routes/auth.py:447
+#: app.py:1685 routes/auth.py:202 routes/auth.py:262 routes/auth.py:447
 #: routes/auth.py:492 templates/force_change_password.html:49
 #: templates/setup.html:469
 msgid "Password must be at least 12 characters"
@@ -699,6 +699,15 @@ msgstr "已插入下一張光碟"
 #: routes/maintenance.py:263
 msgid "Unknown image type"
 msgstr "未知的圖片類型"
+
+#: routes/maintenance.py:381
+msgid "Add your ScreenScraper account in Settings first."
+msgstr ""
+
+#: routes/maintenance.py:382
+#, fuzzy
+msgid "This fix is already running."
+msgstr "該遊戲已在執行中"
 
 #: routes/museum.py:385 routes/scraper.py:773
 msgid "No AI provider configured"
@@ -5655,7 +5664,7 @@ msgstr "工具"
 msgid "Game Imports"
 msgstr "遊戲匯入"
 
-#: templates/base.html:183 templates/rom_tools_hub.html:332
+#: templates/base.html:183 templates/rom_tools_hub.html:345
 msgid "Configuration"
 msgstr "設定"
 
@@ -8653,11 +8662,28 @@ msgstr ""
 msgid "Metadata only &middot; no media downloads"
 msgstr "僅中繼資料 &middot; 不下載媒體"
 
-#: templates/rom_tools_hub.html:300
+#: templates/rom_tools_hub.html:300 templates/rom_tools_hub.html:383
+msgid "Fix Box and Manual Regions"
+msgstr ""
+
+#: templates/rom_tools_hub.html:303
+msgid ""
+"Older ScreenScraper scrapes could give a game another region's box or "
+"manual, such as a European box on a USA game. This looks each one up "
+"again and swaps it for the right region. Pictures from anywhere else are "
+"left alone."
+msgstr ""
+
+#: templates/rom_tools_hub.html:306
+#, fuzzy
+msgid "Needs a ScreenScraper account"
+msgstr "相同的 ScreenScraper 遊戲"
+
+#: templates/rom_tools_hub.html:313
 msgid "Bulk HLTB Lookup"
 msgstr "批次 HLTB 查詢"
 
-#: templates/rom_tools_hub.html:303
+#: templates/rom_tools_hub.html:316
 msgid ""
 "Fetch HowLongToBeat playtime for every game. High-confidence primary-"
 "title matches apply automatically; alt-title matches and low-confidence "
@@ -8666,33 +8692,86 @@ msgstr ""
 "為每個遊戲取得 HowLongToBeat "
 "的遊玩時長。高信賴度的主標題匹配將自動套用；別名標題匹配和低信賴度結果將加入待審核佇列，以便您批次批准或拒絕。"
 
-#: templates/rom_tools_hub.html:306
+#: templates/rom_tools_hub.html:319
 msgid "Uses stored alternate titles"
 msgstr "使用已儲存的別名標題"
 
-#: templates/rom_tools_hub.html:313
+#: templates/rom_tools_hub.html:326
 msgid "HLTB Pending Review"
 msgstr "HLTB 待審核"
 
-#: templates/rom_tools_hub.html:316
+#: templates/rom_tools_hub.html:329
 msgid ""
 "Review and approve HLTB matches that were flagged during a bulk lookup "
 "&mdash; alt-title matches and anything below the confidence threshold."
 msgstr "審核並批准批次查詢中被標記的 HLTB 匹配結果 &mdash; 包括別名標題匹配以及信賴度低於閾值的項。"
 
-#: templates/rom_tools_hub.html:319
+#: templates/rom_tools_hub.html:332
 msgid "Requires review"
 msgstr "需要審核"
 
-#: templates/rom_tools_hub.html:326
+#: templates/rom_tools_hub.html:339
 msgid "Tool Settings"
 msgstr "工具設定"
 
-#: templates/rom_tools_hub.html:329
+#: templates/rom_tools_hub.html:342
 msgid ""
 "Configure paths, external tool locations, archive types, and other "
 "preferences shared across all ROM tools."
 msgstr "設定所有 ROM 工具共享的路徑、外部工具位置、壓縮檔類型及其他偏好設定。"
+
+#: templates/rom_tools_hub.html:384
+msgid ""
+"Each game with a ScreenScraper box or manual is looked up again. Where "
+"another region suits it better, the file is downloaded and the old one is"
+" deleted.\n"
+"\n"
+"Games you have changed by hand are not touched. This uses your daily "
+"ScreenScraper allowance and can take a long time. You can leave the page,"
+" and press this card again to stop."
+msgstr ""
+
+#: templates/rom_tools_hub.html:385
+#, fuzzy
+msgid "Could not start the fix"
+msgstr "無法啟動工作。"
+
+#: templates/rom_tools_hub.html:386
+msgid ""
+"Stop the fix? Files already swapped stay as they are, and a later run "
+"carries on with the rest."
+msgstr ""
+
+#: templates/rom_tools_hub.html:387
+#, fuzzy, python-brace-format
+msgid "Stopped. Files swapped: {replaced}."
+msgstr "已停止。已建議名稱：{proposals}。"
+
+#: templates/rom_tools_hub.html:388
+#, python-brace-format
+msgid ""
+"The fix stopped with an error. Files swapped: {replaced}. The log has the"
+" details."
+msgstr ""
+
+#: templates/rom_tools_hub.html:389
+#, fuzzy, python-brace-format
+msgid "Checked {current} of {total} games. Files swapped: {replaced}."
+msgstr "正在填充第 {current} 個遊戲，共 {total} 個：{title}。已填充：{filled}。"
+
+#: templates/rom_tools_hub.html:390
+#, python-brace-format
+msgid ""
+"Finished. Files swapped: {replaced}. Games not found: {no_match}. Could "
+"not download: {failed}."
+msgstr ""
+
+#: templates/rom_tools_hub.html:391
+#, python-brace-format
+msgid ""
+"Stopped: ScreenScraper stopped answering, so your daily allowance may be "
+"spent. Files swapped: {replaced}. Run it again tomorrow."
+msgstr ""
 
 #: templates/rom_tools_settings.html:309
 msgid "Empty: RetroDB's data folder"

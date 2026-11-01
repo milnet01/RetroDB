@@ -10229,7 +10229,11 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.202 Boxes, manuals, titles and dates follow the game's own region (fix, M).
-- **Status**: todo
+- **Resolution** (2026-11-01): Done 2026-11-01. `scraper/ss_regions.by_region` is the one order. ROM
+  Tools > Fix Box and Manual Regions repairs stored boxes, 3D boxes and
+  manuals; never run against live ScreenScraper yet. Stored titles and
+  dates are not repaired: PASS-59-207 covers dates.
+- **Status**: done
 - **Source**: PASS-59-162, 2026-10-31. Notes: screenscraper 1, 2, 6.
 - **Problem**: `metadata_merger.py` takes the first `box-2D`, `box-3D` and `manuel` in ScreenScraper's alphabetical region list, so a USA game can get a European box or a Portuguese manual. Title and date always prefer the USA.
 - **Fix**: one helper ordering by the game's region, then preferred regions, then the rest. Existing rows need a repair job, because media is fill-only.

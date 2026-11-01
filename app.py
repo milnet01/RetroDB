@@ -1391,6 +1391,8 @@ def dashboard():
                 desc = "HLTB bulk lookup was interrupted" if has_progress else "HLTB bulk lookup was queued"
             elif jtype == 'alt_titles_backfill':
                 desc = "Alternate titles backfill was interrupted" if has_progress else "Alternate titles backfill was queued"
+            elif jtype == 'ss_region_repair':
+                desc = "Box and manual region fix was interrupted"
             elif jtype == 'official_names':
                 desc = "Official names run was interrupted"
             elif jtype == 'ai_fill_bulk':

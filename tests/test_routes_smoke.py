@@ -42,6 +42,9 @@ class TestRouteRegistration:
         'maintenance.api_alt_titles_backfill_start': '/api/maintenance/alt-titles-backfill/start',
         'maintenance.api_alt_titles_backfill_status': '/api/maintenance/alt-titles-backfill/status',
         'maintenance.api_alt_titles_backfill_cancel': '/api/maintenance/alt-titles-backfill/cancel',
+        'maintenance.api_ss_region_repair_start': '/api/maintenance/ss-region-repair/start',
+        'maintenance.api_ss_region_repair_status': '/api/maintenance/ss-region-repair/status',
+        'maintenance.api_ss_region_repair_cancel': '/api/maintenance/ss-region-repair/cancel',
         # Missing-media-ref sweep (Pass 54.1) — admin-guarded, and absent from
         # this map meant they escaped the auth sweep below too (Pass 57.7 item 6).
         'maintenance.api_missing_media_refs_preview': '/api/missing-media-refs/preview',
@@ -91,6 +94,7 @@ class TestAuthGuards:
         '/api/hltb/bulk/status',
         '/api/hltb/pending',
         '/api/maintenance/alt-titles-backfill/status',
+        '/api/maintenance/ss-region-repair/status',
         '/api/games/1/similar',
         # admin_required, not login_required — same unauthenticated redirect.
         '/api/missing-media-refs/preview',
@@ -147,6 +151,8 @@ class TestAuthGuards:
         '/api/hltb/pending/reject-all',
         '/api/game/1/ai-fill',
         '/api/maintenance/alt-titles-backfill/start',
+        '/api/maintenance/ss-region-repair/start',
+        '/api/maintenance/ss-region-repair/cancel',
         '/api/maintenance/alt-titles-backfill/cancel',
         # Clears DB media references library-wide — the most destructive
         # unauthenticated POST in this file (Pass 57.7 item 6).

@@ -15,6 +15,7 @@ import re
 import os
 
 from .base_scraper import http_get, _http_session
+from .ss_regions import by_region
 
 logger = logging.getLogger(__name__)
 
@@ -182,9 +183,6 @@ SYSTEM_ID_MAP = {
     "arcadia": 94, "crvision": 241, "scv": 67, "vsmile": 120, "pv1000": 74,
     "megaduck": 90, "palm": 219,
 }
-
-# Region priority for media selection (prefer English/US/World)
-REGION_PRIORITY = ["us", "wor", "eu", "uk", "jp", "ss"]
 
 # Language priority
 LANGUAGE_PRIORITY = ["en", "us", "wor", "eu", "uk"]
@@ -436,7 +434,8 @@ def _search_once(sanitized_title, system_id, username, password, dev_id, dev_pas
     return None
 
 
-def get_game_info(rom_path, system_folder, username, password, dev_id=None, dev_password=None, use_checksums=True):
+def get_game_info(rom_path, system_folder, username, password, dev_id=None, dev_password=None,
+                  use_checksums=True, own_region=None):
     """
     Get game information from ScreenScraper
     
@@ -550,7 +549,7 @@ def get_game_info(rom_path, system_folder, username, password, dev_id=None, dev_
                 
                 if attempt == 1:
                     logger.info("ScreenScraper: Success without dev credentials")
-                return parse_game_data(data["response"]["jeu"])
+                return parse_game_data(data["response"]["jeu"], own_region)
             
             if response.status_code != 200:
                 logger.warning(f"ScreenScraper API error: {response.status_code}")
@@ -563,7 +562,7 @@ def get_game_info(rom_path, system_folder, username, password, dev_id=None, dev_
     return None
 
 
-def parse_game_data(jeu):
+def parse_game_data(jeu, own_region=None):
     """Parse ScreenScraper JSON response into RetroDB format"""
     result = {
         "source": "ScreenScraper",
@@ -572,7 +571,7 @@ def parse_game_data(jeu):
     
     # Get title (prefer English/region name)
     names = (jeu.get("noms") or [])
-    result["title"] = get_localized_text(names, "text", region_key="region")
+    result["title"] = next((n["text"] for n in by_region(names, own_region) if n.get("text")), "")
     
     # Get description/synopsis
     synopsis_list = (jeu.get("synopsis") or [])
@@ -580,13 +579,9 @@ def parse_game_data(jeu):
     
     # Get release date
     dates = (jeu.get("dates") or [])
-    for date_entry in dates:
-        region = (date_entry.get("region") or "").lower()
-        if region in REGION_PRIORITY[:4]:  # US, World, EU, UK
-            result["release_date"] = date_entry.get("text", "")
-            break
-    if not result.get("release_date") and dates:
-        result["release_date"] = dates[0].get("text", "")
+    ordered_dates = by_region(dates, own_region)
+    if ordered_dates:
+        result["release_date"] = ordered_dates[0].get("text", "")
     
     # Get developer
     # The `{}` / `""` defaults do NOT fire when the key is present with an
@@ -679,7 +674,7 @@ def parse_game_data(jeu):
     
     # Get media URLs
     medias = (jeu.get("medias") or [])
-    result["media"] = parse_media(medias)
+    result["media"] = parse_media(medias, own_region)
     
     # Get ROM info
     roms = (jeu.get("roms") or [])
@@ -692,7 +687,7 @@ def parse_game_data(jeu):
     return result
 
 
-def parse_media(medias):
+def parse_media(medias, own_region=None):
     """Parse media list and select best options by region"""
     result = {}
     
@@ -725,27 +720,17 @@ def parse_media(medias):
     for ss_type, retrodb_type in media_type_map.items():
         if ss_type in media_by_type:
             media_list = media_by_type[ss_type]
-            selected = select_best_media(media_list)
+            selected = select_best_media(media_list, own_region)
             if selected:
                 result[retrodb_type] = selected.get("url", "")
     
     return result
 
 
-def select_best_media(media_list):
-    """Select best media item based on region priority"""
-    if not media_list:
-        return None
-    
-    # Try to find media matching region priority
-    for region in REGION_PRIORITY:
-        for media in media_list:
-            media_region = (media.get("region") or "").lower()
-            if media_region == region:
-                return media
-    
-    # Fall back to first available
-    return media_list[0]
+def select_best_media(media_list, own_region=None):
+    """The media entry nearest the game's region, or None."""
+    ordered = by_region(media_list, own_region)
+    return ordered[0] if ordered else None
 
 
 def get_localized_text(items, text_key="text", lang_key=None, region_key=None):
@@ -762,10 +747,8 @@ def get_localized_text(items, text_key="text", lang_key=None, region_key=None):
     
     # Try region-based selection
     if region_key:
-        for region in REGION_PRIORITY:
-            for item in items:
-                if (item.get(region_key) or "").lower() == region:
-                    return item.get(text_key, "")
+        for item in by_region(items):
+            return item.get(text_key, "")
     
     # Fall back to first item
     if items:

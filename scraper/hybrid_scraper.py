@@ -55,6 +55,7 @@ from scraper.metadata_normalizer import (
     normalize_esrb_rating,
 )
 from scraper.match_scorer import calculate_title_match_score
+from scraper.ss_regions import own_region as game_own_region
 
 # Try to import AI scraper
 AI_AVAILABLE = False
@@ -977,7 +978,7 @@ def _run_fallbacks(metadata, result, sources_data, game, db_game_id,
                         if data:
                             _apply_fallback(fallback_source, data, metadata, result,
                                             sources_data, db_game_id, system_folder,
-                                            force_overwrite)
+                                            force_overwrite, own_region=game_own_region(game))
                 except Exception as fallback_error:
                     logger.warning(f"Fallback scraper {fallback_source} failed: {fallback_error}")
                 apply_progress.step_done()
@@ -1116,7 +1117,7 @@ _FALLBACK_FETCHERS = {
 
 
 def _apply_fallback(source, data, metadata, result, sources_data, db_game_id,
-                    system_folder, force_overwrite):
+                    system_folder, force_overwrite, own_region=None):
     """Apply one fetched fallback record, fill-only, on the caller's thread."""
     sources_data[source] = data
     if source == 'esde':
@@ -1135,7 +1136,8 @@ def _apply_fallback(source, data, metadata, result, sources_data, db_game_id,
         label = 'IGDB'
     elif source == 'screenscraper':
         logger.info(f"Found ScreenScraper match: {data.get('nom', 'Unknown')} (ID: {data.get('id')})")
-        apply_screenscraper_to_metadata(metadata, data, db_game_id, result, fill_only=True)
+        apply_screenscraper_to_metadata(metadata, data, db_game_id, result, fill_only=True,
+                                        own_region=own_region)
         label = 'ScreenScraper'
     else:
         apply_rawg_to_metadata(metadata, data, db_game_id, result, fill_only=True)
@@ -1604,7 +1606,8 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                     if ss_data:
                         logger.info(f"Using cached ScreenScraper data for game {ss_game_id}")
                         sources_data['screenscraper'] = ss_data
-                        apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result)
+                        apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result,
+                                                        own_region=game_own_region(game))
                         result['sources_used'].append('ScreenScraper')
                     else:
                         # Cache expired or not found - try ROM-based lookup as fallback
@@ -1614,10 +1617,12 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                         if rom_path and ss_system_id:
                             ss_devid = api_keys.get('screenscraper_devid', '')
                             ss_devpassword = api_keys.get('screenscraper_devpassword', '')
-                            ss_data = get_game_info(rom_path, system_folder, ss_username, ss_password, ss_devid, ss_devpassword)
+                            ss_data = get_game_info(rom_path, system_folder, ss_username, ss_password, ss_devid, ss_devpassword,
+                                                    own_region=game_own_region(game))
                             if ss_data and 'error' not in ss_data:
                                 sources_data['screenscraper'] = ss_data
-                                apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result)
+                                apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result,
+                                                                own_region=game_own_region(game))
                                 result['sources_used'].append('ScreenScraper')
             except Exception as e:
                 logger.warning(f"Primary ScreenScraper fetch/apply failed for {primary_id}: {e}; "

@@ -628,6 +628,7 @@ class TestPass41_6AExtendSingletonLockOtherJobs:
         ('services.jobs.platform_sync', 'SteamSyncJob', 'steam_sync'),
         ('services.jobs.platform_sync', 'XboxSyncJob', 'xbox_sync'),
         ('services.jobs.official_names', 'OfficialNamesJob', 'official_names'),
+        ('services.jobs.ss_region_repair', 'SsRegionRepairJob', 'ss_region_repair'),
     ]
 
     def test_each_job_has_singleton_fd_attribute(self):
@@ -707,7 +708,12 @@ class TestPass41_6AExtendSingletonLockOtherJobs:
             'SteamSyncJob': lambda j: j.start(user_id=1),
             'XboxSyncJob': lambda j: j.start(user_id=1),
             'OfficialNamesJob': lambda j: j.start(),
+            'SsRegionRepairJob': lambda j: j.start(),
         }
+        monkeypatch.setattr(
+            'services.jobs.ss_region_repair.load_scraper_settings',
+            lambda: {'api_keys': {'screenscraper_username': 'u', 'screenscraper_password': 'p'}},
+        )
 
         for modname, clsname, expected_name in self.JOB_MODULES:
             mod = importlib.import_module(modname)
