@@ -15,6 +15,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import IMAGE_PATH, STATIC_PATH
 from scraper.base_scraper import get_scraper_conn
+from scraper.image_dedup import get_existing_screenshot_hashes, keep_screenshot_if_unique
 
 # Import settings_manager for dynamic path resolution
 # (config.py has empty defaults; actual paths live in data/settings.json)
@@ -697,142 +698,145 @@ def fetch_esde_game_details(game_path, system_folder=None):
             'esde_data': game
         }
 
-    logger.error(f"No matching game found for path: {game_path} (decoded: {decoded_game_path}) in {system_folder}")
+    # Not an error: a game often has no row, and every caller handles None.
+    logger.info(f"No matching game found for path: {game_path} (decoded: {decoded_game_path}) in {system_folder}")
     return None
 
 
-def apply_esde_metadata(db_game_id, game_data, system_folder=None, existing_boxart=None, existing_screenshots=None, force_overwrite=False):
-    """
-    Apply ES-DE metadata to a game in the database.
-    Copies images, screenshots, videos from ES-DE media folders.
+def _find_esde_media_base(system_folder, esde_gl_path, esde_base):
+    """The first existing downloaded_media folder for a system, or None."""
+    possible_media_bases = []
+    # Try explicit config setting first
+    esde_media = _get_esde_media_path()
+    if esde_media:
+        possible_media_bases.append(os.path.join(esde_media, system_folder))
 
-    IMPORTANT: This function follows the "augment, don't replace" principle:
-    - Boxart is only copied if existing_boxart is None/empty (unless force_overwrite=True)
-    - Screenshots are always appended to existing_screenshots, never replaced
+    # Try multiple possible locations for downloaded_media
+    if esde_base:
+        # Standard: gamelists and downloaded_media are siblings
+        possible_media_bases.append(os.path.join(esde_base, 'downloaded_media', system_folder))
+        # In case esde_gl_path is the ES-DE root
+        possible_media_bases.append(os.path.join(esde_gl_path, 'downloaded_media', system_folder))
+        # AppImage location
+        possible_media_bases.append(os.path.join(esde_base, 'ES-DE', 'downloaded_media', system_folder))
+        # Check parent of parent (if gamelists is deep)
+        parent_of_base = os.path.dirname(esde_base)
+        possible_media_bases.append(os.path.join(parent_of_base, 'downloaded_media', system_folder))
 
-    Args:
-        force_overwrite: If True, replace existing media even if present in DB
+    # Also check common ES-DE locations
+    home = os.path.expanduser('~')
+    possible_media_bases.extend([
+        os.path.join(home, '.es-de', 'downloaded_media', system_folder),
+        os.path.join(home, 'ES-DE', 'downloaded_media', system_folder),
+        os.path.join(home, '.var', 'app', 'org.es_de.frontend', 'data', 'ES-DE', 'downloaded_media', system_folder),
+    ])
+
+    for path in possible_media_bases:
+        if os.path.exists(path):
+            logger.info(f"  Found downloaded_media at: {path}")
+            return path
+
+    logger.warning(f"  Could not find downloaded_media folder for {system_folder}")
+    logger.warning(f"  Tried: {possible_media_bases[:3]}...")  # Log first 3 attempts
+    return None
+
+
+def _media_names(rom_path, esde_data):
+    """The names ES-DE may have filed this game's media under, best first.
+
+    A folder ROM's media keeps the whole folder name ("Game (USA).PS3.png"), a
+    file's drops its extension. The game's own ROM comes before a row chosen
+    under another file name, whose media is then the row's.
     """
+    names = []
+    row_path = (esde_data.get('path') or '').rstrip('/')
+    for path in ((rom_path or '').rstrip('/'), row_path):
+        filename = os.path.basename(path)
+        if filename:
+            names += [filename, os.path.splitext(filename)[0]]
+    return list(dict.fromkeys(names))
+
+
+# field, gamelist tag, downloaded_media folder, destination folder and file
+# stem for a gamelist tag's copy and a folder's copy. `boxart` is only ever
+# 'cover': ES-DE's 'image' and 'miximage' are often screenshots, not box art.
+_ESDE_SINGLE_MEDIA = (
+    ('boxart', 'cover', 'covers', 'boxart', 'esde_cover', 'esde_covers'),
+    ('boxart_3d', '3dbox', '3dboxes', 'boxart_3d', 'esde_3dbox', 'esde_3dboxes'),
+    ('fanart', 'fanart', 'fanart', 'fanart', 'esde_fanart', 'esde_fanart'),
+    ('video', 'video', 'videos', 'videos', 'esde', 'esde'),
+    ('manual', 'manual', 'manuals', 'manuals', 'esde', 'esde'),
+)
+_ESDE_SCREENSHOTS = (
+    ('screenshot', 'screenshots', 'esde_ss'),
+    ('titlescreen', 'titlescreens', 'esde_ts'),
+)
+
+
+def copy_esde_media(db_game_id, game_data, system_folder=None, existing=None,
+                    force_overwrite=False):
+    """Copy one game's ES-DE media into RetroDB's folders; writes no column.
+
+    `existing` maps a media field to its current value. A field that has one
+    is left alone, whatever mode this is, so a file another source just
+    downloaded is never replaced or deleted. Screenshots are appended to
+    `existing['screenshots']`, skipping any that look like one already there.
+
+    `force_overwrite` (Full Re-scrape) deletes the row's old box art once ES-DE
+    has really supplied a replacement.
+
+    Returns the names copied in this run only: {field: filename} for single
+    media, and {'screenshots': [new names]} when any were added.
+    """
+    existing = existing or {}
+    copied = {}
     conn = None
     try:
         conn = get_scraper_conn()
-        c = conn.cursor()
-
-        # Get game info including system folder and ROM path
-        c.execute("""
-            SELECT g.rom_path, s.folder, g.boxart, g.screenshots, g.boxart_3d 
-            FROM games g 
-            JOIN systems s ON g.system_id = s.id 
+        row = conn.execute("""
+            SELECT g.rom_path, s.folder, g.boxart, g.boxart_3d
+            FROM games g
+            JOIN systems s ON g.system_id = s.id
             WHERE g.id = ?
-        """, (db_game_id,))
-        result = c.fetchone()
-        
-        if not result:
+        """, (db_game_id,)).fetchone()
+        conn.close()
+        conn = None
+        if not row:
             logger.error(f"Game {db_game_id} not found")
-            conn.close()
-            return False
-        
-        rom_path, sys_folder, db_boxart, db_screenshots, db_boxart_3d = result
+            return copied
+
+        rom_path, sys_folder, db_boxart, db_boxart_3d = tuple(row)
         system_folder = system_folder or sys_folder
-        
-        # Use existing values from DB if not provided as parameters
-        # UNLESS force_overwrite is True - then we want to replace existing media
-        # Track old filenames for deferred cleanup (only delete after replacements found)
-        _old_boxart = None
-        _old_boxart_3d = None
-        if force_overwrite:
-            # In force overwrite mode, treat as if no existing media so ES-DE
-            # tries to find new files. Old files are only deleted later if
-            # replacements are successfully found.
-            existing_boxart = None
-            existing_screenshots = None
-            existing_boxart_3d = None
-            _old_boxart = db_boxart
-            _old_boxart_3d = db_boxart_3d
-        else:
-            if existing_boxart is None:
-                existing_boxart = db_boxart
-            if existing_screenshots is None:
-                existing_screenshots = db_screenshots
-            existing_boxart_3d = db_boxart_3d
-        
-        # Get ROM filename without extension - ES-DE names media files after the ROM
-        rom_filename = os.path.basename(rom_path)
-        rom_name_no_ext = os.path.splitext(rom_filename)[0]
-        
-        # Get the ES-DE base path and downloaded_media location
+        esde_data = game_data.get('esde_data', game_data)
+        names = _media_names(rom_path, esde_data)
+
         # esde_gl_path could be:
         #   /path/to/ES-DE/gamelists  -> downloaded_media is /path/to/ES-DE/downloaded_media
         #   /path/to/gamelists -> downloaded_media could be /path/to/downloaded_media
         esde_gl_path = _get_esde_gamelists_path()
         esde_base = os.path.dirname(esde_gl_path) if esde_gl_path else None
-        downloaded_media_base = None
         gamelist_dir = os.path.join(esde_gl_path, system_folder) if esde_gl_path else None
+        downloaded_media_base = _find_esde_media_base(system_folder, esde_gl_path, esde_base)
+        logger.info(f"Copying ES-DE media for game {db_game_id}: names {names}, "
+                    f"from {downloaded_media_base}")
 
-        # Try explicit config setting first
-        possible_media_bases = []
-        esde_media = _get_esde_media_path()
-        if esde_media:
-            possible_media_bases.append(os.path.join(esde_media, system_folder))
-
-        # Try multiple possible locations for downloaded_media
-        if esde_base:
-            # Standard: gamelists and downloaded_media are siblings
-            possible_media_bases.append(os.path.join(esde_base, 'downloaded_media', system_folder))
-            # In case esde_gl_path is the ES-DE root
-            possible_media_bases.append(os.path.join(esde_gl_path, 'downloaded_media', system_folder))
-            # AppImage location
-            possible_media_bases.append(os.path.join(esde_base, 'ES-DE', 'downloaded_media', system_folder))
-            # Check parent of parent (if gamelists is deep)
-            parent_of_base = os.path.dirname(esde_base)
-            possible_media_bases.append(os.path.join(parent_of_base, 'downloaded_media', system_folder))
-        
-        # Also check common ES-DE locations
-        home = os.path.expanduser('~')
-        possible_media_bases.extend([
-            os.path.join(home, '.es-de', 'downloaded_media', system_folder),
-            os.path.join(home, 'ES-DE', 'downloaded_media', system_folder),
-            os.path.join(home, '.var', 'app', 'org.es_de.frontend', 'data', 'ES-DE', 'downloaded_media', system_folder),
-        ])
-        
-        # Find the first valid downloaded_media path
-        for path in possible_media_bases:
-            if os.path.exists(path):
-                downloaded_media_base = path
-                logger.info(f"  Found downloaded_media at: {path}")
-                break
-        
-        if not downloaded_media_base:
-            logger.warning(f"  Could not find downloaded_media folder for {system_folder}")
-            logger.warning(f"  Tried: {possible_media_bases[:3]}...")  # Log first 3 attempts
-        
-        logger.info(f"Applying ES-DE metadata for game {db_game_id}")
-        logger.info(f"  ROM filename: {rom_filename}")
-        logger.info(f"  ROM name (no ext): {rom_name_no_ext}")
-        logger.info(f"  System folder: {system_folder}")
-        logger.info(f"  Downloaded media base: {downloaded_media_base}")
-        
-        # Helper function to find media in ES-DE downloaded_media folder by ROM name
         def find_media_by_rom_name(media_type):
             """Find media file in ES-DE downloaded_media/{system}/{media_type}/"""
             if not downloaded_media_base:
                 return None
-            
             media_folder = os.path.join(downloaded_media_base, media_type)
             if not os.path.exists(media_folder):
                 logger.debug(f"  Media folder not found: {media_folder}")
                 return None
-            
-            # Look for file matching ROM name with various extensions
-            for ext in ['.png', '.jpg', '.jpeg', '.webp', '.gif', '.mp4', '.mkv', '.avi', '.webm', '.pdf']:
-                media_path = os.path.join(media_folder, rom_name_no_ext + ext)
-                if os.path.exists(media_path):
-                    logger.info(f"  Found {media_type}: {os.path.basename(media_path)}")
-                    return media_path
-            
-            logger.debug(f"  No {media_type} found for: {rom_name_no_ext}")
+            for name in names:
+                for ext in ['.png', '.jpg', '.jpeg', '.webp', '.gif', '.mp4', '.mkv', '.avi', '.webm', '.pdf']:
+                    media_path = os.path.join(media_folder, name + ext)
+                    if os.path.exists(media_path):
+                        logger.info(f"  Found {media_type}: {os.path.basename(media_path)}")
+                        return media_path
+            logger.debug(f"  No {media_type} found for: {names}")
             return None
-        
+
         # Helper function to resolve ES-DE media paths from gamelist.xml.
         #
         # Pass 25.1 — path-traversal guard. Earlier versions accepted any
@@ -878,22 +882,18 @@ def apply_esde_metadata(db_game_id, game_data, system_folder=None, existing_boxa
                     return full_path
 
             return None
-        
-        # Helper function to copy media file
-        def copy_media(src_path, dest_folder, prefix):
-            if not src_path or not os.path.exists(src_path):
-                return None
-            
+
+        def copy_media(src_path, dest_folder, stem):
             ext = os.path.splitext(src_path)[1].lower()
-            filename = f"{db_game_id}_{prefix}{ext}"
-            dest_dir = os.path.join(IMAGE_PATH, dest_folder)
+            filename = f"{db_game_id}_{stem}{ext}"
+            root = STATIC_PATH if dest_folder == 'videos' else IMAGE_PATH
+            dest_dir = os.path.join(root, dest_folder)
             os.makedirs(dest_dir, exist_ok=True)
             dest_path = os.path.join(dest_dir, filename)
-            
             try:
                 shutil.copy2(src_path, dest_path)
                 # Standardize image size for supported types
-                if dest_folder in ('boxart', 'screenshots', 'boxart_3d', 'controllers'):
+                if dest_folder in ('boxart', 'screenshots', 'boxart_3d'):
                     try:
                         from services.image_utils import standardize_downloaded_image
                         standardize_downloaded_image(dest_path, dest_folder)
@@ -904,19 +904,107 @@ def apply_esde_metadata(db_game_id, game_data, system_folder=None, existing_boxa
             except Exception as e:
                 logger.error(f"  Failed to copy {dest_folder}: {e}")
                 return None
-        
+
+        for field, tag, media_type, dest_folder, tag_stem, folder_stem in _ESDE_SINGLE_MEDIA:
+            if existing.get(field):
+                logger.info(f"  Skipping {field} import - already has: {existing[field]}")
+                continue
+            filename = None
+            tag_src = resolve_media_path(esde_data.get(tag, ''))
+            if tag_src:
+                filename = copy_media(tag_src, dest_folder, tag_stem)
+            if not filename:
+                folder_src = find_media_by_rom_name(media_type)
+                if folder_src:
+                    filename = copy_media(folder_src, dest_folder, folder_stem)
+            if filename:
+                copied[field] = filename
+
+        # Old box art goes only once its replacement is really here.
+        if force_overwrite:
+            for field, old in (('boxart', db_boxart), ('boxart_3d', db_boxart_3d)):
+                if old and copied.get(field) and copied[field] != old:
+                    old_path = os.path.join(IMAGE_PATH, field, old)
+                    if os.path.exists(old_path):
+                        try:
+                            os.remove(old_path)
+                            logger.info(f"  Deleted old {field} (replaced): {old}")
+                        except OSError as e:
+                            logger.warning(f"  Could not delete old {field}: {e}")
+
+        # Screenshots: always appended, never replaced.
+        listed = [s.strip() for s in (existing.get('screenshots') or '').split(',') if s.strip()]
+        hashes = get_existing_screenshot_hashes(listed)
+        new_screenshots = []
+        for tag, media_type, stem in _ESDE_SCREENSHOTS:
+            src = resolve_media_path(esde_data.get(tag, '')) or find_media_by_rom_name(media_type)
+            if not src:
+                continue
+            ext = os.path.splitext(src)[1].lower()
+            if f"{db_game_id}_{stem}{ext}" in listed:
+                continue
+            filename = copy_media(src, 'screenshots', stem)
+            if filename and keep_screenshot_if_unique(
+                    os.path.join(IMAGE_PATH, 'screenshots', filename),
+                    filename, hashes, 'ES-DE'):
+                new_screenshots.append(filename)
+        if new_screenshots:
+            logger.info(f"  Added {len(new_screenshots)} new screenshots")
+            copied['screenshots'] = new_screenshots
+
+    except Exception as e:
+        logger.error(f"Error copying ES-DE media: {e}")
+    finally:
+        if conn:
+            conn.close()
+    return copied
+
+
+def apply_esde_metadata(db_game_id, game_data, system_folder=None):
+    """Apply ES-DE data straight to a game's row: the single-source route.
+
+    Fill-only for media (a field that has a value keeps it); text from ES-DE
+    replaces text it has a value for. A hybrid scrape does not come here: it
+    merges through hybrid_scraper._merge_esde.
+    """
+    conn = None
+    try:
+        conn = get_scraper_conn()
+        c = conn.cursor()
+
+        c.execute("""
+            SELECT g.rom_path, g.boxart, g.boxart_3d, g.screenshots, g.fanart, g.video, g.manual
+            FROM games g
+            WHERE g.id = ?
+        """, (db_game_id,))
+        result = c.fetchone()
+
+        if not result:
+            logger.error(f"Game {db_game_id} not found")
+            return False
+
+        rom_path, *media = tuple(result)
+        existing = dict(zip(('boxart', 'boxart_3d', 'screenshots', 'fanart', 'video', 'manual'), media))
+        rom_filename = os.path.basename((rom_path or '').rstrip('/'))
+        copied = copy_esde_media(db_game_id, game_data, system_folder, existing)
+        new_screenshots = copied.get('screenshots')
+        screenshots_str = None
+        if new_screenshots:
+            old = [s.strip() for s in (existing['screenshots'] or '').split(',') if s.strip()]
+            screenshots_str = ','.join(old + new_screenshots)
+
         # Prepare metadata
         esde_data = game_data.get('esde_data', game_data)
-        
+
         name = esde_data.get('name', '') or game_data.get('name', '')
         description = esde_data.get('desc', '') or game_data.get('description', '')
-        
+
         # Resolve publisher/developer - skip numeric IDs
         raw_developer = esde_data.get('developer', '') or game_data.get('developer', '')
         raw_publisher = esde_data.get('publisher', '') or game_data.get('publisher', '')
         developer = resolve_publisher_developer(raw_developer, 'developer')
         publisher = resolve_publisher_developer(raw_publisher, 'publisher')
-        
+
         # Normalize genre to canonical hyphenated forms and players to the max
         # int — consistent with the IGDB/TGDB apply paths. Without this, ES-DE
         # gamelist genres ("Shoot 'Em Up") fragment the genre filter and a
@@ -928,215 +1016,19 @@ def apply_esde_metadata(db_game_id, game_data, system_folder=None, existing_boxa
         # alone. A '1' default wrote players=1 / modes='Single-Player' through
         # COALESCE over curated values on every ES-DE import (Pass 40.6 class).
         players = normalize_players_value(esde_data.get('players') or game_data.get('players'))
-        
+
         # Format release date
         release_date = esde_data.get('releasedate', '') or game_data.get('release_date', '')
         if release_date and len(release_date) >= 8 and 'T' in release_date:
             release_date = f"{release_date[:4]}-{release_date[4:6]}-{release_date[6:8]}"
-        
+
         logger.info(f"  Title: {name}")
         logger.info(f"  Developer: {developer}")
         logger.info(f"  Publisher: {publisher}")
-        
-        # === IMPORT BOXART === (only if not already present)
-        # First try gamelist.xml paths, then search downloaded_media folders by ROM name
-        # Prioritize 2D boxart for main boxart field, store 3D boxart separately
-        boxart_filename = None
-        boxart_3d_filename = None
-        
-        if existing_boxart:
-            logger.info(f"  Skipping boxart import - already has: {existing_boxart}")
-            boxart_filename = existing_boxart
-        else:
-            # Try gamelist.xml paths first - ONLY use actual cover art
-            # IMPORTANT: 'image' and 'miximage' in ES-DE are often screenshots, NOT covers
-            # Only 'cover' is reliable as actual box art
-            for img_field in ['cover']:
-                img_path = esde_data.get(img_field, '')
-                if img_path:
-                    resolved = resolve_media_path(img_path)
-                    if resolved:
-                        boxart_filename = copy_media(resolved, 'boxart', f'esde_{img_field}')
-                        if boxart_filename:
-                            break
-            
-            # If no boxart from gamelist, search downloaded_media/covers folder ONLY
-            # IMPORTANT: Do NOT search miximages - those are composite screenshots, not box art
-            if not boxart_filename:
-                src_path = find_media_by_rom_name('covers')
-                if src_path:
-                    boxart_filename = copy_media(src_path, 'boxart', 'esde_covers')
-            
-            # If ES-DE doesn't have actual cover art, leave boxart_filename as None
-            # This allows the hybrid scraper to try other sources (ScreenScraper, RAWG, IGDB, etc.)
-        
-        # === IMPORT 3D BOXART === (separate from regular boxart)
-        # Check for existing 3D boxart (fetched from DB at start of function)
-        
-        if not existing_boxart_3d:
-            # Try gamelist.xml '3dbox' field first
-            box3d_path = esde_data.get('3dbox', '')
-            if box3d_path:
-                resolved = resolve_media_path(box3d_path)
-                if resolved:
-                    boxart_3d_filename = copy_media(resolved, 'boxart_3d', 'esde_3dbox')
-            
-            # If no 3D boxart from gamelist, search downloaded_media/3dboxes
-            if not boxart_3d_filename:
-                src_path = find_media_by_rom_name('3dboxes')
-                if src_path:
-                    boxart_3d_filename = copy_media(src_path, 'boxart_3d', 'esde_3dboxes')
-            
-            if boxart_3d_filename:
-                logger.info(f"  Imported 3D boxart: {boxart_3d_filename}")
-        else:
-            boxart_3d_filename = existing_boxart_3d
-        
-        # === DEFERRED CLEANUP: delete old media only if replacements were found ===
-        if _old_boxart and boxart_filename and boxart_filename != _old_boxart:
-            old_path = os.path.join(IMAGE_PATH, 'boxart', _old_boxart)
-            if os.path.exists(old_path):
-                try:
-                    os.remove(old_path)
-                    logger.info(f"  Deleted old boxart (replaced): {_old_boxart}")
-                except Exception as e:
-                    logger.warning(f"  Could not delete old boxart: {e}")
-        if _old_boxart_3d and boxart_3d_filename and boxart_3d_filename != _old_boxart_3d:
-            old_path = os.path.join(IMAGE_PATH, 'boxart_3d', _old_boxart_3d)
-            if os.path.exists(old_path):
-                try:
-                    os.remove(old_path)
-                    logger.info(f"  Deleted old 3D boxart (replaced): {_old_boxart_3d}")
-                except Exception as e:
-                    logger.warning(f"  Could not delete old 3D boxart: {e}")
 
-        # === IMPORT SCREENSHOTS === (always append, never replace)
-        # Parse existing screenshots
-        existing_ss_list = []
-        if existing_screenshots:
-            existing_ss_list = [s.strip() for s in existing_screenshots.split(',') if s.strip()]
-            logger.info(f"  Existing screenshots: {len(existing_ss_list)}")
-        
-        new_screenshots = []
-        
-        # Try gamelist.xml paths first
-        for ss_field, prefix in [('screenshot', 'esde_ss'), ('titlescreen', 'esde_ts')]:
-            ss_path = esde_data.get(ss_field, '')
-            if ss_path:
-                resolved = resolve_media_path(ss_path)
-                if resolved:
-                    ss_file = copy_media(resolved, 'screenshots', prefix)
-                    if ss_file and ss_file not in existing_ss_list:
-                        new_screenshots.append(ss_file)
-        
-        # If no new screenshots from gamelist, search downloaded_media folders by ROM name
-        if not new_screenshots:
-            for media_type, prefix in [('screenshots', 'esde_ss'), ('titlescreens', 'esde_ts')]:
-                src_path = find_media_by_rom_name(media_type)
-                if src_path:
-                    ss_file = copy_media(src_path, 'screenshots', prefix)
-                    if ss_file and ss_file not in existing_ss_list:
-                        new_screenshots.append(ss_file)
-        
-        # Combine existing + new screenshots
-        all_screenshots = existing_ss_list + new_screenshots
-        screenshots_str = ','.join(all_screenshots) if all_screenshots else None
-        
-        if new_screenshots:
-            logger.info(f"  Added {len(new_screenshots)} new screenshots")
-        
-        # === IMPORT FANART (separate from screenshots for background use) ===
-        fanart_filename = None
-        
-        # Try gamelist.xml path first
-        fanart_path = esde_data.get('fanart', '')
-        if fanart_path:
-            resolved = resolve_media_path(fanart_path)
-            if resolved:
-                fanart_filename = copy_media(resolved, 'fanart', 'esde_fanart')
-        
-        # If no fanart from gamelist, search downloaded_media
-        if not fanart_filename:
-            src_path = find_media_by_rom_name('fanart')
-            if src_path:
-                fanart_dir = os.path.join(IMAGE_PATH, 'fanart')
-                os.makedirs(fanart_dir, exist_ok=True)
-                ext = os.path.splitext(src_path)[1].lower()
-                fanart_filename = f"{db_game_id}_esde_fanart{ext}"
-                try:
-                    shutil.copy2(src_path, os.path.join(fanart_dir, fanart_filename))
-                    logger.info(f"  Copied fanart: {fanart_filename}")
-                except Exception as e:
-                    logger.warning(f"  Failed to copy fanart: {e}")
-                    fanart_filename = None
-        
-        # === IMPORT VIDEO ===
-        video_filename = None
-        video_path = esde_data.get('video', '')
-        if video_path:
-            resolved = resolve_media_path(video_path)
-            if resolved:
-                video_dir = os.path.join(STATIC_PATH, 'videos')
-                os.makedirs(video_dir, exist_ok=True)
-                ext = os.path.splitext(resolved)[1].lower()
-                video_filename = f"{db_game_id}_esde{ext}"
-                try:
-                    shutil.copy2(resolved, os.path.join(video_dir, video_filename))
-                    logger.info(f"  Copied video: {video_filename}")
-                except Exception as e:
-                    logger.warning(f"  Failed to copy video: {e}")
-                    video_filename = None
-        
-        # If no video from gamelist, search downloaded_media
-        if not video_filename:
-            src_path = find_media_by_rom_name('videos')
-            if src_path:
-                video_dir = os.path.join(STATIC_PATH, 'videos')
-                os.makedirs(video_dir, exist_ok=True)
-                ext = os.path.splitext(src_path)[1].lower()
-                video_filename = f"{db_game_id}_esde{ext}"
-                try:
-                    shutil.copy2(src_path, os.path.join(video_dir, video_filename))
-                    logger.info(f"  Copied video: {video_filename}")
-                except Exception as e:
-                    logger.warning(f"  Failed to copy video: {e}")
-                    video_filename = None
-        
-        # === IMPORT MANUAL ===
-        manual_filename = None
-        manual_path = esde_data.get('manual', '')
-        if manual_path:
-            resolved = resolve_media_path(manual_path)
-            if resolved:
-                manual_dir = os.path.join(IMAGE_PATH, 'manuals')
-                os.makedirs(manual_dir, exist_ok=True)
-                ext = os.path.splitext(resolved)[1].lower()
-                manual_filename = f"{db_game_id}_esde{ext}"
-                try:
-                    shutil.copy2(resolved, os.path.join(manual_dir, manual_filename))
-                    logger.info(f"  Copied manual: {manual_filename}")
-                except Exception as e:
-                    logger.warning(f"  Failed to copy manual: {e}")
-                    manual_filename = None
-        
-        # If no manual from gamelist, search downloaded_media
-        if not manual_filename:
-            src_path = find_media_by_rom_name('manuals')
-            if src_path:
-                manual_dir = os.path.join(IMAGE_PATH, 'manuals')
-                os.makedirs(manual_dir, exist_ok=True)
-                ext = os.path.splitext(src_path)[1].lower()
-                manual_filename = f"{db_game_id}_esde{ext}"
-                try:
-                    shutil.copy2(src_path, os.path.join(manual_dir, manual_filename))
-                    logger.info(f"  Copied manual: {manual_filename}")
-                except Exception as e:
-                    logger.warning(f"  Failed to copy manual: {e}")
-                    manual_filename = None
-        
         # Extract region from ROM filename
         region = extract_region_from_filename(rom_filename)
-        
+
         # Derive game modes from players (only when the gamelist gave a count)
         from services.normalization import modes_from_player_count
         modes = modes_from_player_count(players) or None
@@ -1150,8 +1042,7 @@ def apply_esde_metadata(db_game_id, game_data, system_folder=None, existing_boxa
         # flag (0) when nothing was filled.
         any_field_filled = any((
             name, publisher, developer, release_date, genre, players, modes,
-            description, boxart_filename, boxart_3d_filename, screenshots_str,
-            fanart_filename, video_filename, manual_filename,
+            description, *copied.values(),
         ))
 
         # Update database - use COALESCE to preserve existing data if new data is empty
@@ -1183,17 +1074,17 @@ def apply_esde_metadata(db_game_id, game_data, system_folder=None, existing_boxa
             players if players else None,
             modes if modes else None,
             description if description else None,
-            boxart_filename,
-            boxart_3d_filename,
+            copied.get('boxart'),
+            copied.get('boxart_3d'),
             screenshots_str,
-            fanart_filename,
-            video_filename,
-            manual_filename,
+            copied.get('fanart'),
+            copied.get('video'),
+            copied.get('manual'),
             region,
             1 if any_field_filled else None,
             db_game_id
         ))
-        
+
         conn.commit()
 
         logger.info(f"Applied ES-DE metadata to game {db_game_id}")
@@ -1344,9 +1235,7 @@ def import_system_logos():
                 for logo_name in possible_logo_names:
                     logo_path = os.path.join(system_media_path, logo_name)
                     if os.path.exists(logo_path):
-                        # Keep original extension for webp files
-                        dest_ext = ext if ext in ['.webp', '.svg'] else '.png'
-                        dest_path = os.path.join(dest_dir, f'{system_folder}{dest_ext}')
+                        dest_path = os.path.join(dest_dir, f'{system_folder}{ext}')
                         if not os.path.exists(dest_path):
                             try:
                                 shutil.copy2(logo_path, dest_path)
@@ -1369,16 +1258,17 @@ def import_system_logos():
             for file in files:
                 file_ext = os.path.splitext(file)[1].lower()
                 if file_ext in SUPPORTED_EXTENSIONS:
-                    # Check if this looks like a system logo
-                    file_lower = file.lower()
+                    # A logo is named for its system (nes.svg), or sits in the
+                    # system's own folder (nes/logo.svg). A part of a word is no
+                    # match: "gb" is inside "background_gbstyle".
+                    stem = os.path.splitext(file)[0].lower()
+                    folder = os.path.basename(root).lower()
                     for system in ['nes', 'snes', 'n64', 'gb', 'gba', 'gbc', 'nds', 'psx', 'ps2', 
                                    'genesis', 'megadrive', 'dreamcast', 'saturn', 'gamegear',
                                    'atari2600', 'atari7800', 'mame', 'arcade', 'neogeo']:
-                        if system in file_lower or system in root.lower():
+                        if stem == system or (folder == system and stem in ('logo', 'system')):
                             src_path = os.path.join(root, file)
-                            # Keep original extension for webp/svg
-                            dest_ext = file_ext if file_ext in ['.webp', '.svg'] else '.png'
-                            dest_path = os.path.join(dest_dir, f'{system}{dest_ext}')
+                            dest_path = os.path.join(dest_dir, f'{system}{file_ext}')
                             if not os.path.exists(dest_path):
                                 try:
                                     shutil.copy2(src_path, dest_path)

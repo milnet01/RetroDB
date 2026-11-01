@@ -1,6 +1,16 @@
 - version: 3.34.1
-  date: 2026-10-31
+  date: 2026-11-01
   tags:
+  - type: fix
+    label: ES-DE now keeps its place in your scraper order when it is not the main source. Its descriptions, companies and covers were being replaced by later sources and the AI
+  - type: fix
+    label: Screenshots and title screens from ES-DE are now added to a game when ES-DE is not the main source, unless they look the same as one it already has
+  - type: fix
+    label: ES-DE no longer copies a fan art picture, video or manual the game already has, and a Full Re-scrape no longer deletes a box another source has just downloaded
+  - type: fix
+    label: ES-DE now reads the entry for the game's own ROM file, so another release with the same name cannot supply its details, and PS3 folder games now find their ES-DE covers
+  - type: fix
+    label: Importing system logos from ES-DE no longer takes an unrelated picture because its name contains letters such as "gb"
   - type: fix
     label: A tag in a ROM's file name, such as (USA), now decides its region. The AI is no longer asked, as it could list a USA copy as Europe or Japan
   - type: feature

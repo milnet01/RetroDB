@@ -10269,7 +10269,16 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.205 ES-DE as a fallback source goes through the normal merge (fix, M).
-- **Status**: todo
+- **Resolution** (2026-11-01): Done 2026-11-01. `_merge_esde` is now the one route for primary and
+  fallback; `copy_esde_media` copies only into empty fields and names
+  only what it copied. Also closed: finding 4 (proven by a test: Full
+  Re-scrape did delete the fresh box), merge note 6, and digits-only
+  company names on this route (989). Removal check: Delete and
+  Screenshot Dedup remove the file, so an unlisted `*_esde_ss*` on disk
+  was not removed through them; but RetroDB keeps no record of a
+  removal, so a later scrape copies a removed ES-DE shot back from
+  ES-DE's folder. No repair built; see the follow-up item.
+- **Status**: done
 - **Source**: PASS-59-162, 2026-10-31. Notes: esde 1, 2, 3, 7, 8, 12, 13; merge_and_stored 2, 6.
 - **Problem**: `_apply_fallback` calls `apply_esde_metadata`, which writes to the database but not to `metadata`. Fields stay marked as missing, so later sources and paid AI replace them, against the priority order. Fallback screenshots are dropped, and copied fan art, video and manuals can be discarded. The row is picked by title, not ROM file, and folder ROMs miss their media.
 - **Fix**: share the primary path's merge block with the fallback. Check whether screenshots a user removed on purpose would come back before any repair.
@@ -10404,6 +10413,13 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Source**: measured 2026-10-31, while aligning the local gate with GitHub CI.
 - **Problem**: in the gate's environment, which has the CPU onnxruntime from the lockfile, `tests/test_upload_image_pipeline.py::test_screenshot_duplicates_are_dropped` took 66 to 148 s of a suite that takes 79 to 198 s, depending on machine load. The whole suite on the system Python took 61 s. `test_fu1_csp.py::test_every_action_is_defined` is next, at 37 to 55 s.
 - **Fix**: find what makes it slow; a duplicate check should not need a real upscale. Every push and both GitHub Python versions run it, so this is the largest saving available in the gate.
+
+---
+
+#### Pass 59.222 A screenshot the user removed stays removed when the game is scraped again (fix, M).
+- **Status**: todo
+- **Problem**: since PASS-59-205 a scrape copies ES-DE's screenshots into the list, so one deleted by hand or in Screenshot Review comes back from ES-DE's folder. Online sources can re-download theirs the same way. No record of a removal exists.
+- **Fix**: record what the user removes per game (a removed picture's look or source name) and have every merger skip it. Decide this before the user's Screenshot Review (PASS-59-161) is followed by a bulk scrape.
 
 ## Done index
 

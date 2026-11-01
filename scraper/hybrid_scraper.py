@@ -940,6 +940,7 @@ def _run_fallbacks(metadata, result, sources_data, game, db_game_id,
         # not prefetched: its prompt names the fields still empty at its turn.
         lookup = {
             'title': game_title,
+            'rom_path': game.get('rom_path'),
             'system_name': system_name,
             'system_folder': system_folder,
             'secondary_sources': secondary_sources or [],
@@ -1023,6 +1024,13 @@ def _fetch_esde(lookup):
     from scraper.scrape_esde import search_esde_games, fetch_esde_game_details
     title, folder = lookup['title'], lookup['system_folder']
     logger.info(f"Trying ES-DE fallback for: '{title}'")
+    # The row for this ROM file comes first: a title match can pick another
+    # release of the same name. A result the user ticked still wins.
+    rom_file = os.path.basename((lookup.get('rom_path') or '').rstrip('/'))
+    if rom_file and not lookup.get('user_ticked'):
+        own_row = fetch_esde_game_details(f'./{rom_file}', folder)
+        if own_row:
+            return own_row
     # ES-DE's id is the game's path in gamelist.xml.
     esde_path = _fallback_id('esde', 'ES-DE', lookup,
                              lambda: search_esde_games(title, folder, limit=5))
@@ -1116,17 +1124,59 @@ _FALLBACK_FETCHERS = {
 }
 
 
+def _merge_esde(metadata, details, result, db_game_id, system_folder,
+                force_overwrite, fill_only):
+    """Merge one ES-DE row into `metadata`, as primary or as a fallback.
+
+    Text fills only what is empty. The title follows the other sources: a
+    primary always sets it, a fallback only fills it. Media comes from
+    copy_esde_media, which leaves a field that already has a value alone and
+    names only what it copied now, so an old value in the row can never stand
+    in for ES-DE's (PASS-59-205).
+    """
+    def fill(field, value):
+        if value and not metadata[field]:
+            metadata[field] = value
+            result['filled_fields'].append(f'{field} (ES-DE)')
+
+    name = details.get('name')
+    if name and (not fill_only or not metadata['title']):
+        metadata['title'] = normalize_title(name)
+        result['filled_fields'].append('title (ES-DE)')
+    fill('description', details.get('description'))
+    fill('developer', details.get('developer'))
+    fill('publisher', details.get('publisher'))
+    fill('genre', normalize_genre(details.get('genre') or ''))
+    fill('release_date', details.get('release_date'))
+
+    from services.game_utils import normalize_players_value
+    from services.normalization import modes_from_player_count
+    players = normalize_players_value(details.get('players'))
+    if players and not metadata['players']:
+        fill('players', players)
+        if not metadata['modes']:
+            metadata['modes'] = modes_from_player_count(players)
+
+    from scraper.scrape_esde import copy_esde_media
+    copied = copy_esde_media(db_game_id, details, system_folder,
+                             existing=metadata, force_overwrite=force_overwrite)
+    for field in ('boxart', 'boxart_3d', 'fanart', 'video', 'manual'):
+        fill(field, copied.get(field))
+    if copied.get('boxart'):
+        metadata['_boxart_source'] = 'esde'
+    if copied.get('screenshots'):
+        listed = [s.strip() for s in (metadata['screenshots'] or '').split(',') if s.strip()]
+        metadata['screenshots'] = ','.join(listed + copied['screenshots'])
+        result['filled_fields'].append(f"screenshots +{len(copied['screenshots'])} (ES-DE)")
+
+
 def _apply_fallback(source, data, metadata, result, sources_data, db_game_id,
                     system_folder, force_overwrite, own_region=None):
     """Apply one fetched fallback record, fill-only, on the caller's thread."""
     sources_data[source] = data
     if source == 'esde':
-        from scraper.scrape_esde import apply_esde_metadata as esde_apply
-        # Apply ES-DE metadata - pass force_overwrite for consistent behavior
-        esde_apply(db_game_id, data, system_folder,
-                   existing_boxart=metadata.get('boxart'),
-                   existing_screenshots=metadata.get('screenshots'),
-                   force_overwrite=force_overwrite)
+        _merge_esde(metadata, data, result, db_game_id, system_folder,
+                    force_overwrite, fill_only=True)
         label = 'ES-DE'
     elif source == 'tgdb':
         apply_tgdb_to_metadata(metadata, data, db_game_id, result, fill_only=True)
@@ -1449,7 +1499,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
             esde_details = None
             try:
                 # For ES-DE, we need to fetch the game details from gamelist.xml first
-                from scraper.scrape_esde import fetch_esde_game_details, apply_esde_metadata as apply_esde
+                from scraper.scrape_esde import fetch_esde_game_details
 
                 # If primary_data was provided (from search results), use it directly
                 # This fixes the bug where selecting an ES-DE result would fetch the wrong game
@@ -1479,76 +1529,8 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
             if esde_details:
                 logger.info(f"ES-DE details found: {esde_details.get('name', 'Unknown')}")
 
-                # Apply ES-DE data to metadata
-                # As the primary (user-selected) source, always set title
-                # (matching IGDB/RAWG behavior). Other fields fill only if empty.
-                if esde_details.get('name'):
-                    metadata['title'] = normalize_title(esde_details['name'])
-                    result['filled_fields'].append('title (ES-DE)')
-                if esde_details.get('description') and not metadata['description']:
-                    metadata['description'] = esde_details['description']
-                    result['filled_fields'].append('description (ES-DE)')
-                if esde_details.get('developer') and not metadata['developer']:
-                    metadata['developer'] = esde_details['developer']
-                    result['filled_fields'].append('developer (ES-DE)')
-                if esde_details.get('publisher') and not metadata['publisher']:
-                    metadata['publisher'] = esde_details['publisher']
-                    result['filled_fields'].append('publisher (ES-DE)')
-                if esde_details.get('genre') and not metadata['genre']:
-                    metadata['genre'] = normalize_genre(esde_details['genre'])
-                    result['filled_fields'].append('genre (ES-DE)')
-                if esde_details.get('release_date') and not metadata['release_date']:
-                    metadata['release_date'] = esde_details['release_date']
-                    result['filled_fields'].append('release_date (ES-DE)')
-                if esde_details.get('players') and not metadata['players']:
-                    metadata['players'] = esde_details['players']
-                    result['filled_fields'].append('players (ES-DE)')
-
-                # Now apply ES-DE media (boxart, screenshots, etc.) - pass existing metadata
-                # Pass media_force so Full Re-scrape replaces media unless kept
-                apply_esde(db_game_id, esde_details.get('esde_data', {}), system_folder,
-                          existing_boxart=metadata.get('boxart'),
-                          existing_screenshots=metadata.get('screenshots'),
-                          force_overwrite=media_force)
-
-                # Refresh game data from DB
-                c.execute("SELECT * FROM games WHERE id = ?", (db_game_id,))
-                game = dict(c.fetchone())
-
-                # Update metadata with any media that was copied (verify files exist)
-                _media_dir_map = {
-                    'boxart': os.path.join(IMAGE_PATH, 'boxart'),
-                    'boxart_3d': os.path.join(IMAGE_PATH, 'boxart_3d'),
-                    'fanart': os.path.join(IMAGE_PATH, 'fanart'),
-                    'manual': os.path.join(IMAGE_PATH, 'manuals'),
-                    'video': os.path.join(STATIC_PATH, 'videos'),
-                    'screenshots': os.path.join(IMAGE_PATH, 'screenshots'),
-                }
-                # Pass 41.4.A — screenshots are appended (not replaced) by
-                # apply_esde_metadata, so the DB value after the apply is the
-                # union of pre-existing + newly-scraped. The earlier
-                # `if not metadata.get(field)` guard treated a pre-populated
-                # metadata['screenshots'] as "no need to sync", silently
-                # dropping the appended scrape on the final UPDATE. Sync
-                # screenshots unconditionally, file-existence filtered.
-                if game.get('screenshots'):
-                    ss_list = [s.strip() for s in game['screenshots'].split(',') if s.strip()]
-                    valid = [s for s in ss_list if os.path.exists(
-                        os.path.join(_media_dir_map['screenshots'], s)
-                    )]
-                    if valid:
-                        metadata['screenshots'] = ', '.join(valid)
-                        if 'screenshots (ES-DE)' not in result['filled_fields']:
-                            result['filled_fields'].append('screenshots (ES-DE)')
-                for field in ['boxart', 'boxart_3d', 'fanart', 'video', 'manual']:
-                    if game.get(field) and not metadata.get(field):
-                        if not os.path.exists(os.path.join(_media_dir_map[field], game[field])):
-                            continue
-                        metadata[field] = game[field]
-                        if field == 'boxart':
-                            metadata['_boxart_source'] = 'esde'
-                        if f'{field} (ES-DE)' not in result['filled_fields']:
-                            result['filled_fields'].append(f'{field} (ES-DE)')
+                _merge_esde(metadata, esde_details, result, db_game_id, system_folder,
+                            media_force, fill_only=False)
 
                 result['sources_used'].append('ES-DE')
             else:
