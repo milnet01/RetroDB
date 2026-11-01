@@ -17,10 +17,13 @@ import logging
 
 import config
 from services.analytics import invalidate_analytics_cache
+from services.game_query import invalidate_filter_cache
 from services.api_helpers import error, handle_api_errors, success
 from services.database import get_db, query
 from services.auth import admin_required, login_required
 from services.game_cleanup import (
+    count_ai_region_mismatches,
+    fix_ai_region_mismatches,
     clean_missing_roms,
     clear_clz_imports,
     clear_scraped_data,
@@ -387,6 +390,30 @@ def api_rawg_covers_clear():
     if cleared:
         invalidate_analytics_cache()
     return success(cleared=cleared)
+
+
+# =============================================================================
+# REGIONS THE AI GUESSED AGAINST THE FILE NAME (PASS-59-204)
+# =============================================================================
+
+@bp.route('/api/maintenance/file-regions/preview', methods=['GET'])
+@admin_required
+@handle_api_errors
+def api_file_regions_preview():
+    """How many regions the fix would change. Changes nothing."""
+    return success(count=count_ai_region_mismatches())
+
+
+@bp.route('/api/maintenance/file-regions/fix', methods=['POST'])
+@admin_required
+@handle_api_errors
+def api_file_regions_fix():
+    """Replace AI regions that contradict the ROM's file name."""
+    fixed = fix_ai_region_mismatches()
+    if fixed:
+        invalidate_analytics_cache()
+        invalidate_filter_cache()
+    return success(fixed=fixed)
 
 
 # =============================================================================

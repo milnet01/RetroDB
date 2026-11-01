@@ -10255,7 +10255,13 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.204 The ROM's file name decides its region, ahead of the AI's guess (fix, S).
-- **Status**: todo
+- **Resolution** (2026-11-01): Done 2026-11-01 in 3.34.1. A file name's region tag fills an empty
+  region before every source, so neither the scrape's AI turn nor AI
+  Fill sets it; a stored region stays, Full Re-scrape included. `(En)`
+  no longer reads as a region. ROM Tools > Fix Regions from File Names
+  corrects rows whose history says `region (AI)`; the user presses it
+  (828 games here).
+- **Status**: done
 - **Source**: PASS-59-162, 2026-10-31. Notes: ai_steam_xbox A1; merge_and_stored 1.
 - **Problem**: `hybrid_scraper.py` reads the file name only when region is still empty, after the AI has answered. Hundreds of `(USA)` files are stored as Europe or Japan.
 - **Fix**: read the file name first and do not ask the AI when it gives a region. Add a clean-up for rows whose history says the AI wrote the region and whose file name has a tag.

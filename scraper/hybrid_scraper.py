@@ -1266,6 +1266,15 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
             'alternate_titles': None,
         }
 
+        # The file name says which copy this is, so it comes before every source
+        # and the AI is never asked (PASS-59-204). A stored region stays: it may
+        # be the user's choice, and Full Re-scrape, which starts empty, keeps it too.
+        file_region = extract_region_from_filename(os.path.basename(game.get('rom_path') or ''))
+        if file_region:
+            metadata['region'] = game.get('region') or file_region
+            if not game.get('region'):
+                result['filled_fields'].append('region (filename)')
+
         # Pre-populate metadata from existing database values (for cumulative scraping)
         # This ensures subsequent scrapes only fill gaps, not replace existing data
         # UNLESS force_overwrite is True (full re-scrape mode)
@@ -1647,7 +1656,6 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
         # DETECT ADDITIONAL METADATA
         # =============================================
 
-        # Region from filename if not set
         # Full Re-scrape starts `metadata` empty, so region and save_type fell
         # through to a default ('USA') and a folder guess, and COALESCE then
         # overwrote curated values. Both are DERIVED, not source-supplied, and
@@ -1660,13 +1668,6 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                 metadata['region'] = game.get('region') or None
             if not metadata['save_type']:
                 metadata['save_type'] = game.get('save_type') or None
-
-        if not metadata['region']:
-            rom_path = game.get('rom_path', '')
-            filename = os.path.basename(rom_path)
-            metadata['region'] = extract_region_from_filename(filename)
-            if metadata['region']:
-                result['filled_fields'].append('region (filename)')
 
         # Pass 38.1 — region normalize extracted to _normalize_region.
         _normalize_region(metadata, result)

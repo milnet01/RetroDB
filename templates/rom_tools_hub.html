@@ -307,6 +307,19 @@
         </div>
     </button>
 
+    <button type="button" class="tool-card" data-on-click="fixFileRegions">
+        <div class="tool-card-header">
+            <div class="tool-card-icon">&#127757;</div>
+            <div class="tool-card-title">{{ _('Fix Regions from File Names') }}</div>
+        </div>
+        <div class="tool-card-desc">
+            {{ _('The AI used to guess a game\'s region even when its file name said, so a (USA) file could be listed as Japan. This gives those games the region in their file name.') }}
+        </div>
+        <div class="tool-card-status" id="fileRegionsStatus">
+            <span class="status-dot no-deps"></span> {{ _('No dependencies required') }}
+        </div>
+    </button>
+
     <button type="button" class="tool-card" data-on-click="clearRawgCovers">
         <div class="tool-card-header">
             <div class="tool-card-icon">&#128444;</div>
@@ -450,6 +463,40 @@ function startSsRegionRepair() {
 }
 
 document.addEventListener('DOMContentLoaded', _ssRegionRepairPoll);
+
+const FILE_REGIONS_TEXT = {
+    title: {{ _('Fix Regions from File Names')|tojson }},
+    confirm: {{ _('{count} games have a region from the AI that their file name contradicts. Each will get the region in its file name.\n\nOnly regions the AI filled are changed. If you corrected one of those by hand to differ from the file name, it changes too.')|tojson }},
+    none: {{ _('No game has an AI region that its file name contradicts.')|tojson }},
+    done: {{ _('Fixed {count} regions.')|tojson }},
+    failed: {{ _('Could not fix the regions')|tojson }},
+};
+
+function fixFileRegions() {
+    const box = document.getElementById('fileRegionsStatus');
+    const fill = (template, count) => template.replace('{count}', formatNumber(count));
+    fetch('/api/maintenance/file-regions/preview')
+        .then(r => r.json())
+        .then(preview => {
+            if (!preview.success) throw new Error();
+            if (!preview.count) {
+                box.textContent = FILE_REGIONS_TEXT.none;
+                return;
+            }
+            showConfirm(FILE_REGIONS_TEXT.title, fill(FILE_REGIONS_TEXT.confirm, preview.count), function() {
+                fetch('/api/maintenance/file-regions/fix', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}',
+                })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (!data.success) throw new Error();
+                        box.textContent = fill(FILE_REGIONS_TEXT.done, data.fixed);
+                    })
+                    .catch(() => showNotification(FILE_REGIONS_TEXT.failed, 'error'));
+            });
+        })
+        .catch(() => showNotification(FILE_REGIONS_TEXT.failed, 'error'));
+}
 
 const RAWG_COVERS_TEXT = {
     title: {{ _('Clear RAWG Pictures from Box Art')|tojson }},

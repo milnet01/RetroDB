@@ -9,6 +9,7 @@
 
 import json as json_lib
 import logging
+import os
 from datetime import datetime, timezone
 
 from services.analytics import invalidate_analytics_cache
@@ -101,6 +102,12 @@ def fill_game(game, fields=None):
     elif db_default_ctrl:
         existing_metadata['controller_support'] = db_default_ctrl
 
+    # The file name decides the region, so the AI is not asked (PASS-59-204).
+    from scraper.scrape_esde import extract_region_from_filename
+    file_region = extract_region_from_filename(os.path.basename(game.get('rom_path') or ''))
+    if file_region:
+        existing_metadata['region'] = existing_metadata.get('region') or file_region
+
     ai_data = ai_get_details(
         game_id, game['title'], game['system_name'],
         game['system_folder'], existing_metadata=existing_metadata,
@@ -115,7 +122,7 @@ def fill_game(game, fields=None):
     # earlier assignment instead of appending a duplicate `col = ?`.
     sets = {}
     for field, value in ai_data.items():
-        if field not in ai_fields or not value:
+        if field not in ai_fields or not value or (field == 'region' and file_region):
             continue
         current = str(game.get(field, '') or '').strip()
         should_apply = False
@@ -152,6 +159,9 @@ def fill_game(game, fields=None):
                     continue
             sets[field] = value
             filled_fields.append(field)
+
+    if file_region and not game.get('region'):
+        sets['region'] = file_region
 
     # Post-fill fixups (merged into the same UPDATE)
     pending = dict(sets)

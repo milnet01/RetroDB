@@ -224,3 +224,39 @@ def clear_scraped_data(system_id=None, delete_images=False):
     )
 
     return cleared, images_deleted
+
+
+def _ai_region_mismatches():
+    """(id, stored region, file's region) where the AI's region contradicts the file.
+
+    A stored value that is one of a two-region file's regions agrees with it.
+    """
+    from scraper.scrape_esde import extract_region_from_filename
+
+    rows = query("""SELECT id, rom_path, region FROM games
+                    WHERE scrape_history LIKE '%"region (AI)"%'""")
+    found = []
+    for row in rows:
+        tag = extract_region_from_filename(os.path.basename(row['rom_path'] or ''))
+        if tag and row['region'] not in (tag, *tag.split('/')):
+            found.append((row['id'], row['region'], tag))
+    return found
+
+
+def count_ai_region_mismatches():
+    """How many games hold an AI region their file name contradicts."""
+    return len(_ai_region_mismatches())
+
+
+def fix_ai_region_mismatches():
+    """Give those games their file name's region (PASS-59-204). Returns the count."""
+    fixed = 0
+    with get_db_with_context() as conn:
+        for game_id, stored, tag in _ai_region_mismatches():
+            # `IS` keeps a region changed since the search, and matches an empty one.
+            fixed += conn.execute(
+                "UPDATE games SET region = ? WHERE id = ? AND region IS ?",
+                (tag, game_id, stored),
+            ).rowcount
+    logger.info(f"Set {fixed} region(s) from file names, replacing the AI's guess")
+    return fixed

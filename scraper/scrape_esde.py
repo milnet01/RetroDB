@@ -460,7 +460,6 @@ def extract_region_from_filename(filename):
         r'\(J\)': 'Japan',
         r'\(World\)': 'World',
         r'\(W\)': 'World',
-        r'\(En\)': 'English',
         r'\(Fr\)': 'France',
         r'\(De\)': 'Germany',
         r'\(Es\)': 'Spain',
