@@ -281,7 +281,7 @@
             <div class="shortcut-item"><kbd>e</kbd> <span>Edit game</span></div>
             <div class="shortcut-item"><kbd>s</kbd> <span>Ambil data game</span></div>
             <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Game sebelumnya atau berikutnya</span></div>
-            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Navigasi screenshot</span></div>
+            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Navigasi screenshot, saat salah satunya terbuka</span></div>
         </div>
 
         <div class="help-tip">
@@ -1075,6 +1075,7 @@
             <li>Buat kunci API di pengaturan profil Anda</li>
             <li>Masukkan nama pengguna dan kunci API Anda di Settings &rarr; Account &rarr; RetroAchievements</li>
         </ol>
+        <p>Untuk mendapatkan achievement saat bermain di RetroArch milik RetroDB, DuckStation, atau PCSX2, masukkan kata sandi RetroAchievements Anda sekali di bawah <strong>Raih pencapaian di RetroArch, DuckStation, dan PCSX2</strong> pada halaman yang sama. Kata sandi hanya dikirim ke RetroAchievements dan tidak disimpan; RetroDB menyimpan token masuk yang dikembalikannya, satu untuk setiap pengguna RetroDB. Centang <strong>Mode hardcore</strong> di sana jika Anda menginginkannya. Jika achievement berhenti bisa masuk, misalnya setelah Anda mereset kunci di situs RetroAchievements, keluar lalu masuk lagi. Saat Anda menekan Mainkan di DuckStation atau PCSX2, RetroDB menulis data masuk Anda ke file pengaturan emulator tersebut, dan data itu tetap di sana sampai Anda keluar atau pengguna RetroDB lain bermain. Data masuk yang Anda buat di menu emulator sendiri dibiarkan apa adanya. RetroDB tidak dapat memasukkan akun Anda ke DuckStation di Mac.</p>
 
         <h3>Halaman Achievements</h3>
         <ul>
@@ -1455,6 +1456,18 @@
         <h3>Backfill Alternate Titles</h3>
         <p>Pindai perpustakaan untuk game yang kolom <strong>judul alternatif</strong>-nya kosong dan isi dari IGDB / TGDB / ScreenScraper. Berguna setelah mengimpor katalog besar atau bermigrasi dari alat lain yang tidak menyimpan judul regional/Jepang/subjudul. Berjalan di latar belakang; kemajuan ditampilkan pada kartu perkakas.</p>
         <p><em>Memerlukan setidaknya satu kunci API scraper (IGDB / TGDB / ScreenScraper)</em></p>
+
+        <h3>Perbaiki Wilayah Box dan Manual</h3>
+        <p>Pengambilan data lama dari ScreenScraper memakai box, box 3D, dan manual pertama dalam daftar wilayah yang berurutan menurut abjad, sehingga game USA bisa menampilkan box Eropa atau memuat manual berbahasa Portugis. Alat ini mencari ulang setiap game tersebut. Jika wilayah lain lebih cocok untuk game itu, alat ini mengunduh file tersebut dan menghapus yang lama. Box dan manual dari sumber lain dibiarkan, begitu juga game yang file-nya sudah cocok. Tekan kartu sekali lagi untuk berhenti; proses berikutnya melanjutkan sisanya.</p>
+        <p><em>Memerlukan akun ScreenScraper. Alat ini memakai jatah harian ScreenScraper Anda</em></p>
+
+        <h3>Perbaiki Wilayah dari Nama File</h3>
+        <p>Nama file ROM menunjukkan salinan mana yang dimaksud, sehingga tag seperti <code>(USA)</code> kini menentukan wilayahnya dan AI tidak ditanya. Pengambilan data lama membiarkan AI menebak lebih dulu, sehingga file <code>(USA)</code> bisa tercatat sebagai Jepang. Alat ini memberikan wilayah yang ada di nama file kepada game tersebut. Alat ini hanya mengubah wilayah yang diisi oleh AI, termasuk yang kemudian Anda koreksi secara manual sehingga berbeda dari nama file.</p>
+        <p><em>Tidak memerlukan dependensi</em></p>
+
+        <h3>Hapus Gambar RAWG dari Sampul</h3>
+        <p>RAWG tidak memiliki boxart. Pengambilan data lama menyimpan gambar latarnya, yang sering kali berupa screenshot, sebagai sampul, dan karena pengambilan data hanya mengisi sampul yang kosong, gambar itu menghalangi sampul yang asli. Alat ini menghapus gambar-gambar tersebut dan membiarkan sampulnya kosong. Sampul dari sumber lain dan semua fanart tetap ada. Game tersebut tidak menampilkan sampul sampai pengambilan data menemukannya, jadi jalankan pengambilan data massal dengan <strong>Isi yang Hilang</strong> sesudahnya.</p>
+        <p><em>Tidak memerlukan dependensi</em></p>
 
         <h3>Bulk HLTB Lookup</h3>
         <p>Jalankan pencarian HowLongToBeat untuk setiap game yang belum memiliki estimasi waktu bermain. Setiap kecocokan dinilai berdasarkan judul + platform + tahun rilis; kecocokan dengan keyakinan tinggi disimpan otomatis. Apa pun yang di bawah ambang keyakinan (atau dengan platform yang bertentangan) diparkir untuk ditinjau manusia.</p>

@@ -281,7 +281,7 @@
             <div class="shortcut-item"><kbd>e</kbd> <span>Modifica gioco</span></div>
             <div class="shortcut-item"><kbd>s</kbd> <span>Esegui lo scraping del gioco</span></div>
             <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Gioco precedente o successivo</span></div>
-            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Naviga tra gli screenshot</span></div>
+            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Naviga tra gli screenshot, quando uno è aperto</span></div>
         </div>
 
         <div class="help-tip">
@@ -1075,6 +1075,7 @@
             <li>Genera una chiave API nelle impostazioni del tuo profilo</li>
             <li>Inserisci il tuo nome utente e la chiave API in Impostazioni &rarr; Account &rarr; RetroAchievements</li>
         </ol>
+        <p>Per ottenere obiettivi mentre giochi nel RetroArch di RetroDB, in DuckStation o in PCSX2, inserisci una sola volta la password di RetroAchievements in <strong>Ottieni obiettivi in RetroArch, DuckStation e PCSX2</strong>, nella stessa pagina. Va solo a RetroAchievements e non viene conservata; RetroDB conserva il token di accesso che riceve in risposta, uno per ogni utente di RetroDB. Spunta lì <strong>Modalità hardcore</strong> se la desideri. Se gli obiettivi smettono di accedere, per esempio dopo che hai reimpostato la chiave sul sito di RetroAchievements, esci e accedi di nuovo. Quando premi Gioca in DuckStation o PCSX2, RetroDB scrive il tuo accesso nel file delle impostazioni di quell'emulatore, dove resta finché non esci o finché non gioca un altro utente di RetroDB. Un accesso fatto dal menu dell'emulatore non viene toccato. RetroDB non può far accedere DuckStation su un Mac.</p>
 
         <h3>Pagina Obiettivi</h3>
         <ul>
@@ -1455,6 +1456,18 @@
         <h3>Recupero titoli alternativi</h3>
         <p>Esamina la libreria alla ricerca di giochi il cui campo <strong>titoli alternativi</strong> è vuoto e popolalo da IGDB / TGDB / ScreenScraper. Utile dopo aver importato un grande catalogo o dopo la migrazione da un altro strumento che non memorizzava i titoli regionali / giapponesi / secondari. Viene eseguito in background; l'avanzamento è mostrato sulla scheda dello strumento.</p>
         <p><em>Richiede almeno una chiave API di uno scraper (IGDB / TGDB / ScreenScraper)</em></p>
+
+        <h3>Correggi le regioni di copertine e manuali</h3>
+        <p>I vecchi scraping di ScreenScraper prendevano la prima scatola, la prima scatola 3D e il primo manuale in un elenco alfabetico di regioni, quindi un gioco USA poteva mostrare una scatola europea o avere un manuale portoghese. Questo strumento cerca di nuovo ciascuno di quei giochi. Dove un'altra regione è più adatta al gioco, scarica quel file ed elimina quello vecchio. Scatole e manuali di altra provenienza non vengono toccati, così come i giochi il cui file è già adatto. Premi di nuovo la scheda per fermarlo; un'esecuzione successiva prosegue con il resto.</p>
+        <p><em>Richiede un account ScreenScraper. Usa la tua quota giornaliera di ScreenScraper</em></p>
+
+        <h3>Correggi le regioni dai nomi dei file</h3>
+        <p>Il nome del file di una ROM dice di quale copia si tratta, quindi un'etichetta come <code>(USA)</code> ora decide la sua regione e l'AI non viene interpellata. I vecchi scraping lasciavano prima indovinare l'AI, quindi un file <code>(USA)</code> poteva risultare come Giappone. Questo strumento assegna a quei giochi la regione indicata nel nome del file. Cambia solo le regioni compilate dall'AI, compresa una che hai poi corretto a mano in modo diverso dal nome del file.</p>
+        <p><em>Nessuna dipendenza richiesta</em></p>
+
+        <h3>Elimina le immagini RAWG dalle copertine</h3>
+        <p>RAWG non ha boxart. I vecchi scraping salvavano come copertina la sua immagine di sfondo, spesso uno screenshot, e poiché gli scraping riempiono solo le copertine vuote, quell'immagine ne bloccava una vera. Questo strumento elimina quelle immagini e lascia le copertine vuote. Le copertine di altre fonti e tutte le fanart restano. Quei giochi non mostrano alcuna copertina finché uno scraping non ne trova una, quindi esegui poi uno scraping in blocco con <strong>Riempi mancanti</strong>.</p>
+        <p><em>Nessuna dipendenza richiesta</em></p>
 
         <h3>Ricerca HLTB in blocco</h3>
         <p>Esegui una ricerca HowLongToBeat per ogni gioco privo di una stima del tempo di gioco. Ogni corrispondenza viene valutata per titolo + piattaforma + anno di uscita; le corrispondenze ad alta confidenza vengono salvate automaticamente. Tutto ciò che è al di sotto della soglia di confidenza (o con piattaforme in conflitto) viene messo da parte per la revisione umana.</p>

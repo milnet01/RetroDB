@@ -10421,6 +10421,13 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Problem**: since PASS-59-205 a scrape copies ES-DE's screenshots into the list, so one deleted by hand or in Screenshot Review comes back from ES-DE's folder. Online sources can re-download theirs the same way. No record of a removal exists.
 - **Fix**: record what the user removes per game (a removed picture's look or source name) and have every merger skip it. Decide this before the user's Screenshot Review (PASS-59-161) is followed by a bulk scrape.
 
+---
+
+#### Pass 59.223 The translated help manuals catch up with older English sections (doc-fix, M).
+- **Status**: todo
+- **Problem**: found while translating 3.35.0. The translated `help.<locale>.html` files lack two English sections, Search Anywhere and Keeping a Title, and some older paragraphs lag the English, such as Backfill Alternate Titles. In xh and zu, Custom Images and Fill Missing appear under older labels in older text.
+- **Fix**: compare each locale's sections with `help.html` and translate what is missing. Do it before v4.0.0.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history

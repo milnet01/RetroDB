@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-01 20:20+0200\n"
+"POT-Creation-Date: 2026-11-01 20:46+0200\n"
 "PO-Revision-Date: 2026-06-30 14:26+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ko\n"
@@ -705,12 +705,11 @@ msgstr "알 수 없는 이미지 유형"
 
 #: routes/maintenance.py:433
 msgid "Add your ScreenScraper account in Settings first."
-msgstr ""
+msgstr "먼저 설정에서 ScreenScraper 계정을 추가하세요."
 
 #: routes/maintenance.py:434
-#, fuzzy
 msgid "This fix is already running."
-msgstr "이 게임은 이미 실행 중입니다"
+msgstr "이 수정 작업이 이미 실행 중입니다."
 
 #: routes/museum.py:385 routes/scraper.py:773
 msgid "No AI provider configured"
@@ -1317,7 +1316,7 @@ msgstr "각 게임의 사본을 하나 이상 남겨 두세요. 아무것도 삭
 
 #: routes/tools.py:1432
 msgid "This system has no screenshot check"
-msgstr ""
+msgstr "이 시스템은 스크린샷 검사를 지원하지 않습니다"
 
 #: routes/trophies.py:396
 msgid ""
@@ -5711,7 +5710,7 @@ msgstr "남은 게임:"
 
 #: templates/base.html:226
 msgid "Some data and images from RAWG"
-msgstr ""
+msgstr "RAWG의 일부 데이터와 이미지"
 
 #: templates/base.html:227
 msgid "Click for more info"
@@ -8652,9 +8651,8 @@ msgstr ""
 
 #: templates/_macros/nav_tabs.html:43 templates/rom_tools_hub.html:247
 #: templates/screenshot_review.html:5 templates/screenshot_review.html:64
-#, fuzzy
 msgid "Screenshot Review"
-msgstr "스크린샷 뷰어"
+msgstr "스크린샷 검토"
 
 #: templates/rom_tools_hub.html:250
 msgid ""
@@ -8662,6 +8660,8 @@ msgid ""
 "Spectrum, Commodore 64 and Game Boy shots are listed with the most "
 "suspicious first, and you decide what to remove."
 msgstr ""
+"다른 시스템 버전의 게임을 보여 주는 듯한 스크린샷을 찾습니다. ZX Spectrum, Commodore 64, Game Boy "
+"스크린샷은 의심스러운 순서대로 표시되며, 삭제할 항목은 직접 선택합니다."
 
 #: templates/rom_tools_hub.html:274
 msgid "Image Resizer"
@@ -8699,7 +8699,7 @@ msgstr "메타데이터만 &middot; 미디어 다운로드 없음"
 
 #: templates/rom_tools_hub.html:300 templates/rom_tools_hub.html:409
 msgid "Fix Box and Manual Regions"
-msgstr ""
+msgstr "박스와 설명서 지역 수정"
 
 #: templates/rom_tools_hub.html:303
 msgid ""
@@ -8708,15 +8708,16 @@ msgid ""
 "again and swaps it for the right region. Pictures from anywhere else are "
 "left alone."
 msgstr ""
+"이전 ScreenScraper 스크래핑에서는 미국 게임에 유럽 박스가 붙는 것처럼 게임에 다른 지역의 박스나 설명서가 들어갈 수 "
+"있었습니다. 각 항목을 다시 조회해 올바른 지역의 것으로 바꿉니다. 다른 출처의 이미지는 그대로 둡니다."
 
 #: templates/rom_tools_hub.html:306
-#, fuzzy
 msgid "Needs a ScreenScraper account"
-msgstr "같은 ScreenScraper 게임"
+msgstr "ScreenScraper 계정 필요"
 
 #: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:468
 msgid "Fix Regions from File Names"
-msgstr ""
+msgstr "파일 이름으로 지역 수정"
 
 #: templates/rom_tools_hub.html:316
 msgid ""
@@ -8724,10 +8725,12 @@ msgid ""
 "(USA) file could be listed as Japan. This gives those games the region in"
 " their file name."
 msgstr ""
+"예전에는 파일 이름에 지역이 있어도 AI가 게임의 지역을 추측해서, (USA) 파일이 일본으로 표시될 수 있었습니다. 이 기능은 "
+"해당 게임에 파일 이름에 적힌 지역을 적용합니다."
 
 #: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:502
 msgid "Clear RAWG Pictures from Box Art"
-msgstr ""
+msgstr "박스 아트의 RAWG 이미지 지우기"
 
 #: templates/rom_tools_hub.html:329
 msgid ""
@@ -8735,6 +8738,8 @@ msgid ""
 "screenshot as the cover, and that blocks a real cover. This clears those "
 "pictures so a scrape can find real covers."
 msgstr ""
+"RAWG에는 박스 아트가 없어서 이전 스크래핑이 배경 이미지나 스크린샷을 표지로 저장했고, 그 때문에 진짜 표지를 가져오지 "
+"못합니다. 이 이미지를 지워 스크래핑으로 진짜 표지를 찾을 수 있게 합니다."
 
 #: templates/rom_tools_hub.html:339
 msgid "Bulk HLTB Lookup"
@@ -8787,41 +8792,45 @@ msgid ""
 "ScreenScraper allowance and can take a long time. You can leave the page,"
 " and press this card again to stop."
 msgstr ""
+"ScreenScraper 박스나 설명서가 있는 게임을 각각 다시 조회합니다. 다른 지역의 것이 더 알맞으면 그 파일을 다운로드하고 "
+"기존 파일은 삭제합니다.\n"
+"\n"
+"직접 수정한 게임은 건드리지 않습니다. 하루 ScreenScraper 사용량을 소모하며 오래 걸릴 수 있습니다. 페이지를 떠나도 "
+"되고, 이 카드를 다시 누르면 중지됩니다."
 
 #: templates/rom_tools_hub.html:411
-#, fuzzy
 msgid "Could not start the fix"
-msgstr "작업을 시작할 수 없습니다."
+msgstr "수정 작업을 시작할 수 없습니다"
 
 #: templates/rom_tools_hub.html:412
 msgid ""
 "Stop the fix? Files already swapped stay as they are, and a later run "
 "carries on with the rest."
-msgstr ""
+msgstr "수정을 중지할까요? 이미 교체된 파일은 그대로 유지되며, 다음 실행 때 나머지를 이어서 처리합니다."
 
 #: templates/rom_tools_hub.html:413
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Stopped. Files swapped: {replaced}."
-msgstr "중지됨. 제안된 이름: {proposals}."
+msgstr "중지됨. 교체된 파일: {replaced}개."
 
 #: templates/rom_tools_hub.html:414
 #, python-brace-format
 msgid ""
 "The fix stopped with an error. Files swapped: {replaced}. The log has the"
 " details."
-msgstr ""
+msgstr "수정 작업이 오류로 중지되었습니다. 교체된 파일: {replaced}개. 자세한 내용은 로그를 확인하세요."
 
 #: templates/rom_tools_hub.html:415
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Checked {current} of {total} games. Files swapped: {replaced}."
-msgstr "게임 {current}/{total} 채우는 중: {title}. 지금까지 채운 수: {filled}."
+msgstr "게임 {total}개 중 {current}개 확인함. 교체된 파일: {replaced}개."
 
 #: templates/rom_tools_hub.html:416
 #, python-brace-format
 msgid ""
 "Finished. Files swapped: {replaced}. Games not found: {no_match}. Could "
 "not download: {failed}."
-msgstr ""
+msgstr "완료. 교체된 파일: {replaced}개. 찾지 못한 게임: {no_match}개. 다운로드 실패: {failed}개."
 
 #: templates/rom_tools_hub.html:417
 #, python-brace-format
@@ -8829,6 +8838,8 @@ msgid ""
 "Stopped: ScreenScraper stopped answering, so your daily allowance may be "
 "spent. Files swapped: {replaced}. Run it again tomorrow."
 msgstr ""
+"중지됨: ScreenScraper가 응답하지 않아 하루 사용량을 다 썼을 수 있습니다. 교체된 파일: {replaced}개. 내일 "
+"다시 실행하세요."
 
 #: templates/rom_tools_hub.html:469
 #, python-brace-format
@@ -8839,20 +8850,22 @@ msgid ""
 "Only regions the AI filled are changed. If you corrected one of those by "
 "hand to differ from the file name, it changes too."
 msgstr ""
+"게임 {count}개의 AI 지역이 파일 이름과 맞지 않습니다. 각 게임에 파일 이름에 적힌 지역이 적용됩니다.\n"
+"\n"
+"AI가 채운 지역만 변경됩니다. 그중 파일 이름과 다르게 직접 고친 지역도 함께 바뀝니다."
 
 #: templates/rom_tools_hub.html:470
 msgid "No game has an AI region that its file name contradicts."
-msgstr ""
+msgstr "파일 이름과 맞지 않는 AI 지역을 가진 게임이 없습니다."
 
 #: templates/rom_tools_hub.html:471
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Fixed {count} regions."
-msgstr "{title} (버전 {count}개)"
+msgstr "지역 {count}개를 수정했습니다."
 
 #: templates/rom_tools_hub.html:472
-#, fuzzy
 msgid "Could not fix the regions"
-msgstr "이 버전들을 연결할 수 없습니다."
+msgstr "지역을 수정할 수 없습니다"
 
 #: templates/rom_tools_hub.html:503
 #, python-brace-format
@@ -8864,22 +8877,25 @@ msgid ""
 "Covers from other sources and all fanart stay. Afterwards, run a bulk "
 "scrape with Fill Missing to look for real covers."
 msgstr ""
+"게임과 위시리스트 항목 {count}개가 RAWG 이미지를 박스 아트로 사용하고 있습니다. 이 이미지는 삭제되며, 스크래핑으로 "
+"표지를 찾기 전까지 해당 게임에는 표지가 표시되지 않습니다.\n"
+"\n"
+"다른 출처의 표지와 모든 팬아트는 유지됩니다. 이후 누락 항목 채우기로 일괄 스크래핑을 실행해 진짜 표지를 찾아보세요."
 
 #: templates/rom_tools_hub.html:504
 msgid "No game uses a RAWG picture as its box art."
-msgstr ""
+msgstr "RAWG 이미지를 박스 아트로 사용하는 게임이 없습니다."
 
 #: templates/rom_tools_hub.html:505
 #, python-brace-format
 msgid ""
 "Cleared {count} pictures. Run a bulk scrape with Fill Missing to look for"
 " real covers."
-msgstr ""
+msgstr "이미지 {count}개를 지웠습니다. 누락 항목 채우기로 일괄 스크래핑을 실행해 진짜 표지를 찾아보세요."
 
 #: templates/rom_tools_hub.html:506
-#, fuzzy
 msgid "Could not clear the pictures"
-msgstr "작업을 시작할 수 없습니다."
+msgstr "이미지를 지울 수 없습니다"
 
 #: templates/rom_tools_settings.html:309
 msgid "Empty: RetroDB's data folder"
@@ -8938,13 +8954,15 @@ msgid ""
 "worst come first. Real shots with heavy shading can rank high too, so "
 "look before you remove. Nothing is removed unless you press Remove."
 msgstr ""
+"이 기기들은 한 번에 몇 가지 색만 표시할 수 있어서, 훨씬 많은 색이 필요한 이미지는 게임의 다른 버전에서 온 것일 수 있습니다."
+" 가장 맞지 않는 스크린샷이 먼저 표시됩니다. 음영이 많은 진짜 스크린샷도 높은 순위에 나올 수 있으니 확인 후 삭제하세요. 삭제 "
+"버튼을 누르기 전에는 아무것도 삭제되지 않습니다."
 
 #: templates/screenshot_review.html:91
 msgid "Your library has no ZX Spectrum, Commodore 64 or Game Boy games to check."
-msgstr ""
+msgstr "라이브러리에 확인할 ZX Spectrum, Commodore 64, Game Boy 게임이 없습니다."
 
 #: templates/screenshot_review.html:104
-#, fuzzy
 msgid "Show more"
 msgstr "더 보기"
 

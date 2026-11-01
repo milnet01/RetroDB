@@ -1,3 +1,55 @@
+- version: 3.35.0
+  date: '2026-11-01'
+  tags:
+  - type: fix
+    label: ES-DE ahora mantiene su lugar en el orden de scrapeo cuando no es la fuente principal. Sus descripciones, compañías y carátulas eran reemplazadas por fuentes posteriores y por la IA
+  - type: fix
+    label: Las capturas de pantalla y pantallas de título de ES-DE ahora se añaden a un juego cuando ES-DE no es la fuente principal, salvo que se parezcan a una que ya tenga
+  - type: fix
+    label: ES-DE ya no copia una imagen de fanart, un vídeo o un manual que el juego ya tiene, y un Re-scrapeo completo ya no elimina una carátula que otra fuente acaba de descargar
+  - type: fix
+    label: ES-DE ahora lee la entrada del archivo ROM propio del juego, así que otra versión con el mismo nombre no puede aportar sus datos, y los juegos de PS3 en carpeta ya encuentran sus carátulas de ES-DE
+  - type: fix
+    label: Al importar logos de sistemas desde ES-DE ya no se toma una imagen sin relación porque su nombre contenga letras como "gb"
+  - type: fix
+    label: Una etiqueta en el nombre de archivo de una ROM, como (USA), ahora decide su región. Ya no se consulta a la IA, que podía clasificar una copia de USA como Europa o Japón
+  - type: feature
+    label: Nueva herramienta en Herramientas de ROM, Corregir regiones según nombres de archivo, que corrige los juegos que scrapeos anteriores hicieron mal de esta forma
+  - type: fix
+    label: Las imágenes de fondo de RAWG ya no se guardan como carátula, pues a menudo son capturas de pantalla y bloqueaban una carátula real. Ahora se usan como fanart
+  - type: feature
+    label: Nueva herramienta en Herramientas de ROM, Quitar imágenes de RAWG de las carátulas, que elimina las que guardaron scrapeos anteriores para que un scrapeo pueda encontrar carátulas reales
+  - type: feature
+    label: RetroDB ahora da crédito a RAWG con un enlace en la barra lateral, como pide RAWG
+  - type: fix
+    label: ScreenScraper ahora da a cada juego la carátula, la carátula 3D, el manual, el título y la fecha de lanzamiento de su propia región, en lugar de la primera región por orden alfabético
+  - type: feature
+    label: Nueva herramienta en Herramientas de ROM, Corregir regiones de carátulas y manuales, que cambia las carátulas y manuales que scrapeos anteriores de ScreenScraper tomaron de la región equivocada
+  - type: fix
+    label: Los vídeos de ScreenScraper ahora usan primero el archivo más pequeño, y el más grande solo si este falla
+  - type: fix
+    label: Cada scraper ahora busca en la consola correcta. Atari Lynx, arcade CPS, Super Famicom y otros se buscaban en la máquina equivocada, y ahora se buscan muchos más sistemas, en todas las fuentes y para logros
+  - type: feature
+    label: En la página de un juego, las teclas de flecha izquierda y derecha ahora van al juego anterior y al siguiente
+  - type: feature
+    label: La sección de Trucos en la página de un juego ahora se pliega y recuerda si la dejaste abierta
+  - type: fix
+    label: Al abrir una ventana que empieza en un cuadro de texto, como Scrapear, el cursor ahora se pone en ese cuadro en lugar de en el botón de cerrar
+  - type: feature
+    label: Nueva herramienta Revisión de capturas en Herramientas de ROM que muestra las capturas de pantalla de ZX Spectrum, Commodore 64 y Game Boy con las más sospechosas primero, y elimina solo lo que elijas
+  - type: fix
+    label: Scrapear ahora rechaza una captura de pantalla de Game Boy cuyo original tiene muchos más tonos de los que la máquina podría mostrar
+  - type: fix
+    label: Los paneles inferiores de un juego ahora caben en la ventana en lugar de salirse por el borde derecho
+  - type: feature
+    label: Importa una carátula 3D desde la ventana Editar, junto a las demás imágenes
+  - type: feature
+    label: El inicio de sesión de RetroAchievements ahora llega a DuckStation y PCSX2 al pulsar Jugar
+  - type: fix
+    label: En sistemas de 8 y 16 bits, scrapear ya no añade capturas de pantalla de IGDB o RAWG a un juego lanzado en varios sistemas, pues podían mostrar la versión de otro sistema
+  - type: fix
+    label: El emulador de un juego ahora aparece en su tarjeta de ajustes de Emulador, no junto a Jugar
+  body: "<ul>\n  <li><strong>Cada scraper busca en la consola correcta.</strong> Atari\n    Lynx, arcade CPS, Super Famicom y otros se buscaban en la máquina\n    equivocada, y ahora se buscan muchos más sistemas, en todas las\n    fuentes y para logros.</li>\n  <li><strong>La región de un juego sale primero de su propio nombre de archivo.</strong>\n    Una etiqueta como (USA) ahora decide la región, y ya no se consulta\n    a la IA. Herramientas de ROM tiene una nueva herramienta, Corregir regiones\n    según nombres de archivo, para los juegos que scrapeos anteriores hicieron mal.</li>\n  <li><strong>ScreenScraper sigue la región del juego.</strong> La carátula,\n    la carátula 3D, el manual, el título y la fecha de lanzamiento ahora\n    vienen de la propia región del juego, no de la primera por orden alfabético.\n    Herramientas de ROM tiene una nueva herramienta, Corregir regiones de carátulas\n    y manuales, para scrapeos anteriores. Los vídeos ahora prueban primero el\n    archivo más pequeño.</li>\n  <li><strong>Las imágenes de RAWG ya no son carátulas.</strong> A menudo son\n    capturas de pantalla, y bloqueaban una carátula real. Ahora se usan como\n    fanart. Herramientas de ROM tiene una nueva herramienta, Quitar imágenes de RAWG\n    de las carátulas, para las que guardaron scrapeos anteriores. RetroDB también\n    da crédito a RAWG con un enlace en la barra lateral, como pide RAWG.</li>\n  <li><strong>ES-DE mantiene su lugar en el orden de scrapeo.</strong> Cuando\n    no era la fuente principal, fuentes posteriores y la IA reemplazaban su\n    texto y sus carátulas, y sus capturas de pantalla se descartaban. Ahora se\n    conservan. Ya no copia medios que un juego ya tiene, y lee la entrada del\n    archivo ROM propio del juego. Los juegos de PS3 en carpeta ya encuentran sus\n    carátulas de ES-DE. Al importar logos de sistemas ya no se toma una imagen\n    sin relación. Un Re-scrapeo completo ya no elimina una carátula que otra\n    fuente acaba de descargar.</li>\n  <li><strong>Revisión de capturas.</strong> Una nueva herramienta en Herramientas de ROM\n    muestra las capturas de pantalla de ZX Spectrum, Commodore 64 y Game Boy con las más\n    sospechosas primero, y elimina solo lo que elijas. Scrapear ahora rechaza una\n    captura de pantalla de Game Boy cuyo original tiene muchos más tonos de los que la\n    máquina podría mostrar. En sistemas de 8 y 16 bits ya no añade capturas de pantalla\n    de IGDB o RAWG a un juego lanzado en varios sistemas.</li>\n  <li><strong>El inicio de sesión de RetroAchievements llega a DuckStation y PCSX2</strong>\n    al pulsar Jugar.</li>\n  <li><strong>En la página de un juego:</strong> las teclas de flecha izquierda y derecha\n    van al juego anterior y al siguiente, la sección de Trucos se pliega y lo recuerda,\n    los paneles inferiores caben en la ventana, y el emulador aparece en su tarjeta de\n    ajustes de Emulador, no junto a Jugar.</li>\n  <li><strong>Importar una carátula 3D</strong> ahora está en la ventana Editar, junto\n    a las demás imágenes.</li>\n  <li><strong>Una ventana que empieza en un cuadro de texto,</strong> como Scrapear,\n    ahora pone el cursor en ese cuadro en lugar de en el botón de cerrar.</li>\n</ul>\n"
 - version: 3.34.0
   date: '2026-10-30'
   tags:

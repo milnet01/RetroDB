@@ -281,7 +281,7 @@
             <div class="shortcut-item"><kbd>e</kbd> <span>Edytuj grę</span></div>
             <div class="shortcut-item"><kbd>s</kbd> <span>Pobierz metadane gry</span></div>
             <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Poprzednia lub następna gra</span></div>
-            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Przechodzenie między zrzutami ekranu</span></div>
+            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Przechodzenie między zrzutami ekranu, gdy jeden jest otwarty</span></div>
         </div>
 
         <div class="help-tip">
@@ -851,8 +851,8 @@
             <li><strong>Oceny wiekowe</strong> &mdash; wszystkie 8 systemów ocen z oficjalnymi obrazami ocen i automatycznym mapowaniem krzyżowym. Zmiana jednej oceny automatycznie uzupełnia puste oceny w innych systemach.</li>
             <li><strong>Oceny</strong> &mdash; ocena krytyków, ocena użytkowników</li>
             <li><strong>Opis</strong> &mdash; tekst opisu gry</li>
-            <li><strong>Niestandardowe obrazy</strong> &mdash; prześlij niestandardową okładkę (2D), okładkę 3D i fanart. Wyczyść istniejące obrazy, aby umożliwić ponowne pobieranie.</li>
-            <li><strong>Importuj pudełko 3D</strong> &mdash; również w sekcji Niestandardowe obrazy. Zapisuje się od razu, bez Zapisz zmiany. Wybierz plik <code>.box.json</code> zapisany przez Slipcase razem z jego obrazami (można wybrać cały folder). Slipcase 1.4.0 lub nowszy zapisuje ten plik obok każdego wyeksportowanego obrazu. RetroDB zachowuje ścianki pudełka dla tej gry; kliknięcie okładki pokazuje wtedy pudełko w 3D, które można przeciągać lub obracać klawiszami strzałek. Twoja okładka 3D się nie zmienia. Gdy gra ma już ścianki, RetroDB zapyta przed ich zastąpieniem, a <strong>Usuń</strong> je kasuje.</li>
+            <li><strong>Własne obrazy</strong> &mdash; prześlij niestandardową okładkę (2D), okładkę 3D i fanart. Wyczyść istniejące obrazy, aby umożliwić ponowne pobieranie.</li>
+            <li><strong>Importuj pudełko 3D</strong> &mdash; również w sekcji Własne obrazy. Zapisuje się od razu, bez Zapisz zmiany. Wybierz plik <code>.box.json</code> zapisany przez Slipcase razem z jego obrazami (można wybrać cały folder). Slipcase 1.4.0 lub nowszy zapisuje ten plik obok każdego wyeksportowanego obrazu. RetroDB zachowuje ścianki pudełka dla tej gry; kliknięcie okładki pokazuje wtedy pudełko w 3D, które można przeciągać lub obracać klawiszami strzałek. Twoja okładka 3D się nie zmienia. Gdy gra ma już ścianki, RetroDB zapyta przed ich zastąpieniem, a <strong>Usuń</strong> je kasuje.</li>
             <li><strong>Wideo / zwiastun</strong> &mdash; prześlij lub połącz zwiastun wideo</li>
         </ul>
 
@@ -1075,6 +1075,7 @@
             <li>Wygeneruj klucz API w ustawieniach swojego profilu</li>
             <li>Wprowadź nazwę użytkownika i klucz API w Ustawienia &rarr; Konto &rarr; RetroAchievements</li>
         </ol>
+        <p>Aby zdobywać osiągnięcia podczas gry w RetroArch (RetroDB), DuckStation lub PCSX2, wpisz raz swoje hasło RetroAchievements w sekcji <strong>Zdobywaj osiągnięcia w RetroArch, DuckStation i PCSX2</strong> na tej samej stronie. Trafia ono wyłącznie do RetroAchievements i nie jest przechowywane; RetroDB zachowuje zwrócony token logowania, po jednym na użytkownika RetroDB. Jeśli chcesz, zaznacz tam <strong>Tryb hardcore</strong>. Jeśli logowanie do osiągnięć przestanie działać, na przykład po zresetowaniu klucza na stronie RetroAchievements, wyloguj się i zaloguj ponownie. Gdy naciśniesz Graj w DuckStation lub PCSX2, RetroDB zapisuje Twoje logowanie we własnym pliku ustawień tego emulatora, gdzie pozostaje, dopóki się nie wylogujesz lub nie zagra inny użytkownik RetroDB. Logowanie wykonane we własnym menu emulatora pozostaje nietknięte. RetroDB nie może zalogować DuckStation na Macu.</p>
 
         <h3>Strona osiągnięć</h3>
         <ul>
@@ -1456,6 +1457,18 @@
         <h3>Uzupełnianie tytułów alternatywnych</h3>
         <p>Przeszukaj bibliotekę w poszukiwaniu gier, których pole <strong>tytuły alternatywne</strong> jest puste, i uzupełnij je z IGDB / TGDB / ScreenScraper. Przydatne po zaimportowaniu dużego katalogu lub migracji z innego narzędzia, które nie przechowywało tytułów regionalnych/japońskich/podtytułów. Działa w tle; postęp jest pokazany na karcie narzędzia.</p>
         <p><em>Wymaga co najmniej jednego klucza API scrapera (IGDB / TGDB / ScreenScraper)</em></p>
+
+        <h3>Napraw regiony okładek i instrukcji</h3>
+        <p>Starsze pobrania z ScreenScraper brały pierwsze pudełko, pudełko 3D i instrukcję z alfabetycznej listy regionów, więc gra z USA mogła pokazywać europejskie pudełko lub mieć portugalską instrukcję. To narzędzie ponownie wyszukuje każdą z tych gier. Gdy inny region lepiej pasuje do gry, pobiera ten plik i usuwa stary. Pudełka i instrukcje z innych źródeł pozostają nietknięte, podobnie jak gry, których plik już pasuje. Naciśnij kartę ponownie, aby zatrzymać; późniejsze uruchomienie zajmie się resztą.</p>
+        <p><em>Wymaga konta ScreenScraper. Zużywa Twój dzienny limit ScreenScraper</em></p>
+
+        <h3>Napraw regiony na podstawie nazw plików</h3>
+        <p>Nazwa pliku ROM mówi, która to kopia, więc znacznik taki jak <code>(USA)</code> decyduje teraz o regionie i AI nie jest pytane. Starsze pobrania pozwalały AI zgadywać jako pierwszemu, więc plik <code>(USA)</code> mógł być oznaczony jako Japonia. To narzędzie nadaje tym grom region z nazwy pliku. Zmienia tylko regiony uzupełnione przez AI, także taki, który później poprawiłeś ręcznie tak, że różni się od nazwy pliku.</p>
+        <p><em>Brak zależności zewnętrznych</em></p>
+
+        <h3>Wyczyść obrazy RAWG z okładek</h3>
+        <p>RAWG nie ma okładek. Starsze pobrania zapisywały jego obraz tła, często zrzut ekranu, jako okładkę, a ponieważ pobieranie wypełnia tylko puste okładki, ten obraz blokował prawdziwą. To narzędzie usuwa te obrazy i zostawia okładki puste. Okładki z innych źródeł i cały fanart zostają. Te gry nie pokazują okładki, dopóki pobieranie jej nie znajdzie, więc uruchom potem masowe pobieranie z opcją <strong>Uzupełnij braki</strong>.</p>
+        <p><em>Brak zależności zewnętrznych</em></p>
 
         <h3>Masowe wyszukiwanie HLTB</h3>
         <p>Uruchom wyszukiwanie HowLongToBeat dla każdej gry bez szacowanego czasu gry. Każde dopasowanie jest oceniane według tytułu + platformy + roku wydania; dopasowania o wysokiej pewności są zapisywane automatycznie. Wszystko poniżej progu pewności (lub z niezgodnymi platformami) trafia do przeglądu przez człowieka.</p>

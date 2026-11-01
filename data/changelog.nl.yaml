@@ -1,3 +1,55 @@
+- version: 3.35.0
+  date: '2026-11-01'
+  tags:
+  - type: fix
+    label: ES-DE behoudt nu zijn plek in je scrapervolgorde als het niet de hoofdbron is. Zijn beschrijvingen, bedrijven en covers werden vervangen door latere bronnen en de AI
+  - type: fix
+    label: Screenshots en titelschermen van ES-DE worden nu aan een game toegevoegd als ES-DE niet de hoofdbron is, tenzij ze er hetzelfde uitzien als een die de game al heeft
+  - type: fix
+    label: ES-DE kopieert geen fanart-afbeelding, video of handleiding meer die de game al heeft, en een Volledige herscrape verwijdert geen box meer die een andere bron net heeft gedownload
+  - type: fix
+    label: ES-DE leest nu het item van het eigen ROM-bestand van de game, zodat een andere release met dezelfde naam geen gegevens kan aanleveren, en PS3-mapgames vinden nu hun ES-DE-covers
+  - type: fix
+    label: Bij het importeren van systeemlogo's uit ES-DE wordt geen niet-gerelateerde afbeelding meer gekozen omdat de naam letters als "gb" bevat
+  - type: fix
+    label: Een tag in de bestandsnaam van een ROM, zoals (USA), bepaalt nu de regio. De AI wordt niet meer gevraagd, want die kon een USA-exemplaar als Europa of Japan aanmerken
+  - type: feature
+    label: Nieuwe tool in ROM-tools, Regio's herstellen via bestandsnamen, corrigeert de games die oudere scrapes zo verkeerd hadden
+  - type: fix
+    label: Achtergrondafbeeldingen van RAWG worden niet meer als boxart opgeslagen, omdat het vaak screenshots zijn en ze een echte cover blokkeerden. Ze worden nu als fanart gebruikt
+  - type: feature
+    label: Nieuwe tool in ROM-tools, RAWG-afbeeldingen uit boxart wissen, verwijdert die van oudere scrapes zodat een scrape echte covers kan vinden
+  - type: feature
+    label: RetroDB vermeldt RAWG nu met een link in de zijbalk, zoals RAWG vraagt
+  - type: fix
+    label: ScreenScraper geeft elke game nu de box, 3D-box, handleiding, titel en releasedatum van de eigen regio, in plaats van de regio die alfabetisch eerst kwam
+  - type: feature
+    label: Nieuwe tool in ROM-tools, Box- en handleidingregio's herstellen, wisselt boxen en handleidingen om die oudere ScreenScraper-scrapes uit de verkeerde regio haalden
+  - type: fix
+    label: ScreenScraper-video's gebruiken nu eerst het kleinere bestand en pas het grotere als dat mislukt
+  - type: fix
+    label: Elke scraper zoekt nu op de juiste console. Atari Lynx, arcade CPS, Super Famicom en andere werden op de verkeerde machine gezocht, en veel meer systemen worden nu überhaupt doorzocht, door elke bron en voor prestaties
+  - type: feature
+    label: Op de pagina van een game gaan de pijltjestoetsen links en rechts nu naar de vorige en volgende game
+  - type: feature
+    label: Het onderdeel Cheats op de pagina van een game kan nu worden ingeklapt en onthoudt of je het open liet
+  - type: fix
+    label: Als je een venster opent dat met een tekstvak begint, zoals Scrapen, staat de cursor nu in dat vak in plaats van op de sluitknop
+  - type: feature
+    label: Nieuwe tool Screenshotcontrole in ROM-tools toont screenshots van ZX Spectrum, Commodore 64 en Game Boy met de meest verdachte eerst, en verwijdert alleen wat jij kiest
+  - type: fix
+    label: Scrapen weigert nu een Game Boy-screenshot waarvan het origineel veel meer tinten heeft dan de machine kon tonen
+  - type: fix
+    label: De onderste panelen van een game passen nu in het venster in plaats van over de rechterrand te lopen
+  - type: feature
+    label: Importeer een 3D-box vanuit het venster Bewerken, naast de andere afbeeldingen
+  - type: feature
+    label: Inloggen bij RetroAchievements werkt nu ook in DuckStation en PCSX2 als je op Spelen drukt
+  - type: fix
+    label: Op 8-bit- en 16-bitsystemen voegt scrapen geen IGDB- of RAWG-screenshots meer toe aan een game die op meerdere systemen is uitgebracht, want die konden de versie van een ander systeem tonen
+  - type: fix
+    label: De emulator van een game staat nu op de kaart met Emulator-instellingen, niet naast Spelen
+  body: "<ul>\n  <li><strong>Elke scraper zoekt op de juiste console.</strong> Atari\n    Lynx, arcade CPS, Super Famicom en andere werden op de\n    verkeerde machine gezocht, en veel meer systemen worden nu überhaupt doorzocht,\n    door elke bron en voor prestaties.</li>\n  <li><strong>De regio van een game komt eerst uit de eigen bestandsnaam.</strong>\n    Een tag zoals (USA) bepaalt nu de regio en de AI wordt niet meer\n    gevraagd. ROM-tools heeft een nieuwe tool, Regio's herstellen via bestandsnamen, voor\n    de games die oudere scrapes verkeerd hadden.</li>\n  <li><strong>ScreenScraper volgt de regio van de game.</strong> De box,\n    3D-box, handleiding, titel en releasedatum komen nu uit de eigen\n    regio van de game, niet uit de regio die alfabetisch eerst kwam. ROM-tools heeft een\n    nieuwe tool, Box- en handleidingregio's herstellen, voor oudere scrapes. Video's\n    proberen nu eerst het kleinere bestand.</li>\n  <li><strong>RAWG-afbeeldingen zijn geen boxart meer.</strong> Het zijn vaak\n    screenshots en ze blokkeerden een echte cover. Ze worden nu als\n    fanart gebruikt. ROM-tools heeft een nieuwe tool, RAWG-afbeeldingen uit boxart wissen,\n    voor die van oudere scrapes. RetroDB vermeldt RAWG ook met een\n    link in de zijbalk, zoals RAWG vraagt.</li>\n  <li><strong>ES-DE behoudt zijn plek in je scrapervolgorde.</strong> Als\n    het niet de hoofdbron was, vervingen latere bronnen en de AI zijn\n    tekst en covers, en werden zijn screenshots weggelaten. Nu blijven ze staan.\n    Het kopieert geen media meer die een game al heeft en leest het item\n    van het eigen ROM-bestand van de game. PS3-mapgames vinden nu hun ES-DE-\n    covers. Bij het importeren van systeemlogo's wordt geen niet-gerelateerde afbeelding meer gekozen.\n    Een Volledige herscrape verwijdert geen box meer die een andere bron net heeft\n    gedownload.</li>\n  <li><strong>Screenshotcontrole.</strong> Een nieuwe tool in ROM-tools toont\n    screenshots van ZX Spectrum, Commodore 64 en Game Boy met de meest\n    verdachte eerst, en verwijdert alleen wat jij kiest. Scrapen weigert nu een Game Boy-screenshot\n    waarvan het origineel veel meer tinten heeft dan de machine kon tonen.\n    Op 8-bit- en 16-bitsystemen voegt het geen IGDB- of RAWG-screenshots meer\n    toe aan een game die op meerdere systemen is uitgebracht.</li>\n  <li><strong>Inloggen bij RetroAchievements werkt in DuckStation en PCSX2</strong>\n    als je op Spelen drukt.</li>\n  <li><strong>Op de pagina van een game:</strong> de pijltjestoetsen links en rechts gaan\n    naar de vorige en volgende game, het onderdeel Cheats kan worden ingeklapt en\n    onthoudt dat, de onderste panelen passen in het venster en de emulator staat\n    op de kaart met Emulator-instellingen, niet naast Spelen.</li>\n  <li><strong>Een 3D-box importeren</strong> staat nu in het venster Bewerken, naast\n    de andere afbeeldingen.</li>\n  <li><strong>Een venster dat met een tekstvak begint,</strong> zoals Scrapen,\n    zet de cursor nu in dat vak in plaats van op de sluitknop.</li>\n</ul>\n"
 - version: 3.34.0
   date: '2026-10-30'
   tags:

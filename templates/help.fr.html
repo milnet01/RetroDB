@@ -281,7 +281,7 @@
             <div class="shortcut-item"><kbd>e</kbd> <span>Modifier le jeu</span></div>
             <div class="shortcut-item"><kbd>s</kbd> <span>Récupérer le jeu</span></div>
             <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Jeu précédent ou suivant</span></div>
-            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Naviguer dans les captures d'écran</span></div>
+            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Naviguer dans les captures d'écran, lorsqu'une est ouverte</span></div>
         </div>
 
         <div class="help-tip">
@@ -1075,6 +1075,7 @@
             <li>Générez une clé API dans les paramètres de votre profil</li>
             <li>Saisissez votre nom d'utilisateur et votre clé API dans Paramètres &rarr; Compte &rarr; RetroAchievements</li>
         </ol>
+        <p>Pour gagner des succès pendant que vous jouez dans RetroArch, DuckStation ou PCSX2 de RetroDB, saisissez une fois votre mot de passe RetroAchievements sous <strong>Gagner des succès dans RetroArch, DuckStation et PCSX2</strong> sur la même page. Il est envoyé uniquement à RetroAchievements et n'est pas conservé ; RetroDB conserve le jeton de connexion renvoyé, un par utilisateur RetroDB. Cochez-y <strong>Mode hardcore</strong> si vous le souhaitez. Si les succès ne se connectent plus, par exemple après la réinitialisation de votre clé sur le site RetroAchievements, déconnectez-vous puis reconnectez-vous. Lorsque vous appuyez sur Jouer dans DuckStation ou PCSX2, RetroDB écrit votre connexion dans le fichier de paramètres propre à cet émulateur, où elle reste jusqu'à ce que vous vous déconnectiez ou qu'un autre utilisateur RetroDB joue. Une connexion effectuée depuis le menu de l'émulateur n'est pas touchée. RetroDB ne peut pas connecter DuckStation sur un Mac.</p>
 
         <h3>Page Succès</h3>
         <ul>
@@ -1455,6 +1456,18 @@
         <h3>Compléter les titres alternatifs</h3>
         <p>Balayez la bibliothèque à la recherche de jeux dont le champ <strong>titres alternatifs</strong> est vide et remplissez-le depuis IGDB / TGDB / ScreenScraper. Utile après l'import d'un grand catalogue ou la migration depuis un autre outil qui ne stockait pas les sous-titres régionaux / japonais. S'exécute en arrière-plan ; la progression est affichée sur la carte de l'outil.</p>
         <p><em>Requiert au moins une clé API de scraper (IGDB / TGDB / ScreenScraper)</em></p>
+
+        <h3>Corriger les régions des boîtiers et des manuels</h3>
+        <p>Les anciennes récupérations ScreenScraper prenaient la première boîte, la première boîte 3D et le premier manuel d'une liste alphabétique de régions, si bien qu'un jeu américain pouvait afficher une boîte européenne ou porter un manuel portugais. Cet outil recherche à nouveau chacun de ces jeux. Si une autre région convient mieux au jeu, il télécharge ce fichier et supprime l'ancien. Les boîtes et manuels venant d'ailleurs ne sont pas touchés, pas plus que les jeux dont le fichier convient déjà. Appuyez à nouveau sur la carte pour arrêter ; une exécution ultérieure reprend avec le reste.</p>
+        <p><em>Requiert un compte ScreenScraper. Utilise votre quota quotidien ScreenScraper</em></p>
+
+        <h3>Corriger les régions d'après les noms de fichiers</h3>
+        <p>Le nom de fichier d'une ROM indique de quelle copie il s'agit, donc une étiquette comme <code>(USA)</code> décide maintenant de sa région et l'IA n'est pas interrogée. Les anciennes récupérations laissaient d'abord l'IA deviner, si bien qu'un fichier <code>(USA)</code> pouvait être indiqué comme Japon. Cet outil donne à ces jeux la région de leur nom de fichier. Il ne modifie que les régions remplies par l'IA, y compris une que vous avez ensuite corrigée à la main pour qu'elle diffère du nom de fichier.</p>
+        <p><em>Aucune dépendance requise</em></p>
+
+        <h3>Effacer les images RAWG des jaquettes</h3>
+        <p>RAWG n'a pas de jaquettes. Les anciennes récupérations enregistraient son image de fond, souvent une capture d'écran, comme jaquette, et comme les récupérations ne remplissent que les jaquettes vides, cette image en bloquait une vraie. Cet outil supprime ces images et laisse les jaquettes vides. Les jaquettes d'autres sources et tous les fanarts restent. Ces jeux n'affichent aucune jaquette jusqu'à ce qu'une récupération en trouve une, lancez donc ensuite une récupération en masse avec <strong>Remplir les manquants</strong>.</p>
+        <p><em>Aucune dépendance requise</em></p>
 
         <h3>Recherche HLTB en masse</h3>
         <p>Lancez une recherche HowLongToBeat pour chaque jeu sans estimation de durée. Chaque correspondance est notée selon le titre + la plateforme + l'année de sortie ; les correspondances de haute confiance sont enregistrées automatiquement. Tout ce qui se situe sous le seuil de confiance (ou avec des plateformes conflictuelles) est mis de côté pour révision humaine.</p>

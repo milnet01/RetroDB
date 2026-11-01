@@ -281,7 +281,7 @@
             <div class="shortcut-item"><kbd>e</kbd> <span>Rediger spill</span></div>
             <div class="shortcut-item"><kbd>s</kbd> <span>Scrap spill</span></div>
             <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Forrige eller neste spill</span></div>
-            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Naviger skjermbilder</span></div>
+            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Naviger skjermbilder, mens ett er åpent</span></div>
         </div>
 
         <div class="help-tip">
@@ -1075,6 +1075,7 @@
             <li>Generer en API-nøkkel i profilinnstillingene dine</li>
             <li>Angi brukernavnet og API-nøkkelen din i Innstillinger &rarr; Konto &rarr; RetroAchievements</li>
         </ol>
+        <p>For å tjene prestasjoner mens du spiller i RetroDBs RetroArch, DuckStation eller PCSX2, skriver du inn RetroAchievements-passordet ditt én gang under <strong>Tjen prestasjoner i RetroArch, DuckStation og PCSX2</strong> på samme side. Det går bare til RetroAchievements og blir ikke beholdt; RetroDB beholder påloggingstokenet det returnerer, ett per RetroDB-bruker. Kryss av for <strong>Hardcore-modus</strong> der hvis du vil ha det. Hvis prestasjonene slutter å logge på, for eksempel etter at du har tilbakestilt nøkkelen på RetroAchievements-nettstedet, logger du ut og på igjen. Når du trykker Spill i DuckStation eller PCSX2, skriver RetroDB påloggingen din til emulatorens egen innstillingsfil, der den blir til du logger ut eller en annen RetroDB-bruker spiller. En pålogging du har gjort i emulatorens egen meny, blir latt i fred. RetroDB kan ikke logge på DuckStation på en Mac.</p>
 
         <h3>Prestasjoner-siden</h3>
         <ul>
@@ -1455,6 +1456,18 @@
         <h3>Etterfyll alternative titler</h3>
         <p>Gjennomsøk biblioteket etter spill hvis felt for <strong>alternative titler</strong> er tomt, og fyll det ut fra IGDB/TGDB/ScreenScraper. Nyttig etter import av en stor katalog eller migrering fra et annet verktøy som ikke lagret regionale/japanske/undertitler. Kjører i bakgrunnen; fremgangen vises på verktøykortet.</p>
         <p><em>Krever minst én skraper-API-nøkkel (IGDB/TGDB/ScreenScraper)</em></p>
+
+        <h3>Reparer regioner for coverbokser og manualer</h3>
+        <p>Eldre ScreenScraper-scraping tok den første boksen, 3D-boksen og manualen i en alfabetisk liste over regioner, så et USA-spill kunne vise en europeisk boks eller ha en portugisisk manual. Dette verktøyet slår opp hvert av disse spillene på nytt. Der en annen region passer spillet bedre, laster det ned den filen og sletter den gamle. Bokser og manualer fra andre steder blir latt i fred, det samme gjelder spill der filen allerede passer. Trykk på kortet igjen for å stoppe; en senere kjøring fortsetter med resten.</p>
+        <p><em>Krever en ScreenScraper-konto. Det bruker den daglige ScreenScraper-kvoten din</em></p>
+
+        <h3>Reparer regioner fra filnavn</h3>
+        <p>Filnavnet til en ROM sier hvilken kopi det er, så en merkelapp som <code>(USA)</code> avgjør nå regionen, og KI-en blir ikke spurt. Eldre scraping lot KI-en gjette først, så en <code>(USA)</code>-fil kunne bli oppført som Japan. Dette verktøyet gir disse spillene regionen i filnavnet. Det endrer bare regioner KI-en fylte ut, også en du senere har rettet for hånd slik at den avviker fra filnavnet.</p>
+        <p><em>Ingen avhengigheter kreves</em></p>
+
+        <h3>Fjern RAWG-bilder fra coverbilder</h3>
+        <p>RAWG har ingen boksbilder. Eldre scraping lagret bakgrunnsbildet derfra, ofte et skjermbilde, som omslag, og siden scraping bare fyller tomme omslag, blokkerte det bildet et ekte omslag. Dette verktøyet sletter disse bildene og lar omslagene stå tomme. Omslag fra andre kilder og all fanart blir værende. Disse spillene viser ikke noe omslag før en scraping finner ett, så kjør en masse-scraping med <strong>Fyll manglende</strong> etterpå.</p>
+        <p><em>Ingen avhengigheter kreves</em></p>
 
         <h3>Masse-HLTB-oppslag</h3>
         <p>Kjør et HowLongToBeat-oppslag for hvert spill som mangler et spilletidsestimat. Hvert treff scores etter tittel + plattform + utgivelsesår; treff med høy tillit lagres automatisk. Alt under tillitsterskelen (eller med motstridende plattformer) parkeres for manuell gjennomgang.</p>

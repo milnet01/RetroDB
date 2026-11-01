@@ -281,7 +281,7 @@
             <div class="shortcut-item"><kbd>e</kbd> <span>Spel bewerken</span></div>
             <div class="shortcut-item"><kbd>s</kbd> <span>Spel scrapen</span></div>
             <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Vorig of volgend spel</span></div>
-            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Door screenshots navigeren</span></div>
+            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Door screenshots navigeren, als er een geopend is</span></div>
         </div>
 
         <div class="help-tip">
@@ -1075,6 +1075,7 @@
             <li>Genereer een API-sleutel in uw profielinstellingen</li>
             <li>Voer uw gebruikersnaam en API-sleutel in bij Instellingen &rarr; Account &rarr; RetroAchievements</li>
         </ol>
+        <p>Om prestaties te verdienen terwijl u speelt in RetroArch (RetroDB), DuckStation of PCSX2, voert u uw RetroAchievements-wachtwoord eenmalig in onder <strong>Prestaties verdienen in RetroArch, DuckStation en PCSX2</strong> op dezelfde pagina. Het gaat alleen naar RetroAchievements en wordt niet bewaard; RetroDB bewaart het inlogtoken dat het terugkrijgt, één per RetroDB-gebruiker. Vink daar <strong>Hardcore-modus</strong> aan als u dat wilt. Als inloggen voor prestaties niet meer lukt, bijvoorbeeld nadat u uw sleutel op de site van RetroAchievements hebt vernieuwd, log dan uit en opnieuw in. Wanneer u in DuckStation of PCSX2 op Spelen drukt, schrijft RetroDB uw login naar het eigen instellingenbestand van die emulator, waar die blijft staan tot u uitlogt of een andere RetroDB-gebruiker speelt. Een login die u in het eigen menu van de emulator hebt gedaan, blijft ongemoeid. RetroDB kan DuckStation op een Mac niet inloggen.</p>
 
         <h3>Prestatiepagina</h3>
         <ul>
@@ -1456,6 +1457,18 @@
         <h3>Alternatieve titels aanvullen</h3>
         <p>Doorzoek de bibliotheek naar spellen waarvan het veld <strong>alternatieve titels</strong> leeg is en vul dit aan vanuit IGDB / TGDB / ScreenScraper. Handig na het importeren van een grote catalogus of het migreren vanuit een ander hulpmiddel dat geen regionale/Japanse/onder­titels opsloeg. Loopt op de achtergrond; de voortgang wordt getoond op de hulpmiddelkaart.</p>
         <p><em>Vereist minstens één scraper-API-sleutel (IGDB / TGDB / ScreenScraper)</em></p>
+
+        <h3>Regio's van box en handleiding herstellen</h3>
+        <p>Oudere ScreenScraper-scrapes namen de eerste box, 3D-box en handleiding uit een alfabetische lijst van regio's, waardoor een Amerikaans spel een Europese box kon tonen of een Portugese handleiding kon hebben. Dit hulpmiddel zoekt elk van die spellen opnieuw op. Waar een andere regio beter bij het spel past, downloadt het dat bestand en verwijdert het het oude. Boxen en handleidingen van elders blijven ongemoeid, net als spellen waarvan het bestand al past. Druk nogmaals op de kaart om te stoppen; een latere run gaat verder met de rest.</p>
+        <p><em>Vereist een ScreenScraper-account. Het gebruikt uw dagelijkse ScreenScraper-tegoed</em></p>
+
+        <h3>Regio's herstellen via bestandsnamen</h3>
+        <p>De bestandsnaam van een ROM zegt welk exemplaar het is, dus een tag zoals <code>(USA)</code> bepaalt nu de regio en de AI wordt niet gevraagd. Oudere scrapes lieten de AI eerst raden, waardoor een <code>(USA)</code>-bestand als Japan vermeld kon staan. Dit hulpmiddel geeft die spellen de regio uit hun bestandsnaam. Het wijzigt alleen regio's die de AI heeft ingevuld, ook een die u later met de hand hebt gecorrigeerd zodat die afwijkt van de bestandsnaam.</p>
+        <p><em>Geen externe afhankelijkheden</em></p>
+
+        <h3>RAWG-afbeeldingen uit boxart wissen</h3>
+        <p>RAWG heeft geen boxart. Oudere scrapes sloegen de achtergrondafbeelding ervan, vaak een screenshot, op als cover, en omdat scrapes alleen lege covers aanvullen, blokkeerde die afbeelding een echte cover. Dit hulpmiddel verwijdert die afbeeldingen en laat de covers leeg. Covers uit andere bronnen en alle fanart blijven staan. Die spellen tonen geen cover totdat een scrape er een vindt, dus voer daarna bulk scrapen uit met <strong>Ontbrekende aanvullen</strong>.</p>
+        <p><em>Geen externe afhankelijkheden</em></p>
 
         <h3>Bulk HLTB-opzoeken</h3>
         <p>Voer een HowLongToBeat-opzoeking uit voor elk spel zonder speeltijdschatting. Elke overeenkomst wordt beoordeeld op titel + platform + releasejaar; overeenkomsten met een hoge betrouwbaarheid worden automatisch opgeslagen. Alles onder de betrouwbaarheidsdrempel (of met tegenstrijdige platforms) wordt geparkeerd voor menselijke beoordeling.</p>

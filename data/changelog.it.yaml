@@ -1,3 +1,55 @@
+- version: 3.35.0
+  date: '2026-11-01'
+  tags:
+  - type: fix
+    label: ES-DE ora mantiene il suo posto nell'ordine degli scraper quando non è la fonte principale. Le sue descrizioni, aziende e copertine venivano sostituite dalle fonti successive e dall'IA
+  - type: fix
+    label: Gli screenshot e le schermate del titolo di ES-DE ora vengono aggiunti a un gioco quando ES-DE non è la fonte principale, a meno che non siano identici a uno che il gioco ha già
+  - type: fix
+    label: ES-DE non copia più fanart, video o manuale che il gioco ha già, e una Riscansione completa non elimina più una copertina appena scaricata da un'altra fonte
+  - type: fix
+    label: ES-DE ora legge la voce del file ROM del gioco stesso, così un'altra versione con lo stesso nome non può fornirne i dettagli, e i giochi PS3 in cartella ora trovano le loro copertine ES-DE
+  - type: fix
+    label: L'importazione dei loghi dei sistemi da ES-DE non prende più un'immagine non correlata solo perché il nome contiene lettere come "gb"
+  - type: fix
+    label: Un tag nel nome del file di una ROM, come (USA), ora decide la sua regione. L'IA non viene più interpellata, perché poteva indicare una copia USA come Europa o Giappone
+  - type: feature
+    label: Nuovo strumento in Strumenti ROM, Correggi regioni dai nomi file, che corregge i giochi sbagliati dalle vecchie scansioni
+  - type: fix
+    label: Le immagini di sfondo di RAWG non vengono più salvate come copertina, perché spesso sono screenshot e impedivano di trovare una copertina vera. Ora sono usate come fanart
+  - type: feature
+    label: Nuovo strumento in Strumenti ROM, Rimuovi immagini RAWG dalle copertine, che elimina quelle salvate dalle vecchie scansioni così una scansione può trovare copertine vere
+  - type: feature
+    label: RetroDB ora cita RAWG con un link nella barra laterale, come richiesto da RAWG
+  - type: fix
+    label: ScreenScraper ora assegna a ogni gioco copertina, copertina 3D, manuale, titolo e data di uscita della sua regione, invece di quelli della prima regione in ordine alfabetico
+  - type: feature
+    label: Nuovo strumento in Strumenti ROM, Correggi regioni di copertine e manuali, che scambia copertine e manuali presi dalla regione sbagliata dalle vecchie scansioni di ScreenScraper
+  - type: fix
+    label: I video di ScreenScraper ora usano prima il file più piccolo, e il più grande solo se questo fallisce
+  - type: fix
+    label: Ogni scraper ora cerca la console giusta. Atari Lynx, arcade CPS, Super Famicom e altri venivano cercati sulla macchina sbagliata, e ora molti più sistemi vengono cercati, da ogni fonte e per gli obiettivi
+  - type: feature
+    label: Nella pagina di un gioco, i tasti freccia sinistra e destra ora portano al gioco precedente e successivo
+  - type: feature
+    label: La sezione Trucchi nella pagina di un gioco ora si può comprimere e ricorda se l'hai lasciata aperta
+  - type: fix
+    label: Aprendo una finestra che inizia con una casella di testo, come Scansiona, il cursore ora va in quella casella invece che sul pulsante di chiusura
+  - type: feature
+    label: 'Nuovo strumento Revisione screenshot in Strumenti ROM: elenca gli screenshot di ZX Spectrum, Commodore 64 e Game Boy con i più sospetti per primi e rimuove solo ciò che scegli'
+  - type: fix
+    label: La scansione ora rifiuta uno screenshot Game Boy il cui originale ha molte più sfumature di quante la macchina possa mostrarne
+  - type: fix
+    label: I pannelli in basso di un gioco ora si adattano alla finestra invece di uscire dal bordo destro
+  - type: feature
+    label: Importa una copertina 3D dalla finestra Modifica, accanto alle altre immagini
+  - type: feature
+    label: L'accesso a RetroAchievements ora arriva a DuckStation e PCSX2 quando premi Gioca
+  - type: fix
+    label: Sui sistemi a 8 e 16 bit, la scansione non aggiunge più screenshot di IGDB o RAWG a un gioco uscito su più sistemi, perché potevano mostrare la versione di un altro sistema
+  - type: fix
+    label: L'emulatore di un gioco ora è indicato nella scheda Impostazioni Emulatore, non accanto a Gioca
+  body: "<ul>\n  <li><strong>Ogni scraper cerca la console giusta.</strong> Atari\n    Lynx, arcade CPS, Super Famicom e altri venivano cercati sulla\n    macchina sbagliata, e ora molti più sistemi vengono cercati,\n    da ogni fonte e per gli obiettivi.</li>\n  <li><strong>La regione di un gioco viene prima dal nome del file.</strong>\n    Un tag come (USA) ora decide la regione, e l'IA non viene più\n    interpellata. Strumenti ROM ha un nuovo strumento, Correggi regioni dai\n    nomi file, per i giochi sbagliati dalle vecchie scansioni.</li>\n  <li><strong>ScreenScraper segue la regione del gioco.</strong> Copertina,\n    copertina 3D, manuale, titolo e data di uscita ora vengono dalla\n    regione del gioco, non dalla prima in ordine alfabetico. Strumenti ROM ha un\n    nuovo strumento, Correggi regioni di copertine e manuali, per le vecchie scansioni. I video\n    provano prima il file più piccolo.</li>\n  <li><strong>Le immagini RAWG non sono più copertine.</strong> Spesso sono\n    screenshot e impedivano di trovare una copertina vera. Ora sono usate come\n    fanart. Strumenti ROM ha un nuovo strumento, Rimuovi immagini RAWG dalle copertine,\n    per quelle salvate dalle vecchie scansioni. RetroDB cita anche RAWG con un\n    link nella barra laterale, come richiesto da RAWG.</li>\n  <li><strong>ES-DE mantiene il suo posto nell'ordine degli scraper.</strong> Quando\n    non era la fonte principale, le fonti successive e l'IA sostituivano i suoi\n    testi e le copertine, e i suoi screenshot venivano scartati. Ora restano.\n    Non copia più i contenuti che un gioco ha già e legge la voce\n    del file ROM del gioco stesso. I giochi PS3 in cartella ora trovano le loro\n    copertine ES-DE. L'importazione dei loghi dei sistemi non prende più un'immagine non correlata.\n    Una Riscansione completa non elimina più una copertina appena\n    scaricata da un'altra fonte.</li>\n  <li><strong>Revisione screenshot.</strong> Un nuovo strumento in Strumenti ROM elenca\n    gli screenshot di ZX Spectrum, Commodore 64 e Game Boy con i più\n    sospetti per primi e rimuove solo ciò che scegli. La scansione ora\n    rifiuta uno screenshot Game Boy il cui originale ha molte più sfumature\n    di quante la macchina possa mostrarne. Sui sistemi a 8 e 16 bit non\n    aggiunge più screenshot di IGDB o RAWG a un gioco uscito su più\n    sistemi.</li>\n  <li><strong>L'accesso a RetroAchievements arriva a DuckStation e PCSX2</strong>\n    quando premi Gioca.</li>\n  <li><strong>Nella pagina di un gioco:</strong> i tasti freccia sinistra e destra portano\n    al gioco precedente e successivo, la sezione Trucchi si comprime e\n    ricorda lo stato, i pannelli in basso si adattano alla finestra e l'emulatore è\n    indicato nella scheda Impostazioni Emulatore, non accanto a Gioca.</li>\n  <li><strong>Importa una copertina 3D</strong> ora si trova nella finestra Modifica, accanto\n    alle altre immagini.</li>\n  <li><strong>Una finestra che inizia con una casella di testo,</strong> come Scansiona,\n    ora mette il cursore in quella casella invece che sul pulsante di chiusura.</li>\n</ul>\n"
 - version: 3.34.0
   date: '2026-10-30'
   tags:

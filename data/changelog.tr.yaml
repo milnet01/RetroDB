@@ -1,3 +1,55 @@
+- version: 3.35.0
+  date: '2026-11-01'
+  tags:
+  - type: fix
+    label: ES-DE artık ana kaynak olmadığında kazıyıcı sırasındaki yerini koruyor. Açıklamaları, şirket bilgileri ve kapakları sonraki kaynaklar ve yapay zekâ tarafından değiştiriliyordu
+  - type: fix
+    label: ES-DE ana kaynak olmadığında, ondan gelen ekran görüntüleri ve başlık ekranları, oyunda zaten bulunanlarla aynı görünmedikleri sürece oyuna ekleniyor
+  - type: fix
+    label: ES-DE artık oyunda zaten bulunan bir hayran sanatı resmini, videoyu veya kılavuzu kopyalamıyor; Tam Yeniden Kazıma da başka bir kaynağın yeni indirdiği kutuyu artık silmiyor
+  - type: fix
+    label: ES-DE artık oyunun kendi ROM dosyasının girdisini okuyor; böylece aynı adlı başka bir sürüm bilgileri sağlayamaz ve PS3 klasör oyunları ES-DE kapaklarını artık buluyor
+  - type: fix
+    label: ES-DE'den sistem logolarını içe aktarma, adında "gb" gibi harfler geçtiği için artık alakasız bir resmi almıyor
+  - type: fix
+    label: ROM dosya adındaki (USA) gibi bir etiket artık bölgeyi belirliyor. Yapay zekâya artık sorulmuyor, çünkü ABD sürümünü Avrupa veya Japonya olarak listeleyebiliyordu
+  - type: feature
+    label: ROM Araçları'nda yeni bir araç olan Dosya Adlarından Bölgeleri Düzelt, eski kazımaların bu yüzden yanlış yaptığı oyunları düzeltir
+  - type: fix
+    label: RAWG arka plan resimleri artık kutu kapağı olarak kaydedilmiyor, çünkü çoğu zaman ekran görüntüsü oluyor ve gerçek kapağı engelliyordu. Bunun yerine hayran sanatı olarak kullanılıyor
+  - type: feature
+    label: ROM Araçları'nda yeni bir araç olan Kutu Kapaklarından RAWG Resimlerini Temizle, eski kazımaların kaydettiklerini kaldırır; böylece kazıma gerçek kapakları bulabilir
+  - type: feature
+    label: RetroDB artık RAWG'in istediği şekilde kenar çubuğunda bir bağlantıyla RAWG'e teşekkür ediyor
+  - type: fix
+    label: ScreenScraper artık her oyuna, alfabede ilk gelen bölge yerine kendi bölgesinin kutusunu, 3D kutusunu, kılavuzunu, başlığını ve çıkış tarihini veriyor
+  - type: feature
+    label: ROM Araçları'nda yeni bir araç olan Kutu ve Kılavuz Bölgelerini Düzelt, eski ScreenScraper kazımalarının yanlış bölgeden aldığı kutuları ve kılavuzları değiştirir
+  - type: fix
+    label: ScreenScraper videoları artık önce küçük dosyayı kullanıyor, büyük dosyayı yalnızca bu başarısız olursa kullanıyor
+  - type: fix
+    label: Her kazıyıcı artık doğru konsolu arıyor. Atari Lynx, arcade CPS, Super Famicom ve diğerleri yanlış makinede aranıyordu; ayrıca birçok sistem artık, tüm kaynaklar ve başarımlar için de aranıyor
+  - type: feature
+    label: Bir oyunun sayfasında sol ve sağ ok tuşları artık önceki ve sonraki oyuna gidiyor
+  - type: feature
+    label: Bir oyunun sayfasındaki Hileler bölümü artık katlanabiliyor ve açık bırakıp bırakmadığınızı hatırlıyor
+  - type: fix
+    label: Kazı gibi bir metin kutusuyla başlayan pencere açıldığında imleç artık kapat düğmesinde değil, o kutuda oluyor
+  - type: feature
+    label: ROM Araçları'ndaki yeni Ekran Görüntüsü İnceleme aracı, ZX Spectrum, Commodore 64 ve Game Boy ekran görüntülerini en şüpheli olan başta olacak şekilde listeler ve yalnızca seçtiklerinizi kaldırır
+  - type: fix
+    label: Kazıma artık, aslı makinenin gösterebileceğinden çok daha fazla ton içeren Game Boy ekran görüntüsünü reddediyor
+  - type: fix
+    label: Bir oyunun alt panelleri artık pencereye sığıyor, sağ kenardan taşmıyor
+  - type: feature
+    label: 3D kutuyu, diğer resimlerin yanında, Düzenle penceresinden içe aktarın
+  - type: feature
+    label: RetroAchievements girişi artık Oyna'ya bastığınızda DuckStation ve PCSX2'ye ulaşıyor
+  - type: fix
+    label: 8 bit ve 16 bit sistemlerde kazıma artık birden fazla sistemde çıkan oyunlara IGDB veya RAWG ekran görüntüleri eklemiyor, çünkü bunlar başka bir sistemin sürümünü gösterebiliyordu
+  - type: fix
+    label: Bir oyunun emülatörü artık Oyna'nın yanında değil, Emülatör ayarları kartında belirtiliyor
+  body: "<ul>\n  <li><strong>Her kazıyıcı doğru konsolu arıyor.</strong> Atari\n    Lynx, arcade CPS, Super Famicom ve diğerleri yanlış makinede\n    aranıyordu; ayrıca birçok sistem artık, tüm kaynaklar ve başarımlar için de aranıyor.</li>\n  <li><strong>Oyunun bölgesi önce kendi dosya adından belirlenir.</strong>\n    (USA) gibi bir etiket artık bölgeyi belirliyor ve yapay zekâya\n    artık sorulmuyor. ROM Araçları'nda, eski kazımaların yanlış yaptığı\n    oyunlar için yeni bir araç var: Dosya Adlarından Bölgeleri Düzelt.</li>\n  <li><strong>ScreenScraper oyunun bölgesini izler.</strong> Kutu,\n    3D kutu, kılavuz, başlık ve çıkış tarihi artık alfabede ilk gelen bölgeden değil,\n    oyunun kendi bölgesinden geliyor. ROM Araçları'nda eski kazımalar için yeni\n    bir araç var: Kutu ve Kılavuz Bölgelerini Düzelt. Videolar artık\n    önce küçük dosyayı deniyor.</li>\n  <li><strong>RAWG resimleri artık kutu kapağı değil.</strong> Çoğu zaman\n    ekran görüntüsü oluyorlar ve gerçek kapağı engelliyorlardı. Artık\n    hayran sanatı olarak kullanılıyorlar. ROM Araçları'nda, eski kazımaların kaydettikleri için\n    yeni bir araç var: Kutu Kapaklarından RAWG Resimlerini Temizle. RetroDB ayrıca\n    RAWG'in istediği şekilde kenar çubuğunda bir bağlantıyla RAWG'e teşekkür ediyor.</li>\n  <li><strong>ES-DE kazıyıcı sırasındaki yerini koruyor.</strong> Ana kaynak\n    olmadığında, sonraki kaynaklar ve yapay zekâ metinlerini ve kapaklarını değiştiriyor,\n    ekran görüntüleri de atılıyordu. Artık kalıyorlar.\n    Oyunda zaten bulunan medyayı kopyalamıyor ve oyunun kendi ROM dosyasının\n    girdisini okuyor. PS3 klasör oyunları artık ES-DE\n    kapaklarını buluyor. Sistem logolarını içe aktarma artık alakasız bir resim almıyor.\n    Tam Yeniden Kazıma da başka bir kaynağın yeni indirdiği kutuyu\n    artık silmiyor.</li>\n  <li><strong>Ekran Görüntüsü İnceleme.</strong> ROM Araçları'ndaki yeni bir araç,\n    ZX Spectrum, Commodore 64 ve Game Boy ekran görüntülerini en\n    şüpheli olan başta olacak şekilde listeler ve yalnızca seçtiklerinizi kaldırır.\n    Kazıma artık, aslı makinenin gösterebileceğinden çok daha fazla ton içeren\n    Game Boy ekran görüntüsünü reddediyor. 8 bit ve 16 bit sistemlerde artık\n    birden fazla sistemde çıkan oyunlara IGDB veya RAWG ekran görüntüleri eklemiyor.</li>\n  <li><strong>RetroAchievements girişi DuckStation ve PCSX2'ye ulaşıyor</strong>\n    Oyna'ya bastığınızda.</li>\n  <li><strong>Bir oyunun sayfasında:</strong> sol ve sağ ok tuşları\n    önceki ve sonraki oyuna gider, Hileler bölümü katlanır\n    ve bunu hatırlar, alt paneller pencereye sığar ve emülatör\n    Oyna'nın yanında değil, Emülatör ayarları kartında belirtilir.</li>\n  <li><strong>3D kutuyu içe aktarma</strong> artık Düzenle penceresinde,\n    diğer resimlerin yanında.</li>\n  <li><strong>Metin kutusuyla başlayan bir pencere,</strong> örneğin Kazı,\n    artık imleci kapat düğmesine değil o kutuya koyuyor.</li>\n</ul>\n"
 - version: 3.34.0
   date: '2026-10-30'
   tags:

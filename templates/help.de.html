@@ -281,7 +281,7 @@
             <div class="shortcut-item"><kbd>e</kbd> <span>Spiel bearbeiten</span></div>
             <div class="shortcut-item"><kbd>s</kbd> <span>Spiel scrapen</span></div>
             <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Vorheriges oder nächstes Spiel</span></div>
-            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Durch Screenshots navigieren</span></div>
+            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Durch Screenshots navigieren, solange einer geöffnet ist</span></div>
         </div>
 
         <div class="help-tip">
@@ -1075,6 +1075,7 @@
             <li>Generieren Sie einen API-Schlüssel in Ihren Profileinstellungen</li>
             <li>Geben Sie Ihren Benutzernamen und API-Schlüssel unter Einstellungen &rarr; Konto &rarr; RetroAchievements ein</li>
         </ol>
+        <p>Um Achievements zu verdienen, während Sie in RetroArch, DuckStation oder PCSX2 von RetroDB spielen, geben Sie Ihr RetroAchievements-Passwort einmal unter <strong>Achievements in RetroArch, DuckStation und PCSX2 verdienen</strong> auf derselben Seite ein. Es geht nur an RetroAchievements und wird nicht aufbewahrt; RetroDB behält das zurückgegebene Anmelde-Token, eines pro RetroDB-Benutzer. Aktivieren Sie dort <strong>Hardcore-Modus</strong>, wenn Sie ihn möchten. Wenn die Anmeldung für Achievements nicht mehr funktioniert, etwa nachdem Sie Ihren Schlüssel auf der RetroAchievements-Website zurückgesetzt haben, melden Sie sich ab und wieder an. Wenn Sie in DuckStation oder PCSX2 auf Spielen drücken, schreibt RetroDB Ihre Anmeldung in die eigene Einstellungsdatei dieses Emulators, wo sie bleibt, bis Sie sich abmelden oder ein anderer RetroDB-Benutzer spielt. Eine Anmeldung, die Sie im eigenen Menü des Emulators vorgenommen haben, bleibt unangetastet. RetroDB kann DuckStation auf einem Mac nicht anmelden.</p>
 
         <h3>Achievements-Seite</h3>
         <ul>
@@ -1455,6 +1456,18 @@
         <h3>Alternative Titel nachtragen</h3>
         <p>Durchsucht die Bibliothek nach Spielen, deren Feld <strong>alternative Titel</strong> leer ist, und befüllt es aus IGDB / TGDB / ScreenScraper. Nützlich nach dem Import eines großen Katalogs oder der Migration von einem anderen Werkzeug, das keine regionalen / japanischen / Untertitel gespeichert hat. Läuft im Hintergrund; der Fortschritt wird auf der Werkzeugkarte angezeigt.</p>
         <p><em>Benötigt mindestens einen Scraper-API-Schlüssel (IGDB / TGDB / ScreenScraper)</em></p>
+
+        <h3>Cover- und Handbuch-Regionen korrigieren</h3>
+        <p>Ältere ScreenScraper-Scrapes nahmen die erste Box, 3D-Box und das erste Handbuch aus einer alphabetischen Liste von Regionen, sodass ein USA-Spiel eine europäische Box zeigen oder ein portugiesisches Handbuch haben konnte. Dieses Werkzeug sucht jedes dieser Spiele erneut. Wo eine andere Region besser zum Spiel passt, lädt es diese Datei herunter und löscht die alte. Boxen und Handbücher von anderswo bleiben unberührt, ebenso Spiele, deren Datei schon passt. Drücken Sie die Karte erneut, um anzuhalten; ein späterer Lauf macht mit dem Rest weiter.</p>
+        <p><em>Benötigt ein ScreenScraper-Konto. Es verbraucht Ihr tägliches ScreenScraper-Kontingent</em></p>
+
+        <h3>Regionen anhand der Dateinamen korrigieren</h3>
+        <p>Der Dateiname einer ROM sagt, um welche Kopie es sich handelt, daher entscheidet ein Tag wie <code>(USA)</code> jetzt über ihre Region, und die KI wird nicht gefragt. Ältere Scrapes ließen zuerst die KI raten, sodass eine <code>(USA)</code>-Datei als Japan aufgeführt sein konnte. Dieses Werkzeug gibt diesen Spielen die Region aus ihrem Dateinamen. Es ändert nur Regionen, die die KI ausgefüllt hat, auch eine, die Sie später von Hand so korrigiert haben, dass sie vom Dateinamen abweicht.</p>
+        <p><em>Keine Abhängigkeiten erforderlich</em></p>
+
+        <h3>RAWG-Bilder aus dem Cover entfernen</h3>
+        <p>RAWG hat keine Boxart. Ältere Scrapes speicherten sein Hintergrundbild, oft einen Screenshot, als Cover, und weil Scrapes nur leere Cover füllen, blockierte dieses Bild ein echtes. Dieses Werkzeug löscht diese Bilder und lässt die Cover leer. Cover aus anderen Quellen und alle Fanarts bleiben. Diese Spiele zeigen kein Cover, bis ein Scrape eines findet, starten Sie also danach ein Massen-Scraping mit <strong>Fehlende auffüllen</strong>.</p>
+        <p><em>Keine Abhängigkeiten erforderlich</em></p>
 
         <h3>Massen-HLTB-Suche</h3>
         <p>Führen Sie für jedes Spiel ohne Spielzeitschätzung eine HowLongToBeat-Suche durch. Jeder Treffer wird nach Titel + Plattform + Veröffentlichungsjahr bewertet; Treffer mit hoher Zuversicht werden automatisch gespeichert. Alles unterhalb des Zuversichtsschwellenwerts (oder mit widersprüchlichen Plattformen) wird zur menschlichen Überprüfung beiseitegelegt.</p>

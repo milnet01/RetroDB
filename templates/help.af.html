@@ -281,7 +281,7 @@
             <div class="shortcut-item"><kbd>e</kbd> <span>Redigeer speletjie</span></div>
             <div class="shortcut-item"><kbd>s</kbd> <span>Ontgin speletjie</span></div>
             <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Vorige of volgende speletjie</span></div>
-            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Blaai deur skermkiekies</span></div>
+            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Blaai deur skermkiekies, terwyl een oop is</span></div>
         </div>
 
         <div class="help-tip">
@@ -1075,6 +1075,7 @@
             <li>Genereer 'n API-sleutel in jou profielinstellings</li>
             <li>Voer jou gebruikersnaam en API-sleutel in by Instellings &rarr; Rekening &rarr; RetroAchievements</li>
         </ol>
+        <p>Om prestasies te verdien terwyl jy in RetroDB se RetroArch, DuckStation of PCSX2 speel, voer jou RetroAchievements-wagwoord een keer in onder <strong>Verdien prestasies in RetroArch, DuckStation en PCSX2</strong> op dieselfde bladsy. Dit gaan net na RetroAchievements en word nie gehou nie; RetroDB hou die aanmeldtoken wat dit teruggee, een per RetroDB-gebruiker. Merk <strong>Hardcore-modus</strong> daar as jy dit wil hê. As prestasies ophou aanmeld, byvoorbeeld nadat jy jou sleutel op die RetroAchievements-werf teruggestel het, meld af en meld weer aan. Wanneer jy Speel in DuckStation of PCSX2 druk, skryf RetroDB jou aanmelding na daardie emulator se eie instellingslêer, waar dit bly totdat jy afmeld of 'n ander RetroDB-gebruiker speel. 'n Aanmelding wat jy in die emulator se eie kieslys gedoen het, word met rus gelaat. RetroDB kan nie DuckStation op 'n Mac aanmeld nie.</p>
 
         <h3>Prestasies-bladsy</h3>
         <ul>
@@ -1455,6 +1456,18 @@
         <h3>Terugvul Alternatiewe Titels</h3>
         <p>Deursoek die biblioteek vir speletjies waarvan die <strong>alternatiewe titels</strong>-veld leeg is, en vul dit vanaf IGDB / TGDB / ScreenScraper in. Nuttig na die invoer van 'n groot katalogus of migrasie vanaf 'n ander nutsprogram wat nie streeks-/Japannese/subtitels gestoor het nie. Loop in die agtergrond; vordering word op die nutsprogramkaart gewys.</p>
         <p><em>Vereis ten minste een ontginner-API-sleutel (IGDB / TGDB / ScreenScraper)</em></p>
+
+        <h3>Herstel boks- en handleidingstreke</h3>
+        <p>Ouer ScreenScraper-ontginnings het die eerste boks, 3D-boks en handleiding in 'n alfabetiese lys van streke geneem, so 'n VSA-speletjie kon 'n Europese boks wys of 'n Portugese handleiding hê. Hierdie nutsprogram soek elkeen van daardie speletjies weer op. Waar 'n ander streek beter by die speletjie pas, laai dit daardie lêer af en skrap die oue. Bokse en handleidings van enige ander plek word met rus gelaat, net soos speletjies waarvan die lêer reeds pas. Druk die kaart weer om te stop; 'n latere lopie gaan met die res voort.</p>
+        <p><em>Vereis 'n ScreenScraper-rekening. Dit gebruik jou daaglikse ScreenScraper-toelae</em></p>
+
+        <h3>Herstel streke uit lêernaam</h3>
+        <p>'n ROM se lêernaam sê watter kopie dit is, so 'n merker soos <code>(USA)</code> besluit nou sy streek en die KI word nie gevra nie. Ouer ontginnings het die KI eerste laat raai, so 'n <code>(USA)</code>-lêer kon as Japan gelys word. Hierdie nutsprogram gee daardie speletjies die streek in hul lêernaam. Dit verander slegs streke wat die KI ingevul het, insluitend een wat jy later met die hand reggestel het sodat dit van die lêernaam verskil.</p>
+        <p><em>Geen afhanklikhede vereis nie</em></p>
+
+        <h3>Vee RAWG-prente uit bokskuns</h3>
+        <p>RAWG het geen bokskuns nie. Ouer ontginnings het sy agtergrondprent, dikwels 'n skermkiekie, as die omslag gestoor, en omdat ontginnings net leë omslae invul, het daardie prent 'n regte een geblokkeer. Hierdie nutsprogram skrap daardie prente en laat die omslae leeg. Omslae van ander bronne en alle agtergrondkuns bly. Daardie speletjies wys geen omslag totdat 'n ontginning een vind nie, so doen daarna 'n grootmaat-ontginning met <strong>Vul ontbrekende</strong>.</p>
+        <p><em>Geen afhanklikhede vereis nie</em></p>
 
         <h3>Grootmaat-HLTB-opsoek</h3>
         <p>Voer 'n HowLongToBeat-opsoek uit vir elke speletjie sonder 'n speeltyd-beraming. Elke passing word gepunt volgens titel + platform + vrystellingsjaar; hoë-vertroue-passings word outomaties gestoor. Enigiets onder die vertroue-drempel (of met botsende platforms) word geparkeer vir menslike hersiening.</p>

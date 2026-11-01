@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-01 20:20+0200\n"
+"POT-Creation-Date: 2026-11-01 20:46+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -704,12 +704,11 @@ msgstr "不明な画像タイプです"
 
 #: routes/maintenance.py:433
 msgid "Add your ScreenScraper account in Settings first."
-msgstr ""
+msgstr "まず設定でScreenScraperのアカウントを追加してください。"
 
 #: routes/maintenance.py:434
-#, fuzzy
 msgid "This fix is already running."
-msgstr "このゲームはすでに実行中です"
+msgstr "この修正はすでに実行中です。"
 
 #: routes/museum.py:385 routes/scraper.py:773
 msgid "No AI provider configured"
@@ -1316,7 +1315,7 @@ msgstr "各ゲームのコピーを少なくとも1つ残してください。�
 
 #: routes/tools.py:1432
 msgid "This system has no screenshot check"
-msgstr ""
+msgstr "このシステムにはスクリーンショットの確認がありません"
 
 #: routes/trophies.py:396
 msgid ""
@@ -5698,7 +5697,7 @@ msgstr "残りのゲーム:"
 
 #: templates/base.html:226
 msgid "Some data and images from RAWG"
-msgstr ""
+msgstr "RAWGのデータと画像の一部"
 
 #: templates/base.html:227
 msgid "Click for more info"
@@ -8623,9 +8622,8 @@ msgstr "正確なファイルハッシュまたは視覚的類似性マッチン
 
 #: templates/_macros/nav_tabs.html:43 templates/rom_tools_hub.html:247
 #: templates/screenshot_review.html:5 templates/screenshot_review.html:64
-#, fuzzy
 msgid "Screenshot Review"
-msgstr "スクリーンショットビューア"
+msgstr "スクリーンショットの確認"
 
 #: templates/rom_tools_hub.html:250
 msgid ""
@@ -8633,6 +8631,8 @@ msgid ""
 "Spectrum, Commodore 64 and Game Boy shots are listed with the most "
 "suspicious first, and you decide what to remove."
 msgstr ""
+"別のシステム版のゲームが写っている可能性のあるスクリーンショットを探します。ZX Spectrum、Commodore 64、Game "
+"Boyの画像を怪しい順に表示し、削除するかどうかはあなたが決めます。"
 
 #: templates/rom_tools_hub.html:274
 msgid "Image Resizer"
@@ -8670,7 +8670,7 @@ msgstr "メタデータのみ &middot; メディアのダウンロードなし"
 
 #: templates/rom_tools_hub.html:300 templates/rom_tools_hub.html:409
 msgid "Fix Box and Manual Regions"
-msgstr ""
+msgstr "ボックスとマニュアルの地域を修正"
 
 #: templates/rom_tools_hub.html:303
 msgid ""
@@ -8678,34 +8678,33 @@ msgid ""
 "manual, such as a European box on a USA game. This looks each one up "
 "again and swaps it for the right region. Pictures from anywhere else are "
 "left alone."
-msgstr ""
+msgstr "以前のScreenScraperでの取得では、USA版のゲームにヨーロッパ版のボックスが付くなど、別の地域のボックスやマニュアルが使われることがありました。この機能は1件ずつ再検索し、正しい地域のものに差し替えます。ほかの取得元の画像は変更しません。"
 
 #: templates/rom_tools_hub.html:306
-#, fuzzy
 msgid "Needs a ScreenScraper account"
-msgstr "同じ ScreenScraper ゲーム"
+msgstr "ScreenScraperのアカウントが必要です"
 
 #: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:468
 msgid "Fix Regions from File Names"
-msgstr ""
+msgstr "ファイル名から地域を修正"
 
 #: templates/rom_tools_hub.html:316
 msgid ""
 "The AI used to guess a game's region even when its file name said, so a "
 "(USA) file could be listed as Japan. This gives those games the region in"
 " their file name."
-msgstr ""
+msgstr "以前はAIがファイル名の表記を無視して地域を推測していたため、(USA)のファイルが日本と表示されることがありました。この機能は、そうしたゲームにファイル名どおりの地域を設定します。"
 
 #: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:502
 msgid "Clear RAWG Pictures from Box Art"
-msgstr ""
+msgstr "ボックスアートからRAWGの画像を消去"
 
 #: templates/rom_tools_hub.html:329
 msgid ""
 "RAWG has no box art, so older scrapes saved a background picture or "
 "screenshot as the cover, and that blocks a real cover. This clears those "
 "pictures so a scrape can find real covers."
-msgstr ""
+msgstr "RAWGにはボックスアートがないため、以前の取得では背景画像やスクリーンショットがカバーとして保存され、本物のカバーが入らなくなっていました。この機能はそれらの画像を消去し、取得で本物のカバーを探せるようにします。"
 
 #: templates/rom_tools_hub.html:339
 msgid "Bulk HLTB Lookup"
@@ -8756,34 +8755,37 @@ msgid ""
 "ScreenScraper allowance and can take a long time. You can leave the page,"
 " and press this card again to stop."
 msgstr ""
+"ScreenScraperのボックスまたはマニュアルがある各ゲームを再検索します。別の地域のほうが合う場合は、そのファイルをダウンロードし、古いファイルを削除します。"
+"\n"
+"\n"
+"手動で変更したゲームは対象外です。ScreenScraperの1日の利用枠を使うため、時間がかかることがあります。ページを離れても続行され、このカードをもう一度押すと停止します。"
 
 #: templates/rom_tools_hub.html:411
-#, fuzzy
 msgid "Could not start the fix"
-msgstr "処理を開始できませんでした。"
+msgstr "修正を開始できませんでした"
 
 #: templates/rom_tools_hub.html:412
 msgid ""
 "Stop the fix? Files already swapped stay as they are, and a later run "
 "carries on with the rest."
-msgstr ""
+msgstr "修正を停止しますか?差し替え済みのファイルはそのままで、次回の実行で残りを続けます。"
 
 #: templates/rom_tools_hub.html:413
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Stopped. Files swapped: {replaced}."
-msgstr "停止しました。提案された名前: {proposals}。"
+msgstr "停止しました。差し替えたファイル: {replaced}。"
 
 #: templates/rom_tools_hub.html:414
 #, python-brace-format
 msgid ""
 "The fix stopped with an error. Files swapped: {replaced}. The log has the"
 " details."
-msgstr ""
+msgstr "エラーで修正が停止しました。差し替えたファイル: {replaced}。詳細はログをご確認ください。"
 
 #: templates/rom_tools_hub.html:415
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Checked {current} of {total} games. Files swapped: {replaced}."
-msgstr "ゲーム {current} / {total} を処理中: {title}。これまでに埋めた数: {filled}。"
+msgstr "{total}件中{current}件のゲームを確認しました。差し替えたファイル: {replaced}。"
 
 #: templates/rom_tools_hub.html:416
 #, python-brace-format
@@ -8791,6 +8793,8 @@ msgid ""
 "Finished. Files swapped: {replaced}. Games not found: {no_match}. Could "
 "not download: {failed}."
 msgstr ""
+"完了しました。差し替えたファイル: {replaced}。見つからなかったゲーム: {no_match}。ダウンロードできなかったもの: "
+"{failed}。"
 
 #: templates/rom_tools_hub.html:417
 #, python-brace-format
@@ -8798,6 +8802,8 @@ msgid ""
 "Stopped: ScreenScraper stopped answering, so your daily allowance may be "
 "spent. Files swapped: {replaced}. Run it again tomorrow."
 msgstr ""
+"停止しました。ScreenScraperが応答しなくなったため、1日の利用枠を使い切った可能性があります。差し替えたファイル: "
+"{replaced}。明日もう一度実行してください。"
 
 #: templates/rom_tools_hub.html:469
 #, python-brace-format
@@ -8808,20 +8814,22 @@ msgid ""
 "Only regions the AI filled are changed. If you corrected one of those by "
 "hand to differ from the file name, it changes too."
 msgstr ""
+"{count}件のゲームで、AIが設定した地域がファイル名と食い違っています。それぞれファイル名の地域に変更されます。\n"
+"\n"
+"変更されるのはAIが設定した地域のみです。それらを手動でファイル名と違う地域に直していた場合も、変更されます。"
 
 #: templates/rom_tools_hub.html:470
 msgid "No game has an AI region that its file name contradicts."
-msgstr ""
+msgstr "ファイル名と食い違うAI設定の地域を持つゲームはありません。"
 
 #: templates/rom_tools_hub.html:471
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Fixed {count} regions."
-msgstr "{title}（{count} バージョン）"
+msgstr "{count}件の地域を修正しました。"
 
 #: templates/rom_tools_hub.html:472
-#, fuzzy
 msgid "Could not fix the regions"
-msgstr "これらのバージョンをリンクできませんでした。"
+msgstr "地域を修正できませんでした"
 
 #: templates/rom_tools_hub.html:503
 #, python-brace-format
@@ -8833,22 +8841,25 @@ msgid ""
 "Covers from other sources and all fanart stay. Afterwards, run a bulk "
 "scrape with Fill Missing to look for real covers."
 msgstr ""
+"{count}件のゲームとウィッシュリストの項目が、RAWGの画像をボックスアートとして使っています。それらの画像は削除され、取得で見つかるまでカバーは表示されません。"
+"\n"
+"\n"
+"他の取得元のカバーとファンアートはすべて残ります。その後、未入力のみ補完で一括取得を実行して、本物のカバーを探してください。"
 
 #: templates/rom_tools_hub.html:504
 msgid "No game uses a RAWG picture as its box art."
-msgstr ""
+msgstr "RAWGの画像をボックスアートに使っているゲームはありません。"
 
 #: templates/rom_tools_hub.html:505
 #, python-brace-format
 msgid ""
 "Cleared {count} pictures. Run a bulk scrape with Fill Missing to look for"
 " real covers."
-msgstr ""
+msgstr "{count}件の画像を消去しました。未入力のみ補完で一括取得を実行して、本物のカバーを探してください。"
 
 #: templates/rom_tools_hub.html:506
-#, fuzzy
 msgid "Could not clear the pictures"
-msgstr "処理を開始できませんでした。"
+msgstr "画像を消去できませんでした"
 
 #: templates/rom_tools_settings.html:309
 msgid "Empty: RetroDB's data folder"
@@ -8906,16 +8917,15 @@ msgid ""
 "needs many more may be from another version of the game. Shots that fit "
 "worst come first. Real shots with heavy shading can rank high too, so "
 "look before you remove. Nothing is removed unless you press Remove."
-msgstr ""
+msgstr "これらの機種は同時に表示できる色数が少ないため、はるかに多くの色を使う画像は、別バージョンのゲームのものかもしれません。合わないものから順に表示します。陰影の強い本物の画像も上位に来ることがあるので、削除前によく確認してください。削除を押すまでは何も削除されません。"
 
 #: templates/screenshot_review.html:91
 msgid "Your library has no ZX Spectrum, Commodore 64 or Game Boy games to check."
-msgstr ""
+msgstr "ライブラリに確認できるZX Spectrum、Commodore 64、Game Boyのゲームがありません。"
 
 #: templates/screenshot_review.html:104
-#, fuzzy
 msgid "Show more"
-msgstr "もっと読み込む"
+msgstr "もっと見る"
 
 #: templates/settings.html:13
 msgid "Configure your RetroDB installation"

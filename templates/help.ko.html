@@ -281,7 +281,7 @@
             <div class="shortcut-item"><kbd>e</kbd> <span>게임 편집</span></div>
             <div class="shortcut-item"><kbd>s</kbd> <span>게임 스크래핑</span></div>
             <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>이전 또는 다음 게임</span></div>
-            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>스크린샷 탐색</span></div>
+            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>스크린샷 탐색(스크린샷이 열려 있을 때)</span></div>
         </div>
 
         <div class="help-tip">
@@ -1075,6 +1075,7 @@
             <li>프로필 설정에서 API 키를 생성합니다</li>
             <li>사용자 이름과 API 키를 설정 &rarr; 계정 &rarr; RetroAchievements에 입력합니다</li>
         </ol>
+        <p>RetroDB의 RetroArch, DuckStation 또는 PCSX2로 플레이하면서 업적을 달성하려면, 같은 페이지의 <strong>RetroArch, DuckStation, PCSX2에서 업적 달성</strong>에 RetroAchievements 비밀번호를 한 번만 입력하세요. 비밀번호는 RetroAchievements로만 전송되며 보관되지 않습니다. RetroDB는 돌려받은 로그인 토큰을 RetroDB 사용자마다 하나씩 보관합니다. 원한다면 그곳에서 <strong>하드코어 모드</strong>를 선택하세요. RetroAchievements 사이트에서 키를 재설정한 뒤처럼 업적 로그인이 되지 않으면, 로그아웃한 다음 다시 로그인하세요. DuckStation 또는 PCSX2에서 실행을 누르면 RetroDB가 로그인 정보를 그 에뮬레이터의 설정 파일에 기록하며, 로그아웃하거나 다른 RetroDB 사용자가 플레이할 때까지 그대로 남습니다. 에뮬레이터 자체 메뉴에서 한 로그인은 건드리지 않습니다. Mac에서는 RetroDB가 DuckStation에 로그인할 수 없습니다.</p>
 
         <h3>업적 페이지</h3>
         <ul>
@@ -1455,6 +1456,18 @@
         <h3>대체 제목 채우기</h3>
         <p><strong>대체 제목</strong> 필드가 비어 있는 게임을 라이브러리에서 찾아 IGDB / TGDB / ScreenScraper에서 채웁니다. 대규모 카탈로그를 가져왔거나, 지역별/일본어/부제 제목을 저장하지 않은 다른 도구에서 마이그레이션한 후에 유용합니다. 백그라운드에서 실행되며, 진행 상황은 도구 카드에 표시됩니다.</p>
         <p><em>하나 이상의 스크레이퍼 API 키 필요(IGDB / TGDB / ScreenScraper)</em></p>
+
+        <h3>박스와 설명서 지역 수정</h3>
+        <p>예전 ScreenScraper 스크래핑은 알파벳순 지역 목록에서 처음 나오는 박스, 3D 박스, 설명서를 가져왔기 때문에, USA 게임에 유럽판 박스가 표시되거나 포르투갈어 설명서가 붙을 수 있었습니다. 이 도구는 그런 게임을 각각 다시 검색합니다. 다른 지역이 게임에 더 잘 맞으면 그 파일을 내려받고 이전 파일을 삭제합니다. 다른 출처의 박스와 설명서는 그대로 두며, 파일이 이미 맞는 게임도 그대로 둡니다. 중지하려면 카드를 다시 누르세요. 나중에 실행하면 나머지를 이어서 처리합니다.</p>
+        <p><em>ScreenScraper 계정 필요. ScreenScraper 일일 허용량을 사용합니다</em></p>
+
+        <h3>파일 이름으로 지역 수정</h3>
+        <p>ROM의 파일 이름은 그것이 어떤 판본인지 알려 주므로, 이제 <code>(USA)</code> 같은 태그가 지역을 결정하고 AI에게 묻지 않습니다. 예전 스크래핑은 AI가 먼저 추측하게 했기 때문에 <code>(USA)</code> 파일이 일본으로 표시될 수 있었습니다. 이 도구는 그런 게임에 파일 이름에 있는 지역을 지정합니다. AI가 채운 지역만 바꾸며, 나중에 직접 수정해 파일 이름과 달라진 지역도 포함됩니다.</p>
+        <p><em>의존성 필요 없음</em></p>
+
+        <h3>박스 아트의 RAWG 이미지 지우기</h3>
+        <p>RAWG에는 박스아트가 없습니다. 예전 스크래핑은 RAWG의 배경 그림(대개 스크린샷)을 표지로 저장했고, 스크래핑은 빈 표지만 채우기 때문에 그 그림이 진짜 표지를 막았습니다. 이 도구는 그런 그림을 삭제하고 표지를 비워 둡니다. 다른 출처의 표지와 모든 팬아트는 그대로 남습니다. 해당 게임은 스크래핑으로 표지를 찾을 때까지 표지가 표시되지 않으므로, 이후에 <strong>누락 채우기</strong>로 일괄 스크래핑을 실행하세요.</p>
+        <p><em>의존성 필요 없음</em></p>
 
         <h3>일괄 HLTB 조회</h3>
         <p>플레이 시간 추정치가 없는 모든 게임에 대해 HowLongToBeat 조회를 실행합니다. 각 일치 항목은 제목 + 플랫폼 + 출시 연도로 점수가 매겨지며, 신뢰도가 높은 일치 항목은 자동으로 저장됩니다. 신뢰도 임곗값 미만(또는 플랫폼이 충돌하는) 항목은 사람의 검토를 위해 보류됩니다.</p>

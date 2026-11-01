@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-01 20:20+0200\n"
+"POT-Creation-Date: 2026-11-01 20:46+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -718,12 +718,11 @@ msgstr "Неизвестный тип изображения"
 
 #: routes/maintenance.py:433
 msgid "Add your ScreenScraper account in Settings first."
-msgstr ""
+msgstr "Сначала добавьте учётную запись ScreenScraper в Настройках."
 
 #: routes/maintenance.py:434
-#, fuzzy
 msgid "This fix is already running."
-msgstr "Эта игра уже запущена"
+msgstr "Это исправление уже выполняется."
 
 #: routes/museum.py:385 routes/scraper.py:773
 msgid "No AI provider configured"
@@ -1340,7 +1339,7 @@ msgstr "Оставьте хотя бы одну копию каждой игры
 
 #: routes/tools.py:1432
 msgid "This system has no screenshot check"
-msgstr ""
+msgstr "Для этой системы нет проверки скриншотов"
 
 #: routes/trophies.py:396
 msgid ""
@@ -5824,7 +5823,7 @@ msgstr "Осталось игр:"
 
 #: templates/base.html:226
 msgid "Some data and images from RAWG"
-msgstr ""
+msgstr "Часть данных и изображений из RAWG"
 
 #: templates/base.html:227
 msgid "Click for more info"
@@ -8846,9 +8845,8 @@ msgstr ""
 
 #: templates/_macros/nav_tabs.html:43 templates/rom_tools_hub.html:247
 #: templates/screenshot_review.html:5 templates/screenshot_review.html:64
-#, fuzzy
 msgid "Screenshot Review"
-msgstr "Просмотр скриншотов"
+msgstr "Проверка скриншотов"
 
 #: templates/rom_tools_hub.html:250
 msgid ""
@@ -8856,6 +8854,9 @@ msgid ""
 "Spectrum, Commodore 64 and Game Boy shots are listed with the most "
 "suspicious first, and you decide what to remove."
 msgstr ""
+"Поиск скриншотов, которые могут показывать версию игры для другой "
+"системы. Скриншоты ZX Spectrum, Commodore 64 и Game Boy идут списком, "
+"самые подозрительные первыми, а вы решаете, что удалить."
 
 #: templates/rom_tools_hub.html:274
 msgid "Image Resizer"
@@ -8897,7 +8898,7 @@ msgstr "Только метаданные &middot; без загрузки ме�
 
 #: templates/rom_tools_hub.html:300 templates/rom_tools_hub.html:409
 msgid "Fix Box and Manual Regions"
-msgstr ""
+msgstr "Исправить регионы коробок и инструкций"
 
 #: templates/rom_tools_hub.html:303
 msgid ""
@@ -8906,15 +8907,18 @@ msgid ""
 "again and swaps it for the right region. Pictures from anywhere else are "
 "left alone."
 msgstr ""
+"Прежние скрапы ScreenScraper могли подставить игре коробку или инструкцию"
+" другого региона, например европейскую коробку для игры из США. Здесь "
+"каждая ищется заново и заменяется на подходящую по региону. Картинки из "
+"других источников не затрагиваются."
 
 #: templates/rom_tools_hub.html:306
-#, fuzzy
 msgid "Needs a ScreenScraper account"
-msgstr "Та же игра в ScreenScraper"
+msgstr "Нужна учётная запись ScreenScraper"
 
 #: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:468
 msgid "Fix Regions from File Names"
-msgstr ""
+msgstr "Исправить регионы по именам файлов"
 
 #: templates/rom_tools_hub.html:316
 msgid ""
@@ -8922,10 +8926,13 @@ msgid ""
 "(USA) file could be listed as Japan. This gives those games the region in"
 " their file name."
 msgstr ""
+"ИИ раньше угадывал регион игры, даже если он был указан в имени файла, "
+"поэтому файл (USA) мог оказаться в списке как Japan. Это исправление "
+"задаёт таким играм регион из имени файла."
 
 #: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:502
 msgid "Clear RAWG Pictures from Box Art"
-msgstr ""
+msgstr "Очистить картинки RAWG из обложек"
 
 #: templates/rom_tools_hub.html:329
 msgid ""
@@ -8933,6 +8940,9 @@ msgid ""
 "screenshot as the cover, and that blocks a real cover. This clears those "
 "pictures so a scrape can find real covers."
 msgstr ""
+"У RAWG нет обложек, поэтому прежние скрапы сохраняли в качестве обложки "
+"фоновую картинку или скриншот, и настоящая обложка не находилась. Эти "
+"картинки будут очищены, чтобы скрап мог найти настоящие обложки."
 
 #: templates/rom_tools_hub.html:339
 msgid "Bulk HLTB Lookup"
@@ -8993,22 +9003,30 @@ msgid ""
 "ScreenScraper allowance and can take a long time. You can leave the page,"
 " and press this card again to stop."
 msgstr ""
+"Для каждой игры с коробкой или инструкцией из ScreenScraper поиск "
+"выполняется заново. Если другой регион подходит лучше, файл скачивается, "
+"а старый удаляется.\n"
+"\n"
+"Игры, которые вы меняли вручную, не затрагиваются. Используется ваш "
+"дневной лимит ScreenScraper, и это может занять много времени. Можно "
+"покинуть страницу, а чтобы остановить, нажмите эту карточку снова."
 
 #: templates/rom_tools_hub.html:411
-#, fuzzy
 msgid "Could not start the fix"
-msgstr "Не удалось запустить поиск."
+msgstr "Не удалось запустить исправление"
 
 #: templates/rom_tools_hub.html:412
 msgid ""
 "Stop the fix? Files already swapped stay as they are, and a later run "
 "carries on with the rest."
 msgstr ""
+"Остановить исправление? Уже заменённые файлы останутся как есть, а "
+"следующий запуск продолжит с остальными."
 
 #: templates/rom_tools_hub.html:413
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Stopped. Files swapped: {replaced}."
-msgstr "Остановлено. Предложено названий: {proposals}."
+msgstr "Остановлено. Заменено файлов: {replaced}."
 
 #: templates/rom_tools_hub.html:414
 #, python-brace-format
@@ -9016,11 +9034,13 @@ msgid ""
 "The fix stopped with an error. Files swapped: {replaced}. The log has the"
 " details."
 msgstr ""
+"Исправление остановлено из-за ошибки. Заменено файлов: {replaced}. "
+"Подробности в журнале."
 
 #: templates/rom_tools_hub.html:415
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Checked {current} of {total} games. Files swapped: {replaced}."
-msgstr "Заполняется игра {current} из {total}: {title}. Уже заполнено: {filled}."
+msgstr "Проверено игр: {current} из {total}. Заменено файлов: {replaced}."
 
 #: templates/rom_tools_hub.html:416
 #, python-brace-format
@@ -9028,6 +9048,8 @@ msgid ""
 "Finished. Files swapped: {replaced}. Games not found: {no_match}. Could "
 "not download: {failed}."
 msgstr ""
+"Готово. Заменено файлов: {replaced}. Игр не найдено: {no_match}. Не "
+"удалось скачать: {failed}."
 
 #: templates/rom_tools_hub.html:417
 #, python-brace-format
@@ -9035,6 +9057,8 @@ msgid ""
 "Stopped: ScreenScraper stopped answering, so your daily allowance may be "
 "spent. Files swapped: {replaced}. Run it again tomorrow."
 msgstr ""
+"Остановлено: ScreenScraper перестал отвечать, возможно, ваш дневной лимит"
+" исчерпан. Заменено файлов: {replaced}. Запустите снова завтра."
 
 #: templates/rom_tools_hub.html:469
 #, python-brace-format
@@ -9045,20 +9069,24 @@ msgid ""
 "Only regions the AI filled are changed. If you corrected one of those by "
 "hand to differ from the file name, it changes too."
 msgstr ""
+"У {count} игр регион от ИИ противоречит имени файла. Каждой будет задан "
+"регион из имени файла.\n"
+"\n"
+"Меняются только регионы, заполненные ИИ. Если вы вручную исправили такой "
+"регион так, что он отличается от имени файла, он тоже изменится."
 
 #: templates/rom_tools_hub.html:470
 msgid "No game has an AI region that its file name contradicts."
-msgstr ""
+msgstr "Нет игр, у которых регион от ИИ противоречит имени файла."
 
 #: templates/rom_tools_hub.html:471
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Fixed {count} regions."
-msgstr "{title} (версий: {count})"
+msgstr "Исправлено регионов: {count}."
 
 #: templates/rom_tools_hub.html:472
-#, fuzzy
 msgid "Could not fix the regions"
-msgstr "Не удалось связать эти версии."
+msgstr "Не удалось исправить регионы"
 
 #: templates/rom_tools_hub.html:503
 #, python-brace-format
@@ -9070,10 +9098,17 @@ msgid ""
 "Covers from other sources and all fanart stay. Afterwards, run a bulk "
 "scrape with Fill Missing to look for real covers."
 msgstr ""
+"У {count} игр и записей списка желаемого в качестве обложки стоит "
+"картинка RAWG. Эти картинки будут удалены, и у этих игр не будет обложки,"
+" пока скрап не найдёт её.\n"
+"\n"
+"Обложки из других источников и весь фан-арт останутся. После этого "
+"запустите массовый скрап с режимом «Заполнить недостающее», чтобы найти "
+"настоящие обложки."
 
 #: templates/rom_tools_hub.html:504
 msgid "No game uses a RAWG picture as its box art."
-msgstr ""
+msgstr "Нет игр с картинкой RAWG в качестве обложки."
 
 #: templates/rom_tools_hub.html:505
 #, python-brace-format
@@ -9081,11 +9116,12 @@ msgid ""
 "Cleared {count} pictures. Run a bulk scrape with Fill Missing to look for"
 " real covers."
 msgstr ""
+"Очищено картинок: {count}. Запустите массовый скрап с режимом «Заполнить "
+"недостающее», чтобы найти настоящие обложки."
 
 #: templates/rom_tools_hub.html:506
-#, fuzzy
 msgid "Could not clear the pictures"
-msgstr "Не удалось запустить поиск."
+msgstr "Не удалось очистить картинки"
 
 #: templates/rom_tools_settings.html:309
 msgid "Empty: RetroDB's data folder"
@@ -9146,15 +9182,22 @@ msgid ""
 "worst come first. Real shots with heavy shading can rank high too, so "
 "look before you remove. Nothing is removed unless you press Remove."
 msgstr ""
+"Эти машины могли показывать одновременно лишь несколько цветов, поэтому "
+"картинка, которой нужно намного больше, может быть из другой версии игры."
+" Сначала идут скриншоты, которые подходят хуже всего. Настоящие скриншоты"
+" с плотной шейдерной растушёвкой тоже могут оказаться выше, так что "
+"смотрите, прежде чем удалять. Ничего не удаляется, пока вы не нажмёте "
+"«Удалить»."
 
 #: templates/screenshot_review.html:91
 msgid "Your library has no ZX Spectrum, Commodore 64 or Game Boy games to check."
 msgstr ""
+"В вашей библиотеке нет игр для ZX Spectrum, Commodore 64 или Game Boy для"
+" проверки."
 
 #: templates/screenshot_review.html:104
-#, fuzzy
 msgid "Show more"
-msgstr "Загрузить ещё"
+msgstr "Показать ещё"
 
 #: templates/settings.html:13
 msgid "Configure your RetroDB installation"

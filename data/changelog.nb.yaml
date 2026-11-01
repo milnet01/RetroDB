@@ -1,3 +1,55 @@
+- version: 3.35.0
+  date: '2026-11-01'
+  tags:
+  - type: fix
+    label: ES-DE beholder nå plassen sin i skraperrekkefølgen når det ikke er hovedkilden. Beskrivelsene, selskapene og coverne ble erstattet av senere kilder og AI-en
+  - type: fix
+    label: Skjermbilder og tittelskjermer fra ES-DE legges nå til et spill når ES-DE ikke er hovedkilden, med mindre de ser likedan ut som et bilde spillet allerede har
+  - type: fix
+    label: ES-DE kopierer ikke lenger fankunst, video eller manual som spillet allerede har, og en full reskraping sletter ikke lenger en eske som en annen kilde nettopp har lastet ned
+  - type: fix
+    label: ES-DE leser nå oppføringen for spillets egen ROM-fil, slik at en annen utgave med samme navn ikke kan levere detaljene, og PS3-mappespill finner nå ES-DE-coverne sine
+  - type: fix
+    label: Import av systemlogoer fra ES-DE tar ikke lenger et urelatert bilde fordi navnet inneholder bokstaver som «gb»
+  - type: fix
+    label: En merkelapp i ROM-filens navn, som (USA), avgjør nå regionen. AI-en blir ikke lenger spurt, siden den kunne oppgi en USA-kopi som Europa eller Japan
+  - type: feature
+    label: Nytt verktøy i ROM-verktøy, Fiks regioner fra filnavn, retter spillene som eldre skrapinger fikk feil på denne måten
+  - type: fix
+    label: RAWG-bakgrunnsbilder lagres ikke lenger som esketrekk, siden de ofte er skjermbilder og blokkerte et ekte cover. De brukes som fankunst i stedet
+  - type: feature
+    label: Nytt verktøy i ROM-verktøy, Fjern RAWG-bilder fra esketrekk, fjerner de eldre skrapinger har lagret, slik at en skraping kan finne ekte cover
+  - type: feature
+    label: RetroDB krediterer nå RAWG med en lenke i sidefeltet, slik RAWG ber om
+  - type: fix
+    label: ScreenScraper gir nå hvert spill eske, 3D-eske, manual, tittel og utgivelsesdato fra spillets egen region, i stedet for den regionen som kom først i alfabetet
+  - type: feature
+    label: Nytt verktøy i ROM-verktøy, Fiks eske- og manualregioner, bytter ut esker og manualer som eldre ScreenScraper-skrapinger hentet fra feil region
+  - type: fix
+    label: ScreenScraper-videoer bruker nå den minste filen først, og den største bare hvis det mislykkes
+  - type: fix
+    label: Hver skraper søker nå på riktig konsoll. Atari Lynx, arcade CPS, Super Famicom og andre ble søkt på feil maskin, og mange flere systemer blir nå søkt på i det hele tatt, av alle kilder og for prestasjoner
+  - type: feature
+    label: På et spills side går venstre- og høyrepil nå til forrige og neste spill
+  - type: feature
+    label: Juksekoder-delen på et spills side kan nå foldes sammen, og husker om du lot den stå åpen
+  - type: fix
+    label: Et vindu som starter på et tekstfelt, som Skrap, setter nå markøren i feltet i stedet for på lukkeknappen
+  - type: feature
+    label: Nytt verktøy for skjermbildegjennomgang i ROM-verktøy viser skjermbilder fra ZX Spectrum, Commodore 64 og Game Boy med de mest mistenkelige først, og fjerner bare det du velger
+  - type: fix
+    label: Skraping avviser nå et Game Boy-skjermbilde der originalen har langt flere gråtoner enn maskinen kunne vise
+  - type: fix
+    label: Panelene nederst på et spills side passer nå i vinduet i stedet for å gå utenfor høyre kant
+  - type: feature
+    label: Importer en 3D-eske fra Rediger-vinduet, ved siden av de andre bildene
+  - type: feature
+    label: RetroAchievements-pålogging når nå DuckStation og PCSX2 når du trykker Spill
+  - type: fix
+    label: På 8-bits og 16-bits systemer legger skraping ikke lenger til IGDB- eller RAWG-skjermbilder på et spill utgitt på flere systemer, siden de kunne vise en annen systemversjon
+  - type: fix
+    label: Et spills emulator står nå på kortet for Emulator-innstillinger, ikke ved siden av Spill
+  body: "<ul>\n  <li><strong>Hver skraper søker på riktig konsoll.</strong> Atari\n    Lynx, arcade CPS, Super Famicom og andre ble søkt på feil\n    maskin, og mange flere systemer blir nå søkt på i det hele tatt,\n    av alle kilder og for prestasjoner.</li>\n  <li><strong>Et spills region kommer først fra eget filnavn.</strong>\n    En merkelapp som (USA) avgjør nå regionen, og AI-en blir ikke lenger\n    spurt. ROM-verktøy har et nytt verktøy, Fiks regioner fra filnavn,\n    for spillene som eldre skrapinger fikk feil.</li>\n  <li><strong>ScreenScraper følger spillets region.</strong> Eske,\n    3D-eske, manual, tittel og utgivelsesdato kommer nå fra spillets egen\n    region, ikke den som kom først i alfabetet. ROM-verktøy har et\n    nytt verktøy, Fiks eske- og manualregioner, for eldre skrapinger.\n    Videoer prøver nå den minste filen først.</li>\n  <li><strong>RAWG-bilder er ikke lenger esketrekk.</strong> De er ofte\n    skjermbilder, og de blokkerte et ekte cover. Nå brukes de som\n    fankunst. ROM-verktøy har et nytt verktøy, Fjern RAWG-bilder fra\n    esketrekk, for de eldre skrapinger har lagret. RetroDB krediterer også\n    RAWG med en lenke i sidefeltet, slik RAWG ber om.</li>\n  <li><strong>ES-DE beholder plassen sin i skraperrekkefølgen.</strong> Når\n    det ikke var hovedkilden, erstattet senere kilder og AI-en teksten og\n    coverne, og skjermbildene ble droppet. Nå blir de værende.\n    Det kopierer ikke lenger medier et spill allerede har, og det leser\n    oppføringen for spillets egen ROM-fil. PS3-mappespill finner nå ES-DE-coverne\n    sine. Import av systemlogoer tar ikke lenger et urelatert bilde.\n    En full reskraping sletter ikke lenger en eske som en annen kilde nettopp\n    har lastet ned.</li>\n  <li><strong>Skjermbildegjennomgang.</strong> Et nytt verktøy i ROM-verktøy viser\n    skjermbilder fra ZX Spectrum, Commodore 64 og Game Boy med de mest\n    mistenkelige først, og fjerner bare det du velger. Skraping avviser nå et\n    Game Boy-skjermbilde der originalen har langt flere gråtoner\n    enn maskinen kunne vise. På 8-bits og 16-bits systemer legger det ikke\n    lenger til IGDB- eller RAWG-skjermbilder på et spill utgitt på flere\n    systemer.</li>\n  <li><strong>RetroAchievements-pålogging når DuckStation og PCSX2</strong>\n    når du trykker Spill.</li>\n  <li><strong>På et spills side:</strong> venstre- og høyrepil går\n    til forrige og neste spill, Juksekoder-delen kan foldes sammen og husker det,\n    panelene nederst passer i vinduet, og emulatoren står\n    på kortet for Emulator-innstillinger, ikke ved siden av Spill.</li>\n  <li><strong>Importer en 3D-eske</strong> finner du nå i Rediger-vinduet, ved siden av\n    de andre bildene.</li>\n  <li><strong>Et vindu som starter på et tekstfelt,</strong> som Skrap,\n    setter nå markøren i feltet i stedet for på lukkeknappen.</li>\n</ul>\n"
 - version: 3.34.0
   date: '2026-10-30'
   tags:

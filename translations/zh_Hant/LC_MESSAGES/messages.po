@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-01 20:20+0200\n"
+"POT-Creation-Date: 2026-11-01 20:46+0200\n"
 "PO-Revision-Date: 2026-07-01 09:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hant\n"
@@ -702,12 +702,11 @@ msgstr "未知的圖片類型"
 
 #: routes/maintenance.py:433
 msgid "Add your ScreenScraper account in Settings first."
-msgstr ""
+msgstr "請先到「設定」新增你的 ScreenScraper 帳戶。"
 
 #: routes/maintenance.py:434
-#, fuzzy
 msgid "This fix is already running."
-msgstr "該遊戲已在執行中"
+msgstr "此修復已在執行中。"
 
 #: routes/museum.py:385 routes/scraper.py:773
 msgid "No AI provider configured"
@@ -1314,7 +1313,7 @@ msgstr "每個遊戲至少保留一份副本。未刪除任何內容。"
 
 #: routes/tools.py:1432
 msgid "This system has no screenshot check"
-msgstr ""
+msgstr "此系統沒有螢幕截圖檢查"
 
 #: routes/trophies.py:396
 msgid ""
@@ -5698,7 +5697,7 @@ msgstr "剩餘遊戲："
 
 #: templates/base.html:226
 msgid "Some data and images from RAWG"
-msgstr ""
+msgstr "部分資料和圖片來自 RAWG"
 
 #: templates/base.html:227
 msgid "Click for more info"
@@ -8622,9 +8621,8 @@ msgstr "使用精確檔案雜湊或視覺相似度匹配，查找並刪除每個
 
 #: templates/_macros/nav_tabs.html:43 templates/rom_tools_hub.html:247
 #: templates/screenshot_review.html:5 templates/screenshot_review.html:64
-#, fuzzy
 msgid "Screenshot Review"
-msgstr "螢幕截圖檢視器"
+msgstr "螢幕截圖審查"
 
 #: templates/rom_tools_hub.html:250
 msgid ""
@@ -8632,6 +8630,8 @@ msgid ""
 "Spectrum, Commodore 64 and Game Boy shots are listed with the most "
 "suspicious first, and you decide what to remove."
 msgstr ""
+"找出可能是其他系統版本遊戲的螢幕截圖。ZX Spectrum、Commodore 64 和 Game Boy "
+"的截圖會依可疑程度由高到低列出,由你決定要移除哪些。"
 
 #: templates/rom_tools_hub.html:274
 msgid "Image Resizer"
@@ -8669,7 +8669,7 @@ msgstr "僅中繼資料 &middot; 不下載媒體"
 
 #: templates/rom_tools_hub.html:300 templates/rom_tools_hub.html:409
 msgid "Fix Box and Manual Regions"
-msgstr ""
+msgstr "修復包裝盒與說明書地區"
 
 #: templates/rom_tools_hub.html:303
 msgid ""
@@ -8678,33 +8678,34 @@ msgid ""
 "again and swaps it for the right region. Pictures from anywhere else are "
 "left alone."
 msgstr ""
+"較舊的 ScreenScraper "
+"抓取可能會給遊戲其他地區的包裝盒或說明書,例如美國遊戲配上歐洲包裝盒。此功能會重新查詢每一項,並換成正確地區的版本。來自其他來源的圖片不會被更動。"
 
 #: templates/rom_tools_hub.html:306
-#, fuzzy
 msgid "Needs a ScreenScraper account"
-msgstr "相同的 ScreenScraper 遊戲"
+msgstr "需要 ScreenScraper 帳戶"
 
 #: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:468
 msgid "Fix Regions from File Names"
-msgstr ""
+msgstr "依檔名修復地區"
 
 #: templates/rom_tools_hub.html:316
 msgid ""
 "The AI used to guess a game's region even when its file name said, so a "
 "(USA) file could be listed as Japan. This gives those games the region in"
 " their file name."
-msgstr ""
+msgstr "AI 以前即使檔名已標明,仍會猜測遊戲的地區,所以標示 (USA) 的檔案可能被列為日本。此功能會為這些遊戲套用檔名中的地區。"
 
 #: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:502
 msgid "Clear RAWG Pictures from Box Art"
-msgstr ""
+msgstr "清除包裝盒封面中的 RAWG 圖片"
 
 #: templates/rom_tools_hub.html:329
 msgid ""
 "RAWG has no box art, so older scrapes saved a background picture or "
 "screenshot as the cover, and that blocks a real cover. This clears those "
 "pictures so a scrape can find real covers."
-msgstr ""
+msgstr "RAWG 沒有包裝盒封面,所以較舊的抓取會把背景圖或螢幕截圖存成封面,導致真正的封面無法使用。此功能會清除這些圖片,讓抓取能找到真正的封面。"
 
 #: templates/rom_tools_hub.html:339
 msgid "Bulk HLTB Lookup"
@@ -8757,48 +8758,50 @@ msgid ""
 "ScreenScraper allowance and can take a long time. You can leave the page,"
 " and press this card again to stop."
 msgstr ""
+"每個有 ScreenScraper 包裝盒或說明書的遊戲都會重新查詢。若有更適合的其他地區版本,會下載新檔案並刪除舊檔案。\n"
+"\n"
+"你手動修改過的遊戲不會被更動。這會用掉你每日的 ScreenScraper 額度,而且可能需要很長時間。你可以離開此頁面,再按一次此卡片即可停止。"
 
 #: templates/rom_tools_hub.html:411
-#, fuzzy
 msgid "Could not start the fix"
-msgstr "無法啟動工作。"
+msgstr "無法開始修復"
 
 #: templates/rom_tools_hub.html:412
 msgid ""
 "Stop the fix? Files already swapped stay as they are, and a later run "
 "carries on with the rest."
-msgstr ""
+msgstr "要停止修復嗎?已更換的檔案會保持原樣,之後再執行會繼續處理其餘部分。"
 
 #: templates/rom_tools_hub.html:413
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Stopped. Files swapped: {replaced}."
-msgstr "已停止。已建議名稱：{proposals}。"
+msgstr "已停止。已更換檔案:{replaced}。"
 
 #: templates/rom_tools_hub.html:414
 #, python-brace-format
 msgid ""
 "The fix stopped with an error. Files swapped: {replaced}. The log has the"
 " details."
-msgstr ""
+msgstr "修復因錯誤而停止。已更換檔案:{replaced}。詳情請見記錄。"
 
 #: templates/rom_tools_hub.html:415
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Checked {current} of {total} games. Files swapped: {replaced}."
-msgstr "正在填充第 {current} 個遊戲，共 {total} 個：{title}。已填充：{filled}。"
+msgstr "已檢查 {current} / {total} 個遊戲。已更換檔案:{replaced}。"
 
 #: templates/rom_tools_hub.html:416
 #, python-brace-format
 msgid ""
 "Finished. Files swapped: {replaced}. Games not found: {no_match}. Could "
 "not download: {failed}."
-msgstr ""
+msgstr "已完成。已更換檔案:{replaced}。找不到的遊戲:{no_match}。無法下載:{failed}。"
 
 #: templates/rom_tools_hub.html:417
 #, python-brace-format
 msgid ""
 "Stopped: ScreenScraper stopped answering, so your daily allowance may be "
 "spent. Files swapped: {replaced}. Run it again tomorrow."
-msgstr ""
+msgstr "已停止:ScreenScraper 不再回應,你的每日額度可能已用完。已更換檔案:{replaced}。請明天再執行一次。"
 
 #: templates/rom_tools_hub.html:469
 #, python-brace-format
@@ -8809,20 +8812,22 @@ msgid ""
 "Only regions the AI filled are changed. If you corrected one of those by "
 "hand to differ from the file name, it changes too."
 msgstr ""
+"有 {count} 個遊戲的 AI 地區與檔名不符。每個遊戲都會套用檔名中的地區。\n"
+"\n"
+"只有 AI 填入的地區會被更改。若你曾手動把其中某個地區改成與檔名不同,它也會被更改。"
 
 #: templates/rom_tools_hub.html:470
 msgid "No game has an AI region that its file name contradicts."
-msgstr ""
+msgstr "沒有遊戲的 AI 地區與檔名不符。"
 
 #: templates/rom_tools_hub.html:471
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Fixed {count} regions."
-msgstr "{title}（{count} 個版本）"
+msgstr "已修復 {count} 個地區。"
 
 #: templates/rom_tools_hub.html:472
-#, fuzzy
 msgid "Could not fix the regions"
-msgstr "無法連結這些版本。"
+msgstr "無法修復地區"
 
 #: templates/rom_tools_hub.html:503
 #, python-brace-format
@@ -8834,22 +8839,24 @@ msgid ""
 "Covers from other sources and all fanart stay. Afterwards, run a bulk "
 "scrape with Fill Missing to look for real covers."
 msgstr ""
+"有 {count} 個遊戲和願望單項目使用 RAWG 圖片作為包裝盒封面。這些圖片將被刪除,這些遊戲在抓取到封面之前不會顯示封面。\n"
+"\n"
+"來自其他來源的封面和所有同人圖都會保留。之後請用「填補缺漏」執行批次抓取,以尋找真正的封面。"
 
 #: templates/rom_tools_hub.html:504
 msgid "No game uses a RAWG picture as its box art."
-msgstr ""
+msgstr "沒有遊戲使用 RAWG 圖片作為包裝盒封面。"
 
 #: templates/rom_tools_hub.html:505
 #, python-brace-format
 msgid ""
 "Cleared {count} pictures. Run a bulk scrape with Fill Missing to look for"
 " real covers."
-msgstr ""
+msgstr "已清除 {count} 張圖片。請用「填補缺漏」執行批次抓取,以尋找真正的封面。"
 
 #: templates/rom_tools_hub.html:506
-#, fuzzy
 msgid "Could not clear the pictures"
-msgstr "無法啟動工作。"
+msgstr "無法清除圖片"
 
 #: templates/rom_tools_settings.html:309
 msgid "Empty: RetroDB's data folder"
@@ -8907,16 +8914,15 @@ msgid ""
 "needs many more may be from another version of the game. Shots that fit "
 "worst come first. Real shots with heavy shading can rank high too, so "
 "look before you remove. Nothing is removed unless you press Remove."
-msgstr ""
+msgstr "這些機器一次只能顯示少數顏色,所以需要更多顏色的圖片可能來自其他版本的遊戲。最不符合的截圖會排在最前面。有大量漸層的真實截圖也可能排名很高,所以移除前請先查看。除非你按下「移除」,否則不會移除任何內容。"
 
 #: templates/screenshot_review.html:91
 msgid "Your library has no ZX Spectrum, Commodore 64 or Game Boy games to check."
-msgstr ""
+msgstr "你的遊戲庫中沒有可檢查的 ZX Spectrum、Commodore 64 或 Game Boy 遊戲。"
 
 #: templates/screenshot_review.html:104
-#, fuzzy
 msgid "Show more"
-msgstr "載入更多"
+msgstr "顯示更多"
 
 #: templates/settings.html:13
 msgid "Configure your RetroDB installation"

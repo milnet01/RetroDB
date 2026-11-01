@@ -1,3 +1,55 @@
+- version: 3.35.0
+  date: '2026-11-01'
+  tags:
+  - type: fix
+    label: O ES-DE agora mantém seu lugar na ordem dos buscadores quando não é a fonte principal. Suas descrições, empresas e capas estavam sendo substituídas por fontes posteriores e pela IA
+  - type: fix
+    label: Capturas de Tela e telas de título do ES-DE agora são adicionadas a um jogo quando o ES-DE não é a fonte principal, a menos que sejam iguais a uma que ele já tem
+  - type: fix
+    label: O ES-DE não copia mais uma arte de fãs, vídeo ou manual que o jogo já tem, e uma Rebusca Completa não exclui mais uma caixa que outra fonte acabou de baixar
+  - type: fix
+    label: O ES-DE agora lê a entrada do arquivo ROM do próprio jogo, então outra versão com o mesmo nome não pode fornecer seus dados, e jogos de PS3 em pastas agora encontram suas capas do ES-DE
+  - type: fix
+    label: Importar logos de sistemas do ES-DE não pega mais uma imagem sem relação só porque o nome contém letras como "gb"
+  - type: fix
+    label: Uma marca no nome do arquivo da ROM, como (USA), agora define a região. A IA não é mais consultada, pois podia listar uma cópia dos EUA como Europa ou Japão
+  - type: feature
+    label: Nova ferramenta em Ferramentas de ROM, Corrigir Regiões pelos Nomes de Arquivo, corrige os jogos que buscas antigas erraram dessa forma
+  - type: fix
+    label: As imagens de fundo do RAWG não são mais salvas como capa, pois muitas vezes são capturas de tela e bloqueavam uma capa de verdade. Agora são usadas como arte de fãs
+  - type: feature
+    label: Nova ferramenta em Ferramentas de ROM, Limpar Imagens do RAWG das Capas, remove as que buscas antigas salvaram para que uma busca encontre capas de verdade
+  - type: feature
+    label: O RetroDB agora dá crédito ao RAWG com um link na barra lateral, como o RAWG pede
+  - type: fix
+    label: O ScreenScraper agora dá a cada jogo a caixa, caixa 3D, manual, título e data de lançamento da própria região, em vez da região que vinha primeiro em ordem alfabética
+  - type: feature
+    label: Nova ferramenta em Ferramentas de ROM, Corrigir Regiões de Caixas e Manuais, troca caixas e manuais que buscas antigas do ScreenScraper pegaram da região errada
+  - type: fix
+    label: Os vídeos do ScreenScraper agora usam primeiro o arquivo menor, e o maior só se isso falhar
+  - type: fix
+    label: Cada buscador agora pesquisa o console certo. Atari Lynx, CPS de arcade, Super Famicom e outros estavam sendo pesquisados na máquina errada, e muito mais sistemas agora são pesquisados, por todas as fontes e para conquistas
+  - type: feature
+    label: Na página de um jogo, as setas para esquerda e direita agora vão para o jogo anterior e o próximo
+  - type: feature
+    label: A seção de Trapaças na página de um jogo agora pode ser recolhida e lembra se você a deixou aberta
+  - type: fix
+    label: Abrir uma janela que começa em uma caixa de texto, como Buscar Metadados, agora coloca o cursor nessa caixa em vez do botão de fechar
+  - type: feature
+    label: A nova ferramenta Revisão de Capturas de Tela em Ferramentas de ROM lista capturas de ZX Spectrum, Commodore 64 e Game Boy com as mais suspeitas primeiro, e remove só o que você escolher
+  - type: fix
+    label: A busca agora recusa uma captura de tela de Game Boy cuja original tem muito mais tons do que a máquina poderia mostrar
+  - type: fix
+    label: Os painéis inferiores de um jogo agora cabem na janela em vez de passar da borda direita
+  - type: feature
+    label: Importe uma caixa 3D pela janela Editar, ao lado das outras imagens
+  - type: feature
+    label: O login do RetroAchievements agora chega ao DuckStation e ao PCSX2 quando você aperta Jogar
+  - type: fix
+    label: Em sistemas de 8 e 16 bits, a busca não adiciona mais capturas de tela do IGDB ou RAWG a um jogo lançado em vários sistemas, pois podiam mostrar a versão de outro sistema
+  - type: fix
+    label: O emulador de um jogo agora aparece no cartão de configurações do Emulador, e não ao lado de Jogar
+  body: "<ul>\n  <li><strong>Cada buscador pesquisa o console certo.</strong> Atari\n    Lynx, CPS de arcade, Super Famicom e outros estavam sendo pesquisados na\n    máquina errada, e muito mais sistemas agora são pesquisados,\n    por todas as fontes e para conquistas.</li>\n  <li><strong>A região de um jogo vem primeiro do nome do próprio arquivo.</strong>\n    Uma marca como (USA) agora define a região, e a IA não é mais\n    consultada. Ferramentas de ROM tem uma nova ferramenta, Corrigir Regiões pelos Nomes de Arquivo, para\n    os jogos que buscas antigas erraram.</li>\n  <li><strong>O ScreenScraper segue a região do jogo.</strong> A caixa,\n    caixa 3D, manual, título e data de lançamento agora vêm da própria\n    região do jogo, não da que vinha primeiro em ordem alfabética. Ferramentas de ROM tem uma\n    nova ferramenta, Corrigir Regiões de Caixas e Manuais, para buscas antigas. Os vídeos agora\n    tentam primeiro o arquivo menor.</li>\n  <li><strong>As imagens do RAWG não são mais capas.</strong> Muitas vezes são\n    capturas de tela e bloqueavam uma capa de verdade. Agora são usadas como\n    arte de fãs. Ferramentas de ROM tem uma nova ferramenta, Limpar Imagens do RAWG das Capas,\n    para as que buscas antigas salvaram. O RetroDB também dá crédito ao RAWG com um\n    link na barra lateral, como o RAWG pede.</li>\n  <li><strong>O ES-DE mantém seu lugar na ordem dos buscadores.</strong> Quando\n    não era a fonte principal, fontes posteriores e a IA substituíam seu\n    texto e capas, e suas capturas de tela eram descartadas. Agora elas ficam.\n    Ele não copia mais mídia que o jogo já tem, e lê a entrada\n    do arquivo ROM do próprio jogo. Jogos de PS3 em pastas agora encontram suas capas do ES-DE.\n    Importar logos de sistemas não pega mais uma imagem sem relação.\n    Uma Rebusca Completa não exclui mais uma caixa que outra fonte acabou de\n    baixar.</li>\n  <li><strong>Revisão de Capturas de Tela.</strong> Uma nova ferramenta em Ferramentas de ROM lista\n    capturas de ZX Spectrum, Commodore 64 e Game Boy com as mais\n    suspeitas primeiro, e remove só o que você escolher. A busca agora\n    recusa uma captura de tela de Game Boy cuja original tem muito mais tons\n    do que a máquina poderia mostrar. Em sistemas de 8 e 16 bits, não\n    adiciona mais capturas de tela do IGDB ou RAWG a um jogo lançado em vários\n    sistemas.</li>\n  <li><strong>O login do RetroAchievements chega ao DuckStation e ao PCSX2</strong>\n    quando você aperta Jogar.</li>\n  <li><strong>Na página de um jogo:</strong> as setas para esquerda e direita vão\n    para o jogo anterior e o próximo, a seção de Trapaças pode ser recolhida e\n    lembra o estado, os painéis inferiores cabem na janela, e o emulador é\n    mostrado no cartão de configurações do Emulador, e não ao lado de Jogar.</li>\n  <li><strong>Importar uma caixa 3D</strong> agora fica na janela Editar, ao lado\n    das outras imagens.</li>\n  <li><strong>Uma janela que começa em uma caixa de texto,</strong> como Buscar Metadados,\n    agora coloca o cursor nessa caixa em vez do botão de fechar.</li>\n</ul>\n"
 - version: 3.34.0
   date: '2026-10-30'
   tags:

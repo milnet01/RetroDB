@@ -1,4 +1,4 @@
-- version: 3.34.1
+- version: 3.35.0
   date: 2026-11-01
   tags:
   - type: fix
@@ -49,6 +49,52 @@
     label: On 8-bit and 16-bit systems, scraping no longer adds IGDB or RAWG screenshots to a game released on several systems, as they could show another system's version
   - type: fix
     label: A game's emulator is now named on its Emulator settings card, not beside Play
+  body: |
+    <ul>
+      <li><strong>Each scraper searches the right console.</strong> Atari
+        Lynx, arcade CPS, Super Famicom and others were being searched on
+        the wrong machine, and many more systems are now searched at all,
+        by every source and for achievements.</li>
+      <li><strong>A game's region comes first from its own file name.</strong>
+        A tag such as (USA) now decides the region, and the AI is no longer
+        asked. ROM Tools has a new tool, Fix Regions from File Names, for
+        the games older scrapes got wrong.</li>
+      <li><strong>ScreenScraper follows the game's region.</strong> The box,
+        3D box, manual, title and release date now come from the game's own
+        region, not whichever came first in the alphabet. ROM Tools has a
+        new tool, Fix Box and Manual Regions, for older scrapes. Videos now
+        try the smaller file first.</li>
+      <li><strong>RAWG pictures are no longer box art.</strong> They are often
+        screenshots, and they blocked a real cover. They are now used as
+        fanart. ROM Tools has a new tool, Clear RAWG Pictures from Box Art,
+        for the ones older scrapes saved. RetroDB also credits RAWG with a
+        link in the sidebar, as RAWG asks.</li>
+      <li><strong>ES-DE keeps its place in your scraper order.</strong> When
+        it was not the main source, later sources and the AI replaced its
+        text and covers, and its screenshots were dropped. They now stay.
+        It no longer copies media a game already has, and it reads the entry
+        for the game's own ROM file. PS3 folder games now find their ES-DE
+        covers. Importing system logos no longer takes an unrelated picture.
+        A Full Re-scrape no longer deletes a box another source has just
+        downloaded.</li>
+      <li><strong>Screenshot Review.</strong> A new tool in ROM Tools lists
+        ZX Spectrum, Commodore 64 and Game Boy screenshots with the most
+        suspicious first, and removes only what you choose. Scraping now
+        refuses a Game Boy screenshot whose original has far more shades
+        than the machine could show. On 8-bit and 16-bit systems it no
+        longer adds IGDB or RAWG screenshots to a game released on several
+        systems.</li>
+      <li><strong>RetroAchievements sign-in reaches DuckStation and PCSX2</strong>
+        when you press Play.</li>
+      <li><strong>On a game's page:</strong> the left and right arrow keys go
+        to the previous and next game, the Cheats section folds away and
+        remembers it, the lower panels fit the window, and the emulator is
+        named on its Emulator settings card, not beside Play.</li>
+      <li><strong>Import a 3D box</strong> now sits in the Edit window, beside
+        the other pictures.</li>
+      <li><strong>A window that starts on a text box,</strong> such as Scrape,
+        now puts the cursor in that box instead of on the close button.</li>
+    </ul>
 - version: 3.34.0
   date: 2026-10-30
   tags:

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-01 20:20+0200\n"
+"POT-Creation-Date: 2026-11-01 20:46+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: id\n"
@@ -721,12 +721,11 @@ msgstr "Jenis gambar tidak dikenal"
 
 #: routes/maintenance.py:433
 msgid "Add your ScreenScraper account in Settings first."
-msgstr ""
+msgstr "Tambahkan akun ScreenScraper Anda di Pengaturan terlebih dahulu."
 
 #: routes/maintenance.py:434
-#, fuzzy
 msgid "This fix is already running."
-msgstr "Game ini sudah berjalan"
+msgstr "Perbaikan ini sedang berjalan."
 
 #: routes/museum.py:385 routes/scraper.py:773
 msgid "No AI provider configured"
@@ -1343,7 +1342,7 @@ msgstr "Sisakan setidaknya satu salinan setiap game. Tidak ada yang dihapus."
 
 #: routes/tools.py:1432
 msgid "This system has no screenshot check"
-msgstr ""
+msgstr "Sistem ini tidak punya pemeriksaan screenshot"
 
 #: routes/trophies.py:396
 msgid ""
@@ -5817,7 +5816,7 @@ msgstr "Game tersisa:"
 
 #: templates/base.html:226
 msgid "Some data and images from RAWG"
-msgstr ""
+msgstr "Sebagian data dan gambar dari RAWG"
 
 #: templates/base.html:227
 msgid "Click for more info"
@@ -8839,9 +8838,8 @@ msgstr ""
 
 #: templates/_macros/nav_tabs.html:43 templates/rom_tools_hub.html:247
 #: templates/screenshot_review.html:5 templates/screenshot_review.html:64
-#, fuzzy
 msgid "Screenshot Review"
-msgstr "Penampil screenshot"
+msgstr "Tinjauan Screenshot"
 
 #: templates/rom_tools_hub.html:250
 msgid ""
@@ -8849,6 +8847,9 @@ msgid ""
 "Spectrum, Commodore 64 and Game Boy shots are listed with the most "
 "suspicious first, and you decide what to remove."
 msgstr ""
+"Temukan screenshot yang mungkin menampilkan game versi sistem lain. "
+"Screenshot ZX Spectrum, Commodore 64, dan Game Boy diurutkan dari yang "
+"paling mencurigakan, dan Anda yang memutuskan mana yang dihapus."
 
 #: templates/rom_tools_hub.html:274
 msgid "Image Resizer"
@@ -8890,7 +8891,7 @@ msgstr "Hanya metadata &middot; tanpa unduhan media"
 
 #: templates/rom_tools_hub.html:300 templates/rom_tools_hub.html:409
 msgid "Fix Box and Manual Regions"
-msgstr ""
+msgstr "Perbaiki Wilayah Box dan Manual"
 
 #: templates/rom_tools_hub.html:303
 msgid ""
@@ -8899,15 +8900,18 @@ msgid ""
 "again and swaps it for the right region. Pictures from anywhere else are "
 "left alone."
 msgstr ""
+"Scrape ScreenScraper versi lama bisa memberi game box atau manual dari "
+"wilayah lain, misalnya box Eropa untuk game USA. Fitur ini mencari ulang "
+"setiap game dan menggantinya dengan wilayah yang tepat. Gambar dari "
+"sumber lain tidak diubah."
 
 #: templates/rom_tools_hub.html:306
-#, fuzzy
 msgid "Needs a ScreenScraper account"
-msgstr "Game ScreenScraper yang sama"
+msgstr "Perlu akun ScreenScraper"
 
 #: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:468
 msgid "Fix Regions from File Names"
-msgstr ""
+msgstr "Perbaiki Wilayah dari Nama File"
 
 #: templates/rom_tools_hub.html:316
 msgid ""
@@ -8915,10 +8919,13 @@ msgid ""
 "(USA) file could be listed as Japan. This gives those games the region in"
 " their file name."
 msgstr ""
+"AI dulu menebak wilayah game meskipun nama filenya sudah menyebutkan, "
+"sehingga file (USA) bisa tercatat sebagai Jepang. Fitur ini memberi game "
+"tersebut wilayah sesuai nama filenya."
 
 #: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:502
 msgid "Clear RAWG Pictures from Box Art"
-msgstr ""
+msgstr "Hapus Gambar RAWG dari Sampul"
 
 #: templates/rom_tools_hub.html:329
 msgid ""
@@ -8926,6 +8933,9 @@ msgid ""
 "screenshot as the cover, and that blocks a real cover. This clears those "
 "pictures so a scrape can find real covers."
 msgstr ""
+"RAWG tidak punya sampul, jadi scrape lama menyimpan gambar latar atau "
+"screenshot sebagai sampul, dan itu menghalangi sampul asli. Fitur ini "
+"menghapus gambar tersebut agar scrape bisa menemukan sampul asli."
 
 #: templates/rom_tools_hub.html:339
 msgid "Bulk HLTB Lookup"
@@ -8985,22 +8995,30 @@ msgid ""
 "ScreenScraper allowance and can take a long time. You can leave the page,"
 " and press this card again to stop."
 msgstr ""
+"Setiap game dengan box atau manual dari ScreenScraper dicari ulang. Jika "
+"ada wilayah lain yang lebih cocok, file-nya diunduh dan file lama "
+"dihapus.\n"
+"\n"
+"Game yang Anda ubah sendiri tidak disentuh. Ini memakai jatah harian "
+"ScreenScraper Anda dan bisa memakan waktu lama. Anda boleh meninggalkan "
+"halaman ini, dan tekan kartu ini lagi untuk menghentikan."
 
 #: templates/rom_tools_hub.html:411
-#, fuzzy
 msgid "Could not start the fix"
-msgstr "Tidak dapat memulai proses."
+msgstr "Tidak dapat memulai perbaikan"
 
 #: templates/rom_tools_hub.html:412
 msgid ""
 "Stop the fix? Files already swapped stay as they are, and a later run "
 "carries on with the rest."
 msgstr ""
+"Hentikan perbaikan? File yang sudah diganti tetap seperti itu, dan proses"
+" berikutnya akan melanjutkan sisanya."
 
 #: templates/rom_tools_hub.html:413
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Stopped. Files swapped: {replaced}."
-msgstr "Dihentikan. Nama yang disarankan: {proposals}."
+msgstr "Dihentikan. File yang diganti: {replaced}."
 
 #: templates/rom_tools_hub.html:414
 #, python-brace-format
@@ -9008,11 +9026,13 @@ msgid ""
 "The fix stopped with an error. Files swapped: {replaced}. The log has the"
 " details."
 msgstr ""
+"Perbaikan berhenti karena error. File yang diganti: {replaced}. Detailnya"
+" ada di log."
 
 #: templates/rom_tools_hub.html:415
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Checked {current} of {total} games. Files swapped: {replaced}."
-msgstr "Mengisi game {current} dari {total}: {title}. Sudah terisi: {filled}."
+msgstr "{current} dari {total} game diperiksa. File yang diganti: {replaced}."
 
 #: templates/rom_tools_hub.html:416
 #, python-brace-format
@@ -9020,6 +9040,8 @@ msgid ""
 "Finished. Files swapped: {replaced}. Games not found: {no_match}. Could "
 "not download: {failed}."
 msgstr ""
+"Selesai. File yang diganti: {replaced}. Game tidak ditemukan: {no_match}."
+" Gagal diunduh: {failed}."
 
 #: templates/rom_tools_hub.html:417
 #, python-brace-format
@@ -9027,6 +9049,8 @@ msgid ""
 "Stopped: ScreenScraper stopped answering, so your daily allowance may be "
 "spent. Files swapped: {replaced}. Run it again tomorrow."
 msgstr ""
+"Dihentikan: ScreenScraper tidak lagi merespons, jadi jatah harian Anda "
+"mungkin habis. File yang diganti: {replaced}. Jalankan lagi besok."
 
 #: templates/rom_tools_hub.html:469
 #, python-brace-format
@@ -9037,20 +9061,24 @@ msgid ""
 "Only regions the AI filled are changed. If you corrected one of those by "
 "hand to differ from the file name, it changes too."
 msgstr ""
+"{count} game punya wilayah dari AI yang bertentangan dengan nama filenya."
+" Masing-masing akan diberi wilayah sesuai nama filenya.\n"
+"\n"
+"Hanya wilayah yang diisi AI yang diubah. Jika Anda mengoreksinya sendiri "
+"hingga berbeda dari nama file, wilayah itu juga ikut berubah."
 
 #: templates/rom_tools_hub.html:470
 msgid "No game has an AI region that its file name contradicts."
-msgstr ""
+msgstr "Tidak ada game dengan wilayah AI yang bertentangan dengan nama filenya."
 
 #: templates/rom_tools_hub.html:471
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Fixed {count} regions."
-msgstr "{title} ({count} versi)"
+msgstr "{count} wilayah diperbaiki."
 
 #: templates/rom_tools_hub.html:472
-#, fuzzy
 msgid "Could not fix the regions"
-msgstr "Tidak dapat menautkan versi-versi ini."
+msgstr "Tidak dapat memperbaiki wilayah"
 
 #: templates/rom_tools_hub.html:503
 #, python-brace-format
@@ -9062,10 +9090,16 @@ msgid ""
 "Covers from other sources and all fanart stay. Afterwards, run a bulk "
 "scrape with Fill Missing to look for real covers."
 msgstr ""
+"{count} game dan item wishlist memakai gambar RAWG sebagai sampulnya. "
+"Gambar tersebut akan dihapus, dan game ini tidak punya sampul sampai "
+"scrape menemukannya.\n"
+"\n"
+"Sampul dari sumber lain dan semua fanart tetap ada. Setelah itu, jalankan"
+" scrape massal dengan Fill Missing untuk mencari sampul asli."
 
 #: templates/rom_tools_hub.html:504
 msgid "No game uses a RAWG picture as its box art."
-msgstr ""
+msgstr "Tidak ada game yang memakai gambar RAWG sebagai sampulnya."
 
 #: templates/rom_tools_hub.html:505
 #, python-brace-format
@@ -9073,11 +9107,12 @@ msgid ""
 "Cleared {count} pictures. Run a bulk scrape with Fill Missing to look for"
 " real covers."
 msgstr ""
+"{count} gambar dihapus. Jalankan scrape massal dengan Fill Missing untuk "
+"mencari sampul asli."
 
 #: templates/rom_tools_hub.html:506
-#, fuzzy
 msgid "Could not clear the pictures"
-msgstr "Tidak dapat memulai proses."
+msgstr "Tidak dapat menghapus gambar"
 
 #: templates/rom_tools_settings.html:309
 msgid "Empty: RetroDB's data folder"
@@ -9138,15 +9173,21 @@ msgid ""
 "worst come first. Real shots with heavy shading can rank high too, so "
 "look before you remove. Nothing is removed unless you press Remove."
 msgstr ""
+"Mesin ini hanya bisa menampilkan sedikit warna sekaligus, jadi gambar "
+"yang butuh jauh lebih banyak warna mungkin berasal dari versi game lain. "
+"Screenshot yang paling tidak cocok muncul lebih dulu. Screenshot asli "
+"dengan gradasi tebal juga bisa berperingkat tinggi, jadi periksa dulu "
+"sebelum menghapus. Tidak ada yang dihapus kecuali Anda menekan Hapus."
 
 #: templates/screenshot_review.html:91
 msgid "Your library has no ZX Spectrum, Commodore 64 or Game Boy games to check."
 msgstr ""
+"Pustaka Anda tidak punya game ZX Spectrum, Commodore 64, atau Game Boy "
+"untuk diperiksa."
 
 #: templates/screenshot_review.html:104
-#, fuzzy
 msgid "Show more"
-msgstr "Muat Lebih Banyak"
+msgstr "Tampilkan lebih banyak"
 
 #: templates/settings.html:13
 msgid "Configure your RetroDB installation"

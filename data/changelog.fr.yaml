@@ -1,3 +1,55 @@
+- version: 3.35.0
+  date: '2026-11-01'
+  tags:
+  - type: fix
+    label: ES-DE garde désormais sa place dans l'ordre de vos sources de récupération quand ce n'est pas la source principale. Ses descriptions, ses sociétés et ses jaquettes étaient remplacées par celles des sources suivantes et par l'IA
+  - type: fix
+    label: Les captures d'écran et les écrans titres d'ES-DE sont désormais ajoutés à un jeu quand ES-DE n'est pas la source principale, sauf s'ils ressemblent à une image que le jeu a déjà
+  - type: fix
+    label: ES-DE ne copie plus un fanart, une vidéo ou un manuel que le jeu possède déjà, et une Récupération complète ne supprime plus une jaquette qu'une autre source vient de télécharger
+  - type: fix
+    label: ES-DE lit désormais l'entrée du fichier ROM propre au jeu, de sorte qu'une autre version du même nom ne peut plus fournir ses informations, et les jeux PS3 en dossier trouvent maintenant leurs jaquettes ES-DE
+  - type: fix
+    label: L'importation des logos de systèmes depuis ES-DE ne prend plus une image sans rapport parce que son nom contient des lettres comme "gb"
+  - type: fix
+    label: Une balise dans le nom de fichier d'une ROM, comme (USA), détermine désormais sa région. L'IA n'est plus sollicitée, car elle pouvait classer une copie USA en Europe ou au Japon
+  - type: feature
+    label: Nouvel outil dans Outils ROM, Corriger les régions d'après les noms de fichiers, qui corrige les jeux mal traités par les anciennes récupérations
+  - type: fix
+    label: Les images de fond de RAWG ne sont plus enregistrées comme jaquettes, car ce sont souvent des captures d'écran et elles bloquaient une vraie jaquette. Elles sont utilisées comme Fanart
+  - type: feature
+    label: Nouvel outil dans Outils ROM, Retirer les images RAWG des jaquettes, qui supprime celles enregistrées par les anciennes récupérations afin qu'une récupération puisse trouver de vraies jaquettes
+  - type: feature
+    label: RetroDB cite désormais RAWG avec un lien dans la barre latérale, comme RAWG le demande
+  - type: fix
+    label: ScreenScraper donne désormais à chaque jeu la jaquette, la jaquette 3D, le manuel, l'écran titre et la date de sortie de sa propre région, et non plus ceux de la première région par ordre alphabétique
+  - type: feature
+    label: Nouvel outil dans Outils ROM, Corriger les régions des jaquettes et manuels, qui échange les jaquettes et manuels pris dans la mauvaise région par d'anciennes récupérations ScreenScraper
+  - type: fix
+    label: Les vidéos ScreenScraper utilisent d'abord le fichier le plus petit, et le plus grand seulement en cas d'échec
+  - type: fix
+    label: Chaque source de récupération cherche désormais la bonne console. L'Atari Lynx, le CPS d'arcade, la Super Famicom et d'autres étaient cherchés sur la mauvaise machine, et bien d'autres systèmes sont maintenant cherchés, par toutes les sources et pour les succès
+  - type: feature
+    label: Sur la page d'un jeu, les flèches gauche et droite mènent au jeu précédent et au jeu suivant
+  - type: feature
+    label: La section Codes de triche de la page d'un jeu peut maintenant se replier, et se souvient si vous l'avez laissée ouverte
+  - type: fix
+    label: L'ouverture d'une fenêtre qui commence par une zone de texte, comme Récupérer, place désormais le curseur dans cette zone au lieu du bouton de fermeture
+  - type: feature
+    label: 'Nouvel outil Revue des captures d''écran dans Outils ROM : il liste les captures d''écran ZX Spectrum, Commodore 64 et Game Boy en commençant par les plus suspectes, et ne supprime que ce que vous choisissez'
+  - type: fix
+    label: La récupération refuse désormais une capture d'écran Game Boy dont l'original a bien plus de nuances que la machine ne pouvait en afficher
+  - type: fix
+    label: Les panneaux du bas d'un jeu s'adaptent maintenant à la fenêtre au lieu de dépasser du bord droit
+  - type: feature
+    label: Importez une jaquette 3D depuis la fenêtre Modifier, à côté des autres images
+  - type: feature
+    label: La connexion à RetroAchievements est maintenant transmise à DuckStation et PCSX2 quand vous appuyez sur Jouer
+  - type: fix
+    label: Sur les systèmes 8 bits et 16 bits, la récupération n'ajoute plus de captures d'écran IGDB ou RAWG à un jeu sorti sur plusieurs systèmes, car elles pouvaient montrer la version d'un autre système
+  - type: fix
+    label: L'émulateur d'un jeu est maintenant indiqué sur sa carte de Paramètres de l'émulateur, et non à côté de Jouer
+  body: "<ul>\n  <li><strong>Chaque source cherche la bonne console.</strong> L'Atari\n    Lynx, le CPS d'arcade, la Super Famicom et d'autres étaient cherchés\n    sur la mauvaise machine, et bien d'autres systèmes sont maintenant\n    cherchés, par toutes les sources et pour les succès.</li>\n  <li><strong>La région d'un jeu vient d'abord de son nom de fichier.</strong>\n    Une balise comme (USA) détermine désormais la région, et l'IA n'est\n    plus sollicitée. Outils ROM a un nouvel outil, Corriger les régions\n    d'après les noms de fichiers, pour les jeux mal traités par les\n    anciennes récupérations.</li>\n  <li><strong>ScreenScraper suit la région du jeu.</strong> La jaquette,\n    la jaquette 3D, le manuel, l'écran titre et la date de sortie viennent\n    maintenant de la région du jeu, et non de la première par ordre\n    alphabétique. Outils ROM a un nouvel outil, Corriger les régions des\n    jaquettes et manuels, pour les anciennes récupérations. Les vidéos\n    essaient d'abord le fichier le plus petit.</li>\n  <li><strong>Les images RAWG ne sont plus des jaquettes.</strong> Ce sont\n    souvent des captures d'écran, et elles bloquaient une vraie jaquette.\n    Elles sont maintenant utilisées comme Fanart. Outils ROM a un nouvel\n    outil, Retirer les images RAWG des jaquettes, pour celles enregistrées\n    par les anciennes récupérations. RetroDB cite aussi RAWG avec un lien\n    dans la barre latérale, comme RAWG le demande.</li>\n  <li><strong>ES-DE garde sa place dans l'ordre de vos sources.</strong>\n    Quand ce n'était pas la source principale, les sources suivantes et\n    l'IA remplaçaient ses textes et ses jaquettes, et ses captures d'écran\n    étaient écartées. Elles sont maintenant conservées. ES-DE ne copie\n    plus ce qu'un jeu possède déjà et lit l'entrée du fichier ROM propre\n    au jeu. Les jeux PS3 en dossier trouvent leurs jaquettes ES-DE.\n    L'importation des logos de systèmes ne prend plus d'image sans\n    rapport. Une Récupération complète ne supprime plus une jaquette\n    qu'une autre source vient de télécharger.</li>\n  <li><strong>Revue des captures d'écran.</strong> Un nouvel outil dans\n    Outils ROM liste les captures d'écran ZX Spectrum, Commodore 64 et\n    Game Boy en commençant par les plus suspectes, et ne supprime que ce\n    que vous choisissez. La récupération refuse désormais une capture\n    d'écran Game Boy dont l'original a bien plus de nuances que la machine\n    ne pouvait en afficher. Sur les systèmes 8 bits et 16 bits, elle\n    n'ajoute plus de captures d'écran IGDB ou RAWG à un jeu sorti sur\n    plusieurs systèmes.</li>\n  <li><strong>La connexion à RetroAchievements est transmise à DuckStation et PCSX2</strong>\n    quand vous appuyez sur Jouer.</li>\n  <li><strong>Sur la page d'un jeu :</strong> les flèches gauche et droite\n    mènent au jeu précédent et au jeu suivant, la section Codes de triche\n    se replie et s'en souvient, les panneaux du bas s'adaptent à la\n    fenêtre, et l'émulateur est indiqué sur sa carte de Paramètres de\n    l'émulateur, et non à côté de Jouer.</li>\n  <li><strong>Importer une jaquette 3D</strong> se trouve maintenant dans\n    la fenêtre Modifier, à côté des autres images.</li>\n  <li><strong>Une fenêtre qui commence par une zone de texte,</strong>\n    comme Récupérer, place désormais le curseur dans cette zone au lieu\n    du bouton de fermeture.</li>\n</ul>\n"
 - version: 3.34.0
   date: '2026-10-30'
   tags:

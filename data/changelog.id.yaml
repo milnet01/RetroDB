@@ -1,3 +1,55 @@
+- version: 3.35.0
+  date: '2026-11-01'
+  tags:
+  - type: fix
+    label: ES-DE kini tetap berada di urutan scraper Anda saat bukan sumber utama. Deskripsi, perusahaan, dan cover dari ES-DE sebelumnya tergantikan oleh sumber berikutnya dan AI
+  - type: fix
+    label: Screenshot dan layar judul dari ES-DE kini ditambahkan ke game saat ES-DE bukan sumber utama, kecuali jika tampak sama dengan yang sudah ada
+  - type: fix
+    label: ES-DE tidak lagi menyalin gambar fanart, video, atau manual yang sudah dimiliki game, dan Scrape Ulang Penuh tidak lagi menghapus box yang baru saja diunduh dari sumber lain
+  - type: fix
+    label: ES-DE kini membaca entri untuk file ROM milik game itu sendiri, sehingga rilis lain dengan nama yang sama tidak bisa memberikan detailnya, dan game folder PS3 kini menemukan cover ES-DE mereka
+  - type: fix
+    label: Mengimpor logo sistem dari ES-DE tidak lagi mengambil gambar yang tidak terkait hanya karena namanya memuat huruf seperti "gb"
+  - type: fix
+    label: Tag pada nama file ROM, seperti (USA), kini menentukan wilayahnya. AI tidak lagi ditanya, karena bisa saja salah mencantumkan salinan USA sebagai Eropa atau Jepang
+  - type: feature
+    label: Alat baru di Alat ROM, Perbaiki Wilayah dari Nama File, memperbaiki game yang salah ditentukan oleh scrape lama
+  - type: fix
+    label: Gambar latar RAWG tidak lagi disimpan sebagai box art, karena sering berupa screenshot dan menghalangi cover asli. Gambar itu kini dipakai sebagai fanart
+  - type: feature
+    label: Alat baru di Alat ROM, Hapus Gambar RAWG dari Box Art, menghapus gambar yang disimpan scrape lama agar scrape dapat menemukan cover asli
+  - type: feature
+    label: RetroDB kini mencantumkan kredit RAWG dengan tautan di bilah samping, sesuai permintaan RAWG
+  - type: fix
+    label: ScreenScraper kini memberi setiap game box, box 3D, manual, judul, dan tanggal rilis dari wilayahnya sendiri, bukan wilayah yang kebetulan pertama menurut abjad
+  - type: feature
+    label: Alat baru di Alat ROM, Perbaiki Wilayah Box dan Manual, menukar box dan manual yang diambil scrape ScreenScraper lama dari wilayah yang salah
+  - type: fix
+    label: Video ScreenScraper kini memakai file yang lebih kecil lebih dulu, dan yang lebih besar hanya jika gagal
+  - type: fix
+    label: Setiap scraper kini mencari konsol yang tepat. Atari Lynx, arcade CPS, Super Famicom, dan lainnya sebelumnya dicari pada mesin yang salah, dan kini lebih banyak sistem yang dicari, oleh semua sumber dan untuk Achievement
+  - type: feature
+    label: Di halaman game, tombol panah kiri dan kanan kini membuka game sebelumnya dan berikutnya
+  - type: feature
+    label: Bagian Cheat di halaman game kini bisa dilipat, dan mengingat apakah Anda membiarkannya terbuka
+  - type: fix
+    label: Membuka jendela yang dimulai pada kotak teks, seperti Scrape, kini menempatkan kursor di kotak itu, bukan di tombol tutup
+  - type: feature
+    label: Alat baru Tinjauan Screenshot di Alat ROM mendaftar screenshot ZX Spectrum, Commodore 64, dan Game Boy dengan yang paling mencurigakan di atas, dan hanya menghapus yang Anda pilih
+  - type: fix
+    label: Scrape kini menolak screenshot Game Boy yang aslinya memiliki jauh lebih banyak tingkat warna daripada yang bisa ditampilkan mesinnya
+  - type: fix
+    label: Panel bawah pada halaman game kini muat di jendela, tidak lagi melewati tepi kanan
+  - type: feature
+    label: Impor box 3D dari jendela Edit, di samping gambar lainnya
+  - type: feature
+    label: Masuk RetroAchievements kini sampai ke DuckStation dan PCSX2 saat Anda menekan Mainkan
+  - type: fix
+    label: Pada sistem 8-bit dan 16-bit, scrape tidak lagi menambahkan screenshot IGDB atau RAWG ke game yang dirilis di beberapa sistem, karena bisa menampilkan versi sistem lain
+  - type: fix
+    label: Emulator sebuah game kini ditampilkan pada kartu Pengaturan Emulator, bukan di samping Mainkan
+  body: "<ul>\n  <li><strong>Setiap scraper mencari konsol yang tepat.</strong> Atari\n    Lynx, arcade CPS, Super Famicom, dan lainnya sebelumnya dicari pada\n    mesin yang salah, dan kini lebih banyak sistem yang dicari,\n    oleh semua sumber dan untuk Achievement.</li>\n  <li><strong>Wilayah game kini ditentukan dari nama filenya sendiri.</strong>\n    Tag seperti (USA) kini menentukan wilayah, dan AI tidak lagi\n    ditanya. Alat ROM punya alat baru, Perbaiki Wilayah dari Nama File,\n    untuk game yang salah ditentukan oleh scrape lama.</li>\n  <li><strong>ScreenScraper mengikuti wilayah game.</strong> Box,\n    box 3D, manual, judul, dan tanggal rilis kini berasal dari wilayah\n    game itu sendiri, bukan yang kebetulan pertama menurut abjad. Alat ROM punya\n    alat baru, Perbaiki Wilayah Box dan Manual, untuk scrape lama. Video kini\n    mencoba file yang lebih kecil lebih dulu.</li>\n  <li><strong>Gambar RAWG tidak lagi menjadi box art.</strong> Gambar itu sering berupa\n    screenshot, dan menghalangi cover asli. Kini dipakai sebagai\n    fanart. Alat ROM punya alat baru, Hapus Gambar RAWG dari Box Art,\n    untuk gambar yang disimpan scrape lama. RetroDB juga mencantumkan kredit RAWG dengan\n    tautan di bilah samping, sesuai permintaan RAWG.</li>\n  <li><strong>ES-DE tetap di urutan scraper Anda.</strong> Saat\n    bukan sumber utama, sumber berikutnya dan AI menggantikan teks\n    dan cover-nya, dan screenshot-nya dibuang. Kini semuanya tetap ada.\n    ES-DE tidak lagi menyalin media yang sudah dimiliki game, dan membaca entri\n    untuk file ROM milik game itu sendiri. Game folder PS3 kini menemukan cover\n    ES-DE mereka. Mengimpor logo sistem tidak lagi mengambil gambar yang tidak terkait.\n    Scrape Ulang Penuh tidak lagi menghapus box yang baru saja\n    diunduh dari sumber lain.</li>\n  <li><strong>Tinjauan Screenshot.</strong> Alat baru di Alat ROM mendaftar\n    screenshot ZX Spectrum, Commodore 64, dan Game Boy dengan yang paling\n    mencurigakan di atas, dan hanya menghapus yang Anda pilih. Scrape kini\n    menolak screenshot Game Boy yang aslinya memiliki jauh lebih banyak tingkat warna\n    daripada yang bisa ditampilkan mesinnya. Pada sistem 8-bit dan 16-bit, scrape tidak\n    lagi menambahkan screenshot IGDB atau RAWG ke game yang dirilis di beberapa\n    sistem.</li>\n  <li><strong>Masuk RetroAchievements sampai ke DuckStation dan PCSX2</strong>\n    saat Anda menekan Mainkan.</li>\n  <li><strong>Di halaman game:</strong> tombol panah kiri dan kanan membuka\n    game sebelumnya dan berikutnya, bagian Cheat bisa dilipat dan\n    mengingatnya, panel bawah muat di jendela, dan emulator\n    ditampilkan pada kartu Pengaturan Emulator, bukan di samping Mainkan.</li>\n  <li><strong>Impor box 3D</strong> kini ada di jendela Edit, di samping\n    gambar lainnya.</li>\n  <li><strong>Jendela yang dimulai pada kotak teks,</strong> seperti Scrape,\n    kini menempatkan kursor di kotak itu, bukan di tombol tutup.</li>\n</ul>\n"
 - version: 3.34.0
   date: '2026-10-30'
   tags:

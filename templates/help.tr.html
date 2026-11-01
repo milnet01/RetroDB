@@ -281,7 +281,7 @@
             <div class="shortcut-item"><kbd>e</kbd> <span>Oyunu düzenle</span></div>
             <div class="shortcut-item"><kbd>s</kbd> <span>Oyun için veri çek</span></div>
             <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Önceki veya sonraki oyun</span></div>
-            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Ekran görüntülerinde gezin</span></div>
+            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Ekran görüntülerinde gezin, biri açıkken</span></div>
         </div>
 
         <div class="help-tip">
@@ -851,8 +851,8 @@
             <li><strong>Yaş Derecelendirmeleri</strong> &mdash; Resmi derecelendirme görselleri ve otomatik çapraz eşleme ile tüm 8 derecelendirme sistemi. Bir derecelendirmeyi değiştirmek, diğer sistemlerdeki boş derecelendirmeleri otomatik olarak doldurur.</li>
             <li><strong>Puanlar</strong> &mdash; Eleştirmen puanı, kullanıcı puanı</li>
             <li><strong>Açıklama</strong> &mdash; Oyun açıklama metni</li>
-            <li><strong>Özel Görseller</strong> &mdash; Özel kutu resmi (2D), 3D kutu resmi ve fanart yükleyin. Yeniden veri çekmeye izin vermek için mevcut görselleri temizleyin.</li>
-            <li><strong>3D kutu içe aktar</strong> &mdash; Özel Görseller bölümünde de var. Değişiklikleri Kaydet gerekmeden hemen kaydedilir. Slipcase'in kaydettiği <code>.box.json</code> dosyasını resimleriyle birlikte seçin (klasörün tamamını seçmek de olur). Slipcase 1.4.0 veya daha yenisi bu dosyayı dışa aktarılan her resmin yanına kaydeder. RetroDB kutunun yüzlerini bu oyun için saklar; ardından kapağa tıklamak kutuyu 3D olarak gösterir, sürükleyerek veya ok tuşlarıyla çevirebilirsiniz. 3D kutu kapağı resminiz değişmez. Zaten yüzleri olan bir oyun, onları değiştirmeden önce sorar; <strong>Kaldır</strong> onları siler.</li>
+            <li><strong>Özel Resimler</strong> &mdash; Özel kutu resmi (2D), 3D kutu resmi ve fanart yükleyin. Yeniden veri çekmeye izin vermek için mevcut görselleri temizleyin.</li>
+            <li><strong>3D kutu içe aktar</strong> &mdash; Özel Resimler bölümünde de var. Değişiklikleri Kaydet gerekmeden hemen kaydedilir. Slipcase'in kaydettiği <code>.box.json</code> dosyasını resimleriyle birlikte seçin (klasörün tamamını seçmek de olur). Slipcase 1.4.0 veya daha yenisi bu dosyayı dışa aktarılan her resmin yanına kaydeder. RetroDB kutunun yüzlerini bu oyun için saklar; ardından kapağa tıklamak kutuyu 3D olarak gösterir, sürükleyerek veya ok tuşlarıyla çevirebilirsiniz. 3D kutu kapağı resminiz değişmez. Zaten yüzleri olan bir oyun, onları değiştirmeden önce sorar; <strong>Kaldır</strong> onları siler.</li>
             <li><strong>Video / Fragman</strong> &mdash; Bir video fragmanı yükleyin veya bağlayın</li>
         </ul>
 
@@ -1075,6 +1075,7 @@
             <li>Profil ayarlarınızda bir API anahtarı oluşturun</li>
             <li>Kullanıcı adınızı ve API anahtarınızı Ayarlar &rarr; Hesap &rarr; RetroAchievements bölümüne girin</li>
         </ol>
+        <p>RetroArch (RetroDB), DuckStation veya PCSX2'de oynarken başarım kazanmak için aynı sayfadaki <strong>RetroArch, DuckStation ve PCSX2'de başarım kazanın</strong> bölümüne RetroAchievements parolanızı bir kez girin. Parola yalnızca RetroAchievements'a gider ve saklanmaz; RetroDB, dönen oturum açma belirtecini her RetroDB kullanıcısı için bir tane olmak üzere saklar. İsterseniz orada <strong>Hardcore mod</strong> seçeneğini işaretleyin. Başarımlarda oturum açma çalışmaz olursa, örneğin RetroAchievements sitesinde anahtarınızı sıfırladıktan sonra, çıkış yapıp yeniden oturum açın. DuckStation veya PCSX2'de Oyna'ya bastığınızda RetroDB oturum açma bilginizi o emülatörün kendi ayar dosyasına yazar; bilgi siz çıkış yapana veya başka bir RetroDB kullanıcısı oynayana kadar orada kalır. Emülatörün kendi menüsünden yaptığınız bir oturum açmaya dokunulmaz. RetroDB, Mac'te DuckStation'da oturum açamaz.</p>
 
         <h3>Başarımlar Sayfası</h3>
         <ul>
@@ -1456,6 +1457,18 @@
         <h3>Alternatif Başlıkları Geriye Doldurma</h3>
         <p><strong>Alternatif başlıklar</strong> alanı boş olan oyunlar için kütüphaneyi tarar ve IGDB / TGDB / ScreenScraper'dan doldurur. Büyük bir katalog içe aktardıktan sonra veya bölgesel / Japonca / alt başlıkları saklamayan başka bir araçtan geçiş yaptıktan sonra kullanışlıdır. Arka planda çalışır; ilerleme araç kartında gösterilir.</p>
         <p><em>En az bir veri çekici API anahtarı gerektirir (IGDB / TGDB / ScreenScraper)</em></p>
+
+        <h3>Kutu ve Kılavuz Bölgelerini Düzelt</h3>
+        <p>Eski ScreenScraper veri çekmeleri, alfabetik bölge listesindeki ilk kutuyu, 3D kutuyu ve kılavuzu alıyordu; bu yüzden ABD'ye ait bir oyun Avrupa kutusu gösterebiliyor veya Portekizce kılavuz taşıyabiliyordu. Bu araç bu oyunların her birini yeniden arar. Oyuna başka bir bölge daha uygunsa o dosyayı indirir ve eskisini siler. Başka kaynaklardan gelen kutu ve kılavuzlara dokunulmaz; dosyası zaten uygun olan oyunlara da. Durdurmak için karta yeniden basın; sonraki bir çalıştırma kalanlarla devam eder.</p>
+        <p><em>ScreenScraper hesabı gerektirir. Günlük ScreenScraper kotanızı kullanır</em></p>
+
+        <h3>Bölgeleri Dosya Adlarından Düzelt</h3>
+        <p>Bir ROM'un dosya adı hangi kopya olduğunu söyler, bu yüzden <code>(USA)</code> gibi bir etiket artık bölgesini belirler ve AI'a sorulmaz. Eski veri çekmeler önce AI'ın tahmin etmesine izin veriyordu, bu yüzden <code>(USA)</code> dosyası Japonya olarak listelenebiliyordu. Bu araç bu oyunlara dosya adlarındaki bölgeyi verir. Yalnızca AI'ın doldurduğu bölgeleri değiştirir; sonradan elle düzelttiğiniz ve dosya adından farklı olan bir bölge de buna dahildir.</p>
+        <p><em>Harici bağımlılık yok</em></p>
+
+        <h3>RAWG Görsellerini Kutu Resminden Temizle</h3>
+        <p>RAWG'de kutu resmi yoktur. Eski veri çekmeler onun arka plan resmini, çoğu zaman bir ekran görüntüsünü, kapak olarak kaydediyordu ve veri çekme yalnızca boş kapakları doldurduğu için bu resim gerçek kapağın önünü tıkıyordu. Bu araç bu resimleri siler ve kapakları boş bırakır. Diğer kaynaklardan gelen kapaklar ve tüm fanartlar kalır. Bu oyunlar, bir veri çekme kapak bulana kadar kapak göstermez; bu yüzden ardından <strong>Eksikleri Doldur</strong> ile toplu veri çekme çalıştırın.</p>
+        <p><em>Harici bağımlılık yok</em></p>
 
         <h3>Toplu HLTB Arama</h3>
         <p>Oynanış süresi tahmini eksik olan her oyun için bir HowLongToBeat araması çalıştırın. Her eşleşme başlık + platform + piyasaya çıkış yılına göre puanlanır; yüksek güvenilirlikli eşleşmeler otomatik olarak kaydedilir. Güven eşiğinin altında kalan (veya çelişen platformlara sahip) her şey insan incelemesi için beklemeye alınır.</p>

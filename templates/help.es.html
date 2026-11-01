@@ -281,7 +281,7 @@
             <div class="shortcut-item"><kbd>e</kbd> <span>Editar juego</span></div>
             <div class="shortcut-item"><kbd>s</kbd> <span>Hacer scraping del juego</span></div>
             <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Juego anterior o siguiente</span></div>
-            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Navegar por las capturas</span></div>
+            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Navegar por las capturas, mientras una está abierta</span></div>
         </div>
 
         <div class="help-tip">
@@ -1075,6 +1075,7 @@
             <li>Genera una clave de API en los ajustes de tu perfil</li>
             <li>Introduce tu nombre de usuario y clave de API en Ajustes &rarr; Cuenta &rarr; RetroAchievements</li>
         </ol>
+        <p>Para conseguir logros mientras juegas en RetroArch, DuckStation o PCSX2 de RetroDB, introduce una vez tu contraseña de RetroAchievements en <strong>Consigue logros en RetroArch, DuckStation y PCSX2</strong>, en la misma página. Solo va a RetroAchievements y no se guarda; RetroDB guarda el token de inicio de sesión que devuelve, uno por cada usuario de RetroDB. Marca ahí <strong>Modo hardcore</strong> si lo quieres. Si los logros dejan de iniciar sesión, por ejemplo después de restablecer tu clave en el sitio de RetroAchievements, cierra sesión y vuelve a iniciarla. Cuando pulsas Jugar en DuckStation o PCSX2, RetroDB escribe tu inicio de sesión en el propio archivo de ajustes de ese emulador, donde permanece hasta que cierras sesión o juega otro usuario de RetroDB. Un inicio de sesión hecho desde el propio menú del emulador no se toca. RetroDB no puede iniciar sesión en DuckStation en un Mac.</p>
 
         <h3>Página de Logros</h3>
         <ul>
@@ -1455,6 +1456,18 @@
         <h3>Rellenar títulos alternativos</h3>
         <p>Recorre la biblioteca en busca de juegos cuyo campo de <strong>títulos alternativos</strong> esté vacío y lo rellena desde IGDB / TGDB / ScreenScraper. Útil tras importar un catálogo grande o migrar desde otra herramienta que no almacenaba títulos regionales/japoneses/subtítulos. Se ejecuta en segundo plano; el progreso se muestra en la tarjeta de la herramienta.</p>
         <p><em>Requiere al menos una clave de API de scraper (IGDB / TGDB / ScreenScraper)</em></p>
+
+        <h3>Corregir regiones de cajas y manuales</h3>
+        <p>Los scrapings antiguos de ScreenScraper tomaban la primera caja, caja 3D y manual de una lista alfabética de regiones, así que un juego de EE. UU. podía mostrar una caja europea o llevar un manual portugués. Esta herramienta vuelve a buscar cada uno de esos juegos. Si otra región le va mejor al juego, descarga ese archivo y borra el anterior. Las cajas y manuales de cualquier otro origen no se tocan, igual que los juegos cuyo archivo ya encaja. Pulsa de nuevo la tarjeta para detenerla; una ejecución posterior continúa con el resto.</p>
+        <p><em>Requiere una cuenta de ScreenScraper. Usa tu cupo diario de ScreenScraper</em></p>
+
+        <h3>Corregir regiones según los nombres de archivo</h3>
+        <p>El nombre de archivo de una ROM dice qué copia es, así que una etiqueta como <code>(USA)</code> ahora decide su región y no se pregunta a la IA. Los scrapings antiguos dejaban que la IA adivinara primero, así que un archivo <code>(USA)</code> podía figurar como Japón. Esta herramienta da a esos juegos la región de su nombre de archivo. Solo cambia regiones que rellenó la IA, incluida una que después corregiste a mano para que difiriera del nombre de archivo.</p>
+        <p><em>No requiere dependencias</em></p>
+
+        <h3>Quitar imágenes de RAWG de la carátula</h3>
+        <p>RAWG no tiene carátulas. Los scrapings antiguos guardaban su imagen de fondo, a menudo una captura, como carátula, y como los scrapings solo rellenan carátulas vacías, esa imagen bloqueaba una de verdad. Esta herramienta borra esas imágenes y deja las carátulas vacías. Las carátulas de otras fuentes y todo el fanart se quedan. Esos juegos no muestran carátula hasta que un scraping encuentre una, así que después ejecuta un scraping masivo con <strong>Rellenar ausentes</strong>.</p>
+        <p><em>No requiere dependencias</em></p>
 
         <h3>Búsqueda masiva en HLTB</h3>
         <p>Ejecuta una búsqueda en HowLongToBeat para cada juego al que le falte una estimación de tiempo de juego. Cada coincidencia se puntúa por título + plataforma + año de lanzamiento; las coincidencias de alta confianza se guardan automáticamente. Cualquiera por debajo del umbral de confianza (o con plataformas en conflicto) se aparta para revisión manual.</p>

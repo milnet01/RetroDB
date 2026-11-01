@@ -281,7 +281,7 @@
             <div class="shortcut-item"><kbd>e</kbd> <span>編輯遊戲</span></div>
             <div class="shortcut-item"><kbd>s</kbd> <span>抓取遊戲</span></div>
             <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>上一個或下一個遊戲</span></div>
-            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>瀏覽螢幕截圖</span></div>
+            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>瀏覽螢幕截圖（開啟螢幕截圖時）</span></div>
         </div>
 
         <div class="help-tip">
@@ -1075,6 +1075,7 @@
             <li>在你的個人資料設定中產生 API 密鑰</li>
             <li>在設定 &rarr; 帳戶 &rarr; RetroAchievements 中輸入你的使用者名稱和 API 密鑰</li>
         </ol>
+        <p>要在 RetroDB 的 RetroArch、DuckStation 或 PCSX2 中遊玩時贏取成就，請在同一頁面的<strong>在 RetroArch、DuckStation 和 PCSX2 中贏取成就</strong>下輸入一次你的 RetroAchievements 密碼。密碼只傳送給 RetroAchievements，不會被保留；RetroDB 儲存其傳回的登入權杖，每個 RetroDB 使用者一個。如有需要，可在此勾選<strong>硬核模式</strong>。如果成就無法再登入（例如你在 RetroAchievements 網站上重設了密鑰之後），請登出後重新登入。當你在 DuckStation 或 PCSX2 中按下「遊玩」時，RetroDB 會把你的登入資訊寫入該模擬器自己的設定檔，並一直保留到你登出或其他 RetroDB 使用者開始遊玩。你在模擬器自身選單中完成的登入不會被改動。RetroDB 無法在 Mac 上讓 DuckStation 登入。</p>
 
         <h3>成就頁面</h3>
         <ul>
@@ -1456,6 +1457,18 @@
         <h3>補全備用標題</h3>
         <p>掃描遊戲庫，找出 <strong>備用標題</strong> 欄位為空的遊戲，並從 IGDB / TGDB / ScreenScraper 填充該欄位。在匯入大型目錄，或從另一款不儲存地區/日文/副標題的工具遷移後特別有用。在後台執行，進度顯示在工具卡片上。</p>
         <p><em>至少需要一個抓取源 API 密鑰（IGDB / TGDB / ScreenScraper）</em></p>
+
+        <h3>修復包裝盒與說明書地區</h3>
+        <p>舊版 ScreenScraper 抓取會從按字母排序的地區清單中取第一個包裝盒、3D 包裝盒和說明書，因此美國版遊戲可能顯示歐洲版包裝盒，或帶有葡萄牙語說明書。此工具會重新查詢每個這類遊戲。如果其他地區更適合該遊戲，它會下載該檔案並刪除舊檔案。來自其他地區的包裝盒和說明書不會被改動，檔案已經合適的遊戲也一樣。再次點擊卡片可停止；之後再次執行時會繼續處理其餘部分。</p>
+        <p><em>需要 ScreenScraper 帳號。會消耗你的 ScreenScraper 每日額度</em></p>
+
+        <h3>依檔名修復地區</h3>
+        <p>ROM 的檔名說明了它是哪個版本，因此 <code>(USA)</code> 這樣的標記現在會決定其地區，不再詢問 AI。舊版抓取讓 AI 先猜測，因此 <code>(USA)</code> 檔案可能被標為日本。此工具會把這些遊戲的地區改為檔名中的地區。它只更改由 AI 填寫的地區，包括你之後手動修正、與檔名不同的地區。</p>
+        <p><em>無需依賴</em></p>
+
+        <h3>清除包裝盒封面中的 RAWG 圖片</h3>
+        <p>RAWG 沒有包裝盒封面。舊版抓取會把它的背景圖片（通常是螢幕截圖）儲存為封面，而抓取只填充空封面，所以這張圖片擋住了真正的封面。此工具會刪除這些圖片並讓封面留空。來自其他來源的封面和所有同人圖都會保留。在抓取找到封面之前，這些遊戲不會顯示封面，因此之後請使用<strong>填充缺失項</strong>執行一次批次抓取。</p>
+        <p><em>無需依賴</em></p>
 
         <h3>批量 HLTB 查詢</h3>
         <p>為每個缺少遊玩時長估算的遊戲執行 HowLongToBeat 查詢。每次匹配都按標題 + 平台 + 發行年份評分；高置信度的匹配會自動儲存。低於置信度閾值（或平台存在衝突）的結果會被擱置，等待人工審核。</p>

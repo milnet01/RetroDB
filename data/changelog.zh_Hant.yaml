@@ -1,3 +1,55 @@
+- version: 3.35.0
+  date: '2026-11-01'
+  tags:
+  - type: fix
+    label: 當 ES-DE 不是主要來源時,現在會保留它在抓取順序中的位置。之前它的描述、公司和封面會被後面的來源和 AI 取代
+  - type: fix
+    label: 當 ES-DE 不是主要來源時,現在會把 ES-DE 的螢幕截圖和標題畫面加入遊戲,除非與遊戲已有的看起來相同
+  - type: fix
+    label: ES-DE 不再複製遊戲已有的同人圖、影片或說明書,完整重新抓取也不再刪除其他來源剛下載的包裝盒圖
+  - type: fix
+    label: ES-DE 現在會讀取遊戲自己 ROM 檔案對應的條目,因此同名的其他版本不會再提供資料,PS3 資料夾遊戲也能找到 ES-DE 封面
+  - type: fix
+    label: 從 ES-DE 匯入系統標誌時,不再因為名稱含有「gb」等字母而取到無關的圖片
+  - type: fix
+    label: ROM 檔名中的標籤,例如 (USA),現在會直接決定地區,不再詢問 AI,因為 AI 可能把美國版列為歐洲或日本
+  - type: feature
+    label: ROM 工具新增「從檔名修正地區」工具,可修正舊版抓取弄錯的遊戲
+  - type: fix
+    label: RAWG 背景圖不再儲存為包裝盒圖,因為它們常常是螢幕截圖,會擋住真正的封面。現在改作同人圖使用
+  - type: feature
+    label: ROM 工具新增「清除包裝盒圖中的 RAWG 圖片」工具,可移除舊版抓取儲存的圖片,讓抓取能找到真正的封面
+  - type: feature
+    label: 依照 RAWG 的要求,RetroDB 現在在側邊欄以連結標示 RAWG
+  - type: fix
+    label: ScreenScraper 現在會為每個遊戲提供其所屬地區的包裝盒圖、3D 盒圖、說明書、標題和發行日期,而不是依字母順序最先出現的地區
+  - type: feature
+    label: ROM 工具新增「修正包裝盒與說明書地區」工具,可更換舊版 ScreenScraper 抓取時取自錯誤地區的包裝盒圖和說明書
+  - type: fix
+    label: ScreenScraper 影片現在優先使用較小的檔案,失敗時才用較大的
+  - type: fix
+    label: 每個抓取來源現在都會搜尋正確的主機。Atari Lynx、街機 CPS、Super Famicom 等之前搜錯了機種,而且現在所有來源和成就都能搜尋更多系統
+  - type: feature
+    label: 在遊戲頁面按左右方向鍵,現在可切換到上一個和下一個遊戲
+  - type: feature
+    label: 遊戲頁面的金手指區塊現在可以收合,並會記住你是否展開
+  - type: fix
+    label: 開啟以文字框為起點的視窗(例如抓取)時,游標現在會在文字框內,而不是在關閉按鈕上
+  - type: feature
+    label: ROM 工具新增「螢幕截圖審查」工具,會列出 ZX Spectrum、Commodore 64 和 Game Boy 的螢幕截圖,最可疑的排在最前面,只會移除你選擇的項目
+  - type: fix
+    label: 抓取時現在會拒絕原圖色階遠超 Game Boy 所能顯示的 Game Boy 螢幕截圖
+  - type: fix
+    label: 遊戲下方的面板現在會配合視窗大小,不會再超出右邊緣
+  - type: feature
+    label: 可在編輯視窗中匯入 3D 盒圖,就在其他圖片旁邊
+  - type: feature
+    label: 按下遊玩時,RetroAchievements 登入現在會傳到 DuckStation 和 PCSX2
+  - type: fix
+    label: 在 8 位元和 16 位元系統上,抓取不再為在多個系統發行的遊戲加入 IGDB 或 RAWG 螢幕截圖,因為它們可能是其他系統的版本
+  - type: fix
+    label: 遊戲的模擬器現在顯示在其模擬器設定卡片上,而不是在遊玩旁邊
+  body: "<ul>\n  <li><strong>每個抓取來源都搜尋正確的主機。</strong>Atari\n    Lynx、街機 CPS、Super Famicom 等之前搜錯了機種,而且現在所有來源和成就都能搜尋更多系統。</li>\n  <li><strong>遊戲地區優先依據自己的檔名。</strong>\n    (USA) 之類的標籤現在會直接決定地區,不再詢問 AI。ROM 工具新增「從檔名修正地區」工具,可修正舊版抓取弄錯的遊戲。</li>\n  <li><strong>ScreenScraper 依照遊戲的地區。</strong>包裝盒圖、3D\n    盒圖、說明書、標題和發行日期現在取自遊戲自己的地區,而不是依字母順序最先出現的地區。ROM 工具新增「修正包裝盒與說明書地區」工具,可處理舊版抓取。影片現在會先嘗試較小的檔案。</li>\n  <li><strong>RAWG 圖片不再作為包裝盒圖。</strong>它們常常是螢幕截圖,會擋住真正的封面。現在改作同人圖使用。ROM 工具新增「清除包裝盒圖中的 RAWG 圖片」工具,可處理舊版抓取儲存的圖片。依照 RAWG 的要求,RetroDB 也在側邊欄以連結標示 RAWG。</li>\n  <li><strong>ES-DE 保留它在抓取順序中的位置。</strong>當它不是主要來源時,後面的來源和 AI 會取代它的文字和封面,它的螢幕截圖也會被丟棄。現在這些都會保留。它不再複製遊戲已有的媒體,並會讀取遊戲自己 ROM 檔案對應的條目。PS3 資料夾遊戲現在能找到 ES-DE 封面。匯入系統標誌時不再取到無關的圖片。完整重新抓取也不再刪除其他來源剛下載的包裝盒圖。</li>\n  <li><strong>螢幕截圖審查。</strong>ROM 工具中的新工具會列出 ZX Spectrum、Commodore 64 和 Game Boy 的螢幕截圖,最可疑的排在最前面,只會移除你選擇的項目。抓取時現在會拒絕原圖色階遠超 Game Boy 所能顯示的螢幕截圖。在 8 位元和 16 位元系統上,不再為在多個系統發行的遊戲加入 IGDB 或 RAWG 螢幕截圖。</li>\n  <li><strong>RetroAchievements 登入會傳到 DuckStation 和 PCSX2</strong>,在你按下遊玩時生效。</li>\n  <li><strong>在遊戲頁面:</strong>左右方向鍵可切換到上一個和下一個遊戲,金手指區塊可收合並會記住狀態,下方面板會配合視窗大小,模擬器則顯示在其模擬器設定卡片上,而不是在遊玩旁邊。</li>\n  <li><strong>匯入 3D 盒圖</strong>現在位於編輯視窗中,就在其他圖片旁邊。</li>\n  <li><strong>以文字框為起點的視窗</strong>(例如抓取)現在會把游標放在文字框內,而不是在關閉按鈕上。</li>\n</ul>\n"
 - version: 3.34.0
   date: '2026-10-30'
   tags:

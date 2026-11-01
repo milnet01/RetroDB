@@ -1,3 +1,55 @@
+- version: 3.35.0
+  date: '2026-11-01'
+  tags:
+  - type: fix
+    label: ES-DE zachowuje teraz swoje miejsce w kolejności źródeł, gdy nie jest źródłem głównym. Jego opisy, firmy i okładki były zastępowane przez późniejsze źródła i AI
+  - type: fix
+    label: Zrzuty ekranu i ekrany tytułowe z ES-DE są teraz dodawane do gry, gdy ES-DE nie jest źródłem głównym, chyba że wyglądają tak samo jak te, które gra już ma
+  - type: fix
+    label: ES-DE nie kopiuje już fanartu, wideo ani instrukcji, które gra już ma, a Pełne ponowne pobranie nie usuwa już okładki pobranej przed chwilą z innego źródła
+  - type: fix
+    label: ES-DE odczytuje teraz wpis dla właściwego pliku ROM gry, więc inna wersja o tej samej nazwie nie może podać swoich danych, a gry PS3 w folderach znajdują swoje okładki z ES-DE
+  - type: fix
+    label: Importowanie logo systemów z ES-DE nie bierze już niepowiązanego obrazu tylko dlatego, że jego nazwa zawiera litery takie jak "gb"
+  - type: fix
+    label: Znacznik w nazwie pliku ROM, np. (USA), decyduje teraz o regionie. AI nie jest już pytane, bo mogło uznać kopię z USA za europejską lub japońską
+  - type: feature
+    label: Nowe narzędzie w Narzędziach ROM, Napraw regiony z nazw plików, poprawia gry, w których starsze pobrania dały błędny region
+  - type: fix
+    label: Obrazy tła z RAWG nie są już zapisywane jako okładki, bo często są zrzutami ekranu i blokowały prawdziwą okładkę. Są używane jako fanart
+  - type: feature
+    label: Nowe narzędzie w Narzędziach ROM, Wyczyść obrazy RAWG z okładek, usuwa te zapisane przez starsze pobrania, by można było znaleźć prawdziwe okładki
+  - type: feature
+    label: RetroDB podaje teraz RAWG jako źródło z odnośnikiem na pasku bocznym, zgodnie z prośbą RAWG
+  - type: fix
+    label: ScreenScraper podaje teraz dla każdej gry okładkę, okładkę 3D, instrukcję, ekran tytułowy i datę premiery z jej własnego regionu, a nie z regionu pierwszego w kolejności alfabetycznej
+  - type: feature
+    label: Nowe narzędzie w Narzędziach ROM, Napraw regiony okładek i instrukcji, zamienia okładki i instrukcje, które starsze pobrania ze ScreenScraper wzięły z niewłaściwego regionu
+  - type: fix
+    label: Wideo ze ScreenScraper używa teraz najpierw mniejszego pliku, a większego tylko wtedy, gdy się nie uda
+  - type: fix
+    label: Każde źródło szuka teraz na właściwej konsoli. Atari Lynx, arcade CPS, Super Famicom i inne były szukane na złej maszynie, a wiele kolejnych systemów jest teraz w ogóle przeszukiwanych, przez wszystkie źródła i dla osiągnięć
+  - type: feature
+    label: Na stronie gry strzałki w lewo i w prawo przechodzą do poprzedniej i następnej gry
+  - type: feature
+    label: Sekcję Kody na stronie gry można teraz zwinąć, a jej stan jest zapamiętywany
+  - type: fix
+    label: Otwarcie okna, które zaczyna się od pola tekstowego, np. Pobierz dane, ustawia teraz kursor w tym polu, a nie na przycisku zamknięcia
+  - type: feature
+    label: Nowe narzędzie Przegląd zrzutów ekranu w Narzędziach ROM wyświetla zrzuty ekranu z ZX Spectrum, Commodore 64 i Game Boy, najbardziej podejrzane na początku, i usuwa tylko to, co wybierzesz
+  - type: fix
+    label: Pobieranie danych odrzuca teraz zrzut ekranu z Game Boya, którego oryginał ma znacznie więcej odcieni, niż ta maszyna mogłaby pokazać
+  - type: fix
+    label: Dolne panele gry mieszczą się teraz w oknie i nie wychodzą poza prawą krawędź
+  - type: feature
+    label: Importuj okładkę 3D z okna Edytuj, obok innych obrazów
+  - type: feature
+    label: Logowanie do RetroAchievements trafia teraz do DuckStation i PCSX2 po naciśnięciu Graj
+  - type: fix
+    label: W systemach 8- i 16-bitowych pobieranie danych nie dodaje już zrzutów ekranu z IGDB ani RAWG do gry wydanej na kilku systemach, bo mogły pokazywać wersję z innego systemu
+  - type: fix
+    label: Emulator gry jest teraz podany na karcie Ustawienia emulatora, a nie obok przycisku Graj
+  body: "<ul>\n  <li><strong>Każde źródło szuka na właściwej konsoli.</strong> Atari\n    Lynx, arcade CPS, Super Famicom i inne były szukane na\n    złej maszynie, a wiele kolejnych systemów jest teraz w ogóle\n    przeszukiwanych, przez wszystkie źródła i dla osiągnięć.</li>\n  <li><strong>Region gry wynika najpierw z jej nazwy pliku.</strong>\n    Znacznik, np. (USA), decyduje teraz o regionie, a AI nie jest już\n    pytane. W Narzędziach ROM jest nowe narzędzie, Napraw regiony z nazw plików,\n    dla gier, w których starsze pobrania się pomyliły.</li>\n  <li><strong>ScreenScraper uwzględnia region gry.</strong> Okładka,\n    okładka 3D, instrukcja, ekran tytułowy i data premiery pochodzą teraz z własnego\n    regionu gry, a nie z pierwszego w kolejności alfabetycznej. W Narzędziach ROM jest\n    nowe narzędzie, Napraw regiony okładek i instrukcji, dla starszych pobrań. Wideo\n    najpierw próbuje mniejszego pliku.</li>\n  <li><strong>Obrazy z RAWG nie są już okładkami.</strong> Często są\n    zrzutami ekranu i blokowały prawdziwą okładkę. Teraz są używane jako\n    fanart. W Narzędziach ROM jest nowe narzędzie, Wyczyść obrazy RAWG z okładek,\n    dla tych zapisanych przez starsze pobrania. RetroDB podaje też RAWG\n    z odnośnikiem na pasku bocznym, zgodnie z prośbą RAWG.</li>\n  <li><strong>ES-DE zachowuje swoje miejsce w kolejności źródeł.</strong> Gdy\n    nie był źródłem głównym, późniejsze źródła i AI zastępowały jego\n    tekst i okładki, a jego zrzuty ekranu były pomijane. Teraz zostają.\n    Nie kopiuje już mediów, które gra ma, i odczytuje wpis\n    dla właściwego pliku ROM gry. Gry PS3 w folderach znajdują swoje okładki z ES-DE.\n    Importowanie logo systemów nie bierze już niepowiązanego obrazu.\n    Pełne ponowne pobranie nie usuwa już okładki pobranej przed chwilą\n    z innego źródła.</li>\n  <li><strong>Przegląd zrzutów ekranu.</strong> Nowe narzędzie w Narzędziach ROM wyświetla\n    zrzuty ekranu z ZX Spectrum, Commodore 64 i Game Boy, najbardziej\n    podejrzane na początku, i usuwa tylko to, co wybierzesz. Pobieranie danych odrzuca\n    teraz zrzut ekranu z Game Boya, którego oryginał ma znacznie więcej odcieni,\n    niż ta maszyna mogłaby pokazać. W systemach 8- i 16-bitowych nie\n    dodaje już zrzutów ekranu z IGDB ani RAWG do gry wydanej na kilku\n    systemach.</li>\n  <li><strong>Logowanie do RetroAchievements trafia do DuckStation i PCSX2</strong>\n    po naciśnięciu Graj.</li>\n  <li><strong>Na stronie gry:</strong> strzałki w lewo i w prawo przechodzą\n    do poprzedniej i następnej gry, sekcję Kody można zwinąć i jej stan jest\n    zapamiętywany, dolne panele mieszczą się w oknie, a emulator jest\n    podany na karcie Ustawienia emulatora, a nie obok przycisku Graj.</li>\n  <li><strong>Importuj okładkę 3D</strong> jest teraz w oknie Edytuj, obok\n    innych obrazów.</li>\n  <li><strong>Okno, które zaczyna się od pola tekstowego,</strong> np. Pobierz dane,\n    ustawia teraz kursor w tym polu, a nie na przycisku zamknięcia.</li>\n</ul>\n"
 - version: 3.34.0
   date: '2026-10-30'
   tags:

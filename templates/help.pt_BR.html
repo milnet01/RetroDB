@@ -281,7 +281,7 @@
             <div class="shortcut-item"><kbd>e</kbd> <span>Editar jogo</span></div>
             <div class="shortcut-item"><kbd>s</kbd> <span>Coletar dados do jogo</span></div>
             <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Jogo anterior ou próximo</span></div>
-            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Navegar pelas capturas de tela</span></div>
+            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Navegar pelas capturas de tela, com uma aberta</span></div>
         </div>
 
         <div class="help-tip">
@@ -851,8 +851,8 @@
             <li><strong>Classificações Etárias</strong> &mdash; Todos os 8 sistemas de classificação com imagens oficiais de classificação e cruzamento automático. Alterar uma classificação preenche automaticamente as classificações vazias em outros sistemas.</li>
             <li><strong>Pontuações</strong> &mdash; Pontuação da crítica, pontuação dos usuários</li>
             <li><strong>Descrição</strong> &mdash; Texto de descrição do jogo</li>
-            <li><strong>Imagens Personalizadas</strong> &mdash; Envie capa personalizada (2D), capa 3D e fanart. Limpe as imagens existentes para permitir uma nova coleta.</li>
-            <li><strong>Importar caixa 3D</strong> &mdash; Também em Imagens Personalizadas. Isso é salvo na hora, sem Salvar Alterações. Escolha o arquivo <code>.box.json</code> que o Slipcase salvou, junto com as imagens dele (pode escolher a pasta inteira). O Slipcase 1.4.0 ou mais recente salva este arquivo ao lado de cada imagem exportada. O RetroDB guarda as faces da caixa para este jogo; clicar na capa passa a mostrar a caixa em 3D, para arrastar ou girar com as setas do teclado. A sua imagem de capa 3D não é alterada. Um jogo que já tem faces pergunta antes de substituí-las, e <strong>Remover</strong> as apaga.</li>
+            <li><strong>Imagens personalizadas</strong> &mdash; Envie capa personalizada (2D), capa 3D e fanart. Limpe as imagens existentes para permitir uma nova coleta.</li>
+            <li><strong>Importar caixa 3D</strong> &mdash; Também em Imagens personalizadas. Isso é salvo na hora, sem Salvar Alterações. Escolha o arquivo <code>.box.json</code> que o Slipcase salvou, junto com as imagens dele (pode escolher a pasta inteira). O Slipcase 1.4.0 ou mais recente salva este arquivo ao lado de cada imagem exportada. O RetroDB guarda as faces da caixa para este jogo; clicar na capa passa a mostrar a caixa em 3D, para arrastar ou girar com as setas do teclado. A sua imagem de capa 3D não é alterada. Um jogo que já tem faces pergunta antes de substituí-las, e <strong>Remover</strong> as apaga.</li>
             <li><strong>Vídeo / Trailer</strong> &mdash; Envie ou vincule um vídeo de trailer</li>
         </ul>
 
@@ -1075,6 +1075,7 @@
             <li>Gere uma chave de API nas configurações do seu perfil</li>
             <li>Insira seu nome de usuário e a chave de API em Configurações &rarr; Conta &rarr; RetroAchievements</li>
         </ol>
+        <p>Para ganhar conquistas enquanto joga no RetroArch (RetroDB), no DuckStation ou no PCSX2, digite sua senha do RetroAchievements uma vez em <strong>Ganhe conquistas no RetroArch, DuckStation e PCSX2</strong> na mesma página. Ela vai apenas para o RetroAchievements e não é guardada; o RetroDB guarda o token de login devolvido, um por usuário do RetroDB. Marque <strong>Modo hardcore</strong> ali, se quiser. Se o login de conquistas parar de funcionar, por exemplo depois de redefinir sua chave no site do RetroAchievements, saia e entre novamente. Quando você pressiona Jogar no DuckStation ou no PCSX2, o RetroDB grava seu login no arquivo de configurações do próprio emulador, onde fica até você sair ou outro usuário do RetroDB jogar. Um login feito no menu do próprio emulador não é alterado. O RetroDB não consegue fazer login no DuckStation em um Mac.</p>
 
         <h3>Página de Conquistas</h3>
         <ul>
@@ -1456,6 +1457,18 @@
         <h3>Preencher Títulos Alternativos</h3>
         <p>Varre a biblioteca em busca de jogos cujo campo de <strong>títulos alternativos</strong> está vazio e o preenche a partir do IGDB / TGDB / ScreenScraper. Útil após importar um catálogo grande ou migrar de outra ferramenta que não armazenava títulos regionais / japoneses / subtítulos. Executa em segundo plano; o progresso é mostrado no cartão da ferramenta.</p>
         <p><em>Requer pelo menos uma chave de API de coletor (IGDB / TGDB / ScreenScraper)</em></p>
+
+        <h3>Corrigir Regiões de Caixas e Manuais</h3>
+        <p>Coletas antigas do ScreenScraper pegavam a primeira caixa, caixa 3D e manual de uma lista alfabética de regiões, então um jogo dos EUA podia mostrar uma caixa europeia ou trazer um manual português. Esta ferramenta consulta cada um desses jogos de novo. Onde outra região combina melhor com o jogo, ela baixa esse arquivo e apaga o antigo. Caixas e manuais de outras origens não são alterados, assim como jogos cujo arquivo já combina. Pressione o cartão de novo para parar; uma execução posterior continua com o restante.</p>
+        <p><em>Requer uma conta do ScreenScraper. Usa sua cota diária do ScreenScraper</em></p>
+
+        <h3>Corrigir Regiões pelos Nomes de Arquivo</h3>
+        <p>O nome do arquivo de uma ROM diz qual é a cópia, então uma etiqueta como <code>(USA)</code> agora decide a região e a IA não é consultada. Coletas antigas deixavam a IA adivinhar primeiro, então um arquivo <code>(USA)</code> podia aparecer como Japão. Esta ferramenta dá a esses jogos a região do nome do arquivo. Ela altera apenas regiões preenchidas pela IA, inclusive uma que você corrigiu à mão depois e que difere do nome do arquivo.</p>
+        <p><em>Sem dependências externas</em></p>
+
+        <h3>Limpar Imagens do RAWG das Capas</h3>
+        <p>O RAWG não tem capas. Coletas antigas salvavam a imagem de fundo dele, muitas vezes uma captura de tela, como capa, e como as coletas só preenchem capas vazias, essa imagem bloqueava uma capa real. Esta ferramenta apaga essas imagens e deixa as capas vazias. Capas de outras origens e todo o fanart permanecem. Esses jogos não mostram capa até que uma coleta encontre uma, então execute depois uma coleta em lote com <strong>Preencher Ausentes</strong>.</p>
+        <p><em>Sem dependências externas</em></p>
 
         <h3>Consulta HLTB em Lote</h3>
         <p>Execute uma consulta ao HowLongToBeat para cada jogo sem uma estimativa de tempo de jogo. Cada correspondência é pontuada por título + plataforma + ano de lançamento; correspondências de alta confiança são salvas automaticamente. Qualquer coisa abaixo do limiar de confiança (ou com plataformas conflitantes) é reservada para revisão humana.</p>
