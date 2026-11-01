@@ -307,6 +307,19 @@
         </div>
     </button>
 
+    <button type="button" class="tool-card" data-on-click="clearRawgCovers">
+        <div class="tool-card-header">
+            <div class="tool-card-icon">&#128444;</div>
+            <div class="tool-card-title">{{ _('Clear RAWG Pictures from Box Art') }}</div>
+        </div>
+        <div class="tool-card-desc">
+            {{ _('RAWG has no box art, so older scrapes saved a background picture or screenshot as the cover, and that blocks a real cover. This clears those pictures so a scrape can find real covers.') }}
+        </div>
+        <div class="tool-card-status" id="rawgCoversStatus">
+            <span class="status-dot no-deps"></span> {{ _('No dependencies required') }}
+        </div>
+    </button>
+
     <button type="button" class="tool-card" data-on-click="startHltbBulk">
         <div class="tool-card-header">
             <div class="tool-card-icon">&#9201;</div>
@@ -437,6 +450,43 @@ function startSsRegionRepair() {
 }
 
 document.addEventListener('DOMContentLoaded', _ssRegionRepairPoll);
+
+const RAWG_COVERS_TEXT = {
+    title: {{ _('Clear RAWG Pictures from Box Art')|tojson }},
+    confirm: {{ _('{count} games and wishlist items use a RAWG picture as their box art. Those pictures will be deleted, and these games show no cover until a scrape finds one.\n\nCovers from other sources and all fanart stay. Afterwards, run a bulk scrape with Fill Missing to look for real covers.')|tojson }},
+    none: {{ _('No game uses a RAWG picture as its box art.')|tojson }},
+    done: {{ _('Cleared {count} pictures. Run a bulk scrape with Fill Missing to look for real covers.')|tojson }},
+    failed: {{ _('Could not clear the pictures')|tojson }},
+};
+
+function _rawgCoversText(template, count) {
+    return template.replace('{count}', formatNumber(count));
+}
+
+function clearRawgCovers() {
+    const box = document.getElementById('rawgCoversStatus');
+    fetch('/api/maintenance/rawg-covers/preview')
+        .then(r => r.json())
+        .then(preview => {
+            if (!preview.success) throw new Error();
+            if (!preview.count) {
+                box.textContent = RAWG_COVERS_TEXT.none;
+                return;
+            }
+            showConfirm(RAWG_COVERS_TEXT.title, _rawgCoversText(RAWG_COVERS_TEXT.confirm, preview.count), function() {
+                fetch('/api/maintenance/rawg-covers/clear', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}',
+                })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (!data.success) throw new Error();
+                        box.textContent = _rawgCoversText(RAWG_COVERS_TEXT.done, data.cleared);
+                    })
+                    .catch(() => showNotification(RAWG_COVERS_TEXT.failed, 'error'));
+            });
+        })
+        .catch(() => showNotification(RAWG_COVERS_TEXT.failed, 'error'));
+}
 
 function startHltbBulk() {
     showConfirm(

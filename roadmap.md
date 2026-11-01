@@ -10242,7 +10242,12 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.203 RAWG background pictures stop being used as box art, and RetroDB credits RAWG (fix, S).
-- **Status**: todo
+- **Resolution** (2026-11-01): Done 2026-11-01 in 3.34.1. RAWG fills fanart only (background_image,
+  else the additional picture). ROM Tools > Clear RAWG Pictures from Box
+  Art empties `*_rawg_boxart.*` covers on games and the wishlist and
+  deletes their files; the user presses it (723 games and 1 wishlist
+  item here). The sidebar links to rawg.io on every page.
+- **Status**: done
 - **Source**: PASS-59-162, 2026-10-31. Notes: rawg 1, 3.
 - **Problem**: `scrape_rawg.py` saves `background_image`, often a screenshot, as the cover. Measured: most RAWG covers are landscape. Because media is fill-only, the picture also blocks a real cover. RAWG asks for a link back, and no page gives one.
 - **Fix**: stop filling `boxart` from RAWG, keep the picture as fanart, correct `docs/specs/scrapers.md`, offer a clean-up so those games can get real covers, and add a RAWG credit link.

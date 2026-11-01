@@ -29,6 +29,8 @@ from services.game_cleanup import (
 from services.media_cleanup import (
     clean_orphaned_files,
     clear_missing_media_refs,
+    clear_rawg_covers,
+    count_rawg_covers,
     find_missing_media_refs,
     find_orphaned_media,
 )
@@ -362,6 +364,29 @@ def api_alt_titles_backfill_cancel():
     from services.jobs import alt_titles_backfill_job
     result = alt_titles_backfill_job.cancel()
     return jsonify(result)
+
+
+# =============================================================================
+# RAWG PICTURES USED AS BOX ART (PASS-59-203)
+# =============================================================================
+
+@bp.route('/api/maintenance/rawg-covers/preview', methods=['GET'])
+@admin_required
+@handle_api_errors
+def api_rawg_covers_preview():
+    """How many covers the clean-up would clear. Changes nothing."""
+    return success(count=count_rawg_covers())
+
+
+@bp.route('/api/maintenance/rawg-covers/clear', methods=['POST'])
+@admin_required
+@handle_api_errors
+def api_rawg_covers_clear():
+    """Clear covers taken from RAWG so a scrape can fill in real ones."""
+    cleared = clear_rawg_covers()
+    if cleared:
+        invalidate_analytics_cache()
+    return success(cleared=cleared)
 
 
 # =============================================================================

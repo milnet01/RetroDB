@@ -786,18 +786,7 @@ def apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result, fill_only=Fa
         if added > 0:
             result['filled_fields'].append(f'alternate_titles +{added} (RAWG)')
 
-    # Boxart (only if not already present — never replace existing)
-    if rawg_data.get('boxart_url') and not metadata['boxart']:
-        url = rawg_data['boxart_url']
-        if url:
-            filename = f"{db_game_id}_rawg_boxart{preferred_image_extension('boxart', '.jpg')}"
-            local_path = os.path.join(IMAGE_PATH, 'boxart', filename)
-            if _download_and_finalize(url, local_path, 'boxart', timeout=15):
-                metadata['boxart'] = filename
-                metadata['_boxart_source'] = 'rawg'
-                result['filled_fields'].append('boxart (RAWG)')
-
-    # Fanart from background_image_additional (only if not already present)
+    # No box art: RAWG has none (PASS-59-203). Fanart only if not already present.
     if rawg_data.get('fanart_url') and not metadata.get('fanart'):
         url = rawg_data['fanart_url']
         filename = f"{db_game_id}_rawg_fanart{preferred_image_extension('fanart', '.jpg')}"

@@ -331,8 +331,9 @@ def get_game_details(game_id):
         'esrb_rating': esrb_rating,
         'players': players,
         'modes': ', '.join(modes) if modes else None,
-        'boxart_url': game.get('background_image'),
-        'fanart_url': game.get('background_image_additional'),  # Secondary image for fanart
+        # RAWG has no cover: background_image is wide art or a screenshot, so it
+        # is fanart and never box art (PASS-59-203).
+        'fanart_url': game.get('background_image') or game.get('background_image_additional'),
         'screenshot_urls': screenshot_urls,
         'platforms': game.get('platforms') or [],
         'metacritic': game.get('metacritic'),  # Critic score (0-100)

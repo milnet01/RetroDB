@@ -442,6 +442,52 @@ def find_missing_media_refs(games):
     return affected, guarded
 
 
+# A cover an older scrape took from RAWG is named `<id>_rawg_boxart.<ext>`, or
+# `w<id>_...` on the wishlist. RAWG has no covers: these are background pictures,
+# and being stored they block a real cover (PASS-59-203).
+_RAWG_COVER_TABLES = ('games', 'wishlist')
+_RAWG_COVER_LIKE = r"boxart LIKE '%\_rawg\_boxart.%' ESCAPE '\'"
+
+
+def count_rawg_covers():
+    """How many games and wishlist items show a RAWG picture as their cover."""
+    from services.database import query
+
+    return sum(
+        query(f"SELECT COUNT(*) AS n FROM {table} WHERE {_RAWG_COVER_LIKE}", one=True)['n']
+        for table in _RAWG_COVER_TABLES
+    )
+
+
+def clear_rawg_covers():
+    """Empty every cover taken from RAWG and delete its files. Returns the count.
+
+    Other covers and all fanart stay. A file goes only after its row is saved
+    empty, and `AND boxart = ?` keeps a cover replaced since the search.
+    """
+    from services.database import get_db_with_context
+    from services.game_media_service import remove_media_file
+
+    removed = []
+    with get_db_with_context() as conn:
+        for table in _RAWG_COVER_TABLES:
+            rows = conn.execute(
+                f"SELECT id, boxart FROM {table} WHERE {_RAWG_COVER_LIKE}"
+            ).fetchall()
+            for row in rows:
+                cur = conn.execute(
+                    f"UPDATE {table} SET boxart = NULL WHERE id = ? AND boxart = ?",
+                    (row['id'], row['boxart']),
+                )
+                if cur.rowcount:
+                    removed.append(row['boxart'])
+
+    for filename in removed:
+        remove_media_file(filename, 'boxart')
+    logger.info(f"Cleared {len(removed)} RAWG picture(s) used as box art")
+    return len(removed)
+
+
 def clear_missing_media_refs():
     """Clear DB media references that point to files no longer on disk.
 

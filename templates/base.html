@@ -222,6 +222,8 @@
                         {{ _('Games left:') }} <span id="upscaleStatusCount">{{ _upscale_pending|format_number }}</span></span>
                 </div>
                 {% endif %}
+                {# RAWG's terms ask for a link from every page that shows its data (PASS-59-203). #}
+                <a class="sidebar-credit" href="https://rawg.io/" target="_blank" rel="noopener noreferrer">{{ _('Some data and images from RAWG') }}</a>
                 <button type="button" class="version-info" data-on-click="showAboutModal" title="{{ _('Click for more info') }}">
                     <span class="version-icon">ℹ️</span> RetroDB v{{ config.APP_VERSION }}
                 </button>
