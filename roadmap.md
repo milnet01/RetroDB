@@ -10286,7 +10286,18 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.206 Every source's genres, perspectives and modes reach the canonical forms (fix, M).
-- **Status**: todo
+- **Resolution** (2026-11-01): Shipped 2026-11-01 (3.35.1, open). Decisions: `Text` and `Auditory`
+  perspectives dropped; `Virtual Reality` moves to dimension VR; Arcade,
+  Indie, Family and Compilation dropped; Quiz to Trivia; Tactical and
+  MOBA to Strategy; Pinball and Casino to Casual, no new canonical
+  values; Co-op to Local Co-op. A normalization_rules row with a
+  non-canonical target is ignored, not deleted. Not done: esde 9's empty
+  modes for large counts on online-era systems, since no list of those
+  systems exists. TheGamesDB's full genre list was not captured (no live
+  calls); an unlisted word is dropped safely. On the live library: press
+  Tidy Genres, Perspectives and Modes; a copy showed 1583 of 5685 games
+  changing.
+- **Status**: done
 - **Source**: PASS-59-162, 2026-10-31. Notes: igdb F3, F4, F11; screenscraper 4, 5; tgdb 5, 6; rawg 10; esde 5, 9; merge_and_stored 3, 4, 11, 16.
 - **Problem**: raw IGDB labels such as `Third person` and `Side view` are stored, so one perspective appears under two names and a filter misses games. Genres pass through outside `FIELD_SCHEMAS`. One IGDB label is hidden only by a rule in this library, so a new install gets it raw. TheGamesDB's backup genre table has wrong numbers.
 - **Fix**: one conversion step after the merge for all sources, plus a clean-up of stored rows. `Text`, `Auditory` and `Virtual Reality` need a decision. New canonical values also go in `services/i18n_labels.py`.

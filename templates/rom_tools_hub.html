@@ -320,6 +320,19 @@
         </div>
     </button>
 
+    <button type="button" class="tool-card" data-on-click="fixLabels">
+        <div class="tool-card-header">
+            <div class="tool-card-icon">&#127991;</div>
+            <div class="tool-card-title">{{ _('Tidy Genres, Perspectives and Modes') }}</div>
+        </div>
+        <div class="tool-card-desc">
+            {{ _('Sources name the same thing differently, so one genre could appear as both RPG and Role Playing Game, and a filter missed games. This gives every game one set of names.') }}
+        </div>
+        <div class="tool-card-status" id="labelsStatus">
+            <span class="status-dot no-deps"></span> {{ _('No dependencies required') }}
+        </div>
+    </button>
+
     <button type="button" class="tool-card" data-on-click="clearRawgCovers">
         <div class="tool-card-header">
             <div class="tool-card-icon">&#128444;</div>
@@ -496,6 +509,40 @@ function fixFileRegions() {
             });
         })
         .catch(() => showNotification(FILE_REGIONS_TEXT.failed, 'error'));
+}
+
+const LABELS_TEXT = {
+    title: {{ _('Tidy Genres, Perspectives and Modes')|tojson }},
+    confirm: {{ _('{count} games will change.\n\nNames become the ones in the filter lists. Words with no place there, such as Arcade or Indie, are removed. Words that belong elsewhere, such as FPV, move to the right field if it is empty. A player count that contradicts the game\'s modes is corrected, and old counts of 1 from RAWG are cleared.\n\nAfterwards, run a bulk scrape with Fill Missing to fill anything left empty.')|tojson }},
+    none: {{ _('Every game already uses these names.')|tojson }},
+    done: {{ _('Tidied {count} games. Run a bulk scrape with Fill Missing to fill anything left empty.')|tojson }},
+    failed: {{ _('Could not tidy the names')|tojson }},
+};
+
+function fixLabels() {
+    const box = document.getElementById('labelsStatus');
+    const fill = (template, count) => template.replace('{count}', formatNumber(count));
+    fetch('/api/maintenance/labels/preview')
+        .then(r => r.json())
+        .then(preview => {
+            if (!preview.success) throw new Error();
+            if (!preview.count) {
+                box.textContent = LABELS_TEXT.none;
+                return;
+            }
+            showConfirm(LABELS_TEXT.title, fill(LABELS_TEXT.confirm, preview.count), function() {
+                fetch('/api/maintenance/labels/fix', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}',
+                })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (!data.success) throw new Error();
+                        box.textContent = fill(LABELS_TEXT.done, data.fixed);
+                    })
+                    .catch(() => showNotification(LABELS_TEXT.failed, 'error'));
+            });
+        })
+        .catch(() => showNotification(LABELS_TEXT.failed, 'error'));
 }
 
 const RAWG_COVERS_TEXT = {

@@ -1,9 +1,13 @@
 # =============================================================================
 # RETRODB - Normalization Service
 # =============================================================================
-# Shared normalization dictionaries and functions for genre/modes consistency.
-# Used by the scraper during ingestion and by the settings UI for bulk fixes.
-# Custom rules stored in the normalization_rules DB table override hardcoded maps.
+# One set of names for genre, modes, perspective, dimension and game_structure.
+# A word ends as a value in FIELD_SCHEMAS or that field's dropdown, or it is
+# dropped: an unknown word stored as it came splits a filter and cannot be
+# translated (PASS-59-206). Used by the scraper during ingestion, by the Tidy
+# maintenance tool and by the settings UI for bulk fixes.
+# Custom rules in the normalization_rules DB table override hardcoded maps when
+# their target is one of those values.
 # =============================================================================
 
 import logging
@@ -15,6 +19,16 @@ logger = logging.getLogger(__name__)
 # Strict whitelist of allowed column names for dynamic SQL.
 # These are the only values accepted as the 'field' parameter.
 _ALLOWED_FIELDS = frozenset(('genre', 'modes'))
+
+# Every field with one set of names, and the dropdown_options category holding
+# values a user added to it.
+_LABEL_CATEGORIES = {
+    'genre': 'genre',
+    'modes': 'game_modes',
+    'perspective': 'perspective',
+    'dimension': 'dimension',
+    'game_structure': 'game_structure',
+}
 
 # =============================================================================
 # HARDCODED NORMALIZATION MAPS
@@ -83,12 +97,13 @@ GENRE_NORMALIZATION = {
     # Adventure variations
     'action-adventure': 'Action-Adventure',
     'action adventure': 'Action-Adventure',
-    'point and click': 'Point and Click',
-    'point-and-click': 'Point and Click',
-    'point-and-click adventure': 'Point and Click',
+    'point and click': 'Adventure',
+    'point-and-click': 'Adventure',
+    'point-and-click adventure': 'Adventure',
     'visual novel': 'Visual-Novel',
     'visual-novel': 'Visual-Novel',
-    'interactive fiction': 'Interactive Fiction',
+    'interactive fiction': 'Adventure',
+    'interactive movie': 'Adventure',
     # Puzzle variations
     'puzzles': 'Puzzle',
     # Simulation
@@ -108,23 +123,7 @@ GENRE_NORMALIZATION = {
     'horror': 'Horror',
     'psychological horror': 'Psychological-Horror',
     'psychological-horror': 'Psychological-Horror',
-    # Scrolling directions (from ScreenScraper compound genres)
-    'vertical': 'Vertical-Scroller',
-    'vertical scrolling': 'Vertical-Scroller',
-    'vertical scroller': 'Vertical-Scroller',
-    'horizontal': 'Side-Scroller',
-    'horizontal scrolling': 'Side-Scroller',
-    'side-scrolling': 'Side-Scroller',
-    'side scroller': 'Side-Scroller',
-    'side-scroller': 'Side-Scroller',
     # Other
-    'roguelike': 'Roguelike',
-    'rogue-like': 'Roguelike',
-    'roguelite': 'Roguelike',
-    'metroidvania': 'Metroidvania',
-    'sandbox': 'Sandbox',
-    'open world': 'Open World',
-    'open-world': 'Open World',
     'battle royale': 'Battle-Royale',
     'battle-royale': 'Battle-Royale',
     'card game': 'Board-Card',
@@ -132,8 +131,125 @@ GENRE_NORMALIZATION = {
     'board': 'Board-Card',
     'card': 'Board-Card',
     'board-card': 'Board-Card',
-    'labyrinth': 'Labyrinth',
-    'maze': 'Labyrinth',
+    'board games': 'Board-Card',
+    'card & board game': 'Board-Card',
+    'shougi': 'Board-Card',
+    'asiatic board game': 'Board-Card',
+    'playing cards': 'Board-Card',
+    # IGDB, RAWG and TheGamesDB names
+    'role-playing (rpg)': 'RPG',
+    'real time strategy (rts)': 'Real-Time Strategy',
+    'turn-based strategy (tbs)': 'Turn-Based Strategy',
+    'tactical': 'Strategy',
+    'moba': 'Strategy',
+    'quiz': 'Trivia',
+    'music': 'Music-Rhythm',
+    'rhythm': 'Music-Rhythm',
+    'music and dancing': 'Music-Rhythm',
+    'massively multiplayer': 'MMORPG',
+    'mmo': 'MMORPG',
+    'education': 'Educational',
+    'pinball': 'Casual',
+    'casino': 'Casual',
+    'construction and management simulation': 'Management',
+    'build and management': 'Management',
+    'life': 'Life-Simulation',
+    'vehicle simulation': 'Simulation',
+    # ScreenScraper and ES-DE names
+    'role playing game': 'RPG',
+    'japanese rpg': 'JRPG',
+    'dungeon crawler rpg': 'RPG',
+    'party-based rpg': 'RPG',
+    'shooter scrolling': 'Shoot-em-up',
+    'space invaders like': 'Shoot-em-up',
+    'fighter scrolling': 'Beat-em-up',
+    'lightgun shooter': 'Light-Gun',
+    'run and gun': 'Shooter',
+    'run & jump': 'Platformer',
+    'run & jump scrolling': 'Platformer',
+    'thinking': 'Puzzle',
+    'racing tpv': 'Racing',
+    'racing fpv': 'Racing',
+    'motorcycle race tpv': 'Racing',
+    'motorcycle race fpv': 'Racing',
+    'hunting and fishing': 'Hunting',
+    # One sport is still Sports: the list holds no single sports.
+    'football (american)': 'Sports',
+    'football (soccer)': 'Sports',
+    'baseball': 'Sports',
+    'basketball': 'Sports',
+    'boxing': 'Sports',
+    'golf': 'Sports',
+    'multisports': 'Sports',
+    'tennis': 'Sports',
+    'hockey': 'Sports',
+    'pool': 'Sports',
+    'cycling': 'Sports',
+    'bowling': 'Sports',
+    'skiing': 'Sports',
+    'wrestling': 'Sports',
+    'rugby': 'Sports',
+    'skateboard': 'Sports',
+    'volleyball': 'Sports',
+    'darts': 'Sports',
+    'extreme': 'Sports',
+    'fishing': 'Sports',
+}
+
+# Words that belong in another field. They fill it only when it is empty.
+_FIRST_PERSON = ('perspective', 'First-Person')
+_THIRD_PERSON = ('perspective', 'Third-Person')
+_VERTICAL = ('perspective', 'Vertical-Scroller')
+_SIDE_ON = ('perspective', 'Side-Scroller')
+_3D = ('dimension', '3D')
+GENRE_MOVES = {
+    'fpv': _FIRST_PERSON,
+    'racing fpv': _FIRST_PERSON,
+    'motorcycle race fpv': _FIRST_PERSON,
+    'tpv': _THIRD_PERSON,
+    'racing tpv': _THIRD_PERSON,
+    'motorcycle race tpv': _THIRD_PERSON,
+    'third person shooter': _THIRD_PERSON,
+    'third-person shooter': _THIRD_PERSON,
+    'vertical': _VERTICAL,
+    'vertical scrolling': _VERTICAL,
+    'vertical scroller': _VERTICAL,
+    'vertical-scroller': _VERTICAL,
+    'horizontal': _SIDE_ON,
+    'horizontal scrolling': _SIDE_ON,
+    'side-scrolling': _SIDE_ON,
+    'side scroller': _SIDE_ON,
+    'side-scroller': _SIDE_ON,
+    '2d': ('dimension', '2D'),
+    '3d': _3D,
+    'realtime 3d': _3D,
+    'roguelike': ('game_structure', 'Roguelike'),
+    'rogue-like': ('game_structure', 'Roguelike'),
+    'roguelite': ('game_structure', 'Roguelike'),
+    'metroidvania': ('game_structure', 'Metroidvania'),
+    'sandbox': ('game_structure', 'Sandbox'),
+    'open world': ('game_structure', 'Open-World'),
+    'open-world': ('game_structure', 'Open-World'),
+    'labyrinth': ('game_structure', 'Labyrinth'),
+    'maze': ('game_structure', 'Labyrinth'),
+}
+
+PERSPECTIVE_NORMALIZATION = {
+    'first person': 'First-Person',
+    'third person': 'Third-Person',
+    'side view': 'Side-Scroller',
+    'bird view': 'Isometric',
+    'top down': 'Top-Down',
+}
+
+GAME_STRUCTURE_NORMALIZATION = {
+    'open world': 'Open-World',
+    'interactive drama': 'Interactive-Drama',
+}
+
+_LABEL_MOVES = {
+    'genre': GENRE_MOVES,
+    'perspective': {'virtual reality': ('dimension', 'VR')},
 }
 
 MODES_NORMALIZATION = {
@@ -142,10 +258,12 @@ MODES_NORMALIZATION = {
     'single-player': 'Single-Player',
     'local multiplayer': 'Local Multiplayer',
     'online multiplayer': 'Online Multiplayer',
-    'co-op': 'Co-op',
-    'coop': 'Co-op',
-    'co-operative': 'Co-op',
-    'cooperative': 'Co-op',
+    # The list has no plain Co-op. Most of a retro library shares one screen.
+    'co-op': 'Local Co-op',
+    'coop': 'Local Co-op',
+    'co-operative': 'Local Co-op',
+    'cooperative': 'Local Co-op',
+    'co-op multiplayer': 'Local Co-op',
     'local co-op': 'Local Co-op',
     'local coop': 'Local Co-op',
     'online co-op': 'Online Co-op',
@@ -153,6 +271,10 @@ MODES_NORMALIZATION = {
     'split-screen': 'Split-Screen',
     'split screen': 'Split-Screen',
     'splitscreen': 'Split-Screen',
+    'split-screen multiplayer': 'Split-Screen',
+    'competitive multiplayer': 'Versus',
+    'massively multiplayer online (mmo)': 'MMO',
+    'battle royale': 'Online Multiplayer',
     'versus': 'Versus',
     'pvp': 'Versus',
     # A bare 'Multiplayer' (IGDB's generic mode, and what the player-count
@@ -171,12 +293,46 @@ def modes_from_player_count(players):
     a lowercase 'Single-player', ES-DE wrote 'Single-Player', and neither
     emitted a canonical multiplayer token. Returns '' when the count is
     unknown so each caller decides what an absent value means (Pass 59.29).
+    A range starting above one ("2-4") needs a second player, so it is not
+    Single-Player. A bare "2" usually means "up to 2", so it still is.
     """
     from services.game_utils import normalize_players_value
     count = normalize_players_value(players)
     if not count:
         return ''
-    return 'Single-Player, Local Multiplayer' if count > 1 else 'Single-Player'
+    if count == 1:
+        return 'Single-Player'
+    needs_two = re.match(r'\s*([2-9]|\d\d+)\s*-', str(players))
+    return 'Local Multiplayer' if needs_two else 'Single-Player, Local Multiplayer'
+
+
+def modes_from_igdb(mode_names, multiplayer_modes):
+    """Canonical modes from IGDB's game_modes names and multiplayer_modes details.
+
+    IGDB's bare "Multiplayer" says nothing of where people play, and its details
+    do: an online-only game is not couch multiplayer. With no details, the bare
+    name maps to Local Multiplayer as before.
+    """
+    details = [m for m in multiplayer_modes or [] if isinstance(m, dict)]
+    found = []
+    if any(m.get('offlinemax') for m in details):
+        found.append('Local Multiplayer')
+    if any(m.get('onlinemax') for m in details):
+        found.append('Online Multiplayer')
+    if any(m.get('splitscreen') for m in details):
+        found.append('Split-Screen')
+    if any(m.get('offlinecoop') for m in details):
+        found.append('Local Co-op')
+    if any(m.get('onlinecoop') for m in details):
+        found.append('Online Co-op')
+
+    names = []
+    for name in mode_names:
+        if name.strip().lower() == 'multiplayer' and found:
+            names.extend(found)
+        else:
+            names.append(name)
+    return normalize_modes(', '.join(names))
 
 
 # =============================================================================
@@ -191,30 +347,64 @@ def _validate_field(field):
 
 _combined_map_cache = {}
 _combined_map_cache_time = {}
+_canonical_cache = {}
+_canonical_cache_time = {}
 _COMBINED_MAP_CACHE_TTL = 300  # 5 minutes
+
+
+def _canonical_values(field):
+    """{lowercase: proper form} of a field's values: FIELD_SCHEMAS plus its dropdown."""
+    import time as _time
+    now = _time.time()
+    if field in _canonical_cache and (now - _canonical_cache_time.get(field, 0)) < _COMBINED_MAP_CACHE_TTL:
+        return _canonical_cache[field]
+
+    from scraper.scrape_ai import FIELD_SCHEMAS
+    values = {v.lower(): v for v in FIELD_SCHEMAS[field]}
+    try:
+        rows = query("SELECT value FROM dropdown_options WHERE category = ?",
+                     (_LABEL_CATEGORIES[field],))
+        for row in rows:
+            values.setdefault(row['value'].lower(), row['value'])
+    except Exception:
+        pass  # Table may not exist yet during startup
+
+    _canonical_cache[field] = values
+    _canonical_cache_time[field] = now
+    return values
 
 
 def _get_combined_map(field):
     """Merge hardcoded map with custom DB rules. DB rules override hardcoded.
 
+    A rule whose target is not one of the field's values is ignored, so an old
+    rule cannot split a genre in two.
+
     Results are cached for 5 minutes to avoid repeated DB reads.
     Call invalidate_normalization_cache() after rule changes.
     """
     import time as _time
-    _validate_field(field)
 
     now = _time.time()
     if field in _combined_map_cache and (now - _combined_map_cache_time.get(field, 0)) < _COMBINED_MAP_CACHE_TTL:
         return _combined_map_cache[field]
 
-    base_map = dict(GENRE_NORMALIZATION if field == 'genre' else MODES_NORMALIZATION)
+    base_map = dict({
+        'genre': GENRE_NORMALIZATION,
+        'modes': MODES_NORMALIZATION,
+        'perspective': PERSPECTIVE_NORMALIZATION,
+        'game_structure': GAME_STRUCTURE_NORMALIZATION,
+    }.get(field, {}))
+    canonical = _canonical_values(field)
     try:
         db_rules = query(
             "SELECT from_value, to_value FROM normalization_rules WHERE category = ?",
             (field,)
         )
         for rule in db_rules:
-            base_map[rule['from_value'].lower()] = rule['to_value']
+            targets = [t.strip().lower() for t in rule['to_value'].split(',')]
+            if all(t in canonical for t in targets):
+                base_map[rule['from_value'].lower()] = rule['to_value']
     except Exception:
         pass  # Table may not exist yet during startup
 
@@ -227,74 +417,90 @@ def invalidate_normalization_cache():
     """Clear cached normalization maps (call after rule changes)."""
     _combined_map_cache.clear()
     _combined_map_cache_time.clear()
+    _canonical_cache.clear()
+    _canonical_cache_time.clear()
 
 
 # =============================================================================
 # NORMALIZE FUNCTIONS (used by scraper and bulk operations)
 # =============================================================================
 
-def normalize_genre(genre_str):
+def split_labels(field, text):
+    """(canonical text, {other field: value}) for a field's raw text.
+
+    Splits on commas and on the "/" and "|" that compound names use, so
+    "Shoot'em Up / Vertical" gives ('Shoot-em-up', {'perspective': 'Vertical-Scroller'}).
+    A word that reaches no canonical value is dropped.
     """
-    Normalize genre names for consistency across all scrapers.
-    Maps variations to canonical dropdown values.
-    Handles slash-separated compound genres from ScreenScraper
-    (e.g., "Shoot'em Up / Vertical" -> "Shoot 'em Up, Vertical-Scroller").
-    """
-    if not genre_str:
-        return genre_str
+    norm_map = _get_combined_map(field)
+    canonical = _canonical_values(field)
+    moves = _LABEL_MOVES.get(field, {})
 
-    norm_map = _get_combined_map('genre')
-
-    # Split genres by comma, then split each part by "/" for compound genres
-    raw_parts = [g.strip() for g in genre_str.split(',')]
-    genres = []
-    for part in raw_parts:
-        if '/' in part:
-            genres.extend(sub.strip() for sub in part.split('/'))
-        else:
-            genres.append(part)
-
-    normalized = []
-    seen = set()
-
-    for genre in genres:
-        if not genre:
+    kept = []
+    moved = {}
+    for word in re.split(r'[,/|]', text or ''):
+        key = word.strip().lower()
+        if not key:
             continue
-        genre_lower = genre.lower().strip()
-        result = norm_map.get(genre_lower, genre)
-        result_lower = result.lower()
-        if result_lower not in seen:
-            seen.add(result_lower)
-            normalized.append(result)
+        if key in moves:
+            target, value = moves[key]
+            moved.setdefault(target, value)
+        for part in norm_map.get(key, key).split(','):
+            value = canonical.get(part.strip().lower())
+            if value and value not in kept:
+                kept.append(value)
+    return ', '.join(kept), moved
 
-    return ', '.join(normalized)
+
+def normalize_genre(genre_str):
+    """Genre text as canonical values only."""
+    return split_labels('genre', genre_str)[0] if genre_str else genre_str
 
 
 def normalize_modes(modes_str):
+    """Modes text as canonical values only."""
+    return split_labels('modes', modes_str)[0] if modes_str else modes_str
+
+
+_MULTIPLAYER_MODES = frozenset((
+    'Asynchronous Multiplayer', 'Cross-Platform Play', 'LAN-System Link', 'Local Co-op',
+    'Local Multiplayer', 'MMO', 'Online Co-op', 'Online Multiplayer', 'Split-Screen', 'Versus',
+))
+
+
+def _reconcile_players_and_modes(metadata):
+    """Stop a game saying "1 player" and "Local Multiplayer" together.
+
+    The higher claim wins, since "1" and "Single-Player" are what a source says
+    when it knows no better. Two is the least a multiplayer mode means.
     """
-    Normalize game mode names for consistency across all scrapers.
-    Maps variations to canonical dropdown_options values.
+    players = metadata.get('players')
+    modes = metadata.get('modes')
+    if not isinstance(players, int) or not modes:
+        return
+    words = {m.strip() for m in modes.split(',')}
+    if players == 1 and words & _MULTIPLAYER_MODES:
+        metadata['players'] = 2
+    elif players > 1 and words == {'Single-Player'}:
+        metadata['modes'] = 'Single-Player, Local Multiplayer'
+
+
+def canonicalize_metadata(metadata):
+    """The conversion after the merge, whatever filled each field (PASS-59-206).
+
+    Words belonging in another field fill it only when it is empty. A field left
+    with no words holds '', which the save's COALESCE writes over the old text.
     """
-    if not modes_str:
-        return modes_str
-
-    norm_map = _get_combined_map('modes')
-
-    modes = [m.strip() for m in modes_str.split(',')]
-    normalized = []
-    seen = set()
-
-    for mode in modes:
-        if not mode:
+    for field in _LABEL_CATEGORIES:
+        text = metadata.get(field)
+        if not text:
             continue
-        mode_lower = mode.lower().strip()
-        result = norm_map.get(mode_lower, mode)
-        result_lower = result.lower()
-        if result_lower not in seen:
-            seen.add(result_lower)
-            normalized.append(result)
-
-    return ', '.join(normalized)
+        value, moved = split_labels(field, str(text))
+        metadata[field] = value
+        for target, moved_value in moved.items():
+            if not metadata.get(target):
+                metadata[target] = moved_value
+    _reconcile_players_and_modes(metadata)
 
 
 # =============================================================================

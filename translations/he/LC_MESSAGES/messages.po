@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-01 20:46+0200\n"
+"POT-Creation-Date: 2026-11-01 21:36+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: he\n"
@@ -701,15 +701,15 @@ msgstr ""
 msgid "Next disk inserted"
 msgstr "הדיסק הבא הוכנס"
 
-#: routes/maintenance.py:268
+#: routes/maintenance.py:270
 msgid "Unknown image type"
 msgstr "סוג תמונה לא ידוע"
 
-#: routes/maintenance.py:433
+#: routes/maintenance.py:459
 msgid "Add your ScreenScraper account in Settings first."
 msgstr "קודם הוסף את חשבון ScreenScraper שלך ב־הגדרות."
 
-#: routes/maintenance.py:434
+#: routes/maintenance.py:460
 msgid "This fix is already running."
 msgstr "התיקון הזה כבר פועל."
 
@@ -5715,7 +5715,7 @@ msgstr "כלים"
 msgid "Game Imports"
 msgstr "ייבוא משחקים"
 
-#: templates/base.html:183 templates/rom_tools_hub.html:371
+#: templates/base.html:183 templates/rom_tools_hub.html:384
 msgid "Configuration"
 msgstr "תצורה"
 
@@ -8683,7 +8683,7 @@ msgstr ""
 #: templates/rom_tools_hub.html:226 templates/rom_tools_hub.html:239
 #: templates/rom_tools_hub.html:253 templates/rom_tools_hub.html:267
 #: templates/rom_tools_hub.html:280 templates/rom_tools_hub.html:319
-#: templates/rom_tools_hub.html:332
+#: templates/rom_tools_hub.html:332 templates/rom_tools_hub.html:345
 msgid "No dependencies required"
 msgstr "לא נדרשות תלויות"
 
@@ -8785,7 +8785,7 @@ msgstr ""
 msgid "Metadata only &middot; no media downloads"
 msgstr "מטא-נתונים בלבד &middot; ללא הורדות מדיה"
 
-#: templates/rom_tools_hub.html:300 templates/rom_tools_hub.html:409
+#: templates/rom_tools_hub.html:300 templates/rom_tools_hub.html:422
 msgid "Fix Box and Manual Regions"
 msgstr "תיקון אזורים של קופסאות ומדריכים"
 
@@ -8804,7 +8804,7 @@ msgstr ""
 msgid "Needs a ScreenScraper account"
 msgstr "דורש חשבון ScreenScraper"
 
-#: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:468
+#: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:481
 msgid "Fix Regions from File Names"
 msgstr "תיקון אזורים לפי שמות קבצים"
 
@@ -8818,11 +8818,22 @@ msgstr ""
 "יכול היה להופיע כיפני. הפעולה הזו נותנת למשחקים האלה את האזור משם הקובץ "
 "שלהם."
 
-#: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:502
+#: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:515
+msgid "Tidy Genres, Perspectives and Modes"
+msgstr ""
+
+#: templates/rom_tools_hub.html:329
+msgid ""
+"Sources name the same thing differently, so one genre could appear as "
+"both RPG and Role Playing Game, and a filter missed games. This gives "
+"every game one set of names."
+msgstr ""
+
+#: templates/rom_tools_hub.html:339 templates/rom_tools_hub.html:549
 msgid "Clear RAWG Pictures from Box Art"
 msgstr "נקה תמונות RAWG מעטיפות"
 
-#: templates/rom_tools_hub.html:329
+#: templates/rom_tools_hub.html:342
 msgid ""
 "RAWG has no box art, so older scrapes saved a background picture or "
 "screenshot as the cover, and that blocks a real cover. This clears those "
@@ -8832,11 +8843,11 @@ msgstr ""
 "כעטיפה, וזה חוסם עטיפה אמיתית. הפעולה הזו מנקה את התמונות האלה כדי שגרידה"
 " תוכל למצוא עטיפות אמיתיות."
 
-#: templates/rom_tools_hub.html:339
+#: templates/rom_tools_hub.html:352
 msgid "Bulk HLTB Lookup"
 msgstr "חיפוש HLTB המוני"
 
-#: templates/rom_tools_hub.html:342
+#: templates/rom_tools_hub.html:355
 msgid ""
 "Fetch HowLongToBeat playtime for every game. High-confidence primary-"
 "title matches apply automatically; alt-title matches and low-confidence "
@@ -8846,15 +8857,15 @@ msgstr ""
 "ודאות גבוהה מוחלות אוטומטית; התאמות כותרת חלופית ותוצאות ברמת ודאות נמוכה"
 " נכנסות לתור לבדיקה כדי שתוכל לאשר או לדחות בכמות."
 
-#: templates/rom_tools_hub.html:345
+#: templates/rom_tools_hub.html:358
 msgid "Uses stored alternate titles"
 msgstr "משתמש בכותרות חלופיות מאוחסנות"
 
-#: templates/rom_tools_hub.html:352
+#: templates/rom_tools_hub.html:365
 msgid "HLTB Pending Review"
 msgstr "HLTB בהמתנה לבדיקה"
 
-#: templates/rom_tools_hub.html:355
+#: templates/rom_tools_hub.html:368
 msgid ""
 "Review and approve HLTB matches that were flagged during a bulk lookup "
 "&mdash; alt-title matches and anything below the confidence threshold."
@@ -8862,15 +8873,15 @@ msgstr ""
 "בדוק ואשר התאמות HLTB שסומנו במהלך חיפוש המוני &mdash; התאמות כותרת "
 "חלופית וכל דבר מתחת לסף הוודאות."
 
-#: templates/rom_tools_hub.html:358
+#: templates/rom_tools_hub.html:371
 msgid "Requires review"
 msgstr "דורש בדיקה"
 
-#: templates/rom_tools_hub.html:365
+#: templates/rom_tools_hub.html:378
 msgid "Tool Settings"
 msgstr "הגדרות כלים"
 
-#: templates/rom_tools_hub.html:368
+#: templates/rom_tools_hub.html:381
 msgid ""
 "Configure paths, external tool locations, archive types, and other "
 "preferences shared across all ROM tools."
@@ -8878,7 +8889,7 @@ msgstr ""
 "הגדר נתיבים, מיקומי כלים חיצוניים, סוגי ארכיונים והעדפות אחרות המשותפות "
 "לכל כלי ה-ROM."
 
-#: templates/rom_tools_hub.html:410
+#: templates/rom_tools_hub.html:423
 msgid ""
 "Each game with a ScreenScraper box or manual is looked up again. Where "
 "another region suits it better, the file is downloaded and the old one is"
@@ -8895,11 +8906,11 @@ msgstr ""
 "ב־ScreenScraper ועשויה להימשך זמן רב. אפשר לעזוב את הדף, ולעצור על ידי "
 "לחיצה נוספת על הכרטיס הזה."
 
-#: templates/rom_tools_hub.html:411
+#: templates/rom_tools_hub.html:424
 msgid "Could not start the fix"
 msgstr "לא ניתן להפעיל את התיקון"
 
-#: templates/rom_tools_hub.html:412
+#: templates/rom_tools_hub.html:425
 msgid ""
 "Stop the fix? Files already swapped stay as they are, and a later run "
 "carries on with the rest."
@@ -8907,24 +8918,24 @@ msgstr ""
 "לעצור את התיקון? קבצים שכבר הוחלפו יישארו כפי שהם, והרצה מאוחרת תמשיך עם "
 "השאר."
 
-#: templates/rom_tools_hub.html:413
+#: templates/rom_tools_hub.html:426
 #, python-brace-format
 msgid "Stopped. Files swapped: {replaced}."
 msgstr "נעצר. קבצים שהוחלפו: {replaced}."
 
-#: templates/rom_tools_hub.html:414
+#: templates/rom_tools_hub.html:427
 #, python-brace-format
 msgid ""
 "The fix stopped with an error. Files swapped: {replaced}. The log has the"
 " details."
 msgstr "התיקון נעצר עם שגיאה. קבצים שהוחלפו: {replaced}. הפרטים ביומן."
 
-#: templates/rom_tools_hub.html:415
+#: templates/rom_tools_hub.html:428
 #, python-brace-format
 msgid "Checked {current} of {total} games. Files swapped: {replaced}."
 msgstr "נבדקו {current} מתוך {total} משחקים. קבצים שהוחלפו: {replaced}."
 
-#: templates/rom_tools_hub.html:416
+#: templates/rom_tools_hub.html:429
 #, python-brace-format
 msgid ""
 "Finished. Files swapped: {replaced}. Games not found: {no_match}. Could "
@@ -8933,7 +8944,7 @@ msgstr ""
 "הסתיים. קבצים שהוחלפו: {replaced}. משחקים שלא נמצאו: {no_match}. לא ניתן "
 "היה להוריד: {failed}."
 
-#: templates/rom_tools_hub.html:417
+#: templates/rom_tools_hub.html:430
 #, python-brace-format
 msgid ""
 "Stopped: ScreenScraper stopped answering, so your daily allowance may be "
@@ -8942,7 +8953,7 @@ msgstr ""
 "נעצר: ScreenScraper הפסיק להגיב, אז ייתכן שהמכסה היומית שלך נוצלה. קבצים "
 "שהוחלפו: {replaced}. הרץ שוב מחר."
 
-#: templates/rom_tools_hub.html:469
+#: templates/rom_tools_hub.html:482
 #, python-brace-format
 msgid ""
 "{count} games have a region from the AI that their file name contradicts."
@@ -8957,20 +8968,54 @@ msgstr ""
 "רק אזורים שה־AI מילא ישתנו. אם תיקנת ידנית אחד מהם כך שיהיה שונה משם "
 "הקובץ, גם הוא ישתנה."
 
-#: templates/rom_tools_hub.html:470
+#: templates/rom_tools_hub.html:483
 msgid "No game has an AI region that its file name contradicts."
 msgstr "אין משחק עם אזור מה־AI ששם הקובץ שלו סותר."
 
-#: templates/rom_tools_hub.html:471
+#: templates/rom_tools_hub.html:484
 #, python-brace-format
 msgid "Fixed {count} regions."
 msgstr "תוקנו {count} אזורים."
 
-#: templates/rom_tools_hub.html:472
+#: templates/rom_tools_hub.html:485
 msgid "Could not fix the regions"
 msgstr "לא ניתן לתקן את האזורים"
 
-#: templates/rom_tools_hub.html:503
+#: templates/rom_tools_hub.html:516
+#, python-brace-format
+msgid ""
+"{count} games will change.\n"
+"\n"
+"Names become the ones in the filter lists. Words with no place there, "
+"such as Arcade or Indie, are removed. Words that belong elsewhere, such "
+"as FPV, move to the right field if it is empty. A player count that "
+"contradicts the game's modes is corrected, and old counts of 1 from RAWG "
+"are cleared.\n"
+"\n"
+"Afterwards, run a bulk scrape with Fill Missing to fill anything left "
+"empty."
+msgstr ""
+
+#: templates/rom_tools_hub.html:517
+#, fuzzy
+msgid "Every game already uses these names."
+msgstr "שם המשתמש כבר קיים"
+
+#: templates/rom_tools_hub.html:518
+#, fuzzy, python-brace-format
+msgid ""
+"Tidied {count} games. Run a bulk scrape with Fill Missing to fill "
+"anything left empty."
+msgstr ""
+"נוקו {count} תמונות. הרץ גרידה מרוכזת עם Fill Missing כדי לחפש עטיפות "
+"אמיתיות."
+
+#: templates/rom_tools_hub.html:519
+#, fuzzy
+msgid "Could not tidy the names"
+msgstr "לא ניתן היה לספור את המשחקים."
+
+#: templates/rom_tools_hub.html:550
 #, python-brace-format
 msgid ""
 "{count} games and wishlist items use a RAWG picture as their box art. "
@@ -8986,11 +9031,11 @@ msgstr ""
 "עטיפות ממקורות אחרים וכל אמנות מעריצים יישארו. לאחר מכן הרץ גרידה מרוכזת "
 "עם Fill Missing כדי לחפש עטיפות אמיתיות."
 
-#: templates/rom_tools_hub.html:504
+#: templates/rom_tools_hub.html:551
 msgid "No game uses a RAWG picture as its box art."
 msgstr "אין משחק שמשתמש בתמונת RAWG כעטיפה."
 
-#: templates/rom_tools_hub.html:505
+#: templates/rom_tools_hub.html:552
 #, python-brace-format
 msgid ""
 "Cleared {count} pictures. Run a bulk scrape with Fill Missing to look for"
@@ -8999,7 +9044,7 @@ msgstr ""
 "נוקו {count} תמונות. הרץ גרידה מרוכזת עם Fill Missing כדי לחפש עטיפות "
 "אמיתיות."
 
-#: templates/rom_tools_hub.html:506
+#: templates/rom_tools_hub.html:553
 msgid "Could not clear the pictures"
 msgstr "לא ניתן לנקות את התמונות"
 

@@ -16,8 +16,9 @@ def test_tgdb_unresolved_ids_are_not_written_as_names(tgdb, monkeypatch):
     monkeypatch.setattr(tgdb, '_tgdb_request', lambda *a, **kw: None)
     assert tgdb._resolve_names([6431], tgdb._get_publishers) == ''
     assert tgdb._resolve_genre_names([999999]) == []
-    # The local genre map still names a known id.
-    assert tgdb._resolve_genre_names([1]) == ['Action']
+    # With TGDB's table unreadable a known id stays unnamed too: the local copy
+    # held wrong numbers and saved racing games as Casino (PASS-59-206).
+    assert tgdb._resolve_genre_names([1]) == []
 
 
 def test_tgdb_failed_lookup_is_retried_not_cached_empty(tgdb, monkeypatch):

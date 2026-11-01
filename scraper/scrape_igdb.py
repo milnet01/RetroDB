@@ -619,6 +619,7 @@ def fetch_game_details(game_id):
                game_modes.name, player_perspectives.name,
                multiplayer_modes.offlinemax, multiplayer_modes.onlinemax,
                multiplayer_modes.campaigncoop, multiplayer_modes.splitscreen,
+               multiplayer_modes.offlinecoop, multiplayer_modes.onlinecoop,
                summary, storyline, cover.url, screenshots.url, artworks.url,
                videos.video_id, alternative_names.name, alternative_names.comment,
                platforms.name, rating, rating_count, aggregated_rating, aggregated_rating_count;
@@ -699,7 +700,7 @@ def apply_metadata_to_game(db_game_id, igdb_data):
         # "Role-playing (RPG)" instead of the canonical "RPG", fragmenting the
         # genre filter. The hybrid path already normalizes; do it here too so
         # the contract holds regardless of caller.
-        from services.normalization import normalize_genre
+        from services.normalization import modes_from_igdb, normalize_genre
         genres = igdb_data.get('genres', [])
         # isinstance guard, as at the company loop above: an unexpanded
         # reference arrives as a bare int and ['name'] raised TypeError,
@@ -773,10 +774,11 @@ def apply_metadata_to_game(db_game_id, igdb_data):
             rating = pegi_rating
         
         # Game modes
-        modes = ', '.join(
-            g['name'] for g in igdb_data.get('game_modes', [])
-            if isinstance(g, dict) and g.get('name')
-        ) or ''
+        modes = modes_from_igdb(
+            [g['name'] for g in igdb_data.get('game_modes', [])
+             if isinstance(g, dict) and g.get('name')],
+            igdb_data.get('multiplayer_modes'),
+        )
         
         # Players — Pass 40.6: leave as None when IGDB has no value so
         # COALESCE(?, players) preserves the curated DB value.  The previous

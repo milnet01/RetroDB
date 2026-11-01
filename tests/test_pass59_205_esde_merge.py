@@ -312,3 +312,15 @@ def test_a_logo_named_for_its_system_is_imported_with_its_real_extension(library
     assert scrape_esde.import_system_logos() == 1
     assert os.path.exists(library.image('systems', 'nes.jpg'))
     assert not os.path.exists(library.image('systems', 'nes.png'))
+
+
+def test_a_scrape_gives_stored_words_the_canonical_names(library, later_source):
+    """PASS-59-206: the conversion after the merge reaches what older scrapes stored."""
+    library.gamelist(FATAL_RUN)
+    library.add_game(genre='Racing, Arcade, Racing TPV', perspective='Side view')
+
+    _scrape()
+
+    row = library.row()
+    assert row['genre'] == 'Racing'
+    assert row['perspective'] == 'Side-Scroller'

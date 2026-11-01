@@ -95,6 +95,7 @@ has seen the raw output. Triage into new roadmap passes after.
 
 ### Schema / data shapes
 - `perspective`, `dimension`, `genre`, `modes`, `game_structure` are comma-separated multi-value TEXT fields.
+- A scraped word in those five fields ends as a `FIELD_SCHEMAS` or dropdown value, or is dropped: `services/normalization.py` owns the names, `metadata_merger.fill_labels` applies them per source, and `canonicalize_metadata` runs once more before the save (PASS-59-206).
 - `region` is single-value, dropdown-driven (`region_options` setting; default `default_region`).
 - Genre canonical forms are hyphenated and must match `FIELD_SCHEMAS` in `scraper/scrape_ai.py` (e.g. `First-Person-Shooter`, `Shoot-em-up`, `Beat-em-up`, `Hack-n-Slash`, `Board-Card`).
 - `players` is INTEGER. Scraper/AI ranges like `"1-4"` are normalized to the max (4) before saving.

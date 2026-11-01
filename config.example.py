@@ -129,7 +129,7 @@ except ValueError:
 
 # Application metadata
 APP_NAME = "RetroDB"
-APP_VERSION = "3.35.0"
+APP_VERSION = "3.35.1"
 APP_LAST_UPDATE = "2026-11-01"
 APP_DESCRIPTION = "Retro Gaming ROM Library Manager"
 
@@ -381,40 +381,6 @@ SYSTEM_NAME_MAP = {
     "vircon32": "Vircon32",
     "ports": "Ports",
     "zmachine": "Z-Machine",
-}
-
-# =============================================================================
-# GENRE ID MAPPING FOR THEGAMESDB
-# =============================================================================
-
-TGDB_GENRE_MAP = {
-    1: "Action",
-    2: "Adventure",
-    3: "Arcade",
-    4: "Beat 'em Up",
-    5: "Board Game",
-    6: "Card Game",
-    7: "Casino",
-    8: "Fighting",
-    9: "FPS",
-    10: "Flight Simulator",
-    11: "Life Simulation",
-    12: "Music",
-    13: "Party",
-    14: "Platformer",
-    15: "Puzzle",
-    16: "Racing",
-    17: "Real-Time Strategy",
-    18: "RPG",
-    19: "Sandbox",
-    20: "Shoot 'em Up",
-    21: "Simulation",
-    22: "Sports",
-    23: "Strategy",
-    24: "Survival",
-    25: "Tactical RPG",
-    26: "Turn-Based Strategy",
-    27: "Vehicular Combat",
 }
 
 # =============================================================================

@@ -1031,7 +1031,7 @@ def apply_esde_metadata(db_game_id, game_data, system_folder=None):
 
         # Derive game modes from players (only when the gamelist gave a count)
         from services.normalization import modes_from_player_count
-        modes = modes_from_player_count(players) or None
+        modes = modes_from_player_count(esde_data.get('players') or game_data.get('players')) or None
 
         # Pass 48.3 — only flip `scraped = 1` when ES-DE actually filled at least
         # one metadata/media field. `region` is excluded from the test: it's

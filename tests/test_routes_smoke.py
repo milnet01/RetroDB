@@ -44,6 +44,8 @@ class TestRouteRegistration:
         'maintenance.api_alt_titles_backfill_cancel': '/api/maintenance/alt-titles-backfill/cancel',
         'maintenance.api_file_regions_preview': '/api/maintenance/file-regions/preview',
         'maintenance.api_file_regions_fix': '/api/maintenance/file-regions/fix',
+        'maintenance.api_labels_preview': '/api/maintenance/labels/preview',
+        'maintenance.api_labels_fix': '/api/maintenance/labels/fix',
         'maintenance.api_rawg_covers_preview': '/api/maintenance/rawg-covers/preview',
         'maintenance.api_rawg_covers_clear': '/api/maintenance/rawg-covers/clear',
         'maintenance.api_ss_region_repair_start': '/api/maintenance/ss-region-repair/start',
@@ -101,6 +103,7 @@ class TestAuthGuards:
         '/api/maintenance/ss-region-repair/status',
         '/api/maintenance/rawg-covers/preview',
         '/api/maintenance/file-regions/preview',
+        '/api/maintenance/labels/preview',
         '/api/games/1/similar',
         # admin_required, not login_required — same unauthenticated redirect.
         '/api/missing-media-refs/preview',
@@ -160,6 +163,7 @@ class TestAuthGuards:
         '/api/maintenance/ss-region-repair/start',
         '/api/maintenance/rawg-covers/clear',
         '/api/maintenance/file-regions/fix',
+        '/api/maintenance/labels/fix',
         '/api/maintenance/ss-region-repair/cancel',
         '/api/maintenance/alt-titles-backfill/cancel',
         # Clears DB media references library-wide — the most destructive

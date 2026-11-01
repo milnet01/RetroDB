@@ -207,6 +207,8 @@ Integration with scoring: `calculate_title_match_score` always runs `strip_title
 
 Multi-value text columns are comma-separated; the canonical forms are pinned by `scraper/scrape_ai.py::FIELD_SCHEMAS` and `services/game_utils.py` (CLAUDE.md "Schema / data shapes"):
 
+A word in these columns ends as a `FIELD_SCHEMAS` value or one added to the field's dropdown; any other word is dropped (PASS-59-206). `metadata_merger.fill_labels` converts each source's text, so a source whose words are all dropped leaves the field open for the next. Words belonging in another field (`FPV`, `3D`, `Sandbox`) fill it only when empty. `canonicalize_metadata` runs once more after the merge, for values already stored and to make `players` and `modes` agree. A `normalization_rules` row whose target is not such a value is ignored. The Tidy Genres, Perspectives and Modes card applies the same conversion to stored rows.
+
 - **`genre`** — hyphenated, mapped to a fixed allowlist (`First-Person-Shooter`, `Shoot-em-up`, `Beat-em-up`, `Hack-n-Slash`, `Board-Card`, etc.). `services/normalization.py::normalize_genre` runs at every entry point that writes genre.
 - **`dimension`** — `2D`, `2.5D`, `3D`, `AR (Augmented Reality)`, `FMV (Full Motion Video)`, `Pseudo-3D`, `VR`.
 - **`perspective`** — `First-Person`, `Isometric`, `Side-Scroller`, `Third-Person`, `Top-Down`, `Vertical-Scroller`.

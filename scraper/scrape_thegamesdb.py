@@ -13,7 +13,7 @@ import time
 
 # Add parent directory to path for config import
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from config import IMAGE_PATH, TGDB_GENRE_MAP
+from config import IMAGE_PATH
 
 from scraper.base_scraper import http_get, get_scraper_conn, download_image
 import config as _config
@@ -213,7 +213,9 @@ def _resolve_names(ids, cache_fn, entity_key='name'):
 
 
 def _resolve_genre_names(genre_ids):
-    """Resolve genre IDs to names, with fallback to local TGDB_GENRE_MAP."""
+    """Resolve genre IDs to names. When TGDB's table cannot be read the genre
+    stays empty for a later source: an old local copy held wrong numbers and
+    saved racing games as Casino (PASS-59-206)."""
     if not genre_ids:
         return []
     lookup = _get_genres()
@@ -222,13 +224,6 @@ def _resolve_genre_names(genre_ids):
         info = lookup.get(str(gid))
         if isinstance(info, dict) and info.get('name'):
             names.append(info['name'])
-            continue
-        try:
-            fallback = TGDB_GENRE_MAP.get(int(gid))
-        except (TypeError, ValueError):
-            fallback = None
-        if fallback:
-            names.append(fallback)
     return names
 
 

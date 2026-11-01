@@ -23,6 +23,8 @@ from services.database import get_db, query
 from services.auth import admin_required, login_required
 from services.game_cleanup import (
     count_ai_region_mismatches,
+    count_label_changes,
+    fix_labels,
     fix_ai_region_mismatches,
     clean_missing_roms,
     clear_clz_imports,
@@ -410,6 +412,30 @@ def api_file_regions_preview():
 def api_file_regions_fix():
     """Replace AI regions that contradict the ROM's file name."""
     fixed = fix_ai_region_mismatches()
+    if fixed:
+        invalidate_analytics_cache()
+        invalidate_filter_cache()
+    return success(fixed=fixed)
+
+
+# =============================================================================
+# ONE SET OF NAMES FOR GENRES, PERSPECTIVES AND MODES (PASS-59-206)
+# =============================================================================
+
+@bp.route('/api/maintenance/labels/preview', methods=['GET'])
+@admin_required
+@handle_api_errors
+def api_labels_preview():
+    """How many games the tidy would change. Changes nothing."""
+    return success(count=count_label_changes())
+
+
+@bp.route('/api/maintenance/labels/fix', methods=['POST'])
+@admin_required
+@handle_api_errors
+def api_labels_fix():
+    """Give stored genres, perspectives, modes and player counts one set of names."""
+    fixed = fix_labels()
     if fixed:
         invalidate_analytics_cache()
         invalidate_filter_cache()

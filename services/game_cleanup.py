@@ -8,12 +8,14 @@
 #   clear_scraped_data()  — null scraped metadata columns + reset titles
 # =============================================================================
 
+import json
 import logging
 import os
 
 from services.database import execute, get_db, get_db_with_context, query
 from services.game_utils import reset_game_title_from_filename
 from services.media_cleanup import delete_game_images
+from services.normalization import canonicalize_metadata
 from services import upscale_queue
 
 logger = logging.getLogger(__name__)
@@ -224,6 +226,64 @@ def clear_scraped_data(system_id=None, delete_images=False):
     )
 
     return cleared, images_deleted
+
+
+_LABEL_COLUMNS = ('genre', 'modes', 'perspective', 'dimension', 'game_structure', 'players')
+
+
+def _players_came_from_rawg(history):
+    """Did the newest scrape to record `players` credit RAWG?"""
+    try:
+        entries = json.loads(history or '[]')
+    except ValueError:
+        return False
+    for entry in reversed(entries if isinstance(entries, list) else []):
+        fields = entry.get('fields_filled', []) if isinstance(entry, dict) else []
+        for field in fields:
+            if isinstance(field, str) and field.startswith('players ('):
+                return field == 'players (RAWG)'
+    return False
+
+
+def _label_changes():
+    """(id, stored columns, new columns) for rows whose names or counts would change.
+
+    RAWG used to send a default of 1 player. It no longer does, and because a
+    filled field is never refilled, those old ones block a real count.
+    """
+    columns = ', '.join(_LABEL_COLUMNS)
+    found = []
+    for row in query(f"SELECT id, scrape_history, {columns} FROM games"):
+        stored = {c: row[c] for c in _LABEL_COLUMNS}
+        wanted = dict(stored)
+        if wanted['players'] == 1 and _players_came_from_rawg(row['scrape_history']):
+            wanted['players'] = None
+        canonicalize_metadata(wanted)
+        wanted = {c: (v if v != '' else None) for c, v in wanted.items()}
+        if wanted != {c: (v if v != '' else None) for c, v in stored.items()}:
+            found.append((row['id'], stored, wanted))
+    return found
+
+
+def count_label_changes():
+    """How many games hold names or player counts the tidy would change."""
+    return len(_label_changes())
+
+
+def fix_labels():
+    """Give stored rows the canonical names (PASS-59-206). Returns the count."""
+    set_clause = ', '.join(f'{c} = ?' for c in _LABEL_COLUMNS)
+    # `IS` skips a row changed since the search, and matches an empty value.
+    same_clause = ' AND '.join(f'{c} IS ?' for c in _LABEL_COLUMNS)
+    fixed = 0
+    with get_db_with_context() as conn:
+        for game_id, stored, wanted in _label_changes():
+            fixed += conn.execute(
+                f"UPDATE games SET {set_clause} WHERE id = ? AND {same_clause}",
+                (*wanted.values(), game_id, *stored.values()),
+            ).rowcount
+    logger.info(f"Tidied names or player counts on {fixed} game(s)")
+    return fixed
 
 
 def _ai_region_mismatches():

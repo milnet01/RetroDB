@@ -14,7 +14,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import IMAGE_PATH, STATIC_PATH
-from services.normalization import normalize_genre
+from services.normalization import canonicalize_metadata
 from services.game_utils import generate_sort_title, infer_rating_from_content, RATING_SYSTEM_KEYS, RATING_SYSTEMS
 from services.game_metadata_service import cross_map_ratings
 from services.media_cleanup import media_dir_is_healthy
@@ -43,6 +43,7 @@ from scraper.scrape_igdb import (
 
 # Import metadata merging functions (extracted to reduce file size)
 from scraper.metadata_merger import (
+    fill_labels,
     apply_tgdb_to_metadata,
     apply_igdb_to_metadata,
     apply_rawg_to_metadata,
@@ -237,7 +238,6 @@ def should_use_default_controller(controller_value):
     return False
 
 # normalize_title, normalize_esrb_rating imported from scraper.metadata_normalizer
-# normalize_genre, normalize_modes imported from services.normalization
 
 
 # =============================================================================
@@ -263,6 +263,7 @@ def fetch_igdb_extended(game_id):
                game_modes.name, player_perspectives.name,
                multiplayer_modes.offlinemax, multiplayer_modes.onlinemax,
                multiplayer_modes.campaigncoop, multiplayer_modes.splitscreen,
+               multiplayer_modes.offlinecoop, multiplayer_modes.onlinecoop,
                summary, storyline, cover.url, screenshots.url, artworks.url,
                videos.video_id, alternative_names.name, alternative_names.comment,
                franchise.name, franchises.name, collection.name,
@@ -1146,7 +1147,8 @@ def _merge_esde(metadata, details, result, db_game_id, system_folder,
     fill('description', details.get('description'))
     fill('developer', details.get('developer'))
     fill('publisher', details.get('publisher'))
-    fill('genre', normalize_genre(details.get('genre') or ''))
+    if not metadata['genre']:
+        fill_labels(metadata, result, 'genre', details.get('genre') or '', 'ES-DE')
     fill('release_date', details.get('release_date'))
 
     from services.game_utils import normalize_players_value
@@ -1155,7 +1157,7 @@ def _merge_esde(metadata, details, result, db_game_id, system_folder,
     if players and not metadata['players']:
         fill('players', players)
         if not metadata['modes']:
-            metadata['modes'] = modes_from_player_count(players)
+            metadata['modes'] = modes_from_player_count(details.get('players'))
 
     from scraper.scrape_esde import copy_esde_media
     copied = copy_esde_media(db_game_id, details, system_folder,
@@ -1702,6 +1704,9 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
         # Pass 38.1 — players range→max + sort_title regen extracted to
         # _normalize_players_and_sort_title.
         _normalize_players_and_sort_title(metadata)
+
+        # One set of names, whichever source or older scrape filled each field.
+        canonicalize_metadata(metadata)
 
         # =============================================
         # SAVE TO DATABASE

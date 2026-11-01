@@ -290,7 +290,7 @@ class TestApplyIgdb:
         assert meta['franchise'] == 'Halo'
         assert meta['similar_games'] == 'Destiny, Titanfall'
         assert meta['playtime_estimate'] == 10
-        assert meta['perspective'] == 'First-person'
+        assert meta['perspective'] == 'First-Person'
         assert meta['critic_score'] == 97.5
         assert meta['critic_score_count'] == 120
         assert meta['user_score'] == 91.0

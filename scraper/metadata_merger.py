@@ -31,7 +31,7 @@ from services.image_utils import (
     preferred_image_extension,
     finalize_downloaded_image,
 )
-from services.normalization import normalize_genre, normalize_modes
+from services.normalization import modes_from_igdb, normalize_genre, normalize_modes, split_labels
 from scraper.base_scraper import per_game_screenshots_fit, screenshot_impossible_for_game
 from scraper.image_dedup import (
     compute_dhash,
@@ -54,6 +54,22 @@ from scraper.scraper_manager import load_scraper_settings
 from scraper.ss_regions import by_region
 
 logger = logging.getLogger(__name__)
+
+
+def fill_labels(metadata, result, field, text, source):
+    """Fill `field` from a source's raw text, in canonical names.
+
+    Nothing is recorded, and the field stays open for the next source, when no
+    word survives. A word belonging in another field fills it only when empty.
+    """
+    value, moved = split_labels(field, text)
+    if value:
+        metadata[field] = value
+        result['filled_fields'].append(f'{field} ({source})')
+    for target, moved_value in moved.items():
+        if not metadata.get(target):
+            metadata[target] = moved_value
+            result['filled_fields'].append(f'{target} ({source})')
 
 
 def _download_and_finalize(url, local_path, image_type, *, timeout=15, screenshot_of=None):
@@ -325,8 +341,7 @@ def apply_tgdb_to_metadata(metadata, tgdb_data, db_game_id, result, fill_only=Fa
     if not metadata['genre']:
         genres = tgdb_data.get('genres', [])
         if genres:
-            metadata['genre'] = normalize_genre(', '.join(genres))
-            result['filled_fields'].append('genre (TGDB)')
+            fill_labels(metadata, result, 'genre', ', '.join(genres), 'TGDB')
 
     # Players/Modes
     if not metadata['players']:
@@ -340,7 +355,7 @@ def apply_tgdb_to_metadata(metadata, tgdb_data, db_game_id, result, fill_only=Fa
             metadata['players'] = players
             if not metadata['modes']:
                 from services.normalization import modes_from_player_count
-                metadata['modes'] = modes_from_player_count(players)
+                metadata['modes'] = modes_from_player_count(tgdb_data.get('players'))
             result['filled_fields'].append('players (TGDB)')
 
     # Parse rating field into ESRB and PEGI
@@ -566,8 +581,8 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
     if not metadata['genre']:
         genres = igdb_data.get('genres', [])
         if genres:
-            metadata['genre'] = normalize_genre(', '.join(g.get('name', '') for g in genres))
-            result['filled_fields'].append('genre (IGDB)')
+            fill_labels(metadata, result, 'genre',
+                        ', '.join(g.get('name', '') for g in genres), 'IGDB')
 
     # Description
     if not metadata['description']:
@@ -580,8 +595,9 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
     if not metadata['modes']:
         modes = igdb_data.get('game_modes', [])
         if modes:
-            metadata['modes'] = normalize_modes(', '.join(m.get('name', '') for m in modes))
-            result['filled_fields'].append('modes (IGDB)')
+            names = [m.get('name', '') for m in modes]
+            fill_labels(metadata, result, 'modes',
+                        modes_from_igdb(names, igdb_data.get('multiplayer_modes')), 'IGDB')
 
     # Players
     if not metadata['players']:
@@ -682,8 +698,7 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
             result['filled_fields'].append('playtime_estimate (IGDB)')
 
         if ext.get('perspective') and not metadata.get('perspective'):
-            metadata['perspective'] = ext['perspective']
-            result['filled_fields'].append('perspective (IGDB)')
+            fill_labels(metadata, result, 'perspective', ext['perspective'], 'IGDB')
 
         # Critic and user scores
         if ext.get('critic_score') and not metadata.get('critic_score'):
@@ -736,8 +751,7 @@ def apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result, fill_only=Fa
 
     # Genres
     if rawg_data.get('genre') and not metadata['genre']:
-        metadata['genre'] = normalize_genre(rawg_data['genre'])
-        result['filled_fields'].append('genre (RAWG)')
+        fill_labels(metadata, result, 'genre', rawg_data['genre'], 'RAWG')
 
     # ESRB Rating
     if rawg_data.get('esrb_rating') and not metadata['esrb_rating']:
@@ -751,8 +765,7 @@ def apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result, fill_only=Fa
 
     # Modes
     if rawg_data.get('modes') and not metadata['modes']:
-        metadata['modes'] = normalize_modes(rawg_data['modes'])
-        result['filled_fields'].append('modes (RAWG)')
+        fill_labels(metadata, result, 'modes', rawg_data['modes'], 'RAWG')
 
     # Critic score (Metacritic)
     if rawg_data.get('metacritic') and not metadata['critic_score']:
@@ -1029,8 +1042,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
                 if name:
                     genre_names.append(name)
         if genre_names:
-            metadata['genre'] = normalize_genre(', '.join(genre_names))
-            result['filled_fields'].append('genre (ScreenScraper)')
+            fill_labels(metadata, result, 'genre', ', '.join(genre_names), 'ScreenScraper')
 
     # Players - only fill if empty
     if (ss_data.get('joueurs') or ss_data.get('players')) and not metadata['players']:
@@ -1061,8 +1073,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
     modes_data = ss_data.get('modes', [])
     if modes_data and not metadata.get('modes'):
         if isinstance(modes_data, str):
-            metadata['modes'] = normalize_modes(modes_data)
-            result['filled_fields'].append('modes (ScreenScraper)')
+            fill_labels(metadata, result, 'modes', modes_data, 'ScreenScraper')
         elif isinstance(modes_data, list):
             mode_names = []
             for m in modes_data:
@@ -1073,8 +1084,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
                 elif isinstance(m, str):
                     mode_names.append(m)
             if mode_names:
-                metadata['modes'] = normalize_modes(', '.join(mode_names))
-                result['filled_fields'].append('modes (ScreenScraper)')
+                fill_labels(metadata, result, 'modes', ', '.join(mode_names), 'ScreenScraper')
 
     # Ratings - only fill if empty
     classifications = ss_data.get('classifications', [])

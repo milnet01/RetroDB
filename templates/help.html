@@ -1484,6 +1484,10 @@
         <p>A ROM's file name says which copy it is, so a tag such as <code>(USA)</code> now decides its region and the AI is not asked. Older scrapes let the AI guess first, so a <code>(USA)</code> file could be listed as Japan. This tool gives those games the region in their file name. It changes only regions the AI filled, including one you later corrected by hand to differ from the file name.</p>
         <p><em>No dependencies required</em></p>
 
+        <h3>Tidy Genres, Perspectives and Modes</h3>
+        <p>Sources name the same thing differently, so one genre could appear as both RPG and Role Playing Game, and a filter missed games. Scrapes now use one set of names, the ones in the filter lists. This tool converts what older scrapes stored. Words with no place in those lists, such as Arcade or Indie, are removed. Words that belong in another field, such as FPV, move there if that field is empty. A player count that contradicts a game's modes is corrected, and old counts of 1 from RAWG are cleared so a real count can fill them. A value you added to a dropdown yourself stays. Run a bulk scrape with <strong>Fill Missing</strong> afterwards to fill anything left empty.</p>
+        <p><em>No dependencies required</em></p>
+
         <h3>Clear RAWG Pictures from Box Art</h3>
         <p>RAWG has no box art. Older scrapes saved its background picture, often a screenshot, as the cover, and because scrapes only fill empty covers, that picture blocked a real one. This tool deletes those pictures and leaves the covers empty. Covers from other sources and all fanart stay. Those games show no cover until a scrape finds one, so run a bulk scrape with <strong>Fill Missing</strong> afterwards.</p>
         <p><em>No dependencies required</em></p>
