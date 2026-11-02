@@ -183,6 +183,14 @@ const UnifiedToastController = {
     _pollAbortControllers: new Map(),  // Map of type -> AbortController (cancel in-flight fetches)
     _initialized: false,          // Guard against duplicate init
     _resizeHandler: null,         // Stored for cleanup
+
+    // The line under the subtitle: a PSN game's NPWR ID, or the image file
+    // when the subtitle names the game it belongs to.
+    _extraLine(type, data) {
+        if (type === 'psn-refresh') return data.current_npwr || '';
+        if (type === 'image-resize' && data.current_game) return data.current_file || '';
+        return '';
+    },
     _visibilityHandler: null,     // Stored for cleanup
     _broadcastChannel: null,      // BroadcastChannel for cross-tab communication
     activePollIntervalMs: 2000,   // 2 seconds when operation is active
@@ -1181,7 +1189,7 @@ const UnifiedToastController = {
         // Build subtitle - game name only (system shown separately)
         let currentItem;
         if (type === 'image-resize') {
-            currentItem = data.current_file || t('Processing...');
+            currentItem = data.current_game || data.current_file || t('Processing...');
         } else if (type === 'ra-refresh' || type === 'psn-refresh') {
             currentItem = data.current_game || t('Processing...');
         } else {
@@ -1242,15 +1250,17 @@ const UnifiedToastController = {
         } else if (type === 'ra-refresh' && data.current_system) {
             systemNameValue = data.current_system;
         } else if (type === 'image-resize' && data.current_type) {
-            systemNameValue = data.current_type;
+            systemNameValue = data.current_system
+                ? `${data.current_system} · ${data.current_type}` : data.current_type;
         }
         const systemNameHTML = systemNameValue
             ? `<div class="toast-system-name" data-system-name>${this.escapeHtml(systemNameValue)}</div>`
             : '';
 
         // NPWR ID line for PSN refresh (shown below game title)
-        const npwrHTML = (type === 'psn-refresh' && data.current_npwr)
-            ? `<div class="toast-system-name" data-npwr>${this.escapeHtml(data.current_npwr)}</div>`
+        const extraLine = this._extraLine(type, data);
+        const extraLineHTML = extraLine
+            ? `<div class="toast-system-name" data-extra-line>${this.escapeHtml(extraLine)}</div>`
             : '';
 
         return `
@@ -1261,7 +1271,7 @@ const UnifiedToastController = {
                         <div class="toast-title ${isPaused ? 'paused' : ''}">${config.name} ${isPaused ? t('(Paused)') : t('Running')}</div>
                         ${systemNameHTML}
                         <div class="toast-subtitle" data-subtitle>${this.escapeHtml(currentItem)}</div>
-                        ${npwrHTML}
+                        ${extraLineHTML}
                         <div class="toast-progress-bar">
                             <div class="toast-progress-fill" data-progress style="width: ${percent}%"></div>
                         </div>
@@ -1305,7 +1315,7 @@ const UnifiedToastController = {
         // Build subtitle - game name only (system shown separately)
         let currentItem;
         if (type === 'image-resize') {
-            currentItem = data.current_file || t('Processing...');
+            currentItem = data.current_game || data.current_file || t('Processing...');
         } else if (type === 'ra-refresh' || type === 'psn-refresh') {
             currentItem = data.current_game || t('Processing...');
         } else {
@@ -1342,7 +1352,8 @@ const UnifiedToastController = {
         } else if (type === 'ra-refresh' && data.current_system) {
             systemNameValue = data.current_system;
         } else if (type === 'image-resize' && data.current_type) {
-            systemNameValue = data.current_type;
+            systemNameValue = data.current_system
+                ? `${data.current_system} · ${data.current_type}` : data.current_type;
         }
         if (systemNameValue) {
             if (systemNameEl) {
@@ -1364,21 +1375,22 @@ const UnifiedToastController = {
         const subtitle = toast.querySelector('[data-subtitle]');
         if (subtitle) subtitle.textContent = currentItem;
 
-        // Update NPWR ID line (PSN refresh)
-        if (type === 'psn-refresh') {
-            let npwrEl = toast.querySelector('[data-npwr]');
-            if (data.current_npwr) {
-                if (npwrEl) {
-                    npwrEl.textContent = data.current_npwr;
+        // Update the line under the subtitle
+        if (type === 'psn-refresh' || type === 'image-resize') {
+            const extraLine = this._extraLine(type, data);
+            let extraEl = toast.querySelector('[data-extra-line]');
+            if (extraLine) {
+                if (extraEl) {
+                    extraEl.textContent = extraLine;
                 } else if (subtitle) {
-                    const npwrDiv = document.createElement('div');
-                    npwrDiv.className = 'toast-system-name';
-                    npwrDiv.setAttribute('data-npwr', '');
-                    npwrDiv.textContent = data.current_npwr;
-                    subtitle.insertAdjacentElement('afterend', npwrDiv);
+                    const extraDiv = document.createElement('div');
+                    extraDiv.className = 'toast-system-name';
+                    extraDiv.setAttribute('data-extra-line', '');
+                    extraDiv.textContent = extraLine;
+                    subtitle.insertAdjacentElement('afterend', extraDiv);
                 }
-            } else if (npwrEl) {
-                npwrEl.remove();
+            } else if (extraEl) {
+                extraEl.remove();
             }
         }
 
