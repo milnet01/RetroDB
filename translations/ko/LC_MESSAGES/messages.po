@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-02 07:09+0200\n"
+"POT-Creation-Date: 2026-11-02 07:35+0200\n"
 "PO-Revision-Date: 2026-06-30 14:26+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ko\n"
@@ -55,7 +55,7 @@ msgstr "라이브러리에 RetroAchievements가 있는 게임이 없습니다"
 msgid "System not found or has no achievement games"
 msgstr "시스템을 찾을 수 없거나 업적이 있는 게임이 없습니다"
 
-#: routes/achievements.py:172 routes/achievements.py:479
+#: routes/achievements.py:172 routes/achievements.py:482
 #: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/cheats.py:32
 #: routes/cheats.py:51 routes/collections.py:276 routes/collections.py:531
 #: routes/emulators.py:304 routes/emulators.py:318 routes/games.py:391
@@ -108,7 +108,12 @@ msgstr "%(name)s에 대한 동기화가 이미 진행 중입니다"
 msgid "That job belongs to another user"
 msgstr "해당 작업은 다른 사용자의 것입니다"
 
-#: routes/achievements.py:496
+#: routes/achievements.py:488
+#, fuzzy
+msgid "Could not get an answer from RetroAchievements"
+msgstr "RetroAchievements에서 업적 진행률을 가져올 수 없습니다."
+
+#: routes/achievements.py:502
 msgid "No RetroAchievements found for this game"
 msgstr "이 게임에 대한 RetroAchievements를 찾을 수 없습니다"
 
@@ -830,7 +835,7 @@ msgstr "개발사"
 #: templates/all_games.html:78 templates/analytics.html:483
 #: templates/analytics.html:2428 templates/base.html:974
 #: templates/base.html:1170 templates/compare_games.html:71
-#: templates/game_detail.html:286 templates/game_detail.html:768
+#: templates/game_detail.html:286 templates/game_detail.html:769
 #: templates/local_trophy_detail.html:87 templates/psn_trophy_detail.html:82
 #: templates/steam_achievement_game.html:78 templates/system_games.html:69
 #: templates/xbox_achievement_game.html:67
@@ -869,7 +874,7 @@ msgstr "플레이 모드"
 #: routes/official_names.py:127 templates/_bulk_edit_modal.html:106
 #: templates/_modals/edit_modal.html:85 templates/analytics.html:492
 #: templates/analytics.html:2428 templates/base.html:1161
-#: templates/compare_games.html:75 templates/game_detail.html:765
+#: templates/compare_games.html:75 templates/game_detail.html:766
 #: templates/reports.html:444
 msgid "Region"
 msgstr "지역"
@@ -881,7 +886,7 @@ msgstr "프랜차이즈 / 시리즈"
 
 #: routes/official_names.py:129 templates/_modals/edit_modal.html:56
 #: templates/base.html:1139 templates/compare_games.html:96
-#: templates/game_detail.html:527
+#: templates/game_detail.html:528
 msgid "Similar Games"
 msgstr "유사 게임"
 
@@ -2061,7 +2066,7 @@ msgstr "플레이 가능한 성능으로, 진행을 막는 결함 없이 끝까�
 #: templates/archive_scanner.html:798 templates/base.html:340
 #: templates/base.html:358 templates/base.html:1091
 #: templates/chd_converter.html:170 templates/chd_verify.html:126
-#: templates/game_detail.html:574 templates/login.html:254
+#: templates/game_detail.html:575 templates/login.html:254
 #: templates/museum.html:29 templates/museum_system.html:182
 #: templates/psn_trophies.html:297 templates/psn_trophy_detail.html:182
 #: templates/psn_trophy_detail.html:325 templates/reports.html:521
@@ -2212,8 +2217,8 @@ msgstr "완료 상태가 업데이트되었습니다"
 
 #: services/js_i18n_strings.py:644 templates/achievement_game.html:172
 #: templates/achievement_game.html:197 templates/achievement_game.html:211
-#: templates/base.html:1086 templates/game_detail.html:568
-#: templates/game_detail.html:593 templates/game_detail.html:607
+#: templates/base.html:1086 templates/game_detail.html:569
+#: templates/game_detail.html:594 templates/game_detail.html:608
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:176
 #: templates/psn_trophy_detail.html:209
 #: templates/steam_achievement_game.html:134
@@ -2931,8 +2936,8 @@ msgstr "버전을 찾는 중…"
 
 #: services/js_i18n_strings.py:809 templates/achievement_game.html:168
 #: templates/achievement_game.html:197 templates/achievement_game.html:207
-#: templates/base.html:1082 templates/game_detail.html:564
-#: templates/game_detail.html:593 templates/game_detail.html:603
+#: templates/base.html:1082 templates/game_detail.html:565
+#: templates/game_detail.html:594 templates/game_detail.html:604
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:172
 #: templates/psn_trophy_detail.html:205
 #: templates/steam_achievement_game.html:133
@@ -2944,8 +2949,8 @@ msgstr "메인 + 부가 요소"
 
 #: services/js_i18n_strings.py:810 templates/achievement_game.html:164
 #: templates/achievement_game.html:197 templates/achievement_game.html:203
-#: templates/base.html:1078 templates/game_detail.html:560
-#: templates/game_detail.html:593 templates/game_detail.html:599
+#: templates/base.html:1078 templates/game_detail.html:561
+#: templates/game_detail.html:594 templates/game_detail.html:600
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:168
 #: templates/psn_trophy_detail.html:201
 #: templates/steam_achievement_game.html:132
@@ -3039,8 +3044,8 @@ msgid "Next game"
 msgstr "다음 게임"
 
 #: services/js_i18n_strings.py:829 templates/_bulk_edit_modal.html:171
-#: templates/_modals/edit_modal.html:148 templates/game_detail.html:722
-#: templates/game_detail.html:790
+#: templates/_modals/edit_modal.html:148 templates/game_detail.html:723
+#: templates/game_detail.html:791
 msgid "No"
 msgstr "아니요"
 
@@ -3150,7 +3155,7 @@ msgstr "대기 중인 제안 이름이 없습니다. \"AI에게 묻기\"를 눌�
 msgid "No suggestions. Run Backfill Alternate Titles in Maintenance to find more."
 msgstr "추천 항목이 없습니다. 유지 관리에서 대체 제목 백필을 실행하면 더 찾을 수 있습니다."
 
-#: services/js_i18n_strings.py:856 templates/game_detail.html:895
+#: services/js_i18n_strings.py:856 templates/game_detail.html:896
 msgid "None"
 msgstr "없음"
 
@@ -4104,7 +4109,7 @@ msgstr "작동"
 msgid "World"
 msgstr "전 세계"
 
-#: services/js_i18n_strings.py:1064 templates/game_detail.html:811
+#: services/js_i18n_strings.py:1064 templates/game_detail.html:812
 msgid "Write again with AI"
 msgstr "AI로 다시 작성"
 
@@ -4113,8 +4118,8 @@ msgid "Xbox Imports"
 msgstr "Xbox 가져오기"
 
 #: services/js_i18n_strings.py:1066 templates/_bulk_edit_modal.html:170
-#: templates/_modals/edit_modal.html:148 templates/game_detail.html:665
-#: templates/game_detail.html:722 templates/game_detail.html:790
+#: templates/_modals/edit_modal.html:148 templates/game_detail.html:666
+#: templates/game_detail.html:723 templates/game_detail.html:791
 msgid "Yes"
 msgstr "예"
 
@@ -4487,7 +4492,7 @@ msgstr "더 보기"
 
 #: templates/achievement_game.html:17 templates/achievement_game.html:37
 #: templates/achievements_system.html:15 templates/game_detail.html:21
-#: templates/game_detail.html:352 templates/game_detail.html:773
+#: templates/game_detail.html:352 templates/game_detail.html:774
 #: templates/systems.html:43
 msgid "RetroAchievements"
 msgstr "RetroAchievements"
@@ -4530,7 +4535,7 @@ msgstr "업적 데이터를 불러올 수 없습니다"
 msgid "Check your RetroAchievements credentials in Settings."
 msgstr "설정에서 RetroAchievements 자격 증명을 확인하세요."
 
-#: templates/achievement_game.html:146 templates/game_detail.html:542
+#: templates/achievement_game.html:146 templates/game_detail.html:543
 #: templates/local_trophy_detail.html:158 templates/psn_trophy_detail.html:149
 #: templates/steam_achievement_game.html:123
 #: templates/xbox_achievement_game.html:116
@@ -4538,7 +4543,7 @@ msgid "How Long to Beat"
 msgstr "How Long to Beat"
 
 #: templates/achievement_game.html:153 templates/base.html:1059
-#: templates/game_detail.html:549 templates/psn_trophy_detail.html:157
+#: templates/game_detail.html:550 templates/psn_trophy_detail.html:157
 #: templates/psn_trophy_detail.html:317
 #: templates/steam_achievement_game.html:126
 #: templates/xbox_achievement_game.html:119
@@ -4546,7 +4551,7 @@ msgid "Search game title..."
 msgstr "게임 제목 검색..."
 
 #: templates/achievement_game.html:156 templates/base.html:1062
-#: templates/game_detail.html:552 templates/local_trophy_detail.html:193
+#: templates/game_detail.html:553 templates/local_trophy_detail.html:193
 #: templates/psn_trophy_detail.html:160
 #: templates/steam_achievement_game.html:127
 #: templates/xbox_achievement_game.html:120
@@ -4555,7 +4560,7 @@ msgstr "HLTB 조회"
 
 #: templates/_settings_tabs/account.html:74 templates/achievement_game.html:177
 #: templates/achievement_game.html:253 templates/base.html:1090
-#: templates/game_detail.html:573 templates/local_trophy_detail.html:223
+#: templates/game_detail.html:574 templates/local_trophy_detail.html:223
 #: templates/psn_trophy_detail.html:181 templates/psn_trophy_detail.html:270
 #: templates/settings_emulators.html:60 templates/settings_emulators.html:275
 #: templates/steam_achievement_game.html:137
@@ -4565,7 +4570,7 @@ msgstr "저장"
 
 #: templates/achievement_game.html:217 templates/all_games.html:108
 #: templates/base.html:1103 templates/duplicate_finder.html:301
-#: templates/game_detail.html:117 templates/game_detail.html:613
+#: templates/game_detail.html:117 templates/game_detail.html:614
 #: templates/local_trophy_detail.html:185 templates/psn_trophy_detail.html:214
 #: templates/reports.html:277 templates/screenshot_dedup.html:325
 #: templates/steam_achievement_game.html:163 templates/system_games.html:99
@@ -4573,7 +4578,7 @@ msgstr "저장"
 msgid "Clear"
 msgstr "지우기"
 
-#: templates/achievement_game.html:225 templates/game_detail.html:621
+#: templates/achievement_game.html:225 templates/game_detail.html:622
 #: templates/local_trophy_detail.html:203 templates/psn_trophy_detail.html:234
 #: templates/steam_achievement_game.html:170
 #: templates/xbox_achievement_game.html:163
@@ -4941,7 +4946,7 @@ msgstr "전체 선택"
 msgid "Select Unscraped"
 msgstr "미스크랩 선택"
 
-#: templates/all_games.html:204 templates/game_detail.html:864
+#: templates/all_games.html:204 templates/game_detail.html:865
 #: templates/system_games.html:184
 msgid "Full Re-scrape"
 msgstr "전체 재스크랩"
@@ -4950,7 +4955,7 @@ msgstr "전체 재스크랩"
 msgid "Toggle between full re-scrape and fill missing mode"
 msgstr "전체 재스크랩과 누락 채우기 모드 전환"
 
-#: templates/all_games.html:209 templates/game_detail.html:864
+#: templates/all_games.html:209 templates/game_detail.html:865
 #: templates/system_games.html:189
 msgid "Fill Missing"
 msgstr "누락 채우기"
@@ -5271,7 +5276,7 @@ msgid "Fanart"
 msgstr "팬아트"
 
 #: templates/analytics.html:487 templates/analytics.html:2428
-#: templates/game_detail.html:495
+#: templates/game_detail.html:496
 msgid "Video"
 msgstr "동영상"
 
@@ -5792,7 +5797,7 @@ msgstr "게임 세부 정보 닫기"
 msgid "Loading game details..."
 msgstr "게임 세부 정보 로딩 중..."
 
-#: templates/base.html:989 templates/game_detail.html:499
+#: templates/base.html:989 templates/game_detail.html:500
 msgid "Your browser does not support the video tag."
 msgstr "사용 중인 브라우저는 비디오 태그를 지원하지 않습니다."
 
@@ -5885,7 +5890,7 @@ msgstr "플레이 시간 데이터 없음"
 #: templates/_modals/edit_modal.html:28 templates/_modals/filter_modal.html:13
 #: templates/base.html:1113 templates/dashboard.html:329
 #: templates/dashboard.html:388 templates/dashboard.html:465
-#: templates/dashboard.html:531 templates/game_detail.html:766
+#: templates/dashboard.html:531 templates/game_detail.html:767
 msgid "Title"
 msgstr "제목"
 
@@ -6943,7 +6948,7 @@ msgstr "지역별 버전"
 msgid "Versions:"
 msgstr "버전:"
 
-#: templates/game_detail.html:91 templates/game_detail.html:780
+#: templates/game_detail.html:91 templates/game_detail.html:781
 msgid "Unknown region"
 msgstr "알 수 없는 지역"
 
@@ -7032,262 +7037,262 @@ msgstr "RPCS3: 호환성 목록 없음"
 msgid "No description available. Click \"Scrape\" to fetch metadata."
 msgstr "사용 가능한 설명이 없습니다. \"스크래핑\"을 클릭하여 메타데이터를 가져오세요."
 
-#: templates/game_detail.html:360
+#: templates/game_detail.html:361
 msgid "View on RetroAchievements.org"
 msgstr "RetroAchievements.org에서 보기"
 
-#: templates/game_detail.html:362
+#: templates/game_detail.html:363
 msgid "RA Site"
 msgstr "RA 사이트"
 
-#: templates/game_detail.html:374 templates/steam_achievement_game.html:17
+#: templates/game_detail.html:375 templates/steam_achievement_game.html:17
 #: templates/steam_achievements.html:7 templates/steam_achievements.html:15
 #: templates/steam_achievements.html:21
 msgid "Steam Achievements"
 msgstr "Steam 업적"
 
-#: templates/game_detail.html:390 templates/xbox_achievement_game.html:17
+#: templates/game_detail.html:391 templates/xbox_achievement_game.html:17
 #: templates/xbox_achievements.html:7 templates/xbox_achievements.html:15
 #: templates/xbox_achievements.html:21
 msgid "Xbox Achievements"
 msgstr "Xbox 업적"
 
-#: templates/game_detail.html:405 templates/psn_trophies.html:6
+#: templates/game_detail.html:406 templates/psn_trophies.html:6
 #: templates/psn_trophies.html:15 templates/psn_trophy_detail.html:17
 msgid "PSN Trophies"
 msgstr "PSN 트로피"
 
-#: templates/game_detail.html:430 templates/local_trophy_detail.html:16
+#: templates/game_detail.html:431 templates/local_trophy_detail.html:16
 msgid "RPCS3 Trophies"
 msgstr "RPCS3 트로피"
 
-#: templates/game_detail.html:463
+#: templates/game_detail.html:464
 msgid "(cross-mapped)"
 msgstr "(교차 매핑됨)"
 
-#: templates/game_detail.html:476
+#: templates/game_detail.html:477
 #, python-format
 msgid "Screenshots (%(count)s)"
 msgstr "스크린샷 (%(count)s개)"
 
-#: templates/game_detail.html:478
+#: templates/game_detail.html:479
 msgid "Previous screenshots"
 msgstr "이전 스크린샷"
 
-#: templates/game_detail.html:484
+#: templates/game_detail.html:485
 msgid "Delete screenshot"
 msgstr "스크린샷 삭제"
 
-#: templates/game_detail.html:488
+#: templates/game_detail.html:489
 msgid "Next screenshots"
 msgstr "다음 스크린샷"
 
-#: templates/game_detail.html:507
+#: templates/game_detail.html:508
 msgid "Also Known As"
 msgstr "다른 이름"
 
-#: templates/game_detail.html:511
+#: templates/game_detail.html:512
 #, python-format
 msgid "Source: %(source)s"
 msgstr "출처: %(source)s"
 
-#: templates/game_detail.html:536
+#: templates/game_detail.html:537
 msgid "Loading recommendations..."
 msgstr "추천 항목 로딩 중..."
 
-#: templates/game_detail.html:584
+#: templates/game_detail.html:585
 #, python-format
 msgid "%(pct)s%% match"
 msgstr "%(pct)s%% 일치"
 
-#: templates/game_detail.html:625
+#: templates/game_detail.html:626
 msgid "Source:"
 msgstr "출처:"
 
-#: templates/game_detail.html:628
+#: templates/game_detail.html:629
 msgid "CLZ Games Import (No ROM file)"
 msgstr "CLZ Games 가져오기 (ROM 파일 없음)"
 
-#: templates/game_detail.html:630
+#: templates/game_detail.html:631
 msgid "Steam Import (No ROM file)"
 msgstr "Steam 가져오기 (ROM 파일 없음)"
 
-#: templates/game_detail.html:632
+#: templates/game_detail.html:633
 msgid "Xbox Import (No ROM file)"
 msgstr "Xbox 가져오기 (ROM 파일 없음)"
 
-#: templates/game_detail.html:634
+#: templates/game_detail.html:635
 msgid "PSN Import (No ROM file)"
 msgstr "PSN 가져오기 (ROM 파일 없음)"
 
-#: templates/game_detail.html:640
+#: templates/game_detail.html:641
 msgid "Original Title:"
 msgstr "원제목:"
 
-#: templates/game_detail.html:646
+#: templates/game_detail.html:647
 msgid "File:"
 msgstr "파일:"
 
-#: templates/game_detail.html:648
+#: templates/game_detail.html:649
 msgid "Rename ROM file"
 msgstr "ROM 파일 이름 변경"
 
-#: templates/game_detail.html:651
+#: templates/game_detail.html:652
 msgid "Path:"
 msgstr "경로:"
 
-#: templates/game_detail.html:657
+#: templates/game_detail.html:658
 msgid "Edition:"
 msgstr "에디션:"
 
-#: templates/game_detail.html:664
+#: templates/game_detail.html:665
 msgid "Exclusive:"
 msgstr "독점:"
 
-#: templates/game_detail.html:667
+#: templates/game_detail.html:668
 msgid "Also On:"
 msgstr "지원 플랫폼:"
 
-#: templates/game_detail.html:674
+#: templates/game_detail.html:675
 msgid "Modes:"
 msgstr "모드:"
 
-#: templates/game_detail.html:680
+#: templates/game_detail.html:681
 msgid "Players:"
 msgstr "플레이어 수:"
 
-#: templates/game_detail.html:686
+#: templates/game_detail.html:687
 msgid "Campaign:"
 msgstr "캠페인:"
 
-#: templates/game_detail.html:692
+#: templates/game_detail.html:693
 msgid "Structure:"
 msgstr "구조:"
 
-#: templates/game_detail.html:698
+#: templates/game_detail.html:699
 msgid "Perspective:"
 msgstr "시점:"
 
-#: templates/game_detail.html:704
+#: templates/game_detail.html:705
 msgid "Dimension:"
 msgstr "차원:"
 
-#: templates/game_detail.html:710
+#: templates/game_detail.html:711
 msgid "Save:"
 msgstr "저장:"
 
-#: templates/game_detail.html:716
+#: templates/game_detail.html:717
 msgid "Input:"
 msgstr "입력:"
 
-#: templates/game_detail.html:721
+#: templates/game_detail.html:722
 msgid "Scraped:"
 msgstr "스크래핑됨:"
 
-#: templates/game_detail.html:730
+#: templates/game_detail.html:731
 msgid "Bonus Content"
 msgstr "보너스 콘텐츠"
 
-#: templates/game_detail.html:749
+#: templates/game_detail.html:750
 msgid "Emulator settings"
 msgstr "에뮬레이터 설정"
 
-#: templates/_macros/nav_tabs.html:40 templates/game_detail.html:759
+#: templates/_macros/nav_tabs.html:40 templates/game_detail.html:760
 #: templates/rom_tools_hub.html:193 templates/versions_review.html:5
 #: templates/versions_review.html:80
 msgid "Regional Versions"
 msgstr "지역별 버전"
 
-#: templates/game_detail.html:767 templates/museum_system.html:100
+#: templates/game_detail.html:768 templates/museum_system.html:100
 msgid "Released"
 msgstr "출시"
 
-#: templates/game_detail.html:769
+#: templates/game_detail.html:770
 msgid "File size"
 msgstr "파일 크기"
 
-#: templates/game_detail.html:770
+#: templates/game_detail.html:771
 msgid "Revision"
 msgstr "리비전"
 
-#: templates/game_detail.html:771
+#: templates/game_detail.html:772
 msgid "Languages"
 msgstr "언어"
 
-#: templates/game_detail.html:772
+#: templates/game_detail.html:773
 msgid "Scores"
 msgstr "점수"
 
-#: templates/game_detail.html:781
+#: templates/game_detail.html:782
 msgid "(this page)"
 msgstr "(이 페이지)"
 
-#: templates/game_detail.html:799
+#: templates/game_detail.html:800
 msgid "Known differences"
 msgstr "알려진 차이점"
 
-#: templates/game_detail.html:799
+#: templates/game_detail.html:800
 msgid "AI-written"
 msgstr "AI 작성"
 
-#: templates/game_detail.html:800
+#: templates/game_detail.html:801
 msgid "Written by AI from what it knows about these releases. It can be wrong."
 msgstr "AI가 이 출시판들에 대해 알고 있는 내용으로 작성했습니다. 틀릴 수 있습니다."
 
-#: templates/game_detail.html:802
+#: templates/game_detail.html:803
 msgid "The AI knows of no differences between these versions."
 msgstr "AI가 아는 이 버전들 간의 차이점은 없습니다."
 
-#: templates/game_detail.html:805
+#: templates/game_detail.html:806
 msgid "No other regional versions are linked to this game."
 msgstr "이 게임에 연결된 다른 지역별 버전이 없습니다."
 
-#: templates/game_detail.html:810
+#: templates/game_detail.html:811
 msgid "Unlink this version"
 msgstr "이 버전 연결 해제"
 
-#: templates/game_detail.html:811
+#: templates/game_detail.html:812
 msgid "Summarise differences with AI"
 msgstr "AI로 차이점 요약"
 
-#: templates/game_detail.html:813
+#: templates/game_detail.html:814
 msgid "Link a version"
 msgstr "버전 연결"
 
-#: templates/game_detail.html:814
+#: templates/game_detail.html:815
 msgid "Link a version: search this system"
 msgstr "버전 연결: 이 시스템에서 검색"
 
-#: templates/game_detail.html:830 templates/settings_emulators.html:22
+#: templates/game_detail.html:831 templates/settings_emulators.html:22
 #: templates/settings_emulators.html:127
 msgid "Cheats"
 msgstr "치트"
 
-#: templates/game_detail.html:837
+#: templates/game_detail.html:838
 msgid "Cheat list"
 msgstr "치트 목록"
 
-#: templates/game_detail.html:840
+#: templates/game_detail.html:841
 msgid "Find a cheat"
 msgstr "치트 찾기"
 
-#: templates/game_detail.html:852
+#: templates/game_detail.html:853
 msgid "Scrape History"
 msgstr "스크래핑 기록"
 
-#: templates/game_detail.html:878
+#: templates/game_detail.html:879
 msgid "Primary scraper"
 msgstr "기본 스크레이퍼"
 
-#: templates/game_detail.html:880
+#: templates/game_detail.html:881
 msgid "Fallback scraper"
 msgstr "대체 스크레이퍼"
 
-#: templates/game_detail.html:887
+#: templates/game_detail.html:888
 msgid "Fields filled:"
 msgstr "채워진 필드:"
 
-#: templates/game_detail.html:900
+#: templates/game_detail.html:901
 msgid "Still missing:"
 msgstr "여전히 누락됨:"
 

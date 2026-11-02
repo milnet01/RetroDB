@@ -51,6 +51,7 @@ def get_retroachievements_info(game):
         return None
     return {
         'id': ra_id,
+        'title': game.get('ra_title'),
         'achievement_count': count,
         'points': game.get('ra_points') or 0,
         'has_achievements': True,

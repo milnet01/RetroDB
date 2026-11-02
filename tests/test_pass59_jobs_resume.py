@@ -60,10 +60,11 @@ def _make_db(path):
         CREATE TABLE systems (id INTEGER PRIMARY KEY, folder TEXT, name TEXT);
         CREATE TABLE games (
             id INTEGER PRIMARY KEY, title TEXT, rom_path TEXT, system_id INTEGER,
-            ra_game_id TEXT, ra_achievement_count INTEGER,
-            has_retroachievements INTEGER,
+            ra_game_id TEXT, ra_achievement_count INTEGER, ra_title TEXT, ra_points INTEGER,
+            has_retroachievements INTEGER, alternate_titles TEXT,
             steam_app_id TEXT, xbox_title_id TEXT
         );
+        CREATE TABLE game_achievement_progress (game_id INTEGER, source TEXT);
         CREATE TABLE psn_games (id INTEGER PRIMARY KEY, title TEXT,
                                 npwr_id TEXT, user_id INTEGER);
         CREATE TABLE user_settings (user_id INTEGER, psn_npsso TEXT);
@@ -133,9 +134,9 @@ def job_env(tmp_path, monkeypatch):
 def _drive_ra_refresh(env):
     from services.jobs import ra_refresh as mod
     env.patch(mod)
-    env.monkeypatch.setattr(requests, 'get', lambda *a, **kw: _Resp(200, []))
+    env.monkeypatch.setattr('scraper.retroachievements.fetch_ra_game_list', lambda _c: [])
 
-    def _match(title, _rom, _ra_games):
+    def _match(title, _rom, _ra_games, _alternates):
         env.state['processed'].append(title)
         return {'ID': 1, 'NumAchievements': 5}
     env.monkeypatch.setattr(mod, 'match_ra_game', _match)
@@ -282,9 +283,9 @@ class TestRARefreshCommitsPerGame:
     def test_failure_does_not_discard_earlier_games(self, job_env):
         from services.jobs import ra_refresh as mod
         job_env.patch(mod)
-        job_env.monkeypatch.setattr(requests, 'get', lambda *a, **kw: _Resp(200, []))
+        job_env.monkeypatch.setattr('scraper.retroachievements.fetch_ra_game_list', lambda _c: [])
 
-        def _match(title, _rom, _ra_games):
+        def _match(title, _rom, _ra_games, _alternates):
             if title == 'G6':
                 raise RuntimeError('boom')
             return {'ID': 100, 'NumAchievements': 5}

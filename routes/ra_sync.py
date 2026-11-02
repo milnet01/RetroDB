@@ -168,7 +168,8 @@ def api_clear_ra_data_system(system_id):
 
     # Clear ra_game_id from games table
     execute("""
-        UPDATE games SET ra_game_id = NULL, has_retroachievements = 0
+        UPDATE games SET ra_game_id = NULL, ra_title = NULL, ra_achievement_count = NULL,
+            ra_points = NULL, has_retroachievements = 0
         WHERE system_id = ?
     """, (system_id,))
 
@@ -195,7 +196,8 @@ def api_clear_ra_data_all():
     count = query("SELECT COUNT(*) as c FROM games WHERE ra_game_id IS NOT NULL", one=True)['c']
 
     # Clear all ra_game_id values (only touch rows that have RA data)
-    execute("UPDATE games SET ra_game_id = NULL, has_retroachievements = 0 WHERE ra_game_id IS NOT NULL")
+    execute("UPDATE games SET ra_game_id = NULL, ra_title = NULL, ra_achievement_count = NULL, "
+            "ra_points = NULL, has_retroachievements = 0 WHERE ra_game_id IS NOT NULL")
 
     # Clear all RA progress data
     execute(f"DELETE FROM game_achievement_progress WHERE {_RA_ROWS}")

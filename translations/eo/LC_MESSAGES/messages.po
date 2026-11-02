@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-02 07:09+0200\n"
+"POT-Creation-Date: 2026-11-02 07:35+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: eo\n"
@@ -49,7 +49,7 @@ msgstr "⟦Ñö ĝàɱéš ŵìţĥ ŔéţŕöÀçĥìéⱴéɱéñţš ƒöüñ
 msgid "System not found or has no achievement games"
 msgstr "⟦Šýšţéɱ ñöţ ƒöüñð öŕ ĥàš ñö àçĥìéⱴéɱéñţ ĝàɱéš⟧"
 
-#: routes/achievements.py:172 routes/achievements.py:479
+#: routes/achievements.py:172 routes/achievements.py:482
 #: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/cheats.py:32
 #: routes/cheats.py:51 routes/collections.py:276 routes/collections.py:531
 #: routes/emulators.py:304 routes/emulators.py:318 routes/games.py:391
@@ -102,7 +102,11 @@ msgstr "⟦Šýñç àļŕéàðý ìñ þŕöĝŕéšš ƒöŕ %(name)s⟧"
 msgid "That job belongs to another user"
 msgstr "⟦Ţĥàţ ĵöƀ ƀéļöñĝš ţö àñöţĥéŕ üšéŕ⟧"
 
-#: routes/achievements.py:496
+#: routes/achievements.py:488
+msgid "Could not get an answer from RetroAchievements"
+msgstr "⟦Çöüļð ñöţ ĝéţ àñ àñšŵéŕ ƒŕöɱ ŔéţŕöÀçĥìéⱴéɱéñţš⟧"
+
+#: routes/achievements.py:502
 msgid "No RetroAchievements found for this game"
 msgstr "⟦Ñö ŔéţŕöÀçĥìéⱴéɱéñţš ƒöüñð ƒöŕ ţĥìš ĝàɱé⟧"
 
@@ -808,7 +812,7 @@ msgstr "⟦Ðéⱴéļöþéŕ⟧"
 #: templates/all_games.html:78 templates/analytics.html:483
 #: templates/analytics.html:2428 templates/base.html:974
 #: templates/base.html:1170 templates/compare_games.html:71
-#: templates/game_detail.html:286 templates/game_detail.html:768
+#: templates/game_detail.html:286 templates/game_detail.html:769
 #: templates/local_trophy_detail.html:87 templates/psn_trophy_detail.html:82
 #: templates/steam_achievement_game.html:78 templates/system_games.html:69
 #: templates/xbox_achievement_game.html:67
@@ -847,7 +851,7 @@ msgstr "⟦Þļàý Ɱöðéš⟧"
 #: routes/official_names.py:127 templates/_bulk_edit_modal.html:106
 #: templates/_modals/edit_modal.html:85 templates/analytics.html:492
 #: templates/analytics.html:2428 templates/base.html:1161
-#: templates/compare_games.html:75 templates/game_detail.html:765
+#: templates/compare_games.html:75 templates/game_detail.html:766
 #: templates/reports.html:444
 msgid "Region"
 msgstr "⟦Ŕéĝìöñ⟧"
@@ -859,7 +863,7 @@ msgstr "⟦Ƒŕàñçĥìšé / Šéŕìéš⟧"
 
 #: routes/official_names.py:129 templates/_modals/edit_modal.html:56
 #: templates/base.html:1139 templates/compare_games.html:96
-#: templates/game_detail.html:527
+#: templates/game_detail.html:528
 msgid "Similar Games"
 msgstr "⟦Šìɱìļàŕ Ĝàɱéš⟧"
 
@@ -2021,7 +2025,7 @@ msgstr "⟦Çàñ ƀé çöɱþļéţéð ŵìţĥ þļàýàƀļé þéŕƒöŕ
 #: templates/archive_scanner.html:798 templates/base.html:340
 #: templates/base.html:358 templates/base.html:1091
 #: templates/chd_converter.html:170 templates/chd_verify.html:126
-#: templates/game_detail.html:574 templates/login.html:254
+#: templates/game_detail.html:575 templates/login.html:254
 #: templates/museum.html:29 templates/museum_system.html:182
 #: templates/psn_trophies.html:297 templates/psn_trophy_detail.html:182
 #: templates/psn_trophy_detail.html:325 templates/reports.html:521
@@ -2168,8 +2172,8 @@ msgstr "⟦Çöɱþļéţìöñ šţàţüš üþðàţéð⟧"
 
 #: services/js_i18n_strings.py:644 templates/achievement_game.html:172
 #: templates/achievement_game.html:197 templates/achievement_game.html:211
-#: templates/base.html:1086 templates/game_detail.html:568
-#: templates/game_detail.html:593 templates/game_detail.html:607
+#: templates/base.html:1086 templates/game_detail.html:569
+#: templates/game_detail.html:594 templates/game_detail.html:608
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:176
 #: templates/psn_trophy_detail.html:209
 #: templates/steam_achievement_game.html:134
@@ -2881,8 +2885,8 @@ msgstr "⟦Ļööķìñĝ ƒöŕ ⱴéŕšìöñš…⟧"
 
 #: services/js_i18n_strings.py:809 templates/achievement_game.html:168
 #: templates/achievement_game.html:197 templates/achievement_game.html:207
-#: templates/base.html:1082 templates/game_detail.html:564
-#: templates/game_detail.html:593 templates/game_detail.html:603
+#: templates/base.html:1082 templates/game_detail.html:565
+#: templates/game_detail.html:594 templates/game_detail.html:604
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:172
 #: templates/psn_trophy_detail.html:205
 #: templates/steam_achievement_game.html:133
@@ -2894,8 +2898,8 @@ msgstr "⟦Ɱàìñ + Éжţŕàš⟧"
 
 #: services/js_i18n_strings.py:810 templates/achievement_game.html:164
 #: templates/achievement_game.html:197 templates/achievement_game.html:203
-#: templates/base.html:1078 templates/game_detail.html:560
-#: templates/game_detail.html:593 templates/game_detail.html:599
+#: templates/base.html:1078 templates/game_detail.html:561
+#: templates/game_detail.html:594 templates/game_detail.html:600
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:168
 #: templates/psn_trophy_detail.html:201
 #: templates/steam_achievement_game.html:132
@@ -2983,8 +2987,8 @@ msgid "Next game"
 msgstr "⟦Ñéжţ ĝàɱé⟧"
 
 #: services/js_i18n_strings.py:829 templates/_bulk_edit_modal.html:171
-#: templates/_modals/edit_modal.html:148 templates/game_detail.html:722
-#: templates/game_detail.html:790
+#: templates/_modals/edit_modal.html:148 templates/game_detail.html:723
+#: templates/game_detail.html:791
 msgid "No"
 msgstr "⟦Ñö⟧"
 
@@ -3094,7 +3098,7 @@ msgstr "⟦Ñö šüĝĝéšţéð ñàɱéš ŵàìţìñĝ. Þŕéšš Àšķ 
 msgid "No suggestions. Run Backfill Alternate Titles in Maintenance to find more."
 msgstr "⟦Ñö šüĝĝéšţìöñš. Ŕüñ Ɓàçķƒìļļ Àļţéŕñàţé Ţìţļéš ìñ Ɱàìñţéñàñçé ţö ƒìñð ɱöŕé.⟧"
 
-#: services/js_i18n_strings.py:856 templates/game_detail.html:895
+#: services/js_i18n_strings.py:856 templates/game_detail.html:896
 msgid "None"
 msgstr "⟦Ñöñé⟧"
 
@@ -4008,7 +4012,7 @@ msgstr "⟦Ŵöŕķš⟧"
 msgid "World"
 msgstr "⟦Ŵöŕļð⟧"
 
-#: services/js_i18n_strings.py:1064 templates/game_detail.html:811
+#: services/js_i18n_strings.py:1064 templates/game_detail.html:812
 msgid "Write again with AI"
 msgstr "⟦Ŵŕìţé àĝàìñ ŵìţĥ ÀÌ⟧"
 
@@ -4017,8 +4021,8 @@ msgid "Xbox Imports"
 msgstr "⟦Жƀöж Ìɱþöŕţš⟧"
 
 #: services/js_i18n_strings.py:1066 templates/_bulk_edit_modal.html:170
-#: templates/_modals/edit_modal.html:148 templates/game_detail.html:665
-#: templates/game_detail.html:722 templates/game_detail.html:790
+#: templates/_modals/edit_modal.html:148 templates/game_detail.html:666
+#: templates/game_detail.html:723 templates/game_detail.html:791
 msgid "Yes"
 msgstr "⟦Ýéš⟧"
 
@@ -4381,7 +4385,7 @@ msgstr "⟦Ļöàð Ɱöŕé⟧"
 
 #: templates/achievement_game.html:17 templates/achievement_game.html:37
 #: templates/achievements_system.html:15 templates/game_detail.html:21
-#: templates/game_detail.html:352 templates/game_detail.html:773
+#: templates/game_detail.html:352 templates/game_detail.html:774
 #: templates/systems.html:43
 msgid "RetroAchievements"
 msgstr "⟦ŔéţŕöÀçĥìéⱴéɱéñţš⟧"
@@ -4424,7 +4428,7 @@ msgstr "⟦Çöüļð ñöţ ļöàð àçĥìéⱴéɱéñţ ðàţà⟧"
 msgid "Check your RetroAchievements credentials in Settings."
 msgstr "⟦Çĥéçķ ýöüŕ ŔéţŕöÀçĥìéⱴéɱéñţš çŕéðéñţìàļš ìñ Šéţţìñĝš.⟧"
 
-#: templates/achievement_game.html:146 templates/game_detail.html:542
+#: templates/achievement_game.html:146 templates/game_detail.html:543
 #: templates/local_trophy_detail.html:158 templates/psn_trophy_detail.html:149
 #: templates/steam_achievement_game.html:123
 #: templates/xbox_achievement_game.html:116
@@ -4432,7 +4436,7 @@ msgid "How Long to Beat"
 msgstr "⟦Ĥöŵ Ļöñĝ ţö Ɓéàţ⟧"
 
 #: templates/achievement_game.html:153 templates/base.html:1059
-#: templates/game_detail.html:549 templates/psn_trophy_detail.html:157
+#: templates/game_detail.html:550 templates/psn_trophy_detail.html:157
 #: templates/psn_trophy_detail.html:317
 #: templates/steam_achievement_game.html:126
 #: templates/xbox_achievement_game.html:119
@@ -4440,7 +4444,7 @@ msgid "Search game title..."
 msgstr "⟦Šéàŕçĥ ĝàɱé ţìţļé...⟧"
 
 #: templates/achievement_game.html:156 templates/base.html:1062
-#: templates/game_detail.html:552 templates/local_trophy_detail.html:193
+#: templates/game_detail.html:553 templates/local_trophy_detail.html:193
 #: templates/psn_trophy_detail.html:160
 #: templates/steam_achievement_game.html:127
 #: templates/xbox_achievement_game.html:120
@@ -4449,7 +4453,7 @@ msgstr "⟦Ļööķüþ ĤĻŢƁ⟧"
 
 #: templates/_settings_tabs/account.html:74 templates/achievement_game.html:177
 #: templates/achievement_game.html:253 templates/base.html:1090
-#: templates/game_detail.html:573 templates/local_trophy_detail.html:223
+#: templates/game_detail.html:574 templates/local_trophy_detail.html:223
 #: templates/psn_trophy_detail.html:181 templates/psn_trophy_detail.html:270
 #: templates/settings_emulators.html:60 templates/settings_emulators.html:275
 #: templates/steam_achievement_game.html:137
@@ -4459,7 +4463,7 @@ msgstr "⟦Šàⱴé⟧"
 
 #: templates/achievement_game.html:217 templates/all_games.html:108
 #: templates/base.html:1103 templates/duplicate_finder.html:301
-#: templates/game_detail.html:117 templates/game_detail.html:613
+#: templates/game_detail.html:117 templates/game_detail.html:614
 #: templates/local_trophy_detail.html:185 templates/psn_trophy_detail.html:214
 #: templates/reports.html:277 templates/screenshot_dedup.html:325
 #: templates/steam_achievement_game.html:163 templates/system_games.html:99
@@ -4467,7 +4471,7 @@ msgstr "⟦Šàⱴé⟧"
 msgid "Clear"
 msgstr "⟦Çļéàŕ⟧"
 
-#: templates/achievement_game.html:225 templates/game_detail.html:621
+#: templates/achievement_game.html:225 templates/game_detail.html:622
 #: templates/local_trophy_detail.html:203 templates/psn_trophy_detail.html:234
 #: templates/steam_achievement_game.html:170
 #: templates/xbox_achievement_game.html:163
@@ -4833,7 +4837,7 @@ msgstr "⟦Šéļéçţ Àļļ⟧"
 msgid "Select Unscraped"
 msgstr "⟦Šéļéçţ Üñšçŕàþéð⟧"
 
-#: templates/all_games.html:204 templates/game_detail.html:864
+#: templates/all_games.html:204 templates/game_detail.html:865
 #: templates/system_games.html:184
 msgid "Full Re-scrape"
 msgstr "⟦Ƒüļļ Ŕé-šçŕàþé⟧"
@@ -4842,7 +4846,7 @@ msgstr "⟦Ƒüļļ Ŕé-šçŕàþé⟧"
 msgid "Toggle between full re-scrape and fill missing mode"
 msgstr "⟦Ţöĝĝļé ƀéţŵééñ ƒüļļ ŕé-šçŕàþé àñð ƒìļļ ɱìššìñĝ ɱöðé⟧"
 
-#: templates/all_games.html:209 templates/game_detail.html:864
+#: templates/all_games.html:209 templates/game_detail.html:865
 #: templates/system_games.html:189
 msgid "Fill Missing"
 msgstr "⟦Ƒìļļ Ɱìššìñĝ⟧"
@@ -5161,7 +5165,7 @@ msgid "Fanart"
 msgstr "⟦Ƒàñàŕţ⟧"
 
 #: templates/analytics.html:487 templates/analytics.html:2428
-#: templates/game_detail.html:495
+#: templates/game_detail.html:496
 msgid "Video"
 msgstr "⟦Ѵìðéö⟧"
 
@@ -5680,7 +5684,7 @@ msgstr "⟦Çļöšé ĝàɱé ðéţàìļš⟧"
 msgid "Loading game details..."
 msgstr "⟦Ļöàðìñĝ ĝàɱé ðéţàìļš...⟧"
 
-#: templates/base.html:989 templates/game_detail.html:499
+#: templates/base.html:989 templates/game_detail.html:500
 msgid "Your browser does not support the video tag."
 msgstr "⟦Ýöüŕ ƀŕöŵšéŕ ðöéš ñöţ šüþþöŕţ ţĥé ⱴìðéö ţàĝ.⟧"
 
@@ -5773,7 +5777,7 @@ msgstr "⟦Ñö þļàýţìɱé ðàţà⟧"
 #: templates/_modals/edit_modal.html:28 templates/_modals/filter_modal.html:13
 #: templates/base.html:1113 templates/dashboard.html:329
 #: templates/dashboard.html:388 templates/dashboard.html:465
-#: templates/dashboard.html:531 templates/game_detail.html:766
+#: templates/dashboard.html:531 templates/game_detail.html:767
 msgid "Title"
 msgstr "⟦Ţìţļé⟧"
 
@@ -6813,7 +6817,7 @@ msgstr "⟦Ŕéĝìöñàļ ⱴéŕšìöñš⟧"
 msgid "Versions:"
 msgstr "⟦Ѵéŕšìöñš:⟧"
 
-#: templates/game_detail.html:91 templates/game_detail.html:780
+#: templates/game_detail.html:91 templates/game_detail.html:781
 msgid "Unknown region"
 msgstr "⟦Üñķñöŵñ ŕéĝìöñ⟧"
 
@@ -6896,262 +6900,262 @@ msgstr "⟦ŔÞÇŠ3: ñö çöɱþàţìƀìļìţý ļìšţ⟧"
 msgid "No description available. Click \"Scrape\" to fetch metadata."
 msgstr "⟦Ñö ðéšçŕìþţìöñ àⱴàìļàƀļé. Çļìçķ \"Šçŕàþé\" ţö ƒéţçĥ ɱéţàðàţà.⟧"
 
-#: templates/game_detail.html:360
+#: templates/game_detail.html:361
 msgid "View on RetroAchievements.org"
 msgstr "⟦Ѵìéŵ öñ ŔéţŕöÀçĥìéⱴéɱéñţš.öŕĝ⟧"
 
-#: templates/game_detail.html:362
+#: templates/game_detail.html:363
 msgid "RA Site"
 msgstr "⟦ŔÀ Šìţé⟧"
 
-#: templates/game_detail.html:374 templates/steam_achievement_game.html:17
+#: templates/game_detail.html:375 templates/steam_achievement_game.html:17
 #: templates/steam_achievements.html:7 templates/steam_achievements.html:15
 #: templates/steam_achievements.html:21
 msgid "Steam Achievements"
 msgstr "⟦Šţéàɱ Àçĥìéⱴéɱéñţš⟧"
 
-#: templates/game_detail.html:390 templates/xbox_achievement_game.html:17
+#: templates/game_detail.html:391 templates/xbox_achievement_game.html:17
 #: templates/xbox_achievements.html:7 templates/xbox_achievements.html:15
 #: templates/xbox_achievements.html:21
 msgid "Xbox Achievements"
 msgstr "⟦Жƀöж Àçĥìéⱴéɱéñţš⟧"
 
-#: templates/game_detail.html:405 templates/psn_trophies.html:6
+#: templates/game_detail.html:406 templates/psn_trophies.html:6
 #: templates/psn_trophies.html:15 templates/psn_trophy_detail.html:17
 msgid "PSN Trophies"
 msgstr "⟦ÞŠÑ Ţŕöþĥìéš⟧"
 
-#: templates/game_detail.html:430 templates/local_trophy_detail.html:16
+#: templates/game_detail.html:431 templates/local_trophy_detail.html:16
 msgid "RPCS3 Trophies"
 msgstr "⟦ŔÞÇŠ3 Ţŕöþĥìéš⟧"
 
-#: templates/game_detail.html:463
+#: templates/game_detail.html:464
 msgid "(cross-mapped)"
 msgstr "⟦(çŕöšš-ɱàþþéð)⟧"
 
-#: templates/game_detail.html:476
+#: templates/game_detail.html:477
 #, python-format
 msgid "Screenshots (%(count)s)"
 msgstr "⟦Šçŕééñšĥöţš (%(count)s)⟧"
 
-#: templates/game_detail.html:478
+#: templates/game_detail.html:479
 msgid "Previous screenshots"
 msgstr "⟦Þŕéⱴìöüš šçŕééñšĥöţš⟧"
 
-#: templates/game_detail.html:484
+#: templates/game_detail.html:485
 msgid "Delete screenshot"
 msgstr "⟦Ðéļéţé šçŕééñšĥöţ⟧"
 
-#: templates/game_detail.html:488
+#: templates/game_detail.html:489
 msgid "Next screenshots"
 msgstr "⟦Ñéжţ šçŕééñšĥöţš⟧"
 
-#: templates/game_detail.html:507
+#: templates/game_detail.html:508
 msgid "Also Known As"
 msgstr "⟦Àļšö Ķñöŵñ Àš⟧"
 
-#: templates/game_detail.html:511
+#: templates/game_detail.html:512
 #, python-format
 msgid "Source: %(source)s"
 msgstr "⟦Šöüŕçé: %(source)s⟧"
 
-#: templates/game_detail.html:536
+#: templates/game_detail.html:537
 msgid "Loading recommendations..."
 msgstr "⟦Ļöàðìñĝ ŕéçöɱɱéñðàţìöñš...⟧"
 
-#: templates/game_detail.html:584
+#: templates/game_detail.html:585
 #, python-format
 msgid "%(pct)s%% match"
 msgstr "⟦%(pct)s%% ɱàţçĥ⟧"
 
-#: templates/game_detail.html:625
+#: templates/game_detail.html:626
 msgid "Source:"
 msgstr "⟦Šöüŕçé:⟧"
 
-#: templates/game_detail.html:628
+#: templates/game_detail.html:629
 msgid "CLZ Games Import (No ROM file)"
 msgstr "⟦ÇĻŽ Ĝàɱéš Ìɱþöŕţ (Ñö ŔÖⱮ ƒìļé)⟧"
 
-#: templates/game_detail.html:630
+#: templates/game_detail.html:631
 msgid "Steam Import (No ROM file)"
 msgstr "⟦Šţéàɱ Ìɱþöŕţ (Ñö ŔÖⱮ ƒìļé)⟧"
 
-#: templates/game_detail.html:632
+#: templates/game_detail.html:633
 msgid "Xbox Import (No ROM file)"
 msgstr "⟦Жƀöж Ìɱþöŕţ (Ñö ŔÖⱮ ƒìļé)⟧"
 
-#: templates/game_detail.html:634
+#: templates/game_detail.html:635
 msgid "PSN Import (No ROM file)"
 msgstr "⟦ÞŠÑ Ìɱþöŕţ (Ñö ŔÖⱮ ƒìļé)⟧"
 
-#: templates/game_detail.html:640
+#: templates/game_detail.html:641
 msgid "Original Title:"
 msgstr "⟦Öŕìĝìñàļ Ţìţļé:⟧"
 
-#: templates/game_detail.html:646
+#: templates/game_detail.html:647
 msgid "File:"
 msgstr "⟦Ƒìļé:⟧"
 
-#: templates/game_detail.html:648
+#: templates/game_detail.html:649
 msgid "Rename ROM file"
 msgstr "⟦Ŕéñàɱé ŔÖⱮ ƒìļé⟧"
 
-#: templates/game_detail.html:651
+#: templates/game_detail.html:652
 msgid "Path:"
 msgstr "⟦Þàţĥ:⟧"
 
-#: templates/game_detail.html:657
+#: templates/game_detail.html:658
 msgid "Edition:"
 msgstr "⟦Éðìţìöñ:⟧"
 
-#: templates/game_detail.html:664
+#: templates/game_detail.html:665
 msgid "Exclusive:"
 msgstr "⟦Éжçļüšìⱴé:⟧"
 
-#: templates/game_detail.html:667
+#: templates/game_detail.html:668
 msgid "Also On:"
 msgstr "⟦Àļšö Öñ:⟧"
 
-#: templates/game_detail.html:674
+#: templates/game_detail.html:675
 msgid "Modes:"
 msgstr "⟦Ɱöðéš:⟧"
 
-#: templates/game_detail.html:680
+#: templates/game_detail.html:681
 msgid "Players:"
 msgstr "⟦Þļàýéŕš:⟧"
 
-#: templates/game_detail.html:686
+#: templates/game_detail.html:687
 msgid "Campaign:"
 msgstr "⟦Çàɱþàìĝñ:⟧"
 
-#: templates/game_detail.html:692
+#: templates/game_detail.html:693
 msgid "Structure:"
 msgstr "⟦Šţŕüçţüŕé:⟧"
 
-#: templates/game_detail.html:698
+#: templates/game_detail.html:699
 msgid "Perspective:"
 msgstr "⟦Þéŕšþéçţìⱴé:⟧"
 
-#: templates/game_detail.html:704
+#: templates/game_detail.html:705
 msgid "Dimension:"
 msgstr "⟦Ðìɱéñšìöñ:⟧"
 
-#: templates/game_detail.html:710
+#: templates/game_detail.html:711
 msgid "Save:"
 msgstr "⟦Šàⱴé:⟧"
 
-#: templates/game_detail.html:716
+#: templates/game_detail.html:717
 msgid "Input:"
 msgstr "⟦Ìñþüţ:⟧"
 
-#: templates/game_detail.html:721
+#: templates/game_detail.html:722
 msgid "Scraped:"
 msgstr "⟦Šçŕàþéð:⟧"
 
-#: templates/game_detail.html:730
+#: templates/game_detail.html:731
 msgid "Bonus Content"
 msgstr "⟦Ɓöñüš Çöñţéñţ⟧"
 
-#: templates/game_detail.html:749
+#: templates/game_detail.html:750
 msgid "Emulator settings"
 msgstr "⟦Éɱüļàţöŕ šéţţìñĝš⟧"
 
-#: templates/_macros/nav_tabs.html:40 templates/game_detail.html:759
+#: templates/_macros/nav_tabs.html:40 templates/game_detail.html:760
 #: templates/rom_tools_hub.html:193 templates/versions_review.html:5
 #: templates/versions_review.html:80
 msgid "Regional Versions"
 msgstr "⟦Ŕéĝìöñàļ Ѵéŕšìöñš⟧"
 
-#: templates/game_detail.html:767 templates/museum_system.html:100
+#: templates/game_detail.html:768 templates/museum_system.html:100
 msgid "Released"
 msgstr "⟦Ŕéļéàšéð⟧"
 
-#: templates/game_detail.html:769
+#: templates/game_detail.html:770
 msgid "File size"
 msgstr "⟦Ƒìļé šìžé⟧"
 
-#: templates/game_detail.html:770
+#: templates/game_detail.html:771
 msgid "Revision"
 msgstr "⟦Ŕéⱴìšìöñ⟧"
 
-#: templates/game_detail.html:771
+#: templates/game_detail.html:772
 msgid "Languages"
 msgstr "⟦Ļàñĝüàĝéš⟧"
 
-#: templates/game_detail.html:772
+#: templates/game_detail.html:773
 msgid "Scores"
 msgstr "⟦Šçöŕéš⟧"
 
-#: templates/game_detail.html:781
+#: templates/game_detail.html:782
 msgid "(this page)"
 msgstr "⟦(ţĥìš þàĝé)⟧"
 
-#: templates/game_detail.html:799
+#: templates/game_detail.html:800
 msgid "Known differences"
 msgstr "⟦Ķñöŵñ ðìƒƒéŕéñçéš⟧"
 
-#: templates/game_detail.html:799
+#: templates/game_detail.html:800
 msgid "AI-written"
 msgstr "⟦ÀÌ-ŵŕìţţéñ⟧"
 
-#: templates/game_detail.html:800
+#: templates/game_detail.html:801
 msgid "Written by AI from what it knows about these releases. It can be wrong."
 msgstr "⟦Ŵŕìţţéñ ƀý ÀÌ ƒŕöɱ ŵĥàţ ìţ ķñöŵš àƀöüţ ţĥéšé ŕéļéàšéš. Ìţ çàñ ƀé ŵŕöñĝ.⟧"
 
-#: templates/game_detail.html:802
+#: templates/game_detail.html:803
 msgid "The AI knows of no differences between these versions."
 msgstr "⟦Ţĥé ÀÌ ķñöŵš öƒ ñö ðìƒƒéŕéñçéš ƀéţŵééñ ţĥéšé ⱴéŕšìöñš.⟧"
 
-#: templates/game_detail.html:805
+#: templates/game_detail.html:806
 msgid "No other regional versions are linked to this game."
 msgstr "⟦Ñö öţĥéŕ ŕéĝìöñàļ ⱴéŕšìöñš àŕé ļìñķéð ţö ţĥìš ĝàɱé.⟧"
 
-#: templates/game_detail.html:810
+#: templates/game_detail.html:811
 msgid "Unlink this version"
 msgstr "⟦Üñļìñķ ţĥìš ⱴéŕšìöñ⟧"
 
-#: templates/game_detail.html:811
+#: templates/game_detail.html:812
 msgid "Summarise differences with AI"
 msgstr "⟦Šüɱɱàŕìšé ðìƒƒéŕéñçéš ŵìţĥ ÀÌ⟧"
 
-#: templates/game_detail.html:813
+#: templates/game_detail.html:814
 msgid "Link a version"
 msgstr "⟦Ļìñķ à ⱴéŕšìöñ⟧"
 
-#: templates/game_detail.html:814
+#: templates/game_detail.html:815
 msgid "Link a version: search this system"
 msgstr "⟦Ļìñķ à ⱴéŕšìöñ: šéàŕçĥ ţĥìš šýšţéɱ⟧"
 
-#: templates/game_detail.html:830 templates/settings_emulators.html:22
+#: templates/game_detail.html:831 templates/settings_emulators.html:22
 #: templates/settings_emulators.html:127
 msgid "Cheats"
 msgstr "⟦Çĥéàţš⟧"
 
-#: templates/game_detail.html:837
+#: templates/game_detail.html:838
 msgid "Cheat list"
 msgstr "⟦Çĥéàţ ļìšţ⟧"
 
-#: templates/game_detail.html:840
+#: templates/game_detail.html:841
 msgid "Find a cheat"
 msgstr "⟦Ƒìñð à çĥéàţ⟧"
 
-#: templates/game_detail.html:852
+#: templates/game_detail.html:853
 msgid "Scrape History"
 msgstr "⟦Šçŕàþé Ĥìšţöŕý⟧"
 
-#: templates/game_detail.html:878
+#: templates/game_detail.html:879
 msgid "Primary scraper"
 msgstr "⟦Þŕìɱàŕý šçŕàþéŕ⟧"
 
-#: templates/game_detail.html:880
+#: templates/game_detail.html:881
 msgid "Fallback scraper"
 msgstr "⟦Ƒàļļƀàçķ šçŕàþéŕ⟧"
 
-#: templates/game_detail.html:887
+#: templates/game_detail.html:888
 msgid "Fields filled:"
 msgstr "⟦Ƒìéļðš ƒìļļéð:⟧"
 
-#: templates/game_detail.html:900
+#: templates/game_detail.html:901
 msgid "Still missing:"
 msgstr "⟦Šţìļļ ɱìššìñĝ:⟧"
 

@@ -69,11 +69,14 @@ def ra_db():
 
 
 def _ra_refresh(monkeypatch, sys_id, get):
-    import requests
+    from scraper import retroachievements as ra
     import services.jobs.ra_refresh as ra_refresh
     monkeypatch.setattr(ra_refresh, '_get_ra_credentials', lambda: ('user', 'key'))
     monkeypatch.setattr(ra_refresh, 'shutdown_requested', SimpleNamespace(wait=lambda s: None))
-    monkeypatch.setattr(requests, 'get', get)
+    monkeypatch.setattr(ra, 'get_ra_credentials', lambda: ('user', 'key'))
+    monkeypatch.setattr(ra, '_ra_cache_get', lambda _c: None)
+    monkeypatch.setattr(ra, '_ra_cache_set', lambda _c, _g: None)
+    monkeypatch.setattr(ra, 'http_get', get)
     job = ra_refresh.RARefreshJob()
     job.system_id = sys_id
     job.running = True
@@ -101,11 +104,21 @@ def test_failed_ra_list_fetch_keeps_links(ra_db, monkeypatch, failure):
     assert job.failed_count == 3 and job.skipped_count == 0
 
 
-def test_empty_ra_list_still_unlinks(ra_db, monkeypatch):
-    """Control: a list that really came back without this game unlinks it."""
+def test_empty_ra_list_keeps_links(ra_db, monkeypatch):
+    """No console RA supports has no games, so an empty list is a bad answer."""
     conn, sys_id, ids = ra_db
     job = _ra_refresh(monkeypatch, sys_id,
                       lambda *a, **k: SimpleNamespace(status_code=200, json=lambda: []))
+    assert _ra_link(conn, ids['ra']) == (751, 1)
+    assert job.failed_count == 3
+
+
+def test_ra_list_without_the_game_unlinks(ra_db, monkeypatch):
+    """Control: a list that really came back without this game unlinks it."""
+    conn, sys_id, ids = ra_db
+    other = [{'ID': 1, 'Title': 'Some Other Game', 'NumAchievements': 5, 'Points': 10}]
+    job = _ra_refresh(monkeypatch, sys_id,
+                      lambda *a, **k: SimpleNamespace(status_code=200, json=lambda: other))
     assert _ra_link(conn, ids['ra']) == (None, 0)
     assert job.skipped_count == 3
 

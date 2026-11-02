@@ -8,7 +8,10 @@ import threading
 import time
 import logging
 
-from services.achievement_linking import match_ra_game
+from services.achievement_linking import (
+    NO_RA_MATCH, match_ra_game, ra_link_info, ra_rom_name, save_ra_link,
+)
+from services.hltb_service import extract_alt_titles
 from services.jobs.base import (
     _get_conn, _commit_with_retry, _get_ra_credentials,
     persist_job_start, persist_job_progress, persist_job_complete,
@@ -153,8 +156,6 @@ class RARefreshJob:
 
     def _run_refresh(self):
         """Background refresh thread"""
-        import requests
-
         _last_persist_time = time.time()
         persist_id = None
 
@@ -172,7 +173,7 @@ class RARefreshJob:
 
             # Import RA console mapping
             try:
-                from scraper.retroachievements import RA_CONSOLE_MAP
+                from scraper.retroachievements import RA_CONSOLE_MAP, fetch_ra_game_list
             except ImportError:
                 with self._lock:
                     self.completed = True
@@ -194,7 +195,7 @@ class RARefreshJob:
                 if real_ids:
                     placeholders = ','.join('?' * len(real_ids))
                     c.execute(f"""
-                        SELECT g.id, g.title, g.rom_path, s.folder as system_folder, s.name as system_name
+                        SELECT g.id, g.title, g.rom_path, g.alternate_titles, s.folder as system_folder, s.name as system_name
                         FROM games g
                         JOIN systems s ON g.system_id = s.id
                         WHERE g.id IN ({placeholders})
@@ -222,7 +223,7 @@ class RARefreshJob:
                         self.system_name = row['name'] if row else 'Unknown'
 
                     c.execute("""
-                        SELECT g.id, g.title, g.rom_path, s.folder as system_folder, s.name as system_name
+                        SELECT g.id, g.title, g.rom_path, g.alternate_titles, s.folder as system_folder, s.name as system_name
                         FROM games g
                         JOIN systems s ON g.system_id = s.id
                         WHERE g.system_id = ?
@@ -232,7 +233,7 @@ class RARefreshJob:
                     with self._lock:
                         self.system_name = 'All Systems'
                     c.execute("""
-                        SELECT g.id, g.title, g.rom_path, s.folder as system_folder, s.name as system_name
+                        SELECT g.id, g.title, g.rom_path, g.alternate_titles, s.folder as system_folder, s.name as system_name
                         FROM games g
                         JOIN systems s ON g.system_id = s.id
                         WHERE g.rom_path NOT LIKE 'clz_import/%'
@@ -308,25 +309,12 @@ class RARefreshJob:
 
                         # Fetch console game list if not cached
                         if console_id not in ra_console_cache:
-                            url = "https://retroachievements.org/API/API_GetGameList.php"
-                            params = {
-                                'z': ra_username,
-                                'y': ra_api_key,
-                                'i': console_id,
-                                'h': 1  # Only games with achievements
-                            }
-
                             # PASS-59-117 — a failed fetch is cached as None,
                             # "unknown": reading it as an empty list unlinked
                             # every game on the console.
-                            try:
-                                response = requests.get(url, params=params, timeout=60)
-                                if response.status_code != 200:
-                                    raise RuntimeError(f"HTTP {response.status_code}")
-                                ra_console_cache[console_id] = response.json()
-                            except Exception as e:
-                                logger.warning(f"RA Refresh: game list for console {console_id} failed: {e}")
-                                ra_console_cache[console_id] = None
+                            ra_console_cache[console_id] = fetch_ra_game_list(console_id)
+                            if ra_console_cache[console_id] is None:
+                                logger.warning(f"RA Refresh: game list for console {console_id} failed")
 
                             # Rate limit after fetching console list —
                             # Pass 40.10: shutdown-aware sleep.
@@ -338,21 +326,10 @@ class RARefreshJob:
                                 self.failed_count += 1
                             continue
 
-                        rom_name = game['rom_path'].split('/')[-1].rsplit('.', 1)[0] if game['rom_path'] else ''
-                        ra_match = match_ra_game(game['title'], rom_name, ra_games)
-
-                        if ra_match:
-                            # Update game with RA info
-                            write_conn.execute("""
-                                UPDATE games SET
-                                    ra_game_id = ?,
-                                    ra_achievement_count = ?,
-                                    has_retroachievements = 1
-                                WHERE id = ?
-                            """, (ra_match.get('ID'), ra_match.get('NumAchievements', 0), game['id']))
-                        else:
-                            # Mark as no RA support
-                            write_conn.execute("UPDATE games SET has_retroachievements = 0 WHERE id = ?", (game['id'],))
+                        ra_match = match_ra_game(game['title'], ra_rom_name(game['rom_path']), ra_games,
+                                                 extract_alt_titles(game.get('alternate_titles')))
+                        save_ra_link(write_conn, game['id'],
+                                     ra_link_info(ra_match) if ra_match else NO_RA_MATCH)
 
                         # Commit each game's writes immediately. Batching
                         # across games left prior successes uncommitted, so
@@ -379,29 +356,6 @@ class RARefreshJob:
 
                 # Final commit for remaining updates
                 _commit_with_retry(write_conn)
-
-                # Clean up stale RA entries. Scope to the refreshed system when
-                # this is a single-system refresh — an unscoped wipe would null
-                # ra_game_id for matching rows on OTHER systems that a prior
-                # scan left in the (has_retroachievements=0, ra_game_id set)
-                # state, silently losing their RA links.
-                if not self.cancelled:
-                    wc = write_conn.cursor()
-                    if self.system_id:
-                        wc.execute("""
-                            UPDATE games SET ra_game_id = NULL, has_retroachievements = 0
-                            WHERE ra_game_id IS NOT NULL AND has_retroachievements = 0
-                              AND system_id = ?
-                        """, (self.system_id,))
-                    else:
-                        wc.execute("""
-                            UPDATE games SET ra_game_id = NULL, has_retroachievements = 0
-                            WHERE ra_game_id IS NOT NULL AND has_retroachievements = 0
-                        """)
-                    cleaned = wc.rowcount
-                    _commit_with_retry(write_conn)
-                    if cleaned > 0:
-                        logger.info(f"RA Refresh: Cleaned {cleaned} stale RA entries")
             finally:
                 write_conn.close()
 

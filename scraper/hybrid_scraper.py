@@ -598,8 +598,11 @@ def _normalize_region(metadata, result):
 
 def _apply_retroachievements_check(db_game_id, title, system_folder):
     """Look up RetroAchievements support for `(title, system_folder)` and
-    update the games row if found. Returns True when RA data was written
-    (caller should append 'retroachievements' to its filled_fields list).
+    store the answer on the games row. Returns True when the game is now
+    linked (caller should append 'retroachievements' to its filled_fields list).
+
+    RA having no such game clears an old link; RA not answering changes nothing
+    (PASS-59-210).
 
     Pass 38.1 partial extraction — this block was inline at the tail of
     apply_hybrid_metadata; it opens its own connection (independent of
@@ -608,28 +611,22 @@ def _apply_retroachievements_check(db_game_id, title, system_folder):
     """
     try:
         from scraper.retroachievements import check_retroachievements
-        ra_info = check_retroachievements(title, system_folder)
-        if not (ra_info and ra_info.get('has_achievements')):
-            return False
+        from services.achievement_linking import ra_rom_name, save_ra_link
+        from services.hltb_service import extract_alt_titles
         conn2 = get_scraper_conn()
         try:
-            c2 = conn2.cursor()
-            c2.execute("""
-                UPDATE games SET
-                    has_retroachievements = 1,
-                    ra_game_id = ?,
-                    ra_achievement_count = ?,
-                    ra_points = ?
-                WHERE id = ?
-            """, (
-                ra_info.get('id'),
-                ra_info.get('achievement_count', 0),
-                ra_info.get('points', 0),
-                db_game_id,
-            ))
+            row = conn2.execute("SELECT rom_path, alternate_titles FROM games WHERE id = ?",
+                                (db_game_id,)).fetchone()
+            ra_info = check_retroachievements(
+                title, system_folder, ra_rom_name(row[0]), extract_alt_titles(row[1]))
+            if ra_info is None:
+                return False
+            linked = save_ra_link(conn2, db_game_id, ra_info)
             conn2.commit()
         finally:
             conn2.close()
+        if not linked:
+            return False
         logger.info(
             f"Found RetroAchievements for game {db_game_id}: "
             f"ID={ra_info.get('id')}, "

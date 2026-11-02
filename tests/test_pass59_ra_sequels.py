@@ -39,6 +39,7 @@ CASES = [
     ("Donkey Kong Country 2 - Diddy's Kong Quest (USA)", 751),
     ("Donkey Kong Country 3 - Dixie Kong's Double Trouble! (USA)", 752),
     ('Doom 2', 529),
+    ('Donkey Kong Country 2', 751),   # live-DB title; RA set carries a subtitle
     ('Doom II (USA)', 529),
     ('Sonic Advance 2 (USA)', 794),
     ('Sonic Advance 3 (Europe)', 795),
@@ -53,7 +54,6 @@ CASES = [
 # A numbered local title whose sequel has no RA set must stay unlinked,
 # not borrow the first game's set.
 UNMATCHED = [
-    'Donkey Kong Country 2',          # live-DB title; RA set carries a subtitle
     'Sonic Advance 4 (USA)',
     'Mega Man Battle Network 3 (USA)',
 ]
@@ -92,11 +92,10 @@ def scraper_search(monkeypatch):
 @pytest.mark.parametrize('title,expected', CASES)
 def test_scrape_matcher_keeps_sequels_apart(scraper_search, title, expected):
     result = scraper_search(title)
-    assert result is not None, title
     assert result['id'] == expected, (title, result['title'])
 
 
 @pytest.mark.parametrize('title', UNMATCHED)
 def test_scrape_matcher_rejects_wrong_sequel(scraper_search, title):
     result = scraper_search(title)
-    assert result is None, (title, result and result['title'])
+    assert result['has_achievements'] is False, (title, result['title'])

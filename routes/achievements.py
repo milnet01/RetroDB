@@ -467,33 +467,39 @@ def api_get_stored_achievements(system_id):
 def api_refresh_achievements(game_id):
     """Refresh achievements from RetroAchievements API"""
     from scraper.retroachievements import check_retroachievements
-    
+    from services.achievement_linking import ra_rom_name, save_ra_link
+    from services.database import get_db
+    from services.hltb_service import extract_alt_titles
+
     game = query("""
-        SELECT g.title, s.folder as system_folder
+        SELECT g.title, g.rom_path, g.alternate_titles, s.folder as system_folder
         FROM games g
         JOIN systems s ON g.system_id = s.id
         WHERE g.id = ?
     """, (game_id,), one=True)
-    
+
     if not game:
         return error(_('Game not found'), code=404)
 
-    result = check_retroachievements(game['title'], game['system_folder'])
-    
-    if result:
-        execute("""
-            UPDATE games
-            SET ra_game_id = ?, ra_achievement_count = ?, ra_points = ?
-            WHERE id = ?
-        """, (result['id'], result['achievement_count'], result['points'], game_id))
+    result = check_retroachievements(game['title'], game['system_folder'],
+                                     ra_rom_name(game['rom_path']),
+                                     extract_alt_titles(game['alternate_titles']))
+    if result is None:
+        return error(_('Could not get an answer from RetroAchievements'), code=503)
 
-        invalidate_analytics_cache()
+    db = get_db()
+    try:
+        linked = save_ra_link(db, game_id, result)
+        db.commit()
+    finally:
+        db.close()
+    invalidate_analytics_cache()
+    if linked:
         return success(
             message=f"Found {result['achievement_count']} achievements",
             data=result,
         )
-    else:
-        return error(_('No RetroAchievements found for this game'), code=404)
+    return error(_('No RetroAchievements found for this game'), code=404)
 
 # =============================================================================
 # RETROACHIEVEMENTS API ROUTES

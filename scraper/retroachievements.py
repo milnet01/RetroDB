@@ -5,7 +5,6 @@
 # API Documentation: https://api-docs.retroachievements.org/
 # =============================================================================
 
-import re
 import logging
 import hashlib
 import os
@@ -15,7 +14,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import config
 from .base_scraper import http_get
-from services.achievement_linking import canonical_ra_word, ra_sequel_numbers
+from services.achievement_linking import NO_RA_MATCH, match_ra_game, ra_link_info
 
 logger = logging.getLogger(__name__)
 
@@ -164,193 +163,75 @@ def _time_now():
     return _time.time()
 
 
-def search_game_by_name(game_name, console_id):
-    """
-    Search for a game on RetroAchievements by name
-    Returns game info if found, None otherwise
+def fetch_ra_game_list(console_id):
+    """A console's games that have achievements, or None if RA could not say.
 
-    Uses strict matching to avoid false positives:
-    1. Exact match (normalized)
-    2. Word-based match (all significant words must be present)
-    3. High similarity threshold (>85%)
+    An empty list counts as None: no console RA supports has no games, so it
+    can only be a bad answer, and it must not read as "no game here has a set".
     """
+    cached_games = _ra_cache_get(console_id)
+    if cached_games is not None:
+        logger.debug(f"Using cached RA game list for console {console_id} ({len(cached_games)} games)")
+        return cached_games
 
     username, api_key = get_ra_credentials()
-
     if not api_key:
         logger.warning("RetroAchievements API key not configured")
         return None
-
-    def normalize_title(title):
-        """Normalize title for comparison"""
-        title = title.lower()
-        # Remove parentheses/bracket content (region, version info)
-        title = re.sub(r'\s*[\(\[].*?[\)\]]\s*', '', title)
-        # Normalize punctuation - replace with space
-        title = re.sub(r"[:\-\u2013\u2014/&]", ' ', title)
-        # Normalize apostrophe variants to standard - before the strip below,
-        # which would otherwise delete a curly one ("Kirby’s" -> "kirbys"
-        # while "Kirby's" -> "kirby's", so the two never matched)
-        title = re.sub(r"[\u2019\u2018\u02BC\u02BB`\u00B4\u2032\u02B9]", "'", title)
-        # Remove remaining special chars except apostrophes
-        title = re.sub(r"[^\w\s']", '', title)
-        # Collapse whitespace
-        title = re.sub(r'\s+', ' ', title).strip()
-        return title
-    
-    def get_significant_words(title):
-        """Extract significant words (removing articles and very short words)"""
-        # Number words fold to arabic ("II" -> "2") and are kept even when
-        # one character long, so a sequel never equals its original
-        # (PASS-59-110).
-        words = [canonical_ra_word(w) for w in normalize_title(title).split()]
-        # Remove articles and single characters
-        stopwords = {'the', 'a', 'an', 'of', 'and', 'in', 'on', 'at', 'to', 'for'}
-        return set(w for w in words
-                   if w not in stopwords and (len(w) > 1 or w.isdigit()))
-    
-    # The search side is the same for every RA title on the console (often
-    # 2,000+), so normalize it once rather than per comparison.
-    norm_search = normalize_title(game_name)
-    search_words = get_significant_words(game_name)
-
-    def calculate_similarity(ra_title):
-        """
-        Calculate match score between the search title and an RA title
-        Returns a score from 0-100
-        """
-        norm_ra = normalize_title(ra_title)
-        
-        # Exact match after normalization = perfect score
-        if norm_search == norm_ra:
-            return 100
-        
-        # Word-based comparison
-        ra_words = get_significant_words(ra_title)
-        
-        if not search_words or not ra_words:
-            return 0
-
-        # A sequel number must agree: "Doom 2" is not "Doom" (PASS-59-110).
-        if ra_sequel_numbers(search_words) != ra_sequel_numbers(ra_words):
-            return 0
-        
-        # All search words must be in RA title (strict requirement)
-        if not search_words.issubset(ra_words):
-            # Check if RA words are subset of search (for shorter RA titles)
-            if not ra_words.issubset(search_words):
-                return 0
-        
-        # Calculate Jaccard similarity
-        intersection = len(search_words & ra_words)
-        union = len(search_words | ra_words)
-        jaccard = intersection / union if union > 0 else 0
-        
-        # Word count difference penalty
-        word_diff = abs(len(search_words) - len(ra_words))
-        if word_diff > 2:
-            # Too many extra words - likely wrong game
-            return int(jaccard * 50)  # Heavily penalize
-        
-        # Base score from Jaccard
-        score = int(jaccard * 100)
-        
-        # Bonus for matching word count
-        if len(search_words) == len(ra_words):
-            score = min(100, score + 10)
-        
-        return score
-    
     try:
         # Pass 32.14: bounded LRU + size cap on fetch.
-        cached_games = _ra_cache_get(console_id)
-        if cached_games is not None:
-            games = cached_games
-            logger.debug(f"Using cached RA game list for console {console_id} ({len(games)} games)")
-        else:
-            # Fetch from API and cache
-            url = "https://retroachievements.org/API/API_GetGameList.php"
-            params = {
+        response = http_get(
+            "https://retroachievements.org/API/API_GetGameList.php",
+            params={
                 'z': username,
                 'y': api_key,
                 'i': console_id,
                 'f': 1,  # Only games with achievements
-            }
+            },
+            timeout=30,
+            max_bytes=getattr(config, 'MAX_API_RESPONSE_BYTES', 10 * 1024 * 1024),
+        )
 
-            max_bytes = getattr(config, 'MAX_API_RESPONSE_BYTES', 10 * 1024 * 1024)
-            response = http_get(url, params=params, timeout=30, max_bytes=max_bytes)
+        # Pass 41.7.C — surface RetroAchievements 401 explicitly. The
+        # generic non-200 return-None branch buried "stale RA API key"
+        # under "no entry found"; users had no actionable hint. Log at
+        # ERROR with the user-actionable fix (re-enter API key in
+        # Settings → Scrapers) so the fault is visible in the log
+        # file when the UI shows an empty result.
+        if response is not None and response.status_code == 401:
+            logger.error(
+                "RetroAchievements API returned 401 for GetGameList "
+                "(console_id=%s) — your RA API key is invalid or revoked. "
+                "Re-enter the api_key in Settings → Scrapers.",
+                console_id,
+            )
+        if response is None or response.status_code != 200:
+            return None
 
-            # Pass 41.7.C — surface RetroAchievements 401 explicitly. The
-            # generic non-200 return-None branch buried "stale RA API key"
-            # under "no entry found"; users had no actionable hint. Log at
-            # ERROR with the user-actionable fix (re-enter API key in
-            # Settings → Scrapers) so the fault is visible in the log
-            # file when the UI shows an empty result.
-            if response is not None and response.status_code == 401:
-                logger.error(
-                    "RetroAchievements API returned 401 for GetGameList "
-                    "(console_id=%s) — your RA API key is invalid or revoked. "
-                    "Re-enter the api_key in Settings → Scrapers.",
-                    console_id,
-                )
-            if response is None or response.status_code != 200:
-                return None
-
-            games = response.json()
-            _ra_cache_set(console_id, games)
-            logger.debug(f"Cached RA game list for console {console_id} ({len(games)} games)")
-
-        if games:
-            
-            # Find best match with scoring
-            best_match = None
-            best_score = 0
-            
-            for game in games:
-                ra_title = game.get('Title', '')
-                score = calculate_similarity(ra_title)
-                
-                if score > best_score:
-                    best_score = score
-                    best_match = game
-            
-            # Require high confidence match (85%+)
-            if best_match and best_score >= 85:
-                logger.info(f"RA match: '{game_name}' -> '{best_match.get('Title')}' (score: {best_score})")
-                return {
-                    'id': best_match.get('ID'),
-                    'title': best_match.get('Title'),
-                    'console_name': best_match.get('ConsoleName'),
-                    'achievement_count': best_match.get('NumAchievements', 0),
-                    'points': best_match.get('Points', 0),
-                    'has_achievements': best_match.get('NumAchievements', 0) > 0,
-                    'url': f"https://retroachievements.org/game/{best_match.get('ID')}"
-                }
-            
-            # Try cleaned name comparison as fallback
-            clean_search = clean_game_name(game_name)
-            for game in games:
-                clean_ra = clean_game_name(game.get('Title', ''))
-                if clean_search == clean_ra:
-                    logger.info(f"RA match (cleaned): '{game_name}' -> '{game.get('Title')}'")
-                    return {
-                        'id': game.get('ID'),
-                        'title': game.get('Title'),
-                        'console_name': game.get('ConsoleName'),
-                        'achievement_count': game.get('NumAchievements', 0),
-                        'points': game.get('Points', 0),
-                        'has_achievements': game.get('NumAchievements', 0) > 0,
-                        'url': f"https://retroachievements.org/game/{game.get('ID')}"
-                    }
-            
-            if best_match and best_score >= 70:
-                logger.debug(f"RA near-match rejected (score {best_score}): '{game_name}' -> '{best_match.get('Title')}'")
-        
-        return None
-        
+        games = response.json()
     except Exception as e:
-        logger.error(f"Error searching RetroAchievements: {e}")
+        logger.error(f"Error fetching RetroAchievements game list: {e}")
         return None
+
+    if not games or not isinstance(games, list):
+        logger.warning(f"RetroAchievements sent no game list for console {console_id}")
+        return None
+    _ra_cache_set(console_id, games)
+    logger.debug(f"Cached RA game list for console {console_id} ({len(games)} games)")
+    return games
+
+
+def search_game_by_name(game_name, console_id, rom_name='', alternate_titles=None):
+    """A game's RA link details; NO_RA_MATCH if RA has no such game; None if RA
+    could not be asked, which says nothing about the game."""
+    games = fetch_ra_game_list(console_id)
+    if games is None:
+        return None
+    match = match_ra_game(game_name, rom_name, games, alternate_titles)
+    if not match:
+        return NO_RA_MATCH
+    logger.info(f"RA match: '{game_name}' -> '{match.get('Title')}'")
+    return ra_link_info(match)
 
 
 def get_game_info(game_id):
@@ -403,24 +284,6 @@ def get_game_info(game_id):
     except Exception as e:
         logger.error(f"Error getting RA game info: {e}")
         return None
-
-
-def clean_game_name(name):
-    """Clean game name for comparison"""
-    # Remove common suffixes and prefixes
-    name = name.lower()
-    name = re.sub(r'\s*\(.*?\)\s*', '', name)  # Remove parentheses content
-    name = re.sub(r'\s*\[.*?\]\s*', '', name)  # Remove bracket content
-    name = re.sub(r'[^\w\s]', '', name)  # Remove special characters
-    name = re.sub(r'\s+', ' ', name).strip()  # Normalize whitespace
-    
-    # Remove common prefixes
-    prefixes = ['the ', 'a ']
-    for prefix in prefixes:
-        if name.startswith(prefix):
-            name = name[len(prefix):]
-    
-    return name
 
 
 def get_user_game_progress(game_id, username=None):
@@ -661,30 +524,23 @@ def get_user_summary(username=None):
         return None
 
 
-def check_retroachievements(game_title, system_folder):
-    """
-    Main function to check if a game has RetroAchievements support
-    Returns dict with achievement info or None
+def check_retroachievements(game_title, system_folder, rom_name='', alternate_titles=None):
+    """What RetroAchievements says about a game; see search_game_by_name.
+
+    None also means RA has no console for this folder or no key is set.
     """
     console_id = get_ra_console_id(system_folder)
-    
+
     if not console_id:
         logger.debug(f"No RA console mapping for: {system_folder}")
         return None
-    
+
     username, api_key = get_ra_credentials()
     if not api_key:
         logger.debug("RetroAchievements API key not configured")
         return None
-    
-    result = search_game_by_name(game_title, console_id)
-    
-    if result:
-        logger.info(f"Found RA entry for '{game_title}': {result['title']} ({result['achievement_count']} achievements)")
-    else:
-        logger.debug(f"No RA entry found for: {game_title}")
-    
-    return result
+
+    return search_game_by_name(game_title, console_id, rom_name, alternate_titles)
 
 
 # Test function

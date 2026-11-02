@@ -15,8 +15,25 @@
     label: A bulk HowLongToBeat lookup with Only Missing now retries games matched without a time, and leaves a second between requests
   - type: fix
     label: A match score of 72% no longer shows as 100% on the game page
+  - type: fix
+    label: Games no longer show another game's RetroAchievements. Resident Evil 4 on GameCube no longer shows the set for Resident Evil, and Ratchet Deadlocked no longer the set for Ratchet & Clank
+  - type: fix
+    label: A scrape now removes a RetroAchievements link when RetroAchievements has no such game. If RetroAchievements cannot be reached, the link stays
+  - type: fix
+    label: RetroAchievements now finds more of your games, through the ROM file's name, alternate titles, accents such as Ōkami, and titles with two names
+  - type: fix
+    label: RetroAchievements no longer links a game to a bonus set, a hack or a demo, and X-Men no longer equals G-Men
+  - type: new
+    label: The game page shows RetroAchievements' own name for the linked game, so a wrong link is easy to spot
+  - type: fix
+    label: RA Refresh now saves each game's points, so a game no longer shows 0 points
   body: |
     <ul>
+      <li><strong>RetroAchievements shows the right game.</strong> Sequels no
+        longer carry the first game's achievements. After you update, the
+        dashboard offers a RetroAchievements refresh once. Press it to repair
+        old links. Progress saved under a wrong link is removed, and the next
+        sync fills it in again.</li>
       <li><strong>Play time totals are true.</strong> Times under an hour were
         counted as hours, so the totals on the dashboard and the collector
         trophies were too high. Some totals and trophies will go down.</li>

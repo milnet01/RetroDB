@@ -11,6 +11,7 @@
 
 import re
 import unicodedata
+from functools import lru_cache
 
 # Trademark / copyright glyphs stripped from titles before comparison.
 _TRADEMARK_CHARS = ('™', '®', '©')
@@ -44,7 +45,8 @@ _RA_POSSESSIVE = re.compile(r"'s\b")
 # RA matching — any remaining non-word-non-space-non-apostrophe.
 _RA_NON_WORD = re.compile(r"[^\w\s']")
 
-_RA_STOPWORDS = frozenset({'the', 'a', 'an', 'of', 'and', 'in', 'on', 'at', 'to', 'for'})
+# "i" counts as nothing, so "Final Fantasy I" still finds "Final Fantasy".
+_RA_STOPWORDS = frozenset({'the', 'a', 'an', 'of', 'and', 'in', 'on', 'at', 'to', 'for', 'i'})
 
 # RA matching — a roman-numeral sequel word (ii..xxxix, plus "v"). Bare "i"
 # and "x" are left alone: they are usually a pronoun or a letter ("Mega Man X").
@@ -196,16 +198,40 @@ def normalize_title_for_dedup(title):
 # here were previously defined inline inside RARefreshJob._run_refresh.
 
 
+# PASS-59-210. A bonus set and a hack, demo or prototype are not the retail game,
+# whatever their title says, so a title match never takes one. Homebrew and
+# unlicensed games are real games RA merely marks, so they match without the mark.
+_RA_NEVER_MATCH = ('[subset', '~hack~', '~prototype~', '~demo~', '~test kit~')
+_RA_NAME_MARK = re.compile(r'~(?:homebrew|unlicensed)~', re.IGNORECASE)
+
+# Subtitles that name an add-on to the numbered game, not the game itself.
+_RA_EXPANSION = re.compile(r'xtreme legends|empires|expansion', re.IGNORECASE)
+
+# Where a title's subtitle starts.
+_SUBTITLE_MARK = re.compile(r':|\s-\s')
+
+# What a game's RA link holds when RA answered and has no such game. A failed
+# request is None instead: it says nothing about the game (PASS-59-117).
+NO_RA_MATCH = {'id': None, 'title': None, 'achievement_count': None,
+               'points': None, 'has_achievements': False}
+
+
+@lru_cache(maxsize=65536)
 def normalize_for_ra_match(title):
     """Normalize a title for RetroAchievements list-matching.
 
     Applied symmetrically to both the local game title (or ROM filename) and
     each candidate RA title before comparison. Returns a lowercase string
-    with punctuation collapsed and possessive "'s" trimmed.
+    with punctuation collapsed, accents folded ("Okami" for RA's "\u014ckami")
+    and possessive "'s" trimmed.
     """
     if not title:
         return ''
-    t = title.lower()
+    t = title
+    for ch in _TRADEMARK_CHARS:
+        t = t.replace(ch, '')
+    t = ''.join(c for c in unicodedata.normalize('NFKD', t)
+                if not unicodedata.combining(c)).lower()
     t = _RA_BRACKETED_SUFFIX.sub('', t)
     t = _RA_SEPARATORS.sub(' ', t)
     t = _RA_APOSTROPHES.sub("'", t)
@@ -214,69 +240,199 @@ def normalize_for_ra_match(title):
     return _WHITESPACE.sub(' ', t).strip()
 
 
+@lru_cache(maxsize=65536)
 def ra_significant_words(title):
     """Extract the stopword-filtered word set used by RA Jaccard matching.
 
-    Number words are folded to arabic and kept even when one character
-    long; dropping them made "Donkey Kong Country 2" equal "Donkey Kong
-    Country" (PASS-59-110).
+    Number words are folded to arabic. One-letter words are kept: dropping
+    them made "Donkey Kong Country 2" equal "Donkey Kong Country" (PASS-59-110)
+    and "X-Men" equal "G-Men" (PASS-59-210).
     """
     words = (canonical_ra_word(w) for w in normalize_for_ra_match(title).split())
-    return {w for w in words
-            if w not in _RA_STOPWORDS and (len(w) > 1 or w.isdigit())}
+    return frozenset(w for w in words if w not in _RA_STOPWORDS)
 
 
-def match_ra_game(game_title, rom_name, ra_games, jaccard_threshold=0.85):
-    """Find the best RA-game candidate for a local game.
+def _ra_identity_words(words):
+    """The words a match must agree on: a number or a lone letter ("Mega Man X")."""
+    return {w for w in words if w.isdigit() or len(w) == 1}
 
-    Three-pass strategy, matching the pre-extraction inline logic in
-    RARefreshJob._run_refresh:
-      1. Exact match on normalized game title or ROM-basename.
-      2. Exact word-set equality after stopword strip.
-      3. Jaccard similarity > threshold with one set a subset of the other.
+
+@lru_cache(maxsize=65536)
+def _ra_entry_names(ra_title):
+    """The names an RA list title goes by: "Rally Chase | Thrash Rally" has two.
+    Empty for a title a match must never take."""
+    lowered = ra_title.lower()
+    if any(mark in lowered for mark in _RA_NEVER_MATCH):
+        return ()
+    return tuple(_RA_NAME_MARK.sub('', part).strip() for part in ra_title.split('|'))
+
+
+def _ra_candidates(ra_games):
+    """Every (RA game, name) that may match, retail games ahead of marked ones,
+    so a retail game wins over a homebrew of the same name."""
+    plain, marked = [], []
+    for ra_game in ra_games:
+        if not ra_game.get('NumAchievements'):
+            continue
+        ra_title = ra_game.get('Title') or ''
+        names = _ra_entry_names(ra_title)
+        target = marked if _RA_NAME_MARK.search(ra_title) else plain
+        target.extend((ra_game, name) for name in names)
+    return plain + marked
+
+
+def _ra_same_name(name, candidates):
+    """The RA game with this exact name, else the one with the same words."""
+    norm = normalize_for_ra_match(name)
+    words = ra_significant_words(name)
+    if not norm:
+        return None
+    same_words = None
+    for ra_game, ra_name in candidates:
+        if normalize_for_ra_match(ra_name) == norm:
+            return ra_game
+        if same_words is None and words and ra_significant_words(ra_name) == words:
+            same_words = ra_game
+    return same_words
+
+
+def _ra_head(title):
+    """A title's words before its subtitle; empty if it has no subtitle."""
+    parts = _SUBTITLE_MARK.split(title, maxsplit=1)
+    return ra_significant_words(parts[0]) if len(parts) > 1 else frozenset()
+
+
+def _ra_same_but_subtitle(title, candidates):
+    """The one RA game that is `title` plus a subtitle.
+
+    Only for a numbered title: "Gran Turismo 3" is "Gran Turismo 3: A-Spec",
+    but "Metroid" is not "Metroid: Zero Mission". Never an expansion: "Dynasty
+    Warriors 4" is not "Dynasty Warriors 4: Xtreme Legends". Nor another number:
+    "GP-1" is not "GP-1: Part II". Two such games: neither. The reverse is not
+    safe: "The Sims 2: Castaway" is not "The Sims 2".
+    """
+    words = ra_significant_words(title)
+    if not any(w.isdigit() for w in words):
+        return None
+    identity = _ra_identity_words(words)
+    hits = {}
+    for ra_game, ra_name in candidates:
+        if (_ra_head(ra_name) == words and not _RA_EXPANSION.search(ra_name)
+                and _ra_identity_words(ra_significant_words(ra_name)) == identity):
+            hits[ra_game.get('ID')] = ra_game
+    return next(iter(hits.values())) if len(hits) == 1 else None
+
+
+def _ra_usable_alternates(game_title, alternate_titles):
+    """Alternate titles that can only be this game. Those lists hold other games
+    too, so one with other numbers ("Teen Titans 2" for "Teen Titans") or with
+    all the title's words and more ("Colony Wars: Vengeance") is left out."""
+    words = ra_significant_words(game_title)
+    numbers = ra_sequel_numbers(words)
+    usable = []
+    for alt in alternate_titles or ():
+        alt_words = ra_significant_words(alt)
+        if ra_sequel_numbers(alt_words) == numbers and not words < alt_words:
+            usable.append(alt)
+    return usable
+
+
+def match_ra_game(game_title, rom_name, ra_games, alternate_titles=None,
+                  jaccard_threshold=0.85):
+    """Find the best RA-game candidate for a local game. Scrapes and the refresh
+    both use it, so a link cannot come and go with whichever ran last.
+
+    In order, stopping at the first hit:
+      1. The same name or words as the ROM file's name (it says what the file
+         is), the game title, or a usable alternate title.
+      2. The game title, apart from a subtitle (`_ra_same_but_subtitle`).
+      3. The game title's words all in the RA title, or the reverse, with more
+         than `jaccard_threshold` overlap and the same numbers and lone letters.
 
     Args:
         game_title: the DB game title.
         rom_name: ROM-file basename without extension (may be '').
-        ra_games: iterable of RA game dicts as returned by
-                  retroachievements.GetGameList; each dict should expose
-                  'Title' and 'NumAchievements' keys.
-        jaccard_threshold: minimum overlap ratio for the fuzzy fallback.
+        ra_games: RA game dicts as returned by GetGameList; each should expose
+                  'Title' and 'NumAchievements'.
+        alternate_titles: other names the game goes by.
+        jaccard_threshold: minimum overlap ratio for step 3.
 
     Returns:
-        dict or None: the winning RA game dict, or None when no candidate
-        meets any of the three criteria. RA games with zero achievements are
-        always skipped.
+        dict or None: the winning RA game dict.
     """
-    game_title_norm = normalize_for_ra_match(game_title)
-    game_words = ra_significant_words(game_title)
-    rom_norm = normalize_for_ra_match(rom_name) if rom_name else ''
+    candidates = _ra_candidates(ra_games)
+    alternates = _ra_usable_alternates(game_title, alternate_titles)
+    for name in (rom_name, game_title, *alternates):
+        hit = _ra_same_name(name, candidates)
+        if hit:
+            return hit
 
+    hit = _ra_same_but_subtitle(game_title or '', candidates)
+    if hit:
+        return hit
+
+    game_words = ra_significant_words(game_title)
+    if not game_words:
+        return None
+    identity = _ra_identity_words(game_words)
     best_match = None
     best_score = 0.0
-
-    for ra_game in ra_games:
-        if ra_game.get('NumAchievements', 0) == 0:
+    for ra_game, ra_name in candidates:
+        ra_words = ra_significant_words(ra_name)
+        if not ra_words or _ra_identity_words(ra_words) != identity:
             continue
-
-        ra_title = ra_game.get('Title', '')
-        ra_norm = normalize_for_ra_match(ra_title)
-        ra_words = ra_significant_words(ra_title)
-
-        if ra_norm and (ra_norm == game_title_norm or ra_norm == rom_norm):
-            return ra_game
-
-        if game_words and ra_words:
-            if game_words == ra_words:
-                return ra_game
-            if ra_sequel_numbers(game_words) != ra_sequel_numbers(ra_words):
-                continue
-            if game_words.issubset(ra_words) or ra_words.issubset(game_words):
-                intersection = len(game_words & ra_words)
-                union = len(game_words | ra_words)
-                score = intersection / union if union else 0
-                if score > jaccard_threshold and score > best_score:
-                    best_score = score
-                    best_match = ra_game
-
+        if game_words <= ra_words or ra_words <= game_words:
+            score = len(game_words & ra_words) / len(game_words | ra_words)
+            if score > jaccard_threshold and score > best_score:
+                best_score = score
+                best_match = ra_game
     return best_match
+
+
+def ra_rom_name(rom_path):
+    """A ROM path's file name without its extension."""
+    return rom_path.split('/')[-1].rsplit('.', 1)[0] if rom_path else ''
+
+
+def ra_link_info(ra_game):
+    """An RA list entry as the link details the rest of RetroDB reads."""
+    count = ra_game.get('NumAchievements', 0)
+    return {
+        'id': ra_game.get('ID'),
+        'title': ra_game.get('Title'),
+        'console_name': ra_game.get('ConsoleName'),
+        'achievement_count': count,
+        'points': ra_game.get('Points', 0),
+        'has_achievements': count > 0,
+        'url': f"https://retroachievements.org/game/{ra_game.get('ID')}",
+    }
+
+
+def save_ra_link(conn, game_id, ra_info):
+    """Store a game's RA link, the only place that does; the caller commits.
+
+    `ra_info` is `ra_link_info`'s result, or NO_RA_MATCH to clear the link. Never
+    call this after a failed request. Progress saved under another link was for
+    another game, so it goes; a sync rebuilds it from RA. Returns True if linked.
+    """
+    old = conn.execute("SELECT ra_game_id FROM games WHERE id = ?", (game_id,)).fetchone()
+    new_id = ra_info['id'] if ra_info['has_achievements'] else None
+    linked = new_id is not None
+    conn.execute("""
+        UPDATE games SET
+            has_retroachievements = ?,
+            ra_game_id = ?,
+            ra_title = ?,
+            ra_achievement_count = ?,
+            ra_points = ?
+        WHERE id = ?
+    """, (1 if linked else 0, new_id,
+          ra_info.get('title') if linked else None,
+          ra_info['achievement_count'] if linked else None,
+          ra_info['points'] if linked else None,
+          game_id))
+    if old and old[0] is not None and str(old[0]) != str(new_id):
+        conn.execute(
+            "DELETE FROM game_achievement_progress "
+            "WHERE game_id = ? AND COALESCE(source, 'ra') = 'ra'", (game_id,))
+    return linked

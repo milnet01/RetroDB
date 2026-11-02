@@ -350,6 +350,7 @@
                         <img src="{{ url_for('static', filename='images/trophies/ra.webp') }}" alt="RetroAchievements" class="achievement-platform-icon">
                         <div class="achievement-info">
                             <span class="achievement-label">{{ _('RetroAchievements') }}</span>
+                            {% if retroachievements.title %}<span class="achievement-ra-title">{{ retroachievements.title }}</span>{% endif %}
                             <div class="achievement-progress">
                                 <span class="achievement-bar"><span class="achievement-fill ra-fill" style="width: {{ ra_pct }}%"></span></span>
                                 <span class="achievement-stats">{{ ra_earned|format_number }} / {{ ra_total|format_number }}</span>
@@ -1938,6 +1939,12 @@ body:has(.game-fanart-bg.active)::before {
     color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.5px;
+}
+
+.achievement-ra-title {
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    overflow-wrap: anywhere;
 }
 
 .achievement-progress {

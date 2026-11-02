@@ -97,11 +97,20 @@ source. Its `source` column is whichever sync wrote last.
 ### 4.3 Linking games to platform titles
 
 - **RA.** By title, never by hash. `services/achievement_linking.py::match_ra_game`
-  (refresh job) and `scraper/retroachievements.py::search_game_by_name`
-  (scraper and the single-game refresh route) normalise titles and compare
-  word sets. A sequel number must agree: `canonical_ra_word` folds `II` and
-  `02` to `2`, and `ra_sequel_numbers` must match on both sides
-  (PASS-59-110). RA has no manual link endpoint.
+  is the one matcher (refresh job, scrape, single-game refresh route). It tries
+  the ROM file's name, then the title, then alternate titles, each for the same
+  name or word set. Then a numbered title may take a lone RA game that adds only
+  a subtitle, and last comes a word overlap above 85%. Numbers and one-letter
+  words must agree in the overlap: `canonical_ra_word` folds `II` and `02` to `2`
+  (PASS-59-110, PASS-59-210). An alternate title with other numbers, or with all
+  the title's words and more, is ignored. Bonus sets, hacks, demos and prototypes
+  never match; homebrew and unlicensed games do, after retail ones.
+  `save_ra_link` is the one writer. It stores RA's own title in `games.ra_title`,
+  which the game page shows. A link changing or clearing deletes that game's RA
+  progress rows. RA has no manual link endpoint.
+- **RA answers.** `fetch_ra_game_list` returns None for a failed request or an
+  empty or malformed list. None changes nothing; a real list without the game
+  clears the link, on a scrape, a refresh and the single-game route alike.
 - **PSN.** The full sync matches the title with
   `clean_title_for_matching` — exact on the platform's folder, then exact
   across PlayStation folders, then substring. An existing link is never
@@ -194,10 +203,11 @@ admin-only (`/api/scan-trophies`).
   → `4 passed`. *Breaks when:* `_psn_trophy_counts` maps a missing block to
   `0`, or a count column loses its `COALESCE`.
 - **INV-2** — An RA title match never pairs games whose sequel numbers differ
-  ("Donkey Kong Country 2" with "Donkey Kong Country"), in both matchers.
-  *Test:* `python3 -m pytest -q tests/test_pass59_ra_sequels.py` →
-  `29 passed`. *Breaks when:* number words are dropped as one-character
-  words again, or `ra_sequel_numbers` is not compared.
+  ("Donkey Kong Country 2" with "Donkey Kong Country"), and a failed RA request
+  never clears a link.
+  *Test:* `python3 -m pytest -q tests/test_pass59_ra_sequels.py
+  tests/test_pass59_210_ra_links.py`. *Breaks when:* number words are dropped as
+  one-character words again, or a request failure reads as an empty list.
 - **INV-3** — Two users can hold rows for the same PSN title, Steam
   achievement or collector trophy, and legacy progress rows go to the first
   admin. *Test:* `python3 -m pytest -q

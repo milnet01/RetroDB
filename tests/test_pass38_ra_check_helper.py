@@ -38,9 +38,13 @@ def temp_db_path(tmp_path, monkeypatch):
                     has_retroachievements INTEGER DEFAULT 0,
                     ra_game_id INTEGER,
                     ra_achievement_count INTEGER,
-                    ra_points INTEGER
+                    ra_points INTEGER,
+                    ra_title TEXT,
+                    rom_path TEXT,
+                    alternate_titles TEXT
                 )
             """)
+            conn.execute("CREATE TABLE game_achievement_progress (game_id INTEGER, source TEXT)")
             conn.execute(
                 "INSERT INTO games (id, title) VALUES (?, ?)",
                 (42, 'Sonic the Hedgehog'),

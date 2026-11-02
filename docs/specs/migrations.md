@@ -542,6 +542,7 @@ your migration — not in the runner.
 | 024 | `024_games_release_dates.py` | Add `games.release_dates` (TEXT, JSON object of region code → date). | Additive. Filled only by the AI (scrape gap-fill and AI Fill); NULL = not known. |
 | 025 | `025_games_box_faces.py` | Add `games.box_faces` (TEXT, JSON record of an imported Slipcase box: case, colours, face files). | PASS-59-142 §4.1. Additive. Filled only by an editor's import; NULL = no faces. |
 | 026 | `026_hltb_match_reviewed.py` | Add `games.hltb_match_reviewed` (default 0); put `games.hltb_match_confidence` values above 1 back on the 0-to-1 scale. | PASS-59-209. The repair rewrites those scores in place, and the old values are not kept; the pre-migration backup holds them. |
+| 027 | `027_games_ra_title.py` | Add `games.ra_title`; clear RetroAchievements links shared by rows whose titles have different numbers, with their RA progress; clear counts and points on unlinked rows; queue one `ra_refresh` for the dashboard when any link exists. | PASS-59-210. Old links are not kept; an RA Refresh or sync rebuilds them from RetroAchievements. |
 
 ---
 
