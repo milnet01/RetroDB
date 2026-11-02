@@ -10423,6 +10423,9 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Status**: todo
 - **Source**: PASS-59-162, 2026-10-31. Notes: screenscraper 13; tgdb 17; hltb_ra H8, R12; esde 14; ai_steam_xbox S7; igdb F21; merge_and_stored 25.
 - **Items**: `scrape_screenscraper.get_game_by_id` has no callers and sends `jeuid`, which the service refuses with 400; `gameid` works (tried live). Correct the claims in `docs/specs/scrapers.md`. `routes/tools.py` `api_rom_tools_browse_folders` answers 500 when it has no current path (seen 2026-10-31 by calling `openFolderBrowser` with a made-up name; not seen from a real button).
+- **Progress** (2026-11-02): 2026-11-02: the get_game_by_id item and the fetch-by-id claims in
+  docs/specs/scrapers.md were done by PASS-59-208. The folder-browser
+  500 remains.
 
 ---
 
