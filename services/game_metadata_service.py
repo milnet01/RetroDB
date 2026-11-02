@@ -302,7 +302,7 @@ def apply_hybrid_metadata_to_game(db_game_id, primary_source, primary_id, system
                                   explicit_secondary=None,
                                   secondary_sources=None, fill_gaps=True,
                                   force_overwrite=False, primary_data=None,
-                                  keep_media=False):
+                                  keep_media=False, automatic_pick=False):
     """Apply primary-source metadata, then fill gaps from secondary scrapers.
 
     Unified entry point shared by every apply path:
@@ -370,6 +370,7 @@ def apply_hybrid_metadata_to_game(db_game_id, primary_source, primary_id, system
                 keep_media=keep_media,
                 primary_data=primary_data,
                 restrict_to_selected=explicit_secondary is not None,
+                automatic_pick=automatic_pick,
             )
     except Exception as e:
         logger.error(f"Error in hybrid metadata apply: {e}", exc_info=True)

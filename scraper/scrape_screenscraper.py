@@ -15,6 +15,8 @@ import re
 import os
 import threading
 
+from services import rom_identity
+
 from . import service_limits
 from .base_scraper import http_get, _http_session
 from .ss_regions import by_region
@@ -884,6 +886,68 @@ def get_game_by_id(game_id, username, password, dev_id=None, dev_password=None, 
     except Exception as e:
         logger.error(f"Error fetching game by ID: {e}")
         return None
+
+
+def identify_by_file(rom_path, system_folder, serial, username, password,
+                     dev_id=None, dev_password=None):
+    """The raw `jeu` record for this exact file, or None (PASS-59-217).
+
+    A reply counts only when the service says it knows the file: it answers by
+    file name too, so a CRC is accepted only if it comes back. A serial is sent
+    with a made-up file name, so that only the serial can match.
+    """
+    system_id = get_system_id(system_folder)
+    if not system_id:
+        return None
+
+    def ask(**search):
+        params = _auth_params(username, password, dev_id, dev_password)
+        params.append(("systemeid", str(system_id)))
+        params.extend(search.items())
+        return _jeu_from_reply(_ss_request_with_retry(GAME_INFO_URL, params, timeout=60))
+
+    identity = rom_identity.file_identity(rom_path)
+    if identity:
+        record = ask(romnom=identity['name'], romtaille=str(identity['size']),
+                     crc=identity['crc'], romtype='rom')
+        found = (record or {}).get('rom') or {}
+        if str(found.get('romcrc') or '').upper() == identity['crc'] and _is_a_game(record):
+            return {**record, '_matched_file': True}
+    if serial:
+        record = ask(serialnum=serial, romnom=f'{serial}.iso', romtype='rom')
+        if record and _is_a_game(record):
+            return {**record, '_matched_file': True}
+    return None
+
+
+def _auth_params(username, password, dev_id, dev_password):
+    """Credentials, with devid and devpassword first as the service requires."""
+    params = []
+    if dev_id and dev_password:
+        params.append(("devid", dev_id))
+        params.append(("devpassword", dev_password))
+    params.extend([("softname", SOFTWARE_NAME), ("ssid", username),
+                   ("sspassword", password), ("output", "json")])
+    return params
+
+
+def _jeu_from_reply(response):
+    """A jeuInfos reply's game record, or None for anything else."""
+    if response is None or response.status_code != 200:
+        return None
+    try:
+        data = response.json()
+    except ValueError:
+        return None
+    _note_account_limits(data)
+    return (data.get("response") or {}).get("jeu") or None
+
+
+def _is_a_game(record):
+    """ScreenScraper files demos and tools under records marked as no game."""
+    if str(record.get('notgame', '')).lower() == 'true':
+        return False
+    return not any(str(n.get('text', '')).startswith('ZZZ(notgame)') for n in record.get('noms') or [])
 
 
 def _note_account_limits(data):

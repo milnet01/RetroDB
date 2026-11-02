@@ -93,6 +93,10 @@ Tie-breakers:
 
 ---
 
+### Identifying the file (PASS-59-217)
+
+ScreenScraper is asked about the user's own file before a title search, unless a person ticked a result. `scrape_screenscraper.identify_by_file` accepts a reply only when it returns the CRC sent, or when a serial sent with a made-up file name finds a record, and it refuses records marked as no game. A miss falls through to the title search. Contract: [`PASS-59-217-identify-by-file.md`](PASS-59-217-identify-by-file.md).
+
 ### Extra data each source gives (PASS-59-216)
 
 - **Title screens.** ScreenScraper's `sstitle` and TheGamesDB's `titlescreen` join `screenshots`. Each merge takes up to five shots and keeps one place for the title screen. TheGamesDB's has only its documentation behind it: no real reply has been seen.
@@ -156,7 +160,7 @@ The hybrid orchestrator's UPDATE (`hybrid_scraper.py::_save_game_row`) is the sa
 
 **Exception:** Full Re-scrape mode in `hybrid_scraper` (`force_overwrite=True`) intentionally bypasses fill-only — the user opted in. ES-DE in this mode deletes old box art only once it has copied a replacement.
 
-**Source ids are stricter.** `hybrid_scraper._save_source_ids` stores the IGDB and ScreenScraper game ids a scrape used, as regional-version signals (PASS-59-106 §4.5). It writes `COALESCE(igdb_id, ?)`: a stored id is kept, because a later wrong match would otherwise relink a game. Full Re-scrape writes `COALESCE(?, igdb_id)`. Pinned by `tests/test_scrape_fill_only.py::test_source_ids_fill_only`.
+**Source ids are stricter.** `hybrid_scraper._save_source_ids` stores the IGDB and ScreenScraper game ids a scrape used, as regional-version signals (PASS-59-106 §4.5). It writes `COALESCE(igdb_id, ?)`: a stored id is kept, because a later wrong match would otherwise relink a game. Full Re-scrape writes `COALESCE(?, igdb_id)`. A ScreenScraper record for this exact file replaces the stored `screenscraper_id` (PASS-59-217). Pinned by `tests/test_scrape_fill_only.py::test_source_ids_fill_only`.
 
 **Test pin:** `tests/test_scrape_fill_only.py` runs a real hybrid scrape over a populated row with a source that has nothing, and asserts the values survive. It also asserts that the IGDB and TheGamesDB merges keep stored media and add screenshots. AI Fill is not covered by it.
 

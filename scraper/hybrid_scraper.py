@@ -655,11 +655,15 @@ def _seed_kept_media(metadata, game, stale_fields):
 def _save_source_ids(c, db_game_id, sources_data, force_overwrite=False):
     """PASS-59-106 §4.5 — store the IGDB and ScreenScraper game ids this scrape
     used; they are regional-version suggestion signals. A stored id is kept
-    (INV-10); only Full Re-scrape replaces it with one a source provides."""
+    (INV-10); only Full Re-scrape replaces it with one a source provides, and
+    a record for this exact file replaces ScreenScraper's (PASS-59-217)."""
     igdb_id = source_game_id(sources_data.get('igdb'))
-    ss_id = source_game_id(sources_data.get('screenscraper'))
+    ss_record = sources_data.get('screenscraper')
+    ss_id = source_game_id(ss_record)
     if igdb_id is None and ss_id is None:
         return
+    if ss_id is not None and ss_record.get('_matched_file'):
+        c.execute("UPDATE games SET screenscraper_id = ? WHERE id = ?", (ss_id, db_game_id))
     if force_overwrite:
         sql = ("UPDATE games SET igdb_id = COALESCE(?, igdb_id), "
                "screenscraper_id = COALESCE(?, screenscraper_id) WHERE id = ?")
@@ -920,7 +924,9 @@ def _run_fallbacks(metadata, result, sources_data, game, db_game_id,
         # not prefetched: its prompt names the fields still empty at its turn.
         lookup = {
             'title': game_title,
+            'game_id': db_game_id,
             'rom_path': game.get('rom_path'),
+            'disc_serial': game.get('disc_serial'),
             'system_name': system_name,
             'system_folder': system_folder,
             'secondary_sources': secondary_sources or [],
@@ -959,7 +965,7 @@ def _run_fallbacks(metadata, result, sources_data, game, db_game_id,
                         if data:
                             _apply_fallback(fallback_source, data, metadata, result,
                                             sources_data, db_game_id, system_folder,
-                                            force_overwrite, own_region=game_own_region(game))
+                                            force_overwrite, own_region=game_own_region(game, data))
                 except Exception as fallback_error:
                     logger.warning(f"Fallback scraper {fallback_source} failed: {fallback_error}")
                 apply_progress.step_done()
@@ -1072,6 +1078,34 @@ def _ss_record_by_id(ss_id, keys):
         system_id=system_id)
 
 
+# ScreenScraper found no PS3 game by serial in a trial, 2026-11-02 (PASS-59-217).
+_SS_SERIAL_FOLDERS = ('psx', 'ps2')
+
+
+def _ss_record_by_file(lookup, keys):
+    """ScreenScraper's record for this exact file, or None."""
+    from scraper.scrape_screenscraper import identify_by_file
+    folder, rom_path = lookup['system_folder'], lookup.get('rom_path')
+    if not rom_path:
+        return None
+    serial = None
+    if folder in _SS_SERIAL_FOLDERS:
+        serial = lookup.get('disc_serial')
+        if serial is None:
+            from services.standalone_settings import disc_ids
+            serial = disc_ids({'id': lookup['game_id'], 'rom_path': rom_path,
+                               'system_folder': folder})[0]
+    try:
+        return identify_by_file(rom_path, folder, serial or None,
+                                keys.get('screenscraper_username', ''),
+                                keys.get('screenscraper_password', ''),
+                                keys.get('screenscraper_devid', ''),
+                                keys.get('screenscraper_devpassword', ''))
+    except Exception as e:
+        logger.warning(f"ScreenScraper file lookup failed for game {lookup['game_id']}: {e}")
+        return None
+
+
 def _fetch_screenscraper(lookup):
     keys = lookup['api_keys']
     ss_username = keys.get('screenscraper_username', '')
@@ -1082,6 +1116,11 @@ def _fetch_screenscraper(lookup):
     from scraper.scrape_screenscraper import search_game, get_system_id
     game_title, folder = lookup['title'], lookup['system_folder']
     logger.info(f"Trying ScreenScraper fallback for: '{game_title}'")
+
+    if not lookup.get('user_ticked'):
+        by_file = _ss_record_by_file(lookup, keys)
+        if by_file:
+            return by_file
 
     # A result already chosen from a search is fetched as that game.
     ss_info = _secondary_for('screenscraper', lookup)
@@ -1249,7 +1288,7 @@ def _run_ai_fallback(metadata, result, sources_data, db_game_id, lookup,
 def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                           secondary_sources=None, fill_gaps=True, force_overwrite=False,
                           primary_data=None, restrict_to_selected=False,
-                          keep_media=False):
+                          keep_media=False, automatic_pick=False):
     """
     Apply metadata from primary source, then fill gaps from secondary sources.
 
@@ -1601,11 +1640,18 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
             try:
                 api_keys = load_scraper_settings().get('api_keys', {})
                 if api_keys.get('screenscraper_username') and api_keys.get('screenscraper_password'):
-                    ss_data = _ss_record_by_id(primary_id, api_keys)
+                    # A person's pick stands. A bulk scrape's came from a title search.
+                    ss_data = None
+                    if automatic_pick:
+                        ss_data = _ss_record_by_file(
+                            {'game_id': db_game_id, 'rom_path': game.get('rom_path'),
+                             'disc_serial': game.get('disc_serial'),
+                             'system_folder': system_folder}, api_keys)
+                    ss_data = ss_data or _ss_record_by_id(primary_id, api_keys)
                     if ss_data:
                         sources_data['screenscraper'] = ss_data
                         apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result,
-                                                        own_region=game_own_region(game))
+                                                        own_region=game_own_region(game, ss_data))
                         result['sources_used'].append('ScreenScraper')
                     else:
                         logger.warning(f"ScreenScraper has no record for {primary_id}")

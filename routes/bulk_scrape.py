@@ -132,6 +132,7 @@ def api_bulk_scrape():
             fill_gaps=True,
             primary_data=best_match,
             secondary_sources=secondary_sources,
+            automatic_pick=True,
         )
 
         if result.get('success'):

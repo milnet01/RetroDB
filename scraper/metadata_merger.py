@@ -1030,6 +1030,9 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
             return items[0].get('text', '')
         return None
 
+    if ss_data.get('_matched_file'):
+        result['filled_fields'].append('matched by file (ScreenScraper)')
+
     # `ss_data` is either a raw jeu record (search cache) or the flat dict
     # scrape_screenscraper.parse_game_data returns (ROM lookup on a cache
     # miss). Each text field below reads the raw key first, then the flat one.

@@ -1001,6 +1001,7 @@ class BulkScrapeJob:
                             force_overwrite=(_scrape_mode in FULL_RESCRAPE_MODES),
                             keep_media=(_scrape_mode == 'full_rescrape_keep_media'),
                             primary_data=best_match,
+                            automatic_pick=True,
                             secondary_sources=secondary_sources,
                         )
 
