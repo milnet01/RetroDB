@@ -14,7 +14,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import config
 from .base_scraper import http_get
-from services.achievement_linking import NO_RA_MATCH, match_ra_game, ra_link_info
+from services.achievement_linking import NO_RA_MATCH, match_ra_game_for_file, ra_link_info
 
 logger = logging.getLogger(__name__)
 
@@ -187,6 +187,7 @@ def fetch_ra_game_list(console_id):
                 'y': api_key,
                 'i': console_id,
                 'f': 1,  # Only games with achievements
+                'h': 1,  # With the hashes of the files it knows (PASS-59-217)
             },
             timeout=30,
             max_bytes=getattr(config, 'MAX_API_RESPONSE_BYTES', 10 * 1024 * 1024),
@@ -221,17 +222,19 @@ def fetch_ra_game_list(console_id):
     return games
 
 
-def search_game_by_name(game_name, console_id, rom_name='', alternate_titles=None):
+def search_game_by_name(game_name, console_id, rom_path=None, system_folder=None,
+                        alternate_titles=None):
     """A game's RA link details; NO_RA_MATCH if RA has no such game; None if RA
     could not be asked, which says nothing about the game."""
     games = fetch_ra_game_list(console_id)
     if games is None:
         return None
-    match = match_ra_game(game_name, rom_name, games, alternate_titles)
+    match, copy_fits = match_ra_game_for_file(game_name, rom_path, system_folder, games,
+                                              alternate_titles)
     if not match:
         return NO_RA_MATCH
     logger.info(f"RA match: '{game_name}' -> '{match.get('Title')}'")
-    return ra_link_info(match)
+    return {**ra_link_info(match), 'copy_fits': copy_fits}
 
 
 def get_game_info(game_id):
@@ -535,7 +538,7 @@ def get_user_summary(username=None):
         return None
 
 
-def check_retroachievements(game_title, system_folder, rom_name='', alternate_titles=None):
+def check_retroachievements(game_title, system_folder, rom_path=None, alternate_titles=None):
     """What RetroAchievements says about a game; see search_game_by_name.
 
     None also means RA has no console for this folder or no key is set.
@@ -551,7 +554,7 @@ def check_retroachievements(game_title, system_folder, rom_name='', alternate_ti
         logger.debug("RetroAchievements API key not configured")
         return None
 
-    return search_game_by_name(game_title, console_id, rom_name, alternate_titles)
+    return search_game_by_name(game_title, console_id, rom_path, system_folder, alternate_titles)
 
 
 # Test function

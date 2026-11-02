@@ -13,6 +13,8 @@ import re
 import unicodedata
 from functools import lru_cache
 
+from services import rom_identity
+
 # Trademark / copyright glyphs stripped from titles before comparison.
 _TRADEMARK_CHARS = ('™', '®', '©')
 
@@ -394,6 +396,38 @@ def ra_rom_name(rom_path):
     return rom_path.split('/')[-1].rsplit('.', 1)[0] if rom_path else ''
 
 
+# Systems RetroAchievements identifies by a whole file's MD5 with no special
+# rule, from docs.retroachievements.org/developer-docs/game-identification.html.
+# On any other system a plain MD5 would call a good copy wrong (PASS-59-217).
+PLAIN_MD5_FOLDERS = frozenset({
+    'atari2600', 'atarijaguar', 'wonderswan', 'wonderswancolor', 'colecovision',
+    'channelf', 'vectrex', 'odyssey2', 'videopac', 'intellivision', 'gb', 'gbc', 'gba',
+    'pokemini', 'virtualboy', 'sega32x', 'gamegear', 'mastersystem', 'mark3', 'megadrive',
+    'genesis', 'sg-1000', 'sg1000', 'ngp', 'ngpc', 'supervision', 'megaduck',
+})
+
+
+def match_ra_game_for_file(game_title, rom_path, system_folder, ra_games, alternate_titles=None):
+    """(RA game or None, whether this copy can earn its achievements).
+
+    On a plain-hash system the file's hash names the game, over any title
+    match. The second value is 1 for a listed hash, 0 for a title match with an
+    unlisted one, and None when RetroDB cannot tell.
+    """
+    title_match = match_ra_game(game_title, ra_rom_name(rom_path), ra_games, alternate_titles)
+    if (system_folder or '').lower() not in PLAIN_MD5_FOLDERS or not rom_path:
+        return title_match, None
+    if not any(game.get('Hashes') for game in ra_games):
+        return title_match, None
+    md5 = rom_identity.file_md5(rom_path)
+    if not md5:
+        return title_match, None
+    for game in ra_games:
+        if md5 in (str(h).lower() for h in game.get('Hashes') or ()):
+            return game, 1
+    return title_match, (0 if title_match else None)
+
+
 def ra_link_info(ra_game):
     """An RA list entry as the link details the rest of RetroDB reads."""
     count = ra_game.get('NumAchievements', 0)
@@ -424,12 +458,14 @@ def save_ra_link(conn, game_id, ra_info):
             ra_game_id = ?,
             ra_title = ?,
             ra_achievement_count = ?,
-            ra_points = ?
+            ra_points = ?,
+            ra_copy_fits = ?
         WHERE id = ?
     """, (1 if linked else 0, new_id,
           ra_info.get('title') if linked else None,
           ra_info['achievement_count'] if linked else None,
           ra_info['points'] if linked else None,
+          ra_info.get('copy_fits') if linked else None,
           game_id))
     if old and old[0] is not None and str(old[0]) != str(new_id):
         conn.execute(

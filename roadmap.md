@@ -10446,7 +10446,15 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.217 Identify games from the ROM file itself, using checksums and disc serials (enhancement, L).
-- **Status**: todo
+- **Resolution** (2026-11-02): 2026-11-02: built in the open 3.35.3. Spec:
+  docs/specs/PASS-59-217-identify-by-file.md. Live trials: ScreenScraper
+  CRC gave the exact file for 31 of 32 cartridge games, serial 4 of 4
+  PS1 and 2 of 2 PS2, 0 of 3 PS3 (left out). No bulk scrape run yet.
+  Open: TheGamesDB ByGameHash needs a trial the user has not agreed to;
+  .7z files have no reader; RetroAchievements systems with special hash
+  rules stay "not known"; IGDB, RAWG and TheGamesDB still match by
+  title. Source IDs do not skip a search: spec §8 says why.
+- **Status**: done
 - **Source**: PASS-59-162, 2026-10-31. Notes: screenscraper 8, Table 1; hltb_ra R8; tgdb Table 1.
 - **Idea**: normal matching is by title. ScreenScraper's `roms[]`, `rom` and `serialnum`, TheGamesDB's `ByGameHash` and RetroAchievements' hashes can name the exact game, region and language of a file, and say whether achievements work with this copy. `games.disc_serial` already holds serials, and discs over 100 MB are not checksummed today.
 - **Needs**: a spec, because it changes how every scrape picks its game. Would remove many wrong matches at the root (PASS-59-208).

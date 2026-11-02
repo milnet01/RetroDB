@@ -9,7 +9,7 @@ import time
 import logging
 
 from services.achievement_linking import (
-    NO_RA_MATCH, match_ra_game, ra_link_info, ra_rom_name, save_ra_link,
+    NO_RA_MATCH, match_ra_game_for_file, ra_link_info, save_ra_link,
 )
 from services.hltb_service import extract_alt_titles
 from services.jobs.base import (
@@ -326,10 +326,12 @@ class RARefreshJob:
                                 self.failed_count += 1
                             continue
 
-                        ra_match = match_ra_game(game['title'], ra_rom_name(game['rom_path']), ra_games,
-                                                 extract_alt_titles(game.get('alternate_titles')))
+                        ra_match, copy_fits = match_ra_game_for_file(
+                            game['title'], game['rom_path'], game.get('folder'), ra_games,
+                            extract_alt_titles(game.get('alternate_titles')))
                         save_ra_link(write_conn, game['id'],
-                                     ra_link_info(ra_match) if ra_match else NO_RA_MATCH)
+                                     {**ra_link_info(ra_match), 'copy_fits': copy_fits}
+                                     if ra_match else NO_RA_MATCH)
 
                         # Commit each game's writes immediately. Batching
                         # across games left prior successes uncommitted, so

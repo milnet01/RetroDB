@@ -60,7 +60,7 @@ def _make_db(path):
         CREATE TABLE systems (id INTEGER PRIMARY KEY, folder TEXT, name TEXT);
         CREATE TABLE games (
             id INTEGER PRIMARY KEY, title TEXT, rom_path TEXT, system_id INTEGER,
-            ra_game_id TEXT, ra_achievement_count INTEGER, ra_title TEXT, ra_points INTEGER,
+            ra_game_id TEXT, ra_achievement_count INTEGER, ra_title TEXT, ra_points INTEGER, ra_copy_fits INTEGER,
             has_retroachievements INTEGER, alternate_titles TEXT,
             steam_app_id TEXT, xbox_title_id TEXT
         );
@@ -139,7 +139,8 @@ def _drive_ra_refresh(env):
     def _match(title, _rom, _ra_games, _alternates):
         env.state['processed'].append(title)
         return {'ID': 1, 'NumAchievements': 5}
-    env.monkeypatch.setattr(mod, 'match_ra_game', _match)
+    env.monkeypatch.setattr(mod, 'match_ra_game_for_file',
+                                lambda title, rom, _folder, ra_games, alts: (_match(title, rom, ra_games, alts), None))
 
     job = mod.RARefreshJob()
     job.running = True
@@ -289,7 +290,8 @@ class TestRARefreshCommitsPerGame:
             if title == 'G6':
                 raise RuntimeError('boom')
             return {'ID': 100, 'NumAchievements': 5}
-        job_env.monkeypatch.setattr(mod, 'match_ra_game', _match)
+        job_env.monkeypatch.setattr(mod, 'match_ra_game_for_file',
+                                lambda title, rom, _folder, ra_games, alts: (_match(title, rom, ra_games, alts), None))
 
         conn = job_env.conn()
         conn.execute("DELETE FROM games WHERE id > 6")

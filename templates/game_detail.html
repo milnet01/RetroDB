@@ -351,6 +351,8 @@
                         <div class="achievement-info">
                             <span class="achievement-label">{{ _('RetroAchievements') }}</span>
                             {% if retroachievements.title %}<span class="achievement-ra-title">{{ retroachievements.title }}</span>{% endif %}
+                            {% if game.ra_copy_fits == 1 %}<span class="achievement-ra-title">{{ _('Your copy earns achievements') }}</span>
+                            {% elif game.ra_copy_fits == 0 %}<span class="achievement-ra-title">{{ _('RetroAchievements does not list your copy, so it may not earn achievements') }}</span>{% endif %}
                             <div class="achievement-progress">
                                 <span class="achievement-bar"><span class="achievement-fill ra-fill" style="width: {{ ra_pct }}%"></span></span>
                                 <span class="achievement-stats">{{ ra_earned|format_number }} / {{ ra_total|format_number }}</span>

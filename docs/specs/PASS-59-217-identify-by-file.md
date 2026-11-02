@@ -81,17 +81,17 @@ An exact file's `rom.romregions` counts as the copy's region only when the file 
 
 ### 4.5 RetroAchievements — `services/achievement_linking.py`, `services/jobs/ra_refresh.py`
 
-`fetch_ra_game_list` adds `h=1`, so each game carries `Hashes`.
+`fetch_ra_game_list` adds `h=1`, so each game carries `Hashes`. The largest list measured grew to about 245 KB (Game Boy Advance, 2026-11-02), well under the existing cap.
 
 `PLAIN_MD5_FOLDERS`, in `achievement_linking`, holds the `RA_CONSOLE_MAP` folders of the systems RetroAchievements' identification page says use a whole file's MD5 with no special rule: Atari 2600, Atari Jaguar, WonderSwan and Color, ColecoVision, Channel F, Vectrex, Odyssey 2, Intellivision, Game Boy, Color and Advance, Pokemon Mini, Virtual Boy, 32X, Game Gear, Master System, Mega Drive, SG-1000, Neo Geo Pocket and Color, Supervision, Mega Duck. NES, SNES, N64 and disc systems are left out, because their hashes have special rules.
 
-For a game in those folders with a `file_identity` no larger than 64 MiB, the refresh computes the MD5 of that member or file.
+For a game in those folders with a `file_identity` no larger than 64 MiB, `match_ra_game_for_file` computes the MD5 of that member or file. Every link check uses it, so a scrape cannot undo what a refresh found.
 
 - The hash is in a game's `Hashes`: link that game, over any title match, and set `games.ra_copy_fits = 1`.
 - The hash is in no game's list and the title match found a game: keep that link and set `ra_copy_fits = 0`.
 - Otherwise, or on another system: `ra_copy_fits` is NULL, meaning not known.
 
-Migration `032_games_ra_copy_fits` adds the column. `save_ra_link` clears it with the link.
+Migration `032_games_ra_copy_fits` adds the column. `save_ra_link` is its only writer, and an unlinked game holds NULL.
 
 ### 4.6 What the user sees — `templates/game_detail.html`
 
@@ -150,7 +150,7 @@ The wording is cautious because the page RetroDB follows was last edited about t
 
 ## 7. Tests
 
-`tests/test_pass59_217_identify_by_file.py` holds the test each invariant names, and `tests/test_scrape_fill_only.py` the second half of INV-8. Replies are faked from the shapes in §2's trial. Each test is seen to fail before its behaviour exists. One live trial of each lookup is run after the build and recorded on the roadmap.
+`tests/test_pass59_217_identify_by_file.py` holds the test each of INV-1, INV-2, INV-3, INV-4, INV-5, INV-6, INV-7, INV-8, INV-9, INV-10 and INV-11 names, and `tests/test_scrape_fill_only.py` the second half of INV-8. Replies are faked from the shapes in §2's trial. Each test is seen to fail before its behaviour exists. One live trial of each lookup is run after the build and recorded on the roadmap.
 
 ## 8. Alternatives considered (and rejected)
 

@@ -6,6 +6,7 @@
 # and no member name reaches the filesystem. Reads only; any failure gives None.
 # =============================================================================
 
+import hashlib
 import logging
 import os
 import zipfile
@@ -14,6 +15,7 @@ import zlib
 logger = logging.getLogger(__name__)
 
 MAX_PLAIN_FILE = 1024 ** 3
+MAX_MD5_FILE = 64 * 1024 * 1024
 _READ_SIZE = 1024 * 1024
 _NOT_THE_GAME = ('/', '.txt', '.nfo', '.diz')
 # Containers and playlists: their own CRC is one nobody else holds.
@@ -30,6 +32,31 @@ def file_identity(rom_path):
     except (OSError, ValueError, zipfile.BadZipFile) as e:
         logger.debug(f"Could not read {rom_path}: {e}")
         return None
+
+
+def file_md5(rom_path, limit=MAX_MD5_FILE):
+    """MD5 of the game inside rom_path, which means reading all of it, or None.
+    Over `limit` bytes gives None. Nothing is written to disk."""
+    try:
+        identity = file_identity(rom_path)
+        if not identity or identity['size'] > limit:
+            return None
+        digest = hashlib.md5(usedforsecurity=False)
+        if os.path.splitext(rom_path)[1].lower() == '.zip':
+            with zipfile.ZipFile(rom_path) as archive, archive.open(identity['name']) as member:
+                _read_into(digest, member)
+        else:
+            with open(rom_path, 'rb') as f:
+                _read_into(digest, f)
+        return digest.hexdigest()
+    except (OSError, ValueError, RuntimeError, EOFError, zipfile.BadZipFile, zlib.error) as e:
+        logger.debug(f"Could not read {rom_path}: {e}")
+        return None
+
+
+def _read_into(digest, stream):
+    for chunk in iter(lambda: stream.read(_READ_SIZE), b''):
+        digest.update(chunk)
 
 
 def _zip_identity(rom_path):

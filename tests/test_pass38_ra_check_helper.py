@@ -39,6 +39,7 @@ def temp_db_path(tmp_path, monkeypatch):
                     ra_game_id INTEGER,
                     ra_achievement_count INTEGER,
                     ra_points INTEGER,
+                    ra_copy_fits INTEGER,
                     ra_title TEXT,
                     rom_path TEXT,
                     alternate_titles TEXT

@@ -245,3 +245,76 @@ def test_the_history_says_the_file_matched(monkeypatch):
     metadata_merger.apply_screenscraper_to_metadata(
         collections.defaultdict(lambda: None), {'_matched_file': True}, 1, result)
     assert 'matched by file (ScreenScraper)' in result['filled_fields']
+
+
+# --- INV-9, INV-10: RetroAchievements' list of hashes -----------------------------
+
+RA_LIST = [{'ID': 1, 'Title': 'Sonic', 'NumAchievements': 5, 'Hashes': ['0CC175B9C0F1B6A831C399E269772661']},
+           {'ID': 2, 'Title': 'Tetris', 'NumAchievements': 5, 'Hashes': ['ffffffffffffffffffffffffffffffff']}]
+
+
+def _ra_match(rom, folder='megadrive', ra_games=RA_LIST, title='Tetris'):
+    from services.achievement_linking import match_ra_game_for_file
+    return match_ra_game_for_file(title, rom, folder, ra_games)
+
+
+def test_ra_hash_beats_the_title(tmp_path):
+    rom = _zip(tmp_path / 'Tetris.zip', g__md=b'a')  # MD5 of b'a' is Sonic's hash
+    game, fits = _ra_match(rom)
+    assert (game['ID'], fits) == (1, 1)
+
+
+def test_an_unlisted_copy_keeps_the_title_link_and_says_so(tmp_path):
+    game, fits = _ra_match(_zip(tmp_path / 'Tetris.zip', g__md=b'other'))
+    assert (game['ID'], fits) == (2, 0)
+
+
+def test_no_match_at_all_says_nothing_about_the_copy(tmp_path):
+    game, fits = _ra_match(_zip(tmp_path / 'x.zip', g__md=b'other'), title='Nothing Like It')
+    assert game is None and fits is None
+
+
+@pytest.mark.parametrize('folder', ['nes', 'snes', 'n64', 'psx', 'atari7800', 'fds'])
+def test_special_rule_systems_are_not_judged(tmp_path, folder, monkeypatch):
+    monkeypatch.setattr(rom_identity, 'file_md5', lambda *a: pytest.fail('hashed a special-rule system'))
+    game, fits = _ra_match(_zip(tmp_path / 'Tetris.zip', g__md=b'a'), folder=folder)
+    assert game['ID'] == 2 and fits is None
+
+
+def test_a_list_with_no_hashes_never_blames_the_copy(tmp_path):
+    bare = [{'ID': 2, 'Title': 'Tetris', 'NumAchievements': 5}]
+    game, fits = _ra_match(_zip(tmp_path / 'Tetris.zip', g__md=b'other'), ra_games=bare)
+    assert game['ID'] == 2 and fits is None
+
+
+def test_plain_md5_folders_are_all_ra_systems():
+    from scraper.retroachievements import RA_CONSOLE_MAP
+    from services.achievement_linking import PLAIN_MD5_FOLDERS
+    assert PLAIN_MD5_FOLDERS <= set(RA_CONSOLE_MAP)
+
+
+def test_md5_reads_a_zip_member_and_a_plain_file(tmp_path):
+    expected = '0cc175b9c0f1b6a831c399e269772661'
+    assert rom_identity.file_md5(_zip(tmp_path / 'g.zip', g__md=b'a')) == expected
+    plain = tmp_path / 'g.gb'
+    plain.write_bytes(b'a')
+    assert rom_identity.file_md5(str(plain)) == expected
+
+
+def test_md5_has_a_size_limit(tmp_path):
+    assert rom_identity.file_md5(_zip(tmp_path / 'g.zip', g__md=b'abc'), limit=2) is None
+
+
+def test_the_link_stores_the_answer(tmp_path, monkeypatch):
+    from services.achievement_linking import NO_RA_MATCH, ra_link_info, save_ra_link
+    path = str(tmp_path / 'roms.db')
+    conn = sqlite3.connect(path)
+    from services import migrations
+    migrations.apply_pending(conn)
+    conn.execute("INSERT INTO systems (id, name, folder) VALUES (1, 'MD', 'megadrive')")
+    conn.execute("INSERT INTO games (id, system_id, title, rom_path) VALUES (1, 1, 'T', '/r/t.zip')")
+    save_ra_link(conn, 1, {**ra_link_info(RA_LIST[0]), 'copy_fits': 1})
+    assert conn.execute("SELECT ra_copy_fits FROM games").fetchone()[0] == 1
+    save_ra_link(conn, 1, NO_RA_MATCH)
+    assert conn.execute("SELECT ra_copy_fits FROM games").fetchone()[0] is None
+    conn.close()

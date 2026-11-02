@@ -570,14 +570,14 @@ def _apply_retroachievements_check(db_game_id, title, system_folder):
     """
     try:
         from scraper.retroachievements import check_retroachievements
-        from services.achievement_linking import ra_rom_name, save_ra_link
+        from services.achievement_linking import save_ra_link
         from services.hltb_service import extract_alt_titles
         conn2 = get_scraper_conn()
         try:
             row = conn2.execute("SELECT rom_path, alternate_titles FROM games WHERE id = ?",
                                 (db_game_id,)).fetchone()
             ra_info = check_retroachievements(
-                title, system_folder, ra_rom_name(row[0]), extract_alt_titles(row[1]))
+                title, system_folder, row[0], extract_alt_titles(row[1]))
             if ra_info is None:
                 return False
             linked = save_ra_link(conn2, db_game_id, ra_info)
