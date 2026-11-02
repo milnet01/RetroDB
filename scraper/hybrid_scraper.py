@@ -278,6 +278,7 @@ def fetch_igdb_extended(game_id):
                franchise.name, franchises.name, collections.name,
                similar_games.name, similar_games.cover.url,
                game_engines.name, platforms.name,
+               game_localizations.name, game_localizations.region.name,
                rating, rating_count, aggregated_rating, aggregated_rating_count;
         where id = {game_id};
         """
@@ -1116,6 +1117,26 @@ _FALLBACK_FETCHERS = {
 }
 
 
+def esde_rating_score(rating):
+    """ES-DE's `rating`, 0 to 1 in half-star steps, on the 0 to 100 of user_score.
+    0 is how ES-DE writes no rating."""
+    try:
+        score = float(rating) * 100
+    except (TypeError, ValueError):
+        return None
+    return score if 0 < score <= 100 else None
+
+
+def _use_esde_rating(metadata, result):
+    """An ES-DE rating fills user_score only when no online source gave one, and
+    before the AI is asked: ES-DE does not record who set it, and it may be the
+    owner's own, but it is a real rating and the AI's is a guess."""
+    rating = metadata.pop('_esde_rating', None)
+    if rating and not metadata['user_score']:
+        metadata['user_score'] = rating
+        result['filled_fields'].append('user_score (ES-DE)')
+
+
 def _merge_esde(metadata, details, result, db_game_id, system_folder,
                 force_overwrite, fill_only):
     """Merge one ES-DE row into `metadata`, as primary or as a fallback.
@@ -1141,6 +1162,7 @@ def _merge_esde(metadata, details, result, db_game_id, system_folder,
     if not metadata['genre']:
         fill_labels(metadata, result, 'genre', details.get('genre') or '', 'ES-DE')
     fill('release_date', details.get('release_date'))
+    metadata['_esde_rating'] = esde_rating_score(details.get('rating'))
 
     from services.game_utils import normalize_players_value
     from services.normalization import modes_from_player_count
@@ -1202,6 +1224,7 @@ def _run_ai_fallback(metadata, result, sources_data, db_game_id, lookup,
         logger.info("AI fallback skipped: disabled in settings")
         return
     logger.info(f"Trying AI fallback for: '{game_title}'")
+    _use_esde_rating(metadata, result)
     # Build existing metadata snapshot for AI to know what's missing
     ai_existing = {k: v for k, v in metadata.items() if v}
     # Pass 26.3 — wrap AI call in the circuit breaker so
@@ -1604,6 +1627,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                 primary_source, system_folder, secondary_sources,
                 restrict_to_selected, media_force, c,
             )
+        _use_esde_rating(metadata, result)
 
         # =============================================
         # DETECT ADDITIONAL METADATA

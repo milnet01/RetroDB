@@ -55,6 +55,7 @@ MIGRATIONS = [
     '028_clear_save_type_guesses',
     '029_clear_franchise_guesses',
     '030_tidy_stored_text',
+    '031_hltb_id_and_players',
 ]
 
 

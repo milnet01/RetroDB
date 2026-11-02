@@ -181,6 +181,17 @@ PLATFORM_ALIASES = {
     # PC
     'windows': 'PC', 'microsoft windows': 'PC', 'ibm pc': 'PC',
     'ms-dos': 'DOS', 'macos': 'Mac', 'macintosh': 'Mac',
+    # IGDB's names for what the other sections call something else
+    'pc (microsoft windows)': 'PC', 'atari 8-bit': 'Atari 800', 'atari st/ste': 'Atari ST',
+    'bbc microcomputer system': 'BBC Micro', 'commodore c64/128/max': 'C64',
+    'dragon 32/64': 'Dragon 32', 'family computer': 'NES',
+    'family computer disk system': 'Famicom Disk System', 'google stadia': 'Stadia',
+    'odyssey 2 / videopac g7000': 'Odyssey 2', 'pc-8800 series': 'NEC PC-8801',
+    'pc-9800 series': 'NEC PC-9801', 'pokémon mini': 'Pokemon Mini',
+    'sega master system/mark iii': 'Master System', 'sega mega drive/genesis': 'Mega Drive',
+    'texas instruments ti-99': 'TI-99/4A', 'thomson mo5': 'Thomson MO/TO',
+    'turbografx-16/pc engine': 'TurboGrafx-16', 'turbografx-16/pc engine cd': 'TurboGrafx-CD',
+    'watara/quickshot supervision': 'Watara Supervision', 'xbox series x|s': 'Xbox Series X',
     'apple macintosh': 'Mac',
     # Commodore
     'commodore 64': 'C64', 'commodore amiga': 'Amiga',
@@ -1110,6 +1121,15 @@ def parse_units_sold(value):
 # What a model writes for "I don't know", in a field with no list to check it by.
 _PLACEHOLDER_ANSWERS = {'none', 'n/a', 'na', 'null', 'unknown', 'tbd', '-'}
 _SAME_CONSOLE = {'Genesis', 'Mega Drive'}
+
+
+def known_platforms(names):
+    """`other_platforms` text from a source's platform names: the schema's own
+    spelling, sorted, once each. A name the schema has no entry for is left out."""
+    schema = {v.lower(): v for v in FIELD_SCHEMAS['other_platforms']}
+    found = {schema.get(name.lower()) or PLATFORM_ALIASES.get(name.lower())
+             for name in names if name}
+    return ', '.join(sorted(found - {None}))
 
 
 def _drop_own_platform(platforms, system_name):

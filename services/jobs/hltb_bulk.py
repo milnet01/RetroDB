@@ -291,7 +291,9 @@ class HLTBBulkLookupJob:
                                     hltb_match_name = ?,
                                     hltb_match_platform = ?,
                                     hltb_match_confidence = ?,
-                                    hltb_match_reviewed = 0
+                                    hltb_match_reviewed = 0,
+                                    hltb_id = ?,
+                                    hltb_players = ?
                                 WHERE id = ?
                             """, (playtime_str, result.get('match_name'),
                                   match_platform, confidence_frac, game['id']))
@@ -308,8 +310,8 @@ class HLTBBulkLookupJob:
                                     game_id, hltb_id, match_name, match_platform,
                                     confidence, playtime, main_story, main_plus_sides,
                                     completionist, search_term_used,
-                                    matched_via_alternate, reason
-                                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                                    matched_via_alternate, reason, players
+                                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                                 ON CONFLICT(game_id) DO UPDATE SET
                                     hltb_id = excluded.hltb_id,
                                     match_name = excluded.match_name,
@@ -322,6 +324,7 @@ class HLTBBulkLookupJob:
                                     search_term_used = excluded.search_term_used,
                                     matched_via_alternate = excluded.matched_via_alternate,
                                     reason = excluded.reason,
+                                    players = excluded.players,
                                     created_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
                             """, (
                                 game['id'],
@@ -336,6 +339,7 @@ class HLTBBulkLookupJob:
                                 result.get('search_term_used'),
                                 1 if result.get('matched_via_alternate') else 0,
                                 reason,
+                                result.get('players'),
                             ))
                             with self._lock:
                                 self.queued_count += 1

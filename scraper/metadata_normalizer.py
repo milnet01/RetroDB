@@ -124,7 +124,7 @@ _IGDB_REGION_WORDS = {
     'european': '150', 'europe': '150', 'eu': '150', 'pal': '150',
     'uk': 'GB', 'british': 'GB',
     'german': 'DE', 'french': 'FR', 'spanish': 'ES', 'italian': 'IT',
-    'russian': 'RU', 'chinese': 'CN', 'taiwanese': 'TW', 'korean': 'KR',
+    'russian': 'RU', 'chinese': 'CN', 'taiwanese': 'TW', 'korean': 'KR', 'korea': 'KR',
     'brazilian': 'BR', 'portuguese': 'PT', 'swedish': 'SE', 'hebrew': 'IL',
     'australia': 'AU', 'australian': 'AU', 'polish': 'PL', 'dutch': 'NL',
     'turkish': 'TR', 'greek': 'GR', 'czech': 'CZ', 'hungarian': 'HU',

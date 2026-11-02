@@ -382,6 +382,14 @@ def get_user_game_progress(game_id, username=None):
         return None
 
 
+def _earned_percent(awarded, players):
+    """How rare an achievement is: the share of this game's players who earned it."""
+    try:
+        return round(int(awarded) / int(players) * 100, 1)
+    except (TypeError, ValueError, ZeroDivisionError):
+        return None
+
+
 def get_user_game_progress_custom(game_id, username, api_key):
     """
     Get user's progress for a specific game using custom credentials
@@ -414,6 +422,7 @@ def get_user_game_progress_custom(game_id, username, api_key):
 
         if response is not None and response.status_code == 200:
             data = response.json()
+            players = data.get('NumDistinctPlayers')
 
             # Parse achievements
             achievements = []
@@ -435,6 +444,7 @@ def get_user_game_progress_custom(game_id, username, api_key):
                         'is_unlocked': ach.get('DateEarned') is not None,
                         'is_unlocked_hardcore': ach.get('DateEarnedHardcore') is not None,
                         'type': ach.get('type', 'standard'),
+                        'earned_percent': _earned_percent(ach.get('NumAwarded'), players),
                     })
             
             # Sort by display order
@@ -456,6 +466,7 @@ def get_user_game_progress_custom(game_id, username, api_key):
                 'image_box_art': f"https://media.retroachievements.org{data.get('ImageBoxArt')}" if data.get('ImageBoxArt') else None,
                 'achievements': achievements,
                 'achievement_count': len(achievements),
+                'player_count': players,
                 'unlocked_count': unlocked_count,
                 'unlocked_hardcore': unlocked_hardcore,
                 'total_points': total_points,

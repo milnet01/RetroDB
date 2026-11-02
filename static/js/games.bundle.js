@@ -1577,6 +1577,7 @@ const HLTBManager = {
             if (data.success && data.result) {
                 HLTBManager.pendingData[ctx.name] = {
                     hltb_id: data.result.hltb_id || null,
+                    players: data.result.players || null,
                     match_name: data.result.match_name || query,
                     match_platform: data.result.match_platform || '',
                     confidence: data.result.confidence || 0,
@@ -1683,7 +1684,9 @@ const HLTBManager = {
                 playtime: playtime,
                 match_name: pending.match_name,
                 match_platform: pending.match_platform,
-                confidence: pending.confidence
+                confidence: pending.confidence,
+                hltb_id: pending.hltb_id,
+                players: pending.players
             });
 
         savePromise
@@ -1725,6 +1728,7 @@ const HLTBManager = {
                 ${data.platform_mismatch ? `<span class="hltb-match-warning">${escapeHtml(t('Platform not found'))}</span>` : ''}
                 ${data.release_year ? `<span class="hltb-match-year">${escapeHtml(String(data.release_year))}</span>` : ''}
                 ${confidence > 0 ? `<span class="hltb-match-confidence">${escapeHtml(t('{confidence}% match', {confidence: confidence}))}</span>` : ''}
+                ${data.players ? `<span class="hltb-match-platform">${escapeHtml(t('Players who timed it: {count}', {count: data.players}))}</span>` : ''}
             </div>`;
         }
 

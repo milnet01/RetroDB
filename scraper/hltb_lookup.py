@@ -459,6 +459,7 @@ def lookup_playtime(game_title, system_folder=None, year=None, alternate_titles=
 
         return {
             'game_id': result.get('game_id'),
+            'players': result.get('comp_all_count') or None,
             'match_name': match_name,
             'match_platform': profile_platform,
             'match_confidence': round(confidence * 100),

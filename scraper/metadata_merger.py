@@ -371,6 +371,10 @@ def apply_tgdb_to_metadata(metadata, tgdb_data, db_game_id, result, fill_only=Fa
                 metadata[meta_field] = value
                 result['filled_fields'].append(f"{meta_field} (TGDB)")
 
+    # Other titles. TheGamesDB does not say where each was used.
+    alt_entries = [alt_title_entry(name, source='tgdb') for name in tgdb_data.get('alternates') or []]
+    _add_alt_titles(metadata, [entry for entry in alt_entries if entry], 'TGDB', result)
+
     # Genre
     if not metadata['genre']:
         genres = tgdb_data.get('genres', [])
@@ -543,6 +547,32 @@ def _igdb_age_rating(rating):
 # IGDB METADATA APPLICATION
 # =============================================================================
 
+def _add_alt_titles(metadata, entries, source_label, result):
+    """Merge a source's other titles into the game's, noting how many were new."""
+    if not entries:
+        return
+    before = len(metadata.get('alternate_titles') or [])
+    metadata['alternate_titles'] = merge_alt_titles(
+        metadata.get('alternate_titles'), entries, primary_title=metadata.get('title'))
+    added = len(metadata['alternate_titles']) - before
+    if added > 0:
+        result['filled_fields'].append(f'alternate_titles +{added} ({source_label})')
+
+
+def _fill_other_platforms(metadata, platforms, own_platform_id, result):
+    """IGDB's other consoles for this game, needing to know which is this one.
+    Only this console listed writes nothing: IGDB can miss a version, so that
+    does not prove 'Exclusive'."""
+    if metadata.get('other_platforms') or own_platform_id is None:
+        return
+    from scraper.scrape_ai import known_platforms
+    others = known_platforms(p.get('name') for p in _igdb_objects(platforms)
+                             if p.get('id') != own_platform_id)
+    if others:
+        metadata['other_platforms'] = others
+        result['filled_fields'].append('other_platforms (IGDB)')
+
+
 def _igdb_objects(items):
     """The expanded entries of an IGDB list. An unexpanded reference arrives as
     a bare id, and must cost that entry, not the source's whole answer."""
@@ -577,14 +607,16 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
         )
         if entry:
             alt_entries.append(entry)
-    if alt_entries:
-        before = len(metadata.get('alternate_titles') or [])
-        metadata['alternate_titles'] = merge_alt_titles(
-            metadata.get('alternate_titles'), alt_entries, primary_title=metadata.get('title')
-        )
-        added = len(metadata['alternate_titles']) - before
-        if added > 0:
-            result['filled_fields'].append(f'alternate_titles +{added} (IGDB)')
+    # A title made official for one region.
+    for local in _igdb_objects(igdb_data.get('game_localizations')):
+        region = local.get('region')
+        entry = alt_title_entry(local.get('name'), source='igdb',
+                                region=region.get('name') if isinstance(region, dict) else None)
+        if entry:
+            alt_entries.append(entry)
+    _add_alt_titles(metadata, alt_entries, 'IGDB', result)
+
+    _fill_other_platforms(metadata, igdb_data.get('platforms'), platform_id, result)
 
     # Publisher/Developer
     publishers = []
@@ -1022,14 +1054,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
         )
         if entry:
             alt_entries.append(entry)
-    if alt_entries:
-        before = len(metadata.get('alternate_titles') or [])
-        metadata['alternate_titles'] = merge_alt_titles(
-            metadata.get('alternate_titles'), alt_entries, primary_title=metadata.get('title')
-        )
-        added = len(metadata['alternate_titles']) - before
-        if added > 0:
-            result['filled_fields'].append(f'alternate_titles +{added} (ScreenScraper)')
+    _add_alt_titles(metadata, alt_entries, 'ScreenScraper', result)
 
     # Description - only fill if empty
     # Wrong-language text would stop an English source filling the field.
@@ -1241,7 +1266,13 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
     for m in medias:
         if m.get('type') == 'ss' and m.get('url'):
             _ss_candidates.append((m['url'], m.get('format', 'png')))
-    _ss_candidates = _ss_candidates[:5]
+    # Four shots and the title screen, which keeps its place in the five.
+    _ss_candidates = _ss_candidates[:4]
+    _title_url, _title_ext = _pick_media(medias, ('sstitle',), 'png', own_region)
+    if parsed_media.get('titlescreen'):
+        _title_url, _title_ext = parsed_media['titlescreen'], _url_ext(parsed_media['titlescreen'], 'png')
+    if _title_url:
+        _ss_candidates.append((_title_url, _title_ext))
 
     _jobs = []
     relisted = []

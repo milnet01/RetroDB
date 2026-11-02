@@ -10431,7 +10431,14 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.216 Free extra data from the sources: real regional dates, title screens, more titles (enhancement, M).
-- **Status**: todo
+- **Resolution** (2026-11-02): 2026-11-02: built in the open 3.35.3, tests in
+  tests/test_pass59_216_extra_data.py. Real replies read from IGDB and
+  RetroAchievements; an IGDB scrape and an ES-DE scrape saved on a
+  scratch copy. TheGamesDB was not called (no calls without asking), so
+  its titlescreen rests on its documentation. Stored rows fill on the
+  next scrape. Source IDs moved to PASS-59-217; box backs and flyers
+  split to PASS-59-225.
+- **Status**: done
 - **Source**: PASS-59-162, 2026-10-31. Table: `docs/reviews/PASS-59-162-scraper-investigation.md`.
 - **Candidates**, each a small change: ScreenScraper `dates[]` per region and `sstitle`; TheGamesDB `alternates` and `titlescreen`; ES-DE `rating` as a user score; IGDB `game_localizations` titles and its platform list for `other_platforms`; HowLongToBeat sample sizes and game ID; RetroAchievements players and rarity; source IDs so a re-scrape need not search again.
 - **Larger**: `box-2D-back` and arcade flyers need somewhere to show them.
@@ -10443,6 +10450,11 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Source**: PASS-59-162, 2026-10-31. Notes: screenscraper 8, Table 1; hltb_ra R8; tgdb Table 1.
 - **Idea**: normal matching is by title. ScreenScraper's `roms[]`, `rom` and `serialnum`, TheGamesDB's `ByGameHash` and RetroAchievements' hashes can name the exact game, region and language of a file, and say whether achievements work with this copy. `games.disc_serial` already holds serials, and discs over 100 MB are not checksummed today.
 - **Needs**: a spec, because it changes how every scrape picks its game. Would remove many wrong matches at the root (PASS-59-208).
+- **Progress** (2026-11-02): 2026-11-02: PASS-59-216 passed this item its source IDs. Only igdb_id
+  and screenscraper_id are stored; RAWG and TheGamesDB have no column;
+  no scraper reads a stored ID to skip the search. A skip would lock in
+  any wrong match stored before PASS-59-208, so the spec must say when a
+  stored ID can be trusted.
 
 ---
 
@@ -10510,6 +10522,12 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Needs**: a logo column and folder, fill-only like other media, and a way to fill rows already scraped.
 
 ---
+
+#### Pass 59.225 The back of a game's box, and arcade flyers, on the game page (enhancement, M).
+- **Status**: todo
+- **Source**: split from PASS-59-216, 2026-11-02. Whether it is in v4.0.0 is the user's call.
+- **What the sources send**: ScreenScraper `box-2D-back` (seen in samples, seven regions; parsed to `boxart_back`, unused); TheGamesDB boxart `side: "back"`; ScreenScraper `flyer` (documentation only, in no sample).
+- **Needs**: a column and folder, and somewhere on the game page to show them. `games.box_faces` holds Slipcase imports and only `services/box_faces.py` writes it, so a scraped back needs a decision: its own column, or a change to that contract.
 
 ## Done index
 

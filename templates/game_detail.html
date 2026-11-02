@@ -586,9 +586,10 @@
                 <div id="hltbSaved" style="{% if game.playtime_estimate %}display: block;{% else %}display: none;{% endif %}">
                     {% if game.hltb_match_name %}
                     <div class="hltb-match-header">
-                        <span class="hltb-match-title">{{ game.hltb_match_name }}</span>
+                        <span class="hltb-match-title">{% if game.hltb_id %}<a href="https://howlongtobeat.com/game/{{ game.hltb_id }}" target="_blank" rel="noopener noreferrer">{{ game.hltb_match_name }}</a>{% else %}{{ game.hltb_match_name }}{% endif %}</span>
                         {% if game.hltb_match_platform %}<span class="hltb-match-platform">{{ game.hltb_match_platform }}</span>{% endif %}
                         {% if game.hltb_match_confidence %}<span class="hltb-match-confidence">{% trans pct=[(game.hltb_match_confidence * 100) | round | int, 100] | min %}{{ pct }}% match{% endtrans %}</span>{% endif %}
+                        {% if game.hltb_players %}<span class="hltb-match-platform">{{ _('Players who timed it: %(count)s', count=game.hltb_players|format_number) }}</span>{% endif %}
                     </div>
                     {% endif %}
                     <div class="hltb-results">

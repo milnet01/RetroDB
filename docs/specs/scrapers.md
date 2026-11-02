@@ -93,6 +93,13 @@ Tie-breakers:
 
 ---
 
+### Extra data each source gives (PASS-59-216)
+
+- **Title screens.** ScreenScraper's `sstitle` and TheGamesDB's `titlescreen` join `screenshots`. Each merge takes up to five shots and keeps one place for the title screen. TheGamesDB's has only its documentation behind it: no real reply has been seen.
+- **Other titles.** IGDB's `game_localizations` and TheGamesDB's `alternates` join `alternate_titles`. TheGamesDB does not say where a title was used.
+- **Other consoles.** IGDB's `platforms`, less this console, fill an empty `other_platforms`, spelled by `scrape_ai.known_platforms`. A name the schema lacks is left out. One platform writes nothing: IGDB can miss a version, so it does not prove `Exclusive`.
+- **ES-DE's `rating`.** It fills `user_score` only when no online source gave one, and before the AI is asked. ES-DE does not record who set it; it may be the owner's own.
+
 ## 5. Fill-only invariant
 
 **The rule (scraper UPDATEs):** every `?` bound to a metadata-source value
@@ -202,6 +209,8 @@ The site sends no developer in a search reply. Requests are at least a second ap
 Saved matches are checked only when a person presses Check Saved Play Times in ROM Tools (`stored_match_problem`). No game changes until a person decides: Approve keeps the time and sets `games.hltb_match_reviewed`, so the check does not ask again; Reject clears it.
 
 `games.playtime_estimate` is text. Anything adding it up uses `services/playtime.py`.
+
+A saved match keeps HowLongToBeat's game ID (`games.hltb_id`), which links to its page, and `comp_all_count` (`games.hltb_players`), shown as how many players timed it. A match saved before PASS-59-216 has neither until it is looked up again.
 
 ## 7. Title normalization
 

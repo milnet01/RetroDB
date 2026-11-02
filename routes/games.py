@@ -676,6 +676,7 @@ def game_detail(game_id):
                             user_score = NULL, user_score_count = NULL, units_sold = NULL,
                             release_dates = NULL,
                             hltb_match_name = NULL, hltb_match_platform = NULL, hltb_match_confidence = NULL,
+                            hltb_id = NULL, hltb_players = NULL,
                             scraped = 0, title_locked = 0
                         WHERE id = ?
                     """, (game_id,))

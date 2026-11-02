@@ -643,7 +643,7 @@ def fetch_game_details(game_id):
         url = f"{TGDB_API_BASE}/v1/Games/ByGameID"
         params = {
             'id': game_id,
-            'fields': 'players,publishers,genres,overview,rating,platform,developers',
+            'fields': 'players,publishers,genres,overview,rating,platform,developers,alternates',
             'include': 'boxart,platform'
         }
 
@@ -695,6 +695,7 @@ def fetch_game_details(game_id):
                         'players': game.get('players'),
                         'rating': game.get('rating', ''),
                         'summary': game.get('overview', ''),
+                        'alternates': game.get('alternates') or [],
                         'boxart_url': boxart_url,
                         'screenshot_urls': screenshot_urls,
                         'fanart_urls': fanart_urls,
@@ -714,16 +715,18 @@ def fetch_game_details(game_id):
 def _fetch_game_images(game_id):
     """Fetch screenshots and fanart for a game from the Images endpoint.
 
-    Returns (screenshot_urls, fanart_urls) tuple.
+    Returns (screenshot_urls, fanart_urls) tuple. Title screens count as
+    screenshots and come after them, as ES-DE's do.
     """
     screenshot_urls = []
+    titlescreen_urls = []
     fanart_urls = []
 
     try:
         images_url = f"{TGDB_API_BASE}/v1/Games/Images"
         images_params = {
             'games_id': game_id,
-            'filter[type]': 'screenshot,fanart'
+            'filter[type]': 'screenshot,titlescreen,fanart'
         }
         images_response = _tgdb_request(images_url, params=images_params, timeout=15)
         if images_response and images_response.status_code == 200:
@@ -749,9 +752,13 @@ def _fetch_game_images(game_id):
                             img_type = img.get('type', '').lower()
                             if 'screenshot' in img_type:
                                 screenshot_urls.append(images_base_url + img.get('filename', ''))
+                            elif 'titlescreen' in img_type:
+                                titlescreen_urls.append(images_base_url + img.get('filename', ''))
                             elif 'fanart' in img_type:
                                 fanart_urls.append(images_base_url + img.get('filename', ''))
 
+                    # The merge takes five, so a title screen keeps a place.
+                    screenshot_urls = screenshot_urls[:4] + titlescreen_urls[:1] + screenshot_urls[4:]
                     logger.info(f"Found {len(screenshot_urls)} screenshots, {len(fanart_urls)} fanart for game {game_id}")
     except Exception as e:
         logger.warning(f"Failed to fetch images: {e}")

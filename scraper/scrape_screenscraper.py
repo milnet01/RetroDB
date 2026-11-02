@@ -594,6 +594,7 @@ def parse_game_data(jeu, own_region=None):
     ordered_dates = by_region(dates, own_region)
     if ordered_dates:
         result["release_date"] = ordered_dates[0].get("text", "")
+    result["dates"] = dates
     
     # Get developer
     # The `{}` / `""` defaults do NOT fire when the key is present with an
