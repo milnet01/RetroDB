@@ -16,6 +16,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import IMAGE_PATH, STATIC_PATH
 from scraper.base_scraper import get_scraper_conn
 from scraper.image_dedup import get_existing_screenshot_hashes, keep_screenshot_if_unique
+from scraper.match_scorer import sequel_numbers_agree
 
 # Import settings_manager for dynamic path resolution
 # (config.py has empty defaults; actual paths live in data/settings.json)
@@ -534,6 +535,9 @@ def search_esde_games(title, system_folder, limit=10):
     for game in games:
         game_name = game.get('name', '')
         game_path = game.get('path', '')
+
+        if not sequel_numbers_agree(game_name, title):
+            continue
         
         # Get filename from path for matching
         filename = os.path.basename(game_path) if game_path else ''

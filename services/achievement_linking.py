@@ -58,7 +58,7 @@ def canonical_ra_word(word):
     PASS-59-110: sequel numbers are part of a title's identity, so "Doom II"
     and "Doom 2" must compare equal and "Doom" must not.
     """
-    if word.isdigit():
+    if word.isdecimal():  # isdigit() also takes "²", which int() refuses
         return str(int(word))
     if _RA_ROMAN.match(word):
         values = [_ROMAN_VALUES[c] for c in word]

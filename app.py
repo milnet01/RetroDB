@@ -1746,7 +1746,8 @@ def setup_api():
 
     scraper_settings['api_keys'] = api_keys
     if 'priority' not in scraper_settings:
-        scraper_settings['priority'] = ['esde', 'screenscraper', 'rawg', 'tgdb', 'igdb']
+        from scraper.scraper_manager import DEFAULT_SCRAPER_PRIORITY
+        scraper_settings['priority'] = list(DEFAULT_SCRAPER_PRIORITY)
     if 'enabled' not in scraper_settings:
         scraper_settings['enabled'] = {'esde': True, 'tgdb': True, 'igdb': True, 'rawg': True, 'screenscraper': True}
 

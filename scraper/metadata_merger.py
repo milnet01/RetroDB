@@ -31,7 +31,9 @@ from services.image_utils import (
     preferred_image_extension,
     finalize_downloaded_image,
 )
-from services.normalization import modes_from_igdb, normalize_genre, normalize_modes, split_labels
+from services.normalization import (
+    modes_from_igdb, multiplayer_for_platform, normalize_genre, normalize_modes, split_labels,
+)
 from services.release_dates import (
     igdb_regional_dates,
     is_fuller_date,
@@ -632,19 +634,18 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
         if modes:
             names = [m.get('name', '') for m in modes]
             fill_labels(metadata, result, 'modes',
-                        modes_from_igdb(names, igdb_data.get('multiplayer_modes')), 'IGDB')
+                        modes_from_igdb(names, igdb_data.get('multiplayer_modes'), platform_id),
+                        'IGDB')
 
     # Players
     if not metadata['players']:
-        multi = igdb_data.get('multiplayer_modes', [])
-        if multi:
-            # `or 0`: IGDB may send an explicit null, which max() cannot
-            # compare with an int. No offline count leaves the field open.
-            max_p = max(((m.get('offlinemax') or 0) for m in multi if isinstance(m, dict)),
-                        default=0)
-            if max_p:
-                metadata['players'] = max_p
-                result['filled_fields'].append('players (IGDB)')
+        # `or 0`: IGDB may send an explicit null, which max() cannot
+        # compare with an int. No offline count leaves the field open.
+        multi = multiplayer_for_platform(igdb_data.get('multiplayer_modes'), platform_id)
+        max_p = max(((m.get('offlinemax') or 0) for m in multi), default=0)
+        if max_p:
+            metadata['players'] = max_p
+            result['filled_fields'].append('players (IGDB)')
 
     # Age ratings — see _igdb_age_rating for the two IGDB shapes.
     for rating in igdb_data.get('age_ratings') or []:

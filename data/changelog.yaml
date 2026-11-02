@@ -2,6 +2,24 @@
   date: 2026-11-02
   tags:
   - type: fix
+    label: Scraping no longer takes a sequel for the game you have. Street Fighter II no longer gets details from Street Fighter, nor Sonic the Hedgehog from Sonic 2, when the exact game is missing
+  - type: fix
+    label: A bulk scrape now accepts a match only if its title really matches. The right console and a release date can no longer add up to a pass on their own
+  - type: fix
+    label: IGDB mods, DLC, bundles and updates no longer match a game, unless your ROM has exactly that name
+  - type: fix
+    label: RAWG keeps one record for all versions of a game, so when it covers several consoles it no longer supplies developer, publisher, age rating or multiplayer modes. It no longer guesses a player count at all
+  - type: fix
+    label: IGDB player counts and multiplayer modes now come from the game's own console
+  - type: fix
+    label: When sources match equally well, your scraper order now decides. RAWG no longer scores extra for having a picture or a Metacritic score, and new installs list RAWG last
+  - type: fix
+    label: RAWG is no longer searched for Commodore 64 and DOS games, because it files them under Amiga and PC, so another platform's game could match
+  - type: fix
+    label: A ScreenScraper result you pick is now always the game you get, even after leaving the results open for more than 10 minutes
+  - type: fix
+    label: Accents and punctuation no longer lower a title match, so Pokémon finds Pokemon and R.B.I. finds RBI
+  - type: fix
     label: A release date now shows only as much as its source knows. A game known only by its year shows that year, not a made-up 1 January or 31 December
   - type: fix
     label: IGDB and RAWG dates now belong to the game's own console, and IGDB's to its own region, so a USA copy no longer shows the Japanese date or a port the year of the original

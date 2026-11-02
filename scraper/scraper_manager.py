@@ -48,6 +48,7 @@ from scraper.scraper_cache import (
     get_cached_screenscraper_result,
 )
 from scraper.match_scorer import (
+    MIN_TITLE_SCORE,
     calculate_ss_score,
     calculate_tgdb_score,
     calculate_igdb_score,
@@ -70,6 +71,11 @@ SCRAPER_SETTINGS_FILE = os.path.join(
 # A score of 200 means roughly "close title match with platform confirmation" —
 # anything below is likely the wrong game. Configurable via Settings page.
 MIN_MATCH_SCORE = 200
+
+# Source order when the user has saved none. ScreenScraper first as preferred by
+# the user; RAWG last, having no covers and no per-version data. The Reset button
+# in templates/settings.html and templates/game_detail.html's fallback repeat it.
+DEFAULT_SCRAPER_PRIORITY = ['screenscraper', 'esde', 'tgdb', 'igdb', 'rawg']
 
 _settings_cache = None
 _settings_cache_time = 0
@@ -114,9 +120,8 @@ def _load_scraper_settings_locked():
     if _settings_cache is not None and (now - _settings_cache_time) < _SETTINGS_CACHE_TTL:
         return _settings_cache
 
-    # Defaults - ScreenScraper first as preferred by user
     defaults = {
-        'priority': ['screenscraper', 'esde', 'tgdb', 'igdb', 'rawg'],
+        'priority': list(DEFAULT_SCRAPER_PRIORITY),
         'enabled': {
             'esde': getattr(config, 'SCRAPER_ESDE_ENABLED', True) if config else True,
             'tgdb': getattr(config, 'SCRAPER_TGDB_ENABLED', True) if config else True,
@@ -209,8 +214,11 @@ def passes_match_filter(result, match_settings):
             return False
         return True
     else:
-        # Score mode (default)
-        return result.get('score', 0) >= match_settings['min_score']
+        # Score mode (default). Platform and bonus points alone reach the
+        # minimum, so the title has to match as well.
+        title_score = result.get('title_score', result.get('score', 0))
+        return (result.get('score', 0) >= match_settings['min_score']
+                and title_score >= MIN_TITLE_SCORE)
 
 
 def get_api_key(service, key_name=None):

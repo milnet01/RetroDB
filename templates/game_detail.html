@@ -5131,7 +5131,7 @@ async function performSearch(event) {
         const settingsResponse = await fetch('/api/scraper-settings');
         const scraperSettings = await settingsResponse.json();
         
-        const priority = scraperSettings.priority || ['esde', 'tgdb', 'igdb', 'rawg', 'screenscraper'];
+        const priority = scraperSettings.priority || ['screenscraper', 'esde', 'tgdb', 'igdb', 'rawg'];
         const enabled = scraperSettings.enabled || {};
         
         // Update subtitle with enabled scrapers

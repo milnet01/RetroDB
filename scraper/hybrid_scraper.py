@@ -57,7 +57,8 @@ from scraper.metadata_normalizer import (
     normalize_title,
     normalize_esrb_rating,
 )
-from scraper.match_scorer import calculate_title_match_score
+from scraper.match_scorer import MIN_TITLE_SCORE, calculate_title_match_score
+from scraper.scraper_manager import DEFAULT_SCRAPER_PRIORITY
 from scraper.ss_regions import own_region as game_own_region
 from scraper.scrape_rawg import platform_id as rawg_platform_id
 
@@ -74,18 +75,19 @@ except ImportError:
 # FALLBACK BEST-MATCH SELECTION
 # =============================================================================
 
-def _pick_best_fallback(results, game_title, min_title_score=80):
+def _pick_best_fallback(results, game_title, min_title_score=MIN_TITLE_SCORE):
     """Pick the best-matching result from a fallback scraper search using title scoring.
 
     Returns the single best result dict, or None if no results or if the best
     match doesn't meet the minimum title score threshold.  This prevents
     wrong-game matches (e.g. "Alan Wake II" when searching "Alan Wake Remastered")
-    from polluting a game's screenshots/metadata.
+    from polluting a game's screenshots/metadata. A result a source says is for
+    another console is never picked.
 
     Args:
         results: List of search result dicts.
         game_title: The title to match against.
-        min_title_score: Minimum title match score to accept (default 80).
+        min_title_score: Minimum title match score to accept.
     """
     if not results:
         return None
@@ -93,6 +95,8 @@ def _pick_best_fallback(results, game_title, min_title_score=80):
     best = None
     best_score = -1
     for r in results:
+        if r.get('platform_match') is False:
+            continue
         name = r.get('name', r.get('game_title', ''))
         # ScreenScraper raw results use 'noms' list instead of 'name'
         if not name and 'noms' in r:
@@ -266,7 +270,7 @@ def fetch_igdb_extended(game_id):
                genres.name, age_ratings.category, age_ratings.rating,
                age_ratings.organization.name, age_ratings.rating_category.rating,
                game_modes.name, player_perspectives.name,
-               multiplayer_modes.offlinemax, multiplayer_modes.onlinemax,
+               multiplayer_modes.platform, multiplayer_modes.offlinemax, multiplayer_modes.onlinemax,
                multiplayer_modes.campaigncoop, multiplayer_modes.splitscreen,
                multiplayer_modes.offlinecoop, multiplayer_modes.onlinecoop,
                summary, storyline, cover.url, screenshots.url, artworks.url,
@@ -846,7 +850,7 @@ def _fallback_order(primary_source, sources_data, restrict_to_selected,
     With `restrict_to_selected`, only the user-selected secondary_sources
     (plus AI, always allowed for gap-filling); none selected leaves AI."""
     fallback_settings = load_scraper_settings()
-    user_priority = fallback_settings.get('priority', ['screenscraper', 'esde', 'tgdb', 'igdb'])
+    user_priority = fallback_settings.get('priority', DEFAULT_SCRAPER_PRIORITY)
     fallback_enabled = fallback_settings.get('enabled', {})
 
     # Map internal names to priority list names
@@ -1088,6 +1092,25 @@ def _fetch_rawg(lookup):
     return fetch_rawg(rawg_id) if rawg_id else None
 
 
+def _ss_record_by_id(ss_id, keys):
+    """ScreenScraper's whole record for "gameid:systemid": the one kept from the
+    search when it is still cached, else asked for by id, so a pick is never
+    swapped for another game. None when the service has no such record."""
+    from scraper.scraper_manager import get_cached_screenscraper_result
+    from scraper.scrape_screenscraper import get_game_by_id
+    game_id, _, system_id = str(ss_id).partition(':')
+    system_id = system_id or None
+    cached = get_cached_screenscraper_result(game_id, system_id)
+    if cached:
+        logger.info(f"Using cached ScreenScraper result (ID: {ss_id})")
+        return cached
+    logger.info(f"ScreenScraper cache miss for {ss_id}: fetching by id")
+    return get_game_by_id(
+        game_id, keys.get('screenscraper_username', ''), keys.get('screenscraper_password', ''),
+        keys.get('screenscraper_devid', ''), keys.get('screenscraper_devpassword', ''),
+        system_id=system_id)
+
+
 def _fetch_screenscraper(lookup):
     keys = lookup['api_keys']
     ss_username = keys.get('screenscraper_username', '')
@@ -1099,18 +1122,12 @@ def _fetch_screenscraper(lookup):
     game_title, folder = lookup['title'], lookup['system_folder']
     logger.info(f"Trying ScreenScraper fallback for: '{game_title}'")
 
-    # First check if we have a cached result from the initial search
+    # A result already chosen from a search is fetched as that game.
     ss_info = _secondary_for('screenscraper', lookup)
     if ss_info and ss_info.get('id'):
-        from scraper.scraper_manager import get_cached_screenscraper_result
-        ss_id_parts = str(ss_info['id']).split(':')
-        ss_cached = get_cached_screenscraper_result(
-            ss_id_parts[0],
-            ss_id_parts[1] if len(ss_id_parts) > 1 else None
-        )
-        if ss_cached:
-            logger.info(f"Using cached ScreenScraper result from initial search (ID: {ss_info['id']})")
-            return ss_cached
+        ss_record = _ss_record_by_id(ss_info['id'], keys)
+        if ss_record:
+            return ss_record
 
     if not get_system_id(folder):
         logger.warning(f"ScreenScraper fallback: no system ID found for {folder}")
@@ -1597,45 +1614,16 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
 
         elif primary_source == 'screenscraper':
             try:
-                from scraper.scraper_manager import get_cached_screenscraper_result
-                settings = load_scraper_settings()
-                api_keys = settings.get('api_keys', {})
-                ss_username = api_keys.get('screenscraper_username', '')
-                ss_password = api_keys.get('screenscraper_password', '')
-
-                if ss_username and ss_password:
-                    # Parse gameid:systemid format
-                    ss_game_id = primary_id
-                    ss_system_id = None
-                    if ':' in str(primary_id):
-                        parts = str(primary_id).split(':')
-                        ss_game_id = parts[0]
-                        ss_system_id = parts[1] if len(parts) > 1 else None
-
-                    # Try to get cached search result first (ScreenScraper API doesn't support fetch by ID)
-                    ss_data = get_cached_screenscraper_result(ss_game_id, ss_system_id)
-
+                api_keys = load_scraper_settings().get('api_keys', {})
+                if api_keys.get('screenscraper_username') and api_keys.get('screenscraper_password'):
+                    ss_data = _ss_record_by_id(primary_id, api_keys)
                     if ss_data:
-                        logger.info(f"Using cached ScreenScraper data for game {ss_game_id}")
                         sources_data['screenscraper'] = ss_data
                         apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result,
                                                         own_region=game_own_region(game))
                         result['sources_used'].append('ScreenScraper')
                     else:
-                        # Cache expired or not found - try ROM-based lookup as fallback
-                        logger.warning(f"ScreenScraper cache miss for {ss_game_id}:{ss_system_id}, trying ROM-based lookup")
-                        from scraper.scrape_screenscraper import get_game_info
-                        rom_path = game.get('rom_path', '')
-                        if rom_path and ss_system_id:
-                            ss_devid = api_keys.get('screenscraper_devid', '')
-                            ss_devpassword = api_keys.get('screenscraper_devpassword', '')
-                            ss_data = get_game_info(rom_path, system_folder, ss_username, ss_password, ss_devid, ss_devpassword,
-                                                    own_region=game_own_region(game))
-                            if ss_data and 'error' not in ss_data:
-                                sources_data['screenscraper'] = ss_data
-                                apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result,
-                                                                own_region=game_own_region(game))
-                                result['sources_used'].append('ScreenScraper')
+                        logger.warning(f"ScreenScraper has no record for {primary_id}")
             except Exception as e:
                 logger.warning(f"Primary ScreenScraper fetch/apply failed for {primary_id}: {e}; "
                                "falling through to gap-fill")

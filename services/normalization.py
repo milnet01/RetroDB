@@ -306,14 +306,26 @@ def modes_from_player_count(players):
     return 'Local Multiplayer' if needs_two else 'Single-Player, Local Multiplayer'
 
 
-def modes_from_igdb(mode_names, multiplayer_modes):
+def multiplayer_for_platform(multiplayer_modes, platform_id):
+    """IGDB's multiplayer details for this console. Each entry names its platform;
+    one that does not (or an unknown console) is kept."""
+    details = [m for m in multiplayer_modes or [] if isinstance(m, dict)]
+    if not platform_id:
+        return details
+    return [m for m in details if m.get('platform') in (None, platform_id)]
+
+
+def modes_from_igdb(mode_names, multiplayer_modes, platform_id=None):
     """Canonical modes from IGDB's game_modes names and multiplayer_modes details.
 
     IGDB's bare "Multiplayer" says nothing of where people play, and its details
     do: an online-only game is not couch multiplayer. With no details, the bare
-    name maps to Local Multiplayer as before.
+    name maps to Local Multiplayer as before. With details only for other
+    consoles, multiplayer may not be on this one, so the name is dropped.
     """
-    details = [m for m in multiplayer_modes or [] if isinstance(m, dict)]
+    details = multiplayer_for_platform(multiplayer_modes, platform_id)
+    if multiplayer_modes and not details:
+        mode_names = [n for n in mode_names if n.strip().lower() != 'multiplayer']
     found = []
     if any(m.get('offlinemax') for m in details):
         found.append('Local Multiplayer')

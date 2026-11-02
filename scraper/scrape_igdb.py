@@ -16,6 +16,7 @@ import config as _config
 
 from services.release_dates import igdb_regional_dates, pick_release_date
 from scraper.base_scraper import http_post, download_image, get_scraper_conn, per_game_screenshots_fit
+from scraper.match_scorer import EXACT_TITLE_SCORE, calculate_title_match_score
 
 logger = logging.getLogger(__name__)
 
@@ -382,6 +383,23 @@ def get_platform_id(system_name):
 # SEARCH GAMES
 # =============================================================================
 
+_SEARCH_FIELDS = ('id, name, game_type, first_release_date, platforms.id, platforms.name, '
+                  'platforms.abbreviation, release_dates.region, release_dates.platform, '
+                  'summary, alternative_names.name, alternative_names.comment')
+
+# IGDB game types that are not a game of their own: DLC, expansion, bundle, mod,
+# episode, season, fork, pack, update. IGDB lists them with the games it files
+# under the same platform, and a hack can outrank the game it modifies.
+_ADD_ON_GAME_TYPES = frozenset({1, 2, 3, 5, 6, 7, 12, 13, 14})
+
+
+def _is_someone_elses_add_on(game, title):
+    """True for an add-on the ROM is not named after. A ROM that is itself a hack
+    or an expansion still finds its own record."""
+    return (game.get('game_type') in _ADD_ON_GAME_TYPES
+            and calculate_title_match_score(game.get('name', ''), title) < EXACT_TITLE_SCORE)
+
+
 def search_games(title, system_name=None, limit=10):
     """Search games on IGDB using proper search endpoint"""
     try:
@@ -428,9 +446,7 @@ def search_games(title, system_name=None, limit=10):
         # Build query using search command
         body = f"""
         search "{search_title}";
-        fields id, name, first_release_date, platforms.id, platforms.name, platforms.abbreviation,
-               release_dates.region, release_dates.platform, summary,
-               alternative_names.name, alternative_names.comment;
+        fields {_SEARCH_FIELDS};
         where {where_clause};
         limit {limit};
         """
@@ -469,9 +485,7 @@ def search_games(title, system_name=None, limit=10):
                     vp_where = f'platforms = ({platform_id})'
                 vp_body = f"""
                 search "{search_title}";
-                fields id, name, first_release_date, platforms.id, platforms.name, platforms.abbreviation,
-                       release_dates.region, release_dates.platform, summary,
-                       alternative_names.name, alternative_names.comment;
+                fields {_SEARCH_FIELDS};
                 {"where " + vp_where + ";" if vp_where else ""}
                 limit {limit};
                 """
@@ -492,9 +506,7 @@ def search_games(title, system_name=None, limit=10):
             # Strategy 1: Try with name regex as fallback (some titles work better this way)
             logger.info(f"IGDB: Trying regex fallback for '{search_title}'")
             body = f"""
-            fields id, name, first_release_date, platforms.id, platforms.name, platforms.abbreviation,
-                   release_dates.region, release_dates.platform, summary,
-                   alternative_names.name, alternative_names.comment;
+            fields {_SEARCH_FIELDS};
             where name ~ *"{search_title}"* & version_parent = null{platform_where};
             limit {limit};
             """
@@ -508,14 +520,14 @@ def search_games(title, system_name=None, limit=10):
                 logger.info(f"IGDB: Trying short title search: '{short_title}'")
                 body = f"""
                 search "{short_title}";
-                fields id, name, first_release_date, platforms.id, platforms.name, platforms.abbreviation,
-                       release_dates.region, release_dates.platform, summary,
-                       alternative_names.name, alternative_names.comment;
+                fields {_SEARCH_FIELDS};
                 where version_parent = null{platform_where};
                 limit {limit};
                 """
                 results = igdb_request("games", body, token)
-        
+
+        results = [g for g in results if not _is_someone_elses_add_on(g, title)]
+
         # IGDB region codes
         region_map = {
             1: 'Europe', 2: 'USA', 3: 'Australia', 4: 'New Zealand',
@@ -619,7 +631,7 @@ def fetch_game_details(game_id):
                genres.name, age_ratings.category, age_ratings.rating,
                age_ratings.organization.name, age_ratings.rating_category.rating,
                game_modes.name, player_perspectives.name,
-               multiplayer_modes.offlinemax, multiplayer_modes.onlinemax,
+               multiplayer_modes.platform, multiplayer_modes.offlinemax, multiplayer_modes.onlinemax,
                multiplayer_modes.campaigncoop, multiplayer_modes.splitscreen,
                multiplayer_modes.offlinecoop, multiplayer_modes.onlinecoop,
                summary, storyline, cover.url, screenshots.url, artworks.url,
@@ -697,7 +709,7 @@ def apply_metadata_to_game(db_game_id, igdb_data, system_folder=None):
         # "Role-playing (RPG)" instead of the canonical "RPG", fragmenting the
         # genre filter. The hybrid path already normalizes; do it here too so
         # the contract holds regardless of caller.
-        from services.normalization import modes_from_igdb, normalize_genre
+        from services.normalization import modes_from_igdb, multiplayer_for_platform, normalize_genre
         genres = igdb_data.get('genres', [])
         # isinstance guard, as at the company loop above: an unexpanded
         # reference arrives as a bare int and ['name'] raised TypeError,
@@ -771,10 +783,12 @@ def apply_metadata_to_game(db_game_id, igdb_data, system_folder=None):
             rating = pegi_rating
         
         # Game modes
+        platform_id = get_platform_id(system_folder) if system_folder else None
         modes = modes_from_igdb(
             [g['name'] for g in igdb_data.get('game_modes', [])
              if isinstance(g, dict) and g.get('name')],
             igdb_data.get('multiplayer_modes'),
+            platform_id,
         )
         
         # Players — Pass 40.6: leave as None when IGDB has no value so
@@ -782,7 +796,7 @@ def apply_metadata_to_game(db_game_id, igdb_data, system_folder=None):
         # default of 1 silently overwrote curated multi-player counts on
         # every re-scrape because COALESCE(1, players) is always 1.
         players = None
-        multiplayer_modes = igdb_data.get('multiplayer_modes', [])
+        multiplayer_modes = multiplayer_for_platform(igdb_data.get('multiplayer_modes'), platform_id)
         if multiplayer_modes:
             # `.get('offlinemax', 0)` returns None — not the default — when
             # IGDB sends an explicit null, and max() then raises comparing

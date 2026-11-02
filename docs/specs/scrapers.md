@@ -27,7 +27,7 @@ See also: CLAUDE.md "Scraper fill-only invariant" and "Schema / data shapes"; [`
 | ES-DE             | `scraper/scrape_esde.py`          | local-gamelist  | No (reads ES-DE folders on disk)                                          | Primary metadata + media when user has scraped via ES-DE; canonical `apply_*` pattern (see §5)    |
 | TheGamesDB        | `scraper/scrape_thegamesdb.py`    | remote          | `tgdb_apikey`                                                             | Metadata + boxart + screenshots + fanart; platform-specific covers                                |
 | IGDB              | `scraper/scrape_igdb.py`          | remote          | `igdb_client_id` + `igdb_client_secret`                                   | Richest metadata (genres, modes, perspectives, age ratings × 7 systems, franchise, similar games) |
-| RAWG.io           | `scraper/scrape_rawg.py`          | remote          | `rawg` (settings key; falls back to `RAWG_API_KEY` in `config.py`)        | Metacritic critic score, user score, ESRB; background picture as fanart, no boxart                |
+| RAWG.io           | `scraper/scrape_rawg.py`          | remote          | `rawg` (settings key; falls back to `RAWG_API_KEY` in `config.py`)        | Metacritic critic score, user score; background picture as fanart, no boxart. Credits, ESRB and multiplayer modes only from a record on one platform (PASS-59-208); never a player count |
 | ScreenScraper     | `scraper/scrape_screenscraper.py` | remote          | `screenscraper_username` + `_password` + `_devid` + `_devpassword`        | Retro-specific metadata, regional alt titles, system-specific media (boxart 3D, video, manual)    |
 | Steam             | `scraper/scrape_steam.py`         | remote          | `steam_api_key` + `steam_id` (store app details need no key)              | Per-user owned-games import and achievement sync. Not a source in the hybrid walk.                |
 | Xbox              | `scraper/scrape_xbox.py`          | remote          | `xbox_client_id` + `xbox_client_secret`, then a per-user Microsoft OAuth2 sign-in (XBL + XSTS tokens) | Per-user title import and achievement sync. Not a source in the hybrid walk. |
@@ -68,7 +68,7 @@ The single UPDATE is **not** wrapped in a try/except fallback: a failure means `
 
 ## 4. Merge priority
 
-Priority is the user's configured scraper order (Settings -> Scrapers, `fallback_settings['priority']`, default `screenscraper -> esde -> tgdb -> igdb`). There is no per-field allow-list. Within a hybrid run:
+Priority is the user's configured scraper order (Settings -> Scrapers, `fallback_settings['priority']`, default `scraper_manager.DEFAULT_SCRAPER_PRIORITY`: `screenscraper -> esde -> tgdb -> igdb -> rawg`). There is no per-field allow-list. Within a hybrid run:
 
 1. The **primary** source applies first, wherever it sits in that list.
 2. The remaining enabled scrapers then run in the user's order, minus the primary and any disabled one (`_run_fallbacks`).
@@ -162,7 +162,7 @@ The hybrid orchestrator's UPDATE (`hybrid_scraper.py::_save_game_row`) is the sa
 
 ## 6. Match scoring
 
-`scraper/match_scorer.py::calculate_title_match_score(result_title, search_title) -> int` is the shared title scorer for every source. It runs both titles through `title_normalizer.strip_title_noise` (drops region tags, disc markers, edition tags, version tags), `services/game_utils.py::normalize_article_for_comparison` (moves a trailing article to the front: `Legend of Zelda, The` and `Legend of Zelda, The: Ocarina of Time` compare as `The Legend of Zelda…`; English `The`/`A`/`An` only) and `normalize_for_matching` (lowercases, strips possessive `'s`, drops apostrophe variants, replaces colons/dashes/slashes with spaces, normalises Roman numerals II/VII → 2/7) before comparing. A title left empty by that (it was only tags, such as `(USA)`) scores 0.
+`scraper/match_scorer.py::calculate_title_match_score(result_title, search_title) -> int` is the shared title scorer for every source. It runs both titles through `title_normalizer.strip_title_noise` (drops region tags, disc markers, edition tags, version tags), `services/game_utils.py::normalize_article_for_comparison` (moves a trailing article to the front: `Legend of Zelda, The` and `Legend of Zelda, The: Ocarina of Time` compare as `The Legend of Zelda…`; English `The`/`A`/`An` only) drops accents, apostrophes and the marks `.`, `!` and `?` (`Pokémon` is `Pokemon`, `Conker's` is `Conkers`, `R.B.I.` is `RBI`), then `normalize_for_matching` (lowercases, replaces colons/dashes/slashes with spaces, normalises Roman numerals II/VII → 2/7) before comparing. A title left empty by that (it was only tags, such as `(USA)`) scores 0.
 
 Score ladder (pure title similarity, 0-350; the bands below are maxima, not floors):
 
@@ -173,20 +173,24 @@ Score ladder (pure title similarity, 0-350; the bands below are maxima, not floo
 5. Partial overlap → up to **120** (Jaccard-weighted by search coverage)
 6. + word-order LCS bonus → **0-40**
 
+A different sequel number caps a non-exact match at **40** (PASS-59-208): `Doom` and `Doom II`, `FIFA 98` and `FIFA 99`. A `1` does not count. A number only one title has is forgiven when the words after it are all in the other title, because sources drop it from a subtitle (`Golden Sun 2 - The Lost Age`, `Golden Sun: The Lost Age`). ES-DE's search has its own scoring and leaves such a game out with `sequel_numbers_agree`.
+
 Per-source extras layer on top via `calculate_<src>_score`:
 
 - **+150 if `platform_match=True`** — the result's platform matched the system we searched on. This is the dominant signal; without it, even a perfect title from the wrong platform sits below a fuzzy match on the right platform.
-- **+10-20 if `release_date` present** — recency / completeness signal.
+- **+10 if `release_date` present** — completeness signal, the same for every source.
 - **+10-20 for region** — `match_scorer.region_bonus`: +20 for the user's `default_region` or World, +10 for the next region in `version_groups.preferred_regions()` (by default Europe for a USA user). TGDB names and ScreenScraper codes (`us`, `eu`, `uk`, `jp`, `wor`) map to the setting names first. IGDB has no region signal in search.
-- **RAWG only**: +15 if Metacritic present, +10 if image present.
+
+No source earns more for being richer (PASS-59-208), so equal titles on one platform are decided by the user's order.
 
 After per-source scoring, `ScraperManager.search_games` adds a **priority boost** based on the user's `priority` list: `boost = (len(priority) - idx) * 10` — first source +50, second +40, third +30, etc. for a five-source priority list. Meaningful enough to break ties, not large enough to override a clear title/platform mismatch.
 
 Selection thresholds:
 
-- `_pick_best_fallback(results, game_title, min_title_score=80)` — used for fresh fallback searches; rejects matches below 80 (avoids wrong-game pollution).
+- `match_scorer.MIN_TITLE_SCORE` (80) — the title score a match must reach on its own. `_pick_best_fallback` uses it for fresh fallback searches, and never picks a result whose `platform_match` is false.
 - `_pick_best_secondary(candidates, target_title, min_title_score=100)` — used when the user pre-selected secondaries in the search modal; threshold 100 because the user already endorsed *some* result from this source, so we expect a closer match.
-- `scraper_manager.MIN_MATCH_SCORE = 200` — the bulk-scrape auto-selection floor (the "score" mode in match settings). Below this, the bulk scraper does not auto-accept the top match.
+- `scraper_manager.MIN_MATCH_SCORE = 200` — the bulk-scrape auto-selection floor (the "score" mode in match settings). Below this, the bulk scraper does not auto-accept the top match. The result must also reach `MIN_TITLE_SCORE`, because platform and bonus points alone can reach 200.
+- IGDB's search leaves out DLC, expansions, bundles, mods, episodes, seasons, forks, packs and updates (`game_type`) unless the title is exact, so a ROM that is itself a hack still finds its record.
 
 ---
 
@@ -263,7 +267,7 @@ Hand-off points:
 
 Two layers, both bounded:
 
-- **`scraper/scraper_cache.py`** — ScreenScraper search-result cache. Keyed `f"{game_id}:{system_id}"`, TTL 10 minutes, hard cap 500 entries (evicts expired entries first, then oldest by timestamp). Thread-safe (`_cache_lock`). Used because the ScreenScraper API does not support fetch-by-ID — the only way to get a full result is to keep the search-result payload around between the user picking a result and `apply_screenscraper_to_metadata` running.
+- **`scraper/scraper_cache.py`** — ScreenScraper search-result cache. Keyed `f"{game_id}:{system_id}"`, TTL 10 minutes, hard cap 500 entries (evicts expired entries first, then oldest by timestamp). Thread-safe (`_cache_lock`). Saves a request between the user picking a result and `apply_screenscraper_to_metadata` running. On a miss, `hybrid_scraper._ss_record_by_id` asks for that game with `scrape_screenscraper.get_game_by_id` (`jeuInfos` with `gameid`), so a pick is never swapped for another game.
 - **`scraper_manager._settings_cache`** — 30 s cache on `data/scraper_settings.json`. `load_scraper_settings` returns the cached dict if `(now - cache_time) < 30`. Avoids re-parsing settings JSON on every per-game scrape inside a bulk run.
 
 Circuit breakers (`circuitbreaker` package, see `scraper_manager`): 5 consecutive failures opens the breaker for 120 s. Active on TGDB, IGDB, RAWG, ScreenScraper, AI. When `circuitbreaker` is not installed, `_<src>_breaker` is a no-op decorator (`_noop_breaker`).
@@ -370,7 +374,7 @@ End-to-end checklist for a new remote source `foo`:
 - `genre` values are hyphenated and constrained to `FIELD_SCHEMAS` in `scrape_ai.py`. New genres added to either list must be added to both.
 - Curated DB-default controllers always override scraped/AI controller values (`get_system_default_controller_name`).
 - Per-source primary fetches are wrapped in `try / except`; on failure the orchestrator logs and falls through to gap-fill (Pass 41.4.B). The final UPDATE is **not** wrapped — drift between the metadata dict and the binding tuple must fail loudly.
-- ScreenScraper search results are cached for 10 min (no fetch-by-ID API). Settings JSON is cached for 30 s. Per-source circuit breakers open after 5 failures, recover after 120 s.
+- ScreenScraper search results are cached for 10 min. Settings JSON is cached for 30 s. Per-source circuit breakers open after 5 failures, recover after 120 s.
 - AI Fill is text-only; never writes media. Integer-column writes skip the UPDATE clause when the coerced value is `0` (Pass 45.3).
 - Sort title is auto-generated from title via `services/game_utils.py::generate_sort_title` during scrape and AI Fill.
 - Rating cross-mapping fills empty rating systems from any present rating via the maturity-tier table in `services/game_utils.py`; content inference is the final fallback when no rating system is filled at all.

@@ -10,19 +10,35 @@
 #   calculate_<source>_score    — title score + per-source bonuses
 #
 # Per-source bonuses follow the same shape:
-#   release_date  : +10-20  (TGDB/IGDB/RAWG/SS vary)
+#   release_date  : +10
 #   platform_match: +150    (MAJOR — ensures correct-platform results top)
 #   region        : +10-20  (Default Region and World first; region_bonus;
 #                            TGDB and SS only — IGDB and RAWG give none)
-#   plus source-specific extras (RAWG +metacritic, +image)
+# Equal titles on the same platform are then decided by the user's source order
+# (the priority boost), so no source may earn more for merely being richer.
 # =============================================================================
 
 import logging
+import re
+import unicodedata
 
 from scraper.title_normalizer import normalize_for_matching, strip_title_noise
+from services.achievement_linking import canonical_ra_word, ra_sequel_numbers
 from services.game_utils import normalize_article_for_comparison
 
 logger = logging.getLogger(__name__)
+
+# A title equal to the search once noise is stripped scores this or more.
+EXACT_TITLE_SCORE = 300
+
+# The title score a match must reach before scraping accepts it on its own,
+# whatever other points it earns (PASS-59-208).
+MIN_TITLE_SCORE = 80
+
+# The most a title can score when its sequel number differs: below
+# MIN_TITLE_SCORE and below the Settings "partial" match, still listed in a
+# manual search.
+SEQUEL_MISMATCH_MAX_SCORE = 40
 
 # Source region codes (ScreenScraper's lower-case codes, TGDB's names) read
 # as the names the region settings use.
@@ -69,6 +85,48 @@ def word_order_bonus(result_words_list, search_words_list):
     return int((lcs_len / max_len) * 40)
 
 
+def _sequel_numbers_differ(words_a, words_b):
+    """True when two titles' word lists carry different sequel numbers: "Doom"
+    and "Doom II", "FIFA 98" and "FIFA 99".
+
+    A "1" is left out: "Doom 1" is the game a source lists as "Doom". A number
+    only one title has is forgiven when the subtitle after it is in the other,
+    because sources drop it from a game's subtitle: "Golden Sun 2 - The Lost Age"
+    is "Golden Sun: The Lost Age".
+    """
+    words_a = [canonical_ra_word(w) for w in words_a]
+    words_b = [canonical_ra_word(w) for w in words_b]
+    numbers_a = ra_sequel_numbers(words_a) - {'1'}
+    numbers_b = ra_sequel_numbers(words_b) - {'1'}
+    if numbers_a == numbers_b:
+        return False
+    if not (numbers_a < numbers_b or numbers_b < numbers_a):
+        return True
+    numbered, other = (words_a, words_b) if numbers_b < numbers_a else (words_b, words_a)
+    for number in (numbers_a ^ numbers_b):
+        after = [w for w in numbered[numbered.index(number) + 1:] if not w.isdigit()]
+        if not after or not set(after) <= set(other):
+            return True
+    return False
+
+
+def _comparable(title):
+    """A title's words as the scorer compares them: no region or edition tags,
+    article up front; accents, apostrophes and stray marks gone ("Pokémon" is
+    "Pokemon", "Conker's" is "Conkers", "R.B.I." is "RBI"). A dot between digits
+    stays: "3.5" is not "35"."""
+    title = normalize_article_for_comparison(strip_title_noise(title or ''))
+    title = unicodedata.normalize('NFKD', title)
+    title = ''.join(c for c in title if not unicodedata.combining(c))
+    return normalize_for_matching(re.sub(r"['’`´!?]|(?<!\d)\.|\.(?!\d)", '', title))
+
+
+def sequel_numbers_agree(result_title, search_title):
+    """False when two titles are different games of a series, however alike."""
+    return not _sequel_numbers_differ(_comparable(result_title).split(),
+                                      _comparable(search_title).split())
+
+
 def calculate_title_match_score(result_title, search_title):
     """Title-similarity score between a result and the search query.
 
@@ -79,6 +137,7 @@ def calculate_title_match_score(result_title, search_title):
       4. Result words ⊆ search words            -> up to 100 (penalised — missing terms)
       5. Partial overlap                        -> up to 120 (Jaccard-weighted)
       + word-order bonus (LCS)                  -> 0-40
+    A different sequel number caps a non-exact match (SEQUEL_MISMATCH_MAX_SCORE).
     """
     if not result_title or not search_title:
         return 0
@@ -87,13 +146,8 @@ def calculate_title_match_score(result_title, search_title):
     # that only matches after brackets/editions are stripped.
     raw_exact = result_title.strip().lower() == search_title.strip().lower()
 
-    # Article moved last ("Legend of Zelda, The", No-Intro style) goes back to
-    # the front, after noise strip so a trailing "(USA)" can't hide it.
-    result_title = normalize_article_for_comparison(strip_title_noise(result_title))
-    search_title = normalize_article_for_comparison(strip_title_noise(search_title))
-
-    result_normalized = normalize_for_matching(result_title)
-    search_normalized = normalize_for_matching(search_title)
+    result_normalized = _comparable(result_title)
+    search_normalized = _comparable(search_title)
 
     result_words_list = result_normalized.split()
     search_words_list = search_normalized.split()
@@ -171,6 +225,9 @@ def calculate_title_match_score(result_title, search_title):
         score += order_bonus
         logger.info(f"  -> Word order bonus: +{order_bonus}")
 
+    if _sequel_numbers_differ(result_words_list, search_words_list):
+        logger.info(f"  -> Different sequel number: capped at {SEQUEL_MISMATCH_MAX_SCORE}")
+        return min(score, SEQUEL_MISMATCH_MAX_SCORE)
     return score
 
 
@@ -205,7 +262,7 @@ def calculate_igdb_score(result, search_title):
     score = calculate_title_match_score(result.get('name', ''), search_title)
     result['title_score'] = score
     if result.get('first_release_date'):
-        score += 20
+        score += 10
     if result.get('platform_match'):
         score += 150
     return score
@@ -217,13 +274,9 @@ def calculate_rawg_score(result, search_title):
     result['title_score'] = title_score
     score = title_score
     if result.get('release_date'):
-        score += 20
-    if result.get('image'):
         score += 10
     if result.get('platform_match'):
         score += 150
-    if result.get('metacritic'):
-        score += 15
     logger.info(
         f"RAWG Score for '{result.get('name', '')}': title={title_score}, "
         f"platform_match={result.get('platform_match')}, total={score}"

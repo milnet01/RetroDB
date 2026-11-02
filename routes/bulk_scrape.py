@@ -62,11 +62,11 @@ def api_bulk_scrape():
             search_title = re.sub(r'\s*\([^)]*(?:19\d{2}|20\d{2}|Disk|Side|Part|Ver)[^)]*\)$', '', search_title, flags=re.IGNORECASE).strip()
 
     # Scrape using hybrid scraper with user's priority order
-    from scraper.scraper_manager import scraper_manager, load_scraper_settings
+    from scraper.scraper_manager import DEFAULT_SCRAPER_PRIORITY, scraper_manager, load_scraper_settings
 
     # Get user's scraper priority
     scraper_settings = load_scraper_settings()
-    user_priority = scraper_settings.get('priority', ['screenscraper', 'esde', 'tgdb', 'igdb'])
+    user_priority = scraper_settings.get('priority', DEFAULT_SCRAPER_PRIORITY)
     enabled_scrapers = scraper_settings.get('enabled', {})
 
     logger.info(f"Bulk scrape for '{search_title}' using priority: {user_priority}")

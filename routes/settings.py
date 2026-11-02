@@ -100,7 +100,7 @@ def settings():
     """Settings page"""
     try:
         # Local import: routes.scraper imports back into this package.
-        from scraper.scraper_manager import load_scraper_settings
+        from scraper.scraper_manager import DEFAULT_SCRAPER_PRIORITY, load_scraper_settings
 
         stats = get_stats()
         api_status = get_api_status()
@@ -121,7 +121,7 @@ def settings():
 
         # Load saved scraper settings
         scraper_settings = {
-            'priority': ['esde', 'tgdb', 'igdb', 'rawg'],
+            'priority': list(DEFAULT_SCRAPER_PRIORITY),
             'enabled': {
                 'esde': config.SCRAPER_ESDE_ENABLED,
                 'tgdb': config.SCRAPER_TGDB_ENABLED,

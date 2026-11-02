@@ -566,6 +566,7 @@ def parse_game_data(jeu, own_region=None):
     """Parse ScreenScraper JSON response into RetroDB format"""
     result = {
         "source": "ScreenScraper",
+        "id": jeu.get("id"),
         "screenscraper_id": jeu.get("id"),
     }
     
@@ -676,12 +677,12 @@ def parse_game_data(jeu, own_region=None):
     medias = (jeu.get("medias") or [])
     result["media"] = parse_media(medias, own_region)
     
-    # Get ROM info
-    roms = (jeu.get("roms") or [])
-    if roms:
+    # The matched file is `rom`; `roms` lists every file known for the game.
+    rom = jeu.get("rom") or {}
+    if rom:
         result["rom_info"] = {
-            "romfilename": roms[0].get("romfilename", ""),
-            "romregions": roms[0].get("romregions", ""),
+            "romfilename": rom.get("romfilename", ""),
+            "romregions": rom.get("romregions", ""),
         }
     
     return result
@@ -837,7 +838,7 @@ def get_game_by_id(game_id, username, password, dev_id=None, dev_password=None, 
             ("ssid", username),
             ("sspassword", password),
             ("output", "json"),
-            ("jeuid", str(game_id)),
+            ("gameid", str(game_id)),
         ])
         
         # Add system ID if provided

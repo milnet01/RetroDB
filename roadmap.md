@@ -10315,7 +10315,23 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.208 Scraping stops accepting the wrong game: sequels, mods and other versions (fix, M).
-- **Status**: todo
+- **Resolution** (2026-11-02): Done 2026-11-02 in 3.35.1. Sequel numbers cap the title score
+  (match_scorer); MIN_TITLE_SCORE 80 also binds bulk score mode; IGDB
+  drops add-on game_types unless the title is exact; RAWG gives no
+  credits, ESRB or multiplayer modes from a multi-platform record and no
+  player count at all; c64 and dos are off RAWG's map; RAWG's score
+  extras gone; one DEFAULT_SCRAPER_PRIORITY with RAWG last; IGDB
+  multiplayer details per console; ScreenScraper picks fetched by gameid
+  (also closes the get_game_by_id item in PASS-59-219). Limits: new
+  scrapes only, stored rows are not repaired, so the 476 RAWG players
+  values of 1 stay. RAWG genre, Metacritic and user score still mix
+  versions. A title sharing the sequel number but not the subtitle can
+  still pass (Street Fighter Alpha 2 for Street Fighter II). "Sonic 3
+  and Knuckles" against "Sonic and Knuckles" passes as a dropped
+  subtitle number. Real matches under 80 are now skipped in bulk: on the
+  library's file names about 9 in 100 titles score below 80, against
+  about 6 in 100 below 50 (a proxy, not real search results).
+- **Status**: done
 - **Source**: PASS-59-162, 2026-10-31. Notes: merge_and_stored 19; rawg 5, 6, 11, 12; igdb F10, F13; screenscraper 7, 8.
 - **Problem**: `_pick_best_fallback` accepts a sequel at score 80 and ignores platform. Bulk mode can reach its bar with no title match. IGDB mods can match. RAWG's developer, ratings, players and modes mix every version.
 - **Fix**: sequel numbers must agree, reusing `canonical_ra_word` and `ra_sequel_numbers` from `services/achievement_linking.py`; require a title score in bulk; use IGDB `game_type`. Stored rows cannot all be traced, so a fix applies to new scrapes first.

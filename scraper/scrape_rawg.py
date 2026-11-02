@@ -12,7 +12,7 @@ import sys
 # Add parent directory to path for config import
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from scraper.base_scraper import http_get, safe_json, rate_limit
+from scraper.base_scraper import http_get, on_one_platform, safe_json, rate_limit
 import config as _config
 
 # Pass 45.14 — cap RAWG JSON response, mirroring RA + AI + ScreenScraper.
@@ -27,6 +27,8 @@ BASE_URL = "https://api.rawg.io/api"
 # Only systems RAWG lists: a folder missing here (Intellivision, ColecoVision,
 # PC Engine, Commodore 64, Virtual Boy, arcade, DOS...) is not searched on
 # RAWG, so games from other platforms never match instead (user, 2026-10-27).
+# That includes systems RAWG files under another platform: Commodore 64 under
+# Commodore / Amiga, DOS under PC.
 PLATFORM_MAP = {
     # Nintendo
     'nes': 49,            # NES
@@ -92,7 +94,6 @@ PLATFORM_MAP = {
     'apple2': 41,         # Apple II
     'macintosh': 55,      # Classic Macintosh
     'amiga': 166,         # Commodore / Amiga
-    'c64': 166,           # RAWG files C64 games under Commodore / Amiga
 
     # Microsoft
     'xbox': 80,           # Xbox
@@ -104,8 +105,31 @@ PLATFORM_MAP = {
     'pc': 4,              # PC
     'windows': 4,
     'steam': 4,
-    'dos': 4,             # RAWG files DOS games under PC
 }
+
+# RAWG tags that say where people play, as canonical modes. A plain "Multiplayer"
+# tag is left out: it means online as much as local.
+_TAG_MODES = {
+    'local multiplayer': 'Local Multiplayer',
+    'online multiplayer': 'Online Multiplayer',
+    'split screen': 'Split-Screen',
+    'local co-op': 'Local Co-op',
+    'online co-op': 'Online Co-op',
+    'co-op': 'Co-op',
+}
+
+
+def _modes_from_tags(tags, one_version):
+    """Modes from a record's tags. Tags describe every version, so a record on
+    several platforms says only that the game can be played alone."""
+    modes = []
+    for tag in tags or []:
+        name = (tag.get('name') or '').strip().lower()
+        mode = 'Single-Player' if name in ('singleplayer', 'single-player') else _TAG_MODES.get(name)
+        if mode and mode not in modes and (one_version or mode == 'Single-Player'):
+            modes.append(mode)
+    return modes
+
 
 def _get_api_key():
     """Get the RAWG API key from saved settings, falling back to config.py."""
@@ -231,6 +255,11 @@ def get_game_details(game_id):
         return None
     
     game = data
+
+    # RAWG keeps one record for every version of a game. On a record listing
+    # several platforms the credits and age rating may belong to another
+    # version, so they are left for a source that knows (PASS-59-208).
+    one_version = on_one_platform(game)
     
     # Extract developers
     developers = []
@@ -268,34 +297,6 @@ def get_game_details(game_id):
     if screenshots_data and 'results' in screenshots_data:
         screenshot_urls = [s.get('image') for s in screenshots_data['results'][:5] if s.get('image')]
     
-    # Determine player count from tags. None when no tag says, so the
-    # fill-only merge leaves `players` open for a source that knows
-    # (a default of 1 filled it with a guess no later source could replace).
-    players = None
-    if game.get('tags'):
-        for tag in game['tags']:
-            tag_name = tag.get('name', '').lower()
-            if 'multiplayer' in tag_name or 'co-op' in tag_name:
-                players = 2
-                break
-            if '4 player' in tag_name or 'four player' in tag_name:
-                players = 4
-                break
-    
-    # Game modes
-    modes = []
-    if game.get('tags'):
-        for tag in game['tags']:
-            tag_name = tag.get('name', '').lower()
-            if tag_name in ['singleplayer', 'single-player']:
-                modes.append('Single-Player')
-            elif tag_name in ['multiplayer', 'multi-player']:
-                modes.append('Multiplayer')
-            elif 'co-op' in tag_name or 'coop' in tag_name:
-                modes.append('Co-op')
-            elif 'online' in tag_name and 'multiplayer' in tag_name:
-                modes.append('Online Multiplayer')
-    
     # Convert RAWG rating (0-5) to 0-100 scale for consistency
     user_score = None
     user_score_count = None
@@ -330,12 +331,12 @@ def get_game_details(game_id):
         'name': game.get('name', ''),
         'description': game.get('description_raw', ''),  # Plain text description
         'release_date': game.get('released', ''),
-        'developer': ', '.join(developers) if developers else None,
-        'publisher': ', '.join(publishers) if publishers else None,
+        'developer': ', '.join(developers) if developers and one_version else None,
+        'publisher': ', '.join(publishers) if publishers and one_version else None,
         'genre': ', '.join(genres) if genres else None,
-        'esrb_rating': esrb_rating,
-        'players': players,
-        'modes': ', '.join(modes) if modes else None,
+        'esrb_rating': esrb_rating if one_version else None,
+        'players': None,  # RAWG holds no player count; its tags only hint at one
+        'modes': ', '.join(_modes_from_tags(game.get('tags'), one_version)) or None,
         # RAWG has no cover: background_image is wide art or a screenshot, so it
         # is fanart and never box art (PASS-59-203).
         'fanart_url': game.get('background_image') or game.get('background_image_additional'),
