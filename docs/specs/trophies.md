@@ -248,7 +248,7 @@ admin-only (`/api/scan-trophies`).
   `acquire_job_singleton_lock` with its own name.
 - **INV-9** — The PSN keep-alive refreshes only sessions that expire within
   its window, and skips a user with no NPSSO. *Test:* `python3 -m pytest -q
-  tests/test_psn_keepalive.py` → `2 passed`. *Breaks when:* an expired
+  tests/test_psn_keepalive.py` → `4 passed`. *Breaks when:* an expired
   session is pinged, or the NPSSO fallback is allowed.
 - **INV-10** — The scraper's RA check writes the `games` RA columns only on a
   match and swallows network errors. *Test:* `python3 -m pytest -q

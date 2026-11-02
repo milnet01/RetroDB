@@ -98,3 +98,87 @@ def test_keepalive_skips_in_window_user_without_npsso(monkeypatch):
         psn_keepalive.run_psn_keepalive(now=now)
 
     assert 7004 not in calls, "no NPSSO stored → can't refresh; must not call client"
+
+
+def _sony_refuses(monkeypatch, status=400):
+    """Answer every request as Sony's sign-in server does when it refuses."""
+    from io import BytesIO
+    from requests.adapters import HTTPAdapter
+    from requests.models import Response
+
+    calls = []
+
+    def fake_send(self, request, **_kwargs):
+        calls.append(request.url)
+        reply = Response()
+        reply.status_code = status
+        reply.url = request.url
+        reply.request = request
+        reply.raw = BytesIO(json.dumps({
+            "error": "invalid_grant",
+            "error_description": "Invalid refresh token",
+        }).encode())
+        return reply
+
+    monkeypatch.setattr(HTTPAdapter, "send", fake_send)
+    return calls
+
+
+def _stored_expiry(uid):
+    conn = sqlite3.connect(config.DB_PATH)
+    try:
+        row = conn.execute(
+            "SELECT tokens FROM user_platform_tokens "
+            "WHERE user_id = ? AND platform = 'psn'", (uid,),
+        ).fetchone()
+    finally:
+        conn.close()
+    return json.loads(row[0])["refresh_token_expires_at"]
+
+
+def test_refused_renewal_says_so_and_marks_the_session_expired(monkeypatch):
+    # PASS-59-226: Sony's sign-in errors carry a string under "error". The
+    # library's error class calls .get on it, which hid Sony's answer behind
+    # "'str' object has no attribute 'get'" on every server start.
+    import time
+
+    import app as app_module
+    from routes.trophies import create_psn_client
+    from services.jobs import psn_keepalive
+
+    now = time.time()
+    _seed_psn(7005, "npsso-refused", now + 5 * 86400)
+    sent = _sony_refuses(monkeypatch)
+
+    with app_module.app.app_context():
+        _client, err = create_psn_client(
+            "npsso-refused", user_id=7005, allow_npsso_fallback=False,
+        )
+    assert "Invalid refresh token" in err
+    assert "has no attribute" not in err
+    # token-info now answers expired, so the dashboard banner asks for a re-link.
+    assert _stored_expiry(7005) == 0
+
+    # And the next tick leaves it alone instead of asking Sony again.
+    sent.clear()
+    with app_module.app.app_context():
+        psn_keepalive.run_psn_keepalive()
+    assert sent == []
+
+
+def test_a_server_fault_does_not_end_the_session(monkeypatch):
+    import time
+
+    import app as app_module
+    from routes.trophies import create_psn_client
+
+    expiry = time.time() + 5 * 86400
+    _seed_psn(7006, "npsso-outage", expiry)
+    _sony_refuses(monkeypatch, status=503)
+
+    with app_module.app.app_context():
+        _client, err = create_psn_client(
+            "npsso-outage", user_id=7006, allow_npsso_fallback=False,
+        )
+    assert err
+    assert _stored_expiry(7006) == expiry

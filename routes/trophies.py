@@ -6,6 +6,7 @@
 
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify, flash, g
 from flask_babel import gettext as _
+import json
 import os
 import logging
 import requests
@@ -20,8 +21,33 @@ from services.jobs.base import _download_psn_trophy_image as download_psn_trophy
 # PSN API imports
 try:
     from psnawp_api import PSNAWP
-    from psnawp_api.core.psnawp_exceptions import PSNAWPNotFoundError, PSNAWPAuthenticationError
+    from psnawp_api.core.psnawp_exceptions import (
+        PSNAWPAuthenticationError, PSNAWPBadRequestError, PSNAWPError,
+        PSNAWPNotFoundError, PSNAWPUnauthorizedError,
+    )
     PSNAWP_AVAILABLE = True
+
+    # Sony's sign-in server answers {"error": "invalid_grant", ...}, a string
+    # where PSNAWP 3.1.0 and earlier expect an object. Their PSNAWPError then
+    # raises AttributeError while being built, which hides Sony's answer and the
+    # exception's type (PASS-59-226).
+    def _psn_error_init(self, response):
+        self.code = self.message = self.reference_id = None
+        try:
+            body = json.loads(response)
+        except ValueError:
+            body = None
+        err = body.get('error') if isinstance(body, dict) else None
+        if isinstance(err, dict):
+            self.reference_id = err.get('referenceId')
+            self.code = err.get('code')
+            self.message = err.get('message')
+        elif isinstance(err, str):
+            self.code = err
+            self.message = body.get('error_description') or err
+        Exception.__init__(self, self.message or response)
+
+    PSNAWPError.__init__ = _psn_error_init
 
     # Patch pyrate_limiter + PSNAWP compatibility issues:
     # 1. pyrate_limiter 4.x sync _try_acquire raises NotImplementedError on timeout param
@@ -43,6 +69,7 @@ try:
 except ImportError:
     PSNAWP_AVAILABLE = False
     PSNAWPNotFoundError = Exception  # Fallback for when not installed
+    PSNAWPBadRequestError = PSNAWPUnauthorizedError = Exception
 
 logger = logging.getLogger('scraper')
 
@@ -149,6 +176,12 @@ def create_psn_client(npsso, user_id=None, allow_npsso_fallback=True):
         except Exception as e:
             logger.info(f"PSN cached tokens invalid ({e})")
             if not allow_npsso_fallback:
+                if isinstance(e, (PSNAWPBadRequestError, PSNAWPUnauthorizedError)):
+                    # Sony refused it, so it will never work again. Recording it
+                    # as expired brings up the re-link notice and stops the
+                    # keep-alive asking Sony on every server start.
+                    _save_psn_tokens({**cached_tokens, 'refresh_token_expires_at': 0},
+                                     user_id=user_id)
                 return None, f"PSN cached-token refresh failed: {e}"
             logger.info("Falling back to NPSSO")
             _clear_psn_tokens(user_id)

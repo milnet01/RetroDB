@@ -1,13 +1,15 @@
 # =============================================================================
 # RETRODB - PSN session keep-alive (Pass 50.1)
 # =============================================================================
-# The PSN refresh token lasts ~2 months, and PSNAWP rotates it (with a fresh
-# ~2-month window) on every authenticated call. RetroDB otherwise only refreshes
-# on demand — when a sync runs — so a user who syncs infrequently lets the window
-# lapse and is forced to re-paste their NPSSO through the whole browser wizard.
+# PSNAWP renews the PSN sign-in with the refresh token once the access token has
+# run out, and Sony replaces the refresh token each time. RetroDB otherwise only
+# renews on demand, when a sync runs.
 #
-# This daily background task re-arms each user's session *before* it expires, so
-# NPSSO re-entry becomes rare-to-never while the app is running.
+# This daily background task renews each user's sign-in as it nears expiry. Whether
+# that buys more time is Sony's call: on 2026-10-31 a renewal came back with about
+# 8 days left, not a fresh 2 months, so the sign-in may still end on its own date
+# (PASS-59-226). Renewing from a copy of the database uses up the live row's refresh
+# token: Sony then refuses it, and the row is marked expired.
 #
 # It NEVER pings Sony for a session that has already expired (the refresh would
 # fail and an NPSSO ping with a stale cookie is pointless / could flag the
@@ -23,8 +25,6 @@ import time
 logger = logging.getLogger(__name__)
 
 # Refresh a session once its refresh token drops below this many days of runway.
-# The window is ~60 days; a daily check with a 14-day threshold re-arms a live
-# session roughly once every ~6-7 weeks — minimal Sony traffic, never lapses.
 KEEPALIVE_THRESHOLD_DAYS = 14
 _TICK_SECONDS = 24 * 3600
 _STARTUP_DELAY_SECONDS = 60  # let startup/migrations settle before the first tick

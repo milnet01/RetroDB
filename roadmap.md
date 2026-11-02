@@ -10553,7 +10553,19 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.226 The PlayStation keep-alive cannot renew a sign-in, and the user's runs out about 8 November (fix, S).
-- **Status**: todo
+- **Resolution** (2026-11-02): Cause: Sony's sign-in errors carry a string under "error", and
+  PSNAWP's error class (3.1.0 too) calls .get on it, hiding the refusal.
+  Fixed by replacing that constructor from routes/trophies.py; a 400 or
+  401 on the saved token now marks the row expired, which raises the
+  re-link notice and ends retries. Timeline, from
+  logs/scraping_2026-11-01.log and the live row: 19:49 a server renewed
+  successfully yet the live row stayed at 2026-10-31, so it ran on a
+  copy; 20:07 onward the live server was refused. So the copy's renewal
+  most likely used up the live token, not proven because Sony's text was
+  hidden. Sony's reply of 2026-10-31 gave 7.99 days, not a fresh 2
+  months, so renewals may not extend a sign-in at all. The live server's
+  next start shows the real answer.
+- **Status**: done
 - **Evidence**: `logs/scraping_2026-11-02.log`, on every server start seen today: `PSN keep-alive: user 1 refresh failed: PSN cached-token refresh failed: 'str' object has no attribute 'get'`. User 1's `refresh_token_expires_at` was about 5.9 days away on 2026-11-02.
 - **Where**: the cached-token block of `create_psn_client` in `routes/trophies.py`, which assigns `psnawp.authenticator.token_response`. Cause not traced; a change in the PSNAWP library is unchecked.
 - **Fix**: find what holds a string, and show the failure to the user. The same log line counts one row as already expired.
