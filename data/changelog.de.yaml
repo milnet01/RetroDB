@@ -1,3 +1,69 @@
+- version: 3.35.3
+  date: '2026-11-02'
+  tags:
+  - type: feature
+    label: 'Neues Tool „MAME-Namen“ in den ROM-Tools: MAME-Spiele erhalten ihre echten Namen, Jahre und Hersteller aus der eigenen Liste von MAME, und die Dateien behalten ihre Kurznamen. Ein Scrapen findet dann jedes Spiel, und du kannst die MAME-Liste nach Kategorie filtern, zum Beispiel ohne Spielautomaten. BIOS-Sets werden in der Liste ausgeblendet'
+  - type: fix
+    label: ROM-Berichte bieten das Umbenennen von MAME-Dateien nicht mehr an, weil eine umbenannte Datei in MAME nicht mehr funktioniert
+  - type: fix
+    label: In den Einstellungen steht jetzt, was Microsoft verlangt, bevor eine Xbox-App registriert werden kann. Die Xbox-Anmeldung konnte deshalb nicht getestet werden
+  - type: enhancement
+    label: Die separate Karte „Offizielle Namen“ ist aus dem Massen-AI-Auffüllen entfernt, weil der Schalter „Offizieller Name“ des Auffüllens diese Aufgabe bereits übernimmt
+  - type: fix
+    label: Wenn Sony eine gespeicherte PlayStation-Anmeldung ablehnt, zeigen das Dashboard und die Einstellungen das jetzt an und bitten dich, das Konto neu zu verknüpfen. Vorher zeigte das Protokoll bei jedem Serverstart einen unverständlichen Fehler, und nichts hat dich informiert
+  - type: feature
+    label: Beim Importieren von Steam werden jetzt Beschreibung, Mitwirkende, Metacritic-Wertung, Altersfreigaben, Spielmodi, Cover, Hintergrund und Screenshots jedes Spiels im Hintergrund von seiner Store-Seite übernommen. Scrape ein Spiel, um Genre und Erscheinungsdatum zu erhalten
+  - type: feature
+    label: Ein Steam-Abgleich behält jetzt deine Spielzeit und wann du zuletzt gespielt hast, und die Spielseite zeigt beides an
+  - type: fix
+    label: „Bibliothek abrufen“ auf der Steam-Importseite funktioniert jetzt für einen Admin mit gespeichertem Steam-Schlüssel. Vorher wurde Steam die verborgene Form des Schlüssels geschickt, und die Seite forderte fälschlich, dein Profil auf „Öffentlich“ zu stellen
+  - type: fix
+    label: Ein Steam- oder Xbox-Spiel, das unter demselben Namen schon in deiner Bibliothek ist, wird beim Importieren jetzt mit diesem Spiel verknüpft, sodass seine Achievements synchronisiert werden. Vorher wurde es übersprungen und nie verknüpft
+  - type: fix
+    label: Von Steam, Xbox und PlayStation importierte Spiele werden jetzt sofort richtig sortiert, zum Beispiel Final Fantasy IX vor Final Fantasy X, und die Markenzeichen von Steam werden aus ihren Namen entfernt
+  - type: feature
+    label: Bei Systemen, auf denen RetroAchievements einen einfachen Datei-Hash verwendet, etwa Mega Drive und Game Boy, zeigt die Spielseite an, ob deine Kopie Achievements bringt, und dieser Hash verknüpft das richtige Spiel. Führe RA Refresh aus, um das zu füllen
+  - type: fix
+    label: Ein Scrapen fragt ScreenScraper jetzt zuerst nach deiner genauen Datei, bevor nach dem Namen gesucht wird, sodass du dein Spiel bekommst und nicht eines mit ähnlichem Titel. Ergebnisse, die du selbst anhakst, haben weiterhin Vorrang
+  - type: enhancement
+    label: Das Fortschrittsfenster von Bildgröße ändern nennt jetzt Spiel und System, zu denen jedes Bild gehört
+  - type: feature
+    label: Das Scrapen liefert jetzt Titelbildschirme von ScreenScraper und TheGamesDB, mehr offizielle Namen von IGDB und TheGamesDB (etwa den japanischen Titel eines Spiels) und die anderen Konsolen, auf denen ein Spiel erschienen ist, von IGDB
+  - type: feature
+    label: Ein Spiel ohne Nutzerwertung übernimmt jetzt die Bewertung aus deiner ES-DE-Sammlung, falls dort eine vorhanden ist
+  - type: feature
+    label: Die Spielseite zeigt, wie viele Spieler ein HowLongToBeat-Ergebnis gemessen haben, und verlinkt auf dessen Seite. Früher gespeicherte Ergebnisse zeigen das bei der nächsten Abfrage
+  - type: feature
+    label: Die RetroAchievements-Seite zeigt, wie viele Leute ein Spiel spielen und welcher Anteil von ihnen jedes Achievement erreicht hat
+  - type: fix
+    label: Der Ordnerbrowser der ROM-Tools öffnet sich im ROM-Ordner, wenn kein Startordner vorhanden ist, statt zu scheitern. Eine unlesbare Antwort von IGDB kostet jetzt nur diese eine Angabe, nicht alles, was IGDB zum Spiel gesendet hat
+  - type: fix
+    label: Das Tageslimit von ScreenScraper hält RetroDB jetzt davon ab, bis später weiter anzufragen, und ein Massen-Scrapen weist darauf hin und macht mit seinen anderen Quellen weiter. Vorher sah ein ausgeschöpftes Limit wie „Spiel nicht gefunden“ aus, und die Anfragen liefen die ganze Nacht weiter
+  - type: fix
+    label: Ein Spiel, zu dem keine Quelle antworten konnte, weil ein Dienst am Limit war, wird nicht mehr als gescrapt markiert, sodass der nächste Durchlauf es erneut versucht
+  - type: fix
+    label: Wenn ein TheGamesDB-Schlüssel sein Monatskontingent verbraucht hat, wechselt RetroDB zu deinem anderen Schlüssel und fragt nicht mehr an, sobald beide aufgebraucht sind
+  - type: fix
+    label: Das Monatslimit von RAWG hält RetroDB jetzt ebenfalls vom Anfragen ab, und IGDB wird auf höchstens vier Anfragen pro Sekunde begrenzt
+  - type: fix
+    label: Die Massenabfrage von HowLongToBeat endet jetzt mit einer Meldung, wenn die Seite zu viele Anfragen meldet, und alle Anfragen an die Seite werden zeitlich gestreckt
+  - type: fix
+    label: „Box- und Handbuch-Regionen korrigieren“ gibt nicht mehr nach 25 Spielen in Folge auf, die ScreenScraper nicht kennt. Es stoppt nur, wenn ScreenScraper meldet, dass sein Limit erreicht ist
+  - type: fix
+    label: Auf der Spielseite steht jede Altersfreigabe jetzt zentriert über ihrem Label „KI-Vermutung“
+  - type: fix
+    label: Das TheGamesDB-Kontingent in den Einstellungen nutzt jetzt die Prüfung, die dein Kontingent nicht verbraucht, und zeigt kein erfundenes Rücksetzdatum mehr an, wenn der Dienst keines nennt
+  body: |
+    <ul>
+      <li><strong>MAME-Spiele bekommen ihre echten Namen.</strong> Das neue Tool „MAME-Namen“ in den ROM-Tools übernimmt Namen, Jahre und Hersteller aus der eigenen Liste von MAME.
+        Die Dateien behalten ihre Kurznamen, weil MAME sie braucht. Du kannst die MAME-Liste nach Kategorie filtern, und BIOS-Sets sind ausgeblendet.</li>
+      <li><strong>Steam-Importe bringen viel mehr mit.</strong> Jedes Spiel füllt Beschreibung, Mitwirkende, Metacritic-Wertung, Altersfreigaben, Spielmodi und Bilder von seiner Store-Seite aus. Ein Abgleich behält deine Spielzeit und wann du zuletzt gespielt hast. Ein Spiel, das unter demselben Namen schon in deiner Bibliothek ist, wird jetzt damit verknüpft, sodass seine Achievements synchronisiert werden.</li>
+      <li><strong>Beim Scrapen wird genau dein Spiel gefunden.</strong> Ein Scrape fragt zuerst bei ScreenScraper nach deiner genauen Datei, bevor er nach dem Namen sucht. Außerdem bringt das Scrapen Titelbildschirme, mehr offizielle Namen und die anderen Konsolen, für die ein Spiel erschienen ist.</li>
+      <li><strong>RetroAchievements kennt deine Version.</strong> Bei Systemen, die einen einfachen Datei-Hash nutzen, etwa Mega Drive und Game Boy, zeigt die Spielseite, ob deine Version Achievements freischaltet. Führe RA Refresh aus, um das aufzufüllen. Die RetroAchievements-Seite zeigt außerdem, wie viele Leute ein Spiel spielen und wie viel Prozent von ihnen jedes Achievement erreicht haben.</li>
+      <li><strong>Online-Limits werden beachtet.</strong> Wenn ScreenScraper, TheGamesDB oder RAWG sein Limit erreicht, fragt RetroDB bis später nicht mehr an, und ein Massen-Scrape macht mit seinen anderen Quellen weiter. Ein Spiel, für das zu diesem Zeitpunkt keine Quelle antworten konnte, wird beim nächsten Durchlauf erneut versucht.</li>
+      <li><strong>Eine abgelehnte PlayStation-Anmeldung wird angezeigt.</strong> Das Dashboard und die Einstellungen bitten dich jetzt, neu zu verknüpfen, wenn Sony eine gespeicherte Anmeldung ablehnt.</li>
+      <li><strong>„Offizielle Namen“ ist umgezogen.</strong> Die eigene Karte dafür ist aus dem Massen-AI-Auffüllen verschwunden, weil der Schalter „Offizieller Name“ des Auffüllens dasselbe tut.</li>
+    </ul>
 - version: 3.35.2
   date: '2026-11-02'
   tags:

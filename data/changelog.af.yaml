@@ -1,3 +1,68 @@
+- version: 3.35.3
+  date: '2026-11-02'
+  tags:
+  - type: feature
+    label: 'Nuwe MAME Names-hulpmiddel in ROM Tools: MAME-speletjies kry hul regte name, jare en vervaardigers uit MAME se eie lys, en die lêers behou hul kort name. ''n Skraap vind dan elke speletjie, en jy kan die MAME-lys volgens kategorie filtreer, byvoorbeeld om dobbelmasjiene uit te los. BIOS-stelle word uit die lys versteek'
+  - type: fix
+    label: ROM Reports bied nie meer aan om MAME-lêers te hernoem nie, want 'n hernoemde lêer werk nie meer in MAME nie
+  - type: fix
+    label: Instellings sê nou wat Microsoft vereis voordat 'n Xbox-program geregistreer kan word. Xbox-aanmelding kon hierdeur nie getoets word nie
+  - type: enhancement
+    label: Die aparte Official Names-kaart is weg uit Bulk AI-vul, omdat die AI-vul se Official name-skakelaar reeds hierdie werk doen
+  - type: fix
+    label: Wanneer Sony 'n gestoorde PlayStation-aanmelding van die hand wys, sê die paneelbord en Instellings dit nou en vra jou om weer te koppel. Voorheen het die logboek by elke bediener-aanskakeling 'n betekenislose fout gewys en niks het jou ingelig nie
+  - type: feature
+    label: Om van Steam af in te voer vul nou elke speletjie se beskrywing, erkennings, Metacritic-telling, ouderdomsgraderings, speletjiemodusse, voorblad, agtergrond en skermkiekies uit sy winkelblad, op die agtergrond. Skraap 'n speletjie vir sy genre en vrystellingsdatum
+  - type: feature
+    label: '''n Steam-sinkronisering behou nou jou speeltyd en wanneer jy laas gespeel het, en die speletjieblad wys dit'
+  - type: fix
+    label: Fetch Library op die Steam-invoerblad werk nou vir 'n admin met 'n gestoorde Steam-sleutel. Voorheen het dit die versteekte vorm van die sleutel na Steam gestuur, en die blad het verkeerdelik gesê jy moet jou profiel op Public stel
+  - type: fix
+    label: '''n Steam- of Xbox-speletjie wat reeds onder dieselfde naam in jou biblioteek is, koppel nou aan daardie speletjie wanneer jy dit invoer, sodat sy prestasies sinkroniseer. Voorheen is dit oorgeslaan en nooit gekoppel nie'
+  - type: fix
+    label: Speletjies wat van Steam, Xbox en PlayStation ingevoer word, sorteer nou dadelik reg, soos Final Fantasy IX voor Final Fantasy X, en Steam se handelsmerktekens word uit hul name gelaat
+  - type: feature
+    label: Op stelsels waar RetroAchievements 'n gewone lêer-hash gebruik, soos Mega Drive en Game Boy, sê die speletjieblad of jou kopie prestasies verdien, en daardie hash koppel die regte speletjie. Voer RA Refresh uit om dit in te vul
+  - type: fix
+    label: '''n Skraap vra nou ScreenScraper oor jou presiese lêer voordat dit op naam soek, sodat dit jou speletjie kry en nie een met ''n soortgelyke titel nie. Resultate wat jy self afmerk geld steeds eerste'
+  - type: enhancement
+    label: Die Image Resize-vorderingkassie noem nou die speletjie en stelsel waaraan elke prent behoort
+  - type: feature
+    label: Skraap bring nou titelskerms van ScreenScraper en TheGamesDB, meer amptelike name van IGDB en TheGamesDB (soos 'n speletjie se Japannese titel), en die ander konsoles waarop 'n speletjie uitgekom het van IGDB
+  - type: feature
+    label: '''n Speletjie sonder gebruikerstelling neem nou die gradering in jou ES-DE-versameling, as dit een het'
+  - type: feature
+    label: Die speletjieblad sê hoeveel spelers 'n HowLongToBeat-resultaat getyd het en skakel na sy blad. Resultate wat voorheen gestoor is, wys dit die volgende keer as jy hulle opsoek
+  - type: feature
+    label: Die RetroAchievements-blad wys hoeveel mense 'n speletjie speel en watter deel van hulle elke prestasie verdien het
+  - type: fix
+    label: Die ROM Tools-gidsblaaier maak by jou ROM-gids oop wanneer dit geen gids het om mee te begin nie, in plaas daarvan om te misluk. 'n Verwarde antwoord van IGDB kos nou net daardie een detail, nie alles wat IGDB vir die speletjie gestuur het nie
+  - type: fix
+    label: ScreenScraper se daaglikse limiet keer nou dat RetroDB tot later vra, en 'n grootmaat-skraap sê dit en gaan voort met sy ander bronne. Voorheen het 'n opgebruikte limiet soos "speletjie nie gevind" gelyk en oproepe het die hele nag voortgegaan
+  - type: fix
+    label: '''n Speletjie waarvoor geen bron kon antwoord terwyl ''n diens by sy limiet was, word nie meer as geskraap gemerk nie, sodat die volgende lopie dit weer probeer'
+  - type: fix
+    label: Wanneer 'n TheGamesDB-sleutel sy maand opgebruik het, skuif RetroDB na jou ander sleutel, en hou op vra sodra albei opgebruik is
+  - type: fix
+    label: RAWG se maandelikse limiet keer nou ook dat RetroDB vra, en IGDB word binne sy limiet van vier versoeke per sekonde gehou
+  - type: fix
+    label: HowLongToBeat se grootmaat-opsoek eindig nou met 'n boodskap wanneer die webwerf sê dit het te veel versoeke gehad, en elke versoek aan die webwerf word uitgestrek
+  - type: fix
+    label: Fix Box and Manual Regions gee nie meer op ná 25 speletjies agtereen wat ScreenScraper nie ken nie. Dit stop net wanneer ScreenScraper sê sy limiet is bereik
+  - type: fix
+    label: Op die speletjieblad sit elke ouderdomsgradering nou gesentreer bo sy AI-raaiskatting-etiket
+  - type: fix
+    label: Die TheGamesDB-toelae in Instellings gebruik nou die toets wat nie jou toelae opgebruik nie, en wys nie meer 'n versonne terugstel-datum as die diens nie een gee nie
+  body: |
+    <ul>
+      <li><strong>MAME-speletjies kry hul regte name.</strong> Die nuwe MAME Names-hulpmiddel in ROM Tools haal name, jare en vervaardigers uit MAME se eie lys. Die lêers behou hul kort name, want MAME het dit nodig. Jy kan die MAME-lys volgens kategorie filter, en BIOS-stelle word versteek.</li>
+      <li><strong>Steam-invoere bring baie meer.</strong> Elke speletjie vul sy beskrywing, krediete, Metacritic-telling, ouderdomsgraderings, speletjiemodusse en prente in vanaf sy winkelblad. 'n Sinkronisering behou jou speeltyd en wanneer jy laas gespeel het. 'n Speletjie wat reeds onder dieselfde naam in jou biblioteek is, skakel nou daaraan, sodat sy prestasies sinkroniseer.</li>
+      <li><strong>Skraapwerk vind jou presiese speletjie.</strong> 'n Skraping vra ScreenScraper eers oor jou presiese lêer voordat dit op naam soek. Skrapings bring ook titelskerms, meer amptelike name, en die ander konsoles waarop 'n speletjie uitgekom het.</li>
+      <li><strong>RetroAchievements ken jou kopie.</strong> Op stelsels wat 'n gewone lêer-hash gebruik, soos Mega Drive en Game Boy, sê die speletjiebladsy of jou kopie prestasies verdien. Voer RA Refresh uit om dit in te vul. Die RetroAchievements-bladsy wys ook hoeveel mense 'n speletjie speel en watter deel van hulle elke prestasie verdien het.</li>
+      <li><strong>Aanlyn-limiete word gerespekteer.</strong> Wanneer ScreenScraper, TheGamesDB of RAWG sy limiet bereik, hou RetroDB op vra tot later en 'n grootmaat-skraping gaan voort met sy ander bronne. 'n Speletjie waarvoor geen bron op daardie stadium kon antwoord nie, word met die volgende uitvoering weer probeer.</li>
+      <li><strong>'n Geweierde PlayStation-aanmelding sê so.</strong> Die kontroleskerm en Instellings vra jou nou om weer te skakel wanneer Sony 'n gestoorde aanmelding weier.</li>
+      <li><strong>Official Names het verskuif.</strong> Sy aparte kaart is weg uit Bulk AI Fill, omdat die vul se Official name-skakelaar dieselfde werk doen.</li>
+    </ul>
 - version: 3.35.2
   date: '2026-11-02'
   tags:

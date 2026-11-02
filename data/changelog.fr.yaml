@@ -1,3 +1,89 @@
+- version: 3.35.3
+  date: '2026-11-02'
+  tags:
+  - type: feature
+    label: 'Nouvel outil Noms MAME dans Outils ROM : les jeux MAME reçoivent leurs vrais noms, années et éditeurs depuis la liste propre à MAME, et les fichiers gardent leurs noms courts. Une récupération trouve ensuite chaque jeu, et vous pouvez filtrer la liste MAME par catégorie, par exemple pour exclure les machines à sous. Les sets BIOS sont masqués de la liste'
+  - type: fix
+    label: Les Rapports ROM ne proposent plus de renommer les fichiers MAME, car un fichier renommé ne fonctionne plus dans MAME
+  - type: fix
+    label: Les Paramètres indiquent désormais ce que Microsoft exige avant l'enregistrement d'une application Xbox. La connexion Xbox n'a pas pu être testée à cause de cela
+  - type: enhancement
+    label: La carte séparée Noms officiels a disparu du Remplissage IA en masse, car l'option Nom officiel du remplissage fait déjà ce travail
+  - type: fix
+    label: Quand Sony refuse une connexion PlayStation enregistrée, le tableau de bord et les Paramètres l'indiquent et vous demandent de relier à nouveau le compte. Avant, le journal affichait une erreur sans sens à chaque démarrage du serveur et rien ne vous prévenait
+  - type: feature
+    label: L'importation depuis Steam remplit désormais, en arrière-plan, la description, les crédits, la note Metacritic, les classifications d'âge, les modes de jeu, la boîte, l'arrière-plan et les captures d'écran de chaque jeu à partir de sa page de boutique. Récupérez un jeu pour obtenir son genre et sa date de sortie
+  - type: feature
+    label: Une synchronisation Steam conserve désormais votre temps de jeu et la date de votre dernière partie, et la page du jeu les affiche
+  - type: fix
+    label: Récupérer la bibliothèque sur la page d'importation Steam fonctionne maintenant pour un administrateur ayant une clé Steam enregistrée. Avant, la page envoyait à Steam la version masquée de la clé et indiquait à tort de passer votre profil en Public
+  - type: fix
+    label: Un jeu Steam ou Xbox déjà présent dans votre bibliothèque sous le même nom est désormais lié à ce jeu lors de l'importation, et ses succès se synchronisent. Avant, il était ignoré et jamais lié
+  - type: fix
+    label: Les jeux importés depuis Steam, Xbox et PlayStation sont maintenant triés correctement dès le départ, par exemple Final Fantasy IX avant Final Fantasy X, et les symboles de marque de Steam sont retirés de leurs noms
+  - type: feature
+    label: Sur les systèmes où RetroAchievements utilise un simple hash de fichier, comme la Mega Drive et la Game Boy, la page du jeu indique si votre copie donne des succès, et ce hash relie le bon jeu. Lancez RA Refresh pour renseigner cela
+  - type: fix
+    label: Une récupération interroge maintenant ScreenScraper avec votre fichier exact avant de chercher par nom, et obtient ainsi votre jeu plutôt qu'un titre similaire. Les résultats que vous cochez vous-même restent prioritaires
+  - type: enhancement
+    label: La fenêtre de progression du Redimensionnement d'images indique maintenant le jeu et le système de chaque image
+  - type: feature
+    label: La récupération apporte désormais des écrans-titres depuis ScreenScraper et TheGamesDB, plus de noms officiels depuis IGDB et TheGamesDB (comme le titre japonais d'un jeu), et les autres consoles sur lesquelles un jeu est sorti depuis IGDB
+  - type: feature
+    label: Un jeu sans note d'utilisateur reprend désormais la classification de votre collection ES-DE, s'il en a une
+  - type: feature
+    label: La page du jeu indique combien de joueurs ont chronométré un résultat HowLongToBeat et renvoie vers sa page. Les résultats enregistrés avant cela les afficheront à la prochaine recherche
+  - type: feature
+    label: La page RetroAchievements montre combien de personnes jouent à un jeu et la part d'entre elles qui a obtenu chaque succès
+  - type: fix
+    label: Le navigateur de dossiers des Outils ROM s'ouvre sur votre dossier ROM quand il n'a pas de dossier de départ, au lieu d'échouer. Une réponse illisible d'IGDB ne fait plus perdre que ce détail, et non tout ce qu'IGDB a envoyé pour le jeu
+  - type: fix
+    label: La limite quotidienne de ScreenScraper empêche désormais RetroDB de l'interroger jusqu'à plus tard, et une récupération en masse l'indique et continue avec ses autres sources. Avant, une limite épuisée ressemblait à « jeu introuvable » et les appels continuaient toute la nuit
+  - type: fix
+    label: Un jeu pour lequel aucune source n'a pu répondre pendant qu'un service était à sa limite n'est plus marqué comme récupéré, donc la prochaine exécution le réessaie
+  - type: fix
+    label: Quand une clé TheGamesDB a épuisé son mois, RetroDB passe à votre autre clé, et arrête d'interroger quand les deux sont épuisées
+  - type: fix
+    label: La limite mensuelle de RAWG empêche aussi RetroDB d'interroger ce service, et IGDB est maintenu sous sa limite de quatre requêtes par seconde
+  - type: fix
+    label: La recherche en masse de HowLongToBeat se termine maintenant par un message quand le site indique avoir reçu trop de requêtes, et chaque requête vers le site est espacée
+  - type: fix
+    label: Corriger régions des boîtes et manuels n'abandonne plus après 25 jeux d'affilée inconnus de ScreenScraper. Il ne s'arrête que lorsque ScreenScraper indique que sa limite est atteinte
+  - type: fix
+    label: Sur la page du jeu, chaque classification d'âge est maintenant centrée au-dessus de son étiquette d'estimation IA
+  - type: fix
+    label: Le quota TheGamesDB dans les Paramètres utilise désormais la vérification qui ne consomme pas votre quota, et n'affiche plus de fausse date de réinitialisation quand le service n'en donne aucune
+  body: |
+    <ul>
+      <li><strong>Les jeux MAME retrouvent leur vrai nom.</strong> Le nouvel outil Noms MAME
+        dans les outils ROM reprend les noms, les années et les éditeurs de la liste officielle de MAME.
+        Les fichiers gardent leur nom court, car MAME en a besoin. Vous pouvez
+        filtrer la liste MAME par catégorie, et les jeux BIOS sont masqués.</li>
+      <li><strong>Les imports Steam apportent bien plus.</strong> Chaque jeu récupère sa
+        description, ses crédits, sa note Metacritic, ses classifications d'âge, ses modes de jeu
+        et ses images depuis sa page de boutique. Une synchronisation conserve votre temps de jeu et la date de
+        votre dernière partie. Un jeu déjà présent dans votre bibliothèque sous le même nom est maintenant
+        lié à celui-ci, et ses succès se synchronisent.</li>
+      <li><strong>Les récupérations trouvent votre jeu exact.</strong> Une récupération interroge
+        ScreenScraper sur votre fichier exact avant de chercher par nom. Elle
+        apporte aussi les écrans-titres, davantage de noms officiels et les autres consoles
+        sur lesquelles un jeu est sorti.</li>
+      <li><strong>RetroAchievements reconnaît votre exemplaire.</strong> Sur les systèmes qui
+        utilisent une simple empreinte de fichier, comme la Mega Drive et la Game Boy, la page du jeu
+        indique si votre exemplaire permet d'obtenir des succès. Lancez RA Refresh pour renseigner
+        cette information. La page RetroAchievements montre aussi combien de personnes jouent à un jeu
+        et quelle part d'entre elles a obtenu chaque succès.</li>
+      <li><strong>Les limites en ligne sont respectées.</strong> Quand ScreenScraper,
+        TheGamesDB ou RAWG atteint sa limite, RetroDB arrête de l'interroger jusqu'à plus tard
+        et une récupération en masse continue avec ses autres sources. Un jeu pour lequel aucune source
+        n'a pu répondre à ce moment-là est réessayé au prochain passage.</li>
+      <li><strong>Une connexion PlayStation refusée est signalée.</strong> Le tableau de bord
+        et les Paramètres vous demandent maintenant de relier à nouveau votre compte quand Sony refuse une
+        connexion enregistrée.</li>
+      <li><strong>Noms officiels a changé de place.</strong> Sa carte séparée a disparu
+        du Remplissage IA en masse, car l'option Nom officiel du remplissage
+        remplit le même rôle.</li>
+    </ul>
 - version: 3.35.2
   date: '2026-11-02'
   tags:

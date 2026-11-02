@@ -915,18 +915,16 @@ msgid "This fix is already running."
 msgstr "Це виправлення вже виконується."
 
 #: routes/mame_names.py:38
-#, fuzzy
 msgid "One of those files was not found."
-msgstr "Цю теку не знайдено."
+msgstr "Один із цих файлів не знайдено."
 
 #: routes/mame_names.py:41
 msgid "Choose a MAME list first."
-msgstr ""
+msgstr "Спершу виберіть список MAME."
 
 #: routes/mame_names.py:44
-#, fuzzy
 msgid "MAME Names is already running."
-msgstr "Завантаження зображень уже триває"
+msgstr "MAME Names уже працює."
 
 #: routes/museum.py:385 routes/scraper.py:767
 msgid "No AI provider configured"
@@ -1085,7 +1083,7 @@ msgstr "Відсутній game_id або new_name"
 
 #: routes/reports.py:698 routes/reports.py:829
 msgid "MAME finds a game by its file name, so this file cannot be renamed."
-msgstr ""
+msgstr "MAME шукає гру за назвою файлу, тому цей файл не можна перейменувати."
 
 #: routes/reports.py:702 routes/reports.py:833
 msgid "No ROM path set"
@@ -3040,9 +3038,9 @@ msgid "NOT"
 msgstr "НЕ"
 
 #: services/js_i18n_strings.py:800
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Naming game {current} of {total}."
-msgstr "Завантаження зображень: {done} з {total}"
+msgstr "Називаю гру {current} з {total}."
 
 #: services/js_i18n_strings.py:801
 msgid "Navigation"
@@ -3278,7 +3276,7 @@ msgstr "Зіграно"
 #: services/js_i18n_strings.py:855
 #, python-brace-format
 msgid "Players who timed it: {count}"
-msgstr ""
+msgstr "Гравців із виміряним часом: {count}"
 
 #: services/js_i18n_strings.py:856
 msgid "Please change at least one field before applying."
@@ -3361,9 +3359,8 @@ msgid "RPCS3: Playable"
 msgstr "RPCS3: Можна грати"
 
 #: services/js_i18n_strings.py:874
-#, fuzzy
 msgid "Reading the lists. This can take a few minutes."
-msgstr "Запит до ШІ. Це може тривати до хвилини."
+msgstr "Читаю списки. Це може тривати кілька хвилин."
 
 #: services/js_i18n_strings.py:875
 msgid "Ready"
@@ -3648,9 +3645,8 @@ msgid "See all {n} results"
 msgstr "Показати всі результати ({n})"
 
 #: services/js_i18n_strings.py:936
-#, fuzzy
 msgid "Select Category"
-msgstr "Виберіть рейтинг"
+msgstr "Виберіть категорію"
 
 #: services/js_i18n_strings.py:937
 msgid "Select Developer"
@@ -3851,9 +3847,9 @@ msgid "Systems"
 msgstr "Системи"
 
 #: services/js_i18n_strings.py:980
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "That stopped: {error}"
-msgstr "Помилка: {error}"
+msgstr "Зупинено: {error}"
 
 #: services/js_i18n_strings.py:981
 msgid "The 3D box could not be removed."
@@ -4294,6 +4290,8 @@ msgid ""
 "{state} Games named: {named}. Games changed: {updated}. Not in the lists:"
 " {missing}."
 msgstr ""
+"{state} Ігор названо: {named}. Ігор змінено: {updated}. Немає в списках: "
+"{missing}."
 
 #: services/js_i18n_strings.py:1067
 #, python-brace-format
@@ -4384,6 +4382,8 @@ msgid ""
 "%(service)s refused every saved key, which usually means their limit is "
 "reached. RetroDB will not ask it again until %(when)s."
 msgstr ""
+"%(service)s відхилив усі збережені ключі, що зазвичай означає вичерпаний "
+"ліміт. RetroDB не звертатиметься до нього до %(when)s."
 
 #: services/service_stop_text.py:26
 #, python-format
@@ -4391,6 +4391,8 @@ msgid ""
 "%(service)s says its limit is reached. RetroDB will not ask it again "
 "until %(when)s."
 msgstr ""
+"%(service)s повідомляє, що ліміт вичерпано. RetroDB не звертатиметься до "
+"нього до %(when)s."
 
 #: services/standalone_settings.py:310
 msgid ""
@@ -4704,7 +4706,7 @@ msgstr "Розблоковано (%(count)s)"
 #: templates/achievement_game.html:307 templates/achievement_game.html:352
 #, python-format
 msgid "Earned by %(pct)s%% of players"
-msgstr ""
+msgstr "Отримали %(pct)s%% гравців"
 
 #: templates/achievement_game.html:310
 msgid "Hardcore"
@@ -4980,9 +4982,8 @@ msgid "Select"
 msgstr "Вибрати"
 
 #: templates/all_games.html:94 templates/system_games.html:85
-#, fuzzy
 msgid "Category"
-msgstr "Стратегія"
+msgstr "Категорія"
 
 #: templates/all_games.html:98 templates/compare_games.html:89
 #: templates/system_games.html:89
@@ -7227,26 +7228,27 @@ msgstr "Опис недоступний. Натисніть «Скрапити»
 #: templates/game_detail.html:340
 #, python-format
 msgid "Played on Steam: %(hours)s h %(minutes)s min"
-msgstr ""
+msgstr "Зіграно в Steam: %(hours)s год %(minutes)s хв"
 
 #: templates/game_detail.html:340
 #, python-format
 msgid "Played on Steam: %(minutes)s min"
-msgstr ""
+msgstr "Зіграно в Steam: %(minutes)s хв"
 
 #: templates/game_detail.html:340
-#, fuzzy, python-format
+#, python-format
 msgid "Last played: %(date)s"
-msgstr "Востаннє перевірено %(date)s."
+msgstr "Остання гра: %(date)s"
 
 #: templates/game_detail.html:358
-#, fuzzy
 msgid "Your copy earns achievements"
-msgstr "Немає досягнень Steam"
+msgstr "Ваша копія дає досягнення"
 
 #: templates/game_detail.html:359
 msgid "RetroAchievements does not list your copy, so it may not earn achievements"
 msgstr ""
+"RetroAchievements не має вашої копії в списку, тож вона може не давати "
+"досягнень"
 
 #: templates/game_detail.html:367
 msgid "View on RetroAchievements.org"
@@ -7334,9 +7336,9 @@ msgid "%(pct)s%% match"
 msgstr "%(pct)s%% збіг"
 
 #: templates/game_detail.html:598
-#, fuzzy, python-format
+#, python-format
 msgid "Players who timed it: %(count)s"
-msgstr "Невдало: %(count)s"
+msgstr "Гравців із виміряним часом: %(count)s"
 
 #: templates/game_detail.html:639
 msgid "Source:"
@@ -7775,19 +7777,16 @@ msgid "Trophy Progress"
 msgstr "Прогрес трофеїв"
 
 #: templates/game_imports.html:762 templates/game_imports.html:776
-#, fuzzy
 msgid "In your library: link it"
-msgstr "Ваша бібліотека порожня"
+msgstr "У вашій бібліотеці: зв’язати"
 
 #: templates/game_imports.html:854
-#, fuzzy
 msgid "Linked to games in your library"
-msgstr "ROM у бібліотеці"
+msgstr "Зв’язано з іграми у вашій бібліотеці"
 
 #: templates/game_imports.html:857
-#, fuzzy
 msgid "Details are arriving from Steam in the background"
-msgstr "Скрапінг {n} елемент(ів) у фоновому режимі."
+msgstr "Подробиці надходять зі Steam у фоновому режимі"
 
 #: templates/help.af.html:11 templates/help.de.html:11
 #: templates/help.es.html:11 templates/help.fr.html:11
@@ -8108,9 +8107,8 @@ msgstr "Виберіть файл журналу для перегляду"
 
 #: templates/_macros/nav_tabs.html:42 templates/mame_names.html:6
 #: templates/mame_names.html:34 templates/rom_tools_hub.html:340
-#, fuzzy
 msgid "MAME Names"
-msgstr "Назва гри"
+msgstr "MAME Names"
 
 #: templates/mame_names.html:37
 msgid ""
@@ -8119,49 +8117,58 @@ msgid ""
 "gives each game its real name, year and maker from MAME's own list. A "
 "scrape then finds the game by its file name or its real name."
 msgstr ""
+"MAME шукає гру за точною назвою файлу, тому файли повинні зберігати "
+"короткі назви, як-от dyger.zip. Цей інструмент не чіпає файли й дає "
+"кожній грі справжню назву, рік і виробника зі списку самого MAME. Після "
+"цього скрапінг знаходить гру за назвою файлу або за справжньою назвою."
 
 #: templates/mame_names.html:38
 msgid ""
 "A title you changed yourself is kept. A new name is protected from "
 "scrapers and the AI. Run this again after adding more MAME games."
 msgstr ""
+"Назву, яку ви змінили самі, буде збережено. Нова назва захищена від "
+"скраперів і ШІ. Запустіть це знову після додавання нових ігор MAME."
 
 #: templates/mame_names.html:41
-#, fuzzy
 msgid "MAME list"
-msgstr "Список читів"
+msgstr "Список MAME"
 
 #: templates/mame_names.html:46
 msgid ""
 "The DAT that matches your ROMs, or the output of mame -listxml. An .xml "
 "file, or a .zip holding one."
 msgstr ""
+"DAT, що відповідає вашим ROM, або результат команди mame -listxml. Файл "
+".xml або .zip з ним."
 
 #: templates/mame_names.html:49
 msgid "Second MAME list (optional)"
-msgstr ""
+msgstr "Другий список MAME (необов’язково)"
 
 #: templates/mame_names.html:54
 msgid ""
 "Fills what the first list lacks. BIOS sets are hidden only if a list "
 "marks them."
 msgstr ""
+"Доповнює те, чого бракує в першому списку. Набори BIOS приховуються, лише"
+" якщо список їх позначає."
 
 #: templates/mame_names.html:57
-#, fuzzy
 msgid "Category file (optional)"
-msgstr "підпапка (необов'язково)"
+msgstr "Файл категорій (необов’язково)"
 
 #: templates/mame_names.html:62
 msgid ""
 "A catver.ini. It lets you filter the list, for example to leave out slot "
 "machines."
 msgstr ""
+"Файл catver.ini. Він дає змогу фільтрувати список, наприклад, щоб "
+"виключити ігрові автомати."
 
 #: templates/mame_names.html:66
-#, fuzzy
 msgid "Name MAME Games"
-msgstr "Кількість ігор"
+msgstr "Назвати ігри MAME"
 
 #: templates/multi_disc_organizer.html:168
 msgid "Multi-Disc Game Organizer"
@@ -8919,14 +8926,12 @@ msgstr ""
 "вручну на сторінці гри."
 
 #: templates/rom_tools_hub.html:209
-#, fuzzy
 msgid ""
 "Fill the empty fields of a whole system with AI, choosing which fields, "
 "the game's official name among them."
 msgstr ""
-"Заповніть порожні поля цілої системи за допомогою ШІ, вибравши потрібні "
-"поля. Або попросіть ШІ назвати повну офіційну назву кожної гри й прийміть"
-" лише ті назви, які потрібні."
+"Заповніть порожні поля цілої системи за допомогою ШІ, вибравши поля, "
+"зокрема офіційну назву гри."
 
 #: templates/rom_tools_hub.html:212
 msgid "Needs an AI provider (Settings > Scraping)"
@@ -9064,10 +9069,12 @@ msgid ""
 "Gives MAME games their real names, years and makers from MAME's own list,"
 " and leaves the files alone."
 msgstr ""
+"Дає іграм MAME справжні назви, роки й виробників зі списку самого MAME, "
+"не чіпаючи файли."
 
 #: templates/rom_tools_hub.html:346
 msgid "Needs a MAME list file"
-msgstr ""
+msgstr "Потрібен файл списку MAME"
 
 #: templates/rom_tools_hub.html:354 templates/rom_tools_hub.html:592
 msgid "Tidy Release Dates"
@@ -11492,6 +11499,10 @@ msgid ""
 "Azure, and that may ask for a card. Xbox may still refuse an app made "
 "this way: RetroDB has not been able to test one."
 msgstr ""
+"Для Xbox потрібен застосунок, зареєстрований у Microsoft. Тепер Microsoft"
+" просить особистий обліковий запис спершу отримати каталог, що може "
+"означати реєстрацію в Azure, а там можуть попросити картку. Xbox усе ж "
+"може відхилити такий застосунок: RetroDB не вдалося це перевірити."
 
 #: templates/_settings_tabs/scraping.html:521
 msgid "Test saved AI key"

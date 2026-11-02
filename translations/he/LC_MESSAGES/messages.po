@@ -899,18 +899,16 @@ msgid "This fix is already running."
 msgstr "התיקון הזה כבר פועל."
 
 #: routes/mame_names.py:38
-#, fuzzy
 msgid "One of those files was not found."
-msgstr "התיקייה הזו לא נמצאה."
+msgstr "אחד מהקבצים האלה לא נמצא."
 
 #: routes/mame_names.py:41
 msgid "Choose a MAME list first."
-msgstr ""
+msgstr "קודם בחרו רשימת MAME."
 
 #: routes/mame_names.py:44
-#, fuzzy
 msgid "MAME Names is already running."
-msgstr "הורדת תמונות כבר פועלת"
+msgstr "MAME Names כבר פועל."
 
 #: routes/museum.py:385 routes/scraper.py:767
 msgid "No AI provider configured"
@@ -1059,7 +1057,7 @@ msgstr "חסר game_id או new_name"
 
 #: routes/reports.py:698 routes/reports.py:829
 msgid "MAME finds a game by its file name, so this file cannot be renamed."
-msgstr ""
+msgstr "MAME מזהה משחק לפי שם הקובץ שלו, ולכן אי אפשר לשנות את שם הקובץ הזה."
 
 #: routes/reports.py:702 routes/reports.py:833
 msgid "No ROM path set"
@@ -2995,9 +2993,9 @@ msgid "NOT"
 msgstr "לא"
 
 #: services/js_i18n_strings.py:800
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Naming game {current} of {total}."
-msgstr "מוריד תמונות: {done} מתוך {total}"
+msgstr "נותנים שם למשחק {current} מתוך {total}."
 
 #: services/js_i18n_strings.py:801
 msgid "Navigation"
@@ -3227,7 +3225,7 @@ msgstr "שוחק"
 #: services/js_i18n_strings.py:855
 #, python-brace-format
 msgid "Players who timed it: {count}"
-msgstr ""
+msgstr "שחקנים שמדדו זמן: {count}"
 
 #: services/js_i18n_strings.py:856
 msgid "Please change at least one field before applying."
@@ -3310,9 +3308,8 @@ msgid "RPCS3: Playable"
 msgstr "RPCS3: ניתן לשחק"
 
 #: services/js_i18n_strings.py:874
-#, fuzzy
 msgid "Reading the lists. This can take a few minutes."
-msgstr "שואל את ה-AI. זה עשוי להימשך עד דקה."
+msgstr "קוראים את הרשימות. זה עשוי לקחת כמה דקות."
 
 #: services/js_i18n_strings.py:875
 msgid "Ready"
@@ -3592,9 +3589,8 @@ msgid "See all {n} results"
 msgstr "הצג את כל {n} התוצאות"
 
 #: services/js_i18n_strings.py:936
-#, fuzzy
 msgid "Select Category"
-msgstr "בחר דירוג"
+msgstr "בחר קטגוריה"
 
 #: services/js_i18n_strings.py:937
 msgid "Select Developer"
@@ -3795,9 +3791,9 @@ msgid "Systems"
 msgstr "מערכות"
 
 #: services/js_i18n_strings.py:980
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "That stopped: {error}"
-msgstr "נכשל: {error}"
+msgstr "הפעולה נעצרה: {error}"
 
 #: services/js_i18n_strings.py:981
 msgid "The 3D box could not be removed."
@@ -4229,6 +4225,8 @@ msgid ""
 "{state} Games named: {named}. Games changed: {updated}. Not in the lists:"
 " {missing}."
 msgstr ""
+"{state} משחקים ששמם נקבע: {named}. משחקים ששונו: {updated}. לא ברשימות: "
+"{missing}."
 
 #: services/js_i18n_strings.py:1067
 #, python-brace-format
@@ -4319,13 +4317,15 @@ msgid ""
 "%(service)s refused every saved key, which usually means their limit is "
 "reached. RetroDB will not ask it again until %(when)s."
 msgstr ""
+"%(service)s דחה את כל המפתחות השמורים, מה שבדרך כלל אומר שהגעתם למגבלה. "
+"RetroDB לא יפנה אליו שוב עד %(when)s."
 
 #: services/service_stop_text.py:26
 #, python-format
 msgid ""
 "%(service)s says its limit is reached. RetroDB will not ask it again "
 "until %(when)s."
-msgstr ""
+msgstr "%(service)s מדווח שהגעתם למגבלה. RetroDB לא יפנה אליו שוב עד %(when)s."
 
 #: services/standalone_settings.py:310
 msgid ""
@@ -4635,7 +4635,7 @@ msgstr "נפתחו (%(count)s)"
 #: templates/achievement_game.html:307 templates/achievement_game.html:352
 #, python-format
 msgid "Earned by %(pct)s%% of players"
-msgstr ""
+msgstr "הושג על ידי %(pct)s%% מהשחקנים"
 
 #: templates/achievement_game.html:310
 msgid "Hardcore"
@@ -4908,9 +4908,8 @@ msgid "Select"
 msgstr "בחר"
 
 #: templates/all_games.html:94 templates/system_games.html:85
-#, fuzzy
 msgid "Category"
-msgstr "אסטרטגיה"
+msgstr "קטגוריה"
 
 #: templates/all_games.html:98 templates/compare_games.html:89
 #: templates/system_games.html:89
@@ -7147,26 +7146,25 @@ msgstr "אין תיאור זמין. לחץ על \"גרד\" כדי לאחזר מ�
 #: templates/game_detail.html:340
 #, python-format
 msgid "Played on Steam: %(hours)s h %(minutes)s min"
-msgstr ""
+msgstr "שוחק ב-Steam: %(hours)s שעות ו-%(minutes)s דקות"
 
 #: templates/game_detail.html:340
 #, python-format
 msgid "Played on Steam: %(minutes)s min"
-msgstr ""
+msgstr "שוחק ב-Steam: %(minutes)s דקות"
 
 #: templates/game_detail.html:340
-#, fuzzy, python-format
+#, python-format
 msgid "Last played: %(date)s"
-msgstr "נבדק לאחרונה ב-%(date)s."
+msgstr "שוחק לאחרונה: %(date)s"
 
 #: templates/game_detail.html:358
-#, fuzzy
 msgid "Your copy earns achievements"
-msgstr "אין הישגי Steam"
+msgstr "ההעתק שלך מזכה בהישגים"
 
 #: templates/game_detail.html:359
 msgid "RetroAchievements does not list your copy, so it may not earn achievements"
-msgstr ""
+msgstr "RetroAchievements לא כוללת את ההעתק שלך, ולכן ייתכן שהוא לא מזכה בהישגים"
 
 #: templates/game_detail.html:367
 msgid "View on RetroAchievements.org"
@@ -7254,9 +7252,9 @@ msgid "%(pct)s%% match"
 msgstr "%(pct)s%% התאמה"
 
 #: templates/game_detail.html:598
-#, fuzzy, python-format
+#, python-format
 msgid "Players who timed it: %(count)s"
-msgstr "נכשלו: %(count)s"
+msgstr "שחקנים שמדדו זמן: %(count)s"
 
 #: templates/game_detail.html:639
 msgid "Source:"
@@ -7693,19 +7691,16 @@ msgid "Trophy Progress"
 msgstr "התקדמות גביעים"
 
 #: templates/game_imports.html:762 templates/game_imports.html:776
-#, fuzzy
 msgid "In your library: link it"
-msgstr "הספרייה שלך ריקה"
+msgstr "בספרייה שלך: קשר אותו"
 
 #: templates/game_imports.html:854
-#, fuzzy
 msgid "Linked to games in your library"
-msgstr "קובצי ROM בספרייה"
+msgstr "מקושר למשחקים בספרייה שלך"
 
 #: templates/game_imports.html:857
-#, fuzzy
 msgid "Details are arriving from Steam in the background"
-msgstr "גורדים {n} פריטים ברקע."
+msgstr "פרטים מגיעים מ-Steam ברקע"
 
 #: templates/help.af.html:11 templates/help.de.html:11
 #: templates/help.es.html:11 templates/help.fr.html:11
@@ -8018,9 +8013,8 @@ msgstr "בחר קובץ יומן לצפייה"
 
 #: templates/_macros/nav_tabs.html:42 templates/mame_names.html:6
 #: templates/mame_names.html:34 templates/rom_tools_hub.html:340
-#, fuzzy
 msgid "MAME Names"
-msgstr "שם המשחק"
+msgstr "MAME Names"
 
 #: templates/mame_names.html:37
 msgid ""
@@ -8029,49 +8023,56 @@ msgid ""
 "gives each game its real name, year and maker from MAME's own list. A "
 "scrape then finds the game by its file name or its real name."
 msgstr ""
+"MAME מזהה משחק לפי שם הקובץ המדויק שלו, ולכן הקבצים חייבים לשמור על "
+"שמותיהם הקצרים, כמו dyger.zip. הכלי הזה לא נוגע בקבצים ונותן לכל משחק את "
+"שמו האמיתי, השנה והיצרן מהרשימה של MAME עצמה. אחר כך גרידה מוצאת את המשחק"
+" לפי שם הקובץ או לפי שמו האמיתי."
 
 #: templates/mame_names.html:38
 msgid ""
 "A title you changed yourself is kept. A new name is protected from "
 "scrapers and the AI. Run this again after adding more MAME games."
 msgstr ""
+"כותרת ששינית בעצמך נשמרת. שם חדש מוגן מפני גרדים ומפני הבינה המלאכותית. "
+"הריצו זאת שוב אחרי הוספת משחקי MAME נוספים."
 
 #: templates/mame_names.html:41
-#, fuzzy
 msgid "MAME list"
-msgstr "רשימת צ'יטים"
+msgstr "רשימת MAME"
 
 #: templates/mame_names.html:46
 msgid ""
 "The DAT that matches your ROMs, or the output of mame -listxml. An .xml "
 "file, or a .zip holding one."
 msgstr ""
+"ה-DAT שמתאים ל-ROMs שלך, או הפלט של mame -listxml. קובץ xml., או zip. "
+"שמכיל אחד כזה."
 
 #: templates/mame_names.html:49
 msgid "Second MAME list (optional)"
-msgstr ""
+msgstr "רשימת MAME שנייה (לא חובה)"
 
 #: templates/mame_names.html:54
 msgid ""
 "Fills what the first list lacks. BIOS sets are hidden only if a list "
 "marks them."
 msgstr ""
+"משלימה את מה שחסר ברשימה הראשונה. ערכות BIOS מוסתרות רק אם רשימה מסמנת "
+"אותן."
 
 #: templates/mame_names.html:57
-#, fuzzy
 msgid "Category file (optional)"
-msgstr "תת-תיקייה (אופציונלי)"
+msgstr "קובץ קטגוריות (לא חובה)"
 
 #: templates/mame_names.html:62
 msgid ""
 "A catver.ini. It lets you filter the list, for example to leave out slot "
 "machines."
-msgstr ""
+msgstr "קובץ catver.ini. הוא מאפשר לסנן את הרשימה, למשל כדי להשמיט מכונות מזל."
 
 #: templates/mame_names.html:66
-#, fuzzy
 msgid "Name MAME Games"
-msgstr "מספר משחקים"
+msgstr "תן שמות למשחקי MAME"
 
 #: templates/multi_disc_organizer.html:168
 msgid "Multi-Disc Game Organizer"
@@ -8815,13 +8816,12 @@ msgstr ""
 "הקבוצות ש-RetroDB מציע, או קשר גרסאות ידנית בדף משחק."
 
 #: templates/rom_tools_hub.html:209
-#, fuzzy
 msgid ""
 "Fill the empty fields of a whole system with AI, choosing which fields, "
 "the game's official name among them."
 msgstr ""
-"מלאו עם AI את השדות הריקים של מערכת שלמה, ובחרו אילו שדות. או בקשו מה-AI "
-"את השם הרשמי המלא של כל משחק, וקבלו רק את השמות שאתם רוצים."
+"מלאו בעזרת AI את השדות הריקים של מערכת שלמה, ובחרו אילו שדות, כולל השם "
+"הרשמי של המשחק."
 
 #: templates/rom_tools_hub.html:212
 msgid "Needs an AI provider (Settings > Scraping)"
@@ -8955,10 +8955,12 @@ msgid ""
 "Gives MAME games their real names, years and makers from MAME's own list,"
 " and leaves the files alone."
 msgstr ""
+"נותן למשחקי MAME את שמותיהם האמיתיים, השנים והיצרנים מהרשימה של MAME "
+"עצמה, ולא נוגע בקבצים."
 
 #: templates/rom_tools_hub.html:346
 msgid "Needs a MAME list file"
-msgstr ""
+msgstr "נדרש קובץ רשימת MAME"
 
 #: templates/rom_tools_hub.html:354 templates/rom_tools_hub.html:592
 msgid "Tidy Release Dates"
@@ -11312,6 +11314,9 @@ msgid ""
 "Azure, and that may ask for a card. Xbox may still refuse an app made "
 "this way: RetroDB has not been able to test one."
 msgstr ""
+"Xbox דורשת אפליקציה הרשומה ב-Microsoft. Microsoft דורשת עכשיו מחשבון אישי"
+" ליצור קודם ספרייה, מה שעלול לחייב הרשמה ל-Azure, ואולי גם כרטיס אשראי. "
+"ייתכן ש-Xbox עדיין תסרב לאפליקציה שנוצרה כך: RetroDB לא הצליחה לבדוק זאת."
 
 #: templates/_settings_tabs/scraping.html:521
 msgid "Test saved AI key"

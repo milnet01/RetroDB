@@ -1,3 +1,68 @@
+- version: 3.35.3
+  date: '2026-11-02'
+  tags:
+  - type: feature
+    label: ROM 工具新增「MAME 名稱」工具：MAME 遊戲會從 MAME 自己的清單取得真正的名稱、年份和製作商，檔案則保留原本的簡短名稱。之後抓取就能找到每款遊戲，你也可以依類別篩選 MAME 清單，例如排除投幣式賭博機。BIOS 組合不會顯示在清單中
+  - type: fix
+    label: ROM 報告不再建議重新命名 MAME 檔案，因為檔案改名後就無法在 MAME 中使用
+  - type: fix
+    label: 設定現在會說明在註冊 Xbox 應用程式之前，Microsoft 有哪些要求。由於這個原因，Xbox 登入無法測試
+  - type: enhancement
+    label: 大量 AI 填充中已移除獨立的「正式名稱」卡片，因為填充中的「正式名稱」開關已經有相同功能
+  - type: fix
+    label: 當 Sony 拒絕已儲存的 PlayStation 登入時，儀表板和設定現在會提示你，並請你重新連結。以前每次伺服器啟動時，記錄只會顯示毫無意義的錯誤，也沒有任何提示
+  - type: feature
+    label: 從 Steam 匯入現在會在背景從商店頁面填入每款遊戲的簡介、製作人員、Metacritic 分數、年齡分級、遊戲模式、封面、背景和螢幕截圖。若要取得類型和發行日期，請抓取該遊戲
+  - type: feature
+    label: Steam 同步現在會保留你的遊玩時間和上次遊玩時間，遊戲頁面也會顯示
+  - type: fix
+    label: Steam 匯入頁面的「取得遊戲庫」現在可供已儲存 Steam 金鑰的管理員使用。以前它會把金鑰的隱藏形式傳給 Steam，頁面還錯誤地要求你把個人資料設為公開
+  - type: fix
+    label: 遊戲庫中已有同名的 Steam 或 Xbox 遊戲，匯入時現在會連結到該遊戲，成就也會同步。以前它會被略過，而且不會連結
+  - type: fix
+    label: 從 Steam、Xbox 和 PlayStation 匯入的遊戲現在會立即正確排序，例如 Final Fantasy IX 排在 Final Fantasy X 之前，名稱中 Steam 的商標符號也會移除
+  - type: feature
+    label: 在 RetroAchievements 使用純檔案雜湊的系統上，例如 Mega Drive 和 Game Boy，遊戲頁面會顯示你的檔案能否獲得成就，而且該雜湊會連結到正確的遊戲。請執行 RA 重新整理來填入這項資料
+  - type: fix
+    label: 抓取現在會先用你的確切檔案向 ScreenScraper 查詢，再依名稱搜尋，因此會找到你的遊戲，而不是標題相近的其他遊戲。你自己勾選的結果仍然優先
+  - type: enhancement
+    label: 圖片縮放的進度框現在會標示每張圖片所屬的遊戲和系統
+  - type: feature
+    label: 抓取現在會從 ScreenScraper 和 TheGamesDB 取得標題畫面，從 IGDB 和 TheGamesDB 取得更多正式名稱（例如遊戲的日文標題），並從 IGDB 取得遊戲曾發行的其他主機
+  - type: feature
+    label: 沒有使用者評分的遊戲，現在會採用你 ES-DE 收藏中的分級（如果有的話）
+  - type: feature
+    label: 遊戲頁面會顯示有多少玩家為 HowLongToBeat 的結果計時，並連結到其頁面。在此之前儲存的結果，下次查詢時就會顯示這些資料
+  - type: feature
+    label: RetroAchievements 頁面會顯示有多少人在玩某款遊戲，以及每個成就的獲得比例
+  - type: fix
+    label: ROM 工具的資料夾瀏覽器在沒有起始資料夾時，現在會開啟你的 ROM 資料夾，而不是失敗。IGDB 傳回的資料若有錯亂，現在只會損失那一項細節，而不是該遊戲從 IGDB 取得的全部資料
+  - type: fix
+    label: ScreenScraper 的每日上限現在會讓 RetroDB 暫停查詢直到稍後，大量抓取也會提示這件事，並繼續使用其他來源。以前用完上限時看起來像是「找不到遊戲」，而且整夜持續發出請求
+  - type: fix
+    label: 服務達到上限時，若沒有任何來源能回應某款遊戲，該遊戲不再被標記為已抓取，所以下次執行會再試一次
+  - type: fix
+    label: 當 TheGamesDB 金鑰用完當月額度時，RetroDB 會改用你的另一組金鑰，兩組都用完後就停止查詢
+  - type: fix
+    label: RAWG 的每月上限現在也會讓 RetroDB 停止查詢，而且 IGDB 會維持在每秒四次請求的限制內
+  - type: fix
+    label: HowLongToBeat 的大量查詢現在會在網站表示請求過多時以訊息結束，而且對該網站的每次請求都會間隔開來
+  - type: fix
+    label: 修正封面和說明書地區功能，不再因為連續 25 款遊戲 ScreenScraper 都不認識就放棄。只有在 ScreenScraper 表示已達上限時才會停止
+  - type: fix
+    label: 在遊戲頁面上，每個年齡分級現在會置中顯示在其 AI 推測標籤上方
+  - type: fix
+    label: 設定中的 TheGamesDB 額度現在使用不會消耗額度的檢查方式，而且在服務沒有提供重設日期時，不再顯示編造的重設日期
+  body: |
+    <ul>
+      <li><strong>MAME 遊戲有了真正的名稱。</strong>ROM 工具中新增的 MAME 名稱工具,會從 MAME 自己的清單取得名稱、年份和製造商。檔案會保留簡短的檔名,因為 MAME 需要它們。你可以依類別篩選 MAME 清單,BIOS 組會被隱藏。</li>
+      <li><strong>Steam 匯入帶來更多內容。</strong>每個遊戲都會從商店頁面填入說明、製作名單、Metacritic 評分、年齡分級、遊戲模式和圖片。同步時會保留你的遊玩時間和上次遊玩的時間。遊戲庫中已有同名遊戲時,現在會連結到該遊戲,因此它的成就也會同步。</li>
+      <li><strong>抓取能找到你的確切遊戲。</strong>抓取時會先向 ScreenScraper 查詢你的確切檔案,再依名稱搜尋。抓取也會帶來標題畫面、更多官方名稱,以及遊戲發行過的其他主機。</li>
+      <li><strong>RetroAchievements 認得你的版本。</strong>在使用一般檔案雜湊的系統上,例如 Mega Drive 和 Game Boy,遊戲頁面會顯示你的版本能否獲得成就。執行 RA 重新整理即可填入這項資訊。RetroAchievements 頁面也會顯示有多少人遊玩某款遊戲,以及其中有多少比例的人獲得了各項成就。</li>
+      <li><strong>遵守線上限制。</strong>當 ScreenScraper、TheGamesDB 或 RAWG 達到上限時,RetroDB 會暫停詢問,稍後再試,批次抓取則會繼續使用其他來源。當時沒有任何來源能回應的遊戲,會在下次執行時再試一次。</li>
+      <li><strong>PlayStation 登入被拒時會提示。</strong>當 Sony 拒絕已儲存的登入時,儀表板和設定現在會要求你重新連結。</li>
+      <li><strong>官方名稱已移動。</strong>它獨立的卡片已從批次 AI 填充中移除,因為填充中的官方名稱開關功能相同。</li>
+    </ul>
 - version: 3.35.2
   date: '2026-11-02'
   tags:

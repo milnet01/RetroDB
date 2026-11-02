@@ -1,3 +1,68 @@
+- version: 3.35.3
+  date: '2026-11-02'
+  tags:
+  - type: feature
+    label: 'Nieuwe tool MAME Names in ROM Tools: MAME-games krijgen hun echte namen, jaren en makers uit de eigen lijst van MAME, en de bestanden behouden hun korte namen. Een scrape vindt daarna elke game, en je kunt de MAME-lijst filteren op categorie, bijvoorbeeld om gokkasten weg te laten. BIOS-sets worden in de lijst verborgen'
+  - type: fix
+    label: ROM Reports biedt niet meer aan om MAME-bestanden te hernoemen, want een hernoemd bestand werkt niet meer in MAME
+  - type: fix
+    label: Instellingen laat nu zien wat Microsoft vraagt voordat een Xbox-app kan worden geregistreerd. Inloggen bij Xbox kon hierdoor niet worden getest
+  - type: enhancement
+    label: De aparte kaart Officiële namen is verdwenen uit Bulk AI-aanvulling, omdat de schakelaar Officiële naam van de aanvulling dit al doet
+  - type: fix
+    label: Als Sony een opgeslagen PlayStation-login weigert, melden het dashboard en Instellingen dat nu en vragen ze je om opnieuw te koppelen. Eerder toonde het logboek bij elke serverstart een nietszeggende fout en zei niets het je
+  - type: feature
+    label: Importeren vanuit Steam vult nu van elke game de beschrijving, de credits, de Metacritic-score, de leeftijdsclassificaties, de spelmodi, de box, de achtergrond en de screenshots in vanaf de winkelpagina, op de achtergrond. Scrape een game voor het genre en de releasedatum
+  - type: feature
+    label: Een Steam-synchronisatie bewaart nu je speeltijd en wanneer je voor het laatst hebt gespeeld, en de gamepagina toont ze
+  - type: fix
+    label: Bibliotheek ophalen op de Steam-importpagina werkt nu voor een beheerder met een opgeslagen Steam-sleutel. Eerder stuurde het de verborgen vorm van de sleutel naar Steam, en de pagina zei ten onrechte dat je je profiel op Openbaar moest zetten
+  - type: fix
+    label: Een Steam- of Xbox-game die al onder dezelfde naam in je bibliotheek staat, wordt bij het importeren nu aan die game gekoppeld, zodat de prestaties synchroniseren. Eerder werd hij overgeslagen en nooit gekoppeld
+  - type: fix
+    label: Games die uit Steam, Xbox en PlayStation zijn geïmporteerd, worden nu meteen goed gesorteerd, zoals Final Fantasy IX vóór Final Fantasy X, en de merktekens van Steam blijven uit hun namen weg
+  - type: feature
+    label: Op systemen waar RetroAchievements een gewone bestandshash gebruikt, zoals Mega Drive en Game Boy, meldt de gamepagina of jouw exemplaar prestaties oplevert, en die hash koppelt de juiste game. Voer RA Refresh uit om dit in te vullen
+  - type: fix
+    label: Een scrape vraagt ScreenScraper nu eerst naar je exacte bestand voordat er op naam wordt gezocht, zodat je de juiste game krijgt en geen game met een vergelijkbare titel. Resultaten die je zelf aanvinkt gaan nog steeds voor
+  - type: enhancement
+    label: Het voortgangsvenster van Afbeeldingen verkleinen noemt nu de game en het systeem waartoe elke afbeelding behoort
+  - type: feature
+    label: Scrapen haalt nu titelschermen op van ScreenScraper en TheGamesDB, meer officiële namen van IGDB en TheGamesDB (zoals de Japanse titel van een game), en de andere consoles waarop een game verscheen van IGDB
+  - type: feature
+    label: Een game zonder gebruikersscore neemt nu de classificatie uit je ES-DE-collectie over, als die er is
+  - type: feature
+    label: De gamepagina toont hoeveel spelers een HowLongToBeat-resultaat hebben getimed en linkt naar de pagina ervan. Eerder opgeslagen resultaten tonen dit de volgende keer dat je ze opzoekt
+  - type: feature
+    label: De RetroAchievements-pagina toont hoeveel mensen een game spelen en welk deel van hen elke prestatie heeft behaald
+  - type: fix
+    label: De mapkiezer van ROM Tools opent nu in je ROM-map als er geen beginmap is, in plaats van te mislukken. Een onleesbaar antwoord van IGDB kost nu alleen dat ene detail, niet alles wat IGDB voor de game stuurde
+  - type: fix
+    label: De dagelijkse limiet van ScreenScraper zorgt er nu voor dat RetroDB tot later niet meer vraagt, en een bulkscrape meldt dit en gaat door met zijn andere bronnen. Eerder leek een opgebruikte limiet op "game niet gevonden" en gingen de aanvragen de hele nacht door
+  - type: fix
+    label: Een game waarvoor geen enkele bron kon antwoorden terwijl een dienst aan zijn limiet zat, wordt niet meer als gescrapet gemarkeerd, zodat de volgende run het opnieuw probeert
+  - type: fix
+    label: Als een TheGamesDB-sleutel zijn maand heeft opgebruikt, schakelt RetroDB over op je andere sleutel, en stopt met vragen zodra beide op zijn
+  - type: fix
+    label: De maandlimiet van RAWG zorgt er nu ook voor dat RetroDB stopt met vragen, en IGDB blijft binnen zijn limiet van vier aanvragen per seconde
+  - type: fix
+    label: De bulkopzoeking van HowLongToBeat eindigt nu met een melding als de site zegt dat er te veel aanvragen zijn geweest, en elke aanvraag naar de site wordt gespreid
+  - type: fix
+    label: Regio's van box en handleiding herstellen geeft niet langer op na 25 games op rij die ScreenScraper niet kent. Het stopt alleen als ScreenScraper meldt dat de limiet is bereikt
+  - type: fix
+    label: Op de gamepagina staat elke leeftijdsclassificatie nu gecentreerd boven het label met de AI-schatting
+  - type: fix
+    label: Het TheGamesDB-tegoed in Instellingen gebruikt nu de controle die je tegoed niet verbruikt, en toont geen verzonnen resetdatum meer als de dienst er geen geeft
+  body: |
+    <ul>
+      <li><strong>MAME-games krijgen hun echte namen.</strong> Het nieuwe hulpmiddel MAME Names in ROM Tools haalt namen, jaren en makers uit de eigen lijst van MAME. De bestanden behouden hun korte namen, omdat MAME die nodig heeft. Je kunt de MAME-lijst filteren op categorie en BIOS-sets worden verborgen.</li>
+      <li><strong>Steam-imports brengen veel meer mee.</strong> Elke game vult zijn beschrijving, vermelding van makers, Metacritic-score, leeftijdsclassificaties, spelmodi en afbeeldingen aan vanaf de winkelpagina. Een synchronisatie bewaart je speeltijd en wanneer je voor het laatst hebt gespeeld. Een game die al onder dezelfde naam in je Bibliotheek staat, wordt nu eraan gekoppeld, zodat de Prestaties worden gesynchroniseerd.</li>
+      <li><strong>Scrapen vindt precies jouw game.</strong> Bij het Scrapen vraagt de app eerst aan ScreenScraper naar jouw exacte bestand, voordat er op naam wordt gezocht. Scrapen levert ook titelschermen, meer officiële namen en de andere consoles waarop een game is uitgekomen.</li>
+      <li><strong>RetroAchievements herkent jouw exemplaar.</strong> Bij systemen die een gewone bestandshash gebruiken, zoals Mega Drive en Game Boy, geeft de gamepagina aan of jouw exemplaar Prestaties oplevert. Voer RA Refresh uit om dit aan te vullen. De RetroAchievements-pagina toont ook hoeveel mensen een game spelen en welk deel van hen elke prestatie heeft behaald.</li>
+      <li><strong>Online limieten worden gerespecteerd.</strong> Als ScreenScraper, TheGamesDB of RAWG zijn limiet bereikt, stopt RetroDB tot later met vragen en gaat een bulk-Scrapen verder met de andere bronnen. Een game waarvoor op dat moment geen enkele bron antwoord kon geven, wordt bij de volgende keer opnieuw geprobeerd.</li>
+      <li><strong>Een geweigerde PlayStation-aanmelding wordt gemeld.</strong> Het dashboard en de Instellingen vragen je nu om opnieuw te koppelen wanneer Sony een opgeslagen aanmelding weigert.</li>
+      <li><strong>Official Names is verplaatst.</strong> De aparte kaart is verdwenen uit Bulk AI-aanvulling, omdat de schakelaar Official name van de aanvulling hetzelfde doet.</li>
+    </ul>
 - version: 3.35.2
   date: '2026-11-02'
   tags:

@@ -1,3 +1,86 @@
+- version: 3.35.3
+  date: '2026-11-02'
+  tags:
+  - type: feature
+    label: 'ROM Araçları''nda yeni MAME Adları aracı: MAME oyunları gerçek adlarını, yıllarını ve yapımcılarını MAME''nin kendi listesinden alır, dosyalar ise kısa adlarını korur. Ardından bir kazıma her oyunu bulur ve MAME listesini kategoriye göre süzebilirsiniz, örneğin slot makinelerini dışarıda bırakabilirsiniz. BIOS setleri listede gizlenir'
+  - type: fix
+    label: ROM Raporları artık MAME dosyalarını yeniden adlandırmayı önermiyor, çünkü adı değişen dosya MAME'de çalışmaz
+  - type: fix
+    label: Ayarlar artık bir Xbox uygulaması kaydedilmeden önce Microsoft'un ne istediğini söylüyor. Bu yüzden Xbox girişi test edilemedi
+  - type: enhancement
+    label: Ayrı Resmî Adlar kartı Toplu Yapay Zeka Doldur'dan kaldırıldı, çünkü doldurmadaki Resmî ad anahtarı bu işi zaten yapıyor
+  - type: fix
+    label: Sony kayıtlı bir PlayStation girişini reddettiğinde, panel ve Ayarlar bunu belirtip yeniden bağlamanızı ister. Önceden günlükte her sunucu başlangıcında anlamsız bir hata görünüyordu ve size hiçbir şey söylenmiyordu
+  - type: feature
+    label: Steam'den içe aktarma artık her oyunun açıklamasını, emek verenleri, Metacritic puanını, yaş derecelendirmelerini, oyun modlarını, kutusunu, arka planını ve ekran görüntülerini mağaza sayfasından arka planda dolduruyor. Türü ve çıkış tarihi için oyunu kazıyın
+  - type: feature
+    label: Steam eşitlemesi artık oynama sürenizi ve son oynama zamanınızı koruyor, oyun sayfası da bunları gösteriyor
+  - type: fix
+    label: Steam içe aktarma sayfasındaki Kütüphaneyi Getir, kayıtlı Steam anahtarı olan yönetici için artık çalışıyor. Önceden Steam'e anahtarın gizli biçimini gönderiyordu ve sayfa yanlışlıkla profilinizi Herkese Açık yapmanızı söylüyordu
+  - type: fix
+    label: Kütüphanenizde aynı adla zaten bulunan bir Steam veya Xbox oyunu, içe aktarırken artık o oyuna bağlanıyor ve başarımları eşitleniyor. Önceden atlanıyordu ve hiç bağlanmıyordu
+  - type: fix
+    label: Steam, Xbox ve PlayStation'dan içe aktarılan oyunlar artık hemen doğru sıralanıyor, örneğin Final Fantasy IX, Final Fantasy X'ten önce gelir. Steam'in ticari marka işaretleri de adlardan çıkarıldı
+  - type: feature
+    label: RetroAchievements'ın düz dosya özeti kullandığı Mega Drive ve Game Boy gibi sistemlerde, oyun sayfası kopyanızın başarım kazandırıp kazandırmadığını söylüyor ve bu özet doğru oyuna bağlanıyor. Bunu doldurmak için RA Yenile'yi çalıştırın
+  - type: fix
+    label: Kazıma artık adla aramadan önce ScreenScraper'a tam dosyanızı soruyor, böylece benzer adlı bir oyun yerine sizin oyununuzu buluyor. Kendi işaretlediğiniz sonuçlar yine önceliklidir
+  - type: enhancement
+    label: Görsel Boyutlandırma ilerleme kutusu artık her resmin ait olduğu oyunu ve sistemi gösteriyor
+  - type: feature
+    label: Kazıma artık ScreenScraper ve TheGamesDB'den başlık ekranlarını, IGDB ve TheGamesDB'den daha fazla resmî adı (örneğin oyunun Japonca adı) ve IGDB'den oyunun çıktığı diğer konsolları getiriyor
+  - type: feature
+    label: Kullanıcı puanı olmayan bir oyun artık, varsa ES-DE koleksiyonunuzdaki derecelendirmeyi alıyor
+  - type: feature
+    label: Oyun sayfası, bir HowLongToBeat sonucunu kaç oyuncunun süreye vurduğunu söylüyor ve sayfasına bağlantı veriyor. Bundan önce kaydedilen sonuçlarda bunlar, bir sonraki aramanızda görünür
+  - type: feature
+    label: RetroAchievements sayfası bir oyunu kaç kişinin oynadığını ve her başarımı bunların yüzde kaçının kazandığını gösteriyor
+  - type: fix
+    label: ROM Araçları klasör gezgini, başlanacak klasörü yoksa hata vermek yerine ROM klasörünüzde açılıyor. IGDB'den gelen bozuk bir yanıt artık yalnızca o tek ayrıntıya mal oluyor, IGDB'nin oyun için gönderdiği her şeye değil
+  - type: fix
+    label: ScreenScraper'ın günlük sınırı artık RetroDB'nin daha sonraya kadar sormasını durduruyor, toplu kazıma da bunu söyleyip diğer kaynaklarıyla devam ediyor. Önceden dolmuş bir sınır "oyun bulunamadı" gibi görünüyordu ve çağrılar bütün gece sürüyordu
+  - type: fix
+    label: Bir servis sınırdayken hiçbir kaynağın yanıtlayamadığı oyun artık kazınmış olarak işaretlenmiyor, böylece sonraki çalıştırma yeniden dener
+  - type: fix
+    label: Bir TheGamesDB anahtarı ayını doldurduğunda RetroDB diğer anahtarınıza geçiyor, ikisi de bitince sormayı bırakıyor
+  - type: fix
+    label: RAWG'ın aylık sınırı da artık RetroDB'nin sormasını durduruyor ve IGDB saniyede dört istek sınırında tutuluyor
+  - type: fix
+    label: HowLongToBeat toplu araması, site çok fazla istek aldığını söylediğinde artık bir iletiyle sona eriyor ve siteye giden her istek aralıklandırılıyor
+  - type: fix
+    label: Kutu ve Kılavuz Bölgelerini Düzelt artık ScreenScraper'ın tanımadığı art arda 25 oyundan sonra bırakmıyor. Yalnızca ScreenScraper sınırına ulaşıldığını söylediğinde duruyor
+  - type: fix
+    label: Oyun sayfasında her yaş derecelendirmesi artık Yapay Zeka tahmini etiketinin üzerinde ortalanmış duruyor
+  - type: fix
+    label: Ayarlar'daki TheGamesDB hakkı artık hakkınızı harcamayan denetimi kullanıyor ve servis vermediğinde uydurma bir sıfırlama tarihi göstermiyor
+  body: |
+    <ul>
+      <li><strong>MAME oyunları gerçek adlarına kavuşuyor.</strong> ROM Araçları'ndaki yeni MAME Adları
+        aracı adları, yılları ve yapımcıları MAME'in kendi listesinden alır.
+        Dosyalar kısa adlarını korur, çünkü MAME'in buna ihtiyacı vardır. MAME listesini
+        kategoriye göre süzebilirsiniz, BIOS setleri ise gizlenir.</li>
+      <li><strong>Steam'den içe aktarma çok daha fazlasını getiriyor.</strong> Her oyun; açıklamasını,
+        emekçilerini, Metacritic puanını, yaş derecelendirmelerini, oyun modlarını ve
+        görsellerini mağaza sayfasından doldurur. Eşitleme, oynama sürenizi ve en son ne zaman
+        oynadığınızı korur. Kütüphanenizde aynı adla zaten bulunan bir oyun artık
+        ona bağlanır, böylece başarımları eşitlenir.</li>
+      <li><strong>Kazıma işlemi tam oyununuzu buluyor.</strong> Kazıma, ada göre aramadan önce
+        ScreenScraper'a tam dosyanızı sorar. Kazıma ayrıca başlık ekranlarını, daha fazla
+        resmi adı ve bir oyunun çıktığı diğer konsolları da getirir.</li>
+      <li><strong>RetroAchievements kopyanızı tanıyor.</strong> Mega Drive ve Game Boy gibi
+        düz dosya karması kullanan sistemlerde oyun sayfası,
+        kopyanızın başarım kazandırıp kazandırmadığını söyler. Bunu doldurmak için RA Yenile'yi çalıştırın.
+        RetroAchievements sayfası ayrıca bir oyunu kaç kişinin oynadığını
+        ve her başarımı bunların yüzde kaçının kazandığını gösterir.</li>
+      <li><strong>Çevrimiçi sınırlara uyuluyor.</strong> ScreenScraper,
+        TheGamesDB veya RAWG sınırına ulaştığında RetroDB daha sonrasına kadar sormayı bırakır
+        ve toplu kazıma diğer kaynaklarıyla devam eder. O sırada hiçbir kaynağın
+        yanıt veremediği oyun, bir sonraki çalıştırmada yeniden denenir.</li>
+      <li><strong>Reddedilen PlayStation girişi artık belirtiliyor.</strong> Sony kayıtlı bir girişi
+        reddettiğinde panel ve Ayarlar artık yeniden bağlamanızı ister.</li>
+      <li><strong>Resmi Adlar taşındı.</strong> Ayrı kartı Toplu Yapay Zeka Doldur'dan kalktı,
+        çünkü doldurmadaki Resmi ad anahtarı aynı işi yapar.</li>
+    </ul>
 - version: 3.35.2
   date: '2026-11-02'
   tags:

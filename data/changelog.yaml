@@ -53,6 +53,37 @@
     label: On the game page, each age rating now sits centred over its AI guess label
   - type: fix
     label: The TheGamesDB allowance in Settings now uses the check that does not spend your allowance, and no longer shows a made-up reset date when the service gives none
+  body: |
+    <ul>
+      <li><strong>MAME games get their real names.</strong> The new MAME Names
+        tool in ROM Tools takes names, years and makers from MAME's own list.
+        The files keep their short names, because MAME needs them. You can
+        filter the MAME list by category, and BIOS sets are hidden.</li>
+      <li><strong>Steam imports bring much more.</strong> Each game fills its
+        description, credits, Metacritic score, age ratings, game modes and
+        pictures from its store page. A sync keeps your play time and when you
+        last played. A game already in your library under the same name now
+        links to it, so its achievements sync.</li>
+      <li><strong>Scrapes find your exact game.</strong> A scrape asks
+        ScreenScraper about your exact file before searching by name. Scrapes
+        also bring title screens, more official names, and the other consoles
+        a game came out on.</li>
+      <li><strong>RetroAchievements knows your copy.</strong> On systems that
+        use a plain file hash, such as Mega Drive and Game Boy, the game page
+        says whether your copy earns achievements. Run RA Refresh to fill this
+        in. The RetroAchievements page also shows how many people play a game
+        and what share of them earned each achievement.</li>
+      <li><strong>Online limits are respected.</strong> When ScreenScraper,
+        TheGamesDB or RAWG reaches its limit, RetroDB stops asking until later
+        and a bulk scrape carries on with its other sources. A game no source
+        could answer for at that time is tried again on the next run.</li>
+      <li><strong>A refused PlayStation sign-in says so.</strong> The dashboard
+        and Settings now ask you to re-link when Sony refuses a saved
+        sign-in.</li>
+      <li><strong>Official Names has moved.</strong> Its separate card is gone
+        from Bulk AI Fill, because the fill's Official name switch does the
+        same job.</li>
+    </ul>
 - version: 3.35.2
   date: 2026-11-02
   tags:

@@ -1,3 +1,88 @@
+- version: 3.35.3
+  date: '2026-11-02'
+  tags:
+  - type: feature
+    label: 'Nova ferramenta Nomes MAME em Ferramentas de ROM: os jogos do MAME recebem nome real, ano e fabricante da própria lista do MAME, e os arquivos mantêm os nomes curtos. Depois, uma busca de metadados encontra cada jogo, e você pode filtrar a lista do MAME por categoria, por exemplo para deixar de fora caça-níqueis. Os conjuntos de BIOS ficam ocultos da lista'
+  - type: fix
+    label: Os Relatórios de ROM não oferecem mais renomear arquivos do MAME, porque um arquivo renomeado deixa de funcionar no MAME
+  - type: fix
+    label: Configurações agora mostra o que a Microsoft exige antes de registrar um app Xbox. Não foi possível testar o login do Xbox por causa disso
+  - type: enhancement
+    label: O cartão separado Nomes Oficiais saiu do Preencher com AI em massa, porque a opção Nome oficial do preenchimento já faz esse trabalho
+  - type: fix
+    label: Quando a Sony recusa um login salvo da PlayStation, o painel e as Configurações agora avisam e pedem para vincular de novo. Antes, o log mostrava um erro sem sentido a cada início do servidor e nada avisava você
+  - type: feature
+    label: Importar da Steam agora preenche, em segundo plano, a descrição, os créditos, a nota do Metacritic, as classificações etárias, os modos de jogo, a caixa, o fundo e as capturas de tela de cada jogo a partir da página da loja. Use Buscar Metadados em um jogo para obter o gênero e a data de lançamento
+  - type: feature
+    label: Uma sincronização da Steam agora mantém seu tempo de jogo e quando você jogou pela última vez, e a página do jogo mostra esses dados
+  - type: fix
+    label: Buscar Biblioteca na página de importação da Steam agora funciona para um administrador com chave da Steam salva. Antes, enviava à Steam a versão oculta da chave, e a página dizia por engano para deixar seu perfil como Público
+  - type: fix
+    label: Um jogo da Steam ou Xbox que já está na sua biblioteca com o mesmo nome agora é vinculado a esse jogo ao importar, e suas conquistas são sincronizadas. Antes, ele era ignorado e nunca vinculado
+  - type: fix
+    label: Jogos importados da Steam, Xbox e PlayStation agora são ordenados corretamente desde o início, como Final Fantasy IX antes de Final Fantasy X, e os símbolos de marca registrada da Steam ficam fora dos nomes
+  - type: feature
+    label: Em sistemas onde o RetroAchievements usa um hash simples do arquivo, como Mega Drive e Game Boy, a página do jogo informa se sua cópia rende conquistas, e esse hash vincula o jogo certo. Execute RA Refresh para preencher isso
+  - type: fix
+    label: Uma busca de metadados agora consulta o ScreenScraper pelo seu arquivo exato antes de pesquisar por nome, assim ele acha o seu jogo e não outro com título parecido. Resultados que você marcar continuam valendo
+  - type: enhancement
+    label: A caixa de progresso de Redimensionar Imagens agora mostra o jogo e o sistema de cada imagem
+  - type: feature
+    label: Buscar Metadados agora traz telas de título do ScreenScraper e do TheGamesDB, mais nomes oficiais do IGDB e do TheGamesDB (como o título japonês de um jogo), e os outros consoles em que um jogo foi lançado, vindos do IGDB
+  - type: feature
+    label: Um jogo sem nota de usuário agora usa a classificação da sua coleção do ES-DE, se houver
+  - type: feature
+    label: A página do jogo mostra quantos jogadores cronometraram um resultado do HowLongToBeat e tem um link para a página dele. Resultados salvos antes mostram isso na próxima vez que você os buscar
+  - type: feature
+    label: A página do RetroAchievements mostra quantas pessoas jogam um jogo e que parcela delas ganhou cada conquista
+  - type: fix
+    label: O navegador de pastas das Ferramentas de ROM agora abre na sua pasta de ROMs quando não tem pasta inicial, em vez de falhar. Uma resposta corrompida do IGDB agora custa só aquele detalhe, não tudo o que o IGDB enviou sobre o jogo
+  - type: fix
+    label: O limite diário do ScreenScraper agora faz o RetroDB parar de consultar até mais tarde, e uma busca de metadados em massa avisa e segue com as outras fontes. Antes, um limite esgotado parecia "jogo não encontrado" e as chamadas continuavam a noite toda
+  - type: fix
+    label: Um jogo que nenhuma fonte conseguiu responder enquanto um serviço estava no limite não é mais marcado como pesquisado, então a próxima execução tenta de novo
+  - type: fix
+    label: Quando uma chave do TheGamesDB esgota o mês, o RetroDB passa para a sua outra chave e para de consultar quando as duas acabam
+  - type: fix
+    label: O limite mensal do RAWG agora também faz o RetroDB parar de consultar, e o IGDB é mantido dentro do limite de quatro requisições por segundo
+  - type: fix
+    label: A busca em massa do HowLongToBeat agora termina com uma mensagem quando o site diz que recebeu requisições demais, e todas as requisições ao site são espaçadas
+  - type: fix
+    label: Corrigir Regiões de Caixa e Manual não desiste mais após 25 jogos seguidos que o ScreenScraper não conhece. Ele só para quando o ScreenScraper informa que o limite foi atingido
+  - type: fix
+    label: Na página do jogo, cada classificação etária agora fica centralizada acima do rótulo de palpite da AI
+  - type: fix
+    label: A cota do TheGamesDB em Configurações agora usa a verificação que não gasta sua cota, e não mostra mais uma data de renovação inventada quando o serviço não informa nenhuma
+  body: |
+    <ul>
+      <li><strong>Jogos de MAME ganham seus nomes reais.</strong> A nova ferramenta Nomes do MAME, em Ferramentas de ROM, pega nomes, anos e fabricantes da própria lista do MAME.
+        Os arquivos mantêm os nomes curtos, porque o MAME precisa deles. Você pode
+        filtrar a lista do MAME por categoria, e os conjuntos de BIOS ficam ocultos.</li>
+      <li><strong>Importações da Steam trazem muito mais.</strong> Cada jogo preenche a sua
+        descrição, créditos, nota do Metacritic, classificações etárias, modos de jogo e
+        imagens a partir da página da loja. Uma sincronização mantém seu tempo de jogo e a data da
+        última vez que você jogou. Um jogo que já está na sua biblioteca com o mesmo nome agora
+        é vinculado a ele, e assim suas conquistas são sincronizadas.</li>
+      <li><strong>As buscas de metadados encontram o seu jogo exato.</strong> Uma busca consulta o
+        ScreenScraper sobre o seu arquivo exato antes de pesquisar pelo nome. As buscas
+        também trazem telas de título, mais nomes oficiais e os outros consoles em que
+        um jogo foi lançado.</li>
+      <li><strong>RetroAchievements reconhece a sua cópia.</strong> Em sistemas que
+        usam um hash de arquivo simples, como Mega Drive e Game Boy, a página do jogo
+        informa se a sua cópia dá direito a conquistas. Execute Atualizar RA para preencher
+        isso. A página do RetroAchievements também mostra quantas pessoas jogam um jogo
+        e que parcela delas ganhou cada conquista.</li>
+      <li><strong>Os limites online são respeitados.</strong> Quando o ScreenScraper,
+        TheGamesDB ou RAWG atinge o limite, o RetroDB para de consultar até mais tarde
+        e uma busca em massa segue com as outras fontes. Um jogo que nenhuma fonte
+        conseguiu responder naquele momento é tentado de novo na próxima execução.</li>
+      <li><strong>Um login recusado da PlayStation agora é avisado.</strong> O painel
+        e as Configurações agora pedem que você vincule de novo quando a Sony recusa um
+        login salvo.</li>
+      <li><strong>Nomes Oficiais mudou de lugar.</strong> O cartão separado foi removido
+        do Preenchimento em Massa com AI, pois a opção Nome oficial do preenchimento
+        faz o mesmo trabalho.</li>
+    </ul>
 - version: 3.35.2
   date: '2026-11-02'
   tags:

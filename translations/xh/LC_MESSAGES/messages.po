@@ -914,18 +914,16 @@ msgid "This fix is already running."
 msgstr "Olu lungiso lusebenza kakade."
 
 #: routes/mame_names.py:38
-#, fuzzy
 msgid "One of those files was not found."
-msgstr "Loo folda ayifumanekanga."
+msgstr "Enye kuloo mifanekiso ayifumanekanga."
 
 #: routes/mame_names.py:41
 msgid "Choose a MAME list first."
-msgstr ""
+msgstr "Khetha uluhlu lwe-MAME kuqala."
 
 #: routes/mame_names.py:44
-#, fuzzy
 msgid "MAME Names is already running."
-msgstr "Ukulanda imifanekiso sele kuqhuba"
+msgstr "I-MAME Names sele isebenza."
 
 #: routes/museum.py:385 routes/scraper.py:767
 msgid "No AI provider configured"
@@ -1081,6 +1079,8 @@ msgstr "Kulahleke i-game_id okanye i-new_name"
 #: routes/reports.py:698 routes/reports.py:829
 msgid "MAME finds a game by its file name, so this file cannot be renamed."
 msgstr ""
+"I-MAME ifumana umdlalo ngegama lefayile yawo, ngoko le fayile "
+"ayinakuphinda ithiywe igama."
 
 #: routes/reports.py:702 routes/reports.py:833
 msgid "No ROM path set"
@@ -3046,9 +3046,9 @@ msgid "NOT"
 msgstr "AKUKHO"
 
 #: services/js_i18n_strings.py:800
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Naming game {current} of {total}."
-msgstr "Kulandwa imifanekiso: {done} kwezi {total}"
+msgstr "Ukuthiya umdlalo {current} kwabangu-{total}."
 
 #: services/js_i18n_strings.py:801
 msgid "Navigation"
@@ -3284,7 +3284,7 @@ msgstr "Idlaliwe"
 #: services/js_i18n_strings.py:855
 #, python-brace-format
 msgid "Players who timed it: {count}"
-msgstr ""
+msgstr "Abadlali abawalinganisele ixesha: {count}"
 
 #: services/js_i18n_strings.py:856
 msgid "Please change at least one field before applying."
@@ -3367,9 +3367,8 @@ msgid "RPCS3: Playable"
 msgstr "RPCS3: Uyadlaleka"
 
 #: services/js_i18n_strings.py:874
-#, fuzzy
 msgid "Reading the lists. This can take a few minutes."
-msgstr "Kubuzwa i-AI. Oku kungathatha ukuya kuthi ga kumzuzu."
+msgstr "Ndifunda uluhlu. Oku kungathatha imizuzu embalwa."
 
 #: services/js_i18n_strings.py:875
 msgid "Ready"
@@ -3656,9 +3655,8 @@ msgid "See all {n} results"
 msgstr "Bona zonke iziphumo ezingu-{n}"
 
 #: services/js_i18n_strings.py:936
-#, fuzzy
 msgid "Select Category"
-msgstr "Khetha Isilinganiso"
+msgstr "Khetha uhlobo"
 
 #: services/js_i18n_strings.py:937
 msgid "Select Developer"
@@ -3863,9 +3861,9 @@ msgid "Systems"
 msgstr "Iisistim"
 
 #: services/js_i18n_strings.py:980
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "That stopped: {error}"
-msgstr "Akuphumelelanga: {error}"
+msgstr "Oko kume: {error}"
 
 #: services/js_i18n_strings.py:981
 msgid "The 3D box could not be removed."
@@ -4310,6 +4308,8 @@ msgid ""
 "{state} Games named: {named}. Games changed: {updated}. Not in the lists:"
 " {missing}."
 msgstr ""
+"{state} Imidlalo ethiywe igama: {named}. Imidlalo etshintshiweyo: "
+"{updated}. Engekho koluhlu: {missing}."
 
 #: services/js_i18n_strings.py:1067
 #, python-brace-format
@@ -4400,6 +4400,8 @@ msgid ""
 "%(service)s refused every saved key, which usually means their limit is "
 "reached. RetroDB will not ask it again until %(when)s."
 msgstr ""
+"%(service)s yale zonke izitshixo ezigciniweyo, oku kuthetha ukuba umda "
+"wayo ufikelelwe. RetroDB ayizukuphinda iyibuze de kube %(when)s."
 
 #: services/service_stop_text.py:26
 #, python-format
@@ -4407,6 +4409,8 @@ msgid ""
 "%(service)s says its limit is reached. RetroDB will not ask it again "
 "until %(when)s."
 msgstr ""
+"%(service)s ithi umda wayo ufikelelwe. RetroDB ayizukuphinda iyibuze de "
+"kube %(when)s."
 
 #: services/standalone_settings.py:310
 msgid ""
@@ -4718,7 +4722,7 @@ msgstr "Evuliweyo (%(count)s)"
 #: templates/achievement_game.html:307 templates/achievement_game.html:352
 #, python-format
 msgid "Earned by %(pct)s%% of players"
-msgstr ""
+msgstr "Kuzuzwe ngabadlali abangu-%(pct)s%%"
 
 #: templates/achievement_game.html:310
 msgid "Hardcore"
@@ -4995,9 +4999,8 @@ msgid "Select"
 msgstr "Khetha"
 
 #: templates/all_games.html:94 templates/system_games.html:85
-#, fuzzy
 msgid "Category"
-msgstr "Strategy"
+msgstr "Uhlobo"
 
 #: templates/all_games.html:98 templates/compare_games.html:89
 #: templates/system_games.html:89
@@ -7247,26 +7250,27 @@ msgstr "Akukho nkcazo ifumanekayo. Cofa \"Scrape\" ukuze ulande imetadata."
 #: templates/game_detail.html:340
 #, python-format
 msgid "Played on Steam: %(hours)s h %(minutes)s min"
-msgstr ""
+msgstr "Kudlalwe kwi-Steam: iiyure ezi-%(hours)s imizuzu emi-%(minutes)s"
 
 #: templates/game_detail.html:340
 #, python-format
 msgid "Played on Steam: %(minutes)s min"
-msgstr ""
+msgstr "Kudlalwe kwi-Steam: imizuzu emi-%(minutes)s"
 
 #: templates/game_detail.html:340
-#, fuzzy, python-format
+#, python-format
 msgid "Last played: %(date)s"
-msgstr "Kugqityelwe ukuvavanywa ngo-%(date)s."
+msgstr "Kudlalwe okokugqibela: %(date)s"
 
 #: templates/game_detail.html:358
-#, fuzzy
 msgid "Your copy earns achievements"
-msgstr "Akukho Mpumelelo zeSteam"
+msgstr "Ikopi yakho ifumana iimpumelelo"
 
 #: templates/game_detail.html:359
 msgid "RetroAchievements does not list your copy, so it may not earn achievements"
 msgstr ""
+"I-RetroAchievements ayiyidwelisi ikopi yakho, ngoko inokungafumani "
+"iimpumelelo"
 
 #: templates/game_detail.html:367
 msgid "View on RetroAchievements.org"
@@ -7354,9 +7358,9 @@ msgid "%(pct)s%% match"
 msgstr "%(pct)s%% okudibeneyo"
 
 #: templates/game_detail.html:598
-#, fuzzy, python-format
+#, python-format
 msgid "Players who timed it: %(count)s"
-msgstr "Kwehlulekile: %(count)s"
+msgstr "Abadlali abawalinganisele ixesha: %(count)s"
 
 #: templates/game_detail.html:639
 msgid "Source:"
@@ -7793,19 +7797,16 @@ msgid "Trophy Progress"
 msgstr "Inkqubela Yeendebe"
 
 #: templates/game_imports.html:762 templates/game_imports.html:776
-#, fuzzy
 msgid "In your library: link it"
-msgstr "Ithala lakho alinanto"
+msgstr "Kwithala lakho: yidibanise"
 
 #: templates/game_imports.html:854
-#, fuzzy
 msgid "Linked to games in your library"
-msgstr "Iiim ROM ethala"
+msgstr "Idityaniswe nemidlalo kwithala lakho"
 
 #: templates/game_imports.html:857
-#, fuzzy
 msgid "Details are arriving from Steam in the background"
-msgstr "Ikhupha into/izinto ezingu-{n} ngasemva."
+msgstr "Iinkcukacha ziyafika ezivela kwi-Steam ngasemva"
 
 #: templates/help.af.html:11 templates/help.de.html:11
 #: templates/help.es.html:11 templates/help.fr.html:11
@@ -8126,9 +8127,8 @@ msgstr "Khetha ifayile yelog ukuze uyibone"
 
 #: templates/_macros/nav_tabs.html:42 templates/mame_names.html:6
 #: templates/mame_names.html:34 templates/rom_tools_hub.html:340
-#, fuzzy
 msgid "MAME Names"
-msgstr "Igama Lomdlalo"
+msgstr "MAME Names"
 
 #: templates/mame_names.html:37
 msgid ""
@@ -8137,49 +8137,59 @@ msgid ""
 "gives each game its real name, year and maker from MAME's own list. A "
 "scrape then finds the game by its file name or its real name."
 msgstr ""
+"I-MAME ifumana umdlalo ngegama lefayile elichanekileyo, ngoko iifayile "
+"kufuneka zigcine amagama azo amafutshane, afana ne-dyger.zip. Eli sixhobo"
+" asichukumisi iifayile kodwa sinika umdlalo ngamnye igama lawo "
+"lokwenyani, unyaka nomenzi ukusuka kuluhlu lwe-MAME ngokwayo. Ukukhupha "
+"kuya kuwufumana umdlalo ngegama lefayile okanye ngegama lawo lokwenyani."
 
 #: templates/mame_names.html:38
 msgid ""
 "A title you changed yourself is kept. A new name is protected from "
 "scrapers and the AI. Run this again after adding more MAME games."
 msgstr ""
+"Isihloko ositshintshe wena sigcinwa. Igama elitsha likhuselwe kwizikhupha"
+" nakwi-AI. Phinda usebenzise oku emva kokongeza eminye imidlalo ye-MAME."
 
 #: templates/mame_names.html:41
-#, fuzzy
 msgid "MAME list"
-msgstr "Uluhlu lwee-cheat"
+msgstr "Uluhlu lwe-MAME"
 
 #: templates/mame_names.html:46
 msgid ""
 "The DAT that matches your ROMs, or the output of mame -listxml. An .xml "
 "file, or a .zip holding one."
 msgstr ""
+"I-DAT ehambelana ne-ROM zakho, okanye iziphumo ze-mame -listxml. Ifayile "
+"ye-.xml, okanye i-.zip equlathe enye."
 
 #: templates/mame_names.html:49
 msgid "Second MAME list (optional)"
-msgstr ""
+msgstr "Uluhlu lwesibini lwe-MAME (ukuzikhethela)"
 
 #: templates/mame_names.html:54
 msgid ""
 "Fills what the first list lacks. BIOS sets are hidden only if a list "
 "marks them."
 msgstr ""
+"Lugcwalisa oko uluhlu lokuqala lungenako. Iseti ze-BIOS zifihlwa kuphela "
+"ukuba uluhlu luzichaza."
 
 #: templates/mame_names.html:57
-#, fuzzy
 msgid "Category file (optional)"
-msgstr "isabifolda (khetho)"
+msgstr "Ifayile yeendidi (ukuzikhethela)"
 
 #: templates/mame_names.html:62
 msgid ""
 "A catver.ini. It lets you filter the list, for example to leave out slot "
 "machines."
 msgstr ""
+"I-catver.ini. Ikuvumela ukuhluza uluhlu, umzekelo ukushiya oomatshini "
+"bokutshova."
 
 #: templates/mame_names.html:66
-#, fuzzy
 msgid "Name MAME Games"
-msgstr "Inani lemidlalo"
+msgstr "Thiya Imidlalo ye-MAME"
 
 #: templates/multi_disc_organizer.html:168
 msgid "Multi-Disc Game Organizer"
@@ -8941,14 +8951,12 @@ msgstr ""
 "ngesandla kwiphepha lomdlalo."
 
 #: templates/rom_tools_hub.html:209
-#, fuzzy
 msgid ""
 "Fill the empty fields of a whole system with AI, choosing which fields, "
 "the game's official name among them."
 msgstr ""
-"Zalisa iindawo ezingenanto zesistim yonke nge-AI, ukhethe ukuba ziziphi "
-"iindawo. Okanye cela i-AI igama elipheleleyo elisemthethweni lomdlalo "
-"ngamnye, wamkele kuphela amagama owafunayo."
+"Gcwalisa amasimi angenanto esistim yonke nge-AI, ukhethe amasimi, kuquka "
+"igama elisemthethweni lomdlalo."
 
 #: templates/rom_tools_hub.html:212
 msgid "Needs an AI provider (Settings > Scraping)"
@@ -9090,10 +9098,12 @@ msgid ""
 "Gives MAME games their real names, years and makers from MAME's own list,"
 " and leaves the files alone."
 msgstr ""
+"Linika imidlalo ye-MAME amagama ayo enene, iminyaka nabenzi ukusuka "
+"kuluhlu lwe-MAME ngokwayo, lishiye iifayile zodwa."
 
 #: templates/rom_tools_hub.html:346
 msgid "Needs a MAME list file"
-msgstr ""
+msgstr "Idinga ifayile yoluhlu lwe-MAME"
 
 #: templates/rom_tools_hub.html:354 templates/rom_tools_hub.html:592
 msgid "Tidy Release Dates"
@@ -11529,6 +11539,11 @@ msgid ""
 "Azure, and that may ask for a card. Xbox may still refuse an app made "
 "this way: RetroDB has not been able to test one."
 msgstr ""
+"I-Xbox idinga i-app ebhalisiweyo kwa-Microsoft. Ngoku u-Microsoft ucela "
+"i-akhawunti yobuqu ukuba iqale ifumane ulawulo lwemifanekiso, oku "
+"kungathetha ukubhalisa kwi-Azure, kwaye oko kungacela ikhadi. I-Xbox "
+"isenokwala i-app eyenziwe ngale ndlela: RetroDB ayikwazanga ukuvavanya "
+"nayiphi."
 
 #: templates/_settings_tabs/scraping.html:521
 msgid "Test saved AI key"

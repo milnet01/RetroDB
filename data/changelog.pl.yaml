@@ -1,3 +1,68 @@
+- version: 3.35.3
+  date: '2026-11-02'
+  tags:
+  - type: feature
+    label: 'Nowe narzędzie Nazwy MAME w Narzędziach ROM: gry MAME dostają prawdziwe nazwy, lata i producentów z własnej listy MAME, a pliki zachowują krótkie nazwy. Potem funkcja Pobierz dane znajduje każdą grę, a listę MAME można filtrować według kategorii, np. pomijając automaty do gier hazardowych. Zestawy BIOS są ukryte na liście'
+  - type: fix
+    label: Raporty ROM nie proponują już zmiany nazw plików MAME, bo po zmianie nazwy plik przestaje działać w MAME
+  - type: fix
+    label: Ustawienia podają teraz, czego wymaga Microsoft, zanim będzie można zarejestrować aplikację Xbox. Z tego powodu nie dało się przetestować logowania do Xbox
+  - type: enhancement
+    label: Osobna karta Oficjalne nazwy zniknęła z Zbiorczego uzupełniania AI, bo przełącznik Oficjalna nazwa w tym narzędziu już to robi
+  - type: fix
+    label: Gdy Sony odrzuci zapisane logowanie do PlayStation, pulpit i Ustawienia teraz o tym informują i proszą o ponowne połączenie. Wcześniej dziennik przy każdym starcie serwera pokazywał bezsensowny błąd, a nic Ci o tym nie mówiło
+  - type: feature
+    label: Importowanie ze Steam uzupełnia teraz w tle opis każdej gry, twórców, wynik Metacritic, kategorie wiekowe, tryby gry, okładkę, tło i zrzuty ekranu z jej strony w sklepie. Użyj funkcji Pobierz dane, aby poznać gatunek i datę premiery gry
+  - type: feature
+    label: Synchronizacja ze Steam zachowuje teraz Twój czas gry i datę ostatniej gry, a strona gry je pokazuje
+  - type: fix
+    label: Pobieranie biblioteki na stronie importu ze Steam działa teraz dla administratora z zapisanym kluczem Steam. Wcześniej wysyłało do Steam ukrytą postać klucza, a strona błędnie radziła ustawić profil jako publiczny
+  - type: fix
+    label: Gra ze Steam lub Xbox, która jest już w Twojej bibliotece pod tą samą nazwą, jest teraz podczas importu łączona z tą grą, więc jej osiągnięcia się synchronizują. Wcześniej była pomijana i nigdy nie łączona
+  - type: fix
+    label: Gry zaimportowane ze Steam, Xbox i PlayStation od razu sortują się prawidłowo, np. Final Fantasy IX przed Final Fantasy X, a znaki towarowe ze Steam są usuwane z ich nazw
+  - type: feature
+    label: W systemach, w których RetroAchievements używa zwykłego skrótu pliku, np. Mega Drive i Game Boy, strona gry pokazuje, czy Twoja kopia zdobywa osiągnięcia, a ten skrót łączy właściwą grę. Uruchom RA Refresh, aby to uzupełnić
+  - type: fix
+    label: Funkcja Pobierz dane pyta teraz ScreenScraper o dokładnie Twój plik, zanim zacznie szukać po nazwie, dzięki czemu trafia na Twoją grę, a nie na grę o podobnym tytule. Wyniki zaznaczone przez Ciebie nadal mają pierwszeństwo
+  - type: enhancement
+    label: Okno postępu zmiany rozmiaru obrazów podaje teraz grę i system, do których należy każdy obraz
+  - type: feature
+    label: Pobieranie danych sprowadza teraz ekrany tytułowe ze ScreenScraper i TheGamesDB, więcej oficjalnych nazw z IGDB i TheGamesDB (np. japoński tytuł gry) oraz inne konsole, na które wyszła gra, z IGDB
+  - type: feature
+    label: Gra bez oceny użytkowników przejmuje teraz ocenę z Twojej kolekcji ES-DE, jeśli ją ma
+  - type: feature
+    label: Strona gry podaje, ilu graczy zmierzyło czas w wyniku HowLongToBeat, i łączy ze stroną wyniku. Wyniki zapisane wcześniej pokażą te dane przy następnym wyszukaniu
+  - type: feature
+    label: Strona RetroAchievements pokazuje, ilu osób gra w daną grę i jaki odsetek z nich zdobył każde osiągnięcie
+  - type: fix
+    label: Przeglądarka folderów w Narzędziach ROM otwiera się teraz w folderze ROM, gdy nie ma folderu początkowego, zamiast zgłaszać błąd. Nieczytelna odpowiedź z IGDB kosztuje teraz tylko ten jeden szczegół, a nie wszystko, co IGDB przysłało o grze
+  - type: fix
+    label: Dzienny limit ScreenScraper powoduje teraz, że RetroDB przestaje pytać do później, a zbiorcze pobieranie danych informuje o tym i działa dalej z innymi źródłami. Wcześniej wyczerpany limit wyglądał jak „nie znaleziono gry”, a zapytania trwały całą noc
+  - type: fix
+    label: Gra, dla której żadne źródło nie mogło odpowiedzieć, bo usługa osiągnęła limit, nie jest już oznaczana jako pobrana, więc następne uruchomienie spróbuje ponownie
+  - type: fix
+    label: Gdy klucz TheGamesDB wykorzysta swój miesięczny limit, RetroDB przechodzi na drugi klucz i przestaje pytać, gdy oba się wyczerpią
+  - type: fix
+    label: Miesięczny limit RAWG też powoduje, że RetroDB przestaje pytać, a IGDB mieści się w limicie czterech zapytań na sekundę
+  - type: fix
+    label: Zbiorcze wyszukiwanie HowLongToBeat kończy się teraz komunikatem, gdy strona zgłasza zbyt wiele zapytań, a wszystkie zapytania do strony są rozłożone w czasie
+  - type: fix
+    label: Naprawa regionów okładek i instrukcji nie poddaje się już po 25 grach z rzędu nieznanych ScreenScraper. Zatrzymuje się tylko wtedy, gdy ScreenScraper zgłosi osiągnięcie limitu
+  - type: fix
+    label: Na stronie gry każda kategoria wiekowa jest teraz wyśrodkowana nad etykietą z przypuszczeniem AI
+  - type: fix
+    label: Limit TheGamesDB w Ustawieniach używa teraz sprawdzenia, które nie zużywa limitu, i nie pokazuje już zmyślonej daty odnowienia, gdy usługa jej nie podaje
+  body: |
+    <ul>
+      <li><strong>Gry z MAME dostają prawdziwe nazwy.</strong> Nowe narzędzie MAME Names w ROM Tools bierze nazwy, lata i twórców z własnej listy MAME. Pliki zachowują krótkie nazwy, bo MAME ich potrzebuje. Listę MAME można filtrować według kategorii, a zestawy BIOS są ukryte.</li>
+      <li><strong>Importy ze Steam przynoszą znacznie więcej.</strong> Każda gra uzupełnia opis, twórców, wynik Metacritic, oceny wiekowe, tryby gry i obrazy ze swojej strony w sklepie. Synchronizacja zachowuje czas gry i datę ostatniego uruchomienia. Gra, która jest już w Twojej bibliotece pod tą samą nazwą, zostanie teraz z nią powiązana, więc jej osiągnięcia się zsynchronizują.</li>
+      <li><strong>Pobieranie danych znajduje dokładnie Twoją grę.</strong> Przed szukaniem po nazwie program pyta ScreenScraper o Twój dokładny plik. Pobieranie danych przynosi też ekrany tytułowe, więcej oficjalnych nazw oraz inne konsole, na które wyszła dana gra.</li>
+      <li><strong>RetroAchievements rozpoznaje Twoją kopię.</strong> W systemach używających zwykłego skrótu pliku, takich jak Mega Drive i Game Boy, strona gry pokazuje, czy Twoja kopia daje osiągnięcia. Uruchom RA Refresh, aby to uzupełnić. Strona RetroAchievements pokazuje też, ile osób gra w daną grę i jaki odsetek z nich zdobył każde osiągnięcie.</li>
+      <li><strong>Limity online są respektowane.</strong> Gdy ScreenScraper, TheGamesDB lub RAWG osiągnie limit, RetroDB przestaje pytać do później, a zbiorcze pobieranie danych działa dalej z innymi źródłami. Gra, na którą żadne źródło nie mogło wtedy odpowiedzieć, zostanie sprawdzona ponownie przy następnym uruchomieniu.</li>
+      <li><strong>Odrzucone logowanie do PlayStation jest zgłaszane.</strong> Pulpit i Ustawienia proszą teraz o ponowne połączenie, gdy Sony odrzuci zapisane logowanie.</li>
+      <li><strong>Official Names zostało przeniesione.</strong> Jego osobna karta zniknęła z Bulk AI Fill, ponieważ przełącznik Official name w tym narzędziu robi to samo.</li>
+    </ul>
 - version: 3.35.2
   date: '2026-11-02'
   tags:

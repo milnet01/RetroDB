@@ -1,3 +1,69 @@
+- version: 3.35.3
+  date: '2026-11-02'
+  tags:
+  - type: feature
+    label: 'Alat baru MAME Names di ROM Tools: game MAME mendapatkan nama asli, tahun, dan pembuatnya dari daftar resmi MAME sendiri, sementara file tetap memakai nama pendeknya. Setelah itu Scrape akan menemukan tiap game, dan Anda bisa menyaring daftar MAME menurut kategori, misalnya tanpa mesin slot. Set BIOS disembunyikan dari daftar'
+  - type: fix
+    label: ROM Reports tidak lagi menawarkan untuk mengganti nama file MAME, karena file yang diganti namanya tidak bisa berjalan di MAME
+  - type: fix
+    label: Pengaturan kini menjelaskan apa yang diminta Microsoft sebelum aplikasi Xbox bisa didaftarkan. Login Xbox tidak bisa diuji karena hal ini
+  - type: enhancement
+    label: Kartu Official Names yang terpisah sudah dihapus dari Bulk AI Fill, karena tombol Official name pada Isi dengan AI sudah menjalankan fungsi yang sama
+  - type: fix
+    label: Saat Sony menolak login PlayStation yang tersimpan, dasbor dan Pengaturan kini memberi tahu dan meminta Anda menautkan ulang. Sebelumnya, log menampilkan error yang tidak jelas setiap server dimulai dan tidak ada yang memberi tahu Anda
+  - type: feature
+    label: Impor dari Steam kini mengisi deskripsi, kredit, skor Metacritic, rating usia, mode game, sampul, latar, dan screenshot tiap game dari halaman tokonya, di latar belakang. Scrape sebuah game untuk mendapatkan genre dan tanggal rilisnya
+  - type: feature
+    label: Sinkronisasi Steam kini menyimpan waktu bermain dan kapan terakhir Anda memainkannya, dan halaman game menampilkannya
+  - type: fix
+    label: Fetch Library di halaman impor Steam kini berfungsi untuk admin yang punya kunci Steam tersimpan. Sebelumnya, halaman mengirim bentuk tersembunyi dari kunci itu ke Steam, dan salah menyuruh Anda mengatur profil ke Publik
+  - type: fix
+    label: Game Steam atau Xbox yang sudah ada di pustaka Anda dengan nama yang sama kini ditautkan ke game itu saat diimpor, sehingga achievement-nya tersinkron. Sebelumnya, game itu dilewati dan tidak pernah ditautkan
+  - type: fix
+    label: Game yang diimpor dari Steam, Xbox, dan PlayStation kini langsung terurut dengan benar, misalnya Final Fantasy IX sebelum Final Fantasy X, dan tanda merek dagang Steam dihilangkan dari namanya
+  - type: feature
+    label: Pada sistem yang RetroAchievements-nya memakai hash file biasa, seperti Mega Drive dan Game Boy, halaman game menunjukkan apakah salinan Anda mendapat achievement, dan hash itu menautkan game yang tepat. Jalankan RA Refresh untuk mengisinya
+  - type: fix
+    label: Scrape kini menanyakan file Anda yang persis ke ScreenScraper sebelum mencari berdasarkan nama, sehingga yang didapat adalah game Anda, bukan game berjudul mirip. Hasil yang Anda centang sendiri tetap diutamakan
+  - type: enhancement
+    label: Kotak progres Image Resize kini menyebutkan game dan sistem tempat setiap gambar berasal
+  - type: feature
+    label: Scrape kini mengambil layar judul dari ScreenScraper dan TheGamesDB, lebih banyak nama resmi dari IGDB dan TheGamesDB (seperti judul Jepang sebuah game), serta konsol lain tempat game itu dirilis dari IGDB
+  - type: feature
+    label: Game tanpa skor pengguna kini memakai rating di koleksi ES-DE Anda, jika ada
+  - type: feature
+    label: Halaman game menunjukkan berapa pemain yang mencatat waktu untuk hasil HowLongToBeat dan menautkan ke halamannya. Hasil yang disimpan sebelum ini akan menampilkannya saat Anda mencarinya lagi
+  - type: feature
+    label: Halaman RetroAchievements menunjukkan berapa banyak orang yang memainkan sebuah game dan berapa persen dari mereka yang meraih tiap achievement
+  - type: fix
+    label: Penjelajah folder ROM Tools kini terbuka di folder ROM Anda jika tidak ada folder awal, bukan gagal. Jawaban IGDB yang rusak kini hanya menghilangkan satu detail itu, bukan semua yang dikirim IGDB untuk game tersebut
+  - type: fix
+    label: Batas harian ScreenScraper kini membuat RetroDB berhenti meminta sampai nanti, dan Scrape massal memberi tahu hal itu lalu lanjut dengan sumber lainnya. Sebelumnya, batas yang habis tampak seperti "game tidak ditemukan" dan permintaan terus berjalan sepanjang malam
+  - type: fix
+    label: Game yang tidak bisa dijawab oleh sumber mana pun karena layanan sedang mencapai batas kini tidak ditandai sudah di-scrape, sehingga proses berikutnya mencobanya lagi
+  - type: fix
+    label: Saat satu kunci TheGamesDB sudah habis jatah bulanannya, RetroDB beralih ke kunci Anda yang lain, dan berhenti meminta setelah keduanya habis
+  - type: fix
+    label: Batas bulanan RAWG kini juga membuat RetroDB berhenti meminta, dan IGDB dijaga dalam batasnya empat permintaan per detik
+  - type: fix
+    label: Pencarian massal HowLongToBeat kini berakhir dengan pesan saat situs menyatakan sudah terlalu banyak permintaan, dan setiap permintaan ke situs diberi jeda
+  - type: fix
+    label: Fix Box and Manual Regions tidak lagi menyerah setelah 25 game berturut-turut yang tidak dikenal ScreenScraper. Proses berhenti hanya saat ScreenScraper menyatakan batasnya tercapai
+  - type: fix
+    label: Di halaman game, setiap rating usia kini berada di tengah di atas label tebakan AI-nya
+  - type: fix
+    label: Jatah TheGamesDB di Pengaturan kini memakai pengecekan yang tidak menghabiskan jatah Anda, dan tidak lagi menampilkan tanggal reset karangan saat layanan tidak memberikannya
+  body: |
+    <ul>
+      <li><strong>Game MAME mendapat nama aslinya.</strong> Alat MAME Names yang baru di ROM Tools mengambil nama, tahun, dan pembuat dari daftar milik MAME sendiri.
+        File tetap memakai nama pendeknya, karena MAME membutuhkannya. Daftar MAME bisa difilter menurut kategori, dan set BIOS disembunyikan.</li>
+      <li><strong>Impor Steam membawa lebih banyak data.</strong> Setiap game mengisi deskripsi, kredit, skor Metacritic, rating usia, mode game, dan gambar dari halaman tokonya. Sinkronisasi menjaga waktu bermain dan kapan terakhir kali dimainkan. Game yang sudah ada di Pustaka Anda dengan nama yang sama kini ditautkan, sehingga achievement-nya ikut tersinkron.</li>
+      <li><strong>Scrape menemukan game Anda dengan tepat.</strong> Scrape menanyakan file Anda yang persis ke ScreenScraper sebelum mencari berdasarkan nama. Scrape juga membawa layar judul, lebih banyak nama resmi, dan konsol lain tempat game itu dirilis.</li>
+      <li><strong>RetroAchievements mengenali salinan Anda.</strong> Pada sistem yang memakai hash file biasa, seperti Mega Drive dan Game Boy, halaman game menunjukkan apakah salinan Anda mendapatkan achievement. Jalankan RA Refresh untuk mengisinya. Halaman RetroAchievements juga menampilkan berapa banyak orang yang memainkan sebuah game dan berapa persen dari mereka yang meraih tiap achievement.</li>
+      <li><strong>Batas layanan online dihormati.</strong> Saat ScreenScraper, TheGamesDB, atau RAWG mencapai batasnya, RetroDB berhenti meminta sampai nanti dan scrape massal berlanjut dengan sumber lainnya. Game yang tidak bisa dijawab oleh sumber mana pun saat itu akan dicoba lagi pada proses berikutnya.</li>
+      <li><strong>Penolakan masuk PlayStation kini diberi tahu.</strong> Dasbor dan Pengaturan kini meminta Anda menautkan ulang saat Sony menolak data masuk yang tersimpan.</li>
+      <li><strong>Official Names telah dipindahkan.</strong> Kartu terpisahnya dihapus dari Bulk AI Fill, karena sakelar Official name pada fitur isi itu melakukan hal yang sama.</li>
+    </ul>
 - version: 3.35.2
   date: '2026-11-02'
   tags:

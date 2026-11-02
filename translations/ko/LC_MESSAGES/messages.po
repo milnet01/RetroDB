@@ -897,18 +897,16 @@ msgid "This fix is already running."
 msgstr "이 수정 작업이 이미 실행 중입니다."
 
 #: routes/mame_names.py:38
-#, fuzzy
 msgid "One of those files was not found."
-msgstr "해당 폴더를 찾을 수 없습니다."
+msgstr "해당 파일 중 하나를 찾을 수 없습니다."
 
 #: routes/mame_names.py:41
 msgid "Choose a MAME list first."
-msgstr ""
+msgstr "먼저 MAME 목록을 선택하세요."
 
 #: routes/mame_names.py:44
-#, fuzzy
 msgid "MAME Names is already running."
-msgstr "이미지 가져오기가 이미 실행 중입니다"
+msgstr "MAME 이름 지정이 이미 실행 중입니다."
 
 #: routes/museum.py:385 routes/scraper.py:767
 msgid "No AI provider configured"
@@ -1055,7 +1053,7 @@ msgstr "game_id 또는 new_name이 누락되었습니다"
 
 #: routes/reports.py:698 routes/reports.py:829
 msgid "MAME finds a game by its file name, so this file cannot be renamed."
-msgstr ""
+msgstr "MAME은 파일 이름으로 게임을 찾기 때문에 이 파일의 이름은 바꿀 수 없습니다."
 
 #: routes/reports.py:702 routes/reports.py:833
 msgid "No ROM path set"
@@ -2980,9 +2978,9 @@ msgid "NOT"
 msgstr "아님"
 
 #: services/js_i18n_strings.py:800
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Naming game {current} of {total}."
-msgstr "이미지 가져오는 중: {done} / {total}"
+msgstr "게임 이름 지정 중: {current}/{total}"
 
 #: services/js_i18n_strings.py:801
 msgid "Navigation"
@@ -3212,7 +3210,7 @@ msgstr "플레이함"
 #: services/js_i18n_strings.py:855
 #, python-brace-format
 msgid "Players who timed it: {count}"
-msgstr ""
+msgstr "기록을 잰 플레이어: {count}"
 
 #: services/js_i18n_strings.py:856
 msgid "Please change at least one field before applying."
@@ -3295,9 +3293,8 @@ msgid "RPCS3: Playable"
 msgstr "RPCS3: 플레이 가능"
 
 #: services/js_i18n_strings.py:874
-#, fuzzy
 msgid "Reading the lists. This can take a few minutes."
-msgstr "AI에 요청하는 중입니다. 최대 1분 정도 걸릴 수 있습니다."
+msgstr "목록을 읽는 중입니다. 몇 분 걸릴 수 있습니다."
 
 #: services/js_i18n_strings.py:875
 msgid "Ready"
@@ -3573,9 +3570,8 @@ msgid "See all {n} results"
 msgstr "결과 {n}개 모두 보기"
 
 #: services/js_i18n_strings.py:936
-#, fuzzy
 msgid "Select Category"
-msgstr "등급 선택"
+msgstr "카테고리 선택"
 
 #: services/js_i18n_strings.py:937
 msgid "Select Developer"
@@ -3776,9 +3772,9 @@ msgid "Systems"
 msgstr "시스템"
 
 #: services/js_i18n_strings.py:980
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "That stopped: {error}"
-msgstr "실패: {error}"
+msgstr "중단되었습니다: {error}"
 
 #: services/js_i18n_strings.py:981
 msgid "The 3D box could not be removed."
@@ -4201,7 +4197,7 @@ msgstr "{state} 채운 게임: {filled}. 새 정보 없음: {skipped}. 응답 �
 msgid ""
 "{state} Games named: {named}. Games changed: {updated}. Not in the lists:"
 " {missing}."
-msgstr ""
+msgstr "{state} 이름을 지정한 게임: {named}. 변경된 게임: {updated}. 목록에 없음: {missing}."
 
 #: services/js_i18n_strings.py:1067
 #, python-brace-format
@@ -4292,13 +4288,15 @@ msgid ""
 "%(service)s refused every saved key, which usually means their limit is "
 "reached. RetroDB will not ask it again until %(when)s."
 msgstr ""
+"%(service)s이(가) 저장된 키를 모두 거부했습니다. 보통 사용 한도에 도달했다는 뜻입니다. RetroDB는 "
+"%(when)s까지 다시 요청하지 않습니다."
 
 #: services/service_stop_text.py:26
 #, python-format
 msgid ""
 "%(service)s says its limit is reached. RetroDB will not ask it again "
 "until %(when)s."
-msgstr ""
+msgstr "%(service)s에서 사용 한도에 도달했다고 합니다. RetroDB는 %(when)s까지 다시 요청하지 않습니다."
 
 #: services/standalone_settings.py:310
 msgid ""
@@ -4604,7 +4602,7 @@ msgstr "잠금 해제됨 (%(count)s)"
 #: templates/achievement_game.html:307 templates/achievement_game.html:352
 #, python-format
 msgid "Earned by %(pct)s%% of players"
-msgstr ""
+msgstr "플레이어의 %(pct)s%%가 획득함"
 
 #: templates/achievement_game.html:310
 msgid "Hardcore"
@@ -4870,9 +4868,8 @@ msgid "Select"
 msgstr "선택"
 
 #: templates/all_games.html:94 templates/system_games.html:85
-#, fuzzy
 msgid "Category"
-msgstr "전략"
+msgstr "카테고리"
 
 #: templates/all_games.html:98 templates/compare_games.html:89
 #: templates/system_games.html:89
@@ -7093,26 +7090,25 @@ msgstr "사용 가능한 설명이 없습니다. \"스크래핑\"을 클릭하�
 #: templates/game_detail.html:340
 #, python-format
 msgid "Played on Steam: %(hours)s h %(minutes)s min"
-msgstr ""
+msgstr "Steam에서 실행한 시간: %(hours)s시간 %(minutes)s분"
 
 #: templates/game_detail.html:340
 #, python-format
 msgid "Played on Steam: %(minutes)s min"
-msgstr ""
+msgstr "Steam에서 실행한 시간: %(minutes)s분"
 
 #: templates/game_detail.html:340
-#, fuzzy, python-format
+#, python-format
 msgid "Last played: %(date)s"
-msgstr "마지막 테스트: %(date)s."
+msgstr "마지막 실행: %(date)s"
 
 #: templates/game_detail.html:358
-#, fuzzy
 msgid "Your copy earns achievements"
-msgstr "Steam 업적 없음"
+msgstr "내 사본으로 업적을 얻을 수 있습니다"
 
 #: templates/game_detail.html:359
 msgid "RetroAchievements does not list your copy, so it may not earn achievements"
-msgstr ""
+msgstr "RetroAchievements 목록에 내 사본이 없어 업적을 얻지 못할 수 있습니다"
 
 #: templates/game_detail.html:367
 msgid "View on RetroAchievements.org"
@@ -7198,9 +7194,9 @@ msgid "%(pct)s%% match"
 msgstr "%(pct)s%% 일치"
 
 #: templates/game_detail.html:598
-#, fuzzy, python-format
+#, python-format
 msgid "Players who timed it: %(count)s"
-msgstr "실패: %(count)s"
+msgstr "기록을 잰 플레이어: %(count)s"
 
 #: templates/game_detail.html:639
 msgid "Source:"
@@ -7632,19 +7628,16 @@ msgid "Trophy Progress"
 msgstr "트로피 진행률"
 
 #: templates/game_imports.html:762 templates/game_imports.html:776
-#, fuzzy
 msgid "In your library: link it"
-msgstr "라이브러리가 비어 있습니다"
+msgstr "내 라이브러리: 연결하기"
 
 #: templates/game_imports.html:854
-#, fuzzy
 msgid "Linked to games in your library"
-msgstr "라이브러리의 ROM 수"
+msgstr "라이브러리의 게임에 연결됨"
 
 #: templates/game_imports.html:857
-#, fuzzy
 msgid "Details are arriving from Steam in the background"
-msgstr "백그라운드에서 {n}개 항목을 스크래핑하는 중입니다."
+msgstr "Steam에서 상세 정보를 백그라운드로 받아오는 중입니다"
 
 #: templates/help.af.html:11 templates/help.de.html:11
 #: templates/help.es.html:11 templates/help.fr.html:11
@@ -7953,9 +7946,8 @@ msgstr "볼 로그 파일을 선택하세요"
 
 #: templates/_macros/nav_tabs.html:42 templates/mame_names.html:6
 #: templates/mame_names.html:34 templates/rom_tools_hub.html:340
-#, fuzzy
 msgid "MAME Names"
-msgstr "게임 이름"
+msgstr "MAME 이름"
 
 #: templates/mame_names.html:37
 msgid ""
@@ -7964,49 +7956,53 @@ msgid ""
 "gives each game its real name, year and maker from MAME's own list. A "
 "scrape then finds the game by its file name or its real name."
 msgstr ""
+"MAME은 정확한 파일 이름으로 게임을 찾으므로 파일은 dyger.zip처럼 짧은 이름을 유지해야 합니다. 이 도구는 파일은 그대로"
+" 두고, MAME 자체 목록에서 각 게임의 실제 이름, 연도, 제작사를 가져와 지정합니다. 이후 스크래핑은 파일 이름이나 실제 "
+"이름으로 게임을 찾습니다."
 
 #: templates/mame_names.html:38
 msgid ""
 "A title you changed yourself is kept. A new name is protected from "
 "scrapers and the AI. Run this again after adding more MAME games."
 msgstr ""
+"직접 바꾼 제목은 그대로 유지됩니다. 새 이름은 스크래퍼와 AI가 바꾸지 못하게 보호됩니다. MAME 게임을 더 추가한 뒤에는 다시"
+" 실행하세요."
 
 #: templates/mame_names.html:41
-#, fuzzy
 msgid "MAME list"
-msgstr "치트 목록"
+msgstr "MAME 목록"
 
 #: templates/mame_names.html:46
 msgid ""
 "The DAT that matches your ROMs, or the output of mame -listxml. An .xml "
 "file, or a .zip holding one."
 msgstr ""
+"ROM과 일치하는 DAT 또는 mame -listxml의 출력 파일입니다. .xml 파일이거나 .xml 파일이 든 .zip "
+"파일이어야 합니다."
 
 #: templates/mame_names.html:49
 msgid "Second MAME list (optional)"
-msgstr ""
+msgstr "두 번째 MAME 목록 (선택)"
 
 #: templates/mame_names.html:54
 msgid ""
 "Fills what the first list lacks. BIOS sets are hidden only if a list "
 "marks them."
-msgstr ""
+msgstr "첫 번째 목록에 없는 내용을 채웁니다. BIOS 세트는 목록에 표시된 경우에만 숨겨집니다."
 
 #: templates/mame_names.html:57
-#, fuzzy
 msgid "Category file (optional)"
-msgstr "하위 폴더 (선택 사항)"
+msgstr "카테고리 파일 (선택)"
 
 #: templates/mame_names.html:62
 msgid ""
 "A catver.ini. It lets you filter the list, for example to leave out slot "
 "machines."
-msgstr ""
+msgstr "catver.ini 파일입니다. 슬롯머신을 제외하는 등 목록을 필터링할 수 있습니다."
 
 #: templates/mame_names.html:66
-#, fuzzy
 msgid "Name MAME Games"
-msgstr "게임 수"
+msgstr "MAME 게임 이름 지정"
 
 #: templates/multi_disc_organizer.html:168
 msgid "Multi-Disc Game Organizer"
@@ -8731,13 +8727,10 @@ msgstr ""
 "버전을 연결하세요."
 
 #: templates/rom_tools_hub.html:209
-#, fuzzy
 msgid ""
 "Fill the empty fields of a whole system with AI, choosing which fields, "
 "the game's official name among them."
-msgstr ""
-"항목을 골라 시스템 전체의 빈 항목을 AI로 채웁니다. 또는 AI에게 각 게임의 전체 공식 이름을 물어보고, 원하는 이름만 "
-"수락하세요."
+msgstr "AI로 시스템 전체의 빈 필드를 채웁니다. 게임의 공식 이름을 포함해 채울 필드를 선택할 수 있습니다."
 
 #: templates/rom_tools_hub.html:212
 msgid "Needs an AI provider (Settings > Scraping)"
@@ -8862,11 +8855,11 @@ msgstr ""
 msgid ""
 "Gives MAME games their real names, years and makers from MAME's own list,"
 " and leaves the files alone."
-msgstr ""
+msgstr "MAME 자체 목록에서 MAME 게임의 실제 이름, 연도, 제작사를 가져오며 파일은 그대로 둡니다."
 
 #: templates/rom_tools_hub.html:346
 msgid "Needs a MAME list file"
-msgstr ""
+msgstr "MAME 목록 파일이 필요합니다"
 
 #: templates/rom_tools_hub.html:354 templates/rom_tools_hub.html:592
 msgid "Tidy Release Dates"
@@ -11149,6 +11142,9 @@ msgid ""
 "Azure, and that may ask for a card. Xbox may still refuse an app made "
 "this way: RetroDB has not been able to test one."
 msgstr ""
+"Xbox를 사용하려면 Microsoft에 등록된 앱이 필요합니다. Microsoft는 이제 개인 계정에 먼저 디렉터리를 만들도록 "
+"요구하며, 이를 위해 Azure에 가입해야 할 수 있고 카드 정보를 요구할 수도 있습니다. 이렇게 만든 앱을 Xbox가 거부할 수도"
+" 있습니다. RetroDB는 아직 테스트해 보지 못했습니다."
 
 #: templates/_settings_tabs/scraping.html:521
 msgid "Test saved AI key"

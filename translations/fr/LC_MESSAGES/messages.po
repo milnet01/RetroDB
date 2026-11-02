@@ -918,18 +918,16 @@ msgid "This fix is already running."
 msgstr "Cette correction est déjà en cours."
 
 #: routes/mame_names.py:38
-#, fuzzy
 msgid "One of those files was not found."
-msgstr "Ce dossier est introuvable."
+msgstr "L'un de ces fichiers est introuvable."
 
 #: routes/mame_names.py:41
 msgid "Choose a MAME list first."
-msgstr ""
+msgstr "Choisissez d'abord une liste MAME."
 
 #: routes/mame_names.py:44
-#, fuzzy
 msgid "MAME Names is already running."
-msgstr "Une récupération d'images est déjà en cours"
+msgstr "MAME Names est déjà en cours d'exécution."
 
 #: routes/museum.py:385 routes/scraper.py:767
 msgid "No AI provider configured"
@@ -1093,6 +1091,8 @@ msgstr "game_id ou new_name manquant"
 #: routes/reports.py:698 routes/reports.py:829
 msgid "MAME finds a game by its file name, so this file cannot be renamed."
 msgstr ""
+"MAME trouve un jeu par le nom de son fichier, ce fichier ne peut donc pas"
+" être renommé."
 
 #: routes/reports.py:702 routes/reports.py:833
 msgid "No ROM path set"
@@ -3062,9 +3062,9 @@ msgid "NOT"
 msgstr "PAS"
 
 #: services/js_i18n_strings.py:800
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Naming game {current} of {total}."
-msgstr "Récupération des images : {done} sur {total}"
+msgstr "Nom du jeu {current} sur {total} en cours."
 
 #: services/js_i18n_strings.py:801
 msgid "Navigation"
@@ -3302,7 +3302,7 @@ msgstr "Joué"
 #: services/js_i18n_strings.py:855
 #, python-brace-format
 msgid "Players who timed it: {count}"
-msgstr ""
+msgstr "Joueurs ayant chronométré : {count}"
 
 #: services/js_i18n_strings.py:856
 msgid "Please change at least one field before applying."
@@ -3385,9 +3385,8 @@ msgid "RPCS3: Playable"
 msgstr "RPCS3 : Jouable"
 
 #: services/js_i18n_strings.py:874
-#, fuzzy
 msgid "Reading the lists. This can take a few minutes."
-msgstr "Interrogation de l'IA. Cela peut prendre jusqu'à une minute."
+msgstr "Lecture des listes. Cela peut prendre quelques minutes."
 
 #: services/js_i18n_strings.py:875
 msgid "Ready"
@@ -3672,9 +3671,8 @@ msgid "See all {n} results"
 msgstr "Voir les {n} résultats"
 
 #: services/js_i18n_strings.py:936
-#, fuzzy
 msgid "Select Category"
-msgstr "Sélectionner une classification"
+msgstr "Sélectionner une catégorie"
 
 #: services/js_i18n_strings.py:937
 msgid "Select Developer"
@@ -3881,9 +3879,9 @@ msgid "Systems"
 msgstr "Systèmes"
 
 #: services/js_i18n_strings.py:980
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "That stopped: {error}"
-msgstr "Échec : {error}"
+msgstr "Arrêt : {error}"
 
 #: services/js_i18n_strings.py:981
 msgid "The 3D box could not be removed."
@@ -4336,6 +4334,8 @@ msgid ""
 "{state} Games named: {named}. Games changed: {updated}. Not in the lists:"
 " {missing}."
 msgstr ""
+"{state} Jeux nommés : {named}. Jeux modifiés : {updated}. Absents des "
+"listes : {missing}."
 
 #: services/js_i18n_strings.py:1067
 #, python-brace-format
@@ -4426,6 +4426,9 @@ msgid ""
 "%(service)s refused every saved key, which usually means their limit is "
 "reached. RetroDB will not ask it again until %(when)s."
 msgstr ""
+"%(service)s a refusé toutes les clés enregistrées, ce qui signifie "
+"souvent que sa limite est atteinte. RetroDB ne l'interrogera plus avant "
+"%(when)s."
 
 #: services/service_stop_text.py:26
 #, python-format
@@ -4433,6 +4436,8 @@ msgid ""
 "%(service)s says its limit is reached. RetroDB will not ask it again "
 "until %(when)s."
 msgstr ""
+"%(service)s indique que sa limite est atteinte. RetroDB ne l'interrogera "
+"plus avant %(when)s."
 
 #: services/standalone_settings.py:310
 msgid ""
@@ -4744,7 +4749,7 @@ msgstr "Débloqués (%(count)s)"
 #: templates/achievement_game.html:307 templates/achievement_game.html:352
 #, python-format
 msgid "Earned by %(pct)s%% of players"
-msgstr ""
+msgstr "Obtenu par %(pct)s%% des joueurs"
 
 #: templates/achievement_game.html:310
 msgid "Hardcore"
@@ -5022,9 +5027,8 @@ msgid "Select"
 msgstr "Sélectionner"
 
 #: templates/all_games.html:94 templates/system_games.html:85
-#, fuzzy
 msgid "Category"
-msgstr "Stratégie"
+msgstr "Catégorie"
 
 #: templates/all_games.html:98 templates/compare_games.html:89
 #: templates/system_games.html:89
@@ -7278,26 +7282,27 @@ msgstr ""
 #: templates/game_detail.html:340
 #, python-format
 msgid "Played on Steam: %(hours)s h %(minutes)s min"
-msgstr ""
+msgstr "Joué sur Steam : %(hours)s h %(minutes)s min"
 
 #: templates/game_detail.html:340
 #, python-format
 msgid "Played on Steam: %(minutes)s min"
-msgstr ""
+msgstr "Joué sur Steam : %(minutes)s min"
 
 #: templates/game_detail.html:340
-#, fuzzy, python-format
+#, python-format
 msgid "Last played: %(date)s"
-msgstr "Dernier test le %(date)s."
+msgstr "Dernière partie : %(date)s"
 
 #: templates/game_detail.html:358
-#, fuzzy
 msgid "Your copy earns achievements"
-msgstr "Aucun succès Steam"
+msgstr "Votre exemplaire permet d'obtenir des succès"
 
 #: templates/game_detail.html:359
 msgid "RetroAchievements does not list your copy, so it may not earn achievements"
 msgstr ""
+"RetroAchievements ne répertorie pas votre exemplaire, il se peut donc "
+"qu'il ne permette pas d'obtenir des succès"
 
 #: templates/game_detail.html:367
 msgid "View on RetroAchievements.org"
@@ -7386,9 +7391,9 @@ msgid "%(pct)s%% match"
 msgstr "%(pct)s%% de correspondance"
 
 #: templates/game_detail.html:598
-#, fuzzy, python-format
+#, python-format
 msgid "Players who timed it: %(count)s"
-msgstr "Échoués : %(count)s"
+msgstr "Joueurs ayant chronométré : %(count)s"
 
 #: templates/game_detail.html:639
 msgid "Source:"
@@ -7827,19 +7832,16 @@ msgid "Trophy Progress"
 msgstr "Progression des trophées"
 
 #: templates/game_imports.html:762 templates/game_imports.html:776
-#, fuzzy
 msgid "In your library: link it"
-msgstr "Votre bibliothèque est vide"
+msgstr "Dans votre bibliothèque : le lier"
 
 #: templates/game_imports.html:854
-#, fuzzy
 msgid "Linked to games in your library"
-msgstr "ROM dans la bibliothèque"
+msgstr "Lié à des jeux de votre bibliothèque"
 
 #: templates/game_imports.html:857
-#, fuzzy
 msgid "Details are arriving from Steam in the background"
-msgstr "Récupération de {n} élément(s) en arrière-plan."
+msgstr "Les détails arrivent de Steam en arrière-plan"
 
 #: templates/help.af.html:11 templates/help.de.html:11
 #: templates/help.es.html:11 templates/help.fr.html:11
@@ -8160,9 +8162,8 @@ msgstr "Sélectionnez un fichier journal à afficher"
 
 #: templates/_macros/nav_tabs.html:42 templates/mame_names.html:6
 #: templates/mame_names.html:34 templates/rom_tools_hub.html:340
-#, fuzzy
 msgid "MAME Names"
-msgstr "Nom du jeu"
+msgstr "MAME Names"
 
 #: templates/mame_names.html:37
 msgid ""
@@ -8171,49 +8172,60 @@ msgid ""
 "gives each game its real name, year and maker from MAME's own list. A "
 "scrape then finds the game by its file name or its real name."
 msgstr ""
+"MAME trouve un jeu par le nom exact de son fichier, les fichiers doivent "
+"donc garder leurs noms courts, comme dyger.zip. Cet outil ne touche pas "
+"aux fichiers et donne à chaque jeu son vrai nom, son année et son éditeur"
+" d'après la liste de MAME. Ensuite, une récupération trouve le jeu par le"
+" nom de son fichier ou par son vrai nom."
 
 #: templates/mame_names.html:38
 msgid ""
 "A title you changed yourself is kept. A new name is protected from "
 "scrapers and the AI. Run this again after adding more MAME games."
 msgstr ""
+"Un titre que vous avez modifié vous-même est conservé. Un nouveau nom est"
+" protégé contre les outils de récupération et l'IA. Relancez l'outil "
+"après avoir ajouté d'autres jeux MAME."
 
 #: templates/mame_names.html:41
-#, fuzzy
 msgid "MAME list"
-msgstr "Liste de codes de triche"
+msgstr "Liste MAME"
 
 #: templates/mame_names.html:46
 msgid ""
 "The DAT that matches your ROMs, or the output of mame -listxml. An .xml "
 "file, or a .zip holding one."
 msgstr ""
+"Le DAT qui correspond à vos ROM, ou le résultat de mame -listxml. Un "
+"fichier .xml, ou un .zip qui en contient un."
 
 #: templates/mame_names.html:49
 msgid "Second MAME list (optional)"
-msgstr ""
+msgstr "Seconde liste MAME (facultatif)"
 
 #: templates/mame_names.html:54
 msgid ""
 "Fills what the first list lacks. BIOS sets are hidden only if a list "
 "marks them."
 msgstr ""
+"Complète ce qui manque à la première liste. Les jeux BIOS ne sont masqués"
+" que si une liste les signale."
 
 #: templates/mame_names.html:57
-#, fuzzy
 msgid "Category file (optional)"
-msgstr "sous-dossier (facultatif)"
+msgstr "Fichier de catégories (facultatif)"
 
 #: templates/mame_names.html:62
 msgid ""
 "A catver.ini. It lets you filter the list, for example to leave out slot "
 "machines."
 msgstr ""
+"Un fichier catver.ini. Il permet de filtrer la liste, par exemple pour "
+"exclure les machines à sous."
 
 #: templates/mame_names.html:66
-#, fuzzy
 msgid "Name MAME Games"
-msgstr "Nombre de jeux"
+msgstr "Nommer les jeux MAME"
 
 #: templates/multi_disc_organizer.html:168
 msgid "Multi-Disc Game Organizer"
@@ -8975,14 +8987,12 @@ msgstr ""
 "les versions à la main sur la page d'un jeu."
 
 #: templates/rom_tools_hub.html:209
-#, fuzzy
 msgid ""
 "Fill the empty fields of a whole system with AI, choosing which fields, "
 "the game's official name among them."
 msgstr ""
-"Remplissez avec l'IA les champs vides d'un système entier, en choisissant"
-" les champs. Ou demandez à l'IA le nom officiel complet de chaque jeu et "
-"n'acceptez que les noms que vous voulez."
+"Remplissez avec l'IA les champs vides de tout un système, en choisissant "
+"lesquels, dont le nom officiel du jeu."
 
 #: templates/rom_tools_hub.html:212
 msgid "Needs an AI provider (Settings > Scraping)"
@@ -9127,10 +9137,12 @@ msgid ""
 "Gives MAME games their real names, years and makers from MAME's own list,"
 " and leaves the files alone."
 msgstr ""
+"Donne aux jeux MAME leur vrai nom, leur année et leur éditeur d'après la "
+"liste de MAME, sans toucher aux fichiers."
 
 #: templates/rom_tools_hub.html:346
 msgid "Needs a MAME list file"
-msgstr ""
+msgstr "Un fichier de liste MAME est nécessaire"
 
 #: templates/rom_tools_hub.html:354 templates/rom_tools_hub.html:592
 msgid "Tidy Release Dates"
@@ -11601,6 +11613,11 @@ msgid ""
 "Azure, and that may ask for a card. Xbox may still refuse an app made "
 "this way: RetroDB has not been able to test one."
 msgstr ""
+"Xbox nécessite une application enregistrée auprès de Microsoft. Microsoft"
+" demande désormais à un compte personnel de créer d'abord un annuaire, ce"
+" qui peut passer par une inscription à Azure, et celle-ci peut exiger une"
+" carte bancaire. Xbox peut encore refuser une application créée ainsi : "
+"RetroDB n'a pas pu en tester une."
 
 #: templates/_settings_tabs/scraping.html:521
 msgid "Test saved AI key"
