@@ -33,6 +33,33 @@
     label: 'New ROM Tools card: Tidy Genres, Perspectives and Modes converts what older scrapes stored, moves words such as FPV to the right field, and corrects player counts that contradict a game''s modes'
   - type: fix
     label: Online-only games from IGDB are no longer listed as local multiplayer, and a game that needs two players is no longer listed as single-player
+  body: |
+    <ul>
+      <li><strong>Scraping stops taking the wrong game.</strong> A sequel no
+        longer passes for the game you have, so Street Fighter II gets nothing
+        from Street Fighter, and a bulk scrape needs the title to match, not
+        only the console. IGDB mods, DLC and bundles no longer match unless your
+        ROM has that exact name.</li>
+      <li><strong>RAWG stops mixing versions of a game.</strong> When its record
+        covers several consoles it no longer supplies developer, publisher, age
+        rating or multiplayer modes, and it no longer guesses a player count.
+        It is no longer searched for Commodore 64 and DOS games.</li>
+      <li><strong>Your scraper order decides between equal matches.</strong>
+        RAWG no longer scores extra for a picture or a Metacritic score, and new
+        installs list it last.</li>
+      <li><strong>A release date shows only what its source knows.</strong> A
+        game known only by its year shows that year. Dates from IGDB and RAWG
+        belong to the game's own console, and the Release Dates list now fills
+        from IGDB and ScreenScraper too.</li>
+      <li><strong>One set of names for genres, perspectives and modes.</strong>
+        Filters now find every game, and online-only games are no longer listed
+        as local multiplayer.</li>
+      <li><strong>Two new ROM Tools cards.</strong> Tidy Release Dates and Tidy
+        Genres, Perspectives and Modes correct what older scrapes stored. Press
+        them, then run a bulk scrape with Fill Missing.</li>
+      <li><strong>Player counts come from the game's own console,</strong> and
+        a ScreenScraper result you pick is always the game you get.</li>
+    </ul>
 - version: 3.35.0
   date: 2026-11-01
   tags:

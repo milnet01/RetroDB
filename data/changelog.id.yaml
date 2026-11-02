@@ -2,37 +2,38 @@
   date: '2026-11-02'
   tags:
   - type: fix
-    label: Scraping tidak lagi memakai sekuel untuk game yang Anda miliki. Street Fighter II tidak lagi mengambil detail dari Street Fighter, dan Sonic the Hedgehog tidak dari Sonic 2, saat game yang persis sama tidak ditemukan
+    label: Scraping tidak lagi mengambil sekuel untuk game yang Anda miliki. Street Fighter II tidak lagi mendapat detail dari Street Fighter, begitu juga Sonic the Hedgehog dari Sonic 2, saat game yang tepat tidak ditemukan
   - type: fix
-    label: Scrape massal kini hanya menerima kecocokan jika judulnya benar-benar sama. Konsol yang tepat dan tanggal rilis tidak lagi cukup untuk meloloskan hasil begitu saja
+    label: Scrape massal kini hanya menerima kecocokan jika judulnya benar-benar cocok. Konsol yang tepat dan tanggal rilis tidak lagi cukup untuk lolos dengan sendirinya
   - type: fix
-    label: Mod, DLC, bundel, dan pembaruan dari IGDB tidak lagi cocok dengan sebuah game, kecuali ROM Anda memang bernama persis sama
+    label: Mod, DLC, bundel, dan pembaruan dari IGDB tidak lagi dicocokkan dengan sebuah game, kecuali ROM Anda memiliki nama yang persis sama
   - type: fix
-    label: RAWG menyimpan satu data untuk semua versi sebuah game, jadi jika mencakup beberapa konsol, RAWG tidak lagi memberi pengembang, penerbit, rating usia, atau mode multipemain. RAWG juga tidak lagi menebak jumlah pemain sama sekali
+    label: RAWG menyimpan satu data untuk semua versi sebuah game, jadi jika mencakup beberapa konsol, RAWG tidak lagi memberikan pengembang, penerbit, rating usia, atau mode multipemain. RAWG juga tidak lagi menebak jumlah pemain sama sekali
   - type: fix
-    label: Jumlah pemain dan mode multipemain dari IGDB kini berasal dari konsol game itu sendiri
+    label: Jumlah pemain dan mode multipemain dari IGDB kini berasal dari konsol asli game tersebut
   - type: fix
-    label: Jika beberapa sumber sama-sama cocok, urutan scraper Anda yang menentukan. RAWG tidak lagi mendapat skor tambahan karena punya gambar atau skor Metacritic, dan instalasi baru menempatkan RAWG di urutan terakhir
+    label: Jika beberapa sumber sama cocoknya, urutan scraper Anda yang menentukan. RAWG tidak lagi mendapat skor tambahan karena memiliki gambar atau skor Metacritic, dan instalasi baru menempatkan RAWG di urutan terakhir
   - type: fix
-    label: RAWG tidak lagi dicari untuk game Commodore 64 dan DOS, karena RAWG mengelompokkannya di Amiga dan PC, sehingga game platform lain bisa saja cocok
+    label: RAWG tidak lagi dicari untuk game Commodore 64 dan DOS, karena RAWG mengelompokkannya di Amiga dan PC, sehingga game dari platform lain bisa saja cocok
   - type: fix
     label: Hasil ScreenScraper yang Anda pilih kini selalu menjadi game yang Anda dapatkan, bahkan setelah hasilnya dibiarkan terbuka lebih dari 10 menit
   - type: fix
-    label: Aksen dan tanda baca tidak lagi menurunkan kecocokan judul, jadi Pokémon menemukan Pokemon dan R.B.I. menemukan RBI
+    label: Aksen dan tanda baca tidak lagi menurunkan kecocokan judul, sehingga Pokémon menemukan Pokemon dan R.B.I. menemukan RBI
   - type: fix
-    label: Tanggal rilis kini hanya tampil sesuai yang diketahui sumbernya. Game yang hanya diketahui tahunnya akan menampilkan tahun itu, bukan 1 Januari atau 31 Desember karangan
+    label: Tanggal rilis kini hanya ditampilkan sesuai yang diketahui sumbernya. Game yang hanya diketahui tahunnya akan menampilkan tahun itu, bukan 1 Januari atau 31 Desember buatan
   - type: fix
-    label: Tanggal dari IGDB dan RAWG kini sesuai konsol game itu sendiri, dan tanggal IGDB sesuai wilayahnya sendiri, jadi salinan USA tidak lagi menampilkan tanggal Jepang, dan versi port tidak lagi menampilkan tahun versi aslinya
+    label: Tanggal dari IGDB dan RAWG kini milik konsol game itu sendiri, dan tanggal IGDB juga sesuai wilayahnya, sehingga salinan AS tidak lagi menampilkan tanggal Jepang atau port menampilkan tahun versi aslinya
   - type: feature
     label: Daftar Tanggal Rilis di halaman game kini terisi dari IGDB dan ScreenScraper, tidak hanya dari AI
   - type: added
-    label: 'Kartu Alat ROM baru: Tidy Release Dates merapikan hari karangan yang disimpan scrape lama, agar scrape bisa mengisi tanggal yang sebenarnya'
+    label: 'Kartu Alat ROM baru: Rapikan Tanggal Rilis menghapus hari buatan yang disimpan scrape lama, sehingga scrape bisa mengisi tanggal yang sebenarnya'
   - type: fix
     label: Genre, perspektif, dan mode game kini memakai satu set nama dari sumber mana pun, sehingga filter menemukan semua game. Satu genre tidak lagi tampil sebagai RPG sekaligus Role Playing Game
   - type: added
-    label: 'Kartu Alat ROM baru: Tidy Genres, Perspectives and Modes mengonversi data dari scrape lama, memindahkan kata seperti FPV ke kolom yang tepat, dan memperbaiki jumlah pemain yang bertentangan dengan mode game'
+    label: 'Kartu Alat ROM baru: Rapikan Genre, Perspektif, dan Mode mengonversi data yang disimpan scrape lama, memindahkan kata seperti FPV ke kolom yang tepat, dan memperbaiki jumlah pemain yang bertentangan dengan mode game'
   - type: fix
-    label: Game khusus online dari IGDB tidak lagi terdaftar sebagai multipemain lokal, dan game yang butuh dua pemain tidak lagi terdaftar sebagai pemain tunggal
+    label: Game khusus online dari IGDB tidak lagi dicantumkan sebagai multipemain lokal, dan game yang butuh dua pemain tidak lagi dicantumkan sebagai pemain tunggal
+  body: "<ul>\n  <li><strong>Scraping berhenti mengambil game yang salah.</strong> Sekuel tidak\n    lagi dianggap sebagai game yang Anda miliki, jadi Street Fighter II tidak mendapat apa pun\n    dari Street Fighter, dan scrape massal mensyaratkan judul yang cocok, bukan\n    hanya konsolnya. Mod, DLC, dan bundel dari IGDB tidak lagi cocok kecuali\n    ROM Anda memiliki nama yang persis sama.</li>\n  <li><strong>RAWG berhenti mencampur versi sebuah game.</strong> Jika datanya\n    mencakup beberapa konsol, RAWG tidak lagi memberikan pengembang, penerbit, rating\n    usia, atau mode multipemain, dan tidak lagi menebak jumlah pemain.\n    RAWG tidak lagi dicari untuk game Commodore 64 dan DOS.</li>\n  <li><strong>Urutan scraper Anda menentukan di antara kecocokan yang setara.</strong>\n    RAWG tidak lagi mendapat skor tambahan karena gambar atau skor Metacritic, dan instalasi\n    baru menempatkannya di urutan terakhir.</li>\n  <li><strong>Tanggal rilis hanya menampilkan yang diketahui sumbernya.</strong> Game\n    yang hanya diketahui tahunnya menampilkan tahun itu. Tanggal dari IGDB dan RAWG\n    milik konsol game itu sendiri, dan daftar Tanggal Rilis kini terisi\n    dari IGDB dan ScreenScraper juga.</li>\n  <li><strong>Satu set nama untuk genre, perspektif, dan mode.</strong>\n    Filter kini menemukan semua game, dan game khusus online tidak lagi dicantumkan\n    sebagai multipemain lokal.</li>\n  <li><strong>Dua kartu Alat ROM baru.</strong> Rapikan Tanggal Rilis dan Rapikan\n    Genre, Perspektif, dan Mode memperbaiki data yang disimpan scrape lama. Tekan\n    keduanya, lalu jalankan scrape massal dengan Isi yang Kosong.</li>\n  <li><strong>Jumlah pemain berasal dari konsol asli game,</strong> dan\n    hasil ScreenScraper yang Anda pilih selalu menjadi game yang Anda dapatkan.</li>\n</ul>\n"
 - version: 3.35.0
   date: '2026-11-01'
   tags:

@@ -2,37 +2,38 @@
   date: '2026-11-02'
   tags:
   - type: fix
-    label: Skraping henter ikke lenger en oppfølger til spillet du har. Street Fighter II får ikke lenger detaljer fra Street Fighter, og Sonic the Hedgehog ikke fra Sonic 2, når det nøyaktige spillet mangler
+    label: Skraping tar ikke lenger med en oppfølger til spillet du har. Street Fighter II får ikke lenger detaljer fra Street Fighter, og Sonic the Hedgehog ikke fra Sonic 2, når det riktige spillet mangler
   - type: fix
-    label: En masseskraping godtar nå en treff bare hvis tittelen virkelig stemmer. Riktig konsoll og en utgivelsesdato kan ikke lenger alene gi godkjent treff
+    label: En massekjøring av skraping godtar nå bare en treff hvis tittelen faktisk stemmer. Riktig konsoll og en utgivelsesdato kan ikke lenger alene gi godkjent treff
   - type: fix
-    label: IGDB-modder, DLC, pakker og oppdateringer matcher ikke lenger et spill, med mindre ROM-en din har akkurat det navnet
+    label: IGDB-modder, DLC, pakker og oppdateringer treffer ikke lenger et spill, med mindre ROM-en din har akkurat det navnet
   - type: fix
-    label: RAWG har én post for alle versjoner av et spill, så når den dekker flere konsoller, gir den ikke lenger utvikler, utgiver, aldersgrense eller flerspillermoduser. Den gjetter heller ikke lenger antall spillere
+    label: RAWG har én oppføring for alle versjoner av et spill, så når den dekker flere konsoller, gir den ikke lenger utvikler, utgiver, aldersgrense eller flerspillermoduser. Den gjetter heller ikke lenger på antall spillere
   - type: fix
-    label: IGDB-spillerantall og flerspillermoduser kommer nå fra spillets egen konsoll
+    label: Antall spillere og flerspillermoduser fra IGDB kommer nå fra spillets egen konsoll
   - type: fix
-    label: Når kildene passer like godt, avgjør nå rekkefølgen på skraperne dine. RAWG får ikke lenger ekstra poeng for bilde eller Metacritic-score, og nye installasjoner setter RAWG sist
+    label: Når kilder passer like godt, bestemmer nå rekkefølgen på skraperne dine. RAWG får ikke lenger ekstra poeng for bilde eller Metacritic-score, og nye installasjoner setter RAWG sist
   - type: fix
-    label: RAWG blir ikke lenger søkt i for Commodore 64- og DOS-spill, fordi den fører dem under Amiga og PC, så et spill fra en annen plattform kunne gi treff
+    label: RAWG blir ikke lenger søkt i for Commodore 64- og DOS-spill, fordi den lister dem under Amiga og PC, så et spill fra en annen plattform kunne gi treff
   - type: fix
-    label: Et ScreenScraper-resultat du velger, blir nå alltid spillet du får, selv om du lar resultatene stå åpne i mer enn 10 minutter
+    label: Et ScreenScraper-resultat du velger, er nå alltid spillet du får, selv om du lar resultatene stå åpne i mer enn 10 minutter
   - type: fix
-    label: Aksenter og tegnsetting senker ikke lenger tittelmatchen, så Pokémon finner Pokemon og R.B.I. finner RBI
+    label: Aksenter og tegnsetting senker ikke lenger treffet på en tittel, så Pokémon finner Pokemon og R.B.I. finner RBI
   - type: fix
-    label: En utgivelsesdato vises nå bare så detaljert som kilden vet. Et spill som bare er kjent med årstall, viser det året, ikke en oppdiktet 1. januar eller 31. desember
+    label: En utgivelsesdato vises nå bare så detaljert som kilden vet. Et spill som bare har årstall, viser det året, ikke en oppdiktet 1. januar eller 31. desember
   - type: fix
-    label: IGDB- og RAWG-datoer hører nå til spillets egen konsoll, og IGDB-datoer til sin egen region, så en USA-kopi viser ikke lenger den japanske datoen, og en portering ikke originalens år
+    label: Datoer fra IGDB og RAWG tilhører nå spillets egen konsoll, og IGDB-datoer også sin egen region, så en USA-utgave viser ikke lenger den japanske datoen, og en port får ikke originalens år
   - type: feature
-    label: Listen Utgivelsesdatoer på et spills side fylles nå fra IGDB og ScreenScraper, ikke bare av AI
+    label: Listen over utgivelsesdatoer på spillsiden fylles nå fra IGDB og ScreenScraper, ikke bare fra AI
   - type: added
-    label: 'Nytt ROM-verktøykort: Rydd utgivelsesdatoer fjerner de oppdiktede dagene eldre skrapinger lagret, slik at en skraping kan fylle inn den riktige datoen'
+    label: 'Nytt ROM-verktøykort: Rydd utgivelsesdatoer fjerner de oppdiktede dagene eldre skrapinger lagret, slik at en ny skraping kan fylle inn den riktige datoen'
   - type: fix
-    label: Sjangere, perspektiver og spillmoduser bruker nå ett sett med navn uansett hvilken kilde som fylte dem, så filtre finner alle spill. En sjanger vises ikke lenger både som RPG og Role Playing Game
+    label: Sjangere, perspektiver og spillmoduser bruker nå ett sett med navn uansett kilde, så filtre finner alle spill. En sjanger vises ikke lenger både som RPG og Role Playing Game
   - type: added
-    label: 'Nytt ROM-verktøykort: Rydd sjangere, perspektiver og moduser konverterer det eldre skrapinger lagret, flytter ord som FPV til riktig felt, og retter spillerantall som motsier spillets moduser'
+    label: 'Nytt ROM-verktøykort: Rydd sjangere, perspektiver og moduser konverterer det eldre skrapinger lagret, flytter ord som FPV til riktig felt og retter antall spillere som strider mot spillets moduser'
   - type: fix
-    label: Spill som bare kan spilles på nett fra IGDB blir ikke lenger oppført som lokal flerspiller, og et spill som krever to spillere blir ikke lenger oppført som enspiller
+    label: Spill som bare kan spilles online fra IGDB, vises ikke lenger som lokal flerspiller, og et spill som krever to spillere, vises ikke lenger som enspiller
+  body: "<ul>\n  <li><strong>Skraping slutter å ta feil spill.</strong> En oppfølger\n    regnes ikke lenger som spillet du har, så Street Fighter II får ingenting\n    fra Street Fighter, og en massekjøring av skraping krever at tittelen stemmer, ikke\n    bare konsollen. IGDB-modder, DLC og pakker treffer ikke lenger med mindre\n    ROM-en har akkurat det navnet.</li>\n  <li><strong>RAWG slutter å blande versjoner av et spill.</strong> Når oppføringen\n    dekker flere konsoller, gir den ikke lenger utvikler, utgiver, aldersgrense\n    eller flerspillermoduser, og den gjetter ikke på antall spillere.\n    Den blir ikke lenger søkt i for Commodore 64- og DOS-spill.</li>\n  <li><strong>Rekkefølgen på skraperne avgjør mellom like treff.</strong>\n    RAWG får ikke lenger ekstra poeng for bilde eller Metacritic-score, og nye\n    installasjoner setter den sist.</li>\n  <li><strong>En utgivelsesdato viser bare det kilden vet.</strong> Et\n    spill som bare har årstall, viser det året. Datoer fra IGDB og RAWG\n    tilhører spillets egen konsoll, og listen over utgivelsesdatoer fylles nå\n    også fra IGDB og ScreenScraper.</li>\n  <li><strong>Ett sett med navn for sjangere, perspektiver og moduser.</strong>\n    Filtre finner nå alle spill, og spill som bare kan spilles online, vises ikke lenger\n    som lokal flerspiller.</li>\n  <li><strong>To nye ROM-verktøykort.</strong> Rydd utgivelsesdatoer og Rydd\n    sjangere, perspektiver og moduser retter det eldre skrapinger lagret. Trykk\n    på dem, og kjør deretter en massekjøring av skraping med Fyll ut manglende.</li>\n  <li><strong>Antall spillere kommer fra spillets egen konsoll,</strong> og\n    et ScreenScraper-resultat du velger, er alltid spillet du får.</li>\n</ul>\n"
 - version: 3.35.0
   date: '2026-11-01'
   tags:

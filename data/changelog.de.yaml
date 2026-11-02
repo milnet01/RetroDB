@@ -2,37 +2,38 @@
   date: '2026-11-02'
   tags:
   - type: fix
-    label: Beim Scrapen wird für dein Spiel kein Nachfolger mehr verwendet. Street Fighter II bekommt keine Details mehr von Street Fighter und Sonic the Hedgehog keine von Sonic 2, wenn das genaue Spiel fehlt
+    label: Scrapen nimmt keinen Nachfolger mehr für das Spiel, das du hast. Street Fighter II bekommt keine Angaben mehr von Street Fighter und Sonic the Hedgehog keine von Sonic 2, wenn das genaue Spiel fehlt
   - type: fix
     label: Ein Massen-Scrape akzeptiert einen Treffer jetzt nur noch, wenn der Titel wirklich passt. Die richtige Konsole und ein Veröffentlichungsdatum reichen allein nicht mehr aus
   - type: fix
-    label: IGDB-Mods, DLC, Bundles und Updates passen nicht mehr zu einem Spiel, außer deine ROM heißt genau so
+    label: IGDB-Mods, DLC, Bundles und Updates passen nicht mehr zu einem Spiel, es sei denn, deine ROM heißt genau so
   - type: fix
-    label: RAWG führt für alle Versionen eines Spiels nur einen Eintrag. Deckt er mehrere Konsolen ab, liefert er daher keine Entwickler, Publisher, Altersfreigabe oder Mehrspielermodi mehr. Die Spielerzahl wird gar nicht mehr geraten
+    label: RAWG führt einen Eintrag für alle Versionen eines Spiels. Deckt er mehrere Konsolen ab, liefert er daher keine Entwickler, Publisher, Altersfreigaben oder Mehrspielermodi mehr. Eine Spielerzahl wird gar nicht mehr geraten
   - type: fix
-    label: Spielerzahlen und Mehrspielermodi von IGDB stammen jetzt von der Konsole des jeweiligen Spiels
+    label: IGDB-Spielerzahlen und Mehrspielermodi stammen jetzt von der eigenen Konsole des Spiels
   - type: fix
-    label: Passen mehrere Quellen gleich gut, entscheidet jetzt deine Scraper-Reihenfolge. RAWG bekommt keine Extrapunkte mehr für ein Bild oder einen Metacritic-Wert, und bei Neuinstallationen steht RAWG zuletzt
+    label: Passen mehrere Quellen gleich gut, entscheidet jetzt deine Scraper-Reihenfolge. RAWG bekommt keine Extrapunkte mehr für ein Bild oder eine Metacritic-Wertung, und bei Neuinstallationen steht RAWG zuletzt
   - type: fix
     label: RAWG wird für Commodore-64- und DOS-Spiele nicht mehr durchsucht, da es sie unter Amiga und PC ablegt und so das Spiel einer anderen Plattform passen könnte
   - type: fix
-    label: Ein von dir gewähltes ScreenScraper-Ergebnis ist jetzt immer das Spiel, das du bekommst, auch wenn die Ergebnisse länger als 10 Minuten geöffnet blieben
+    label: Ein von dir gewähltes ScreenScraper-Ergebnis ist jetzt immer das Spiel, das du bekommst, auch wenn die Ergebnisse länger als 10 Minuten offen waren
   - type: fix
-    label: Akzente und Satzzeichen senken den Titelabgleich nicht mehr, sodass Pokémon auch Pokemon findet und R.B.I. auch RBI
+    label: Akzente und Satzzeichen senken die Titelübereinstimmung nicht mehr, sodass Pokémon auch Pokemon findet und R.B.I. auch RBI
   - type: fix
-    label: Ein Veröffentlichungsdatum zeigt nur noch so viel, wie die Quelle weiß. Ein Spiel, von dem nur das Jahr bekannt ist, zeigt dieses Jahr und nicht einen erfundenen 1. Januar oder 31. Dezember
+    label: Ein Veröffentlichungsdatum zeigt nur noch so viel, wie die Quelle weiß. Ein Spiel, von dem nur das Jahr bekannt ist, zeigt dieses Jahr, kein erfundenes 1. Januar oder 31. Dezember
   - type: fix
-    label: Die Daten von IGDB und RAWG gehören jetzt zur Konsole des Spiels, die von IGDB auch zur jeweiligen Region. Eine USA-Version zeigt so nicht mehr das japanische Datum und eine Portierung nicht mehr das Jahr des Originals
+    label: IGDB- und RAWG-Daten gehören jetzt zur eigenen Konsole des Spiels, die von IGDB auch zur eigenen Region. Eine USA-Version zeigt so nicht mehr das japanische Datum und eine Portierung nicht mehr das Jahr des Originals
   - type: feature
-    label: Die Liste der Veröffentlichungsdaten auf der Spielseite wird jetzt aus IGDB und ScreenScraper gefüllt, nicht nur von der KI
+    label: Die Liste der Veröffentlichungsdaten auf der Seite eines Spiels wird jetzt aus IGDB und ScreenScraper gefüllt, nicht nur von der KI
   - type: added
-    label: 'Neue Karte in den ROM-Tools: „Veröffentlichungsdaten bereinigen“ entfernt die erfundenen Tage, die ältere Scrapes gespeichert haben, damit ein Scrape das echte Datum eintragen kann'
+    label: 'Neue Karte bei den ROM-Tools: Veröffentlichungsdaten bereinigen entfernt die erfundenen Tage, die ältere Scrapes gespeichert haben, damit ein Scrape das echte Datum eintragen kann'
   - type: fix
-    label: Genres, Perspektiven und Spielmodi verwenden jetzt einheitliche Namen, egal welche Quelle sie geliefert hat, sodass Filter alle Spiele finden. Ein Genre erscheint nicht mehr zugleich als RPG und Role Playing Game
+    label: Genres, Perspektiven und Spielmodi verwenden jetzt einheitliche Namen, egal welche Quelle sie geliefert hat, sodass Filter jedes Spiel finden. Ein Genre wird nicht mehr zugleich als RPG und Role Playing Game angezeigt
   - type: added
-    label: 'Neue Karte in den ROM-Tools: „Genres, Perspektiven und Modi bereinigen“ wandelt um, was ältere Scrapes gespeichert haben, verschiebt Begriffe wie FPV ins richtige Feld und korrigiert Spielerzahlen, die den Modi eines Spiels widersprechen'
+    label: 'Neue Karte bei den ROM-Tools: Genres, Perspektiven und Modi bereinigen wandelt um, was ältere Scrapes gespeichert haben, verschiebt Begriffe wie FPV ins richtige Feld und korrigiert Spielerzahlen, die den Modi eines Spiels widersprechen'
   - type: fix
     label: Reine Online-Spiele von IGDB werden nicht mehr als lokaler Mehrspielermodus geführt, und ein Spiel, das zwei Spieler braucht, nicht mehr als Einzelspieler-Spiel
+  body: "<ul>\n  <li><strong>Scrapen nimmt nicht mehr das falsche Spiel.</strong> Ein Nachfolger\n    gilt nicht mehr als das Spiel, das du hast. Street Fighter II bekommt also nichts\n    von Street Fighter, und ein Massen-Scrape verlangt einen passenden Titel, nicht\n    nur die richtige Konsole. IGDB-Mods, DLC und Bundles passen nur noch, wenn deine\n    ROM genau so heißt.</li>\n  <li><strong>RAWG vermischt keine Versionen eines Spiels mehr.</strong> Deckt sein Eintrag\n    mehrere Konsolen ab, liefert er keine Entwickler, Publisher, Altersfreigaben\n    oder Mehrspielermodi mehr und rät keine Spielerzahl. Für Commodore-64- und\n    DOS-Spiele wird er nicht mehr durchsucht.</li>\n  <li><strong>Deine Scraper-Reihenfolge entscheidet bei gleichen Treffern.</strong>\n    RAWG bekommt keine Extrapunkte mehr für ein Bild oder eine Metacritic-Wertung, und bei Neuinstallationen\n    steht es zuletzt.</li>\n  <li><strong>Ein Veröffentlichungsdatum zeigt nur, was die Quelle weiß.</strong> Ein\n    Spiel, von dem nur das Jahr bekannt ist, zeigt dieses Jahr. Daten von IGDB und RAWG\n    gehören zur eigenen Konsole des Spiels, und die Liste der Veröffentlichungsdaten wird jetzt\n    auch aus IGDB und ScreenScraper gefüllt.</li>\n  <li><strong>Einheitliche Namen für Genres, Perspektiven und Modi.</strong>\n    Filter finden jetzt jedes Spiel, und reine Online-Spiele werden nicht mehr\n    als lokaler Mehrspielermodus geführt.</li>\n  <li><strong>Zwei neue ROM-Tools-Karten.</strong> Veröffentlichungsdaten bereinigen und Genres,\n    Perspektiven und Modi bereinigen korrigieren, was ältere Scrapes gespeichert haben. Drücke\n    darauf und starte dann einen Massen-Scrape mit Fehlendes ergänzen.</li>\n  <li><strong>Spielerzahlen stammen von der eigenen Konsole des Spiels,</strong> und\n    ein von dir gewähltes ScreenScraper-Ergebnis ist immer das Spiel, das du bekommst.</li>\n</ul>\n"
 - version: 3.35.0
   date: '2026-11-01'
   tags:

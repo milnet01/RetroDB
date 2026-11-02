@@ -2,37 +2,38 @@
   date: '2026-11-02'
   tags:
   - type: fix
-    label: 抓取不再為你擁有的遊戲取用續作資料。找不到完全相符的遊戲時,《Street Fighter II》不會再取得《Street Fighter》的詳細資料,《Sonic the Hedgehog》也不會取得《Sonic 2》的資料
+    label: 抓取資料時,不會再拿續作來當成你擁有的遊戲。找不到完全相同的遊戲時,《Street Fighter II》不會再取得《Street Fighter》的資料,《Sonic the Hedgehog》也不會取得《Sonic 2》的資料
   - type: fix
-    label: 批次抓取現在只會在標題確實相符時才接受配對。主機正確加上發行日期,不再能單獨視為通過
+    label: 批次抓取現在只有在標題真正相符時才會接受比對結果。主機正確加上發行日期,不能再單靠這兩項就通過
   - type: fix
-    label: IGDB 的模組、DLC、合集和更新檔不再配對到遊戲,除非你的 ROM 名稱與其完全相同
+    label: IGDB 的模組、DLC、合集和更新檔不會再比對成遊戲,除非你的 ROM 名稱與它完全相同
   - type: fix
-    label: RAWG 會把一款遊戲的所有版本合併成一筆紀錄,因此當它涵蓋多個主機時,不再提供開發商、發行商、年齡分級或多人模式。它也完全不再猜測玩家人數
+    label: RAWG 會把一款遊戲的所有版本合併成一筆資料,所以當它涵蓋多個主機時,不再提供開發商、發行商、年齡分級或多人模式,也完全不再猜測玩家人數
   - type: fix
     label: IGDB 的玩家人數和多人模式現在取自該遊戲自己的主機
   - type: fix
-    label: 當各來源的配對程度相同時,現在由你設定的抓取來源順序決定。RAWG 不再因為有圖片或 Metacritic 分數而加分,新安裝會把 RAWG 排在最後
+    label: 當各來源的相符程度相同時,現在由你設定的抓取來源順序決定。RAWG 不再因為有圖片或 Metacritic 分數而額外加分,新安裝會將 RAWG 排在最後
   - type: fix
-    label: 不再於 RAWG 搜尋 Commodore 64 和 DOS 遊戲,因為它把這些遊戲歸在 Amiga 和 PC 之下,可能會配對到其他平台的遊戲
+    label: Commodore 64 和 DOS 遊戲不再搜尋 RAWG,因為它把這些遊戲歸在 Amiga 和 PC 下,可能會比對到其他平台的遊戲
   - type: fix
     label: 你選擇的 ScreenScraper 結果現在一定就是你得到的遊戲,即使結果頁面開著超過 10 分鐘也一樣
   - type: fix
-    label: 重音符號和標點不再降低標題的相符度,所以搜尋 Pokémon 能找到 Pokemon,R.B.I. 能找到 RBI
+    label: 重音符號和標點不再降低標題的相符程度,所以 Pokémon 可以找到 Pokemon,R.B.I. 可以找到 RBI
   - type: fix
-    label: 發行日期現在只顯示來源所知道的精確度。只知道年份的遊戲就只顯示年份,不再編造 1 月 1 日或 12 月 31 日
+    label: 發行日期現在只會顯示來源所知道的精確度。只知道年份的遊戲只會顯示年份,不會再編出 1 月 1 日或 12 月 31 日
   - type: fix
-    label: IGDB 和 RAWG 的日期現在屬於遊戲自己的主機,IGDB 的日期也屬於自己的地區,因此美國版不再顯示日本日期,移植版也不再顯示原作的年份
+    label: IGDB 和 RAWG 的日期現在屬於遊戲自己的主機,IGDB 的日期也屬於自己的地區,所以美版不會再顯示日本的日期,移植版也不會再顯示原作的年份
   - type: feature
-    label: 遊戲頁面上的發行日期清單現在會從 IGDB 和 ScreenScraper 填入,不再只靠 AI
+    label: 遊戲頁面上的發行日期清單現在會由 IGDB 和 ScreenScraper 填入,不再只靠 AI
   - type: added
-    label: 新的 ROM 工具卡片:整理發行日期,會清除舊版抓取所存的編造日期,讓之後的抓取能填入真正的日期
+    label: 新的 ROM 工具卡片:整理發行日期,會清除舊版抓取所存的編造日期,讓之後的抓取可以填入真正的日期
   - type: fix
-    label: 類型、視角和遊戲模式現在不論由哪個來源填入,都使用同一組名稱,篩選就能找到所有遊戲。同一種類型不再同時顯示為 RPG 和 Role Playing Game
+    label: 無論由哪個來源填入,類型、視角和遊戲模式現在都使用同一套名稱,篩選就能找到所有遊戲。同一個類型不會再同時顯示為 RPG 和 Role Playing Game
   - type: added
-    label: 新的 ROM 工具卡片:整理類型、視角和模式,會轉換舊版抓取所存的內容,把 FPV 等詞移到正確欄位,並修正與遊戲模式互相矛盾的玩家人數
+    label: 新的 ROM 工具卡片:整理類型、視角和模式,會轉換舊版抓取所存的內容,把 FPV 這類詞移到正確的欄位,並修正與遊戲模式相矛盾的玩家人數
   - type: fix
-    label: IGDB 上僅限線上的遊戲不再被列為本地多人遊戲,需要兩名玩家的遊戲也不再被列為單人遊戲
+    label: IGDB 的純線上遊戲不會再被列為本機多人遊戲,需要兩名玩家的遊戲也不會再被列為單人遊戲
+  body: "<ul>\n  <li><strong>抓取不再拿錯遊戲。</strong>續作不再被當成你擁有的遊戲,所以《Street Fighter II》不會再從《Street Fighter》取得任何資料,批次抓取也要求標題相符,而不是只看主機。IGDB 的模組、DLC 和合集不會再比對成功,除非你的 ROM 名稱與它完全相同。</li>\n  <li><strong>RAWG 不再混用遊戲的不同版本。</strong>當它的資料涵蓋多個主機時,不再提供開發商、發行商、年齡分級或多人模式,也不再猜測玩家人數。Commodore 64 和 DOS 遊戲也不再搜尋 RAWG。</li>\n  <li><strong>相符程度相同時,由你的抓取來源順序決定。</strong>RAWG 不再因為有圖片或 Metacritic 分數而額外加分,新安裝會將它排在最後。</li>\n  <li><strong>發行日期只顯示來源所知道的內容。</strong>只知道年份的遊戲只會顯示年份。IGDB 和 RAWG 的日期屬於遊戲自己的主機,發行日期清單現在也會由 IGDB 和 ScreenScraper 填入。</li>\n  <li><strong>類型、視角和模式使用同一套名稱。</strong>篩選現在能找到所有遊戲,純線上遊戲也不會再被列為本機多人遊戲。</li>\n  <li><strong>兩張新的 ROM 工具卡片。</strong>整理發行日期,以及整理類型、視角和模式,可修正舊版抓取所存的內容。按下它們後,再用「填補缺漏」執行批次抓取。</li>\n  <li><strong>玩家人數取自遊戲自己的主機,</strong>你選擇的 ScreenScraper 結果也一定就是你得到的遊戲。</li>\n</ul>\n"
 - version: 3.35.0
   date: '2026-11-01'
   tags:

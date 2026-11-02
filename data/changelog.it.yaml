@@ -2,25 +2,25 @@
   date: '2026-11-02'
   tags:
   - type: fix
-    label: Lo scraping non prende più un sequel al posto del gioco che hai. Street Fighter II non riceve più dettagli da Street Fighter, né Sonic the Hedgehog da Sonic 2, quando manca il gioco esatto
+    label: La scansione non prende più un seguito al posto del gioco che hai. Street Fighter II non riceve più dettagli da Street Fighter, né Sonic the Hedgehog da Sonic 2, quando manca il gioco esatto
   - type: fix
-    label: Una scansione in blocco ora accetta una corrispondenza solo se il titolo corrisponde davvero. La console giusta e una data di uscita non bastano più, da sole, per essere accettate
+    label: Una scansione di massa ora accetta una corrispondenza solo se il titolo corrisponde davvero. La console giusta e una data di uscita non bastano più da sole per essere accettate
   - type: fix
     label: Mod, DLC, bundle e aggiornamenti di IGDB non corrispondono più a un gioco, a meno che la tua ROM abbia esattamente quel nome
   - type: fix
-    label: RAWG conserva un solo record per tutte le versioni di un gioco, quindi quando copre più console non fornisce più sviluppatore, editore, classificazione per età o modalità multigiocatore. Non ipotizza più in alcun modo il numero di giocatori
+    label: RAWG ha un solo record per tutte le versioni di un gioco, quindi quando riguarda più console non fornisce più sviluppatore, editore, classificazione per età o modalità multigiocatore. Non ipotizza più in alcun modo il numero di giocatori
   - type: fix
-    label: Il numero di giocatori e le modalità multigiocatore di IGDB ora provengono dalla console del gioco stesso
+    label: Il numero di giocatori e le modalità multigiocatore di IGDB ora arrivano dalla console del gioco stesso
   - type: fix
-    label: Quando le fonti corrispondono allo stesso modo, ora decide l'ordine dei tuoi scraper. RAWG non ottiene più punti extra per avere un'immagine o un punteggio Metacritic, e le nuove installazioni mettono RAWG per ultimo
+    label: Quando le fonti corrispondono allo stesso modo, ora decide l'ordine dei tuoi scraper. RAWG non ottiene più punti extra per un'immagine o un voto Metacritic, e le nuove installazioni lo mettono per ultimo
   - type: fix
-    label: RAWG non viene più cercato per i giochi Commodore 64 e DOS, perché li archivia sotto Amiga e PC, e quindi potrebbe corrispondere il gioco di un'altra piattaforma
+    label: RAWG non viene più cercato per i giochi Commodore 64 e DOS, perché li classifica come Amiga e PC, e quindi potrebbe corrispondere un gioco di un'altra piattaforma
   - type: fix
-    label: Il risultato di ScreenScraper che scegli ora è sempre il gioco che ottieni, anche se lasci i risultati aperti per più di 10 minuti
+    label: Il risultato ScreenScraper che scegli è ora sempre il gioco che ottieni, anche dopo aver lasciato i risultati aperti per più di 10 minuti
   - type: fix
     label: Accenti e punteggiatura non abbassano più la corrispondenza del titolo, quindi Pokémon trova Pokemon e R.B.I. trova RBI
   - type: fix
-    label: Una data di uscita ora mostra solo ciò che la sua fonte conosce. Un gioco noto solo per l'anno mostra quell'anno, non un 1° gennaio o un 31 dicembre inventato
+    label: Una data di uscita ora mostra solo ciò che conosce la sua fonte. Un gioco noto solo per l'anno mostra quell'anno, non un 1° gennaio o un 31 dicembre inventato
   - type: fix
     label: Le date di IGDB e RAWG ora appartengono alla console del gioco stesso, e quelle di IGDB alla sua regione, quindi una copia USA non mostra più la data giapponese né un port l'anno dell'originale
   - type: feature
@@ -28,11 +28,12 @@
   - type: added
     label: 'Nuova scheda Strumenti ROM: Riordina date di uscita elimina i giorni inventati salvati dalle vecchie scansioni, così una scansione può inserire la data reale'
   - type: fix
-    label: Generi, prospettive e modalità di gioco ora usano un unico insieme di nomi, qualunque fonte li abbia compilati, così i filtri trovano ogni gioco. Un genere non appare più sia come RPG sia come Role Playing Game
+    label: Generi, prospettive e modalità di gioco ora usano un solo set di nomi, qualunque fonte li abbia compilati, così i filtri trovano ogni gioco. Un genere non appare più sia come RPG sia come Role Playing Game
   - type: added
-    label: 'Nuova scheda Strumenti ROM: Riordina generi, prospettive e modalità converte ciò che hanno salvato le vecchie scansioni, sposta parole come FPV nel campo giusto e corregge i numeri di giocatori che contraddicono le modalità di un gioco'
+    label: 'Nuova scheda Strumenti ROM: Riordina generi, prospettive e modalità converte ciò che le vecchie scansioni hanno salvato, sposta parole come FPV nel campo giusto e corregge i numeri di giocatori in contrasto con le modalità di un gioco'
   - type: fix
     label: I giochi solo online di IGDB non sono più elencati come multigiocatore locale, e un gioco che richiede due giocatori non è più elencato come per giocatore singolo
+  body: "<ul>\n  <li><strong>La scansione non prende più il gioco sbagliato.</strong> Un seguito non\n    viene più scambiato per il gioco che hai, quindi Street Fighter II non riceve nulla\n    da Street Fighter, e una scansione di massa richiede che il titolo corrisponda, non\n    solo la console. Mod, DLC e bundle di IGDB non corrispondono più a meno che la tua\n    ROM abbia quel nome esatto.</li>\n  <li><strong>RAWG smette di mescolare le versioni di un gioco.</strong> Quando il suo record\n    riguarda più console non fornisce più sviluppatore, editore, classificazione per età\n    o modalità multigiocatore, e non ipotizza più il numero di giocatori.\n    Non viene più cercato per i giochi Commodore 64 e DOS.</li>\n  <li><strong>L'ordine dei tuoi scraper decide tra corrispondenze uguali.</strong>\n    RAWG non ottiene più punti extra per un'immagine o un voto Metacritic, e le nuove\n    installazioni lo mettono per ultimo.</li>\n  <li><strong>Una data di uscita mostra solo ciò che la sua fonte conosce.</strong> Un\n    gioco noto solo per l'anno mostra quell'anno. Le date di IGDB e RAWG\n    appartengono alla console del gioco stesso, e l'elenco Date di uscita ora si compila\n    anche da IGDB e ScreenScraper.</li>\n  <li><strong>Un solo set di nomi per generi, prospettive e modalità.</strong>\n    I filtri ora trovano ogni gioco, e i giochi solo online non sono più elencati\n    come multigiocatore locale.</li>\n  <li><strong>Due nuove schede Strumenti ROM.</strong> Riordina date di uscita e Riordina\n    generi, prospettive e modalità correggono ciò che le vecchie scansioni hanno salvato. Premile,\n    poi avvia una scansione di massa con Compila mancanti.</li>\n  <li><strong>Il numero di giocatori arriva dalla console del gioco stesso,</strong> e\n    il risultato ScreenScraper che scegli è sempre il gioco che ottieni.</li>\n</ul>\n"
 - version: 3.35.0
   date: '2026-11-01'
   tags:
