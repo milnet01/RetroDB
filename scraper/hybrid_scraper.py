@@ -421,7 +421,7 @@ def detect_controller_support(system_folder, modes):
 # HYBRID APPLY METADATA
 # =============================================================================
 
-def _normalize_ratings(metadata, result):
+def _normalize_ratings(metadata, result, system_folder=None):
     """Run the three rating-normalisation steps the save block needs:
 
     1. Normalize ESRB to its canonical letter (KA → E, etc).
@@ -457,7 +457,7 @@ def _normalize_ratings(metadata, result):
         for k in RATING_SYSTEM_KEYS
     )
     if not has_any_rating:
-        inferred = infer_rating_from_content(metadata)
+        inferred = infer_rating_from_content({**metadata, 'system_folder': system_folder})
         if inferred:
             for col, val in inferred.items():
                 metadata[col] = val
@@ -509,13 +509,16 @@ def _build_scrape_history_json(c, db_game_id, primary_source, metadata,
     return json.dumps(existing_history)
 
 
+_REGION_ALIASES = {'north america': 'USA'}
+
+
 def _normalize_region(metadata, result):
     """Reduce `metadata['region']` to a single value, falling back to the
     user's `default_region` setting (default 'USA').
 
     Two cases handled:
-      - Multi-value ('USA, Europe, Japan'): pick the first part that
-        matches a configured region option, else `default_region`.
+      - Multi-value ('USA, Europe, Japan' or 'USA/Europe'): pick the first
+        part that matches a configured region option, else `default_region`.
       - Empty: use `default_region` and record `'region (default)'` in
         `result['filled_fields']`.
       - Single-value: leave untouched.
@@ -538,10 +541,11 @@ def _normalize_region(metadata, result):
         region_opts = ['usa', 'europe', 'japan', 'world']
         default_region = 'USA'
 
-    region_value = metadata.get('region') or ''
+    region_value = _REGION_ALIASES.get(str(metadata.get('region') or '').lower(), metadata.get('region') or '')
+    metadata['region'] = region_value
     if region_value:
-        if ',' in region_value:
-            parts = [p.strip() for p in region_value.split(',') if p.strip()]
+        parts = [p.strip() for p in re.split(r'[,/]', region_value) if p.strip()]
+        if len(parts) > 1:
             matched = next((p for p in parts if p.lower() in region_opts), None)
             metadata['region'] = matched or default_region
         # Single-value path: leave as-is.
@@ -1386,7 +1390,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                 elif len(valid_ss) < len(ss_list):
                     missing = [s for s in ss_list if s not in valid_ss]
                     logger.warning(f"Screenshot files missing from disk, removing: {missing}")
-                    metadata['screenshots'] = ', '.join(valid_ss) if valid_ss else None
+                    metadata['screenshots'] = ','.join(valid_ss) if valid_ss else None
                     stale_media.append(('screenshots', screenshots_value))
 
             # Clear stale references from DB so COALESCE doesn't restore them.
@@ -1658,7 +1662,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
         # =============================================
 
         # Pass 38.1 — rating normalize/cross-map/infer extracted to _normalize_ratings.
-        _normalize_ratings(metadata, result)
+        _normalize_ratings(metadata, result, system_folder)
 
         # Pass 38.1 — players range→max + sort_title regen extracted to
         # _normalize_players_and_sort_title.

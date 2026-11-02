@@ -298,13 +298,7 @@ def resolve_publisher_developer(value, value_type='publisher'):
     
     value = str(value).strip()
     
-    # If it's a numeric ID (ScreenScraper style), skip it
-    # The hybrid scraper will fill this from TGDB/IGDB
-    if value.isdigit():
-        logger.debug(f"Skipping numeric {value_type} ID: {value}")
-        return None
-    
-    # It's a real name - return it
+    # Digits alone can be a real name: 989 Studios is listed as "989".
     return value
 
 
@@ -473,13 +467,13 @@ def extract_region_from_filename(filename):
         r'\(J\)': 'Japan',
         r'\(World\)': 'World',
         r'\(W\)': 'World',
-        r'\(Fr\)': 'France',
-        r'\(De\)': 'Germany',
-        r'\(Es\)': 'Spain',
-        r'\(It\)': 'Italy',
-        r'\(Br\)': 'Brazil',
-        r'\(K\)': 'Korea',
-        r'\(Ch\)': 'China',
+        r'\((?:Fr|France)\)': 'France',
+        r'\((?:De|Germany)\)': 'Germany',
+        r'\((?:Es|Spain)\)': 'Spain',
+        r'\((?:It|Italy)\)': 'Italy',
+        r'\((?:Br|Brazil)\)': 'Brazil',
+        r'\((?:K|Korea)\)': 'Korea',
+        r'\((?:Ch|China)\)': 'China',
         r'\(Asia\)': 'Asia',
         r'\(PAL\)': 'PAL',
         r'\(NTSC\)': 'NTSC',

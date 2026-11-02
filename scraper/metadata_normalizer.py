@@ -62,6 +62,7 @@ def normalize_title(title):
 # KA (Kids to Adults) was replaced by E (Everyone) in 1998; older scraper
 # data carries KA / K-A and human-readable forms that need collapsing.
 _ESRB_NORMALIZATION = {
+    'NOT RATED': None,
     'KA': 'E',
     'K-A': 'E',
     'KIDS TO ADULTS': 'E',

@@ -562,6 +562,8 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
     # is typically the region (e.g. "Japanese title") or platform variant.
     alt_entries = []
     for alt in igdb_data.get('alternative_names') or []:
+        if alt.get('comment') == 'Windows Executable' or (alt.get('name') or '').lower().endswith('.exe'):
+            continue
         entry = alt_title_entry(
             alt.get('name'),
             region=alt.get('comment'),
@@ -612,7 +614,7 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
 
     # Description
     if not metadata['description']:
-        desc = igdb_data.get('storyline') or igdb_data.get('summary')
+        desc = igdb_data.get('summary') or igdb_data.get('storyline')
         if desc:
             metadata['description'] = desc
             result['filled_fields'].append('description (IGDB)')
@@ -969,8 +971,9 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
                 return item['text']
         return None
 
-    def get_localized(items, lang='en'):
-        """Get localized text from ScreenScraper format"""
+    def get_localized(items, lang='en', any_language=True):
+        """Get localized text from ScreenScraper format. With any_language
+        false, text in no wanted language gives None."""
         if not items:
             return None
         # Priority: en/us, wor, ss, first available
@@ -983,7 +986,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
             if item.get('langue', '').lower() == lang:
                 return item.get('text', '')
         # Fallback
-        if items and isinstance(items[0], dict):
+        if any_language and items and isinstance(items[0], dict):
             return items[0].get('text', '')
         return None
 
@@ -1021,7 +1024,8 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
             result['filled_fields'].append(f'alternate_titles +{added} (ScreenScraper)')
 
     # Description - only fill if empty
-    desc = get_localized(ss_data.get('synopsis')) or ss_data.get('description')
+    # Wrong-language text would stop an English source filling the field.
+    desc = get_localized(ss_data.get('synopsis'), any_language=False) or ss_data.get('description')
     if desc and not metadata['description']:
         metadata['description'] = desc
         result['filled_fields'].append('description (ScreenScraper)')

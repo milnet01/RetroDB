@@ -337,7 +337,7 @@ def _ai_region_mismatches():
     for row in rows:
         tag = extract_region_from_filename(os.path.basename(row['rom_path'] or ''))
         if tag and row['region'] not in (tag, *tag.split('/')):
-            found.append((row['id'], row['region'], tag))
+            found.append((row['id'], row['region'], tag.split('/')[0]))
     return found
 
 

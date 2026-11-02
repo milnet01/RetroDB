@@ -10397,7 +10397,10 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.213 Descriptions and text arrive clean and in the right language (fix, S).
-- **Status**: todo
+- **Shipped** (2026-11-02, v3.35.2): `normalization.clean_description` and `COMPANY_ALIASES` run in the save step; migration 030 applies them to stored rows and also removes executable alternate titles, an ESRB `NOT RATED`, two-value regions and off-list platform names. ScreenScraper descriptions need a wanted language. IGDB prefers `summary`. RAWG titles lose a trailing year, and its alternates come only from one-console records. ES-DE keeps `989`. File-name regions read full country names. Inference is told the system. Closed: screenscraper 3, 9; rawg 7, 9, 13; igdb F6, F15; esde 10, 11; merge_and_stored 8, 13, 14, 15, 21, 23; tgdb 18 first bullet.
+  - **Not done**: tgdb 8: TheGamesDB gives no language, so a German overview can still be taken; no live TheGamesDB calls were allowed to test a region tie-break. merge 18: the stored wrong-language rows (1007, 4019, 1061, 6371, 6372, 6373) stay, because nothing can detect them reliably; clear them by hand and re-scrape. 1007 Yar's Revenge also holds another game's text. rawg 9: stored titles with a year (4212, 4610) stay. tgdb 18 second and third bullets left.
+  - **Limits**: English is the only wanted language for descriptions, so a French-speaking user with a French-only record gets none from ScreenScraper. Atari and Sega of America are left unmerged on purpose. A single region outside the options, such as `France`, stays and matches no default filter.
+- **Status**: done
 - **Source**: PASS-59-162, 2026-10-31. Notes: screenscraper 3, 9; rawg 7, 9, 13; tgdb 8, 18; igdb F6, F15; esde 10, 11; merge_and_stored 8, 13, 14, 15, 18, 21, 23.
 - **Problem**: web codes such as `&quot;` and heading marks such as `###` show in descriptions. IGDB's alternate titles can include `dosbox.exe`. Some descriptions are in another language. Company names vary. Digits-only `989` is dropped.
 - **Fix**: a shared text clean-up on the way in and for stored rows. Company variants may become a normalization rule.

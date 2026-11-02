@@ -7,6 +7,7 @@
 
 import logging
 import os
+import re
 import sys
 
 # Add parent directory to path for config import
@@ -314,8 +315,9 @@ def get_game_details(game_id):
     result = {
         'id': game.get('id'),
         'slug': game.get('slug'),
-        'name': game.get('name', ''),
-        'description': game.get('description_raw', ''),  # Plain text description
+        # RAWG can add the year to a name: "Sonic the Hedgehog (1991)".
+        'name': re.sub(r'\s*\((?:19|20)\d\d\)$', '', game.get('name', '')),
+        'description': game.get('description_raw', ''),
         'release_date': game.get('released', ''),
         'developer': ', '.join(developers) if developers and one_version else None,
         'publisher': ', '.join(publishers) if publishers and one_version else None,
@@ -333,7 +335,8 @@ def get_game_details(game_id):
         'user_score_count': user_score_count,
         'playtime': game.get('playtime'),  # Average playtime in hours
         'website': game.get('website'),
-        'alternative_names': alternative_names,
+        # On a many-console record these can name another console's release.
+        'alternative_names': alternative_names if one_version else [],
         'source': 'rawg'
     }
 

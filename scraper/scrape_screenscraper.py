@@ -576,7 +576,8 @@ def parse_game_data(jeu, own_region=None):
     
     # Get description/synopsis
     synopsis_list = (jeu.get("synopsis") or [])
-    result["description"] = get_localized_text(synopsis_list, "text", lang_key="langue")
+    # Wrong-language text would stop an English source filling the field.
+    result["description"] = get_localized_text(synopsis_list, "text", lang_key="langue", any_language=False)
     
     # Get release date
     dates = (jeu.get("dates") or [])
@@ -734,8 +735,9 @@ def select_best_media(media_list, own_region=None):
     return ordered[0] if ordered else None
 
 
-def get_localized_text(items, text_key="text", lang_key=None, region_key=None):
-    """Get text from a list of localized items, preferring English"""
+def get_localized_text(items, text_key="text", lang_key=None, region_key=None, any_language=True):
+    """Get text from a list of localized items, preferring English. With
+    any_language false, text in no wanted language gives ""."""
     if not items:
         return ""
     
@@ -752,7 +754,7 @@ def get_localized_text(items, text_key="text", lang_key=None, region_key=None):
             return item.get(text_key, "")
     
     # Fall back to first item
-    if items:
+    if any_language and items:
         return items[0].get(text_key, "")
     
     return ""

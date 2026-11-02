@@ -809,7 +809,7 @@ def apply_metadata_to_game(db_game_id, igdb_data, system_folder=None):
                 players = max_players
         
         # Description
-        description = igdb_data.get('storyline', igdb_data.get('summary', ''))
+        description = igdb_data.get('summary') or igdb_data.get('storyline', '')
         
         # Download cover art — fill-only: skip when the game already has boxart.
         boxart = None

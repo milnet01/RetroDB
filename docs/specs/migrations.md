@@ -545,6 +545,7 @@ your migration — not in the runner.
 | 027 | `027_games_ra_title.py` | Add `games.ra_title`; clear RetroAchievements links shared by rows whose titles have different numbers, with their RA progress; clear counts and points on unlinked rows; queue one `ra_refresh` for the dashboard when any link exists. | PASS-59-210. Old links are not kept; an RA Refresh or sync rebuilds them from RetroAchievements. |
 | 028 | `028_clear_save_type_guesses.py` | Clear `games.save_type` where it holds `Battery Save / SRAM` or `Password / None`, the wordings only the per-system guess wrote. | PASS-59-211. The old values are not kept; the pre-migration backup holds them. |
 | 029 | `029_clear_franchise_guesses.py` | Clear `games.franchise` where its newest credit is TheGamesDB or RAWG and it is the start of the title; keep a repeated name once. | PASS-59-212. The next scrape refills them. The old values are not kept; the pre-migration backup holds them. |
+| 030 | `030_tidy_stored_text.py` | Clean stored descriptions and company names; remove executable names from `alternate_titles`; `screenshots` separated by `,` alone; clear an ESRB `NOT RATED`; one value in `region`; `other_platforms` names from the list. | PASS-59-213. Same cleaning as the scrape's save step. The old values are not kept; the pre-migration backup holds them. |
 
 ---
 

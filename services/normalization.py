@@ -10,6 +10,7 @@
 # their target is one of those values.
 # =============================================================================
 
+import html
 import logging
 import re
 from services.database import query, get_db_with_context
@@ -497,12 +498,52 @@ def _reconcile_players_and_modes(metadata):
         metadata['modes'] = 'Single-Player, Local Multiplayer'
 
 
+_HEADING_MARK = re.compile(r'^#{1,6}\s*', re.MULTILINE)
+_BULLET_MARK = re.compile(r'^\*\s+', re.MULTILINE)
+_FOOTNOTE_MARK = re.compile(r'(?<=\w)\[(?:[a-z]|\d{1,3})\]')
+
+
+def clean_description(text):
+    """A description as readable text: web codes such as `&quot;`, Windows line
+    endings, heading and bullet marks, and footnote marks such as `[a]` go
+    (PASS-59-213)."""
+    text = html.unescape(str(text)).replace('\r\n', '\n').replace('\r', '\n')
+    text = _BULLET_MARK.sub('', _HEADING_MARK.sub('', text))
+    lines = (line.rstrip() for line in _FOOTNOTE_MARK.sub('', text).split('\n'))
+    return '\n'.join(lines).strip()
+
+
+# One company under several spellings, as the sources write them. Only names
+# that are plainly one company: Atari, Inc. and Atari Games really are two.
+COMPANY_ALIASES = {
+    'sega': 'SEGA',
+    'ubi soft': 'Ubisoft',
+    'ubisoft entertainment': 'Ubisoft',
+    'ubi soft entertainment software': 'Ubisoft',
+    'acclaim': 'Acclaim Entertainment',
+    'ocean software': 'Ocean',
+    'ocean software ltd.': 'Ocean',
+}
+
+
+def canonical_companies(value):
+    """A publisher or developer list with one spelling per company, each once."""
+    names = (name.strip() for name in str(value).split(','))
+    return ', '.join(dict.fromkeys(
+        COMPANY_ALIASES.get(name.casefold(), name) for name in names if name))
+
+
 def canonicalize_metadata(metadata):
     """The conversion after the merge, whatever filled each field (PASS-59-206).
 
     Words belonging in another field fill it only when it is empty. A field left
     with no words holds '', which the save's COALESCE writes over the old text.
     """
+    if metadata.get('description'):
+        metadata['description'] = clean_description(metadata['description']) or None
+    for field in ('publisher', 'developer'):
+        if metadata.get(field):
+            metadata[field] = canonical_companies(metadata[field])
     for field in _LABEL_CATEGORIES:
         text = metadata.get(field)
         if not text:

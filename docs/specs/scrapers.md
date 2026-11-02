@@ -319,6 +319,13 @@ Text-only. AI never returns images, screenshots, videos, or manuals — `AI_FILL
 
 **Franchise (PASS-59-212).** Only a source that names a series fills it: IGDB (`franchise`, `franchises`, then `collections`), ScreenScraper (`familles`, a repeated name kept once) and the AI. TheGamesDB and RAWG name none, and nothing derives one from a title.
 
+**Clean text (PASS-59-213).** `canonicalize_metadata` cleans what is about to be saved, from any source.
+
+- **Descriptions**: `normalization.clean_description` removes web codes, Windows line endings, heading and bullet marks, and footnote marks. ScreenScraper's is taken only in a wanted language, so a French-only one leaves the field for the next source. IGDB's `summary` comes before `storyline`.
+- **Companies**: `normalization.COMPANY_ALIASES` holds plainly one company under several spellings. Separate companies stay separate.
+- **Alternate titles**: IGDB's executable names are skipped; RAWG's are used only from a one-console record.
+- **Region**: `_normalize_region` keeps one value from `USA/Europe` and turns `North America` into `USA`. A single value outside the options stays, as `France` is true and the default would not be.
+
 **AI answers are checked and marked** (PASS-59-211).
 
 - A score needs a stated scale or a value above 10: `8.5/10` becomes 85, a bare `7` is refused, and so is anything above 100. A sales range, a sum of money or a figure under 1,000 is refused. A list answer is joined, a placeholder such as `N/A` is dropped, and a game's own system is removed from `other_platforms`.
