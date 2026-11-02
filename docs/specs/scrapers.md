@@ -29,7 +29,7 @@ See also: CLAUDE.md "Scraper fill-only invariant" and "Schema / data shapes"; [`
 | IGDB              | `scraper/scrape_igdb.py`          | remote          | `igdb_client_id` + `igdb_client_secret`                                   | Richest metadata (genres, modes, perspectives, age ratings × 7 systems, franchise, similar games) |
 | RAWG.io           | `scraper/scrape_rawg.py`          | remote          | `rawg` (settings key; falls back to `RAWG_API_KEY` in `config.py`)        | Metacritic critic score, user score; background picture as fanart, no boxart. Credits, ESRB and multiplayer modes only from a record on one platform (PASS-59-208); never a player count |
 | ScreenScraper     | `scraper/scrape_screenscraper.py` | remote          | `screenscraper_username` + `_password` + `_devid` + `_devpassword`        | Retro-specific metadata, regional alt titles, system-specific media (boxart 3D, video, manual)    |
-| Steam             | `scraper/scrape_steam.py`         | remote          | `steam_api_key` + `steam_id` (store app details need no key)              | Per-user owned-games import and achievement sync. Not a source in the hybrid walk.                |
+| Steam             | `scraper/scrape_steam.py`         | remote          | `steam_api_key` + `steam_id` (store app details need no key)              | Per-user owned-games import and achievement sync. Not a source in the hybrid walk: `SteamSyncJob` fills an imported game once from its store page, as primary source `steam` with `mark_scraped=False`. It leaves the date and genre to a scrape, because the date is the Steam release and the genre is nearly always Action.                |
 | Xbox              | `scraper/scrape_xbox.py`          | remote          | `xbox_client_id` + `xbox_client_secret`, then a per-user Microsoft OAuth2 sign-in (XBL + XSTS tokens) | Per-user title import and achievement sync. Not a source in the hybrid walk. |
 | RetroAchievements | `scraper/retroachievements.py`    | remote          | `ra_apikey`                                                               | `has_retroachievements`, `ra_game_id`, `ra_achievement_count`, `ra_points` (tail of hybrid apply) |
 | AI Fill           | `scraper/scrape_ai.py`            | AI              | One of: `ai_gemini_api_key`, `ai_openai_api_key`, `ai_anthropic_api_key` (+ optional `ai_gemini_project_id`) | Final gap-fill for text-only fields; never media (see §12)                                        |
@@ -278,6 +278,7 @@ Hand-off points:
 | RAWG | 0.3 s | A 401, 403 or 429 naming a limit, or `X-RateLimit-Remaining` at zero | One day |
 | IGDB | 0.26 s: its limit is 4 a second | Never; a 429 raises, as other errors do | - |
 | HowLongToBeat | 1 s, token requests included | A 429 after `http_post`'s retries | 15 minutes |
+| Steam store | 1.5 s: its limit is undocumented, about 200 calls in five minutes as usually reported | A 403 or 429 | Five minutes; the sync carries on, and the next one asks about games it missed |
 
 A bulk scrape carries on with its other sources and leaves a game found nowhere unstamped, so a later run asks again. HowLongToBeat's and Fix Box and Manual Regions' jobs end. Each status reply has `service_stops`, sentences from `services/service_stop_text.py`. Media downloads are not paced or stopped.
 

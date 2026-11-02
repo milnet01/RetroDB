@@ -804,6 +804,12 @@ def game_detail(game_id):
             if steam_counts and not steam_counts['total']:
                 steam_counts = None
 
+        # What Steam says about this person's time with the game (PASS-59-218).
+        steam_play = query("""
+            SELECT minutes, last_played FROM platform_play_time
+            WHERE game_id = ? AND user_id = ? AND source = 'steam' AND minutes > 0
+        """, (game_id, g.user['id']), one=True)
+
         # Xbox achievement count (Pass 31.2 — per user).
         xbox_counts = None
         if game_dict.get('xbox_title_id'):
@@ -863,6 +869,7 @@ def game_detail(game_id):
                              achievement_progress=achievement_progress,
                              psn_progress=psn_progress,
                              steam_counts=steam_counts,
+                             steam_play=steam_play,
                              xbox_counts=xbox_counts,
                              # PASS-59-149 — the cards' rule: an imported game
                              # with no ROM file has nothing to play.

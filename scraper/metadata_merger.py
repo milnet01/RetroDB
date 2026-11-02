@@ -32,7 +32,8 @@ from services.image_utils import (
     finalize_downloaded_image,
 )
 from services.normalization import (
-    modes_from_igdb, multiplayer_for_platform, normalize_genre, normalize_modes, split_labels,
+    clean_description, modes_from_igdb, multiplayer_for_platform, normalize_genre,
+    normalize_modes, split_labels,
 )
 from services.release_dates import (
     igdb_regional_dates,
@@ -303,6 +304,7 @@ __all__ = [
     'apply_tgdb_to_metadata',
     'apply_igdb_to_metadata',
     'apply_rawg_to_metadata',
+    'apply_steam_to_metadata',
     'apply_screenscraper_to_metadata',
     'apply_ai_to_metadata',
     'load_scraper_settings',
@@ -504,8 +506,8 @@ _IGDB_RATING_WORDS = {
     'THREE': '3', 'SEVEN': '7', 'TEN': '10', 'TWELVE': '12', 'FOURTEEN': '14',
     'FIFTEEN': '15', 'SIXTEEN': '16', 'EIGHTEEN': '18',
 }
-# rating_category.rating text (after word → number and '+' removal) → value.
-_IGDB_RATING_TEXT = {
+# A board's rating as text (after word → number and '+' removal) → stored value.
+_BOARD_RATING_TEXT = {
     'esrb_rating': {'RP': 'RP', 'EC': 'EC', 'E': 'E', 'E10': 'E10+', 'T': 'T',
                     'M': 'M', 'AO': 'AO'},
     'pegi_rating': {n: f'PEGI {n}' for n in ('3', '7', '12', '16', '18')},
@@ -540,7 +542,7 @@ def _igdb_age_rating(rating):
     token = re.sub(r'^(?:ESRB|PEGI|CERO|USK|GRAC|CLASS_?IND|ACB)[\s_]*', '',
                    str(text).strip().upper()).replace('+', '').strip()
     token = _IGDB_RATING_WORDS.get(token, token)
-    return field, _IGDB_RATING_TEXT[field].get(token)
+    return field, _BOARD_RATING_TEXT[field].get(token)
 
 
 # =============================================================================
@@ -909,6 +911,105 @@ def apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result, fill_only=Fa
         if downloaded:
             metadata['screenshots'] = ','.join(existing_ss + downloaded)
             result['filled_fields'].append('screenshots (RAWG)')
+
+
+# =============================================================================
+# STEAM STORE METADATA APPLICATION (PASS-59-218)
+# =============================================================================
+
+# The boards in a store reply's `ratings` that RetroDB has a column for.
+_STEAM_RATING_BOARDS = {
+    'esrb': 'esrb_rating', 'pegi': 'pegi_rating', 'usk': 'usk_rating',
+    'oflc': 'acb_rating', 'cero': 'cero_rating', 'kgrb': 'grac_rating',
+    'dejus': 'classind_rating',
+}
+_STEAM_LINE_BREAK = re.compile(r'<br\s*/?>|</p>|<li\b[^>]*>|</ul>|<h\d\b[^>]*>|</h\d>', re.IGNORECASE)
+_HTML_TAG = re.compile(r'<[^>]+>')
+_STEAM_SCREENSHOTS = 5
+
+
+def _steam_description(details):
+    """The store's long text as plain lines, else its short one."""
+    text = details.get('about_the_game') or details.get('short_description') or ''
+    text = _HTML_TAG.sub('', _STEAM_LINE_BREAK.sub('\n', text))
+    return re.sub(r'\n{3,}', '\n\n', clean_description(text))
+
+
+def _steam_rating(board, rating):
+    """The stored value for one `ratings` entry, or None. A `rating_generated`
+    entry is Steam's own estimate, not the board's. Korea's top rating is
+    written 19 on the store and 18 in RetroDB."""
+    if not isinstance(rating, dict) or rating.get('rating_generated') not in (None, '', '0', 0):
+        return None
+    value = str(rating.get('rating') or '').strip().upper().replace('+', '')
+    if board == 'kgrb' and value == '19':
+        value = '18'
+    return _BOARD_RATING_TEXT[_STEAM_RATING_BOARDS[board]].get(value)
+
+
+def _download_first(urls, directory, filename, image_type):
+    """Save the first address that answers. True when one did."""
+    local_path = os.path.join(IMAGE_PATH, directory, filename)
+    return any(_download_and_finalize(url, local_path, image_type, timeout=15) for url in urls)
+
+
+def apply_steam_to_metadata(metadata, details, app_id, db_game_id, result):
+    """Fill empty fields from a Steam store reply for this exact game.
+
+    Left out on purpose. The date is the Steam release: DOOM 3 says 2007, not
+    2004. The genre is nearly always just Action. A filled field is not asked
+    for again, so either would keep a scrape's better answer out.
+    """
+    from scraper.scrape_steam import box_art_urls, fanart_urls
+
+    def fill(field, value):
+        if value and not metadata[field]:
+            metadata[field] = value
+            result['filled_fields'].append(f'{field} (Steam)')
+
+    fill('description', _steam_description(details))
+    fill('developer', ', '.join(details.get('developers') or []))
+    fill('publisher', ', '.join(details.get('publishers') or []))
+    fill('critic_score', (details.get('metacritic') or {}).get('score'))
+    if not metadata['modes']:
+        names = [c.get('description', '') for c in details.get('categories') or []]
+        fill_labels(metadata, result, 'modes', ', '.join(names), 'Steam')
+    for board, rating in (details.get('ratings') or {}).items():
+        if board in _STEAM_RATING_BOARDS:
+            fill(_STEAM_RATING_BOARDS[board], _steam_rating(board, rating))
+
+    if not metadata['boxart']:
+        filename = f"{db_game_id}_steam_boxart{preferred_image_extension('boxart', '.jpg')}"
+        if _download_first(box_art_urls(app_id), 'boxart', filename, 'boxart'):
+            fill('boxart', filename)
+    if not metadata['fanart']:
+        filename = f"{db_game_id}_steam_fanart{preferred_image_extension('fanart', '.jpg')}"
+        if _download_first(fanart_urls(app_id, details), 'fanart', filename, 'fanart'):
+            fill('fanart', filename)
+
+    urls = [s.get('path_full') for s in details.get('screenshots') or []]
+    urls = [url for url in urls if url][:_STEAM_SCREENSHOTS]
+    if urls:
+        screenshot_dir = os.path.join(IMAGE_PATH, 'screenshots')
+        os.makedirs(screenshot_dir, exist_ok=True)
+        existing = [s.strip() for s in (metadata['screenshots'] or '').split(',') if s.strip()]
+        existing_hashes = get_existing_screenshot_hashes(existing)
+        jobs = []
+        relisted = []
+        for i, url in enumerate(urls, start=len(existing) + 1):
+            filename = f"{db_game_id}_steam_ss{i}{preferred_image_extension('screenshots', '.jpg')}"
+            local_path = os.path.join(screenshot_dir, filename)
+            if _skip_screenshot(filename, local_path, existing, relisted):
+                continue
+            jobs.append(
+                lambda u=url, p=local_path, f=filename:
+                    f if _download_and_finalize(u, p, 'screenshots', timeout=15, screenshot_of=db_game_id) else None
+            )
+        existing_hashes.extend(get_existing_screenshot_hashes(relisted))
+        downloaded = relisted + _download_screenshots_parallel(jobs, existing_hashes, 'Steam')
+        if downloaded:
+            metadata['screenshots'] = ','.join(existing + downloaded)
+            result['filled_fields'].append('screenshots (Steam)')
 
 
 # =============================================================================

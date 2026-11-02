@@ -10467,10 +10467,18 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.218 Steam and Xbox imports keep what the services already send (enhancement, M).
-- **Status**: todo
+- **Status**: in-progress
 - **Source**: PASS-59-162, 2026-10-31. Notes: ai_steam_xbox S1 to S7, X1 to X7. The library has no Steam or Xbox rows, and Xbox has no real reply, so the Xbox claims are unproven.
 - **Problem**: `get_app_details` has no callers, so imports stay nearly empty. A title match never links the Steam ID, so no achievements. Play time is fetched then dropped. Xbox may stop at 100 games, and phone and PC titles may be filed as Xbox One.
 - **Needs**: one real Xbox sign-in to test. Steam store data has real board ratings and a Metacritic score.
+- **Decided** (user, 2026-11-02): Steam first, tested with the user's
+  own Steam account against a scratch database. Then the user is guided
+  through Microsoft's app registration and one Xbox sign-in;
+  `xbox_client_id` and `xbox_client_secret` are empty, so registration
+  comes first. Xbox fixes wait for real replies.
+- **Progress** (2026-11-02): Steam built and run against the user's real account on a scratch database (8 games). `SteamSyncJob` fills empty fields once per game from the store, keeps play time in `platform_play_time`, and a Steam or Xbox title match now links its ID. Steam's date and genre are left out: DOOM 3 is dated 2007, its Steam release, and 7 of 8 genres are only Action. Also fixed: an admin's Fetch Library sent Steam the masked key.
+  - **Not done**: Steam's review summary (`appreviews?json=1`) answered with a web page, not data, so no user scores. S6 (achievement language) and the `hidden` flag are left. The S3 note's example was wrong: `generate_sort_title` pads numbers and does not move "The".
+  - **Next**: Xbox X1 to X7, after the user registers a Microsoft app and signs in once.
 
 ---
 
@@ -10512,6 +10520,9 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Status**: todo
 - **Problem**: since PASS-59-205 a scrape copies ES-DE's screenshots into the list, so one deleted by hand or in Screenshot Review comes back from ES-DE's folder. Online sources can re-download theirs the same way. No record of a removal exists.
 - **Fix**: record what the user removes per game (a removed picture's look or source name) and have every merger skip it. Decide this before the user's Screenshot Review (PASS-59-161) is followed by a bulk scrape.
+- **Decided** (user, 2026-11-02): the bulk Fill Missing scrape is held
+  until this and PASS-59-224 land. Restart, RA refresh and the tidy-up
+  jobs go ahead.
 
 ---
 
@@ -10536,6 +10547,8 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Source**: split from PASS-59-216, 2026-11-02. Whether it is in v4.0.0 is the user's call.
 - **What the sources send**: ScreenScraper `box-2D-back` (seen in samples, seven regions; parsed to `boxart_back`, unused); TheGamesDB boxart `side: "back"`; ScreenScraper `flyer` (documentation only, in no sample).
 - **Needs**: a column and folder, and somewhere on the game page to show them. `games.box_faces` holds Slipcase imports and only `services/box_faces.py` writes it, so a scraped back needs a decision: its own column, or a change to that contract.
+- **Decided** (user, 2026-11-02): box backs are in v4.0.0; arcade
+  flyers wait until after it.
 
 ## Done index
 

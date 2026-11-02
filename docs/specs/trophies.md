@@ -117,8 +117,10 @@ source. Its `source` column is whichever sync wrote last.
   cleared by a sync (`COALESCE(excluded.linked_game_id, ...)`). Editors can
   set or clear a link with `POST /api/psn/link-game`, scoped to their own row.
 - **Steam and Xbox.** Through `games.steam_app_id` and `games.xbox_title_id`,
-  set at import (`routes/platform_import.py::_check_duplicate` matches on the
-  platform id, then on `normalize_title_for_dedup` within the system).
+  set at import (`routes/platform_import.py::_DuplicateIndex` matches on the
+  platform id, then on `normalize_title_for_dedup` within the system). A title
+  match holding no id gets this one (`_link_by_title`), so its achievements
+  sync; one holding another id keeps it (PASS-59-218).
 - **RPCS3.** `routes/trophies.py::find_matching_game` matches at page render
   through an alias table and the same three passes as PSN. Nothing is stored.
 
@@ -132,7 +134,7 @@ cross-process `flock` named after the job, persisted progress and resume.
 | `RARefreshJob` (`ra_refresh`) | `/api/refresh-retroachievements[/<system_id>]` (admin) | global RA account (`_get_ra_credentials`) | `games` RA columns; commits per game |
 | `RASyncJob` (`ra_sync`) | `/api/achievements/sync-system/<id>` (editor) | the caller's own RA account, else the global one | `games.ra_achievement_count`; the caller's `game_achievement_progress` |
 | `PSNRefreshJob` (`psn_refresh`) | `/api/psn/bulk-refresh/start` (login) | the caller's NPSSO | the caller's `psn_games`, `psn_trophies` |
-| `SteamSyncJob` (`steam_sync`) | `/api/steam-achievements/sync-all`, `/api/steam/sync-achievements` (editor) | caller's `user_settings`, else `scraper_settings.json` | the caller's Steam rows |
+| `SteamSyncJob` (`steam_sync`) | `/api/steam-achievements/sync-all`, `/api/steam/sync-achievements` (editor), and a Steam import that added or linked a game | caller's `user_settings`, else `scraper_settings.json`; the store step needs none | the caller's Steam rows and `platform_play_time`; empty `games` fields, once per game, from the store (`docs/specs/scrapers.md` §10) |
 | `XboxSyncJob` (`xbox_sync`) | `/api/xbox-achievements/sync-all`, `/api/xbox/sync-achievements` (editor) | global client id; the caller's tokens | the caller's Xbox rows |
 
 Also:

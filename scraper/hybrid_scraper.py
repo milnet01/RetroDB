@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 # Source names as the Apply Metadata progress gauge shows them (PASS-59-108).
 _PROGRESS_SOURCE_LABELS = {
     'esde': 'ES-DE', 'tgdb': 'TheGamesDB', 'igdb': 'IGDB', 'rawg': 'RAWG',
-    'screenscraper': 'ScreenScraper', 'ai': 'AI',
+    'screenscraper': 'ScreenScraper', 'ai': 'AI', 'steam': 'Steam',
 }
 
 # Import individual scrapers
@@ -50,6 +50,7 @@ from scraper.metadata_merger import (
     apply_igdb_to_metadata,
     apply_rawg_to_metadata,
     apply_screenscraper_to_metadata,
+    apply_steam_to_metadata,
     apply_ai_to_metadata,
     load_scraper_settings,
 )
@@ -682,13 +683,14 @@ def _log_date_disagreement(metadata, game):
                        f"disagrees with its regional dates {metadata['release_dates']}")
 
 
-def _save_game_row(c, metadata, scrape_history_json, db_game_id):
+def _save_game_row(c, metadata, scrape_history_json, db_game_id, mark_scraped=True):
     """Write the assembled metadata back to the games row (fill-only).
 
     Pops the internal `_boxart_source` tracking key, JSON-encodes
     `alternate_titles`, then issues the COALESCE-guarded UPDATE so an empty
     metadata field preserves the existing DB value (the scraper fill-only
-    invariant). `scrape_history` and `scraped` are set unconditionally.
+    invariant). `scrape_history` is set unconditionally, and `scraped` unless
+    `mark_scraped` is False.
     Uses the caller's cursor — the caller owns the transaction / commit.
 
     Pass 38.1 partial extraction — was the SAVE TO DATABASE block inline in
@@ -757,7 +759,7 @@ def _save_game_row(c, metadata, scrape_history_json, db_game_id):
             release_dates = COALESCE(?, release_dates),
             alternate_titles = COALESCE(?, alternate_titles),
             scrape_history = ?,
-            scraped = 1
+            scraped = COALESCE(?, scraped)
         WHERE id = ?
     """, (
         metadata['title'],
@@ -804,6 +806,7 @@ def _save_game_row(c, metadata, scrape_history_json, db_game_id):
         metadata.get('release_dates'),
         alt_titles_json,
         scrape_history_json,
+        1 if mark_scraped else None,
         db_game_id
     ))
 
@@ -1288,13 +1291,16 @@ def _run_ai_fallback(metadata, result, sources_data, db_game_id, lookup,
 def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                           secondary_sources=None, fill_gaps=True, force_overwrite=False,
                           primary_data=None, restrict_to_selected=False,
-                          keep_media=False, automatic_pick=False):
+                          keep_media=False, automatic_pick=False, mark_scraped=True):
     """
     Apply metadata from primary source, then fill gaps from secondary sources.
 
     Args:
         db_game_id: Database ID of the game
-        primary_source: 'esde', 'tgdb', or 'igdb'
+        primary_source: 'esde', 'tgdb', 'igdb', 'rawg', 'screenscraper', or
+            'steam', which takes its store reply as primary_data
+        mark_scraped: If False, leave `games.scraped` as it is, so a game filled
+            from one source still counts as waiting for a scrape
         primary_id: ID/path for the primary source
         system_folder: System folder name for ES-DE lookups
         secondary_sources: List of dicts with 'source' and 'id' for fallback
@@ -1659,6 +1665,14 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                 logger.warning(f"Primary ScreenScraper fetch/apply failed for {primary_id}: {e}; "
                                "falling through to gap-fill")
 
+        elif primary_source == 'steam':
+            try:
+                apply_steam_to_metadata(metadata, primary_data, primary_id, db_game_id, result)
+                result['sources_used'].append('Steam')
+            except Exception as e:
+                logger.warning(f"Steam store apply failed for {primary_id}: {e}; "
+                               "falling through to gap-fill")
+
         apply_progress.step_done()
 
         # =============================================
@@ -1757,7 +1771,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
 
         # Pass 38.1 — SAVE TO DATABASE block extracted to _save_game_row.
         apply_progress.begin('save')
-        _save_game_row(c, metadata, scrape_history_json, db_game_id)
+        _save_game_row(c, metadata, scrape_history_json, db_game_id, mark_scraped)
         _save_source_ids(c, db_game_id, sources_data, force_overwrite)
 
         conn.commit()

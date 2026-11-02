@@ -25,6 +25,7 @@
 # =============================================================================
 
 import os
+import re
 import logging
 from datetime import datetime, timezone
 
@@ -35,9 +36,10 @@ import secrets as _secrets
 import config
 from services.achievement_linking import normalize_title_for_dedup as normalize_title
 from services.database import get_db, query, execute
+from services.game_utils import generate_sort_title
 from services.api_helpers import success, error
 from services.auth import login_required, editor_required
-from routes.scraper import get_saved_api_keys
+from routes.scraper import get_saved_api_keys, is_masked_sentinel
 
 logger = logging.getLogger(__name__)
 
@@ -74,6 +76,23 @@ def _ensure_system_exists(folder, name=None):
 
 
 _PLATFORM_ID_FIELDS = ('steam_app_id', 'xbox_title_id', 'psn_npwr_id')
+_TRADE_MARKS = re.compile('[\u2122\u00ae\u00a9]')
+
+
+def _new_game_title(name):
+    """(title, sort title) for a game a service names. A library sorts on its sort
+    title, so without one Final Fantasy X files before Final Fantasy IX until a scrape."""
+    title = _TRADE_MARKS.sub('', name or '').strip()
+    return title, generate_sort_title(title)
+
+
+def _link_by_title(c, field, value, game_id):
+    """Give a game found by title its platform ID, so its achievements can sync.
+    False when it already holds one, which stays. `field` is one of
+    _PLATFORM_ID_FIELDS, never caller input."""
+    c.execute(f"UPDATE games SET {field} = ? WHERE id = ? AND COALESCE({field}, '') = ''",
+              (value, game_id))
+    return c.rowcount == 1
 
 
 class _DuplicateIndex:
@@ -94,10 +113,12 @@ class _DuplicateIndex:
             raise ValueError(f"unknown platform field {platform_field!r}")
         self._by_platform_id = {}
         self._by_title = {}
+        self._holding_an_id = set()
         for row in query(f"SELECT id, title, system_id, {platform_field} AS pid "
                          f"FROM games ORDER BY id"):
             if row['pid']:
                 self._by_platform_id.setdefault(row['pid'], row['id'])
+                self._holding_an_id.add(row['id'])
             norm = normalize_title(row['title'])
             if norm:
                 self._by_title.setdefault((norm, row['system_id']), row['id'])
@@ -110,6 +131,10 @@ class _DuplicateIndex:
         if norm and system_id:
             return self._by_title.get((norm, system_id))
         return None
+
+    def can_link(self, game_id):
+        """True when `find` matched a game by title that holds no platform ID yet."""
+        return game_id is not None and game_id not in self._holding_an_id
 
 
 # =============================================================================
@@ -146,7 +171,11 @@ def api_steam_fetch_library():
 
     # Allow overriding from request body
     data = request.get_json() or {}
-    steam_api_key = data.get('steam_api_key') or steam_api_key
+    # The page fills its key box from a settings reply that masks the key, so
+    # an unchanged box sends back the mask, which Steam refuses.
+    typed_key = data.get('steam_api_key')
+    if typed_key and not is_masked_sentinel(typed_key):
+        steam_api_key = typed_key
     steam_id = data.get('steam_id') or steam_id
 
     if not steam_api_key:
@@ -189,8 +218,9 @@ def api_steam_fetch_library():
             'name': name,
             'playtime': playtime,
             'last_played': last_played,
-            'already_imported': existing_id is not None,
+            'already_imported': existing_id is not None and not dupes.can_link(existing_id),
             'existing_game_id': existing_id,
+            'will_link': dupes.can_link(existing_id),
             'icon_url': f"https://media.steampowered.com/steamcommunity/public/images/apps/{app_id}/{game.get('img_icon_url', '')}.jpg" if game.get('img_icon_url') else None,
         })
 
@@ -226,6 +256,7 @@ def api_steam_import():
 
     system_id = system['id']
     imported = 0
+    linked = 0
     skipped = 0
     failed = 0
 
@@ -236,16 +267,16 @@ def api_steam_import():
 
         # Build lookup for duplicate detection
         existing_steam_ids = set()
-        existing_norm = set()
-        for row in c.execute("SELECT steam_app_id, title, system_id FROM games").fetchall():
+        existing_norm = {}
+        for row in c.execute("SELECT id, steam_app_id, title, system_id FROM games ORDER BY id").fetchall():
             if row['steam_app_id']:
                 existing_steam_ids.add(row['steam_app_id'])
-            existing_norm.add((normalize_title(row['title']), row['system_id']))
+            existing_norm.setdefault((normalize_title(row['title']), row['system_id']), row['id'])
 
         for game in selected_games:
             try:
                 app_id = str(game.get('appid', ''))
-                title = game.get('name', '').strip()
+                title, sort_title = _new_game_title(game.get('name'))
                 if not title:
                     failed += 1
                     continue
@@ -254,8 +285,13 @@ def api_steam_import():
                 if app_id in existing_steam_ids:
                     skipped += 1
                     continue
-                if (normalize_title(title), system_id) in existing_norm:
-                    skipped += 1
+                match = existing_norm.get((normalize_title(title), system_id))
+                if match:
+                    if _link_by_title(c, 'steam_app_id', app_id, match):
+                        linked += 1
+                        existing_steam_ids.add(app_id)
+                    else:
+                        skipped += 1
                     continue
 
                 # Generate rom_path
@@ -263,11 +299,12 @@ def api_steam_import():
 
                 c.execute("""
                     INSERT INTO games (
-                        title, system_id, rom_path, scraped,
+                        title, sort_title, system_id, rom_path, scraped,
                         steam_app_id, created_at
-                    ) VALUES (?, ?, ?, 0, ?, ?)
+                    ) VALUES (?, ?, ?, ?, 0, ?, ?)
                 """, (
                     title,
+                    sort_title,
                     system_id,
                     rom_path,
                     app_id,
@@ -276,7 +313,7 @@ def api_steam_import():
 
                 imported += 1
                 existing_steam_ids.add(app_id)
-                existing_norm.add((normalize_title(title), system_id))
+                existing_norm[(normalize_title(title), system_id)] = c.lastrowid
 
             except Exception as e:
                 logger.error(f"Steam Import: Failed to import '{game.get('name')}': {e}")
@@ -284,12 +321,22 @@ def api_steam_import():
 
         conn.commit()
 
-        logger.info(f"Steam Import complete: {imported} imported, {skipped} skipped, {failed} failed")
+        logger.info(f"Steam Import complete: {imported} imported, {linked} linked, "
+                    f"{skipped} skipped, {failed} failed")
+
+        # Fills these games from their store pages and brings achievements and
+        # play time. One already running reaches them on the next sync.
+        details_coming = False
+        if imported or linked:
+            from services.jobs import steam_sync_job
+            details_coming = steam_sync_job.start(user_id=g.user['id']).get('success', False)
 
         return success(
             imported=imported,
+            linked=linked,
             skipped=skipped,
             failed=failed,
+            details_coming=details_coming,
         )
 
     except Exception as e:
@@ -553,8 +600,9 @@ def api_xbox_fetch_library():
             'platform': folder,
             'platform_display': platform_display,
             'system_name': system['name'] if system else folder,
-            'already_imported': existing_id is not None,
+            'already_imported': existing_id is not None and not dupes.can_link(existing_id),
             'existing_game_id': existing_id,
+            'will_link': dupes.can_link(existing_id),
             'total_gamerscore': total_achievements,
             'earned_gamerscore': earned_achievements,
             'image_url': display_image,
@@ -588,6 +636,7 @@ def api_xbox_import():
             xbox_systems[folder] = system
 
     imported = 0
+    linked = 0
     skipped = 0
     failed = 0
 
@@ -599,16 +648,15 @@ def api_xbox_import():
         # Build lookup
         existing_xbox_ids = set()
         existing_norm = {}
-        for row in c.execute("SELECT xbox_title_id, title, system_id FROM games").fetchall():
+        for row in c.execute("SELECT id, xbox_title_id, title, system_id FROM games ORDER BY id").fetchall():
             if row['xbox_title_id']:
                 existing_xbox_ids.add(row['xbox_title_id'])
-            key = (normalize_title(row['title']), row['system_id'])
-            existing_norm[key] = True
+            existing_norm.setdefault((normalize_title(row['title']), row['system_id']), row['id'])
 
         for game in selected_games:
             try:
                 title_id = str(game.get('title_id', ''))
-                title = game.get('name', '').strip()
+                title, sort_title = _new_game_title(game.get('name'))
                 platform = game.get('platform', 'xboxone')
                 if not title:
                     failed += 1
@@ -625,19 +673,25 @@ def api_xbox_import():
                 if title_id in existing_xbox_ids:
                     skipped += 1
                     continue
-                if (normalize_title(title), system_id) in existing_norm:
-                    skipped += 1
+                match = existing_norm.get((normalize_title(title), system_id))
+                if match:
+                    if _link_by_title(c, 'xbox_title_id', title_id, match):
+                        linked += 1
+                        existing_xbox_ids.add(title_id)
+                    else:
+                        skipped += 1
                     continue
 
                 rom_path = f"xbox_import/{platform}/{title_id}"
 
                 c.execute("""
                     INSERT INTO games (
-                        title, system_id, rom_path, scraped,
+                        title, sort_title, system_id, rom_path, scraped,
                         xbox_title_id, created_at
-                    ) VALUES (?, ?, ?, 0, ?, ?)
+                    ) VALUES (?, ?, ?, ?, 0, ?, ?)
                 """, (
                     title,
+                    sort_title,
                     system_id,
                     rom_path,
                     title_id,
@@ -646,7 +700,7 @@ def api_xbox_import():
 
                 imported += 1
                 existing_xbox_ids.add(title_id)
-                existing_norm[(normalize_title(title), system_id)] = True
+                existing_norm[(normalize_title(title), system_id)] = c.lastrowid
 
             except Exception as e:
                 logger.error(f"Xbox Import: Failed to import '{game.get('name')}': {e}")
@@ -654,10 +708,12 @@ def api_xbox_import():
 
         conn.commit()
 
-        logger.info(f"Xbox Import complete: {imported} imported, {skipped} skipped, {failed} failed")
+        logger.info(f"Xbox Import complete: {imported} imported, {linked} linked, "
+                    f"{skipped} skipped, {failed} failed")
 
         return success(
             imported=imported,
+            linked=linked,
             skipped=skipped,
             failed=failed,
         )
@@ -963,7 +1019,7 @@ def api_psn_import():
         for game in selected_games:
             try:
                 npwr_id = str(game.get('npwr_id', ''))
-                title = game.get('name', '').strip()
+                title, sort_title = _new_game_title(game.get('name'))
                 platform = game.get('platform', 'ps4')
                 if not title:
                     failed += 1
@@ -988,11 +1044,12 @@ def api_psn_import():
 
                 c.execute("""
                     INSERT INTO games (
-                        title, system_id, rom_path, scraped,
+                        title, sort_title, system_id, rom_path, scraped,
                         psn_npwr_id, created_at
-                    ) VALUES (?, ?, ?, 0, ?, ?)
+                    ) VALUES (?, ?, ?, ?, 0, ?, ?)
                 """, (
                     title,
+                    sort_title,
                     system_id,
                     rom_path,
                     npwr_id,

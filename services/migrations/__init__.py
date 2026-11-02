@@ -57,6 +57,7 @@ MIGRATIONS = [
     '030_tidy_stored_text',
     '031_hltb_id_and_players',
     '032_games_ra_copy_fits',
+    '033_platform_play_time',
 ]
 
 

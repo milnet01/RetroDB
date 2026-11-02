@@ -336,6 +336,10 @@
                 {% endif %}
             </div>
             
+            {% if steam_play %}
+            <p class="text-muted">{% if steam_play.minutes >= 60 %}{{ _('Played on Steam: %(hours)s h %(minutes)s min', hours=(steam_play.minutes // 60)|format_number, minutes=steam_play.minutes % 60) }}{% else %}{{ _('Played on Steam: %(minutes)s min', minutes=steam_play.minutes) }}{% endif %}{% if steam_play.last_played %} · {{ _('Last played: %(date)s', date=steam_play.last_played|timestamp_to_date) }}{% endif %}</p>
+            {% endif %}
+
             <!-- Achievements & Trophies Row -->
             {% set has_any_achievements = (game.ra_game_id and retroachievements and retroachievements.has_achievements) or steam_counts or xbox_counts or psn_progress or (trophy_info and trophy_info[0]) %}
             {% if has_any_achievements %}

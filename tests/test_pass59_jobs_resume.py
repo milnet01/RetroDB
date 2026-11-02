@@ -62,7 +62,7 @@ def _make_db(path):
             id INTEGER PRIMARY KEY, title TEXT, rom_path TEXT, system_id INTEGER,
             ra_game_id TEXT, ra_achievement_count INTEGER, ra_title TEXT, ra_points INTEGER, ra_copy_fits INTEGER,
             has_retroachievements INTEGER, alternate_titles TEXT,
-            steam_app_id TEXT, xbox_title_id TEXT
+            steam_app_id TEXT, xbox_title_id TEXT, scrape_history TEXT
         );
         CREATE TABLE game_achievement_progress (game_id INTEGER, source TEXT);
         CREATE TABLE psn_games (id INTEGER PRIMARY KEY, title TEXT,
@@ -176,6 +176,8 @@ def _drive_steam(env):
         env.state['processed'].append(f"G{app_id}")
         return None
     env.monkeypatch.setattr(steam, 'get_player_achievements', _ach)
+    env.monkeypatch.setattr(steam, 'get_owned_games', lambda *_a: [])
+    env.monkeypatch.setattr(mod, '_fill_from_steam_store', lambda _game: None)
 
     job = mod.SteamSyncJob()
     job._user_id = USER_ID

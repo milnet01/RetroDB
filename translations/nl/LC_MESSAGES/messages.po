@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-02 12:40+0200\n"
+"POT-Creation-Date: 2026-11-02 14:44+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: nl\n"
@@ -60,7 +60,7 @@ msgstr "Systeem niet gevonden of heeft geen games met prestaties"
 #: routes/bonus_discs.py:265 routes/bulk_scrape.py:48 routes/cheats.py:32
 #: routes/cheats.py:51 routes/collections.py:276 routes/collections.py:531
 #: routes/emulators.py:304 routes/emulators.py:318 routes/games.py:394
-#: routes/games.py:902 routes/games.py:1029 routes/games.py:1096
+#: routes/games.py:909 routes/games.py:1036 routes/games.py:1103
 #: routes/games_ai.py:31 routes/games_media.py:37 routes/games_media.py:85
 #: routes/games_media.py:148 routes/games_media.py:197
 #: routes/games_media.py:230 routes/launch.py:242 routes/reports.py:693
@@ -104,8 +104,8 @@ msgstr "Geen games met RetroAchievements in dit systeem"
 msgid "Sync already in progress for %(name)s"
 msgstr "Synchronisatie al bezig voor %(name)s"
 
-#: routes/achievements.py:406 routes/platform_import.py:334
-#: routes/platform_import.py:702
+#: routes/achievements.py:406 routes/platform_import.py:381
+#: routes/platform_import.py:758
 msgid "That job belongs to another user"
 msgstr "Die taak is van een andere gebruiker"
 
@@ -244,9 +244,9 @@ msgstr "Hoofdgame niet gevonden"
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "Bonusschijf en hoofdgame moeten in hetzelfde systeem staan"
 
-#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1358
-#: routes/games.py:1388 routes/platform_import.py:297
-#: routes/platform_import.py:667 routes/platform_import.py:1032
+#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1365
+#: routes/games.py:1395 routes/platform_import.py:344
+#: routes/platform_import.py:723 routes/platform_import.py:1089
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:204 routes/scraper.py:535
 #: routes/scraper.py:926 routes/settings.py:320 routes/settings.py:344
@@ -492,15 +492,15 @@ msgstr ""
 msgid "Game not found after update"
 msgstr "Game niet gevonden na update"
 
-#: routes/games.py:1033
+#: routes/games.py:1040
 msgid "No game selected."
 msgstr "Geen game geselecteerd."
 
-#: routes/games.py:1057
+#: routes/games.py:1064
 msgid "This metadata apply is no longer running."
 msgstr "Deze metadatatoepassing is niet meer actief."
 
-#: routes/games.py:1066
+#: routes/games.py:1073
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
@@ -509,41 +509,41 @@ msgstr ""
 "Metadata toegepast vanuit %(sources)s! (%(filled)d velden ingevuld, "
 "%(missing)d ontbreken nog)"
 
-#: routes/games.py:1072
+#: routes/games.py:1079
 msgid "Failed to apply metadata."
 msgstr "Toepassen van metadata mislukt."
 
-#: routes/games.py:1132 routes/games.py:1177
+#: routes/games.py:1139 routes/games.py:1184
 msgid "No fields to update"
 msgstr "Geen velden om bij te werken"
 
-#: routes/games.py:1174 routes/platform_import.py:220
-#: routes/platform_import.py:581 routes/platform_import.py:936
+#: routes/games.py:1181 routes/platform_import.py:250
+#: routes/platform_import.py:629 routes/platform_import.py:992
 #: routes/trophies.py:1870
 msgid "No games selected"
 msgstr "Geen games geselecteerd"
 
-#: routes/games.py:1184
+#: routes/games.py:1191
 msgid "Invalid completion status"
 msgstr "Ongeldige voltooiingsstatus"
 
-#: routes/games.py:1232
+#: routes/games.py:1239
 msgid "No valid fields to update"
 msgstr "Geen geldige velden om bij te werken"
 
-#: routes/games.py:1351
+#: routes/games.py:1358
 msgid "Invalid status"
 msgstr "Ongeldige status"
 
-#: routes/games.py:1376
+#: routes/games.py:1383
 msgid "Not authenticated"
 msgstr "Niet geauthenticeerd"
 
-#: routes/games.py:1407
+#: routes/games.py:1414
 msgid "Filter type and value required"
 msgstr "Filtertype en waarde vereist"
 
-#: routes/games.py:1420
+#: routes/games.py:1427
 msgid "Invalid filter type"
 msgstr "Ongeldig filtertype"
 
@@ -857,7 +857,7 @@ msgstr "Ontwikkelaar"
 #: templates/all_games.html:78 templates/analytics.html:483
 #: templates/analytics.html:2428 templates/base.html:974
 #: templates/base.html:1170 templates/compare_games.html:71
-#: templates/game_detail.html:286 templates/game_detail.html:778
+#: templates/game_detail.html:286 templates/game_detail.html:782
 #: templates/local_trophy_detail.html:87 templates/psn_trophy_detail.html:82
 #: templates/steam_achievement_game.html:78 templates/system_games.html:69
 #: templates/xbox_achievement_game.html:67
@@ -897,7 +897,7 @@ msgstr "Spelmodi"
 #: routes/official_names.py:127 templates/_bulk_edit_modal.html:106
 #: templates/_modals/edit_modal.html:85 templates/analytics.html:492
 #: templates/analytics.html:2428 templates/base.html:1161
-#: templates/compare_games.html:75 templates/game_detail.html:775
+#: templates/compare_games.html:75 templates/game_detail.html:779
 #: templates/reports.html:444
 msgid "Region"
 msgstr "Regio"
@@ -909,7 +909,7 @@ msgstr "Franchise / reeks"
 
 #: routes/official_names.py:129 templates/_modals/edit_modal.html:56
 #: templates/base.html:1139 templates/compare_games.html:96
-#: templates/game_detail.html:536
+#: templates/game_detail.html:540
 msgid "Similar Games"
 msgstr "Vergelijkbare games"
 
@@ -991,19 +991,19 @@ msgstr "Er loopt al een ronde AI-aanvulling."
 msgid "No AI fill run to cancel."
 msgstr "Er is geen ronde AI-aanvulling om te annuleren."
 
-#: routes/platform_import.py:153
+#: routes/platform_import.py:182
 msgid "Steam API key not configured. Add it in Settings → API Keys."
 msgstr ""
 "Steam API-sleutel niet geconfigureerd. Voeg deze toe bij Instellingen → "
 "API-sleutels."
 
-#: routes/platform_import.py:155
+#: routes/platform_import.py:184
 msgid "Steam ID not configured. Add it in Settings → API Keys."
 msgstr ""
 "Steam-ID niet geconfigureerd. Voeg deze toe bij Instellingen → API-"
 "sleutels."
 
-#: routes/platform_import.py:161
+#: routes/platform_import.py:190
 #, python-format
 msgid ""
 "Could not resolve Steam vanity URL \"%(steam_id)s\". Use your 17-digit "
@@ -1012,7 +1012,7 @@ msgstr ""
 "Kon Steam vanity-URL \"%(steam_id)s\" niet herleiden. Gebruik in plaats "
 "daarvan je 17-cijferige Steam-ID."
 
-#: routes/platform_import.py:167
+#: routes/platform_import.py:196
 msgid ""
 "No games found. Check that your Steam profile and game details are set to"
 " Public."
@@ -1020,37 +1020,37 @@ msgstr ""
 "Geen games gevonden. Controleer of je Steam-profiel en gamegegevens op "
 "Openbaar staan."
 
-#: routes/platform_import.py:225
+#: routes/platform_import.py:255
 msgid "Could not create Windows system entry"
 msgstr "Kon Windows-systeeminvoer niet aanmaken"
 
-#: routes/platform_import.py:352
+#: routes/platform_import.py:399
 msgid "Xbox Client ID not configured. Add it in Settings → API Keys."
 msgstr ""
 "Xbox Client-ID niet geconfigureerd. Voeg deze toe bij Instellingen → API-"
 "sleutels."
 
-#: routes/platform_import.py:490
+#: routes/platform_import.py:537
 msgid "Xbox credentials not configured. Add them in Settings → API Keys."
 msgstr ""
 "Xbox-inloggegevens niet geconfigureerd. Voeg deze toe bij Instellingen → "
 "API-sleutels."
 
-#: routes/platform_import.py:494
+#: routes/platform_import.py:541
 msgid "Xbox authentication failed. Please re-connect your Xbox account."
 msgstr "Xbox-authenticatie mislukt. Koppel je Xbox-account opnieuw."
 
-#: routes/platform_import.py:498
+#: routes/platform_import.py:545
 msgid "No games found in Xbox title history."
 msgstr "Geen games gevonden in Xbox-titelgeschiedenis."
 
-#: routes/platform_import.py:777
+#: routes/platform_import.py:833
 msgid "PSN NPSSO not configured. Add it in Settings → API Keys."
 msgstr ""
 "PSN NPSSO niet geconfigureerd. Voeg deze toe bij Instellingen → API-"
 "sleutels."
 
-#: routes/platform_import.py:804
+#: routes/platform_import.py:860
 msgid "Failed to fetch PSN game list. Try syncing trophies first."
 msgstr ""
 "Ophalen van PSN-gamelijst mislukt. Probeer eerst trofeeën te "
@@ -2131,7 +2131,7 @@ msgstr ""
 #: templates/archive_scanner.html:798 templates/base.html:340
 #: templates/base.html:358 templates/base.html:1091
 #: templates/chd_converter.html:170 templates/chd_verify.html:126
-#: templates/game_detail.html:583 templates/login.html:254
+#: templates/game_detail.html:587 templates/login.html:254
 #: templates/museum.html:29 templates/museum_system.html:182
 #: templates/psn_trophies.html:297 templates/psn_trophy_detail.html:182
 #: templates/psn_trophy_detail.html:325 templates/reports.html:521
@@ -2283,8 +2283,8 @@ msgstr "Voltooiingsstatus bijgewerkt"
 
 #: services/js_i18n_strings.py:645 templates/achievement_game.html:172
 #: templates/achievement_game.html:197 templates/achievement_game.html:211
-#: templates/base.html:1086 templates/game_detail.html:577
-#: templates/game_detail.html:603 templates/game_detail.html:617
+#: templates/base.html:1086 templates/game_detail.html:581
+#: templates/game_detail.html:607 templates/game_detail.html:621
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:176
 #: templates/psn_trophy_detail.html:209
 #: templates/steam_achievement_game.html:134
@@ -3014,8 +3014,8 @@ msgstr "Zoeken naar versies…"
 
 #: services/js_i18n_strings.py:810 templates/achievement_game.html:168
 #: templates/achievement_game.html:197 templates/achievement_game.html:207
-#: templates/base.html:1082 templates/game_detail.html:573
-#: templates/game_detail.html:603 templates/game_detail.html:613
+#: templates/base.html:1082 templates/game_detail.html:577
+#: templates/game_detail.html:607 templates/game_detail.html:617
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:172
 #: templates/psn_trophy_detail.html:205
 #: templates/steam_achievement_game.html:133
@@ -3027,8 +3027,8 @@ msgstr "Hoofdgame + extra's"
 
 #: services/js_i18n_strings.py:811 templates/achievement_game.html:164
 #: templates/achievement_game.html:197 templates/achievement_game.html:203
-#: templates/base.html:1078 templates/game_detail.html:569
-#: templates/game_detail.html:603 templates/game_detail.html:609
+#: templates/base.html:1078 templates/game_detail.html:573
+#: templates/game_detail.html:607 templates/game_detail.html:613
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:168
 #: templates/psn_trophy_detail.html:201
 #: templates/steam_achievement_game.html:132
@@ -3128,8 +3128,8 @@ msgid "Next game"
 msgstr "Volgend spel"
 
 #: services/js_i18n_strings.py:830 templates/_bulk_edit_modal.html:171
-#: templates/_modals/edit_modal.html:148 templates/game_detail.html:732
-#: templates/game_detail.html:800
+#: templates/_modals/edit_modal.html:148 templates/game_detail.html:736
+#: templates/game_detail.html:804
 msgid "No"
 msgstr "Nee"
 
@@ -3245,7 +3245,7 @@ msgstr ""
 "Geen suggesties. Voer Alternatieve titels aanvullen uit in Onderhoud om "
 "er meer te vinden."
 
-#: services/js_i18n_strings.py:857 templates/game_detail.html:905
+#: services/js_i18n_strings.py:857 templates/game_detail.html:909
 msgid "None"
 msgstr "Geen"
 
@@ -4236,7 +4236,7 @@ msgstr "Werkt"
 msgid "World"
 msgstr "Wereld"
 
-#: services/js_i18n_strings.py:1066 templates/game_detail.html:821
+#: services/js_i18n_strings.py:1066 templates/game_detail.html:825
 msgid "Write again with AI"
 msgstr "Opnieuw schrijven met AI"
 
@@ -4245,8 +4245,8 @@ msgid "Xbox Imports"
 msgstr "Xbox-imports"
 
 #: services/js_i18n_strings.py:1068 templates/_bulk_edit_modal.html:170
-#: templates/_modals/edit_modal.html:148 templates/game_detail.html:675
-#: templates/game_detail.html:732 templates/game_detail.html:800
+#: templates/_modals/edit_modal.html:148 templates/game_detail.html:679
+#: templates/game_detail.html:736 templates/game_detail.html:804
 msgid "Yes"
 msgstr "Ja"
 
@@ -4649,7 +4649,7 @@ msgstr "Meer laden"
 
 #: templates/achievement_game.html:17 templates/achievement_game.html:37
 #: templates/achievements_system.html:15 templates/game_detail.html:21
-#: templates/game_detail.html:352 templates/game_detail.html:783
+#: templates/game_detail.html:356 templates/game_detail.html:787
 #: templates/systems.html:43
 msgid "RetroAchievements"
 msgstr "RetroAchievements"
@@ -4692,7 +4692,7 @@ msgstr "Kon prestatiegegevens niet laden"
 msgid "Check your RetroAchievements credentials in Settings."
 msgstr "Controleer je RetroAchievements-inloggegevens bij Instellingen."
 
-#: templates/achievement_game.html:146 templates/game_detail.html:551
+#: templates/achievement_game.html:146 templates/game_detail.html:555
 #: templates/local_trophy_detail.html:158 templates/psn_trophy_detail.html:149
 #: templates/steam_achievement_game.html:123
 #: templates/xbox_achievement_game.html:116
@@ -4700,7 +4700,7 @@ msgid "How Long to Beat"
 msgstr "How Long to Beat"
 
 #: templates/achievement_game.html:153 templates/base.html:1059
-#: templates/game_detail.html:558 templates/psn_trophy_detail.html:157
+#: templates/game_detail.html:562 templates/psn_trophy_detail.html:157
 #: templates/psn_trophy_detail.html:317
 #: templates/steam_achievement_game.html:126
 #: templates/xbox_achievement_game.html:119
@@ -4708,7 +4708,7 @@ msgid "Search game title..."
 msgstr "Gametitel zoeken..."
 
 #: templates/achievement_game.html:156 templates/base.html:1062
-#: templates/game_detail.html:561 templates/local_trophy_detail.html:193
+#: templates/game_detail.html:565 templates/local_trophy_detail.html:193
 #: templates/psn_trophy_detail.html:160
 #: templates/steam_achievement_game.html:127
 #: templates/xbox_achievement_game.html:120
@@ -4717,7 +4717,7 @@ msgstr "HLTB opzoeken"
 
 #: templates/_settings_tabs/account.html:74 templates/achievement_game.html:177
 #: templates/achievement_game.html:253 templates/base.html:1090
-#: templates/game_detail.html:582 templates/local_trophy_detail.html:223
+#: templates/game_detail.html:586 templates/local_trophy_detail.html:223
 #: templates/psn_trophy_detail.html:181 templates/psn_trophy_detail.html:270
 #: templates/settings_emulators.html:60 templates/settings_emulators.html:275
 #: templates/steam_achievement_game.html:137
@@ -4727,7 +4727,7 @@ msgstr "Opslaan"
 
 #: templates/achievement_game.html:217 templates/all_games.html:108
 #: templates/base.html:1103 templates/duplicate_finder.html:301
-#: templates/game_detail.html:117 templates/game_detail.html:623
+#: templates/game_detail.html:117 templates/game_detail.html:627
 #: templates/local_trophy_detail.html:185 templates/psn_trophy_detail.html:214
 #: templates/reports.html:277 templates/screenshot_dedup.html:325
 #: templates/steam_achievement_game.html:163 templates/system_games.html:99
@@ -4735,7 +4735,7 @@ msgstr "Opslaan"
 msgid "Clear"
 msgstr "Wissen"
 
-#: templates/achievement_game.html:225 templates/game_detail.html:631
+#: templates/achievement_game.html:225 templates/game_detail.html:635
 #: templates/local_trophy_detail.html:203 templates/psn_trophy_detail.html:234
 #: templates/steam_achievement_game.html:170
 #: templates/xbox_achievement_game.html:163
@@ -5110,7 +5110,7 @@ msgstr "Alles selecteren"
 msgid "Select Unscraped"
 msgstr "Niet-gescrapete selecteren"
 
-#: templates/all_games.html:204 templates/game_detail.html:874
+#: templates/all_games.html:204 templates/game_detail.html:878
 #: templates/system_games.html:184
 msgid "Full Re-scrape"
 msgstr "Volledige herscrape"
@@ -5121,7 +5121,7 @@ msgstr ""
 "Schakelen tussen volledige herscrape en modus ontbrekende gegevens "
 "aanvullen"
 
-#: templates/all_games.html:209 templates/game_detail.html:874
+#: templates/all_games.html:209 templates/game_detail.html:878
 #: templates/system_games.html:189
 msgid "Fill Missing"
 msgstr "Ontbrekende aanvullen"
@@ -5444,7 +5444,7 @@ msgid "Fanart"
 msgstr "Fanart"
 
 #: templates/analytics.html:487 templates/analytics.html:2428
-#: templates/game_detail.html:504
+#: templates/game_detail.html:508
 msgid "Video"
 msgstr "Video"
 
@@ -5969,7 +5969,7 @@ msgstr "Gamedetails sluiten"
 msgid "Loading game details..."
 msgstr "Gamedetails laden..."
 
-#: templates/base.html:989 templates/game_detail.html:508
+#: templates/base.html:989 templates/game_detail.html:512
 msgid "Your browser does not support the video tag."
 msgstr "Je browser ondersteunt de video-tag niet."
 
@@ -6064,7 +6064,7 @@ msgstr "Geen speeltijdgegevens"
 #: templates/_modals/edit_modal.html:28 templates/_modals/filter_modal.html:13
 #: templates/base.html:1113 templates/dashboard.html:329
 #: templates/dashboard.html:388 templates/dashboard.html:465
-#: templates/dashboard.html:531 templates/game_detail.html:776
+#: templates/dashboard.html:531 templates/game_detail.html:780
 msgid "Title"
 msgstr "Titel"
 
@@ -7138,7 +7138,7 @@ msgstr "Regionale versies"
 msgid "Versions:"
 msgstr "Versies:"
 
-#: templates/game_detail.html:91 templates/game_detail.html:790
+#: templates/game_detail.html:91 templates/game_detail.html:794
 msgid "Unknown region"
 msgstr "Onbekende regio"
 
@@ -7245,53 +7245,68 @@ msgstr ""
 "Geen beschrijving beschikbaar. Klik op \"Scrapen\" om metadata op te "
 "halen."
 
-#: templates/game_detail.html:354
+#: templates/game_detail.html:340
+#, python-format
+msgid "Played on Steam: %(hours)s h %(minutes)s min"
+msgstr ""
+
+#: templates/game_detail.html:340
+#, python-format
+msgid "Played on Steam: %(minutes)s min"
+msgstr ""
+
+#: templates/game_detail.html:340
+#, fuzzy, python-format
+msgid "Last played: %(date)s"
+msgstr "Laatst getest op %(date)s."
+
+#: templates/game_detail.html:358
 #, fuzzy
 msgid "Your copy earns achievements"
 msgstr "Geen Steam-prestaties"
 
-#: templates/game_detail.html:355
+#: templates/game_detail.html:359
 msgid "RetroAchievements does not list your copy, so it may not earn achievements"
 msgstr ""
 
-#: templates/game_detail.html:363
+#: templates/game_detail.html:367
 msgid "View on RetroAchievements.org"
 msgstr "Bekijk op RetroAchievements.org"
 
-#: templates/game_detail.html:365
+#: templates/game_detail.html:369
 msgid "RA Site"
 msgstr "RA-site"
 
-#: templates/game_detail.html:377 templates/steam_achievement_game.html:17
+#: templates/game_detail.html:381 templates/steam_achievement_game.html:17
 #: templates/steam_achievements.html:7 templates/steam_achievements.html:15
 #: templates/steam_achievements.html:21
 msgid "Steam Achievements"
 msgstr "Steam-prestaties"
 
-#: templates/game_detail.html:393 templates/xbox_achievement_game.html:17
+#: templates/game_detail.html:397 templates/xbox_achievement_game.html:17
 #: templates/xbox_achievements.html:7 templates/xbox_achievements.html:15
 #: templates/xbox_achievements.html:21
 msgid "Xbox Achievements"
 msgstr "Xbox-prestaties"
 
-#: templates/game_detail.html:408 templates/psn_trophies.html:6
+#: templates/game_detail.html:412 templates/psn_trophies.html:6
 #: templates/psn_trophies.html:15 templates/psn_trophy_detail.html:17
 msgid "PSN Trophies"
 msgstr "PSN-trofeeën"
 
-#: templates/game_detail.html:433 templates/local_trophy_detail.html:16
+#: templates/game_detail.html:437 templates/local_trophy_detail.html:16
 msgid "RPCS3 Trophies"
 msgstr "RPCS3-trofeeën"
 
-#: templates/game_detail.html:461 templates/game_detail.html:469
+#: templates/game_detail.html:465 templates/game_detail.html:473
 msgid "AI guess"
 msgstr "AI-schatting"
 
-#: templates/game_detail.html:467
+#: templates/game_detail.html:471
 msgid "(cross-mapped)"
 msgstr "(kruislings gekoppeld)"
 
-#: templates/game_detail.html:474
+#: templates/game_detail.html:478
 msgid ""
 "AI guess: a guess based on the game's content, not an official rating. "
 "The game may be older than the board."
@@ -7299,243 +7314,243 @@ msgstr ""
 "AI-schatting: een schatting op basis van de inhoud van de game, geen "
 "officiële classificatie. De game kan ouder zijn dan de keuringsinstantie."
 
-#: templates/game_detail.html:475
+#: templates/game_detail.html:479
 #, python-format
 msgid "Year each board started rating games: %(boards)s."
 msgstr ""
 "Jaar waarin elke keuringsinstantie begon met het beoordelen van games: "
 "%(boards)s."
 
-#: templates/game_detail.html:485
+#: templates/game_detail.html:489
 #, python-format
 msgid "Screenshots (%(count)s)"
 msgstr "Screenshots (%(count)s)"
 
-#: templates/game_detail.html:487
+#: templates/game_detail.html:491
 msgid "Previous screenshots"
 msgstr "Vorige screenshots"
 
-#: templates/game_detail.html:493
+#: templates/game_detail.html:497
 msgid "Delete screenshot"
 msgstr "Screenshot verwijderen"
 
-#: templates/game_detail.html:497
+#: templates/game_detail.html:501
 msgid "Next screenshots"
 msgstr "Volgende screenshots"
 
-#: templates/game_detail.html:516
+#: templates/game_detail.html:520
 msgid "Also Known As"
 msgstr "Ook bekend als"
 
-#: templates/game_detail.html:520
+#: templates/game_detail.html:524
 #, python-format
 msgid "Source: %(source)s"
 msgstr "Bron: %(source)s"
 
-#: templates/game_detail.html:545
+#: templates/game_detail.html:549
 msgid "Loading recommendations..."
 msgstr "Aanbevelingen laden..."
 
-#: templates/game_detail.html:593
+#: templates/game_detail.html:597
 #, python-format
 msgid "%(pct)s%% match"
 msgstr "%(pct)s%% overeenkomst"
 
-#: templates/game_detail.html:594
+#: templates/game_detail.html:598
 #, fuzzy, python-format
 msgid "Players who timed it: %(count)s"
 msgstr "Mislukt: %(count)s"
 
-#: templates/game_detail.html:635
+#: templates/game_detail.html:639
 msgid "Source:"
 msgstr "Bron:"
 
-#: templates/game_detail.html:638
+#: templates/game_detail.html:642
 msgid "CLZ Games Import (No ROM file)"
 msgstr "CLZ Games Import (geen ROM-bestand)"
 
-#: templates/game_detail.html:640
+#: templates/game_detail.html:644
 msgid "Steam Import (No ROM file)"
 msgstr "Steam-import (geen ROM-bestand)"
 
-#: templates/game_detail.html:642
+#: templates/game_detail.html:646
 msgid "Xbox Import (No ROM file)"
 msgstr "Xbox-import (geen ROM-bestand)"
 
-#: templates/game_detail.html:644
+#: templates/game_detail.html:648
 msgid "PSN Import (No ROM file)"
 msgstr "PSN-import (geen ROM-bestand)"
 
-#: templates/game_detail.html:650
+#: templates/game_detail.html:654
 msgid "Original Title:"
 msgstr "Oorspronkelijke titel:"
 
-#: templates/game_detail.html:656
+#: templates/game_detail.html:660
 msgid "File:"
 msgstr "Bestand:"
 
-#: templates/game_detail.html:658
+#: templates/game_detail.html:662
 msgid "Rename ROM file"
 msgstr "ROM-bestand hernoemen"
 
-#: templates/game_detail.html:661
+#: templates/game_detail.html:665
 msgid "Path:"
 msgstr "Pad:"
 
-#: templates/game_detail.html:667
+#: templates/game_detail.html:671
 msgid "Edition:"
 msgstr "Editie:"
 
-#: templates/game_detail.html:674
+#: templates/game_detail.html:678
 msgid "Exclusive:"
 msgstr "Exclusief:"
 
-#: templates/game_detail.html:677
+#: templates/game_detail.html:681
 msgid "Also On:"
 msgstr "Ook op:"
 
-#: templates/game_detail.html:684
+#: templates/game_detail.html:688
 msgid "Modes:"
 msgstr "Modi:"
 
-#: templates/game_detail.html:690
+#: templates/game_detail.html:694
 msgid "Players:"
 msgstr "Spelers:"
 
-#: templates/game_detail.html:696
+#: templates/game_detail.html:700
 msgid "Campaign:"
 msgstr "Campagne:"
 
-#: templates/game_detail.html:702
+#: templates/game_detail.html:706
 msgid "Structure:"
 msgstr "Structuur:"
 
-#: templates/game_detail.html:708
+#: templates/game_detail.html:712
 msgid "Perspective:"
 msgstr "Perspectief:"
 
-#: templates/game_detail.html:714
+#: templates/game_detail.html:718
 msgid "Dimension:"
 msgstr "Dimensie:"
 
-#: templates/game_detail.html:720
+#: templates/game_detail.html:724
 msgid "Save:"
 msgstr "Save:"
 
-#: templates/game_detail.html:726
+#: templates/game_detail.html:730
 msgid "Input:"
 msgstr "Invoer:"
 
-#: templates/game_detail.html:731
+#: templates/game_detail.html:735
 msgid "Scraped:"
 msgstr "Gescraped:"
 
-#: templates/game_detail.html:740
+#: templates/game_detail.html:744
 msgid "Bonus Content"
 msgstr "Bonusinhoud"
 
-#: templates/game_detail.html:759
+#: templates/game_detail.html:763
 msgid "Emulator settings"
 msgstr "Emulatorinstellingen"
 
-#: templates/_macros/nav_tabs.html:40 templates/game_detail.html:769
+#: templates/_macros/nav_tabs.html:40 templates/game_detail.html:773
 #: templates/rom_tools_hub.html:193 templates/versions_review.html:5
 #: templates/versions_review.html:80
 msgid "Regional Versions"
 msgstr "Regionale versies"
 
-#: templates/game_detail.html:777 templates/museum_system.html:100
+#: templates/game_detail.html:781 templates/museum_system.html:100
 msgid "Released"
 msgstr "Uitgebracht"
 
-#: templates/game_detail.html:779
+#: templates/game_detail.html:783
 msgid "File size"
 msgstr "Bestandsgrootte"
 
-#: templates/game_detail.html:780
+#: templates/game_detail.html:784
 msgid "Revision"
 msgstr "Revisie"
 
-#: templates/game_detail.html:781
+#: templates/game_detail.html:785
 msgid "Languages"
 msgstr "Talen"
 
-#: templates/game_detail.html:782
+#: templates/game_detail.html:786
 msgid "Scores"
 msgstr "Scores"
 
-#: templates/game_detail.html:791
+#: templates/game_detail.html:795
 msgid "(this page)"
 msgstr "(deze pagina)"
 
-#: templates/game_detail.html:809
+#: templates/game_detail.html:813
 msgid "Known differences"
 msgstr "Bekende verschillen"
 
-#: templates/game_detail.html:809
+#: templates/game_detail.html:813
 msgid "AI-written"
 msgstr "Door AI geschreven"
 
-#: templates/game_detail.html:810
+#: templates/game_detail.html:814
 msgid "Written by AI from what it knows about these releases. It can be wrong."
 msgstr ""
 "Door AI geschreven op basis van wat het weet over deze releases. Het kan "
 "fout zijn."
 
-#: templates/game_detail.html:812
+#: templates/game_detail.html:816
 msgid "The AI knows of no differences between these versions."
 msgstr "De AI kent geen verschillen tussen deze versies."
 
-#: templates/game_detail.html:815
+#: templates/game_detail.html:819
 msgid "No other regional versions are linked to this game."
 msgstr "Er zijn geen andere regionale versies aan deze game gekoppeld."
 
-#: templates/game_detail.html:820
+#: templates/game_detail.html:824
 msgid "Unlink this version"
 msgstr "Deze versie ontkoppelen"
 
-#: templates/game_detail.html:821
+#: templates/game_detail.html:825
 msgid "Summarise differences with AI"
 msgstr "Verschillen samenvatten met AI"
 
-#: templates/game_detail.html:823
+#: templates/game_detail.html:827
 msgid "Link a version"
 msgstr "Een versie koppelen"
 
-#: templates/game_detail.html:824
+#: templates/game_detail.html:828
 msgid "Link a version: search this system"
 msgstr "Een versie koppelen: zoek in dit systeem"
 
-#: templates/game_detail.html:840 templates/settings_emulators.html:22
+#: templates/game_detail.html:844 templates/settings_emulators.html:22
 #: templates/settings_emulators.html:127
 msgid "Cheats"
 msgstr "Cheats"
 
-#: templates/game_detail.html:847
+#: templates/game_detail.html:851
 msgid "Cheat list"
 msgstr "Cheatlijst"
 
-#: templates/game_detail.html:850
+#: templates/game_detail.html:854
 msgid "Find a cheat"
 msgstr "Cheat zoeken"
 
-#: templates/game_detail.html:862
+#: templates/game_detail.html:866
 msgid "Scrape History"
 msgstr "Scrapegeschiedenis"
 
-#: templates/game_detail.html:888
+#: templates/game_detail.html:892
 msgid "Primary scraper"
 msgstr "Primaire scraper"
 
-#: templates/game_detail.html:890
+#: templates/game_detail.html:894
 msgid "Fallback scraper"
 msgstr "Fallback-scraper"
 
-#: templates/game_detail.html:897
+#: templates/game_detail.html:901
 msgid "Fields filled:"
 msgstr "Ingevulde velden:"
 
-#: templates/game_detail.html:910
+#: templates/game_detail.html:914
 msgid "Still missing:"
 msgstr "Nog ontbrekend:"
 
@@ -7781,6 +7796,21 @@ msgstr "PS Vita"
 #: templates/psn_trophy_detail.html:114
 msgid "Trophy Progress"
 msgstr "Trofeeënvoortgang"
+
+#: templates/game_imports.html:762 templates/game_imports.html:776
+#, fuzzy
+msgid "In your library: link it"
+msgstr "Je bibliotheek is leeg"
+
+#: templates/game_imports.html:854
+#, fuzzy
+msgid "Linked to games in your library"
+msgstr "ROM's in bibliotheek"
+
+#: templates/game_imports.html:857
+#, fuzzy
+msgid "Details are arriving from Steam in the background"
+msgstr "{n} item(s) worden op de achtergrond gescraped."
 
 #: templates/help.af.html:11 templates/help.de.html:11
 #: templates/help.es.html:11 templates/help.fr.html:11

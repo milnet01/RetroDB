@@ -548,6 +548,7 @@ your migration — not in the runner.
 | 030 | `030_tidy_stored_text.py` | Clean stored descriptions and company names; remove executable names from `alternate_titles`; `screenshots` separated by `,` alone; clear an ESRB `NOT RATED`; one value in `region`; `other_platforms` names from the list. | PASS-59-213. Same cleaning as the scrape's save step. The old values are not kept; the pre-migration backup holds them. |
 | 031 | `031_hltb_id_and_players.py` | Add `games.hltb_id`, `games.hltb_players` and `hltb_pending_matches.players` (PASS-59-216). |
 | 032 | `032_games_ra_copy_fits.py` | Add `games.ra_copy_fits` (PASS-59-217). |
+| 033 | `033_platform_play_time.py` | Add `platform_play_time`, the play time a service reports per user (PASS-59-218). |
 
 ---
 

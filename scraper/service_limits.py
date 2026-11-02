@@ -22,6 +22,7 @@ THEGAMESDB = 'tgdb'
 RAWG = 'rawg'
 IGDB = 'igdb'
 HOWLONGTOBEAT = 'hltb'
+STEAM_STORE = 'steam_store'
 
 NAMES = {
     SCREENSCRAPER: 'ScreenScraper',
@@ -29,6 +30,7 @@ NAMES = {
     RAWG: 'RAWG',
     IGDB: 'IGDB',
     HOWLONGTOBEAT: 'HowLongToBeat',
+    STEAM_STORE: 'Steam',
 }
 
 # The services a game scrape searches.
@@ -41,11 +43,14 @@ KEY_REFUSED = 'key_refused'
 # Seconds between calls. IGDB's limit is 4 a second. ScreenScraper's replies
 # state the account's own rate, which replaces this figure. RAWG and
 # HowLongToBeat publish no rate. TheGamesDB limits only the month's total.
+# Steam's store documents neither the call nor a limit; about 200 calls in five
+# minutes is the figure usually reported, unchecked, and this keeps within it.
 _DEFAULT_PACE = {
     SCREENSCRAPER: 0.1,
     RAWG: 0.3,
     IGDB: 0.26,
     HOWLONGTOBEAT: 1.0,
+    STEAM_STORE: 1.5,
 }
 SLOWEST_PACE = 8.0
 

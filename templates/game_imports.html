@@ -759,7 +759,7 @@ function renderTable(platform) {
                 <td>${escapeHtml(game.name)}</td>
                 <td>${game.playtime > 0 ? formatPlaytime(game.playtime) : '<span style="color:var(--text-muted)">—</span>'}</td>
                 <td>${game.last_played > 0 ? formatTimestamp(game.last_played) : '<span style="color:var(--text-muted)">—</span>'}</td>
-                <td>${isNew ? '<span class="status-new">New</span>' : '<span class="status-existing">Already imported</span>'}</td>`;
+                <td>${!isNew ? '<span class="status-existing">Already imported</span>' : (game.will_link ? `<span class="status-new">${escapeHtml({{ _('In your library: link it')|tojson }})}</span>` : '<span class="status-new">New</span>')}</td>`;
         } else if (platform === 'psn') {
             const progress = game.trophy_progress || 0;
             tr.innerHTML = `<td class="checkbox-cell"><input type="checkbox" class="${platform}-checkbox" data-index="${idx}" ${!isNew ? 'disabled' : ''} data-on-change="updateSelection" data-args="${actionArgs(String(platform))}"></td>
@@ -773,7 +773,7 @@ function renderTable(platform) {
                 <td>${escapeHtml(game.name)}</td>
                 <td><span class="platform-badge">${escapeHtml(game.system_name || game.platform_display)}</span></td>
                 <td>${game.earned_gamerscore > 0 ? `${formatNumber(game.earned_gamerscore)} / ${formatNumber(game.total_gamerscore)}` : '<span style="color:var(--text-muted)">—</span>'}</td>
-                <td>${isNew ? '<span class="status-new">New</span>' : '<span class="status-existing">Already imported</span>'}</td>`;
+                <td>${!isNew ? '<span class="status-existing">Already imported</span>' : (game.will_link ? `<span class="status-new">${escapeHtml({{ _('In your library: link it')|tojson }})}</span>` : '<span class="status-new">New</span>')}</td>`;
         }
         tbody.appendChild(tr);
     });
@@ -851,10 +851,12 @@ async function importGames(platform) {
         if (data.success) {
             const parts = [];
             if (data.imported > 0) parts.push(`${data.imported} imported`);
+            if (data.linked > 0) parts.push(`${ {{ _('Linked to games in your library')|tojson }} }: ${data.linked}`);
             if (data.skipped > 0) parts.push(`${data.skipped} already existed`);
             if (data.failed > 0) parts.push(`${data.failed} failed`);
+            if (data.details_coming) parts.push({{ _('Details are arriving from Steam in the background')|tojson }});
             showNotification(parts.join(', ') || 'Import complete', 'success');
-            selected.forEach(g => g.already_imported = true);
+            selected.forEach(g => { g.already_imported = true; g.will_link = false; });
             const total = state[platform].games.length;
             const already = state[platform].games.filter(g => g.already_imported).length;
             document.getElementById(platform + 'Total').textContent = formatNumber(total);

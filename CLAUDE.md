@@ -140,6 +140,9 @@ Moved to `.claude/rules/ratings.md`, which loads when a matching file is read. R
 - A token reaches RetroArch only in a launch's run layer (`session_keys`), never the base cfg or a game's cfg; `_PROTECTED_KEYS` holds the `cheevos_*` keys so a menu save cannot copy one.
 - DuckStation and PCSX2 take no sign-in for one launch, so `services/ra_standalone.py` writes it to their main settings files at Play and takes it back when that user signs out or a signed-out user plays. A sign-in from an emulator's own menu is never overwritten. `emulator_written_settings` holds a hash of the token, never the token. DuckStation's token is encrypted as its `EncryptLoginToken` does; if DuckStation changes that, it asks the user to sign in again.
 
+### Steam imports (PASS-59-218)
+- `SteamSyncJob` also fills empty fields once per game from the store page, and keeps play time in `platform_play_time`, per user. `games.scraped` stays as it was. The mark that a game was filled is a `scrape_history` entry with `primary_source` `steam`. Steam's date and genre are left out on purpose. Spec: `docs/specs/scrapers.md`.
+
 ### Page wiring
 - A box that takes a path gets `browse_button()` from `_macros/browse_button.html` beside it, in a `.path-input-row`, and a row in `tests/test_path_browser.py`. The button shows for admins only: `/api/settings/browse-paths` can list any folder on the computer.
 - Both `/games` (Library) and `/system/<id>` use `AllGamesController` — keep them in sync.
