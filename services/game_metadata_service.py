@@ -382,8 +382,8 @@ def apply_hybrid_metadata_to_game(db_game_id, primary_source, primary_id, system
     Returns:
         dict: {'success', 'filled_fields', 'missing_fields', 'sources_used'}
               as produced by scraper.hybrid_scraper.apply_hybrid_metadata. On
-              unexpected failure, falls back to `apply_metadata_to_game` on
-              freshly-fetched primary data and returns {'success': <bool>}.
+              unexpected failure, {'success': False}: the single-source routes
+              can overwrite curated values, so none takes over (PASS-59-214).
     """
     from scraper.hybrid_scraper import apply_hybrid_metadata as hybrid_apply
 
@@ -422,11 +422,7 @@ def apply_hybrid_metadata_to_game(db_game_id, primary_source, primary_id, system
                 restrict_to_selected=explicit_secondary is not None,
             )
     except Exception as e:
-        logger.error(f"Error in hybrid metadata apply: {e}")
-        from scraper.scraper_manager import scraper_manager
-        game_data = scraper_manager.fetch_game_details(primary_id, primary_source, system_folder)
-        if game_data:
-            return {'success': apply_metadata_to_game(db_game_id, game_data, primary_source, system_folder)}
+        logger.error(f"Error in hybrid metadata apply: {e}", exc_info=True)
         return {'success': False}
     finally:
         if owns_timer:

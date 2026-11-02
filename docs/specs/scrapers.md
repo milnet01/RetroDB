@@ -319,6 +319,8 @@ Text-only. AI never returns images, screenshots, videos, or manuals — `AI_FILL
 
 **Franchise (PASS-59-212).** Only a source that names a series fills it: IGDB (`franchise`, `franchises`, then `collections`), ScreenScraper (`familles`, a repeated name kept once) and the AI. TheGamesDB and RAWG name none, and nothing derives one from a title.
 
+**Full Re-scrape keeps what no source gave (PASS-59-214).** Before the derived steps run, `region`, `save_type`, `controller_support` and every rating no source filled are seeded from the row, so cross-mapping, inference and the folder guess have nothing to write over. A curated system controller still wins. If the merged scrape fails unexpectedly, the scrape reports failure and writes nothing; no single-source route takes over.
+
 **Clean text (PASS-59-213).** `canonicalize_metadata` cleans what is about to be saved, from any source.
 
 - **Descriptions**: `normalization.clean_description` removes web codes, Windows line endings, heading and bullet marks, and footnote marks. ScreenScraper's is taken only in a wanted language, so a French-only one leaves the field for the next source. IGDB's `summary` comes before `storyline`.

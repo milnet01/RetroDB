@@ -216,5 +216,13 @@ def test_migration_runs_on_a_database_with_no_games_table():
     migrations._load('030_tidy_stored_text').apply(sqlite3.connect(':memory:'))
 
 
+def test_migration_runs_on_an_old_database_missing_columns():
+    conn = sqlite3.connect(':memory:')
+    conn.execute('CREATE TABLE games (id INTEGER PRIMARY KEY, description TEXT)')
+    conn.execute("INSERT INTO games (description) VALUES ('The &quot;hub&quot;')")
+    migrations._load('030_tidy_stored_text').apply(conn)
+    assert conn.execute('SELECT description FROM games').fetchone()[0] == 'The "hub"'
+
+
 def test_second_igdb_path_also_prefers_the_summary():
     assert "igdb_data.get('summary') or igdb_data.get('storyline'" in open(scrape_igdb.__file__, encoding='utf-8').read()

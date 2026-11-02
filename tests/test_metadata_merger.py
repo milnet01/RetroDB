@@ -175,12 +175,6 @@ class TestApplyIgdb:
         assert meta['description'] == 'Master Chief saves the galaxy.'
         assert meta['players'] == 4
 
-    def test_storyline_preferred_over_summary_for_description(self, blank):
-        meta, result = blank
-        igdb = {'storyline': 'Long story.', 'summary': 'Short.'}
-        apply_igdb_to_metadata(meta, igdb, db_game_id=1, result=result)
-        assert meta['description'] == 'Long story.'
-
     def test_release_date_converted_from_unix_timestamp(self, blank):
         meta, result = blank
         # 2001-11-15 UTC

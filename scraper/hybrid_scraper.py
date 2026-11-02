@@ -639,10 +639,16 @@ _KEPT_MEDIA_FIELDS = ('boxart', 'boxart_3d', 'fanart', 'manual', 'video', 'scree
 def _seed_kept_media(metadata, game, stale_fields):
     """PASS-59-133 — Full Re-scrape with "keep existing media": seed each media
     field whose file is still on disk, so the fill-only media checks skip its
-    download. New screenshots still append to the kept list."""
+    download. New screenshots still append to the kept list, which holds only
+    names whose file is there."""
     for field in _KEPT_MEDIA_FIELDS:
         if game.get(field) and field not in stale_fields:
             metadata[field] = game[field]
+    ss_dir = os.path.join(IMAGE_PATH, 'screenshots')
+    if metadata.get('screenshots') and media_dir_is_healthy(ss_dir):
+        names = (name.strip() for name in metadata['screenshots'].split(','))
+        metadata['screenshots'] = ','.join(
+            name for name in names if name and os.path.exists(os.path.join(ss_dir, name))) or None
 
 
 def _save_source_ids(c, db_game_id, sources_data, force_overwrite=False):
@@ -1605,16 +1611,18 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
 
         # Full Re-scrape starts `metadata` empty, so region and save_type fell
         # through to a default ('USA') and a folder guess, and COALESCE then
-        # overwrote curated values. Both are DERIVED, not source-supplied, and
+        # overwrote curated values. These are DERIVED, not source-supplied, and
         # CLAUDE.md scopes the force-mode exception to "any field a source
         # actually provides" — so seed them from the existing row when no
         # source filled them. A source-supplied value still wins, because
-        # sources run before this block (Pass 59.22).
+        # sources run before this block (Pass 59.22). Ratings and controller too:
+        # cross-mapping, inference and the folder guess then have nothing to
+        # write over (PASS-59-214).
         if force_overwrite:
-            if not metadata['region']:
-                metadata['region'] = game.get('region') or None
-            if not metadata['save_type']:
-                metadata['save_type'] = game.get('save_type') or None
+            rating_columns = [RATING_SYSTEMS[k]['db_column'] for k in RATING_SYSTEM_KEYS]
+            for field in ('region', 'save_type', 'controller_support', *rating_columns):
+                if not metadata[field]:
+                    metadata[field] = game.get(field) or None
 
         # Pass 38.1 — region normalize extracted to _normalize_region.
         _normalize_region(metadata, result)
@@ -1652,11 +1660,6 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                 # No DB default exists — only clear generic values
                 pass
 
-        # Pass 38.1 — scrape-history build extracted to _build_scrape_history_json.
-        scrape_history_json = _build_scrape_history_json(
-            c, db_game_id, primary_source, metadata, result, force_overwrite
-        )
-
         # =============================================
         # NORMALIZE VALUES BEFORE SAVE
         # =============================================
@@ -1672,6 +1675,11 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
         canonicalize_metadata(metadata)
 
         _log_date_disagreement(metadata, game)
+
+        # After the steps above, so what they filled is credited (PASS-59-214).
+        scrape_history_json = _build_scrape_history_json(
+            c, db_game_id, primary_source, metadata, result, force_overwrite
+        )
 
         # =============================================
         # SAVE TO DATABASE

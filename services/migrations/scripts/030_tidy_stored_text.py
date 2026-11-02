@@ -9,7 +9,7 @@
 
 import json
 
-from services.migrations._helpers import _table_exists
+from services.migrations._helpers import _has_column, _table_exists
 
 _REGIONS = {'north america': 'USA'}
 
@@ -58,6 +58,8 @@ def apply(conn):
         'other_platforms': platforms,
     }
     for field, tidy in tidiers.items():
+        if not _has_column(cursor, 'games', field):
+            continue
         rows = cursor.execute(f"SELECT id, {field} FROM games "
                               f"WHERE {field} IS NOT NULL AND {field} != ''").fetchall()
         for game_id, value in rows:

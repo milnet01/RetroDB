@@ -112,8 +112,8 @@ def test_force_rescrape_seeds_derived_fields_from_the_row():
     values through COALESCE."""
     src = open('scraper/hybrid_scraper.py').read()
     block = src[src.index('if force_overwrite:'):]
-    assert "metadata['region'] = game.get('region')" in block
-    assert "metadata['save_type'] = game.get('save_type')" in block
+    assert "for field in ('region', 'save_type'," in block
+    assert 'metadata[field] = game.get(field) or None' in block
 
 
 # --------------------------------------------------------------------------

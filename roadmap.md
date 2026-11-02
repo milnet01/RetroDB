@@ -10408,7 +10408,9 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.214 Full Re-scrape and the second update path keep hand-set values (fix, M).
-- **Status**: todo
+- **Shipped** (2026-11-02, v3.35.2): reproduced on a throwaway library first: Full Re-scrape replaced a hand-set controller and guessed over ratings. Force mode now seeds `controller_support` and every rating from the row when no source filled them. Scrape history is built after the ratings and name steps, so cross-mapped and inferred values are credited, and the AI guess mark can now show on inferred ratings. Keep Media lists only screenshots whose file exists. An unexpected scrape failure now returns failure and writes nothing; the fallback to `apply_metadata_to_game` is gone. Closed: merge_and_stored 5, 22, 24; tgdb 11. merge_and_stored 6 and esde 4 were already closed by PASS-59-205.
+  - **Limits**: a scrape that hits an unexpected error now reports failure rather than saving a partial result. `game_metadata_service.apply_metadata_to_game` and the TheGamesDB and IGDB `apply_metadata_to_game` it dispatches to now have no caller; removing them, their tests and the `CLAUDE.md` wording belongs to PASS-59-219. Rows scraped before this keep their old history, so old inferred ratings stay unmarked.
+- **Status**: done
 - **Source**: PASS-59-162, 2026-10-31. Notes: merge_and_stored 5, 6, 22, 24; esde 4; tgdb 11. All from reading code; none run.
 - **Problem**: in force mode only `region` and `save_type` are protected, so a guessed controller or an inferred rating can replace a hand-set one. Full Re-scrape may delete box art it has just downloaded. TheGamesDB's `apply_metadata_to_game` can overwrite curated values and leaves no history.
 - **Fix**: first reproduce each on a scratch database, then seed these values from the row when no source filled them.
