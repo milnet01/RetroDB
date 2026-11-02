@@ -150,7 +150,7 @@ class AiFillBulkJob:
                 'skipped': self.skipped_count,
                 'current_game': self.current_title,
                 'system_name': self.system_name,
-                'return_url': '/tools/official-names',
+                'return_url': '/tools/ai-fill-bulk',
                 'error': self.error_message,
             }
 

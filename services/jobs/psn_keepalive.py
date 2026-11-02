@@ -8,8 +8,8 @@
 # This daily background task renews each user's sign-in as it nears expiry. Whether
 # that buys more time is Sony's call: on 2026-10-31 a renewal came back with about
 # 8 days left, not a fresh 2 months, so the sign-in may still end on its own date
-# (PASS-59-226). Renewing from a copy of the database uses up the live row's refresh
-# token: Sony then refuses it, and the row is marked expired.
+# (PASS-59-226). Renewing from a copy of the database can use up the live row's
+# refresh token: Sony then refuses it, and the row is marked expired.
 #
 # It NEVER pings Sony for a session that has already expired (the refresh would
 # fail and an NPSSO ping with a stale cookie is pointless / could flag the

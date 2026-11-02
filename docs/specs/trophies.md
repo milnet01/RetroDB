@@ -150,7 +150,10 @@ Also:
   current game for other users.
 - **PSN keep-alive** (`services/jobs/psn_keepalive.py`) refreshes a user's
   PSN session once a day when it expires within 14 days. It never falls back
-  to the NPSSO and skips sessions already expired.
+  to the NPSSO and skips sessions already expired. When Sony refuses the
+  refresh token, `create_psn_client` records the session as expired, which
+  raises the re-link notice and ends the retries. A server fault changes
+  nothing.
 - **Rate limits.** The PSN, Steam and Xbox bulk starts are limited to two an
   hour (`app.py`). The RA job starts are not rate-limited.
 - **Upstream pacing.** PSN bulk refresh waits 2.5 s per game, Steam 1 s,

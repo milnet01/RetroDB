@@ -1287,8 +1287,8 @@ def _official_title_context(game_id):
 
 
 def _official_title_rejected(game_id, title):
-    """True when the user rejected `title` for this game in Official Names
-    (PASS-59-159 INV-6: a rejected name is not proposed again)."""
+    """True when the user rejected `title` for this game in the old Official
+    Names tool, whose refusals still stand (PASS-59-159 INV-6)."""
     from services.database import get_db
     conn = get_db()
     try:
@@ -1519,36 +1519,10 @@ def summarize_version_differences(system_name, versions):
 
 
 # =============================================================================
-# OFFICIAL NAMES (PASS-59-159)
+# OFFICIAL TITLE (PASS-59-159)
 # =============================================================================
 
-OFFICIAL_NAMES_BATCH = 25
 _MAX_OFFICIAL_TITLE_LEN = 200
-
-
-def _build_official_names_prompt(system_name, games):
-    """Prompt asking for each game's official title in its ROM's region."""
-    from scraper.scrape_esde import extract_region_from_filename
-    lines = []
-    for i, g in enumerate(games):
-        rom_file = os.path.basename(g.get('rom_file') or '')
-        region = extract_region_from_filename(rom_file) or g.get('region') or 'unknown'
-        lines.append(f'{i}. title: "{_sanitize_prompt_input(g.get("title"))}"; '
-                     f'ROM file: "{_sanitize_prompt_input(rom_file)}"; '
-                     f'region: {_sanitize_prompt_input(region)}')
-
-    return f"""These are games on {_sanitize_prompt_input(system_name)}, each with its current title,
-its ROM file name and the region of that ROM:
-{chr(10).join(lines)}
-
-For each game give its full official title as released in that region,
-written in Latin script the way that region's own release writes it
-(a Japanese ROM of Mega Man is "Rockman"). Also say which region the
-CURRENT title belongs to: "USA", "Europe", "Japan" or "World", or null
-when you are not sure. If you do not know the official title, give null.
-
-Respond with a JSON object only, with one entry per game, in this shape:
-{{"games": [{{"i": 0, "official_title": "...", "old_title_region": "Japan"}}]}}"""
 
 
 def _clean_official_title(value):
@@ -1562,83 +1536,6 @@ def _clean_official_title(value):
         return None
     from scraper.metadata_normalizer import normalize_title
     return normalize_title(title)
-
-
-def _official_names_items(raw_text):
-    """The list of answer entries in an AI reply, or None.
-
-    The prompt asks for {"games": [...]}: OpenAI's JSON mode returns only
-    objects, so a bare array never arrived from it and every answer was
-    lost. A bare array, an object holding the list under another key, code
-    fences and prose around the JSON (Gemini's search grounding) are all
-    read too."""
-    decoder = json.JSONDecoder()
-    text = raw_text.strip()
-    for start in [0] + [m.start() for m in re.finditer(r'[\[{]', text)]:
-        try:
-            data, _end = decoder.raw_decode(text, start)
-        except json.JSONDecodeError:
-            continue
-        if isinstance(data, dict):
-            data = data.get('games', next(
-                (v for v in data.values() if isinstance(v, list)), None))
-        if isinstance(data, list) and any(isinstance(x, dict) for x in data):
-            return data
-    return None
-
-
-def _parse_official_names(raw_text, count):
-    """`count` answers, in input order, from an AI reply. Entries are paired
-    by their `i`, never by position; a bad entry leaves that game None."""
-    from scraper.metadata_normalizer import alt_title_region
-    empty = {'official_title': None, 'old_title_region': None}
-    answers = [dict(empty) for _ in range(count)]
-    if not raw_text:
-        return answers
-    items = _official_names_items(raw_text)
-    if items is None:
-        logger.warning(f"Official names: unreadable AI reply: {raw_text[:200]!r}")
-        return answers
-    for item in items:
-        if not isinstance(item, dict):
-            continue
-        i = item.get('i')
-        if not isinstance(i, int) or isinstance(i, bool) or not 0 <= i < count:
-            continue
-        title = _clean_official_title(item.get('official_title'))
-        if title is None:
-            continue
-        region = item.get('old_title_region')
-        code = alt_title_region(region)[0] if isinstance(region, str) else None
-        answers[i] = {'official_title': title, 'old_title_region': code}
-    return answers
-
-
-def propose_official_names(system_name, games):
-    """Ask the configured AI for each game's official name.
-
-    games: [{'title': str, 'rom_file': str, 'region': str|None}], at most
-    OFFICIAL_NAMES_BATCH. Returns one dict per input, same order:
-    {'official_title': str|None, 'old_title_region': str|None}.
-    Raises RuntimeError when no provider is set up or the call fails; the
-    caller decides whether to stop.
-    """
-    provider_config = _get_active_provider()
-    if not provider_config:
-        raise RuntimeError('No AI provider is configured')
-    call_fn = {'gemini': _call_gemini, 'openai': _call_openai,
-               'claude': _call_claude}.get(provider_config['provider'])
-    if not call_fn:
-        raise RuntimeError(f"Unknown AI provider '{provider_config['provider']}'")
-    kwargs = {}
-    if provider_config.get('project_id'):
-        kwargs['project_id'] = provider_config['project_id']
-    rate_limit(delay=1.0)
-    raw_text = call_fn(_build_official_names_prompt(system_name, games),
-                       provider_config['api_key'], provider_config['model'], **kwargs)
-    if not raw_text:
-        raise RuntimeError(f"No reply from {provider_config['provider']}")
-    return _parse_official_names(raw_text, len(games))
 
 
 def check_api_status():

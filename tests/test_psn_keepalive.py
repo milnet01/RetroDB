@@ -143,15 +143,15 @@ def test_refused_renewal_says_so_and_marks_the_session_expired(monkeypatch):
     import time
 
     import app as app_module
-    from routes.trophies import create_psn_client
+    import routes.trophies as trophies
     from services.jobs import psn_keepalive
 
     now = time.time()
     _seed_psn(7005, "npsso-refused", now + 5 * 86400)
-    sent = _sony_refuses(monkeypatch)
+    _sony_refuses(monkeypatch)
 
     with app_module.app.app_context():
-        _client, err = create_psn_client(
+        _client, err = trophies.create_psn_client(
             "npsso-refused", user_id=7005, allow_npsso_fallback=False,
         )
     assert "Invalid refresh token" in err
@@ -160,10 +160,14 @@ def test_refused_renewal_says_so_and_marks_the_session_expired(monkeypatch):
     assert _stored_expiry(7005) == 0
 
     # And the next tick leaves it alone instead of asking Sony again.
-    sent.clear()
+    pinged = []
+    monkeypatch.setattr(
+        trophies, "create_psn_client",
+        lambda *a, **k: pinged.append(k.get("user_id")) or (object(), None),
+    )
     with app_module.app.app_context():
         psn_keepalive.run_psn_keepalive()
-    assert sent == []
+    assert 7005 not in pinged
 
 
 def test_a_server_fault_does_not_end_the_session(monkeypatch):

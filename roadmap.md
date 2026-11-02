@@ -9551,6 +9551,11 @@ were corrected in `2836bc3` and are not repeated here.
   User chose: accepted AI names and hand-typed titles survive every
   scrape (a title lock); the AI tags the old title's region; a run
   covers one system or all, in the background, from the review page.
+- **Progress** (2026-11-02): Review run and page withdrawn (user, 2026-11-02): Bulk AI Fill's
+  Official name switch does this job. The title lock stays, and so does
+  the title_proposals table, whose rejected names still stand.
+  routes/official_names.py is now routes/ai_fill_bulk.py and the page is
+  /tools/ai-fill-bulk.
 
 ---
 
@@ -10570,6 +10575,17 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Where**: the cached-token block of `create_psn_client` in `routes/trophies.py`, which assigns `psnawp.authenticator.token_response`. Cause not traced; a change in the PSNAWP library is unchecked.
 - **Fix**: find what holds a string, and show the failure to the user. The same log line counts one row as already expired.
 - **Why soon**: once it expires, trophy sync needs a new sign-in. PASS-59-111's Sony walk may cover that, so do this first.
+
+---
+
+#### Pass 59.227 MAME games show their real names, and scrape by them, with the file names left alone (enhancement, M).
+- **Target**: `games.title` for the MAME system comes from MAME's own list: the set name (`dyger`) to its description (`Dyger (Korea set 1)`), year and manufacturer. `rom_path` never changes. Scrapers then search by the real name.
+- **Why**: 6,291 MAME rows are titled by short name and 2 are scraped (2026-11-02), so a scrape searches for `dyger` or `peps0275`. Hold them out of the bulk Fill Missing until this lands.
+- **Data** (MAME Curator session, measured 2026-11-02): the title from the 0.284 non-merged DAT, which holds all 6,291 zips; other fields from `listxml-0.287.xml`, joined by set name, which lacks 10 of them. Keep the full description, since 627 zips share a base title. A shipped feature needs the user to point at their own file; RetroDB cannot assume these paths.
+- **Sources**: arcadeDB is keyed by set name; libretro-thumbnails by description. ScreenScraper's romnom with a set's zip name is untested. Read each one's terms first.
+- **Open**: gambling, slot, handheld, computer, tabletop and board-game sets per catver.ini, and BIOS sets, are in the same folder. Whether they show is the user's call.
+- **Status**: todo. Lanes: scraper, services.
+- **Source**: user, 2026-11-02.
 
 ## Done index
 

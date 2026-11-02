@@ -627,7 +627,6 @@ class TestPass41_6AExtendSingletonLockOtherJobs:
         ('services.jobs.psn_refresh', 'PSNRefreshJob', 'psn_refresh'),
         ('services.jobs.platform_sync', 'SteamSyncJob', 'steam_sync'),
         ('services.jobs.platform_sync', 'XboxSyncJob', 'xbox_sync'),
-        ('services.jobs.official_names', 'OfficialNamesJob', 'official_names'),
         ('services.jobs.ss_region_repair', 'SsRegionRepairJob', 'ss_region_repair'),
     ]
 
@@ -707,7 +706,6 @@ class TestPass41_6AExtendSingletonLockOtherJobs:
             'PSNRefreshJob': lambda j: j.start(['NPWR0001'], 'fake-npsso', user_id=1),
             'SteamSyncJob': lambda j: j.start(user_id=1),
             'XboxSyncJob': lambda j: j.start(user_id=1),
-            'OfficialNamesJob': lambda j: j.start(),
             'SsRegionRepairJob': lambda j: j.start(),
         }
         monkeypatch.setattr(
