@@ -329,6 +329,7 @@ from routes.controllers import bp as controllers_bp
 from routes.bonus_discs import bp as bonus_discs_bp
 from routes.versions import bp as versions_bp
 from routes.ai_fill_bulk import bp as ai_fill_bulk_bp
+from routes.mame_names import bp as mame_names_bp
 from routes.settings import bp as settings_bp
 from routes.systems import bp as systems_bp
 from routes.games import bp as games_bp
@@ -358,6 +359,7 @@ app.register_blueprint(controllers_bp)
 app.register_blueprint(bonus_discs_bp)
 app.register_blueprint(versions_bp)
 app.register_blueprint(ai_fill_bulk_bp)
+app.register_blueprint(mame_names_bp)
 app.register_blueprint(settings_bp)
 app.register_blueprint(systems_bp)
 app.register_blueprint(games_bp)
@@ -1383,6 +1385,8 @@ def dashboard():
                 desc = "HLTB bulk lookup was interrupted" if has_progress else "HLTB bulk lookup was queued"
             elif jtype == 'alt_titles_backfill':
                 desc = "Alternate titles backfill was interrupted" if has_progress else "Alternate titles backfill was queued"
+            elif jtype == 'mame_names':
+                desc = "MAME Names was interrupted"
             elif jtype == 'ss_region_repair':
                 desc = "Box and manual region fix was interrupted"
             elif jtype == 'ai_fill_bulk':

@@ -1451,6 +1451,10 @@
         <p>Editors only. RetroDB suggests games that look like one game from different regions: the same IGDB or ScreenScraper game, the same title with a different region tag, or a regional name that matches. Untick any game that does not belong and click <strong>"Link ticked games"</strong>, or click <strong>"Not versions"</strong> so that group is never suggested again. Nothing is linked until you confirm it. Run <strong>Backfill Alternate Titles</strong> in Maintenance first: it fills the IGDB and ScreenScraper ids the suggestions use.</p>
         <p><em>No external dependencies</em></p>
 
+        <h3>MAME Names</h3>
+        <p>Admins only. MAME finds a game by its exact file name, so keep the short names, such as dyger.zip. Choose MAME's list (a DAT that matches your ROMs, or the output of <code>mame -listxml</code>) and press <strong>"Name MAME Games"</strong>. Each game gets its real name, year and maker, and the files are left alone. A title you changed yourself is kept. Add a <code>catver.ini</code> to filter the list by category. BIOS sets are hidden from the list but stay on disk, because other games need them. Scrape after this, so the scrapers can find each game.</p>
+        <p><em>Requires: a MAME list file</em></p>
+
         <h3>Bulk AI Fill</h3>
         <p>Editors only. Runs AI Fill on a whole system, for the fields you switch on (see AI Fill &rarr; Many Games at Once).</p>
         <p><em>Requires: an AI provider in <strong>Settings &rarr; Scraping</strong></em></p>

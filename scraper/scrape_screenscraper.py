@@ -16,6 +16,7 @@ import os
 import threading
 
 from services import rom_identity
+from services.game_utils import is_arcade_set
 
 from . import service_limits
 from .base_scraper import http_get, _http_session
@@ -906,6 +907,14 @@ def identify_by_file(rom_path, system_folder, serial, username, password,
         params.extend(search.items())
         return _jeu_from_reply(_ss_request_with_retry(GAME_INFO_URL, params, timeout=60))
 
+    if is_arcade_set(system_folder):
+        # A set is many files, so it has no one CRC; MAME's file names are its identity.
+        name = os.path.basename(rom_path or '')
+        record = ask(romnom=name, romtype='rom') if name else None
+        found = (record or {}).get('rom') or {}
+        if str(found.get('romfilename') or '').lower() == name.lower() and _is_a_game(record):
+            return {**record, '_matched_file': True}
+        return None
     identity = rom_identity.file_identity(rom_path)
     if identity:
         record = ask(romnom=identity['name'], romtaille=str(identity['size']),

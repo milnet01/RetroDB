@@ -51,6 +51,9 @@ class TestRouteRegistration:
         'maintenance.api_rawg_covers_preview': '/api/maintenance/rawg-covers/preview',
         'maintenance.api_rawg_covers_clear': '/api/maintenance/rawg-covers/clear',
         'maintenance.api_ss_region_repair_start': '/api/maintenance/ss-region-repair/start',
+        'mame_names.api_mame_names_start': '/api/mame-names/start',
+        'mame_names.api_mame_names_status': '/api/mame-names/status',
+        'mame_names.api_mame_names_cancel': '/api/mame-names/cancel',
         'maintenance.api_ss_region_repair_status': '/api/maintenance/ss-region-repair/status',
         'maintenance.api_ss_region_repair_cancel': '/api/maintenance/ss-region-repair/cancel',
         # Missing-media-ref sweep (Pass 54.1) — admin-guarded, and absent from

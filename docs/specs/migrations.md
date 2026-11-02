@@ -549,6 +549,7 @@ your migration — not in the runner.
 | 031 | `031_hltb_id_and_players.py` | Add `games.hltb_id`, `games.hltb_players` and `hltb_pending_matches.players` (PASS-59-216). |
 | 032 | `032_games_ra_copy_fits.py` | Add `games.ra_copy_fits` (PASS-59-217). |
 | 033 | `033_platform_play_time.py` | Add `platform_play_time`, the play time a service reports per user (PASS-59-218). |
+| 034 | `034_arcade_category.py` | Add `games.arcade_category` (TEXT): an arcade set's category, `BIOS` hiding it from game lists. | PASS-59-227 |
 
 ---
 

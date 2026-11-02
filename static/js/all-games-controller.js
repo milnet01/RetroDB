@@ -28,7 +28,7 @@ const AllGamesController = (function() {
 
     // PASS-53-11 — these filters hold a list of values (any of them
     // matches); MULTI_FILTER_FIELDS in services/game_query.py.
-    const MULTI_FIELDS = ['genre', 'franchise', 'developer', 'publisher', 'modes', 'perspective', 'dimension'];
+    const MULTI_FIELDS = ['genre', 'franchise', 'developer', 'publisher', 'modes', 'perspective', 'dimension', 'arcade_category'];
     const isMulti = type => MULTI_FIELDS.includes(type);
     // A filter value as a list; a single value saved by an older build
     // becomes a one-item list.
@@ -837,7 +837,7 @@ const AllGamesController = (function() {
             genre: t('Select Genre'), franchise: t('Select Series'),
             publisher: t('Select Publisher'), developer: t('Select Developer'),
             modes: t('Select Play Mode'), perspective: t('Select Perspective'),
-            dimension: t('Select Dimension'),
+            dimension: t('Select Dimension'), arcade_category: t('Select Category'),
             rating: t('Select Rating'), source: t('Select Source')
         };
         if (title) title.textContent = titles[filterType] || t('Select Filter');
@@ -1165,7 +1165,7 @@ const AllGamesController = (function() {
                 const icons = {
                     system: '&#128421;&#65039;', system_type: '&#128241;', genre: '&#127917;',
                     franchise: '&#128218;', publisher: '&#127970;', developer: '&#128104;&#8205;&#128187;',
-                    modes: '&#128101;', perspective: '&#128065;&#65039;', dimension: '&#128208;',
+                    modes: '&#128101;', perspective: '&#128065;&#65039;', dimension: '&#128208;', arcade_category: '&#128377;&#65039;',
                     rating: '&#11088;', source: '&#128203;',
                     search: '&#128269;', letter: '&#128289;'
                 };

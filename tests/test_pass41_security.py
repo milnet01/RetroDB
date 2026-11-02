@@ -628,6 +628,7 @@ class TestPass41_6AExtendSingletonLockOtherJobs:
         ('services.jobs.platform_sync', 'SteamSyncJob', 'steam_sync'),
         ('services.jobs.platform_sync', 'XboxSyncJob', 'xbox_sync'),
         ('services.jobs.ss_region_repair', 'SsRegionRepairJob', 'ss_region_repair'),
+        ('services.jobs.mame_names', 'MameNamesJob', 'mame_names'),
     ]
 
     def test_each_job_has_singleton_fd_attribute(self):
@@ -707,6 +708,7 @@ class TestPass41_6AExtendSingletonLockOtherJobs:
             'SteamSyncJob': lambda j: j.start(user_id=1),
             'XboxSyncJob': lambda j: j.start(user_id=1),
             'SsRegionRepairJob': lambda j: j.start(),
+            'MameNamesJob': lambda j: j.start([]),
         }
         monkeypatch.setattr(
             'services.jobs.ss_region_repair.load_scraper_settings',

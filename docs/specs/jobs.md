@@ -45,6 +45,7 @@ can be resumed (or surfaced) on the next start.
 | `museum_images.py` | `MuseumImageFetchJob` | `museum_images_job` | Fetches missing controller images for one system's Museum page (search, download, background removal). Not persisted. |
 | `player_cores.py` | `PlayerCoresJob` | `player_cores_job` | Downloads the bundled player's cores and the shader pack, from Play or Settings > Emulators (PASS-59-81 §4.4). A request for a queued core joins it. Not persisted. |
 | `ss_region_repair.py` | `SsRegionRepairJob` | `ss_region_repair_job` | ROM Tools > Fix Box and Manual Regions: looks up games holding a box, 3D box or manual an old scrape named `<id>_ss_boxart.*`, `<id>_ss_boxart3d.*` or `<id>_ss_manual.*`, and swaps a file only where `ss_regions.by_region` no longer chooses the first listed entry, which is what the old scrape took (PASS-59-202). A swapped name gains its region, which also marks it done, and the old file goes last. Stops when ScreenScraper says its daily limit is reached (`scrapers.md` §10). Its status reply is flat, read by its Tools card. Not resumable; a later run skips what is done. |
+| `mame_names.py` | `MameNamesJob` | `mame_names_job` | Reads the MAME lists the user chose and gives each game in an arcade folder its real name, year, maker and category (PASS-59-227). |
 | `ai_fill_bulk.py` | `AiFillBulkJob` | `ai_fill_bulk_job` | ROM Tools > Bulk AI Fill: runs `services/ai_fill.fill_game` on every game of one system or all systems that has a switched-on field (`ai_fill.FIELD_GROUPS`) empty, writing only those fields. Resumable, with its switches: a restarted run skips games whose scrape history has an `ai_fill` entry, unless `include_done` is set. Its status reply is flat, for the AI Fill toast. Stops after `MAX_FAILURES_IN_A_ROW` games in a row get no answer. |
 | `webp_migrate.py` | `WebPMigrateJob` | `webp_migrate_job` | Bulk JPEG/PNG → WebP format migration for boxart / boxart_3d / fanart / screenshots (FU.3, v3.6.19). |
 
@@ -197,6 +198,7 @@ Lock-name → DB column-name mapping (used in routes / `request_shutdown`):
 | `alt_titles_backfill.lock` | `alt_titles_backfill_job` |
 | `hltb_bulk.lock` | `hltb_bulk_job` |
 | `ss_region_repair.lock` | `ss_region_repair_job` |
+| `mame_names.lock` | `mame_names_job` |
 | `museum_images.lock` | `museum_images_job` |
 | `player_cores.lock` | `player_cores_job` |
 | `ai_fill_bulk.lock` | `ai_fill_bulk_job` |
@@ -299,7 +301,7 @@ two-zone progress layout and the toast detail-line table.
    `museum_generate_job`, `image_resize_job`, `steam_sync_job`,
    `xbox_sync_job`, `alt_titles_backfill_job`, `hltb_bulk_job`,
    `museum_images_job`, `ai_fill_bulk_job`,
-   `ss_region_repair_job`. **Note:**
+   `ss_region_repair_job`, `mame_names_job`. **Note:**
    `webp_migrate_job` is intentionally absent today — SIGTERM mid-WebP
    migration leaves the row `running` until `mark_jobs_interrupted` flips
    it on next start, then the user re-runs the job from the top

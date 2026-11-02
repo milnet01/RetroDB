@@ -1162,6 +1162,20 @@ def parse_dump_tags(rom_path):
     return tags
 
 
+# Folders of arcade sets. MAME finds each set by its exact file name, and a name
+# like `dyger` tells a search nothing (PASS-59-227).
+ARCADE_SET_FOLDERS = ('mame', 'mame-advmame', 'fbneo', 'fba', 'arcade', 'neogeo')
+
+
+def is_arcade_set(system_folder):
+    return (system_folder or '').lower() in ARCADE_SET_FOLDERS
+
+
+def arcade_search_title(title):
+    """A MAME title without its brackets: `Dyger (Korea set 1)` searches as `Dyger`."""
+    return re.sub(r'\s*[\(\[][^)\]]*[\)\]]', '', title or '').strip() or title
+
+
 def derive_title_from_filename(rom_path, is_computer_system=False):
     """
     Convert a ROM filename back to a proper game title following naming standards.

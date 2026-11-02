@@ -8433,6 +8433,14 @@ were corrected in `2836bc3` and are not repeated here.
   10. Release v4.0.0, then PASS-59-112.
 - **Status**: todo. Lanes: release.
 - **Source**: user, 2026-10-17.
+- **Progress** (2026-11-02): Xbox held (user, 2026-11-02): the Azure portal refuses a personal
+  account with "The ability to create applications outside of a
+  directory has been deprecated". A directory needs an Azure sign-up or
+  the M365 Developer Program, and a February 2026 Microsoft Q&A reply
+  says XboxLive.signin needs Xbox developer enrolment; a hobby plugin
+  guide says otherwise. Nothing tested. So PASS-59-162's findings X1 to
+  X7 stay unconfirmed, and Xbox goes out with v4.0.0 untested. Settings
+  now says this.
 
 ---
 

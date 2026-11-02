@@ -156,6 +156,8 @@ WHERE id = ?
 
 The hybrid orchestrator's UPDATE (`hybrid_scraper.py::_save_game_row`) is the same pattern across its columns.
 
+**Arcade sets** (PASS-59-227). In `services.game_utils.ARCADE_SET_FOLDERS` a file name is MAME's identity for a game. ROM Tools > MAME Names (`services/mame_names.py`) sets the title from MAME's list and locks it. A bulk scrape then searches by that title without its brackets, not by the file name. ScreenScraper's `identify_by_file` sends the zip's name as `romnom` and accepts a reply only if `romfilename` matches. ROM Reports will not rename these files.
+
 **Title lock** (PASS-59-159 §4.3). `games.title_locked = 1` means no scraper writes `title` or `sort_title`, in normal or Full Re-scrape mode. Both sites above write `title` as `CASE WHEN title_locked = 1 THEN title ELSE COALESCE(?, title) END`; `_save_game_row` writes `sort_title` the same way. Scrapers still search with a locked title. The edit windows set the lock when a title is changed, and their "Keep this title when scraping" tick box sets or clears it; the per-game Reset clears it. `tests/test_official_names.py` pins it.
 
 **Exception:** Full Re-scrape mode in `hybrid_scraper` (`force_overwrite=True`) intentionally bypasses fill-only — the user opted in. ES-DE in this mode deletes old box art only once it has copied a replacement.

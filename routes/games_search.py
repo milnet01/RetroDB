@@ -60,6 +60,10 @@ def api_search_games():
     if len(clean_title) < 2:
         clean_title = title
 
+    from services.game_utils import arcade_search_title, is_arcade_set
+    if is_arcade_set(folder):
+        clean_title = arcade_search_title(clean_title)
+
     results = search_games(clean_title, system, system_folder=folder, limit=15)
 
     rom_path = request.args.get('rom_path', '')

@@ -103,6 +103,7 @@ has seen the raw output. Triage into new roadmap passes after.
 - When a system has curated default controllers in the DB, they always override scraped/AI controller values.
 - `units_sold` (INTEGER, migration 023) is filled only by the AI — scrape gap-fill and AI Fill; `scrape_ai.parse_units_sold()` turns "2.4 million" etc. into an int.
 - `release_dates` (TEXT, migration 024) is a JSON object of region code → date (`{"JP": "2002-11-17", "NA": "2002-11"}`), filled by IGDB and ScreenScraper, then the AI. `services/release_dates.py` parses, stores and displays it; `release_date` stays the row's own release, and holds only as much of a date as its source knows (`docs/specs/scrapers.md` "How exact a date is", PASS-59-207).
+- Arcade sets (PASS-59-227): a file in `ARCADE_SET_FOLDERS` keeps its name, because MAME finds a game by it. `games.arcade_category` holds the catver.ini top level; `BIOS` hides a row from game lists until asked for.
 - RPCS3 compatibility (PS3) is never stored: `services/rpcs3_compat.py` reads the local RPCS3's `GuiConfigs/compat_database.dat` (re-read when it changes) and looks games up by `games.disc_serial`. Local ROMs only, never imported games.
 - Regional versions (PASS-59-106): only `services/version_groups.py` links rows through `games.version_group_id`. `_build_games_query` shows one row per group unless `group_versions=False`. Contract: `docs/specs/PASS-59-106-regional-versions.md`.
 

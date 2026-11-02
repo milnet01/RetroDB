@@ -17,7 +17,7 @@ import config
 
 # Import services layer
 from services.database import query, execute
-from services.game_utils import get_system_type, build_filename
+from services.game_utils import ARCADE_SET_FOLDERS, get_system_type, build_filename, is_arcade_set
 from services.api_helpers import handle_api_errors, success, error
 from services.auth import login_required, editor_required
 from services.rom_scanner import rom_type_problem
@@ -92,7 +92,8 @@ def api_reports_naming_check():
         LEFT JOIN systems s ON g.system_id = s.id
         WHERE g.rom_path IS NOT NULL AND g.rom_path != ''
           AND g.rom_path NOT LIKE '%_import/%'
-    """)
+          AND COALESCE(s.folder, '') NOT IN ({})
+    """.format(','.join('?' * len(ARCADE_SET_FOLDERS))), ARCADE_SET_FOLDERS)
     
     # Read once, not once per game.
     article_placement = settings_manager.get_setting('article_placement', 'beginning')
@@ -688,9 +689,13 @@ def api_reports_rename_rom():
         return error(_('Invalid filename'), 400)
 
     # Get game info
-    game = query("SELECT rom_path FROM games WHERE id = ?", (game_id,), one=True)
+    game = query("""SELECT g.rom_path, s.folder AS system FROM games g
+                     LEFT JOIN systems s ON g.system_id = s.id WHERE g.id = ?""",
+                 (game_id,), one=True)
     if not game:
         return error(_('Game not found'), 404)
+    if is_arcade_set(game['system']):
+        return error(_('MAME finds a game by its file name, so this file cannot be renamed.'), 400)
 
     old_path = game['rom_path']
     if not old_path:
@@ -820,6 +825,8 @@ def api_reports_rename_to_scraped():
     """, (game_id,), one=True)
     if not game:
         return error(_('Game not found'), 404)
+    if is_arcade_set(game['system']):
+        return error(_('MAME finds a game by its file name, so this file cannot be renamed.'), 400)
 
     old_path = game['rom_path']
     if not old_path:

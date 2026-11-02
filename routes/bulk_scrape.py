@@ -13,7 +13,7 @@ import logging
 
 from services.database import query
 from services.jobs import bulk_scrape_job
-from services.game_utils import derive_title_from_filename, get_system_type
+from services.game_utils import arcade_search_title, derive_title_from_filename, get_system_type, is_arcade_set
 from services.auth import login_required, editor_required
 from services.api_helpers import handle_api_errors, success, error
 
@@ -53,7 +53,9 @@ def api_bulk_scrape():
 
     # Derive search title from ROM FILENAME, not database title
     is_computer_system = get_system_type(game['system_folder']) == 'computer'
-    if game.get('rom_path'):
+    if is_arcade_set(game['system_folder']):
+        search_title = arcade_search_title(game['title'])
+    elif game.get('rom_path'):
         search_title = derive_title_from_filename(game['rom_path'], is_computer_system)
         logger.info(f"Derived search title from filename: '{search_title}' (from: {os.path.basename(game['rom_path'])})")
     else:

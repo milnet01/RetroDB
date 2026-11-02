@@ -64,6 +64,7 @@ _MIGRATION_SCRIPTS = [
     'services.migrations.scripts.031_hltb_id_and_players',
     'services.migrations.scripts.032_games_ra_copy_fits',
     'services.migrations.scripts.033_platform_play_time',
+    'services.migrations.scripts.034_arcade_category',
 ]
 
 # Some pip packages have their own runtime imports that PyInstaller's

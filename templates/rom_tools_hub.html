@@ -333,6 +333,21 @@
         </div>
     </button>
 
+    {% if current_user and current_user.role == 'admin' %}
+    <a href="{{ url_for('mame_names.mame_names_page') }}" class="tool-card">
+        <div class="tool-card-header">
+            <div class="tool-card-icon">🕹️</div>
+            <div class="tool-card-title">{{ _('MAME Names') }}</div>
+        </div>
+        <div class="tool-card-desc">
+            {{ _("Gives MAME games their real names, years and makers from MAME's own list, and leaves the files alone.") }}
+        </div>
+        <div class="tool-card-status">
+            <span class="status-dot no-deps"></span> {{ _('Needs a MAME list file') }}
+        </div>
+    </a>
+    {% endif %}
+
     <button type="button" class="tool-card" data-on-click="fixReleaseDates">
         <div class="tool-card-header">
             <div class="tool-card-icon">&#128197;</div>

@@ -727,7 +727,7 @@ class BulkScrapeJob:
         """Background thread that runs the actual scraping"""
         from scraper.scraper_manager import scraper_manager, load_scraper_settings, get_match_settings, passes_match_filter
         from services.game_metadata_service import apply_hybrid_metadata_to_game
-        from services.game_utils import derive_title_from_filename, get_system_type
+        from services.game_utils import arcade_search_title, is_arcade_set, derive_title_from_filename, get_system_type
 
         # Snapshot immutable job parameters at thread start — prevents corruption
         # if self is modified before this thread begins executing
@@ -922,7 +922,10 @@ class BulkScrapeJob:
                     # title would otherwise be re-confirmed on every re-scrape.
                     rom_path = game_dict.get('rom_path', '')
                     search_title = title
-                    if rom_path:
+                    if is_arcade_set(system_folder):
+                        # An arcade file name says nothing; its title is MAME's own.
+                        search_title = arcade_search_title(title)
+                    elif rom_path:
                         search_title = derive_title_from_filename(
                             rom_path, get_system_type(system_folder) == 'computer')
                     logger.info(f"Scraping: {search_title} for {system_name}")

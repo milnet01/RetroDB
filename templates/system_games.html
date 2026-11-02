@@ -80,6 +80,11 @@
         <button type="button" class="filter-btn" data-on-click="openFilterModal" data-args='["dimension"]'>
             <span class="filter-icon">📐</span> {{ _('Dimension') }}
         </button>
+        {% if filter_options.arcade_category %}
+        <button type="button" class="filter-btn" data-on-click="openFilterModal" data-args='["arcade_category"]'>
+            <span class="filter-icon">🕹️</span> {{ _('Category') }}
+        </button>
+        {% endif %}
         <button type="button" class="filter-btn" data-on-click="openFilterModal" data-args='["rating"]'>
             <span class="filter-icon">⭐</span> {{ _('Rating') }}
         </button>
