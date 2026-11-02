@@ -10383,6 +10383,9 @@ the cover zoom in Firefox before being reverted for the local fix.
   declined, and no repair button clears stored ones. The answer named
   ratings; scores are treated the same way (kept, marked as AI, checked
   for scale and pairing), which is this session's reading.
+- **Confirmed** (user, 2026-11-02): AI renames stay immediate, so A14
+  is closed as decided. AI scores stay kept and marked, including stored
+  scores of 10 or under.
 
 ---
 
@@ -10418,7 +10421,9 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.215 RetroDB keeps to each service's limits and stops when told to (fix, M).
-- **Status**: todo
+- **Shipped** (2026-11-02, v3.35.3): `scraper/service_limits.py` holds each service's pace and stop; `docs/specs/scrapers.md` §10 has the table. Bulk scrape, HowLongToBeat and Fix Box and Manual Regions report `service_stops`; the 25-silent-searches stop is gone. Live, 2026-11-02: TheGamesDB's free check gave the public key 296 left, refresh in about 12 days, and the private key 0 with a timer of 0. ScreenScraper's reply gave maxthreads 1, 3,072 a minute, 50,000 a day.
+  - **Limits**: no real 430, 431, or RAWG limit reply has been seen; those paths are tested on the documented or expected shapes. Whether `/v1/API/Limit` is truly free is the documentation's word: only one call was made. The key test still calls `/v1/Platforms`. A stop is in memory, so a restart asks once more. Media downloads are not paced or stopped. A dead ScreenScraper no longer ends Fix Box and Manual Regions early; each game waits out its timeouts until cancelled. A single-game search shows no message when a source is stopped. Finding tgdb 12's extra `ByGameID` call per game is not removed. The HowLongToBeat job has no live progress, so its stop shows as a toast when ROM Tools next opens. HowLongToBeat's terms are still unread.
+- **Status**: done
 - **Source**: PASS-59-162, 2026-10-31. Notes: screenscraper Terms; tgdb 12, 16; rawg 14, Terms; igdb Terms, F12; hltb_ra Terms.
 - **Problem**: ScreenScraper's docs require quota handling, and its 430 and 431 replies look like not found, so bulk runs keep calling. TheGamesDB has no stop at zero allowance and its status check spends paid calls when `/v1/API/Limit` is free. RAWG's monthly limit is untracked. IGDB has no throttle for its limit of 4 requests a second. The HowLongToBeat bulk job has no delay.
 - **Fix**: a quota-exhausted result distinct from not found, a stop for that source in the job with a clear message, and a shared per-source pace.

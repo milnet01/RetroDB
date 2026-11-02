@@ -15,6 +15,7 @@ import time
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import IMAGE_PATH
 
+from scraper import service_limits
 from scraper.base_scraper import http_get, get_scraper_conn, download_image
 import config as _config
 from services.release_dates import source_date
@@ -57,13 +58,30 @@ def get_api_keys():
     return (public_key, private_key)
 
 
+# A key's limit is a monthly one. Its refresh timer says when it ends, and when
+# it says nothing a spent or refused key is asked about again after this long.
+_KEY_RECHECK_SECONDS = 86400
+
+
+def _key_stop_name(key_type):
+    return f'{service_limits.THEGAMESDB}:{key_type}'
+
+
+def _key_spent(key_type, seconds, reason, keys_to_try):
+    """Pass over this key for a while, and stop the service once none is left."""
+    service_limits.stop(_key_stop_name(key_type), seconds, reason)
+    stops = [service_limits.stopped(_key_stop_name(name)) for name, _key in keys_to_try]
+    if all(stops):
+        soonest = min(entry['until'] for entry in stops)
+        service_limits.stop(service_limits.THEGAMESDB, soonest - time.time(), reason)
+
+
 def _tgdb_request(url, params=None, timeout=30):
     """Make a TGDB API request with public key first, falling back to private key.
 
-    Replaces the 'apikey' param with the public key, makes the request.
-    If 403, retries with the private key.
-    Tracks API allowance from response headers.
-    Returns the requests.Response object, or None on total failure.
+    A key passes to the next on 403 or 429, or once a reply shows it spent.
+    Tracks API allowance from each reply (PASS-59-215).
+    Returns the requests.Response object, or None on total failure or a stop.
     """
     global _allowance_info
 
@@ -83,7 +101,12 @@ def _tgdb_request(url, params=None, timeout=30):
         logger.error("No TGDB API keys configured")
         return None
 
+    if service_limits.stopped(service_limits.THEGAMESDB):
+        return None
+
     for key_type, key in keys_to_try:
+        if service_limits.stopped(_key_stop_name(key_type)):
+            continue
         params['apikey'] = key
         response = http_get(url, params=params, timeout=timeout, retries=2, max_bytes=_TGDB_MAX_BYTES)
 
@@ -108,11 +131,16 @@ def _tgdb_request(url, params=None, timeout=30):
                             logger.warning(f"TGDB API allowance low: {remaining} remaining (+{extra or 0} extra)")
                         else:
                             logger.debug(f"TGDB API allowance: {remaining} remaining (+{extra or 0} extra)")
+                        if remaining + (extra or 0) <= 0:
+                            _key_spent(key_type,
+                                       int(data.get('allowance_refresh_timer') or _KEY_RECHECK_SECONDS),
+                                       service_limits.LIMIT_REACHED, keys_to_try)
             except Exception:
                 pass
             return response
-        elif response.status_code == 403:
-            logger.warning(f"TGDB {key_type} key returned 403, trying next key...")
+        elif response.status_code in (403, 429):
+            logger.warning(f"TGDB {key_type} key returned {response.status_code}, trying next key...")
+            _key_spent(key_type, _KEY_RECHECK_SECONDS, service_limits.KEY_REFUSED, keys_to_try)
             continue
         else:
             logger.warning(f"TGDB API returned status {response.status_code} with {key_type} key")

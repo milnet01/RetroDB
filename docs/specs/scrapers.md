@@ -259,6 +259,20 @@ Hand-off points:
 
 `scraper/base_scraper.py` is the only sanctioned HTTP layer for the `scraper/` package. Every adapter (TGDB, IGDB, RAWG, ScreenScraper, AI, RA, Steam, Xbox) goes through it (Pass 41.5 / 41.5.B closed most carry-overs; Xbox followed in Pass 59.26). The key and status probes in `routes/scraper.py` (`api_check_scraper`, `api_scraper_allowance`) call `requests` directly and are outside this contract: a probe must not wait out a 429 backoff.
 
+`scraper/service_limits.py` (PASS-59-215) sets the gap between calls to each service and holds each service's stop. A stopped service's sender returns its usual nothing without calling, and a caller that must tell "no answer" from "no such game" asks `stopped()`. A stop lives in memory: a restart forgets it, and saving API keys clears it.
+
+| Service | Gap between calls | Stops when | For |
+|---|---|---|---|
+| ScreenScraper | The reply's `maxrequestspermin`; doubled on a 429. One call at a time, for `maxthreads` | A 430 or 431, a reply in words naming a quota, or a reply at its daily limit | One hour: the service does not say when its day ends |
+| TheGamesDB | None; the limit is monthly | A reply shows a key spent, or a 403 or 429: that key is passed over. All keys passed over stops the service | The reply's refresh timer, or one day |
+| RAWG | 0.3 s | A 401, 403 or 429 naming a limit, or `X-RateLimit-Remaining` at zero | One day |
+| IGDB | 0.26 s: its limit is 4 a second | Never; a 429 raises, as other errors do | - |
+| HowLongToBeat | 1 s, token requests included | A 429 after `http_post`'s retries | 15 minutes |
+
+A bulk scrape carries on with its other sources and leaves a game found nowhere unstamped, so a later run asks again. HowLongToBeat's and Fix Box and Manual Regions' jobs end. Each status reply has `service_stops`, sentences from `services/service_stop_text.py`. Media downloads are not paced or stopped.
+
+The Settings allowance check calls TheGamesDB's `/v1/API/Limit`, which its documentation says does not count. The key test still calls `/v1/Platforms`: how `/v1/API/Limit` answers a bad key has not been seen.
+
 `http_get(url, params=None, headers=None, timeout=30, retries=2, max_bytes=None)` and `http_post(url, data=None, json_data=None, headers=None, timeout=30, retries=2, max_bytes=None)`:
 
 - Shared `requests.Session` for connection pooling.

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-02 08:02+0200\n"
+"POT-Creation-Date: 2026-11-02 10:05+0200\n"
 "PO-Revision-Date: 2026-07-01 09:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hans\n"
@@ -55,7 +55,7 @@ msgid "System not found or has no achievement games"
 msgstr "未找到系统，或该系统没有包含成就的游戏"
 
 #: routes/achievements.py:172 routes/achievements.py:482
-#: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/cheats.py:32
+#: routes/bonus_discs.py:265 routes/bulk_scrape.py:48 routes/cheats.py:32
 #: routes/cheats.py:51 routes/collections.py:276 routes/collections.py:531
 #: routes/emulators.py:304 routes/emulators.py:318 routes/games.py:394
 #: routes/games.py:901 routes/games.py:1028 routes/games.py:1095
@@ -242,8 +242,8 @@ msgstr "附赠光盘与主游戏必须属于同一系统"
 #: routes/games.py:1387 routes/platform_import.py:297
 #: routes/platform_import.py:667 routes/platform_import.py:1032
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
-#: routes/scrape_logs.py:219 routes/scraper.py:203 routes/scraper.py:531
-#: routes/scraper.py:932 routes/settings.py:320 routes/settings.py:344
+#: routes/scrape_logs.py:219 routes/scraper.py:204 routes/scraper.py:535
+#: routes/scraper.py:926 routes/settings.py:320 routes/settings.py:344
 #: routes/settings.py:459 routes/settings.py:538 routes/settings.py:567
 #: routes/settings.py:611 routes/settings.py:627 routes/settings.py:663
 #: routes/steam_achievements.py:138 routes/systems.py:292 routes/systems.py:482
@@ -269,19 +269,19 @@ msgstr "缺少 bonus_id 或 parent_id"
 msgid "Missing game_id"
 msgstr "缺少 game_id"
 
-#: routes/bulk_scrape.py:35
+#: routes/bulk_scrape.py:37
 msgid "No game ID provided"
 msgstr "未提供游戏 ID"
 
-#: routes/bulk_scrape.py:142
+#: routes/bulk_scrape.py:144
 msgid "Failed to apply metadata"
 msgstr "应用元数据失败"
 
-#: routes/bulk_scrape.py:144
+#: routes/bulk_scrape.py:146
 msgid "No matches found"
 msgstr "未找到匹配项"
 
-#: routes/bulk_scrape.py:163
+#: routes/bulk_scrape.py:165
 msgid "No game IDs provided"
 msgstr "未提供游戏 ID"
 
@@ -700,19 +700,19 @@ msgstr ""
 msgid "Next disk inserted"
 msgstr "已插入下一张光盘"
 
-#: routes/maintenance.py:272
+#: routes/maintenance.py:274
 msgid "Unknown image type"
 msgstr "未知的图片类型"
 
-#: routes/maintenance.py:485
+#: routes/maintenance.py:487
 msgid "Add your ScreenScraper account in Settings first."
 msgstr "请先在设置中添加你的 ScreenScraper 账户。"
 
-#: routes/maintenance.py:486
+#: routes/maintenance.py:488
 msgid "This fix is already running."
 msgstr "此修复已在运行。"
 
-#: routes/museum.py:385 routes/scraper.py:773
+#: routes/museum.py:385 routes/scraper.py:767
 msgid "No AI provider configured"
 msgstr "未配置 AI 提供方"
 
@@ -1086,78 +1086,78 @@ msgstr "未找到文件"
 msgid "Log file not found"
 msgstr "未找到日志文件"
 
-#: routes/scraper.py:218
+#: routes/scraper.py:219
 #, python-format
 msgid "invalid scraper settings: %(reason)s"
 msgstr "抓取器设置无效：%(reason)s"
 
-#: routes/scraper.py:279
+#: routes/scraper.py:280
 #, python-format
 msgid "invalid api keys: %(reason)s"
 msgstr "API 密钥无效：%(reason)s"
 
-#: routes/scraper.py:551
+#: routes/scraper.py:555
 msgid "No TGDB API key configured"
 msgstr "尚未配置 TGDB API 密钥"
 
-#: routes/scraper.py:658
+#: routes/scraper.py:652
 msgid "No ScreenScraper credentials configured"
 msgstr "尚未配置 ScreenScraper 凭据"
 
-#: routes/scraper.py:694
+#: routes/scraper.py:688
 msgid "Invalid JSON response from ScreenScraper"
 msgstr "ScreenScraper 返回的 JSON 响应无效"
 
-#: routes/scraper.py:697
+#: routes/scraper.py:691
 msgid "Error parsing API response"
 msgstr "解析 API 响应时出错"
 
-#: routes/scraper.py:699
+#: routes/scraper.py:693
 #, python-format
 msgid "ScreenScraper answered HTTP %(code)s"
 msgstr "ScreenScraper 返回了 HTTP %(code)s"
 
-#: routes/scraper.py:714
+#: routes/scraper.py:708
 msgid "No RAWG API key configured"
 msgstr "未配置 RAWG API 密钥"
 
-#: routes/scraper.py:819
+#: routes/scraper.py:813
 #, python-format
 msgid "Unknown AI provider: %(provider)s"
 msgstr "未知的 AI 提供方：%(provider)s"
 
-#: routes/scraper.py:822
+#: routes/scraper.py:816
 msgid "No response from AI provider"
 msgstr "AI 提供方无响应"
 
-#: routes/scraper.py:827 routes/scraper.py:828
+#: routes/scraper.py:821 routes/scraper.py:822
 #, python-format
 msgid "%(provider)s refused the API key. Check the key and save it again."
 msgstr "%(provider)s 拒绝了该 API 密钥。请检查密钥并重新保存。"
 
-#: routes/scraper.py:829
+#: routes/scraper.py:823
 #, python-format
 msgid "%(provider)s wants payment: the account has no credit or billing is off."
 msgstr "%(provider)s 要求付款：账户没有余额，或已关闭计费。"
 
-#: routes/scraper.py:830
+#: routes/scraper.py:824
 #, python-format
 msgid ""
 "%(provider)s says a usage limit is reached. Try again later or check your"
 " plan."
 msgstr "%(provider)s 表示已达到使用上限。请稍后再试，或检查您的套餐。"
 
-#: routes/scraper.py:832
+#: routes/scraper.py:826
 #, python-format
 msgid "%(provider)s answered with error %(code)s."
 msgstr "%(provider)s 返回错误 %(code)s。"
 
-#: routes/scraper.py:925
+#: routes/scraper.py:919
 #, python-format
 msgid "Connection error: %(error)s"
 msgstr "连接错误：%(error)s"
 
-#: routes/scraper.py:928
+#: routes/scraper.py:922
 #, python-format
 msgid "Allowance check not supported for %(scraper)s"
 msgstr "%(scraper)s 不支持配额检查"
@@ -4318,6 +4318,20 @@ msgstr "请输入你的 RetroAchievements 用户名和密码。"
 #: services/ra_sign_in.py:94
 msgid "Sign in to RetroAchievements first."
 msgstr "请先登录 RetroAchievements。"
+
+#: services/service_stop_text.py:22
+#, python-format
+msgid ""
+"%(service)s refused every saved key, which usually means their limit is "
+"reached. RetroDB will not ask it again until %(when)s."
+msgstr ""
+
+#: services/service_stop_text.py:26
+#, python-format
+msgid ""
+"%(service)s says its limit is reached. RetroDB will not ask it again "
+"until %(when)s."
+msgstr ""
 
 #: services/standalone_settings.py:310
 msgid ""
@@ -8765,7 +8779,7 @@ msgstr ""
 msgid "Needs a ScreenScraper account"
 msgstr "需要 ScreenScraper 账户"
 
-#: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:507
+#: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:509
 msgid "Fix Regions from File Names"
 msgstr "根据文件名修复地区"
 
@@ -8776,7 +8790,7 @@ msgid ""
 " their file name."
 msgstr "AI 以前即使文件名已写明,也会猜测游戏的地区,导致 (USA) 文件被列为日本。此功能会为这些游戏设置文件名中的地区。"
 
-#: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:541
+#: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:543
 msgid "Tidy Genres, Perspectives and Modes"
 msgstr "整理类型、视角和模式"
 
@@ -8789,7 +8803,7 @@ msgstr ""
 "不同来源对同一事物的叫法不同,所以同一个类型可能同时显示为 RPG 和 Role Playing "
 "Game,导致筛选时漏掉一些游戏。此操作会让每个游戏使用统一的名称。"
 
-#: templates/rom_tools_hub.html:339 templates/rom_tools_hub.html:575
+#: templates/rom_tools_hub.html:339 templates/rom_tools_hub.html:577
 msgid "Tidy Release Dates"
 msgstr "整理发行日期"
 
@@ -8802,7 +8816,7 @@ msgstr ""
 "旧版抓取会把只知道年份的日期存成 1 月 1 日或 12 月 31 "
 "日,好像具体日期是已知的一样。此操作会把这些日期还原为只保留年份或月份,以便重新抓取时填入真实日期。"
 
-#: templates/rom_tools_hub.html:352 templates/rom_tools_hub.html:609
+#: templates/rom_tools_hub.html:352 templates/rom_tools_hub.html:611
 msgid "Check Saved Play Times"
 msgstr "检查已保存的游玩时间"
 
@@ -8813,7 +8827,7 @@ msgid ""
 "review page, where you keep or clear each one."
 msgstr "旧版查询可能会保存续作的游玩时间,或其他系统上同名游戏的游玩时间。此操作会将这些匹配发送到审核页面,由你逐个选择保留或清除。"
 
-#: templates/rom_tools_hub.html:365 templates/rom_tools_hub.html:643
+#: templates/rom_tools_hub.html:365 templates/rom_tools_hub.html:645
 msgid "Clear RAWG Pictures from Box Art"
 msgstr "清除包装封面中的 RAWG 图片"
 
@@ -8889,7 +8903,7 @@ msgid ""
 "carries on with the rest."
 msgstr "要停止修复吗?已替换的文件会保持不变,之后再运行会继续处理剩余部分。"
 
-#: templates/rom_tools_hub.html:452
+#: templates/rom_tools_hub.html:452 templates/rom_tools_hub.html:456
 #, python-brace-format
 msgid "Stopped. Files swapped: {replaced}."
 msgstr "已停止。已替换文件:{replaced}。"
@@ -8913,14 +8927,7 @@ msgid ""
 "not download: {failed}."
 msgstr "已完成。已替换文件:{replaced}。未找到的游戏:{no_match}。下载失败:{failed}。"
 
-#: templates/rom_tools_hub.html:456
-#, python-brace-format
-msgid ""
-"Stopped: ScreenScraper stopped answering, so your daily allowance may be "
-"spent. Files swapped: {replaced}. Run it again tomorrow."
-msgstr "已停止:ScreenScraper 不再响应,你的每日额度可能已用完。已替换文件:{replaced}。请明天再运行。"
-
-#: templates/rom_tools_hub.html:508
+#: templates/rom_tools_hub.html:510
 #, python-brace-format
 msgid ""
 "{count} games have a region from the AI that their file name contradicts."
@@ -8933,20 +8940,20 @@ msgstr ""
 "\n"
 "只有由 AI 填写的地区会被更改。如果你曾手动把其中某个地区改得与文件名不同,它也会被更改。"
 
-#: templates/rom_tools_hub.html:509
+#: templates/rom_tools_hub.html:511
 msgid "No game has an AI region that its file name contradicts."
 msgstr "没有游戏的 AI 地区与文件名不符。"
 
-#: templates/rom_tools_hub.html:510
+#: templates/rom_tools_hub.html:512
 #, python-brace-format
 msgid "Fixed {count} regions."
 msgstr "已修复 {count} 个地区。"
 
-#: templates/rom_tools_hub.html:511
+#: templates/rom_tools_hub.html:513
 msgid "Could not fix the regions"
 msgstr "无法修复地区"
 
-#: templates/rom_tools_hub.html:542
+#: templates/rom_tools_hub.html:544
 #, python-brace-format
 msgid ""
 "{count} games will change.\n"
@@ -8967,22 +8974,22 @@ msgstr ""
 "\n"
 "完成后,请使用“填充缺失项”进行批量抓取,以补全仍为空的内容。"
 
-#: templates/rom_tools_hub.html:543
+#: templates/rom_tools_hub.html:545
 msgid "Every game already uses these names."
 msgstr "所有游戏都已使用这些名称。"
 
-#: templates/rom_tools_hub.html:544
+#: templates/rom_tools_hub.html:546
 #, python-brace-format
 msgid ""
 "Tidied {count} games. Run a bulk scrape with Fill Missing to fill "
 "anything left empty."
 msgstr "已整理 {count} 个游戏。请使用“填充缺失项”进行批量抓取,以补全仍为空的内容。"
 
-#: templates/rom_tools_hub.html:545
+#: templates/rom_tools_hub.html:547
 msgid "Could not tidy the names"
 msgstr "无法整理名称"
 
-#: templates/rom_tools_hub.html:576
+#: templates/rom_tools_hub.html:578
 #, python-brace-format
 msgid ""
 "{count} games will change.\n"
@@ -8994,22 +9001,22 @@ msgstr ""
 "\n"
 "像 1987 年 1 月 1 日这样的日期会变为 1987 年。没有被任何抓取填充过的日期将保持不变。"
 
-#: templates/rom_tools_hub.html:577
+#: templates/rom_tools_hub.html:579
 msgid "No release dates need tidying."
 msgstr "没有需要整理的发行日期。"
 
-#: templates/rom_tools_hub.html:578
+#: templates/rom_tools_hub.html:580
 #, python-brace-format
 msgid ""
 "Tidied {count} games. Run a bulk scrape with Fill Missing to look for "
 "fuller dates."
 msgstr "已整理 {count} 个游戏。请使用“填充缺失项”进行批量抓取,以查找更完整的日期。"
 
-#: templates/rom_tools_hub.html:579
+#: templates/rom_tools_hub.html:581
 msgid "Could not tidy the release dates"
 msgstr "无法整理发行日期"
 
-#: templates/rom_tools_hub.html:610
+#: templates/rom_tools_hub.html:612
 #, python-brace-format
 msgid ""
 "{count} saved play times look like another game. They will go to the "
@@ -9021,20 +9028,20 @@ msgstr ""
 "\n"
 "在审核页面,“批准”会保留该时间,“拒绝”会清除该时间。"
 
-#: templates/rom_tools_hub.html:611
+#: templates/rom_tools_hub.html:613
 msgid "No saved play time looks wrong."
 msgstr "没有发现看起来有误的已保存游玩时间。"
 
-#: templates/rom_tools_hub.html:612
+#: templates/rom_tools_hub.html:614
 #, python-brace-format
 msgid "Sent {count} play times to the HowLongToBeat review page."
 msgstr "已将 {count} 个游玩时间发送到 HowLongToBeat 审核页面。"
 
-#: templates/rom_tools_hub.html:613
+#: templates/rom_tools_hub.html:615
 msgid "Could not check the saved play times"
 msgstr "无法检查已保存的游玩时间"
 
-#: templates/rom_tools_hub.html:644
+#: templates/rom_tools_hub.html:646
 #, python-brace-format
 msgid ""
 "{count} games and wishlist items use a RAWG picture as their box art. "
@@ -9048,18 +9055,18 @@ msgstr ""
 "\n"
 "来自其他来源的封面和所有同人图会保留。之后请用“填充缺失项”进行批量抓取,以查找真正的封面。"
 
-#: templates/rom_tools_hub.html:645
+#: templates/rom_tools_hub.html:647
 msgid "No game uses a RAWG picture as its box art."
 msgstr "没有游戏使用 RAWG 图片作为包装封面。"
 
-#: templates/rom_tools_hub.html:646
+#: templates/rom_tools_hub.html:648
 #, python-brace-format
 msgid ""
 "Cleared {count} pictures. Run a bulk scrape with Fill Missing to look for"
 " real covers."
 msgstr "已清除 {count} 张图片。请用“填充缺失项”进行批量抓取,以查找真正的封面。"
 
-#: templates/rom_tools_hub.html:647
+#: templates/rom_tools_hub.html:649
 msgid "Could not clear the pictures"
 msgstr "无法清除图片"
 
@@ -11389,4 +11396,11 @@ msgstr "在 Patreon 上支持"
 #~ " what they have. A bulk lookup "
 #~ "can fetch the times again."
 #~ msgstr ""
+
+#~ msgid ""
+#~ "Stopped: ScreenScraper stopped answering, so"
+#~ " your daily allowance may be spent."
+#~ " Files swapped: {replaced}. Run it "
+#~ "again tomorrow."
+#~ msgstr "已停止:ScreenScraper 不再响应,你的每日额度可能已用完。已替换文件:{replaced}。请明天再运行。"
 

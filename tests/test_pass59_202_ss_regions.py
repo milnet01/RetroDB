@@ -279,7 +279,6 @@ def _run_job(monkeypatch, reply, image_ok=True, manual_bytes=b'%PDF-1.4'):
     monkeypatch.setattr(mod, 'search_game', search)
     monkeypatch.setattr(mod, '_download_and_finalize', image)
     monkeypatch.setattr(mod, 'download_ss_media', manual)
-    monkeypatch.setattr(mod, 'PACE_SECONDS', 0)
     monkeypatch.setattr(mod, 'preferred_image_extension', lambda _t, ext: '.webp')
     job = mod.SsRegionRepairJob()
     job.running = True
@@ -350,18 +349,39 @@ def test_repair_ignores_media_from_other_sources(library, monkeypatch):
     assert row()['boxart'] == '1_igdb.webp'
 
 
-def test_repair_stops_when_replies_dry_up(library, monkeypatch):
-    from services.jobs import ss_region_repair as mod
+def _more_games(count):
     conn = sqlite3.connect(config.DB_PATH)
-    for i in range(2, mod.MAX_SILENT_IN_A_ROW + 5):
+    for i in range(2, count + 2):
         conn.execute("INSERT INTO games (id, system_id, title, rom_path, screenscraper_id, boxart) "
                      "VALUES (?, 1, ?, ?, 77, ?)",
                      (i, f'G{i}', f'/r/G{i}.zip', f'{i}_ss_boxart.webp'))
     conn.commit()
     conn.close()
+
+
+def test_repair_stops_when_the_days_limit_is_reached(library, monkeypatch):
+    from scraper import service_limits
+    from services.jobs import ss_region_repair as mod
+    _more_games(5)
+    real_stopped = service_limits.stopped
+    calls = []
+
+    def stopped_after_two(source):
+        calls.append(source)
+        if len(calls) == 3:
+            service_limits.stop(source, 60)
+        return real_stopped(source)
+
+    monkeypatch.setattr(service_limits, 'stopped', stopped_after_two)
     job, searches, _ = _run_job(monkeypatch, None)
-    assert len(searches) == mod.MAX_SILENT_IN_A_ROW
-    assert job.get_status()['stopped_no_reply'] is True
+    assert len(searches) == 2
+    assert job.get_status()['no_match'] == 1
+
+
+def test_repair_carries_on_past_games_that_are_not_found(library, monkeypatch):
+    _more_games(30)
+    _, searches, _ = _run_job(monkeypatch, None)
+    assert len(searches) == 31
 
 
 def test_repair_leaves_an_unmapped_system_alone(library, monkeypatch):
@@ -393,5 +413,5 @@ def test_status_route_has_what_the_card_reads(admin_test_client):
     client, _csrf = admin_test_client()
     status = client.get('/api/maintenance/ss-region-repair/status').get_json()
     for key in ('running', 'completed', 'cancelled', 'current', 'total', 'replaced',
-                'no_match', 'failed', 'stopped_no_reply', 'error'):
+                'no_match', 'failed', 'service_stops', 'error'):
         assert key in status

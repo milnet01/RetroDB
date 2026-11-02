@@ -1,3 +1,22 @@
+- version: 3.35.3
+  date: 2026-11-02
+  tags:
+  - type: fix
+    label: ScreenScraper's daily limit now stops RetroDB asking until later, and a bulk scrape says so and carries on with its other sources. Before, a spent limit looked like "game not found" and calls went on all night
+  - type: fix
+    label: A game no source could answer for while a service was at its limit is no longer marked as scraped, so the next run tries it again
+  - type: fix
+    label: When a TheGamesDB key has used its month, RetroDB moves to your other key, and stops asking once both are used up
+  - type: fix
+    label: RAWG's monthly limit now stops RetroDB asking too, and IGDB is kept within its limit of four requests a second
+  - type: fix
+    label: HowLongToBeat's bulk lookup now ends with a message when the site says it has had too many requests, and every request to the site is spaced out
+  - type: fix
+    label: Fix Box and Manual Regions no longer gives up after 25 games in a row that ScreenScraper does not know. It stops only when ScreenScraper says its limit is reached
+  - type: fix
+    label: On the game page, each age rating now sits centred over its AI guess label
+  - type: fix
+    label: The TheGamesDB allowance in Settings now uses the check that does not spend your allowance, and no longer shows a made-up reset date when the service gives none
 - version: 3.35.2
   date: 2026-11-02
   tags:

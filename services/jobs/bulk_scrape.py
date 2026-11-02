@@ -13,6 +13,7 @@ from collections import deque
 from datetime import datetime, timezone
 
 from services import apply_progress
+from scraper import service_limits
 from services.jobs.base import (
     _get_conn, persist_job_start, persist_job_progress, persist_job_complete,
     persist_job_queued, remove_queued_job, resolve_terminal_status,
@@ -127,6 +128,21 @@ class BulkScrapeJob:
         finally:
             if conn:
                 conn.close()
+
+    def _count_no_match(self, game_id, enabled):
+        """Record a game nothing was found for.
+
+        With a source stopped at its limit that is no verdict on the game, so it
+        stays unstamped for the next run to ask again (PASS-59-215).
+        """
+        if any(enabled.get(source) and service_limits.stopped(source)
+               for source in service_limits.SCRAPE_SOURCES):
+            with self._lock:
+                self.skipped_count += 1
+            return
+        self._stamp_bulk_scraped(game_id)
+        with self._lock:
+            self.failed_count += 1
 
     def get_status(self):
         """Get current job status including queue info"""
@@ -938,9 +954,7 @@ class BulkScrapeJob:
 
                         if not sorted_results:
                             logger.warning(f"No results passed match filter ({match_settings['mode']} mode) for {title}")
-                            self._stamp_bulk_scraped(game_id)
-                            with self._lock:
-                                self.failed_count += 1
+                            self._count_no_match(game_id, enabled_scrapers)
                             continue
 
                         # Find best match from enabled scraper
@@ -1005,9 +1019,7 @@ class BulkScrapeJob:
                                 self.skipped_count += 1
                     else:
                         logger.info(f"No results for {title}")
-                        self._stamp_bulk_scraped(game_id)
-                        with self._lock:
-                            self.failed_count += 1
+                        self._count_no_match(game_id, enabled_scrapers)
 
                 except Exception as e:
                     logger.error(f"Error scraping game {game_id}: {e}")

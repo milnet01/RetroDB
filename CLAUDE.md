@@ -116,6 +116,9 @@ has seen the raw output. Triage into new roadmap passes after.
 - Every `apply_*_to_game()` UPDATE in `scraper/scrape_*.py` MUST wrap every `?` in `COALESCE(?, column_name)` so an empty response from IGDB/TGDB/RAWG/etc. preserves the existing scraped or curated value. Bare `publisher = ?, developer = ?` is a bug (Pass 30.4 fix). `scrape_esde.apply_esde_metadata` is the canonical pattern. `tests/test_scrape_fill_only.py` pins the contract for IGDB + TGDB.
 - Five exceptions. AI Fill replaces a scraped value it disagrees with in the fields of `VALIDATE_FIELDS`, keeping the old value under `replaced` in that scrape's history entry (PASS-59-211). A date for the game's own region from IGDB or ScreenScraper fills out a stored year or month it agrees with (PASS-59-207). Full Re-scrape mode in `hybrid_scraper` overwrites any field a source provides (fields no source fills are preserved, not blanked). AI Fill renames a game to the official title the AI gives (`docs/specs/scrapers.md` §12), keeping the old name as an alternate title. And the title runs the other way: with `games.title_locked = 1` no scrape writes `title` or `sort_title`, Full Re-scrape included — the four title writes are `CASE WHEN title_locked = 1 THEN title ELSE COALESCE(?, title) END` (PASS-59-159 §4.3).
 
+### Service limits (PASS-59-215)
+- A sender to an online service calls `service_limits.wait_for_turn` before each request and returns its usual nothing when that says no. "Not found" and "stopped" look alike by design; a caller that must tell them apart asks `service_limits.stopped`. Table: `docs/specs/scrapers.md` §10.
+
 ### AI answers (PASS-59-211)
 - `services/field_sources.py` reads `games.scrape_history` to mark what the AI wrote. The game page marks AI ratings as a guess and says when each board started (user, 2026-11-02: label, do not remove). A hand edit is credited `(manual)`, which clears the mark; any new edit path must call `_note_hand_edits` in `routes/games.py`.
 

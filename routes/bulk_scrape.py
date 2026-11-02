@@ -6,6 +6,8 @@
 
 from flask import Blueprint, request, jsonify
 from flask_babel import gettext as _
+from scraper.service_limits import SCRAPE_SOURCES
+from services.service_stop_text import stop_sentences
 import os
 import logging
 
@@ -172,7 +174,7 @@ def api_bulk_scrape_job_start():
 def api_bulk_scrape_job_status():
     """Get the status of the current bulk scrape job"""
     status = bulk_scrape_job.get_status()
-    return success(**status)
+    return success(service_stops=stop_sentences(SCRAPE_SOURCES), **status)
 
 
 @bp.route('/api/bulk-scrape-job/pause', methods=['POST'])

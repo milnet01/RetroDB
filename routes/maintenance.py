@@ -8,6 +8,8 @@
 
 from flask import Blueprint, request, jsonify
 from flask_babel import gettext as _
+from scraper.service_limits import SCREENSCRAPER
+from services.service_stop_text import stop_sentences
 import os
 import sys
 import time
@@ -493,6 +495,7 @@ def api_ss_region_repair_status():
     """Poll the region repair job."""
     from services.jobs import ss_region_repair_job
     status = ss_region_repair_job.get_status()
+    status['service_stops'] = stop_sentences([SCREENSCRAPER])
     status['success'] = True
     return jsonify(status)
 

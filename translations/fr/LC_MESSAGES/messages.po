@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-02 08:02+0200\n"
+"POT-Creation-Date: 2026-11-02 10:05+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -57,7 +57,7 @@ msgid "System not found or has no achievement games"
 msgstr "Système introuvable ou sans jeux à succès"
 
 #: routes/achievements.py:172 routes/achievements.py:482
-#: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/cheats.py:32
+#: routes/bonus_discs.py:265 routes/bulk_scrape.py:48 routes/cheats.py:32
 #: routes/cheats.py:51 routes/collections.py:276 routes/collections.py:531
 #: routes/emulators.py:304 routes/emulators.py:318 routes/games.py:394
 #: routes/games.py:901 routes/games.py:1028 routes/games.py:1095
@@ -248,8 +248,8 @@ msgstr "Le disque bonus et le jeu parent doivent appartenir au même système"
 #: routes/games.py:1387 routes/platform_import.py:297
 #: routes/platform_import.py:667 routes/platform_import.py:1032
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
-#: routes/scrape_logs.py:219 routes/scraper.py:203 routes/scraper.py:531
-#: routes/scraper.py:932 routes/settings.py:320 routes/settings.py:344
+#: routes/scrape_logs.py:219 routes/scraper.py:204 routes/scraper.py:535
+#: routes/scraper.py:926 routes/settings.py:320 routes/settings.py:344
 #: routes/settings.py:459 routes/settings.py:538 routes/settings.py:567
 #: routes/settings.py:611 routes/settings.py:627 routes/settings.py:663
 #: routes/steam_achievements.py:138 routes/systems.py:292 routes/systems.py:482
@@ -275,19 +275,19 @@ msgstr "bonus_id ou parent_id manquant"
 msgid "Missing game_id"
 msgstr "game_id manquant"
 
-#: routes/bulk_scrape.py:35
+#: routes/bulk_scrape.py:37
 msgid "No game ID provided"
 msgstr "Aucun identifiant de jeu fourni"
 
-#: routes/bulk_scrape.py:142
+#: routes/bulk_scrape.py:144
 msgid "Failed to apply metadata"
 msgstr "Échec de l'application des métadonnées"
 
-#: routes/bulk_scrape.py:144
+#: routes/bulk_scrape.py:146
 msgid "No matches found"
 msgstr "Aucune correspondance trouvée"
 
-#: routes/bulk_scrape.py:163
+#: routes/bulk_scrape.py:165
 msgid "No game IDs provided"
 msgstr "Aucun identifiant de jeu fourni"
 
@@ -724,19 +724,19 @@ msgstr ""
 msgid "Next disk inserted"
 msgstr "Disque suivant inséré"
 
-#: routes/maintenance.py:272
+#: routes/maintenance.py:274
 msgid "Unknown image type"
 msgstr "Type d'image inconnu"
 
-#: routes/maintenance.py:485
+#: routes/maintenance.py:487
 msgid "Add your ScreenScraper account in Settings first."
 msgstr "Ajoutez d'abord votre compte ScreenScraper dans les Paramètres."
 
-#: routes/maintenance.py:486
+#: routes/maintenance.py:488
 msgid "This fix is already running."
 msgstr "Cette correction est déjà en cours."
 
-#: routes/museum.py:385 routes/scraper.py:773
+#: routes/museum.py:385 routes/scraper.py:767
 msgid "No AI provider configured"
 msgstr "Aucun fournisseur d'IA configuré"
 
@@ -1126,65 +1126,65 @@ msgstr "Fichier introuvable"
 msgid "Log file not found"
 msgstr "Fichier journal introuvable"
 
-#: routes/scraper.py:218
+#: routes/scraper.py:219
 #, python-format
 msgid "invalid scraper settings: %(reason)s"
 msgstr "paramètres de récupération invalides : %(reason)s"
 
-#: routes/scraper.py:279
+#: routes/scraper.py:280
 #, python-format
 msgid "invalid api keys: %(reason)s"
 msgstr "clés API invalides : %(reason)s"
 
-#: routes/scraper.py:551
+#: routes/scraper.py:555
 msgid "No TGDB API key configured"
 msgstr "Aucune clé API TGDB configurée"
 
-#: routes/scraper.py:658
+#: routes/scraper.py:652
 msgid "No ScreenScraper credentials configured"
 msgstr "Aucun identifiant ScreenScraper configuré"
 
-#: routes/scraper.py:694
+#: routes/scraper.py:688
 msgid "Invalid JSON response from ScreenScraper"
 msgstr "Réponse JSON invalide de ScreenScraper"
 
-#: routes/scraper.py:697
+#: routes/scraper.py:691
 msgid "Error parsing API response"
 msgstr "Erreur lors de l'analyse de la réponse de l'API"
 
-#: routes/scraper.py:699
+#: routes/scraper.py:693
 #, python-format
 msgid "ScreenScraper answered HTTP %(code)s"
 msgstr "ScreenScraper a répondu HTTP %(code)s"
 
-#: routes/scraper.py:714
+#: routes/scraper.py:708
 msgid "No RAWG API key configured"
 msgstr "Aucune clé API RAWG configurée"
 
-#: routes/scraper.py:819
+#: routes/scraper.py:813
 #, python-format
 msgid "Unknown AI provider: %(provider)s"
 msgstr "Fournisseur d'IA inconnu : %(provider)s"
 
-#: routes/scraper.py:822
+#: routes/scraper.py:816
 msgid "No response from AI provider"
 msgstr "Aucune réponse du fournisseur d'IA"
 
-#: routes/scraper.py:827 routes/scraper.py:828
+#: routes/scraper.py:821 routes/scraper.py:822
 #, python-format
 msgid "%(provider)s refused the API key. Check the key and save it again."
 msgstr ""
 "%(provider)s a refusé la clé API. Vérifiez la clé et enregistrez-la de "
 "nouveau."
 
-#: routes/scraper.py:829
+#: routes/scraper.py:823
 #, python-format
 msgid "%(provider)s wants payment: the account has no credit or billing is off."
 msgstr ""
 "%(provider)s demande un paiement : le compte n’a plus de crédit ou la "
 "facturation est désactivée."
 
-#: routes/scraper.py:830
+#: routes/scraper.py:824
 #, python-format
 msgid ""
 "%(provider)s says a usage limit is reached. Try again later or check your"
@@ -1193,17 +1193,17 @@ msgstr ""
 "%(provider)s indique qu’une limite d’utilisation est atteinte. Réessayez "
 "plus tard ou vérifiez votre forfait."
 
-#: routes/scraper.py:832
+#: routes/scraper.py:826
 #, python-format
 msgid "%(provider)s answered with error %(code)s."
 msgstr "%(provider)s a répondu avec l’erreur %(code)s."
 
-#: routes/scraper.py:925
+#: routes/scraper.py:919
 #, python-format
 msgid "Connection error: %(error)s"
 msgstr "Erreur de connexion : %(error)s"
 
-#: routes/scraper.py:928
+#: routes/scraper.py:922
 #, python-format
 msgid "Allowance check not supported for %(scraper)s"
 msgstr "Vérification du quota non prise en charge pour %(scraper)s"
@@ -4477,6 +4477,20 @@ msgstr "Saisissez votre nom d'utilisateur et votre mot de passe RetroAchievement
 #: services/ra_sign_in.py:94
 msgid "Sign in to RetroAchievements first."
 msgstr "Connectez-vous d'abord à RetroAchievements."
+
+#: services/service_stop_text.py:22
+#, python-format
+msgid ""
+"%(service)s refused every saved key, which usually means their limit is "
+"reached. RetroDB will not ask it again until %(when)s."
+msgstr ""
+
+#: services/service_stop_text.py:26
+#, python-format
+msgid ""
+"%(service)s says its limit is reached. RetroDB will not ask it again "
+"until %(when)s."
+msgstr ""
 
 #: services/standalone_settings.py:310
 msgid ""
@@ -9070,7 +9084,7 @@ msgstr ""
 msgid "Needs a ScreenScraper account"
 msgstr "Nécessite un compte ScreenScraper"
 
-#: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:507
+#: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:509
 msgid "Fix Regions from File Names"
 msgstr "Corriger les régions d'après les noms de fichiers"
 
@@ -9084,7 +9098,7 @@ msgstr ""
 "l'indiquait, si bien qu'un fichier (USA) pouvait être classé Japon. Cette"
 " action attribue à ces jeux la région indiquée dans leur nom de fichier."
 
-#: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:541
+#: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:543
 msgid "Tidy Genres, Perspectives and Modes"
 msgstr "Harmoniser les genres, perspectives et modes"
 
@@ -9099,7 +9113,7 @@ msgstr ""
 "filtre passait à côté de certains jeux. Cette action donne à chaque jeu "
 "un seul jeu de noms."
 
-#: templates/rom_tools_hub.html:339 templates/rom_tools_hub.html:575
+#: templates/rom_tools_hub.html:339 templates/rom_tools_hub.html:577
 msgid "Tidy Release Dates"
 msgstr "Nettoyer les dates de sortie"
 
@@ -9114,7 +9128,7 @@ msgstr ""
 "connu. Cette action ramène ces dates à l'année ou au mois, pour qu'une "
 "récupération puisse renseigner la vraie date."
 
-#: templates/rom_tools_hub.html:352 templates/rom_tools_hub.html:609
+#: templates/rom_tools_hub.html:352 templates/rom_tools_hub.html:611
 msgid "Check Saved Play Times"
 msgstr "Vérifier les durées de jeu enregistrées"
 
@@ -9129,7 +9143,7 @@ msgstr ""
 "envoie ces correspondances à la page de vérification, où vous gardez ou "
 "effacez chacune d'elles."
 
-#: templates/rom_tools_hub.html:365 templates/rom_tools_hub.html:643
+#: templates/rom_tools_hub.html:365 templates/rom_tools_hub.html:645
 msgid "Clear RAWG Pictures from Box Art"
 msgstr "Effacer les images RAWG des jaquettes"
 
@@ -9224,7 +9238,7 @@ msgstr ""
 "Arrêter la correction ? Les fichiers déjà remplacés restent tels quels, "
 "et une prochaine exécution continuera avec le reste."
 
-#: templates/rom_tools_hub.html:452
+#: templates/rom_tools_hub.html:452 templates/rom_tools_hub.html:456
 #, python-brace-format
 msgid "Stopped. Files swapped: {replaced}."
 msgstr "Arrêté. Fichiers remplacés : {replaced}."
@@ -9252,16 +9266,7 @@ msgstr ""
 "Terminé. Fichiers remplacés : {replaced}. Jeux introuvables : {no_match}."
 " Téléchargements impossibles : {failed}."
 
-#: templates/rom_tools_hub.html:456
-#, python-brace-format
-msgid ""
-"Stopped: ScreenScraper stopped answering, so your daily allowance may be "
-"spent. Files swapped: {replaced}. Run it again tomorrow."
-msgstr ""
-"Arrêté : ScreenScraper ne répond plus, votre quota quotidien est peut-"
-"être épuisé. Fichiers remplacés : {replaced}. Relancez demain."
-
-#: templates/rom_tools_hub.html:508
+#: templates/rom_tools_hub.html:510
 #, python-brace-format
 msgid ""
 "{count} games have a region from the AI that their file name contradicts."
@@ -9277,20 +9282,20 @@ msgstr ""
 " l'une d'elles à la main pour qu'elle diffère du nom de fichier, elle "
 "sera aussi modifiée."
 
-#: templates/rom_tools_hub.html:509
+#: templates/rom_tools_hub.html:511
 msgid "No game has an AI region that its file name contradicts."
 msgstr "Aucun jeu n'a de région IA contredite par son nom de fichier."
 
-#: templates/rom_tools_hub.html:510
+#: templates/rom_tools_hub.html:512
 #, python-brace-format
 msgid "Fixed {count} regions."
 msgstr "{count} régions corrigées."
 
-#: templates/rom_tools_hub.html:511
+#: templates/rom_tools_hub.html:513
 msgid "Could not fix the regions"
 msgstr "Impossible de corriger les régions"
 
-#: templates/rom_tools_hub.html:542
+#: templates/rom_tools_hub.html:544
 #, python-brace-format
 msgid ""
 "{count} games will change.\n"
@@ -9315,11 +9320,11 @@ msgstr ""
 "Ensuite, lancez une récupération en masse avec Compléter les manquants "
 "pour remplir ce qui reste vide."
 
-#: templates/rom_tools_hub.html:543
+#: templates/rom_tools_hub.html:545
 msgid "Every game already uses these names."
 msgstr "Tous les jeux utilisent déjà ces noms."
 
-#: templates/rom_tools_hub.html:544
+#: templates/rom_tools_hub.html:546
 #, python-brace-format
 msgid ""
 "Tidied {count} games. Run a bulk scrape with Fill Missing to fill "
@@ -9328,11 +9333,11 @@ msgstr ""
 "{count} jeux harmonisés. Lancez une récupération en masse avec Compléter "
 "les manquants pour remplir ce qui reste vide."
 
-#: templates/rom_tools_hub.html:545
+#: templates/rom_tools_hub.html:547
 msgid "Could not tidy the names"
 msgstr "Impossible d'harmoniser les noms"
 
-#: templates/rom_tools_hub.html:576
+#: templates/rom_tools_hub.html:578
 #, python-brace-format
 msgid ""
 "{count} games will change.\n"
@@ -9345,11 +9350,11 @@ msgstr ""
 "Une date comme le 1er janvier 1987 devient 1987. Une date qu'aucune "
 "récupération n'a renseignée reste telle quelle."
 
-#: templates/rom_tools_hub.html:577
+#: templates/rom_tools_hub.html:579
 msgid "No release dates need tidying."
 msgstr "Aucune date de sortie à nettoyer."
 
-#: templates/rom_tools_hub.html:578
+#: templates/rom_tools_hub.html:580
 #, python-brace-format
 msgid ""
 "Tidied {count} games. Run a bulk scrape with Fill Missing to look for "
@@ -9358,11 +9363,11 @@ msgstr ""
 "{count} jeux nettoyés. Lancez une récupération en masse avec Compléter "
 "les manquants pour chercher des dates plus précises."
 
-#: templates/rom_tools_hub.html:579
+#: templates/rom_tools_hub.html:581
 msgid "Could not tidy the release dates"
 msgstr "Impossible de nettoyer les dates de sortie"
 
-#: templates/rom_tools_hub.html:610
+#: templates/rom_tools_hub.html:612
 #, python-brace-format
 msgid ""
 "{count} saved play times look like another game. They will go to the "
@@ -9376,20 +9381,20 @@ msgstr ""
 "\n"
 "Là, Approuver garde une durée et Rejeter l'efface."
 
-#: templates/rom_tools_hub.html:611
+#: templates/rom_tools_hub.html:613
 msgid "No saved play time looks wrong."
 msgstr "Aucune durée de jeu enregistrée ne semble erronée."
 
-#: templates/rom_tools_hub.html:612
+#: templates/rom_tools_hub.html:614
 #, python-brace-format
 msgid "Sent {count} play times to the HowLongToBeat review page."
 msgstr "{count} durées de jeu envoyées à la page de vérification de HowLongToBeat."
 
-#: templates/rom_tools_hub.html:613
+#: templates/rom_tools_hub.html:615
 msgid "Could not check the saved play times"
 msgstr "Impossible de vérifier les durées de jeu enregistrées"
 
-#: templates/rom_tools_hub.html:644
+#: templates/rom_tools_hub.html:646
 #, python-brace-format
 msgid ""
 "{count} games and wishlist items use a RAWG picture as their box art. "
@@ -9407,11 +9412,11 @@ msgstr ""
 "Ensuite, lancez une récupération en masse avec Remplir les manquants pour"
 " chercher de vraies jaquettes."
 
-#: templates/rom_tools_hub.html:645
+#: templates/rom_tools_hub.html:647
 msgid "No game uses a RAWG picture as its box art."
 msgstr "Aucun jeu n'utilise d'image RAWG comme jaquette."
 
-#: templates/rom_tools_hub.html:646
+#: templates/rom_tools_hub.html:648
 #, python-brace-format
 msgid ""
 "Cleared {count} pictures. Run a bulk scrape with Fill Missing to look for"
@@ -9420,7 +9425,7 @@ msgstr ""
 "{count} images effacées. Lancez une récupération en masse avec Remplir "
 "les manquants pour chercher de vraies jaquettes."
 
-#: templates/rom_tools_hub.html:647
+#: templates/rom_tools_hub.html:649
 msgid "Could not clear the pictures"
 msgstr "Impossible d'effacer les images"
 
@@ -11952,4 +11957,15 @@ msgstr "Soutenir sur Patreon"
 #~ " what they have. A bulk lookup "
 #~ "can fetch the times again."
 #~ msgstr ""
+
+#~ msgid ""
+#~ "Stopped: ScreenScraper stopped answering, so"
+#~ " your daily allowance may be spent."
+#~ " Files swapped: {replaced}. Run it "
+#~ "again tomorrow."
+#~ msgstr ""
+#~ "Arrêté : ScreenScraper ne répond plus,"
+#~ " votre quota quotidien est peut-être"
+#~ " épuisé. Fichiers remplacés : {replaced}."
+#~ " Relancez demain."
 

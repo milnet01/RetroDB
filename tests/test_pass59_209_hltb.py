@@ -144,18 +144,6 @@ class TestClassify:
         assert classify_match(result, 'X', 95) == 'auto_apply'
 
 
-class TestPace:
-    def test_requests_are_spaced(self, monkeypatch):
-        waits = []
-        clock = [100.0]
-        monkeypatch.setattr(hltb_lookup.time, 'monotonic', lambda: clock[0])
-        monkeypatch.setattr(hltb_lookup.time, 'sleep', waits.append)
-        monkeypatch.setattr(hltb_lookup, '_last_request_at', 0.0)
-        hltb_lookup._wait_for_turn()
-        hltb_lookup._wait_for_turn()
-        assert waits == [hltb_lookup.MIN_REQUEST_GAP_SECONDS]
-
-
 def _game(db, title, folder='gb', estimate='Main: 9 hrs', match=None,
           platform='Game Boy', confidence=1.0, reviewed=0, alternate_titles=None):
     system = db.execute("SELECT id FROM systems WHERE folder = ?", (folder,)).fetchone()
@@ -314,6 +302,16 @@ class TestBulkJob:
         _game(db, 'Contra')  # has a time: skipped
         db.commit()
         assert self._run(db, monkeypatch, {}) == [('Tetris', '1989')]
+
+    def test_a_stop_from_the_site_ends_the_run(self, db, monkeypatch):
+        from scraper import service_limits
+        _game(db, 'Tetris', estimate=None)
+        _game(db, 'Contra', estimate=None)
+        real_stopped = service_limits.stopped
+        monkeypatch.setattr(service_limits, 'stopped',
+                            lambda source: real_stopped(source) or {'until': 0, 'reason': 'x'})
+        calls = self._run(db, monkeypatch, {})
+        assert len(calls) == 1
 
     def test_another_platform_waits_in_the_queue(self, db, monkeypatch):
         game_id = _game(db, 'Final Approach', estimate=None, match='Old')

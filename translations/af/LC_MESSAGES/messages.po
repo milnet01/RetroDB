@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-02 08:02+0200\n"
+"POT-Creation-Date: 2026-11-02 10:05+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: af\n"
@@ -57,7 +57,7 @@ msgid "System not found or has no achievement games"
 msgstr "Stelsel nie gevind nie of het geen speletjies met prestasies nie"
 
 #: routes/achievements.py:172 routes/achievements.py:482
-#: routes/bonus_discs.py:265 routes/bulk_scrape.py:46 routes/cheats.py:32
+#: routes/bonus_discs.py:265 routes/bulk_scrape.py:48 routes/cheats.py:32
 #: routes/cheats.py:51 routes/collections.py:276 routes/collections.py:531
 #: routes/emulators.py:304 routes/emulators.py:318 routes/games.py:394
 #: routes/games.py:901 routes/games.py:1028 routes/games.py:1095
@@ -248,8 +248,8 @@ msgstr "Bonusskyf en ouerspeletjie moet in dieselfde stelsel wees"
 #: routes/games.py:1387 routes/platform_import.py:297
 #: routes/platform_import.py:667 routes/platform_import.py:1032
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
-#: routes/scrape_logs.py:219 routes/scraper.py:203 routes/scraper.py:531
-#: routes/scraper.py:932 routes/settings.py:320 routes/settings.py:344
+#: routes/scrape_logs.py:219 routes/scraper.py:204 routes/scraper.py:535
+#: routes/scraper.py:926 routes/settings.py:320 routes/settings.py:344
 #: routes/settings.py:459 routes/settings.py:538 routes/settings.py:567
 #: routes/settings.py:611 routes/settings.py:627 routes/settings.py:663
 #: routes/steam_achievements.py:138 routes/systems.py:292 routes/systems.py:482
@@ -275,19 +275,19 @@ msgstr "bonus_id of parent_id ontbreek"
 msgid "Missing game_id"
 msgstr "game_id ontbreek"
 
-#: routes/bulk_scrape.py:35
+#: routes/bulk_scrape.py:37
 msgid "No game ID provided"
 msgstr "Geen speletjie-ID verskaf nie"
 
-#: routes/bulk_scrape.py:142
+#: routes/bulk_scrape.py:144
 msgid "Failed to apply metadata"
 msgstr "Kon nie metadata toepas nie"
 
-#: routes/bulk_scrape.py:144
+#: routes/bulk_scrape.py:146
 msgid "No matches found"
 msgstr "Geen ooreenstemmings gevind nie"
 
-#: routes/bulk_scrape.py:163
+#: routes/bulk_scrape.py:165
 msgid "No game IDs provided"
 msgstr "Geen speletjie-ID's verskaf nie"
 
@@ -720,19 +720,19 @@ msgstr ""
 msgid "Next disk inserted"
 msgstr "Volgende skyf ingesit"
 
-#: routes/maintenance.py:272
+#: routes/maintenance.py:274
 msgid "Unknown image type"
 msgstr "Onbekende beeldtipe"
 
-#: routes/maintenance.py:485
+#: routes/maintenance.py:487
 msgid "Add your ScreenScraper account in Settings first."
 msgstr "Voeg eers jou ScreenScraper-rekening by Instellings by."
 
-#: routes/maintenance.py:486
+#: routes/maintenance.py:488
 msgid "This fix is already running."
 msgstr "Hierdie regstelling loop reeds."
 
-#: routes/museum.py:385 routes/scraper.py:773
+#: routes/museum.py:385 routes/scraper.py:767
 msgid "No AI provider configured"
 msgstr "Geen KI-verskaffer opgestel nie"
 
@@ -1116,65 +1116,65 @@ msgstr "Lêer nie gevind nie"
 msgid "Log file not found"
 msgstr "Loglêer nie gevind nie"
 
-#: routes/scraper.py:218
+#: routes/scraper.py:219
 #, python-format
 msgid "invalid scraper settings: %(reason)s"
 msgstr "ongeldige skraper-instellings: %(reason)s"
 
-#: routes/scraper.py:279
+#: routes/scraper.py:280
 #, python-format
 msgid "invalid api keys: %(reason)s"
 msgstr "ongeldige API-sleutels: %(reason)s"
 
-#: routes/scraper.py:551
+#: routes/scraper.py:555
 msgid "No TGDB API key configured"
 msgstr "Geen TGDB API-sleutel opgestel nie"
 
-#: routes/scraper.py:658
+#: routes/scraper.py:652
 msgid "No ScreenScraper credentials configured"
 msgstr "Geen ScreenScraper-geloofsbriewe opgestel nie"
 
-#: routes/scraper.py:694
+#: routes/scraper.py:688
 msgid "Invalid JSON response from ScreenScraper"
 msgstr "Ongeldige JSON-antwoord van ScreenScraper"
 
-#: routes/scraper.py:697
+#: routes/scraper.py:691
 msgid "Error parsing API response"
 msgstr "Fout tydens ontleding van API-antwoord"
 
-#: routes/scraper.py:699
+#: routes/scraper.py:693
 #, python-format
 msgid "ScreenScraper answered HTTP %(code)s"
 msgstr "ScreenScraper het HTTP %(code)s geantwoord"
 
-#: routes/scraper.py:714
+#: routes/scraper.py:708
 msgid "No RAWG API key configured"
 msgstr "Geen RAWG API-sleutel opgestel nie"
 
-#: routes/scraper.py:819
+#: routes/scraper.py:813
 #, python-format
 msgid "Unknown AI provider: %(provider)s"
 msgstr "Onbekende KI-verskaffer: %(provider)s"
 
-#: routes/scraper.py:822
+#: routes/scraper.py:816
 msgid "No response from AI provider"
 msgstr "Geen antwoord van KI-verskaffer nie"
 
-#: routes/scraper.py:827 routes/scraper.py:828
+#: routes/scraper.py:821 routes/scraper.py:822
 #, python-format
 msgid "%(provider)s refused the API key. Check the key and save it again."
 msgstr ""
 "%(provider)s het die API-sleutel geweier. Gaan die sleutel na en stoor "
 "dit weer."
 
-#: routes/scraper.py:829
+#: routes/scraper.py:823
 #, python-format
 msgid "%(provider)s wants payment: the account has no credit or billing is off."
 msgstr ""
 "%(provider)s vra betaling: die rekening het geen krediet nie of "
 "fakturering is af."
 
-#: routes/scraper.py:830
+#: routes/scraper.py:824
 #, python-format
 msgid ""
 "%(provider)s says a usage limit is reached. Try again later or check your"
@@ -1183,17 +1183,17 @@ msgstr ""
 "%(provider)s sê ’n gebruikslimiet is bereik. Probeer later weer of gaan "
 "jou plan na."
 
-#: routes/scraper.py:832
+#: routes/scraper.py:826
 #, python-format
 msgid "%(provider)s answered with error %(code)s."
 msgstr "%(provider)s het met fout %(code)s geantwoord."
 
-#: routes/scraper.py:925
+#: routes/scraper.py:919
 #, python-format
 msgid "Connection error: %(error)s"
 msgstr "Verbindingsfout: %(error)s"
 
-#: routes/scraper.py:928
+#: routes/scraper.py:922
 #, python-format
 msgid "Allowance check not supported for %(scraper)s"
 msgstr "Toelaagkontrole word nie vir %(scraper)s ondersteun nie"
@@ -4439,6 +4439,20 @@ msgstr "Voer jou RetroAchievements-gebruikersnaam en -wagwoord in."
 #: services/ra_sign_in.py:94
 msgid "Sign in to RetroAchievements first."
 msgstr "Meld eers by RetroAchievements aan."
+
+#: services/service_stop_text.py:22
+#, python-format
+msgid ""
+"%(service)s refused every saved key, which usually means their limit is "
+"reached. RetroDB will not ask it again until %(when)s."
+msgstr ""
+
+#: services/service_stop_text.py:26
+#, python-format
+msgid ""
+"%(service)s says its limit is reached. RetroDB will not ask it again "
+"until %(when)s."
+msgstr ""
 
 #: services/standalone_settings.py:310
 msgid ""
@@ -9019,7 +9033,7 @@ msgstr ""
 msgid "Needs a ScreenScraper account"
 msgstr "Het 'n ScreenScraper-rekening nodig"
 
-#: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:507
+#: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:509
 msgid "Fix Regions from File Names"
 msgstr "Herstel streke uit lêernaam"
 
@@ -9033,7 +9047,7 @@ msgstr ""
 "gesê het, so 'n (USA)-lêer kon as Japan gelys word. Dit gee daardie "
 "speletjies die streek in hul lêernaam."
 
-#: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:541
+#: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:543
 msgid "Tidy Genres, Perspectives and Modes"
 msgstr "Maak Genres, Perspektiewe en Modusse netjies"
 
@@ -9047,7 +9061,7 @@ msgstr ""
 "Role Playing Game verskyn, en 'n filter het speletjies gemis. Dit gee "
 "elke speletjie een stel name."
 
-#: templates/rom_tools_hub.html:339 templates/rom_tools_hub.html:575
+#: templates/rom_tools_hub.html:339 templates/rom_tools_hub.html:577
 msgid "Tidy Release Dates"
 msgstr "Maak Uitreikdatums netjies"
 
@@ -9062,7 +9076,7 @@ msgstr ""
 " datums terug tot die jaar of maand, sodat 'n skraap die regte een kan "
 "invul."
 
-#: templates/rom_tools_hub.html:352 templates/rom_tools_hub.html:609
+#: templates/rom_tools_hub.html:352 templates/rom_tools_hub.html:611
 msgid "Check Saved Play Times"
 msgstr "Gaan gestoorde speeltye na"
 
@@ -9076,7 +9090,7 @@ msgstr ""
 "speletjie met dieselfde naam op 'n ander stelsel. Dit stuur daardie "
 "passings na die nasienbladsy, waar jy elkeen hou of skoonmaak."
 
-#: templates/rom_tools_hub.html:365 templates/rom_tools_hub.html:643
+#: templates/rom_tools_hub.html:365 templates/rom_tools_hub.html:645
 msgid "Clear RAWG Pictures from Box Art"
 msgstr "Vee RAWG-prente uit bokskuns"
 
@@ -9168,7 +9182,7 @@ msgstr ""
 "Stop die regstelling? Lêers wat reeds geruil is, bly soos hulle is, en 'n"
 " latere uitvoering gaan voort met die res."
 
-#: templates/rom_tools_hub.html:452
+#: templates/rom_tools_hub.html:452 templates/rom_tools_hub.html:456
 #, python-brace-format
 msgid "Stopped. Files swapped: {replaced}."
 msgstr "Gestop. Lêers geruil: {replaced}."
@@ -9196,16 +9210,7 @@ msgstr ""
 "Klaar. Lêers geruil: {replaced}. Speletjies nie gevind nie: {no_match}. "
 "Kon nie aflaai nie: {failed}."
 
-#: templates/rom_tools_hub.html:456
-#, python-brace-format
-msgid ""
-"Stopped: ScreenScraper stopped answering, so your daily allowance may be "
-"spent. Files swapped: {replaced}. Run it again tomorrow."
-msgstr ""
-"Gestop: ScreenScraper het opgehou antwoord, so jou daaglikse toelae is "
-"dalk op. Lêers geruil: {replaced}. Voer dit môre weer uit."
-
-#: templates/rom_tools_hub.html:508
+#: templates/rom_tools_hub.html:510
 #, python-brace-format
 msgid ""
 "{count} games have a region from the AI that their file name contradicts."
@@ -9221,20 +9226,20 @@ msgstr ""
 " met die hand reggemaak het om van die lêernaam te verskil, verander dit "
 "ook."
 
-#: templates/rom_tools_hub.html:509
+#: templates/rom_tools_hub.html:511
 msgid "No game has an AI region that its file name contradicts."
 msgstr "Geen speletjie het 'n AI-streek wat sy lêernaam weerspreek nie."
 
-#: templates/rom_tools_hub.html:510
+#: templates/rom_tools_hub.html:512
 #, python-brace-format
 msgid "Fixed {count} regions."
 msgstr "{count} streke reggemaak."
 
-#: templates/rom_tools_hub.html:511
+#: templates/rom_tools_hub.html:513
 msgid "Could not fix the regions"
 msgstr "Kon nie die streke regmaak nie"
 
-#: templates/rom_tools_hub.html:542
+#: templates/rom_tools_hub.html:544
 #, python-brace-format
 msgid ""
 "{count} games will change.\n"
@@ -9259,11 +9264,11 @@ msgstr ""
 "Laat daarna 'n grootmaat-skraap met Vul Ontbrekende In loop om enigiets "
 "wat nog leeg is, in te vul."
 
-#: templates/rom_tools_hub.html:543
+#: templates/rom_tools_hub.html:545
 msgid "Every game already uses these names."
 msgstr "Elke speletjie gebruik reeds hierdie name."
 
-#: templates/rom_tools_hub.html:544
+#: templates/rom_tools_hub.html:546
 #, python-brace-format
 msgid ""
 "Tidied {count} games. Run a bulk scrape with Fill Missing to fill "
@@ -9272,11 +9277,11 @@ msgstr ""
 "{count} speletjies netjies gemaak. Laat 'n grootmaat-skraap met Vul "
 "Ontbrekende In loop om enigiets wat nog leeg is, in te vul."
 
-#: templates/rom_tools_hub.html:545
+#: templates/rom_tools_hub.html:547
 msgid "Could not tidy the names"
 msgstr "Kon nie die name netjies maak nie"
 
-#: templates/rom_tools_hub.html:576
+#: templates/rom_tools_hub.html:578
 #, python-brace-format
 msgid ""
 "{count} games will change.\n"
@@ -9289,11 +9294,11 @@ msgstr ""
 "'n Datum soos 1 Januarie 1987 word 1987. 'n Datum wat geen skraap ingevul"
 " het nie, bly soos dit is."
 
-#: templates/rom_tools_hub.html:577
+#: templates/rom_tools_hub.html:579
 msgid "No release dates need tidying."
 msgstr "Geen uitreikdatums hoef netjies gemaak te word nie."
 
-#: templates/rom_tools_hub.html:578
+#: templates/rom_tools_hub.html:580
 #, python-brace-format
 msgid ""
 "Tidied {count} games. Run a bulk scrape with Fill Missing to look for "
@@ -9302,11 +9307,11 @@ msgstr ""
 "{count} speletjies netjies gemaak. Laat 'n grootmaat-skraap met Vul "
 "Ontbrekende In loop om na voller datums te soek."
 
-#: templates/rom_tools_hub.html:579
+#: templates/rom_tools_hub.html:581
 msgid "Could not tidy the release dates"
 msgstr "Kon nie die uitreikdatums netjies maak nie"
 
-#: templates/rom_tools_hub.html:610
+#: templates/rom_tools_hub.html:612
 #, python-brace-format
 msgid ""
 "{count} saved play times look like another game. They will go to the "
@@ -9319,20 +9324,20 @@ msgstr ""
 "\n"
 "Daar hou Goedkeur 'n tyd en Verwerp maak dit skoon."
 
-#: templates/rom_tools_hub.html:611
+#: templates/rom_tools_hub.html:613
 msgid "No saved play time looks wrong."
 msgstr "Geen gestoorde speeltyd lyk verkeerd nie."
 
-#: templates/rom_tools_hub.html:612
+#: templates/rom_tools_hub.html:614
 #, python-brace-format
 msgid "Sent {count} play times to the HowLongToBeat review page."
 msgstr "{count} speeltye na die HowLongToBeat-nasienbladsy gestuur."
 
-#: templates/rom_tools_hub.html:613
+#: templates/rom_tools_hub.html:615
 msgid "Could not check the saved play times"
 msgstr "Kon nie die gestoorde speeltye nagaan nie"
 
-#: templates/rom_tools_hub.html:644
+#: templates/rom_tools_hub.html:646
 #, python-brace-format
 msgid ""
 "{count} games and wishlist items use a RAWG picture as their box art. "
@@ -9349,11 +9354,11 @@ msgstr ""
 "Omslae van ander bronne en alle fankuns bly. Voer daarna 'n grootmaat-"
 "skraap met Vul ontbrekende in om regte omslae te soek."
 
-#: templates/rom_tools_hub.html:645
+#: templates/rom_tools_hub.html:647
 msgid "No game uses a RAWG picture as its box art."
 msgstr "Geen speletjie gebruik 'n RAWG-prent as sy bokskuns nie."
 
-#: templates/rom_tools_hub.html:646
+#: templates/rom_tools_hub.html:648
 #, python-brace-format
 msgid ""
 "Cleared {count} pictures. Run a bulk scrape with Fill Missing to look for"
@@ -9362,7 +9367,7 @@ msgstr ""
 "{count} prente uitgevee. Voer 'n grootmaat-skraap met Vul ontbrekende in "
 "om regte omslae te soek."
 
-#: templates/rom_tools_hub.html:647
+#: templates/rom_tools_hub.html:649
 msgid "Could not clear the pictures"
 msgstr "Kon nie die prente uitvee nie"
 
@@ -11841,4 +11846,15 @@ msgstr "Ondersteun op Patreon"
 #~ " what they have. A bulk lookup "
 #~ "can fetch the times again."
 #~ msgstr ""
+
+#~ msgid ""
+#~ "Stopped: ScreenScraper stopped answering, so"
+#~ " your daily allowance may be spent."
+#~ " Files swapped: {replaced}. Run it "
+#~ "again tomorrow."
+#~ msgstr ""
+#~ "Gestop: ScreenScraper het opgehou antwoord,"
+#~ " so jou daaglikse toelae is dalk "
+#~ "op. Lêers geruil: {replaced}. Voer dit"
+#~ " môre weer uit."
 

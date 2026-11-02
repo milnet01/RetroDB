@@ -453,7 +453,7 @@ const SS_REGION_REPAIR_TEXT = {
     failed: {{ _('The fix stopped with an error. Files swapped: {replaced}. The log has the details.')|tojson }},
     running: {{ _('Checked {current} of {total} games. Files swapped: {replaced}.')|tojson }},
     done: {{ _('Finished. Files swapped: {replaced}. Games not found: {no_match}. Could not download: {failed}.')|tojson }},
-    stopped: {{ _('Stopped: ScreenScraper stopped answering, so your daily allowance may be spent. Files swapped: {replaced}. Run it again tomorrow.')|tojson }},
+    stopped: {{ _('Stopped. Files swapped: {replaced}.')|tojson }},
 };
 
 let _ssRegionRepairRunning = false;
@@ -461,11 +461,13 @@ let _ssRegionRepairRunning = false;
 function _ssRegionRepairShow(status) {
     const box = document.getElementById('ssRegionRepairStatus');
     if (!box) return;
+    const stops = status.service_stops || [];
     const template = status.running ? SS_REGION_REPAIR_TEXT.running
         : status.error ? SS_REGION_REPAIR_TEXT.failed
-        : status.stopped_no_reply ? SS_REGION_REPAIR_TEXT.stopped
+        : stops.length ? SS_REGION_REPAIR_TEXT.stopped
         : status.cancelled ? SS_REGION_REPAIR_TEXT.cancelled : SS_REGION_REPAIR_TEXT.done;
-    box.textContent = template.replace(/\{(\w+)\}/g, (_m, key) => formatNumber(status[key] || 0));
+    const said = template.replace(/\{(\w+)\}/g, (_m, key) => formatNumber(status[key] || 0));
+    box.textContent = [said, ...stops].join(' ');
 }
 
 function _ssRegionRepairPoll() {
@@ -715,6 +717,7 @@ async function refreshHltbPendingCount() {
         const resp = await fetch('/api/hltb/bulk/status');
         const data = await resp.json();
         const count = (data && data.pending_review) || 0;
+        (data.service_stops || []).forEach(said => showNotification(said, 'warning'));
         const card = document.getElementById('hltbReviewCard');
         const badge = document.getElementById('hltbPendingCount');
         if (card && badge) {

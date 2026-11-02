@@ -13,11 +13,18 @@ import logging
 import hashlib
 import re
 import os
+import threading
 
+from . import service_limits
 from .base_scraper import http_get, _http_session
 from .ss_regions import by_region
 
 logger = logging.getLogger(__name__)
+
+# ScreenScraper does not say when its day ends, so a spent limit is asked about
+# again after this long: one call an hour, against a run's thousands.
+_LIMIT_RECHECK_SECONDS = 3600
+_one_at_a_time = threading.Lock()
 
 # ScreenScraper API endpoints
 API_BASE = "https://api.screenscraper.fr/api2"
@@ -369,6 +376,7 @@ def _search_once(sanitized_title, system_id, username, password, dev_id, dev_pas
                         return None
                     elif "quota" in response_lower or "maximum" in response_lower or "api fermé" in response_lower:
                         logger.warning("ScreenScraper: API quota/rate limit reached")
+                        service_limits.stop(service_limits.SCREENSCRAPER, _LIMIT_RECHECK_SECONDS)
                         return None
                     elif "identifiants développeur" in response_lower or "developer" in response_lower:
                         # Dev credentials rejected - retry without them
@@ -391,7 +399,9 @@ def _search_once(sanitized_title, system_id, username, password, dev_id, dev_pas
                 except Exception:
                     logger.info("ScreenScraper: Could not parse response as JSON (game likely not found)")
                     return None
-                
+
+                _note_account_limits(data)
+
                 if "response" in data and "jeux" in data["response"]:
                     results = data["response"]["jeux"]
                     # Handle SS API quirk: single result may be a dict instead of list
@@ -863,6 +873,7 @@ def get_game_by_id(game_id, username, password, dev_id=None, dev_password=None, 
             return None
 
         data = response.json()
+        _note_account_limits(data)
 
         if "response" not in data or "jeu" not in data["response"]:
             return None
@@ -874,11 +885,39 @@ def get_game_by_id(game_id, username, password, dev_id=None, dev_password=None, 
         return None
 
 
+def _note_account_limits(data):
+    """Keep to the limits a reply states for this account (PASS-59-215)."""
+    user = (data.get('response') or {}).get('ssuser') if isinstance(data, dict) else None
+    if not isinstance(user, dict):
+        return
+
+    def number(field):
+        try:
+            return int(user.get(field))
+        except (TypeError, ValueError):
+            return 0
+
+    per_minute = number('maxrequestspermin')
+    if per_minute > 0:
+        service_limits.set_pace(service_limits.SCREENSCRAPER, 60 / per_minute)
+    for used, allowed in (('requeststoday', 'maxrequestsperday'),
+                          ('requestskotoday', 'maxrequestskoperday')):
+        if 0 < number(allowed) <= number(used):
+            service_limits.stop(service_limits.SCREENSCRAPER, _LIMIT_RECHECK_SECONDS)
+
+
 def _ss_request_with_retry(url, params, timeout=60, retries=2):
+    """One ScreenScraper call at a time: a free account's maxthreads is 1."""
+    with _one_at_a_time:
+        return _ss_request(url, params, timeout, retries)
+
+
+def _ss_request(url, params, timeout, retries):
     """Make a ScreenScraper API request with retry logic for transient failures.
 
-    Retries on timeouts, 429/430 (rate limit), and 5xx (server errors)
-    with exponential backoff.  Returns the Response object or None.
+    Retries on timeouts, 429 (too fast) and 5xx (server errors) with exponential
+    backoff. 430 and 431 mean the day's limit is spent, so they stop the service
+    instead. Returns the Response object, or None with nothing sent if stopped.
 
     Pass 25.7 — enforce MAX_API_RESPONSE_BYTES (default 10 MB) on successful
     responses. A giant SS JSON body would OOM the worker during `.json()`
@@ -893,6 +932,8 @@ def _ss_request_with_retry(url, params, timeout=60, retries=2):
         max_bytes = 10 * 1024 * 1024
 
     for attempt in range(retries + 1):
+        if not service_limits.wait_for_turn(service_limits.SCREENSCRAPER):
+            return None
         try:
             # Shared session for connection pooling (Pass 26.1); stream=True is
             # required for the response-size cap below so we can abort before
@@ -922,7 +963,12 @@ def _ss_request_with_retry(url, params, timeout=60, retries=2):
                 # Re-inject the bounded body so callers can still use .json()/.text.
                 response._content = bytes(buf)
                 return response
-            elif response.status_code in (429, 430):
+            elif response.status_code in (430, 431):
+                logger.warning(f"ScreenScraper daily limit reached ({response.status_code})")
+                service_limits.stop(service_limits.SCREENSCRAPER, _LIMIT_RECHECK_SECONDS)
+                return response
+            elif response.status_code == 429:
+                service_limits.slow_down(service_limits.SCREENSCRAPER)
                 if attempt < retries:
                     wait = 2 ** attempt
                     logger.warning(f"ScreenScraper rate limited ({response.status_code}), waiting {wait}s...")

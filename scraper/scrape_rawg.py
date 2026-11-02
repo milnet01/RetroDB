@@ -13,7 +13,8 @@ import sys
 # Add parent directory to path for config import
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from scraper.base_scraper import http_get, on_one_platform, safe_json, rate_limit
+from scraper import service_limits
+from scraper.base_scraper import http_get, on_one_platform, safe_json
 import config as _config
 
 # Pass 45.14 — cap RAWG JSON response, mirroring RA + AI + ScreenScraper.
@@ -138,11 +139,26 @@ def _get_api_key():
     return get_api_key('rawg', 'RAWG_API_KEY')
 
 
+# The free plan allows 20,000 requests a month. A spent month is asked about
+# again after this long, because a reply does not say when it ends.
+_LIMIT_RECHECK_SECONDS = 86400
+
+
+def _last_allowed_call(response):
+    try:
+        return int(response.headers.get('X-RateLimit-Remaining', 1)) <= 0
+    except (TypeError, ValueError):
+        return False
+
+
 def _make_request(endpoint, params=None, max_retries=2):
     """Make a request to RAWG API with retry logic"""
     api_key = _get_api_key()
     if not api_key:
         logger.warning("RAWG API key not configured")
+        return None
+
+    if not service_limits.wait_for_turn(service_limits.RAWG):
         return None
 
     if params is None:
@@ -159,9 +175,13 @@ def _make_request(endpoint, params=None, max_retries=2):
         return None
 
     if response.status_code == 200:
+        if _last_allowed_call(response):
+            service_limits.stop(service_limits.RAWG, _LIMIT_RECHECK_SECONDS)
         return safe_json(response)
     else:
         logger.warning(f"RAWG request failed: {response.status_code} - URL: {url}")
+        if response.status_code in (401, 403, 429) and 'limit' in response.text.lower():
+            service_limits.stop(service_limits.RAWG, _LIMIT_RECHECK_SECONDS)
         return None
 
 
@@ -241,9 +261,6 @@ def search_games(title, system_folder=None, limit=10):
         }
         
         results.append(result)
-    
-    # Rate limit - RAWG free tier has 20,000 requests/month
-    rate_limit(0.3)
     
     return results
 
@@ -339,8 +356,6 @@ def get_game_details(game_id):
         'alternative_names': alternative_names if one_version else [],
         'source': 'rawg'
     }
-
-    rate_limit(0.3)  # Rate limiting
 
     return result
 

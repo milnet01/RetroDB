@@ -21,6 +21,7 @@ import threading
 import time
 from datetime import datetime, timezone
 
+from scraper import service_limits
 from services.jobs.base import (
     _get_conn, _commit_with_retry,
     persist_job_start, persist_job_progress, persist_job_complete,
@@ -260,6 +261,10 @@ class HLTBBulkLookupJob:
                             year=release_year(game.get('release_date')),
                             alternate_titles=alt_titles or None,
                         )
+
+                        # Every game after this would come back empty unasked.
+                        if service_limits.stopped(service_limits.HOWLONGTOBEAT):
+                            break
 
                         decision = classify_match(result, game['title'],
                                                   self.confidence_threshold)

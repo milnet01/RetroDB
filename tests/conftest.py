@@ -61,6 +61,16 @@ import pytest  # noqa: E402
 from tests._util import REPO_ROOT, read_source, read_module_source, slice_function, count_except_blocks  # noqa: E402,F401
 
 
+@pytest.fixture(autouse=True)
+def _no_service_limits_between_tests():
+    """A stop or pace in one test must not reach the next, or slow the suite."""
+    from scraper import service_limits
+    service_limits.clear()
+    service_limits._pace.clear()
+    yield
+    service_limits.clear()
+
+
 @pytest.fixture
 def app_client(monkeypatch):
     """Function-scoped Flask test client with TESTING=True restored on teardown.

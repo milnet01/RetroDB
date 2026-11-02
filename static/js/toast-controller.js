@@ -655,6 +655,18 @@ const UnifiedToastController = {
     },
 
     /**
+     * Say once that a service has stopped at its limit (PASS-59-215).
+     */
+    sayServiceStops(sentences) {
+        this._saidServiceStops = this._saidServiceStops || new Set();
+        for (const said of sentences || []) {
+            if (this._saidServiceStops.has(said)) continue;
+            this._saidServiceStops.add(said);
+            showNotification(said, 'warning');
+        }
+    },
+
+    /**
      * Poll status for a specific type
      */
     async pollStatus(type, endpoint) {
@@ -687,6 +699,7 @@ const UnifiedToastController = {
             if (data.success === false) return;
 
             this.updateToasts(type, data);
+            this.sayServiceStops(data.service_stops);
 
             // Manage polling lifecycle based on active state
             const isActive = data.running && !data.completed;

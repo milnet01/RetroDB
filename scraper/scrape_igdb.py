@@ -15,6 +15,7 @@ from config import IMAGE_PATH
 import config as _config
 
 from services.release_dates import igdb_regional_dates, pick_release_date
+from scraper import service_limits
 from scraper.base_scraper import http_post, download_image, get_scraper_conn, per_game_screenshots_fit
 from scraper.match_scorer import EXACT_TITLE_SCORE, calculate_title_match_score
 
@@ -98,6 +99,7 @@ def igdb_request(endpoint, body, token):
         'Authorization': f'Bearer {token}',
         'Accept': 'application/json'
     }
+    service_limits.wait_for_turn(service_limits.IGDB)
     r = http_post(
         f"https://api.igdb.com/v4/{endpoint}",
         data=body,
@@ -121,6 +123,7 @@ def igdb_request(endpoint, body, token):
             _igdb_token_cache['expires_at'] = 0
         fresh_token = igdb_auth()
         headers['Authorization'] = f'Bearer {fresh_token}'
+        service_limits.wait_for_turn(service_limits.IGDB)
         r = http_post(
             f"https://api.igdb.com/v4/{endpoint}",
             data=body,
