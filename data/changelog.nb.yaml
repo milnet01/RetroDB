@@ -1,3 +1,59 @@
+- version: 3.35.2
+  date: '2026-11-02'
+  tags:
+  - type: fix
+    label: Total spilletid teller ikke lenger minutter som timer, på dashbordet, samlertrofeene og analysediagrammet. Et spill på 36 minutter ble regnet som 36 timer
+  - type: fix
+    label: HowLongToBeat tar ikke lenger en oppfølger for spillet ditt. Double Dragon II får ikke lenger tidene til Double Dragon III
+  - type: fix
+    label: Et massesøk i HowLongToBeat lagrer ikke lenger tiden til et spill på et annet system. Mario Golf på Game Boy Color får ikke lenger tiden fra Nintendo 64. Disse treffene venter nå på gjennomgangssiden
+  - type: fix
+    label: Massesøk og enkeltsøk i HowLongToBeat bruker nå utgivelsesåret til spillet, så Doom fra 1993 får ikke lenger tidene til Doom fra 2016
+  - type: new
+    label: Sjekk lagrede spilletider i ROM-verktøy sender lagrede treff som ser feil ut til gjennomgangssiden, der du beholder eller fjerner hvert enkelt
+  - type: fix
+    label: Et massesøk i HowLongToBeat med Bare manglende prøver nå på nytt spill som er funnet uten tid, og venter ett sekund mellom forespørslene
+  - type: fix
+    label: En treffscore på 72 % vises ikke lenger som 100 % på spillsiden
+  - type: fix
+    label: Spill viser ikke lenger et annet spills RetroAchievements. Resident Evil 4 på GameCube viser ikke lenger settet for Resident Evil, og Ratchet Deadlocked ikke lenger settet for Ratchet & Clank
+  - type: fix
+    label: En skraping fjerner nå en RetroAchievements-lenke når RetroAchievements ikke har et slikt spill. Hvis RetroAchievements ikke kan nås, beholdes lenken
+  - type: fix
+    label: RetroAchievements finner nå flere av spillene dine, via navnet på ROM-filen, alternative titler, aksenter som i Ōkami, og titler med to navn
+  - type: fix
+    label: RetroAchievements lenker ikke lenger et spill til et bonussett, et hack eller en demo, og X-Men er ikke lenger det samme som G-Men
+  - type: new
+    label: Spillsiden viser RetroAchievements' eget navn på det lenkede spillet, så en feil lenke er lett å oppdage
+  - type: fix
+    label: RA-oppdatering lagrer nå poengene til hvert spill, så et spill viser ikke lenger 0 poeng
+  - type: new
+    label: Spillsiden merker aldersgrenser fra AI som et gjett basert på innholdet i spillet, og viser når hvert klassifiseringsorgan startet. OutRun fra 1987 ser ikke lenger ut til å være offisielt vurdert av ESRB
+  - type: new
+    label: Spillsiden merker anmeldelsesscorer og salgstall som kom fra AI. Hvis du selv endrer en vurdering eller et salgstall, fjernes merket
+  - type: fix
+    label: En score fra AI på feil skala avvises, så et populært spill får ikke lenger 7 av 100 fra en ny skraping
+  - type: fix
+    label: Et antall scorer fra AI lagres ikke lenger ved siden av scoren fra et annet nettsted, og spillsiden viser ikke lenger et som er lagret slik
+  - type: fix
+    label: Et salgsintervall eller et pengebeløp fra AI blir ikke lenger til noen få solgte eksemplarer
+  - type: fix
+    label: AI-svar lagrer ikke lenger lister som kode, ordene N/A eller None som verdier, eller et spills egen konsoll under andre plattformer
+  - type: fix
+    label: AI-utfylling beholder nå verdien den erstatter i historikken til spillet
+  - type: fix
+    label: Kassettspill får ikke lenger en funnet-på Battery Save-type, og nye AI-svar blir ikke lenger Standard Edition som standard
+  - type: fix
+    label: Serien til et spill kommer ikke lenger fra å dele opp tittelen, så Need For Speed er ikke lenger i en serie som heter Need. Serienavn fra IGDB leses igjen, og gamle gjetninger fjernes så neste skraping kan fylle dem ut på nytt
+  - type: fix
+    label: Beskrivelser viser ikke lenger webkoder i stedet for anførselstegn, eller overskriftstegn som
+  - type: fix
+    label: Ett selskap har nå én stavemåte, så et klikk på Sega finner alle SEGA-spill. Regioner har én verdi, og plattformer bruker navnene i listen
+  - type: fix
+    label: Spilltitler fra RAWG får ikke lenger lagt til et årstall, og alternative titler lister ikke lenger filnavn som dosbox.exe
+  - type: fix
+    label: Full reskraping erstatter ikke lenger en aldersgrense eller kontroller du har satt med et gjett, og en skraping som feiler underveis skriver ikke lenger via en mindre nøye rute
+  body: "<ul>\n  <li><strong>AI-svar sier at de er AI.</strong> Aldersgrenser fra AI\n    beholdes, merket som et gjett basert på innholdet i spillet, med året hvert\n    klassifiseringsorgan startet. Scorer og salgstall fra AI er også merket.</li>\n  <li><strong>RetroAchievements viser riktig spill.</strong> Oppfølgere har ikke\n    lenger det første spillets prestasjoner. Etter oppdateringen tilbyr\n    dashbordet én gang en RetroAchievements-oppdatering. Trykk på den for å reparere\n    gamle lenker. Fremdrift lagret under en feil lenke fjernes, og neste\n    synkronisering fyller den inn igjen.</li>\n  <li><strong>Totalene for spilletid stemmer.</strong> Tider under én time ble\n    regnet som timer, så totalene på dashbordet og samlertrofeene var for høye.\n    Noen totaler og trofeer vil gå ned.</li>\n  <li><strong>HowLongToBeat finner riktig spill.</strong> En oppfølger blir ikke lenger\n    tatt for spillet du har, og systemet og året til spillet teller nå.\n    Et treff på et annet system, eller fra flere år senere, venter på deg på\n    gjennomgangssiden.</li>\n  <li><strong>Sjekk det som allerede er lagret.</strong> Trykk på Sjekk lagrede spilletider\n    i ROM-verktøy for å sende tvilsomme lagrede treff til gjennomgangssiden.\n    Ingenting endres før du bestemmer deg.</li>\n  <li><strong>Serienavn er ekte.</strong> Serien til et spill kommer ikke lenger\n    fra å dele opp tittelen. Etter oppdateringen fjernes serienavn som var\n    gjettet, også noen som var riktige. Neste skraping\n    fyller dem ut fra kilder som oppgir en serie.</li>\n  <li><strong>Ren tekst.</strong> Beskrivelser viser ikke lenger webkoder eller\n    overskriftstegn. Ett selskap har én stavemåte, et spill har én region, og\n    filnavn som dosbox.exe listes ikke lenger som andre titler. Dette\n    skjer én gang, av seg selv, etter oppdateringen.</li>\n  <li><strong>Full reskraping beholder valgene dine.</strong> En aldersgrense eller\n    kontroller du har satt, beholdes med mindre en kilde faktisk oppgir en.</li>\n</ul>\n"
 - version: 3.35.1
   date: '2026-11-02'
   tags:

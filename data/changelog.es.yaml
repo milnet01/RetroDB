@@ -1,3 +1,59 @@
+- version: 3.35.2
+  date: '2026-11-02'
+  tags:
+  - type: fix
+    label: El tiempo total de juego ya no cuenta los minutos como horas, ni en el panel, ni en los trofeos de coleccionista, ni en el gráfico de analíticas. Un juego de 36 minutos se contaba como 36 horas
+  - type: fix
+    label: HowLongToBeat ya no confunde una secuela con tu juego. Double Dragon II ya no recibe los tiempos de Double Dragon III
+  - type: fix
+    label: Una búsqueda masiva en HowLongToBeat ya no guarda el tiempo de un juego de otro sistema. Mario Golf de Game Boy Color ya no recibe el tiempo de Nintendo 64. Estas coincidencias ahora esperan en la página de revisión
+  - type: fix
+    label: Las búsquedas de HowLongToBeat, masivas o individuales, ahora usan el año de lanzamiento del juego, así que Doom de 1993 ya no recibe los tiempos de Doom de 2016
+  - type: new
+    label: Comprobar tiempos de juego guardados, en Herramientas ROM, envía a la página de revisión las coincidencias guardadas que parecen erróneas, donde conservas o borras cada una
+  - type: fix
+    label: Una búsqueda masiva en HowLongToBeat con Solo los que faltan ahora reintenta los juegos con coincidencia sin tiempo y deja un segundo entre peticiones
+  - type: fix
+    label: Una puntuación de coincidencia del 72% ya no aparece como 100% en la página del juego
+  - type: fix
+    label: Los juegos ya no muestran los RetroAchievements de otro juego. Resident Evil 4 de GameCube ya no muestra el conjunto de Resident Evil, y Ratchet Deadlocked ya no muestra el de Ratchet & Clank
+  - type: fix
+    label: Un scrapeo ahora elimina el enlace a RetroAchievements cuando allí no existe ese juego. Si no se puede conectar con RetroAchievements, el enlace se mantiene
+  - type: fix
+    label: RetroAchievements ahora encuentra más de tus juegos, a través del nombre del archivo ROM, títulos alternativos, acentos como en Ōkami y títulos con dos nombres
+  - type: fix
+    label: RetroAchievements ya no enlaza un juego con un conjunto extra, un hack o una demo, y X-Men ya no equivale a G-Men
+  - type: new
+    label: La página del juego muestra el nombre que RetroAchievements da al juego enlazado, para detectar fácilmente un enlace erróneo
+  - type: fix
+    label: Actualizar RA ahora guarda los puntos de cada juego, así que un juego ya no muestra 0 puntos
+  - type: new
+    label: La página del juego marca las clasificaciones por edad de la AI como una suposición basada en el contenido del juego, e indica cuándo empezó cada junta de clasificación. OutRun de 1987 ya no parece clasificado oficialmente por ESRB
+  - type: new
+    label: La página del juego marca las puntuaciones de reseñas y las cifras de ventas que vienen de la AI. Si cambias tú una clasificación o cifra de ventas, la marca desaparece
+  - type: fix
+    label: Se rechaza una puntuación de la AI en una escala incorrecta, así que un juego bien valorado ya no recibe 7 sobre 100 en un nuevo scrapeo
+  - type: fix
+    label: El número de votos de la AI ya no se guarda junto a la puntuación de otro sitio, y la página del juego ya no muestra uno guardado así
+  - type: fix
+    label: Un rango de ventas o una suma de dinero de la AI ya no se convierte en unas pocas copias vendidas
+  - type: fix
+    label: Las respuestas de la AI ya no guardan listas como código, ni las palabras N/A o None como valores, ni la propia consola del juego en otras plataformas
+  - type: fix
+    label: Rellenar con AI ahora conserva en el historial del juego el valor que reemplaza
+  - type: fix
+    label: Los juegos de cartucho ya no reciben un tipo de Guardado con batería inventado, y las nuevas respuestas de la AI ya no usan por defecto Edición estándar
+  - type: fix
+    label: La serie de un juego ya no sale de recortar su título, así que Need For Speed ya no está en una serie llamada Need. Los nombres de serie de IGDB se leen de nuevo y las suposiciones antiguas se borran para que el próximo scrapeo las rellene
+  - type: fix
+    label: Las descripciones ya no muestran códigos web en lugar de comillas, ni marcas de encabezado como
+  - type: fix
+    label: Cada empresa ahora tiene una sola grafía, así que al hacer clic en Sega aparecen todos los juegos de SEGA. Las regiones tienen un solo valor y las plataformas usan los nombres de la lista
+  - type: fix
+    label: Los títulos de juegos de RAWG ya no ganan un año, y los títulos alternativos ya no incluyen nombres de archivo como dosbox.exe
+  - type: fix
+    label: Re-scrapeo completo ya no reemplaza por una suposición una clasificación o un mando que hayas definido, y un scrapeo que falla a medias ya no escribe por una vía menos cuidadosa
+  body: "<ul>\n  <li><strong>Las respuestas de la AI indican que son de la AI.</strong> Las clasificaciones por edad de la AI\n    se mantienen, marcadas como una suposición basada en el contenido del juego, con el año en que empezó cada\n    junta de clasificación. Las puntuaciones y ventas de la AI también están marcadas.</li>\n  <li><strong>RetroAchievements muestra el juego correcto.</strong> Las secuelas ya no\n    llevan los logros del primer juego. Tras actualizar, el\n    panel ofrece una vez una actualización de RetroAchievements. Púlsala para reparar\n    los enlaces antiguos. El progreso guardado con un enlace erróneo se elimina y la próxima\n    sincronización lo rellena de nuevo.</li>\n  <li><strong>Los totales de tiempo de juego son correctos.</strong> Los tiempos de menos de una hora se\n    contaban como horas, así que los totales del panel y los trofeos de coleccionista\n    eran demasiado altos. Algunos totales y trofeos bajarán.</li>\n  <li><strong>HowLongToBeat encuentra el juego correcto.</strong> Una secuela ya\n    no se hace pasar por tu juego, y ahora cuentan el sistema y el año del juego.\n    Una coincidencia de otro sistema, o de años después, te espera\n    en la página de revisión.</li>\n  <li><strong>Revisa lo ya guardado.</strong> Pulsa Comprobar tiempos de juego guardados\n    en Herramientas ROM para enviar a la página de revisión las coincidencias guardadas dudosas.\n    No cambia nada hasta que decidas.</li>\n  <li><strong>Los nombres de serie son reales.</strong> La serie de un juego ya no sale\n    de recortar su título. Tras actualizar, se borran los nombres de serie que eran\n    suposiciones, incluidos algunos correctos. El próximo scrapeo\n    los rellena con fuentes que nombran una serie.</li>\n  <li><strong>Texto limpio.</strong> Las descripciones ya no muestran códigos web ni\n    marcas de encabezado. Cada empresa tiene una grafía, cada juego una región, y\n    los nombres de archivo como dosbox.exe ya no aparecen como otros títulos. Esto\n    ocurre una vez, por sí solo, tras actualizar.</li>\n  <li><strong>Re-scrapeo completo respeta tus decisiones.</strong> Una clasificación o\n    un mando que hayas definido se mantiene salvo que una fuente aporte uno de verdad.</li>\n</ul>\n"
 - version: 3.35.1
   date: '2026-11-02'
   tags:

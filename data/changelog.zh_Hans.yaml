@@ -1,3 +1,59 @@
+- version: 3.35.2
+  date: '2026-11-02'
+  tags:
+  - type: fix
+    label: 总游玩时间不再把分钟算成小时,仪表盘、收藏家奖杯和统计图表都已修正。之前一款36分钟的游戏会被算成36小时
+  - type: fix
+    label: HowLongToBeat 不再把续作当成你的游戏。《Double Dragon II》不再获得《Double Dragon III》的时长
+  - type: fix
+    label: 批量 HowLongToBeat 查询不再保存其他系统上同名游戏的时长。Game Boy Color 上的《Mario Golf》不再获得 Nintendo 64 版的时长。这类匹配现在会留在审核页面等待处理
+  - type: fix
+    label: 批量和单个 HowLongToBeat 查询现在都会参考游戏的发行年份,因此1993年的《Doom》不再获得2016年《Doom》的时长
+  - type: new
+    label: ROM 工具中的“检查已保存的游玩时间”会把看起来有误的已保存匹配送到审核页面,由你逐个选择保留或清除
+  - type: fix
+    label: 勾选“仅缺失项”的批量 HowLongToBeat 查询现在会重试已匹配但没有时长的游戏,并在每次请求之间间隔一秒
+  - type: fix
+    label: 72%的匹配分数不再在游戏页面显示为100%
+  - type: fix
+    label: 游戏不再显示其他游戏的 RetroAchievements。GameCube 上的《Resident Evil 4》不再显示《Resident Evil》的成就集,《Ratchet Deadlocked》也不再显示《Ratchet & Clank》的成就集
+  - type: fix
+    label: 当 RetroAchievements 上没有对应游戏时,抓取现在会移除 RetroAchievements 链接。如果无法连接 RetroAchievements,链接会保留
+  - type: fix
+    label: RetroAchievements 现在能找到更多你的游戏,方式包括 ROM 文件名、备用标题、带重音的名称(如 Ōkami)以及有两个名称的标题
+  - type: fix
+    label: RetroAchievements 不再把游戏链接到奖励集、破解版或演示版,X-Men 也不再被当成 G-Men
+  - type: new
+    label: 游戏页面会显示 RetroAchievements 对所链接游戏使用的名称,方便发现错误链接
+  - type: fix
+    label: RA 刷新现在会保存每个游戏的点数,因此游戏不再显示0点
+  - type: new
+    label: 游戏页面会把 AI 提供的年龄分级标为基于游戏内容的推测,并说明各分级机构的起始年份。1987年的《OutRun》不再看起来像是有 ESRB 的正式分级
+  - type: new
+    label: 游戏页面会标出来自 AI 的评分和销量数据。你自己修改分级或销量后,标记会消失
+  - type: fix
+    label: AI 给出的评分如果量表不对会被拒绝,因此一款口碑不错的游戏不再在新的抓取中得到100分中的7分
+  - type: fix
+    label: AI 给出的评分人数不再与其他网站的评分一起保存,游戏页面也不再显示已经这样保存的数据
+  - type: fix
+    label: AI 给出的销量范围或金额不再变成寥寥几份的销量
+  - type: fix
+    label: AI 的回答不再把列表存成代码,不再把 N/A 或 None 当作值,也不再把游戏自身的主机列在其他平台下
+  - type: fix
+    label: AI 填充现在会把被替换的值保留在游戏历史中
+  - type: fix
+    label: 卡带游戏不再被编造出“电池存档”类型,新的 AI 回答也不再默认为标准版
+  - type: fix
+    label: 游戏的系列不再通过拆分标题得出,因此 Need For Speed 不再被归入名为 Need 的系列。IGDB 的系列名称会重新读取,旧的猜测数据会被清除,等待下次抓取重新填充
+  - type: fix
+    label: 描述中不再用网页代码代替引号,也不再显示标题标记
+  - type: fix
+    label: 同一家公司现在只有一种写法,因此点击 Sega 能找到所有 SEGA 游戏。地区只保留一个值,平台使用列表中的名称
+  - type: fix
+    label: 来自 RAWG 的游戏标题不再被加上年份,备用标题也不再列出 dosbox.exe 之类的文件名
+  - type: fix
+    label: 完整重新抓取不再用猜测值替换你设置的分级或手柄,抓取中途失败时也不再通过不够严谨的方式写入
+  body: "<ul>\n  <li><strong>AI 回答会标明来自 AI。</strong>AI 提供的年龄分级会保留,并标为基于游戏内容的推测,同时显示各分级机构的起始年份。AI 提供的评分和销量也会被标出。</li>\n  <li><strong>RetroAchievements 显示正确的游戏。</strong>续作不再带有第一部游戏的成就。更新后,仪表盘会提供一次 RetroAchievements 刷新。点击它即可修复旧链接。保存在错误链接下的进度会被移除,下次同步时会重新填入。</li>\n  <li><strong>游玩时间总计更准确。</strong>不足一小时的时间曾被算成小时,所以仪表盘和收藏家奖杯上的总计偏高。部分总计和奖杯会减少。</li>\n  <li><strong>HowLongToBeat 能找到正确的游戏。</strong>续作不再被当成你拥有的游戏,游戏的系统和年份现在也会参与判断。其他系统或相隔多年的匹配会留在审核页面等你处理。</li>\n  <li><strong>检查已保存的内容。</strong>在 ROM 工具中点击“检查已保存的游玩时间”,可把存疑的已保存匹配送到审核页面。在你决定之前不会有任何改变。</li>\n  <li><strong>系列名称更可靠。</strong>游戏的系列不再通过拆分标题得出。更新后,猜测出的系列名称会被清除,其中也包括一些正确的。下次抓取会从标明系列的来源重新填充。</li>\n  <li><strong>文本更干净。</strong>描述中不再显示网页代码或标题标记。同一家公司只有一种写法,一款游戏只有一个地区,dosbox.exe 之类的文件名也不再被列为其他标题。这些会在更新后自动一次完成。</li>\n  <li><strong>完整重新抓取会保留你的选择。</strong>你设置的分级或手柄会保留,除非来源确实提供了相应数据。</li>\n</ul>\n"
 - version: 3.35.1
   date: '2026-11-02'
   tags:

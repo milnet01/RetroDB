@@ -1,3 +1,59 @@
+- version: 3.35.2
+  date: '2026-11-02'
+  tags:
+  - type: fix
+    label: Toplam oynama süresi artık dakikaları saat olarak saymıyor; bu hem panoda, hem koleksiyoncu kupalarında, hem de analiz grafiğinde geçerli. 36 dakikalık bir oyun 36 saat sayılıyordu
+  - type: fix
+    label: HowLongToBeat artık oyununuz için devam oyununu almıyor. Double Dragon II artık Double Dragon III'ün sürelerini almıyor
+  - type: fix
+    label: Toplu HowLongToBeat araması artık başka bir sistemdeki oyunun süresini kaydetmiyor. Game Boy Color'daki Mario Golf artık Nintendo 64 süresini almıyor. Bu eşleşmeler artık inceleme sayfasında bekliyor
+  - type: fix
+    label: Toplu ve tekli HowLongToBeat aramaları artık oyunun çıkış yılını kullanıyor; böylece 1993 tarihli Doom artık 2016 tarihli Doom'un sürelerini almıyor
+  - type: new
+    label: ROM Araçları'ndaki Kayıtlı Oynama Sürelerini Denetle, yanlış görünen kayıtlı eşleşmeleri inceleme sayfasına gönderir; orada her birini tutar ya da silersiniz
+  - type: fix
+    label: Yalnızca Eksikler seçeneğiyle yapılan toplu HowLongToBeat araması artık süresiz eşleşen oyunları yeniden dener ve istekler arasında bir saniye bekler
+  - type: fix
+    label: '%72''lik bir eşleşme puanı artık oyun sayfasında %100 olarak görünmüyor'
+  - type: fix
+    label: Oyunlar artık başka bir oyunun RetroAchievements verilerini göstermiyor. GameCube'daki Resident Evil 4 artık Resident Evil setini, Ratchet Deadlocked da artık Ratchet & Clank setini göstermiyor
+  - type: fix
+    label: Kazıma artık RetroAchievements'ta böyle bir oyun yoksa RetroAchievements bağlantısını kaldırıyor. RetroAchievements'a ulaşılamazsa bağlantı kalıyor
+  - type: fix
+    label: RetroAchievements artık oyunlarınızın daha fazlasını buluyor; ROM dosyasının adı, alternatif başlıklar, Ōkami gibi aksanlı harfler ve iki adı olan başlıklar üzerinden eşleştiriyor
+  - type: fix
+    label: RetroAchievements artık bir oyunu bonus sete, hack'e veya demoya bağlamıyor ve X-Men artık G-Men ile eşleşmiyor
+  - type: new
+    label: Oyun sayfası, bağlı oyun için RetroAchievements'ın kendi adını gösterir; böylece yanlış bağlantı kolayca fark edilir
+  - type: fix
+    label: RA Yenile artık her oyunun puanlarını kaydediyor; böylece bir oyun artık 0 puan göstermiyor
+  - type: new
+    label: Oyun sayfası, yapay zekadan gelen yaş derecelendirmelerini oyunun içeriğine dayanan bir tahmin olarak işaretler ve her derecelendirme kurumunun ne zaman başladığını belirtir. 1987 tarihli OutRun artık ESRB tarafından resmen derecelendirilmiş gibi görünmüyor
+  - type: new
+    label: Oyun sayfası, yapay zekadan gelen değerlendirme puanlarını ve satış rakamlarını işaretler. Bir derecelendirmeyi veya satış rakamını kendiniz değiştirirseniz işaret kalkar
+  - type: fix
+    label: Yapay zekadan gelen yanlış ölçekteki puan reddedilir; böylece beğenilen bir oyun yeni bir kazımadan 100 üzerinden 7 almaz
+  - type: fix
+    label: Yapay zekadan gelen puan sayısı artık başka bir sitenin puanının yanına kaydedilmiyor ve oyun sayfası bu şekilde kaydedilmiş olanı artık göstermiyor
+  - type: fix
+    label: Yapay zekadan gelen bir satış aralığı veya para tutarı artık birkaç adet satış olarak kaydedilmiyor
+  - type: fix
+    label: Yapay zeka yanıtları artık listeleri kod olarak, N/A veya None sözcüklerini değer olarak ya da oyunun kendi konsolunu diğer platformlar altında saklamıyor
+  - type: fix
+    label: Yapay Zeka Doldur artık değiştirdiği değeri oyunun geçmişinde tutuyor
+  - type: fix
+    label: Kartuş oyunlarına artık uydurma bir Pil ile Kayıt türü verilmiyor ve yeni yapay zeka yanıtları artık varsayılan olarak Standart Sürüm seçmiyor
+  - type: fix
+    label: Bir oyunun serisi artık başlığı parçalanarak çıkarılmıyor; böylece Need For Speed artık Need adlı bir seride değil. IGDB'nin seri adları yeniden okunuyor ve eski tahminler, bir sonraki kazımanın yeniden doldurması için temizleniyor
+  - type: fix
+    label: Açıklamalar artık tırnak işaretleri yerine web kodlarını veya başlık işaretlerini göstermiyor
+  - type: fix
+    label: Bir şirket artık tek bir yazıma sahip; böylece Sega'ya tıklamak tüm SEGA oyunlarını buluyor. Bölgeler tek bir değer tutuyor ve platformlar listedeki adları kullanıyor
+  - type: fix
+    label: RAWG'dan gelen oyun başlıkları artık yıl eklenmiş olmuyor ve alternatif başlıklar artık dosbox.exe gibi dosya adlarını listelemiyor
+  - type: fix
+    label: Tam Yeniden Kazıma artık sizin belirlediğiniz bir derecelendirmeyi veya kontrolcüyü bir tahminle değiştirmiyor ve yarıda başarısız olan bir kazıma artık daha özensiz bir yoldan yazmıyor
+  body: "<ul>\n  <li><strong>Yapay zeka yanıtları yapay zeka olduklarını belirtir.</strong> Yapay zekadan gelen yaş derecelendirmeleri\n    kalır; oyunun içeriğine dayanan bir tahmin olarak işaretlenir ve her\n    derecelendirme kurumunun başladığı yıl gösterilir. Yapay zekadan gelen puanlar ve satışlar da işaretlenir.</li>\n  <li><strong>RetroAchievements doğru oyunu gösterir.</strong> Devam oyunları\n    artık ilk oyunun başarımlarını taşımıyor. Güncellemeden sonra\n    pano bir kez RetroAchievements yenilemesi önerir. Eski bağlantıları\n    onarmak için buna basın. Yanlış bağlantı altında kaydedilen ilerleme silinir\n    ve bir sonraki eşitleme onu yeniden doldurur.</li>\n  <li><strong>Oynama süresi toplamları doğru.</strong> Bir saatten kısa süreler\n    saat olarak sayılıyordu; bu yüzden panodaki toplamlar ve koleksiyoncu\n    kupaları fazla yüksekti. Bazı toplamlar ve kupalar düşecek.</li>\n  <li><strong>HowLongToBeat doğru oyunu bulur.</strong> Bir devam oyunu artık\n    sahip olduğunuz oyun yerine geçmiyor ve oyunun sistemi ile yılı artık\n    hesaba katılıyor. Başka bir sistemdeki ya da yıllar sonrasına ait bir eşleşme,\n    inceleme sayfasında sizi bekler.</li>\n  <li><strong>Kayıtlı olanları denetleyin.</strong> Şüpheli kayıtlı eşleşmeleri inceleme sayfasına göndermek için\n    ROM Araçları'ndaki Kayıtlı Oynama Sürelerini Denetle'ye basın.\n    Siz karar verene kadar hiçbir şey değişmez.</li>\n  <li><strong>Seri adları gerçek.</strong> Bir oyunun serisi artık başlığı\n    parçalanarak çıkarılmıyor. Güncellemeden sonra tahmin edilen seri adları\n    temizlenir; doğru olanlardan bazıları da dahil. Bir sonraki kazıma\n    onları seri adı veren kaynaklardan doldurur.</li>\n  <li><strong>Temiz metin.</strong> Açıklamalar artık web kodlarını veya\n    başlık işaretlerini göstermiyor. Bir şirket tek yazıma, bir oyun tek bölgeye sahip\n    ve dosbox.exe gibi dosya adları artık diğer başlıklar olarak listelenmiyor.\n    Bu, güncellemeden sonra kendiliğinden bir kez gerçekleşir.</li>\n  <li><strong>Tam Yeniden Kazıma seçimlerinizi korur.</strong> Belirlediğiniz bir derecelendirme veya\n    kontrolcü, bir kaynak gerçekten bir tane sağlamadıkça kalır.</li>\n</ul>\n"
 - version: 3.35.1
   date: '2026-11-02'
   tags:

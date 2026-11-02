@@ -112,11 +112,8 @@ msgid "That job belongs to another user"
 msgstr "Dieser Auftrag gehört einem anderen Benutzer"
 
 #: routes/achievements.py:488
-#, fuzzy
 msgid "Could not get an answer from RetroAchievements"
-msgstr ""
-"Achievement-Fortschritt konnte nicht von RetroAchievements abgerufen "
-"werden."
+msgstr "Von RetroAchievements konnte keine Antwort abgerufen werden"
 
 #: routes/achievements.py:502
 msgid "No RetroAchievements found for this game"
@@ -7201,13 +7198,12 @@ msgstr "Kritiker-Wertung (%(count)s Rezensionen)"
 
 #: templates/game_detail.html:230 templates/game_detail.html:235
 msgid "From the AI, not checked against a review site."
-msgstr ""
+msgstr "Von der KI, nicht mit einer Testseite abgeglichen."
 
 #: templates/game_detail.html:231 templates/game_detail.html:236
 #: templates/game_detail.html:241
-#, fuzzy
 msgid "AI"
-msgstr "Haupt"
+msgstr "KI"
 
 #: templates/game_detail.html:235
 #, python-format
@@ -7215,9 +7211,9 @@ msgid "User Score (%(count)s ratings)"
 msgstr "Nutzer-Wertung (%(count)s Bewertungen)"
 
 #: templates/game_detail.html:240
-#, fuzzy, python-format
+#, python-format
 msgid "Copies sold on %(system)s, from the AI, not checked"
-msgstr "Verkaufte Exemplare auf %(system)s, nach veröffentlichten Verkaufszahlen"
+msgstr "Verkaufte Exemplare auf %(system)s, von der KI, nicht geprüft"
 
 #: templates/game_detail.html:240
 #, python-format
@@ -7282,9 +7278,8 @@ msgid "RPCS3 Trophies"
 msgstr "RPCS3-Trophäen"
 
 #: templates/game_detail.html:459 templates/game_detail.html:467
-#, fuzzy
 msgid "AI guess"
-msgstr "In Bearbeitung"
+msgstr "KI-Schätzung"
 
 #: templates/game_detail.html:465
 msgid "(cross-mapped)"
@@ -7295,11 +7290,15 @@ msgid ""
 "AI guess: a guess based on the game's content, not an official rating. "
 "The game may be older than the board."
 msgstr ""
+"KI-Schätzung: eine Schätzung auf Basis des Spielinhalts, keine offizielle"
+" Bewertung. Das Spiel kann älter sein als die Prüfstelle."
 
 #: templates/game_detail.html:473
 #, python-format
 msgid "Year each board started rating games: %(boards)s."
 msgstr ""
+"Jahr, in dem die einzelnen Prüfstellen mit der Bewertung von Spielen "
+"begonnen haben: %(boards)s."
 
 #: templates/game_detail.html:483
 #, python-format
@@ -7834,14 +7833,12 @@ msgid "Low confidence"
 msgstr "Geringe Zuverlässigkeit"
 
 #: templates/hltb_review.html:31
-#, fuzzy
 msgid "Other platform or year"
-msgstr "Platformer"
+msgstr "Andere Plattform oder anderes Jahr"
 
 #: templates/hltb_review.html:32
-#, fuzzy
 msgid "Already saved"
-msgstr "Nein (bereits festgelegt)"
+msgstr "Bereits gespeichert"
 
 #: templates/hltb_review.html:41
 msgid "No pending HLTB matches"
@@ -7856,33 +7853,30 @@ msgstr ""
 "Übereinstimmungen hier zur Überprüfung in die Warteschlange zu stellen."
 
 #: templates/hltb_review.html:192
-#, fuzzy
 msgid "Not listed for this system"
-msgstr "Für dieses System ist kein Emulator eingerichtet."
+msgstr "Für dieses System nicht aufgeführt"
 
 #: templates/hltb_review.html:193
-#, fuzzy
 msgid "Came out years after this game"
-msgstr "Für dieses Spiel festgelegt"
+msgstr "Erschien Jahre nach diesem Spiel"
 
 #: templates/hltb_review.html:194
-#, fuzzy
 msgid "Saved, but not listed for this system"
-msgstr "Für dieses System ist kein Emulator eingerichtet."
+msgstr "Gespeichert, aber für dieses System nicht aufgeführt"
 
 #: templates/hltb_review.html:195
 msgid "Saved, but the title differs"
-msgstr ""
+msgstr "Gespeichert, aber der Titel weicht ab"
 
 #: templates/hltb_review.html:196
 #, python-brace-format
 msgid "{count} on another platform or year"
-msgstr ""
+msgstr "{count} auf anderer Plattform oder aus anderem Jahr"
 
 #: templates/hltb_review.html:197
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{count} already saved"
-msgstr "Nein (bereits festgelegt)"
+msgstr "{count} bereits gespeichert"
 
 #: templates/hltb_review.html:198
 #, python-brace-format
@@ -7890,6 +7884,8 @@ msgid ""
 "This will clear the play time from {count} games that already have one. A"
 " bulk lookup can fetch the times again."
 msgstr ""
+"Dadurch wird die Spielzeit bei {count} Spielen gelöscht, die bereits eine"
+" haben. Eine Massensuche kann die Zeiten erneut abrufen."
 
 #: templates/hltb_review.html:199
 #, python-brace-format
@@ -7897,6 +7893,8 @@ msgid ""
 "The other {count} queued matches are dropped, and those games keep what "
 "they have."
 msgstr ""
+"Die übrigen {count} Treffer in der Warteschlange werden verworfen, und "
+"diese Spiele behalten ihre bisherigen Werte."
 
 #: templates/_settings_tabs/data.html:5 templates/local_trophies.html:6
 #: templates/psn_trophy_detail.html:276 templates/systems.html:89
@@ -9135,9 +9133,8 @@ msgstr ""
 " eintragen kann."
 
 #: templates/rom_tools_hub.html:352 templates/rom_tools_hub.html:609
-#, fuzzy
 msgid "Check Saved Play Times"
-msgstr "Nach Updates suchen"
+msgstr "Gespeicherte Spielzeiten prüfen"
 
 #: templates/rom_tools_hub.html:355
 msgid ""
@@ -9145,6 +9142,10 @@ msgid ""
 "with the same name on another system. This sends those matches to the "
 "review page, where you keep or clear each one."
 msgstr ""
+"Ältere Suchen konnten die Spielzeit eines Nachfolgers oder eines anderen "
+"Spiels mit demselben Namen auf einem anderen System speichern. Dadurch "
+"werden diese Treffer an die Prüfseite geschickt, wo du jeden einzelnen "
+"behalten oder löschen kannst."
 
 #: templates/rom_tools_hub.html:365 templates/rom_tools_hub.html:643
 msgid "Clear RAWG Pictures from Box Art"
@@ -9388,20 +9389,24 @@ msgid ""
 "\n"
 "There, Approve keeps a time and Reject clears it."
 msgstr ""
+"{count} gespeicherte Spielzeiten sehen nach einem anderen Spiel aus. Sie "
+"kommen auf die Prüfseite, und kein Spiel wird geändert, bis du "
+"entscheidest.\n"
+"\n"
+"Dort behält Genehmigen eine Zeit, und Ablehnen löscht sie."
 
 #: templates/rom_tools_hub.html:611
 msgid "No saved play time looks wrong."
-msgstr ""
+msgstr "Keine gespeicherte Spielzeit sieht falsch aus."
 
 #: templates/rom_tools_hub.html:612
 #, python-brace-format
 msgid "Sent {count} play times to the HowLongToBeat review page."
-msgstr ""
+msgstr "{count} Spielzeiten wurden an die HowLongToBeat-Prüfseite geschickt."
 
 #: templates/rom_tools_hub.html:613
-#, fuzzy
 msgid "Could not check the saved play times"
-msgstr "Diese Namen konnten nicht abgelehnt werden."
+msgstr "Die gespeicherten Spielzeiten konnten nicht geprüft werden"
 
 #: templates/rom_tools_hub.html:644
 #, python-brace-format

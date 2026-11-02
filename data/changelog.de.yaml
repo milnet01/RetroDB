@@ -1,3 +1,59 @@
+- version: 3.35.2
+  date: '2026-11-02'
+  tags:
+  - type: fix
+    label: Die gesamte Spielzeit zählt Minuten nicht mehr als Stunden – im Dashboard, bei den Sammler-Trophäen und im Analyse-Diagramm. Ein Spiel mit 36 Minuten wurde als 36 Stunden gezählt
+  - type: fix
+    label: HowLongToBeat hält keinen Nachfolger mehr für dein Spiel. Double Dragon II bekommt nicht mehr die Zeiten von Double Dragon III
+  - type: fix
+    label: Eine HowLongToBeat-Massensuche speichert nicht mehr die Zeit eines Spiels auf einem anderen System. Mario Golf auf Game Boy Color bekommt nicht mehr die Zeit für Nintendo 64. Diese Treffer warten jetzt auf der Prüfseite
+  - type: fix
+    label: Massen- und Einzelsuchen bei HowLongToBeat nutzen jetzt das Erscheinungsjahr des Spiels, damit Doom von 1993 nicht mehr die Zeiten von Doom von 2016 bekommt
+  - type: new
+    label: „Gespeicherte Spielzeiten prüfen“ in den ROM-Tools schickt gespeicherte Treffer, die falsch aussehen, auf die Prüfseite, wo du jeden einzelnen behältst oder löschst
+  - type: fix
+    label: Eine HowLongToBeat-Massensuche mit „Nur fehlende“ versucht es jetzt erneut bei Spielen, die ohne Zeit zugeordnet wurden, und lässt eine Sekunde zwischen den Anfragen
+  - type: fix
+    label: Ein Trefferwert von 72 % wird auf der Spielseite nicht mehr als 100 % angezeigt
+  - type: fix
+    label: Spiele zeigen keine RetroAchievements eines anderen Spiels mehr. Resident Evil 4 auf GameCube zeigt nicht mehr das Set von Resident Evil, und Ratchet Deadlocked nicht mehr das Set von Ratchet & Clank
+  - type: fix
+    label: Ein Scrapen entfernt jetzt eine RetroAchievements-Verknüpfung, wenn es bei RetroAchievements kein solches Spiel gibt. Ist RetroAchievements nicht erreichbar, bleibt die Verknüpfung bestehen
+  - type: fix
+    label: RetroAchievements findet jetzt mehr deiner Spiele – über den Namen der ROM-Datei, alternative Titel, Akzente wie bei Ōkami und Titel mit zwei Namen
+  - type: fix
+    label: RetroAchievements verknüpft ein Spiel nicht mehr mit einem Bonus-Set, einem Hack oder einer Demo, und X-Men wird nicht mehr mit G-Men gleichgesetzt
+  - type: new
+    label: Die Spielseite zeigt den Namen, den RetroAchievements selbst für das verknüpfte Spiel verwendet, sodass eine falsche Verknüpfung leicht auffällt
+  - type: fix
+    label: Die RA-Aktualisierung speichert jetzt die Punkte jedes Spiels, sodass ein Spiel nicht mehr 0 Punkte zeigt
+  - type: new
+    label: Die Spielseite kennzeichnet Altersfreigaben von der KI als Vermutung auf Basis des Spielinhalts und nennt, wann die jeweilige Bewertungsstelle gestartet ist. OutRun von 1987 sieht nicht mehr offiziell von der ESRB eingestuft aus
+  - type: new
+    label: Die Spielseite kennzeichnet Testwertungen und Verkaufszahlen, die von der KI stammen. Änderst du eine Bewertung oder Verkaufszahl selbst, verschwindet die Kennzeichnung
+  - type: fix
+    label: Eine KI-Wertung auf der falschen Skala wird abgelehnt, sodass ein beliebtes Spiel bei einem neuen Scrapen nicht mehr 7 von 100 erhält
+  - type: fix
+    label: Eine Anzahl von Wertungen von der KI wird nicht mehr neben der Wertung einer anderen Seite gespeichert, und die Spielseite zeigt keine solche mehr an
+  - type: fix
+    label: Eine Verkaufsspanne oder ein Geldbetrag von der KI wird nicht mehr zu ein paar verkauften Exemplaren
+  - type: fix
+    label: KI-Antworten speichern keine Listen mehr als Code, nicht mehr die Wörter N/A oder None als Werte und nicht mehr die eigene Konsole eines Spiels unter anderen Plattformen
+  - type: fix
+    label: AI-Auffüllen behält jetzt den ersetzten Wert im Verlauf des Spiels
+  - type: fix
+    label: Modulspiele bekommen keinen erfundenen Batteriespeicher-Typ mehr, und neue KI-Antworten setzen nicht mehr standardmäßig Standard Edition
+  - type: fix
+    label: Die Serie eines Spiels wird nicht mehr aus dem zerschnittenen Titel abgeleitet, sodass Need For Speed nicht mehr in einer Serie namens Need steht. Serienamen von IGDB werden wieder gelesen, und alte Vermutungen werden gelöscht, damit das nächste Scrapen sie neu füllt
+  - type: fix
+    label: Beschreibungen zeigen keine Web-Codes mehr anstelle von Anführungszeichen oder Überschriftzeichen wie
+  - type: fix
+    label: Ein Unternehmen hat jetzt eine Schreibweise, sodass ein Klick auf Sega alle SEGA-Spiele findet. Regionen haben einen Wert, und Plattformen verwenden die Namen aus der Liste
+  - type: fix
+    label: Spieltitel von RAWG bekommen keine Jahreszahl mehr, und alternative Titel listen keine Dateinamen wie dosbox.exe mehr auf
+  - type: fix
+    label: Vollständiges Neu-Scrapen ersetzt eine von dir gesetzte Bewertung oder einen Controller nicht mehr durch eine Vermutung, und ein Scrapen, das zwischendurch fehlschlägt, schreibt nicht mehr über einen weniger sorgfältigen Weg
+  body: "<ul>\n  <li><strong>KI-Antworten sind als KI erkennbar.</strong> Altersfreigaben von der KI\n    bleiben erhalten, gekennzeichnet als Vermutung auf Basis des Spielinhalts, mit dem Jahr, in dem die jeweilige\n    Bewertungsstelle gestartet ist. Wertungen und Verkaufszahlen von der KI sind ebenfalls gekennzeichnet.</li>\n  <li><strong>RetroAchievements zeigt das richtige Spiel.</strong> Nachfolger\n    tragen nicht mehr die Achievements des ersten Spiels. Nach dem Update\n    bietet das Dashboard einmal eine RetroAchievements-Aktualisierung an. Drücke darauf, um\n    alte Verknüpfungen zu reparieren. Fortschritt, der unter einer falschen Verknüpfung gespeichert wurde, wird entfernt, und die nächste\n    Synchronisierung füllt ihn neu auf.</li>\n  <li><strong>Die Gesamtspielzeiten stimmen.</strong> Zeiten unter einer Stunde wurden\n    als Stunden gezählt, daher waren die Summen im Dashboard und bei den Sammler-Trophäen zu hoch.\n    Manche Summen und Trophäen werden sinken.</li>\n  <li><strong>HowLongToBeat findet das richtige Spiel.</strong> Ein Nachfolger\n    gilt nicht mehr als dein Spiel, und das System und das Jahr des Spiels zählen jetzt.\n    Ein Treffer auf einem anderen System oder aus Jahren später wartet auf der\n    Prüfseite auf dich.</li>\n  <li><strong>Prüfe, was bereits gespeichert ist.</strong> Drücke in den ROM-Tools auf „Gespeicherte Spielzeiten prüfen“,\n    um zweifelhafte gespeicherte Treffer auf die Prüfseite zu schicken.\n    Nichts ändert sich, bis du entscheidest.</li>\n  <li><strong>Serienamen sind echt.</strong> Die Serie eines Spiels wird nicht mehr\n    aus dem zerschnittenen Titel abgeleitet. Nach dem Update werden vermutete Serienamen gelöscht, auch manche, die richtig waren. Das nächste Scrapen\n    füllt sie aus Quellen, die eine Serie nennen.</li>\n  <li><strong>Saubere Texte.</strong> Beschreibungen zeigen keine Web-Codes oder\n    Überschriftzeichen mehr. Ein Unternehmen hat eine Schreibweise, ein Spiel hat eine Region, und\n    Dateinamen wie dosbox.exe werden nicht mehr als andere Titel aufgelistet. Das\n    geschieht nach dem Update einmalig von selbst.</li>\n  <li><strong>Vollständiges Neu-Scrapen behält deine Entscheidungen.</strong> Eine von dir gesetzte Bewertung oder ein\n    Controller bleibt, es sei denn, eine Quelle liefert wirklich einen.</li>\n</ul>\n"
 - version: 3.35.1
   date: '2026-11-02'
   tags:

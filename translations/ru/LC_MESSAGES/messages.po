@@ -110,9 +110,8 @@ msgid "That job belongs to another user"
 msgstr "Это задание принадлежит другому пользователю"
 
 #: routes/achievements.py:488
-#, fuzzy
 msgid "Could not get an answer from RetroAchievements"
-msgstr "Не удалось получить прогресс достижений из RetroAchievements."
+msgstr "Не удалось получить ответ от RetroAchievements"
 
 #: routes/achievements.py:502
 msgid "No RetroAchievements found for this game"
@@ -7133,13 +7132,12 @@ msgstr "Оценка критиков (%(count)s обзоров)"
 
 #: templates/game_detail.html:230 templates/game_detail.html:235
 msgid "From the AI, not checked against a review site."
-msgstr ""
+msgstr "Данные от ИИ, не сверены с сайтом обзоров."
 
 #: templates/game_detail.html:231 templates/game_detail.html:236
 #: templates/game_detail.html:241
-#, fuzzy
 msgid "AI"
-msgstr "Главная"
+msgstr "ИИ"
 
 #: templates/game_detail.html:235
 #, python-format
@@ -7147,9 +7145,9 @@ msgid "User Score (%(count)s ratings)"
 msgstr "Пользовательская оценка (%(count)s оценок)"
 
 #: templates/game_detail.html:240
-#, fuzzy, python-format
+#, python-format
 msgid "Copies sold on %(system)s, from the AI, not checked"
-msgstr "Продано копий на %(system)s по опубликованным данным о продажах"
+msgstr "Проданные копии на %(system)s, данные от ИИ, не проверены"
 
 #: templates/game_detail.html:240
 #, python-format
@@ -7212,9 +7210,8 @@ msgid "RPCS3 Trophies"
 msgstr "Трофеи RPCS3"
 
 #: templates/game_detail.html:459 templates/game_detail.html:467
-#, fuzzy
 msgid "AI guess"
-msgstr "В процессе"
+msgstr "Оценка ИИ"
 
 #: templates/game_detail.html:465
 msgid "(cross-mapped)"
@@ -7225,11 +7222,13 @@ msgid ""
 "AI guess: a guess based on the game's content, not an official rating. "
 "The game may be older than the board."
 msgstr ""
+"Оценка ИИ: предположение по содержанию игры, а не официальный рейтинг. "
+"Игра может быть старше самой организации."
 
 #: templates/game_detail.html:473
 #, python-format
 msgid "Year each board started rating games: %(boards)s."
-msgstr ""
+msgstr "Год, с которого каждая организация начала оценивать игры: %(boards)s."
 
 #: templates/game_detail.html:483
 #, python-format
@@ -7762,14 +7761,12 @@ msgid "Low confidence"
 msgstr "Низкая уверенность"
 
 #: templates/hltb_review.html:31
-#, fuzzy
 msgid "Other platform or year"
-msgstr "Платформер"
+msgstr "Другая платформа или год"
 
 #: templates/hltb_review.html:32
-#, fuzzy
 msgid "Already saved"
-msgstr "Нет (уже задано)"
+msgstr "Уже сохранено"
 
 #: templates/hltb_review.html:41
 msgid "No pending HLTB matches"
@@ -7784,33 +7781,30 @@ msgstr ""
 " совпадения в очередь на проверку здесь."
 
 #: templates/hltb_review.html:192
-#, fuzzy
 msgid "Not listed for this system"
-msgstr "Для этой системы не настроен эмулятор."
+msgstr "Нет в списке для этой системы"
 
 #: templates/hltb_review.html:193
-#, fuzzy
 msgid "Came out years after this game"
-msgstr "Задано для этой игры"
+msgstr "Вышла через много лет после этой игры"
 
 #: templates/hltb_review.html:194
-#, fuzzy
 msgid "Saved, but not listed for this system"
-msgstr "Для этой системы не настроен эмулятор."
+msgstr "Сохранено, но нет в списке для этой системы"
 
 #: templates/hltb_review.html:195
 msgid "Saved, but the title differs"
-msgstr ""
+msgstr "Сохранено, но название отличается"
 
 #: templates/hltb_review.html:196
 #, python-brace-format
 msgid "{count} on another platform or year"
-msgstr ""
+msgstr "{count} на другой платформе или в другом году"
 
 #: templates/hltb_review.html:197
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{count} already saved"
-msgstr "Нет (уже задано)"
+msgstr "{count} уже сохранено"
 
 #: templates/hltb_review.html:198
 #, python-brace-format
@@ -7818,6 +7812,8 @@ msgid ""
 "This will clear the play time from {count} games that already have one. A"
 " bulk lookup can fetch the times again."
 msgstr ""
+"Время прохождения будет удалено у игр, у которых оно уже есть: {count}. "
+"Массовый поиск сможет загрузить его снова."
 
 #: templates/hltb_review.html:199
 #, python-brace-format
@@ -7825,6 +7821,8 @@ msgid ""
 "The other {count} queued matches are dropped, and those games keep what "
 "they have."
 msgstr ""
+"Остальные совпадения в очереди ({count}) будут отброшены, а у этих игр "
+"останутся прежние данные."
 
 #: templates/_settings_tabs/data.html:5 templates/local_trophies.html:6
 #: templates/psn_trophy_detail.html:276 templates/systems.html:89
@@ -9049,9 +9047,8 @@ msgstr ""
 " до года или месяца, и скрапинг сможет подставить настоящую."
 
 #: templates/rom_tools_hub.html:352 templates/rom_tools_hub.html:609
-#, fuzzy
 msgid "Check Saved Play Times"
-msgstr "Проверить обновления"
+msgstr "Проверить сохранённое время прохождения"
 
 #: templates/rom_tools_hub.html:355
 msgid ""
@@ -9059,6 +9056,10 @@ msgid ""
 "with the same name on another system. This sends those matches to the "
 "review page, where you keep or clear each one."
 msgstr ""
+"Раньше при поиске могло сохраниться время прохождения сиквела или другой "
+"игры с таким же названием на другой системе. Эти совпадения будут "
+"отправлены на страницу проверки, где вы сможете оставить или удалить "
+"каждое из них."
 
 #: templates/rom_tools_hub.html:365 templates/rom_tools_hub.html:643
 msgid "Clear RAWG Pictures from Box Art"
@@ -9298,20 +9299,24 @@ msgid ""
 "\n"
 "There, Approve keeps a time and Reject clears it."
 msgstr ""
+"Сохранённое время прохождения похоже на данные другой игры: {count}. Они "
+"попадут на страницу проверки, и ни одна игра не изменится, пока вы не "
+"решите.\n"
+"\n"
+"Там «Одобрить» оставляет время, а «Отклонить» удаляет его."
 
 #: templates/rom_tools_hub.html:611
 msgid "No saved play time looks wrong."
-msgstr ""
+msgstr "Неверного сохранённого времени прохождения не найдено."
 
 #: templates/rom_tools_hub.html:612
 #, python-brace-format
 msgid "Sent {count} play times to the HowLongToBeat review page."
-msgstr ""
+msgstr "Отправлено на страницу проверки HowLongToBeat: {count}."
 
 #: templates/rom_tools_hub.html:613
-#, fuzzy
 msgid "Could not check the saved play times"
-msgstr "Не удалось отклонить эти названия."
+msgstr "Не удалось проверить сохранённое время прохождения"
 
 #: templates/rom_tools_hub.html:644
 #, python-brace-format

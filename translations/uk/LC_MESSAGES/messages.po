@@ -111,9 +111,8 @@ msgid "That job belongs to another user"
 msgstr "Це завдання належить іншому користувачу"
 
 #: routes/achievements.py:488
-#, fuzzy
 msgid "Could not get an answer from RetroAchievements"
-msgstr "Не вдалося отримати прогрес досягнень з RetroAchievements."
+msgstr "Не вдалося отримати відповідь від RetroAchievements"
 
 #: routes/achievements.py:502
 msgid "No RetroAchievements found for this game"
@@ -7137,13 +7136,12 @@ msgstr "Оцінка критиків (%(count)s рецензій)"
 
 #: templates/game_detail.html:230 templates/game_detail.html:235
 msgid "From the AI, not checked against a review site."
-msgstr ""
+msgstr "Від ШІ, не перевірено на сайті оглядів."
 
 #: templates/game_detail.html:231 templates/game_detail.html:236
 #: templates/game_detail.html:241
-#, fuzzy
 msgid "AI"
-msgstr "Головна"
+msgstr "ШІ"
 
 #: templates/game_detail.html:235
 #, python-format
@@ -7151,9 +7149,9 @@ msgid "User Score (%(count)s ratings)"
 msgstr "Оцінка користувачів (%(count)s оцінок)"
 
 #: templates/game_detail.html:240
-#, fuzzy, python-format
+#, python-format
 msgid "Copies sold on %(system)s, from the AI, not checked"
-msgstr "Продано копій на %(system)s, за опублікованими даними продажів"
+msgstr "Продані копії на %(system)s, від ШІ, не перевірено"
 
 #: templates/game_detail.html:240
 #, python-format
@@ -7216,9 +7214,8 @@ msgid "RPCS3 Trophies"
 msgstr "Трофеї RPCS3"
 
 #: templates/game_detail.html:459 templates/game_detail.html:467
-#, fuzzy
 msgid "AI guess"
-msgstr "У процесі"
+msgstr "Припущення ШІ"
 
 #: templates/game_detail.html:465
 msgid "(cross-mapped)"
@@ -7229,11 +7226,13 @@ msgid ""
 "AI guess: a guess based on the game's content, not an official rating. "
 "The game may be older than the board."
 msgstr ""
+"Припущення ШІ: оцінка на основі вмісту гри, а не офіційний рейтинг. Гра "
+"може бути старшою за цю організацію."
 
 #: templates/game_detail.html:473
 #, python-format
 msgid "Year each board started rating games: %(boards)s."
-msgstr ""
+msgstr "Рік, коли кожна організація почала оцінювати ігри: %(boards)s."
 
 #: templates/game_detail.html:483
 #, python-format
@@ -7766,14 +7765,12 @@ msgid "Low confidence"
 msgstr "Низька впевненість"
 
 #: templates/hltb_review.html:31
-#, fuzzy
 msgid "Other platform or year"
-msgstr "Платформер"
+msgstr "Інша платформа або рік"
 
 #: templates/hltb_review.html:32
-#, fuzzy
 msgid "Already saved"
-msgstr "Ні (вже задано)"
+msgstr "Уже збережено"
 
 #: templates/hltb_review.html:41
 msgid "No pending HLTB matches"
@@ -7788,33 +7785,30 @@ msgstr ""
 "додати збіги сюди для перегляду."
 
 #: templates/hltb_review.html:192
-#, fuzzy
 msgid "Not listed for this system"
-msgstr "Для цієї системи не налаштовано емулятор."
+msgstr "Немає в списку для цієї системи"
 
 #: templates/hltb_review.html:193
-#, fuzzy
 msgid "Came out years after this game"
-msgstr "Задано для цієї гри"
+msgstr "Вийшла через кілька років після цієї гри"
 
 #: templates/hltb_review.html:194
-#, fuzzy
 msgid "Saved, but not listed for this system"
-msgstr "Для цієї системи не налаштовано емулятор."
+msgstr "Збережено, але немає в списку для цієї системи"
 
 #: templates/hltb_review.html:195
 msgid "Saved, but the title differs"
-msgstr ""
+msgstr "Збережено, але назва відрізняється"
 
 #: templates/hltb_review.html:196
 #, python-brace-format
 msgid "{count} on another platform or year"
-msgstr ""
+msgstr "{count} на іншій платформі або з іншим роком"
 
 #: templates/hltb_review.html:197
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{count} already saved"
-msgstr "Ні (вже задано)"
+msgstr "{count} уже збережено"
 
 #: templates/hltb_review.html:198
 #, python-brace-format
@@ -7822,6 +7816,8 @@ msgid ""
 "This will clear the play time from {count} games that already have one. A"
 " bulk lookup can fetch the times again."
 msgstr ""
+"Це очистить час проходження в {count} ігор, які його вже мають. Масовий "
+"пошук зможе отримати час знову."
 
 #: templates/hltb_review.html:199
 #, python-brace-format
@@ -7829,6 +7825,8 @@ msgid ""
 "The other {count} queued matches are dropped, and those games keep what "
 "they have."
 msgstr ""
+"Решта {count} зіставлень у черзі буде скасовано, а ці ігри залишать "
+"наявні дані."
 
 #: templates/_settings_tabs/data.html:5 templates/local_trophies.html:6
 #: templates/psn_trophy_detail.html:276 templates/systems.html:89
@@ -9051,9 +9049,8 @@ msgstr ""
 "скрап міг заповнити справжню."
 
 #: templates/rom_tools_hub.html:352 templates/rom_tools_hub.html:609
-#, fuzzy
 msgid "Check Saved Play Times"
-msgstr "Перевірити оновлення"
+msgstr "Перевірити збережений час проходження"
 
 #: templates/rom_tools_hub.html:355
 msgid ""
@@ -9061,6 +9058,9 @@ msgid ""
 "with the same name on another system. This sends those matches to the "
 "review page, where you keep or clear each one."
 msgstr ""
+"Попередні пошуки могли зберегти час проходження сиквела або іншої гри з "
+"такою самою назвою на іншій системі. Ці зіставлення буде надіслано на "
+"сторінку перевірки, де ви залишите або очистите кожне з них."
 
 #: templates/rom_tools_hub.html:365 templates/rom_tools_hub.html:643
 msgid "Clear RAWG Pictures from Box Art"
@@ -9298,20 +9298,24 @@ msgid ""
 "\n"
 "There, Approve keeps a time and Reject clears it."
 msgstr ""
+"{count} збережених часів проходження схожі на дані іншої гри. Їх буде "
+"надіслано на сторінку перевірки, і жодна гра не зміниться, доки ви не "
+"вирішите.\n"
+"\n"
+"Там «Схвалити» залишає час, а «Відхилити» очищає його."
 
 #: templates/rom_tools_hub.html:611
 msgid "No saved play time looks wrong."
-msgstr ""
+msgstr "Жоден збережений час проходження не виглядає хибним."
 
 #: templates/rom_tools_hub.html:612
 #, python-brace-format
 msgid "Sent {count} play times to the HowLongToBeat review page."
-msgstr ""
+msgstr "Надіслано часів проходження на сторінку перевірки HowLongToBeat: {count}."
 
 #: templates/rom_tools_hub.html:613
-#, fuzzy
 msgid "Could not check the saved play times"
-msgstr "Не вдалося відхилити ці назви."
+msgstr "Не вдалося перевірити збережений час проходження"
 
 #: templates/rom_tools_hub.html:644
 #, python-brace-format

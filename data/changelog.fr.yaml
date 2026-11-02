@@ -1,3 +1,59 @@
+- version: 3.35.2
+  date: '2026-11-02'
+  tags:
+  - type: fix
+    label: Le temps de jeu total ne compte plus les minutes comme des heures, sur le tableau de bord, les trophées de collectionneur et le graphique d'analyse. Un jeu de 36 minutes était compté comme 36 heures
+  - type: fix
+    label: HowLongToBeat ne prend plus une suite pour votre jeu. Double Dragon II ne reçoit plus les durées de Double Dragon III
+  - type: fix
+    label: Une recherche groupée HowLongToBeat n'enregistre plus la durée d'un jeu sur un autre système. Mario Golf sur Game Boy Color ne reçoit plus la durée de la Nintendo 64. Ces correspondances attendent désormais sur la page de vérification
+  - type: fix
+    label: 'Les recherches HowLongToBeat, groupées ou unitaires, utilisent maintenant l''année de sortie du jeu : Doom de 1993 ne reçoit plus les durées de Doom de 2016'
+  - type: new
+    label: Vérifier les temps de jeu enregistrés, dans Outils ROM, envoie les correspondances enregistrées qui semblent erronées vers la page de vérification, où vous gardez ou effacez chacune d'elles
+  - type: fix
+    label: Une recherche groupée HowLongToBeat avec Seulement les manquants réessaie maintenant les jeux associés sans durée, et laisse une seconde entre les requêtes
+  - type: fix
+    label: Un score de correspondance de 72 % ne s'affiche plus comme 100 % sur la page du jeu
+  - type: fix
+    label: Les jeux n'affichent plus les RetroAchievements d'un autre jeu. Resident Evil 4 sur GameCube n'affiche plus l'ensemble de Resident Evil, et Ratchet Deadlocked n'affiche plus celui de Ratchet & Clank
+  - type: fix
+    label: Une récupération supprime maintenant le lien RetroAchievements quand RetroAchievements n'a pas ce jeu. Si RetroAchievements est inaccessible, le lien reste
+  - type: fix
+    label: RetroAchievements trouve maintenant plus de vos jeux, grâce au nom du fichier ROM, aux titres alternatifs, aux accents comme dans Ōkami, et aux titres à deux noms
+  - type: fix
+    label: RetroAchievements ne lie plus un jeu à un ensemble bonus, un hack ou une démo, et X-Men n'est plus égal à G-Men
+  - type: new
+    label: La page du jeu affiche le nom que RetroAchievements donne au jeu lié, ce qui permet de repérer facilement un mauvais lien
+  - type: fix
+    label: L'actualisation RA enregistre maintenant les points de chaque jeu, donc un jeu n'affiche plus 0 point
+  - type: new
+    label: La page du jeu signale les classifications d'âge issues de l'IA comme une estimation fondée sur le contenu du jeu, et indique quand chaque organisme de classification a commencé. OutRun de 1987 ne semble plus officiellement classé par l'ESRB
+  - type: new
+    label: La page du jeu signale les notes de critiques et les chiffres de ventes issus de l'IA. Si vous modifiez vous-même une classification ou un chiffre de ventes, la mention disparaît
+  - type: fix
+    label: 'Une note de l''IA sur une mauvaise échelle est refusée : un jeu apprécié ne reçoit plus 7 sur 100 après une nouvelle récupération'
+  - type: fix
+    label: Un nombre d'avis issu de l'IA n'est plus enregistré à côté de la note d'un autre site, et la page du jeu n'affiche plus ceux qui l'ont été
+  - type: fix
+    label: Une fourchette de ventes ou une somme d'argent issue de l'IA ne devient plus quelques exemplaires vendus
+  - type: fix
+    label: Les réponses de l'IA ne stockent plus de listes sous forme de code, ni les mots N/A ou None comme valeurs, ni la propre console d'un jeu parmi les autres plateformes
+  - type: fix
+    label: Remplissage IA conserve maintenant dans l'historique du jeu la valeur qu'il remplace
+  - type: fix
+    label: Les jeux sur cartouche ne reçoivent plus un type de sauvegarde sur pile inventé, et les nouvelles réponses de l'IA n'adoptent plus Édition standard par défaut
+  - type: fix
+    label: 'La série d''un jeu ne vient plus du découpage de son titre : Need For Speed n''est plus dans une série appelée Need. Les noms de séries d''IGDB sont de nouveau lus, et les anciennes suppositions sont effacées pour que la prochaine récupération les remplisse'
+  - type: fix
+    label: Les descriptions n'affichent plus de codes web à la place des guillemets, ni de marques de titre comme
+  - type: fix
+    label: Une société a maintenant une seule orthographe, donc cliquer sur Sega trouve tous les jeux SEGA. Les régions n'ont qu'une valeur, et les plateformes utilisent les noms de la liste
+  - type: fix
+    label: Les titres de jeux venant de RAWG n'ajoutent plus d'année, et les titres alternatifs ne listent plus de noms de fichiers comme dosbox.exe
+  - type: fix
+    label: Récupération complète ne remplace plus par une supposition une classification ou une manette que vous avez définie, et une récupération qui échoue en cours de route n'écrit plus par une voie moins soignée
+  body: "<ul>\n  <li><strong>Les réponses de l'IA indiquent qu'elles viennent de l'IA.</strong> Les classifications d'âge de l'IA\n    sont conservées, signalées comme une estimation fondée sur le contenu du jeu, avec l'année où chaque\n    organisme de classification a commencé. Les notes et les ventes issues de l'IA sont aussi signalées.</li>\n  <li><strong>RetroAchievements affiche le bon jeu.</strong> Les suites ne\n    portent plus les succès du premier jeu. Après la mise à jour, le\n    tableau de bord propose une fois une actualisation RetroAchievements. Appuyez dessus pour réparer\n    les anciens liens. La progression enregistrée sous un mauvais lien est supprimée, et la prochaine\n    synchronisation la remplit de nouveau.</li>\n  <li><strong>Les totaux de temps de jeu sont justes.</strong> Les durées de moins d'une heure étaient\n    comptées comme des heures, donc les totaux du tableau de bord et les trophées de collectionneur\n    étaient trop élevés. Certains totaux et trophées vont baisser.</li>\n  <li><strong>HowLongToBeat trouve le bon jeu.</strong> Une suite ne\n    passe plus pour le jeu que vous avez, et le système et l'année du jeu comptent maintenant.\n    Une correspondance sur un autre système, ou d'années plus tard, vous attend\n    sur la page de vérification.</li>\n  <li><strong>Vérifiez ce qui est déjà enregistré.</strong> Appuyez sur Vérifier les temps de\n    jeu enregistrés dans Outils ROM pour envoyer les correspondances douteuses vers la page de vérification.\n    Rien ne change tant que vous n'avez pas décidé.</li>\n  <li><strong>Les noms de séries sont fiables.</strong> La série d'un jeu ne vient plus\n    du découpage de son titre. Après la mise à jour, les noms de séries qui étaient\n    devinés sont effacés, dont certains qui étaient justes. La prochaine récupération\n    les remplit à partir de sources qui nomment une série.</li>\n  <li><strong>Textes propres.</strong> Les descriptions n'affichent plus de codes web ni\n    de marques de titre. Une société a une seule orthographe, un jeu a une seule région, et\n    les noms de fichiers comme dosbox.exe ne sont plus listés comme autres titres. Cela\n    se fait une fois, automatiquement, après la mise à jour.</li>\n  <li><strong>Récupération complète respecte vos choix.</strong> Une classification ou\n    une manette que vous avez définie reste, sauf si une source en fournit vraiment une.</li>\n</ul>\n"
 - version: 3.35.1
   date: '2026-11-02'
   tags:

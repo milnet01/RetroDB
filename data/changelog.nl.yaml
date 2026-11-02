@@ -1,3 +1,59 @@
+- version: 3.35.2
+  date: '2026-11-02'
+  tags:
+  - type: fix
+    label: De totale speeltijd telt minuten niet meer als uren, op het dashboard, bij de verzamelaarstrofeeën en in de analysegrafiek. Een game van 36 minuten werd geteld als 36 uur
+  - type: fix
+    label: HowLongToBeat neemt geen vervolg meer aan voor jouw game. Double Dragon II krijgt niet langer de tijden van Double Dragon III
+  - type: fix
+    label: Een bulkzoekopdracht van HowLongToBeat slaat de tijd van een game op een ander systeem niet meer op. Mario Golf op Game Boy Color krijgt niet langer de tijd van Nintendo 64. Deze overeenkomsten wachten nu op de controlepagina
+  - type: fix
+    label: Bulk- en losse zoekopdrachten van HowLongToBeat gebruiken nu het releasejaar van de game, zodat Doom uit 1993 niet langer de tijden van Doom uit 2016 krijgt
+  - type: new
+    label: Met Opgeslagen speeltijden controleren in ROM Tools worden opgeslagen overeenkomsten die er verkeerd uitzien naar de controlepagina gestuurd, waar je ze stuk voor stuk behoudt of wist
+  - type: fix
+    label: Een bulkzoekopdracht van HowLongToBeat met Alleen ontbrekende probeert nu games opnieuw die zonder tijd zijn gekoppeld, en laat een seconde tussen de verzoeken
+  - type: fix
+    label: Een overeenkomstscore van 72% wordt op de gamepagina niet meer als 100% getoond
+  - type: fix
+    label: Games tonen niet langer de RetroAchievements van een andere game. Resident Evil 4 op GameCube toont niet meer de set van Resident Evil, en Ratchet Deadlocked niet meer die van Ratchet & Clank
+  - type: fix
+    label: Een scrape verwijdert nu een RetroAchievements-koppeling als RetroAchievements zo'n game niet kent. Als RetroAchievements niet bereikbaar is, blijft de koppeling bestaan
+  - type: fix
+    label: RetroAchievements vindt nu meer van je games, via de naam van het ROM-bestand, alternatieve titels, accenten zoals in Ōkami en titels met twee namen
+  - type: fix
+    label: RetroAchievements koppelt een game niet meer aan een bonusset, een hack of een demo, en X-Men is niet langer gelijk aan G-Men
+  - type: new
+    label: De gamepagina toont de eigen naam die RetroAchievements aan de gekoppelde game geeft, zodat een foute koppeling snel opvalt
+  - type: fix
+    label: RA Refresh slaat nu de punten van elke game op, zodat een game niet meer 0 punten toont
+  - type: new
+    label: De gamepagina markeert leeftijdsclassificaties van de AI als een gok op basis van de inhoud van de game, en vermeldt wanneer elke classificatie-instantie begon. OutRun uit 1987 lijkt niet langer officieel door ESRB beoordeeld
+  - type: new
+    label: De gamepagina markeert recensiescores en verkoopcijfers die van de AI komen. Als je zelf een classificatie of verkoopcijfer wijzigt, verdwijnt de markering
+  - type: fix
+    label: Een score van de AI op de verkeerde schaal wordt geweigerd, zodat een goed ontvangen game bij een nieuwe scrape niet meer 7 van 100 krijgt
+  - type: fix
+    label: Een aantal scores van de AI wordt niet meer naast de score van een andere site opgeslagen, en de gamepagina toont er geen meer die dat wel was
+  - type: fix
+    label: Een verkoopbereik of een geldbedrag van de AI wordt niet meer een paar verkochte exemplaren
+  - type: fix
+    label: AI-antwoorden slaan lijsten niet meer op als code, niet meer de woorden N/A of None als waarde, en niet meer de eigen console van een game onder andere platforms
+  - type: fix
+    label: AI-aanvulling bewaart nu de waarde die wordt vervangen in de geschiedenis van de game
+  - type: fix
+    label: Cartridgegames krijgen geen verzonnen type Batterij-opslag meer, en nieuwe AI-antwoorden gebruiken niet langer standaard Standard Edition
+  - type: fix
+    label: De reeks van een game komt niet meer uit het opknippen van de titel, dus Need For Speed zit niet meer in een reeks genaamd Need. De reeksnamen van IGDB worden weer gelezen, en oude gokken worden gewist zodat de volgende scrape ze opnieuw vult
+  - type: fix
+    label: Beschrijvingen tonen geen webcodes meer in plaats van aanhalingstekens, of kopmarkeringen zoals
+  - type: fix
+    label: Eén bedrijf heeft nu één spelling, dus een klik op Sega vindt elke SEGA-game. Regio's hebben één waarde, en platforms gebruiken de namen uit de lijst
+  - type: fix
+    label: Gametitels van RAWG krijgen geen jaartal meer erbij, en alternatieve titels vermelden geen bestandsnamen meer zoals dosbox.exe
+  - type: fix
+    label: Volledige herscrape vervangt een classificatie of controller die je hebt ingesteld niet meer door een gok, en een scrape die halverwege mislukt schrijft niet meer via een minder zorgvuldige route
+  body: "<ul>\n  <li><strong>AI-antwoorden zeggen dat ze AI zijn.</strong> Leeftijdsclassificaties van de AI\n    blijven staan, gemarkeerd als een gok op basis van de inhoud van de game, met het jaar waarin elke\n    classificatie-instantie begon. Scores en verkopen van de AI zijn ook gemarkeerd.</li>\n  <li><strong>RetroAchievements toont de juiste game.</strong> Vervolgen\n    hebben niet langer de prestaties van de eerste game. Na de update biedt het\n    dashboard eenmalig een RetroAchievements-verversing aan. Druk erop om\n    oude koppelingen te herstellen. Voortgang die onder een foute koppeling is opgeslagen wordt verwijderd, en de volgende\n    synchronisatie vult die weer aan.</li>\n  <li><strong>Totalen van speeltijd kloppen.</strong> Tijden onder een uur werden\n    als uren geteld, dus de totalen op het dashboard en de verzamelaarstrofeeën\n    waren te hoog. Sommige totalen en trofeeën gaan omlaag.</li>\n  <li><strong>HowLongToBeat vindt de juiste game.</strong> Een vervolg\n    gaat niet meer door voor de game die je hebt, en het systeem en het jaar van de game tellen nu mee.\n    Een overeenkomst op een ander systeem, of van jaren later, wacht op je\n    op de controlepagina.</li>\n  <li><strong>Controleer wat al is opgeslagen.</strong> Druk op Opgeslagen speeltijden\n    controleren in ROM Tools om twijfelachtige opgeslagen overeenkomsten naar de controlepagina te sturen.\n    Er verandert niets totdat jij beslist.</li>\n  <li><strong>Reeksnamen zijn echt.</strong> De reeks van een game komt niet meer\n    uit het opknippen van de titel. Na de update worden reeksnamen die\n    zijn geraden gewist, ook een paar die juist waren. De volgende scrape\n    vult ze uit bronnen die een reeks noemen.</li>\n  <li><strong>Schone tekst.</strong> Beschrijvingen tonen geen webcodes of\n    kopmarkeringen meer. Eén bedrijf heeft één spelling, een game heeft één regio, en\n    bestandsnamen zoals dosbox.exe worden niet meer als andere titels vermeld. Dit\n    gebeurt eenmalig, vanzelf, na de update.</li>\n  <li><strong>Volledige herscrape behoudt je keuzes.</strong> Een classificatie of\n    controller die je hebt ingesteld blijft staan, tenzij een bron er echt een levert.</li>\n</ul>\n"
 - version: 3.35.1
   date: '2026-11-02'
   tags:

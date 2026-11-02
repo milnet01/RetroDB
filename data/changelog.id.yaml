@@ -1,3 +1,59 @@
+- version: 3.35.2
+  date: '2026-11-02'
+  tags:
+  - type: fix
+    label: Total waktu bermain tidak lagi menghitung menit sebagai jam, di dasbor, trofi kolektor, dan grafik analitik. Game berdurasi 36 menit sempat dihitung 36 jam
+  - type: fix
+    label: HowLongToBeat tidak lagi mengira sekuel sebagai game Anda. Double Dragon II tidak lagi mendapat waktu Double Dragon III
+  - type: fix
+    label: Pencarian massal HowLongToBeat tidak lagi menyimpan waktu game di sistem lain. Mario Golf di Game Boy Color tidak lagi mendapat waktu Nintendo 64. Kecocokan ini kini menunggu di halaman tinjauan
+  - type: fix
+    label: Pencarian massal dan tunggal HowLongToBeat kini memakai tahun rilis game, jadi Doom tahun 1993 tidak lagi mendapat waktu Doom tahun 2016
+  - type: new
+    label: Check Saved Play Times di ROM Tools mengirim kecocokan tersimpan yang tampak salah ke halaman tinjauan, tempat Anda menyimpan atau menghapus tiap kecocokan
+  - type: fix
+    label: Pencarian massal HowLongToBeat dengan Only Missing kini mencoba ulang game yang cocok tanpa waktu, dan memberi jeda satu detik antar permintaan
+  - type: fix
+    label: Skor kecocokan 72% tidak lagi tampil sebagai 100% di halaman game
+  - type: fix
+    label: Game tidak lagi menampilkan RetroAchievements milik game lain. Resident Evil 4 di GameCube tidak lagi menampilkan set Resident Evil, dan Ratchet Deadlocked tidak lagi menampilkan set Ratchet & Clank
+  - type: fix
+    label: Scrape kini menghapus tautan RetroAchievements jika RetroAchievements tidak punya game tersebut. Jika RetroAchievements tidak dapat dijangkau, tautan tetap ada
+  - type: fix
+    label: RetroAchievements kini menemukan lebih banyak game Anda, lewat nama file ROM, judul alternatif, aksen seperti Ōkami, dan judul dengan dua nama
+  - type: fix
+    label: RetroAchievements tidak lagi menautkan game ke set bonus, hack, atau demo, dan X-Men tidak lagi dianggap sama dengan G-Men
+  - type: new
+    label: Halaman game menampilkan nama dari RetroAchievements sendiri untuk game yang tertaut, sehingga tautan yang salah mudah terlihat
+  - type: fix
+    label: RA Refresh kini menyimpan poin tiap game, jadi game tidak lagi menampilkan 0 poin
+  - type: new
+    label: Halaman game menandai peringkat usia dari AI sebagai perkiraan berdasarkan isi game, dan menyebutkan kapan tiap lembaga peringkat berdiri. OutRun dari 1987 tidak lagi tampak diberi peringkat resmi oleh ESRB
+  - type: new
+    label: Halaman game menandai skor ulasan dan angka penjualan yang berasal dari AI. Jika Anda mengubah rating atau angka penjualan sendiri, tandanya hilang
+  - type: fix
+    label: Skor dari AI dengan skala yang salah ditolak, jadi game yang disukai tidak lagi mendapat 7 dari 100 dari scrape baru
+  - type: fix
+    label: Jumlah skor dari AI tidak lagi disimpan di samping skor situs lain, dan halaman game tidak lagi menampilkan yang sudah terlanjur tersimpan
+  - type: fix
+    label: Rentang penjualan atau jumlah uang dari AI tidak lagi berubah menjadi beberapa kopi terjual
+  - type: fix
+    label: Jawaban AI tidak lagi menyimpan daftar sebagai kode, kata N/A atau None sebagai nilai, atau konsol game itu sendiri di bawah platform lain
+  - type: fix
+    label: Isi dengan AI kini menyimpan nilai yang diganti di riwayat game
+  - type: fix
+    label: Game kartrid tidak lagi mendapat jenis Battery Save rekaan, dan jawaban AI baru tidak lagi berstandar Standard Edition
+  - type: fix
+    label: Seri sebuah game tidak lagi berasal dari pemotongan judulnya, jadi Need For Speed tidak lagi masuk seri bernama Need. Nama seri dari IGDB dibaca lagi, dan tebakan lama dihapus agar diisi ulang oleh scrape berikutnya
+  - type: fix
+    label: Deskripsi tidak lagi menampilkan kode web sebagai pengganti tanda kutip, atau tanda judul seperti
+  - type: fix
+    label: Satu perusahaan kini punya satu ejaan, jadi mengeklik Sega menemukan semua game SEGA. Wilayah hanya berisi satu nilai, dan platform memakai nama dari daftar
+  - type: fix
+    label: Judul game dari RAWG tidak lagi ditambah tahun, dan judul alternatif tidak lagi mencantumkan nama file seperti dosbox.exe
+  - type: fix
+    label: Scrape Ulang Penuh tidak lagi mengganti rating atau kontroler yang Anda atur dengan tebakan, dan scrape yang gagal di tengah jalan tidak lagi menulis lewat jalur yang kurang teliti
+  body: "<ul>\n  <li><strong>Jawaban AI diberi tanda AI.</strong> Peringkat usia dari AI\n    tetap ada, ditandai sebagai perkiraan berdasarkan isi game, beserta tahun\n    berdirinya tiap lembaga peringkat. Skor dan penjualan dari AI juga ditandai.</li>\n  <li><strong>RetroAchievements menampilkan game yang benar.</strong> Sekuel tidak\n    lagi membawa Achievement game pertama. Setelah Anda memperbarui,\n    dasbor menawarkan RetroAchievements refresh satu kali. Tekan untuk memperbaiki\n    tautan lama. Progres yang tersimpan di tautan yang salah dihapus, dan sinkronisasi\n    berikutnya akan mengisinya lagi.</li>\n  <li><strong>Total waktu bermain jadi akurat.</strong> Waktu di bawah satu jam\n    sempat dihitung sebagai jam, sehingga total di dasbor dan trofi\n    kolektor terlalu tinggi. Beberapa total dan trofi akan turun.</li>\n  <li><strong>HowLongToBeat menemukan game yang tepat.</strong> Sekuel tidak lagi\n    dianggap game yang Anda miliki, dan sistem serta tahun game kini diperhitungkan.\n    Kecocokan di sistem lain, atau dari tahun yang jauh berbeda, menunggu Anda\n    di halaman tinjauan.</li>\n  <li><strong>Periksa yang sudah tersimpan.</strong> Tekan Check Saved Play\n    Times di ROM Tools untuk mengirim kecocokan tersimpan yang meragukan ke halaman tinjauan.\n    Tidak ada yang berubah sampai Anda memutuskan.</li>\n  <li><strong>Nama seri jadi nyata.</strong> Seri sebuah game tidak lagi berasal\n    dari pemotongan judulnya. Setelah Anda memperbarui, nama seri yang\n    ditebak dihapus, termasuk beberapa yang benar. Scrape berikutnya\n    mengisinya dari sumber yang menyebutkan seri.</li>\n  <li><strong>Teks bersih.</strong> Deskripsi tidak lagi menampilkan kode web atau\n    tanda judul. Satu perusahaan punya satu ejaan, satu game punya satu wilayah, dan\n    nama file seperti dosbox.exe tidak lagi dicantumkan sebagai judul lain. Ini\n    terjadi sekali, otomatis, setelah Anda memperbarui.</li>\n  <li><strong>Scrape Ulang Penuh menjaga pilihan Anda.</strong> Rating atau\n    kontroler yang Anda atur tetap ada kecuali sumber benar-benar menyediakannya.</li>\n</ul>\n"
 - version: 3.35.1
   date: '2026-11-02'
   tags:

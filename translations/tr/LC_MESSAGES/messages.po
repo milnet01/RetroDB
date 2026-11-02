@@ -110,9 +110,8 @@ msgid "That job belongs to another user"
 msgstr "Bu iş başka bir kullanıcıya ait"
 
 #: routes/achievements.py:488
-#, fuzzy
 msgid "Could not get an answer from RetroAchievements"
-msgstr "RetroAchievements'tan başarım ilerlemesi alınamadı."
+msgstr "RetroAchievements'tan yanıt alınamadı"
 
 #: routes/achievements.py:502
 msgid "No RetroAchievements found for this game"
@@ -7147,13 +7146,12 @@ msgstr "Eleştirmen Puanı (%(count)s inceleme)"
 
 #: templates/game_detail.html:230 templates/game_detail.html:235
 msgid "From the AI, not checked against a review site."
-msgstr ""
+msgstr "Yapay zekadan geldi, bir inceleme sitesiyle karşılaştırılmadı."
 
 #: templates/game_detail.html:231 templates/game_detail.html:236
 #: templates/game_detail.html:241
-#, fuzzy
 msgid "AI"
-msgstr "Ana"
+msgstr "YZ"
 
 #: templates/game_detail.html:235
 #, python-format
@@ -7161,9 +7159,9 @@ msgid "User Score (%(count)s ratings)"
 msgstr "Kullanıcı Puanı (%(count)s derecelendirme)"
 
 #: templates/game_detail.html:240
-#, fuzzy, python-format
+#, python-format
 msgid "Copies sold on %(system)s, from the AI, not checked"
-msgstr "%(system)s için satılan kopya sayısı, yayımlanmış satış rakamlarından"
+msgstr "%(system)s sistemindeki satış adedi, yapay zekadan, kontrol edilmedi"
 
 #: templates/game_detail.html:240
 #, python-format
@@ -7226,9 +7224,8 @@ msgid "RPCS3 Trophies"
 msgstr "RPCS3 Kupaları"
 
 #: templates/game_detail.html:459 templates/game_detail.html:467
-#, fuzzy
 msgid "AI guess"
-msgstr "Devam Ediyor"
+msgstr "YZ tahmini"
 
 #: templates/game_detail.html:465
 msgid "(cross-mapped)"
@@ -7239,11 +7236,13 @@ msgid ""
 "AI guess: a guess based on the game's content, not an official rating. "
 "The game may be older than the board."
 msgstr ""
+"YZ tahmini: oyunun içeriğine dayanan bir tahmindir, resmî bir "
+"derecelendirme değildir. Oyun kurulundan daha eski olabilir."
 
 #: templates/game_detail.html:473
 #, python-format
 msgid "Year each board started rating games: %(boards)s."
-msgstr ""
+msgstr "Kurulların oyunları derecelendirmeye başladığı yıl: %(boards)s."
 
 #: templates/game_detail.html:483
 #, python-format
@@ -7777,14 +7776,12 @@ msgid "Low confidence"
 msgstr "Düşük güven"
 
 #: templates/hltb_review.html:31
-#, fuzzy
 msgid "Other platform or year"
-msgstr "Platform"
+msgstr "Başka platform veya yıl"
 
 #: templates/hltb_review.html:32
-#, fuzzy
 msgid "Already saved"
-msgstr "Hayır (zaten ayarlı)"
+msgstr "Zaten kayıtlı"
 
 #: templates/hltb_review.html:41
 msgid "No pending HLTB matches"
@@ -7799,33 +7796,30 @@ msgstr ""
 "Merkezi'nden toplu HLTB araması çalıştırın."
 
 #: templates/hltb_review.html:192
-#, fuzzy
 msgid "Not listed for this system"
-msgstr "Bu sistem için ayarlanmış bir emülatör yok."
+msgstr "Bu sistem için listelenmemiş"
 
 #: templates/hltb_review.html:193
-#, fuzzy
 msgid "Came out years after this game"
-msgstr "Bu oyun için ayarlandı"
+msgstr "Bu oyundan yıllar sonra çıkmış"
 
 #: templates/hltb_review.html:194
-#, fuzzy
 msgid "Saved, but not listed for this system"
-msgstr "Bu sistem için ayarlanmış bir emülatör yok."
+msgstr "Kayıtlı, ama bu sistem için listelenmemiş"
 
 #: templates/hltb_review.html:195
 msgid "Saved, but the title differs"
-msgstr ""
+msgstr "Kayıtlı, ama başlık farklı"
 
 #: templates/hltb_review.html:196
 #, python-brace-format
 msgid "{count} on another platform or year"
-msgstr ""
+msgstr "{count} tanesi başka platformda veya yılda"
 
 #: templates/hltb_review.html:197
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{count} already saved"
-msgstr "Hayır (zaten ayarlı)"
+msgstr "{count} tanesi zaten kayıtlı"
 
 #: templates/hltb_review.html:198
 #, python-brace-format
@@ -7833,6 +7827,8 @@ msgid ""
 "This will clear the play time from {count} games that already have one. A"
 " bulk lookup can fetch the times again."
 msgstr ""
+"Bu işlem, süresi olan {count} oyunun oynama süresini silecek. Toplu arama"
+" süreleri yeniden getirebilir."
 
 #: templates/hltb_review.html:199
 #, python-brace-format
@@ -7840,6 +7836,8 @@ msgid ""
 "The other {count} queued matches are dropped, and those games keep what "
 "they have."
 msgstr ""
+"Sıradaki diğer {count} eşleşme çıkarılır ve bu oyunlar mevcut bilgilerini"
+" korur."
 
 #: templates/_settings_tabs/data.html:5 templates/local_trophies.html:6
 #: templates/psn_trophy_detail.html:276 templates/systems.html:89
@@ -9061,9 +9059,8 @@ msgstr ""
 "aya indirir; böylece yeni bir kazıma gerçek tarihi doldurabilir."
 
 #: templates/rom_tools_hub.html:352 templates/rom_tools_hub.html:609
-#, fuzzy
 msgid "Check Saved Play Times"
-msgstr "Güncellemeleri denetle"
+msgstr "Kayıtlı Oynama Sürelerini Denetle"
 
 #: templates/rom_tools_hub.html:355
 msgid ""
@@ -9071,6 +9068,10 @@ msgid ""
 "with the same name on another system. This sends those matches to the "
 "review page, where you keep or clear each one."
 msgstr ""
+"Eski aramalar, bir devam oyununun ya da başka bir sistemdeki aynı adlı "
+"başka bir oyunun oynama süresini kaydetmiş olabilir. Bu işlem o "
+"eşleşmeleri inceleme sayfasına gönderir; orada her birini tutar veya "
+"silersiniz."
 
 #: templates/rom_tools_hub.html:365 templates/rom_tools_hub.html:643
 msgid "Clear RAWG Pictures from Box Art"
@@ -9310,20 +9311,24 @@ msgid ""
 "\n"
 "There, Approve keeps a time and Reject clears it."
 msgstr ""
+"{count} kayıtlı oynama süresi başka bir oyuna ait gibi görünüyor. Bunlar "
+"inceleme sayfasına gidecek ve siz karar verene kadar hiçbir oyun "
+"değişmeyecek.\n"
+"\n"
+"Orada Onayla süreyi korur, Reddet siler."
 
 #: templates/rom_tools_hub.html:611
 msgid "No saved play time looks wrong."
-msgstr ""
+msgstr "Kayıtlı hiçbir oynama süresi yanlış görünmüyor."
 
 #: templates/rom_tools_hub.html:612
 #, python-brace-format
 msgid "Sent {count} play times to the HowLongToBeat review page."
-msgstr ""
+msgstr "{count} oynama süresi HowLongToBeat inceleme sayfasına gönderildi."
 
 #: templates/rom_tools_hub.html:613
-#, fuzzy
 msgid "Could not check the saved play times"
-msgstr "Bu adlar reddedilemedi."
+msgstr "Kayıtlı oynama süreleri denetlenemedi"
 
 #: templates/rom_tools_hub.html:644
 #, python-brace-format

@@ -1,3 +1,59 @@
+- version: 3.35.2
+  date: '2026-11-02'
+  tags:
+  - type: fix
+    label: Łączny czas gry nie liczy już minut jako godzin na pulpicie, w trofeach kolekcjonera i na wykresie analitycznym. Gra trwająca 36 minut była liczona jako 36 godzin
+  - type: fix
+    label: HowLongToBeat nie bierze już kontynuacji za Twoją grę. Double Dragon II nie dostaje już czasów z Double Dragon III
+  - type: fix
+    label: Zbiorcze wyszukiwanie w HowLongToBeat nie zapisuje już czasu gry z innego systemu. Mario Golf na Game Boy Color nie dostaje już czasu z Nintendo 64. Takie dopasowania czekają teraz na stronie przeglądu
+  - type: fix
+    label: Zbiorcze i pojedyncze wyszukiwanie w HowLongToBeat uwzględnia teraz rok wydania gry, więc Doom z 1993 roku nie dostaje już czasów z Dooma z 2016
+  - type: new
+    label: Opcja Sprawdź zapisane czasy gry w Narzędziach ROM wysyła zapisane dopasowania, które wyglądają źle, na stronę przeglądu, gdzie każde zachowasz lub wyczyścisz
+  - type: fix
+    label: Zbiorcze wyszukiwanie w HowLongToBeat z opcją Tylko brakujące ponawia próbę dla gier dopasowanych bez czasu i robi sekundę przerwy między zapytaniami
+  - type: fix
+    label: Wynik dopasowania 72% nie jest już pokazywany jako 100% na stronie gry
+  - type: fix
+    label: Gry nie pokazują już Osiągnięć RetroAchievements innej gry. Resident Evil 4 na GameCube nie pokazuje już zestawu z Resident Evil, a Ratchet Deadlocked zestawu z Ratchet & Clank
+  - type: fix
+    label: Opcja Pobierz dane usuwa teraz powiązanie z RetroAchievements, gdy RetroAchievements nie ma takiej gry. Jeśli RetroAchievements jest nieosiągalne, powiązanie zostaje
+  - type: fix
+    label: RetroAchievements znajduje teraz więcej Twoich gier dzięki nazwie pliku ROM, alternatywnym tytułom, znakom diakrytycznym jak w Ōkami oraz tytułom o dwóch nazwach
+  - type: fix
+    label: RetroAchievements nie łączy już gry z zestawem bonusowym, hackiem ani demem, a X-Men nie jest już równe G-Men
+  - type: new
+    label: Strona gry pokazuje nazwę powiązanej gry nadaną przez RetroAchievements, więc błędne powiązanie łatwo zauważyć
+  - type: fix
+    label: Odświeżanie RA zapisuje teraz punkty każdej gry, więc gra nie pokazuje już 0 punktów
+  - type: new
+    label: Strona gry oznacza klasyfikacje wiekowe od AI jako przypuszczenie oparte na zawartości gry i podaje, kiedy każda organizacja klasyfikacyjna zaczęła działać. OutRun z 1987 roku nie wygląda już na oficjalnie ocenione przez ESRB
+  - type: new
+    label: Strona gry oznacza oceny recenzentów i dane o sprzedaży pochodzące od AI. Zmiana oceny lub danych o sprzedaży przez Ciebie usuwa oznaczenie
+  - type: fix
+    label: Ocena od AI w złej skali jest odrzucana, więc lubiana gra nie dostaje już 7 na 100 po nowym pobraniu danych
+  - type: fix
+    label: Liczba ocen od AI nie jest już zapisywana obok wyniku z innej strony, a strona gry nie pokazuje już takiej, która została zapisana
+  - type: fix
+    label: Przedział sprzedaży lub kwota pieniędzy od AI nie zamienia się już w kilka sprzedanych egzemplarzy
+  - type: fix
+    label: Odpowiedzi AI nie zapisują już list jako kodu, słów N/A ani None jako wartości, ani własnej konsoli gry wśród innych platform
+  - type: fix
+    label: Uzupełnianie AI zachowuje teraz zastępowaną wartość w historii gry
+  - type: fix
+    label: Gry z kartridżami nie dostają już zmyślonego typu Battery Save, a nowe odpowiedzi AI nie przyjmują domyślnie Standard Edition
+  - type: fix
+    label: Seria gry nie jest już wyciągana z pocięcia jej tytułu, więc Need For Speed nie należy już do serii o nazwie Need. Nazwy serii z IGDB są znów odczytywane, a stare domysły są czyszczone, by kolejne pobranie danych je uzupełniło
+  - type: fix
+    label: Opisy nie pokazują już kodów internetowych zamiast cudzysłowów ani znaczników nagłówków, takich jak
+  - type: fix
+    label: Jedna firma ma teraz jeden zapis, więc kliknięcie Sega znajduje każdą grę SEGA. Regiony mają jedną wartość, a platformy używają nazw z listy
+  - type: fix
+    label: Tytuły gier z RAWG nie dostają już roku, a alternatywne tytuły nie wymieniają nazw plików, takich jak dosbox.exe
+  - type: fix
+    label: Pełne ponowne pobranie nie zastępuje już ustawionej przez Ciebie oceny ani kontrolera domysłem, a pobranie danych, które zawiedzie w połowie, nie zapisuje już przez mniej staranną ścieżkę
+  body: "<ul>\n  <li><strong>Odpowiedzi AI mówią, że pochodzą od AI.</strong> Klasyfikacje wiekowe od AI\n    zostają, oznaczone jako przypuszczenie oparte na zawartości gry, z rokiem, w którym\n    każda organizacja klasyfikacyjna zaczęła działać. Oceny i sprzedaż od AI są również oznaczone.</li>\n  <li><strong>RetroAchievements pokazuje właściwą grę.</strong> Kontynuacje nie\n    mają już Osiągnięć pierwszej gry. Po aktualizacji\n    pulpit raz zaproponuje odświeżenie RetroAchievements. Naciśnij je, aby naprawić\n    stare powiązania. Postęp zapisany przy błędnym powiązaniu zostanie usunięty, a następna\n    synchronizacja uzupełni go ponownie.</li>\n  <li><strong>Łączne czasy gry są prawdziwe.</strong> Czasy poniżej godziny\n    były liczone jako godziny, więc sumy na pulpicie i trofea kolekcjonera\n    były za wysokie. Niektóre sumy i trofea się zmniejszą.</li>\n  <li><strong>HowLongToBeat znajduje właściwą grę.</strong> Kontynuacja nie\n    uchodzi już za Twoją grę, a system i rok gry są teraz brane pod uwagę.\n    Dopasowanie z innego systemu lub sprzed lat czeka na Ciebie\n    na stronie przeglądu.</li>\n  <li><strong>Sprawdź, co już zapisano.</strong> Naciśnij Sprawdź zapisane czasy gry\n    w Narzędziach ROM, aby wysłać wątpliwe zapisane dopasowania na stronę przeglądu.\n    Nic się nie zmieni, dopóki nie zdecydujesz.</li>\n  <li><strong>Nazwy serii są prawdziwe.</strong> Seria gry nie jest już wyciągana\n    z pocięcia jej tytułu. Po aktualizacji domyślnie ustalone nazwy serii zostaną wyczyszczone, także niektóre trafne. Kolejne pobranie danych\n    uzupełni je ze źródeł, które podają serię.</li>\n  <li><strong>Czysty tekst.</strong> Opisy nie pokazują już kodów internetowych ani\n    znaczników nagłówków. Jedna firma ma jeden zapis, gra ma jeden region, a\n    nazwy plików, takie jak dosbox.exe, nie są już wymieniane jako inne tytuły. To\n    dzieje się raz, samoczynnie, po aktualizacji.</li>\n  <li><strong>Pełne ponowne pobranie zachowuje Twoje wybory.</strong> Ustawiona przez Ciebie ocena lub\n    kontroler zostaje, chyba że źródło naprawdę je podaje.</li>\n</ul>\n"
 - version: 3.35.1
   date: '2026-11-02'
   tags:

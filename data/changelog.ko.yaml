@@ -1,3 +1,59 @@
+- version: 3.35.2
+  date: '2026-11-02'
+  tags:
+  - type: fix
+    label: 총 플레이 시간이 더 이상 분을 시간으로 계산하지 않습니다. 대시보드, 수집가 트로피, 분석 차트에 모두 적용됩니다. 36분짜리 게임이 36시간으로 계산되던 문제가 해결되었습니다
+  - type: fix
+    label: HowLongToBeat가 더 이상 후속작을 내 게임으로 인식하지 않습니다. Double Dragon II에 Double Dragon III의 시간이 붙지 않습니다
+  - type: fix
+    label: HowLongToBeat 일괄 조회가 더 이상 다른 시스템 게임의 시간을 저장하지 않습니다. 게임보이 컬러의 Mario Golf에 Nintendo 64 시간이 붙지 않습니다. 이런 일치 항목은 이제 검토 페이지에서 대기합니다
+  - type: fix
+    label: HowLongToBeat 일괄 조회와 개별 조회에서 게임의 출시 연도를 사용하므로, 1993년作 Doom에 2016년作 Doom의 시간이 붙지 않습니다
+  - type: new
+    label: ROM 도구의 저장된 플레이 시간 확인은 잘못된 것으로 보이는 저장된 일치 항목을 검토 페이지로 보내고, 거기서 각각 유지하거나 지울 수 있습니다
+  - type: fix
+    label: '''누락된 항목만''으로 HowLongToBeat 일괄 조회를 하면 시간 없이 일치된 게임을 다시 시도하며, 요청 사이에 1초 간격을 둡니다'
+  - type: fix
+    label: 일치 점수 72%가 게임 페이지에서 100%로 표시되지 않습니다
+  - type: fix
+    label: 게임에 다른 게임의 RetroAchievements가 표시되지 않습니다. 게임큐브의 Resident Evil 4에 Resident Evil 세트가 나오지 않고, Ratchet Deadlocked에 Ratchet & Clank 세트가 나오지 않습니다
+  - type: fix
+    label: RetroAchievements에 해당 게임이 없으면 스크래핑 시 RetroAchievements 링크를 제거합니다. RetroAchievements에 연결할 수 없으면 링크는 유지됩니다
+  - type: fix
+    label: RetroAchievements가 ROM 파일 이름, 대체 제목, Ōkami 같은 악센트 문자, 이름이 둘인 제목을 통해 더 많은 게임을 찾습니다
+  - type: fix
+    label: RetroAchievements가 더 이상 게임을 보너스 세트, 해킹판, 데모에 연결하지 않으며, X-Men과 G-Men도 같은 것으로 보지 않습니다
+  - type: new
+    label: 게임 페이지에 연결된 게임의 RetroAchievements 자체 이름이 표시되어 잘못된 연결을 쉽게 알아볼 수 있습니다
+  - type: fix
+    label: RA 새로고침이 이제 각 게임의 포인트를 저장하므로 게임에 0포인트로 표시되지 않습니다
+  - type: new
+    label: 게임 페이지에 AI의 연령 등급이 게임 내용에 기반한 추정치임을 표시하고, 각 등급 기관이 시작된 해도 알려 줍니다. 1987년作 OutRun이 ESRB 공식 등급을 받은 것처럼 보이지 않습니다
+  - type: new
+    label: 게임 페이지에 AI에서 가져온 리뷰 점수와 판매량을 표시합니다. 등급이나 판매량을 직접 바꾸면 표시가 사라집니다
+  - type: fix
+    label: AI가 잘못된 척도로 준 점수는 거부되므로, 평이 좋은 게임이 새 스크래핑에서 100점 만점에 7점을 받지 않습니다
+  - type: fix
+    label: AI가 준 점수 개수는 다른 사이트의 점수 옆에 저장되지 않으며, 그렇게 저장된 것은 게임 페이지에 표시되지 않습니다
+  - type: fix
+    label: AI가 준 판매량 범위나 금액이 몇 장 판매된 것으로 바뀌지 않습니다
+  - type: fix
+    label: AI 답변이 목록을 코드로 저장하거나, N/A나 None을 값으로 저장하거나, 게임 자신의 콘솔을 다른 플랫폼에 넣지 않습니다
+  - type: fix
+    label: AI 채우기가 이제 바뀌기 전의 값을 게임 기록에 보관합니다
+  - type: fix
+    label: 카트리지 게임에 지어낸 배터리 저장 유형이 붙지 않고, 새 AI 답변이 기본값으로 스탠더드 에디션이 되지 않습니다
+  - type: fix
+    label: 게임 시리즈가 더 이상 제목을 잘라서 만들어지지 않으므로 Need For Speed가 Need라는 시리즈에 속하지 않습니다. IGDB의 시리즈 이름을 다시 읽고, 이전의 추측값은 지워서 다음 스크래핑 때 다시 채웁니다
+  - type: fix
+    label: 설명에 따옴표 대신 웹 코드가 표시되거나 제목 표시 같은 기호가 나타나지 않습니다
+  - type: fix
+    label: 한 회사는 한 가지 표기만 사용하므로 Sega를 클릭하면 모든 SEGA 게임이 나옵니다. 지역은 값 하나만 가지며, 플랫폼은 목록에 있는 이름을 사용합니다
+  - type: fix
+    label: RAWG의 게임 제목에 연도가 붙지 않고, 대체 제목에 dosbox.exe 같은 파일 이름이 나열되지 않습니다
+  - type: fix
+    label: 전체 재스크랩이 직접 설정한 등급이나 컨트롤러를 추측값으로 바꾸지 않으며, 도중에 실패한 스크래핑이 덜 신중한 경로로 기록하지 않습니다
+  body: "<ul>\n  <li><strong>AI 답변은 AI임을 표시합니다.</strong> AI의 연령 등급은 유지되며, 게임 내용에 기반한 추정치로 표시되고 각 등급 기관이 시작된 해도 함께 나옵니다. AI의 점수와 판매량도 표시됩니다.</li>\n  <li><strong>RetroAchievements가 올바른 게임을 보여 줍니다.</strong> 후속작에 첫 게임의 업적이 붙지 않습니다. 업데이트 후 대시보드에서 RetroAchievements 새로고침이 한 번 제안됩니다. 눌러서 이전 링크를 고치세요. 잘못된 링크로 저장된 진행 상황은 삭제되며, 다음 동기화 때 다시 채워집니다.</li>\n  <li><strong>플레이 시간 합계가 정확해집니다.</strong> 1시간 미만의 시간이 시간으로 계산되어 대시보드 합계와 수집가 트로피가 너무 높았습니다. 일부 합계와 트로피는 내려갑니다.</li>\n  <li><strong>HowLongToBeat가 올바른 게임을 찾습니다.</strong> 후속작이 내 게임으로 인식되지 않으며, 게임의 시스템과 연도도 반영됩니다. 다른 시스템이거나 몇 년 뒤의 일치 항목은 검토 페이지에서 기다립니다.</li>\n  <li><strong>이미 저장된 항목을 확인하세요.</strong> ROM 도구에서 저장된 플레이 시간 확인을 누르면 의심스러운 저장 항목이 검토 페이지로 갑니다. 직접 결정하기 전에는 아무것도 바뀌지 않습니다.</li>\n  <li><strong>시리즈 이름이 제대로 됩니다.</strong> 게임 시리즈가 더 이상 제목을 잘라서 만들어지지 않습니다. 업데이트 후 추측된 시리즈 이름은 맞았던 것도 포함해 지워지며, 다음 스크래핑 때 시리즈를 알려 주는 출처에서 채웁니다.</li>\n  <li><strong>텍스트가 깔끔해집니다.</strong> 설명에 웹 코드나 제목 표시 기호가 나타나지 않습니다. 한 회사는 한 가지 표기, 한 게임은 한 지역을 가지며, dosbox.exe 같은 파일 이름은 다른 제목으로 나열되지 않습니다. 업데이트 후 이 작업은 자동으로 한 번 실행됩니다.</li>\n  <li><strong>전체 재스크랩이 내 선택을 유지합니다.</strong> 직접 설정한 등급이나 컨트롤러는 어떤 출처가 실제로 제공하지 않는 한 그대로 유지됩니다.</li>\n</ul>\n"
 - version: 3.35.1
   date: '2026-11-02'
   tags:
