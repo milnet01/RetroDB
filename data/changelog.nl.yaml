@@ -1,3 +1,38 @@
+- version: 3.35.1
+  date: '2026-11-02'
+  tags:
+  - type: fix
+    label: Scrapen neemt niet langer een vervolg over voor de game die je hebt. Street Fighter II krijgt geen details meer van Street Fighter, en Sonic the Hedgehog niet meer van Sonic 2, als de exacte game ontbreekt
+  - type: fix
+    label: Een bulk-scrape accepteert een match alleen als de titel echt overeenkomt. De juiste console en een releasedatum zijn niet langer genoeg om samen door te komen
+  - type: fix
+    label: IGDB-mods, DLC, bundels en updates komen niet meer overeen met een game, tenzij je ROM precies die naam heeft
+  - type: fix
+    label: RAWG bewaart één record voor alle versies van een game. Als die meerdere consoles beslaat, levert RAWG dus geen ontwikkelaar, uitgever, leeftijdsclassificatie of multiplayer-modi meer. Het raadt ook helemaal geen aantal spelers meer
+  - type: fix
+    label: IGDB-spelersaantallen en multiplayer-modi komen nu van de eigen console van de game
+  - type: fix
+    label: Als bronnen even goed overeenkomen, bepaalt nu jouw scraper-volgorde. RAWG scoort niet langer extra voor een afbeelding of een Metacritic-score, en nieuwe installaties zetten RAWG als laatste
+  - type: fix
+    label: RAWG wordt niet meer doorzocht voor Commodore 64- en DOS-games, omdat het die onder Amiga en pc indeelt, waardoor een game van een ander platform kon matchen
+  - type: fix
+    label: Een ScreenScraper-resultaat dat je kiest is nu altijd de game die je krijgt, ook als je de resultaten langer dan 10 minuten open liet staan
+  - type: fix
+    label: Accenten en leestekens verlagen een titelmatch niet meer, dus Pokémon vindt Pokemon en R.B.I. vindt RBI
+  - type: fix
+    label: Een releasedatum toont nu alleen wat de bron weet. Een game waarvan alleen het jaar bekend is, toont dat jaar, niet een verzonnen 1 januari of 31 december
+  - type: fix
+    label: IGDB- en RAWG-datums horen nu bij de eigen console van de game, en die van IGDB ook bij de eigen regio, zodat een Amerikaanse versie niet meer de Japanse datum toont en een port niet meer het jaar van het origineel
+  - type: feature
+    label: De lijst Releasedatums op de pagina van een game wordt nu gevuld vanuit IGDB en ScreenScraper, niet alleen door de AI
+  - type: added
+    label: 'Nieuwe ROM Tools-kaart: Releasedatums opschonen verwijdert de verzonnen dagen die oudere scrapes opsloegen, zodat een scrape de echte datum kan invullen'
+  - type: fix
+    label: Genres, perspectieven en gamemodi gebruiken nu één set namen, ongeacht welke bron ze vulde, zodat filters elke game vinden. Eén genre wordt niet meer getoond als zowel RPG als Role Playing Game
+  - type: added
+    label: 'Nieuwe ROM Tools-kaart: Genres, perspectieven en modi opschonen zet om wat oudere scrapes opsloegen, verplaatst woorden zoals FPV naar het juiste veld en corrigeert spelersaantallen die de modi van een game tegenspreken'
+  - type: fix
+    label: Online-only games van IGDB worden niet meer als lokale multiplayer vermeld, en een game waarvoor twee spelers nodig zijn, wordt niet meer als singleplayer vermeld
 - version: 3.35.0
   date: '2026-11-01'
   tags:

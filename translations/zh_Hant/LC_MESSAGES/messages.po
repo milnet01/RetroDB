@@ -8699,7 +8699,7 @@ msgstr "AI 以前即使檔名已標明,仍會猜測遊戲的地區,所以標示 
 
 #: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:528
 msgid "Tidy Genres, Perspectives and Modes"
-msgstr ""
+msgstr "整理類型、視角與模式"
 
 #: templates/rom_tools_hub.html:329
 msgid ""
@@ -8707,11 +8707,12 @@ msgid ""
 "both RPG and Role Playing Game, and a filter missed games. This gives "
 "every game one set of names."
 msgstr ""
+"不同來源對同一件事的叫法不同,所以同一個類型可能同時出現 RPG 和 Role Playing "
+"Game,篩選時就會漏掉遊戲。這個功能會讓每個遊戲都使用同一套名稱。"
 
 #: templates/rom_tools_hub.html:339 templates/rom_tools_hub.html:562
-#, fuzzy
 msgid "Tidy Release Dates"
-msgstr "發行日期"
+msgstr "整理發行日期"
 
 #: templates/rom_tools_hub.html:342
 msgid ""
@@ -8719,6 +8720,8 @@ msgid ""
 "December, as if the day were known. This cuts those dates back to the "
 "year or month, so a scrape can fill in the real one."
 msgstr ""
+"較舊的抓取會把只知道年份的日期存成 1 月 1 日或 12 月 31 "
+"日,好像確實知道是哪一天。這個功能會把這些日期縮減為年份或月份,讓之後的抓取可以補上真正的日期。"
 
 #: templates/rom_tools_hub.html:352 templates/rom_tools_hub.html:596
 msgid "Clear RAWG Pictures from Box Art"
@@ -8867,23 +8870,27 @@ msgid ""
 "Afterwards, run a bulk scrape with Fill Missing to fill anything left "
 "empty."
 msgstr ""
+"將有 {count} 個遊戲會被更改。\n"
+"\n"
+"名稱會改成篩選清單中使用的名稱。在清單中沒有位置的詞,例如 Arcade 或 Indie,會被移除。屬於其他欄位的詞,例如 "
+"FPV,若該欄位是空的,就會移到正確的欄位。與遊戲模式互相矛盾的玩家人數會被修正,來自 RAWG 的舊人數 1 會被清除。\n"
+"\n"
+"完成後,請執行「填補缺漏」的批次抓取,補上仍然空白的內容。"
 
 #: templates/rom_tools_hub.html:530
-#, fuzzy
 msgid "Every game already uses these names."
-msgstr "使用者名稱已存在"
+msgstr "所有遊戲都已使用這些名稱。"
 
 #: templates/rom_tools_hub.html:531
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid ""
 "Tidied {count} games. Run a bulk scrape with Fill Missing to fill "
 "anything left empty."
-msgstr "已清除 {count} 張圖片。請用「填補缺漏」執行批次抓取,以尋找真正的封面。"
+msgstr "已整理 {count} 個遊戲。請執行「填補缺漏」的批次抓取,補上仍然空白的內容。"
 
 #: templates/rom_tools_hub.html:532
-#, fuzzy
 msgid "Could not tidy the names"
-msgstr "無法計算遊戲數量。"
+msgstr "無法整理名稱"
 
 #: templates/rom_tools_hub.html:563
 #, python-brace-format
@@ -8893,23 +8900,24 @@ msgid ""
 "A date such as 1 January 1987 becomes 1987. A date no scrape filled stays"
 " as it is."
 msgstr ""
+"將有 {count} 個遊戲會被更改。\n"
+"\n"
+"像 1987 年 1 月 1 日這樣的日期會變成 1987 年。尚未被任何抓取補上的日期會維持原樣。"
 
 #: templates/rom_tools_hub.html:564
-#, fuzzy
 msgid "No release dates need tidying."
-msgstr "發行日期"
+msgstr "沒有需要整理的發行日期。"
 
 #: templates/rom_tools_hub.html:565
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid ""
 "Tidied {count} games. Run a bulk scrape with Fill Missing to look for "
 "fuller dates."
-msgstr "已清除 {count} 張圖片。請用「填補缺漏」執行批次抓取,以尋找真正的封面。"
+msgstr "已整理 {count} 個遊戲。請執行「填補缺漏」的批次抓取,尋找更完整的日期。"
 
 #: templates/rom_tools_hub.html:566
-#, fuzzy
 msgid "Could not tidy the release dates"
-msgstr "無法計算遊戲數量。"
+msgstr "無法整理發行日期"
 
 #: templates/rom_tools_hub.html:597
 #, python-brace-format

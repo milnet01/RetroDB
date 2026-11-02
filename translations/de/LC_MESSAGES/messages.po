@@ -9016,7 +9016,7 @@ msgstr ""
 
 #: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:528
 msgid "Tidy Genres, Perspectives and Modes"
-msgstr ""
+msgstr "Genres, Perspektiven und Modi bereinigen"
 
 #: templates/rom_tools_hub.html:329
 msgid ""
@@ -9024,11 +9024,13 @@ msgid ""
 "both RPG and Role Playing Game, and a filter missed games. This gives "
 "every game one set of names."
 msgstr ""
+"Quellen benennen dasselbe unterschiedlich, daher konnte ein Genre sowohl "
+"als RPG als auch als Role Playing Game auftauchen, und ein Filter übersah"
+" Spiele. So erhält jedes Spiel einheitliche Namen."
 
 #: templates/rom_tools_hub.html:339 templates/rom_tools_hub.html:562
-#, fuzzy
 msgid "Tidy Release Dates"
-msgstr "Veröffentlichungsdaten"
+msgstr "Erscheinungsdaten bereinigen"
 
 #: templates/rom_tools_hub.html:342
 msgid ""
@@ -9036,6 +9038,10 @@ msgid ""
 "December, as if the day were known. This cuts those dates back to the "
 "year or month, so a scrape can fill in the real one."
 msgstr ""
+"Ältere Scrapes speicherten ein Datum, von dem nur das Jahr bekannt war, "
+"als 1. Januar oder 31. Dezember, als wäre der Tag bekannt. Dies kürzt "
+"diese Daten auf das Jahr oder den Monat, damit ein Scrape das echte Datum"
+" eintragen kann."
 
 #: templates/rom_tools_hub.html:352 templates/rom_tools_hub.html:596
 msgid "Clear RAWG Pictures from Box Art"
@@ -9213,25 +9219,33 @@ msgid ""
 "Afterwards, run a bulk scrape with Fill Missing to fill anything left "
 "empty."
 msgstr ""
+"{count} Spiele werden geändert.\n"
+"\n"
+"Namen werden durch die aus den Filterlisten ersetzt. Begriffe, die dort "
+"keinen Platz haben, wie Arcade oder Indie, werden entfernt. Begriffe, die"
+" woanders hingehören, wie FPV, werden ins passende Feld verschoben, falls"
+" es leer ist. Eine Spielerzahl, die den Modi des Spiels widerspricht, "
+"wird korrigiert, und alte Werte von 1 aus RAWG werden gelöscht.\n"
+"\n"
+"Starte danach einen Massen-Scrape mit „Fehlendes ergänzen“, um alles noch"
+" Leere zu füllen."
 
 #: templates/rom_tools_hub.html:530
-#, fuzzy
 msgid "Every game already uses these names."
-msgstr "Benutzername existiert bereits"
+msgstr "Alle Spiele verwenden bereits diese Namen."
 
 #: templates/rom_tools_hub.html:531
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid ""
 "Tidied {count} games. Run a bulk scrape with Fill Missing to fill "
 "anything left empty."
 msgstr ""
-"{count} Bilder entfernt. Starte einen Massen-Scrape mit „Fehlendes "
-"auffüllen“, um echte Cover zu suchen."
+"{count} Spiele bereinigt. Starte einen Massen-Scrape mit „Fehlendes "
+"ergänzen“, um alles noch Leere zu füllen."
 
 #: templates/rom_tools_hub.html:532
-#, fuzzy
 msgid "Could not tidy the names"
-msgstr "Die Spiele konnten nicht gezählt werden."
+msgstr "Die Namen konnten nicht bereinigt werden"
 
 #: templates/rom_tools_hub.html:563
 #, python-brace-format
@@ -9241,25 +9255,27 @@ msgid ""
 "A date such as 1 January 1987 becomes 1987. A date no scrape filled stays"
 " as it is."
 msgstr ""
+"{count} Spiele werden geändert.\n"
+"\n"
+"Ein Datum wie 1. Januar 1987 wird zu 1987. Ein Datum, das kein Scrape "
+"ergänzt hat, bleibt unverändert."
 
 #: templates/rom_tools_hub.html:564
-#, fuzzy
 msgid "No release dates need tidying."
-msgstr "Veröffentlichungsdaten"
+msgstr "Es müssen keine Erscheinungsdaten bereinigt werden."
 
 #: templates/rom_tools_hub.html:565
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid ""
 "Tidied {count} games. Run a bulk scrape with Fill Missing to look for "
 "fuller dates."
 msgstr ""
-"{count} Bilder entfernt. Starte einen Massen-Scrape mit „Fehlendes "
-"auffüllen“, um echte Cover zu suchen."
+"{count} Spiele bereinigt. Starte einen Massen-Scrape mit „Fehlendes "
+"ergänzen“, um nach genaueren Daten zu suchen."
 
 #: templates/rom_tools_hub.html:566
-#, fuzzy
 msgid "Could not tidy the release dates"
-msgstr "Die Spiele konnten nicht gezählt werden."
+msgstr "Die Erscheinungsdaten konnten nicht bereinigt werden"
 
 #: templates/rom_tools_hub.html:597
 #, python-brace-format

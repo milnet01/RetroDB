@@ -1,3 +1,38 @@
+- version: 3.35.1
+  date: '2026-11-02'
+  tags:
+  - type: fix
+    label: Skraping henter ikke lenger en oppfølger til spillet du har. Street Fighter II får ikke lenger detaljer fra Street Fighter, og Sonic the Hedgehog ikke fra Sonic 2, når det nøyaktige spillet mangler
+  - type: fix
+    label: En masseskraping godtar nå en treff bare hvis tittelen virkelig stemmer. Riktig konsoll og en utgivelsesdato kan ikke lenger alene gi godkjent treff
+  - type: fix
+    label: IGDB-modder, DLC, pakker og oppdateringer matcher ikke lenger et spill, med mindre ROM-en din har akkurat det navnet
+  - type: fix
+    label: RAWG har én post for alle versjoner av et spill, så når den dekker flere konsoller, gir den ikke lenger utvikler, utgiver, aldersgrense eller flerspillermoduser. Den gjetter heller ikke lenger antall spillere
+  - type: fix
+    label: IGDB-spillerantall og flerspillermoduser kommer nå fra spillets egen konsoll
+  - type: fix
+    label: Når kildene passer like godt, avgjør nå rekkefølgen på skraperne dine. RAWG får ikke lenger ekstra poeng for bilde eller Metacritic-score, og nye installasjoner setter RAWG sist
+  - type: fix
+    label: RAWG blir ikke lenger søkt i for Commodore 64- og DOS-spill, fordi den fører dem under Amiga og PC, så et spill fra en annen plattform kunne gi treff
+  - type: fix
+    label: Et ScreenScraper-resultat du velger, blir nå alltid spillet du får, selv om du lar resultatene stå åpne i mer enn 10 minutter
+  - type: fix
+    label: Aksenter og tegnsetting senker ikke lenger tittelmatchen, så Pokémon finner Pokemon og R.B.I. finner RBI
+  - type: fix
+    label: En utgivelsesdato vises nå bare så detaljert som kilden vet. Et spill som bare er kjent med årstall, viser det året, ikke en oppdiktet 1. januar eller 31. desember
+  - type: fix
+    label: IGDB- og RAWG-datoer hører nå til spillets egen konsoll, og IGDB-datoer til sin egen region, så en USA-kopi viser ikke lenger den japanske datoen, og en portering ikke originalens år
+  - type: feature
+    label: Listen Utgivelsesdatoer på et spills side fylles nå fra IGDB og ScreenScraper, ikke bare av AI
+  - type: added
+    label: 'Nytt ROM-verktøykort: Rydd utgivelsesdatoer fjerner de oppdiktede dagene eldre skrapinger lagret, slik at en skraping kan fylle inn den riktige datoen'
+  - type: fix
+    label: Sjangere, perspektiver og spillmoduser bruker nå ett sett med navn uansett hvilken kilde som fylte dem, så filtre finner alle spill. En sjanger vises ikke lenger både som RPG og Role Playing Game
+  - type: added
+    label: 'Nytt ROM-verktøykort: Rydd sjangere, perspektiver og moduser konverterer det eldre skrapinger lagret, flytter ord som FPV til riktig felt, og retter spillerantall som motsier spillets moduser'
+  - type: fix
+    label: Spill som bare kan spilles på nett fra IGDB blir ikke lenger oppført som lokal flerspiller, og et spill som krever to spillere blir ikke lenger oppført som enspiller
 - version: 3.35.0
   date: '2026-11-01'
   tags:

@@ -1,3 +1,38 @@
+- version: 3.35.1
+  date: '2026-11-02'
+  tags:
+  - type: fix
+    label: Buscar Metadados não usa mais uma continuação no lugar do jogo que você tem. Street Fighter II não recebe mais detalhes de Street Fighter, nem Sonic the Hedgehog de Sonic 2, quando o jogo exato não é encontrado
+  - type: fix
+    label: Uma busca de metadados em lote agora só aceita um resultado se o título realmente corresponder. O console certo e uma data de lançamento não bastam mais, por si sós, para aprovar
+  - type: fix
+    label: Mods, DLCs, pacotes e atualizações do IGDB não correspondem mais a um jogo, a menos que sua ROM tenha exatamente esse nome
+  - type: fix
+    label: O RAWG mantém um único registro para todas as versões de um jogo. Por isso, quando ele abrange vários consoles, não fornece mais desenvolvedora, distribuidora, classificação etária nem modos multijogador. Ele também não tenta mais adivinhar o número de jogadores
+  - type: fix
+    label: O número de jogadores e os modos multijogador do IGDB agora vêm do console do próprio jogo
+  - type: fix
+    label: Quando as fontes correspondem igualmente bem, agora a sua ordem de scrapers decide. O RAWG não ganha mais pontos extras por ter imagem ou nota do Metacritic, e novas instalações listam o RAWG por último
+  - type: fix
+    label: O RAWG não é mais consultado para jogos de Commodore 64 e DOS, porque ele os classifica como Amiga e PC, e o jogo de outra plataforma poderia corresponder
+  - type: fix
+    label: O resultado do ScreenScraper que você escolhe agora é sempre o jogo que você recebe, mesmo depois de deixar os resultados abertos por mais de 10 minutos
+  - type: fix
+    label: Acentos e pontuação não reduzem mais a correspondência de título, então Pokémon encontra Pokemon e R.B.I. encontra RBI
+  - type: fix
+    label: Uma data de lançamento agora aparece só com o que a fonte sabe. Um jogo conhecido apenas pelo ano mostra esse ano, e não um 1º de janeiro ou 31 de dezembro inventado
+  - type: fix
+    label: As datas do IGDB e do RAWG agora pertencem ao console do próprio jogo, e as do IGDB também à sua própria região. Assim, uma cópia dos EUA não mostra mais a data japonesa, nem uma versão adaptada o ano do original
+  - type: feature
+    label: A lista de Datas de Lançamento na página de um jogo agora é preenchida pelo IGDB e pelo ScreenScraper, e não só pela IA
+  - type: added
+    label: 'Novo cartão em Ferramentas de ROM: Limpar Datas de Lançamento remove os dias inventados que buscas antigas guardaram, para que uma nova busca possa preencher a data real'
+  - type: fix
+    label: Gêneros, perspectivas e modos de jogo agora usam um único conjunto de nomes, seja qual for a fonte, então os filtros encontram todos os jogos. Um mesmo gênero não aparece mais como RPG e Role Playing Game
+  - type: added
+    label: 'Novo cartão em Ferramentas de ROM: Limpar Gêneros, Perspectivas e Modos converte o que buscas antigas guardaram, move palavras como FPV para o campo certo e corrige números de jogadores que contradizem os modos do jogo'
+  - type: fix
+    label: Jogos somente online do IGDB não são mais listados como multijogador local, e um jogo que exige dois jogadores não é mais listado como de um jogador
 - version: 3.35.0
   date: '2026-11-01'
   tags:

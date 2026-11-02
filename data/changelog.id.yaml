@@ -1,3 +1,38 @@
+- version: 3.35.1
+  date: '2026-11-02'
+  tags:
+  - type: fix
+    label: Scraping tidak lagi memakai sekuel untuk game yang Anda miliki. Street Fighter II tidak lagi mengambil detail dari Street Fighter, dan Sonic the Hedgehog tidak dari Sonic 2, saat game yang persis sama tidak ditemukan
+  - type: fix
+    label: Scrape massal kini hanya menerima kecocokan jika judulnya benar-benar sama. Konsol yang tepat dan tanggal rilis tidak lagi cukup untuk meloloskan hasil begitu saja
+  - type: fix
+    label: Mod, DLC, bundel, dan pembaruan dari IGDB tidak lagi cocok dengan sebuah game, kecuali ROM Anda memang bernama persis sama
+  - type: fix
+    label: RAWG menyimpan satu data untuk semua versi sebuah game, jadi jika mencakup beberapa konsol, RAWG tidak lagi memberi pengembang, penerbit, rating usia, atau mode multipemain. RAWG juga tidak lagi menebak jumlah pemain sama sekali
+  - type: fix
+    label: Jumlah pemain dan mode multipemain dari IGDB kini berasal dari konsol game itu sendiri
+  - type: fix
+    label: Jika beberapa sumber sama-sama cocok, urutan scraper Anda yang menentukan. RAWG tidak lagi mendapat skor tambahan karena punya gambar atau skor Metacritic, dan instalasi baru menempatkan RAWG di urutan terakhir
+  - type: fix
+    label: RAWG tidak lagi dicari untuk game Commodore 64 dan DOS, karena RAWG mengelompokkannya di Amiga dan PC, sehingga game platform lain bisa saja cocok
+  - type: fix
+    label: Hasil ScreenScraper yang Anda pilih kini selalu menjadi game yang Anda dapatkan, bahkan setelah hasilnya dibiarkan terbuka lebih dari 10 menit
+  - type: fix
+    label: Aksen dan tanda baca tidak lagi menurunkan kecocokan judul, jadi Pokémon menemukan Pokemon dan R.B.I. menemukan RBI
+  - type: fix
+    label: Tanggal rilis kini hanya tampil sesuai yang diketahui sumbernya. Game yang hanya diketahui tahunnya akan menampilkan tahun itu, bukan 1 Januari atau 31 Desember karangan
+  - type: fix
+    label: Tanggal dari IGDB dan RAWG kini sesuai konsol game itu sendiri, dan tanggal IGDB sesuai wilayahnya sendiri, jadi salinan USA tidak lagi menampilkan tanggal Jepang, dan versi port tidak lagi menampilkan tahun versi aslinya
+  - type: feature
+    label: Daftar Tanggal Rilis di halaman game kini terisi dari IGDB dan ScreenScraper, tidak hanya dari AI
+  - type: added
+    label: 'Kartu Alat ROM baru: Tidy Release Dates merapikan hari karangan yang disimpan scrape lama, agar scrape bisa mengisi tanggal yang sebenarnya'
+  - type: fix
+    label: Genre, perspektif, dan mode game kini memakai satu set nama dari sumber mana pun, sehingga filter menemukan semua game. Satu genre tidak lagi tampil sebagai RPG sekaligus Role Playing Game
+  - type: added
+    label: 'Kartu Alat ROM baru: Tidy Genres, Perspectives and Modes mengonversi data dari scrape lama, memindahkan kata seperti FPV ke kolom yang tepat, dan memperbaiki jumlah pemain yang bertentangan dengan mode game'
+  - type: fix
+    label: Game khusus online dari IGDB tidak lagi terdaftar sebagai multipemain lokal, dan game yang butuh dua pemain tidak lagi terdaftar sebagai pemain tunggal
 - version: 3.35.0
   date: '2026-11-01'
   tags:

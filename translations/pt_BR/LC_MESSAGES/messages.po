@@ -8959,7 +8959,7 @@ msgstr ""
 
 #: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:528
 msgid "Tidy Genres, Perspectives and Modes"
-msgstr ""
+msgstr "Organizar Gêneros, Perspectivas e Modos"
 
 #: templates/rom_tools_hub.html:329
 msgid ""
@@ -8967,11 +8967,13 @@ msgid ""
 "both RPG and Role Playing Game, and a filter missed games. This gives "
 "every game one set of names."
 msgstr ""
+"As fontes dão nomes diferentes à mesma coisa, então um gênero podia "
+"aparecer como RPG e como Role Playing Game, e um filtro deixava jogos de "
+"fora. Isso dá a todos os jogos um único conjunto de nomes."
 
 #: templates/rom_tools_hub.html:339 templates/rom_tools_hub.html:562
-#, fuzzy
 msgid "Tidy Release Dates"
-msgstr "Datas de lançamento"
+msgstr "Organizar Datas de Lançamento"
 
 #: templates/rom_tools_hub.html:342
 msgid ""
@@ -8979,6 +8981,10 @@ msgid ""
 "December, as if the day were known. This cuts those dates back to the "
 "year or month, so a scrape can fill in the real one."
 msgstr ""
+"Buscas de metadados mais antigas guardavam uma data conhecida só pelo ano"
+" como 1º de janeiro ou 31 de dezembro, como se o dia fosse conhecido. "
+"Isso reduz essas datas ao ano ou ao mês, para que uma nova busca de "
+"metadados possa preencher a data real."
 
 #: templates/rom_tools_hub.html:352 templates/rom_tools_hub.html:596
 msgid "Clear RAWG Pictures from Box Art"
@@ -9155,25 +9161,33 @@ msgid ""
 "Afterwards, run a bulk scrape with Fill Missing to fill anything left "
 "empty."
 msgstr ""
+"{count} jogos serão alterados.\n"
+"\n"
+"Os nomes passam a ser os das listas de filtros. Palavras sem lugar ali, "
+"como Arcade ou Indie, são removidas. Palavras que pertencem a outro "
+"campo, como FPV, são movidas para o campo certo se ele estiver vazio. Uma"
+" quantidade de jogadores que contradiz os modos do jogo é corrigida, e as"
+" quantidades antigas de 1 vindas do RAWG são apagadas.\n"
+"\n"
+"Depois, execute uma Buscar Metadados em massa com Preencher Faltantes "
+"para preencher o que ficar vazio."
 
 #: templates/rom_tools_hub.html:530
-#, fuzzy
 msgid "Every game already uses these names."
-msgstr "O nome de usuário já existe"
+msgstr "Todos os jogos já usam esses nomes."
 
 #: templates/rom_tools_hub.html:531
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid ""
 "Tidied {count} games. Run a bulk scrape with Fill Missing to fill "
 "anything left empty."
 msgstr ""
-"{count} imagens limpas. Faça uma busca em massa com Preencher Faltantes "
-"para procurar capas reais."
+"{count} jogos organizados. Execute uma Buscar Metadados em massa com "
+"Preencher Faltantes para preencher o que ficar vazio."
 
 #: templates/rom_tools_hub.html:532
-#, fuzzy
 msgid "Could not tidy the names"
-msgstr "Não foi possível contar os jogos."
+msgstr "Não foi possível organizar os nomes"
 
 #: templates/rom_tools_hub.html:563
 #, python-brace-format
@@ -9183,25 +9197,27 @@ msgid ""
 "A date such as 1 January 1987 becomes 1987. A date no scrape filled stays"
 " as it is."
 msgstr ""
+"{count} jogos serão alterados.\n"
+"\n"
+"Uma data como 1º de janeiro de 1987 passa a ser 1987. Uma data que "
+"nenhuma busca de metadados preencheu permanece como está."
 
 #: templates/rom_tools_hub.html:564
-#, fuzzy
 msgid "No release dates need tidying."
-msgstr "Datas de lançamento"
+msgstr "Nenhuma data de lançamento precisa ser organizada."
 
 #: templates/rom_tools_hub.html:565
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid ""
 "Tidied {count} games. Run a bulk scrape with Fill Missing to look for "
 "fuller dates."
 msgstr ""
-"{count} imagens limpas. Faça uma busca em massa com Preencher Faltantes "
-"para procurar capas reais."
+"{count} jogos organizados. Execute uma Buscar Metadados em massa com "
+"Preencher Faltantes para procurar datas mais completas."
 
 #: templates/rom_tools_hub.html:566
-#, fuzzy
 msgid "Could not tidy the release dates"
-msgstr "Não foi possível contar os jogos."
+msgstr "Não foi possível organizar as datas de lançamento"
 
 #: templates/rom_tools_hub.html:597
 #, python-brace-format

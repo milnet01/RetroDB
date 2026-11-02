@@ -8731,7 +8731,7 @@ msgstr ""
 
 #: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:528
 msgid "Tidy Genres, Perspectives and Modes"
-msgstr ""
+msgstr "장르, 시점, 모드 정리"
 
 #: templates/rom_tools_hub.html:329
 msgid ""
@@ -8739,11 +8739,12 @@ msgid ""
 "both RPG and Role Playing Game, and a filter missed games. This gives "
 "every game one set of names."
 msgstr ""
+"출처마다 같은 항목을 다르게 부르기 때문에 한 장르가 RPG와 Role Playing Game으로 따로 나타나 필터에서 게임이 빠질"
+" 수 있습니다. 모든 게임에 하나로 통일된 이름을 적용합니다."
 
 #: templates/rom_tools_hub.html:339 templates/rom_tools_hub.html:562
-#, fuzzy
 msgid "Tidy Release Dates"
-msgstr "출시일"
+msgstr "출시일 정리"
 
 #: templates/rom_tools_hub.html:342
 msgid ""
@@ -8751,6 +8752,8 @@ msgid ""
 "December, as if the day were known. This cuts those dates back to the "
 "year or month, so a scrape can fill in the real one."
 msgstr ""
+"예전 스크래핑에서는 연도만 알려진 날짜를 마치 날짜를 아는 것처럼 1월 1일이나 12월 31일로 저장했습니다. 이런 날짜를 연도나 "
+"월까지만 남겨, 스크래핑으로 실제 날짜를 채울 수 있게 합니다."
 
 #: templates/rom_tools_hub.html:352 templates/rom_tools_hub.html:596
 msgid "Clear RAWG Pictures from Box Art"
@@ -8905,23 +8908,28 @@ msgid ""
 "Afterwards, run a bulk scrape with Fill Missing to fill anything left "
 "empty."
 msgstr ""
+"게임 {count}개가 변경됩니다.\n"
+"\n"
+"이름은 필터 목록에 있는 이름으로 바뀝니다. Arcade나 Indie처럼 목록에 들어갈 곳이 없는 단어는 삭제됩니다. FPV처럼 "
+"다른 항목에 속하는 단어는 해당 항목이 비어 있으면 그곳으로 옮겨집니다. 게임 모드와 맞지 않는 플레이어 수는 바로잡고, "
+"RAWG에서 가져온 예전 수치 1은 지웁니다.\n"
+"\n"
+"그 후 빈 항목 채우기로 일괄 스크래핑을 실행해 남은 빈칸을 채우세요."
 
 #: templates/rom_tools_hub.html:530
-#, fuzzy
 msgid "Every game already uses these names."
-msgstr "사용자 이름이 이미 존재합니다"
+msgstr "모든 게임이 이미 이 이름을 사용하고 있습니다."
 
 #: templates/rom_tools_hub.html:531
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid ""
 "Tidied {count} games. Run a bulk scrape with Fill Missing to fill "
 "anything left empty."
-msgstr "이미지 {count}개를 지웠습니다. 누락 항목 채우기로 일괄 스크래핑을 실행해 진짜 표지를 찾아보세요."
+msgstr "게임 {count}개를 정리했습니다. 빈 항목 채우기로 일괄 스크래핑을 실행해 남은 빈칸을 채우세요."
 
 #: templates/rom_tools_hub.html:532
-#, fuzzy
 msgid "Could not tidy the names"
-msgstr "게임 수를 셀 수 없습니다."
+msgstr "이름을 정리할 수 없습니다"
 
 #: templates/rom_tools_hub.html:563
 #, python-brace-format
@@ -8931,23 +8939,24 @@ msgid ""
 "A date such as 1 January 1987 becomes 1987. A date no scrape filled stays"
 " as it is."
 msgstr ""
+"게임 {count}개가 변경됩니다.\n"
+"\n"
+"1987년 1월 1일 같은 날짜는 1987로 바뀝니다. 스크래핑으로 채워지지 않은 날짜는 그대로 유지됩니다."
 
 #: templates/rom_tools_hub.html:564
-#, fuzzy
 msgid "No release dates need tidying."
-msgstr "출시일"
+msgstr "정리할 출시일이 없습니다."
 
 #: templates/rom_tools_hub.html:565
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid ""
 "Tidied {count} games. Run a bulk scrape with Fill Missing to look for "
 "fuller dates."
-msgstr "이미지 {count}개를 지웠습니다. 누락 항목 채우기로 일괄 스크래핑을 실행해 진짜 표지를 찾아보세요."
+msgstr "게임 {count}개를 정리했습니다. 빈 항목 채우기로 일괄 스크래핑을 실행해 더 자세한 날짜를 찾아보세요."
 
 #: templates/rom_tools_hub.html:566
-#, fuzzy
 msgid "Could not tidy the release dates"
-msgstr "게임 수를 셀 수 없습니다."
+msgstr "출시일을 정리할 수 없습니다"
 
 #: templates/rom_tools_hub.html:597
 #, python-brace-format
