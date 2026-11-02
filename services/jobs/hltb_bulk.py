@@ -5,12 +5,14 @@
 # runs lookup_playtime with each game's alternate_titles, and:
 #
 #   - auto-applies primary-title matches at or above the confidence threshold
-#   - queues everything else (alt-title matches + low-confidence primaries) into
-#     hltb_pending_matches for user review on /hltb/review
+#   - queues everything else (alt-title matches, low-confidence primaries, and
+#     matches on another platform or from a later year) into hltb_pending_matches
+#     for user review on /hltb/review
 #
 # The reasoning: primary-title + high confidence == obvious match, no need to
 # interrupt the user. Alt-title matches are exceptional by nature and deserve
-# a human glance. Low-confidence matches might be the wrong game entirely.
+# a human glance. Low-confidence matches might be the wrong game entirely, and
+# so might a perfect score for a game of the same name on another platform.
 # =============================================================================
 
 import json
@@ -28,15 +30,27 @@ from services.jobs.base import (
 
 logger = logging.getLogger(__name__)
 
+# classify_match's verdict -> hltb_pending_matches.reason
+_QUEUE_REASONS = {
+    'queue_platform': 'wrong_platform',
+    'queue_year': 'wrong_year',
+    'queue_alt': 'alt_title',
+    'queue_low_conf': 'low_confidence',
+}
+
 
 def classify_match(result, primary_title, confidence_threshold):
     """Decide whether an HLTB result should be auto-applied or queued.
 
-    Returns one of: 'auto_apply', 'queue_alt', 'queue_low_conf', 'skip_no_result'.
+    Returns 'skip_no_result', 'auto_apply', or a key of _QUEUE_REASONS.
     Pure logic, no I/O — factored out so it can be unit-tested without mocking.
     """
     if not result:
         return 'skip_no_result'
+    if result.get('platform_mismatch'):
+        return 'queue_platform'
+    if result.get('year_mismatch'):
+        return 'queue_year'
     confidence = result.get('match_confidence', 0) or 0
     via_alt = bool(result.get('matched_via_alternate'))
     if via_alt:
@@ -110,7 +124,8 @@ class HLTBBulkLookupJob:
 
         Args:
             only_missing: If True (default), skip games that already have a
-                stored hltb_match_name. Re-run everything if False.
+                play time, so a time the site adds later is still fetched for a
+                game matched without one. Re-run everything if False.
             confidence_threshold: Primary-title matches at or above this
                 percent are auto-applied; everything else is queued.
         """
@@ -167,13 +182,13 @@ class HLTBBulkLookupJob:
     def _worker(self):
         persist_id = None
         try:
-            from scraper.hltb_lookup import lookup_playtime
+            from scraper.hltb_lookup import lookup_playtime, release_year
 
             conn = _get_conn()
             c = conn.cursor()
-            where_missing = "AND (g.hltb_match_name IS NULL OR g.hltb_match_name = '')" if self.only_missing else ""
+            where_missing = "AND (g.playtime_estimate IS NULL OR g.playtime_estimate = '')" if self.only_missing else ""
             c.execute(f"""
-                SELECT g.id, g.title, g.alternate_titles, g.hltb_match_name,
+                SELECT g.id, g.title, g.alternate_titles, g.release_date,
                        s.name AS system_name, s.folder AS system_folder
                 FROM games g
                 JOIN systems s ON g.system_id = s.id
@@ -242,6 +257,7 @@ class HLTBBulkLookupJob:
                         result = lookup_playtime(
                             game['title'],
                             system_folder=game.get('system_folder'),
+                            year=release_year(game.get('release_date')),
                             alternate_titles=alt_titles or None,
                         )
 
@@ -269,15 +285,15 @@ class HLTBBulkLookupJob:
                                     playtime_estimate = ?,
                                     hltb_match_name = ?,
                                     hltb_match_platform = ?,
-                                    hltb_match_confidence = ?
+                                    hltb_match_confidence = ?,
+                                    hltb_match_reviewed = 0
                                 WHERE id = ?
                             """, (playtime_str, result.get('match_name'),
                                   match_platform, confidence_frac, game['id']))
                             with self._lock:
                                 self.auto_applied_count += 1
                         else:
-                            # queue_alt or queue_low_conf → insert into pending
-                            reason = 'alt_title' if decision == 'queue_alt' else 'low_confidence'
+                            reason = _QUEUE_REASONS[decision]
                             match_platform = result.get('match_platform')
                             if isinstance(match_platform, (list, tuple)):
                                 match_platform = ', '.join(str(p) for p in match_platform) or None

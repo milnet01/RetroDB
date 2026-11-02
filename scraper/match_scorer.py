@@ -92,8 +92,11 @@ def _sequel_numbers_differ(words_a, words_b):
     A "1" is left out: "Doom 1" is the game a source lists as "Doom". A number
     only one title has is forgiven when the subtitle after it is in the other,
     because sources drop it from a game's subtitle: "Golden Sun 2 - The Lost Age"
-    is "Golden Sun: The Lost Age".
+    is "Golden Sun: The Lost Age". Titles differing only in their spacing are
+    never different numbers: "3 D Glooper" is "3D Glooper", "V Ball" is "VBall".
     """
+    if ''.join(words_a) == ''.join(words_b):
+        return False
     words_a = [canonical_ra_word(w) for w in words_a]
     words_b = [canonical_ra_word(w) for w in words_b]
     numbers_a = ra_sequel_numbers(words_a) - {'1'}
@@ -119,6 +122,12 @@ def _comparable(title):
     title = unicodedata.normalize('NFKD', title)
     title = ''.join(c for c in title if not unicodedata.combining(c))
     return normalize_for_matching(re.sub(r"['’`´!?]|(?<!\d)\.|\.(?!\d)", '', title))
+
+
+def canonical_title(title):
+    """A title as one string, for a character-by-character comparison: as
+    _comparable, and with every number written one way ("II" is "2")."""
+    return ' '.join(canonical_ra_word(word) for word in _comparable(title).split())
 
 
 def sequel_numbers_agree(result_title, search_title):

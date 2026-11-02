@@ -6,10 +6,12 @@ keeps renaming it; see _get_auth_token for the full history).
 """
 
 import logging
+import threading
 import time
 from difflib import SequenceMatcher
 
 from .base_scraper import http_get, http_post
+from .match_scorer import canonical_title, sequel_numbers_agree
 
 logger = logging.getLogger(__name__)
 
@@ -49,10 +51,10 @@ SYSTEM_TO_HLTB_PLATFORM = {
     'tg16cd': 'TurboGrafx-CD', 'pcenginecd': 'TurboGrafx-CD',
     # SNK
     'neogeo': 'Neo Geo', 'neogeocd': 'Neo Geo CD',
-    'ngp': 'Neo Geo Pocket', 'ngpc': 'Neo Geo Pocket Color',
+    'ngp': 'Neo Geo Pocket', 'ngpc': 'Neo Geo Pocket',
     # Computers
     'amiga': 'Amiga', 'amiga500': 'Amiga', 'amiga600': 'Amiga',
-    'amiga1200': 'Amiga', 'amigacd32': 'Amiga',
+    'amiga1200': 'Amiga', 'amigacd32': 'Amiga CD32',
     'c64': 'Commodore 64', 'c128': 'Commodore 64',
     'zxspectrum': 'ZX Spectrum', 'spectrum': 'ZX Spectrum',
     'amstradcpc': 'Amstrad CPC', 'cpc': 'Amstrad CPC',
@@ -102,6 +104,52 @@ _hp_key = None
 _hp_val = None
 _auth_token_time = 0
 _AUTH_TOKEN_TTL = 300  # 5 minutes
+
+# The site has no published limit. A search carrying the year can take four
+# requests a game, so a bulk run spaces them out.
+MIN_REQUEST_GAP_SECONDS = 1.0
+_request_lock = threading.Lock()
+_last_request_at = 0.0
+
+# A title with a different sequel number scores at most this, under every bar
+# that accepts a match.
+SEQUEL_SCORE_CAP = 0.5
+
+# A site's game released more than this many years after ours is another game.
+# Later than the game's own date, not earlier: a port comes after its original.
+YEAR_MISMATCH_GAP = 1
+
+
+def _wait_for_turn():
+    """Hold a request until MIN_REQUEST_GAP_SECONDS after the last one."""
+    global _last_request_at
+    with _request_lock:
+        wait = MIN_REQUEST_GAP_SECONDS - (time.monotonic() - _last_request_at)
+        if wait > 0:
+            time.sleep(wait)
+        _last_request_at = time.monotonic()
+
+
+def title_score(search_title, result_name):
+    """How alike two titles are, 0 to 1, and low for another game of a series."""
+    score = SequenceMatcher(None, canonical_title(search_title),
+                            canonical_title(result_name)).ratio()
+    if not sequel_numbers_agree(result_name, search_title):
+        return min(score, SEQUEL_SCORE_CAP)
+    return score
+
+
+def on_platform(hltb_platform, profile_platform):
+    """True when a result's comma-separated list names this platform whole, so
+    "Game Boy" is not found inside "Game Boy Advance"."""
+    listed = {name.strip().lower() for name in str(profile_platform).split(',')}
+    return hltb_platform.lower() in listed
+
+
+def release_year(release_date):
+    """The year of a stored date as text, or None."""
+    year = str(release_date or '')[:4]
+    return year if len(year) == 4 and year.isdigit() else None
 
 
 def _get_auth_token():
@@ -203,6 +251,7 @@ def _search_hltb(game_title, platform='', year=None):
 
     search_headers, payload = _build_request(token, hp_key, hp_val)
 
+    _wait_for_turn()
     try:
         resp = http_post(
             f"{HLTB_BASE_URL}/api/search/site",
@@ -303,6 +352,14 @@ def lookup_playtime(game_title, system_folder=None, year=None, alternate_titles=
         # (near-exact title). This prevents e.g. year=1994 returning only
         # "Art of Fighting 2" when the user searched "Art of Fighting" (1992).
         GOOD_MATCH = 0.95
+        wanted_year = int(release_year(year) or 0)
+
+        def _year_gap(found):
+            """How far a result's year is from ours; equal titles take the nearest."""
+            if not wanted_year:
+                return 0
+            found_year = found.get('release_world')
+            return abs(found_year - wanted_year) if found_year else 9999
 
         search_steps = []
         if hltb_platform and year:
@@ -315,18 +372,20 @@ def lookup_playtime(game_title, system_folder=None, year=None, alternate_titles=
 
         def _run_search_for_title(search_title):
             """Run graduated-fallback search for one title. Returns (best_result, best_score)."""
-            search_lower = search_title.lower()
             local_best = None
             local_score = 0.0
+            local_gap = 0
             for label, plat, yr in search_steps:
                 raw = _search_hltb(search_title, platform=plat, year=yr)
                 if not raw:
                     continue
                 for r in raw:
-                    s = SequenceMatcher(None, search_lower, r.get('game_name', '').lower()).ratio()
-                    if s > local_score:
+                    s = title_score(search_title, r.get('game_name', ''))
+                    gap = _year_gap(r)
+                    if s > local_score or (s == local_score and gap < local_gap):
                         local_score = s
                         local_best = r
+                        local_gap = gap
                 logger.info(f"HLTB: [{label}] for '{search_title}' best={(local_best or {}).get('game_name', '')!r} score={local_score:.4f}")
                 if local_score >= GOOD_MATCH:
                     break
@@ -382,21 +441,20 @@ def lookup_playtime(game_title, system_folder=None, year=None, alternate_titles=
         # Detect platform mismatch: requested platform not in result's platform list
         platform_mismatch = False
         if hltb_platform and profile_platform:
-            platform_str = str(profile_platform).lower()
-            if hltb_platform.lower() not in platform_str:
+            if not on_platform(hltb_platform, profile_platform):
                 platform_mismatch = True
                 logger.info(f"HLTB: Platform mismatch — requested '{hltb_platform}', result has '{profile_platform}'")
 
-        # Release year and developer from API response
         release_world = result.get('release_world') or None
-        profile_dev = result.get('profile_dev') or None
+        year_mismatch = bool(wanted_year and release_world
+                             and release_world > wanted_year + YEAR_MISMATCH_GAP)
 
         # Use the score already computed during candidate selection
         confidence = best_score
 
         logger.info(f"HLTB: Found '{match_name}' for '{game_title}' "
                      f"(main={main_story}h, extra={main_extra}h, complete={completionist}h, "
-                     f"confidence={confidence:.0%}, year={release_world}, dev={profile_dev})")
+                     f"confidence={confidence:.0%}, year={release_world})")
 
         return {
             'game_id': result.get('game_id'),
@@ -404,11 +462,11 @@ def lookup_playtime(game_title, system_folder=None, year=None, alternate_titles=
             'match_platform': profile_platform,
             'match_confidence': round(confidence * 100),
             'platform_mismatch': platform_mismatch,
+            'year_mismatch': year_mismatch,
             'main_story': main_story,
             'main_plus_sides': main_extra,
             'completionist': completionist,
             'release_world': release_world,
-            'profile_dev': profile_dev,
             'search_term_used': search_term_used,
             'matched_via_alternate': search_term_used.lower() != game_title.lower(),
         }

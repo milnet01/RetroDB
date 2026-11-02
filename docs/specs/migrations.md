@@ -541,6 +541,7 @@ your migration — not in the runner.
 | 023 | `023_games_units_sold.py` | Add `games.units_sold` (INTEGER, lifetime copies sold on the row's platform). | Additive. Filled only by the AI (scrape gap-fill and AI Fill); NULL = not known. |
 | 024 | `024_games_release_dates.py` | Add `games.release_dates` (TEXT, JSON object of region code → date). | Additive. Filled only by the AI (scrape gap-fill and AI Fill); NULL = not known. |
 | 025 | `025_games_box_faces.py` | Add `games.box_faces` (TEXT, JSON record of an imported Slipcase box: case, colours, face files). | PASS-59-142 §4.1. Additive. Filled only by an editor's import; NULL = no faces. |
+| 026 | `026_hltb_match_reviewed.py` | Add `games.hltb_match_reviewed` (default 0); put `games.hltb_match_confidence` values above 1 back on the 0-to-1 scale. | PASS-59-209. The repair rewrites those scores in place, and the old values are not kept; the pre-migration backup holds them. |
 
 ---
 

@@ -25,9 +25,11 @@
 </div>
 
 <div class="hltb-review-filters">
-    <button type="button" class="filter-tab active" data-filter="all" data-on-click="hltbFilterReview" data-args='["all", "$this"]'>{{ _('All') }}</button>
-    <button type="button" class="filter-tab" data-filter="alt_title" data-on-click="hltbFilterReview" data-args='["alt_title", "$this"]'>{{ _('Alt-title matches') }}</button>
-    <button type="button" class="filter-tab" data-filter="low_confidence" data-on-click="hltbFilterReview" data-args='["low_confidence", "$this"]'>{{ _('Low confidence') }}</button>
+    <button type="button" class="filter-btn active" data-filter="all" data-on-click="hltbFilterReview" data-args='["all", "$this"]'>{{ _('All') }}</button>
+    <button type="button" class="filter-btn" data-filter="alt_title" data-on-click="hltbFilterReview" data-args='["alt_title", "$this"]'>{{ _('Alt-title matches') }}</button>
+    <button type="button" class="filter-btn" data-filter="low_confidence" data-on-click="hltbFilterReview" data-args='["low_confidence", "$this"]'>{{ _('Low confidence') }}</button>
+    <button type="button" class="filter-btn" data-filter="other_game" data-on-click="hltbFilterReview" data-args='["other_game", "$this"]'>{{ _('Other platform or year') }}</button>
+    <button type="button" class="filter-btn" data-filter="stored" data-on-click="hltbFilterReview" data-args='["stored", "$this"]'>{{ _('Already saved') }}</button>
 </div>
 
 <div class="hltb-review-list" id="hltbReviewList">
@@ -56,7 +58,7 @@
 
 .hltb-review-item {
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: 1rem;
     padding: 1rem 1.25rem;
     background: var(--bg-medium);
@@ -119,7 +121,7 @@
     padding: 2px 8px;
     background: var(--bg-lighter);
     border-radius: var(--radius-full);
-    white-space: nowrap;
+    overflow-wrap: anywhere;
 }
 
 .hltb-review-meta .meta-chip.alt {
@@ -145,6 +147,17 @@
     flex-direction: column;
     gap: 0.35rem;
     align-self: center;
+}
+
+@media (max-width: 600px) {
+    .hltb-review-item {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .hltb-review-actions {
+        flex-direction: row;
+        align-self: start;
+    }
 }
 
 .hltb-review-actions .btn {
@@ -175,20 +188,39 @@ async function hltbLoadPending() {
     }
 }
 
+const REVIEW_TEXT = {
+    wrong_platform: {{ _('Not listed for this system')|tojson }},
+    wrong_year: {{ _('Came out years after this game')|tojson }},
+    stored_platform: {{ _('Saved, but not listed for this system')|tojson }},
+    stored_title: {{ _('Saved, but the title differs')|tojson }},
+    other_game_count: {{ _('{count} on another platform or year')|tojson }},
+    stored_count: {{ _('{count} already saved')|tojson }},
+    reject_stored: {{ _('This will clear the play time from {count} games that already have one. A bulk lookup can fetch the times again.')|tojson }},
+    reject_others: {{ _('The other {count} queued matches are dropped, and those games keep what they have.')|tojson }},
+};
+const REVIEW_FILTERS = {
+    other_game: ['wrong_platform', 'wrong_year'],
+    stored: ['stored_platform', 'stored_title'],
+};
+
+function hltbInFilter(item, filter) {
+    return filter === 'all' || (REVIEW_FILTERS[filter] || [filter]).includes(item.reason);
+}
+
 function hltbRenderPending() {
     const list = document.getElementById('hltbReviewList');
     const summary = document.getElementById('hltbReviewSummary');
     const empty = document.getElementById('hltbReviewEmpty');
 
-    const filtered = activeFilter === 'all'
-        ? pendingMatches
-        : pendingMatches.filter(m => m.reason === activeFilter);
+    const filtered = pendingMatches.filter(m => hltbInFilter(m, activeFilter));
 
     const altCount = pendingMatches.filter(m => m.reason === 'alt_title').length;
     const lowCount = pendingMatches.filter(m => m.reason === 'low_confidence').length;
+    const otherCount = pendingMatches.filter(m => hltbInFilter(m, 'other_game')).length;
+    const storedCount = pendingMatches.filter(m => hltbInFilter(m, 'stored')).length;
 
     summary.innerHTML = pendingMatches.length
-        ? `<strong>${pendingMatches.length}</strong> pending &middot; ${altCount} alt-title matches &middot; ${lowCount} low-confidence`
+        ? `<strong>${pendingMatches.length}</strong> pending &middot; ${altCount} alt-title matches &middot; ${lowCount} low-confidence &middot; ${REVIEW_TEXT.other_game_count.replace('{count}', otherCount)} &middot; ${REVIEW_TEXT.stored_count.replace('{count}', storedCount)}`
         : '';
 
     if (!pendingMatches.length) {
@@ -212,6 +244,9 @@ function hltbRenderPending() {
             ? `<span class="meta-chip">${escapeHtml(item.match_platform)}</span>`
             : '';
         const playtime = item.playtime || 'No playtime data';
+        const reasonChip = REVIEW_TEXT[item.reason]
+            ? `<span class="meta-chip alt">${escapeHtml(REVIEW_TEXT[item.reason])}</span>`
+            : '';
         return `
             <div class="hltb-review-item reason-${escapeHtml(item.reason || 'unknown')}" data-id="${item.id}">
                 <div class="hltb-review-body">
@@ -222,6 +257,7 @@ function hltbRenderPending() {
                         <span class="hltb-review-match-title">${escapeHtml(item.match_name || '—')}</span>
                     </div>
                     <div class="hltb-review-meta">
+                        ${reasonChip}
                         ${platChip}
                         <span class="meta-chip ${confClass}">${conf}% match</span>
                         ${altChip}
@@ -239,7 +275,7 @@ function hltbRenderPending() {
 
 function hltbFilterReview(filter, btn) {
     activeFilter = filter;
-    document.querySelectorAll('.hltb-review-filters .filter-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.hltb-review-filters .filter-btn').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
     hltbRenderPending();
 }
@@ -277,13 +313,11 @@ async function hltbReject(id) {
 }
 
 function hltbApproveAll() {
-    const visible = activeFilter === 'all'
-        ? pendingMatches
-        : pendingMatches.filter(m => m.reason === activeFilter);
+    const visible = pendingMatches.filter(m => hltbInFilter(m, activeFilter));
     if (!visible.length) return;
     showConfirm(
         'Approve all visible matches?',
-        `This will apply ${visible.length} HLTB ${activeFilter === 'all' ? 'pending' : activeFilter.replace('_', ' ')} match${visible.length === 1 ? '' : 'es'} to your games. Cannot be undone without a manual Clear on each game.`,
+        `This will apply ${visible.length} HLTB pending match${visible.length === 1 ? '' : 'es'} to your games. Cannot be undone without a manual Clear on each game.`,
         async () => {
             try {
                 const resp = await fetch('/api/hltb/pending/approve-all', {
@@ -306,13 +340,16 @@ function hltbApproveAll() {
 }
 
 function hltbRejectAll() {
-    const visible = activeFilter === 'all'
-        ? pendingMatches
-        : pendingMatches.filter(m => m.reason === activeFilter);
+    const visible = pendingMatches.filter(m => hltbInFilter(m, activeFilter));
     if (!visible.length) return;
+    const stored = visible.filter(m => hltbInFilter(m, 'stored')).length;
     showConfirm(
         'Reject all visible matches?',
-        `This will drop ${visible.length} queued HLTB match${visible.length === 1 ? '' : 'es'}. Nothing is written to your games; they remain unlinked from HLTB.`,
+        stored
+            ? [REVIEW_TEXT.reject_stored.replace('{count}', stored),
+               visible.length > stored ? REVIEW_TEXT.reject_others.replace('{count}', visible.length - stored) : '',
+              ].join(' ').trim()
+            : `This will drop ${visible.length} queued HLTB match${visible.length === 1 ? '' : 'es'}. Nothing is written to your games; they keep what they have.`,
         async () => {
             try {
                 const resp = await fetch('/api/hltb/pending/reject-all', {

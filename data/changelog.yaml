@@ -1,3 +1,33 @@
+- version: 3.35.2
+  date: 2026-11-02
+  tags:
+  - type: fix
+    label: Total play time no longer counts minutes as hours, on the dashboard, the collector trophies and the analytics chart. A 36-minute game was counted as 36 hours
+  - type: fix
+    label: HowLongToBeat no longer takes a sequel for your game. Double Dragon II no longer gets the times of Double Dragon III
+  - type: fix
+    label: A bulk HowLongToBeat lookup no longer saves the time of a game on another system. Mario Golf on Game Boy Color no longer gets the Nintendo 64 time. These matches now wait on the review page
+  - type: fix
+    label: Bulk and single HowLongToBeat lookups now use the game's release year, so Doom from 1993 no longer gets the times of Doom from 2016
+  - type: new
+    label: Check Saved Play Times in ROM Tools sends saved matches that look wrong to the review page, where you keep or clear each one
+  - type: fix
+    label: A bulk HowLongToBeat lookup with Only Missing now retries games matched without a time, and leaves a second between requests
+  - type: fix
+    label: A match score of 72% no longer shows as 100% on the game page
+  body: |
+    <ul>
+      <li><strong>Play time totals are true.</strong> Times under an hour were
+        counted as hours, so the totals on the dashboard and the collector
+        trophies were too high. Some totals and trophies will go down.</li>
+      <li><strong>HowLongToBeat finds the right game.</strong> A sequel no longer
+        passes for the game you have, and the game's system and year now count.
+        A match on another system, or from years later, waits for you on the
+        review page.</li>
+      <li><strong>Check what is already saved.</strong> Press Check Saved Play
+        Times in ROM Tools to send doubtful saved matches to the review page.
+        Nothing changes until you decide.</li>
+    </ul>
 - version: 3.35.1
   date: 2026-11-02
   tags:

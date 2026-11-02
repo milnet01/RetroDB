@@ -279,7 +279,6 @@ class TestApplyIgdb:
             '_extended': {
                 'franchise': 'Halo',
                 'similar_games': 'Destiny, Titanfall',
-                'playtime_estimate': 10,
                 'perspective': 'First-person',
                 'critic_score': 97.5,
                 'critic_score_count': 120,
@@ -290,7 +289,6 @@ class TestApplyIgdb:
         apply_igdb_to_metadata(meta, igdb, db_game_id=1, result=result)
         assert meta['franchise'] == 'Halo'
         assert meta['similar_games'] == 'Destiny, Titanfall'
-        assert meta['playtime_estimate'] == 10
         assert meta['perspective'] == 'First-Person'
         assert meta['critic_score'] == 97.5
         assert meta['critic_score_count'] == 120

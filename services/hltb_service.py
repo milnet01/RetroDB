@@ -6,7 +6,8 @@
 #   - HLTBLookup           — single-game lookup + save + clear + generic search
 #   - HLTBPendingQueue     — review queue for bulk-lookup matches that need
 #                            a human glance (alt-title hits, low-confidence
-#                            primaries)
+#                            primaries, another platform or year), and saved
+#                            matches sent back for a second look
 #   - HLTBBulkOrchestrator — thin wrapper over services.jobs.hltb_bulk_job
 #                            that stitches in hltb_pending_matches queue depth
 #
@@ -24,6 +25,16 @@ from flask_babel import gettext as _
 from services.database import query, execute
 
 logger = logging.getLogger(__name__)
+
+# Queue reasons for a match the bulk job did not apply.
+OTHER_GAME_REASONS = ('wrong_platform', 'wrong_year')
+# Queue reasons for a match already on the game: rejecting one clears it.
+STORED_REASONS = ('stored_platform', 'stored_title')
+
+# A saved match whose title scores below this against the game's title and every
+# alternate title is not the game. Old rows were accepted at 0.95 by a score that
+# let sequels through, and people saved lower ones by hand, so the bar is low.
+STORED_TITLE_FLOOR = 0.6
 
 
 class HLTBError(Exception):
@@ -100,7 +111,25 @@ def _resolve_filter_clause(filter_value):
         return ("WHERE reason = 'alt_title'", ())
     if filter_value == 'low_confidence':
         return ("WHERE reason = 'low_confidence'", ())
+    if filter_value == 'other_game':
+        return (f"WHERE reason IN ({','.join('?' * len(OTHER_GAME_REASONS))})", OTHER_GAME_REASONS)
+    if filter_value == 'stored':
+        return (f"WHERE reason IN ({','.join('?' * len(STORED_REASONS))})", STORED_REASONS)
     return ("", ())
+
+
+def stored_match_problem(game):
+    """Why a saved match looks wrong: a queue reason, or None."""
+    from scraper.hltb_lookup import SYSTEM_TO_HLTB_PLATFORM, on_platform, title_score
+
+    wanted = SYSTEM_TO_HLTB_PLATFORM.get((game['system_folder'] or '').lower())
+    if wanted and game['hltb_match_platform'] \
+            and not on_platform(wanted, game['hltb_match_platform']):
+        return 'stored_platform'
+    titles = [game['title']] + extract_alt_titles(game['alternate_titles'])
+    if max(title_score(t, game['hltb_match_name']) for t in titles) < STORED_TITLE_FLOOR:
+        return 'stored_title'
+    return None
 
 
 class HLTBLookup:
@@ -112,7 +141,7 @@ class HLTBLookup:
         Raises GameNotFound if the game row doesn't exist.
         Raises NoHLTBMatch if HLTB has no match for the search title.
         """
-        from scraper.hltb_lookup import lookup_playtime, format_playtime
+        from scraper.hltb_lookup import lookup_playtime, format_playtime, release_year
 
         game = query("""
             SELECT g.*, s.folder AS system_folder
@@ -128,6 +157,7 @@ class HLTBLookup:
         alt_titles = extract_alt_titles(game.get('alternate_titles'))
 
         result = lookup_playtime(title, game['system_folder'],
+                                 year=release_year(game.get('release_date')),
                                  alternate_titles=alt_titles)
 
         if not result:
@@ -144,8 +174,16 @@ class HLTBLookup:
 
         if playtime_str and not preview:
             execute("""
-                UPDATE games SET playtime_estimate = ? WHERE id = ?
-            """, (playtime_str, game_id))
+                UPDATE games SET
+                    playtime_estimate = ?,
+                    hltb_match_name = ?,
+                    hltb_match_platform = ?,
+                    hltb_match_confidence = ?,
+                    hltb_match_reviewed = 0
+                WHERE id = ?
+            """, (playtime_str, result['match_name'],
+                  _normalize_match_platform(result.get('match_platform')) or None,
+                  _normalize_confidence(result['match_confidence']), game_id))
 
         return {
             'playtime': playtime_str,
@@ -210,7 +248,6 @@ class HLTBLookup:
             'confidence': result.get('match_confidence', 0),
             'platform_mismatch': result.get('platform_mismatch', False),
             'release_year': result.get('release_world'),
-            'developer': result.get('profile_dev'),
             'search_term_used': result.get('search_term_used'),
             'matched_via_alternate': result.get('matched_via_alternate', False),
         }
@@ -236,7 +273,8 @@ class HLTBLookup:
                 playtime_estimate = ?,
                 hltb_match_name = ?,
                 hltb_match_platform = ?,
-                hltb_match_confidence = ?
+                hltb_match_confidence = ?,
+                hltb_match_reviewed = 1
             WHERE id = ?
         """, (playtime, match_name, match_platform, confidence, game_id))
 
@@ -247,7 +285,8 @@ class HLTBLookup:
                 playtime_estimate = NULL,
                 hltb_match_name = NULL,
                 hltb_match_platform = NULL,
-                hltb_match_confidence = NULL
+                hltb_match_confidence = NULL,
+                hltb_match_reviewed = 0
             WHERE id = ?
         """, (game_id,))
 
@@ -288,7 +327,8 @@ class HLTBPendingQueue:
                 playtime_estimate = ?,
                 hltb_match_name = ?,
                 hltb_match_platform = ?,
-                hltb_match_confidence = ?
+                hltb_match_confidence = ?,
+                hltb_match_reviewed = 1
             WHERE id = ?
         """, (pending_row.get('playtime'), pending_row.get('match_name'),
               pending_row.get('match_platform'), confidence_frac,
@@ -307,7 +347,12 @@ class HLTBPendingQueue:
         self._apply(dict(row))
 
     def reject(self, pending_id):
-        """Drop one pending match from the queue."""
+        """Drop one pending match from the queue. Rejecting a saved match
+        also clears it from the game."""
+        row = query("SELECT game_id, reason FROM hltb_pending_matches WHERE id = ?",
+                    (pending_id,), one=True)
+        if row and row['reason'] in STORED_REASONS:
+            lookup_service.clear(row['game_id'])
         execute("DELETE FROM hltb_pending_matches WHERE id = ?", (pending_id,))
 
     def approve_all(self, filter_value):
@@ -323,11 +368,53 @@ class HLTBPendingQueue:
     def reject_all(self, filter_value):
         """Drop every pending match matching the filter. Returns the count dropped."""
         where, params = _resolve_filter_clause(filter_value)
-        count_row = query(f"SELECT COUNT(*) AS c FROM hltb_pending_matches {where}",
-                          params, one=True)
-        count = count_row['c'] if count_row else 0
+        rows = query(f"SELECT game_id, reason FROM hltb_pending_matches {where}", params)
+        for row in rows or []:
+            if row['reason'] in STORED_REASONS:
+                lookup_service.clear(row['game_id'])
         execute(f"DELETE FROM hltb_pending_matches {where}", params)
-        return count
+        return len(rows or [])
+
+    def _stored_suspects(self):
+        """Saved matches with a time that look wrong, as (row, reason). Skips a
+        match a person approved and a game already waiting in the queue."""
+        rows = query("""
+            SELECT g.id, g.title, g.alternate_titles, g.playtime_estimate,
+                   g.hltb_match_name, g.hltb_match_platform, g.hltb_match_confidence,
+                   s.folder AS system_folder
+            FROM games g
+            JOIN systems s ON g.system_id = s.id
+            WHERE g.playtime_estimate IS NOT NULL AND g.playtime_estimate != ''
+              AND g.hltb_match_name IS NOT NULL AND g.hltb_match_name != ''
+              AND g.hltb_match_reviewed = 0
+              AND g.id NOT IN (SELECT game_id FROM hltb_pending_matches)
+        """)
+        found = []
+        for row in rows or []:
+            reason = stored_match_problem(row)
+            if reason:
+                found.append((row, reason))
+        return found
+
+    def count_stored_suspects(self):
+        """How many saved matches queue_stored_suspects would queue."""
+        return len(self._stored_suspects())
+
+    def queue_stored_suspects(self):
+        """Send suspect saved matches to the queue. The games do not change
+        until a person decides. Returns the count queued."""
+        found = self._stored_suspects()
+        for row, reason in found:
+            confidence = row['hltb_match_confidence']
+            execute("""
+                INSERT INTO hltb_pending_matches
+                    (game_id, match_name, match_platform, confidence, playtime, reason)
+                VALUES (?, ?, ?, ?, ?, ?)
+                ON CONFLICT(game_id) DO NOTHING
+            """, (row['id'], row['hltb_match_name'], row['hltb_match_platform'],
+                  None if confidence is None else confidence * 100,
+                  row['playtime_estimate'], reason))
+        return len(found)
 
 
 class HLTBBulkOrchestrator:

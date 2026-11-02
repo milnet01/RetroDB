@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-02 05:06+0200\n"
+"POT-Creation-Date: 2026-11-02 07:09+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -42,7 +42,7 @@ msgstr "Einrichtung erforderlich"
 msgid "Password change required"
 msgstr "Passwortänderung erforderlich"
 
-#: app.py:1685 routes/auth.py:202 routes/auth.py:262 routes/auth.py:447
+#: app.py:1678 routes/auth.py:202 routes/auth.py:262 routes/auth.py:447
 #: routes/auth.py:492 templates/force_change_password.html:49
 #: templates/setup.html:469
 msgid "Password must be at least 12 characters"
@@ -65,7 +65,7 @@ msgstr "System nicht gefunden oder hat keine Spiele mit Achievements"
 #: routes/games_media.py:148 routes/games_media.py:197
 #: routes/games_media.py:230 routes/launch.py:242 routes/reports.py:693
 #: routes/reports.py:822 routes/trophies.py:1291 services/cheats.py:617
-#: services/hltb_service.py:125
+#: services/hltb_service.py:154
 msgid "Game not found"
 msgstr "Spiel nicht gefunden"
 
@@ -1536,25 +1536,25 @@ msgstr "Diese Cheat-Liste gehört nicht zu diesem Spiel."
 msgid "Cheats work in the player, DuckStation and PCSX2."
 msgstr "Cheats funktionieren im Player, in DuckStation und in PCSX2."
 
-#: services/hltb_service.py:134
+#: services/hltb_service.py:164
 #, python-format
 msgid "No HLTB match found for \"%(title)s\""
 msgstr "Kein HLTB-Treffer für \"%(title)s\" gefunden"
 
-#: services/hltb_service.py:176
+#: services/hltb_service.py:214
 msgid "No search query provided"
 msgstr "Keine Suchanfrage angegeben"
 
-#: services/hltb_service.py:201
+#: services/hltb_service.py:239
 #, python-format
 msgid "No HLTB match found for \"%(query)s\""
 msgstr "Kein HLTB-Treffer für \"%(query)s\" gefunden"
 
-#: services/hltb_service.py:225
+#: services/hltb_service.py:262
 msgid "No playtime provided"
 msgstr "Keine Spielzeit angegeben"
 
-#: services/hltb_service.py:306
+#: services/hltb_service.py:346
 msgid "Pending match not found"
 msgstr "Ausstehender Treffer nicht gefunden"
 
@@ -5848,7 +5848,7 @@ msgstr "Werkzeuge"
 msgid "Game Imports"
 msgstr "Spiel-Importe"
 
-#: templates/base.html:183 templates/rom_tools_hub.html:397
+#: templates/base.html:183 templates/rom_tools_hub.html:410
 msgid "Configuration"
 msgstr "Konfiguration"
 
@@ -7795,17 +7795,70 @@ msgstr "Alternativtitel-Übereinstimmungen"
 msgid "Low confidence"
 msgstr "Geringe Zuverlässigkeit"
 
-#: templates/hltb_review.html:39
+#: templates/hltb_review.html:31
+#, fuzzy
+msgid "Other platform or year"
+msgstr "Platformer"
+
+#: templates/hltb_review.html:32
+#, fuzzy
+msgid "Already saved"
+msgstr "Nein (bereits festgelegt)"
+
+#: templates/hltb_review.html:41
 msgid "No pending HLTB matches"
 msgstr "Keine ausstehenden HLTB-Übereinstimmungen"
 
-#: templates/hltb_review.html:40
+#: templates/hltb_review.html:42
 msgid ""
 "Run a bulk HLTB lookup from the ROM Tools Hub to queue matches for review"
 " here."
 msgstr ""
 "Führen Sie ein Massen-HLTB-Nachschlagen vom ROM-Werkzeug-Hub aus, um "
 "Übereinstimmungen hier zur Überprüfung in die Warteschlange zu stellen."
+
+#: templates/hltb_review.html:192
+#, fuzzy
+msgid "Not listed for this system"
+msgstr "Für dieses System ist kein Emulator eingerichtet."
+
+#: templates/hltb_review.html:193
+#, fuzzy
+msgid "Came out years after this game"
+msgstr "Für dieses Spiel festgelegt"
+
+#: templates/hltb_review.html:194
+#, fuzzy
+msgid "Saved, but not listed for this system"
+msgstr "Für dieses System ist kein Emulator eingerichtet."
+
+#: templates/hltb_review.html:195
+msgid "Saved, but the title differs"
+msgstr ""
+
+#: templates/hltb_review.html:196
+#, python-brace-format
+msgid "{count} on another platform or year"
+msgstr ""
+
+#: templates/hltb_review.html:197
+#, fuzzy, python-brace-format
+msgid "{count} already saved"
+msgstr "Nein (bereits festgelegt)"
+
+#: templates/hltb_review.html:198
+#, python-brace-format
+msgid ""
+"This will clear the play time from {count} games that already have one. A"
+" bulk lookup can fetch the times again."
+msgstr ""
+
+#: templates/hltb_review.html:199
+#, python-brace-format
+msgid ""
+"The other {count} queued matches are dropped, and those games keep what "
+"they have."
+msgstr ""
 
 #: templates/_settings_tabs/data.html:5 templates/local_trophies.html:6
 #: templates/psn_trophy_detail.html:276 templates/systems.html:89
@@ -8870,7 +8923,7 @@ msgstr ""
 #: templates/rom_tools_hub.html:253 templates/rom_tools_hub.html:267
 #: templates/rom_tools_hub.html:280 templates/rom_tools_hub.html:319
 #: templates/rom_tools_hub.html:332 templates/rom_tools_hub.html:345
-#: templates/rom_tools_hub.html:358
+#: templates/rom_tools_hub.html:358 templates/rom_tools_hub.html:371
 msgid "No dependencies required"
 msgstr "Keine Abhängigkeiten erforderlich"
 
@@ -8980,7 +9033,7 @@ msgstr ""
 msgid "Metadata only &middot; no media downloads"
 msgstr "Nur Metadaten &middot; keine Medien-Downloads"
 
-#: templates/rom_tools_hub.html:300 templates/rom_tools_hub.html:435
+#: templates/rom_tools_hub.html:300 templates/rom_tools_hub.html:448
 msgid "Fix Box and Manual Regions"
 msgstr "Cover- und Handbuch-Regionen korrigieren"
 
@@ -9000,7 +9053,7 @@ msgstr ""
 msgid "Needs a ScreenScraper account"
 msgstr "Erfordert ein ScreenScraper-Konto"
 
-#: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:494
+#: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:507
 msgid "Fix Regions from File Names"
 msgstr "Regionen anhand der Dateinamen korrigieren"
 
@@ -9014,7 +9067,7 @@ msgstr ""
 "nannte, sodass eine (USA)-Datei als Japan geführt werden konnte. Hier "
 "erhalten diese Spiele die Region aus ihrem Dateinamen."
 
-#: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:528
+#: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:541
 msgid "Tidy Genres, Perspectives and Modes"
 msgstr "Genres, Perspektiven und Modi bereinigen"
 
@@ -9028,7 +9081,7 @@ msgstr ""
 "als RPG als auch als Role Playing Game auftauchen, und ein Filter übersah"
 " Spiele. So erhält jedes Spiel einheitliche Namen."
 
-#: templates/rom_tools_hub.html:339 templates/rom_tools_hub.html:562
+#: templates/rom_tools_hub.html:339 templates/rom_tools_hub.html:575
 msgid "Tidy Release Dates"
 msgstr "Erscheinungsdaten bereinigen"
 
@@ -9043,11 +9096,23 @@ msgstr ""
 "diese Daten auf das Jahr oder den Monat, damit ein Scrape das echte Datum"
 " eintragen kann."
 
-#: templates/rom_tools_hub.html:352 templates/rom_tools_hub.html:596
+#: templates/rom_tools_hub.html:352 templates/rom_tools_hub.html:609
+#, fuzzy
+msgid "Check Saved Play Times"
+msgstr "Nach Updates suchen"
+
+#: templates/rom_tools_hub.html:355
+msgid ""
+"Older lookups could save the play time of a sequel, or of another game "
+"with the same name on another system. This sends those matches to the "
+"review page, where you keep or clear each one."
+msgstr ""
+
+#: templates/rom_tools_hub.html:365 templates/rom_tools_hub.html:643
 msgid "Clear RAWG Pictures from Box Art"
 msgstr "RAWG-Bilder aus dem Cover entfernen"
 
-#: templates/rom_tools_hub.html:355
+#: templates/rom_tools_hub.html:368
 msgid ""
 "RAWG has no box art, so older scrapes saved a background picture or "
 "screenshot as the cover, and that blocks a real cover. This clears those "
@@ -9058,11 +9123,11 @@ msgstr ""
 "Cover. Hier werden diese Bilder entfernt, damit ein Scrape echte Cover "
 "finden kann."
 
-#: templates/rom_tools_hub.html:365
+#: templates/rom_tools_hub.html:378
 msgid "Bulk HLTB Lookup"
 msgstr "Massen-HLTB-Nachschlagen"
 
-#: templates/rom_tools_hub.html:368
+#: templates/rom_tools_hub.html:381
 msgid ""
 "Fetch HowLongToBeat playtime for every game. High-confidence primary-"
 "title matches apply automatically; alt-title matches and low-confidence "
@@ -9074,15 +9139,15 @@ msgstr ""
 " geringer Zuverlässigkeit werden zur Überprüfung in die Warteschlange "
 "gestellt, sodass Sie sie stapelweise bestätigen oder ablehnen können."
 
-#: templates/rom_tools_hub.html:371
+#: templates/rom_tools_hub.html:384
 msgid "Uses stored alternate titles"
 msgstr "Verwendet gespeicherte Alternativtitel"
 
-#: templates/rom_tools_hub.html:378
+#: templates/rom_tools_hub.html:391
 msgid "HLTB Pending Review"
 msgstr "HLTB-Überprüfung ausstehend"
 
-#: templates/rom_tools_hub.html:381
+#: templates/rom_tools_hub.html:394
 msgid ""
 "Review and approve HLTB matches that were flagged during a bulk lookup "
 "&mdash; alt-title matches and anything below the confidence threshold."
@@ -9091,15 +9156,15 @@ msgstr ""
 "Massen-Nachschlagen markiert wurden &mdash; Alternativtitel-"
 "Übereinstimmungen und alles unterhalb der Zuverlässigkeitsschwelle."
 
-#: templates/rom_tools_hub.html:384
+#: templates/rom_tools_hub.html:397
 msgid "Requires review"
 msgstr "Überprüfung erforderlich"
 
-#: templates/rom_tools_hub.html:391
+#: templates/rom_tools_hub.html:404
 msgid "Tool Settings"
 msgstr "Werkzeug-Einstellungen"
 
-#: templates/rom_tools_hub.html:394
+#: templates/rom_tools_hub.html:407
 msgid ""
 "Configure paths, external tool locations, archive types, and other "
 "preferences shared across all ROM tools."
@@ -9108,7 +9173,7 @@ msgstr ""
 " andere Einstellungen, die von allen ROM-Werkzeugen gemeinsam genutzt "
 "werden."
 
-#: templates/rom_tools_hub.html:436
+#: templates/rom_tools_hub.html:449
 msgid ""
 "Each game with a ScreenScraper box or manual is looked up again. Where "
 "another region suits it better, the file is downloaded and the old one is"
@@ -9126,11 +9191,11 @@ msgstr ""
 "dein tägliches ScreenScraper-Kontingent und kann lange dauern. Du kannst "
 "die Seite verlassen und diese Karte erneut drücken, um zu stoppen."
 
-#: templates/rom_tools_hub.html:437
+#: templates/rom_tools_hub.html:450
 msgid "Could not start the fix"
 msgstr "Die Korrektur konnte nicht gestartet werden"
 
-#: templates/rom_tools_hub.html:438
+#: templates/rom_tools_hub.html:451
 msgid ""
 "Stop the fix? Files already swapped stay as they are, and a later run "
 "carries on with the rest."
@@ -9138,12 +9203,12 @@ msgstr ""
 "Korrektur stoppen? Bereits ersetzte Dateien bleiben bestehen, und ein "
 "späterer Durchlauf macht mit dem Rest weiter."
 
-#: templates/rom_tools_hub.html:439
+#: templates/rom_tools_hub.html:452
 #, python-brace-format
 msgid "Stopped. Files swapped: {replaced}."
 msgstr "Gestoppt. Ersetzte Dateien: {replaced}."
 
-#: templates/rom_tools_hub.html:440
+#: templates/rom_tools_hub.html:453
 #, python-brace-format
 msgid ""
 "The fix stopped with an error. Files swapped: {replaced}. The log has the"
@@ -9152,12 +9217,12 @@ msgstr ""
 "Die Korrektur wurde mit einem Fehler beendet. Ersetzte Dateien: "
 "{replaced}. Details stehen im Protokoll."
 
-#: templates/rom_tools_hub.html:441
+#: templates/rom_tools_hub.html:454
 #, python-brace-format
 msgid "Checked {current} of {total} games. Files swapped: {replaced}."
 msgstr "{current} von {total} Spielen geprüft. Ersetzte Dateien: {replaced}."
 
-#: templates/rom_tools_hub.html:442
+#: templates/rom_tools_hub.html:455
 #, python-brace-format
 msgid ""
 "Finished. Files swapped: {replaced}. Games not found: {no_match}. Could "
@@ -9166,7 +9231,7 @@ msgstr ""
 "Fertig. Ersetzte Dateien: {replaced}. Nicht gefundene Spiele: {no_match}."
 " Nicht herunterladbar: {failed}."
 
-#: templates/rom_tools_hub.html:443
+#: templates/rom_tools_hub.html:456
 #, python-brace-format
 msgid ""
 "Stopped: ScreenScraper stopped answering, so your daily allowance may be "
@@ -9176,7 +9241,7 @@ msgstr ""
 "tägliches Kontingent aufgebraucht. Ersetzte Dateien: {replaced}. Starte "
 "es morgen erneut."
 
-#: templates/rom_tools_hub.html:495
+#: templates/rom_tools_hub.html:508
 #, python-brace-format
 msgid ""
 "{count} games have a region from the AI that their file name contradicts."
@@ -9192,20 +9257,20 @@ msgstr ""
 "davon von Hand so korrigiert, dass sie vom Dateinamen abweicht, wird sie "
 "ebenfalls geändert."
 
-#: templates/rom_tools_hub.html:496
+#: templates/rom_tools_hub.html:509
 msgid "No game has an AI region that its file name contradicts."
 msgstr "Bei keinem Spiel widerspricht der Dateiname einer KI-Region."
 
-#: templates/rom_tools_hub.html:497
+#: templates/rom_tools_hub.html:510
 #, python-brace-format
 msgid "Fixed {count} regions."
 msgstr "{count} Regionen korrigiert."
 
-#: templates/rom_tools_hub.html:498
+#: templates/rom_tools_hub.html:511
 msgid "Could not fix the regions"
 msgstr "Die Regionen konnten nicht korrigiert werden"
 
-#: templates/rom_tools_hub.html:529
+#: templates/rom_tools_hub.html:542
 #, python-brace-format
 msgid ""
 "{count} games will change.\n"
@@ -9230,11 +9295,11 @@ msgstr ""
 "Starte danach einen Massen-Scrape mit „Fehlendes ergänzen“, um alles noch"
 " Leere zu füllen."
 
-#: templates/rom_tools_hub.html:530
+#: templates/rom_tools_hub.html:543
 msgid "Every game already uses these names."
 msgstr "Alle Spiele verwenden bereits diese Namen."
 
-#: templates/rom_tools_hub.html:531
+#: templates/rom_tools_hub.html:544
 #, python-brace-format
 msgid ""
 "Tidied {count} games. Run a bulk scrape with Fill Missing to fill "
@@ -9243,11 +9308,11 @@ msgstr ""
 "{count} Spiele bereinigt. Starte einen Massen-Scrape mit „Fehlendes "
 "ergänzen“, um alles noch Leere zu füllen."
 
-#: templates/rom_tools_hub.html:532
+#: templates/rom_tools_hub.html:545
 msgid "Could not tidy the names"
 msgstr "Die Namen konnten nicht bereinigt werden"
 
-#: templates/rom_tools_hub.html:563
+#: templates/rom_tools_hub.html:576
 #, python-brace-format
 msgid ""
 "{count} games will change.\n"
@@ -9260,11 +9325,11 @@ msgstr ""
 "Ein Datum wie 1. Januar 1987 wird zu 1987. Ein Datum, das kein Scrape "
 "ergänzt hat, bleibt unverändert."
 
-#: templates/rom_tools_hub.html:564
+#: templates/rom_tools_hub.html:577
 msgid "No release dates need tidying."
 msgstr "Es müssen keine Erscheinungsdaten bereinigt werden."
 
-#: templates/rom_tools_hub.html:565
+#: templates/rom_tools_hub.html:578
 #, python-brace-format
 msgid ""
 "Tidied {count} games. Run a bulk scrape with Fill Missing to look for "
@@ -9273,11 +9338,34 @@ msgstr ""
 "{count} Spiele bereinigt. Starte einen Massen-Scrape mit „Fehlendes "
 "ergänzen“, um nach genaueren Daten zu suchen."
 
-#: templates/rom_tools_hub.html:566
+#: templates/rom_tools_hub.html:579
 msgid "Could not tidy the release dates"
 msgstr "Die Erscheinungsdaten konnten nicht bereinigt werden"
 
-#: templates/rom_tools_hub.html:597
+#: templates/rom_tools_hub.html:610
+#, python-brace-format
+msgid ""
+"{count} saved play times look like another game. They will go to the "
+"review page, and no game changes until you decide.\n"
+"\n"
+"There, Approve keeps a time and Reject clears it."
+msgstr ""
+
+#: templates/rom_tools_hub.html:611
+msgid "No saved play time looks wrong."
+msgstr ""
+
+#: templates/rom_tools_hub.html:612
+#, python-brace-format
+msgid "Sent {count} play times to the HowLongToBeat review page."
+msgstr ""
+
+#: templates/rom_tools_hub.html:613
+#, fuzzy
+msgid "Could not check the saved play times"
+msgstr "Diese Namen konnten nicht abgelehnt werden."
+
+#: templates/rom_tools_hub.html:644
 #, python-brace-format
 msgid ""
 "{count} games and wishlist items use a RAWG picture as their box art. "
@@ -9294,11 +9382,11 @@ msgstr ""
 "Cover aus anderen Quellen und alle Fanart bleiben erhalten. Starte danach"
 " einen Massen-Scrape mit „Fehlendes auffüllen“, um echte Cover zu suchen."
 
-#: templates/rom_tools_hub.html:598
+#: templates/rom_tools_hub.html:645
 msgid "No game uses a RAWG picture as its box art."
 msgstr "Kein Spiel verwendet ein RAWG-Bild als Cover."
 
-#: templates/rom_tools_hub.html:599
+#: templates/rom_tools_hub.html:646
 #, python-brace-format
 msgid ""
 "Cleared {count} pictures. Run a bulk scrape with Fill Missing to look for"
@@ -9307,7 +9395,7 @@ msgstr ""
 "{count} Bilder entfernt. Starte einen Massen-Scrape mit „Fehlendes "
 "auffüllen“, um echte Cover zu suchen."
 
-#: templates/rom_tools_hub.html:600
+#: templates/rom_tools_hub.html:647
 msgid "Could not clear the pictures"
 msgstr "Die Bilder konnten nicht entfernt werden"
 
@@ -11812,4 +11900,13 @@ msgstr "Auf Patreon unterstützen"
 
 #~ msgid "Launches in: %(name)s"
 #~ msgstr "Startet in: %(name)s"
+
+#~ msgid ""
+#~ "This will clear the play time from"
+#~ " {stored} games that already have "
+#~ "one. The other {other} queued matches"
+#~ " are dropped, and those games keep"
+#~ " what they have. A bulk lookup "
+#~ "can fetch the times again."
+#~ msgstr ""
 

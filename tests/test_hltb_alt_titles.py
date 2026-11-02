@@ -15,7 +15,6 @@ def _mk_hltb_result(name, game_id=1, comp_main=36000, platform='NES'):
         'comp_100': comp_main + 7200,
         'profile_platform': platform,
         'release_world': 1991,
-        'profile_dev': 'Natsume',
     }
 
 

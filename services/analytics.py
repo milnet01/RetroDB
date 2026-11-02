@@ -6,7 +6,6 @@
 # =============================================================================
 
 import logging
-import re
 import threading
 import time
 
@@ -14,6 +13,7 @@ import settings_manager
 from services.database import query
 from services.formatters import format_size, get_manufacturer
 from services.game_utils import RATING_SYSTEM_KEYS, RATING_SYSTEMS, RATING_VALUES
+from services.playtime import main_story_hours
 
 logger = logging.getLogger(__name__)
 
@@ -488,15 +488,9 @@ def _get_playtime_data():
 
     main_hours = []
     for row in rows:
-        est = row.get('playtime_estimate', '')
-        # PASS-59-63 — anchored to a segment start so `Main+Extras:` never matches.
-        match = re.search(r'(?:^|\|)\s*Main(?: Story)?\s*:\s*([\d.½]+)', est)
-        if match:
-            val = match.group(1).replace('½', '.5')
-            try:
-                main_hours.append(float(val))
-            except ValueError:
-                pass
+        hours = main_story_hours(row.get('playtime_estimate', ''))
+        if hours is not None:
+            main_hours.append(hours)
 
     buckets = {'< 5h': 0, '5-10h': 0, '10-20h': 0, '20-40h': 0, '40-60h': 0, '60-100h': 0, '100h+': 0}
     for h in main_hours:

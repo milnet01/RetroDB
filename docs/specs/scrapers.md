@@ -194,6 +194,18 @@ Selection thresholds:
 
 ---
 
+### HowLongToBeat
+
+`scraper/hltb_lookup.py` scores on its own 0-to-1 scale (`title_score`): characters compared on the scorer's cleaned title, with a different sequel number capped below every bar. Titles differing only in spacing never count as different numbers. Equal scores go to the result nearest the game's year.
+
+The bulk job applies a match only at or above its threshold, on the game's own platform (`on_platform`: whole names from the site's list), and no more than a year later than the game. A port comes after its original, so an earlier release passes. Everything else waits on `/hltb/review`, with the time unsaved.
+
+The site sends no developer in a search reply. Requests are at least a second apart.
+
+Saved matches are checked only when a person presses Check Saved Play Times in ROM Tools (`stored_match_problem`). No game changes until a person decides: Approve keeps the time and sets `games.hltb_match_reviewed`, so the check does not ask again; Reject clears it.
+
+`games.playtime_estimate` is text. Anything adding it up uses `services/playtime.py`.
+
 ## 7. Title normalization
 
 Two distinct passes, both lossless and idempotent:

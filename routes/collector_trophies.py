@@ -13,7 +13,6 @@
 # =============================================================================
 
 import logging
-import re
 from datetime import datetime, timezone
 
 from flask import Blueprint, render_template, jsonify, g
@@ -22,6 +21,7 @@ from services.api_helpers import handle_api_errors, success
 from services.auth import login_required, permission_required
 from services.database import get_request_db, query
 from services.formatters import get_manufacturer
+from services.playtime import main_story_hours
 
 logger = logging.getLogger(__name__)
 
@@ -359,13 +359,7 @@ def _gather_collection_stats(user_id=None):
     hltb_rows = query("SELECT playtime_estimate FROM games WHERE playtime_estimate IS NOT NULL AND playtime_estimate != ''")
     total_hours = 0.0
     for r in hltb_rows:
-        m = re.search(r'Main[^:]*:\s*([\d.½]+)', r['playtime_estimate'] or '')
-        if m:
-            val = m.group(1).replace('½', '.5')
-            try:
-                total_hours += float(val)
-            except ValueError:
-                pass
+        total_hours += main_story_hours(r['playtime_estimate']) or 0
     stats['total_hltb_hours'] = int(total_hours)
 
     # --- Collection: genres, franchise concentration, manufacturer spread ---

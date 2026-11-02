@@ -20,7 +20,6 @@ import os
 import sys
 import logging
 import json
-import re
 import secrets
 import time
 from datetime import timedelta
@@ -82,6 +81,7 @@ from services.api_helpers import handle_api_errors, success as api_success, erro
 from services.analytics import (
     build_analytics_context,
 )
+from services.playtime import main_story_hours
 
 # Pre-compute static rating data (derived from constants, never changes)
 _RATING_IMG_MAP_JS = get_rating_image_map_js()
@@ -1079,14 +1079,7 @@ def get_stats():
             for row in hltb_rows:
                 est = row.get('playtime_estimate', '')
                 if est:
-                    # Parse "Main: 25h" or "Main Story: 25½ Hours" patterns
-                    match = re.search(r'Main[^:]*:\s*([\d.½]+)', est)
-                    if match:
-                        val = match.group(1).replace('½', '.5')
-                        try:
-                            total_hltb_hours += float(val)
-                        except ValueError:
-                            pass
+                    total_hltb_hours += main_story_hours(est) or 0
         except Exception:
             pass
 

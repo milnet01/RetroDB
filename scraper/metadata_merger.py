@@ -729,10 +729,6 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
             metadata['similar_games'] = ext['similar_games']
             result['filled_fields'].append('similar_games (IGDB)')
 
-        if ext.get('playtime_estimate') and not metadata['playtime_estimate']:
-            metadata['playtime_estimate'] = ext['playtime_estimate']
-            result['filled_fields'].append('playtime_estimate (IGDB)')
-
         if ext.get('perspective') and not metadata.get('perspective'):
             fill_labels(metadata, result, 'perspective', ext['perspective'], 'IGDB')
 

@@ -346,6 +346,19 @@
         </div>
     </button>
 
+    <button type="button" class="tool-card" data-on-click="checkSavedPlayTimes">
+        <div class="tool-card-header">
+            <div class="tool-card-icon">&#9201;</div>
+            <div class="tool-card-title">{{ _('Check Saved Play Times') }}</div>
+        </div>
+        <div class="tool-card-desc">
+            {{ _('Older lookups could save the play time of a sequel, or of another game with the same name on another system. This sends those matches to the review page, where you keep or clear each one.') }}
+        </div>
+        <div class="tool-card-status" id="playTimesStatus">
+            <span class="status-dot no-deps"></span> {{ _('No dependencies required') }}
+        </div>
+    </button>
+
     <button type="button" class="tool-card" data-on-click="clearRawgCovers">
         <div class="tool-card-header">
             <div class="tool-card-icon">&#128444;</div>
@@ -590,6 +603,40 @@ function fixReleaseDates() {
             });
         })
         .catch(() => showNotification(RELEASE_DATES_TEXT.failed, 'error'));
+}
+
+const PLAY_TIMES_TEXT = {
+    title: {{ _('Check Saved Play Times')|tojson }},
+    confirm: {{ _('{count} saved play times look like another game. They will go to the review page, and no game changes until you decide.\n\nThere, Approve keeps a time and Reject clears it.')|tojson }},
+    none: {{ _('No saved play time looks wrong.')|tojson }},
+    done: {{ _('Sent {count} play times to the HowLongToBeat review page.')|tojson }},
+    failed: {{ _('Could not check the saved play times')|tojson }},
+};
+
+function checkSavedPlayTimes() {
+    const box = document.getElementById('playTimesStatus');
+    const fill = (template, count) => template.replace('{count}', formatNumber(count));
+    fetch('/api/hltb/stored-check/preview')
+        .then(r => r.json())
+        .then(preview => {
+            if (!preview.success) throw new Error();
+            if (!preview.count) {
+                box.textContent = PLAY_TIMES_TEXT.none;
+                return;
+            }
+            showConfirm(PLAY_TIMES_TEXT.title, fill(PLAY_TIMES_TEXT.confirm, preview.count), function() {
+                fetch('/api/hltb/stored-check/queue', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}',
+                })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (!data.success) throw new Error();
+                        box.textContent = fill(PLAY_TIMES_TEXT.done, data.queued);
+                    })
+                    .catch(() => showNotification(PLAY_TIMES_TEXT.failed, 'error'));
+            });
+        })
+        .catch(() => showNotification(PLAY_TIMES_TEXT.failed, 'error'));
 }
 
 const RAWG_COVERS_TEXT = {

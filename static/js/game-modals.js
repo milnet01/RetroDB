@@ -630,7 +630,6 @@ const HLTBManager = {
                     main_extra: data.result.main_extra || '--',
                     completionist: data.result.completionist || '--',
                     release_year: data.result.release_year || null,
-                    developer: data.result.developer || null,
                     search_term_used: data.result.search_term_used || null,
                     matched_via_alternate: !!data.result.matched_via_alternate
                 };
@@ -659,9 +658,6 @@ const HLTBManager = {
                     }
                     if (pending.release_year) {
                         headerHtml += `<span class="hltb-match-year">${escapeHtml(String(pending.release_year))}</span>`;
-                    }
-                    if (pending.developer) {
-                        headerHtml += `<span class="hltb-match-developer">${escapeHtml(pending.developer)}</span>`;
                     }
                     if (confidence > 0) {
                         headerHtml += `<span class="hltb-match-confidence">${escapeHtml(t('{confidence}% match', {confidence: confidence}))}</span>`;
@@ -783,7 +779,6 @@ const HLTBManager = {
                 ${data.match_platform ? `<span class="hltb-match-platform">${escapeHtml(data.match_platform)}</span>` : ''}
                 ${data.platform_mismatch ? `<span class="hltb-match-warning">${escapeHtml(t('Platform not found'))}</span>` : ''}
                 ${data.release_year ? `<span class="hltb-match-year">${escapeHtml(String(data.release_year))}</span>` : ''}
-                ${data.developer ? `<span class="hltb-match-developer">${escapeHtml(data.developer)}</span>` : ''}
                 ${confidence > 0 ? `<span class="hltb-match-confidence">${escapeHtml(t('{confidence}% match', {confidence: confidence}))}</span>` : ''}
             </div>`;
         }

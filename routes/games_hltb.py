@@ -119,6 +119,22 @@ def api_hltb_bulk_cancel():
     return jsonify(bulk_orchestrator.cancel())
 
 
+@bp.route('/api/hltb/stored-check/preview', methods=['GET'])
+@admin_required
+@handle_api_errors
+def api_hltb_stored_check_preview():
+    """How many saved matches look wrong. Changes nothing."""
+    return success(count=pending_queue.count_stored_suspects())
+
+
+@bp.route('/api/hltb/stored-check/queue', methods=['POST'])
+@admin_required
+@handle_api_errors
+def api_hltb_stored_check_queue():
+    """Send saved matches that look wrong to the review queue."""
+    return success(queued=pending_queue.queue_stored_suspects())
+
+
 @bp.route('/api/hltb/pending', methods=['GET'])
 @login_required
 @handle_api_errors

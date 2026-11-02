@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-02 05:06+0200\n"
+"POT-Creation-Date: 2026-11-02 07:09+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: eo\n"
@@ -35,7 +35,7 @@ msgstr "⟦Šéţüþ ŕéɋüìŕéð⟧"
 msgid "Password change required"
 msgstr "⟦Þàššŵöŕð çĥàñĝé ŕéɋüìŕéð⟧"
 
-#: app.py:1685 routes/auth.py:202 routes/auth.py:262 routes/auth.py:447
+#: app.py:1678 routes/auth.py:202 routes/auth.py:262 routes/auth.py:447
 #: routes/auth.py:492 templates/force_change_password.html:49
 #: templates/setup.html:469
 msgid "Password must be at least 12 characters"
@@ -58,7 +58,7 @@ msgstr "⟦Šýšţéɱ ñöţ ƒöüñð öŕ ĥàš ñö àçĥìéⱴéɱéñ
 #: routes/games_media.py:148 routes/games_media.py:197
 #: routes/games_media.py:230 routes/launch.py:242 routes/reports.py:693
 #: routes/reports.py:822 routes/trophies.py:1291 services/cheats.py:617
-#: services/hltb_service.py:125
+#: services/hltb_service.py:154
 msgid "Game not found"
 msgstr "⟦Ĝàɱé ñöţ ƒöüñð⟧"
 
@@ -1445,25 +1445,25 @@ msgstr "⟦Ţĥàţ çĥéàţ ļìšţ ìš ñöţ öñé öƒ ţĥìš ĝàɱ�
 msgid "Cheats work in the player, DuckStation and PCSX2."
 msgstr "⟦Çĥéàţš ŵöŕķ ìñ ţĥé þļàýéŕ, ÐüçķŠţàţìöñ àñð ÞÇŠЖ2.⟧"
 
-#: services/hltb_service.py:134
+#: services/hltb_service.py:164
 #, python-format
 msgid "No HLTB match found for \"%(title)s\""
 msgstr "⟦Ñö ĤĻŢƁ ɱàţçĥ ƒöüñð ƒöŕ \"%(title)s\"⟧"
 
-#: services/hltb_service.py:176
+#: services/hltb_service.py:214
 msgid "No search query provided"
 msgstr "⟦Ñö šéàŕçĥ ɋüéŕý þŕöⱴìðéð⟧"
 
-#: services/hltb_service.py:201
+#: services/hltb_service.py:239
 #, python-format
 msgid "No HLTB match found for \"%(query)s\""
 msgstr "⟦Ñö ĤĻŢƁ ɱàţçĥ ƒöüñð ƒöŕ \"%(query)s\"⟧"
 
-#: services/hltb_service.py:225
+#: services/hltb_service.py:262
 msgid "No playtime provided"
 msgstr "⟦Ñö þļàýţìɱé þŕöⱴìðéð⟧"
 
-#: services/hltb_service.py:306
+#: services/hltb_service.py:346
 msgid "Pending match not found"
 msgstr "⟦Þéñðìñĝ ɱàţçĥ ñöţ ƒöüñð⟧"
 
@@ -5564,7 +5564,7 @@ msgstr "⟦Ţööļš⟧"
 msgid "Game Imports"
 msgstr "⟦Ĝàɱé Ìɱþöŕţš⟧"
 
-#: templates/base.html:183 templates/rom_tools_hub.html:397
+#: templates/base.html:183 templates/rom_tools_hub.html:410
 msgid "Configuration"
 msgstr "⟦Çöñƒìĝüŕàţìöñ⟧"
 
@@ -7429,13 +7429,57 @@ msgstr "⟦Àļţ-ţìţļé ɱàţçĥéš⟧"
 msgid "Low confidence"
 msgstr "⟦Ļöŵ çöñƒìðéñçé⟧"
 
-#: templates/hltb_review.html:39
+#: templates/hltb_review.html:31
+msgid "Other platform or year"
+msgstr "⟦Öţĥéŕ þļàţƒöŕɱ öŕ ýéàŕ⟧"
+
+#: templates/hltb_review.html:32
+msgid "Already saved"
+msgstr "⟦Àļŕéàðý šàⱴéð⟧"
+
+#: templates/hltb_review.html:41
 msgid "No pending HLTB matches"
 msgstr "⟦Ñö þéñðìñĝ ĤĻŢƁ ɱàţçĥéš⟧"
 
-#: templates/hltb_review.html:40
+#: templates/hltb_review.html:42
 msgid "Run a bulk HLTB lookup from the ROM Tools Hub to queue matches for review here."
 msgstr "⟦Ŕüñ à ƀüļķ ĤĻŢƁ ļööķüþ ƒŕöɱ ţĥé ŔÖⱮ Ţööļš Ĥüƀ ţö ɋüéüé ɱàţçĥéš ƒöŕ ŕéⱴìéŵ ĥéŕé.⟧"
+
+#: templates/hltb_review.html:192
+msgid "Not listed for this system"
+msgstr "⟦Ñöţ ļìšţéð ƒöŕ ţĥìš šýšţéɱ⟧"
+
+#: templates/hltb_review.html:193
+msgid "Came out years after this game"
+msgstr "⟦Çàɱé öüţ ýéàŕš àƒţéŕ ţĥìš ĝàɱé⟧"
+
+#: templates/hltb_review.html:194
+msgid "Saved, but not listed for this system"
+msgstr "⟦Šàⱴéð, ƀüţ ñöţ ļìšţéð ƒöŕ ţĥìš šýšţéɱ⟧"
+
+#: templates/hltb_review.html:195
+msgid "Saved, but the title differs"
+msgstr "⟦Šàⱴéð, ƀüţ ţĥé ţìţļé ðìƒƒéŕš⟧"
+
+#: templates/hltb_review.html:196
+#, python-brace-format
+msgid "{count} on another platform or year"
+msgstr "⟦{count} öñ àñöţĥéŕ þļàţƒöŕɱ öŕ ýéàŕ⟧"
+
+#: templates/hltb_review.html:197
+#, python-brace-format
+msgid "{count} already saved"
+msgstr "⟦{count} àļŕéàðý šàⱴéð⟧"
+
+#: templates/hltb_review.html:198
+#, python-brace-format
+msgid "This will clear the play time from {count} games that already have one. A bulk lookup can fetch the times again."
+msgstr "⟦Ţĥìš ŵìļļ çļéàŕ ţĥé þļàý ţìɱé ƒŕöɱ {count} ĝàɱéš ţĥàţ àļŕéàðý ĥàⱴé öñé. À ƀüļķ ļööķüþ çàñ ƒéţçĥ ţĥé ţìɱéš àĝàìñ.⟧"
+
+#: templates/hltb_review.html:199
+#, python-brace-format
+msgid "The other {count} queued matches are dropped, and those games keep what they have."
+msgstr "⟦Ţĥé öţĥéŕ {count} ɋüéüéð ɱàţçĥéš àŕé ðŕöþþéð, àñð ţĥöšé ĝàɱéš ķééþ ŵĥàţ ţĥéý ĥàⱴé.⟧"
 
 #: templates/_settings_tabs/data.html:5 templates/local_trophies.html:6
 #: templates/psn_trophy_detail.html:276 templates/systems.html:89
@@ -8382,7 +8426,7 @@ msgstr "⟦Ƒìñð ðüþļìçàţé ŔÖⱮš ƀý ĥàšĥ, ƒìļéñàɱé
 #: templates/rom_tools_hub.html:253 templates/rom_tools_hub.html:267
 #: templates/rom_tools_hub.html:280 templates/rom_tools_hub.html:319
 #: templates/rom_tools_hub.html:332 templates/rom_tools_hub.html:345
-#: templates/rom_tools_hub.html:358
+#: templates/rom_tools_hub.html:358 templates/rom_tools_hub.html:371
 msgid "No dependencies required"
 msgstr "⟦Ñö ðéþéñðéñçìéš ŕéɋüìŕéð⟧"
 
@@ -8443,7 +8487,7 @@ msgstr "⟦Šçàñ ýöüŕ ļìƀŕàŕý ƒöŕ ŕéĝìöñàļ / àļţéŕ
 msgid "Metadata only &middot; no media downloads"
 msgstr "⟦Ɱéţàðàţà öñļý &ɱìððöţ; ñö ɱéðìà ðöŵñļöàðš⟧"
 
-#: templates/rom_tools_hub.html:300 templates/rom_tools_hub.html:435
+#: templates/rom_tools_hub.html:300 templates/rom_tools_hub.html:448
 msgid "Fix Box and Manual Regions"
 msgstr "⟦Ƒìж Ɓöж àñð Ɱàñüàļ Ŕéĝìöñš⟧"
 
@@ -8455,7 +8499,7 @@ msgstr "⟦Öļðéŕ ŠçŕééñŠçŕàþéŕ šçŕàþéš çöüļð ĝì�
 msgid "Needs a ScreenScraper account"
 msgstr "⟦Ñééðš à ŠçŕééñŠçŕàþéŕ àççöüñţ⟧"
 
-#: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:494
+#: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:507
 msgid "Fix Regions from File Names"
 msgstr "⟦Ƒìж Ŕéĝìöñš ƒŕöɱ Ƒìļé Ñàɱéš⟧"
 
@@ -8463,7 +8507,7 @@ msgstr "⟦Ƒìж Ŕéĝìöñš ƒŕöɱ Ƒìļé Ñàɱéš⟧"
 msgid "The AI used to guess a game's region even when its file name said, so a (USA) file could be listed as Japan. This gives those games the region in their file name."
 msgstr "⟦Ţĥé ÀÌ üšéð ţö ĝüéšš à ĝàɱé'š ŕéĝìöñ éⱴéñ ŵĥéñ ìţš ƒìļé ñàɱé šàìð, šö à (ÜŠÀ) ƒìļé çöüļð ƀé ļìšţéð àš Ĵàþàñ. Ţĥìš ĝìⱴéš ţĥöšé ĝàɱéš ţĥé ŕéĝìöñ ìñ ţĥéìŕ ƒìļé ñàɱé.⟧"
 
-#: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:528
+#: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:541
 msgid "Tidy Genres, Perspectives and Modes"
 msgstr "⟦Ţìðý Ĝéñŕéš, Þéŕšþéçţìⱴéš àñð Ɱöðéš⟧"
 
@@ -8471,7 +8515,7 @@ msgstr "⟦Ţìðý Ĝéñŕéš, Þéŕšþéçţìⱴéš àñð Ɱöðéš�
 msgid "Sources name the same thing differently, so one genre could appear as both RPG and Role Playing Game, and a filter missed games. This gives every game one set of names."
 msgstr "⟦Šöüŕçéš ñàɱé ţĥé šàɱé ţĥìñĝ ðìƒƒéŕéñţļý, šö öñé ĝéñŕé çöüļð àþþéàŕ àš ƀöţĥ ŔÞĜ àñð Ŕöļé Þļàýìñĝ Ĝàɱé, àñð à ƒìļţéŕ ɱìššéð ĝàɱéš. Ţĥìš ĝìⱴéš éⱴéŕý ĝàɱé öñé šéţ öƒ ñàɱéš.⟧"
 
-#: templates/rom_tools_hub.html:339 templates/rom_tools_hub.html:562
+#: templates/rom_tools_hub.html:339 templates/rom_tools_hub.html:575
 msgid "Tidy Release Dates"
 msgstr "⟦Ţìðý Ŕéļéàšé Ðàţéš⟧"
 
@@ -8479,47 +8523,55 @@ msgstr "⟦Ţìðý Ŕéļéàšé Ðàţéš⟧"
 msgid "Older scrapes stored a date known only by its year as 1 January or 31 December, as if the day were known. This cuts those dates back to the year or month, so a scrape can fill in the real one."
 msgstr "⟦Öļðéŕ šçŕàþéš šţöŕéð à ðàţé ķñöŵñ öñļý ƀý ìţš ýéàŕ àš 1 Ĵàñüàŕý öŕ 31 Ðéçéɱƀéŕ, àš ìƒ ţĥé ðàý ŵéŕé ķñöŵñ. Ţĥìš çüţš ţĥöšé ðàţéš ƀàçķ ţö ţĥé ýéàŕ öŕ ɱöñţĥ, šö à šçŕàþé çàñ ƒìļļ ìñ ţĥé ŕéàļ öñé.⟧"
 
-#: templates/rom_tools_hub.html:352 templates/rom_tools_hub.html:596
+#: templates/rom_tools_hub.html:352 templates/rom_tools_hub.html:609
+msgid "Check Saved Play Times"
+msgstr "⟦Çĥéçķ Šàⱴéð Þļàý Ţìɱéš⟧"
+
+#: templates/rom_tools_hub.html:355
+msgid "Older lookups could save the play time of a sequel, or of another game with the same name on another system. This sends those matches to the review page, where you keep or clear each one."
+msgstr "⟦Öļðéŕ ļööķüþš çöüļð šàⱴé ţĥé þļàý ţìɱé öƒ à šéɋüéļ, öŕ öƒ àñöţĥéŕ ĝàɱé ŵìţĥ ţĥé šàɱé ñàɱé öñ àñöţĥéŕ šýšţéɱ. Ţĥìš šéñðš ţĥöšé ɱàţçĥéš ţö ţĥé ŕéⱴìéŵ þàĝé, ŵĥéŕé ýöü ķééþ öŕ çļéàŕ éàçĥ öñé.⟧"
+
+#: templates/rom_tools_hub.html:365 templates/rom_tools_hub.html:643
 msgid "Clear RAWG Pictures from Box Art"
 msgstr "⟦Çļéàŕ ŔÀŴĜ Þìçţüŕéš ƒŕöɱ Ɓöж Àŕţ⟧"
 
-#: templates/rom_tools_hub.html:355
+#: templates/rom_tools_hub.html:368
 msgid "RAWG has no box art, so older scrapes saved a background picture or screenshot as the cover, and that blocks a real cover. This clears those pictures so a scrape can find real covers."
 msgstr "⟦ŔÀŴĜ ĥàš ñö ƀöж àŕţ, šö öļðéŕ šçŕàþéš šàⱴéð à ƀàçķĝŕöüñð þìçţüŕé öŕ šçŕééñšĥöţ àš ţĥé çöⱴéŕ, àñð ţĥàţ ƀļöçķš à ŕéàļ çöⱴéŕ. Ţĥìš çļéàŕš ţĥöšé þìçţüŕéš šö à šçŕàþé çàñ ƒìñð ŕéàļ çöⱴéŕš.⟧"
 
-#: templates/rom_tools_hub.html:365
+#: templates/rom_tools_hub.html:378
 msgid "Bulk HLTB Lookup"
 msgstr "⟦Ɓüļķ ĤĻŢƁ Ļööķüþ⟧"
 
-#: templates/rom_tools_hub.html:368
+#: templates/rom_tools_hub.html:381
 msgid "Fetch HowLongToBeat playtime for every game. High-confidence primary-title matches apply automatically; alt-title matches and low-confidence hits are queued for review so you can approve or reject in bulk."
 msgstr "⟦Ƒéţçĥ ĤöŵĻöñĝŢöƁéàţ þļàýţìɱé ƒöŕ éⱴéŕý ĝàɱé. Ĥìĝĥ-çöñƒìðéñçé þŕìɱàŕý-ţìţļé ɱàţçĥéš àþþļý àüţöɱàţìçàļļý; àļţ-ţìţļé ɱàţçĥéš àñð ļöŵ-çöñƒìðéñçé ĥìţš àŕé ɋüéüéð ƒöŕ ŕéⱴìéŵ šö ýöü çàñ àþþŕöⱴé öŕ ŕéĵéçţ ìñ ƀüļķ.⟧"
 
-#: templates/rom_tools_hub.html:371
+#: templates/rom_tools_hub.html:384
 msgid "Uses stored alternate titles"
 msgstr "⟦Üšéš šţöŕéð àļţéŕñàţé ţìţļéš⟧"
 
-#: templates/rom_tools_hub.html:378
+#: templates/rom_tools_hub.html:391
 msgid "HLTB Pending Review"
 msgstr "⟦ĤĻŢƁ Þéñðìñĝ Ŕéⱴìéŵ⟧"
 
-#: templates/rom_tools_hub.html:381
+#: templates/rom_tools_hub.html:394
 msgid "Review and approve HLTB matches that were flagged during a bulk lookup &mdash; alt-title matches and anything below the confidence threshold."
 msgstr "⟦Ŕéⱴìéŵ àñð àþþŕöⱴé ĤĻŢƁ ɱàţçĥéš ţĥàţ ŵéŕé ƒļàĝĝéð ðüŕìñĝ à ƀüļķ ļööķüþ &ɱðàšĥ; àļţ-ţìţļé ɱàţçĥéš àñð àñýţĥìñĝ ƀéļöŵ ţĥé çöñƒìðéñçé ţĥŕéšĥöļð.⟧"
 
-#: templates/rom_tools_hub.html:384
+#: templates/rom_tools_hub.html:397
 msgid "Requires review"
 msgstr "⟦Ŕéɋüìŕéš ŕéⱴìéŵ⟧"
 
-#: templates/rom_tools_hub.html:391
+#: templates/rom_tools_hub.html:404
 msgid "Tool Settings"
 msgstr "⟦Ţööļ Šéţţìñĝš⟧"
 
-#: templates/rom_tools_hub.html:394
+#: templates/rom_tools_hub.html:407
 msgid "Configure paths, external tool locations, archive types, and other preferences shared across all ROM tools."
 msgstr "⟦Çöñƒìĝüŕé þàţĥš, éжţéŕñàļ ţööļ ļöçàţìöñš, àŕçĥìⱴé ţýþéš, àñð öţĥéŕ þŕéƒéŕéñçéš šĥàŕéð àçŕöšš àļļ ŔÖⱮ ţööļš.⟧"
 
-#: templates/rom_tools_hub.html:436
+#: templates/rom_tools_hub.html:449
 msgid ""
 "Each game with a ScreenScraper box or manual is looked up again. Where another region suits it better, the file is downloaded and the old one is deleted.\n"
 "\n"
@@ -8529,40 +8581,40 @@ msgstr ""
 "\n"
 "Ĝàɱéš ýöü ĥàⱴé çĥàñĝéð ƀý ĥàñð àŕé ñöţ ţöüçĥéð. Ţĥìš üšéš ýöüŕ ðàìļý ŠçŕééñŠçŕàþéŕ àļļöŵàñçé àñð çàñ ţàķé à ļöñĝ ţìɱé. Ýöü çàñ ļéàⱴé ţĥé þàĝé, àñð þŕéšš ţĥìš çàŕð àĝàìñ ţö šţöþ.⟧"
 
-#: templates/rom_tools_hub.html:437
+#: templates/rom_tools_hub.html:450
 msgid "Could not start the fix"
 msgstr "⟦Çöüļð ñöţ šţàŕţ ţĥé ƒìж⟧"
 
-#: templates/rom_tools_hub.html:438
+#: templates/rom_tools_hub.html:451
 msgid "Stop the fix? Files already swapped stay as they are, and a later run carries on with the rest."
 msgstr "⟦Šţöþ ţĥé ƒìж? Ƒìļéš àļŕéàðý šŵàþþéð šţàý àš ţĥéý àŕé, àñð à ļàţéŕ ŕüñ çàŕŕìéš öñ ŵìţĥ ţĥé ŕéšţ.⟧"
 
-#: templates/rom_tools_hub.html:439
+#: templates/rom_tools_hub.html:452
 #, python-brace-format
 msgid "Stopped. Files swapped: {replaced}."
 msgstr "⟦Šţöþþéð. Ƒìļéš šŵàþþéð: {replaced}.⟧"
 
-#: templates/rom_tools_hub.html:440
+#: templates/rom_tools_hub.html:453
 #, python-brace-format
 msgid "The fix stopped with an error. Files swapped: {replaced}. The log has the details."
 msgstr "⟦Ţĥé ƒìж šţöþþéð ŵìţĥ àñ éŕŕöŕ. Ƒìļéš šŵàþþéð: {replaced}. Ţĥé ļöĝ ĥàš ţĥé ðéţàìļš.⟧"
 
-#: templates/rom_tools_hub.html:441
+#: templates/rom_tools_hub.html:454
 #, python-brace-format
 msgid "Checked {current} of {total} games. Files swapped: {replaced}."
 msgstr "⟦Çĥéçķéð {current} öƒ {total} ĝàɱéš. Ƒìļéš šŵàþþéð: {replaced}.⟧"
 
-#: templates/rom_tools_hub.html:442
+#: templates/rom_tools_hub.html:455
 #, python-brace-format
 msgid "Finished. Files swapped: {replaced}. Games not found: {no_match}. Could not download: {failed}."
 msgstr "⟦Ƒìñìšĥéð. Ƒìļéš šŵàþþéð: {replaced}. Ĝàɱéš ñöţ ƒöüñð: {no_match}. Çöüļð ñöţ ðöŵñļöàð: {failed}.⟧"
 
-#: templates/rom_tools_hub.html:443
+#: templates/rom_tools_hub.html:456
 #, python-brace-format
 msgid "Stopped: ScreenScraper stopped answering, so your daily allowance may be spent. Files swapped: {replaced}. Run it again tomorrow."
 msgstr "⟦Šţöþþéð: ŠçŕééñŠçŕàþéŕ šţöþþéð àñšŵéŕìñĝ, šö ýöüŕ ðàìļý àļļöŵàñçé ɱàý ƀé šþéñţ. Ƒìļéš šŵàþþéð: {replaced}. Ŕüñ ìţ àĝàìñ ţöɱöŕŕöŵ.⟧"
 
-#: templates/rom_tools_hub.html:495
+#: templates/rom_tools_hub.html:508
 #, python-brace-format
 msgid ""
 "{count} games have a region from the AI that their file name contradicts. Each will get the region in its file name.\n"
@@ -8573,20 +8625,20 @@ msgstr ""
 "\n"
 "Öñļý ŕéĝìöñš ţĥé ÀÌ ƒìļļéð àŕé çĥàñĝéð. Ìƒ ýöü çöŕŕéçţéð öñé öƒ ţĥöšé ƀý ĥàñð ţö ðìƒƒéŕ ƒŕöɱ ţĥé ƒìļé ñàɱé, ìţ çĥàñĝéš ţöö.⟧"
 
-#: templates/rom_tools_hub.html:496
+#: templates/rom_tools_hub.html:509
 msgid "No game has an AI region that its file name contradicts."
 msgstr "⟦Ñö ĝàɱé ĥàš àñ ÀÌ ŕéĝìöñ ţĥàţ ìţš ƒìļé ñàɱé çöñţŕàðìçţš.⟧"
 
-#: templates/rom_tools_hub.html:497
+#: templates/rom_tools_hub.html:510
 #, python-brace-format
 msgid "Fixed {count} regions."
 msgstr "⟦Ƒìжéð {count} ŕéĝìöñš.⟧"
 
-#: templates/rom_tools_hub.html:498
+#: templates/rom_tools_hub.html:511
 msgid "Could not fix the regions"
 msgstr "⟦Çöüļð ñöţ ƒìж ţĥé ŕéĝìöñš⟧"
 
-#: templates/rom_tools_hub.html:529
+#: templates/rom_tools_hub.html:542
 #, python-brace-format
 msgid ""
 "{count} games will change.\n"
@@ -8601,20 +8653,20 @@ msgstr ""
 "\n"
 "Àƒţéŕŵàŕðš, ŕüñ à ƀüļķ šçŕàþé ŵìţĥ Ƒìļļ Ɱìššìñĝ ţö ƒìļļ àñýţĥìñĝ ļéƒţ éɱþţý.⟧"
 
-#: templates/rom_tools_hub.html:530
+#: templates/rom_tools_hub.html:543
 msgid "Every game already uses these names."
 msgstr "⟦Éⱴéŕý ĝàɱé àļŕéàðý üšéš ţĥéšé ñàɱéš.⟧"
 
-#: templates/rom_tools_hub.html:531
+#: templates/rom_tools_hub.html:544
 #, python-brace-format
 msgid "Tidied {count} games. Run a bulk scrape with Fill Missing to fill anything left empty."
 msgstr "⟦Ţìðìéð {count} ĝàɱéš. Ŕüñ à ƀüļķ šçŕàþé ŵìţĥ Ƒìļļ Ɱìššìñĝ ţö ƒìļļ àñýţĥìñĝ ļéƒţ éɱþţý.⟧"
 
-#: templates/rom_tools_hub.html:532
+#: templates/rom_tools_hub.html:545
 msgid "Could not tidy the names"
 msgstr "⟦Çöüļð ñöţ ţìðý ţĥé ñàɱéš⟧"
 
-#: templates/rom_tools_hub.html:563
+#: templates/rom_tools_hub.html:576
 #, python-brace-format
 msgid ""
 "{count} games will change.\n"
@@ -8625,20 +8677,44 @@ msgstr ""
 "\n"
 "À ðàţé šüçĥ àš 1 Ĵàñüàŕý 1987 ƀéçöɱéš 1987. À ðàţé ñö šçŕàþé ƒìļļéð šţàýš àš ìţ ìš.⟧"
 
-#: templates/rom_tools_hub.html:564
+#: templates/rom_tools_hub.html:577
 msgid "No release dates need tidying."
 msgstr "⟦Ñö ŕéļéàšé ðàţéš ñééð ţìðýìñĝ.⟧"
 
-#: templates/rom_tools_hub.html:565
+#: templates/rom_tools_hub.html:578
 #, python-brace-format
 msgid "Tidied {count} games. Run a bulk scrape with Fill Missing to look for fuller dates."
 msgstr "⟦Ţìðìéð {count} ĝàɱéš. Ŕüñ à ƀüļķ šçŕàþé ŵìţĥ Ƒìļļ Ɱìššìñĝ ţö ļööķ ƒöŕ ƒüļļéŕ ðàţéš.⟧"
 
-#: templates/rom_tools_hub.html:566
+#: templates/rom_tools_hub.html:579
 msgid "Could not tidy the release dates"
 msgstr "⟦Çöüļð ñöţ ţìðý ţĥé ŕéļéàšé ðàţéš⟧"
 
-#: templates/rom_tools_hub.html:597
+#: templates/rom_tools_hub.html:610
+#, python-brace-format
+msgid ""
+"{count} saved play times look like another game. They will go to the review page, and no game changes until you decide.\n"
+"\n"
+"There, Approve keeps a time and Reject clears it."
+msgstr ""
+"⟦{count} šàⱴéð þļàý ţìɱéš ļööķ ļìķé àñöţĥéŕ ĝàɱé. Ţĥéý ŵìļļ ĝö ţö ţĥé ŕéⱴìéŵ þàĝé, àñð ñö ĝàɱé çĥàñĝéš üñţìļ ýöü ðéçìðé.\n"
+"\n"
+"Ţĥéŕé, Àþþŕöⱴé ķééþš à ţìɱé àñð Ŕéĵéçţ çļéàŕš ìţ.⟧"
+
+#: templates/rom_tools_hub.html:611
+msgid "No saved play time looks wrong."
+msgstr "⟦Ñö šàⱴéð þļàý ţìɱé ļööķš ŵŕöñĝ.⟧"
+
+#: templates/rom_tools_hub.html:612
+#, python-brace-format
+msgid "Sent {count} play times to the HowLongToBeat review page."
+msgstr "⟦Šéñţ {count} þļàý ţìɱéš ţö ţĥé ĤöŵĻöñĝŢöƁéàţ ŕéⱴìéŵ þàĝé.⟧"
+
+#: templates/rom_tools_hub.html:613
+msgid "Could not check the saved play times"
+msgstr "⟦Çöüļð ñöţ çĥéçķ ţĥé šàⱴéð þļàý ţìɱéš⟧"
+
+#: templates/rom_tools_hub.html:644
 #, python-brace-format
 msgid ""
 "{count} games and wishlist items use a RAWG picture as their box art. Those pictures will be deleted, and these games show no cover until a scrape finds one.\n"
@@ -8649,16 +8725,16 @@ msgstr ""
 "\n"
 "Çöⱴéŕš ƒŕöɱ öţĥéŕ šöüŕçéš àñð àļļ ƒàñàŕţ šţàý. Àƒţéŕŵàŕðš, ŕüñ à ƀüļķ šçŕàþé ŵìţĥ Ƒìļļ Ɱìššìñĝ ţö ļööķ ƒöŕ ŕéàļ çöⱴéŕš.⟧"
 
-#: templates/rom_tools_hub.html:598
+#: templates/rom_tools_hub.html:645
 msgid "No game uses a RAWG picture as its box art."
 msgstr "⟦Ñö ĝàɱé üšéš à ŔÀŴĜ þìçţüŕé àš ìţš ƀöж àŕţ.⟧"
 
-#: templates/rom_tools_hub.html:599
+#: templates/rom_tools_hub.html:646
 #, python-brace-format
 msgid "Cleared {count} pictures. Run a bulk scrape with Fill Missing to look for real covers."
 msgstr "⟦Çļéàŕéð {count} þìçţüŕéš. Ŕüñ à ƀüļķ šçŕàþé ŵìţĥ Ƒìļļ Ɱìššìñĝ ţö ļööķ ƒöŕ ŕéàļ çöⱴéŕš.⟧"
 
-#: templates/rom_tools_hub.html:600
+#: templates/rom_tools_hub.html:647
 msgid "Could not clear the pictures"
 msgstr "⟦Çöüļð ñöţ çļéàŕ ţĥé þìçţüŕéš⟧"
 

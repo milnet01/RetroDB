@@ -10339,7 +10339,18 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.209 HowLongToBeat: right game, right platform, and minutes counted as minutes (fix, M).
-- **Status**: todo
+- **Resolution** (2026-11-02): Done 2026-11-02, opening 3.35.2. Limits: Check Saved Play Times (ROM
+  Tools) still has to be pressed on the live library; 244 saved matches
+  were flagged on a copy (233 platform, 11 title), and some are fine
+  because HowLongToBeat does not list every system. Stored rows cannot
+  be checked by year: no year is stored for a match. A title spaced so a
+  Roman numeral stands alone ("Super Spike V' Ball") still scores as a
+  sequel, so it goes to review. `gp32` has no platform filter, and
+  `pcfx`'s "NEC PC-FX" was not confirmed: two guessed searches found
+  nothing. Requests are a second apart here until PASS-59-215 gives a
+  shared pace. HowLongToBeat's terms were not read (its page refused the
+  fetch).
+- **Status**: done
 - **Source**: PASS-59-162, 2026-10-31. Notes: hltb_ra H1 to H8.
 - **Problem**: `app.py`, `routes/collector_trophies.py` and `services/analytics.py` read `Main: 36 mins` as 36 hours, so totals are far too high. The bulk job ignores `platform_mismatch`. A sequel can pass the 95% bar. The year is never passed, and `Game Boy` is found inside `Game Boy Advance`.
 - **Fix**: one shared time parser or numeric columns; queue mismatches for review; numbers must agree; pass the year; compare whole platform names. Send affected stored rows to the review queue.

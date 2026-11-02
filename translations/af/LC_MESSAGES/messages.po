@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-02 05:06+0200\n"
+"POT-Creation-Date: 2026-11-02 07:09+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: af\n"
@@ -42,7 +42,7 @@ msgstr "Opstelling vereis"
 msgid "Password change required"
 msgstr "Wagwoordverandering vereis"
 
-#: app.py:1685 routes/auth.py:202 routes/auth.py:262 routes/auth.py:447
+#: app.py:1678 routes/auth.py:202 routes/auth.py:262 routes/auth.py:447
 #: routes/auth.py:492 templates/force_change_password.html:49
 #: templates/setup.html:469
 msgid "Password must be at least 12 characters"
@@ -65,7 +65,7 @@ msgstr "Stelsel nie gevind nie of het geen speletjies met prestasies nie"
 #: routes/games_media.py:148 routes/games_media.py:197
 #: routes/games_media.py:230 routes/launch.py:242 routes/reports.py:693
 #: routes/reports.py:822 routes/trophies.py:1291 services/cheats.py:617
-#: services/hltb_service.py:125
+#: services/hltb_service.py:154
 msgid "Game not found"
 msgstr "Speletjie nie gevind nie"
 
@@ -1510,25 +1510,25 @@ msgstr "Daardie kulkodelys behoort nie aan hierdie speletjie nie."
 msgid "Cheats work in the player, DuckStation and PCSX2."
 msgstr "Kulkodes werk in die speler, DuckStation en PCSX2."
 
-#: services/hltb_service.py:134
+#: services/hltb_service.py:164
 #, python-format
 msgid "No HLTB match found for \"%(title)s\""
 msgstr "Geen HLTB-passing vir \"%(title)s\" gevind nie"
 
-#: services/hltb_service.py:176
+#: services/hltb_service.py:214
 msgid "No search query provided"
 msgstr "Geen soeknavraag verskaf nie"
 
-#: services/hltb_service.py:201
+#: services/hltb_service.py:239
 #, python-format
 msgid "No HLTB match found for \"%(query)s\""
 msgstr "Geen HLTB-passing vir \"%(query)s\" gevind nie"
 
-#: services/hltb_service.py:225
+#: services/hltb_service.py:262
 msgid "No playtime provided"
 msgstr "Geen speeltyd verskaf nie"
 
-#: services/hltb_service.py:306
+#: services/hltb_service.py:346
 msgid "Pending match not found"
 msgstr "Hangende passing nie gevind nie"
 
@@ -5800,7 +5800,7 @@ msgstr "Gereedskap"
 msgid "Game Imports"
 msgstr "Speletjie-invoere"
 
-#: templates/base.html:183 templates/rom_tools_hub.html:397
+#: templates/base.html:183 templates/rom_tools_hub.html:410
 msgid "Configuration"
 msgstr "Konfigurasie"
 
@@ -7740,17 +7740,70 @@ msgstr "Alt-titel-passings"
 msgid "Low confidence"
 msgstr "Lae vertroue"
 
-#: templates/hltb_review.html:39
+#: templates/hltb_review.html:31
+#, fuzzy
+msgid "Other platform or year"
+msgstr "Platformer"
+
+#: templates/hltb_review.html:32
+#, fuzzy
+msgid "Already saved"
+msgstr "Nee (reeds gestel)"
+
+#: templates/hltb_review.html:41
 msgid "No pending HLTB matches"
 msgstr "Geen hangende HLTB-passings nie"
 
-#: templates/hltb_review.html:40
+#: templates/hltb_review.html:42
 msgid ""
 "Run a bulk HLTB lookup from the ROM Tools Hub to queue matches for review"
 " here."
 msgstr ""
 "Voer 'n grootmaat-HLTB-opsoek vanaf die ROM-nutsmiddel-sentrum uit om "
 "passings hier vir nasien te wag."
+
+#: templates/hltb_review.html:192
+#, fuzzy
+msgid "Not listed for this system"
+msgstr "Geen emulator is vir hierdie stelsel opgestel nie."
+
+#: templates/hltb_review.html:193
+#, fuzzy
+msgid "Came out years after this game"
+msgstr "Gestel vir hierdie speletjie"
+
+#: templates/hltb_review.html:194
+#, fuzzy
+msgid "Saved, but not listed for this system"
+msgstr "Geen emulator is vir hierdie stelsel opgestel nie."
+
+#: templates/hltb_review.html:195
+msgid "Saved, but the title differs"
+msgstr ""
+
+#: templates/hltb_review.html:196
+#, python-brace-format
+msgid "{count} on another platform or year"
+msgstr ""
+
+#: templates/hltb_review.html:197
+#, fuzzy, python-brace-format
+msgid "{count} already saved"
+msgstr "Nee (reeds gestel)"
+
+#: templates/hltb_review.html:198
+#, python-brace-format
+msgid ""
+"This will clear the play time from {count} games that already have one. A"
+" bulk lookup can fetch the times again."
+msgstr ""
+
+#: templates/hltb_review.html:199
+#, python-brace-format
+msgid ""
+"The other {count} queued matches are dropped, and those games keep what "
+"they have."
+msgstr ""
 
 #: templates/_settings_tabs/data.html:5 templates/local_trophies.html:6
 #: templates/psn_trophy_detail.html:276 templates/systems.html:89
@@ -8805,7 +8858,7 @@ msgstr ""
 #: templates/rom_tools_hub.html:253 templates/rom_tools_hub.html:267
 #: templates/rom_tools_hub.html:280 templates/rom_tools_hub.html:319
 #: templates/rom_tools_hub.html:332 templates/rom_tools_hub.html:345
-#: templates/rom_tools_hub.html:358
+#: templates/rom_tools_hub.html:358 templates/rom_tools_hub.html:371
 msgid "No dependencies required"
 msgstr "Geen afhanklikhede vereis nie"
 
@@ -8912,7 +8965,7 @@ msgstr ""
 msgid "Metadata only &middot; no media downloads"
 msgstr "Slegs metadata &middot; geen media-aflaaie nie"
 
-#: templates/rom_tools_hub.html:300 templates/rom_tools_hub.html:435
+#: templates/rom_tools_hub.html:300 templates/rom_tools_hub.html:448
 msgid "Fix Box and Manual Regions"
 msgstr "Herstel boks- en handleidingstreke"
 
@@ -8932,7 +8985,7 @@ msgstr ""
 msgid "Needs a ScreenScraper account"
 msgstr "Het 'n ScreenScraper-rekening nodig"
 
-#: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:494
+#: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:507
 msgid "Fix Regions from File Names"
 msgstr "Herstel streke uit lêernaam"
 
@@ -8946,7 +8999,7 @@ msgstr ""
 "gesê het, so 'n (USA)-lêer kon as Japan gelys word. Dit gee daardie "
 "speletjies die streek in hul lêernaam."
 
-#: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:528
+#: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:541
 msgid "Tidy Genres, Perspectives and Modes"
 msgstr "Maak Genres, Perspektiewe en Modusse netjies"
 
@@ -8960,7 +9013,7 @@ msgstr ""
 "Role Playing Game verskyn, en 'n filter het speletjies gemis. Dit gee "
 "elke speletjie een stel name."
 
-#: templates/rom_tools_hub.html:339 templates/rom_tools_hub.html:562
+#: templates/rom_tools_hub.html:339 templates/rom_tools_hub.html:575
 msgid "Tidy Release Dates"
 msgstr "Maak Uitreikdatums netjies"
 
@@ -8975,11 +9028,23 @@ msgstr ""
 " datums terug tot die jaar of maand, sodat 'n skraap die regte een kan "
 "invul."
 
-#: templates/rom_tools_hub.html:352 templates/rom_tools_hub.html:596
+#: templates/rom_tools_hub.html:352 templates/rom_tools_hub.html:609
+#, fuzzy
+msgid "Check Saved Play Times"
+msgstr "Kyk vir opdaterings"
+
+#: templates/rom_tools_hub.html:355
+msgid ""
+"Older lookups could save the play time of a sequel, or of another game "
+"with the same name on another system. This sends those matches to the "
+"review page, where you keep or clear each one."
+msgstr ""
+
+#: templates/rom_tools_hub.html:365 templates/rom_tools_hub.html:643
 msgid "Clear RAWG Pictures from Box Art"
 msgstr "Vee RAWG-prente uit bokskuns"
 
-#: templates/rom_tools_hub.html:355
+#: templates/rom_tools_hub.html:368
 msgid ""
 "RAWG has no box art, so older scrapes saved a background picture or "
 "screenshot as the cover, and that blocks a real cover. This clears those "
@@ -8989,11 +9054,11 @@ msgstr ""
 "skermkiekie as omslag gestoor, en dit blokkeer 'n regte omslag. Dit vee "
 "daardie prente uit sodat 'n skraap regte omslae kan vind."
 
-#: templates/rom_tools_hub.html:365
+#: templates/rom_tools_hub.html:378
 msgid "Bulk HLTB Lookup"
 msgstr "Massa HLTB-opsoek"
 
-#: templates/rom_tools_hub.html:368
+#: templates/rom_tools_hub.html:381
 msgid ""
 "Fetch HowLongToBeat playtime for every game. High-confidence primary-"
 "title matches apply automatically; alt-title matches and low-confidence "
@@ -9004,15 +9069,15 @@ msgstr ""
 "selfvertroue treffers word in wagry vir hersiening geplaas sodat jy in "
 "massa kan goedkeur of afkeur."
 
-#: templates/rom_tools_hub.html:371
+#: templates/rom_tools_hub.html:384
 msgid "Uses stored alternate titles"
 msgstr "Gebruik gestoorde alternatiewe titels"
 
-#: templates/rom_tools_hub.html:378
+#: templates/rom_tools_hub.html:391
 msgid "HLTB Pending Review"
 msgstr "HLTB Hangende Hersiening"
 
-#: templates/rom_tools_hub.html:381
+#: templates/rom_tools_hub.html:394
 msgid ""
 "Review and approve HLTB matches that were flagged during a bulk lookup "
 "&mdash; alt-title matches and anything below the confidence threshold."
@@ -9021,15 +9086,15 @@ msgstr ""
 "&mdash; alternatiewe-titel-passings en enigiets onder die selfvertroue-"
 "drempel."
 
-#: templates/rom_tools_hub.html:384
+#: templates/rom_tools_hub.html:397
 msgid "Requires review"
 msgstr "Vereis hersiening"
 
-#: templates/rom_tools_hub.html:391
+#: templates/rom_tools_hub.html:404
 msgid "Tool Settings"
 msgstr "Nutsprograminstellings"
 
-#: templates/rom_tools_hub.html:394
+#: templates/rom_tools_hub.html:407
 msgid ""
 "Configure paths, external tool locations, archive types, and other "
 "preferences shared across all ROM tools."
@@ -9037,7 +9102,7 @@ msgstr ""
 "Stel paaie, eksterne nutsprogramliggings, argieftipes, en ander voorkeure"
 " op wat oor alle ROM-nutsprogramme gedeel word."
 
-#: templates/rom_tools_hub.html:436
+#: templates/rom_tools_hub.html:449
 msgid ""
 "Each game with a ScreenScraper box or manual is looked up again. Where "
 "another region suits it better, the file is downloaded and the old one is"
@@ -9055,11 +9120,11 @@ msgstr ""
 "gebruik jou daaglikse ScreenScraper-toelae en kan lank neem. Jy kan die "
 "bladsy verlaat, en druk weer op hierdie kaart om te stop."
 
-#: templates/rom_tools_hub.html:437
+#: templates/rom_tools_hub.html:450
 msgid "Could not start the fix"
 msgstr "Kon nie die regstelling begin nie"
 
-#: templates/rom_tools_hub.html:438
+#: templates/rom_tools_hub.html:451
 msgid ""
 "Stop the fix? Files already swapped stay as they are, and a later run "
 "carries on with the rest."
@@ -9067,12 +9132,12 @@ msgstr ""
 "Stop die regstelling? Lêers wat reeds geruil is, bly soos hulle is, en 'n"
 " latere uitvoering gaan voort met die res."
 
-#: templates/rom_tools_hub.html:439
+#: templates/rom_tools_hub.html:452
 #, python-brace-format
 msgid "Stopped. Files swapped: {replaced}."
 msgstr "Gestop. Lêers geruil: {replaced}."
 
-#: templates/rom_tools_hub.html:440
+#: templates/rom_tools_hub.html:453
 #, python-brace-format
 msgid ""
 "The fix stopped with an error. Files swapped: {replaced}. The log has the"
@@ -9081,12 +9146,12 @@ msgstr ""
 "Die regstelling het met 'n fout gestop. Lêers geruil: {replaced}. Die log"
 " het die besonderhede."
 
-#: templates/rom_tools_hub.html:441
+#: templates/rom_tools_hub.html:454
 #, python-brace-format
 msgid "Checked {current} of {total} games. Files swapped: {replaced}."
 msgstr "{current} van {total} speletjies nagegaan. Lêers geruil: {replaced}."
 
-#: templates/rom_tools_hub.html:442
+#: templates/rom_tools_hub.html:455
 #, python-brace-format
 msgid ""
 "Finished. Files swapped: {replaced}. Games not found: {no_match}. Could "
@@ -9095,7 +9160,7 @@ msgstr ""
 "Klaar. Lêers geruil: {replaced}. Speletjies nie gevind nie: {no_match}. "
 "Kon nie aflaai nie: {failed}."
 
-#: templates/rom_tools_hub.html:443
+#: templates/rom_tools_hub.html:456
 #, python-brace-format
 msgid ""
 "Stopped: ScreenScraper stopped answering, so your daily allowance may be "
@@ -9104,7 +9169,7 @@ msgstr ""
 "Gestop: ScreenScraper het opgehou antwoord, so jou daaglikse toelae is "
 "dalk op. Lêers geruil: {replaced}. Voer dit môre weer uit."
 
-#: templates/rom_tools_hub.html:495
+#: templates/rom_tools_hub.html:508
 #, python-brace-format
 msgid ""
 "{count} games have a region from the AI that their file name contradicts."
@@ -9120,20 +9185,20 @@ msgstr ""
 " met die hand reggemaak het om van die lêernaam te verskil, verander dit "
 "ook."
 
-#: templates/rom_tools_hub.html:496
+#: templates/rom_tools_hub.html:509
 msgid "No game has an AI region that its file name contradicts."
 msgstr "Geen speletjie het 'n AI-streek wat sy lêernaam weerspreek nie."
 
-#: templates/rom_tools_hub.html:497
+#: templates/rom_tools_hub.html:510
 #, python-brace-format
 msgid "Fixed {count} regions."
 msgstr "{count} streke reggemaak."
 
-#: templates/rom_tools_hub.html:498
+#: templates/rom_tools_hub.html:511
 msgid "Could not fix the regions"
 msgstr "Kon nie die streke regmaak nie"
 
-#: templates/rom_tools_hub.html:529
+#: templates/rom_tools_hub.html:542
 #, python-brace-format
 msgid ""
 "{count} games will change.\n"
@@ -9158,11 +9223,11 @@ msgstr ""
 "Laat daarna 'n grootmaat-skraap met Vul Ontbrekende In loop om enigiets "
 "wat nog leeg is, in te vul."
 
-#: templates/rom_tools_hub.html:530
+#: templates/rom_tools_hub.html:543
 msgid "Every game already uses these names."
 msgstr "Elke speletjie gebruik reeds hierdie name."
 
-#: templates/rom_tools_hub.html:531
+#: templates/rom_tools_hub.html:544
 #, python-brace-format
 msgid ""
 "Tidied {count} games. Run a bulk scrape with Fill Missing to fill "
@@ -9171,11 +9236,11 @@ msgstr ""
 "{count} speletjies netjies gemaak. Laat 'n grootmaat-skraap met Vul "
 "Ontbrekende In loop om enigiets wat nog leeg is, in te vul."
 
-#: templates/rom_tools_hub.html:532
+#: templates/rom_tools_hub.html:545
 msgid "Could not tidy the names"
 msgstr "Kon nie die name netjies maak nie"
 
-#: templates/rom_tools_hub.html:563
+#: templates/rom_tools_hub.html:576
 #, python-brace-format
 msgid ""
 "{count} games will change.\n"
@@ -9188,11 +9253,11 @@ msgstr ""
 "'n Datum soos 1 Januarie 1987 word 1987. 'n Datum wat geen skraap ingevul"
 " het nie, bly soos dit is."
 
-#: templates/rom_tools_hub.html:564
+#: templates/rom_tools_hub.html:577
 msgid "No release dates need tidying."
 msgstr "Geen uitreikdatums hoef netjies gemaak te word nie."
 
-#: templates/rom_tools_hub.html:565
+#: templates/rom_tools_hub.html:578
 #, python-brace-format
 msgid ""
 "Tidied {count} games. Run a bulk scrape with Fill Missing to look for "
@@ -9201,11 +9266,34 @@ msgstr ""
 "{count} speletjies netjies gemaak. Laat 'n grootmaat-skraap met Vul "
 "Ontbrekende In loop om na voller datums te soek."
 
-#: templates/rom_tools_hub.html:566
+#: templates/rom_tools_hub.html:579
 msgid "Could not tidy the release dates"
 msgstr "Kon nie die uitreikdatums netjies maak nie"
 
-#: templates/rom_tools_hub.html:597
+#: templates/rom_tools_hub.html:610
+#, python-brace-format
+msgid ""
+"{count} saved play times look like another game. They will go to the "
+"review page, and no game changes until you decide.\n"
+"\n"
+"There, Approve keeps a time and Reject clears it."
+msgstr ""
+
+#: templates/rom_tools_hub.html:611
+msgid "No saved play time looks wrong."
+msgstr ""
+
+#: templates/rom_tools_hub.html:612
+#, python-brace-format
+msgid "Sent {count} play times to the HowLongToBeat review page."
+msgstr ""
+
+#: templates/rom_tools_hub.html:613
+#, fuzzy
+msgid "Could not check the saved play times"
+msgstr "Kon nie hierdie name verwerp nie."
+
+#: templates/rom_tools_hub.html:644
 #, python-brace-format
 msgid ""
 "{count} games and wishlist items use a RAWG picture as their box art. "
@@ -9222,11 +9310,11 @@ msgstr ""
 "Omslae van ander bronne en alle fankuns bly. Voer daarna 'n grootmaat-"
 "skraap met Vul ontbrekende in om regte omslae te soek."
 
-#: templates/rom_tools_hub.html:598
+#: templates/rom_tools_hub.html:645
 msgid "No game uses a RAWG picture as its box art."
 msgstr "Geen speletjie gebruik 'n RAWG-prent as sy bokskuns nie."
 
-#: templates/rom_tools_hub.html:599
+#: templates/rom_tools_hub.html:646
 #, python-brace-format
 msgid ""
 "Cleared {count} pictures. Run a bulk scrape with Fill Missing to look for"
@@ -9235,7 +9323,7 @@ msgstr ""
 "{count} prente uitgevee. Voer 'n grootmaat-skraap met Vul ontbrekende in "
 "om regte omslae te soek."
 
-#: templates/rom_tools_hub.html:600
+#: templates/rom_tools_hub.html:647
 msgid "Could not clear the pictures"
 msgstr "Kon nie die prente uitvee nie"
 
@@ -11705,4 +11793,13 @@ msgstr "Ondersteun op Patreon"
 
 #~ msgid "Launches in: %(name)s"
 #~ msgstr "Begin in: %(name)s"
+
+#~ msgid ""
+#~ "This will clear the play time from"
+#~ " {stored} games that already have "
+#~ "one. The other {other} queued matches"
+#~ " are dropped, and those games keep"
+#~ " what they have. A bulk lookup "
+#~ "can fetch the times again."
+#~ msgstr ""
 

@@ -50,6 +50,7 @@ MIGRATIONS = [
     '023_games_units_sold',
     '024_games_release_dates',
     '025_games_box_faces',
+    '026_hltb_match_reviewed',
 ]
 
 

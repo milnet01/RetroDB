@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-02 05:06+0200\n"
+"POT-Creation-Date: 2026-11-02 07:09+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: tr\n"
@@ -42,7 +42,7 @@ msgstr "Kurulum gerekli"
 msgid "Password change required"
 msgstr "Şifre değişikliği gerekli"
 
-#: app.py:1685 routes/auth.py:202 routes/auth.py:262 routes/auth.py:447
+#: app.py:1678 routes/auth.py:202 routes/auth.py:262 routes/auth.py:447
 #: routes/auth.py:492 templates/force_change_password.html:49
 #: templates/setup.html:469
 msgid "Password must be at least 12 characters"
@@ -65,7 +65,7 @@ msgstr "Sistem bulunamadı veya başarım içeren oyunu yok"
 #: routes/games_media.py:148 routes/games_media.py:197
 #: routes/games_media.py:230 routes/launch.py:242 routes/reports.py:693
 #: routes/reports.py:822 routes/trophies.py:1291 services/cheats.py:617
-#: services/hltb_service.py:125
+#: services/hltb_service.py:154
 msgid "Game not found"
 msgstr "Oyun bulunamadı"
 
@@ -1514,25 +1514,25 @@ msgstr "Bu hile listesi bu oyuna ait değil."
 msgid "Cheats work in the player, DuckStation and PCSX2."
 msgstr "Hileler oynatıcıda, DuckStation'da ve PCSX2'de çalışır."
 
-#: services/hltb_service.py:134
+#: services/hltb_service.py:164
 #, python-format
 msgid "No HLTB match found for \"%(title)s\""
 msgstr "\"%(title)s\" için HLTB eşleşmesi bulunamadı"
 
-#: services/hltb_service.py:176
+#: services/hltb_service.py:214
 msgid "No search query provided"
 msgstr "Arama sorgusu sağlanmadı"
 
-#: services/hltb_service.py:201
+#: services/hltb_service.py:239
 #, python-format
 msgid "No HLTB match found for \"%(query)s\""
 msgstr "\"%(query)s\" için HLTB eşleşmesi bulunamadı"
 
-#: services/hltb_service.py:225
+#: services/hltb_service.py:262
 msgid "No playtime provided"
 msgstr "Oynama süresi sağlanmadı"
 
-#: services/hltb_service.py:306
+#: services/hltb_service.py:346
 msgid "Pending match not found"
 msgstr "Bekleyen eşleşme bulunamadı"
 
@@ -5803,7 +5803,7 @@ msgstr "Araçlar"
 msgid "Game Imports"
 msgstr "Oyun İçe Aktarmaları"
 
-#: templates/base.html:183 templates/rom_tools_hub.html:397
+#: templates/base.html:183 templates/rom_tools_hub.html:410
 msgid "Configuration"
 msgstr "Yapılandırma"
 
@@ -7740,17 +7740,70 @@ msgstr "Alternatif başlık eşleşmeleri"
 msgid "Low confidence"
 msgstr "Düşük güven"
 
-#: templates/hltb_review.html:39
+#: templates/hltb_review.html:31
+#, fuzzy
+msgid "Other platform or year"
+msgstr "Platform"
+
+#: templates/hltb_review.html:32
+#, fuzzy
+msgid "Already saved"
+msgstr "Hayır (zaten ayarlı)"
+
+#: templates/hltb_review.html:41
 msgid "No pending HLTB matches"
 msgstr "Bekleyen HLTB eşleşmesi yok"
 
-#: templates/hltb_review.html:40
+#: templates/hltb_review.html:42
 msgid ""
 "Run a bulk HLTB lookup from the ROM Tools Hub to queue matches for review"
 " here."
 msgstr ""
 "Burada incelenmek üzere eşleşmeleri kuyruğa almak için ROM Araçları "
 "Merkezi'nden toplu HLTB araması çalıştırın."
+
+#: templates/hltb_review.html:192
+#, fuzzy
+msgid "Not listed for this system"
+msgstr "Bu sistem için ayarlanmış bir emülatör yok."
+
+#: templates/hltb_review.html:193
+#, fuzzy
+msgid "Came out years after this game"
+msgstr "Bu oyun için ayarlandı"
+
+#: templates/hltb_review.html:194
+#, fuzzy
+msgid "Saved, but not listed for this system"
+msgstr "Bu sistem için ayarlanmış bir emülatör yok."
+
+#: templates/hltb_review.html:195
+msgid "Saved, but the title differs"
+msgstr ""
+
+#: templates/hltb_review.html:196
+#, python-brace-format
+msgid "{count} on another platform or year"
+msgstr ""
+
+#: templates/hltb_review.html:197
+#, fuzzy, python-brace-format
+msgid "{count} already saved"
+msgstr "Hayır (zaten ayarlı)"
+
+#: templates/hltb_review.html:198
+#, python-brace-format
+msgid ""
+"This will clear the play time from {count} games that already have one. A"
+" bulk lookup can fetch the times again."
+msgstr ""
+
+#: templates/hltb_review.html:199
+#, python-brace-format
+msgid ""
+"The other {count} queued matches are dropped, and those games keep what "
+"they have."
+msgstr ""
 
 #: templates/_settings_tabs/data.html:5 templates/local_trophies.html:6
 #: templates/psn_trophy_detail.html:276 templates/systems.html:89
@@ -8801,7 +8854,7 @@ msgstr ""
 #: templates/rom_tools_hub.html:253 templates/rom_tools_hub.html:267
 #: templates/rom_tools_hub.html:280 templates/rom_tools_hub.html:319
 #: templates/rom_tools_hub.html:332 templates/rom_tools_hub.html:345
-#: templates/rom_tools_hub.html:358
+#: templates/rom_tools_hub.html:358 templates/rom_tools_hub.html:371
 msgid "No dependencies required"
 msgstr "Bağımlılık gerektirmez"
 
@@ -8909,7 +8962,7 @@ msgstr ""
 msgid "Metadata only &middot; no media downloads"
 msgstr "Yalnızca meta veri &middot; medya indirme yok"
 
-#: templates/rom_tools_hub.html:300 templates/rom_tools_hub.html:435
+#: templates/rom_tools_hub.html:300 templates/rom_tools_hub.html:448
 msgid "Fix Box and Manual Regions"
 msgstr "Kutu ve Kılavuz Bölgelerini Düzelt"
 
@@ -8929,7 +8982,7 @@ msgstr ""
 msgid "Needs a ScreenScraper account"
 msgstr "ScreenScraper hesabı gerekir"
 
-#: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:494
+#: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:507
 msgid "Fix Regions from File Names"
 msgstr "Bölgeleri Dosya Adlarından Düzelt"
 
@@ -8943,7 +8996,7 @@ msgstr ""
 "yüzden (USA) olan bir dosya Japonya olarak listelenebiliyordu. Bu işlem o"
 " oyunlara dosya adındaki bölgeyi verir."
 
-#: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:528
+#: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:541
 msgid "Tidy Genres, Perspectives and Modes"
 msgstr "Türleri, Bakış Açılarını ve Modları Düzenle"
 
@@ -8957,7 +9010,7 @@ msgstr ""
 "Role Playing Game olarak görünebilir ve bir filtre bazı oyunları "
 "kaçırabilir. Bu işlem her oyuna tek bir ad takımı verir."
 
-#: templates/rom_tools_hub.html:339 templates/rom_tools_hub.html:562
+#: templates/rom_tools_hub.html:339 templates/rom_tools_hub.html:575
 msgid "Tidy Release Dates"
 msgstr "Çıkış Tarihlerini Düzenle"
 
@@ -8971,11 +9024,23 @@ msgstr ""
 " Ocak veya 31 Aralık olarak kaydetmişti. Bu işlem bu tarihleri yıla veya "
 "aya indirir; böylece yeni bir kazıma gerçek tarihi doldurabilir."
 
-#: templates/rom_tools_hub.html:352 templates/rom_tools_hub.html:596
+#: templates/rom_tools_hub.html:352 templates/rom_tools_hub.html:609
+#, fuzzy
+msgid "Check Saved Play Times"
+msgstr "Güncellemeleri denetle"
+
+#: templates/rom_tools_hub.html:355
+msgid ""
+"Older lookups could save the play time of a sequel, or of another game "
+"with the same name on another system. This sends those matches to the "
+"review page, where you keep or clear each one."
+msgstr ""
+
+#: templates/rom_tools_hub.html:365 templates/rom_tools_hub.html:643
 msgid "Clear RAWG Pictures from Box Art"
 msgstr "RAWG Görsellerini Kutu Resminden Temizle"
 
-#: templates/rom_tools_hub.html:355
+#: templates/rom_tools_hub.html:368
 msgid ""
 "RAWG has no box art, so older scrapes saved a background picture or "
 "screenshot as the cover, and that blocks a real cover. This clears those "
@@ -8986,11 +9051,11 @@ msgstr ""
 "engelliyor. Bu işlem o görselleri temizler, böylece kazıma gerçek "
 "kapakları bulabilir."
 
-#: templates/rom_tools_hub.html:365
+#: templates/rom_tools_hub.html:378
 msgid "Bulk HLTB Lookup"
 msgstr "Toplu HLTB Araması"
 
-#: templates/rom_tools_hub.html:368
+#: templates/rom_tools_hub.html:381
 msgid ""
 "Fetch HowLongToBeat playtime for every game. High-confidence primary-"
 "title matches apply automatically; alt-title matches and low-confidence "
@@ -9001,15 +9066,15 @@ msgstr ""
 "eşleşmeleri ve düşük güvenilirlikli sonuçlar, toplu olarak "
 "onaylayabilmeniz veya reddedebilmeniz için incelemeye kuyruğa alınır."
 
-#: templates/rom_tools_hub.html:371
+#: templates/rom_tools_hub.html:384
 msgid "Uses stored alternate titles"
 msgstr "Kayıtlı alternatif başlıkları kullanır"
 
-#: templates/rom_tools_hub.html:378
+#: templates/rom_tools_hub.html:391
 msgid "HLTB Pending Review"
 msgstr "HLTB İncelemesi Bekleyen"
 
-#: templates/rom_tools_hub.html:381
+#: templates/rom_tools_hub.html:394
 msgid ""
 "Review and approve HLTB matches that were flagged during a bulk lookup "
 "&mdash; alt-title matches and anything below the confidence threshold."
@@ -9018,15 +9083,15 @@ msgstr ""
 "onaylayın &mdash; alternatif başlık eşleşmeleri ve güven eşiğinin "
 "altındaki her şey."
 
-#: templates/rom_tools_hub.html:384
+#: templates/rom_tools_hub.html:397
 msgid "Requires review"
 msgstr "İnceleme gerektirir"
 
-#: templates/rom_tools_hub.html:391
+#: templates/rom_tools_hub.html:404
 msgid "Tool Settings"
 msgstr "Araç Ayarları"
 
-#: templates/rom_tools_hub.html:394
+#: templates/rom_tools_hub.html:407
 msgid ""
 "Configure paths, external tool locations, archive types, and other "
 "preferences shared across all ROM tools."
@@ -9034,7 +9099,7 @@ msgstr ""
 "Tüm ROM araçlarında paylaşılan yolları, harici araç konumlarını, arşiv "
 "türlerini ve diğer tercihleri yapılandırın."
 
-#: templates/rom_tools_hub.html:436
+#: templates/rom_tools_hub.html:449
 msgid ""
 "Each game with a ScreenScraper box or manual is looked up again. Where "
 "another region suits it better, the file is downloaded and the old one is"
@@ -9051,11 +9116,11 @@ msgstr ""
 "hakkınızı kullanır ve uzun sürebilir. Sayfadan ayrılabilirsiniz, "
 "durdurmak için bu karta tekrar basın."
 
-#: templates/rom_tools_hub.html:437
+#: templates/rom_tools_hub.html:450
 msgid "Could not start the fix"
 msgstr "Düzeltme başlatılamadı"
 
-#: templates/rom_tools_hub.html:438
+#: templates/rom_tools_hub.html:451
 msgid ""
 "Stop the fix? Files already swapped stay as they are, and a later run "
 "carries on with the rest."
@@ -9063,12 +9128,12 @@ msgstr ""
 "Düzeltme durdurulsun mu? Değiştirilen dosyalar olduğu gibi kalır, sonraki"
 " çalıştırma kalanlarla devam eder."
 
-#: templates/rom_tools_hub.html:439
+#: templates/rom_tools_hub.html:452
 #, python-brace-format
 msgid "Stopped. Files swapped: {replaced}."
 msgstr "Durduruldu. Değiştirilen dosya: {replaced}."
 
-#: templates/rom_tools_hub.html:440
+#: templates/rom_tools_hub.html:453
 #, python-brace-format
 msgid ""
 "The fix stopped with an error. Files swapped: {replaced}. The log has the"
@@ -9077,14 +9142,14 @@ msgstr ""
 "Düzeltme bir hatayla durdu. Değiştirilen dosya: {replaced}. Ayrıntılar "
 "günlükte."
 
-#: templates/rom_tools_hub.html:441
+#: templates/rom_tools_hub.html:454
 #, python-brace-format
 msgid "Checked {current} of {total} games. Files swapped: {replaced}."
 msgstr ""
 "{total} oyundan {current} tanesi denetlendi. Değiştirilen dosya: "
 "{replaced}."
 
-#: templates/rom_tools_hub.html:442
+#: templates/rom_tools_hub.html:455
 #, python-brace-format
 msgid ""
 "Finished. Files swapped: {replaced}. Games not found: {no_match}. Could "
@@ -9093,7 +9158,7 @@ msgstr ""
 "Bitti. Değiştirilen dosya: {replaced}. Bulunamayan oyun: {no_match}. "
 "İndirilemeyen: {failed}."
 
-#: templates/rom_tools_hub.html:443
+#: templates/rom_tools_hub.html:456
 #, python-brace-format
 msgid ""
 "Stopped: ScreenScraper stopped answering, so your daily allowance may be "
@@ -9102,7 +9167,7 @@ msgstr ""
 "Durduruldu: ScreenScraper yanıt vermeyi kesti, günlük hakkınız dolmuş "
 "olabilir. Değiştirilen dosya: {replaced}. Yarın tekrar çalıştırın."
 
-#: templates/rom_tools_hub.html:495
+#: templates/rom_tools_hub.html:508
 #, python-brace-format
 msgid ""
 "{count} games have a region from the AI that their file name contradicts."
@@ -9117,20 +9182,20 @@ msgstr ""
 "Yalnızca yapay zekanın doldurduğu bölgeler değişir. Bunlardan birini elle"
 " dosya adından farklı olacak şekilde düzelttiyseniz o da değişir."
 
-#: templates/rom_tools_hub.html:496
+#: templates/rom_tools_hub.html:509
 msgid "No game has an AI region that its file name contradicts."
 msgstr "Hiçbir oyunun, dosya adıyla çelişen bir yapay zeka bölgesi yok."
 
-#: templates/rom_tools_hub.html:497
+#: templates/rom_tools_hub.html:510
 #, python-brace-format
 msgid "Fixed {count} regions."
 msgstr "{count} bölge düzeltildi."
 
-#: templates/rom_tools_hub.html:498
+#: templates/rom_tools_hub.html:511
 msgid "Could not fix the regions"
 msgstr "Bölgeler düzeltilemedi"
 
-#: templates/rom_tools_hub.html:529
+#: templates/rom_tools_hub.html:542
 #, python-brace-format
 msgid ""
 "{count} games will change.\n"
@@ -9154,11 +9219,11 @@ msgstr ""
 "Sonrasında, boş kalanları doldurmak için Eksikleri Doldur ile toplu "
 "kazıma çalıştırın."
 
-#: templates/rom_tools_hub.html:530
+#: templates/rom_tools_hub.html:543
 msgid "Every game already uses these names."
 msgstr "Tüm oyunlar zaten bu adları kullanıyor."
 
-#: templates/rom_tools_hub.html:531
+#: templates/rom_tools_hub.html:544
 #, python-brace-format
 msgid ""
 "Tidied {count} games. Run a bulk scrape with Fill Missing to fill "
@@ -9167,11 +9232,11 @@ msgstr ""
 "{count} oyun düzenlendi. Boş kalanları doldurmak için Eksikleri Doldur "
 "ile toplu kazıma çalıştırın."
 
-#: templates/rom_tools_hub.html:532
+#: templates/rom_tools_hub.html:545
 msgid "Could not tidy the names"
 msgstr "Adlar düzenlenemedi"
 
-#: templates/rom_tools_hub.html:563
+#: templates/rom_tools_hub.html:576
 #, python-brace-format
 msgid ""
 "{count} games will change.\n"
@@ -9184,11 +9249,11 @@ msgstr ""
 "1 Ocak 1987 gibi bir tarih 1987 olur. Hiçbir kazımanın doldurmadığı tarih"
 " olduğu gibi kalır."
 
-#: templates/rom_tools_hub.html:564
+#: templates/rom_tools_hub.html:577
 msgid "No release dates need tidying."
 msgstr "Düzenlenmesi gereken çıkış tarihi yok."
 
-#: templates/rom_tools_hub.html:565
+#: templates/rom_tools_hub.html:578
 #, python-brace-format
 msgid ""
 "Tidied {count} games. Run a bulk scrape with Fill Missing to look for "
@@ -9197,11 +9262,34 @@ msgstr ""
 "{count} oyun düzenlendi. Daha ayrıntılı tarihleri aramak için Eksikleri "
 "Doldur ile toplu kazıma çalıştırın."
 
-#: templates/rom_tools_hub.html:566
+#: templates/rom_tools_hub.html:579
 msgid "Could not tidy the release dates"
 msgstr "Çıkış tarihleri düzenlenemedi"
 
-#: templates/rom_tools_hub.html:597
+#: templates/rom_tools_hub.html:610
+#, python-brace-format
+msgid ""
+"{count} saved play times look like another game. They will go to the "
+"review page, and no game changes until you decide.\n"
+"\n"
+"There, Approve keeps a time and Reject clears it."
+msgstr ""
+
+#: templates/rom_tools_hub.html:611
+msgid "No saved play time looks wrong."
+msgstr ""
+
+#: templates/rom_tools_hub.html:612
+#, python-brace-format
+msgid "Sent {count} play times to the HowLongToBeat review page."
+msgstr ""
+
+#: templates/rom_tools_hub.html:613
+#, fuzzy
+msgid "Could not check the saved play times"
+msgstr "Bu adlar reddedilemedi."
+
+#: templates/rom_tools_hub.html:644
 #, python-brace-format
 msgid ""
 "{count} games and wishlist items use a RAWG picture as their box art. "
@@ -9219,11 +9307,11 @@ msgstr ""
 "gerçek kapakları aramak için Eksikleri Doldur ile toplu kazıma "
 "çalıştırın."
 
-#: templates/rom_tools_hub.html:598
+#: templates/rom_tools_hub.html:645
 msgid "No game uses a RAWG picture as its box art."
 msgstr "Hiçbir oyun kutu resmi olarak RAWG görseli kullanmıyor."
 
-#: templates/rom_tools_hub.html:599
+#: templates/rom_tools_hub.html:646
 #, python-brace-format
 msgid ""
 "Cleared {count} pictures. Run a bulk scrape with Fill Missing to look for"
@@ -9232,7 +9320,7 @@ msgstr ""
 "{count} görsel temizlendi. Gerçek kapakları aramak için Eksikleri Doldur "
 "ile toplu kazıma çalıştırın."
 
-#: templates/rom_tools_hub.html:600
+#: templates/rom_tools_hub.html:647
 msgid "Could not clear the pictures"
 msgstr "Görseller temizlenemedi"
 
@@ -11718,4 +11806,13 @@ msgstr "Patreon'da Destekle"
 
 #~ msgid "Launches in: %(name)s"
 #~ msgstr "Şurada açılır: %(name)s"
+
+#~ msgid ""
+#~ "This will clear the play time from"
+#~ " {stored} games that already have "
+#~ "one. The other {other} queued matches"
+#~ " are dropped, and those games keep"
+#~ " what they have. A bulk lookup "
+#~ "can fetch the times again."
+#~ msgstr ""
 

@@ -321,7 +321,6 @@ def fetch_igdb_extended(game_id):
             game['_extended'] = {
                 'franchise': franchise,
                 'similar_games': ', '.join(similar) if similar else None,
-                'playtime_estimate': None,  # IGDB deprecated time_to_beat
                 'critic_score': critic_score,
                 'critic_score_count': critic_score_count,
                 'user_score': user_score,
