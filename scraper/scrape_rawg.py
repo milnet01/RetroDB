@@ -304,20 +304,6 @@ def get_game_details(game_id):
         user_score = round(game['rating'] * 20, 1)  # Convert 0-5 to 0-100
         user_score_count = game.get('ratings_count', 0)
 
-    # Fetch game series for franchise data (separate API call)
-    franchise = None
-    series_data = _make_request(f'games/{game_id}/game-series', {'page_size': 5})
-    if series_data and series_data.get('count', 0) > 0:
-        # The series endpoint returns related games; the series name is implied
-        # by the shared games. Use the first result's name pattern if available.
-        series_names = [g.get('name', '') for g in series_data.get('results', []) if g.get('name')]
-        if series_names:
-            # Find common prefix among series game names for franchise identification
-            from os.path import commonprefix
-            prefix = commonprefix(series_names + [game.get('name', '')]).strip().rstrip(':- ')
-            if prefix and len(prefix) >= 3:
-                franchise = prefix
-
     # RAWG's detail endpoint returns alternative_names as a flat list of strings
     # (no region metadata). Keep them verbatim so the merger can dedupe.
     alternative_names = []
@@ -347,7 +333,6 @@ def get_game_details(game_id):
         'user_score_count': user_score_count,
         'playtime': game.get('playtime'),  # Average playtime in hours
         'website': game.get('website'),
-        'franchise': franchise,
         'alternative_names': alternative_names,
         'source': 'rawg'
     }

@@ -10387,7 +10387,9 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.212 Franchise comes from real data, not guessed from the title (fix, S).
-- **Status**: todo
+- **Shipped** (2026-11-02, v3.35.2): TheGamesDB's title guess and RAWG's common-letters guess are gone, with RAWG's extra request. IGDB reads `collections`; one live call for OutRun returned `OutRun`. ScreenScraper keeps a repeated name once. Migration 029 clears a franchise whose newest credit is TheGamesDB or RAWG and which is still the start of the title, and collapses repeats. Closed: tgdb 3; rawg 2; igdb F5; merge_and_stored 17.
+  - **Limits**: the clear also takes correct values such as `Double Dragon`, because a right guess and a wrong one look alike; a scrape refills them. Guesses that no longer start the title stay, because a hand edit leaves no credit and they cannot be told apart; `Air` on Deadly Skies is one. A scrape after this fills the field from IGDB, ScreenScraper or the AI, and not every game has a series there.
+- **Status**: done
 - **Source**: PASS-59-162, 2026-10-31. Notes: tgdb 3; rawg 2; igdb F5; merge_and_stored 17.
 - **Problem**: TheGamesDB's franchise is cut from the title, giving `Mission`. RAWG's is a letter-by-letter common prefix, giving `Need` or `Men`. IGDB's reads the removed `collection` field. A guess also blocks a real answer later, because the field is no longer empty.
 - **Fix**: remove both guesses, read IGDB `collections`, and clean up stored guesses so they can be re-filled.

@@ -544,6 +544,7 @@ your migration — not in the runner.
 | 026 | `026_hltb_match_reviewed.py` | Add `games.hltb_match_reviewed` (default 0); put `games.hltb_match_confidence` values above 1 back on the 0-to-1 scale. | PASS-59-209. The repair rewrites those scores in place, and the old values are not kept; the pre-migration backup holds them. |
 | 027 | `027_games_ra_title.py` | Add `games.ra_title`; clear RetroAchievements links shared by rows whose titles have different numbers, with their RA progress; clear counts and points on unlinked rows; queue one `ra_refresh` for the dashboard when any link exists. | PASS-59-210. Old links are not kept; an RA Refresh or sync rebuilds them from RetroAchievements. |
 | 028 | `028_clear_save_type_guesses.py` | Clear `games.save_type` where it holds `Battery Save / SRAM` or `Password / None`, the wordings only the per-system guess wrote. | PASS-59-211. The old values are not kept; the pre-migration backup holds them. |
+| 029 | `029_clear_franchise_guesses.py` | Clear `games.franchise` where its newest credit is TheGamesDB or RAWG and it is the start of the title; keep a repeated name once. | PASS-59-212. The next scrape refills them. The old values are not kept; the pre-migration backup holds them. |
 
 ---
 

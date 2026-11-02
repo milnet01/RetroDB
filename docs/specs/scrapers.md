@@ -317,6 +317,8 @@ Text-only. AI never returns images, screenshots, videos, or manuals — `AI_FILL
 - **Disagreements**: a date over a year from the regional date of the copy's region is logged and left, as neither is proof.
 - **Older rows**: ROM Tools > Tidy Release Dates (`game_cleanup.fix_release_dates`) cuts stored dates back by the source `scrape_history` credits. A date no scrape credits stays, except 1 January 1970.
 
+**Franchise (PASS-59-212).** Only a source that names a series fills it: IGDB (`franchise`, `franchises`, then `collections`), ScreenScraper (`familles`, a repeated name kept once) and the AI. TheGamesDB and RAWG name none, and nothing derives one from a title.
+
 **AI answers are checked and marked** (PASS-59-211).
 
 - A score needs a stated scale or a value above 10: `8.5/10` becomes 85, a bare `7` is refused, and so is anything above 100. A sales range, a sum of money or a figure under 1,000 is refused. A list answer is joined, a placeholder such as `N/A` is dropped, and a game's own system is removed from `other_platforms`.

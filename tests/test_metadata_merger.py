@@ -128,23 +128,6 @@ class TestApplyTgdb:
         assert meta['players'] == 1
         assert meta['modes'] == 'Single-Player'
 
-    def test_franchise_not_overwritten_on_primary_path(self, blank):
-        """Indie-review fix: fill-only invariant — TGDB on the primary path
-        (fill_only=False) must NOT overwrite an existing/curated franchise.
-        The old `or not fill_only` clause let it clobber the value; IGDB/RAWG
-        already guard with `not metadata['franchise']`."""
-        meta, result = blank
-        meta['franchise'] = 'Curated Series'
-        tgdb = {'name': 'X', '_extended': {'franchise': 'Other Series'}}
-        apply_tgdb_to_metadata(meta, tgdb, db_game_id=1, result=result, fill_only=False)
-        assert meta['franchise'] == 'Curated Series'
-
-    def test_franchise_fills_when_empty(self, blank):
-        meta, result = blank
-        tgdb = {'name': 'X', '_extended': {'franchise': 'New Series'}}
-        apply_tgdb_to_metadata(meta, tgdb, db_game_id=1, result=result, fill_only=False)
-        assert meta['franchise'] == 'New Series'
-
     def test_pegi_parsed_from_rating(self, blank):
         meta, result = blank
         apply_tgdb_to_metadata(meta, {'rating': 'PEGI 16'}, db_game_id=1, result=result)
@@ -359,23 +342,6 @@ class TestApplyRawg:
         meta, result = blank
         apply_rawg_to_metadata(meta, {'release_date': '2007'}, db_game_id=1, result=result)
         assert meta['release_date'] == '2007'
-
-    def test_franchise_only_fills_empty(self, blank):
-        meta, result = blank
-        meta['franchise'] = 'Existing'
-        # Note: franchise handling in RAWG ignores fill_only and only fills empty.
-        apply_rawg_to_metadata(meta, {'franchise': 'Other'}, db_game_id=1, result=result, fill_only=False)
-        assert meta['franchise'] == 'Existing'
-
-    def test_franchise_preserved_when_fill_only_true(self, blank):
-        """fill_only=True must also leave a populated franchise untouched.
-        Earlier test only covered fill_only=False; this pins the invariant
-        from the other direction — a refactor that swaps the logic for
-        franchise alone would have been invisible."""
-        meta, result = blank
-        meta['franchise'] = 'Existing'
-        apply_rawg_to_metadata(meta, {'franchise': 'Other'}, db_game_id=1, result=result, fill_only=True)
-        assert meta['franchise'] == 'Existing'
 
 
 # ---------------------------------------------------------------------------

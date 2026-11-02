@@ -275,7 +275,7 @@ def fetch_igdb_extended(game_id):
                multiplayer_modes.offlinecoop, multiplayer_modes.onlinecoop,
                summary, storyline, cover.url, screenshots.url, artworks.url,
                videos.video_id, alternative_names.name, alternative_names.comment,
-               franchise.name, franchises.name, collection.name,
+               franchise.name, franchises.name, collections.name,
                similar_games.name, similar_games.cover.url,
                game_engines.name, platforms.name,
                rating, rating_count, aggregated_rating, aggregated_rating_count;
@@ -293,8 +293,8 @@ def fetch_igdb_extended(game_id):
                 franchise = game['franchise'].get('name')
             elif game.get('franchises'):
                 franchise = game['franchises'][0].get('name')
-            elif game.get('collection'):
-                franchise = game['collection'].get('name')
+            elif game.get('collections'):
+                franchise = game['collections'][0].get('name')
 
             # Process similar games
             similar = []
@@ -345,50 +345,11 @@ def fetch_igdb_extended(game_id):
 def fetch_tgdb_extended(game_id):
     """Fetch extended game information from TGDB"""
     try:
-        details = fetch_tgdb_details(game_id)
-        if not details:
-            return None
-
-        # TGDB doesn't have franchise/series in basic API, but we can derive from game title
-        # Look for common patterns like "Final Fantasy VII" -> "Final Fantasy"
-        title = details.get('name', '')
-        franchise = extract_franchise_from_title(title)
-
-        details['_extended'] = {
-            'franchise': franchise,
-        }
-
-        return details
+        return fetch_tgdb_details(game_id) or None
 
     except Exception as e:
         logger.error(f"TGDB extended fetch error: {e}")
         return None
-
-
-def extract_franchise_from_title(title):
-    """Try to extract franchise/series name from game title"""
-    # Common franchise patterns
-    franchise_patterns = [
-        # Roman numerals
-        r'^(.+?)\s+[IVXLCDM]+$',
-        r'^(.+?)\s+[IVXLCDM]+\s*[-:].+$',
-        # Arabic numerals
-        r'^(.+?)\s+\d+$',
-        r'^(.+?)\s+\d+\s*[-:].+$',
-        # Subtitles
-        r'^(.+?):\s+.+$',
-        r'^(.+?)\s+-\s+.+$',
-    ]
-
-    for pattern in franchise_patterns:
-        match = re.match(pattern, title)
-        if match:
-            franchise = match.group(1).strip()
-            # Only return if franchise is substantial
-            if len(franchise) > 3:
-                return franchise
-
-    return None
 
 
 # =============================================================================

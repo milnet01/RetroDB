@@ -461,17 +461,6 @@ def apply_tgdb_to_metadata(metadata, tgdb_data, db_game_id, result, fill_only=Fa
                 metadata['fanart'] = filename
                 result['filled_fields'].append('fanart (TGDB)')
 
-    # Extended data
-    if tgdb_data.get('_extended'):
-        ext = tgdb_data['_extended']
-        # Fill-only: franchise is not a title, so even on the TGDB primary path
-        # (fill_only=False) it must not overwrite an existing/curated franchise.
-        # IGDB and RAWG already guard with `not metadata['franchise']` only;
-        # the old `or not fill_only` here let TGDB clobber a curated value.
-        if ext.get('franchise') and not metadata['franchise']:
-            metadata['franchise'] = ext['franchise']
-            result['filled_fields'].append('franchise (TGDB)')
-
 
 # =============================================================================
 # IGDB AGE RATINGS
@@ -816,11 +805,6 @@ def apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result, fill_only=Fa
         metadata['user_score_count'] = rawg_data.get('user_score_count')
         result['filled_fields'].append('user_score (RAWG)')
 
-    # Franchise
-    if rawg_data.get('franchise') and not metadata.get('franchise'):
-        metadata['franchise'] = rawg_data['franchise']
-        result['filled_fields'].append('franchise (RAWG)')
-
     # Alternate names — RAWG returns flat list of strings with no region info.
     alt_entries = [
         alt_title_entry(name, source='rawg')
@@ -1102,7 +1086,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
             if name:
                 franchise_names.append(name)
         if franchise_names:
-            metadata['franchise'] = ', '.join(franchise_names)
+            metadata['franchise'] = ', '.join(dict.fromkeys(franchise_names))
             result['filled_fields'].append('franchise (ScreenScraper)')
     # Also check for pre-processed franchise from newer scraper format
     if ss_data.get('franchise') and not metadata.get('franchise'):

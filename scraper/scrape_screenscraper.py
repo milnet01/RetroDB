@@ -614,7 +614,7 @@ def parse_game_data(jeu, own_region=None):
         franchise_name = get_localized_text(names, "text", lang_key="langue")
         if franchise_name:
             franchise_names.append(franchise_name)
-    result["franchise"] = ", ".join(franchise_names) if franchise_names else ""
+    result["franchise"] = ", ".join(dict.fromkeys(franchise_names))
 
     # Get game modes
     modes_list = (jeu.get("modes") or [])
