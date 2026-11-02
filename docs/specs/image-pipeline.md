@@ -72,7 +72,7 @@ with the primary, and standardized images that already sit in the
        3. _make_responsive_variants               # boxart -sm / -md
               │
               ▼
-   apply_*_to_game(...) UPDATE games SET <field> = COALESCE(?, <field>)
+   hybrid_scraper._save_game_row: UPDATE games SET <field> = COALESCE(?, <field>)
               │
               ▼
    later: find_orphaned_media + clean_orphaned_files
@@ -237,8 +237,8 @@ waits at most `_GPU_RUN_TIMEOUT` seconds per call, then raises
 
 ### 5.1 Upscaling after the scrape (PASS-59-130)
 
-A scrape does not upscale. `game_metadata_service.apply_metadata_to_game`
-and `apply_hybrid_metadata_to_game` run inside
+A scrape does not upscale. `game_metadata_service.apply_hybrid_metadata_to_game`
+runs inside
 `services/upscale_queue.py::upscale_later(game_id)`, which sets the
 `image_utils.defer_upscale` ContextVar. While it is set, `standardize_image`
 leaves an image below the upscale threshold as downloaded. Downscaling,
@@ -398,7 +398,7 @@ media-cleanup sweep then deletes).
 This is the contract behind CLAUDE.md "Media handling — during pre-
 population, media files are validated on disk … stale DB references
 … are auto-cleared so scrapers can re-download." The scraper-side
-fill-only invariant (`apply_*_to_game` wraps every `?` in
+fill-only invariant (a scraper UPDATE wraps every `?` in
 `COALESCE(?, column_name)`) preserves the cleared `NULL`s by letting
 the new scrape value land instead of restoring the stale string.
 
@@ -694,7 +694,7 @@ is a regression — flag it in code review.
    never converted to WebP — `img.save(path, 'GIF')` without
    `save_all=True` flattens animation to the first frame.
 10. **The fill-only invariant extends to media columns.** Scraper
-    `apply_*_to_game` UPDATEs wrap every `?` in
+    UPDATEs wrap every `?` in
     `COALESCE(?, column_name)` (see CLAUDE.md "Scraper fill-only
     invariant"); the pre-populate stale-clear step is the only place
     that ever NULLs a media column outside of Full Re-scrape mode.

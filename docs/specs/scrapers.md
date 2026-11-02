@@ -98,19 +98,16 @@ Tie-breakers:
 **The rule (scraper UPDATEs):** every `?` bound to a metadata-source value
 in a scraper `UPDATE games` statement MUST be wrapped in
 `COALESCE(?, column_name)` so an empty value from the upstream preserves
-whatever's already in the column. Sources that own a direct `UPDATE games`:
-`scrape_esde`, `scrape_igdb`, `scrape_thegamesdb`, and the hybrid
-orchestrator's composite UPDATE in `hybrid_scraper`. `scrape_rawg` and
-`scrape_screenscraper` do **not** own a direct `UPDATE games` — they write
-through `scraper/metadata_merger.py::apply_*_to_metadata`, which feeds
-into the hybrid UPDATE; the COALESCE protection therefore happens once,
-in `hybrid_scraper`.
+whatever's already in the column. Two places own a direct `UPDATE games`:
+the hybrid orchestrator's composite UPDATE in `hybrid_scraper`, and
+`scrape_esde.apply_esde_metadata`, which the ES-DE bulk import calls. Every
+other source writes through `scraper/metadata_merger.py::apply_*_to_metadata`,
+which feeds into the hybrid UPDATE.
 
 **Audit-column exception.** A handful of columns are bare by design,
 because they're status / audit data — overwriting them is the point. As
 of the current code base that means `scrape_history = ?` and
-`scraped = 1` in the hybrid UPDATE, and `scraped = 1` in
-`scrape_igdb.apply_metadata_to_game`. Leave those bare.
+`scraped = 1` in the hybrid UPDATE. Leave those bare.
 
 **AI Fill is a separate path.** `services/ai_fill.py` does **not** use the
 COALESCE wrapper. It builds the `UPDATE games` with bare `field = ?`
@@ -121,9 +118,9 @@ the clause is appended). Don't wrap the AI Fill UPDATEs in COALESCE —
 that would block the cross-map / rating-inference paths that intentionally
 overwrite (because the user opted into AI fill).
 
-**The bug class scraper-COALESCE prevents:** bare `publisher = ?, developer = ?` in `apply_metadata_to_game` means that a TGDB or IGDB response that didn't return publisher/developer (very common — partial records) will silently NULL the column on every re-scrape. Pass 30.4 fixed the original instance for `publisher`/`developer`. Pass 40.6 closed the variant on `players` where the dict was initialised to `1` (so `COALESCE(1, players)` always returned 1 — the `COALESCE` was correct, the initialiser was wrong; fixed via `normalize_players_value` returning `int|None`). Pass 45.3 closed the same shape in AI Fill where bare `field = ?` writes after `int(float("0"))` were clobbering curated `players=4` with `0` — fixed by the `should_apply` skip-empty-int guard, not by adding COALESCE.
+**The bug class scraper-COALESCE prevents:** bare `publisher = ?, developer = ?` in a scraper UPDATE means that a source's response that didn't return publisher/developer (very common — partial records) will silently NULL the column on every re-scrape. Pass 30.4 fixed the original instance for `publisher`/`developer`. Pass 40.6 closed the variant on `players` where the dict was initialised to `1` (so `COALESCE(1, players)` always returned 1 — the `COALESCE` was correct, the initialiser was wrong; fixed via `normalize_players_value` returning `int|None`). Pass 45.3 closed the same shape in AI Fill where bare `field = ?` writes after `int(float("0"))` were clobbering curated `players=4` with `0` — fixed by the `should_apply` skip-empty-int guard, not by adding COALESCE.
 
-**Canonical site:** `scraper/scrape_esde.py::apply_esde_metadata`, the single-source route. A hybrid scrape merges ES-DE through `hybrid_scraper._merge_esde` instead. This SQL keeps an old value only when the new one is empty:
+**Canonical site:** `scraper/scrape_esde.py::apply_esde_metadata`, the ES-DE bulk import. A hybrid scrape merges ES-DE through `hybrid_scraper._merge_esde` instead. This SQL keeps an old value only when the new one is empty:
 
 ```sql
 UPDATE games SET
@@ -146,15 +143,15 @@ UPDATE games SET
 WHERE id = ?
 ```
 
-The hybrid orchestrator's UPDATE (`hybrid_scraper.py::_save_game_row`) is the same pattern across ~40 columns. The same pattern repeats in `scrape_igdb.apply_metadata_to_game` and `scrape_thegamesdb.apply_metadata_to_game`.
+The hybrid orchestrator's UPDATE (`hybrid_scraper.py::_save_game_row`) is the same pattern across its columns.
 
-**Title lock** (PASS-59-159 §4.3). `games.title_locked = 1` means no scraper writes `title` or `sort_title`, in normal or Full Re-scrape mode. All four sites above write `title` as `CASE WHEN title_locked = 1 THEN title ELSE COALESCE(?, title) END`; `_save_game_row` writes `sort_title` the same way. Scrapers still search with a locked title. The edit windows set the lock when a title is changed, and their "Keep this title when scraping" tick box sets or clears it; the per-game Reset clears it. `tests/test_official_names.py` pins it.
+**Title lock** (PASS-59-159 §4.3). `games.title_locked = 1` means no scraper writes `title` or `sort_title`, in normal or Full Re-scrape mode. Both sites above write `title` as `CASE WHEN title_locked = 1 THEN title ELSE COALESCE(?, title) END`; `_save_game_row` writes `sort_title` the same way. Scrapers still search with a locked title. The edit windows set the lock when a title is changed, and their "Keep this title when scraping" tick box sets or clears it; the per-game Reset clears it. `tests/test_official_names.py` pins it.
 
 **Exception:** Full Re-scrape mode in `hybrid_scraper` (`force_overwrite=True`) intentionally bypasses fill-only — the user opted in. ES-DE in this mode deletes old box art only once it has copied a replacement.
 
 **Source ids are stricter.** `hybrid_scraper._save_source_ids` stores the IGDB and ScreenScraper game ids a scrape used, as regional-version signals (PASS-59-106 §4.5). It writes `COALESCE(igdb_id, ?)`: a stored id is kept, because a later wrong match would otherwise relink a game. Full Re-scrape writes `COALESCE(?, igdb_id)`. Pinned by `tests/test_scrape_fill_only.py::test_source_ids_fill_only`.
 
-**Test pin:** `tests/test_scrape_fill_only.py` exercises both IGDB and TGDB with an existing populated row + an empty API response and asserts every column survives. Re-asserts the failure-side contract too (DB error → `apply_metadata_to_game` returns `False`, not `True`, not a re-raise). ES-DE, the hybrid orchestrator UPDATE, and AI Fill are **not** currently covered by this test — extending coverage is a known roadmap item.
+**Test pin:** `tests/test_scrape_fill_only.py` runs a real hybrid scrape over a populated row with a source that has nothing, and asserts the values survive. It also asserts that the IGDB and TheGamesDB merges keep stored media and add screenshots. AI Fill is not covered by it.
 
 **When adding a new field** to the metadata dict in `hybrid_scraper.apply_hybrid_metadata`, add the corresponding column to the UPDATE binding tuple AND wrap the `?` in COALESCE in the same commit, and add a regression case to `tests/test_scrape_fill_only.py`. Drift between the metadata dict and the UPDATE tuple is precisely why the UPDATE has no try/except fallback — silent drift is the bug; loud failure is the contract.
 
@@ -387,10 +384,6 @@ End-to-end checklist for a new remote source `foo`:
        # Returns the canonical record fetched by ID.
        ...
 
-   def apply_foo_to_game(db_game_id, foo_data) -> bool:
-       # Standalone single-source UPDATE. Mirrors the COALESCE pattern from
-       # scrape_esde.apply_esde_metadata exactly.
-       ...
    ```
    All HTTP calls go through `base_scraper.http_get` / `http_post`. All image downloads go through `base_scraper.download_image` or `metadata_merger._download_and_finalize`. No bare `requests.get` calls.
 
@@ -413,7 +406,7 @@ End-to-end checklist for a new remote source `foo`:
    - Add a `SCRAPER_FOO_ENABLED` default in `config.py` + `config.example.py`.
 
 6. **Tests** (required for landing):
-   - `tests/test_scrape_fill_only.py` — add a test exercising `apply_foo_to_game` with an existing populated row + an empty API response; assert every column survives. Mirror the IGDB/TGDB tests.
+   - `tests/test_scrape_fill_only.py` — add `apply_foo_to_metadata` to the media tests, so stored media stays and empty media fills.
    - `tests/test_hybrid_scraper.py` — pin per-source scoring extras against `scraper/match_scorer.py`.
    - `tests/test_pass40_9_16_security.py` (the Pass 40 SSRF tests) — if `foo` downloads images, add SSRF + redirect-chain tests asserting it goes through `base_scraper.download_image`.
 

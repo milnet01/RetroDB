@@ -143,7 +143,7 @@ title      = CASE WHEN title_locked = 1 THEN title ELSE COALESCE(?, title) END,
 sort_title = CASE WHEN title_locked = 1 THEN sort_title ELSE COALESCE(?, sort_title) END
 ```
 
-at the four write sites listed in §2 item 2, in both normal and Full
+at the write sites `_save_game_row` and `apply_esde_metadata`, in both normal and Full
 Re-scrape modes. Scrapers still use a locked title for searching, as
 they use any stored title today.
 
@@ -248,7 +248,7 @@ signal.
 - **INV-1** — No scrape changes `title` or `sort_title` of a game with
   `title_locked = 1`, in normal or Full Re-scrape mode.
   *Test:* `tests/test_official_names.py::test_locked_title_survives_scrape`,
-  run against each of the four write sites with a source returning a
+  run against each write site with a source returning a
   different name.
   *Breaks when:* any write site keeps the bare `COALESCE(?, title)`.
 

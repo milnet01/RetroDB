@@ -543,6 +543,12 @@ def _igdb_age_rating(rating):
 # IGDB METADATA APPLICATION
 # =============================================================================
 
+def _igdb_objects(items):
+    """The expanded entries of an IGDB list. An unexpanded reference arrives as
+    a bare id, and must cost that entry, not the source's whole answer."""
+    return [item for item in items or [] if isinstance(item, dict)]
+
+
 def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=False,
                            platform_id=None, own_region=None):
     """Apply IGDB data to metadata dict.
@@ -561,7 +567,7 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
     # Alternate names — IGDB returns list of {name, comment?} where comment
     # is typically the region (e.g. "Japanese title") or platform variant.
     alt_entries = []
-    for alt in igdb_data.get('alternative_names') or []:
+    for alt in _igdb_objects(igdb_data.get('alternative_names')):
         if alt.get('comment') == 'Windows Executable' or (alt.get('name') or '').lower().endswith('.exe'):
             continue
         entry = alt_title_entry(
@@ -581,11 +587,13 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
             result['filled_fields'].append(f'alternate_titles +{added} (IGDB)')
 
     # Publisher/Developer
-    involved = igdb_data.get('involved_companies', [])
     publishers = []
     developers = []
-    for comp in involved:
-        name = comp.get('company', {}).get('name', '')
+    for comp in _igdb_objects(igdb_data.get('involved_companies')):
+        company = comp.get('company')
+        name = company.get('name', '') if isinstance(company, dict) else ''
+        if not name:
+            continue
         if comp.get('publisher'):
             publishers.append(name)
         if comp.get('developer'):
@@ -607,7 +615,7 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
 
     # Genre
     if not metadata['genre']:
-        genres = igdb_data.get('genres', [])
+        genres = _igdb_objects(igdb_data.get('genres'))
         if genres:
             fill_labels(metadata, result, 'genre',
                         ', '.join(g.get('name', '') for g in genres), 'IGDB')
@@ -621,7 +629,7 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
 
     # Modes
     if not metadata['modes']:
-        modes = igdb_data.get('game_modes', [])
+        modes = _igdb_objects(igdb_data.get('game_modes'))
         if modes:
             names = [m.get('name', '') for m in modes]
             fill_labels(metadata, result, 'modes',
@@ -647,8 +655,8 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
 
     # Download cover (only if not already present)
     if not metadata['boxart']:
-        cover = igdb_data.get('cover', {})
-        if cover.get('url'):
+        cover = igdb_data.get('cover')
+        if isinstance(cover, dict) and cover.get('url'):
             url = cover['url'].replace('t_thumb', 't_cover_big')
             if not url.startswith('http'):
                 url = f"https:{url}"
@@ -660,7 +668,7 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
                 result['filled_fields'].append('boxart (IGDB)')
 
     # Download screenshots (append to existing)
-    screenshots = igdb_data.get('screenshots', [])
+    screenshots = _igdb_objects(igdb_data.get('screenshots'))
     if screenshots and per_game_screenshots_fit(igdb_data, db_game_id):
         existing_screenshots = metadata['screenshots'].split(',') if metadata['screenshots'] else []
         existing_screenshots = [s.strip() for s in existing_screenshots if s.strip()]
@@ -697,7 +705,7 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
 
     # Download fanart/artwork (only if not already present)
     if not metadata['fanart']:
-        artworks = igdb_data.get('artworks', [])
+        artworks = _igdb_objects(igdb_data.get('artworks'))
         if artworks and artworks[0].get('url'):
             url = artworks[0]['url'].replace('t_thumb', 't_1080p')
             if not url.startswith('http'):

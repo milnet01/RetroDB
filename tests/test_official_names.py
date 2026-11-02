@@ -17,7 +17,7 @@ LOCKED_NAME = 'Rockman'
 
 
 # ---------------------------------------------------------------------------
-# INV-1 / INV-2 — the four scraper title writes honour the lock
+# INV-1 / INV-2 — the scraper title writes honour the lock
 # ---------------------------------------------------------------------------
 
 @pytest.fixture
@@ -59,21 +59,6 @@ def _titles(connect):
         c.close()
 
 
-def _scrape_igdb(connect, monkeypatch):
-    from scraper import scrape_igdb
-    monkeypatch.setattr(scrape_igdb, 'get_scraper_conn', connect)
-    monkeypatch.setattr(scrape_igdb, 'download_image', lambda *a, **k: None)
-    assert scrape_igdb.apply_metadata_to_game(1, {'name': SCRAPED_NAME}) is True
-
-
-def _scrape_tgdb(connect, monkeypatch):
-    from scraper import scrape_thegamesdb
-    monkeypatch.setattr(scrape_thegamesdb, 'get_scraper_conn', connect)
-    monkeypatch.setattr(scrape_thegamesdb, '_download_tgdb_image',
-                        lambda *a, **k: None, raising=False)
-    assert scrape_thegamesdb.apply_metadata_to_game(1, {'game_title': SCRAPED_NAME}) is True
-
-
 def _scrape_esde(connect, monkeypatch):
     from scraper import scrape_esde
     monkeypatch.setattr(scrape_esde, 'get_scraper_conn', connect)
@@ -92,8 +77,7 @@ def _scrape_hybrid(connect, monkeypatch):
     conn.close()
 
 
-SCRAPERS = {'igdb': _scrape_igdb, 'tgdb': _scrape_tgdb,
-            'esde': _scrape_esde, 'hybrid': _scrape_hybrid}
+SCRAPERS = {'esde': _scrape_esde, 'hybrid': _scrape_hybrid}
 
 
 @pytest.mark.parametrize('site', SCRAPERS)

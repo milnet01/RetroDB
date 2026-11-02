@@ -305,7 +305,7 @@ def api_rom_tools_browse_folders():
     """Browse folders within the ROMs directory"""
     data = request.get_json() or {}
     base_path = _get_rom_path()
-    current_path = data.get('path', base_path)
+    current_path = data.get('path') or base_path
 
     # Security: Ensure path is within base_path
     try:

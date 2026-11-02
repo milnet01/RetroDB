@@ -1210,7 +1210,7 @@ deviates should be migrated when touched (see `roadmap.md`).
 | Module files | `snake_case.py` | `services/api_helpers.py`, `routes/games_hltb.py` |
 | Packages | `snake_case/` | `services/`, `scraper/`, `services/jobs/` |
 | Classes | `PascalCase` | `BulkScrapeJob`, `SecretRedactor`, `HLTBLookup` |
-| Functions / methods | `snake_case` | `get_current_user()`, `apply_metadata_to_game()` |
+| Functions / methods | `snake_case` | `get_current_user()`, `apply_hybrid_metadata_to_game()` |
 | Variables | `snake_case` | `game_id`, `match_confidence` |
 | Module-level constants | `SCREAMING_SNAKE_CASE` | `ROLE_PERMISSIONS`, `MANUFACTURER_MAP`, `COMPUTER_SYSTEMS` |
 | Module-private helpers | `_leading_underscore` | `_extract_alt_titles()`, `_apply_pending_match()` |

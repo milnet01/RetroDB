@@ -10455,7 +10455,12 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.219 Small scraper leftovers: dead code, spec drift, and a folder-browser server error (chore, S).
-- **Status**: todo
+- **Resolution** (2026-11-02): 2026-11-02: folder-browser 500 fixed (a null path opens the ROM
+  folder). The single-source apply_metadata_to_game routes, their tests
+  and the wording are gone; fill-only and bad-reference tests now run on
+  the live merge, which needed the bad-reference guards. Whether a real
+  button ever sends a null path was not seen.
+- **Status**: done
 - **Source**: PASS-59-162, 2026-10-31. Notes: screenscraper 13; tgdb 17; hltb_ra H8, R12; esde 14; ai_steam_xbox S7; igdb F21; merge_and_stored 25.
 - **Items**: `scrape_screenscraper.get_game_by_id` has no callers and sends `jeuid`, which the service refuses with 400; `gameid` works (tried live). Correct the claims in `docs/specs/scrapers.md`. `routes/tools.py` `api_rom_tools_browse_folders` answers 500 when it has no current path (seen 2026-10-31 by calling `openFolderBrowser` with a made-up name; not seen from a real button).
 - **Progress** (2026-11-02): 2026-11-02: the get_game_by_id item and the fetch-by-id claims in

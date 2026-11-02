@@ -7,7 +7,7 @@ import sqlite3
 
 import pytest
 
-from scraper import hybrid_scraper, metadata_merger, metadata_normalizer, scrape_esde, scrape_igdb, scrape_rawg, scrape_screenscraper
+from scraper import hybrid_scraper, metadata_merger, metadata_normalizer, scrape_esde, scrape_rawg, scrape_screenscraper
 from services import migrations
 from services.normalization import canonical_companies, canonicalize_metadata, clean_description
 
@@ -222,7 +222,3 @@ def test_migration_runs_on_an_old_database_missing_columns():
     conn.execute("INSERT INTO games (description) VALUES ('The &quot;hub&quot;')")
     migrations._load('030_tidy_stored_text').apply(conn)
     assert conn.execute('SELECT description FROM games').fetchone()[0] == 'The "hub"'
-
-
-def test_second_igdb_path_also_prefers_the_summary():
-    assert "igdb_data.get('summary') or igdb_data.get('storyline'" in open(scrape_igdb.__file__, encoding='utf-8').read()

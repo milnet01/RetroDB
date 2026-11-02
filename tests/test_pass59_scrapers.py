@@ -5,6 +5,7 @@ lost value in one field propagates: a mis-parsed ESRB code seeds all nine
 rating boards, and one explicit JSON null used to discard a whole record.
 """
 
+import collections
 import os
 import re
 
@@ -43,13 +44,11 @@ def test_parse_esrb_code_rejects_non_esrb(raw):
 
 
 def test_tgdb_rating_parse_has_one_home():
-    """Both TGDB paths must call the shared parser, so they cannot diverge
-    again — the hybrid copy had been fixed and the single-source one had not."""
-    from scraper import scrape_thegamesdb, metadata_merger
-    for mod in (scrape_thegamesdb, metadata_merger):
-        src = open(mod.__file__).read()
-        assert 'parse_esrb_code' in src, mod.__name__
-        assert "for esrb in ['E10+'" not in src, mod.__name__
+    """TGDB ratings go through the shared parser, so they cannot diverge again."""
+    from scraper import metadata_merger
+    src = open(metadata_merger.__file__).read()
+    assert 'parse_esrb_code' in src
+    assert "for esrb in ['E10+'" not in src
 
 
 # --------------------------------------------------------------------------
@@ -221,16 +220,6 @@ def test_xbox_title_history_caps_the_paginated_body():
 # 59.27 — IGDB lost an entire apply on any unexpanded reference
 # --------------------------------------------------------------------------
 
-def test_igdb_unexpanded_references_do_not_abort_the_apply():
-    """An unexpanded IGDB reference arrives as a bare int. Each of these
-    shapes used to raise, and the outer except discarded every field."""
-    src = open('scraper/scrape_igdb.py').read()
-    assert "g['name'] for g in genres)" not in src
-    assert "g['name'] for g in igdb_data.get('game_modes', []))" not in src
-    assert "m.get('offlinemax', 0)" not in src
-    assert "'cover' in igdb_data and 'url' in igdb_data['cover']" not in src
-
-
 @pytest.mark.parametrize('bad_field,payload', [
     ('genres', {'genres': [17, {'name': 'Shooter'}]}),
     ('game_modes', {'game_modes': [3, {'name': 'Single player'}]}),
@@ -238,24 +227,20 @@ def test_igdb_unexpanded_references_do_not_abort_the_apply():
     # JSON null, and max() then raises comparing None with int.
     ('multiplayer_modes', {'multiplayer_modes': [{'offlinemax': None}, 9]}),
     ('cover', {'cover': 4242}),
+    ('involved_companies', {'involved_companies': [7, {'company': 8, 'developer': True}]}),
+    ('screenshots', {'screenshots': [5], 'platforms': [{'id': 26}]}),
+    ('artworks', {'artworks': [5]}),
+    ('alternative_names', {'alternative_names': [5]}),
 ])
-def test_igdb_apply_survives_an_unexpanded_reference(bad_field, payload, monkeypatch):
-    """One unexpanded reference used to raise, and the outer except swallowed
-    it and returned False — discarding the ENTIRE IGDB apply, not one field."""
-    from scraper import scrape_igdb
-    from tests.test_scrape_fill_only import _make_conn_with_existing_row
-
-    conn = _make_conn_with_existing_row(id=1, title='Existing')
-    monkeypatch.setattr(scrape_igdb, 'get_scraper_conn', lambda: conn)
-    monkeypatch.setattr(scrape_igdb, 'download_image', lambda *a, **kw: None)
+def test_igdb_apply_survives_an_unexpanded_reference(bad_field, payload):
+    """One unexpanded reference must cost that field, not the source's whole answer."""
+    from scraper import metadata_merger
 
     igdb_data = {'name': 'Test Game', 'summary': 'A summary.'}
     igdb_data.update(payload)
-
-    assert scrape_igdb.apply_metadata_to_game(1, igdb_data) is True, \
-        f'a malformed {bad_field} discarded the whole apply'
-    row = conn.execute("SELECT description FROM games WHERE id=1").fetchone()
-    assert row['description'] == 'A summary.', 'unrelated fields must still be written'
+    metadata = collections.defaultdict(lambda: None, title='Existing')
+    metadata_merger.apply_igdb_to_metadata(metadata, igdb_data, 1, {'filled_fields': []})
+    assert metadata['description'] == 'A summary.', 'unrelated fields must still be written'
 
 
 # --------------------------------------------------------------------------

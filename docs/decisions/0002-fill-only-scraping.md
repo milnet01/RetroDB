@@ -40,8 +40,7 @@ The contract, its audit-column carve-out and AI Fill's separate path are
 
 - Every scraper `UPDATE` wraps each value in `COALESCE(?, column)`.
   `scraper/scrape_esde.py::apply_esde_metadata` is the model.
-- `tests/test_scrape_fill_only.py` pins the rule for IGDB and TGDB. The
-  other sources are not yet covered by it
+- `tests/test_scrape_fill_only.py` pins the rule on the path every scrape takes
   ([`../specs/scrapers.md`](../specs/scrapers.md) § 5, *Test pin*).
 - A re-scrape cannot repair a wrong value. The user clears the field, or
   runs Full Re-scrape.

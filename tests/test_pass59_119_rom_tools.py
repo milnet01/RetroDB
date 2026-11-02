@@ -313,6 +313,14 @@ def test_browse_parent_link_stays_inside_the_root(rom_client, tmp_path):  # noqa
     assert resp.get_json()['parent_path'] is None
 
 
+def test_browse_with_no_path_opens_the_root(rom_client):  # noqa: F811
+    """PASS-59-219: the page sends null when it has no current folder."""
+    post, roms = rom_client
+    resp = post('/api/rom-tools/browse-folders', {'path': None})
+    assert resp.status_code == 200
+    assert resp.get_json()['current_path'] == str(roms)
+
+
 # --- Staging: never the system temp dir by default ---------------------------
 
 @pytest.mark.parametrize('temp_path', ['', os.path.join(tempfile.gettempdir(), 'retrodb_romtools')])

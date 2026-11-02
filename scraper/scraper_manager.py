@@ -645,7 +645,7 @@ class ScraperManager:
             return None
 
     # Metadata-apply orchestration lives in services.game_metadata_service
-    # (apply_metadata_to_game + apply_hybrid_metadata_to_game). Callers should
+    # (apply_hybrid_metadata_to_game). Callers should
     # go through that service rather than reaching back into the manager.
 
 
