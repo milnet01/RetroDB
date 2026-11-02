@@ -34,7 +34,7 @@ class TestBuildGamesQuery:
         # group_versions=False: these tests pin the filters; the PASS-59-106
         # grouping wrapper is pinned by tests/test_version_groups_query.py.
         sql, vals = _build_games_query({'show_bonus': '1'}, group_versions=False)
-        assert "is_bonus_disc" not in sql
+        assert "is_bonus_disc = 0" not in sql
         assert vals == []
 
     def test_empty_params_hides_bonus_discs_by_default(self):

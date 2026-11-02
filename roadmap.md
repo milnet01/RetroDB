@@ -10543,6 +10543,9 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Status**: todo
 - **Problem**: found while translating 3.35.0. The translated `help.<locale>.html` files lack two English sections, Search Anywhere and Keeping a Title, and some older paragraphs lag the English, such as Backfill Alternate Titles. In xh and zu, Custom Images and Fill Missing appear under older labels in older text.
 - **Fix**: compare each locale's sections with `help.html` and translate what is missing. Do it before v4.0.0.
+- **Progress** (2026-11-02): Also missing from the translated manuals: the MAME Names section
+  (2026-11-02). New strings for the MAME Names page and the Xbox wording
+  in Settings wait on translation too.
 
 ---
 
@@ -10594,6 +10597,11 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Open**: gambling, slot, handheld, computer, tabletop and board-game sets per catver.ini, and BIOS sets, are in the same folder. Whether they show is the user's call.
 - **Status**: todo. Lanes: scraper, services.
 - **Source**: user, 2026-11-02.
+- **Progress** (2026-11-02): Built 2026-11-02: naming tool, category filter, BIOS hidden, search by
+  title, ScreenScraper lookup by zip name, reports refuse a rename.
+  Still to do when worthwhile: arcadeDB and libretro-thumbnails as
+  sources, after reading their terms. A scrape of a named game through
+  every source has not been run.
 
 ## Done index
 
