@@ -317,16 +317,18 @@ ESRB_TO_PEGI_MAP = {
 # =============================================================================
 
 # All supported rating systems with metadata
+# `started` is the year each board began rating games, shown beside an AI guess.
+# Sources and how firm each is: docs/specs/scrapers.md §12.
 RATING_SYSTEMS = {
-    'esrb':     {'name': 'ESRB',      'full_name': 'Entertainment Software Rating Board',   'region': 'North America', 'db_column': 'esrb_rating'},
-    'pegi':     {'name': 'PEGI',      'full_name': 'Pan European Game Information',          'region': 'Europe',        'db_column': 'pegi_rating'},
-    'cero':     {'name': 'CERO',      'full_name': 'Computer Entertainment Rating Org.',     'region': 'Japan',         'db_column': 'cero_rating'},
-    'usk':      {'name': 'USK',       'full_name': 'Unterhaltungssoftware Selbstkontrolle',  'region': 'Germany',       'db_column': 'usk_rating'},
-    'acb':      {'name': 'ACB',       'full_name': 'Australian Classification Board',        'region': 'Australia',     'db_column': 'acb_rating'},
-    'fpb':      {'name': 'FPB',       'full_name': 'Film and Publication Board',             'region': 'South Africa',  'db_column': 'fpb_rating'},
-    'grac':     {'name': 'GRAC',      'full_name': 'Game Rating and Administration Comm.',   'region': 'South Korea',   'db_column': 'grac_rating'},
-    'classind': {'name': 'CLASS_IND', 'full_name': 'Classificação Indicativa',               'region': 'Brazil',        'db_column': 'classind_rating'},
-    'china':    {'name': 'CADPA',     'full_name': 'China Game Rating (CADPA age reminder)',  'region': 'China',         'db_column': 'china_rating'},
+    'esrb':     {'started': 1994, 'name': 'ESRB',      'full_name': 'Entertainment Software Rating Board',   'region': 'North America', 'db_column': 'esrb_rating'},
+    'pegi':     {'started': 2003, 'name': 'PEGI',      'full_name': 'Pan European Game Information',          'region': 'Europe',        'db_column': 'pegi_rating'},
+    'cero':     {'started': 2002, 'name': 'CERO',      'full_name': 'Computer Entertainment Rating Org.',     'region': 'Japan',         'db_column': 'cero_rating'},
+    'usk':      {'started': 1994, 'name': 'USK',       'full_name': 'Unterhaltungssoftware Selbstkontrolle',  'region': 'Germany',       'db_column': 'usk_rating'},
+    'acb':      {'started': 1994, 'name': 'ACB',       'full_name': 'Australian Classification Board',        'region': 'Australia',     'db_column': 'acb_rating'},
+    'fpb':      {'started': 1998, 'name': 'FPB',       'full_name': 'Film and Publication Board',             'region': 'South Africa',  'db_column': 'fpb_rating'},
+    'grac':     {'started': 2006, 'name': 'GRAC',      'full_name': 'Game Rating and Administration Comm.',   'region': 'South Korea',   'db_column': 'grac_rating'},
+    'classind': {'started': 2001, 'name': 'CLASS_IND', 'full_name': 'Classificação Indicativa',               'region': 'Brazil',        'db_column': 'classind_rating'},
+    'china':    {'started': 2020, 'name': 'CADPA',     'full_name': 'China Game Rating (CADPA age reminder)',  'region': 'China',         'db_column': 'china_rating'},
 }
 
 # Valid values per rating system (order = least to most restrictive)

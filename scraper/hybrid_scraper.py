@@ -65,7 +65,7 @@ from scraper.scrape_rawg import platform_id as rawg_platform_id
 # Try to import AI scraper
 AI_AVAILABLE = False
 try:
-    from scraper.scrape_ai import get_game_details as fetch_ai_metadata
+    from scraper.scrape_ai import AI_FILLABLE_FIELDS, get_game_details as fetch_ai_metadata
     AI_AVAILABLE = True
     logger.info("AI metadata scraper module loaded successfully")
 except ImportError:
@@ -396,10 +396,10 @@ def extract_franchise_from_title(title):
 # =============================================================================
 
 def detect_save_type(system_folder, title):
-    """Detect likely save type based on system and game era"""
+    """The save type every game on a system shares, or None.
 
-    # Systems that typically use battery saves
-    battery_systems = ['nes', 'snes', 'gb', 'gbc', 'gba', 'genesis', 'megadrive', 'n64']
+    Cartridge systems are not guessed: many of their games save nothing.
+    """
 
     # Systems that use memory cards
     memcard_systems = ['psx', 'ps2', 'gc', 'dreamcast', 'saturn']
@@ -407,19 +407,12 @@ def detect_save_type(system_folder, title):
     # Systems that use internal storage
     internal_systems = ['ps3', 'xbox', 'xbox360', 'wii', 'wiiu', 'switch', 'psp', 'psvita']
 
-    # Cartridge systems without saves (passwords common)
-    password_systems = ['atari2600', 'atari5200', 'atari7800', 'colecovision', 'intellivision']
-
     system = (system_folder or '').lower()  # Pass 48.5 — guard None system_folder
 
-    if system in battery_systems:
-        return "Battery Save / SRAM"
-    elif system in memcard_systems:
+    if system in memcard_systems:
         return "Memory Card"
     elif system in internal_systems:
         return "Internal Storage"
-    elif system in password_systems:
-        return "Password / None"
     else:
         return None
 
@@ -1247,7 +1240,9 @@ def _run_ai_fallback(metadata, result, sources_data, db_game_id, lookup,
     from scraper.scraper_manager import _ai_breaker
     ai_data = _ai_breaker(fetch_ai_metadata)(
         db_game_id, game_title, lookup['system_name'],
-        lookup['system_folder'], existing_metadata=ai_existing
+        lookup['system_folder'], existing_metadata=ai_existing,
+        # Filled fields are not asked about: a gap-fill ignores those answers.
+        only_fields=[f for f in AI_FILLABLE_FIELDS if not ai_existing.get(f)] + ['title'],
     )
     if ai_data:
         sources_data['ai'] = ai_data

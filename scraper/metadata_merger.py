@@ -1438,12 +1438,15 @@ def apply_ai_to_metadata(metadata, ai_data, db_game_id, result, fill_only=True):
             metadata[field] = ai_data[field]
             result['filled_fields'].append(f'{field} (AI)')
 
-    # Score fields — convert to int before storing
-    score_fields = ['critic_score', 'critic_score_count', 'user_score', 'user_score_count',
-                    'units_sold']
-    for field in score_fields:
+    # Score fields — convert to int before storing. A count belongs to its
+    # score, so it is written only with an AI score (PASS-59-211).
+    wanted = [f for f in ('critic_score', 'user_score') if ai_data.get(f) and _should_apply(f)]
+    if ai_data.get('units_sold') and _should_apply('units_sold'):
+        wanted.append('units_sold')
+    wanted += [f'{f}_count' for f in wanted if f != 'units_sold']
+    for field in wanted:
         val = ai_data.get(field)
-        if val and _should_apply(field):
+        if val:
             try:
                 metadata[field] = int(float(val))
                 result['filled_fields'].append(f'{field} (AI)')

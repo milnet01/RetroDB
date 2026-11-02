@@ -443,7 +443,7 @@ def _sanitize_prompt_input(value, *, max_len=256):
 
 
 def _build_prompt(title, system_name, missing_fields, existing_values=None,
-                  official_title_for=None, date_region=None):
+                  official_title_for=None, date_region=None, can_search=True):
     """Build a structured JSON-requesting prompt for the AI provider.
 
     Uses the authoritative field schemas from the reference template.
@@ -455,6 +455,7 @@ def _build_prompt(title, system_name, missing_fields, existing_values=None,
         existing_values: Optional dict of field->current_value for validation mode.
                         Fields with existing values get a "verify and correct" prefix.
         date_region: The game's region, for `release_date`, or None.
+        can_search: False when the provider has no web search tool here.
         official_title_for: Optional {'rom_file', 'region'} of the game's ROM;
                         when given, the prompt also asks for the official title
                         as released in that region (see _official_title_context).
@@ -638,7 +639,7 @@ def _build_prompt(title, system_name, missing_fields, existing_values=None,
             field_instructions.append(
                 '"edition": edition type with first letter of each word capitalised '
                 '(e.g., "Greatest Hits", "Collector\'s Edition", "Game of the Year Edition"). '
-                'Return "Standard Edition" for standard/original releases.'
+                'Return "" for a standard or original release.'
             )
         elif field == 'critic_score':
             field_instructions.append(
@@ -733,6 +734,15 @@ def _build_prompt(title, system_name, missing_fields, existing_values=None,
         if has_validation else ''
     )
 
+    score_rule = (
+        'For review score fields (critic_score, user_score), search online for the most accurate '
+        'aggregated scores. Prefer Metacritic, OpenCritic, and GameFAQs as primary sources. For '
+        'classic/retro games where those sites have no coverage, MobyGames and AtariAge are '
+        'excellent alternative sources.'
+        if can_search else
+        'You have no web search here. Ignore any instruction above to search. Give critic_score, '
+        'user_score, their counts and units_sold only if you clearly remember a published figure; '
+        'otherwise use "".')
     prompt = f"""You are a retro gaming metadata expert. Use ONLY the provided schema values — do not use terms outside the schemas.
 
 Game: "{title}"
@@ -743,10 +753,10 @@ Return a JSON object with ONLY these fields:
 
 Rules:
 - Return ONLY valid JSON. No markdown, no explanation, no code fences.
-- Use empty string "" for any field you are genuinely unsure about. Do not guess.
+- Use empty string "" for any field you are genuinely unsure about. Do not guess. Age ratings are the one exception: judge them from the game's content as asked above; RetroDB shows them as a guess.
 - For comma-separated fields (genre, modes, perspective, dimension, game_structure), separate values with ", " (comma-space).
 - For units_sold, give a published sales figure, never an estimate of your own.
-- For review score fields (critic_score, user_score), search online for the most accurate aggregated scores. Prefer Metacritic, OpenCritic, and GameFAQs as primary sources. For classic/retro games where those sites have no coverage, MobyGames and AtariAge are excellent alternative sources.
+- {score_rule}
 - Be accurate. Wrong data is worse than empty data.{validation_rule}
 """
     return prompt
@@ -1028,9 +1038,37 @@ def _parse_ai_response(raw_text):
 
 _SALES_SCALE = {'thousand': 1_000, 'k': 1_000, 'million': 1_000_000,
                 'm': 1_000_000, 'mil': 1_000_000, 'billion': 1_000_000_000}
+_MIN_UNITS_SOLD = 1000
+_SALES_NOT_COPIES = re.compile(
+    r'\d\s*(?:-|\u2013|\u2014|to)\s*\d|[$\u20ac\u00a3]|\b(?:dollars?|usd|euros?|pounds?|yen|revenue)\b',
+    re.IGNORECASE)
+_SCORE_RE = re.compile(r'^\s*~?\s*(\d+(?:\.\d+)?)\s*(%|/\s*(\d+(?:\.\d+)?))?\s*$')
 _SALES_RE = re.compile(r'^~?\s*([\d.,]+)\s*([a-z]*)', re.IGNORECASE)
 # No single game has sold more than about 300 million copies on one platform.
 _MAX_UNITS_SOLD = 500_000_000
+
+
+def parse_score(value):
+    """A review score from 1 to 100 as an int, or None.
+
+    A stated scale is converted ("85/100", "8.5/10", "85%"). A bare number up to
+    10 says nothing about its scale, and is far likelier 7 out of 10 than 7 out
+    of 100, so it is refused. So is anything above 100.
+    """
+    if value is None or isinstance(value, bool):
+        return None
+    match = _SCORE_RE.match(str(value))
+    if not match:
+        return None
+    number = float(match.group(1))
+    if match.group(3):
+        scale = float(match.group(3))
+        if not scale:
+            return None
+        number = number * 100 / scale
+    elif not match.group(2) and number <= 10:
+        return None
+    return int(round(number)) if 0 < number <= 100 else None
 
 
 def parse_units_sold(value):
@@ -1038,8 +1076,12 @@ def parse_units_sold(value):
 
     Takes what an AI writes despite being asked for a bare integer:
     2400000, "2,400,000", "2.4 million", "2.4M", "~850k", "over 1 million".
+    A range or a sum of money is not a count of copies, and a figure under
+    1,000 has lost its unit ("2.4" for 2.4 million).
     """
     if value is None or isinstance(value, bool):
+        return None
+    if isinstance(value, str) and _SALES_NOT_COPIES.search(value):
         return None
     if isinstance(value, (int, float)):
         number, scale = float(value), 1
@@ -1062,7 +1104,24 @@ def parse_units_sold(value):
         except ValueError:
             return None
     count = int(round(number * scale))
-    return count if 0 < count <= _MAX_UNITS_SOLD else None
+    return count if _MIN_UNITS_SOLD <= count <= _MAX_UNITS_SOLD else None
+
+
+# What a model writes for "I don't know", in a field with no list to check it by.
+_PLACEHOLDER_ANSWERS = {'none', 'n/a', 'na', 'null', 'unknown', 'tbd', '-'}
+_SAME_CONSOLE = {'Genesis', 'Mega Drive'}
+
+
+def _drop_own_platform(platforms, system_name):
+    """`other_platforms` without the game's own system. "Genesis" and "Mega
+    Drive" are one console, and the schema lists both."""
+    schema = {v.lower(): v for v in FIELD_SCHEMAS['other_platforms']}
+    name = (system_name or '').lower()
+    own = {PLATFORM_ALIASES.get(name) or schema.get(name)}
+    if own & _SAME_CONSOLE:
+        own |= _SAME_CONSOLE
+    kept = [p.strip() for p in platforms.split(',') if p.strip() not in own]
+    return ', '.join(kept)
 
 
 def _validate_all_fields(data):
@@ -1104,6 +1163,10 @@ def _validate_field(field_name, value):
     if field_name == 'release_dates':
         from services.release_dates import release_dates_json
         return release_dates_json(value) or ''
+
+    # A list is a comma-separated field written the JSON way, not text.
+    if isinstance(value, (list, tuple)):
+        value = ', '.join(str(v) for v in value if v is not None)
 
     # Convert to string
     value = str(value).strip()
@@ -1154,11 +1217,8 @@ def _validate_field(field_name, value):
 
     # Numeric score fields — validate as integers in range
     if field_name in ('critic_score', 'user_score'):
-        try:
-            score = int(float(value))
-            return str(max(0, min(100, score))) if score > 0 else ''
-        except (ValueError, TypeError):
-            return ''
+        score = parse_score(value)
+        return str(score) if score else ''
     if field_name in ('critic_score_count', 'user_score_count'):
         try:
             count = int(float(value))
@@ -1170,6 +1230,8 @@ def _validate_field(field_name, value):
         return str(count) if count else ''
 
     # Free-text fields — basic sanitization
+    if value.lower() in _PLACEHOLDER_ANSWERS:
+        return ''
     # Truncate extremely long values
     if field_name == 'description':
         return value[:2000]
@@ -1215,6 +1277,9 @@ def _official_title_rejected(game_id, title):
             "AND proposed_title = ?", (game_id, title)).fetchone() is not None
     finally:
         conn.close()
+
+
+_SEARCHED_FIELDS = {'units_sold', 'critic_score', 'user_score'}
 
 
 def get_game_details(game_id, title, system_name, system_folder=None, existing_metadata=None,
@@ -1269,12 +1334,16 @@ def get_game_details(game_id, title, system_name, system_folder=None, existing_m
         f"validating {validate_count} existing fields for '{title}' on {system_name}"
     )
 
+    provider = provider_config['provider']
+    # Gemini and OpenAI always carry a search tool; Claude only if turned on.
+    can_search = provider != 'claude' or bool(provider_config.get('web_search'))
+
     # Build prompt and call provider
     prompt = _build_prompt(title, system_name, missing_fields, existing_values=validate_existing,
                            official_title_for=official_for,
-                           date_region=(existing_metadata or {}).get('region'))
+                           date_region=(existing_metadata or {}).get('region'),
+                           can_search=can_search)
 
-    provider = provider_config['provider']
     api_key = provider_config['api_key']
     model = provider_config['model']
 
@@ -1294,9 +1363,9 @@ def get_game_details(game_id, title, system_name, system_folder=None, existing_m
     kwargs = {}
     if provider == 'gemini' and provider_config.get('project_id'):
         kwargs['project_id'] = provider_config['project_id']
-    # Search only for what needs it: a game whose sales figure is not asked
-    # for pays for no searches.
-    if provider == 'claude' and provider_config.get('web_search') and 'units_sold' in missing_fields:
+    # Search only for what needs it: a game whose sales figure and scores are
+    # not asked for pays for no searches.
+    if can_search and provider == 'claude' and _SEARCHED_FIELDS & set(missing_fields):
         kwargs['web_search'] = True
 
     raw_text = call_fn(prompt, api_key, model, **kwargs)
@@ -1305,6 +1374,11 @@ def get_game_details(game_id, title, system_name, system_folder=None, existing_m
         return None
 
     result = _parse_ai_response(raw_text)
+
+    if result and result.get('other_platforms'):
+        result['other_platforms'] = _drop_own_platform(result['other_platforms'], system_name)
+        if not result['other_platforms']:
+            result.pop('other_platforms')
 
     # Keep an official title only when it was asked for and not rejected.
     official = result.get('official_title') if result else None

@@ -27,8 +27,27 @@
     label: The game page shows RetroAchievements' own name for the linked game, so a wrong link is easy to spot
   - type: fix
     label: RA Refresh now saves each game's points, so a game no longer shows 0 points
+  - type: new
+    label: The game page marks age ratings from the AI as a guess based on the game's content, and says when each ratings board started. OutRun from 1987 no longer looks officially rated by ESRB
+  - type: new
+    label: The game page marks review scores and sales figures that came from the AI. Changing a rating or sales figure yourself removes the mark
+  - type: fix
+    label: A score from the AI on the wrong scale is refused, so a well-liked game no longer gets 7 out of 100 from a new scrape
+  - type: fix
+    label: A score count from the AI is no longer saved beside another site's score, and the game page no longer shows one that was
+  - type: fix
+    label: A sales range or a sum of money from the AI no longer becomes a few copies sold
+  - type: fix
+    label: AI answers no longer store lists as code, the words N/A or None as values, or a game's own console under other platforms
+  - type: fix
+    label: AI Fill now keeps the value it replaces in the game's history
+  - type: fix
+    label: Cartridge games no longer get a made-up Battery Save type, and new AI answers no longer default to Standard Edition
   body: |
     <ul>
+      <li><strong>AI answers say they are AI.</strong> Age ratings from the AI
+        stay, marked as a guess based on the game's content, with the year each
+        ratings board started. Scores and sales from the AI are marked too.</li>
       <li><strong>RetroAchievements shows the right game.</strong> Sequels no
         longer carry the first game's achievements. After you update, the
         dashboard offers a RetroAchievements refresh once. Press it to repair

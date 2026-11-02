@@ -8,7 +8,6 @@
 #   clear_scraped_data()  — null scraped metadata columns + reset titles
 # =============================================================================
 
-import json
 import logging
 import os
 
@@ -234,17 +233,8 @@ _LABEL_COLUMNS = ('genre', 'modes', 'perspective', 'dimension', 'game_structure'
 
 def _filled_by(history, field):
     """The source the newest scrape to record `field` credits, or None."""
-    try:
-        entries = json.loads(history or '[]')
-    except ValueError:
-        return None
-    prefix = f'{field} ('
-    for entry in reversed(entries if isinstance(entries, list) else []):
-        filled = entry.get('fields_filled', []) if isinstance(entry, dict) else []
-        for item in filled:
-            if isinstance(item, str) and item.startswith(prefix) and item.endswith(')'):
-                return item[len(prefix):-1]
-    return None
+    from services.field_sources import credits
+    return credits(history).get(field)
 
 
 def _label_changes():

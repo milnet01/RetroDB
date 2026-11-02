@@ -10369,11 +10369,20 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.211 AI answers are checked and labelled, not shown as official facts (fix, M).
-- **Status**: todo
+- **Shipped** (2026-11-02, v3.35.2): `services/field_sources.py` reads the scrape history; the game page marks AI ratings `AI guess`, with a note and each board's start year, and marks AI scores and sales. Scale, sales, list, placeholder and own-platform checks in `scrape_ai`; a score count is written only with an AI score, and a stored AI count beside another source's score is not shown. The prompt no longer contradicts itself on ratings or claims a search it lacks. Gap-fill asks only about empty fields. AI Fill keeps replaced values in history. Save type is no longer guessed for cartridge systems (migration 028 clears the two old wordings); AI Fill no longer defaults to Standard Edition. Closed: A2, A3, A4, A5, A7, A9, A10, A12, A13, A15; merge 7, 12.
+  - **Not done**: A14 (renames straight away). A review step would send Mega Man to Rockman to review, against the user's decision of 2026-10-27; a change needs the user. A8: citations are still discarded, so nothing proves a figure; it only carries the AI mark.
+  - **Limits**: marks are on the game page only, not library cards. Stored values stay as they are: AI scores of 10 or under still show (with the mark), and about 5,000 rows still say Standard Edition. AI Fill credits a rating it cross-mapped from a scraped one as AI, so that one reads as a guess; a scrape's cross-mapped rating from an AI value carries no mark. A person's edit in the Compare page or any path other than the three edit routes is not credited. The FPB and ClassInd years rest on one source each (`docs/specs/scrapers.md` §12). A viewer's game page logs one 403 in the browser console, not traced; this change added no script.
+- **Status**: done
 - **Source**: PASS-59-162, 2026-10-31. Notes: ai_steam_xbox A2, A3, A4, A5, A7, A8, A9, A10, A12, A13, A14, A15; merge_and_stored 7, 12.
 - **Problem**: age ratings are inferred and look official, even before a board existed. A score count from the AI can sit beside another site's score. A 0-10 score is stored as 7/100. `1-2 million` parses to 1 copy. Lists can be stored as Python text. Citations are thrown away, and Claude is told to search with no search tool. AI Fill overwrites scraped values, which `CLAUDE.md` does not list.
 - **Decision for the user**: mark AI values on the game page, or stop asking for ratings and scores the AI cannot know.
 - **Fix**: range and scale checks, paired score and count, a source mark per value.
+- **Decision** (user, 2026-11-02): keep AI age ratings, new and
+  stored. Label each as a guess based on the game's content, and state
+  when that ratings board started. The recommendation to stop asking was
+  declined, and no repair button clears stored ones. The answer named
+  ratings; scores are treated the same way (kept, marked as AI, checked
+  for scale and pairing), which is this session's reading.
 
 ---
 

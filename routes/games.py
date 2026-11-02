@@ -24,6 +24,9 @@ from services.game_utils import (
     normalize_players_value,
     RATING_SYSTEMS, RATING_SYSTEM_KEYS,
 )
+from services.field_sources import (
+    HAND_EDITED_FIELDS, ai_marks, hand_edit_history, rating_board_starts,
+)
 from services.game_query import (
     escape_like, get_retroachievements_info, get_trophy_info_for_game,
     get_bonus_discs_for_game, _get_filter_options, _build_games_query,
@@ -566,6 +569,14 @@ def game_detail(game_id):
                         flash(_("Screenshots not added because they match ones the game "
                                 "already has: %(count)s", count=duplicate_shots), "warning")
 
+                    _note_hand_edits(game_id, {
+                        'units_sold': units_sold, 'esrb_rating': esrb_rating,
+                        'pegi_rating': pegi_rating, 'cero_rating': cero_rating,
+                        'usk_rating': usk_rating, 'acb_rating': acb_rating,
+                        'fpb_rating': fpb_rating, 'grac_rating': grac_rating,
+                        'classind_rating': classind_rating, 'china_rating': china_rating,
+                    })
+
                     # Update database
                     execute("""
                         UPDATE games SET
@@ -744,6 +755,14 @@ def game_detail(game_id):
         pref_rating_name = RATING_SYSTEMS.get(pref_sys, {}).get('name', pref_sys.upper())
         pref_rating_region = RATING_SYSTEMS.get(pref_sys, {}).get('region', '')
         all_ratings = get_all_ratings(game)
+        ai_mark = ai_marks(game_dict)
+        for rating in all_ratings:
+            rating['ai_guess'] = RATING_SYSTEMS[rating['system']]['db_column'] in ai_mark['ratings']
+        pref_col = RATING_SYSTEMS.get(pref_sys, {}).get('db_column')
+        # A cross-mapped rating is only as sure as the guesses it was made from.
+        pref_guess = bool(ai_mark['ratings']) if pref_rating_crossmapped else pref_col in ai_mark['ratings']
+        is_admin = (getattr(g, 'user', None) or {}).get('role') == 'admin'
+        shown_guesses = ai_mark['ratings'] if is_admin else ({pref_col} if pref_guess else set())
 
         # Achievement & trophy progress for the caller (Pass 31.2).
         achievement_progress = query("""
@@ -832,9 +851,12 @@ def game_detail(game_id):
                              alternate_titles=alternate_titles,
                              release_dates=release_dates,
                              pref_rating={'value': pref_rating_val, 'image': pref_rating_img,
-                                          'crossmapped': pref_rating_crossmapped, 'name': pref_rating_name,
+                                          'crossmapped': pref_rating_crossmapped, 'ai_guess': pref_guess,
+                                          'name': pref_rating_name,
                                           'region': pref_rating_region, 'system': pref_sys},
                              all_ratings=all_ratings,
+                             ai_mark=ai_mark,
+                             guess_board_starts=', '.join(rating_board_starts(shown_guesses)),
                              retroachievements=get_retroachievements_info(game),
                              trophy_info=get_trophy_info_for_game(game['title'], game['system_name']),
                              achievement_progress=achievement_progress,
@@ -1050,6 +1072,17 @@ def api_apply_metadata_progress(task_id):
     return jsonify({'success': True, **snap})
 
 
+def _note_hand_edits(game_id, new_values):
+    """Credit a person for the marked fields this edit changes, so a corrected
+    AI rating stops showing as a guess (PASS-59-211)."""
+    columns = ', '.join(HAND_EDITED_FIELDS)
+    row = query(f"SELECT scrape_history, {columns} FROM games WHERE id = ?", (game_id,), one=True)
+    if row:
+        history = hand_edit_history(row['scrape_history'], row, new_values)
+        if history:
+            execute("UPDATE games SET scrape_history = ? WHERE id = ?", (history, game_id))
+
+
 @bp.route('/api/game/<int:game_id>/edit', methods=['POST'])
 @editor_required
 @handle_api_errors
@@ -1112,6 +1145,7 @@ def api_game_edit(game_id):
 
     values.append(game_id)
 
+    _note_hand_edits(game_id, normalized)
     execute(f"""
         UPDATE games SET {', '.join(updates)} WHERE id = ?
     """, tuple(values))
@@ -1195,6 +1229,9 @@ def api_games_bulk_edit():
 
     if not replace_updates and not append_fields:
         return error(_('No valid fields to update'), 400)
+
+    for bulk_game_id in game_ids:
+        _note_hand_edits(bulk_game_id, {f: v for f, v in fields.items() if f in bulk_allowed_fields})
 
     from services.database import get_db_with_context
 

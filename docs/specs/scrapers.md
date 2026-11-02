@@ -317,6 +317,30 @@ Text-only. AI never returns images, screenshots, videos, or manuals — `AI_FILL
 - **Disagreements**: a date over a year from the regional date of the copy's region is logged and left, as neither is proof.
 - **Older rows**: ROM Tools > Tidy Release Dates (`game_cleanup.fix_release_dates`) cuts stored dates back by the source `scrape_history` credits. A date no scrape credits stays, except 1 January 1970.
 
+**AI answers are checked and marked** (PASS-59-211).
+
+- A score needs a stated scale or a value above 10: `8.5/10` becomes 85, a bare `7` is refused, and so is anything above 100. A sales range, a sum of money or a figure under 1,000 is refused. A list answer is joined, a placeholder such as `N/A` is dropped, and a game's own system is removed from `other_platforms`.
+- A score count is written only with an AI score from the same answer. `services/field_sources.py::ai_marks` also hides a stored AI count beside another source's score.
+- A scrape gap-fill asks only about empty fields. With no search tool, the prompt says so and asks for remembered published figures only.
+- AI Fill keeps a value it replaces under `replaced` in its history entry.
+- The per-system save type guess is gone for cartridge systems, and AI Fill no longer writes `Standard Edition` by default.
+
+**AI age ratings** (user, 2026-11-02). They stay, new and stored. The game page marks each `AI guess`, and says it is based on the game's content and when each board started. A rating credited `AI` or `ratings (inferred from content)` is marked; a scraper's value, a person's edit or a cross-mapping is not. Only the game page carries marks; the library cards do not.
+
+Start years in `RATING_SYSTEMS`, checked 2026-11-02:
+
+| Board | Year | Source and strength |
+|---|---|---|
+| ESRB | 1994 | esrb.org |
+| PEGI | 2003 | secondary sources agree |
+| CERO | 2002 | secondary source |
+| USK | 1994 | secondary sources agree |
+| ACB | 1994 | when game classification began; secondary sources agree |
+| FPB | 1998 | when the board began work, including games; one source |
+| GRAC | 2006 | founded as the Game Rating Board; secondary sources agree |
+| ClassInd | 2001 | when games began; one weak source |
+| CADPA | 2020 | standard released December 2020, in force July 2021 |
+
 **Official title** (user, 2026-10-27). For a game with a ROM and an unlocked title, `get_game_details` also asks for `official_title` (the title as released in the ROM's region, as PASS-59-159 §4.2 asks the Official Names run) and `old_title_region`. Both are outside `AI_FILLABLE_FIELDS`; `_validate_all_fields` keeps them after `_clean_official_title`. `metadata_merger.apply_ai_to_metadata` (manual and bulk scrape) and `services/ai_fill.py` (the AI Fill button and Bulk AI Fill) rename the game to it, keeping the replaced name as an alternate title tagged with `old_title_region`. It is an exception to fill-only for `title`, as the user asked. A locked title is never asked about, and `_save_game_row` never writes one. Pinned by `tests/test_ai_official_title.py`.
 
 **Circuit breaker:** `_ai_breaker` (5 failures / 120 s recovery) wraps `fetch_ai_metadata` calls from `hybrid_scraper` so a repeatedly-failing provider doesn't burn a quota on every gap-fill attempt.

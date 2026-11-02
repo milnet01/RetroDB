@@ -24,6 +24,8 @@ from services.game_utils import (
 
 logger = logging.getLogger(__name__)
 
+_COUNT_OF = {'critic_score_count': 'critic_score', 'user_score_count': 'user_score'}
+
 # The bulk run's on/off switches: switch key -> the columns it covers, in the
 # order the page shows them. 'title' is the official name. Every column of
 # scrape_ai.AI_FILLABLE_FIELDS is under one switch (tests/test_ai_fill_bulk.py).
@@ -118,6 +120,7 @@ def fill_game(game, fields=None):
         return None
 
     filled_fields = []
+    replaced = {}
     # column -> value. One key per column, so a later fixup overrides an
     # earlier assignment instead of appending a duplicate `col = ?`.
     sets = {}
@@ -125,6 +128,9 @@ def fill_game(game, fields=None):
         if field not in ai_fields or not value or (field == 'region' and file_region):
             continue
         current = str(game.get(field, '') or '').strip()
+        # A count belongs to its score, so it is written only with an AI score.
+        if field in _COUNT_OF and (current or game.get(_COUNT_OF[field]) or not ai_data.get(_COUNT_OF[field])):
+            continue
         should_apply = False
 
         if not current:
@@ -135,6 +141,7 @@ def fill_game(game, fields=None):
             should_apply = True
         elif field in VALIDATE_FIELDS and value != current:
             should_apply = True
+            replaced[field] = current[:200]
             logger.info(f"AI fill: correcting {field}: '{current}' → '{value}'")
 
         if should_apply:
@@ -249,12 +256,6 @@ def fill_game(game, fields=None):
             sets['other_platforms'] = sorted_str
             logger.info(f"AI fill: sorted platforms '{other_plats}' → '{sorted_str}'")
 
-    edition = pending.get('edition') or (game.get('edition', '') or '').strip()
-    if not edition:
-        sets['edition'] = 'Standard Edition'
-        if 'edition' not in filled_fields:
-            filled_fields.append('edition')
-
     # The fixups above can touch any column; keep only the chosen ones.
     if fields is not None:
         allowed = set(fields)
@@ -293,6 +294,8 @@ def fill_game(game, fields=None):
                 'fields_missing': still_missing,
                 'scrape_mode': 'ai_fill'
             }
+            if replaced:
+                history_entry['replaced'] = replaced
             existing_history.append(history_entry)
             scrape_history_json = json_lib.dumps(existing_history)
         except Exception as e:

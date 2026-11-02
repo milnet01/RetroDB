@@ -227,18 +227,18 @@
 
                 <!-- Critic/User Scores -->
                 {% if game.critic_score %}
-                <span class="game-badge score-badge critic-score {% if game.critic_score >= 75 %}score-good{% elif game.critic_score >= 50 %}score-mixed{% else %}score-bad{% endif %}" title="{% trans count=game.critic_score_count or '?' %}Critic Score ({{ count }} reviews){% endtrans %}">
-                    ⭐ {{ game.critic_score|round|int }}
+                <span class="game-badge score-badge critic-score {% if game.critic_score >= 75 %}score-good{% elif game.critic_score >= 50 %}score-mixed{% else %}score-bad{% endif %}" title="{% trans count=ai_mark.critic_score_count or '?' %}Critic Score ({{ count }} reviews){% endtrans %}{% if ai_mark.critic_score %} {{ _('From the AI, not checked against a review site.') }}{% endif %}">
+                    ⭐ {{ game.critic_score|round|int }}{% if ai_mark.critic_score %} <span class="ai-mark">{{ _('AI') }}</span>{% endif %}
                 </span>
                 {% endif %}
                 {% if game.user_score %}
-                <span class="game-badge score-badge user-score {% if game.user_score >= 75 %}score-good{% elif game.user_score >= 50 %}score-mixed{% else %}score-bad{% endif %}" title="{% trans count=game.user_score_count or '?' %}User Score ({{ count }} ratings){% endtrans %}">
-                    👤 {{ game.user_score|round|int }}
+                <span class="game-badge score-badge user-score {% if game.user_score >= 75 %}score-good{% elif game.user_score >= 50 %}score-mixed{% else %}score-bad{% endif %}" title="{% trans count=ai_mark.user_score_count or '?' %}User Score ({{ count }} ratings){% endtrans %}{% if ai_mark.user_score %} {{ _('From the AI, not checked against a review site.') }}{% endif %}">
+                    👤 {{ game.user_score|round|int }}{% if ai_mark.user_score %} <span class="ai-mark">{{ _('AI') }}</span>{% endif %}
                 </span>
                 {% endif %}
                 {% if game.units_sold %}
-                <span class="game-badge sales-badge" title="{{ _('Copies sold on %(system)s, from published sales figures', system=game.system_name) }}">
-                    📈 {{ _('%(count)s sold', count=game.units_sold|format_number) }}
+                <span class="game-badge sales-badge" title="{% if ai_mark.units_sold %}{{ _('Copies sold on %(system)s, from the AI, not checked', system=game.system_name) }}{% else %}{{ _('Copies sold on %(system)s, from published sales figures', system=game.system_name) }}{% endif %}">
+                    📈 {{ _('%(count)s sold', count=game.units_sold|format_number) }}{% if ai_mark.units_sold %} <span class="ai-mark">{{ _('AI') }}</span>{% endif %}
                 </span>
                 {% endif %}
                 {% if game.rpcs3_compat %}
@@ -456,6 +456,7 @@
                     {% else %}
                     <span class="hero-rating-text">{{ rating.name }} {{ rating.value }}</span>
                     {% endif %}
+                    {% if rating.ai_guess %}<span class="ai-mark">{{ _('AI guess') }}</span>{% endif %}
                 </div>
                 {% endfor %}
             </div>
@@ -463,8 +464,13 @@
             <div class="hero-age-ratings">
                 <div class="hero-rating-item" title="{{ pref_rating.name }} ({{ pref_rating.region }}): {{ pref_rating.value }}{% if pref_rating.crossmapped %} {{ _('(cross-mapped)') }}{% endif %}">
                     <img src="{{ url_for('static', filename='images/ratings/' + pref_rating.image) }}" alt="{{ pref_rating.value }}">
+                    {% if pref_rating.ai_guess %}<span class="ai-mark">{{ _('AI guess') }}</span>{% endif %}
                 </div>
             </div>
+            {% endif %}
+            {% if guess_board_starts %}
+            <p class="ai-guess-note">{{ _("AI guess: a guess based on the game's content, not an official rating. The game may be older than the board.") }}
+                {{ _('Year each board started rating games: %(boards)s.', boards=guess_board_starts) }}</p>
             {% endif %}
         </div>
     </div>
@@ -1725,6 +1731,29 @@ body:has(.game-fanart-bg.active)::before {
 
 .hero-rating-item img:hover {
     transform: scale(1.1);
+}
+
+.ai-mark {
+    display: inline-block;
+    padding: 0 4px;
+    border: 1px solid currentColor;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.hero-rating-item .ai-mark {
+    display: block;
+    width: fit-content;
+    margin: 2px auto 0;
+    color: var(--text-primary);
+}
+
+.ai-guess-note {
+    margin: var(--spacing-sm) 0 0;
+    font-size: 0.85rem;
+    color: var(--text-primary);
 }
 
 .hero-rating-text {

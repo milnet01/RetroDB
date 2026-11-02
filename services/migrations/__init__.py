@@ -52,6 +52,7 @@ MIGRATIONS = [
     '025_games_box_faces',
     '026_hltb_match_reviewed',
     '027_games_ra_title',
+    '028_clear_save_type_guesses',
 ]
 
 
