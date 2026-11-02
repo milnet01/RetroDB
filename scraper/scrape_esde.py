@@ -20,10 +20,21 @@ from scraper.image_dedup import get_existing_screenshot_hashes, keep_screenshot_
 # Import settings_manager for dynamic path resolution
 # (config.py has empty defaults; actual paths live in data/settings.json)
 import settings_manager
+from services.release_dates import source_date
 
 
 def _get_rom_path():
     return settings_manager.get_effective_path('rom_path', '')
+
+
+def esde_date(raw):
+    """An ES-DE `<releasedate>` (YYYYMMDDTHHMMSS) as a date, or '' for none.
+
+    ES-DE pads a date it only partly knows, so a first of the month is a month.
+    """
+    if not raw or len(raw) < 8:
+        return ''
+    return source_date(f'{raw[:4]}-{raw[4:6]}-{raw[6:8]}', padded_months=True) or ''
 
 
 def _get_esde_gamelists_path():
@@ -583,10 +594,7 @@ def search_esde_games(title, system_folder, limit=10):
         
         if score > 0:
             # Format release date
-            release_date = game.get('releasedate', '')
-            if release_date and len(release_date) >= 8:
-                # ES-DE format: YYYYMMDDTHHMMSS
-                release_date = f"{release_date[:4]}-{release_date[4:6]}-{release_date[6:8]}"
+            release_date = esde_date(game.get('releasedate'))
             
             # Extract region from filename
             region = extract_region_from_filename(filename)
@@ -679,9 +687,7 @@ def fetch_esde_game_details(game_path, system_folder=None):
 
     if match is not None:
         game = match
-        release_date = game.get('releasedate', '')
-        if release_date and len(release_date) >= 8:
-            release_date = f"{release_date[:4]}-{release_date[4:6]}-{release_date[6:8]}"
+        release_date = esde_date(game.get('releasedate'))
 
         return {
             'name': game.get('name', ''),
@@ -1018,9 +1024,8 @@ def apply_esde_metadata(db_game_id, game_data, system_folder=None):
         players = normalize_players_value(esde_data.get('players') or game_data.get('players'))
 
         # Format release date
-        release_date = esde_data.get('releasedate', '') or game_data.get('release_date', '')
-        if release_date and len(release_date) >= 8 and 'T' in release_date:
-            release_date = f"{release_date[:4]}-{release_date[4:6]}-{release_date[6:8]}"
+        release_date = (esde_date(esde_data.get('releasedate'))
+                        or source_date(game_data.get('release_date'), padded_months=True) or '')
 
         logger.info(f"  Title: {name}")
         logger.info(f"  Developer: {developer}")

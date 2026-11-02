@@ -333,6 +333,19 @@
         </div>
     </button>
 
+    <button type="button" class="tool-card" data-on-click="fixReleaseDates">
+        <div class="tool-card-header">
+            <div class="tool-card-icon">&#128197;</div>
+            <div class="tool-card-title">{{ _('Tidy Release Dates') }}</div>
+        </div>
+        <div class="tool-card-desc">
+            {{ _('Older scrapes stored a date known only by its year as 1 January or 31 December, as if the day were known. This cuts those dates back to the year or month, so a scrape can fill in the real one.') }}
+        </div>
+        <div class="tool-card-status" id="releaseDatesStatus">
+            <span class="status-dot no-deps"></span> {{ _('No dependencies required') }}
+        </div>
+    </button>
+
     <button type="button" class="tool-card" data-on-click="clearRawgCovers">
         <div class="tool-card-header">
             <div class="tool-card-icon">&#128444;</div>
@@ -543,6 +556,40 @@ function fixLabels() {
             });
         })
         .catch(() => showNotification(LABELS_TEXT.failed, 'error'));
+}
+
+const RELEASE_DATES_TEXT = {
+    title: {{ _('Tidy Release Dates')|tojson }},
+    confirm: {{ _('{count} games will change.\n\nA date such as 1 January 1987 becomes 1987. A date no scrape filled stays as it is.')|tojson }},
+    none: {{ _('No release dates need tidying.')|tojson }},
+    done: {{ _('Tidied {count} games. Run a bulk scrape with Fill Missing to look for fuller dates.')|tojson }},
+    failed: {{ _('Could not tidy the release dates')|tojson }},
+};
+
+function fixReleaseDates() {
+    const box = document.getElementById('releaseDatesStatus');
+    const fill = (template, count) => template.replace('{count}', formatNumber(count));
+    fetch('/api/maintenance/release-dates/preview')
+        .then(r => r.json())
+        .then(preview => {
+            if (!preview.success) throw new Error();
+            if (!preview.count) {
+                box.textContent = RELEASE_DATES_TEXT.none;
+                return;
+            }
+            showConfirm(RELEASE_DATES_TEXT.title, fill(RELEASE_DATES_TEXT.confirm, preview.count), function() {
+                fetch('/api/maintenance/release-dates/fix', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}',
+                })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (!data.success) throw new Error();
+                        box.textContent = fill(RELEASE_DATES_TEXT.done, data.fixed);
+                    })
+                    .catch(() => showNotification(RELEASE_DATES_TEXT.failed, 'error'));
+            });
+        })
+        .catch(() => showNotification(RELEASE_DATES_TEXT.failed, 'error'));
 }
 
 const RAWG_COVERS_TEXT = {

@@ -7,7 +7,6 @@
 import os
 import logging
 import threading
-from datetime import datetime
 import sys
 
 # Add parent directory to path for config import
@@ -15,6 +14,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import IMAGE_PATH
 import config as _config
 
+from services.release_dates import igdb_regional_dates, pick_release_date
 from scraper.base_scraper import http_post, download_image, get_scraper_conn, per_game_screenshots_fit
 
 logger = logging.getLogger(__name__)
@@ -613,6 +613,8 @@ def fetch_game_details(game_id):
         
         body = f"""
         fields name, first_release_date,
+               release_dates.date, release_dates.y, release_dates.m, release_dates.date_format,
+               release_dates.platform, release_dates.release_region,
                involved_companies.company.name, involved_companies.developer, involved_companies.publisher,
                genres.name, age_ratings.category, age_ratings.rating,
                age_ratings.organization.name, age_ratings.rating_category.rating,
@@ -643,7 +645,7 @@ def fetch_game_details(game_id):
 # APPLY METADATA
 # =============================================================================
 
-def apply_metadata_to_game(db_game_id, igdb_data):
+def apply_metadata_to_game(db_game_id, igdb_data, system_folder=None):
     """Apply IGDB metadata to database game"""
     conn = None
     
@@ -657,7 +659,7 @@ def apply_metadata_to_game(db_game_id, igdb_data):
         # and REPLACED the screenshots column instead of appending. Read the
         # current values so boxart/fanart download only when empty and
         # screenshots append (mirrors scrape_esde's "augment, don't replace").
-        c.execute("SELECT boxart, screenshots, fanart FROM games WHERE id = ?", (db_game_id,))
+        c.execute("SELECT boxart, screenshots, fanart, region FROM games WHERE id = ?", (db_game_id,))
         _existing = c.fetchone()
         existing_boxart = (_existing[0] if _existing else None) or ''
         existing_screenshots = (_existing[1] if _existing else None) or ''
@@ -685,14 +687,9 @@ def apply_metadata_to_game(db_game_id, igdb_data):
                 developer = f"{developer}, {name}" if developer else name
         
         # Release date
-        release_date = igdb_data.get('first_release_date')
-        if release_date:
-            try:
-                release_date = datetime.utcfromtimestamp(release_date).strftime('%Y-%m-%d')
-            except Exception:
-                release_date = ''
-        else:
-            release_date = ''
+        release_date, _ = pick_release_date(
+            igdb_regional_dates(igdb_data.get('release_dates'), get_platform_id(system_folder)),
+            _existing[3] if _existing else None)
         
         # Genre — normalize to the hyphenated canonical forms (FIELD_SCHEMAS).
         # This single-source apply path is a fallback when the hybrid fetch

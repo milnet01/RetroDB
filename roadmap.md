@@ -8418,7 +8418,7 @@ were corrected in `2836bc3` and are not repeated here.
      investigation done 2026-10-31; the user chose every group for
      v4.0.0, in this order: PASS-59-201 to PASS-59-214 (wrong data),
      PASS-59-215 (service limits), PASS-59-216 and PASS-59-217 (extra
-     data, identifying by file), PASS-59-218 (Steam and Xbox).
+     data, identifying by file), PASS-59-218 (Steam and Xbox), then PASS-59-224 (game logos, added by the user 2026-11-02).
      PASS-59-219 (leftovers) goes alongside. PASS-59-161 (screenshots
      true to their system) ships in this step.
   6. Stricter browser security: PASS-60-1, after the template changes
@@ -10305,7 +10305,9 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.207 Release dates stay as exact as the source and belong to this console and region (fix, M).
-- **Status**: todo
+- **Resolution** (2026-11-02, 3.35.1): every source's date goes through `services/release_dates.py`. IGDB reads `release_dates` by console and region, and it and ScreenScraper fill the regional dates. ROM Tools > Tidy Release Dates cuts back stored dates: 256 of 5,685 on a copy of the library.
+  - **Limits**: a date disagreeing with the regional date is only logged, so a person is not shown it. A wrong date the source stored in full (IGDB's other console or region) stays until cleared and scraped again, as nothing offline can tell. RAWG's search still uses `exclude_additions`, untested (rawg finding 8).
+- **Status**: done
 - **Source**: PASS-59-162, 2026-10-31. Notes: igdb F1, F2; esde 6; tgdb 13; rawg 8; ai_steam_xbox A6, A11; merge_and_stored 9, 10.
 - **Problem**: an IGDB date known only by year is stored as 31 December. ES-DE pads to 1 January. `first_release_date` is the earliest for any console or region. `release_date` and `release_dates` can disagree.
 - **Fix**: read IGDB's `release_dates` by platform and region, and store `YYYY` or `YYYY-MM` when that is all a source knows. Fill `release_dates` from IGDB and ScreenScraper, not only the AI.
@@ -10438,6 +10440,17 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Status**: todo
 - **Problem**: found while translating 3.35.0. The translated `help.<locale>.html` files lack two English sections, Search Anywhere and Keeping a Title, and some older paragraphs lag the English, such as Backfill Alternate Titles. In xh and zu, Custom Images and Fill Missing appear under older labels in older text.
 - **Fix**: compare each locale's sections with `help.html` and translate what is missing. Do it before v4.0.0.
+
+---
+
+#### Pass 59.224 Game logos on the game page, in place of a missing box, and in the play menu (feature, M).
+- **Status**: todo
+- **Source**: user, 2026-11-02.
+- **Decided** (user, 2026-11-02): in v4.0.0, after the scraper fixes. Show the logo on the game page above the title text, as a stand-in for a missing box, and on a full-screen play or loading screen. Whether such a screen exists is unchecked. The title stays as text, because a logo can be hard to read.
+- **Sources**: ES-DE `marquees/` (local, about 5,290 files counted 2026-10-31). ScreenScraper `wheel` and `wheel-hd`. TheGamesDB `clearlogo`, from its docs only, no sample. IGDB artwork types 5, 6 and 7, which 69 of 1,672 Mega Drive, 78 of 1,996 SNES and 159 of 4,314 PS2 games have (asked live 2026-11-02).
+- **Needs**: a logo column and folder, fill-only like other media, and a way to fill rows already scraped.
+
+---
 
 ## Done index
 

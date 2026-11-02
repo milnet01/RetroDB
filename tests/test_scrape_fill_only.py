@@ -47,7 +47,7 @@ def _make_conn_with_existing_row(**values):
     conn.execute("""
         CREATE TABLE games (
             id INTEGER PRIMARY KEY,
-            title TEXT, publisher TEXT, developer TEXT, release_date TEXT,
+            title TEXT, publisher TEXT, developer TEXT, release_date TEXT, region TEXT,
             genre TEXT, rating TEXT, esrb_rating TEXT, pegi_rating TEXT,
             players INTEGER, modes TEXT, description TEXT, boxart TEXT,
             screenshots TEXT, fanart TEXT,

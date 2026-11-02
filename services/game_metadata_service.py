@@ -337,7 +337,7 @@ def _apply_single_source(db_game_id, game_data, source, normalized, system_folde
         return apply_tgdb(db_game_id, game_data)
     if normalized == 'igdb':
         from scraper.scrape_igdb import apply_metadata_to_game as apply_igdb
-        return apply_igdb(db_game_id, game_data)
+        return apply_igdb(db_game_id, game_data, system_folder)
     if normalized == 'esde':
         from scraper.scrape_esde import apply_esde_metadata
         return apply_esde_metadata(db_game_id, game_data, system_folder)

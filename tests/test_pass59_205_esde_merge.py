@@ -101,7 +101,7 @@ def later_source(monkeypatch):
                         lambda: {'enabled': {}, 'api_keys': {}}, raising=False)
     monkeypatch.setitem(hybrid_scraper._FALLBACK_FETCHERS, 'rawg', lambda lookup: {'any': 1})
 
-    def fill(metadata, data, db_game_id, result, fill_only=False):
+    def fill(metadata, data, db_game_id, result, fill_only=False, **_):
         for field, value in (('developer', 'Later Source'), ('fanart', 'later_fanart.png')):
             if not metadata[field]:
                 metadata[field] = value
@@ -205,7 +205,7 @@ def test_full_rescrape_does_not_delete_a_box_it_just_downloaded(
     monkeypatch.setattr(hybrid_scraper, '_fallback_order',
                         lambda *a, **k: ['rawg', 'esde'])
 
-    def fill(metadata, data, db_game_id, result, fill_only=False):
+    def fill(metadata, data, db_game_id, result, fill_only=False, **_):
         metadata['boxart'] = '1_ss_boxart.webp'
     monkeypatch.setattr(hybrid_scraper, 'apply_rawg_to_metadata', fill)
 

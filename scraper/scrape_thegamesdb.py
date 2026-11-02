@@ -17,6 +17,7 @@ from config import IMAGE_PATH
 
 from scraper.base_scraper import http_get, get_scraper_conn, download_image
 import config as _config
+from services.release_dates import source_date
 
 # Pass 45.14 — every scraper API response cap, mirroring RA + AI + ScreenScraper.
 _TGDB_MAX_BYTES = getattr(_config, 'MAX_API_RESPONSE_BYTES', 10 * 1024 * 1024)
@@ -1068,8 +1069,9 @@ def apply_metadata_to_game(db_game_id, tgdb_data):
                         release_date = f"{groups[0]}-{groups[1].zfill(2)}-{groups[2].zfill(2)}"
                         break
                     elif len(groups) == 1:
-                        release_date = f"{groups[0]}-01-01"
+                        release_date = groups[0]
                         break
+            release_date = source_date(release_date) or ''
 
         # Process rating for ESRB/PEGI
         rating = tgdb_data.get('rating', '') or ''

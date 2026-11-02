@@ -16,6 +16,7 @@ from services.database import execute, get_db, get_db_with_context, query
 from services.game_utils import reset_game_title_from_filename
 from services.media_cleanup import delete_game_images
 from services.normalization import canonicalize_metadata
+from services.release_dates import source_date
 from services import upscale_queue
 
 logger = logging.getLogger(__name__)
@@ -231,18 +232,19 @@ def clear_scraped_data(system_id=None, delete_images=False):
 _LABEL_COLUMNS = ('genre', 'modes', 'perspective', 'dimension', 'game_structure', 'players')
 
 
-def _players_came_from_rawg(history):
-    """Did the newest scrape to record `players` credit RAWG?"""
+def _filled_by(history, field):
+    """The source the newest scrape to record `field` credits, or None."""
     try:
         entries = json.loads(history or '[]')
     except ValueError:
-        return False
+        return None
+    prefix = f'{field} ('
     for entry in reversed(entries if isinstance(entries, list) else []):
-        fields = entry.get('fields_filled', []) if isinstance(entry, dict) else []
-        for field in fields:
-            if isinstance(field, str) and field.startswith('players ('):
-                return field == 'players (RAWG)'
-    return False
+        filled = entry.get('fields_filled', []) if isinstance(entry, dict) else []
+        for item in filled:
+            if isinstance(item, str) and item.startswith(prefix) and item.endswith(')'):
+                return item[len(prefix):-1]
+    return None
 
 
 def _label_changes():
@@ -256,7 +258,7 @@ def _label_changes():
     for row in query(f"SELECT id, scrape_history, {columns} FROM games"):
         stored = {c: row[c] for c in _LABEL_COLUMNS}
         wanted = dict(stored)
-        if wanted['players'] == 1 and _players_came_from_rawg(row['scrape_history']):
+        if wanted['players'] == 1 and _filled_by(row['scrape_history'], 'players') == 'RAWG':
             wanted['players'] = None
         canonicalize_metadata(wanted)
         wanted = {c: (v if v != '' else None) for c, v in wanted.items()}
@@ -283,6 +285,52 @@ def fix_labels():
                 (*wanted.values(), game_id, *stored.values()),
             ).rowcount
     logger.info(f"Tidied names or player counts on {fixed} game(s)")
+    return fixed
+
+
+def _tidied_date(stored, source):
+    """What a stored `release_date` from `source` really knows (PASS-59-207).
+
+    A date no scrape credits may have been typed by hand, so it stays. 1 January
+    1970 stays empty either way: no game came out then.
+    """
+    if stored == '1970-01-01':
+        return None
+    if source is None:
+        return stored
+    if source == 'IGDB':
+        # IGDB's year-only dates were stored as the last day of the year.
+        return stored[:4] if stored.endswith('-12-31') else stored
+    return source_date(stored, padded_months=source == 'ES-DE') or stored
+
+
+def _release_date_changes():
+    """(id, stored date, new date) for rows whose date claims more than is known."""
+    found = []
+    for row in query("SELECT id, release_date, scrape_history FROM games "
+                     "WHERE release_date IS NOT NULL AND release_date != ''"):
+        wanted = _tidied_date(row['release_date'], _filled_by(row['scrape_history'], 'release_date'))
+        if wanted != row['release_date']:
+            found.append((row['id'], row['release_date'], wanted))
+    return found
+
+
+def count_release_date_changes():
+    """How many games hold a date the tidy would change."""
+    return len(_release_date_changes())
+
+
+def fix_release_dates():
+    """Cut stored release dates back to what their source knew. Returns the count."""
+    fixed = 0
+    with get_db_with_context() as conn:
+        for game_id, stored, wanted in _release_date_changes():
+            # `release_date = ?` skips a row changed since the search.
+            fixed += conn.execute(
+                "UPDATE games SET release_date = ? WHERE id = ? AND release_date = ?",
+                (wanted, game_id, stored),
+            ).rowcount
+    logger.info(f"Tidied the release date on {fixed} game(s)")
     return fixed
 
 

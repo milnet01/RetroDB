@@ -201,7 +201,8 @@ class TestApplyIgdb:
     def test_release_date_converted_from_unix_timestamp(self, blank):
         meta, result = blank
         # 2001-11-15 UTC
-        apply_igdb_to_metadata(meta, {'first_release_date': 1005782400}, db_game_id=1, result=result)
+        entry = {'date': 1005782400, 'y': 2001, 'm': 11, 'date_format': 0, 'release_region': 2}
+        apply_igdb_to_metadata(meta, {'release_dates': [entry]}, db_game_id=1, result=result)
         assert meta['release_date'] == '2001-11-15'
 
     def test_age_rating_category_map(self, blank):
@@ -356,10 +357,10 @@ class TestApplyRawg:
         apply_rawg_to_metadata(meta, {'release_date': '2007-10-10T00:00:00Z'}, db_game_id=1, result=result)
         assert meta['release_date'] == '2007-10-10'
 
-    def test_release_date_too_short_ignored(self, blank):
+    def test_release_date_of_only_a_year_is_kept(self, blank):
         meta, result = blank
         apply_rawg_to_metadata(meta, {'release_date': '2007'}, db_game_id=1, result=result)
-        assert meta['release_date'] == ''
+        assert meta['release_date'] == '2007'
 
     def test_franchise_only_fills_empty(self, blank):
         meta, result = blank

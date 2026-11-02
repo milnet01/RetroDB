@@ -140,6 +140,11 @@ def _make_request(endpoint, params=None, max_retries=2):
         return None
 
 
+def platform_id(system_folder):
+    """RAWG platform for this system folder, or None."""
+    return PLATFORM_MAP.get(system_folder.lower()) if system_folder else None
+
+
 def search_games(title, system_folder=None, limit=10):
     """Search for games on RAWG"""
     results = []
@@ -151,13 +156,13 @@ def search_games(title, system_folder=None, limit=10):
         'exclude_additions': 'true',  # Exclude DLCs/editions from results
     }
     
-    platform_id = PLATFORM_MAP.get(system_folder.lower()) if system_folder else None
-    if system_folder and not platform_id:
+    rawg_platform = platform_id(system_folder)
+    if system_folder and not rawg_platform:
         logger.info(f"RAWG: no platform for system folder '{system_folder}' — not searched")
         return results
-    if platform_id:
-        params['platforms'] = platform_id
-    logger.info(f"RAWG: Searching with platform_id={platform_id} for system_folder={system_folder}")
+    if rawg_platform:
+        params['platforms'] = rawg_platform
+    logger.info(f"RAWG: Searching with platform_id={rawg_platform} for system_folder={system_folder}")
 
     data = _make_request('games', params)
 
@@ -185,7 +190,7 @@ def search_games(title, system_folder=None, limit=10):
                     'id': plat.get('id'),
                     'name': plat.get('name', '')
                 }
-                if platform_id and plat.get('id') == platform_id:
+                if rawg_platform and plat.get('id') == rawg_platform:
                     platform_match = True
                     matched_platform_name = plat.get('name', '')
                     # Put matched platform first

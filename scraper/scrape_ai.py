@@ -443,7 +443,7 @@ def _sanitize_prompt_input(value, *, max_len=256):
 
 
 def _build_prompt(title, system_name, missing_fields, existing_values=None,
-                  official_title_for=None):
+                  official_title_for=None, date_region=None):
     """Build a structured JSON-requesting prompt for the AI provider.
 
     Uses the authoritative field schemas from the reference template.
@@ -454,6 +454,7 @@ def _build_prompt(title, system_name, missing_fields, existing_values=None,
         missing_fields: List of field names to request
         existing_values: Optional dict of field->current_value for validation mode.
                         Fields with existing values get a "verify and correct" prefix.
+        date_region: The game's region, for `release_date`, or None.
         official_title_for: Optional {'rom_file', 'region'} of the game's ROM;
                         when given, the prompt also asks for the official title
                         as released in that region (see _official_title_context).
@@ -488,8 +489,10 @@ def _build_prompt(title, system_name, missing_fields, existing_values=None,
                 '"publisher": publishing company name(s), comma-separated if more than one'
             )
         elif field == 'release_date':
+            where = f' in the {_sanitize_prompt_input(date_region)} region' if date_region else ''
             field_instructions.append(
-                '"release_date": release date for THIS specific platform in YYYY-MM-DD format'
+                '"release_date": release date for THIS specific platform' + where
+                + ' in YYYY-MM-DD format, or YYYY-MM / YYYY when only that much is known'
             )
         elif field == 'release_dates':
             field_instructions.append(
@@ -1093,6 +1096,10 @@ def _validate_field(field_name, value):
     if value is None:
         return ''
 
+    if field_name == 'release_date':
+        from services.release_dates import source_date
+        return source_date(value) or ''
+
     # An object, not text: stored as JSON, one date per region.
     if field_name == 'release_dates':
         from services.release_dates import release_dates_json
@@ -1264,7 +1271,8 @@ def get_game_details(game_id, title, system_name, system_folder=None, existing_m
 
     # Build prompt and call provider
     prompt = _build_prompt(title, system_name, missing_fields, existing_values=validate_existing,
-                           official_title_for=official_for)
+                           official_title_for=official_for,
+                           date_region=(existing_metadata or {}).get('region'))
 
     provider = provider_config['provider']
     api_key = provider_config['api_key']

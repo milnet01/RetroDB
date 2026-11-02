@@ -32,6 +32,14 @@ from services.image_utils import (
     finalize_downloaded_image,
 )
 from services.normalization import modes_from_igdb, normalize_genre, normalize_modes, split_labels
+from services.release_dates import (
+    igdb_regional_dates,
+    is_fuller_date,
+    merge_release_dates,
+    pick_release_date,
+    screenscraper_regional_dates,
+    source_date,
+)
 from scraper.base_scraper import per_game_screenshots_fit, screenshot_impossible_for_game
 from scraper.image_dedup import (
     compute_dhash,
@@ -51,7 +59,7 @@ from scraper.metadata_normalizer import (
 # loader that returned an empty `enabled: {}` on miss, so upstream
 # enabled-lookups silently disagreed with scraper_manager's view.
 from scraper.scraper_manager import load_scraper_settings
-from scraper.ss_regions import by_region
+from scraper.ss_regions import by_region, region_codes
 
 logger = logging.getLogger(__name__)
 
@@ -307,6 +315,29 @@ __all__ = [
 
 
 # =============================================================================
+# RELEASE DATES (PASS-59-207)
+# =============================================================================
+
+def _fill_release_date(metadata, when, label, result, own=False):
+    """Fill an empty `release_date`. A date for this copy's own region (`own`) may
+    also fill out a stored year or month, as it says more and contradicts nothing."""
+    if not when:
+        return
+    stored = metadata.get('release_date') or ''
+    if not stored or (own and is_fuller_date(when, stored)):
+        metadata['release_date'] = when
+        result['filled_fields'].append(f'release_date ({label})')
+
+
+def _fill_regional_dates(metadata, found, label, result):
+    """Add a source's per-region dates for the regions `release_dates` lacks."""
+    merged = merge_release_dates(metadata.get('release_dates'), found)
+    if merged:
+        metadata['release_dates'] = merged
+        result['filled_fields'].append(f'release_dates ({label})')
+
+
+# =============================================================================
 # TGDB METADATA APPLICATION
 # =============================================================================
 
@@ -318,9 +349,10 @@ def apply_tgdb_to_metadata(metadata, tgdb_data, db_game_id, result, fill_only=Fa
         'title': 'name',
         'publisher': 'publisher',
         'developer': 'developer',
-        'release_date': 'release_date',
         'description': 'summary',
     }
+
+    _fill_release_date(metadata, source_date(tgdb_data.get('release_date')), 'TGDB', result)
 
     for meta_field, tgdb_field in field_map.items():
         # Title: always set when primary source (fill_only=False), matching IGDB/RAWG
@@ -520,10 +552,14 @@ def _igdb_age_rating(rating):
 # IGDB METADATA APPLICATION
 # =============================================================================
 
-def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=False):
-    """Apply IGDB data to metadata dict"""
-    from datetime import datetime, timezone
+def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=False,
+                           platform_id=None, own_region=None):
+    """Apply IGDB data to metadata dict.
 
+    Dates come from `release_dates` for `platform_id`, nearest `own_region`
+    (`ss_regions.own_region`). `first_release_date` is never used: it is the
+    earliest for any console or region, and hides how exact it is.
+    """
     # Title
     if not metadata['title'] or not fill_only:
         if igdb_data.get('name'):
@@ -571,11 +607,10 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
         result['filled_fields'].append('developer (IGDB)')
 
     # Release date
-    if not metadata['release_date']:
-        ts = igdb_data.get('first_release_date')
-        if ts:
-            metadata['release_date'] = datetime.fromtimestamp(ts, tz=timezone.utc).strftime('%Y-%m-%d')
-            result['filled_fields'].append('release_date (IGDB)')
+    regional = igdb_regional_dates(igdb_data.get('release_dates'), platform_id)
+    when, is_own = pick_release_date(regional, own_region or metadata.get('region'))
+    _fill_release_date(metadata, when, 'IGDB', result, own=is_own)
+    _fill_regional_dates(metadata, regional, 'IGDB', result)
 
     # Genre
     if not metadata['genre']:
@@ -716,7 +751,16 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
 # RAWG METADATA APPLICATION
 # =============================================================================
 
-def apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result, fill_only=False):
+def _rawg_date(rawg_data, platform_id):
+    """This console's date from a RAWG record, else the record's own date."""
+    for entry in rawg_data.get('platforms') or []:
+        if (entry.get('platform') or {}).get('id') == platform_id and entry.get('released_at'):
+            return entry['released_at']
+    return rawg_data.get('release_date')
+
+
+def apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result, fill_only=False,
+                           platform_id=None):
     """Apply RAWG.io data to metadata dict"""
 
     # Title
@@ -733,11 +777,7 @@ def apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result, fill_only=Fa
         result['filled_fields'].append('description (RAWG)')
 
     # Release date
-    if rawg_data.get('release_date') and not metadata['release_date']:
-        release = rawg_data['release_date']
-        if release and len(release) >= 10:
-            metadata['release_date'] = release[:10]
-            result['filled_fields'].append('release_date (RAWG)')
+    _fill_release_date(metadata, source_date(_rawg_date(rawg_data, platform_id)), 'RAWG', result)
 
     # Developer
     if rawg_data.get('developer') and not metadata['developer']:
@@ -1007,11 +1047,14 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
 
     # Release date - only fill if empty
     dates = ss_data.get('dates') or ss_data.get('release_date')
-    if dates and not metadata['release_date']:
-        date_str = dates if isinstance(dates, str) else get_regional(dates)
-        if date_str:
-            metadata['release_date'] = date_str[:10] if len(date_str) >= 10 else date_str
-            result['filled_fields'].append('release_date (ScreenScraper)')
+    if isinstance(dates, str):
+        _fill_release_date(metadata, source_date(dates), 'ScreenScraper', result)
+    elif dates:
+        nearest = next((i for i in by_region(dates, own_region) if i.get('text')), {})
+        is_own = (nearest.get('region') or '').lower() in region_codes(own_region)
+        _fill_release_date(metadata, source_date(nearest.get('text')), 'ScreenScraper',
+                           result, own=is_own)
+        _fill_regional_dates(metadata, screenscraper_regional_dates(dates), 'ScreenScraper', result)
 
     # Developer/Publisher - only fill if empty
     if (ss_data.get('developpeur') or ss_data.get('developer')) and not metadata['developer']:

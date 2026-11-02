@@ -24,7 +24,9 @@ from services.auth import admin_required, login_required
 from services.game_cleanup import (
     count_ai_region_mismatches,
     count_label_changes,
+    count_release_date_changes,
     fix_labels,
+    fix_release_dates,
     fix_ai_region_mismatches,
     clean_missing_roms,
     clear_clz_imports,
@@ -436,6 +438,30 @@ def api_labels_preview():
 def api_labels_fix():
     """Give stored genres, perspectives, modes and player counts one set of names."""
     fixed = fix_labels()
+    if fixed:
+        invalidate_analytics_cache()
+        invalidate_filter_cache()
+    return success(fixed=fixed)
+
+
+# =============================================================================
+# RELEASE DATES THAT CLAIM A DAY NOBODY PUBLISHED (PASS-59-207)
+# =============================================================================
+
+@bp.route('/api/maintenance/release-dates/preview', methods=['GET'])
+@admin_required
+@handle_api_errors
+def api_release_dates_preview():
+    """How many games the tidy would change. Changes nothing."""
+    return success(count=count_release_date_changes())
+
+
+@bp.route('/api/maintenance/release-dates/fix', methods=['POST'])
+@admin_required
+@handle_api_errors
+def api_release_dates_fix():
+    """Cut stored release dates back to what their source knew."""
+    fixed = fix_release_dates()
     if fixed:
         invalidate_analytics_cache()
         invalidate_filter_cache()

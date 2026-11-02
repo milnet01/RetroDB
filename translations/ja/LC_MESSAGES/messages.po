@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-01 21:36+0200\n"
+"POT-Creation-Date: 2026-11-02 05:06+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -698,15 +698,15 @@ msgstr ""
 msgid "Next disk inserted"
 msgstr "次のディスクを挿入しました"
 
-#: routes/maintenance.py:270
+#: routes/maintenance.py:272
 msgid "Unknown image type"
 msgstr "不明な画像タイプです"
 
-#: routes/maintenance.py:459
+#: routes/maintenance.py:485
 msgid "Add your ScreenScraper account in Settings first."
 msgstr "まず設定でScreenScraperのアカウントを追加してください。"
 
-#: routes/maintenance.py:460
+#: routes/maintenance.py:486
 msgid "This fix is already running."
 msgstr "この修正はすでに実行中です。"
 
@@ -5663,7 +5663,7 @@ msgstr "ツール"
 msgid "Game Imports"
 msgstr "ゲームインポート"
 
-#: templates/base.html:183 templates/rom_tools_hub.html:384
+#: templates/base.html:183 templates/rom_tools_hub.html:397
 msgid "Configuration"
 msgstr "設定"
 
@@ -8576,6 +8576,7 @@ msgstr "ハッシュ、ファイル名、またはその両方で重複ROMを見
 #: templates/rom_tools_hub.html:253 templates/rom_tools_hub.html:267
 #: templates/rom_tools_hub.html:280 templates/rom_tools_hub.html:319
 #: templates/rom_tools_hub.html:332 templates/rom_tools_hub.html:345
+#: templates/rom_tools_hub.html:358
 msgid "No dependencies required"
 msgstr "依存関係は不要"
 
@@ -8668,7 +8669,7 @@ msgstr ""
 msgid "Metadata only &middot; no media downloads"
 msgstr "メタデータのみ &middot; メディアのダウンロードなし"
 
-#: templates/rom_tools_hub.html:300 templates/rom_tools_hub.html:422
+#: templates/rom_tools_hub.html:300 templates/rom_tools_hub.html:435
 msgid "Fix Box and Manual Regions"
 msgstr "ボックスとマニュアルの地域を修正"
 
@@ -8684,7 +8685,7 @@ msgstr "以前のScreenScraperでの取得では、USA版のゲームにヨー�
 msgid "Needs a ScreenScraper account"
 msgstr "ScreenScraperのアカウントが必要です"
 
-#: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:481
+#: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:494
 msgid "Fix Regions from File Names"
 msgstr "ファイル名から地域を修正"
 
@@ -8695,7 +8696,7 @@ msgid ""
 " their file name."
 msgstr "以前はAIがファイル名の表記を無視して地域を推測していたため、(USA)のファイルが日本と表示されることがありました。この機能は、そうしたゲームにファイル名どおりの地域を設定します。"
 
-#: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:515
+#: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:528
 msgid "Tidy Genres, Perspectives and Modes"
 msgstr ""
 
@@ -8706,57 +8707,69 @@ msgid ""
 "every game one set of names."
 msgstr ""
 
-#: templates/rom_tools_hub.html:339 templates/rom_tools_hub.html:549
+#: templates/rom_tools_hub.html:339 templates/rom_tools_hub.html:562
+#, fuzzy
+msgid "Tidy Release Dates"
+msgstr "発売日"
+
+#: templates/rom_tools_hub.html:342
+msgid ""
+"Older scrapes stored a date known only by its year as 1 January or 31 "
+"December, as if the day were known. This cuts those dates back to the "
+"year or month, so a scrape can fill in the real one."
+msgstr ""
+
+#: templates/rom_tools_hub.html:352 templates/rom_tools_hub.html:596
 msgid "Clear RAWG Pictures from Box Art"
 msgstr "ボックスアートからRAWGの画像を消去"
 
-#: templates/rom_tools_hub.html:342
+#: templates/rom_tools_hub.html:355
 msgid ""
 "RAWG has no box art, so older scrapes saved a background picture or "
 "screenshot as the cover, and that blocks a real cover. This clears those "
 "pictures so a scrape can find real covers."
 msgstr "RAWGにはボックスアートがないため、以前の取得では背景画像やスクリーンショットがカバーとして保存され、本物のカバーが入らなくなっていました。この機能はそれらの画像を消去し、取得で本物のカバーを探せるようにします。"
 
-#: templates/rom_tools_hub.html:352
+#: templates/rom_tools_hub.html:365
 msgid "Bulk HLTB Lookup"
 msgstr "一括HLTB検索"
 
-#: templates/rom_tools_hub.html:355
+#: templates/rom_tools_hub.html:368
 msgid ""
 "Fetch HowLongToBeat playtime for every game. High-confidence primary-"
 "title matches apply automatically; alt-title matches and low-confidence "
 "hits are queued for review so you can approve or reject in bulk."
 msgstr "すべてのゲームのHowLongToBeatプレイ時間を取得します。高信頼度の主タイトル一致は自動的に適用され、別名の一致と低信頼度のヒットは確認用にキューされ、一括で承認または却下できます。"
 
-#: templates/rom_tools_hub.html:358
+#: templates/rom_tools_hub.html:371
 msgid "Uses stored alternate titles"
 msgstr "保存された別名を使用"
 
-#: templates/rom_tools_hub.html:365
+#: templates/rom_tools_hub.html:378
 msgid "HLTB Pending Review"
 msgstr "HLTB保留中の確認"
 
-#: templates/rom_tools_hub.html:368
+#: templates/rom_tools_hub.html:381
 msgid ""
 "Review and approve HLTB matches that were flagged during a bulk lookup "
 "&mdash; alt-title matches and anything below the confidence threshold."
 msgstr "一括検索中にフラグが付けられたHLTBの一致を確認して承認します &mdash; 別名の一致と信頼度しきい値を下回るもの。"
 
-#: templates/rom_tools_hub.html:371
+#: templates/rom_tools_hub.html:384
 msgid "Requires review"
 msgstr "確認が必要"
 
-#: templates/rom_tools_hub.html:378
+#: templates/rom_tools_hub.html:391
 msgid "Tool Settings"
 msgstr "ツール設定"
 
-#: templates/rom_tools_hub.html:381
+#: templates/rom_tools_hub.html:394
 msgid ""
 "Configure paths, external tool locations, archive types, and other "
 "preferences shared across all ROM tools."
 msgstr "すべてのROMツールで共有されるパス、外部ツールの場所、アーカイブタイプ、その他の設定を構成します。"
 
-#: templates/rom_tools_hub.html:423
+#: templates/rom_tools_hub.html:436
 msgid ""
 "Each game with a ScreenScraper box or manual is looked up again. Where "
 "another region suits it better, the file is downloaded and the old one is"
@@ -8771,34 +8784,34 @@ msgstr ""
 "\n"
 "手動で変更したゲームは対象外です。ScreenScraperの1日の利用枠を使うため、時間がかかることがあります。ページを離れても続行され、このカードをもう一度押すと停止します。"
 
-#: templates/rom_tools_hub.html:424
+#: templates/rom_tools_hub.html:437
 msgid "Could not start the fix"
 msgstr "修正を開始できませんでした"
 
-#: templates/rom_tools_hub.html:425
+#: templates/rom_tools_hub.html:438
 msgid ""
 "Stop the fix? Files already swapped stay as they are, and a later run "
 "carries on with the rest."
 msgstr "修正を停止しますか?差し替え済みのファイルはそのままで、次回の実行で残りを続けます。"
 
-#: templates/rom_tools_hub.html:426
+#: templates/rom_tools_hub.html:439
 #, python-brace-format
 msgid "Stopped. Files swapped: {replaced}."
 msgstr "停止しました。差し替えたファイル: {replaced}。"
 
-#: templates/rom_tools_hub.html:427
+#: templates/rom_tools_hub.html:440
 #, python-brace-format
 msgid ""
 "The fix stopped with an error. Files swapped: {replaced}. The log has the"
 " details."
 msgstr "エラーで修正が停止しました。差し替えたファイル: {replaced}。詳細はログをご確認ください。"
 
-#: templates/rom_tools_hub.html:428
+#: templates/rom_tools_hub.html:441
 #, python-brace-format
 msgid "Checked {current} of {total} games. Files swapped: {replaced}."
 msgstr "{total}件中{current}件のゲームを確認しました。差し替えたファイル: {replaced}。"
 
-#: templates/rom_tools_hub.html:429
+#: templates/rom_tools_hub.html:442
 #, python-brace-format
 msgid ""
 "Finished. Files swapped: {replaced}. Games not found: {no_match}. Could "
@@ -8807,7 +8820,7 @@ msgstr ""
 "完了しました。差し替えたファイル: {replaced}。見つからなかったゲーム: {no_match}。ダウンロードできなかったもの: "
 "{failed}。"
 
-#: templates/rom_tools_hub.html:430
+#: templates/rom_tools_hub.html:443
 #, python-brace-format
 msgid ""
 "Stopped: ScreenScraper stopped answering, so your daily allowance may be "
@@ -8816,7 +8829,7 @@ msgstr ""
 "停止しました。ScreenScraperが応答しなくなったため、1日の利用枠を使い切った可能性があります。差し替えたファイル: "
 "{replaced}。明日もう一度実行してください。"
 
-#: templates/rom_tools_hub.html:482
+#: templates/rom_tools_hub.html:495
 #, python-brace-format
 msgid ""
 "{count} games have a region from the AI that their file name contradicts."
@@ -8829,20 +8842,20 @@ msgstr ""
 "\n"
 "変更されるのはAIが設定した地域のみです。それらを手動でファイル名と違う地域に直していた場合も、変更されます。"
 
-#: templates/rom_tools_hub.html:483
+#: templates/rom_tools_hub.html:496
 msgid "No game has an AI region that its file name contradicts."
 msgstr "ファイル名と食い違うAI設定の地域を持つゲームはありません。"
 
-#: templates/rom_tools_hub.html:484
+#: templates/rom_tools_hub.html:497
 #, python-brace-format
 msgid "Fixed {count} regions."
 msgstr "{count}件の地域を修正しました。"
 
-#: templates/rom_tools_hub.html:485
+#: templates/rom_tools_hub.html:498
 msgid "Could not fix the regions"
 msgstr "地域を修正できませんでした"
 
-#: templates/rom_tools_hub.html:516
+#: templates/rom_tools_hub.html:529
 #, python-brace-format
 msgid ""
 "{count} games will change.\n"
@@ -8857,24 +8870,50 @@ msgid ""
 "empty."
 msgstr ""
 
-#: templates/rom_tools_hub.html:517
+#: templates/rom_tools_hub.html:530
 #, fuzzy
 msgid "Every game already uses these names."
 msgstr "そのユーザー名はすでに存在します"
 
-#: templates/rom_tools_hub.html:518
+#: templates/rom_tools_hub.html:531
 #, fuzzy, python-brace-format
 msgid ""
 "Tidied {count} games. Run a bulk scrape with Fill Missing to fill "
 "anything left empty."
 msgstr "{count}件の画像を消去しました。未入力のみ補完で一括取得を実行して、本物のカバーを探してください。"
 
-#: templates/rom_tools_hub.html:519
+#: templates/rom_tools_hub.html:532
 #, fuzzy
 msgid "Could not tidy the names"
 msgstr "ゲームの数を数えられませんでした。"
 
-#: templates/rom_tools_hub.html:550
+#: templates/rom_tools_hub.html:563
+#, python-brace-format
+msgid ""
+"{count} games will change.\n"
+"\n"
+"A date such as 1 January 1987 becomes 1987. A date no scrape filled stays"
+" as it is."
+msgstr ""
+
+#: templates/rom_tools_hub.html:564
+#, fuzzy
+msgid "No release dates need tidying."
+msgstr "発売日"
+
+#: templates/rom_tools_hub.html:565
+#, fuzzy, python-brace-format
+msgid ""
+"Tidied {count} games. Run a bulk scrape with Fill Missing to look for "
+"fuller dates."
+msgstr "{count}件の画像を消去しました。未入力のみ補完で一括取得を実行して、本物のカバーを探してください。"
+
+#: templates/rom_tools_hub.html:566
+#, fuzzy
+msgid "Could not tidy the release dates"
+msgstr "ゲームの数を数えられませんでした。"
+
+#: templates/rom_tools_hub.html:597
 #, python-brace-format
 msgid ""
 "{count} games and wishlist items use a RAWG picture as their box art. "
@@ -8889,18 +8928,18 @@ msgstr ""
 "\n"
 "他の取得元のカバーとファンアートはすべて残ります。その後、未入力のみ補完で一括取得を実行して、本物のカバーを探してください。"
 
-#: templates/rom_tools_hub.html:551
+#: templates/rom_tools_hub.html:598
 msgid "No game uses a RAWG picture as its box art."
 msgstr "RAWGの画像をボックスアートに使っているゲームはありません。"
 
-#: templates/rom_tools_hub.html:552
+#: templates/rom_tools_hub.html:599
 #, python-brace-format
 msgid ""
 "Cleared {count} pictures. Run a bulk scrape with Fill Missing to look for"
 " real covers."
 msgstr "{count}件の画像を消去しました。未入力のみ補完で一括取得を実行して、本物のカバーを探してください。"
 
-#: templates/rom_tools_hub.html:553
+#: templates/rom_tools_hub.html:600
 msgid "Could not clear the pictures"
 msgstr "画像を消去できませんでした"
 

@@ -62,7 +62,7 @@ def fallbacks(monkeypatch):
     applied = []
 
     def _apply(name):
-        def apply(metadata, data, db_game_id, result, fill_only=False):
+        def apply(metadata, data, db_game_id, result, fill_only=False, **_):
             applied.append(name)
             if not metadata['genre']:
                 metadata['genre'] = data['genre']

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-01 21:36+0200\n"
+"POT-Creation-Date: 2026-11-02 05:06+0200\n"
 "PO-Revision-Date: 2026-07-01 09:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hans\n"
@@ -696,15 +696,15 @@ msgstr ""
 msgid "Next disk inserted"
 msgstr "已插入下一张光盘"
 
-#: routes/maintenance.py:270
+#: routes/maintenance.py:272
 msgid "Unknown image type"
 msgstr "未知的图片类型"
 
-#: routes/maintenance.py:459
+#: routes/maintenance.py:485
 msgid "Add your ScreenScraper account in Settings first."
 msgstr "请先在设置中添加你的 ScreenScraper 账户。"
 
-#: routes/maintenance.py:460
+#: routes/maintenance.py:486
 msgid "This fix is already running."
 msgstr "此修复已在运行。"
 
@@ -5661,7 +5661,7 @@ msgstr "工具"
 msgid "Game Imports"
 msgstr "游戏导入"
 
-#: templates/base.html:183 templates/rom_tools_hub.html:384
+#: templates/base.html:183 templates/rom_tools_hub.html:397
 msgid "Configuration"
 msgstr "配置"
 
@@ -8575,6 +8575,7 @@ msgstr "按哈希值、文件名或两者查找重复的 ROM。识别地区版�
 #: templates/rom_tools_hub.html:253 templates/rom_tools_hub.html:267
 #: templates/rom_tools_hub.html:280 templates/rom_tools_hub.html:319
 #: templates/rom_tools_hub.html:332 templates/rom_tools_hub.html:345
+#: templates/rom_tools_hub.html:358
 msgid "No dependencies required"
 msgstr "无需依赖项"
 
@@ -8665,7 +8666,7 @@ msgstr ""
 msgid "Metadata only &middot; no media downloads"
 msgstr "仅元数据 &middot; 不下载媒体"
 
-#: templates/rom_tools_hub.html:300 templates/rom_tools_hub.html:422
+#: templates/rom_tools_hub.html:300 templates/rom_tools_hub.html:435
 msgid "Fix Box and Manual Regions"
 msgstr "修复包装盒和说明书地区"
 
@@ -8683,7 +8684,7 @@ msgstr ""
 msgid "Needs a ScreenScraper account"
 msgstr "需要 ScreenScraper 账户"
 
-#: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:481
+#: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:494
 msgid "Fix Regions from File Names"
 msgstr "根据文件名修复地区"
 
@@ -8694,7 +8695,7 @@ msgid ""
 " their file name."
 msgstr "AI 以前即使文件名已写明,也会猜测游戏的地区,导致 (USA) 文件被列为日本。此功能会为这些游戏设置文件名中的地区。"
 
-#: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:515
+#: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:528
 msgid "Tidy Genres, Perspectives and Modes"
 msgstr ""
 
@@ -8705,22 +8706,34 @@ msgid ""
 "every game one set of names."
 msgstr ""
 
-#: templates/rom_tools_hub.html:339 templates/rom_tools_hub.html:549
+#: templates/rom_tools_hub.html:339 templates/rom_tools_hub.html:562
+#, fuzzy
+msgid "Tidy Release Dates"
+msgstr "发行日期"
+
+#: templates/rom_tools_hub.html:342
+msgid ""
+"Older scrapes stored a date known only by its year as 1 January or 31 "
+"December, as if the day were known. This cuts those dates back to the "
+"year or month, so a scrape can fill in the real one."
+msgstr ""
+
+#: templates/rom_tools_hub.html:352 templates/rom_tools_hub.html:596
 msgid "Clear RAWG Pictures from Box Art"
 msgstr "清除包装封面中的 RAWG 图片"
 
-#: templates/rom_tools_hub.html:342
+#: templates/rom_tools_hub.html:355
 msgid ""
 "RAWG has no box art, so older scrapes saved a background picture or "
 "screenshot as the cover, and that blocks a real cover. This clears those "
 "pictures so a scrape can find real covers."
 msgstr "RAWG 没有包装封面,所以旧版抓取把背景图或截图保存成了封面,导致无法使用真正的封面。此功能会清除这些图片,以便抓取时找到真正的封面。"
 
-#: templates/rom_tools_hub.html:352
+#: templates/rom_tools_hub.html:365
 msgid "Bulk HLTB Lookup"
 msgstr "批量 HLTB 查询"
 
-#: templates/rom_tools_hub.html:355
+#: templates/rom_tools_hub.html:368
 msgid ""
 "Fetch HowLongToBeat playtime for every game. High-confidence primary-"
 "title matches apply automatically; alt-title matches and low-confidence "
@@ -8729,35 +8742,35 @@ msgstr ""
 "为每个游戏获取 HowLongToBeat "
 "的游玩时长。高置信度的主标题匹配将自动应用；别名标题匹配和低置信度结果将加入待审核队列，以便您批量批准或拒绝。"
 
-#: templates/rom_tools_hub.html:358
+#: templates/rom_tools_hub.html:371
 msgid "Uses stored alternate titles"
 msgstr "使用已存储的别名标题"
 
-#: templates/rom_tools_hub.html:365
+#: templates/rom_tools_hub.html:378
 msgid "HLTB Pending Review"
 msgstr "HLTB 待审核"
 
-#: templates/rom_tools_hub.html:368
+#: templates/rom_tools_hub.html:381
 msgid ""
 "Review and approve HLTB matches that were flagged during a bulk lookup "
 "&mdash; alt-title matches and anything below the confidence threshold."
 msgstr "审核并批准批量查询中被标记的 HLTB 匹配结果 &mdash; 包括别名标题匹配以及置信度低于阈值的项。"
 
-#: templates/rom_tools_hub.html:371
+#: templates/rom_tools_hub.html:384
 msgid "Requires review"
 msgstr "需要审核"
 
-#: templates/rom_tools_hub.html:378
+#: templates/rom_tools_hub.html:391
 msgid "Tool Settings"
 msgstr "工具设置"
 
-#: templates/rom_tools_hub.html:381
+#: templates/rom_tools_hub.html:394
 msgid ""
 "Configure paths, external tool locations, archive types, and other "
 "preferences shared across all ROM tools."
 msgstr "配置所有 ROM 工具共享的路径、外部工具位置、压缩包类型及其他偏好设置。"
 
-#: templates/rom_tools_hub.html:423
+#: templates/rom_tools_hub.html:436
 msgid ""
 "Each game with a ScreenScraper box or manual is looked up again. Where "
 "another region suits it better, the file is downloaded and the old one is"
@@ -8771,48 +8784,48 @@ msgstr ""
 "\n"
 "你手动修改过的游戏不会被改动。此操作会消耗你每日的 ScreenScraper 额度,可能需要很长时间。你可以离开此页面,再次点击此卡片即可停止。"
 
-#: templates/rom_tools_hub.html:424
+#: templates/rom_tools_hub.html:437
 msgid "Could not start the fix"
 msgstr "无法开始修复"
 
-#: templates/rom_tools_hub.html:425
+#: templates/rom_tools_hub.html:438
 msgid ""
 "Stop the fix? Files already swapped stay as they are, and a later run "
 "carries on with the rest."
 msgstr "要停止修复吗?已替换的文件会保持不变,之后再运行会继续处理剩余部分。"
 
-#: templates/rom_tools_hub.html:426
+#: templates/rom_tools_hub.html:439
 #, python-brace-format
 msgid "Stopped. Files swapped: {replaced}."
 msgstr "已停止。已替换文件:{replaced}。"
 
-#: templates/rom_tools_hub.html:427
+#: templates/rom_tools_hub.html:440
 #, python-brace-format
 msgid ""
 "The fix stopped with an error. Files swapped: {replaced}. The log has the"
 " details."
 msgstr "修复因错误而停止。已替换文件:{replaced}。详情请查看日志。"
 
-#: templates/rom_tools_hub.html:428
+#: templates/rom_tools_hub.html:441
 #, python-brace-format
 msgid "Checked {current} of {total} games. Files swapped: {replaced}."
 msgstr "已检查 {current}/{total} 个游戏。已替换文件:{replaced}。"
 
-#: templates/rom_tools_hub.html:429
+#: templates/rom_tools_hub.html:442
 #, python-brace-format
 msgid ""
 "Finished. Files swapped: {replaced}. Games not found: {no_match}. Could "
 "not download: {failed}."
 msgstr "已完成。已替换文件:{replaced}。未找到的游戏:{no_match}。下载失败:{failed}。"
 
-#: templates/rom_tools_hub.html:430
+#: templates/rom_tools_hub.html:443
 #, python-brace-format
 msgid ""
 "Stopped: ScreenScraper stopped answering, so your daily allowance may be "
 "spent. Files swapped: {replaced}. Run it again tomorrow."
 msgstr "已停止:ScreenScraper 不再响应,你的每日额度可能已用完。已替换文件:{replaced}。请明天再运行。"
 
-#: templates/rom_tools_hub.html:482
+#: templates/rom_tools_hub.html:495
 #, python-brace-format
 msgid ""
 "{count} games have a region from the AI that their file name contradicts."
@@ -8825,20 +8838,20 @@ msgstr ""
 "\n"
 "只有由 AI 填写的地区会被更改。如果你曾手动把其中某个地区改得与文件名不同,它也会被更改。"
 
-#: templates/rom_tools_hub.html:483
+#: templates/rom_tools_hub.html:496
 msgid "No game has an AI region that its file name contradicts."
 msgstr "没有游戏的 AI 地区与文件名不符。"
 
-#: templates/rom_tools_hub.html:484
+#: templates/rom_tools_hub.html:497
 #, python-brace-format
 msgid "Fixed {count} regions."
 msgstr "已修复 {count} 个地区。"
 
-#: templates/rom_tools_hub.html:485
+#: templates/rom_tools_hub.html:498
 msgid "Could not fix the regions"
 msgstr "无法修复地区"
 
-#: templates/rom_tools_hub.html:516
+#: templates/rom_tools_hub.html:529
 #, python-brace-format
 msgid ""
 "{count} games will change.\n"
@@ -8853,24 +8866,50 @@ msgid ""
 "empty."
 msgstr ""
 
-#: templates/rom_tools_hub.html:517
+#: templates/rom_tools_hub.html:530
 #, fuzzy
 msgid "Every game already uses these names."
 msgstr "用户名已存在"
 
-#: templates/rom_tools_hub.html:518
+#: templates/rom_tools_hub.html:531
 #, fuzzy, python-brace-format
 msgid ""
 "Tidied {count} games. Run a bulk scrape with Fill Missing to fill "
 "anything left empty."
 msgstr "已清除 {count} 张图片。请用“填充缺失项”进行批量抓取,以查找真正的封面。"
 
-#: templates/rom_tools_hub.html:519
+#: templates/rom_tools_hub.html:532
 #, fuzzy
 msgid "Could not tidy the names"
 msgstr "无法统计游戏数量。"
 
-#: templates/rom_tools_hub.html:550
+#: templates/rom_tools_hub.html:563
+#, python-brace-format
+msgid ""
+"{count} games will change.\n"
+"\n"
+"A date such as 1 January 1987 becomes 1987. A date no scrape filled stays"
+" as it is."
+msgstr ""
+
+#: templates/rom_tools_hub.html:564
+#, fuzzy
+msgid "No release dates need tidying."
+msgstr "发行日期"
+
+#: templates/rom_tools_hub.html:565
+#, fuzzy, python-brace-format
+msgid ""
+"Tidied {count} games. Run a bulk scrape with Fill Missing to look for "
+"fuller dates."
+msgstr "已清除 {count} 张图片。请用“填充缺失项”进行批量抓取,以查找真正的封面。"
+
+#: templates/rom_tools_hub.html:566
+#, fuzzy
+msgid "Could not tidy the release dates"
+msgstr "无法统计游戏数量。"
+
+#: templates/rom_tools_hub.html:597
 #, python-brace-format
 msgid ""
 "{count} games and wishlist items use a RAWG picture as their box art. "
@@ -8884,18 +8923,18 @@ msgstr ""
 "\n"
 "来自其他来源的封面和所有同人图会保留。之后请用“填充缺失项”进行批量抓取,以查找真正的封面。"
 
-#: templates/rom_tools_hub.html:551
+#: templates/rom_tools_hub.html:598
 msgid "No game uses a RAWG picture as its box art."
 msgstr "没有游戏使用 RAWG 图片作为包装封面。"
 
-#: templates/rom_tools_hub.html:552
+#: templates/rom_tools_hub.html:599
 #, python-brace-format
 msgid ""
 "Cleared {count} pictures. Run a bulk scrape with Fill Missing to look for"
 " real covers."
 msgstr "已清除 {count} 张图片。请用“填充缺失项”进行批量抓取,以查找真正的封面。"
 
-#: templates/rom_tools_hub.html:553
+#: templates/rom_tools_hub.html:600
 msgid "Could not clear the pictures"
 msgstr "无法清除图片"
 

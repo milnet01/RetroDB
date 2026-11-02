@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-01 21:36+0200\n"
+"POT-Creation-Date: 2026-11-02 05:06+0200\n"
 "PO-Revision-Date: 2026-06-30 14:26+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ko\n"
@@ -699,15 +699,15 @@ msgstr ""
 msgid "Next disk inserted"
 msgstr "다음 디스크를 넣었습니다"
 
-#: routes/maintenance.py:270
+#: routes/maintenance.py:272
 msgid "Unknown image type"
 msgstr "알 수 없는 이미지 유형"
 
-#: routes/maintenance.py:459
+#: routes/maintenance.py:485
 msgid "Add your ScreenScraper account in Settings first."
 msgstr "먼저 설정에서 ScreenScraper 계정을 추가하세요."
 
-#: routes/maintenance.py:460
+#: routes/maintenance.py:486
 msgid "This fix is already running."
 msgstr "이 수정 작업이 이미 실행 중입니다."
 
@@ -5676,7 +5676,7 @@ msgstr "도구"
 msgid "Game Imports"
 msgstr "게임 가져오기"
 
-#: templates/base.html:183 templates/rom_tools_hub.html:384
+#: templates/base.html:183 templates/rom_tools_hub.html:397
 msgid "Configuration"
 msgstr "구성"
 
@@ -8601,6 +8601,7 @@ msgstr "해시, 파일명 또는 둘 다로 중복 ROM을 찾습니다. 지역 �
 #: templates/rom_tools_hub.html:253 templates/rom_tools_hub.html:267
 #: templates/rom_tools_hub.html:280 templates/rom_tools_hub.html:319
 #: templates/rom_tools_hub.html:332 templates/rom_tools_hub.html:345
+#: templates/rom_tools_hub.html:358
 msgid "No dependencies required"
 msgstr "필요한 의존성 없음"
 
@@ -8697,7 +8698,7 @@ msgstr ""
 msgid "Metadata only &middot; no media downloads"
 msgstr "메타데이터만 &middot; 미디어 다운로드 없음"
 
-#: templates/rom_tools_hub.html:300 templates/rom_tools_hub.html:422
+#: templates/rom_tools_hub.html:300 templates/rom_tools_hub.html:435
 msgid "Fix Box and Manual Regions"
 msgstr "박스와 설명서 지역 수정"
 
@@ -8715,7 +8716,7 @@ msgstr ""
 msgid "Needs a ScreenScraper account"
 msgstr "ScreenScraper 계정 필요"
 
-#: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:481
+#: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:494
 msgid "Fix Regions from File Names"
 msgstr "파일 이름으로 지역 수정"
 
@@ -8728,7 +8729,7 @@ msgstr ""
 "예전에는 파일 이름에 지역이 있어도 AI가 게임의 지역을 추측해서, (USA) 파일이 일본으로 표시될 수 있었습니다. 이 기능은 "
 "해당 게임에 파일 이름에 적힌 지역을 적용합니다."
 
-#: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:515
+#: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:528
 msgid "Tidy Genres, Perspectives and Modes"
 msgstr ""
 
@@ -8739,11 +8740,23 @@ msgid ""
 "every game one set of names."
 msgstr ""
 
-#: templates/rom_tools_hub.html:339 templates/rom_tools_hub.html:549
+#: templates/rom_tools_hub.html:339 templates/rom_tools_hub.html:562
+#, fuzzy
+msgid "Tidy Release Dates"
+msgstr "출시일"
+
+#: templates/rom_tools_hub.html:342
+msgid ""
+"Older scrapes stored a date known only by its year as 1 January or 31 "
+"December, as if the day were known. This cuts those dates back to the "
+"year or month, so a scrape can fill in the real one."
+msgstr ""
+
+#: templates/rom_tools_hub.html:352 templates/rom_tools_hub.html:596
 msgid "Clear RAWG Pictures from Box Art"
 msgstr "박스 아트의 RAWG 이미지 지우기"
 
-#: templates/rom_tools_hub.html:342
+#: templates/rom_tools_hub.html:355
 msgid ""
 "RAWG has no box art, so older scrapes saved a background picture or "
 "screenshot as the cover, and that blocks a real cover. This clears those "
@@ -8752,11 +8765,11 @@ msgstr ""
 "RAWG에는 박스 아트가 없어서 이전 스크래핑이 배경 이미지나 스크린샷을 표지로 저장했고, 그 때문에 진짜 표지를 가져오지 "
 "못합니다. 이 이미지를 지워 스크래핑으로 진짜 표지를 찾을 수 있게 합니다."
 
-#: templates/rom_tools_hub.html:352
+#: templates/rom_tools_hub.html:365
 msgid "Bulk HLTB Lookup"
 msgstr "HLTB 일괄 조회"
 
-#: templates/rom_tools_hub.html:355
+#: templates/rom_tools_hub.html:368
 msgid ""
 "Fetch HowLongToBeat playtime for every game. High-confidence primary-"
 "title matches apply automatically; alt-title matches and low-confidence "
@@ -8765,35 +8778,35 @@ msgstr ""
 "모든 게임의 HowLongToBeat 플레이 시간을 가져옵니다. 신뢰도가 높은 기본 제목 일치 항목은 자동으로 적용되며, 대체 제목"
 " 일치 및 신뢰도가 낮은 항목은 일괄적으로 승인하거나 거부할 수 있도록 검토 대기열에 추가됩니다."
 
-#: templates/rom_tools_hub.html:358
+#: templates/rom_tools_hub.html:371
 msgid "Uses stored alternate titles"
 msgstr "저장된 대체 제목 사용"
 
-#: templates/rom_tools_hub.html:365
+#: templates/rom_tools_hub.html:378
 msgid "HLTB Pending Review"
 msgstr "HLTB 검토 대기 중"
 
-#: templates/rom_tools_hub.html:368
+#: templates/rom_tools_hub.html:381
 msgid ""
 "Review and approve HLTB matches that were flagged during a bulk lookup "
 "&mdash; alt-title matches and anything below the confidence threshold."
 msgstr "일괄 조회 중 표시된 HLTB 일치 항목&mdash;대체 제목 일치 및 신뢰도 임계값 미만의 항목을 검토하고 승인합니다."
 
-#: templates/rom_tools_hub.html:371
+#: templates/rom_tools_hub.html:384
 msgid "Requires review"
 msgstr "검토 필요"
 
-#: templates/rom_tools_hub.html:378
+#: templates/rom_tools_hub.html:391
 msgid "Tool Settings"
 msgstr "도구 설정"
 
-#: templates/rom_tools_hub.html:381
+#: templates/rom_tools_hub.html:394
 msgid ""
 "Configure paths, external tool locations, archive types, and other "
 "preferences shared across all ROM tools."
 msgstr "모든 ROM 도구에서 공유되는 경로, 외부 도구 위치, 아카이브 유형 및 기타 환경설정을 구성합니다."
 
-#: templates/rom_tools_hub.html:423
+#: templates/rom_tools_hub.html:436
 msgid ""
 "Each game with a ScreenScraper box or manual is looked up again. Where "
 "another region suits it better, the file is downloaded and the old one is"
@@ -8809,41 +8822,41 @@ msgstr ""
 "직접 수정한 게임은 건드리지 않습니다. 하루 ScreenScraper 사용량을 소모하며 오래 걸릴 수 있습니다. 페이지를 떠나도 "
 "되고, 이 카드를 다시 누르면 중지됩니다."
 
-#: templates/rom_tools_hub.html:424
+#: templates/rom_tools_hub.html:437
 msgid "Could not start the fix"
 msgstr "수정 작업을 시작할 수 없습니다"
 
-#: templates/rom_tools_hub.html:425
+#: templates/rom_tools_hub.html:438
 msgid ""
 "Stop the fix? Files already swapped stay as they are, and a later run "
 "carries on with the rest."
 msgstr "수정을 중지할까요? 이미 교체된 파일은 그대로 유지되며, 다음 실행 때 나머지를 이어서 처리합니다."
 
-#: templates/rom_tools_hub.html:426
+#: templates/rom_tools_hub.html:439
 #, python-brace-format
 msgid "Stopped. Files swapped: {replaced}."
 msgstr "중지됨. 교체된 파일: {replaced}개."
 
-#: templates/rom_tools_hub.html:427
+#: templates/rom_tools_hub.html:440
 #, python-brace-format
 msgid ""
 "The fix stopped with an error. Files swapped: {replaced}. The log has the"
 " details."
 msgstr "수정 작업이 오류로 중지되었습니다. 교체된 파일: {replaced}개. 자세한 내용은 로그를 확인하세요."
 
-#: templates/rom_tools_hub.html:428
+#: templates/rom_tools_hub.html:441
 #, python-brace-format
 msgid "Checked {current} of {total} games. Files swapped: {replaced}."
 msgstr "게임 {total}개 중 {current}개 확인함. 교체된 파일: {replaced}개."
 
-#: templates/rom_tools_hub.html:429
+#: templates/rom_tools_hub.html:442
 #, python-brace-format
 msgid ""
 "Finished. Files swapped: {replaced}. Games not found: {no_match}. Could "
 "not download: {failed}."
 msgstr "완료. 교체된 파일: {replaced}개. 찾지 못한 게임: {no_match}개. 다운로드 실패: {failed}개."
 
-#: templates/rom_tools_hub.html:430
+#: templates/rom_tools_hub.html:443
 #, python-brace-format
 msgid ""
 "Stopped: ScreenScraper stopped answering, so your daily allowance may be "
@@ -8852,7 +8865,7 @@ msgstr ""
 "중지됨: ScreenScraper가 응답하지 않아 하루 사용량을 다 썼을 수 있습니다. 교체된 파일: {replaced}개. 내일 "
 "다시 실행하세요."
 
-#: templates/rom_tools_hub.html:482
+#: templates/rom_tools_hub.html:495
 #, python-brace-format
 msgid ""
 "{count} games have a region from the AI that their file name contradicts."
@@ -8865,20 +8878,20 @@ msgstr ""
 "\n"
 "AI가 채운 지역만 변경됩니다. 그중 파일 이름과 다르게 직접 고친 지역도 함께 바뀝니다."
 
-#: templates/rom_tools_hub.html:483
+#: templates/rom_tools_hub.html:496
 msgid "No game has an AI region that its file name contradicts."
 msgstr "파일 이름과 맞지 않는 AI 지역을 가진 게임이 없습니다."
 
-#: templates/rom_tools_hub.html:484
+#: templates/rom_tools_hub.html:497
 #, python-brace-format
 msgid "Fixed {count} regions."
 msgstr "지역 {count}개를 수정했습니다."
 
-#: templates/rom_tools_hub.html:485
+#: templates/rom_tools_hub.html:498
 msgid "Could not fix the regions"
 msgstr "지역을 수정할 수 없습니다"
 
-#: templates/rom_tools_hub.html:516
+#: templates/rom_tools_hub.html:529
 #, python-brace-format
 msgid ""
 "{count} games will change.\n"
@@ -8893,24 +8906,50 @@ msgid ""
 "empty."
 msgstr ""
 
-#: templates/rom_tools_hub.html:517
+#: templates/rom_tools_hub.html:530
 #, fuzzy
 msgid "Every game already uses these names."
 msgstr "사용자 이름이 이미 존재합니다"
 
-#: templates/rom_tools_hub.html:518
+#: templates/rom_tools_hub.html:531
 #, fuzzy, python-brace-format
 msgid ""
 "Tidied {count} games. Run a bulk scrape with Fill Missing to fill "
 "anything left empty."
 msgstr "이미지 {count}개를 지웠습니다. 누락 항목 채우기로 일괄 스크래핑을 실행해 진짜 표지를 찾아보세요."
 
-#: templates/rom_tools_hub.html:519
+#: templates/rom_tools_hub.html:532
 #, fuzzy
 msgid "Could not tidy the names"
 msgstr "게임 수를 셀 수 없습니다."
 
-#: templates/rom_tools_hub.html:550
+#: templates/rom_tools_hub.html:563
+#, python-brace-format
+msgid ""
+"{count} games will change.\n"
+"\n"
+"A date such as 1 January 1987 becomes 1987. A date no scrape filled stays"
+" as it is."
+msgstr ""
+
+#: templates/rom_tools_hub.html:564
+#, fuzzy
+msgid "No release dates need tidying."
+msgstr "출시일"
+
+#: templates/rom_tools_hub.html:565
+#, fuzzy, python-brace-format
+msgid ""
+"Tidied {count} games. Run a bulk scrape with Fill Missing to look for "
+"fuller dates."
+msgstr "이미지 {count}개를 지웠습니다. 누락 항목 채우기로 일괄 스크래핑을 실행해 진짜 표지를 찾아보세요."
+
+#: templates/rom_tools_hub.html:566
+#, fuzzy
+msgid "Could not tidy the release dates"
+msgstr "게임 수를 셀 수 없습니다."
+
+#: templates/rom_tools_hub.html:597
 #, python-brace-format
 msgid ""
 "{count} games and wishlist items use a RAWG picture as their box art. "
@@ -8925,18 +8964,18 @@ msgstr ""
 "\n"
 "다른 출처의 표지와 모든 팬아트는 유지됩니다. 이후 누락 항목 채우기로 일괄 스크래핑을 실행해 진짜 표지를 찾아보세요."
 
-#: templates/rom_tools_hub.html:551
+#: templates/rom_tools_hub.html:598
 msgid "No game uses a RAWG picture as its box art."
 msgstr "RAWG 이미지를 박스 아트로 사용하는 게임이 없습니다."
 
-#: templates/rom_tools_hub.html:552
+#: templates/rom_tools_hub.html:599
 #, python-brace-format
 msgid ""
 "Cleared {count} pictures. Run a bulk scrape with Fill Missing to look for"
 " real covers."
 msgstr "이미지 {count}개를 지웠습니다. 누락 항목 채우기로 일괄 스크래핑을 실행해 진짜 표지를 찾아보세요."
 
-#: templates/rom_tools_hub.html:553
+#: templates/rom_tools_hub.html:600
 msgid "Could not clear the pictures"
 msgstr "이미지를 지울 수 없습니다"
 

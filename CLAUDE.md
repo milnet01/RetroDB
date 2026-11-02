@@ -102,7 +102,7 @@ has seen the raw output. Triage into new roadmap passes after.
 - Sort title is auto-generated during scraping and AI Fill via `generate_sort_title()` in `services/game_utils.py`.
 - When a system has curated default controllers in the DB, they always override scraped/AI controller values.
 - `units_sold` (INTEGER, migration 023) is filled only by the AI — scrape gap-fill and AI Fill; `scrape_ai.parse_units_sold()` turns "2.4 million" etc. into an int.
-- `release_dates` (TEXT, migration 024) is a JSON object of region code → date (`{"JP": "2002-11-17", "NA": "2002-11"}`), filled only by the AI — scrape gap-fill and AI Fill. `services/release_dates.py` parses, stores and displays it; `release_date` stays the row's own release.
+- `release_dates` (TEXT, migration 024) is a JSON object of region code → date (`{"JP": "2002-11-17", "NA": "2002-11"}`), filled by IGDB and ScreenScraper, then the AI. `services/release_dates.py` parses, stores and displays it; `release_date` stays the row's own release, and holds only as much of a date as its source knows (`docs/specs/scrapers.md` "How exact a date is", PASS-59-207).
 - RPCS3 compatibility (PS3) is never stored: `services/rpcs3_compat.py` reads the local RPCS3's `GuiConfigs/compat_database.dat` (re-read when it changes) and looks games up by `games.disc_serial`. Local ROMs only, never imported games.
 - Regional versions (PASS-59-106): only `services/version_groups.py` links rows through `games.version_group_id`. `_build_games_query` shows one row per group unless `group_versions=False`. Contract: `docs/specs/PASS-59-106-regional-versions.md`.
 
@@ -114,7 +114,7 @@ has seen the raw output. Triage into new roadmap passes after.
 
 ### Scraper fill-only invariant
 - Every `apply_*_to_game()` UPDATE in `scraper/scrape_*.py` MUST wrap every `?` in `COALESCE(?, column_name)` so an empty response from IGDB/TGDB/RAWG/etc. preserves the existing scraped or curated value. Bare `publisher = ?, developer = ?` is a bug (Pass 30.4 fix). `scrape_esde.apply_esde_metadata` is the canonical pattern. `tests/test_scrape_fill_only.py` pins the contract for IGDB + TGDB.
-- Three exceptions. Full Re-scrape mode in `hybrid_scraper` overwrites any field a source provides (fields no source fills are preserved, not blanked). AI Fill renames a game to the official title the AI gives (`docs/specs/scrapers.md` §12), keeping the old name as an alternate title. And the title runs the other way: with `games.title_locked = 1` no scrape writes `title` or `sort_title`, Full Re-scrape included — the four title writes are `CASE WHEN title_locked = 1 THEN title ELSE COALESCE(?, title) END` (PASS-59-159 §4.3).
+- Four exceptions. A date for the game's own region from IGDB or ScreenScraper fills out a stored year or month it agrees with (PASS-59-207). Full Re-scrape mode in `hybrid_scraper` overwrites any field a source provides (fields no source fills are preserved, not blanked). AI Fill renames a game to the official title the AI gives (`docs/specs/scrapers.md` §12), keeping the old name as an alternate title. And the title runs the other way: with `games.title_locked = 1` no scrape writes `title` or `sort_title`, Full Re-scrape included — the four title writes are `CASE WHEN title_locked = 1 THEN title ELSE COALESCE(?, title) END` (PASS-59-159 §4.3).
 
 ### Multi-rating system (9 systems)
 Moved to `.claude/rules/ratings.md`, which loads when a matching file is read. Read it before touching ratings, the edit modals or the scrapers.

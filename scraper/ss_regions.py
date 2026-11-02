@@ -25,7 +25,7 @@ _REGION_CODES = {
 }
 
 
-def _codes(region):
+def region_codes(region):
     """ScreenScraper codes for a region value, which may be a combined one
     such as `USA/Europe` or `USA, Europe`."""
     codes = []
@@ -40,9 +40,9 @@ def by_region(items, own=None):
     Items no rule ranks keep their listed order, after those that are ranked.
     """
     from services.version_groups import preferred_regions
-    order = _codes(own)
+    order = region_codes(own)
     for name in preferred_regions():
-        order.extend(_codes(name))
+        order.extend(region_codes(name))
     order.append('ss')
     rank = {}
     for code in order:

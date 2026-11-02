@@ -15,6 +15,7 @@ from concurrent.futures import ThreadPoolExecutor
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import IMAGE_PATH, STATIC_PATH
 from services.normalization import canonicalize_metadata
+from services.release_dates import year_gap_with_own_region
 from services.game_utils import generate_sort_title, infer_rating_from_content, RATING_SYSTEM_KEYS, RATING_SYSTEMS
 from services.game_metadata_service import cross_map_ratings
 from services.media_cleanup import media_dir_is_healthy
@@ -37,6 +38,7 @@ from scraper.scrape_thegamesdb import (
     fetch_game_details as fetch_tgdb_details,
 )
 from scraper.scrape_igdb import (
+    get_platform_id as get_igdb_platform_id,
     igdb_auth,
     igdb_request
 )
@@ -57,6 +59,7 @@ from scraper.metadata_normalizer import (
 )
 from scraper.match_scorer import calculate_title_match_score
 from scraper.ss_regions import own_region as game_own_region
+from scraper.scrape_rawg import platform_id as rawg_platform_id
 
 # Try to import AI scraper
 AI_AVAILABLE = False
@@ -257,6 +260,8 @@ def fetch_igdb_extended(game_id):
         # Note: time_to_beat was deprecated, using external_games for HLTB instead
         body = f"""
         fields name, first_release_date,
+               release_dates.date, release_dates.y, release_dates.m, release_dates.date_format,
+               release_dates.platform, release_dates.release_region,
                involved_companies.company.name, involved_companies.developer, involved_companies.publisher,
                genres.name, age_ratings.category, age_ratings.rating,
                age_ratings.organization.name, age_ratings.rating_category.rating,
@@ -697,6 +702,15 @@ def _save_source_ids(c, db_game_id, sources_data, force_overwrite=False):
         sql = ("UPDATE games SET igdb_id = COALESCE(igdb_id, ?), "
                "screenscraper_id = COALESCE(screenscraper_id, ?) WHERE id = ?")
     c.execute(sql, (igdb_id, ss_id, db_game_id))
+
+
+def _log_date_disagreement(metadata, game):
+    """Log a date over a year from the regional date for this copy's region.
+    Neither is corrected, as neither is proof (PASS-59-162, merge_and_stored 10)."""
+    if year_gap_with_own_region(metadata.get('release_date'), metadata.get('release_dates'),
+                                game_own_region(game)):
+        logger.warning(f"Game {game.get('id')}: release date {metadata['release_date']} "
+                       f"disagrees with its regional dates {metadata['release_dates']}")
 
 
 def _save_game_row(c, metadata, scrape_history_json, db_game_id):
@@ -1184,7 +1198,8 @@ def _apply_fallback(source, data, metadata, result, sources_data, db_game_id,
         apply_tgdb_to_metadata(metadata, data, db_game_id, result, fill_only=True)
         label = 'TheGamesDB'
     elif source == 'igdb':
-        apply_igdb_to_metadata(metadata, data, db_game_id, result, fill_only=True)
+        apply_igdb_to_metadata(metadata, data, db_game_id, result, fill_only=True,
+                               platform_id=get_igdb_platform_id(system_folder), own_region=own_region)
         label = 'IGDB'
     elif source == 'screenscraper':
         logger.info(f"Found ScreenScraper match: {data.get('nom', 'Unknown')} (ID: {data.get('id')})")
@@ -1192,7 +1207,8 @@ def _apply_fallback(source, data, metadata, result, sources_data, db_game_id,
                                         own_region=own_region)
         label = 'ScreenScraper'
     else:
-        apply_rawg_to_metadata(metadata, data, db_game_id, result, fill_only=True)
+        apply_rawg_to_metadata(metadata, data, db_game_id, result, fill_only=True,
+                               platform_id=rawg_platform_id(system_folder))
         label = 'RAWG'
     if label not in result['sources_used']:
         result['sources_used'].append(label)
@@ -1558,7 +1574,9 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                 igdb_data = fetch_igdb_extended(primary_id)
                 if igdb_data:
                     sources_data['igdb'] = igdb_data
-                    apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result)
+                    apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result,
+                                           platform_id=get_igdb_platform_id(system_folder),
+                                           own_region=game_own_region(game))
                     result['sources_used'].append('IGDB')
             except Exception as e:
                 logger.warning(f"Primary IGDB fetch/apply failed for {primary_id}: {e}; "
@@ -1570,7 +1588,8 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                 rawg_data = fetch_rawg(primary_id)
                 if rawg_data:
                     sources_data['rawg'] = rawg_data
-                    apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result)
+                    apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result,
+                                           platform_id=rawg_platform_id(system_folder))
                     result['sources_used'].append('RAWG')
             except Exception as e:
                 logger.warning(f"Primary RAWG fetch/apply failed for {primary_id}: {e}; "
@@ -1707,6 +1726,8 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
 
         # One set of names, whichever source or older scrape filled each field.
         canonicalize_metadata(metadata)
+
+        _log_date_disagreement(metadata, game)
 
         # =============================================
         # SAVE TO DATABASE
