@@ -10550,6 +10550,15 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Decided** (user, 2026-11-02): box backs are in v4.0.0; arcade
   flyers wait until after it.
 
+---
+
+#### Pass 59.226 The PlayStation keep-alive cannot renew a sign-in, and the user's runs out about 8 November (fix, S).
+- **Status**: todo
+- **Evidence**: `logs/scraping_2026-11-02.log`, on every server start seen today: `PSN keep-alive: user 1 refresh failed: PSN cached-token refresh failed: 'str' object has no attribute 'get'`. User 1's `refresh_token_expires_at` was about 5.9 days away on 2026-11-02.
+- **Where**: the cached-token block of `create_psn_client` in `routes/trophies.py`, which assigns `psnawp.authenticator.token_response`. Cause not traced; a change in the PSNAWP library is unchecked.
+- **Fix**: find what holds a string, and show the failure to the user. The same log line counts one row as already expired.
+- **Why soon**: once it expires, trophy sync needs a new sign-in. PASS-59-111's Sony walk may cover that, so do this first.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
