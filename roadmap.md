@@ -7313,7 +7313,14 @@ were corrected in `2836bc3` and are not repeated here.
 - **Verify**: a fresh `--standalone` build contains no `docs/` tree
   (`tests/test_pass58_standalone_docs.py` pins it); then the old token no
   longer authenticates.
-- **Status**: planned (2026-09-02). Lanes: security, packaging.
+- **Resolution** (2026-11-03): rotated. The user signed out of
+  PlayStation, signed in again and saved the new token in Settings. The
+  saved token differs from the one in `docs/psn-npsso.env` (compared
+  by equality, never printed). One sign-in with the old token: Sony
+  refused it (PSNAWPAuthenticationError). One with the new token:
+  accepted, as the user's PSN name. RetroDB reads the token from
+  Settings only; `docs/psn-npsso.env` is an installer template copy.
+- **Status**: done (2026-11-03). Lanes: security, packaging.
 - **Source**: in-session 2026-09-01 (`a5e0939`); filed 2026-09-02 because it
   existed only in a session handoff, which is not somewhere the next session
   will find it.
@@ -8386,6 +8393,14 @@ were corrected in `2836bc3` and are not repeated here.
   the one-line reply whole), or a browser window RetroDB drives, which
   only works on the machine running RetroDB and may meet Sony's bot
   checks. Try guided paste first, during this item's walk.
+- **Progress** (2026-11-03): walk started with the PASS-59-71
+  rotation. Found and fixed (commit 5d37d4a): a new token went unused
+  while the cached session lived, and Save & Test reported the old
+  session as working. Rough steps seen so far, not fixed: Paste &
+  Detect raises Brave's clipboard permission prompt; the wizard's
+  messages in `psnQuickSaveAndTest` (templates/settings.html) are
+  English-only; the steps never say to sign out first, which a
+  rotation needs.
 
 ---
 
