@@ -51,11 +51,13 @@ def compute_dhash(image_path, hash_size=8):
         return None
 
 
-def get_existing_screenshot_hashes(filenames):
+def get_existing_screenshot_hashes(filenames, game_id=None):
     """Compute dHash for each filename under IMAGE_PATH/screenshots.
 
     Returns a list of (filename, hash_int) tuples, skipping any file that
-    failed to hash (missing, corrupt, unreadable).
+    failed to hash (missing, corrupt, unreadable). With `game_id`, the
+    screenshots the user removed from that game are added too, so a merge
+    drops a download that looks like one of them (PASS-59-222).
     """
     hashes = []
     for fname in filenames:
@@ -63,7 +65,29 @@ def get_existing_screenshot_hashes(filenames):
         h = compute_dhash(path)
         if h is not None:
             hashes.append((fname, h))
+    if game_id is not None:
+        hashes.extend(removed_hashes(game_id))
     return hashes
+
+
+_REMOVED_LABEL = 'a screenshot the user removed'
+
+
+def remember_removed(game_id, path):
+    """Keep the look of a screenshot the user is deleting (PASS-59-222).
+    Call before the file goes. An unreadable file is not remembered."""
+    from services.database import execute
+    h = compute_dhash(path)
+    if h is not None:
+        execute("INSERT OR IGNORE INTO removed_screenshots (game_id, dhash) VALUES (?, ?)",
+                (game_id, format(h, 'x')))
+
+
+def removed_hashes(game_id):
+    """[(label, hash_int)] for each screenshot the user removed from the game."""
+    from services.database import query
+    return [(_REMOVED_LABEL, int(r['dhash'], 16)) for r in query(
+        "SELECT dhash FROM removed_screenshots WHERE game_id = ?", (game_id,))]
 
 
 def is_visual_duplicate(new_path, existing_hashes, threshold=10):

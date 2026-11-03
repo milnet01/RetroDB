@@ -433,7 +433,7 @@ def apply_tgdb_to_metadata(metadata, tgdb_data, db_game_id, result, fill_only=Fa
     if ss_urls:
         existing_screenshots = metadata['screenshots'].split(',') if metadata['screenshots'] else []
         existing_screenshots = [s.strip() for s in existing_screenshots if s.strip()]
-        existing_hashes = get_existing_screenshot_hashes(existing_screenshots)
+        existing_hashes = get_existing_screenshot_hashes(existing_screenshots, db_game_id)
 
         start_num = len(existing_screenshots) + 1
 
@@ -706,7 +706,7 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
     if screenshots and per_game_screenshots_fit(igdb_data, db_game_id):
         existing_screenshots = metadata['screenshots'].split(',') if metadata['screenshots'] else []
         existing_screenshots = [s.strip() for s in existing_screenshots if s.strip()]
-        existing_hashes = get_existing_screenshot_hashes(existing_screenshots)
+        existing_hashes = get_existing_screenshot_hashes(existing_screenshots, db_game_id)
 
         start_num = len(existing_screenshots) + 1
         _jobs = []
@@ -879,7 +879,7 @@ def apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result, fill_only=Fa
         os.makedirs(screenshot_dir, exist_ok=True)
 
         existing_ss = [s.strip() for s in metadata['screenshots'].split(',') if s.strip()] if metadata['screenshots'] else []
-        existing_hashes = get_existing_screenshot_hashes(existing_ss)
+        existing_hashes = get_existing_screenshot_hashes(existing_ss, db_game_id)
 
         # Offset by what is already stored and skip a name that exists, the
         # same guard the IGDB / TGDB / ScreenScraper loops carry. Fixed indices
@@ -993,7 +993,7 @@ def apply_steam_to_metadata(metadata, details, app_id, db_game_id, result):
         screenshot_dir = os.path.join(IMAGE_PATH, 'screenshots')
         os.makedirs(screenshot_dir, exist_ok=True)
         existing = [s.strip() for s in (metadata['screenshots'] or '').split(',') if s.strip()]
-        existing_hashes = get_existing_screenshot_hashes(existing)
+        existing_hashes = get_existing_screenshot_hashes(existing, db_game_id)
         jobs = []
         relisted = []
         for i, url in enumerate(urls, start=len(existing) + 1):
@@ -1356,7 +1356,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
     # Screenshots - ALWAYS append, never replace
     existing_screenshots = metadata['screenshots'].split(',') if metadata['screenshots'] else []
     existing_screenshots = [s.strip() for s in existing_screenshots if s.strip()]
-    existing_hashes = get_existing_screenshot_hashes(existing_screenshots)
+    existing_hashes = get_existing_screenshot_hashes(existing_screenshots, db_game_id)
 
     start_num = len(existing_screenshots)
 

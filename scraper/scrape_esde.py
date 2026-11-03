@@ -938,7 +938,7 @@ def copy_esde_media(db_game_id, game_data, system_folder=None, existing=None,
 
         # Screenshots: always appended, never replaced.
         listed = [s.strip() for s in (existing.get('screenshots') or '').split(',') if s.strip()]
-        hashes = get_existing_screenshot_hashes(listed)
+        hashes = get_existing_screenshot_hashes(listed, db_game_id)
         new_screenshots = []
         for tag, media_type, stem in _ESDE_SCREENSHOTS:
             src = resolve_media_path(esde_data.get(tag, '')) or find_media_by_rom_name(media_type)

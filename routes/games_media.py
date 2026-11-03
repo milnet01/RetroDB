@@ -21,6 +21,7 @@ from services.game_query import invalidate_filter_cache
 from services.rom_scanner import rom_type_problem
 from services.security import safe_filename, safe_path
 import settings_manager
+from scraper.image_dedup import remember_removed
 
 logger = logging.getLogger(__name__)
 
@@ -162,6 +163,8 @@ def api_delete_screenshot(game_id):
 
     screenshot_path = os.path.join(config.IMAGE_PATH, 'screenshots', screenshot_to_delete)
     if os.path.exists(screenshot_path):
+        # PASS-59-222 — no later scrape brings this picture back.
+        remember_removed(game_id, screenshot_path)
         os.remove(screenshot_path)
         logger.info(f"Deleted screenshot file: {screenshot_to_delete}")
 
