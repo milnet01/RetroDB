@@ -10690,6 +10690,17 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Decided** (user, 2026-11-03): no raised lip as a 3D shape; it
   shows only in the face pictures. Build to SLIP-0125 § 4.1.
 
+---
+
+#### Pass 59.232 Move Refresh RetroAchievements out of Settings to where weekly jobs live (UX, S).
+- **Target**: the Refresh RetroAchievements button and its Clear RA
+  controls in `templates/_settings_tabs/system.html`.
+- **Why** (user, 2026-11-03): it is a job run about once a week, not a
+  setting; Settings holds what changes how the app is used.
+- **Open**: where it goes. Recommendation: the Achievements page, next
+  to Refresh Progress. Ask the user before building.
+- **Status**: todo.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
