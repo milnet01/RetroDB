@@ -737,7 +737,7 @@ message, so nothing flashes yet.
 > (reduced-motion, backup/restore, and core a11y were checked and already exist).
 
 #### Pass 52.1 Translate JS-driven toasts / dialogs — the last i18n seam (I18N, M)
-- **Status**: planned (raises the priority of the Pass 49.x deferral now that
+- **Status**: in-progress (raises the priority of the Pass 49.x deferral now that
   v3.14.0 ships ten UI locales, two of them Chinese).
 - **Problem**: the UI catalogs cover templates and Python, but user-facing
   strings emitted from JavaScript — `showNotification()` / `showConfirm()` /
@@ -759,6 +759,15 @@ message, so nothing flashes yet.
   — never wrap genre/perspective/dimension/modes/game_structure values.
 - **Est.**: M — mechanical sweep, but ~138 strings × 10 locales plus a
   build + catalog round-trip. Supersedes the Pass 49.x inline-`<script>` deferral.
+- **Progress** (2026-11-03, commit e1769b3): pop-up text wrapped in 34
+  templates and four static/js files. Templates use `{{ _('...')|tojson }}`
+  (PASS-49-6's choice); `t()` only fills in values there. Screenshot
+  Review and the game page called `t('...')` in a template, which is never
+  collected; fixed. Guard: `tests/test_js_popup_strings.py`. Walked on
+  :5001 in the pseudolocale: 26 pages, no script errors.
+  **Still owed**: translating the new strings into the 20 locales, in the
+  v4.0.0 end batch (PASS-59-113 step 7). Not wrapped: button labels and
+  other non-pop-up text set from JS.
 
 #### Pass 52.2 aria-live announcements for long-running job progress (A11Y, S)
 - **Status**: done
