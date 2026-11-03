@@ -10681,7 +10681,17 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.231 The 3D box viewer draws a real case shape: rounded corners and edges, a raised lip, a side seam (FEATURE, M).
-- **Status**: todo; waits for Slipcase's SLIP-0125 spec (PS5 first).
+- **Shipped** (2026-11-03): built to SLIP-0125 § 4.1 as of Slipcase
+  52dbd6f (slot centred on the seam, half-round ends). The import keeps
+  a valid `shape`; a bad one imports flat. The viewer draws on WebGL2
+  (no WebGL2: the flat picture); its geometry equals Slipcase's
+  `box_patches` exactly for six test shapes. The depth buffer settles
+  the concave solid, so nothing is sorted.
+  - **Owed**: the user's own look, after importing a box file from a
+  Slipcase build that writes `shape` (the stored Final Fantasy VII
+  Rebirth box has none yet). A figure change in Slipcase needs no
+  RetroDB change; a geometry change needs boxPatches ported again.
+- **Status**: done; waits for Slipcase's SLIP-0125 spec (PS5 first).
 - **Why**: the user chose real shape plus painted faces, and put it
   in v4.0.0 (user, 2026-11-03).
 - **Agreed with Slipcase (2026-11-03, RetroDB's answer)**: shape as
