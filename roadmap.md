@@ -10639,7 +10639,15 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Target**: when you press Play, a full-screen screen shows the game's logo while the emulator starts.
 - **Why**: PASS-59-224 asked for the logo on a play or loading screen too. None exists: `static/js/game-launch.js::launchGameImpl` relabels the Play button and shows toasts (PASS-59-224 spec §3, §9). Split out when PASS-59-224 shipped, as the user asked (2026-11-03).
 - **Needs**: a design first: when it shows, how it closes, what it shows for a game with no logo.
-- **Status**: todo.
+- **Shipped** (2026-11-03, 478a00f, in the open 4.0.0): the screen
+  lives in `static/js/game-launch.js`, its styles in
+  `components/launch-indicator.css`. It also closes 15 s after the
+  start, because a game started from another device's browser never
+  takes that browser's focus. Walked in headless Chrome on :5001 with
+  launch replies faked. **Still owed**: one real Play on the user's
+  desktop to see it close as the game window opens; the 20 locale
+  translations of its two strings.
+- **Status**: done.
 - **Source**: user, 2026-11-02.
 - **Decided** (user, 2026-11-03): the game's logo, large, on its
   background art. It closes by itself once the emulator opens; Esc or
