@@ -10733,7 +10733,13 @@ the cover zoom in Firefox before being reverted for the local fix.
   setting; Settings holds what changes how the app is used.
 - **Open**: where it goes. Recommendation: the Achievements page, next
   to Refresh Progress. Ask the user before building.
-- **Status**: todo.
+- **Shipped** 2026-11-03 (366650f): the button is Find Games with
+  Achievements on the RetroAchievements page, in a card where every
+  button has a line saying what it does; Clear RA Data for all systems
+  moved with it; an admin with no linked games gets an empty page with
+  the Find button. Settings keeps a link. Owed: translations of the
+  new strings; the user's own look after Restart.
+- **Status**: done.
 - **Decided** (user, 2026-11-03): the Achievements page. That page
   also has Sync and Refresh Progress buttons, so each button must say
   plainly what it does (label and a short line under it), so no one
