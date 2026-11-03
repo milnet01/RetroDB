@@ -1,3 +1,21 @@
+- version: 3.35.4
+  date: '2026-11-03'
+  tags:
+  - type: fix
+    label: Une capture d'écran que vous supprimez d'un jeu reste désormais supprimée. Avant, la récupération suivante pouvait la recopier depuis ES-DE ou la télécharger de nouveau depuis une source en ligne. Supprimer un doublon avec l'outil des captures d'écran en double n'est pas concerné, car l'image est conservée une fois
+  - type: feature
+    label: 'Les jeux ont maintenant leur logo : la récupération l''enregistre depuis ES-DE, ScreenScraper, TheGamesDB, IGDB et Steam, et la page du jeu l''affiche au-dessus du titre, ou à la place d''une boîte manquante. Vous pouvez téléverser ou supprimer un logo dans la fenêtre Modifier. Lancez une récupération en masse avec Fill Missing pour ajouter les logos des jeux déjà récupérés'
+  - type: fix
+    label: IGDB ne fournit plus le logo d'un jeu comme arrière-plan de la page
+  - type: feature
+    label: 'Les jeux ont maintenant le dos de leur boîte : la récupération l''enregistre depuis ES-DE, ScreenScraper et TheGamesDB, et un bouton Dos sur la jaquette de la page du jeu l''affiche. Cliquez sur le dos pour l''agrandir. Vous pouvez téléverser ou supprimer un dos dans la fenêtre Modifier. Les dos se remplissent à chaque récupération d''un jeu ; Fill Missing ne récupère pas à nouveau un jeu uniquement pour son dos'
+  - type: fix
+    label: Un jeu sans jaquette avant sur TheGamesDB n'obtient plus le dos de la boîte comme jaquette
+  - type: fix
+    label: Si vous désactivez un outil de récupération dans les Paramètres pendant une récupération en masse, le nombre de jeux introuvables est maintenant juste dès le jeu suivant. Avant, un jeu pouvait être compté comme arrêté
+  - type: enhancement
+    label: Sur un système sans émulateur configuré, le bouton Jouer est grisé. Pointez-le pour savoir pourquoi, ou cliquez dessus pour voir un message indiquant qu'aucun émulateur n'est configuré. Avant, une ligne de texte s'affichait à côté du bouton
+  body: "<ul>\n  <li><strong>Les jeux ont leur logo.</strong> La récupération enregistre le\n    logo de chaque jeu, et la page du jeu l'affiche au-dessus du titre, ou à la place d'une\n    boîte manquante. Lancez une récupération en masse avec Fill Missing pour ajouter les logos des\n    jeux déjà récupérés.</li>\n  <li><strong>Les jeux ont le dos de leur boîte.</strong> Un bouton Dos sur\n    la jaquette de la page du jeu l'affiche, et vous pouvez cliquer dessus pour l'agrandir. Les dos\n    se remplissent à chaque récupération d'un jeu.</li>\n  <li><strong>Une capture d'écran supprimée reste supprimée.</strong> La récupération suivante\n    ne la recopie plus et ne la télécharge plus de nouveau.</li>\n  <li><strong>Jouer indique pourquoi il ne peut pas démarrer.</strong> Sur un système sans\n    émulateur configuré, le bouton Jouer est grisé et explique pourquoi.</li>\n</ul>\n"
 - version: 3.35.3
   date: '2026-11-02'
   tags:

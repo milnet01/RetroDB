@@ -1,3 +1,21 @@
+- version: 3.35.4
+  date: '2026-11-03'
+  tags:
+  - type: fix
+    label: Una captura de pantalla que eliminas de un juego ahora se queda eliminada. Antes, el siguiente scrapeo podía volver a copiarla desde ES-DE o descargarla otra vez desde una fuente en línea. Eliminar una copia sobrante en la herramienta de capturas de pantalla duplicadas no cuenta, porque la imagen se conserva una vez
+  - type: feature
+    label: 'Los juegos ahora tienen su logotipo: el scrapeo lo guarda desde ES-DE, ScreenScraper, TheGamesDB, IGDB y Steam, y la página del juego lo muestra sobre el título, o en lugar de una caja que falta. Puedes subir o eliminar un logotipo en la ventana Editar. Haz un scrapeo masivo con Rellenar faltantes para añadir logotipos a juegos que scrapeaste antes'
+  - type: fix
+    label: IGDB ya no da a un juego su logotipo como fondo de la página
+  - type: feature
+    label: 'Los juegos ahora tienen la parte trasera de su caja: el scrapeo la guarda desde ES-DE, ScreenScraper y TheGamesDB, y un botón Reverso en la portada de la página del juego la muestra. Haz clic en el reverso para ampliarlo. Puedes subir o eliminar un reverso en la ventana Editar. Los reversos se rellenan cada vez que se scrapea un juego; Rellenar faltantes no vuelve a scrapear un juego solo por su reverso'
+  - type: fix
+    label: Un juego sin portada frontal en TheGamesDB ya no recibe la parte trasera de la caja como portada
+  - type: fix
+    label: Si desactivas un scraper en Ajustes mientras se ejecuta un scrapeo masivo, el recuento de juegos no encontrados ahora es correcto desde el siguiente juego. Antes, un juego podía contarse como detenido
+  - type: enhancement
+    label: En un sistema sin emulador configurado, el botón Jugar aparece en gris. Pasa el cursor sobre él para ver el motivo, o haz clic para ver un cuadro que indica que no hay ningún emulador configurado. Antes, había una línea de texto junto al botón
+  body: "<ul>\n  <li><strong>Los juegos tienen su logotipo.</strong> El scrapeo guarda el\n    logotipo de cada juego, y la página del juego lo muestra sobre el título, o en lugar de una\n    caja que falta. Haz un scrapeo masivo con Rellenar faltantes para añadir logotipos a\n    juegos que scrapeaste antes.</li>\n  <li><strong>Los juegos tienen la parte trasera de su caja.</strong> Un botón Reverso en\n    la portada de la página del juego la muestra, y puedes hacer clic para ampliarla. Los reversos\n    se rellenan cada vez que se scrapea un juego.</li>\n  <li><strong>Una captura de pantalla eliminada se queda eliminada.</strong> El siguiente scrapeo\n    ya no la copia de nuevo ni la descarga otra vez.</li>\n  <li><strong>Jugar indica por qué no puede iniciarse.</strong> En un sistema sin\n    emulador configurado, el botón Jugar aparece en gris e indica el motivo.</li>\n</ul>\n"
 - version: 3.35.3
   date: '2026-11-02'
   tags:

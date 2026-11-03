@@ -1,3 +1,21 @@
+- version: 3.35.4
+  date: '2026-11-03'
+  tags:
+  - type: fix
+    label: Screenshot yang Anda hapus dari sebuah game kini tetap terhapus. Sebelumnya, scrape berikutnya bisa menyalinnya kembali dari ES-DE atau mengunduhnya lagi dari sumber online. Menghapus salinan ganda di alat Screenshot Ganda tidak termasuk, karena gambarnya tetap tersimpan satu kali
+  - type: feature
+    label: 'Game kini punya logo: scrape menyimpannya dari ES-DE, ScreenScraper, TheGamesDB, IGDB, dan Steam, lalu halaman game menampilkannya di atas judul, atau sebagai pengganti boks yang tidak ada. Anda bisa mengunggah atau menghapus logo di jendela Edit. Jalankan scrape massal dengan Isi yang Kosong untuk mengisi logo game yang pernah Anda scrape sebelumnya'
+  - type: fix
+    label: IGDB tidak lagi menjadikan logo game sebagai latar halaman
+  - type: feature
+    label: 'Game kini punya bagian belakang boksnya: scrape menyimpannya dari ES-DE, ScreenScraper, dan TheGamesDB, dan tombol Belakang pada sampul di halaman game menampilkannya. Klik bagian belakang untuk memperbesar. Anda bisa mengunggah atau menghapus bagian belakang di jendela Edit. Bagian belakang terisi setiap kali game di-scrape; Isi yang Kosong tidak men-scrape ulang game hanya demi bagian belakangnya'
+  - type: fix
+    label: Game tanpa sampul depan di TheGamesDB tidak lagi memakai bagian belakang boks sebagai sampulnya
+  - type: fix
+    label: Jika Anda mematikan sebuah scraper di Pengaturan saat scrape massal sedang berjalan, jumlah game yang tidak ditemukan kini benar mulai dari game berikutnya. Sebelumnya, sebuah game bisa terhitung sebagai dihentikan
+  - type: enhancement
+    label: Pada sistem tanpa emulator yang disiapkan, tombol Mainkan berwarna abu-abu. Arahkan kursor ke tombol itu untuk melihat alasannya, atau klik untuk membuka kotak yang menyatakan belum ada emulator yang disiapkan. Sebelumnya, ada satu baris teks di samping tombol
+  body: "<ul>\n  <li><strong>Game punya logo.</strong> Scrape menyimpan logo setiap game, dan halaman game menampilkannya di atas judul, atau sebagai pengganti boks yang tidak ada. Jalankan scrape massal dengan Isi yang Kosong untuk mengisi logo game yang pernah Anda scrape sebelumnya.</li>\n  <li><strong>Game punya bagian belakang boks.</strong> Tombol Belakang pada sampul di halaman game menampilkannya, dan Anda bisa mengkliknya untuk memperbesar. Bagian belakang terisi setiap kali game di-scrape.</li>\n  <li><strong>Screenshot yang dihapus tetap terhapus.</strong> Scrape berikutnya tidak lagi menyalinnya kembali atau mengunduhnya lagi.</li>\n  <li><strong>Mainkan menjelaskan mengapa tidak bisa mulai.</strong> Pada sistem tanpa emulator yang disiapkan, tombol Mainkan berwarna abu-abu dan menjelaskan alasannya.</li>\n</ul>\n"
 - version: 3.35.3
   date: '2026-11-02'
   tags:

@@ -1,3 +1,21 @@
+- version: 3.35.4
+  date: '2026-11-03'
+  tags:
+  - type: fix
+    label: Uma captura de tela que você exclui de um jogo agora continua excluída. Antes, a próxima busca de metadados podia copiá-la de volta do ES-DE ou baixá-la de novo de uma fonte online. Excluir uma cópia extra na ferramenta Capturas de Tela Duplicadas não conta, porque a imagem continua guardada uma vez
+  - type: feature
+    label: 'Os jogos agora têm logotipo: a busca de metadados o salva do ES-DE, ScreenScraper, TheGamesDB, IGDB e Steam, e a página do jogo o mostra acima do título, ou no lugar de uma caixa ausente. Você pode enviar ou excluir um logotipo na janela Editar. Faça uma busca de metadados em massa com Preencher Faltantes para preencher os logotipos de jogos que você já buscou antes'
+  - type: fix
+    label: O IGDB não usa mais o logotipo de um jogo como plano de fundo da página
+  - type: feature
+    label: 'Os jogos agora têm o verso da caixa: a busca de metadados o salva do ES-DE, ScreenScraper e TheGamesDB, e um botão Verso na capa da página do jogo o mostra. Clique no verso para ampliá-lo. Você pode enviar ou excluir um verso na janela Editar. Os versos são preenchidos sempre que um jogo é buscado; Preencher Faltantes não busca os metadados de um jogo de novo só por causa do verso'
+  - type: fix
+    label: Um jogo sem capa frontal no TheGamesDB não recebe mais o verso da caixa como capa
+  - type: fix
+    label: Se você desativar um buscador em Configurações enquanto uma busca de metadados em massa está em andamento, a contagem de jogos não encontrados agora fica correta a partir do próximo jogo. Antes, um jogo podia ser contado como interrompido
+  - type: enhancement
+    label: Em um sistema sem emulador configurado, o botão Jogar fica esmaecido. Aponte para ele para ver o motivo, ou clique nele para abrir uma caixa informando que não há emulador configurado. Antes, havia uma linha de texto ao lado do botão
+  body: "<ul>\n  <li><strong>Jogos ganham logotipo.</strong> A busca de metadados salva o\n    logotipo de cada jogo, e a página do jogo o mostra acima do título, ou no lugar de uma\n    caixa ausente. Faça uma busca de metadados em massa com Preencher Faltantes para preencher os logotipos de\n    jogos que você já buscou antes.</li>\n  <li><strong>Jogos ganham o verso da caixa.</strong> Um botão Verso na\n    capa da página do jogo o mostra, e você pode clicar nele para ampliar. Os versos\n    são preenchidos sempre que um jogo é buscado.</li>\n  <li><strong>Uma captura de tela excluída continua excluída.</strong> A próxima busca de metadados\n    não a copia de volta nem a baixa de novo.</li>\n  <li><strong>Jogar explica por que não inicia.</strong> Em um sistema sem\n    emulador configurado, o botão Jogar fica esmaecido e informa o motivo.</li>\n</ul>\n"
 - version: 3.35.3
   date: '2026-11-02'
   tags:

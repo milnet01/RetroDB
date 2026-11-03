@@ -1,3 +1,21 @@
+- version: 3.35.4
+  date: '2026-11-03'
+  tags:
+  - type: fix
+    label: Zrzut ekranu usunięty z gry teraz zostaje usunięty. Wcześniej kolejne pobieranie danych mogło skopiować go z powrotem z ES-DE albo pobrać ponownie ze źródła online. Usunięcie zbędnej kopii w narzędziu Duplikaty zrzutów ekranu się nie liczy, bo obraz i tak zostaje raz
+  - type: feature
+    label: 'Gry mają teraz swoje logo: Pobierz dane zapisuje je z ES-DE, ScreenScraper, TheGamesDB, IGDB i Steam, a strona gry pokazuje je nad tytułem albo zamiast brakującego pudełka. Logo możesz wgrać lub usunąć w oknie Edytuj. Uruchom zbiorcze pobieranie danych z opcją Uzupełnij braki, aby uzupełnić logo w grach, dla których dane pobrano wcześniej'
+  - type: fix
+    label: IGDB nie ustawia już logo gry jako tła strony
+  - type: feature
+    label: 'Gry mają teraz tył pudełka: Pobierz dane zapisuje go z ES-DE, ScreenScraper i TheGamesDB, a przycisk Tył na okładce na stronie gry go pokazuje. Kliknij tył, aby go powiększyć. Tył możesz wgrać lub usunąć w oknie Edytuj. Tyły uzupełniają się za każdym razem, gdy pobierasz dane gry; Uzupełnij braki nie pobiera danych gry ponownie tylko dla tyłu'
+  - type: fix
+    label: Gra bez okładki z przodu w TheGamesDB nie dostaje już tyłu pudełka jako okładki
+  - type: fix
+    label: Jeśli wyłączysz scraper w Ustawieniach w trakcie zbiorczego pobierania danych, liczba nieznalezionych gier jest teraz poprawna od następnej gry. Wcześniej gra mogła zostać policzona jako zatrzymana
+  - type: enhancement
+    label: W systemie bez skonfigurowanego emulatora przycisk Graj jest wyszarzony. Najedź na niego, aby zobaczyć powód, albo kliknij, aby zobaczyć okno z informacją, że emulator nie jest skonfigurowany. Wcześniej obok przycisku był wiersz tekstu
+  body: "<ul>\n  <li><strong>Gry mają logo.</strong> Pobierz dane zapisuje logo każdej gry,\n    a strona gry pokazuje je nad tytułem albo zamiast brakującego pudełka.\n    Uruchom zbiorcze pobieranie danych z opcją Uzupełnij braki, aby uzupełnić\n    logo w grach, dla których dane pobrano wcześniej.</li>\n  <li><strong>Gry mają tył pudełka.</strong> Pokazuje go przycisk Tył na\n    okładce na stronie gry, a kliknięcie powiększa obraz. Tyły uzupełniają się\n    za każdym razem, gdy pobierasz dane gry.</li>\n  <li><strong>Usunięty zrzut ekranu zostaje usunięty.</strong> Kolejne\n    pobieranie danych nie kopiuje go już z powrotem ani nie pobiera ponownie.</li>\n  <li><strong>Graj mówi, dlaczego nie może ruszyć.</strong> W systemie bez\n    skonfigurowanego emulatora przycisk Graj jest wyszarzony i podaje powód.</li>\n</ul>\n"
 - version: 3.35.3
   date: '2026-11-02'
   tags:

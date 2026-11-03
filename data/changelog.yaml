@@ -15,6 +15,20 @@
     label: If you switch a scraper off in Settings while a bulk scrape is running, the count of games not found is now right from the next game. Before, a game could be counted as stopped instead
   - type: enhancement
     label: On a system with no emulator set up, the Play button is greyed out. Point at it to see why, or click it for a box that says no emulator is set up. Before, a line of text sat beside the button
+  body: |
+    <ul>
+      <li><strong>Games get their logo.</strong> Scraping saves each game's
+        logo, and the game page shows it above the title, or in place of a
+        missing box. Run a bulk scrape with Fill Missing to fill logos for
+        games you scraped before.</li>
+      <li><strong>Games get the back of their box.</strong> A Back button on
+        the game page's cover shows it, and you can click it to zoom. Backs
+        fill whenever a game is scraped.</li>
+      <li><strong>A deleted screenshot stays deleted.</strong> The next scrape
+        no longer copies it back or downloads it again.</li>
+      <li><strong>Play says why it cannot start.</strong> On a system with no
+        emulator set up, the Play button is greyed out and says why.</li>
+    </ul>
 - version: 3.35.3
   date: 2026-11-02
   tags:

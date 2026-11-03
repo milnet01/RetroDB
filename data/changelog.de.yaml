@@ -1,3 +1,21 @@
+- version: 3.35.4
+  date: '2026-11-03'
+  tags:
+  - type: fix
+    label: Ein Screenshot, den du bei einem Spiel löschst, bleibt jetzt gelöscht. Früher konnte der nächste Scrape ihn aus ES-DE zurückkopieren oder aus einer Online-Quelle erneut herunterladen. Das Löschen einer überzähligen Kopie im Werkzeug für doppelte Screenshots zählt nicht, denn das Bild bleibt einmal erhalten
+  - type: feature
+    label: 'Spiele bekommen jetzt ihr Logo: Beim Scrapen wird es aus ES-DE, ScreenScraper, TheGamesDB, IGDB und Steam gespeichert, und die Spieleseite zeigt es über dem Titel oder anstelle einer fehlenden Box. Im Fenster „Bearbeiten“ kannst du ein Logo hochladen oder löschen. Starte einen Massen-Scrape mit „Fehlendes ergänzen“, um Logos für Spiele zu füllen, die du früher gescrapt hast'
+  - type: fix
+    label: IGDB setzt das Logo eines Spiels nicht mehr als Seitenhintergrund
+  - type: feature
+    label: 'Spiele bekommen jetzt die Rückseite ihrer Box: Beim Scrapen wird sie aus ES-DE, ScreenScraper und TheGamesDB gespeichert, und eine Schaltfläche „Rückseite“ am Cover auf der Spieleseite zeigt sie an. Klicke auf die Rückseite, um sie zu vergrößern. Im Fenster „Bearbeiten“ kannst du eine Rückseite hochladen oder löschen. Rückseiten werden bei jedem Scrapen eines Spiels gefüllt; „Fehlendes ergänzen“ scrapt ein Spiel nicht erneut, nur um die Rückseite zu holen'
+  - type: fix
+    label: Ein Spiel ohne Vorderseite auf TheGamesDB bekommt nicht mehr die Rückseite der Box als Cover
+  - type: fix
+    label: Wenn du einen Scraper in den Einstellungen ausschaltest, während ein Massen-Scrape läuft, stimmt die Zahl der nicht gefundenen Spiele jetzt ab dem nächsten Spiel. Früher konnte ein Spiel stattdessen als gestoppt gezählt werden
+  - type: enhancement
+    label: Bei einem System ohne eingerichteten Emulator ist die Schaltfläche „Spielen“ ausgegraut. Zeige darauf, um den Grund zu sehen, oder klicke darauf, um ein Fenster mit dem Hinweis zu öffnen, dass kein Emulator eingerichtet ist. Früher stand neben der Schaltfläche eine Textzeile
+  body: "<ul>\n  <li><strong>Spiele bekommen ihr Logo.</strong> Beim Scrapen wird das\n    Logo jedes Spiels gespeichert, und die Spieleseite zeigt es über dem Titel oder anstelle einer\n    fehlenden Box. Starte einen Massen-Scrape mit „Fehlendes ergänzen“, um Logos für\n    Spiele zu füllen, die du früher gescrapt hast.</li>\n  <li><strong>Spiele bekommen die Rückseite ihrer Box.</strong> Eine Schaltfläche „Rückseite“ am\n    Cover auf der Spieleseite zeigt sie an, und du kannst sie anklicken, um sie zu vergrößern. Rückseiten\n    werden bei jedem Scrapen eines Spiels gefüllt.</li>\n  <li><strong>Ein gelöschter Screenshot bleibt gelöscht.</strong> Der nächste Scrape\n    kopiert ihn nicht mehr zurück und lädt ihn nicht erneut herunter.</li>\n  <li><strong>„Spielen“ sagt, warum es nicht startet.</strong> Bei einem System ohne\n    eingerichteten Emulator ist die Schaltfläche „Spielen“ ausgegraut und nennt den Grund.</li>\n</ul>\n"
 - version: 3.35.3
   date: '2026-11-02'
   tags:
