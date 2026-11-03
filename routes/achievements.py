@@ -46,6 +46,10 @@ def achievements():
     """, one=True)
     
     if not first_system:
+        # An admin gets the button that links games, or a new library
+        # could never reach it (PASS-59-232).
+        if g.user and g.user.get('role') == 'admin':
+            return render_template('achievements_ra_empty.html')
         # Stay inside Achievements: the next tab along (Pass 53.3).
         flash(_('No games with RetroAchievements found in your library'), 'info')
         return redirect(url_for('trophies.trophies'))

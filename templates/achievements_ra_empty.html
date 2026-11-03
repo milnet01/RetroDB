@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{# The RetroAchievements tab when no game is linked yet, for an admin
+   (PASS-59-232). Others are sent to the next tab along. #}
+{% set adaptive_layout = true %}
+{% from "_macros/nav_tabs.html" import achievement_tabs %}
+{% from "_macros/ra_tools.html" import ra_find_games %}
+
+{% block title %}{{ _('RetroAchievements') }} - RetroDB{% endblock %}
+
+{% block content %}
+<div class="page-box achievements-page">
+{{ achievement_tabs('retroachievements') }}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">🏆 {{ _('RetroAchievements') }}</h1>
+        <p class="page-subtitle">{{ _('No game in your library is linked to RetroAchievements yet.') }}</p>
+    </div>
+</div>
+
+<section class="card mb-lg" id="raTools">
+    <div class="card-body ra-tools">
+        {{ ra_find_games() }}
+    </div>
+</section>
+</div>
+{% endblock %}

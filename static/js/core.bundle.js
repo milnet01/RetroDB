@@ -3805,11 +3805,10 @@ async function clearClzImports() {
 
 async function refreshRetroAchievements() {
     showConfirm(
-        t('🏆 Refresh RetroAchievements'),
+        t('🔍 Find Games with Achievements'),
         t('This will scan all games and update their RetroAchievements status. This may take several minutes for large collections. Continue?'),
         async function() {
             const btn = document.getElementById('refreshRABtn');
-            const resultDiv = document.getElementById('refreshRAResult');
 
             if (btn) {
                 btn.disabled = true;
@@ -3873,7 +3872,7 @@ async function refreshRetroAchievements() {
                     showNotification(data.error || t('Failed to start RetroAchievements refresh'), 'error');
                     if (btn) {
                         btn.disabled = false;
-                        btn.innerHTML = `<span class="btn-icon">🏆</span> ${escapeHtml(t('Refresh RetroAchievements'))}`;
+                        btn.innerHTML = `<span class="btn-icon">🔍</span> ${escapeHtml(t('Find Games with Achievements'))}`;
                     }
                 }
             } catch (error) {
@@ -3881,7 +3880,7 @@ async function refreshRetroAchievements() {
                 showNotification(t('Failed to start RetroAchievements refresh'), 'error');
                 if (btn) {
                     btn.disabled = false;
-                    btn.innerHTML = `<span class="btn-icon">🏆</span> ${escapeHtml(t('Refresh RetroAchievements'))}`;
+                    btn.innerHTML = `<span class="btn-icon">🔍</span> ${escapeHtml(t('Find Games with Achievements'))}`;
                 }
             }
         }
@@ -3895,22 +3894,11 @@ function cancelRARefresh() {
 }
 
 async function clearRAData() {
-    const systemSelect = document.getElementById('clearRASystemSelect');
-    const systemId = systemSelect ? systemSelect.value : 'all';
-    const systemName = systemSelect && systemId !== 'all'
-        ? systemSelect.options[systemSelect.selectedIndex].text
-        : 'all systems';
-
-    const confirmMsg = systemId === 'all'
-        ? t('This will clear ALL RetroAchievements game IDs and progress data from your database. You will need to run "Refresh RetroAchievements" again afterwards to re-scan your games. Continue?')
-        : t('This will clear RetroAchievements game IDs and progress data for "{system}". Continue?', {system: systemName});
-
     showConfirm(
         t('🗑️ Clear RetroAchievements Data'),
-        confirmMsg,
+        t('This will clear ALL RetroAchievements game IDs and progress data from your database. You will need to run "Find Games with Achievements" again afterwards to re-scan your games. Continue?'),
         async function() {
-            const btn = document.getElementById('clearRABtn');
-            const resultDiv = document.getElementById('clearRAResult');
+            const btn = document.getElementById('clearAllRABtn');
 
             if (btn) {
                 btn.disabled = true;
@@ -3918,36 +3906,21 @@ async function clearRAData() {
             }
 
             try {
-                const endpoint = systemId === 'all'
-                    ? '/api/clear-ra-data'
-                    : `/api/clear-ra-data/${systemId}`;
-
-                const data = await API.post(endpoint);
+                const data = await API.post('/api/clear-ra-data');
 
                 if (data.success) {
-                    const msg = systemId === 'all'
-                        ? t('Cleared RA data for {n} games', {n: formatNumber(data.cleared)})
-                        : t('Cleared RA data for {n} games in {system}', {n: formatNumber(data.cleared), system: systemName});
-                    showNotification(msg, 'success');
-
-                    if (resultDiv) {
-                        resultDiv.innerHTML = `<div class="glass-panel" style="padding: var(--spacing-md); background: rgba(76, 201, 240, 0.1);">
-                            <strong style="color: var(--primary-cyan);">✓ ${escapeHtml(t('RA Data Cleared'))}</strong>
-                            <p style="margin-top: var(--spacing-xs);">${escapeHtml(t('Cleared RetroAchievements data for {n} games. Run "Refresh RetroAchievements" to re-scan with updated matching.', {n: formatNumber(data.cleared)}))}</p>
-                        </div>`;
-                        resultDiv.style.display = 'block';
-                    }
-                } else {
-                    showNotification(data.error || t('Failed to clear RA data'), 'error');
+                    showNotification(t('Cleared RA data for {n} games', {n: formatNumber(data.cleared)}), 'success');
+                    setTimeout(() => { window.location.href = '/achievements'; }, 1500);
+                    return;
                 }
+                showNotification(data.error || t('Failed to clear RA data'), 'error');
             } catch (error) {
                 console.error('Error clearing RA data:', error);
                 showNotification(t('Failed to clear RA data'), 'error');
-            } finally {
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerHTML = `<span class="btn-icon">🗑️</span> ${escapeHtml(t('Clear RA Data'))}`;
-                }
+            }
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = `<span class="btn-icon">🗑️</span> ${escapeHtml(t('Clear RA Data for All Systems'))}`;
             }
         },
         {danger: true}

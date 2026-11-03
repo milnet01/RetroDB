@@ -2,6 +2,7 @@
 {% set adaptive_layout = true %}
 {% from "_macros/nav_tabs.html" import achievement_tabs %}
 {% from "_macros/breadcrumb.html" import breadcrumb %}
+{% from "_macros/ra_tools.html" import ra_find_games, ra_clear_all %}
 {% set needs_games_bundle = true %}
 
 {% block title %}{{ system.name }} Achievements - RetroDB{% endblock %}
@@ -91,25 +92,8 @@
 
 <!-- System Stats -->
 <section class="card mb-lg">
-    <div class="card-header" style="display: flex; flex-wrap: wrap; gap: var(--spacing-sm); justify-content: space-between; align-items: center;">
+    <div class="card-header">
         <h2 class="card-title" style="margin: 0;">{{ system.name }}</h2>
-        {% if ra_configured %}
-        <div class="header-actions" style="display: flex; align-items: center; gap: var(--spacing-md);">
-            <span class="cache-status" id="cacheStatus" 
-                  data-last-synced="{{ system.last_synced or '' }}"
-                  style="font-size: 0.85rem; color: var(--text-muted);">
-                {% if system.last_synced %}{{ _('Loading...') }}{% else %}{{ _('Never synced') }}{% endif %}
-            </span>
-            <button type="button" data-on-click="refreshSystemProgress" class="btn btn-primary btn-sm" id="refreshBtn">
-                <span class="btn-icon">🔄</span>
-                <span class="btn-text">{{ _('Sync Progress') }}</span>
-            </button>
-            <button type="button" data-on-click="clearSystemRAData" class="btn btn-danger btn-sm" id="clearRABtn" title="{{ _('Remove this system from Achievements') }}">
-                <span class="btn-icon">🗑️</span>
-                <span class="btn-text">{{ _('Clear RA Data') }}</span>
-            </button>
-        </div>
-        {% endif %}
     </div>
     <div class="card-body">
         <div class="achievement-overview">
@@ -156,6 +140,42 @@
         </div>
     </div>
 </section>
+
+{% set _is_admin = current_user and current_user.role == 'admin' %}
+{% if ra_configured or _is_admin %}
+<!-- Achievement jobs: each button says what it does (PASS-59-232) -->
+<section class="card mb-lg" id="raTools">
+    <div class="card-body ra-tools">
+        {% if ra_configured %}
+        <div class="ra-tool">
+            <button type="button" data-on-click="refreshSystemProgress" class="btn btn-primary btn-sm" id="refreshBtn">
+                <span class="btn-icon">🔄</span>
+                <span class="btn-text">{{ _('Sync Progress') }}</span>
+            </button>
+            <p class="text-muted ra-tool-note">
+                {% trans system=system.name %}Downloads which achievements you have earned in your {{ system }} games. Run it after playing.{% endtrans %}
+            </p>
+            <span class="cache-status text-muted ra-tool-note" id="cacheStatus" data-last-synced="{{ system.last_synced or '' }}">
+                {% if system.last_synced %}{{ _('Loading...') }}{% else %}{{ _('Never synced') }}{% endif %}
+            </span>
+        </div>
+        {% endif %}
+        {% if _is_admin %}
+        {{ ra_find_games() }}
+        <div class="ra-tool">
+            <button type="button" data-on-click="clearSystemRAData" class="btn btn-danger btn-sm" id="clearRABtn">
+                <span class="btn-icon">🗑️</span>
+                <span class="btn-text">{{ _('Clear RA Data') }}</span>
+            </button>
+            <p class="text-muted ra-tool-note">
+                {% trans system=system.name %}Unlinks your {{ system }} games from RetroAchievements and removes {{ system }} from this page.{% endtrans %}
+            </p>
+        </div>
+        {{ ra_clear_all() }}
+        {% endif %}
+    </div>
+</section>
+{% endif %}
 
 <!-- Filter Bar -->
 <div class="filter-bar glass-panel" style="padding: var(--spacing-md); margin-bottom: var(--spacing-lg);">
