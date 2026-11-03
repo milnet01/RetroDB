@@ -199,6 +199,9 @@
 <section id="navigation" class="help-section card">
     <h2 class="card-title">Navigasi</h2>
     <div class="card-body">
+        <h3>Cari dari Mana Saja</h3>
+        <p>Kotak pencarian di bawah nama Anda di sidebar ada di setiap halaman. Ketik dua huruf atau lebih untuk melihat konsol yang cocok dan hingga delapan game yang cocok. Tekan <kbd>&darr;</kbd> dan <kbd>&uarr;</kbd> untuk berpindah di antaranya, <kbd>Enter</kbd> untuk membuka salah satunya, dan <kbd>Esc</kbd> untuk menutup daftar. <strong>Lihat semua hasil</strong>, atau <kbd>Enter</kbd> tanpa memilih apa pun, membuka Pustaka dengan pencarian tersebut.</p>
+
         <h3>Bagian Sidebar</h3>
 
         <h4>Utama</h4>
@@ -271,7 +274,7 @@
 
         <h3>Aksi</h3>
         <div class="shortcut-grid">
-            <div class="shortcut-item"><kbd>/</kbd> <span>Fokus pencarian</span></div>
+            <div class="shortcut-item"><kbd>/</kbd> <span>Fokus pencarian (kotak milik halaman itu, atau jika tidak ada, kotak di sidebar)</span></div>
             <div class="shortcut-item"><kbd>Esc</kbd> <span>Tutup modal</span></div>
             <div class="shortcut-item"><kbd>?</kbd> <span>Tampilkan pintasan</span></div>
         </div>
@@ -554,8 +557,9 @@
         </ul>
 
         <h3 id="emulators-play">Emulator dan Bermain</h3>
-        <p>Admin menyiapkan emulator di <strong>Pengaturan &rarr; Emulator</strong>. Tambahkan folder tempat emulator Anda berada ke <strong>Folder emulator</strong>. RetroDB menemukan setiap emulator di sana (AppImage, skrip portabel, atau Flatpak yang terpasang) dan menautkannya ke sistem yang dijalankannya. Tabel pemetaan menunjukkan, untuk setiap sistem, apakah emulatornya berfungsi dan apakah file BIOS-nya sudah tersedia. RetroDB hanya membaca file BIOS; RetroDB tidak pernah menyalin atau mengunduhnya.</p>
+        <p>Admin menyiapkan emulator di <strong>Pengaturan &rarr; Emulator</strong>. Tambahkan folder tempat emulator Anda berada ke <strong>Folder emulator</strong>. RetroDB menemukan setiap emulator di sana (AppImage, skrip portabel, atau Flatpak yang terpasang) dan menautkannya ke sistem yang dijalankannya. Tabel pemetaan menampilkan setiap sistem satu kali, dengan daftar untuk memilih emulatornya, serta apakah emulator itu berfungsi dan apakah file BIOS-nya sudah tersedia. RetroDB hanya membaca file BIOS; RetroDB tidak pernah menyalin atau mengunduhnya.</p>
         <p>Game yang emulatornya berfungsi mendapat tombol <strong>Mainkan</strong> di halaman game, di kartu Library, dan di halaman sistem.</p>
+        <p>Belum punya emulator? Tekan <strong>Dapatkan RetroArch</strong> di bawah <strong>Main di RetroDB</strong> di halaman yang sama. RetroDB mengunduh RetroArch resmi dari libretro, memeriksa unduhannya, dan memasangnya sebagai <strong>RetroArch (RetroDB)</strong>, dengan pengaturan dan save miliknya sendiri, terpisah dari RetroArch lain yang sudah Anda pakai. Lalu RetroDB mengunduh core terbaik untuk setiap sistem saat pertama kali Anda bermain. Untuk game multi-disc, <strong>Disk berikutnya</strong> berfungsi tanpa pengaturan apa pun. Selama game seperti itu berjalan, dan di Windows dan macOS selama game apa pun berjalan, RetroArch mendengarkan perintah RetroDB di sebuah port jaringan.</p>
         <p>Untuk DuckStation, PCSX2, dan RPCS3, RetroDB juga mengatur skala resolusi dan rasio aspek untuk setiap game, di file pengaturan per game milik emulator itu sendiri, serta apakah game dimulai dalam layar penuh. Ubah nilainya untuk satu sistem sekaligus dengan tombol <strong>Pengaturan</strong> di tabel pemetaan, atau untuk satu game di panel <strong>Pengaturan emulator</strong> pada halaman game-nya. Nilai ini ditulis saat Anda menekan Mainkan. Pengaturan yang Anda ubah di dalam emulator itu sendiri selalu diutamakan: sejak saat itu RetroDB tidak mengubahnya lagi. Jalankan setiap emulator sekali sebelum bermain, agar emulator membuat folder pengaturannya.</p>
 
         <h4>Cheat</h4>
@@ -619,17 +623,22 @@
             <li>Gambar dan media dari sumber sekunder saat sumber utama tidak memilikinya</li>
             <li>Pengisian celah otomatis lintas scraper untuk cakupan maksimal</li>
             <li>Judul urut (sort title) dibuat otomatis dari judul game selama pengambilan data</li>
+            <li>Sebuah sumber hanya dicari jika sumber itu mencantumkan sistem game tersebut, dan hanya pada sistem itu: RAWG tidak punya Intellivision, jadi game Intellivision tidak dicari di RAWG, tempat game itu hanya akan cocok dengan game dari platform lain</li>
+            <li>Saat AI aktif, AI juga memberikan judul resmi game sebagaimana dirilis di wilayah ROM-nya, dan game diganti namanya menjadi judul itu, baik saat scraping satu game maupun di Bulk Scrape (lihat <a href="#ai-fill">AI Fill</a>)</li>
         </ul>
 
         <h3>Penanganan Media</h3>
         <ul>
-            <li>Kolom media (boxart, boxart 3D, screenshot, fanart, video, manual) <strong>tidak pernah diganti</strong> selama pengambilan data normal &mdash; hanya diisi jika kosong</li>
+            <li>Kolom media (boxart, boxart 3D, sisi belakang boks, screenshot, fanart, logo, video, manual) <strong>tidak pernah diganti</strong> selama pengambilan data normal &mdash; hanya diisi jika kosong</li>
             <li>Screenshot selalu <strong>ditambahkan</strong>, tidak pernah diganti</li>
             <li>Untuk mengunduh ulang media, kosongkan gambar yang ada di modal edit terlebih dahulu, lalu ambil data ulang</li>
             <li>Mode <strong>Full Re-scrape</strong> menggantikan aturan ini dan mengganti semuanya</li>
             <li>Referensi media yang basi (berkas dihapus tetapi nama berkas masih ada di database) otomatis dibersihkan sebelum pengambilan data agar media segar dapat diunduh</li>
             <li>Gambar yang diunduh otomatis distandardisasi ke ukuran target (lihat <a href="#image-standardization">Image Standardization</a>)</li>
         </ul>
+
+        <h3>Mempertahankan Judul</h3>
+        <p>Saat Anda mengetik judul baru di jendela edit lalu menyimpannya, scraping tidak lagi mengubahnya, termasuk Full Re-scrape. Kotak <strong>Pertahankan judul ini saat scraping</strong> di jendela edit menunjukkan apakah sebuah judul dipertahankan; hapus centangnya agar scraper bisa mengganti nama game lagi. <strong>Atur Ulang</strong> di halaman game juga membuat scraper bisa mengganti namanya, dan <strong>Hapus data hasil scrape</strong> di Pemeliharaan membiarkan judul yang dipertahankan apa adanya.</p>
 
         <h3>Prioritas Scraper</h3>
         <p>Konfigurasikan scraper mana yang berjalan lebih dulu dan mana yang aktif/nonaktif di <strong>Settings &rarr; Scraping &rarr; Scraper</strong>. Seret dan lepas untuk mengurutkan ulang prioritas. Scraper yang dinonaktifkan tidak akan dicoba selama pengambilan data dan tidak akan memicu peringatan status API di Dasbor.</p>
@@ -646,7 +655,7 @@
         <h3>Memulai Pengambilan Data Massal</h3>
         <ol>
             <li>Buka halaman System atau Library mana pun</li>
-            <li>Klik <strong>"Select"</strong> untuk masuk ke mode pemilihan</li>
+            <li>Klik <strong>"Select"</strong> untuk masuk ke mode pemilihan. Perkakas pemilihan muncul di bilah di sepanjang bagian bawah jendela.</li>
             <li>Pilih game satu per satu atau gunakan pemilihan cepat:
                 <ul>
                     <li><strong>Select All</strong> &mdash; Semua game yang terlihat</li>
@@ -655,6 +664,7 @@
             </li>
             <li>Pilih mode: <strong>Fill Missing</strong> atau <strong>Full Re-scrape</strong></li>
             <li>Klik <strong>"Scrape Selected"</strong></li>
+            <li>Klik <strong>"Done"</strong> untuk keluar dari mode pemilihan</li>
         </ol>
 
         <h3>Kontrol</h3>
@@ -731,6 +741,7 @@
             <li><strong>Game serupa</strong> selalu disegarkan (data AI lebih andal untuk kolom ini)</li>
             <li><strong>Rating hasil pemetaan silang</strong> &mdash; Jika satu sistem rating sudah diketahui, rating kosong di sistem lain otomatis diisi menggunakan pemetaan silang tingkat kedewasaan</li>
             <li><strong>Sort title</strong> dibuat otomatis saat diisi</li>
+            <li><strong>Judul resmi</strong> &mdash; AI juga menyebutkan judul resmi game sebagaimana dirilis di wilayah ROM-nya, dan game diganti namanya menjadi judul itu, di AI Fill dan setiap kali AI mengisi kekosongan selama scraping. Nama lama disimpan sebagai judul alternatif. Judul yang Anda ketik sendiri, atau Anda pertahankan dengan <strong>Pertahankan judul ini saat scraping</strong>, tidak pernah diganti</li>
             <li>Kolom <strong>Players</strong> menormalkan rentang (mis. "1-4" menjadi 4)</li>
         </ul>
 
@@ -766,10 +777,11 @@
         <h3>Tombol Filter</h3>
         <p>Setiap filter membuka modal yang menampilkan semua nilai unik dalam perpustakaan Anda beserta jumlahnya. Filter mendukung dua mode:</p>
         <ul>
-            <li><strong>Sertakan (IS)</strong> &mdash; Hanya tampilkan game yang cocok dengan nilai yang dipilih</li>
-            <li><strong>Kecualikan (IS NOT)</strong> &mdash; Sembunyikan game yang cocok dengan nilai yang dipilih</li>
+            <li><strong>Sertakan (IS)</strong> &mdash; Hanya tampilkan game yang cocok dengan nilai-nilai yang dipilih</li>
+            <li><strong>Kecualikan (IS NOT)</strong> &mdash; Sembunyikan game yang cocok dengan nilai-nilai yang dipilih</li>
         </ul>
         <p>Beralih antara mode sertakan dan kecualikan menggunakan sakelar di modal filter.</p>
+        <p>Di filter Genre, Seri, Penerbit, Pengembang, Mode Bermain, Perspektif, dan Dimensi, centang nilai sebanyak yang Anda mau lalu tekan <strong>Terapkan</strong>. Sebuah game tampil jika memiliki salah satu nilai yang dicentang; dalam mode kecualikan, game disembunyikan jika memiliki salah satunya. Setiap nilai mendapat tag sendiri di atas daftar game, dan &times; pada tag itu hanya menghapus nilai tersebut. Filter Rating dan Sumber hanya menerima satu nilai dan langsung berlaku begitu Anda mengkliknya.</p>
 
         <h3>Filter yang Tersedia</h3>
         <table class="data-table">
@@ -786,26 +798,32 @@
                 <tr><td><strong>Perspective</strong></td><td>First-Person, Top-Down, Isometric, Side-Scroller</td><td>Ya</td></tr>
                 <tr><td><strong>Dimension</strong></td><td>2D, 3D</td><td>Ya</td></tr>
                 <tr><td><strong>Rating</strong></td><td>Rating usia (menampilkan sistem pilihan Anda)</td><td>Tidak</td></tr>
-                <tr><td><strong>Has RA</strong></td><td>Game dengan dukungan RetroAchievements</td><td>Tidak</td></tr>
-                <tr><td><strong>Show Bonus</strong></td><td>Alihkan visibilitas disc bonus</td><td>Tidak</td></tr>
+                <tr><td><strong>Memiliki Achievement</strong></td><td>Game dengan dukungan RetroAchievements</td><td>Tidak</td></tr>
+                <tr><td><strong>Belum Di-scrape</strong></td><td>Hanya game yang belum diisi oleh scraper mana pun</td><td>Tidak</td></tr>
+                <tr><td><strong>Disc Bonus</strong></td><td>Alihkan visibilitas disc bonus</td><td>Tidak</td></tr>
             </tbody>
         </table>
 
+        <p>Tombol yang disorot berarti aktif. Filter aktif juga tampil sebagai tag di samping jumlah game; klik &times; pada tag untuk menghapusnya. <strong>Hapus</strong> menghapus semuanya. Di ponsel, tombol filter dibuka dari tombol <strong>Filter</strong>.</p>
+
         <h3>Opsi Pengurutan</h3>
+        <p>Pilih urutan dari <strong>Urutkan berdasarkan</strong>, di samping jumlah game:</p>
         <ul>
-            <li><strong>Title</strong> &mdash; Alfabetis berdasarkan sort title (tidak peduli huruf besar/kecil)</li>
-            <li><strong>Release Date</strong> &mdash; Urutan kronologis (paling awal dulu)</li>
-            <li><strong>Platform</strong> &mdash; Dikelompokkan berdasarkan nama sistem</li>
+            <li><strong>Nama</strong> &mdash; Alfabetis berdasarkan sort title (tidak peduli huruf besar/kecil)</li>
+            <li><strong>Rilis terbaru</strong> / <strong>Rilis terlama</strong> &mdash; Berdasarkan tanggal rilis</li>
+            <li><strong>Skor kritikus</strong> / <strong>Skor pengguna</strong> &mdash; Tertinggi lebih dulu</li>
+            <li><strong>Baru ditambahkan</strong> &mdash; Game yang terakhir ditambahkan ke pustaka Anda tampil paling atas</li>
         </ul>
+        <p>Game tanpa tanggal atau skor tampil paling akhir. Hapus tetap mempertahankan urutan yang Anda pilih.</p>
 
         <h3>Navigasi Alfabet</h3>
-        <p>Lompat ke game yang diawali huruf tertentu. Huruf tanpa game yang cocok akan ditampilkan pudar (abu-abu). Angka dan simbol dikelompokkan di bawah <strong>#</strong>.</p>
+        <p>Lompat ke game yang diawali huruf tertentu. Huruf tanpa game yang cocok akan ditampilkan pudar (abu-abu). Angka dan simbol dikelompokkan di bawah <strong>#</strong>. Bilah ini berfungsi saat mengurutkan berdasarkan nama, dan tampil pudar untuk urutan lainnya.</p>
 
         <h3>Infinite Scroll</h3>
         <p>Game dimuat dalam kelompok 100 saat Anda menggulir. Halaman baru otomatis dimuat saat Anda mendekati bagian bawah. Mengubah filter atau pencarian langsung mengatur ulang dan memuat ulang hasil.</p>
 
         <h3>Penyimpanan Status</h3>
-        <p>Filter, kata kunci pencarian, dan posisi gulir Anda saat ini disimpan dalam penyimpanan sesi. Semuanya dipulihkan saat Anda kembali ke halaman atau memuat ulang.</p>
+        <p>Filter, kata kunci pencarian, urutan, dan posisi gulir Anda saat ini disimpan dalam penyimpanan sesi. Semuanya dipulihkan saat Anda kembali ke halaman atau memuat ulang.</p>
     </div>
 </section>
 
@@ -835,6 +853,8 @@
         <p>Klik tautan judul game atau navigasi dari breadcrumb untuk melihat halaman detail game penuh. Fitur tambahan di halaman penuh meliputi:</p>
         <ul>
             <li><strong>Header latar fanart</strong> dengan navigasi breadcrumb</li>
+            <li><strong>Logo game</strong> &mdash; Logo game tampil di atas judulnya, yang tetap berupa teks. Game tanpa boxart menampilkan logonya di tempat boks. Scraping mengisi logo dari ES-DE, ScreenScraper, TheGamesDB, IGDB, dan Steam; bulk scrape dengan <strong>Isi yang Hilang</strong> mengisinya untuk game yang sudah di-scrape sebelumnya</li>
+            <li><strong>Sisi belakang boks</strong> &mdash; Jika sebuah game memiliki sisi belakang boksnya, tombol <strong>Belakang</strong> ada di sampul. Tekan tombol itu untuk melihat sisi belakang, lalu tekan <strong>Depan</strong> untuk kembali. Klik sisi belakang untuk memperbesarnya. Scraping mengisi sisi belakang boks dari ES-DE, ScreenScraper, dan TheGamesDB setiap kali sebuah game di-scrape</li>
             <li><strong>Badge impor platform</strong> &mdash; Menampilkan CLZ Import, Steam Import, Xbox Import, atau PSN Import dengan logo platform bila berlaku</li>
             <li><strong>Indikator disc bonus</strong> &mdash; Menampilkan badge dan tautan "Part of:" ke game induk beserta thumbnail-nya</li>
             <li><strong>Tombol Delete</strong> &mdash; Hapus game dari database (dengan konfirmasi)</li>
@@ -851,7 +871,7 @@
             <li><strong>Age Ratings</strong> &mdash; Semua 8 sistem rating dengan gambar rating resmi dan pemetaan silang otomatis. Mengubah satu rating otomatis mengisi rating kosong di sistem lain.</li>
             <li><strong>Scores</strong> &mdash; Skor kritikus, skor pengguna</li>
             <li><strong>Description</strong> &mdash; Teks deskripsi game</li>
-            <li><strong>Custom Images</strong> &mdash; Unggah boxart kustom (2D), boxart 3D, dan fanart. Kosongkan gambar yang ada untuk mengizinkan pengambilan data ulang.</li>
+            <li><strong>Custom Images</strong> &mdash; Unggah boxart kustom (2D), boxart 3D, sisi belakang boks, fanart, dan logo. Kosongkan gambar yang ada untuk mengizinkan pengambilan data ulang.</li>
             <li><strong>Impor kotak 3D</strong> &mdash; Juga di Custom Images. Ini langsung tersimpan, tanpa Simpan Perubahan. Pilih file <code>.box.json</code> yang disimpan Slipcase, beserta gambar-gambarnya (memilih seluruh folder juga boleh). Slipcase 1.4.0 atau yang lebih baru menyimpan file ini di samping setiap gambar yang diekspor. RetroDB menyimpan sisi-sisi kotak untuk game ini; mengeklik sampul kemudian menampilkan kotak dalam 3D, yang dapat diseret atau diputar dengan tombol panah. Gambar boxart 3D Anda tidak diubah. Game yang sudah memiliki sisi kotak akan bertanya sebelum menggantinya, dan <strong>Hapus</strong> akan menghapusnya.</li>
             <li><strong>Video / Trailer</strong> &mdash; Unggah atau tautkan video trailer</li>
         </ul>
@@ -895,7 +915,7 @@
         <p>Atur sistem pilihan Anda di <strong>Settings &rarr; Library &rarr; Display</strong>. Gambar rating resmi ditampilkan pada kartu game, modal detail, dan halaman detail. Rating yang kosong otomatis diisi dari rating yang tersedia lewat pemetaan silang tingkat kedewasaan selama pengambilan data, AI Fill, dan pengeditan manual.</p>
 
         <h3>Disc Bonus</h3>
-        <p>RetroDB otomatis mendeteksi disc bonus/tambahan (mis. CD soundtrack, disc konten tambahan) dan menautkannya ke game induknya. Disc bonus disembunyikan secara bawaan di library &mdash; alihkan <strong>"Show Bonus"</strong> di filter untuk menampilkannya. Disc bonus yang tertaut muncul di modal detail game induknya.</p>
+        <p>RetroDB otomatis mendeteksi disc bonus/tambahan (mis. CD soundtrack, disc konten tambahan) dan menautkannya ke game induknya. Disc bonus disembunyikan secara bawaan di library &mdash; alihkan <strong>"Disc Bonus"</strong> di filter untuk menampilkannya. Disc bonus yang tertaut muncul di modal detail game induknya.</p>
 
         <h3>Versi Regional</h3>
         <p>Jika Anda memiliki satu game dari beberapa region, tautkan versinya dan Pustaka menampilkannya sebagai satu kartu dengan lencana &#127760;. Kartu itu membuka dan memainkan versi dari region pilihan Anda (<strong>Pengaturan &rarr; Pustaka &rarr; Wilayah Bawaan</strong>). Halaman game mencantumkan setiap versi, membandingkannya (tanggal rilis, penerbit, ukuran berkas, revisi, bahasa, skor, RetroAchievements) dan menautkan ke masing-masing. Editor dapat melepas tautan sebuah versi di sana, atau mencari di sistem yang sama untuk menautkan versi lain. Editor juga dapat menekan <strong>Ringkas perbedaan dengan AI</strong> untuk mendapatkan daftar perbedaan yang diketahui antarversi, seperti sensor atau konten yang dihapus. Daftar ini ditandai sebagai tulisan AI dan bisa salah; fitur ini memerlukan penyedia AI di <strong>Pengaturan &rarr; Scraping</strong>. Header halaman menghitung game, dengan jumlah ROM di sampingnya jika keduanya berbeda.</p>
@@ -1027,8 +1047,9 @@
             <li>Konfigurasikan kunci Steam Web API dan Steam ID Anda di Settings</li>
             <li>Buka tab Game Imports &rarr; <strong>Steam</strong></li>
             <li>Klik <strong>"Fetch Library"</strong> untuk mengambil game Steam Anda</li>
-            <li>Pilih game yang akan diimpor (duplikat terdeteksi otomatis)</li>
+            <li>Pilih game yang akan diimpor. Game yang sudah ada di daftar Windows Anda dengan nama yang sama ditautkan ke Steam alih-alih ditambahkan dua kali</li>
             <li>Game yang diimpor ditandai dengan Steam App ID-nya untuk pelacakan achievement</li>
+            <li>Di latar belakang, setiap game mengisi detailnya yang kosong dari halaman toko Steam-nya, dan achievement serta waktu bermain Anda masuk. Halaman game menampilkan waktu bermain Anda. Scrape game tersebut untuk mendapatkan genre dan tanggal rilisnya: data dari Steam terlalu umum, atau berupa tanggal game itu masuk ke Steam</li>
         </ol>
 
         <h3>Impor Xbox</h3>
@@ -1432,8 +1453,12 @@
         <p>Khusus Editor. RetroDB menyarankan game yang tampak seperti satu game dari region berbeda: game IGDB atau ScreenScraper yang sama, judul yang sama dengan tag region berbeda, atau nama regional yang cocok. Hapus centang game yang tidak termasuk lalu klik <strong>"Tautkan game yang dicentang"</strong>, atau klik <strong>"Bukan versi"</strong> agar grup itu tidak pernah disarankan lagi. Tidak ada yang ditautkan sampai Anda mengonfirmasinya. Jalankan <strong>Isi Ulang Judul Alternatif</strong> di Maintenance terlebih dahulu: fitur ini mengisi id IGDB dan ScreenScraper yang digunakan oleh saran tersebut.</p>
         <p><em>Tanpa dependensi eksternal</em></p>
 
+        <h3>Nama MAME</h3>
+        <p>Khusus admin. MAME menemukan game berdasarkan nama filenya yang persis, jadi pertahankan nama pendeknya, seperti dyger.zip. Pilih daftar MAME (DAT yang cocok dengan ROM Anda, atau keluaran <code>mame -listxml</code>) lalu tekan <strong>"Beri Nama Game MAME"</strong>. Setiap game mendapat nama asli, tahun, dan pembuatnya, dan filenya tidak diubah. Judul yang Anda ubah sendiri tetap dipertahankan. Tambahkan <code>catver.ini</code> untuk memfilter daftar menurut kategori. Set BIOS disembunyikan dari daftar tetapi tetap ada di disk, karena game lain membutuhkannya. Lakukan scraping setelah ini, agar scraper dapat menemukan setiap game.</p>
+        <p><em>Memerlukan: file daftar MAME</em></p>
+
         <h3>Isi dengan AI Massal</h3>
-        <p>Khusus editor. Kartu <strong>Isi kolom kosong dengan AI</strong> menjalankan Isi dengan AI pada seluruh sistem, untuk kolom yang Anda aktifkan (lihat AI Fill &rarr; Banyak Game Sekaligus).</p>
+        <p>Khusus editor. Menjalankan Isi dengan AI pada seluruh sistem, untuk kolom yang Anda aktifkan (lihat AI Fill &rarr; Banyak Game Sekaligus).</p>
         <p><em>Memerlukan: penyedia AI di <strong>Pengaturan &rarr; Scraping</strong></em></p>
 
         <h3>Multi-Disc Organizer</h3>
@@ -1454,7 +1479,7 @@
         <p><em>Tanpa dependensi eksternal (peningkatan skala AI berbasis Python)</em></p>
 
         <h3>Backfill Alternate Titles</h3>
-        <p>Pindai perpustakaan untuk game yang kolom <strong>judul alternatif</strong>-nya kosong dan isi dari IGDB / TGDB / ScreenScraper. Berguna setelah mengimpor katalog besar atau bermigrasi dari alat lain yang tidak menyimpan judul regional/Jepang/subjudul. Berjalan di latar belakang; kemajuan ditampilkan pada kartu perkakas.</p>
+        <p>Menyisir setiap game yang sudah di-scrape dan mengambil <strong>judul alternatif</strong>-nya dari IGDB / TGDB / ScreenScraper, ditandai dengan wilayah asal tiap nama. Nama yang sudah Anda miliki mendapatkan wilayahnya. Berguna setelah mengimpor katalog besar atau bermigrasi dari alat lain yang tidak menyimpan judul regional/Jepang/subjudul. Berjalan di latar belakang; kemajuan ditampilkan pada kartu perkakas.</p>
         <p><em>Memerlukan setidaknya satu kunci API scraper (IGDB / TGDB / ScreenScraper)</em></p>
 
         <h3>Perbaiki Wilayah Box dan Manual</h3>
@@ -1463,6 +1488,18 @@
 
         <h3>Perbaiki Wilayah dari Nama File</h3>
         <p>Nama file ROM menunjukkan salinan mana yang dimaksud, sehingga tag seperti <code>(USA)</code> kini menentukan wilayahnya dan AI tidak ditanya. Pengambilan data lama membiarkan AI menebak lebih dulu, sehingga file <code>(USA)</code> bisa tercatat sebagai Jepang. Alat ini memberikan wilayah yang ada di nama file kepada game tersebut. Alat ini hanya mengubah wilayah yang diisi oleh AI, termasuk yang kemudian Anda koreksi secara manual sehingga berbeda dari nama file.</p>
+        <p><em>Tidak memerlukan dependensi</em></p>
+
+        <h3>Rapikan Tanggal Rilis</h3>
+        <p>Scraping lama menyimpan tanggal yang hanya diketahui tahunnya sebagai 1 Januari atau 31 Desember, seolah-olah harinya diketahui. Alat ini memangkas tanggal tersebut kembali ke tahun atau bulannya, sehingga scraping berikutnya dapat mengisi tanggal yang sebenarnya. Tanggal yang tidak diisi oleh scraping tetap seperti apa adanya.</p>
+        <p><em>Tidak memerlukan dependensi</em></p>
+
+        <h3>Periksa Waktu Bermain Tersimpan</h3>
+        <p>Pencarian lama bisa menyimpan waktu bermain sebuah sekuel, atau game lain bernama sama di sistem lain. Alat ini mengirim kecocokan tersebut ke halaman tinjauan HowLongToBeat, dan tidak ada game yang berubah sampai Anda memutuskan. Di sana, Setujui mempertahankan sebuah waktu dan Tolak menghapusnya. Sebagian kecocokan memang benar: HowLongToBeat tidak mencantumkan setiap sistem tempat sebuah game dirilis.</p>
+        <p><em>Tidak memerlukan dependensi</em></p>
+
+        <h3>Rapikan Genre, Perspektif, dan Mode</h3>
+        <p>Sumber-sumber menamai hal yang sama secara berbeda, sehingga satu genre bisa muncul sebagai RPG sekaligus Role Playing Game, dan sebuah filter melewatkan game. Scraping kini memakai satu set nama, yaitu yang ada di daftar filter. Alat ini mengonversi apa yang disimpan oleh scraping lama. Kata yang tidak punya tempat di daftar itu, seperti Arcade atau Indie, dihapus. Kata yang termasuk kolom lain, seperti FPV, dipindahkan ke sana jika kolom itu kosong. Jumlah pemain yang bertentangan dengan mode sebuah game diperbaiki, dan jumlah lama bernilai 1 dari RAWG dihapus agar jumlah yang sebenarnya dapat mengisinya. Nilai yang Anda tambahkan sendiri ke dropdown tetap ada. Setelah itu jalankan bulk scrape dengan <strong>Isi yang Hilang</strong> untuk mengisi apa pun yang masih kosong.</p>
         <p><em>Tidak memerlukan dependensi</em></p>
 
         <h3>Hapus Gambar RAWG dari Sampul</h3>
@@ -1542,6 +1579,7 @@
                 <tr><td>Kontroler</td><td>sisi terpanjang 1280px</td><td>Mempertahankan transparansi (RGBA)</td></tr>
                 <tr><td>Perangkat Keras</td><td>sisi terpanjang 1280px</td><td>Mempertahankan transparansi (RGBA)</td></tr>
                 <tr><td>Fanart</td><td>Dilewati</td><td>Tidak distandardisasi (dibiarkan pada ukuran asli)</td></tr>
+                <tr><td>Logo</td><td>Dilewati</td><td>Dibiarkan pada ukuran asli; latar transparannya tetap terjaga (disimpan sebagai PNG jika formatnya JPEG)</td></tr>
             </tbody>
         </table>
 

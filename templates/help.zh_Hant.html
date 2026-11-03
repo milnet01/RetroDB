@@ -199,6 +199,9 @@
 <section id="navigation" class="help-section card">
     <h2 class="card-title">導覽</h2>
     <div class="card-body">
+        <h3>隨處搜尋</h3>
+        <p>側邊欄中你名字下方的搜尋框在每個頁面上都有。輸入兩個或更多字母，即可看到相符的主機和最多八個相符的遊戲。按 <kbd>&darr;</kbd> 和 <kbd>&uarr;</kbd> 在其中移動，按 <kbd>Enter</kbd> 開啟一個，按 <kbd>Esc</kbd> 關閉清單。點擊<strong>查看所有結果</strong>，或在未選擇任何項目時按 <kbd>Enter</kbd>，會以該搜尋開啟遊戲庫。</p>
+
         <h3>側邊欄分區</h3>
 
         <h4>主要</h4>
@@ -554,8 +557,9 @@
         </ul>
 
         <h3 id="emulators-play">模擬器與遊玩</h3>
-        <p>管理員在 <strong>設定 &rarr; 模擬器</strong> 中設定模擬器。把存放模擬器的資料夾加入<strong>模擬器資料夾</strong>。RetroDB 會在其中找到每個模擬器（AppImage、可攜式指令碼或已安裝的 Flatpak），並將其與它能執行的系統關聯起來。對應表會顯示每個系統的模擬器是否可用，以及 BIOS 檔案是否就位。RetroDB 只讀取 BIOS 檔案，絕不會複製或下載它們。</p>
+        <p>管理員在 <strong>設定 &rarr; 模擬器</strong> 中設定模擬器。把存放模擬器的資料夾加入<strong>模擬器資料夾</strong>。RetroDB 會在其中找到每個模擬器（AppImage、可攜式指令碼或已安裝的 Flatpak），並將其與它能執行的系統關聯起來。對應表會把每個系統顯示一次，附帶一個用於選擇其模擬器的清單，並顯示該模擬器是否可用，以及其 BIOS 檔案是否就位。RetroDB 只讀取 BIOS 檔案，絕不會複製或下載它們。</p>
         <p>模擬器可用的遊戲，會在遊戲頁面、資料庫卡片和系統頁面上顯示<strong>遊玩</strong>按鈕。</p>
+        <p>還沒有模擬器？在同一頁面的<strong>在 RetroDB 中遊玩</strong>下按<strong>取得 RetroArch</strong>。RetroDB 會從 libretro 下載官方 RetroArch，檢查下載內容，並將其設定為 <strong>RetroArch (RetroDB)</strong>，擁有自己的設定和存檔，與你已在使用的任何 RetroArch 分開。之後，在你第一次遊玩時，它會為每個系統下載最合適的核心。對於多光碟遊戲，<strong>下一張光碟</strong>無需任何設定即可使用。在這類遊戲執行時（在 Windows 和 macOS 上則是任何遊戲執行時），RetroArch 會在一個網路連接埠上監聽 RetroDB 的指令。</p>
         <p>對於 DuckStation、PCSX2 和 RPCS3，RetroDB 還會在模擬器自己的單遊戲設定檔中，為每個遊戲設定解析度縮放和長寬比，以及遊戲是否全螢幕啟動。要修改整個系統的值，請使用對應表中的<strong>設定</strong>按鈕；要修改單一遊戲，請使用其遊戲頁面上的<strong>模擬器設定</strong>面板。這些值會在你按下遊玩時寫入。你在模擬器內部修改的設定一律優先：此後 RetroDB 不再改動它。請在遊玩前先執行一次每個模擬器，讓它建立自己的設定資料夾。</p>
 
         <h4>金手指</h4>
@@ -619,17 +623,22 @@
             <li>當主來源沒有圖片和媒體時，從次要來源獲取</li>
             <li>跨抓取器自動補全空缺，以獲得最大覆蓋</li>
             <li>抓取過程中會根據遊戲標題自動生成排序標題</li>
+            <li>只有當某個來源列出了該遊戲的系統時才會搜尋它，並且只在該系統中搜尋：RAWG 沒有 Intellivision，因此不會在 RAWG 上查找 Intellivision 遊戲，否則只會比對到其他平台的遊戲</li>
+            <li>開啟 AI 時，它還會給出遊戲在其 ROM 所屬地區發行時的官方標題，遊戲會被重新命名為該標題，單一遊戲抓取和批量抓取中都是如此（參見<a href="#ai-fill">AI 填充</a>）</li>
         </ul>
 
         <h3>媒體處理</h3>
         <ul>
-            <li>媒體欄位（封面、3D 封面、螢幕截圖、同人圖、影片、說明書）在正常抓取時<strong>絕不會被替換</strong> &mdash; 只在為空時填充</li>
+            <li>媒體欄位（封面、3D 封面、盒子背面、螢幕截圖、同人圖、標誌、影片、說明書）在正常抓取時<strong>絕不會被替換</strong> &mdash; 只在為空時填充</li>
             <li>螢幕截圖始終是<strong>追加</strong>，絕不替換</li>
             <li>若要重新下載媒體，請先在編輯彈窗中清除現有圖片，然後重新抓取</li>
-            <li><strong>完全重新抓取</strong>模式會覆蓋此規則並替換所有內容</li>
+            <li><strong>完整重新抓取</strong>模式會覆蓋此規則並替換所有內容</li>
             <li>失效的媒體引用（檔案已刪除但檔案名仍在資料庫中）會在抓取前自動清除，以便下載新的媒體</li>
             <li>下載的圖片會自動標準化為目標尺寸（參見<a href="#image-standardization">圖片標準化</a>）</li>
         </ul>
+
+        <h3>保留標題</h3>
+        <p>當你在編輯視窗中輸入新標題並儲存後，抓取就不會再更改它，完整重新抓取也一樣。編輯視窗中的<strong>抓取時保留此標題</strong>核取方塊會顯示標題是否被保留；取消勾選即可讓抓取器再次重新命名該遊戲。遊戲頁面上的<strong>重置</strong>也會讓抓取器重新命名它，而維護中的<strong>清除抓取資料</strong>會讓保留的標題保持不變。</p>
 
         <h3>抓取器優先級</h3>
         <p>在 <strong>設定 &rarr; 抓取 &rarr; 抓取器</strong> 中配置哪些抓取器優先運行以及哪些啟用/停用。拖放可重新排序優先級。停用的抓取器在抓取時不會被嘗試，也不會在儀表板上觸發 API 狀態警告。</p>
@@ -646,15 +655,16 @@
         <h3>開始批量抓取</h3>
         <ol>
             <li>前往任意系統或遊戲庫頁面</li>
-            <li>點擊 <strong>"選擇"</strong> 進入選擇模式</li>
+            <li>點擊 <strong>"選擇"</strong> 進入選擇模式。選擇工具會出現在視窗底部的一個列中。</li>
             <li>逐個選擇遊戲，或使用快速選擇：
                 <ul>
                     <li><strong>全選</strong> &mdash; 所有可見的遊戲</li>
                     <li><strong>選擇未抓取</strong> &mdash; 僅無中繼資料的遊戲</li>
                 </ul>
             </li>
-            <li>選擇模式：<strong>填充缺失</strong> 或 <strong>完全重新抓取</strong></li>
+            <li>選擇模式：<strong>填充缺失項</strong> 或 <strong>完整重新抓取</strong></li>
             <li>點擊 <strong>"抓取所選"</strong></li>
+            <li>點擊 <strong>"完成"</strong> 離開選擇模式</li>
         </ol>
 
         <h3>控制</h3>
@@ -684,8 +694,8 @@
         <h3>抓取選項</h3>
         <ul>
             <li><strong>僅填充缺失</strong> &mdash; 只填充空的中繼資料欄位，保留現有資料</li>
-            <li><strong>完全重新抓取</strong> &mdash; 替換所有欄位，包括媒體（下載新的圖片和影片）</li>
-            <li><strong>保留現有媒體</strong> &mdash; 使用完全重新抓取時，保留磁碟上已有的圖片、影片和手冊，而不是重新下載。仍會加入新的截圖。</li>
+            <li><strong>完整重新抓取</strong> &mdash; 替換所有欄位，包括媒體（下載新的圖片和影片）</li>
+            <li><strong>保留現有媒體</strong> &mdash; 使用完整重新抓取時，保留磁碟上已有的圖片、影片和手冊，而不是重新下載。仍會加入新的截圖。</li>
             <li><strong>檢查 RetroAchievements</strong> &mdash; 抓取時也檢查 RetroAchievements 成就集</li>
         </ul>
 
@@ -731,6 +741,7 @@
             <li><strong>相似遊戲</strong>始終會被重新整理（此欄位的 AI 資料更可靠）</li>
             <li><strong>交叉映射的分級</strong> &mdash; 如果已知一個分級系統，其他系統中空的分級會使用成熟度等級交叉映射自動填充</li>
             <li>填充時會自動生成<strong>排序標題</strong></li>
+            <li><strong>官方標題</strong> &mdash; AI 還會給出遊戲在其 ROM 所屬地區發行時的官方標題，遊戲會被重新命名為該標題，在 AI 填充中以及抓取時 AI 填補空缺時都是如此。舊名稱會保留為備用標題。你自己輸入的標題，或用<strong>抓取時保留此標題</strong>保留的標題，絕不會被重新命名</li>
             <li><strong>玩家人數</strong>欄位會規範化範圍（例如 "1-4" 變為 4）</li>
         </ul>
 
@@ -770,6 +781,7 @@
             <li><strong>排除（IS NOT）</strong> &mdash; 隱藏匹配所選值的遊戲</li>
         </ul>
         <p>使用篩選彈窗中的開關在包含和排除模式之間切換。</p>
+        <p>在類型、系列、發行商、開發商、遊玩模式、視角和維度篩選器中，可勾選任意數量的值，然後按<strong>套用</strong>。遊戲只要具有任一勾選的值就會顯示；在排除模式下，遊戲只要具有其中任一值就會被隱藏。每個值在遊戲上方都有自己的標籤，點擊其 &times; 只會移除該值。分級和來源篩選器只取一個值，點擊後立即生效。</p>
 
         <h3>可用篩選器</h3>
         <table class="data-table">
@@ -786,26 +798,32 @@
                 <tr><td><strong>視角</strong></td><td>第一人稱、俯視、等距、橫版捲軸</td><td>是</td></tr>
                 <tr><td><strong>維度</strong></td><td>2D、3D</td><td>是</td></tr>
                 <tr><td><strong>分級</strong></td><td>年齡分級（顯示你偏好的系統）</td><td>否</td></tr>
-                <tr><td><strong>含 RA</strong></td><td>支援 RetroAchievements 的遊戲</td><td>否</td></tr>
-                <tr><td><strong>顯示附贈</strong></td><td>切換附贈光碟的可見性</td><td>否</td></tr>
+                <tr><td><strong>有成就</strong></td><td>支援 RetroAchievements 的遊戲</td><td>否</td></tr>
+                <tr><td><strong>未抓取</strong></td><td>僅顯示尚未被任何抓取器填充的遊戲</td><td>否</td></tr>
+                <tr><td><strong>附贈光碟</strong></td><td>切換附贈光碟的可見性</td><td>否</td></tr>
             </tbody>
         </table>
 
+        <p>醒目顯示的按鈕表示已開啟。已啟用的篩選器還會以標籤形式顯示在遊戲數量旁邊；點擊標籤的 &times; 可將其移除。<strong>清除</strong>會移除所有篩選器。在手機上，篩選按鈕從<strong>篩選</strong>按鈕中開啟。</p>
+
         <h3>排序選項</h3>
+        <p>在遊戲數量旁邊的<strong>排序方式</strong>中選擇順序：</p>
         <ul>
-            <li><strong>標題</strong> &mdash; 按排序標題字母順序（不區分大小寫）</li>
-            <li><strong>發行日期</strong> &mdash; 按時間順序（最早在前）</li>
-            <li><strong>平台</strong> &mdash; 按系統名稱分組</li>
+            <li><strong>名稱</strong> &mdash; 按排序標題字母順序（不區分大小寫）</li>
+            <li><strong>最新發行</strong> / <strong>最早發行</strong> &mdash; 按發行日期</li>
+            <li><strong>媒體評分</strong> / <strong>使用者評分</strong> &mdash; 最高的在前</li>
+            <li><strong>最近新增</strong> &mdash; 最後加入遊戲庫的遊戲排在最前</li>
         </ul>
+        <p>沒有日期或評分的遊戲排在最後。清除會保留你選擇的排序。</p>
 
         <h3>字母導航</h3>
-        <p>跳轉到以特定字母開頭的遊戲。沒有匹配遊戲的字母會顯示為灰色。數字和符號歸入 <strong>#</strong> 之下。</p>
+        <p>跳轉到以特定字母開頭的遊戲。沒有匹配遊戲的字母會顯示為灰色。數字和符號歸入 <strong>#</strong> 之下。按名稱排序時可使用字母列，按其他方式排序時它會顯示為灰色。</p>
 
         <h3>無限滾動</h3>
         <p>遊戲會在你滾動時以每批 100 個的方式載入。當你接近底部時會自動載入新頁面。更改篩選器或搜尋會立即重置並重新載入結果。</p>
 
         <h3>狀態保持</h3>
-        <p>你當前的篩選器、搜尋詞和滾動位置會儲存在會話存儲中。當你返回該頁面或重新整理時會被恢復。</p>
+        <p>你當前的篩選器、搜尋詞、排序和滾動位置會儲存在會話存儲中。當你返回該頁面或重新整理時會被恢復。</p>
     </div>
 </section>
 
@@ -835,6 +853,8 @@
         <p>點擊遊戲標題連結或從麵包屑導航進入，即可查看完整遊戲詳情頁。完整頁面上的附加功能包括：</p>
         <ul>
             <li><strong>同人圖背景頁頭</strong>，帶麵包屑導航</li>
+            <li><strong>遊戲標誌</strong> &mdash; 遊戲的標誌顯示在標題上方，標題仍以文字顯示。沒有封面的遊戲會在封面的位置顯示其標誌。抓取會從 ES-DE、ScreenScraper、TheGamesDB、IGDB 和 Steam 填充標誌；使用<strong>填充缺失項</strong>的批量抓取會為之前抓取過的遊戲填充標誌</li>
+            <li><strong>盒子背面</strong> &mdash; 當遊戲有盒子背面時，封面上會有一個<strong>背面</strong>按鈕。按下它可查看背面，按<strong>正面</strong>可返回。點擊背面可放大。每次抓取遊戲時，都會從 ES-DE、ScreenScraper 和 TheGamesDB 填充背面</li>
             <li><strong>平台匯入徽章</strong> &mdash; 適用時顯示 CLZ 匯入、Steam 匯入、Xbox 匯入或 PSN 匯入，並帶平台標誌</li>
             <li><strong>附贈光碟指示</strong> &mdash; 顯示徽章和帶縮圖的 "所屬：" 連結，指向父遊戲</li>
             <li><strong>刪除按鈕</strong> &mdash; 從資料庫中移除該遊戲（需確認）</li>
@@ -851,7 +871,7 @@
             <li><strong>年齡分級</strong> &mdash; 全部 8 個分級系統，帶官方分級圖片和自動交叉映射。更改一個分級會自動填充其他系統中空的分級。</li>
             <li><strong>評分</strong> &mdash; 媒體評分、使用者評分</li>
             <li><strong>簡介</strong> &mdash; 遊戲簡介文字</li>
-            <li><strong>自訂圖片</strong> &mdash; 上傳自訂封面（2D）、3D 封面和同人圖。清除現有圖片以允許重新抓取。</li>
+            <li><strong>自訂圖片</strong> &mdash; 上傳自訂封面（2D）、3D 封面、盒子背面、同人圖和標誌。清除現有圖片以允許重新抓取。</li>
             <li><strong>匯入 3D 包裝盒</strong> &mdash; 也在「自訂圖片」中。無需按「儲存變更」，會立即儲存。選擇 Slipcase 儲存的 <code>.box.json</code> 檔案以及它的圖片（選擇整個資料夾也可以）。Slipcase 1.4.0 或更新版本會在每張匯出的圖片旁儲存此檔案。RetroDB 會為這個遊戲保存包裝盒的各面；之後點擊封面就會以 3D 顯示包裝盒，可以拖曳或用方向鍵轉動。你的 3D 封面圖片不會被改動。已經有各面圖片的遊戲會在取代前先詢問，<strong>移除</strong>會刪除它們。</li>
             <li><strong>影片 / 預告</strong> &mdash; 上傳或連結影片預告</li>
         </ul>
@@ -1027,8 +1047,9 @@
             <li>在設定中配置你的 Steam Web API 密鑰和 Steam ID</li>
             <li>進入遊戲匯入 &rarr; <strong>Steam</strong> 標籤頁</li>
             <li>點擊<strong>「獲取遊戲庫」</strong>以檢索你的 Steam 遊戲</li>
-            <li>選擇要匯入的遊戲（會自動偵測重複項）</li>
+            <li>選擇要匯入的遊戲。已在你的 Windows 清單中、名稱相同的遊戲會連結到 Steam，而不會重複新增</li>
             <li>匯入的遊戲會標記其 Steam App ID 以便追蹤成就</li>
+            <li>每個遊戲會在背景從其 Steam 商店頁面填充空白的詳細資訊，你的成就和遊玩時間也會隨之同步。遊戲頁面會顯示你的遊玩時間。請抓取該遊戲以取得其類型和發行日期：Steam 的類型過於寬泛，日期則是遊戲登上 Steam 的日期</li>
         </ol>
 
         <h3>Xbox 匯入</h3>
@@ -1432,8 +1453,12 @@
         <p>僅限編輯者。RetroDB 會推薦看起來是同一遊戲不同地區版本的遊戲：同一個 IGDB 或 ScreenScraper 遊戲、僅地區標籤不同的同名遊戲，或相符的地區名稱。取消勾選不屬於該組的遊戲，然後點擊 <strong>「連結已勾選的遊戲」</strong>；或點擊 <strong>「非版本」</strong>，該組將不再被推薦。在你確認之前，不會連結任何內容。請先在維護中執行 <strong>回填別名標題</strong>：它會填入推薦所用的 IGDB 和 ScreenScraper ID。</p>
         <p><em>無外部依賴</em></p>
 
+        <h3>MAME 命名</h3>
+        <p>僅限管理員。MAME 透過精確的檔名尋找遊戲，所以請保留短名稱，例如 dyger.zip。選擇 MAME 的清單（與你的 ROM 相符的 DAT，或 <code>mame -listxml</code> 的輸出），然後按<strong>「為 MAME 遊戲命名」</strong>。每個遊戲都會獲得其真實名稱、年份和廠商，檔案則保持不變。你自己更改過的標題會被保留。加入 <code>catver.ini</code> 可依類別篩選清單。BIOS 集會在清單中隱藏，但仍保留在磁碟上，因為其他遊戲需要它們。之後請進行抓取，以便抓取器能找到每個遊戲。</p>
+        <p><em>需要：一個 MAME 清單檔案</em></p>
+
         <h3>批量 AI 填充</h3>
-        <p>僅限編輯者。<strong>用 AI 填充空白欄位</strong>卡片會對整個系統執行 AI 填充，填充你開啟的欄位（參見 AI 填充 &rarr; 一次處理多個遊戲）。</p>
+        <p>僅限編輯者。對整個系統執行 AI 填充，填充你開啟的欄位（參見 AI 填充 &rarr; 一次處理多個遊戲）。</p>
         <p><em>需要：<strong>設定 &rarr; 抓取</strong> 中的 AI 提供者</em></p>
 
         <h3>多光碟整理器</h3>
@@ -1454,7 +1479,7 @@
         <p><em>無外部依賴（基於 Python 的 AI 放大）</em></p>
 
         <h3>補全備用標題</h3>
-        <p>掃描遊戲庫，找出 <strong>備用標題</strong> 欄位為空的遊戲，並從 IGDB / TGDB / ScreenScraper 填充該欄位。在匯入大型目錄，或從另一款不儲存地區/日文/副標題的工具遷移後特別有用。在後台執行，進度顯示在工具卡片上。</p>
+        <p>遍歷每個已抓取的遊戲，從 IGDB / TGDB / ScreenScraper 取得其<strong>備用標題</strong>，並標註每個名稱所屬的地區。你已有的名稱也會獲得其地區。在匯入大型目錄，或從另一款不儲存地區/日文/副標題的工具遷移後特別有用。在後台執行，進度顯示在工具卡片上。</p>
         <p><em>至少需要一個抓取源 API 密鑰（IGDB / TGDB / ScreenScraper）</em></p>
 
         <h3>修復包裝盒與說明書地區</h3>
@@ -1463,6 +1488,18 @@
 
         <h3>依檔名修復地區</h3>
         <p>ROM 的檔名說明了它是哪個版本，因此 <code>(USA)</code> 這樣的標記現在會決定其地區，不再詢問 AI。舊版抓取讓 AI 先猜測，因此 <code>(USA)</code> 檔案可能被標為日本。此工具會把這些遊戲的地區改為檔名中的地區。它只更改由 AI 填寫的地區，包括你之後手動修正、與檔名不同的地區。</p>
+        <p><em>無需依賴</em></p>
+
+        <h3>整理發行日期</h3>
+        <p>舊版抓取會把只知道年份的日期存為 1 月 1 日或 12 月 31 日，就像知道具體日期一樣。此工具會把這些日期縮減為年份或月份，以便之後的抓取可以填入真實日期。不是由抓取填入的日期保持不變。</p>
+        <p><em>無需依賴</em></p>
+
+        <h3>檢查已儲存的遊玩時間</h3>
+        <p>舊版查詢可能儲存了續作的遊玩時間，或另一個系統上同名遊戲的遊玩時間。此工具會把這些比對結果送到 HowLongToBeat 審核頁面，在你做出決定之前，不會更改任何遊戲。在那裡，批准會保留時間，拒絕會清除它。有些比對結果是正確的：HowLongToBeat 並未列出遊戲發行過的每個系統。</p>
+        <p><em>無需依賴</em></p>
+
+        <h3>整理類型、視角與模式</h3>
+        <p>各來源對同一事物的叫法不同，因此一個類型可能同時顯示為 RPG 和 Role Playing Game，篩選器就會漏掉遊戲。現在抓取使用同一套名稱，即篩選清單中的名稱。此工具會轉換舊版抓取儲存的內容。在這些清單中沒有位置的詞（如 Arcade 或 Indie）會被刪除。屬於其他欄位的詞（如 FPV）會在該欄位為空時移到那裡。與遊戲模式矛盾的玩家人數會被修正，來自 RAWG 的舊玩家人數 1 會被清除，以便填入真實人數。你自己加入下拉選單中的值會保留。之後請使用<strong>填充缺失項</strong>執行一次批次抓取，以填充仍為空的內容。</p>
         <p><em>無需依賴</em></p>
 
         <h3>清除包裝盒封面中的 RAWG 圖片</h3>
@@ -1542,6 +1579,7 @@
                 <tr><td>手把</td><td>最長邊 1280px</td><td>保留透明度（RGBA）</td></tr>
                 <tr><td>硬件</td><td>最長邊 1280px</td><td>保留透明度（RGBA）</td></tr>
                 <tr><td>同人圖</td><td>已略過</td><td>不進行標準化（保持原始尺寸）</td></tr>
+                <tr><td>標誌</td><td>已略過</td><td>保持原始尺寸；保留其透明背景（格式為 JPEG 時儲存為 PNG）</td></tr>
             </tbody>
         </table>
 

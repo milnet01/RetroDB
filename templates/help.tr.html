@@ -199,6 +199,9 @@
 <section id="navigation" class="help-section card">
     <h2 class="card-title">Gezinme</h2>
     <div class="card-body">
+        <h3>Her Yerde Arama</h3>
+        <p>Kenar çubuğunda adınızın altındaki arama kutusu her sayfada bulunur. Eşleşen konsolları ve en fazla sekiz eşleşen oyunu görmek için iki veya daha fazla harf yazın. Aralarında gezinmek için <kbd>&darr;</kbd> ve <kbd>&uarr;</kbd>, birini açmak için <kbd>Enter</kbd>, listeyi kapatmak için <kbd>Esc</kbd> tuşuna basın. <strong>Tüm sonuçları gör</strong> ya da hiçbir şey seçmeden <kbd>Enter</kbd>, Kütüphane'yi o aramayla açar.</p>
+
         <h3>Kenar Çubuğu Bölümleri</h3>
 
         <h4>Ana</h4>
@@ -243,9 +246,9 @@
         <h3>Gezinme Yolu (Breadcrumb)</h3>
         <p>Her sayfanın üstündeki gezinme yolu, navigasyon rotanızı gösterir. Örnekler:</p>
         <ul>
-            <li><code>Sistemler &rsaquo; NES &rsaquo; Super Mario Bros.</code></li>
+            <li><code>Systems &rsaquo; NES &rsaquo; Super Mario Bros.</code></li>
             <li><code>RetroAchievements &rsaquo; SNES</code></li>
-            <li><code>PSN Kupaları &rsaquo; The Last of Us</code></li>
+            <li><code>PSN Trophies &rsaquo; The Last of Us</code></li>
         </ul>
 
         <h3>Sekmeler</h3>
@@ -556,6 +559,7 @@
         <h3 id="emulators-play">Emülatörler ve Oynama</h3>
         <p>Yöneticiler emülatörleri <strong>Ayarlar &rarr; Emülatörler</strong> bölümünden ayarlar. Emülatörlerinizin bulunduğu klasörü <strong>Emülatör klasörleri</strong> alanına ekleyin. RetroDB her emülatörü orada bulur (bir AppImage, taşınabilir bir betik veya kurulu bir Flatpak) ve çalıştırdığı sistemlerle eşleştirir. Eşleme tablosu her sistem için emülatörünün çalışıp çalışmadığını ve BIOS dosyalarının yerinde olup olmadığını gösterir. RetroDB BIOS dosyalarını yalnızca okur; asla kopyalamaz veya indirmez.</p>
         <p>Emülatörü çalışan oyunlar için oyun sayfasında, Kütüphane kartlarında ve sistem sayfalarında bir <strong>Oyna</strong> düğmesi bulunur.</p>
+        <p>Henüz emülatörünüz yok mu? Aynı sayfada <strong>RetroDB'de oyna</strong> altındaki <strong>RetroArch'ı edin</strong> düğmesine basın. RetroDB resmi RetroArch'ı libretro'dan indirir, indirmeyi denetler ve onu kendi ayarları ve kayıtlarıyla, zaten kullandığınız her RetroArch'tan ayrı tutularak <strong>RetroArch (RetroDB)</strong> olarak kurar. Ardından ilk oynadığınızda her sistem için en iyi çekirdeği indirir. Çok diskli bir oyunda <strong>Sonraki disk</strong> hiçbir kurulum gerekmeden çalışır. Böyle bir oyun çalışırken, Windows ve macOS'ta ise herhangi bir oyun çalışırken, RetroArch bir ağ bağlantı noktasında RetroDB'nin komutlarını dinler.</p>
         <p>DuckStation, PCSX2 ve RPCS3 için RetroDB ayrıca her oyunun çözünürlük ölçeğini ve en-boy oranını, emülatörün kendi oyun başına ayar dosyasında belirler; oyunun tam ekran başlayıp başlamayacağını da ayarlar. Bir sistemin tamamı için değerleri eşleme tablosundaki <strong>Ayarlar</strong> düğmesiyle, tek bir oyun için ise oyun sayfasındaki <strong>Emülatör ayarları</strong> panelinden değiştirin. Değerler Oyna'ya bastığınızda yazılır. Emülatörün kendi içinde değiştirdiğiniz bir ayar her zaman geçerlidir: RetroDB bundan sonra ona dokunmaz. Emülatör ayar klasörünü oluştursun diye oynamadan önce her emülatörü bir kez çalıştırın.</p>
 
         <h4>Hileler</h4>
@@ -619,17 +623,22 @@
             <li>Birincil kaynakta bulunmadığında ikincil kaynaklardan görseller ve medya</li>
             <li>Maksimum kapsam için veri çekiciler arasında otomatik boşluk doldurma</li>
             <li>Sıralama başlığı, veri çekme sırasında oyun başlığından otomatik olarak oluşturulur</li>
+            <li>Bir kaynak yalnızca oyunun sistemini listelediğinde ve yalnızca o sistemde aranır: RAWG'de Intellivision yoktur, bu yüzden Intellivision oyunları RAWG'de aranmaz; orada yalnızca başka platformlardaki oyunlarla eşleşirlerdi</li>
+            <li>Yapay zekâ açıkken, oyunun ROM'unun bölgesinde yayımlandığı haliyle resmi başlığını da verir ve oyun hem tekli veri çekmede hem de Toplu Veri Çekmede bu ada göre yeniden adlandırılır (bkz. <a href="#ai-fill">AI Doldurma</a>)</li>
         </ul>
 
         <h3>Medya İşleme</h3>
         <ul>
-            <li>Medya alanları (kutu resmi, 3D kutu resmi, ekran görüntüleri, fanart, video, kılavuz) normal veri çekme sırasında <strong>asla değiştirilmez</strong> &mdash; yalnızca boş olduklarında doldurulur</li>
+            <li>Medya alanları (kutu resmi, 3D kutu resmi, kutu arkası, ekran görüntüleri, fanart, logo, video, kılavuz) normal veri çekme sırasında <strong>asla değiştirilmez</strong> &mdash; yalnızca boş olduklarında doldurulur</li>
             <li>Ekran görüntüleri her zaman <strong>eklenir</strong>, asla değiştirilmez</li>
             <li>Medyayı yeniden indirmek için önce düzenleme penceresindeki mevcut görseli temizleyin, ardından yeniden veri çekin</li>
             <li><strong>Tam Yeniden Veri Çekme</strong> modu bunu geçersiz kılar ve her şeyi değiştirir</li>
             <li>Eski medya referansları (dosya silinmiş ancak dosya adı hâlâ veritabanında) yeni medyanın indirilebilmesi için veri çekmeden önce otomatik olarak temizlenir</li>
             <li>İndirilen görseller otomatik olarak hedef boyutlara standartlaştırılır (bkz. <a href="#image-standardization">Görsel Standartlaştırma</a>)</li>
         </ul>
+
+        <h3>Başlığı Koruma</h3>
+        <p>Düzenleme penceresinde yeni bir başlık yazıp kaydettiğinizde, veri çekme artık onu değiştirmez; Tam Yeniden Veri Çekme de buna dahildir. Düzenleme penceresindeki <strong>Kazırken bu başlığı koru</strong> kutusu bir başlığın korunup korunmadığını gösterir; veri çekicilerin oyunu yeniden adlandırabilmesi için işaretini kaldırın. Bir oyunun sayfasındaki <strong>Sıfırla</strong> da veri çekicilerin onu yeniden adlandırmasına izin verir; Bakım'daki <strong>Veri Çekilen Verileri Temizle</strong> ise korunan başlıklara dokunmaz.</p>
 
         <h3>Veri Çekici Önceliği</h3>
         <p>Hangi veri çekicilerin önce çalışacağını ve hangilerinin etkin/devre dışı olduğunu <strong>Ayarlar &rarr; Veri Çekme &rarr; Veri Çekici</strong> bölümünde yapılandırın. Önceliği yeniden sıralamak için sürükleyip bırakın. Devre dışı bırakılan veri çekiciler, veri çekme sırasında denenmez ve Kontrol Panelinde API durum uyarılarını tetiklemez.</p>
@@ -646,7 +655,7 @@
         <h3>Toplu Veri Çekme Başlatma</h3>
         <ol>
             <li>Herhangi bir Sistem veya Kütüphane sayfasına gidin</li>
-            <li>Seçim moduna girmek için <strong>"Seç"</strong> düğmesine tıklayın</li>
+            <li>Seçim moduna girmek için <strong>"Seç"</strong> düğmesine tıklayın. Seçim araçları pencerenin altındaki bir çubukta görünür.</li>
             <li>Oyunları tek tek seçin veya hızlı seçimi kullanın:
                 <ul>
                     <li><strong>Tümünü Seç</strong> &mdash; Görünen tüm oyunlar</li>
@@ -654,7 +663,8 @@
                 </ul>
             </li>
             <li>Modu seçin: <strong>Eksikleri Doldur</strong> veya <strong>Tam Yeniden Veri Çekme</strong></li>
-            <li><strong>"Seçilenler İçin Veri Çek"</strong> düğmesine tıklayın</li>
+            <li><strong>"Seçilenleri Kazı"</strong> düğmesine tıklayın</li>
+            <li>Seçim modundan çıkmak için <strong>"Tamamlandı"</strong> düğmesine tıklayın</li>
         </ol>
 
         <h3>Kontroller</h3>
@@ -731,6 +741,7 @@
             <li><strong>Benzer oyunlar</strong> her zaman yenilenir (AI verisi bu alan için daha güvenilirdir)</li>
             <li><strong>Çapraz eşlenmiş derecelendirmeler</strong> &mdash; Bir derecelendirme sistemi biliniyorsa, diğer sistemlerdeki boş derecelendirmeler olgunluk seviyesi çapraz eşlemesi kullanılarak otomatik olarak doldurulur</li>
             <li><strong>Sıralama başlığı</strong> doldurulduğunda otomatik olarak oluşturulur</li>
+            <li><strong>Resmi başlık</strong> &mdash; yapay zekâ ayrıca oyunun ROM'unun bölgesinde yayımlandığı haliyle resmi başlığını verir ve oyun hem AI Doldurma'da hem de yapay zekâ veri çekme sırasında boşlukları doldurduğunda bu ada göre yeniden adlandırılır. Eski ad alternatif başlık olarak saklanır. Kendiniz yazdığınız ya da <strong>Kazırken bu başlığı koru</strong> ile koruduğunuz bir başlık asla yeniden adlandırılmaz</li>
             <li><strong>Oyuncu sayısı</strong> alanı aralıkları normalleştirir (örn. "1-4" değeri 4 olur)</li>
         </ul>
 
@@ -770,6 +781,7 @@
             <li><strong>Hariç Tut (ŞU DEĞİLDİR)</strong> &mdash; Seçilen değerle eşleşen oyunları gizler</li>
         </ul>
         <p>Filtre penceresindeki anahtarı kullanarak dahil etme ve hariç tutma modu arasında geçiş yapın.</p>
+        <p>Tür, Seri, Yayıncı, Geliştirici, Oynanış Modu, Perspektif ve Boyut filtrelerinde istediğiniz kadar değeri işaretleyin ve <strong>Uygula</strong>'ya basın. Bir oyun, işaretlenen değerlerden herhangi birine sahipse gösterilir; hariç tutma modunda ise bunlardan herhangi birine sahipse gizlenir. Her değer, oyunların üstünde kendi etiketini alır ve etiketin &times; işareti yalnızca o değeri kaldırır. Derecelendirme ve Kaynak filtreleri tek bir değer alır ve ona tıkladığınız anda uygulanır.</p>
 
         <h3>Mevcut Filtreler</h3>
         <table class="data-table">
@@ -786,26 +798,32 @@
                 <tr><td><strong>Perspektif</strong></td><td>Birinci Şahıs, Üstten Görünüm, İzometrik, Yandan Kaydırmalı</td><td>Evet</td></tr>
                 <tr><td><strong>Boyut</strong></td><td>2D, 3D</td><td>Evet</td></tr>
                 <tr><td><strong>Derecelendirme</strong></td><td>Yaş derecelendirmesi (tercih ettiğiniz sistemi gösterir)</td><td>Hayır</td></tr>
-                <tr><td><strong>RA Var</strong></td><td>RetroAchievements desteği olan oyunlar</td><td>Hayır</td></tr>
-                <tr><td><strong>Bonusu Göster</strong></td><td>Bonus disk görünürlüğünü aç/kapat</td><td>Hayır</td></tr>
+                <tr><td><strong>Başarımları Var</strong></td><td>RetroAchievements desteği olan oyunlar</td><td>Hayır</td></tr>
+                <tr><td><strong>Kazınmamış</strong></td><td>Yalnızca henüz hiçbir veri çekicinin doldurmadığı oyunlar</td><td>Hayır</td></tr>
+                <tr><td><strong>Bonus Diskler</strong></td><td>Bonus disk görünürlüğünü aç/kapat</td><td>Hayır</td></tr>
             </tbody>
         </table>
 
+        <p>Vurgulanan bir düğme açıktır. Etkin filtreler ayrıca oyun sayısının yanında etiket olarak görünür; kaldırmak için bir etiketin &times; işaretine tıklayın. <strong>Temizle</strong> hepsini kaldırır. Telefonda filtre düğmeleri <strong>Filtreler</strong> düğmesinden açılır.</p>
+
         <h3>Sıralama Seçenekleri</h3>
+        <p>Oyun sayısının yanındaki <strong>Sıralama</strong> listesinden bir sıra seçin:</p>
         <ul>
-            <li><strong>Başlık</strong> &mdash; Sıralama başlığına göre alfabetik (büyük/küçük harf duyarsız)</li>
-            <li><strong>Piyasaya Çıkış Tarihi</strong> &mdash; Kronolojik sıra (önce en eski)</li>
-            <li><strong>Platform</strong> &mdash; Sistem adına göre gruplandırılmış</li>
+            <li><strong>Ad</strong> &mdash; Sıralama başlığına göre alfabetik (büyük/küçük harf duyarsız)</li>
+            <li><strong>En yeni çıkış</strong> / <strong>En eski çıkış</strong> &mdash; Çıkış tarihine göre</li>
+            <li><strong>Eleştirmen puanı</strong> / <strong>Kullanıcı puanı</strong> &mdash; En yüksek önce</li>
+            <li><strong>Son eklenenler</strong> &mdash; Kütüphanenize en son eklenen oyunlar önce gelir</li>
         </ul>
+        <p>Tarihi veya puanı olmayan oyunlar en sona gelir. Temizle, seçtiğiniz sıralamayı korur.</p>
 
         <h3>Alfabe Gezinmesi</h3>
-        <p>Belirli bir harfle başlayan oyunlara atlayın. Eşleşen oyunu olmayan harfler grileştirilir. Sayılar ve semboller <strong>#</strong> altında gruplandırılır.</p>
+        <p>Belirli bir harfle başlayan oyunlara atlayın. Eşleşen oyunu olmayan harfler grileştirilir. Sayılar ve semboller <strong>#</strong> altında gruplandırılır. Çubuk ada göre sıralarken çalışır, diğer sıralamalarda grileştirilir.</p>
 
         <h3>Sonsuz Kaydırma</h3>
         <p>Kaydırdıkça oyunlar 100'lük gruplar halinde yüklenir. Alta yaklaştığınızda yeni sayfalar otomatik olarak yüklenir. Filtreleri veya aramayı değiştirmek sonuçları anında sıfırlar ve yeniden yükler.</p>
 
         <h3>Durum Kalıcılığı</h3>
-        <p>Geçerli filtreleriniz, arama teriminiz ve kaydırma konumunuz oturum depolamasında kaydedilir. Sayfaya geri döndüğünüzde veya yenilediğinizde geri yüklenirler.</p>
+        <p>Geçerli filtreleriniz, arama teriminiz, sıralamanız ve kaydırma konumunuz oturum depolamasında kaydedilir. Sayfaya geri döndüğünüzde veya yenilediğinizde geri yüklenirler.</p>
     </div>
 </section>
 
@@ -835,6 +853,8 @@
         <p>Tam oyun detay sayfasını görüntülemek için oyun başlığı bağlantısına tıklayın veya gezinme yolundan gidin. Tam sayfadaki ek özellikler şunları içerir:</p>
         <ul>
             <li><strong>Gezinme yollu fanart arka plan başlığı</strong></li>
+            <li><strong>Oyun logosu</strong> &mdash; Oyunun logosu, metin olarak kalan başlığının üstünde görünür. Kutu resmi olmayan bir oyun, kutunun yerinde logosunu gösterir. Veri çekme logoları ES-DE, ScreenScraper, TheGamesDB, IGDB ve Steam'den doldurur; <strong>Eksikleri Doldur</strong> ile yapılan toplu veri çekme, daha önce veri çekilmiş oyunlar için de onları doldurur</li>
+            <li><strong>Kutunun arkası</strong> &mdash; Bir oyunun kutusunun arkası varsa, kapağın üzerinde bir <strong>Arka</strong> düğmesi bulunur. Arkayı görmek için ona basın, geri dönmek için <strong>Ön</strong>'e basın. Yakınlaştırmak için arkaya tıklayın. Veri çekme, bir oyun her veri çekildiğinde arkaları ES-DE, ScreenScraper ve TheGamesDB'den doldurur</li>
             <li><strong>Platform içe aktarma rozetleri</strong> &mdash; Uygulanabilir olduğunda platform logolarıyla CLZ İçe Aktarma, Steam İçe Aktarma, Xbox İçe Aktarma veya PSN İçe Aktarma gösterir</li>
             <li><strong>Bonus disk göstergesi</strong> &mdash; Bir rozet ve küçük resimle üst oyuna "Parçası:" bağlantısı gösterir</li>
             <li><strong>Sil düğmesi</strong> &mdash; Oyunu veritabanından kaldırır (onay ile)</li>
@@ -851,7 +871,7 @@
             <li><strong>Yaş Derecelendirmeleri</strong> &mdash; Resmi derecelendirme görselleri ve otomatik çapraz eşleme ile tüm 8 derecelendirme sistemi. Bir derecelendirmeyi değiştirmek, diğer sistemlerdeki boş derecelendirmeleri otomatik olarak doldurur.</li>
             <li><strong>Puanlar</strong> &mdash; Eleştirmen puanı, kullanıcı puanı</li>
             <li><strong>Açıklama</strong> &mdash; Oyun açıklama metni</li>
-            <li><strong>Özel Resimler</strong> &mdash; Özel kutu resmi (2D), 3D kutu resmi ve fanart yükleyin. Yeniden veri çekmeye izin vermek için mevcut görselleri temizleyin.</li>
+            <li><strong>Özel Resimler</strong> &mdash; Özel kutu resmi (2D), 3D kutu resmi, kutunun arkası, fanart ve bir logo yükleyin. Yeniden veri çekmeye izin vermek için mevcut görselleri temizleyin.</li>
             <li><strong>3D kutu içe aktar</strong> &mdash; Özel Resimler bölümünde de var. Değişiklikleri Kaydet gerekmeden hemen kaydedilir. Slipcase'in kaydettiği <code>.box.json</code> dosyasını resimleriyle birlikte seçin (klasörün tamamını seçmek de olur). Slipcase 1.4.0 veya daha yenisi bu dosyayı dışa aktarılan her resmin yanına kaydeder. RetroDB kutunun yüzlerini bu oyun için saklar; ardından kapağa tıklamak kutuyu 3D olarak gösterir, sürükleyerek veya ok tuşlarıyla çevirebilirsiniz. 3D kutu kapağı resminiz değişmez. Zaten yüzleri olan bir oyun, onları değiştirmeden önce sorar; <strong>Kaldır</strong> onları siler.</li>
             <li><strong>Video / Fragman</strong> &mdash; Bir video fragmanı yükleyin veya bağlayın</li>
         </ul>
@@ -895,7 +915,7 @@
         <p>Tercih ettiğiniz sistemi <strong>Ayarlar &rarr; Kütüphane &rarr; Görünüm</strong> bölümünden ayarlayın. Resmi derecelendirme görselleri, oyun kartlarında, detay pencerelerinde ve detay sayfalarında görüntülenir. Boş derecelendirmeler, veri çekme, AI Doldurma ve manuel düzenleme sırasında olgunluk seviyesi çapraz eşlemesi yoluyla mevcut herhangi bir derecelendirmeden otomatik olarak doldurulur.</p>
 
         <h3>Bonus Diskler</h3>
-        <p>RetroDB, bonus/ekstra diskleri (örn. soundtrack CD'leri, ekstra içerik diskleri) otomatik olarak algılar ve üst oyunlarıyla bağlar. Bonus diskler varsayılan olarak kütüphanede gizlenir &mdash; bunları görüntülemek için filtrelerde <strong>"Bonusu Göster"</strong> seçeneğini açın. Bağlı bonus diskler, üst oyunun detay penceresinde görünür.</p>
+        <p>RetroDB, bonus/ekstra diskleri (örn. soundtrack CD'leri, ekstra içerik diskleri) otomatik olarak algılar ve üst oyunlarıyla bağlar. Bonus diskler varsayılan olarak kütüphanede gizlenir &mdash; bunları görüntülemek için filtrelerde <strong>"Bonus Diskler"</strong> seçeneğini açın. Bağlı bonus diskler, üst oyunun detay penceresinde görünür.</p>
 
         <h3>Bölgesel Sürümler</h3>
         <p>Bir oyuna birkaç bölgeden sahipseniz sürümleri bağlayın; Kütüphane bunları &#127760; rozetli tek bir kart olarak gösterir. Kart, tercih ettiğiniz bölgenin sürümünü açar ve oynatır (<strong>Ayarlar &rarr; Kütüphane &rarr; Varsayılan Bölge</strong>). Oyun sayfası her sürümü listeler, bunları karşılaştırır (çıkış tarihi, yayıncı, dosya boyutu, revizyon, diller, puanlar, RetroAchievements) ve her birine bağlantı verir. Düzenleyiciler orada bir sürümün bağlantısını kaldırabilir ya da başka birini bağlamak için aynı sistemde arama yapabilir. Düzenleyiciler ayrıca sürümler arasındaki sansür veya kaldırılmış içerik gibi bilinen farkların listesi için <strong>Farkları yapay zeka ile özetle</strong> düğmesine basabilir. Liste yapay zeka tarafından yazıldı olarak işaretlenir ve hatalı olabilir; <strong>Ayarlar &rarr; Kazıma</strong> bölümünde bir AI sağlayıcı gerektirir. Sayfa başlığı oyunları sayar; iki sayı farklı olduğunda ROM sayısını yanında gösterir.</p>
@@ -1026,9 +1046,10 @@
         <ol>
             <li>Ayarlar'da Steam Web API anahtarınızı ve Steam ID'nizi yapılandırın</li>
             <li>Oyun İçe Aktarma &rarr; <strong>Steam</strong> sekmesine gidin</li>
-            <li>Steam oyunlarınızı almak için <strong>"Kütüphaneyi Getir"</strong> düğmesine tıklayın</li>
-            <li>İçe aktarılacak oyunları seçin (yinelenenler otomatik olarak tespit edilir)</li>
+            <li>Steam oyunlarınızı almak için <strong>"Kütüphaneyi Al"</strong> düğmesine tıklayın</li>
+            <li>İçe aktarılacak oyunları seçin. Windows listenizde aynı adla zaten bulunan bir oyun, iki kez eklenmek yerine Steam'e bağlanır</li>
             <li>İçe aktarılan oyunlar, başarım takibi için Steam App ID'leriyle etiketlenir</li>
+            <li>Arka planda her oyun boş ayrıntılarını Steam mağaza sayfasından doldurur; başarımlarınız ve oynama süreniz de gelir. Oyun sayfası oynama sürenizi gösterir. Türü ve çıkış tarihi için oyunun verisini çekin: Steam'inkiler çok geniştir ya da oyunun Steam'e geldiği tarihtir</li>
         </ol>
 
         <h3>Xbox İçe Aktarma</h3>
@@ -1047,7 +1068,7 @@
         <ol>
             <li>Oyun İçe Aktarma &rarr; <strong>PSN</strong> sekmesine gidin</li>
             <li>NPSSO çerezinizi girin (nasıl alınacağı için bkz. <a href="#trophies">Kupalar &rarr; PSN Kimlik Doğrulama</a>)</li>
-            <li>PSN oyunlarınızı almak için <strong>"Kütüphaneyi Getir"</strong> düğmesine tıklayın</li>
+            <li>PSN oyunlarınızı almak için <strong>"Kütüphaneyi Al"</strong> düğmesine tıklayın</li>
             <li>İçe aktarılacak oyunları seçin</li>
         </ol>
 
@@ -1432,8 +1453,12 @@
         <p>Yalnızca düzenleyiciler. RetroDB, farklı bölgelerden tek bir oyun gibi görünen oyunları önerir: aynı IGDB veya ScreenScraper oyunu, farklı bölge etiketine sahip aynı başlık ya da eşleşen bölgesel bir ad. Gruba ait olmayan oyunların işaretini kaldırıp <strong>"İşaretli oyunları bağla"</strong> düğmesine tıklayın ya da bu grubun bir daha önerilmemesi için <strong>"Sürüm değil"</strong> düğmesine tıklayın. Siz onaylayana kadar hiçbir şey bağlanmaz. Önce Bakım bölümünde <strong>Alternatif Başlıkları Geriye Dönük Doldur</strong> işlemini çalıştırın: önerilerin kullandığı IGDB ve ScreenScraper kimliklerini doldurur.</p>
         <p><em>Harici bağımlılık yok</em></p>
 
+        <h3>MAME Adları</h3>
+        <p>Yalnızca yöneticiler. MAME bir oyunu tam dosya adıyla bulur, bu yüzden dyger.zip gibi kısa adları koruyun. MAME'nin listesini seçin (ROM'larınıza uyan bir DAT ya da <code>mame -listxml</code> çıktısı) ve <strong>"MAME Oyunlarını Adlandır"</strong>'a basın. Her oyun gerçek adını, yılını ve yapımcısını alır; dosyalara dokunulmaz. Kendiniz değiştirdiğiniz bir başlık korunur. Listeyi kategoriye göre filtrelemek için bir <code>catver.ini</code> ekleyin. BIOS setleri listede gizlenir ama diskte kalır, çünkü başka oyunların onlara ihtiyacı vardır. Veri çekicilerin her oyunu bulabilmesi için bundan sonra veri çekin.</p>
+        <p><em>Gerektirir: bir MAME liste dosyası</em></p>
+
         <h3>Toplu Yapay Zeka Doldur</h3>
-        <p>Yalnızca düzenleyiciler. <strong>Boş alanları yapay zekâ ile doldur</strong> kartı, açtığınız alanlar için Yapay Zeka Doldur'u bütün bir sistemde çalıştırır (bkz. Yapay Zeka Doldur &rarr; Aynı Anda Birçok Oyun).</p>
+        <p>Yalnızca düzenleyiciler. Açtığınız alanlar için Yapay Zeka Doldur'u bütün bir sistemde çalıştırır (bkz. AI Doldurma &rarr; Aynı Anda Birçok Oyun).</p>
         <p><em>Gerektirir: <strong>Ayarlar &rarr; Kazıma</strong> içinde bir yapay zekâ sağlayıcısı</em></p>
 
         <h3>Çoklu Disk Düzenleyici</h3>
@@ -1454,7 +1479,7 @@
         <p><em>Harici bağımlılık yok (Python tabanlı AI büyütme)</em></p>
 
         <h3>Alternatif Başlıkları Geriye Doldurma</h3>
-        <p><strong>Alternatif başlıklar</strong> alanı boş olan oyunlar için kütüphaneyi tarar ve IGDB / TGDB / ScreenScraper'dan doldurur. Büyük bir katalog içe aktardıktan sonra veya bölgesel / Japonca / alt başlıkları saklamayan başka bir araçtan geçiş yaptıktan sonra kullanışlıdır. Arka planda çalışır; ilerleme araç kartında gösterilir.</p>
+        <p>Veri çekilmiş her oyunu tarar ve <strong>alternatif başlıklarını</strong>, her adın geldiği bölgeyle etiketlenmiş olarak IGDB / TGDB / ScreenScraper'dan alır. Zaten sahip olduğunuz adlar bölgelerini kazanır. Büyük bir katalog içe aktardıktan sonra veya bölgesel / Japonca / alt başlıkları saklamayan başka bir araçtan geçiş yaptıktan sonra kullanışlıdır. Arka planda çalışır; ilerleme araç kartında gösterilir.</p>
         <p><em>En az bir veri çekici API anahtarı gerektirir (IGDB / TGDB / ScreenScraper)</em></p>
 
         <h3>Kutu ve Kılavuz Bölgelerini Düzelt</h3>
@@ -1463,6 +1488,18 @@
 
         <h3>Bölgeleri Dosya Adlarından Düzelt</h3>
         <p>Bir ROM'un dosya adı hangi kopya olduğunu söyler, bu yüzden <code>(USA)</code> gibi bir etiket artık bölgesini belirler ve AI'a sorulmaz. Eski veri çekmeler önce AI'ın tahmin etmesine izin veriyordu, bu yüzden <code>(USA)</code> dosyası Japonya olarak listelenebiliyordu. Bu araç bu oyunlara dosya adlarındaki bölgeyi verir. Yalnızca AI'ın doldurduğu bölgeleri değiştirir; sonradan elle düzelttiğiniz ve dosya adından farklı olan bir bölge de buna dahildir.</p>
+        <p><em>Harici bağımlılık yok</em></p>
+
+        <h3>Çıkış Tarihlerini Düzenle</h3>
+        <p>Eski veri çekmeler, yalnızca yılı bilinen bir tarihi, gün biliniyormuş gibi 1 Ocak ya da 31 Aralık olarak saklıyordu. Bu araç bu tarihleri yıla ya da aya geri indirir, böylece sonraki bir veri çekme gerçek tarihi doldurabilir. Hiçbir veri çekmenin doldurmadığı bir tarih olduğu gibi kalır.</p>
+        <p><em>Harici bağımlılık yok</em></p>
+
+        <h3>Kayıtlı Oynama Sürelerini Denetle</h3>
+        <p>Eski aramalar bir devam oyununun ya da başka bir sistemdeki aynı adlı başka bir oyunun oynama süresini kaydedebiliyordu. Bu araç bu eşleşmeleri HowLongToBeat inceleme sayfasına gönderir ve siz karar verene kadar hiçbir oyun değişmez. Orada Onayla bir süreyi korur, Reddet onu temizler. Bazı eşleşmeler doğrudur: HowLongToBeat bir oyunun çıktığı her sistemi listelemez.</p>
+        <p><em>Harici bağımlılık yok</em></p>
+
+        <h3>Türleri, Bakış Açılarını ve Modları Düzenle</h3>
+        <p>Kaynaklar aynı şeye farklı adlar verir; bu yüzden bir tür hem RPG hem de Role Playing Game olarak görünebiliyor ve bir filtre oyunları kaçırıyordu. Veri çekmeler artık tek bir ad kümesi, yani filtre listelerindeki adları kullanır. Bu araç eski veri çekmelerin sakladıklarını dönüştürür. Bu listelerde yeri olmayan Arcade veya Indie gibi sözcükler kaldırılır. FPV gibi başka bir alana ait sözcükler, o alan boşsa oraya taşınır. Bir oyunun modlarıyla çelişen oyuncu sayısı düzeltilir ve gerçek bir sayı doldurabilsin diye RAWG'den gelen eski 1 değerleri temizlenir. Bir açılır listeye kendiniz eklediğiniz bir değer kalır. Boş kalanları doldurmak için ardından <strong>Eksikleri Doldur</strong> ile toplu veri çekme çalıştırın.</p>
         <p><em>Harici bağımlılık yok</em></p>
 
         <h3>RAWG Görsellerini Kutu Resminden Temizle</h3>
@@ -1542,6 +1579,7 @@
                 <tr><td>Kontrolcüler</td><td>1280px en uzun kenar</td><td>Saydamlığı korur (RGBA)</td></tr>
                 <tr><td>Donanım</td><td>1280px en uzun kenar</td><td>Saydamlığı korur (RGBA)</td></tr>
                 <tr><td>Fanart</td><td>Atlanır</td><td>Standartlaştırılmaz (orijinal boyutta bırakılır)</td></tr>
+                <tr><td>Logo</td><td>Atlanır</td><td>Orijinal boyutta bırakılır; saydam arka planını korur (biçim JPEG olduğunda PNG olarak kaydedilir)</td></tr>
             </tbody>
         </table>
 

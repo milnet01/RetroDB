@@ -199,6 +199,9 @@
 <section id="navigation" class="help-section card">
     <h2 class="card-title">Navigatie</h2>
     <div class="card-body">
+        <h3>Overal zoeken</h3>
+        <p>Het zoekvak onder uw naam in de zijbalk staat op elke pagina. Typ twee of meer letters om overeenkomende consoles en tot acht overeenkomende spellen te zien. Druk op <kbd>&darr;</kbd> en <kbd>&uarr;</kbd> om erdoorheen te gaan, op <kbd>Enter</kbd> om er een te openen en op <kbd>Esc</kbd> om de lijst te sluiten. <strong>Alle resultaten bekijken</strong>, of <kbd>Enter</kbd> zonder keuze, opent de bibliotheek met die zoekopdracht.</p>
+
         <h3>Zijbalkonderdelen</h3>
 
         <h4>Hoofdmenu</h4>
@@ -554,8 +557,9 @@
         </ul>
 
         <h3 id="emulators-play">Emulators en spelen</h3>
-        <p>Beheerders stellen emulators in via <strong>Instellingen &rarr; Emulators</strong>. Voeg de map waarin uw emulators staan toe bij <strong>Emulatormappen</strong>. RetroDB vindt daar elke emulator (een AppImage, een draagbaar script of een geïnstalleerde Flatpak) en koppelt die aan de systemen die hij draait. De koppelingstabel toont per systeem of de emulator werkt en of de BIOS-bestanden aanwezig zijn. RetroDB leest BIOS-bestanden alleen; het kopieert of downloadt ze nooit.</p>
+        <p>Beheerders stellen emulators in via <strong>Instellingen &rarr; Emulators</strong>. Voeg de map waarin uw emulators staan toe bij <strong>Emulatormappen</strong>. RetroDB vindt daar elke emulator (een AppImage, een draagbaar script of een geïnstalleerde Flatpak) en koppelt die aan de systemen die hij draait. De koppelingstabel toont elk systeem één keer, met een lijst om de emulator te kiezen, en of die emulator werkt en of de BIOS-bestanden aanwezig zijn. RetroDB leest BIOS-bestanden alleen; het kopieert of downloadt ze nooit.</p>
         <p>Spellen waarvan de emulator werkt, krijgen een knop <strong>Spelen</strong> op de spelpagina, op bibliotheekkaarten en op systeempagina's.</p>
+        <p>Nog geen emulator? Druk op <strong>RetroArch ophalen</strong> onder <strong>Spelen in RetroDB</strong> op dezelfde pagina. RetroDB downloadt de officiële RetroArch van libretro, controleert de download en stelt hem in als <strong>RetroArch (RetroDB)</strong>, met eigen instellingen en opslagbestanden, los van een RetroArch die u al gebruikt. Daarna downloadt het de beste core voor elk systeem de eerste keer dat u speelt. Bij een spel met meerdere schijven werkt <strong>Volgende schijf</strong> zonder instellen. Terwijl zo'n spel draait, en op Windows en macOS terwijl welk spel dan ook draait, luistert RetroArch op een netwerkpoort naar de opdrachten van RetroDB.</p>
         <p>Voor DuckStation, PCSX2 en RPCS3 stelt RetroDB ook per spel de resolutieschaal en de beeldverhouding in, in het eigen instellingenbestand per spel van de emulator, en of het spel op volledig scherm start. Wijzig de waarden voor een heel systeem met de knop <strong>Instellingen</strong> in de koppelingstabel, of voor één spel in het paneel <strong>Emulatorinstellingen</strong> op de spelpagina. Ze worden weggeschreven wanneer u op Spelen drukt. Een instelling die u in de emulator zelf wijzigt, wint altijd: RetroDB laat die vanaf dan met rust. Start elke emulator één keer voordat u speelt, zodat hij zijn instellingenmap aanmaakt.</p>
 
         <h4>Cheats</h4>
@@ -619,17 +623,22 @@
             <li>Afbeeldingen en media uit secundaire bronnen wanneer de primaire bron ze niet heeft</li>
             <li>Automatisch opvullen van hiaten tussen scrapers voor maximale dekking</li>
             <li>De sorteertitel wordt tijdens het scrapen automatisch gegenereerd op basis van de speltitel</li>
+            <li>Een bron wordt alleen doorzocht als die het systeem van het spel kent, en alleen op dat systeem: RAWG heeft geen Intellivision, dus Intellivision-spellen worden niet op RAWG opgezocht, waar ze alleen spellen van andere platforms zouden vinden</li>
+            <li>Als AI aan staat, geeft die ook de officiële titel van het spel zoals uitgebracht in de regio van de ROM, en krijgt het spel die naam, bij het scrapen van één spel en bij bulk scrapen (zie <a href="#ai-fill">AI-invulling</a>)</li>
         </ul>
 
         <h3>Media-afhandeling</h3>
         <ul>
-            <li>Mediavelden (boxart, 3D-boxart, screenshots, fanart, video, handleiding) worden tijdens normaal scrapen <strong>nooit vervangen</strong> &mdash; alleen ingevuld wanneer ze leeg zijn</li>
+            <li>Mediavelden (boxart, 3D-boxart, achterkant van de doos, screenshots, fanart, logo, video, handleiding) worden tijdens normaal scrapen <strong>nooit vervangen</strong> &mdash; alleen ingevuld wanneer ze leeg zijn</li>
             <li>Screenshots worden altijd <strong>toegevoegd</strong>, nooit vervangen</li>
             <li>Om media opnieuw te downloaden, wist u eerst de bestaande afbeelding in het bewerkingsvenster en scrapet u vervolgens opnieuw</li>
             <li>De modus <strong>Volledig opnieuw scrapen</strong> negeert dit en vervangt alles</li>
             <li>Verouderde mediaverwijzingen (bestand verwijderd, maar bestandsnaam nog in de database) worden vóór het scrapen automatisch gewist, zodat verse media kan worden gedownload</li>
             <li>Gedownloade afbeeldingen worden automatisch gestandaardiseerd naar doelformaten (zie <a href="#image-standardization">Afbeeldingsstandaardisatie</a>)</li>
         </ul>
+
+        <h3>Een titel behouden</h3>
+        <p>Als u in het bewerkingsvenster een nieuwe titel typt en opslaat, verandert scrapen die niet meer, ook niet bij Volledig opnieuw scrapen. Het vakje <strong>Deze titel behouden bij scrapen</strong> in het bewerkingsvenster toont of een titel behouden blijft; vink het uit om scrapers het spel weer te laten hernoemen. <strong>Resetten</strong> op de pagina van een spel laat scrapers het ook weer hernoemen, en <strong>Gescrapete gegevens wissen</strong> bij Onderhoud laat behouden titels zoals ze zijn.</p>
 
         <h3>Scraperprioriteit</h3>
         <p>Configureer welke scrapers als eerste draaien en welke in-/uitgeschakeld zijn bij <strong>Instellingen &rarr; Scrapen &rarr; Scraper</strong>. Sleep om de prioriteit te herschikken. Uitgeschakelde scrapers worden niet geprobeerd tijdens het scrapen en activeren geen API-statuswaarschuwingen op het dashboard.</p>
@@ -646,15 +655,16 @@
         <h3>Een bulk scrape starten</h3>
         <ol>
             <li>Ga naar een systeem- of bibliotheekpagina</li>
-            <li>Klik op <strong>"Selecteren"</strong> om de selectiemodus te openen</li>
+            <li>Klik op <strong>"Selecteren"</strong> om de selectiemodus te openen. De selectiehulpmiddelen verschijnen in een balk onderaan het venster.</li>
             <li>Selecteer spellen afzonderlijk of gebruik snelle selectie:
                 <ul>
                     <li><strong>Alles selecteren</strong> &mdash; Alle zichtbare spellen</li>
                     <li><strong>Niet-gescrapete selecteren</strong> &mdash; Alleen spellen zonder metadata</li>
                 </ul>
             </li>
-            <li>Kies modus: <strong>Ontbrekende invullen</strong> of <strong>Volledig opnieuw scrapen</strong></li>
+            <li>Kies modus: <strong>Ontbrekende aanvullen</strong> of <strong>Volledig opnieuw scrapen</strong></li>
             <li>Klik op <strong>"Geselecteerde scrapen"</strong></li>
+            <li>Klik op <strong>"Klaar"</strong> om de selectiemodus te verlaten</li>
         </ol>
 
         <h3>Bediening</h3>
@@ -731,6 +741,7 @@
             <li><strong>Vergelijkbare spellen</strong> worden altijd ververst (AI-gegevens zijn betrouwbaarder voor dit veld)</li>
             <li><strong>Kruisgekoppelde beoordelingen</strong> &mdash; Als één beoordelingssysteem bekend is, worden lege beoordelingen in andere systemen automatisch ingevuld via kruiskoppeling op basis van leeftijdscategorieën</li>
             <li><strong>Sorteertitel</strong> wordt automatisch gegenereerd wanneer deze wordt ingevuld</li>
+            <li><strong>Officiële titel</strong> &mdash; de AI noemt ook de officiële titel van het spel zoals uitgebracht in de regio van de ROM, en het spel krijgt die naam, bij AI-invulling en telkens wanneer AI tijdens het scrapen gaten opvult. De oude naam blijft bewaard als alternatieve titel. Een titel die u zelf hebt getypt, of hebt behouden met <strong>Deze titel behouden bij scrapen</strong>, wordt nooit hernoemd</li>
             <li>Het veld <strong>Aantal spelers</strong> normaliseert bereiken (bijv. "1-4" wordt 4)</li>
         </ul>
 
@@ -770,6 +781,7 @@
             <li><strong>Exclusief (IS NIET)</strong> &mdash; Verberg spellen die overeenkomen met de geselecteerde waarde</li>
         </ul>
         <p>Schakel tussen inclusieve en exclusieve modus met de schakelaar in het filtervenster.</p>
+        <p>Vink in de filters Genre, Reeks, Uitgever, Ontwikkelaar, Speelmodus, Perspectief en Dimensie zoveel waarden aan als u wilt en druk op <strong>Toepassen</strong>. Een spel verschijnt als het een van de aangevinkte waarden heeft; in de exclusieve modus wordt een spel verborgen als het er een van heeft. Elke waarde krijgt een eigen label boven de spellen, en het &times; daarvan verwijdert alleen die waarde. De filters Classificatie en Bron nemen één waarde en worden toegepast zodra u erop klikt.</p>
 
         <h3>Beschikbare filters</h3>
         <table class="data-table">
@@ -786,17 +798,23 @@
                 <tr><td><strong>Perspectief</strong></td><td>First-Person, Top-Down, Isometric, Side-Scroller</td><td>Ja</td></tr>
                 <tr><td><strong>Dimensie</strong></td><td>2D, 3D</td><td>Ja</td></tr>
                 <tr><td><strong>Classificatie</strong></td><td>Leeftijdsclassificatie (toont uw voorkeurssysteem)</td><td>Nee</td></tr>
-                <tr><td><strong>Heeft RA</strong></td><td>Spellen met ondersteuning voor RetroAchievements</td><td>Nee</td></tr>
-                <tr><td><strong>Bonus tonen</strong></td><td>Zichtbaarheid van bonusschijven in-/uitschakelen</td><td>Nee</td></tr>
+                <tr><td><strong>Heeft prestaties</strong></td><td>Spellen met ondersteuning voor RetroAchievements</td><td>Nee</td></tr>
+                <tr><td><strong>Niet gescraped</strong></td><td>Alleen spellen die nog door geen enkele scraper zijn ingevuld</td><td>Nee</td></tr>
+                <tr><td><strong>Bonusschijven</strong></td><td>Zichtbaarheid van bonusschijven in-/uitschakelen</td><td>Nee</td></tr>
             </tbody>
         </table>
 
+        <p>Een gemarkeerde knop staat aan. Actieve filters verschijnen ook als labels naast het aantal spellen; klik op het &times; van een label om het te verwijderen. <strong>Wissen</strong> verwijdert ze allemaal. Op een telefoon openen de filterknoppen via de knop <strong>Filters</strong>.</p>
+
         <h3>Sorteeropties</h3>
+        <p>Kies een volgorde bij <strong>Sorteren op</strong>, naast het aantal spellen:</p>
         <ul>
-            <li><strong>Titel</strong> &mdash; Alfabetisch op sorteertitel (niet hoofdlettergevoelig)</li>
-            <li><strong>Releasedatum</strong> &mdash; Chronologische volgorde (eerste eerst)</li>
-            <li><strong>Platform</strong> &mdash; Gegroepeerd op systeemnaam</li>
+            <li><strong>Naam</strong> &mdash; Alfabetisch op sorteertitel (niet hoofdlettergevoelig)</li>
+            <li><strong>Nieuwste release</strong> / <strong>Oudste release</strong> &mdash; Op releasedatum</li>
+            <li><strong>Recensiescore</strong> / <strong>Gebruikersscore</strong> &mdash; Hoogste eerst</li>
+            <li><strong>Recent toegevoegd</strong> &mdash; De spellen die het laatst aan uw bibliotheek zijn toegevoegd, komen eerst</li>
         </ul>
+        <p>Spellen zonder datum of score komen als laatste. Wissen behoudt de sortering die u hebt gekozen.</p>
 
         <h3>Alfabetnavigatie</h3>
         <p>Spring naar spellen die met een bepaalde letter beginnen. Letters zonder overeenkomende spellen zijn grijs weergegeven. Cijfers en symbolen zijn gegroepeerd onder <strong>#</strong>.</p>
@@ -835,6 +853,8 @@
         <p>Klik op de speltitel-link of navigeer via het kruimelpad om de volledige detailpagina van een spel te bekijken. Extra functies op de volledige pagina zijn onder meer:</p>
         <ul>
             <li><strong>Fanart-achtergrondkop</strong> met kruimelpadnavigatie</li>
+            <li><strong>Spellogo</strong> &mdash; Het logo van het spel staat boven de titel, die als tekst blijft staan. Een spel zonder boxart toont zijn logo op de plek van de doos. Scrapen vult logo's vanuit ES-DE, ScreenScraper, TheGamesDB, IGDB en Steam; een bulk scrape met <strong>Ontbrekende aanvullen</strong> vult ze voor spellen die al eerder zijn gescrapet</li>
+            <li><strong>Achterkant van de doos</strong> &mdash; Als een spel de achterkant van zijn doos heeft, staat er een knop <strong>Achterkant</strong> op de hoes. Druk erop om de achterkant te zien, en druk op <strong>Voorkant</strong> om terug te gaan. Klik op de achterkant om in te zoomen. Scrapen vult achterkanten vanuit ES-DE, ScreenScraper en TheGamesDB telkens wanneer een spel wordt gescrapet</li>
             <li><strong>Platform-importbadges</strong> &mdash; Toont CLZ-import, Steam-import, Xbox-import of PSN-import met platformlogo's indien van toepassing</li>
             <li><strong>Bonusschijfindicator</strong> &mdash; Toont een badge en een "Onderdeel van:"-link naar het hoofdspel met miniatuurafbeelding</li>
             <li><strong>Verwijderknop</strong> &mdash; Verwijder het spel uit de database (met bevestiging)</li>
@@ -851,7 +871,7 @@
             <li><strong>Leeftijdsclassificaties</strong> &mdash; Alle 8 classificatiesystemen met officiële classificatieafbeeldingen en automatische kruiskoppeling. Het wijzigen van één classificatie vult automatisch lege classificaties in andere systemen in.</li>
             <li><strong>Scores</strong> &mdash; Criticusscore, gebruikersscore</li>
             <li><strong>Beschrijving</strong> &mdash; Speltekstbeschrijving</li>
-            <li><strong>Aangepaste afbeeldingen</strong> &mdash; Upload aangepaste boxart (2D), 3D-boxart en fanart. Wis bestaande afbeeldingen om opnieuw scrapen mogelijk te maken.</li>
+            <li><strong>Aangepaste afbeeldingen</strong> &mdash; Upload aangepaste boxart (2D), 3D-boxart, de achterkant van de doos, fanart en een logo. Wis bestaande afbeeldingen om opnieuw scrapen mogelijk te maken.</li>
             <li><strong>3D-doos importeren</strong> &mdash; Ook in Aangepaste afbeeldingen. Dit wordt meteen opgeslagen, zonder Wijzigingen opslaan. Kies het <code>.box.json</code>-bestand dat Slipcase heeft opgeslagen, samen met de afbeeldingen (de hele map kiezen mag ook). Slipcase 1.4.0 of nieuwer slaat dit bestand op naast elke geëxporteerde afbeelding. RetroDB bewaart de zijden van de doos bij dit spel; klikt u daarna op de cover, dan ziet u de doos in 3D, om te slepen of met de pijltjestoetsen te draaien. Uw 3D-boxartafbeelding blijft ongewijzigd. Bij een spel dat al zijden heeft, wordt eerst gevraagd of ze vervangen mogen worden, en <strong>Verwijderen</strong> wist ze.</li>
             <li><strong>Video / trailer</strong> &mdash; Upload een videotrailer of koppel er een</li>
         </ul>
@@ -1027,8 +1047,9 @@
             <li>Configureer uw Steam Web API-sleutel en Steam-ID in Instellingen</li>
             <li>Ga naar Spelimporten &rarr; tabblad <strong>Steam</strong></li>
             <li>Klik op <strong>"Bibliotheek ophalen"</strong> om uw Steam-spellen op te halen</li>
-            <li>Selecteer spellen om te importeren (duplicaten worden automatisch gedetecteerd)</li>
+            <li>Selecteer spellen om te importeren Een spel dat met dezelfde naam al in uw Windows-lijst staat, wordt aan Steam gekoppeld in plaats van twee keer toegevoegd</li>
             <li>Geïmporteerde spellen worden getagd met hun Steam-app-ID voor prestatieregistratie</li>
+            <li>Op de achtergrond vult elk spel zijn lege gegevens aan vanaf zijn Steam-winkelpagina, en komen uw prestaties en speeltijd binnen. De spelpagina toont uw speeltijd. Scrape het spel voor het genre en de releasedatum: die van Steam zijn te breed, of zijn de datum waarop het spel op Steam kwam</li>
         </ol>
 
         <h3>Xbox-import</h3>
@@ -1432,8 +1453,12 @@
         <p>Alleen voor bewerkers. RetroDB stelt spellen voor die eruitzien als één spel uit verschillende regio's: hetzelfde IGDB- of ScreenScraper-spel, dezelfde titel met een andere regiotag, of een overeenkomende regionale naam. Vink elk spel uit dat er niet bij hoort en klik op <strong>"Aangevinkte games koppelen"</strong>, of klik op <strong>"Geen versies"</strong> zodat die groep nooit meer wordt voorgesteld. Er wordt niets gekoppeld totdat u het bevestigt. Voer eerst <strong>Alternatieve titels aanvullen</strong> uit in Onderhoud: dit vult de IGDB- en ScreenScraper-id's die de voorstellen gebruiken.</p>
         <p><em>Geen externe afhankelijkheden</em></p>
 
+        <h3>MAME Names</h3>
+        <p>Alleen voor beheerders. MAME vindt een spel aan de hand van de exacte bestandsnaam, dus houd de korte namen, zoals dyger.zip. Kies de lijst van MAME (een DAT die bij uw ROMs past, of de uitvoer van <code>mame -listxml</code>) en druk op <strong>"MAME-games benoemen"</strong>. Elk spel krijgt zijn echte naam, jaar en maker, en de bestanden blijven ongemoeid. Een titel die u zelf hebt gewijzigd, blijft behouden. Voeg een <code>catver.ini</code> toe om de lijst op categorie te filteren. BIOS-sets worden in de lijst verborgen maar blijven op de schijf, omdat andere spellen ze nodig hebben. Scrape hierna, zodat de scrapers elk spel kunnen vinden.</p>
+        <p><em>Vereist: een MAME-lijstbestand</em></p>
+
         <h3>Bulk-AI-aanvulling</h3>
-        <p>Alleen voor bewerkers. De kaart <strong>Lege velden vullen met AI</strong> voert AI-aanvulling uit op een heel systeem, voor de velden die je aanzet (zie AI-aanvulling &rarr; Veel spellen tegelijk).</p>
+        <p>Alleen voor bewerkers. Voert AI-aanvulling uit op een heel systeem, voor de velden die je aanzet (zie AI-aanvulling &rarr; Veel spellen tegelijk).</p>
         <p><em>Vereist: een AI-aanbieder in <strong>Instellingen &rarr; Scrapen</strong></em></p>
 
         <h3>Multi-disc-organizer</h3>
@@ -1454,7 +1479,7 @@
         <p><em>Geen externe afhankelijkheden (Python-gebaseerde AI-upscaling)</em></p>
 
         <h3>Alternatieve titels aanvullen</h3>
-        <p>Doorzoek de bibliotheek naar spellen waarvan het veld <strong>alternatieve titels</strong> leeg is en vul dit aan vanuit IGDB / TGDB / ScreenScraper. Handig na het importeren van een grote catalogus of het migreren vanuit een ander hulpmiddel dat geen regionale/Japanse/onder­titels opsloeg. Loopt op de achtergrond; de voortgang wordt getoond op de hulpmiddelkaart.</p>
+        <p>Loop elk gescrapet spel langs en haal de <strong>alternatieve titels</strong> op uit IGDB / TGDB / ScreenScraper, gelabeld met de regio waar elke naam vandaan komt. Namen die u al hebt, krijgen hun regio erbij. Handig na het importeren van een grote catalogus of het migreren vanuit een ander hulpmiddel dat geen regionale/Japanse/onder­titels opsloeg. Loopt op de achtergrond; de voortgang wordt getoond op de hulpmiddelkaart.</p>
         <p><em>Vereist minstens één scraper-API-sleutel (IGDB / TGDB / ScreenScraper)</em></p>
 
         <h3>Regio's van box en handleiding herstellen</h3>
@@ -1463,6 +1488,18 @@
 
         <h3>Regio's herstellen via bestandsnamen</h3>
         <p>De bestandsnaam van een ROM zegt welk exemplaar het is, dus een tag zoals <code>(USA)</code> bepaalt nu de regio en de AI wordt niet gevraagd. Oudere scrapes lieten de AI eerst raden, waardoor een <code>(USA)</code>-bestand als Japan vermeld kon staan. Dit hulpmiddel geeft die spellen de regio uit hun bestandsnaam. Het wijzigt alleen regio's die de AI heeft ingevuld, ook een die u later met de hand hebt gecorrigeerd zodat die afwijkt van de bestandsnaam.</p>
+        <p><em>Geen externe afhankelijkheden</em></p>
+
+        <h3>Releasedatums opschonen</h3>
+        <p>Oudere scrapes sloegen een datum waarvan alleen het jaar bekend was op als 1 januari of 31 december, alsof de dag bekend was. Dit kort die datums in tot het jaar of de maand, zodat een latere scrape de echte datum kan invullen. Een datum die geen scrape heeft ingevuld, blijft zoals hij is.</p>
+        <p><em>Geen externe afhankelijkheden</em></p>
+
+        <h3>Opgeslagen speeltijden controleren</h3>
+        <p>Oudere opzoekingen konden de speeltijd van een vervolg opslaan, of van een ander spel met dezelfde naam op een ander systeem. Dit stuurt die overeenkomsten naar de beoordelingspagina van HowLongToBeat, en er verandert geen spel totdat u beslist. Daar houdt Goedkeuren een tijd en wist Afwijzen hem. Sommige overeenkomsten kloppen wel: HowLongToBeat vermeldt niet elk systeem waarop een spel is uitgekomen.</p>
+        <p><em>Geen externe afhankelijkheden</em></p>
+
+        <h3>Genres, perspectieven en modi opschonen</h3>
+        <p>Bronnen noemen hetzelfde verschillend, dus één genre kon zowel als RPG als Role Playing Game verschijnen, en een filter miste spellen. Scrapes gebruiken nu één set namen, die in de filterlijsten. Dit hulpmiddel zet om wat oudere scrapes hebben opgeslagen. Woorden zonder plek in die lijsten, zoals Arcade of Indie, worden verwijderd. Woorden die in een ander veld horen, zoals FPV, verhuizen daarheen als dat veld leeg is. Een aantal spelers dat in strijd is met de modi van een spel wordt gecorrigeerd, en oude aantallen van 1 uit RAWG worden gewist zodat een echt aantal ze kan invullen. Een waarde die u zelf aan een keuzelijst hebt toegevoegd, blijft staan. Voer daarna bulk scrapen uit met <strong>Ontbrekende aanvullen</strong> om alles wat leeg is gebleven in te vullen.</p>
         <p><em>Geen externe afhankelijkheden</em></p>
 
         <h3>RAWG-afbeeldingen uit boxart wissen</h3>
@@ -1542,6 +1579,7 @@
                 <tr><td>Controllers</td><td>1280px langste zijde</td><td>Behoudt transparantie (RGBA)</td></tr>
                 <tr><td>Hardware</td><td>1280px langste zijde</td><td>Behoudt transparantie (RGBA)</td></tr>
                 <tr><td>Fanart</td><td>Overgeslagen</td><td>Niet gestandaardiseerd (blijft op originele grootte)</td></tr>
+                <tr><td>Logo</td><td>Overgeslagen</td><td>Blijft op originele grootte; behoudt de transparante achtergrond (opgeslagen als PNG wanneer het formaat JPEG is)</td></tr>
             </tbody>
         </table>
 

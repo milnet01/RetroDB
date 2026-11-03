@@ -199,6 +199,9 @@
 <section id="navigation" class="help-section card">
     <h2 class="card-title">Navigasjon</h2>
     <div class="card-body">
+        <h3>Søk overalt</h3>
+        <p>Søkefeltet under navnet ditt i sidefeltet finnes på hver side. Skriv to eller flere bokstaver for å se konsoller som passer og opptil åtte spill som passer. Trykk <kbd>&darr;</kbd> og <kbd>&uarr;</kbd> for å gå gjennom dem, <kbd>Enter</kbd> for å åpne ett, og <kbd>Esc</kbd> for å lukke listen. <strong>Se alle resultater</strong>, eller <kbd>Enter</kbd> uten noe valgt, åpner biblioteket med det søket.</p>
+        
         <h3>Sidefeltseksjoner</h3>
 
         <h4>Hovedmeny</h4>
@@ -554,8 +557,9 @@
         </ul>
 
         <h3 id="emulators-play">Emulatorer og spilling</h3>
-        <p>Administratorer setter opp emulatorer under <strong>Innstillinger &rarr; Emulatorer</strong>. Legg mappen der emulatorene dine ligger til i <strong>Emulatormapper</strong>. RetroDB finner hver emulator der (en AppImage, et portabelt skript eller en installert Flatpak) og knytter den til systemene den kjører. Tilordningstabellen viser for hvert system om emulatoren fungerer og om BIOS-filene er på plass. RetroDB leser bare BIOS-filer; den kopierer eller laster dem aldri ned.</p>
+        <p>Administratorer setter opp emulatorer under <strong>Innstillinger &rarr; Emulatorer</strong>. Legg mappen der emulatorene dine ligger til i <strong>Emulatormapper</strong>. RetroDB finner hver emulator der (en AppImage, et portabelt skript eller en installert Flatpak) og knytter den til systemene den kjører. Tilordningstabellen viser hvert system én gang, med en liste for å velge emulator, og om den emulatoren fungerer og om BIOS-filene er på plass. RetroDB leser bare BIOS-filer; den kopierer eller laster dem aldri ned.</p>
         <p>Spill der emulatoren fungerer får en <strong>Spill</strong>-knapp på spillsiden, på biblioteksbrikker og på systemsider.</p>
+        <p>Ingen emulator ennå? Trykk <strong>Hent RetroArch</strong> under <strong>Spill i RetroDB</strong> på samme side. RetroDB laster ned den offisielle RetroArch fra libretro, sjekker nedlastingen og setter den opp som <strong>RetroArch (RetroDB)</strong>, med egne innstillinger og lagringer, holdt atskilt fra en RetroArch du allerede bruker. Deretter laster den ned den beste kjernen for hvert system første gang du spiller. For et spill på flere disker virker <strong>Neste disk</strong> uten oppsett. Mens et slikt spill kjører, og på Windows og macOS mens et hvilket som helst spill kjører, lytter RetroArch etter RetroDBs kommandoer på en nettverksport.</p>
         <p>For DuckStation, PCSX2 og RPCS3 setter RetroDB også oppløsningsskala og sideforhold for hvert spill, i emulatorens egen innstillingsfil per spill, og om spillet starter i fullskjerm. Endre verdiene for et helt system med <strong>Innstillinger</strong>-knappen i tilordningstabellen, eller for ett spill i panelet <strong>Emulatorinnstillinger</strong> på spillsiden. De skrives når du trykker Spill. En innstilling du endrer inne i selve emulatoren gjelder alltid: RetroDB lar den være i fred fra da av. Kjør hver emulator én gang før du spiller, slik at den oppretter innstillingsmappen sin.</p>
 
         <h4>Juksekoder</h4>
@@ -619,11 +623,13 @@
             <li>Bilder og medier fra sekundære kilder når primærkilden ikke har dem</li>
             <li>Automatisk utfylling av hull på tvers av skrapere for maksimal dekning</li>
             <li>Sorteringstittel genereres automatisk fra spilltittelen under scraping</li>
+            <li>En kilde søkes bare når den har spillets system, og bare på det systemet: RAWG har ikke Intellivision, så Intellivision-spill slås ikke opp på RAWG, der de bare ville matche spill fra andre plattformer</li>
+            <li>Når KI er på, gir den også spillets offisielle tittel slik den ble utgitt i ROM-ens region, og spillet får nytt navn etter den, både ved scraping av ett spill og i masse-scraping (se <a href="#ai-fill">KI-utfylling</a>)</li>
         </ul>
 
         <h3>Mediehåndtering</h3>
         <ul>
-            <li>Mediefelt (boksbilde, 3D-boksbilde, skjermbilder, fanart, video, manual) blir <strong>aldri erstattet</strong> under normal scraping &mdash; kun fylt ut når de er tomme</li>
+            <li>Mediefelt (boksbilde, 3D-boksbilde, baksiden av esken, skjermbilder, fanart, logo, video, manual) blir <strong>aldri erstattet</strong> under normal scraping &mdash; kun fylt ut når de er tomme</li>
             <li>Skjermbilder blir alltid <strong>lagt til</strong>, aldri erstattet</li>
             <li>For å laste ned medier på nytt, fjern det eksisterende bildet i redigeringsmodalen først, og scrap deretter på nytt</li>
             <li><strong>Full Re-scrape</strong>-modus overstyrer dette og erstatter alt</li>
@@ -631,6 +637,8 @@
             <li>Nedlastede bilder standardiseres automatisk til målstørrelser (se <a href="#image-standardization">Bildestandardisering</a>)</li>
         </ul>
 
+        <h3>Beholde en tittel</h3>
+        <p>Når du skriver en ny tittel i redigeringsvinduet og lagrer, endrer ikke scraping den lenger, heller ikke Full reskraping. Boksen <strong>Behold denne tittelen ved skraping</strong> i redigeringsvinduet viser om en tittel beholdes; fjern haken for å la skraperne gi spillet nytt navn igjen. <strong>Tilbakestill</strong> på spillets side lar også skraperne gi det nytt navn, og <strong>Tøm scrapede data</strong> under Vedlikehold lar beholdte titler være som de er.</p>
         <h3>Skraper-prioritet</h3>
         <p>Konfigurer hvilke skrapere som kjører først, og hvilke som er aktivert/deaktivert, i <strong>Innstillinger &rarr; Scraping &rarr; Skraper</strong>. Dra og slipp for å endre prioritetsrekkefølgen. Deaktiverte skrapere forsøkes ikke under scraping og utløser ikke API-statusvarsler på Dashboardet.</p>
 
@@ -646,7 +654,7 @@
         <h3>Starte en masse-scraping</h3>
         <ol>
             <li>Gå til en hvilken som helst System- eller Bibliotek-side</li>
-            <li>Klikk <strong>"Select"</strong> for å gå inn i valgmodus</li>
+            <li>Klikk <strong>"Select"</strong> for å gå inn i valgmodus. Valgverktøyene vises i en linje langs bunnen av vinduet.</li>
             <li>Velg spill individuelt eller bruk hurtigvalg:
                 <ul>
                     <li><strong>Velg alle</strong> &mdash; Alle synlige spill</li>
@@ -655,6 +663,7 @@
             </li>
             <li>Velg modus: <strong>Fill Missing</strong> eller <strong>Full Re-scrape</strong></li>
             <li>Klikk <strong>"Scrape Selected"</strong></li>
+            <li>Klikk <strong>"Ferdig"</strong> for å gå ut av valgmodus</li>
         </ol>
 
         <h3>Kontroller</h3>
@@ -731,6 +740,7 @@
             <li><strong>Lignende spill</strong> oppdateres alltid (KI-data er mer pålitelig for dette feltet)</li>
             <li><strong>Kryssmappede aldersgrenser</strong> &mdash; Hvis ett aldersgrense-system er kjent, fylles tomme aldersgrenser i andre systemer automatisk ut ved hjelp av kryssmapping av modenhetsnivå</li>
             <li><strong>Sorteringstittel</strong> genereres automatisk når den fylles ut</li>
+            <li><strong>Offisiell tittel</strong> &mdash; KI-en oppgir også spillets offisielle tittel slik den ble utgitt i ROM-ens region, og spillet får nytt navn etter den, i KI-utfylling og hver gang KI fyller hull under scraping. Det gamle navnet beholdes som alternativ tittel. En tittel du skrev selv, eller beholdt med <strong>Behold denne tittelen ved skraping</strong>, får aldri nytt navn</li>
             <li><strong>Antall spillere</strong>-feltet normaliserer intervaller (f.eks. blir "1-4" til 4)</li>
         </ul>
 
@@ -770,6 +780,7 @@
             <li><strong>Ekskluder (IS NOT)</strong> &mdash; Skjul spill som samsvarer med den valgte verdien</li>
         </ul>
         <p>Bytt mellom inkluder- og ekskluder-modus med bryteren i filtermodalen.</p>
+        <p>I filtrene Sjanger, Serie, Utgiver, Utvikler, Spillmodus, Perspektiv og Dimensjon kan du hake av så mange verdier du vil og trykke <strong>Bruk</strong>. Et spill vises hvis det har en av de avhakede verdiene; i ekskluder-modus skjules et spill hvis det har en av dem. Hver verdi får sin egen merkelapp over spillene, og dens &times; fjerner bare den verdien. Filtrene Aldersgrense og Kilde tar én verdi og brukes så snart du klikker på den.</p>
 
         <h3>Tilgjengelige filtre</h3>
         <table class="data-table">
@@ -787,17 +798,22 @@
                 <tr><td><strong>Dimensjon</strong></td><td>2D, 3D</td><td>Ja</td></tr>
                 <tr><td><strong>Aldersgrense</strong></td><td>Aldersgrense (viser ditt foretrukne system)</td><td>Nei</td></tr>
                 <tr><td><strong>Har RA</strong></td><td>Spill med støtte for RetroAchievements</td><td>Nei</td></tr>
-                <tr><td><strong>Vis bonus</strong></td><td>Slå av/på synlighet for bonusdisker</td><td>Nei</td></tr>
+                <tr><td><strong>Uskrapet</strong></td><td>Bare spill ingen skraper har fylt ut ennå</td><td>Nei</td></tr>
+                <tr><td><strong>Bonusplater</strong></td><td>Slå av/på synlighet for bonusdisker</td><td>Nei</td></tr>
             </tbody>
         </table>
 
+        <p>En uthevet knapp er på. Aktive filtre vises også som merkelapper ved siden av antall spill; klikk en merkelapps &times; for å fjerne den. <strong>Fjern</strong> fjerner alle. På en telefon åpnes filterknappene fra <strong>Filtre</strong>-knappen.</p>
         <h3>Sorteringsalternativer</h3>
+        <p>Velg en rekkefølge fra <strong>Sorter etter</strong>, ved siden av antall spill:</p>
         <ul>
-            <li><strong>Tittel</strong> &mdash; Alfabetisk etter sorteringstittel (ikke skiller mellom store/små bokstaver)</li>
-            <li><strong>Utgivelsesdato</strong> &mdash; Kronologisk rekkefølge (tidligst først)</li>
-            <li><strong>Plattform</strong> &mdash; Gruppert etter systemnavn</li>
+            <li><strong>Navn</strong> &mdash; Alfabetisk etter sorteringstittel (skiller ikke mellom store/små bokstaver)</li>
+            <li><strong>Nyeste utgivelse</strong> / <strong>Eldste utgivelse</strong> &mdash; Etter utgivelsesdato</li>
+            <li><strong>Kritikerpoeng</strong> / <strong>Brukerpoeng</strong> &mdash; Høyeste først</li>
+            <li><strong>Nylig lagt til</strong> &mdash; Spillene som sist ble lagt til i biblioteket ditt kommer først</li>
         </ul>
 
+        <p>Spill uten dato eller poeng kommer sist. Fjern beholder sorteringen du valgte.</p>
         <h3>Alfabetnavigasjon</h3>
         <p>Hopp til spill som starter med en bestemt bokstav. Bokstaver uten samsvarende spill vises nedtonet. Tall og symboler grupperes under <strong>#</strong>.</p>
 
@@ -835,6 +851,8 @@
         <p>Klikk lenken til spilltittelen eller naviger fra brødsmulestien for å se hele spilldetaljsiden. Ytterligere funksjoner på hele siden inkluderer:</p>
         <ul>
             <li><strong>Fanart-bakgrunnsoverskrift</strong> med brødsmulesti-navigasjon</li>
+            <li><strong>Spillogo</strong> &mdash; Spillets logo vises over tittelen, som forblir tekst. Et spill uten boksbilde viser logoen sin der esken skulle vært. Scraping fyller logoer fra ES-DE, ScreenScraper, TheGamesDB, IGDB og Steam; en masse-scraping med <strong>Fyll manglende</strong> fyller dem for spill som ble scrapet før</li>
+            <li><strong>Baksiden av esken</strong> &mdash; Når et spill har baksiden av esken sin, sitter en <strong>Bakside</strong>-knapp på coveret. Trykk den for å se baksiden, og trykk <strong>Forside</strong> for å gå tilbake. Klikk baksiden for å zoome inn. Scraping fyller baksider fra ES-DE, ScreenScraper og TheGamesDB hver gang et spill blir scrapet</li>
             <li><strong>Plattformimport-merker</strong> &mdash; Viser CLZ-import, Steam-import, Xbox-import eller PSN-import med plattformlogoer der det gjelder</li>
             <li><strong>Bonusdisk-indikator</strong> &mdash; Viser et merke og en "Part of:"-lenke til hovedspillet med miniatyrbilde</li>
             <li><strong>Slett-knapp</strong> &mdash; Fjern spillet fra databasen (med bekreftelse)</li>
@@ -851,7 +869,7 @@
             <li><strong>Aldersgrenser</strong> &mdash; Alle 8 aldersgrense-systemer med offisielle vurderingsbilder og automatisk kryssmapping. Endring av én aldersgrense fyller automatisk ut tomme aldersgrenser i andre systemer.</li>
             <li><strong>Score</strong> &mdash; Kritikerscore, brukerscore</li>
             <li><strong>Beskrivelse</strong> &mdash; Spillbeskrivelsestekst</li>
-            <li><strong>Egendefinerte bilder</strong> &mdash; Last opp egendefinert boksbilde (2D), 3D-boksbilde og fanart. Fjern eksisterende bilder for å tillate ny scraping.</li>
+            <li><strong>Egendefinerte bilder</strong> &mdash; Last opp egendefinert boksbilde (2D), 3D-boksbilde, baksiden av esken, fanart og en logo. Fjern eksisterende bilder for å tillate ny scraping.</li>
             <li><strong>Importer 3D-boks</strong> &mdash; Også i Egendefinerte bilder. Dette lagres med en gang, uten Lagre endringer. Velg <code>.box.json</code>-filen Slipcase lagret, sammen med bildene som hører til (det går fint å velge hele mappen). Slipcase 1.4.0 eller nyere lagrer denne filen ved siden av hvert eksporterte bilde. RetroDB tar vare på boksens flater for dette spillet; når du klikker på omslaget, vises boksen i 3D, og du kan dra den eller snu den med piltastene. 3D-boksbildet ditt endres ikke. Et spill som allerede har flater, spør før de erstattes, og <strong>Fjern</strong> sletter dem.</li>
             <li><strong>Video/trailer</strong> &mdash; Last opp eller lenk til en video-trailer</li>
         </ul>
@@ -1027,8 +1045,9 @@
             <li>Konfigurer Steam Web API-nøkkelen og Steam-ID-en din i Innstillinger</li>
             <li>Gå til Spillimport &rarr; <strong>Steam</strong>-fanen</li>
             <li>Klikk <strong>"Fetch Library"</strong> for å hente Steam-spillene dine</li>
-            <li>Velg spill som skal importeres (duplikater oppdages automatisk)</li>
+            <li>Velg spill som skal importeres. Et spill som allerede står i Windows-listen din med samme navn, knyttes til Steam i stedet for å legges til to ganger</li>
             <li>Importerte spill tagges med Steam App-ID-en sin for sporing av prestasjoner</li>
+            <li>I bakgrunnen fyller hvert spill de tomme opplysningene sine fra Steam-butikksiden, og prestasjonene og spilletiden din kommer inn. Spillsiden viser spilletiden din. Scrape spillet for sjanger og utgivelsesdato: Steams er for brede, eller er datoen spillet kom på Steam</li>
         </ol>
 
         <h3>Xbox-import</h3>
@@ -1432,6 +1451,9 @@
         <p>Kun for editorer. RetroDB foreslår spill som ser ut som ett spill fra ulike regioner: samme IGDB- eller ScreenScraper-spill, samme tittel med en annen regiontagg, eller et regionalt navn som samsvarer. Fjern avkrysningen for spill som ikke hører til, og klikk <strong>"Koble avkryssede spill"</strong>, eller klikk <strong>"Ikke versjoner"</strong> slik at gruppen aldri foreslås igjen. Ingenting kobles før du bekrefter det. Kjør <strong>Etterfyll alternative titler</strong> i Vedlikehold først: den fyller inn IGDB- og ScreenScraper-ID-ene som forslagene bruker.</p>
         <p><em>Ingen eksterne avhengigheter</em></p>
 
+        <h3>MAME-navn</h3>
+        <p>Kun administratorer. MAME finner et spill etter det nøyaktige filnavnet, så behold de korte navnene, som dyger.zip. Velg MAMEs liste (en DAT som passer til ROM-ene dine, eller utdataene fra <code>mame -listxml</code>) og trykk <strong>"Navngi MAME-spill"</strong>. Hvert spill får sitt virkelige navn, år og produsent, og filene blir latt være. En tittel du har endret selv, beholdes. Legg til en <code>catver.ini</code> for å filtrere listen etter kategori. BIOS-sett skjules fra listen, men blir liggende på disken, fordi andre spill trenger dem. Scrape etterpå, så skraperne kan finne hvert spill.</p>
+        <p><em>Krever: en MAME-listefil</em></p>
         <h3>Mass-AI-utfylling</h3>
         <p>Bare for redaktører. Kortet <strong>Fyll tomme felt med KI</strong> kjører AI-utfylling på et helt system, for feltene du slår på (se KI-utfylling &rarr; Mange spill på en gang).</p>
         <p><em>Krever: en KI-leverandør i <strong>Innstillinger &rarr; Skraper</strong></em></p>
@@ -1465,6 +1487,15 @@
         <p>Filnavnet til en ROM sier hvilken kopi det er, så en merkelapp som <code>(USA)</code> avgjør nå regionen, og KI-en blir ikke spurt. Eldre scraping lot KI-en gjette først, så en <code>(USA)</code>-fil kunne bli oppført som Japan. Dette verktøyet gir disse spillene regionen i filnavnet. Det endrer bare regioner KI-en fylte ut, også en du senere har rettet for hånd slik at den avviker fra filnavnet.</p>
         <p><em>Ingen avhengigheter kreves</em></p>
 
+        <h3>Rydd opp i utgivelsesdatoer</h3>
+        <p>Eldre scraping lagret en dato der bare året var kjent som 1. januar eller 31. desember, som om dagen var kjent. Dette kutter slike datoer ned til året eller måneden, så en senere scraping kan fylle inn den riktige. En dato ingen scraping fylte ut, forblir som den er.</p>
+        <p><em>Ingen avhengigheter kreves</em></p>
+        <h3>Sjekk lagrede spilletider</h3>
+        <p>Eldre oppslag kunne lagre spilletiden til en oppfølger, eller til et annet spill med samme navn på et annet system. Dette sender slike treff til HowLongToBeat-gjennomgangssiden, og ingen spill endres før du bestemmer deg. Der beholder Godkjenn en tid og Avvis fjerner den. Noen treff er i orden: HowLongToBeat lister ikke alle systemene et spill kom ut på.</p>
+        <p><em>Ingen avhengigheter kreves</em></p>
+        <h3>Rydd opp i sjangere, perspektiver og moduser</h3>
+        <p>Kildene kaller det samme ulike ting, så én sjanger kunne vises både som RPG og Role Playing Game, og et filter gikk glipp av spill. Scraping bruker nå ett sett med navn, de i filterlistene. Dette verktøyet gjør om det eldre scraping lagret. Ord uten plass i disse listene, som Arcade eller Indie, fjernes. Ord som hører hjemme i et annet felt, som FPV, flyttes dit hvis det feltet er tomt. Et spillerantall som strider mot et spills moduser, rettes, og gamle antall på 1 fra RAWG fjernes så et riktig antall kan fylle dem. En verdi du selv har lagt til i en nedtrekksliste, blir værende. Kjør en masse-scraping med <strong>Fyll manglende</strong> etterpå for å fylle det som står tomt.</p>
+        <p><em>Ingen avhengigheter kreves</em></p>
         <h3>Fjern RAWG-bilder fra coverbilder</h3>
         <p>RAWG har ingen boksbilder. Eldre scraping lagret bakgrunnsbildet derfra, ofte et skjermbilde, som omslag, og siden scraping bare fyller tomme omslag, blokkerte det bildet et ekte omslag. Dette verktøyet sletter disse bildene og lar omslagene stå tomme. Omslag fra andre kilder og all fanart blir værende. Disse spillene viser ikke noe omslag før en scraping finner ett, så kjør en masse-scraping med <strong>Fyll manglende</strong> etterpå.</p>
         <p><em>Ingen avhengigheter kreves</em></p>
@@ -1542,6 +1573,7 @@
                 <tr><td>Kontrollere</td><td>1280px lengste kant</td><td>Bevarer gjennomsiktighet (RGBA)</td></tr>
                 <tr><td>Maskinvare</td><td>1280px lengste kant</td><td>Bevarer gjennomsiktighet (RGBA)</td></tr>
                 <tr><td>Fanart</td><td>Hoppet over</td><td>Ikke standardisert (beholdes i original størrelse)</td></tr>
+                <tr><td>Logo</td><td>Hoppet over</td><td>Beholdes i original størrelse; beholder den gjennomsiktige bakgrunnen (lagres som PNG når formatet er JPEG)</td></tr>
             </tbody>
         </table>
 

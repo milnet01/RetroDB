@@ -199,6 +199,9 @@
 <section id="navigation" class="help-section card">
     <h2 class="card-title">Navigasie</h2>
     <div class="card-body">
+        <h3>Soek Oral</h3>
+        <p>Die soekblokkie onder jou naam in die kantbalk is op elke bladsy. Tik twee of meer letters om ooreenstemmende konsoles en tot agt ooreenstemmende speletjies te sien. Druk <kbd>&darr;</kbd> en <kbd>&uarr;</kbd> om daardeur te beweeg, <kbd>Enter</kbd> om een oop te maak, en <kbd>Esc</kbd> om die lys toe te maak. <strong>Sien alle resultate</strong>, of <kbd>Enter</kbd> sonder dat iets gekies is, maak die Biblioteek met daardie soektog oop.</p>
+
         <h3>Kantbalk-afdelings</h3>
 
         <h4>Hoof</h4>
@@ -271,7 +274,7 @@
 
         <h3>Aksies</h3>
         <div class="shortcut-grid">
-            <div class="shortcut-item"><kbd>/</kbd> <span>Fokus soek</span></div>
+            <div class="shortcut-item"><kbd>/</kbd> <span>Fokus soek (die bladsy se eie blokkie, anders die kantbalk s&rsquo;n)</span></div>
             <div class="shortcut-item"><kbd>Esc</kbd> <span>Maak modaalvenster toe</span></div>
             <div class="shortcut-item"><kbd>?</kbd> <span>Wys kortpaaie</span></div>
         </div>
@@ -556,6 +559,7 @@
         <h3 id="emulators-play">Emulators en Speel</h3>
         <p>Administrateurs stel emulators by <strong>Instellings &rarr; Emulators</strong> op. Voeg die gids waarin jou emulators bly by <strong>Emulatorvouers</strong>. RetroDB vind elke emulator daar ('n AppImage, 'n draagbare skrip of 'n geïnstalleerde Flatpak) en koppel dit aan die stelsels wat dit laat loop. Die toewysingstabel wys vir elke stelsel of sy emulator werk en of sy BIOS-lêers op hul plek is. RetroDB lees net BIOS-lêers; dit kopieer of laai dit nooit af nie.</p>
         <p>Speletjies waarvan die emulator werk, kry 'n <strong>Speel</strong>-knoppie op die speletjiebladsy, op Biblioteek-kaarte en op stelselbladsye.</p>
+        <p>Nog geen emulator nie? Druk <strong>Kry RetroArch</strong> onder <strong>Speel in RetroDB</strong> op dieselfde bladsy. RetroDB laai die amptelike RetroArch van libretro af, kontroleer die aflaai, en stel dit op as <strong>RetroArch (RetroDB)</strong>, met sy eie instellings en stoorlêers, apart van enige RetroArch wat jy reeds gebruik. Dit laai dan die beste kern vir elke stelsel af die eerste keer dat jy speel. Vir 'n speletjie met veelvuldige skywe werk <strong>Volgende skyf</strong> sonder enige opstelling. Terwyl so 'n speletjie loop, en op Windows en macOS terwyl enige speletjie loop, luister RetroArch op 'n netwerkpoort vir RetroDB se opdragte.</p>
         <p>Vir DuckStation, PCSX2 en RPCS3 stel RetroDB ook vir elke speletjie die resolusieskaal en beeldverhouding in, in die emulator se eie per-speletjie-instellingslêer, asook of die speletjie in volskerm begin. Verander die waardes vir 'n hele stelsel met die <strong>Instellings</strong>-knoppie in die toewysingstabel, of vir een speletjie in die <strong>Emulatorinstellings</strong>-paneel op sy speletjiebladsy. Dit word geskryf wanneer jy Speel druk. 'n Instelling wat jy in die emulator self verander, wen altyd: RetroDB laat dit van toe af met rus. Laat elke emulator een keer loop voor jy speel, sodat dit sy instellingsgids skep.</p>
 
         <h4>Kulkodes</h4>
@@ -619,17 +623,22 @@
             <li>Beelde en media van sekondêre bronne wanneer die primêre bron dit nie het nie</li>
             <li>Outomatiese gapingsvulling oor ontginners heen vir maksimum dekking</li>
             <li>Sorteertitel word outomaties uit die speletjietitel gegenereer tydens ontginning</li>
+            <li>'n Bron word net deursoek wanneer dit die speletjie se stelsel lys, en net op daardie stelsel: RAWG het geen Intellivision nie, dus word Intellivision-speletjies nie op RAWG opgesoek nie, waar hulle net speletjies van ander platforms sou pas</li>
+            <li>Wanneer KI aan is, gee dit ook die speletjie se amptelike titel soos dit in sy ROM se streek vrygestel is, en die speletjie word daarna hernoem, in 'n enkelspeletjie-ontginning en in Grootmaat-ontginning (sien <a href="#ai-fill">KI-invul</a>)</li>
         </ul>
 
         <h3>Mediahantering</h3>
         <ul>
-            <li>Media-velde (boekskyf, 3D-boekskyf, skermkiekies, agtergrondkuns, video, handleiding) word <strong>nooit vervang</strong> tydens normale ontginning nie &mdash; slegs ingevul wanneer leeg</li>
+            <li>Media-velde (boekskyf, 3D-boekskyf, boks-agterkant, skermkiekies, agtergrondkuns, logo, video, handleiding) word <strong>nooit vervang</strong> tydens normale ontginning nie &mdash; slegs ingevul wanneer leeg</li>
             <li>Skermkiekies word altyd <strong>bygevoeg</strong>, nooit vervang nie</li>
             <li>Om media te herlaai, maak die bestaande beeld eers leeg in die redigeer-modaalvenster, en ontgin dan weer</li>
             <li>Die <strong>Volledige Her-ontginning</strong>-modus oorskryf dit en vervang alles</li>
             <li>Verouderde media-verwysings (lêer verwyder maar lêernaam steeds in die databasis) word outomaties leeggemaak voor ontginning sodat vars media afgelaai kan word</li>
             <li>Afgelaaide beelde word outomaties gestandaardiseer na teikengroottes (sien <a href="#image-standardization">Beeldstandaardisering</a>)</li>
         </ul>
+
+        <h3>'n Titel Behou</h3>
+        <p>Wanneer jy 'n nuwe titel in die redigeervenster tik en stoor, verander ontginning dit nie meer nie, Volledige Her-ontginning ingesluit. Die redigeervenster se <strong>Behou hierdie titel wanneer geskraap word</strong>-blokkie wys of 'n titel behou word; ontmerk dit om ontginners die speletjie weer te laat hernoem. <strong>Herstel</strong> op 'n speletjie se bladsy laat ontginners dit ook hernoem, en <strong>Vee ontginde data uit</strong> in Onderhoud laat behoue titels soos hulle is.</p>
 
         <h3>Ontginner-prioriteit</h3>
         <p>Stel op watter ontginners eerste loop en watter aan-/afgeskakel is by <strong>Instellings &rarr; Ontginning &rarr; Ontginner</strong>. Sleep-en-los om prioriteit te herrangskik. Gedeaktiveerde ontginners word nie tydens ontginning probeer nie en ontketen nie API-statuswaarskuwings op die Kontrolebord nie.</p>
@@ -646,7 +655,7 @@
         <h3>'n Grootmaat-ontginning Begin</h3>
         <ol>
             <li>Gaan na enige Stelsel- of Biblioteek-bladsy</li>
-            <li>Klik <strong>"Kies"</strong> om die keusemodus te betree</li>
+            <li>Klik <strong>"Kies"</strong> om die keusemodus te betree. Die keusegereedskap verskyn in 'n balk onderaan die venster.</li>
             <li>Kies speletjies individueel of gebruik vinnige keuse:
                 <ul>
                     <li><strong>Kies Almal</strong> &mdash; Alle sigbare speletjies</li>
@@ -655,6 +664,7 @@
             </li>
             <li>Kies modus: <strong>Vul Ontbrekendes In</strong> of <strong>Volledige Her-ontginning</strong></li>
             <li>Klik <strong>"Ontgin Gekiesdes"</strong></li>
+            <li>Klik <strong>"Klaar"</strong> om die keusemodus te verlaat</li>
         </ol>
 
         <h3>Kontroles</h3>
@@ -731,6 +741,7 @@
             <li><strong>Soortgelyke speletjies</strong> word altyd verfris (KI-data is meer betroubaar vir hierdie veld)</li>
             <li><strong>Kruis-afgebeelde graderings</strong> &mdash; As een graderingstelsel bekend is, word leë graderings in ander stelsels outomaties ingevul via volwassenheidsvlak-kruisafbeelding</li>
             <li><strong>Sorteertitel</strong> word outomaties gegenereer wanneer ingevul</li>
+            <li><strong>Amptelike titel</strong> &mdash; die KI noem ook die speletjie se amptelike titel soos dit in sy ROM se streek vrygestel is, en die speletjie word daarna hernoem, in KI-invul en wanneer KI gapings tydens ontginning invul. Die ou naam word as 'n alternatiewe titel behou. 'n Titel wat jy self getik het, of met <strong>Behou hierdie titel wanneer geskraap word</strong> behou het, word nooit hernoem nie</li>
             <li>Die <strong>Spelers</strong>-veld normaliseer reekse (bv. word "1-4" 4)</li>
         </ul>
 
@@ -770,6 +781,7 @@
             <li><strong>Uitsluit (IS NOT)</strong> &mdash; Versteek speletjies wat by die gekiesde waarde pas</li>
         </ul>
         <p>Wissel tussen insluit- en uitsluitmodus met die skakelaar in die filter-modaalvenster.</p>
+        <p>In die Genre-, Reeks-, Uitgewer-, Ontwikkelaar-, Speelmodus-, Perspektief- en Dimensie-filters kan jy enige aantal waardes merk en <strong>Pas toe</strong> druk. 'n Speletjie wys as dit enige van die gemerkte waardes het; in uitsluitmodus word 'n speletjie versteek as dit enige daarvan het. Elke waarde kry sy eie etiket bo die speletjies, en sy &times; verwyder net daardie waarde. Die Gradering- en Bron-filters neem een waarde en word toegepas sodra jy daarop klik.</p>
 
         <h3>Beskikbare Filters</h3>
         <table class="data-table">
@@ -786,26 +798,32 @@
                 <tr><td><strong>Perspektief</strong></td><td>Eerstepersoon, Bo-aansig, Isometries, Kant-rol</td><td>Ja</td></tr>
                 <tr><td><strong>Dimensie</strong></td><td>2D, 3D</td><td>Ja</td></tr>
                 <tr><td><strong>Gradering</strong></td><td>Ouderdomsgradering (wys jou voorkeurstelsel)</td><td>Nee</td></tr>
-                <tr><td><strong>Het RA</strong></td><td>Speletjies met RetroAchievements-ondersteuning</td><td>Nee</td></tr>
-                <tr><td><strong>Wys Bonus</strong></td><td>Wissel bonus-skyf-sigbaarheid</td><td>Nee</td></tr>
+                <tr><td><strong>Het Prestasies</strong></td><td>Speletjies met RetroAchievements-ondersteuning</td><td>Nee</td></tr>
+                <tr><td><strong>Ongeskraap</strong></td><td>Net speletjies wat nog geen ontginner ingevul het nie</td><td>Nee</td></tr>
+                <tr><td><strong>Bonusskywe</strong></td><td>Wissel bonus-skyf-sigbaarheid</td><td>Nee</td></tr>
             </tbody>
         </table>
 
+        <p>'n Uitgeligte knoppie is aan. Aktiewe filters wys ook as etikette langs die speletjietelling; klik 'n etiket se &times; om dit te verwyder. <strong>Maak skoon</strong> verwyder hulle almal. Op 'n foon maak die filterknoppies oop vanaf die <strong>Filters</strong>-knoppie.</p>
+
         <h3>Sorteeropsies</h3>
+        <p>Kies 'n volgorde uit <strong>Sorteer volgens</strong>, langs die speletjietelling:</p>
         <ul>
-            <li><strong>Titel</strong> &mdash; Alfabeties volgens sorteertitel (kassensitief onbelangrik)</li>
-            <li><strong>Vrystellingsdatum</strong> &mdash; Chronologiese volgorde (vroegste eerste)</li>
-            <li><strong>Platform</strong> &mdash; Gegroepeer volgens stelselnaam</li>
+            <li><strong>Naam</strong> &mdash; Alfabeties volgens sorteertitel (hoofletters maak nie saak nie)</li>
+            <li><strong>Nuutste vrystelling</strong> / <strong>Oudste vrystelling</strong> &mdash; Volgens vrystellingsdatum</li>
+            <li><strong>Kritikustelling</strong> / <strong>Gebruikerstelling</strong> &mdash; Hoogste eerste</li>
+            <li><strong>Onlangs bygevoeg</strong> &mdash; Die speletjies wat laaste by jou biblioteek gevoeg is, kom eerste</li>
         </ul>
+        <p>Speletjies sonder 'n datum of telling kom laaste. Maak skoon behou die sortering wat jy gekies het.</p>
 
         <h3>Alfabet-navigasie</h3>
-        <p>Spring na speletjies wat met 'n spesifieke letter begin. Letters sonder passende speletjies word grys vertoon. Syfers en simbole word onder <strong>#</strong> gegroepeer.</p>
+        <p>Spring na speletjies wat met 'n spesifieke letter begin. Letters sonder passende speletjies word grys vertoon. Syfers en simbole word onder <strong>#</strong> gegroepeer. Die balk werk wanneer volgens naam gesorteer word, en is grys vir enige ander sortering.</p>
 
         <h3>Oneindige Rol</h3>
         <p>Speletjies laai in groepe van 100 terwyl jy rol. Nuwe bladsye laai outomaties wanneer jy naby die onderkant kom. Om filters of soek te verander, herstel en herlaai resultate onmiddellik.</p>
 
         <h3>Toestandbehoud</h3>
-        <p>Jou huidige filters, soekterm, en rolposisie word in sessie-berging gestoor. Hulle word herstel wanneer jy na die bladsy terugkeer of dit herlaai.</p>
+        <p>Jou huidige filters, soekterm, sortering en rolposisie word in sessie-berging gestoor. Hulle word herstel wanneer jy na die bladsy terugkeer of dit herlaai.</p>
     </div>
 </section>
 
@@ -835,6 +853,8 @@
         <p>Klik die speletjietitel-skakel of navigeer vanaf broodkrummels om die volle speletjie-detailbladsy te bekyk. Bykomende funksies op die volle bladsy sluit in:</p>
         <ul>
             <li><strong>Agtergrondkuns-agtergrondkopstuk</strong> met broodkrummel-navigasie</li>
+            <li><strong>Speletjie-logo</strong> &mdash; Die speletjie se logo wys bo sy titel, wat as teks bly. 'n Speletjie sonder boekskyf wys sy logo in die boks se plek. Ontginning vul logo's in vanaf ES-DE, ScreenScraper, TheGamesDB, IGDB en Steam; 'n grootmaat-ontginning met <strong>Vul ontbrekende</strong> vul dit in vir speletjies wat voorheen ontgin is</li>
+            <li><strong>Agterkant van die boks</strong> &mdash; Wanneer 'n speletjie die agterkant van sy boks het, sit 'n <strong>Agterkant</strong>-knoppie op die omslag. Druk dit om die agterkant te sien, en druk <strong>Voorkant</strong> om terug te gaan. Klik die agterkant om dit te vergroot. Ontginning vul agterkante in vanaf ES-DE, ScreenScraper en TheGamesDB wanneer 'n speletjie ook al ontgin word</li>
             <li><strong>Platform-invoer-kentekens</strong> &mdash; Wys CLZ-invoer, Steam-invoer, Xbox-invoer, of PSN-invoer met platformlogo's waar van toepassing</li>
             <li><strong>Bonus-skyf-aanwyser</strong> &mdash; Wys 'n kenteken en 'n "Deel van:"-skakel na die ouerspeletjie met duimnael</li>
             <li><strong>Verwyder-knoppie</strong> &mdash; Verwyder die speletjie uit die databasis (met bevestiging)</li>
@@ -851,7 +871,7 @@
             <li><strong>Ouderdomsgraderings</strong> &mdash; Alle 8 graderingstelsels met amptelike graderingbeelde en outomatiese kruisafbeelding. Om een gradering te verander vul outomaties leë graderings in ander stelsels in.</li>
             <li><strong>Tellings</strong> &mdash; Kritikustelling, gebruikertelling</li>
             <li><strong>Beskrywing</strong> &mdash; Speletjiebeskrywingsteks</li>
-            <li><strong>Pasgemaakte Beelde</strong> &mdash; Laai pasgemaakte boekskyf (2D), 3D-boekskyf, en agtergrondkuns op. Maak bestaande beelde skoon om her-ontginning toe te laat.</li>
+            <li><strong>Pasgemaakte Beelde</strong> &mdash; Laai pasgemaakte boekskyf (2D), 3D-boekskyf, die agterkant van die boks, agtergrondkuns en 'n logo op. Maak bestaande beelde skoon om her-ontginning toe te laat.</li>
             <li><strong>Voer 3D-boks in</strong> &mdash; Ook in Pasgemaakte Beelde. Dit stoor dadelik, sonder Stoor veranderinge. Kies die <code>.box.json</code>-lêer wat Slipcase gestoor het, saam met sy prente (om die hele vouer te kies is goed). Slipcase 1.4.0 of nuwer stoor hierdie lêer langs elke uitgevoerde prent. RetroDB hou die boks se vlakke vir hierdie speletjie; as jy dan op die omslag klik, wys dit die boks in 3D, om te sleep of met die pyltjiesleutels te draai. Jou 3D-bokskunsprent word nie verander nie. 'n Speletjie wat reeds vlakke het, vra voordat dit hulle vervang, en <strong>Verwyder</strong> skrap hulle.</li>
             <li><strong>Video / Voorskou</strong> &mdash; Laai 'n video-voorskou op of skakel daarna</li>
         </ul>
@@ -895,7 +915,7 @@
         <p>Stel jou voorkeurstelsel by <strong>Instellings &rarr; Biblioteek &rarr; Vertoning</strong>. Amptelike graderingbeelde word op speletjiekaarte, detail-modaalvensters, en detailbladsye vertoon. Leë graderings word outomaties ingevul vanaf enige beskikbare gradering via volwassenheidsvlak-kruisafbeelding tydens ontginning, KI-invul, en handmatige redigering.</p>
 
         <h3>Bonus-skywe</h3>
-        <p>RetroDB bespeur outomaties bonus-/ekstra-skywe (bv. klankbaan-CD's, ekstra-inhoud-skywe) en koppel hulle aan hul ouerspeletjie. Bonus-skywe word by verstek in die biblioteek versteek &mdash; wissel <strong>"Wys Bonus"</strong> in filters om hulle te vertoon. Gekoppelde bonus-skywe verskyn in die ouerspeletjie se detail-modaalvenster.</p>
+        <p>RetroDB bespeur outomaties bonus-/ekstra-skywe (bv. klankbaan-CD's, ekstra-inhoud-skywe) en koppel hulle aan hul ouerspeletjie. Bonus-skywe word by verstek in die biblioteek versteek &mdash; wissel <strong>"Bonusskywe"</strong> in filters om hulle te vertoon. Gekoppelde bonus-skywe verskyn in die ouerspeletjie se detail-modaalvenster.</p>
 
         <h3>Streeksweergawes</h3>
         <p>Wanneer jy een speletjie uit verskeie streke besit, koppel die weergawes en die biblioteek wys hulle as een kaart met 'n &#127760;-kenteken. Die kaart open en speel die weergawe uit jou voorkeurstreek (<strong>Instellings &rarr; Biblioteek &rarr; Verstekstreek</strong>). Die speletjiebladsy lys elke weergawe, vergelyk hulle (vrystellingsdatum, uitgewer, lêergrootte, hersiening, tale, tellings, RetroAchievements) en skakel na elkeen. Redigeerders kan 'n weergawe daar ontkoppel, of dieselfde stelsel deursoek om 'n ander een te koppel. Redigeerders kan ook <strong>Som verskille op met KI</strong> druk vir 'n lys van bekende verskille tussen die weergawes, soos sensuur of verwyderde inhoud. Dit is gemerk as KI-geskryf en kan verkeerd wees; dit benodig 'n KI-verskaffer in <strong>Instellings &rarr; Skraap</strong>. Die bladsyopskrif tel speletjies, met die aantal ROM's daarnaas wanneer die twee verskil.</p>
@@ -1027,8 +1047,9 @@
             <li>Stel jou Steam Web API-sleutel en Steam-ID op by Instellings</li>
             <li>Gaan na Speletjie-invoere &rarr; <strong>Steam</strong>-oortjie</li>
             <li>Klik <strong>"Haal Biblioteek Op"</strong> om jou Steam-speletjies te bekom</li>
-            <li>Kies speletjies om in te voer (duplikate word outomaties bespeur)</li>
+            <li>Kies speletjies om in te voer. Een wat reeds onder dieselfde naam in jou Windows-lys is, word aan Steam gekoppel in plaas daarvan om twee keer bygevoeg te word</li>
             <li>Ingevoerde speletjies word geëtiketteer met hul Steam-toepassing-ID vir prestasie-opsporing</li>
+            <li>In die agtergrond vul elke speletjie sy leë besonderhede vanaf sy Steam-winkelbladsy in, en jou prestasies en speeltyd kom aan. Die speletjiebladsy wys jou speeltyd. Ontgin die speletjie vir sy genre en vrystellingsdatum: Steam s'n is te breed, of is die datum waarop dit Steam bereik het</li>
         </ol>
 
         <h3>Xbox-invoer</h3>
@@ -1432,8 +1453,12 @@
         <p>Slegs redigeerders. RetroDB stel speletjies voor wat lyk soos een speletjie uit verskillende streke: dieselfde IGDB- of ScreenScraper-speletjie, dieselfde titel met 'n ander streek-etiket, of 'n streeksnaam wat ooreenstem. Ontmerk enige speletjie wat nie hoort nie en klik <strong>"Koppel gemerkte speletjies"</strong>, of klik <strong>"Nie weergawes nie"</strong> sodat daardie groep nooit weer voorgestel word nie. Niks word gekoppel voordat jy dit bevestig nie. Voer eers <strong>Vul Alternatiewe Titels In</strong> in Onderhoud uit: dit vul die IGDB- en ScreenScraper-ID's in wat die voorstelle gebruik.</p>
         <p><em>Geen eksterne afhanklikhede</em></p>
 
+        <h3>MAME Names</h3>
+        <p>Net vir administrateurs. MAME vind 'n speletjie aan sy presiese lêernaam, so behou die kort name, soos dyger.zip. Kies MAME se lys ('n DAT wat by jou ROM's pas, of die uitvoer van <code>mame -listxml</code>) en druk <strong>"Benoem MAME-speletjies"</strong>. Elke speletjie kry sy regte naam, jaar en maker, en die lêers word met rus gelaat. 'n Titel wat jy self verander het, word behou. Voeg 'n <code>catver.ini</code> by om die lys volgens kategorie te filter. BIOS-stelle word uit die lys versteek maar bly op die skyf, omdat ander speletjies dit nodig het. Ontgin hierna, sodat die ontginners elke speletjie kan vind.</p>
+        <p><em>Vereis: 'n MAME-lyslêer</em></p>
+
         <h3>Massa-AI-vul</h3>
-        <p>Net vir redigeerders. Die kaart <strong>Vul leë velde met KI</strong> doen AI-vul op 'n hele stelsel, vir die velde wat jy aanskakel (kyk KI-invul &rarr; Baie Speletjies Gelyk).</p>
+        <p>Net vir redigeerders. Doen KI-invul op 'n hele stelsel, vir die velde wat jy aanskakel (kyk KI-invul &rarr; Baie Speletjies Gelyk).</p>
         <p><em>Vereis: 'n KI-verskaffer in <strong>Instellings &rarr; Skraap</strong></em></p>
 
         <h3>Multi-skyf-organiseerder</h3>
@@ -1454,7 +1479,7 @@
         <p><em>Geen eksterne afhanklikhede (Python-gebaseerde KI-opskalering)</em></p>
 
         <h3>Terugvul Alternatiewe Titels</h3>
-        <p>Deursoek die biblioteek vir speletjies waarvan die <strong>alternatiewe titels</strong>-veld leeg is, en vul dit vanaf IGDB / TGDB / ScreenScraper in. Nuttig na die invoer van 'n groot katalogus of migrasie vanaf 'n ander nutsprogram wat nie streeks-/Japannese/subtitels gestoor het nie. Loop in die agtergrond; vordering word op die nutsprogramkaart gewys.</p>
+        <p>Gaan deur elke ontginde speletjie en haal sy <strong>alternatiewe titels</strong> vanaf IGDB / TGDB / ScreenScraper, gemerk met die streek waar elke naam vandaan kom. Name wat jy reeds het, kry hul streek. Nuttig na die invoer van 'n groot katalogus of migrasie vanaf 'n ander nutsprogram wat nie streeks-/Japannese/subtitels gestoor het nie. Loop in die agtergrond; vordering word op die nutsprogramkaart gewys.</p>
         <p><em>Vereis ten minste een ontginner-API-sleutel (IGDB / TGDB / ScreenScraper)</em></p>
 
         <h3>Herstel boks- en handleidingstreke</h3>
@@ -1463,6 +1488,18 @@
 
         <h3>Herstel streke uit lêernaam</h3>
         <p>'n ROM se lêernaam sê watter kopie dit is, so 'n merker soos <code>(USA)</code> besluit nou sy streek en die KI word nie gevra nie. Ouer ontginnings het die KI eerste laat raai, so 'n <code>(USA)</code>-lêer kon as Japan gelys word. Hierdie nutsprogram gee daardie speletjies die streek in hul lêernaam. Dit verander slegs streke wat die KI ingevul het, insluitend een wat jy later met die hand reggestel het sodat dit van die lêernaam verskil.</p>
+        <p><em>Geen afhanklikhede vereis nie</em></p>
+
+        <h3>Maak Uitreikdatums netjies</h3>
+        <p>Ouer ontginnings het 'n datum wat net volgens sy jaar bekend was as 1 Januarie of 31 Desember gestoor, asof die dag bekend was. Dit sny daardie datums terug na die jaar of maand, sodat 'n latere ontginning die regte een kan invul. 'n Datum wat geen ontginning ingevul het nie, bly soos dit is.</p>
+        <p><em>Geen afhanklikhede vereis nie</em></p>
+
+        <h3>Gaan gestoorde speeltye na</h3>
+        <p>Ouer opsoeke kon die speeltyd van 'n opvolger stoor, of van 'n ander speletjie met dieselfde naam op 'n ander stelsel. Dit stuur daardie passings na die HowLongToBeat-hersieningsbladsy, en geen speletjie verander voordat jy besluit nie. Daar behou Keur goed 'n tyd en Verwerp maak dit skoon. Sommige passings is reg: HowLongToBeat lys nie elke stelsel waarop 'n speletjie uitgekom het nie.</p>
+        <p><em>Geen afhanklikhede vereis nie</em></p>
+
+        <h3>Maak Genres, Perspektiewe en Modusse netjies</h3>
+        <p>Bronne noem dieselfde ding verskillend, so een genre kon as beide RPG en Role Playing Game verskyn, en 'n filter het speletjies gemis. Ontginnings gebruik nou een stel name, dié in die filterlyste. Hierdie nutsprogram skakel om wat ouer ontginnings gestoor het. Woorde sonder 'n plek in daardie lyste, soos Arcade of Indie, word verwyder. Woorde wat in 'n ander veld hoort, soos FPV, skuif daarheen as daardie veld leeg is. 'n Spelertelling wat 'n speletjie se modusse weerspreek, word reggestel, en ou tellings van 1 vanaf RAWG word skoongemaak sodat 'n regte telling dit kan invul. 'n Waarde wat jy self by 'n aftreklys gevoeg het, bly. Doen daarna 'n grootmaat-ontginning met <strong>Vul ontbrekende</strong> om enigiets wat leeg gebly het in te vul.</p>
         <p><em>Geen afhanklikhede vereis nie</em></p>
 
         <h3>Vee RAWG-prente uit bokskuns</h3>
@@ -1542,6 +1579,7 @@
                 <tr><td>Beheerders</td><td>1280px langste rand</td><td>Behou deursigtigheid (RGBA)</td></tr>
                 <tr><td>Hardeware</td><td>1280px langste rand</td><td>Behou deursigtigheid (RGBA)</td></tr>
                 <tr><td>Agtergrondkuns</td><td>Oorgeslaan</td><td>Nie gestandaardiseer nie (op oorspronklike grootte gelaat)</td></tr>
+                <tr><td>Logo</td><td>Oorgeslaan</td><td>Op oorspronklike grootte gelaat; behou sy deursigtige agtergrond (as PNG gestoor wanneer die formaat JPEG is)</td></tr>
             </tbody>
         </table>
 

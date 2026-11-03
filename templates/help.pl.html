@@ -199,6 +199,9 @@
 <section id="navigation" class="help-section card">
     <h2 class="card-title">Nawigacja</h2>
     <div class="card-body">
+        <h3>Wyszukiwanie wszędzie</h3>
+        <p>Pole wyszukiwania pod Twoją nazwą na pasku bocznym jest na każdej stronie. Wpisz co najmniej dwie litery, aby zobaczyć pasujące konsole i do ośmiu pasujących gier. Naciskaj <kbd>&darr;</kbd> i <kbd>&uarr;</kbd>, aby się między nimi przesuwać, <kbd>Enter</kbd>, aby otworzyć jedną z nich, i <kbd>Esc</kbd>, aby zamknąć listę. <strong>Zobacz wszystkie wyniki</strong> albo <kbd>Enter</kbd> bez wybranej pozycji otwiera Bibliotekę z tym wyszukiwaniem.</p>
+
         <h3>Sekcje paska bocznego</h3>
 
         <h4>Główne</h4>
@@ -554,8 +557,9 @@
         </ul>
 
         <h3 id="emulators-play">Emulatory i granie</h3>
-        <p>Administratorzy konfigurują emulatory w <strong>Ustawienia &rarr; Emulatory</strong>. Dodaj folder, w którym znajdują się Twoje emulatory, do <strong>Foldery emulatorów</strong>. RetroDB znajduje tam każdy emulator (AppImage, przenośny skrypt lub zainstalowany Flatpak) i łączy go z systemami, które uruchamia. Tabela przypisań pokazuje dla każdego systemu, czy jego emulator działa i czy pliki BIOS są na miejscu. RetroDB tylko odczytuje pliki BIOS; nigdy ich nie kopiuje ani nie pobiera.</p>
+        <p>Administratorzy konfigurują emulatory w <strong>Ustawienia &rarr; Emulatory</strong>. Dodaj folder, w którym znajdują się Twoje emulatory, do <strong>Foldery emulatorów</strong>. RetroDB znajduje tam każdy emulator (AppImage, przenośny skrypt lub zainstalowany Flatpak) i łączy go z systemami, które uruchamia. Tabela przypisań pokazuje każdy system raz, z listą do wyboru jego emulatora, oraz to, czy ten emulator działa i czy pliki BIOS są na miejscu. RetroDB tylko odczytuje pliki BIOS; nigdy ich nie kopiuje ani nie pobiera.</p>
         <p>Gry, których emulator działa, mają przycisk <strong>Graj</strong> na stronie gry, na kartach Biblioteki i na stronach systemów.</p>
+        <p>Nie masz jeszcze emulatora? Naciśnij <strong>Pobierz RetroArch</strong> w sekcji <strong>Graj w RetroDB</strong> na tej samej stronie. RetroDB pobiera oficjalny RetroArch z libretro, sprawdza pobrany plik i konfiguruje go jako <strong>RetroArch (RetroDB)</strong>, z własnymi ustawieniami i zapisami, oddzielnie od RetroArch, którego już używasz. Następnie przy pierwszym graniu pobiera najlepszy rdzeń dla każdego systemu. W grze wielopłytowej <strong>Następny dysk</strong> działa bez żadnej konfiguracji. Gdy taka gra jest uruchomiona, a w systemach Windows i macOS gdy uruchomiona jest dowolna gra, RetroArch nasłuchuje poleceń RetroDB na porcie sieciowym.</p>
         <p>W przypadku DuckStation, PCSX2 i RPCS3 RetroDB ustawia też dla każdej gry skalę rozdzielczości i proporcje obrazu, w osobnym pliku ustawień gry samego emulatora, oraz to, czy gra uruchamia się na pełnym ekranie. Wartości dla całego systemu zmienisz przyciskiem <strong>Ustawienia</strong> w tabeli przypisań, a dla jednej gry w panelu <strong>Ustawienia emulatora</strong> na jej stronie. Są zapisywane po naciśnięciu Graj. Ustawienie zmienione w samym emulatorze zawsze ma pierwszeństwo: RetroDB od tej pory go nie rusza. Uruchom każdy emulator raz przed graniem, aby utworzył swój folder ustawień.</p>
 
         <h4>Kody</h4>
@@ -619,17 +623,22 @@
             <li>Obrazy i multimedia ze źródeł drugorzędnych, gdy główne źródło ich nie posiada</li>
             <li>Automatyczne uzupełnianie luk między scraperami dla maksymalnego pokrycia</li>
             <li>Tytuł sortowania jest generowany automatycznie z tytułu gry podczas pobierania</li>
+            <li>Źródło jest przeszukiwane tylko wtedy, gdy obsługuje system gry, i tylko w tym systemie: RAWG nie ma Intellivision, więc gry na Intellivision nie są wyszukiwane w RAWG, gdzie pasowałyby tylko do gier z innych platform</li>
+            <li>Gdy AI jest włączona, podaje też oficjalny tytuł gry wydanej w regionie jej ROM-u, a gra otrzymuje tę nazwę, zarówno przy pobieraniu danych jednej gry, jak i przy masowym pobieraniu (zobacz <a href="#ai-fill">Uzupełnianie AI</a>)</li>
         </ul>
 
         <h3>Obsługa multimediów</h3>
         <ul>
-            <li>Pola multimediów (okładka, okładka 3D, zrzuty ekranu, fanart, wideo, instrukcja) <strong>nigdy nie są zastępowane</strong> podczas zwykłego pobierania &mdash; są uzupełniane tylko wtedy, gdy są puste</li>
+            <li>Pola multimediów (okładka, okładka 3D, tył pudełka, zrzuty ekranu, fanart, logo, wideo, instrukcja) <strong>nigdy nie są zastępowane</strong> podczas zwykłego pobierania &mdash; są uzupełniane tylko wtedy, gdy są puste</li>
             <li>Zrzuty ekranu są zawsze <strong>dołączane</strong>, nigdy nie są zastępowane</li>
             <li>Aby ponownie pobrać multimedia, najpierw wyczyść istniejący obraz w oknie edycji, a następnie pobierz ponownie</li>
             <li>Tryb <strong>Pełne ponowne pobranie</strong> nadpisuje tę zasadę i zastępuje wszystko</li>
             <li>Nieaktualne odniesienia do multimediów (plik usunięty, ale nazwa pliku wciąż w bazie danych) są automatycznie czyszczone przed pobieraniem, aby umożliwić pobranie świeżych multimediów</li>
             <li>Pobrane obrazy są automatycznie standaryzowane do docelowych rozmiarów (zobacz <a href="#image-standardization">Standaryzacja obrazów</a>)</li>
         </ul>
+
+        <h3>Zachowanie tytułu</h3>
+        <p>Gdy wpiszesz nowy tytuł w oknie edycji i zapiszesz, pobieranie danych już go nie zmienia, także Pełne ponowne pobranie. Pole <strong>Zachowaj ten tytuł przy pobieraniu danych</strong> w oknie edycji pokazuje, czy tytuł jest zachowany; odznacz je, aby scrapery znów mogły zmienić nazwę gry. <strong>Resetuj</strong> na stronie gry również pozwala scraperom znów zmienić jej nazwę, a <strong>Wyczyść pobrane dane</strong> w sekcji Konserwacja pozostawia zachowane tytuły bez zmian.</p>
 
         <h3>Priorytet scraperów</h3>
         <p>Skonfiguruj, które scrapery uruchamiają się jako pierwsze i które są włączone/wyłączone w <strong>Ustawienia &rarr; Pobieranie metadanych &rarr; Scraper</strong>. Przeciągnij i upuść, aby zmienić kolejność priorytetu. Wyłączone scrapery nie będą próbowane podczas pobierania i nie wywołają ostrzeżeń o statusie API w Panelu głównym.</p>
@@ -646,15 +655,16 @@
         <h3>Rozpoczynanie masowego pobierania</h3>
         <ol>
             <li>Przejdź do dowolnej strony Systemu lub Biblioteki</li>
-            <li>Kliknij <strong>„Wybierz”</strong>, aby przejść do trybu zaznaczania</li>
+            <li>Kliknij <strong>„Wybierz”</strong>, aby przejść do trybu zaznaczania. Narzędzia zaznaczania pojawiają się na pasku u dołu okna.</li>
             <li>Zaznacz gry pojedynczo lub użyj szybkiego wyboru:
                 <ul>
                     <li><strong>Zaznacz wszystkie</strong> &mdash; wszystkie widoczne gry</li>
                     <li><strong>Zaznacz niepobrane</strong> &mdash; tylko gry bez metadanych</li>
                 </ul>
             </li>
-            <li>Wybierz tryb: <strong>Uzupełnij brakujące</strong> lub <strong>Pełne ponowne pobranie</strong></li>
-            <li>Kliknij <strong>„Pobierz zaznaczone”</strong></li>
+            <li>Wybierz tryb: <strong>Uzupełnij braki</strong> lub <strong>Pełne ponowne pobranie</strong></li>
+            <li>Kliknij <strong>„Pobierz dane dla zaznaczonych”</strong></li>
+            <li>Kliknij <strong>„Gotowe”</strong>, aby wyjść z trybu zaznaczania</li>
         </ol>
 
         <h3>Sterowanie</h3>
@@ -731,6 +741,7 @@
             <li><strong>Podobne gry</strong> są zawsze odświeżane (dane AI są bardziej wiarygodne w tym polu)</li>
             <li><strong>Wzajemnie mapowane oceny</strong> &mdash; jeśli znany jest jeden system oceny, puste oceny w innych systemach są automatycznie uzupełniane za pomocą mapowania poziomów dojrzałości</li>
             <li><strong>Tytuł sortowania</strong> jest generowany automatycznie po uzupełnieniu</li>
+            <li><strong>Oficjalny tytuł</strong> &mdash; AI podaje też oficjalny tytuł gry wydanej w regionie jej ROM-u, a gra otrzymuje tę nazwę, w Uzupełnianiu AI i za każdym razem, gdy AI uzupełnia luki podczas pobierania danych. Stara nazwa zostaje zachowana jako tytuł alternatywny. Tytuł wpisany przez Ciebie lub zachowany opcją <strong>Zachowaj ten tytuł przy pobieraniu danych</strong> nigdy nie jest zmieniany</li>
             <li>Pole <strong>Liczba graczy</strong> normalizuje zakresy (np. „1-4” staje się 4)</li>
         </ul>
 
@@ -770,6 +781,7 @@
             <li><strong>Wyklucz (IS NOT)</strong> &mdash; ukryj gry pasujące do wybranej wartości</li>
         </ul>
         <p>Przełączaj między trybem uwzględniania a wykluczania za pomocą przełącznika w oknie filtra.</p>
+        <p>W filtrach Gatunek, Seria, Wydawca, Deweloper, Tryb gry, Perspektywa i Wymiar zaznacz dowolną liczbę wartości i naciśnij <strong>Zastosuj</strong>. Gra jest widoczna, jeśli ma którąkolwiek z zaznaczonych wartości; w trybie wykluczania gra jest ukryta, jeśli ma którąkolwiek z nich. Każda wartość dostaje własny znacznik nad grami, a jego &times; usuwa tylko tę wartość. Filtry Ocena i Źródło przyjmują jedną wartość i działają, gdy tylko ją klikniesz.</p>
 
         <h3>Dostępne filtry</h3>
         <table class="data-table">
@@ -786,17 +798,23 @@
                 <tr><td><strong>Perspektywa</strong></td><td>Pierwszoosobowa, z góry, izometryczna, przewijana z boku</td><td>Tak</td></tr>
                 <tr><td><strong>Wymiar</strong></td><td>2D, 3D</td><td>Tak</td></tr>
                 <tr><td><strong>Ocena</strong></td><td>Ocena wiekowa (pokazuje Twój preferowany system)</td><td>Nie</td></tr>
-                <tr><td><strong>Ma RA</strong></td><td>Gry z obsługą RetroAchievements</td><td>Nie</td></tr>
-                <tr><td><strong>Pokaż bonusowe</strong></td><td>Przełącz widoczność płyt bonusowych</td><td>Nie</td></tr>
+                <tr><td><strong>Ma osiągnięcia</strong></td><td>Gry z obsługą RetroAchievements</td><td>Nie</td></tr>
+                <tr><td><strong>Bez pobranych danych</strong></td><td>Tylko gry, których żaden scraper jeszcze nie uzupełnił</td><td>Nie</td></tr>
+                <tr><td><strong>Płyty bonusowe</strong></td><td>Przełącz widoczność płyt bonusowych</td><td>Nie</td></tr>
             </tbody>
         </table>
 
+        <p>Podświetlony przycisk jest włączony. Aktywne filtry są też widoczne jako znaczniki obok liczby gier; kliknij &times; znacznika, aby go usunąć. <strong>Wyczyść</strong> usuwa je wszystkie. Na telefonie przyciski filtrów otwiera się przyciskiem <strong>Filtry</strong>.</p>
+
         <h3>Opcje sortowania</h3>
+        <p>Wybierz kolejność z listy <strong>Sortuj według</strong>, obok liczby gier:</p>
         <ul>
-            <li><strong>Tytuł</strong> &mdash; alfabetycznie według tytułu sortowania (bez rozróżniania wielkości liter)</li>
-            <li><strong>Data wydania</strong> &mdash; porządek chronologiczny (od najwcześniejszej)</li>
-            <li><strong>Platforma</strong> &mdash; pogrupowane według nazwy systemu</li>
+            <li><strong>Nazwa</strong> &mdash; alfabetycznie według tytułu sortowania (bez rozróżniania wielkości liter)</li>
+            <li><strong>Najnowsze wydanie</strong> / <strong>Najstarsze wydanie</strong> &mdash; według daty wydania</li>
+            <li><strong>Ocena krytyków</strong> / <strong>Ocena użytkowników</strong> &mdash; od najwyższej</li>
+            <li><strong>Ostatnio dodane</strong> &mdash; najpierw gry dodane do biblioteki jako ostatnie</li>
         </ul>
+        <p>Gry bez daty lub oceny są na końcu. Wyczyść zachowuje wybrane sortowanie.</p>
 
         <h3>Nawigacja alfabetyczna</h3>
         <p>Przeskocz do gier zaczynających się na daną literę. Litery bez pasujących gier są wyszarzone. Cyfry i symbole są grupowane pod <strong>#</strong>.</p>
@@ -835,6 +853,8 @@
         <p>Kliknij odnośnik tytułu gry lub przejdź przez ścieżkę nawigacji, aby zobaczyć pełną stronę szczegółów gry. Dodatkowe funkcje na pełnej stronie obejmują:</p>
         <ul>
             <li><strong>Nagłówek z tłem fanart</strong> z nawigacją w postaci ścieżki</li>
+            <li><strong>Logo gry</strong> &mdash; logo gry jest widoczne nad jej tytułem, który pozostaje tekstem. Gra bez okładki pokazuje logo w miejscu pudełka. Pobieranie danych uzupełnia loga z ES-DE, ScreenScraper, TheGamesDB, IGDB i Steam; masowe pobieranie z opcją <strong>Uzupełnij braki</strong> uzupełnia je dla gier pobranych wcześniej</li>
+            <li><strong>Tył pudełka</strong> &mdash; gdy gra ma tył pudełka, na okładce jest przycisk <strong>Tył</strong>. Naciśnij go, aby zobaczyć tył, i naciśnij <strong>Przód</strong>, aby wrócić. Kliknij tył, aby go powiększyć. Pobieranie danych uzupełnia tyły z ES-DE, ScreenScraper i TheGamesDB za każdym razem, gdy pobierane są dane gry</li>
             <li><strong>Odznaki importu platformy</strong> &mdash; pokazuje Import CLZ, Import Steam, Import Xbox lub Import PSN z logotypami platform, gdy ma to zastosowanie</li>
             <li><strong>Wskaźnik płyty bonusowej</strong> &mdash; pokazuje odznakę i odnośnik „Część:” do gry nadrzędnej z miniaturą</li>
             <li><strong>Przycisk usuwania</strong> &mdash; usuwa grę z bazy danych (z potwierdzeniem)</li>
@@ -851,7 +871,7 @@
             <li><strong>Oceny wiekowe</strong> &mdash; wszystkie 8 systemów ocen z oficjalnymi obrazami ocen i automatycznym mapowaniem krzyżowym. Zmiana jednej oceny automatycznie uzupełnia puste oceny w innych systemach.</li>
             <li><strong>Oceny</strong> &mdash; ocena krytyków, ocena użytkowników</li>
             <li><strong>Opis</strong> &mdash; tekst opisu gry</li>
-            <li><strong>Własne obrazy</strong> &mdash; prześlij niestandardową okładkę (2D), okładkę 3D i fanart. Wyczyść istniejące obrazy, aby umożliwić ponowne pobieranie.</li>
+            <li><strong>Własne obrazy</strong> &mdash; prześlij niestandardową okładkę (2D), okładkę 3D, tył pudełka, fanart i logo. Wyczyść istniejące obrazy, aby umożliwić ponowne pobieranie.</li>
             <li><strong>Importuj pudełko 3D</strong> &mdash; również w sekcji Własne obrazy. Zapisuje się od razu, bez Zapisz zmiany. Wybierz plik <code>.box.json</code> zapisany przez Slipcase razem z jego obrazami (można wybrać cały folder). Slipcase 1.4.0 lub nowszy zapisuje ten plik obok każdego wyeksportowanego obrazu. RetroDB zachowuje ścianki pudełka dla tej gry; kliknięcie okładki pokazuje wtedy pudełko w 3D, które można przeciągać lub obracać klawiszami strzałek. Twoja okładka 3D się nie zmienia. Gdy gra ma już ścianki, RetroDB zapyta przed ich zastąpieniem, a <strong>Usuń</strong> je kasuje.</li>
             <li><strong>Wideo / zwiastun</strong> &mdash; prześlij lub połącz zwiastun wideo</li>
         </ul>
@@ -1027,8 +1047,9 @@
             <li>Skonfiguruj swój klucz Steam Web API i Steam ID w Ustawieniach</li>
             <li>Przejdź do Import gier &rarr; zakładka <strong>Steam</strong></li>
             <li>Kliknij <strong>„Pobierz bibliotekę”</strong>, aby pobrać swoje gry ze Steam</li>
-            <li>Wybierz gry do zaimportowania (duplikaty są wykrywane automatycznie)</li>
+            <li>Wybierz gry do zaimportowania Gra, która jest już na Twojej liście Windows pod tą samą nazwą, zostaje połączona ze Steam, a nie dodana drugi raz</li>
             <li>Zaimportowane gry są oznaczane ich Steam App ID do śledzenia osiągnięć</li>
+            <li>W tle każda gra uzupełnia puste dane ze swojej strony w sklepie Steam, a Twoje osiągnięcia i czas gry są pobierane. Strona gry pokazuje Twój czas gry. Pobierz dane gry, aby uzyskać gatunek i datę wydania: te ze Steam są zbyt ogólne albo są datą pojawienia się gry na Steam</li>
         </ol>
 
         <h3>Import Xbox</h3>
@@ -1432,8 +1453,12 @@
         <p>Tylko dla edytorów. RetroDB sugeruje gry, które wyglądają na jedną grę z różnych regionów: tę samą grę w IGDB lub ScreenScraper, ten sam tytuł z innym tagiem regionu albo pasującą nazwę regionalną. Odznacz każdą grę, która nie pasuje, i kliknij <strong>„Połącz zaznaczone gry”</strong> albo kliknij <strong>„Nie wersje”</strong>, aby ta grupa nigdy więcej nie była sugerowana. Nic nie zostanie połączone, dopóki tego nie potwierdzisz. Najpierw uruchom <strong>Uzupełnij tytuły alternatywne</strong> w sekcji Konserwacja: uzupełnia to identyfikatory IGDB i ScreenScraper, z których korzystają sugestie.</p>
         <p><em>Brak zależności zewnętrznych</em></p>
 
+        <h3>MAME Names</h3>
+        <p>Tylko dla administratorów. MAME znajduje grę po dokładnej nazwie pliku, więc zachowaj krótkie nazwy, takie jak dyger.zip. Wybierz listę MAME (plik DAT pasujący do Twoich ROM-ów lub wynik polecenia <code>mame -listxml</code>) i naciśnij <strong>„Nadaj nazwy grom MAME”</strong>. Każda gra dostaje swoją prawdziwą nazwę, rok i producenta, a pliki pozostają nietknięte. Tytuł, który zmieniłeś samodzielnie, zostaje zachowany. Dodaj plik <code>catver.ini</code>, aby filtrować listę według kategorii. Zestawy BIOS są ukryte na liście, ale zostają na dysku, ponieważ potrzebują ich inne gry. Potem pobierz dane, aby scrapery mogły znaleźć każdą grę.</p>
+        <p><em>Wymaga: pliku listy MAME</em></p>
+
         <h3>Masowe uzupełnianie AI</h3>
-        <p>Tylko dla edytorów. Karta <strong>Uzupełnij puste pola przez AI</strong> uruchamia Uzupełnianie AI dla całego systemu, dla pól, które włączysz (zob. Uzupełnianie AI &rarr; Wiele gier naraz).</p>
+        <p>Tylko dla edytorów. Uruchamia Uzupełnianie AI dla całego systemu, dla pól, które włączysz (zob. Uzupełnianie AI &rarr; Wiele gier naraz).</p>
         <p><em>Wymaga: dostawcy AI w <strong>Ustawienia &rarr; Pobieranie danych</strong></em></p>
 
         <h3>Organizator gier wielopłytowych</h3>
@@ -1454,7 +1479,7 @@
         <p><em>Brak zależności zewnętrznych (skalowanie AI oparte na Pythonie)</em></p>
 
         <h3>Uzupełnianie tytułów alternatywnych</h3>
-        <p>Przeszukaj bibliotekę w poszukiwaniu gier, których pole <strong>tytuły alternatywne</strong> jest puste, i uzupełnij je z IGDB / TGDB / ScreenScraper. Przydatne po zaimportowaniu dużego katalogu lub migracji z innego narzędzia, które nie przechowywało tytułów regionalnych/japońskich/podtytułów. Działa w tle; postęp jest pokazany na karcie narzędzia.</p>
+        <p>Przejdź przez każdą grę z pobranymi danymi i pobierz jej <strong>tytuły alternatywne</strong> z IGDB / TGDB / ScreenScraper, oznaczone regionem, z którego pochodzi każda nazwa. Nazwy, które już masz, otrzymują swój region. Przydatne po zaimportowaniu dużego katalogu lub migracji z innego narzędzia, które nie przechowywało tytułów regionalnych/japońskich/podtytułów. Działa w tle; postęp jest pokazany na karcie narzędzia.</p>
         <p><em>Wymaga co najmniej jednego klucza API scrapera (IGDB / TGDB / ScreenScraper)</em></p>
 
         <h3>Napraw regiony okładek i instrukcji</h3>
@@ -1463,6 +1488,18 @@
 
         <h3>Napraw regiony na podstawie nazw plików</h3>
         <p>Nazwa pliku ROM mówi, która to kopia, więc znacznik taki jak <code>(USA)</code> decyduje teraz o regionie i AI nie jest pytane. Starsze pobrania pozwalały AI zgadywać jako pierwszemu, więc plik <code>(USA)</code> mógł być oznaczony jako Japonia. To narzędzie nadaje tym grom region z nazwy pliku. Zmienia tylko regiony uzupełnione przez AI, także taki, który później poprawiłeś ręcznie tak, że różni się od nazwy pliku.</p>
+        <p><em>Brak zależności zewnętrznych</em></p>
+
+        <h3>Uporządkuj daty wydania</h3>
+        <p>Starsze pobrania zapisywały datę, z której znany był tylko rok, jako 1 stycznia lub 31 grudnia, tak jakby dzień był znany. To narzędzie skraca te daty do roku lub miesiąca, aby późniejsze pobranie mogło uzupełnić prawdziwą datę. Data, której nie uzupełniło żadne pobranie, pozostaje bez zmian.</p>
+        <p><em>Brak zależności zewnętrznych</em></p>
+
+        <h3>Sprawdź zapisane czasy gry</h3>
+        <p>Starsze wyszukiwania mogły zapisać czas gry kontynuacji albo innej gry o tej samej nazwie na innym systemie. To narzędzie wysyła takie dopasowania na stronę przeglądu HowLongToBeat i żadna gra się nie zmienia, dopóki nie zdecydujesz. Tam Zatwierdź zachowuje czas, a Odrzuć go czyści. Niektóre dopasowania są w porządku: HowLongToBeat nie wymienia każdego systemu, na który gra została wydana.</p>
+        <p><em>Brak zależności zewnętrznych</em></p>
+
+        <h3>Uporządkuj gatunki, perspektywy i tryby</h3>
+        <p>Źródła nazywają to samo różnie, więc jeden gatunek mógł występować jako RPG i jako Role Playing Game, a filtr pomijał gry. Pobieranie danych używa teraz jednego zestawu nazw, tych z list filtrów. To narzędzie przekształca to, co zapisały starsze pobrania. Słowa, które nie mają miejsca na tych listach, takie jak Arcade czy Indie, są usuwane. Słowa należące do innego pola, takie jak FPV, są tam przenoszone, jeśli to pole jest puste. Liczba graczy sprzeczna z trybami gry jest poprawiana, a stare liczby 1 z RAWG są czyszczone, aby mogła je uzupełnić prawdziwa liczba. Wartość, którą sam dodałeś do listy rozwijanej, zostaje. Uruchom potem masowe pobieranie z opcją <strong>Uzupełnij braki</strong>, aby uzupełnić to, co pozostało puste.</p>
         <p><em>Brak zależności zewnętrznych</em></p>
 
         <h3>Wyczyść obrazy RAWG z okładek</h3>
@@ -1542,6 +1579,7 @@
                 <tr><td>Kontrolery</td><td>1280px najdłuższej krawędzi</td><td>Zachowuje przezroczystość (RGBA)</td></tr>
                 <tr><td>Sprzęt</td><td>1280px najdłuższej krawędzi</td><td>Zachowuje przezroczystość (RGBA)</td></tr>
                 <tr><td>Fanart</td><td>Pomijany</td><td>Nie jest standaryzowany (pozostaje w oryginalnym rozmiarze)</td></tr>
+                <tr><td>Logo</td><td>Pomijane</td><td>Pozostaje w oryginalnym rozmiarze; zachowuje przezroczyste tło (zapisywane jako PNG, gdy format to JPEG)</td></tr>
             </tbody>
         </table>
 
