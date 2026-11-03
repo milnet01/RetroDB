@@ -10554,7 +10554,10 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.224 Game logos on the game page, in place of a missing box, and in the play menu (feature, M).
-- **Status**: todo
+- **Resolution** (2026-11-03): Shipped 2026-11-03 in 5d0e8b6 (3.35.4, unreleased). Game page and Edit
+  window only; the play screen is queued as its own item. Spec:
+  docs/specs/PASS-59-224-game-logos.md.
+- **Status**: shipped (2026-11-03). The play screen is PASS-59-228.
 - **Source**: user, 2026-11-02.
 - **Decided** (user, 2026-11-02): in v4.0.0, after the scraper fixes. Show the logo on the game page above the title text, as a stand-in for a missing box, and on a full-screen play or loading screen. Whether such a screen exists is unchecked. The title stays as text, because a logo can be hard to read.
 - **Sources**: ES-DE `marquees/` (local, about 5,290 files counted 2026-10-31). ScreenScraper `wheel` and `wheel-hd`. TheGamesDB `clearlogo`, from its docs only, no sample. IGDB artwork types 5, 6 and 7, which 69 of 1,672 Mega Drive, 78 of 1,996 SNES and 159 of 4,314 PS2 games have (asked live 2026-11-02).
@@ -10606,6 +10609,25 @@ the cover zoom in Firefox before being reverted for the local fix.
   Still to do when worthwhile: arcadeDB and libretro-thumbnails as
   sources, after reading their terms. A scrape of a named game through
   every source has not been run.
+
+---
+
+#### Pass 59.228 A full-screen play screen that shows the game's logo while it starts (feature, M).
+- **Target**: when you press Play, a full-screen screen shows the game's logo while the emulator starts.
+- **Why**: PASS-59-224 asked for the logo on a play or loading screen too. None exists: `static/js/game-launch.js::launchGameImpl` relabels the Play button and shows toasts (PASS-59-224 spec §3, §9). Split out when PASS-59-224 shipped, as the user asked (2026-11-03).
+- **Needs**: a design first: when it shows, how it closes, what it shows for a game with no logo.
+- **Status**: todo.
+- **Source**: user, 2026-11-02.
+
+---
+
+#### Pass 59.229 Some tests pass or fail by run order: they read removed_screenshots from a test database nothing has migrated (test, S).
+- **Target**: every test file passes when run alone and in any order.
+- **Why**: the push gate's docs check runs in random order and failed once on `tests/test_pass59_217_identify_by_file.py::test_the_history_says_the_file_matched`. That test fails when its file runs alone, before PASS-59-224 as well as after. ScreenScraper merge tests in `test_pass59_216_extra_data.py`, `test_metadata_merger.py` and `test_scrape_fill_only.py` fail the same way alone; the full suite passes.
+- **Cause (likely)**: `get_existing_screenshot_hashes(..., game_id)` reads `removed_screenshots` (migration 035) from the session test database, which has its tables only once some test has imported `app`.
+- **Fix idea**: migrate the session test database in `tests/conftest.py`, or point the affected tests at a migrated fixture.
+- **Status**: todo.
+- **Source**: build of PASS-59-224, 2026-11-03.
 
 ## Done index
 
