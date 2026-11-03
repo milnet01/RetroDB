@@ -10653,7 +10653,11 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Why**: the push gate's docs check runs in random order and failed once on `tests/test_pass59_217_identify_by_file.py::test_the_history_says_the_file_matched`. That test fails when its file runs alone, before PASS-59-224 as well as after. ScreenScraper merge tests in `test_pass59_216_extra_data.py`, `test_metadata_merger.py` and `test_scrape_fill_only.py` fail the same way alone; the full suite passes.
 - **Cause (likely)**: `get_existing_screenshot_hashes(..., game_id)` reads `removed_screenshots` (migration 035) from the session test database, which has its tables only once some test has imported `app`.
 - **Fix idea**: migrate the session test database in `tests/conftest.py`, or point the affected tests at a migrated fixture.
-- **Status**: todo.
+- **Shipped** (2026-11-03, e915e1f): a session fixture in
+  `tests/conftest.py` migrates the test database before any test runs.
+  The four files that failed alone now pass alone; full suite and
+  `ci_local.sh --docs` pass.
+- **Status**: done.
 - **Source**: build of PASS-59-224, 2026-11-03.
 
 ---
