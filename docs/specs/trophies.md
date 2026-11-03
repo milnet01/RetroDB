@@ -168,6 +168,10 @@ Also:
 - PSN: `routes/trophies.py::create_psn_client` uses cached tokens while the
   refresh token is unexpired, re-saves them, and otherwise falls back to the
   NPSSO. `/api/psn/token-info` reports expiry, never the tokens.
+- PSN: a new NPSSO replaces the cached session. `/api/psn/save-npsso` signs
+  in with it, ignoring the cache, and saves it only if Sony accepts it;
+  `/api/users/settings` drops the cache when the NPSSO changes
+  (`tests/test_psn_new_npsso.py`).
 - Xbox: `scrape_xbox.get_authenticated_session` refreshes a stale token and
   clears the stored tokens when the refresh fails. The OAuth `state` is bound
   to the user who started sign-in.

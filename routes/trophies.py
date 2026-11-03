@@ -125,7 +125,7 @@ def _clear_psn_tokens(user_id=None):
     logger.debug("PSN token cache cleared (user=%d)", uid)
 
 
-def create_psn_client(npsso, user_id=None, allow_npsso_fallback=True):
+def create_psn_client(npsso, user_id=None, allow_npsso_fallback=True, use_cache=True):
     """Create an authenticated PSNAWP client with token caching.
 
     Tries cached refresh tokens first (valid ~2 months). Falls back to NPSSO
@@ -140,6 +140,9 @@ def create_psn_client(npsso, user_id=None, allow_npsso_fallback=True):
             used — an expired or failed cache returns an error instead of
             pinging Sony with the (possibly stale) NPSSO. The keep-alive passes
             False so it never pings an already-expired session.
+        use_cache: When False, sign in with this NPSSO and ignore the cached
+            session, which a successful sign-in then replaces and a failed one
+            leaves alone. Saving a new NPSSO passes False (PASS-59-111).
 
     Returns:
         (psnawp, None) on success, (None, error_string) on failure.
@@ -151,7 +154,7 @@ def create_psn_client(npsso, user_id=None, allow_npsso_fallback=True):
         return None, "PSN NPSSO cookie not configured"
 
     # Try cached tokens first
-    cached_tokens = _load_psn_tokens(user_id)
+    cached_tokens = _load_psn_tokens(user_id) if use_cache else None
     if cached_tokens:
         try:
             import time as _time
@@ -1859,25 +1862,25 @@ def api_psn_save_npsso():
     if not npsso:
         return error(_('No NPSSO token provided'), 400)
 
-    # Save to user settings
     from services.database import get_request_db
     db = get_request_db()
-    db.execute("UPDATE user_settings SET psn_npsso = ?, psn_username = ? WHERE user_id = ?",
-               (npsso, username, g.user['id']))
-    db.commit()
+    row = db.execute("SELECT psn_npsso FROM user_settings WHERE user_id = ?",
+                     (g.user['id'],)).fetchone()
+    is_new = not row or row[0] != npsso
 
-    # Test the connection
-    psnawp, psn_error = create_psn_client(npsso)
+    # A new token signs in by itself; otherwise the cached session would
+    # answer and the token would go unused until it expired. Nothing is saved
+    # until the sign-in works, so a refused token leaves a working one alone
+    # (PASS-59-111).
+    psnawp, psn_error = create_psn_client(npsso, use_cache=not is_new)
     if psn_error:
         return error(psn_error, 400)
 
     try:
         online_id = psnawp.me().online_id
-        # Update username if we got it from PSN
-        if online_id and not username:
-            db.execute("UPDATE user_settings SET psn_username = ? WHERE user_id = ?",
-                       (online_id, g.user['id']))
-            db.commit()
+        db.execute("UPDATE user_settings SET psn_npsso = ?, psn_username = ? WHERE user_id = ?",
+                   (npsso, username or online_id or '', g.user['id']))
+        db.commit()
         return success(username=online_id or username)
     except Exception as e:
         # PASS-59-114 — the exception text stays in the log, not the reply.
