@@ -10680,7 +10680,7 @@ the cover zoom in Firefox before being reverted for the local fix.
 
 ---
 
-#### Pass 59.231 The 3D box viewer draws a real case shape: rounded corners and rounded edges, hinge included (FEATURE, M).
+#### Pass 59.231 The 3D box viewer draws a real case shape: rounded corners and edges, a raised lip, a side seam (FEATURE, M).
 - **Status**: todo; waits for Slipcase's SLIP-0125 spec (PS5 first).
 - **Why**: the user chose real shape plus painted faces, and put it
   in v4.0.0 (user, 2026-11-03).
@@ -10701,6 +10701,12 @@ the cover zoom in Firefox before being reverted for the local fix.
   at the hinge. The lip stays painted in the face pictures. Unblocked.
 - **Decided** (user, 2026-11-03): no raised lip as a 3D shape; it
   shows only in the face pictures. Build to SLIP-0125 § 4.1.
+- **Decided again** (user, 2026-11-03, later): the real lip shape,
+  replacing the no-lip answer above. SLIP-0125 § 4.1 was amended: new
+  optional `lip_width_mm`, `lip_height_mm`, `seam_width_mm`,
+  `seam_depth_mm` (missing means 0); no lip or seam on the spine side;
+  the solid is concave, so check depth sorting in the viewer. Slipcase
+  no longer paints the lip's inner wall into the pictures.
 
 ---
 
