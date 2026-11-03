@@ -7316,6 +7316,8 @@ were corrected in `2836bc3` and are not repeated here.
   docs/psn-npsso.env. A session then printed that file, so the new
   token is exposed in a conversation log. Get one more token, enter
   it in Settings and in that file, then check the app signs in.
+- **Progress** (2026-11-03): still open; the user chose to get the
+  new token later.
 
 ---
 
@@ -9205,6 +9207,9 @@ were corrected in `2836bc3` and are not repeated here.
   to their pictures; Remove and re-import update the zoom without a
   reload. **Still owed**: a real mouse drag by eye (only keys were
   driven); the 20 locale translations of the two new strings.
+- **Progress** (2026-11-03): the user dragged the box with a real
+  mouse and it turns correctly. Still owed: the 20 locale
+  translations of the two new strings.
 
 ---
 
@@ -10636,6 +10641,10 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Needs**: a design first: when it shows, how it closes, what it shows for a game with no logo.
 - **Status**: todo.
 - **Source**: user, 2026-11-02.
+- **Decided** (user, 2026-11-03): the game's logo, large, on its
+  background art. It closes by itself once the emulator opens; Esc or
+  a click closes it sooner. A game with no logo shows its title in
+  big text instead. Design done; ready to build.
 
 ---
 
