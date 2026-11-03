@@ -34,6 +34,7 @@ DIRECTORIES = (
     'static/images/ratings',
     'static/images/fanart',
     'static/images/game_logos',
+    'static/images/boxart_back',
     'static/videos',
     'static/images/manuals',
     'static/images/trophies',

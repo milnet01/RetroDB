@@ -177,6 +177,7 @@ def test_fallback_cover_stops_a_later_source_taking_the_field(library, later_sou
 @pytest.mark.parametrize('field,folder,source,copy', [
     ('fanart', 'fanart', 'fanart/Fatal Run (USA).png', 'images/fanart/1_esde_fanart.png'),
     ('game_logo', 'game_logos', 'marquees/Fatal Run (USA).png', 'images/game_logos/1_esde_logos.png'),
+    ('boxart_back', 'boxart_back', 'backcovers/Fatal Run (USA).png', 'images/boxart_back/1_esde_backs.png'),
     ('video', 'videos', 'videos/Fatal Run (USA).mp4', 'static/videos/1_esde.mp4'),
     ('manual', 'manuals', 'manuals/Fatal Run (USA).pdf', 'images/manuals/1_esde.pdf'),
 ])
@@ -337,3 +338,15 @@ def test_a_marquee_becomes_the_logo(library, later_source):
 
     assert library.row()['game_logo'] == '1_esde_logos.png'
     assert os.path.exists(library.image('game_logos', '1_esde_logos.png'))
+
+
+def test_a_backcover_becomes_the_box_back(library, later_source):
+    """PASS-59-225 — ES-DE's backcovers folder fills the back of the box."""
+    library.gamelist(FATAL_RUN)
+    _file(os.path.join(library.media, 'backcovers', 'Fatal Run (USA).png'))
+    library.add_game()
+
+    _scrape()
+
+    assert library.row()['boxart_back'] == '1_esde_backs.png'
+    assert os.path.exists(library.image('boxart_back', '1_esde_backs.png'))

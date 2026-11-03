@@ -802,11 +802,9 @@ class BulkScrapeJob:
                 logger.warning(f"Pre-fetch failed, will fall back to per-game queries: {e}")
 
         try:
-            # Load scraper settings once before the loop. Inside the try: a
+            # Match settings are read once, before the loop. Inside the try: a
             # raise here used to kill the thread with `running` still True,
             # the job_queue row 'running' and the singleton lock held.
-            scraper_settings = load_scraper_settings()
-            enabled_scrapers = scraper_settings.get('enabled', {})
             match_settings = get_match_settings()
 
             for i, game_id in enumerate(_game_ids):
@@ -816,6 +814,10 @@ class BulkScrapeJob:
                         logger.info(f"Bulk scrape cancelled at game {i+1}/{len(_game_ids)}")
                         break
                     self.current_index = i
+
+                # Read per game, as the search does, so a source switched
+                # off in Settings mid-run is off from the next game on.
+                enabled_scrapers = load_scraper_settings().get('enabled', {})
 
                 # Persist progress every 10 items or 30 seconds
                 _now = time.time()

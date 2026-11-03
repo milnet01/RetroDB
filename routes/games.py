@@ -515,6 +515,7 @@ def game_detail(game_id):
                     boxart_3d_filename = game['boxart_3d'] if game['boxart_3d'] else ''
                     fanart_filename = game['fanart']
                     logo_filename = game['game_logo'] or ''
+                    back_filename = game['boxart_back'] or ''
                     screenshots = game['screenshots'] or ''
                     video_filename = game['video'] if game['video'] else ''
 
@@ -530,6 +531,9 @@ def game_detail(game_id):
                     if request.form.get('remove_game_logo') == '1' and logo_filename:
                         remove_media_file(logo_filename, 'game_logo')
                         logo_filename = ''
+                    if request.form.get('remove_boxart_back') == '1' and back_filename:
+                        remove_media_file(back_filename, 'boxart_back')
+                        back_filename = ''
                     if request.form.get('remove_video') == '1' and video_filename:
                         remove_media_file(video_filename, 'video')
                         video_filename = ''
@@ -547,7 +551,7 @@ def game_detail(game_id):
                             return current
                         if current and current != uploaded and not query(
                                 f"SELECT 1 FROM games WHERE "
-                                f"{safe_column(media_type, ('boxart', 'boxart_3d', 'fanart', 'game_logo'))} = ? AND id != ?",
+                                f"{safe_column(media_type, ('boxart', 'boxart_3d', 'boxart_back', 'fanart', 'game_logo'))} = ? AND id != ?",
                                 (current, game_id), one=True):
                             replaced.append((current, media_type))
                         return uploaded
@@ -556,6 +560,7 @@ def game_detail(game_id):
                     boxart_3d_filename = _upload('custom_boxart_3d', 'boxart_3d', 'custom_3d', boxart_3d_filename)
                     fanart_filename = _upload('custom_fanart', 'fanart', 'custom_fanart', fanart_filename)
                     logo_filename = _upload('custom_game_logo', 'game_logo', 'custom_logo', logo_filename)
+                    back_filename = _upload('custom_boxart_back', 'boxart_back', 'custom_back', back_filename)
 
                     video_upload = request.files.get('custom_video')
                     uploaded = save_upload(video_upload, os.path.join(config.STATIC_PATH, 'videos'), game_id, 'custom', ALLOWED_VIDEO_EXT)
@@ -620,6 +625,7 @@ def game_detail(game_id):
                             boxart_3d = NULLIF(?, ''),
                             fanart = NULLIF(?, ''),
                             game_logo = NULLIF(?, ''),
+                            boxart_back = NULLIF(?, ''),
                             screenshots = NULLIF(?, ''),
                             video = NULLIF(?, ''),
                             emulator_override_id = ?,
@@ -635,7 +641,7 @@ def game_detail(game_id):
                         esrb_rating, pegi_rating, cero_rating, usk_rating, acb_rating, fpb_rating, grac_rating, classind_rating,
                         china_rating,
                         save_type, similar_games, edition, description,
-                        boxart_filename, boxart_3d_filename, fanart_filename, logo_filename,
+                        boxart_filename, boxart_3d_filename, fanart_filename, logo_filename, back_filename,
                         screenshots, video_filename,
                         emulator_override_id, launch_args_override,
                         edit_title_lock(game['title'], game['title_locked'], title,
@@ -677,7 +683,7 @@ def game_detail(game_id):
                             china_rating = NULL,
                             players = NULL, modes = NULL, description = NULL,
                             boxart = NULL, boxart_3d = NULL, screenshots = NULL,
-                            fanart = NULL, game_logo = NULL, video = NULL, manual = NULL,
+                            fanart = NULL, game_logo = NULL, boxart_back = NULL, video = NULL, manual = NULL,
                             region = NULL, franchise = NULL, similar_games = NULL,
                             playtime_estimate = NULL, controller_support = NULL, save_type = NULL,
                             scrape_history = NULL, critic_score = NULL, critic_score_count = NULL,
@@ -986,6 +992,7 @@ def api_game_detail(game_id):
             'boxart_3d': game['boxart_3d'],
             'fanart': game['fanart'],
             'game_logo': game['game_logo'],
+            'boxart_back': game['boxart_back'],
             'screenshots': screenshots[:5],
             'video': game['video'],
             'esrb_rating': game['esrb_rating'],

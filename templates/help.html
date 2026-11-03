@@ -629,7 +629,7 @@
 
         <h3>Media Handling</h3>
         <ul>
-            <li>Media fields (boxart, 3D boxart, screenshots, fanart, logo, video, manual) are <strong>never replaced</strong> during normal scraping &mdash; only filled when empty</li>
+            <li>Media fields (boxart, 3D boxart, box back, screenshots, fanart, logo, video, manual) are <strong>never replaced</strong> during normal scraping &mdash; only filled when empty</li>
             <li>Screenshots are always <strong>appended</strong>, never replaced</li>
             <li>To re-download media, clear the existing image in the edit modal first, then re-scrape</li>
             <li><strong>Full Re-scrape</strong> mode overrides this and replaces everything</li>
@@ -854,6 +854,7 @@
         <ul>
             <li><strong>Fanart background header</strong> with breadcrumb navigation</li>
             <li><strong>Game logo</strong> &mdash; The game's logo shows above its title, which stays as text. A game with no box art shows its logo in the box's place. Scraping fills logos from ES-DE, ScreenScraper, TheGamesDB, IGDB and Steam; a bulk scrape with <strong>Fill Missing</strong> fills them for games scraped before</li>
+            <li><strong>Back of the box</strong> &mdash; When a game has the back of its box, a <strong>Back</strong> button sits on the cover. Press it to see the back, and press <strong>Front</strong> to return. Click the back to zoom it. Scraping fills backs from ES-DE, ScreenScraper and TheGamesDB whenever a game is scraped</li>
             <li><strong>Platform import badges</strong> &mdash; Shows CLZ Import, Steam Import, Xbox Import, or PSN Import with platform logos when applicable</li>
             <li><strong>Bonus disc indicator</strong> &mdash; Shows a badge and "Part of:" link to the parent game with thumbnail</li>
             <li><strong>Delete button</strong> &mdash; Remove the game from the database (with confirmation)</li>
@@ -870,7 +871,7 @@
             <li><strong>Age Ratings</strong> &mdash; All 8 rating systems with official rating images and automatic cross-mapping. Changing one rating auto-fills empty ratings in other systems.</li>
             <li><strong>Scores</strong> &mdash; Critic score, user score</li>
             <li><strong>Description</strong> &mdash; Game description text</li>
-            <li><strong>Custom Images</strong> &mdash; Upload custom boxart (2D), 3D boxart, fanart and a logo. Clear existing images to allow re-scraping.</li>
+            <li><strong>Custom Images</strong> &mdash; Upload custom boxart (2D), 3D boxart, the back of the box, fanart and a logo. Clear existing images to allow re-scraping.</li>
             <li><strong>Import 3D box</strong> &mdash; Also in Custom Images. This saves straight away, without Save Changes. Pick the <code>.box.json</code> file Slipcase saved, together with its pictures (picking the whole folder is fine). Slipcase 1.4.0 or newer saves this file beside each exported picture. RetroDB keeps the box's faces for this game; clicking the cover then shows the box in 3D, to drag or turn with the arrow keys. Your 3D boxart picture is not changed. A game that already has faces asks before replacing them, and <strong>Remove</strong> deletes them.</li>
             <li><strong>Video / Trailer</strong> &mdash; Upload or link a video trailer</li>
         </ul>

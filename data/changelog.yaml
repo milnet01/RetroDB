@@ -7,6 +7,12 @@
     label: 'Games now get their logo: scraping saves it from ES-DE, ScreenScraper, TheGamesDB, IGDB and Steam, and the game page shows it above the title, or in place of a missing box. You can upload or delete a logo in the Edit window. Run a bulk scrape with Fill Missing to fill logos for games you scraped before'
   - type: fix
     label: IGDB no longer gives a game its logo as the page background
+  - type: feature
+    label: 'Games now get the back of their box: scraping saves it from ES-DE, ScreenScraper and TheGamesDB, and a Back button on the game page''s cover shows it. Click the back to zoom it. You can upload or delete a back in the Edit window. Backs fill whenever a game is scraped; Fill Missing does not scrape a game again only for its back'
+  - type: fix
+    label: A game with no front cover on TheGamesDB no longer gets the back of the box as its cover
+  - type: fix
+    label: If you switch a scraper off in Settings while a bulk scrape is running, the count of games not found is now right from the next game. Before, a game could be counted as stopped instead
   - type: enhancement
     label: On a system with no emulator set up, the Play button is greyed out. Point at it to see why, or click it for a box that says no emulator is set up. Before, a line of text sat beside the button
 - version: 3.35.3

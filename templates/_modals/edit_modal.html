@@ -412,6 +412,17 @@
                             <input type="hidden" name="remove_game_logo" value="" />
                             {% endif %}
                         </div>
+                        <div class="edit-field">
+                            <label for="custom_boxart_back">{{ _('Custom Box Back') }}</label>
+                            <input id="custom_boxart_back" type="file" name="custom_boxart_back" accept="image/*" />
+                            {% if game.boxart_back %}
+                            <span class="current-file">{% trans filename=game.boxart_back %}Current: {{ filename }}{% endtrans %}</span>
+                            <button type="button" class="btn btn-sm btn-danger" style="margin-top: 8px;" data-on-click="confirmRemoveMedia" data-args='["remove_boxart_back", "🗑️ Delete Box Back", "Delete the back of the box? You can re-scrape to get a new one."]'>
+                                🗑️ {{ _('Delete Box Back') }}
+                            </button>
+                            <input type="hidden" name="remove_boxart_back" value="" />
+                            {% endif %}
+                        </div>
                         <div class="edit-field full-width">
                             <label for="custom_screenshots">{{ _('Add Screenshots') }}</label>
                             <input id="custom_screenshots" type="file" name="custom_screenshots" accept="image/*" multiple />

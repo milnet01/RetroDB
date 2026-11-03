@@ -635,7 +635,7 @@ def source_game_id(data):
         return None
 
 
-_KEPT_MEDIA_FIELDS = ('boxart', 'boxart_3d', 'fanart', 'game_logo', 'manual', 'video', 'screenshots')
+_KEPT_MEDIA_FIELDS = ('boxart', 'boxart_3d', 'boxart_back', 'fanart', 'game_logo', 'manual', 'video', 'screenshots')
 
 
 def _seed_kept_media(metadata, game, stale_fields):
@@ -738,6 +738,7 @@ def _save_game_row(c, metadata, scrape_history_json, db_game_id, mark_scraped=Tr
             screenshots = COALESCE(?, screenshots),
             fanart = COALESCE(?, fanart),
             game_logo = COALESCE(?, game_logo),
+            boxart_back = COALESCE(?, boxart_back),
             video = COALESCE(?, video),
             manual = COALESCE(?, manual),
             region = COALESCE(?, region),
@@ -786,6 +787,7 @@ def _save_game_row(c, metadata, scrape_history_json, db_game_id, mark_scraped=Tr
         metadata['screenshots'],
         metadata['fanart'],
         metadata.get('game_logo'),
+        metadata.get('boxart_back'),
         metadata['video'],
         metadata['manual'],
         metadata['region'],
@@ -1219,7 +1221,7 @@ def _merge_esde(metadata, details, result, db_game_id, system_folder,
     from scraper.scrape_esde import copy_esde_media
     copied = copy_esde_media(db_game_id, details, system_folder,
                              existing=metadata, force_overwrite=force_overwrite)
-    for field in ('boxart', 'boxart_3d', 'fanart', 'game_logo', 'video', 'manual'):
+    for field in ('boxart', 'boxart_3d', 'boxart_back', 'fanart', 'game_logo', 'video', 'manual'):
         fill(field, copied.get(field))
     if copied.get('boxart'):
         metadata['_boxart_source'] = 'esde'
@@ -1361,6 +1363,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
             'screenshots': None,
             'fanart': None,
             'game_logo': None,
+            'boxart_back': None,
             'video': None,
             'manual': None,
             'region': None,
@@ -1420,6 +1423,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                 'boxart_3d': os.path.join(IMAGE_PATH, 'boxart_3d'),
                 'fanart': os.path.join(IMAGE_PATH, 'fanart'),
                 'game_logo': os.path.join(IMAGE_PATH, 'game_logos'),
+                'boxart_back': os.path.join(IMAGE_PATH, 'boxart_back'),
                 'manual': os.path.join(IMAGE_PATH, 'manuals'),
             }
             # Pass 40.15 — capture the (field, stale_filename) we observed at
@@ -1502,6 +1506,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                 'boxart_3d': os.path.join(IMAGE_PATH, 'boxart_3d'),
                 'fanart': os.path.join(IMAGE_PATH, 'fanart'),
                 'game_logo': os.path.join(IMAGE_PATH, 'game_logos'),
+                'boxart_back': os.path.join(IMAGE_PATH, 'boxart_back'),
                 'manual': os.path.join(IMAGE_PATH, 'manuals'),
             }
             _force_stale = []  # list of (field, stale_filename)

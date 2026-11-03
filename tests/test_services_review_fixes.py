@@ -116,6 +116,6 @@ def test_orphan_scan_spares_basename_reference(tmp_path, monkeypatch):
 
     from services.media_cleanup import find_orphaned_media
     games = [{'id': 1, 'boxart': 'some/dir/kept.png', 'boxart_3d': None,
-              'fanart': None, 'game_logo': None, 'video': None, 'manual': None, 'screenshots': None}]
+              'fanart': None, 'game_logo': None, 'boxart_back': None, 'video': None, 'manual': None, 'screenshots': None}]
     orphans, _ = find_orphaned_media(games)
     assert [os.path.basename(o['path']) for o in orphans] == ['99_gone.png']

@@ -48,7 +48,7 @@ if _xdist_worker or "RETRODB_IMAGE_PATH" not in os.environ:
     _test_media_dir = tempfile.mkdtemp(prefix=f"retrodb-test-media-{_xdist_worker or 'main'}-")
     _test_static = os.path.join(_test_media_dir, "static")
     _test_images = os.path.join(_test_static, "images")
-    for _sub in ("boxart", "boxart_3d", "screenshots", "fanart", "game_logos", "manuals"):
+    for _sub in ("boxart", "boxart_3d", "screenshots", "fanart", "game_logos", "boxart_back", "manuals"):
         os.makedirs(os.path.join(_test_images, _sub), exist_ok=True)
     os.makedirs(os.path.join(_test_static, "videos"), exist_ok=True)
     os.environ["RETRODB_STATIC_PATH"] = _test_static

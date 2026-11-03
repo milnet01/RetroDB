@@ -104,6 +104,7 @@ ScreenScraper is asked about the user's own file before a title search, unless a
 - **Other consoles.** IGDB's `platforms`, less this console, fill an empty `other_platforms`, spelled by `scrape_ai.known_platforms`. A name the schema lacks is left out. One platform writes nothing: IGDB can miss a version, so it does not prove `Exclusive`.
 - **ES-DE's `rating`.** It fills `user_score` only when no online source gave one, and before the AI is asked. ES-DE does not record who set it; it may be the owner's own.
 - **Logos (PASS-59-224).** `game_logo` is filled from ES-DE's `marquee` tag or `marquees/` folder, ScreenScraper's `wheel-hd` then `wheel`, TheGamesDB's `clearlogo` (same Images request), IGDB artwork type 7 then 5 (never 6, black), and Steam's `logo.png`. IGDB fanart skips logo, infographic and icon artworks. A record with no `game_logo` key, such as the wishlist's, gets no logo downloaded. Spec: `PASS-59-224-game-logos.md`.
+- **Box backs (PASS-59-225).** `boxart_back` is filled from ES-DE's `backcovers/` folder, ScreenScraper's `box-2D-back` nearest the game's region, and TheGamesDB's boxart `side: back` (same request as the front). A back never stands in for a missing front. It is not a Fill Missing gap, so a game without one is not scraped again for it. It is separate from Slipcase's `box_faces`. The wishlist's record has no `boxart_back` key and downloads none.
 
 ## 5. Fill-only invariant
 
@@ -149,6 +150,7 @@ UPDATE games SET
     screenshots = COALESCE(?, screenshots),
     fanart      = COALESCE(?, fanart),
     game_logo   = COALESCE(?, game_logo),
+    boxart_back = COALESCE(?, boxart_back),
     video       = COALESCE(?, video),
     manual      = COALESCE(?, manual),
     region      = COALESCE(?, region),
@@ -438,7 +440,7 @@ End-to-end checklist for a new remote source `foo`:
 - Fill-only across every source; the only documented exception is `force_overwrite=True` in `hybrid_scraper` (Full Re-scrape).
 - Screenshots are always *appended*, never replaced. Dedup via dHash with Hamming threshold 10.
 - ScreenScraper, TheGamesDB, IGDB and RAWG downloads pass the game id as `screenshot_of`; `services/screenshot_fit.py` refuses a Game Boy original with too many colours (PASS-59-161). It decides by exact colour count, only on an unscaled lossless original, and before finalizing. ZX Spectrum and C64 are not refused: real originals overlap other systems' shots. ES-DE copies and manual uploads are not checked.
-- Media fields (`boxart`, `boxart_3d`, `fanart`, `game_logo`, `video`, `manual`) are filled only when empty; clear them via the edit modal to force a re-fetch.
+- Media fields (`boxart`, `boxart_3d`, `boxart_back`, `fanart`, `game_logo`, `video`, `manual`) are filled only when empty; clear them via the edit modal to force a re-fetch.
 - Stale media references (file deleted, filename still in DB) are detected pre-merge and conditionally NULLed under `WHERE id = ? AND <field> = ?` (Pass 40.15).
 - Every image download MUST go through `base_scraper.download_image` or `metadata_merger._download_and_finalize` — both gate on SSRF, walk the redirect chain, pin the resolved IP, stream with `MAX_MEDIA_DOWNLOAD_BYTES` cap (50 MB default), and write atomically (Pass 25.7, 32.6, 32.7, 40.7, 40.15, 45.2).
 - Every API call from a `scraper/` module goes through `base_scraper.http_get` / `http_post` — backoff with jitter on 429/5xx, optional `max_bytes` cap (Pass 26.4, 32.14). Route-level key and status probes in `routes/scraper.py` are exempt (§10).

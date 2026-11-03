@@ -61,6 +61,7 @@ MIGRATIONS = [
     '034_arcade_category',
     '035_removed_screenshots',
     '036_games_game_logo',
+    '037_games_boxart_back',
 ]
 
 

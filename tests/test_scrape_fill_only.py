@@ -31,6 +31,7 @@ TGDB_MEDIA = {
     'screenshot_urls': ['http://x/s1.jpg', 'http://x/s2.jpg'],
     'fanart_urls': ['http://x/f1.jpg'],
     'logo_urls': ['http://x/l1.png'],
+    'boxart_back_url': 'http://x/back.jpg',
 }
 
 
@@ -40,13 +41,15 @@ def _metadata(**stored):
 
 @pytest.mark.parametrize('force', [False, True])
 def test_a_source_with_nothing_keeps_every_value(library, force):  # noqa: F811
-    library.add_game(boxart='curated_box.webp', game_logo='curated_logo.webp', **STORED)
+    library.add_game(boxart='curated_box.webp', game_logo='curated_logo.webp',
+                     boxart_back='curated_back.webp', **STORED)
     hybrid_scraper.apply_hybrid_metadata(1, 'esde', 'nothing', 'atari2600',
                                          fill_gaps=False, force_overwrite=force)
     row = library.row()
     assert {field: row[field] for field in STORED} == STORED
     assert row['boxart'] == 'curated_box.webp'
     assert row['game_logo'] == 'curated_logo.webp'  # PASS-59-224 INV-1
+    assert row['boxart_back'] == 'curated_back.webp'  # PASS-59-225
 
 
 @pytest.fixture
@@ -62,11 +65,13 @@ def tgdb_downloads(downloads, monkeypatch):  # noqa: F811
 def test_stored_media_stays_and_screenshots_are_added(tgdb_downloads, merge, answer):
     metadata = _metadata(title='Curated Game', boxart='curated_box.webp',
                          fanart='curated_fan.webp', game_logo='curated_logo.webp',
+                         boxart_back='curated_back.webp',
                          screenshots='old_ss.webp')
     merge(metadata, answer, 1, {'filled_fields': []})
     assert metadata['boxart'] == 'curated_box.webp'
     assert metadata['fanart'] == 'curated_fan.webp'
     assert metadata['game_logo'] == 'curated_logo.webp'
+    assert metadata['boxart_back'] == 'curated_back.webp'
     shots = metadata['screenshots'].split(',')
     assert shots[0] == 'old_ss.webp'
     assert len(shots) == 3

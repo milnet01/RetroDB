@@ -42,6 +42,7 @@ _MEDIA_KINDS = {
     'boxart_3d': 'boxart_3d',
     'fanart': 'fanart',
     'game_logos': 'logo',
+    'boxart_back': 'boxart_back',
     'screenshots': 'screenshot',
     'videos': 'video',
     'manuals': 'manual',

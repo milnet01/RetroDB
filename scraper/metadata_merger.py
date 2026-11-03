@@ -428,6 +428,15 @@ def apply_tgdb_to_metadata(metadata, tgdb_data, db_game_id, result, fill_only=Fa
                 metadata['_boxart_source'] = 'tgdb'
                 result['filled_fields'].append('boxart (TGDB)')
 
+    # Back of the box (only if not already present)
+    if _wants(metadata, 'boxart_back'):
+        back_url = tgdb_data.get('boxart_back_url')
+        if back_url:
+            filename = download_tgdb_image(db_game_id, back_url, 'boxart_back', suffix='_back')
+            if filename:
+                metadata['boxart_back'] = filename
+                result['filled_fields'].append('boxart_back (TGDB)')
+
     # Download screenshots (append to existing instead of replacing)
     ss_urls = tgdb_data.get('screenshot_urls', [])
     if ss_urls:
@@ -468,7 +477,7 @@ def apply_tgdb_to_metadata(metadata, tgdb_data, db_game_id, result, fill_only=Fa
                 result['filled_fields'].append('fanart (TGDB)')
 
     # Logo (only if not already present)
-    if _wants_logo(metadata):
+    if _wants(metadata, 'game_logo'):
         logo_urls = tgdb_data.get('logo_urls', [])
         if logo_urls:
             filename = download_tgdb_image(db_game_id, logo_urls[0], 'game_logo', suffix='_logo')
@@ -584,11 +593,11 @@ def _fill_other_platforms(metadata, platforms, own_platform_id, result):
         result['filled_fields'].append('other_platforms (IGDB)')
 
 
-def _wants_logo(metadata):
-    """True when this record keeps a logo and has none yet. A caller whose
-    record has no `game_logo` key (the wishlist) keeps none, so none is
-    downloaded for it (PASS-59-224)."""
-    return 'game_logo' in metadata and not metadata['game_logo']
+def _wants(metadata, field):
+    """True when this record keeps `field` and has none yet. A record with no
+    such key keeps none, so none is downloaded for it: the wishlist's has no
+    `game_logo` (PASS-59-224) or `boxart_back` (PASS-59-225)."""
+    return field in metadata and not metadata[field]
 
 
 # IGDB artwork_type ids (its artwork_types endpoint, asked 2026-11-03).
@@ -772,7 +781,7 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
             if _download_and_finalize(url, local_path, 'fanart', timeout=15):
                 metadata['fanart'] = filename
                 result['filled_fields'].append('fanart (IGDB)')
-    if _wants_logo(metadata):
+    if _wants(metadata, 'game_logo'):
         logo = next((a for kind in _IGDB_LOGO_TYPES for a in artworks
                      if a.get('artwork_type') == kind), None)
         if logo:
@@ -1022,7 +1031,7 @@ def apply_steam_to_metadata(metadata, details, app_id, db_game_id, result):
         filename = f"{db_game_id}_steam_fanart{preferred_image_extension('fanart', '.jpg')}"
         if _download_first(fanart_urls(app_id, details), 'fanart', filename, 'fanart'):
             fill('fanart', filename)
-    if _wants_logo(metadata):
+    if _wants(metadata, 'game_logo'):
         filename = f"{db_game_id}_steam_logo{preferred_image_extension('game_logo', '.png')}"
         if _download_first(logo_urls(app_id), 'game_logos', filename, 'game_logo'):
             metadata['game_logo'] = filename
@@ -1394,6 +1403,20 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
                 metadata['boxart_3d'] = filename
                 result['filled_fields'].append('boxart_3d (ScreenScraper)')
 
+    # Back of the box - only download if not already present
+    if _wants(metadata, 'boxart_back'):
+        back_url = parsed_media.get('boxart_back')
+        if back_url:
+            ext = _url_ext(back_url, 'png')
+        else:
+            back_url, ext = _pick_media(medias, ('box-2D-back',), 'png', own_region)
+        if back_url:
+            filename = f"{db_game_id}_ss_back{preferred_image_extension('boxart_back', '.' + ext)}"
+            local_path = os.path.join(IMAGE_PATH, 'boxart_back', filename)
+            if download_ss_media(back_url, local_path, image_type='boxart_back'):
+                metadata['boxart_back'] = filename
+                result['filled_fields'].append('boxart_back (ScreenScraper)')
+
     # Screenshots - ALWAYS append, never replace
     existing_screenshots = metadata['screenshots'].split(',') if metadata['screenshots'] else []
     existing_screenshots = [s.strip() for s in existing_screenshots if s.strip()]
@@ -1463,7 +1486,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
                 result['filled_fields'].append('fanart (ScreenScraper)')
 
     # Logo - wheel-hd, else wheel, nearest the game's region
-    if _wants_logo(metadata):
+    if _wants(metadata, 'game_logo'):
         for kind in ('wheel-hd', 'wheel'):
             logo_url, ext = _pick_media(medias, (kind,), 'png', own_region)
             if not logo_url:

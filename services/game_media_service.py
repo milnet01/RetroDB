@@ -105,7 +105,7 @@ def resolve_media_path(filename, media_type):
             candidate = os.path.join(base, filename.lstrip('/'))
     else:
         from services.image_utils import media_folder
-        subdir = media_folder(media_type)  # boxart, boxart_3d, fanart, game_logos
+        subdir = media_folder(media_type)  # boxart, boxart_3d, boxart_back, fanart, game_logos
         if not filename.startswith('/') and not filename.startswith('images/'):
             base = config.IMAGE_PATH
             candidate = os.path.join(base, subdir, filename)
@@ -158,7 +158,7 @@ def save_upload(file_storage, dest_dir, game_id, prefix, allowed_ext, image_type
         game_id: game row id, used to namespace the output filename.
         prefix: filename discriminator (e.g. 'custom', 'custom_3d').
         allowed_ext: iterable of allowed lowercase extensions (no dots).
-        image_type: image type ('boxart', 'boxart_3d', 'fanart', 'game_logo'). An
+        image_type: image type ('boxart', 'boxart_3d', 'boxart_back', 'fanart', 'game_logo'). An
             image upload then goes through the scraper's pipeline: saved in
             the configured image format, resized, and given its `-sm` / `-md`
             versions (`finalize_upload`).

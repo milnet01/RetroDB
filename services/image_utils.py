@@ -478,7 +478,7 @@ def _init_upscaler(allow_gpu=True):
 # manuals keep their original extension; GIFs preserve animation.
 _CONVERTIBLE_TYPES = frozenset({
     'boxart', 'boxart_3d', 'screenshots', 'fanart', 'controllers', 'hardware',
-    'game_logo',
+    'game_logo', 'boxart_back',
 })
 
 # Image types whose folder under IMAGE_PATH has another name. `game_logo`'s

@@ -203,6 +203,24 @@
                     <span id="boxartToggleText">{% if show_3d_initially %}2D{% else %}3D{% endif %}</span>
                 </button>
                 {% endif %}
+                {# PASS-59-225 — the back of the box, behind a Back button. It zooms
+                   as a plain picture, never the Slipcase 3D box. #}
+                {% if game.boxart_back %}
+                <img src="{{ url_for('static', filename='images/boxart_back/' + game.boxart_back) }}"
+                     alt="{{ _('Back of the box') }}"
+                     class="game-boxart-image clickable boxart-back"
+                     id="boxartBack"
+                     loading="lazy" decoding="async"
+                     style="display: none;"
+                     data-zoom-url="{{ url_for('static', filename='images/boxart_back/' + game.boxart_back) }}" data-on-click="openBoxartZoom" data-args='["$this.dataset.zoomUrl", true]'
+                     title="{{ _('Click to zoom') }}">
+                <button type="button" class="boxart-back-btn" id="boxartBackBtn" data-on-click="toggleBoxartBack"
+                        aria-pressed="false" title="{{ _('Show the back of the box') }}"
+                        data-label-back="{{ _('Back') }}" data-title-back="{{ _('Show the back of the box') }}"
+                        data-label-front="{{ _('Front') }}" data-title-front="{{ _('Show the front of the box') }}">
+                    <span id="boxartBackText">{{ _('Back') }}</span>
+                </button>
+                {% endif %}
                 <!-- Hidden placeholder for missing images -->
                 <div class="game-boxart-empty" id="boxartPlaceholder" style="display: none;">
                     <span class="boxart-empty-icon">🎮</span>
@@ -1712,7 +1730,8 @@ body:has(.game-fanart-bg.active)::before {
     position: relative;
 }
 
-.boxart-toggle-btn {
+.boxart-toggle-btn,
+.boxart-back-btn {
     position: absolute;
     bottom: 10px;
     right: 10px;
@@ -1731,14 +1750,22 @@ body:has(.game-fanart-bg.active)::before {
     z-index: 10;
 }
 
-.boxart-toggle-btn:hover {
+.boxart-toggle-btn:hover,
+.boxart-back-btn:hover {
     background: rgba(76, 201, 240, 0.2);
     box-shadow: 0 0 10px rgba(76, 201, 240, 0.4);
 }
 
-.boxart-toggle-btn.active {
+.boxart-toggle-btn.active,
+.boxart-back-btn.active {
     background: rgba(76, 201, 240, 0.3);
     border-color: var(--neon-cyan);
+}
+
+/* PASS-59-225 — Back sits opposite the 2D/3D button and shares its look. */
+.boxart-back-btn {
+    left: 10px;
+    right: auto;
 }
 
 /* Age Ratings (bottom of hero-info) */
@@ -5787,7 +5814,7 @@ async function clearHLTB() {
 
 // A game with Slipcase faces zooms to the turnable box, whichever cover was
 // clicked; otherwise the clicked picture (PASS-59-143, user 2026-10-23).
-function openBoxartZoom(imageUrl) {
+function openBoxartZoom(imageUrl, plainPicture) {
     const modal = document.getElementById('boxartZoomModal');
     const img = document.getElementById('boxartZoomImage');
     // The page's .content-wrapper (z-index 1) caps any z-index inside it, so
@@ -5796,7 +5823,8 @@ function openBoxartZoom(imageUrl) {
     // viewer does (main.js).
     document.body.appendChild(modal);
     modal.classList.add('active');
-    const showsBox = window.BoxViewer ? BoxViewer.show() : false;
+    // The box back (PASS-59-225) is a plain picture, never the 3D box.
+    const showsBox = !plainPicture && window.BoxViewer ? BoxViewer.show() : false;
     img.style.display = showsBox ? 'none' : '';
     if (!showsBox) img.src = imageUrl;
 }
@@ -5844,6 +5872,47 @@ function toggleBoxartView() {
     }
 }
 
+// PASS-59-225 — Back shows the back of the box in the cover's place; pressed
+// again it brings back whichever front (2D or 3D) was showing.
+let showingBoxBack = false;
+let frontBeforeBack = null;
+
+function toggleBoxartBack() {
+    const back = document.getElementById('boxartBack');
+    const btn = document.getElementById('boxartBackBtn');
+    const frontToggle = document.querySelector('.boxart-toggle-btn');
+    if (!back || !btn) return;
+    showingBoxBack = !showingBoxBack;
+    if (showingBoxBack) {
+        frontBeforeBack = ['boxart2d', 'boxart3d']
+            .map(id => document.getElementById(id))
+            .find(img => img && img.style.display !== 'none') || null;
+        if (frontBeforeBack) frontBeforeBack.style.display = 'none';
+        back.style.display = 'block';
+    } else {
+        back.style.display = 'none';
+        if (frontBeforeBack) frontBeforeBack.style.display = 'block';
+    }
+    if (frontToggle) frontToggle.style.display = showingBoxBack ? 'none' : '';
+    btn.classList.toggle('active', showingBoxBack);
+    btn.setAttribute('aria-pressed', String(showingBoxBack));
+    // Labels come translated from the page: this script's strings are not extracted.
+    btn.title = showingBoxBack ? btn.dataset.titleFront : btn.dataset.titleBack;
+    document.getElementById('boxartBackText').textContent =
+        showingBoxBack ? btn.dataset.labelFront : btn.dataset.labelBack;
+}
+
+// A back whose file is gone takes its button with it, and the front returns.
+document.addEventListener('DOMContentLoaded', function() {
+    const back = document.getElementById('boxartBack');
+    if (!back) return;
+    back.addEventListener('error', function() {
+        if (showingBoxBack) toggleBoxartBack();
+        const btn = document.getElementById('boxartBackBtn');
+        if (btn) btn.remove();
+        back.remove();
+    }, { once: true });
+});
 
 // FU.1 — per-page error handler for the 3D boxart. Two-step fallback (hide
 // 3D → swap to 2D if present → else show the shared placeholder) doesn't

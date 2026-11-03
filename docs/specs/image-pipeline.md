@@ -105,7 +105,7 @@ on ingest:
 
 The table above lists the **convertible image types** only. Non-convertible
 types — anything whose `image_type` is not in `_CONVERTIBLE_TYPES = {boxart,
-boxart_3d, screenshots, fanart, controllers, hardware, game_logo}` — bypass
+boxart_3d, boxart_back, screenshots, fanart, controllers, hardware, game_logo}` — bypass
 `preferred_image_extension()` entirely and keep their original extension
 regardless of `IMAGE_FORMAT`. That covers videos (`.mp4`), manuals (`.pdf`),
 and anything else the function isn't asked to decide about. Don't add new
@@ -387,7 +387,7 @@ a single bomb image).
 
 `hybrid_scraper.py:765-823` runs before every scrape to harmonise the
 DB with disk. For each media field (`boxart`, `boxart_3d`, `fanart`,
-`game_logo`, `manual`, `video`, `screenshots`):
+`boxart_back`, `game_logo`, `manual`, `video`, `screenshots`):
 
 1. Stat the file under its expected directory.
 2. If missing, clear the value in the local `metadata` dict.

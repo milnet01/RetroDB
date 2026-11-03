@@ -769,6 +769,7 @@ _ESDE_SINGLE_MEDIA = (
     ('boxart_3d', '3dbox', '3dboxes', 'boxart_3d', 'esde_3dbox', 'esde_3dboxes'),
     ('fanart', 'fanart', 'fanart', 'fanart', 'esde_fanart', 'esde_fanart'),
     ('game_logo', 'marquee', 'marquees', 'game_logos', 'esde_logo', 'esde_logos'),
+    ('boxart_back', 'backcover', 'backcovers', 'boxart_back', 'esde_back', 'esde_backs'),
     ('video', 'video', 'videos', 'videos', 'esde', 'esde'),
     ('manual', 'manual', 'manuals', 'manuals', 'esde', 'esde'),
 )
@@ -898,7 +899,7 @@ def copy_esde_media(db_game_id, game_data, system_folder=None, existing=None,
             try:
                 shutil.copy2(src_path, dest_path)
                 # Standardize image size for supported types
-                if dest_folder in ('boxart', 'screenshots', 'boxart_3d'):
+                if dest_folder in ('boxart', 'screenshots', 'boxart_3d', 'boxart_back'):
                     try:
                         from services.image_utils import standardize_downloaded_image
                         standardize_downloaded_image(dest_path, dest_folder)
@@ -979,7 +980,7 @@ def apply_esde_metadata(db_game_id, game_data, system_folder=None):
 
         c.execute("""
             SELECT g.rom_path, g.boxart, g.boxart_3d, g.screenshots, g.fanart, g.video, g.manual,
-                   g.game_logo
+                   g.game_logo, g.boxart_back
             FROM games g
             WHERE g.id = ?
         """, (db_game_id,))
@@ -991,7 +992,7 @@ def apply_esde_metadata(db_game_id, game_data, system_folder=None):
 
         rom_path, *media = tuple(result)
         existing = dict(zip(('boxart', 'boxart_3d', 'screenshots', 'fanart', 'video', 'manual',
-                             'game_logo'), media))
+                             'game_logo', 'boxart_back'), media))
         rom_filename = os.path.basename((rom_path or '').rstrip('/'))
         copied = copy_esde_media(db_game_id, game_data, system_folder, existing)
         new_screenshots = copied.get('screenshots')
@@ -1069,6 +1070,7 @@ def apply_esde_metadata(db_game_id, game_data, system_folder=None):
                 video = COALESCE(?, video),
                 manual = COALESCE(?, manual),
                 game_logo = COALESCE(?, game_logo),
+                boxart_back = COALESCE(?, boxart_back),
                 region = COALESCE(?, region),
                 scraped = COALESCE(?, scraped)
             WHERE id = ?
@@ -1088,6 +1090,7 @@ def apply_esde_metadata(db_game_id, game_data, system_folder=None):
             copied.get('video'),
             copied.get('manual'),
             copied.get('game_logo'),
+            copied.get('boxart_back'),
             region,
             1 if any_field_filled else None,
             db_game_id

@@ -123,7 +123,7 @@ picked.
 - The ES-DE half: `apply_esde_metadata`'s SELECT, `existing` map and UPDATE.
 - `services/wishlist_scraper.py::_empty_metadata` has no `game_logo` key. A
   merger downloads a logo only for a record that has the key
-  (`metadata_merger._wants_logo`), so the wishlist, which keeps none, fetches
+  (`metadata_merger._wants`), so the wishlist, which keeps none, fetches
   none (changed at build: with the key, every wishlist scrape downloaded
   logos it then dropped).
 - `services/apply_progress.py::_MEDIA_KINDS` and `static/js/apply-progress.js`

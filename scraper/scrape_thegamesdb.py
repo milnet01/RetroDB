@@ -678,9 +678,14 @@ def fetch_game_details(game_id):
                             boxart_url = base_url + art.get('filename', '')
                             break
 
-                    # If no front boxart, try any boxart
-                    if not boxart_url and game_boxart:
-                        boxart_url = base_url + game_boxart[0].get('filename', '')
+                    # No front: any picture but a back, which has its own slot
+                    if not boxart_url:
+                        boxart_url = next((base_url + art.get('filename', '')
+                                           for art in game_boxart
+                                           if art.get('side') != 'back'), None)
+                    boxart_back_url = next((base_url + art.get('filename', '')
+                                            for art in game_boxart
+                                            if art.get('side') == 'back'), None)
 
                     # Screenshots, fanart and logos from the separate images endpoint
                     screenshot_urls, fanart_urls, logo_urls = _fetch_game_images(game_id)
@@ -697,6 +702,7 @@ def fetch_game_details(game_id):
                         'summary': game.get('overview', ''),
                         'alternates': game.get('alternates') or [],
                         'boxart_url': boxart_url,
+                        'boxart_back_url': boxart_back_url,
                         'screenshot_urls': screenshot_urls,
                         'fanart_urls': fanart_urls,
                         'logo_urls': logo_urls,

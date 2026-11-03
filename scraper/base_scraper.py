@@ -389,7 +389,7 @@ def download_image(url, dest_path, timeout=15, screenshot_of=None):
         try:
             from services.image_utils import finalize_downloaded_image
             parent_dir = os.path.basename(os.path.dirname(dest_path))
-            if parent_dir in ('boxart', 'screenshots', 'boxart_3d', 'controllers', 'fanart'):
+            if parent_dir in ('boxart', 'screenshots', 'boxart_3d', 'boxart_back', 'controllers', 'fanart'):
                 finalize_downloaded_image(dest_path, parent_dir)
             elif parent_dir == 'game_logos':
                 finalize_downloaded_image(dest_path, 'game_logo')

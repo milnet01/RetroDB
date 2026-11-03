@@ -960,7 +960,7 @@ class TestPass45_7OrphanCleanupRace:
         import config
         monkeypatch.setattr(config, 'IMAGE_PATH', str(tmp_path / 'images'))
         monkeypatch.setattr(config, 'STATIC_PATH', str(tmp_path / 'static'))
-        for sub in ('boxart', 'boxart_3d', 'screenshots', 'fanart', 'game_logos', 'manuals'):
+        for sub in ('boxart', 'boxart_3d', 'screenshots', 'fanart', 'game_logos', 'boxart_back', 'manuals'):
             (tmp_path / 'images' / sub).mkdir(parents=True, exist_ok=True)
         (tmp_path / 'static' / 'videos').mkdir(parents=True, exist_ok=True)
 
@@ -975,7 +975,7 @@ class TestPass45_7OrphanCleanupRace:
         boxart.write_bytes(b'fake')
 
         games = [{'id': 1, 'boxart': '', 'boxart_3d': '', 'screenshots': '',
-                  'fanart': '', 'game_logo': '', 'video': '', 'manual': ''}]
+                  'fanart': '', 'game_logo': '', 'boxart_back': '', 'video': '', 'manual': ''}]
         orphaned, _ = media_cleanup.find_orphaned_media(games)
         assert len(orphaned) == 1
         entry = orphaned[0]
@@ -999,7 +999,7 @@ class TestPass45_7OrphanCleanupRace:
         link.symlink_to(real)
 
         games = [{'id': 1, 'boxart': '', 'boxart_3d': '', 'screenshots': '',
-                  'fanart': '', 'game_logo': '', 'video': '', 'manual': ''}]
+                  'fanart': '', 'game_logo': '', 'boxart_back': '', 'video': '', 'manual': ''}]
         orphaned, _ = media_cleanup.find_orphaned_media(games)
         paths = [o['path'] for o in orphaned]
         assert str(real) in paths, "real file must be considered"
@@ -1019,7 +1019,7 @@ class TestPass45_7OrphanCleanupRace:
         target.write_bytes(b'orphan')
 
         games = [{'id': 1, 'boxart': '', 'boxart_3d': '', 'screenshots': '',
-                  'fanart': '', 'game_logo': '', 'video': '', 'manual': ''}]
+                  'fanart': '', 'game_logo': '', 'boxart_back': '', 'video': '', 'manual': ''}]
         orphaned, _ = media_cleanup.find_orphaned_media(games)
         assert len(orphaned) == 1
 
@@ -1070,7 +1070,7 @@ class TestPass45_7OrphanCleanupRace:
         target.write_bytes(b'orphan')
 
         games = [{'id': 1, 'boxart': '', 'boxart_3d': '', 'screenshots': '',
-                  'fanart': '', 'game_logo': '', 'video': '', 'manual': ''}]
+                  'fanart': '', 'game_logo': '', 'boxart_back': '', 'video': '', 'manual': ''}]
         orphaned, _ = media_cleanup.find_orphaned_media(games)
         deleted, errors, freed = media_cleanup.clean_orphaned_files(orphaned)
         assert deleted == 1
