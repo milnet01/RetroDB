@@ -551,6 +551,7 @@ your migration — not in the runner.
 | 033 | `033_platform_play_time.py` | Add `platform_play_time`, the play time a service reports per user (PASS-59-218). |
 | 034 | `034_arcade_category.py` | Add `games.arcade_category` (TEXT): an arcade set's category, `BIOS` hiding it from game lists. | PASS-59-227 |
 | 035 | `035_removed_screenshots.py` | Add `removed_screenshots` (`game_id`, `dhash` hex TEXT, `removed_at`): the look of each screenshot the user deleted, so no scrape brings it back. | PASS-59-222 |
+| 036 | `036_games_game_logo.py` | Add `games.game_logo` (TEXT, a filename in `images/game_logos/`). | PASS-59-224 §4.1. Additive. Filled by a scrape or an editor's upload; NULL = no logo. |
 
 ---
 

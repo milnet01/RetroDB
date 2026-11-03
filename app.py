@@ -1979,7 +1979,7 @@ if __name__ == '__main__':
         logger.info("=" * 60)
 
     # Create required directories (always, in both processes is fine)
-    for subdir in ['boxart', 'boxart_3d', 'screenshots', 'systems', 'ratings', 'fanart', 'videos', 'manuals', 'avatars', 'controllers']:
+    for subdir in ['boxart', 'boxart_3d', 'screenshots', 'systems', 'ratings', 'fanart', 'videos', 'manuals', 'avatars', 'controllers', 'game_logos']:
         os.makedirs(os.path.join(config.IMAGE_PATH, subdir), exist_ok=True)
 
     # Create data directory for settings (anchored to BASE_DIR — see config.py;

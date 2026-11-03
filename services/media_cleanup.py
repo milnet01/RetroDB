@@ -2,7 +2,7 @@
 # RETRODB - Media cleanup
 # =============================================================================
 # Per-game media deletion + orphan detection for the media directories:
-# boxart, boxart_3d, screenshots, fanart, video, manual.
+# boxart, boxart_3d, screenshots, fanart, game_logo, video, manual.
 # =============================================================================
 
 import logging
@@ -26,6 +26,7 @@ def _media_layout():
         ('boxart',      os.path.join(config.IMAGE_PATH, 'boxart'),      'images/', False),
         ('boxart_3d',   os.path.join(config.IMAGE_PATH, 'boxart_3d'),   'images/', False),
         ('fanart',      os.path.join(config.IMAGE_PATH, 'fanart'),      'images/', False),
+        ('game_logo',   os.path.join(config.IMAGE_PATH, 'game_logos'),  'images/', False),
         ('screenshots', os.path.join(config.IMAGE_PATH, 'screenshots'), 'images/', True),
         ('video',       os.path.join(config.STATIC_PATH, 'videos'),     'videos/', False),
         ('manual',      os.path.join(config.IMAGE_PATH, 'manuals'),     'images/', False),
@@ -152,7 +153,7 @@ def delete_game_images(games):
 def _collect_referenced_files(games):
     referenced = set()
     for game in games:
-        for field in ('boxart', 'boxart_3d', 'fanart', 'video', 'manual'):
+        for field in ('boxart', 'boxart_3d', 'fanart', 'game_logo', 'video', 'manual'):
             value = game[field]
             if value:
                 referenced.add(value)
@@ -199,6 +200,7 @@ def find_orphaned_media(games):
         (os.path.join(config.IMAGE_PATH, 'boxart_3d'),   'boxart_3d',   image_base),
         (os.path.join(config.IMAGE_PATH, 'screenshots'), 'screenshots', image_base),
         (os.path.join(config.IMAGE_PATH, 'fanart'),      'fanart',      image_base),
+        (os.path.join(config.IMAGE_PATH, 'game_logos'),  'game_logo',   image_base),
         (os.path.join(config.STATIC_PATH, 'videos'),     'video',       config.STATIC_PATH),
         # Manuals live under IMAGE_PATH/manuals (matches every scraper output
         # and _media_layout). Was STATIC_PATH/manuals, which never existed.
@@ -505,7 +507,7 @@ def clear_missing_media_refs():
     from services.database import get_db_with_context, query, safe_column
 
     games = query(
-        "SELECT id, title, boxart, boxart_3d, screenshots, fanart, video, manual "
+        "SELECT id, title, boxart, boxart_3d, screenshots, fanart, game_logo, video, manual "
         "FROM games"
     )
     affected, guarded = find_missing_media_refs(games)

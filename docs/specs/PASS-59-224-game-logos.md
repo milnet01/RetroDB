@@ -1,7 +1,7 @@
 <!-- ants-spec-format: 1 -->
 # PASS-59-224 — Game logos on the game page
 
-**Status:** accepted (2026-11-03; contract gate cancelled for this project).
+**Status:** built (2026-11-03; contract gate cancelled for this project).
 **Kind:** feature.
 **Source:** ROADMAP PASS-59-224 (user, 2026-11-02; scope narrowed 2026-11-03).
 **Pairs with:** PASS-59-142 (box faces sit beside the box art this pass may stand in for).
@@ -121,8 +121,11 @@ picked.
   `_KEPT_MEDIA_FIELDS`, both `_media_dirs` maps, `_merge_esde`'s fill list,
   and `_save_game_row` as `game_logo = COALESCE(?, game_logo)`.
 - The ES-DE half: `apply_esde_metadata`'s SELECT, `existing` map and UPDATE.
-- `services/wishlist_scraper.py::_empty_metadata` gains `game_logo: None`, so
-  the shared mergers do not raise. Nothing writes it to the wishlist.
+- `services/wishlist_scraper.py::_empty_metadata` has no `game_logo` key. A
+  merger downloads a logo only for a record that has the key
+  (`metadata_merger._wants_logo`), so the wishlist, which keeps none, fetches
+  none (changed at build: with the key, every wishlist scrape downloaded
+  logos it then dropped).
 - `services/apply_progress.py::_MEDIA_KINDS` and `static/js/apply-progress.js`
   gain a `logo` kind, label `t('logo')`.
 - `services/jobs/bulk_scrape.py`: the Fill Missing field list gains
@@ -246,9 +249,10 @@ through `_allowed_esde_roots`. Uploads go through `_upload`'s existing checks.
   The page looks as it does today.
 - **The download fails or is not an image**: the existing pipeline drops it
   and the field stays empty.
-- **ES-DE arcade marquees** may be the cabinet's top strip rather than a clear
-  logo. It is kept, like any other filled field. The editor can clear it.
-  Unverified until the build reads a sample.
+- **ES-DE arcade marquees** are clear logos, not cabinet strips: every file
+  in the local `mame/marquees/` folder has a transparent background, and a
+  sample looked at by eye showed only logos (checked at build, 2026-11-03).
+  The editor can still clear one.
 - **A black or dark logo on a dark theme** may be hard to see. IGDB's black
   type is skipped; the other sources' logos are taken as they come. The title
   text stays readable either way.

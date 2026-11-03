@@ -27,7 +27,7 @@ _COLUMNS = [
     'description', 'players', 'modes', 'esrb_rating', 'pegi_rating',
     'cero_rating', 'usk_rating', 'acb_rating', 'fpb_rating', 'grac_rating',
     'classind_rating', 'china_rating', 'boxart', 'boxart_3d', 'screenshots', 'fanart',
-    'video', 'manual', 'region', 'franchise', 'similar_games',
+    'game_logo', 'video', 'manual', 'region', 'franchise', 'similar_games',
     'playtime_estimate', 'controller_support', 'save_type', 'game_structure',
     'perspective', 'dimension', 'edition', 'campaign', 'other_platforms',
     'critic_score', 'critic_score_count', 'user_score', 'user_score_count', 'units_sold', 'release_dates',

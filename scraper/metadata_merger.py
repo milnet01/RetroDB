@@ -467,6 +467,15 @@ def apply_tgdb_to_metadata(metadata, tgdb_data, db_game_id, result, fill_only=Fa
                 metadata['fanart'] = filename
                 result['filled_fields'].append('fanart (TGDB)')
 
+    # Logo (only if not already present)
+    if _wants_logo(metadata):
+        logo_urls = tgdb_data.get('logo_urls', [])
+        if logo_urls:
+            filename = download_tgdb_image(db_game_id, logo_urls[0], 'game_logo', suffix='_logo')
+            if filename:
+                metadata['game_logo'] = filename
+                result['filled_fields'].append('game_logo (TGDB)')
+
 
 # =============================================================================
 # IGDB AGE RATINGS
@@ -573,6 +582,18 @@ def _fill_other_platforms(metadata, platforms, own_platform_id, result):
     if others:
         metadata['other_platforms'] = others
         result['filled_fields'].append('other_platforms (IGDB)')
+
+
+def _wants_logo(metadata):
+    """True when this record keeps a logo and has none yet. A caller whose
+    record has no `game_logo` key (the wishlist) keeps none, so none is
+    downloaded for it (PASS-59-224)."""
+    return 'game_logo' in metadata and not metadata['game_logo']
+
+
+# IGDB artwork_type ids (its artwork_types endpoint, asked 2026-11-03).
+_IGDB_LOGO_TYPES = (7, 5)                     # colour, then white; 6 (black) is never used
+_IGDB_NOT_FANART = {5, 6, 7, 8, 12, 13, 14}   # logos, infographic, icons
 
 
 def _igdb_objects(items):
@@ -737,11 +758,13 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
             metadata['screenshots'] = ','.join(all_screenshots)
             result['filled_fields'].append(f'screenshots +{len(new_ss_files)} (IGDB)')
 
-    # Download fanart/artwork (only if not already present)
+    # Fanart and logo come from the artworks list, told apart by artwork_type
+    artworks = [a for a in _igdb_objects(igdb_data.get('artworks')) if a.get('url')]
     if not metadata['fanart']:
-        artworks = _igdb_objects(igdb_data.get('artworks'))
-        if artworks and artworks[0].get('url'):
-            url = artworks[0]['url'].replace('t_thumb', 't_1080p')
+        fanart = next((a for a in artworks
+                       if a.get('artwork_type') not in _IGDB_NOT_FANART), None)
+        if fanart:
+            url = fanart['url'].replace('t_thumb', 't_1080p')
             if not url.startswith('http'):
                 url = f"https:{url}"
             filename = f"{db_game_id}_igdb_fanart{preferred_image_extension('fanart', '.jpg')}"
@@ -749,6 +772,19 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
             if _download_and_finalize(url, local_path, 'fanart', timeout=15):
                 metadata['fanart'] = filename
                 result['filled_fields'].append('fanart (IGDB)')
+    if _wants_logo(metadata):
+        logo = next((a for kind in _IGDB_LOGO_TYPES for a in artworks
+                     if a.get('artwork_type') == kind), None)
+        if logo:
+            # .png at its own size: the .jpg address drops the clear background
+            url = os.path.splitext(logo['url'].replace('t_thumb', 't_original'))[0] + '.png'
+            if not url.startswith('http'):
+                url = f"https:{url}"
+            filename = f"{db_game_id}_igdb_logo{preferred_image_extension('game_logo', '.png')}"
+            local_path = os.path.join(IMAGE_PATH, 'game_logos', filename)
+            if _download_and_finalize(url, local_path, 'game_logo', timeout=15):
+                metadata['game_logo'] = filename
+                result['filled_fields'].append('game_logo (IGDB)')
 
     # Extended data
     if igdb_data.get('_extended'):
@@ -960,7 +996,7 @@ def apply_steam_to_metadata(metadata, details, app_id, db_game_id, result):
     2004. The genre is nearly always just Action. A filled field is not asked
     for again, so either would keep a scrape's better answer out.
     """
-    from scraper.scrape_steam import box_art_urls, fanart_urls
+    from scraper.scrape_steam import box_art_urls, fanart_urls, logo_urls
 
     def fill(field, value):
         if value and not metadata[field]:
@@ -986,6 +1022,11 @@ def apply_steam_to_metadata(metadata, details, app_id, db_game_id, result):
         filename = f"{db_game_id}_steam_fanart{preferred_image_extension('fanart', '.jpg')}"
         if _download_first(fanart_urls(app_id, details), 'fanart', filename, 'fanart'):
             fill('fanart', filename)
+    if _wants_logo(metadata):
+        filename = f"{db_game_id}_steam_logo{preferred_image_extension('game_logo', '.png')}"
+        if _download_first(logo_urls(app_id), 'game_logos', filename, 'game_logo'):
+            metadata['game_logo'] = filename
+            result['filled_fields'].append('game_logo (Steam)')
 
     urls = [s.get('path_full') for s in details.get('screenshots') or []]
     urls = [url for url in urls if url][:_STEAM_SCREENSHOTS]
@@ -1420,6 +1461,19 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
             if download_ss_media(fanart_url, local_path, image_type='fanart'):
                 metadata['fanart'] = filename
                 result['filled_fields'].append('fanart (ScreenScraper)')
+
+    # Logo - wheel-hd, else wheel, nearest the game's region
+    if _wants_logo(metadata):
+        for kind in ('wheel-hd', 'wheel'):
+            logo_url, ext = _pick_media(medias, (kind,), 'png', own_region)
+            if not logo_url:
+                continue
+            filename = f"{db_game_id}_ss_logo{preferred_image_extension('game_logo', '.' + ext)}"
+            local_path = os.path.join(IMAGE_PATH, 'game_logos', filename)
+            if download_ss_media(logo_url, local_path, image_type='game_logo'):
+                metadata['game_logo'] = filename
+                result['filled_fields'].append('game_logo (ScreenScraper)')
+                break
 
     # Video - only download if not already present
     if not metadata['video']:

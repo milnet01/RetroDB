@@ -218,6 +218,11 @@ def box_art_urls(app_id):
             f'{ART_URL}/{app_id}/library_600x900.jpg']
 
 
+def logo_urls(app_id):
+    """Addresses to try for an app's logo on a clear background."""
+    return [f'{ART_URL}/{app_id}/logo.png']
+
+
 def fanart_urls(app_id, details):
     """Addresses to try for wide background art, best first."""
     return [url for url in (f'{ART_URL}/{app_id}/library_hero.jpg',

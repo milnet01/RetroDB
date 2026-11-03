@@ -3,10 +3,10 @@ from scraper.hybrid_scraper import _seed_kept_media
 
 
 def test_seeds_media_on_disk_and_skips_stale_and_text_fields():
-    metadata = {'boxart': None, 'fanart': None, 'video': None,
+    metadata = {'boxart': None, 'fanart': None, 'game_logo': None, 'video': None,
                 'screenshots': None, 'description': None}
-    game = {'boxart': 'a.png', 'fanart': 'gone.png', 'video': None,
+    game = {'boxart': 'a.png', 'fanart': 'gone.png', 'game_logo': 'l.png', 'video': None,
             'screenshots': 'a-1.png, a-2.png', 'description': 'old'}
     _seed_kept_media(metadata, game, {'fanart'})
-    assert metadata == {'boxart': 'a.png', 'fanart': None, 'video': None,
+    assert metadata == {'boxart': 'a.png', 'fanart': None, 'game_logo': 'l.png', 'video': None,
                         'screenshots': 'a-1.png, a-2.png', 'description': None}

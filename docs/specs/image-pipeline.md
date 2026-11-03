@@ -105,12 +105,17 @@ on ingest:
 
 The table above lists the **convertible image types** only. Non-convertible
 types — anything whose `image_type` is not in `_CONVERTIBLE_TYPES = {boxart,
-boxart_3d, screenshots, fanart, controllers, hardware}` — bypass
+boxart_3d, screenshots, fanart, controllers, hardware, game_logo}` — bypass
 `preferred_image_extension()` entirely and keep their original extension
 regardless of `IMAGE_FORMAT`. That covers videos (`.mp4`), manuals (`.pdf`),
 and anything else the function isn't asked to decide about. Don't add new
 extension rows to the table for non-image types — wire the new `image_type`
 into `_CONVERTIBLE_TYPES` if it should be re-encoded, otherwise leave it out.
+
+A game logo (`game_logo`, PASS-59-224) keeps its clear background: with
+`IMAGE_FORMAT=jpeg` it is stored as `.png`, since JPEG has no alpha, and
+`standardize_downloaded_image` leaves it at its own size, with no `-sm`/`-md`
+variants. Its folder is `game_logos/` (`image_utils.media_folder`).
 
 GIFs are never re-encoded — `img.save(path, 'GIF')` without `save_all`
 flattens animated GIFs to the first frame, so the only safe path is
@@ -382,7 +387,7 @@ a single bomb image).
 
 `hybrid_scraper.py:765-823` runs before every scrape to harmonise the
 DB with disk. For each media field (`boxart`, `boxart_3d`, `fanart`,
-`manual`, `video`, `screenshots`):
+`game_logo`, `manual`, `video`, `screenshots`):
 
 1. Stat the file under its expected directory.
 2. If missing, clear the value in the local `metadata` dict.

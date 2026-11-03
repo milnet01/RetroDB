@@ -60,6 +60,7 @@ MIGRATIONS = [
     '033_platform_play_time',
     '034_arcade_category',
     '035_removed_screenshots',
+    '036_games_game_logo',
 ]
 
 

@@ -391,6 +391,8 @@ def download_image(url, dest_path, timeout=15, screenshot_of=None):
             parent_dir = os.path.basename(os.path.dirname(dest_path))
             if parent_dir in ('boxart', 'screenshots', 'boxart_3d', 'controllers', 'fanart'):
                 finalize_downloaded_image(dest_path, parent_dir)
+            elif parent_dir == 'game_logos':
+                finalize_downloaded_image(dest_path, 'game_logo')
         except Exception as e:
             # scrapers.md §9: when finalize raises, delete the on-disk file and
             # return False so the caller does NOT set metadata[field] to a

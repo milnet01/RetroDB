@@ -36,6 +36,7 @@
                     case 'boxart': return t('Downloading box art…');
                     case 'boxart_3d': return t('Downloading 3D box art…');
                     case 'fanart': return t('Downloading fan art…');
+                    case 'logo': return t('Downloading logo…');
                     case 'screenshot': return t('Downloading screenshots…');
                     case 'video': return t('Downloading video…');
                     case 'manual': return t('Downloading manual…');

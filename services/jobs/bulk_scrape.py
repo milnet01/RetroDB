@@ -27,6 +27,19 @@ logger = logging.getLogger(__name__)
 # Full Re-scrape, and its variant that keeps media already on disk (PASS-59-133).
 FULL_RESCRAPE_MODES = ('full_rescrape', 'full_rescrape_keep_media')
 
+# The fields whose gap makes Fill Missing scrape a game rather than skip it.
+FILL_MISSING_FIELDS = (
+    'description', 'publisher', 'developer', 'genre',
+    'release_date', 'esrb_rating', 'pegi_rating',
+    'boxart', 'boxart_3d', 'screenshots', 'fanart', 'game_logo',
+    'players', 'modes',
+)
+
+
+def missing_fields(game):
+    """The FILL_MISSING_FIELDS this game row has no value for."""
+    return [field for field in FILL_MISSING_FIELDS if not game.get(field)]
+
 
 def _extract_year_from_result(result):
     """Extract release year from a search result (handles all scraper formats)."""
@@ -899,13 +912,7 @@ class BulkScrapeJob:
 
                     # Check if should skip (fill_missing mode)
                     if _scrape_mode == 'fill_missing':
-                        fill_missing_fields = [
-                            'description', 'publisher', 'developer', 'genre',
-                            'release_date', 'esrb_rating', 'pegi_rating',
-                            'boxart', 'boxart_3d', 'screenshots', 'fanart',
-                            'players', 'modes',
-                        ]
-                        missing = [f for f in fill_missing_fields if not game_dict.get(f)]
+                        missing = missing_fields(game_dict)
                         if not missing:
                             logger.info(f"Skipping {title} - all metadata fields populated")
                             self._stamp_bulk_scraped(game_id)

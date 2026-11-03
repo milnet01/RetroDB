@@ -401,6 +401,17 @@
                             <input type="hidden" name="remove_fanart" value="" />
                             {% endif %}
                         </div>
+                        <div class="edit-field">
+                            <label for="custom_game_logo">{{ _('Custom Logo') }}</label>
+                            <input id="custom_game_logo" type="file" name="custom_game_logo" accept="image/*" />
+                            {% if game.game_logo %}
+                            <span class="current-file">{% trans filename=game.game_logo %}Current: {{ filename }}{% endtrans %}</span>
+                            <button type="button" class="btn btn-sm btn-danger" style="margin-top: 8px;" data-on-click="confirmRemoveMedia" data-args='["remove_game_logo", "🗑️ Delete Logo", "Delete the logo? You can re-scrape to get a new one."]'>
+                                🗑️ {{ _('Delete Logo') }}
+                            </button>
+                            <input type="hidden" name="remove_game_logo" value="" />
+                            {% endif %}
+                        </div>
                         <div class="edit-field full-width">
                             <label for="custom_screenshots">{{ _('Add Screenshots') }}</label>
                             <input id="custom_screenshots" type="file" name="custom_screenshots" accept="image/*" multiple />

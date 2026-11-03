@@ -149,7 +149,7 @@ def api_clear_scraped_data():
 @handle_api_errors
 def api_orphaned_media_preview():
     """Scan for orphaned media files (not linked to any game in database)"""
-    games = query("SELECT id, boxart, boxart_3d, screenshots, fanart, video, manual FROM games")
+    games = query("SELECT id, boxart, boxart_3d, screenshots, fanart, game_logo, video, manual FROM games")
     orphaned, total_size = find_orphaned_media(games)
     return success(
         files=orphaned,
@@ -162,7 +162,7 @@ def api_orphaned_media_preview():
 @handle_api_errors
 def api_orphaned_media_clean():
     """Delete orphaned media files"""
-    games = query("SELECT id, boxart, boxart_3d, screenshots, fanart, video, manual FROM games")
+    games = query("SELECT id, boxart, boxart_3d, screenshots, fanart, game_logo, video, manual FROM games")
     orphaned, _ = find_orphaned_media(games)
     # Pass 48.4 — honour the original preview scan-start so a file written by
     # a concurrent scraper during the preview→clean window is skipped. The
@@ -192,7 +192,7 @@ def api_missing_media_refs_preview():
     mass-missing guard so the UI can warn before the user clears anything.
     """
     games = query(
-        "SELECT id, title, boxart, boxart_3d, screenshots, fanart, video, manual "
+        "SELECT id, title, boxart, boxart_3d, screenshots, fanart, game_logo, video, manual "
         "FROM games"
     )
     affected, guarded = find_missing_media_refs(games)

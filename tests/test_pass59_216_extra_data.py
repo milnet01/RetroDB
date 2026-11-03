@@ -82,7 +82,7 @@ def test_tgdb_asks_for_alternates_and_passes_them_on(monkeypatch):
             {'game_title': 'Out Run', 'alternates': ['OutRun']}]}, 'include': {}})
 
     monkeypatch.setattr(scrape_thegamesdb, '_tgdb_request', request)
-    monkeypatch.setattr(scrape_thegamesdb, '_fetch_game_images', lambda game_id: ([], []))
+    monkeypatch.setattr(scrape_thegamesdb, '_fetch_game_images', lambda game_id: ([], [], []))
     found = scrape_thegamesdb.fetch_game_details(7)
     assert 'alternates' in sent['fields'].split(',')
     assert found['alternates'] == ['OutRun']
@@ -90,21 +90,24 @@ def test_tgdb_asks_for_alternates_and_passes_them_on(monkeypatch):
 
 # --- Title screens ----------------------------------------------------------
 
-def test_tgdb_title_screen_keeps_a_place_in_the_five(monkeypatch):
+def test_tgdb_title_screen_and_logo_ride_one_request(monkeypatch):
     images = [{'type': 'screenshot', 'filename': f's{n}.jpg'} for n in range(6)]
-    images += [{'type': 'titlescreen', 'filename': 't.jpg'}, {'type': 'fanart', 'filename': 'f.jpg'}]
+    images += [{'type': 'titlescreen', 'filename': 't.jpg'}, {'type': 'fanart', 'filename': 'f.jpg'},
+               {'type': 'clearlogo', 'side': None, 'filename': 'clearlogo/7.png'}]
     reply = {'data': {'base_url': {'original': 'http://x/'}, 'images': {'7': images}}}
-    sent = {}
+    calls = []
 
     def request(url, params=None, timeout=None):
-        sent.update(params)
+        calls.append(params)
         return SimpleNamespace(status_code=200, json=lambda: reply)
 
     monkeypatch.setattr(scrape_thegamesdb, '_tgdb_request', request)
-    shots, fanart = scrape_thegamesdb._fetch_game_images(7)
-    assert 'titlescreen' in sent['filter[type]'].split(',')
+    shots, fanart, logos = scrape_thegamesdb._fetch_game_images(7)
+    assert len(calls) == 1  # PASS-59-224 INV-4: logos ride the same request
+    assert {'titlescreen', 'clearlogo'} <= set(calls[0]['filter[type]'].split(','))
     assert 'http://x/t.jpg' in shots[:5]
     assert fanart == ['http://x/f.jpg']
+    assert logos == ['http://x/clearlogo/7.png']
 
 
 def _ss_urls(monkeypatch, tmp_path, answer):

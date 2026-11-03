@@ -768,6 +768,7 @@ _ESDE_SINGLE_MEDIA = (
     ('boxart', 'cover', 'covers', 'boxart', 'esde_cover', 'esde_covers'),
     ('boxart_3d', '3dbox', '3dboxes', 'boxart_3d', 'esde_3dbox', 'esde_3dboxes'),
     ('fanart', 'fanart', 'fanart', 'fanart', 'esde_fanart', 'esde_fanart'),
+    ('game_logo', 'marquee', 'marquees', 'game_logos', 'esde_logo', 'esde_logos'),
     ('video', 'video', 'videos', 'videos', 'esde', 'esde'),
     ('manual', 'manual', 'manuals', 'manuals', 'esde', 'esde'),
 )
@@ -977,7 +978,8 @@ def apply_esde_metadata(db_game_id, game_data, system_folder=None):
         c = conn.cursor()
 
         c.execute("""
-            SELECT g.rom_path, g.boxart, g.boxart_3d, g.screenshots, g.fanart, g.video, g.manual
+            SELECT g.rom_path, g.boxart, g.boxart_3d, g.screenshots, g.fanart, g.video, g.manual,
+                   g.game_logo
             FROM games g
             WHERE g.id = ?
         """, (db_game_id,))
@@ -988,7 +990,8 @@ def apply_esde_metadata(db_game_id, game_data, system_folder=None):
             return False
 
         rom_path, *media = tuple(result)
-        existing = dict(zip(('boxart', 'boxart_3d', 'screenshots', 'fanart', 'video', 'manual'), media))
+        existing = dict(zip(('boxart', 'boxart_3d', 'screenshots', 'fanart', 'video', 'manual',
+                             'game_logo'), media))
         rom_filename = os.path.basename((rom_path or '').rstrip('/'))
         copied = copy_esde_media(db_game_id, game_data, system_folder, existing)
         new_screenshots = copied.get('screenshots')
@@ -1065,6 +1068,7 @@ def apply_esde_metadata(db_game_id, game_data, system_folder=None):
                 fanart = COALESCE(?, fanart),
                 video = COALESCE(?, video),
                 manual = COALESCE(?, manual),
+                game_logo = COALESCE(?, game_logo),
                 region = COALESCE(?, region),
                 scraped = COALESCE(?, scraped)
             WHERE id = ?
@@ -1083,6 +1087,7 @@ def apply_esde_metadata(db_game_id, game_data, system_folder=None):
             copied.get('fanart'),
             copied.get('video'),
             copied.get('manual'),
+            copied.get('game_logo'),
             region,
             1 if any_field_filled else None,
             db_game_id

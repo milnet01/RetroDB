@@ -682,8 +682,8 @@ def fetch_game_details(game_id):
                     if not boxart_url and game_boxart:
                         boxart_url = base_url + game_boxart[0].get('filename', '')
 
-                    # Get screenshots and fanart from separate images endpoint
-                    screenshot_urls, fanart_urls = _fetch_game_images(game_id)
+                    # Screenshots, fanart and logos from the separate images endpoint
+                    screenshot_urls, fanart_urls, logo_urls = _fetch_game_images(game_id)
 
                     result = {
                         'id': game_id,
@@ -699,6 +699,7 @@ def fetch_game_details(game_id):
                         'boxart_url': boxart_url,
                         'screenshot_urls': screenshot_urls,
                         'fanart_urls': fanart_urls,
+                        'logo_urls': logo_urls,
                     }
 
                     logger.info(f"TGDB details fetched successfully for: {result['name']}")
@@ -713,20 +714,21 @@ def fetch_game_details(game_id):
 
 
 def _fetch_game_images(game_id):
-    """Fetch screenshots and fanart for a game from the Images endpoint.
+    """Fetch screenshots, fanart and logos for a game from the Images endpoint.
 
-    Returns (screenshot_urls, fanart_urls) tuple. Title screens count as
-    screenshots and come after them, as ES-DE's do.
+    Returns (screenshot_urls, fanart_urls, logo_urls), all from one request.
+    Title screens count as screenshots and come after them, as ES-DE's do.
     """
     screenshot_urls = []
     titlescreen_urls = []
     fanart_urls = []
+    logo_urls = []
 
     try:
         images_url = f"{TGDB_API_BASE}/v1/Games/Images"
         images_params = {
             'games_id': game_id,
-            'filter[type]': 'screenshot,titlescreen,fanart'
+            'filter[type]': 'screenshot,titlescreen,fanart,clearlogo'
         }
         images_response = _tgdb_request(images_url, params=images_params, timeout=15)
         if images_response and images_response.status_code == 200:
@@ -756,6 +758,8 @@ def _fetch_game_images(game_id):
                                 titlescreen_urls.append(images_base_url + img.get('filename', ''))
                             elif 'fanart' in img_type:
                                 fanart_urls.append(images_base_url + img.get('filename', ''))
+                            elif img_type == 'clearlogo':
+                                logo_urls.append(images_base_url + img.get('filename', ''))
 
                     # The merge takes five, so a title screen keeps a place.
                     screenshot_urls = screenshot_urls[:4] + titlescreen_urls[:1] + screenshot_urls[4:]
@@ -763,7 +767,7 @@ def _fetch_game_images(game_id):
     except Exception as e:
         logger.warning(f"Failed to fetch images: {e}")
 
-    return screenshot_urls, fanart_urls
+    return screenshot_urls, fanart_urls, logo_urls
 
 
 # =============================================================================
@@ -1089,11 +1093,11 @@ def _download_tgdb_image(db_game_id, image_url, image_type, suffix=''):
         # Get file extension from URL or default to jpg, then translate to the
         # configured ingest format (e.g. WebP).
         url_ext = os.path.splitext(image_url.split('?')[0])[1] or '.jpg'
-        from services.image_utils import preferred_image_extension
+        from services.image_utils import media_folder, preferred_image_extension
         ext = preferred_image_extension(image_type, url_ext)
 
         filename = f"{db_game_id}_tgdb{suffix}{ext}"
-        local_dir = os.path.join(IMAGE_PATH, image_type)
+        local_dir = os.path.join(IMAGE_PATH, media_folder(image_type))
         os.makedirs(local_dir, exist_ok=True)
         local_path = os.path.join(local_dir, filename)
 

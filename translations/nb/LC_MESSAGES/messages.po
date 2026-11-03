@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-02 17:02+0200\n"
+"POT-Creation-Date: 2026-11-03 10:51+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: nb\n"
@@ -59,11 +59,11 @@ msgstr "System ikke funnet eller har ingen spill med prestasjoner"
 #: routes/achievements.py:172 routes/achievements.py:482
 #: routes/bonus_discs.py:265 routes/bulk_scrape.py:48 routes/cheats.py:32
 #: routes/cheats.py:51 routes/collections.py:276 routes/collections.py:531
-#: routes/emulators.py:304 routes/emulators.py:318 routes/games.py:394
-#: routes/games.py:909 routes/games.py:1036 routes/games.py:1103
-#: routes/games_ai.py:31 routes/games_media.py:37 routes/games_media.py:85
-#: routes/games_media.py:148 routes/games_media.py:197
-#: routes/games_media.py:230 routes/launch.py:242 routes/reports.py:696
+#: routes/emulators.py:304 routes/emulators.py:318 routes/games.py:395
+#: routes/games.py:917 routes/games.py:1045 routes/games.py:1112
+#: routes/games_ai.py:31 routes/games_media.py:38 routes/games_media.py:86
+#: routes/games_media.py:149 routes/games_media.py:200
+#: routes/games_media.py:233 routes/launch.py:242 routes/reports.py:696
 #: routes/reports.py:827 routes/trophies.py:1324 services/cheats.py:617
 #: services/hltb_service.py:162
 msgid "Game not found"
@@ -132,7 +132,7 @@ msgstr "Spillbeskrivelse"
 #: templates/all_games.html:72 templates/analytics.html:481
 #: templates/analytics.html:2428 templates/base.html:975
 #: templates/base.html:1188 templates/compare_games.html:73
-#: templates/dashboard.html:390 templates/game_detail.html:310
+#: templates/dashboard.html:390 templates/game_detail.html:330
 #: templates/local_trophy_detail.html:99 templates/psn_trophy_detail.html:94
 #: templates/psn_trophy_detail.html:258
 #: templates/steam_achievement_game.html:178 templates/system_games.html:63
@@ -145,7 +145,7 @@ msgstr "Sjanger"
 #: templates/all_games.html:81 templates/analytics.html:482
 #: templates/analytics.html:2428 templates/base.html:973
 #: templates/base.html:1174 templates/compare_games.html:70
-#: templates/game_detail.html:298 templates/local_trophy_detail.html:93
+#: templates/game_detail.html:318 templates/local_trophy_detail.html:93
 #: templates/psn_trophy_detail.html:88 templates/steam_achievement_game.html:84
 #: templates/system_games.html:72 templates/xbox_achievement_game.html:73
 msgid "Developer"
@@ -156,7 +156,7 @@ msgstr "Utvikler"
 #: templates/all_games.html:78 templates/analytics.html:483
 #: templates/analytics.html:2428 templates/base.html:974
 #: templates/base.html:1170 templates/compare_games.html:71
-#: templates/game_detail.html:286 templates/game_detail.html:782
+#: templates/game_detail.html:306 templates/game_detail.html:802
 #: templates/local_trophy_detail.html:87 templates/psn_trophy_detail.html:82
 #: templates/steam_achievement_game.html:78 templates/system_games.html:69
 #: templates/xbox_achievement_game.html:67
@@ -171,7 +171,7 @@ msgid "Release Date"
 msgstr "Utgivelsesdato"
 
 #: routes/ai_fill_bulk.py:41 templates/base.html:977
-#: templates/game_detail.html:328
+#: templates/game_detail.html:348
 msgid "Release dates"
 msgstr "Utgivelsesdatoer"
 
@@ -183,7 +183,7 @@ msgstr "Solgte eksemplarer"
 #: routes/ai_fill_bulk.py:43 templates/_bulk_edit_modal.html:112
 #: templates/_modals/edit_modal.html:137 templates/achievement_game.html:271
 #: templates/all_games.html:84 templates/base.html:1204
-#: templates/compare_games.html:76 templates/game_detail.html:225
+#: templates/compare_games.html:76 templates/game_detail.html:245
 #: templates/system_games.html:75
 msgid "Players"
 msgstr "Spillere"
@@ -196,7 +196,7 @@ msgstr "Spillmoduser"
 #: routes/ai_fill_bulk.py:45 templates/_bulk_edit_modal.html:106
 #: templates/_modals/edit_modal.html:85 templates/analytics.html:492
 #: templates/analytics.html:2428 templates/base.html:1161
-#: templates/compare_games.html:75 templates/game_detail.html:779
+#: templates/compare_games.html:75 templates/game_detail.html:799
 #: templates/reports.html:444
 msgid "Region"
 msgstr "Region"
@@ -208,7 +208,7 @@ msgstr "Franchise / serie"
 
 #: routes/ai_fill_bulk.py:47 templates/_modals/edit_modal.html:56
 #: templates/base.html:1139 templates/compare_games.html:96
-#: templates/game_detail.html:540
+#: templates/game_detail.html:560
 msgid "Similar Games"
 msgstr "Lignende spill"
 
@@ -286,7 +286,7 @@ msgstr "Sett opp en AI-leverandør i Innstillinger > Skraping først."
 msgid "Pick a system, or all systems."
 msgstr "Velg et system, eller alle systemer."
 
-#: routes/ai_fill_bulk.py:115 services/js_i18n_strings.py:1011
+#: routes/ai_fill_bulk.py:115 services/js_i18n_strings.py:1013
 msgid "Turn on at least one field."
 msgstr "Slå på minst ett felt."
 
@@ -425,8 +425,8 @@ msgstr "Overordnet spill ikke funnet"
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "Bonusplaten og det overordnede spillet må være i samme system"
 
-#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1365
-#: routes/games.py:1395 routes/platform_import.py:344
+#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1374
+#: routes/games.py:1404 routes/platform_import.py:344
 #: routes/platform_import.py:723 routes/platform_import.py:1089
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:204 routes/scraper.py:535
@@ -645,22 +645,22 @@ msgstr ""
 msgid "Emulator not found"
 msgstr "Emulator ikke funnet"
 
-#: routes/games.py:251 routes/games.py:285
+#: routes/games.py:252 routes/games.py:286
 msgid "No IDs provided"
 msgstr "Ingen IDer angitt"
 
-#: routes/games.py:293
+#: routes/games.py:294
 msgid "Provide 1-50 valid IDs"
 msgstr "Angi 1–50 gyldige IDer"
 
-#: routes/games.py:559
+#: routes/games.py:565
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
 msgstr ""
 "Videoen ble ikke lagret: den må være en MP4-, WebM- eller OGG-fil på "
 "opptil %(mb)s MB."
 
-#: routes/games.py:569
+#: routes/games.py:575
 #, python-format
 msgid ""
 "Screenshots not added because they match ones the game already has: "
@@ -669,19 +669,19 @@ msgstr ""
 "Skjermbilder som ikke ble lagt til fordi de er like dem spillet allerede "
 "har: %(count)s"
 
-#: routes/games.py:706
+#: routes/games.py:714
 msgid "Game not found after update"
 msgstr "Spillet ble ikke funnet etter oppdatering"
 
-#: routes/games.py:1040
+#: routes/games.py:1049
 msgid "No game selected."
 msgstr "Ingen spill valgt."
 
-#: routes/games.py:1064
+#: routes/games.py:1073
 msgid "This metadata apply is no longer running."
 msgstr "Denne metadatabehandlingen kjører ikke lenger."
 
-#: routes/games.py:1073
+#: routes/games.py:1082
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
@@ -690,41 +690,41 @@ msgstr ""
 "Metadata brukt fra %(sources)s! (%(filled)d felt fylt ut, %(missing)d "
 "mangler fortsatt)"
 
-#: routes/games.py:1079
+#: routes/games.py:1088
 msgid "Failed to apply metadata."
 msgstr "Kunne ikke bruke metadata."
 
-#: routes/games.py:1139 routes/games.py:1184
+#: routes/games.py:1148 routes/games.py:1193
 msgid "No fields to update"
 msgstr "Ingen felt å oppdatere"
 
-#: routes/games.py:1181 routes/platform_import.py:250
+#: routes/games.py:1190 routes/platform_import.py:250
 #: routes/platform_import.py:629 routes/platform_import.py:992
 #: routes/trophies.py:1903
 msgid "No games selected"
 msgstr "Ingen spill valgt"
 
-#: routes/games.py:1191
+#: routes/games.py:1200
 msgid "Invalid completion status"
 msgstr "Ugyldig fullføringsstatus"
 
-#: routes/games.py:1239
+#: routes/games.py:1248
 msgid "No valid fields to update"
 msgstr "Ingen gyldige felt å oppdatere"
 
-#: routes/games.py:1358
+#: routes/games.py:1367
 msgid "Invalid status"
 msgstr "Ugyldig status"
 
-#: routes/games.py:1383
+#: routes/games.py:1392
 msgid "Not authenticated"
 msgstr "Ikke autentisert"
 
-#: routes/games.py:1414
+#: routes/games.py:1423
 msgid "Filter type and value required"
 msgstr "Filtertype og verdi kreves"
 
-#: routes/games.py:1427
+#: routes/games.py:1436
 msgid "Invalid filter type"
 msgstr "Ugyldig filtertype"
 
@@ -738,91 +738,91 @@ msgstr ""
 msgid "AI scraper module not available"
 msgstr "AI-skrapemodulen er ikke tilgjengelig"
 
-#: routes/games_media.py:74
+#: routes/games_media.py:75
 msgid "No filename provided"
 msgstr "Ingen filnavn angitt"
 
-#: routes/games_media.py:81 routes/reports.py:689 routes/scrape_logs.py:129
+#: routes/games_media.py:82 routes/reports.py:689 routes/scrape_logs.py:129
 #: routes/scrape_logs.py:154 routes/scrape_logs.py:203 routes/settings.py:353
 msgid "Invalid filename"
 msgstr "Ugyldig filnavn"
 
-#: routes/games_media.py:90
+#: routes/games_media.py:91
 #, python-format
 msgid "ROM file not found on disk: %(path)s"
 msgstr "ROM-filen ble ikke funnet på disk: %(path)s"
 
-#: routes/games_media.py:105 routes/reports.py:726 routes/reports.py:903
+#: routes/games_media.py:106 routes/reports.py:726 routes/reports.py:903
 msgid "Destination is outside the configured ROM root"
 msgstr "Målet er utenfor den konfigurerte ROM-rotmappen"
 
-#: routes/games_media.py:109 routes/reports.py:730
+#: routes/games_media.py:110 routes/reports.py:730
 #, python-format
 msgid "Cannot rename: %(reason)s"
 msgstr "Kan ikke gi nytt navn: %(reason)s"
 
-#: routes/games_media.py:114 routes/reports.py:736 routes/reports.py:909
+#: routes/games_media.py:115 routes/reports.py:736 routes/reports.py:909
 msgid "A file with that name already exists"
 msgstr "En fil med det navnet finnes allerede"
 
-#: routes/games_media.py:121
+#: routes/games_media.py:122
 msgid "Failed to rename file"
 msgstr "Kunne ikke endre navn på filen"
 
-#: routes/games_media.py:141
+#: routes/games_media.py:142
 msgid "No screenshot specified"
 msgstr "Ingen skjermbilde angitt"
 
-#: routes/games_media.py:144
+#: routes/games_media.py:145
 msgid "Invalid screenshot filename"
 msgstr "Ugyldig filnavn for skjermbilde"
 
-#: routes/games_media.py:154
+#: routes/games_media.py:155
 msgid "Screenshot not found"
 msgstr "Skjermbildet ble ikke funnet"
 
-#: routes/games_media.py:188 templates/_modals/edit_modal.html:389
+#: routes/games_media.py:191 templates/_modals/edit_modal.html:389
 msgid "Pick the .box.json file Slipcase saved, together with its pictures."
 msgstr "Velg .box.json-filen Slipcase lagret, sammen med bildene som hører til."
 
-#: routes/games_media.py:189
+#: routes/games_media.py:192
 msgid "Pick only one .box.json file at a time."
 msgstr "Velg bare én .box.json-fil om gangen."
 
-#: routes/games_media.py:190
+#: routes/games_media.py:193
 msgid "The .box.json file could not be read."
 msgstr "Kunne ikke lese .box.json-filen."
 
-#: routes/games_media.py:191
+#: routes/games_media.py:194
 msgid "This is not a Slipcase box file RetroDB can read."
 msgstr "Dette er ikke en Slipcase-boksfil RetroDB kan lese."
 
-#: routes/games_media.py:192
+#: routes/games_media.py:195
 msgid "The box file names a picture RetroDB will not open."
 msgstr "Boksfilen viser til et bilde RetroDB ikke vil åpne."
 
-#: routes/games_media.py:193
+#: routes/games_media.py:196
 #, python-format
 msgid "Some pictures the box file needs were not picked: %(names)s"
 msgstr "Noen bilder boksfilen trenger ble ikke valgt: %(names)s"
 
-#: routes/games_media.py:195
+#: routes/games_media.py:198
 msgid "A picture is larger than 10 MB."
 msgstr "Et bilde er større enn 10 MB."
 
-#: routes/games_media.py:196
+#: routes/games_media.py:199
 msgid "A picture is not a readable image."
 msgstr "Et bilde er ikke et lesbart bilde."
 
-#: routes/games_media.py:198
+#: routes/games_media.py:201
 msgid "This game already has 3D box faces."
 msgstr "Dette spillet har allerede 3D-boksflater."
 
-#: routes/games_media.py:199
+#: routes/games_media.py:202
 msgid "The faces could not be saved. Check the disk has space."
 msgstr "Kunne ikke lagre flatene. Sjekk at disken har plass."
 
-#: routes/games_media.py:201 services/js_i18n_strings.py:982
+#: routes/games_media.py:204 services/js_i18n_strings.py:984
 msgid "The box file could not be imported."
 msgstr "Kunne ikke importere boksfilen."
 
@@ -984,7 +984,7 @@ msgstr "Ingen bilde å behandle"
 msgid "Image file not found"
 msgstr "Bildefilen ble ikke funnet"
 
-#: routes/museum.py:740 routes/museum.py:744 services/js_i18n_strings.py:592
+#: routes/museum.py:740 routes/museum.py:744 services/js_i18n_strings.py:593
 msgid "Background removal failed"
 msgstr "Fjerning av bakgrunn mislyktes"
 
@@ -1234,7 +1234,7 @@ msgid "Invalid %(field)s: %(result)s"
 msgstr "Ugyldig %(field)s: %(result)s"
 
 #: routes/settings.py:534 routes/settings.py:608 routes/settings.py:660
-#: routes/tools.py:291 services/js_i18n_strings.py:716
+#: routes/tools.py:291 services/js_i18n_strings.py:718
 msgid "Failed to save settings"
 msgstr "Kunne ikke lagre innstillinger"
 
@@ -1868,19 +1868,19 @@ msgstr "Sandkasse"
 msgid "Turn-Based"
 msgstr "Turbasert"
 
-#: services/js_i18n_strings.py:551
+#: services/js_i18n_strings.py:552
 msgid "(Paused)"
 msgstr "(Pause)"
 
-#: services/js_i18n_strings.py:552
+#: services/js_i18n_strings.py:553
 msgid "(none)"
 msgstr "(ingen)"
 
-#: services/js_i18n_strings.py:553
+#: services/js_i18n_strings.py:554
 msgid "(not set)"
 msgstr "(ikke angitt)"
 
-#: services/js_i18n_strings.py:554 templates/_bulk_edit_modal.html:25
+#: services/js_i18n_strings.py:555 templates/_bulk_edit_modal.html:25
 #: templates/_bulk_edit_modal.html:38 templates/_bulk_edit_modal.html:83
 #: templates/_bulk_edit_modal.html:95 templates/_bulk_edit_modal.html:120
 #: templates/_bulk_edit_modal.html:137 templates/_bulk_edit_modal.html:153
@@ -1888,29 +1888,29 @@ msgstr "(ikke angitt)"
 msgid "-- Don't change --"
 msgstr "-- Ikke endre --"
 
-#: services/js_i18n_strings.py:555
+#: services/js_i18n_strings.py:556
 msgid "-- Select log file --"
 msgstr "-- Velg loggfil --"
 
-#: services/js_i18n_strings.py:556
+#: services/js_i18n_strings.py:557
 #, python-brace-format
 msgid "... and {n} more"
 msgstr "... og {n} til"
 
-#: services/js_i18n_strings.py:557 templates/_bulk_edit_modal.html:30
+#: services/js_i18n_strings.py:558 templates/_bulk_edit_modal.html:30
 #: templates/base.html:1050
 msgid "100%"
 msgstr "100 %"
 
-#: services/js_i18n_strings.py:558
+#: services/js_i18n_strings.py:559
 msgid "3D box imported."
 msgstr "3D-boks importert."
 
-#: services/js_i18n_strings.py:559
+#: services/js_i18n_strings.py:560
 msgid "3D box removed."
 msgstr "3D-boks fjernet."
 
-#: services/js_i18n_strings.py:560
+#: services/js_i18n_strings.py:561
 msgid ""
 "A cheat that is on pauses RetroAchievements hardcore mode for that "
 "session."
@@ -1918,95 +1918,95 @@ msgstr ""
 "En juksekode som er på, setter RetroAchievements hardcore-modus på pause "
 "for den økten."
 
-#: services/js_i18n_strings.py:561 templates/_settings_tabs/account.html:296
+#: services/js_i18n_strings.py:562 templates/_settings_tabs/account.html:296
 #: templates/archive_scanner.html:726 templates/multi_disc_organizer.html:217
 #: templates/reports.html:369 templates/reports.html:450
 msgid "Actions"
 msgstr "Handlinger"
 
-#: services/js_i18n_strings.py:562
+#: services/js_i18n_strings.py:563
 msgid "Added to queue - will start when current operation completes"
 msgstr "Lagt til i køen - starter når gjeldende operasjon er fullført"
 
-#: services/js_i18n_strings.py:563
+#: services/js_i18n_strings.py:564
 msgid "All ROMs accounted for!"
 msgstr "Alle ROM-er er kontrollert!"
 
-#: services/js_i18n_strings.py:564 templates/logs.html:764
+#: services/js_i18n_strings.py:565 templates/logs.html:764
 msgid "All Sources"
 msgstr "Alle kilder"
 
-#: services/js_i18n_strings.py:565 templates/all_games.html:42
+#: services/js_i18n_strings.py:566 templates/all_games.html:42
 #: templates/reports.html:328 templates/reports.html:407
 #: templates/reports.html:480
 msgid "All Systems"
 msgstr "Alle systemer"
 
-#: services/js_i18n_strings.py:566
+#: services/js_i18n_strings.py:567
 msgid "Already Syncing"
 msgstr "Synkroniserer allerede"
 
-#: services/js_i18n_strings.py:567
+#: services/js_i18n_strings.py:568
 msgid "Always on while cheats are on"
 msgstr "Alltid på mens juksekoder er på"
 
-#: services/js_i18n_strings.py:568
+#: services/js_i18n_strings.py:569
 msgid "An update is already being downloaded."
 msgstr "En oppdatering lastes allerede ned."
 
-#: services/js_i18n_strings.py:569
+#: services/js_i18n_strings.py:570
 #, python-brace-format
 msgid "Applied when you press Play, in the {emulator} settings for this game."
 msgstr ""
 "Brukes når du trykker Spill, i {emulator}-innstillingene for dette "
 "spillet."
 
-#: services/js_i18n_strings.py:570
+#: services/js_i18n_strings.py:571
 #, python-brace-format
 msgid "Applied {n} update(s)."
 msgstr "Brukte {n} oppdatering(er)."
 
-#: services/js_i18n_strings.py:571 templates/_bulk_edit_modal.html:193
+#: services/js_i18n_strings.py:572 templates/_bulk_edit_modal.html:193
 msgid "Apply Changes"
 msgstr "Bruk endringer"
 
-#: services/js_i18n_strings.py:572
+#: services/js_i18n_strings.py:573
 msgid "Apply Normalization"
 msgstr "Bruk normalisering"
 
-#: services/js_i18n_strings.py:573
+#: services/js_i18n_strings.py:574
 #, python-brace-format
 msgid "Apply failed: {error}"
 msgstr "Bruk mislyktes: {error}"
 
-#: services/js_i18n_strings.py:574
+#: services/js_i18n_strings.py:575
 #, python-brace-format
 msgid "Apply {n} Selected"
 msgstr "Bruk {n} valgte"
 
-#: services/js_i18n_strings.py:575
+#: services/js_i18n_strings.py:576
 #, python-brace-format
 msgid "Apply {n} normalization rule?"
 msgstr "Bruke {n} normaliseringsregel?"
 
-#: services/js_i18n_strings.py:576
+#: services/js_i18n_strings.py:577
 #, python-brace-format
 msgid "Apply {n} normalization rules?"
 msgstr "Bruke {n} normaliseringsregler?"
 
-#: services/js_i18n_strings.py:577
+#: services/js_i18n_strings.py:578
 msgid "Applying Metadata"
 msgstr "Anvender metadata"
 
-#: services/js_i18n_strings.py:578
+#: services/js_i18n_strings.py:579
 msgid "Applying..."
 msgstr "Bruker..."
 
-#: services/js_i18n_strings.py:579
+#: services/js_i18n_strings.py:580
 msgid "Applying…"
 msgstr "Bruker…"
 
-#: services/js_i18n_strings.py:580
+#: services/js_i18n_strings.py:581
 msgid ""
 "Are you sure you want to cancel the bulk scrape?\n"
 "\n"
@@ -2020,16 +2020,16 @@ msgstr ""
 " avbruddet trer i kraft — fremdriftsvarselet vil fortsette å oppdateres i"
 " mellomtiden."
 
-#: services/js_i18n_strings.py:581
+#: services/js_i18n_strings.py:582
 msgid "Are you sure you want to cancel?"
 msgstr "Er du sikker på at du vil avbryte?"
 
-#: services/js_i18n_strings.py:582
+#: services/js_i18n_strings.py:583
 #, python-brace-format
 msgid "Are you sure you want to delete \"{filename}\"?"
 msgstr "Er du sikker på at du vil slette «{filename}»?"
 
-#: services/js_i18n_strings.py:583
+#: services/js_i18n_strings.py:584
 msgid ""
 "Are you sure you want to reset all metadata for this game? This will "
 "delete boxart and screenshots."
@@ -2037,69 +2037,69 @@ msgstr ""
 "Er du sikker på at du vil tilbakestille all metadata for dette spillet? "
 "Dette vil slette omslagsbilde og skjermbilder."
 
-#: services/js_i18n_strings.py:584
+#: services/js_i18n_strings.py:585
 msgid "Are you sure you want to restart the server?"
 msgstr "Er du sikker på at du vil starte serveren på nytt?"
 
-#: services/js_i18n_strings.py:585
+#: services/js_i18n_strings.py:586
 msgid ""
 "Are you sure you want to shut down the server? You will need to start it "
 "again manually."
 msgstr "Er du sikker på at du vil slå av serveren? Du må starte den igjen manuelt."
 
-#: services/js_i18n_strings.py:586 templates/settings.html:42
+#: services/js_i18n_strings.py:587 templates/settings.html:42
 msgid "Are you sure?"
 msgstr "Er du sikker?"
 
-#: services/js_i18n_strings.py:587
+#: services/js_i18n_strings.py:588
 msgid "As the core sets it"
 msgstr "Slik kjernen setter det"
 
-#: services/js_i18n_strings.py:588
+#: services/js_i18n_strings.py:589
 msgid "Asking AI…"
 msgstr "Spør KI…"
 
-#: services/js_i18n_strings.py:589
+#: services/js_i18n_strings.py:590
 msgid "Asking the AI. This can take up to a minute."
 msgstr "Spør AI-en. Dette kan ta opptil ett minutt."
 
-#: services/js_i18n_strings.py:590
+#: services/js_i18n_strings.py:591
 msgid "Aspect ratio"
 msgstr "Sideforhold"
 
-#: services/js_i18n_strings.py:591
+#: services/js_i18n_strings.py:592
 msgid "BIOS"
 msgstr "BIOS"
 
-#: services/js_i18n_strings.py:593
+#: services/js_i18n_strings.py:594
 msgid "Background removed"
 msgstr "Bakgrunn fjernet"
 
-#: services/js_i18n_strings.py:594
+#: services/js_i18n_strings.py:595
 msgid "Bulk fetch failed"
 msgstr "Massehenting mislyktes"
 
-#: services/js_i18n_strings.py:595
+#: services/js_i18n_strings.py:596
 msgid "Bulk fetch request failed"
 msgstr "Forespørsel om massehenting mislyktes"
 
-#: services/js_i18n_strings.py:596
+#: services/js_i18n_strings.py:597
 msgid "Bulk scraping complete!"
 msgstr "Masseskraping fullført!"
 
-#: services/js_i18n_strings.py:597
+#: services/js_i18n_strings.py:598
 msgid "CLZ Imports"
 msgstr "CLZ-importer"
 
-#: services/js_i18n_strings.py:598
+#: services/js_i18n_strings.py:599
 msgid "CRT screen"
 msgstr "CRT-skjerm"
 
-#: services/js_i18n_strings.py:599 templates/game_detail.html:246
+#: services/js_i18n_strings.py:600 templates/game_detail.html:266
 msgid "Can be completed with playable performance and no game-breaking glitches."
 msgstr "Kan fullføres med spillbar ytelse og uten feil som ødelegger spillet."
 
-#: services/js_i18n_strings.py:600 templates/_bulk_edit_modal.html:191
+#: services/js_i18n_strings.py:601 templates/_bulk_edit_modal.html:191
 #: templates/_bulk_scrape_modal.html:49 templates/_modals/edit_modal.html:12
 #: templates/_modals/rename_modal.html:19
 #: templates/_settings_tabs/account.html:73
@@ -2109,7 +2109,7 @@ msgstr "Kan fullføres med spillbar ytelse og uten feil som ødelegger spillet."
 #: templates/archive_scanner.html:798 templates/base.html:340
 #: templates/base.html:358 templates/base.html:1091
 #: templates/chd_converter.html:170 templates/chd_verify.html:126
-#: templates/game_detail.html:587 templates/login.html:254
+#: templates/game_detail.html:607 templates/login.html:254
 #: templates/museum.html:29 templates/museum_system.html:182
 #: templates/psn_trophies.html:297 templates/psn_trophy_detail.html:182
 #: templates/psn_trophy_detail.html:325 templates/reports.html:521
@@ -2120,78 +2120,78 @@ msgstr "Kan fullføres med spillbar ytelse og uten feil som ødelegger spillet."
 msgid "Cancel"
 msgstr "Avbryt"
 
-#: services/js_i18n_strings.py:601
+#: services/js_i18n_strings.py:602
 msgid "Cancel Bulk Scrape"
 msgstr "Avbryt masseskraping"
 
-#: services/js_i18n_strings.py:602
+#: services/js_i18n_strings.py:603
 msgid "Cancel failed"
 msgstr "Avbryting mislyktes"
 
-#: services/js_i18n_strings.py:603
+#: services/js_i18n_strings.py:604
 msgid "Cancel request failed"
 msgstr "Avbruddsforespørsel mislyktes"
 
-#: services/js_i18n_strings.py:604
+#: services/js_i18n_strings.py:605
 msgid "Cancellation requested"
 msgstr "Avbrudd forespurt"
 
-#: services/js_i18n_strings.py:605
+#: services/js_i18n_strings.py:606
 msgid "Cancelled"
 msgstr "Avbrutt"
 
-#: services/js_i18n_strings.py:606
+#: services/js_i18n_strings.py:607
 msgid "Cancelled by user"
 msgstr "Avbrutt av bruker"
 
-#: services/js_i18n_strings.py:607
+#: services/js_i18n_strings.py:608
 msgid "Cheat list changed."
 msgstr "Juksekodelisten er byttet."
 
-#: services/js_i18n_strings.py:608
+#: services/js_i18n_strings.py:609
 msgid "Cheats saved."
 msgstr "Juksekoder lagret."
 
-#: services/js_i18n_strings.py:609
+#: services/js_i18n_strings.py:610
 msgid "Checking RetroAchievements…"
 msgstr "Sjekker RetroAchievements…"
 
-#: services/js_i18n_strings.py:610
+#: services/js_i18n_strings.py:611
 msgid "Clean Missing ROMs"
 msgstr "Rydd opp manglende ROM-er"
 
-#: services/js_i18n_strings.py:611
+#: services/js_i18n_strings.py:612
 msgid "Clear CLZ Imports"
 msgstr "Fjern CLZ-importer"
 
-#: services/js_i18n_strings.py:612
+#: services/js_i18n_strings.py:613
 msgid "Clear HLTB data for this game?"
 msgstr "Fjerne HLTB-data for dette spillet?"
 
-#: services/js_i18n_strings.py:613 templates/achievements_system.html:109
+#: services/js_i18n_strings.py:614 templates/achievements_system.html:109
 msgid "Clear RA Data"
 msgstr "Fjern RA-data"
 
-#: services/js_i18n_strings.py:614
+#: services/js_i18n_strings.py:615
 msgid "Clear RetroAchievements Data"
 msgstr "Fjern RetroAchievements-data"
 
-#: services/js_i18n_strings.py:615
+#: services/js_i18n_strings.py:616
 #, python-brace-format
 msgid "Cleared RA data for {count} games in {system}"
 msgstr "Fjernet RA-data for {count} spill i {system}"
 
-#: services/js_i18n_strings.py:616
+#: services/js_i18n_strings.py:617
 #, python-brace-format
 msgid "Cleared RA data for {n} games"
 msgstr "Fjernet RA-data for {n} spill"
 
-#: services/js_i18n_strings.py:617
+#: services/js_i18n_strings.py:618
 #, python-brace-format
 msgid "Cleared RA data for {n} games in {system}"
 msgstr "Fjernet RA-data for {n} spill i {system}"
 
-#: services/js_i18n_strings.py:618
+#: services/js_i18n_strings.py:619
 #, python-brace-format
 msgid ""
 "Cleared RetroAchievements data for {n} games. Run \"Refresh "
@@ -2200,15 +2200,15 @@ msgstr ""
 "Fjernet RetroAchievements-data for {n} spill. Kjør «Oppdater "
 "RetroAchievements» for å skanne på nytt med oppdatert samsvar."
 
-#: services/js_i18n_strings.py:619
+#: services/js_i18n_strings.py:620
 msgid "Clearing..."
 msgstr "Fjerner..."
 
-#: services/js_i18n_strings.py:620
+#: services/js_i18n_strings.py:621
 msgid "Click again to remove"
 msgstr "Klikk igjen for å fjerne"
 
-#: services/js_i18n_strings.py:621 templates/_bulk_edit_modal.html:8
+#: services/js_i18n_strings.py:622 templates/_bulk_edit_modal.html:8
 #: templates/_bulk_scrape_modal.html:8
 #: templates/_modals/boxart_zoom_modal.html:5
 #: templates/_modals/manual_reader_modal.html:11
@@ -2222,46 +2222,46 @@ msgstr "Klikk igjen for å fjerne"
 msgid "Close"
 msgstr "Lukk"
 
-#: services/js_i18n_strings.py:622
+#: services/js_i18n_strings.py:623
 msgid "Close keyboard shortcuts"
 msgstr "Lukk hurtigtaster"
 
-#: services/js_i18n_strings.py:623
+#: services/js_i18n_strings.py:624
 msgid "Close modal / cancel"
 msgstr "Lukk vindu / avbryt"
 
-#: services/js_i18n_strings.py:624 templates/dashboard.html:188
+#: services/js_i18n_strings.py:625 templates/dashboard.html:188
 #: templates/setup.html:20
 msgid "Complete"
 msgstr "Fullført"
 
-#: services/js_i18n_strings.py:625
+#: services/js_i18n_strings.py:626
 msgid "Complete!"
 msgstr "Fullført!"
 
-#: services/js_i18n_strings.py:626 templates/_bulk_edit_modal.html:29
+#: services/js_i18n_strings.py:627 templates/_bulk_edit_modal.html:29
 #: templates/analytics.html:1664 templates/base.html:1049
-#: templates/dashboard.html:506 templates/game_detail.html:267
+#: templates/dashboard.html:506 templates/game_detail.html:287
 msgid "Completed"
 msgstr "Fullført"
 
-#: services/js_i18n_strings.py:627 templates/_bulk_edit_modal.html:23
+#: services/js_i18n_strings.py:628 templates/_bulk_edit_modal.html:23
 #: templates/analytics.html:137 templates/base.html:1044
 msgid "Completion Status"
 msgstr "Fullføringsstatus"
 
-#: services/js_i18n_strings.py:628 templates/game_detail.html:263
+#: services/js_i18n_strings.py:629 templates/game_detail.html:283
 msgid "Completion status"
 msgstr "Fullføringsstatus"
 
-#: services/js_i18n_strings.py:629
+#: services/js_i18n_strings.py:630
 msgid "Completion status updated"
 msgstr "Fullføringsstatus oppdatert"
 
-#: services/js_i18n_strings.py:630 templates/achievement_game.html:172
+#: services/js_i18n_strings.py:631 templates/achievement_game.html:172
 #: templates/achievement_game.html:197 templates/achievement_game.html:211
-#: templates/base.html:1086 templates/game_detail.html:581
-#: templates/game_detail.html:607 templates/game_detail.html:621
+#: templates/base.html:1086 templates/game_detail.html:601
+#: templates/game_detail.html:627 templates/game_detail.html:641
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:176
 #: templates/psn_trophy_detail.html:209
 #: templates/steam_achievement_game.html:134
@@ -2271,58 +2271,58 @@ msgstr "Fullføringsstatus oppdatert"
 msgid "Completionist"
 msgstr "Fullfører"
 
-#: services/js_i18n_strings.py:631 templates/settings.html:41
+#: services/js_i18n_strings.py:632 templates/settings.html:41
 msgid "Confirm Action"
 msgstr "Bekreft handling"
 
-#: services/js_i18n_strings.py:632
+#: services/js_i18n_strings.py:633
 msgid "Confirm Bulk Edit"
 msgstr "Bekreft masseredigering"
 
-#: services/js_i18n_strings.py:633
+#: services/js_i18n_strings.py:634
 msgid "Content generated successfully"
 msgstr "Innhold generert"
 
-#: services/js_i18n_strings.py:634
+#: services/js_i18n_strings.py:635
 msgid "Controller"
 msgstr "Kontroller"
 
-#: services/js_i18n_strings.py:635
+#: services/js_i18n_strings.py:636
 msgid "Controller image saved"
 msgstr "Kontrollerbilde lagret"
 
-#: services/js_i18n_strings.py:636
+#: services/js_i18n_strings.py:637
 msgid "Controller image uploaded"
 msgstr "Kontrollerbilde lastet opp"
 
-#: services/js_i18n_strings.py:637
+#: services/js_i18n_strings.py:638
 #, python-brace-format
 msgid "Copied {copied} files; {unchanged} were already there; {skipped} skipped."
 msgstr ""
 "Kopierte {copied} filer; {unchanged} fantes allerede; {skipped} hoppet "
 "over."
 
-#: services/js_i18n_strings.py:638
+#: services/js_i18n_strings.py:639
 msgid "Core"
 msgstr "Kjerne"
 
-#: services/js_i18n_strings.py:639
+#: services/js_i18n_strings.py:640
 msgid "Could not apply metadata."
 msgstr "Kunne ikke bruke metadata."
 
-#: services/js_i18n_strings.py:640
+#: services/js_i18n_strings.py:641
 msgid "Could not change the cheat list."
 msgstr "Kunne ikke bytte juksekodeliste."
 
-#: services/js_i18n_strings.py:641
+#: services/js_i18n_strings.py:642
 msgid "Could not check for updates."
 msgstr "Kunne ikke se etter oppdateringer."
 
-#: services/js_i18n_strings.py:642
+#: services/js_i18n_strings.py:643
 msgid "Could not count the games."
 msgstr "Kunne ikke telle spillene."
 
-#: services/js_i18n_strings.py:643
+#: services/js_i18n_strings.py:644
 #, python-brace-format
 msgid ""
 "Could not download the {system} core. Check the internet connection and "
@@ -2331,396 +2331,401 @@ msgstr ""
 "Kunne ikke laste ned kjernen for {system}. Sjekk internettforbindelsen og"
 " prøv igjen."
 
-#: services/js_i18n_strings.py:644
+#: services/js_i18n_strings.py:645
 msgid "Could not link these versions."
 msgstr "Kunne ikke koble sammen disse versjonene."
 
-#: services/js_i18n_strings.py:645
+#: services/js_i18n_strings.py:646
 msgid "Could not load suggestions."
 msgstr "Kunne ikke laste inn forslag."
 
-#: services/js_i18n_strings.py:646
+#: services/js_i18n_strings.py:647
 msgid "Could not open this manual. Use \"Open PDF in a new tab\" instead."
 msgstr "Kunne ikke åpne denne manualen. Bruk «Åpne PDF i ny fane» i stedet."
 
-#: services/js_i18n_strings.py:647
+#: services/js_i18n_strings.py:648
 msgid "Could not read the run status."
 msgstr "Kunne ikke lese statusen for kjøringen."
 
-#: services/js_i18n_strings.py:648
+#: services/js_i18n_strings.py:649
 msgid "Could not reconnect to server. Please refresh manually."
 msgstr "Kunne ikke koble til serveren på nytt. Oppdater siden manuelt."
 
-#: services/js_i18n_strings.py:649
+#: services/js_i18n_strings.py:650
 msgid "Could not save that setting."
 msgstr "Kunne ikke lagre den innstillingen."
 
-#: services/js_i18n_strings.py:650
+#: services/js_i18n_strings.py:651
 msgid "Could not save that."
 msgstr "Kunne ikke lagre det."
 
-#: services/js_i18n_strings.py:651
+#: services/js_i18n_strings.py:652
 msgid "Could not save the cheats."
 msgstr "Kunne ikke lagre juksekodene."
 
-#: services/js_i18n_strings.py:652
+#: services/js_i18n_strings.py:653
 msgid "Could not show this page of the manual."
 msgstr "Kunne ikke vise denne siden av manualen."
 
-#: services/js_i18n_strings.py:653
+#: services/js_i18n_strings.py:654
 msgid "Could not start the run."
 msgstr "Kunne ikke starte kjøringen."
 
-#: services/js_i18n_strings.py:654
+#: services/js_i18n_strings.py:655
 msgid "Could not stop the run."
 msgstr "Kunne ikke stoppe kjøringen."
 
-#: services/js_i18n_strings.py:655
+#: services/js_i18n_strings.py:656
 msgid "Could not stop the running instance."
 msgstr "Kunne ikke stoppe den kjørende instansen."
 
-#: services/js_i18n_strings.py:656
+#: services/js_i18n_strings.py:657
 msgid "Could not unlink this version."
 msgstr "Kunne ikke fjerne koblingen for denne versjonen."
 
-#: services/js_i18n_strings.py:657
+#: services/js_i18n_strings.py:658
 msgid "Could not write the summary."
 msgstr "Kunne ikke skrive sammendraget."
 
-#: services/js_i18n_strings.py:658
+#: services/js_i18n_strings.py:659
 #, python-brace-format
 msgid "Critic Score ({count} reviews)"
 msgstr "Kritikerpoeng ({count} anmeldelser)"
 
-#: services/js_i18n_strings.py:659
+#: services/js_i18n_strings.py:660
 msgid "Currently set"
 msgstr "Nåværende innstilling"
 
-#: services/js_i18n_strings.py:660
+#: services/js_i18n_strings.py:661
 #, python-brace-format
 msgid "Default emulator for {system}"
 msgstr "Standardemulator for {system}"
 
-#: services/js_i18n_strings.py:661
+#: services/js_i18n_strings.py:662
 msgid "Delete Log File"
 msgstr "Slett loggfil"
 
-#: services/js_i18n_strings.py:662
+#: services/js_i18n_strings.py:663
 #, python-brace-format
 msgid "Detect failed: {error}"
 msgstr "Oppdaging mislyktes: {error}"
 
-#: services/js_i18n_strings.py:663
+#: services/js_i18n_strings.py:664
 msgid "Detected path"
 msgstr "Oppdaget bane"
 
-#: services/js_i18n_strings.py:664
+#: services/js_i18n_strings.py:665
 msgid "Detecting…"
 msgstr "Oppdager…"
 
-#: services/js_i18n_strings.py:665 templates/game_detail.html:250
+#: services/js_i18n_strings.py:666 templates/game_detail.html:270
 msgid "Does not start, or crashes the emulator."
 msgstr "Starter ikke, eller får emulatoren til å krasje."
 
-#: services/js_i18n_strings.py:666 templates/_bulk_scrape_modal.html:69
+#: services/js_i18n_strings.py:667 templates/_bulk_scrape_modal.html:69
 #: templates/all_games.html:228 templates/psn_trophies.html:247
 #: templates/psn_trophies.html:307 templates/reports.html:525
 #: templates/system_games.html:208
 msgid "Done"
 msgstr "Ferdig"
 
-#: services/js_i18n_strings.py:667
+#: services/js_i18n_strings.py:668
 msgid "Done."
 msgstr "Ferdig."
 
-#: services/js_i18n_strings.py:668 templates/logs.html:734
+#: services/js_i18n_strings.py:669 templates/logs.html:734
 msgid "Download"
 msgstr "Last ned"
 
-#: services/js_i18n_strings.py:669
+#: services/js_i18n_strings.py:670
 msgid "Download again"
 msgstr "Last ned på nytt"
 
-#: services/js_i18n_strings.py:670
+#: services/js_i18n_strings.py:671
 msgid "Download the update first."
 msgstr "Last ned oppdateringen først."
 
-#: services/js_i18n_strings.py:671
+#: services/js_i18n_strings.py:672
 #, python-brace-format
 msgid "Downloaded {date}, {n} files"
 msgstr "Lastet ned {date}, {n} filer"
 
-#: services/js_i18n_strings.py:672
+#: services/js_i18n_strings.py:673
 msgid "Downloading 3D box art…"
 msgstr "Laster ned 3D-omslagsbilde…"
 
-#: services/js_i18n_strings.py:673
+#: services/js_i18n_strings.py:674
 msgid "Downloading box art…"
 msgstr "Laster ned omslagsbilde…"
 
-#: services/js_i18n_strings.py:674
+#: services/js_i18n_strings.py:675
 msgid "Downloading fan art…"
 msgstr "Laster ned fankunst…"
 
-#: services/js_i18n_strings.py:675
+#: services/js_i18n_strings.py:676
+#, fuzzy
+msgid "Downloading logo…"
+msgstr "Laster ned video…"
+
+#: services/js_i18n_strings.py:677
 msgid "Downloading manual…"
 msgstr "Laster ned manual…"
 
-#: services/js_i18n_strings.py:676
+#: services/js_i18n_strings.py:678
 msgid "Downloading media…"
 msgstr "Laster ned medier…"
 
-#: services/js_i18n_strings.py:677
+#: services/js_i18n_strings.py:679
 msgid "Downloading screenshots…"
 msgstr "Laster ned skjermbilder…"
 
-#: services/js_i18n_strings.py:678
+#: services/js_i18n_strings.py:680
 #, python-brace-format
 msgid "Downloading the {system} core…"
 msgstr "Laster ned kjernen for {system}…"
 
-#: services/js_i18n_strings.py:679
+#: services/js_i18n_strings.py:681
 msgid "Downloading video…"
 msgstr "Laster ned video…"
 
-#: services/js_i18n_strings.py:680
+#: services/js_i18n_strings.py:682
 #, python-brace-format
 msgid "Downloading {core} ({done} of {total})… {percent}%"
 msgstr "Laster ned {core} ({done} av {total})… {percent}%"
 
-#: services/js_i18n_strings.py:681
+#: services/js_i18n_strings.py:683
 #, python-brace-format
 msgid "Downloading {item}… {percent}%"
 msgstr "Laster ned {item}… {percent}%"
 
-#: services/js_i18n_strings.py:682
+#: services/js_i18n_strings.py:684
 #, python-brace-format
 msgid "Downloading {item}… {size}"
 msgstr "Laster ned {item}… {size}"
 
-#: services/js_i18n_strings.py:683
+#: services/js_i18n_strings.py:685
 msgid "DuckStation cheats"
 msgstr "DuckStation-juksekoder"
 
-#: services/js_i18n_strings.py:684
+#: services/js_i18n_strings.py:686
 msgid "DuckStation ignores cheats in hardcore mode."
 msgstr "DuckStation overser juksekoder i hardcore-modus."
 
-#: services/js_i18n_strings.py:685 templates/_settings_tabs/account.html:341
-#: templates/base.html:1005 templates/game_detail.html:121
+#: services/js_i18n_strings.py:687 templates/_settings_tabs/account.html:341
+#: templates/base.html:1005 templates/game_detail.html:133
 #: templates/wishlist.html:641
 msgid "Edit"
 msgstr "Rediger"
 
-#: services/js_i18n_strings.py:686
+#: services/js_i18n_strings.py:688
 msgid "Edit game"
 msgstr "Rediger spill"
 
-#: services/js_i18n_strings.py:687
+#: services/js_i18n_strings.py:689
 #, python-brace-format
 msgid "Edit: {title}"
 msgstr "Rediger: {title}"
 
-#: services/js_i18n_strings.py:688
+#: services/js_i18n_strings.py:690
 msgid "Emulator"
 msgstr "Emulator"
 
-#: services/js_i18n_strings.py:689
+#: services/js_i18n_strings.py:691
 msgid "Enter one folder path."
 msgstr "Skriv inn én mappebane."
 
-#: services/js_i18n_strings.py:690
+#: services/js_i18n_strings.py:692
 msgid "Error"
 msgstr "Feil"
 
-#: services/js_i18n_strings.py:691
+#: services/js_i18n_strings.py:693
 msgid "Error clearing HLTB data"
 msgstr "Feil ved fjerning av HLTB-data"
 
-#: services/js_i18n_strings.py:692
+#: services/js_i18n_strings.py:694
 msgid "Error connecting to HowLongToBeat"
 msgstr "Feil ved tilkobling til HowLongToBeat"
 
-#: services/js_i18n_strings.py:693
+#: services/js_i18n_strings.py:695
 msgid "Error deleting log file"
 msgstr "Feil ved sletting av loggfil"
 
-#: services/js_i18n_strings.py:694
+#: services/js_i18n_strings.py:696
 msgid "Error loading file"
 msgstr "Feil ved lasting av fil"
 
-#: services/js_i18n_strings.py:695
+#: services/js_i18n_strings.py:697
 msgid "Error loading log file"
 msgstr "Feil ved lasting av loggfil"
 
-#: services/js_i18n_strings.py:696
+#: services/js_i18n_strings.py:698
 msgid "Error looking up HLTB"
 msgstr "Feil ved oppslag i HLTB"
 
-#: services/js_i18n_strings.py:697
+#: services/js_i18n_strings.py:699
 msgid "Error refreshing RetroAchievements: "
 msgstr "Feil ved oppdatering av RetroAchievements: "
 
-#: services/js_i18n_strings.py:698
+#: services/js_i18n_strings.py:700
 msgid "Error saving HLTB data"
 msgstr "Feil ved lagring av HLTB-data"
 
-#: services/js_i18n_strings.py:699
+#: services/js_i18n_strings.py:701
 msgid "Error saving game: "
 msgstr "Feil ved lagring av spill: "
 
-#: services/js_i18n_strings.py:700
+#: services/js_i18n_strings.py:702
 #, python-brace-format
 msgid "Error scanning library: {error}"
 msgstr "Feil ved skanning av bibliotek: {error}"
 
-#: services/js_i18n_strings.py:701
+#: services/js_i18n_strings.py:703
 msgid "Error updating completion status"
 msgstr "Feil ved oppdatering av fullføringsstatus"
 
-#: services/js_i18n_strings.py:702
+#: services/js_i18n_strings.py:704
 msgid "Error updating status"
 msgstr "Feil ved oppdatering av status"
 
-#: services/js_i18n_strings.py:703 templates/_modals/edit_modal.html:228
+#: services/js_i18n_strings.py:705 templates/_modals/edit_modal.html:228
 #: templates/base.html:1281
 msgid "Exclusive"
 msgstr "Eksklusiv"
 
-#: services/js_i18n_strings.py:704
+#: services/js_i18n_strings.py:706
 msgid "Failed to apply bulk edit. Check console for details."
 msgstr "Kunne ikke bruke masseredigering. Se konsollen for detaljer."
 
-#: services/js_i18n_strings.py:705
+#: services/js_i18n_strings.py:707
 msgid "Failed to apply normalization"
 msgstr "Kunne ikke bruke normalisering"
 
-#: services/js_i18n_strings.py:706
+#: services/js_i18n_strings.py:708
 msgid "Failed to clean missing ROMs"
 msgstr "Kunne ikke rydde opp manglende ROM-er"
 
-#: services/js_i18n_strings.py:707
+#: services/js_i18n_strings.py:709
 msgid "Failed to clear CLZ imports"
 msgstr "Kunne ikke fjerne CLZ-importer"
 
-#: services/js_i18n_strings.py:708
+#: services/js_i18n_strings.py:710
 msgid "Failed to clear HLTB: "
 msgstr "Kunne ikke fjerne HLTB: "
 
-#: services/js_i18n_strings.py:709
+#: services/js_i18n_strings.py:711
 msgid "Failed to clear RA data"
 msgstr "Kunne ikke fjerne RA-data"
 
-#: services/js_i18n_strings.py:710
+#: services/js_i18n_strings.py:712
 msgid "Failed to delete"
 msgstr "Kunne ikke slette"
 
-#: services/js_i18n_strings.py:711
+#: services/js_i18n_strings.py:713
 msgid "Failed to fetch controller image"
 msgstr "Kunne ikke hente kontrollerbilde"
 
-#: services/js_i18n_strings.py:712
+#: services/js_i18n_strings.py:714
 msgid "Failed to fetch image"
 msgstr "Kunne ikke hente bilde"
 
-#: services/js_i18n_strings.py:713
+#: services/js_i18n_strings.py:715
 msgid "Failed to load game"
 msgstr "Kunne ikke laste spill"
 
-#: services/js_i18n_strings.py:714
+#: services/js_i18n_strings.py:716
 msgid "Failed to load normalization data"
 msgstr "Kunne ikke laste normaliseringsdata"
 
-#: services/js_i18n_strings.py:715
+#: services/js_i18n_strings.py:717
 msgid "Failed to save HLTB: "
 msgstr "Kunne ikke lagre HLTB: "
 
-#: services/js_i18n_strings.py:717
+#: services/js_i18n_strings.py:719
 msgid "Failed to save: "
 msgstr "Kunne ikke lagre: "
 
-#: services/js_i18n_strings.py:718
+#: services/js_i18n_strings.py:720
 msgid "Failed to start RetroAchievements refresh"
 msgstr "Kunne ikke starte oppdatering av RetroAchievements"
 
-#: services/js_i18n_strings.py:719
+#: services/js_i18n_strings.py:721
 msgid "Failed to start bulk scrape"
 msgstr "Kunne ikke starte masseskraping"
 
-#: services/js_i18n_strings.py:720
+#: services/js_i18n_strings.py:722
 msgid "Failed to start generation"
 msgstr "Kunne ikke starte generering"
 
-#: services/js_i18n_strings.py:721
+#: services/js_i18n_strings.py:723
 msgid "Failed to update completion status: "
 msgstr "Kunne ikke oppdatere fullføringsstatus: "
 
-#: services/js_i18n_strings.py:722
+#: services/js_i18n_strings.py:724
 #, python-brace-format
 msgid "Failed to update status: {error}"
 msgstr "Kunne ikke oppdatere status: {error}"
 
-#: services/js_i18n_strings.py:723
+#: services/js_i18n_strings.py:725
 #, python-brace-format
 msgid "Failed: {error}"
 msgstr "Mislyktes: {error}"
 
-#: services/js_i18n_strings.py:724
+#: services/js_i18n_strings.py:726
 msgid "Fetch All Controller Images"
 msgstr "Hent alle kontrollerbilder"
 
-#: services/js_i18n_strings.py:725
+#: services/js_i18n_strings.py:727
 #, python-brace-format
 msgid "Fetching from {source}…"
 msgstr "Henter fra {source}…"
 
-#: services/js_i18n_strings.py:726
+#: services/js_i18n_strings.py:728
 #, python-brace-format
 msgid "Fetching images: {done} of {total}"
 msgstr "Henter bilder: {done} av {total}"
 
-#: services/js_i18n_strings.py:727 templates/ai_fill_bulk.html:99
+#: services/js_i18n_strings.py:729 templates/ai_fill_bulk.html:99
 #: templates/ai_fill_bulk.html:104
 msgid "Fill with AI"
 msgstr "Fyll med KI"
 
-#: services/js_i18n_strings.py:728
+#: services/js_i18n_strings.py:730
 #, python-brace-format
 msgid "Fill {count} games with AI? Your AI provider charges for each game."
 msgstr ""
 "Fylle {count} spill med KI? KI-leverandøren din tar betalt for hvert "
 "spill."
 
-#: services/js_i18n_strings.py:729
+#: services/js_i18n_strings.py:731
 #, python-brace-format
 msgid "Filling game {current} of {total}: {title}. Filled so far: {filled}."
 msgstr "Fyller spill {current} av {total}: {title}. Fylt så langt: {filled}."
 
-#: services/js_i18n_strings.py:730
+#: services/js_i18n_strings.py:732
 msgid "Focus search box"
 msgstr "Fokuser søkefeltet"
 
-#: services/js_i18n_strings.py:731 templates/logs.html:743
+#: services/js_i18n_strings.py:733 templates/logs.html:743
 msgid "From"
 msgstr "Fra"
 
-#: services/js_i18n_strings.py:732
+#: services/js_i18n_strings.py:734
 msgid "From the system setting"
 msgstr "Fra systeminnstillingen"
 
-#: services/js_i18n_strings.py:733
+#: services/js_i18n_strings.py:735
 msgid "Fullscreen"
 msgstr "Fullskjerm"
 
-#: services/js_i18n_strings.py:734
+#: services/js_i18n_strings.py:736
 msgid "Game Page"
 msgstr "Spillside"
 
-#: services/js_i18n_strings.py:735
+#: services/js_i18n_strings.py:737
 msgid "Game details updated successfully."
 msgstr "Spilldetaljer oppdatert."
 
-#: services/js_i18n_strings.py:736 templates/_settings_tabs/data.html:186
+#: services/js_i18n_strings.py:738 templates/_settings_tabs/data.html:186
 #: templates/achievements_system.html:119 templates/analytics.html:571
 #: templates/analytics.html:1584 templates/analytics.html:1625
 #: templates/analytics.html:1947 templates/analytics.html:2122
@@ -2730,32 +2735,32 @@ msgstr "Spilldetaljer oppdatert."
 msgid "Games"
 msgstr "Spill"
 
-#: services/js_i18n_strings.py:737
+#: services/js_i18n_strings.py:739
 #, python-brace-format
 msgid "Games to fill: {count}."
 msgstr "Spill å fylle: {count}."
 
-#: services/js_i18n_strings.py:738
+#: services/js_i18n_strings.py:740
 msgid "Generate All Museum Content"
 msgstr "Generer alt museumsinnhold"
 
-#: services/js_i18n_strings.py:739 templates/museum_system.html:45
+#: services/js_i18n_strings.py:741 templates/museum_system.html:45
 msgid "Generate Content"
 msgstr "Generer innhold"
 
-#: services/js_i18n_strings.py:740 templates/museum.html:28
+#: services/js_i18n_strings.py:742 templates/museum.html:28
 msgid "Generating content..."
 msgstr "Genererer innhold..."
 
-#: services/js_i18n_strings.py:741
+#: services/js_i18n_strings.py:743
 msgid "Generating..."
 msgstr "Genererer..."
 
-#: services/js_i18n_strings.py:742
+#: services/js_i18n_strings.py:744
 msgid "Generation cancelled"
 msgstr "Generering avbrutt"
 
-#: services/js_i18n_strings.py:743
+#: services/js_i18n_strings.py:745
 #, python-brace-format
 msgid ""
 "Generation complete: {generated} generated, {skipped} skipped, {failed} "
@@ -2764,19 +2769,19 @@ msgstr ""
 "Generering fullført: {generated} generert, {skipped} hoppet over, "
 "{failed} feilet"
 
-#: services/js_i18n_strings.py:744
+#: services/js_i18n_strings.py:746
 msgid "Generation failed"
 msgstr "Generering mislyktes"
 
-#: services/js_i18n_strings.py:745
+#: services/js_i18n_strings.py:747
 msgid "Generation request failed"
 msgstr "Genereringsforespørsel mislyktes"
 
-#: services/js_i18n_strings.py:746
+#: services/js_i18n_strings.py:748
 msgid "Get cheats in Settings > Emulators"
 msgstr "Hent juksekoder under Innstillinger > Emulatorer"
 
-#: services/js_i18n_strings.py:747 templates/game_detail.html:247
+#: services/js_i18n_strings.py:749 templates/game_detail.html:267
 msgid ""
 "Gets in game, but cannot be finished, has serious glitches or runs too "
 "slowly."
@@ -2784,188 +2789,188 @@ msgstr ""
 "Kommer inn i spillet, men kan ikke fullføres, har alvorlige feil eller "
 "går for sakte."
 
-#: services/js_i18n_strings.py:748
+#: services/js_i18n_strings.py:750
 msgid "Go to Analytics"
 msgstr "Gå til Analyse"
 
-#: services/js_i18n_strings.py:749
+#: services/js_i18n_strings.py:751
 msgid "Go to Changelog"
 msgstr "Gå til Endringslogg"
 
-#: services/js_i18n_strings.py:750
+#: services/js_i18n_strings.py:752
 msgid "Go to Dashboard"
 msgstr "Gå til Oversikt"
 
-#: services/js_i18n_strings.py:751
+#: services/js_i18n_strings.py:753
 msgid "Go to Help"
 msgstr "Gå til Hjelp"
 
-#: services/js_i18n_strings.py:752
+#: services/js_i18n_strings.py:754
 msgid "Go to Library"
 msgstr "Gå til Bibliotek"
 
-#: services/js_i18n_strings.py:753
+#: services/js_i18n_strings.py:755
 msgid "Go to Settings"
 msgstr "Gå til Innstillinger"
 
-#: services/js_i18n_strings.py:754
+#: services/js_i18n_strings.py:756
 msgid "Go to Systems"
 msgstr "Gå til Systemer"
 
-#: services/js_i18n_strings.py:755
+#: services/js_i18n_strings.py:757
 msgid "HLTB data cleared"
 msgstr "HLTB-data fjernet"
 
-#: services/js_i18n_strings.py:756
+#: services/js_i18n_strings.py:758
 msgid "HLTB data saved"
 msgstr "HLTB-data lagret"
 
-#: services/js_i18n_strings.py:757
+#: services/js_i18n_strings.py:759
 msgid "HLTB lookup cancelled"
 msgstr "HLTB-oppslag avbrutt"
 
-#: services/js_i18n_strings.py:758
+#: services/js_i18n_strings.py:760
 msgid "Handheld LCD"
 msgstr "Håndholdt LCD"
 
-#: services/js_i18n_strings.py:759 templates/all_games.html:104
+#: services/js_i18n_strings.py:761 templates/all_games.html:104
 #: templates/system_games.html:95
 msgid "Has Achievements"
 msgstr "Har prestasjoner"
 
-#: services/js_i18n_strings.py:760 templates/logs.html:719
+#: services/js_i18n_strings.py:762 templates/logs.html:719
 msgid "Image Resize"
 msgstr "Bildeendring"
 
-#: services/js_i18n_strings.py:761
+#: services/js_i18n_strings.py:763
 msgid "Image fetch cancelled."
 msgstr "Bildehenting avbrutt."
 
-#: services/js_i18n_strings.py:762
+#: services/js_i18n_strings.py:764
 msgid "Image must be under 10MB"
 msgstr "Bildet må være under 10 MB"
 
-#: services/js_i18n_strings.py:763
+#: services/js_i18n_strings.py:765
 msgid "Importing…"
 msgstr "Importerer…"
 
-#: services/js_i18n_strings.py:764 templates/_bulk_edit_modal.html:27
+#: services/js_i18n_strings.py:766 templates/_bulk_edit_modal.html:27
 #: templates/achievements_system.html:151
 #: templates/achievements_system.html:170 templates/analytics.html:1664
 #: templates/base.html:1047 templates/dashboard.html:362
-#: templates/dashboard.html:502 templates/game_detail.html:265
+#: templates/dashboard.html:502 templates/game_detail.html:285
 #: templates/steam_achievements.html:77 templates/xbox_achievements.html:77
 msgid "In Progress"
 msgstr "Pågår"
 
-#: services/js_i18n_strings.py:765
+#: services/js_i18n_strings.py:767
 msgid "Initializing bulk scrape..."
 msgstr "Initialiserer masseskraping..."
 
-#: services/js_i18n_strings.py:766 templates/_bulk_scrape_modal.html:23
+#: services/js_i18n_strings.py:768 templates/_bulk_scrape_modal.html:23
 #: templates/duplicate_finder.html:250 templates/screenshot_dedup.html:276
 msgid "Initializing..."
 msgstr "Initialiserer..."
 
-#: services/js_i18n_strings.py:767
+#: services/js_i18n_strings.py:769
 msgid "Input lag reduction"
 msgstr "Redusert inndataforsinkelse"
 
-#: services/js_i18n_strings.py:768
+#: services/js_i18n_strings.py:770
 msgid "Install update"
 msgstr "Installer oppdatering"
 
-#: services/js_i18n_strings.py:769
+#: services/js_i18n_strings.py:771
 #, python-brace-format
 msgid "Installed {n} cores."
 msgstr "Installerte {n} kjerner."
 
-#: services/js_i18n_strings.py:770
+#: services/js_i18n_strings.py:772
 #, python-brace-format
 msgid "Installed {n} cores. Failed: {failed}"
 msgstr "Installerte {n} kjerner. Mislyktes: {failed}"
 
-#: services/js_i18n_strings.py:771
+#: services/js_i18n_strings.py:773
 msgid "Installing the update and restarting RetroDB…"
 msgstr "Installerer oppdateringen og starter RetroDB på nytt …"
 
-#: services/js_i18n_strings.py:772
+#: services/js_i18n_strings.py:774
 msgid "Integer scaling"
 msgstr "Heltallsskalering"
 
-#: services/js_i18n_strings.py:773
+#: services/js_i18n_strings.py:775
 msgid "Just synced"
 msgstr "Nettopp synkronisert"
 
-#: services/js_i18n_strings.py:774
+#: services/js_i18n_strings.py:776
 msgid "Keyboard Shortcuts"
 msgstr "Hurtigtaster"
 
-#: services/js_i18n_strings.py:775
+#: services/js_i18n_strings.py:777
 msgid "Kill"
 msgstr "Avslutt"
 
-#: services/js_i18n_strings.py:776
+#: services/js_i18n_strings.py:778
 #, python-brace-format
 msgid "Last tested {date}."
 msgstr "Sist testet {date}."
 
-#: services/js_i18n_strings.py:777
+#: services/js_i18n_strings.py:779
 #, python-brace-format
 msgid "Launch failed: {error}"
 msgstr "Start mislyktes: {error}"
 
-#: services/js_i18n_strings.py:778
+#: services/js_i18n_strings.py:780
 #, python-brace-format
 msgid "Launched (pid {pid})"
 msgstr "Startet (pid {pid})"
 
-#: services/js_i18n_strings.py:779
+#: services/js_i18n_strings.py:781
 msgid "Launched (replaced previous instance)"
 msgstr "Startet (erstattet forrige instans)"
 
-#: services/js_i18n_strings.py:780
+#: services/js_i18n_strings.py:782
 msgid "Launching…"
 msgstr "Starter…"
 
-#: services/js_i18n_strings.py:781
+#: services/js_i18n_strings.py:783
 #, python-brace-format
 msgid "Library scan complete! Found {n} new games."
 msgstr "Biblioteksskanning fullført! Fant {n} nye spill."
 
-#: services/js_i18n_strings.py:782
+#: services/js_i18n_strings.py:784
 msgid "Link"
 msgstr "Koble"
 
-#: services/js_i18n_strings.py:783
+#: services/js_i18n_strings.py:785
 msgid "Link ticked games"
 msgstr "Koble avkryssede spill"
 
-#: services/js_i18n_strings.py:784
+#: services/js_i18n_strings.py:786
 msgid "Loading log file..."
 msgstr "Laster loggfil..."
 
-#: services/js_i18n_strings.py:785
+#: services/js_i18n_strings.py:787
 msgid "Loading the manual…"
 msgstr "Laster inn manualen…"
 
-#: services/js_i18n_strings.py:786 templates/settings_emulators.html:201
+#: services/js_i18n_strings.py:788 templates/settings_emulators.html:201
 #: templates/settings_emulators.html:219
 msgid "Loading…"
 msgstr "Laster…"
 
-#: services/js_i18n_strings.py:787
+#: services/js_i18n_strings.py:789
 msgid "Log file deleted"
 msgstr "Loggfil slettet"
 
-#: services/js_i18n_strings.py:788
+#: services/js_i18n_strings.py:790
 msgid "Looking for versions…"
 msgstr "Ser etter versjoner…"
 
-#: services/js_i18n_strings.py:789 templates/achievement_game.html:168
+#: services/js_i18n_strings.py:791 templates/achievement_game.html:168
 #: templates/achievement_game.html:197 templates/achievement_game.html:207
-#: templates/base.html:1082 templates/game_detail.html:577
-#: templates/game_detail.html:607 templates/game_detail.html:617
+#: templates/base.html:1082 templates/game_detail.html:597
+#: templates/game_detail.html:627 templates/game_detail.html:637
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:172
 #: templates/psn_trophy_detail.html:205
 #: templates/steam_achievement_game.html:133
@@ -2975,10 +2980,10 @@ msgstr "Ser etter versjoner…"
 msgid "Main + Extras"
 msgstr "Hovedspill + ekstrainnhold"
 
-#: services/js_i18n_strings.py:790 templates/achievement_game.html:164
+#: services/js_i18n_strings.py:792 templates/achievement_game.html:164
 #: templates/achievement_game.html:197 templates/achievement_game.html:203
-#: templates/base.html:1078 templates/game_detail.html:573
-#: templates/game_detail.html:607 templates/game_detail.html:613
+#: templates/base.html:1078 templates/game_detail.html:593
+#: templates/game_detail.html:627 templates/game_detail.html:633
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:168
 #: templates/psn_trophy_detail.html:201
 #: templates/steam_achievement_game.html:132
@@ -2988,15 +2993,15 @@ msgstr "Hovedspill + ekstrainnhold"
 msgid "Main Story"
 msgstr "Hovedhistorie"
 
-#: services/js_i18n_strings.py:791
+#: services/js_i18n_strings.py:793
 msgid "Marked as not versions."
 msgstr "Merket som ikke versjoner."
 
-#: services/js_i18n_strings.py:792
+#: services/js_i18n_strings.py:794
 msgid "Match found - please confirm to save"
 msgstr "Treff funnet - bekreft for å lagre"
 
-#: services/js_i18n_strings.py:793
+#: services/js_i18n_strings.py:795
 msgid ""
 "Matched using this alternate/regional title — confirm it refers to the "
 "same game before saving."
@@ -3004,7 +3009,7 @@ msgstr ""
 "Matchet med denne alternative/regionale tittelen — bekreft at den viser "
 "til samme spill før du lagrer."
 
-#: services/js_i18n_strings.py:794
+#: services/js_i18n_strings.py:796
 #, python-brace-format
 msgid ""
 "Matched via alternate title \"{term}\" — HLTB shows it as \"{match}\". "
@@ -3013,316 +3018,317 @@ msgstr ""
 "Matchet via alternativ tittel «{term}» — HLTB viser den som «{match}». "
 "Bekreft før du lagrer."
 
-#: services/js_i18n_strings.py:795
+#: services/js_i18n_strings.py:797
 #, python-brace-format
 msgid "Missing: {files}"
 msgstr "Mangler: {files}"
 
-#: services/js_i18n_strings.py:796
+#: services/js_i18n_strings.py:798
 msgid "Multi-System"
 msgstr "Flere systemer"
 
-#: services/js_i18n_strings.py:797
+#: services/js_i18n_strings.py:799
 msgid "Multi-platform"
 msgstr "Flerplattform"
 
-#: services/js_i18n_strings.py:798
+#: services/js_i18n_strings.py:800
 msgid "Museum generation started"
 msgstr "Museumsgenerering startet"
 
-#: services/js_i18n_strings.py:799
+#: services/js_i18n_strings.py:801
 msgid "NOT"
 msgstr "IKKE"
 
-#: services/js_i18n_strings.py:800
+#: services/js_i18n_strings.py:802
 #, python-brace-format
 msgid "Naming game {current} of {total}."
 msgstr "Gir navn til spill {current} av {total}."
 
-#: services/js_i18n_strings.py:801
+#: services/js_i18n_strings.py:803
 msgid "Navigation"
 msgstr "Navigasjon"
 
-#: services/js_i18n_strings.py:802
+#: services/js_i18n_strings.py:804
 msgid "Network error"
 msgstr "Nettverksfeil"
 
-#: services/js_i18n_strings.py:803
+#: services/js_i18n_strings.py:805
 msgid "Network error starting bulk scrape"
 msgstr "Nettverksfeil ved start av masseskraping"
 
-#: services/js_i18n_strings.py:804
+#: services/js_i18n_strings.py:806
 msgid "Next disk"
 msgstr "Neste disk"
 
-#: services/js_i18n_strings.py:805
+#: services/js_i18n_strings.py:807
 msgid "Next disk failed"
 msgstr "Neste disk mislyktes"
 
-#: services/js_i18n_strings.py:806
+#: services/js_i18n_strings.py:808
 msgid "Next game"
 msgstr "Neste spill"
 
-#: services/js_i18n_strings.py:807 templates/_bulk_edit_modal.html:171
-#: templates/_modals/edit_modal.html:148 templates/game_detail.html:736
-#: templates/game_detail.html:804
+#: services/js_i18n_strings.py:809 templates/_bulk_edit_modal.html:171
+#: templates/_modals/edit_modal.html:148 templates/game_detail.html:756
+#: templates/game_detail.html:824
 msgid "No"
 msgstr "Nei"
 
-#: services/js_i18n_strings.py:808
+#: services/js_i18n_strings.py:810
 msgid "No (already set)"
 msgstr "Nei (allerede angitt)"
 
-#: services/js_i18n_strings.py:809
+#: services/js_i18n_strings.py:811
 msgid "No CLZ Import games found"
 msgstr "Ingen CLZ-importspill funnet"
 
-#: services/js_i18n_strings.py:810
+#: services/js_i18n_strings.py:812
 msgid "No Changes"
 msgstr "Ingen endringer"
 
-#: services/js_i18n_strings.py:811
+#: services/js_i18n_strings.py:813
 msgid "No Games Selected"
 msgstr "Ingen spill valgt"
 
-#: services/js_i18n_strings.py:812
+#: services/js_i18n_strings.py:814
 msgid "No HLTB data found"
 msgstr "Ingen HLTB-data funnet"
 
-#: services/js_i18n_strings.py:813
+#: services/js_i18n_strings.py:815
 msgid "No achievements found"
 msgstr "Ingen prestasjoner funnet"
 
-#: services/js_i18n_strings.py:814 templates/achievement_game.html:72
+#: services/js_i18n_strings.py:816 templates/achievement_game.html:72
 #: templates/steam_achievement_game.html:69
 #: templates/xbox_achievement_game.html:59
 msgid "No description available."
 msgstr "Ingen beskrivelse tilgjengelig."
 
-#: services/js_i18n_strings.py:815
+#: services/js_i18n_strings.py:817
 msgid "No emulator AppImages found in the scan paths."
 msgstr "Fant ingen emulator-AppImages i skannebanene."
 
-#: services/js_i18n_strings.py:816
+#: services/js_i18n_strings.py:818
 msgid "No emulators registered."
 msgstr "Ingen emulatorer registrert."
 
-#: services/js_i18n_strings.py:817
+#: services/js_i18n_strings.py:819
 msgid "No folders yet."
 msgstr "Ingen mapper ennå."
 
-#: services/js_i18n_strings.py:818
+#: services/js_i18n_strings.py:820
 msgid "No game here has those fields empty, or AI Fill has done them all."
 msgstr ""
 "Ingen spill her har de feltene tomme, eller så har AI-utfylling gjort "
 "alle."
 
-#: services/js_i18n_strings.py:819
+#: services/js_i18n_strings.py:821
 msgid "No games or systems match"
 msgstr "Ingen spill eller systemer samsvarer"
 
-#: services/js_i18n_strings.py:820
+#: services/js_i18n_strings.py:822
 msgid "No log files in this category"
 msgstr "Ingen loggfiler i denne kategorien"
 
-#: services/js_i18n_strings.py:821
+#: services/js_i18n_strings.py:823
 msgid "No log lines match current filters"
 msgstr "Ingen loggslinjer samsvarer med gjeldende filtre"
 
-#: services/js_i18n_strings.py:822
+#: services/js_i18n_strings.py:824
 msgid "No mappings yet. Add an emulator folder above."
 msgstr "Ingen koblinger ennå. Legg til en emulatormappe ovenfor."
 
-#: services/js_i18n_strings.py:823
+#: services/js_i18n_strings.py:825
 msgid "No matching games on this system."
 msgstr "Ingen samsvarende spill på dette systemet."
 
-#: services/js_i18n_strings.py:824
+#: services/js_i18n_strings.py:826
 msgid "No missing ROM files found."
 msgstr "Ingen manglende ROM-filer funnet."
 
-#: services/js_i18n_strings.py:825
+#: services/js_i18n_strings.py:827
 msgid "No newer version is available."
 msgstr "Ingen nyere versjon er tilgjengelig."
 
-#: services/js_i18n_strings.py:826
+#: services/js_i18n_strings.py:828
 msgid "No options available"
 msgstr "Ingen alternativer tilgjengelig"
 
-#: services/js_i18n_strings.py:827
+#: services/js_i18n_strings.py:829
 msgid "No ratings available"
 msgstr "Ingen aldersgrenser tilgjengelig"
 
-#: services/js_i18n_strings.py:828
+#: services/js_i18n_strings.py:830
 msgid "No results"
 msgstr "Ingen resultater"
 
-#: services/js_i18n_strings.py:829
+#: services/js_i18n_strings.py:831
 msgid "No results found"
 msgstr "Ingen resultater funnet"
 
-#: services/js_i18n_strings.py:830
+#: services/js_i18n_strings.py:832
 msgid "No results found on HowLongToBeat"
 msgstr "Ingen resultater funnet på HowLongToBeat"
 
-#: services/js_i18n_strings.py:831
+#: services/js_i18n_strings.py:833
 msgid "No sessions match current filters"
 msgstr "Ingen økter samsvarer med gjeldende filtre"
 
-#: services/js_i18n_strings.py:832
+#: services/js_i18n_strings.py:834
 msgid "No suggestions. Run Backfill Alternate Titles in Maintenance to find more."
 msgstr ""
 "Ingen forslag. Kjør Etterfyll alternative titler i Vedlikehold for å "
 "finne flere."
 
-#: services/js_i18n_strings.py:833 templates/game_detail.html:909
+#: services/js_i18n_strings.py:835 templates/game_detail.html:929
 msgid "None"
 msgstr "Ingen"
 
-#: services/js_i18n_strings.py:834
+#: services/js_i18n_strings.py:836
 #, python-brace-format
 msgid "Normalization applied: {games} games updated, {rules} rules saved"
 msgstr "Normalisering brukt: {games} spill oppdatert, {rules} regler lagret"
 
-#: services/js_i18n_strings.py:835
+#: services/js_i18n_strings.py:837
 msgid "Not downloaded"
 msgstr "Ikke lastet ned"
 
-#: services/js_i18n_strings.py:836
+#: services/js_i18n_strings.py:838
 msgid "Not versions"
 msgstr "Ikke versjoner"
 
-#: services/js_i18n_strings.py:837 templates/base.html:1440
+#: services/js_i18n_strings.py:839 templates/base.html:1440
 msgid "Now playing"
 msgstr "Spiller nå"
 
-#: services/js_i18n_strings.py:838 templates/base.html:341
+#: services/js_i18n_strings.py:840 templates/base.html:341
 msgid "OK"
 msgstr "OK"
 
-#: services/js_i18n_strings.py:839
+#: services/js_i18n_strings.py:841
 msgid "Off"
 msgstr "Av"
 
-#: services/js_i18n_strings.py:840
+#: services/js_i18n_strings.py:842
 msgid "On"
 msgstr "På"
 
-#: services/js_i18n_strings.py:841
+#: services/js_i18n_strings.py:843
 msgid "Operation completed"
 msgstr "Operasjon fullført"
 
-#: services/js_i18n_strings.py:842
+#: services/js_i18n_strings.py:844
 msgid "Operation failed"
 msgstr "Operasjon mislyktes"
 
-#: services/js_i18n_strings.py:843
+#: services/js_i18n_strings.py:845
 msgid "Other"
 msgstr "Annet"
 
-#: services/js_i18n_strings.py:844
+#: services/js_i18n_strings.py:846
 msgid "PCSX2 applies these lines whenever any cheat is on."
 msgstr "PCSX2 bruker disse linjene når en hvilken som helst juksekode er på."
 
-#: services/js_i18n_strings.py:845
+#: services/js_i18n_strings.py:847
 msgid "PCSX2 cheats (community collection)"
 msgstr "PCSX2-juksekoder (fellesskapssamling)"
 
-#: services/js_i18n_strings.py:846
+#: services/js_i18n_strings.py:848
 msgid "PCSX2 ignores cheats in hardcore mode."
 msgstr "PCSX2 overser juksekoder i hardcore-modus."
 
-#: services/js_i18n_strings.py:847
+#: services/js_i18n_strings.py:849
 msgid "PSN Imports"
 msgstr "PSN-importer"
 
-#: services/js_i18n_strings.py:848
+#: services/js_i18n_strings.py:850
 msgid "Page:"
 msgstr "Side:"
 
-#: services/js_i18n_strings.py:849
+#: services/js_i18n_strings.py:851
 msgid "Part of a Series"
 msgstr "Del av en serie"
 
-#: services/js_i18n_strings.py:850 templates/_bulk_scrape_modal.html:46
+#: services/js_i18n_strings.py:852 templates/_bulk_scrape_modal.html:46
 #: templates/archive_scanner.html:658 templates/archive_scanner.html:795
 #: templates/psn_trophies.html:294
 msgid "Pause"
 msgstr "Pause"
 
-#: services/js_i18n_strings.py:851
+#: services/js_i18n_strings.py:853
 msgid "Paused - Click Resume to continue"
 msgstr "Pause - klikk Fortsett for å fortsette"
 
-#: services/js_i18n_strings.py:852
+#: services/js_i18n_strings.py:854
 msgid "Platform not found"
 msgstr "Plattformen ble ikke funnet"
 
-#: services/js_i18n_strings.py:853 templates/game_detail.html:99
+#: services/js_i18n_strings.py:855 templates/game_detail.html:110
+#: templates/game_detail.html:113
 msgid "Play"
 msgstr "Spill"
 
-#: services/js_i18n_strings.py:854 templates/_bulk_edit_modal.html:28
+#: services/js_i18n_strings.py:856 templates/_bulk_edit_modal.html:28
 #: templates/analytics.html:1664 templates/base.html:1048
-#: templates/dashboard.html:504 templates/game_detail.html:266
+#: templates/dashboard.html:504 templates/game_detail.html:286
 msgid "Played"
 msgstr "Spilt"
 
-#: services/js_i18n_strings.py:855
+#: services/js_i18n_strings.py:857
 #, python-brace-format
 msgid "Players who timed it: {count}"
 msgstr "Spillere som tidtok det: {count}"
 
-#: services/js_i18n_strings.py:856
+#: services/js_i18n_strings.py:858
 msgid "Please change at least one field before applying."
 msgstr "Endre minst ett felt før du bruker det."
 
-#: services/js_i18n_strings.py:857
+#: services/js_i18n_strings.py:859
 msgid "Please enter a game title"
 msgstr "Skriv inn en spilltittel"
 
-#: services/js_i18n_strings.py:858
+#: services/js_i18n_strings.py:860
 msgid "Please select at least one game to edit."
 msgstr "Velg minst ett spill å redigere."
 
-#: services/js_i18n_strings.py:859
+#: services/js_i18n_strings.py:861
 msgid "Please select at least one game to scrape."
 msgstr "Velg minst ett spill å skrape."
 
-#: services/js_i18n_strings.py:860
+#: services/js_i18n_strings.py:862
 msgid "Pre-session log entries"
 msgstr "Loggoppføringer før økten"
 
-#: services/js_i18n_strings.py:861
+#: services/js_i18n_strings.py:863
 msgid "Previous game"
 msgstr "Forrige spill"
 
-#: services/js_i18n_strings.py:862
+#: services/js_i18n_strings.py:864
 msgid "Processing images…"
 msgstr "Behandler bilder…"
 
-#: services/js_i18n_strings.py:863 templates/game_imports.html:418
+#: services/js_i18n_strings.py:865 templates/game_imports.html:418
 msgid "Processing..."
 msgstr "Behandler..."
 
-#: services/js_i18n_strings.py:864
+#: services/js_i18n_strings.py:866
 #, python-brace-format
 msgid "Processing: {file}"
 msgstr "Behandler: {file}"
 
-#: services/js_i18n_strings.py:865
+#: services/js_i18n_strings.py:867
 msgid "Queued"
 msgstr "I kø"
 
-#: services/js_i18n_strings.py:866
+#: services/js_i18n_strings.py:868
 msgid "RA Data Cleared"
 msgstr "RA-data fjernet"
 
-#: services/js_i18n_strings.py:867
+#: services/js_i18n_strings.py:869
 msgid "ROM Files"
 msgstr "ROM-filer"
 
-#: services/js_i18n_strings.py:868 templates/_macros/nav_tabs.html:34
+#: services/js_i18n_strings.py:870 templates/_macros/nav_tabs.html:34
 #: templates/ai_fill_bulk.html:49 templates/archive_scanner.html:561
 #: templates/base.html:174 templates/chd_converter.html:64
 #: templates/chd_verify.html:80 templates/duplicate_finder.html:166
@@ -3333,152 +3339,152 @@ msgstr "ROM-filer"
 msgid "ROM Tools"
 msgstr "ROM-verktøy"
 
-#: services/js_i18n_strings.py:869 templates/game_detail.html:247
+#: services/js_i18n_strings.py:871 templates/game_detail.html:267
 msgid "RPCS3: Ingame"
 msgstr "RPCS3: I spillet"
 
-#: services/js_i18n_strings.py:870 templates/game_detail.html:248
+#: services/js_i18n_strings.py:872 templates/game_detail.html:268
 msgid "RPCS3: Intro"
 msgstr "RPCS3: Intro"
 
-#: services/js_i18n_strings.py:871 templates/game_detail.html:249
+#: services/js_i18n_strings.py:873 templates/game_detail.html:269
 msgid "RPCS3: Loadable"
 msgstr "RPCS3: Kan lastes"
 
-#: services/js_i18n_strings.py:872 templates/game_detail.html:250
+#: services/js_i18n_strings.py:874 templates/game_detail.html:270
 msgid "RPCS3: Nothing"
 msgstr "RPCS3: Ingenting"
 
-#: services/js_i18n_strings.py:873 templates/game_detail.html:246
+#: services/js_i18n_strings.py:875 templates/game_detail.html:266
 msgid "RPCS3: Playable"
 msgstr "RPCS3: Spillbar"
 
-#: services/js_i18n_strings.py:874
+#: services/js_i18n_strings.py:876
 msgid "Reading the lists. This can take a few minutes."
 msgstr "Leser listene. Dette kan ta noen minutter."
 
-#: services/js_i18n_strings.py:875
+#: services/js_i18n_strings.py:877
 msgid "Ready"
 msgstr "Klar"
 
-#: services/js_i18n_strings.py:876
+#: services/js_i18n_strings.py:878
 msgid "Refresh RetroAchievements"
 msgstr "Oppdater RetroAchievements"
 
-#: services/js_i18n_strings.py:877
+#: services/js_i18n_strings.py:879
 #, python-brace-format
 msgid "Refresh: {system}"
 msgstr "Oppdater: {system}"
 
-#: services/js_i18n_strings.py:878
+#: services/js_i18n_strings.py:880
 #, python-brace-format
 msgid "Refreshing RA for {system}..."
 msgstr "Oppdaterer RA for {system}..."
 
-#: services/js_i18n_strings.py:879
+#: services/js_i18n_strings.py:881
 msgid "Regional name matches"
 msgstr "Regionale navnetreff"
 
-#: services/js_i18n_strings.py:880 templates/_modals/edit_modal.html:386
+#: services/js_i18n_strings.py:882 templates/_modals/edit_modal.html:386
 #: templates/compare_games.html:24 templates/compare_games.html:40
 msgid "Remove"
 msgstr "Fjern"
 
-#: services/js_i18n_strings.py:881
+#: services/js_i18n_strings.py:883
 msgid "Remove background from the uploaded image?"
 msgstr "Fjerne bakgrunnen fra det opplastede bildet?"
 
-#: services/js_i18n_strings.py:882
+#: services/js_i18n_strings.py:884
 msgid "Remove from queue"
 msgstr "Fjern fra køen"
 
-#: services/js_i18n_strings.py:883
+#: services/js_i18n_strings.py:885
 msgid "Remove the 3D box?"
 msgstr "Fjerne 3D-boksen?"
 
-#: services/js_i18n_strings.py:884
+#: services/js_i18n_strings.py:886
 #, python-brace-format
 msgid "Removed {n} CLZ Import games"
 msgstr "Fjernet {n} CLZ-importspill"
 
-#: services/js_i18n_strings.py:885
+#: services/js_i18n_strings.py:887
 #, python-brace-format
 msgid "Removed {n} CLZ Import games:"
 msgstr "Fjernet {n} CLZ-importspill:"
 
-#: services/js_i18n_strings.py:886
+#: services/js_i18n_strings.py:888
 #, python-brace-format
 msgid "Removed {n} games with missing ROMs"
 msgstr "Fjernet {n} spill med manglende ROM-er"
 
-#: services/js_i18n_strings.py:887
+#: services/js_i18n_strings.py:889
 #, python-brace-format
 msgid "Removed {n} games:"
 msgstr "Fjernet {n} spill:"
 
-#: services/js_i18n_strings.py:888
+#: services/js_i18n_strings.py:890
 msgid "Removing background…"
 msgstr "Fjerner bakgrunn…"
 
-#: services/js_i18n_strings.py:889
+#: services/js_i18n_strings.py:891
 msgid "Removing..."
 msgstr "Fjerner..."
 
-#: services/js_i18n_strings.py:890 templates/_bulk_edit_modal.html:42
+#: services/js_i18n_strings.py:892 templates/_bulk_edit_modal.html:42
 #: templates/_bulk_edit_modal.html:56 templates/_bulk_edit_modal.html:70
 #: templates/_bulk_edit_modal.html:124 templates/_bulk_edit_modal.html:140
 #: templates/_bulk_edit_modal.html:156 templates/_bulk_edit_modal.html:180
 msgid "Replace"
 msgstr "Erstatt"
 
-#: services/js_i18n_strings.py:891
+#: services/js_i18n_strings.py:893
 msgid "Replace the 3D box?"
 msgstr "Erstatte 3D-boksen?"
 
-#: services/js_i18n_strings.py:892 templates/logs.html:716
+#: services/js_i18n_strings.py:894 templates/logs.html:716
 msgid "Reports"
 msgstr "Rapporter"
 
-#: services/js_i18n_strings.py:893
+#: services/js_i18n_strings.py:895
 msgid "Resolution scale"
 msgstr "Oppløsningsskala"
 
-#: services/js_i18n_strings.py:894
+#: services/js_i18n_strings.py:896
 msgid "Restarting server..."
 msgstr "Starter serveren på nytt..."
 
-#: services/js_i18n_strings.py:895
+#: services/js_i18n_strings.py:897
 msgid "Resume"
 msgstr "Fortsett"
 
-#: services/js_i18n_strings.py:896
+#: services/js_i18n_strings.py:898
 msgid "RetroArch cheats (libretro)"
 msgstr "RetroArch-juksekoder (libretro)"
 
-#: services/js_i18n_strings.py:897
+#: services/js_i18n_strings.py:899
 msgid "RetroArch is installed."
 msgstr "RetroArch er installert."
 
-#: services/js_i18n_strings.py:898
+#: services/js_i18n_strings.py:900
 msgid "RetroArch was not installed."
 msgstr "RetroArch ble ikke installert."
 
-#: services/js_i18n_strings.py:899
+#: services/js_i18n_strings.py:901
 #, python-brace-format
 msgid "RetroArch was not installed: {error}"
 msgstr "RetroArch ble ikke installert: {error}"
 
-#: services/js_i18n_strings.py:900
+#: services/js_i18n_strings.py:902
 msgid "RetroDB default"
 msgstr "RetroDB-standard"
 
-#: services/js_i18n_strings.py:901
+#: services/js_i18n_strings.py:903
 msgid "RetroDB has not come back yet. See logs/update.log, then reload this page."
 msgstr ""
 "RetroDB er ikke tilbake ennå. Se logs/update.log, og last deretter inn "
 "denne siden på nytt."
 
-#: services/js_i18n_strings.py:902
+#: services/js_i18n_strings.py:904
 msgid ""
 "RetroDB is run by a process manager here. Download the release and "
 "install it yourself."
@@ -3486,7 +3492,7 @@ msgstr ""
 "RetroDB kjøres av en prosessbehandler her. Last ned utgivelsen og "
 "installer den selv."
 
-#: services/js_i18n_strings.py:903
+#: services/js_i18n_strings.py:905
 msgid ""
 "RetroDB will back up its database, install the update and restart. Anyone"
 " using it will be disconnected for a minute or two."
@@ -3495,49 +3501,49 @@ msgstr ""
 "starter på nytt. Alle som bruker den, blir koblet fra i et minutt eller "
 "to."
 
-#: services/js_i18n_strings.py:904
+#: services/js_i18n_strings.py:906
 #, python-brace-format
 msgid "RetroDB {version} is available."
 msgstr "RetroDB {version} er tilgjengelig."
 
-#: services/js_i18n_strings.py:905
+#: services/js_i18n_strings.py:907
 msgid "Run-ahead, 1 frame"
 msgstr "Run-ahead, 1 bilde"
 
-#: services/js_i18n_strings.py:906
+#: services/js_i18n_strings.py:908
 msgid "Running"
 msgstr "Kjører"
 
-#: services/js_i18n_strings.py:907
+#: services/js_i18n_strings.py:909
 msgid "Running..."
 msgstr "Kjører..."
 
-#: services/js_i18n_strings.py:908
+#: services/js_i18n_strings.py:910
 msgid "Same IGDB game"
 msgstr "Samme IGDB-spill"
 
-#: services/js_i18n_strings.py:909
+#: services/js_i18n_strings.py:911
 msgid "Same ScreenScraper game"
 msgstr "Samme ScreenScraper-spill"
 
-#: services/js_i18n_strings.py:910
+#: services/js_i18n_strings.py:912
 msgid "Same title, different region"
 msgstr "Samme tittel, annen region"
 
-#: services/js_i18n_strings.py:911
+#: services/js_i18n_strings.py:913
 msgid "Save Failed"
 msgstr "Lagring mislyktes"
 
-#: services/js_i18n_strings.py:912
+#: services/js_i18n_strings.py:914
 #, python-brace-format
 msgid "Save failed: {error}"
 msgstr "Lagring mislyktes: {error}"
 
-#: services/js_i18n_strings.py:913
+#: services/js_i18n_strings.py:915
 msgid "Saved"
 msgstr "Lagret"
 
-#: services/js_i18n_strings.py:914
+#: services/js_i18n_strings.py:916
 msgid ""
 "Saved in the emulator's settings for this game. Changes made inside the "
 "emulator show here."
@@ -3545,280 +3551,280 @@ msgstr ""
 "Lagret i emulatorens innstillinger for dette spillet. Endringer gjort "
 "inne i emulatoren vises her."
 
-#: services/js_i18n_strings.py:915
+#: services/js_i18n_strings.py:917
 msgid "Saved."
 msgstr "Lagret."
 
-#: services/js_i18n_strings.py:916
+#: services/js_i18n_strings.py:918
 msgid "Saved. It applies the next time you press Play."
 msgstr "Lagret. Det tas i bruk neste gang du trykker Spill."
 
-#: services/js_i18n_strings.py:917
+#: services/js_i18n_strings.py:919
 msgid "Saving to the database…"
 msgstr "Lagrer i databasen…"
 
-#: services/js_i18n_strings.py:918
+#: services/js_i18n_strings.py:920
 msgid "Saving..."
 msgstr "Lagrer..."
 
-#: services/js_i18n_strings.py:919
+#: services/js_i18n_strings.py:921
 msgid "Saving…"
 msgstr "Lagrer…"
 
-#: services/js_i18n_strings.py:920
+#: services/js_i18n_strings.py:922
 #, python-brace-format
 msgid "Scan failed (HTTP {status})"
 msgstr "Skanning mislyktes (HTTP {status})"
 
-#: services/js_i18n_strings.py:921
+#: services/js_i18n_strings.py:923
 #, python-brace-format
 msgid "Scan failed: {error}"
 msgstr "Skanning mislyktes: {error}"
 
-#: services/js_i18n_strings.py:922
+#: services/js_i18n_strings.py:924
 #, python-brace-format
 msgid "Scanned {paths} paths · found {found} matches."
 msgstr "Skannet {paths} stier · fant {found} treff."
 
-#: services/js_i18n_strings.py:923 templates/multi_disc_organizer.html:204
+#: services/js_i18n_strings.py:925 templates/multi_disc_organizer.html:204
 msgid "Scanning..."
 msgstr "Skanner..."
 
-#: services/js_i18n_strings.py:924
+#: services/js_i18n_strings.py:926
 msgid "Scanning…"
 msgstr "Skanner…"
 
-#: services/js_i18n_strings.py:925
+#: services/js_i18n_strings.py:927
 msgid "Scrape game"
 msgstr "Skrap spill"
 
-#: services/js_i18n_strings.py:926
+#: services/js_i18n_strings.py:928
 #, python-brace-format
 msgid "Scraped 0/{total} - 0%"
 msgstr "Skrapet 0/{total} - 0 %"
 
-#: services/js_i18n_strings.py:927
+#: services/js_i18n_strings.py:929
 #, python-brace-format
 msgid "Scraped {processed} / {total} - {percent}%"
 msgstr "Skrapet {processed} / {total} - {percent} %"
 
-#: services/js_i18n_strings.py:928 templates/logs.html:710
+#: services/js_i18n_strings.py:930 templates/logs.html:710
 #: templates/wishlist.html:507
 msgid "Scraping"
 msgstr "Skraper"
 
-#: services/js_i18n_strings.py:929
+#: services/js_i18n_strings.py:931
 msgid "Screen effect"
 msgstr "Skjermeffekt"
 
-#: services/js_i18n_strings.py:930 templates/logs.html:781
+#: services/js_i18n_strings.py:932 templates/logs.html:781
 #: templates/museum_system.html:197 templates/museum_system.html:204
 #: templates/psn_trophy_detail.html:320
 msgid "Search"
 msgstr "Søk"
 
-#: services/js_i18n_strings.py:931
+#: services/js_i18n_strings.py:933
 msgid "Search failed."
 msgstr "Søket mislyktes."
 
-#: services/js_i18n_strings.py:932
+#: services/js_i18n_strings.py:934
 msgid "Search failed. Try again."
 msgstr "Søket mislyktes. Prøv igjen."
 
-#: services/js_i18n_strings.py:933
+#: services/js_i18n_strings.py:935
 msgid "Searching & removing background..."
 msgstr "Søker og fjerner bakgrunn..."
 
-#: services/js_i18n_strings.py:934
+#: services/js_i18n_strings.py:936
 #, python-brace-format
 msgid "Searching {source}…"
 msgstr "Søker i {source}…"
 
-#: services/js_i18n_strings.py:935
+#: services/js_i18n_strings.py:937
 #, python-brace-format
 msgid "See all {n} results"
 msgstr "Se alle {n} resultater"
 
-#: services/js_i18n_strings.py:936
+#: services/js_i18n_strings.py:938
 msgid "Select Category"
 msgstr "Velg kategori"
 
-#: services/js_i18n_strings.py:937
+#: services/js_i18n_strings.py:939
 msgid "Select Developer"
 msgstr "Velg utvikler"
 
-#: services/js_i18n_strings.py:938
+#: services/js_i18n_strings.py:940
 msgid "Select Dimension"
 msgstr "Velg dimensjon"
 
-#: services/js_i18n_strings.py:939
+#: services/js_i18n_strings.py:941
 #: templates/_modals/select_filter_modal.html:15
 msgid "Select Filter"
 msgstr "Velg filter"
 
-#: services/js_i18n_strings.py:940
+#: services/js_i18n_strings.py:942
 msgid "Select Genre"
 msgstr "Velg sjanger"
 
-#: services/js_i18n_strings.py:941
+#: services/js_i18n_strings.py:943
 msgid "Select Perspective"
 msgstr "Velg perspektiv"
 
-#: services/js_i18n_strings.py:942
+#: services/js_i18n_strings.py:944
 msgid "Select Play Mode"
 msgstr "Velg spillmodus"
 
-#: services/js_i18n_strings.py:943
+#: services/js_i18n_strings.py:945
 msgid "Select Publisher"
 msgstr "Velg utgiver"
 
-#: services/js_i18n_strings.py:944
+#: services/js_i18n_strings.py:946
 msgid "Select Rating"
 msgstr "Velg aldersgrense"
 
-#: services/js_i18n_strings.py:945
+#: services/js_i18n_strings.py:947
 msgid "Select Series"
 msgstr "Velg serie"
 
-#: services/js_i18n_strings.py:946
+#: services/js_i18n_strings.py:948
 msgid "Select Source"
 msgstr "Velg kilde"
 
-#: services/js_i18n_strings.py:947
+#: services/js_i18n_strings.py:949
 #, python-brace-format
 msgid "Selected {count} games across all pages"
 msgstr "Valgte {count} spill på tvers av alle sider"
 
-#: services/js_i18n_strings.py:948
+#: services/js_i18n_strings.py:950
 #, python-brace-format
 msgid "Selected {count} unscraped games across all pages"
 msgstr "Valgte {count} uskrapede spill på tvers av alle sider"
 
-#: services/js_i18n_strings.py:949
+#: services/js_i18n_strings.py:951
 msgid "Server restarted successfully!"
 msgstr "Serveren ble startet på nytt!"
 
-#: services/js_i18n_strings.py:950
+#: services/js_i18n_strings.py:952
 msgid "Server stopped. You can close this tab."
 msgstr "Serveren er stoppet. Du kan lukke denne fanen."
 
-#: services/js_i18n_strings.py:951
+#: services/js_i18n_strings.py:953
 msgid "Set for this game"
 msgstr "Angitt for dette spillet"
 
-#: services/js_i18n_strings.py:952
+#: services/js_i18n_strings.py:954
 msgid "Set inside the emulator; RetroDB leaves it alone"
 msgstr "Angis i emulatoren; RetroDB lar den være"
 
-#: services/js_i18n_strings.py:953
+#: services/js_i18n_strings.py:955
 msgid "Set per system, in Settings > Emulators"
 msgstr "Angis per system, i Innstillinger > Emulatorer"
 
-#: services/js_i18n_strings.py:954 templates/_macros/nav_tabs.html:46
+#: services/js_i18n_strings.py:956 templates/_macros/nav_tabs.html:46
 #: templates/base.html:186 templates/rom_tools_hub.html:119
 #: templates/settings.html:5 templates/settings.html:12
 #: templates/settings_emulators.html:4
 msgid "Settings"
 msgstr "Innstillinger"
 
-#: services/js_i18n_strings.py:955
+#: services/js_i18n_strings.py:957
 msgid "Show keyboard shortcuts"
 msgstr "Vis hurtigtaster"
 
-#: services/js_i18n_strings.py:956
+#: services/js_i18n_strings.py:958
 msgid "Showing Bonus Discs"
 msgstr "Viser bonusplater"
 
-#: services/js_i18n_strings.py:957 templates/game_detail.html:249
+#: services/js_i18n_strings.py:959 templates/game_detail.html:269
 msgid "Shows a black screen with a frame rate in the window title."
 msgstr "Viser en svart skjerm med bildefrekvens i vindustittelen."
 
-#: services/js_i18n_strings.py:958 templates/game_detail.html:248
+#: services/js_i18n_strings.py:960 templates/game_detail.html:268
 msgid "Shows an image but does not get past the menus."
 msgstr "Viser et bilde, men kommer ikke forbi menyene."
 
-#: services/js_i18n_strings.py:959
+#: services/js_i18n_strings.py:961
 msgid "Shutting down server..."
 msgstr "Slår av serveren..."
 
-#: services/js_i18n_strings.py:960
+#: services/js_i18n_strings.py:962
 #, python-brace-format
 msgid "Signed in as {name}"
 msgstr "Logget inn som {name}"
 
-#: services/js_i18n_strings.py:961
+#: services/js_i18n_strings.py:963
 msgid "Signing in…"
 msgstr "Logger inn…"
 
-#: services/js_i18n_strings.py:962 templates/_modals/edit_modal.html:50
+#: services/js_i18n_strings.py:964 templates/_modals/edit_modal.html:50
 #: templates/base.html:1134
 msgid "Standalone"
 msgstr "Frittstående"
 
-#: services/js_i18n_strings.py:963
+#: services/js_i18n_strings.py:965
 msgid "Starting..."
 msgstr "Starter..."
 
-#: services/js_i18n_strings.py:964
+#: services/js_i18n_strings.py:966
 msgid "Starting…"
 msgstr "Starter…"
 
-#: services/js_i18n_strings.py:965
+#: services/js_i18n_strings.py:967
 msgid "Steam Imports"
 msgstr "Steam-importer"
 
-#: services/js_i18n_strings.py:966
+#: services/js_i18n_strings.py:968
 msgid "Stopped."
 msgstr "Stoppet."
 
-#: services/js_i18n_strings.py:967
+#: services/js_i18n_strings.py:969
 #, python-brace-format
 msgid "Successfully updated {count} games"
 msgstr "Oppdaterte {count} spill"
 
-#: services/js_i18n_strings.py:968
+#: services/js_i18n_strings.py:970
 msgid "Summary written."
 msgstr "Sammendrag skrevet."
 
-#: services/js_i18n_strings.py:969
+#: services/js_i18n_strings.py:971
 msgid "Switched-on cheats apply the next time you press Play."
 msgstr "Juksekoder du slår på, gjelder neste gang du trykker Spill."
 
-#: services/js_i18n_strings.py:970
+#: services/js_i18n_strings.py:972
 msgid "Sync In Progress"
 msgstr "Synkronisering pågår"
 
-#: services/js_i18n_strings.py:971 templates/achievements_system.html:105
+#: services/js_i18n_strings.py:973 templates/achievements_system.html:105
 msgid "Sync Progress"
 msgstr "Synkroniseringsfremdrift"
 
-#: services/js_i18n_strings.py:972
+#: services/js_i18n_strings.py:974
 msgid "Sync Queued"
 msgstr "Synkronisering i kø"
 
-#: services/js_i18n_strings.py:973
+#: services/js_i18n_strings.py:975
 msgid "Sync complete! Refresh page to see updated progress."
 msgstr "Synkronisering fullført! Oppdater siden for å se oppdatert fremdrift."
 
-#: services/js_i18n_strings.py:974
+#: services/js_i18n_strings.py:976
 msgid "Sync failed"
 msgstr "Synkronisering mislyktes"
 
-#: services/js_i18n_strings.py:975
+#: services/js_i18n_strings.py:977
 #, python-brace-format
 msgid "Sync: {system}"
 msgstr "Synkroniser: {system}"
 
-#: services/js_i18n_strings.py:976
+#: services/js_i18n_strings.py:978
 msgid "Syncing..."
 msgstr "Synkroniserer..."
 
-#: services/js_i18n_strings.py:977
+#: services/js_i18n_strings.py:979
 #, python-brace-format
 msgid "Syncing: {processed} / {total}"
 msgstr "Synkroniserer: {processed} / {total}"
 
-#: services/js_i18n_strings.py:978 templates/_settings_tabs/_tab_bar.html:11
+#: services/js_i18n_strings.py:980 templates/_settings_tabs/_tab_bar.html:11
 #: templates/_settings_tabs/customization.html:299
 #: templates/achievement_game.html:228 templates/ai_fill_bulk.html:91
 #: templates/analytics.html:569 templates/analytics.html:603
@@ -3832,7 +3838,7 @@ msgstr "Synkroniserer: {processed} / {total}"
 msgid "System"
 msgstr "System"
 
-#: services/js_i18n_strings.py:979
+#: services/js_i18n_strings.py:981
 #: templates/_settings_tabs/customization.html:153
 #: templates/_settings_tabs/customization.html:234
 #: templates/_settings_tabs/data.html:19 templates/achievements_system.html:49
@@ -3841,38 +3847,38 @@ msgstr "System"
 msgid "Systems"
 msgstr "Systemer"
 
-#: services/js_i18n_strings.py:980
+#: services/js_i18n_strings.py:982
 #, python-brace-format
 msgid "That stopped: {error}"
 msgstr "Det stoppet: {error}"
 
-#: services/js_i18n_strings.py:981
+#: services/js_i18n_strings.py:983
 msgid "The 3D box could not be removed."
 msgstr "Kunne ikke fjerne 3D-boksen."
 
-#: services/js_i18n_strings.py:983
+#: services/js_i18n_strings.py:985
 msgid "The cheats were not downloaded."
 msgstr "Juksekodene ble ikke lastet ned."
 
-#: services/js_i18n_strings.py:984
+#: services/js_i18n_strings.py:986
 #, python-brace-format
 msgid "The cheats were not downloaded: {error}"
 msgstr "Juksekodene ble ikke lastet ned: {error}"
 
-#: services/js_i18n_strings.py:985
+#: services/js_i18n_strings.py:987
 msgid "The core installed but the game still cannot start."
 msgstr "Kjernen ble installert, men spillet kan fortsatt ikke starte."
 
-#: services/js_i18n_strings.py:986
+#: services/js_i18n_strings.py:988
 #, python-brace-format
 msgid "The download failed: {error}"
 msgstr "Nedlastingen mislyktes: {error}"
 
-#: services/js_i18n_strings.py:987
+#: services/js_i18n_strings.py:989
 msgid "The imported faces are deleted. Your Slipcase files are not touched."
 msgstr "De importerte flatene slettes. Slipcase-filene dine blir ikke rørt."
 
-#: services/js_i18n_strings.py:988
+#: services/js_i18n_strings.py:990
 #, python-brace-format
 msgid ""
 "The run stopped: {error}. Check your AI key with Test saved AI key in "
@@ -3882,19 +3888,19 @@ msgstr ""
 "nøkkel i Innstillinger > Skraping. Spill som allerede er fylt, beholder "
 "det de fikk."
 
-#: services/js_i18n_strings.py:989
+#: services/js_i18n_strings.py:991
 msgid "The switches go back to the new list's own settings."
 msgstr "Bryterne går tilbake til den nye listens egne innstillinger."
 
-#: services/js_i18n_strings.py:990
+#: services/js_i18n_strings.py:992
 msgid "The update could not be started. See logs/update.log."
 msgstr "Oppdateringen kunne ikke startes. Se logs/update.log."
 
-#: services/js_i18n_strings.py:991
+#: services/js_i18n_strings.py:993
 msgid "The update is downloaded and checked."
 msgstr "Oppdateringen er lastet ned og kontrollert."
 
-#: services/js_i18n_strings.py:992
+#: services/js_i18n_strings.py:994
 #, python-brace-format
 msgid ""
 "The update to {to} did not work, so RetroDB went back to {from}. Reason: "
@@ -3903,39 +3909,39 @@ msgstr ""
 "Oppdateringen til {to} fungerte ikke, så RetroDB gikk tilbake til {from}."
 " Årsak: {reason}"
 
-#: services/js_i18n_strings.py:993
+#: services/js_i18n_strings.py:995
 msgid "This copy of RetroDB is a git checkout. Update it with git pull."
 msgstr "Denne kopien av RetroDB er en git-utsjekking. Oppdater den med git pull."
 
-#: services/js_i18n_strings.py:994
+#: services/js_i18n_strings.py:996
 msgid "This game already has 3D box faces. Replace them with the ones you picked?"
 msgstr "Dette spillet har allerede 3D-boksflater. Erstatte dem med dem du valgte?"
 
-#: services/js_i18n_strings.py:995
+#: services/js_i18n_strings.py:997
 msgid "This game is already running.  Kill the existing process and relaunch?"
 msgstr ""
 "Dette spillet kjører allerede.  Avslutte den eksisterende prosessen og "
 "starte på nytt?"
 
-#: services/js_i18n_strings.py:996
+#: services/js_i18n_strings.py:998
 msgid "This name holds \"=\", which the emulator's settings cannot hold."
 msgstr ""
 "Dette navnet inneholder \"=\", som emulatorens innstillinger ikke kan "
 "lagre."
 
-#: services/js_i18n_strings.py:997
+#: services/js_i18n_strings.py:999
 msgid "This release has no download for this computer yet."
 msgstr "Denne utgivelsen har ingen nedlasting for denne datamaskinen ennå."
 
-#: services/js_i18n_strings.py:998
+#: services/js_i18n_strings.py:1000
 msgid "This system is already being synced."
 msgstr "Dette systemet synkroniseres allerede."
 
-#: services/js_i18n_strings.py:999
+#: services/js_i18n_strings.py:1001
 msgid "This update cannot be installed here."
 msgstr "Denne oppdateringen kan ikke installeres her."
 
-#: services/js_i18n_strings.py:1000
+#: services/js_i18n_strings.py:1002
 msgid ""
 "This will clear ALL RetroAchievements game IDs and progress data from "
 "your database. You will need to run \"Refresh RetroAchievements\" again "
@@ -3945,7 +3951,7 @@ msgstr ""
 "databasen. Du må kjøre «Oppdater RetroAchievements» på nytt etterpå for å"
 " skanne spillene dine igjen. Fortsette?"
 
-#: services/js_i18n_strings.py:1001
+#: services/js_i18n_strings.py:1003
 #, python-brace-format
 msgid ""
 "This will clear RetroAchievements game IDs and progress data for "
@@ -3954,12 +3960,12 @@ msgstr ""
 "Dette vil fjerne RetroAchievements-spill-IDer og fremdriftsdata for "
 "«{system}». Fortsette?"
 
-#: services/js_i18n_strings.py:1002
+#: services/js_i18n_strings.py:1004
 #, python-brace-format
 msgid "This will remove \"{system}\" from the Achievements page. Continue?"
 msgstr "Dette vil fjerne «{system}» fra Prestasjoner-siden. Fortsette?"
 
-#: services/js_i18n_strings.py:1003
+#: services/js_i18n_strings.py:1005
 msgid ""
 "This will remove ALL games imported via CLZ Games Import from the "
 "database. This cannot be undone. Continue?"
@@ -3967,7 +3973,7 @@ msgstr ""
 "Dette vil fjerne ALLE spill importert via CLZ Games-import fra databasen."
 " Dette kan ikke angres. Fortsette?"
 
-#: services/js_i18n_strings.py:1004
+#: services/js_i18n_strings.py:1006
 msgid ""
 "This will remove database entries for ROM files that no longer exist on "
 "disk. This cannot be undone. Continue?"
@@ -3975,7 +3981,7 @@ msgstr ""
 "Dette vil fjerne databaseoppføringer for ROM-filer som ikke lenger finnes"
 " på disken. Dette kan ikke angres. Fortsette?"
 
-#: services/js_i18n_strings.py:1005
+#: services/js_i18n_strings.py:1007
 msgid ""
 "This will scan all games and update their RetroAchievements status. This "
 "may take several minutes for large collections. Continue?"
@@ -3983,7 +3989,7 @@ msgstr ""
 "Dette vil skanne alle spill og oppdatere RetroAchievements-statusen "
 "deres. Dette kan ta flere minutter for store samlinger. Fortsette?"
 
-#: services/js_i18n_strings.py:1006
+#: services/js_i18n_strings.py:1008
 msgid ""
 "This will search for and download images for all controllers without "
 "images. Continue?"
@@ -3991,7 +3997,7 @@ msgstr ""
 "Dette vil søke etter og laste ned bilder for alle kontrollere uten "
 "bilder. Fortsette?"
 
-#: services/js_i18n_strings.py:1007
+#: services/js_i18n_strings.py:1009
 msgid ""
 "This will use your configured AI provider to generate history and top "
 "games for all systems. This may take several minutes and use API credits."
@@ -4001,55 +4007,55 @@ msgstr ""
 "og toppspill for alle systemer. Dette kan ta flere minutter og bruke API-"
 "kreditter. Fortsette?"
 
-#: services/js_i18n_strings.py:1008
+#: services/js_i18n_strings.py:1010
 msgid "Tick at least two games."
 msgstr "Kryss av minst to spill."
 
-#: services/js_i18n_strings.py:1009 templates/logs.html:745
+#: services/js_i18n_strings.py:1011 templates/logs.html:745
 msgid "To"
 msgstr "Til"
 
-#: services/js_i18n_strings.py:1010
+#: services/js_i18n_strings.py:1012
 msgid "Try adjusting your search or filters"
 msgstr "Prøv å justere søket eller filtrene"
 
-#: services/js_i18n_strings.py:1012
+#: services/js_i18n_strings.py:1014
 msgid "Unexpected error"
 msgstr "Uventet feil"
 
-#: services/js_i18n_strings.py:1013
+#: services/js_i18n_strings.py:1015
 msgid "Unhandled rejection"
 msgstr "Uhåndtert avvisning"
 
-#: services/js_i18n_strings.py:1014 templates/analytics.html:583
+#: services/js_i18n_strings.py:1016 templates/analytics.html:583
 #: templates/base.html:1238 templates/local_trophy_detail.html:220
 #: templates/local_trophy_detail.html:224
 msgid "Unknown"
 msgstr "Ukjent"
 
-#: services/js_i18n_strings.py:1015
+#: services/js_i18n_strings.py:1017
 msgid "Unknown error"
 msgstr "Ukjent feil"
 
-#: services/js_i18n_strings.py:1016
+#: services/js_i18n_strings.py:1018
 msgid "Unknown error occurred."
 msgstr "En ukjent feil oppstod."
 
-#: services/js_i18n_strings.py:1017
+#: services/js_i18n_strings.py:1019
 #, python-brace-format
 msgid "Unpacking {item}…"
 msgstr "Pakker ut {item}…"
 
-#: services/js_i18n_strings.py:1018 templates/all_games.html:107
+#: services/js_i18n_strings.py:1020 templates/all_games.html:107
 #: templates/system_games.html:98 templates/wishlist.html:506
 msgid "Unscraped"
 msgstr "Uskrapet"
 
-#: services/js_i18n_strings.py:1019
+#: services/js_i18n_strings.py:1021
 msgid "Update Failed"
 msgstr "Oppdatering mislyktes"
 
-#: services/js_i18n_strings.py:1020
+#: services/js_i18n_strings.py:1022
 #, python-brace-format
 msgid ""
 "Update {count} game(s)?\n"
@@ -4060,45 +4066,45 @@ msgstr ""
 "\n"
 "Felt: {fields}"
 
-#: services/js_i18n_strings.py:1021
+#: services/js_i18n_strings.py:1023
 #, python-brace-format
 msgid "Updated from {from} to {to}."
 msgstr "Oppdatert fra {from} til {to}."
 
-#: services/js_i18n_strings.py:1022 templates/museum_system.html:198
+#: services/js_i18n_strings.py:1024 templates/museum_system.html:198
 #: templates/museum_system.html:205
 msgid "Upload"
 msgstr "Last opp"
 
-#: services/js_i18n_strings.py:1023
+#: services/js_i18n_strings.py:1025
 msgid "Upload Controller Image"
 msgstr "Last opp kontrollerbilde"
 
-#: services/js_i18n_strings.py:1024
+#: services/js_i18n_strings.py:1026
 msgid "Upload failed"
 msgstr "Opplasting mislyktes"
 
-#: services/js_i18n_strings.py:1025
+#: services/js_i18n_strings.py:1027
 msgid "Upload replacement image"
 msgstr "Last opp erstatningsbilde"
 
-#: services/js_i18n_strings.py:1026
+#: services/js_i18n_strings.py:1028
 msgid "Uploading & removing background…"
 msgstr "Laster opp og fjerner bakgrunn…"
 
-#: services/js_i18n_strings.py:1027
+#: services/js_i18n_strings.py:1029
 msgid "Uploading…"
 msgstr "Laster opp…"
 
-#: services/js_i18n_strings.py:1028
+#: services/js_i18n_strings.py:1030
 msgid "Use another cheat list?"
 msgstr "Bruke en annen juksekodeliste?"
 
-#: services/js_i18n_strings.py:1029
+#: services/js_i18n_strings.py:1031
 msgid "Use the system setting"
 msgstr "Bruk systeminnstillingen"
 
-#: services/js_i18n_strings.py:1030
+#: services/js_i18n_strings.py:1032
 #, python-brace-format
 msgid ""
 "Used for every {system} game unless the game sets its own. Applied when "
@@ -4107,61 +4113,61 @@ msgstr ""
 "Brukes for alle {system}-spill med mindre spillet har sin egen. Tas i "
 "bruk når du trykker Spill."
 
-#: services/js_i18n_strings.py:1031
+#: services/js_i18n_strings.py:1033
 #, python-brace-format
 msgid "User Score ({count} ratings)"
 msgstr "Brukerpoeng ({count} vurderinger)"
 
-#: services/js_i18n_strings.py:1032
+#: services/js_i18n_strings.py:1034
 msgid "Version unlinked."
 msgstr "Koblingen til versjonen er fjernet."
 
-#: services/js_i18n_strings.py:1033
+#: services/js_i18n_strings.py:1035
 #, python-brace-format
 msgid "Version {version} is available."
 msgstr "Versjon {version} er tilgjengelig."
 
-#: services/js_i18n_strings.py:1034
+#: services/js_i18n_strings.py:1036
 msgid "Versions linked."
 msgstr "Versjoner koblet sammen."
 
-#: services/js_i18n_strings.py:1035
+#: services/js_i18n_strings.py:1037
 #, python-brace-format
 msgid "What is new in {version}"
 msgstr "Nytt i {version}"
 
-#: services/js_i18n_strings.py:1036
+#: services/js_i18n_strings.py:1038
 #, python-brace-format
 msgid "What is new in {version} ({date})"
 msgstr "Nytt i {version} ({date})"
 
-#: services/js_i18n_strings.py:1037
+#: services/js_i18n_strings.py:1039
 msgid "Will change?"
 msgstr "Endres?"
 
-#: services/js_i18n_strings.py:1038
+#: services/js_i18n_strings.py:1040
 msgid "Works"
 msgstr "Fungerer"
 
-#: services/js_i18n_strings.py:1039 templates/game_detail.html:825
+#: services/js_i18n_strings.py:1041 templates/game_detail.html:845
 msgid "Write again with AI"
 msgstr "Skriv på nytt med AI"
 
-#: services/js_i18n_strings.py:1040
+#: services/js_i18n_strings.py:1042
 msgid "Xbox Imports"
 msgstr "Xbox-importer"
 
-#: services/js_i18n_strings.py:1041 templates/_bulk_edit_modal.html:170
-#: templates/_modals/edit_modal.html:148 templates/game_detail.html:679
-#: templates/game_detail.html:736 templates/game_detail.html:804
+#: services/js_i18n_strings.py:1043 templates/_bulk_edit_modal.html:170
+#: templates/_modals/edit_modal.html:148 templates/game_detail.html:699
+#: templates/game_detail.html:756 templates/game_detail.html:824
 msgid "Yes"
 msgstr "Ja"
 
-#: services/js_i18n_strings.py:1042
+#: services/js_i18n_strings.py:1044
 msgid "You have the latest version."
 msgstr "Du har den nyeste versjonen."
 
-#: services/js_i18n_strings.py:1043
+#: services/js_i18n_strings.py:1045
 #, python-brace-format
 msgid ""
 "Your bulk scrape has been queued (position {position}). It will start "
@@ -4170,111 +4176,111 @@ msgstr ""
 "Masseskrapingen din er satt i kø (posisjon {position}). Den starter "
 "automatisk når gjeldende skraping er fullført."
 
-#: services/js_i18n_strings.py:1044
+#: services/js_i18n_strings.py:1046
 msgid "found"
 msgstr "funnet"
 
-#: services/js_i18n_strings.py:1045
+#: services/js_i18n_strings.py:1047
 msgid "in queue"
 msgstr "i kø"
 
-#: services/js_i18n_strings.py:1046
+#: services/js_i18n_strings.py:1048
 msgid "system"
 msgstr "system"
 
-#: services/js_i18n_strings.py:1047
+#: services/js_i18n_strings.py:1049
 #, python-brace-format
 msgid "{confidence}% match"
 msgstr "{confidence} % treff"
 
-#: services/js_i18n_strings.py:1048
+#: services/js_i18n_strings.py:1050
 #, python-brace-format
 msgid "{count} Achievements"
 msgstr "{count} prestasjoner"
 
-#: services/js_i18n_strings.py:1049
+#: services/js_i18n_strings.py:1051
 #, python-brace-format
 msgid "{count} regional versions"
 msgstr "{count} regionale versjoner"
 
-#: services/js_i18n_strings.py:1050
+#: services/js_i18n_strings.py:1052
 #, python-brace-format
 msgid "{count} sold"
 msgstr "{count} solgt"
 
-#: services/js_i18n_strings.py:1051
+#: services/js_i18n_strings.py:1053
 #, python-brace-format
 msgid "{count} suggested groups. Untick any game that does not belong, then link."
 msgstr ""
 "{count} foreslåtte grupper. Fjern avkrysningen for spill som ikke hører "
 "til, og koble deretter."
 
-#: services/js_i18n_strings.py:1052
+#: services/js_i18n_strings.py:1054
 #, python-brace-format
 msgid "{emulator} (not found)"
 msgstr "{emulator} (ikke funnet)"
 
-#: services/js_i18n_strings.py:1053
+#: services/js_i18n_strings.py:1055
 #, python-brace-format
 msgid "{fetched} fetched, {skipped} skipped, {failed} failed"
 msgstr "{fetched} hentet, {skipped} hoppet over, {failed} feilet"
 
-#: services/js_i18n_strings.py:1054
+#: services/js_i18n_strings.py:1056
 #, python-brace-format
 msgid "{job} Queued (#{position})"
 msgstr "{job} i kø (#{position})"
 
-#: services/js_i18n_strings.py:1055
+#: services/js_i18n_strings.py:1057
 #, python-brace-format
 msgid "{job} cancelled"
 msgstr "{job} avbrutt"
 
-#: services/js_i18n_strings.py:1056
+#: services/js_i18n_strings.py:1058
 #, python-brace-format
 msgid "{job} completed ({n} processed)"
 msgstr "{job} fullført ({n} behandlet)"
 
-#: services/js_i18n_strings.py:1057
+#: services/js_i18n_strings.py:1059
 #, python-brace-format
 msgid "{job} failed: {error}"
 msgstr "{job} mislyktes: {error}"
 
-#: services/js_i18n_strings.py:1058
+#: services/js_i18n_strings.py:1060
 #, python-brace-format
 msgid "{job}: {current} of {total} ({percent}%)"
 msgstr "{job}: {current} av {total} ({percent} %)"
 
-#: services/js_i18n_strings.py:1059
+#: services/js_i18n_strings.py:1061
 #, python-brace-format
 msgid "{n} Player(s)"
 msgstr "{n} spiller(e)"
 
-#: services/js_i18n_strings.py:1060
+#: services/js_i18n_strings.py:1062
 #, python-brace-format
 msgid "{n} cores"
 msgstr "{n} kjerner"
 
-#: services/js_i18n_strings.py:1061
+#: services/js_i18n_strings.py:1063
 #, python-brace-format
 msgid "{n} games"
 msgstr "{n} spill"
 
-#: services/js_i18n_strings.py:1062
+#: services/js_i18n_strings.py:1064
 #, python-brace-format
 msgid "{n} lines"
 msgstr "{n} linjer"
 
-#: services/js_i18n_strings.py:1063
+#: services/js_i18n_strings.py:1065
 #, python-brace-format
 msgid "{n} results"
 msgstr "{n} resultater"
 
-#: services/js_i18n_strings.py:1064
+#: services/js_i18n_strings.py:1066
 #, python-brace-format
 msgid "{points} pts"
 msgstr "{points} p"
 
-#: services/js_i18n_strings.py:1065
+#: services/js_i18n_strings.py:1067
 #, python-brace-format
 msgid ""
 "{state} Games filled: {filled}. Nothing new: {skipped}. No answer: "
@@ -4283,7 +4289,7 @@ msgstr ""
 "{state} Spill fylt: {filled}. Ikke noe nytt: {skipped}. Ikke noe svar: "
 "{failed}."
 
-#: services/js_i18n_strings.py:1066
+#: services/js_i18n_strings.py:1068
 #, python-brace-format
 msgid ""
 "{state} Games named: {named}. Games changed: {updated}. Not in the lists:"
@@ -4292,70 +4298,70 @@ msgstr ""
 "{state} Spill med navn: {named}. Spill endret: {updated}. Ikke i listene:"
 " {missing}."
 
-#: services/js_i18n_strings.py:1067
+#: services/js_i18n_strings.py:1069
 #, python-brace-format
 msgid "{system} has been added to the sync queue."
 msgstr "{system} er lagt til i synkroniseringskøen."
 
-#: services/js_i18n_strings.py:1068
+#: services/js_i18n_strings.py:1070
 #, python-brace-format
 msgid "{title} ({count} versions)"
 msgstr "{title} ({count} versjoner)"
 
-#: services/js_i18n_strings.py:1069
+#: services/js_i18n_strings.py:1071
 msgid "⏳ Searching..."
 msgstr "⏳ Søker..."
 
-#: services/js_i18n_strings.py:1070
+#: services/js_i18n_strings.py:1072
 #, python-brace-format
 msgid "⚠️ Cancel {job}"
 msgstr "⚠️ Avbryt {job}"
 
-#: services/js_i18n_strings.py:1071
+#: services/js_i18n_strings.py:1073
 msgid "⚠️ Confirm"
 msgstr "⚠️ Bekreft"
 
-#: services/js_i18n_strings.py:1072
+#: services/js_i18n_strings.py:1074
 msgid "⚡ via"
 msgstr "⚡ via"
 
-#: services/js_i18n_strings.py:1073
+#: services/js_i18n_strings.py:1075
 msgid "✕ Clear"
 msgstr "✕ Fjern"
 
-#: services/js_i18n_strings.py:1074
+#: services/js_i18n_strings.py:1076
 msgid "🏆 Refresh RetroAchievements"
 msgstr "🏆 Oppdater RetroAchievements"
 
-#: services/js_i18n_strings.py:1075
+#: services/js_i18n_strings.py:1077
 msgid "📋 Clear CLZ Imports"
 msgstr "📋 Fjern CLZ-importer"
 
-#: services/js_i18n_strings.py:1076
+#: services/js_i18n_strings.py:1078
 msgid "🔄 Restart Server"
 msgstr "🔄 Start server på nytt"
 
-#: services/js_i18n_strings.py:1077
+#: services/js_i18n_strings.py:1079
 msgid "🔍 Lookup HLTB"
 msgstr "🔍 Slå opp HLTB"
 
-#: services/js_i18n_strings.py:1078
+#: services/js_i18n_strings.py:1080
 msgid "🗑️ Clear HLTB Data"
 msgstr "🗑️ Fjern HLTB-data"
 
-#: services/js_i18n_strings.py:1079
+#: services/js_i18n_strings.py:1081
 msgid "🗑️ Clear RetroAchievements Data"
 msgstr "🗑️ Fjern RetroAchievements-data"
 
-#: services/js_i18n_strings.py:1080
+#: services/js_i18n_strings.py:1082
 msgid "🗑️ Reset Metadata"
 msgstr "🗑️ Tilbakestill metadata"
 
-#: services/js_i18n_strings.py:1081
+#: services/js_i18n_strings.py:1083
 msgid "🛑 Shut Down Server"
 msgstr "🛑 Slå av server"
 
-#: services/js_i18n_strings.py:1082
+#: services/js_i18n_strings.py:1084
 msgid "🧹 Clean Missing ROMs"
 msgstr "🧹 Rydd opp manglende ROM-er"
 
@@ -4419,7 +4425,7 @@ msgstr ""
 msgid "Settings path outside the data folder."
 msgstr "Innstillingsbanen er utenfor datamappen."
 
-#: services/standalone_settings.py:360 templates/game_detail.html:102
+#: services/standalone_settings.py:360 templates/game_detail.html:109
 msgid "No emulator is set up for this system."
 msgstr "Ingen emulator er satt opp for dette systemet."
 
@@ -4449,7 +4455,7 @@ msgstr "Kun felt endret fra «Ikke endre» vil bli oppdatert."
 
 #: templates/_bulk_edit_modal.html:26 templates/achievements_system.html:171
 #: templates/analytics.html:1664 templates/base.html:1046
-#: templates/dashboard.html:500 templates/game_detail.html:264
+#: templates/dashboard.html:500 templates/game_detail.html:284
 #: templates/steam_achievements.html:78 templates/xbox_achievements.html:78
 msgid "Not Started"
 msgstr "Ikke startet"
@@ -4556,7 +4562,7 @@ msgstr "Last inn mer"
 
 #: templates/achievement_game.html:17 templates/achievement_game.html:37
 #: templates/achievements_system.html:15 templates/game_detail.html:21
-#: templates/game_detail.html:356 templates/game_detail.html:787
+#: templates/game_detail.html:376 templates/game_detail.html:807
 #: templates/systems.html:43
 msgid "RetroAchievements"
 msgstr "RetroAchievements"
@@ -4572,7 +4578,7 @@ msgid "Refresh RA"
 msgstr "Oppdater RA"
 
 #: templates/achievement_game.html:93 templates/all_games.html:75
-#: templates/game_detail.html:322 templates/system_games.html:66
+#: templates/game_detail.html:342 templates/system_games.html:66
 msgid "Series"
 msgstr "Serie"
 
@@ -4599,7 +4605,7 @@ msgstr "Kunne ikke laste prestasjonsdata"
 msgid "Check your RetroAchievements credentials in Settings."
 msgstr "Kontroller RetroAchievements-legitimasjonen din i Innstillinger."
 
-#: templates/achievement_game.html:146 templates/game_detail.html:555
+#: templates/achievement_game.html:146 templates/game_detail.html:575
 #: templates/local_trophy_detail.html:158 templates/psn_trophy_detail.html:149
 #: templates/steam_achievement_game.html:123
 #: templates/xbox_achievement_game.html:116
@@ -4607,7 +4613,7 @@ msgid "How Long to Beat"
 msgstr "How Long to Beat"
 
 #: templates/achievement_game.html:153 templates/base.html:1059
-#: templates/game_detail.html:562 templates/psn_trophy_detail.html:157
+#: templates/game_detail.html:582 templates/psn_trophy_detail.html:157
 #: templates/psn_trophy_detail.html:317
 #: templates/steam_achievement_game.html:126
 #: templates/xbox_achievement_game.html:119
@@ -4615,7 +4621,7 @@ msgid "Search game title..."
 msgstr "Søk spilltittel..."
 
 #: templates/achievement_game.html:156 templates/base.html:1062
-#: templates/game_detail.html:565 templates/local_trophy_detail.html:193
+#: templates/game_detail.html:585 templates/local_trophy_detail.html:193
 #: templates/psn_trophy_detail.html:160
 #: templates/steam_achievement_game.html:127
 #: templates/xbox_achievement_game.html:120
@@ -4624,7 +4630,7 @@ msgstr "Slå opp HLTB"
 
 #: templates/_settings_tabs/account.html:74 templates/achievement_game.html:177
 #: templates/achievement_game.html:253 templates/base.html:1090
-#: templates/game_detail.html:586 templates/local_trophy_detail.html:223
+#: templates/game_detail.html:606 templates/local_trophy_detail.html:223
 #: templates/psn_trophy_detail.html:181 templates/psn_trophy_detail.html:270
 #: templates/settings_emulators.html:60 templates/settings_emulators.html:275
 #: templates/steam_achievement_game.html:137
@@ -4634,7 +4640,7 @@ msgstr "Lagre"
 
 #: templates/achievement_game.html:217 templates/all_games.html:113
 #: templates/base.html:1103 templates/duplicate_finder.html:301
-#: templates/game_detail.html:117 templates/game_detail.html:627
+#: templates/game_detail.html:129 templates/game_detail.html:647
 #: templates/local_trophy_detail.html:185 templates/psn_trophy_detail.html:214
 #: templates/reports.html:277 templates/screenshot_dedup.html:325
 #: templates/steam_achievement_game.html:163 templates/system_games.html:104
@@ -4642,7 +4648,7 @@ msgstr "Lagre"
 msgid "Clear"
 msgstr "Fjern"
 
-#: templates/achievement_game.html:225 templates/game_detail.html:635
+#: templates/achievement_game.html:225 templates/game_detail.html:655
 #: templates/local_trophy_detail.html:203 templates/psn_trophy_detail.html:234
 #: templates/steam_achievement_game.html:170
 #: templates/xbox_achievement_game.html:163
@@ -5100,7 +5106,7 @@ msgstr "Velg alle"
 msgid "Select Unscraped"
 msgstr "Velg uskrapede"
 
-#: templates/all_games.html:209 templates/game_detail.html:878
+#: templates/all_games.html:209 templates/game_detail.html:898
 #: templates/system_games.html:189
 msgid "Full Re-scrape"
 msgstr "Full reskraping"
@@ -5109,7 +5115,7 @@ msgstr "Full reskraping"
 msgid "Toggle between full re-scrape and fill missing mode"
 msgstr "Bytt mellom full reskraping og fyll manglende-modus"
 
-#: templates/all_games.html:214 templates/game_detail.html:878
+#: templates/all_games.html:214 templates/game_detail.html:898
 #: templates/system_games.html:194
 msgid "Fill Missing"
 msgstr "Fyll manglende"
@@ -5432,12 +5438,12 @@ msgid "Fanart"
 msgstr "Fankunst"
 
 #: templates/analytics.html:487 templates/analytics.html:2428
-#: templates/game_detail.html:508
+#: templates/game_detail.html:528
 msgid "Video"
 msgstr "Video"
 
 #: templates/_modals/manual_reader_modal.html:9 templates/analytics.html:488
-#: templates/analytics.html:2428 templates/game_detail.html:111
+#: templates/analytics.html:2428 templates/game_detail.html:123
 msgid "Manual"
 msgstr "Manual"
 
@@ -5949,7 +5955,7 @@ msgstr "Lukk spilldetaljer"
 msgid "Loading game details..."
 msgstr "Laster spilldetaljer..."
 
-#: templates/base.html:989 templates/game_detail.html:512
+#: templates/base.html:989 templates/game_detail.html:532
 msgid "Your browser does not support the video tag."
 msgstr "Nettleseren din støtter ikke video-taggen."
 
@@ -5957,15 +5963,15 @@ msgstr "Nettleseren din støtter ikke video-taggen."
 msgid "View Full Page"
 msgstr "Vis hele siden"
 
-#: templates/base.html:998 templates/game_detail.html:125
+#: templates/base.html:998 templates/game_detail.html:137
 msgid "Fill missing metadata with AI"
 msgstr "Fyll manglende metadata med AI"
 
-#: templates/base.html:999 templates/game_detail.html:127
+#: templates/base.html:999 templates/game_detail.html:139
 msgid "AI Fill"
 msgstr "AI-utfylling"
 
-#: templates/base.html:1002 templates/game_detail.html:132
+#: templates/base.html:1002 templates/game_detail.html:144
 msgid "Scrape"
 msgstr "Skrap"
 
@@ -6042,7 +6048,7 @@ msgstr "Ingen spilletidsdata"
 #: templates/_modals/edit_modal.html:28 templates/_modals/filter_modal.html:13
 #: templates/base.html:1113 templates/dashboard.html:329
 #: templates/dashboard.html:388 templates/dashboard.html:465
-#: templates/dashboard.html:531 templates/game_detail.html:780
+#: templates/dashboard.html:531 templates/game_detail.html:800
 msgid "Title"
 msgstr "Tittel"
 
@@ -7061,97 +7067,97 @@ msgstr "Forrige"
 msgid "Next"
 msgstr "Neste"
 
-#: templates/game_detail.html:63
+#: templates/game_detail.html:70
 msgid "CLZ Import - No ROM file"
 msgstr "CLZ-import - ingen ROM-fil"
 
-#: templates/game_detail.html:63 templates/game_imports.html:167
+#: templates/game_detail.html:70 templates/game_imports.html:167
 msgid "CLZ Import"
 msgstr "CLZ-import"
 
-#: templates/game_detail.html:65
+#: templates/game_detail.html:72
 msgid "Steam Import - No ROM file"
 msgstr "Steam-import - ingen ROM-fil"
 
-#: templates/game_detail.html:65
+#: templates/game_detail.html:72
 msgid "Steam Import"
 msgstr "Steam-import"
 
-#: templates/game_detail.html:67
+#: templates/game_detail.html:74
 msgid "Xbox Import - No ROM file"
 msgstr "Xbox-import - ingen ROM-fil"
 
-#: templates/game_detail.html:67
+#: templates/game_detail.html:74
 msgid "Xbox Import"
 msgstr "Xbox-import"
 
-#: templates/game_detail.html:69
+#: templates/game_detail.html:76
 msgid "PSN Import - No ROM file"
 msgstr "PSN-import - ingen ROM-fil"
 
-#: templates/game_detail.html:69
+#: templates/game_detail.html:76
 msgid "PSN Import"
 msgstr "PSN-import"
 
-#: templates/game_detail.html:72
+#: templates/game_detail.html:79
 msgid "This is a bonus/extra disc"
 msgstr "Dette er en bonus-/ekstraplate"
 
-#: templates/game_detail.html:72
+#: templates/game_detail.html:79
 msgid "Bonus Disc"
 msgstr "Bonusplate"
 
-#: templates/game_detail.html:77
+#: templates/game_detail.html:84
 msgid "Part of:"
 msgstr "Del av:"
 
-#: templates/game_detail.html:88
+#: templates/game_detail.html:95
 msgid "Regional versions"
 msgstr "Regionale versjoner"
 
-#: templates/game_detail.html:89
+#: templates/game_detail.html:96
 msgid "Versions:"
 msgstr "Versjoner:"
 
-#: templates/game_detail.html:91 templates/game_detail.html:794
+#: templates/game_detail.html:98 templates/game_detail.html:814
 msgid "Unknown region"
 msgstr "Ukjent region"
 
-#: templates/game_detail.html:97
+#: templates/game_detail.html:105
 msgid "Launch this game in the configured emulator"
 msgstr "Start dette spillet i den konfigurerte emulatoren"
 
-#: templates/game_detail.html:105
+#: templates/game_detail.html:117
 msgid "Keyboard game: press Scroll Lock for RetroArch keys"
 msgstr "Tastaturspill: trykk Scroll Lock for RetroArch-tastene"
 
-#: templates/game_detail.html:109
+#: templates/game_detail.html:121
 msgid "View Manual (PDF)"
 msgstr "Vis manual (PDF)"
 
-#: templates/game_detail.html:134
+#: templates/game_detail.html:146
 msgid "Delete game from database"
 msgstr "Slett spill fra databasen"
 
-#: templates/_settings_tabs/account.html:343 templates/game_detail.html:136
+#: templates/_settings_tabs/account.html:343 templates/game_detail.html:148
 #: templates/logs.html:735 templates/settings.html:45
 #: templates/wishlist.html:642
 msgid "Delete"
 msgstr "Slett"
 
-#: templates/game_detail.html:170 templates/game_detail.html:182
+#: templates/game_detail.html:182 templates/game_detail.html:194
 msgid "Click to zoom"
 msgstr "Klikk for å zoome"
 
-#: templates/game_detail.html:187
+#: templates/game_detail.html:199
 msgid "Switch between 2D and 3D boxart"
 msgstr "Bytt mellom 2D- og 3D-omslagsbilde"
 
-#: templates/game_detail.html:207
+#: templates/game_detail.html:227
 msgid "Click the cover to turn the 3D box"
 msgstr "Klikk på omslaget for å snu 3D-boksen"
 
-#: templates/game_detail.html:214
+#: templates/game_detail.html:234
 msgid ""
 "Sharper images for this game are still being made. They'll appear on "
 "their own."
@@ -7159,50 +7165,50 @@ msgstr ""
 "Skarpere bilder av dette spillet lages fortsatt. De dukker opp av seg "
 "selv."
 
-#: templates/game_detail.html:225
+#: templates/game_detail.html:245
 msgid "Player"
 msgstr "Spiller"
 
-#: templates/game_detail.html:230
+#: templates/game_detail.html:250
 #, python-format
 msgid "Critic Score (%(count)s reviews)"
 msgstr "Kritikerpoeng (%(count)s anmeldelser)"
 
-#: templates/game_detail.html:230 templates/game_detail.html:235
+#: templates/game_detail.html:250 templates/game_detail.html:255
 msgid "From the AI, not checked against a review site."
 msgstr "Fra AI-en, ikke sjekket mot et anmeldelsesnettsted."
 
-#: templates/game_detail.html:231 templates/game_detail.html:236
-#: templates/game_detail.html:241
+#: templates/game_detail.html:251 templates/game_detail.html:256
+#: templates/game_detail.html:261
 msgid "AI"
 msgstr "AI"
 
-#: templates/game_detail.html:235
+#: templates/game_detail.html:255
 #, python-format
 msgid "User Score (%(count)s ratings)"
 msgstr "Brukerpoeng (%(count)s vurderinger)"
 
-#: templates/game_detail.html:240
+#: templates/game_detail.html:260
 #, python-format
 msgid "Copies sold on %(system)s, from the AI, not checked"
 msgstr "Solgte eksemplarer på %(system)s, fra AI-en, ikke sjekket"
 
-#: templates/game_detail.html:240
+#: templates/game_detail.html:260
 #, python-format
 msgid "Copies sold on %(system)s, from published sales figures"
 msgstr "Solgte eksemplarer på %(system)s, etter publiserte salgstall"
 
-#: templates/game_detail.html:241
+#: templates/game_detail.html:261
 #, python-format
 msgid "%(count)s sold"
 msgstr "%(count)s solgt"
 
-#: templates/game_detail.html:252
+#: templates/game_detail.html:272
 #, python-format
 msgid "Last tested %(date)s."
 msgstr "Sist testet %(date)s."
 
-#: templates/game_detail.html:256
+#: templates/game_detail.html:276
 msgid ""
 "RetroDB reads PS3 compatibility from your RPCS3. In RPCS3, choose Manage "
 "> Databases > Download Compatibility Database."
@@ -7210,77 +7216,77 @@ msgstr ""
 "RetroDB leser PS3-kompatibilitet fra RPCS3-en din. I RPCS3 velger du "
 "Manage > Databases > Download Compatibility Database."
 
-#: templates/game_detail.html:257
+#: templates/game_detail.html:277
 msgid "RPCS3: no compatibility list"
 msgstr "RPCS3: ingen kompatibilitetsliste"
 
-#: templates/game_detail.html:278
+#: templates/game_detail.html:298
 msgid "No description available. Click \"Scrape\" to fetch metadata."
 msgstr "Ingen beskrivelse tilgjengelig. Klikk «Skrap» for å hente metadata."
 
-#: templates/game_detail.html:340
+#: templates/game_detail.html:360
 #, python-format
 msgid "Played on Steam: %(hours)s h %(minutes)s min"
 msgstr "Spilt på Steam: %(hours)s t %(minutes)s min"
 
-#: templates/game_detail.html:340
+#: templates/game_detail.html:360
 #, python-format
 msgid "Played on Steam: %(minutes)s min"
 msgstr "Spilt på Steam: %(minutes)s min"
 
-#: templates/game_detail.html:340
+#: templates/game_detail.html:360
 #, python-format
 msgid "Last played: %(date)s"
 msgstr "Sist spilt: %(date)s"
 
-#: templates/game_detail.html:358
+#: templates/game_detail.html:378
 msgid "Your copy earns achievements"
 msgstr "Din kopi gir prestasjoner"
 
-#: templates/game_detail.html:359
+#: templates/game_detail.html:379
 msgid "RetroAchievements does not list your copy, so it may not earn achievements"
 msgstr ""
 "RetroAchievements har ikke din kopi oppført, så den gir kanskje ikke "
 "prestasjoner"
 
-#: templates/game_detail.html:367
+#: templates/game_detail.html:387
 msgid "View on RetroAchievements.org"
 msgstr "Vis på RetroAchievements.org"
 
-#: templates/game_detail.html:369
+#: templates/game_detail.html:389
 msgid "RA Site"
 msgstr "RA-nettsted"
 
-#: templates/game_detail.html:381 templates/steam_achievement_game.html:17
+#: templates/game_detail.html:401 templates/steam_achievement_game.html:17
 #: templates/steam_achievements.html:7 templates/steam_achievements.html:15
 #: templates/steam_achievements.html:21
 msgid "Steam Achievements"
 msgstr "Steam-prestasjoner"
 
-#: templates/game_detail.html:397 templates/xbox_achievement_game.html:17
+#: templates/game_detail.html:417 templates/xbox_achievement_game.html:17
 #: templates/xbox_achievements.html:7 templates/xbox_achievements.html:15
 #: templates/xbox_achievements.html:21
 msgid "Xbox Achievements"
 msgstr "Xbox-prestasjoner"
 
-#: templates/game_detail.html:412 templates/psn_trophies.html:6
+#: templates/game_detail.html:432 templates/psn_trophies.html:6
 #: templates/psn_trophies.html:15 templates/psn_trophy_detail.html:17
 msgid "PSN Trophies"
 msgstr "PSN-trofeer"
 
-#: templates/game_detail.html:437 templates/local_trophy_detail.html:16
+#: templates/game_detail.html:457 templates/local_trophy_detail.html:16
 msgid "RPCS3 Trophies"
 msgstr "RPCS3-trofeer"
 
-#: templates/game_detail.html:465 templates/game_detail.html:473
+#: templates/game_detail.html:485 templates/game_detail.html:493
 msgid "AI guess"
 msgstr "AI-gjetning"
 
-#: templates/game_detail.html:471
+#: templates/game_detail.html:491
 msgid "(cross-mapped)"
 msgstr "(krysskoblet)"
 
-#: templates/game_detail.html:478
+#: templates/game_detail.html:498
 msgid ""
 "AI guess: a guess based on the game's content, not an official rating. "
 "The game may be older than the board."
@@ -7288,239 +7294,239 @@ msgstr ""
 "AI-gjetning: et anslag basert på innholdet i spillet, ikke en offisiell "
 "aldersgrense. Spillet kan være eldre enn ordningen."
 
-#: templates/game_detail.html:479
+#: templates/game_detail.html:499
 #, python-format
 msgid "Year each board started rating games: %(boards)s."
 msgstr "Året hver ordning begynte å gi spill aldersgrense: %(boards)s."
 
-#: templates/game_detail.html:489
+#: templates/game_detail.html:509
 #, python-format
 msgid "Screenshots (%(count)s)"
 msgstr "Skjermbilder (%(count)s)"
 
-#: templates/game_detail.html:491
+#: templates/game_detail.html:511
 msgid "Previous screenshots"
 msgstr "Forrige skjermbilder"
 
-#: templates/game_detail.html:497
+#: templates/game_detail.html:517
 msgid "Delete screenshot"
 msgstr "Slett skjermbilde"
 
-#: templates/game_detail.html:501
+#: templates/game_detail.html:521
 msgid "Next screenshots"
 msgstr "Neste skjermbilder"
 
-#: templates/game_detail.html:520
+#: templates/game_detail.html:540
 msgid "Also Known As"
 msgstr "Også kjent som"
 
-#: templates/game_detail.html:524
+#: templates/game_detail.html:544
 #, python-format
 msgid "Source: %(source)s"
 msgstr "Kilde: %(source)s"
 
-#: templates/game_detail.html:549
+#: templates/game_detail.html:569
 msgid "Loading recommendations..."
 msgstr "Laster anbefalinger..."
 
-#: templates/game_detail.html:597
+#: templates/game_detail.html:617
 #, python-format
 msgid "%(pct)s%% match"
 msgstr "%(pct)s %% treff"
 
-#: templates/game_detail.html:598
+#: templates/game_detail.html:618
 #, python-format
 msgid "Players who timed it: %(count)s"
 msgstr "Spillere som tidtok det: %(count)s"
 
-#: templates/game_detail.html:639
+#: templates/game_detail.html:659
 msgid "Source:"
 msgstr "Kilde:"
 
-#: templates/game_detail.html:642
+#: templates/game_detail.html:662
 msgid "CLZ Games Import (No ROM file)"
 msgstr "CLZ Games-import (ingen ROM-fil)"
 
-#: templates/game_detail.html:644
+#: templates/game_detail.html:664
 msgid "Steam Import (No ROM file)"
 msgstr "Steam-import (ingen ROM-fil)"
 
-#: templates/game_detail.html:646
+#: templates/game_detail.html:666
 msgid "Xbox Import (No ROM file)"
 msgstr "Xbox-import (ingen ROM-fil)"
 
-#: templates/game_detail.html:648
+#: templates/game_detail.html:668
 msgid "PSN Import (No ROM file)"
 msgstr "PSN-import (ingen ROM-fil)"
 
-#: templates/game_detail.html:654
+#: templates/game_detail.html:674
 msgid "Original Title:"
 msgstr "Originaltittel:"
 
-#: templates/game_detail.html:660
+#: templates/game_detail.html:680
 msgid "File:"
 msgstr "Fil:"
 
-#: templates/game_detail.html:662
+#: templates/game_detail.html:682
 msgid "Rename ROM file"
 msgstr "Endre navn på ROM-fil"
 
-#: templates/game_detail.html:665
+#: templates/game_detail.html:685
 msgid "Path:"
 msgstr "Sti:"
 
-#: templates/game_detail.html:671
+#: templates/game_detail.html:691
 msgid "Edition:"
 msgstr "Utgave:"
 
-#: templates/game_detail.html:678
+#: templates/game_detail.html:698
 msgid "Exclusive:"
 msgstr "Eksklusiv:"
 
-#: templates/game_detail.html:681
+#: templates/game_detail.html:701
 msgid "Also On:"
 msgstr "Også på:"
 
-#: templates/game_detail.html:688
+#: templates/game_detail.html:708
 msgid "Modes:"
 msgstr "Moduser:"
 
-#: templates/game_detail.html:694
+#: templates/game_detail.html:714
 msgid "Players:"
 msgstr "Spillere:"
 
-#: templates/game_detail.html:700
+#: templates/game_detail.html:720
 msgid "Campaign:"
 msgstr "Kampanje:"
 
-#: templates/game_detail.html:706
+#: templates/game_detail.html:726
 msgid "Structure:"
 msgstr "Struktur:"
 
-#: templates/game_detail.html:712
+#: templates/game_detail.html:732
 msgid "Perspective:"
 msgstr "Perspektiv:"
 
-#: templates/game_detail.html:718
+#: templates/game_detail.html:738
 msgid "Dimension:"
 msgstr "Dimensjon:"
 
-#: templates/game_detail.html:724
+#: templates/game_detail.html:744
 msgid "Save:"
 msgstr "Lagring:"
 
-#: templates/game_detail.html:730
+#: templates/game_detail.html:750
 msgid "Input:"
 msgstr "Inndata:"
 
-#: templates/game_detail.html:735
+#: templates/game_detail.html:755
 msgid "Scraped:"
 msgstr "Skrapet:"
 
-#: templates/game_detail.html:744
+#: templates/game_detail.html:764
 msgid "Bonus Content"
 msgstr "Bonusinnhold"
 
-#: templates/game_detail.html:763
+#: templates/game_detail.html:783
 msgid "Emulator settings"
 msgstr "Emulatorinnstillinger"
 
-#: templates/_macros/nav_tabs.html:40 templates/game_detail.html:773
+#: templates/_macros/nav_tabs.html:40 templates/game_detail.html:793
 #: templates/rom_tools_hub.html:193 templates/versions_review.html:5
 #: templates/versions_review.html:80
 msgid "Regional Versions"
 msgstr "Regionale versjoner"
 
-#: templates/game_detail.html:781 templates/museum_system.html:100
+#: templates/game_detail.html:801 templates/museum_system.html:100
 msgid "Released"
 msgstr "Utgitt"
 
-#: templates/game_detail.html:783
+#: templates/game_detail.html:803
 msgid "File size"
 msgstr "Filstørrelse"
 
-#: templates/game_detail.html:784
+#: templates/game_detail.html:804
 msgid "Revision"
 msgstr "Revisjon"
 
-#: templates/game_detail.html:785
+#: templates/game_detail.html:805
 msgid "Languages"
 msgstr "Språk"
 
-#: templates/game_detail.html:786
+#: templates/game_detail.html:806
 msgid "Scores"
 msgstr "Poeng"
 
-#: templates/game_detail.html:795
+#: templates/game_detail.html:815
 msgid "(this page)"
 msgstr "(denne siden)"
 
-#: templates/game_detail.html:813
+#: templates/game_detail.html:833
 msgid "Known differences"
 msgstr "Kjente forskjeller"
 
-#: templates/game_detail.html:813
+#: templates/game_detail.html:833
 msgid "AI-written"
 msgstr "AI-skrevet"
 
-#: templates/game_detail.html:814
+#: templates/game_detail.html:834
 msgid "Written by AI from what it knows about these releases. It can be wrong."
 msgstr "Skrevet av AI ut fra det den vet om disse utgivelsene. Det kan være feil."
 
-#: templates/game_detail.html:816
+#: templates/game_detail.html:836
 msgid "The AI knows of no differences between these versions."
 msgstr "AI-en kjenner ikke til noen forskjeller mellom disse versjonene."
 
-#: templates/game_detail.html:819
+#: templates/game_detail.html:839
 msgid "No other regional versions are linked to this game."
 msgstr "Ingen andre regionale versjoner er koblet til dette spillet."
 
-#: templates/game_detail.html:824
+#: templates/game_detail.html:844
 msgid "Unlink this version"
 msgstr "Fjern koblingen for denne versjonen"
 
-#: templates/game_detail.html:825
+#: templates/game_detail.html:845
 msgid "Summarise differences with AI"
 msgstr "Oppsummer forskjeller med AI"
 
-#: templates/game_detail.html:827
+#: templates/game_detail.html:847
 msgid "Link a version"
 msgstr "Koble en versjon"
 
-#: templates/game_detail.html:828
+#: templates/game_detail.html:848
 msgid "Link a version: search this system"
 msgstr "Koble en versjon: søk i dette systemet"
 
-#: templates/game_detail.html:844 templates/settings_emulators.html:22
+#: templates/game_detail.html:864 templates/settings_emulators.html:22
 #: templates/settings_emulators.html:127
 msgid "Cheats"
 msgstr "Juksekoder"
 
-#: templates/game_detail.html:851
+#: templates/game_detail.html:871
 msgid "Cheat list"
 msgstr "Juksekodeliste"
 
-#: templates/game_detail.html:854
+#: templates/game_detail.html:874
 msgid "Find a cheat"
 msgstr "Finn en juksekode"
 
-#: templates/game_detail.html:866
+#: templates/game_detail.html:886
 msgid "Scrape History"
 msgstr "Skrapehistorikk"
 
-#: templates/game_detail.html:892
+#: templates/game_detail.html:912
 msgid "Primary scraper"
 msgstr "Primær skraper"
 
-#: templates/game_detail.html:894
+#: templates/game_detail.html:914
 msgid "Fallback scraper"
 msgstr "Reserveskraper"
 
-#: templates/game_detail.html:901
+#: templates/game_detail.html:921
 msgid "Fields filled:"
 msgstr "Felt fylt:"
 
-#: templates/game_detail.html:914
+#: templates/game_detail.html:934
 msgid "Still missing:"
 msgstr "Mangler fortsatt:"
 
@@ -10265,7 +10271,8 @@ msgid "Custom Boxart (2D)"
 msgstr "Egendefinert omslagsbilde (2D)"
 
 #: templates/_modals/edit_modal.html:360 templates/_modals/edit_modal.html:372
-#: templates/_modals/edit_modal.html:397 templates/_modals/edit_modal.html:422
+#: templates/_modals/edit_modal.html:397 templates/_modals/edit_modal.html:408
+#: templates/_modals/edit_modal.html:433
 #, python-format
 msgid "Current: %(filename)s"
 msgstr "Gjeldende: %(filename)s"
@@ -10311,47 +10318,57 @@ msgid "Delete Fanart"
 msgstr "Slett fankunst"
 
 #: templates/_modals/edit_modal.html:405
+#, fuzzy
+msgid "Custom Logo"
+msgstr "Egendefinerte bilder"
+
+#: templates/_modals/edit_modal.html:410
+#, fuzzy
+msgid "Delete Logo"
+msgstr "Slett loggfil"
+
+#: templates/_modals/edit_modal.html:416
 msgid "Add Screenshots"
 msgstr "Legg til skjermbilder"
 
-#: templates/_modals/edit_modal.html:407
+#: templates/_modals/edit_modal.html:418
 msgid "Hold Ctrl/Cmd to select multiple files"
 msgstr "Hold Ctrl/Cmd for å velge flere filer"
 
-#: templates/_modals/edit_modal.html:409
+#: templates/_modals/edit_modal.html:420
 #, python-format
 msgid "Current: %(count)s screenshots"
 msgstr "Gjeldende: %(count)s skjermbilder"
 
-#: templates/_modals/edit_modal.html:416
+#: templates/_modals/edit_modal.html:427
 msgid "Video / Trailer"
 msgstr "Video/trailer"
 
-#: templates/_modals/edit_modal.html:418
+#: templates/_modals/edit_modal.html:429
 msgid "Video File"
 msgstr "Videofil"
 
-#: templates/_modals/edit_modal.html:420
+#: templates/_modals/edit_modal.html:431
 msgid "Supported formats: MP4, WebM, OGG"
 msgstr "Støttede formater: MP4, WebM, OGG"
 
-#: templates/_modals/edit_modal.html:424
+#: templates/_modals/edit_modal.html:435
 msgid "Remove Video"
 msgstr "Fjern video"
 
-#: templates/_modals/edit_modal.html:434
+#: templates/_modals/edit_modal.html:445
 msgid "Launch"
 msgstr "Start"
 
-#: templates/_modals/edit_modal.html:436
+#: templates/_modals/edit_modal.html:447
 msgid "Emulator override"
 msgstr "Emulatoroverstyring"
 
-#: templates/_modals/edit_modal.html:438
+#: templates/_modals/edit_modal.html:449
 msgid "(use system default)"
 msgstr "(bruk systemstandard)"
 
-#: templates/_modals/edit_modal.html:440
+#: templates/_modals/edit_modal.html:451
 msgid ""
 "Pick a specific emulator for this game.  Leave blank to use the per-"
 "system default."
@@ -10359,15 +10376,15 @@ msgstr ""
 "Velg en bestemt emulator for dette spillet. La stå tomt for å bruke "
 "standarden per system."
 
-#: templates/_modals/edit_modal.html:444
+#: templates/_modals/edit_modal.html:455
 msgid "Custom launch args"
 msgstr "Egendefinerte startargumenter"
 
-#: templates/_modals/edit_modal.html:445
+#: templates/_modals/edit_modal.html:456
 msgid "e.g.  --renderer vulkan"
 msgstr "f.eks. --renderer vulkan"
 
-#: templates/_modals/edit_modal.html:446
+#: templates/_modals/edit_modal.html:457
 msgid ""
 "Appended to the emulator's args template after substitution.  Use shell-"
 "quoted strings if values contain spaces."

@@ -158,7 +158,7 @@ def _split_layout(tmp_path, monkeypatch):
     data = tmp_path / 'data' / 'static' / 'images'
     monkeypatch.setattr(config, 'STATIC_PATH', str(bundle))
     monkeypatch.setattr(config, 'IMAGE_PATH', str(data))
-    for sub in ('boxart', 'boxart_3d', 'screenshots', 'fanart', 'manuals'):
+    for sub in ('boxart', 'boxart_3d', 'screenshots', 'fanart', 'game_logos', 'manuals'):
         (data / sub).mkdir(parents=True, exist_ok=True)
     (bundle / 'videos').mkdir(parents=True, exist_ok=True)
     return bundle, data
@@ -171,7 +171,7 @@ class TestMediaPathsResolveOnASplitLayout:
 
         from services.media_cleanup import find_missing_media_refs
         game = {'id': 1, 'title': 'Sonic', 'boxart': '1_boxart.png',
-                'boxart_3d': '', 'screenshots': '', 'fanart': '',
+                'boxart_3d': '', 'screenshots': '', 'fanart': '', 'game_logo': '',
                 'video': '', 'manual': ''}
         affected, _guarded = find_missing_media_refs([game])
 
@@ -205,7 +205,7 @@ class TestMediaPathsResolveOnASplitLayout:
         from services.media_cleanup import find_missing_media_refs
         game = {'id': 1, 'title': 'Sonic', 'boxart': 'images/boxart/1_boxart.png',
                 'boxart_3d': '', 'screenshots': '/images/screenshots/1_s.png',
-                'fanart': '', 'video': '', 'manual': ''}
+                'fanart': '', 'game_logo': '', 'video': '', 'manual': ''}
         (data / 'screenshots' / '1_s.png').write_bytes(b'x')
         affected, _guarded = find_missing_media_refs([game])
         assert affected == []

@@ -28,7 +28,7 @@ _METADATA_KEYS = [
     'genre', 'players', 'modes',
     'esrb_rating', 'pegi_rating', 'cero_rating', 'usk_rating',
     'acb_rating', 'fpb_rating', 'grac_rating', 'classind_rating',
-    'boxart', 'boxart_3d', 'screenshots', 'fanart', 'video', 'manual',
+    'boxart', 'boxart_3d', 'screenshots', 'fanart', 'game_logo', 'video', 'manual',
     'franchise', 'similar_games', 'playtime_estimate',
     'perspective', 'alternate_titles',
     'critic_score', 'critic_score_count', 'user_score', 'user_score_count',

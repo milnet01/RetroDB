@@ -478,7 +478,18 @@ def _init_upscaler(allow_gpu=True):
 # manuals keep their original extension; GIFs preserve animation.
 _CONVERTIBLE_TYPES = frozenset({
     'boxart', 'boxart_3d', 'screenshots', 'fanart', 'controllers', 'hardware',
+    'game_logo',
 })
+
+# Image types whose folder under IMAGE_PATH has another name. `game_logo`'s
+# folder is plural so it cannot be confused with `systems.logo` (PASS-59-224).
+_MEDIA_FOLDERS = {'game_logo': 'game_logos'}
+
+
+def media_folder(image_type):
+    """The folder under IMAGE_PATH that holds pictures of `image_type`."""
+    return _MEDIA_FOLDERS.get(image_type, image_type)
+
 
 _PIL_FORMAT_FOR_EXT = {
     '.webp': 'WEBP',
@@ -509,6 +520,8 @@ def preferred_image_extension(image_type, original_ext='.jpg'):
     fmt = getattr(config, 'IMAGE_FORMAT', 'webp').lower()
     if fmt == 'webp':
         return '.webp'
+    if image_type == 'game_logo':
+        return '.png'  # a logo keeps its clear background; JPEG has no alpha
     # jpeg mode: keep original if already JPEG-ish, else downgrade to jpg
     return original_ext if original_ext in ('.jpg', '.jpeg') else '.jpg'
 
@@ -743,7 +756,8 @@ def standardize_downloaded_image(path, image_type, still_wanted=None):
 
     Args:
         path: Absolute path to the image file.
-        image_type: One of 'boxart', 'screenshots', 'boxart_3d', 'controllers', 'fanart'.
+        image_type: One of 'boxart', 'screenshots', 'boxart_3d', 'controllers', 'fanart',
+            'game_logo' (left as it is).
         still_wanted: See standardize_image().
     """
     import config
@@ -753,6 +767,8 @@ def standardize_downloaded_image(path, image_type, still_wanted=None):
 
     if image_type in config.IMAGE_SKIP_TYPES:
         return
+    if image_type == 'game_logo':
+        return  # PASS-59-224: a logo is shown at its own size, never resized
 
     if image_type in ('controllers', 'hardware'):
         target = config.IMAGE_TARGET_LONGEST_EDGE

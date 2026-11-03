@@ -23,7 +23,7 @@ def _layout_nested(tmp_path, monkeypatch):
     static = tmp_path / 'static'
     monkeypatch.setattr(config, 'STATIC_PATH', str(static))
     monkeypatch.setattr(config, 'IMAGE_PATH', str(static / 'images'))
-    for sub in ('boxart', 'boxart_3d', 'screenshots', 'fanart', 'manuals'):
+    for sub in ('boxart', 'boxart_3d', 'screenshots', 'fanart', 'game_logos', 'manuals'):
         (static / 'images' / sub).mkdir(parents=True, exist_ok=True)
     (static / 'videos').mkdir(parents=True, exist_ok=True)
     return static
@@ -35,14 +35,14 @@ def _layout_split(tmp_path, monkeypatch):
     import config
     monkeypatch.setattr(config, 'IMAGE_PATH', str(tmp_path / 'images'))
     monkeypatch.setattr(config, 'STATIC_PATH', str(tmp_path / 'static'))
-    for sub in ('boxart', 'boxart_3d', 'screenshots', 'fanart', 'manuals'):
+    for sub in ('boxart', 'boxart_3d', 'screenshots', 'fanart', 'game_logos', 'manuals'):
         (tmp_path / 'images' / sub).mkdir(parents=True, exist_ok=True)
     (tmp_path / 'static' / 'videos').mkdir(parents=True, exist_ok=True)
 
 
 def _empty_game(**overrides):
     row = {'id': 0, 'boxart': '', 'boxart_3d': '', 'screenshots': '',
-           'fanart': '', 'video': '', 'manual': ''}
+           'fanart': '', 'game_logo': '', 'video': '', 'manual': ''}
     row.update(overrides)
     return row
 
@@ -270,3 +270,20 @@ class TestBoxFacesOrphans:
         orphaned, _ = media_cleanup.find_orphaned_media([_empty_game(id=7)])
         names = {o['filename']: o['type'] for o in orphaned}
         assert names == {'8_front_ab12cd34.webp': 'box_faces'}
+
+
+class TestGameLogoOrphans:
+    """PASS-59-224 INV-5 — a logo a row names is never an orphan; one no row names is."""
+
+    def test_a_named_logo_is_kept_and_an_unnamed_one_is_an_orphan(self, tmp_path, monkeypatch):
+        _layout_split(tmp_path, monkeypatch)
+        from services import media_cleanup
+
+        folder = tmp_path / 'images' / 'game_logos'
+        (folder / '99_ss_logo.webp').write_bytes(b'named by game 7')
+        (folder / '98_ss_logo.webp').write_bytes(b'named by no one')
+
+        orphaned, _ = media_cleanup.find_orphaned_media(
+            [_empty_game(id=7, game_logo='99_ss_logo.webp')])
+        names = {o['filename']: o['type'] for o in orphaned}
+        assert names == {'98_ss_logo.webp': 'game_logo'}

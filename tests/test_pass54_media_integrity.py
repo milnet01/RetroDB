@@ -19,7 +19,7 @@ def _nested_layout(tmp_path, monkeypatch):
     static = tmp_path / 'static'
     monkeypatch.setattr(config, 'STATIC_PATH', str(static))
     monkeypatch.setattr(config, 'IMAGE_PATH', str(static / 'images'))
-    for sub in ('boxart', 'boxart_3d', 'screenshots', 'fanart', 'manuals'):
+    for sub in ('boxart', 'boxart_3d', 'screenshots', 'fanart', 'game_logos', 'manuals'):
         (static / 'images' / sub).mkdir(parents=True, exist_ok=True)
     (static / 'videos').mkdir(parents=True, exist_ok=True)
     return static
@@ -27,7 +27,7 @@ def _nested_layout(tmp_path, monkeypatch):
 
 def _game(**over):
     row = {'id': 1, 'title': 'Sonic', 'boxart': '', 'boxart_3d': '',
-           'screenshots': '', 'fanart': '', 'video': '', 'manual': ''}
+           'screenshots': '', 'fanart': '', 'game_logo': '', 'video': '', 'manual': ''}
     row.update(over)
     return row
 

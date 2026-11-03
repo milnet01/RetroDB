@@ -58,6 +58,15 @@
 {% set is_platform_import = is_clz_import or is_steam_import or is_xbox_import or is_psn_import %}
 <div class="game-page-header">
     <div class="game-title-row">
+        {# PASS-59-224 — the logo sits above the title, which stays text. alt=""
+           because the title says the same. #}
+        {% if game.game_logo %}
+        <div class="game-page-logo-line">
+        <img src="{{ url_for('static', filename='images/game_logos/' + game.game_logo) }}"
+             alt="" class="game-page-logo" decoding="async"
+             data-on-error="hide">
+        </div>
+        {% endif %}
         <h1 class="game-page-title">{{ game.title }}</h1>
         {% if is_clz_import %}
         <span class="platform-import-badge clz" title="{{ _('CLZ Import - No ROM file') }}"><img src="{{ url_for('static', filename='images/trophies/clz-games-web.svg') }}" alt="CLZ" class="platform-import-icon"> {{ _('CLZ Import') }}</span>
@@ -197,6 +206,14 @@
                 <!-- Hidden placeholder for missing images -->
                 <div class="game-boxart-empty" id="boxartPlaceholder" style="display: none;">
                     <span class="boxart-empty-icon">🎮</span>
+                </div>
+            {% elif game.game_logo %}
+                {# PASS-59-224 — no box: the logo stands in, 🎮 if it fails to load. #}
+                <div class="game-boxart-empty game-boxart-logo">
+                    <img src="{{ url_for('static', filename='images/game_logos/' + game.game_logo) }}"
+                         alt="" class="game-boxart-logo-image" decoding="async"
+                         data-on-error="hide-show-next">
+                    <span class="boxart-empty-icon" style="display: none;">🎮</span>
                 </div>
             {% else %}
                 <div class="game-boxart-empty">
