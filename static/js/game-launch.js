@@ -7,6 +7,7 @@
 // the prior instance and relaunch.  Surfaces errors via showNotification.
 // PASS-59-81 §4.5 — a 202 with `installing` means the player's core is
 // downloading: poll the core job, then send the launch again once.
+// PASS-59-228 — a full-screen play screen covers the page while it starts.
 // =============================================================================
 
 (function () {
@@ -39,12 +40,87 @@
         }
     }
 
+    // PASS-59-228 — the play screen: the game's logo, large, on its background
+    // art (its title when it has no logo) while the game starts. It closes when
+    // the game's window takes focus from the browser, on Esc or a click, when
+    // the launch fails or the game quits, or SCREEN_MAX_MS after the start: a
+    // game started from another device's browser never takes that one's focus.
+    const SCREEN_MAX_MS = 15000;
+    const STATUS_POLL_MS = 1000;
+    let screen = null;
+
+    function closeScreen() {
+        if (!screen) return;
+        const s = screen;
+        screen = null;
+        clearTimeout(s.timer);
+        clearInterval(s.poll);
+        window.removeEventListener('blur', closeScreen);
+        document.removeEventListener('keydown', s.onKey, true);
+        s.el.remove();
+        if (s.trigger && s.trigger.isConnected) s.trigger.focus({preventScroll: true});
+    }
+
+    function openScreen(btn) {
+        closeScreen();
+        const d = btn.dataset;
+        const title = d.gameTitle || '';
+        const el = document.createElement('div');
+        el.className = 'play-screen';
+        el.tabIndex = -1;
+        el.setAttribute('role', 'dialog');
+        el.setAttribute('aria-modal', 'true');
+        el.setAttribute('aria-label', t('Starting {title}', {title}));
+        if (d.fanart) {
+            el.style.backgroundImage = `url("/static/images/fanart/${encodeURIComponent(d.fanart)}")`;
+        }
+        const art = d.logo ? document.createElement('img') : document.createElement('h1');
+        if (d.logo) {
+            art.src = `/static/images/game_logos/${encodeURIComponent(d.logo)}`;
+            art.alt = title;
+            art.className = 'play-screen-logo';
+        } else {
+            art.textContent = title;
+            art.className = 'play-screen-title';
+        }
+        const status = document.createElement('p');
+        status.className = 'play-screen-status';
+        status.setAttribute('aria-live', 'polite');
+        status.textContent = t('Starting…');
+        el.append(art, status);
+        el.addEventListener('click', closeScreen);
+        const onKey = (e) => { if (e.key === 'Escape') { e.preventDefault(); closeScreen(); } };
+        document.addEventListener('keydown', onKey, true);
+        document.body.appendChild(el);
+        el.focus({preventScroll: true});
+        screen = {el, status, onKey, trigger: btn, timer: null, poll: null};
+    }
+
+    function screenStatus(text) {
+        if (screen) screen.status.textContent = text;
+    }
+
+    // The game started: close on focus loss, when it quits, or at the limit.
+    function screenStarted(token) {
+        if (!screen) return;
+        const s = screen;
+        window.addEventListener('blur', closeScreen);
+        s.timer = setTimeout(closeScreen, SCREEN_MAX_MS);
+        if (!token) return;
+        s.poll = setInterval(async () => {
+            const rv = await fetch(`/api/launch/${token}/status`).catch(() => null);
+            const st = rv && rv.ok ? ((await rv.json().catch(() => ({}))).data || {}) : {};
+            if (screen === s && st.state !== 'running') closeScreen();
+        }, STATUS_POLL_MS);
+    }
+
     async function launchGameImpl(btn, afterInstall = false) {
         const gid = btn.dataset.gameId;
         const orig = btn.innerHTML;
         const origTitle = btn.title;
         btn.disabled = true;
         busyLabel(btn, t('Launching…'));
+        if (!afterInstall) openScreen(btn);
 
         try {
             const rv = await fetch(`/api/game/${gid}/launch`, {
@@ -54,7 +130,9 @@
             const body = await rv.json().catch(() => ({}));
 
             if (rv.status === 409 && body.existing_token) {
+                closeScreen();
                 if (confirm(t('This game is already running.  Kill the existing process and relaunch?'))) {
+                    openScreen(btn);
                     // Pass 48.4 — check the kill succeeded before retrying. A
                     // failed kill (process unkillable, token expired) otherwise
                     // surfaces as a second confusing "already running" 409.
@@ -73,6 +151,7 @@
                     });
                     const body2 = await rv2.json().catch(() => ({}));
                     if (!rv2.ok) throw new Error(body2.error || rv2.statusText);
+                    screenStarted(body2.data && body2.data.token);
                     if (typeof showNotification === 'function') {
                         showNotification(t('Launched (replaced previous instance)'), 'success');
                     }
@@ -86,6 +165,7 @@
                 if (afterInstall) throw new Error(t('The core installed but the game still cannot start.'));
                 const msg = t('Downloading the {system} core…', {system: inst.system});
                 busyLabel(btn, msg);
+                screenStatus(msg);
                 if (typeof showNotification === 'function') {
                     showNotification(inst.bytes ? `${msg} (${formatBytes(inst.bytes)})` : msg, 'info');
                 }
@@ -94,11 +174,13 @@
                 }
                 await launchGameImpl(btn, true);
             } else {
+                screenStarted(body.data && body.data.token);
                 if (typeof showNotification === 'function') {
                     showNotification(t('Launched (pid {pid})', {pid: body.data && body.data.pid}), 'success');
                 }
             }
         } catch (e) {
+            closeScreen();
             if (typeof showNotification === 'function') {
                 showNotification(t('Launch failed: {error}', {error: e.message}), 'error');
             } else {

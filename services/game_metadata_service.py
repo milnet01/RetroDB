@@ -203,7 +203,7 @@ def import_source_for_rom_path(rom_path):
 # these (plus the achievement/psn joins handled in the SQL).
 _CARD_COLUMNS = (
     'id', 'title', 'sort_title', 'system_id', 'boxart', 'boxart_3d', 'fanart',
-    'genre', 'franchise', 'developer', 'publisher', 'release_date', 'modes',
+    'game_logo', 'genre', 'franchise', 'developer', 'publisher', 'release_date', 'modes',
     'esrb_rating', 'pegi_rating', 'cero_rating', 'usk_rating', 'acb_rating',
     'fpb_rating', 'grac_rating', 'classind_rating', 'china_rating',
     'critic_score', 'critic_score_count', 'user_score', 'user_score_count',

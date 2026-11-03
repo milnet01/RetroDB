@@ -321,7 +321,7 @@ def api_games_card_data():
     sql = f"""
         SELECT g.id, g.title, g.sort_title, g.system_id, g.emulator_override_id,
                g.boxart, g.boxart_3d,
-               g.fanart, g.genre, g.franchise, g.developer, g.publisher,
+               g.fanart, g.game_logo, g.genre, g.franchise, g.developer, g.publisher,
                g.release_date, g.modes, g.esrb_rating, g.pegi_rating,
                g.cero_rating, g.usk_rating, g.acb_rating, g.fpb_rating,
                g.grac_rating, g.classind_rating, g.china_rating,

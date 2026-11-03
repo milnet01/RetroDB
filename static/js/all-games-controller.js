@@ -718,7 +718,8 @@ const AllGamesController = (function() {
         // from the card's top-right corner (hidden in bulk-select mode).
         const playHtml = game.can_launch
             ? `<button type="button" class="card-play-btn" data-game-id="${game.id}"
-                       title="${escAttr(t('Play'))}" aria-label="${escAttr(t('Play'))}"
+                       data-game-title="${esc(game.title)}" data-logo="${esc(game.game_logo)}" data-fanart="${esc(game.fanart)}"
+                       title="${esc(t('Play'))}" aria-label="${esc(t('Play'))}"
                        data-on-click="launchGame" data-args="${actionArgs('$this')}" data-stop data-prevent><svg viewBox="0 0 100 100" aria-hidden="true" focusable="false"><polygon points="35,24 35,76 80,50"/></svg></button>`
             : '';
 

@@ -104,7 +104,7 @@
     <div class="header-buttons">
         {% if can_play and has_perm('launch') %}
         {% if play_emulator %}
-        <button type="button" id="play-btn" class="btn btn-primary" data-game-id="{{ game.id }}" data-on-click="launchGame" data-args='["$this"]' title="{{ _('Launch this game in the configured emulator') }}">
+        <button type="button" id="play-btn" class="btn btn-primary" data-game-id="{{ game.id }}" data-game-title="{{ game.title }}" data-logo="{{ game.game_logo or '' }}" data-fanart="{{ game.fanart or '' }}" data-on-click="launchGame" data-args='["$this"]' title="{{ _('Launch this game in the configured emulator') }}">
         {% else %}
         {# PASS-59-197 — no emulator: Play looks disabled but stays clickable (aria-disabled,
            not disabled) so its tooltip shows and a click explains why. #}
