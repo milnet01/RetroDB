@@ -10681,6 +10681,12 @@ the cover zoom in Firefox before being reverted for the local fix.
   `static/js/box-viewer.js` draws it (CSS 3D first: rounded face
   corners, thin strips for lip and bevel). A box imported before
   this needs importing again to gain its shape.
+- **Progress** (2026-11-03): Slipcase's spec arrived:
+  `Slipcase/docs/specs/SLIP-0125-keep-case-shape.md` § 4.1. An optional
+  `"shape": {"corner_radius_mm", "edge_radius_mm"}` in box file v1;
+  each zero applies on its own (RetroDB agreed); a bad shape draws the
+  box flat. Slipcase dropped the raised lip: it makes the solid concave
+  at the hinge. The lip stays painted in the face pictures. Unblocked.
 
 ## Done index
 
