@@ -10704,6 +10704,10 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Open**: where it goes. Recommendation: the Achievements page, next
   to Refresh Progress. Ask the user before building.
 - **Status**: todo.
+- **Decided** (user, 2026-11-03): the Achievements page. That page
+  also has Sync and Refresh Progress buttons, so each button must say
+  plainly what it does (label and a short line under it), so no one
+  mixes them up.
 
 ## Done index
 
