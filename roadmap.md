@@ -10550,6 +10550,10 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Progress** (2026-11-02): Also missing from the translated manuals: the MAME Names section
   (2026-11-02). New strings for the MAME Names page and the Xbox wording
   in Settings wait on translation too.
+- **Progress** (2026-11-03): 2026-11-03: help.html gained a "Back of the box" item on the game page
+  list, and "box back" in Media Handling and Custom Images (PASS-59-225).
+  The new UI strings for the Back button and Edit window wait on
+  translation too.
 
 ---
 
@@ -10566,7 +10570,12 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.225 The back of a game's box, and arcade flyers, on the game page (enhancement, M).
-- **Status**: todo
+- **Resolution** (2026-11-03): Shipped 2026-11-03 in d2473a1 (box backs only; arcade flyers still wait
+  until after v4.0.0). Decided with the user 2026-11-03: its own column
+  games.boxart_back, kept apart from Slipcase's box_faces; a Back button on
+  the game page's cover; not a Fill Missing gap. Sources: ES-DE backcovers,
+  ScreenScraper box-2D-back, TheGamesDB side "back".
+- **Status**: done
 - **Source**: split from PASS-59-216, 2026-11-02. Whether it is in v4.0.0 is the user's call.
 - **What the sources send**: ScreenScraper `box-2D-back` (seen in samples, seven regions; parsed to `boxart_back`, unused); TheGamesDB boxart `side: "back"`; ScreenScraper `flyer` (documentation only, in no sample).
 - **Needs**: a column and folder, and somewhere on the game page to show them. `games.box_faces` holds Slipcase imports and only `services/box_faces.py` writes it, so a scraped back needs a decision: its own column, or a change to that contract.
@@ -10628,6 +10637,16 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Fix idea**: migrate the session test database in `tests/conftest.py`, or point the affected tests at a migrated fixture.
 - **Status**: todo.
 - **Source**: build of PASS-59-224, 2026-11-03.
+
+---
+
+#### Pass 59.230 Arcade flyers on the game page (enhancement, S).
+- **Status**: todo
+- **Decided** (user, 2026-11-02): after v4.0.0.
+- **What the sources send**: ScreenScraper `flyer` (documentation only,
+  in no sample seen). Check a real arcade answer before building.
+- **Pattern**: the box back (PASS-59-225) — its own column and folder,
+  fill-only, and a place on the game page.
 
 ## Done index
 
