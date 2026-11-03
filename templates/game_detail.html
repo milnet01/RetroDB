@@ -94,12 +94,17 @@
     {% endif %}
     <div class="header-buttons">
         {% if can_play and has_perm('launch') %}
+        {% if play_emulator %}
         <button type="button" id="play-btn" class="btn btn-primary" data-game-id="{{ game.id }}" data-on-click="launchGame" data-args='["$this"]' title="{{ _('Launch this game in the configured emulator') }}">
+        {% else %}
+        {# PASS-59-197 — no emulator: Play looks disabled but stays clickable (aria-disabled,
+           not disabled) so its tooltip shows and a click explains why. #}
+        {% set no_emu_msg = _('No emulator is set up for this system.') %}
+        <button type="button" id="play-btn" class="btn btn-primary" aria-disabled="true" data-on-click="showModal" data-args="{{ [_('Play'), no_emu_msg]|tojson|forceescape }}" title="{{ no_emu_msg }}">
+        {% endif %}
             <span class="btn-icon">▶</span>
             {{ _('Play') }}
         </button>
-        {# PASS-59-197 — why Play has no emulator. The Emulator settings heading names one it has. #}
-        {% if not play_emulator %}<span class="play-emulator">{{ _('No emulator is set up for this system.') }}</span>{% endif %}
         {% if keyboard_play %}
         {# PASS-59-152 — keyboard computers start in game focus. #}
         <a href="{{ url_for('help_page') }}#emulators-play" class="play-key-hint">⌨ {{ _('Keyboard game: press Scroll Lock for RetroArch keys') }}</a>
