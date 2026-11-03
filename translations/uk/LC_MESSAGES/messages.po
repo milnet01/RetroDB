@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-03 20:46+0200\n"
+"POT-Creation-Date: 2026-11-03 21:03+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: uk\n"
@@ -2131,7 +2131,7 @@ msgstr "Можна пройти з прийнятною швидкодією і 
 #: templates/chd_converter.html:170 templates/chd_verify.html:126
 #: templates/game_detail.html:627 templates/login.html:254
 #: templates/museum.html:29 templates/museum_system.html:182
-#: templates/psn_trophies.html:297 templates/psn_trophy_detail.html:182
+#: templates/psn_trophies.html:298 templates/psn_trophy_detail.html:182
 #: templates/psn_trophy_detail.html:325 templates/reports.html:521
 #: templates/screenshot_dedup.html:263 templates/settings.html:44
 #: templates/settings_emulators.html:274
@@ -2198,7 +2198,7 @@ msgstr "Очистити дані RA"
 msgid "Clear RA Data for All Systems"
 msgstr "Очищено дані RA для {n} ігор"
 
-#: services/js_i18n_strings.py:622 templates/achievements_system.html:529
+#: services/js_i18n_strings.py:622 templates/achievements_system.html:530
 msgid "Clear RetroAchievements Data"
 msgstr "Очистити дані RetroAchievements"
 
@@ -2435,8 +2435,8 @@ msgid "Does not start, or crashes the emulator."
 msgstr "Не запускається або спричиняє збій емулятора."
 
 #: services/js_i18n_strings.py:672 templates/_bulk_scrape_modal.html:69
-#: templates/all_games.html:229 templates/psn_trophies.html:247
-#: templates/psn_trophies.html:307 templates/reports.html:525
+#: templates/all_games.html:229 templates/psn_trophies.html:248
+#: templates/psn_trophies.html:308 templates/reports.html:525
 #: templates/system_games.html:209
 msgid "Done"
 msgstr "Готово"
@@ -2662,8 +2662,8 @@ msgstr "Не вдалося очистити імпорти CLZ"
 msgid "Failed to clear HLTB: {error}"
 msgstr "Не вдалося очистити HowLongToBeat: "
 
-#: services/js_i18n_strings.py:717 templates/achievements_system.html:554
-#: templates/achievements_system.html:562
+#: services/js_i18n_strings.py:717 templates/achievements_system.html:555
+#: templates/achievements_system.html:563
 msgid "Failed to clear RA data"
 msgstr "Не вдалося очистити дані RA"
 
@@ -3324,7 +3324,7 @@ msgstr "Частина серії"
 #: services/js_i18n_strings.py:860 templates/_bulk_scrape_modal.html:46
 #: templates/archive_scanner.html:658 templates/archive_scanner.html:795
 #: templates/archive_scanner.html:1596 templates/archive_scanner.html:1627
-#: templates/psn_trophies.html:294
+#: templates/psn_trophies.html:295
 msgid "Pause"
 msgstr "Пауза"
 
@@ -3862,7 +3862,7 @@ msgstr "Підсумок написано."
 msgid "Switched-on cheats apply the next time you press Play."
 msgstr "Увімкнені чити застосуються, коли ви наступного разу натиснете «Грати»."
 
-#: services/js_i18n_strings.py:979 templates/achievements_system.html:499
+#: services/js_i18n_strings.py:979 templates/achievements_system.html:500
 msgid "Sync In Progress"
 msgstr "Синхронізація виконується"
 
@@ -3870,11 +3870,11 @@ msgstr "Синхронізація виконується"
 msgid "Sync Progress"
 msgstr "Прогрес синхронізації"
 
-#: services/js_i18n_strings.py:981 templates/achievements_system.html:451
+#: services/js_i18n_strings.py:981 templates/achievements_system.html:452
 msgid "Sync Queued"
 msgstr "Синхронізацію додано в чергу"
 
-#: services/js_i18n_strings.py:982 templates/achievements_system.html:607
+#: services/js_i18n_strings.py:982 templates/achievements_system.html:608
 msgid "Sync complete! Refresh page to see updated progress."
 msgstr "Синхронізацію завершено! Оновіть сторінку, щоб побачити оновлений прогрес."
 
@@ -4003,7 +4003,7 @@ msgstr "Ця назва містить «=», а налаштування ему
 msgid "This release has no download for this computer yet."
 msgstr "Цей випуск ще не має завантаження для цього комп'ютера."
 
-#: services/js_i18n_strings.py:1007 templates/achievements_system.html:499
+#: services/js_i18n_strings.py:1007 templates/achievements_system.html:500
 msgid "This system is already being synced."
 msgstr "Цю систему вже синхронізовано."
 
@@ -4620,7 +4620,7 @@ msgstr "Невдало: %(count)s"
 msgid "Skipped: %(count)s"
 msgstr "Пропущено: %(count)s"
 
-#: templates/_bulk_scrape_modal.html:42 templates/psn_trophies.html:300
+#: templates/_bulk_scrape_modal.html:42 templates/psn_trophies.html:301
 msgid "Background"
 msgstr "Фон"
 
@@ -4926,22 +4926,38 @@ msgstr "Завершено (100%)"
 msgid "Jump to:"
 msgstr "Перейти до:"
 
-#: templates/achievements_system.html:251
+#: templates/achievements_system.html:204 templates/local_trophies.html:102
+#: templates/steam_achievements.html:90 templates/xbox_achievements.html:90
+#, fuzzy
+msgid "Back to the first game"
+msgstr "Задано для цієї гри"
+
+#: templates/achievements_system.html:204 templates/all_games.html:122
+#: templates/game_imports.html:330 templates/game_imports.html:393
+#: templates/hltb_review.html:28 templates/local_trophies.html:102
+#: templates/logs.html:707 templates/psn_trophies.html:129
+#: templates/psn_trophies.html:163 templates/psn_trophies.html:181
+#: templates/steam_achievements.html:90 templates/system_games.html:113
+#: templates/wishlist.html:26 templates/xbox_achievements.html:90
+msgid "All"
+msgstr "Усі"
+
+#: templates/achievements_system.html:252
 #, python-format
 msgid "<span>%(count)s</span> achievements"
 msgstr "<span>%(count)s</span> досягнень"
 
-#: templates/achievements_system.html:362
+#: templates/achievements_system.html:363
 #, fuzzy
 msgid "System is already in the queue"
 msgstr "Цю систему вже синхронізовано."
 
-#: templates/achievements_system.html:391
+#: templates/achievements_system.html:392
 #, fuzzy, python-brace-format
 msgid "Added {system} to sync queue"
 msgstr "{system} додано до черги синхронізації."
 
-#: templates/achievements_system.html:451
+#: templates/achievements_system.html:452
 #, fuzzy, python-brace-format
 msgid ""
 "{system} has been added to the sync queue. It will start automatically "
@@ -4950,19 +4966,19 @@ msgstr ""
 "Ваш масовий скрапінг додано в чергу (позиція {position}). Він "
 "розпочнеться автоматично після завершення поточного скрапінгу."
 
-#: templates/achievements_system.html:499
+#: templates/achievements_system.html:500
 #, python-brace-format
 msgid "{reason} Check the toast notification for progress."
 msgstr ""
 
-#: templates/achievements_system.html:530
+#: templates/achievements_system.html:531
 #, fuzzy, python-brace-format
 msgid ""
 "This will remove \"{system}\" from the Achievements page by clearing all "
 "RetroAchievements game IDs and progress data for this system. Continue?"
 msgstr "Це видалить «{system}» зі сторінки досягнень. Продовжити?"
 
-#: templates/achievements_system.html:547
+#: templates/achievements_system.html:548
 #, python-brace-format
 msgid "RA data cleared for {system}. Games cleared: {count}"
 msgstr ""
@@ -5152,29 +5168,22 @@ msgstr "Бонусні диски"
 msgid "Alphabetical jump navigation"
 msgstr "Алфавітна навігація"
 
-#: templates/all_games.html:122 templates/system_games.html:113
+#: templates/all_games.html:122 templates/psn_trophies.html:181
+#: templates/system_games.html:113
 msgid "Show every game again"
 msgstr ""
 
-#: templates/all_games.html:122 templates/game_imports.html:330
-#: templates/game_imports.html:393 templates/hltb_review.html:28
-#: templates/logs.html:707 templates/psn_trophies.html:129
-#: templates/psn_trophies.html:163 templates/system_games.html:113
-#: templates/wishlist.html:26
-msgid "All"
-msgstr "Усі"
-
-#: templates/all_games.html:155 templates/psn_trophies.html:213
+#: templates/all_games.html:155 templates/psn_trophies.html:214
 #: templates/system_games.html:146
 msgid "SHOWING"
 msgstr "ПОКАЗАНО"
 
-#: templates/all_games.html:155 templates/psn_trophies.html:213
+#: templates/all_games.html:155 templates/psn_trophies.html:214
 #: templates/system_games.html:146
 msgid "OF"
 msgstr "З"
 
-#: templates/all_games.html:155 templates/psn_trophies.html:213
+#: templates/all_games.html:155 templates/psn_trophies.html:214
 #: templates/system_games.html:146
 msgid "GAMES"
 msgstr "ІГОР"
@@ -5239,7 +5248,7 @@ msgid "Clear filters"
 msgstr "Очистити фільтри"
 
 #: templates/_modals/filter_modal.html:18 templates/all_games.html:196
-#: templates/psn_trophies.html:222 templates/system_games.html:176
+#: templates/psn_trophies.html:223 templates/system_games.html:176
 msgid "Loading games..."
 msgstr "Завантаження ігор..."
 
@@ -5955,7 +5964,7 @@ msgstr "Ви впевнені, що хочете скасувати?"
 
 #: templates/archive_scanner.html:1376 templates/chd_converter.html:304
 #: templates/chd_verify.html:258 templates/duplicate_finder.html:541
-#: templates/psn_trophies.html:1622
+#: templates/psn_trophies.html:1631
 #, fuzzy
 msgid "No Selection"
 msgstr "Немає опису"
@@ -8915,16 +8924,16 @@ msgstr ""
 "Натисніть «Сканувати трофеї», щоб знайти дані трофеїв у вашій інсталяції "
 "RPCS3."
 
-#: templates/local_trophies.html:113
+#: templates/local_trophies.html:114
 #, python-format
 msgid "Games (%(count)s)"
 msgstr "Ігри (%(count)s)"
 
-#: templates/local_trophies.html:171
+#: templates/local_trophies.html:172
 msgid "Scanning Trophies"
 msgstr "Сканування трофеїв"
 
-#: templates/local_trophies.html:174
+#: templates/local_trophies.html:175
 msgid "Scanning trophy folders..."
 msgstr "Сканування папок трофеїв..."
 
@@ -9341,7 +9350,7 @@ msgstr "успішно,"
 msgid "skipped,"
 msgstr "пропущено,"
 
-#: templates/museum.html:39 templates/psn_trophies.html:278
+#: templates/museum.html:39 templates/psn_trophies.html:279
 msgid "failed"
 msgstr "невдало"
 
@@ -9669,51 +9678,51 @@ msgstr "Незавершено"
 msgid "Sync Selected"
 msgstr "Синхронізувати вибрані"
 
-#: templates/psn_trophies.html:233
+#: templates/psn_trophies.html:234
 msgid "Syncing PSN Trophies"
 msgstr "Синхронізація трофеїв PSN"
 
-#: templates/psn_trophies.html:236
+#: templates/psn_trophies.html:237
 msgid "Connecting to PlayStation Network..."
 msgstr "Підключення до PlayStation Network..."
 
-#: templates/psn_trophies.html:242 templates/psn_trophies.html:274
+#: templates/psn_trophies.html:243 templates/psn_trophies.html:275
 msgid "synced"
 msgstr "синхронізовано"
 
-#: templates/psn_trophies.html:243
+#: templates/psn_trophies.html:244
 msgid "images"
 msgstr "зображень"
 
-#: templates/psn_trophies.html:256
+#: templates/psn_trophies.html:257
 msgid "Bulk Trophy Refresh"
 msgstr "Масове оновлення трофеїв"
 
-#: templates/psn_trophies.html:259
+#: templates/psn_trophies.html:260
 msgid "Starting bulk refresh..."
 msgstr "Запуск масового оновлення..."
 
-#: templates/psn_trophies.html:282
+#: templates/psn_trophies.html:283
 msgid "skipped"
 msgstr "пропущено"
 
-#: templates/psn_trophies.html:287
+#: templates/psn_trophies.html:288
 msgid "Rate limited: ~2.5 seconds between games to respect PSN API limits"
 msgstr ""
 "Обмеження швидкості: ~2,5 секунди між іграми, щоб дотримуватися лімітів "
 "API PSN"
 
-#: templates/psn_trophies.html:1622
+#: templates/psn_trophies.html:1631
 #, fuzzy
 msgid "Please select at least one game to refresh."
 msgstr "Виберіть принаймні одну гру для редагування."
 
-#: templates/psn_trophies.html:1757
+#: templates/psn_trophies.html:1766
 #, fuzzy
 msgid "Cancel Refresh"
 msgstr "Оновити"
 
-#: templates/psn_trophies.html:1757
+#: templates/psn_trophies.html:1766
 #, fuzzy
 msgid "Are you sure you want to cancel the bulk refresh?"
 msgstr "Ви впевнені, що хочете скасувати?"
@@ -11761,15 +11770,15 @@ msgstr "Здобуто"
 msgid "Avg. Completion"
 msgstr "Сер. завершеність"
 
-#: templates/steam_achievements.html:142
+#: templates/steam_achievements.html:143
 msgid "No Steam Achievements"
 msgstr "Немає досягнень Steam"
 
-#: templates/steam_achievements.html:144
+#: templates/steam_achievements.html:145
 msgid "Import Steam games and sync achievements to see them here."
 msgstr "Імпортуйте ігри Steam і синхронізуйте досягнення, щоб побачити їх тут."
 
-#: templates/steam_achievements.html:145 templates/xbox_achievements.html:145
+#: templates/steam_achievements.html:146 templates/xbox_achievements.html:146
 #, python-format
 msgid ""
 "Go to <a href=\"%(url)s\" style=\"color: var(--primary-cyan);\">Game "
@@ -11778,23 +11787,23 @@ msgstr ""
 "Перейдіть до <a href=\"%(url)s\" style=\"color: var(--primary-"
 "cyan);\">Імпорти ігор</a>, щоб почати."
 
-#: templates/steam_achievements.html:166
+#: templates/steam_achievements.html:167
 #, fuzzy
 msgid "Steam achievement sync started"
 msgstr "Досягнення Steam"
 
-#: templates/steam_achievements.html:170 templates/xbox_achievements.html:170
+#: templates/steam_achievements.html:171 templates/xbox_achievements.html:171
 #, fuzzy
 msgid "Failed to start sync"
 msgstr "Не вдалося запустити скрапінг."
 
-#: templates/steam_achievements.html:175 templates/steam_achievements.html:194
-#: templates/xbox_achievements.html:175 templates/xbox_achievements.html:194
+#: templates/steam_achievements.html:176 templates/steam_achievements.html:195
+#: templates/xbox_achievements.html:176 templates/xbox_achievements.html:195
 #, fuzzy, python-brace-format
 msgid "Sync error: {error}"
 msgstr "Помилка сканування: {error}"
 
-#: templates/steam_achievements.html:196 templates/xbox_achievements.html:196
+#: templates/steam_achievements.html:197 templates/xbox_achievements.html:197
 #, fuzzy, python-brace-format
 msgid "Sync complete: {synced} synced, {skipped} skipped"
 msgstr ""
@@ -12159,15 +12168,15 @@ msgstr ""
 "Натисніть <strong>Оновити</strong> вище, щоб синхронізувати окремі "
 "досягнення з Xbox."
 
-#: templates/xbox_achievements.html:142
+#: templates/xbox_achievements.html:143
 msgid "No Xbox Achievements"
 msgstr "Немає досягнень Xbox"
 
-#: templates/xbox_achievements.html:144
+#: templates/xbox_achievements.html:145
 msgid "Import Xbox games and sync achievements to see them here."
 msgstr "Імпортуйте ігри Xbox і синхронізуйте досягнення, щоб побачити їх тут."
 
-#: templates/xbox_achievements.html:166
+#: templates/xbox_achievements.html:167
 #, fuzzy
 msgid "Xbox achievement sync started"
 msgstr "Досягнення Xbox"

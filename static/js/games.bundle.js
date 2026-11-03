@@ -42,6 +42,10 @@ const AlphabetNav = {
 
         buttons.forEach(btn => {
             const letter = btn.dataset.letter;
+            if (!letter) {  // "All": back to the first game
+                btn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+                return;
+            }
             if (letterMap.has(letter)) {
                 btn.classList.remove('disabled');
                 btn.onclick = () => this.scrollToLetter(letterMap.get(letter));

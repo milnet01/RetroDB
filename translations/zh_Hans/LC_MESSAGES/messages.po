@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-03 20:46+0200\n"
+"POT-Creation-Date: 2026-11-03 21:03+0200\n"
 "PO-Revision-Date: 2026-07-01 09:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hans\n"
@@ -2082,7 +2082,7 @@ msgstr "可以通关，性能可玩，且没有影响游戏的严重故障。"
 #: templates/chd_converter.html:170 templates/chd_verify.html:126
 #: templates/game_detail.html:627 templates/login.html:254
 #: templates/museum.html:29 templates/museum_system.html:182
-#: templates/psn_trophies.html:297 templates/psn_trophy_detail.html:182
+#: templates/psn_trophies.html:298 templates/psn_trophy_detail.html:182
 #: templates/psn_trophy_detail.html:325 templates/reports.html:521
 #: templates/screenshot_dedup.html:263 templates/settings.html:44
 #: templates/settings_emulators.html:274
@@ -2149,7 +2149,7 @@ msgstr "清除 RA 数据"
 msgid "Clear RA Data for All Systems"
 msgstr "已清除 {n} 个游戏的 RA 数据"
 
-#: services/js_i18n_strings.py:622 templates/achievements_system.html:529
+#: services/js_i18n_strings.py:622 templates/achievements_system.html:530
 msgid "Clear RetroAchievements Data"
 msgstr "清除 RetroAchievements 数据"
 
@@ -2382,8 +2382,8 @@ msgid "Does not start, or crashes the emulator."
 msgstr "无法启动，或导致模拟器崩溃。"
 
 #: services/js_i18n_strings.py:672 templates/_bulk_scrape_modal.html:69
-#: templates/all_games.html:229 templates/psn_trophies.html:247
-#: templates/psn_trophies.html:307 templates/reports.html:525
+#: templates/all_games.html:229 templates/psn_trophies.html:248
+#: templates/psn_trophies.html:308 templates/reports.html:525
 #: templates/system_games.html:209
 msgid "Done"
 msgstr "完成"
@@ -2609,8 +2609,8 @@ msgstr "清除 CLZ 导入失败"
 msgid "Failed to clear HLTB: {error}"
 msgstr "清除 HLTB 失败："
 
-#: services/js_i18n_strings.py:717 templates/achievements_system.html:554
-#: templates/achievements_system.html:562
+#: services/js_i18n_strings.py:717 templates/achievements_system.html:555
+#: templates/achievements_system.html:563
 msgid "Failed to clear RA data"
 msgstr "清除 RA 数据失败"
 
@@ -3255,7 +3255,7 @@ msgstr "系列作品之一"
 #: services/js_i18n_strings.py:860 templates/_bulk_scrape_modal.html:46
 #: templates/archive_scanner.html:658 templates/archive_scanner.html:795
 #: templates/archive_scanner.html:1596 templates/archive_scanner.html:1627
-#: templates/psn_trophies.html:294
+#: templates/psn_trophies.html:295
 msgid "Pause"
 msgstr "暂停"
 
@@ -3784,7 +3784,7 @@ msgstr "摘要已撰写。"
 msgid "Switched-on cheats apply the next time you press Play."
 msgstr "已开启的金手指会在你下次按下游玩时生效。"
 
-#: services/js_i18n_strings.py:979 templates/achievements_system.html:499
+#: services/js_i18n_strings.py:979 templates/achievements_system.html:500
 msgid "Sync In Progress"
 msgstr "同步进行中"
 
@@ -3792,11 +3792,11 @@ msgstr "同步进行中"
 msgid "Sync Progress"
 msgstr "同步进度"
 
-#: services/js_i18n_strings.py:981 templates/achievements_system.html:451
+#: services/js_i18n_strings.py:981 templates/achievements_system.html:452
 msgid "Sync Queued"
 msgstr "同步已加入队列"
 
-#: services/js_i18n_strings.py:982 templates/achievements_system.html:607
+#: services/js_i18n_strings.py:982 templates/achievements_system.html:608
 msgid "Sync complete! Refresh page to see updated progress."
 msgstr "同步完成！刷新页面以查看更新后的进度。"
 
@@ -3920,7 +3920,7 @@ msgstr "此名称包含“=”，模拟器的设置无法保存它。"
 msgid "This release has no download for this computer yet."
 msgstr "此版本暂时没有适用于这台电脑的下载。"
 
-#: services/js_i18n_strings.py:1007 templates/achievements_system.html:499
+#: services/js_i18n_strings.py:1007 templates/achievements_system.html:500
 msgid "This system is already being synced."
 msgstr "此系统正在同步中。"
 
@@ -4503,7 +4503,7 @@ msgstr "失败：%(count)s"
 msgid "Skipped: %(count)s"
 msgstr "已跳过：%(count)s"
 
-#: templates/_bulk_scrape_modal.html:42 templates/psn_trophies.html:300
+#: templates/_bulk_scrape_modal.html:42 templates/psn_trophies.html:301
 msgid "Background"
 msgstr "背景"
 
@@ -4807,41 +4807,57 @@ msgstr "已完成（100%）"
 msgid "Jump to:"
 msgstr "跳转到："
 
-#: templates/achievements_system.html:251
+#: templates/achievements_system.html:204 templates/local_trophies.html:102
+#: templates/steam_achievements.html:90 templates/xbox_achievements.html:90
+#, fuzzy
+msgid "Back to the first game"
+msgstr "为此游戏设置"
+
+#: templates/achievements_system.html:204 templates/all_games.html:122
+#: templates/game_imports.html:330 templates/game_imports.html:393
+#: templates/hltb_review.html:28 templates/local_trophies.html:102
+#: templates/logs.html:707 templates/psn_trophies.html:129
+#: templates/psn_trophies.html:163 templates/psn_trophies.html:181
+#: templates/steam_achievements.html:90 templates/system_games.html:113
+#: templates/wishlist.html:26 templates/xbox_achievements.html:90
+msgid "All"
+msgstr "全部"
+
+#: templates/achievements_system.html:252
 #, python-format
 msgid "<span>%(count)s</span> achievements"
 msgstr "<span>%(count)s</span> 个成就"
 
-#: templates/achievements_system.html:362
+#: templates/achievements_system.html:363
 #, fuzzy
 msgid "System is already in the queue"
 msgstr "此系统正在同步中。"
 
-#: templates/achievements_system.html:391
+#: templates/achievements_system.html:392
 #, fuzzy, python-brace-format
 msgid "Added {system} to sync queue"
 msgstr "{system} 已加入同步队列。"
 
-#: templates/achievements_system.html:451
+#: templates/achievements_system.html:452
 #, fuzzy, python-brace-format
 msgid ""
 "{system} has been added to the sync queue. It will start automatically "
 "when the current sync completes."
 msgstr "您的批量抓取已加入队列（位置 {position}）。当前抓取完成后将自动开始。"
 
-#: templates/achievements_system.html:499
+#: templates/achievements_system.html:500
 #, python-brace-format
 msgid "{reason} Check the toast notification for progress."
 msgstr ""
 
-#: templates/achievements_system.html:530
+#: templates/achievements_system.html:531
 #, fuzzy, python-brace-format
 msgid ""
 "This will remove \"{system}\" from the Achievements page by clearing all "
 "RetroAchievements game IDs and progress data for this system. Continue?"
 msgstr "这将从成就页面移除“{system}”。是否继续？"
 
-#: templates/achievements_system.html:547
+#: templates/achievements_system.html:548
 #, python-brace-format
 msgid "RA data cleared for {system}. Games cleared: {count}"
 msgstr ""
@@ -5020,29 +5036,22 @@ msgstr "附赠光盘"
 msgid "Alphabetical jump navigation"
 msgstr "字母跳转导航"
 
-#: templates/all_games.html:122 templates/system_games.html:113
+#: templates/all_games.html:122 templates/psn_trophies.html:181
+#: templates/system_games.html:113
 msgid "Show every game again"
 msgstr ""
 
-#: templates/all_games.html:122 templates/game_imports.html:330
-#: templates/game_imports.html:393 templates/hltb_review.html:28
-#: templates/logs.html:707 templates/psn_trophies.html:129
-#: templates/psn_trophies.html:163 templates/system_games.html:113
-#: templates/wishlist.html:26
-msgid "All"
-msgstr "全部"
-
-#: templates/all_games.html:155 templates/psn_trophies.html:213
+#: templates/all_games.html:155 templates/psn_trophies.html:214
 #: templates/system_games.html:146
 msgid "SHOWING"
 msgstr "正在显示"
 
-#: templates/all_games.html:155 templates/psn_trophies.html:213
+#: templates/all_games.html:155 templates/psn_trophies.html:214
 #: templates/system_games.html:146
 msgid "OF"
 msgstr "共"
 
-#: templates/all_games.html:155 templates/psn_trophies.html:213
+#: templates/all_games.html:155 templates/psn_trophies.html:214
 #: templates/system_games.html:146
 msgid "GAMES"
 msgstr "游戏"
@@ -5107,7 +5116,7 @@ msgid "Clear filters"
 msgstr "清除筛选"
 
 #: templates/_modals/filter_modal.html:18 templates/all_games.html:196
-#: templates/psn_trophies.html:222 templates/system_games.html:176
+#: templates/psn_trophies.html:223 templates/system_games.html:176
 msgid "Loading games..."
 msgstr "正在加载游戏…"
 
@@ -5819,7 +5828,7 @@ msgstr "确定要取消吗？"
 
 #: templates/archive_scanner.html:1376 templates/chd_converter.html:304
 #: templates/chd_verify.html:258 templates/duplicate_finder.html:541
-#: templates/psn_trophies.html:1622
+#: templates/psn_trophies.html:1631
 #, fuzzy
 msgid "No Selection"
 msgstr "无描述"
@@ -8731,16 +8740,16 @@ msgid ""
 "installation."
 msgstr "点击“扫描奖杯”以在您的 RPCS3 安装中搜索奖杯数据。"
 
-#: templates/local_trophies.html:113
+#: templates/local_trophies.html:114
 #, python-format
 msgid "Games (%(count)s)"
 msgstr "游戏（%(count)s）"
 
-#: templates/local_trophies.html:171
+#: templates/local_trophies.html:172
 msgid "Scanning Trophies"
 msgstr "正在扫描奖杯"
 
-#: templates/local_trophies.html:174
+#: templates/local_trophies.html:175
 msgid "Scanning trophy folders..."
 msgstr "正在扫描奖杯文件夹……"
 
@@ -9141,7 +9150,7 @@ msgstr "成功，"
 msgid "skipped,"
 msgstr "已跳过，"
 
-#: templates/museum.html:39 templates/psn_trophies.html:278
+#: templates/museum.html:39 templates/psn_trophies.html:279
 msgid "failed"
 msgstr "失败"
 
@@ -9456,49 +9465,49 @@ msgstr "未完成"
 msgid "Sync Selected"
 msgstr "同步所选"
 
-#: templates/psn_trophies.html:233
+#: templates/psn_trophies.html:234
 msgid "Syncing PSN Trophies"
 msgstr "正在同步 PSN 奖杯"
 
-#: templates/psn_trophies.html:236
+#: templates/psn_trophies.html:237
 msgid "Connecting to PlayStation Network..."
 msgstr "正在连接 PlayStation Network..."
 
-#: templates/psn_trophies.html:242 templates/psn_trophies.html:274
+#: templates/psn_trophies.html:243 templates/psn_trophies.html:275
 msgid "synced"
 msgstr "已同步"
 
-#: templates/psn_trophies.html:243
+#: templates/psn_trophies.html:244
 msgid "images"
 msgstr "图片"
 
-#: templates/psn_trophies.html:256
+#: templates/psn_trophies.html:257
 msgid "Bulk Trophy Refresh"
 msgstr "批量刷新奖杯"
 
-#: templates/psn_trophies.html:259
+#: templates/psn_trophies.html:260
 msgid "Starting bulk refresh..."
 msgstr "正在开始批量刷新……"
 
-#: templates/psn_trophies.html:282
+#: templates/psn_trophies.html:283
 msgid "skipped"
 msgstr "已跳过"
 
-#: templates/psn_trophies.html:287
+#: templates/psn_trophies.html:288
 msgid "Rate limited: ~2.5 seconds between games to respect PSN API limits"
 msgstr "已限速：每个游戏之间约间隔 2.5 秒，以遵守 PSN API 限制"
 
-#: templates/psn_trophies.html:1622
+#: templates/psn_trophies.html:1631
 #, fuzzy
 msgid "Please select at least one game to refresh."
 msgstr "请至少选择一个要编辑的游戏。"
 
-#: templates/psn_trophies.html:1757
+#: templates/psn_trophies.html:1766
 #, fuzzy
 msgid "Cancel Refresh"
 msgstr "刷新"
 
-#: templates/psn_trophies.html:1757
+#: templates/psn_trophies.html:1766
 #, fuzzy
 msgid "Are you sure you want to cancel the bulk refresh?"
 msgstr "确定要取消吗？"
@@ -11427,15 +11436,15 @@ msgstr "已获得"
 msgid "Avg. Completion"
 msgstr "平均完成度"
 
-#: templates/steam_achievements.html:142
+#: templates/steam_achievements.html:143
 msgid "No Steam Achievements"
 msgstr "无 Steam 成就"
 
-#: templates/steam_achievements.html:144
+#: templates/steam_achievements.html:145
 msgid "Import Steam games and sync achievements to see them here."
 msgstr "导入 Steam 游戏并同步成就即可在此查看。"
 
-#: templates/steam_achievements.html:145 templates/xbox_achievements.html:145
+#: templates/steam_achievements.html:146 templates/xbox_achievements.html:146
 #, python-format
 msgid ""
 "Go to <a href=\"%(url)s\" style=\"color: var(--primary-cyan);\">Game "
@@ -11444,23 +11453,23 @@ msgstr ""
 "前往 <a href=\"%(url)s\" style=\"color: var(--primary-cyan);\">游戏导入</a> "
 "开始使用。"
 
-#: templates/steam_achievements.html:166
+#: templates/steam_achievements.html:167
 #, fuzzy
 msgid "Steam achievement sync started"
 msgstr "Steam 成就"
 
-#: templates/steam_achievements.html:170 templates/xbox_achievements.html:170
+#: templates/steam_achievements.html:171 templates/xbox_achievements.html:171
 #, fuzzy
 msgid "Failed to start sync"
 msgstr "启动抓取失败。"
 
-#: templates/steam_achievements.html:175 templates/steam_achievements.html:194
-#: templates/xbox_achievements.html:175 templates/xbox_achievements.html:194
+#: templates/steam_achievements.html:176 templates/steam_achievements.html:195
+#: templates/xbox_achievements.html:176 templates/xbox_achievements.html:195
 #, fuzzy, python-brace-format
 msgid "Sync error: {error}"
 msgstr "扫描失败：{error}"
 
-#: templates/steam_achievements.html:196 templates/xbox_achievements.html:196
+#: templates/steam_achievements.html:197 templates/xbox_achievements.html:197
 #, fuzzy, python-brace-format
 msgid "Sync complete: {synced} synced, {skipped} skipped"
 msgstr "生成完成：已生成 {generated} 项，已跳过 {skipped} 项，失败 {failed} 项"
@@ -11815,15 +11824,15 @@ msgid ""
 " Xbox."
 msgstr "点击上方的<strong>刷新</strong>以从 Xbox 同步各项成就。"
 
-#: templates/xbox_achievements.html:142
+#: templates/xbox_achievements.html:143
 msgid "No Xbox Achievements"
 msgstr "无 Xbox 成就"
 
-#: templates/xbox_achievements.html:144
+#: templates/xbox_achievements.html:145
 msgid "Import Xbox games and sync achievements to see them here."
 msgstr "导入 Xbox 游戏并同步成就后即可在此查看。"
 
-#: templates/xbox_achievements.html:166
+#: templates/xbox_achievements.html:167
 #, fuzzy
 msgid "Xbox achievement sync started"
 msgstr "Xbox 成就"
