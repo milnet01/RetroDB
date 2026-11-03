@@ -1250,6 +1250,20 @@ const AllGamesController = (function() {
 
         nav.querySelectorAll('.alphabet-btn').forEach(btn => {
             const letter = btn.dataset.letter;
+            if (!letter) {
+                // "All": undo a letter jump. A jump to a letter not yet loaded
+                // filters the list to that letter, and the filter bar's Clear
+                // ignores letters, so this is the way back.
+                btn.addEventListener('click', () => {
+                    const wasFiltered = !!filters.letter;
+                    activeLetterJump = null;
+                    delete filters.letter;
+                    nav.querySelectorAll('.alphabet-btn.active').forEach(b => b.classList.remove('active'));
+                    if (wasFiltered) resetAndFetch();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+                return;
+            }
             const hasGames = letterSet.size === 0 || letterSet.has(letter);
 
             if (hasGames) {

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-03 17:48+0200\n"
+"POT-Creation-Date: 2026-11-03 20:46+0200\n"
 "PO-Revision-Date: 2026-06-30 14:26+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ko\n"
@@ -41,8 +41,8 @@ msgstr "설정이 필요합니다"
 msgid "Password change required"
 msgstr "비밀번호 변경이 필요합니다"
 
-#: app.py:1678 routes/auth.py:202 routes/auth.py:262 routes/auth.py:447
-#: routes/auth.py:492 templates/force_change_password.html:49
+#: app.py:1678 routes/auth.py:202 routes/auth.py:262 routes/auth.py:456
+#: routes/auth.py:501 templates/force_change_password.html:49
 #: templates/setup.html:469
 msgid "Password must be at least 12 characters"
 msgstr "비밀번호는 최소 12자 이상이어야 합니다"
@@ -63,7 +63,7 @@ msgstr "시스템을 찾을 수 없거나 업적이 있는 게임이 없습니�
 #: routes/games_ai.py:31 routes/games_media.py:38 routes/games_media.py:86
 #: routes/games_media.py:149 routes/games_media.py:200
 #: routes/games_media.py:233 routes/launch.py:242 routes/reports.py:696
-#: routes/reports.py:827 routes/trophies.py:1324 services/cheats.py:617
+#: routes/reports.py:827 routes/trophies.py:1327 services/cheats.py:617
 #: services/hltb_service.py:162
 msgid "Game not found"
 msgstr "게임을 찾을 수 없습니다"
@@ -350,7 +350,7 @@ msgstr "자신의 계정은 삭제할 수 없습니다"
 msgid "Cannot delete the last admin user"
 msgstr "마지막 관리자 사용자는 삭제할 수 없습니다"
 
-#: routes/auth.py:354 routes/auth.py:423 routes/auth.py:479
+#: routes/auth.py:354 routes/auth.py:432 routes/auth.py:488
 msgid "Not logged in"
 msgstr "로그인되어 있지 않습니다"
 
@@ -367,45 +367,45 @@ msgstr "잘못된 테마입니다"
 msgid "Invalid RPCS3 trophy folder: %(reason)s"
 msgstr "잘못된 RPCS3 트로피 폴더: %(reason)s"
 
-#: routes/auth.py:435
+#: routes/auth.py:444
 msgid "Too many attempts. Please try again later."
 msgstr "시도가 너무 많습니다. 잠시 후 다시 시도하세요."
 
-#: routes/auth.py:442 routes/auth.py:488
+#: routes/auth.py:451 routes/auth.py:497
 msgid "New password is required"
 msgstr "새 비밀번호가 필요합니다"
 
-#: routes/auth.py:453
+#: routes/auth.py:462
 msgid "Current password is incorrect"
 msgstr "현재 비밀번호가 올바르지 않습니다"
 
-#: routes/auth.py:482
+#: routes/auth.py:491
 msgid "Password change not required"
 msgstr "비밀번호 변경이 필요하지 않습니다"
 
-#: routes/auth.py:534
+#: routes/auth.py:543
 msgid "No file provided"
 msgstr "제공된 파일이 없습니다"
 
-#: routes/auth.py:538 routes/museum.py:660
+#: routes/auth.py:547 routes/museum.py:660
 msgid "No file selected"
 msgstr "선택된 파일이 없습니다"
 
-#: routes/auth.py:543
+#: routes/auth.py:552
 msgid "Invalid file type. Allowed: jpg, png, gif, webp"
 msgstr "잘못된 파일 형식입니다. 허용 형식: jpg, png, gif, webp"
 
-#: routes/auth.py:548
+#: routes/auth.py:557
 msgid "File too large. Maximum size is 2MB"
 msgstr "파일이 너무 큽니다. 최대 크기는 2MB입니다"
 
-#: routes/auth.py:566
+#: routes/auth.py:575
 msgid ""
 "Avatar uploads require Pillow; please ask the operator to install the "
 "project requirements."
 msgstr "아바타 업로드에는 Pillow가 필요합니다. 운영자에게 프로젝트 요구 사항 설치를 요청하세요."
 
-#: routes/auth.py:582 routes/museum.py:692
+#: routes/auth.py:591 routes/museum.py:692
 msgid "Invalid image file"
 msgstr "잘못된 이미지 파일입니다"
 
@@ -430,9 +430,9 @@ msgstr "보너스 디스크와 상위 게임은 같은 시스템에 있어야 �
 #: routes/settings.py:459 routes/settings.py:538 routes/settings.py:567
 #: routes/settings.py:611 routes/settings.py:627 routes/settings.py:663
 #: routes/steam_achievements.py:138 routes/systems.py:292 routes/systems.py:482
-#: routes/trophies.py:541 routes/trophies.py:739 routes/trophies.py:787
-#: routes/trophies.py:1615 routes/trophies.py:1639 routes/trophies.py:1684
-#: routes/trophies.py:1712 routes/trophies.py:1754 routes/trophies.py:1821
+#: routes/trophies.py:544 routes/trophies.py:742 routes/trophies.py:790
+#: routes/trophies.py:1618 routes/trophies.py:1642 routes/trophies.py:1687
+#: routes/trophies.py:1715 routes/trophies.py:1757 routes/trophies.py:1824
 #: routes/xbox_achievements.py:157 services/api_helpers.py:46
 msgid "An internal error occurred"
 msgstr "내부 오류가 발생했습니다"
@@ -688,7 +688,7 @@ msgstr "업데이트할 필드가 없습니다"
 
 #: routes/games.py:1197 routes/platform_import.py:250
 #: routes/platform_import.py:629 routes/platform_import.py:992
-#: routes/trophies.py:1903 templates/game_imports.html:579
+#: routes/trophies.py:1906 templates/game_imports.html:579
 #: templates/game_imports.html:842
 msgid "No games selected"
 msgstr "선택된 게임이 없습니다"
@@ -1333,66 +1333,66 @@ msgstr "각 게임의 사본을 하나 이상 남겨 두세요. 아무것도 삭
 msgid "This system has no screenshot check"
 msgstr "이 시스템은 스크린샷 검사를 지원하지 않습니다"
 
-#: routes/trophies.py:429
+#: routes/trophies.py:432
 msgid ""
 "Please configure your RPCS3 Trophy Path in your profile settings to view "
 "trophies"
 msgstr "트로피를 보려면 프로필 설정에서 RPCS3 트로피 경로를 설정하세요"
 
-#: routes/trophies.py:461
+#: routes/trophies.py:464
 msgid "Trophy set not found"
 msgstr "트로피 세트를 찾을 수 없습니다"
 
-#: routes/trophies.py:505
+#: routes/trophies.py:508
 msgid "RPCS3_TROPHY_PATH not configured"
 msgstr "RPCS3_TROPHY_PATH가 설정되지 않았습니다"
 
-#: routes/trophies.py:508
+#: routes/trophies.py:511
 #, python-format
 msgid "Trophy path not found: %(path)s"
 msgstr "트로피 경로를 찾을 수 없습니다: %(path)s"
 
-#: routes/trophies.py:800 routes/trophies.py:1737
+#: routes/trophies.py:803 routes/trophies.py:1740
 msgid "PSN game not found"
 msgstr "PSN 게임을 찾을 수 없습니다"
 
-#: routes/trophies.py:1091
+#: routes/trophies.py:1094
 msgid "Sync already in progress"
 msgstr "동기화가 이미 진행 중입니다"
 
-#: routes/trophies.py:1342
+#: routes/trophies.py:1345
 msgid "Game not found in your PSN trophy list"
 msgstr "PSN 트로피 목록에서 게임을 찾을 수 없습니다"
 
-#: routes/trophies.py:1612
+#: routes/trophies.py:1615
 msgid "Game not found on PSN"
 msgstr "PSN에서 게임을 찾을 수 없습니다"
 
-#: routes/trophies.py:1627 routes/trophies.py:1700
+#: routes/trophies.py:1630 routes/trophies.py:1703
 msgid "Missing npwr_id"
 msgstr "npwr_id가 누락되었습니다"
 
-#: routes/trophies.py:1725
+#: routes/trophies.py:1728
 msgid "Missing npwr_id or group_id"
 msgstr "npwr_id 또는 group_id가 누락되었습니다"
 
-#: routes/trophies.py:1728
+#: routes/trophies.py:1731
 msgid "Name cannot be empty"
 msgstr "이름은 비워 둘 수 없습니다"
 
-#: routes/trophies.py:1766
+#: routes/trophies.py:1769
 msgid "PSNAWP library not installed. Run: pip install psnawp"
 msgstr "PSNAWP 라이브러리가 설치되어 있지 않습니다. 실행: pip install psnawp"
 
-#: routes/trophies.py:1860
+#: routes/trophies.py:1863
 msgid "No NPSSO token provided"
 msgstr "제공된 NPSSO 토큰이 없습니다"
 
-#: routes/trophies.py:1885
+#: routes/trophies.py:1888
 msgid "Could not connect to PSN"
 msgstr "PSN에 연결할 수 없습니다"
 
-#: routes/trophies.py:1912
+#: routes/trophies.py:1915
 msgid "PSN NPSSO not configured"
 msgstr "PSN NPSSO가 설정되지 않았습니다"
 
@@ -2385,9 +2385,9 @@ msgid "Does not start, or crashes the emulator."
 msgstr "시작되지 않거나 에뮬레이터가 충돌합니다."
 
 #: services/js_i18n_strings.py:672 templates/_bulk_scrape_modal.html:69
-#: templates/all_games.html:228 templates/psn_trophies.html:247
+#: templates/all_games.html:229 templates/psn_trophies.html:247
 #: templates/psn_trophies.html:307 templates/reports.html:525
-#: templates/system_games.html:208
+#: templates/system_games.html:209
 msgid "Done"
 msgstr "완료"
 
@@ -5038,126 +5038,138 @@ msgstr "보너스 디스크"
 msgid "Alphabetical jump navigation"
 msgstr "알파벳순 이동 탐색"
 
-#: templates/all_games.html:154 templates/psn_trophies.html:213
-#: templates/system_games.html:145
+#: templates/all_games.html:122 templates/system_games.html:113
+msgid "Show every game again"
+msgstr ""
+
+#: templates/all_games.html:122 templates/game_imports.html:330
+#: templates/game_imports.html:393 templates/hltb_review.html:28
+#: templates/logs.html:707 templates/psn_trophies.html:129
+#: templates/psn_trophies.html:163 templates/system_games.html:113
+#: templates/wishlist.html:26
+msgid "All"
+msgstr "전체"
+
+#: templates/all_games.html:155 templates/psn_trophies.html:213
+#: templates/system_games.html:146
 msgid "SHOWING"
 msgstr "표시 중"
 
-#: templates/all_games.html:154 templates/psn_trophies.html:213
-#: templates/system_games.html:145
+#: templates/all_games.html:155 templates/psn_trophies.html:213
+#: templates/system_games.html:146
 msgid "OF"
 msgstr "/"
 
-#: templates/all_games.html:154 templates/psn_trophies.html:213
-#: templates/system_games.html:145
+#: templates/all_games.html:155 templates/psn_trophies.html:213
+#: templates/system_games.html:146
 msgid "GAMES"
 msgstr "게임"
 
-#: templates/all_games.html:155 templates/system_games.html:146
+#: templates/all_games.html:156 templates/system_games.html:147
 msgid "Active filters"
 msgstr "적용된 필터"
 
-#: templates/all_games.html:157 templates/system_games.html:148
+#: templates/all_games.html:158 templates/system_games.html:149
 msgid "Sort by"
 msgstr "정렬 기준"
 
-#: templates/all_games.html:159 templates/settings_emulators.html:191
-#: templates/settings_emulators.html:236 templates/system_games.html:150
+#: templates/all_games.html:160 templates/settings_emulators.html:191
+#: templates/settings_emulators.html:236 templates/system_games.html:151
 msgid "Name"
 msgstr "이름"
 
-#: templates/all_games.html:160 templates/system_games.html:151
+#: templates/all_games.html:161 templates/system_games.html:152
 msgid "Newest release"
 msgstr "최신 출시순"
 
-#: templates/all_games.html:161 templates/system_games.html:152
+#: templates/all_games.html:162 templates/system_games.html:153
 msgid "Oldest release"
 msgstr "오래된 출시순"
 
-#: templates/all_games.html:162 templates/system_games.html:153
+#: templates/all_games.html:163 templates/system_games.html:154
 msgid "Critic score"
 msgstr "평론가 점수"
 
-#: templates/all_games.html:163 templates/system_games.html:154
+#: templates/all_games.html:164 templates/system_games.html:155
 msgid "User score"
 msgstr "사용자 점수"
 
-#: templates/all_games.html:164 templates/system_games.html:155
+#: templates/all_games.html:165 templates/system_games.html:156
 msgid "Recently added"
 msgstr "최근 추가됨"
 
-#: templates/all_games.html:174 templates/system_games.html:165
+#: templates/all_games.html:175 templates/system_games.html:166
 msgid "No games match these filters"
 msgstr "이 필터와 일치하는 게임이 없습니다"
 
-#: templates/all_games.html:176 templates/dashboard.html:93
+#: templates/all_games.html:177 templates/dashboard.html:93
 msgid "Your library is empty"
 msgstr "라이브러리가 비어 있습니다"
 
-#: templates/all_games.html:178 templates/dashboard.html:95
+#: templates/all_games.html:179 templates/dashboard.html:95
 msgid "Scan your ROM folder to add your games."
 msgstr "ROM 폴더를 스캔해 게임을 추가하세요."
 
-#: templates/_settings_tabs/library.html:46 templates/all_games.html:181
+#: templates/_settings_tabs/library.html:46 templates/all_games.html:182
 #: templates/dashboard.html:83 templates/dashboard.html:99
 #: templates/systems.html:111
 msgid "Scan Library"
 msgstr "라이브러리 스캔"
 
-#: templates/all_games.html:184 templates/dashboard.html:104
+#: templates/all_games.html:185 templates/dashboard.html:104
 msgid "Ask an admin to scan the ROM folder."
 msgstr "관리자에게 ROM 폴더 스캔을 요청하세요."
 
-#: templates/all_games.html:188 templates/system_games.html:168
+#: templates/all_games.html:189 templates/system_games.html:169
 msgid "Clear filters"
 msgstr "필터 지우기"
 
-#: templates/_modals/filter_modal.html:18 templates/all_games.html:195
-#: templates/psn_trophies.html:222 templates/system_games.html:175
+#: templates/_modals/filter_modal.html:18 templates/all_games.html:196
+#: templates/psn_trophies.html:222 templates/system_games.html:176
 msgid "Loading games..."
 msgstr "게임 로딩 중..."
 
-#: templates/all_games.html:200 templates/system_games.html:180
+#: templates/all_games.html:201 templates/system_games.html:181
 msgid "Selected games"
 msgstr "선택한 게임"
 
-#: templates/all_games.html:202 templates/system_games.html:182
+#: templates/all_games.html:203 templates/system_games.html:183
 msgid "Select All"
 msgstr "전체 선택"
 
-#: templates/all_games.html:205 templates/system_games.html:185
+#: templates/all_games.html:206 templates/system_games.html:186
 msgid "Select Unscraped"
 msgstr "미스크랩 선택"
 
-#: templates/all_games.html:209 templates/game_detail.html:918
-#: templates/system_games.html:189
+#: templates/all_games.html:210 templates/game_detail.html:918
+#: templates/system_games.html:190
 msgid "Full Re-scrape"
 msgstr "전체 재스크랩"
 
-#: templates/all_games.html:211 templates/system_games.html:191
+#: templates/all_games.html:212 templates/system_games.html:192
 msgid "Toggle between full re-scrape and fill missing mode"
 msgstr "전체 재스크랩과 누락 채우기 모드 전환"
 
-#: templates/all_games.html:214 templates/game_detail.html:918
-#: templates/system_games.html:194
+#: templates/all_games.html:215 templates/game_detail.html:918
+#: templates/system_games.html:195
 msgid "Fill Missing"
 msgstr "누락 채우기"
 
-#: templates/all_games.html:216 templates/system_games.html:196
+#: templates/all_games.html:217 templates/system_games.html:197
 msgid ""
 "Full Re-scrape keeps the art, videos and manuals already downloaded "
 "instead of fetching them again"
 msgstr "전체 다시 스크랩은 이미 다운로드한 아트, 동영상, 설명서를 다시 가져오지 않고 유지합니다"
 
-#: templates/all_games.html:218 templates/system_games.html:198
+#: templates/all_games.html:219 templates/system_games.html:199
 msgid "Keep existing media"
 msgstr "기존 미디어 유지"
 
-#: templates/all_games.html:222 templates/system_games.html:202
+#: templates/all_games.html:223 templates/system_games.html:203
 msgid "Scrape Selected"
 msgstr "선택 항목 스크래핑"
 
-#: templates/all_games.html:225 templates/system_games.html:205
+#: templates/all_games.html:226 templates/system_games.html:206
 msgid "Edit Selected"
 msgstr "선택 항목 편집"
 
@@ -5935,7 +5947,7 @@ msgid "M3U Created"
 msgstr "미스크래핑"
 
 #: templates/archive_scanner.html:1463
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid "Successfully created:"
 msgstr "게임 {count}개를 성공적으로 업데이트했습니다"
 
@@ -5990,14 +6002,14 @@ msgstr "동기화 중: {processed} / {total}"
 
 #: templates/archive_scanner.html:1568 templates/archive_scanner.html:1573
 #: templates/archive_scanner.html:1741 templates/archive_scanner.html:1747
-#, fuzzy, python-brace-format, python-format
+#, fuzzy, python-brace-format
 msgid "Success: {count}"
 msgstr "성공: %(count)s"
 
 #: templates/archive_scanner.html:1569 templates/archive_scanner.html:1574
 #: templates/archive_scanner.html:1742 templates/archive_scanner.html:1748
 #: templates/game_imports.html:596 templates/game_imports.html:856
-#, fuzzy, python-brace-format, python-format
+#, fuzzy, python-brace-format
 msgid "Failed: {count}"
 msgstr "실패: %(count)s"
 
@@ -8060,7 +8072,7 @@ msgid "Delete Screenshot"
 msgstr "스크린샷 삭제"
 
 #: templates/game_detail.html:5945
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid "Are you sure you want to delete this screenshot?"
 msgstr "\"{filename}\"을(를) 삭제하시겠습니까?"
 
@@ -8251,13 +8263,6 @@ msgstr "연결 해제"
 msgid "Xbox Library"
 msgstr "Xbox 라이브러리"
 
-#: templates/game_imports.html:330 templates/game_imports.html:393
-#: templates/hltb_review.html:28 templates/logs.html:707
-#: templates/psn_trophies.html:129 templates/psn_trophies.html:163
-#: templates/wishlist.html:26
-msgid "All"
-msgstr "전체"
-
 #: templates/game_imports.html:331
 msgid "Xbox 360"
 msgstr "Xbox 360"
@@ -8336,7 +8341,7 @@ msgid "Games found: {total} ({existing} already imported)"
 msgstr ""
 
 #: templates/game_imports.html:594 templates/game_imports.html:853
-#, fuzzy, python-brace-format, python-format
+#, fuzzy, python-brace-format
 msgid "Imported: {count}"
 msgstr "건너뜀: %(count)s"
 
@@ -8356,7 +8361,7 @@ msgid "Import failed"
 msgstr "선택 항목 가져오기"
 
 #: templates/game_imports.html:607 templates/game_imports.html:867
-#, fuzzy, python-brace-format, python-format
+#, fuzzy, python-brace-format
 msgid "Import error: {error}"
 msgstr "연결 오류: %(error)s"
 
@@ -10898,7 +10903,7 @@ msgid "Delete Option"
 msgstr "로고 삭제"
 
 #: templates/settings.html:2933
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid "Are you sure you want to delete this option?"
 msgstr "\"{filename}\"을(를) 삭제하시겠습니까?"
 
@@ -11522,7 +11527,7 @@ msgstr "컬렉션의 게임"
 msgid "Refresh RetroAchievements data for this system"
 msgstr "이 시스템의 RetroAchievements 데이터 새로고침"
 
-#: templates/system_games.html:166
+#: templates/system_games.html:167
 msgid "No games here yet"
 msgstr "아직 게임이 없습니다"
 

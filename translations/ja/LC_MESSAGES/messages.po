@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-03 17:48+0200\n"
+"POT-Creation-Date: 2026-11-03 20:46+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -40,8 +40,8 @@ msgstr "セットアップが必要です"
 msgid "Password change required"
 msgstr "パスワードの変更が必要です"
 
-#: app.py:1678 routes/auth.py:202 routes/auth.py:262 routes/auth.py:447
-#: routes/auth.py:492 templates/force_change_password.html:49
+#: app.py:1678 routes/auth.py:202 routes/auth.py:262 routes/auth.py:456
+#: routes/auth.py:501 templates/force_change_password.html:49
 #: templates/setup.html:469
 msgid "Password must be at least 12 characters"
 msgstr "パスワードは12文字以上で入力してください"
@@ -62,7 +62,7 @@ msgstr "システムが見つからないか、実績対応ゲームがありま
 #: routes/games_ai.py:31 routes/games_media.py:38 routes/games_media.py:86
 #: routes/games_media.py:149 routes/games_media.py:200
 #: routes/games_media.py:233 routes/launch.py:242 routes/reports.py:696
-#: routes/reports.py:827 routes/trophies.py:1324 services/cheats.py:617
+#: routes/reports.py:827 routes/trophies.py:1327 services/cheats.py:617
 #: services/hltb_service.py:162
 msgid "Game not found"
 msgstr "ゲームが見つかりません"
@@ -349,7 +349,7 @@ msgstr "自分のアカウントは削除できません"
 msgid "Cannot delete the last admin user"
 msgstr "最後の管理者ユーザーは削除できません"
 
-#: routes/auth.py:354 routes/auth.py:423 routes/auth.py:479
+#: routes/auth.py:354 routes/auth.py:432 routes/auth.py:488
 msgid "Not logged in"
 msgstr "ログインしていません"
 
@@ -366,45 +366,45 @@ msgstr "無効なテーマです"
 msgid "Invalid RPCS3 trophy folder: %(reason)s"
 msgstr "無効な RPCS3 トロフィーフォルダーです: %(reason)s"
 
-#: routes/auth.py:435
+#: routes/auth.py:444
 msgid "Too many attempts. Please try again later."
 msgstr "試行回数が多すぎます。しばらくしてから再度お試しください。"
 
-#: routes/auth.py:442 routes/auth.py:488
+#: routes/auth.py:451 routes/auth.py:497
 msgid "New password is required"
 msgstr "新しいパスワードが必要です"
 
-#: routes/auth.py:453
+#: routes/auth.py:462
 msgid "Current password is incorrect"
 msgstr "現在のパスワードが正しくありません"
 
-#: routes/auth.py:482
+#: routes/auth.py:491
 msgid "Password change not required"
 msgstr "パスワードの変更は不要です"
 
-#: routes/auth.py:534
+#: routes/auth.py:543
 msgid "No file provided"
 msgstr "ファイルが指定されていません"
 
-#: routes/auth.py:538 routes/museum.py:660
+#: routes/auth.py:547 routes/museum.py:660
 msgid "No file selected"
 msgstr "ファイルが選択されていません"
 
-#: routes/auth.py:543
+#: routes/auth.py:552
 msgid "Invalid file type. Allowed: jpg, png, gif, webp"
 msgstr "ファイル形式が無効です。許可される形式: jpg、png、gif、webp"
 
-#: routes/auth.py:548
+#: routes/auth.py:557
 msgid "File too large. Maximum size is 2MB"
 msgstr "ファイルが大きすぎます。最大サイズは2MBです"
 
-#: routes/auth.py:566
+#: routes/auth.py:575
 msgid ""
 "Avatar uploads require Pillow; please ask the operator to install the "
 "project requirements."
 msgstr "アバターのアップロードにはPillowが必要です。運用担当者にプロジェクトの依存パッケージのインストールを依頼してください。"
 
-#: routes/auth.py:582 routes/museum.py:692
+#: routes/auth.py:591 routes/museum.py:692
 msgid "Invalid image file"
 msgstr "画像ファイルが無効です"
 
@@ -429,9 +429,9 @@ msgstr "ボーナスディスクと親ゲームは同じシステム内にある
 #: routes/settings.py:459 routes/settings.py:538 routes/settings.py:567
 #: routes/settings.py:611 routes/settings.py:627 routes/settings.py:663
 #: routes/steam_achievements.py:138 routes/systems.py:292 routes/systems.py:482
-#: routes/trophies.py:541 routes/trophies.py:739 routes/trophies.py:787
-#: routes/trophies.py:1615 routes/trophies.py:1639 routes/trophies.py:1684
-#: routes/trophies.py:1712 routes/trophies.py:1754 routes/trophies.py:1821
+#: routes/trophies.py:544 routes/trophies.py:742 routes/trophies.py:790
+#: routes/trophies.py:1618 routes/trophies.py:1642 routes/trophies.py:1687
+#: routes/trophies.py:1715 routes/trophies.py:1757 routes/trophies.py:1824
 #: routes/xbox_achievements.py:157 services/api_helpers.py:46
 msgid "An internal error occurred"
 msgstr "内部エラーが発生しました"
@@ -687,7 +687,7 @@ msgstr "更新するフィールドがありません"
 
 #: routes/games.py:1197 routes/platform_import.py:250
 #: routes/platform_import.py:629 routes/platform_import.py:992
-#: routes/trophies.py:1903 templates/game_imports.html:579
+#: routes/trophies.py:1906 templates/game_imports.html:579
 #: templates/game_imports.html:842
 msgid "No games selected"
 msgstr "ゲームが選択されていません"
@@ -1332,66 +1332,66 @@ msgstr "各ゲームのコピーを少なくとも1つ残してください。�
 msgid "This system has no screenshot check"
 msgstr "このシステムにはスクリーンショットの確認がありません"
 
-#: routes/trophies.py:429
+#: routes/trophies.py:432
 msgid ""
 "Please configure your RPCS3 Trophy Path in your profile settings to view "
 "trophies"
 msgstr "トロフィーを表示するには、プロフィール設定でRPCS3トロフィーパスを設定してください"
 
-#: routes/trophies.py:461
+#: routes/trophies.py:464
 msgid "Trophy set not found"
 msgstr "トロフィーセットが見つかりません"
 
-#: routes/trophies.py:505
+#: routes/trophies.py:508
 msgid "RPCS3_TROPHY_PATH not configured"
 msgstr "RPCS3_TROPHY_PATHが設定されていません"
 
-#: routes/trophies.py:508
+#: routes/trophies.py:511
 #, python-format
 msgid "Trophy path not found: %(path)s"
 msgstr "トロフィーパスが見つかりません: %(path)s"
 
-#: routes/trophies.py:800 routes/trophies.py:1737
+#: routes/trophies.py:803 routes/trophies.py:1740
 msgid "PSN game not found"
 msgstr "PSNゲームが見つかりません"
 
-#: routes/trophies.py:1091
+#: routes/trophies.py:1094
 msgid "Sync already in progress"
 msgstr "同期はすでに実行中です"
 
-#: routes/trophies.py:1342
+#: routes/trophies.py:1345
 msgid "Game not found in your PSN trophy list"
 msgstr "PSNのトロフィーリストにゲームが見つかりません"
 
-#: routes/trophies.py:1612
+#: routes/trophies.py:1615
 msgid "Game not found on PSN"
 msgstr "PSNにゲームが見つかりません"
 
-#: routes/trophies.py:1627 routes/trophies.py:1700
+#: routes/trophies.py:1630 routes/trophies.py:1703
 msgid "Missing npwr_id"
 msgstr "npwr_idがありません"
 
-#: routes/trophies.py:1725
+#: routes/trophies.py:1728
 msgid "Missing npwr_id or group_id"
 msgstr "npwr_idまたはgroup_idがありません"
 
-#: routes/trophies.py:1728
+#: routes/trophies.py:1731
 msgid "Name cannot be empty"
 msgstr "名前を空にすることはできません"
 
-#: routes/trophies.py:1766
+#: routes/trophies.py:1769
 msgid "PSNAWP library not installed. Run: pip install psnawp"
 msgstr "PSNAWPライブラリがインストールされていません。次を実行してください: pip install psnawp"
 
-#: routes/trophies.py:1860
+#: routes/trophies.py:1863
 msgid "No NPSSO token provided"
 msgstr "NPSSOトークンが指定されていません"
 
-#: routes/trophies.py:1885
+#: routes/trophies.py:1888
 msgid "Could not connect to PSN"
 msgstr "PSN に接続できませんでした"
 
-#: routes/trophies.py:1912
+#: routes/trophies.py:1915
 msgid "PSN NPSSO not configured"
 msgstr "PSN NPSSOが設定されていません"
 
@@ -2384,9 +2384,9 @@ msgid "Does not start, or crashes the emulator."
 msgstr "起動しないか、エミュレーターがクラッシュします。"
 
 #: services/js_i18n_strings.py:672 templates/_bulk_scrape_modal.html:69
-#: templates/all_games.html:228 templates/psn_trophies.html:247
+#: templates/all_games.html:229 templates/psn_trophies.html:247
 #: templates/psn_trophies.html:307 templates/reports.html:525
-#: templates/system_games.html:208
+#: templates/system_games.html:209
 msgid "Done"
 msgstr "完了"
 
@@ -5022,126 +5022,138 @@ msgstr "ボーナスディスク"
 msgid "Alphabetical jump navigation"
 msgstr "アルファベットジャンプナビゲーション"
 
-#: templates/all_games.html:154 templates/psn_trophies.html:213
-#: templates/system_games.html:145
+#: templates/all_games.html:122 templates/system_games.html:113
+msgid "Show every game again"
+msgstr ""
+
+#: templates/all_games.html:122 templates/game_imports.html:330
+#: templates/game_imports.html:393 templates/hltb_review.html:28
+#: templates/logs.html:707 templates/psn_trophies.html:129
+#: templates/psn_trophies.html:163 templates/system_games.html:113
+#: templates/wishlist.html:26
+msgid "All"
+msgstr "すべて"
+
+#: templates/all_games.html:155 templates/psn_trophies.html:213
+#: templates/system_games.html:146
 msgid "SHOWING"
 msgstr "表示中"
 
-#: templates/all_games.html:154 templates/psn_trophies.html:213
-#: templates/system_games.html:145
+#: templates/all_games.html:155 templates/psn_trophies.html:213
+#: templates/system_games.html:146
 msgid "OF"
 msgstr "/"
 
-#: templates/all_games.html:154 templates/psn_trophies.html:213
-#: templates/system_games.html:145
+#: templates/all_games.html:155 templates/psn_trophies.html:213
+#: templates/system_games.html:146
 msgid "GAMES"
 msgstr "ゲーム"
 
-#: templates/all_games.html:155 templates/system_games.html:146
+#: templates/all_games.html:156 templates/system_games.html:147
 msgid "Active filters"
 msgstr "適用中のフィルター"
 
-#: templates/all_games.html:157 templates/system_games.html:148
+#: templates/all_games.html:158 templates/system_games.html:149
 msgid "Sort by"
 msgstr "並び替え"
 
-#: templates/all_games.html:159 templates/settings_emulators.html:191
-#: templates/settings_emulators.html:236 templates/system_games.html:150
+#: templates/all_games.html:160 templates/settings_emulators.html:191
+#: templates/settings_emulators.html:236 templates/system_games.html:151
 msgid "Name"
 msgstr "名前"
 
-#: templates/all_games.html:160 templates/system_games.html:151
+#: templates/all_games.html:161 templates/system_games.html:152
 msgid "Newest release"
 msgstr "発売日が新しい順"
 
-#: templates/all_games.html:161 templates/system_games.html:152
+#: templates/all_games.html:162 templates/system_games.html:153
 msgid "Oldest release"
 msgstr "発売日が古い順"
 
-#: templates/all_games.html:162 templates/system_games.html:153
+#: templates/all_games.html:163 templates/system_games.html:154
 msgid "Critic score"
 msgstr "評論家スコア"
 
-#: templates/all_games.html:163 templates/system_games.html:154
+#: templates/all_games.html:164 templates/system_games.html:155
 msgid "User score"
 msgstr "ユーザースコア"
 
-#: templates/all_games.html:164 templates/system_games.html:155
+#: templates/all_games.html:165 templates/system_games.html:156
 msgid "Recently added"
 msgstr "最近追加"
 
-#: templates/all_games.html:174 templates/system_games.html:165
+#: templates/all_games.html:175 templates/system_games.html:166
 msgid "No games match these filters"
 msgstr "これらのフィルターに一致するゲームはありません"
 
-#: templates/all_games.html:176 templates/dashboard.html:93
+#: templates/all_games.html:177 templates/dashboard.html:93
 msgid "Your library is empty"
 msgstr "ライブラリは空です"
 
-#: templates/all_games.html:178 templates/dashboard.html:95
+#: templates/all_games.html:179 templates/dashboard.html:95
 msgid "Scan your ROM folder to add your games."
 msgstr "ROM フォルダーをスキャンしてゲームを追加してください。"
 
-#: templates/_settings_tabs/library.html:46 templates/all_games.html:181
+#: templates/_settings_tabs/library.html:46 templates/all_games.html:182
 #: templates/dashboard.html:83 templates/dashboard.html:99
 #: templates/systems.html:111
 msgid "Scan Library"
 msgstr "ライブラリをスキャン"
 
-#: templates/all_games.html:184 templates/dashboard.html:104
+#: templates/all_games.html:185 templates/dashboard.html:104
 msgid "Ask an admin to scan the ROM folder."
 msgstr "管理者に ROM フォルダーのスキャンを依頼してください。"
 
-#: templates/all_games.html:188 templates/system_games.html:168
+#: templates/all_games.html:189 templates/system_games.html:169
 msgid "Clear filters"
 msgstr "フィルターを消去"
 
-#: templates/_modals/filter_modal.html:18 templates/all_games.html:195
-#: templates/psn_trophies.html:222 templates/system_games.html:175
+#: templates/_modals/filter_modal.html:18 templates/all_games.html:196
+#: templates/psn_trophies.html:222 templates/system_games.html:176
 msgid "Loading games..."
 msgstr "ゲームを読み込んでいます..."
 
-#: templates/all_games.html:200 templates/system_games.html:180
+#: templates/all_games.html:201 templates/system_games.html:181
 msgid "Selected games"
 msgstr "選択したゲーム"
 
-#: templates/all_games.html:202 templates/system_games.html:182
+#: templates/all_games.html:203 templates/system_games.html:183
 msgid "Select All"
 msgstr "すべて選択"
 
-#: templates/all_games.html:205 templates/system_games.html:185
+#: templates/all_games.html:206 templates/system_games.html:186
 msgid "Select Unscraped"
 msgstr "未取得を選択"
 
-#: templates/all_games.html:209 templates/game_detail.html:918
-#: templates/system_games.html:189
+#: templates/all_games.html:210 templates/game_detail.html:918
+#: templates/system_games.html:190
 msgid "Full Re-scrape"
 msgstr "完全再取得"
 
-#: templates/all_games.html:211 templates/system_games.html:191
+#: templates/all_games.html:212 templates/system_games.html:192
 msgid "Toggle between full re-scrape and fill missing mode"
 msgstr "完全再取得と欠落補完モードを切り替え"
 
-#: templates/all_games.html:214 templates/game_detail.html:918
-#: templates/system_games.html:194
+#: templates/all_games.html:215 templates/game_detail.html:918
+#: templates/system_games.html:195
 msgid "Fill Missing"
 msgstr "欠落を補完"
 
-#: templates/all_games.html:216 templates/system_games.html:196
+#: templates/all_games.html:217 templates/system_games.html:197
 msgid ""
 "Full Re-scrape keeps the art, videos and manuals already downloaded "
 "instead of fetching them again"
 msgstr "完全再スクレイプでは、ダウンロード済みのアート、動画、マニュアルを再取得せずに保持します"
 
-#: templates/all_games.html:218 templates/system_games.html:198
+#: templates/all_games.html:219 templates/system_games.html:199
 msgid "Keep existing media"
 msgstr "既存のメディアを保持"
 
-#: templates/all_games.html:222 templates/system_games.html:202
+#: templates/all_games.html:223 templates/system_games.html:203
 msgid "Scrape Selected"
 msgstr "選択を取得"
 
-#: templates/all_games.html:225 templates/system_games.html:205
+#: templates/all_games.html:226 templates/system_games.html:206
 msgid "Edit Selected"
 msgstr "選択を編集"
 
@@ -5919,7 +5931,7 @@ msgid "M3U Created"
 msgstr "未取得"
 
 #: templates/archive_scanner.html:1463
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid "Successfully created:"
 msgstr "{count}件のゲームを正常に更新しました"
 
@@ -5974,14 +5986,14 @@ msgstr "同期中: {processed} / {total}"
 
 #: templates/archive_scanner.html:1568 templates/archive_scanner.html:1573
 #: templates/archive_scanner.html:1741 templates/archive_scanner.html:1747
-#, fuzzy, python-brace-format, python-format
+#, fuzzy, python-brace-format
 msgid "Success: {count}"
 msgstr "成功: %(count)s"
 
 #: templates/archive_scanner.html:1569 templates/archive_scanner.html:1574
 #: templates/archive_scanner.html:1742 templates/archive_scanner.html:1748
 #: templates/game_imports.html:596 templates/game_imports.html:856
-#, fuzzy, python-brace-format, python-format
+#, fuzzy, python-brace-format
 msgid "Failed: {count}"
 msgstr "失敗: %(count)s"
 
@@ -8042,7 +8054,7 @@ msgid "Delete Screenshot"
 msgstr "スクリーンショットを削除"
 
 #: templates/game_detail.html:5945
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid "Are you sure you want to delete this screenshot?"
 msgstr "「{filename}」を削除してもよろしいですか？"
 
@@ -8233,13 +8245,6 @@ msgstr "切断"
 msgid "Xbox Library"
 msgstr "Xboxライブラリ"
 
-#: templates/game_imports.html:330 templates/game_imports.html:393
-#: templates/hltb_review.html:28 templates/logs.html:707
-#: templates/psn_trophies.html:129 templates/psn_trophies.html:163
-#: templates/wishlist.html:26
-msgid "All"
-msgstr "すべて"
-
 #: templates/game_imports.html:331
 msgid "Xbox 360"
 msgstr "Xbox 360"
@@ -8318,7 +8323,7 @@ msgid "Games found: {total} ({existing} already imported)"
 msgstr ""
 
 #: templates/game_imports.html:594 templates/game_imports.html:853
-#, fuzzy, python-brace-format, python-format
+#, fuzzy, python-brace-format
 msgid "Imported: {count}"
 msgstr "スキップ: %(count)s"
 
@@ -8338,7 +8343,7 @@ msgid "Import failed"
 msgstr "選択をインポート"
 
 #: templates/game_imports.html:607 templates/game_imports.html:867
-#, fuzzy, python-brace-format, python-format
+#, fuzzy, python-brace-format
 msgid "Import error: {error}"
 msgstr "接続エラー: %(error)s"
 
@@ -10851,7 +10856,7 @@ msgid "Delete Option"
 msgstr "ロゴを削除"
 
 #: templates/settings.html:2933
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid "Are you sure you want to delete this option?"
 msgstr "「{filename}」を削除してもよろしいですか？"
 
@@ -11477,7 +11482,7 @@ msgstr "コレクション内のゲーム"
 msgid "Refresh RetroAchievements data for this system"
 msgstr "このシステムのRetroAchievementsデータを更新"
 
-#: templates/system_games.html:166
+#: templates/system_games.html:167
 msgid "No games here yet"
 msgstr "まだゲームがありません"
 
