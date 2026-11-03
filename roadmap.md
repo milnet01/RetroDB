@@ -10530,7 +10530,11 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.222 A screenshot the user removed stays removed when the game is scraped again (fix, M).
-- **Status**: todo
+- **Resolution** (2026-11-03): Shipped 2026-11-03 in ef3660a (3.35.4, unreleased): a deleted
+  screenshot's dHash goes in removed_screenshots (migration 035);
+  every merger and the ES-DE copy drop a look-alike. The Duplicate
+  Screenshots tool records nothing. Needs the user's Restart for 035.
+- **Status**: done
 - **Problem**: since PASS-59-205 a scrape copies ES-DE's screenshots into the list, so one deleted by hand or in Screenshot Review comes back from ES-DE's folder. Online sources can re-download theirs the same way. No record of a removal exists.
 - **Fix**: record what the user removes per game (a removed picture's look or source name) and have every merger skip it. Decide this before the user's Screenshot Review (PASS-59-161) is followed by a bulk scrape.
 - **Decided** (user, 2026-11-02): the bulk Fill Missing scrape is held
