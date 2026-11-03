@@ -61,6 +61,19 @@ import pytest  # noqa: E402
 from tests._util import REPO_ROOT, read_source, read_module_source, slice_function, count_except_blocks  # noqa: E402,F401
 
 
+@pytest.fixture(scope="session", autouse=True)
+def _migrated_test_db():
+    """Give the throwaway test DB its full schema before any test runs.
+
+    Without this, a test that reads a table (e.g. removed_screenshots) passed
+    only when some earlier test had imported `app`, which migrates on import;
+    run alone or in another order, it failed (PASS-59-229). Same order as app.py.
+    """
+    from services.database_init import ensure_user_tables, init_database
+    ensure_user_tables()
+    init_database()
+
+
 @pytest.fixture(autouse=True)
 def _no_service_limits_between_tests():
     """A stop or pace in one test must not reach the next, or slow the suite."""
