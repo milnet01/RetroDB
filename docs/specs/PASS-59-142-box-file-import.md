@@ -69,6 +69,11 @@ A new column, `games.box_faces` (TEXT, migration 025, NULL = no faces):
   upper case.
 - `faces` holds all six keys. A face the box file left null or absent is
   `null`.
+- `shape` (PASS-59-231) is present only when the box file's `shape` passes
+  Slipcase SLIP-0125 § 4.1's reading rules. It holds all nine keys in mm,
+  a missing lip, seam or recess key stored as 0. A shape breaking any rule
+  is dropped and the box imports flat; it never refuses the file. A box
+  imported before PASS-59-231 has no `shape` until it is imported again.
 - The files live in `<IMAGE_PATH>/box_faces/`, named
   `<game_id>_<face>_<token>.webp`. `token` is 8 random hex characters, the
   same for every face of one import. A new import gets new names, so a

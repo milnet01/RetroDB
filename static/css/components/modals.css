@@ -154,9 +154,9 @@
     box-shadow: none;
 }
 
-/* PASS-59-143 — the turnable 3D box (static/js/box-viewer.js). Only the
-   faces paint, so the box sits on the backdrop (SLIP-0104 INV-12). The
-   stage stops short of the window's edges, so a click beside it still
+/* PASS-59-143 — the turnable 3D box (static/js/box-viewer.js, drawn on a
+   transparent WebGL canvas). Only the box paints, so it sits on the
+   backdrop (SLIP-0104 INV-12). The stage stops short of the window's edges, so a click beside it still
    closes the zoom. */
 .box-viewer {
     display: flex;
@@ -186,26 +186,11 @@
     outline-offset: 4px;
 }
 
-.box-viewer-box {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform-style: preserve-3d;
-}
-
-.box-viewer-face {
-    position: absolute;
-    background-size: 100% 100%;
-    backface-visibility: hidden;
-}
-
-/* Lighting: a black layer whose opacity box-viewer.js sets per face. */
-.box-viewer-face::after {
-    content: '';
+.box-viewer-canvas {
     position: absolute;
     inset: 0;
-    background: #000;
-    opacity: var(--box-shade, 0);
+    width: 100%;
+    height: 100%;
 }
 
 .box-viewer-hint {
