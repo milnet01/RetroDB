@@ -1147,6 +1147,29 @@ async function clearClzImports() {
     );
 }
 
+// The Find Games button lives on the page that shows the job's results,
+// so it follows the shared job poller: busy while the job runs, back to
+// normal when it stops (PASS-59-232).
+function resetFindGamesButton() {
+    const btn = document.getElementById('refreshRABtn');
+    if (!btn || btn.dataset.onClick !== 'refreshRetroAchievements') return;
+    btn.disabled = false;
+    btn.innerHTML = `<span class="btn-icon">🔍</span> ${escapeHtml(t('Find Games with Achievements'))}`;
+}
+
+document.addEventListener('retrodb:job-status', (e) => {
+    const {type, data} = e.detail || {};
+    if (type !== 'ra-refresh' || !data) return;
+    const btn = document.getElementById('refreshRABtn');
+    if (!btn || btn.dataset.onClick !== 'refreshRetroAchievements') return;
+    if (data.running && !data.completed) {
+        btn.disabled = true;
+        btn.innerHTML = `<span class="btn-icon">⏳</span> ${escapeHtml(t('Running...'))}`;
+    } else if (btn.disabled) {
+        resetFindGamesButton();
+    }
+});
+
 async function refreshRetroAchievements() {
     showConfirm(
         t('🔍 Find Games with Achievements'),
@@ -1222,18 +1245,12 @@ async function refreshRetroAchievements() {
                     }
                 } else {
                     showNotification(data.error || t('Failed to start RetroAchievements refresh'), 'error');
-                    if (btn) {
-                        btn.disabled = false;
-                        btn.innerHTML = `<span class="btn-icon">🔍</span> ${escapeHtml(t('Find Games with Achievements'))}`;
-                    }
+                    resetFindGamesButton();
                 }
             } catch (error) {
                 console.error('Error starting RetroAchievements refresh:', error);
                 showNotification(t('Failed to start RetroAchievements refresh'), 'error');
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerHTML = `<span class="btn-icon">🔍</span> ${escapeHtml(t('Find Games with Achievements'))}`;
-                }
+                resetFindGamesButton();
             }
         }
     );
