@@ -301,7 +301,7 @@ async function startConversion() {
     });
     
     if (selectedFiles.length === 0) {
-        showModal('⚠️ No Selection', 'No files selected');
+        showModal('⚠️ ' + {{ _('No Selection')|tojson }}, {{ _('No files selected')|tojson }});
         return;
     }
     
@@ -343,15 +343,15 @@ async function startConversion() {
                     }
                 },
                 onComplete() { resetUI(); },
-                onError(task) { showModal('❌ Error', task.error || 'Conversion failed'); resetUI(); },
+                onError(task) { showModal('❌ ' + {{ _('Error')|tojson }}, task.error || {{ _('Conversion failed')|tojson }}); resetUI(); },
                 onCancel() { resetUI(); }
             }, 500);
         } else {
-            showModal('❌ Error', data.error);
+            showModal('❌ ' + {{ _('Error')|tojson }}, data.error);
             resetUI();
         }
     } catch (error) {
-        showModal('❌ Error', error.message);
+        showModal('❌ ' + {{ _('Error')|tojson }}, error.message);
         resetUI();
     }
 }

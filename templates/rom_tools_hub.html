@@ -430,10 +430,8 @@
 <script nonce="{{ csp_nonce }}">
 function startAltTitlesBackfill() {
     showConfirm(
-        '🌐 Backfill Alternate Titles',
-        'Scan every scraped game for alternate / regional titles using IGDB and ScreenScraper search results.\n\n' +
-        'No media is downloaded, no other metadata is touched — just alternate title lists are merged into the DB.\n\n' +
-        'This may take a while for large libraries.',
+        '🌐 ' + {{ _('Backfill Alternate Titles')|tojson }},
+        {{ _('Scan every scraped game for alternate / regional titles using IGDB and ScreenScraper search results.\n\nNo media is downloaded, no other metadata is touched — just alternate title lists are merged into the DB.\n\nThis may take a while for large libraries.')|tojson }},
         function() {
             fetch('/api/maintenance/alt-titles-backfill/start', {
                 method: 'POST',
@@ -443,7 +441,7 @@ function startAltTitlesBackfill() {
             .then(r => r.json())
             .then(data => {
                 if (data.success) {
-                    showNotification('Alt-titles backfill started', 'success');
+                    showNotification({{ _('Alt-titles backfill started')|tojson }}, 'success');
                     if (typeof UnifiedToastController !== 'undefined') {
                         UnifiedToastController.adjustPollingSpeed('alt-titles-backfill', true);
                         UnifiedToastController.broadcast('job-started', 'alt-titles-backfill', {
@@ -451,10 +449,10 @@ function startAltTitlesBackfill() {
                         });
                     }
                 } else {
-                    showNotification(data.error || 'Failed to start', 'error');
+                    showNotification(data.error || {{ _('Failed to start')|tojson }}, 'error');
                 }
             })
-            .catch(() => showNotification('Failed to start backfill', 'error'));
+            .catch(() => showNotification({{ _('Failed to start backfill')|tojson }}, 'error'));
         }
     );
 }
@@ -695,11 +693,8 @@ function clearRawgCovers() {
 
 function startHltbBulk() {
     showConfirm(
-        '⏱ Bulk HLTB Lookup',
-        'Fetch HowLongToBeat playtime for every game.\n\n' +
-        'High-confidence primary-title matches apply automatically.\n' +
-        'Alt-title matches and low-confidence matches queue for review on the HLTB Pending Review page.\n\n' +
-        'By default only games without an existing HLTB match are processed. HLTB rate-limits, so this runs slowly in the background — you can leave the page.',
+        '⏱ ' + {{ _('Bulk HLTB Lookup')|tojson }},
+        {{ _('Fetch HowLongToBeat playtime for every game.\n\nHigh-confidence primary-title matches apply automatically.\nAlt-title matches and low-confidence matches queue for review on the HLTB Pending Review page.\n\nBy default only games without an existing HLTB match are processed. HLTB rate-limits, so this runs slowly in the background — you can leave the page.')|tojson }},
         function() {
             fetch('/api/hltb/bulk/start', {
                 method: 'POST',
@@ -709,7 +704,7 @@ function startHltbBulk() {
             .then(r => r.json())
             .then(data => {
                 if (data.success) {
-                    showNotification('Bulk HLTB lookup started — queued matches will appear on the review page', 'success');
+                    showNotification({{ _('Bulk HLTB lookup started — queued matches will appear on the review page')|tojson }}, 'success');
                     if (typeof UnifiedToastController !== 'undefined') {
                         UnifiedToastController.adjustPollingSpeed('hltb-bulk', true);
                         UnifiedToastController.broadcast('job-started', 'hltb-bulk', {
@@ -717,10 +712,10 @@ function startHltbBulk() {
                         });
                     }
                 } else {
-                    showNotification(data.error || 'Failed to start', 'error');
+                    showNotification(data.error || {{ _('Failed to start')|tojson }}, 'error');
                 }
             })
-            .catch(() => showNotification('Failed to start bulk HLTB', 'error'));
+            .catch(() => showNotification({{ _('Failed to start bulk HLTB')|tojson }}, 'error'));
         }
     );
 }
@@ -750,13 +745,8 @@ document.addEventListener('DOMContentLoaded', refreshHltbPendingCount);
 
 function startImageResize() {
     showConfirm(
-        '🖼️ Image Resizer',
-        'Standardize all images to consistent sizes:\n\n' +
-        'Boxart, Screenshots, 3D Boxart: 1080px height\n' +
-        'Controllers & Hardware: 1280px longest edge\n\n' +
-        'Small images will be AI-upscaled (Real-ESRGAN), large images will be downscaled (Lanczos). ' +
-        'Images already within 80-120% of target size are skipped.\n\n' +
-        'This may take a while for large collections.',
+        '🖼️ ' + {{ _('Image Resizer')|tojson }},
+        {{ _('Standardize all images to consistent sizes:\n\nBoxart, Screenshots, 3D Boxart: 1080px height\nControllers & Hardware: 1280px longest edge\n\nSmall images will be AI-upscaled (Real-ESRGAN), large images will be downscaled (Lanczos). Images already within 80 to 120 percent of target size are skipped.\n\nThis may take a while for large collections.')|tojson }},
         function() {
             fetch('/api/maintenance/image-resize/start', {
                 method: 'POST',
@@ -766,7 +756,7 @@ function startImageResize() {
             .then(r => r.json())
             .then(data => {
                 if (data.success) {
-                    showNotification('Image standardization started', 'success');
+                    showNotification({{ _('Image standardization started')|tojson }}, 'success');
                     if (typeof UnifiedToastController !== 'undefined') {
                         UnifiedToastController.adjustPollingSpeed('image-resize', true);
                         UnifiedToastController.broadcast('job-started', 'image-resize', {
@@ -774,10 +764,10 @@ function startImageResize() {
                         });
                     }
                 } else {
-                    showNotification(data.error || 'Failed to start', 'error');
+                    showNotification(data.error || {{ _('Failed to start')|tojson }}, 'error');
                 }
             })
-            .catch(() => showNotification('Failed to start image resize', 'error'));
+            .catch(() => showNotification({{ _('Failed to start image resize')|tojson }}, 'error'));
         }
     );
 }

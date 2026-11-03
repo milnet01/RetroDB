@@ -168,7 +168,7 @@ const BulkScrapeController = {
     async start(gameIds, systemId = null, scrapeMode = 'fill_missing') {
         if (gameIds.length === 0) {
             const _wi = typeof getThemedIcon === 'function' ? getThemedIcon('warning') : '⚠️';
-            showModal(`${_wi} ${t('No Games Selected')}`, t('Please select at least one game to scrape.'));
+            showModal(_wi + ' ' + t('No Games Selected'), t('Please select at least one game to scrape.'));
             return;
         }
 
@@ -187,7 +187,7 @@ const BulkScrapeController = {
             if (data.success) {
                 if (data.queued) {
                     const _qi = typeof getThemedIcon === 'function' ? getThemedIcon('queued') : '📋';
-                    showModal(`${_qi} ${t('Queued')}`, t('Your bulk scrape has been queued (position {position}). It will start automatically when the current scrape finishes.', {position: data.queue_position}));
+                    showModal(_qi + ' ' + t('Queued'), t('Your bulk scrape has been queued (position {position}). It will start automatically when the current scrape finishes.', {position: data.queue_position}));
 
                     if (typeof exitBulkMode === 'function') {
                         exitBulkMode();
@@ -236,13 +236,13 @@ const BulkScrapeController = {
                     showNotification(data.error, 'warning');
                 } else {
                     const _ei2 = typeof getThemedIcon === 'function' ? getThemedIcon('error') : '❌';
-                    showModal(`${_ei2} ${t('Error')}`, data.error || t('Failed to start bulk scrape'));
+                    showModal(_ei2 + ' ' + t('Error'), data.error || t('Failed to start bulk scrape'));
                 }
             }
         } catch (error) {
             console.error('Error starting bulk scrape:', error);
             const _ei3 = typeof getThemedIcon === 'function' ? getThemedIcon('error') : '❌';
-            showModal(`${_ei3} ${t('Error')}`, t('Network error starting bulk scrape'));
+            showModal(_ei3 + ' ' + t('Error'), t('Network error starting bulk scrape'));
         }
     },
 
@@ -392,7 +392,7 @@ const BulkScrapeController = {
     cancel() {
         const _wi2 = typeof getThemedIcon === 'function' ? getThemedIcon('warning') : '⚠️';
         showConfirm(
-            `${_wi2} ${t('Cancel Bulk Scrape')}`,
+            _wi2 + ' ' + t('Cancel Bulk Scrape'),
             t('Are you sure you want to cancel the bulk scrape?\n\nNote: the current game will finish scraping (usually 10–60 seconds) before the cancel takes effect — the progress toast will keep updating during that window.'),
             async () => {
             try {
@@ -981,14 +981,14 @@ const RARefreshController = {
                 }
             } else {
                 if (typeof showModal !== 'undefined') {
-                    showModal(`${_ti('error')} ${t('Error')}`, data.error || t('Unknown error'));
+                    showModal(_ti('error') + ' ' + t('Error'), data.error || t('Unknown error'));
                 }
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             }
         } catch (err) {
             if (typeof showModal !== 'undefined') {
-                showModal(`${_ti('error')} ${t('Error')}`, t('Error refreshing RetroAchievements: ') + err.message);
+                showModal(_ti('error') + ' ' + t('Error'), t('Error refreshing RetroAchievements: {error}', {error: err.message}));
             }
             btn.innerHTML = originalText;
             btn.disabled = false;
@@ -1704,7 +1704,7 @@ const HLTBManager = {
                 HLTBManager.pendingData[ctx.name] = null;
                 showNotification(t('HLTB data saved'), 'success');
             } else {
-                showNotification(t('Failed to save HLTB: ') + (data.error || t('Unknown error')), 'error');
+                showNotification(t('Failed to save HLTB: {error}', {error: data.error || t('Unknown error')}), 'error');
             }
         })
         .catch(err => showNotification(t('Error saving HLTB data'), 'error'));
@@ -1796,7 +1796,7 @@ const HLTBManager = {
                     if (ctx.onClear) ctx.onClear();
                     showNotification(t('HLTB data cleared'), 'success');
                 } else {
-                    showNotification(t('Failed to clear HLTB: ') + (data.error || t('Unknown error')), 'error');
+                    showNotification(t('Failed to clear HLTB: {error}', {error: data.error || t('Unknown error')}), 'error');
                 }
             })
             .catch(err => showNotification(t('Error clearing HLTB data'), 'error'));
@@ -2082,18 +2082,18 @@ const GameEditModal = {
 
                 const _ti = typeof getThemedIcon === 'function' ? getThemedIcon : (k) => ({ save: '✅', error: '❌' }[k] || k);
                 if (typeof showModal === 'function') {
-                    showModal(`${_ti('save')} ${t('Saved')}`, t('Game details updated successfully.'));
+                    showModal(_ti('save') + ' ' + t('Saved'), t('Game details updated successfully.'));
                 }
             } else {
                 const _ti = typeof getThemedIcon === 'function' ? getThemedIcon : (k) => ({ error: '❌' }[k] || k);
-                showModal(`${_ti('error')} ${t('Save Failed')}`, t('Failed to save: ') + (data.error || t('Unknown error')));
+                showModal(_ti('error') + ' ' + t('Save Failed'), t('Failed to save: {error}', {error: data.error || t('Unknown error')}));
             }
         })
         .catch(err => {
             saveBtn.innerHTML = originalText;
             saveBtn.disabled = false;
             const _ti = typeof getThemedIcon === 'function' ? getThemedIcon : (k) => ({ error: '❌' }[k] || k);
-            showModal(`${_ti('error')} ${t('Error')}`, t('Error saving game: ') + err.message);
+            showModal(_ti('error') + ' ' + t('Error'), t('Error saving game: {error}', {error: err.message}));
         });
     },
 
@@ -2233,15 +2233,15 @@ const GameEditModal = {
                 }
             } else {
                 const _ei = typeof getThemedIcon === 'function' ? getThemedIcon('error') : '❌';
-                showModal(`${_ei} ${t('Update Failed')}`, t('Failed to update completion status: ') + (data.error || t('Unknown error')));
+                showModal(_ei + ' ' + t('Update Failed'), t('Failed to update completion status: {error}', {error: data.error || t('Unknown error')}));
             }
         })
         .catch(err => {
             const _ei = typeof getThemedIcon === 'function' ? getThemedIcon('error') : '❌';
             if (err.data) {
-                showModal(`${_ei} ${t('Update Failed')}`, t('Failed to update completion status: ') + err.message);
+                showModal(_ei + ' ' + t('Update Failed'), t('Failed to update completion status: {error}', {error: err.message}));
             } else {
-                showModal(`${_ei} ${t('Error')}`, t('Error updating completion status'));
+                showModal(_ei + ' ' + t('Error'), t('Error updating completion status'));
             }
         });
     },
@@ -3125,21 +3125,21 @@ window.triggerAiFill = function() {
             if (data.success) {
                 const count = data.filled_count || 0;
                 if (count > 0) {
-                    showNotification(`AI filled ${count} field${count !== 1 ? 's' : ''}: ${data.filled_fields.join(', ')}`, 'success');
+                    showNotification(t('Fields the AI filled ({count}): {fields}', {count: count, fields: data.filled_fields.join(', ')}), 'success');
                     GameDetailModal.cache.delete(gameId);
                     if (GameDetailModal.currentId === gameId) GameDetailModal.open(gameId);
                     if (typeof AllGamesController !== 'undefined' && AllGamesController.refreshCards) {
                         AllGamesController.refreshCards(gameId);
                     }
                 } else {
-                    showNotification('AI found no missing fields to fill', 'info');
+                    showNotification(t('AI found no missing fields to fill'), 'info');
                 }
             } else {
-                showNotification(data.error || 'AI fill failed', 'error');
+                showNotification(data.error || t('AI fill failed'), 'error');
             }
         })
         .catch(err => {
-            showNotification('AI fill request failed: ' + err.message, 'error');
+            showNotification(t('AI fill request failed: {error}', {error: err.message}), 'error');
         })
         .finally(() => {
             btn.disabled = false;

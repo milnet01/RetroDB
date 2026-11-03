@@ -745,15 +745,15 @@ async function refreshTrophies() {
         const data = await response.json();
 
         if (data.success) {
-            showNotification(`Synced ${data.trophies_synced} trophies`, 'success');
+            showNotification(t({{ _('Trophies synced: {count}')|tojson }}, {count: data.trophies_synced}), 'success');
             setTimeout(() => location.reload(), 1000);
         } else {
-            showNotification(data.error || 'Sync failed', 'error');
+            showNotification(data.error || {{ _('Sync failed')|tojson }}, 'error');
             btn.innerHTML = originalText;
             btn.disabled = false;
         }
     } catch (error) {
-        showNotification('Network error during sync', 'error');
+        showNotification({{ _('Network error during sync')|tojson }}, 'error');
         btn.innerHTML = originalText;
         btn.disabled = false;
     }
@@ -809,7 +809,7 @@ const psnHltbCtx = {
 // Wrapper functions that call the shared HLTBManager
 function lookupHLTB() {
     if (!linkedGameId) {
-        showNotification('Link this PSN game to a RetroDB game first', 'warning');
+        showNotification({{ _('Link this PSN game to a RetroDB game first')|tojson }}, 'warning');
         return;
     }
     HLTBManager.lookup(psnHltbCtx);
@@ -850,7 +850,7 @@ async function searchGamesForLink() {
     const searchQuery = input ? input.value.trim() : '';
 
     if (!searchQuery || searchQuery.length < 2) {
-        showNotification('Enter at least 2 characters to search', 'warning');
+        showNotification({{ _('Enter at least 2 characters to search')|tojson }}, 'warning');
         return;
     }
 
@@ -925,13 +925,13 @@ async function linkGame(gameId, gameTitle, systemName) {
         const data = await resp.json();
 
         if (data.success) {
-            showNotification(`Linked to "${gameTitle}"`, 'success');
+            showNotification(t({{ _('Linked to "{title}"')|tojson }}, {title: gameTitle}), 'success');
             setTimeout(() => location.reload(), 800);
         } else {
-            showNotification(data.error || 'Failed to link game', 'error');
+            showNotification(data.error || {{ _('Failed to link game')|tojson }}, 'error');
         }
     } catch (error) {
-        showNotification('Network error', 'error');
+        showNotification({{ _('Network error')|tojson }}, 'error');
     }
 }
 
@@ -945,13 +945,13 @@ async function unlinkGame() {
         const data = await resp.json();
 
         if (data.success) {
-            showNotification('Game unlinked', 'success');
+            showNotification({{ _('Game unlinked')|tojson }}, 'success');
             setTimeout(() => location.reload(), 800);
         } else {
-            showNotification(data.error || 'Failed to unlink game', 'error');
+            showNotification(data.error || {{ _('Failed to unlink game')|tojson }}, 'error');
         }
     } catch (error) {
-        showNotification('Network error', 'error');
+        showNotification({{ _('Network error')|tojson }}, 'error');
     }
 }
 

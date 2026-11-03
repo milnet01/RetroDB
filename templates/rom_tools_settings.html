@@ -575,15 +575,15 @@ document.getElementById('settingsForm').addEventListener('submit', async functio
             msg.style.display = 'block';
             setTimeout(() => { msg.style.display = 'none'; }, 3000);
         } else {
-            showModal('❌ Error', 'Error saving settings: ' + (data.error || 'Unknown error'));
+            showModal('❌ ' + {{ _('Error')|tojson }}, t({{ _('Error saving settings: {error}')|tojson }}, {error: data.error || {{ _('Unknown error')|tojson }}}));
         }
     } catch (error) {
-        showModal('❌ Error', 'Error saving settings: ' + error.message);
+        showModal('❌ ' + {{ _('Error')|tojson }}, t({{ _('Error saving settings: {error}')|tojson }}, {error: error.message}));
     }
 });
 
 function resetDefaults() {
-    showConfirm('🔄 Reset Settings', 'Reset all ROM Tools settings to defaults?', function() {
+    showConfirm('🔄 ' + {{ _('Reset Settings')|tojson }}, {{ _('Reset all ROM Tools settings to defaults?')|tojson }}, function() {
         document.getElementById('romsPath').value = '/mnt/Games/ROMS';
         document.getElementById('tempPath').value = '';
         document.getElementById('chdmanPath').value = 'chdman';

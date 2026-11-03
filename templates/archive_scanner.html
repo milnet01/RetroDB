@@ -1118,7 +1118,7 @@ async function startScan() {
     const modes = getSelectedModes();
     
     if (types.length === 0) {
-        showModal('⚠️ No Types Selected', 'Please select at least one compression type to scan.');
+        showModal('⚠️ ' + {{ _('No Types Selected')|tojson }}, {{ _('Please select at least one compression type to scan.')|tojson }});
         return;
     }
     
@@ -1160,11 +1160,11 @@ async function startScan() {
                 onNotFound: handleScanNotFound
             }, 500);
         } else {
-            showModal('❌ Error', 'Error starting scan: ' + data.error);
+            showModal('❌ ' + {{ _('Error')|tojson }}, t({{ _('Error starting scan: {error}')|tojson }}, {error: data.error}));
             resetUI();
         }
     } catch (error) {
-        showModal('❌ Error', 'Error starting scan: ' + error.message);
+        showModal('❌ ' + {{ _('Error')|tojson }}, t({{ _('Error starting scan: {error}')|tojson }}, {error: error.message}));
         resetUI();
     }
 }
@@ -1196,12 +1196,12 @@ function handleScanProgress(task) {
 
 function handleScanComplete(task) {
     handleScanDone();
-    showModal('✅ Scan Complete', `Found ${scanResults.length} issues in your archive collection.`);
+    showModal('✅ ' + {{ _('Scan Complete')|tojson }}, t({{ _('Issues found in your archive collection: {count}')|tojson }}, {count: formatNumber(scanResults.length)}));
 }
 
 function handleScanError(task) {
     handleScanDone();
-    showModal('❌ Scan Error', task.error || 'Scan failed');
+    showModal('❌ ' + {{ _('Scan Error')|tojson }}, task.error || {{ _('Scan failed')|tojson }});
 }
 
 function handleScanDone() {
@@ -1216,7 +1216,7 @@ function handleScanNotFound() {
     currentTaskId = null;
     resetUI();
     saveSessionState();
-    showModal('⚠️ Scan Interrupted', 'The scan was interrupted (server may have restarted). Results so far have been preserved.');
+    showModal('⚠️ ' + {{ _('Scan Interrupted')|tojson }}, {{ _('The scan was interrupted (server may have restarted). Results so far have been preserved.')|tojson }});
 }
 
 async function togglePause() {
@@ -1226,7 +1226,7 @@ async function togglePause() {
 }
 
 async function cancelScan() {
-    showConfirm('⚠️ Cancel Scan', 'Are you sure you want to cancel the scan?', async function() {
+    showConfirm('⚠️ ' + {{ _('Cancel Scan')|tojson }}, {{ _('Are you sure you want to cancel the scan?')|tojson }}, async function() {
         if (!currentTaskId) return;
         try {
             await fetch(`/api/rom-tools/task/${currentTaskId}/cancel`, { method: 'POST' });
@@ -1373,11 +1373,11 @@ async function removeSelectedFiles() {
     const filesToRemove = Array.from(checkboxes).map(cb => cb.value);
     
     if (filesToRemove.length === 0) {
-        showModal('⚠️ No Selection', 'Please select files to remove.');
+        showModal('⚠️ ' + {{ _('No Selection')|tojson }}, {{ _('Please select files to remove.')|tojson }});
         return;
     }
     
-    showConfirm('🗑️ Remove Files', `Remove ${filesToRemove.length} files from this archive?`, async function() {
+    showConfirm('🗑️ ' + {{ _('Remove Files')|tojson }}, t({{ _('Files to remove from this archive: {count}. Continue?')|tojson }}, {count: formatNumber(filesToRemove.length)}), async function() {
         try {
             const response = await fetch('/api/rom-tools/archive-scanner/remove-files', {
                 method: 'POST',
@@ -1391,20 +1391,20 @@ async function removeSelectedFiles() {
             const data = await response.json();
             
             if (data.success) {
-                showModal('✅ Files Removed', `Successfully removed ${filesToRemove.length} files.`);
+                showModal('✅ ' + {{ _('Files Removed')|tojson }}, t({{ _('Files removed: {count}')|tojson }}, {count: formatNumber(filesToRemove.length)}));
                 closeArchiveModal();
                 viewArchive(currentArchivePath);
             } else {
-                showModal('❌ Error', data.error || 'Failed to remove files.');
+                showModal('❌ ' + {{ _('Error')|tojson }}, data.error || {{ _('Failed to remove files.')|tojson }});
             }
         } catch (error) {
-            showModal('❌ Error', error.message);
+            showModal('❌ ' + {{ _('Error')|tojson }}, error.message);
         }
     });
 }
 
 async function removeUnwanted(path) {
-    showConfirm('🧹 Remove Unwanted', `Remove unwanted files from this archive?`, async function() {
+    showConfirm('🧹 ' + {{ _('Remove Unwanted')|tojson }}, {{ _('Remove unwanted files from this archive?')|tojson }}, async function() {
         try {
             const response = await fetch('/api/rom-tools/archive-scanner/clean', {
                 method: 'POST',
@@ -1415,15 +1415,15 @@ async function removeUnwanted(path) {
             const data = await response.json();
             
             if (data.success) {
-                showModal('✅ Cleaned', `Removed ${data.removed_count} unwanted files.`);
+                showModal('✅ ' + {{ _('Cleaned')|tojson }}, t({{ _('Unwanted files removed: {count}')|tojson }}, {count: formatNumber(data.removed_count)}));
                 scanResults = scanResults.filter(r => r.path !== path);
                 updateResultsTable();
                 updateStats();
             } else {
-                showModal('❌ Error', data.error || 'Failed to clean archive.');
+                showModal('❌ ' + {{ _('Error')|tojson }}, data.error || {{ _('Failed to clean archive.')|tojson }});
             }
         } catch (error) {
-            showModal('❌ Error', error.message);
+            showModal('❌ ' + {{ _('Error')|tojson }}, error.message);
         }
     });
 }
@@ -1432,13 +1432,13 @@ async function createM3U(path) {
     const archiveName = path.split('/').pop();
     const folderName = archiveName.replace(/\.[^.]+$/, '');
     
-    showConfirm('💿 Create M3U', 
-        'This will create an ES-DE compatible M3U playlist:\n'
-        + `• Extract archive to ${folderName}/ folder\n`
-        + '• Add noload.txt to prevent ES-DE scanning\n'
-        + `• Create ${folderName}.m3u playlist file\n`
-        + '• Move original archive to staging folder\n\n'
-        + 'Continue?',
+    showConfirm('💿 ' + {{ _('Create M3U')|tojson }}, 
+        {{ _('This will create an ES-DE compatible M3U playlist:')|tojson }} + '\n'
+        + '• ' + t({{ _('Extract archive to {folder}/ folder')|tojson }}, {folder: folderName}) + '\n'
+        + '• ' + {{ _('Add noload.txt to prevent ES-DE scanning')|tojson }} + '\n'
+        + '• ' + t({{ _('Create {folder}.m3u playlist file')|tojson }}, {folder: folderName}) + '\n'
+        + '• ' + {{ _('Move original archive to staging folder')|tojson }} + '\n\n'
+        + {{ _('Continue?')|tojson }},
         async function() {
             try {
                 const response = await fetch('/api/rom-tools/archive-scanner/create-m3u', {
@@ -1452,18 +1452,18 @@ async function createM3U(path) {
                 if (data.success) {
                     let movedInfo = '';
                     if (data.archive_moved) {
-                        movedInfo = `\n📦 Archive moved to: ${data.moved_to}`;
+                        movedInfo = '\n📦 ' + t({{ _('Archive moved to: {path}')|tojson }}, {path: data.moved_to});
                     }
                     if (data.skipped_files && data.skipped_files.length) {
                         movedInfo += '\n• ' + {{ _('The archive holds more than one release. The playlist uses the first; these disks stay in the folder:')|tojson }}
                             + ' ' + data.skipped_files.join(', ');
                     }
 
-                    showModal('✅ M3U Created', 
-                        'Successfully created:\n'
-                        + `• M3U: ${data.m3u_path}\n`
-                        + `• Folder: ${data.folder_path}\n`
-                        + `• Files: ${formatNumber(data.file_count)} ROM file(s)`
+                    showModal('✅ ' + {{ _('M3U Created')|tojson }}, 
+                        {{ _('Successfully created:')|tojson }} + '\n'
+                        + '• ' + t({{ _('M3U: {path}')|tojson }}, {path: data.m3u_path}) + '\n'
+                        + '• ' + t({{ _('Folder: {path}')|tojson }}, {path: data.folder_path}) + '\n'
+                        + '• ' + t({{ _('ROM files: {count}')|tojson }}, {count: formatNumber(data.file_count)})
                         + movedInfo);
                     
                     // Remove from scan results since it's been processed
@@ -1471,10 +1471,10 @@ async function createM3U(path) {
                     updateResultsTable();
                     updateStats();
                 } else {
-                    showModal('❌ Error', data.error || 'Failed to create M3U.');
+                    showModal('❌ ' + {{ _('Error')|tojson }}, data.error || {{ _('Failed to create M3U.')|tojson }});
                 }
             } catch (error) {
-                showModal('❌ Error', error.message);
+                showModal('❌ ' + {{ _('Error')|tojson }}, error.message);
             }
         });
 }
@@ -1483,11 +1483,11 @@ async function batchRemoveUnwanted() {
     const unwantedResults = scanResults.filter(r => r.type === 'unwanted');
     
     if (unwantedResults.length === 0) {
-        showModal('ℹ️ No Archives', 'No archives with unwanted files to process.');
+        showModal('ℹ️ ' + {{ _('No Archives')|tojson }}, {{ _('No archives with unwanted files to process.')|tojson }});
         return;
     }
     
-    showConfirm('🧹 Batch Remove', `Remove unwanted files from ${unwantedResults.length} archives?`, async function() {
+    showConfirm('🧹 ' + {{ _('Batch Remove')|tojson }}, t({{ _('Archives to remove unwanted files from: {count}. Continue?')|tojson }}, {count: formatNumber(unwantedResults.length)}), async function() {
         // Initialize batch state
         batchState = {
             running: true,
@@ -1502,7 +1502,7 @@ async function batchRemoveUnwanted() {
         };
         
         // Show the progress modal
-        showBatchProgressModal('🧹 Removing Unwanted Files');
+        showBatchProgressModal('🧹 ' + {{ _('Removing Unwanted Files')|tojson }});
         
         // Process archives
         await processBatchRemove();
@@ -1562,16 +1562,16 @@ async function processBatchRemove() {
     
     // Show completion message
     if (batchState.cancelled) {
-        showModal('⚠️ Cancelled', 
-            'Batch operation cancelled.\n'
-            + `✅ Processed: ${formatNumber(batchState.current)} / ${formatNumber(batchState.total)}\n`
-            + `✅ Success: ${formatNumber(batchState.success)}\n`
-            + `❌ Failed: ${formatNumber(batchState.failed)}`);
+        showModal('⚠️ ' + {{ _('Cancelled')|tojson }}, 
+            {{ _('Batch operation cancelled.')|tojson }} + '\n'
+            + '✅ ' + t({{ _('Processed: {done} / {total}')|tojson }}, {done: formatNumber(batchState.current), total: formatNumber(batchState.total)}) + '\n'
+            + '✅ ' + t({{ _('Success: {count}')|tojson }}, {count: formatNumber(batchState.success)}) + '\n'
+            + '❌ ' + t({{ _('Failed: {count}')|tojson }}, {count: formatNumber(batchState.failed)}));
     } else {
-        showModal('✅ Batch Complete',
-            `Removed unwanted files from ${formatNumber(batchState.total)} archives:\n`
-            + `✅ Success: ${formatNumber(batchState.success)}\n`
-            + `❌ Failed: ${formatNumber(batchState.failed)}`);
+        showModal('✅ ' + {{ _('Batch Complete')|tojson }},
+            t({{ _('Archives cleaned of unwanted files: {count}')|tojson }}, {count: formatNumber(batchState.total)}) + '\n'
+            + '✅ ' + t({{ _('Success: {count}')|tojson }}, {count: formatNumber(batchState.success)}) + '\n'
+            + '❌ ' + t({{ _('Failed: {count}')|tojson }}, {count: formatNumber(batchState.failed)}));
     }
     
     // Update scan results - remove successful ones
@@ -1591,9 +1591,9 @@ function showBatchProgressModal(title) {
     document.getElementById('batchStatFailed').textContent = '0';
     document.getElementById('batchProgressBar').style.width = '0%';
     document.getElementById('batchProgressBar').textContent = '0%';
-    document.getElementById('batchCurrentFile').innerHTML = '<span>Current:</span> Starting...';
+    document.getElementById('batchCurrentFile').innerHTML = '<span>' + {{ _('Current:')|tojson }} + '</span> ' + {{ _('Starting...')|tojson }};
     document.getElementById('batchPauseIcon').textContent = '⏸️';
-    document.getElementById('batchPauseText').textContent = 'Pause';
+    document.getElementById('batchPauseText').textContent = {{ _('Pause')|tojson }};
     document.getElementById('batchProgressModal').classList.add('active');
 }
 
@@ -1611,7 +1611,7 @@ function updateBatchProgress(currentFilename) {
     document.getElementById('batchProgressBar').textContent = `${percent}%`;
     
     if (currentFilename) {
-        document.getElementById('batchCurrentFile').innerHTML = `<span>Current:</span> ${escapeHtml(currentFilename)}`;
+        document.getElementById('batchCurrentFile').innerHTML = '<span>' + {{ _('Current:')|tojson }} + '</span> ' + escapeHtml(currentFilename);
     }
 }
 
@@ -1620,19 +1620,19 @@ function toggleBatchPause() {
     
     if (batchState.paused) {
         document.getElementById('batchPauseIcon').textContent = '▶️';
-        document.getElementById('batchPauseText').textContent = 'Resume';
-        document.getElementById('batchCurrentFile').innerHTML = '<span>Status:</span> Paused...';
+        document.getElementById('batchPauseText').textContent = {{ _('Resume')|tojson }};
+        document.getElementById('batchCurrentFile').innerHTML = '<span>' + {{ _('Status:')|tojson }} + '</span> ' + {{ _('Paused...')|tojson }};
     } else {
         document.getElementById('batchPauseIcon').textContent = '⏸️';
-        document.getElementById('batchPauseText').textContent = 'Pause';
+        document.getElementById('batchPauseText').textContent = {{ _('Pause')|tojson }};
     }
 }
 
 function cancelBatchOperation() {
-    showConfirm('❌ Cancel Operation', 'Are you sure you want to cancel the batch operation?', function() {
+    showConfirm('❌ ' + {{ _('Cancel Operation')|tojson }}, {{ _('Are you sure you want to cancel the batch operation?')|tojson }}, function() {
         batchState.cancelled = true;
         batchState.paused = false;  // Unpause so the loop can exit
-        document.getElementById('batchCurrentFile').innerHTML = '<span>Status:</span> Cancelling...';
+        document.getElementById('batchCurrentFile').innerHTML = '<span>' + {{ _('Status:')|tojson }} + '</span> ' + {{ _('Cancelling...')|tojson }};
     });
 }
 
@@ -1640,18 +1640,18 @@ async function batchCreateM3U() {
     const multiFileResults = scanResults.filter(r => r.type === 'multi-file');
     
     if (multiFileResults.length === 0) {
-        showModal('ℹ️ No Archives', 'No multi-file archives to process.');
+        showModal('ℹ️ ' + {{ _('No Archives')|tojson }}, {{ _('No multi-file archives to process.')|tojson }});
         return;
     }
     
-    showConfirm('💿 Batch M3U', 
-        `Create M3U playlists for ${formatNumber(multiFileResults.length)} multi-file archives?\n\n`
-        + 'Each archive will be:\n'
-        + '• Extracted to its own folder\n'
-        + '• Have noload.txt added\n'
-        + '• Get an M3U playlist created\n'
+    showConfirm('💿 ' + {{ _('Batch M3U')|tojson }}, 
+        t({{ _('Multi-file archives to give M3U playlists: {count}')|tojson }}, {count: formatNumber(multiFileResults.length)}) + '\n\n'
+        + {{ _('Each archive will be:')|tojson }} + '\n'
+        + '• ' + {{ _('Extracted to its own folder')|tojson }} + '\n'
+        + '• ' + {{ _('Have noload.txt added')|tojson }} + '\n'
+        + '• ' + {{ _('Get an M3U playlist created')|tojson }} + '\n'
         + '• ' + {{ _('Have the original archive moved to the staging folder')|tojson }} + '\n\n'
-        + 'This may take a while for large archives.',
+        + {{ _('This may take a while for large archives.')|tojson }},
         async function() {
             // Initialize batch state
             batchState = {
@@ -1667,7 +1667,7 @@ async function batchCreateM3U() {
             };
             
             // Show the progress modal
-            showBatchProgressModal('💿 Creating M3U Playlists');
+            showBatchProgressModal('💿 ' + {{ _('Creating M3U Playlists')|tojson }});
             
             // Process archives
             await processBatchM3U();
@@ -1735,18 +1735,18 @@ async function processBatchM3U() {
     
     // Show completion message
     if (batchState.cancelled) {
-        showModal('⚠️ Cancelled', 
-            'Batch operation cancelled.\n'
-            + `✅ Processed: ${formatNumber(batchState.current)} / ${formatNumber(batchState.total)}\n`
-            + `✅ Success: ${formatNumber(batchState.success)}\n`
-            + `❌ Failed: ${formatNumber(batchState.failed)}\n`
-            + `📦 Archives moved to staging: ${formatNumber(movedCount)}`);
+        showModal('⚠️ ' + {{ _('Cancelled')|tojson }}, 
+            {{ _('Batch operation cancelled.')|tojson }} + '\n'
+            + '✅ ' + t({{ _('Processed: {done} / {total}')|tojson }}, {done: formatNumber(batchState.current), total: formatNumber(batchState.total)}) + '\n'
+            + '✅ ' + t({{ _('Success: {count}')|tojson }}, {count: formatNumber(batchState.success)}) + '\n'
+            + '❌ ' + t({{ _('Failed: {count}')|tojson }}, {count: formatNumber(batchState.failed)}) + '\n'
+            + '📦 ' + t({{ _('Archives moved to staging: {count}')|tojson }}, {count: formatNumber(movedCount)}));
     } else {
-        showModal('✅ Batch Complete',
-            `Created M3U playlists for ${formatNumber(batchState.total)} archives:\n`
-            + `✅ Success: ${formatNumber(batchState.success)}\n`
-            + `❌ Failed: ${formatNumber(batchState.failed)}\n`
-            + `📦 Archives moved to staging: ${formatNumber(movedCount)}`
+        showModal('✅ ' + {{ _('Batch Complete')|tojson }},
+            t({{ _('Archives given M3U playlists: {count}')|tojson }}, {count: formatNumber(batchState.total)}) + '\n'
+            + '✅ ' + t({{ _('Success: {count}')|tojson }}, {count: formatNumber(batchState.success)}) + '\n'
+            + '❌ ' + t({{ _('Failed: {count}')|tojson }}, {count: formatNumber(batchState.failed)}) + '\n'
+            + '📦 ' + t({{ _('Archives moved to staging: {count}')|tojson }}, {count: formatNumber(movedCount)})
             + (movedFolder ? '\n\n' + {{ _('Original archives moved to:')|tojson }} + '\n' + movedFolder : ''));
     }
     

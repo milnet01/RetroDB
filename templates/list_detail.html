@@ -444,22 +444,22 @@ async function addGameToList(gameId, btnEl) {
                 btnEl.classList.add('added');
                 btnEl.disabled = true;
             }
-            showNotification('Game added to list.', 'success');
+            showNotification({{ _('Game added to list.')|tojson }}, 'success');
             // Reload page to update the table
             setTimeout(() => location.reload(), 500);
         } else {
-            showNotification(data.error || 'Failed to add game.', 'error');
+            showNotification(data.error || {{ _('Failed to add game.')|tojson }}, 'error');
         }
     } catch (e) {
         console.error('Error adding game:', e);
-        showNotification('Error adding game to list.', 'error');
+        showNotification({{ _('Error adding game to list.')|tojson }}, 'error');
     }
 }
 
 function confirmRemoveGame(gameId, gameTitle) {
     showConfirm(
-        'Remove Game',
-        `Remove "${gameTitle}" from this list?`,
+        {{ _('Remove Game')|tojson }},
+        t({{ _('Remove "{title}" from this list?')|tojson }}, {title: gameTitle}),
         () => removeGameFromList(gameId)
     );
 }
@@ -470,7 +470,7 @@ async function removeGameFromList(gameId) {
         const data = await resp.json();
         if (data.success) {
             existingGameIds.delete(gameId);
-            showNotification('Game removed from list.', 'success');
+            showNotification({{ _('Game removed from list.')|tojson }}, 'success');
             // Remove row from table
             const row = document.querySelector(`tr[data-game-id="${gameId}"]`);
             if (row) row.remove();
@@ -490,11 +490,11 @@ async function removeGameFromList(gameId) {
                 if (emptyEl) emptyEl.style.display = '';
             }
         } else {
-            showNotification(data.error || 'Failed to remove game.', 'error');
+            showNotification(data.error || {{ _('Failed to remove game.')|tojson }}, 'error');
         }
     } catch (e) {
         console.error('Error removing game:', e);
-        showNotification('Error removing game.', 'error');
+        showNotification({{ _('Error removing game.')|tojson }}, 'error');
     }
 }
 

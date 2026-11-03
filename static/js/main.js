@@ -29,13 +29,13 @@ let _backToTopScrollHandler = null;
 let _lastErrorToastAt = 0;
 const _ERROR_TOAST_INTERVAL_MS = 5000;
 
-function _surfaceError(prefix, detail) {
+function _surfaceError(message) {
     if (typeof showNotification !== 'function') return;
     const now = Date.now();
     if (now - _lastErrorToastAt < _ERROR_TOAST_INTERVAL_MS) return;
     _lastErrorToastAt = now;
     try {
-        showNotification(`${prefix}: ${detail}`, 'error');
+        showNotification(message, 'error');
     } catch (_e) { /* swallow — never loop on a toast failure */ }
 }
 
@@ -44,20 +44,20 @@ window.addEventListener('error', function(event) {
     // useful detail — nothing actionable to surface, skip.
     const msg = event.message || '';
     if (!msg || msg === 'Script error.') return;
-    _surfaceError(t('Unexpected error'), msg);
+    _surfaceError(t('Unexpected error: {error}', {error: msg}));
 });
 
 window.addEventListener('unhandledrejection', function(event) {
     const r = event.reason;
     let detail;
     if (r instanceof Error) {
-        detail = r.message || r.name || 'unknown error';
+        detail = r.message || r.name || t('Unknown error');
     } else if (typeof r === 'string') {
         detail = r;
     } else {
         try { detail = JSON.stringify(r); } catch (_e) { detail = String(r); }
     }
-    _surfaceError(t('Unhandled rejection'), detail);
+    _surfaceError(t('Unhandled rejection: {error}', {error: detail}));
 });
 
 // =============================================================================

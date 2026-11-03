@@ -551,7 +551,7 @@ function selectLargest() {
             }
         });
     });
-    showNotification('Selected largest file in each group', 'info');
+    showNotification({{ _('Selected largest file in each group')|tojson }}, 'info');
 }
 
 async function deleteSelected() {
@@ -569,14 +569,13 @@ async function deleteSelected() {
     });
 
     if (deletions.length === 0) {
-        showNotification('No files selected for deletion', 'warning');
+        showNotification({{ _('No files selected for deletion')|tojson }}, 'warning');
         return;
     }
 
     showConfirm(
-        'Delete Duplicate Screenshots',
-        'Delete ' + formatNumber(deletions.length) + ' duplicate screenshot(s)?\n\n' +
-        'Files will be removed from disk and database references updated. This cannot be undone.',
+        {{ _('Delete Duplicate Screenshots')|tojson }},
+        t({{ _('Duplicate screenshots to delete: {count}\n\nFiles will be removed from disk and database references updated. This cannot be undone.')|tojson }}, {count: formatNumber(deletions.length)}),
         async function() {
             try {
                 var response = await fetch('/api/rom-tools/screenshot-dedup/delete', {
@@ -589,17 +588,17 @@ async function deleteSelected() {
 
                 if (data.success) {
                     showNotification(
-                        'Deleted ' + data.results.deleted + ' files, freed ' + formatBytes(data.results.freed_space) +
-                        ', updated ' + data.results.db_updated + ' game(s)',
+                        t({{ _('Files deleted: {deleted}. Space freed: {size}. Games updated: {updated}')|tojson }},
+                          {deleted: data.results.deleted, size: formatBytes(data.results.freed_space), updated: data.results.db_updated}),
                         'success'
                     );
                     // Re-scan to refresh results
                     startScan();
                 } else {
-                    showNotification(data.error || 'Failed to delete', 'error');
+                    showNotification(data.error || {{ _('Failed to delete')|tojson }}, 'error');
                 }
             } catch (error) {
-                showNotification('Failed to delete: ' + error.message, 'error');
+                showNotification(t({{ _('Failed to delete: {error}')|tojson }}, {error: error.message}), 'error');
             }
         }
     );

@@ -289,10 +289,10 @@ async function scanMultiDisc() {
             document.getElementById('stat-systems').textContent = formatNumber(data.scanned_systems ? data.scanned_systems.length : 0);
             document.getElementById('stat-games').textContent = formatNumber(multiDiscGames.length);
         } else {
-            showModal('❌ Error', data.error || 'Failed to scan');
+            showModal('❌ ' + {{ _('Error')|tojson }}, data.error || {{ _('Failed to scan')|tojson }});
         }
     } catch (error) {
-        showModal('❌ Error', error.message);
+        showModal('❌ ' + {{ _('Error')|tojson }}, error.message);
     }
     
     setTimeout(() => {
@@ -339,17 +339,10 @@ function renderMultiDiscTable(games) {
 async function organizeMultiDisc(index) {
     const game = multiDiscGames[index];
     
-    showConfirm(game.in_folder ? '📝 Create M3U' : '📁 Organize Multi-Disc', 
-        game.in_folder 
-            ? 'This will create an M3U playlist for the existing folder:\n'
-              + `• Folder: ${game.name}/\n`
-              + `• Create ${game.name}.m3u playlist\n`
-              + '• Add noload.txt if missing'
-            : 'This will:\n'
-              + `• Create folder: ${game.name}/\n`
-              + `• Move ${game.disc_count} disc files into the folder\n`
-              + '• Add noload.txt\n'
-              + `• Create ${game.name}.m3u playlist`,
+    showConfirm(game.in_folder ? '📝 ' + {{ _('Create M3U')|tojson }} : '📁 ' + {{ _('Organize Multi-Disc')|tojson }},
+        game.in_folder
+            ? t({{ _('This will create an M3U playlist for the existing folder:\n• Folder: {name}/\n• Create {name}.m3u playlist\n• Add noload.txt if missing')|tojson }}, {name: game.name})
+            : t({{ _('This will:\n• Create folder: {name}/\n• Move the disc files into the folder ({count})\n• Add noload.txt\n• Create {name}.m3u playlist')|tojson }}, {name: game.name, count: game.disc_count}),
         async function() {
             try {
                 const response = await fetch('/api/reports/organize-multidisc', {
@@ -366,16 +359,16 @@ async function organizeMultiDisc(index) {
                 const data = await response.json();
                 
                 if (data.success) {
-                    showModal('✅ Organized', `Created ${data.m3u_path}`);
+                    showModal('✅ ' + {{ _('Organized')|tojson }}, t({{ _('Created {path}')|tojson }}, {path: data.m3u_path}));
                     multiDiscGames.splice(index, 1);
                     document.getElementById('stat-games').textContent = formatNumber(multiDiscGames.length);
                     document.getElementById('organizeAllBtn').disabled = multiDiscGames.length === 0;
                     renderMultiDiscTable(multiDiscGames);
                 } else {
-                    showModal('❌ Error', data.error);
+                    showModal('❌ ' + {{ _('Error')|tojson }}, data.error);
                 }
             } catch (error) {
-                showModal('❌ Error', error.message);
+                showModal('❌ ' + {{ _('Error')|tojson }}, error.message);
             }
         });
 }
@@ -384,9 +377,8 @@ async function organizeMultiDisc(index) {
 async function organizeAllMultiDisc() {
     if (multiDiscGames.length === 0) return;
     
-    showConfirm('📁 Organize All', 
-        `Organize all ${formatNumber(multiDiscGames.length)} multi-disc games?\n\n`
-        + 'Each game will get its own folder with an M3U playlist.',
+    showConfirm('📁 ' + {{ _('Organize All')|tojson }},
+        t({{ _('Organize every multi-disc game ({count})?\n\nEach game will get its own folder with an M3U playlist.')|tojson }}, {count: formatNumber(multiDiscGames.length)}),
         async function() {
             let success = 0;
             let failed = 0;
@@ -412,7 +404,9 @@ async function organizeAllMultiDisc() {
                 }
             }
             
-            showModal('✅ Complete', `Organized ${success} games. ${failed > 0 ? `Failed: ${failed}` : ''}`);
+            showModal('✅ ' + {{ _('Complete')|tojson }}, failed > 0
+                ? t({{ _('Games organized: {count}. Failed: {failed}')|tojson }}, {count: success, failed: failed})
+                : t({{ _('Games organized: {count}')|tojson }}, {count: success}));
             multiDiscGames = [];
             document.getElementById('stat-games').textContent = formatNumber(0);
             document.getElementById('organizeAllBtn').disabled = true;

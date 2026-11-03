@@ -287,12 +287,12 @@ async function hltbApprove(id) {
         if (data.success) {
             pendingMatches = pendingMatches.filter(m => m.id !== id);
             hltbRenderPending();
-            showNotification('Match approved', 'success');
+            showNotification({{ _('Match approved')|tojson }}, 'success');
         } else {
-            showNotification(data.error || 'Failed to approve', 'error');
+            showNotification(data.error || {{ _('Failed to approve')|tojson }}, 'error');
         }
     } catch (err) {
-        showNotification('Approve failed', 'error');
+        showNotification({{ _('Approve failed')|tojson }}, 'error');
     }
 }
 
@@ -303,12 +303,12 @@ async function hltbReject(id) {
         if (data.success) {
             pendingMatches = pendingMatches.filter(m => m.id !== id);
             hltbRenderPending();
-            showNotification('Match rejected', 'info');
+            showNotification({{ _('Match rejected')|tojson }}, 'info');
         } else {
-            showNotification(data.error || 'Failed to reject', 'error');
+            showNotification(data.error || {{ _('Failed to reject')|tojson }}, 'error');
         }
     } catch (err) {
-        showNotification('Reject failed', 'error');
+        showNotification({{ _('Reject failed')|tojson }}, 'error');
     }
 }
 
@@ -316,8 +316,8 @@ function hltbApproveAll() {
     const visible = pendingMatches.filter(m => hltbInFilter(m, activeFilter));
     if (!visible.length) return;
     showConfirm(
-        'Approve all visible matches?',
-        `This will apply ${visible.length} HLTB pending match${visible.length === 1 ? '' : 'es'} to your games. Cannot be undone without a manual Clear on each game.`,
+        {{ _('Approve all visible matches?')|tojson }},
+        t({{ _('HLTB pending matches to apply to your games: {count}. Cannot be undone without a manual Clear on each game.')|tojson }}, {count: visible.length}),
         async () => {
             try {
                 const resp = await fetch('/api/hltb/pending/approve-all', {
@@ -327,13 +327,13 @@ function hltbApproveAll() {
                 });
                 const data = await resp.json();
                 if (data.success) {
-                    showNotification(`Approved ${data.applied} match${data.applied === 1 ? '' : 'es'}`, 'success');
+                    showNotification(t({{ _('Matches approved: {count}')|tojson }}, {count: data.applied}), 'success');
                     hltbLoadPending();
                 } else {
-                    showNotification(data.error || 'Bulk approve failed', 'error');
+                    showNotification(data.error || {{ _('Bulk approve failed')|tojson }}, 'error');
                 }
             } catch (err) {
-                showNotification('Bulk approve failed', 'error');
+                showNotification({{ _('Bulk approve failed')|tojson }}, 'error');
             }
         }
     );
@@ -344,12 +344,12 @@ function hltbRejectAll() {
     if (!visible.length) return;
     const stored = visible.filter(m => hltbInFilter(m, 'stored')).length;
     showConfirm(
-        'Reject all visible matches?',
+        {{ _('Reject all visible matches?')|tojson }},
         stored
             ? [REVIEW_TEXT.reject_stored.replace('{count}', stored),
                visible.length > stored ? REVIEW_TEXT.reject_others.replace('{count}', visible.length - stored) : '',
               ].join(' ').trim()
-            : `This will drop ${visible.length} queued HLTB match${visible.length === 1 ? '' : 'es'}. Nothing is written to your games; they keep what they have.`,
+            : t({{ _('Queued HLTB matches to drop: {count}. Nothing is written to your games; they keep what they have.')|tojson }}, {count: visible.length}),
         async () => {
             try {
                 const resp = await fetch('/api/hltb/pending/reject-all', {
@@ -359,13 +359,13 @@ function hltbRejectAll() {
                 });
                 const data = await resp.json();
                 if (data.success) {
-                    showNotification(`Rejected ${data.rejected} match${data.rejected === 1 ? '' : 'es'}`, 'info');
+                    showNotification(t({{ _('Matches rejected: {count}')|tojson }}, {count: data.rejected}), 'info');
                     hltbLoadPending();
                 } else {
-                    showNotification(data.error || 'Bulk reject failed', 'error');
+                    showNotification(data.error || {{ _('Bulk reject failed')|tojson }}, 'error');
                 }
             } catch (err) {
-                showNotification('Bulk reject failed', 'error');
+                showNotification({{ _('Bulk reject failed')|tojson }}, 'error');
             }
         }
     );

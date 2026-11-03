@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-03 17:22+0200\n"
+"POT-Creation-Date: 2026-11-03 17:48+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: pl\n"
@@ -134,7 +134,7 @@ msgstr "Opis gry"
 #: templates/base.html:1188 templates/compare_games.html:73
 #: templates/dashboard.html:390 templates/game_detail.html:350
 #: templates/local_trophy_detail.html:99 templates/psn_trophy_detail.html:94
-#: templates/psn_trophy_detail.html:258
+#: templates/psn_trophy_detail.html:258 templates/reports.html:1140
 #: templates/steam_achievement_game.html:178 templates/system_games.html:63
 #: templates/xbox_achievement_game.html:171
 msgid "Genre"
@@ -146,8 +146,9 @@ msgstr "Gatunek"
 #: templates/analytics.html:2428 templates/base.html:973
 #: templates/base.html:1174 templates/compare_games.html:70
 #: templates/game_detail.html:338 templates/local_trophy_detail.html:93
-#: templates/psn_trophy_detail.html:88 templates/steam_achievement_game.html:84
-#: templates/system_games.html:72 templates/xbox_achievement_game.html:73
+#: templates/psn_trophy_detail.html:88 templates/reports.html:1140
+#: templates/steam_achievement_game.html:84 templates/system_games.html:72
+#: templates/xbox_achievement_game.html:73
 msgid "Developer"
 msgstr "Deweloper"
 
@@ -158,8 +159,8 @@ msgstr "Deweloper"
 #: templates/base.html:1170 templates/compare_games.html:71
 #: templates/game_detail.html:326 templates/game_detail.html:822
 #: templates/local_trophy_detail.html:87 templates/psn_trophy_detail.html:82
-#: templates/steam_achievement_game.html:78 templates/system_games.html:69
-#: templates/xbox_achievement_game.html:67
+#: templates/reports.html:1140 templates/steam_achievement_game.html:78
+#: templates/system_games.html:69 templates/xbox_achievement_game.html:67
 msgid "Publisher"
 msgstr "Wydawca"
 
@@ -197,7 +198,7 @@ msgstr "Tryby gry"
 #: templates/_modals/edit_modal.html:85 templates/analytics.html:492
 #: templates/analytics.html:2428 templates/base.html:1161
 #: templates/compare_games.html:75 templates/game_detail.html:819
-#: templates/reports.html:444
+#: templates/reports.html:444 templates/reports.html:1140
 msgid "Region"
 msgstr "Region"
 
@@ -286,7 +287,7 @@ msgstr "Najpierw skonfiguruj dostawcę AI w Ustawienia > Pobieranie danych."
 msgid "Pick a system, or all systems."
 msgstr "Wybierz system lub wszystkie systemy."
 
-#: routes/ai_fill_bulk.py:115 services/js_i18n_strings.py:1011
+#: routes/ai_fill_bulk.py:115 services/js_i18n_strings.py:1019
 msgid "Turn on at least one field."
 msgstr "Włącz co najmniej jedno pole."
 
@@ -700,7 +701,8 @@ msgstr "Brak pól do zaktualizowania"
 
 #: routes/games.py:1197 routes/platform_import.py:250
 #: routes/platform_import.py:629 routes/platform_import.py:992
-#: routes/trophies.py:1903
+#: routes/trophies.py:1903 templates/game_imports.html:579
+#: templates/game_imports.html:842
 msgid "No games selected"
 msgstr "Nie wybrano żadnych gier"
 
@@ -822,7 +824,7 @@ msgstr "Ta gra ma już ścianki pudełka 3D."
 msgid "The faces could not be saved. Check the disk has space."
 msgstr "Nie udało się zapisać ścianek. Sprawdź, czy na dysku jest miejsce."
 
-#: routes/games_media.py:204 services/js_i18n_strings.py:983
+#: routes/games_media.py:204 services/js_i18n_strings.py:991
 msgid "The box file could not be imported."
 msgstr "Nie udało się zaimportować pliku pudełka."
 
@@ -984,7 +986,7 @@ msgstr "Brak obrazu do przetworzenia"
 msgid "Image file not found"
 msgstr "Nie znaleziono pliku obrazu"
 
-#: routes/museum.py:740 routes/museum.py:744 services/js_i18n_strings.py:592
+#: routes/museum.py:740 routes/museum.py:744 services/js_i18n_strings.py:599
 msgid "Background removal failed"
 msgstr "Nie udało się usunąć tła"
 
@@ -1242,7 +1244,8 @@ msgid "Invalid %(field)s: %(result)s"
 msgstr "Nieprawidłowe %(field)s: %(result)s"
 
 #: routes/settings.py:534 routes/settings.py:608 routes/settings.py:660
-#: routes/tools.py:291 services/js_i18n_strings.py:717
+#: routes/tools.py:291 services/js_i18n_strings.py:724
+#: templates/settings.html:1149 templates/settings.html:2742
 msgid "Failed to save settings"
 msgstr "Nie udało się zapisać ustawień"
 
@@ -1878,19 +1881,19 @@ msgstr "Piaskownica"
 msgid "Turn-Based"
 msgstr "Turowa"
 
-#: services/js_i18n_strings.py:551
+#: services/js_i18n_strings.py:555
 msgid "(Paused)"
 msgstr "(Wstrzymano)"
 
-#: services/js_i18n_strings.py:552
+#: services/js_i18n_strings.py:556
 msgid "(none)"
 msgstr "(brak)"
 
-#: services/js_i18n_strings.py:553
+#: services/js_i18n_strings.py:557
 msgid "(not set)"
 msgstr "(nie ustawiono)"
 
-#: services/js_i18n_strings.py:554 templates/_bulk_edit_modal.html:25
+#: services/js_i18n_strings.py:558 templates/_bulk_edit_modal.html:25
 #: templates/_bulk_edit_modal.html:38 templates/_bulk_edit_modal.html:83
 #: templates/_bulk_edit_modal.html:95 templates/_bulk_edit_modal.html:120
 #: templates/_bulk_edit_modal.html:137 templates/_bulk_edit_modal.html:153
@@ -1898,121 +1901,135 @@ msgstr "(nie ustawiono)"
 msgid "-- Don't change --"
 msgstr "-- Nie zmieniaj --"
 
-#: services/js_i18n_strings.py:555
+#: services/js_i18n_strings.py:559
 msgid "-- Select log file --"
 msgstr "-- Wybierz plik dziennika --"
 
-#: services/js_i18n_strings.py:556
+#: services/js_i18n_strings.py:560
 #, python-brace-format
 msgid "... and {n} more"
 msgstr "... i {n} więcej"
 
-#: services/js_i18n_strings.py:557 templates/_bulk_edit_modal.html:30
+#: services/js_i18n_strings.py:561 templates/_bulk_edit_modal.html:30
 #: templates/base.html:1050
 msgid "100%"
 msgstr "100%"
 
-#: services/js_i18n_strings.py:558
+#: services/js_i18n_strings.py:562
 msgid "3D box imported."
 msgstr "Zaimportowano pudełko 3D."
 
-#: services/js_i18n_strings.py:559
+#: services/js_i18n_strings.py:563
 msgid "3D box removed."
 msgstr "Usunięto pudełko 3D."
 
-#: services/js_i18n_strings.py:560
+#: services/js_i18n_strings.py:564
 msgid ""
 "A cheat that is on pauses RetroAchievements hardcore mode for that "
 "session."
 msgstr "Włączony kod wstrzymuje tryb hardcore RetroAchievements na czas tej sesji."
 
-#: services/js_i18n_strings.py:561 templates/_settings_tabs/account.html:296
+#: services/js_i18n_strings.py:565 templates/game_detail.html:4533
+#, fuzzy
+msgid "AI fill failed"
+msgstr "Anulowanie nie powiodło się"
+
+#: services/js_i18n_strings.py:566 templates/game_detail.html:4537
+#, fuzzy, python-brace-format
+msgid "AI fill request failed: {error}"
+msgstr "Wykrywanie nie powiodło się: {error}"
+
+#: services/js_i18n_strings.py:567 templates/game_detail.html:4530
+msgid "AI found no missing fields to fill"
+msgstr ""
+
+#: services/js_i18n_strings.py:568 templates/_settings_tabs/account.html:296
 #: templates/archive_scanner.html:726 templates/multi_disc_organizer.html:217
 #: templates/reports.html:369 templates/reports.html:450
 msgid "Actions"
 msgstr "Działania"
 
-#: services/js_i18n_strings.py:562
+#: services/js_i18n_strings.py:569
 msgid "Added to queue - will start when current operation completes"
 msgstr "Dodano do kolejki — rozpocznie się po zakończeniu bieżącej operacji"
 
-#: services/js_i18n_strings.py:563
+#: services/js_i18n_strings.py:570
 msgid "All ROMs accounted for!"
 msgstr "Wszystkie ROM-y są na miejscu!"
 
-#: services/js_i18n_strings.py:564 templates/logs.html:764
+#: services/js_i18n_strings.py:571 templates/logs.html:764
 msgid "All Sources"
 msgstr "Wszystkie źródła"
 
-#: services/js_i18n_strings.py:565 templates/all_games.html:42
+#: services/js_i18n_strings.py:572 templates/all_games.html:42
 #: templates/reports.html:328 templates/reports.html:407
 #: templates/reports.html:480
 msgid "All Systems"
 msgstr "Wszystkie systemy"
 
-#: services/js_i18n_strings.py:566
+#: services/js_i18n_strings.py:573
 msgid "Already Syncing"
 msgstr "Synchronizacja już trwa"
 
-#: services/js_i18n_strings.py:567
+#: services/js_i18n_strings.py:574
 msgid "Always on while cheats are on"
 msgstr "Zawsze włączone, gdy kody są włączone"
 
-#: services/js_i18n_strings.py:568
+#: services/js_i18n_strings.py:575
 msgid "An update is already being downloaded."
 msgstr "Aktualizacja jest już pobierana."
 
-#: services/js_i18n_strings.py:569
+#: services/js_i18n_strings.py:576
 #, python-brace-format
 msgid "Applied when you press Play, in the {emulator} settings for this game."
 msgstr "Stosowane po naciśnięciu Graj, w ustawieniach {emulator} dla tej gry."
 
-#: services/js_i18n_strings.py:570
+#: services/js_i18n_strings.py:577
 #, python-brace-format
 msgid "Applied {n} update(s)."
 msgstr "Zastosowano aktualizacje: {n}."
 
-#: services/js_i18n_strings.py:571 templates/_bulk_edit_modal.html:193
+#: services/js_i18n_strings.py:578 templates/_bulk_edit_modal.html:193
 msgid "Apply Changes"
 msgstr "Zastosuj zmiany"
 
-#: services/js_i18n_strings.py:572
+#: services/js_i18n_strings.py:579
 msgid "Apply Normalization"
 msgstr "Zastosuj normalizację"
 
-#: services/js_i18n_strings.py:573
+#: services/js_i18n_strings.py:580
 #, python-brace-format
 msgid "Apply failed: {error}"
 msgstr "Nie udało się zastosować: {error}"
 
-#: services/js_i18n_strings.py:574
+#: services/js_i18n_strings.py:581
 #, python-brace-format
 msgid "Apply {n} Selected"
 msgstr "Zastosuj {n} wybranych"
 
-#: services/js_i18n_strings.py:575
+#: services/js_i18n_strings.py:582
 #, python-brace-format
 msgid "Apply {n} normalization rule?"
 msgstr "Zastosować {n} regułę normalizacji?"
 
-#: services/js_i18n_strings.py:576
+#: services/js_i18n_strings.py:583
 #, python-brace-format
 msgid "Apply {n} normalization rules?"
 msgstr "Zastosować {n} reguł normalizacji?"
 
-#: services/js_i18n_strings.py:577
+#: services/js_i18n_strings.py:584
 msgid "Applying Metadata"
 msgstr "Stosowanie metadanych"
 
-#: services/js_i18n_strings.py:578
+#: services/js_i18n_strings.py:585
 msgid "Applying..."
 msgstr "Stosowanie..."
 
-#: services/js_i18n_strings.py:579
+#: services/js_i18n_strings.py:586
 msgid "Applying…"
 msgstr "Stosowanie…"
 
-#: services/js_i18n_strings.py:580
+#: services/js_i18n_strings.py:587
 msgid ""
 "Are you sure you want to cancel the bulk scrape?\n"
 "\n"
@@ -2026,16 +2043,16 @@ msgstr ""
 "anulowanie zacznie obowiązywać — powiadomienie o postępie będzie w tym "
 "czasie nadal aktualizowane."
 
-#: services/js_i18n_strings.py:581
+#: services/js_i18n_strings.py:588
 msgid "Are you sure you want to cancel?"
 msgstr "Czy na pewno chcesz anulować?"
 
-#: services/js_i18n_strings.py:582
+#: services/js_i18n_strings.py:589 templates/settings.html:4925
 #, python-brace-format
 msgid "Are you sure you want to delete \"{filename}\"?"
 msgstr "Czy na pewno chcesz usunąć „{filename}”?"
 
-#: services/js_i18n_strings.py:583
+#: services/js_i18n_strings.py:590
 msgid ""
 "Are you sure you want to reset all metadata for this game? This will "
 "delete boxart and screenshots."
@@ -2043,11 +2060,11 @@ msgstr ""
 "Czy na pewno chcesz zresetować wszystkie metadane tej gry? Spowoduje to "
 "usunięcie okładki i zrzutów ekranu."
 
-#: services/js_i18n_strings.py:584
+#: services/js_i18n_strings.py:591
 msgid "Are you sure you want to restart the server?"
 msgstr "Czy na pewno chcesz zrestartować serwer?"
 
-#: services/js_i18n_strings.py:585
+#: services/js_i18n_strings.py:592
 msgid ""
 "Are you sure you want to shut down the server? You will need to start it "
 "again manually."
@@ -2055,61 +2072,61 @@ msgstr ""
 "Czy na pewno chcesz wyłączyć serwer? Trzeba będzie uruchomić go ponownie "
 "ręcznie."
 
-#: services/js_i18n_strings.py:586 templates/settings.html:42
+#: services/js_i18n_strings.py:593 templates/settings.html:42
 msgid "Are you sure?"
 msgstr "Czy na pewno?"
 
-#: services/js_i18n_strings.py:587
+#: services/js_i18n_strings.py:594
 msgid "As the core sets it"
 msgstr "Tak, jak ustawia rdzeń"
 
-#: services/js_i18n_strings.py:588
+#: services/js_i18n_strings.py:595
 msgid "Asking AI…"
 msgstr "Pytanie AI…"
 
-#: services/js_i18n_strings.py:589
+#: services/js_i18n_strings.py:596
 msgid "Asking the AI. This can take up to a minute."
 msgstr "Pytanie AI. To może potrwać do minuty."
 
-#: services/js_i18n_strings.py:590
+#: services/js_i18n_strings.py:597
 msgid "Aspect ratio"
 msgstr "Proporcje obrazu"
 
-#: services/js_i18n_strings.py:591
+#: services/js_i18n_strings.py:598
 msgid "BIOS"
 msgstr "BIOS"
 
-#: services/js_i18n_strings.py:593
+#: services/js_i18n_strings.py:600
 msgid "Background removed"
 msgstr "Tło usunięte"
 
-#: services/js_i18n_strings.py:594
+#: services/js_i18n_strings.py:601
 msgid "Bulk fetch failed"
 msgstr "Masowe pobieranie nie powiodło się"
 
-#: services/js_i18n_strings.py:595
+#: services/js_i18n_strings.py:602
 msgid "Bulk fetch request failed"
 msgstr "Żądanie masowego pobierania nie powiodło się"
 
-#: services/js_i18n_strings.py:596
+#: services/js_i18n_strings.py:603
 msgid "Bulk scraping complete!"
 msgstr "Masowe pobieranie danych zakończone!"
 
-#: services/js_i18n_strings.py:597
+#: services/js_i18n_strings.py:604
 msgid "CLZ Imports"
 msgstr "Importy CLZ"
 
-#: services/js_i18n_strings.py:598
+#: services/js_i18n_strings.py:605
 msgid "CRT screen"
 msgstr "Ekran CRT"
 
-#: services/js_i18n_strings.py:599 templates/game_detail.html:286
+#: services/js_i18n_strings.py:606 templates/game_detail.html:286
 msgid "Can be completed with playable performance and no game-breaking glitches."
 msgstr ""
 "Można ją ukończyć przy grywalnej wydajności i bez błędów "
 "uniemożliwiających grę."
 
-#: services/js_i18n_strings.py:600 templates/_bulk_edit_modal.html:191
+#: services/js_i18n_strings.py:607 templates/_bulk_edit_modal.html:191
 #: templates/_bulk_scrape_modal.html:49 templates/_modals/edit_modal.html:12
 #: templates/_modals/rename_modal.html:19
 #: templates/_settings_tabs/account.html:73
@@ -2130,86 +2147,87 @@ msgstr ""
 msgid "Cancel"
 msgstr "Anuluj"
 
-#: services/js_i18n_strings.py:601
+#: services/js_i18n_strings.py:608
 msgid "Cancel Bulk Scrape"
 msgstr "Anuluj masowe pobieranie danych"
 
-#: services/js_i18n_strings.py:602
+#: services/js_i18n_strings.py:609
 msgid "Cancel failed"
 msgstr "Anulowanie nie powiodło się"
 
-#: services/js_i18n_strings.py:603
+#: services/js_i18n_strings.py:610
 msgid "Cancel request failed"
 msgstr "Żądanie anulowania nie powiodło się"
 
-#: services/js_i18n_strings.py:604
+#: services/js_i18n_strings.py:611
 msgid "Cancellation requested"
 msgstr "Zażądano anulowania"
 
-#: services/js_i18n_strings.py:605
+#: services/js_i18n_strings.py:612 templates/archive_scanner.html:1565
+#: templates/archive_scanner.html:1738
 msgid "Cancelled"
 msgstr "Anulowano"
 
-#: services/js_i18n_strings.py:606
+#: services/js_i18n_strings.py:613
 msgid "Cancelled by user"
 msgstr "Anulowano przez użytkownika"
 
-#: services/js_i18n_strings.py:607
+#: services/js_i18n_strings.py:614
 msgid "Cheat list changed."
 msgstr "Zmieniono listę kodów."
 
-#: services/js_i18n_strings.py:608
+#: services/js_i18n_strings.py:615
 msgid "Cheats saved."
 msgstr "Zapisano kody."
 
-#: services/js_i18n_strings.py:609
+#: services/js_i18n_strings.py:616
 msgid "Checking RetroAchievements…"
 msgstr "Sprawdzanie RetroAchievements…"
 
-#: services/js_i18n_strings.py:610
+#: services/js_i18n_strings.py:617
 msgid "Clean Missing ROMs"
 msgstr "Wyczyść brakujące ROM-y"
 
-#: services/js_i18n_strings.py:611
+#: services/js_i18n_strings.py:618
 msgid "Clear CLZ Imports"
 msgstr "Wyczyść importy CLZ"
 
-#: services/js_i18n_strings.py:612
+#: services/js_i18n_strings.py:619 templates/game_detail.html:5795
 msgid "Clear HLTB data for this game?"
 msgstr "Wyczyścić dane HLTB dla tej gry?"
 
-#: services/js_i18n_strings.py:613 templates/achievements_system.html:168
+#: services/js_i18n_strings.py:620 templates/achievements_system.html:168
 msgid "Clear RA Data"
 msgstr "Wyczyść dane RA"
 
-#: services/js_i18n_strings.py:614 templates/_macros/ra_tools.html:28
-#, fuzzy, python-brace-format
+#: services/js_i18n_strings.py:621 templates/_macros/ra_tools.html:28
+#, fuzzy
 msgid "Clear RA Data for All Systems"
 msgstr "Wyczyszczono dane RA dla {n} gier"
 
-#: services/js_i18n_strings.py:615
+#: services/js_i18n_strings.py:622 templates/achievements_system.html:529
 msgid "Clear RetroAchievements Data"
 msgstr "Wyczyść dane RetroAchievements"
 
-#: services/js_i18n_strings.py:616
+#: services/js_i18n_strings.py:623
 #, python-brace-format
 msgid "Cleared RA data for {count} games in {system}"
 msgstr "Wyczyszczono dane RA dla {count} gier w systemie {system}"
 
-#: services/js_i18n_strings.py:617
+#: services/js_i18n_strings.py:624
 #, python-brace-format
 msgid "Cleared RA data for {n} games"
 msgstr "Wyczyszczono dane RA dla {n} gier"
 
-#: services/js_i18n_strings.py:618
+#: services/js_i18n_strings.py:625
 msgid "Clearing..."
 msgstr "Czyszczenie..."
 
-#: services/js_i18n_strings.py:619
+#: services/js_i18n_strings.py:626
 msgid "Click again to remove"
 msgstr "Kliknij ponownie, aby usunąć"
 
-#: services/js_i18n_strings.py:620 templates/_bulk_edit_modal.html:8
+#: services/js_i18n_strings.py:627 templates/_bulk_edit_modal.html:8
 #: templates/_bulk_scrape_modal.html:8
 #: templates/_modals/boxart_zoom_modal.html:5
 #: templates/_modals/manual_reader_modal.html:11
@@ -2223,43 +2241,43 @@ msgstr "Kliknij ponownie, aby usunąć"
 msgid "Close"
 msgstr "Zamknij"
 
-#: services/js_i18n_strings.py:621
+#: services/js_i18n_strings.py:628
 msgid "Close keyboard shortcuts"
 msgstr "Zamknij skróty klawiszowe"
 
-#: services/js_i18n_strings.py:622
+#: services/js_i18n_strings.py:629
 msgid "Close modal / cancel"
 msgstr "Zamknij okno / anuluj"
 
-#: services/js_i18n_strings.py:623 templates/dashboard.html:188
-#: templates/setup.html:20
+#: services/js_i18n_strings.py:630 templates/dashboard.html:188
+#: templates/multi_disc_organizer.html:407 templates/setup.html:20
 msgid "Complete"
 msgstr "Ukończono"
 
-#: services/js_i18n_strings.py:624
+#: services/js_i18n_strings.py:631
 msgid "Complete!"
 msgstr "Ukończono!"
 
-#: services/js_i18n_strings.py:625 templates/_bulk_edit_modal.html:29
+#: services/js_i18n_strings.py:632 templates/_bulk_edit_modal.html:29
 #: templates/analytics.html:1664 templates/base.html:1049
 #: templates/dashboard.html:506 templates/game_detail.html:307
 msgid "Completed"
 msgstr "Ukończono"
 
-#: services/js_i18n_strings.py:626 templates/_bulk_edit_modal.html:23
+#: services/js_i18n_strings.py:633 templates/_bulk_edit_modal.html:23
 #: templates/analytics.html:137 templates/base.html:1044
 msgid "Completion Status"
 msgstr "Status ukończenia"
 
-#: services/js_i18n_strings.py:627 templates/game_detail.html:303
+#: services/js_i18n_strings.py:634 templates/game_detail.html:303
 msgid "Completion status"
 msgstr "Status ukończenia"
 
-#: services/js_i18n_strings.py:628
+#: services/js_i18n_strings.py:635
 msgid "Completion status updated"
 msgstr "Zaktualizowano status ukończenia"
 
-#: services/js_i18n_strings.py:629 templates/achievement_game.html:172
+#: services/js_i18n_strings.py:636 templates/achievement_game.html:172
 #: templates/achievement_game.html:197 templates/achievement_game.html:211
 #: templates/base.html:1086 templates/game_detail.html:621
 #: templates/game_detail.html:647 templates/game_detail.html:661
@@ -2272,58 +2290,58 @@ msgstr "Zaktualizowano status ukończenia"
 msgid "Completionist"
 msgstr "Kompletacjonista"
 
-#: services/js_i18n_strings.py:630 templates/settings.html:41
+#: services/js_i18n_strings.py:637 templates/settings.html:41
 msgid "Confirm Action"
 msgstr "Potwierdź czynność"
 
-#: services/js_i18n_strings.py:631
+#: services/js_i18n_strings.py:638
 msgid "Confirm Bulk Edit"
 msgstr "Potwierdź masową edycję"
 
-#: services/js_i18n_strings.py:632
+#: services/js_i18n_strings.py:639
 msgid "Content generated successfully"
 msgstr "Zawartość wygenerowana pomyślnie"
 
-#: services/js_i18n_strings.py:633
+#: services/js_i18n_strings.py:640
 msgid "Controller"
 msgstr "Kontroler"
 
-#: services/js_i18n_strings.py:634
+#: services/js_i18n_strings.py:641
 msgid "Controller image saved"
 msgstr "Obraz kontrolera zapisany"
 
-#: services/js_i18n_strings.py:635
+#: services/js_i18n_strings.py:642
 msgid "Controller image uploaded"
 msgstr "Obraz kontrolera przesłany"
 
-#: services/js_i18n_strings.py:636
+#: services/js_i18n_strings.py:643
 #, python-brace-format
 msgid "Copied {copied} files; {unchanged} were already there; {skipped} skipped."
 msgstr ""
 "Skopiowano plików: {copied}; już istniało: {unchanged}; pominięto: "
 "{skipped}."
 
-#: services/js_i18n_strings.py:637
+#: services/js_i18n_strings.py:644
 msgid "Core"
 msgstr "Rdzeń"
 
-#: services/js_i18n_strings.py:638
+#: services/js_i18n_strings.py:645
 msgid "Could not apply metadata."
 msgstr "Nie można zastosować metadanych."
 
-#: services/js_i18n_strings.py:639
+#: services/js_i18n_strings.py:646
 msgid "Could not change the cheat list."
 msgstr "Nie udało się zmienić listy kodów."
 
-#: services/js_i18n_strings.py:640
+#: services/js_i18n_strings.py:647
 msgid "Could not check for updates."
 msgstr "Nie udało się sprawdzić aktualizacji."
 
-#: services/js_i18n_strings.py:641
+#: services/js_i18n_strings.py:648
 msgid "Could not count the games."
 msgstr "Nie udało się policzyć gier."
 
-#: services/js_i18n_strings.py:642
+#: services/js_i18n_strings.py:649
 #, python-brace-format
 msgid ""
 "Could not download the {system} core. Check the internet connection and "
@@ -2332,415 +2350,462 @@ msgstr ""
 "Nie można pobrać rdzenia dla systemu {system}. Sprawdź połączenie z "
 "internetem i spróbuj ponownie."
 
-#: services/js_i18n_strings.py:643
+#: services/js_i18n_strings.py:650
 msgid "Could not link these versions."
 msgstr "Nie udało się połączyć tych wersji."
 
-#: services/js_i18n_strings.py:644
+#: services/js_i18n_strings.py:651
 msgid "Could not load suggestions."
 msgstr "Nie udało się wczytać sugestii."
 
-#: services/js_i18n_strings.py:645
+#: services/js_i18n_strings.py:652
 msgid "Could not open this manual. Use \"Open PDF in a new tab\" instead."
 msgstr ""
 "Nie udało się otworzyć tej instrukcji. Użyj zamiast tego „Otwórz PDF w "
 "nowej karcie”."
 
-#: services/js_i18n_strings.py:646
+#: services/js_i18n_strings.py:653
 msgid "Could not read the run status."
 msgstr "Nie udało się odczytać stanu wyszukiwania."
 
-#: services/js_i18n_strings.py:647
+#: services/js_i18n_strings.py:654
 msgid "Could not reconnect to server. Please refresh manually."
 msgstr "Nie udało się ponownie połączyć z serwerem. Odśwież stronę ręcznie."
 
-#: services/js_i18n_strings.py:648
+#: services/js_i18n_strings.py:655
 msgid "Could not save that setting."
 msgstr "Nie udało się zapisać tego ustawienia."
 
-#: services/js_i18n_strings.py:649
+#: services/js_i18n_strings.py:656
 msgid "Could not save that."
 msgstr "Nie udało się zapisać."
 
-#: services/js_i18n_strings.py:650
+#: services/js_i18n_strings.py:657
 msgid "Could not save the cheats."
 msgstr "Nie udało się zapisać kodów."
 
-#: services/js_i18n_strings.py:651
+#: services/js_i18n_strings.py:658
 msgid "Could not show this page of the manual."
 msgstr "Nie udało się wyświetlić tej strony instrukcji."
 
-#: services/js_i18n_strings.py:652
+#: services/js_i18n_strings.py:659
 msgid "Could not start the run."
 msgstr "Nie udało się rozpocząć wyszukiwania."
 
-#: services/js_i18n_strings.py:653
+#: services/js_i18n_strings.py:660
 msgid "Could not stop the run."
 msgstr "Nie udało się zatrzymać wyszukiwania."
 
-#: services/js_i18n_strings.py:654
+#: services/js_i18n_strings.py:661
 msgid "Could not stop the running instance."
 msgstr "Nie udało się zatrzymać uruchomionej instancji."
 
-#: services/js_i18n_strings.py:655
+#: services/js_i18n_strings.py:662
 msgid "Could not unlink this version."
 msgstr "Nie udało się odłączyć tej wersji."
 
-#: services/js_i18n_strings.py:656
+#: services/js_i18n_strings.py:663
 msgid "Could not write the summary."
 msgstr "Nie udało się napisać podsumowania."
 
-#: services/js_i18n_strings.py:657
+#: services/js_i18n_strings.py:664
 #, python-brace-format
 msgid "Critic Score ({count} reviews)"
 msgstr "Ocena krytyków (recenzje: {count})"
 
-#: services/js_i18n_strings.py:658
+#: services/js_i18n_strings.py:665
 msgid "Currently set"
 msgstr "Obecnie ustawione"
 
-#: services/js_i18n_strings.py:659
+#: services/js_i18n_strings.py:666
 #, python-brace-format
 msgid "Default emulator for {system}"
 msgstr "Domyślny emulator dla {system}"
 
-#: services/js_i18n_strings.py:660
+#: services/js_i18n_strings.py:667 templates/settings.html:4925
 msgid "Delete Log File"
 msgstr "Usuń plik dziennika"
 
-#: services/js_i18n_strings.py:661
+#: services/js_i18n_strings.py:668
 #, python-brace-format
 msgid "Detect failed: {error}"
 msgstr "Wykrywanie nie powiodło się: {error}"
 
-#: services/js_i18n_strings.py:662
+#: services/js_i18n_strings.py:669
 msgid "Detected path"
 msgstr "Wykryta ścieżka"
 
-#: services/js_i18n_strings.py:663
+#: services/js_i18n_strings.py:670
 msgid "Detecting…"
 msgstr "Wykrywanie…"
 
-#: services/js_i18n_strings.py:664 templates/game_detail.html:290
+#: services/js_i18n_strings.py:671 templates/game_detail.html:290
 msgid "Does not start, or crashes the emulator."
 msgstr "Nie uruchamia się lub zawiesza emulator."
 
-#: services/js_i18n_strings.py:665 templates/_bulk_scrape_modal.html:69
+#: services/js_i18n_strings.py:672 templates/_bulk_scrape_modal.html:69
 #: templates/all_games.html:228 templates/psn_trophies.html:247
 #: templates/psn_trophies.html:307 templates/reports.html:525
 #: templates/system_games.html:208
 msgid "Done"
 msgstr "Gotowe"
 
-#: services/js_i18n_strings.py:666
+#: services/js_i18n_strings.py:673
 msgid "Done."
 msgstr "Gotowe."
 
-#: services/js_i18n_strings.py:667 templates/logs.html:734
+#: services/js_i18n_strings.py:674 templates/logs.html:734
 msgid "Download"
 msgstr "Pobierz"
 
-#: services/js_i18n_strings.py:668
+#: services/js_i18n_strings.py:675
 msgid "Download again"
 msgstr "Pobierz ponownie"
 
-#: services/js_i18n_strings.py:669
+#: services/js_i18n_strings.py:676
 msgid "Download the update first."
 msgstr "Najpierw pobierz aktualizację."
 
-#: services/js_i18n_strings.py:670
+#: services/js_i18n_strings.py:677
 #, python-brace-format
 msgid "Downloaded {date}, {n} files"
 msgstr "Pobrano {date}, plików: {n}"
 
-#: services/js_i18n_strings.py:671
+#: services/js_i18n_strings.py:678
 msgid "Downloading 3D box art…"
 msgstr "Pobieranie okładki 3D…"
 
-#: services/js_i18n_strings.py:672
+#: services/js_i18n_strings.py:679
 msgid "Downloading box art…"
 msgstr "Pobieranie okładki…"
 
-#: services/js_i18n_strings.py:673
+#: services/js_i18n_strings.py:680
 msgid "Downloading fan art…"
 msgstr "Pobieranie fanartu…"
 
-#: services/js_i18n_strings.py:674
+#: services/js_i18n_strings.py:681
 msgid "Downloading logo…"
 msgstr "Pobieranie logo…"
 
-#: services/js_i18n_strings.py:675
+#: services/js_i18n_strings.py:682
 msgid "Downloading manual…"
 msgstr "Pobieranie instrukcji…"
 
-#: services/js_i18n_strings.py:676
+#: services/js_i18n_strings.py:683
 msgid "Downloading media…"
 msgstr "Pobieranie multimediów…"
 
-#: services/js_i18n_strings.py:677
+#: services/js_i18n_strings.py:684
 msgid "Downloading screenshots…"
 msgstr "Pobieranie zrzutów ekranu…"
 
-#: services/js_i18n_strings.py:678
+#: services/js_i18n_strings.py:685
 msgid "Downloading the back of the box…"
 msgstr "Pobieranie tyłu pudełka…"
 
-#: services/js_i18n_strings.py:679
+#: services/js_i18n_strings.py:686
 #, python-brace-format
 msgid "Downloading the {system} core…"
 msgstr "Pobieranie rdzenia dla systemu {system}…"
 
-#: services/js_i18n_strings.py:680
+#: services/js_i18n_strings.py:687
 msgid "Downloading video…"
 msgstr "Pobieranie wideo…"
 
-#: services/js_i18n_strings.py:681
+#: services/js_i18n_strings.py:688
 #, python-brace-format
 msgid "Downloading {core} ({done} of {total})… {percent}%"
 msgstr "Pobieranie {core} ({done} z {total})… {percent}%"
 
-#: services/js_i18n_strings.py:682
+#: services/js_i18n_strings.py:689
 #, python-brace-format
 msgid "Downloading {item}… {percent}%"
 msgstr "Pobieranie {item}… {percent}%"
 
-#: services/js_i18n_strings.py:683
+#: services/js_i18n_strings.py:690
 #, python-brace-format
 msgid "Downloading {item}… {size}"
 msgstr "Pobieranie {item}… {size}"
 
-#: services/js_i18n_strings.py:684
+#: services/js_i18n_strings.py:691
 msgid "DuckStation cheats"
 msgstr "Kody DuckStation"
 
-#: services/js_i18n_strings.py:685
+#: services/js_i18n_strings.py:692
 msgid "DuckStation ignores cheats in hardcore mode."
 msgstr "DuckStation pomija kody w trybie hardcore."
 
-#: services/js_i18n_strings.py:686 templates/_settings_tabs/account.html:341
+#: services/js_i18n_strings.py:693 templates/_settings_tabs/account.html:341
 #: templates/base.html:1005 templates/game_detail.html:135
 #: templates/wishlist.html:641
 msgid "Edit"
 msgstr "Edytuj"
 
-#: services/js_i18n_strings.py:687
+#: services/js_i18n_strings.py:694
 msgid "Edit game"
 msgstr "Edytuj grę"
 
-#: services/js_i18n_strings.py:688
+#: services/js_i18n_strings.py:695
 #, python-brace-format
 msgid "Edit: {title}"
 msgstr "Edytuj: {title}"
 
-#: services/js_i18n_strings.py:689
+#: services/js_i18n_strings.py:696
 msgid "Emulator"
 msgstr "Emulator"
 
-#: services/js_i18n_strings.py:690
+#: services/js_i18n_strings.py:697
 msgid "Enter one folder path."
 msgstr "Wpisz jedną ścieżkę folderu."
 
-#: services/js_i18n_strings.py:691
+#: services/js_i18n_strings.py:698 templates/archive_scanner.html:1163
+#: templates/archive_scanner.html:1167 templates/archive_scanner.html:1398
+#: templates/archive_scanner.html:1401 templates/archive_scanner.html:1423
+#: templates/archive_scanner.html:1426 templates/archive_scanner.html:1474
+#: templates/archive_scanner.html:1477 templates/chd_converter.html:346
+#: templates/chd_converter.html:350 templates/chd_converter.html:354
+#: templates/chd_verify.html:311 templates/chd_verify.html:315
+#: templates/chd_verify.html:319 templates/duplicate_finder.html:559
+#: templates/duplicate_finder.html:562 templates/game_detail.html:5164
+#: templates/game_detail.html:5168 templates/local_trophy_detail.html:418
+#: templates/local_trophy_detail.html:443
+#: templates/multi_disc_organizer.html:292
+#: templates/multi_disc_organizer.html:295
+#: templates/multi_disc_organizer.html:368
+#: templates/multi_disc_organizer.html:371 templates/reports.html:1123
+#: templates/reports.html:1126 templates/reports.html:1192
+#: templates/reports.html:1195 templates/rom_tools_settings.html:578
+#: templates/rom_tools_settings.html:581 templates/settings.html:2922
+#: templates/settings.html:2926 templates/settings.html:2945
+#: templates/settings.html:2949 templates/settings.html:3542
+#: templates/settings.html:3546 templates/settings.html:3614
+#: templates/settings.html:3618 templates/settings.html:3649
+#: templates/settings.html:3653 templates/settings.html:3679
+#: templates/settings.html:3683 templates/settings.html:4185
+#: templates/settings.html:4189 templates/settings.html:4207
+#: templates/settings.html:4238 templates/settings.html:4298
+#: templates/settings.html:4302 templates/settings.html:4432
+#: templates/settings.html:4436 templates/settings.html:4462
+#: templates/settings.html:4466 templates/settings.html:4913
+#: templates/settings.html:4916 templates/settings.html:4935
+#: templates/settings.html:4938 templates/settings.html:4953
+#: templates/settings.html:4956
 msgid "Error"
 msgstr "Błąd"
 
-#: services/js_i18n_strings.py:692
+#: services/js_i18n_strings.py:699 templates/game_detail.html:5807
 msgid "Error clearing HLTB data"
 msgstr "Błąd podczas czyszczenia danych HLTB"
 
-#: services/js_i18n_strings.py:693
+#: services/js_i18n_strings.py:700
 msgid "Error connecting to HowLongToBeat"
 msgstr "Błąd połączenia z HowLongToBeat"
 
-#: services/js_i18n_strings.py:694
+#: services/js_i18n_strings.py:701
 msgid "Error deleting log file"
 msgstr "Błąd podczas usuwania pliku dziennika"
 
-#: services/js_i18n_strings.py:695
+#: services/js_i18n_strings.py:702
 msgid "Error loading file"
 msgstr "Błąd podczas wczytywania pliku"
 
-#: services/js_i18n_strings.py:696
+#: services/js_i18n_strings.py:703
 msgid "Error loading log file"
 msgstr "Błąd podczas wczytywania pliku dziennika"
 
-#: services/js_i18n_strings.py:697
+#: services/js_i18n_strings.py:704 templates/game_detail.html:5704
 msgid "Error looking up HLTB"
 msgstr "Błąd podczas wyszukiwania w HLTB"
 
-#: services/js_i18n_strings.py:698
-msgid "Error refreshing RetroAchievements: "
+#: services/js_i18n_strings.py:705
+#, fuzzy, python-brace-format
+msgid "Error refreshing RetroAchievements: {error}"
 msgstr "Błąd podczas odświeżania RetroAchievements: "
 
-#: services/js_i18n_strings.py:699
+#: services/js_i18n_strings.py:706 templates/game_detail.html:5776
 msgid "Error saving HLTB data"
 msgstr "Błąd podczas zapisywania danych HLTB"
 
-#: services/js_i18n_strings.py:700
-msgid "Error saving game: "
+#: services/js_i18n_strings.py:707
+#, fuzzy, python-brace-format
+msgid "Error saving game: {error}"
 msgstr "Błąd podczas zapisywania gry: "
 
-#: services/js_i18n_strings.py:701
+#: services/js_i18n_strings.py:708
 #, python-brace-format
 msgid "Error scanning library: {error}"
 msgstr "Błąd podczas skanowania biblioteki: {error}"
 
-#: services/js_i18n_strings.py:702
+#: services/js_i18n_strings.py:709
 msgid "Error updating completion status"
 msgstr "Błąd podczas aktualizacji statusu ukończenia"
 
-#: services/js_i18n_strings.py:703
+#: services/js_i18n_strings.py:710
 msgid "Error updating status"
 msgstr "Błąd podczas aktualizacji statusu"
 
-#: services/js_i18n_strings.py:704 templates/_modals/edit_modal.html:228
-#: templates/base.html:1281
+#: services/js_i18n_strings.py:711 templates/_modals/edit_modal.html:228
+#: templates/base.html:1281 templates/game_detail.html:4220
+#: templates/game_detail.html:4231
 msgid "Exclusive"
 msgstr "Ekskluzywna"
 
-#: services/js_i18n_strings.py:705
+#: services/js_i18n_strings.py:712
 msgid "Failed to apply bulk edit. Check console for details."
 msgstr ""
 "Nie udało się zastosować masowej edycji. Sprawdź konsolę, aby uzyskać "
 "szczegóły."
 
-#: services/js_i18n_strings.py:706
+#: services/js_i18n_strings.py:713
 msgid "Failed to apply normalization"
 msgstr "Nie udało się zastosować normalizacji"
 
-#: services/js_i18n_strings.py:707
+#: services/js_i18n_strings.py:714
 msgid "Failed to clean missing ROMs"
 msgstr "Nie udało się wyczyścić brakujących ROM-ów"
 
-#: services/js_i18n_strings.py:708
+#: services/js_i18n_strings.py:715
 msgid "Failed to clear CLZ imports"
 msgstr "Nie udało się wyczyścić importów CLZ"
 
-#: services/js_i18n_strings.py:709
-msgid "Failed to clear HLTB: "
+#: services/js_i18n_strings.py:716
+#, fuzzy, python-brace-format
+msgid "Failed to clear HLTB: {error}"
 msgstr "Nie udało się wyczyścić HLTB: "
 
-#: services/js_i18n_strings.py:710
+#: services/js_i18n_strings.py:717 templates/achievements_system.html:554
+#: templates/achievements_system.html:562
 msgid "Failed to clear RA data"
 msgstr "Nie udało się wyczyścić danych RA"
 
-#: services/js_i18n_strings.py:711
+#: services/js_i18n_strings.py:718 templates/screenshot_dedup.html:598
 msgid "Failed to delete"
 msgstr "Nie udało się usunąć"
 
-#: services/js_i18n_strings.py:712
+#: services/js_i18n_strings.py:719
 msgid "Failed to fetch controller image"
 msgstr "Nie udało się pobrać obrazu kontrolera"
 
-#: services/js_i18n_strings.py:713
+#: services/js_i18n_strings.py:720
 msgid "Failed to fetch image"
 msgstr "Nie udało się pobrać obrazu"
 
-#: services/js_i18n_strings.py:714
+#: services/js_i18n_strings.py:721
 msgid "Failed to load game"
 msgstr "Nie udało się wczytać gry"
 
-#: services/js_i18n_strings.py:715
+#: services/js_i18n_strings.py:722
 msgid "Failed to load normalization data"
 msgstr "Nie udało się wczytać danych normalizacji"
 
-#: services/js_i18n_strings.py:716
-msgid "Failed to save HLTB: "
+#: services/js_i18n_strings.py:723
+#, fuzzy, python-brace-format
+msgid "Failed to save HLTB: {error}"
 msgstr "Nie udało się zapisać HLTB: "
 
-#: services/js_i18n_strings.py:718
-msgid "Failed to save: "
-msgstr "Nie udało się zapisać: "
+#: services/js_i18n_strings.py:725 templates/settings.html:1475
+#: templates/settings.html:1518 templates/settings.html:1724
+#: templates/settings.html:1772
+#, fuzzy, python-brace-format
+msgid "Failed to save: {error}"
+msgstr "Niepowodzenie: {error}"
 
-#: services/js_i18n_strings.py:719
+#: services/js_i18n_strings.py:726
 msgid "Failed to start RetroAchievements refresh"
 msgstr "Nie udało się rozpocząć odświeżania RetroAchievements"
 
-#: services/js_i18n_strings.py:720
+#: services/js_i18n_strings.py:727
 msgid "Failed to start bulk scrape"
 msgstr "Nie udało się rozpocząć masowego pobierania danych"
 
-#: services/js_i18n_strings.py:721
+#: services/js_i18n_strings.py:728
 msgid "Failed to start generation"
 msgstr "Nie udało się rozpocząć generowania"
 
-#: services/js_i18n_strings.py:722
-msgid "Failed to update completion status: "
+#: services/js_i18n_strings.py:729
+#, fuzzy, python-brace-format
+msgid "Failed to update completion status: {error}"
 msgstr "Nie udało się zaktualizować statusu ukończenia: "
 
-#: services/js_i18n_strings.py:723
+#: services/js_i18n_strings.py:730
 #, python-brace-format
 msgid "Failed to update status: {error}"
 msgstr "Nie udało się zaktualizować statusu: {error}"
 
-#: services/js_i18n_strings.py:724
+#: services/js_i18n_strings.py:731 templates/settings.html:1939
+#: templates/settings.html:1986
 #, python-brace-format
 msgid "Failed: {error}"
 msgstr "Niepowodzenie: {error}"
 
-#: services/js_i18n_strings.py:725
+#: services/js_i18n_strings.py:732
 msgid "Fetch All Controller Images"
 msgstr "Pobierz wszystkie obrazy kontrolerów"
 
-#: services/js_i18n_strings.py:726
+#: services/js_i18n_strings.py:733
 #, python-brace-format
 msgid "Fetching from {source}…"
 msgstr "Pobieranie z {source}…"
 
-#: services/js_i18n_strings.py:727
+#: services/js_i18n_strings.py:734
 #, python-brace-format
 msgid "Fetching images: {done} of {total}"
 msgstr "Pobieranie obrazów: {done} z {total}"
 
-#: services/js_i18n_strings.py:728 templates/ai_fill_bulk.html:99
+#: services/js_i18n_strings.py:735 templates/game_detail.html:4527
+#, python-brace-format
+msgid "Fields the AI filled ({count}): {fields}"
+msgstr ""
+
+#: services/js_i18n_strings.py:736 templates/ai_fill_bulk.html:99
 #: templates/ai_fill_bulk.html:104
 msgid "Fill with AI"
 msgstr "Uzupełnij przez AI"
 
-#: services/js_i18n_strings.py:729
+#: services/js_i18n_strings.py:737
 #, python-brace-format
 msgid "Fill {count} games with AI? Your AI provider charges for each game."
 msgstr ""
 "Uzupełnić gry przez AI (liczba: {count})? Dostawca AI pobiera opłatę za "
 "każdą grę."
 
-#: services/js_i18n_strings.py:730
+#: services/js_i18n_strings.py:738
 #, python-brace-format
 msgid "Filling game {current} of {total}: {title}. Filled so far: {filled}."
 msgstr ""
 "Uzupełnianie gry {current} z {total}: {title}. Uzupełniono dotąd: "
 "{filled}."
 
-#: services/js_i18n_strings.py:731 templates/_macros/ra_tools.html:16
+#: services/js_i18n_strings.py:739 templates/_macros/ra_tools.html:16
 #, fuzzy
 msgid "Find Games with Achievements"
 msgstr "Gry z osiągnięciami"
 
-#: services/js_i18n_strings.py:732
+#: services/js_i18n_strings.py:740
 msgid "Focus search box"
 msgstr "Przejdź do pola wyszukiwania"
 
-#: services/js_i18n_strings.py:733 templates/logs.html:743
+#: services/js_i18n_strings.py:741 templates/logs.html:743
 msgid "From"
 msgstr "Od"
 
-#: services/js_i18n_strings.py:734
+#: services/js_i18n_strings.py:742
 msgid "From the system setting"
 msgstr "Z ustawienia systemu"
 
-#: services/js_i18n_strings.py:735
+#: services/js_i18n_strings.py:743
 msgid "Fullscreen"
 msgstr "Pełny ekran"
 
-#: services/js_i18n_strings.py:736
+#: services/js_i18n_strings.py:744
 msgid "Game Page"
 msgstr "Strona gry"
 
-#: services/js_i18n_strings.py:737
+#: services/js_i18n_strings.py:745
 msgid "Game details updated successfully."
 msgstr "Szczegóły gry zaktualizowane pomyślnie."
 
-#: services/js_i18n_strings.py:738 templates/_settings_tabs/data.html:186
+#: services/js_i18n_strings.py:746 templates/_settings_tabs/data.html:186
 #: templates/achievements_system.html:103 templates/analytics.html:571
 #: templates/analytics.html:1584 templates/analytics.html:1625
 #: templates/analytics.html:1947 templates/analytics.html:2122
@@ -2750,32 +2815,32 @@ msgstr "Szczegóły gry zaktualizowane pomyślnie."
 msgid "Games"
 msgstr "Gry"
 
-#: services/js_i18n_strings.py:739
+#: services/js_i18n_strings.py:747
 #, python-brace-format
 msgid "Games to fill: {count}."
 msgstr "Gry do uzupełnienia: {count}."
 
-#: services/js_i18n_strings.py:740
+#: services/js_i18n_strings.py:748
 msgid "Generate All Museum Content"
 msgstr "Wygeneruj całą zawartość Muzeum"
 
-#: services/js_i18n_strings.py:741 templates/museum_system.html:45
+#: services/js_i18n_strings.py:749 templates/museum_system.html:45
 msgid "Generate Content"
 msgstr "Generuj zawartość"
 
-#: services/js_i18n_strings.py:742 templates/museum.html:28
+#: services/js_i18n_strings.py:750 templates/museum.html:28
 msgid "Generating content..."
 msgstr "Generowanie zawartości..."
 
-#: services/js_i18n_strings.py:743
+#: services/js_i18n_strings.py:751
 msgid "Generating..."
 msgstr "Generowanie..."
 
-#: services/js_i18n_strings.py:744
+#: services/js_i18n_strings.py:752
 msgid "Generation cancelled"
 msgstr "Generowanie anulowane"
 
-#: services/js_i18n_strings.py:745
+#: services/js_i18n_strings.py:753
 #, python-brace-format
 msgid ""
 "Generation complete: {generated} generated, {skipped} skipped, {failed} "
@@ -2784,19 +2849,19 @@ msgstr ""
 "Generowanie zakończone: {generated} wygenerowano, {skipped} pominięto, "
 "{failed} nieudanych"
 
-#: services/js_i18n_strings.py:746
+#: services/js_i18n_strings.py:754
 msgid "Generation failed"
 msgstr "Generowanie nie powiodło się"
 
-#: services/js_i18n_strings.py:747
+#: services/js_i18n_strings.py:755
 msgid "Generation request failed"
 msgstr "Żądanie generowania nie powiodło się"
 
-#: services/js_i18n_strings.py:748
+#: services/js_i18n_strings.py:756
 msgid "Get cheats in Settings > Emulators"
 msgstr "Pobierz kody w Ustawienia > Emulatory"
 
-#: services/js_i18n_strings.py:749 templates/game_detail.html:287
+#: services/js_i18n_strings.py:757 templates/game_detail.html:287
 msgid ""
 "Gets in game, but cannot be finished, has serious glitches or runs too "
 "slowly."
@@ -2804,72 +2869,72 @@ msgstr ""
 "Dochodzi do rozgrywki, ale nie da się jej ukończyć, ma poważne błędy lub "
 "działa zbyt wolno."
 
-#: services/js_i18n_strings.py:750
+#: services/js_i18n_strings.py:758
 msgid "Go to Analytics"
 msgstr "Przejdź do Analityki"
 
-#: services/js_i18n_strings.py:751
+#: services/js_i18n_strings.py:759
 msgid "Go to Changelog"
 msgstr "Przejdź do Dziennika zmian"
 
-#: services/js_i18n_strings.py:752
+#: services/js_i18n_strings.py:760
 msgid "Go to Dashboard"
 msgstr "Przejdź do Panelu"
 
-#: services/js_i18n_strings.py:753
+#: services/js_i18n_strings.py:761
 msgid "Go to Help"
 msgstr "Przejdź do Pomocy"
 
-#: services/js_i18n_strings.py:754
+#: services/js_i18n_strings.py:762
 msgid "Go to Library"
 msgstr "Przejdź do Biblioteki"
 
-#: services/js_i18n_strings.py:755
+#: services/js_i18n_strings.py:763
 msgid "Go to Settings"
 msgstr "Przejdź do Ustawień"
 
-#: services/js_i18n_strings.py:756
+#: services/js_i18n_strings.py:764
 msgid "Go to Systems"
 msgstr "Przejdź do Systemów"
 
-#: services/js_i18n_strings.py:757
+#: services/js_i18n_strings.py:765 templates/game_detail.html:5802
 msgid "HLTB data cleared"
 msgstr "Dane HLTB wyczyszczone"
 
-#: services/js_i18n_strings.py:758
+#: services/js_i18n_strings.py:766 templates/game_detail.html:5771
 msgid "HLTB data saved"
 msgstr "Dane HLTB zapisane"
 
-#: services/js_i18n_strings.py:759
+#: services/js_i18n_strings.py:767 templates/game_detail.html:5791
 msgid "HLTB lookup cancelled"
 msgstr "Wyszukiwanie HLTB anulowane"
 
-#: services/js_i18n_strings.py:760
+#: services/js_i18n_strings.py:768
 msgid "Handheld LCD"
 msgstr "Ekran LCD konsoli przenośnej"
 
-#: services/js_i18n_strings.py:761 templates/all_games.html:104
+#: services/js_i18n_strings.py:769 templates/all_games.html:104
 #: templates/system_games.html:95
 msgid "Has Achievements"
 msgstr "Ma osiągnięcia"
 
-#: services/js_i18n_strings.py:762 templates/logs.html:719
+#: services/js_i18n_strings.py:770 templates/logs.html:719
 msgid "Image Resize"
 msgstr "Zmiana rozmiaru obrazu"
 
-#: services/js_i18n_strings.py:763
+#: services/js_i18n_strings.py:771
 msgid "Image fetch cancelled."
 msgstr "Pobieranie obrazów anulowane."
 
-#: services/js_i18n_strings.py:764
+#: services/js_i18n_strings.py:772
 msgid "Image must be under 10MB"
 msgstr "Obraz musi mieć mniej niż 10MB"
 
-#: services/js_i18n_strings.py:765
+#: services/js_i18n_strings.py:773
 msgid "Importing…"
 msgstr "Importowanie…"
 
-#: services/js_i18n_strings.py:766 templates/_bulk_edit_modal.html:27
+#: services/js_i18n_strings.py:774 templates/_bulk_edit_modal.html:27
 #: templates/achievements_system.html:135
 #: templates/achievements_system.html:190 templates/analytics.html:1664
 #: templates/base.html:1047 templates/dashboard.html:362
@@ -2878,111 +2943,111 @@ msgstr "Importowanie…"
 msgid "In Progress"
 msgstr "W trakcie"
 
-#: services/js_i18n_strings.py:767
+#: services/js_i18n_strings.py:775
 msgid "Initializing bulk scrape..."
 msgstr "Inicjowanie masowego pobierania danych..."
 
-#: services/js_i18n_strings.py:768 templates/_bulk_scrape_modal.html:23
+#: services/js_i18n_strings.py:776 templates/_bulk_scrape_modal.html:23
 #: templates/duplicate_finder.html:250 templates/screenshot_dedup.html:276
 msgid "Initializing..."
 msgstr "Inicjowanie..."
 
-#: services/js_i18n_strings.py:769
+#: services/js_i18n_strings.py:777
 msgid "Input lag reduction"
 msgstr "Redukcja opóźnienia sterowania"
 
-#: services/js_i18n_strings.py:770
+#: services/js_i18n_strings.py:778
 msgid "Install update"
 msgstr "Zainstaluj aktualizację"
 
-#: services/js_i18n_strings.py:771
+#: services/js_i18n_strings.py:779
 #, python-brace-format
 msgid "Installed {n} cores."
 msgstr "Zainstalowane rdzenie: {n}."
 
-#: services/js_i18n_strings.py:772
+#: services/js_i18n_strings.py:780
 #, python-brace-format
 msgid "Installed {n} cores. Failed: {failed}"
 msgstr "Zainstalowane rdzenie: {n}. Niepowodzenia: {failed}"
 
-#: services/js_i18n_strings.py:773
+#: services/js_i18n_strings.py:781
 msgid "Installing the update and restarting RetroDB…"
 msgstr "Instalowanie aktualizacji i ponowne uruchamianie RetroDB…"
 
-#: services/js_i18n_strings.py:774
+#: services/js_i18n_strings.py:782
 msgid "Integer scaling"
 msgstr "Skalowanie całkowite"
 
-#: services/js_i18n_strings.py:775
+#: services/js_i18n_strings.py:783
 msgid "Just synced"
 msgstr "Właśnie zsynchronizowano"
 
-#: services/js_i18n_strings.py:776
+#: services/js_i18n_strings.py:784
 msgid "Keyboard Shortcuts"
 msgstr "Skróty klawiszowe"
 
-#: services/js_i18n_strings.py:777
+#: services/js_i18n_strings.py:785
 msgid "Kill"
 msgstr "Zakończ"
 
-#: services/js_i18n_strings.py:778
+#: services/js_i18n_strings.py:786
 #, python-brace-format
 msgid "Last tested {date}."
 msgstr "Ostatni test: {date}."
 
-#: services/js_i18n_strings.py:779
+#: services/js_i18n_strings.py:787
 #, python-brace-format
 msgid "Launch failed: {error}"
 msgstr "Uruchomienie nie powiodło się: {error}"
 
-#: services/js_i18n_strings.py:780
+#: services/js_i18n_strings.py:788
 #, python-brace-format
 msgid "Launched (pid {pid})"
 msgstr "Uruchomiono (pid {pid})"
 
-#: services/js_i18n_strings.py:781
+#: services/js_i18n_strings.py:789
 msgid "Launched (replaced previous instance)"
 msgstr "Uruchomiono (zastąpiono poprzednią instancję)"
 
-#: services/js_i18n_strings.py:782
+#: services/js_i18n_strings.py:790
 msgid "Launching…"
 msgstr "Uruchamianie…"
 
-#: services/js_i18n_strings.py:783
+#: services/js_i18n_strings.py:791
 #, python-brace-format
 msgid "Library scan complete! Found {n} new games."
 msgstr "Skanowanie biblioteki zakończone! Znaleziono {n} nowych gier."
 
-#: services/js_i18n_strings.py:784
+#: services/js_i18n_strings.py:792
 msgid "Link"
 msgstr "Połącz"
 
-#: services/js_i18n_strings.py:785
+#: services/js_i18n_strings.py:793
 msgid "Link ticked games"
 msgstr "Połącz zaznaczone gry"
 
-#: services/js_i18n_strings.py:786
+#: services/js_i18n_strings.py:794
 msgid "Loading log file..."
 msgstr "Wczytywanie pliku dziennika..."
 
-#: services/js_i18n_strings.py:787
+#: services/js_i18n_strings.py:795
 msgid "Loading the manual…"
 msgstr "Wczytywanie instrukcji…"
 
-#: services/js_i18n_strings.py:788 templates/settings_emulators.html:201
+#: services/js_i18n_strings.py:796 templates/settings_emulators.html:201
 #: templates/settings_emulators.html:219
 msgid "Loading…"
 msgstr "Wczytywanie…"
 
-#: services/js_i18n_strings.py:789
+#: services/js_i18n_strings.py:797
 msgid "Log file deleted"
 msgstr "Plik dziennika usunięty"
 
-#: services/js_i18n_strings.py:790
+#: services/js_i18n_strings.py:798
 msgid "Looking for versions…"
 msgstr "Szukanie wersji…"
 
-#: services/js_i18n_strings.py:791 templates/achievement_game.html:168
+#: services/js_i18n_strings.py:799 templates/achievement_game.html:168
 #: templates/achievement_game.html:197 templates/achievement_game.html:207
 #: templates/base.html:1082 templates/game_detail.html:617
 #: templates/game_detail.html:647 templates/game_detail.html:657
@@ -2995,7 +3060,7 @@ msgstr "Szukanie wersji…"
 msgid "Main + Extras"
 msgstr "Główna + dodatki"
 
-#: services/js_i18n_strings.py:792 templates/achievement_game.html:164
+#: services/js_i18n_strings.py:800 templates/achievement_game.html:164
 #: templates/achievement_game.html:197 templates/achievement_game.html:203
 #: templates/base.html:1078 templates/game_detail.html:613
 #: templates/game_detail.html:647 templates/game_detail.html:653
@@ -3008,15 +3073,15 @@ msgstr "Główna + dodatki"
 msgid "Main Story"
 msgstr "Główny wątek fabularny"
 
-#: services/js_i18n_strings.py:793
+#: services/js_i18n_strings.py:801
 msgid "Marked as not versions."
 msgstr "Oznaczono jako nie-wersje."
 
-#: services/js_i18n_strings.py:794
+#: services/js_i18n_strings.py:802 templates/game_detail.html:5698
 msgid "Match found - please confirm to save"
 msgstr "Znaleziono dopasowanie — potwierdź, aby zapisać"
 
-#: services/js_i18n_strings.py:795
+#: services/js_i18n_strings.py:803
 msgid ""
 "Matched using this alternate/regional title — confirm it refers to the "
 "same game before saving."
@@ -3024,7 +3089,7 @@ msgstr ""
 "Dopasowano na podstawie alternatywnego/regionalnego tytułu — przed "
 "zapisaniem potwierdź, że dotyczy tej samej gry."
 
-#: services/js_i18n_strings.py:796
+#: services/js_i18n_strings.py:804
 #, python-brace-format
 msgid ""
 "Matched via alternate title \"{term}\" — HLTB shows it as \"{match}\". "
@@ -3033,315 +3098,319 @@ msgstr ""
 "Dopasowano poprzez alternatywny tytuł „{term}” — HLTB wyświetla go jako "
 "„{match}”. Potwierdź przed zapisaniem."
 
-#: services/js_i18n_strings.py:797
+#: services/js_i18n_strings.py:805
 #, python-brace-format
 msgid "Missing: {files}"
 msgstr "Brakuje: {files}"
 
-#: services/js_i18n_strings.py:798
+#: services/js_i18n_strings.py:806
 msgid "Multi-System"
 msgstr "Wielosystemowa"
 
-#: services/js_i18n_strings.py:799
+#: services/js_i18n_strings.py:807 templates/game_detail.html:4220
+#: templates/game_detail.html:4235
 msgid "Multi-platform"
 msgstr "Wieloplatformowa"
 
-#: services/js_i18n_strings.py:800
+#: services/js_i18n_strings.py:808
 msgid "Museum generation started"
 msgstr "Rozpoczęto generowanie Muzeum"
 
-#: services/js_i18n_strings.py:801
+#: services/js_i18n_strings.py:809
 msgid "NOT"
 msgstr "NIE"
 
-#: services/js_i18n_strings.py:802
+#: services/js_i18n_strings.py:810
 #, python-brace-format
 msgid "Naming game {current} of {total}."
 msgstr "Nadawanie nazwy grze {current} z {total}."
 
-#: services/js_i18n_strings.py:803
+#: services/js_i18n_strings.py:811
 msgid "Navigation"
 msgstr "Nawigacja"
 
-#: services/js_i18n_strings.py:804
+#: services/js_i18n_strings.py:812 templates/psn_trophy_detail.html:934
+#: templates/psn_trophy_detail.html:954
 msgid "Network error"
 msgstr "Błąd sieci"
 
-#: services/js_i18n_strings.py:805
+#: services/js_i18n_strings.py:813
 msgid "Network error starting bulk scrape"
 msgstr "Błąd sieci podczas rozpoczynania masowego pobierania danych"
 
-#: services/js_i18n_strings.py:806
+#: services/js_i18n_strings.py:814
 msgid "Next disk"
 msgstr "Następny dysk"
 
-#: services/js_i18n_strings.py:807
+#: services/js_i18n_strings.py:815
 msgid "Next disk failed"
 msgstr "Zmiana dysku nie powiodła się"
 
-#: services/js_i18n_strings.py:808
+#: services/js_i18n_strings.py:816
 msgid "Next game"
 msgstr "Następna gra"
 
-#: services/js_i18n_strings.py:809 templates/_bulk_edit_modal.html:171
+#: services/js_i18n_strings.py:817 templates/_bulk_edit_modal.html:171
 #: templates/_modals/edit_modal.html:148 templates/game_detail.html:776
 #: templates/game_detail.html:844
 msgid "No"
 msgstr "Nie"
 
-#: services/js_i18n_strings.py:810
+#: services/js_i18n_strings.py:818
 msgid "No (already set)"
 msgstr "Nie (już ustawiono)"
 
-#: services/js_i18n_strings.py:811
+#: services/js_i18n_strings.py:819
 msgid "No CLZ Import games found"
 msgstr "Nie znaleziono gier z importu CLZ"
 
-#: services/js_i18n_strings.py:812
+#: services/js_i18n_strings.py:820
 msgid "No Changes"
 msgstr "Brak zmian"
 
-#: services/js_i18n_strings.py:813
+#: services/js_i18n_strings.py:821
 msgid "No Games Selected"
 msgstr "Nie wybrano gier"
 
-#: services/js_i18n_strings.py:814
+#: services/js_i18n_strings.py:822 templates/game_detail.html:5701
 msgid "No HLTB data found"
 msgstr "Nie znaleziono danych HLTB"
 
-#: services/js_i18n_strings.py:815
+#: services/js_i18n_strings.py:823
 msgid "No achievements found"
 msgstr "Nie znaleziono osiągnięć"
 
-#: services/js_i18n_strings.py:816 templates/achievement_game.html:72
+#: services/js_i18n_strings.py:824 templates/achievement_game.html:72
 #: templates/steam_achievement_game.html:69
 #: templates/xbox_achievement_game.html:59
 msgid "No description available."
 msgstr "Brak dostępnego opisu."
 
-#: services/js_i18n_strings.py:817
+#: services/js_i18n_strings.py:825
 msgid "No emulator AppImages found in the scan paths."
 msgstr "Nie znaleziono AppImage emulatorów w ścieżkach skanowania."
 
-#: services/js_i18n_strings.py:818
+#: services/js_i18n_strings.py:826
 msgid "No emulators registered."
 msgstr "Brak zarejestrowanych emulatorów."
 
-#: services/js_i18n_strings.py:819
+#: services/js_i18n_strings.py:827
 msgid "No folders yet."
 msgstr "Nie ma jeszcze folderów."
 
-#: services/js_i18n_strings.py:820
+#: services/js_i18n_strings.py:828
 msgid "No game here has those fields empty, or AI Fill has done them all."
 msgstr ""
 "Żadna gra tutaj nie ma tych pól pustych albo Uzupełnianie AI zrobiło już "
 "wszystkie."
 
-#: services/js_i18n_strings.py:821
+#: services/js_i18n_strings.py:829
 msgid "No games or systems match"
 msgstr "Brak pasujących gier lub systemów"
 
-#: services/js_i18n_strings.py:822
+#: services/js_i18n_strings.py:830
 msgid "No log files in this category"
 msgstr "Brak plików dziennika w tej kategorii"
 
-#: services/js_i18n_strings.py:823
+#: services/js_i18n_strings.py:831
 msgid "No log lines match current filters"
 msgstr "Żadne wiersze dziennika nie pasują do bieżących filtrów"
 
-#: services/js_i18n_strings.py:824
+#: services/js_i18n_strings.py:832
 msgid "No mappings yet. Add an emulator folder above."
 msgstr "Nie ma jeszcze powiązań. Dodaj folder emulatorów powyżej."
 
-#: services/js_i18n_strings.py:825
+#: services/js_i18n_strings.py:833
 msgid "No matching games on this system."
 msgstr "Brak pasujących gier w tym systemie."
 
-#: services/js_i18n_strings.py:826
+#: services/js_i18n_strings.py:834
 msgid "No missing ROM files found."
 msgstr "Nie znaleziono brakujących plików ROM."
 
-#: services/js_i18n_strings.py:827
+#: services/js_i18n_strings.py:835
 msgid "No newer version is available."
 msgstr "Nie ma nowszej wersji."
 
-#: services/js_i18n_strings.py:828
+#: services/js_i18n_strings.py:836
 msgid "No options available"
 msgstr "Brak dostępnych opcji"
 
-#: services/js_i18n_strings.py:829
+#: services/js_i18n_strings.py:837
 msgid "No ratings available"
 msgstr "Brak dostępnych ocen"
 
-#: services/js_i18n_strings.py:830
+#: services/js_i18n_strings.py:838
 msgid "No results"
 msgstr "Brak wyników"
 
-#: services/js_i18n_strings.py:831
+#: services/js_i18n_strings.py:839
 msgid "No results found"
 msgstr "Nie znaleziono wyników"
 
-#: services/js_i18n_strings.py:832
+#: services/js_i18n_strings.py:840
 msgid "No results found on HowLongToBeat"
 msgstr "Nie znaleziono wyników w HowLongToBeat"
 
-#: services/js_i18n_strings.py:833
+#: services/js_i18n_strings.py:841
 msgid "No sessions match current filters"
 msgstr "Żadne sesje nie pasują do bieżących filtrów"
 
-#: services/js_i18n_strings.py:834
+#: services/js_i18n_strings.py:842
 msgid "No suggestions. Run Backfill Alternate Titles in Maintenance to find more."
 msgstr ""
 "Brak sugestii. Uruchom Uzupełnij tytuły alternatywne w sekcji "
 "Konserwacja, aby znaleźć więcej."
 
-#: services/js_i18n_strings.py:835 templates/game_detail.html:949
+#: services/js_i18n_strings.py:843 templates/game_detail.html:949
 msgid "None"
 msgstr "Brak"
 
-#: services/js_i18n_strings.py:836
+#: services/js_i18n_strings.py:844
 #, python-brace-format
 msgid "Normalization applied: {games} games updated, {rules} rules saved"
 msgstr ""
 "Zastosowano normalizację: zaktualizowano {games} gier, zapisano {rules} "
 "reguł"
 
-#: services/js_i18n_strings.py:837
+#: services/js_i18n_strings.py:845
 msgid "Not downloaded"
 msgstr "Nie pobrano"
 
-#: services/js_i18n_strings.py:838
+#: services/js_i18n_strings.py:846
 msgid "Not versions"
 msgstr "Nie wersje"
 
-#: services/js_i18n_strings.py:839 templates/base.html:1440
+#: services/js_i18n_strings.py:847 templates/base.html:1440
 msgid "Now playing"
 msgstr "Teraz grasz"
 
-#: services/js_i18n_strings.py:840 templates/base.html:341
+#: services/js_i18n_strings.py:848 templates/base.html:341
 msgid "OK"
 msgstr "OK"
 
-#: services/js_i18n_strings.py:841
+#: services/js_i18n_strings.py:849
 msgid "Off"
 msgstr "Wyłączone"
 
-#: services/js_i18n_strings.py:842
+#: services/js_i18n_strings.py:850
 msgid "On"
 msgstr "Włączone"
 
-#: services/js_i18n_strings.py:843
+#: services/js_i18n_strings.py:851
 msgid "Operation completed"
 msgstr "Operacja zakończona"
 
-#: services/js_i18n_strings.py:844
+#: services/js_i18n_strings.py:852
 msgid "Operation failed"
 msgstr "Operacja nie powiodła się"
 
-#: services/js_i18n_strings.py:845
+#: services/js_i18n_strings.py:853
 msgid "Other"
 msgstr "Inne"
 
-#: services/js_i18n_strings.py:846
+#: services/js_i18n_strings.py:854
 msgid "PCSX2 applies these lines whenever any cheat is on."
 msgstr "PCSX2 stosuje te wiersze zawsze, gdy włączony jest jakikolwiek kod."
 
-#: services/js_i18n_strings.py:847
+#: services/js_i18n_strings.py:855
 msgid "PCSX2 cheats (community collection)"
 msgstr "Kody PCSX2 (zbiór społeczności)"
 
-#: services/js_i18n_strings.py:848
+#: services/js_i18n_strings.py:856
 msgid "PCSX2 ignores cheats in hardcore mode."
 msgstr "PCSX2 pomija kody w trybie hardcore."
 
-#: services/js_i18n_strings.py:849
+#: services/js_i18n_strings.py:857
 msgid "PSN Imports"
 msgstr "Importy PSN"
 
-#: services/js_i18n_strings.py:850
+#: services/js_i18n_strings.py:858
 msgid "Page:"
 msgstr "Strona:"
 
-#: services/js_i18n_strings.py:851
+#: services/js_i18n_strings.py:859 templates/game_detail.html:4258
+#: templates/game_detail.html:4273
 msgid "Part of a Series"
 msgstr "Część serii"
 
-#: services/js_i18n_strings.py:852 templates/_bulk_scrape_modal.html:46
+#: services/js_i18n_strings.py:860 templates/_bulk_scrape_modal.html:46
 #: templates/archive_scanner.html:658 templates/archive_scanner.html:795
+#: templates/archive_scanner.html:1596 templates/archive_scanner.html:1627
 #: templates/psn_trophies.html:294
 msgid "Pause"
 msgstr "Wstrzymaj"
 
-#: services/js_i18n_strings.py:853
+#: services/js_i18n_strings.py:861
 msgid "Paused - Click Resume to continue"
 msgstr "Wstrzymano — kliknij Wznów, aby kontynuować"
 
-#: services/js_i18n_strings.py:854
+#: services/js_i18n_strings.py:862
 msgid "Platform not found"
 msgstr "Nie znaleziono platformy"
 
-#: services/js_i18n_strings.py:855 templates/game_detail.html:112
+#: services/js_i18n_strings.py:863 templates/game_detail.html:112
 #: templates/game_detail.html:115
 msgid "Play"
 msgstr "Graj"
 
-#: services/js_i18n_strings.py:856 templates/_bulk_edit_modal.html:28
+#: services/js_i18n_strings.py:864 templates/_bulk_edit_modal.html:28
 #: templates/analytics.html:1664 templates/base.html:1048
 #: templates/dashboard.html:504 templates/game_detail.html:306
 msgid "Played"
 msgstr "Zagrano"
 
-#: services/js_i18n_strings.py:857
+#: services/js_i18n_strings.py:865
 #, python-brace-format
 msgid "Players who timed it: {count}"
 msgstr "Gracze, którzy zmierzyli czas: {count}"
 
-#: services/js_i18n_strings.py:858
+#: services/js_i18n_strings.py:866
 msgid "Please change at least one field before applying."
 msgstr "Zmień co najmniej jedno pole przed zastosowaniem."
 
-#: services/js_i18n_strings.py:859
+#: services/js_i18n_strings.py:867 templates/game_detail.html:5620
 msgid "Please enter a game title"
 msgstr "Wpisz tytuł gry"
 
-#: services/js_i18n_strings.py:860
+#: services/js_i18n_strings.py:868
 msgid "Please select at least one game to edit."
 msgstr "Wybierz co najmniej jedną grę do edycji."
 
-#: services/js_i18n_strings.py:861
+#: services/js_i18n_strings.py:869
 msgid "Please select at least one game to scrape."
 msgstr "Wybierz co najmniej jedną grę do pobrania danych."
 
-#: services/js_i18n_strings.py:862
+#: services/js_i18n_strings.py:870
 msgid "Pre-session log entries"
 msgstr "Wpisy dziennika sprzed sesji"
 
-#: services/js_i18n_strings.py:863
+#: services/js_i18n_strings.py:871
 msgid "Previous game"
 msgstr "Poprzednia gra"
 
-#: services/js_i18n_strings.py:864
+#: services/js_i18n_strings.py:872
 msgid "Processing images…"
 msgstr "Przetwarzanie obrazów…"
 
-#: services/js_i18n_strings.py:865 templates/game_imports.html:418
+#: services/js_i18n_strings.py:873 templates/game_imports.html:418
 msgid "Processing..."
 msgstr "Przetwarzanie..."
 
-#: services/js_i18n_strings.py:866
+#: services/js_i18n_strings.py:874
 #, python-brace-format
 msgid "Processing: {file}"
 msgstr "Przetwarzanie: {file}"
 
-#: services/js_i18n_strings.py:867
+#: services/js_i18n_strings.py:875
 msgid "Queued"
 msgstr "W kolejce"
 
-#: services/js_i18n_strings.py:868
+#: services/js_i18n_strings.py:876
 msgid "ROM Files"
 msgstr "Pliki ROM"
 
-#: services/js_i18n_strings.py:869 templates/_macros/nav_tabs.html:34
+#: services/js_i18n_strings.py:877 templates/_macros/nav_tabs.html:34
 #: templates/ai_fill_bulk.html:49 templates/archive_scanner.html:561
 #: templates/base.html:174 templates/chd_converter.html:64
 #: templates/chd_verify.html:80 templates/duplicate_finder.html:166
@@ -3352,148 +3421,149 @@ msgstr "Pliki ROM"
 msgid "ROM Tools"
 msgstr "Narzędzia ROM"
 
-#: services/js_i18n_strings.py:870 templates/game_detail.html:287
+#: services/js_i18n_strings.py:878 templates/game_detail.html:287
 msgid "RPCS3: Ingame"
 msgstr "RPCS3: W grze"
 
-#: services/js_i18n_strings.py:871 templates/game_detail.html:288
+#: services/js_i18n_strings.py:879 templates/game_detail.html:288
 msgid "RPCS3: Intro"
 msgstr "RPCS3: Intro"
 
-#: services/js_i18n_strings.py:872 templates/game_detail.html:289
+#: services/js_i18n_strings.py:880 templates/game_detail.html:289
 msgid "RPCS3: Loadable"
 msgstr "RPCS3: Wczytuje się"
 
-#: services/js_i18n_strings.py:873 templates/game_detail.html:290
+#: services/js_i18n_strings.py:881 templates/game_detail.html:290
 msgid "RPCS3: Nothing"
 msgstr "RPCS3: Nic"
 
-#: services/js_i18n_strings.py:874 templates/game_detail.html:286
+#: services/js_i18n_strings.py:882 templates/game_detail.html:286
 msgid "RPCS3: Playable"
 msgstr "RPCS3: Grywalna"
 
-#: services/js_i18n_strings.py:875
+#: services/js_i18n_strings.py:883
 msgid "Reading the lists. This can take a few minutes."
 msgstr "Wczytywanie list. Może to potrwać kilka minut."
 
-#: services/js_i18n_strings.py:876
+#: services/js_i18n_strings.py:884
 msgid "Ready"
 msgstr "Gotowe"
 
-#: services/js_i18n_strings.py:877
+#: services/js_i18n_strings.py:885
 #, python-brace-format
 msgid "Refresh: {system}"
 msgstr "Odśwież: {system}"
 
-#: services/js_i18n_strings.py:878
+#: services/js_i18n_strings.py:886
 #, python-brace-format
 msgid "Refreshing RA for {system}..."
 msgstr "Odświeżanie RA dla {system}..."
 
-#: services/js_i18n_strings.py:879
+#: services/js_i18n_strings.py:887
 msgid "Regional name matches"
 msgstr "Zgodne nazwy regionalne"
 
-#: services/js_i18n_strings.py:880 templates/_modals/edit_modal.html:386
+#: services/js_i18n_strings.py:888 templates/_modals/edit_modal.html:386
 #: templates/compare_games.html:24 templates/compare_games.html:40
+#: templates/screenshot_review.html:185
 msgid "Remove"
 msgstr "Usuń"
 
-#: services/js_i18n_strings.py:881
+#: services/js_i18n_strings.py:889
 msgid "Remove background from the uploaded image?"
 msgstr "Usunąć tło z przesłanego obrazu?"
 
-#: services/js_i18n_strings.py:882
+#: services/js_i18n_strings.py:890
 msgid "Remove from queue"
 msgstr "Usuń z kolejki"
 
-#: services/js_i18n_strings.py:883
+#: services/js_i18n_strings.py:891
 msgid "Remove the 3D box?"
 msgstr "Usunąć pudełko 3D?"
 
-#: services/js_i18n_strings.py:884
+#: services/js_i18n_strings.py:892
 #, python-brace-format
 msgid "Removed {n} CLZ Import games"
 msgstr "Usunięto {n} gier z importu CLZ"
 
-#: services/js_i18n_strings.py:885
+#: services/js_i18n_strings.py:893
 #, python-brace-format
 msgid "Removed {n} CLZ Import games:"
 msgstr "Usunięto {n} gier z importu CLZ:"
 
-#: services/js_i18n_strings.py:886
+#: services/js_i18n_strings.py:894
 #, python-brace-format
 msgid "Removed {n} games with missing ROMs"
 msgstr "Usunięto {n} gier z brakującymi ROM-ami"
 
-#: services/js_i18n_strings.py:887
+#: services/js_i18n_strings.py:895
 #, python-brace-format
 msgid "Removed {n} games:"
 msgstr "Usunięto {n} gier:"
 
-#: services/js_i18n_strings.py:888
+#: services/js_i18n_strings.py:896
 msgid "Removing background…"
 msgstr "Usuwanie tła…"
 
-#: services/js_i18n_strings.py:889
+#: services/js_i18n_strings.py:897
 msgid "Removing..."
 msgstr "Usuwanie..."
 
-#: services/js_i18n_strings.py:890 templates/_bulk_edit_modal.html:42
+#: services/js_i18n_strings.py:898 templates/_bulk_edit_modal.html:42
 #: templates/_bulk_edit_modal.html:56 templates/_bulk_edit_modal.html:70
 #: templates/_bulk_edit_modal.html:124 templates/_bulk_edit_modal.html:140
 #: templates/_bulk_edit_modal.html:156 templates/_bulk_edit_modal.html:180
 msgid "Replace"
 msgstr "Zastąp"
 
-#: services/js_i18n_strings.py:891
+#: services/js_i18n_strings.py:899
 msgid "Replace the 3D box?"
 msgstr "Zastąpić pudełko 3D?"
 
-#: services/js_i18n_strings.py:892 templates/logs.html:716
+#: services/js_i18n_strings.py:900 templates/logs.html:716
 msgid "Reports"
 msgstr "Raporty"
 
-#: services/js_i18n_strings.py:893
+#: services/js_i18n_strings.py:901
 msgid "Resolution scale"
 msgstr "Skala rozdzielczości"
 
-#: services/js_i18n_strings.py:894
+#: services/js_i18n_strings.py:902
 msgid "Restarting server..."
 msgstr "Restartowanie serwera..."
 
-#: services/js_i18n_strings.py:895
+#: services/js_i18n_strings.py:903 templates/archive_scanner.html:1623
 msgid "Resume"
 msgstr "Wznów"
 
-#: services/js_i18n_strings.py:896
+#: services/js_i18n_strings.py:904
 msgid "RetroArch cheats (libretro)"
 msgstr "Kody RetroArch (libretro)"
 
-#: services/js_i18n_strings.py:897
+#: services/js_i18n_strings.py:905
 msgid "RetroArch is installed."
 msgstr "RetroArch jest zainstalowany."
 
-#: services/js_i18n_strings.py:898
+#: services/js_i18n_strings.py:906
 msgid "RetroArch was not installed."
 msgstr "RetroArch nie został zainstalowany."
 
-#: services/js_i18n_strings.py:899
+#: services/js_i18n_strings.py:907
 #, python-brace-format
 msgid "RetroArch was not installed: {error}"
 msgstr "RetroArch nie został zainstalowany: {error}"
 
-#: services/js_i18n_strings.py:900
+#: services/js_i18n_strings.py:908
 msgid "RetroDB default"
 msgstr "Domyślne RetroDB"
 
-#: services/js_i18n_strings.py:901
+#: services/js_i18n_strings.py:909
 msgid "RetroDB has not come back yet. See logs/update.log, then reload this page."
 msgstr ""
 "RetroDB jeszcze nie wrócił. Sprawdź logs/update.log, a potem odśwież tę "
 "stronę."
 
-#: services/js_i18n_strings.py:902
+#: services/js_i18n_strings.py:910
 msgid ""
 "RetroDB is run by a process manager here. Download the release and "
 "install it yourself."
@@ -3501,7 +3571,7 @@ msgstr ""
 "Tutaj RetroDB jest uruchamiany przez menedżera procesów. Pobierz wydanie "
 "i zainstaluj je samodzielnie."
 
-#: services/js_i18n_strings.py:903
+#: services/js_i18n_strings.py:911
 msgid ""
 "RetroDB will back up its database, install the update and restart. Anyone"
 " using it will be disconnected for a minute or two."
@@ -3510,49 +3580,49 @@ msgstr ""
 "uruchomi się ponownie. Wszyscy użytkownicy zostaną rozłączeni na minutę "
 "lub dwie."
 
-#: services/js_i18n_strings.py:904
+#: services/js_i18n_strings.py:912
 #, python-brace-format
 msgid "RetroDB {version} is available."
 msgstr "Dostępny jest RetroDB {version}."
 
-#: services/js_i18n_strings.py:905
+#: services/js_i18n_strings.py:913
 msgid "Run-ahead, 1 frame"
 msgstr "Run-ahead, 1 klatka"
 
-#: services/js_i18n_strings.py:906
+#: services/js_i18n_strings.py:914
 msgid "Running"
 msgstr "Uruchomiono"
 
-#: services/js_i18n_strings.py:907
+#: services/js_i18n_strings.py:915
 msgid "Running..."
 msgstr "Uruchamianie..."
 
-#: services/js_i18n_strings.py:908
+#: services/js_i18n_strings.py:916
 msgid "Same IGDB game"
 msgstr "Ta sama gra w IGDB"
 
-#: services/js_i18n_strings.py:909
+#: services/js_i18n_strings.py:917
 msgid "Same ScreenScraper game"
 msgstr "Ta sama gra w ScreenScraper"
 
-#: services/js_i18n_strings.py:910
+#: services/js_i18n_strings.py:918
 msgid "Same title, different region"
 msgstr "Ten sam tytuł, inny region"
 
-#: services/js_i18n_strings.py:911
+#: services/js_i18n_strings.py:919
 msgid "Save Failed"
 msgstr "Zapis nie powiódł się"
 
-#: services/js_i18n_strings.py:912
+#: services/js_i18n_strings.py:920
 #, python-brace-format
 msgid "Save failed: {error}"
 msgstr "Zapis nie powiódł się: {error}"
 
-#: services/js_i18n_strings.py:913
+#: services/js_i18n_strings.py:921
 msgid "Saved"
 msgstr "Zapisano"
 
-#: services/js_i18n_strings.py:914
+#: services/js_i18n_strings.py:922
 msgid ""
 "Saved in the emulator's settings for this game. Changes made inside the "
 "emulator show here."
@@ -3560,287 +3630,290 @@ msgstr ""
 "Zapisywane w ustawieniach emulatora dla tej gry. Zmiany wprowadzone w "
 "emulatorze są widoczne tutaj."
 
-#: services/js_i18n_strings.py:915
+#: services/js_i18n_strings.py:923
 msgid "Saved."
 msgstr "Zapisano."
 
-#: services/js_i18n_strings.py:916
+#: services/js_i18n_strings.py:924
 msgid "Saved. It applies the next time you press Play."
 msgstr "Zapisano. Zostanie zastosowane przy następnym naciśnięciu Graj."
 
-#: services/js_i18n_strings.py:917
+#: services/js_i18n_strings.py:925
 msgid "Saving to the database…"
 msgstr "Zapisywanie w bazie danych…"
 
-#: services/js_i18n_strings.py:918
+#: services/js_i18n_strings.py:926
 msgid "Saving..."
 msgstr "Zapisywanie..."
 
-#: services/js_i18n_strings.py:919
+#: services/js_i18n_strings.py:927
 msgid "Saving…"
 msgstr "Zapisywanie…"
 
-#: services/js_i18n_strings.py:920
+#: services/js_i18n_strings.py:928
 #, python-brace-format
 msgid "Scan failed (HTTP {status})"
 msgstr "Skanowanie nie powiodło się (HTTP {status})"
 
-#: services/js_i18n_strings.py:921
+#: services/js_i18n_strings.py:929
 #, python-brace-format
 msgid "Scan failed: {error}"
 msgstr "Skanowanie nie powiodło się: {error}"
 
-#: services/js_i18n_strings.py:922
+#: services/js_i18n_strings.py:930
 #, python-brace-format
 msgid "Scanned {paths} paths · found {found} matches."
 msgstr "Przeskanowano ścieżek: {paths} · znaleziono dopasowań: {found}."
 
-#: services/js_i18n_strings.py:923 templates/multi_disc_organizer.html:204
+#: services/js_i18n_strings.py:931 templates/multi_disc_organizer.html:204
 msgid "Scanning..."
 msgstr "Skanowanie..."
 
-#: services/js_i18n_strings.py:924
+#: services/js_i18n_strings.py:932
 msgid "Scanning…"
 msgstr "Skanowanie…"
 
-#: services/js_i18n_strings.py:925
+#: services/js_i18n_strings.py:933
 msgid "Scrape game"
 msgstr "Pobierz dane gry"
 
-#: services/js_i18n_strings.py:926
+#: services/js_i18n_strings.py:934
 #, python-brace-format
 msgid "Scraped 0/{total} - 0%"
 msgstr "Pobrano 0/{total} - 0%"
 
-#: services/js_i18n_strings.py:927
+#: services/js_i18n_strings.py:935
 #, python-brace-format
 msgid "Scraped {processed} / {total} - {percent}%"
 msgstr "Pobrano {processed} / {total} - {percent}%"
 
-#: services/js_i18n_strings.py:928 templates/logs.html:710
+#: services/js_i18n_strings.py:936 templates/logs.html:710
 #: templates/wishlist.html:507
 msgid "Scraping"
 msgstr "Pobieranie danych"
 
-#: services/js_i18n_strings.py:929
+#: services/js_i18n_strings.py:937
 msgid "Screen effect"
 msgstr "Efekt ekranu"
 
-#: services/js_i18n_strings.py:930 templates/logs.html:781
+#: services/js_i18n_strings.py:938 templates/logs.html:781
 #: templates/museum_system.html:197 templates/museum_system.html:204
 #: templates/psn_trophy_detail.html:320
 msgid "Search"
 msgstr "Szukaj"
 
-#: services/js_i18n_strings.py:931
+#: services/js_i18n_strings.py:939
 msgid "Search failed."
 msgstr "Wyszukiwanie nie powiodło się."
 
-#: services/js_i18n_strings.py:932
+#: services/js_i18n_strings.py:940
 msgid "Search failed. Try again."
 msgstr "Wyszukiwanie nie powiodło się. Spróbuj ponownie."
 
-#: services/js_i18n_strings.py:933
+#: services/js_i18n_strings.py:941
 msgid "Searching & removing background..."
 msgstr "Wyszukiwanie i usuwanie tła..."
 
-#: services/js_i18n_strings.py:934
+#: services/js_i18n_strings.py:942
 #, python-brace-format
 msgid "Searching {source}…"
 msgstr "Wyszukiwanie w {source}…"
 
-#: services/js_i18n_strings.py:935
+#: services/js_i18n_strings.py:943
 #, python-brace-format
 msgid "See all {n} results"
 msgstr "Zobacz wszystkie wyniki ({n})"
 
-#: services/js_i18n_strings.py:936
+#: services/js_i18n_strings.py:944
 msgid "Select Category"
 msgstr "Wybierz kategorię"
 
-#: services/js_i18n_strings.py:937
+#: services/js_i18n_strings.py:945
 msgid "Select Developer"
 msgstr "Wybierz dewelopera"
 
-#: services/js_i18n_strings.py:938
+#: services/js_i18n_strings.py:946
 msgid "Select Dimension"
 msgstr "Wybierz wymiar"
 
-#: services/js_i18n_strings.py:939
+#: services/js_i18n_strings.py:947
 #: templates/_modals/select_filter_modal.html:15
 msgid "Select Filter"
 msgstr "Wybierz filtr"
 
-#: services/js_i18n_strings.py:940
+#: services/js_i18n_strings.py:948
 msgid "Select Genre"
 msgstr "Wybierz gatunek"
 
-#: services/js_i18n_strings.py:941
+#: services/js_i18n_strings.py:949
 msgid "Select Perspective"
 msgstr "Wybierz perspektywę"
 
-#: services/js_i18n_strings.py:942
+#: services/js_i18n_strings.py:950
 msgid "Select Play Mode"
 msgstr "Wybierz tryb gry"
 
-#: services/js_i18n_strings.py:943
+#: services/js_i18n_strings.py:951
 msgid "Select Publisher"
 msgstr "Wybierz wydawcę"
 
-#: services/js_i18n_strings.py:944
+#: services/js_i18n_strings.py:952
 msgid "Select Rating"
 msgstr "Wybierz ocenę"
 
-#: services/js_i18n_strings.py:945
+#: services/js_i18n_strings.py:953
 msgid "Select Series"
 msgstr "Wybierz serię"
 
-#: services/js_i18n_strings.py:946
+#: services/js_i18n_strings.py:954
 msgid "Select Source"
 msgstr "Wybierz źródło"
 
-#: services/js_i18n_strings.py:947
+#: services/js_i18n_strings.py:955
 #, python-brace-format
 msgid "Selected {count} games across all pages"
 msgstr "Wybrano {count} gier na wszystkich stronach"
 
-#: services/js_i18n_strings.py:948
+#: services/js_i18n_strings.py:956
 #, python-brace-format
 msgid "Selected {count} unscraped games across all pages"
 msgstr "Wybrano {count} gier bez pobranych danych na wszystkich stronach"
 
-#: services/js_i18n_strings.py:949
+#: services/js_i18n_strings.py:957
 msgid "Server restarted successfully!"
 msgstr "Serwer zrestartowany pomyślnie!"
 
-#: services/js_i18n_strings.py:950
+#: services/js_i18n_strings.py:958
 msgid "Server stopped. You can close this tab."
 msgstr "Serwer zatrzymany. Możesz zamknąć tę kartę."
 
-#: services/js_i18n_strings.py:951
+#: services/js_i18n_strings.py:959
 msgid "Set for this game"
 msgstr "Ustawione dla tej gry"
 
-#: services/js_i18n_strings.py:952
+#: services/js_i18n_strings.py:960
 msgid "Set inside the emulator; RetroDB leaves it alone"
 msgstr "Ustawiane w emulatorze; RetroDB tego nie zmienia"
 
-#: services/js_i18n_strings.py:953
+#: services/js_i18n_strings.py:961
 msgid "Set per system, in Settings > Emulators"
 msgstr "Ustawiane osobno dla każdego systemu w Ustawienia > Emulatory"
 
-#: services/js_i18n_strings.py:954 templates/_macros/nav_tabs.html:46
+#: services/js_i18n_strings.py:962 templates/_macros/nav_tabs.html:46
 #: templates/base.html:186 templates/rom_tools_hub.html:119
 #: templates/settings.html:5 templates/settings.html:12
 #: templates/settings_emulators.html:4
 msgid "Settings"
 msgstr "Ustawienia"
 
-#: services/js_i18n_strings.py:955
+#: services/js_i18n_strings.py:963
 msgid "Show keyboard shortcuts"
 msgstr "Pokaż skróty klawiszowe"
 
-#: services/js_i18n_strings.py:956
+#: services/js_i18n_strings.py:964
 msgid "Showing Bonus Discs"
 msgstr "Wyświetlanie płyt bonusowych"
 
-#: services/js_i18n_strings.py:957 templates/game_detail.html:289
+#: services/js_i18n_strings.py:965 templates/game_detail.html:289
 msgid "Shows a black screen with a frame rate in the window title."
 msgstr "Pokazuje czarny ekran z liczbą klatek na sekundę w tytule okna."
 
-#: services/js_i18n_strings.py:958 templates/game_detail.html:288
+#: services/js_i18n_strings.py:966 templates/game_detail.html:288
 msgid "Shows an image but does not get past the menus."
 msgstr "Pokazuje obraz, ale nie wychodzi poza menu."
 
-#: services/js_i18n_strings.py:959
+#: services/js_i18n_strings.py:967
 msgid "Shutting down server..."
 msgstr "Wyłączanie serwera..."
 
-#: services/js_i18n_strings.py:960
+#: services/js_i18n_strings.py:968
 #, python-brace-format
 msgid "Signed in as {name}"
 msgstr "Zalogowano jako {name}"
 
-#: services/js_i18n_strings.py:961
+#: services/js_i18n_strings.py:969
 msgid "Signing in…"
 msgstr "Logowanie…"
 
-#: services/js_i18n_strings.py:962 templates/_modals/edit_modal.html:50
-#: templates/base.html:1134
+#: services/js_i18n_strings.py:970 templates/_modals/edit_modal.html:50
+#: templates/base.html:1134 templates/game_detail.html:4258
+#: templates/game_detail.html:4269
 msgid "Standalone"
 msgstr "Samodzielna"
 
-#: services/js_i18n_strings.py:963
+#: services/js_i18n_strings.py:971
 #, fuzzy, python-brace-format
 msgid "Starting {title}"
 msgstr "Tytuł sortujący"
 
-#: services/js_i18n_strings.py:964
+#: services/js_i18n_strings.py:972 templates/archive_scanner.html:1594
 msgid "Starting..."
 msgstr "Uruchamianie..."
 
-#: services/js_i18n_strings.py:965
+#: services/js_i18n_strings.py:973
 msgid "Starting…"
 msgstr "Uruchamianie…"
 
-#: services/js_i18n_strings.py:966
+#: services/js_i18n_strings.py:974
 msgid "Steam Imports"
 msgstr "Importy Steam"
 
-#: services/js_i18n_strings.py:967
+#: services/js_i18n_strings.py:975
 msgid "Stopped."
 msgstr "Zatrzymano."
 
-#: services/js_i18n_strings.py:968
+#: services/js_i18n_strings.py:976
 #, python-brace-format
 msgid "Successfully updated {count} games"
 msgstr "Pomyślnie zaktualizowano {count} gier"
 
-#: services/js_i18n_strings.py:969
+#: services/js_i18n_strings.py:977
 msgid "Summary written."
 msgstr "Podsumowanie napisane."
 
-#: services/js_i18n_strings.py:970
+#: services/js_i18n_strings.py:978
 msgid "Switched-on cheats apply the next time you press Play."
 msgstr "Włączone kody zadziałają, gdy następnym razem naciśniesz Graj."
 
-#: services/js_i18n_strings.py:971
+#: services/js_i18n_strings.py:979 templates/achievements_system.html:499
 msgid "Sync In Progress"
 msgstr "Synchronizacja w toku"
 
-#: services/js_i18n_strings.py:972 templates/achievements_system.html:153
+#: services/js_i18n_strings.py:980 templates/achievements_system.html:153
 msgid "Sync Progress"
 msgstr "Postęp synchronizacji"
 
-#: services/js_i18n_strings.py:973
+#: services/js_i18n_strings.py:981 templates/achievements_system.html:451
 msgid "Sync Queued"
 msgstr "Synchronizacja w kolejce"
 
-#: services/js_i18n_strings.py:974
+#: services/js_i18n_strings.py:982 templates/achievements_system.html:607
 msgid "Sync complete! Refresh page to see updated progress."
 msgstr ""
 "Synchronizacja zakończona! Odśwież stronę, aby zobaczyć zaktualizowany "
 "postęp."
 
-#: services/js_i18n_strings.py:975
+#: services/js_i18n_strings.py:983 templates/psn_trophy_detail.html:751
+#: templates/steam_achievement_game.html:297
+#: templates/xbox_achievement_game.html:288
 msgid "Sync failed"
 msgstr "Synchronizacja nie powiodła się"
 
-#: services/js_i18n_strings.py:976
+#: services/js_i18n_strings.py:984
 #, python-brace-format
 msgid "Sync: {system}"
 msgstr "Synchronizacja: {system}"
 
-#: services/js_i18n_strings.py:977
+#: services/js_i18n_strings.py:985
 msgid "Syncing..."
 msgstr "Synchronizowanie..."
 
-#: services/js_i18n_strings.py:978
+#: services/js_i18n_strings.py:986
 #, python-brace-format
 msgid "Syncing: {processed} / {total}"
 msgstr "Synchronizowanie: {processed} / {total}"
 
-#: services/js_i18n_strings.py:979 templates/_settings_tabs/_tab_bar.html:11
+#: services/js_i18n_strings.py:987 templates/_settings_tabs/_tab_bar.html:11
 #: templates/_settings_tabs/customization.html:299
 #: templates/achievement_game.html:228 templates/ai_fill_bulk.html:91
 #: templates/analytics.html:569 templates/analytics.html:603
@@ -3854,7 +3927,7 @@ msgstr "Synchronizowanie: {processed} / {total}"
 msgid "System"
 msgstr "System"
 
-#: services/js_i18n_strings.py:980
+#: services/js_i18n_strings.py:988
 #: templates/_settings_tabs/customization.html:153
 #: templates/_settings_tabs/customization.html:234
 #: templates/_settings_tabs/data.html:19 templates/achievements_system.html:50
@@ -3863,40 +3936,40 @@ msgstr "System"
 msgid "Systems"
 msgstr "Systemy"
 
-#: services/js_i18n_strings.py:981
+#: services/js_i18n_strings.py:989
 #, python-brace-format
 msgid "That stopped: {error}"
 msgstr "Przerwano: {error}"
 
-#: services/js_i18n_strings.py:982
+#: services/js_i18n_strings.py:990
 msgid "The 3D box could not be removed."
 msgstr "Nie udało się usunąć pudełka 3D."
 
-#: services/js_i18n_strings.py:984
+#: services/js_i18n_strings.py:992
 msgid "The cheats were not downloaded."
 msgstr "Kody nie zostały pobrane."
 
-#: services/js_i18n_strings.py:985
+#: services/js_i18n_strings.py:993
 #, python-brace-format
 msgid "The cheats were not downloaded: {error}"
 msgstr "Kody nie zostały pobrane: {error}"
 
-#: services/js_i18n_strings.py:986
+#: services/js_i18n_strings.py:994
 msgid "The core installed but the game still cannot start."
 msgstr "Rdzeń został zainstalowany, ale gry nadal nie można uruchomić."
 
-#: services/js_i18n_strings.py:987
+#: services/js_i18n_strings.py:995
 #, python-brace-format
 msgid "The download failed: {error}"
 msgstr "Pobieranie nie powiodło się: {error}"
 
-#: services/js_i18n_strings.py:988
+#: services/js_i18n_strings.py:996
 msgid "The imported faces are deleted. Your Slipcase files are not touched."
 msgstr ""
 "Zaimportowane ścianki zostaną usunięte. Twoje pliki Slipcase pozostaną "
 "nietknięte."
 
-#: services/js_i18n_strings.py:989
+#: services/js_i18n_strings.py:997
 #, python-brace-format
 msgid ""
 "The run stopped: {error}. Check your AI key with Test saved AI key in "
@@ -3906,19 +3979,19 @@ msgstr ""
 "zapisany klucz AI w Ustawienia > Pobieranie danych. Gry już uzupełnione "
 "zachowują to, co dostały."
 
-#: services/js_i18n_strings.py:990
+#: services/js_i18n_strings.py:998
 msgid "The switches go back to the new list's own settings."
 msgstr "Przełączniki wrócą do ustawień nowej listy."
 
-#: services/js_i18n_strings.py:991
+#: services/js_i18n_strings.py:999
 msgid "The update could not be started. See logs/update.log."
 msgstr "Nie udało się rozpocząć aktualizacji. Sprawdź logs/update.log."
 
-#: services/js_i18n_strings.py:992
+#: services/js_i18n_strings.py:1000
 msgid "The update is downloaded and checked."
 msgstr "Aktualizacja jest pobrana i sprawdzona."
 
-#: services/js_i18n_strings.py:993
+#: services/js_i18n_strings.py:1001
 #, python-brace-format
 msgid ""
 "The update to {to} did not work, so RetroDB went back to {from}. Reason: "
@@ -3927,37 +4000,37 @@ msgstr ""
 "Aktualizacja do {to} nie zadziałała, więc RetroDB wrócił do {from}. "
 "Powód: {reason}"
 
-#: services/js_i18n_strings.py:994
+#: services/js_i18n_strings.py:1002
 msgid "This copy of RetroDB is a git checkout. Update it with git pull."
 msgstr "Ta kopia RetroDB jest klonem git. Zaktualizuj ją poleceniem git pull."
 
-#: services/js_i18n_strings.py:995
+#: services/js_i18n_strings.py:1003
 msgid "This game already has 3D box faces. Replace them with the ones you picked?"
 msgstr "Ta gra ma już ścianki pudełka 3D. Zastąpić je wybranymi?"
 
-#: services/js_i18n_strings.py:996
+#: services/js_i18n_strings.py:1004
 msgid "This game is already running.  Kill the existing process and relaunch?"
 msgstr ""
 "Ta gra jest już uruchomiona.  Zakończyć istniejący proces i uruchomić "
 "ponownie?"
 
-#: services/js_i18n_strings.py:997
+#: services/js_i18n_strings.py:1005
 msgid "This name holds \"=\", which the emulator's settings cannot hold."
 msgstr "Ta nazwa zawiera „=”, którego nie mogą zawierać ustawienia emulatora."
 
-#: services/js_i18n_strings.py:998
+#: services/js_i18n_strings.py:1006
 msgid "This release has no download for this computer yet."
 msgstr "To wydanie nie ma jeszcze pliku do pobrania dla tego komputera."
 
-#: services/js_i18n_strings.py:999
+#: services/js_i18n_strings.py:1007 templates/achievements_system.html:499
 msgid "This system is already being synced."
 msgstr "Ten system jest już synchronizowany."
 
-#: services/js_i18n_strings.py:1000
+#: services/js_i18n_strings.py:1008
 msgid "This update cannot be installed here."
 msgstr "Tej aktualizacji nie można tu zainstalować."
 
-#: services/js_i18n_strings.py:1001
+#: services/js_i18n_strings.py:1009
 #, fuzzy
 msgid ""
 "This will clear ALL RetroAchievements game IDs and progress data from "
@@ -3969,12 +4042,12 @@ msgstr ""
 "ponownie uruchomić „Odśwież RetroAchievements”, aby ponownie przeskanować"
 " gry. Kontynuować?"
 
-#: services/js_i18n_strings.py:1002
+#: services/js_i18n_strings.py:1010
 #, python-brace-format
 msgid "This will remove \"{system}\" from the Achievements page. Continue?"
 msgstr "Spowoduje to usunięcie „{system}” ze strony Osiągnięcia. Kontynuować?"
 
-#: services/js_i18n_strings.py:1003
+#: services/js_i18n_strings.py:1011
 msgid ""
 "This will remove ALL games imported via CLZ Games Import from the "
 "database. This cannot be undone. Continue?"
@@ -3982,7 +4055,7 @@ msgstr ""
 "Spowoduje to usunięcie WSZYSTKICH gier zaimportowanych przez import CLZ "
 "Games z bazy danych. Tej czynności nie można cofnąć. Kontynuować?"
 
-#: services/js_i18n_strings.py:1004
+#: services/js_i18n_strings.py:1012
 msgid ""
 "This will remove database entries for ROM files that no longer exist on "
 "disk. This cannot be undone. Continue?"
@@ -3990,7 +4063,7 @@ msgstr ""
 "Spowoduje to usunięcie wpisów w bazie danych dla plików ROM, które nie "
 "istnieją już na dysku. Tej czynności nie można cofnąć. Kontynuować?"
 
-#: services/js_i18n_strings.py:1005
+#: services/js_i18n_strings.py:1013
 msgid ""
 "This will scan all games and update their RetroAchievements status. This "
 "may take several minutes for large collections. Continue?"
@@ -3999,7 +4072,7 @@ msgstr ""
 "RetroAchievements. W przypadku dużych kolekcji może to potrwać kilka "
 "minut. Kontynuować?"
 
-#: services/js_i18n_strings.py:1006
+#: services/js_i18n_strings.py:1014
 msgid ""
 "This will search for and download images for all controllers without "
 "images. Continue?"
@@ -4007,7 +4080,7 @@ msgstr ""
 "Spowoduje to wyszukanie i pobranie obrazów dla wszystkich kontrolerów bez"
 " obrazów. Kontynuować?"
 
-#: services/js_i18n_strings.py:1007
+#: services/js_i18n_strings.py:1015
 msgid ""
 "This will use your configured AI provider to generate history and top "
 "games for all systems. This may take several minutes and use API credits."
@@ -4017,55 +4090,58 @@ msgstr ""
 "historii i najlepszych gier dla wszystkich systemów. Może to potrwać "
 "kilka minut i zużyć środki API. Kontynuować?"
 
-#: services/js_i18n_strings.py:1008
+#: services/js_i18n_strings.py:1016
 msgid "Tick at least two games."
 msgstr "Zaznacz co najmniej dwie gry."
 
-#: services/js_i18n_strings.py:1009 templates/logs.html:745
+#: services/js_i18n_strings.py:1017 templates/logs.html:745
 msgid "To"
 msgstr "Do"
 
-#: services/js_i18n_strings.py:1010
+#: services/js_i18n_strings.py:1018
 msgid "Try adjusting your search or filters"
 msgstr "Spróbuj dostosować wyszukiwanie lub filtry"
 
-#: services/js_i18n_strings.py:1012
-msgid "Unexpected error"
+#: services/js_i18n_strings.py:1020
+#, fuzzy, python-brace-format
+msgid "Unexpected error: {error}"
 msgstr "Nieoczekiwany błąd"
 
-#: services/js_i18n_strings.py:1013
-msgid "Unhandled rejection"
+#: services/js_i18n_strings.py:1021
+#, fuzzy, python-brace-format
+msgid "Unhandled rejection: {error}"
 msgstr "Nieobsłużone odrzucenie"
 
-#: services/js_i18n_strings.py:1014 templates/analytics.html:583
+#: services/js_i18n_strings.py:1022 templates/analytics.html:583
 #: templates/base.html:1238 templates/local_trophy_detail.html:220
 #: templates/local_trophy_detail.html:224
 msgid "Unknown"
 msgstr "Nieznany"
 
-#: services/js_i18n_strings.py:1015
+#: services/js_i18n_strings.py:1023 templates/rom_tools_settings.html:578
+#: templates/settings.html:1967
 msgid "Unknown error"
 msgstr "Nieznany błąd"
 
-#: services/js_i18n_strings.py:1016
+#: services/js_i18n_strings.py:1024
 msgid "Unknown error occurred."
 msgstr "Wystąpił nieznany błąd."
 
-#: services/js_i18n_strings.py:1017
+#: services/js_i18n_strings.py:1025
 #, python-brace-format
 msgid "Unpacking {item}…"
 msgstr "Rozpakowywanie {item}…"
 
-#: services/js_i18n_strings.py:1018 templates/all_games.html:107
+#: services/js_i18n_strings.py:1026 templates/all_games.html:107
 #: templates/system_games.html:98 templates/wishlist.html:506
 msgid "Unscraped"
 msgstr "Bez pobranych danych"
 
-#: services/js_i18n_strings.py:1019
+#: services/js_i18n_strings.py:1027
 msgid "Update Failed"
 msgstr "Aktualizacja nie powiodła się"
 
-#: services/js_i18n_strings.py:1020
+#: services/js_i18n_strings.py:1028
 #, python-brace-format
 msgid ""
 "Update {count} game(s)?\n"
@@ -4076,45 +4152,45 @@ msgstr ""
 "\n"
 "Pola: {fields}"
 
-#: services/js_i18n_strings.py:1021
+#: services/js_i18n_strings.py:1029
 #, python-brace-format
 msgid "Updated from {from} to {to}."
 msgstr "Zaktualizowano z {from} do {to}."
 
-#: services/js_i18n_strings.py:1022 templates/museum_system.html:198
+#: services/js_i18n_strings.py:1030 templates/museum_system.html:198
 #: templates/museum_system.html:205
 msgid "Upload"
 msgstr "Prześlij"
 
-#: services/js_i18n_strings.py:1023
+#: services/js_i18n_strings.py:1031
 msgid "Upload Controller Image"
 msgstr "Prześlij obraz kontrolera"
 
-#: services/js_i18n_strings.py:1024
+#: services/js_i18n_strings.py:1032 templates/settings.html:5203
 msgid "Upload failed"
 msgstr "Przesyłanie nie powiodło się"
 
-#: services/js_i18n_strings.py:1025
+#: services/js_i18n_strings.py:1033
 msgid "Upload replacement image"
 msgstr "Prześlij zastępczy obraz"
 
-#: services/js_i18n_strings.py:1026
+#: services/js_i18n_strings.py:1034
 msgid "Uploading & removing background…"
 msgstr "Przesyłanie i usuwanie tła…"
 
-#: services/js_i18n_strings.py:1027
+#: services/js_i18n_strings.py:1035
 msgid "Uploading…"
 msgstr "Przesyłanie…"
 
-#: services/js_i18n_strings.py:1028
+#: services/js_i18n_strings.py:1036
 msgid "Use another cheat list?"
 msgstr "Użyć innej listy kodów?"
 
-#: services/js_i18n_strings.py:1029
+#: services/js_i18n_strings.py:1037
 msgid "Use the system setting"
 msgstr "Użyj ustawienia systemu"
 
-#: services/js_i18n_strings.py:1030
+#: services/js_i18n_strings.py:1038
 #, python-brace-format
 msgid ""
 "Used for every {system} game unless the game sets its own. Applied when "
@@ -4123,61 +4199,61 @@ msgstr ""
 "Używane dla każdej gry {system}, chyba że gra ma własne ustawienie. "
 "Stosowane po naciśnięciu Graj."
 
-#: services/js_i18n_strings.py:1031
+#: services/js_i18n_strings.py:1039
 #, python-brace-format
 msgid "User Score ({count} ratings)"
 msgstr "Ocena użytkowników (oceny: {count})"
 
-#: services/js_i18n_strings.py:1032
+#: services/js_i18n_strings.py:1040
 msgid "Version unlinked."
 msgstr "Wersja odłączona."
 
-#: services/js_i18n_strings.py:1033
+#: services/js_i18n_strings.py:1041
 #, python-brace-format
 msgid "Version {version} is available."
 msgstr "Dostępna jest wersja {version}."
 
-#: services/js_i18n_strings.py:1034
+#: services/js_i18n_strings.py:1042
 msgid "Versions linked."
 msgstr "Wersje połączone."
 
-#: services/js_i18n_strings.py:1035
+#: services/js_i18n_strings.py:1043
 #, python-brace-format
 msgid "What is new in {version}"
 msgstr "Co nowego w {version}"
 
-#: services/js_i18n_strings.py:1036
+#: services/js_i18n_strings.py:1044
 #, python-brace-format
 msgid "What is new in {version} ({date})"
 msgstr "Co nowego w {version} ({date})"
 
-#: services/js_i18n_strings.py:1037
+#: services/js_i18n_strings.py:1045
 msgid "Will change?"
 msgstr "Zmieni się?"
 
-#: services/js_i18n_strings.py:1038
+#: services/js_i18n_strings.py:1046
 msgid "Works"
 msgstr "Działa"
 
-#: services/js_i18n_strings.py:1039 templates/game_detail.html:865
+#: services/js_i18n_strings.py:1047 templates/game_detail.html:865
 msgid "Write again with AI"
 msgstr "Napisz ponownie z AI"
 
-#: services/js_i18n_strings.py:1040
+#: services/js_i18n_strings.py:1048
 msgid "Xbox Imports"
 msgstr "Importy Xbox"
 
-#: services/js_i18n_strings.py:1041 templates/_bulk_edit_modal.html:170
+#: services/js_i18n_strings.py:1049 templates/_bulk_edit_modal.html:170
 #: templates/_modals/edit_modal.html:148 templates/game_detail.html:719
 #: templates/game_detail.html:776 templates/game_detail.html:844
 msgid "Yes"
 msgstr "Tak"
 
-#: services/js_i18n_strings.py:1042
+#: services/js_i18n_strings.py:1050
 msgid "You have the latest version."
 msgstr "Masz najnowszą wersję."
 
-#: services/js_i18n_strings.py:1043
+#: services/js_i18n_strings.py:1051
 #, python-brace-format
 msgid ""
 "Your bulk scrape has been queued (position {position}). It will start "
@@ -4187,109 +4263,109 @@ msgstr ""
 "{position}). Rozpocznie się automatycznie po zakończeniu bieżącego "
 "pobierania."
 
-#: services/js_i18n_strings.py:1044
+#: services/js_i18n_strings.py:1052
 msgid "found"
 msgstr "znaleziono"
 
-#: services/js_i18n_strings.py:1045
+#: services/js_i18n_strings.py:1053
 msgid "in queue"
 msgstr "w kolejce"
 
-#: services/js_i18n_strings.py:1046
+#: services/js_i18n_strings.py:1054
 msgid "system"
 msgstr "system"
 
-#: services/js_i18n_strings.py:1047
+#: services/js_i18n_strings.py:1055
 #, python-brace-format
 msgid "{confidence}% match"
 msgstr "{confidence}% dopasowania"
 
-#: services/js_i18n_strings.py:1048
+#: services/js_i18n_strings.py:1056
 #, python-brace-format
 msgid "{count} Achievements"
 msgstr "{count} osiągnięć"
 
-#: services/js_i18n_strings.py:1049
+#: services/js_i18n_strings.py:1057
 #, python-brace-format
 msgid "{count} regional versions"
 msgstr "Wersje regionalne: {count}"
 
-#: services/js_i18n_strings.py:1050
+#: services/js_i18n_strings.py:1058
 #, python-brace-format
 msgid "{count} sold"
 msgstr "Sprzedane egzemplarze: {count}"
 
-#: services/js_i18n_strings.py:1051
+#: services/js_i18n_strings.py:1059
 #, python-brace-format
 msgid "{count} suggested groups. Untick any game that does not belong, then link."
 msgstr "Sugerowane grupy: {count}. Odznacz gry, które nie pasują, a potem połącz."
 
-#: services/js_i18n_strings.py:1052
+#: services/js_i18n_strings.py:1060
 #, python-brace-format
 msgid "{emulator} (not found)"
 msgstr "{emulator} (nie znaleziono)"
 
-#: services/js_i18n_strings.py:1053
+#: services/js_i18n_strings.py:1061
 #, python-brace-format
 msgid "{fetched} fetched, {skipped} skipped, {failed} failed"
 msgstr "{fetched} pobrano, {skipped} pominięto, {failed} nieudanych"
 
-#: services/js_i18n_strings.py:1054
+#: services/js_i18n_strings.py:1062
 #, python-brace-format
 msgid "{job} Queued (#{position})"
 msgstr "{job} w kolejce (#{position})"
 
-#: services/js_i18n_strings.py:1055
+#: services/js_i18n_strings.py:1063
 #, python-brace-format
 msgid "{job} cancelled"
 msgstr "{job} anulowano"
 
-#: services/js_i18n_strings.py:1056
+#: services/js_i18n_strings.py:1064
 #, python-brace-format
 msgid "{job} completed ({n} processed)"
 msgstr "{job} zakończono ({n} przetworzono)"
 
-#: services/js_i18n_strings.py:1057
+#: services/js_i18n_strings.py:1065
 #, python-brace-format
 msgid "{job} failed: {error}"
 msgstr "{job} nie powiodło się: {error}"
 
-#: services/js_i18n_strings.py:1058
+#: services/js_i18n_strings.py:1066
 #, python-brace-format
 msgid "{job}: {current} of {total} ({percent}%)"
 msgstr "{job}: {current} z {total} ({percent}%)"
 
-#: services/js_i18n_strings.py:1059
+#: services/js_i18n_strings.py:1067
 #, python-brace-format
 msgid "{n} Player(s)"
 msgstr "{n} gracz(y)"
 
-#: services/js_i18n_strings.py:1060
+#: services/js_i18n_strings.py:1068
 #, python-brace-format
 msgid "{n} cores"
 msgstr "Rdzenie: {n}"
 
-#: services/js_i18n_strings.py:1061
+#: services/js_i18n_strings.py:1069
 #, python-brace-format
 msgid "{n} games"
 msgstr "{n} gier"
 
-#: services/js_i18n_strings.py:1062
+#: services/js_i18n_strings.py:1070
 #, python-brace-format
 msgid "{n} lines"
 msgstr "{n} wierszy"
 
-#: services/js_i18n_strings.py:1063
+#: services/js_i18n_strings.py:1071
 #, python-brace-format
 msgid "{n} results"
 msgstr "Wyniki: {n}"
 
-#: services/js_i18n_strings.py:1064
+#: services/js_i18n_strings.py:1072
 #, python-brace-format
 msgid "{points} pts"
 msgstr "{points} pkt"
 
-#: services/js_i18n_strings.py:1065
+#: services/js_i18n_strings.py:1073
 #, python-brace-format
 msgid ""
 "{state} Games filled: {filled}. Nothing new: {skipped}. No answer: "
@@ -4298,7 +4374,7 @@ msgstr ""
 "{state} Uzupełnione gry: {filled}. Nic nowego: {skipped}. Brak "
 "odpowiedzi: {failed}."
 
-#: services/js_i18n_strings.py:1066
+#: services/js_i18n_strings.py:1074
 #, python-brace-format
 msgid ""
 "{state} Games named: {named}. Games changed: {updated}. Not in the lists:"
@@ -4307,71 +4383,71 @@ msgstr ""
 "{state} Gry z nadanymi nazwami: {named}. Gry ze zmianami: {updated}. "
 "Spoza list: {missing}."
 
-#: services/js_i18n_strings.py:1067
+#: services/js_i18n_strings.py:1075
 #, python-brace-format
 msgid "{system} has been added to the sync queue."
 msgstr "{system} został dodany do kolejki synchronizacji."
 
-#: services/js_i18n_strings.py:1068
+#: services/js_i18n_strings.py:1076
 #, python-brace-format
 msgid "{title} ({count} versions)"
 msgstr "{title} (wersje: {count})"
 
-#: services/js_i18n_strings.py:1069
+#: services/js_i18n_strings.py:1077
 msgid "⏳ Searching..."
 msgstr "⏳ Wyszukiwanie..."
 
-#: services/js_i18n_strings.py:1070
+#: services/js_i18n_strings.py:1078
 #, python-brace-format
 msgid "⚠️ Cancel {job}"
 msgstr "⚠️ Anuluj {job}"
 
-#: services/js_i18n_strings.py:1071
+#: services/js_i18n_strings.py:1079
 msgid "⚠️ Confirm"
 msgstr "⚠️ Potwierdź"
 
-#: services/js_i18n_strings.py:1072
+#: services/js_i18n_strings.py:1080
 msgid "⚡ via"
 msgstr "⚡ przez"
 
-#: services/js_i18n_strings.py:1073
+#: services/js_i18n_strings.py:1081
 msgid "✕ Clear"
 msgstr "✕ Wyczyść"
 
-#: services/js_i18n_strings.py:1074
+#: services/js_i18n_strings.py:1082
 msgid "📋 Clear CLZ Imports"
 msgstr "📋 Wyczyść importy CLZ"
 
-#: services/js_i18n_strings.py:1075
+#: services/js_i18n_strings.py:1083
 msgid "🔄 Restart Server"
 msgstr "🔄 Zrestartuj serwer"
 
-#: services/js_i18n_strings.py:1076
+#: services/js_i18n_strings.py:1084
 #, fuzzy
 msgid "🔍 Find Games with Achievements"
 msgstr "Gry z osiągnięciami"
 
-#: services/js_i18n_strings.py:1077
+#: services/js_i18n_strings.py:1085
 msgid "🔍 Lookup HLTB"
 msgstr "🔍 Wyszukaj HLTB"
 
-#: services/js_i18n_strings.py:1078
+#: services/js_i18n_strings.py:1086
 msgid "🗑️ Clear HLTB Data"
 msgstr "🗑️ Wyczyść dane HLTB"
 
-#: services/js_i18n_strings.py:1079
+#: services/js_i18n_strings.py:1087
 msgid "🗑️ Clear RetroAchievements Data"
 msgstr "🗑️ Wyczyść dane RetroAchievements"
 
-#: services/js_i18n_strings.py:1080
+#: services/js_i18n_strings.py:1088
 msgid "🗑️ Reset Metadata"
 msgstr "🗑️ Zresetuj metadane"
 
-#: services/js_i18n_strings.py:1081
+#: services/js_i18n_strings.py:1089
 msgid "🛑 Shut Down Server"
 msgstr "🛑 Wyłącz serwer"
 
-#: services/js_i18n_strings.py:1082
+#: services/js_i18n_strings.py:1090
 msgid "🧹 Clean Missing ROMs"
 msgstr "🧹 Wyczyść brakujące ROM-y"
 
@@ -4761,6 +4837,21 @@ msgstr "Nie udało się pobrać postępu osiągnięć z RetroAchievements."
 msgid "Please check your API credentials in Settings."
 msgstr "Sprawdź swoje dane uwierzytelniające API w Ustawieniach."
 
+#: templates/achievement_game.html:456
+#, fuzzy
+msgid "Achievement data refreshed!"
+msgstr "Postęp osiągnięć"
+
+#: templates/achievement_game.html:460
+#, fuzzy
+msgid "Failed to refresh achievements"
+msgstr "Błąd podczas odświeżania RetroAchievements: "
+
+#: templates/achievement_game.html:467
+#, fuzzy, python-brace-format
+msgid "Error refreshing achievements: {error}"
+msgstr "Błąd podczas odświeżania RetroAchievements: "
+
 #: templates/achievements_ra_empty.html:17
 #, fuzzy
 msgid "No game in your library is linked to RetroAchievements yet."
@@ -4859,6 +4950,43 @@ msgstr "Przejdź do:"
 #, python-format
 msgid "<span>%(count)s</span> achievements"
 msgstr "<span>%(count)s</span> osiągnięć"
+
+#: templates/achievements_system.html:362
+#, fuzzy
+msgid "System is already in the queue"
+msgstr "Ten system jest już synchronizowany."
+
+#: templates/achievements_system.html:391
+#, fuzzy, python-brace-format
+msgid "Added {system} to sync queue"
+msgstr "{system} został dodany do kolejki synchronizacji."
+
+#: templates/achievements_system.html:451
+#, fuzzy, python-brace-format
+msgid ""
+"{system} has been added to the sync queue. It will start automatically "
+"when the current sync completes."
+msgstr ""
+"Twoje masowe pobieranie danych zostało dodane do kolejki (pozycja "
+"{position}). Rozpocznie się automatycznie po zakończeniu bieżącego "
+"pobierania."
+
+#: templates/achievements_system.html:499
+#, python-brace-format
+msgid "{reason} Check the toast notification for progress."
+msgstr ""
+
+#: templates/achievements_system.html:530
+#, fuzzy, python-brace-format
+msgid ""
+"This will remove \"{system}\" from the Achievements page by clearing all "
+"RetroAchievements game IDs and progress data for this system. Continue?"
+msgstr "Spowoduje to usunięcie „{system}” ze strony Osiągnięcia. Kontynuować?"
+
+#: templates/achievements_system.html:547
+#, python-brace-format
+msgid "RA data cleared for {system}. Games cleared: {count}"
+msgstr ""
 
 #: templates/_macros/nav_tabs.html:41 templates/ai_fill_bulk.html:5
 #: templates/rom_tools_hub.html:206
@@ -5577,6 +5705,21 @@ msgstr "HLTB"
 msgid "Completeness"
 msgstr "Kompletność"
 
+#: templates/analytics.html:2739
+#, fuzzy
+msgid "PNG infographic downloaded."
+msgstr "Infografika PNG"
+
+#: templates/analytics.html:2762 templates/analytics.html:2773
+#, fuzzy
+msgid "Stats copied to clipboard."
+msgstr "Kopiuj do schowka"
+
+#: templates/analytics.html:2815
+#, fuzzy
+msgid "CSV data exported."
+msgstr "Eksport CSV"
+
 #: templates/archive_scanner.html:570 templates/duplicate_finder.html:183
 #: templates/screenshot_dedup.html:236
 msgid "Scan Configuration"
@@ -5682,11 +5825,11 @@ msgstr "Rozpocznij skanowanie"
 msgid "Clear Log"
 msgstr "Wyczyść dziennik"
 
-#: templates/archive_scanner.html:668
+#: templates/archive_scanner.html:668 templates/archive_scanner.html:1490
 msgid "Batch Remove"
 msgstr "Usuń wsadowo"
 
-#: templates/archive_scanner.html:671
+#: templates/archive_scanner.html:671 templates/archive_scanner.html:1647
 msgid "Batch M3U"
 msgstr "Wsadowe M3U"
 
@@ -5742,22 +5885,184 @@ msgstr "Przetwarzanie wsadowe"
 msgid "Processed"
 msgstr "Przetworzone"
 
-#: templates/archive_scanner.html:782 templates/reports.html:492
+#: templates/archive_scanner.html:782 templates/game_detail.html:4067
+#: templates/reports.html:492 templates/settings.html:3540
+#: templates/settings.html:4296 templates/settings.html:4950
 msgid "Success"
 msgstr "Sukces"
 
-#: templates/archive_scanner.html:786 templates/reports.html:496
-#: templates/wishlist.html:509
+#: templates/archive_scanner.html:786 templates/game_imports.html:652
+#: templates/game_imports.html:727 templates/game_imports.html:905
+#: templates/reports.html:496 templates/wishlist.html:509
 msgid "Failed"
 msgstr "Niepowodzenie"
 
-#: templates/archive_scanner.html:790
+#: templates/archive_scanner.html:790 templates/archive_scanner.html:1594
+#: templates/archive_scanner.html:1614
 msgid "Current:"
 msgstr "Bieżące:"
 
 #: templates/archive_scanner.html:790
 msgid "Waiting to start..."
 msgstr "Oczekiwanie na rozpoczęcie..."
+
+#: templates/archive_scanner.html:1121
+#, fuzzy
+msgid "No Types Selected"
+msgstr "Nie wybrano gier"
+
+#: templates/archive_scanner.html:1121
+#, fuzzy
+msgid "Please select at least one compression type to scan."
+msgstr "Wybierz co najmniej jedną grę do pobrania danych."
+
+#: templates/archive_scanner.html:1163 templates/archive_scanner.html:1167
+#, fuzzy, python-brace-format
+msgid "Error starting scan: {error}"
+msgstr "Błąd podczas skanowania biblioteki: {error}"
+
+#: templates/archive_scanner.html:1199
+#, fuzzy
+msgid "Scan Complete"
+msgstr "Niekompletne"
+
+#: templates/archive_scanner.html:1199
+#, python-brace-format
+msgid "Issues found in your archive collection: {count}"
+msgstr ""
+
+#: templates/archive_scanner.html:1204
+#, fuzzy
+msgid "Scan Error"
+msgstr "Dziennik skanowania"
+
+#: templates/archive_scanner.html:1204 templates/screenshot_review.html:153
+#, fuzzy
+msgid "Scan failed"
+msgstr "Anulowanie nie powiodło się"
+
+#: templates/archive_scanner.html:1219
+#, fuzzy
+msgid "Scan Interrupted"
+msgstr "Uszkodzone"
+
+#: templates/archive_scanner.html:1219
+msgid ""
+"The scan was interrupted (server may have restarted). Results so far have"
+" been preserved."
+msgstr ""
+
+#: templates/archive_scanner.html:1229
+#, fuzzy
+msgid "Cancel Scan"
+msgstr "Anuluj"
+
+#: templates/archive_scanner.html:1229
+#, fuzzy
+msgid "Are you sure you want to cancel the scan?"
+msgstr "Czy na pewno chcesz anulować?"
+
+#: templates/archive_scanner.html:1376 templates/chd_converter.html:304
+#: templates/chd_verify.html:258 templates/duplicate_finder.html:541
+#: templates/psn_trophies.html:1622
+#, fuzzy
+msgid "No Selection"
+msgstr "Brak opisu"
+
+#: templates/archive_scanner.html:1376
+#, fuzzy
+msgid "Please select files to remove."
+msgstr "Wybierz co najmniej jedną grę do pobrania danych."
+
+#: templates/archive_scanner.html:1380
+#, fuzzy
+msgid "Remove Files"
+msgstr "Zmień nazwę pliku"
+
+#: templates/archive_scanner.html:1380
+#, fuzzy, python-brace-format
+msgid "Files to remove from this archive: {count}. Continue?"
+msgstr "Spowoduje to usunięcie „{system}” ze strony Osiągnięcia. Kontynuować?"
+
+#: templates/archive_scanner.html:1394
+#, fuzzy
+msgid "Files Removed"
+msgstr "Brak plików do usunięcia"
+
+#: templates/archive_scanner.html:1394
+#, fuzzy, python-brace-format
+msgid "Files removed: {count}"
+msgstr "Gracze, którzy zmierzyli czas: {count}"
+
+#: templates/archive_scanner.html:1398
+#, fuzzy
+msgid "Failed to remove files."
+msgstr "Nie udało się zmienić nazwy pliku"
+
+#: templates/archive_scanner.html:1407
+#, fuzzy
+msgid "Remove Unwanted"
+msgstr "Niepożądane"
+
+#: templates/archive_scanner.html:1407
+msgid "Remove unwanted files from this archive?"
+msgstr ""
+
+#: templates/archive_scanner.html:1418
+#, fuzzy
+msgid "Cleaned"
+msgstr "Zdobyte"
+
+#: templates/archive_scanner.html:1418
+#, python-brace-format
+msgid "Unwanted files removed: {count}"
+msgstr ""
+
+#: templates/archive_scanner.html:1423
+#, fuzzy
+msgid "Failed to clean archive."
+msgstr "Nie udało się zapisać."
+
+#: templates/archive_scanner.html:1435 templates/multi_disc_organizer.html:342
+#, fuzzy
+msgid "Create M3U"
+msgstr "Wsadowe M3U"
+
+#: templates/archive_scanner.html:1436
+msgid "This will create an ES-DE compatible M3U playlist:"
+msgstr ""
+
+#: templates/archive_scanner.html:1437
+#, python-brace-format
+msgid "Extract archive to {folder}/ folder"
+msgstr ""
+
+#: templates/archive_scanner.html:1438
+#, fuzzy
+msgid "Add noload.txt to prevent ES-DE scanning"
+msgstr ""
+"Dodaje plik <code>noload.txt</code>, aby zapobiec skanowaniu "
+"poszczególnych płyt przez ES-DE"
+
+#: templates/archive_scanner.html:1439
+#, python-brace-format
+msgid "Create {folder}.m3u playlist file"
+msgstr ""
+
+#: templates/archive_scanner.html:1440
+#, fuzzy
+msgid "Move original archive to staging folder"
+msgstr "Przenieś oryginalne archiwum do folderu tymczasowego"
+
+#: templates/archive_scanner.html:1441
+#, fuzzy
+msgid "Continue?"
+msgstr "Online"
+
+#: templates/archive_scanner.html:1455
+#, fuzzy, python-brace-format
+msgid "Archive moved to: {path}"
+msgstr "Oryginalne archiwa przeniesiono do:"
 
 #: templates/archive_scanner.html:1458
 msgid ""
@@ -5767,9 +6072,161 @@ msgstr ""
 "Archiwum zawiera więcej niż jedno wydanie. Playlista używa pierwszego; te"
 " dyski zostają w folderze:"
 
+#: templates/archive_scanner.html:1462
+#, fuzzy
+msgid "M3U Created"
+msgstr "bez pobranych danych"
+
+#: templates/archive_scanner.html:1463
+#, fuzzy, python-brace-format
+msgid "Successfully created:"
+msgstr "Pomyślnie zaktualizowano {count} gier"
+
+#: templates/archive_scanner.html:1464
+#, fuzzy, python-brace-format
+msgid "M3U: {path}"
+msgstr "Ścieżka ROM"
+
+#: templates/archive_scanner.html:1465
+#, fuzzy, python-brace-format
+msgid "Folder: {path}"
+msgstr "Ścieżka folderu ROM-ów"
+
+#: templates/archive_scanner.html:1466
+#, fuzzy, python-brace-format
+msgid "ROM files: {count}"
+msgstr "Gry do uzupełnienia: {count}."
+
+#: templates/archive_scanner.html:1474
+#, fuzzy
+msgid "Failed to create M3U."
+msgstr "Nie udało się usunąć."
+
+#: templates/archive_scanner.html:1486 templates/archive_scanner.html:1643
+#, fuzzy
+msgid "No Archives"
+msgstr "Skanuj archiwa ZIP"
+
+#: templates/archive_scanner.html:1486
+msgid "No archives with unwanted files to process."
+msgstr ""
+
+#: templates/archive_scanner.html:1490
+#, python-brace-format
+msgid "Archives to remove unwanted files from: {count}. Continue?"
+msgstr ""
+
+#: templates/archive_scanner.html:1505
+#, fuzzy
+msgid "Removing Unwanted Files"
+msgstr "Skanuj w poszukiwaniu niepożądanych plików"
+
+#: templates/archive_scanner.html:1566 templates/archive_scanner.html:1739
+#, fuzzy
+msgid "Batch operation cancelled."
+msgstr "Generowanie anulowane"
+
+#: templates/archive_scanner.html:1567 templates/archive_scanner.html:1740
+#, fuzzy, python-brace-format
+msgid "Processed: {done} / {total}"
+msgstr "Synchronizowanie: {processed} / {total}"
+
+#: templates/archive_scanner.html:1568 templates/archive_scanner.html:1573
+#: templates/archive_scanner.html:1741 templates/archive_scanner.html:1747
+#, fuzzy, python-brace-format, python-format
+msgid "Success: {count}"
+msgstr "Powodzenia: %(count)s"
+
+#: templates/archive_scanner.html:1569 templates/archive_scanner.html:1574
+#: templates/archive_scanner.html:1742 templates/archive_scanner.html:1748
+#: templates/game_imports.html:596 templates/game_imports.html:856
+#, fuzzy, python-brace-format, python-format
+msgid "Failed: {count}"
+msgstr "Niepowodzenia: %(count)s"
+
+#: templates/archive_scanner.html:1571 templates/archive_scanner.html:1745
+#, fuzzy
+msgid "Batch Complete"
+msgstr "Wsadowa zmiana nazw zakończona"
+
+#: templates/archive_scanner.html:1572
+#, fuzzy, python-brace-format
+msgid "Archives cleaned of unwanted files: {count}"
+msgstr "Skanuj w poszukiwaniu niepożądanych plików"
+
+#: templates/archive_scanner.html:1624 templates/archive_scanner.html:1635
+#, fuzzy
+msgid "Status:"
+msgstr "Status"
+
+#: templates/archive_scanner.html:1624
+#, fuzzy
+msgid "Paused..."
+msgstr "Wstrzymaj"
+
+#: templates/archive_scanner.html:1632
+#, fuzzy
+msgid "Cancel Operation"
+msgstr "Konfiguracja skanowania"
+
+#: templates/archive_scanner.html:1632
+#, fuzzy
+msgid "Are you sure you want to cancel the batch operation?"
+msgstr "Czy na pewno chcesz anulować?"
+
+#: templates/archive_scanner.html:1635
+#, fuzzy
+msgid "Cancelling..."
+msgstr "Skanowanie..."
+
+#: templates/archive_scanner.html:1643
+#, fuzzy
+msgid "No multi-file archives to process."
+msgstr "Skanuj w poszukiwaniu archiwów wieloplikowych"
+
+#: templates/archive_scanner.html:1648
+#, python-brace-format
+msgid "Multi-file archives to give M3U playlists: {count}"
+msgstr ""
+
+#: templates/archive_scanner.html:1649
+msgid "Each archive will be:"
+msgstr ""
+
+#: templates/archive_scanner.html:1650
+#, fuzzy
+msgid "Extracted to its own folder"
+msgstr "Wybierz ten folder"
+
+#: templates/archive_scanner.html:1651
+msgid "Have noload.txt added"
+msgstr ""
+
+#: templates/archive_scanner.html:1652
+msgid "Get an M3U playlist created"
+msgstr ""
+
 #: templates/archive_scanner.html:1653
 msgid "Have the original archive moved to the staging folder"
 msgstr "Przenieś oryginalne archiwum do folderu tymczasowego"
+
+#: templates/archive_scanner.html:1654
+msgid "This may take a while for large archives."
+msgstr ""
+
+#: templates/archive_scanner.html:1670
+msgid "Creating M3U Playlists"
+msgstr ""
+
+#: templates/archive_scanner.html:1743 templates/archive_scanner.html:1749
+#, python-brace-format
+msgid "Archives moved to staging: {count}"
+msgstr ""
+
+#: templates/archive_scanner.html:1746
+#, python-brace-format
+msgid "Archives given M3U playlists: {count}"
+msgstr ""
 
 #: templates/archive_scanner.html:1750
 msgid "Original archives moved to:"
@@ -5949,7 +6406,7 @@ msgstr "Wesprzyj RetroDB"
 msgid "Back to top"
 msgstr "Powrót na górę"
 
-#: templates/base.html:333
+#: templates/base.html:333 templates/base.html:523
 msgid "Alert"
 msgstr "Alert"
 
@@ -6081,6 +6538,7 @@ msgstr "Brak danych o czasie gry"
 #: templates/base.html:1113 templates/dashboard.html:329
 #: templates/dashboard.html:388 templates/dashboard.html:465
 #: templates/dashboard.html:531 templates/game_detail.html:820
+#: templates/reports.html:1141
 msgid "Title"
 msgstr "Tytuł"
 
@@ -6488,6 +6946,16 @@ msgstr "Rozmiar po kompresji"
 msgid "Space Saved"
 msgstr "Zaoszczędzone miejsce"
 
+#: templates/chd_converter.html:304 templates/chd_verify.html:258
+#, fuzzy
+msgid "No files selected"
+msgstr "Nie wybrano pliku"
+
+#: templates/chd_converter.html:346
+#, fuzzy
+msgid "Conversion failed"
+msgstr "Operacja nie powiodła się"
+
 #: templates/chd_verify.html:90
 msgid "Why Verify CHD Files?"
 msgstr "Dlaczego warto weryfikować pliki CHD?"
@@ -6537,6 +7005,11 @@ msgstr "Nieprawidłowe"
 #: templates/chd_verify.html:160
 msgid "Total Size"
 msgstr "Całkowity rozmiar"
+
+#: templates/chd_verify.html:311
+#, fuzzy
+msgid "Verification failed"
+msgstr "Operacja nie powiodła się"
 
 #: templates/collector_trophies.html:12
 msgid "Track your collection milestones and earn trophies"
@@ -6624,6 +7097,16 @@ msgstr "Pierwsze kroki"
 #, python-format
 msgid "Earned %(date)s"
 msgstr "Zdobyto %(date)s"
+
+#: templates/collector_trophies.html:505
+#, fuzzy
+msgid "Failed to refresh trophies."
+msgstr "Nie udało się wczytać kolejnych wpisów."
+
+#: templates/collector_trophies.html:511
+#, fuzzy
+msgid "Error refreshing trophies."
+msgstr "Błąd podczas odświeżania RetroAchievements: "
 
 #: templates/compare_games.html:11
 msgid "Compare Games"
@@ -6889,6 +7372,7 @@ msgid "View All Games →"
 msgstr "Zobacz wszystkie gry →"
 
 #: templates/dashboard.html:391 templates/reports.html:447
+#: templates/reports.html:1140
 msgid "Year"
 msgstr "Rok"
 
@@ -6948,6 +7432,41 @@ msgstr "Nieskonfigurowane"
 #: templates/_settings_tabs/account.html:320 templates/dashboard.html:622
 msgid "Configured"
 msgstr "Skonfigurowane"
+
+#: templates/dashboard.html:1152
+#, fuzzy
+msgid "Job resumed successfully"
+msgstr "Serwer zrestartowany pomyślnie!"
+
+#: templates/dashboard.html:1158
+#, fuzzy
+msgid "Failed to resume job"
+msgstr "Nie udało się usunąć."
+
+#: templates/dashboard.html:1163
+#, fuzzy
+msgid "Error resuming job"
+msgstr "Błąd podczas usuwania pozycji."
+
+#: templates/dashboard.html:1196
+#, fuzzy, python-brace-format
+msgid "Failed to resume job {id}"
+msgstr "Nie udało się zmienić nazwy pliku"
+
+#: templates/dashboard.html:1204
+#, fuzzy
+msgid "All jobs resumed"
+msgstr "Wszystkie problemy"
+
+#: templates/dashboard.html:1252
+#, fuzzy
+msgid "No games found"
+msgstr "Znalezione gry:"
+
+#: templates/dashboard.html:1256
+#, fuzzy
+msgid "Error picking random game"
+msgstr "Wybierz losową grę"
 
 #: templates/dashboard.html:1421
 msgid ""
@@ -7062,6 +7581,34 @@ msgstr "Zachowaj najmniejsze"
 #: templates/duplicate_finder.html:292 templates/screenshot_dedup.html:313
 msgid "Delete Unselected"
 msgstr "Usuń niezaznaczone"
+
+#: templates/duplicate_finder.html:541 templates/screenshot_dedup.html:572
+#, fuzzy
+msgid "No files selected for deletion"
+msgstr "Nie wybrano pliku"
+
+#: templates/duplicate_finder.html:545
+#, fuzzy
+msgid "Delete Files"
+msgstr "Usuń plik dziennika"
+
+#: templates/duplicate_finder.html:545
+#, fuzzy, python-brace-format
+msgid ""
+"Are you sure you want to delete these files ({count})?\n"
+"\n"
+"This action cannot be undone!"
+msgstr "Czy na pewno chcesz usunąć „{filename}”?"
+
+#: templates/duplicate_finder.html:556
+#, fuzzy
+msgid "Files Deleted"
+msgstr "Plik dziennika usunięty"
+
+#: templates/duplicate_finder.html:556
+#, python-brace-format
+msgid "Files deleted: {deleted}. Space freed: {size}"
+msgstr ""
 
 #: templates/force_change_password.html:10
 msgid "Change Default Password"
@@ -7591,6 +8138,129 @@ msgstr "Wypełnione pola:"
 msgid "Still missing:"
 msgstr "Nadal brakuje:"
 
+#: templates/_modals/scrape_modal.html:39 templates/game_detail.html:3957
+msgid "Reset Metadata"
+msgstr "Zresetuj metadane"
+
+#: templates/game_detail.html:3957
+msgid ""
+"Reset all metadata including boxart and screenshots? This cannot be "
+"undone."
+msgstr ""
+
+#: templates/game_detail.html:4067
+#, fuzzy
+msgid "ROM file renamed successfully!"
+msgstr "Serwer zrestartowany pomyślnie!"
+
+#: templates/game_detail.html:4498
+#, fuzzy
+msgid "Clear Metadata"
+msgstr "Szukaj metadanych"
+
+#: templates/game_detail.html:4499
+msgid ""
+"Clear all metadata including boxart, screenshots, and videos? This cannot"
+" be undone."
+msgstr ""
+
+#: templates/game_detail.html:5145
+#, fuzzy
+msgid "Delete Game"
+msgstr "Zaznaczone gry"
+
+#: templates/game_detail.html:5146
+#, fuzzy, python-brace-format
+msgid "Are you sure you want to delete \"{title}\" from the database?"
+msgstr "Czy na pewno chcesz usunąć „{filename}”?"
+
+#: templates/game_detail.html:5147
+msgid ""
+"This will remove the game entry from RetroDB but will NOT delete the "
+"actual ROM file."
+msgstr ""
+
+#: templates/game_detail.html:5160
+#, fuzzy
+msgid "Game Deleted"
+msgstr "Wybrano 0 gier"
+
+#: templates/game_detail.html:5160
+#, python-brace-format
+msgid "Game \"{title}\" has been removed from the database."
+msgstr ""
+
+#: templates/game_detail.html:5164
+#, fuzzy
+msgid "Failed to delete game"
+msgstr "Nie udało się usunąć"
+
+#: templates/game_detail.html:5168
+msgid "An error occurred while deleting the game."
+msgstr ""
+
+#: templates/game_detail.html:5499
+#, fuzzy
+msgid "Sort title generated"
+msgstr "Zawartość wygenerowana"
+
+#: templates/game_detail.html:5693
+#, fuzzy, python-brace-format
+msgid ""
+"Matched via alternate title \"{term}\" — HLTB shows it as \"{name}\". "
+"Confirm before saving."
+msgstr ""
+"Dopasowano poprzez alternatywny tytuł „{term}” — HLTB wyświetla go jako "
+"„{match}”. Potwierdź przed zapisaniem."
+
+#: templates/game_detail.html:5773
+#, fuzzy
+msgid "Failed to save HLTB data"
+msgstr "Nie udało się zapisać HLTB: "
+
+#: templates/game_detail.html:5795 templates/local_trophy_detail.html:428
+#, fuzzy
+msgid "Clear HLTB Data"
+msgstr "🗑️ Wyczyść dane HLTB"
+
+#: templates/game_detail.html:5804
+#, fuzzy
+msgid "Failed to clear HLTB data"
+msgstr "Nie udało się wyczyścić danych RA"
+
+#: templates/game_detail.html:5944
+#, fuzzy
+msgid "Delete Screenshot"
+msgstr "Usuń zrzut ekranu"
+
+#: templates/game_detail.html:5945
+#, fuzzy, python-brace-format
+msgid "Are you sure you want to delete this screenshot?"
+msgstr "Czy na pewno chcesz usunąć „{filename}”?"
+
+#: templates/game_detail.html:5958
+msgid "Session expired — please log in again"
+msgstr ""
+
+#: templates/game_detail.html:5961
+msgid "Server error — please try again"
+msgstr ""
+
+#: templates/game_detail.html:5989
+#, fuzzy
+msgid "Screenshot deleted"
+msgstr "Deduplikacja zrzutów ekranu"
+
+#: templates/game_detail.html:5991
+#, fuzzy
+msgid "Failed to delete screenshot"
+msgstr "Usuń zrzut ekranu"
+
+#: templates/game_detail.html:5995
+#, fuzzy, python-brace-format
+msgid "Failed to delete screenshot: {error}"
+msgstr "Nie udało się zaktualizować statusu: {error}"
+
 #: templates/game_imports.html:170
 msgid "Steam"
 msgstr "Steam"
@@ -7834,6 +8504,80 @@ msgstr "PS Vita"
 msgid "Trophy Progress"
 msgstr "Postęp trofeów"
 
+#: templates/game_imports.html:528
+#, fuzzy
+msgid "Parse failed"
+msgstr "Aktualizacja nie powiodła się"
+
+#: templates/game_imports.html:544 templates/game_imports.html:670
+#, python-brace-format
+msgid "Games found: {total} ({existing} already imported)"
+msgstr ""
+
+#: templates/game_imports.html:594 templates/game_imports.html:853
+#, fuzzy, python-brace-format, python-format
+msgid "Imported: {count}"
+msgstr "Pominięto: %(count)s"
+
+#: templates/game_imports.html:595 templates/game_imports.html:855
+#, python-brace-format
+msgid "Already in library: {count}"
+msgstr ""
+
+#: templates/game_imports.html:597 templates/game_imports.html:858
+#, fuzzy
+msgid "Import complete"
+msgstr "Importuj zaznaczone"
+
+#: templates/game_imports.html:605 templates/game_imports.html:866
+#, fuzzy
+msgid "Import failed"
+msgstr "Importuj zaznaczone"
+
+#: templates/game_imports.html:607 templates/game_imports.html:867
+#, fuzzy, python-brace-format, python-format
+msgid "Import error: {error}"
+msgstr "Błąd połączenia: %(error)s"
+
+#: templates/game_imports.html:629
+#, fuzzy
+msgid "Please drop a PDF file"
+msgstr "Wpisz tytuł gry"
+
+#: templates/game_imports.html:707
+#, fuzzy
+msgid "Failed to get auth URL"
+msgstr "Nie udało się pobrać obrazu"
+
+#: templates/game_imports.html:708
+#, fuzzy, python-brace-format
+msgid "Failed to connect to Xbox: {error}"
+msgstr "Nie udało się zaktualizować statusu: {error}"
+
+#: templates/game_imports.html:712
+#, fuzzy
+msgid "Disconnect Xbox"
+msgstr "Rozłącz"
+
+#: templates/game_imports.html:712
+msgid "Remove your Xbox account connection? You can reconnect later."
+msgstr ""
+
+#: templates/game_imports.html:713
+#, fuzzy
+msgid "Xbox account disconnected"
+msgstr "Konto Xbox"
+
+#: templates/game_imports.html:714
+#, fuzzy, python-brace-format
+msgid "Failed to disconnect: {error}"
+msgstr "Nie udało się zaktualizować statusu: {error}"
+
+#: templates/game_imports.html:739
+#, python-brace-format
+msgid "Xbox games found: {total} ({existing} already imported)"
+msgstr ""
+
 #: templates/game_imports.html:762 templates/game_imports.html:776
 msgid "In your library: link it"
 msgstr "W Twojej bibliotece: połącz"
@@ -7845,6 +8589,21 @@ msgstr "Połączono z grami w Twojej bibliotece"
 #: templates/game_imports.html:857
 msgid "Details are arriving from Steam in the background"
 msgstr "Szczegóły są pobierane ze Steam w tle"
+
+#: templates/game_imports.html:926
+#, python-brace-format
+msgid "PSN games found: {total} ({existing} already imported)"
+msgstr ""
+
+#: templates/game_imports.html:999
+#, fuzzy
+msgid "Xbox account connected successfully!"
+msgstr "Zawartość wygenerowana pomyślnie"
+
+#: templates/game_imports.html:1005
+#, fuzzy, python-brace-format
+msgid "Xbox connection failed: {error}"
+msgstr "Wykrywanie nie powiodło się: {error}"
 
 #: templates/help.af.html:11 templates/help.de.html:11
 #: templates/help.es.html:11 templates/help.fr.html:11
@@ -7969,6 +8728,170 @@ msgstr ""
 "Pozostałe {count} dopasowań w kolejce zostanie odrzuconych, a te gry "
 "zachowają to, co mają."
 
+#: templates/hltb_review.html:290
+#, fuzzy
+msgid "Match approved"
+msgstr "Usuń wsadowo"
+
+#: templates/hltb_review.html:292
+#, fuzzy
+msgid "Failed to approve"
+msgstr "Nie udało się usunąć."
+
+#: templates/hltb_review.html:295
+#, fuzzy
+msgid "Approve failed"
+msgstr "Zapis nie powiódł się"
+
+#: templates/hltb_review.html:306
+#, fuzzy
+msgid "Match rejected"
+msgstr "Wsadowa zmiana nazw zakończona"
+
+#: templates/hltb_review.html:308
+#, fuzzy
+msgid "Failed to reject"
+msgstr "Nie udało się usunąć"
+
+#: templates/hltb_review.html:311
+#, fuzzy
+msgid "Reject failed"
+msgstr "Odrzuć wszystkie"
+
+#: templates/hltb_review.html:319
+msgid "Approve all visible matches?"
+msgstr ""
+
+#: templates/hltb_review.html:320
+#, python-brace-format
+msgid ""
+"HLTB pending matches to apply to your games: {count}. Cannot be undone "
+"without a manual Clear on each game."
+msgstr ""
+
+#: templates/hltb_review.html:330
+#, python-brace-format
+msgid "Matches approved: {count}"
+msgstr ""
+
+#: templates/hltb_review.html:333 templates/hltb_review.html:336
+#, fuzzy
+msgid "Bulk approve failed"
+msgstr "Masowe pobieranie nie powiodło się"
+
+#: templates/hltb_review.html:347
+msgid "Reject all visible matches?"
+msgstr ""
+
+#: templates/hltb_review.html:352
+#, python-brace-format
+msgid ""
+"Queued HLTB matches to drop: {count}. Nothing is written to your games; "
+"they keep what they have."
+msgstr ""
+
+#: templates/hltb_review.html:362
+#, python-brace-format
+msgid "Matches rejected: {count}"
+msgstr ""
+
+#: templates/hltb_review.html:365 templates/hltb_review.html:368
+#, fuzzy
+msgid "Bulk reject failed"
+msgstr "Masowe pobieranie nie powiodło się"
+
+#: templates/list_detail.html:447
+#, fuzzy
+msgid "Game added to list."
+msgstr "Dodano do listy życzeń."
+
+#: templates/list_detail.html:451
+#, fuzzy
+msgid "Failed to add game."
+msgstr "Nie udało się wczytać gry"
+
+#: templates/list_detail.html:455
+#, fuzzy
+msgid "Error adding game to list."
+msgstr "Błąd podczas zapisywania gry: "
+
+#: templates/list_detail.html:461
+#, fuzzy
+msgid "Remove Game"
+msgstr "Usuń tło"
+
+#: templates/list_detail.html:462
+#, fuzzy, python-brace-format
+msgid "Remove \"{title}\" from this list?"
+msgstr "Usuń z listy życzeń"
+
+#: templates/list_detail.html:473
+#, fuzzy
+msgid "Game removed from list."
+msgstr "Usunięto z listy życzeń."
+
+#: templates/list_detail.html:493
+#, fuzzy
+msgid "Failed to remove game."
+msgstr "Nie udało się usunąć."
+
+#: templates/list_detail.html:497
+#, fuzzy
+msgid "Error removing game."
+msgstr "Błąd podczas usuwania pozycji."
+
+#: templates/lists.html:422
+#, fuzzy
+msgid "Please enter a list name."
+msgstr "Wpisz tytuł gry."
+
+#: templates/lists.html:451
+#, fuzzy
+msgid "List updated."
+msgstr "Ostatnia aktualizacja"
+
+#: templates/lists.html:451
+#, fuzzy
+msgid "List created."
+msgstr "Ostatnia aktualizacja"
+
+#: templates/lists.html:455
+#, fuzzy
+msgid "Failed to save list."
+msgstr "Nie udało się zapisać."
+
+#: templates/lists.html:459
+#, fuzzy
+msgid "Error saving list."
+msgstr "Błąd podczas zapisywania pozycji listy życzeń."
+
+#: templates/lists.html:465
+#, fuzzy
+msgid "Delete List"
+msgstr "Usuń logo"
+
+#: templates/lists.html:466
+#, python-brace-format
+msgid ""
+"Are you sure you want to delete \"{name}\"?\n"
+"This will not delete the games themselves, only the list."
+msgstr ""
+
+#: templates/lists.html:476
+#, fuzzy
+msgid "List deleted."
+msgstr "Edytuj zaznaczone"
+
+#: templates/lists.html:479
+#, fuzzy
+msgid "Failed to delete list."
+msgstr "Nie udało się usunąć"
+
+#: templates/lists.html:483
+#, fuzzy
+msgid "Error deleting list."
+msgstr "Błąd podczas usuwania pliku dziennika"
+
 #: templates/_settings_tabs/data.html:5 templates/local_trophies.html:6
 #: templates/psn_trophy_detail.html:276 templates/systems.html:89
 msgid "Trophies"
@@ -8068,6 +8991,60 @@ msgstr "Nie odblokowano jeszcze żadnych trofeów"
 #: templates/local_trophy_detail.html:305 templates/psn_trophy_detail.html:496
 msgid "All trophies unlocked!"
 msgstr "Wszystkie trofea odblokowane!"
+
+#: templates/local_trophy_detail.html:347
+#, fuzzy, python-brace-format
+msgid ""
+"Matched via alternate title \"{term}\" — please verify this is the same "
+"game."
+msgstr ""
+"Dopasowano poprzez alternatywny tytuł „{term}” — HLTB wyświetla go jako "
+"„{match}”. Potwierdź przed zapisaniem."
+
+#: templates/local_trophy_detail.html:351
+#, fuzzy
+msgid "HLTB Match Found"
+msgstr "Nie znaleziono danych HLTB"
+
+#: templates/local_trophy_detail.html:352
+#, python-brace-format
+msgid ""
+"Found: \"{match}\"{platform} ({confidence} confidence){alt}\n"
+"\n"
+"Playtime: {playtime}\n"
+"\n"
+"Accept this match?"
+msgstr ""
+
+#: templates/local_trophy_detail.html:411
+#, fuzzy
+msgid "HLTB Lookup Failed"
+msgstr "Wyszukiwanie HLTB anulowane"
+
+#: templates/local_trophy_detail.html:411
+#, fuzzy
+msgid "No match found."
+msgstr "Nie znaleziono dopasowań"
+
+#: templates/local_trophy_detail.html:418 templates/settings.html:1854
+#: templates/settings.html:1890 templates/settings.html:1924
+#: templates/settings.html:1942 templates/settings.html:1967
+#: templates/settings.html:1970 templates/settings.html:1989
+#: templates/settings.html:2083 templates/steam_achievement_game.html:302
+#: templates/xbox_achievement_game.html:293
+#, fuzzy, python-brace-format
+msgid "Error: {error}"
+msgstr "Niepowodzenie: {error}"
+
+#: templates/local_trophy_detail.html:429
+#, fuzzy
+msgid "Are you sure you want to remove the HLTB playtime data?"
+msgstr "Czy na pewno chcesz zrestartować serwer?"
+
+#: templates/local_trophy_detail.html:443
+#, fuzzy
+msgid "Failed to clear HLTB data."
+msgstr "Nie udało się wyczyścić danych RA"
 
 #: templates/login.html:205
 msgid "Welcome to RetroDB"
@@ -8260,6 +9237,7 @@ msgstr "Tworzy plik playlisty M3U dla zgodności z ES-DE"
 
 #: templates/multi_disc_organizer.html:183 templates/reports.html:326
 #: templates/reports.html:405 templates/reports.html:480
+#: templates/reports.html:1153
 msgid "System:"
 msgstr "System:"
 
@@ -8272,6 +9250,7 @@ msgid "Scan for Loose Discs"
 msgstr "Skanuj w poszukiwaniu luźnych płyt"
 
 #: templates/multi_disc_organizer.html:195
+#: templates/multi_disc_organizer.html:380
 msgid "Organize All"
 msgstr "Zorganizuj wszystkie"
 
@@ -8302,6 +9281,63 @@ msgstr "Przeskanowane systemy:"
 #: templates/multi_disc_organizer.html:239
 msgid "Games found:"
 msgstr "Znalezione gry:"
+
+#: templates/multi_disc_organizer.html:292
+#, fuzzy
+msgid "Failed to scan"
+msgstr "Nie udało się zapisać: "
+
+#: templates/multi_disc_organizer.html:342
+#, fuzzy
+msgid "Organize Multi-Disc"
+msgstr "Zorganizuj wszystkie"
+
+#: templates/multi_disc_organizer.html:344
+#, python-brace-format
+msgid ""
+"This will create an M3U playlist for the existing folder:\n"
+"• Folder: {name}/\n"
+"• Create {name}.m3u playlist\n"
+"• Add noload.txt if missing"
+msgstr ""
+
+#: templates/multi_disc_organizer.html:345
+#, python-brace-format
+msgid ""
+"This will:\n"
+"• Create folder: {name}/\n"
+"• Move the disc files into the folder ({count})\n"
+"• Add noload.txt\n"
+"• Create {name}.m3u playlist"
+msgstr ""
+
+#: templates/multi_disc_organizer.html:362
+#, fuzzy
+msgid "Organized"
+msgstr "Zorganizuj wszystkie"
+
+#: templates/multi_disc_organizer.html:362
+#, fuzzy, python-brace-format
+msgid "Created {path}"
+msgstr "Wykryta ścieżka"
+
+#: templates/multi_disc_organizer.html:381
+#, python-brace-format
+msgid ""
+"Organize every multi-disc game ({count})?\n"
+"\n"
+"Each game will get its own folder with an M3U playlist."
+msgstr ""
+
+#: templates/multi_disc_organizer.html:408
+#, fuzzy, python-brace-format
+msgid "Games organized: {count}. Failed: {failed}"
+msgstr "Zainstalowane rdzenie: {n}. Niepowodzenia: {failed}"
+
+#: templates/multi_disc_organizer.html:409
+#, fuzzy, python-brace-format
+msgid "Games organized: {count}"
+msgstr "Gry do uzupełnienia: {count}."
 
 #: templates/museum.html:12
 msgid "Gaming system encyclopedia — history, specs, and legacy"
@@ -8690,6 +9726,21 @@ msgstr ""
 "Ograniczenie szybkości: ~2,5 sekundy między grami, aby zachować limity "
 "API PSN"
 
+#: templates/psn_trophies.html:1622
+#, fuzzy
+msgid "Please select at least one game to refresh."
+msgstr "Wybierz co najmniej jedną grę do edycji."
+
+#: templates/psn_trophies.html:1757
+#, fuzzy
+msgid "Cancel Refresh"
+msgstr "Odśwież"
+
+#: templates/psn_trophies.html:1757
+#, fuzzy
+msgid "Are you sure you want to cancel the bulk refresh?"
+msgstr "Czy na pewno chcesz anulować?"
+
 #: templates/psn_trophy_detail.html:73
 #, python-format
 msgid "No description available. NPWR ID: %(npwr_id)s"
@@ -8735,6 +9786,46 @@ msgstr "Powiąż z grą RetroDB"
 #: templates/psn_trophy_detail.html:453 templates/psn_trophy_detail.html:483
 msgid "No description"
 msgstr "Brak opisu"
+
+#: templates/psn_trophy_detail.html:748
+#, python-brace-format
+msgid "Trophies synced: {count}"
+msgstr ""
+
+#: templates/psn_trophy_detail.html:756
+#, fuzzy
+msgid "Network error during sync"
+msgstr "Błąd sieci podczas rozpoczynania masowego pobierania danych"
+
+#: templates/psn_trophy_detail.html:812
+#, fuzzy
+msgid "Link this PSN game to a RetroDB game first"
+msgstr "Powiąż tę grę PSN z grą RetroDB, aby dodać dane HLTB."
+
+#: templates/psn_trophy_detail.html:853
+#, fuzzy
+msgid "Enter at least 2 characters to search"
+msgstr "Wpisz tytuł gry do wyszukania..."
+
+#: templates/psn_trophy_detail.html:928
+#, fuzzy, python-brace-format
+msgid "Linked to \"{title}\""
+msgstr "Edytuj: {title}"
+
+#: templates/psn_trophy_detail.html:931
+#, fuzzy
+msgid "Failed to link game"
+msgstr "Nie udało się wczytać gry"
+
+#: templates/psn_trophy_detail.html:948
+#, fuzzy
+msgid "Game unlinked"
+msgstr "Przeskanowane gry"
+
+#: templates/psn_trophy_detail.html:951
+#, fuzzy
+msgid "Failed to unlink game"
+msgstr "Nie udało się wczytać gry"
 
 #: templates/reports.html:269 templates/rom_tools_hub.html:264
 msgid "Analyze ROM filenames against naming standards and scraped metadata"
@@ -8895,6 +9986,100 @@ msgstr "Wsadowa zmiana nazw zakończona"
 msgid "Start Rename"
 msgstr "Rozpocznij zmianę nazw"
 
+#: templates/reports.html:681
+#, fuzzy
+msgid "Cleared"
+msgstr "Wyczyść"
+
+#: templates/reports.html:681
+msgid "Scan results have been cleared."
+msgstr ""
+
+#: templates/reports.html:773
+msgid "Some scan checks encountered errors. Check browser console for details."
+msgstr ""
+
+#: templates/_modals/rename_modal.html:20 templates/reports.html:1109
+msgid "Rename File"
+msgstr "Zmień nazwę pliku"
+
+#: templates/reports.html:1109
+#, python-brace-format
+msgid "Rename ROM file to:<br><code>{name}</code>"
+msgstr ""
+
+#: templates/reports.html:1120
+#, fuzzy
+msgid "Renamed"
+msgstr "Nazwa"
+
+#: templates/reports.html:1120 templates/reports.html:1184
+#, fuzzy
+msgid "File renamed successfully."
+msgstr "Serwer zrestartowany pomyślnie!"
+
+#: templates/reports.html:1140
+#, fuzzy
+msgid "System Type"
+msgstr "Typ problemu:"
+
+#: templates/reports.html:1140
+#, fuzzy
+msgid "System Name"
+msgstr "Sugerowana nazwa"
+
+#: templates/reports.html:1146
+#, fuzzy
+msgid "Cannot Rename"
+msgstr "Rozpocznij zmianę nazw"
+
+#: templates/reports.html:1146
+msgid "No suggested filename available. Please re-scan to refresh the data."
+msgstr ""
+
+#: templates/reports.html:1159
+#, fuzzy
+msgid "Naming convention:"
+msgstr "Konwencje nazewnictwa ROM"
+
+#: templates/_modals/rename_modal.html:8 templates/reports.html:1163
+msgid "Current filename:"
+msgstr "Bieżąca nazwa pliku:"
+
+#: templates/reports.html:1167
+#, fuzzy
+msgid "Rename to:"
+msgstr "Zmień nazwę pliku"
+
+#: templates/reports.html:1170
+#, fuzzy
+msgid "This will rename the file on disk. Make sure you have backups."
+msgstr "Tej czynności nie można cofnąć. Upewnij się, że masz kopie zapasowe."
+
+#: templates/_modals/rename_modal.html:4 templates/reports.html:1173
+msgid "Rename ROM File"
+msgstr "Zmień nazwę pliku ROM"
+
+#: templates/reports.html:1226 templates/reports.html:1383
+#, fuzzy
+msgid "No Items"
+msgstr "Notatki"
+
+#: templates/reports.html:1226 templates/reports.html:1383
+#, fuzzy
+msgid "No items with suggested names match your current filters."
+msgstr "Żadne sesje nie pasują do bieżących filtrów"
+
+#: templates/reports.html:1258
+#, fuzzy
+msgid "Cancel Batch Rename?"
+msgstr "Wsadowa zmiana nazw"
+
+#: templates/reports.html:1259
+#, fuzzy
+msgid "A batch rename is in progress. Are you sure you want to cancel?"
+msgstr "Czy na pewno chcesz anulować?"
+
 #: templates/rom_tools_hub.html:115
 msgid "Utilities for managing, converting, and organizing your ROM collection"
 msgstr "Narzędzia do zarządzania, konwertowania i organizowania kolekcji ROM-ów"
@@ -9037,7 +10222,7 @@ msgstr ""
 "Zrzuty z ZX Spectrum, Commodore 64 i Game Boya są ułożone od najbardziej "
 "podejrzanych, a Ty decydujesz, które usunąć."
 
-#: templates/rom_tools_hub.html:274
+#: templates/rom_tools_hub.html:274 templates/rom_tools_hub.html:748
 msgid "Image Resizer"
 msgstr "Zmiana rozmiaru obrazów"
 
@@ -9053,7 +10238,7 @@ msgstr ""
 "dużych. Docelowo 1080px wysokości dla okładek/zrzutów ekranu i 1280px "
 "dłuższej krawędzi dla kontrolerów/sprzętu."
 
-#: templates/rom_tools_hub.html:287
+#: templates/rom_tools_hub.html:287 templates/rom_tools_hub.html:433
 msgid "Backfill Alternate Titles"
 msgstr "Uzupełnij tytuły alternatywne"
 
@@ -9076,7 +10261,7 @@ msgstr ""
 msgid "Metadata only &middot; no media downloads"
 msgstr "Tylko metadane &middot; bez pobierania mediów"
 
-#: templates/rom_tools_hub.html:300 templates/rom_tools_hub.html:463
+#: templates/rom_tools_hub.html:300 templates/rom_tools_hub.html:461
 msgid "Fix Box and Manual Regions"
 msgstr "Napraw regiony okładek i instrukcji"
 
@@ -9096,7 +10281,7 @@ msgstr ""
 msgid "Needs a ScreenScraper account"
 msgstr "Wymaga konta ScreenScraper"
 
-#: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:524
+#: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:522
 msgid "Fix Regions from File Names"
 msgstr "Napraw regiony na podstawie nazw plików"
 
@@ -9110,7 +10295,7 @@ msgstr ""
 "(USA) mógł trafić na listę jako Japonia. Ta naprawa nadaje takim grom "
 "region z nazwy pliku."
 
-#: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:558
+#: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:556
 msgid "Tidy Genres, Perspectives and Modes"
 msgstr "Uporządkuj gatunki, perspektywy i tryby"
 
@@ -9136,7 +10321,7 @@ msgstr ""
 msgid "Needs a MAME list file"
 msgstr "Wymagany plik listy MAME"
 
-#: templates/rom_tools_hub.html:354 templates/rom_tools_hub.html:592
+#: templates/rom_tools_hub.html:354 templates/rom_tools_hub.html:590
 msgid "Tidy Release Dates"
 msgstr "Uporządkuj daty wydania"
 
@@ -9151,7 +10336,7 @@ msgstr ""
 "daty do roku lub miesiąca, aby kolejne pobranie danych mogło wpisać "
 "prawdziwą datę."
 
-#: templates/rom_tools_hub.html:367 templates/rom_tools_hub.html:626
+#: templates/rom_tools_hub.html:367 templates/rom_tools_hub.html:624
 msgid "Check Saved Play Times"
 msgstr "Sprawdź zapisane czasy gry"
 
@@ -9165,7 +10350,7 @@ msgstr ""
 "samej nazwie na innym systemie. Ta opcja wysyła takie dopasowania na "
 "stronę weryfikacji, gdzie każde z nich zachowasz lub usuniesz."
 
-#: templates/rom_tools_hub.html:380 templates/rom_tools_hub.html:660
+#: templates/rom_tools_hub.html:380 templates/rom_tools_hub.html:658
 msgid "Clear RAWG Pictures from Box Art"
 msgstr "Wyczyść obrazy RAWG z okładek"
 
@@ -9179,7 +10364,7 @@ msgstr ""
 "tła lub zrzut ekranu, co blokuje prawdziwą okładkę. Ta naprawa usuwa te "
 "obrazy, aby pobranie danych mogło znaleźć prawdziwe okładki."
 
-#: templates/rom_tools_hub.html:393
+#: templates/rom_tools_hub.html:393 templates/rom_tools_hub.html:696
 msgid "Bulk HLTB Lookup"
 msgstr "Masowe wyszukiwanie HLTB"
 
@@ -9227,7 +10412,33 @@ msgstr ""
 "Skonfiguruj ścieżki, lokalizacje narzędzi zewnętrznych, typy archiwów i "
 "inne preferencje współdzielone przez wszystkie narzędzia ROM."
 
-#: templates/rom_tools_hub.html:464
+#: templates/rom_tools_hub.html:434
+msgid ""
+"Scan every scraped game for alternate / regional titles using IGDB and "
+"ScreenScraper search results.\n"
+"\n"
+"No media is downloaded, no other metadata is touched — just alternate "
+"title lists are merged into the DB.\n"
+"\n"
+"This may take a while for large libraries."
+msgstr ""
+
+#: templates/rom_tools_hub.html:444
+msgid "Alt-titles backfill started"
+msgstr ""
+
+#: templates/rom_tools_hub.html:452 templates/rom_tools_hub.html:715
+#: templates/rom_tools_hub.html:767
+#, fuzzy
+msgid "Failed to start"
+msgstr "Nie udało się zapisać: "
+
+#: templates/rom_tools_hub.html:455
+#, fuzzy
+msgid "Failed to start backfill"
+msgstr "Nie udało się rozpocząć pobierania danych."
+
+#: templates/rom_tools_hub.html:462
 msgid ""
 "Each game with a ScreenScraper box or manual is looked up again. Where "
 "another region suits it better, the file is downloaded and the old one is"
@@ -9245,11 +10456,11 @@ msgstr ""
 "ScreenScraper i może trwać bardzo długo. Możesz opuścić stronę, a aby ją "
 "zatrzymać, naciśnij tę kartę ponownie."
 
-#: templates/rom_tools_hub.html:465
+#: templates/rom_tools_hub.html:463
 msgid "Could not start the fix"
 msgstr "Nie udało się uruchomić naprawy"
 
-#: templates/rom_tools_hub.html:466
+#: templates/rom_tools_hub.html:464
 msgid ""
 "Stop the fix? Files already swapped stay as they are, and a later run "
 "carries on with the rest."
@@ -9257,12 +10468,12 @@ msgstr ""
 "Zatrzymać naprawę? Pliki, które już podmieniono, pozostaną, a kolejne "
 "uruchomienie dokończy resztę."
 
-#: templates/rom_tools_hub.html:467 templates/rom_tools_hub.html:471
+#: templates/rom_tools_hub.html:465 templates/rom_tools_hub.html:469
 #, python-brace-format
 msgid "Stopped. Files swapped: {replaced}."
 msgstr "Zatrzymano. Podmienione pliki: {replaced}."
 
-#: templates/rom_tools_hub.html:468
+#: templates/rom_tools_hub.html:466
 #, python-brace-format
 msgid ""
 "The fix stopped with an error. Files swapped: {replaced}. The log has the"
@@ -9271,12 +10482,12 @@ msgstr ""
 "Naprawa zakończyła się błędem. Podmienione pliki: {replaced}. Szczegóły "
 "są w dzienniku."
 
-#: templates/rom_tools_hub.html:469
+#: templates/rom_tools_hub.html:467
 #, python-brace-format
 msgid "Checked {current} of {total} games. Files swapped: {replaced}."
 msgstr "Sprawdzono {current} z {total} gier. Podmienione pliki: {replaced}."
 
-#: templates/rom_tools_hub.html:470
+#: templates/rom_tools_hub.html:468
 #, python-brace-format
 msgid ""
 "Finished. Files swapped: {replaced}. Games not found: {no_match}. Could "
@@ -9285,7 +10496,7 @@ msgstr ""
 "Zakończono. Podmienione pliki: {replaced}. Nie znaleziono gier: "
 "{no_match}. Nie udało się pobrać: {failed}."
 
-#: templates/rom_tools_hub.html:525
+#: templates/rom_tools_hub.html:523
 #, python-brace-format
 msgid ""
 "{count} games have a region from the AI that their file name contradicts."
@@ -9301,20 +10512,20 @@ msgstr ""
 " któryś z nich tak, że różni się od nazwy pliku, on też zostanie "
 "zmieniony."
 
-#: templates/rom_tools_hub.html:526
+#: templates/rom_tools_hub.html:524
 msgid "No game has an AI region that its file name contradicts."
 msgstr "Żadna gra nie ma regionu od AI, który przeczy nazwie pliku."
 
-#: templates/rom_tools_hub.html:527
+#: templates/rom_tools_hub.html:525
 #, python-brace-format
 msgid "Fixed {count} regions."
 msgstr "Naprawiono regiony: {count}."
 
-#: templates/rom_tools_hub.html:528
+#: templates/rom_tools_hub.html:526
 msgid "Could not fix the regions"
 msgstr "Nie udało się naprawić regionów"
 
-#: templates/rom_tools_hub.html:559
+#: templates/rom_tools_hub.html:557
 #, python-brace-format
 msgid ""
 "{count} games will change.\n"
@@ -9339,11 +10550,11 @@ msgstr ""
 "Potem uruchom zbiorcze pobieranie danych z opcją Uzupełnij braki, aby "
 "wypełnić pozostałe puste pola."
 
-#: templates/rom_tools_hub.html:560
+#: templates/rom_tools_hub.html:558
 msgid "Every game already uses these names."
 msgstr "Wszystkie gry już używają tych nazw."
 
-#: templates/rom_tools_hub.html:561
+#: templates/rom_tools_hub.html:559
 #, python-brace-format
 msgid ""
 "Tidied {count} games. Run a bulk scrape with Fill Missing to fill "
@@ -9352,11 +10563,11 @@ msgstr ""
 "Uporządkowano gry: {count}. Uruchom zbiorcze pobieranie danych z opcją "
 "Uzupełnij braki, aby wypełnić pozostałe puste pola."
 
-#: templates/rom_tools_hub.html:562
+#: templates/rom_tools_hub.html:560
 msgid "Could not tidy the names"
 msgstr "Nie udało się uporządkować nazw"
 
-#: templates/rom_tools_hub.html:593
+#: templates/rom_tools_hub.html:591
 #, python-brace-format
 msgid ""
 "{count} games will change.\n"
@@ -9369,11 +10580,11 @@ msgstr ""
 "Data taka jak 1 stycznia 1987 zmieni się na 1987. Data, której nie "
 "uzupełniło żadne pobranie danych, pozostanie bez zmian."
 
-#: templates/rom_tools_hub.html:594
+#: templates/rom_tools_hub.html:592
 msgid "No release dates need tidying."
 msgstr "Żadne daty wydania nie wymagają porządkowania."
 
-#: templates/rom_tools_hub.html:595
+#: templates/rom_tools_hub.html:593
 #, python-brace-format
 msgid ""
 "Tidied {count} games. Run a bulk scrape with Fill Missing to look for "
@@ -9382,11 +10593,11 @@ msgstr ""
 "Uporządkowano gry: {count}. Uruchom zbiorcze pobieranie danych z opcją "
 "Uzupełnij braki, aby poszukać pełniejszych dat."
 
-#: templates/rom_tools_hub.html:596
+#: templates/rom_tools_hub.html:594
 msgid "Could not tidy the release dates"
 msgstr "Nie udało się uporządkować dat wydania"
 
-#: templates/rom_tools_hub.html:627
+#: templates/rom_tools_hub.html:625
 #, python-brace-format
 msgid ""
 "{count} saved play times look like another game. They will go to the "
@@ -9399,20 +10610,20 @@ msgstr ""
 "\n"
 "Tam Zatwierdź zachowuje czas, a Odrzuć go usuwa."
 
-#: templates/rom_tools_hub.html:628
+#: templates/rom_tools_hub.html:626
 msgid "No saved play time looks wrong."
 msgstr "Żaden zapisany czas gry nie wygląda na błędny."
 
-#: templates/rom_tools_hub.html:629
+#: templates/rom_tools_hub.html:627
 #, python-brace-format
 msgid "Sent {count} play times to the HowLongToBeat review page."
 msgstr "Wysłano {count} czasów gry na stronę weryfikacji HowLongToBeat."
 
-#: templates/rom_tools_hub.html:630
+#: templates/rom_tools_hub.html:628
 msgid "Could not check the saved play times"
 msgstr "Nie udało się sprawdzić zapisanych czasów gry"
 
-#: templates/rom_tools_hub.html:661
+#: templates/rom_tools_hub.html:659
 #, python-brace-format
 msgid ""
 "{count} games and wishlist items use a RAWG picture as their box art. "
@@ -9430,11 +10641,11 @@ msgstr ""
 "pobieranie danych z opcją Uzupełnij brakujące, aby poszukać prawdziwych "
 "okładek."
 
-#: templates/rom_tools_hub.html:662
+#: templates/rom_tools_hub.html:660
 msgid "No game uses a RAWG picture as its box art."
 msgstr "Żadna gra nie używa obrazu RAWG jako okładki."
 
-#: templates/rom_tools_hub.html:663
+#: templates/rom_tools_hub.html:661
 #, python-brace-format
 msgid ""
 "Cleared {count} pictures. Run a bulk scrape with Fill Missing to look for"
@@ -9443,9 +10654,60 @@ msgstr ""
 "Wyczyszczono obrazy: {count}. Uruchom zbiorowe pobieranie danych z opcją "
 "Uzupełnij brakujące, aby poszukać prawdziwych okładek."
 
-#: templates/rom_tools_hub.html:664
+#: templates/rom_tools_hub.html:662
 msgid "Could not clear the pictures"
 msgstr "Nie udało się wyczyścić obrazów"
+
+#: templates/rom_tools_hub.html:697
+#, fuzzy
+msgid ""
+"Fetch HowLongToBeat playtime for every game.\n"
+"\n"
+"High-confidence primary-title matches apply automatically.\n"
+"Alt-title matches and low-confidence matches queue for review on the HLTB"
+" Pending Review page.\n"
+"\n"
+"By default only games without an existing HLTB match are processed. HLTB "
+"rate-limits, so this runs slowly in the background — you can leave the "
+"page."
+msgstr ""
+"Pobierz czas gry HowLongToBeat dla każdej gry. Dopasowania podstawowego "
+"tytułu o wysokiej pewności są stosowane automatycznie; dopasowania "
+"tytułów alternatywnych i wyniki o niskiej pewności trafiają do kolejki "
+"przeglądu, dzięki czemu możesz je masowo zatwierdzić lub odrzucić."
+
+#: templates/rom_tools_hub.html:707
+msgid "Bulk HLTB lookup started — queued matches will appear on the review page"
+msgstr ""
+
+#: templates/rom_tools_hub.html:718
+#, fuzzy
+msgid "Failed to start bulk HLTB"
+msgstr "Nie udało się rozpocząć masowego pobierania danych"
+
+#: templates/rom_tools_hub.html:749
+msgid ""
+"Standardize all images to consistent sizes:\n"
+"\n"
+"Boxart, Screenshots, 3D Boxart: 1080px height\n"
+"Controllers & Hardware: 1280px longest edge\n"
+"\n"
+"Small images will be AI-upscaled (Real-ESRGAN), large images will be "
+"downscaled (Lanczos). Images already within 80 to 120 percent of target "
+"size are skipped.\n"
+"\n"
+"This may take a while for large collections."
+msgstr ""
+
+#: templates/rom_tools_hub.html:759
+#, fuzzy
+msgid "Image standardization started"
+msgstr "Rozpoczęto generowanie Muzeum"
+
+#: templates/rom_tools_hub.html:770
+#, fuzzy
+msgid "Failed to start image resize"
+msgstr "Nie udało się rozpocząć generowania"
 
 #: templates/rom_tools_settings.html:309
 msgid "Empty: RetroDB's data folder"
@@ -9458,6 +10720,22 @@ msgid ""
 msgstr ""
 "Dokąd Utwórz M3U przenosi oryginalne archiwa. Pozostaw puste, aby użyć "
 "folderu danych RetroDB."
+
+#: templates/rom_tools_settings.html:578 templates/rom_tools_settings.html:581
+#: templates/settings.html:1478 templates/settings.html:1521
+#: templates/settings.html:1730 templates/settings.html:1778
+#, fuzzy, python-brace-format
+msgid "Error saving settings: {error}"
+msgstr "Błąd podczas skanowania biblioteki: {error}"
+
+#: templates/rom_tools_settings.html:586
+#, fuzzy
+msgid "Reset Settings"
+msgstr "Zapisz ustawienia"
+
+#: templates/rom_tools_settings.html:586
+msgid "Reset all ROM Tools settings to defaults?"
+msgstr ""
 
 #: templates/screenshot_dedup.html:243
 msgid "Exact Hash (MD5) &mdash; identical files only"
@@ -9499,6 +10777,34 @@ msgstr "Możliwe do odzyskania miejsce"
 msgid "Keep Largest"
 msgstr "Zachowaj największe"
 
+#: templates/screenshot_dedup.html:554
+msgid "Selected largest file in each group"
+msgstr ""
+
+#: templates/screenshot_dedup.html:577
+#, fuzzy
+msgid "Delete Duplicate Screenshots"
+msgstr "Usuń zrzut ekranu"
+
+#: templates/screenshot_dedup.html:578
+#, python-brace-format
+msgid ""
+"Duplicate screenshots to delete: {count}\n"
+"\n"
+"Files will be removed from disk and database references updated. This "
+"cannot be undone."
+msgstr ""
+
+#: templates/screenshot_dedup.html:591
+#, python-brace-format
+msgid "Files deleted: {deleted}. Space freed: {size}. Games updated: {updated}"
+msgstr ""
+
+#: templates/screenshot_dedup.html:601
+#, fuzzy, python-brace-format
+msgid "Failed to delete: {error}"
+msgstr "Nie udało się usunąć"
+
 #: templates/screenshot_review.html:67
 msgid ""
 "These machines could show only a few colours at once, so a picture that "
@@ -9522,9 +10828,73 @@ msgstr ""
 msgid "Show more"
 msgstr "Pokaż więcej"
 
+#: templates/screenshot_review.html:165
+#, python-brace-format
+msgid "{count} screenshots, most suspicious first."
+msgstr ""
+
+#: templates/screenshot_review.html:166
+#, fuzzy
+msgid "No screenshots to review for this system."
+msgstr "Brak dostępnych specyfikacji dla tego systemu."
+
+#: templates/screenshot_review.html:168
+#, fuzzy, python-brace-format
+msgid "{count} could not be read."
+msgstr "Nie udało się usunąć pudełka 3D."
+
+#: templates/screenshot_review.html:180
+#, fuzzy
+msgid "Open full size"
+msgstr "Rozmiar pliku"
+
+#: templates/screenshot_review.html:183
+#, python-brace-format
+msgid "Colour misfit: {score}"
+msgstr ""
+
+#: templates/screenshot_review.html:192
+#, fuzzy
+msgid "Remove Screenshot"
+msgstr "Poprzedni zrzut ekranu"
+
+#: templates/screenshot_review.html:192
+msgid ""
+"Remove this screenshot from the game and delete its file? This cannot be "
+"undone."
+msgstr ""
+
+#: templates/screenshot_review.html:203
+#, fuzzy
+msgid "Screenshot removed"
+msgstr "Przegląd zrzutów ekranu"
+
 #: templates/settings.html:13
 msgid "Configure your RetroDB installation"
 msgstr "Skonfiguruj instalację RetroDB"
+
+#: templates/settings.html:1147
+msgid "Your settings have been saved!"
+msgstr ""
+
+#: templates/settings.html:1153
+#, fuzzy
+msgid "Network error saving settings"
+msgstr "Błąd sieci podczas zapisywania języka"
+
+#: templates/settings.html:1222
+msgid "Timezone saved! Page will reload to apply."
+msgstr ""
+
+#: templates/settings.html:1225
+#, fuzzy
+msgid "Failed to save timezone"
+msgstr "Nie udało się zapisać ustawień"
+
+#: templates/settings.html:1229
+#, fuzzy
+msgid "Network error saving timezone"
+msgstr "Błąd sieci podczas zapisywania języka"
 
 #: templates/settings.html:1250
 msgid "Failed to save language"
@@ -9533,6 +10903,258 @@ msgstr "Nie udało się zapisać języka"
 #: templates/settings.html:1256
 msgid "Network error saving language"
 msgstr "Błąd sieci podczas zapisywania języka"
+
+#: templates/settings.html:1265
+#, fuzzy
+msgid "Please enter a new password"
+msgstr "Wpisz nowe hasło"
+
+#: templates/settings.html:1280
+#, fuzzy
+msgid "Password changed successfully!"
+msgstr "Serwer zrestartowany pomyślnie!"
+
+#: templates/settings.html:1284
+#, fuzzy
+msgid "Failed to change password"
+msgstr "Zmień hasło"
+
+#: templates/settings.html:1288
+#, fuzzy
+msgid "Network error changing password"
+msgstr "Błąd sieci podczas zapisywania języka"
+
+#: templates/settings.html:1375
+#, fuzzy
+msgid "User saved successfully!"
+msgstr "Serwer zrestartowany pomyślnie!"
+
+#: templates/settings.html:1380
+#, fuzzy
+msgid "Failed to save user"
+msgstr "Nie udało się zapisać: "
+
+#: templates/settings.html:1384
+#, fuzzy
+msgid "Network error saving user"
+msgstr "Błąd sieci podczas zapisywania języka"
+
+#: templates/settings.html:1390
+#, fuzzy
+msgid "Delete User"
+msgstr "Usuń niezaznaczone"
+
+#: templates/settings.html:1391
+#, fuzzy, python-brace-format
+msgid ""
+"Are you sure you want to delete user \"{username}\"? This action cannot "
+"be undone."
+msgstr "Czy na pewno chcesz usunąć „{filename}”?"
+
+#: templates/settings.html:1399
+#, fuzzy
+msgid "User deleted successfully"
+msgstr "Serwer zrestartowany pomyślnie!"
+
+#: templates/settings.html:1404
+#, fuzzy
+msgid "Failed to delete user"
+msgstr "Nie udało się usunąć"
+
+#: templates/settings.html:1408
+#, fuzzy
+msgid "Network error deleting user"
+msgstr "Błąd sieci podczas rozpoczynania masowego pobierania danych"
+
+#: templates/settings.html:1470
+#, fuzzy
+msgid "Path settings saved!"
+msgstr "Zapisz ustawienia ścieżek"
+
+#: templates/settings.html:1472
+#, fuzzy
+msgid "Restart required for changes to take full effect"
+msgstr "Zmiany ścieżki ROM wymagają restartu, aby w pełni zadziałały"
+
+#: templates/settings.html:1516
+#, fuzzy
+msgid "Display settings saved!"
+msgstr "Zapisz ustawienia wyświetlania"
+
+#: templates/settings.html:1673
+#, fuzzy
+msgid "Region already exists"
+msgstr "Opcja już istnieje"
+
+#: templates/settings.html:1722
+msgid "ROM naming settings saved!"
+msgstr ""
+
+#: templates/settings.html:1770
+#, fuzzy
+msgid "Notification settings saved!"
+msgstr "Ustawienia powiadomień"
+
+#: templates/settings.html:1790
+#, python-brace-format
+msgid "Success - disappears in {seconds}s"
+msgstr ""
+
+#: templates/settings.html:1791
+#, python-brace-format
+msgid "Info - disappears in {seconds}s"
+msgstr ""
+
+#: templates/settings.html:1792
+#, python-brace-format
+msgid "Warning - disappears in {seconds}s"
+msgstr ""
+
+#: templates/settings.html:1793
+#, python-brace-format
+msgid "Error - disappears in {seconds}s"
+msgstr ""
+
+#: templates/settings.html:1849
+#, fuzzy, python-brace-format
+msgid "Bonus discs detected: {count}"
+msgstr "Nie znaleziono płyty bonusowej"
+
+#: templates/settings.html:1851
+#, fuzzy, python-brace-format
+msgid "Detection failed: {error}"
+msgstr "Wykrywanie nie powiodło się: {error}"
+
+#: templates/settings.html:1883
+#, python-brace-format
+msgid "Bonus discs linked to parent games: {count}"
+msgstr ""
+
+#: templates/settings.html:1887
+#, fuzzy, python-brace-format
+msgid "Auto-link failed: {error}"
+msgstr "Uruchomienie nie powiodło się: {error}"
+
+#: templates/settings.html:1909
+#, fuzzy
+msgid "Bonus Disc Statistics"
+msgstr "Statystyki konwersji"
+
+#: templates/settings.html:1912
+#, fuzzy
+msgid "Total Bonus Discs:"
+msgstr "Płyty bonusowe"
+
+#: templates/settings.html:1913
+#, fuzzy
+msgid "Linked to Parent:"
+msgstr "Nie udało się zapisać: "
+
+#: templates/settings.html:1914
+#, fuzzy
+msgid "Unlinked:"
+msgstr "Odłącz"
+
+#: templates/settings.html:1915
+#, fuzzy
+msgid "Games with Bonus Content:"
+msgstr "Gry z ocenami użytkowników"
+
+#: templates/settings.html:1921
+#, fuzzy, python-brace-format
+msgid "Failed to load stats: {error}"
+msgstr "Nie udało się zaktualizować statusu: {error}"
+
+#: templates/settings.html:1936
+msgid "Game marked as bonus disc"
+msgstr ""
+
+#: templates/settings.html:1957
+#, fuzzy
+msgid "Select Parent Game"
+msgstr "Zaznaczone gry"
+
+#: templates/settings.html:1958
+msgid "Choose the parent game for this bonus disc:"
+msgstr ""
+
+#: templates/settings.html:1965
+msgid ""
+"No potential parent games found. Try using \"Mark\" instead to just hide "
+"this from listings."
+msgstr ""
+
+#: templates/settings.html:2005
+#, python-brace-format
+msgid "Backup created: {filename} ({size})"
+msgstr ""
+
+#: templates/settings.html:2008
+#, fuzzy, python-brace-format
+msgid "Backup failed: {error}"
+msgstr "Nie udało się zastosować: {error}"
+
+#: templates/settings.html:2011
+#, fuzzy, python-brace-format
+msgid "Backup error: {error}"
+msgstr "Nie udało się zastosować: {error}"
+
+#: templates/settings.html:2051
+#, fuzzy
+msgid "Restore Backup"
+msgstr "Usuń tło"
+
+#: templates/settings.html:2052
+#, python-brace-format
+msgid ""
+"Are you sure you want to restore from \"{filename}\"?\n"
+"\n"
+"This will replace your current database. A pre-restore backup will be "
+"created automatically."
+msgstr ""
+
+#: templates/settings.html:2058
+msgid "Database restored! Reloading page..."
+msgstr ""
+
+#: templates/settings.html:2063
+#, fuzzy, python-brace-format
+msgid "Restore failed: {error}"
+msgstr "Wykrywanie nie powiodło się: {error}"
+
+#: templates/settings.html:2066
+#, fuzzy, python-brace-format
+msgid "Restore error: {error}"
+msgstr "Wykrywanie nie powiodło się: {error}"
+
+#: templates/settings.html:2073
+msgid "Calculating file sizes..."
+msgstr ""
+
+#: templates/settings.html:2080
+#, fuzzy, python-brace-format
+msgid "Calculation failed: {error}"
+msgstr "Skanowanie nie powiodło się: {error}"
+
+#: templates/settings.html:2308
+#, fuzzy
+msgid "AI Metadata"
+msgstr "Z metadanymi"
+
+#: templates/settings.html:2309
+#, fuzzy, python-brace-format
+msgid "{name} enabled"
+msgstr "Włączony"
+
+#: templates/settings.html:2309
+#, fuzzy, python-brace-format
+msgid "{name} disabled"
+msgstr "Wyłączone"
+
+#: templates/settings.html:2312
+#, fuzzy
+msgid "Failed to save scraper setting"
+msgstr "Nie udało się zapisać ustawień"
 
 #: templates/settings.html:2417
 msgid "Testing…"
@@ -9546,6 +11168,310 @@ msgstr "Klucz działa: %(provider)s odpowiedział, używając %(model)s."
 #: templates/settings.html:2427
 msgid "The key test failed."
 msgstr "Test klucza nie powiódł się."
+
+#: templates/settings.html:2905
+#, fuzzy
+msgid "Invalid Input"
+msgstr "Nieprawidłowa ścieżka"
+
+#: templates/settings.html:2905
+#, fuzzy
+msgid "Please enter a value"
+msgstr "Wpisz tytuł gry"
+
+#: templates/settings.html:2922 templates/settings.html:2926
+#, fuzzy
+msgid "Failed to add option"
+msgstr "Nie udało się zapisać ustawień"
+
+#: templates/settings.html:2932
+#, fuzzy
+msgid "Delete Option"
+msgstr "Usuń logo"
+
+#: templates/settings.html:2933
+#, fuzzy, python-brace-format
+msgid "Are you sure you want to delete this option?"
+msgstr "Czy na pewno chcesz usunąć „{filename}”?"
+
+#: templates/settings.html:2945 templates/settings.html:2949
+#, fuzzy
+msgid "Failed to delete option"
+msgstr "Nie udało się usunąć"
+
+#: templates/settings.html:3496 templates/settings.html:4258
+#, fuzzy
+msgid "Missing Input"
+msgstr "Brakujący region"
+
+#: templates/settings.html:3496 templates/settings.html:4258
+#, fuzzy
+msgid "Please enter a controller name"
+msgstr "Niestandardowa nazwa kontrolera"
+
+#: templates/settings.html:3540
+#, fuzzy, python-brace-format
+msgid "Controller \"{name}\" has been added to the library."
+msgstr "{system} został dodany do kolejki synchronizacji."
+
+#: templates/settings.html:3542 templates/settings.html:3546
+#, fuzzy
+msgid "Failed to add controller"
+msgstr "Nie udało się pobrać obrazu kontrolera"
+
+#: templates/settings.html:3614 templates/settings.html:3618
+#, fuzzy
+msgid "Failed to set default controller"
+msgstr "Domyślne kontrolery systemów"
+
+#: templates/settings.html:3649 templates/settings.html:3653
+#, fuzzy
+msgid "Failed to add default controller"
+msgstr "Nie udało się pobrać obrazu kontrolera"
+
+#: templates/settings.html:3679 templates/settings.html:3683
+#, fuzzy
+msgid "Failed to remove default controller"
+msgstr "Domyślne kontrolery systemów"
+
+#: templates/settings.html:3786
+#, fuzzy
+msgid "ALL SYSTEMS"
+msgstr "Wszystkie systemy"
+
+#: templates/settings.html:3790
+#, fuzzy
+msgid "Clear Scraped Data"
+msgstr "Wyczyść dane RA"
+
+#: templates/settings.html:3791
+#, fuzzy, python-brace-format
+msgid "This will clear all scraped metadata from games in {system}."
+msgstr "Wyczyszczono dane RA dla {count} gier w systemie {system}"
+
+#: templates/settings.html:3792
+msgid "Downloaded images will also be deleted!"
+msgstr ""
+
+#: templates/settings.html:3793
+#, fuzzy
+msgid "This cannot be undone. Are you sure?"
+msgstr "Tej czynności nie można cofnąć. Upewnij się, że masz kopie zapasowe."
+
+#: templates/settings.html:3918
+#, fuzzy
+msgid "No Files"
+msgstr "Pliki ROM"
+
+#: templates/settings.html:3918
+#, fuzzy
+msgid "Please scan for orphaned files first."
+msgstr "Skanuj w poszukiwaniu niepożądanych plików"
+
+#: templates/settings.html:3923
+#, fuzzy
+msgid "Delete Orphaned Files"
+msgstr "Usuń plik dziennika"
+
+#: templates/settings.html:3924
+#, python-brace-format
+msgid ""
+"Orphaned media files to delete permanently: {count}. This action cannot "
+"be undone.<br><br>Proceed?"
+msgstr ""
+
+#: templates/settings.html:4054
+#, fuzzy
+msgid "Nothing to Clear"
+msgstr "brak zmian do zaktualizowania"
+
+#: templates/settings.html:4054
+msgid "Please scan for missing media references first."
+msgstr ""
+
+#: templates/settings.html:4059
+#, fuzzy
+msgid "Clear Missing References"
+msgstr "Wyczyść brakujące ROM-y"
+
+#: templates/settings.html:4060
+#, python-brace-format
+msgid ""
+"Database references to clear: {count}. They point to media files that no "
+"longer exist on disk, so scrapers can download them again. Your game "
+"entries are not affected.<br><br>Proceed?"
+msgstr ""
+
+#: templates/settings.html:4160
+#, fuzzy
+msgid "Delete Controller"
+msgstr "Następny kontroler"
+
+#: templates/settings.html:4161
+#, python-brace-format
+msgid ""
+"Are you sure you want to delete {name}?<br><br>This will remove it from "
+"the library and any systems using it as default."
+msgstr ""
+
+#: templates/settings.html:4183
+#, fuzzy
+msgid "Deleted"
+msgstr "Usuń"
+
+#: templates/settings.html:4183
+#, fuzzy, python-brace-format
+msgid "Controller \"{name}\" has been removed."
+msgstr "Nazwa kontrolera jest wymagana"
+
+#: templates/settings.html:4185 templates/settings.html:4189
+#, fuzzy
+msgid "Failed to delete controller"
+msgstr "Nie udało się pobrać obrazu kontrolera"
+
+#: templates/settings.html:4207
+#, fuzzy
+msgid "Failed to load controller"
+msgstr "Nie udało się wczytać kolejnych wpisów."
+
+#: templates/settings.html:4238
+#, fuzzy
+msgid "Failed to load controller data"
+msgstr "Nie udało się pobrać obrazu kontrolera"
+
+#: templates/settings.html:4296
+#, fuzzy, python-brace-format
+msgid "Controller \"{name}\" has been updated."
+msgstr "Nazwa kontrolera jest wymagana"
+
+#: templates/settings.html:4298 templates/settings.html:4302
+#, fuzzy
+msgid "Failed to update controller"
+msgstr "Nie udało się pobrać obrazu kontrolera"
+
+#: templates/settings.html:4429
+#, fuzzy
+msgid "Logos Refreshed"
+msgstr "Odśwież"
+
+#: templates/settings.html:4430
+#, python-brace-format
+msgid "System logos updated: {count}. The table has been refreshed."
+msgstr ""
+
+#: templates/settings.html:4432
+#, fuzzy
+msgid "Failed to refresh logos"
+msgstr "Nie udało się zmienić nazwy pliku"
+
+#: templates/settings.html:4436
+#, fuzzy
+msgid "Failed to refresh system logos"
+msgstr "Odśwież logo systemów"
+
+#: templates/settings.html:4458
+#, fuzzy
+msgid "Names Refreshed"
+msgstr "Wydane gry"
+
+#: templates/settings.html:4459
+#, python-brace-format
+msgid "System names updated: {count}. Click OK to refresh the page."
+msgstr ""
+
+#: templates/settings.html:4462
+#, fuzzy
+msgid "Failed to refresh names"
+msgstr "Nie udało się zmienić nazwy pliku"
+
+#: templates/settings.html:4466
+#, fuzzy
+msgid "Failed to refresh system names"
+msgstr "Odśwież nazwy systemów"
+
+#: templates/settings.html:4909
+#, fuzzy, python-brace-format
+msgid "Log: {filename}"
+msgstr "Wymagana nazwa pliku logo"
+
+#: templates/settings.html:4910
+#, fuzzy
+msgid "Log file is empty"
+msgstr "Plik dziennika usunięty"
+
+#: templates/settings.html:4913
+#, fuzzy
+msgid "Failed to load log file"
+msgstr "Nie udało się wczytać gry"
+
+#: templates/settings.html:4916
+#, fuzzy, python-brace-format
+msgid "Error loading log file: {error}"
+msgstr "Błąd podczas wczytywania pliku dziennika"
+
+#: templates/settings.html:4935
+#, fuzzy
+msgid "Failed to delete log file"
+msgstr "Nie udało się usunąć"
+
+#: templates/settings.html:4938
+#, fuzzy, python-brace-format
+msgid "Error deleting log file: {error}"
+msgstr "Błąd podczas usuwania pliku dziennika"
+
+#: templates/settings.html:4944
+#, fuzzy
+msgid "Clear Old Logs"
+msgstr "Wyczyść dziennik"
+
+#: templates/settings.html:4944
+msgid "This will delete all log files older than 5 days. Continue?"
+msgstr ""
+
+#: templates/settings.html:4950
+#, python-brace-format
+msgid "Old log files removed: {count}"
+msgstr ""
+
+#: templates/settings.html:4953
+#, fuzzy
+msgid "Failed to clear old logs"
+msgstr "Nie udało się wyczyścić importów CLZ"
+
+#: templates/settings.html:4956
+#, fuzzy, python-brace-format
+msgid "Error clearing old logs: {error}"
+msgstr "Błąd podczas skanowania biblioteki: {error}"
+
+#: templates/settings.html:5126
+#, fuzzy
+msgid "Redirect URI copied to clipboard"
+msgstr "Kopiuj do schowka"
+
+#: templates/settings.html:5201 templates/settings.html:5243
+#, fuzzy
+msgid "Avatar updated!"
+msgstr "Ostatnia aktualizacja"
+
+#: templates/settings.html:5206
+#, fuzzy, python-brace-format
+msgid "Upload failed: {error}"
+msgstr "Nie udało się zastosować: {error}"
+
+#: templates/settings.html:5220
+#, fuzzy
+msgid "Avatar removed"
+msgstr "Usuń wsadowo"
+
+#: templates/settings.html:5223
+#, fuzzy
+msgid "Failed to remove avatar"
+msgstr "Nie udało się usunąć."
+
+#: templates/settings.html:5246
+#, fuzzy
+msgid "Failed to save avatar"
+msgstr "Nie udało się zapisać HLTB: "
 
 #: templates/_settings_tabs/_tab_bar.html:23
 #: templates/_settings_tabs/_tab_bar.html:38
@@ -9839,6 +11765,12 @@ msgstr ""
 "Kliknij powyżej <strong>Odśwież</strong>, aby zsynchronizować "
 "poszczególne osiągnięcia ze Steam."
 
+#: templates/steam_achievement_game.html:294
+#: templates/xbox_achievement_game.html:285
+#, fuzzy
+msgid "Achievements synced!"
+msgstr "Wszystkie osiągnięcia odblokowane!"
+
 #: templates/steam_achievements.html:22 templates/xbox_achievements.html:22
 #, python-format
 msgid "%(count)s games with achievement data"
@@ -9872,6 +11804,29 @@ msgid ""
 msgstr ""
 "Przejdź do <a href=\"%(url)s\" style=\"color: var(--primary-"
 "cyan);\">Importy gier</a>, aby zacząć."
+
+#: templates/steam_achievements.html:166
+#, fuzzy
+msgid "Steam achievement sync started"
+msgstr "Osiągnięcia Steam"
+
+#: templates/steam_achievements.html:170 templates/xbox_achievements.html:170
+#, fuzzy
+msgid "Failed to start sync"
+msgstr "Nie udało się rozpocząć pobierania danych."
+
+#: templates/steam_achievements.html:175 templates/steam_achievements.html:194
+#: templates/xbox_achievements.html:175 templates/xbox_achievements.html:194
+#, fuzzy, python-brace-format
+msgid "Sync error: {error}"
+msgstr "Skanowanie nie powiodło się: {error}"
+
+#: templates/steam_achievements.html:196 templates/xbox_achievements.html:196
+#, fuzzy, python-brace-format
+msgid "Sync complete: {synced} synced, {skipped} skipped"
+msgstr ""
+"Generowanie zakończone: {generated} wygenerowano, {skipped} pominięto, "
+"{failed} nieudanych"
 
 #: templates/system_games.html:24
 msgid "games in your collection"
@@ -9940,6 +11895,60 @@ msgstr "Przeskanuj bibliotekę ROM-ów, aby dodać systemy."
 #: templates/systems.html:120
 msgid "System Specifications"
 msgstr "Specyfikacje systemu"
+
+#: templates/tags.html:480
+#, fuzzy
+msgid "Please enter a tag name."
+msgstr "Wpisz tytuł gry."
+
+#: templates/tags.html:505
+#, fuzzy
+msgid "Tag updated."
+msgstr "Ostatnia aktualizacja"
+
+#: templates/tags.html:505
+#, fuzzy
+msgid "Tag created."
+msgstr "To nie jest plik kodów."
+
+#: templates/tags.html:509
+#, fuzzy
+msgid "Failed to save tag."
+msgstr "Nie udało się zapisać."
+
+#: templates/tags.html:513
+#, fuzzy
+msgid "Error saving tag."
+msgstr "Błąd podczas zapisywania gry: "
+
+#: templates/tags.html:519
+#, fuzzy
+msgid "Delete Tag"
+msgstr "Usuń logo"
+
+#: templates/tags.html:520
+#, fuzzy, python-brace-format
+msgid ""
+"Are you sure you want to delete the tag \"{name}\"?\n"
+"This will remove the tag from all games."
+msgstr ""
+"Czy na pewno chcesz zresetować wszystkie metadane tej gry? Spowoduje to "
+"usunięcie okładki i zrzutów ekranu."
+
+#: templates/tags.html:530
+#, fuzzy
+msgid "Tag deleted."
+msgstr "Usuń"
+
+#: templates/tags.html:534
+#, fuzzy
+msgid "Failed to delete tag."
+msgstr "Nie udało się usunąć"
+
+#: templates/tags.html:538
+#, fuzzy
+msgid "Error deleting tag."
+msgstr "Błąd podczas usuwania pliku dziennika"
 
 #: templates/versions_review.html:83
 msgid ""
@@ -10187,6 +12196,11 @@ msgstr "Brak osiągnięć Xbox"
 msgid "Import Xbox games and sync achievements to see them here."
 msgstr "Zaimportuj gry Xbox i zsynchronizuj osiągnięcia, aby zobaczyć je tutaj."
 
+#: templates/xbox_achievements.html:166
+#, fuzzy
+msgid "Xbox achievement sync started"
+msgstr "Osiągnięcia Xbox"
+
 #: templates/_macros/legal_disclaimer.html:12
 msgid ""
 "We do not condone piracy. RetroDB does not distribute or host ROM files. "
@@ -10357,9 +12371,13 @@ msgstr "Własna okładka (2D)"
 msgid "Current: %(filename)s"
 msgstr "Bieżąca: %(filename)s"
 
-#: templates/_modals/edit_modal.html:362
+#: templates/_modals/edit_modal.html:361 templates/_modals/edit_modal.html:362
 msgid "Delete Boxart"
 msgstr "Usuń okładkę"
+
+#: templates/_modals/edit_modal.html:361
+msgid "Delete boxart? You can re-scrape to get a new one."
+msgstr ""
 
 #: templates/_modals/edit_modal.html:368
 msgid "Custom 3D Boxart"
@@ -10369,9 +12387,13 @@ msgstr "Własna okładka 3D"
 msgid "One flat picture of the box."
 msgstr "Jeden płaski obraz pudełka."
 
-#: templates/_modals/edit_modal.html:374
+#: templates/_modals/edit_modal.html:373 templates/_modals/edit_modal.html:374
 msgid "Delete 3D Boxart"
 msgstr "Usuń okładkę 3D"
+
+#: templates/_modals/edit_modal.html:373
+msgid "Delete 3D boxart? You can re-scrape to get a new one."
+msgstr ""
 
 #: templates/_modals/edit_modal.html:383
 msgid "3D box from Slipcase"
@@ -10393,25 +12415,37 @@ msgstr "Zaimportowano pudełko 3D:"
 msgid "Custom Fanart"
 msgstr "Własny fanart"
 
-#: templates/_modals/edit_modal.html:399
+#: templates/_modals/edit_modal.html:398 templates/_modals/edit_modal.html:399
 msgid "Delete Fanart"
 msgstr "Usuń fanart"
+
+#: templates/_modals/edit_modal.html:398
+msgid "Delete fanart? You can re-scrape to get a new one."
+msgstr ""
 
 #: templates/_modals/edit_modal.html:405
 msgid "Custom Logo"
 msgstr "Własne logo"
 
-#: templates/_modals/edit_modal.html:410
+#: templates/_modals/edit_modal.html:409 templates/_modals/edit_modal.html:410
 msgid "Delete Logo"
 msgstr "Usuń logo"
+
+#: templates/_modals/edit_modal.html:409
+msgid "Delete the logo? You can re-scrape to get a new one."
+msgstr ""
 
 #: templates/_modals/edit_modal.html:416
 msgid "Custom Box Back"
 msgstr "Własny tył pudełka"
 
-#: templates/_modals/edit_modal.html:421
+#: templates/_modals/edit_modal.html:420 templates/_modals/edit_modal.html:421
 msgid "Delete Box Back"
 msgstr "Usuń tył pudełka"
+
+#: templates/_modals/edit_modal.html:420
+msgid "Delete the back of the box? You can re-scrape to get a new one."
+msgstr ""
 
 #: templates/_modals/edit_modal.html:427
 msgid "Add Screenshots"
@@ -10438,9 +12472,13 @@ msgstr "Plik wideo"
 msgid "Supported formats: MP4, WebM, OGG"
 msgstr "Obsługiwane formaty: MP4, WebM, OGG"
 
-#: templates/_modals/edit_modal.html:446
+#: templates/_modals/edit_modal.html:445 templates/_modals/edit_modal.html:446
 msgid "Remove Video"
 msgstr "Usuń wideo"
+
+#: templates/_modals/edit_modal.html:445
+msgid "Remove video? You can upload a new one later."
+msgstr ""
 
 #: templates/_modals/edit_modal.html:456
 msgid "Launch"
@@ -10498,14 +12536,6 @@ msgstr "Otwórz PDF w nowej karcie"
 msgid "Manual page. Use the arrow keys to turn pages."
 msgstr "Strona instrukcji. Użyj klawiszy strzałek, aby przewracać strony."
 
-#: templates/_modals/rename_modal.html:4
-msgid "Rename ROM File"
-msgstr "Zmień nazwę pliku ROM"
-
-#: templates/_modals/rename_modal.html:8
-msgid "Current filename:"
-msgstr "Bieżąca nazwa pliku:"
-
 #: templates/_modals/rename_modal.html:11
 msgid "New filename:"
 msgstr "Nowa nazwa pliku:"
@@ -10527,10 +12557,6 @@ msgstr ""
 "Spowoduje to zmianę nazwy rzeczywistego pliku ROM na dysku. Upewnij się, "
 "że nazwa pliku jest poprawna przed kontynuowaniem. Rozszerzenie pliku "
 "zostanie zachowane automatycznie."
-
-#: templates/_modals/rename_modal.html:20
-msgid "Rename File"
-msgstr "Zmień nazwę pliku"
 
 #: templates/_modals/scrape_modal.html:5
 msgid "Search Metadata"
@@ -10555,10 +12581,6 @@ msgstr "Szukaj tytułu gry do pobrania danych"
 #: templates/_modals/scrape_modal.html:27
 msgid "Enter a title to search for matches."
 msgstr "Wpisz tytuł, aby wyszukać dopasowania."
-
-#: templates/_modals/scrape_modal.html:39
-msgid "Reset Metadata"
-msgstr "Zresetuj metadane"
 
 #: templates/_modals/screenshot_modal.html:7
 msgid "Use ← → arrow keys to navigate • ESC to close"

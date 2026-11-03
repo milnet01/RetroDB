@@ -344,12 +344,13 @@ async function lookupHLTB() {
             const confidence = data.confidence ? Math.min(Math.round(data.confidence * 100), 100) : null;
             const platformInfo = data.match_platform ? ` [${data.match_platform}]` : '';
             const altNotice = data.matched_via_alternate && data.search_term_used
-                ? `\n\n⚡ Matched via alternate title "${data.search_term_used}" — please verify this is the same game.`
+                ? '\n\n⚡ ' + t({{ _('Matched via alternate title "{term}" — please verify this is the same game.')|tojson }}, {term: data.search_term_used})
                 : '';
 
             showConfirm(
-                '✅ HLTB Match Found',
-                `Found: "${data.match_name}"${platformInfo} (${confidence}% confidence)${altNotice}\n\nPlaytime: ${data.playtime}\n\nAccept this match?`,
+                '✅ ' + {{ _('HLTB Match Found')|tojson }},
+                t({{ _('Found: "{match}"{platform} ({confidence} confidence){alt}\n\nPlaytime: {playtime}\n\nAccept this match?')|tojson }},
+                  {match: data.match_name, platform: platformInfo, confidence: confidence + '%', alt: altNotice, playtime: data.playtime}),
                 async function() {
                     // Save the result
                     await fetch('/api/hltb-save/{{ game.id }}', {
@@ -407,14 +408,14 @@ async function lookupHLTB() {
                 btn.innerHTML = '<span class="btn-icon">🔄</span> Refresh';
             }
         } else {
-            showModal('❌ HLTB Lookup Failed', data.error || 'No match found.');
+            showModal('❌ ' + {{ _('HLTB Lookup Failed')|tojson }}, data.error || {{ _('No match found.')|tojson }});
             if (btn) {
                 btn.disabled = false;
                 btn.innerHTML = '<span class="btn-icon">🔍</span> Lookup HLTB';
             }
         }
     } catch (error) {
-        showModal('❌ Error', 'Error: ' + error.message);
+        showModal('❌ ' + {{ _('Error')|tojson }}, t({{ _('Error: {error}')|tojson }}, {error: error.message}));
         if (btn) {
             btn.disabled = false;
             btn.innerHTML = '<span class="btn-icon">🔍</span> Lookup HLTB';
@@ -424,8 +425,8 @@ async function lookupHLTB() {
 
 async function clearHLTB() {
     showConfirm(
-        '🗑️ Clear HLTB Data',
-        'Are you sure you want to remove the HLTB playtime data?',
+        '🗑️ ' + {{ _('Clear HLTB Data')|tojson }},
+        {{ _('Are you sure you want to remove the HLTB playtime data?')|tojson }},
         async function() {
             try {
                 await fetch('/api/hltb-clear/{{ game.id }}', { method: 'POST' });
@@ -439,7 +440,7 @@ async function clearHLTB() {
                         </button>
                     </div>`;
             } catch (error) {
-                showModal('❌ Error', 'Failed to clear HLTB data.');
+                showModal('❌ ' + {{ _('Error')|tojson }}, {{ _('Failed to clear HLTB data.')|tojson }});
             }
         }
     );

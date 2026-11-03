@@ -349,6 +349,6 @@ def test_settings_reset_names_only_elements_on_the_page(pages):  # noqa: F811
 def test_archive_scanner_shows_no_fixed_staging_path(pages):  # noqa: F811
     html = pages('/tools/archive-scanner', {})
     assert 'ROMS_TO_BE_DELETED' not in html
-    batch = html[html.index("showConfirm('💿 Batch M3U'"):]
+    batch = html[html.index("""showConfirm('💿 ' + "Batch M3U\""""):]
     batch = batch[:batch.index('async function()')]
     assert 'staging folder' in batch

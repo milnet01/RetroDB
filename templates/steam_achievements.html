@@ -163,16 +163,16 @@ async function syncAll() {
         const data = await resp.json();
 
         if (data.success) {
-            showNotification('Steam achievement sync started', 'info');
+            showNotification({{ _('Steam achievement sync started')|tojson }}, 'info');
             btn.innerHTML = '<span class="btn-icon">🔄</span> Syncing...';
             syncPollInterval = setInterval(pollSyncStatus, 2000);
         } else {
-            showNotification(data.error || 'Failed to start sync', 'error');
+            showNotification(data.error || {{ _('Failed to start sync')|tojson }}, 'error');
             btn.disabled = false;
             btn.innerHTML = '<span class="btn-icon">🔄</span> <span class="btn-text">Sync All</span>';
         }
     } catch (e) {
-        showNotification('Sync error: ' + e.message, 'error');
+        showNotification(t({{ _('Sync error: {error}')|tojson }}, {error: e.message}), 'error');
         btn.disabled = false;
         btn.innerHTML = '<span class="btn-icon">🔄</span> <span class="btn-text">Sync All</span>';
     }
@@ -191,9 +191,9 @@ async function pollSyncStatus() {
             btn.innerHTML = '<span class="btn-icon">🔄</span> <span class="btn-text">Sync All</span>';
 
             if (data.error) {
-                showNotification('Sync error: ' + data.error, 'error');
+                showNotification(t({{ _('Sync error: {error}')|tojson }}, {error: data.error}), 'error');
             } else {
-                showNotification(`Sync complete: ${formatNumber(data.success)} synced, ${formatNumber(data.skipped)} skipped`, 'success');
+                showNotification(t({{ _('Sync complete: {synced} synced, {skipped} skipped')|tojson }}, {synced: formatNumber(data.success), skipped: formatNumber(data.skipped)}), 'success');
                 setTimeout(() => window.location.reload(), 1500);
             }
         } else if (data.running) {

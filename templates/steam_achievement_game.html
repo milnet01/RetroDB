@@ -291,15 +291,15 @@ async function refreshAchievements() {
         const data = await resp.json();
 
         if (data.success) {
-            showNotification('Achievements synced!', 'success');
+            showNotification({{ _('Achievements synced!')|tojson }}, 'success');
             setTimeout(() => window.location.reload(), 1000);
         } else {
-            showNotification(data.error || 'Sync failed', 'error');
+            showNotification(data.error || {{ _('Sync failed')|tojson }}, 'error');
             btn.disabled = false;
             btn.innerHTML = '<span class="btn-icon">🔄</span> Refresh';
         }
     } catch (e) {
-        showNotification('Error: ' + e.message, 'error');
+        showNotification(t({{ _('Error: {error}')|tojson }}, {error: e.message}), 'error');
         btn.disabled = false;
         btn.innerHTML = '<span class="btn-icon">🔄</span> Refresh';
     }

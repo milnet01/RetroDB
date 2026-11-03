@@ -1149,18 +1149,18 @@ function resumeJob(jobId) {
         .then(r => r.json())
         .then(data => {
             if (data.success) {
-                showNotification('Job resumed successfully', 'success');
+                showNotification({{ _('Job resumed successfully')|tojson }}, 'success');
                 if (window.RetroDB && window.RetroDB.ToastController) {
                     window.RetroDB.ToastController.pollAllNow();
                 }
                 animateOutItem(item);
             } else {
-                showNotification(data.error || 'Failed to resume job', 'error');
+                showNotification(data.error || {{ _('Failed to resume job')|tojson }}, 'error');
                 if (btn) { btn.disabled = false; btn.textContent = 'Resume'; }
             }
         })
         .catch(() => {
-            showNotification('Error resuming job', 'error');
+            showNotification({{ _('Error resuming job')|tojson }}, 'error');
             if (btn) { btn.disabled = false; btn.textContent = 'Resume'; }
         });
 }
@@ -1193,7 +1193,7 @@ function resumeAllRecoverableJobs() {
             .then(r => r.json())
             .then(data => {
                 if (!data.success) {
-                    showNotification(data.error || 'Failed to resume job ' + jobId, 'error');
+                    showNotification(data.error || t({{ _('Failed to resume job {id}')|tojson }}, {id: jobId}), 'error');
                 }
             })
             .catch(() => {})
@@ -1201,7 +1201,7 @@ function resumeAllRecoverableJobs() {
                 pending--;
                 animateOutItem(item);
                 if (pending <= 0) {
-                    showNotification('All jobs resumed', 'success');
+                    showNotification({{ _('All jobs resumed')|tojson }}, 'success');
                     if (window.RetroDB && window.RetroDB.ToastController) {
                         window.RetroDB.ToastController.pollAllNow();
                     }
@@ -1249,11 +1249,11 @@ function randomGame() {
             if (data.success) {
                 window.location.href = '/game/' + data.game_id;
             } else {
-                showNotification('No games found', 'warning');
+                showNotification({{ _('No games found')|tojson }}, 'warning');
             }
         })
         .catch(() => {
-            showNotification('Error picking random game', 'error');
+            showNotification({{ _('Error picking random game')|tojson }}, 'error');
         });
 }
 
