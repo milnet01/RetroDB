@@ -9485,6 +9485,10 @@ were corrected in `2836bc3` and are not repeated here.
   `[Cheats] Enable` (file restored after), the PCSX2 pack downloaded.
   **Still owed**: the manual run in the player, DuckStation and PCSX2
   (spec §7), and §14's question on RetroArch's exit rewrite.
+- **Progress** (2026-11-03): the user ran cheats in the player,
+  DuckStation and PCSX2 in the last week of October and says they
+  work. Still open: spec §14 (does RetroArch's exit rewrite of the
+  `.cht` keep cheats it could not apply).
 
 ---
 
