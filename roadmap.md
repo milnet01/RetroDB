@@ -8413,7 +8413,9 @@ were corrected in `2836bc3` and are not repeated here.
      download link, set up next to RetroDB with its own settings
      folder), then PASS-59-155 (cheats).
   5b. Turnable 3D box art (user, 2026-10-23): PASS-59-142 (import
-     Slipcase box faces), then PASS-59-143 (the 3D viewer).
+     Slipcase box faces), then PASS-59-143 (the 3D viewer), then PASS-59-231
+     (real case shape, added by the user 2026-11-03; waits for
+     Slipcase's SLIP-0125 spec).
   5c. Scraper data, complete and correct (user, 2026-10-23): PASS-59-162
      investigation done 2026-10-31; the user chose every group for
      v4.0.0, in this order: PASS-59-201 to PASS-59-214 (wrong data),
@@ -10654,6 +10656,22 @@ the cover zoom in Firefox before being reverted for the local fix.
   in no sample seen). Check a real arcade answer before building.
 - **Pattern**: the box back (PASS-59-225) — its own column and folder,
   fill-only, and a place on the game page.
+
+---
+
+#### Pass 59.231 The 3D box viewer draws a real case shape: rounded corners, a raised lip, a bevelled hinge (FEATURE, M).
+- **Status**: todo; waits for Slipcase's SLIP-0125 spec (PS5 first).
+- **Why**: the user chose real shape plus painted faces, and put it
+  in v4.0.0 (user, 2026-11-03).
+- **Agreed with Slipcase (2026-11-03, RetroDB's answer)**: shape as
+  a few named mm parameters in an optional `shape` section of box
+  file version 1; absent or zero means flat. Released importers
+  refuse any version but 1 and ignore unknown keys. Face images
+  unchanged (INV-11).
+- **Work**: `services/box_faces.py` keeps `shape` in the record;
+  `static/js/box-viewer.js` draws it (CSS 3D first: rounded face
+  corners, thin strips for lip and bevel). A box imported before
+  this needs importing again to gain its shape.
 
 ## Done index
 
