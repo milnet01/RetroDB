@@ -8401,6 +8401,20 @@ were corrected in `2836bc3` and are not repeated here.
   messages in `psnQuickSaveAndTest` (templates/settings.html) are
   English-only; the steps never say to sign out first, which a
   rotation needs.
+- **Correction and finding** (2026-11-03, from the log): the user's
+  first Save & Test at 20:13 signed in via the NPSSO; signing out of
+  Sony had already killed the cached session, so the fallback ran.
+  Commit 5d37d4a's message is wrong to call that a passing old
+  session; the flaw it fixes is real only while the old session still
+  works. **Sony's refresh token now lasts 10 days**
+  (`refresh_token_expires_in` 863999, seen twice today), not about
+  two months, and using it does not move its expiry. A lapsed session
+  re-signs from the NPSSO on the next request, but the keep-alive never
+  falls back to the NPSSO (INV-9). So the Settings banner counts down a
+  10-day session the user need not act on. Next: show what the user
+  must act on (the NPSSO's own expiry, which Sony does not report),
+  and reword the banner. The comment "valid ~2 months" in
+  `create_psn_client` and trophies spec §4.5 assume the old lifetime.
 
 ---
 
