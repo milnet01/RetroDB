@@ -156,7 +156,7 @@ def test_refused_renewal_says_so_and_marks_the_session_expired(monkeypatch):
         )
     assert "Invalid refresh token" in err
     assert "has no attribute" not in err
-    # token-info now answers expired, so the dashboard banner asks for a re-link.
+    # Recorded as expired, so the next sync signs in from the NPSSO instead.
     assert _stored_expiry(7005) == 0
 
     # And the next tick leaves it alone instead of asking Sony again.

@@ -6,16 +6,18 @@
 # renews on demand, when a sync runs.
 #
 # This daily background task renews each user's sign-in as it nears expiry. Whether
-# that buys more time is Sony's call: on 2026-10-31 a renewal came back with about
-# 8 days left, not a fresh 2 months, so the sign-in may still end on its own date
-# (PASS-59-226). Renewing from a copy of the database can use up the live row's
+# that buys more time is Sony's call: Sony's refresh token lasts 10 days and a
+# renewal does not move that date (PASS-59-226, PASS-59-111). A lapsed session
+# signs in again from the NPSSO on the next sync; this task never uses the
+# NPSSO. Renewing from a copy of the database can use up the live row's
 # refresh token: Sony then refuses it, and the row is marked expired.
 #
 # It NEVER pings Sony for a session that has already expired (the refresh would
 # fail and an NPSSO ping with a stale cookie is pointless / could flag the
 # account). It only touches sessions in the window `now < expiry <= threshold`
 # — still valid, but approaching the edge. Already-expired sessions are left for
-# the user to re-link (the Settings banner / dashboard notice handles prompting).
+# the next sync, which signs in from the NPSSO; the Settings and dashboard
+# banners speak up only if Sony refuses that NPSSO.
 # =============================================================================
 
 import logging
@@ -102,7 +104,7 @@ def run_psn_keepalive(threshold_days=KEEPALIVE_THRESHOLD_DAYS, now=None):
     if checked or skipped_expired:
         logger.info(
             "PSN keep-alive: %d in-window, %d refreshed, %d failed, "
-            "%d already-expired (left for re-link)",
+            "%d already-expired (left for the next sync)",
             checked, refreshed, failed, skipped_expired,
         )
     return (checked, refreshed, failed, skipped_expired)

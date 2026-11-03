@@ -159,6 +159,7 @@
                     <div style="flex: 1;">
                         <div style="color: var(--text-primary); font-weight: 600; margin-bottom: 4px;">{{ _("Open Sony's account page") }}</div>
                         <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0 0 8px;">{{ _('First sign in to PlayStation in this browser. Then open the account page: it shows your NPSSO token as JSON. If you are not signed in, it shows "Invalid login" instead.') }}</p>
+                        <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0 0 8px;">{{ _('Replacing a token that still works? Sign out of PlayStation first, then sign in again. Signing out ends the old token, so Sony gives you a new one.') }}</p>
                         <button type="button" class="btn btn-secondary btn-sm" data-on-click="window.open" data-args='["https://store.playstation.com", "_blank"]'>
                             {{ _('Sign in to PlayStation') }}
                         </button>
@@ -196,8 +197,8 @@
                                    placeholder="{{ _('Paste JSON or token here') }}"
                                    style="flex: 1; min-width: 200px;"
                                    data-on-input="psnNpssoAutoDetect" data-args='["$this"]'>
-                            <button type="button" class="btn btn-secondary btn-sm" data-on-click="psnPasteFromClipboard" title="{{ _('Read from clipboard') }}">
-                                {{ _('Paste &amp; Detect') }}
+                            <button type="button" class="btn btn-secondary btn-sm" data-on-click="psnFocusNpssoBox" title="{{ _('Puts the cursor in the box. Then press Ctrl+V.') }}">
+                                {{ _('Paste here') }}
                             </button>
                         </div>
                         <div id="psnNpssoDetectResult" role="status" aria-live="polite" style="margin-top: 6px; font-size: 0.85rem;"></div>

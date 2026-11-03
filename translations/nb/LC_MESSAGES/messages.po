@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-03 21:03+0200\n"
+"POT-Creation-Date: 2026-11-03 21:20+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: nb\n"
@@ -64,7 +64,7 @@ msgstr "System ikke funnet eller har ingen spill med prestasjoner"
 #: routes/games_ai.py:31 routes/games_media.py:38 routes/games_media.py:86
 #: routes/games_media.py:149 routes/games_media.py:200
 #: routes/games_media.py:233 routes/launch.py:242 routes/reports.py:696
-#: routes/reports.py:827 routes/trophies.py:1327 services/cheats.py:617
+#: routes/reports.py:827 routes/trophies.py:1336 services/cheats.py:617
 #: services/hltb_service.py:162
 msgid "Game not found"
 msgstr "Spill ikke funnet"
@@ -435,9 +435,9 @@ msgstr "Bonusplaten og det overordnede spillet må være i samme system"
 #: routes/settings.py:459 routes/settings.py:538 routes/settings.py:567
 #: routes/settings.py:611 routes/settings.py:627 routes/settings.py:663
 #: routes/steam_achievements.py:138 routes/systems.py:292 routes/systems.py:482
-#: routes/trophies.py:544 routes/trophies.py:742 routes/trophies.py:790
-#: routes/trophies.py:1618 routes/trophies.py:1642 routes/trophies.py:1687
-#: routes/trophies.py:1715 routes/trophies.py:1757 routes/trophies.py:1824
+#: routes/trophies.py:553 routes/trophies.py:751 routes/trophies.py:799
+#: routes/trophies.py:1627 routes/trophies.py:1651 routes/trophies.py:1696
+#: routes/trophies.py:1724 routes/trophies.py:1766 routes/trophies.py:1833
 #: routes/xbox_achievements.py:157 services/api_helpers.py:46
 msgid "An internal error occurred"
 msgstr "En intern feil oppstod"
@@ -701,7 +701,7 @@ msgstr "Ingen felt å oppdatere"
 
 #: routes/games.py:1197 routes/platform_import.py:250
 #: routes/platform_import.py:629 routes/platform_import.py:992
-#: routes/trophies.py:1906 templates/game_imports.html:579
+#: routes/trophies.py:1908 templates/game_imports.html:579
 #: templates/game_imports.html:842
 msgid "No games selected"
 msgstr "Ingen spill valgt"
@@ -1368,66 +1368,66 @@ msgstr "Behold minst én kopi av hvert spill. Ingenting ble slettet."
 msgid "This system has no screenshot check"
 msgstr "Dette systemet har ingen kontroll av skjermbilder"
 
-#: routes/trophies.py:432
+#: routes/trophies.py:441
 msgid ""
 "Please configure your RPCS3 Trophy Path in your profile settings to view "
 "trophies"
 msgstr "Konfigurer RPCS3-trofésti i profilinnstillingene dine for å se trofeer"
 
-#: routes/trophies.py:464
+#: routes/trophies.py:473
 msgid "Trophy set not found"
 msgstr "Trofésettet ble ikke funnet"
 
-#: routes/trophies.py:508
+#: routes/trophies.py:517
 msgid "RPCS3_TROPHY_PATH not configured"
 msgstr "RPCS3_TROPHY_PATH er ikke konfigurert"
 
-#: routes/trophies.py:511
+#: routes/trophies.py:520
 #, python-format
 msgid "Trophy path not found: %(path)s"
 msgstr "Trofésti ikke funnet: %(path)s"
 
-#: routes/trophies.py:803 routes/trophies.py:1740
+#: routes/trophies.py:812 routes/trophies.py:1749
 msgid "PSN game not found"
 msgstr "PSN-spillet ble ikke funnet"
 
-#: routes/trophies.py:1094
+#: routes/trophies.py:1103
 msgid "Sync already in progress"
 msgstr "Synkronisering pågår allerede"
 
-#: routes/trophies.py:1345
+#: routes/trophies.py:1354
 msgid "Game not found in your PSN trophy list"
 msgstr "Spillet ble ikke funnet i PSN-trofélisten din"
 
-#: routes/trophies.py:1615
+#: routes/trophies.py:1624
 msgid "Game not found on PSN"
 msgstr "Spillet ble ikke funnet på PSN"
 
-#: routes/trophies.py:1630 routes/trophies.py:1703
+#: routes/trophies.py:1639 routes/trophies.py:1712
 msgid "Missing npwr_id"
 msgstr "Mangler npwr_id"
 
-#: routes/trophies.py:1728
+#: routes/trophies.py:1737
 msgid "Missing npwr_id or group_id"
 msgstr "Mangler npwr_id eller group_id"
 
-#: routes/trophies.py:1731
+#: routes/trophies.py:1740
 msgid "Name cannot be empty"
 msgstr "Navnet kan ikke være tomt"
 
-#: routes/trophies.py:1769
+#: routes/trophies.py:1778
 msgid "PSNAWP library not installed. Run: pip install psnawp"
 msgstr "PSNAWP-biblioteket er ikke installert. Kjør: pip install psnawp"
 
-#: routes/trophies.py:1863
+#: routes/trophies.py:1865
 msgid "No NPSSO token provided"
 msgstr "Ingen NPSSO-token angitt"
 
-#: routes/trophies.py:1888
+#: routes/trophies.py:1890
 msgid "Could not connect to PSN"
 msgstr "Kunne ikke koble til PSN"
 
-#: routes/trophies.py:1915
+#: routes/trophies.py:1917
 msgid "PSN NPSSO not configured"
 msgstr "PSN NPSSO er ikke konfigurert"
 
@@ -1935,7 +1935,7 @@ msgstr "Oppdaging mislyktes: {error}"
 msgid "AI found no missing fields to fill"
 msgstr ""
 
-#: services/js_i18n_strings.py:568 templates/_settings_tabs/account.html:296
+#: services/js_i18n_strings.py:568 templates/_settings_tabs/account.html:297
 #: templates/archive_scanner.html:726 templates/multi_disc_organizer.html:217
 #: templates/reports.html:369 templates/reports.html:450
 msgid "Actions"
@@ -2120,7 +2120,7 @@ msgstr "Kan fullføres med spillbar ytelse og uten feil som ødelegger spillet."
 #: templates/_bulk_scrape_modal.html:49 templates/_modals/edit_modal.html:12
 #: templates/_modals/rename_modal.html:19
 #: templates/_settings_tabs/account.html:73
-#: templates/_settings_tabs/account.html:391
+#: templates/_settings_tabs/account.html:392
 #: templates/_settings_tabs/customization.html:264
 #: templates/achievement_game.html:178 templates/archive_scanner.html:661
 #: templates/archive_scanner.html:798 templates/base.html:340
@@ -2523,7 +2523,7 @@ msgstr "DuckStation-juksekoder"
 msgid "DuckStation ignores cheats in hardcore mode."
 msgstr "DuckStation overser juksekoder i hardcore-modus."
 
-#: services/js_i18n_strings.py:693 templates/_settings_tabs/account.html:341
+#: services/js_i18n_strings.py:693 templates/_settings_tabs/account.html:342
 #: templates/base.html:1005 templates/game_detail.html:135
 #: templates/wishlist.html:641
 msgid "Edit"
@@ -4144,7 +4144,7 @@ msgstr "Last opp"
 msgid "Upload Controller Image"
 msgstr "Last opp kontrollerbilde"
 
-#: services/js_i18n_strings.py:1032 templates/settings.html:5203
+#: services/js_i18n_strings.py:1032 templates/settings.html:5192
 msgid "Upload failed"
 msgstr "Opplasting mislyktes"
 
@@ -4726,7 +4726,7 @@ msgstr "Flere detaljer"
 msgid "First Achievement"
 msgstr "Første prestasjon"
 
-#: templates/_settings_tabs/account.html:336
+#: templates/_settings_tabs/account.html:337
 #: templates/achievement_game.html:233 templates/achievement_game.html:237
 #: templates/local_trophy_detail.html:211
 #: templates/local_trophy_detail.html:215 templates/psn_trophies.html:76
@@ -5677,7 +5677,7 @@ msgstr "Antall spill"
 msgid "Critic"
 msgstr "Kritiker"
 
-#: templates/_settings_tabs/account.html:291 templates/analytics.html:1965
+#: templates/_settings_tabs/account.html:292 templates/analytics.html:1965
 msgid "User"
 msgstr "Bruker"
 
@@ -7222,7 +7222,7 @@ msgstr "Fortsett alle"
 msgid "Dismiss All"
 msgstr "Avvis alle"
 
-#: templates/dashboard.html:60 templates/dashboard.html:1438
+#: templates/dashboard.html:60 templates/dashboard.html:1431
 msgid "Dismiss"
 msgstr "Avvis"
 
@@ -7417,7 +7417,7 @@ msgstr "Deaktivert"
 msgid "Not Configured"
 msgstr "Ikke konfigurert"
 
-#: templates/_settings_tabs/account.html:320 templates/dashboard.html:622
+#: templates/_settings_tabs/account.html:321 templates/dashboard.html:622
 msgid "Configured"
 msgstr "Konfigurert"
 
@@ -7457,24 +7457,17 @@ msgid "Error picking random game"
 msgstr "Velg et tilfeldig spill"
 
 #: templates/dashboard.html:1421
+#, fuzzy
 msgid ""
-"Your PlayStation Network session has expired — re-link it to keep trophy "
-"and library sync working."
+"Sony refused your saved PlayStation Network token. Get a new one to keep "
+"trophy and library sync working."
 msgstr ""
 "PlayStation Network-økten din har utløpt — koble den til på nytt for å "
 "holde trofé- og bibliotekssynkroniseringen i gang."
 
-#: templates/dashboard.html:1424
-msgid ""
-"Your PlayStation Network session expires soon — re-link it to avoid an "
-"interruption."
+#: templates/dashboard.html:1430
+msgid "Get a new token"
 msgstr ""
-"PlayStation Network-økten din utløper snart — koble den til på nytt for å"
-" unngå avbrudd."
-
-#: templates/dashboard.html:1437
-msgid "Re-link now"
-msgstr "Koble til på nytt nå"
 
 #: templates/duplicate_finder.html:176
 msgid "Careful Review Recommended"
@@ -7610,7 +7603,7 @@ msgstr ""
 "Du bruker standard administratorpassord. Av sikkerhetshensyn må du angi "
 "et nytt passord før du fortsetter."
 
-#: templates/_settings_tabs/account.html:233
+#: templates/_settings_tabs/account.html:234
 #: templates/force_change_password.html:20
 msgid "New Password"
 msgstr "Nytt passord"
@@ -7712,7 +7705,7 @@ msgstr "Vis manual (PDF)"
 msgid "Delete game from database"
 msgstr "Slett spill fra databasen"
 
-#: templates/_settings_tabs/account.html:343 templates/game_detail.html:150
+#: templates/_settings_tabs/account.html:344 templates/game_detail.html:150
 #: templates/logs.html:735 templates/settings.html:45
 #: templates/wishlist.html:642
 msgid "Delete"
@@ -11417,32 +11410,93 @@ msgstr "Kunne ikke fjerne CLZ-importer"
 msgid "Error clearing old logs: {error}"
 msgstr "Feil ved skanning av bibliotek: {error}"
 
-#: templates/settings.html:5126
+#: templates/settings.html:5001
+#, fuzzy
+msgid "Token extracted from the pasted page"
+msgstr "Autogenerert fra tittel"
+
+#: templates/settings.html:5003
+#, fuzzy
+msgid "Token detected"
+msgstr "Bruk oppdaget"
+
+#: templates/settings.html:5005
+msgid "Could not detect a valid NPSSO token"
+msgstr ""
+
+#: templates/settings.html:5017
+msgid "Now press Ctrl+V to paste."
+msgstr ""
+
+#: templates/settings.html:5029
+#, fuzzy
+msgid "Enter an NPSSO token first"
+msgstr "Oppsett av NPSSO-token"
+
+#: templates/settings.html:5034
+#, fuzzy
+msgid "Testing..."
+msgstr "Tester…"
+
+#: templates/settings.html:5035
+#, fuzzy
+msgid "Saving and connecting..."
+msgstr "Lagre &amp; test tilkobling"
+
+#: templates/settings.html:5046
+#, fuzzy, python-format
+msgid "Connected as %(name)s"
+msgstr "Kombinert (hash + navn)"
+
+#: templates/settings.html:5053
+#, fuzzy
+msgid "Connection failed"
+msgstr "Operasjon mislyktes"
+
+#: templates/settings.html:5056
+#, fuzzy, python-format
+msgid "Error: %(msg)s"
+msgstr "FEIL:"
+
+#: templates/settings.html:5075
+#, python-format
+msgid ""
+"Sony refused your saved NPSSO token on %(date)s. Get a new one with the "
+"steps below."
+msgstr ""
+
+#: templates/settings.html:5078
+msgid ""
+"Connected to PSN. RetroDB keeps the sign-in going by itself. You need a "
+"new token only if Sony refuses this one."
+msgstr ""
+
+#: templates/settings.html:5115
 #, fuzzy
 msgid "Redirect URI copied to clipboard"
 msgstr "Kopier til utklippstavlen"
 
-#: templates/settings.html:5201 templates/settings.html:5243
+#: templates/settings.html:5190 templates/settings.html:5232
 #, fuzzy
 msgid "Avatar updated!"
 msgstr "Sist oppdatert"
 
-#: templates/settings.html:5206
+#: templates/settings.html:5195
 #, fuzzy, python-brace-format
 msgid "Upload failed: {error}"
 msgstr "Bruk mislyktes: {error}"
 
-#: templates/settings.html:5220
+#: templates/settings.html:5209
 #, fuzzy
 msgid "Avatar removed"
 msgstr "Massefjerning"
 
-#: templates/settings.html:5223
+#: templates/settings.html:5212
 #, fuzzy
 msgid "Failed to remove avatar"
 msgstr "Kunne ikke fjerne."
 
-#: templates/settings.html:5246
+#: templates/settings.html:5235
 #, fuzzy
 msgid "Failed to save avatar"
 msgstr "Kunne ikke lagre HLTB: "
@@ -12612,8 +12666,8 @@ msgid "My Profile"
 msgstr "Min profil"
 
 #: templates/_settings_tabs/account.html:6
-#: templates/_settings_tabs/account.html:250
-#: templates/_settings_tabs/account.html:257
+#: templates/_settings_tabs/account.html:251
+#: templates/_settings_tabs/account.html:258
 msgid "Timezone"
 msgstr "Tidssone"
 
@@ -12791,15 +12845,22 @@ msgstr ""
 "den viser NPSSO-tokenet ditt som JSON. Hvis du ikke er pålogget, viser "
 "den «Invalid login» i stedet."
 
-#: templates/_settings_tabs/account.html:163
+#: templates/_settings_tabs/account.html:162
+msgid ""
+"Replacing a token that still works? Sign out of PlayStation first, then "
+"sign in again. Signing out ends the old token, so Sony gives you a new "
+"one."
+msgstr ""
+
+#: templates/_settings_tabs/account.html:164
 msgid "Sign in to PlayStation"
 msgstr "Logg på PlayStation"
 
-#: templates/_settings_tabs/account.html:166
+#: templates/_settings_tabs/account.html:167
 msgid "Open Sony Account Page"
 msgstr "Åpne Sonys kontoside"
 
-#: templates/_settings_tabs/account.html:173
+#: templates/_settings_tabs/account.html:174
 msgid ""
 "Optional shortcut: drag the button below to your browser's bookmarks bar."
 " Then, on the Sony JSON page, click the bookmark to copy your NPSSO in "
@@ -12809,15 +12870,15 @@ msgstr ""
 "din. Deretter, på Sonys JSON-side, klikk bokmerket for å kopiere NPSSO-en"
 " din med ett klikk."
 
-#: templates/_settings_tabs/account.html:174
+#: templates/_settings_tabs/account.html:175
 msgid "Copy NPSSO"
 msgstr "Kopier NPSSO"
 
-#: templates/_settings_tabs/account.html:183
+#: templates/_settings_tabs/account.html:184
 msgid "Copy the page content"
 msgstr "Kopier sideinnholdet"
 
-#: templates/_settings_tabs/account.html:184
+#: templates/_settings_tabs/account.html:185
 msgid ""
 "Select all (<kbd style=\"background: var(--bg-medium); padding: 1px 6px; "
 "border-radius: 3px; border: 1px solid var(--card-border); font-size: "
@@ -12833,80 +12894,81 @@ msgstr ""
 "(--card-border); font-size: 0.8rem;\">Ctrl+C</kbd>). Du kan kopiere hele "
 "JSON-en &mdash; vi trekker ut tokenet automatisk."
 
-#: templates/_settings_tabs/account.html:192
+#: templates/_settings_tabs/account.html:193
 msgid "Paste the token"
 msgstr "Lim inn tokenet"
 
-#: templates/_settings_tabs/account.html:196
+#: templates/_settings_tabs/account.html:197
 msgid "Paste JSON or token here"
 msgstr "Lim inn JSON eller token her"
 
-#: templates/_settings_tabs/account.html:199
-msgid "Read from clipboard"
-msgstr "Les fra utklippstavlen"
-
 #: templates/_settings_tabs/account.html:200
-msgid "Paste &amp; Detect"
-msgstr "Lim inn &amp; oppdag"
+msgid "Puts the cursor in the box. Then press Ctrl+V."
+msgstr ""
 
-#: templates/_settings_tabs/account.html:211
+#: templates/_settings_tabs/account.html:201
+#, fuzzy
+msgid "Paste here"
+msgstr "Lim inn tokenet"
+
+#: templates/_settings_tabs/account.html:212
 msgid "Save &amp; Test Connection"
 msgstr "Lagre &amp; test tilkobling"
 
-#: templates/_settings_tabs/account.html:218
+#: templates/_settings_tabs/account.html:219
 msgid "Save My Settings"
 msgstr "Lagre innstillingene mine"
 
-#: templates/_settings_tabs/account.html:222
-#: templates/_settings_tabs/account.html:238
+#: templates/_settings_tabs/account.html:223
+#: templates/_settings_tabs/account.html:239
 msgid "Change Password"
 msgstr "Endre passord"
 
-#: templates/_settings_tabs/account.html:224
+#: templates/_settings_tabs/account.html:225
 msgid "Every account needs a password to log in."
 msgstr "Hver konto trenger et passord for å logge inn."
 
-#: templates/_settings_tabs/account.html:228
+#: templates/_settings_tabs/account.html:229
 msgid "Current Password"
 msgstr "Nåværende passord"
 
-#: templates/_settings_tabs/account.html:229
+#: templates/_settings_tabs/account.html:230
 msgid "Enter current password"
 msgstr "Skriv inn nåværende passord"
 
-#: templates/_settings_tabs/account.html:234
+#: templates/_settings_tabs/account.html:235
 msgid "Enter new password"
 msgstr "Skriv inn nytt passord"
 
-#: templates/_settings_tabs/account.html:242
+#: templates/_settings_tabs/account.html:243
 msgid "Please log in to view your profile settings."
 msgstr "Logg inn for å se profilinnstillingene dine."
 
-#: templates/_settings_tabs/account.html:254
+#: templates/_settings_tabs/account.html:255
 msgid "Set your timezone to ensure all dates and times display correctly."
 msgstr "Angi tidssonen din for å sikre at alle datoer og klokkeslett vises riktig."
 
-#: templates/_settings_tabs/account.html:259
+#: templates/_settings_tabs/account.html:260
 msgid "Search timezones..."
 msgstr "Søk tidssoner..."
 
-#: templates/_settings_tabs/account.html:263
+#: templates/_settings_tabs/account.html:264
 msgid "Browser detected:"
 msgstr "Nettleser oppdaget:"
 
-#: templates/_settings_tabs/account.html:264
+#: templates/_settings_tabs/account.html:265
 msgid "Use detected"
 msgstr "Bruk oppdaget"
 
-#: templates/_settings_tabs/account.html:267
+#: templates/_settings_tabs/account.html:268
 msgid "Save Timezone"
 msgstr "Lagre tidssone"
 
-#: templates/_settings_tabs/account.html:275
+#: templates/_settings_tabs/account.html:276
 msgid "User Management"
 msgstr "Brukeradministrasjon"
 
-#: templates/_settings_tabs/account.html:279
+#: templates/_settings_tabs/account.html:280
 msgid ""
 "Manage users who can access RetroDB. Admin users require a password to "
 "login, while Editor and Viewer users can login with a single click."
@@ -12915,82 +12977,82 @@ msgstr ""
 "krever passord for å logge inn, mens redaktør- og seer-brukere kan logge "
 "inn med ett klikk."
 
-#: templates/_settings_tabs/account.html:284
-#: templates/_settings_tabs/account.html:358
+#: templates/_settings_tabs/account.html:285
+#: templates/_settings_tabs/account.html:359
 msgid "Add User"
 msgstr "Legg til bruker"
 
-#: templates/_settings_tabs/account.html:292
+#: templates/_settings_tabs/account.html:293
 msgid "Role"
 msgstr "Rolle"
 
-#: templates/_settings_tabs/account.html:293
+#: templates/_settings_tabs/account.html:294
 msgid "Trophy Path"
 msgstr "Trofésti"
 
-#: templates/_settings_tabs/account.html:294
+#: templates/_settings_tabs/account.html:295
 msgid "RA Username"
 msgstr "RA-brukernavn"
 
-#: templates/_settings_tabs/account.html:295
+#: templates/_settings_tabs/account.html:296
 msgid "Last Login"
 msgstr "Siste innlogging"
 
-#: templates/_settings_tabs/account.html:322
-#: templates/_settings_tabs/account.html:329
+#: templates/_settings_tabs/account.html:323
+#: templates/_settings_tabs/account.html:330
 msgid "Not Set"
 msgstr "Ikke angitt"
 
-#: templates/_settings_tabs/account.html:359
+#: templates/_settings_tabs/account.html:360
 msgid "Close user modal"
 msgstr "Lukk brukervindu"
 
-#: templates/_settings_tabs/account.html:365
+#: templates/_settings_tabs/account.html:366
 msgid "Username *"
 msgstr "Brukernavn *"
 
-#: templates/_settings_tabs/account.html:366
+#: templates/_settings_tabs/account.html:367
 msgid "username"
 msgstr "brukernavn"
 
-#: templates/_settings_tabs/account.html:370
 #: templates/_settings_tabs/account.html:371
+#: templates/_settings_tabs/account.html:372
 msgid "Display Name"
 msgstr "Visningsnavn"
 
-#: templates/_settings_tabs/account.html:375
+#: templates/_settings_tabs/account.html:376
 msgid "Role *"
 msgstr "Rolle *"
 
-#: templates/_settings_tabs/account.html:377
+#: templates/_settings_tabs/account.html:378
 msgid "Viewer - Read only access"
 msgstr "Seer - kun lesetilgang"
 
-#: templates/_settings_tabs/account.html:378
+#: templates/_settings_tabs/account.html:379
 msgid "Player - Can launch and track progress"
 msgstr "Spiller - kan starte og spore fremdrift"
 
-#: templates/_settings_tabs/account.html:379
+#: templates/_settings_tabs/account.html:380
 msgid "Editor - Can edit games and scrape"
 msgstr "Redaktør - kan redigere spill og skrape"
 
-#: templates/_settings_tabs/account.html:380
+#: templates/_settings_tabs/account.html:381
 msgid "Admin - Full access"
 msgstr "Administrator - full tilgang"
 
-#: templates/_settings_tabs/account.html:385
+#: templates/_settings_tabs/account.html:386
 msgid "Reset Password"
 msgstr "Tilbakestill passord"
 
-#: templates/_settings_tabs/account.html:386
+#: templates/_settings_tabs/account.html:387
 msgid "Leave blank to keep current"
 msgstr "La stå tomt for å beholde gjeldende"
 
-#: templates/_settings_tabs/account.html:387
+#: templates/_settings_tabs/account.html:388
 msgid "Only for admin accounts"
 msgstr "Kun for administratorkontoer"
 
-#: templates/_settings_tabs/account.html:392
+#: templates/_settings_tabs/account.html:393
 msgid "Save User"
 msgstr "Lagre bruker"
 
@@ -14116,4 +14178,22 @@ msgstr "Støtt på Patreon"
 
 #~ msgid "Remove this system from Achievements"
 #~ msgstr "Fjern dette systemet fra Prestasjoner"
+
+#~ msgid ""
+#~ "Your PlayStation Network session expires "
+#~ "soon — re-link it to avoid "
+#~ "an interruption."
+#~ msgstr ""
+#~ "PlayStation Network-økten din utløper "
+#~ "snart — koble den til på nytt "
+#~ "for å unngå avbrudd."
+
+#~ msgid "Re-link now"
+#~ msgstr "Koble til på nytt nå"
+
+#~ msgid "Read from clipboard"
+#~ msgstr "Les fra utklippstavlen"
+
+#~ msgid "Paste &amp; Detect"
+#~ msgstr "Lim inn &amp; oppdag"
 

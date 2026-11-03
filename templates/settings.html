@@ -4998,35 +4998,23 @@ function psnNpssoAutoDetect(input) {
     const token = extractNpsso(val);
     if (token && token !== val) {
         input.value = token;
-        resultEl.innerHTML = '<span style="color: var(--neon-green);">Token extracted from JSON</span>';
+        resultEl.innerHTML = '<span style="color: var(--neon-green);">' + escapeHtml({{ _('Token extracted from the pasted page')|tojson }}) + '</span>';
     } else if (token) {
-        resultEl.innerHTML = '<span style="color: var(--neon-green);">Token detected</span>';
+        resultEl.innerHTML = '<span style="color: var(--neon-green);">' + escapeHtml({{ _('Token detected')|tojson }}) + '</span>';
     } else {
-        resultEl.innerHTML = '<span style="color: var(--neon-orange);">Could not detect a valid NPSSO token</span>';
+        resultEl.innerHTML = '<span style="color: var(--neon-orange);">' + escapeHtml({{ _('Could not detect a valid NPSSO token')|tojson }}) + '</span>';
     }
 }
 
-/** Paste from clipboard and auto-extract */
-async function psnPasteFromClipboard() {
+/** Put the cursor in the token box. Reading the clipboard from a script
+ *  makes the browser ask for permission; Ctrl+V into the box does not, and
+ *  psnNpssoAutoDetect pulls the token out of what is pasted (PASS-59-111). */
+function psnFocusNpssoBox() {
     const input = document.getElementById('userPsnNpsso');
-    const resultEl = document.getElementById('psnNpssoDetectResult');
-    try {
-        const text = await navigator.clipboard.readText();
-        if (!text) {
-            resultEl.innerHTML = '<span style="color: var(--neon-orange);">Clipboard is empty</span>';
-            return;
-        }
-        const token = extractNpsso(text);
-        if (token) {
-            input.value = token;
-            resultEl.innerHTML = '<span style="color: var(--neon-green);">Token extracted and pasted</span>';
-        } else {
-            input.value = text;
-            resultEl.innerHTML = '<span style="color: var(--neon-orange);">Pasted, but could not detect NPSSO token format</span>';
-        }
-    } catch (e) {
-        resultEl.innerHTML = '<span style="color: var(--neon-orange);">Clipboard access denied &mdash; paste manually with Ctrl+V</span>';
-    }
+    input.focus();
+    input.select();
+    document.getElementById('psnNpssoDetectResult').innerHTML =
+        '<span style="color: var(--text-secondary);">' + escapeHtml({{ _('Now press Ctrl+V to paste.')|tojson }}) + '</span>';
 }
 
 /** Save NPSSO + test in one step */
@@ -5035,15 +5023,16 @@ async function psnQuickSaveAndTest() {
     const resultSpan = document.getElementById('psnTestResult');
     const npsso = document.getElementById('userPsnNpsso').value.trim();
     const username = document.getElementById('userPsnUsername').value.trim();
+    const btnLabel = btn.textContent;
 
     if (!npsso) {
-        resultSpan.innerHTML = '<span style="color: var(--neon-orange);">Enter an NPSSO token first</span>';
+        resultSpan.innerHTML = '<span style="color: var(--neon-orange);">' + escapeHtml({{ _('Enter an NPSSO token first')|tojson }}) + '</span>';
         return;
     }
 
     btn.disabled = true;
-    btn.innerHTML = 'Testing...';
-    resultSpan.innerHTML = '<span style="color: var(--text-secondary);">Saving and connecting...</span>';
+    btn.textContent = {{ _('Testing...')|tojson }};
+    resultSpan.innerHTML = '<span style="color: var(--text-secondary);">' + escapeHtml({{ _('Saving and connecting...')|tojson }}) + '</span>';
 
     try {
         const resp = await fetch('/api/psn/save-npsso', {
@@ -5054,48 +5043,48 @@ async function psnQuickSaveAndTest() {
         const data = await resp.json();
 
         if (data.success) {
-            resultSpan.innerHTML = '<span style="color: var(--neon-green);">Connected as ' + escapeHtml(data.username) + '</span>';
+            const msg = {{ _('Connected as %(name)s', name='{name}')|tojson }}.replace('{name}', data.username || '');
+            resultSpan.innerHTML = '<span style="color: var(--neon-green);">' + escapeHtml(msg) + '</span>';
             if (data.username && !username) {
                 document.getElementById('userPsnUsername').value = data.username;
             }
-            // Refresh token status
             loadPsnTokenStatus();
         } else {
-            resultSpan.innerHTML = '<span style="color: var(--neon-red);">' + escapeHtml(data.error || 'Connection failed') + '</span>';
+            resultSpan.innerHTML = '<span style="color: var(--neon-red);">' + escapeHtml(data.error || {{ _('Connection failed')|tojson }}) + '</span>';
         }
     } catch (e) {
-        resultSpan.innerHTML = '<span style="color: var(--neon-red);">Error: ' + escapeHtml(e.message) + '</span>';
+        resultSpan.innerHTML = '<span style="color: var(--neon-red);">' + escapeHtml({{ _('Error: %(msg)s', msg='{msg}')|tojson }}.replace('{msg}', e.message)) + '</span>';
     }
 
     btn.disabled = false;
-    btn.innerHTML = 'Save &amp; Test Connection';
+    btn.textContent = btnLabel;
 }
 
-/** Load and display PSN token expiration status */
+/** Show whether the user must act on their PSN sign-in. Sony's own 10-day
+ *  session is not shown: RetroDB signs in again from the saved NPSSO when it
+ *  lapses, so only a refused NPSSO needs the user (PASS-59-111). */
 async function loadPsnTokenStatus() {
     const statusEl = document.getElementById('psnTokenStatus');
     try {
         const resp = await fetch('/api/psn/token-info');
         const data = await resp.json();
-
-        if (data.has_token && !data.expired) {
-            const days = data.days_remaining;
-            const color = days > 14 ? 'var(--neon-green)' : days > 3 ? 'var(--neon-orange)' : 'var(--neon-red)';
-            const expDate = new Date(data.refresh_expires_at * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-            statusEl.style.display = 'flex';
-            statusEl.style.background = days > 14 ? 'rgba(34,197,94,0.1)' : days > 3 ? 'rgba(245,158,11,0.1)' : 'rgba(239,68,68,0.1)';
-            statusEl.style.border = '1px solid ' + color;
-            statusEl.innerHTML = '<span style="color:' + color + '; font-weight: 600;">' +
-                (days > 14 ? '&#10003;' : '&#9888;') +
-                '</span><span style="color: var(--text-primary);">PSN session active &mdash; expires <strong>' + expDate + '</strong> (' + days + ' day' + (days !== 1 ? 's' : '') + ' remaining)</span>';
-        } else if (data.expired) {
-            statusEl.style.display = 'flex';
-            statusEl.style.background = 'rgba(239,68,68,0.1)';
-            statusEl.style.border = '1px solid var(--neon-red)';
-            statusEl.innerHTML = '<span style="color: var(--neon-red); font-weight: 600;">&#10007;</span><span style="color: var(--text-primary);">PSN session expired &mdash; enter a new NPSSO token below</span>';
+        let color, bg, icon, msg;
+        if (data.refused) {
+            const when = new Date(data.refused_at * 1000).toLocaleDateString(document.documentElement.lang || undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+            color = 'var(--neon-red)'; bg = 'rgba(239,68,68,0.1)'; icon = '&#10007;';
+            msg = {{ _('Sony refused your saved NPSSO token on %(date)s. Get a new one with the steps below.', date='{date}')|tojson }}.replace('{date}', when);
+        } else if (data.has_token) {
+            color = 'var(--neon-green)'; bg = 'rgba(34,197,94,0.1)'; icon = '&#10003;';
+            msg = {{ _('Connected to PSN. RetroDB keeps the sign-in going by itself. You need a new token only if Sony refuses this one.')|tojson }};
         } else {
             statusEl.style.display = 'none';
+            return;
         }
+        statusEl.style.display = 'flex';
+        statusEl.style.background = bg;
+        statusEl.style.border = '1px solid ' + color;
+        statusEl.innerHTML = '<span style="color:' + color + '; font-weight: 600;">' + icon + '</span>' +
+            '<span style="color: var(--text-primary);">' + escapeHtml(msg) + '</span>';
     } catch (e) {
         statusEl.style.display = 'none';
     }

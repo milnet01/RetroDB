@@ -8415,6 +8415,20 @@ were corrected in `2836bc3` and are not repeated here.
   must act on (the NPSSO's own expiry, which Sony does not report),
   and reword the banner. The comment "valid ~2 months" in
   `create_psn_client` and trophies spec §4.5 assume the old lifetime.
+- **Fixed** (2026-11-03, user chose both designs): the Settings banner
+  no longer counts down Sony's 10-day session. It is green while a
+  session is cached and red only once Sony refuses the saved NPSSO,
+  which `create_psn_client` now records as `npsso_refused_at`; the
+  dashboard notice shows only that refusal. Paste here focuses the box
+  for Ctrl+V instead of reading the clipboard. Step 1 says to sign out
+  first when replacing a working token. `psnQuickSaveAndTest` and its
+  neighbours are translatable. The stale "two months" text in
+  `create_psn_client`, trophies spec §4.5, the help page and the
+  keep-alive header is corrected. Walked headless at 1280 and 375 px on
+  a scratch DB, with Sony's replies faked. Still open: the server's own
+  sign-in error ("PSN authentication failed...") is English-only; the
+  guided-paste idea; translations of the new strings and of the two help
+  paragraphs (step 7).
 
 ---
 

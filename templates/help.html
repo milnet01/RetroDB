@@ -1265,7 +1265,7 @@
             <li>The page will display JSON containing your NPSSO token</li>
             <li>Copy the <code>npsso</code> value and paste it into Settings &rarr; Account &rarr; PSN</li>
         </ol>
-        <p>Once authenticated, RetroDB caches the access tokens securely in its own database (per user) and refreshes them automatically &mdash; you do not paste the NPSSO again on every sync. The session stays valid for about two months, and RetroDB now also renews it automatically in the background, so in normal use you should rarely need a fresh NPSSO.</p>
+        <p>Once authenticated, RetroDB caches the access tokens securely in its own database (per user) and refreshes them automatically &mdash; you do not paste the NPSSO again on every sync. When Sony's session ends, RetroDB signs in again with your saved NPSSO by itself. You need a new NPSSO only when Sony refuses the saved one; Settings &rarr; Account and the dashboard then tell you.</p>
 
         <h3>Trophy Details</h3>
         <ul>
@@ -1831,7 +1831,7 @@
         <ul>
             <li>NPSSO tokens expire &mdash; generate a new one from <code>ca.account.sony.com/api/v1/ssocookie</code></li>
             <li>Make sure you're logged into store.playstation.com before visiting the cookie URL</li>
-            <li>RetroDB caches your PSN session for about two months and now auto-renews it in the background; if it still lapses, just paste a fresh NPSSO in Settings &rarr; Account &rarr; PSN</li>
+            <li>RetroDB signs in again by itself while Sony accepts your saved NPSSO. Once Sony refuses it, paste a new one in Settings &rarr; Account &rarr; PSN. To replace a token that still works, sign out of PlayStation first.</li>
         </ul>
 
         <h4>"Xbox Authentication Failed"</h4>

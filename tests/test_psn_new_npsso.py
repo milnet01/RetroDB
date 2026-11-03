@@ -22,7 +22,7 @@ def _schema():
     import app  # noqa: F401  (builds the throwaway DB's schema)
 
 
-def _seed(npsso):
+def _seed(npsso, days_left=9):
     conn = sqlite3.connect(config.DB_PATH)
     try:
         conn.execute(
@@ -30,7 +30,7 @@ def _seed(npsso):
             "VALUES (?, 'psn', ?, '') "
             "ON CONFLICT(user_id, platform) DO UPDATE SET tokens = excluded.tokens",
             (UID, json.dumps({"refresh_token": "old-session", "access_token": "at",
-                              "refresh_token_expires_at": time.time() + 9 * 86400})))
+                              "refresh_token_expires_at": time.time() + days_left * 86400})))
         conn.execute(
             "INSERT INTO user_settings (user_id, psn_npsso) VALUES (?, ?) "
             "ON CONFLICT(user_id) DO UPDATE SET psn_npsso = excluded.psn_npsso",
@@ -116,3 +116,51 @@ def test_settings_save_with_the_same_token_keeps_the_session(admin_test_client):
     client.post("/api/users/settings", headers={"X-CSRF-Token": csrf},
                 json={"psn_npsso": "old-token", "timezone": "UTC"})
     assert _stored() == ("old-token", "old-session")
+
+
+# The Settings and dashboard banners ask the user to act only when Sony
+# refuses the saved NPSSO. A lapsed 10-day session is not such a case: the
+# next request signs in again from the NPSSO (PASS-59-111).
+
+def _token_info(admin_test_client):
+    client, _csrf = admin_test_client()
+    return client.get("/api/psn/token-info").get_json()
+
+
+def _sign_in_with_saved(npsso):
+    import app as app_module
+    import routes.trophies as trophies
+    with app_module.app.app_context():
+        return trophies.create_psn_client(npsso, user_id=UID)
+
+
+def test_a_lapsed_session_is_not_something_to_act_on(admin_test_client, fake_sony):
+    _seed("old-token", days_left=-1)
+    info = _token_info(admin_test_client)
+    assert info["has_token"] is True
+    assert info["refused"] is False
+    assert "days_remaining" not in info
+
+
+def test_a_refused_saved_token_is_reported(admin_test_client, fake_sony):
+    _seed("refused", days_left=-1)
+    _client, err = _sign_in_with_saved("refused")
+    assert err
+    info = _token_info(admin_test_client)
+    assert info["refused"] is True
+    assert info["refused_at"] > time.time() - 60
+
+
+def test_a_refused_new_token_is_not_reported(admin_test_client, fake_sony):
+    _seed("old-token")
+    _save(admin_test_client, "refused")
+    assert _token_info(admin_test_client)["refused"] is False
+
+
+def test_a_new_token_clears_the_refusal(admin_test_client, fake_sony):
+    _seed("refused", days_left=-1)
+    _sign_in_with_saved("refused")
+    _save(admin_test_client, "new-token")
+    info = _token_info(admin_test_client)
+    assert info["has_token"] is True
+    assert info["refused"] is False

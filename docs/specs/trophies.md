@@ -167,7 +167,12 @@ Also:
 - Every accessor does nothing without a `user_id`.
 - PSN: `routes/trophies.py::create_psn_client` uses cached tokens while the
   refresh token is unexpired, re-saves them, and otherwise falls back to the
-  NPSSO. `/api/psn/token-info` reports expiry, never the tokens.
+  NPSSO. Sony's refresh token lasts 10 days and renewing it does not move
+  that date. When Sony refuses the saved NPSSO, the cache records
+  `npsso_refused_at`. `/api/psn/token-info` reports only that refusal and
+  whether a session is cached, never the tokens or an expiry: a lapsed
+  session needs nothing from the user (PASS-59-111,
+  `tests/test_psn_new_npsso.py`).
 - PSN: a new NPSSO replaces the cached session. `/api/psn/save-npsso` signs
   in with it, ignoring the cache, and saves it only if Sony accepts it;
   `/api/users/settings` drops the cache when the NPSSO changes

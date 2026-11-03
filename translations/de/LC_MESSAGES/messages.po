@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-03 21:03+0200\n"
+"POT-Creation-Date: 2026-11-03 21:20+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -64,7 +64,7 @@ msgstr "System nicht gefunden oder hat keine Spiele mit Achievements"
 #: routes/games_ai.py:31 routes/games_media.py:38 routes/games_media.py:86
 #: routes/games_media.py:149 routes/games_media.py:200
 #: routes/games_media.py:233 routes/launch.py:242 routes/reports.py:696
-#: routes/reports.py:827 routes/trophies.py:1327 services/cheats.py:617
+#: routes/reports.py:827 routes/trophies.py:1336 services/cheats.py:617
 #: services/hltb_service.py:162
 msgid "Game not found"
 msgstr "Spiel nicht gefunden"
@@ -437,9 +437,9 @@ msgstr "Bonus-Disc und Hauptspiel müssen sich im selben System befinden"
 #: routes/settings.py:459 routes/settings.py:538 routes/settings.py:567
 #: routes/settings.py:611 routes/settings.py:627 routes/settings.py:663
 #: routes/steam_achievements.py:138 routes/systems.py:292 routes/systems.py:482
-#: routes/trophies.py:544 routes/trophies.py:742 routes/trophies.py:790
-#: routes/trophies.py:1618 routes/trophies.py:1642 routes/trophies.py:1687
-#: routes/trophies.py:1715 routes/trophies.py:1757 routes/trophies.py:1824
+#: routes/trophies.py:553 routes/trophies.py:751 routes/trophies.py:799
+#: routes/trophies.py:1627 routes/trophies.py:1651 routes/trophies.py:1696
+#: routes/trophies.py:1724 routes/trophies.py:1766 routes/trophies.py:1833
 #: routes/xbox_achievements.py:157 services/api_helpers.py:46
 msgid "An internal error occurred"
 msgstr "Ein interner Fehler ist aufgetreten"
@@ -703,7 +703,7 @@ msgstr "Keine Felder zum Aktualisieren"
 
 #: routes/games.py:1197 routes/platform_import.py:250
 #: routes/platform_import.py:629 routes/platform_import.py:992
-#: routes/trophies.py:1906 templates/game_imports.html:579
+#: routes/trophies.py:1908 templates/game_imports.html:579
 #: templates/game_imports.html:842
 msgid "No games selected"
 msgstr "Keine Spiele ausgewählt"
@@ -1390,7 +1390,7 @@ msgstr "Behalten Sie mindestens eine Kopie jedes Spiels. Es wurde nichts gelösc
 msgid "This system has no screenshot check"
 msgstr "Für dieses System gibt es keine Screenshot-Prüfung"
 
-#: routes/trophies.py:432
+#: routes/trophies.py:441
 msgid ""
 "Please configure your RPCS3 Trophy Path in your profile settings to view "
 "trophies"
@@ -1398,60 +1398,60 @@ msgstr ""
 "Bitte konfigurieren Sie Ihren RPCS3-Trophäenpfad in Ihren "
 "Profileinstellungen, um Trophäen anzuzeigen"
 
-#: routes/trophies.py:464
+#: routes/trophies.py:473
 msgid "Trophy set not found"
 msgstr "Trophäensatz nicht gefunden"
 
-#: routes/trophies.py:508
+#: routes/trophies.py:517
 msgid "RPCS3_TROPHY_PATH not configured"
 msgstr "RPCS3_TROPHY_PATH nicht konfiguriert"
 
-#: routes/trophies.py:511
+#: routes/trophies.py:520
 #, python-format
 msgid "Trophy path not found: %(path)s"
 msgstr "Trophäenpfad nicht gefunden: %(path)s"
 
-#: routes/trophies.py:803 routes/trophies.py:1740
+#: routes/trophies.py:812 routes/trophies.py:1749
 msgid "PSN game not found"
 msgstr "PSN-Spiel nicht gefunden"
 
-#: routes/trophies.py:1094
+#: routes/trophies.py:1103
 msgid "Sync already in progress"
 msgstr "Synchronisierung läuft bereits"
 
-#: routes/trophies.py:1345
+#: routes/trophies.py:1354
 msgid "Game not found in your PSN trophy list"
 msgstr "Spiel nicht in Ihrer PSN-Trophäenliste gefunden"
 
-#: routes/trophies.py:1615
+#: routes/trophies.py:1624
 msgid "Game not found on PSN"
 msgstr "Spiel nicht auf PSN gefunden"
 
-#: routes/trophies.py:1630 routes/trophies.py:1703
+#: routes/trophies.py:1639 routes/trophies.py:1712
 msgid "Missing npwr_id"
 msgstr "npwr_id fehlt"
 
-#: routes/trophies.py:1728
+#: routes/trophies.py:1737
 msgid "Missing npwr_id or group_id"
 msgstr "npwr_id oder group_id fehlt"
 
-#: routes/trophies.py:1731
+#: routes/trophies.py:1740
 msgid "Name cannot be empty"
 msgstr "Der Name darf nicht leer sein"
 
-#: routes/trophies.py:1769
+#: routes/trophies.py:1778
 msgid "PSNAWP library not installed. Run: pip install psnawp"
 msgstr "PSNAWP-Bibliothek nicht installiert. Führen Sie aus: pip install psnawp"
 
-#: routes/trophies.py:1863
+#: routes/trophies.py:1865
 msgid "No NPSSO token provided"
 msgstr "Kein NPSSO-Token angegeben"
 
-#: routes/trophies.py:1888
+#: routes/trophies.py:1890
 msgid "Could not connect to PSN"
 msgstr "Verbindung zu PSN fehlgeschlagen"
 
-#: routes/trophies.py:1915
+#: routes/trophies.py:1917
 msgid "PSN NPSSO not configured"
 msgstr "PSN-NPSSO nicht konfiguriert"
 
@@ -1963,7 +1963,7 @@ msgstr "Erkennung fehlgeschlagen: {error}"
 msgid "AI found no missing fields to fill"
 msgstr ""
 
-#: services/js_i18n_strings.py:568 templates/_settings_tabs/account.html:296
+#: services/js_i18n_strings.py:568 templates/_settings_tabs/account.html:297
 #: templates/archive_scanner.html:726 templates/multi_disc_organizer.html:217
 #: templates/reports.html:369 templates/reports.html:450
 msgid "Actions"
@@ -2154,7 +2154,7 @@ msgstr ""
 #: templates/_bulk_scrape_modal.html:49 templates/_modals/edit_modal.html:12
 #: templates/_modals/rename_modal.html:19
 #: templates/_settings_tabs/account.html:73
-#: templates/_settings_tabs/account.html:391
+#: templates/_settings_tabs/account.html:392
 #: templates/_settings_tabs/customization.html:264
 #: templates/achievement_game.html:178 templates/archive_scanner.html:661
 #: templates/archive_scanner.html:798 templates/base.html:340
@@ -2561,7 +2561,7 @@ msgstr "DuckStation-Cheats"
 msgid "DuckStation ignores cheats in hardcore mode."
 msgstr "DuckStation ignoriert Cheats im Hardcore-Modus."
 
-#: services/js_i18n_strings.py:693 templates/_settings_tabs/account.html:341
+#: services/js_i18n_strings.py:693 templates/_settings_tabs/account.html:342
 #: templates/base.html:1005 templates/game_detail.html:135
 #: templates/wishlist.html:641
 msgid "Edit"
@@ -4195,7 +4195,7 @@ msgstr "Hochladen"
 msgid "Upload Controller Image"
 msgstr "Controller-Bild hochladen"
 
-#: services/js_i18n_strings.py:1032 templates/settings.html:5203
+#: services/js_i18n_strings.py:1032 templates/settings.html:5192
 msgid "Upload failed"
 msgstr "Hochladen fehlgeschlagen"
 
@@ -4780,7 +4780,7 @@ msgstr "Weitere Details"
 msgid "First Achievement"
 msgstr "Erstes Achievement"
 
-#: templates/_settings_tabs/account.html:336
+#: templates/_settings_tabs/account.html:337
 #: templates/achievement_game.html:233 templates/achievement_game.html:237
 #: templates/local_trophy_detail.html:211
 #: templates/local_trophy_detail.html:215 templates/psn_trophies.html:76
@@ -5737,7 +5737,7 @@ msgstr "Anzahl der Spiele"
 msgid "Critic"
 msgstr "Kritiker"
 
-#: templates/_settings_tabs/account.html:291 templates/analytics.html:1965
+#: templates/_settings_tabs/account.html:292 templates/analytics.html:1965
 msgid "User"
 msgstr "Benutzer"
 
@@ -7289,7 +7289,7 @@ msgstr "Alle fortsetzen"
 msgid "Dismiss All"
 msgstr "Alle verwerfen"
 
-#: templates/dashboard.html:60 templates/dashboard.html:1438
+#: templates/dashboard.html:60 templates/dashboard.html:1431
 msgid "Dismiss"
 msgstr "Verwerfen"
 
@@ -7484,7 +7484,7 @@ msgstr "Deaktiviert"
 msgid "Not Configured"
 msgstr "Nicht konfiguriert"
 
-#: templates/_settings_tabs/account.html:320 templates/dashboard.html:622
+#: templates/_settings_tabs/account.html:321 templates/dashboard.html:622
 msgid "Configured"
 msgstr "Konfiguriert"
 
@@ -7524,25 +7524,18 @@ msgid "Error picking random game"
 msgstr "Ein zufälliges Spiel auswählen"
 
 #: templates/dashboard.html:1421
+#, fuzzy
 msgid ""
-"Your PlayStation Network session has expired — re-link it to keep trophy "
-"and library sync working."
+"Sony refused your saved PlayStation Network token. Get a new one to keep "
+"trophy and library sync working."
 msgstr ""
 "Ihre PlayStation-Network-Sitzung ist abgelaufen — verknüpfen Sie sie "
 "erneut, damit Trophäen- und Bibliothekssynchronisierung weiter "
 "funktionieren."
 
-#: templates/dashboard.html:1424
-msgid ""
-"Your PlayStation Network session expires soon — re-link it to avoid an "
-"interruption."
+#: templates/dashboard.html:1430
+msgid "Get a new token"
 msgstr ""
-"Ihre PlayStation-Network-Sitzung läuft bald ab — verknüpfen Sie sie "
-"erneut, um eine Unterbrechung zu vermeiden."
-
-#: templates/dashboard.html:1437
-msgid "Re-link now"
-msgstr "Jetzt neu verknüpfen"
 
 #: templates/duplicate_finder.html:176
 msgid "Careful Review Recommended"
@@ -7679,7 +7672,7 @@ msgstr ""
 "Sie verwenden das Standard-Admin-Passwort. Aus Sicherheitsgründen müssen "
 "Sie ein neues Passwort festlegen, bevor Sie fortfahren."
 
-#: templates/_settings_tabs/account.html:233
+#: templates/_settings_tabs/account.html:234
 #: templates/force_change_password.html:20
 msgid "New Password"
 msgstr "Neues Passwort"
@@ -7781,7 +7774,7 @@ msgstr "Handbuch anzeigen (PDF)"
 msgid "Delete game from database"
 msgstr "Spiel aus der Datenbank löschen"
 
-#: templates/_settings_tabs/account.html:343 templates/game_detail.html:150
+#: templates/_settings_tabs/account.html:344 templates/game_detail.html:150
 #: templates/logs.html:735 templates/settings.html:45
 #: templates/wishlist.html:642
 msgid "Delete"
@@ -11527,32 +11520,93 @@ msgstr "CLZ-Importe konnten nicht gelöscht werden"
 msgid "Error clearing old logs: {error}"
 msgstr "Fehler beim Scannen der Bibliothek: {error}"
 
-#: templates/settings.html:5126
+#: templates/settings.html:5001
+#, fuzzy
+msgid "Token extracted from the pasted page"
+msgstr "Automatisch aus Titel generiert"
+
+#: templates/settings.html:5003
+#, fuzzy
+msgid "Token detected"
+msgstr "Erkannte verwenden"
+
+#: templates/settings.html:5005
+msgid "Could not detect a valid NPSSO token"
+msgstr ""
+
+#: templates/settings.html:5017
+msgid "Now press Ctrl+V to paste."
+msgstr ""
+
+#: templates/settings.html:5029
+#, fuzzy
+msgid "Enter an NPSSO token first"
+msgstr "NPSSO-Token einrichten"
+
+#: templates/settings.html:5034
+#, fuzzy
+msgid "Testing..."
+msgstr "Wird getestet…"
+
+#: templates/settings.html:5035
+#, fuzzy
+msgid "Saving and connecting..."
+msgstr "Speichern &amp; Verbindung testen"
+
+#: templates/settings.html:5046
+#, fuzzy, python-format
+msgid "Connected as %(name)s"
+msgstr "Kombiniert (Hash + Name)"
+
+#: templates/settings.html:5053
+#, fuzzy
+msgid "Connection failed"
+msgstr "Vorgang fehlgeschlagen"
+
+#: templates/settings.html:5056
+#, fuzzy, python-format
+msgid "Error: %(msg)s"
+msgstr "ERROR:"
+
+#: templates/settings.html:5075
+#, python-format
+msgid ""
+"Sony refused your saved NPSSO token on %(date)s. Get a new one with the "
+"steps below."
+msgstr ""
+
+#: templates/settings.html:5078
+msgid ""
+"Connected to PSN. RetroDB keeps the sign-in going by itself. You need a "
+"new token only if Sony refuses this one."
+msgstr ""
+
+#: templates/settings.html:5115
 #, fuzzy
 msgid "Redirect URI copied to clipboard"
 msgstr "In Zwischenablage kopieren"
 
-#: templates/settings.html:5201 templates/settings.html:5243
+#: templates/settings.html:5190 templates/settings.html:5232
 #, fuzzy
 msgid "Avatar updated!"
 msgstr "Zuletzt aktualisiert"
 
-#: templates/settings.html:5206
+#: templates/settings.html:5195
 #, fuzzy, python-brace-format
 msgid "Upload failed: {error}"
 msgstr "Anwenden fehlgeschlagen: {error}"
 
-#: templates/settings.html:5220
+#: templates/settings.html:5209
 #, fuzzy
 msgid "Avatar removed"
 msgstr "Stapelweise entfernen"
 
-#: templates/settings.html:5223
+#: templates/settings.html:5212
 #, fuzzy
 msgid "Failed to remove avatar"
 msgstr "Entfernen fehlgeschlagen."
 
-#: templates/settings.html:5246
+#: templates/settings.html:5235
 #, fuzzy
 msgid "Failed to save avatar"
 msgstr "HLTB konnte nicht gespeichert werden: "
@@ -12744,8 +12798,8 @@ msgid "My Profile"
 msgstr "Mein Profil"
 
 #: templates/_settings_tabs/account.html:6
-#: templates/_settings_tabs/account.html:250
-#: templates/_settings_tabs/account.html:257
+#: templates/_settings_tabs/account.html:251
+#: templates/_settings_tabs/account.html:258
 msgid "Timezone"
 msgstr "Zeitzone"
 
@@ -12928,15 +12982,22 @@ msgstr ""
 "dann die Kontoseite: Sie zeigt Ihr NPSSO-Token als JSON. Wenn Sie nicht "
 "angemeldet sind, zeigt sie stattdessen \"Invalid login\"."
 
-#: templates/_settings_tabs/account.html:163
+#: templates/_settings_tabs/account.html:162
+msgid ""
+"Replacing a token that still works? Sign out of PlayStation first, then "
+"sign in again. Signing out ends the old token, so Sony gives you a new "
+"one."
+msgstr ""
+
+#: templates/_settings_tabs/account.html:164
 msgid "Sign in to PlayStation"
 msgstr "Bei PlayStation anmelden"
 
-#: templates/_settings_tabs/account.html:166
+#: templates/_settings_tabs/account.html:167
 msgid "Open Sony Account Page"
 msgstr "Sony-Kontoseite öffnen"
 
-#: templates/_settings_tabs/account.html:173
+#: templates/_settings_tabs/account.html:174
 msgid ""
 "Optional shortcut: drag the button below to your browser's bookmarks bar."
 " Then, on the Sony JSON page, click the bookmark to copy your NPSSO in "
@@ -12946,15 +13007,15 @@ msgstr ""
 "Lesezeichenleiste Ihres Browsers. Klicken Sie dann auf der Sony-JSON-"
 "Seite auf das Lesezeichen, um Ihren NPSSO mit einem Klick zu kopieren."
 
-#: templates/_settings_tabs/account.html:174
+#: templates/_settings_tabs/account.html:175
 msgid "Copy NPSSO"
 msgstr "NPSSO kopieren"
 
-#: templates/_settings_tabs/account.html:183
+#: templates/_settings_tabs/account.html:184
 msgid "Copy the page content"
 msgstr "Seiteninhalt kopieren"
 
-#: templates/_settings_tabs/account.html:184
+#: templates/_settings_tabs/account.html:185
 msgid ""
 "Select all (<kbd style=\"background: var(--bg-medium); padding: 1px 6px; "
 "border-radius: 3px; border: 1px solid var(--card-border); font-size: "
@@ -12970,82 +13031,83 @@ msgstr ""
 "(--card-border); font-size: 0.8rem;\">Ctrl+C</kbd>). Sie können das "
 "gesamte JSON kopieren &mdash; wir extrahieren den Token automatisch."
 
-#: templates/_settings_tabs/account.html:192
+#: templates/_settings_tabs/account.html:193
 msgid "Paste the token"
 msgstr "Token einfügen"
 
-#: templates/_settings_tabs/account.html:196
+#: templates/_settings_tabs/account.html:197
 msgid "Paste JSON or token here"
 msgstr "JSON oder Token hier einfügen"
 
-#: templates/_settings_tabs/account.html:199
-msgid "Read from clipboard"
-msgstr "Aus Zwischenablage lesen"
-
 #: templates/_settings_tabs/account.html:200
-msgid "Paste &amp; Detect"
-msgstr "Einfügen &amp; erkennen"
+msgid "Puts the cursor in the box. Then press Ctrl+V."
+msgstr ""
 
-#: templates/_settings_tabs/account.html:211
+#: templates/_settings_tabs/account.html:201
+#, fuzzy
+msgid "Paste here"
+msgstr "Token einfügen"
+
+#: templates/_settings_tabs/account.html:212
 msgid "Save &amp; Test Connection"
 msgstr "Speichern &amp; Verbindung testen"
 
-#: templates/_settings_tabs/account.html:218
+#: templates/_settings_tabs/account.html:219
 msgid "Save My Settings"
 msgstr "Meine Einstellungen speichern"
 
-#: templates/_settings_tabs/account.html:222
-#: templates/_settings_tabs/account.html:238
+#: templates/_settings_tabs/account.html:223
+#: templates/_settings_tabs/account.html:239
 msgid "Change Password"
 msgstr "Passwort ändern"
 
-#: templates/_settings_tabs/account.html:224
+#: templates/_settings_tabs/account.html:225
 msgid "Every account needs a password to log in."
 msgstr "Jedes Konto benötigt ein Passwort zur Anmeldung."
 
-#: templates/_settings_tabs/account.html:228
+#: templates/_settings_tabs/account.html:229
 msgid "Current Password"
 msgstr "Aktuelles Passwort"
 
-#: templates/_settings_tabs/account.html:229
+#: templates/_settings_tabs/account.html:230
 msgid "Enter current password"
 msgstr "Aktuelles Passwort eingeben"
 
-#: templates/_settings_tabs/account.html:234
+#: templates/_settings_tabs/account.html:235
 msgid "Enter new password"
 msgstr "Neues Passwort eingeben"
 
-#: templates/_settings_tabs/account.html:242
+#: templates/_settings_tabs/account.html:243
 msgid "Please log in to view your profile settings."
 msgstr "Bitte melden Sie sich an, um Ihre Profileinstellungen anzuzeigen."
 
-#: templates/_settings_tabs/account.html:254
+#: templates/_settings_tabs/account.html:255
 msgid "Set your timezone to ensure all dates and times display correctly."
 msgstr ""
 "Legen Sie Ihre Zeitzone fest, damit alle Datums- und Zeitangaben korrekt "
 "angezeigt werden."
 
-#: templates/_settings_tabs/account.html:259
+#: templates/_settings_tabs/account.html:260
 msgid "Search timezones..."
 msgstr "Zeitzonen suchen …"
 
-#: templates/_settings_tabs/account.html:263
+#: templates/_settings_tabs/account.html:264
 msgid "Browser detected:"
 msgstr "Vom Browser erkannt:"
 
-#: templates/_settings_tabs/account.html:264
+#: templates/_settings_tabs/account.html:265
 msgid "Use detected"
 msgstr "Erkannte verwenden"
 
-#: templates/_settings_tabs/account.html:267
+#: templates/_settings_tabs/account.html:268
 msgid "Save Timezone"
 msgstr "Zeitzone speichern"
 
-#: templates/_settings_tabs/account.html:275
+#: templates/_settings_tabs/account.html:276
 msgid "User Management"
 msgstr "Benutzerverwaltung"
 
-#: templates/_settings_tabs/account.html:279
+#: templates/_settings_tabs/account.html:280
 msgid ""
 "Manage users who can access RetroDB. Admin users require a password to "
 "login, while Editor and Viewer users can login with a single click."
@@ -13054,82 +13116,82 @@ msgstr ""
 "benötigen ein Passwort zur Anmeldung, während sich Editor- und Viewer-"
 "Benutzer mit einem einzigen Klick anmelden können."
 
-#: templates/_settings_tabs/account.html:284
-#: templates/_settings_tabs/account.html:358
+#: templates/_settings_tabs/account.html:285
+#: templates/_settings_tabs/account.html:359
 msgid "Add User"
 msgstr "Benutzer hinzufügen"
 
-#: templates/_settings_tabs/account.html:292
+#: templates/_settings_tabs/account.html:293
 msgid "Role"
 msgstr "Rolle"
 
-#: templates/_settings_tabs/account.html:293
+#: templates/_settings_tabs/account.html:294
 msgid "Trophy Path"
 msgstr "Trophäenpfad"
 
-#: templates/_settings_tabs/account.html:294
+#: templates/_settings_tabs/account.html:295
 msgid "RA Username"
 msgstr "RA-Benutzername"
 
-#: templates/_settings_tabs/account.html:295
+#: templates/_settings_tabs/account.html:296
 msgid "Last Login"
 msgstr "Letzte Anmeldung"
 
-#: templates/_settings_tabs/account.html:322
-#: templates/_settings_tabs/account.html:329
+#: templates/_settings_tabs/account.html:323
+#: templates/_settings_tabs/account.html:330
 msgid "Not Set"
 msgstr "Nicht festgelegt"
 
-#: templates/_settings_tabs/account.html:359
+#: templates/_settings_tabs/account.html:360
 msgid "Close user modal"
 msgstr "Benutzerdialog schließen"
 
-#: templates/_settings_tabs/account.html:365
+#: templates/_settings_tabs/account.html:366
 msgid "Username *"
 msgstr "Benutzername *"
 
-#: templates/_settings_tabs/account.html:366
+#: templates/_settings_tabs/account.html:367
 msgid "username"
 msgstr "Benutzername"
 
-#: templates/_settings_tabs/account.html:370
 #: templates/_settings_tabs/account.html:371
+#: templates/_settings_tabs/account.html:372
 msgid "Display Name"
 msgstr "Anzeigename"
 
-#: templates/_settings_tabs/account.html:375
+#: templates/_settings_tabs/account.html:376
 msgid "Role *"
 msgstr "Rolle *"
 
-#: templates/_settings_tabs/account.html:377
+#: templates/_settings_tabs/account.html:378
 msgid "Viewer - Read only access"
 msgstr "Viewer – nur Lesezugriff"
 
-#: templates/_settings_tabs/account.html:378
+#: templates/_settings_tabs/account.html:379
 msgid "Player - Can launch and track progress"
 msgstr "Player – kann starten und Fortschritt verfolgen"
 
-#: templates/_settings_tabs/account.html:379
+#: templates/_settings_tabs/account.html:380
 msgid "Editor - Can edit games and scrape"
 msgstr "Editor – kann Spiele bearbeiten und scrapen"
 
-#: templates/_settings_tabs/account.html:380
+#: templates/_settings_tabs/account.html:381
 msgid "Admin - Full access"
 msgstr "Admin – Vollzugriff"
 
-#: templates/_settings_tabs/account.html:385
+#: templates/_settings_tabs/account.html:386
 msgid "Reset Password"
 msgstr "Passwort zurücksetzen"
 
-#: templates/_settings_tabs/account.html:386
+#: templates/_settings_tabs/account.html:387
 msgid "Leave blank to keep current"
 msgstr "Leer lassen, um das aktuelle beizubehalten"
 
-#: templates/_settings_tabs/account.html:387
+#: templates/_settings_tabs/account.html:388
 msgid "Only for admin accounts"
 msgstr "Nur für Admin-Konten"
 
-#: templates/_settings_tabs/account.html:392
+#: templates/_settings_tabs/account.html:393
 msgid "Save User"
 msgstr "Benutzer speichern"
 
@@ -14289,4 +14351,23 @@ msgstr "Auf Patreon unterstützen"
 
 #~ msgid "Remove this system from Achievements"
 #~ msgstr "Dieses System aus Achievements entfernen"
+
+#~ msgid ""
+#~ "Your PlayStation Network session expires "
+#~ "soon — re-link it to avoid "
+#~ "an interruption."
+#~ msgstr ""
+#~ "Ihre PlayStation-Network-Sitzung läuft "
+#~ "bald ab — verknüpfen Sie sie "
+#~ "erneut, um eine Unterbrechung zu "
+#~ "vermeiden."
+
+#~ msgid "Re-link now"
+#~ msgstr "Jetzt neu verknüpfen"
+
+#~ msgid "Read from clipboard"
+#~ msgstr "Aus Zwischenablage lesen"
+
+#~ msgid "Paste &amp; Detect"
+#~ msgstr "Einfügen &amp; erkennen"
 

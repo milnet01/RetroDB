@@ -128,8 +128,11 @@ def _clear_psn_tokens(user_id=None):
 def create_psn_client(npsso, user_id=None, allow_npsso_fallback=True, use_cache=True):
     """Create an authenticated PSNAWP client with token caching.
 
-    Tries cached refresh tokens first (valid ~2 months). Falls back to NPSSO
-    if cached tokens are expired. Saves tokens after successful authentication.
+    Tries cached refresh tokens first (Sony's refresh token lasts 10 days and
+    renewing it does not move that date). Falls back to NPSSO if cached tokens
+    are expired. Saves tokens after successful authentication. When Sony
+    refuses the saved NPSSO, records `npsso_refused_at` in the cache so the
+    Settings and dashboard banners can ask for a new one (PASS-59-111).
 
     Args:
         npsso: The NPSSO cookie string.
@@ -206,6 +209,12 @@ def create_psn_client(npsso, user_id=None, allow_npsso_fallback=True, use_cache=
         return psnawp, None
     except PSNAWPAuthenticationError as e:
         logger.error(f"PSN authentication failed: {e}")
+        if use_cache:
+            # The saved NPSSO, not a new one being tried: that one is the
+            # user's to replace. A refused new token changes nothing.
+            import time as _time
+            _save_psn_tokens({'npsso_refused_at': _time.time(),
+                              'refresh_token_expires_at': 0}, user_id=user_id)
         return None, "PSN authentication failed. Your NPSSO may have expired."
     except Exception as e:
         logger.error(f"PSN connection error: {e}")
@@ -1828,27 +1837,20 @@ def api_psn_status():
 @bp.route('/api/psn/token-info')
 @login_required
 def api_psn_token_info():
-    """Get PSN token expiration information for the settings UI."""
-    import time as _time
+    """Say whether the user must act on their PSN sign-in (PASS-59-111).
 
+    Only a refused NPSSO needs the user. Sony's 10-day session is not
+    reported: when it lapses, the next request signs in again from the NPSSO.
+    """
     cached = _load_psn_tokens()
     if not cached:
-        return jsonify({'has_token': False})
+        return jsonify({'has_token': False, 'refused': False})
 
-    refresh_expires = cached.get('refresh_token_expires_at', 0)
-    access_expires = cached.get('access_token_expires_at', 0)
-    now = _time.time()
+    refused_at = cached.get('npsso_refused_at')
+    if refused_at:
+        return jsonify({'has_token': False, 'refused': True, 'refused_at': refused_at})
 
-    if refresh_expires <= now:
-        return jsonify({'has_token': False, 'expired': True})
-
-    return jsonify({
-        'has_token': True,
-        'expired': False,
-        'refresh_expires_at': refresh_expires,
-        'days_remaining': max(0, int((refresh_expires - now) / 86400)),
-        'access_valid': access_expires > now
-    })
+    return jsonify({'has_token': True, 'refused': False})
 
 
 @bp.route('/api/psn/save-npsso', methods=['POST'])
