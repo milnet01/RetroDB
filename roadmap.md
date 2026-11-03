@@ -10544,7 +10544,14 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.223 The translated help manuals catch up with older English sections (doc-fix, M).
-- **Status**: todo
+- **Resolution** (2026-11-03): Shipped 2026-11-03 in 419ae7e, into the open 4.0.0 entry. All 20
+  manuals match help.html by section structure, <code>/<pre> text, ids,
+  hrefs and Jinja. Also fixed: the Back label meant "go back" in af, de,
+  es; help.html's stale Official Names mention. Left for the PASS-59-113
+  translation step: "MAME Names" is still English in the nb and it
+  catalogs. Gap: test_i18n_longform compares hrefs as sets, so it missed
+  the lost in-text #ai-fill link.
+- **Status**: done
 - **Problem**: found while translating 3.35.0. The translated `help.<locale>.html` files lack two English sections, Search Anywhere and Keeping a Title, and some older paragraphs lag the English, such as Backfill Alternate Titles. In xh and zu, Custom Images and Fill Missing appear under older labels in older text.
 - **Fix**: compare each locale's sections with `help.html` and translate what is missing. Do it before v4.0.0.
 - **Progress** (2026-11-02): Also missing from the translated manuals: the MAME Names section
