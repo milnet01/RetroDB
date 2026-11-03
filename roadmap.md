@@ -10707,6 +10707,12 @@ the cover zoom in Firefox before being reverted for the local fix.
   `seam_depth_mm` (missing means 0); no lip or seam on the spine side;
   the solid is concave, so check depth sorting in the viewer. Slipcase
   no longer paints the lip's inner wall into the pictures.
+- **Spec update** (Slipcase, 2026-11-03, its commit 95bee0b): SLIP-0125
+  § 4.1 (e) adds a finger recess on the opening side, asked for by the
+  user: optional `recess_length_mm`, `recess_height_mm`,
+  `recess_depth_mm` (missing means 0; any 0 means no recess), with
+  their own limits. On the spine side the seam strip is flat and shows
+  the spine picture. Which half the recess cuts waits on the user.
 
 ---
 
