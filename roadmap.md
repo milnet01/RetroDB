@@ -10442,6 +10442,11 @@ the cover zoom in Firefox before being reverted for the local fix.
   title. Ask the user.
   - **Found**: the year shows after Save but not after a reload; no
   column stores it.
+- **Fixed** 2026-11-04 (584117d, user's choice): stored alternate
+  titles are tried only when the box holds the game's own title.
+  - **Owed**: the help manual's "How Long to Beat" steps say "Select the
+  correct match from the results"; the page shows one match with Save
+  and Cancel. Fix with the translations step (all help files).
 
 ---
 
@@ -10849,6 +10854,21 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Open**: a separate page or a mode of the Library; which actions it
   offers (browse, details, Play). Likely needs a spec
   (`spec-format.md` §1): it spans pages, input and layout.
+- **Status**: todo.
+
+---
+
+#### Pass 59.236 ROCm's roctracer aborts every GPU process at exit: find a fix that needs no copy of ROCm (investigate, S).
+- **When**: after v4.0.0 (user, 2026-11-04).
+- **Why**: `roctracer` 6.4.0 (openSUSE build) fails an assertion in
+  `hsa_support::Finalize` at exit. pytest exits 134, and a plain kill
+  of a server writes a core dump of hundreds of MB.
+- **Try, in order**: a newer ROCm; keeping `libroctracer64` from
+  loading; reporting it to AMD or openSUSE.
+- **Decided** (user, 2026-11-04): no fork of ROCm. Measured that day
+  for this machine's gfx1032 card (run as gfx1030): the ROCm files the
+  upscaler loads are 2.48 GB on disk, 534 MB packed with `xz -1`, for
+  one card family only.
 - **Status**: todo.
 
 ## Done index
