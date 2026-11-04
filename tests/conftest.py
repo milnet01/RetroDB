@@ -19,18 +19,16 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 # via the app_client fixture). config.DB_PATH defaults to database/roms.db, so
 # without this every `pytest` run (and the ci_local.sh pre-push gate) would run
 # migrations + seeding against the real library. Point it at a fresh throwaway
-# DB before config/app are first imported. An explicit RETRODB_DB_PATH (CI, or a
-# developer who wants a fixed path) still wins.
+# DB before config/app are first imported.
+#
+# A RETRODB_* path inherited from the shell is NEVER honoured (PASS-59-239): it
+# could name the live library. Each process — every pytest-xdist worker
+# included — mints its own temp dirs, so workers never share a DB and race
+# init_database (UNIQUE constraint on the seeded admin).
 import tempfile  # noqa: E402
-# Each pytest-xdist worker is a subprocess that inherits the master's env, so a
-# path set once would be SHARED by every worker and they'd race init_database
-# (UNIQUE constraint on the seeded admin). When running under xdist, key the DB
-# on the worker id so each gets its own; otherwise honour a developer/CI-set
-# RETRODB_DB_PATH and only mint one when none is set.
-_xdist_worker = os.environ.get("PYTEST_XDIST_WORKER")
-if _xdist_worker or "RETRODB_DB_PATH" not in os.environ:
-    _test_db_dir = tempfile.mkdtemp(prefix=f"retrodb-test-{_xdist_worker or 'main'}-")
-    os.environ["RETRODB_DB_PATH"] = os.path.join(_test_db_dir, "roms.db")
+_proc = os.environ.get("PYTEST_XDIST_WORKER") or "main"
+_test_db_dir = tempfile.mkdtemp(prefix=f"retrodb-test-{_proc}-")
+os.environ["RETRODB_DB_PATH"] = os.path.join(_test_db_dir, "roms.db")
 
 # Isolate the scraped-media roots from the operator's real files, for the SAME
 # reason (and the same way) as the DB above. The media-cleanup helpers
@@ -43,16 +41,35 @@ if _xdist_worker or "RETRODB_DB_PATH" not in os.environ:
 # STATIC_PATH at throwaway dirs via env BEFORE config is imported makes the real
 # media tree physically unreachable from the test process no matter what — the
 # env override is read at config import time and survives a config re-import,
-# which a per-attribute monkeypatch does not. Keyed per xdist worker like the DB.
-if _xdist_worker or "RETRODB_IMAGE_PATH" not in os.environ:
-    _test_media_dir = tempfile.mkdtemp(prefix=f"retrodb-test-media-{_xdist_worker or 'main'}-")
-    _test_static = os.path.join(_test_media_dir, "static")
-    _test_images = os.path.join(_test_static, "images")
-    for _sub in ("boxart", "boxart_3d", "screenshots", "fanart", "game_logos", "boxart_back", "manuals"):
-        os.makedirs(os.path.join(_test_images, _sub), exist_ok=True)
-    os.makedirs(os.path.join(_test_static, "videos"), exist_ok=True)
-    os.environ["RETRODB_STATIC_PATH"] = _test_static
-    os.environ["RETRODB_IMAGE_PATH"] = _test_images
+# which a per-attribute monkeypatch does not.
+_test_media_dir = tempfile.mkdtemp(prefix=f"retrodb-test-media-{_proc}-")
+_test_static = os.path.join(_test_media_dir, "static")
+_test_images = os.path.join(_test_static, "images")
+for _sub in ("boxart", "boxart_3d", "screenshots", "fanart", "game_logos", "boxart_back", "manuals"):
+    os.makedirs(os.path.join(_test_images, _sub), exist_ok=True)
+os.makedirs(os.path.join(_test_static, "videos"), exist_ok=True)
+os.environ["RETRODB_STATIC_PATH"] = _test_static
+os.environ["RETRODB_IMAGE_PATH"] = _test_images
+
+# The settings files, too: a route test that saves settings must not write the
+# operator's data/settings.json or data/scraper_settings.json.
+_test_data = os.path.join(_test_media_dir, "data")
+os.makedirs(_test_data, exist_ok=True)
+os.environ["RETRODB_SETTINGS_FILE"] = os.path.join(_test_data, "settings.json")
+os.environ["RETRODB_SCRAPER_SETTINGS_FILE"] = os.path.join(_test_data, "scraper_settings.json")
+
+# Refuse to run at all if config resolves any of them outside the temp root —
+# e.g. a config.py copied from an older config.example.py, which lacks the
+# settings-file overrides.
+import config as _config  # noqa: E402
+_temp_root = os.path.realpath(tempfile.gettempdir())
+for _name in ("DB_PATH", "IMAGE_PATH", "STATIC_PATH", "SETTINGS_FILE", "SCRAPER_SETTINGS_FILE"):
+    _path = getattr(_config, _name, None)
+    if not _path or os.path.commonpath([_temp_root, os.path.realpath(_path)]) != _temp_root:
+        raise SystemExit(
+            f"conftest: config.{_name} is {_path!r}, outside the temp root; refusing to run "
+            "tests against live data. If config.py is older than config.example.py, "
+            "copy the new path lines across.")
 
 import pytest  # noqa: E402
 

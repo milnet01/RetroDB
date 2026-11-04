@@ -21,9 +21,11 @@ from scraper.base_scraper import http_post, rate_limit, safe_json
 
 logger = logging.getLogger(__name__)
 
-# Settings file path (same as scraper_manager)
-SCRAPER_SETTINGS_FILE = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+# Settings file path, the same one scraper_manager and routes/scraper.py use:
+# anchored to config.BASE_DIR, never this file's folder, which in a frozen
+# bundle sits under _internal/ (Pass 57.5).
+SCRAPER_SETTINGS_FILE = getattr(config, 'SCRAPER_SETTINGS_FILE', None) or os.path.join(
+    config.BASE_DIR,
     'data', 'scraper_settings.json'
 )
 

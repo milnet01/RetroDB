@@ -49,7 +49,10 @@ logger = logging.getLogger(__name__)
 # Path to scraper settings file - EXPORTED for use by app.py settings route.
 # Anchored to config.BASE_DIR (writable user-data root) so the file lives
 # next to the launcher in a frozen bundle, not inside _internal/.
-SCRAPER_SETTINGS_FILE = os.path.join(config.BASE_DIR, 'data', 'scraper_settings.json')
+# config.SCRAPER_SETTINGS_FILE carries the test suite's override (PASS-59-239);
+# a config.py copied before it existed falls back to the anchor.
+SCRAPER_SETTINGS_FILE = getattr(config, 'SCRAPER_SETTINGS_FILE', None) or os.path.join(
+    config.BASE_DIR, 'data', 'scraper_settings.json')
 
 
 # =============================================================================

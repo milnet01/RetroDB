@@ -120,13 +120,12 @@ class TestPathAgreement:
 
         assert sm.SCRAPER_SETTINGS_FILE == routes_scraper.SCRAPER_SETTINGS_FILE
 
-    def test_path_is_anchored_to_base_dir(self):
-        """Anchoring matters only where BASE_DIR stops equalling the repo root —
-        a frozen bundle, where BASE_DIR sits next to the launcher and this
-        module's __file__ sits under _internal/. Assert the anchor rather than
-        the resolved string, which are the same value from a checkout."""
-        import os
+    def test_path_follows_config(self):
+        """Every reader takes config's path — anchored to BASE_DIR, which in a
+        frozen bundle sits next to the launcher rather than under _internal/
+        where this module's __file__ is. config's default is pinned in
+        test_pass46_frozen_paths; under pytest it is a temp file (PASS-59-239)."""
+        from scraper import scrape_ai
 
-        assert sm.SCRAPER_SETTINGS_FILE == os.path.join(
-            config.BASE_DIR, 'data', 'scraper_settings.json'
-        )
+        assert sm.SCRAPER_SETTINGS_FILE == config.SCRAPER_SETTINGS_FILE
+        assert scrape_ai.SCRAPER_SETTINGS_FILE == config.SCRAPER_SETTINGS_FILE

@@ -115,6 +115,8 @@ class TestPass46_3_FrozenModeSplit:
         monkeypatch.delenv("RETRODB_DB_PATH", raising=False)
         monkeypatch.delenv("RETRODB_STATIC_PATH", raising=False)
         monkeypatch.delenv("RETRODB_IMAGE_PATH", raising=False)
+        monkeypatch.delenv("RETRODB_SETTINGS_FILE", raising=False)
+        monkeypatch.delenv("RETRODB_SCRAPER_SETTINGS_FILE", raising=False)
 
         # evict_config_modules has already popped the snapshot-prone modules
         # both before and (on teardown) after this test. Re-import config now
@@ -125,32 +127,32 @@ class TestPass46_3_FrozenModeSplit:
         assert config.STATIC_PATH == os.path.join(str(meipass_dir), "static")
         assert config.IMAGE_PATH == os.path.join(str(launcher_dir), "static", "images")
         assert config.DB_PATH == os.path.join(str(launcher_dir), "database", "roms.db")
+        assert config.SETTINGS_FILE == os.path.join(str(launcher_dir), "data", "settings.json")
+        assert config.SCRAPER_SETTINGS_FILE == os.path.join(
+            str(launcher_dir), "data", "scraper_settings.json")
 
 
 class TestPass46_3_DependentModulesFollowConfig:
     """settings_manager, log_manager, and routes.scraper must derive their
-    on-disk paths from config.BASE_DIR — not from a local
-    dirname(__file__) snapshot — so they track the writable user-data root
-    in a frozen bundle."""
+    on-disk paths from config — not from a local dirname(__file__) snapshot —
+    so they track the writable user-data root in a frozen bundle. config's
+    own default for the settings files is pinned in the frozen-mode test
+    above (PASS-59-239: under pytest they point at a temp dir)."""
 
-    def test_settings_manager_anchored_to_config_base_dir(self):
+    def test_settings_manager_follows_config(self):
         import config
         import settings_manager
-        assert settings_manager.SETTINGS_FILE == os.path.join(
-            config.BASE_DIR, "data", "settings.json"
-        )
+        assert settings_manager.SETTINGS_FILE == config.SETTINGS_FILE
 
     def test_log_manager_anchored_to_config_base_dir(self):
         import config
         import log_manager
         assert log_manager.LOGS_DIR == os.path.join(config.BASE_DIR, "logs")
 
-    def test_scraper_settings_file_anchored_to_config_base_dir(self):
+    def test_scraper_settings_file_follows_config(self):
         import config
         from routes import scraper
-        assert scraper.SCRAPER_SETTINGS_FILE == os.path.join(
-            config.BASE_DIR, "data", "scraper_settings.json"
-        )
+        assert scraper.SCRAPER_SETTINGS_FILE == config.SCRAPER_SETTINGS_FILE
 
 
 @pytest.fixture

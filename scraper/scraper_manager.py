@@ -62,7 +62,8 @@ from scraper.match_scorer import (
 # the launcher and this module's __file__ sits under _internal/ — so the routes
 # would have written one file and the scrapers read another. Falls back to the
 # repo root only when config itself failed to import (see above).
-SCRAPER_SETTINGS_FILE = os.path.join(
+# config.SCRAPER_SETTINGS_FILE carries the test suite's override (PASS-59-239).
+SCRAPER_SETTINGS_FILE = getattr(config, 'SCRAPER_SETTINGS_FILE', None) or os.path.join(
     config.BASE_DIR if config else os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
     'data', 'scraper_settings.json',
 )

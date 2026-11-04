@@ -2,6 +2,8 @@
   date: 2026-11-04
   tags:
   - type: fix
+    label: "RetroDB's own checks can no longer touch your library while they run. They always use a throwaway copy of the database, pictures and settings, and refuse to start if any of them points at your real files"
+  - type: fix
     label: Clean orphaned files no longer deletes your wishlist's pictures. Opening a game no longer makes it forget screenshots it cannot find. Before, with the picture drive unplugged, every game you opened lost its whole screenshot list; now the list is kept, and a missing picture is only hidden
   - type: fix
     label: A video or manual download that fails part-way no longer damages the copy the game already had, and a failed download no longer leaves a hidden half-file in the media folder. The background upscaler no longer saves an old picture over a newer one downloaded meanwhile. Convert to WebP keeps every game that shares a picture pointing at it, and never touches a file outside the picture folders
