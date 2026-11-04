@@ -10936,7 +10936,12 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.238 Media files are never lost: wishlist pictures, screenshot lists, partial downloads (audit-fix, M).
-- **Status**: todo
+- **Resolution** (2026-11-04): Shipped 2026-11-04 in 71ff0a97, all eight parts, tests in
+  tests/test_pass59_238_media.py. Deleting a game removes its media only
+  from the two hand deletes (one game, one wishlist item); Clean missing
+  ROMs and Clear CLZ imports still leave files to the orphan sweep, so a
+  game whose ROM is only briefly missing keeps its pictures.
+- **Status**: done
 - **Why**: audit 2026-11-04, lanes 3, 6 and 8. The first two confirmed in
   code 2026-11-04.
 - **Fix**:
