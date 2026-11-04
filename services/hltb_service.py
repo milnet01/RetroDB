@@ -215,7 +215,8 @@ class HLTBLookup:
         """Generic HLTB search by title. Does not write to the DB.
 
         If `alternate_titles` is omitted and `game_id` is supplied, the game's
-        stored alt titles are loaded from the DB as a fallback.
+        stored alt titles are loaded from the DB as a fallback, but only when
+        the query is the game's own title: typed text is searched as typed.
 
         Raises HLTBError(400) if no search query is provided.
         Raises NoHLTBMatch if HLTB has no match.
@@ -232,10 +233,10 @@ class HLTBLookup:
         if not alts and game_id is not None:
             try:
                 row = query(
-                    "SELECT alternate_titles FROM games WHERE id = ?",
+                    "SELECT title, alternate_titles FROM games WHERE id = ?",
                     (int(game_id),), one=True,
                 )
-                if row:
+                if row and (row.get('title') or '').strip().casefold() == q.casefold():
                     alts = extract_alt_titles(row.get('alternate_titles'))
             except (ValueError, TypeError):
                 pass

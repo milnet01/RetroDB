@@ -331,3 +331,28 @@ def test_analytics_counts_minutes_as_minutes(db):
     assert count == 1
     assert data[labels.index('< 5h')] == 1
     assert average == 0.6
+
+
+class TestSearchAlternates:
+    """The game page's search tries a game's other titles only for its own
+    title: text a person types is searched as typed (walk 2026-11-04)."""
+
+    def _search(self, db, typed):
+        from services.hltb_service import lookup_service
+        game_id = _game(db, 'Sonic the Hedgehog 3', folder='megadrive',
+                        alternate_titles='[{"title": "Sonic 3"}]')
+        seen = {}
+
+        def lookup(title, system_folder=None, year=None, alternate_titles=None):
+            seen['alts'] = alternate_titles
+            return {'game_id': 1, 'match_name': title, 'match_confidence': 100}
+
+        with patch.object(hltb_lookup, 'lookup_playtime', lookup):
+            lookup_service.search(typed, 'megadrive', game_id=game_id)
+        return seen['alts']
+
+    def test_the_games_own_title_tries_its_other_titles(self, db):
+        assert self._search(db, ' sonic the hedgehog 3 ') == ['Sonic 3']
+
+    def test_typed_text_is_searched_as_typed(self, db):
+        assert self._search(db, 'zzqx nonexistent game') is None
