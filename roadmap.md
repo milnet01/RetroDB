@@ -10870,6 +10870,16 @@ the cover zoom in Firefox before being reverted for the local fix.
   upscaler loads are 2.48 GB on disk, 534 MB packed with `xz -1`, for
   one card family only.
 - **Status**: todo.
+- **Found** 2026-11-04: installed ROCm is mixed 6.4 (rocblas from AMD's
+  SLES 15.6 build in /opt/rocm-6.4.0; roctracer 6.4.0 from OBS
+  science:GPU:ROCm; hip 6.4.2), and zypper shows roctracer locked.
+  Tumbleweed's main repo has ROCm 7.2.0. Its librocblas5 7.2.0-10.1
+  builds for gfx1031 but not gfx1032 (rpm -qlp, 2026-11-04).
+  - **Idea** (user, 2026-11-04): ask openSUSE to add gfx1032 to the
+  build targets, and report the roctracer abort. Test 7.2 first: a
+  report against 6.4 would likely be answered "upgrade". Moving to 7.2
+  must keep onnxruntime's ROCm provider working (memories
+  onnxruntime_rocm_trap, rocsolver_missing). The user posts any report.
 
 ## Done index
 
