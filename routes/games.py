@@ -57,6 +57,7 @@ from services.game_media_service import (
     remove_media_file, save_upload, save_screenshots,
 )
 from services.image_utils import media_folder
+from services.media_cleanup import shown_screenshots
 
 logger = logging.getLogger(__name__)
 
@@ -733,17 +734,9 @@ def game_detail(game_id):
         else:
             game_dict['scrape_history'] = []
 
-        # Validate screenshot files exist on disk — filter out stale references
+        # Hide screenshots missing on disk; the stored list is never changed here.
         if game_dict.get('screenshots'):
-            ss_dir = os.path.join(config.IMAGE_PATH, 'screenshots')
-            ss_list = [s.strip() for s in game_dict['screenshots'].split(',') if s.strip()]
-            valid_ss = [s for s in ss_list if os.path.exists(os.path.join(ss_dir, s))]
-            if len(valid_ss) < len(ss_list):
-                missing = [s for s in ss_list if s not in valid_ss]
-                logger.warning(f"Game {game_id}: removing stale screenshot refs: {missing}")
-                new_val = ', '.join(valid_ss) if valid_ss else None
-                game_dict['screenshots'] = new_val
-                execute("UPDATE games SET screenshots = ? WHERE id = ?", (new_val, game_id))
+            game_dict['screenshots'] = ', '.join(shown_screenshots(game_dict['screenshots'])) or None
 
         class GameObj:
             def __init__(self, d):
@@ -950,17 +943,7 @@ def api_game_detail(game_id):
         rpcs3_info = None
     rpcs3_compat.ensure_serial(game)
 
-    screenshots = []
-    if game['screenshots']:
-        ss_dir = os.path.join(config.IMAGE_PATH, 'screenshots')
-        screenshots = [s.strip() for s in game['screenshots'].split(',') if s.strip()]
-        valid_ss = [s for s in screenshots if os.path.exists(os.path.join(ss_dir, s))]
-        if len(valid_ss) < len(screenshots):
-            missing = [s for s in screenshots if s not in valid_ss]
-            logger.warning(f"Game {game_id}: removing stale screenshot refs: {missing}")
-            new_val = ', '.join(valid_ss) if valid_ss else None
-            execute("UPDATE games SET screenshots = ? WHERE id = ?", (new_val, game_id))
-        screenshots = valid_ss
+    screenshots = shown_screenshots(game['screenshots'])
 
     return success(
         game={

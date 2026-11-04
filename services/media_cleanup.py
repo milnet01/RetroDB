@@ -107,6 +107,21 @@ def media_dir_is_healthy(directory):
         return False
 
 
+def shown_screenshots(value):
+    """The screenshots a page should show from a stored list. Never writes.
+
+    PASS-59-238 — views once wrote back the list without the files they
+    could not find, so an unmounted folder emptied every opened game's list.
+    A healthy folder hides a missing file; an unhealthy one shows the list
+    as stored. Stale names are cleared only by the scans.
+    """
+    shots = [s.strip() for s in (value or '').split(',') if s.strip()]
+    ss_dir = os.path.join(config.IMAGE_PATH, 'screenshots')
+    if not shots or not media_dir_is_healthy(ss_dir):
+        return shots
+    return [s for s in shots if os.path.exists(os.path.join(ss_dir, s))]
+
+
 def delete_game_images(games):
     """Delete image/media files for a list of game rows.
 
@@ -151,26 +166,54 @@ def delete_game_images(games):
     return deleted
 
 
-def _collect_referenced_files(games):
+def delete_unshared_media(row):
+    """Delete the media files a just-deleted games or wishlist row named,
+    except any file another row still names (PASS-59-238). Returns the count.
+
+    Call after the row's DELETE, so a failure here strands only files the
+    orphan sweep can reclaim, never a reference to a missing file.
+    """
+    from services.database import query
+    others = list(query(
+        "SELECT boxart, boxart_3d, screenshots, fanart, game_logo, boxart_back, video, manual FROM games"))
+    others += list(query("SELECT boxart, boxart_3d, screenshots, fanart, video, manual FROM wishlist"))
+    still_named = {os.path.basename(v) for v in _collect_referenced_files(others)}
+
+    keys = row.keys()
+    own = {}
+    for field, _root, _prefix, _is_list in _media_layout():
+        if field in keys and row[field]:
+            entries = [e.strip() for e in row[field].split(',') if e.strip()]
+            own[field] = ','.join(e for e in entries if os.path.basename(e) not in still_named)
+    return delete_game_images([own])
+
+
+def _collect_referenced_files(rows):
+    """Every media value the rows name. Wishlist rows lack some columns."""
     referenced = set()
-    for game in games:
+    for row in rows:
+        keys = row.keys()
         for field in ('boxart', 'boxart_3d', 'boxart_back', 'fanart', 'game_logo', 'video', 'manual'):
-            value = game[field]
+            value = row[field] if field in keys else None
             if value:
                 referenced.add(value)
-        if game['screenshots']:
-            for ss in game['screenshots'].split(','):
+        if 'screenshots' in keys and row['screenshots']:
+            for ss in row['screenshots'].split(','):
                 ss = ss.strip()
                 if ss:
                     referenced.add(ss)
     return referenced
 
 
-def find_orphaned_media(games):
+def find_orphaned_media(games, wishlist=()):
     """Walk media directories and return (orphan_list, total_bytes).
 
     A file is considered orphaned if its "<game_id>_" filename prefix does not
     match any live game ID and its filename is not referenced by any games row.
+
+    PASS-59-238 — wishlist pictures are named "w<item_id>_..."
+    (wishlist_scraper's fake_db_id). Pass the wishlist rows as ``wishlist``,
+    or every one of them is an orphan; a file a wishlist row names is kept too.
 
     Pass 45.7 — each orphan dict carries the mtime observed at scan time AND
     the scan-start timestamp. ``clean_orphaned_files`` later checks both:
@@ -183,7 +226,8 @@ def find_orphaned_media(games):
     import time as _time
 
     game_ids = {g['id'] for g in games}
-    referenced_files = _collect_referenced_files(games)
+    wishlist_ids = {w['id'] for w in wishlist}
+    referenced_files = _collect_referenced_files(list(games) + list(wishlist))
     # Pass 48.2 matches orphans on basename; a set keeps that one lookup per
     # file instead of a walk over every reference (orphans x references).
     referenced_basenames = {os.path.basename(ref) for ref in referenced_files}
@@ -241,6 +285,9 @@ def find_orphaned_media(games):
                 if file_prefix.isdigit():
                     game_id = int(file_prefix)
                     if game_id in game_ids:
+                        is_orphaned = False
+                elif file_prefix[:1] == 'w' and file_prefix[1:].isdigit():
+                    if int(file_prefix[1:]) in wishlist_ids:
                         is_orphaned = False
             except (ValueError, IndexError):
                 pass

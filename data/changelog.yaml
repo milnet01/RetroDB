@@ -2,6 +2,12 @@
   date: 2026-11-04
   tags:
   - type: fix
+    label: Clean orphaned files no longer deletes your wishlist's pictures. Opening a game no longer makes it forget screenshots it cannot find. Before, with the picture drive unplugged, every game you opened lost its whole screenshot list; now the list is kept, and a missing picture is only hidden
+  - type: fix
+    label: A video or manual download that fails part-way no longer damages the copy the game already had, and a failed download no longer leaves a hidden half-file in the media folder. The background upscaler no longer saves an old picture over a newer one downloaded meanwhile. Convert to WebP keeps every game that shares a picture pointing at it, and never touches a file outside the picture folders
+  - type: fix
+    label: Deleting a game or a wishlist item now deletes its pictures, videos and manuals too, but keeps any another game or wishlist item still uses. Saved pictures can be read by other accounts on the computer again, and Resize Images counts a picture it could not save as failed, not as done
+  - type: fix
     label: Duplicate Finder no longer offers a working file for deletion. Looking by name, it no longer calls a game's .cue and .bin copies of each other. It never offers a disc's track file, which two versions of a game can share. It will not delete a disc that a playlist lists. A game whose file you delete now moves to the copy you keep, so it stays in the library
   - type: fix
     label: Organize Multi-Disc no longer writes over an existing playlist or a file already in the game's folder; it stops and says which. The playlist it makes lists each disc's .cue, not its track files. Games whose files it moves now follow them into the folder, so Clean missing ROMs no longer removes them

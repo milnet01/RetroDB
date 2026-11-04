@@ -1007,6 +1007,9 @@ def _atomic_save(img, path, fmt, **save_kwargs):
             pass
         finally:
             os.close(sync_fd)
+        # PASS-59-238 — mkstemp makes the file 0600; an image must stay
+        # readable by a web server or another account, as a plain save is.
+        os.chmod(tmp_path, 0o644)
         os.replace(tmp_path, path)
         tmp_path = None
         # Fsync the directory so the rename is durable on next mount.
@@ -1025,7 +1028,11 @@ def _atomic_save(img, path, fmt, **save_kwargs):
 
 
 def _save_image(img, path):
-    """Save image preserving format with appropriate quality settings."""
+    """Save image preserving format with appropriate quality settings.
+
+    Returns False when the save failed (logged), True otherwise. A GIF is
+    left as it is on disk and counts as True.
+    """
     ext = os.path.splitext(path)[1].lower()
 
     # GIFs: never re-encode. PIL's `img.save(path, 'GIF')` without save_all
@@ -1033,7 +1040,7 @@ def _save_image(img, path):
     # already discarded subsequent frames. The original file on disk still
     # has the animation intact, so the safe path is to leave it untouched.
     if ext == '.gif':
-        return
+        return True
 
     try:
         if ext == '.webp':
@@ -1054,3 +1061,5 @@ def _save_image(img, path):
             _atomic_save(img, path, 'PNG')
     except Exception as e:
         logger.error(f"Image standardize: failed to save {path}: {e}")
+        return False
+    return True

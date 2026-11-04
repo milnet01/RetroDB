@@ -16,6 +16,7 @@ import logging
 import time
 from datetime import datetime, timezone
 
+from services.security import safe_path
 from services.jobs.base import (
     _get_conn,
     persist_job_start,
@@ -302,7 +303,10 @@ def _build_work_list():
                     ext = os.path.splitext(entry)[1].lower()
                     if ext not in _CONVERTIBLE_EXTS:
                         continue
-                    full_path = os.path.join(directory, entry)
+                    # PASS-59-238 — a stored name must stay inside its folder.
+                    full_path = safe_path(os.path.join(directory, entry), directory)
+                    if not full_path:
+                        continue
                     try:
                         size = os.path.getsize(full_path)
                     except OSError:
@@ -338,9 +342,6 @@ def _migrate_one(item):
     from services.image_utils import _save_image, _make_responsive_variants
 
     full_path = item['full_path']
-    if not os.path.isfile(full_path):
-        return ('skipped', 0)
-
     stem, ext = os.path.splitext(item['filename'])
     new_filename = f"{stem}.webp"
     directory = os.path.join(config.IMAGE_PATH, item['image_type'])
@@ -360,15 +361,22 @@ def _migrate_one(item):
         except Exception as e:
             logger.warning(f"WebP migration: existing {new_full_path} is corrupt, re-encoding: {e}")
             adopt = False
+    # PASS-59-238 — adopt before the missing check: when two rows share a
+    # file, the first conversion removes the original and the second row
+    # must still be pointed at the .webp, not left naming a deleted file.
     if adopt:
-        original_size = os.path.getsize(full_path)
+        original_size = os.path.getsize(full_path) if os.path.isfile(full_path) else 0
         if _update_db_filename(item, new_filename):
-            try:
-                os.remove(full_path)
-            except OSError as e:
-                logger.warning(f"WebP migration: could not delete original {full_path}: {e}")
+            if original_size:
+                try:
+                    os.remove(full_path)
+                except OSError as e:
+                    logger.warning(f"WebP migration: could not delete original {full_path}: {e}")
             return ('converted', original_size)
         return ('failed', 0)
+
+    if not os.path.isfile(full_path):
+        return ('skipped', 0)
 
     original_size = os.path.getsize(full_path)
 

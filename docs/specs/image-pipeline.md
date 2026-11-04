@@ -420,8 +420,9 @@ from the maintenance routes (`routes/maintenance.py`):
   preview being stale) and calls `clean_orphaned_files(candidates)`.
 
 A file is "orphaned" when both: (a) its `<game_id>_` filename prefix
-doesn't match any live game ID, and (b) the bare filename isn't
-referenced by any games-row media column.
+doesn't match any live game ID, nor its `w<item_id>_` prefix any live
+wishlist item (PASS-59-238), and (b) the bare filename isn't
+referenced by any games-row or wishlist-row media column.
 
 **Pass 45.7 race fix**: each candidate carries `mtime` and
 `scan_started_at`. At delete time, `clean_orphaned_files` re-checks:

@@ -171,17 +171,19 @@ def _download_and_finalize(url, local_path, image_type, *, timeout=15, screensho
                     f.write(chunk)
                     dl.received(written)
         if screenshot_of and screenshot_impossible_for_game(tmp_path, screenshot_of):
-            os.remove(tmp_path)
             return False
         os.replace(tmp_path, local_path)
     except Exception as e:
         logger.warning(f"Download error for {url}: {e}")
+        return False
+    finally:
+        # PASS-59-238 — every early return above left the temp file behind.
+        # After the os.replace it no longer exists.
         if os.path.exists(tmp_path):
             try:
                 os.remove(tmp_path)
             except OSError:
                 pass
-        return False
 
     try:
         finalize_downloaded_image(local_path, image_type)
@@ -1099,8 +1101,14 @@ def download_ss_media(url, dest_path, timeout=15, image_type=None, screenshot_of
         max_bytes = getattr(_config, 'MAX_MEDIA_DOWNLOAD_BYTES', 50 * 1024 * 1024)
     except Exception:
         max_bytes = 50 * 1024 * 1024
+    # PASS-59-238 — write beside the file and swap it in only when whole, so
+    # a failed download never damages the copy a game already uses.
+    import tempfile
+    tmp_path = None
     try:
         os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+        fd, tmp_path = tempfile.mkstemp(prefix='.dl_', dir=os.path.dirname(dest_path) or '.')
+        os.close(fd)
         with pin_host_ip(pinned_host, pinned_ip), _http_session.get(safe_url, timeout=timeout, stream=True, allow_redirects=False) as r:
             if r.status_code != 200:
                 return False
@@ -1109,25 +1117,28 @@ def download_ss_media(url, dest_path, timeout=15, image_type=None, screenshot_of
                 logger.warning(f"ScreenScraper media rejected: declared {declared} > {max_bytes}")
                 return False
             written = 0
-            with open(dest_path, 'wb') as f, apply_progress.download(dest_path, declared) as dl:
+            with open(tmp_path, 'wb') as f, apply_progress.download(dest_path, declared) as dl:
                 for chunk in r.iter_content(chunk_size=8192):
                     if not chunk:
                         continue
                     written += len(chunk)
                     if written > max_bytes:
                         logger.warning(f"ScreenScraper media aborted: exceeded {max_bytes} bytes")
-                        try:
-                            f.close()
-                            os.remove(dest_path)
-                        except OSError:
-                            pass
                         return False
                     f.write(chunk)
                     dl.received(written)
+        os.chmod(tmp_path, 0o644)
+        os.replace(tmp_path, dest_path)
         return True
     except Exception as e:
         logger.warning(f"Failed to download ScreenScraper media: {e}")
-    return False
+        return False
+    finally:
+        if tmp_path and os.path.exists(tmp_path):
+            try:
+                os.remove(tmp_path)
+            except OSError:
+                pass
 
 
 def _pick_media(medias, types, default_ext, own_region):

@@ -2,35 +2,41 @@
   date: '2026-11-04'
   tags:
   - type: fix
-    label: Duplicate Finder tilbyr ikke lenger en fil som fungerer til sletting. Når den ser etter navn, regner den ikke lenger et spills .cue- og .bin-kopier som kopier av hverandre. Den tilbyr aldri en plates sporfil, som to versjoner av et spill kan dele. Den sletter ikke en plate som en spilleliste har med. Et spill der du sletter filen, flyttes nå til kopien du beholder, så det blir i biblioteket
+    label: Rydd opp i foreldreløse filer sletter ikke lenger bildene i ønskelisten din. Når du åpner et spill, glemmer det ikke lenger skjermbilder det ikke finner. Før mistet hvert spill du åpnet hele skjermbildelisten hvis bildestasjonen var frakoblet. Nå beholdes listen, og et bilde som mangler, skjules bare
   - type: fix
-    label: Organize Multi-Disc skriver ikke lenger over en eksisterende spilleliste eller en fil som allerede ligger i spillets mappe; den stopper og sier hvilken. Spillelisten den lager, har hver plates .cue, ikke sporfilene. Spill der den flytter filer, følger nå med inn i mappen, så Clean missing ROMs ikke lenger fjerner dem
+    label: En video- eller manualnedlasting som mislykkes underveis, skader ikke lenger kopien spillet allerede hadde, og en mislykket nedlasting etterlater ikke lenger en skjult halv fil i mediemappen. Oppskaleringen i bakgrunnen lagrer ikke lenger et gammelt bilde over et nyere som ble lastet ned i mellomtiden. Konverter til WebP sørger for at alle spill som deler et bilde, fortsatt peker på det, og rører aldri en fil utenfor bildemappene
   - type: fix
-    label: Konvertering til CHD med «delete originals» sletter nå også platens sporfiler, men beholder et spor som en annen .cue fortsatt bruker. Spillet og alle spillelister som hadde den gamle platen, peker nå til den nye .chd-filen. Når du endrer navn på et spills fil, oppdateres nå spillelisten som har den med, og en sporfil som en .cue trenger, kan ikke få nytt navn. Fjerning av filer fra en zip fjerner bare filene du valgte, også når et navn har [ eller ]. Screenshot Dedup sletter bare kopiene skanningen fant, og beholder alltid én
+    label: Når du sletter et spill eller et ønskelisteelement, slettes nå også bildene, videoene og manualene, men de som et annet spill eller ønskelisteelement fortsatt bruker, beholdes. Lagrede bilder kan igjen leses av andre kontoer på datamaskinen, og Endre størrelse på bilder teller et bilde som ikke kunne lagres, som mislykket, ikke som ferdig
   - type: fix
-    label: How Long to Beat på et spills side søker etter det du skriver. Før søkte den etter spillets andre navn hvis den ikke fant tittelen, og den kunne tilby et annet spill, for eksempel en fan-nyinnspilling. Den prøver fortsatt de andre navnene når feltet har spillets eget navn
+    label: Duplikatsøk foreslår ikke lenger en fungerende fil for sletting. Når det søker etter navn, regner det ikke lenger et spills .cue- og .bin-kopier som kopier av hverandre. Det foreslår aldri en plates sporfil, som to versjoner av et spill kan dele. Det sletter ikke en plate som står i en spilleliste. Et spill der du sletter filen, flyttes nå til kopien du beholder, slik at det blir i biblioteket
   - type: fix
-    label: Trinnene for How Long to Beat i hjelpemanualen stemmer nå med skjermen. De sa at man skulle velge en treff fra en liste; siden viser ett treff med Lagre og Avbryt. PlayStation-hjelpen sier ikke lenger at innloggingen varer i omtrent to måneder, siden RetroDB logger inn på nytt av seg selv. Alle de 20 oversatte manualene har begge endringene
+    label: Organiser flerplatespill skriver ikke lenger over en eksisterende spilleliste eller en fil som allerede ligger i spillets mappe. Det stopper og sier hvilken. Spillelisten det lager, har med hver plates .cue, ikke sporfilene. Spill der filene flyttes, følger nå med inn i mappen, så Rydd bort manglende ROM-er fjerner dem ikke lenger
   - type: fix
-    label: Hver bokstavlinje starter nå med en Alle-knapp. På sidene Bibliotek, konsoll og PSN Trophies viser valg av en bokstav bare spillene med den bokstaven, og før fantes det ingen knapp for å få tilbake resten. På de andre prestasjonssidene går Alle tilbake til det første spillet
+    label: Konvertering til CHD med «slett originaler» sletter nå også platens sporfiler, men beholder et spor som en annen .cue fortsatt bruker. Spillet og alle spillelister som hadde den gamle platen, peker nå på den nye .chd-filen. Når du gir en spillfil nytt navn, oppdateres spillelisten som har den, og en sporfil som en .cue trenger, kan ikke få nytt navn. Når du fjerner filer fra en zip, fjernes bare filene du valgte, selv om et navn har [ eller ]. Skjermbildeduplikater sletter bare kopiene skanningen fant, og beholder alltid én
   - type: fix
-    label: Et nytt PlayStation-token du limer inn i Innstillinger, brukes nå med en gang. Før brukte RetroDB den gamle innloggingen til den gikk ut, og Lagre og test tilkobling meldte at den gamle innloggingen fungerte. Et token som Sony avviser, erstatter ikke lenger et som fungerer
+    label: How Long to Beat på et spills side søker etter det du skriver. Før søkte det etter spillets andre navn hvis det ikke fant tittelen, og det kunne foreslå et annet spill, for eksempel en nyinnspilling laget av fans. Det prøver fortsatt de andre navnene når feltet inneholder spillets eget navn
+  - type: fix
+    label: Trinnene for How Long to Beat i hjelpemanualen stemmer nå med skjermen. De sa at du skulle velge et treff fra en liste, men siden viser ett treff med Lagre og Avbryt. PlayStation-hjelpen sier ikke lenger at innloggingen varer i omtrent to måneder, siden RetroDB logger inn på nytt av seg selv. Alle 20 oversatte manualene har begge endringene
+  - type: fix
+    label: Hver bokstavlinje starter nå med en Alle-knapp. På sidene Bibliotek, konsoll og PSN-trofeer viser et bokstavvalg bare spillene med den bokstaven, og før fantes det ingen knapp for å få de andre tilbake. På de andre prestasjonssidene går Alle tilbake til det første spillet
+  - type: fix
+    label: Et nytt PlayStation-innloggingstoken du limer inn i Innstillinger, brukes nå med en gang. Før brukte RetroDB den gamle innloggingen til den gikk ut, og Lagre og test tilkobling meldte at den gamle innloggingen fungerte. Et token som Sony avviser, erstatter ikke lenger et som fungerer
   - type: enhancement
-    label: 'PlayStation-innloggingen i Innstillinger er lettere å holde i gang. Banneret teller ikke lenger ned dager du aldri trengte å gjøre noe på, siden RetroDB logger inn på nytt av seg selv; det blir bare rødt når Sony avviser det lagrede tokenet. Knappen Paste here får ikke lenger nettleseren til å be om tilgang til utklippstavlen: den setter markøren i feltet så du kan trykke Ctrl+V. Trinnene sier nå at du først skal logge ut av PlayStation når du bytter et token som fortsatt fungerer, og meldingene deres kan oversettes'
+    label: 'PlayStation-innloggingen i Innstillinger er lettere å holde i gang. Banneret teller ikke lenger ned dager du aldri trengte å gjøre noe på, fordi RetroDB logger inn på nytt av seg selv. Det blir bare rødt når Sony avviser det lagrede tokenet ditt. Knappen Lim inn her får ikke lenger nettleseren til å be om tilgang til utklippstavlen: den setter markøren i feltet så du kan trykke Ctrl+V. Trinnene sier nå at du først skal logge ut av PlayStation når du bytter et token som fortsatt fungerer, og meldingene deres kan oversettes'
   - type: enhancement
-    label: Popup-meldinger og spørsmålsbokser, som «Innstillinger lagret» eller «Slette denne listen?», kan nå oversettes på alle sider. Før ble de fleste stående på engelsk uansett hvilket språk du valgte
+    label: Meldinger i sprettopp og spørsmålsbokser, som «Innstillinger lagret» eller «Slette denne listen?», kan nå oversettes på alle sider. Før ble de fleste stående på engelsk uansett hvilket språk du valgte
   - type: enhancement
-    label: Meldingene som sier hvorfor en PlayStation-innlogging mislyktes, som «Your NPSSO may have expired», kan nå oversettes
+    label: Meldingene som forklarer hvorfor en PlayStation-innlogging mislyktes, for eksempel «Your NPSSO may have expired», kan nå oversettes
   - type: fix
-    label: Hjelpemanualen på alle språk stemmer nå med den engelske. Den får Search Anywhere, Keeping a Title, MAME Names og baksiden av esken, og eldre avsnitt som hadde falt etter, er oppdatert
+    label: Hjelpemanualen på alle språk stemmer nå med den engelske. Den får Søk overalt, Behold en tittel, MAME-navn og baksiden av esken, og eldre avsnitt som hadde falt etter, er oppdatert
   - type: fix
     label: På tysk, afrikaans og spansk sier Tilbake-knappen på et spills omslag nå baksiden av esken, ikke «gå tilbake»
   - type: feature
-    label: Når du trykker Spill, fylles skjermen nå med spillets logo på bakgrunnsbildet mens spillet starter, eller med navnet i store bokstaver hvis det ikke har logo. Det forsvinner av seg selv når spillvinduet åpnes, eller når du trykker Esc eller klikker
+    label: Når du trykker Spill, fyller nå spillets logo på bakgrunnsbildet skjermen mens spillet starter, eller navnet i store bokstaver hvis det ikke har logo. Det forsvinner av seg selv når spillvinduet åpnes, eller når du trykker Esc eller klikker
   - type: feature
-    label: 'Den dreibare 3D-esken har nå den ekte formen til et PS5-etui: avrundede hjørner og kanter, den hevede kanten rundt omslaget, linjen der de to halvdelene møtes, og fingerhullet i åpningssiden. Den trenger en eskefil fra en Slipcase-versjon som skriver formen; importer esken på nytt for å få den. Andre esker ser ut som før'
+    label: 'Den dreibare 3D-esken har nå den ekte formen til et PS5-etui: avrundede hjørner og kanter, den hevede kanten rundt omslaget, linjen der de to halvdelene møtes, og fingerhullet på siden som åpnes. Den trenger en eskefil fra en Slipcase-versjon som skriver formen. Importer esken på nytt for å få den. Andre esker ser ut som før'
   - type: enhancement
-    label: Refresh RetroAchievements er flyttet fra Innstillinger til RetroAchievements-siden, og heter nå Find Games with Achievements. Hver knapp der har nå en linje som sier hva den gjør, så det er lett å se forskjell på Find Games og Sync Progress. Når ingen spill er koblet ennå, viser siden en admin Find-knappen i stedet for å gå videre til neste fane
+    label: Oppdater RetroAchievements er flyttet fra Innstillinger til RetroAchievements-siden og heter nå Finn spill med prestasjoner. Hver knapp der har nå en linje som sier hva den gjør, så det er lett å se forskjell på Finn spill og Synkroniser fremgang. Når ingen spill er koblet ennå, viser siden en administrator Finn-knappen i stedet for å gå videre til neste fane
   body: "<ul>\n  <li><strong>Hjelpemanualen er oppdatert på alle språk.</strong>\n    Deler som bare fantes i den engelske manualen, er nå oversatt.</li>\n</ul>\n"
 - version: 3.35.4
   date: '2026-11-03'

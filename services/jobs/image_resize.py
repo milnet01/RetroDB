@@ -403,8 +403,9 @@ def _standardize_with_tracking(path, image_type, target, preserve_rgba):
             result_img = _downscale_image(img, image_type, target)
             action = 'downscaled'
 
-        if result_img is not None:
-            _save_image(result_img, path)
+        # PASS-59-238 — a failed save is a failure, not an upscale.
+        if result_img is not None and not _save_image(result_img, path):
+            raise OSError(f"could not save {path}")
     finally:
         try:
             if result_img is not None and result_img is not img:

@@ -23,6 +23,7 @@ from services.rom_scanner import rom_type_problem
 from services.security import safe_filename, safe_path
 import settings_manager
 from scraper.image_dedup import remember_removed
+from services.media_cleanup import delete_unshared_media
 
 logger = logging.getLogger(__name__)
 
@@ -33,8 +34,8 @@ bp = Blueprint('games_media', __name__)
 @editor_required
 @handle_api_errors
 def api_delete_game(game_id):
-    """Delete a game from the database."""
-    game = query("SELECT id, title, rom_path FROM games WHERE id = ?", (game_id,), one=True)
+    """Delete a game from the database, and the media only it named."""
+    game = query("SELECT * FROM games WHERE id = ?", (game_id,), one=True)
     if not game:
         return error(_('Game not found'), 404)
 
@@ -44,6 +45,7 @@ def api_delete_game(game_id):
 
     execute("DELETE FROM games WHERE id = ?", (game_id,))
     upscale_queue.forget_cleared()
+    delete_unshared_media(game)
 
     invalidate_filter_cache()
     invalidate_analytics_cache()

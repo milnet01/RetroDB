@@ -113,6 +113,15 @@ def _still_named(conn, game_id, path):
     return os.path.exists(path) and any(p == path for p, _ in _media_files(conn, game_id))
 
 
+def _identity(path):
+    """What tells one file at `path` from a newer one written over it."""
+    try:
+        st = os.stat(path)
+    except OSError:
+        return None
+    return (st.st_ino, st.st_size, st.st_mtime_ns)
+
+
 def process_game(game_id, queued_at):
     """Standardize every image `game_id` names, then drop its row unless a
     newer scrape listed the game again meanwhile. An image the game stops
@@ -122,11 +131,17 @@ def process_game(game_id, queued_at):
     try:
         files = [(p, t) for p, t in _media_files(conn, game_id) if os.path.exists(p)]
         for path, image_type in files:
-            def still_wanted(path=path):
-                return _still_named(conn, game_id, path)
+            # PASS-59-238 — the file must also be the one read: a scrape that
+            # downloads a newer picture under the same name meanwhile wins.
+            seen = _identity(path)
+
+            def still_wanted(path=path, seen=seen):
+                return (_identity(path) == seen
+                        and _still_named(conn, game_id, path))
             try:
                 standardize_downloaded_image(path, image_type, still_wanted)
-                if still_wanted():
+                # Variants follow whatever file is there now, ours or newer.
+                if _still_named(conn, game_id, path):
                     _make_responsive_variants(path, image_type)
             except Exception as e:
                 logger.warning(f"Upscale queue: {path} failed: {e}")

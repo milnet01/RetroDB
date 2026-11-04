@@ -2,36 +2,42 @@
   date: '2026-11-04'
   tags:
   - type: fix
-    label: Duplicate Finder tidak lagi menawarkan file yang masih dipakai untuk dihapus. Saat mencari berdasarkan nama, game's .cue dan .bin tidak lagi dianggap salinan satu sama lain. Ia tidak pernah menawarkan file track disc, yang bisa dipakai bersama oleh dua versi game. Ia tidak akan menghapus disc yang tercantum dalam playlist. Game yang file-nya Anda hapus kini pindah ke salinan yang Anda simpan, jadi tetap ada di pustaka
+    label: Bersihkan file yatim tidak lagi menghapus gambar Wishlist Anda. Membuka game tidak lagi membuatnya melupakan screenshot yang tidak ditemukan. Dulu, saat drive gambar dicabut, setiap game yang Anda buka kehilangan seluruh daftar screenshot-nya; sekarang daftar itu tetap disimpan, dan gambar yang hilang hanya disembunyikan
   - type: fix
-    label: Organize Multi-Disc tidak lagi menimpa playlist yang sudah ada atau file yang sudah ada di folder game; ia berhenti dan memberi tahu file mana. Playlist yang dibuatnya mencantumkan .cue tiap disc, bukan file track-nya. Game yang file-nya dipindahkan kini ikut ke folder tersebut, sehingga Clean missing ROMs tidak lagi menghapusnya
+    label: Unduhan video atau manual yang gagal di tengah jalan tidak lagi merusak salinan yang sudah dimiliki game, dan unduhan yang gagal tidak lagi meninggalkan file setengah jadi yang tersembunyi di folder media. Upscaler latar belakang tidak lagi menyimpan gambar lama di atas gambar baru yang diunduh sementara itu. Konversi ke WebP menjaga setiap game yang berbagi satu gambar tetap menunjuk ke gambar itu, dan tidak pernah menyentuh file di luar folder gambar
   - type: fix
-    label: Konversi ke CHD dengan "delete originals" kini juga menghapus file track disc, tetapi mempertahankan track yang masih dipakai .cue lain. Game dan playlist yang mencantumkan disc lama kini mengarah ke .chd baru. Mengganti nama file game kini memperbarui playlist yang mencantumkannya, dan file track yang dibutuhkan .cue tidak bisa diganti namanya. Menghapus file dari zip hanya menghapus file yang Anda pilih, bahkan jika nama berisi [ atau ]. Screenshot Dedup hanya menghapus salinan yang ditemukan pemindaiannya, dan selalu menyisakan satu
+    label: Menghapus game atau item Wishlist kini juga menghapus gambar, video, dan manual miliknya, tetapi tetap menyimpan yang masih dipakai game atau item Wishlist lain. Gambar yang disimpan kini bisa dibaca lagi oleh akun lain di komputer, dan Ubah Ukuran Gambar menghitung gambar yang gagal disimpan sebagai gagal, bukan selesai
   - type: fix
-    label: How Long to Beat di halaman game mencari sesuai yang Anda ketik. Sebelumnya, judul yang tidak ditemukan membuatnya mencari nama lain game tersebut, dan bisa menawarkan game yang berbeda, seperti remake buatan penggemar. Ia tetap mencoba nama lain jika kotak berisi nama asli game
+    label: Pencari Duplikat tidak lagi menawarkan file yang masih dipakai untuk dihapus. Saat mencari berdasarkan nama, ia tidak lagi menganggap salinan .cue dan .bin sebuah game sebagai duplikat satu sama lain. Ia tidak pernah menawarkan file track disc, yang bisa dipakai bersama oleh dua versi game. Ia tidak akan menghapus disc yang tercantum di playlist. Game yang file-nya Anda hapus kini berpindah ke salinan yang Anda simpan, sehingga tetap ada di Pustaka
   - type: fix
-    label: Langkah How Long to Beat di manual bantuan kini sesuai dengan layar. Sebelumnya tertulis untuk memilih kecocokan dari daftar; halaman hanya menampilkan satu kecocokan dengan Simpan dan Batal. Bantuan PlayStation tidak lagi menyebut bahwa masuk berlaku sekitar dua bulan, karena RetroDB masuk lagi dengan sendirinya. Semua 20 manual terjemahan memuat kedua perubahan ini
+    label: Atur Multi-Disc tidak lagi menimpa playlist yang sudah ada atau file yang sudah ada di folder game; prosesnya berhenti dan memberi tahu file mana. Playlist yang dibuat mencantumkan .cue tiap disc, bukan file track-nya. Game yang file-nya dipindahkan kini ikut ke folder tersebut, sehingga Bersihkan ROM yang hilang tidak lagi menghapusnya
   - type: fix
-    label: Setiap bilah huruf kini diawali tombol All. Di halaman Pustaka, konsol, dan PSN Trophies, memilih huruf hanya menampilkan game berawalan huruf itu, dan sebelumnya tidak ada tombol untuk menampilkan sisanya lagi. Di halaman Achievement lain, All kembali ke game pertama
+    label: Konversi ke CHD dengan "hapus file asli" kini juga menghapus file track disc, tetapi menyimpan track yang masih dipakai .cue lain. Game dan playlist yang mencantumkan disc lama kini menunjuk ke .chd yang baru. Mengganti nama file game kini memperbarui playlist yang mencantumkannya, dan file track yang dibutuhkan .cue tidak bisa diganti namanya. Menghapus file dari zip hanya menghapus file yang Anda pilih, bahkan saat nama berisi [ atau ]. Screenshot Dedup hanya menghapus salinan yang ditemukan pemindaiannya, dan selalu menyisakan satu
   - type: fix
-    label: Token masuk PlayStation baru yang Anda tempel di Pengaturan kini langsung dipakai. Sebelumnya, RetroDB tetap memakai akun masuk lama sampai habis, dan Save & Test Connection menyatakan akun masuk lama itu berfungsi. Token yang ditolak Sony tidak lagi menggantikan token yang masih berfungsi
+    label: How Long to Beat di halaman game mencari apa yang Anda ketik. Dulu, judul yang tidak ditemukan membuatnya mencari nama lain game itu, dan bisa menawarkan game yang berbeda, seperti remake buatan penggemar. Nama lain tetap dicoba saat kotak berisi nama asli game
+  - type: fix
+    label: Langkah How Long to Beat di manual bantuan kini sesuai dengan tampilan layar. Sebelumnya disebut memilih kecocokan dari daftar; halaman hanya menampilkan satu kecocokan dengan Simpan dan Batal. Bantuan PlayStation tidak lagi menyebut masa berlaku masuk sekitar dua bulan, karena RetroDB masuk lagi sendiri. Kedua perubahan ini ada di semua 20 manual terjemahan
+  - type: fix
+    label: Setiap bar huruf kini diawali tombol Semua. Di halaman Pustaka, konsol, dan Trofi PSN, memilih huruf hanya menampilkan game berawalan huruf itu, dan dulu tidak ada tombol untuk menampilkan sisanya lagi. Di halaman achievement lainnya, Semua kembali ke game pertama
+  - type: fix
+    label: Token masuk PlayStation baru yang Anda tempel di Pengaturan kini langsung dipakai. Dulu RetroDB tetap memakai token lama sampai habis masa berlakunya, dan Simpan & Tes Koneksi melaporkan token lama itu berfungsi. Token yang ditolak Sony tidak lagi menggantikan token yang masih berfungsi
   - type: enhancement
-    label: 'Masuk PlayStation di Pengaturan kini lebih mudah dipertahankan. Spanduk tidak lagi menghitung mundur hari yang tidak perlu Anda tindaklanjuti, karena RetroDB masuk lagi dengan sendirinya; spanduk hanya menjadi merah jika Sony menolak token tersimpan Anda. Tombol Paste here tidak lagi membuat browser meminta izin membaca clipboard: tombol itu menaruh kursor di kotak untuk Ctrl+V. Langkahnya kini meminta Anda keluar dari PlayStation dulu saat mengganti token yang masih berfungsi, dan pesannya bisa diterjemahkan'
+    label: 'Masuk PlayStation di Pengaturan kini lebih mudah dijaga. Banner tidak lagi menghitung mundur hari yang tidak perlu Anda tindaklanjuti, karena RetroDB masuk lagi sendiri; banner hanya menjadi merah saat Sony menolak token tersimpan Anda. Tombol Tempel di sini tidak lagi membuat browser meminta izin membaca clipboard: ia hanya menaruh kursor di kotak untuk Ctrl+V. Langkah-langkahnya kini meminta Anda keluar dari PlayStation dulu saat mengganti token yang masih berfungsi, dan pesannya bisa diterjemahkan'
   - type: enhancement
-    label: Pesan pop-up dan kotak pertanyaan, seperti "Settings saved" atau "Delete this list?", kini bisa diterjemahkan di semua halaman. Sebelumnya, sebagian besar tetap berbahasa Inggris apa pun bahasa yang Anda pilih
+    label: Pesan pop-up dan kotak pertanyaan, seperti "Pengaturan disimpan" atau "Hapus daftar ini?", kini bisa diterjemahkan di semua halaman. Dulu sebagian besar tetap berbahasa Inggris apa pun bahasa yang dipilih
   - type: enhancement
-    label: Pesan yang menjelaskan mengapa masuk PlayStation gagal, seperti "Your NPSSO may have expired", kini bisa diterjemahkan
+    label: Pesan yang menjelaskan mengapa masuk PlayStation gagal, seperti "NPSSO Anda mungkin sudah kedaluwarsa", kini bisa diterjemahkan
   - type: fix
-    label: Manual bantuan di setiap bahasa kini sesuai dengan yang berbahasa Inggris. Ada tambahan Search Anywhere, Keeping a Title, MAME Names, dan bagian belakang kotak, dan paragraf lama yang tertinggal sudah diperbarui
+    label: Manual bantuan di setiap bahasa kini sama dengan versi Inggris. Ada tambahan Search Anywhere, Keeping a Title, MAME Names, dan bagian belakang boks, dan paragraf lama yang tertinggal sudah diperbarui
   - type: fix
-    label: Dalam bahasa Jerman, Afrikaans, dan Spanyol, tombol Kembali pada sampul game kini berarti bagian belakang kotak, bukan "kembali"
+    label: Dalam bahasa Jerman, Afrikaans, dan Spanyol, tombol Kembali di sampul game kini berarti bagian belakang boks, bukan "kembali"
   - type: feature
-    label: Menekan Mainkan kini memenuhi layar dengan logo game di atas gambar latarnya saat game dimulai, atau nama game dengan huruf besar jika tidak punya logo. Tampilan hilang sendiri saat jendela game terbuka, atau saat Anda menekan Esc atau mengklik
+    label: Menekan Mainkan kini memenuhi layar dengan logo game di atas gambar latarnya saat game dimulai, atau namanya dalam huruf besar jika tidak ada logo. Tampilan ini hilang sendiri saat jendela game terbuka, atau saat Anda menekan Esc atau mengeklik
   - type: feature
-    label: 'Kotak 3D yang bisa diputar kini berbentuk seperti case PS5 asli: sudut dan tepi membulat, bibir yang menonjol di sekeliling sampul, garis pertemuan kedua bagian, dan celah jari di sisi pembukanya. Ini memerlukan file kotak dari versi Slipcase yang menulis bentuk tersebut; impor ulang kotaknya untuk mendapatkannya. Kotak lain tampil seperti sebelumnya'
+    label: 'Boks 3D yang bisa diputar kini berbentuk seperti casing PS5 asli: sudut dan tepi membulat, bibir yang menonjol di sekeliling sampul, garis pertemuan dua belahan, dan celah jari di sisi pembukanya. Ini membutuhkan file boks dari versi Slipcase yang menyimpan bentuknya; impor boks lagi untuk mendapatkannya. Boks lain tampil seperti sebelumnya'
   - type: enhancement
-    label: Refresh RetroAchievements dipindahkan dari Pengaturan ke halaman RetroAchievements, dan kini bernama Find Games with Achievements. Setiap tombol di sana kini punya satu baris yang menjelaskan fungsinya, sehingga Find Games dan Sync Progress mudah dibedakan. Jika belum ada game yang terhubung, halaman menampilkan tombol Find kepada admin, bukan langsung ke tab berikutnya
-  body: "<ul>\n  <li><strong>Manual bantuan sudah terbaru di setiap bahasa.</strong>\n    Bagian yang sebelumnya hanya ada di manual berbahasa Inggris kini sudah diterjemahkan.</li>\n</ul>\n"
+    label: Refresh RetroAchievements dipindah dari Pengaturan ke halaman RetroAchievements, dan kini bernama Find Games with Achievements. Setiap tombol di sana kini punya keterangan fungsinya, sehingga Find Games dan Sync Progress mudah dibedakan. Jika belum ada game yang terhubung, halaman menampilkan tombol Find kepada admin, bukan langsung pindah ke tab berikutnya
+  body: "<ul>\n  <li><strong>Manual bantuan sudah diperbarui di setiap bahasa.</strong>\n    Bagian yang sebelumnya hanya ada di manual Inggris kini sudah diterjemahkan.</li>\n</ul>\n"
 - version: 3.35.4
   date: '2026-11-03'
   tags:
