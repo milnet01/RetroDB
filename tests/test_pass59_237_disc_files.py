@@ -43,8 +43,8 @@ def test_playlists_follow_a_renamed_disc(tmp_path):
     m3u.write_text('Game/Game (Disc 1).chd\r\nGame/Game (Disc 2).chd\r\n')
     assert disc_files.playlists_naming(str(disc)) == [str(m3u)]
     disc_files.repoint_playlists(str(disc), str(folder / 'Game (Disc 1) [fixed].chd'))
-    assert m3u.read_text(newline='') == (
-        'Game/Game (Disc 1) [fixed].chd\r\nGame/Game (Disc 2).chd\r\n')
+    assert m3u.read_bytes() == (
+        b'Game/Game (Disc 1) [fixed].chd\r\nGame/Game (Disc 2).chd\r\n')
 
 
 # --- Duplicate Finder --------------------------------------------------------
