@@ -18,6 +18,7 @@ from services import upscale_queue
 from services.auth import editor_required, login_required
 from services.database import query, execute
 from services.game_query import invalidate_filter_cache
+from services.disc_files import rename_disc, sheets_naming
 from services.rom_scanner import rom_type_problem
 from services.security import safe_filename, safe_path
 import settings_manager
@@ -90,6 +91,10 @@ def api_rename_rom(game_id):
     if not os.path.exists(old_path):
         return error(_('ROM file not found on disk: %(path)s') % {'path': old_path}, 404)
 
+    # PASS-59-237 — a sheet finds its tracks by name.
+    if sheets_naming(old_path):
+        return error(_('A .cue or .gdi file names this track, so renaming it would break that disc. Rename the .cue or .gdi file instead.'), 400)
+
     directory = os.path.dirname(old_path)
     new_path = os.path.join(directory, new_filename)
 
@@ -115,7 +120,7 @@ def api_rename_rom(game_id):
         return error(_('A file with that name already exists'), 400)
 
     try:
-        os.rename(old_path, new_path)
+        rename_disc(old_path, new_path)
         logger.info(f"Renamed ROM: {old_path} -> {new_path}")
     except OSError as e:
         logger.error(f"Failed to rename ROM file: {e}")

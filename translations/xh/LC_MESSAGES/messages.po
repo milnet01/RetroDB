@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-04 11:20+0200\n"
+"POT-Creation-Date: 2026-11-04 18:35+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: xh\n"
@@ -61,10 +61,10 @@ msgstr "Isistim ayifunyanwanga okanye ayinamidlalo eneempumelelo"
 #: routes/cheats.py:51 routes/collections.py:276 routes/collections.py:531
 #: routes/emulators.py:304 routes/emulators.py:318 routes/games.py:395
 #: routes/games.py:923 routes/games.py:1052 routes/games.py:1119
-#: routes/games_ai.py:31 routes/games_media.py:38 routes/games_media.py:86
-#: routes/games_media.py:149 routes/games_media.py:200
-#: routes/games_media.py:233 routes/launch.py:242 routes/reports.py:696
-#: routes/reports.py:827 routes/trophies.py:1336 services/cheats.py:617
+#: routes/games_ai.py:31 routes/games_media.py:39 routes/games_media.py:87
+#: routes/games_media.py:154 routes/games_media.py:205
+#: routes/games_media.py:238 routes/launch.py:242 routes/reports.py:706
+#: routes/reports.py:841 routes/trophies.py:1336 services/cheats.py:617
 #: services/hltb_service.py:162
 msgid "Game not found"
 msgstr "Umdlalo awufunyanwanga"
@@ -451,7 +451,7 @@ msgstr "Umzimba wesicelo kufuneka ube yinto ye-JSON"
 msgid "Missing bonus_id or parent_id"
 msgstr "Kulahleke i-bonus_id okanye i-parent_id"
 
-#: routes/bonus_discs.py:314 routes/reports.py:815
+#: routes/bonus_discs.py:314 routes/reports.py:829
 msgid "Missing game_id"
 msgstr "Kulahleke i-game_id"
 
@@ -740,91 +740,100 @@ msgstr ""
 msgid "AI scraper module not available"
 msgstr "Imodyuli ye-AI scraper ayifumaneki"
 
-#: routes/games_media.py:75
+#: routes/games_media.py:76
 msgid "No filename provided"
 msgstr "Akukho gama lefayile linikeziweyo"
 
-#: routes/games_media.py:82 routes/reports.py:689 routes/scrape_logs.py:129
+#: routes/games_media.py:83 routes/reports.py:699 routes/scrape_logs.py:129
 #: routes/scrape_logs.py:154 routes/scrape_logs.py:203 routes/settings.py:353
 msgid "Invalid filename"
 msgstr "Igama lefayile elingasebenziyo"
 
-#: routes/games_media.py:91
+#: routes/games_media.py:92
 #, python-format
 msgid "ROM file not found on disk: %(path)s"
 msgstr "Ifayile yeROM ayifunyanwanga kwidiski: %(path)s"
 
-#: routes/games_media.py:106 routes/reports.py:726 routes/reports.py:903
+#: routes/games_media.py:96 routes/reports.py:731 routes/reports.py:856
+msgid ""
+"A .cue or .gdi file names this track, so renaming it would break that "
+"disc. Rename the .cue or .gdi file instead."
+msgstr ""
+"Ifayile ye-.cue okanye ye-.gdi ibiza le track, ngoko ukuyiqamba ngokutsha"
+" igama kuya kuyonakalisa leya diski. Qamba ngokutsha igama lefayile "
+"ye-.cue okanye ye-.gdi endaweni yoko."
+
+#: routes/games_media.py:111 routes/reports.py:740 routes/reports.py:921
 msgid "Destination is outside the configured ROM root"
 msgstr "Indawo eyiyeyo ingaphandle kwengcambu yeROM emiselweyo"
 
-#: routes/games_media.py:110 routes/reports.py:730
+#: routes/games_media.py:115 routes/reports.py:744
 #, python-format
 msgid "Cannot rename: %(reason)s"
 msgstr "Ayikwazi ukuthiya ngokutsha: %(reason)s"
 
-#: routes/games_media.py:115 routes/reports.py:736 routes/reports.py:909
+#: routes/games_media.py:120 routes/reports.py:750 routes/reports.py:927
 msgid "A file with that name already exists"
 msgstr "Ifayile enelo gama sele ikhona"
 
-#: routes/games_media.py:122
+#: routes/games_media.py:127
 msgid "Failed to rename file"
 msgstr "Kwehlulekile ukunika ifayile igama elitsha"
 
-#: routes/games_media.py:142
+#: routes/games_media.py:147
 msgid "No screenshot specified"
 msgstr "Akukho screenshot ikhankanyiweyo"
 
-#: routes/games_media.py:145
+#: routes/games_media.py:150
 msgid "Invalid screenshot filename"
 msgstr "Igama lefayile ye-screenshot elingasebenziyo"
 
-#: routes/games_media.py:155
+#: routes/games_media.py:160
 msgid "Screenshot not found"
 msgstr "I-screenshot ayifunyanwanga"
 
-#: routes/games_media.py:191 templates/_modals/edit_modal.html:389
+#: routes/games_media.py:196 templates/_modals/edit_modal.html:389
 msgid "Pick the .box.json file Slipcase saved, together with its pictures."
 msgstr "Khetha ifayile ye-.box.json egcinwe yi-Slipcase, kunye nemifanekiso yayo."
 
-#: routes/games_media.py:192
+#: routes/games_media.py:197
 msgid "Pick only one .box.json file at a time."
 msgstr "Khetha ifayile enye kuphela ye-.box.json ngexesha."
 
-#: routes/games_media.py:193
+#: routes/games_media.py:198
 msgid "The .box.json file could not be read."
 msgstr "Ifayile ye-.box.json ayikwazanga ukufundwa."
 
-#: routes/games_media.py:194
+#: routes/games_media.py:199
 msgid "This is not a Slipcase box file RetroDB can read."
 msgstr "Le ayiyiyo ifayile yebhokisi ye-Slipcase i-RetroDB enokuyifunda."
 
-#: routes/games_media.py:195
+#: routes/games_media.py:200
 msgid "The box file names a picture RetroDB will not open."
 msgstr "Ifayile yebhokisi ikhankanya umfanekiso i-RetroDB engazukuwuvula."
 
-#: routes/games_media.py:196
+#: routes/games_media.py:201
 #, python-format
 msgid "Some pictures the box file needs were not picked: %(names)s"
 msgstr "Eminye imifanekiso efunwa yifayile yebhokisi ayikhethwanga: %(names)s"
 
-#: routes/games_media.py:198
+#: routes/games_media.py:203
 msgid "A picture is larger than 10 MB."
 msgstr "Umfanekiso omnye mkhulu ngaphezu kwe-10 MB."
 
-#: routes/games_media.py:199
+#: routes/games_media.py:204
 msgid "A picture is not a readable image."
 msgstr "Umfanekiso omnye awungowomfanekiso onokufundwa."
 
-#: routes/games_media.py:201
+#: routes/games_media.py:206
 msgid "This game already has 3D box faces."
 msgstr "Lo mdlalo sele unamacala ebhokisi ye-3D."
 
-#: routes/games_media.py:202
+#: routes/games_media.py:207
 msgid "The faces could not be saved. Check the disk has space."
 msgstr "Amacala akakwazanga ukugcinwa. Jonga ukuba idiski inendawo."
 
-#: routes/games_media.py:204 services/js_i18n_strings.py:991
+#: routes/games_media.py:209 services/js_i18n_strings.py:991
 msgid "The box file could not be imported."
 msgstr "Ifayile yebhokisi ayikwazanga ukungeniswa."
 
@@ -1052,63 +1061,68 @@ msgstr ""
 msgid "System %(name)s does not support RetroAchievements"
 msgstr "Isistim %(name)s ayixhasi iRetroAchievements"
 
-#: routes/reports.py:428
+#: routes/reports.py:429
 msgid "Unknown system"
 msgstr "Isistim engaziwayo"
 
-#: routes/reports.py:449 routes/reports.py:600
+#: routes/reports.py:450 routes/reports.py:611
 msgid "ROM path not configured. Go to Settings → Paths to set it."
 msgstr "Indlela yeROM ayimiselwanga. Yiya kwiiSethingi → Iindlela ukuze uyimisele."
 
-#: routes/reports.py:596
+#: routes/reports.py:607
 msgid "Missing required parameters"
 msgstr "Kulahleke iiparamitha ezifunekayo"
 
-#: routes/reports.py:606 routes/tools.py:512 routes/tools.py:569
-#: routes/tools.py:614
+#: routes/reports.py:617 routes/tools.py:513 routes/tools.py:570
+#: routes/tools.py:615
 msgid "Invalid path"
 msgstr "Indlela engasebenziyo"
 
-#: routes/reports.py:612
+#: routes/reports.py:624 routes/reports.py:651
+#, python-format
+msgid "%(name)s already exists. Move or rename it first."
+msgstr "%(name)s sele ikhona. Yihambise okanye uyiqambe ngokutsha igama kuqala."
+
+#: routes/reports.py:630
 #, python-format
 msgid "Folder does not exist: %(folder_path)s"
 msgstr "Ifolda ayikho: %(folder_path)s"
 
-#: routes/reports.py:686
+#: routes/reports.py:696
 msgid "Missing game_id or new_name"
 msgstr "Kulahleke i-game_id okanye i-new_name"
 
-#: routes/reports.py:698 routes/reports.py:829
+#: routes/reports.py:708 routes/reports.py:843
 msgid "MAME finds a game by its file name, so this file cannot be renamed."
 msgstr ""
 "I-MAME ifumana umdlalo ngegama lefayile yawo, ngoko le fayile "
 "ayinakuphinda ithiywe igama."
 
-#: routes/reports.py:702 routes/reports.py:833
+#: routes/reports.py:712 routes/reports.py:847
 msgid "No ROM path set"
 msgstr "Akukho ndlela yeROM emiselweyo"
 
-#: routes/reports.py:717 routes/reports.py:838
+#: routes/reports.py:727 routes/reports.py:852
 msgid "ROM file not found"
 msgstr "Ifayile yeROM ayifunyanwanga"
 
-#: routes/reports.py:745
+#: routes/reports.py:759
 msgid "M3U files must keep the .m3u extension"
 msgstr "Iifayile zeM3U kufuneka zigcine isandiso se-.m3u"
 
-#: routes/reports.py:760 routes/reports.py:923
+#: routes/reports.py:774 routes/reports.py:941
 msgid "A folder with the new name already exists"
 msgstr "Ifolda enegama elitsha sele ikhona"
 
-#: routes/reports.py:842
+#: routes/reports.py:860
 msgid "No scraped title available"
 msgstr "Akukho sihloko sikhutshiweyo sifumanekayo"
 
-#: routes/reports.py:860
+#: routes/reports.py:878
 msgid "Title is empty after sanitization"
 msgstr "Isihloko asinanto emva kococeko"
 
-#: routes/reports.py:883
+#: routes/reports.py:901
 msgid "Generated filename contains invalid characters"
 msgstr "Igama lefayile eliveliswe liqulethe abalinganiso abangasebenziyo"
 
@@ -1117,7 +1131,7 @@ msgstr "Igama lefayile eliveliswe liqulethe abalinganiso abangasebenziyo"
 msgid "Invalid log file"
 msgstr "Ifayile yelog engasebenziyo"
 
-#: routes/scrape_logs.py:101 routes/tools.py:515
+#: routes/scrape_logs.py:101 routes/tools.py:516
 msgid "File not found"
 msgstr "Ifayile ayifunyanwanga"
 
@@ -1234,21 +1248,21 @@ msgid "Invalid %(field)s: %(result)s"
 msgstr "%(field)s engasebenziyo: %(result)s"
 
 #: routes/settings.py:534 routes/settings.py:608 routes/settings.py:660
-#: routes/tools.py:291 services/js_i18n_strings.py:724
+#: routes/tools.py:292 services/js_i18n_strings.py:724
 #: templates/settings.html:1149 templates/settings.html:2742
 msgid "Failed to save settings"
 msgstr "Kwehlulekile ukugcina iisethingi"
 
-#: routes/settings.py:553 routes/tools.py:363
+#: routes/settings.py:553 routes/tools.py:364
 msgid "Permission denied"
 msgstr "Imvume yaliwe"
 
-#: routes/settings.py:587 routes/tools.py:283
+#: routes/settings.py:587 routes/tools.py:284
 #, python-format
 msgid "Unknown setting key: %(key)s"
 msgstr "Isitshixo sesethingi esingaziwayo: %(key)s"
 
-#: routes/settings.py:593 routes/tools.py:286
+#: routes/settings.py:593 routes/tools.py:287
 #, python-format
 msgid "Invalid value for '%(key)s': %(reason)s"
 msgstr "Ixabiso elingasebenziyo le-'%(key)s': %(reason)s"
@@ -1286,85 +1300,91 @@ msgstr "Kufuneka i-ID yesistim"
 msgid "ES-DE scraper not available"
 msgstr "I-ES-DE scraper ayifumaneki"
 
-#: routes/tools.py:273
+#: routes/tools.py:274
 msgid "Administrator privileges required"
 msgstr "Kufuneka amalungelo omlawuli"
 
-#: routes/tools.py:277
+#: routes/tools.py:278
 msgid "Settings payload must be an object"
 msgstr "I-payload yeisethingi kufuneka ibe yinto"
 
-#: routes/tools.py:326 routes/tools.py:974
+#: routes/tools.py:327 routes/tools.py:979
 #, python-format
 msgid "Path does not exist: %(path)s"
 msgstr "Indlela ayikho: %(path)s"
 
-#: routes/tools.py:391
+#: routes/tools.py:392
 msgid "Task not found"
 msgstr "Umsebenzi awufunyanwanga"
 
-#: routes/tools.py:414 routes/tools.py:434
+#: routes/tools.py:415 routes/tools.py:435
 msgid "Task not found or not running"
 msgstr "Umsebenzi awufunyanwanga okanye awuqhubi"
 
-#: routes/tools.py:454
+#: routes/tools.py:455
 msgid "Task not found or not paused"
 msgstr "Umsebenzi awufunyanwanga okanye awumiswanga"
 
-#: routes/tools.py:471 routes/tools.py:676 routes/tools.py:847
-#: routes/tools.py:963
+#: routes/tools.py:472 routes/tools.py:677 routes/tools.py:852
+#: routes/tools.py:968
 msgid "Invalid scan path"
 msgstr "Indlela yokuskena engasebenziyo"
 
-#: routes/tools.py:509 routes/tools.py:566 routes/tools.py:611
+#: routes/tools.py:510 routes/tools.py:567 routes/tools.py:612
 msgid "No path provided"
 msgstr "Akukho ndlela inikeziweyo"
 
-#: routes/tools.py:537
+#: routes/tools.py:538
 msgid "No archive path provided"
 msgstr "Akukho ndlela ye-archive inikeziweyo"
 
-#: routes/tools.py:540
+#: routes/tools.py:541
 msgid "Invalid archive path"
 msgstr "Indlela ye-archive engasebenziyo"
 
-#: routes/tools.py:543
+#: routes/tools.py:544
 msgid "No files to remove"
 msgstr "Akukho fayile zokususa"
 
-#: routes/tools.py:644
+#: routes/tools.py:645
 msgid "No paths provided"
 msgstr "Akukho ndlela zinikeziweyo"
 
-#: routes/tools.py:650
+#: routes/tools.py:651
 #, python-format
 msgid "Invalid path: %(path)s"
 msgstr "Indlela engasebenziyo: %(path)s"
 
-#: routes/tools.py:725
+#: routes/tools.py:726
 msgid "chdman not found. Please install MAME tools."
 msgstr "i-chdman ayifunyanwanga. Nceda ufake izixhobo zeMAME."
 
-#: routes/tools.py:870
+#: routes/tools.py:875
 msgid "chdman not found"
 msgstr "i-chdman ayifunyanwanga"
 
-#: routes/tools.py:968
+#: routes/tools.py:973
 #, python-format
 msgid "Unknown duplicate method: %(method)s"
 msgstr "Indlela yokufumana iimpinda engaziwayo: %(method)s"
 
-#: routes/tools.py:1176
+#: routes/tools.py:1186 routes/tools.py:1540
 msgid "These scan results have expired. Scan again, then delete."
 msgstr "Ezi ziphumo zokuskena ziphelelwe lixesha. Skena kwakhona, uze ucime."
 
-#: routes/tools.py:1181
+#: routes/tools.py:1191
 msgid "Keep at least one copy of each game. Nothing was deleted."
 msgstr "Gcina ubuncinci ikopi enye yomdlalo ngamnye. Akukho nto icinyiweyo."
 
-#: routes/tools.py:1432
+#: routes/tools.py:1451
 msgid "This system has no screenshot check"
 msgstr "Le sistim ayinakujongwa kwii-Screenshot"
+
+#: routes/tools.py:1550
+msgid "Keep at least one copy of each screenshot. Nothing was deleted."
+msgstr ""
+"Gcina ubuncinane ikopi enye yeshothi nganye yesikrini. Akukho nto "
+"icinyiweyo."
 
 #: routes/trophies.py:154 routes/trophies.py:1778
 msgid "PSNAWP library not installed. Run: pip install psnawp"
@@ -1554,20 +1574,20 @@ msgstr "Ii-cheat zisebenza kwisidlali, kwi-DuckStation nakwi-PCSX2."
 msgid "No HLTB match found for \"%(title)s\""
 msgstr "Akukho kudibana kweHLTB kufunyenwe kwi-\"%(title)s\""
 
-#: services/hltb_service.py:227
+#: services/hltb_service.py:228
 msgid "No search query provided"
 msgstr "Akukho mbuzo wokukhangela unikeziweyo"
 
-#: services/hltb_service.py:252
+#: services/hltb_service.py:253
 #, python-format
 msgid "No HLTB match found for \"%(query)s\""
 msgstr "Akukho kudibana kweHLTB kufunyenwe kwi-\"%(query)s\""
 
-#: services/hltb_service.py:276
+#: services/hltb_service.py:277
 msgid "No playtime provided"
 msgstr "Akukho xesha lokudlala linikeziweyo"
 
-#: services/hltb_service.py:368
+#: services/hltb_service.py:369
 msgid "Pending match not found"
 msgstr "Ukudibana okulindileyo akufunyanwanga"
 
@@ -2692,7 +2712,7 @@ msgstr "Ukucima i-HLTB kusilele: {error}"
 msgid "Failed to clear RA data"
 msgstr "Kwehlulekile ukusula idatha yeRA"
 
-#: services/js_i18n_strings.py:718 templates/screenshot_dedup.html:598
+#: services/js_i18n_strings.py:718 templates/screenshot_dedup.html:600
 msgid "Failed to delete"
 msgstr "Kwehlulekile ukucima"
 
@@ -7561,7 +7581,7 @@ msgstr "Gcina Encinci"
 msgid "Delete Unselected"
 msgstr "Cima Engakhethwanga"
 
-#: templates/duplicate_finder.html:541 templates/screenshot_dedup.html:572
+#: templates/duplicate_finder.html:541 templates/screenshot_dedup.html:574
 msgid "No files selected for deletion"
 msgstr "Akukho mafayile akhethiweyo okucinywa"
 
@@ -10741,15 +10761,15 @@ msgstr "Isithuba Esinokubuyiselwa"
 msgid "Keep Largest"
 msgstr "Gcina Enkulu"
 
-#: templates/screenshot_dedup.html:554
+#: templates/screenshot_dedup.html:556
 msgid "Selected largest file in each group"
 msgstr "Kukhethwe ifayile enkulu kwiqela ngalinye"
 
-#: templates/screenshot_dedup.html:577
+#: templates/screenshot_dedup.html:579
 msgid "Delete Duplicate Screenshots"
 msgstr "Cima ii-Screenshot eziphindiweyo"
 
-#: templates/screenshot_dedup.html:578
+#: templates/screenshot_dedup.html:580
 #, python-brace-format
 msgid ""
 "Duplicate screenshots to delete: {count}\n"
@@ -10762,14 +10782,14 @@ msgstr ""
 "Iifayile ziya kususwa kwidiski kwaye iirekhodi zedatabheyisi ziza "
 "kuhlaziywa. Oku akunakuphindwa."
 
-#: templates/screenshot_dedup.html:591
+#: templates/screenshot_dedup.html:593
 #, python-brace-format
 msgid "Files deleted: {deleted}. Space freed: {size}. Games updated: {updated}"
 msgstr ""
 "Iifayile ezicinyiweyo: {deleted}. Indawo ekhutshiweyo: {size}. Imidlalo "
 "ehlaziyiweyo: {updated}"
 
-#: templates/screenshot_dedup.html:601
+#: templates/screenshot_dedup.html:603
 #, python-brace-format
 msgid "Failed to delete: {error}"
 msgstr "Koyekile ukucima: {error}"

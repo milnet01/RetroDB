@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-04 11:20+0200\n"
+"POT-Creation-Date: 2026-11-04 18:35+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -61,10 +61,10 @@ msgstr "Sistema non trovato o senza giochi con obiettivi"
 #: routes/cheats.py:51 routes/collections.py:276 routes/collections.py:531
 #: routes/emulators.py:304 routes/emulators.py:318 routes/games.py:395
 #: routes/games.py:923 routes/games.py:1052 routes/games.py:1119
-#: routes/games_ai.py:31 routes/games_media.py:38 routes/games_media.py:86
-#: routes/games_media.py:149 routes/games_media.py:200
-#: routes/games_media.py:233 routes/launch.py:242 routes/reports.py:696
-#: routes/reports.py:827 routes/trophies.py:1336 services/cheats.py:617
+#: routes/games_ai.py:31 routes/games_media.py:39 routes/games_media.py:87
+#: routes/games_media.py:154 routes/games_media.py:205
+#: routes/games_media.py:238 routes/launch.py:242 routes/reports.py:706
+#: routes/reports.py:841 routes/trophies.py:1336 services/cheats.py:617
 #: services/hltb_service.py:162
 msgid "Game not found"
 msgstr "Gioco non trovato"
@@ -453,7 +453,7 @@ msgstr "Il corpo della richiesta deve essere un oggetto JSON"
 msgid "Missing bonus_id or parent_id"
 msgstr "bonus_id o parent_id mancante"
 
-#: routes/bonus_discs.py:314 routes/reports.py:815
+#: routes/bonus_discs.py:314 routes/reports.py:829
 msgid "Missing game_id"
 msgstr "game_id mancante"
 
@@ -740,93 +740,101 @@ msgstr ""
 msgid "AI scraper module not available"
 msgstr "Modulo scraper AI non disponibile"
 
-#: routes/games_media.py:75
+#: routes/games_media.py:76
 msgid "No filename provided"
 msgstr "Nessun nome file fornito"
 
-#: routes/games_media.py:82 routes/reports.py:689 routes/scrape_logs.py:129
+#: routes/games_media.py:83 routes/reports.py:699 routes/scrape_logs.py:129
 #: routes/scrape_logs.py:154 routes/scrape_logs.py:203 routes/settings.py:353
 msgid "Invalid filename"
 msgstr "Nome file non valido"
 
-#: routes/games_media.py:91
+#: routes/games_media.py:92
 #, python-format
 msgid "ROM file not found on disk: %(path)s"
 msgstr "File ROM non trovato su disco: %(path)s"
 
-#: routes/games_media.py:106 routes/reports.py:726 routes/reports.py:903
+#: routes/games_media.py:96 routes/reports.py:731 routes/reports.py:856
+msgid ""
+"A .cue or .gdi file names this track, so renaming it would break that "
+"disc. Rename the .cue or .gdi file instead."
+msgstr ""
+"Un file .cue o .gdi fa riferimento a questa traccia, quindi rinominarla "
+"renderebbe inutilizzabile il disco. Rinomina invece il file .cue o .gdi."
+
+#: routes/games_media.py:111 routes/reports.py:740 routes/reports.py:921
 msgid "Destination is outside the configured ROM root"
 msgstr "La destinazione è al di fuori della cartella ROM configurata"
 
-#: routes/games_media.py:110 routes/reports.py:730
+#: routes/games_media.py:115 routes/reports.py:744
 #, python-format
 msgid "Cannot rename: %(reason)s"
 msgstr "Impossibile rinominare: %(reason)s"
 
-#: routes/games_media.py:115 routes/reports.py:736 routes/reports.py:909
+#: routes/games_media.py:120 routes/reports.py:750 routes/reports.py:927
 msgid "A file with that name already exists"
 msgstr "Esiste già un file con quel nome"
 
-#: routes/games_media.py:122
+#: routes/games_media.py:127
 msgid "Failed to rename file"
 msgstr "Impossibile rinominare il file"
 
-#: routes/games_media.py:142
+#: routes/games_media.py:147
 msgid "No screenshot specified"
 msgstr "Nessuno screenshot specificato"
 
-#: routes/games_media.py:145
+#: routes/games_media.py:150
 msgid "Invalid screenshot filename"
 msgstr "Nome file dello screenshot non valido"
 
-#: routes/games_media.py:155
+#: routes/games_media.py:160
 msgid "Screenshot not found"
 msgstr "Screenshot non trovato"
 
-#: routes/games_media.py:191 templates/_modals/edit_modal.html:389
+#: routes/games_media.py:196 templates/_modals/edit_modal.html:389
 msgid "Pick the .box.json file Slipcase saved, together with its pictures."
 msgstr "Scegli il file .box.json salvato da Slipcase, insieme alle sue immagini."
 
-#: routes/games_media.py:192
+#: routes/games_media.py:197
 msgid "Pick only one .box.json file at a time."
 msgstr "Scegli un solo file .box.json alla volta."
 
-#: routes/games_media.py:193
+#: routes/games_media.py:198
 msgid "The .box.json file could not be read."
 msgstr "Impossibile leggere il file .box.json."
 
-#: routes/games_media.py:194
+#: routes/games_media.py:199
 msgid "This is not a Slipcase box file RetroDB can read."
 msgstr "Questo non è un file di scatola Slipcase che RetroDB può leggere."
 
-#: routes/games_media.py:195
+#: routes/games_media.py:200
 msgid "The box file names a picture RetroDB will not open."
 msgstr "Il file della scatola indica un'immagine che RetroDB non apre."
 
-#: routes/games_media.py:196
+#: routes/games_media.py:201
 #, python-format
 msgid "Some pictures the box file needs were not picked: %(names)s"
 msgstr ""
 "Alcune immagini richieste dal file della scatola non sono state scelte: "
 "%(names)s"
 
-#: routes/games_media.py:198
+#: routes/games_media.py:203
 msgid "A picture is larger than 10 MB."
 msgstr "Un'immagine supera i 10 MB."
 
-#: routes/games_media.py:199
+#: routes/games_media.py:204
 msgid "A picture is not a readable image."
 msgstr "Un'immagine non è leggibile."
 
-#: routes/games_media.py:201
+#: routes/games_media.py:206
 msgid "This game already has 3D box faces."
 msgstr "Questo gioco ha già le facce della scatola 3D."
 
-#: routes/games_media.py:202
+#: routes/games_media.py:207
 msgid "The faces could not be saved. Check the disk has space."
 msgstr "Impossibile salvare le facce. Controlla che il disco abbia spazio."
 
-#: routes/games_media.py:204 services/js_i18n_strings.py:991
+#: routes/games_media.py:209 services/js_i18n_strings.py:991
 msgid "The box file could not be imported."
 msgstr "Impossibile importare il file della scatola."
 
@@ -1052,65 +1060,70 @@ msgstr ""
 msgid "System %(name)s does not support RetroAchievements"
 msgstr "Il sistema %(name)s non supporta RetroAchievements"
 
-#: routes/reports.py:428
+#: routes/reports.py:429
 msgid "Unknown system"
 msgstr "Sistema sconosciuto"
 
-#: routes/reports.py:449 routes/reports.py:600
+#: routes/reports.py:450 routes/reports.py:611
 msgid "ROM path not configured. Go to Settings → Paths to set it."
 msgstr ""
 "Percorso ROM non configurato. Vai in Impostazioni → Percorsi per "
 "impostarlo."
 
-#: routes/reports.py:596
+#: routes/reports.py:607
 msgid "Missing required parameters"
 msgstr "Parametri obbligatori mancanti"
 
-#: routes/reports.py:606 routes/tools.py:512 routes/tools.py:569
-#: routes/tools.py:614
+#: routes/reports.py:617 routes/tools.py:513 routes/tools.py:570
+#: routes/tools.py:615
 msgid "Invalid path"
 msgstr "Percorso non valido"
 
-#: routes/reports.py:612
+#: routes/reports.py:624 routes/reports.py:651
+#, python-format
+msgid "%(name)s already exists. Move or rename it first."
+msgstr "%(name)s esiste già. Spostalo o rinominalo prima."
+
+#: routes/reports.py:630
 #, python-format
 msgid "Folder does not exist: %(folder_path)s"
 msgstr "La cartella non esiste: %(folder_path)s"
 
-#: routes/reports.py:686
+#: routes/reports.py:696
 msgid "Missing game_id or new_name"
 msgstr "game_id o new_name mancante"
 
-#: routes/reports.py:698 routes/reports.py:829
+#: routes/reports.py:708 routes/reports.py:843
 msgid "MAME finds a game by its file name, so this file cannot be renamed."
 msgstr ""
 "MAME trova un gioco dal nome del file, quindi questo file non può essere "
 "rinominato."
 
-#: routes/reports.py:702 routes/reports.py:833
+#: routes/reports.py:712 routes/reports.py:847
 msgid "No ROM path set"
 msgstr "Nessun percorso ROM impostato"
 
-#: routes/reports.py:717 routes/reports.py:838
+#: routes/reports.py:727 routes/reports.py:852
 msgid "ROM file not found"
 msgstr "File ROM non trovato"
 
-#: routes/reports.py:745
+#: routes/reports.py:759
 msgid "M3U files must keep the .m3u extension"
 msgstr "I file M3U devono mantenere l'estensione .m3u"
 
-#: routes/reports.py:760 routes/reports.py:923
+#: routes/reports.py:774 routes/reports.py:941
 msgid "A folder with the new name already exists"
 msgstr "Esiste già una cartella con il nuovo nome"
 
-#: routes/reports.py:842
+#: routes/reports.py:860
 msgid "No scraped title available"
 msgstr "Nessun titolo recuperato disponibile"
 
-#: routes/reports.py:860
+#: routes/reports.py:878
 msgid "Title is empty after sanitization"
 msgstr "Il titolo è vuoto dopo la sanificazione"
 
-#: routes/reports.py:883
+#: routes/reports.py:901
 msgid "Generated filename contains invalid characters"
 msgstr "Il nome file generato contiene caratteri non validi"
 
@@ -1119,7 +1132,7 @@ msgstr "Il nome file generato contiene caratteri non validi"
 msgid "Invalid log file"
 msgstr "File di log non valido"
 
-#: routes/scrape_logs.py:101 routes/tools.py:515
+#: routes/scrape_logs.py:101 routes/tools.py:516
 msgid "File not found"
 msgstr "File non trovato"
 
@@ -1238,21 +1251,21 @@ msgid "Invalid %(field)s: %(result)s"
 msgstr "%(field)s non valido: %(result)s"
 
 #: routes/settings.py:534 routes/settings.py:608 routes/settings.py:660
-#: routes/tools.py:291 services/js_i18n_strings.py:724
+#: routes/tools.py:292 services/js_i18n_strings.py:724
 #: templates/settings.html:1149 templates/settings.html:2742
 msgid "Failed to save settings"
 msgstr "Impossibile salvare le impostazioni"
 
-#: routes/settings.py:553 routes/tools.py:363
+#: routes/settings.py:553 routes/tools.py:364
 msgid "Permission denied"
 msgstr "Autorizzazione negata"
 
-#: routes/settings.py:587 routes/tools.py:283
+#: routes/settings.py:587 routes/tools.py:284
 #, python-format
 msgid "Unknown setting key: %(key)s"
 msgstr "Chiave di impostazione sconosciuta: %(key)s"
 
-#: routes/settings.py:593 routes/tools.py:286
+#: routes/settings.py:593 routes/tools.py:287
 #, python-format
 msgid "Invalid value for '%(key)s': %(reason)s"
 msgstr "Valore non valido per '%(key)s': %(reason)s"
@@ -1290,87 +1303,91 @@ msgstr "ID sistema obbligatorio"
 msgid "ES-DE scraper not available"
 msgstr "Scraper ES-DE non disponibile"
 
-#: routes/tools.py:273
+#: routes/tools.py:274
 msgid "Administrator privileges required"
 msgstr "Privilegi di amministratore richiesti"
 
-#: routes/tools.py:277
+#: routes/tools.py:278
 msgid "Settings payload must be an object"
 msgstr "Il payload delle impostazioni deve essere un oggetto"
 
-#: routes/tools.py:326 routes/tools.py:974
+#: routes/tools.py:327 routes/tools.py:979
 #, python-format
 msgid "Path does not exist: %(path)s"
 msgstr "Il percorso non esiste: %(path)s"
 
-#: routes/tools.py:391
+#: routes/tools.py:392
 msgid "Task not found"
 msgstr "Attività non trovata"
 
-#: routes/tools.py:414 routes/tools.py:434
+#: routes/tools.py:415 routes/tools.py:435
 msgid "Task not found or not running"
 msgstr "Attività non trovata o non in esecuzione"
 
-#: routes/tools.py:454
+#: routes/tools.py:455
 msgid "Task not found or not paused"
 msgstr "Attività non trovata o non in pausa"
 
-#: routes/tools.py:471 routes/tools.py:676 routes/tools.py:847
-#: routes/tools.py:963
+#: routes/tools.py:472 routes/tools.py:677 routes/tools.py:852
+#: routes/tools.py:968
 msgid "Invalid scan path"
 msgstr "Percorso di scansione non valido"
 
-#: routes/tools.py:509 routes/tools.py:566 routes/tools.py:611
+#: routes/tools.py:510 routes/tools.py:567 routes/tools.py:612
 msgid "No path provided"
 msgstr "Nessun percorso fornito"
 
-#: routes/tools.py:537
+#: routes/tools.py:538
 msgid "No archive path provided"
 msgstr "Nessun percorso di archivio fornito"
 
-#: routes/tools.py:540
+#: routes/tools.py:541
 msgid "Invalid archive path"
 msgstr "Percorso di archivio non valido"
 
-#: routes/tools.py:543
+#: routes/tools.py:544
 msgid "No files to remove"
 msgstr "Nessun file da rimuovere"
 
-#: routes/tools.py:644
+#: routes/tools.py:645
 msgid "No paths provided"
 msgstr "Nessun percorso fornito"
 
-#: routes/tools.py:650
+#: routes/tools.py:651
 #, python-format
 msgid "Invalid path: %(path)s"
 msgstr "Percorso non valido: %(path)s"
 
-#: routes/tools.py:725
+#: routes/tools.py:726
 msgid "chdman not found. Please install MAME tools."
 msgstr "chdman non trovato. Installa gli strumenti MAME."
 
-#: routes/tools.py:870
+#: routes/tools.py:875
 msgid "chdman not found"
 msgstr "chdman non trovato"
 
-#: routes/tools.py:968
+#: routes/tools.py:973
 #, python-format
 msgid "Unknown duplicate method: %(method)s"
 msgstr "Metodo duplicati sconosciuto: %(method)s"
 
-#: routes/tools.py:1176
+#: routes/tools.py:1186 routes/tools.py:1540
 msgid "These scan results have expired. Scan again, then delete."
 msgstr ""
 "Questi risultati della scansione sono scaduti. Esegui di nuovo la "
 "scansione, poi elimina."
 
-#: routes/tools.py:1181
+#: routes/tools.py:1191
 msgid "Keep at least one copy of each game. Nothing was deleted."
 msgstr "Conserva almeno una copia di ogni gioco. Non è stato eliminato nulla."
 
-#: routes/tools.py:1432
+#: routes/tools.py:1451
 msgid "This system has no screenshot check"
 msgstr "Questo sistema non ha il controllo degli screenshot"
+
+#: routes/tools.py:1550
+msgid "Keep at least one copy of each screenshot. Nothing was deleted."
+msgstr "Conserva almeno una copia di ogni screenshot. Non è stato eliminato nulla."
 
 #: routes/trophies.py:154 routes/trophies.py:1778
 msgid "PSNAWP library not installed. Run: pip install psnawp"
@@ -1558,20 +1575,20 @@ msgstr "I trucchi funzionano in RetroArch (RetroDB), DuckStation e PCSX2."
 msgid "No HLTB match found for \"%(title)s\""
 msgstr "Nessuna corrispondenza HLTB trovata per \"%(title)s\""
 
-#: services/hltb_service.py:227
+#: services/hltb_service.py:228
 msgid "No search query provided"
 msgstr "Nessuna query di ricerca fornita"
 
-#: services/hltb_service.py:252
+#: services/hltb_service.py:253
 #, python-format
 msgid "No HLTB match found for \"%(query)s\""
 msgstr "Nessuna corrispondenza HLTB trovata per \"%(query)s\""
 
-#: services/hltb_service.py:276
+#: services/hltb_service.py:277
 msgid "No playtime provided"
 msgstr "Nessun tempo di gioco fornito"
 
-#: services/hltb_service.py:368
+#: services/hltb_service.py:369
 msgid "Pending match not found"
 msgstr "Corrispondenza in sospeso non trovata"
 
@@ -2694,7 +2711,7 @@ msgstr "Impossibile cancellare HLTB: {error}"
 msgid "Failed to clear RA data"
 msgstr "Impossibile cancellare i dati RA"
 
-#: services/js_i18n_strings.py:718 templates/screenshot_dedup.html:598
+#: services/js_i18n_strings.py:718 templates/screenshot_dedup.html:600
 msgid "Failed to delete"
 msgstr "Eliminazione non riuscita"
 
@@ -7565,7 +7582,7 @@ msgstr "Conserva il più piccolo"
 msgid "Delete Unselected"
 msgstr "Elimina i non selezionati"
 
-#: templates/duplicate_finder.html:541 templates/screenshot_dedup.html:572
+#: templates/duplicate_finder.html:541 templates/screenshot_dedup.html:574
 msgid "No files selected for deletion"
 msgstr "Nessun file selezionato per l'eliminazione"
 
@@ -10741,15 +10758,15 @@ msgstr "Spazio recuperabile"
 msgid "Keep Largest"
 msgstr "Conserva il più grande"
 
-#: templates/screenshot_dedup.html:554
+#: templates/screenshot_dedup.html:556
 msgid "Selected largest file in each group"
 msgstr "File più grande selezionato in ogni gruppo"
 
-#: templates/screenshot_dedup.html:577
+#: templates/screenshot_dedup.html:579
 msgid "Delete Duplicate Screenshots"
 msgstr "Elimina screenshot duplicati"
 
-#: templates/screenshot_dedup.html:578
+#: templates/screenshot_dedup.html:580
 #, python-brace-format
 msgid ""
 "Duplicate screenshots to delete: {count}\n"
@@ -10762,14 +10779,14 @@ msgstr ""
 "I file verranno rimossi dal disco e i riferimenti nel database "
 "aggiornati. L'operazione non può essere annullata."
 
-#: templates/screenshot_dedup.html:591
+#: templates/screenshot_dedup.html:593
 #, python-brace-format
 msgid "Files deleted: {deleted}. Space freed: {size}. Games updated: {updated}"
 msgstr ""
 "File eliminati: {deleted}. Spazio liberato: {size}. Giochi aggiornati: "
 "{updated}"
 
-#: templates/screenshot_dedup.html:601
+#: templates/screenshot_dedup.html:603
 #, python-brace-format
 msgid "Failed to delete: {error}"
 msgstr "Eliminazione non riuscita: {error}"

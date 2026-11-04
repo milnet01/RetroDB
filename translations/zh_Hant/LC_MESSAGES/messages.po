@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-04 11:20+0200\n"
+"POT-Creation-Date: 2026-11-04 18:35+0200\n"
 "PO-Revision-Date: 2026-07-01 09:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hant\n"
@@ -59,10 +59,10 @@ msgstr "未找到系統，或該系統沒有包含成就的遊戲"
 #: routes/cheats.py:51 routes/collections.py:276 routes/collections.py:531
 #: routes/emulators.py:304 routes/emulators.py:318 routes/games.py:395
 #: routes/games.py:923 routes/games.py:1052 routes/games.py:1119
-#: routes/games_ai.py:31 routes/games_media.py:38 routes/games_media.py:86
-#: routes/games_media.py:149 routes/games_media.py:200
-#: routes/games_media.py:233 routes/launch.py:242 routes/reports.py:696
-#: routes/reports.py:827 routes/trophies.py:1336 services/cheats.py:617
+#: routes/games_ai.py:31 routes/games_media.py:39 routes/games_media.py:87
+#: routes/games_media.py:154 routes/games_media.py:205
+#: routes/games_media.py:238 routes/launch.py:242 routes/reports.py:706
+#: routes/reports.py:841 routes/trophies.py:1336 services/cheats.py:617
 #: services/hltb_service.py:162
 msgid "Game not found"
 msgstr "未找到遊戲"
@@ -447,7 +447,7 @@ msgstr "請求正文必須是 JSON 物件"
 msgid "Missing bonus_id or parent_id"
 msgstr "缺少 bonus_id 或 parent_id"
 
-#: routes/bonus_discs.py:314 routes/reports.py:815
+#: routes/bonus_discs.py:314 routes/reports.py:829
 msgid "Missing game_id"
 msgstr "缺少 game_id"
 
@@ -722,91 +722,97 @@ msgstr "AI 未返回任何資料。請檢查您的 API 金鑰和供應商設定�
 msgid "AI scraper module not available"
 msgstr "AI 抓取模組不可用"
 
-#: routes/games_media.py:75
+#: routes/games_media.py:76
 msgid "No filename provided"
 msgstr "未提供檔名"
 
-#: routes/games_media.py:82 routes/reports.py:689 routes/scrape_logs.py:129
+#: routes/games_media.py:83 routes/reports.py:699 routes/scrape_logs.py:129
 #: routes/scrape_logs.py:154 routes/scrape_logs.py:203 routes/settings.py:353
 msgid "Invalid filename"
 msgstr "無效的檔案名稱"
 
-#: routes/games_media.py:91
+#: routes/games_media.py:92
 #, python-format
 msgid "ROM file not found on disk: %(path)s"
 msgstr "磁碟上未找到 ROM 檔案：%(path)s"
 
-#: routes/games_media.py:106 routes/reports.py:726 routes/reports.py:903
+#: routes/games_media.py:96 routes/reports.py:731 routes/reports.py:856
+msgid ""
+"A .cue or .gdi file names this track, so renaming it would break that "
+"disc. Rename the .cue or .gdi file instead."
+msgstr ".cue 或 .gdi 檔案已指定這個音軌的名稱,所以重新命名會讓該光碟無法使用。請改為重新命名 .cue 或 .gdi 檔案。"
+
+#: routes/games_media.py:111 routes/reports.py:740 routes/reports.py:921
 msgid "Destination is outside the configured ROM root"
 msgstr "目標位置在已設定的 ROM 根目錄之外"
 
-#: routes/games_media.py:110 routes/reports.py:730
+#: routes/games_media.py:115 routes/reports.py:744
 #, python-format
 msgid "Cannot rename: %(reason)s"
 msgstr "無法重新命名：%(reason)s"
 
-#: routes/games_media.py:115 routes/reports.py:736 routes/reports.py:909
+#: routes/games_media.py:120 routes/reports.py:750 routes/reports.py:927
 msgid "A file with that name already exists"
 msgstr "已存在同名檔案"
 
-#: routes/games_media.py:122
+#: routes/games_media.py:127
 msgid "Failed to rename file"
 msgstr "重新命名檔案失敗"
 
-#: routes/games_media.py:142
+#: routes/games_media.py:147
 msgid "No screenshot specified"
 msgstr "未指定螢幕截圖"
 
-#: routes/games_media.py:145
+#: routes/games_media.py:150
 msgid "Invalid screenshot filename"
 msgstr "螢幕截圖檔案名稱無效"
 
-#: routes/games_media.py:155
+#: routes/games_media.py:160
 msgid "Screenshot not found"
 msgstr "未找到螢幕截圖"
 
-#: routes/games_media.py:191 templates/_modals/edit_modal.html:389
+#: routes/games_media.py:196 templates/_modals/edit_modal.html:389
 msgid "Pick the .box.json file Slipcase saved, together with its pictures."
 msgstr "請選擇 Slipcase 儲存的 .box.json 檔案，以及它的圖片。"
 
-#: routes/games_media.py:192
+#: routes/games_media.py:197
 msgid "Pick only one .box.json file at a time."
 msgstr "一次只能選擇一個 .box.json 檔案。"
 
-#: routes/games_media.py:193
+#: routes/games_media.py:198
 msgid "The .box.json file could not be read."
 msgstr "無法讀取 .box.json 檔案。"
 
-#: routes/games_media.py:194
+#: routes/games_media.py:199
 msgid "This is not a Slipcase box file RetroDB can read."
 msgstr "這不是 RetroDB 能讀取的 Slipcase 包裝盒檔案。"
 
-#: routes/games_media.py:195
+#: routes/games_media.py:200
 msgid "The box file names a picture RetroDB will not open."
 msgstr "包裝盒檔案指定了一張 RetroDB 不會開啟的圖片。"
 
-#: routes/games_media.py:196
+#: routes/games_media.py:201
 #, python-format
 msgid "Some pictures the box file needs were not picked: %(names)s"
 msgstr "包裝盒檔案需要的部分圖片沒有被選擇：%(names)s"
 
-#: routes/games_media.py:198
+#: routes/games_media.py:203
 msgid "A picture is larger than 10 MB."
 msgstr "有一張圖片超過 10 MB。"
 
-#: routes/games_media.py:199
+#: routes/games_media.py:204
 msgid "A picture is not a readable image."
 msgstr "有一張圖片無法讀取。"
 
-#: routes/games_media.py:201
+#: routes/games_media.py:206
 msgid "This game already has 3D box faces."
 msgstr "這個遊戲已經有 3D 包裝盒的各面圖片。"
 
-#: routes/games_media.py:202
+#: routes/games_media.py:207
 msgid "The faces could not be saved. Check the disk has space."
 msgstr "無法儲存各面圖片。請檢查磁碟是否有足夠空間。"
 
-#: routes/games_media.py:204 services/js_i18n_strings.py:991
+#: routes/games_media.py:209 services/js_i18n_strings.py:991
 msgid "The box file could not be imported."
 msgstr "無法匯入包裝盒檔案。"
 
@@ -1024,61 +1030,66 @@ msgstr "取得 PSN 遊戲清單失敗。請先嘗試同步獎盃。"
 msgid "System %(name)s does not support RetroAchievements"
 msgstr "系統 %(name)s 不支援 RetroAchievements"
 
-#: routes/reports.py:428
+#: routes/reports.py:429
 msgid "Unknown system"
 msgstr "未知系統"
 
-#: routes/reports.py:449 routes/reports.py:600
+#: routes/reports.py:450 routes/reports.py:611
 msgid "ROM path not configured. Go to Settings → Paths to set it."
 msgstr "未設定 ROM 路徑。請前往「設定 → 路徑」進行設定。"
 
-#: routes/reports.py:596
+#: routes/reports.py:607
 msgid "Missing required parameters"
 msgstr "缺少必填參數"
 
-#: routes/reports.py:606 routes/tools.py:512 routes/tools.py:569
-#: routes/tools.py:614
+#: routes/reports.py:617 routes/tools.py:513 routes/tools.py:570
+#: routes/tools.py:615
 msgid "Invalid path"
 msgstr "路徑無效"
 
-#: routes/reports.py:612
+#: routes/reports.py:624 routes/reports.py:651
+#, python-format
+msgid "%(name)s already exists. Move or rename it first."
+msgstr "%(name)s 已經存在。請先移動或重新命名它。"
+
+#: routes/reports.py:630
 #, python-format
 msgid "Folder does not exist: %(folder_path)s"
 msgstr "資料夾不存在：%(folder_path)s"
 
-#: routes/reports.py:686
+#: routes/reports.py:696
 msgid "Missing game_id or new_name"
 msgstr "缺少 game_id 或 new_name"
 
-#: routes/reports.py:698 routes/reports.py:829
+#: routes/reports.py:708 routes/reports.py:843
 msgid "MAME finds a game by its file name, so this file cannot be renamed."
 msgstr "MAME 是靠檔案名稱來找遊戲的,所以這個檔案不能改名。"
 
-#: routes/reports.py:702 routes/reports.py:833
+#: routes/reports.py:712 routes/reports.py:847
 msgid "No ROM path set"
 msgstr "未設定 ROM 路徑"
 
-#: routes/reports.py:717 routes/reports.py:838
+#: routes/reports.py:727 routes/reports.py:852
 msgid "ROM file not found"
 msgstr "未找到 ROM 檔案"
 
-#: routes/reports.py:745
+#: routes/reports.py:759
 msgid "M3U files must keep the .m3u extension"
 msgstr "M3U 檔案必須保留 .m3u 副檔名"
 
-#: routes/reports.py:760 routes/reports.py:923
+#: routes/reports.py:774 routes/reports.py:941
 msgid "A folder with the new name already exists"
 msgstr "已存在同名的資料夾"
 
-#: routes/reports.py:842
+#: routes/reports.py:860
 msgid "No scraped title available"
 msgstr "沒有可用的抓取標題"
 
-#: routes/reports.py:860
+#: routes/reports.py:878
 msgid "Title is empty after sanitization"
 msgstr "清理後標題為空"
 
-#: routes/reports.py:883
+#: routes/reports.py:901
 msgid "Generated filename contains invalid characters"
 msgstr "產生的檔案名稱包含無效字元"
 
@@ -1087,7 +1098,7 @@ msgstr "產生的檔案名稱包含無效字元"
 msgid "Invalid log file"
 msgstr "日誌檔案無效"
 
-#: routes/scrape_logs.py:101 routes/tools.py:515
+#: routes/scrape_logs.py:101 routes/tools.py:516
 msgid "File not found"
 msgstr "未找到檔案"
 
@@ -1198,21 +1209,21 @@ msgid "Invalid %(field)s: %(result)s"
 msgstr "無效的 %(field)s：%(result)s"
 
 #: routes/settings.py:534 routes/settings.py:608 routes/settings.py:660
-#: routes/tools.py:291 services/js_i18n_strings.py:724
+#: routes/tools.py:292 services/js_i18n_strings.py:724
 #: templates/settings.html:1149 templates/settings.html:2742
 msgid "Failed to save settings"
 msgstr "儲存設定失敗"
 
-#: routes/settings.py:553 routes/tools.py:363
+#: routes/settings.py:553 routes/tools.py:364
 msgid "Permission denied"
 msgstr "權限被拒絕"
 
-#: routes/settings.py:587 routes/tools.py:283
+#: routes/settings.py:587 routes/tools.py:284
 #, python-format
 msgid "Unknown setting key: %(key)s"
 msgstr "未知的設定鍵：%(key)s"
 
-#: routes/settings.py:593 routes/tools.py:286
+#: routes/settings.py:593 routes/tools.py:287
 #, python-format
 msgid "Invalid value for '%(key)s': %(reason)s"
 msgstr "“%(key)s”的值無效：%(reason)s"
@@ -1250,85 +1261,89 @@ msgstr "需要系統 ID"
 msgid "ES-DE scraper not available"
 msgstr "ES-DE 抓取器不可用"
 
-#: routes/tools.py:273
+#: routes/tools.py:274
 msgid "Administrator privileges required"
 msgstr "需要管理員權限"
 
-#: routes/tools.py:277
+#: routes/tools.py:278
 msgid "Settings payload must be an object"
 msgstr "設定資料必須為物件"
 
-#: routes/tools.py:326 routes/tools.py:974
+#: routes/tools.py:327 routes/tools.py:979
 #, python-format
 msgid "Path does not exist: %(path)s"
 msgstr "路徑不存在：%(path)s"
 
-#: routes/tools.py:391
+#: routes/tools.py:392
 msgid "Task not found"
 msgstr "未找到任務"
 
-#: routes/tools.py:414 routes/tools.py:434
+#: routes/tools.py:415 routes/tools.py:435
 msgid "Task not found or not running"
 msgstr "未找到任務或任務未執行"
 
-#: routes/tools.py:454
+#: routes/tools.py:455
 msgid "Task not found or not paused"
 msgstr "未找到任務或任務未暫停"
 
-#: routes/tools.py:471 routes/tools.py:676 routes/tools.py:847
-#: routes/tools.py:963
+#: routes/tools.py:472 routes/tools.py:677 routes/tools.py:852
+#: routes/tools.py:968
 msgid "Invalid scan path"
 msgstr "掃描路徑無效"
 
-#: routes/tools.py:509 routes/tools.py:566 routes/tools.py:611
+#: routes/tools.py:510 routes/tools.py:567 routes/tools.py:612
 msgid "No path provided"
 msgstr "未提供路徑"
 
-#: routes/tools.py:537
+#: routes/tools.py:538
 msgid "No archive path provided"
 msgstr "未提供歸檔路徑"
 
-#: routes/tools.py:540
+#: routes/tools.py:541
 msgid "Invalid archive path"
 msgstr "壓縮檔路徑無效"
 
-#: routes/tools.py:543
+#: routes/tools.py:544
 msgid "No files to remove"
 msgstr "沒有可移除的檔案"
 
-#: routes/tools.py:644
+#: routes/tools.py:645
 msgid "No paths provided"
 msgstr "未提供路徑"
 
-#: routes/tools.py:650
+#: routes/tools.py:651
 #, python-format
 msgid "Invalid path: %(path)s"
 msgstr "路徑無效：%(path)s"
 
-#: routes/tools.py:725
+#: routes/tools.py:726
 msgid "chdman not found. Please install MAME tools."
 msgstr "未找到 chdman。請安裝 MAME 工具。"
 
-#: routes/tools.py:870
+#: routes/tools.py:875
 msgid "chdman not found"
 msgstr "未找到 chdman"
 
-#: routes/tools.py:968
+#: routes/tools.py:973
 #, python-format
 msgid "Unknown duplicate method: %(method)s"
 msgstr "未知的重複偵測方式：%(method)s"
 
-#: routes/tools.py:1176
+#: routes/tools.py:1186 routes/tools.py:1540
 msgid "These scan results have expired. Scan again, then delete."
 msgstr "這些掃描結果已過期。請重新掃描後再刪除。"
 
-#: routes/tools.py:1181
+#: routes/tools.py:1191
 msgid "Keep at least one copy of each game. Nothing was deleted."
 msgstr "每個遊戲至少保留一份副本。未刪除任何內容。"
 
-#: routes/tools.py:1432
+#: routes/tools.py:1451
 msgid "This system has no screenshot check"
 msgstr "此系統沒有螢幕截圖檢查"
+
+#: routes/tools.py:1550
+msgid "Keep at least one copy of each screenshot. Nothing was deleted."
+msgstr "每張螢幕截圖請至少保留一份。沒有刪除任何項目。"
 
 #: routes/trophies.py:154 routes/trophies.py:1778
 msgid "PSNAWP library not installed. Run: pip install psnawp"
@@ -1514,20 +1529,20 @@ msgstr "金手指可在播放器、DuckStation 和 PCSX2 中使用。"
 msgid "No HLTB match found for \"%(title)s\""
 msgstr "未找到「%(title)s」的 HLTB 匹配結果"
 
-#: services/hltb_service.py:227
+#: services/hltb_service.py:228
 msgid "No search query provided"
 msgstr "未提供搜尋關鍵詞"
 
-#: services/hltb_service.py:252
+#: services/hltb_service.py:253
 #, python-format
 msgid "No HLTB match found for \"%(query)s\""
 msgstr "未找到與「%(query)s」匹配的 HLTB 結果"
 
-#: services/hltb_service.py:276
+#: services/hltb_service.py:277
 msgid "No playtime provided"
 msgstr "未提供遊玩時長"
 
-#: services/hltb_service.py:368
+#: services/hltb_service.py:369
 msgid "Pending match not found"
 msgstr "未找到待處理的符合項目"
 
@@ -2634,7 +2649,7 @@ msgstr "清除 HLTB 失敗:{error}"
 msgid "Failed to clear RA data"
 msgstr "清除 RA 資料失敗"
 
-#: services/js_i18n_strings.py:718 templates/screenshot_dedup.html:598
+#: services/js_i18n_strings.py:718 templates/screenshot_dedup.html:600
 msgid "Failed to delete"
 msgstr "刪除失敗"
 
@@ -7379,7 +7394,7 @@ msgstr "保留最小的"
 msgid "Delete Unselected"
 msgstr "刪除未選項"
 
-#: templates/duplicate_finder.html:541 templates/screenshot_dedup.html:572
+#: templates/duplicate_finder.html:541 templates/screenshot_dedup.html:574
 msgid "No files selected for deletion"
 msgstr "未選擇要刪除的檔案"
 
@@ -10371,15 +10386,15 @@ msgstr "可回收空間"
 msgid "Keep Largest"
 msgstr "保留最大的"
 
-#: templates/screenshot_dedup.html:554
+#: templates/screenshot_dedup.html:556
 msgid "Selected largest file in each group"
 msgstr "已選取每組中最大的檔案"
 
-#: templates/screenshot_dedup.html:577
+#: templates/screenshot_dedup.html:579
 msgid "Delete Duplicate Screenshots"
 msgstr "刪除重複的螢幕截圖"
 
-#: templates/screenshot_dedup.html:578
+#: templates/screenshot_dedup.html:580
 #, python-brace-format
 msgid ""
 "Duplicate screenshots to delete: {count}\n"
@@ -10391,12 +10406,12 @@ msgstr ""
 "\n"
 "檔案將從磁碟移除,資料庫中的參照也會更新。此操作無法復原。"
 
-#: templates/screenshot_dedup.html:591
+#: templates/screenshot_dedup.html:593
 #, python-brace-format
 msgid "Files deleted: {deleted}. Space freed: {size}. Games updated: {updated}"
 msgstr "已刪除檔案:{deleted}。釋出空間:{size}。已更新遊戲:{updated}"
 
-#: templates/screenshot_dedup.html:601
+#: templates/screenshot_dedup.html:603
 #, python-brace-format
 msgid "Failed to delete: {error}"
 msgstr "刪除失敗:{error}"

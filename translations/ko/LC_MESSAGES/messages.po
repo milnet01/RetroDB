@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-04 11:20+0200\n"
+"POT-Creation-Date: 2026-11-04 18:35+0200\n"
 "PO-Revision-Date: 2026-06-30 14:26+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ko\n"
@@ -60,10 +60,10 @@ msgstr "시스템을 찾을 수 없거나 업적이 있는 게임이 없습니�
 #: routes/cheats.py:51 routes/collections.py:276 routes/collections.py:531
 #: routes/emulators.py:304 routes/emulators.py:318 routes/games.py:395
 #: routes/games.py:923 routes/games.py:1052 routes/games.py:1119
-#: routes/games_ai.py:31 routes/games_media.py:38 routes/games_media.py:86
-#: routes/games_media.py:149 routes/games_media.py:200
-#: routes/games_media.py:233 routes/launch.py:242 routes/reports.py:696
-#: routes/reports.py:827 routes/trophies.py:1336 services/cheats.py:617
+#: routes/games_ai.py:31 routes/games_media.py:39 routes/games_media.py:87
+#: routes/games_media.py:154 routes/games_media.py:205
+#: routes/games_media.py:238 routes/launch.py:242 routes/reports.py:706
+#: routes/reports.py:841 routes/trophies.py:1336 services/cheats.py:617
 #: services/hltb_service.py:162
 msgid "Game not found"
 msgstr "게임을 찾을 수 없습니다"
@@ -448,7 +448,7 @@ msgstr "요청 본문은 JSON 객체여야 합니다"
 msgid "Missing bonus_id or parent_id"
 msgstr "bonus_id 또는 parent_id가 누락되었습니다"
 
-#: routes/bonus_discs.py:314 routes/reports.py:815
+#: routes/bonus_discs.py:314 routes/reports.py:829
 msgid "Missing game_id"
 msgstr "game_id가 누락되었습니다"
 
@@ -725,91 +725,99 @@ msgstr "AI가 데이터를 반환하지 않았습니다. API 키와 공급자 �
 msgid "AI scraper module not available"
 msgstr "AI 스크레이퍼 모듈을 사용할 수 없습니다"
 
-#: routes/games_media.py:75
+#: routes/games_media.py:76
 msgid "No filename provided"
 msgstr "제공된 파일 이름이 없습니다"
 
-#: routes/games_media.py:82 routes/reports.py:689 routes/scrape_logs.py:129
+#: routes/games_media.py:83 routes/reports.py:699 routes/scrape_logs.py:129
 #: routes/scrape_logs.py:154 routes/scrape_logs.py:203 routes/settings.py:353
 msgid "Invalid filename"
 msgstr "잘못된 파일 이름입니다"
 
-#: routes/games_media.py:91
+#: routes/games_media.py:92
 #, python-format
 msgid "ROM file not found on disk: %(path)s"
 msgstr "디스크에서 ROM 파일을 찾을 수 없습니다: %(path)s"
 
-#: routes/games_media.py:106 routes/reports.py:726 routes/reports.py:903
+#: routes/games_media.py:96 routes/reports.py:731 routes/reports.py:856
+msgid ""
+"A .cue or .gdi file names this track, so renaming it would break that "
+"disc. Rename the .cue or .gdi file instead."
+msgstr ""
+".cue 또는 .gdi 파일이 이 트랙을 지정하고 있어서 이름을 바꾸면 해당 디스크가 손상됩니다. 대신 .cue 또는 .gdi "
+"파일의 이름을 바꾸세요."
+
+#: routes/games_media.py:111 routes/reports.py:740 routes/reports.py:921
 msgid "Destination is outside the configured ROM root"
 msgstr "대상이 설정된 ROM 루트 외부에 있습니다"
 
-#: routes/games_media.py:110 routes/reports.py:730
+#: routes/games_media.py:115 routes/reports.py:744
 #, python-format
 msgid "Cannot rename: %(reason)s"
 msgstr "이름을 바꿀 수 없습니다: %(reason)s"
 
-#: routes/games_media.py:115 routes/reports.py:736 routes/reports.py:909
+#: routes/games_media.py:120 routes/reports.py:750 routes/reports.py:927
 msgid "A file with that name already exists"
 msgstr "해당 이름의 파일이 이미 존재합니다"
 
-#: routes/games_media.py:122
+#: routes/games_media.py:127
 msgid "Failed to rename file"
 msgstr "파일 이름 변경에 실패했습니다"
 
-#: routes/games_media.py:142
+#: routes/games_media.py:147
 msgid "No screenshot specified"
 msgstr "지정된 스크린샷이 없습니다"
 
-#: routes/games_media.py:145
+#: routes/games_media.py:150
 msgid "Invalid screenshot filename"
 msgstr "잘못된 스크린샷 파일 이름입니다"
 
-#: routes/games_media.py:155
+#: routes/games_media.py:160
 msgid "Screenshot not found"
 msgstr "스크린샷을 찾을 수 없습니다"
 
-#: routes/games_media.py:191 templates/_modals/edit_modal.html:389
+#: routes/games_media.py:196 templates/_modals/edit_modal.html:389
 msgid "Pick the .box.json file Slipcase saved, together with its pictures."
 msgstr "Slipcase가 저장한 .box.json 파일을 그 그림 파일들과 함께 선택하세요."
 
-#: routes/games_media.py:192
+#: routes/games_media.py:197
 msgid "Pick only one .box.json file at a time."
 msgstr ".box.json 파일은 한 번에 하나만 선택하세요."
 
-#: routes/games_media.py:193
+#: routes/games_media.py:198
 msgid "The .box.json file could not be read."
 msgstr ".box.json 파일을 읽을 수 없습니다."
 
-#: routes/games_media.py:194
+#: routes/games_media.py:199
 msgid "This is not a Slipcase box file RetroDB can read."
 msgstr "RetroDB가 읽을 수 있는 Slipcase 박스 파일이 아닙니다."
 
-#: routes/games_media.py:195
+#: routes/games_media.py:200
 msgid "The box file names a picture RetroDB will not open."
 msgstr "박스 파일에 RetroDB가 열지 않는 그림이 지정되어 있습니다."
 
-#: routes/games_media.py:196
+#: routes/games_media.py:201
 #, python-format
 msgid "Some pictures the box file needs were not picked: %(names)s"
 msgstr "박스 파일에 필요한 그림 중 일부가 선택되지 않았습니다: %(names)s"
 
-#: routes/games_media.py:198
+#: routes/games_media.py:203
 msgid "A picture is larger than 10 MB."
 msgstr "그림 하나가 10MB보다 큽니다."
 
-#: routes/games_media.py:199
+#: routes/games_media.py:204
 msgid "A picture is not a readable image."
 msgstr "그림 하나가 읽을 수 있는 이미지가 아닙니다."
 
-#: routes/games_media.py:201
+#: routes/games_media.py:206
 msgid "This game already has 3D box faces."
 msgstr "이 게임에는 이미 3D 박스 면이 있습니다."
 
-#: routes/games_media.py:202
+#: routes/games_media.py:207
 msgid "The faces could not be saved. Check the disk has space."
 msgstr "면을 저장할 수 없습니다. 디스크에 공간이 있는지 확인하세요."
 
-#: routes/games_media.py:204 services/js_i18n_strings.py:991
+#: routes/games_media.py:209 services/js_i18n_strings.py:991
 msgid "The box file could not be imported."
 msgstr "박스 파일을 가져올 수 없습니다."
 
@@ -1027,61 +1035,66 @@ msgstr "PSN 게임 목록을 가져오지 못했습니다. 먼저 트로피를 �
 msgid "System %(name)s does not support RetroAchievements"
 msgstr "시스템 %(name)s은(는) RetroAchievements를 지원하지 않습니다"
 
-#: routes/reports.py:428
+#: routes/reports.py:429
 msgid "Unknown system"
 msgstr "알 수 없는 시스템입니다"
 
-#: routes/reports.py:449 routes/reports.py:600
+#: routes/reports.py:450 routes/reports.py:611
 msgid "ROM path not configured. Go to Settings → Paths to set it."
 msgstr "ROM 경로가 설정되지 않았습니다. 설정 → 경로에서 설정하세요."
 
-#: routes/reports.py:596
+#: routes/reports.py:607
 msgid "Missing required parameters"
 msgstr "필수 매개변수가 누락되었습니다"
 
-#: routes/reports.py:606 routes/tools.py:512 routes/tools.py:569
-#: routes/tools.py:614
+#: routes/reports.py:617 routes/tools.py:513 routes/tools.py:570
+#: routes/tools.py:615
 msgid "Invalid path"
 msgstr "잘못된 경로입니다"
 
-#: routes/reports.py:612
+#: routes/reports.py:624 routes/reports.py:651
+#, python-format
+msgid "%(name)s already exists. Move or rename it first."
+msgstr "%(name)s이(가) 이미 있습니다. 먼저 이동하거나 이름을 바꾸세요."
+
+#: routes/reports.py:630
 #, python-format
 msgid "Folder does not exist: %(folder_path)s"
 msgstr "폴더가 존재하지 않습니다: %(folder_path)s"
 
-#: routes/reports.py:686
+#: routes/reports.py:696
 msgid "Missing game_id or new_name"
 msgstr "game_id 또는 new_name이 누락되었습니다"
 
-#: routes/reports.py:698 routes/reports.py:829
+#: routes/reports.py:708 routes/reports.py:843
 msgid "MAME finds a game by its file name, so this file cannot be renamed."
 msgstr "MAME은 파일 이름으로 게임을 찾기 때문에 이 파일의 이름은 바꿀 수 없습니다."
 
-#: routes/reports.py:702 routes/reports.py:833
+#: routes/reports.py:712 routes/reports.py:847
 msgid "No ROM path set"
 msgstr "설정된 ROM 경로가 없습니다"
 
-#: routes/reports.py:717 routes/reports.py:838
+#: routes/reports.py:727 routes/reports.py:852
 msgid "ROM file not found"
 msgstr "ROM 파일을 찾을 수 없습니다"
 
-#: routes/reports.py:745
+#: routes/reports.py:759
 msgid "M3U files must keep the .m3u extension"
 msgstr "M3U 파일은 .m3u 확장자를 유지해야 합니다"
 
-#: routes/reports.py:760 routes/reports.py:923
+#: routes/reports.py:774 routes/reports.py:941
 msgid "A folder with the new name already exists"
 msgstr "새 이름의 폴더가 이미 존재합니다"
 
-#: routes/reports.py:842
+#: routes/reports.py:860
 msgid "No scraped title available"
 msgstr "사용 가능한 스크래핑된 제목이 없습니다"
 
-#: routes/reports.py:860
+#: routes/reports.py:878
 msgid "Title is empty after sanitization"
 msgstr "정리 후 제목이 비어 있습니다"
 
-#: routes/reports.py:883
+#: routes/reports.py:901
 msgid "Generated filename contains invalid characters"
 msgstr "생성된 파일 이름에 잘못된 문자가 포함되어 있습니다"
 
@@ -1090,7 +1103,7 @@ msgstr "생성된 파일 이름에 잘못된 문자가 포함되어 있습니다
 msgid "Invalid log file"
 msgstr "잘못된 로그 파일입니다"
 
-#: routes/scrape_logs.py:101 routes/tools.py:515
+#: routes/scrape_logs.py:101 routes/tools.py:516
 msgid "File not found"
 msgstr "파일을 찾을 수 없습니다"
 
@@ -1201,21 +1214,21 @@ msgid "Invalid %(field)s: %(result)s"
 msgstr "잘못된 %(field)s: %(result)s"
 
 #: routes/settings.py:534 routes/settings.py:608 routes/settings.py:660
-#: routes/tools.py:291 services/js_i18n_strings.py:724
+#: routes/tools.py:292 services/js_i18n_strings.py:724
 #: templates/settings.html:1149 templates/settings.html:2742
 msgid "Failed to save settings"
 msgstr "설정 저장에 실패했습니다"
 
-#: routes/settings.py:553 routes/tools.py:363
+#: routes/settings.py:553 routes/tools.py:364
 msgid "Permission denied"
 msgstr "권한이 거부되었습니다"
 
-#: routes/settings.py:587 routes/tools.py:283
+#: routes/settings.py:587 routes/tools.py:284
 #, python-format
 msgid "Unknown setting key: %(key)s"
 msgstr "알 수 없는 설정 키: %(key)s"
 
-#: routes/settings.py:593 routes/tools.py:286
+#: routes/settings.py:593 routes/tools.py:287
 #, python-format
 msgid "Invalid value for '%(key)s': %(reason)s"
 msgstr "'%(key)s'에 대한 잘못된 값: %(reason)s"
@@ -1253,85 +1266,89 @@ msgstr "시스템 ID가 필요합니다"
 msgid "ES-DE scraper not available"
 msgstr "ES-DE 스크레이퍼를 사용할 수 없습니다"
 
-#: routes/tools.py:273
+#: routes/tools.py:274
 msgid "Administrator privileges required"
 msgstr "관리자 권한이 필요합니다"
 
-#: routes/tools.py:277
+#: routes/tools.py:278
 msgid "Settings payload must be an object"
 msgstr "설정 페이로드는 객체여야 합니다"
 
-#: routes/tools.py:326 routes/tools.py:974
+#: routes/tools.py:327 routes/tools.py:979
 #, python-format
 msgid "Path does not exist: %(path)s"
 msgstr "경로가 존재하지 않습니다: %(path)s"
 
-#: routes/tools.py:391
+#: routes/tools.py:392
 msgid "Task not found"
 msgstr "작업을 찾을 수 없습니다"
 
-#: routes/tools.py:414 routes/tools.py:434
+#: routes/tools.py:415 routes/tools.py:435
 msgid "Task not found or not running"
 msgstr "작업을 찾을 수 없거나 실행 중이 아닙니다"
 
-#: routes/tools.py:454
+#: routes/tools.py:455
 msgid "Task not found or not paused"
 msgstr "작업을 찾을 수 없거나 일시정지되어 있지 않습니다"
 
-#: routes/tools.py:471 routes/tools.py:676 routes/tools.py:847
-#: routes/tools.py:963
+#: routes/tools.py:472 routes/tools.py:677 routes/tools.py:852
+#: routes/tools.py:968
 msgid "Invalid scan path"
 msgstr "잘못된 스캔 경로입니다"
 
-#: routes/tools.py:509 routes/tools.py:566 routes/tools.py:611
+#: routes/tools.py:510 routes/tools.py:567 routes/tools.py:612
 msgid "No path provided"
 msgstr "제공된 경로가 없습니다"
 
-#: routes/tools.py:537
+#: routes/tools.py:538
 msgid "No archive path provided"
 msgstr "제공된 아카이브 경로가 없습니다"
 
-#: routes/tools.py:540
+#: routes/tools.py:541
 msgid "Invalid archive path"
 msgstr "잘못된 아카이브 경로입니다"
 
-#: routes/tools.py:543
+#: routes/tools.py:544
 msgid "No files to remove"
 msgstr "제거할 파일이 없습니다"
 
-#: routes/tools.py:644
+#: routes/tools.py:645
 msgid "No paths provided"
 msgstr "제공된 경로가 없습니다"
 
-#: routes/tools.py:650
+#: routes/tools.py:651
 #, python-format
 msgid "Invalid path: %(path)s"
 msgstr "잘못된 경로: %(path)s"
 
-#: routes/tools.py:725
+#: routes/tools.py:726
 msgid "chdman not found. Please install MAME tools."
 msgstr "chdman을 찾을 수 없습니다. MAME 도구를 설치하세요."
 
-#: routes/tools.py:870
+#: routes/tools.py:875
 msgid "chdman not found"
 msgstr "chdman을 찾을 수 없습니다"
 
-#: routes/tools.py:968
+#: routes/tools.py:973
 #, python-format
 msgid "Unknown duplicate method: %(method)s"
 msgstr "알 수 없는 중복 검사 방법: %(method)s"
 
-#: routes/tools.py:1176
+#: routes/tools.py:1186 routes/tools.py:1540
 msgid "These scan results have expired. Scan again, then delete."
 msgstr "이 스캔 결과는 만료되었습니다. 다시 스캔한 후 삭제하세요."
 
-#: routes/tools.py:1181
+#: routes/tools.py:1191
 msgid "Keep at least one copy of each game. Nothing was deleted."
 msgstr "각 게임의 사본을 하나 이상 남겨 두세요. 아무것도 삭제되지 않았습니다."
 
-#: routes/tools.py:1432
+#: routes/tools.py:1451
 msgid "This system has no screenshot check"
 msgstr "이 시스템은 스크린샷 검사를 지원하지 않습니다"
+
+#: routes/tools.py:1550
+msgid "Keep at least one copy of each screenshot. Nothing was deleted."
+msgstr "스크린샷마다 사본을 하나 이상 남겨 두세요. 삭제된 항목은 없습니다."
 
 #: routes/trophies.py:154 routes/trophies.py:1778
 msgid "PSNAWP library not installed. Run: pip install psnawp"
@@ -1517,20 +1534,20 @@ msgstr "치트는 플레이어, DuckStation, PCSX2에서 작동합니다."
 msgid "No HLTB match found for \"%(title)s\""
 msgstr "\"%(title)s\"에 대한 HLTB 일치 항목을 찾을 수 없습니다"
 
-#: services/hltb_service.py:227
+#: services/hltb_service.py:228
 msgid "No search query provided"
 msgstr "제공된 검색어가 없습니다"
 
-#: services/hltb_service.py:252
+#: services/hltb_service.py:253
 #, python-format
 msgid "No HLTB match found for \"%(query)s\""
 msgstr "\"%(query)s\"에 대한 HLTB 일치 항목을 찾을 수 없습니다"
 
-#: services/hltb_service.py:276
+#: services/hltb_service.py:277
 msgid "No playtime provided"
 msgstr "제공된 플레이 시간이 없습니다"
 
-#: services/hltb_service.py:368
+#: services/hltb_service.py:369
 msgid "Pending match not found"
 msgstr "대기 중인 일치 항목을 찾을 수 없습니다"
 
@@ -2637,7 +2654,7 @@ msgstr "HLTB 지우기 실패: {error}"
 msgid "Failed to clear RA data"
 msgstr "RA 데이터 지우기에 실패했습니다"
 
-#: services/js_i18n_strings.py:718 templates/screenshot_dedup.html:598
+#: services/js_i18n_strings.py:718 templates/screenshot_dedup.html:600
 msgid "Failed to delete"
 msgstr "삭제에 실패했습니다"
 
@@ -7403,7 +7420,7 @@ msgstr "최소 항목 유지"
 msgid "Delete Unselected"
 msgstr "선택되지 않은 항목 삭제"
 
-#: templates/duplicate_finder.html:541 templates/screenshot_dedup.html:572
+#: templates/duplicate_finder.html:541 templates/screenshot_dedup.html:574
 msgid "No files selected for deletion"
 msgstr "삭제할 파일을 선택하지 않았습니다"
 
@@ -10421,15 +10438,15 @@ msgstr "확보 가능한 공간"
 msgid "Keep Largest"
 msgstr "가장 큰 항목 유지"
 
-#: templates/screenshot_dedup.html:554
+#: templates/screenshot_dedup.html:556
 msgid "Selected largest file in each group"
 msgstr "각 그룹에서 가장 큰 파일을 선택했습니다"
 
-#: templates/screenshot_dedup.html:577
+#: templates/screenshot_dedup.html:579
 msgid "Delete Duplicate Screenshots"
 msgstr "중복 스크린샷 삭제"
 
-#: templates/screenshot_dedup.html:578
+#: templates/screenshot_dedup.html:580
 #, python-brace-format
 msgid ""
 "Duplicate screenshots to delete: {count}\n"
@@ -10441,12 +10458,12 @@ msgstr ""
 "\n"
 "파일이 디스크에서 제거되고 데이터베이스 참조가 업데이트됩니다. 이 작업은 되돌릴 수 없습니다."
 
-#: templates/screenshot_dedup.html:591
+#: templates/screenshot_dedup.html:593
 #, python-brace-format
 msgid "Files deleted: {deleted}. Space freed: {size}. Games updated: {updated}"
 msgstr "삭제된 파일: {deleted}개. 확보된 공간: {size}. 업데이트된 게임: {updated}개"
 
-#: templates/screenshot_dedup.html:601
+#: templates/screenshot_dedup.html:603
 #, python-brace-format
 msgid "Failed to delete: {error}"
 msgstr "삭제 실패: {error}"

@@ -17,6 +17,7 @@ import config
 
 # Import services layer
 from services.database import query, execute
+from services.disc_files import rename_disc, sheets_naming, tracks_in
 from services.game_utils import ARCADE_SET_FOLDERS, get_system_type, build_filename, is_arcade_set
 from services.api_helpers import handle_api_errors, success, error
 from services.auth import login_required, editor_required
@@ -581,6 +582,16 @@ def api_reports_multidisc_scan():
 # API ROUTES - Organize Multi-Disc
 # =============================================================================
 
+def _write_playlist(m3u_path, name, folder_path, files):
+    """Write the .m3u for a game folder. A track a .cue or .gdi in the
+    folder names is part of that disc, so only the sheet is listed."""
+    tracks = tracks_in(folder_path)
+    with open(m3u_path, 'x', encoding='utf-8') as f:
+        for filename in files:
+            if os.path.realpath(os.path.join(folder_path, filename)) not in tracks:
+                f.write(f"{name}/{filename}\n")
+
+
 @reports_bp.route('/api/reports/organize-multidisc', methods=['POST'])
 @editor_required
 @handle_api_errors
@@ -605,62 +616,61 @@ def api_reports_organize_multidisc():
     if safe_path(folder_path, rom_path) is None:
         return error(_('Invalid path'), 400)
     m3u_path = os.path.join(system_path, f"{name}.m3u")
+    files = sorted(f for f in files if safe_filename(f))
+
+    # PASS-59-237 — never write over a playlist or a file: either may be
+    # the only copy, or carry hand edits.
+    if os.path.exists(m3u_path):
+        return error(_('%(name)s already exists. Move or rename it first.')
+                     % {'name': os.path.basename(m3u_path)}, 400)
 
     if in_folder:
         # Files are already in folder, just create M3U
         if not os.path.isdir(folder_path):
             return error(_('Folder does not exist: %(folder_path)s') % {'folder_path': folder_path}, 400)
-        
+
         # Create noload.txt if it doesn't exist
         noload_path = os.path.join(folder_path, 'noload.txt')
         if not os.path.exists(noload_path):
             with open(noload_path, 'w') as f:
                 pass  # Empty file
-        
-        # Create M3U file
-        with open(m3u_path, 'w', encoding='utf-8') as f:
-            for filename in sorted(files):
-                if safe_filename(filename):
-                    f.write(f"{name}/{filename}\n")
-        
+
+        _write_playlist(m3u_path, name, folder_path, files)
         logger.info(f"Created M3U for existing folder: {name} ({len(files)} discs)")
-        
+
         return success(
             m3u_path=m3u_path,
             folder_path=folder_path,
             files_moved=0,
             created_m3u_only=True,
         )
-    
+
     # Standard case: move loose files into folder
-    
-    # Create the folder
+    for filename in files:
+        if os.path.lexists(os.path.join(folder_path, filename)):
+            return error(_('%(name)s already exists. Move or rename it first.')
+                         % {'name': f"{name}/{filename}"}, 400)
+
     os.makedirs(folder_path, exist_ok=True)
-    
-    # Move files to the folder
+
     moved_files = []
     for filename in files:
-        if not safe_filename(filename):
-            continue
         src = os.path.join(system_path, filename)
         dst = os.path.join(folder_path, filename)
-        
         if os.path.exists(src):
             shutil.move(src, dst)
+            # The game that was this file follows it into the folder.
+            execute("UPDATE games SET rom_path = ? WHERE rom_path = ?", (dst, src))
             moved_files.append(filename)
-    
+
     # Create noload.txt
     noload_path = os.path.join(folder_path, 'noload.txt')
     with open(noload_path, 'w') as f:
         pass  # Empty file
-    
-    # Create M3U file
-    with open(m3u_path, 'w', encoding='utf-8') as f:
-        for filename in sorted(moved_files):
-            f.write(f"{name}/{filename}\n")
-    
+
+    _write_playlist(m3u_path, name, folder_path, moved_files)
     logger.info(f"Organized multi-disc game: {name} ({len(moved_files)} discs)")
-    
+
     return success(
         m3u_path=m3u_path,
         folder_path=folder_path,
@@ -715,6 +725,10 @@ def api_reports_rename_rom():
 
     if not os.path.exists(old_path):
         return error(_('ROM file not found'), 404)
+
+    # PASS-59-237 — a sheet finds its tracks by name.
+    if sheets_naming(old_path):
+        return error(_('A .cue or .gdi file names this track, so renaming it would break that disc. Rename the .cue or .gdi file instead.'), 400)
 
     # Build new path
     dir_path = os.path.dirname(old_path)
@@ -783,7 +797,7 @@ def api_reports_rename_rom():
 
     # Rename the main file (ROM or M3U)
     if new_path != old_path:
-        os.rename(old_path, new_path)
+        rename_disc(old_path, new_path)
 
     # Update database
     execute("UPDATE games SET rom_path = ? WHERE id = ?", (new_path, game_id))
@@ -836,6 +850,10 @@ def api_reports_rename_to_scraped():
 
     if not is_virtual and not os.path.exists(old_path):
         return error(_('ROM file not found'), 404)
+
+    # PASS-59-237 — a sheet finds its tracks by name.
+    if not is_virtual and sheets_naming(old_path):
+        return error(_('A .cue or .gdi file names this track, so renaming it would break that disc. Rename the .cue or .gdi file instead.'), 400)
 
     title = game['title']
     if not title:
@@ -946,7 +964,7 @@ def api_reports_rename_to_scraped():
     
     # Rename the main file (ROM or M3U)
     if new_path != old_path:
-        os.rename(old_path, new_path)
+        rename_disc(old_path, new_path)
         
         # Update database
         execute("UPDATE games SET rom_path = ? WHERE id = ?", (new_path, game_id))

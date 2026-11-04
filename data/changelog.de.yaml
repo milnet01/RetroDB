@@ -2,30 +2,36 @@
   date: '2026-11-04'
   tags:
   - type: fix
-    label: How Long to Beat auf der Seite eines Spiels sucht jetzt nach dem, was du eingibst. Früher suchte es bei einem Titel, den es nicht fand, stattdessen nach den anderen Namen des Spiels und konnte ein anderes Spiel vorschlagen, zum Beispiel ein Fan-Remake. Die anderen Namen probiert es weiterhin, wenn im Feld der eigene Name des Spiels steht
+    label: Der Duplikat-Finder bietet keine funktionierende Datei mehr zum Löschen an. Bei der Suche nach Namen hält er die .cue- und .bin-Kopien eines Spiels nicht mehr für Duplikate voneinander. Er bietet nie die Track-Datei einer Disc an, die sich zwei Versionen eines Spiels teilen können. Er löscht keine Disc, die in einer Playlist steht. Ein Spiel, dessen Datei du löschst, wechselt jetzt zur Kopie, die du behältst, und bleibt so in der Bibliothek
   - type: fix
-    label: Die Schritte zu How Long to Beat im Handbuch passen jetzt zum Bildschirm. Dort stand, man solle einen Treffer aus einer Liste wählen; die Seite zeigt aber einen Treffer mit Speichern und Abbrechen. Die PlayStation-Hilfe sagt nicht mehr, dass die Anmeldung etwa zwei Monate gilt, da RetroDB sich von selbst neu anmeldet. Alle 20 übersetzten Handbücher enthalten beide Änderungen
+    label: Mehrere Discs ordnen überschreibt keine vorhandene Playlist und keine Datei, die schon im Ordner des Spiels liegt; es stoppt und nennt, welche. Die erstellte Playlist enthält die .cue jeder Disc, nicht ihre Track-Dateien. Spiele, deren Dateien verschoben werden, folgen ihnen jetzt in den Ordner, daher entfernt Fehlende ROMs bereinigen sie nicht mehr
   - type: fix
-    label: Jede Buchstabenleiste beginnt jetzt mit einer Schaltfläche Alle. Auf den Seiten Bibliothek, Konsole und PSN-Trophäen zeigt die Auswahl eines Buchstabens nur die Spiele mit diesem Buchstaben, und früher gab es keine Schaltfläche, um die übrigen wieder anzuzeigen. Auf den anderen Achievements-Seiten führt Alle zurück zum ersten Spiel
+    label: Das Konvertieren in CHD mit "Originale löschen" löscht jetzt auch die Track-Dateien der Disc, behält aber einen Track, den noch eine andere .cue nutzt. Das Spiel und jede Playlist, in der die alte Disc stand, verweisen jetzt auf die neue .chd. Das Umbenennen der Datei eines Spiels aktualisiert jetzt die Playlist, in der sie steht, und eine Track-Datei, die eine .cue braucht, lässt sich nicht umbenennen. Das Entfernen von Dateien aus einer ZIP-Datei entfernt nur die gewählten Dateien, auch wenn ein Name [ oder ] enthält. Screenshot-Duplikate löscht nur die Kopien, die der Scan gefunden hat, und behält immer eine
+  - type: fix
+    label: How Long to Beat auf der Seite eines Spiels sucht nach dem, was du eingibst. Früher suchte es bei einem nicht gefundenen Titel stattdessen nach den anderen Namen des Spiels und konnte ein anderes Spiel anbieten, etwa ein Fan-Remake. Die anderen Namen probiert es weiterhin, wenn das Feld den eigenen Namen des Spiels enthält
+  - type: fix
+    label: Die Schritte zu How Long to Beat im Handbuch passen jetzt zum Bildschirm. Dort hieß es, man solle einen Treffer aus einer Liste wählen; die Seite zeigt einen Treffer mit Speichern und Abbrechen. Die PlayStation-Hilfe sagt nicht mehr, dass die Anmeldung etwa zwei Monate hält, da RetroDB sich selbst neu anmeldet. Alle 20 übersetzten Handbücher enthalten beide Änderungen
+  - type: fix
+    label: Jede Buchstabenleiste beginnt jetzt mit einer Schaltfläche Alle. Auf den Seiten Bibliothek, Konsole und PSN-Trophäen zeigt die Auswahl eines Buchstabens nur die Spiele mit diesem Buchstaben, und früher gab es keine Schaltfläche, um die übrigen zurückzuholen. Auf den anderen Achievement-Seiten führt Alle zurück zum ersten Spiel
   - type: fix
     label: Ein neues PlayStation-Anmeldetoken, das du in den Einstellungen einfügst, wird jetzt sofort verwendet. Früher nutzte RetroDB die alte Anmeldung weiter, bis sie ablief, und Speichern & Verbindung testen meldete diese alte Anmeldung als funktionierend. Ein Token, das Sony ablehnt, ersetzt kein funktionierendes mehr
   - type: enhancement
-    label: 'Die PlayStation-Anmeldung in den Einstellungen lässt sich leichter aufrechterhalten. Das Banner zählt keine Tage mehr herunter, an denen du nichts tun musstest, da RetroDB sich von selbst neu anmeldet; es wird nur rot, wenn Sony dein gespeichertes Token ablehnt. Die Schaltfläche Hier einfügen lässt den Browser nicht mehr um Zugriff auf die Zwischenablage bitten: Sie setzt den Cursor in das Feld für Strg+V. Die Schritte sagen jetzt, dass du dich zuerst bei PlayStation abmelden sollst, wenn du ein noch funktionierendes Token ersetzt, und ihre Meldungen können übersetzt werden'
+    label: 'Die PlayStation-Anmeldung in den Einstellungen lässt sich leichter aufrechterhalten. Das Banner zählt keine Tage mehr herunter, an denen du nichts tun musstest, da RetroDB sich selbst neu anmeldet; es wird nur rot, wenn Sony dein gespeichertes Token ablehnt. Die Schaltfläche Hier einfügen lässt den Browser nicht mehr um Zugriff auf die Zwischenablage bitten: Sie setzt den Cursor ins Feld für Strg+V. Die Schritte sagen jetzt, dass du dich zuerst von PlayStation abmelden sollst, wenn du ein noch gültiges Token ersetzt, und ihre Meldungen lassen sich übersetzen'
   - type: enhancement
-    label: Hinweismeldungen und Abfragen wie „Einstellungen gespeichert“ oder „Diese Liste löschen?“ können jetzt auf jeder Seite übersetzt werden. Früher blieben die meisten davon auf Englisch, egal welche Sprache du gewählt hast
+    label: Pop-up-Meldungen und Rückfragen wie "Einstellungen gespeichert" oder "Diese Liste löschen?" lassen sich jetzt auf jeder Seite übersetzen. Früher blieben die meisten auf Englisch, egal welche Sprache du gewählt hast
   - type: enhancement
-    label: Die Meldungen, die erklären, warum eine PlayStation-Anmeldung fehlgeschlagen ist, etwa „Dein NPSSO ist möglicherweise abgelaufen“, können jetzt übersetzt werden
+    label: Die Meldungen, die erklären, warum eine PlayStation-Anmeldung fehlgeschlagen ist, etwa "Dein NPSSO ist möglicherweise abgelaufen", lassen sich jetzt übersetzen
   - type: fix
-    label: Das Handbuch in jeder Sprache entspricht jetzt dem englischen. Es enthält neu Search Anywhere, Keeping a Title, MAME Names und die Rückseite der Box, und ältere Absätze, die veraltet waren, sind auf dem neuesten Stand
+    label: Das Handbuch ist in jeder Sprache jetzt auf dem Stand des englischen. Es enthält neu Überall suchen, Einen Titel behalten, MAME-Namen und die Rückseite der Box, und ältere Absätze, die veraltet waren, sind aktualisiert
   - type: fix
-    label: In Deutsch, Afrikaans und Spanisch heißt die Schaltfläche „Zurück“ auf dem Cover eines Spiels jetzt „Rückseite der Box“ und nicht mehr „zurückgehen“
+    label: Auf Deutsch, Afrikaans und Spanisch steht auf der Zurück-Schaltfläche am Cover eines Spiels jetzt die Rückseite der Box, nicht "zurück"
   - type: feature
-    label: Wenn du auf Spielen drückst, füllt jetzt das Logo des Spiels auf seinem Hintergrundbild den Bildschirm, während das Spiel startet, oder sein Name in großen Buchstaben, wenn es kein Logo hat. Es verschwindet von selbst, sobald sich das Fenster des Spiels öffnet, oder wenn du Esc drückst oder klickst
+    label: Wenn du Spielen drückst, füllt jetzt das Logo des Spiels auf seinem Hintergrundbild den Bildschirm, während das Spiel startet, oder sein Name in großen Buchstaben, wenn es kein Logo hat. Es verschwindet von selbst, wenn sich das Fenster des Spiels öffnet, oder wenn du Esc drückst oder klickst
   - type: feature
-    label: 'Die drehbare 3D-Box hat jetzt die echte Form einer PS5-Hülle: abgerundete Ecken und Kanten, den erhöhten Rand um das Cover, die Linie, an der sich die beiden Hälften treffen, und die Fingerkerbe an der Öffnungsseite. Dafür braucht es eine Box-Datei aus einer Slipcase-Version, die die Form mitschreibt; importiere die Box erneut, um sie zu bekommen. Andere Boxen sehen aus wie zuvor'
+    label: 'Die drehbare 3D-Box hat jetzt die echte Form einer PS5-Hülle: abgerundete Ecken und Kanten, den erhöhten Rand um das Cover, die Linie, an der sich die beiden Hälften treffen, und die Grifföffnung an der Öffnungsseite. Dafür brauchst du eine Box-Datei aus einer Slipcase-Version, die die Form schreibt; importiere die Box erneut, um sie zu erhalten. Andere Boxen sehen aus wie zuvor'
   - type: enhancement
-    label: Refresh RetroAchievements wurde von den Einstellungen auf die Seite RetroAchievements verschoben und heißt jetzt Spiele mit Achievements finden. Jede Schaltfläche dort hat nun eine Zeile, die erklärt, was sie tut, damit sich Spiele finden und Fortschritt synchronisieren leicht unterscheiden lassen. Sind noch keine Spiele verknüpft, zeigt die Seite einem Admin die Schaltfläche Finden, statt zum nächsten Tab zu wechseln
-  body: "<ul>\n  <li><strong>Das Handbuch ist in jeder Sprache auf dem neuesten Stand.</strong>\n    Abschnitte, die es bisher nur im englischen Handbuch gab, sind jetzt übersetzt.</li>\n</ul>\n"
+    label: Refresh RetroAchievements wurde von den Einstellungen auf die Seite RetroAchievements verschoben und heißt jetzt Spiele mit Achievements finden. Jede Schaltfläche dort hat jetzt eine Zeile, die erklärt, was sie tut, sodass Spiele finden und Fortschritt synchronisieren leicht zu unterscheiden sind. Sind noch keine Spiele verknüpft, zeigt die Seite einem Admin die Schaltfläche Finden, statt zum nächsten Tab zu springen
+  body: "<ul>\n  <li><strong>Das Handbuch ist in jeder Sprache auf dem neuesten Stand.</strong>\n    Abschnitte, die es nur im englischen Handbuch gab, sind jetzt übersetzt.</li>\n</ul>\n"
 - version: 3.35.4
   date: '2026-11-03'
   tags:

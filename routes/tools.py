@@ -22,7 +22,8 @@ import glob
 import config
 import settings_manager
 from services.atomic_io import atomic_write_json
-from services.database import query
+from services.database import execute, query
+from services.disc_files import playlists_naming, tracks_in
 from services.api_helpers import handle_api_errors, success, error
 from services.auth import login_required, admin_required, editor_required
 from services.security import safe_path
@@ -795,6 +796,10 @@ def api_chd_converter_convert():
             status = file_result['status']
 
             if status == 'success':
+                if not os.path.exists(file_path):
+                    # PASS-59-237 — the game that was the source is the .chd now.
+                    execute("UPDATE games SET rom_path = ? WHERE rom_path = ?",
+                            (file_result['destination'], file_path))
                 task['results']['converted'] += 1
                 task['results']['original_size'] += file_result['original_size']
                 task['results']['compressed_size'] += file_result['compressed_size']
@@ -1034,21 +1039,23 @@ def api_duplicate_finder_scan():
         from scraper.rom_tools import _safe_under_root
         rom_root = Path(_get_rom_path()).resolve()
 
+        def wanted(filepath, tracks):
+            # PASS-59-237 — a track a .cue or .gdi names is part of that
+            # disc, never a copy: two releases can share one audio track.
+            return (filepath.lower().endswith(tuple(extensions_lower))
+                    and os.path.realpath(filepath) not in tracks
+                    and _safe_under_root(Path(filepath), rom_root))
+
         if recursive:
             for root, dirs, filenames in os.walk(path):
-                for filename in filenames:
-                    filepath = os.path.join(root, filename)
-                    if (any(filename.lower().endswith(ext) for ext in extensions_lower)
-                            and _safe_under_root(Path(filepath), rom_root)):
-                        files.append(filepath)
+                tracks = tracks_in(root)
+                files.extend(fp for fp in (os.path.join(root, n) for n in filenames)
+                             if wanted(fp, tracks))
                 task['current_action'] = f'Scanning: {os.path.basename(root)}'
         else:
-            for filename in os.listdir(path):
-                filepath = os.path.join(path, filename)
-                if (os.path.isfile(filepath)
-                        and any(filename.lower().endswith(ext) for ext in extensions_lower)
-                        and _safe_under_root(Path(filepath), rom_root)):
-                    files.append(filepath)
+            tracks = tracks_in(path)
+            files.extend(fp for fp in (os.path.join(path, n) for n in os.listdir(path))
+                         if os.path.isfile(fp) and wanted(fp, tracks))
         
         task['total'] = len(files)
         task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] Found {len(files)} ROM files")
@@ -1112,7 +1119,10 @@ def api_duplicate_finder_scan():
                     if key is None:
                         continue
                 elif method == 'name':
-                    key = normalize_name(os.path.splitext(os.path.basename(f))[0])
+                    # PASS-59-237 — the type too: Game.cue and Game.bin are
+                    # one disc, not two copies.
+                    stem, ext = os.path.splitext(os.path.basename(f))
+                    key = f"{normalize_name(stem)}{ext.lower()}"
                 else:
                     name_key = normalize_name(os.path.splitext(os.path.basename(f))[0])
                     hash_key = hash_file(f)
@@ -1192,10 +1202,19 @@ def api_duplicate_finder_delete():
             results['failed'] += 1
             results['errors'].append(f'Invalid path: {fp}')
             continue
+        # PASS-59-237 — a disc a playlist lists is the game's own copy.
+        if playlists_naming(fp):
+            results['failed'] += 1
+            results['errors'].append(f'A playlist lists this disc: {fp}')
+            continue
+        kept = next(f for g in groups if fp in g for f in sorted(g - requested))
         try:
             if os.path.exists(fp):
                 size = os.path.getsize(fp)
                 os.remove(fp)
+                # The game that was this file is now the copy kept.
+                execute("UPDATE games SET rom_path = ? WHERE rom_path IN (?, ?)",
+                        (kept, fp, os.path.realpath(fp)))
                 results['deleted'] += 1
                 results['freed_space'] += size
             else:
@@ -1514,13 +1533,30 @@ def api_screenshot_dedup_delete():
     screenshots_dir = os.path.join(config.IMAGE_PATH, 'screenshots')
     results = {'deleted': 0, 'failed': 0, 'freed_space': 0, 'db_updated': 0}
 
+    # PASS-59-237 — delete only files the scan put in one of that game's
+    # duplicate sets, and never every file of a set.
+    task = _rom_tool_tasks.get(str(data.get('task_id') or ''))
+    if not task or task.get('task_type') != 'screenshot_dedup':
+        return error(_('These scan results have expired. Scan again, then delete.'), 400)
+    sets = {}
+    for group in task.get('results', {}).get('groups', []):
+        sets[group['game_id']] = [{f['filename'] for f in s['files']}
+                                  for s in group['duplicate_sets']]
+    requested = {}
+    for d in deletions:
+        requested.setdefault(d.get('game_id'), set()).add(d.get('filename', ''))
+    if any(s <= requested.get(gid, set()) for gid, game_sets in sets.items()
+           for s in game_sets):
+        return error(_('Keep at least one copy of each screenshot. Nothing was deleted.'), 400)
+
     # Group by game_id
     by_game = {}
     for d in deletions:
         gid = d.get('game_id')
         fn = d.get('filename', '')
         # Validate filename (no path traversal)
-        if not fn or os.sep in fn or '/' in fn or '..' in fn:
+        if (not fn or os.sep in fn or '/' in fn or '..' in fn
+                or not any(fn in s for s in sets.get(gid, []))):
             results['failed'] += 1
             continue
         if gid not in by_game:
@@ -1543,6 +1579,9 @@ def api_screenshot_dedup_delete():
 
         # Delete files from disk
         for fn in filenames:
+            if fn not in current:
+                results['failed'] += 1
+                continue
             filepath = os.path.join(screenshots_dir, fn)
             try:
                 if os.path.exists(filepath):

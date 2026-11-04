@@ -2,30 +2,36 @@
   date: '2026-11-04'
   tags:
   - type: fix
-    label: Funkcja How Long to Beat na stronie gry szuka tego, co wpiszesz. Wcześniej, gdy nie znalazła takiego tytułu, szukała innych nazw gry i mogła zaproponować inną grę, na przykład fanowski remake. Nadal próbuje innych nazw, gdy w polu jest własna nazwa gry
+    label: Wyszukiwarka duplikatów nie proponuje już do usunięcia działającego pliku. Przy szukaniu według nazwy nie uznaje już kopii .cue i .bin tej samej gry za duplikaty siebie nawzajem. Nigdy nie proponuje pliku ścieżek płyty, który mogą współdzielić dwie wersje gry. Nie usunie płyty, która jest na liście odtwarzania. Gra, której plik usuniesz, przechodzi teraz na kopię, którą zachowasz, dzięki czemu zostaje w bibliotece
   - type: fix
-    label: Kroki How Long to Beat w instrukcji pasują teraz do ekranu. Wcześniej trzeba było wybrać dopasowanie z listy, a na stronie widać jedno dopasowanie z przyciskami Zapisz i Anuluj. Pomoc dla PlayStation nie mówi już, że logowanie trwa około dwóch miesięcy, bo RetroDB loguje się ponownie sam. Obie zmiany są w wszystkich 20 przetłumaczonych instrukcjach
+    label: Organizowanie wielopłytowych nie nadpisuje już istniejącej listy odtwarzania ani pliku, który jest już w folderze gry; zatrzymuje się i mówi, który to plik. Tworzona lista odtwarzania zawiera plik .cue każdej płyty, a nie pliki jej ścieżek. Gry, których pliki przenosi, idą teraz za nimi do folderu, więc czyszczenie brakujących ROM-ów już ich nie usuwa
   - type: fix
-    label: Każdy pasek liter ma teraz przycisk Wszystkie. Na stronach Biblioteki, konsoli i Trofeów PSN wybranie litery pokazuje tylko gry na tę literę, a wcześniej nie było przycisku, który przywracał resztę. Na pozostałych stronach osiągnięć Wszystkie wraca do pierwszej gry
+    label: Konwersja do CHD z opcją „usuń oryginały” usuwa teraz także pliki ścieżek płyty, ale zachowuje ścieżkę, której używa jeszcze inny plik .cue. Gra i każda lista odtwarzania, na której była stara płyta, wskazują teraz nowy plik .chd. Zmiana nazwy pliku gry aktualizuje teraz listę odtwarzania, która go zawiera, a pliku ścieżki potrzebnego dla .cue nie można przemianować. Usuwanie plików z archiwum zip usuwa tylko wybrane pliki, nawet gdy nazwa zawiera [ lub ]. Screenshot Dedup usuwa tylko kopie znalezione podczas skanowania i zawsze zostawia jedną
   - type: fix
-    label: Nowy token logowania PlayStation wklejony w Ustawieniach jest teraz używany od razu. Wcześniej RetroDB używał starego logowania do wygaśnięcia, a Zapisz i testuj połączenie podawał, że stare logowanie działa. Token odrzucony przez Sony nie zastępuje już działającego
+    label: How Long to Beat na stronie gry szuka tego, co wpiszesz. Wcześniej, gdy nie znalazł tytułu, szukał innych nazw gry i mógł zaproponować inną grę, na przykład fanowski remake. Nadal sprawdza inne nazwy, gdy w polu jest własna nazwa gry
+  - type: fix
+    label: Kroki How Long to Beat w instrukcji pomocy zgadzają się teraz z ekranem. Mówiły o wyborze dopasowania z listy, a strona pokazuje jedno dopasowanie z przyciskami Zapisz i Anuluj. Pomoc PlayStation nie mówi już, że logowanie trwa około dwóch miesięcy, bo RetroDB loguje się ponownie sam. Wszystkie 20 przetłumaczonych instrukcji zawiera obie zmiany
+  - type: fix
+    label: Każdy pasek liter zaczyna się teraz od przycisku Wszystko. Na stronach Biblioteki, konsoli i Trofeów PSN wybór litery pokazuje tylko gry na tę literę, a wcześniej nie było przycisku, który przywracał resztę. Na pozostałych stronach osiągnięć Wszystko wraca do pierwszej gry
+  - type: fix
+    label: Nowy token logowania PlayStation wklejony w Ustawieniach jest teraz używany od razu. Wcześniej RetroDB używał starego logowania, aż wygasło, a Zapisz i sprawdź połączenie podawało, że działa stare logowanie. Token odrzucony przez Sony nie zastępuje już działającego
   - type: enhancement
-    label: 'Logowanie PlayStation w Ustawieniach łatwiej utrzymać. Baner nie odlicza już dni, w których nic nie musiałeś robić, bo RetroDB loguje się ponownie sam; robi się czerwony tylko wtedy, gdy Sony odrzuci zapisany token. Przycisk Wklej tutaj nie wywołuje już pytania przeglądarki o dostęp do schowka: ustawia kursor w polu, by wkleić przez Ctrl+V. Kroki mówią teraz, by najpierw wylogować się z PlayStation, gdy zmieniasz token, który jeszcze działa, a ich komunikaty można tłumaczyć'
+    label: 'Logowanie PlayStation w Ustawieniach łatwiej utrzymać. Baner nie odlicza już dni, w których nie musiałeś nic robić, bo RetroDB loguje się ponownie sam; robi się czerwony tylko wtedy, gdy Sony odrzuci zapisany token. Przycisk Wklej tutaj nie powoduje już, że przeglądarka prosi o dostęp do schowka: ustawia kursor w polu, aby użyć Ctrl+V. Kroki mówią teraz, by najpierw wylogować się z PlayStation, gdy wymieniasz działający token, a ich komunikaty można tłumaczyć'
   - type: enhancement
-    label: Wyskakujące komunikaty i pytania, takie jak „Ustawienia zapisane” czy „Usunąć tę listę?”, można teraz tłumaczyć na każdej stronie. Wcześniej większość została po angielsku bez względu na wybrany język
+    label: Wyskakujące komunikaty i okna z pytaniami, takie jak „Zapisano ustawienia” czy „Usunąć tę listę?”, można teraz tłumaczyć na każdej stronie. Wcześniej większość z nich zostawała po angielsku, niezależnie od wybranego języka
   - type: enhancement
-    label: Komunikaty z powodem nieudanego logowania do PlayStation, takie jak „Twój NPSSO mógł wygasnąć”, można teraz tłumaczyć
+    label: Komunikaty wyjaśniające, dlaczego logowanie do PlayStation się nie udało, takie jak „Twój NPSSO mógł wygasnąć”, można teraz tłumaczyć
   - type: fix
-    label: Instrukcja w każdym języku odpowiada teraz angielskiej. Dodano Search Anywhere, Keeping a Title, MAME Names i tył pudełka, a starsze akapity zostały zaktualizowane
+    label: Instrukcja pomocy w każdym języku odpowiada teraz angielskiej. Zyskała Wyszukiwanie wszędzie, Zachowanie tytułu, Nazwy MAME i tył pudełka, a starsze akapity, które były nieaktualne, zostały zaktualizowane
   - type: fix
     label: W niemieckim, afrikaans i hiszpańskim przycisk Wstecz na okładce gry oznacza teraz tył pudełka, a nie „cofnij”
   - type: feature
-    label: Naciśnięcie Graj wypełnia teraz ekran logo gry na tle jej obrazka, gdy gra się uruchamia, albo jej nazwą dużymi literami, gdy nie ma logo. Znika samo, gdy otworzy się okno gry, albo po naciśnięciu Esc lub kliknięciu
+    label: Naciśnięcie Graj wypełnia teraz ekran logo gry na tle jej obrazka podczas uruchamiania gry albo jej nazwą dużymi literami, gdy nie ma logo. Znika samo, gdy otworzy się okno gry, albo gdy naciśniesz Esc lub klikniesz
   - type: feature
-    label: 'Obracane pudełko 3D ma teraz prawdziwy kształt etui PS5: zaokrąglone rogi i krawędzie, wypukłą ramkę wokół okładki, linię łączenia dwóch połówek i wycięcie na palec po otwieranej stronie. Wymaga pliku pudełka z wersji Slipcase, która zapisuje kształt; zaimportuj pudełko ponownie. Inne pudełka wyglądają jak wcześniej'
+    label: 'Obracane pudełko 3D ma teraz prawdziwy kształt etui PS5: zaokrąglone rogi i krawędzie, uniesioną krawędź wokół okładki, linię łączenia dwóch połówek i wycięcie na palec po otwieranej stronie. Wymaga pliku pudełka z wersji Slipcase, która zapisuje kształt; zaimportuj pudełko ponownie, aby go uzyskać. Inne pudełka wyglądają jak dawniej'
   - type: enhancement
-    label: Odśwież RetroAchievements przeniesiono z Ustawień na stronę RetroAchievements i nazwano Znajdź gry z osiągnięciami. Każdy przycisk ma tam teraz opis działania, więc łatwo odróżnić Znajdź gry od Synchronizuj postępy. Gdy żadna gra nie jest jeszcze powiązana, administrator widzi przycisk Znajdź zamiast przejścia do następnej karty
-  body: "<ul>\n  <li><strong>Instrukcja jest aktualna w każdym języku.</strong>\n    Sekcje, które były tylko w angielskiej instrukcji, są teraz przetłumaczone.</li>\n</ul>\n"
+    label: Odświeżanie RetroAchievements przeniesiono z Ustawień na stronę RetroAchievements i nazwano Znajdź gry z osiągnięciami. Każdy przycisk ma teraz opis tego, co robi, więc łatwo odróżnić Znajdź gry od Synchronizuj postępy. Gdy nie ma jeszcze powiązanych gier, strona pokazuje administratorowi przycisk Znajdź zamiast przechodzić do następnej karty
+  body: "<ul>\n  <li><strong>Instrukcja pomocy jest aktualna w każdym języku.</strong>\n    Sekcje, które były tylko w angielskiej instrukcji, są teraz przetłumaczone.</li>\n</ul>\n"
 - version: 3.35.4
   date: '2026-11-03'
   tags:

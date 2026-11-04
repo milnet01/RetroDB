@@ -2,30 +2,36 @@
   date: '2026-11-04'
   tags:
   - type: fix
-    label: How Long to Beat nella pagina di un gioco cerca ciò che scrivi. Prima, se non trovava un titolo, cercava tra gli altri nomi del gioco e poteva proporre un gioco diverso, come il remake di un fan. Prova ancora gli altri nomi quando la casella contiene il nome stesso del gioco
+    label: Duplicate Finder non propone più un file funzionante da eliminare. Cercando per nome, non considera più copie l'una dell'altra il .cue e il .bin di un gioco. Non propone mai il file delle tracce di un disco, che due versioni di un gioco possono condividere. Non elimina un disco elencato in una playlist. Un gioco di cui elimini il file ora passa alla copia che tieni, così resta nella libreria
   - type: fix
-    label: I passaggi di How Long to Beat nel manuale di aiuto ora corrispondono alla schermata. Dicevano di scegliere una corrispondenza da un elenco; la pagina ne mostra una sola con Salva e Annulla. L'aiuto di PlayStation non dice più che l'accesso dura circa due mesi, perché RetroDB accede di nuovo da solo. Tutti i 20 manuali tradotti hanno entrambe le modifiche
+    label: 'Organize Multi-Disc non sovrascrive più una playlist esistente né un file già presente nella cartella del gioco: si ferma e indica quale. La playlist creata elenca il .cue di ogni disco, non i file delle tracce. I giochi i cui file vengono spostati ora li seguono nella cartella, quindi Clean missing ROMs non li rimuove più'
   - type: fix
-    label: Ogni barra delle lettere ora inizia con un pulsante Tutti. Nelle pagine Libreria, console e Trofei PSN, scegliendo una lettera si vedono solo i giochi di quella lettera, e prima non c'era un pulsante per rivedere tutti gli altri. Nelle altre pagine degli Obiettivi, Tutti torna al primo gioco
+    label: La conversione in CHD con "elimina gli originali" ora elimina anche i file delle tracce del disco, ma mantiene una traccia usata ancora da un altro .cue. Il gioco e le playlist che elencavano il vecchio disco ora puntano al nuovo .chd. Rinominare il file di un gioco ora aggiorna la playlist che lo elenca, e un file di tracce necessario a un .cue non può essere rinominato. Rimuovere file da uno zip elimina solo i file scelti, anche quando un nome contiene [ o ]. Screenshot Dedup elimina solo le copie trovate dalla scansione e ne tiene sempre una
   - type: fix
-    label: Un nuovo token di accesso PlayStation incollato in Impostazioni ora viene usato subito. Prima RetroDB continuava a usare il vecchio accesso finché non scadeva, e Salva e prova connessione indicava quel vecchio accesso come funzionante. Un token rifiutato da Sony non sostituisce più uno che funziona
+    label: How Long to Beat nella pagina di un gioco cerca ciò che scrivi. Prima, se non trovava un titolo, cercava gli altri nomi del gioco e poteva proporre un gioco diverso, come il remake di un fan. Prova ancora gli altri nomi quando la casella contiene il nome stesso del gioco
+  - type: fix
+    label: I passaggi di How Long to Beat nel manuale ora corrispondono alla schermata. Dicevano di scegliere una corrispondenza da un elenco; la pagina ne mostra una con Salva e Annulla. La guida di PlayStation non dice più che l'accesso dura circa due mesi, perché RetroDB accede di nuovo da solo. Tutti i 20 manuali tradotti hanno entrambe le modifiche
+  - type: fix
+    label: Ogni barra delle lettere ora inizia con un pulsante Tutti. Nelle pagine Libreria, console e PSN Trophies, scegliendo una lettera si vedono solo i giochi con quella lettera, e prima non c'era un pulsante per rivedere gli altri. Nelle altre pagine degli Obiettivi, Tutti torna al primo gioco
+  - type: fix
+    label: Un nuovo token di accesso PlayStation incollato in Impostazioni ora viene usato subito. Prima RetroDB continuava a usare il vecchio accesso finché non scadeva, e Salva e prova connessione indicava come funzionante quel vecchio accesso. Un token rifiutato da Sony non sostituisce più uno che funziona
   - type: enhancement
     label: 'L''accesso PlayStation in Impostazioni è più facile da mantenere. Il banner non conta più i giorni in cui non dovevi fare nulla, perché RetroDB accede di nuovo da solo; diventa rosso solo se Sony rifiuta il token salvato. Il pulsante Incolla qui non fa più chiedere al browser di leggere gli appunti: mette il cursore nella casella per Ctrl+V. I passaggi ora dicono di uscire prima da PlayStation quando sostituisci un token ancora valido, e i loro messaggi si possono tradurre'
   - type: enhancement
-    label: I messaggi a comparsa e le finestre di domanda, come "Impostazioni salvate" o "Eliminare questa lista?", ora si possono tradurre in ogni pagina. Prima la maggior parte restava in inglese qualunque lingua scegliessi
+    label: I messaggi a comparsa e le finestre di domanda, come "Impostazioni salvate" o "Eliminare questa lista?", ora si possono tradurre in tutte le pagine. Prima la maggior parte restava in inglese qualunque lingua scegliessi
   - type: enhancement
-    label: I messaggi che spiegano perché un accesso PlayStation non è riuscito, come "Il tuo NPSSO potrebbe essere scaduto", ora si possono tradurre
+    label: I messaggi che spiegano perché un accesso PlayStation è fallito, come "Your NPSSO may have expired", ora si possono tradurre
   - type: fix
-    label: Il manuale di aiuto in ogni lingua ora corrisponde a quello inglese. Include Search Anywhere, Keeping a Title, MAME Names e il retro della scatola, e i paragrafi più vecchi rimasti indietro sono aggiornati
+    label: Il manuale in ogni lingua ora corrisponde a quello inglese. Include Search Anywhere, Keeping a Title, MAME Names e il retro della confezione, e i paragrafi più vecchi rimasti indietro sono aggiornati
   - type: fix
-    label: In tedesco, afrikaans e spagnolo, il pulsante Indietro sulla copertina di un gioco ora indica il retro della scatola, non "torna indietro"
+    label: In tedesco, afrikaans e spagnolo, il pulsante Indietro sulla copertina di un gioco ora indica il retro della confezione, non "torna indietro"
   - type: feature
-    label: Premendo Gioca ora lo schermo si riempie con il logo del gioco sull'immagine di sfondo mentre il gioco si avvia, o con il suo nome a grandi lettere se non ha un logo. Scompare da solo quando si apre la finestra del gioco, o quando premi Esc o fai clic
+    label: Premendo Gioca ora lo schermo si riempie con il logo del gioco sull'immagine di sfondo mentre il gioco si avvia, oppure con il suo nome a grandi lettere se non ha un logo. Scompare da solo quando si apre la finestra del gioco, o quando premi Esc o fai clic
   - type: feature
-    label: 'La scatola 3D girevole ora ha la vera forma di una custodia PS5: angoli e bordi arrotondati, il bordo rialzato intorno alla copertina, la linea dove si uniscono le due metà e l''incavo per le dita sul lato di apertura. Serve un file della scatola da una versione di Slipcase che scrive la forma; importa di nuovo la scatola per ottenerla. Le altre scatole restano come prima'
+    label: 'La confezione 3D girevole ora ha la vera forma di una custodia PS5: angoli e bordi arrotondati, il bordo rialzato intorno alla copertina, la linea dove si uniscono le due metà e l''incavo per il dito sul lato di apertura. Serve un file della confezione di una versione di Slipcase che scrive la forma; importa di nuovo la confezione per ottenerlo. Le altre confezioni restano come prima'
   - type: enhancement
-    label: Refresh RetroAchievements è passato da Impostazioni alla pagina RetroAchievements e ora si chiama Trova giochi con Obiettivi. Ogni pulsante ora ha una riga che spiega cosa fa, così Trova giochi e Sincronizza progressi sono facili da distinguere. Se non ci sono ancora giochi collegati, la pagina mostra a un amministratore il pulsante Trova invece di passare alla scheda successiva
-  body: "<ul>\n  <li><strong>Il manuale di aiuto è aggiornato in ogni lingua.</strong>\n    Le sezioni presenti solo nel manuale inglese ora sono tradotte.</li>\n</ul>\n"
+    label: Refresh RetroAchievements è stato spostato da Impostazioni alla pagina RetroAchievements e ora si chiama Trova giochi con obiettivi. Ogni pulsante ora ha una riga che spiega cosa fa, così Trova giochi e Sincronizza progressi sono facili da distinguere. Se non ci sono ancora giochi collegati, la pagina mostra a un amministratore il pulsante Trova invece di passare alla scheda successiva
+  body: "<ul>\n  <li><strong>Il manuale è aggiornato in ogni lingua.</strong>\n    Le sezioni presenti solo nel manuale inglese ora sono tradotte.</li>\n</ul>\n"
 - version: 3.35.4
   date: '2026-11-03'
   tags:

@@ -334,6 +334,7 @@
 <script nonce="{{ csp_nonce }}">
 let dedupGroups = [];
 let currentTaskId = null;
+let scanTaskId = null;  // kept after the scan ends: delete names it
 
 function toggleThreshold() {
     const method = document.getElementById('scanMethod').value;
@@ -368,6 +369,7 @@ async function startScan() {
 
         if (data.success) {
             currentTaskId = data.task_id;
+            scanTaskId = data.task_id;
             TaskPoller.start(data.task_id, {
                 onProgress(task) {
                     const percent = task.percent || 0;
@@ -581,7 +583,7 @@ async function deleteSelected() {
                 var response = await fetch('/api/rom-tools/screenshot-dedup/delete', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ deletions: deletions })
+                    body: JSON.stringify({ task_id: scanTaskId, deletions: deletions })
                 });
 
                 var data = await response.json();

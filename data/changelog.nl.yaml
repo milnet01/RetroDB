@@ -2,30 +2,36 @@
   date: '2026-11-04'
   tags:
   - type: fix
-    label: How Long to Beat op de pagina van een game zoekt naar wat je typt. Eerder zocht het bij een titel die het niet kon vinden in plaats daarvan op de andere namen van de game, en kon het een andere game voorstellen, zoals een remake van fans. Het probeert nog steeds de andere namen als het vak de eigen naam van de game bevat
+    label: Duplicate Finder biedt geen werkend bestand meer aan om te verwijderen. Bij zoeken op naam ziet het de .cue- en .bin-kopieën van een game niet meer als elkaars duplicaat. Het biedt nooit het trackbestand van een schijf aan, dat twee versies van een game kunnen delen. Het verwijdert geen schijf die in een afspeellijst staat. Een game waarvan je het bestand verwijdert, gaat nu naar de kopie die je bewaart, zodat het in de bibliotheek blijft
   - type: fix
-    label: De stappen voor How Long to Beat in de Handleiding komen nu overeen met het scherm. Er stond dat je een resultaat uit een lijst moest kiezen; de pagina toont één resultaat met Opslaan en Annuleren. De PlayStation-hulp zegt niet meer dat de aanmelding ongeveer twee maanden geldig blijft, omdat RetroDB zelf opnieuw inlogt. Alle 20 vertaalde handleidingen bevatten beide wijzigingen
+    label: Organize Multi-Disc overschrijft geen bestaande afspeellijst of bestand in de map van de game meer; het stopt en meldt welke. De afspeellijst die het maakt bevat de .cue van elke schijf, niet de trackbestanden. Games waarvan het de bestanden verplaatst, volgen die nu naar de map, dus Clean missing ROMs verwijdert ze niet meer
   - type: fix
-    label: Elke letterbalk begint nu met een knop Alle. Op de pagina's Bibliotheek, Console en PSN Trophies toont het kiezen van een letter alleen de games met die letter, en eerder was er geen knop om de rest terug te halen. Op de andere Prestaties-pagina's gaat Alle terug naar de eerste game
+    label: Omzetten naar CHD met "originelen verwijderen" verwijdert nu ook de trackbestanden van de schijf, maar bewaart een track die een andere .cue nog gebruikt. De game en elke afspeellijst met de oude schijf verwijzen nu naar de nieuwe .chd. Een bestand van een game hernoemen past nu ook de afspeellijst aan waarin het staat, en een trackbestand dat een .cue nodig heeft kan niet worden hernoemd. Bestanden uit een zip verwijderen verwijdert alleen de gekozen bestanden, ook als een naam [ of ] bevat. Screenshot Dedup verwijdert alleen de kopieën die de scan vond en houdt er altijd één over
   - type: fix
-    label: Een nieuw PlayStation-token dat je in Instellingen plakt, wordt nu direct gebruikt. Eerder bleef RetroDB de oude aanmelding gebruiken tot die verliep, en Opslaan en verbinding testen meldde dat die oude aanmelding werkte. Een token dat Sony weigert vervangt geen werkend token meer
+    label: How Long to Beat op de pagina van een game zoekt naar wat je typt. Eerder zocht het bij een titel die het niet kon vinden op de andere namen van de game, en kon het een andere game voorstellen, zoals een remake van fans. Het probeert de andere namen nog wel als het vak de eigen naam van de game bevat
+  - type: fix
+    label: De stappen voor How Long to Beat in de handleiding komen nu overeen met het scherm. Er stond dat je een resultaat uit een lijst kiest; de pagina toont één resultaat met Opslaan en Annuleren. De PlayStation-hulp zegt niet meer dat het inloggen ongeveer twee maanden geldig blijft, want RetroDB logt zelf opnieuw in. Alle 20 vertaalde handleidingen bevatten beide wijzigingen
+  - type: fix
+    label: Elke letterbalk begint nu met een knop Alles. Op de pagina's Bibliotheek, console en PSN Trophies toont een letter alleen de games met die letter, en er was geen knop om de rest terug te halen. Op de andere pagina's met prestaties gaat Alles terug naar de eerste game
+  - type: fix
+    label: Een nieuw PlayStation-token dat je in Instellingen plakt, wordt nu meteen gebruikt. Eerder bleef RetroDB de oude aanmelding gebruiken tot die verliep, en Opslaan en verbinding testen meldde die oude aanmelding als werkend. Een token dat Sony weigert, vervangt er geen dat werkt
   - type: enhancement
-    label: 'De PlayStation-aanmelding in Instellingen is makkelijker draaiende te houden. De banner telt geen dagen meer af waarop je niets hoefde te doen, omdat RetroDB zelf opnieuw inlogt; hij wordt alleen rood als Sony je opgeslagen token weigert. De knop Hier plakken laat de browser niet meer om toegang tot je klembord vragen: hij zet de cursor in het vak voor Ctrl+V. De stappen zeggen nu dat je eerst moet uitloggen bij PlayStation als je een token vervangt dat nog werkt, en de berichten erin kunnen worden vertaald'
+    label: 'De PlayStation-aanmelding in Instellingen is makkelijker draaiende te houden. De banner telt geen dagen meer af waarop je niets hoefde te doen, omdat RetroDB zelf opnieuw inlogt; hij wordt alleen rood als Sony je opgeslagen token weigert. De knop Hier plakken laat de browser niet meer om toegang tot je klembord vragen: hij zet de cursor in het vak voor Ctrl+V. De stappen zeggen nu dat je eerst uit PlayStation moet uitloggen als je een token vervangt dat nog werkt, en de berichten erin kunnen worden vertaald'
   - type: enhancement
-    label: Pop-upberichten en vraagvensters, zoals "Instellingen opgeslagen" of "Deze lijst verwijderen?", kunnen nu op elke pagina worden vertaald. Eerder bleven de meeste in het Engels, welke taal je ook koos
+    label: Pop-upberichten en vragen, zoals "Instellingen opgeslagen" of "Deze lijst verwijderen?", kunnen nu op elke pagina worden vertaald. Eerder bleven de meeste in het Engels, welke taal je ook koos
   - type: enhancement
     label: De berichten die uitleggen waarom een PlayStation-aanmelding mislukte, zoals "Je NPSSO is mogelijk verlopen", kunnen nu worden vertaald
   - type: fix
-    label: De Handleiding in elke taal komt nu overeen met de Engelse. Hij krijgt Overal zoeken, Een titel behouden, MAME-namen en de achterkant van de doos, en oudere alinea's die achterliepen zijn bijgewerkt
+    label: De handleiding in elke taal komt nu overeen met de Engelse. Hij bevat nu Search Anywhere, Keeping a Title, MAME Names en de achterkant van de doos, en oudere alinea's die achterliepen zijn bijgewerkt
   - type: fix
-    label: In het Duits, Afrikaans en Spaans staat op de knop Terug op de cover van een game nu de achterkant van de doos, niet "ga terug"
+    label: In het Duits, Afrikaans en Spaans zegt de knop Terug op de cover van een game nu de achterkant van de doos, niet "ga terug"
   - type: feature
-    label: Als je op Spelen drukt, vult nu het logo van de game op zijn achtergrondafbeelding het scherm terwijl de game start, of de naam in grote letters als er geen logo is. Het verdwijnt vanzelf als het venster van de game opent, of als je op Esc drukt of klikt
+    label: Als je op Spelen drukt, vult nu het logo van de game op de achtergrondafbeelding het scherm terwijl de game start, of de naam in grote letters als er geen logo is. Het verdwijnt vanzelf als het venster van de game opent, of als je op Esc drukt of klikt
   - type: feature
-    label: 'De draaibare 3D-doos heeft nu de echte vorm van een PS5-hoesje: afgeronde hoeken en randen, de verhoogde rand rond de cover, de naad waar de twee helften samenkomen en de vingersleuf aan de openingszijde. Daarvoor is een doosbestand nodig uit een versie van Slipcase die de vorm meeschrijft; importeer de doos opnieuw om dit te krijgen. Andere dozen zien eruit als voorheen'
+    label: 'De draaibare 3D-doos heeft nu de echte vorm van een PS5-doosje: afgeronde hoeken en randen, de verhoogde rand rond de cover, de lijn waar de twee helften samenkomen en de vingersleuf in de openingszijde. Je hebt een doosbestand nodig van een Slipcase-versie die de vorm schrijft; importeer de doos opnieuw om het te krijgen. Andere dozen zien eruit als eerder'
   - type: enhancement
-    label: RetroAchievements vernieuwen is verplaatst van Instellingen naar de RetroAchievements-pagina en heet nu Games met prestaties zoeken. Elke knop daar heeft nu een regel die uitlegt wat hij doet, zodat Games zoeken en Voortgang synchroniseren makkelijk uit elkaar te houden zijn. Als er nog geen games gekoppeld zijn, toont de pagina een beheerder de knop Zoeken in plaats van door te gaan naar het volgende tabblad
-  body: "<ul>\n  <li><strong>De Handleiding is in elke taal up-to-date.</strong>\n    Secties die alleen in de Engelse handleiding stonden, zijn nu vertaald.</li>\n</ul>\n"
+    label: Refresh RetroAchievements is verplaatst van Instellingen naar de RetroAchievements-pagina en heet nu Games met prestaties zoeken. Elke knop daar heeft nu een regel die zegt wat hij doet, zodat Games zoeken en Voortgang synchroniseren makkelijk te onderscheiden zijn. Als er nog geen games gekoppeld zijn, toont de pagina een beheerder de knop Zoeken in plaats van door te gaan naar het volgende tabblad
+  body: "<ul>\n  <li><strong>De handleiding is in elke taal up-to-date.</strong>\n    Onderdelen die alleen in de Engelse handleiding stonden, zijn nu vertaald.</li>\n</ul>\n"
 - version: 3.35.4
   date: '2026-11-03'
   tags:

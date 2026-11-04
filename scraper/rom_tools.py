@@ -18,6 +18,8 @@ from typing import List, Optional, Dict, Any, Tuple
 from dataclasses import dataclass, field, asdict
 import logging
 
+from services.disc_files import repoint_playlists, sheet_tracks, sheets_naming
+
 logger = logging.getLogger(__name__)
 
 
@@ -107,7 +109,7 @@ def convert_one_to_chd(
             result["error"] = "original kept: conversion was not verified"
         elif delete_original:
             try:
-                src.unlink()
+                _delete_converted_source(src, dst)
             except OSError as e:
                 # Conversion succeeded; surface the delete failure but
                 # don't flip status — the .chd is good.
@@ -128,6 +130,18 @@ def convert_one_to_chd(
                 tmp.unlink()
             except OSError:
                 pass
+
+
+def _delete_converted_source(src: Path, chd: Path) -> None:
+    """PASS-59-237 — a .cue or .gdi is the whole disc with its tracks, so
+    they go too, except a track another sheet in the folder still names.
+    A playlist that listed the source lists the .chd instead."""
+    tracks = sheet_tracks(str(src))
+    repoint_playlists(str(src), str(chd))
+    src.unlink()
+    for track in tracks:
+        if os.path.isfile(track) and not sheets_naming(track):
+            os.remove(track)
 
 
 # PASS-59-119 — the Temporary Path default before it became empty.
@@ -674,6 +688,11 @@ class ArchiveScanner:
         if not cmd_info.get("delete"):
             return {"success": False, "error": f"Archive type {ext} doesn't support file deletion"}
         
+        # PASS-59-237 — 7z reads * and ? as wildcards even after -i!.
+        if ext == ".7z" and any(c in f for f in files_to_remove for c in "*?"):
+            return {"success": False,
+                    "error": "A name with * or ? cannot be removed from a .7z safely"}
+
         # Get current contents before deletion for verification
         contents_before = set(self._list_archive_contents(path))
         logger.debug(f"Archive contains {len(contents_before)} files before deletion")
@@ -681,7 +700,8 @@ class ArchiveScanner:
         try:
             if ext == ".zip":
                 # Use "--" to indicate end of options, preventing filenames starting with "-" from being interpreted as switches
-                cmd = ["zip", "-d", str(path), "--"] + files_to_remove
+                # -nw: names are literal, so "Game [!].sfc" is not a pattern.
+                cmd = ["zip", "-d", "-nw", str(path), "--"] + files_to_remove
             elif ext == ".7z":
                 # For 7z, we need to use a different approach for files starting with "-"
                 # Using @ syntax with a list file, or wrap filenames
@@ -715,6 +735,11 @@ class ArchiveScanner:
                 for f in actually_removed:
                     logger.info(f"  Removed: '{f}'")
             
+            extra = actually_removed - set(files_to_remove)
+            if extra:
+                logger.error(f"Removed files nobody asked for: {sorted(extra)}")
+                return {"success": False,
+                        "error": "Also removed: " + ", ".join(sorted(extra))}
             if result.returncode == 0 and actually_removed:
                 logger.info(f"Successfully removed {len(actually_removed)} files from {archive_path}")
                 return {"success": True, "removed_count": len(actually_removed)}
@@ -1789,32 +1814,6 @@ class DuplicateFinder:
             names = [f["name"] for f in files]
             return min(names, key=len)
         return "Unknown"
-    
-    def delete_duplicates(self, files_to_delete: List[str]) -> Dict[str, Any]:
-        """Delete specified duplicate files"""
-        results = {
-            "deleted": 0,
-            "failed": 0,
-            "freed_space": 0,
-            "errors": []
-        }
-        
-        for file_path in files_to_delete:
-            try:
-                p = Path(file_path)
-                if p.exists():
-                    size = p.stat().st_size
-                    p.unlink()
-                    results["deleted"] += 1
-                    results["freed_space"] += size
-                else:
-                    results["errors"].append(f"File not found: {file_path}")
-                    results["failed"] += 1
-            except Exception as e:
-                results["errors"].append(f"Error deleting {file_path}: {e}")
-                results["failed"] += 1
-        
-        return results
     
     def _timestamp(self) -> str:
         return datetime.now().strftime("%H:%M:%S")

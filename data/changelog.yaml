@@ -2,6 +2,12 @@
   date: 2026-11-04
   tags:
   - type: fix
+    label: Duplicate Finder no longer offers a working file for deletion. Looking by name, it no longer calls a game's .cue and .bin copies of each other. It never offers a disc's track file, which two versions of a game can share. It will not delete a disc that a playlist lists. A game whose file you delete now moves to the copy you keep, so it stays in the library
+  - type: fix
+    label: Organize Multi-Disc no longer writes over an existing playlist or a file already in the game's folder; it stops and says which. The playlist it makes lists each disc's .cue, not its track files. Games whose files it moves now follow them into the folder, so Clean missing ROMs no longer removes them
+  - type: fix
+    label: 'Converting to CHD with "delete originals" now deletes the disc''s track files too, but keeps a track another .cue still uses. The game and any playlist that listed the old disc now point at the new .chd. Renaming a game''s file now updates the playlist that lists it, and a track file a .cue needs cannot be renamed. Removing files from a zip removes only the files you picked, even when a name holds [ or ]. Screenshot Dedup deletes only the copies its scan found, and always keeps one'
+  - type: fix
     label: How Long to Beat on a game's page searches for what you type. Before, a title it could not find made it search the game's other names instead, and it could offer a different game, such as a fan remake. It still tries the other names when the box holds the game's own name
   - type: fix
     label: The help manual's How Long to Beat steps match the screen. They said to pick a match from a list; the page shows one match with Save and Cancel. The PlayStation help no longer says the sign-in lasts about two months, since RetroDB signs in again by itself. All 20 translated manuals carry both changes

@@ -2,30 +2,36 @@
   date: '2026-11-04'
   tags:
   - type: fix
-    label: Bir oyunun sayfasındaki How Long to Beat, yazdığınızı arar. Önceden bulamadığı bir başlık yerine oyunun diğer adlarını arıyordu ve hayran yapımı bir yeniden yapım gibi farklı bir oyun önerebiliyordu. Kutuda oyunun kendi adı olduğunda diğer adları yine dener
+    label: Duplicate Finder artık silinmek üzere çalışan bir dosya önermiyor. Ada göre ararken bir oyunun .cue ve .bin kopyalarını artık birbirinin kopyası saymıyor. Bir oyunun iki sürümünün paylaşabileceği disk iz dosyasını hiçbir zaman önermiyor. Bir oynatma listesinde yer alan diski silmez. Dosyasını sildiğiniz oyun artık sakladığınız kopyaya geçer, böylece Kütüphane'de kalır
   - type: fix
-    label: Kılavuzdaki How Long to Beat adımları artık ekranla uyumlu. Önceden listeden eşleşme seçmenizi söylüyordu; sayfa ise Kaydet ve İptal ile tek bir eşleşme gösteriyor. PlayStation yardımı artık oturum açmanın yaklaşık iki ay sürdüğünü söylemiyor, çünkü RetroDB yeniden kendisi oturum açıyor. Çevrilmiş 20 kılavuzun hepsinde bu iki değişiklik var
+    label: Organize Multi-Disc artık var olan bir oynatma listesinin ya da oyunun klasöründeki bir dosyanın üzerine yazmıyor; durup hangisi olduğunu söylüyor. Oluşturduğu oynatma listesi her diskin iz dosyalarını değil .cue dosyasını listeler. Dosyaları taşınan oyunlar artık klasöre onlarla birlikte taşınır, bu yüzden Clean missing ROMs onları artık kaldırmaz
   - type: fix
-    label: Her harf çubuğu artık Tümü düğmesiyle başlıyor. Kütüphane, konsol ve PSN Kupaları sayfalarında bir harf seçince yalnızca o harfin oyunları görünüyor; önceden gerisini geri getirecek düğme yoktu. Diğer başarım sayfalarında Tümü ilk oyuna döner
+    label: '"Orijinalleri sil" ile CHD''ye dönüştürmek artık diskin iz dosyalarını da siler, ancak başka bir .cue''nun hâlâ kullandığı izi korur. Oyun ve eski diski listeleyen oynatma listeleri artık yeni .chd dosyasını gösterir. Bir oyunun dosyasını yeniden adlandırmak artık onu listeleyen oynatma listesini günceller; bir .cue''nun ihtiyaç duyduğu iz dosyası yeniden adlandırılamaz. Bir zip içinden dosya kaldırmak, adda [ veya ] olsa bile yalnızca seçtiğiniz dosyaları kaldırır. Screenshot Dedup yalnızca taramasının bulduğu kopyaları siler ve her zaman birini saklar'
   - type: fix
-    label: Ayarlar'a yapıştırdığınız yeni PlayStation oturum belirteci artık hemen kullanılıyor. Önceden RetroDB eski oturum bitene kadar onu kullanıyordu ve Kaydet ve Bağlantıyı Sına eski oturumu çalışıyor diye gösteriyordu. Sony'nin reddettiği belirteç artık çalışan birinin yerini almıyor
+    label: Bir oyunun sayfasındaki How Long to Beat artık yazdığınızı arar. Önceden, bulamadığı bir başlık yerine oyunun diğer adlarını arıyordu ve hayran yapımı bir yeniden yapım gibi farklı bir oyun önerebiliyordu. Kutuda oyunun kendi adı olduğunda diğer adları yine dener
+  - type: fix
+    label: Kılavuzdaki How Long to Beat adımları artık ekranla uyuşuyor. Listeden bir eşleşme seçmenizi söylüyordu; sayfa ise Kaydet ve İptal ile tek bir eşleşme gösteriyor. PlayStation yardımı artık oturum açmanın yaklaşık iki ay sürdüğünü söylemiyor, çünkü RetroDB kendiliğinden yeniden oturum açar. Çevrilmiş 20 kılavuzun hepsinde her iki değişiklik de var
+  - type: fix
+    label: Her harf çubuğu artık Tümü düğmesiyle başlıyor. Kütüphane, konsol ve PSN Trophies sayfalarında bir harf seçmek yalnızca o harfin oyunlarını gösterir; önceden geri kalanları getirecek bir düğme yoktu. Diğer başarım sayfalarında Tümü ilk oyuna döner
+  - type: fix
+    label: Ayarlar'a yapıştırdığınız yeni PlayStation oturum belirteci artık hemen kullanılıyor. Önceden RetroDB eski oturumu süresi dolana kadar kullanmaya devam ediyordu ve Save & Test Connection eski oturumu çalışıyor diye bildiriyordu. Sony'nin reddettiği bir belirteç artık çalışan birinin yerini almaz
   - type: enhancement
-    label: 'Ayarlar''daki PlayStation oturumunu sürdürmek daha kolay. Pano artık işlem yapmanız gerekmeyen günleri saymıyor, çünkü RetroDB yeniden kendisi oturum açıyor; yalnızca Sony kayıtlı belirtecinizi reddederse kırmızı olur. Buraya yapıştır düğmesi artık tarayıcının panonuzu okuma izni istemesine yol açmıyor: imleci Ctrl+V için kutuya koyuyor. Adımlar, hâlâ çalışan bir belirteci değiştirirken önce PlayStation''dan çıkış yapmanızı söylüyor ve mesajları çevrilebiliyor'
+    label: 'Ayarlar''daki PlayStation oturumunu sürdürmek artık daha kolay. Afiş artık işlem yapmanız gerekmeyen günleri saymıyor, çünkü RetroDB kendiliğinden yeniden oturum açar; yalnızca Sony kayıtlı belirtecinizi reddettiğinde kırmızı olur. Paste here düğmesi artık tarayıcının panonuza erişim izni istemesine yol açmaz: imleci Ctrl+V için kutuya koyar. Adımlar artık hâlâ çalışan bir belirteci değiştirirken önce PlayStation''dan çıkış yapmanızı söylüyor ve mesajları çevrilebiliyor'
   - type: enhancement
     label: '"Ayarlar kaydedildi" veya "Bu liste silinsin mi?" gibi açılır mesajlar ve soru kutuları artık her sayfada çevrilebiliyor. Önceden çoğu, seçtiğiniz dil ne olursa olsun İngilizce kalıyordu'
   - type: enhancement
-    label: '"NPSSO''nuzun süresi dolmuş olabilir" gibi PlayStation oturum açmanın neden başarısız olduğunu söyleyen mesajlar artık çevrilebiliyor'
+    label: Bir PlayStation oturumunun neden açılamadığını anlatan "Your NPSSO may have expired" gibi mesajlar artık çevrilebiliyor
   - type: fix
-    label: Her dildeki kılavuz artık İngilizce olanla uyumlu. Her Yerde Ara, Başlığı Koruma, MAME Adları ve kutunun arkası bölümleri eklendi, geride kalmış eski paragraflar güncellendi
+    label: Her dildeki kılavuz artık İngilizce olanla uyuşuyor. Search Anywhere, Keeping a Title, MAME Names ve kutunun arkası bölümlerini kazandı; geride kalmış eski paragraflar güncellendi
   - type: fix
-    label: Almanca, Afrikaanca ve İspanyolcada bir oyunun kapağındaki Geri düğmesi artık "geri git" değil, kutunun arkası anlamına geliyor
+    label: Almanca, Afrikaanca ve İspanyolcada, oyun kapağındaki Geri düğmesi artık "geri git" yerine kutunun arkasını söylüyor
   - type: feature
-    label: Oyna'ya basmak, oyun başlarken ekranı oyunun logosuyla arka plan resminin üzerinde dolduruyor; logo yoksa oyunun adını büyük harflerle gösteriyor. Oyunun penceresi açılınca ya da Esc'ye basınca veya tıklayınca kendiliğinden kapanır
+    label: Oyna'ya basmak artık oyun başlarken ekranı, arka plan resmi üzerinde oyunun logosuyla ya da logosu yoksa büyük harflerle adıyla dolduruyor. Oyunun penceresi açılınca ya da Esc tuşuna basınca veya tıklayınca kendiliğinden kapanır
   - type: feature
-    label: 'Döndürülebilen 3D kutu artık gerçek bir PS5 kutusunun şeklinde: yuvarlak köşeler ve kenarlar, kapağın çevresindeki yükseltilmiş kenar, iki yarının birleştiği çizgi ve açılan yandaki parmak girintisi. Şekli yazan bir Slipcase sürümünden kutu dosyası gerekir; almak için kutuyu yeniden içe aktarın. Diğer kutular eskisi gibi görünür'
+    label: 'Döndürülebilir 3B kutu artık gerçek bir PS5 kutusunun şeklinde: yuvarlak köşeler ve kenarlar, kapağın çevresindeki çıkıntılı kenar, iki yarının birleştiği çizgi ve açılan taraftaki parmak girintisi. Şekli yazan bir Slipcase sürümünden kutu dosyası gerekir; almak için kutuyu yeniden içe aktarın. Diğer kutular eskisi gibi görünür'
   - type: enhancement
-    label: RetroAchievements'ı Yenile, Ayarlar'dan RetroAchievements sayfasına taşındı ve artık Başarımlı Oyunları Bul adını taşıyor. Oradaki her düğmenin ne yaptığını anlatan bir satır var, böylece Oyunları Bul ile İlerlemeyi Eşitle kolayca ayırt edilir. Henüz bağlı oyun yoksa sayfa, sonraki sekmeye geçmek yerine yöneticiye Bul düğmesini gösterir
-  body: "<ul>\n  <li><strong>Kılavuz her dilde güncel.</strong>\n    Yalnızca İngilizce kılavuzda olan bölümler artık çevrildi.</li>\n</ul>\n"
+    label: Refresh RetroAchievements, Ayarlar'dan RetroAchievements sayfasına taşındı ve artık Find Games with Achievements adını taşıyor. Oradaki her düğmenin ne yaptığını anlatan bir satır var, böylece Find Games ile Sync Progress kolayca ayırt edilir. Henüz bağlı oyun yokken sayfa, bir sonraki sekmeye geçmek yerine yöneticiye Find düğmesini gösterir
+  body: "<ul>\n  <li><strong>Kılavuz her dilde güncel.</strong>\n    Yalnızca İngilizce kılavuzda bulunan bölümler artık çevrildi.</li>\n</ul>\n"
 - version: 3.35.4
   date: '2026-11-03'
   tags:
