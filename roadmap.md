@@ -11048,6 +11048,8 @@ the cover zoom in Firefox before being reverted for the local fix.
   - A rating cross-mapped from an AI guess is not marked as a guess.
   - Clear Scraped Data leaves `perspective`, `dimension`, `game_structure`.
 - **Source**: audit 2026-11-04.
+- **Decided** (user, 2026-11-04): AI Fill leaves hand-edited values
+  alone; it replaces only scraped values in `VALIDATE_FIELDS`.
 
 ---
 
@@ -11140,6 +11142,9 @@ the cover zoom in Firefox before being reverted for the local fix.
     PASS-43-4 whether RTL lands for v4.0.0.
   - Translate the new strings with `scripts/translate_release.py`.
 - **Source**: audit 2026-11-04.
+- **Decided** (user, 2026-11-04): right-to-left layout waits until after
+  v4.0.0 (PASS-43-4). Hebrew ships marked as a preview whose layout is
+  not yet right to left.
 
 ---
 
