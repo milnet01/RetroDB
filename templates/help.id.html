@@ -1207,11 +1207,12 @@
     <div class="card-body">
         <h3>Penggunaan</h3>
         <ol>
-            <li>Buka modal detail game mana pun</li>
-            <li>Klik <strong>"Lookup HLTB"</strong></li>
-            <li>Pilih kecocokan yang benar dari hasil</li>
-            <li>Estimasi waktu bermain disimpan ke game tersebut</li>
+            <li>Buka halaman game dan cari <strong>How Long to Beat</strong>, atau buka jendela <strong>Edit</strong>-nya</li>
+            <li>Kotak pencarian berisi judul game. Ubah jika HowLongToBeat mengenal game tersebut dengan nama lain</li>
+            <li>Klik <strong>"Cari HLTB"</strong></li>
+            <li>Periksa satu kecocokan yang ditampilkan, beserta platformnya dan seberapa dekat kecocokannya, lalu klik <strong>Simpan</strong>. <strong>Batal</strong> tidak menyimpan apa pun</li>
         </ol>
+        <p>Jika kotak masih berisi judul asli game, pencarian juga mencoba judul lain dari game tersebut yang diketahui. Teks yang Anda ketik sendiri dicari persis seperti yang diketik.</p>
 
         <h3>Kategori Waktu</h3>
         <ul>
@@ -1265,7 +1266,7 @@
             <li>Halaman tersebut akan menampilkan JSON yang berisi token NPSSO Anda</li>
             <li>Salin nilai <code>npsso</code> dan tempelkan di Settings &rarr; Account &rarr; PSN</li>
         </ol>
-        <p>Setelah terautentikasi, RetroDB menyimpan token akses secara aman di database-nya sendiri (per pengguna) dan memperbaruinya secara otomatis &mdash; Anda tidak perlu menempelkan NPSSO lagi setiap kali sinkronisasi. Sesi tetap berlaku selama kira-kira dua bulan, dan sekarang RetroDB juga memperbaruinya secara otomatis di latar belakang, sehingga dalam penggunaan normal Anda jarang perlu NPSSO baru.</p>
+        <p>Setelah terautentikasi, RetroDB menyimpan token akses secara aman di database-nya sendiri (per pengguna) dan memperbaruinya secara otomatis &mdash; Anda tidak perlu menempelkan NPSSO lagi setiap kali sinkronisasi. Saat sesi Sony berakhir, RetroDB masuk kembali dengan sendirinya menggunakan NPSSO yang tersimpan. Anda hanya perlu NPSSO baru jika Sony menolak NPSSO yang tersimpan; Settings &rarr; Account dan Dasbor akan memberi tahu Anda.</p>
 
         <h3>Detail Trofi</h3>
         <ul>
@@ -1831,7 +1832,7 @@
         <ul>
             <li>Token NPSSO kedaluwarsa &mdash; buat yang baru dari <code>ca.account.sony.com/api/v1/ssocookie</code></li>
             <li>Pastikan Anda sudah masuk ke store.playstation.com sebelum mengunjungi URL cookie tersebut</li>
-            <li>RetroDB menyimpan sesi PSN Anda selama kira-kira dua bulan dan sekarang memperbaruinya secara otomatis di latar belakang; jika masih habis masa berlakunya, cukup tempelkan NPSSO baru di Settings &rarr; Account &rarr; PSN</li>
+            <li>RetroDB masuk kembali dengan sendirinya selama Sony menerima NPSSO Anda yang tersimpan. Setelah Sony menolaknya, tempelkan yang baru di Settings &rarr; Account &rarr; PSN. Untuk mengganti token yang masih berfungsi, keluar dari PlayStation terlebih dahulu.</li>
         </ul>
 
         <h4>"Xbox Authentication Failed"</h4>

@@ -1207,11 +1207,12 @@
     <div class="card-body">
         <h3>Utilizzo</h3>
         <ol>
-            <li>Apri la finestra modale dei dettagli di un gioco</li>
-            <li>Fai clic su <strong>"Ricerca HLTB"</strong></li>
-            <li>Seleziona la corrispondenza corretta tra i risultati</li>
-            <li>Le stime del tempo di gioco vengono salvate nel gioco</li>
+            <li>Apri la pagina di un gioco e trova <strong>How Long to Beat</strong>, oppure apri la sua finestra <strong>Modifica</strong></li>
+            <li>La casella di ricerca contiene il titolo del gioco. Cambialo se HowLongToBeat conosce il gioco con un altro nome</li>
+            <li>Fai clic su <strong>"Cerca HLTB"</strong></li>
+            <li>Controlla l'unica corrispondenza mostrata, con la sua piattaforma e quanto è vicina, poi fai clic su <strong>Salva</strong>. <strong>Annulla</strong> non conserva nulla</li>
         </ol>
+        <p>Se la casella contiene ancora il titolo del gioco, la ricerca prova anche gli altri titoli noti del gioco. Il testo che scrivi tu viene cercato così come lo scrivi.</p>
 
         <h3>Categorie di tempo</h3>
         <ul>
@@ -1265,7 +1266,7 @@
             <li>La pagina mostrerà un JSON contenente il tuo token NPSSO</li>
             <li>Copia il valore <code>npsso</code> e incollalo in Impostazioni &rarr; Account &rarr; PSN</li>
         </ol>
-        <p>Una volta effettuata l'autenticazione, RetroDB conserva i token di accesso in modo sicuro nel proprio database (per utente) e li aggiorna automaticamente &mdash; non devi incollare di nuovo l'NPSSO a ogni sincronizzazione. La sessione resta valida per circa due mesi, e ora RetroDB la rinnova anche automaticamente in background, quindi nell'uso normale raramente dovrebbe servirti un nuovo NPSSO.</p>
+        <p>Una volta effettuata l'autenticazione, RetroDB conserva i token di accesso in modo sicuro nel proprio database (per utente) e li aggiorna automaticamente &mdash; non devi incollare di nuovo l'NPSSO a ogni sincronizzazione. Quando la sessione di Sony termina, RetroDB accede di nuovo da solo con l'NPSSO salvato. Ti serve un nuovo NPSSO solo quando Sony rifiuta quello salvato; in quel caso te lo dicono Impostazioni &rarr; Account e la dashboard.</p>
 
         <h3>Dettagli dei trofei</h3>
         <ul>
@@ -1831,7 +1832,7 @@
         <ul>
             <li>I token NPSSO scadono &mdash; generane uno nuovo da <code>ca.account.sony.com/api/v1/ssocookie</code></li>
             <li>Assicurati di aver effettuato l'accesso a store.playstation.com prima di visitare l'URL del cookie</li>
-            <li>RetroDB conserva la tua sessione PSN per circa due mesi e ora la rinnova automaticamente in background; se scade comunque, incolla semplicemente un nuovo NPSSO in Impostazioni &rarr; Account &rarr; PSN</li>
+            <li>RetroDB accede di nuovo da solo finché Sony accetta l'NPSSO salvato. Quando Sony lo rifiuta, incolla un nuovo NPSSO in Impostazioni &rarr; Account &rarr; PSN. Per sostituire un token che funziona ancora, esci prima da PlayStation.</li>
         </ul>
 
         <h4>"Autenticazione Xbox fallita"</h4>

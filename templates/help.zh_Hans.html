@@ -1207,11 +1207,12 @@
     <div class="card-body">
         <h3>用法</h3>
         <ol>
-            <li>打开任意游戏的详情弹窗</li>
+            <li>打开游戏页面并找到<strong>通关时长</strong>，或打开其<strong>编辑</strong>窗口</li>
+            <li>搜索框中已填入游戏标题。如果 HowLongToBeat 以另一个名称收录该游戏，请修改它</li>
             <li>点击<strong>“查询 HLTB”</strong></li>
-            <li>从结果中选择正确的匹配项</li>
-            <li>游玩时长估算会保存到该游戏</li>
+            <li>检查显示的唯一匹配项及其平台和相似程度，然后点击<strong>保存</strong>。<strong>取消</strong>则不保存任何内容</li>
         </ol>
+        <p>如果搜索框中仍是游戏本身的标题，搜索还会尝试该游戏的其他已知标题。你自己输入的文字会按原样搜索。</p>
 
         <h3>时长类别</h3>
         <ul>
@@ -1265,7 +1266,7 @@
             <li>该页面会显示包含你的 NPSSO 令牌的 JSON</li>
             <li>复制 <code>npsso</code> 值并粘贴到设置 &rarr; 账户 &rarr; PSN</li>
         </ol>
-        <p>身份验证完成后，RetroDB 会将访问令牌安全地缓存在自己的数据库中（按用户），并自动刷新它们 &mdash; 你无需在每次同步时重新粘贴 NPSSO。会话大约在两个月内保持有效，而且 RetroDB 现在还会在后台自动续期，因此在正常使用中你应该很少需要获取新的 NPSSO。</p>
+        <p>身份验证完成后，RetroDB 会将访问令牌安全地缓存在自己的数据库中（按用户），并自动刷新它们 &mdash; 你无需在每次同步时重新粘贴 NPSSO。当 Sony 的会话结束时，RetroDB 会使用你保存的 NPSSO 自动重新登录。只有当 Sony 拒绝已保存的 NPSSO 时，你才需要新的 NPSSO；届时 设置 &rarr; 账户 和仪表盘会提示你。</p>
 
         <h3>奖杯详情</h3>
         <ul>
@@ -1831,7 +1832,7 @@
         <ul>
             <li>NPSSO 令牌会过期 &mdash; 请从 <code>ca.account.sony.com/api/v1/ssocookie</code> 生成一个新的</li>
             <li>在访问该 cookie 网址之前，请确保你已登录 store.playstation.com</li>
-            <li>RetroDB 会将你的 PSN 会话缓存约两个月，并且现在会在后台自动续期；如果仍然失效，只需在 设置 &rarr; 账户 &rarr; PSN 中粘贴一个新的 NPSSO 即可</li>
+            <li>只要 Sony 接受你保存的 NPSSO，RetroDB 就会自动重新登录。一旦 Sony 拒绝它，请在 设置 &rarr; 账户 &rarr; PSN 中粘贴一个新的。若要替换仍然有效的令牌，请先退出 PlayStation 登录。</li>
         </ul>
 
         <h4>“Xbox 身份验证失败”</h4>

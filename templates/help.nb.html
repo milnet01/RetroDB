@@ -1205,11 +1205,12 @@
     <div class="card-body">
         <h3>Bruk</h3>
         <ol>
-            <li>Åpne detaljmodalen for et spill</li>
-            <li>Klikk <strong>"Lookup HLTB"</strong></li>
-            <li>Velg riktig treff blant resultatene</li>
-            <li>Spilletidsestimater lagres på spillet</li>
+            <li>Åpne siden til et spill og finn <strong>How Long to Beat</strong>, eller åpne <strong>Rediger</strong>-vinduet for spillet</li>
+            <li>Søkefeltet inneholder spillets tittel. Endre den hvis HowLongToBeat kjenner spillet under et annet navn</li>
+            <li>Klikk <strong>"Slå opp HLTB"</strong></li>
+            <li>Kontroller det ene treffet som vises, med plattform og hvor godt det stemmer, og klikk deretter <strong>Lagre</strong>. <strong>Avbryt</strong> lagrer ingenting</li>
         </ol>
+        <p>Hvis feltet fortsatt inneholder spillets egen tittel, prøver søket også spillets andre kjente titler. Tekst du har skrevet selv, søkes slik den er skrevet.</p>
 
         <h3>Tidskategorier</h3>
         <ul>
@@ -1263,7 +1264,7 @@
             <li>Siden vil vise JSON som inneholder NPSSO-tokenet ditt</li>
             <li>Kopier <code>npsso</code>-verdien og lim den inn i Innstillinger &rarr; Konto &rarr; PSN</li>
         </ol>
-        <p>Etter autentisering bufrer RetroDB tilgangstokenene sikkert i sin egen database (per bruker) og fornyer dem automatisk &mdash; du trenger ikke lime inn NPSSO igjen ved hver synkronisering. Økten forblir gyldig i omtrent to måneder, og RetroDB fornyer den nå også automatisk i bakgrunnen, så i normal bruk bør du sjelden trenge en ny NPSSO.</p>
+        <p>Etter autentisering bufrer RetroDB tilgangstokenene sikkert i sin egen database (per bruker) og fornyer dem automatisk &mdash; du trenger ikke lime inn NPSSO igjen ved hver synkronisering. Når Sonys økt utløper, logger RetroDB inn igjen av seg selv med den lagrede NPSSO-en din. Du trenger en ny NPSSO bare når Sony avviser den lagrede; Innstillinger &rarr; Konto og Dashboard sier da fra.</p>
 
         <h3>Trofedetaljer</h3>
         <ul>
@@ -1825,7 +1826,7 @@
         <ul>
             <li>NPSSO-tokens utløper &mdash; generer et nytt fra <code>ca.account.sony.com/api/v1/ssocookie</code></li>
             <li>Sørg for at du er logget inn på store.playstation.com før du besøker informasjonskapsel-URL-en</li>
-            <li>RetroDB bufrer PSN-økten din i omtrent to måneder og fornyer den nå også automatisk i bakgrunnen; hvis den likevel utløper, bare lim inn en fersk NPSSO i Innstillinger &rarr; Konto &rarr; PSN</li>
+            <li>RetroDB logger inn igjen av seg selv så lenge Sony godtar den lagrede NPSSO-en din. Når Sony avviser den, limer du inn en ny i Innstillinger &rarr; Konto &rarr; PSN. For å bytte ut et token som fortsatt virker, logg først ut av PlayStation.</li>
         </ul>
 
         <h4>"Xbox Authentication Failed"</h4>

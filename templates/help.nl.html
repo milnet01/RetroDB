@@ -1207,11 +1207,12 @@
     <div class="card-body">
         <h3>Gebruik</h3>
         <ol>
-            <li>Open het detailvenster van een spel</li>
+            <li>Open de pagina van een spel en zoek <strong>How Long to Beat</strong>, of open het venster <strong>Bewerken</strong></li>
+            <li>Het zoekvak bevat de titel van het spel. Pas deze aan als HowLongToBeat het spel onder een andere naam kent</li>
             <li>Klik op <strong>"HLTB opzoeken"</strong></li>
-            <li>Selecteer de juiste overeenkomst uit de resultaten</li>
-            <li>Speeltijdschattingen worden bij het spel opgeslagen</li>
+            <li>Controleer de ene getoonde overeenkomst, met het platform en hoe goed deze overeenkomt, en klik dan op <strong>Opslaan</strong>. <strong>Annuleren</strong> bewaart niets</li>
         </ol>
+        <p>Als het vak nog de eigen titel van het spel bevat, probeert de zoekopdracht ook de andere bekende titels van het spel. Tekst die u zelf hebt getypt, wordt gezocht zoals getypt.</p>
 
         <h3>Tijdcategorieën</h3>
         <ul>
@@ -1265,7 +1266,7 @@
             <li>De pagina toont JSON met uw NPSSO-token</li>
             <li>Kopieer de <code>npsso</code>-waarde en plak deze bij Instellingen &rarr; Account &rarr; PSN</li>
         </ol>
-        <p>Zodra u bent geauthenticeerd, cachet RetroDB de toegangstokens veilig in de eigen database (per gebruiker) en vernieuwt deze automatisch &mdash; u hoeft de NPSSO niet bij elke synchronisatie opnieuw te plakken. De sessie blijft ongeveer twee maanden geldig, en RetroDB vernieuwt deze nu ook automatisch op de achtergrond, dus in normaal gebruik zult u zelden een nieuwe NPSSO nodig hebben.</p>
+        <p>Zodra u bent geauthenticeerd, cachet RetroDB de toegangstokens veilig in de eigen database (per gebruiker) en vernieuwt deze automatisch &mdash; u hoeft de NPSSO niet bij elke synchronisatie opnieuw te plakken. Wanneer de sessie van Sony afloopt, meldt RetroDB zich met uw opgeslagen NPSSO zelf opnieuw aan. U hebt alleen een nieuwe NPSSO nodig als Sony de opgeslagen weigert; Instellingen &rarr; Account en het dashboard laten u dat dan weten.</p>
 
         <h3>Trofeedetails</h3>
         <ul>
@@ -1831,7 +1832,7 @@
         <ul>
             <li>NPSSO-tokens verlopen &mdash; genereer een nieuwe via <code>ca.account.sony.com/api/v1/ssocookie</code></li>
             <li>Zorg ervoor dat u bent aangemeld bij store.playstation.com voordat u de cookie-URL bezoekt</li>
-            <li>RetroDB cachet uw PSN-sessie ongeveer twee maanden en vernieuwt deze nu ook automatisch op de achtergrond; als deze toch verloopt, plakt u eenvoudig een nieuwe NPSSO bij Instellingen &rarr; Account &rarr; PSN</li>
+            <li>RetroDB meldt zich zelf opnieuw aan zolang Sony uw opgeslagen NPSSO accepteert. Zodra Sony deze weigert, plakt u een nieuwe bij Instellingen &rarr; Account &rarr; PSN. Wilt u een token vervangen dat nog werkt, meld u dan eerst af bij PlayStation.</li>
         </ul>
 
         <h4>"Xbox Authentication Failed"</h4>

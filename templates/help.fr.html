@@ -1207,11 +1207,12 @@
     <div class="card-body">
         <h3>Utilisation</h3>
         <ol>
-            <li>Ouvrez la fenêtre de détails d'un jeu</li>
-            <li>Cliquez sur <strong>« Recherche HLTB »</strong></li>
-            <li>Sélectionnez la bonne correspondance parmi les résultats</li>
-            <li>Les estimations de durée sont enregistrées dans le jeu</li>
+            <li>Ouvrez la page d'un jeu et trouvez <strong>How Long to Beat</strong>, ou ouvrez sa fenêtre <strong>Modifier</strong></li>
+            <li>Le champ de recherche contient le titre du jeu. Modifiez-le si HowLongToBeat connaît le jeu sous un autre nom</li>
+            <li>Cliquez sur <strong>« Rechercher sur HLTB »</strong></li>
+            <li>Vérifiez la correspondance unique affichée, avec sa plateforme et son degré de proximité, puis cliquez sur <strong>Enregistrer</strong>. <strong>Annuler</strong> ne conserve rien</li>
         </ol>
+        <p>Si le champ contient encore le titre propre du jeu, la recherche essaie aussi les autres titres connus du jeu. Le texte que vous avez saisi vous-même est recherché tel quel.</p>
 
         <h3>Catégories de durée</h3>
         <ul>
@@ -1265,7 +1266,7 @@
             <li>La page affichera du JSON contenant votre jeton NPSSO</li>
             <li>Copiez la valeur <code>npsso</code> et collez-la dans Paramètres &rarr; Compte &rarr; PSN</li>
         </ol>
-        <p>Une fois authentifié, RetroDB conserve les jetons d'accès en sécurité dans sa propre base de données (par utilisateur) et les actualise automatiquement &mdash; vous n'avez pas à recoller le NPSSO à chaque synchronisation. La session reste valide environ deux mois, et RetroDB la renouvelle désormais aussi automatiquement en arrière-plan, donc en usage normal vous aurez rarement besoin d'un nouveau NPSSO.</p>
+        <p>Une fois authentifié, RetroDB conserve les jetons d'accès en sécurité dans sa propre base de données (par utilisateur) et les actualise automatiquement &mdash; vous n'avez pas à recoller le NPSSO à chaque synchronisation. Lorsque la session de Sony prend fin, RetroDB se reconnecte tout seul avec votre NPSSO enregistré. Vous n'avez besoin d'un nouveau NPSSO que lorsque Sony refuse celui enregistré ; Paramètres &rarr; Compte et le Tableau de bord vous le signalent alors.</p>
 
         <h3>Détails des trophées</h3>
         <ul>
@@ -1831,7 +1832,7 @@
         <ul>
             <li>Les jetons NPSSO expirent &mdash; générez-en un nouveau depuis <code>ca.account.sony.com/api/v1/ssocookie</code></li>
             <li>Assurez-vous d'être connecté à store.playstation.com avant de visiter l'URL du cookie</li>
-            <li>RetroDB conserve votre session PSN environ deux mois et la renouvelle désormais automatiquement en arrière-plan ; si elle expire quand même, collez simplement un nouveau NPSSO dans Paramètres &rarr; Compte &rarr; PSN</li>
+            <li>RetroDB se reconnecte tout seul tant que Sony accepte votre NPSSO enregistré. Dès que Sony le refuse, collez-en un nouveau dans Paramètres &rarr; Compte &rarr; PSN. Pour remplacer un jeton qui fonctionne encore, déconnectez-vous d'abord de PlayStation.</li>
         </ul>
 
         <h4>« Échec de l'authentification Xbox »</h4>

@@ -1205,11 +1205,12 @@
     <div class="card-body">
         <h3>사용법</h3>
         <ol>
-            <li>임의의 게임의 상세 모달을 엽니다</li>
+            <li>게임 페이지를 열고 <strong>How Long to Beat</strong>를 찾거나, 해당 게임의 <strong>편집</strong> 창을 엽니다</li>
+            <li>검색 상자에는 게임 제목이 들어 있습니다. HowLongToBeat에서 다른 이름으로 알려진 게임이면 바꾸세요</li>
             <li><strong>"HLTB 조회"</strong>를 클릭합니다</li>
-            <li>결과에서 올바른 일치 항목을 선택합니다</li>
-            <li>플레이 시간 추정치가 게임에 저장됩니다</li>
+            <li>표시된 일치 항목 하나를 플랫폼 및 일치 정도와 함께 확인한 다음 <strong>저장</strong>을 클릭합니다. <strong>취소</strong>하면 아무것도 저장되지 않습니다</li>
         </ol>
+        <p>상자에 게임 본래 제목이 그대로 있으면 검색은 게임의 다른 알려진 제목도 시도합니다. 직접 입력한 텍스트는 입력한 그대로 검색합니다.</p>
 
         <h3>시간 카테고리</h3>
         <ul>
@@ -1263,7 +1264,7 @@
             <li>페이지에 NPSSO 토큰이 포함된 JSON이 표시됩니다</li>
             <li><code>npsso</code> 값을 복사하여 설정 &rarr; 계정 &rarr; PSN에 붙여넣습니다</li>
         </ol>
-        <p>인증이 완료되면 RetroDB는 액세스 토큰을 자체 데이터베이스에 사용자별로 안전하게 캐시하고 자동으로 갱신합니다 &mdash; 동기화할 때마다 NPSSO를 다시 붙여 넣을 필요가 없습니다. 세션은 약 2개월 동안 유효하며, 이제 RetroDB가 백그라운드에서 자동으로 갱신하므로 평소에는 새 NPSSO가 필요한 일이 드뭅니다.</p>
+        <p>인증이 완료되면 RetroDB는 액세스 토큰을 자체 데이터베이스에 사용자별로 안전하게 캐시하고 자동으로 갱신합니다 &mdash; 동기화할 때마다 NPSSO를 다시 붙여 넣을 필요가 없습니다. Sony 세션이 끝나면 RetroDB가 저장된 NPSSO로 스스로 다시 로그인합니다. 새 NPSSO는 Sony가 저장된 NPSSO를 거부할 때만 필요하며, 그때는 설정 &rarr; 계정과 대시보드에서 알려 줍니다.</p>
 
         <h3>트로피 세부 정보</h3>
         <ul>
@@ -1825,7 +1826,7 @@
         <ul>
             <li>NPSSO 토큰은 만료됩니다 &mdash; <code>ca.account.sony.com/api/v1/ssocookie</code> 에서 새로 생성하세요</li>
             <li>쿠키 URL을 방문하기 전에 store.playstation.com에 로그인되어 있는지 확인하세요</li>
-            <li>RetroDB는 PSN 세션을 약 2개월 동안 캐시하고 이제 백그라운드에서 자동으로 갱신합니다. 그래도 만료되면 설정 &rarr; 계정 &rarr; PSN에 새 NPSSO를 붙여 넣으세요</li>
+            <li>Sony가 저장된 NPSSO를 받아들이는 동안 RetroDB가 스스로 다시 로그인합니다. Sony가 거부하면 설정 &rarr; 계정 &rarr; PSN에 새 NPSSO를 붙여 넣으세요. 아직 작동하는 토큰을 바꾸려면 먼저 PlayStation에서 로그아웃하세요.</li>
         </ul>
 
         <h4>"Xbox Authentication Failed"</h4>

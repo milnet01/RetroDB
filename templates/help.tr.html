@@ -1207,11 +1207,12 @@
     <div class="card-body">
         <h3>Kullanım</h3>
         <ol>
-            <li>Herhangi bir oyunun detay penceresini açın</li>
+            <li>Bir oyunun sayfasını açıp <strong>How Long to Beat</strong> bölümünü bulun ya da oyunun <strong>Düzenle</strong> penceresini açın</li>
+            <li>Arama kutusunda oyunun adı yazılıdır. HowLongToBeat oyunu başka bir adla biliyorsa bunu değiştirin</li>
             <li><strong>"HLTB Ara"</strong> düğmesine tıklayın</li>
-            <li>Sonuçlardan doğru eşleşmeyi seçin</li>
-            <li>Oynanış süresi tahminleri oyuna kaydedilir</li>
+            <li>Gösterilen tek eşleşmeyi platformu ve ne kadar yakın olduğuyla birlikte kontrol edin, ardından <strong>Kaydet</strong> düğmesine tıklayın. <strong>İptal</strong> hiçbir şey kaydetmez</li>
         </ol>
+        <p>Kutuda hâlâ oyunun kendi adı varsa, arama oyunun bilinen diğer adlarını da dener. Kendiniz yazdığınız metin, yazdığınız gibi aranır.</p>
 
         <h3>Süre Kategorileri</h3>
         <ul>
@@ -1265,7 +1266,7 @@
             <li>Sayfa, NPSSO belirtecinizi içeren JSON görüntüler</li>
             <li><code>npsso</code> değerini kopyalayın ve Ayarlar &rarr; Hesap &rarr; PSN bölümüne yapıştırın</li>
         </ol>
-        <p>Kimlik doğrulandıktan sonra, RetroDB erişim belirteçlerini kendi veritabanında (kullanıcı başına) güvenli bir şekilde önbelleğe alır ve otomatik olarak yeniler &mdash; her senkronizasyonda NPSSO'yu tekrar yapıştırmanız gerekmez. Oturum yaklaşık iki ay geçerli kalır ve RetroDB artık bunu arka planda otomatik olarak da yeniler, bu nedenle normal kullanımda nadiren yeni bir NPSSO'ya ihtiyaç duymanız gerekir.</p>
+        <p>Kimlik doğrulandıktan sonra, RetroDB erişim belirteçlerini kendi veritabanında (kullanıcı başına) güvenli bir şekilde önbelleğe alır ve otomatik olarak yeniler &mdash; her senkronizasyonda NPSSO'yu tekrar yapıştırmanız gerekmez. Sony'nin oturumu sona erdiğinde RetroDB, kaydedilmiş NPSSO'nuzla kendiliğinden yeniden oturum açar. Yalnızca Sony kaydedilmiş olanı reddettiğinde yeni bir NPSSO'ya ihtiyacınız olur; bu durumda Ayarlar &rarr; Hesap ve Kontrol Paneli bunu size bildirir.</p>
 
         <h3>Kupa Ayrıntıları</h3>
         <ul>
@@ -1831,7 +1832,7 @@
         <ul>
             <li>NPSSO belirteçlerinin süresi dolar &mdash; <code>ca.account.sony.com/api/v1/ssocookie</code> adresinden yeni bir tane oluşturun</li>
             <li>Çerez URL'sini ziyaret etmeden önce store.playstation.com adresine giriş yaptığınızdan emin olun</li>
-            <li>RetroDB, PSN oturumunuzu yaklaşık iki ay boyunca önbelleğe alır ve şimdi bunu arka planda otomatik olarak da yeniler; yine de süresi dolarsa, Ayarlar &rarr; Hesap &rarr; PSN bölümüne yeni bir NPSSO yapıştırmanız yeterlidir</li>
+            <li>RetroDB, Sony kaydedilmiş NPSSO'nuzu kabul ettiği sürece kendiliğinden yeniden oturum açar. Sony onu reddettiğinde Ayarlar &rarr; Hesap &rarr; PSN bölümüne yenisini yapıştırın. Hâlâ çalışan bir belirteci değiştirmek için önce PlayStation oturumunu kapatın.</li>
         </ul>
 
         <h4>"Xbox Kimlik Doğrulama Başarısız"</h4>
