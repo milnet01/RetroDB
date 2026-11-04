@@ -10801,6 +10801,44 @@ the cover zoom in Firefox before being reverted for the local fix.
   plainly what it does (label and a short line under it), so no one
   mixes them up.
 
+---
+
+#### Pass 59.233 Check each ROM is a good copy against No-Intro and Redump lists (feature, M).
+- **When**: after v4.0.0 (user, 2026-11-04).
+- **Why**: a bad dump plays wrongly or not at all, and nothing in
+  RetroDB says so today. The CHD check covers CHD files only.
+- **Start from**: `services/rom_identity.py` already gives a file's
+  name, size and CRC (PASS-59-217). Compare those to No-Intro and
+  Redump DAT files the user supplies.
+- **Open**: where the result shows (ROM Tools, the game page, both),
+  and how DAT files reach the app. Ask the user before building.
+- **Status**: todo.
+
+---
+
+#### Pass 59.234 Back up and restore each game's saves (feature, M).
+- **When**: after v4.0.0 (user, 2026-11-04).
+- **Why**: saves live only in each emulator's folders; a lost disk or
+  a bad emulator update loses them. Nothing in RetroDB copies them.
+- **Start from**: `services/player.py` names RetroArch's
+  `savefile_directory` and `savestate_directory` keys; DuckStation,
+  PCSX2 and the other standalone emulators keep their own folders.
+- **Open**: which emulators first, where copies go, and how many
+  copies to keep. Ask the user before building.
+- **Status**: todo.
+
+---
+
+#### Pass 59.235 TV mode: a big-text Library you steer with a game controller (feature, L).
+- **When**: after v4.0.0 (user, 2026-11-04).
+- **Why**: RetroDB launches games, but choosing one needs a mouse and
+  keyboard. No page reads a game controller today (no `getGamepads`
+  in `static/js`).
+- **Open**: a separate page or a mode of the Library; which actions it
+  offers (browse, details, Play). Likely needs a spec
+  (`spec-format.md` §1): it spans pages, input and layout.
+- **Status**: todo.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
