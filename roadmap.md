@@ -10897,7 +10897,15 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.237 ROM tools never delete or overwrite a working ROM or playlist (audit-fix, M).
-- **Status**: todo
+- **Resolution** (2026-11-04): Done 2026-11-04 in cb6f0b86. New services/disc_files.py; fixes in
+  routes/tools.py, routes/reports.py, routes/games_media.py,
+  scraper/rom_tools.py; tests in tests/test_pass59_237_disc_files.py.
+  Premise corrections: the live Duplicate Finder and CHD scan are in
+  routes/tools.py (the DuplicateFinder and CHDConverter classes in
+  scraper/rom_tools.py are unused, left for PASS-59-251); the Create M3U
+  staging move already repointed rom_path (PASS-59-137). Not done: a
+  browser walk of the Duplicate Finder and Screenshot Dedup pages.
+- **Status**: done
 - **Why**: the 2026-11-04 audit (`docs/reviews/2026-11-04-independent-audit.md`,
   lanes 9 and 10). Confirmed in code 2026-11-04 for the first three.
 - **Fix**:
