@@ -8497,6 +8497,16 @@ were corrected in `2836bc3` and are not repeated here.
   guide says otherwise. Nothing tested. So PASS-59-162's findings X1 to
   X7 stay unconfirmed, and Xbox goes out with v4.0.0 untested. Settings
   now says this.
+- **Progress** (2026-11-04): step 8 done. 15 lanes ran (the 14-lane
+  partition was stale); raw reports in
+  `docs/reviews/2026-11-04-independent-audit.md`. Step 9 is these
+  passes, in this order: data safety PASS-59-237, PASS-59-238,
+  PASS-59-239, PASS-59-240; silent failures PASS-59-241; user edits
+  PASS-59-242; jobs PASS-59-243; updates PASS-59-244; access
+  PASS-59-245; translation PASS-59-246; scrapers PASS-59-247;
+  hardening PASS-59-248; small fixes PASS-59-249; docs PASS-59-250;
+  the second-look review PASS-59-251 last. PASS-59-252 (Slipcase
+  recess keys) goes with PASS-59-231.
 
 ---
 
@@ -10883,6 +10893,386 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Decided** (user, 2026-11-04): after v4.0.0, draft the openSUSE
   gfx1032 build-target request and test the roctracer abort on 7.2;
   show the user the report text to post.
+
+---
+
+#### Pass 59.237 ROM tools never delete or overwrite a working ROM or playlist (audit-fix, M).
+- **Status**: todo
+- **Why**: the 2026-11-04 audit (`docs/reviews/2026-11-04-independent-audit.md`,
+  lanes 9 and 10). Confirmed in code 2026-11-04 for the first three.
+- **Fix**:
+  - Duplicate Finder name mode groups by stem only, so `Game.cue` and
+    `Game.bin` are duplicates (`scraper/rom_tools.py` name grouping).
+    Group by stem plus extension.
+  - `delete_duplicates` unlinks any path sent. Check each is under the ROM
+    root, in a found group, and that one copy survives.
+  - Hash mode can delete an audio-track `.bin` two releases share, and
+    leaves `games.rom_path` stale.
+  - Organize Multi-Disc (`routes/reports.py`) writes over an existing
+    `.m3u`, and `shutil.move` replaces a same-named file. Refuse both, as
+    `rom_tools` Create M3U does.
+  - Organize and the Create M3U staging move leave `games.rom_path` on
+    the old place, so Clean missing ROMs then deletes those games.
+  - Organize puts `.bin` tracks next to their `.cue` in the playlist.
+  - CHD convert with delete originals lists `.bin` and `.cue` both and
+    deletes only the file chdman got; a `.m3u` naming the `.cue` is not
+    updated.
+  - `zip -d` matches names as patterns (`[!]`); pass `-nw` and check the
+    removed set against the request.
+  - Renaming a `.bin` breaks its `.cue`; renaming a disc in a playlist
+    folder breaks the `.m3u`.
+  - Screenshot-dedup delete (`routes/tools.py`) does not check the file
+    belongs to the game or keep one copy.
+- **Source**: audit 2026-11-04.
+
+---
+
+#### Pass 59.238 Media files are never lost: wishlist pictures, screenshot lists, partial downloads (audit-fix, M).
+- **Status**: todo
+- **Why**: audit 2026-11-04, lanes 3, 6 and 8. The first two confirmed in
+  code 2026-11-04.
+- **Fix**:
+  - The orphan sweep (`services/media_cleanup.py`) keeps only digit
+    prefixes, so wishlist files `w<id>_...` are deleted. Keep wishlist
+    rows' files.
+  - The game page and modal (`routes/games.py`) clear `screenshots` for
+    any file not found, on every view, by any user. With `IMAGE_PATH`
+    unmounted every viewed game loses its list. Clear only when the
+    folder is healthy, or only in scans as CLAUDE.md says.
+  - `metadata_merger._download_and_finalize` leaves `.dl_*` temp files
+    on early returns; use `finally`.
+  - Video and manual downloads write straight over the file the row
+    uses; write to a temp file and rename.
+  - `webp_migrate`: no `safe_path` containment; a file two rows share is
+    deleted by the first conversion and the second row keeps a dead
+    name. Run the adopt check before the missing check.
+  - The background upscaler can write an old picture over a newer
+    download of the same name; compare mtime or inode in `still_wanted`.
+  - `_atomic_save` leaves new images at 0600; `_save_image` swallows save
+    errors, so failed saves count as done.
+  - Deleting a game or a wishlist item leaves its media files.
+- **Source**: audit 2026-11-04.
+
+---
+
+#### Pass 59.239 Tests can never reach the live database, media or settings files (test, S).
+- **Status**: todo
+- **Why**: audit 2026-11-04, lane 14. Confirmed in `tests/conftest.py`
+  2026-11-04. A test once wiped a live library (memory
+  test-media-isolation).
+- **Fix**:
+  - Outside xdist, conftest keeps an inherited `RETRODB_DB_PATH` or
+    `RETRODB_IMAGE_PATH`. Always make temp dirs under pytest, or refuse
+    any path outside the temp root.
+  - `RETRODB_STATIC_PATH` is set only when `RETRODB_IMAGE_PATH` is unset.
+  - `settings_manager.SETTINGS_FILE` and `SCRAPER_SETTINGS_FILE` are not
+    redirected; `admin_test_client` stubs load but not save.
+  - `test_media_path_isolation` checks config equals the env var, not
+    that it is a temp dir.
+  - `scripts/ci_local.sh` import smoke isolates the DB only.
+- **Source**: audit 2026-11-04.
+
+---
+
+#### Pass 59.240 Sign-ins and keys stay out of logs, backups and shared emulator files (security, M).
+- **Status**: todo
+- **Why**: audit 2026-11-04, lanes 1, 2, 3, 7, 9 and 15. Old scrape logs
+  already held ScreenScraper sign-ins (memory redact-scrape-logs).
+- **Fix**:
+  - Failure logs print full URLs with credentials:
+    `metadata_merger.py` ScreenScraper media; `routes/scraper.py` check
+    routes (`sspassword`, `devpassword`, TGDB `apikey`, Gemini `key=`);
+    `jobs/ra_sync.py` RA key. Log the error type, or redact the URL.
+  - Check where the `log_redactor` filter is attached; add `cheevos_token`
+    and a JSON `"Token":` key.
+  - `services/player.py`: `cheevos_*` keys can be saved into the base
+    `retroarch.cfg` by RetroArch's Save Current Configuration; strip them
+    before each launch. Sweep stale `data/player/run/*.cfg` at startup.
+  - Deleting or deactivating a user leaves their RA token in DuckStation
+    and PCSX2 files (`routes/auth.py`); call `ra_standalone.sign_out`.
+  - DB backups are written at 0644 then chmod; write them 0600 and
+    atomically (`services/database.py::backup_database`).
+  - Migration 015 leaves `.migrated-015` token files.
+  - Task logs with exception text are readable by any signed-in user.
+- **Source**: audit 2026-11-04.
+
+---
+
+#### Pass 59.241 Features that silently do nothing: HLTB auto-apply, RA Refresh hash match, per-user tags, PSN links (fix, M).
+- **Status**: todo
+- **Why**: audit 2026-11-04, lanes 5, 7, 10 and 12. First two confirmed
+  in code 2026-11-04.
+- **Fix**:
+  - `jobs/hltb_bulk.py` auto-apply UPDATE has 7 placeholders and 5 values;
+    every auto-apply fails.
+  - `jobs/ra_refresh.py` passes `game.get('folder')`; rows hold
+    `system_folder`, so the hash match never runs.
+  - Tags: `name` is still UNIQUE across users (001 baseline); a second
+    user's same-named tag fails with a 500. Migrate to `(owner_id, name)`.
+  - A full PSN sync's COALESCE replaces a link the user set by hand, and
+    its substring match links "Doom" to "Doom Eternal".
+  - PSN import never links an existing game by title, unlike Steam and
+    Xbox.
+  - `toast-controller.js` reads `wasActive` after `updateToasts` sets it,
+    so job-end messages and the restart poll never fire.
+  - Xbox: a refresh drops the gamertag and nothing fetches it again; any
+    failed refresh, even a timeout, deletes the tokens.
+  - Steam credentials fall back to the shared settings file for a user
+    with none (`jobs/platform_sync.py`), so one person's library lands
+    under another.
+  - Non-admins can never refresh their RPCS3 trophies.
+- **Source**: audit 2026-11-04.
+
+---
+
+#### Pass 59.242 Scrapes and AI Fill keep what the user typed (audit-fix, M).
+- **Status**: todo
+- **Why**: audit 2026-11-04, lanes 3, 4, 8 and 10. Fill-only is a project
+  contract (CLAUDE.md, `docs/decisions/`).
+- **Fix**:
+  - `canonicalize_metadata` runs on stored values, so a stored genre, mode
+    or perspective not in the lists becomes `''` and overwrites the column;
+    players reconciliation rewrites a stored `players`.
+  - A scrape writes back every field it read at its start, so an edit made
+    during it is lost. Re-read the row before the save.
+  - `ai_fill.py` compares raw text before normalizing, so an unchanged
+    value (`4` vs `1-4`, reordered genres) is recorded as replaced by the
+    AI.
+  - AI Fill replaces hand-edited values in `VALIDATE_FIELDS`; the user
+    decides whether it may.
+  - The system-default controller replaces a typed `controller_support`.
+  - The form edit route sets every field it was not sent to NULL.
+  - Reset says all metadata is cleared but leaves eight fields and the
+    caches.
+  - CLZ import stores a year as `YYYY-01-01`.
+  - A rating cross-mapped from an AI guess is not marked as a guess.
+  - Clear Scraped Data leaves `perspective`, `dimension`, `game_structure`.
+- **Source**: audit 2026-11-04.
+
+---
+
+#### Pass 59.243 Background jobs survive restarts, swaps and one bad game (audit-fix, M).
+- **Status**: todo
+- **Why**: audit 2026-11-04, lanes 2, 7, 10 and 11.
+- **Fix**:
+  - A demoted or swapped scrape, and a resume queued while one runs, are
+    queued in memory only and lost on restart (`jobs/bulk_scrape.py`).
+  - After the 60 s swap timeout `reset()` clears `cancelled`, so the old
+    worker keeps going beside the new one. Use a run token.
+  - Queue DB writes with retry backoff run under `self._lock`, blocking
+    status polls.
+  - `ss_region_repair` and `ai_fill_bulk` end the whole run on one game's
+    error.
+  - `player_cores_job` is not drained on shutdown and has no cancel.
+  - A run stopped by a service limit ends as completed with no message.
+  - Importing `app` from a second process marks the live server's jobs
+    interrupted.
+  - Resume has no guard against a double click.
+  - Wishlist items stay on "scraping" after an error or a restart.
+  - Migrations: `apply_pending` reads `user_version` before the lock.
+  - PSN: sign-in runs inside `_psn_sync_lock`; keep-alive is per process
+    and renews daily; one game's sync pulls the whole title list.
+  - After SIGTERM the sync loops run with no delay.
+- **Source**: audit 2026-11-04.
+
+---
+
+#### Pass 59.244 Updates and game launches recover from a failure (audit-fix, S).
+- **Status**: todo
+- **Why**: audit 2026-11-04, lane 15. Related: PASS-59-174 (rollback),
+  PASS-59-168 (command port bound to 127.0.0.1).
+- **Fix**:
+  - `updater_apply.apply` returns without restarting on an unknown plan
+    version, a missing plan key, or a folder error before its `try`; the
+    old app has already exited. Restart on every early exit.
+  - The standalone build's version is never checked before the swap.
+  - Two player launches at once both pass the one-session check.
+  - No scan-root check on a ROM when `rom_path` is unset.
+  - Cheats: `take_back` can pick up another game's `.cht` with the same
+    file name; `place_for_launch` and `take_back` catch `OSError` only.
+  - `standalone_settings.write_lines` leaves a temp file on failure,
+    replaces a symlink, and sets 0600; `_read_lines` fails on non-UTF-8.
+  - `cheats.py` writes `sources.json` in place.
+  - `game-launch.js` core wait has no timeout and treats an error page as
+    done; it uses `confirm()`, not `showConfirm`.
+- **Source**: audit 2026-11-04.
+
+---
+
+#### Pass 59.245 Keyboard focus is always easy to see, and every control works from the keyboard (accessibility, M).
+- **Status**: todo
+- **Why**: audit 2026-11-04, lanes 12 and 13. The user is partially
+  sighted.
+- **Fix**:
+  - No global `:focus-visible` rule; several controls show focus only as a
+    1px border change, the same as hover; `launch-indicator.css` removes
+    it.
+  - Focus rings are a fixed cyan, so they ignore the theme.
+  - Library card filter links are spans with no tabindex, role or key
+    handler (`all-games-controller.js`); both Library and console pages.
+  - The play screen has no focus trap; the running-games popover does not
+    close on Escape or outside click.
+  - Tag colour swatches lack `aria-label` and `aria-pressed`.
+  - Trophy images use `alt="P"`, `"G"`, `"S"`, `"B"`.
+  - `docs/specs/themes.md` says every component uses the colour tokens;
+    many fixed colours remain. Move the visible ones to tokens and correct
+    the claim.
+  - Check each fix at desktop and 375px.
+- **Source**: audit 2026-11-04.
+
+---
+
+#### Pass 59.246 The last untranslated screen text, and right-to-left for Hebrew (i18n, M).
+- **Status**: todo
+- **Why**: audit 2026-11-04, lanes 5, 11, 12 and 13. Related: PASS-52-1
+  (JS toasts), PASS-59-179 (maintenance tools), PASS-43-4 (RTL + Arabic).
+- **Fix**:
+  - `app.py`: recovery banner, job-route and setup errors, CSRF, 404/500
+    envelopes; `formatters.py` "Unknown".
+  - `all-games-controller.js` card labels and badge tooltips;
+    `launch-indicator.js` fallback name.
+  - `base.html` job-queue panel (also escape `system_name`); `setup.html`;
+    `tags.html`; `list_detail.html`; `compare_games.html`;
+    `rom_tools_settings.html`; two strings in `game_detail.html`.
+  - Steam/Xbox "Game has no achievements" and platform-sync job errors.
+  - Number and size formats ignore the language.
+  - `base.html` sets no `dir="rtl"` though Hebrew ships; decide with
+    PASS-43-4 whether RTL lands for v4.0.0.
+  - Translate the new strings with `scripts/translate_release.py`.
+- **Source**: audit 2026-11-04.
+
+---
+
+#### Pass 59.247 Scrapers follow the service rules and close what they open (audit-fix, S).
+- **Status**: todo
+- **Why**: audit 2026-11-04, lanes 1, 3, 4 and 9.
+- **Fix**:
+  - Gap-fill calls TGDB, IGDB, RAWG and ScreenScraper outside their
+    circuit breakers; only AI uses one (`hybrid_scraper.py`).
+  - ScreenScraper `get_game_info` skips the quota and daily-stop rules.
+  - ScreenScraper streamed replies are not closed on early exits.
+  - The Settings check routes call services without `wait_for_turn`;
+    decide whether checks are exempt and record it.
+  - `ssrf.py` fails on a relative `Location` redirect; `_ip_is_public`
+    should use `is_global`.
+  - A region with no listed part becomes `default_region`.
+  - `release_dates.year_gap_with_own_region` can raise and roll back the
+    whole scrape.
+  - ES-DE: `bulk_import_esde` has no caller and its data does not fit
+    `apply_esde_metadata`; fix or remove. `~/` paths are not expanded;
+    ES-DE media copies have no size cap.
+  - Cache keys `"123:None"` vs `"123:"`.
+  - IGDB ids go into query text without `int()`.
+  - Version-group suggestions can join a rejected pair through a third.
+- **Source**: audit 2026-11-04.
+
+---
+
+#### Pass 59.248 Sign-in hardening and release-pipeline checks (security, S).
+- **Status**: todo
+- **Why**: audit 2026-11-04, lanes 1, 11 and 14. Threat model: LAN, one
+  household (memory deployment-threat-model), so keep fixes small.
+- **Fix**:
+  - A password change or admin reset leaves other sessions valid for 7
+    days (`docs/specs/auth.md` §7 says otherwise). Add a session epoch.
+  - The old avatar is deleted before the new upload is checked.
+  - Setup API has no CSRF before setup completes.
+  - Non-string inputs give unformatted 500s on auth routes.
+  - `release.yml` runs no tests on a tag push; tool installs there and in
+    `dependabot-lockfile.yml` are unpinned.
+  - `release.yml` advises `--certificate-identity-regexp '.*'`.
+  - `dependabot-lockfile.yml` claims the PR turns green on its own; a
+    `GITHUB_TOKEN` push starts no run.
+  - A secret key that cannot be written signs everyone out each restart,
+    with nothing logged.
+- **Source**: audit 2026-11-04.
+
+---
+
+#### Pass 59.249 Smaller correctness and speed fixes from the audit (audit-fix, M).
+- **Status**: todo
+- **Why**: audit 2026-11-04, all lanes; each low on its own. Already
+  filed: PASS-59-160 ("Action" filter).
+- **Fix**:
+  - Library card ETag ignores progress and launch changes.
+  - BIOS rows in header counts, letter bar and `api_filter_games`; similar
+    games lists own regional versions.
+  - Letter bar and accented first letters disagree.
+  - Select all stops at 10,000 silently; bulk edit splits a string id.
+  - Bulk edit runs `_note_hand_edits` per game outside the transaction.
+  - Analytics manufacturer map misses five ES-DE folders; use
+    `SYSTEM_SPECS`.
+  - "Recently scraped" misses re-scrapes.
+  - Category logs duplicate `rom_tools` and `image_resize` lines.
+  - Changelog and JSON reads in `app.py` have no `encoding=`; test on the
+    Windows PC. The changelog YAML is parsed on every request.
+  - Museum controller images go under `STATIC_PATH`, not `IMAGE_PATH`.
+  - `HSA_OVERRIDE_GFX_VERSION=10.3.0` forced for every AMD card.
+  - CLZ import: non-Latin titles all match; preview creates systems.
+  - Bonus discs can loop; auto-link re-marks an unmarked disc.
+  - GIFs are upscaled then discarded; the model download has no hash.
+  - Restore removes `-wal`/`-shm` with connections open.
+  - Other lows in the audit file, lanes 2, 5, 6, 8 to 11.
+- **Source**: audit 2026-11-04.
+
+---
+
+#### Pass 59.250 Docs and comments that say what the code does not (doc-fix, S).
+- **Status**: todo
+- **Why**: audit 2026-11-04, all lanes.
+- **Fix**:
+  - `auth.md`: §7 session revocation (fixed by PASS-59-248 or reworded),
+    §9 bucket clear and force-change, §13.1 bare POST routes, §6 token
+    store also holds RetroAchievements.
+  - `jobs.md`: lock directory, progress cadence, `current`/`total`.
+  - `scrapers.md`: `ai_claude_api_key`; fill-only exceptions match
+    CLAUDE.md; `apply_esde_metadata` named as canonical though unused.
+  - `api-contracts.md` §3.2 vs museum, achievements, trophies routes that
+    answer failures with HTTP 200, and exception text in messages.
+  - `image-pipeline.md` §12.1, §15 rule 3.
+  - Updater spec §6 lacks `/api/updates/dismiss`.
+  - Code comments: CSP "report-only", migration 016 foreign keys, 012 log
+    line, `game-launch.js` onclick, `game_utils` examples,
+    `security.py` realpath, museum admin-only, `platform_tokens`.
+  - `pyproject.toml` pip-compile; `release.yml` `/mnt/Storage`;
+    `ci_local.sh` failure text suggests `--no-verify`.
+  - `help.html` contents list lacks `#emulators-play`.
+- **Source**: audit 2026-11-04.
+
+---
+
+#### Pass 59.251 Finish the audit where it only searched, and update its partition (audit, M).
+- **Status**: todo
+- **Why**: audit 2026-11-04. Lanes 12, 13 and 14 searched patterns more
+  than they read; lane 15 skipped `services/emulator_seeder.py`; lane 9
+  skipped the `SYSTEM_DEFAULT_CONTROLLER` table; lane 4 skipped lookup
+  tables.
+- **Do**:
+  - Run cold lanes over the unread JavaScript files, the templates and
+    CSS, `tests/`, `install*.py`, `.semgrep.yml`, `.gitleaks.toml` and
+    `services/emulator_seeder.py`, split small enough to read in full.
+  - Update `roadmap.md` § Periodic Independent Review: drop the four
+    missing paths, add the launch/emulators/cheats/updater lane, and
+    split the oversized JS and template lanes.
+  - Triage the new findings into this audit's passes.
+- **Source**: audit 2026-11-04.
+
+---
+
+#### Pass 59.252 The box viewer reads Slipcase's two new finger-recess keys (enhancement, S).
+- **Status**: todo
+- **Why**: the Slipcase session, 2026-11-04 (SLIP-0130, Slipcase commit
+  4de187b, SLIP-0125 § 4.1 amended). Box file version stays 1.
+- **Keys** in `shape`:
+  - `recess_end_radius_mm`: 0 square ends; half `recess_height_mm` round
+    (missing means half, the old look); at most half.
+  - `recess_offset_mm`: slot middle above the opening side's middle,
+    negative below; missing 0. Limit: `recess_length_mm + 2*|offset| <
+    height_mm - 2*max(corner_radius_mm, lip_width_mm)`.
+  - A shape breaking either limit is ignored whole.
+- Ignoring the keys still draws a round, centred slot, so nothing breaks
+  today. Xbox One and Series X cases are newly shaped.
+- **Source**: Slipcase session, 2026-11-04.
 
 ## Done index
 
