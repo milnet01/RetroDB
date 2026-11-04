@@ -10430,6 +10430,18 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Source**: PASS-59-162, 2026-10-31. Notes: hltb_ra H1 to H8.
 - **Problem**: `app.py`, `routes/collector_trophies.py` and `services/analytics.py` read `Main: 36 mins` as 36 hours, so totals are far too high. The bulk job ignores `platform_mismatch`. A sequel can pass the 95% bar. The year is never passed, and `Game Boy` is found inside `Game Boy Advance`.
 - **Fix**: one shared time parser or numeric columns; queue mismatches for review; numbers must agree; pass the year; compare whole platform names. Send affected stored rows to the review queue.
+- **Walked** 2026-11-04 (headless Chrome, scratch DB, game 1829
+  Sonic the Hedgehog 3, 1400 px and 375 px): empty box warns; lookup,
+  Cancel, Save and reload work; no console errors; no sideways scroll
+  at 375 px.
+  - **Found**: a typed title HLTB does not know still falls back to the
+  game's stored alternate titles (`HLTBLookupService.search` loads
+  them by `game_id`), so nonsense text offered "Sonic 3 A.I.R" (2019,
+  PC/Mobile, 78%) with Save. The via-notice and "Platform not found"
+  show. Open: use alternates only when the box holds the game's own
+  title. Ask the user.
+  - **Found**: the year shows after Save but not after a reload; no
+  column stores it.
 
 ---
 
