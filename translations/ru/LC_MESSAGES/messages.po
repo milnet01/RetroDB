@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-03 21:20+0200\n"
+"POT-Creation-Date: 2026-11-04 11:20+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: app.py:695
+#: app.py:698
 #, python-format
 msgid ""
 "Upload exceeds the %(total)s MB limit. Each image may be up to %(image)s "
@@ -30,19 +30,19 @@ msgstr ""
 "%(image)s МБ, а видео — до %(video)s МБ; загружайте меньше файлов за раз."
 " Операторы могут повысить общий лимит через RETRODB_MAX_UPLOAD_MB."
 
-#: app.py:726
+#: app.py:729
 msgid "Too many requests. Please wait and try again."
 msgstr "Слишком много запросов. Подождите и повторите попытку."
 
-#: app.py:835
+#: app.py:838
 msgid "Setup required"
 msgstr "Требуется настройка"
 
-#: app.py:856
+#: app.py:859
 msgid "Password change required"
 msgstr "Требуется смена пароля"
 
-#: app.py:1678 routes/auth.py:202 routes/auth.py:262 routes/auth.py:456
+#: app.py:1681 routes/auth.py:202 routes/auth.py:262 routes/auth.py:456
 #: routes/auth.py:501 templates/force_change_password.html:49
 #: templates/setup.html:469
 msgid "Password must be at least 12 characters"
@@ -1356,6 +1356,34 @@ msgstr "Оставьте хотя бы одну копию каждой игры
 msgid "This system has no screenshot check"
 msgstr "Для этой системы нет проверки скриншотов"
 
+#: routes/trophies.py:154 routes/trophies.py:1778
+msgid "PSNAWP library not installed. Run: pip install psnawp"
+msgstr "Библиотека PSNAWP не установлена. Выполните: pip install psnawp"
+
+#: routes/trophies.py:157
+#, fuzzy
+msgid "PSN NPSSO cookie not configured"
+msgstr "NPSSO PSN не настроен"
+
+#: routes/trophies.py:180 routes/trophies.py:197
+#, fuzzy
+msgid "PSN refresh token expired"
+msgstr "Вставьте JSON или токен сюда"
+
+#: routes/trophies.py:191
+#, python-format
+msgid "PSN cached-token refresh failed: %(error)s"
+msgstr ""
+
+#: routes/trophies.py:218
+msgid "PSN authentication failed. Your NPSSO may have expired."
+msgstr ""
+
+#: routes/trophies.py:221
+#, fuzzy, python-format
+msgid "PSN connection error: %(error)s"
+msgstr "Ошибка подключения: %(error)s"
+
 #: routes/trophies.py:441
 msgid ""
 "Please configure your RPCS3 Trophy Path in your profile settings to view "
@@ -1404,10 +1432,6 @@ msgstr "Отсутствует npwr_id или group_id"
 #: routes/trophies.py:1740
 msgid "Name cannot be empty"
 msgstr "Имя не может быть пустым"
-
-#: routes/trophies.py:1778
-msgid "PSNAWP library not installed. Run: pip install psnawp"
-msgstr "Библиотека PSNAWP не установлена. Выполните: pip install psnawp"
 
 #: routes/trophies.py:1865
 msgid "No NPSSO token provided"

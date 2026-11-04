@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-03 21:20+0200\n"
+"POT-Creation-Date: 2026-11-04 11:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: eo\n"
@@ -18,24 +18,24 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: app.py:695
+#: app.py:698
 #, python-format
 msgid "Upload exceeds the %(total)s MB limit. Each image may be up to %(image)s MB and a video up to %(video)s MB; upload fewer files at once. Operators can raise the total limit via RETRODB_MAX_UPLOAD_MB."
 msgstr "⟦Üþļöàð éжçééðš ţĥé %(total)s ⱮƁ ļìɱìţ. Éàçĥ ìɱàĝé ɱàý ƀé üþ ţö %(image)s ⱮƁ àñð à ⱴìðéö üþ ţö %(video)s ⱮƁ; üþļöàð ƒéŵéŕ ƒìļéš àţ öñçé. Öþéŕàţöŕš çàñ ŕàìšé ţĥé ţöţàļ ļìɱìţ ⱴìà ŔÉŢŔÖÐƁ_ⱮÀЖ_ÜÞĻÖÀÐ_ⱮƁ.⟧"
 
-#: app.py:726
+#: app.py:729
 msgid "Too many requests. Please wait and try again."
 msgstr "⟦Ţöö ɱàñý ŕéɋüéšţš. Þļéàšé ŵàìţ àñð ţŕý àĝàìñ.⟧"
 
-#: app.py:835
+#: app.py:838
 msgid "Setup required"
 msgstr "⟦Šéţüþ ŕéɋüìŕéð⟧"
 
-#: app.py:856
+#: app.py:859
 msgid "Password change required"
 msgstr "⟦Þàššŵöŕð çĥàñĝé ŕéɋüìŕéð⟧"
 
-#: app.py:1678 routes/auth.py:202 routes/auth.py:262 routes/auth.py:456
+#: app.py:1681 routes/auth.py:202 routes/auth.py:262 routes/auth.py:456
 #: routes/auth.py:501 templates/force_change_password.html:49
 #: templates/setup.html:469
 msgid "Password must be at least 12 characters"
@@ -1305,6 +1305,32 @@ msgstr "⟦Ķééþ àţ ļéàšţ öñé çöþý öƒ éàçĥ ĝàɱé. Ñö
 msgid "This system has no screenshot check"
 msgstr "⟦Ţĥìš šýšţéɱ ĥàš ñö šçŕééñšĥöţ çĥéçķ⟧"
 
+#: routes/trophies.py:154 routes/trophies.py:1778
+msgid "PSNAWP library not installed. Run: pip install psnawp"
+msgstr "⟦ÞŠÑÀŴÞ ļìƀŕàŕý ñöţ ìñšţàļļéð. Ŕüñ: þìþ ìñšţàļļ þšñàŵþ⟧"
+
+#: routes/trophies.py:157
+msgid "PSN NPSSO cookie not configured"
+msgstr "⟦ÞŠÑ ÑÞŠŠÖ çööķìé ñöţ çöñƒìĝüŕéð⟧"
+
+#: routes/trophies.py:180 routes/trophies.py:197
+msgid "PSN refresh token expired"
+msgstr "⟦ÞŠÑ ŕéƒŕéšĥ ţöķéñ éжþìŕéð⟧"
+
+#: routes/trophies.py:191
+#, python-format
+msgid "PSN cached-token refresh failed: %(error)s"
+msgstr "⟦ÞŠÑ çàçĥéð-ţöķéñ ŕéƒŕéšĥ ƒàìļéð: %(error)s⟧"
+
+#: routes/trophies.py:218
+msgid "PSN authentication failed. Your NPSSO may have expired."
+msgstr "⟦ÞŠÑ àüţĥéñţìçàţìöñ ƒàìļéð. Ýöüŕ ÑÞŠŠÖ ɱàý ĥàⱴé éжþìŕéð.⟧"
+
+#: routes/trophies.py:221
+#, python-format
+msgid "PSN connection error: %(error)s"
+msgstr "⟦ÞŠÑ çöññéçţìöñ éŕŕöŕ: %(error)s⟧"
+
 #: routes/trophies.py:441
 msgid "Please configure your RPCS3 Trophy Path in your profile settings to view trophies"
 msgstr "⟦Þļéàšé çöñƒìĝüŕé ýöüŕ ŔÞÇŠ3 Ţŕöþĥý Þàţĥ ìñ ýöüŕ þŕöƒìļé šéţţìñĝš ţö ⱴìéŵ ţŕöþĥìéš⟧"
@@ -1349,10 +1375,6 @@ msgstr "⟦Ɱìššìñĝ ñþŵŕ_ìð öŕ ĝŕöüþ_ìð⟧"
 #: routes/trophies.py:1740
 msgid "Name cannot be empty"
 msgstr "⟦Ñàɱé çàññöţ ƀé éɱþţý⟧"
-
-#: routes/trophies.py:1778
-msgid "PSNAWP library not installed. Run: pip install psnawp"
-msgstr "⟦ÞŠÑÀŴÞ ļìƀŕàŕý ñöţ ìñšţàļļéð. Ŕüñ: þìþ ìñšţàļļ þšñàŵþ⟧"
 
 #: routes/trophies.py:1865
 msgid "No NPSSO token provided"

@@ -14,7 +14,7 @@ if len(sys.argv) > 1 and sys.argv[1] == '--apply-update':
     sys.exit(updater_apply.main(sys.argv[1:]))
 
 from werkzeug.exceptions import HTTPException
-from flask import Flask, render_template, request, redirect, url_for, jsonify, session, g, send_from_directory, abort
+from flask import Flask, render_template, request, redirect, url_for, jsonify, session, g, send_from_directory, abort, has_request_context
 import gzip
 import os
 import sys
@@ -209,6 +209,9 @@ def select_locale():
         is_admin = bool(user) and 'manage_settings' in ROLE_PERMISSIONS.get(user['role'], ())
         if pref and pref in selectable_locales(is_admin):
             return pref
+    # A background job has no browser to ask, so it gets the default.
+    if not has_request_context():
+        return 'en'
     # 2. transient per-session switch — intentionally retained but unreachable
     #    in v1 (no UI writes session['locale']); kept for a future
     #    anon-switcher. Not dead code.

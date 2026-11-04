@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-03 21:20+0200\n"
+"POT-Creation-Date: 2026-11-04 11:20+0200\n"
 "PO-Revision-Date: 2026-06-30 14:26+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ko\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: app.py:695
+#: app.py:698
 #, python-format
 msgid ""
 "Upload exceeds the %(total)s MB limit. Each image may be up to %(image)s "
@@ -29,19 +29,19 @@ msgstr ""
 "MB까지 가능합니다. 한 번에 더 적은 파일을 업로드하세요. 운영자는 RETRODB_MAX_UPLOAD_MB로 전체 한도를 늘릴 수"
 " 있습니다."
 
-#: app.py:726
+#: app.py:729
 msgid "Too many requests. Please wait and try again."
 msgstr "요청이 너무 많습니다. 잠시 후 다시 시도하세요."
 
-#: app.py:835
+#: app.py:838
 msgid "Setup required"
 msgstr "설정이 필요합니다"
 
-#: app.py:856
+#: app.py:859
 msgid "Password change required"
 msgstr "비밀번호 변경이 필요합니다"
 
-#: app.py:1678 routes/auth.py:202 routes/auth.py:262 routes/auth.py:456
+#: app.py:1681 routes/auth.py:202 routes/auth.py:262 routes/auth.py:456
 #: routes/auth.py:501 templates/force_change_password.html:49
 #: templates/setup.html:469
 msgid "Password must be at least 12 characters"
@@ -1333,6 +1333,34 @@ msgstr "각 게임의 사본을 하나 이상 남겨 두세요. 아무것도 삭
 msgid "This system has no screenshot check"
 msgstr "이 시스템은 스크린샷 검사를 지원하지 않습니다"
 
+#: routes/trophies.py:154 routes/trophies.py:1778
+msgid "PSNAWP library not installed. Run: pip install psnawp"
+msgstr "PSNAWP 라이브러리가 설치되어 있지 않습니다. 실행: pip install psnawp"
+
+#: routes/trophies.py:157
+#, fuzzy
+msgid "PSN NPSSO cookie not configured"
+msgstr "PSN NPSSO가 설정되지 않았습니다"
+
+#: routes/trophies.py:180 routes/trophies.py:197
+#, fuzzy
+msgid "PSN refresh token expired"
+msgstr "JSON 또는 토큰을 여기에 붙여넣으세요"
+
+#: routes/trophies.py:191
+#, python-format
+msgid "PSN cached-token refresh failed: %(error)s"
+msgstr ""
+
+#: routes/trophies.py:218
+msgid "PSN authentication failed. Your NPSSO may have expired."
+msgstr ""
+
+#: routes/trophies.py:221
+#, fuzzy, python-format
+msgid "PSN connection error: %(error)s"
+msgstr "연결 오류: %(error)s"
+
 #: routes/trophies.py:441
 msgid ""
 "Please configure your RPCS3 Trophy Path in your profile settings to view "
@@ -1379,10 +1407,6 @@ msgstr "npwr_id 또는 group_id가 누락되었습니다"
 #: routes/trophies.py:1740
 msgid "Name cannot be empty"
 msgstr "이름은 비워 둘 수 없습니다"
-
-#: routes/trophies.py:1778
-msgid "PSNAWP library not installed. Run: pip install psnawp"
-msgstr "PSNAWP 라이브러리가 설치되어 있지 않습니다. 실행: pip install psnawp"
 
 #: routes/trophies.py:1865
 msgid "No NPSSO token provided"
