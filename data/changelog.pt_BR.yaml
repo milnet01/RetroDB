@@ -1,3 +1,31 @@
+- version: 4.0.0
+  date: '2026-11-04'
+  tags:
+  - type: fix
+    label: O How Long to Beat na página de um jogo pesquisa o que você digita. Antes, quando não achava um título, ele pesquisava os outros nomes do jogo, e podia sugerir outro jogo, como um remake feito por fãs. Ele ainda tenta os outros nomes quando o campo contém o nome do próprio jogo
+  - type: fix
+    label: Os passos do How Long to Beat no manual de ajuda agora correspondem à tela. Eles diziam para escolher um resultado em uma lista; a página mostra um resultado com Salvar e Cancelar. A ajuda do PlayStation não diz mais que o login dura cerca de dois meses, pois o RetroDB entra de novo sozinho. Todos os 20 manuais traduzidos têm as duas mudanças
+  - type: fix
+    label: Toda barra de letras agora começa com um botão Todos. Nas páginas Biblioteca, de console e Troféus da PSN, escolher uma letra mostra só os jogos dessa letra, e antes não havia botão para trazer o resto de volta. Nas outras páginas de conquistas, Todos volta ao primeiro jogo
+  - type: fix
+    label: Um novo token de login do PlayStation colado em Configurações agora é usado na hora. Antes, o RetroDB continuava usando o login antigo até ele expirar, e Salvar e Testar Conexão mostrava esse login antigo como funcionando. Um token recusado pela Sony não substitui mais um que funciona
+  - type: enhancement
+    label: 'O login do PlayStation em Configurações ficou mais fácil de manter. O aviso não conta mais dias em que você não precisava fazer nada, porque o RetroDB entra de novo sozinho; ele só fica vermelho quando a Sony recusa o token salvo. O botão Colar aqui não faz mais o navegador pedir para ler sua área de transferência: ele põe o cursor na caixa para você usar Ctrl+V. Os passos agora dizem para sair do PlayStation primeiro ao trocar um token que ainda funciona, e suas mensagens podem ser traduzidas'
+  - type: enhancement
+    label: Mensagens pop-up e caixas de pergunta, como "Configurações salvas" ou "Excluir esta lista?", agora podem ser traduzidas em todas as páginas. Antes, a maioria ficava em inglês, qualquer que fosse o idioma escolhido
+  - type: enhancement
+    label: As mensagens que explicam por que um login do PlayStation falhou, como "Seu NPSSO pode ter expirado", agora podem ser traduzidas
+  - type: fix
+    label: O manual de ajuda em todos os idiomas agora corresponde ao em inglês. Ele ganha Pesquisar em Qualquer Lugar, Manter um Título, Nomes MAME e o verso da caixa, e parágrafos antigos que estavam desatualizados foram atualizados
+  - type: fix
+    label: Em alemão, africâner e espanhol, o botão Voltar na capa de um jogo agora diz o verso da caixa, e não "voltar"
+  - type: feature
+    label: Ao pressionar Jogar, a tela agora se enche com o logotipo do jogo sobre a imagem de fundo enquanto o jogo inicia, ou com o nome em letras grandes quando não há logotipo. Ela some sozinha quando a janela do jogo abre, ou quando você pressiona Esc ou clica
+  - type: feature
+    label: 'A caixa 3D giratória agora tem o formato real de uma caixa de PS5: cantos e bordas arredondados, a borda elevada ao redor da capa, a linha onde as duas metades se encontram e o recorte para o dedo no lado de abertura. Ela precisa de um arquivo de caixa de uma versão do Slipcase que grave o formato; importe a caixa de novo para obtê-lo. As outras caixas continuam como antes'
+  - type: enhancement
+    label: Atualizar RetroAchievements saiu de Configurações para a página RetroAchievements e agora se chama Encontrar Jogos com Conquistas. Cada botão ali agora tem uma linha dizendo o que faz, assim Encontrar Jogos e Sincronizar Progresso ficam fáceis de distinguir. Sem jogos vinculados ainda, a página mostra ao administrador o botão Encontrar em vez de passar para a próxima aba
+  body: "<ul>\n  <li><strong>O manual de ajuda está atualizado em todos os idiomas.</strong>\n    Seções que existiam só no manual em inglês agora estão traduzidas.</li>\n</ul>\n"
 - version: 3.35.4
   date: '2026-11-03'
   tags:

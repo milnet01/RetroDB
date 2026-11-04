@@ -1,3 +1,31 @@
+- version: 4.0.0
+  date: '2026-11-04'
+  tags:
+  - type: fix
+    label: Funkcja How Long to Beat na stronie gry szuka tego, co wpiszesz. Wcześniej, gdy nie znalazła takiego tytułu, szukała innych nazw gry i mogła zaproponować inną grę, na przykład fanowski remake. Nadal próbuje innych nazw, gdy w polu jest własna nazwa gry
+  - type: fix
+    label: Kroki How Long to Beat w instrukcji pasują teraz do ekranu. Wcześniej trzeba było wybrać dopasowanie z listy, a na stronie widać jedno dopasowanie z przyciskami Zapisz i Anuluj. Pomoc dla PlayStation nie mówi już, że logowanie trwa około dwóch miesięcy, bo RetroDB loguje się ponownie sam. Obie zmiany są w wszystkich 20 przetłumaczonych instrukcjach
+  - type: fix
+    label: Każdy pasek liter ma teraz przycisk Wszystkie. Na stronach Biblioteki, konsoli i Trofeów PSN wybranie litery pokazuje tylko gry na tę literę, a wcześniej nie było przycisku, który przywracał resztę. Na pozostałych stronach osiągnięć Wszystkie wraca do pierwszej gry
+  - type: fix
+    label: Nowy token logowania PlayStation wklejony w Ustawieniach jest teraz używany od razu. Wcześniej RetroDB używał starego logowania do wygaśnięcia, a Zapisz i testuj połączenie podawał, że stare logowanie działa. Token odrzucony przez Sony nie zastępuje już działającego
+  - type: enhancement
+    label: 'Logowanie PlayStation w Ustawieniach łatwiej utrzymać. Baner nie odlicza już dni, w których nic nie musiałeś robić, bo RetroDB loguje się ponownie sam; robi się czerwony tylko wtedy, gdy Sony odrzuci zapisany token. Przycisk Wklej tutaj nie wywołuje już pytania przeglądarki o dostęp do schowka: ustawia kursor w polu, by wkleić przez Ctrl+V. Kroki mówią teraz, by najpierw wylogować się z PlayStation, gdy zmieniasz token, który jeszcze działa, a ich komunikaty można tłumaczyć'
+  - type: enhancement
+    label: Wyskakujące komunikaty i pytania, takie jak „Ustawienia zapisane” czy „Usunąć tę listę?”, można teraz tłumaczyć na każdej stronie. Wcześniej większość została po angielsku bez względu na wybrany język
+  - type: enhancement
+    label: Komunikaty z powodem nieudanego logowania do PlayStation, takie jak „Twój NPSSO mógł wygasnąć”, można teraz tłumaczyć
+  - type: fix
+    label: Instrukcja w każdym języku odpowiada teraz angielskiej. Dodano Search Anywhere, Keeping a Title, MAME Names i tył pudełka, a starsze akapity zostały zaktualizowane
+  - type: fix
+    label: W niemieckim, afrikaans i hiszpańskim przycisk Wstecz na okładce gry oznacza teraz tył pudełka, a nie „cofnij”
+  - type: feature
+    label: Naciśnięcie Graj wypełnia teraz ekran logo gry na tle jej obrazka, gdy gra się uruchamia, albo jej nazwą dużymi literami, gdy nie ma logo. Znika samo, gdy otworzy się okno gry, albo po naciśnięciu Esc lub kliknięciu
+  - type: feature
+    label: 'Obracane pudełko 3D ma teraz prawdziwy kształt etui PS5: zaokrąglone rogi i krawędzie, wypukłą ramkę wokół okładki, linię łączenia dwóch połówek i wycięcie na palec po otwieranej stronie. Wymaga pliku pudełka z wersji Slipcase, która zapisuje kształt; zaimportuj pudełko ponownie. Inne pudełka wyglądają jak wcześniej'
+  - type: enhancement
+    label: Odśwież RetroAchievements przeniesiono z Ustawień na stronę RetroAchievements i nazwano Znajdź gry z osiągnięciami. Każdy przycisk ma tam teraz opis działania, więc łatwo odróżnić Znajdź gry od Synchronizuj postępy. Gdy żadna gra nie jest jeszcze powiązana, administrator widzi przycisk Znajdź zamiast przejścia do następnej karty
+  body: "<ul>\n  <li><strong>Instrukcja jest aktualna w każdym języku.</strong>\n    Sekcje, które były tylko w angielskiej instrukcji, są teraz przetłumaczone.</li>\n</ul>\n"
 - version: 3.35.4
   date: '2026-11-03'
   tags:

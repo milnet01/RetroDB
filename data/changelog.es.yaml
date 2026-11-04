@@ -1,3 +1,31 @@
+- version: 4.0.0
+  date: '2026-11-04'
+  tags:
+  - type: fix
+    label: How Long to Beat en la página de un juego busca lo que escribes. Antes, si no encontraba un título, buscaba los otros nombres del juego y podía ofrecer un juego distinto, como un remake de fans. Sigue probando los otros nombres cuando el cuadro contiene el nombre propio del juego
+  - type: fix
+    label: Los pasos de How Long to Beat en el manual de ayuda coinciden con la pantalla. Decían que había que elegir una coincidencia de una lista; la página muestra una sola coincidencia con Guardar y Cancelar. La ayuda de PlayStation ya no dice que el inicio de sesión dura unos dos meses, porque RetroDB vuelve a iniciar sesión por sí solo. Los 20 manuales traducidos incluyen ambos cambios
+  - type: fix
+    label: Ahora todas las barras de letras empiezan con un botón Todos. En las páginas de Biblioteca, de consola y de Trofeos de PSN, al elegir una letra solo se ven los juegos de esa letra, y antes no había botón para volver a ver el resto. En las demás páginas de logros, Todos vuelve al primer juego
+  - type: fix
+    label: Un token nuevo de inicio de sesión de PlayStation que pegas en Ajustes se usa de inmediato. Antes, RetroDB seguía usando el inicio de sesión anterior hasta que caducaba, y Guardar y probar conexión indicaba que ese inicio de sesión anterior funcionaba. Un token que Sony rechaza ya no reemplaza a uno que funciona
+  - type: enhancement
+    label: 'Es más fácil mantener el inicio de sesión de PlayStation en Ajustes. El aviso ya no cuenta días en los que no tenías que hacer nada, porque RetroDB vuelve a iniciar sesión por sí solo; solo se pone rojo cuando Sony rechaza tu token guardado. El botón Pegar aquí ya no hace que el navegador pida permiso para leer el portapapeles: coloca el cursor en el cuadro para pulsar Ctrl+V. Los pasos ahora indican que primero cierres sesión en PlayStation cuando reemplazas un token que aún funciona, y sus mensajes se pueden traducir'
+  - type: enhancement
+    label: Los mensajes emergentes y los cuadros de pregunta, como "Ajustes guardados" o "¿Eliminar esta lista?", ahora se pueden traducir en todas las páginas. Antes, la mayoría seguían en inglés sin importar el idioma elegido
+  - type: enhancement
+    label: Los mensajes que explican por qué falló un inicio de sesión de PlayStation, como "Tu NPSSO puede haber caducado", ahora se pueden traducir
+  - type: fix
+    label: El manual de ayuda en todos los idiomas ahora coincide con el inglés. Incluye Búsqueda en cualquier lugar, Conservar un título, Nombres MAME y la parte trasera de la caja, y los párrafos antiguos que se habían quedado atrás están al día
+  - type: fix
+    label: En alemán, afrikáans y español, el botón Atrás en la portada de un juego ahora dice la parte trasera de la caja, en lugar de "volver"
+  - type: feature
+    label: Al pulsar Jugar, la pantalla se llena con el logotipo del juego sobre su imagen de fondo mientras el juego se inicia, o con su nombre en letras grandes si no tiene logotipo. Desaparece solo cuando se abre la ventana del juego, o cuando pulsas Esc o haces clic
+  - type: feature
+    label: 'La caja 3D giratoria ahora tiene la forma real de una caja de PS5: esquinas y bordes redondeados, el borde elevado alrededor de la portada, la línea donde se unen las dos mitades y la ranura para el dedo en el lado de apertura. Necesita un archivo de caja de una versión de Slipcase que escriba la forma; importa la caja de nuevo para obtenerla. Las demás cajas se ven igual que antes'
+  - type: enhancement
+    label: Actualizar RetroAchievements pasó de Ajustes a la página de RetroAchievements y ahora se llama Buscar juegos con logros. Cada botón de esa página tiene ahora una línea que explica lo que hace, así que es fácil distinguir Buscar juegos de Sincronizar progreso. Si aún no hay juegos vinculados, la página muestra a un administrador el botón Buscar en lugar de pasar a la siguiente pestaña
+  body: "<ul>\n  <li><strong>El manual de ayuda está al día en todos los idiomas.</strong>\n    Las secciones que solo estaban en el manual en inglés ahora están traducidas.</li>\n</ul>\n"
 - version: 3.35.4
   date: '2026-11-03'
   tags:

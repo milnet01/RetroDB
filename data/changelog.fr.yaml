@@ -1,3 +1,31 @@
+- version: 4.0.0
+  date: '2026-11-04'
+  tags:
+  - type: fix
+    label: Sur la page d'un jeu, How Long to Beat recherche ce que vous saisissez. Avant, si un titre restait introuvable, l'outil cherchait les autres noms du jeu et pouvait proposer un autre jeu, comme un remake de fan. Il essaie toujours les autres noms quand la zone contient le nom propre du jeu
+  - type: fix
+    label: Les étapes de How Long to Beat dans le manuel d'aide correspondent maintenant à l'écran. Elles disaient de choisir un résultat dans une liste ; la page affiche un seul résultat avec Enregistrer et Annuler. L'aide PlayStation n'indique plus que la connexion dure environ deux mois, car RetroDB se reconnecte tout seul. Les 20 manuels traduits contiennent ces deux changements
+  - type: fix
+    label: Chaque barre de lettres commence désormais par un bouton Tout. Sur les pages Bibliothèque, console et Trophées PSN, choisir une lettre n'affiche que les jeux de cette lettre, et il n'y avait aucun bouton pour revoir les autres. Sur les autres pages de succès, Tout revient au premier jeu
+  - type: fix
+    label: Un nouveau jeton de connexion PlayStation collé dans les Paramètres est maintenant utilisé immédiatement. Avant, RetroDB gardait l'ancienne connexion jusqu'à son expiration, et Enregistrer et tester la connexion indiquait qu'elle fonctionnait. Un jeton refusé par Sony ne remplace plus un jeton qui fonctionne
+  - type: enhancement
+    label: 'La connexion PlayStation dans les Paramètres est plus facile à maintenir. La bannière ne décompte plus des jours où vous n''aviez rien à faire, car RetroDB se reconnecte tout seul ; elle ne devient rouge que si Sony refuse votre jeton enregistré. Le bouton Coller ici ne fait plus demander l''accès à votre presse-papiers au navigateur : il place le curseur dans la zone pour Ctrl+V. Les étapes indiquent maintenant de se déconnecter de PlayStation d''abord quand vous remplacez un jeton qui fonctionne encore, et leurs messages peuvent être traduits'
+  - type: enhancement
+    label: Les messages contextuels et les boîtes de question, comme « Paramètres enregistrés » ou « Supprimer cette liste ? », peuvent maintenant être traduits sur toutes les pages. Avant, la plupart restaient en anglais quelle que soit la langue choisie
+  - type: enhancement
+    label: Les messages expliquant pourquoi une connexion PlayStation a échoué, comme « Votre NPSSO a peut-être expiré », peuvent maintenant être traduits
+  - type: fix
+    label: Le manuel d'aide, dans toutes les langues, correspond maintenant à la version anglaise. Il ajoute Recherche partout, Conserver un titre, Noms MAME et le dos de la boîte, et les anciens paragraphes en retard sont mis à jour
+  - type: fix
+    label: En allemand, en afrikaans et en espagnol, le bouton Retour sur la jaquette d'un jeu indique maintenant le dos de la boîte, et non « revenir en arrière »
+  - type: feature
+    label: Appuyer sur Jouer remplit maintenant l'écran avec le logo du jeu sur son image de fond pendant le lancement, ou avec son nom en grandes lettres s'il n'a pas de logo. Il disparaît tout seul quand la fenêtre du jeu s'ouvre, ou si vous appuyez sur Échap ou cliquez
+  - type: feature
+    label: 'La boîte 3D rotative a maintenant la vraie forme d''un boîtier PS5 : coins et bords arrondis, rebord surélevé autour de la jaquette, ligne de jonction des deux moitiés et encoche pour le doigt du côté d''ouverture. Elle nécessite un fichier de boîte issu d''une version de Slipcase qui enregistre la forme ; importez à nouveau la boîte pour l''obtenir. Les autres boîtes restent inchangées'
+  - type: enhancement
+    label: Actualiser RetroAchievements est passé des Paramètres à la page RetroAchievements et s'appelle maintenant Trouver les jeux avec Succès. Chaque bouton y a désormais une ligne qui explique son rôle, pour bien distinguer Trouver les jeux et Synchroniser la progression. Si aucun jeu n'est encore lié, la page montre à un admin le bouton Trouver au lieu de passer à l'onglet suivant
+  body: "<ul>\n  <li><strong>Le manuel d'aide est à jour dans toutes les langues.</strong>\n    Les sections qui n'existaient qu'en anglais sont maintenant traduites.</li>\n</ul>\n"
 - version: 3.35.4
   date: '2026-11-03'
   tags:

@@ -1,3 +1,31 @@
+- version: 4.0.0
+  date: '2026-11-04'
+  tags:
+  - type: fix
+    label: Bir oyunun sayfasındaki How Long to Beat, yazdığınızı arar. Önceden bulamadığı bir başlık yerine oyunun diğer adlarını arıyordu ve hayran yapımı bir yeniden yapım gibi farklı bir oyun önerebiliyordu. Kutuda oyunun kendi adı olduğunda diğer adları yine dener
+  - type: fix
+    label: Kılavuzdaki How Long to Beat adımları artık ekranla uyumlu. Önceden listeden eşleşme seçmenizi söylüyordu; sayfa ise Kaydet ve İptal ile tek bir eşleşme gösteriyor. PlayStation yardımı artık oturum açmanın yaklaşık iki ay sürdüğünü söylemiyor, çünkü RetroDB yeniden kendisi oturum açıyor. Çevrilmiş 20 kılavuzun hepsinde bu iki değişiklik var
+  - type: fix
+    label: Her harf çubuğu artık Tümü düğmesiyle başlıyor. Kütüphane, konsol ve PSN Kupaları sayfalarında bir harf seçince yalnızca o harfin oyunları görünüyor; önceden gerisini geri getirecek düğme yoktu. Diğer başarım sayfalarında Tümü ilk oyuna döner
+  - type: fix
+    label: Ayarlar'a yapıştırdığınız yeni PlayStation oturum belirteci artık hemen kullanılıyor. Önceden RetroDB eski oturum bitene kadar onu kullanıyordu ve Kaydet ve Bağlantıyı Sına eski oturumu çalışıyor diye gösteriyordu. Sony'nin reddettiği belirteç artık çalışan birinin yerini almıyor
+  - type: enhancement
+    label: 'Ayarlar''daki PlayStation oturumunu sürdürmek daha kolay. Pano artık işlem yapmanız gerekmeyen günleri saymıyor, çünkü RetroDB yeniden kendisi oturum açıyor; yalnızca Sony kayıtlı belirtecinizi reddederse kırmızı olur. Buraya yapıştır düğmesi artık tarayıcının panonuzu okuma izni istemesine yol açmıyor: imleci Ctrl+V için kutuya koyuyor. Adımlar, hâlâ çalışan bir belirteci değiştirirken önce PlayStation''dan çıkış yapmanızı söylüyor ve mesajları çevrilebiliyor'
+  - type: enhancement
+    label: '"Ayarlar kaydedildi" veya "Bu liste silinsin mi?" gibi açılır mesajlar ve soru kutuları artık her sayfada çevrilebiliyor. Önceden çoğu, seçtiğiniz dil ne olursa olsun İngilizce kalıyordu'
+  - type: enhancement
+    label: '"NPSSO''nuzun süresi dolmuş olabilir" gibi PlayStation oturum açmanın neden başarısız olduğunu söyleyen mesajlar artık çevrilebiliyor'
+  - type: fix
+    label: Her dildeki kılavuz artık İngilizce olanla uyumlu. Her Yerde Ara, Başlığı Koruma, MAME Adları ve kutunun arkası bölümleri eklendi, geride kalmış eski paragraflar güncellendi
+  - type: fix
+    label: Almanca, Afrikaanca ve İspanyolcada bir oyunun kapağındaki Geri düğmesi artık "geri git" değil, kutunun arkası anlamına geliyor
+  - type: feature
+    label: Oyna'ya basmak, oyun başlarken ekranı oyunun logosuyla arka plan resminin üzerinde dolduruyor; logo yoksa oyunun adını büyük harflerle gösteriyor. Oyunun penceresi açılınca ya da Esc'ye basınca veya tıklayınca kendiliğinden kapanır
+  - type: feature
+    label: 'Döndürülebilen 3D kutu artık gerçek bir PS5 kutusunun şeklinde: yuvarlak köşeler ve kenarlar, kapağın çevresindeki yükseltilmiş kenar, iki yarının birleştiği çizgi ve açılan yandaki parmak girintisi. Şekli yazan bir Slipcase sürümünden kutu dosyası gerekir; almak için kutuyu yeniden içe aktarın. Diğer kutular eskisi gibi görünür'
+  - type: enhancement
+    label: RetroAchievements'ı Yenile, Ayarlar'dan RetroAchievements sayfasına taşındı ve artık Başarımlı Oyunları Bul adını taşıyor. Oradaki her düğmenin ne yaptığını anlatan bir satır var, böylece Oyunları Bul ile İlerlemeyi Eşitle kolayca ayırt edilir. Henüz bağlı oyun yoksa sayfa, sonraki sekmeye geçmek yerine yöneticiye Bul düğmesini gösterir
+  body: "<ul>\n  <li><strong>Kılavuz her dilde güncel.</strong>\n    Yalnızca İngilizce kılavuzda olan bölümler artık çevrildi.</li>\n</ul>\n"
 - version: 3.35.4
   date: '2026-11-03'
   tags:
