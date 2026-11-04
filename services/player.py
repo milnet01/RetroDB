@@ -259,7 +259,11 @@ def launch_args(game: dict, sys_emu: Optional[dict], core_path: str,
                 input_remapping_directory=str(profile / 'remaps'),
                 libretro_directory=str(profile / 'cores'),
                 system_directory=_user_system_dir(),
-                cheat_database_path=str(profile / 'cheats'))
+                cheat_database_path=str(profile / 'cheats'),
+                # A menu's Save Current Configuration can write the session's
+                # sign-in into the base cfg; it belongs in the run layer only
+                # (PASS-59-240).
+                cheevos_username='', cheevos_password='', cheevos_token='')
     port = _free_port() if needs_commands(rom_path) else None
     rec_values = recommended or {}
     try:
@@ -274,6 +278,10 @@ def launch_args(game: dict, sys_emu: Optional[dict], core_path: str,
         _save_record(game['id'], rec)
         layers = [str(system_cfg)] if system_cfg.is_file() else []
         layers.append(str(game_cfg))
+        # One player session at a time (INV-17), so any run layer still here
+        # is one an earlier session failed to delete, and may hold a token.
+        for stale in (profile / 'run').glob('*.cfg'):
+            stale.unlink(missing_ok=True)
         run_keys = dict(session_keys or {})
         if port is not None:
             run_keys.update(network_cmd_enable='true', network_cmd_port=str(port))
@@ -316,7 +324,16 @@ def _overrides(rom_path: Path) -> list:
 
 def after_session(game_id: int, rom_path: Path, token: str) -> None:
     """Keep what the user changed during play as the game's settings. Runs
-    once per player session, from the launcher, whatever the exit code."""
+    once per player session, from the launcher, whatever the exit code.
+    The run layer is deleted even when the rest fails: it can hold a sign-in
+    token (PASS-59-240)."""
+    try:
+        _keep_session_changes(game_id, rom_path, token)
+    finally:
+        (profile_dir() / 'run' / f'{token}.cfg').unlink(missing_ok=True)
+
+
+def _keep_session_changes(game_id: int, rom_path: Path, token: str) -> None:
     from services import cheats
     cheats.take_back(game_id, rom_path, profile_dir())
     rec = _record(game_id)
@@ -346,4 +363,3 @@ def after_session(game_id: int, rom_path: Path, token: str) -> None:
     if rec['user']['cfg']:
         _write(_game_file(game_id, 'cfg'), _compose(rec, 'cfg'))
     _save_record(game_id, rec)
-    (profile_dir() / 'run' / f'{token}.cfg').unlink(missing_ok=True)

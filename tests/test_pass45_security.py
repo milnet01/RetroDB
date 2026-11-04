@@ -753,15 +753,8 @@ class TestPass45_5AtomicWrite:
             "(Pass 45.5)"
         )
 
-    def test_backup_database_chmods_before_verify(self, tmp_path, monkeypatch):
-        """backup_database's chmod must fire before the integrity-check
-        verify open. Strategy: end-to-end smoke a real backup, then
-        grep the source for chmod-before-verify ordering.
-
-        sqlite3.Connection is C-immutable so we can't intercept execute()
-        at the class level; instead we (1) confirm the backup runs to
-        completion and (2) confirm the source has the chmod block before
-        the ``sqlite3.connect(dst_path)`` verify-open block."""
+    def test_backup_database_ends_owner_only(self, tmp_path, monkeypatch):
+        """A real backup ends owner-only (0o600)."""
         import services.database as db_mod
         import sqlite3
         import stat
@@ -782,28 +775,10 @@ class TestPass45_5AtomicWrite:
             f"backup file final mode should be 0o600, got {oct(final_mode)}"
         )
 
-        # Source-level pin: chmod must precede the verify connect. Pull
-        # the function body and find the offsets of (a) the chmod call on
-        # dst_path and (b) the verify ``sqlite3.connect(dst_path)``.
-        path = os.path.join(_REPO_ROOT, 'services', 'database.py')
-        with open(path, encoding='utf-8') as f:
-            body = f.read()
-        idx = body.find('def backup_database')
-        next_def = body.find('\ndef ', idx + 1)
-        body_slice = body[idx:next_def] if next_def != -1 else body[idx:]
-        chmod_pos = body_slice.find('os.chmod(dst_path')
-        verify_pos = body_slice.find('verify = sqlite3.connect(dst_path')
-        assert chmod_pos != -1, (
-            "backup_database must chmod dst_path"
-        )
-        assert verify_pos != -1, (
-            "backup_database must open dst_path for the integrity-check verify"
-        )
-        assert chmod_pos < verify_pos, (
-            "backup_database must chmod the destination BEFORE the "
-            "integrity-check verify connect (Pass 45.5). The previous "
-            "order left a 0o644 window for the duration of the check."
-        )
+        # PASS-59-240 replaced the chmod-before-verify ordering this test
+        # used to pin: the backup is now written into a file created 0o600,
+        # so no window exists at all. tests/test_pass59_240_secrets.py
+        # watches the file's mode mid-write.
 
     def test_secret_key_uses_atomic_write_text(self):
         """app._get_secret_key must route through atomic_write_text with

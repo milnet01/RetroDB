@@ -1,44 +1,46 @@
 - version: 4.0.0
-  date: '2026-11-04'
+  date: '2026-11-05'
   tags:
+  - type: security
+    label: Twoje dane logowania pozostają prywatne. Kopie zapasowe bazy danych nie mogą już być odczytywane przez inne konta na komputerze, a nieudana kopia zapasowa nie usuwa już poprzedniej. Usunięcie lub wyłączenie użytkownika wylogowuje go też z RetroAchievements w DuckStation i PCSX2. Dane logowania do RetroAchievements zapisane z własnego menu gracza nie przechodzą już na kolejną osobę, która gra. Logi i zapisane błędy zadań ukrywają tokeny RetroAchievements, błąd PlayStation innego użytkownika widzi tylko on sam, a stare pliki logowania PlayStation i Xbox zapisane zwykłym tekstem są usuwane
   - type: fix
-    label: Własne testy RetroDB nie mogą już ruszać Twojej biblioteki podczas działania. Zawsze używają tymczasowej kopii bazy danych, obrazów i ustawień, a jeśli którykolwiek z tych elementów wskazuje na Twoje prawdziwe pliki, odmawiają uruchomienia
+    label: Własne testy RetroDB nie mogą już dotknąć Twojej biblioteki podczas działania. Zawsze używają tymczasowej kopii bazy danych, obrazów i ustawień i nie uruchomią się, jeśli którekolwiek z nich wskazuje na Twoje prawdziwe pliki
   - type: fix
-    label: Czyszczenie osieroconych plików nie usuwa już obrazów z Listy życzeń. Otwarcie gry nie powoduje już, że zapomina ona zrzuty ekranu, których nie może znaleźć. Wcześniej, gdy dysk z obrazami był odłączony, każda otwarta gra traciła całą listę zrzutów ekranu; teraz lista zostaje zachowana, a brakujący obraz jest tylko ukrywany
+    label: Czyszczenie osieroconych plików nie usuwa już obrazów z Twojej listy życzeń. Otwarcie gry nie sprawia już, że zapomina ona zrzuty ekranu, których nie może znaleźć. Wcześniej, gdy dysk z obrazami był odłączony, każda otwarta gra traciła całą listę zrzutów ekranu; teraz lista zostaje, a brakujący obraz jest tylko ukryty
   - type: fix
-    label: Pobieranie wideo lub instrukcji, które przerwie się w połowie, nie uszkadza już kopii, którą gra już miała, a nieudane pobieranie nie zostawia w folderze mediów ukrytego niedokończonego pliku. Działający w tle skaler nie zapisuje już starego obrazu nad nowszym, pobranym w międzyczasie. Konwersja do WebP zachowuje wskazywanie obrazu dla każdej gry, która go współdzieli, i nigdy nie rusza plików spoza folderów z obrazami
+    label: Pobieranie wideo lub instrukcji, które przerwie się w połowie, nie uszkadza już kopii, którą gra już miała, a nieudane pobieranie nie zostawia ukrytego niepełnego pliku w folderze multimediów. Skaler działający w tle nie zapisuje już starego obrazu na nowszym, pobranym w międzyczasie. Konwersja do WebP zachowuje wskazywanie obrazu przez każdą grę, która go współdzieli, i nigdy nie rusza plików spoza folderów z obrazami
   - type: fix
-    label: Usunięcie gry lub pozycji z Listy życzeń usuwa teraz także jej obrazy, wideo i instrukcje, ale zachowuje te, z których nadal korzysta inna gra lub pozycja z Listy życzeń. Zapisane obrazy mogą znowu być odczytywane przez inne konta na komputerze, a Zmiana rozmiaru obrazów liczy obraz, którego nie udało się zapisać, jako nieudany, a nie jako gotowy
+    label: Usunięcie gry lub pozycji z listy życzeń usuwa teraz także jej obrazy, wideo i instrukcje, ale zachowuje te, z których nadal korzysta inna gra lub pozycja listy życzeń. Zapisane obrazy znów mogą być odczytywane przez inne konta na komputerze, a Zmiana rozmiaru obrazów liczy obraz, którego nie udało się zapisać, jako nieudany, a nie jako gotowy
   - type: fix
-    label: Wyszukiwarka duplikatów nie proponuje już do usunięcia działającego pliku. Podczas szukania według nazwy nie uznaje już plików .cue i .bin jednej gry za swoje kopie. Nigdy nie proponuje pliku ścieżki płyty, który mogą współdzielić dwie wersje gry. Nie usunie płyty wymienionej na playliście. Gra, której plik usuwasz, przechodzi teraz do kopii, którą zachowujesz, więc pozostaje w Bibliotece
+    label: Wyszukiwarka duplikatów nie proponuje już do usunięcia działającego pliku. Przy szukaniu według nazwy nie uznaje już plików .cue i .bin tej samej gry za swoje kopie. Nigdy nie proponuje pliku ścieżki płyty, który mogą współdzielić dwie wersje gry. Nie usunie płyty wymienionej na playliście. Gra, której plik usuniesz, przechodzi teraz na kopię, którą zachowasz, więc zostaje w bibliotece
   - type: fix
-    label: Porządkowanie wielopłytowych nie nadpisuje już istniejącej playlisty ani pliku, który już jest w folderze gry; zatrzymuje się i podaje który. Utworzona playlista zawiera pliki .cue poszczególnych płyt, a nie ich pliki ścieżek. Gry, których pliki przenosi, podążają teraz za nimi do folderu, więc Czyszczenie brakujących ROM-ów już ich nie usuwa
+    label: Porządkowanie wielopłytowych nie nadpisuje już istniejącej playlisty ani pliku znajdującego się już w folderze gry; zatrzymuje się i mówi, o który chodzi. Utworzona playlista wymienia plik .cue każdej płyty, a nie pliki jej ścieżek. Gry, których pliki przenosi, podążają teraz za nimi do folderu, więc Wyczyść brakujące ROM-y już ich nie usuwa
   - type: fix
-    label: Konwersja do CHD z opcją „usuń oryginały” usuwa teraz także pliki ścieżek płyty, ale zachowuje ścieżkę, której nadal używa inny plik .cue. Gra i każda playlista z wymienioną starą płytą wskazują teraz nowy plik .chd. Zmiana nazwy pliku gry aktualizuje teraz playlistę, na której jest wymieniony, a pliku ścieżki potrzebnego dla .cue nie można zmienić. Usuwanie plików z archiwum zip usuwa tylko wybrane pliki, nawet gdy nazwa zawiera [ lub ]. Usuwanie duplikatów zrzutów ekranu kasuje tylko kopie znalezione podczas skanowania i zawsze zostawia jedną
+    label: Konwersja do CHD z opcją „usuń oryginały” usuwa teraz także pliki ścieżek płyty, ale zachowuje ścieżkę, której nadal używa inny plik .cue. Gra i każda playlista, która wymieniała starą płytę, wskazują teraz nowy plik .chd. Zmiana nazwy pliku gry aktualizuje teraz playlistę, która go wymienia, a pliku ścieżki potrzebnego plikowi .cue nie można zmienić. Usuwanie plików z archiwum zip usuwa tylko wybrane pliki, nawet gdy nazwa zawiera [ lub ]. Deduplikacja zrzutów ekranu usuwa tylko kopie znalezione podczas skanowania i zawsze zostawia jedną
   - type: fix
-    label: How Long to Beat na stronie gry wyszukuje to, co wpiszesz. Wcześniej, gdy nie mógł znaleźć tytułu, szukał innych nazw gry i mógł zaproponować inną grę, na przykład fanowski remake. Nadal sprawdza inne nazwy, gdy w polu jest właściwa nazwa gry
+    label: How Long to Beat na stronie gry wyszukuje to, co wpiszesz. Wcześniej, gdy nie mógł znaleźć tytułu, szukał innych nazw gry i mógł zaproponować inną grę, na przykład fanowski remake. Nadal próbuje innych nazw, gdy w polu jest własna nazwa gry
   - type: fix
-    label: Kroki dotyczące How Long to Beat w instrukcji pomocy zgadzają się z ekranem. Mówiły o wyborze dopasowania z listy, a strona pokazuje jedno dopasowanie z przyciskami Zapisz i Anuluj. Pomoc dla PlayStation nie mówi już, że logowanie trwa około dwóch miesięcy, bo RetroDB loguje się ponownie samodzielnie. Wszystkie 20 przetłumaczonych instrukcji zawiera obie zmiany
+    label: Kroki How Long to Beat w instrukcji pomocy zgadzają się z ekranem. Mówiły o wybraniu dopasowania z listy; strona pokazuje jedno dopasowanie z przyciskami Zapisz i Anuluj. Pomoc PlayStation nie mówi już, że logowanie trwa około dwóch miesięcy, bo RetroDB loguje się ponownie sam. Wszystkie 20 przetłumaczonych instrukcji zawiera obie zmiany
   - type: fix
-    label: Każdy pasek liter zaczyna się teraz od przycisku Wszystko. Na stronach Biblioteki, konsoli i Trofeów PSN wybranie litery pokazuje tylko gry na tę literę, a wcześniej nie było przycisku, który przywracał resztę. Na innych stronach osiągnięć Wszystko wraca do pierwszej gry
+    label: Każdy pasek liter zaczyna się teraz od przycisku Wszystkie. Na stronach Biblioteki, konsol i Trofeów PSN wybranie litery pokazuje tylko gry na tę literę, a wcześniej nie było przycisku, by przywrócić resztę. Na innych stronach osiągnięć Wszystkie wraca do pierwszej gry
   - type: fix
-    label: Nowy token logowania PlayStation wklejony w Ustawieniach jest teraz używany od razu. Wcześniej RetroDB używał starego logowania, aż wygasło, a Zapisz i sprawdź połączenie podawało, że to stare logowanie działa. Token odrzucony przez Sony nie zastępuje już tego, który działa
+    label: Nowy token logowania PlayStation wklejony w Ustawieniach jest teraz używany od razu. Wcześniej RetroDB używał starego logowania, aż wygasło, a Zapisz i testuj połączenie pokazywało to stare logowanie jako działające. Token odrzucony przez Sony nie zastępuje już działającego
   - type: enhancement
-    label: 'Logowanie PlayStation w Ustawieniach łatwiej utrzymać. Baner nie odlicza już dni, w których nie musiałeś nic robić, bo RetroDB loguje się ponownie samodzielnie; robi się czerwony tylko wtedy, gdy Sony odrzuci zapisany token. Przycisk Wklej tutaj nie powoduje już, że przeglądarka prosi o dostęp do schowka: ustawia kursor w polu, abyś użył Ctrl+V. Kroki mówią teraz, by najpierw wylogować się z PlayStation, gdy wymieniasz token, który nadal działa, a ich komunikaty można tłumaczyć'
+    label: 'Logowanie PlayStation w Ustawieniach łatwiej utrzymać. Baner nie odlicza już dni, w których nie musiałeś nic robić, bo RetroDB loguje się ponownie sam; robi się czerwony tylko wtedy, gdy Sony odrzuci zapisany token. Przycisk Wklej tutaj nie powoduje już, że przeglądarka prosi o odczyt schowka: ustawia kursor w polu, abyś wkleił za pomocą Ctrl+V. Kroki mówią teraz, by najpierw wylogować się z PlayStation, gdy wymieniasz token, który nadal działa, a ich komunikaty można tłumaczyć'
   - type: enhancement
-    label: Wyskakujące komunikaty i okna z pytaniami, takie jak „Zapisano ustawienia” lub „Usunąć tę listę?”, można teraz tłumaczyć na każdej stronie. Wcześniej większość z nich pozostawała po angielsku niezależnie od wybranego języka
+    label: Komunikaty wyskakujące i okna z pytaniami, takie jak „Zapisano ustawienia” czy „Usunąć tę listę?”, można teraz tłumaczyć na każdej stronie. Wcześniej większość z nich pozostawała po angielsku niezależnie od wybranego języka
   - type: enhancement
     label: Komunikaty wyjaśniające, dlaczego logowanie PlayStation się nie udało, takie jak „Twój NPSSO mógł wygasnąć”, można teraz tłumaczyć
   - type: fix
-    label: Instrukcja pomocy w każdym języku odpowiada teraz angielskiej. Zyskuje Wyszukiwanie wszędzie, Zachowanie tytułu, Nazwy MAME i tył pudełka, a starsze akapity, które były nieaktualne, zostały zaktualizowane
+    label: Instrukcja pomocy w każdym języku odpowiada teraz angielskiej. Zyskała Wyszukiwanie wszędzie, Zachowanie tytułu, Nazwy MAME i tył pudełka, a starsze akapity, które się zdezaktualizowały, są aktualne
   - type: fix
-    label: W niemieckim, afrikaans i hiszpańskim przycisk Wstecz na okładce gry oznacza teraz tył pudełka, a nie „cofnij”
+    label: W niemieckim, afrikaans i hiszpańskim przycisk Wstecz na okładce gry oznacza teraz tył pudełka, a nie „wróć”
   - type: feature
-    label: Naciśnięcie Graj wypełnia teraz ekran logo gry na tle jej obrazu podczas uruchamiania gry, a gdy gra nie ma logo, jej nazwą dużymi literami. Znika samo, gdy otworzy się okno gry, albo po naciśnięciu Esc lub kliknięciu
+    label: Naciśnięcie Graj wypełnia teraz ekran logo gry na tle jej obrazu podczas uruchamiania gry, a gdy nie ma logo, jej nazwą dużymi literami. Znika samo, gdy otworzy się okno gry, albo po naciśnięciu Esc lub kliknięciu
   - type: feature
-    label: 'Obracane pudełko 3D ma teraz prawdziwy kształt etui PS5: zaokrąglone rogi i krawędzie, wypukłą krawędź wokół okładki, linię łączenia obu połówek i wcięcie na palec po otwieranej stronie. Wymaga pliku pudełka z wersji Slipcase, która zapisuje kształt; zaimportuj pudełko ponownie, aby go dostać. Inne pudełka wyglądają jak dawniej'
+    label: 'Obracane pudełko 3D ma teraz prawdziwy kształt etui PS5: zaokrąglone rogi i krawędzie, podniesioną krawędź wokół okładki, linię łączenia obu połówek i otwór na palec po otwieranej stronie. Wymaga pliku pudełka z wersji Slipcase, która zapisuje kształt; zaimportuj pudełko ponownie, aby go uzyskać. Inne pudełka wyglądają jak dotąd'
   - type: enhancement
-    label: Odśwież RetroAchievements zostało przeniesione z Ustawień na stronę RetroAchievements i nazywa się teraz Znajdź gry z osiągnięciami. Każdy przycisk ma teraz opis tego, co robi, więc łatwo odróżnić Znajdź gry od Synchronizuj postęp. Gdy nie połączono jeszcze żadnych gier, strona pokazuje administratorowi przycisk Znajdź zamiast przechodzić do następnej karty
+    label: Odśwież RetroAchievements przeniesiono z Ustawień na stronę RetroAchievements i nazwano Znajdź gry z osiągnięciami. Każdy przycisk ma teraz opis tego, co robi, więc łatwo odróżnić Znajdź gry od Synchronizuj postęp. Gdy nie ma jeszcze powiązanych gier, strona pokazuje administratorowi przycisk Znajdź zamiast przechodzić do następnej karty
   body: "<ul>\n  <li><strong>Instrukcja pomocy jest aktualna w każdym języku.</strong>\n    Sekcje, które były tylko w angielskiej instrukcji, są teraz przetłumaczone.</li>\n</ul>\n"
 - version: 3.35.4
   date: '2026-11-03'

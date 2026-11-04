@@ -24,10 +24,14 @@ import re
 # Ordered: most specific first so they win over the generic fallbacks.
 _PATTERNS = [
     # JSON token fields: "access_token": "..." / "refresh_token": "..." / "api_key": "..." / etc.
-    (re.compile(r'("(?:access_token|refresh_token|id_token|api_key|apiKey|authorization|authKey|authz_c|session_token|secret|password|devpassword|npsso)"\s*:\s*")([^"]+)(")', re.IGNORECASE), r'\1<redacted>\3'),
+    (re.compile(r'("(?:access_token|refresh_token|id_token|api_key|apiKey|authorization|authKey|authz_c|session_token|secret|password|devpassword|npsso|token)"\s*:\s*")([^"]+)(")', re.IGNORECASE), r'\1<redacted>\3'),
     # Pass 33.10 — Python repr() form of the same dict keys, e.g.
     # "{'access_token': 'abc'}" coming out of `logger.info('%r', dct)`.
-    (re.compile(r"('(?:access_token|refresh_token|id_token|api_key|apiKey|authorization|authKey|authz_c|session_token|secret|password|devpassword|npsso)'\s*:\s*')([^']+)(')", re.IGNORECASE), r'\1<redacted>\3'),
+    (re.compile(r"('(?:access_token|refresh_token|id_token|api_key|apiKey|authorization|authKey|authz_c|session_token|secret|password|devpassword|npsso|token)'\s*:\s*')([^']+)(')", re.IGNORECASE), r'\1<redacted>\3'),
+    # PASS-59-240 — RetroArch cfg lines: cheevos_token = "..." and
+    # cheevos_password = "..." (the RetroAchievements sign-in). The JSON key
+    # lists above carry a bare `token` for RA's login reply ("Token": "...").
+    (re.compile(r'(cheevos_(?:token|password)\s*=\s*")([^"]*)(")', re.IGNORECASE), r'\1<redacted>\3'),
     # JWT triples (header.payload.signature), 3 base64url segments separated by dots
     (re.compile(r'\beyJ[A-Za-z0-9_\-]{10,}\.[A-Za-z0-9_\-]{10,}\.[A-Za-z0-9_\-]{10,}\b'), '<redacted-jwt>'),
     # Authorization header values: "Authorization: Bearer ..." / "Authorization: Basic ..."

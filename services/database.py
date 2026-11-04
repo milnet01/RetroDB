@@ -342,8 +342,14 @@ def backup_database(src_path, dst_path):
     Create a consistent snapshot of a SQLite database using the online
     backup API. Coordinates with WAL mode and concurrent writers, unlike
     `shutil.copy2` which can produce a torn file. Verifies the result with
-    `PRAGMA integrity_check` and removes the destination file if the check
-    fails, so callers never receive a corrupt backup.
+    `PRAGMA integrity_check`, so callers never receive a corrupt backup.
+
+    The snapshot is written to a hidden `.partial` file beside `dst_path`,
+    created owner-only (0o600) before a byte is written, and renamed into
+    place only once it passes the check (PASS-59-240). The backup holds
+    password hashes, sessions and tokens, so it is never readable by other
+    accounts, and a failed backup leaves any earlier file at `dst_path` as it
+    was.
 
     Args:
         src_path: Path to the live SQLite database file.
@@ -353,57 +359,59 @@ def backup_database(src_path, dst_path):
         RuntimeError: if the backup fails its post-write integrity check.
         sqlite3.Error: on any underlying SQLite failure.
     """
-    src = sqlite3.connect(src_path)
+    import tempfile
+    directory = os.path.dirname(dst_path) or '.'
     try:
-        dst = sqlite3.connect(dst_path)
-        try:
-            with dst:
-                src.backup(dst)
-        finally:
-            dst.close()
-    finally:
-        src.close()
-
-    # Pass 45.5 — chmod *before* the integrity-check open so the backup
-    # never exists at the umask default while it holds session cookies,
-    # password hashes, and OAuth tokens. The previous order was
-    # backup → verify-open → chmod, which left a 0o644 window for the
-    # entire duration of PRAGMA integrity_check.
-    try:
-        os.chmod(dst_path, 0o600)
+        fd, tmp_path = tempfile.mkstemp(
+            prefix=f".{os.path.basename(dst_path)}.", suffix='.partial', dir=directory)
     except OSError as e:
-        # Pass 48.5 — don't swallow silently: a failed chmod leaves the backup
-        # at the umask default (potentially 0o644) while it holds session
-        # cookies, password hashes and OAuth tokens. Surface it so the operator
-        # can tighten permissions (e.g. on a filesystem that ignores chmod).
-        logger.warning(f"Could not chmod backup {dst_path} to 0o600: {e}")
-
-    verify = sqlite3.connect(dst_path)
+        # Same error a direct sqlite3.connect(dst_path) gave (callers and
+        # tests/test_database_backup.py rely on it).
+        raise sqlite3.OperationalError('unable to open database file') from e
+    os.close(fd)   # mkstemp creates it 0o600; SQLite writes into it
     try:
-        # Pass 45.10 — match the migration runner's busy_timeout. A
-        # backup-verify connection competing with a peer reader on the
-        # same file would otherwise fail-fast under SQLite's default
-        # zero timeout.
-        verify.execute("PRAGMA busy_timeout = 5000")
-        result = verify.execute("PRAGMA integrity_check").fetchone()
-    finally:
-        verify.close()
-
-    if not result or result[0] != 'ok':
+        src = sqlite3.connect(src_path)
         try:
-            os.remove(dst_path)
+            dst = sqlite3.connect(tmp_path)
+            try:
+                with dst:
+                    src.backup(dst)
+            finally:
+                dst.close()
+        finally:
+            src.close()
+
+        verify = sqlite3.connect(tmp_path)
+        try:
+            # Pass 45.10 — match the migration runner's busy_timeout. A
+            # backup-verify connection competing with a peer reader on the
+            # same file would otherwise fail-fast under SQLite's default
+            # zero timeout.
+            verify.execute("PRAGMA busy_timeout = 5000")
+            result = verify.execute("PRAGMA integrity_check").fetchone()
+        finally:
+            verify.close()
+        if not result or result[0] != 'ok':
+            raise RuntimeError(
+                f"backup failed integrity check: {result[0] if result else 'no result'}")
+
+        # Pass 35.1 — fsync the file before the rename and the directory
+        # after it, so a power loss can't leave a name pointing at empty
+        # contents.
+        try:
+            _fsync_path(tmp_path)
+        except OSError:
+            pass   # fsync can fail on some network filesystems
+        os.replace(tmp_path, dst_path)
+    except BaseException:
+        try:
+            os.remove(tmp_path)
         except OSError:
             pass
-        raise RuntimeError(f"backup failed integrity check: {result[0] if result else 'no result'}")
-
-    # Pass 35.1 — fsync both the file and its parent directory so a power
-    # loss can't leave a directory entry pointing at empty contents.
+        raise
     try:
-        _fsync_path(dst_path)
-        _fsync_path(os.path.dirname(dst_path) or '.')
+        _fsync_path(directory)
     except OSError:
-        # fsync can fail on some network filesystems — not worth aborting
-        # an otherwise-verified backup over.
         pass
 
 

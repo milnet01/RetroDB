@@ -553,6 +553,7 @@ your migration — not in the runner.
 | 035 | `035_removed_screenshots.py` | Add `removed_screenshots` (`game_id`, `dhash` hex TEXT, `removed_at`): the look of each screenshot the user deleted, so no scrape brings it back. | PASS-59-222 |
 | 036 | `036_games_game_logo.py` | Add `games.game_logo` (TEXT, a filename in `images/game_logos/`). | PASS-59-224 §4.1. Additive. Filled by a scrape or an editor's upload; NULL = no logo. |
 | 037 | `037_games_boxart_back.py` | Add `games.boxart_back` (TEXT, a filename in `images/boxart_back/`). | PASS-59-225. Additive. Filled by a scrape or an editor's upload; NULL = no back. Separate from `box_faces`. |
+| 038 | `038_delete_kept_token_files.py` | Delete the `*_tokens.json.migrated-015` plaintext token files 015 kept, where `user_platform_tokens` already holds that platform's token. | PASS-59-240. No schema change. A file whose platform has no row may be the only copy, and stays. |
 
 ---
 

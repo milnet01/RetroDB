@@ -213,3 +213,19 @@ class TestCategoryFileHandlerRedacts:
         assert "igdb token" in written, "the record never reached the category file"
         assert jwt not in written
         assert "<redacted-jwt>" in written
+
+
+class TestRetroAchievementsSecrets:
+    """PASS-59-240: RetroArch cfg lines and the RA login reply carry the token."""
+
+    @pytest.mark.parametrize('line,secret', [
+        ('cheevos_token = "0123456789abcdef"', '0123456789abcdef'),  # gitleaks:allow — synthetic test value
+        ('cheevos_password = "hunter2pass"', 'hunter2pass'),  # gitleaks:allow — synthetic test value
+        ('{"Success":true,"User":"bob","Token":"AbCdEf123456"}', 'AbCdEf123456'),  # gitleaks:allow — synthetic test value
+        ("{'Success': True, 'Token': 'AbCdEf123456'}", 'AbCdEf123456'),  # gitleaks:allow — synthetic test value
+    ])
+    def test_token_is_redacted(self, line, secret):
+        assert secret not in redact(line)
+
+    def test_username_is_kept(self):
+        assert 'cheevos_username = "bob"' == redact('cheevos_username = "bob"')

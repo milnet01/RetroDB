@@ -815,10 +815,15 @@ def persist_job_complete(job_id, status='completed', error=None):
     Args:
         job_id: The job_queue row ID returned by persist_job_start.
         status: Final status ('completed', 'failed', 'cancelled')
-        error: Optional error message string.
+        error: Optional error message string. Redacted before it is saved: an
+            exception's text can carry a request URL with a key in it
+            (PASS-59-240).
     """
     if job_id is None:
         return
+    if error:
+        from services.log_redactor import redact
+        error = redact(error)
     try:
         def _do_complete():
             now = datetime.now(timezone.utc).isoformat()

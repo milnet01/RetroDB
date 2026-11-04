@@ -1942,6 +1942,8 @@ def api_psn_bulk_refresh_status():
     if owner is not None and owner != g.user['id']:
         status['current_game'] = None
         status['current_npwr'] = None
+        # The error can quote the owner's PSN sign-in failure (PASS-59-240).
+        status['error'] = None
     return jsonify({'success': True, **status})
 
 

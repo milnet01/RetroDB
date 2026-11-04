@@ -274,6 +274,11 @@ def api_update_user(user_id):
         params.append(user_id)
         execute(f"UPDATE users SET {', '.join(updates)} WHERE id = ?", params)
 
+    if 'is_active' in data and not data['is_active']:
+        # Their RA token must not stay in the shared emulator files (PASS-59-240).
+        from services import ra_sign_in
+        ra_sign_in.sign_out(user_id)
+
     return success(message='User updated successfully')
 
 
@@ -305,6 +310,10 @@ def api_delete_user(user_id):
             if clean_name:
                 avatar_path = os.path.join(config.IMAGE_PATH, 'avatars', clean_name)
 
+    # Before the rows go: sign-out reads the RA username from the user's own
+    # token record, and takes it out of the shared emulator files (PASS-59-240).
+    from services import ra_sign_in
+    ra_sign_in.sign_out(user_id)
     _delete_user_and_owned_rows(user_id)
     if avatar_path and os.path.isfile(avatar_path):
         os.remove(avatar_path)

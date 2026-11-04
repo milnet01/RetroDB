@@ -9,6 +9,7 @@ import time
 import logging
 import requests
 from datetime import datetime
+from services.log_redactor import redact
 
 from services.jobs.base import (
     _get_conn, _commit_with_retry, _download_psn_trophy_image,
@@ -325,9 +326,9 @@ class PSNRefreshJob:
                 with self._lock:
                     self.completed = True
                     self.running = False
-                    self.error_message = f"PSN authentication failed: {e!s}"
+                    self.error_message = f"PSN authentication failed: {redact(str(e))}"
                 release_singleton_fd(self)
-                persist_job_complete(persist_id, status='failed', error=f"PSN authentication failed: {e!s}")
+                persist_job_complete(persist_id, status='failed', error=f"PSN authentication failed: {redact(str(e))}")
                 return
 
             # Get trophy titles once (paginated — can be slow for large libraries)
@@ -414,9 +415,9 @@ class PSNRefreshJob:
                 with self._lock:
                     self.completed = True
                     self.running = False
-                    self.error_message = f"Failed to fetch trophy titles: {e!s}"
+                    self.error_message = f"Failed to fetch trophy titles: {redact(str(e))}"
                 release_singleton_fd(self)
-                persist_job_complete(persist_id, status='failed', error=f"Failed to fetch trophy titles: {e!s}")
+                persist_job_complete(persist_id, status='failed', error=f"Failed to fetch trophy titles: {redact(str(e))}")
                 return
 
             logger.info(f"Starting PSN refresh job {self.job_id} with {len(self.npwr_ids)} games")
@@ -547,7 +548,7 @@ class PSNRefreshJob:
             with self._lock:
                 self.completed = True
                 self.running = False
-                self.error_message = str(e)
+                self.error_message = redact(str(e))
             release_singleton_fd(self)
             persist_job_complete(persist_id, status='failed', error=str(e))
 

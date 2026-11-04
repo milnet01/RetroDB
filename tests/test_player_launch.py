@@ -536,3 +536,40 @@ def test_81_inv6_missing_core_downloads_or_422(launch_client, monkeypatch, tmp_p
     else:
         assert asked == []
         assert 'Player core not found' in rv.get_json()['error']
+
+
+# PASS-59-240: a sign-in never outlives its launch, whatever the player saved.
+
+def test_launch_clears_a_sign_in_a_menu_save_left_in_the_base_cfg(playerdb, monkeypatch):
+    monkeypatch.setattr('services.launch_resolver.ra_sign_in.launch_keys', lambda uid: {})
+    base = playerdb['profile'] / 'retroarch.cfg'
+    base.parent.mkdir(parents=True, exist_ok=True)
+    base.write_text('cheevos_username = "Ants"\ncheevos_token = "secret-token"\n'
+                    'cheevos_password = "secret-pw"\nvideo_vsync = "true"\n')
+    _resolve()
+    text = base.read_text()
+    assert 'secret-token' not in text and 'secret-pw' not in text and 'Ants' not in text
+    assert 'video_vsync = "true"' in text
+
+
+def test_launch_sweeps_run_layers_an_earlier_session_left(playerdb, monkeypatch):
+    monkeypatch.setattr('services.launch_resolver.ra_sign_in.launch_keys', lambda uid: {})
+    stale = playerdb['profile'] / 'run' / 'old-session.cfg'
+    stale.parent.mkdir(parents=True, exist_ok=True)
+    stale.write_text('cheevos_token = "secret-token"\n')
+    _resolve()
+    assert not stale.exists()
+
+
+def test_run_layer_is_deleted_even_when_the_session_cleanup_fails(playerdb, monkeypatch):
+    monkeypatch.setattr('services.launch_resolver.ra_sign_in.launch_keys', lambda uid: _RA_KEYS)
+    ctx = _resolve()
+    layer = Path(_run_layer(ctx))
+
+    def _boom(*a, **k):
+        raise OSError('disk gone')
+    monkeypatch.setattr('services.cheats.take_back', _boom)
+    from services import player
+    with pytest.raises(OSError):
+        player.after_session(1, Path('/nonexistent/game.cue'), layer.stem)
+    assert not layer.exists()
