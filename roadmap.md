@@ -10990,7 +10990,14 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.240 Sign-ins and keys stay out of logs, backups and shared emulator files (security, M).
-- **Status**: todo
+- **Resolution** (2026-11-05): Shipped 2026-11-05 in 20401036. Fixed: redactor (cheevos cfg lines,
+  JSON Token), saved job errors and PSN errors redacted, PSN status
+  hides error from non-owners, player clears base-cfg sign-in and sweeps
+  run layers, user delete/deactivate signs out of RA emulators, backups
+  0600 and atomic, migration 038 removes .migrated-015 files. Checked
+  and left: scraper check routes, RA sync and Gemini never send a
+  credential URL to the browser.
+- **Status**: done
 - **Why**: audit 2026-11-04, lanes 1, 2, 3, 7, 9 and 15. Old scrape logs
   already held ScreenScraper sign-ins (memory redact-scrape-logs).
 - **Fix**:
