@@ -56,6 +56,8 @@ from services.game_media_service import (
     ALLOWED_IMAGE_EXT, ALLOWED_VIDEO_EXT, image_dir,
     remove_media_file, save_upload, save_screenshots,
 )
+from services.image_utils import media_folder
+from services.media_cleanup import shown_screenshots
 
 logger = logging.getLogger(__name__)
 
@@ -320,7 +322,7 @@ def api_games_card_data():
     sql = f"""
         SELECT g.id, g.title, g.sort_title, g.system_id, g.emulator_override_id,
                g.boxart, g.boxart_3d,
-               g.fanart, g.genre, g.franchise, g.developer, g.publisher,
+               g.fanart, g.game_logo, g.genre, g.franchise, g.developer, g.publisher,
                g.release_date, g.modes, g.esrb_rating, g.pegi_rating,
                g.cero_rating, g.usk_rating, g.acb_rating, g.fpb_rating,
                g.grac_rating, g.classind_rating, g.china_rating,
@@ -513,6 +515,8 @@ def game_detail(game_id):
                     boxart_filename = game['boxart']
                     boxart_3d_filename = game['boxart_3d'] if game['boxart_3d'] else ''
                     fanart_filename = game['fanart']
+                    logo_filename = game['game_logo'] or ''
+                    back_filename = game['boxart_back'] or ''
                     screenshots = game['screenshots'] or ''
                     video_filename = game['video'] if game['video'] else ''
 
@@ -525,6 +529,12 @@ def game_detail(game_id):
                     if request.form.get('remove_fanart') == '1' and fanart_filename:
                         remove_media_file(fanart_filename, 'fanart')
                         fanart_filename = ''
+                    if request.form.get('remove_game_logo') == '1' and logo_filename:
+                        remove_media_file(logo_filename, 'game_logo')
+                        logo_filename = ''
+                    if request.form.get('remove_boxart_back') == '1' and back_filename:
+                        remove_media_file(back_filename, 'boxart_back')
+                        back_filename = ''
                     if request.form.get('remove_video') == '1' and video_filename:
                         remove_media_file(video_filename, 'video')
                         video_filename = ''
@@ -536,13 +546,13 @@ def game_detail(game_id):
                     replaced = []
 
                     def _upload(field, media_type, prefix, current):
-                        uploaded = save_upload(request.files.get(field), image_dir(media_type),
+                        uploaded = save_upload(request.files.get(field), image_dir(media_folder(media_type)),
                                                game_id, prefix, ALLOWED_IMAGE_EXT, image_type=media_type)
                         if not uploaded:
                             return current
                         if current and current != uploaded and not query(
                                 f"SELECT 1 FROM games WHERE "
-                                f"{safe_column(media_type, ('boxart', 'boxart_3d', 'fanart'))} = ? AND id != ?",
+                                f"{safe_column(media_type, ('boxart', 'boxart_3d', 'boxart_back', 'fanart', 'game_logo'))} = ? AND id != ?",
                                 (current, game_id), one=True):
                             replaced.append((current, media_type))
                         return uploaded
@@ -550,6 +560,8 @@ def game_detail(game_id):
                     boxart_filename = _upload('custom_boxart', 'boxart', 'custom', boxart_filename)
                     boxart_3d_filename = _upload('custom_boxart_3d', 'boxart_3d', 'custom_3d', boxart_3d_filename)
                     fanart_filename = _upload('custom_fanart', 'fanart', 'custom_fanart', fanart_filename)
+                    logo_filename = _upload('custom_game_logo', 'game_logo', 'custom_logo', logo_filename)
+                    back_filename = _upload('custom_boxart_back', 'boxart_back', 'custom_back', back_filename)
 
                     video_upload = request.files.get('custom_video')
                     uploaded = save_upload(video_upload, os.path.join(config.STATIC_PATH, 'videos'), game_id, 'custom', ALLOWED_VIDEO_EXT)
@@ -613,6 +625,8 @@ def game_detail(game_id):
                             boxart = NULLIF(?, ''),
                             boxart_3d = NULLIF(?, ''),
                             fanart = NULLIF(?, ''),
+                            game_logo = NULLIF(?, ''),
+                            boxart_back = NULLIF(?, ''),
                             screenshots = NULLIF(?, ''),
                             video = NULLIF(?, ''),
                             emulator_override_id = ?,
@@ -628,7 +642,8 @@ def game_detail(game_id):
                         esrb_rating, pegi_rating, cero_rating, usk_rating, acb_rating, fpb_rating, grac_rating, classind_rating,
                         china_rating,
                         save_type, similar_games, edition, description,
-                        boxart_filename, boxart_3d_filename, fanart_filename, screenshots, video_filename,
+                        boxart_filename, boxart_3d_filename, fanart_filename, logo_filename, back_filename,
+                        screenshots, video_filename,
                         emulator_override_id, launch_args_override,
                         edit_title_lock(game['title'], game['title_locked'], title,
                                         request.form.get('edit_title_locked') == '1'),
@@ -669,13 +684,14 @@ def game_detail(game_id):
                             china_rating = NULL,
                             players = NULL, modes = NULL, description = NULL,
                             boxart = NULL, boxart_3d = NULL, screenshots = NULL,
-                            fanart = NULL, video = NULL, manual = NULL,
+                            fanart = NULL, game_logo = NULL, boxart_back = NULL, video = NULL, manual = NULL,
                             region = NULL, franchise = NULL, similar_games = NULL,
                             playtime_estimate = NULL, controller_support = NULL, save_type = NULL,
                             scrape_history = NULL, critic_score = NULL, critic_score_count = NULL,
                             user_score = NULL, user_score_count = NULL, units_sold = NULL,
                             release_dates = NULL,
                             hltb_match_name = NULL, hltb_match_platform = NULL, hltb_match_confidence = NULL,
+                            hltb_id = NULL, hltb_players = NULL,
                             scraped = 0, title_locked = 0
                         WHERE id = ?
                     """, (game_id,))
@@ -718,17 +734,9 @@ def game_detail(game_id):
         else:
             game_dict['scrape_history'] = []
 
-        # Validate screenshot files exist on disk — filter out stale references
+        # Hide screenshots missing on disk; the stored list is never changed here.
         if game_dict.get('screenshots'):
-            ss_dir = os.path.join(config.IMAGE_PATH, 'screenshots')
-            ss_list = [s.strip() for s in game_dict['screenshots'].split(',') if s.strip()]
-            valid_ss = [s for s in ss_list if os.path.exists(os.path.join(ss_dir, s))]
-            if len(valid_ss) < len(ss_list):
-                missing = [s for s in ss_list if s not in valid_ss]
-                logger.warning(f"Game {game_id}: removing stale screenshot refs: {missing}")
-                new_val = ', '.join(valid_ss) if valid_ss else None
-                game_dict['screenshots'] = new_val
-                execute("UPDATE games SET screenshots = ? WHERE id = ?", (new_val, game_id))
+            game_dict['screenshots'] = ', '.join(shown_screenshots(game_dict['screenshots'])) or None
 
         class GameObj:
             def __init__(self, d):
@@ -803,6 +811,12 @@ def game_detail(game_id):
             if steam_counts and not steam_counts['total']:
                 steam_counts = None
 
+        # What Steam says about this person's time with the game (PASS-59-218).
+        steam_play = query("""
+            SELECT minutes, last_played FROM platform_play_time
+            WHERE game_id = ? AND user_id = ? AND source = 'steam' AND minutes > 0
+        """, (game_id, g.user['id']), one=True)
+
         # Xbox achievement count (Pass 31.2 — per user).
         xbox_counts = None
         if game_dict.get('xbox_title_id'):
@@ -862,6 +876,7 @@ def game_detail(game_id):
                              achievement_progress=achievement_progress,
                              psn_progress=psn_progress,
                              steam_counts=steam_counts,
+                             steam_play=steam_play,
                              xbox_counts=xbox_counts,
                              # PASS-59-149 — the cards' rule: an imported game
                              # with no ROM file has nothing to play.
@@ -928,17 +943,7 @@ def api_game_detail(game_id):
         rpcs3_info = None
     rpcs3_compat.ensure_serial(game)
 
-    screenshots = []
-    if game['screenshots']:
-        ss_dir = os.path.join(config.IMAGE_PATH, 'screenshots')
-        screenshots = [s.strip() for s in game['screenshots'].split(',') if s.strip()]
-        valid_ss = [s for s in screenshots if os.path.exists(os.path.join(ss_dir, s))]
-        if len(valid_ss) < len(screenshots):
-            missing = [s for s in screenshots if s not in valid_ss]
-            logger.warning(f"Game {game_id}: removing stale screenshot refs: {missing}")
-            new_val = ', '.join(valid_ss) if valid_ss else None
-            execute("UPDATE games SET screenshots = ? WHERE id = ?", (new_val, game_id))
-        screenshots = valid_ss
+    screenshots = shown_screenshots(game['screenshots'])
 
     return success(
         game={
@@ -969,6 +974,8 @@ def api_game_detail(game_id):
             'boxart': game['boxart'],
             'boxart_3d': game['boxart_3d'],
             'fanart': game['fanart'],
+            'game_logo': game['game_logo'],
+            'boxart_back': game['boxart_back'],
             'screenshots': screenshots[:5],
             'video': game['video'],
             'esrb_rating': game['esrb_rating'],

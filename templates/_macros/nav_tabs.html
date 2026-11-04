@@ -38,7 +38,8 @@
     {{ _tab(url_for('tools.multi_disc_organizer'), '💽', _('Multi-Disc Organizer'), active == 'multi_disc_organizer') }}
     {{ _tab(url_for('tools.duplicate_finder'), '🔍', _('Duplicate Finder'), active == 'duplicate_finder') }}
     {% if has_perm('edit') %}{{ _tab(url_for('versions.versions_review'), '🌐', _('Regional Versions'), active == 'versions') }}{% endif %}
-    {% if has_perm('edit') %}{{ _tab(url_for('official_names.official_names_review'), '🤖', _('Bulk AI Fill'), active == 'official_names') }}{% endif %}
+    {% if has_perm('edit') %}{{ _tab(url_for('ai_fill_bulk.ai_fill_bulk_page'), '🤖', _('Bulk AI Fill'), active == 'ai_fill_bulk') }}{% endif %}
+    {% if has_perm('system_functions') %}{{ _tab(url_for('mame_names.mame_names_page'), '🕹️', _('MAME Names'), active == 'mame_names') }}{% endif %}
     {{ _tab(url_for('tools.screenshot_dedup'), '📸', _('Screenshot Dedup'), active == 'screenshot_dedup') }}
     {% if has_perm('edit') %}{{ _tab(url_for('tools.screenshot_review'), '🎨', _('Screenshot Review'), active == 'screenshot_review') }}{% endif %}
     {{ _tab(url_for('reports.reports'), '📊', _('ROM Reports'), active == 'reports') }}

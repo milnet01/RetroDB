@@ -4,8 +4,8 @@
 # Shared helpers for game metadata merging:
 #   - Rating cross-mapping (manual edit + AI fill).
 #   - Game-card dict shaping for /api/games and /api/games/card-data.
-#   - Unified metadata-apply orchestrator (apply_metadata_to_game +
-#     apply_hybrid_metadata_to_game) used by routes/games.py,
+#   - Unified metadata-apply orchestrator (apply_hybrid_metadata_to_game)
+#     used by routes/games.py,
 #     routes/bulk_scrape.py, and services/jobs/bulk_scrape.py so all three
 #     go through the same source-name normalization + secondary-source build
 #     instead of each reaching into scraper_manager or scraper.hybrid_scraper
@@ -203,7 +203,7 @@ def import_source_for_rom_path(rom_path):
 # these (plus the achievement/psn joins handled in the SQL).
 _CARD_COLUMNS = (
     'id', 'title', 'sort_title', 'system_id', 'boxart', 'boxart_3d', 'fanart',
-    'genre', 'franchise', 'developer', 'publisher', 'release_date', 'modes',
+    'game_logo', 'genre', 'franchise', 'developer', 'publisher', 'release_date', 'modes',
     'esrb_rating', 'pegi_rating', 'cero_rating', 'usk_rating', 'acb_rating',
     'fpb_rating', 'grac_rating', 'classind_rating', 'china_rating',
     'critic_score', 'critic_score_count', 'user_score', 'user_score_count',
@@ -298,61 +298,11 @@ def _normalize_source(source):
     return _SOURCE_NAME_MAP.get(source, source)
 
 
-def apply_metadata_to_game(db_game_id, game_data, source, system_folder=None):
-    """Apply metadata from a single (non-hybrid) source to a game.
-
-    Dispatches to the per-source `apply_*` functions in `scraper/`. Used by the
-    manual "Apply from this source" flow in `routes/games.py` when the user
-    picked a single scraper and no gap-fill is needed.
-
-    RAWG and ScreenScraper have no standalone apply function — their metadata
-    is only reachable through the hybrid path, so those sources return False
-    here; callers should use `apply_hybrid_metadata_to_game` instead.
-
-    Args:
-        db_game_id: Database game ID.
-        game_data: Fetched game-details dict from the chosen source.
-        source: Raw source name ('thegamesdb', 'igdb', 'esde', 'rawg',
-                'screenscraper') — accepts either raw or short form.
-        system_folder: System folder (required for ES-DE apply).
-
-    Returns:
-        bool: True on success, False otherwise (including for unroutable
-              RAWG / ScreenScraper single-source applies).
-    """
-    logger.info(f"Applying metadata from {source} to game {db_game_id}")
-    normalized = _normalize_source(source)
-    try:
-        with upscale_later(db_game_id):
-            return _apply_single_source(db_game_id, game_data, source, normalized, system_folder)
-    except Exception as e:
-        logger.error(f"Error applying metadata from {source}: {e}")
-        return False
-
-
-def _apply_single_source(db_game_id, game_data, source, normalized, system_folder):
-    """apply_metadata_to_game's dispatch to the per-source apply function."""
-    if normalized == 'tgdb':
-        from scraper.scrape_thegamesdb import apply_metadata_to_game as apply_tgdb
-        return apply_tgdb(db_game_id, game_data)
-    if normalized == 'igdb':
-        from scraper.scrape_igdb import apply_metadata_to_game as apply_igdb
-        return apply_igdb(db_game_id, game_data, system_folder)
-    if normalized == 'esde':
-        from scraper.scrape_esde import apply_esde_metadata
-        return apply_esde_metadata(db_game_id, game_data, system_folder)
-    if normalized in ('rawg', 'screenscraper'):
-        logger.info(f"{source} has no single-source apply — caller should use apply_hybrid_metadata_to_game")
-        return False
-    logger.error(f"Unknown source: {source}")
-    return False
-
-
 def apply_hybrid_metadata_to_game(db_game_id, primary_source, primary_id, system_folder,
                                   explicit_secondary=None,
                                   secondary_sources=None, fill_gaps=True,
                                   force_overwrite=False, primary_data=None,
-                                  keep_media=False):
+                                  keep_media=False, automatic_pick=False):
     """Apply primary-source metadata, then fill gaps from secondary scrapers.
 
     Unified entry point shared by every apply path:
@@ -420,6 +370,7 @@ def apply_hybrid_metadata_to_game(db_game_id, primary_source, primary_id, system
                 keep_media=keep_media,
                 primary_data=primary_data,
                 restrict_to_selected=explicit_secondary is not None,
+                automatic_pick=automatic_pick,
             )
     except Exception as e:
         logger.error(f"Error in hybrid metadata apply: {e}", exc_info=True)

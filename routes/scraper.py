@@ -11,6 +11,7 @@
 #   GET  /api/scraper-allowance/<scraper> - Check rate limits
 # =============================================================================
 
+from scraper import service_limits
 import os
 import json
 import urllib.request
@@ -48,7 +49,10 @@ logger = logging.getLogger(__name__)
 # Path to scraper settings file - EXPORTED for use by app.py settings route.
 # Anchored to config.BASE_DIR (writable user-data root) so the file lives
 # next to the launcher in a frozen bundle, not inside _internal/.
-SCRAPER_SETTINGS_FILE = os.path.join(config.BASE_DIR, 'data', 'scraper_settings.json')
+# config.SCRAPER_SETTINGS_FILE carries the test suite's override (PASS-59-239);
+# a config.py copied before it existed falls back to the anchor.
+SCRAPER_SETTINGS_FILE = getattr(config, 'SCRAPER_SETTINGS_FILE', None) or os.path.join(
+    config.BASE_DIR, 'data', 'scraper_settings.json')
 
 
 # =============================================================================
@@ -277,6 +281,9 @@ def api_save_api_keys():
     ok, reason, data = validate_scraper_api_keys(data)
     if not ok:
         return error(_('invalid api keys: %(reason)s') % {'reason': reason}, 400)
+
+    # New keys may be what a stopped service was waiting for.
+    service_limits.clear()
 
     # Update API keys
     existing['api_keys'] = data
@@ -557,11 +564,10 @@ def api_scraper_allowance(scraper):
                 'private_key_configured': bool(tgdb_private),
             }
 
-            # Check private key allowance (only private key has a trackable monthly pool)
-            # TGDB appends allowance data to every API response, even on 403/429
+            # The allowance check is the one call the API says it does not count.
             if tgdb_private:
                 try:
-                    url = f'https://api.thegamesdb.net/v1/Platforms?apikey={tgdb_private}'
+                    url = f'https://api.thegamesdb.net/v1/API/Limit?apikey={tgdb_private}'
                     r = requests.get(url, timeout=10)
 
                     # Try to parse allowance data from response body regardless of status code
@@ -584,14 +590,6 @@ def api_scraper_allowance(scraper):
                             except (ValueError, TypeError):
                                 pass
 
-                        if not reset_date:
-                            now = datetime.now(timezone.utc)
-                            if now.month == 12:
-                                reset_dt = now.replace(year=now.year + 1, month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
-                            else:
-                                reset_dt = now.replace(month=now.month + 1, day=1, hour=0, minute=0, second=0, microsecond=0)
-                            reset_date = reset_dt.strftime('%Y-%m-%d %H:%M UTC')
-
                         result['remaining_monthly'] = data.get('remaining_monthly_allowance', 'Unknown')
                         result['extra_allowance'] = data.get('extra_allowance', 0)
                         result['refresh_timer'] = refresh_timer if refresh_timer else 'Unknown'
@@ -610,10 +608,9 @@ def api_scraper_allowance(scraper):
                     logger.error(f"TGDB private key allowance check error: {e}")
                     result['private_key_error'] = 'Connection error'
 
-            # Check public key allowance (TGDB appends allowance data to every response)
             if tgdb_public:
                 try:
-                    url = f'https://api.thegamesdb.net/v1/Platforms?apikey={tgdb_public}'
+                    url = f'https://api.thegamesdb.net/v1/API/Limit?apikey={tgdb_public}'
                     r = requests.get(url, timeout=10)
 
                     # Try to parse allowance data from response body regardless of status code

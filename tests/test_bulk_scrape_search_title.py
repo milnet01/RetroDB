@@ -64,3 +64,26 @@ def test_bulk_scrape_searches_by_filename_title(db_path, scrape_mode):
         'Outrun',
         'Stored Title Only',  # no ROM file: the stored title is all there is
     ]
+
+
+def test_a_source_switched_off_mid_run_is_off_for_the_next_game(db_path):
+    """The on/off list is read per game, so a change in Settings while the job
+    runs reaches the next game, not only the next run."""
+    reads = iter([{'enabled': {'tgdb': True}}, {'enabled': {'tgdb': False}},
+                  {'enabled': {'tgdb': False}}])
+    seen = []
+    job = BulkScrapeJob()
+    job.game_ids = [1, 2, 3]
+    job.scrape_mode = 'full_rescrape'
+    with patch.object(bulk_scrape_mod, '_get_conn', side_effect=lambda: _connect(db_path)), \
+         patch.object(bulk_scrape_mod, 'persist_job_start', return_value=None), \
+         patch.object(bulk_scrape_mod, 'persist_job_progress', return_value=None), \
+         patch.object(bulk_scrape_mod, 'persist_job_complete', return_value=None), \
+         patch.object(job, '_finish_worker'), \
+         patch.object(job, '_count_no_match', side_effect=lambda gid, enabled: seen.append(dict(enabled))), \
+         patch('scraper.scraper_manager.load_scraper_settings', side_effect=lambda: next(reads)), \
+         patch('scraper.scraper_manager.get_match_settings', return_value={'mode': 'off'}), \
+         patch('scraper.scraper_manager.scraper_manager.search_games', return_value=[]):
+        job._run_scrape()
+
+    assert seen == [{'tgdb': True}, {'tgdb': False}, {'tgdb': False}]

@@ -631,14 +631,6 @@ class TestPass40_6PlayersNormalization:
         assert normalize_players_value(value) == expected
 
 
-# Note: IGDB/TGDB `players = None` initialisation is functionally covered
-# by `tests/test_scrape_fill_only.py::test_{igdb,tgdb}_apply_preserves_
-# existing_values_when_response_is_empty` — those tests seed a DB row with
-# players=1, run apply_*_metadata with an empty response, and assert the
-# curated value survives the COALESCE. Stronger than asserting the literal
-# `players = None` appears in the source.
-
-
 class TestPass40_6RouteNormalization:
     """api_game_edit + edit_metadata must run players through
     normalize_players_value before binding to the INTEGER column.

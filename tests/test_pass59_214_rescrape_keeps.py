@@ -3,7 +3,6 @@ Runs the real scrape against a throwaway library; no source has anything to give
 import json
 import os
 
-import pytest
 
 from scraper import hybrid_scraper
 from services import game_metadata_service
@@ -56,17 +55,10 @@ def test_keep_media_seeds_only_screenshots_on_disk(tmp_path, monkeypatch):
     assert metadata['screenshots'] == 'here.webp'
 
 
-def test_a_failed_scrape_writes_nothing_by_a_second_route(monkeypatch):
-    called = []
-
+def test_a_failed_scrape_reports_failure(monkeypatch):
     def fails(*args, **kwargs):
         raise RuntimeError('boom')
 
     monkeypatch.setattr('scraper.hybrid_scraper.apply_hybrid_metadata', fails)
-    monkeypatch.setattr(game_metadata_service, 'apply_metadata_to_game',
-                        lambda *a, **k: called.append(a) or True)
-    monkeypatch.setattr('scraper.scraper_manager.scraper_manager.fetch_game_details',
-                        lambda *a, **k: {'name': 'Game'})
     found = game_metadata_service.apply_hybrid_metadata_to_game(1, 'igdb', 5, 'atari2600')
     assert found['success'] is False
-    assert not called

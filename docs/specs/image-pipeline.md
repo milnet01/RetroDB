@@ -72,7 +72,7 @@ with the primary, and standardized images that already sit in the
        3. _make_responsive_variants               # boxart -sm / -md
               │
               ▼
-   apply_*_to_game(...) UPDATE games SET <field> = COALESCE(?, <field>)
+   hybrid_scraper._save_game_row: UPDATE games SET <field> = COALESCE(?, <field>)
               │
               ▼
    later: find_orphaned_media + clean_orphaned_files
@@ -105,12 +105,17 @@ on ingest:
 
 The table above lists the **convertible image types** only. Non-convertible
 types — anything whose `image_type` is not in `_CONVERTIBLE_TYPES = {boxart,
-boxart_3d, screenshots, fanart, controllers, hardware}` — bypass
+boxart_3d, boxart_back, screenshots, fanart, controllers, hardware, game_logo}` — bypass
 `preferred_image_extension()` entirely and keep their original extension
 regardless of `IMAGE_FORMAT`. That covers videos (`.mp4`), manuals (`.pdf`),
 and anything else the function isn't asked to decide about. Don't add new
 extension rows to the table for non-image types — wire the new `image_type`
 into `_CONVERTIBLE_TYPES` if it should be re-encoded, otherwise leave it out.
+
+A game logo (`game_logo`, PASS-59-224) keeps its clear background: with
+`IMAGE_FORMAT=jpeg` it is stored as `.png`, since JPEG has no alpha, and
+`standardize_downloaded_image` leaves it at its own size, with no `-sm`/`-md`
+variants. Its folder is `game_logos/` (`image_utils.media_folder`).
 
 GIFs are never re-encoded — `img.save(path, 'GIF')` without `save_all`
 flattens animated GIFs to the first frame, so the only safe path is
@@ -237,8 +242,8 @@ waits at most `_GPU_RUN_TIMEOUT` seconds per call, then raises
 
 ### 5.1 Upscaling after the scrape (PASS-59-130)
 
-A scrape does not upscale. `game_metadata_service.apply_metadata_to_game`
-and `apply_hybrid_metadata_to_game` run inside
+A scrape does not upscale. `game_metadata_service.apply_hybrid_metadata_to_game`
+runs inside
 `services/upscale_queue.py::upscale_later(game_id)`, which sets the
 `image_utils.defer_upscale` ContextVar. While it is set, `standardize_image`
 leaves an image below the upscale threshold as downloaded. Downscaling,
@@ -382,7 +387,7 @@ a single bomb image).
 
 `hybrid_scraper.py:765-823` runs before every scrape to harmonise the
 DB with disk. For each media field (`boxart`, `boxart_3d`, `fanart`,
-`manual`, `video`, `screenshots`):
+`boxart_back`, `game_logo`, `manual`, `video`, `screenshots`):
 
 1. Stat the file under its expected directory.
 2. If missing, clear the value in the local `metadata` dict.
@@ -398,7 +403,7 @@ media-cleanup sweep then deletes).
 This is the contract behind CLAUDE.md "Media handling — during pre-
 population, media files are validated on disk … stale DB references
 … are auto-cleared so scrapers can re-download." The scraper-side
-fill-only invariant (`apply_*_to_game` wraps every `?` in
+fill-only invariant (a scraper UPDATE wraps every `?` in
 `COALESCE(?, column_name)`) preserves the cleared `NULL`s by letting
 the new scrape value land instead of restoring the stale string.
 
@@ -415,8 +420,9 @@ from the maintenance routes (`routes/maintenance.py`):
   preview being stale) and calls `clean_orphaned_files(candidates)`.
 
 A file is "orphaned" when both: (a) its `<game_id>_` filename prefix
-doesn't match any live game ID, and (b) the bare filename isn't
-referenced by any games-row media column.
+doesn't match any live game ID, nor its `w<item_id>_` prefix any live
+wishlist item (PASS-59-238), and (b) the bare filename isn't
+referenced by any games-row or wishlist-row media column.
 
 **Pass 45.7 race fix**: each candidate carries `mtime` and
 `scan_started_at`. At delete time, `clean_orphaned_files` re-checks:
@@ -694,7 +700,7 @@ is a regression — flag it in code review.
    never converted to WebP — `img.save(path, 'GIF')` without
    `save_all=True` flattens animation to the first frame.
 10. **The fill-only invariant extends to media columns.** Scraper
-    `apply_*_to_game` UPDATEs wrap every `?` in
+    UPDATEs wrap every `?` in
     `COALESCE(?, column_name)` (see CLAUDE.md "Scraper fill-only
     invariant"); the pre-populate stale-clear step is the only place
     that ever NULLs a media column outside of Full Re-scrape mode.

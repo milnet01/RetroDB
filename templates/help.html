@@ -629,7 +629,7 @@
 
         <h3>Media Handling</h3>
         <ul>
-            <li>Media fields (boxart, 3D boxart, screenshots, fanart, video, manual) are <strong>never replaced</strong> during normal scraping &mdash; only filled when empty</li>
+            <li>Media fields (boxart, 3D boxart, box back, screenshots, fanart, logo, video, manual) are <strong>never replaced</strong> during normal scraping &mdash; only filled when empty</li>
             <li>Screenshots are always <strong>appended</strong>, never replaced</li>
             <li>To re-download media, clear the existing image in the edit modal first, then re-scrape</li>
             <li><strong>Full Re-scrape</strong> mode overrides this and replaces everything</li>
@@ -638,7 +638,7 @@
         </ul>
 
         <h3>Keeping a Title</h3>
-        <p>When you type a new title in the edit window and save, or accept an official name in ROM Tools, scraping no longer changes it, Full Re-scrape included. The edit window's <strong>Keep this title when scraping</strong> box shows whether a title is kept; untick it to let scrapers rename the game again. <strong>Reset</strong> on a game's page also lets scrapers rename it, and <strong>Clear scraped data</strong> in Maintenance leaves kept titles as they are.</p>
+        <p>When you type a new title in the edit window and save, scraping no longer changes it, Full Re-scrape included. The edit window's <strong>Keep this title when scraping</strong> box shows whether a title is kept; untick it to let scrapers rename the game again. <strong>Reset</strong> on a game's page also lets scrapers rename it, and <strong>Clear scraped data</strong> in Maintenance leaves kept titles as they are.</p>
 
         <h3>Scraper Priority</h3>
         <p>Configure which scrapers run first and which are enabled/disabled in <strong>Settings &rarr; Scraping &rarr; Scraper</strong>. Drag-and-drop to reorder priority. Disabled scrapers won't be tried during scraping and won't trigger API status warnings on the Dashboard.</p>
@@ -741,7 +741,7 @@
             <li><strong>Similar games</strong> are always refreshed (AI data is more reliable for this field)</li>
             <li><strong>Cross-mapped ratings</strong> &mdash; If one rating system is known, empty ratings in other systems are automatically filled using maturity tier cross-mapping</li>
             <li><strong>Sort title</strong> is auto-generated when filled</li>
-            <li><strong>Official title</strong> &mdash; the AI also names the game's official title as released in its ROM's region, and the game is renamed to it, in AI Fill and whenever AI fills gaps during scraping. The old name is kept as an alternate title. A title you typed yourself or accepted in Official Names is never renamed</li>
+            <li><strong>Official title</strong> &mdash; the AI also names the game's official title as released in its ROM's region, and the game is renamed to it, in AI Fill and whenever AI fills gaps during scraping. The old name is kept as an alternate title. A title you typed yourself, or kept with <strong>Keep this title when scraping</strong>, is never renamed</li>
             <li><strong>Players</strong> field normalizes ranges (e.g. "1-4" becomes 4)</li>
         </ul>
 
@@ -853,6 +853,8 @@
         <p>Click the game title link or navigate from breadcrumbs to view the full game detail page. Additional features on the full page include:</p>
         <ul>
             <li><strong>Fanart background header</strong> with breadcrumb navigation</li>
+            <li><strong>Game logo</strong> &mdash; The game's logo shows above its title, which stays as text. A game with no box art shows its logo in the box's place. Scraping fills logos from ES-DE, ScreenScraper, TheGamesDB, IGDB and Steam; a bulk scrape with <strong>Fill Missing</strong> fills them for games scraped before</li>
+            <li><strong>Back of the box</strong> &mdash; When a game has the back of its box, a <strong>Back</strong> button sits on the cover. Press it to see the back, and press <strong>Front</strong> to return. Click the back to zoom it. Scraping fills backs from ES-DE, ScreenScraper and TheGamesDB whenever a game is scraped</li>
             <li><strong>Platform import badges</strong> &mdash; Shows CLZ Import, Steam Import, Xbox Import, or PSN Import with platform logos when applicable</li>
             <li><strong>Bonus disc indicator</strong> &mdash; Shows a badge and "Part of:" link to the parent game with thumbnail</li>
             <li><strong>Delete button</strong> &mdash; Remove the game from the database (with confirmation)</li>
@@ -869,7 +871,7 @@
             <li><strong>Age Ratings</strong> &mdash; All 8 rating systems with official rating images and automatic cross-mapping. Changing one rating auto-fills empty ratings in other systems.</li>
             <li><strong>Scores</strong> &mdash; Critic score, user score</li>
             <li><strong>Description</strong> &mdash; Game description text</li>
-            <li><strong>Custom Images</strong> &mdash; Upload custom boxart (2D), 3D boxart, and fanart. Clear existing images to allow re-scraping.</li>
+            <li><strong>Custom Images</strong> &mdash; Upload custom boxart (2D), 3D boxart, the back of the box, fanart and a logo. Clear existing images to allow re-scraping.</li>
             <li><strong>Import 3D box</strong> &mdash; Also in Custom Images. This saves straight away, without Save Changes. Pick the <code>.box.json</code> file Slipcase saved, together with its pictures (picking the whole folder is fine). Slipcase 1.4.0 or newer saves this file beside each exported picture. RetroDB keeps the box's faces for this game; clicking the cover then shows the box in 3D, to drag or turn with the arrow keys. Your 3D boxart picture is not changed. A game that already has faces asks before replacing them, and <strong>Remove</strong> deletes them.</li>
             <li><strong>Video / Trailer</strong> &mdash; Upload or link a video trailer</li>
         </ul>
@@ -1045,8 +1047,9 @@
             <li>Configure your Steam Web API key and Steam ID in Settings</li>
             <li>Go to Game Imports &rarr; <strong>Steam</strong> tab</li>
             <li>Click <strong>"Fetch Library"</strong> to retrieve your Steam games</li>
-            <li>Select games to import (duplicates are automatically detected)</li>
+            <li>Select games to import. One already in your Windows list by the same name is linked to Steam instead of added twice</li>
             <li>Imported games are tagged with their Steam App ID for achievement tracking</li>
+            <li>In the background, each game fills its empty details from its Steam store page, and your achievements and play time arrive. The game page shows your play time. Scrape the game for its genre and release date: Steam's are too broad, or are the date it reached Steam</li>
         </ol>
 
         <h3>Xbox Import</h3>
@@ -1204,11 +1207,12 @@
     <div class="card-body">
         <h3>Usage</h3>
         <ol>
-            <li>Open any game's detail modal</li>
+            <li>Open a game's page and find <strong>How Long to Beat</strong>, or open its <strong>Edit</strong> window</li>
+            <li>The search box holds the game's title. Change it if HowLongToBeat knows the game by another name</li>
             <li>Click <strong>"Lookup HLTB"</strong></li>
-            <li>Select the correct match from the results</li>
-            <li>Playtime estimates are saved to the game</li>
+            <li>Check the one match shown, with its platform and how close it is, then click <strong>Save</strong>. <strong>Cancel</strong> keeps nothing</li>
         </ol>
+        <p>If the box still holds the game's own title, the search also tries the game's other known titles. Text you typed yourself is searched as typed.</p>
 
         <h3>Time Categories</h3>
         <ul>
@@ -1262,7 +1266,7 @@
             <li>The page will display JSON containing your NPSSO token</li>
             <li>Copy the <code>npsso</code> value and paste it into Settings &rarr; Account &rarr; PSN</li>
         </ol>
-        <p>Once authenticated, RetroDB caches the access tokens securely in its own database (per user) and refreshes them automatically &mdash; you do not paste the NPSSO again on every sync. The session stays valid for about two months, and RetroDB now also renews it automatically in the background, so in normal use you should rarely need a fresh NPSSO.</p>
+        <p>Once authenticated, RetroDB caches the access tokens securely in its own database (per user) and refreshes them automatically &mdash; you do not paste the NPSSO again on every sync. When Sony's session ends, RetroDB signs in again with your saved NPSSO by itself. You need a new NPSSO only when Sony refuses the saved one; Settings &rarr; Account and the dashboard then tell you.</p>
 
         <h3>Trophy Details</h3>
         <ul>
@@ -1450,9 +1454,12 @@
         <p>Editors only. RetroDB suggests games that look like one game from different regions: the same IGDB or ScreenScraper game, the same title with a different region tag, or a regional name that matches. Untick any game that does not belong and click <strong>"Link ticked games"</strong>, or click <strong>"Not versions"</strong> so that group is never suggested again. Nothing is linked until you confirm it. Run <strong>Backfill Alternate Titles</strong> in Maintenance first: it fills the IGDB and ScreenScraper ids the suggestions use.</p>
         <p><em>No external dependencies</em></p>
 
+        <h3>MAME Names</h3>
+        <p>Admins only. MAME finds a game by its exact file name, so keep the short names, such as dyger.zip. Choose MAME's list (a DAT that matches your ROMs, or the output of <code>mame -listxml</code>) and press <strong>"Name MAME Games"</strong>. Each game gets its real name, year and maker, and the files are left alone. A title you changed yourself is kept. Add a <code>catver.ini</code> to filter the list by category. BIOS sets are hidden from the list but stay on disk, because other games need them. Scrape after this, so the scrapers can find each game.</p>
+        <p><em>Requires: a MAME list file</em></p>
+
         <h3>Bulk AI Fill</h3>
-        <p>Editors only. The <strong>Fill empty fields with AI</strong> card runs AI Fill on a whole system, for the fields you switch on (see AI Fill &rarr; Many Games at Once).</p>
-        <p>The <strong>Official Names</strong> card: pick one system or all systems and press <strong>"Ask the AI"</strong>. In the background, the AI suggests each game's full official name as released in the region of its ROM: a Japanese ROM of Mega Man becomes Rockman. The list shows each old name, the suggested name, and which region the old name comes from. Tick the names you want and press <strong>"Accept ticked"</strong>, or <strong>"Reject ticked"</strong> so that name is never suggested again. Nothing changes until you accept it. An accepted name keeps the old one as an alternate title, and scraping no longer changes it (see Keeping a Title). Games whose title you typed yourself are not asked about. The AI can be wrong, so read each name before accepting it.</p>
+        <p>Editors only. Runs AI Fill on a whole system, for the fields you switch on (see AI Fill &rarr; Many Games at Once).</p>
         <p><em>Requires: an AI provider in <strong>Settings &rarr; Scraping</strong></em></p>
 
         <h3>Multi-Disc Organizer</h3>
@@ -1573,6 +1580,7 @@
                 <tr><td>Controllers</td><td>1280px longest edge</td><td>Preserves transparency (RGBA)</td></tr>
                 <tr><td>Hardware</td><td>1280px longest edge</td><td>Preserves transparency (RGBA)</td></tr>
                 <tr><td>Fanart</td><td>Skipped</td><td>Not standardized (left at original size)</td></tr>
+                <tr><td>Logo</td><td>Skipped</td><td>Left at original size; keeps its clear background (saved as PNG when the format is JPEG)</td></tr>
             </tbody>
         </table>
 
@@ -1824,7 +1832,7 @@
         <ul>
             <li>NPSSO tokens expire &mdash; generate a new one from <code>ca.account.sony.com/api/v1/ssocookie</code></li>
             <li>Make sure you're logged into store.playstation.com before visiting the cookie URL</li>
-            <li>RetroDB caches your PSN session for about two months and now auto-renews it in the background; if it still lapses, just paste a fresh NPSSO in Settings &rarr; Account &rarr; PSN</li>
+            <li>RetroDB signs in again by itself while Sony accepts your saved NPSSO. Once Sony refuses it, paste a new one in Settings &rarr; Account &rarr; PSN. To replace a token that still works, sign out of PlayStation first.</li>
         </ul>
 
         <h4>"Xbox Authentication Failed"</h4>

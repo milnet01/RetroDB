@@ -627,8 +627,8 @@ class TestPass41_6AExtendSingletonLockOtherJobs:
         ('services.jobs.psn_refresh', 'PSNRefreshJob', 'psn_refresh'),
         ('services.jobs.platform_sync', 'SteamSyncJob', 'steam_sync'),
         ('services.jobs.platform_sync', 'XboxSyncJob', 'xbox_sync'),
-        ('services.jobs.official_names', 'OfficialNamesJob', 'official_names'),
         ('services.jobs.ss_region_repair', 'SsRegionRepairJob', 'ss_region_repair'),
+        ('services.jobs.mame_names', 'MameNamesJob', 'mame_names'),
     ]
 
     def test_each_job_has_singleton_fd_attribute(self):
@@ -707,8 +707,8 @@ class TestPass41_6AExtendSingletonLockOtherJobs:
             'PSNRefreshJob': lambda j: j.start(['NPWR0001'], 'fake-npsso', user_id=1),
             'SteamSyncJob': lambda j: j.start(user_id=1),
             'XboxSyncJob': lambda j: j.start(user_id=1),
-            'OfficialNamesJob': lambda j: j.start(),
             'SsRegionRepairJob': lambda j: j.start(),
+            'MameNamesJob': lambda j: j.start([]),
         }
         monkeypatch.setattr(
             'services.jobs.ss_region_repair.load_scraper_settings',
@@ -826,8 +826,6 @@ class TestPass41_5bSteamHltbThroughBaseScraper:
         assert scrape_steam.get_achievement_schema('K', 1) == []
         assert scrape_steam.get_player_summary('K', '76561') is None
         assert scrape_steam.get_app_details(1) is None
-        result = scrape_steam.check_api_key('K')
-        assert result == {'valid': False, 'error': 'Connection error'}
 
     def test_hltb_returns_none_on_total_failure(self, monkeypatch):
         """When http_get / http_post return None, HLTB must surface a clean

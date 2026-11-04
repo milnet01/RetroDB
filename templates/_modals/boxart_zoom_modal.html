@@ -7,7 +7,7 @@
     <div class="box-viewer" id="boxViewer" data-record='{{ box_faces|tojson }}' hidden>
         <div class="box-viewer-stage" tabindex="0" role="img"
              aria-label="{{ _('3D box. Drag or use the arrow keys to turn it.') }}">
-            <div class="box-viewer-box"></div>
+            <canvas class="box-viewer-canvas"></canvas>
         </div>
         <p class="box-viewer-hint">{{ _('Drag to turn. Scroll or press + and - to zoom. Double-click to reset.') }}</p>
     </div>

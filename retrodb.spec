@@ -61,6 +61,13 @@ _MIGRATION_SCRIPTS = [
     'services.migrations.scripts.028_clear_save_type_guesses',
     'services.migrations.scripts.029_clear_franchise_guesses',
     'services.migrations.scripts.030_tidy_stored_text',
+    'services.migrations.scripts.031_hltb_id_and_players',
+    'services.migrations.scripts.032_games_ra_copy_fits',
+    'services.migrations.scripts.033_platform_play_time',
+    'services.migrations.scripts.034_arcade_category',
+    'services.migrations.scripts.035_removed_screenshots',
+    'services.migrations.scripts.036_games_game_logo',
+    'services.migrations.scripts.037_games_boxart_back',
 ]
 
 # Some pip packages have their own runtime imports that PyInstaller's

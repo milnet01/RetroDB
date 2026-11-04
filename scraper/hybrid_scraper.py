@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 # Source names as the Apply Metadata progress gauge shows them (PASS-59-108).
 _PROGRESS_SOURCE_LABELS = {
     'esde': 'ES-DE', 'tgdb': 'TheGamesDB', 'igdb': 'IGDB', 'rawg': 'RAWG',
-    'screenscraper': 'ScreenScraper', 'ai': 'AI',
+    'screenscraper': 'ScreenScraper', 'ai': 'AI', 'steam': 'Steam',
 }
 
 # Import individual scrapers
@@ -50,6 +50,7 @@ from scraper.metadata_merger import (
     apply_igdb_to_metadata,
     apply_rawg_to_metadata,
     apply_screenscraper_to_metadata,
+    apply_steam_to_metadata,
     apply_ai_to_metadata,
     load_scraper_settings,
 )
@@ -273,11 +274,12 @@ def fetch_igdb_extended(game_id):
                multiplayer_modes.platform, multiplayer_modes.offlinemax, multiplayer_modes.onlinemax,
                multiplayer_modes.campaigncoop, multiplayer_modes.splitscreen,
                multiplayer_modes.offlinecoop, multiplayer_modes.onlinecoop,
-               summary, storyline, cover.url, screenshots.url, artworks.url,
+               summary, storyline, cover.url, screenshots.url, artworks.url, artworks.artwork_type,
                videos.video_id, alternative_names.name, alternative_names.comment,
                franchise.name, franchises.name, collections.name,
                similar_games.name, similar_games.cover.url,
                game_engines.name, platforms.name,
+               game_localizations.name, game_localizations.region.name,
                rating, rating_count, aggregated_rating, aggregated_rating_count;
         where id = {game_id};
         """
@@ -569,14 +571,14 @@ def _apply_retroachievements_check(db_game_id, title, system_folder):
     """
     try:
         from scraper.retroachievements import check_retroachievements
-        from services.achievement_linking import ra_rom_name, save_ra_link
+        from services.achievement_linking import save_ra_link
         from services.hltb_service import extract_alt_titles
         conn2 = get_scraper_conn()
         try:
             row = conn2.execute("SELECT rom_path, alternate_titles FROM games WHERE id = ?",
                                 (db_game_id,)).fetchone()
             ra_info = check_retroachievements(
-                title, system_folder, ra_rom_name(row[0]), extract_alt_titles(row[1]))
+                title, system_folder, row[0], extract_alt_titles(row[1]))
             if ra_info is None:
                 return False
             linked = save_ra_link(conn2, db_game_id, ra_info)
@@ -633,7 +635,7 @@ def source_game_id(data):
         return None
 
 
-_KEPT_MEDIA_FIELDS = ('boxart', 'boxart_3d', 'fanart', 'manual', 'video', 'screenshots')
+_KEPT_MEDIA_FIELDS = ('boxart', 'boxart_3d', 'boxart_back', 'fanart', 'game_logo', 'manual', 'video', 'screenshots')
 
 
 def _seed_kept_media(metadata, game, stale_fields):
@@ -654,11 +656,15 @@ def _seed_kept_media(metadata, game, stale_fields):
 def _save_source_ids(c, db_game_id, sources_data, force_overwrite=False):
     """PASS-59-106 §4.5 — store the IGDB and ScreenScraper game ids this scrape
     used; they are regional-version suggestion signals. A stored id is kept
-    (INV-10); only Full Re-scrape replaces it with one a source provides."""
+    (INV-10); only Full Re-scrape replaces it with one a source provides, and
+    a record for this exact file replaces ScreenScraper's (PASS-59-217)."""
     igdb_id = source_game_id(sources_data.get('igdb'))
-    ss_id = source_game_id(sources_data.get('screenscraper'))
+    ss_record = sources_data.get('screenscraper')
+    ss_id = source_game_id(ss_record)
     if igdb_id is None and ss_id is None:
         return
+    if ss_id is not None and ss_record.get('_matched_file'):
+        c.execute("UPDATE games SET screenscraper_id = ? WHERE id = ?", (ss_id, db_game_id))
     if force_overwrite:
         sql = ("UPDATE games SET igdb_id = COALESCE(?, igdb_id), "
                "screenscraper_id = COALESCE(?, screenscraper_id) WHERE id = ?")
@@ -677,13 +683,14 @@ def _log_date_disagreement(metadata, game):
                        f"disagrees with its regional dates {metadata['release_dates']}")
 
 
-def _save_game_row(c, metadata, scrape_history_json, db_game_id):
+def _save_game_row(c, metadata, scrape_history_json, db_game_id, mark_scraped=True):
     """Write the assembled metadata back to the games row (fill-only).
 
     Pops the internal `_boxart_source` tracking key, JSON-encodes
     `alternate_titles`, then issues the COALESCE-guarded UPDATE so an empty
     metadata field preserves the existing DB value (the scraper fill-only
-    invariant). `scrape_history` and `scraped` are set unconditionally.
+    invariant). `scrape_history` is set unconditionally, and `scraped` unless
+    `mark_scraped` is False.
     Uses the caller's cursor — the caller owns the transaction / commit.
 
     Pass 38.1 partial extraction — was the SAVE TO DATABASE block inline in
@@ -730,6 +737,8 @@ def _save_game_row(c, metadata, scrape_history_json, db_game_id):
             boxart_3d = COALESCE(?, boxart_3d),
             screenshots = COALESCE(?, screenshots),
             fanart = COALESCE(?, fanart),
+            game_logo = COALESCE(?, game_logo),
+            boxart_back = COALESCE(?, boxart_back),
             video = COALESCE(?, video),
             manual = COALESCE(?, manual),
             region = COALESCE(?, region),
@@ -752,7 +761,7 @@ def _save_game_row(c, metadata, scrape_history_json, db_game_id):
             release_dates = COALESCE(?, release_dates),
             alternate_titles = COALESCE(?, alternate_titles),
             scrape_history = ?,
-            scraped = 1
+            scraped = COALESCE(?, scraped)
         WHERE id = ?
     """, (
         metadata['title'],
@@ -777,6 +786,8 @@ def _save_game_row(c, metadata, scrape_history_json, db_game_id):
         metadata['boxart_3d'],
         metadata['screenshots'],
         metadata['fanart'],
+        metadata.get('game_logo'),
+        metadata.get('boxart_back'),
         metadata['video'],
         metadata['manual'],
         metadata['region'],
@@ -799,6 +810,7 @@ def _save_game_row(c, metadata, scrape_history_json, db_game_id):
         metadata.get('release_dates'),
         alt_titles_json,
         scrape_history_json,
+        1 if mark_scraped else None,
         db_game_id
     ))
 
@@ -919,7 +931,9 @@ def _run_fallbacks(metadata, result, sources_data, game, db_game_id,
         # not prefetched: its prompt names the fields still empty at its turn.
         lookup = {
             'title': game_title,
+            'game_id': db_game_id,
             'rom_path': game.get('rom_path'),
+            'disc_serial': game.get('disc_serial'),
             'system_name': system_name,
             'system_folder': system_folder,
             'secondary_sources': secondary_sources or [],
@@ -958,7 +972,7 @@ def _run_fallbacks(metadata, result, sources_data, game, db_game_id,
                         if data:
                             _apply_fallback(fallback_source, data, metadata, result,
                                             sources_data, db_game_id, system_folder,
-                                            force_overwrite, own_region=game_own_region(game))
+                                            force_overwrite, own_region=game_own_region(game, data))
                 except Exception as fallback_error:
                     logger.warning(f"Fallback scraper {fallback_source} failed: {fallback_error}")
                 apply_progress.step_done()
@@ -1071,6 +1085,34 @@ def _ss_record_by_id(ss_id, keys):
         system_id=system_id)
 
 
+# ScreenScraper found no PS3 game by serial in a trial, 2026-11-02 (PASS-59-217).
+_SS_SERIAL_FOLDERS = ('psx', 'ps2')
+
+
+def _ss_record_by_file(lookup, keys):
+    """ScreenScraper's record for this exact file, or None."""
+    from scraper.scrape_screenscraper import identify_by_file
+    folder, rom_path = lookup['system_folder'], lookup.get('rom_path')
+    if not rom_path:
+        return None
+    serial = None
+    if folder in _SS_SERIAL_FOLDERS:
+        serial = lookup.get('disc_serial')
+        if serial is None:
+            from services.standalone_settings import disc_ids
+            serial = disc_ids({'id': lookup['game_id'], 'rom_path': rom_path,
+                               'system_folder': folder})[0]
+    try:
+        return identify_by_file(rom_path, folder, serial or None,
+                                keys.get('screenscraper_username', ''),
+                                keys.get('screenscraper_password', ''),
+                                keys.get('screenscraper_devid', ''),
+                                keys.get('screenscraper_devpassword', ''))
+    except Exception as e:
+        logger.warning(f"ScreenScraper file lookup failed for game {lookup['game_id']}: {e}")
+        return None
+
+
 def _fetch_screenscraper(lookup):
     keys = lookup['api_keys']
     ss_username = keys.get('screenscraper_username', '')
@@ -1081,6 +1123,11 @@ def _fetch_screenscraper(lookup):
     from scraper.scrape_screenscraper import search_game, get_system_id
     game_title, folder = lookup['title'], lookup['system_folder']
     logger.info(f"Trying ScreenScraper fallback for: '{game_title}'")
+
+    if not lookup.get('user_ticked'):
+        by_file = _ss_record_by_file(lookup, keys)
+        if by_file:
+            return by_file
 
     # A result already chosen from a search is fetched as that game.
     ss_info = _secondary_for('screenscraper', lookup)
@@ -1116,6 +1163,26 @@ _FALLBACK_FETCHERS = {
 }
 
 
+def esde_rating_score(rating):
+    """ES-DE's `rating`, 0 to 1 in half-star steps, on the 0 to 100 of user_score.
+    0 is how ES-DE writes no rating."""
+    try:
+        score = float(rating) * 100
+    except (TypeError, ValueError):
+        return None
+    return score if 0 < score <= 100 else None
+
+
+def _use_esde_rating(metadata, result):
+    """An ES-DE rating fills user_score only when no online source gave one, and
+    before the AI is asked: ES-DE does not record who set it, and it may be the
+    owner's own, but it is a real rating and the AI's is a guess."""
+    rating = metadata.pop('_esde_rating', None)
+    if rating and not metadata['user_score']:
+        metadata['user_score'] = rating
+        result['filled_fields'].append('user_score (ES-DE)')
+
+
 def _merge_esde(metadata, details, result, db_game_id, system_folder,
                 force_overwrite, fill_only):
     """Merge one ES-DE row into `metadata`, as primary or as a fallback.
@@ -1141,6 +1208,7 @@ def _merge_esde(metadata, details, result, db_game_id, system_folder,
     if not metadata['genre']:
         fill_labels(metadata, result, 'genre', details.get('genre') or '', 'ES-DE')
     fill('release_date', details.get('release_date'))
+    metadata['_esde_rating'] = esde_rating_score(details.get('rating'))
 
     from services.game_utils import normalize_players_value
     from services.normalization import modes_from_player_count
@@ -1153,7 +1221,7 @@ def _merge_esde(metadata, details, result, db_game_id, system_folder,
     from scraper.scrape_esde import copy_esde_media
     copied = copy_esde_media(db_game_id, details, system_folder,
                              existing=metadata, force_overwrite=force_overwrite)
-    for field in ('boxart', 'boxart_3d', 'fanart', 'video', 'manual'):
+    for field in ('boxart', 'boxart_3d', 'boxart_back', 'fanart', 'game_logo', 'video', 'manual'):
         fill(field, copied.get(field))
     if copied.get('boxart'):
         metadata['_boxart_source'] = 'esde'
@@ -1202,6 +1270,7 @@ def _run_ai_fallback(metadata, result, sources_data, db_game_id, lookup,
         logger.info("AI fallback skipped: disabled in settings")
         return
     logger.info(f"Trying AI fallback for: '{game_title}'")
+    _use_esde_rating(metadata, result)
     # Build existing metadata snapshot for AI to know what's missing
     ai_existing = {k: v for k, v in metadata.items() if v}
     # Pass 26.3 — wrap AI call in the circuit breaker so
@@ -1226,13 +1295,16 @@ def _run_ai_fallback(metadata, result, sources_data, db_game_id, lookup,
 def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                           secondary_sources=None, fill_gaps=True, force_overwrite=False,
                           primary_data=None, restrict_to_selected=False,
-                          keep_media=False):
+                          keep_media=False, automatic_pick=False, mark_scraped=True):
     """
     Apply metadata from primary source, then fill gaps from secondary sources.
 
     Args:
         db_game_id: Database ID of the game
-        primary_source: 'esde', 'tgdb', or 'igdb'
+        primary_source: 'esde', 'tgdb', 'igdb', 'rawg', 'screenscraper', or
+            'steam', which takes its store reply as primary_data
+        mark_scraped: If False, leave `games.scraped` as it is, so a game filled
+            from one source still counts as waiting for a scrape
         primary_id: ID/path for the primary source
         system_folder: System folder name for ES-DE lookups
         secondary_sources: List of dicts with 'source' and 'id' for fallback
@@ -1290,6 +1362,8 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
             'boxart_3d': None,
             'screenshots': None,
             'fanart': None,
+            'game_logo': None,
+            'boxart_back': None,
             'video': None,
             'manual': None,
             'region': None,
@@ -1348,6 +1422,8 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                 'boxart': os.path.join(IMAGE_PATH, 'boxart'),
                 'boxart_3d': os.path.join(IMAGE_PATH, 'boxart_3d'),
                 'fanart': os.path.join(IMAGE_PATH, 'fanart'),
+                'game_logo': os.path.join(IMAGE_PATH, 'game_logos'),
+                'boxart_back': os.path.join(IMAGE_PATH, 'boxart_back'),
                 'manual': os.path.join(IMAGE_PATH, 'manuals'),
             }
             # Pass 40.15 — capture the (field, stale_filename) we observed at
@@ -1429,6 +1505,8 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                 'boxart': os.path.join(IMAGE_PATH, 'boxart'),
                 'boxart_3d': os.path.join(IMAGE_PATH, 'boxart_3d'),
                 'fanart': os.path.join(IMAGE_PATH, 'fanart'),
+                'game_logo': os.path.join(IMAGE_PATH, 'game_logos'),
+                'boxart_back': os.path.join(IMAGE_PATH, 'boxart_back'),
                 'manual': os.path.join(IMAGE_PATH, 'manuals'),
             }
             _force_stale = []  # list of (field, stale_filename)
@@ -1578,16 +1656,31 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
             try:
                 api_keys = load_scraper_settings().get('api_keys', {})
                 if api_keys.get('screenscraper_username') and api_keys.get('screenscraper_password'):
-                    ss_data = _ss_record_by_id(primary_id, api_keys)
+                    # A person's pick stands. A bulk scrape's came from a title search.
+                    ss_data = None
+                    if automatic_pick:
+                        ss_data = _ss_record_by_file(
+                            {'game_id': db_game_id, 'rom_path': game.get('rom_path'),
+                             'disc_serial': game.get('disc_serial'),
+                             'system_folder': system_folder}, api_keys)
+                    ss_data = ss_data or _ss_record_by_id(primary_id, api_keys)
                     if ss_data:
                         sources_data['screenscraper'] = ss_data
                         apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result,
-                                                        own_region=game_own_region(game))
+                                                        own_region=game_own_region(game, ss_data))
                         result['sources_used'].append('ScreenScraper')
                     else:
                         logger.warning(f"ScreenScraper has no record for {primary_id}")
             except Exception as e:
                 logger.warning(f"Primary ScreenScraper fetch/apply failed for {primary_id}: {e}; "
+                               "falling through to gap-fill")
+
+        elif primary_source == 'steam':
+            try:
+                apply_steam_to_metadata(metadata, primary_data, primary_id, db_game_id, result)
+                result['sources_used'].append('Steam')
+            except Exception as e:
+                logger.warning(f"Steam store apply failed for {primary_id}: {e}; "
                                "falling through to gap-fill")
 
         apply_progress.step_done()
@@ -1604,6 +1697,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                 primary_source, system_folder, secondary_sources,
                 restrict_to_selected, media_force, c,
             )
+        _use_esde_rating(metadata, result)
 
         # =============================================
         # DETECT ADDITIONAL METADATA
@@ -1687,7 +1781,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
 
         # Pass 38.1 — SAVE TO DATABASE block extracted to _save_game_row.
         apply_progress.begin('save')
-        _save_game_row(c, metadata, scrape_history_json, db_game_id)
+        _save_game_row(c, metadata, scrape_history_json, db_game_id, mark_scraped)
         _save_source_ids(c, db_game_id, sources_data, force_overwrite)
 
         conn.commit()

@@ -31,11 +31,10 @@ class TestEscapeLike:
 
 class TestBuildGamesQuery:
     def test_show_bonus_true_produces_no_filter(self):
-        # With show_bonus=1 and no other params, the fallback WHERE 1=1 kicks in.
         # group_versions=False: these tests pin the filters; the PASS-59-106
         # grouping wrapper is pinned by tests/test_version_groups_query.py.
         sql, vals = _build_games_query({'show_bonus': '1'}, group_versions=False)
-        assert "WHERE 1=1" in sql
+        assert "is_bonus_disc = 0" not in sql
         assert vals == []
 
     def test_empty_params_hides_bonus_discs_by_default(self):
@@ -145,7 +144,7 @@ class TestSortOrder:
         conn.executescript("""
             CREATE TABLE systems (id INTEGER PRIMARY KEY, system_type TEXT);
             CREATE TABLE games (id INTEGER PRIMARY KEY, system_id INTEGER,
-                title TEXT, sort_title TEXT, is_bonus_disc INTEGER DEFAULT 0,
+                title TEXT, sort_title TEXT, is_bonus_disc INTEGER DEFAULT 0, arcade_category TEXT,
                 release_date TEXT, critic_score REAL, user_score REAL,
                 created_at TEXT);
             INSERT INTO systems VALUES (1, 'Console');

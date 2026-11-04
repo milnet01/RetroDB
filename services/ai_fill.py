@@ -4,7 +4,7 @@
 # Fills one game's empty metadata from the AI, with the smart overwrite
 # rules, rating cross-mapping, controller-default preference and the
 # scrape-history entry. The game page's AI Fill button and the bulk run on
-# ROM Tools > Official Names both use fill_game().
+# ROM Tools > Bulk AI Fill both use fill_game().
 # =============================================================================
 
 import json as json_lib

@@ -56,7 +56,6 @@ def test_rawg_players_unknown_without_a_player_tag(monkeypatch):
         return None
 
     monkeypatch.setattr(scrape_rawg, '_make_request', _req)
-    monkeypatch.setattr(scrape_rawg, 'rate_limit', lambda *a: None)
     assert scrape_rawg.get_game_details(1)['players'] is None
 
 

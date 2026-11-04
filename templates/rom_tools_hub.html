@@ -200,13 +200,13 @@
         </div>
     </a>
 
-    <a href="{{ url_for('official_names.official_names_review') }}" class="tool-card">
+    <a href="{{ url_for('ai_fill_bulk.ai_fill_bulk_page') }}" class="tool-card">
         <div class="tool-card-header">
             <div class="tool-card-icon">🤖</div>
             <div class="tool-card-title">{{ _('Bulk AI Fill') }}</div>
         </div>
         <div class="tool-card-desc">
-            {{ _("Fill the empty fields of a whole system with AI, choosing which fields. Or ask the AI for each game's full official name, and accept only the names you want.") }}
+            {{ _("Fill the empty fields of a whole system with AI, choosing which fields, the game's official name among them.") }}
         </div>
         <div class="tool-card-status">
             <span class="status-dot no-deps"></span> {{ _('Needs an AI provider (Settings > Scraping)') }}
@@ -333,6 +333,21 @@
         </div>
     </button>
 
+    {% if current_user and current_user.role == 'admin' %}
+    <a href="{{ url_for('mame_names.mame_names_page') }}" class="tool-card">
+        <div class="tool-card-header">
+            <div class="tool-card-icon">🕹️</div>
+            <div class="tool-card-title">{{ _('MAME Names') }}</div>
+        </div>
+        <div class="tool-card-desc">
+            {{ _("Gives MAME games their real names, years and makers from MAME's own list, and leaves the files alone.") }}
+        </div>
+        <div class="tool-card-status">
+            <span class="status-dot no-deps"></span> {{ _('Needs a MAME list file') }}
+        </div>
+    </a>
+    {% endif %}
+
     <button type="button" class="tool-card" data-on-click="fixReleaseDates">
         <div class="tool-card-header">
             <div class="tool-card-icon">&#128197;</div>
@@ -415,10 +430,8 @@
 <script nonce="{{ csp_nonce }}">
 function startAltTitlesBackfill() {
     showConfirm(
-        '🌐 Backfill Alternate Titles',
-        'Scan every scraped game for alternate / regional titles using IGDB and ScreenScraper search results.\n\n' +
-        'No media is downloaded, no other metadata is touched — just alternate title lists are merged into the DB.\n\n' +
-        'This may take a while for large libraries.',
+        '🌐 ' + {{ _('Backfill Alternate Titles')|tojson }},
+        {{ _('Scan every scraped game for alternate / regional titles using IGDB and ScreenScraper search results.\n\nNo media is downloaded, no other metadata is touched — just alternate title lists are merged into the DB.\n\nThis may take a while for large libraries.')|tojson }},
         function() {
             fetch('/api/maintenance/alt-titles-backfill/start', {
                 method: 'POST',
@@ -428,7 +441,7 @@ function startAltTitlesBackfill() {
             .then(r => r.json())
             .then(data => {
                 if (data.success) {
-                    showNotification('Alt-titles backfill started', 'success');
+                    showNotification({{ _('Alt-titles backfill started')|tojson }}, 'success');
                     if (typeof UnifiedToastController !== 'undefined') {
                         UnifiedToastController.adjustPollingSpeed('alt-titles-backfill', true);
                         UnifiedToastController.broadcast('job-started', 'alt-titles-backfill', {
@@ -436,10 +449,10 @@ function startAltTitlesBackfill() {
                         });
                     }
                 } else {
-                    showNotification(data.error || 'Failed to start', 'error');
+                    showNotification(data.error || {{ _('Failed to start')|tojson }}, 'error');
                 }
             })
-            .catch(() => showNotification('Failed to start backfill', 'error'));
+            .catch(() => showNotification({{ _('Failed to start backfill')|tojson }}, 'error'));
         }
     );
 }
@@ -453,7 +466,7 @@ const SS_REGION_REPAIR_TEXT = {
     failed: {{ _('The fix stopped with an error. Files swapped: {replaced}. The log has the details.')|tojson }},
     running: {{ _('Checked {current} of {total} games. Files swapped: {replaced}.')|tojson }},
     done: {{ _('Finished. Files swapped: {replaced}. Games not found: {no_match}. Could not download: {failed}.')|tojson }},
-    stopped: {{ _('Stopped: ScreenScraper stopped answering, so your daily allowance may be spent. Files swapped: {replaced}. Run it again tomorrow.')|tojson }},
+    stopped: {{ _('Stopped. Files swapped: {replaced}.')|tojson }},
 };
 
 let _ssRegionRepairRunning = false;
@@ -461,11 +474,13 @@ let _ssRegionRepairRunning = false;
 function _ssRegionRepairShow(status) {
     const box = document.getElementById('ssRegionRepairStatus');
     if (!box) return;
+    const stops = status.service_stops || [];
     const template = status.running ? SS_REGION_REPAIR_TEXT.running
         : status.error ? SS_REGION_REPAIR_TEXT.failed
-        : status.stopped_no_reply ? SS_REGION_REPAIR_TEXT.stopped
+        : stops.length ? SS_REGION_REPAIR_TEXT.stopped
         : status.cancelled ? SS_REGION_REPAIR_TEXT.cancelled : SS_REGION_REPAIR_TEXT.done;
-    box.textContent = template.replace(/\{(\w+)\}/g, (_m, key) => formatNumber(status[key] || 0));
+    const said = template.replace(/\{(\w+)\}/g, (_m, key) => formatNumber(status[key] || 0));
+    box.textContent = [said, ...stops].join(' ');
 }
 
 function _ssRegionRepairPoll() {
@@ -678,11 +693,8 @@ function clearRawgCovers() {
 
 function startHltbBulk() {
     showConfirm(
-        '⏱ Bulk HLTB Lookup',
-        'Fetch HowLongToBeat playtime for every game.\n\n' +
-        'High-confidence primary-title matches apply automatically.\n' +
-        'Alt-title matches and low-confidence matches queue for review on the HLTB Pending Review page.\n\n' +
-        'By default only games without an existing HLTB match are processed. HLTB rate-limits, so this runs slowly in the background — you can leave the page.',
+        '⏱ ' + {{ _('Bulk HLTB Lookup')|tojson }},
+        {{ _('Fetch HowLongToBeat playtime for every game.\n\nHigh-confidence primary-title matches apply automatically.\nAlt-title matches and low-confidence matches queue for review on the HLTB Pending Review page.\n\nBy default only games without an existing HLTB match are processed. HLTB rate-limits, so this runs slowly in the background — you can leave the page.')|tojson }},
         function() {
             fetch('/api/hltb/bulk/start', {
                 method: 'POST',
@@ -692,7 +704,7 @@ function startHltbBulk() {
             .then(r => r.json())
             .then(data => {
                 if (data.success) {
-                    showNotification('Bulk HLTB lookup started — queued matches will appear on the review page', 'success');
+                    showNotification({{ _('Bulk HLTB lookup started — queued matches will appear on the review page')|tojson }}, 'success');
                     if (typeof UnifiedToastController !== 'undefined') {
                         UnifiedToastController.adjustPollingSpeed('hltb-bulk', true);
                         UnifiedToastController.broadcast('job-started', 'hltb-bulk', {
@@ -700,10 +712,10 @@ function startHltbBulk() {
                         });
                     }
                 } else {
-                    showNotification(data.error || 'Failed to start', 'error');
+                    showNotification(data.error || {{ _('Failed to start')|tojson }}, 'error');
                 }
             })
-            .catch(() => showNotification('Failed to start bulk HLTB', 'error'));
+            .catch(() => showNotification({{ _('Failed to start bulk HLTB')|tojson }}, 'error'));
         }
     );
 }
@@ -715,6 +727,7 @@ async function refreshHltbPendingCount() {
         const resp = await fetch('/api/hltb/bulk/status');
         const data = await resp.json();
         const count = (data && data.pending_review) || 0;
+        (data.service_stops || []).forEach(said => showNotification(said, 'warning'));
         const card = document.getElementById('hltbReviewCard');
         const badge = document.getElementById('hltbPendingCount');
         if (card && badge) {
@@ -732,13 +745,8 @@ document.addEventListener('DOMContentLoaded', refreshHltbPendingCount);
 
 function startImageResize() {
     showConfirm(
-        '🖼️ Image Resizer',
-        'Standardize all images to consistent sizes:\n\n' +
-        'Boxart, Screenshots, 3D Boxart: 1080px height\n' +
-        'Controllers & Hardware: 1280px longest edge\n\n' +
-        'Small images will be AI-upscaled (Real-ESRGAN), large images will be downscaled (Lanczos). ' +
-        'Images already within 80-120% of target size are skipped.\n\n' +
-        'This may take a while for large collections.',
+        '🖼️ ' + {{ _('Image Resizer')|tojson }},
+        {{ _('Standardize all images to consistent sizes:\n\nBoxart, Screenshots, 3D Boxart: 1080px height\nControllers & Hardware: 1280px longest edge\n\nSmall images will be AI-upscaled (Real-ESRGAN), large images will be downscaled (Lanczos). Images already within 80 to 120 percent of target size are skipped.\n\nThis may take a while for large collections.')|tojson }},
         function() {
             fetch('/api/maintenance/image-resize/start', {
                 method: 'POST',
@@ -748,7 +756,7 @@ function startImageResize() {
             .then(r => r.json())
             .then(data => {
                 if (data.success) {
-                    showNotification('Image standardization started', 'success');
+                    showNotification({{ _('Image standardization started')|tojson }}, 'success');
                     if (typeof UnifiedToastController !== 'undefined') {
                         UnifiedToastController.adjustPollingSpeed('image-resize', true);
                         UnifiedToastController.broadcast('job-started', 'image-resize', {
@@ -756,10 +764,10 @@ function startImageResize() {
                         });
                     }
                 } else {
-                    showNotification(data.error || 'Failed to start', 'error');
+                    showNotification(data.error || {{ _('Failed to start')|tojson }}, 'error');
                 }
             })
-            .catch(() => showNotification('Failed to start image resize', 'error'));
+            .catch(() => showNotification({{ _('Failed to start image resize')|tojson }}, 'error'));
         }
     );
 }

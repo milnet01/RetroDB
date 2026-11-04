@@ -81,7 +81,12 @@ def test_pass_59_197_no_emulator_is_said_beside_play(player_game, admin_test_cli
     monkeypatch.setattr(routes.games, 'launch_emulator_name', lambda *a: None)
     client, _csrf = admin_test_client()
     page = client.get(f'/game/{player_game}').get_data(as_text=True)
-    assert 'No emulator is set up for this system.' in page
+    # Play looks disabled, says why on hover, and opens a modal on click.
+    btn = re.search(r'<button[^>]*id="play-btn"[^>]*>', page).group(0)
+    assert 'aria-disabled="true"' in btn
+    assert 'title="No emulator is set up for this system."' in btn
+    assert 'data-on-click="showModal"' in btn
+    assert 'class="play-emulator"' not in page
     assert '<span class="emu-settings-name">' not in page
 
 

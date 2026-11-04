@@ -478,7 +478,18 @@ def _init_upscaler(allow_gpu=True):
 # manuals keep their original extension; GIFs preserve animation.
 _CONVERTIBLE_TYPES = frozenset({
     'boxart', 'boxart_3d', 'screenshots', 'fanart', 'controllers', 'hardware',
+    'game_logo', 'boxart_back',
 })
+
+# Image types whose folder under IMAGE_PATH has another name. `game_logo`'s
+# folder is plural so it cannot be confused with `systems.logo` (PASS-59-224).
+_MEDIA_FOLDERS = {'game_logo': 'game_logos'}
+
+
+def media_folder(image_type):
+    """The folder under IMAGE_PATH that holds pictures of `image_type`."""
+    return _MEDIA_FOLDERS.get(image_type, image_type)
+
 
 _PIL_FORMAT_FOR_EXT = {
     '.webp': 'WEBP',
@@ -509,6 +520,8 @@ def preferred_image_extension(image_type, original_ext='.jpg'):
     fmt = getattr(config, 'IMAGE_FORMAT', 'webp').lower()
     if fmt == 'webp':
         return '.webp'
+    if image_type == 'game_logo':
+        return '.png'  # a logo keeps its clear background; JPEG has no alpha
     # jpeg mode: keep original if already JPEG-ish, else downgrade to jpg
     return original_ext if original_ext in ('.jpg', '.jpeg') else '.jpg'
 
@@ -743,7 +756,8 @@ def standardize_downloaded_image(path, image_type, still_wanted=None):
 
     Args:
         path: Absolute path to the image file.
-        image_type: One of 'boxart', 'screenshots', 'boxart_3d', 'controllers', 'fanart'.
+        image_type: One of 'boxart', 'screenshots', 'boxart_3d', 'controllers', 'fanart',
+            'game_logo' (left as it is).
         still_wanted: See standardize_image().
     """
     import config
@@ -753,6 +767,8 @@ def standardize_downloaded_image(path, image_type, still_wanted=None):
 
     if image_type in config.IMAGE_SKIP_TYPES:
         return
+    if image_type == 'game_logo':
+        return  # PASS-59-224: a logo is shown at its own size, never resized
 
     if image_type in ('controllers', 'hardware'):
         target = config.IMAGE_TARGET_LONGEST_EDGE
@@ -991,6 +1007,9 @@ def _atomic_save(img, path, fmt, **save_kwargs):
             pass
         finally:
             os.close(sync_fd)
+        # PASS-59-238 — mkstemp makes the file 0600; an image must stay
+        # readable by a web server or another account, as a plain save is.
+        os.chmod(tmp_path, 0o644)
         os.replace(tmp_path, path)
         tmp_path = None
         # Fsync the directory so the rename is durable on next mount.
@@ -1009,7 +1028,11 @@ def _atomic_save(img, path, fmt, **save_kwargs):
 
 
 def _save_image(img, path):
-    """Save image preserving format with appropriate quality settings."""
+    """Save image preserving format with appropriate quality settings.
+
+    Returns False when the save failed (logged), True otherwise. A GIF is
+    left as it is on disk and counts as True.
+    """
     ext = os.path.splitext(path)[1].lower()
 
     # GIFs: never re-encode. PIL's `img.save(path, 'GIF')` without save_all
@@ -1017,7 +1040,7 @@ def _save_image(img, path):
     # already discarded subsequent frames. The original file on disk still
     # has the animation intact, so the safe path is to leave it untouched.
     if ext == '.gif':
-        return
+        return True
 
     try:
         if ext == '.webp':
@@ -1038,3 +1061,5 @@ def _save_image(img, path):
             _atomic_save(img, path, 'PNG')
     except Exception as e:
         logger.error(f"Image standardize: failed to save {path}: {e}")
+        return False
+    return True

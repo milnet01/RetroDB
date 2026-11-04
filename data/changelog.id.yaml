@@ -1,3 +1,129 @@
+- version: 4.0.0
+  date: '2026-11-04'
+  tags:
+  - type: fix
+    label: Pemeriksaan bawaan RetroDB tidak lagi bisa menyentuh pustaka Anda saat berjalan. Pemeriksaan ini selalu memakai salinan sementara dari database, gambar, dan pengaturan, dan menolak mulai jika salah satunya mengarah ke file asli Anda
+  - type: fix
+    label: Bersihkan file yatim tidak lagi menghapus gambar Wishlist Anda. Membuka game tidak lagi membuatnya lupa screenshot yang tidak ditemukan. Sebelumnya, saat drive gambar dicabut, setiap game yang Anda buka kehilangan seluruh daftar screenshot-nya; kini daftar itu tetap disimpan, dan gambar yang hilang hanya disembunyikan
+  - type: fix
+    label: Unduh video atau manual yang gagal di tengah jalan tidak lagi merusak salinan yang sudah dimiliki game, dan unduhan yang gagal tidak lagi meninggalkan setengah file tersembunyi di folder media. Peningkat resolusi di latar belakang tidak lagi menyimpan gambar lama di atas gambar baru yang diunduh sementara itu. Konversi ke WebP menjaga semua game yang berbagi satu gambar tetap mengarah ke gambar itu, dan tidak pernah menyentuh file di luar folder gambar
+  - type: fix
+    label: Menghapus game atau item Wishlist kini juga menghapus gambar, video, dan manual miliknya, tetapi tetap menyimpan yang masih dipakai game atau item Wishlist lain. Gambar tersimpan kini bisa dibaca lagi oleh akun lain di komputer, dan Ubah Ukuran Gambar menghitung gambar yang gagal disimpan sebagai gagal, bukan selesai
+  - type: fix
+    label: Pencari Duplikat tidak lagi menawarkan file yang berfungsi untuk dihapus. Saat mencari berdasarkan nama, ia tidak lagi menganggap file .cue dan .bin sebuah game sebagai salinan satu sama lain. Ia tidak pernah menawarkan file track disc, yang bisa dipakai bersama oleh dua versi game. Ia tidak akan menghapus disc yang tercantum di playlist. Game yang file-nya Anda hapus kini berpindah ke salinan yang Anda simpan, sehingga tetap ada di pustaka
+  - type: fix
+    label: Atur Multi-Disc tidak lagi menimpa playlist yang sudah ada atau file yang sudah ada di folder game; ia berhenti dan memberi tahu file yang mana. Playlist yang dibuatnya mencantumkan .cue setiap disc, bukan file track-nya. Game yang file-nya dipindahkan kini ikut ke folder tersebut, sehingga Bersihkan ROM hilang tidak lagi menghapusnya
+  - type: fix
+    label: Konversi ke CHD dengan "hapus file asli" kini juga menghapus file track disc, tetapi menyimpan track yang masih dipakai .cue lain. Game dan playlist yang mencantumkan disc lama kini mengarah ke .chd baru. Mengganti nama file game kini memperbarui playlist yang mencantumkannya, dan file track yang dibutuhkan .cue tidak bisa diganti namanya. Menghapus file dari zip hanya menghapus file yang Anda pilih, bahkan saat nama mengandung [ atau ]. Screenshot Dedup hanya menghapus salinan yang ditemukan pemindaian, dan selalu menyisakan satu
+  - type: fix
+    label: How Long to Beat di halaman game mencari sesuai yang Anda ketik. Sebelumnya, judul yang tidak ditemukan membuatnya mencari nama lain game itu, dan bisa menawarkan game berbeda, seperti remake buatan penggemar. Ia tetap mencoba nama lain saat kotak berisi nama asli game
+  - type: fix
+    label: Langkah How Long to Beat di manual bantuan kini sesuai dengan layar. Sebelumnya tertulis memilih kecocokan dari daftar; halaman menampilkan satu kecocokan dengan Simpan dan Batal. Bantuan PlayStation tidak lagi menyebut masa berlaku masuk sekitar dua bulan, karena RetroDB masuk lagi dengan sendirinya. Semua 20 manual terjemahan memuat kedua perubahan ini
+  - type: fix
+    label: Setiap bilah huruf kini diawali tombol Semua. Di halaman Pustaka, konsol, dan Trofi PSN, memilih huruf hanya menampilkan game berawalan huruf itu, dan sebelumnya tidak ada tombol untuk menampilkan sisanya lagi. Di halaman achievement lain, Semua kembali ke game pertama
+  - type: fix
+    label: Token masuk PlayStation baru yang Anda tempel di Pengaturan kini langsung dipakai. Sebelumnya, RetroDB terus memakai login lama sampai habis masa berlakunya, dan Simpan & Uji Koneksi melaporkan login lama itu berfungsi. Token yang ditolak Sony tidak lagi menggantikan token yang masih berfungsi
+  - type: enhancement
+    label: 'Login PlayStation di Pengaturan kini lebih mudah dijaga. Banner tidak lagi menghitung mundur hari yang tidak perlu Anda tindak lanjuti, karena RetroDB masuk lagi dengan sendirinya; banner hanya menjadi merah saat Sony menolak token tersimpan Anda. Tombol Tempel di sini tidak lagi membuat browser meminta izin membaca clipboard: tombol ini menaruh kursor di kotak untuk Ctrl+V. Langkah-langkahnya kini meminta Anda keluar dari PlayStation dulu saat mengganti token yang masih berfungsi, dan pesannya bisa diterjemahkan'
+  - type: enhancement
+    label: Pesan pop-up dan kotak pertanyaan, seperti "Pengaturan disimpan" atau "Hapus daftar ini?", kini bisa diterjemahkan di setiap halaman. Sebelumnya, sebagian besar tetap berbahasa Inggris apa pun bahasa yang Anda pilih
+  - type: enhancement
+    label: Pesan yang menjelaskan mengapa login PlayStation gagal, seperti "NPSSO Anda mungkin sudah kedaluwarsa", kini bisa diterjemahkan
+  - type: fix
+    label: Manual bantuan di setiap bahasa kini sesuai dengan versi Inggris. Ada tambahan Search Anywhere, Keeping a Title, MAME Names, dan bagian belakang kotak, dan paragraf lama yang tertinggal sudah diperbarui
+  - type: fix
+    label: Dalam bahasa Jerman, Afrikaans, dan Spanyol, tombol Kembali pada sampul game kini berarti bagian belakang kotak, bukan "kembali"
+  - type: feature
+    label: Menekan Mainkan kini memenuhi layar dengan logo game di atas gambar latarnya saat game dimulai, atau namanya dengan huruf besar jika tidak ada logo. Tampilan ini hilang sendiri saat jendela game terbuka, atau saat Anda menekan Esc atau mengeklik
+  - type: feature
+    label: 'Kotak 3D yang bisa diputar kini berbentuk seperti case PS5 asli: sudut dan tepi membulat, bibir yang menonjol di sekeliling sampul, garis pertemuan kedua belahan, dan celah jari di sisi pembukanya. Ini butuh file kotak dari versi Slipcase yang menulis bentuk tersebut; impor kotak lagi untuk mendapatkannya. Kotak lain tampil seperti sebelumnya'
+  - type: enhancement
+    label: Segarkan RetroAchievements dipindah dari Pengaturan ke halaman RetroAchievements, dan kini bernama Cari Game dengan Achievement. Setiap tombol di sana kini punya keterangan fungsinya, sehingga Cari Game dan Sinkronkan Progres mudah dibedakan. Jika belum ada game yang tertaut, halaman menampilkan tombol Cari kepada admin, bukan langsung pindah ke tab berikutnya
+  body: "<ul>\n  <li><strong>Manual bantuan sudah terbaru di setiap bahasa.</strong>\n    Bagian yang sebelumnya hanya ada di manual berbahasa Inggris kini sudah diterjemahkan.</li>\n</ul>\n"
+- version: 3.35.4
+  date: '2026-11-03'
+  tags:
+  - type: fix
+    label: Screenshot yang Anda hapus dari sebuah game kini tetap terhapus. Sebelumnya, scrape berikutnya bisa menyalinnya kembali dari ES-DE atau mengunduhnya lagi dari sumber online. Menghapus salinan ganda di alat Screenshot Ganda tidak termasuk, karena gambarnya tetap tersimpan satu kali
+  - type: feature
+    label: 'Game kini punya logo: scrape menyimpannya dari ES-DE, ScreenScraper, TheGamesDB, IGDB, dan Steam, lalu halaman game menampilkannya di atas judul, atau sebagai pengganti boks yang tidak ada. Anda bisa mengunggah atau menghapus logo di jendela Edit. Jalankan scrape massal dengan Isi yang Kosong untuk mengisi logo game yang pernah Anda scrape sebelumnya'
+  - type: fix
+    label: IGDB tidak lagi menjadikan logo game sebagai latar halaman
+  - type: feature
+    label: 'Game kini punya bagian belakang boksnya: scrape menyimpannya dari ES-DE, ScreenScraper, dan TheGamesDB, dan tombol Belakang pada sampul di halaman game menampilkannya. Klik bagian belakang untuk memperbesar. Anda bisa mengunggah atau menghapus bagian belakang di jendela Edit. Bagian belakang terisi setiap kali game di-scrape; Isi yang Kosong tidak men-scrape ulang game hanya demi bagian belakangnya'
+  - type: fix
+    label: Game tanpa sampul depan di TheGamesDB tidak lagi memakai bagian belakang boks sebagai sampulnya
+  - type: fix
+    label: Jika Anda mematikan sebuah scraper di Pengaturan saat scrape massal sedang berjalan, jumlah game yang tidak ditemukan kini benar mulai dari game berikutnya. Sebelumnya, sebuah game bisa terhitung sebagai dihentikan
+  - type: enhancement
+    label: Pada sistem tanpa emulator yang disiapkan, tombol Mainkan berwarna abu-abu. Arahkan kursor ke tombol itu untuk melihat alasannya, atau klik untuk membuka kotak yang menyatakan belum ada emulator yang disiapkan. Sebelumnya, ada satu baris teks di samping tombol
+  body: "<ul>\n  <li><strong>Game punya logo.</strong> Scrape menyimpan logo setiap game, dan halaman game menampilkannya di atas judul, atau sebagai pengganti boks yang tidak ada. Jalankan scrape massal dengan Isi yang Kosong untuk mengisi logo game yang pernah Anda scrape sebelumnya.</li>\n  <li><strong>Game punya bagian belakang boks.</strong> Tombol Belakang pada sampul di halaman game menampilkannya, dan Anda bisa mengkliknya untuk memperbesar. Bagian belakang terisi setiap kali game di-scrape.</li>\n  <li><strong>Screenshot yang dihapus tetap terhapus.</strong> Scrape berikutnya tidak lagi menyalinnya kembali atau mengunduhnya lagi.</li>\n  <li><strong>Mainkan menjelaskan mengapa tidak bisa mulai.</strong> Pada sistem tanpa emulator yang disiapkan, tombol Mainkan berwarna abu-abu dan menjelaskan alasannya.</li>\n</ul>\n"
+- version: 3.35.3
+  date: '2026-11-02'
+  tags:
+  - type: feature
+    label: 'Alat baru MAME Names di ROM Tools: game MAME mendapatkan nama asli, tahun, dan pembuatnya dari daftar resmi MAME sendiri, sementara file tetap memakai nama pendeknya. Setelah itu Scrape akan menemukan tiap game, dan Anda bisa menyaring daftar MAME menurut kategori, misalnya tanpa mesin slot. Set BIOS disembunyikan dari daftar'
+  - type: fix
+    label: ROM Reports tidak lagi menawarkan untuk mengganti nama file MAME, karena file yang diganti namanya tidak bisa berjalan di MAME
+  - type: fix
+    label: Pengaturan kini menjelaskan apa yang diminta Microsoft sebelum aplikasi Xbox bisa didaftarkan. Login Xbox tidak bisa diuji karena hal ini
+  - type: enhancement
+    label: Kartu Official Names yang terpisah sudah dihapus dari Bulk AI Fill, karena tombol Official name pada Isi dengan AI sudah menjalankan fungsi yang sama
+  - type: fix
+    label: Saat Sony menolak login PlayStation yang tersimpan, dasbor dan Pengaturan kini memberi tahu dan meminta Anda menautkan ulang. Sebelumnya, log menampilkan error yang tidak jelas setiap server dimulai dan tidak ada yang memberi tahu Anda
+  - type: feature
+    label: Impor dari Steam kini mengisi deskripsi, kredit, skor Metacritic, rating usia, mode game, sampul, latar, dan screenshot tiap game dari halaman tokonya, di latar belakang. Scrape sebuah game untuk mendapatkan genre dan tanggal rilisnya
+  - type: feature
+    label: Sinkronisasi Steam kini menyimpan waktu bermain dan kapan terakhir Anda memainkannya, dan halaman game menampilkannya
+  - type: fix
+    label: Fetch Library di halaman impor Steam kini berfungsi untuk admin yang punya kunci Steam tersimpan. Sebelumnya, halaman mengirim bentuk tersembunyi dari kunci itu ke Steam, dan salah menyuruh Anda mengatur profil ke Publik
+  - type: fix
+    label: Game Steam atau Xbox yang sudah ada di pustaka Anda dengan nama yang sama kini ditautkan ke game itu saat diimpor, sehingga achievement-nya tersinkron. Sebelumnya, game itu dilewati dan tidak pernah ditautkan
+  - type: fix
+    label: Game yang diimpor dari Steam, Xbox, dan PlayStation kini langsung terurut dengan benar, misalnya Final Fantasy IX sebelum Final Fantasy X, dan tanda merek dagang Steam dihilangkan dari namanya
+  - type: feature
+    label: Pada sistem yang RetroAchievements-nya memakai hash file biasa, seperti Mega Drive dan Game Boy, halaman game menunjukkan apakah salinan Anda mendapat achievement, dan hash itu menautkan game yang tepat. Jalankan RA Refresh untuk mengisinya
+  - type: fix
+    label: Scrape kini menanyakan file Anda yang persis ke ScreenScraper sebelum mencari berdasarkan nama, sehingga yang didapat adalah game Anda, bukan game berjudul mirip. Hasil yang Anda centang sendiri tetap diutamakan
+  - type: enhancement
+    label: Kotak progres Image Resize kini menyebutkan game dan sistem tempat setiap gambar berasal
+  - type: feature
+    label: Scrape kini mengambil layar judul dari ScreenScraper dan TheGamesDB, lebih banyak nama resmi dari IGDB dan TheGamesDB (seperti judul Jepang sebuah game), serta konsol lain tempat game itu dirilis dari IGDB
+  - type: feature
+    label: Game tanpa skor pengguna kini memakai rating di koleksi ES-DE Anda, jika ada
+  - type: feature
+    label: Halaman game menunjukkan berapa pemain yang mencatat waktu untuk hasil HowLongToBeat dan menautkan ke halamannya. Hasil yang disimpan sebelum ini akan menampilkannya saat Anda mencarinya lagi
+  - type: feature
+    label: Halaman RetroAchievements menunjukkan berapa banyak orang yang memainkan sebuah game dan berapa persen dari mereka yang meraih tiap achievement
+  - type: fix
+    label: Penjelajah folder ROM Tools kini terbuka di folder ROM Anda jika tidak ada folder awal, bukan gagal. Jawaban IGDB yang rusak kini hanya menghilangkan satu detail itu, bukan semua yang dikirim IGDB untuk game tersebut
+  - type: fix
+    label: Batas harian ScreenScraper kini membuat RetroDB berhenti meminta sampai nanti, dan Scrape massal memberi tahu hal itu lalu lanjut dengan sumber lainnya. Sebelumnya, batas yang habis tampak seperti "game tidak ditemukan" dan permintaan terus berjalan sepanjang malam
+  - type: fix
+    label: Game yang tidak bisa dijawab oleh sumber mana pun karena layanan sedang mencapai batas kini tidak ditandai sudah di-scrape, sehingga proses berikutnya mencobanya lagi
+  - type: fix
+    label: Saat satu kunci TheGamesDB sudah habis jatah bulanannya, RetroDB beralih ke kunci Anda yang lain, dan berhenti meminta setelah keduanya habis
+  - type: fix
+    label: Batas bulanan RAWG kini juga membuat RetroDB berhenti meminta, dan IGDB dijaga dalam batasnya empat permintaan per detik
+  - type: fix
+    label: Pencarian massal HowLongToBeat kini berakhir dengan pesan saat situs menyatakan sudah terlalu banyak permintaan, dan setiap permintaan ke situs diberi jeda
+  - type: fix
+    label: Fix Box and Manual Regions tidak lagi menyerah setelah 25 game berturut-turut yang tidak dikenal ScreenScraper. Proses berhenti hanya saat ScreenScraper menyatakan batasnya tercapai
+  - type: fix
+    label: Di halaman game, setiap rating usia kini berada di tengah di atas label tebakan AI-nya
+  - type: fix
+    label: Jatah TheGamesDB di Pengaturan kini memakai pengecekan yang tidak menghabiskan jatah Anda, dan tidak lagi menampilkan tanggal reset karangan saat layanan tidak memberikannya
+  body: |
+    <ul>
+      <li><strong>Game MAME mendapat nama aslinya.</strong> Alat MAME Names yang baru di ROM Tools mengambil nama, tahun, dan pembuat dari daftar milik MAME sendiri.
+        File tetap memakai nama pendeknya, karena MAME membutuhkannya. Daftar MAME bisa difilter menurut kategori, dan set BIOS disembunyikan.</li>
+      <li><strong>Impor Steam membawa lebih banyak data.</strong> Setiap game mengisi deskripsi, kredit, skor Metacritic, rating usia, mode game, dan gambar dari halaman tokonya. Sinkronisasi menjaga waktu bermain dan kapan terakhir kali dimainkan. Game yang sudah ada di Pustaka Anda dengan nama yang sama kini ditautkan, sehingga achievement-nya ikut tersinkron.</li>
+      <li><strong>Scrape menemukan game Anda dengan tepat.</strong> Scrape menanyakan file Anda yang persis ke ScreenScraper sebelum mencari berdasarkan nama. Scrape juga membawa layar judul, lebih banyak nama resmi, dan konsol lain tempat game itu dirilis.</li>
+      <li><strong>RetroAchievements mengenali salinan Anda.</strong> Pada sistem yang memakai hash file biasa, seperti Mega Drive dan Game Boy, halaman game menunjukkan apakah salinan Anda mendapatkan achievement. Jalankan RA Refresh untuk mengisinya. Halaman RetroAchievements juga menampilkan berapa banyak orang yang memainkan sebuah game dan berapa persen dari mereka yang meraih tiap achievement.</li>
+      <li><strong>Batas layanan online dihormati.</strong> Saat ScreenScraper, TheGamesDB, atau RAWG mencapai batasnya, RetroDB berhenti meminta sampai nanti dan scrape massal berlanjut dengan sumber lainnya. Game yang tidak bisa dijawab oleh sumber mana pun saat itu akan dicoba lagi pada proses berikutnya.</li>
+      <li><strong>Penolakan masuk PlayStation kini diberi tahu.</strong> Dasbor dan Pengaturan kini meminta Anda menautkan ulang saat Sony menolak data masuk yang tersimpan.</li>
+      <li><strong>Official Names telah dipindahkan.</strong> Kartu terpisahnya dihapus dari Bulk AI Fill, karena sakelar Official name pada fitur isi itu melakukan hal yang sama.</li>
+    </ul>
 - version: 3.35.2
   date: '2026-11-02'
   tags:

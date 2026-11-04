@@ -2,7 +2,8 @@
 
 An editor imports a Slipcase box file (`S.box.json`, format
 `slipcase-box` version 1, Slipcase `docs/specs/SLIP-0104-turnable-3d-box.md`
-§ 4.1) with its face pictures. The faces are stored as WebP in
+§ 4.1) with its face pictures, and the case's shape when the file gives one
+(SLIP-0125 § 4.1, PASS-59-231). The faces are stored as WebP in
 `<IMAGE_PATH>/box_faces/` and described by the JSON in `games.box_faces`.
 `boxart_3d` is never touched. Contract: `docs/specs/PASS-59-142-box-file-import.md`.
 """
@@ -10,6 +11,7 @@ An editor imports a Slipcase box file (`S.box.json`, format
 import io
 import json
 import logging
+import math
 import os
 import re
 import secrets
@@ -25,6 +27,12 @@ FACES = ('front', 'spine', 'back', 'edge', 'top', 'bottom')
 REQUIRED_FACES = ('front', 'spine')
 COLOURS = ('top', 'bottom', 'edge')
 SIZES = ('width_mm', 'height_mm', 'depth_mm')
+# The case's shape (Slipcase SLIP-0125 § 4.1): the first two keys are
+# required; a missing lip, seam or recess key means 0.
+SHAPE_KEYS = ('corner_radius_mm', 'edge_radius_mm', 'lip_width_mm', 'lip_height_mm',
+              'seam_width_mm', 'seam_depth_mm', 'recess_length_mm',
+              'recess_height_mm', 'recess_depth_mm')
+SHAPE_REQUIRED = ('corner_radius_mm', 'edge_radius_mm')
 
 MAX_BOX_FILE_SIZE = 64 * 1024
 TARGET_HEIGHT = 1080          # the front's height after import; never enlarged
@@ -134,8 +142,42 @@ def _section(data, key):
     return value
 
 
+def _shape(data, case):
+    """The `shape` section by SLIP-0125 § 4.1's rules, every key in mm, or
+    None for a flat box. A shape breaking any rule is dropped whole; it
+    never refuses the file."""
+    shape = data.get('shape')
+    if not isinstance(shape, dict) or any(key not in shape for key in SHAPE_REQUIRED):
+        return None
+    s = {}
+    for key in SHAPE_KEYS:
+        value = shape.get(key, 0)
+        if (isinstance(value, bool) or not isinstance(value, (int, float))
+                or not math.isfinite(value) or value < 0):
+            return None
+        s[key] = value
+    width, height, depth = case['width_mm'], case['height_mm'], case['depth_mm']
+    side = min(width, height) / 4
+    corner, edge = s['corner_radius_mm'], s['edge_radius_mm']
+    lip_w, lip_h = s['lip_width_mm'], s['lip_height_mm']
+    if (corner > side or lip_w > side or edge > depth / 4
+            or lip_h > depth / 8 or s['seam_width_mm'] > depth / 8
+            or s['seam_depth_mm'] > s['seam_width_mm']
+            or (lip_h > 0 and (lip_w == 0 or lip_w < edge))
+            or s['recess_length_mm'] >= height - 2 * max(corner, lip_w)
+            or s['recess_depth_mm'] > side
+            or (s['recess_height_mm'] > 0
+                and (s['recess_length_mm'] <= s['recess_height_mm']
+                     or s['recess_height_mm'] <= s['seam_width_mm']))
+            or s['recess_height_mm'] / 2 >= depth / 2 - lip_h - edge):
+        return None
+    if not any(s.values()):
+        return None
+    return s
+
+
 def _parse_box_file(raw):
-    """Check the description and return (case, colours, face names)."""
+    """Check the description and return (case, colours, face names, shape)."""
     if len(raw) > MAX_BOX_FILE_SIZE:
         raise BoxImportError('bad_json', 'the box file is larger than 64 KB')
     try:
@@ -172,7 +214,7 @@ def _parse_box_file(raw):
     bad = [face for face, value in names.items() if value is not None and not _plain_name(value)]
     if bad:
         raise BoxImportError('bad_face_name', ', '.join(bad))
-    return case, colours, names
+    return case, colours, names, _shape(data, case)
 
 
 # ---------------------------------------------------------------------------
@@ -256,7 +298,7 @@ def import_box_file(game_id, uploads, replace=False):
         raise BoxImportError('no_box_file')
     if len(box_files) > 1:
         raise BoxImportError('two_box_files', ', '.join(sorted(box_files)))
-    case, colours, names = _parse_box_file(_read(uploads[box_files[0]], MAX_BOX_FILE_SIZE))
+    case, colours, names, shape = _parse_box_file(_read(uploads[box_files[0]], MAX_BOX_FILE_SIZE))
 
     missing = [names[face] for face in FACES if names[face] and names[face] not in uploads]
     if missing:
@@ -285,6 +327,8 @@ def import_box_file(game_id, uploads, replace=False):
             written.append(path)
             stored[face] = filename
         record = {'version': RECORD_VERSION, 'case': case, 'colours': colours, 'faces': stored}
+        if shape is not None:
+            record['shape'] = shape
         execute('UPDATE games SET box_faces = ? WHERE id = ?', (json.dumps(record), game_id))
     except Exception as e:
         for path in written:

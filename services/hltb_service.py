@@ -90,6 +90,14 @@ def _normalize_match_platform(match_platform):
     return match_platform or ''
 
 
+def _whole_number(value):
+    """An ID or count sent by the page, or None if it is not one."""
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
 def _normalize_confidence(confidence):
     """Accept 0-1 float, 0-100 number, or list/tuple; return a 0-1 float or None."""
     if confidence is None:
@@ -179,13 +187,18 @@ class HLTBLookup:
                     hltb_match_name = ?,
                     hltb_match_platform = ?,
                     hltb_match_confidence = ?,
-                    hltb_match_reviewed = 0
+                    hltb_match_reviewed = 0,
+                    hltb_id = ?,
+                    hltb_players = ?
                 WHERE id = ?
             """, (playtime_str, result['match_name'],
                   _normalize_match_platform(result.get('match_platform')) or None,
-                  _normalize_confidence(result['match_confidence']), game_id))
+                  _normalize_confidence(result['match_confidence']),
+                  result.get('game_id'), result.get('players'), game_id))
 
         return {
+            'hltb_id': result.get('game_id'),
+            'players': result.get('players'),
             'playtime': playtime_str,
             'match_name': result['match_name'],
             'match_platform': _normalize_match_platform(result.get('match_platform', '')),
@@ -202,7 +215,8 @@ class HLTBLookup:
         """Generic HLTB search by title. Does not write to the DB.
 
         If `alternate_titles` is omitted and `game_id` is supplied, the game's
-        stored alt titles are loaded from the DB as a fallback.
+        stored alt titles are loaded from the DB as a fallback, but only when
+        the query is the game's own title: typed text is searched as typed.
 
         Raises HLTBError(400) if no search query is provided.
         Raises NoHLTBMatch if HLTB has no match.
@@ -219,10 +233,10 @@ class HLTBLookup:
         if not alts and game_id is not None:
             try:
                 row = query(
-                    "SELECT alternate_titles FROM games WHERE id = ?",
+                    "SELECT title, alternate_titles FROM games WHERE id = ?",
                     (int(game_id),), one=True,
                 )
-                if row:
+                if row and (row.get('title') or '').strip().casefold() == q.casefold():
                     alts = extract_alt_titles(row.get('alternate_titles'))
             except (ValueError, TypeError):
                 pass
@@ -240,6 +254,7 @@ class HLTBLookup:
 
         return {
             'hltb_id': result.get('game_id'),
+            'players': result.get('players'),
             'main_story': format_playtime(result['main_story']) if result.get('main_story') else None,
             'main_extra': format_playtime(result['main_plus_sides']) if result.get('main_plus_sides') else None,
             'completionist': format_playtime(result['completionist']) if result.get('completionist') else None,
@@ -274,9 +289,12 @@ class HLTBLookup:
                 hltb_match_name = ?,
                 hltb_match_platform = ?,
                 hltb_match_confidence = ?,
-                hltb_match_reviewed = 1
+                hltb_match_reviewed = 1,
+                hltb_id = ?,
+                hltb_players = ?
             WHERE id = ?
-        """, (playtime, match_name, match_platform, confidence, game_id))
+        """, (playtime, match_name, match_platform, confidence,
+              _whole_number(payload.get('hltb_id')), _whole_number(payload.get('players')), game_id))
 
     def clear(self, game_id):
         """Clear HLTB playtime + match fields on a games row."""
@@ -286,7 +304,9 @@ class HLTBLookup:
                 hltb_match_name = NULL,
                 hltb_match_platform = NULL,
                 hltb_match_confidence = NULL,
-                hltb_match_reviewed = 0
+                hltb_match_reviewed = 0,
+                hltb_id = NULL,
+                hltb_players = NULL
             WHERE id = ?
         """, (game_id,))
 
@@ -328,10 +348,13 @@ class HLTBPendingQueue:
                 hltb_match_name = ?,
                 hltb_match_platform = ?,
                 hltb_match_confidence = ?,
-                hltb_match_reviewed = 1
+                hltb_match_reviewed = 1,
+                hltb_id = COALESCE(?, hltb_id),
+                hltb_players = COALESCE(?, hltb_players)
             WHERE id = ?
         """, (pending_row.get('playtime'), pending_row.get('match_name'),
               pending_row.get('match_platform'), confidence_frac,
+              pending_row.get('hltb_id'), pending_row.get('players'),
               pending_row['game_id']))
         execute("DELETE FROM hltb_pending_matches WHERE id = ?", (pending_row['id'],))
 

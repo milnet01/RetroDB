@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 # (PASS-53-11): a game matches if it has any of them, and the not_ form
 # hides a game that has any of them.
 MULTI_FILTER_FIELDS = ('genre', 'franchise', 'developer', 'publisher',
-                       'modes', 'perspective', 'dimension')
+                       'modes', 'perspective', 'dimension', 'arcade_category')
 
 
 def escape_like(value):
@@ -141,12 +141,13 @@ def _get_filter_options(system_id=None):
         params = (system_id,)
 
     rows = query(f"""
-        SELECT genre, franchise, developer, publisher, modes, perspective, dimension
+        SELECT genre, franchise, developer, publisher, modes, perspective, dimension,
+               arcade_category
         FROM games
         WHERE (genre IS NOT NULL OR franchise IS NOT NULL
            OR developer IS NOT NULL OR publisher IS NOT NULL
            OR modes IS NOT NULL OR perspective IS NOT NULL
-           OR dimension IS NOT NULL){system_filter}
+           OR dimension IS NOT NULL OR arcade_category IS NOT NULL){system_filter}
     """, params)
 
     field_counts = {f: {} for f in MULTI_FILTER_FIELDS}
@@ -239,6 +240,10 @@ def _build_games_query(params, count_only=False, ids_only=False, user_id=None,
         values.append(params['system_type'])
 
     # A value may be one string or a list of them (PASS-53-11).
+    # A BIOS set is not a game: it shows only when asked for by name (PASS-59-227).
+    if 'BIOS' not in _as_list(params.get('arcade_category')):
+        conditions.append("(g.arcade_category IS NULL OR g.arcade_category != 'BIOS')")
+
     for field in MULTI_FILTER_FIELDS:
         wanted = _as_list(params.get(field))
         if wanted:
@@ -327,7 +332,7 @@ def _build_games_query(params, count_only=False, ids_only=False, user_id=None,
         sql = f"""
             SELECT g.id, g.title, g.sort_title, g.system_id, g.emulator_override_id,
                    g.boxart, g.boxart_3d,
-                   g.fanart, g.genre, g.franchise, g.developer, g.publisher,
+                   g.fanart, g.game_logo, g.genre, g.franchise, g.developer, g.publisher,
                    g.release_date, g.modes, g.esrb_rating, g.pegi_rating,
                    g.cero_rating, g.usk_rating, g.acb_rating, g.fpb_rating,
                    g.grac_rating, g.classind_rating, g.china_rating,

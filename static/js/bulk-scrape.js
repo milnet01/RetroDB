@@ -89,7 +89,7 @@ const BulkScrapeController = {
     async start(gameIds, systemId = null, scrapeMode = 'fill_missing') {
         if (gameIds.length === 0) {
             const _wi = typeof getThemedIcon === 'function' ? getThemedIcon('warning') : '⚠️';
-            showModal(`${_wi} ${t('No Games Selected')}`, t('Please select at least one game to scrape.'));
+            showModal(_wi + ' ' + t('No Games Selected'), t('Please select at least one game to scrape.'));
             return;
         }
         
@@ -109,7 +109,7 @@ const BulkScrapeController = {
                 if (data.queued) {
                     // Job was queued, show queued notification and exit bulk mode
                     const _qi = typeof getThemedIcon === 'function' ? getThemedIcon('queued') : '📋';
-                    showModal(`${_qi} ${t('Queued')}`, t('Your bulk scrape has been queued (position {position}). It will start automatically when the current scrape finishes.', {position: data.queue_position}));
+                    showModal(_qi + ' ' + t('Queued'), t('Your bulk scrape has been queued (position {position}). It will start automatically when the current scrape finishes.', {position: data.queue_position}));
                     
                     // Exit bulk mode if the function exists on this page
                     if (typeof exitBulkMode === 'function') {
@@ -163,13 +163,13 @@ const BulkScrapeController = {
                     showNotification(data.error, 'warning');
                 } else {
                     const _ei2 = typeof getThemedIcon === 'function' ? getThemedIcon('error') : '❌';
-                    showModal(`${_ei2} ${t('Error')}`, data.error || t('Failed to start bulk scrape'));
+                    showModal(_ei2 + ' ' + t('Error'), data.error || t('Failed to start bulk scrape'));
                 }
             }
         } catch (error) {
             console.error('Error starting bulk scrape:', error);
             const _ei3 = typeof getThemedIcon === 'function' ? getThemedIcon('error') : '❌';
-            showModal(`${_ei3} ${t('Error')}`, t('Network error starting bulk scrape'));
+            showModal(_ei3 + ' ' + t('Error'), t('Network error starting bulk scrape'));
         }
     },
     
@@ -332,7 +332,7 @@ const BulkScrapeController = {
         // Surface that explicitly so users don't think cancel is broken
         // when the progress toast keeps ticking for a bit after they confirm.
         showConfirm(
-            `${_wi2} ${t('Cancel Bulk Scrape')}`,
+            _wi2 + ' ' + t('Cancel Bulk Scrape'),
             t('Are you sure you want to cancel the bulk scrape?\n\nNote: the current game will finish scraping (usually 10–60 seconds) before the cancel takes effect — the progress toast will keep updating during that window.'),
             async () => {
             try {

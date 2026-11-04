@@ -157,6 +157,9 @@ def test_setup_browser_closes_once_setup_is_done(monkeypatch):
 
 @pytest.mark.parametrize('template, field, scope', [
     ('_settings_tabs/library.html', 'romPathInput', 'folder'),
+    ('mame_names.html', 'mameListPath', 'file'),
+    ('mame_names.html', 'mameExtraListPath', 'file'),
+    ('mame_names.html', 'mameCategoryPath', 'file'),
     ('_settings_tabs/scraping.html', 'esdeGamelistsInput', 'folder'),
     ('_settings_tabs/scraping.html', 'esdeMediaInput', 'folder'),
     ('_settings_tabs/scraping.html', 'rpcs3TrophyInput', 'folder'),

@@ -29,7 +29,7 @@ See also: CLAUDE.md "Scraper fill-only invariant" and "Schema / data shapes"; [`
 | IGDB              | `scraper/scrape_igdb.py`          | remote          | `igdb_client_id` + `igdb_client_secret`                                   | Richest metadata (genres, modes, perspectives, age ratings × 7 systems, franchise, similar games) |
 | RAWG.io           | `scraper/scrape_rawg.py`          | remote          | `rawg` (settings key; falls back to `RAWG_API_KEY` in `config.py`)        | Metacritic critic score, user score; background picture as fanart, no boxart. Credits, ESRB and multiplayer modes only from a record on one platform (PASS-59-208); never a player count |
 | ScreenScraper     | `scraper/scrape_screenscraper.py` | remote          | `screenscraper_username` + `_password` + `_devid` + `_devpassword`        | Retro-specific metadata, regional alt titles, system-specific media (boxart 3D, video, manual)    |
-| Steam             | `scraper/scrape_steam.py`         | remote          | `steam_api_key` + `steam_id` (store app details need no key)              | Per-user owned-games import and achievement sync. Not a source in the hybrid walk.                |
+| Steam             | `scraper/scrape_steam.py`         | remote          | `steam_api_key` + `steam_id` (store app details need no key)              | Per-user owned-games import and achievement sync. Not a source in the hybrid walk: `SteamSyncJob` fills an imported game once from its store page, as primary source `steam` with `mark_scraped=False`. It leaves the date and genre to a scrape, because the date is the Steam release and the genre is nearly always Action.                |
 | Xbox              | `scraper/scrape_xbox.py`          | remote          | `xbox_client_id` + `xbox_client_secret`, then a per-user Microsoft OAuth2 sign-in (XBL + XSTS tokens) | Per-user title import and achievement sync. Not a source in the hybrid walk. |
 | RetroAchievements | `scraper/retroachievements.py`    | remote          | `ra_apikey`                                                               | `has_retroachievements`, `ra_game_id`, `ra_achievement_count`, `ra_points` (tail of hybrid apply) |
 | AI Fill           | `scraper/scrape_ai.py`            | AI              | One of: `ai_gemini_api_key`, `ai_openai_api_key`, `ai_anthropic_api_key` (+ optional `ai_gemini_project_id`) | Final gap-fill for text-only fields; never media (see §12)                                        |
@@ -87,30 +87,40 @@ Tie-breakers:
 
 - **ScreenScraper regions**: `scraper/ss_regions.by_region` is the one order for its names, dates, boxes and manuals (PASS-59-202): this copy's region, then `version_groups.preferred_regions()`, then the generic `ss` entry, then the rest as listed. `ss_regions.own_region` takes this copy's region from its file name's tag, else the stored value. Descriptions stay English. The smaller `video-normalized` is tried first and `video` only if that fails. A search result is scored against all its regional names. Games scraped earlier are put right by the job `ss_region_repair` (`jobs.md`).
 - **Boxart**: ScreenScraper ships system-specific covers (Saturn JP boxart for a Saturn ROM) where IGDB ships the generic global cover, so order IGDB last if regional covers matter. RAWG has no covers: its `background_image` is wide art or a screenshot, so it fills fanart only, and ROM Tools > Clear RAWG Pictures from Box Art empties covers older scrapes took from it (PASS-59-203). RetroDB's sidebar links to RAWG on every page, as its terms ask. ES-DE ahead of a source means its local cover wins over that source's, as primary or as a fallback (PASS-59-205).
-- **Screenshots**: never replaced, always *appended*, then deduped via `image_dedup.compute_dhash` with Hamming-distance threshold 10. Each per-source merger reads existing filenames + their hashes once, then calls `keep_screenshot_if_unique` on each new download. Visual dupes (re-encodes / resizes) are dropped before they reach the UPDATE. IGDB and RAWG attach screenshots to the game, not to one platform's version, so on an 8-bit or 16-bit system theirs are taken only when the game lists exactly one platform (`base_scraper.per_game_screenshots_fit`, `screenshot_fit.EIGHT_AND_SIXTEEN_BIT`, PASS-59-161). Newer systems take them regardless, and may show another version's pictures.
+- **Screenshots**: never replaced, always *appended*, then deduped via `image_dedup.compute_dhash` with Hamming-distance threshold 10. Each per-source merger reads existing filenames + their hashes once, then calls `keep_screenshot_if_unique` on each new download. Visual dupes (re-encodes / resizes) are dropped before they reach the UPDATE. A screenshot the user deletes from a game keeps its dHash in `removed_screenshots`; passing `game_id` to `get_existing_screenshot_hashes` adds those, so every merger and the ES-DE copy drop a picture that looks like one removed (PASS-59-222). The Duplicate Screenshots tool records nothing: its user keeps one copy of that picture. IGDB and RAWG attach screenshots to the game, not to one platform's version, so on an 8-bit or 16-bit system theirs are taken only when the game lists exactly one platform (`base_scraper.per_game_screenshots_fit`, `screenshot_fit.EIGHT_AND_SIXTEEN_BIT`, PASS-59-161). Newer systems take them regardless, and may show another version's pictures.
 - **Empty values never win**: the fill-only invariant (§5) means a later high-priority source filling an empty field always wins, but an empty response from a high-priority source never wipes what came from a lower-priority source.
 - **Curated DB defaults always win for controllers**: `get_system_default_controller_name` runs after gap-fill and overrides whatever was scraped/inferred.
 
 ---
+
+### Identifying the file (PASS-59-217)
+
+ScreenScraper is asked about the user's own file before a title search, unless a person ticked a result. `scrape_screenscraper.identify_by_file` accepts a reply only when it returns the CRC sent, or when a serial sent with a made-up file name finds a record, and it refuses records marked as no game. A miss falls through to the title search. Contract: [`PASS-59-217-identify-by-file.md`](PASS-59-217-identify-by-file.md).
+
+### Extra data each source gives (PASS-59-216)
+
+- **Title screens.** ScreenScraper's `sstitle` and TheGamesDB's `titlescreen` join `screenshots`. Each merge takes up to five shots and keeps one place for the title screen. TheGamesDB's has only its documentation behind it: no real reply has been seen.
+- **Other titles.** IGDB's `game_localizations` and TheGamesDB's `alternates` join `alternate_titles`. TheGamesDB does not say where a title was used.
+- **Other consoles.** IGDB's `platforms`, less this console, fill an empty `other_platforms`, spelled by `scrape_ai.known_platforms`. A name the schema lacks is left out. One platform writes nothing: IGDB can miss a version, so it does not prove `Exclusive`.
+- **ES-DE's `rating`.** It fills `user_score` only when no online source gave one, and before the AI is asked. ES-DE does not record who set it; it may be the owner's own.
+- **Logos (PASS-59-224).** `game_logo` is filled from ES-DE's `marquee` tag or `marquees/` folder, ScreenScraper's `wheel-hd` then `wheel`, TheGamesDB's `clearlogo` (same Images request), IGDB artwork type 7 then 5 (never 6, black), and Steam's `logo.png`. IGDB fanart skips logo, infographic and icon artworks. A record with no `game_logo` key, such as the wishlist's, gets no logo downloaded. Spec: `PASS-59-224-game-logos.md`.
+- **Box backs (PASS-59-225).** `boxart_back` is filled from ES-DE's `backcovers/` folder, ScreenScraper's `box-2D-back` nearest the game's region, and TheGamesDB's boxart `side: back` (same request as the front). A back never stands in for a missing front. It is not a Fill Missing gap, so a game without one is not scraped again for it. It is separate from Slipcase's `box_faces`. The wishlist's record has no `boxart_back` key and downloads none.
 
 ## 5. Fill-only invariant
 
 **The rule (scraper UPDATEs):** every `?` bound to a metadata-source value
 in a scraper `UPDATE games` statement MUST be wrapped in
 `COALESCE(?, column_name)` so an empty value from the upstream preserves
-whatever's already in the column. Sources that own a direct `UPDATE games`:
-`scrape_esde`, `scrape_igdb`, `scrape_thegamesdb`, and the hybrid
-orchestrator's composite UPDATE in `hybrid_scraper`. `scrape_rawg` and
-`scrape_screenscraper` do **not** own a direct `UPDATE games` — they write
-through `scraper/metadata_merger.py::apply_*_to_metadata`, which feeds
-into the hybrid UPDATE; the COALESCE protection therefore happens once,
-in `hybrid_scraper`.
+whatever's already in the column. Two places own a direct `UPDATE games`:
+the hybrid orchestrator's composite UPDATE in `hybrid_scraper`, and
+`scrape_esde.apply_esde_metadata`, which the ES-DE bulk import calls. Every
+other source writes through `scraper/metadata_merger.py::apply_*_to_metadata`,
+which feeds into the hybrid UPDATE.
 
 **Audit-column exception.** A handful of columns are bare by design,
 because they're status / audit data — overwriting them is the point. As
 of the current code base that means `scrape_history = ?` and
-`scraped = 1` in the hybrid UPDATE, and `scraped = 1` in
-`scrape_igdb.apply_metadata_to_game`. Leave those bare.
+`scraped = 1` in the hybrid UPDATE. Leave those bare.
 
 **AI Fill is a separate path.** `services/ai_fill.py` does **not** use the
 COALESCE wrapper. It builds the `UPDATE games` with bare `field = ?`
@@ -121,9 +131,9 @@ the clause is appended). Don't wrap the AI Fill UPDATEs in COALESCE —
 that would block the cross-map / rating-inference paths that intentionally
 overwrite (because the user opted into AI fill).
 
-**The bug class scraper-COALESCE prevents:** bare `publisher = ?, developer = ?` in `apply_metadata_to_game` means that a TGDB or IGDB response that didn't return publisher/developer (very common — partial records) will silently NULL the column on every re-scrape. Pass 30.4 fixed the original instance for `publisher`/`developer`. Pass 40.6 closed the variant on `players` where the dict was initialised to `1` (so `COALESCE(1, players)` always returned 1 — the `COALESCE` was correct, the initialiser was wrong; fixed via `normalize_players_value` returning `int|None`). Pass 45.3 closed the same shape in AI Fill where bare `field = ?` writes after `int(float("0"))` were clobbering curated `players=4` with `0` — fixed by the `should_apply` skip-empty-int guard, not by adding COALESCE.
+**The bug class scraper-COALESCE prevents:** bare `publisher = ?, developer = ?` in a scraper UPDATE means that a source's response that didn't return publisher/developer (very common — partial records) will silently NULL the column on every re-scrape. Pass 30.4 fixed the original instance for `publisher`/`developer`. Pass 40.6 closed the variant on `players` where the dict was initialised to `1` (so `COALESCE(1, players)` always returned 1 — the `COALESCE` was correct, the initialiser was wrong; fixed via `normalize_players_value` returning `int|None`). Pass 45.3 closed the same shape in AI Fill where bare `field = ?` writes after `int(float("0"))` were clobbering curated `players=4` with `0` — fixed by the `should_apply` skip-empty-int guard, not by adding COALESCE.
 
-**Canonical site:** `scraper/scrape_esde.py::apply_esde_metadata`, the single-source route. A hybrid scrape merges ES-DE through `hybrid_scraper._merge_esde` instead. This SQL keeps an old value only when the new one is empty:
+**Canonical site:** `scraper/scrape_esde.py::apply_esde_metadata`, the ES-DE bulk import. A hybrid scrape merges ES-DE through `hybrid_scraper._merge_esde` instead. This SQL keeps an old value only when the new one is empty:
 
 ```sql
 UPDATE games SET
@@ -139,6 +149,8 @@ UPDATE games SET
     boxart_3d   = COALESCE(?, boxart_3d),
     screenshots = COALESCE(?, screenshots),
     fanart      = COALESCE(?, fanart),
+    game_logo   = COALESCE(?, game_logo),
+    boxart_back = COALESCE(?, boxart_back),
     video       = COALESCE(?, video),
     manual      = COALESCE(?, manual),
     region      = COALESCE(?, region),
@@ -146,15 +158,17 @@ UPDATE games SET
 WHERE id = ?
 ```
 
-The hybrid orchestrator's UPDATE (`hybrid_scraper.py::_save_game_row`) is the same pattern across ~40 columns. The same pattern repeats in `scrape_igdb.apply_metadata_to_game` and `scrape_thegamesdb.apply_metadata_to_game`.
+The hybrid orchestrator's UPDATE (`hybrid_scraper.py::_save_game_row`) is the same pattern across its columns.
 
-**Title lock** (PASS-59-159 §4.3). `games.title_locked = 1` means no scraper writes `title` or `sort_title`, in normal or Full Re-scrape mode. All four sites above write `title` as `CASE WHEN title_locked = 1 THEN title ELSE COALESCE(?, title) END`; `_save_game_row` writes `sort_title` the same way. Scrapers still search with a locked title. The edit windows set the lock when a title is changed, and their "Keep this title when scraping" tick box sets or clears it; the per-game Reset clears it. `tests/test_official_names.py` pins it.
+**Arcade sets** (PASS-59-227). In `services.game_utils.ARCADE_SET_FOLDERS` a file name is MAME's identity for a game. ROM Tools > MAME Names (`services/mame_names.py`) sets the title from MAME's list and locks it. A bulk scrape then searches by that title without its brackets, not by the file name. ScreenScraper's `identify_by_file` sends the zip's name as `romnom` and accepts a reply only if `romfilename` matches. ROM Reports will not rename these files.
+
+**Title lock** (PASS-59-159 §4.3). `games.title_locked = 1` means no scraper writes `title` or `sort_title`, in normal or Full Re-scrape mode. Both sites above write `title` as `CASE WHEN title_locked = 1 THEN title ELSE COALESCE(?, title) END`; `_save_game_row` writes `sort_title` the same way. Scrapers still search with a locked title. The edit windows set the lock when a title is changed, and their "Keep this title when scraping" tick box sets or clears it; the per-game Reset clears it. `tests/test_official_names.py` pins it.
 
 **Exception:** Full Re-scrape mode in `hybrid_scraper` (`force_overwrite=True`) intentionally bypasses fill-only — the user opted in. ES-DE in this mode deletes old box art only once it has copied a replacement.
 
-**Source ids are stricter.** `hybrid_scraper._save_source_ids` stores the IGDB and ScreenScraper game ids a scrape used, as regional-version signals (PASS-59-106 §4.5). It writes `COALESCE(igdb_id, ?)`: a stored id is kept, because a later wrong match would otherwise relink a game. Full Re-scrape writes `COALESCE(?, igdb_id)`. Pinned by `tests/test_scrape_fill_only.py::test_source_ids_fill_only`.
+**Source ids are stricter.** `hybrid_scraper._save_source_ids` stores the IGDB and ScreenScraper game ids a scrape used, as regional-version signals (PASS-59-106 §4.5). It writes `COALESCE(igdb_id, ?)`: a stored id is kept, because a later wrong match would otherwise relink a game. Full Re-scrape writes `COALESCE(?, igdb_id)`. A ScreenScraper record for this exact file replaces the stored `screenscraper_id` (PASS-59-217). Pinned by `tests/test_scrape_fill_only.py::test_source_ids_fill_only`.
 
-**Test pin:** `tests/test_scrape_fill_only.py` exercises both IGDB and TGDB with an existing populated row + an empty API response and asserts every column survives. Re-asserts the failure-side contract too (DB error → `apply_metadata_to_game` returns `False`, not `True`, not a re-raise). ES-DE, the hybrid orchestrator UPDATE, and AI Fill are **not** currently covered by this test — extending coverage is a known roadmap item.
+**Test pin:** `tests/test_scrape_fill_only.py` runs a real hybrid scrape over a populated row with a source that has nothing, and asserts the values survive. It also asserts that the IGDB and TheGamesDB merges keep stored media and add screenshots. AI Fill is not covered by it.
 
 **When adding a new field** to the metadata dict in `hybrid_scraper.apply_hybrid_metadata`, add the corresponding column to the UPDATE binding tuple AND wrap the `?` in COALESCE in the same commit, and add a regression case to `tests/test_scrape_fill_only.py`. Drift between the metadata dict and the UPDATE tuple is precisely why the UPDATE has no try/except fallback — silent drift is the bug; loud failure is the contract.
 
@@ -205,6 +219,8 @@ The site sends no developer in a search reply. Requests are at least a second ap
 Saved matches are checked only when a person presses Check Saved Play Times in ROM Tools (`stored_match_problem`). No game changes until a person decides: Approve keeps the time and sets `games.hltb_match_reviewed`, so the check does not ask again; Reject clears it.
 
 `games.playtime_estimate` is text. Anything adding it up uses `services/playtime.py`.
+
+A saved match keeps HowLongToBeat's game ID (`games.hltb_id`), which links to its page, and `comp_all_count` (`games.hltb_players`), shown as how many players timed it. A match saved before PASS-59-216 has neither until it is looked up again.
 
 ## 7. Title normalization
 
@@ -258,6 +274,21 @@ Hand-off points:
 ## 10. HTTP base contract
 
 `scraper/base_scraper.py` is the only sanctioned HTTP layer for the `scraper/` package. Every adapter (TGDB, IGDB, RAWG, ScreenScraper, AI, RA, Steam, Xbox) goes through it (Pass 41.5 / 41.5.B closed most carry-overs; Xbox followed in Pass 59.26). The key and status probes in `routes/scraper.py` (`api_check_scraper`, `api_scraper_allowance`) call `requests` directly and are outside this contract: a probe must not wait out a 429 backoff.
+
+`scraper/service_limits.py` (PASS-59-215) sets the gap between calls to each service and holds each service's stop. A stopped service's sender returns its usual nothing without calling, and a caller that must tell "no answer" from "no such game" asks `stopped()`. A stop lives in memory: a restart forgets it, and saving API keys clears it.
+
+| Service | Gap between calls | Stops when | For |
+|---|---|---|---|
+| ScreenScraper | The reply's `maxrequestspermin`; doubled on a 429. One call at a time, for `maxthreads` | A 430 or 431, a reply in words naming a quota, or a reply at its daily limit | One hour: the service does not say when its day ends |
+| TheGamesDB | None; the limit is monthly | A reply shows a key spent, or a 403 or 429: that key is passed over. All keys passed over stops the service | The reply's refresh timer, or one day |
+| RAWG | 0.3 s | A 401, 403 or 429 naming a limit, or `X-RateLimit-Remaining` at zero | One day |
+| IGDB | 0.26 s: its limit is 4 a second | Never; a 429 raises, as other errors do | - |
+| HowLongToBeat | 1 s, token requests included | A 429 after `http_post`'s retries | 15 minutes |
+| Steam store | 1.5 s: its limit is undocumented, about 200 calls in five minutes as usually reported | A 403 or 429 | Five minutes; the sync carries on, and the next one asks about games it missed |
+
+A bulk scrape carries on with its other sources and leaves a game found nowhere unstamped, so a later run asks again. HowLongToBeat's and Fix Box and Manual Regions' jobs end. Each status reply has `service_stops`, sentences from `services/service_stop_text.py`. Media downloads are not paced or stopped.
+
+The Settings allowance check calls TheGamesDB's `/v1/API/Limit`, which its documentation says does not count. The key test still calls `/v1/Platforms`: how `/v1/API/Limit` answers a bad key has not been seen.
 
 `http_get(url, params=None, headers=None, timeout=30, retries=2, max_bytes=None)` and `http_post(url, data=None, json_data=None, headers=None, timeout=30, retries=2, max_bytes=None)`:
 
@@ -352,7 +383,7 @@ Start years in `RATING_SYSTEMS`, checked 2026-11-02:
 | ClassInd | 2001 | when games began; one weak source |
 | CADPA | 2020 | standard released December 2020, in force July 2021 |
 
-**Official title** (user, 2026-10-27). For a game with a ROM and an unlocked title, `get_game_details` also asks for `official_title` (the title as released in the ROM's region, as PASS-59-159 §4.2 asks the Official Names run) and `old_title_region`. Both are outside `AI_FILLABLE_FIELDS`; `_validate_all_fields` keeps them after `_clean_official_title`. `metadata_merger.apply_ai_to_metadata` (manual and bulk scrape) and `services/ai_fill.py` (the AI Fill button and Bulk AI Fill) rename the game to it, keeping the replaced name as an alternate title tagged with `old_title_region`. It is an exception to fill-only for `title`, as the user asked. A locked title is never asked about, and `_save_game_row` never writes one. Pinned by `tests/test_ai_official_title.py`.
+**Official title** (user, 2026-10-27). For a game with a ROM and an unlocked title, `get_game_details` also asks for `official_title` (the title as released in the ROM's region) and `old_title_region`. Both are outside `AI_FILLABLE_FIELDS`; `_validate_all_fields` keeps them after `_clean_official_title`. `metadata_merger.apply_ai_to_metadata` (manual and bulk scrape) and `services/ai_fill.py` (the AI Fill button and Bulk AI Fill) rename the game to it, keeping the replaced name as an alternate title tagged with `old_title_region`. It is an exception to fill-only for `title`, as the user asked. A locked title is never asked about, and `_save_game_row` never writes one. Pinned by `tests/test_ai_official_title.py`.
 
 **Circuit breaker:** `_ai_breaker` (5 failures / 120 s recovery) wraps `fetch_ai_metadata` calls from `hybrid_scraper` so a repeatedly-failing provider doesn't burn a quota on every gap-fill attempt.
 
@@ -373,10 +404,6 @@ End-to-end checklist for a new remote source `foo`:
        # Returns the canonical record fetched by ID.
        ...
 
-   def apply_foo_to_game(db_game_id, foo_data) -> bool:
-       # Standalone single-source UPDATE. Mirrors the COALESCE pattern from
-       # scrape_esde.apply_esde_metadata exactly.
-       ...
    ```
    All HTTP calls go through `base_scraper.http_get` / `http_post`. All image downloads go through `base_scraper.download_image` or `metadata_merger._download_and_finalize`. No bare `requests.get` calls.
 
@@ -399,7 +426,7 @@ End-to-end checklist for a new remote source `foo`:
    - Add a `SCRAPER_FOO_ENABLED` default in `config.py` + `config.example.py`.
 
 6. **Tests** (required for landing):
-   - `tests/test_scrape_fill_only.py` — add a test exercising `apply_foo_to_game` with an existing populated row + an empty API response; assert every column survives. Mirror the IGDB/TGDB tests.
+   - `tests/test_scrape_fill_only.py` — add `apply_foo_to_metadata` to the media tests, so stored media stays and empty media fills.
    - `tests/test_hybrid_scraper.py` — pin per-source scoring extras against `scraper/match_scorer.py`.
    - `tests/test_pass40_9_16_security.py` (the Pass 40 SSRF tests) — if `foo` downloads images, add SSRF + redirect-chain tests asserting it goes through `base_scraper.download_image`.
 
@@ -413,7 +440,7 @@ End-to-end checklist for a new remote source `foo`:
 - Fill-only across every source; the only documented exception is `force_overwrite=True` in `hybrid_scraper` (Full Re-scrape).
 - Screenshots are always *appended*, never replaced. Dedup via dHash with Hamming threshold 10.
 - ScreenScraper, TheGamesDB, IGDB and RAWG downloads pass the game id as `screenshot_of`; `services/screenshot_fit.py` refuses a Game Boy original with too many colours (PASS-59-161). It decides by exact colour count, only on an unscaled lossless original, and before finalizing. ZX Spectrum and C64 are not refused: real originals overlap other systems' shots. ES-DE copies and manual uploads are not checked.
-- Media fields (`boxart`, `boxart_3d`, `fanart`, `video`, `manual`) are filled only when empty; clear them via the edit modal to force a re-fetch.
+- Media fields (`boxart`, `boxart_3d`, `boxart_back`, `fanart`, `game_logo`, `video`, `manual`) are filled only when empty; clear them via the edit modal to force a re-fetch.
 - Stale media references (file deleted, filename still in DB) are detected pre-merge and conditionally NULLed under `WHERE id = ? AND <field> = ?` (Pass 40.15).
 - Every image download MUST go through `base_scraper.download_image` or `metadata_merger._download_and_finalize` — both gate on SSRF, walk the redirect chain, pin the resolved IP, stream with `MAX_MEDIA_DOWNLOAD_BYTES` cap (50 MB default), and write atomically (Pass 25.7, 32.6, 32.7, 40.7, 40.15, 45.2).
 - Every API call from a `scraper/` module goes through `base_scraper.http_get` / `http_post` — backoff with jitter on 429/5xx, optional `max_bytes` cap (Pass 26.4, 32.14). Route-level key and status probes in `routes/scraper.py` are exempt (§10).

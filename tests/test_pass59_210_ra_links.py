@@ -121,7 +121,7 @@ def test_list_request_asks_only_for_games_with_achievements(ra_api):
     answer.json.return_value = [_ra(1, 'Pikmin')]
     assert ra.fetch_ra_game_list(16) == [_ra(1, 'Pikmin')]
     params = get.call_args.kwargs['params']
-    assert params['f'] == 1 and 'h' not in params
+    assert params['f'] == 1 and params['h'] == 1
     assert get.call_args.kwargs['max_bytes']
 
 
@@ -152,7 +152,7 @@ def conn():
     db.executescript("""
         CREATE TABLE games (id INTEGER PRIMARY KEY, title TEXT, rom_path TEXT, alternate_titles TEXT,
             has_retroachievements INTEGER DEFAULT 0, ra_game_id INTEGER, ra_title TEXT,
-            ra_achievement_count INTEGER, ra_points INTEGER);
+            ra_achievement_count INTEGER, ra_points INTEGER, ra_copy_fits INTEGER);
         CREATE TABLE game_achievement_progress (game_id INTEGER, source TEXT);
         INSERT INTO games (id, title, has_retroachievements, ra_game_id, ra_title,
             ra_achievement_count, ra_points) VALUES (1, 'Pikmin 2', 1, 15540, 'Pikmin', 50, 400);
@@ -215,12 +215,12 @@ def test_scrape_failure_keeps_the_link(scrape, conn):
     assert _row(conn)[1] == 15540
 
 
-def test_scrape_passes_rom_name_and_alternates(scrape, conn):
+def test_scrape_passes_rom_path_and_alternates(scrape, conn):
     conn.execute("""UPDATE games SET rom_path = '/gc/Pikmin 2 (USA).iso',
                     alternate_titles = '[{"title": "Pikmin Two"}]'""")
     result, check = scrape(ra_link_info(_ra(14817, 'Pikmin 2')))
     assert result is True
-    check.assert_called_once_with('Pikmin 2', 'gc', 'Pikmin 2 (USA)', ['Pikmin Two'])
+    check.assert_called_once_with('Pikmin 2', 'gc', '/gc/Pikmin 2 (USA).iso', ['Pikmin Two'])
 
 
 # --- The refresh job ---------------------------------------------------------------
@@ -238,6 +238,7 @@ def _run_refresh(tmp_path, monkeypatch, game_list):
         INSERT INTO games VALUES (1, 'Pikmin 2', 'gc/Pikmin 2.iso', 1, NULL, 1, 15540, NULL, 50, NULL);
         INSERT INTO games VALUES (2, 'Tetris', 'gc/Tetris.iso', 1, NULL, 1, 15540, NULL, 50, NULL);
         CREATE TABLE game_achievement_progress (game_id INTEGER, source TEXT);
+        ALTER TABLE games ADD COLUMN ra_copy_fits INTEGER;
     """)
     db.commit()
 

@@ -419,7 +419,7 @@ function selectListIcon(el) {
 async function saveList() {
     const name = document.getElementById('listNameInput').value.trim();
     if (!name) {
-        showNotification('Please enter a list name.', 'warning');
+        showNotification({{ _('Please enter a list name.')|tojson }}, 'warning');
         return;
     }
 
@@ -448,22 +448,22 @@ async function saveList() {
 
         const data = await resp.json();
         if (data.success) {
-            showNotification(editId ? 'List updated.' : 'List created.', 'success');
+            showNotification(editId ? {{ _('List updated.')|tojson }} : {{ _('List created.')|tojson }}, 'success');
             closeListModal();
             loadLists();
         } else {
-            showNotification(data.error || 'Failed to save list.', 'error');
+            showNotification(data.error || {{ _('Failed to save list.')|tojson }}, 'error');
         }
     } catch (e) {
         console.error('Error saving list:', e);
-        showNotification('Error saving list.', 'error');
+        showNotification({{ _('Error saving list.')|tojson }}, 'error');
     }
 }
 
 function confirmDeleteList(listId, listName) {
     showConfirm(
-        'Delete List',
-        `Are you sure you want to delete "${listName}"?\nThis will not delete the games themselves, only the list.`,
+        {{ _('Delete List')|tojson }},
+        t({{ _('Are you sure you want to delete "{name}"?\nThis will not delete the games themselves, only the list.')|tojson }}, {name: listName}),
         () => deleteList(listId)
     );
 }
@@ -473,14 +473,14 @@ async function deleteList(listId) {
         const resp = await fetch(`/api/lists/${listId}`, { method: 'DELETE' });
         const data = await resp.json();
         if (data.success) {
-            showNotification('List deleted.', 'success');
+            showNotification({{ _('List deleted.')|tojson }}, 'success');
             loadLists();
         } else {
-            showNotification(data.error || 'Failed to delete list.', 'error');
+            showNotification(data.error || {{ _('Failed to delete list.')|tojson }}, 'error');
         }
     } catch (e) {
         console.error('Error deleting list:', e);
-        showNotification('Error deleting list.', 'error');
+        showNotification({{ _('Error deleting list.')|tojson }}, 'error');
     }
 }
 

@@ -96,7 +96,6 @@ def _rawg_details(monkeypatch, platforms, tags):
         'esrb_rating': {'slug': 'mature'},
         'tags': [{'name': t} for t in tags],
     }
-    monkeypatch.setattr(scrape_rawg, 'rate_limit', lambda *_: None)
     monkeypatch.setattr(scrape_rawg, '_make_request',
                         lambda endpoint, params=None: record if endpoint == 'games/7' else None)
     return scrape_rawg.get_game_details(7)

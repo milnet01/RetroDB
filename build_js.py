@@ -57,7 +57,8 @@ EXCLUDED = [
     'rom-tools.js',             # Page-specific
     'museum.js',                # Page-specific
     'versions.js',              # Page-specific (game page + Regional Versions)
-    'official-names.js',        # Page-specific (ROM Tools > Official Names)
+    'ai-fill-bulk.js',          # Page-specific (ROM Tools > Bulk AI Fill)
+    'mame-names.js',            # Page-specific (ROM Tools > MAME Names)
     'updates.js',               # Page-specific (Settings > Updates + dashboard banner)
 ]
 

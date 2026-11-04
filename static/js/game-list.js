@@ -202,14 +202,14 @@ const RARefreshController = {
                 }
             } else {
                 if (typeof showModal !== 'undefined') {
-                    showModal(`${_ti('error')} ${t('Error')}`, data.error || t('Unknown error'));
+                    showModal(_ti('error') + ' ' + t('Error'), data.error || t('Unknown error'));
                 }
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             }
         } catch (err) {
             if (typeof showModal !== 'undefined') {
-                showModal(`${_ti('error')} ${t('Error')}`, t('Error refreshing RetroAchievements: ') + err.message);
+                showModal(_ti('error') + ' ' + t('Error'), t('Error refreshing RetroAchievements: {error}', {error: err.message}));
             }
             btn.innerHTML = originalText;
             btn.disabled = false;

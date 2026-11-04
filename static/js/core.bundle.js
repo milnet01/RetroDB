@@ -1316,6 +1316,12 @@ const UnifiedToastController = {
     _pollAbortControllers: new Map(),  // Map of type -> AbortController (cancel in-flight fetches)
     _initialized: false,          // Guard against duplicate init
     _resizeHandler: null,         // Stored for cleanup
+
+    _extraLine(type, data) {
+        if (type === 'psn-refresh') return data.current_npwr || '';
+        if (type === 'image-resize' && data.current_game) return data.current_file || '';
+        return '';
+    },
     _visibilityHandler: null,     // Stored for cleanup
     _broadcastChannel: null,      // BroadcastChannel for cross-tab communication
     activePollIntervalMs: 2000,   // 2 seconds when operation is active
@@ -1736,6 +1742,18 @@ const UnifiedToastController = {
     },
 
     /**
+     * Say once that a service has stopped at its limit (PASS-59-215).
+     */
+    sayServiceStops(sentences) {
+        this._saidServiceStops = this._saidServiceStops || new Set();
+        for (const said of sentences || []) {
+            if (this._saidServiceStops.has(said)) continue;
+            this._saidServiceStops.add(said);
+            showNotification(said, 'warning');
+        }
+    },
+
+    /**
      * Poll status for a specific type
      */
     async pollStatus(type, endpoint) {
@@ -1760,6 +1778,7 @@ const UnifiedToastController = {
             if (data.success === false) return;
 
             this.updateToasts(type, data);
+            this.sayServiceStops(data.service_stops);
 
             const isActive = data.running && !data.completed;
             const wasActive = this.activeOperations.get(type) || false;
@@ -2175,7 +2194,7 @@ const UnifiedToastController = {
 
         let currentItem;
         if (type === 'image-resize') {
-            currentItem = data.current_file || t('Processing...');
+            currentItem = data.current_game || data.current_file || t('Processing...');
         } else if (type === 'ra-refresh' || type === 'psn-refresh') {
             currentItem = data.current_game || t('Processing...');
         } else {
@@ -2233,14 +2252,16 @@ const UnifiedToastController = {
         } else if (type === 'ra-refresh' && data.current_system) {
             systemNameValue = data.current_system;
         } else if (type === 'image-resize' && data.current_type) {
-            systemNameValue = data.current_type;
+            systemNameValue = data.current_system
+                ? `${data.current_system} · ${data.current_type}` : data.current_type;
         }
         const systemNameHTML = systemNameValue
             ? `<div class="toast-system-name" data-system-name>${this.escapeHtml(systemNameValue)}</div>`
             : '';
 
-        const npwrHTML = (type === 'psn-refresh' && data.current_npwr)
-            ? `<div class="toast-system-name" data-npwr>${this.escapeHtml(data.current_npwr)}</div>`
+        const extraLine = this._extraLine(type, data);
+        const extraLineHTML = extraLine
+            ? `<div class="toast-system-name" data-extra-line>${this.escapeHtml(extraLine)}</div>`
             : '';
 
         return `
@@ -2251,7 +2272,7 @@ const UnifiedToastController = {
                         <div class="toast-title ${isPaused ? 'paused' : ''}">${config.name} ${isPaused ? t('(Paused)') : t('Running')}</div>
                         ${systemNameHTML}
                         <div class="toast-subtitle" data-subtitle>${this.escapeHtml(currentItem)}</div>
-                        ${npwrHTML}
+                        ${extraLineHTML}
                         <div class="toast-progress-bar">
                             <div class="toast-progress-fill" data-progress style="width: ${percent}%"></div>
                         </div>
@@ -2292,7 +2313,7 @@ const UnifiedToastController = {
 
         let currentItem;
         if (type === 'image-resize') {
-            currentItem = data.current_file || t('Processing...');
+            currentItem = data.current_game || data.current_file || t('Processing...');
         } else if (type === 'ra-refresh' || type === 'psn-refresh') {
             currentItem = data.current_game || t('Processing...');
         } else {
@@ -2325,7 +2346,8 @@ const UnifiedToastController = {
         } else if (type === 'ra-refresh' && data.current_system) {
             systemNameValue = data.current_system;
         } else if (type === 'image-resize' && data.current_type) {
-            systemNameValue = data.current_type;
+            systemNameValue = data.current_system
+                ? `${data.current_system} · ${data.current_type}` : data.current_type;
         }
         if (systemNameValue) {
             if (systemNameEl) {
@@ -2345,20 +2367,21 @@ const UnifiedToastController = {
         const subtitle = toast.querySelector('[data-subtitle]');
         if (subtitle) subtitle.textContent = currentItem;
 
-        if (type === 'psn-refresh') {
-            let npwrEl = toast.querySelector('[data-npwr]');
-            if (data.current_npwr) {
-                if (npwrEl) {
-                    npwrEl.textContent = data.current_npwr;
+        if (type === 'psn-refresh' || type === 'image-resize') {
+            const extraLine = this._extraLine(type, data);
+            let extraEl = toast.querySelector('[data-extra-line]');
+            if (extraLine) {
+                if (extraEl) {
+                    extraEl.textContent = extraLine;
                 } else if (subtitle) {
-                    const npwrDiv = document.createElement('div');
-                    npwrDiv.className = 'toast-system-name';
-                    npwrDiv.setAttribute('data-npwr', '');
-                    npwrDiv.textContent = data.current_npwr;
-                    subtitle.insertAdjacentElement('afterend', npwrDiv);
+                    const extraDiv = document.createElement('div');
+                    extraDiv.className = 'toast-system-name';
+                    extraDiv.setAttribute('data-extra-line', '');
+                    extraDiv.textContent = extraLine;
+                    subtitle.insertAdjacentElement('afterend', extraDiv);
                 }
-            } else if (npwrEl) {
-                npwrEl.remove();
+            } else if (extraEl) {
+                extraEl.remove();
             }
         }
 
@@ -2841,33 +2864,33 @@ let _backToTopScrollHandler = null;
 let _lastErrorToastAt = 0;
 const _ERROR_TOAST_INTERVAL_MS = 5000;
 
-function _surfaceError(prefix, detail) {
+function _surfaceError(message) {
     if (typeof showNotification !== 'function') return;
     const now = Date.now();
     if (now - _lastErrorToastAt < _ERROR_TOAST_INTERVAL_MS) return;
     _lastErrorToastAt = now;
     try {
-        showNotification(`${prefix}: ${detail}`, 'error');
+        showNotification(message, 'error');
     } catch (_e) { /* swallow — never loop on a toast failure */ }
 }
 
 window.addEventListener('error', function(event) {
     const msg = event.message || '';
     if (!msg || msg === 'Script error.') return;
-    _surfaceError(t('Unexpected error'), msg);
+    _surfaceError(t('Unexpected error: {error}', {error: msg}));
 });
 
 window.addEventListener('unhandledrejection', function(event) {
     const r = event.reason;
     let detail;
     if (r instanceof Error) {
-        detail = r.message || r.name || 'unknown error';
+        detail = r.message || r.name || t('Unknown error');
     } else if (typeof r === 'string') {
         detail = r;
     } else {
         try { detail = JSON.stringify(r); } catch (_e) { detail = String(r); }
     }
-    _surfaceError(t('Unhandled rejection'), detail);
+    _surfaceError(t('Unhandled rejection: {error}', {error: detail}));
 });
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -3780,13 +3803,32 @@ async function clearClzImports() {
     );
 }
 
+function resetFindGamesButton() {
+    const btn = document.getElementById('refreshRABtn');
+    if (!btn || btn.dataset.onClick !== 'refreshRetroAchievements') return;
+    btn.disabled = false;
+    btn.innerHTML = `<span class="btn-icon">🔍</span> ${escapeHtml(t('Find Games with Achievements'))}`;
+}
+
+document.addEventListener('retrodb:job-status', (e) => {
+    const {type, data} = e.detail || {};
+    if (type !== 'ra-refresh' || !data) return;
+    const btn = document.getElementById('refreshRABtn');
+    if (!btn || btn.dataset.onClick !== 'refreshRetroAchievements') return;
+    if (data.running && !data.completed) {
+        btn.disabled = true;
+        btn.innerHTML = `<span class="btn-icon">⏳</span> ${escapeHtml(t('Running...'))}`;
+    } else if (btn.disabled) {
+        resetFindGamesButton();
+    }
+});
+
 async function refreshRetroAchievements() {
     showConfirm(
-        t('🏆 Refresh RetroAchievements'),
+        t('🔍 Find Games with Achievements'),
         t('This will scan all games and update their RetroAchievements status. This may take several minutes for large collections. Continue?'),
         async function() {
             const btn = document.getElementById('refreshRABtn');
-            const resultDiv = document.getElementById('refreshRAResult');
 
             if (btn) {
                 btn.disabled = true;
@@ -3848,18 +3890,12 @@ async function refreshRetroAchievements() {
                     }
                 } else {
                     showNotification(data.error || t('Failed to start RetroAchievements refresh'), 'error');
-                    if (btn) {
-                        btn.disabled = false;
-                        btn.innerHTML = `<span class="btn-icon">🏆</span> ${escapeHtml(t('Refresh RetroAchievements'))}`;
-                    }
+                    resetFindGamesButton();
                 }
             } catch (error) {
                 console.error('Error starting RetroAchievements refresh:', error);
                 showNotification(t('Failed to start RetroAchievements refresh'), 'error');
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerHTML = `<span class="btn-icon">🏆</span> ${escapeHtml(t('Refresh RetroAchievements'))}`;
-                }
+                resetFindGamesButton();
             }
         }
     );
@@ -3872,22 +3908,11 @@ function cancelRARefresh() {
 }
 
 async function clearRAData() {
-    const systemSelect = document.getElementById('clearRASystemSelect');
-    const systemId = systemSelect ? systemSelect.value : 'all';
-    const systemName = systemSelect && systemId !== 'all'
-        ? systemSelect.options[systemSelect.selectedIndex].text
-        : 'all systems';
-
-    const confirmMsg = systemId === 'all'
-        ? t('This will clear ALL RetroAchievements game IDs and progress data from your database. You will need to run "Refresh RetroAchievements" again afterwards to re-scan your games. Continue?')
-        : t('This will clear RetroAchievements game IDs and progress data for "{system}". Continue?', {system: systemName});
-
     showConfirm(
         t('🗑️ Clear RetroAchievements Data'),
-        confirmMsg,
+        t('This will clear ALL RetroAchievements game IDs and progress data from your database. You will need to run "Find Games with Achievements" again afterwards to re-scan your games. Continue?'),
         async function() {
-            const btn = document.getElementById('clearRABtn');
-            const resultDiv = document.getElementById('clearRAResult');
+            const btn = document.getElementById('clearAllRABtn');
 
             if (btn) {
                 btn.disabled = true;
@@ -3895,36 +3920,21 @@ async function clearRAData() {
             }
 
             try {
-                const endpoint = systemId === 'all'
-                    ? '/api/clear-ra-data'
-                    : `/api/clear-ra-data/${systemId}`;
-
-                const data = await API.post(endpoint);
+                const data = await API.post('/api/clear-ra-data');
 
                 if (data.success) {
-                    const msg = systemId === 'all'
-                        ? t('Cleared RA data for {n} games', {n: formatNumber(data.cleared)})
-                        : t('Cleared RA data for {n} games in {system}', {n: formatNumber(data.cleared), system: systemName});
-                    showNotification(msg, 'success');
-
-                    if (resultDiv) {
-                        resultDiv.innerHTML = `<div class="glass-panel" style="padding: var(--spacing-md); background: rgba(76, 201, 240, 0.1);">
-                            <strong style="color: var(--primary-cyan);">✓ ${escapeHtml(t('RA Data Cleared'))}</strong>
-                            <p style="margin-top: var(--spacing-xs);">${escapeHtml(t('Cleared RetroAchievements data for {n} games. Run "Refresh RetroAchievements" to re-scan with updated matching.', {n: formatNumber(data.cleared)}))}</p>
-                        </div>`;
-                        resultDiv.style.display = 'block';
-                    }
-                } else {
-                    showNotification(data.error || t('Failed to clear RA data'), 'error');
+                    showNotification(t('Cleared RA data for {n} games', {n: formatNumber(data.cleared)}), 'success');
+                    setTimeout(() => { window.location.href = '/achievements'; }, 1500);
+                    return;
                 }
+                showNotification(data.error || t('Failed to clear RA data'), 'error');
             } catch (error) {
                 console.error('Error clearing RA data:', error);
                 showNotification(t('Failed to clear RA data'), 'error');
-            } finally {
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerHTML = `<span class="btn-icon">🗑️</span> ${escapeHtml(t('Clear RA Data'))}`;
-                }
+            }
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = `<span class="btn-icon">🗑️</span> ${escapeHtml(t('Clear RA Data for All Systems'))}`;
             }
         },
         {danger: true}

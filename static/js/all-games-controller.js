@@ -28,7 +28,7 @@ const AllGamesController = (function() {
 
     // PASS-53-11 — these filters hold a list of values (any of them
     // matches); MULTI_FILTER_FIELDS in services/game_query.py.
-    const MULTI_FIELDS = ['genre', 'franchise', 'developer', 'publisher', 'modes', 'perspective', 'dimension'];
+    const MULTI_FIELDS = ['genre', 'franchise', 'developer', 'publisher', 'modes', 'perspective', 'dimension', 'arcade_category'];
     const isMulti = type => MULTI_FIELDS.includes(type);
     // A filter value as a list; a single value saved by an older build
     // becomes a one-item list.
@@ -718,7 +718,8 @@ const AllGamesController = (function() {
         // from the card's top-right corner (hidden in bulk-select mode).
         const playHtml = game.can_launch
             ? `<button type="button" class="card-play-btn" data-game-id="${game.id}"
-                       title="${escAttr(t('Play'))}" aria-label="${escAttr(t('Play'))}"
+                       data-game-title="${esc(game.title)}" data-logo="${esc(game.game_logo)}" data-fanart="${esc(game.fanart)}"
+                       title="${esc(t('Play'))}" aria-label="${esc(t('Play'))}"
                        data-on-click="launchGame" data-args="${actionArgs('$this')}" data-stop data-prevent><svg viewBox="0 0 100 100" aria-hidden="true" focusable="false"><polygon points="35,24 35,76 80,50"/></svg></button>`
             : '';
 
@@ -837,7 +838,7 @@ const AllGamesController = (function() {
             genre: t('Select Genre'), franchise: t('Select Series'),
             publisher: t('Select Publisher'), developer: t('Select Developer'),
             modes: t('Select Play Mode'), perspective: t('Select Perspective'),
-            dimension: t('Select Dimension'),
+            dimension: t('Select Dimension'), arcade_category: t('Select Category'),
             rating: t('Select Rating'), source: t('Select Source')
         };
         if (title) title.textContent = titles[filterType] || t('Select Filter');
@@ -1165,7 +1166,7 @@ const AllGamesController = (function() {
                 const icons = {
                     system: '&#128421;&#65039;', system_type: '&#128241;', genre: '&#127917;',
                     franchise: '&#128218;', publisher: '&#127970;', developer: '&#128104;&#8205;&#128187;',
-                    modes: '&#128101;', perspective: '&#128065;&#65039;', dimension: '&#128208;',
+                    modes: '&#128101;', perspective: '&#128065;&#65039;', dimension: '&#128208;', arcade_category: '&#128377;&#65039;',
                     rating: '&#11088;', source: '&#128203;',
                     search: '&#128269;', letter: '&#128289;'
                 };
@@ -1249,6 +1250,20 @@ const AllGamesController = (function() {
 
         nav.querySelectorAll('.alphabet-btn').forEach(btn => {
             const letter = btn.dataset.letter;
+            if (!letter) {
+                // "All": undo a letter jump. A jump to a letter not yet loaded
+                // filters the list to that letter, and the filter bar's Clear
+                // ignores letters, so this is the way back.
+                btn.addEventListener('click', () => {
+                    const wasFiltered = !!filters.letter;
+                    activeLetterJump = null;
+                    delete filters.letter;
+                    nav.querySelectorAll('.alphabet-btn.active').forEach(b => b.classList.remove('active'));
+                    if (wasFiltered) resetAndFetch();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+                return;
+            }
             const hasGames = letterSet.size === 0 || letterSet.has(letter);
 
             if (hasGames) {

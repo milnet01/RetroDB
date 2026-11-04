@@ -46,6 +46,10 @@ def achievements():
     """, one=True)
     
     if not first_system:
+        # An admin gets the button that links games, or a new library
+        # could never reach it (PASS-59-232).
+        if g.user and g.user.get('role') == 'admin':
+            return render_template('achievements_ra_empty.html')
         # Stay inside Achievements: the next tab along (Pass 53.3).
         flash(_('No games with RetroAchievements found in your library'), 'info')
         return redirect(url_for('trophies.trophies'))
@@ -467,7 +471,7 @@ def api_get_stored_achievements(system_id):
 def api_refresh_achievements(game_id):
     """Refresh achievements from RetroAchievements API"""
     from scraper.retroachievements import check_retroachievements
-    from services.achievement_linking import ra_rom_name, save_ra_link
+    from services.achievement_linking import save_ra_link
     from services.database import get_db
     from services.hltb_service import extract_alt_titles
 
@@ -482,7 +486,7 @@ def api_refresh_achievements(game_id):
         return error(_('Game not found'), code=404)
 
     result = check_retroachievements(game['title'], game['system_folder'],
-                                     ra_rom_name(game['rom_path']),
+                                     game['rom_path'],
                                      extract_alt_titles(game['alternate_titles']))
     if result is None:
         return error(_('Could not get an answer from RetroAchievements'), code=503)

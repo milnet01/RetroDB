@@ -477,7 +477,7 @@ function selectTagColor(el) {
 async function saveTag() {
     const name = document.getElementById('tagNameInput').value.trim();
     if (!name) {
-        showNotification('Please enter a tag name.', 'warning');
+        showNotification({{ _('Please enter a tag name.')|tojson }}, 'warning');
         return;
     }
 
@@ -502,22 +502,22 @@ async function saveTag() {
 
         const data = await resp.json();
         if (data.success) {
-            showNotification(editId ? 'Tag updated.' : 'Tag created.', 'success');
+            showNotification(editId ? {{ _('Tag updated.')|tojson }} : {{ _('Tag created.')|tojson }}, 'success');
             closeTagModal();
             loadTags();
         } else {
-            showNotification(data.error || 'Failed to save tag.', 'error');
+            showNotification(data.error || {{ _('Failed to save tag.')|tojson }}, 'error');
         }
     } catch (e) {
         console.error('Error saving tag:', e);
-        showNotification('Error saving tag.', 'error');
+        showNotification({{ _('Error saving tag.')|tojson }}, 'error');
     }
 }
 
 function confirmDeleteTag(tagId, tagName) {
     showConfirm(
-        'Delete Tag',
-        `Are you sure you want to delete the tag "${tagName}"?\nThis will remove the tag from all games.`,
+        {{ _('Delete Tag')|tojson }},
+        t({{ _('Are you sure you want to delete the tag "{name}"?\nThis will remove the tag from all games.')|tojson }}, {name: tagName}),
         () => deleteTag(tagId)
     );
 }
@@ -527,15 +527,15 @@ async function deleteTag(tagId) {
         const resp = await fetch(`/api/tags/${tagId}`, { method: 'DELETE' });
         const data = await resp.json();
         if (data.success) {
-            showNotification('Tag deleted.', 'success');
+            showNotification({{ _('Tag deleted.')|tojson }}, 'success');
             if (expandedTagId === tagId) closeTagGamesPanel();
             loadTags();
         } else {
-            showNotification(data.error || 'Failed to delete tag.', 'error');
+            showNotification(data.error || {{ _('Failed to delete tag.')|tojson }}, 'error');
         }
     } catch (e) {
         console.error('Error deleting tag:', e);
-        showNotification('Error deleting tag.', 'error');
+        showNotification({{ _('Error deleting tag.')|tojson }}, 'error');
     }
 }
 

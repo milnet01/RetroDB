@@ -2736,7 +2736,7 @@ function exportAsPNG() {
     link.href = canvas.toDataURL('image/png');
     link.click();
 
-    showNotification('PNG infographic downloaded.', 'success');
+    showNotification({{ _('PNG infographic downloaded.')|tojson }}, 'success');
 }
 
 function exportToClipboard() {
@@ -2759,7 +2759,7 @@ function exportToClipboard() {
     const text = lines.join('\n');
 
     navigator.clipboard.writeText(text).then(() => {
-        showNotification('Stats copied to clipboard.', 'success');
+        showNotification({{ _('Stats copied to clipboard.')|tojson }}, 'success');
     }).catch(() => {
         // Fallback
         const ta = document.createElement('textarea');
@@ -2770,7 +2770,7 @@ function exportToClipboard() {
         ta.select();
         document.execCommand('copy');
         document.body.removeChild(ta);
-        showNotification('Stats copied to clipboard.', 'success');
+        showNotification({{ _('Stats copied to clipboard.')|tojson }}, 'success');
     });
 }
 
@@ -2812,7 +2812,7 @@ function exportAsCSV() {
     link.click();
     URL.revokeObjectURL(link.href);
 
-    showNotification('CSV data exported.', 'success');
+    showNotification({{ _('CSV data exported.')|tojson }}, 'success');
 }
 </script>
 {% endblock %}

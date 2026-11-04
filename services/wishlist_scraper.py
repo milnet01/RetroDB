@@ -61,7 +61,9 @@ def _empty_metadata():
     The per-source appliers (see scraper/metadata_merger.py) mutate this dict
     in place, only filling keys where the value is falsy — so initialising
     every key to None lets the first source fill everything and subsequent
-    sources fill only the gaps.
+    sources fill only the gaps. There is no `game_logo` or `boxart_back`
+    key: the wishlist keeps neither, and without the key the mergers download
+    none.
     """
     return {
         'title': None,

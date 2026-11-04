@@ -1,3 +1,148 @@
+- version: 4.0.0
+  date: '2026-11-04'
+  tags:
+  - type: fix
+    label: RetroDBs egne kontroller kan ikke lenger berøre biblioteket ditt mens de kjører. De bruker alltid en engangskopi av databasen, bildene og innstillingene, og nekter å starte hvis noen av dem peker til de virkelige filene dine
+  - type: fix
+    label: Rydd opp i foreldreløse filer sletter ikke lenger bildene i ønskelisten din. Når du åpner et spill, glemmer det ikke lenger skjermbilder det ikke finner. Før, når bildestasjonen var koblet fra, mistet hvert spill du åpnet hele skjermbildelisten; nå beholdes listen, og et manglende bilde skjules bare
+  - type: fix
+    label: En nedlasting av video eller manual som mislykkes underveis, skader ikke lenger kopien spillet allerede hadde, og en mislykket nedlasting etterlater ikke lenger en skjult halv fil i mediemappen. Oppskaleringen i bakgrunnen lagrer ikke lenger et gammelt bilde over et nyere som ble lastet ned i mellomtiden. Konverter til WebP lar alle spill som deler et bilde fortsatt peke til det, og rører aldri en fil utenfor bildemappene
+  - type: fix
+    label: Når du sletter et spill eller et ønskelisteelement, slettes nå også bildene, videoene og manualene, men det beholder alt som et annet spill eller ønskelisteelement fortsatt bruker. Lagrede bilder kan igjen leses av andre kontoer på datamaskinen, og Endre størrelse på bilder teller et bilde som ikke kunne lagres som mislykket, ikke som ferdig
+  - type: fix
+    label: Duplikatsøk foreslår ikke lenger en fungerende fil for sletting. Når det søker etter navn, regner det ikke lenger et spills .cue- og .bin-kopier som kopier av hverandre. Det foreslår aldri sporfilen til en disk, som to versjoner av et spill kan dele. Det sletter ikke en disk som står i en spilleliste. Et spill der du sletter filen, flyttes nå til kopien du beholder, så det blir værende i biblioteket
+  - type: fix
+    label: Organiser flere disker skriver ikke lenger over en eksisterende spilleliste eller en fil som allerede ligger i spillets mappe; det stopper og sier hvilken. Spillelisten det lager, har hver disks .cue, ikke sporfilene. Spill der filene flyttes, følger nå med inn i mappen, så Fjern manglende ROM-er fjerner dem ikke lenger
+  - type: fix
+    label: Konvertering til CHD med «slett originaler» sletter nå også diskens sporfiler, men beholder et spor som en annen .cue fortsatt bruker. Spillet og alle spillelister som hadde den gamle disken, peker nå til den nye .chd-filen. Når du endrer navn på et spills fil, oppdateres spillelisten som har den, og en sporfil som en .cue trenger, kan ikke omdøpes. Når du fjerner filer fra en zip, fjernes bare filene du valgte, selv om et navn har [ eller ]. Skjermbilde-duplikater sletter bare kopiene skanningen fant, og beholder alltid ett
+  - type: fix
+    label: How Long to Beat på et spills side søker etter det du skriver. Før, hvis en tittel ikke ble funnet, søkte det etter spillets andre navn i stedet, og det kunne foreslå et annet spill, for eksempel en nyinnspilling laget av fans. Det prøver fortsatt de andre navnene når boksen har spillets eget navn
+  - type: fix
+    label: Trinnene for How Long to Beat i hjelpemanualen stemmer nå med skjermen. De sa at du skulle velge et treff fra en liste; siden viser ett treff med Lagre og Avbryt. PlayStation-hjelpen sier ikke lenger at påloggingen varer i omtrent to måneder, siden RetroDB logger inn igjen av seg selv. Alle 20 oversatte manualer har begge endringene
+  - type: fix
+    label: Hver bokstavlinje starter nå med en Alle-knapp. På sidene Bibliotek, konsoll og PSN-trofeer viser valg av en bokstav bare spillene med den bokstaven, og før fantes det ingen knapp for å få tilbake resten. På de andre prestasjonssidene går Alle tilbake til det første spillet
+  - type: fix
+    label: Et nytt PlayStation-pålogginstoken du limer inn i Innstillinger, brukes nå med en gang. Før brukte RetroDB den gamle påloggingen til den gikk ut, og Lagre og test tilkobling meldte at den gamle påloggingen fungerte. Et token som Sony avviser, erstatter ikke lenger et som fungerer
+  - type: enhancement
+    label: 'PlayStation-påloggingen i Innstillinger er enklere å holde i gang. Banneret teller ikke lenger ned dager du aldri trengte å handle på, fordi RetroDB logger inn igjen av seg selv; det blir bare rødt når Sony avviser det lagrede tokenet ditt. Knappen Lim inn her får ikke lenger nettleseren til å spørre om tilgang til utklippstavlen: den setter markøren i boksen så du kan bruke Ctrl+V. Trinnene sier nå at du først skal logge ut av PlayStation når du bytter et token som fortsatt fungerer, og meldingene deres kan oversettes'
+  - type: enhancement
+    label: Popup-meldinger og spørsmålsbokser, som «Innstillinger lagret» eller «Slette denne listen?», kan nå oversettes på alle sider. Før ble de fleste stående på engelsk uansett hvilket språk du valgte
+  - type: enhancement
+    label: Meldingene som forklarer hvorfor en PlayStation-pålogging mislyktes, som «NPSSO-en din kan ha utløpt», kan nå oversettes
+  - type: fix
+    label: Hjelpemanualen på alle språk stemmer nå med den engelske. Den får Søk overalt, Behold en tittel, MAME-navn og baksiden av esken, og eldre avsnitt som hadde havnet på etterskudd, er oppdatert
+  - type: fix
+    label: På tysk, afrikaans og spansk sier Tilbake-knappen på et spills omslag nå baksiden av esken, ikke «gå tilbake»
+  - type: feature
+    label: Når du trykker Spill, fyller nå spillets logo på bakgrunnsbildet skjermen mens spillet starter, eller navnet med store bokstaver hvis det ikke har logo. Det forsvinner av seg selv når spillets vindu åpnes, eller når du trykker Esc eller klikker
+  - type: feature
+    label: 'Den dreibare 3D-esken har nå den ekte formen til en PS5-eske: avrundede hjørner og kanter, den hevede leppen rundt omslaget, linjen der de to halvdelene møtes, og fingerutsparingen på åpningssiden. Den trenger en eskefil fra en Slipcase-versjon som skriver formen; importer esken på nytt for å få den. Andre esker ser ut som før'
+  - type: enhancement
+    label: Oppdater RetroAchievements er flyttet fra Innstillinger til RetroAchievements-siden, og heter nå Finn spill med prestasjoner. Hver knapp der har nå en linje som sier hva den gjør, så det er lett å se forskjell på Finn spill og Synkroniser fremdrift. Når ingen spill er koblet ennå, viser siden Finn-knappen til en admin i stedet for å gå videre til neste fane
+  body: "<ul>\n  <li><strong>Hjelpemanualen er oppdatert på alle språk.</strong>\n    Deler som bare fantes i den engelske manualen, er nå oversatt.</li>\n</ul>\n"
+- version: 3.35.4
+  date: '2026-11-03'
+  tags:
+  - type: fix
+    label: Et skjermbilde du sletter fra et spill, forblir nå slettet. Før kunne neste skraping kopiere det tilbake fra ES-DE eller laste det ned igjen fra en nettkilde. Å slette en ekstra kopi i verktøyet Duplikate skjermbilder teller ikke, fordi du beholder bildet én gang
+  - type: feature
+    label: 'Spill får nå logoen sin: skrapingen lagrer den fra ES-DE, ScreenScraper, TheGamesDB, IGDB og Steam, og spillsiden viser den over tittelen, eller i stedet for en manglende eske. Du kan laste opp eller slette en logo i Rediger-vinduet. Kjør en massehenting med Fyll ut manglende for å fylle inn logoer for spill du har skrapet før'
+  - type: fix
+    label: IGDB gir ikke lenger et spill logoen som sidebakgrunn
+  - type: feature
+    label: 'Spill får nå baksiden av esken: skrapingen lagrer den fra ES-DE, ScreenScraper og TheGamesDB, og en Bak-knapp på spillsidens omslag viser den. Klikk på baksiden for å zoome. Du kan laste opp eller slette en bakside i Rediger-vinduet. Baksider fylles inn hver gang et spill skrapes, men Fyll ut manglende skraper ikke et spill på nytt bare for baksiden'
+  - type: fix
+    label: Et spill uten forside på TheGamesDB får ikke lenger baksiden av esken som omslag
+  - type: fix
+    label: Hvis du slår av en skraper i Innstillinger mens en massehenting pågår, stemmer antallet spill som ikke ble funnet nå fra og med neste spill. Før kunne et spill bli talt som stoppet i stedet
+  - type: enhancement
+    label: På et system uten oppsatt emulator er Spill-knappen grået ut. Hold musepekeren over den for å se hvorfor, eller klikk på den for å få en boks som sier at ingen emulator er satt opp. Før stod det en tekstlinje ved siden av knappen
+  body: "<ul>\n  <li><strong>Spill får logoen sin.</strong> Skrapingen lagrer logoen til hvert spill, og spillsiden viser den over tittelen, eller i stedet for en manglende eske. Kjør en massehenting med Fyll ut manglende for å fylle inn logoer for spill du har skrapet før.</li>\n  <li><strong>Spill får baksiden av esken.</strong> En Bak-knapp på spillsidens omslag viser den, og du kan klikke på den for å zoome. Baksider fylles inn hver gang et spill skrapes.</li>\n  <li><strong>Et slettet skjermbilde forblir slettet.</strong> Neste skraping kopierer det ikke lenger tilbake og laster det ikke ned igjen.</li>\n  <li><strong>Spill sier hvorfor det ikke kan starte.</strong> På et system uten oppsatt emulator er Spill-knappen grået ut og sier hvorfor.</li>\n</ul>\n"
+- version: 3.35.3
+  date: '2026-11-02'
+  tags:
+  - type: feature
+    label: 'Nytt verktøy for MAME-navn i ROM-verktøy: MAME-spill får sine ekte navn, år og utgivere fra MAMEs egen liste, og filene beholder de korte navnene sine. En skraping finner deretter hvert spill, og du kan filtrere MAME-listen etter kategori, for eksempel for å utelate spilleautomater. BIOS-sett skjules fra listen'
+  - type: fix
+    label: ROM-rapporter tilbyr ikke lenger å gi MAME-filer nye navn, fordi en fil med nytt navn slutter å fungere i MAME
+  - type: fix
+    label: Innstillinger forklarer nå hva Microsoft krever før en Xbox-app kan registreres. Xbox-pålogging kunne ikke testes på grunn av dette
+  - type: enhancement
+    label: Det separate kortet Offisielle navn er fjernet fra Samlet AI-utfylling, fordi bryteren Offisielt navn i utfyllingen allerede gjør denne jobben
+  - type: fix
+    label: Når Sony avviser en lagret PlayStation-pålogging, sier dashbordet og Innstillinger fra om det og ber deg koble til på nytt. Før viste loggen en meningsløs feil ved hver serverstart, og ingenting fortalte deg det
+  - type: feature
+    label: Import fra Steam fyller nå ut hvert spills beskrivelse, medvirkende, Metacritic-score, aldersgrenser, spillmoduser, coverbilde, bakgrunn og skjermbilder fra butikksiden, i bakgrunnen. Skrap et spill for å få sjanger og utgivelsesdato
+  - type: feature
+    label: En Steam-synkronisering beholder nå spilletiden din og når du sist spilte, og spillsiden viser dem
+  - type: fix
+    label: Hent bibliotek på Steam-importsiden fungerer nå for en administrator med en lagret Steam-nøkkel. Før sendte den Steam den skjulte formen av nøkkelen, og siden sa feilaktig at du må sette profilen din til offentlig
+  - type: fix
+    label: Et Steam- eller Xbox-spill som allerede ligger i biblioteket ditt under samme navn, kobles nå til det spillet ved import, slik at prestasjonene synkroniseres. Før ble det hoppet over og aldri koblet
+  - type: fix
+    label: Spill importert fra Steam, Xbox og PlayStation sorteres nå riktig med en gang, for eksempel Final Fantasy IX før Final Fantasy X, og Steams varemerketegn er utelatt fra navnene
+  - type: feature
+    label: På systemer der RetroAchievements bruker en vanlig filhash, som Mega Drive og Game Boy, sier spillsiden om kopien din gir prestasjoner, og hashen kobler til riktig spill. Kjør RA-oppdatering for å fylle ut dette
+  - type: fix
+    label: En skraping spør nå ScreenScraper om den nøyaktige filen din før den søker på navn, slik at du får riktig spill og ikke et med lignende tittel. Resultater du selv haker av, gjelder fortsatt først
+  - type: enhancement
+    label: Fremdriftsboksen for bildestørrelse nevner nå hvilket spill og system hvert bilde hører til
+  - type: feature
+    label: Skraping henter nå tittelskjermer fra ScreenScraper og TheGamesDB, flere offisielle navn fra IGDB og TheGamesDB (som et spills japanske tittel), og de andre konsollene et spill kom ut på fra IGDB
+  - type: feature
+    label: Et spill uten brukerscore får nå aldersgrensen fra ES-DE-samlingen din, hvis den har en
+  - type: feature
+    label: Spillsiden viser hvor mange spillere som har tidfestet et HowLongToBeat-resultat, og lenker til siden. Resultater lagret før dette viser det neste gang du slår dem opp
+  - type: feature
+    label: RetroAchievements-siden viser hvor mange som spiller et spill, og hvor stor andel av dem som har oppnådd hver prestasjon
+  - type: fix
+    label: Mappeleseren i ROM-verktøy åpner nå i ROM-mappen din når den ikke har noen mappe å starte fra, i stedet for å feile. Et uleselig svar fra IGDB koster nå bare den ene detaljen, ikke alt IGDB sendte for spillet
+  - type: fix
+    label: ScreenScrapers daglige grense gjør nå at RetroDB slutter å spørre til senere, og en samlet skraping sier fra om det og fortsetter med de andre kildene sine. Før så en brukt opp grense ut som «spill ikke funnet», og kallene fortsatte hele natten
+  - type: fix
+    label: Et spill som ingen kilde kunne svare for mens en tjeneste var på grensen, markeres ikke lenger som skrapt, så neste kjøring prøver det på nytt
+  - type: fix
+    label: Når en TheGamesDB-nøkkel har brukt opp måneden, bytter RetroDB til den andre nøkkelen din, og slutter å spørre når begge er brukt opp
+  - type: fix
+    label: RAWGs månedlige grense gjør nå også at RetroDB slutter å spørre, og IGDB holdes innenfor grensen på fire forespørsler i sekundet
+  - type: fix
+    label: HowLongToBeats samlede oppslag avsluttes nå med en melding når nettstedet sier det har fått for mange forespørsler, og alle forespørsler til nettstedet har nå mellomrom
+  - type: fix
+    label: Fiks regioner for coverbilde og manual gir ikke lenger opp etter 25 spill på rad som ScreenScraper ikke kjenner. Den stopper bare når ScreenScraper sier at grensen er nådd
+  - type: fix
+    label: På spillsiden står hver aldersgrense nå sentrert over AI-gjetningsetiketten sin
+  - type: fix
+    label: TheGamesDB-kvoten i Innstillinger bruker nå kontrollen som ikke bruker opp kvoten din, og viser ikke lenger en oppdiktet nullstillingsdato når tjenesten ikke oppgir noen
+  body: |
+    <ul>
+      <li><strong>MAME-spill får sine ekte navn.</strong> Det nye verktøyet MAME Names i ROM Tools henter navn, år og utviklere fra MAMEs egen liste.
+        Filene beholder de korte navnene sine, fordi MAME trenger dem. Du kan
+        filtrere MAME-listen etter kategori, og BIOS-sett er skjult.</li>
+      <li><strong>Steam-importer gir mye mer.</strong> Hvert spill fyller ut
+        beskrivelse, medvirkende, Metacritic-score, aldersgrenser, spillmodi og
+        bilder fra butikksiden sin. En synkronisering beholder spilletiden din og når du
+        sist spilte. Et spill som allerede ligger i biblioteket ditt under samme navn, blir nå
+        koblet til det, slik at prestasjonene synkroniseres.</li>
+      <li><strong>Skraping finner akkurat ditt spill.</strong> En skraping spør
+        ScreenScraper om den nøyaktige filen din før den søker på navn. Skraping
+        henter også tittelskjermer, flere offisielle navn og de andre konsollene
+        et spill kom ut på.</li>
+      <li><strong>RetroAchievements kjenner din kopi.</strong> På systemer som
+        bruker en vanlig filhash, som Mega Drive og Game Boy, sier spillsiden
+        om kopien din gir prestasjoner. Kjør RA Refresh for å fylle ut
+        dette. RetroAchievements-siden viser også hvor mange som spiller et spill
+        og hvor stor andel av dem som har oppnådd hver prestasjon.</li>
+      <li><strong>Grenser på nett respekteres.</strong> Når ScreenScraper,
+        TheGamesDB eller RAWG når grensen sin, slutter RetroDB å spørre til senere,
+        og en massekjøring av skraping fortsetter med de andre kildene. Et spill som ingen kilde
+        kunne svare for på det tidspunktet, prøves igjen i neste kjøring.</li>
+      <li><strong>En avvist PlayStation-pålogging sier fra.</strong> Dashbordet
+        og Innstillinger ber deg nå koble til på nytt når Sony avviser en lagret
+        pålogging.</li>
+      <li><strong>Official Names har flyttet.</strong> Det separate kortet er borte
+        fra Bulk AI Fill, fordi bryteren Official name i utfyllingen
+        gjør den samme jobben.</li>
+    </ul>
 - version: 3.35.2
   date: '2026-11-02'
   tags:

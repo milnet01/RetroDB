@@ -32,7 +32,8 @@ from services.image_utils import (
     finalize_downloaded_image,
 )
 from services.normalization import (
-    modes_from_igdb, multiplayer_for_platform, normalize_genre, normalize_modes, split_labels,
+    clean_description, modes_from_igdb, multiplayer_for_platform, normalize_genre,
+    normalize_modes, split_labels,
 )
 from services.release_dates import (
     igdb_regional_dates,
@@ -170,17 +171,19 @@ def _download_and_finalize(url, local_path, image_type, *, timeout=15, screensho
                     f.write(chunk)
                     dl.received(written)
         if screenshot_of and screenshot_impossible_for_game(tmp_path, screenshot_of):
-            os.remove(tmp_path)
             return False
         os.replace(tmp_path, local_path)
     except Exception as e:
         logger.warning(f"Download error for {url}: {e}")
+        return False
+    finally:
+        # PASS-59-238 — every early return above left the temp file behind.
+        # After the os.replace it no longer exists.
         if os.path.exists(tmp_path):
             try:
                 os.remove(tmp_path)
             except OSError:
                 pass
-        return False
 
     try:
         finalize_downloaded_image(local_path, image_type)
@@ -303,6 +306,7 @@ __all__ = [
     'apply_tgdb_to_metadata',
     'apply_igdb_to_metadata',
     'apply_rawg_to_metadata',
+    'apply_steam_to_metadata',
     'apply_screenscraper_to_metadata',
     'apply_ai_to_metadata',
     'load_scraper_settings',
@@ -371,6 +375,10 @@ def apply_tgdb_to_metadata(metadata, tgdb_data, db_game_id, result, fill_only=Fa
                 metadata[meta_field] = value
                 result['filled_fields'].append(f"{meta_field} (TGDB)")
 
+    # Other titles. TheGamesDB does not say where each was used.
+    alt_entries = [alt_title_entry(name, source='tgdb') for name in tgdb_data.get('alternates') or []]
+    _add_alt_titles(metadata, [entry for entry in alt_entries if entry], 'TGDB', result)
+
     # Genre
     if not metadata['genre']:
         genres = tgdb_data.get('genres', [])
@@ -422,12 +430,21 @@ def apply_tgdb_to_metadata(metadata, tgdb_data, db_game_id, result, fill_only=Fa
                 metadata['_boxart_source'] = 'tgdb'
                 result['filled_fields'].append('boxart (TGDB)')
 
+    # Back of the box (only if not already present)
+    if _wants(metadata, 'boxart_back'):
+        back_url = tgdb_data.get('boxart_back_url')
+        if back_url:
+            filename = download_tgdb_image(db_game_id, back_url, 'boxart_back', suffix='_back')
+            if filename:
+                metadata['boxart_back'] = filename
+                result['filled_fields'].append('boxart_back (TGDB)')
+
     # Download screenshots (append to existing instead of replacing)
     ss_urls = tgdb_data.get('screenshot_urls', [])
     if ss_urls:
         existing_screenshots = metadata['screenshots'].split(',') if metadata['screenshots'] else []
         existing_screenshots = [s.strip() for s in existing_screenshots if s.strip()]
-        existing_hashes = get_existing_screenshot_hashes(existing_screenshots)
+        existing_hashes = get_existing_screenshot_hashes(existing_screenshots, db_game_id)
 
         start_num = len(existing_screenshots) + 1
 
@@ -460,6 +477,15 @@ def apply_tgdb_to_metadata(metadata, tgdb_data, db_game_id, result, fill_only=Fa
             if filename:
                 metadata['fanart'] = filename
                 result['filled_fields'].append('fanart (TGDB)')
+
+    # Logo (only if not already present)
+    if _wants(metadata, 'game_logo'):
+        logo_urls = tgdb_data.get('logo_urls', [])
+        if logo_urls:
+            filename = download_tgdb_image(db_game_id, logo_urls[0], 'game_logo', suffix='_logo')
+            if filename:
+                metadata['game_logo'] = filename
+                result['filled_fields'].append('game_logo (TGDB)')
 
 
 # =============================================================================
@@ -500,8 +526,8 @@ _IGDB_RATING_WORDS = {
     'THREE': '3', 'SEVEN': '7', 'TEN': '10', 'TWELVE': '12', 'FOURTEEN': '14',
     'FIFTEEN': '15', 'SIXTEEN': '16', 'EIGHTEEN': '18',
 }
-# rating_category.rating text (after word → number and '+' removal) → value.
-_IGDB_RATING_TEXT = {
+# A board's rating as text (after word → number and '+' removal) → stored value.
+_BOARD_RATING_TEXT = {
     'esrb_rating': {'RP': 'RP', 'EC': 'EC', 'E': 'E', 'E10': 'E10+', 'T': 'T',
                     'M': 'M', 'AO': 'AO'},
     'pegi_rating': {n: f'PEGI {n}' for n in ('3', '7', '12', '16', '18')},
@@ -536,12 +562,56 @@ def _igdb_age_rating(rating):
     token = re.sub(r'^(?:ESRB|PEGI|CERO|USK|GRAC|CLASS_?IND|ACB)[\s_]*', '',
                    str(text).strip().upper()).replace('+', '').strip()
     token = _IGDB_RATING_WORDS.get(token, token)
-    return field, _IGDB_RATING_TEXT[field].get(token)
+    return field, _BOARD_RATING_TEXT[field].get(token)
 
 
 # =============================================================================
 # IGDB METADATA APPLICATION
 # =============================================================================
+
+def _add_alt_titles(metadata, entries, source_label, result):
+    """Merge a source's other titles into the game's, noting how many were new."""
+    if not entries:
+        return
+    before = len(metadata.get('alternate_titles') or [])
+    metadata['alternate_titles'] = merge_alt_titles(
+        metadata.get('alternate_titles'), entries, primary_title=metadata.get('title'))
+    added = len(metadata['alternate_titles']) - before
+    if added > 0:
+        result['filled_fields'].append(f'alternate_titles +{added} ({source_label})')
+
+
+def _fill_other_platforms(metadata, platforms, own_platform_id, result):
+    """IGDB's other consoles for this game, needing to know which is this one.
+    Only this console listed writes nothing: IGDB can miss a version, so that
+    does not prove 'Exclusive'."""
+    if metadata.get('other_platforms') or own_platform_id is None:
+        return
+    from scraper.scrape_ai import known_platforms
+    others = known_platforms(p.get('name') for p in _igdb_objects(platforms)
+                             if p.get('id') != own_platform_id)
+    if others:
+        metadata['other_platforms'] = others
+        result['filled_fields'].append('other_platforms (IGDB)')
+
+
+def _wants(metadata, field):
+    """True when this record keeps `field` and has none yet. A record with no
+    such key keeps none, so none is downloaded for it: the wishlist's has no
+    `game_logo` (PASS-59-224) or `boxart_back` (PASS-59-225)."""
+    return field in metadata and not metadata[field]
+
+
+# IGDB artwork_type ids (its artwork_types endpoint, asked 2026-11-03).
+_IGDB_LOGO_TYPES = (7, 5)                     # colour, then white; 6 (black) is never used
+_IGDB_NOT_FANART = {5, 6, 7, 8, 12, 13, 14}   # logos, infographic, icons
+
+
+def _igdb_objects(items):
+    """The expanded entries of an IGDB list. An unexpanded reference arrives as
+    a bare id, and must cost that entry, not the source's whole answer."""
+    return [item for item in items or [] if isinstance(item, dict)]
+
 
 def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=False,
                            platform_id=None, own_region=None):
@@ -561,7 +631,7 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
     # Alternate names — IGDB returns list of {name, comment?} where comment
     # is typically the region (e.g. "Japanese title") or platform variant.
     alt_entries = []
-    for alt in igdb_data.get('alternative_names') or []:
+    for alt in _igdb_objects(igdb_data.get('alternative_names')):
         if alt.get('comment') == 'Windows Executable' or (alt.get('name') or '').lower().endswith('.exe'):
             continue
         entry = alt_title_entry(
@@ -571,21 +641,25 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
         )
         if entry:
             alt_entries.append(entry)
-    if alt_entries:
-        before = len(metadata.get('alternate_titles') or [])
-        metadata['alternate_titles'] = merge_alt_titles(
-            metadata.get('alternate_titles'), alt_entries, primary_title=metadata.get('title')
-        )
-        added = len(metadata['alternate_titles']) - before
-        if added > 0:
-            result['filled_fields'].append(f'alternate_titles +{added} (IGDB)')
+    # A title made official for one region.
+    for local in _igdb_objects(igdb_data.get('game_localizations')):
+        region = local.get('region')
+        entry = alt_title_entry(local.get('name'), source='igdb',
+                                region=region.get('name') if isinstance(region, dict) else None)
+        if entry:
+            alt_entries.append(entry)
+    _add_alt_titles(metadata, alt_entries, 'IGDB', result)
+
+    _fill_other_platforms(metadata, igdb_data.get('platforms'), platform_id, result)
 
     # Publisher/Developer
-    involved = igdb_data.get('involved_companies', [])
     publishers = []
     developers = []
-    for comp in involved:
-        name = comp.get('company', {}).get('name', '')
+    for comp in _igdb_objects(igdb_data.get('involved_companies')):
+        company = comp.get('company')
+        name = company.get('name', '') if isinstance(company, dict) else ''
+        if not name:
+            continue
         if comp.get('publisher'):
             publishers.append(name)
         if comp.get('developer'):
@@ -607,7 +681,7 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
 
     # Genre
     if not metadata['genre']:
-        genres = igdb_data.get('genres', [])
+        genres = _igdb_objects(igdb_data.get('genres'))
         if genres:
             fill_labels(metadata, result, 'genre',
                         ', '.join(g.get('name', '') for g in genres), 'IGDB')
@@ -621,7 +695,7 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
 
     # Modes
     if not metadata['modes']:
-        modes = igdb_data.get('game_modes', [])
+        modes = _igdb_objects(igdb_data.get('game_modes'))
         if modes:
             names = [m.get('name', '') for m in modes]
             fill_labels(metadata, result, 'modes',
@@ -647,8 +721,8 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
 
     # Download cover (only if not already present)
     if not metadata['boxart']:
-        cover = igdb_data.get('cover', {})
-        if cover.get('url'):
+        cover = igdb_data.get('cover')
+        if isinstance(cover, dict) and cover.get('url'):
             url = cover['url'].replace('t_thumb', 't_cover_big')
             if not url.startswith('http'):
                 url = f"https:{url}"
@@ -660,11 +734,11 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
                 result['filled_fields'].append('boxart (IGDB)')
 
     # Download screenshots (append to existing)
-    screenshots = igdb_data.get('screenshots', [])
+    screenshots = _igdb_objects(igdb_data.get('screenshots'))
     if screenshots and per_game_screenshots_fit(igdb_data, db_game_id):
         existing_screenshots = metadata['screenshots'].split(',') if metadata['screenshots'] else []
         existing_screenshots = [s.strip() for s in existing_screenshots if s.strip()]
-        existing_hashes = get_existing_screenshot_hashes(existing_screenshots)
+        existing_hashes = get_existing_screenshot_hashes(existing_screenshots, db_game_id)
 
         start_num = len(existing_screenshots) + 1
         _jobs = []
@@ -695,11 +769,13 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
             metadata['screenshots'] = ','.join(all_screenshots)
             result['filled_fields'].append(f'screenshots +{len(new_ss_files)} (IGDB)')
 
-    # Download fanart/artwork (only if not already present)
+    # Fanart and logo come from the artworks list, told apart by artwork_type
+    artworks = [a for a in _igdb_objects(igdb_data.get('artworks')) if a.get('url')]
     if not metadata['fanart']:
-        artworks = igdb_data.get('artworks', [])
-        if artworks and artworks[0].get('url'):
-            url = artworks[0]['url'].replace('t_thumb', 't_1080p')
+        fanart = next((a for a in artworks
+                       if a.get('artwork_type') not in _IGDB_NOT_FANART), None)
+        if fanart:
+            url = fanart['url'].replace('t_thumb', 't_1080p')
             if not url.startswith('http'):
                 url = f"https:{url}"
             filename = f"{db_game_id}_igdb_fanart{preferred_image_extension('fanart', '.jpg')}"
@@ -707,6 +783,19 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
             if _download_and_finalize(url, local_path, 'fanart', timeout=15):
                 metadata['fanart'] = filename
                 result['filled_fields'].append('fanart (IGDB)')
+    if _wants(metadata, 'game_logo'):
+        logo = next((a for kind in _IGDB_LOGO_TYPES for a in artworks
+                     if a.get('artwork_type') == kind), None)
+        if logo:
+            # .png at its own size: the .jpg address drops the clear background
+            url = os.path.splitext(logo['url'].replace('t_thumb', 't_original'))[0] + '.png'
+            if not url.startswith('http'):
+                url = f"https:{url}"
+            filename = f"{db_game_id}_igdb_logo{preferred_image_extension('game_logo', '.png')}"
+            local_path = os.path.join(IMAGE_PATH, 'game_logos', filename)
+            if _download_and_finalize(url, local_path, 'game_logo', timeout=15):
+                metadata['game_logo'] = filename
+                result['filled_fields'].append('game_logo (IGDB)')
 
     # Extended data
     if igdb_data.get('_extended'):
@@ -837,7 +926,7 @@ def apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result, fill_only=Fa
         os.makedirs(screenshot_dir, exist_ok=True)
 
         existing_ss = [s.strip() for s in metadata['screenshots'].split(',') if s.strip()] if metadata['screenshots'] else []
-        existing_hashes = get_existing_screenshot_hashes(existing_ss)
+        existing_hashes = get_existing_screenshot_hashes(existing_ss, db_game_id)
 
         # Offset by what is already stored and skip a name that exists, the
         # same guard the IGDB / TGDB / ScreenScraper loops carry. Fixed indices
@@ -869,6 +958,110 @@ def apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result, fill_only=Fa
         if downloaded:
             metadata['screenshots'] = ','.join(existing_ss + downloaded)
             result['filled_fields'].append('screenshots (RAWG)')
+
+
+# =============================================================================
+# STEAM STORE METADATA APPLICATION (PASS-59-218)
+# =============================================================================
+
+# The boards in a store reply's `ratings` that RetroDB has a column for.
+_STEAM_RATING_BOARDS = {
+    'esrb': 'esrb_rating', 'pegi': 'pegi_rating', 'usk': 'usk_rating',
+    'oflc': 'acb_rating', 'cero': 'cero_rating', 'kgrb': 'grac_rating',
+    'dejus': 'classind_rating',
+}
+_STEAM_LINE_BREAK = re.compile(r'<br\s*/?>|</p>|<li\b[^>]*>|</ul>|<h\d\b[^>]*>|</h\d>', re.IGNORECASE)
+_HTML_TAG = re.compile(r'<[^>]+>')
+_STEAM_SCREENSHOTS = 5
+
+
+def _steam_description(details):
+    """The store's long text as plain lines, else its short one."""
+    text = details.get('about_the_game') or details.get('short_description') or ''
+    text = _HTML_TAG.sub('', _STEAM_LINE_BREAK.sub('\n', text))
+    return re.sub(r'\n{3,}', '\n\n', clean_description(text))
+
+
+def _steam_rating(board, rating):
+    """The stored value for one `ratings` entry, or None. A `rating_generated`
+    entry is Steam's own estimate, not the board's. Korea's top rating is
+    written 19 on the store and 18 in RetroDB."""
+    if not isinstance(rating, dict) or rating.get('rating_generated') not in (None, '', '0', 0):
+        return None
+    value = str(rating.get('rating') or '').strip().upper().replace('+', '')
+    if board == 'kgrb' and value == '19':
+        value = '18'
+    return _BOARD_RATING_TEXT[_STEAM_RATING_BOARDS[board]].get(value)
+
+
+def _download_first(urls, directory, filename, image_type):
+    """Save the first address that answers. True when one did."""
+    local_path = os.path.join(IMAGE_PATH, directory, filename)
+    return any(_download_and_finalize(url, local_path, image_type, timeout=15) for url in urls)
+
+
+def apply_steam_to_metadata(metadata, details, app_id, db_game_id, result):
+    """Fill empty fields from a Steam store reply for this exact game.
+
+    Left out on purpose. The date is the Steam release: DOOM 3 says 2007, not
+    2004. The genre is nearly always just Action. A filled field is not asked
+    for again, so either would keep a scrape's better answer out.
+    """
+    from scraper.scrape_steam import box_art_urls, fanart_urls, logo_urls
+
+    def fill(field, value):
+        if value and not metadata[field]:
+            metadata[field] = value
+            result['filled_fields'].append(f'{field} (Steam)')
+
+    fill('description', _steam_description(details))
+    fill('developer', ', '.join(details.get('developers') or []))
+    fill('publisher', ', '.join(details.get('publishers') or []))
+    fill('critic_score', (details.get('metacritic') or {}).get('score'))
+    if not metadata['modes']:
+        names = [c.get('description', '') for c in details.get('categories') or []]
+        fill_labels(metadata, result, 'modes', ', '.join(names), 'Steam')
+    for board, rating in (details.get('ratings') or {}).items():
+        if board in _STEAM_RATING_BOARDS:
+            fill(_STEAM_RATING_BOARDS[board], _steam_rating(board, rating))
+
+    if not metadata['boxart']:
+        filename = f"{db_game_id}_steam_boxart{preferred_image_extension('boxart', '.jpg')}"
+        if _download_first(box_art_urls(app_id), 'boxart', filename, 'boxart'):
+            fill('boxart', filename)
+    if not metadata['fanart']:
+        filename = f"{db_game_id}_steam_fanart{preferred_image_extension('fanart', '.jpg')}"
+        if _download_first(fanart_urls(app_id, details), 'fanart', filename, 'fanart'):
+            fill('fanart', filename)
+    if _wants(metadata, 'game_logo'):
+        filename = f"{db_game_id}_steam_logo{preferred_image_extension('game_logo', '.png')}"
+        if _download_first(logo_urls(app_id), 'game_logos', filename, 'game_logo'):
+            metadata['game_logo'] = filename
+            result['filled_fields'].append('game_logo (Steam)')
+
+    urls = [s.get('path_full') for s in details.get('screenshots') or []]
+    urls = [url for url in urls if url][:_STEAM_SCREENSHOTS]
+    if urls:
+        screenshot_dir = os.path.join(IMAGE_PATH, 'screenshots')
+        os.makedirs(screenshot_dir, exist_ok=True)
+        existing = [s.strip() for s in (metadata['screenshots'] or '').split(',') if s.strip()]
+        existing_hashes = get_existing_screenshot_hashes(existing, db_game_id)
+        jobs = []
+        relisted = []
+        for i, url in enumerate(urls, start=len(existing) + 1):
+            filename = f"{db_game_id}_steam_ss{i}{preferred_image_extension('screenshots', '.jpg')}"
+            local_path = os.path.join(screenshot_dir, filename)
+            if _skip_screenshot(filename, local_path, existing, relisted):
+                continue
+            jobs.append(
+                lambda u=url, p=local_path, f=filename:
+                    f if _download_and_finalize(u, p, 'screenshots', timeout=15, screenshot_of=db_game_id) else None
+            )
+        existing_hashes.extend(get_existing_screenshot_hashes(relisted))
+        downloaded = relisted + _download_screenshots_parallel(jobs, existing_hashes, 'Steam')
+        if downloaded:
+            metadata['screenshots'] = ','.join(existing + downloaded)
+            result['filled_fields'].append('screenshots (Steam)')
 
 
 # =============================================================================
@@ -908,8 +1101,14 @@ def download_ss_media(url, dest_path, timeout=15, image_type=None, screenshot_of
         max_bytes = getattr(_config, 'MAX_MEDIA_DOWNLOAD_BYTES', 50 * 1024 * 1024)
     except Exception:
         max_bytes = 50 * 1024 * 1024
+    # PASS-59-238 — write beside the file and swap it in only when whole, so
+    # a failed download never damages the copy a game already uses.
+    import tempfile
+    tmp_path = None
     try:
         os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+        fd, tmp_path = tempfile.mkstemp(prefix='.dl_', dir=os.path.dirname(dest_path) or '.')
+        os.close(fd)
         with pin_host_ip(pinned_host, pinned_ip), _http_session.get(safe_url, timeout=timeout, stream=True, allow_redirects=False) as r:
             if r.status_code != 200:
                 return False
@@ -918,25 +1117,28 @@ def download_ss_media(url, dest_path, timeout=15, image_type=None, screenshot_of
                 logger.warning(f"ScreenScraper media rejected: declared {declared} > {max_bytes}")
                 return False
             written = 0
-            with open(dest_path, 'wb') as f, apply_progress.download(dest_path, declared) as dl:
+            with open(tmp_path, 'wb') as f, apply_progress.download(dest_path, declared) as dl:
                 for chunk in r.iter_content(chunk_size=8192):
                     if not chunk:
                         continue
                     written += len(chunk)
                     if written > max_bytes:
                         logger.warning(f"ScreenScraper media aborted: exceeded {max_bytes} bytes")
-                        try:
-                            f.close()
-                            os.remove(dest_path)
-                        except OSError:
-                            pass
                         return False
                     f.write(chunk)
                     dl.received(written)
+        os.chmod(tmp_path, 0o644)
+        os.replace(tmp_path, dest_path)
         return True
     except Exception as e:
         logger.warning(f"Failed to download ScreenScraper media: {e}")
-    return False
+        return False
+    finally:
+        if tmp_path and os.path.exists(tmp_path):
+            try:
+                os.remove(tmp_path)
+            except OSError:
+                pass
 
 
 def _pick_media(medias, types, default_ext, own_region):
@@ -990,6 +1192,9 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
             return items[0].get('text', '')
         return None
 
+    if ss_data.get('_matched_file'):
+        result['filled_fields'].append('matched by file (ScreenScraper)')
+
     # `ss_data` is either a raw jeu record (search cache) or the flat dict
     # scrape_screenscraper.parse_game_data returns (ROM lookup on a cache
     # miss). Each text field below reads the raw key first, then the flat one.
@@ -1014,14 +1219,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
         )
         if entry:
             alt_entries.append(entry)
-    if alt_entries:
-        before = len(metadata.get('alternate_titles') or [])
-        metadata['alternate_titles'] = merge_alt_titles(
-            metadata.get('alternate_titles'), alt_entries, primary_title=metadata.get('title')
-        )
-        added = len(metadata['alternate_titles']) - before
-        if added > 0:
-            result['filled_fields'].append(f'alternate_titles +{added} (ScreenScraper)')
+    _add_alt_titles(metadata, alt_entries, 'ScreenScraper', result)
 
     # Description - only fill if empty
     # Wrong-language text would stop an English source filling the field.
@@ -1216,10 +1414,24 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
                 metadata['boxart_3d'] = filename
                 result['filled_fields'].append('boxart_3d (ScreenScraper)')
 
+    # Back of the box - only download if not already present
+    if _wants(metadata, 'boxart_back'):
+        back_url = parsed_media.get('boxart_back')
+        if back_url:
+            ext = _url_ext(back_url, 'png')
+        else:
+            back_url, ext = _pick_media(medias, ('box-2D-back',), 'png', own_region)
+        if back_url:
+            filename = f"{db_game_id}_ss_back{preferred_image_extension('boxart_back', '.' + ext)}"
+            local_path = os.path.join(IMAGE_PATH, 'boxart_back', filename)
+            if download_ss_media(back_url, local_path, image_type='boxart_back'):
+                metadata['boxart_back'] = filename
+                result['filled_fields'].append('boxart_back (ScreenScraper)')
+
     # Screenshots - ALWAYS append, never replace
     existing_screenshots = metadata['screenshots'].split(',') if metadata['screenshots'] else []
     existing_screenshots = [s.strip() for s in existing_screenshots if s.strip()]
-    existing_hashes = get_existing_screenshot_hashes(existing_screenshots)
+    existing_hashes = get_existing_screenshot_hashes(existing_screenshots, db_game_id)
 
     start_num = len(existing_screenshots)
 
@@ -1233,7 +1445,13 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
     for m in medias:
         if m.get('type') == 'ss' and m.get('url'):
             _ss_candidates.append((m['url'], m.get('format', 'png')))
-    _ss_candidates = _ss_candidates[:5]
+    # Four shots and the title screen, which keeps its place in the five.
+    _ss_candidates = _ss_candidates[:4]
+    _title_url, _title_ext = _pick_media(medias, ('sstitle',), 'png', own_region)
+    if parsed_media.get('titlescreen'):
+        _title_url, _title_ext = parsed_media['titlescreen'], _url_ext(parsed_media['titlescreen'], 'png')
+    if _title_url:
+        _ss_candidates.append((_title_url, _title_ext))
 
     _jobs = []
     relisted = []
@@ -1277,6 +1495,19 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
             if download_ss_media(fanart_url, local_path, image_type='fanart'):
                 metadata['fanart'] = filename
                 result['filled_fields'].append('fanart (ScreenScraper)')
+
+    # Logo - wheel-hd, else wheel, nearest the game's region
+    if _wants(metadata, 'game_logo'):
+        for kind in ('wheel-hd', 'wheel'):
+            logo_url, ext = _pick_media(medias, (kind,), 'png', own_region)
+            if not logo_url:
+                continue
+            filename = f"{db_game_id}_ss_logo{preferred_image_extension('game_logo', '.' + ext)}"
+            local_path = os.path.join(IMAGE_PATH, 'game_logos', filename)
+            if download_ss_media(logo_url, local_path, image_type='game_logo'):
+                metadata['game_logo'] = filename
+                result['filled_fields'].append('game_logo (ScreenScraper)')
+                break
 
     # Video - only download if not already present
     if not metadata['video']:

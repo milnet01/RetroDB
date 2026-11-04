@@ -502,13 +502,13 @@ async function refreshTrophies() {
             // Reload to show updated progress
             setTimeout(() => location.reload(), 600);
         } else {
-            showNotification(data.error || 'Failed to refresh trophies.', 'error');
+            showNotification(data.error || {{ _('Failed to refresh trophies.')|tojson }}, 'error');
             btn.disabled = false;
             btn.textContent = 'Refresh Progress';
         }
     } catch (e) {
         console.error('Error refreshing trophies:', e);
-        showNotification('Error refreshing trophies.', 'error');
+        showNotification({{ _('Error refreshing trophies.')|tojson }}, 'error');
         btn.disabled = false;
         btn.textContent = 'Refresh Progress';
     }

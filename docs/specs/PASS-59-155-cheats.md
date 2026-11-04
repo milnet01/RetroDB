@@ -421,6 +421,21 @@ Rows live in `../reviews/PASS-59-155-cheats-loop-log.md`.
 
 ## 14. Open questions
 
-1. Whether RetroArch's rewrite of the `.cht` on exit keeps cheats it could
-   not apply. If it drops them, INV-2's copy-back loses them. To check in
-   the manual run.
+1. **Answered 2026-11-04 from RetroArch's source** (`libretro/RetroArch`
+   master `a3e9cc4a`): the rewrite keeps every cheat it loaded, so INV-2's
+   copy-back loses none.
+   - RetroArch rewrites the file when content unloads
+     (`event_save_files` in `save.c` calls
+     `cheat_manager_save_game_specific_cheats`).
+   - `cheat_manager_apply_cheats` only passes switched-on cheats to the
+     core. It removes nothing from the list, and `cheat_manager_save`
+     writes the whole list back, switched on or off.
+   - The rewrite is a fresh file. It keeps each cheat's description,
+     code, switch and RetroArch's own numeric keys. Comments and other
+     keys are dropped, and so is any cheat numbered past the file's
+     `cheats = N` count. This touches the game's copy only; the pack or
+     import it came from is unchanged.
+   - A file with no `cheats = N` line loads nothing, and RetroArch
+     deletes it at unload. §6's "copy is missing" case then keeps the
+     game's `.cht`. The import never files such a file as RetroArch's
+     (§4.3).

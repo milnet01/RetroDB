@@ -6,12 +6,14 @@
 
 from flask import Blueprint, request, jsonify
 from flask_babel import gettext as _
+from scraper.service_limits import SCRAPE_SOURCES
+from services.service_stop_text import stop_sentences
 import os
 import logging
 
 from services.database import query
 from services.jobs import bulk_scrape_job
-from services.game_utils import derive_title_from_filename, get_system_type
+from services.game_utils import arcade_search_title, derive_title_from_filename, get_system_type, is_arcade_set
 from services.auth import login_required, editor_required
 from services.api_helpers import handle_api_errors, success, error
 
@@ -51,7 +53,9 @@ def api_bulk_scrape():
 
     # Derive search title from ROM FILENAME, not database title
     is_computer_system = get_system_type(game['system_folder']) == 'computer'
-    if game.get('rom_path'):
+    if is_arcade_set(game['system_folder']):
+        search_title = arcade_search_title(game['title'])
+    elif game.get('rom_path'):
         search_title = derive_title_from_filename(game['rom_path'], is_computer_system)
         logger.info(f"Derived search title from filename: '{search_title}' (from: {os.path.basename(game['rom_path'])})")
     else:
@@ -130,6 +134,7 @@ def api_bulk_scrape():
             fill_gaps=True,
             primary_data=best_match,
             secondary_sources=secondary_sources,
+            automatic_pick=True,
         )
 
         if result.get('success'):
@@ -172,7 +177,7 @@ def api_bulk_scrape_job_start():
 def api_bulk_scrape_job_status():
     """Get the status of the current bulk scrape job"""
     status = bulk_scrape_job.get_status()
-    return success(**status)
+    return success(service_stops=stop_sentences(SCRAPE_SOURCES), **status)
 
 
 @bp.route('/api/bulk-scrape-job/pause', methods=['POST'])

@@ -29,34 +29,12 @@
                     Remove database entries for ROMs that have been deleted from disk
                 </p>
             </div>
-            <div>
-                <button type="button" data-on-click="refreshRetroAchievements" class="btn btn-primary" id="refreshRABtn">
-                    <span class="btn-icon">🏆</span>
-                    Refresh RetroAchievements
-                </button>
-                <p class="text-muted" style="font-size: 0.85rem; margin-top: var(--spacing-sm);">
-                    Scan all games and update RetroAchievements status (may take a while)
-                </p>
-                <div style="display: flex; gap: var(--spacing-md); align-items: center; flex-wrap: wrap; margin-top: var(--spacing-md);">
-                    <select id="clearRASystemSelect" class="form-select" style="max-width: 300px;">
-                        <option value="all">All Systems</option>
-                        {% for system in systems %}
-                        <option value="{{ system.id }}">{{ system.name }}</option>
-                        {% endfor %}
-                    </select>
-                    <button type="button" data-on-click="clearRAData" class="btn btn-danger" id="clearRABtn">
-                        <span class="btn-icon">🗑️</span>
-                        Clear RA Data
-                    </button>
-                </div>
-                <p class="text-muted" style="font-size: 0.85rem; margin-top: var(--spacing-sm);">
-                    Clear RetroAchievements game IDs and progress data for selected system (or all systems)
-                </p>
-            </div>
+            <p class="text-muted" style="font-size: 0.85rem;">
+                {{ _('Finding and clearing RetroAchievements games is on the') }}
+                <a href="{{ url_for('achievements.achievements') }}">{{ _('Achievements page') }}</a>.
+            </p>
         </div>
         <div id="cleanMissingResult" style="margin-top: var(--spacing-md); display: none;"></div>
-        <div id="refreshRAResult" style="margin-top: var(--spacing-md); display: none;"></div>
-        <div id="clearRAResult" style="margin-top: var(--spacing-md); display: none;"></div>
         
         <!-- Clear Data Section -->
         <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">

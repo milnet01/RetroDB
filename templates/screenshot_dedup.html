@@ -334,6 +334,7 @@
 <script nonce="{{ csp_nonce }}">
 let dedupGroups = [];
 let currentTaskId = null;
+let scanTaskId = null;  // kept after the scan ends: delete names it
 
 function toggleThreshold() {
     const method = document.getElementById('scanMethod').value;
@@ -368,6 +369,7 @@ async function startScan() {
 
         if (data.success) {
             currentTaskId = data.task_id;
+            scanTaskId = data.task_id;
             TaskPoller.start(data.task_id, {
                 onProgress(task) {
                     const percent = task.percent || 0;
@@ -551,7 +553,7 @@ function selectLargest() {
             }
         });
     });
-    showNotification('Selected largest file in each group', 'info');
+    showNotification({{ _('Selected largest file in each group')|tojson }}, 'info');
 }
 
 async function deleteSelected() {
@@ -569,37 +571,36 @@ async function deleteSelected() {
     });
 
     if (deletions.length === 0) {
-        showNotification('No files selected for deletion', 'warning');
+        showNotification({{ _('No files selected for deletion')|tojson }}, 'warning');
         return;
     }
 
     showConfirm(
-        'Delete Duplicate Screenshots',
-        'Delete ' + formatNumber(deletions.length) + ' duplicate screenshot(s)?\n\n' +
-        'Files will be removed from disk and database references updated. This cannot be undone.',
+        {{ _('Delete Duplicate Screenshots')|tojson }},
+        t({{ _('Duplicate screenshots to delete: {count}\n\nFiles will be removed from disk and database references updated. This cannot be undone.')|tojson }}, {count: formatNumber(deletions.length)}),
         async function() {
             try {
                 var response = await fetch('/api/rom-tools/screenshot-dedup/delete', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ deletions: deletions })
+                    body: JSON.stringify({ task_id: scanTaskId, deletions: deletions })
                 });
 
                 var data = await response.json();
 
                 if (data.success) {
                     showNotification(
-                        'Deleted ' + data.results.deleted + ' files, freed ' + formatBytes(data.results.freed_space) +
-                        ', updated ' + data.results.db_updated + ' game(s)',
+                        t({{ _('Files deleted: {deleted}. Space freed: {size}. Games updated: {updated}')|tojson }},
+                          {deleted: data.results.deleted, size: formatBytes(data.results.freed_space), updated: data.results.db_updated}),
                         'success'
                     );
                     // Re-scan to refresh results
                     startScan();
                 } else {
-                    showNotification(data.error || 'Failed to delete', 'error');
+                    showNotification(data.error || {{ _('Failed to delete')|tojson }}, 'error');
                 }
             } catch (error) {
-                showNotification('Failed to delete: ' + error.message, 'error');
+                showNotification(t({{ _('Failed to delete: {error}')|tojson }}, {error: error.message}), 'error');
             }
         }
     );

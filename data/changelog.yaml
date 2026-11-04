@@ -1,3 +1,166 @@
+- version: 4.0.0
+  date: 2026-11-04
+  tags:
+  - type: fix
+    label: "RetroDB's own checks can no longer touch your library while they run. They always use a throwaway copy of the database, pictures and settings, and refuse to start if any of them points at your real files"
+  - type: fix
+    label: Clean orphaned files no longer deletes your wishlist's pictures. Opening a game no longer makes it forget screenshots it cannot find. Before, with the picture drive unplugged, every game you opened lost its whole screenshot list; now the list is kept, and a missing picture is only hidden
+  - type: fix
+    label: A video or manual download that fails part-way no longer damages the copy the game already had, and a failed download no longer leaves a hidden half-file in the media folder. The background upscaler no longer saves an old picture over a newer one downloaded meanwhile. Convert to WebP keeps every game that shares a picture pointing at it, and never touches a file outside the picture folders
+  - type: fix
+    label: Deleting a game or a wishlist item now deletes its pictures, videos and manuals too, but keeps any another game or wishlist item still uses. Saved pictures can be read by other accounts on the computer again, and Resize Images counts a picture it could not save as failed, not as done
+  - type: fix
+    label: Duplicate Finder no longer offers a working file for deletion. Looking by name, it no longer calls a game's .cue and .bin copies of each other. It never offers a disc's track file, which two versions of a game can share. It will not delete a disc that a playlist lists. A game whose file you delete now moves to the copy you keep, so it stays in the library
+  - type: fix
+    label: Organize Multi-Disc no longer writes over an existing playlist or a file already in the game's folder; it stops and says which. The playlist it makes lists each disc's .cue, not its track files. Games whose files it moves now follow them into the folder, so Clean missing ROMs no longer removes them
+  - type: fix
+    label: 'Converting to CHD with "delete originals" now deletes the disc''s track files too, but keeps a track another .cue still uses. The game and any playlist that listed the old disc now point at the new .chd. Renaming a game''s file now updates the playlist that lists it, and a track file a .cue needs cannot be renamed. Removing files from a zip removes only the files you picked, even when a name holds [ or ]. Screenshot Dedup deletes only the copies its scan found, and always keeps one'
+  - type: fix
+    label: How Long to Beat on a game's page searches for what you type. Before, a title it could not find made it search the game's other names instead, and it could offer a different game, such as a fan remake. It still tries the other names when the box holds the game's own name
+  - type: fix
+    label: The help manual's How Long to Beat steps match the screen. They said to pick a match from a list; the page shows one match with Save and Cancel. The PlayStation help no longer says the sign-in lasts about two months, since RetroDB signs in again by itself. All 20 translated manuals carry both changes
+  - type: fix
+    label: Every letter bar now starts with an All button. On the Library, console and PSN Trophies pages, picking a letter shows only that letter's games, and before there was no button to bring the rest back. On the other achievement pages, All goes back to the first game
+  - type: fix
+    label: A new PlayStation sign-in token you paste in Settings is now used straight away. Before, RetroDB kept using the old sign-in until it ran out, and Save & Test Connection reported that old sign-in as working. A token Sony refuses no longer replaces one that works
+  - type: enhancement
+    label: 'The PlayStation sign-in in Settings is easier to keep going. The banner no longer counts down days you never had to act on, because RetroDB signs in again by itself; it turns red only when Sony refuses your saved token. The Paste here button no longer makes the browser ask to read your clipboard: it puts the cursor in the box for Ctrl+V. The steps now say to sign out of PlayStation first when you replace a token that still works, and their messages can be translated'
+  - type: enhancement
+    label: Pop-up messages and question boxes, such as "Settings saved" or "Delete this list?", can now be translated on every page. Before, most of them stayed in English whatever language you chose
+  - type: enhancement
+    label: The messages that say why a PlayStation sign-in failed, such as "Your NPSSO may have expired", can now be translated
+  - type: fix
+    label: The help manual in every language now matches the English one. It gains Search Anywhere, Keeping a Title, MAME Names and the back of the box, and older paragraphs that had fallen behind are up to date
+  - type: fix
+    label: In German, Afrikaans and Spanish, the Back button on a game's cover now says the back of the box, not "go back"
+  - type: feature
+    label: Pressing Play now fills the screen with the game's logo on its background picture while the game starts, or its name in large letters when it has no logo. It goes away by itself when the game's window opens, or when you press Esc or click
+  - type: feature
+    label: 'The turnable 3D box now has the real shape of a PS5 case: rounded corners and edges, the raised lip round the cover, the line where the two halves meet, and the finger slot in the opening side. It needs a box file from a Slipcase version that writes the shape; import the box again to get it. Other boxes look as before'
+  - type: enhancement
+    label: 'Refresh RetroAchievements moved from Settings to the RetroAchievements page, and is now called Find Games with Achievements. Every button there now has a line saying what it does, so Find Games and Sync Progress are easy to tell apart. With no games linked yet, the page shows an admin the Find button instead of moving on to the next tab'
+  body: |
+    <ul>
+      <li><strong>The help manual is up to date in every language.</strong>
+        Sections that were only in the English manual are now translated.</li>
+    </ul>
+- version: 3.35.4
+  date: 2026-11-03
+  tags:
+  - type: fix
+    label: A screenshot you delete from a game now stays deleted. Before, the next scrape could copy it back from ES-DE or download it again from an online source. Deleting a spare copy in the Duplicate Screenshots tool does not count, because you keep the picture once
+  - type: feature
+    label: 'Games now get their logo: scraping saves it from ES-DE, ScreenScraper, TheGamesDB, IGDB and Steam, and the game page shows it above the title, or in place of a missing box. You can upload or delete a logo in the Edit window. Run a bulk scrape with Fill Missing to fill logos for games you scraped before'
+  - type: fix
+    label: IGDB no longer gives a game its logo as the page background
+  - type: feature
+    label: 'Games now get the back of their box: scraping saves it from ES-DE, ScreenScraper and TheGamesDB, and a Back button on the game page''s cover shows it. Click the back to zoom it. You can upload or delete a back in the Edit window. Backs fill whenever a game is scraped; Fill Missing does not scrape a game again only for its back'
+  - type: fix
+    label: A game with no front cover on TheGamesDB no longer gets the back of the box as its cover
+  - type: fix
+    label: If you switch a scraper off in Settings while a bulk scrape is running, the count of games not found is now right from the next game. Before, a game could be counted as stopped instead
+  - type: enhancement
+    label: On a system with no emulator set up, the Play button is greyed out. Point at it to see why, or click it for a box that says no emulator is set up. Before, a line of text sat beside the button
+  body: |
+    <ul>
+      <li><strong>Games get their logo.</strong> Scraping saves each game's
+        logo, and the game page shows it above the title, or in place of a
+        missing box. Run a bulk scrape with Fill Missing to fill logos for
+        games you scraped before.</li>
+      <li><strong>Games get the back of their box.</strong> A Back button on
+        the game page's cover shows it, and you can click it to zoom. Backs
+        fill whenever a game is scraped.</li>
+      <li><strong>A deleted screenshot stays deleted.</strong> The next scrape
+        no longer copies it back or downloads it again.</li>
+      <li><strong>Play says why it cannot start.</strong> On a system with no
+        emulator set up, the Play button is greyed out and says why.</li>
+    </ul>
+- version: 3.35.3
+  date: 2026-11-02
+  tags:
+  - type: feature
+    label: 'New MAME Names tool in ROM Tools: MAME games get their real names, years and makers from MAME''s own list, and the files keep their short names. A scrape then finds each game, and you can filter the MAME list by category, such as leaving out slot machines. BIOS sets are hidden from the list'
+  - type: fix
+    label: ROM Reports no longer offers to rename MAME files, because a renamed file stops working in MAME
+  - type: fix
+    label: Settings now says what Microsoft asks for before an Xbox app can be registered. Xbox sign-in could not be tested because of this
+  - type: enhancement
+    label: The separate Official Names card is gone from Bulk AI Fill, because the fill's Official name switch already does this job
+  - type: fix
+    label: When Sony refuses a saved PlayStation sign-in, the dashboard and Settings now say so and ask you to re-link. Before, the log showed a meaningless error at every server start and nothing told you
+  - type: feature
+    label: Importing from Steam now fills each game's description, credits, Metacritic score, age ratings, game modes, box, background and screenshots from its store page, in the background. Scrape a game for its genre and release date
+  - type: feature
+    label: A Steam sync now keeps your play time and when you last played, and the game page shows them
+  - type: fix
+    label: Fetch Library on the Steam import page now works for an admin with a saved Steam key. Before, it sent Steam the hidden form of the key, and the page wrongly said to set your profile to Public
+  - type: fix
+    label: A Steam or Xbox game already in your library under the same name now links to that game when you import it, so its achievements sync. Before, it was skipped and never linked
+  - type: fix
+    label: Games imported from Steam, Xbox and PlayStation now sort properly straight away, such as Final Fantasy IX before Final Fantasy X, and Steam's trademark signs are left out of their names
+  - type: feature
+    label: On systems where RetroAchievements uses a plain file hash, such as Mega Drive and Game Boy, the game page says whether your copy earns achievements, and that hash links the right game. Run RA Refresh to fill this in
+  - type: fix
+    label: A scrape now asks ScreenScraper about your exact file before searching by name, so it gets your game rather than one with a similar title. Results you tick yourself still win
+  - type: enhancement
+    label: The Image Resize progress box now names the game and system each picture belongs to
+  - type: feature
+    label: Scraping now brings title screens from ScreenScraper and TheGamesDB, more official names from IGDB and TheGamesDB (such as a game's Japanese title), and the other consoles a game came out on from IGDB
+  - type: feature
+    label: A game with no user score now takes the rating in your ES-DE collection, if it has one
+  - type: feature
+    label: The game page says how many players timed a HowLongToBeat result and links to its page. Results saved before this show those next time you look them up
+  - type: feature
+    label: The RetroAchievements page shows how many people play a game and what share of them earned each achievement
+  - type: fix
+    label: The ROM Tools folder browser opens at your ROM folder when it has no folder to start from, instead of failing. A garbled answer from IGDB now costs only that one detail, not everything IGDB sent for the game
+  - type: fix
+    label: ScreenScraper's daily limit now stops RetroDB asking until later, and a bulk scrape says so and carries on with its other sources. Before, a spent limit looked like "game not found" and calls went on all night
+  - type: fix
+    label: A game no source could answer for while a service was at its limit is no longer marked as scraped, so the next run tries it again
+  - type: fix
+    label: When a TheGamesDB key has used its month, RetroDB moves to your other key, and stops asking once both are used up
+  - type: fix
+    label: RAWG's monthly limit now stops RetroDB asking too, and IGDB is kept within its limit of four requests a second
+  - type: fix
+    label: HowLongToBeat's bulk lookup now ends with a message when the site says it has had too many requests, and every request to the site is spaced out
+  - type: fix
+    label: Fix Box and Manual Regions no longer gives up after 25 games in a row that ScreenScraper does not know. It stops only when ScreenScraper says its limit is reached
+  - type: fix
+    label: On the game page, each age rating now sits centred over its AI guess label
+  - type: fix
+    label: The TheGamesDB allowance in Settings now uses the check that does not spend your allowance, and no longer shows a made-up reset date when the service gives none
+  body: |
+    <ul>
+      <li><strong>MAME games get their real names.</strong> The new MAME Names
+        tool in ROM Tools takes names, years and makers from MAME's own list.
+        The files keep their short names, because MAME needs them. You can
+        filter the MAME list by category, and BIOS sets are hidden.</li>
+      <li><strong>Steam imports bring much more.</strong> Each game fills its
+        description, credits, Metacritic score, age ratings, game modes and
+        pictures from its store page. A sync keeps your play time and when you
+        last played. A game already in your library under the same name now
+        links to it, so its achievements sync.</li>
+      <li><strong>Scrapes find your exact game.</strong> A scrape asks
+        ScreenScraper about your exact file before searching by name. Scrapes
+        also bring title screens, more official names, and the other consoles
+        a game came out on.</li>
+      <li><strong>RetroAchievements knows your copy.</strong> On systems that
+        use a plain file hash, such as Mega Drive and Game Boy, the game page
+        says whether your copy earns achievements. Run RA Refresh to fill this
+        in. The RetroAchievements page also shows how many people play a game
+        and what share of them earned each achievement.</li>
+      <li><strong>Online limits are respected.</strong> When ScreenScraper,
+        TheGamesDB or RAWG reaches its limit, RetroDB stops asking until later
+        and a bulk scrape carries on with its other sources. A game no source
+        could answer for at that time is tried again on the next run.</li>
+      <li><strong>A refused PlayStation sign-in says so.</strong> The dashboard
+        and Settings now ask you to re-link when Sony refuses a saved
+        sign-in.</li>
+      <li><strong>Official Names has moved.</strong> Its separate card is gone
+        from Bulk AI Fill, because the fill's Official name switch does the
+        same job.</li>
+    </ul>
 - version: 3.35.2
   date: 2026-11-02
   tags:

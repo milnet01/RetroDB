@@ -30,7 +30,9 @@ def region_codes(region):
     such as `USA/Europe` or `USA, Europe`."""
     codes = []
     for part in re.split(r'[/,]', region or ''):
-        codes.extend(_REGION_CODES.get(part.strip().lower(), ()))
+        part = part.strip().lower()
+        # ScreenScraper's own two-letter codes pass through (a file's `romregions`).
+        codes.extend(_REGION_CODES.get(part, (part,) if len(part) == 2 else ()))
     return codes
 
 
@@ -51,12 +53,16 @@ def by_region(items, own=None):
     return sorted(dicts, key=lambda i: rank.get((i.get('region') or '').lower(), len(rank)))
 
 
-def own_region(game):
-    """The region of this copy: its file name's tag, else the stored value.
+def own_region(game, ss_record=None):
+    """The region of this copy: its file name's tag, else what ScreenScraper
+    says of this exact file, else the stored value.
 
     The file name comes first because the stored value can be the AI's guess
     (PASS-59-162, merge_and_stored finding 1).
     """
     from scraper.scrape_esde import extract_region_from_filename
     name = os.path.basename(game.get('rom_path') or '')
-    return extract_region_from_filename(name) or game.get('region') or None
+    file_regions = ''
+    if ss_record and ss_record.get('_matched_file'):
+        file_regions = ((ss_record.get('rom') or {}).get('romregions') or '').split(',')[0].strip()
+    return extract_region_from_filename(name) or file_regions or game.get('region') or None

@@ -409,8 +409,17 @@ def api_user_settings():
             params.append(data[field])
 
     if updates:
+        # A changed NPSSO ends the cached PSN session, so the next connection
+        # signs in with the new token instead of the old session (PASS-59-111).
+        npsso_changed = False
+        if 'psn_npsso' in data:
+            old = get_user_settings(g.user['id'])
+            npsso_changed = (old['psn_npsso'] if old else None) != data['psn_npsso']
         params.append(g.user['id'])
         execute(f"UPDATE user_settings SET {', '.join(updates)} WHERE user_id = ?", params)
+        if npsso_changed:
+            from routes.trophies import _clear_psn_tokens
+            _clear_psn_tokens(g.user['id'])
         return success(message='Settings updated')
 
     return success(message='No changes made')

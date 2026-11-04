@@ -13,6 +13,7 @@ from collections import deque
 from datetime import datetime, timezone
 
 from services import apply_progress
+from scraper import service_limits
 from services.jobs.base import (
     _get_conn, persist_job_start, persist_job_progress, persist_job_complete,
     persist_job_queued, remove_queued_job, resolve_terminal_status,
@@ -25,6 +26,19 @@ logger = logging.getLogger(__name__)
 
 # Full Re-scrape, and its variant that keeps media already on disk (PASS-59-133).
 FULL_RESCRAPE_MODES = ('full_rescrape', 'full_rescrape_keep_media')
+
+# The fields whose gap makes Fill Missing scrape a game rather than skip it.
+FILL_MISSING_FIELDS = (
+    'description', 'publisher', 'developer', 'genre',
+    'release_date', 'esrb_rating', 'pegi_rating',
+    'boxart', 'boxart_3d', 'screenshots', 'fanart', 'game_logo',
+    'players', 'modes',
+)
+
+
+def missing_fields(game):
+    """The FILL_MISSING_FIELDS this game row has no value for."""
+    return [field for field in FILL_MISSING_FIELDS if not game.get(field)]
 
 
 def _extract_year_from_result(result):
@@ -127,6 +141,21 @@ class BulkScrapeJob:
         finally:
             if conn:
                 conn.close()
+
+    def _count_no_match(self, game_id, enabled):
+        """Record a game nothing was found for.
+
+        With a source stopped at its limit that is no verdict on the game, so it
+        stays unstamped for the next run to ask again (PASS-59-215).
+        """
+        if any(enabled.get(source) and service_limits.stopped(source)
+               for source in service_limits.SCRAPE_SOURCES):
+            with self._lock:
+                self.skipped_count += 1
+            return
+        self._stamp_bulk_scraped(game_id)
+        with self._lock:
+            self.failed_count += 1
 
     def get_status(self):
         """Get current job status including queue info"""
@@ -711,7 +740,7 @@ class BulkScrapeJob:
         """Background thread that runs the actual scraping"""
         from scraper.scraper_manager import scraper_manager, load_scraper_settings, get_match_settings, passes_match_filter
         from services.game_metadata_service import apply_hybrid_metadata_to_game
-        from services.game_utils import derive_title_from_filename, get_system_type
+        from services.game_utils import arcade_search_title, is_arcade_set, derive_title_from_filename, get_system_type
 
         # Snapshot immutable job parameters at thread start — prevents corruption
         # if self is modified before this thread begins executing
@@ -773,11 +802,9 @@ class BulkScrapeJob:
                 logger.warning(f"Pre-fetch failed, will fall back to per-game queries: {e}")
 
         try:
-            # Load scraper settings once before the loop. Inside the try: a
+            # Match settings are read once, before the loop. Inside the try: a
             # raise here used to kill the thread with `running` still True,
             # the job_queue row 'running' and the singleton lock held.
-            scraper_settings = load_scraper_settings()
-            enabled_scrapers = scraper_settings.get('enabled', {})
             match_settings = get_match_settings()
 
             for i, game_id in enumerate(_game_ids):
@@ -787,6 +814,10 @@ class BulkScrapeJob:
                         logger.info(f"Bulk scrape cancelled at game {i+1}/{len(_game_ids)}")
                         break
                     self.current_index = i
+
+                # Read per game, as the search does, so a source switched
+                # off in Settings mid-run is off from the next game on.
+                enabled_scrapers = load_scraper_settings().get('enabled', {})
 
                 # Persist progress every 10 items or 30 seconds
                 _now = time.time()
@@ -883,13 +914,7 @@ class BulkScrapeJob:
 
                     # Check if should skip (fill_missing mode)
                     if _scrape_mode == 'fill_missing':
-                        fill_missing_fields = [
-                            'description', 'publisher', 'developer', 'genre',
-                            'release_date', 'esrb_rating', 'pegi_rating',
-                            'boxart', 'boxart_3d', 'screenshots', 'fanart',
-                            'players', 'modes',
-                        ]
-                        missing = [f for f in fill_missing_fields if not game_dict.get(f)]
+                        missing = missing_fields(game_dict)
                         if not missing:
                             logger.info(f"Skipping {title} - all metadata fields populated")
                             self._stamp_bulk_scraped(game_id)
@@ -906,7 +931,10 @@ class BulkScrapeJob:
                     # title would otherwise be re-confirmed on every re-scrape.
                     rom_path = game_dict.get('rom_path', '')
                     search_title = title
-                    if rom_path:
+                    if is_arcade_set(system_folder):
+                        # An arcade file name says nothing; its title is MAME's own.
+                        search_title = arcade_search_title(title)
+                    elif rom_path:
                         search_title = derive_title_from_filename(
                             rom_path, get_system_type(system_folder) == 'computer')
                     logger.info(f"Scraping: {search_title} for {system_name}")
@@ -938,9 +966,7 @@ class BulkScrapeJob:
 
                         if not sorted_results:
                             logger.warning(f"No results passed match filter ({match_settings['mode']} mode) for {title}")
-                            self._stamp_bulk_scraped(game_id)
-                            with self._lock:
-                                self.failed_count += 1
+                            self._count_no_match(game_id, enabled_scrapers)
                             continue
 
                         # Find best match from enabled scraper
@@ -987,6 +1013,7 @@ class BulkScrapeJob:
                             force_overwrite=(_scrape_mode in FULL_RESCRAPE_MODES),
                             keep_media=(_scrape_mode == 'full_rescrape_keep_media'),
                             primary_data=best_match,
+                            automatic_pick=True,
                             secondary_sources=secondary_sources,
                         )
 
@@ -1005,9 +1032,7 @@ class BulkScrapeJob:
                                 self.skipped_count += 1
                     else:
                         logger.info(f"No results for {title}")
-                        self._stamp_bulk_scraped(game_id)
-                        with self._lock:
-                            self.failed_count += 1
+                        self._count_no_match(game_id, enabled_scrapers)
 
                 except Exception as e:
                     logger.error(f"Error scraping game {game_id}: {e}")

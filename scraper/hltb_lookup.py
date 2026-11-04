@@ -6,10 +6,10 @@ keeps renaming it; see _get_auth_token for the full history).
 """
 
 import logging
-import threading
 import time
 from difflib import SequenceMatcher
 
+from . import service_limits
 from .base_scraper import http_get, http_post
 from .match_scorer import canonical_title, sequel_numbers_agree
 
@@ -105,11 +105,9 @@ _hp_val = None
 _auth_token_time = 0
 _AUTH_TOKEN_TTL = 300  # 5 minutes
 
-# The site has no published limit. A search carrying the year can take four
-# requests a game, so a bulk run spaces them out.
-MIN_REQUEST_GAP_SECONDS = 1.0
-_request_lock = threading.Lock()
-_last_request_at = 0.0
+# The site publishes no limit. A 429 that outlasts http_post's retries stops it
+# for this long.
+TOO_MANY_REQUESTS_WAIT_SECONDS = 900
 
 # A title with a different sequel number scores at most this, under every bar
 # that accepts a match.
@@ -120,14 +118,9 @@ SEQUEL_SCORE_CAP = 0.5
 YEAR_MISMATCH_GAP = 1
 
 
-def _wait_for_turn():
-    """Hold a request until MIN_REQUEST_GAP_SECONDS after the last one."""
-    global _last_request_at
-    with _request_lock:
-        wait = MIN_REQUEST_GAP_SECONDS - (time.monotonic() - _last_request_at)
-        if wait > 0:
-            time.sleep(wait)
-        _last_request_at = time.monotonic()
+def _stop_if_told(response):
+    if response is not None and response.status_code == 429:
+        service_limits.stop(service_limits.HOWLONGTOBEAT, TOO_MANY_REQUESTS_WAIT_SECONDS)
 
 
 def title_score(search_title, result_name):
@@ -175,7 +168,10 @@ def _get_auth_token():
         # /api/search/site rename the init response carries only {token};
         # hpKey/hpVal are gone, which the `if hk and hv` guard tolerates.
         init_url = f"{HLTB_BASE_URL}/api/search/site/init?t={int(time.time() * 1000)}"
+        if not service_limits.wait_for_turn(service_limits.HOWLONGTOBEAT):
+            return None, None, None
         resp = http_get(init_url, headers=HLTB_HEADERS, timeout=15)
+        _stop_if_told(resp)
         if resp is None:
             logger.warning("HLTB: Auth token request failed (no response)")
             return None, None, None
@@ -251,7 +247,8 @@ def _search_hltb(game_title, platform='', year=None):
 
     search_headers, payload = _build_request(token, hp_key, hp_val)
 
-    _wait_for_turn()
+    if not service_limits.wait_for_turn(service_limits.HOWLONGTOBEAT):
+        return None
     try:
         resp = http_post(
             f"{HLTB_BASE_URL}/api/search/site",
@@ -259,6 +256,7 @@ def _search_hltb(game_title, platform='', year=None):
             json_data=payload,
             timeout=30
         )
+        _stop_if_told(resp)
         if resp is None:
             logger.warning("HLTB: Search request failed (no response)")
             return None
@@ -274,12 +272,15 @@ def _search_hltb(game_title, platform='', year=None):
             token, hp_key, hp_val = _get_auth_token()
             if token:
                 search_headers, payload = _build_request(token, hp_key, hp_val)
+                if not service_limits.wait_for_turn(service_limits.HOWLONGTOBEAT):
+                    return None
                 resp = http_post(
                     f"{HLTB_BASE_URL}/api/search/site",
                     headers=search_headers,
                     json_data=payload,
                     timeout=30
                 )
+                _stop_if_told(resp)
                 if resp is None:
                     logger.warning("HLTB: Retry after token refresh failed (no response)")
                     return None
@@ -458,6 +459,7 @@ def lookup_playtime(game_title, system_folder=None, year=None, alternate_titles=
 
         return {
             'game_id': result.get('game_id'),
+            'players': result.get('comp_all_count') or None,
             'match_name': match_name,
             'match_platform': profile_platform,
             'match_confidence': round(confidence * 100),

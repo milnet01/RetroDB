@@ -1,3 +1,128 @@
+- version: 4.0.0
+  date: '2026-11-04'
+  tags:
+  - type: fix
+    label: RetroDB se eie toetse kan nie meer jou biblioteek raak terwyl hulle loop nie. Hulle gebruik altyd 'n weggooikopie van die databasis, prente en instellings, en weier om te begin as enige van hulle na jou regte lêers wys
+  - type: fix
+    label: Maak weeslêers skoon verwyder nie meer jou wenslys se prente nie. As jy 'n speletjie oopmaak, vergeet dit nie meer skermkiekies wat dit nie kan vind nie. Voorheen het elke speletjie wat jy oopgemaak het sy hele skermkiekielys verloor as die prentskyf uitgeprop was; nou word die lys behou, en 'n ontbrekende prent word net versteek
+  - type: fix
+    label: '''n Video- of handleiding-aflaai wat halfpad misluk, beskadig nie meer die kopie wat die speletjie reeds gehad het nie, en ''n mislukte aflaai laat nie meer ''n versteekte halflêer in die mediagids agter nie. Die agtergrond-opskaler stoor nie meer ''n ou prent oor ''n nuwer een wat intussen afgelaai is nie. Skakel om na WebP hou elke speletjie wat ''n prent deel steeds daarna wys, en raak nooit ''n lêer buite die prentgidse aan nie'
+  - type: fix
+    label: As jy 'n speletjie of 'n wenslysitem verwyder, word sy prente, video's en handleidings nou ook verwyder, maar dit behou enigiets wat 'n ander speletjie of wenslysitem nog gebruik. Gestoorde prente kan weer deur ander rekeninge op die rekenaar gelees word, en Verander prentgrootte tel 'n prent wat dit nie kon stoor nie as misluk, nie as klaar nie
+  - type: fix
+    label: Duplikaatvinder bied nie meer 'n werkende lêer vir verwydering aan nie. As dit volgens naam soek, noem dit nie meer 'n speletjie se .cue- en .bin-kopieë duplikate van mekaar nie. Dit bied nooit 'n skyf se snitlêer aan nie, wat twee weergawes van 'n speletjie kan deel. Dit sal nie 'n skyf verwyder wat 'n snitlys lys nie. 'n Speletjie waarvan jy die lêer verwyder, skuif nou na die kopie wat jy hou, sodat dit in die biblioteek bly
+  - type: fix
+    label: Organiseer veelskyf skryf nie meer oor 'n bestaande snitlys of 'n lêer wat reeds in die speletjie se gids is nie; dit stop en sê watter een. Die snitlys wat dit maak, lys elke skyf se .cue, nie sy snitlêers nie. Speletjies wie se lêers dit skuif, volg hulle nou na die gids, sodat Maak ontbrekende ROM's skoon hulle nie meer verwyder nie
+  - type: fix
+    label: Omskakeling na CHD met "verwyder oorspronklikes" verwyder nou ook die skyf se snitlêers, maar hou 'n snit wat nog 'n ander .cue gebruik. Die speletjie en enige snitlys wat die ou skyf gelys het, wys nou na die nuwe .chd. As jy 'n speletjie se lêer hernoem, werk dit nou die snitlys op wat dit lys, en 'n snitlêer wat 'n .cue nodig het, kan nie hernoem word nie. As jy lêers uit 'n zip verwyder, word net die lêers verwyder wat jy gekies het, selfs wanneer 'n naam [ of ] bevat. Skermkiekie-ontdubbeling verwyder net die kopieë wat sy skandering gevind het, en hou altyd een
+  - type: fix
+    label: How Long to Beat op 'n speletjie se bladsy soek na wat jy tik. Voorheen, as dit nie 'n titel kon vind nie, het dit eerder die speletjie se ander name gesoek, en dit kon 'n ander speletjie aanbied, soos 'n aanhangerhermaak. Dit probeer steeds die ander name as die blokkie die speletjie se eie naam bevat
+  - type: fix
+    label: Die How Long to Beat-stappe in die hulphandleiding pas by die skerm. Hulle het gesê jy moet 'n treffer uit 'n lys kies; die bladsy wys een treffer met Stoor en Kanselleer. Die PlayStation-hulp sê nie meer die aanmelding hou ongeveer twee maande nie, aangesien RetroDB self weer aanmeld. Al 20 vertaalde handleidings bevat albei veranderinge
+  - type: fix
+    label: Elke letterbalk begin nou met 'n Alles-knoppie. Op die Biblioteek-, konsole- en PSN-trofeebladsye wys 'n letterkeuse net daardie letter se speletjies, en voorheen was daar geen knoppie om die res terug te bring nie. Op die ander prestasiebladsye gaan Alles terug na die eerste speletjie
+  - type: fix
+    label: '''n Nuwe PlayStation-aanmeldtoken wat jy in Instellings plak, word nou dadelik gebruik. Voorheen het RetroDB die ou aanmelding bly gebruik totdat dit verval het, en Stoor en toets verbinding het daardie ou aanmelding as werkend gemeld. ''n Token wat Sony weier, vervang nie meer een wat werk nie'
+  - type: enhancement
+    label: 'Die PlayStation-aanmelding in Instellings is makliker om aan die gang te hou. Die banier tel nie meer dae af waarop jy niks hoef te doen nie, omdat RetroDB self weer aanmeld; dit word net rooi as Sony jou gestoorde token weier. Die Plak hier-knoppie laat die blaaier nie meer vra om jou knipbord te lees nie: dit sit die wyser in die blokkie vir Ctrl+V. Die stappe sê nou jy moet eers by PlayStation afmeld as jy ''n token vervang wat nog werk, en hulle boodskappe kan vertaal word'
+  - type: enhancement
+    label: Opspringboodskappe en vraagblokkies, soos "Instellings gestoor" of "Verwyder hierdie lys?", kan nou op elke bladsy vertaal word. Voorheen het die meeste in Engels gebly, ongeag watter taal jy gekies het
+  - type: enhancement
+    label: Die boodskappe wat sê hoekom 'n PlayStation-aanmelding misluk het, soos "Your NPSSO may have expired", kan nou vertaal word
+  - type: fix
+    label: Die hulphandleiding in elke taal pas nou by die Engelse een. Dit kry Soek oral, Behou 'n titel, MAME-name en die agterkant van die boks, en ouer paragrawe wat agter geraak het, is op datum
+  - type: fix
+    label: In Duits, Afrikaans en Spaans sê die Terug-knoppie op 'n speletjie se omslag nou die agterkant van die boks, nie "gaan terug" nie
+  - type: feature
+    label: As jy Speel druk, vul die speletjie se logo op sy agtergrondprent nou die skerm terwyl die speletjie begin, of sy naam in groot letters as dit geen logo het nie. Dit verdwyn self wanneer die speletjie se venster oopmaak, of as jy Esc druk of klik
+  - type: feature
+    label: 'Die draaibare 3D-boks het nou die egte vorm van ''n PS5-houer: ronde hoeke en rande, die verhewe lip om die omslag, die lyn waar die twee helftes ontmoet, en die vingersleuf in die opening-kant. Dit het ''n boks-lêer nodig van ''n Slipcase-weergawe wat die vorm skryf; voer die boks weer in om dit te kry. Ander bokse lyk soos voorheen'
+  - type: enhancement
+    label: Verfris RetroAchievements is van Instellings na die RetroAchievements-bladsy geskuif, en heet nou Vind speletjies met prestasies. Elke knoppie daar het nou 'n reël wat sê wat dit doen, sodat Vind speletjies en Sinkroniseer vordering maklik uitmekaar gehou word. As geen speletjies nog gekoppel is nie, wys die bladsy vir 'n admin die Vind-knoppie in plaas daarvan om na die volgende oortjie te gaan
+  body: "<ul>\n  <li><strong>Die hulphandleiding is in elke taal op datum.</strong>\n    Afdelings wat net in die Engelse handleiding was, is nou vertaal.</li>\n</ul>\n"
+- version: 3.35.4
+  date: '2026-11-03'
+  tags:
+  - type: fix
+    label: '''n Skermkiekie wat jy van ''n speletjie verwyder, bly nou verwyder. Voorheen kon die volgende skraap dit weer vanaf ES-DE terugkopieer of vanaf ''n aanlynbron weer aflaai. Om ''n oortollige kopie in die Duplikaat-skermkiekies-nutsprogram te verwyder tel nie, want jy hou die prent een keer'
+  - type: feature
+    label: 'Speletjies kry nou hul logo: skraap stoor dit vanaf ES-DE, ScreenScraper, TheGamesDB, IGDB en Steam, en die speletjiebladsy wys dit bo die titel, of in die plek van ''n ontbrekende boks. Jy kan ''n logo in die Wysig-venster oplaai of verwyder. Doen ''n grootmaat-skraap met Vul ontbrekende in om logo''s te vul vir speletjies wat jy voorheen geskraap het'
+  - type: fix
+    label: IGDB gee nie meer 'n speletjie se logo as die bladsyagtergrond nie
+  - type: feature
+    label: 'Speletjies kry nou die agterkant van hul boks: skraap stoor dit vanaf ES-DE, ScreenScraper en TheGamesDB, en ''n Terug-knoppie op die speletjiebladsy se omslag wys dit. Klik op die agterkant om dit te vergroot. Jy kan ''n agterkant in die Wysig-venster oplaai of verwyder. Agterkante word gevul wanneer ''n speletjie geskraap word; Vul ontbrekende skraap nie ''n speletjie weer net vir sy agterkant nie'
+  - type: fix
+    label: '''n Speletjie sonder voorblad op TheGamesDB kry nie meer die agterkant van die boks as sy omslag nie'
+  - type: fix
+    label: As jy 'n skraper in Instellings afskakel terwyl 'n grootmaat-skraap loop, is die telling van speletjies wat nie gevind is nie nou reg vanaf die volgende speletjie. Voorheen kon 'n speletjie eerder as gestop getel word
+  - type: enhancement
+    label: Op 'n stelsel sonder 'n opgestelde emulator is die Speel-knoppie gryserig. Wys daarheen om te sien hhoekom, of klik daarop vir 'n boks wat sê geen emulator is opgestel nie. Voorheen het 'n reël teks langs die knoppie gestaan
+  body: "<ul>\n  <li><strong>Speletjies kry hul logo.</strong> Skraap stoor elke speletjie se\n    logo, en die speletjiebladsy wys dit bo die titel, of in die plek van 'n\n    ontbrekende boks. Doen 'n grootmaat-skraap met Vul ontbrekende in om logo's te vul vir\n    speletjies wat jy voorheen geskraap het.</li>\n  <li><strong>Speletjies kry die agterkant van hul boks.</strong> 'n Terug-knoppie op\n    die speletjiebladsy se omslag wys dit, en jy kan daarop klik om te vergroot. Agterkante\n    word gevul wanneer 'n speletjie geskraap word.</li>\n  <li><strong>'n Verwyderde skermkiekie bly verwyder.</strong> Die volgende skraap\n    kopieer dit nie meer terug nie en laai dit nie weer af nie.</li>\n  <li><strong>Speel sê hoekom dit nie kan begin nie.</strong> Op 'n stelsel sonder 'n\n    opgestelde emulator is die Speel-knoppie gryserig en sê hoekom.</li>\n</ul>\n"
+- version: 3.35.3
+  date: '2026-11-02'
+  tags:
+  - type: feature
+    label: 'Nuwe MAME Names-hulpmiddel in ROM Tools: MAME-speletjies kry hul regte name, jare en vervaardigers uit MAME se eie lys, en die lêers behou hul kort name. ''n Skraap vind dan elke speletjie, en jy kan die MAME-lys volgens kategorie filtreer, byvoorbeeld om dobbelmasjiene uit te los. BIOS-stelle word uit die lys versteek'
+  - type: fix
+    label: ROM Reports bied nie meer aan om MAME-lêers te hernoem nie, want 'n hernoemde lêer werk nie meer in MAME nie
+  - type: fix
+    label: Instellings sê nou wat Microsoft vereis voordat 'n Xbox-program geregistreer kan word. Xbox-aanmelding kon hierdeur nie getoets word nie
+  - type: enhancement
+    label: Die aparte Official Names-kaart is weg uit Bulk AI-vul, omdat die AI-vul se Official name-skakelaar reeds hierdie werk doen
+  - type: fix
+    label: Wanneer Sony 'n gestoorde PlayStation-aanmelding van die hand wys, sê die paneelbord en Instellings dit nou en vra jou om weer te koppel. Voorheen het die logboek by elke bediener-aanskakeling 'n betekenislose fout gewys en niks het jou ingelig nie
+  - type: feature
+    label: Om van Steam af in te voer vul nou elke speletjie se beskrywing, erkennings, Metacritic-telling, ouderdomsgraderings, speletjiemodusse, voorblad, agtergrond en skermkiekies uit sy winkelblad, op die agtergrond. Skraap 'n speletjie vir sy genre en vrystellingsdatum
+  - type: feature
+    label: '''n Steam-sinkronisering behou nou jou speeltyd en wanneer jy laas gespeel het, en die speletjieblad wys dit'
+  - type: fix
+    label: Fetch Library op die Steam-invoerblad werk nou vir 'n admin met 'n gestoorde Steam-sleutel. Voorheen het dit die versteekte vorm van die sleutel na Steam gestuur, en die blad het verkeerdelik gesê jy moet jou profiel op Public stel
+  - type: fix
+    label: '''n Steam- of Xbox-speletjie wat reeds onder dieselfde naam in jou biblioteek is, koppel nou aan daardie speletjie wanneer jy dit invoer, sodat sy prestasies sinkroniseer. Voorheen is dit oorgeslaan en nooit gekoppel nie'
+  - type: fix
+    label: Speletjies wat van Steam, Xbox en PlayStation ingevoer word, sorteer nou dadelik reg, soos Final Fantasy IX voor Final Fantasy X, en Steam se handelsmerktekens word uit hul name gelaat
+  - type: feature
+    label: Op stelsels waar RetroAchievements 'n gewone lêer-hash gebruik, soos Mega Drive en Game Boy, sê die speletjieblad of jou kopie prestasies verdien, en daardie hash koppel die regte speletjie. Voer RA Refresh uit om dit in te vul
+  - type: fix
+    label: '''n Skraap vra nou ScreenScraper oor jou presiese lêer voordat dit op naam soek, sodat dit jou speletjie kry en nie een met ''n soortgelyke titel nie. Resultate wat jy self afmerk geld steeds eerste'
+  - type: enhancement
+    label: Die Image Resize-vorderingkassie noem nou die speletjie en stelsel waaraan elke prent behoort
+  - type: feature
+    label: Skraap bring nou titelskerms van ScreenScraper en TheGamesDB, meer amptelike name van IGDB en TheGamesDB (soos 'n speletjie se Japannese titel), en die ander konsoles waarop 'n speletjie uitgekom het van IGDB
+  - type: feature
+    label: '''n Speletjie sonder gebruikerstelling neem nou die gradering in jou ES-DE-versameling, as dit een het'
+  - type: feature
+    label: Die speletjieblad sê hoeveel spelers 'n HowLongToBeat-resultaat getyd het en skakel na sy blad. Resultate wat voorheen gestoor is, wys dit die volgende keer as jy hulle opsoek
+  - type: feature
+    label: Die RetroAchievements-blad wys hoeveel mense 'n speletjie speel en watter deel van hulle elke prestasie verdien het
+  - type: fix
+    label: Die ROM Tools-gidsblaaier maak by jou ROM-gids oop wanneer dit geen gids het om mee te begin nie, in plaas daarvan om te misluk. 'n Verwarde antwoord van IGDB kos nou net daardie een detail, nie alles wat IGDB vir die speletjie gestuur het nie
+  - type: fix
+    label: ScreenScraper se daaglikse limiet keer nou dat RetroDB tot later vra, en 'n grootmaat-skraap sê dit en gaan voort met sy ander bronne. Voorheen het 'n opgebruikte limiet soos "speletjie nie gevind" gelyk en oproepe het die hele nag voortgegaan
+  - type: fix
+    label: '''n Speletjie waarvoor geen bron kon antwoord terwyl ''n diens by sy limiet was, word nie meer as geskraap gemerk nie, sodat die volgende lopie dit weer probeer'
+  - type: fix
+    label: Wanneer 'n TheGamesDB-sleutel sy maand opgebruik het, skuif RetroDB na jou ander sleutel, en hou op vra sodra albei opgebruik is
+  - type: fix
+    label: RAWG se maandelikse limiet keer nou ook dat RetroDB vra, en IGDB word binne sy limiet van vier versoeke per sekonde gehou
+  - type: fix
+    label: HowLongToBeat se grootmaat-opsoek eindig nou met 'n boodskap wanneer die webwerf sê dit het te veel versoeke gehad, en elke versoek aan die webwerf word uitgestrek
+  - type: fix
+    label: Fix Box and Manual Regions gee nie meer op ná 25 speletjies agtereen wat ScreenScraper nie ken nie. Dit stop net wanneer ScreenScraper sê sy limiet is bereik
+  - type: fix
+    label: Op die speletjieblad sit elke ouderdomsgradering nou gesentreer bo sy AI-raaiskatting-etiket
+  - type: fix
+    label: Die TheGamesDB-toelae in Instellings gebruik nou die toets wat nie jou toelae opgebruik nie, en wys nie meer 'n versonne terugstel-datum as die diens nie een gee nie
+  body: |
+    <ul>
+      <li><strong>MAME-speletjies kry hul regte name.</strong> Die nuwe MAME Names-hulpmiddel in ROM Tools haal name, jare en vervaardigers uit MAME se eie lys. Die lêers behou hul kort name, want MAME het dit nodig. Jy kan die MAME-lys volgens kategorie filter, en BIOS-stelle word versteek.</li>
+      <li><strong>Steam-invoere bring baie meer.</strong> Elke speletjie vul sy beskrywing, krediete, Metacritic-telling, ouderdomsgraderings, speletjiemodusse en prente in vanaf sy winkelblad. 'n Sinkronisering behou jou speeltyd en wanneer jy laas gespeel het. 'n Speletjie wat reeds onder dieselfde naam in jou biblioteek is, skakel nou daaraan, sodat sy prestasies sinkroniseer.</li>
+      <li><strong>Skraapwerk vind jou presiese speletjie.</strong> 'n Skraping vra ScreenScraper eers oor jou presiese lêer voordat dit op naam soek. Skrapings bring ook titelskerms, meer amptelike name, en die ander konsoles waarop 'n speletjie uitgekom het.</li>
+      <li><strong>RetroAchievements ken jou kopie.</strong> Op stelsels wat 'n gewone lêer-hash gebruik, soos Mega Drive en Game Boy, sê die speletjiebladsy of jou kopie prestasies verdien. Voer RA Refresh uit om dit in te vul. Die RetroAchievements-bladsy wys ook hoeveel mense 'n speletjie speel en watter deel van hulle elke prestasie verdien het.</li>
+      <li><strong>Aanlyn-limiete word gerespekteer.</strong> Wanneer ScreenScraper, TheGamesDB of RAWG sy limiet bereik, hou RetroDB op vra tot later en 'n grootmaat-skraping gaan voort met sy ander bronne. 'n Speletjie waarvoor geen bron op daardie stadium kon antwoord nie, word met die volgende uitvoering weer probeer.</li>
+      <li><strong>'n Geweierde PlayStation-aanmelding sê so.</strong> Die kontroleskerm en Instellings vra jou nou om weer te skakel wanneer Sony 'n gestoorde aanmelding weier.</li>
+      <li><strong>Official Names het verskuif.</strong> Sy aparte kaart is weg uit Bulk AI Fill, omdat die vul se Official name-skakelaar dieselfde werk doen.</li>
+    </ul>
 - version: 3.35.2
   date: '2026-11-02'
   tags:

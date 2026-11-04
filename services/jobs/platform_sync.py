@@ -79,6 +79,50 @@ def _get_xbox_credentials():
     return '', ''
 
 
+# `store_filled`: a scrape history entry from the Steam store means it has already
+# answered for this game, so it is not asked again on every sync.
+_STEAM_GAMES_SQL = """
+    SELECT g.id, g.title, g.steam_app_id, s.folder AS system_folder,
+           COALESCE(g.scrape_history, '') LIKE '%"primary_source": "steam"%' AS store_filled
+    FROM games g LEFT JOIN systems s ON s.id = g.system_id
+"""
+
+
+def _fill_from_steam_store(game):
+    """Fill this game's empty fields from its Steam store page (PASS-59-218).
+
+    The store says nothing about most of what a scrape finds, so the game still
+    counts as waiting for one. No reply records nothing, so the next sync asks
+    again.
+    """
+    from scraper.hybrid_scraper import apply_hybrid_metadata
+    from scraper.scrape_steam import get_app_details
+
+    details = get_app_details(game['steam_app_id'])
+    if details:
+        apply_hybrid_metadata(
+            game['id'], 'steam', game['steam_app_id'], game['system_folder'],
+            fill_gaps=False, primary_data=details, mark_scraped=False)
+
+
+def _save_steam_play_time(cursor, game_id, user_id, owned):
+    """Keep what Steam says about this person's time with this game."""
+    cursor.execute("""
+        INSERT INTO platform_play_time
+            (user_id, game_id, source, minutes, last_played, updated_at)
+        VALUES (?, ?, 'steam', ?, ?, ?)
+        ON CONFLICT(user_id, game_id, source) DO UPDATE SET
+            minutes = excluded.minutes,
+            last_played = excluded.last_played,
+            updated_at = excluded.updated_at
+    """, (
+        user_id, game_id,
+        owned.get('playtime_forever', 0),
+        owned.get('rtime_last_played', 0),
+        datetime.now(timezone.utc).isoformat(),
+    ))
+
+
 def _upsert_steam_progress(cursor, game_id, user_id, app_id, result):
     """UPSERT game_achievement_progress for a Steam game (Pass 38.7).
 
@@ -375,20 +419,14 @@ class SteamSyncJob:
 
     def _run_sync(self):
         """Background sync thread"""
-        from scraper.scrape_steam import get_player_achievements
+        from scraper.scrape_steam import get_owned_games, get_player_achievements
 
         _last_persist_time = time.time()
         persist_id = None
 
         try:
             steam_api_key, steam_id = _get_steam_credentials(user_id=self._user_id)
-            if not steam_api_key or not steam_id:
-                with self._lock:
-                    self.completed = True
-                    self.running = False
-                    self.error_message = "Steam API key or Steam ID not configured"
-                release_singleton_fd(self)
-                return
+            has_account = bool(steam_api_key and steam_id)
 
             # Use pre-set game IDs from resume, or query from DB
             if self._resume_game_ids is not None:
@@ -402,10 +440,7 @@ class SteamSyncJob:
                 real_ids = [gid for gid in game_ids if gid is not None]
                 if real_ids:
                     placeholders = ','.join('?' * len(real_ids))
-                    c.execute(f"""
-                        SELECT id, title, steam_app_id FROM games
-                        WHERE id IN ({placeholders})
-                    """, real_ids)
+                    c.execute(f"{_STEAM_GAMES_SQL} WHERE g.id IN ({placeholders})", real_ids)
                     for row in c.fetchall():
                         id_map[row['id']] = dict(row)
                 conn.close()
@@ -414,12 +449,20 @@ class SteamSyncJob:
             else:
                 conn = _get_conn()
                 c = conn.cursor()
-                c.execute("""
-                    SELECT id, title, steam_app_id FROM games
-                    WHERE steam_app_id IS NOT NULL AND steam_app_id != ''
-                """)
+                c.execute(f"{_STEAM_GAMES_SQL} "
+                          "WHERE g.steam_app_id IS NOT NULL AND g.steam_app_id != ''")
                 games = [dict(row) for row in c.fetchall()]
                 conn.close()
+
+            # The store needs no account, so a sync without one still fills
+            # games from it. With nothing to fill, it has nothing to do.
+            if not has_account and all(g is None or g['store_filled'] for g in games):
+                with self._lock:
+                    self.completed = True
+                    self.running = False
+                    self.error_message = "Steam API key or Steam ID not configured"
+                release_singleton_fd(self)
+                return
 
             with self._lock:
                 self.total_games = len(games)
@@ -440,6 +483,11 @@ class SteamSyncJob:
                 release_singleton_fd(self)
                 persist_job_complete(persist_id, status='completed', error="No Steam games found")
                 return
+
+            owned_games = {}
+            if has_account:
+                owned_games = {str(owned.get('appid')): owned
+                               for owned in get_owned_games(steam_api_key, steam_id)}
 
             sync_conn = _get_conn()
             try:
@@ -472,7 +520,16 @@ class SteamSyncJob:
                         _last_persist_time = _now
 
                     try:
-                        result = get_player_achievements(steam_api_key, steam_id, game['steam_app_id'])
+                        if not game['store_filled']:
+                            _fill_from_steam_store(game)
+                        owned = owned_games.get(str(game['steam_app_id']))
+                        if owned and self._user_id:
+                            _save_steam_play_time(sync_cursor, game['id'], self._user_id, owned)
+                            _commit_with_retry(sync_conn)
+
+                        result = None
+                        if has_account:
+                            result = get_player_achievements(steam_api_key, steam_id, game['steam_app_id'])
                         if result is None:
                             with self._lock:
                                 self.skipped_count += 1

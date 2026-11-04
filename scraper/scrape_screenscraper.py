@@ -13,11 +13,21 @@ import logging
 import hashlib
 import re
 import os
+import threading
 
+from services import rom_identity
+from services.game_utils import is_arcade_set
+
+from . import service_limits
 from .base_scraper import http_get, _http_session
 from .ss_regions import by_region
 
 logger = logging.getLogger(__name__)
+
+# ScreenScraper does not say when its day ends, so a spent limit is asked about
+# again after this long: one call an hour, against a run's thousands.
+_LIMIT_RECHECK_SECONDS = 3600
+_one_at_a_time = threading.Lock()
 
 # ScreenScraper API endpoints
 API_BASE = "https://api.screenscraper.fr/api2"
@@ -369,6 +379,7 @@ def _search_once(sanitized_title, system_id, username, password, dev_id, dev_pas
                         return None
                     elif "quota" in response_lower or "maximum" in response_lower or "api fermé" in response_lower:
                         logger.warning("ScreenScraper: API quota/rate limit reached")
+                        service_limits.stop(service_limits.SCREENSCRAPER, _LIMIT_RECHECK_SECONDS)
                         return None
                     elif "identifiants développeur" in response_lower or "developer" in response_lower:
                         # Dev credentials rejected - retry without them
@@ -391,7 +402,9 @@ def _search_once(sanitized_title, system_id, username, password, dev_id, dev_pas
                 except Exception:
                     logger.info("ScreenScraper: Could not parse response as JSON (game likely not found)")
                     return None
-                
+
+                _note_account_limits(data)
+
                 if "response" in data and "jeux" in data["response"]:
                     results = data["response"]["jeux"]
                     # Handle SS API quirk: single result may be a dict instead of list
@@ -584,6 +597,7 @@ def parse_game_data(jeu, own_region=None):
     ordered_dates = by_region(dates, own_region)
     if ordered_dates:
         result["release_date"] = ordered_dates[0].get("text", "")
+    result["dates"] = dates
     
     # Get developer
     # The `{}` / `""` defaults do NOT fire when the key is present with an
@@ -863,6 +877,7 @@ def get_game_by_id(game_id, username, password, dev_id=None, dev_password=None, 
             return None
 
         data = response.json()
+        _note_account_limits(data)
 
         if "response" not in data or "jeu" not in data["response"]:
             return None
@@ -874,11 +889,109 @@ def get_game_by_id(game_id, username, password, dev_id=None, dev_password=None, 
         return None
 
 
+def identify_by_file(rom_path, system_folder, serial, username, password,
+                     dev_id=None, dev_password=None):
+    """The raw `jeu` record for this exact file, or None (PASS-59-217).
+
+    A reply counts only when the service says it knows the file: it answers by
+    file name too, so a CRC is accepted only if it comes back. A serial is sent
+    with a made-up file name, so that only the serial can match.
+    """
+    system_id = get_system_id(system_folder)
+    if not system_id:
+        return None
+
+    def ask(**search):
+        params = _auth_params(username, password, dev_id, dev_password)
+        params.append(("systemeid", str(system_id)))
+        params.extend(search.items())
+        return _jeu_from_reply(_ss_request_with_retry(GAME_INFO_URL, params, timeout=60))
+
+    if is_arcade_set(system_folder):
+        # A set is many files, so it has no one CRC; MAME's file names are its identity.
+        name = os.path.basename(rom_path or '')
+        record = ask(romnom=name, romtype='rom') if name else None
+        found = (record or {}).get('rom') or {}
+        if str(found.get('romfilename') or '').lower() == name.lower() and _is_a_game(record):
+            return {**record, '_matched_file': True}
+        return None
+    identity = rom_identity.file_identity(rom_path)
+    if identity:
+        record = ask(romnom=identity['name'], romtaille=str(identity['size']),
+                     crc=identity['crc'], romtype='rom')
+        found = (record or {}).get('rom') or {}
+        if str(found.get('romcrc') or '').upper() == identity['crc'] and _is_a_game(record):
+            return {**record, '_matched_file': True}
+    if serial:
+        record = ask(serialnum=serial, romnom=f'{serial}.iso', romtype='rom')
+        if record and _is_a_game(record):
+            return {**record, '_matched_file': True}
+    return None
+
+
+def _auth_params(username, password, dev_id, dev_password):
+    """Credentials, with devid and devpassword first as the service requires."""
+    params = []
+    if dev_id and dev_password:
+        params.append(("devid", dev_id))
+        params.append(("devpassword", dev_password))
+    params.extend([("softname", SOFTWARE_NAME), ("ssid", username),
+                   ("sspassword", password), ("output", "json")])
+    return params
+
+
+def _jeu_from_reply(response):
+    """A jeuInfos reply's game record, or None for anything else."""
+    if response is None or response.status_code != 200:
+        return None
+    try:
+        data = response.json()
+    except ValueError:
+        return None
+    _note_account_limits(data)
+    return (data.get("response") or {}).get("jeu") or None
+
+
+def _is_a_game(record):
+    """ScreenScraper files demos and tools under records marked as no game."""
+    if str(record.get('notgame', '')).lower() == 'true':
+        return False
+    return not any(str(n.get('text', '')).startswith('ZZZ(notgame)') for n in record.get('noms') or [])
+
+
+def _note_account_limits(data):
+    """Keep to the limits a reply states for this account (PASS-59-215)."""
+    user = (data.get('response') or {}).get('ssuser') if isinstance(data, dict) else None
+    if not isinstance(user, dict):
+        return
+
+    def number(field):
+        try:
+            return int(user.get(field))
+        except (TypeError, ValueError):
+            return 0
+
+    per_minute = number('maxrequestspermin')
+    if per_minute > 0:
+        service_limits.set_pace(service_limits.SCREENSCRAPER, 60 / per_minute)
+    for used, allowed in (('requeststoday', 'maxrequestsperday'),
+                          ('requestskotoday', 'maxrequestskoperday')):
+        if 0 < number(allowed) <= number(used):
+            service_limits.stop(service_limits.SCREENSCRAPER, _LIMIT_RECHECK_SECONDS)
+
+
 def _ss_request_with_retry(url, params, timeout=60, retries=2):
+    """One ScreenScraper call at a time: a free account's maxthreads is 1."""
+    with _one_at_a_time:
+        return _ss_request(url, params, timeout, retries)
+
+
+def _ss_request(url, params, timeout, retries):
     """Make a ScreenScraper API request with retry logic for transient failures.
 
-    Retries on timeouts, 429/430 (rate limit), and 5xx (server errors)
-    with exponential backoff.  Returns the Response object or None.
+    Retries on timeouts, 429 (too fast) and 5xx (server errors) with exponential
+    backoff. 430 and 431 mean the day's limit is spent, so they stop the service
+    instead. Returns the Response object, or None with nothing sent if stopped.
 
     Pass 25.7 — enforce MAX_API_RESPONSE_BYTES (default 10 MB) on successful
     responses. A giant SS JSON body would OOM the worker during `.json()`
@@ -893,6 +1006,8 @@ def _ss_request_with_retry(url, params, timeout=60, retries=2):
         max_bytes = 10 * 1024 * 1024
 
     for attempt in range(retries + 1):
+        if not service_limits.wait_for_turn(service_limits.SCREENSCRAPER):
+            return None
         try:
             # Shared session for connection pooling (Pass 26.1); stream=True is
             # required for the response-size cap below so we can abort before
@@ -922,7 +1037,12 @@ def _ss_request_with_retry(url, params, timeout=60, retries=2):
                 # Re-inject the bounded body so callers can still use .json()/.text.
                 response._content = bytes(buf)
                 return response
-            elif response.status_code in (429, 430):
+            elif response.status_code in (430, 431):
+                logger.warning(f"ScreenScraper daily limit reached ({response.status_code})")
+                service_limits.stop(service_limits.SCREENSCRAPER, _LIMIT_RECHECK_SECONDS)
+                return response
+            elif response.status_code == 429:
+                service_limits.slow_down(service_limits.SCREENSCRAPER)
                 if attempt < retries:
                     wait = 2 ** attempt
                     logger.warning(f"ScreenScraper rate limited ({response.status_code}), waiting {wait}s...")

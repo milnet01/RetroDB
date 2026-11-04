@@ -15,9 +15,9 @@ import time
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import IMAGE_PATH
 
-from scraper.base_scraper import http_get, get_scraper_conn, download_image
+from scraper import service_limits
+from scraper.base_scraper import http_get, download_image
 import config as _config
-from services.release_dates import source_date
 
 # Pass 45.14 — every scraper API response cap, mirroring RA + AI + ScreenScraper.
 _TGDB_MAX_BYTES = getattr(_config, 'MAX_API_RESPONSE_BYTES', 10 * 1024 * 1024)
@@ -57,13 +57,30 @@ def get_api_keys():
     return (public_key, private_key)
 
 
+# A key's limit is a monthly one. Its refresh timer says when it ends, and when
+# it says nothing a spent or refused key is asked about again after this long.
+_KEY_RECHECK_SECONDS = 86400
+
+
+def _key_stop_name(key_type):
+    return f'{service_limits.THEGAMESDB}:{key_type}'
+
+
+def _key_spent(key_type, seconds, reason, keys_to_try):
+    """Pass over this key for a while, and stop the service once none is left."""
+    service_limits.stop(_key_stop_name(key_type), seconds, reason)
+    stops = [service_limits.stopped(_key_stop_name(name)) for name, _key in keys_to_try]
+    if all(stops):
+        soonest = min(entry['until'] for entry in stops)
+        service_limits.stop(service_limits.THEGAMESDB, soonest - time.time(), reason)
+
+
 def _tgdb_request(url, params=None, timeout=30):
     """Make a TGDB API request with public key first, falling back to private key.
 
-    Replaces the 'apikey' param with the public key, makes the request.
-    If 403, retries with the private key.
-    Tracks API allowance from response headers.
-    Returns the requests.Response object, or None on total failure.
+    A key passes to the next on 403 or 429, or once a reply shows it spent.
+    Tracks API allowance from each reply (PASS-59-215).
+    Returns the requests.Response object, or None on total failure or a stop.
     """
     global _allowance_info
 
@@ -83,7 +100,12 @@ def _tgdb_request(url, params=None, timeout=30):
         logger.error("No TGDB API keys configured")
         return None
 
+    if service_limits.stopped(service_limits.THEGAMESDB):
+        return None
+
     for key_type, key in keys_to_try:
+        if service_limits.stopped(_key_stop_name(key_type)):
+            continue
         params['apikey'] = key
         response = http_get(url, params=params, timeout=timeout, retries=2, max_bytes=_TGDB_MAX_BYTES)
 
@@ -108,11 +130,16 @@ def _tgdb_request(url, params=None, timeout=30):
                             logger.warning(f"TGDB API allowance low: {remaining} remaining (+{extra or 0} extra)")
                         else:
                             logger.debug(f"TGDB API allowance: {remaining} remaining (+{extra or 0} extra)")
+                        if remaining + (extra or 0) <= 0:
+                            _key_spent(key_type,
+                                       int(data.get('allowance_refresh_timer') or _KEY_RECHECK_SECONDS),
+                                       service_limits.LIMIT_REACHED, keys_to_try)
             except Exception:
                 pass
             return response
-        elif response.status_code == 403:
-            logger.warning(f"TGDB {key_type} key returned 403, trying next key...")
+        elif response.status_code in (403, 429):
+            logger.warning(f"TGDB {key_type} key returned {response.status_code}, trying next key...")
+            _key_spent(key_type, _KEY_RECHECK_SECONDS, service_limits.KEY_REFUSED, keys_to_try)
             continue
         else:
             logger.warning(f"TGDB API returned status {response.status_code} with {key_type} key")
@@ -616,7 +643,7 @@ def fetch_game_details(game_id):
         url = f"{TGDB_API_BASE}/v1/Games/ByGameID"
         params = {
             'id': game_id,
-            'fields': 'players,publishers,genres,overview,rating,platform,developers',
+            'fields': 'players,publishers,genres,overview,rating,platform,developers,alternates',
             'include': 'boxart,platform'
         }
 
@@ -651,12 +678,17 @@ def fetch_game_details(game_id):
                             boxart_url = base_url + art.get('filename', '')
                             break
 
-                    # If no front boxart, try any boxart
-                    if not boxart_url and game_boxart:
-                        boxart_url = base_url + game_boxart[0].get('filename', '')
+                    # No front: any picture but a back, which has its own slot
+                    if not boxart_url:
+                        boxart_url = next((base_url + art.get('filename', '')
+                                           for art in game_boxart
+                                           if art.get('side') != 'back'), None)
+                    boxart_back_url = next((base_url + art.get('filename', '')
+                                            for art in game_boxart
+                                            if art.get('side') == 'back'), None)
 
-                    # Get screenshots and fanart from separate images endpoint
-                    screenshot_urls, fanart_urls = _fetch_game_images(game_id)
+                    # Screenshots, fanart and logos from the separate images endpoint
+                    screenshot_urls, fanart_urls, logo_urls = _fetch_game_images(game_id)
 
                     result = {
                         'id': game_id,
@@ -668,9 +700,12 @@ def fetch_game_details(game_id):
                         'players': game.get('players'),
                         'rating': game.get('rating', ''),
                         'summary': game.get('overview', ''),
+                        'alternates': game.get('alternates') or [],
                         'boxart_url': boxart_url,
+                        'boxart_back_url': boxart_back_url,
                         'screenshot_urls': screenshot_urls,
                         'fanart_urls': fanart_urls,
+                        'logo_urls': logo_urls,
                     }
 
                     logger.info(f"TGDB details fetched successfully for: {result['name']}")
@@ -685,18 +720,21 @@ def fetch_game_details(game_id):
 
 
 def _fetch_game_images(game_id):
-    """Fetch screenshots and fanart for a game from the Images endpoint.
+    """Fetch screenshots, fanart and logos for a game from the Images endpoint.
 
-    Returns (screenshot_urls, fanart_urls) tuple.
+    Returns (screenshot_urls, fanart_urls, logo_urls), all from one request.
+    Title screens count as screenshots and come after them, as ES-DE's do.
     """
     screenshot_urls = []
+    titlescreen_urls = []
     fanart_urls = []
+    logo_urls = []
 
     try:
         images_url = f"{TGDB_API_BASE}/v1/Games/Images"
         images_params = {
             'games_id': game_id,
-            'filter[type]': 'screenshot,fanart'
+            'filter[type]': 'screenshot,titlescreen,fanart,clearlogo'
         }
         images_response = _tgdb_request(images_url, params=images_params, timeout=15)
         if images_response and images_response.status_code == 200:
@@ -722,14 +760,20 @@ def _fetch_game_images(game_id):
                             img_type = img.get('type', '').lower()
                             if 'screenshot' in img_type:
                                 screenshot_urls.append(images_base_url + img.get('filename', ''))
+                            elif 'titlescreen' in img_type:
+                                titlescreen_urls.append(images_base_url + img.get('filename', ''))
                             elif 'fanart' in img_type:
                                 fanart_urls.append(images_base_url + img.get('filename', ''))
+                            elif img_type == 'clearlogo':
+                                logo_urls.append(images_base_url + img.get('filename', ''))
 
+                    # The merge takes five, so a title screen keeps a place.
+                    screenshot_urls = screenshot_urls[:4] + titlescreen_urls[:1] + screenshot_urls[4:]
                     logger.info(f"Found {len(screenshot_urls)} screenshots, {len(fanart_urls)} fanart for game {game_id}")
     except Exception as e:
         logger.warning(f"Failed to fetch images: {e}")
 
-    return screenshot_urls, fanart_urls
+    return screenshot_urls, fanart_urls, logo_urls
 
 
 # =============================================================================
@@ -1025,200 +1069,6 @@ def fetch_platform_images(platform_id):
 
 
 # =============================================================================
-# APPLY METADATA
-# =============================================================================
-
-def apply_metadata_to_game(db_game_id, tgdb_data):
-    """Apply TheGamesDB metadata to database game"""
-    conn = None
-
-    try:
-        conn = get_scraper_conn()
-        c = conn.cursor()
-
-        logger.info(f"Applying TGDB metadata for game {db_game_id}")
-
-        # Pass 48.5 — media fill-only invariant. As a hybrid *fallback* path this
-        # must not overwrite curated boxart/fanart or replace the screenshots
-        # column. Read current media so boxart/fanart download only when empty
-        # and screenshots append (mirrors scrape_esde's "augment, don't replace").
-        c.execute("SELECT boxart, screenshots, fanart FROM games WHERE id = ?", (db_game_id,))
-        _existing = c.fetchone()
-        existing_boxart = (_existing[0] if _existing else None) or ''
-        existing_screenshots = (_existing[1] if _existing else None) or ''
-        existing_fanart = (_existing[2] if _existing else None) or ''
-
-        # Extract data with defaults
-        publisher = tgdb_data.get('publisher', '') or ''
-        developer = tgdb_data.get('developer', '') or ''
-        release_date = tgdb_data.get('release_date', '') or ''
-
-        # Format release date
-        if release_date:
-            date_patterns = [
-                r'(\d{4})-(\d{2})-(\d{2})',
-                r'(\d{4})/(\d{2})/(\d{2})',
-                r'(\d{4})',
-            ]
-
-            for pattern in date_patterns:
-                match = re.search(pattern, release_date)
-                if match:
-                    groups = match.groups()
-                    if len(groups) == 3:
-                        release_date = f"{groups[0]}-{groups[1].zfill(2)}-{groups[2].zfill(2)}"
-                        break
-                    elif len(groups) == 1:
-                        release_date = groups[0]
-                        break
-            release_date = source_date(release_date) or ''
-
-        # Process rating for ESRB/PEGI
-        rating = tgdb_data.get('rating', '') or ''
-        esrb_rating = ''
-        pegi_rating = ''
-
-        if rating:
-            # Shared with the hybrid path (metadata_merger) so the two cannot
-            # diverge again — this copy matched substrings and mis-assigned
-            # four of the six real TGDB strings (Pass 59.19). No blind
-            # fallback to the raw string: a value matching no ESRB code is not
-            # an ESRB rating, and the raw text stays in the `rating` column.
-            from services.game_utils import parse_esrb_code
-            esrb_rating = parse_esrb_code(rating)
-
-            if 'pegi' in rating.lower():
-                numbers = re.findall(r'\d+', rating)
-                if numbers:
-                    pegi_rating = f"PEGI {numbers[0]}"
-
-        # Genre — normalize to hyphenated canonical forms (FIELD_SCHEMAS). This
-        # single-source apply is a fallback when the hybrid fetch fails; the
-        # hybrid path normalizes, so do it here too to keep the genre-filter
-        # canonical regardless of caller.
-        from services.normalization import normalize_genre
-        genres = tgdb_data.get('genres', [])
-        if isinstance(genres, list):
-            genre = normalize_genre(', '.join(str(g).strip() for g in genres if g))
-        else:
-            genre = normalize_genre(str(genres)) if genres else ''
-
-        # Players — Pass 40.6: leave as None when TGDB doesn't supply a
-        # value (or supplies one that doesn't parse).  COALESCE(?, players)
-        # then preserves the curated DB value on re-scrape.
-        players = None
-        players_val = tgdb_data.get('players')
-        if players_val:
-            try:
-                parsed = int(str(players_val))
-                if parsed >= 1:
-                    players = parsed
-            except (ValueError, TypeError):
-                players = None
-
-        # Description
-        description = tgdb_data.get('summary', '') or ''
-
-        # Game title from scraped data
-        scraped_title = tgdb_data.get('name', '') or tgdb_data.get('game_title', '')
-
-        # Download boxart — fill-only: skip when the game already has boxart.
-        boxart = None
-        boxart_url = tgdb_data.get('boxart_url')
-        if not existing_boxart and boxart_url:
-            boxart = _download_tgdb_image(db_game_id, boxart_url, 'boxart')
-
-        # Download screenshots, then append to existing (never replace).
-        screenshots = []
-        screenshot_urls = tgdb_data.get('screenshot_urls', [])
-        for i, ss_url in enumerate(screenshot_urls[:5]):  # Limit to 5 screenshots
-            ss_filename = _download_tgdb_image(db_game_id, ss_url, 'screenshots', suffix=f'_ss{i+1}')
-            if ss_filename:
-                screenshots.append(ss_filename)
-
-        _existing_ss = [s for s in existing_screenshots.split(',') if s]
-        _merged_ss = _existing_ss + [s for s in screenshots if s not in _existing_ss]
-        screenshots_str = ','.join(_merged_ss) if _merged_ss else None
-
-        # Download fanart (first one only) — fill-only: skip when present.
-        fanart = None
-        fanart_urls = tgdb_data.get('fanart_urls', [])
-        if not existing_fanart and fanart_urls:
-            fanart = _download_tgdb_image(db_game_id, fanart_urls[0], 'fanart', suffix='_fanart')
-
-        # Log values
-        logger.info(f"Update values for game {db_game_id}:")
-        logger.info(f"  Title: {scraped_title}")
-        logger.info(f"  Publisher: {publisher}")
-        logger.info(f"  Developer: {developer}")
-        logger.info(f"  Release Date: {release_date}")
-        logger.info(f"  Genre: {genre}")
-        logger.info(f"  ESRB: {esrb_rating}")
-        logger.info(f"  PEGI: {pegi_rating}")
-        logger.info(f"  Players: {players}")
-        logger.info(f"  Boxart: {boxart}")
-        logger.info(f"  Screenshots: {len(screenshots)}")
-        logger.info(f"  Fanart: {fanart}")
-
-        # Fill-only writes: COALESCE preserves prior scraped/curated values when
-        # the TGDB response is empty for a field. Matches scrape_esde's pattern.
-        def _trunc(value, limit):
-            return str(value)[:limit] if value else None
-
-        # modes_str follows the source signal: only emit when TGDB supplied
-        # a player count, otherwise leave None so COALESCE preserves curated.
-        from services.normalization import modes_from_player_count
-        modes_str = modes_from_player_count(players) or None
-        c.execute("""
-            UPDATE games SET
-                title = CASE WHEN title_locked = 1 THEN title ELSE COALESCE(?, title) END,
-                publisher = COALESCE(?, publisher),
-                developer = COALESCE(?, developer),
-                release_date = COALESCE(?, release_date),
-                genre = COALESCE(?, genre),
-                rating = COALESCE(?, rating),
-                esrb_rating = COALESCE(?, esrb_rating),
-                pegi_rating = COALESCE(?, pegi_rating),
-                players = COALESCE(?, players),
-                modes = COALESCE(?, modes),
-                description = COALESCE(?, description),
-                boxart = COALESCE(?, boxart),
-                screenshots = COALESCE(?, screenshots),
-                fanart = COALESCE(?, fanart),
-                scraped = 1
-            WHERE id = ?
-        """, (
-            _trunc(scraped_title, 255),
-            _trunc(publisher, 255),
-            _trunc(developer, 255),
-            _trunc(release_date, 20),
-            _trunc(genre, 500),
-            _trunc(rating, 50),
-            _trunc(esrb_rating, 50),
-            _trunc(pegi_rating, 50),
-            players if players else None,
-            modes_str,
-            _trunc(description, 2000),
-            str(boxart) if boxart else None,
-            screenshots_str,
-            str(fanart) if fanart else None,
-            db_game_id
-        ))
-
-        conn.commit()
-        logger.info(f"Applied TGDB metadata to game {db_game_id}")
-        return True
-
-    except Exception as e:
-        logger.error(f"Error applying TGDB metadata: {e}")
-        if conn:
-            conn.rollback()
-        return False
-    finally:
-        if conn:
-            conn.close()
-
-# =============================================================================
 # IMAGE DOWNLOAD
 # =============================================================================
 
@@ -1249,11 +1099,11 @@ def _download_tgdb_image(db_game_id, image_url, image_type, suffix=''):
         # Get file extension from URL or default to jpg, then translate to the
         # configured ingest format (e.g. WebP).
         url_ext = os.path.splitext(image_url.split('?')[0])[1] or '.jpg'
-        from services.image_utils import preferred_image_extension
+        from services.image_utils import media_folder, preferred_image_extension
         ext = preferred_image_extension(image_type, url_ext)
 
         filename = f"{db_game_id}_tgdb{suffix}{ext}"
-        local_dir = os.path.join(IMAGE_PATH, image_type)
+        local_dir = os.path.join(IMAGE_PATH, media_folder(image_type))
         os.makedirs(local_dir, exist_ok=True)
         local_path = os.path.join(local_dir, filename)
 

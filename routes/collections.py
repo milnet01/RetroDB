@@ -16,6 +16,7 @@ import logging
 from datetime import datetime, timezone
 
 from services.database import query, execute
+from services.media_cleanup import delete_unshared_media
 from services.auth import login_required
 from services.api_helpers import handle_api_errors, success, error
 
@@ -732,6 +733,7 @@ def api_delete_wishlist_item(item_id):
         return error(_('Wishlist item not found'), 404)
 
     execute("DELETE FROM wishlist WHERE id = ?", (item_id,))
+    delete_unshared_media(item)
     logger.info(f"Deleted wishlist item '{item['title']}' (id={item_id})")
     return success()
 

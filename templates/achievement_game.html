@@ -266,6 +266,12 @@
                     <span class="md-value">{% trans count=progress.achievement_count|format_number %}{{ count }} total{% endtrans %}</span>
                 </div>
                 {% endif %}
+                {% if progress and progress.player_count %}
+                <div class="md-item">
+                    <span class="md-label">{{ _('Players') }}</span>
+                    <span class="md-value">{{ progress.player_count|format_number }}</span>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -297,6 +303,9 @@
                             <div class="trophy-item-desc">{{ ach.description }}</div>
                             <div class="trophy-item-meta">
                                 <span class="trophy-type-label achievement-points">{{ ach.points }} pts</span>
+                                {% if ach.earned_percent is not none %}
+                                <span class="trophy-timestamp">{% trans pct=ach.earned_percent %}Earned by {{ pct }}% of players{% endtrans %}</span>
+                                {% endif %}
                                 {% if ach.is_unlocked_hardcore %}
                                 <span class="trophy-type-label hardcore">🔥 {{ _('Hardcore') }}</span>
                                 {% endif %}
@@ -339,6 +348,9 @@
                             <div class="trophy-item-desc">{{ ach.description }}</div>
                             <div class="trophy-item-meta">
                                 <span class="trophy-type-label achievement-points-locked">{{ ach.points }} pts</span>
+                                {% if ach.earned_percent is not none %}
+                                <span class="trophy-timestamp">{% trans pct=ach.earned_percent %}Earned by {{ pct }}% of players{% endtrans %}</span>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -441,18 +453,18 @@ async function refreshRAProgress() {
         const data = await response.json();
 
         if (data.success) {
-            showNotification('Achievement data refreshed!', 'success');
+            showNotification({{ _('Achievement data refreshed!')|tojson }}, 'success');
             // Reload to show updated data
             setTimeout(() => window.location.reload(), 1000);
         } else {
-            showNotification(data.error || 'Failed to refresh achievements', 'error');
+            showNotification(data.error || {{ _('Failed to refresh achievements')|tojson }}, 'error');
             if (btn) {
                 btn.disabled = false;
                 btn.innerHTML = '<span class="btn-icon">🔄</span> Refresh RA';
             }
         }
     } catch (error) {
-        showNotification('Error refreshing achievements: ' + error.message, 'error');
+        showNotification(t({{ _('Error refreshing achievements: {error}')|tojson }}, {error: error.message}), 'error');
         if (btn) {
             btn.disabled = false;
             btn.innerHTML = '<span class="btn-icon">🔄</span> Refresh RA';

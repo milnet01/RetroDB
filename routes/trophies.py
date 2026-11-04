@@ -6,6 +6,7 @@
 
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify, flash, g
 from flask_babel import gettext as _
+import json
 import os
 import logging
 import requests
@@ -20,8 +21,33 @@ from services.jobs.base import _download_psn_trophy_image as download_psn_trophy
 # PSN API imports
 try:
     from psnawp_api import PSNAWP
-    from psnawp_api.core.psnawp_exceptions import PSNAWPNotFoundError, PSNAWPAuthenticationError
+    from psnawp_api.core.psnawp_exceptions import (
+        PSNAWPAuthenticationError, PSNAWPBadRequestError, PSNAWPError,
+        PSNAWPNotFoundError, PSNAWPUnauthorizedError,
+    )
     PSNAWP_AVAILABLE = True
+
+    # Sony's sign-in server answers {"error": "invalid_grant", ...}, a string
+    # where PSNAWP 3.1.0 and earlier expect an object. Their PSNAWPError then
+    # raises AttributeError while being built, which hides Sony's answer and the
+    # exception's type (PASS-59-226).
+    def _psn_error_init(self, response):
+        self.code = self.message = self.reference_id = None
+        try:
+            body = json.loads(response)
+        except ValueError:
+            body = None
+        err = body.get('error') if isinstance(body, dict) else None
+        if isinstance(err, dict):
+            self.reference_id = err.get('referenceId')
+            self.code = err.get('code')
+            self.message = err.get('message')
+        elif isinstance(err, str):
+            self.code = err
+            self.message = body.get('error_description') or err
+        Exception.__init__(self, self.message or response)
+
+    PSNAWPError.__init__ = _psn_error_init
 
     # Patch pyrate_limiter + PSNAWP compatibility issues:
     # 1. pyrate_limiter 4.x sync _try_acquire raises NotImplementedError on timeout param
@@ -43,6 +69,7 @@ try:
 except ImportError:
     PSNAWP_AVAILABLE = False
     PSNAWPNotFoundError = Exception  # Fallback for when not installed
+    PSNAWPBadRequestError = PSNAWPUnauthorizedError = Exception
 
 logger = logging.getLogger('scraper')
 
@@ -98,11 +125,14 @@ def _clear_psn_tokens(user_id=None):
     logger.debug("PSN token cache cleared (user=%d)", uid)
 
 
-def create_psn_client(npsso, user_id=None, allow_npsso_fallback=True):
+def create_psn_client(npsso, user_id=None, allow_npsso_fallback=True, use_cache=True):
     """Create an authenticated PSNAWP client with token caching.
 
-    Tries cached refresh tokens first (valid ~2 months). Falls back to NPSSO
-    if cached tokens are expired. Saves tokens after successful authentication.
+    Tries cached refresh tokens first (Sony's refresh token lasts 10 days and
+    renewing it does not move that date). Falls back to NPSSO if cached tokens
+    are expired. Saves tokens after successful authentication. When Sony
+    refuses the saved NPSSO, records `npsso_refused_at` in the cache so the
+    Settings and dashboard banners can ask for a new one (PASS-59-111).
 
     Args:
         npsso: The NPSSO cookie string.
@@ -113,18 +143,21 @@ def create_psn_client(npsso, user_id=None, allow_npsso_fallback=True):
             used — an expired or failed cache returns an error instead of
             pinging Sony with the (possibly stale) NPSSO. The keep-alive passes
             False so it never pings an already-expired session.
+        use_cache: When False, sign in with this NPSSO and ignore the cached
+            session, which a successful sign-in then replaces and a failed one
+            leaves alone. Saving a new NPSSO passes False (PASS-59-111).
 
     Returns:
         (psnawp, None) on success, (None, error_string) on failure.
     """
     if not PSNAWP_AVAILABLE:
-        return None, "PSNAWP library not installed. Run: pip install psnawp"
+        return None, _('PSNAWP library not installed. Run: pip install psnawp')
 
     if not npsso:
-        return None, "PSN NPSSO cookie not configured"
+        return None, _('PSN NPSSO cookie not configured')
 
     # Try cached tokens first
-    cached_tokens = _load_psn_tokens(user_id)
+    cached_tokens = _load_psn_tokens(user_id) if use_cache else None
     if cached_tokens:
         try:
             import time as _time
@@ -134,7 +167,7 @@ def create_psn_client(npsso, user_id=None, allow_npsso_fallback=True):
                 psnawp.authenticator.token_response = cached_tokens
                 # Validate by making a lightweight call (.online_id access
                 # triggers the auth round-trip; result intentionally unused).
-                _ = psnawp.me().online_id
+                _online_id = psnawp.me().online_id
                 # Save refreshed tokens (access token may have been renewed)
                 _save_psn_tokens(psnawp.authenticator.token_response, user_id=user_id)
                 logger.info("PSN authenticated using cached tokens")
@@ -144,25 +177,31 @@ def create_psn_client(npsso, user_id=None, allow_npsso_fallback=True):
                 if not allow_npsso_fallback:
                     # Keep-alive must not ping with NPSSO; leave the (expired)
                     # cache in place so token-info still reports `expired:true`.
-                    return None, "PSN refresh token expired"
+                    return None, _('PSN refresh token expired')
                 _clear_psn_tokens(user_id)
         except Exception as e:
             logger.info(f"PSN cached tokens invalid ({e})")
             if not allow_npsso_fallback:
-                return None, f"PSN cached-token refresh failed: {e}"
+                if isinstance(e, (PSNAWPBadRequestError, PSNAWPUnauthorizedError)):
+                    # Sony refused it, so it will never work again. Recording it
+                    # as expired brings up the re-link notice and stops the
+                    # keep-alive asking Sony on every server start.
+                    _save_psn_tokens({**cached_tokens, 'refresh_token_expires_at': 0},
+                                     user_id=user_id)
+                return None, _('PSN cached-token refresh failed: %(error)s') % {'error': e}
             logger.info("Falling back to NPSSO")
             _clear_psn_tokens(user_id)
 
     if not allow_npsso_fallback:
         # No usable cache and the keep-alive must not ping Sony with the NPSSO.
-        return None, "PSN refresh token expired"
+        return None, _('PSN refresh token expired')
 
     # Fresh auth via NPSSO
     try:
         psnawp = PSNAWP(npsso)
         # Force authentication by making a call (.online_id access triggers
         # the auth round-trip; result intentionally unused).
-        _ = psnawp.me().online_id
+        _online_id = psnawp.me().online_id
         # Cache the tokens for future use
         if psnawp.authenticator.token_response:
             _save_psn_tokens(psnawp.authenticator.token_response, user_id=user_id)
@@ -170,10 +209,16 @@ def create_psn_client(npsso, user_id=None, allow_npsso_fallback=True):
         return psnawp, None
     except PSNAWPAuthenticationError as e:
         logger.error(f"PSN authentication failed: {e}")
-        return None, "PSN authentication failed. Your NPSSO may have expired."
+        if use_cache:
+            # The saved NPSSO, not a new one being tried: that one is the
+            # user's to replace. A refused new token changes nothing.
+            import time as _time
+            _save_psn_tokens({'npsso_refused_at': _time.time(),
+                              'refresh_token_expires_at': 0}, user_id=user_id)
+        return None, _('PSN authentication failed. Your NPSSO may have expired.')
     except Exception as e:
         logger.error(f"PSN connection error: {e}")
-        return None, f"PSN connection error: {e}"
+        return None, _('PSN connection error: %(error)s') % {'error': e}
 
 
 def get_psn_client():
@@ -1792,27 +1837,20 @@ def api_psn_status():
 @bp.route('/api/psn/token-info')
 @login_required
 def api_psn_token_info():
-    """Get PSN token expiration information for the settings UI."""
-    import time as _time
+    """Say whether the user must act on their PSN sign-in (PASS-59-111).
 
+    Only a refused NPSSO needs the user. Sony's 10-day session is not
+    reported: when it lapses, the next request signs in again from the NPSSO.
+    """
     cached = _load_psn_tokens()
     if not cached:
-        return jsonify({'has_token': False})
+        return jsonify({'has_token': False, 'refused': False})
 
-    refresh_expires = cached.get('refresh_token_expires_at', 0)
-    access_expires = cached.get('access_token_expires_at', 0)
-    now = _time.time()
+    refused_at = cached.get('npsso_refused_at')
+    if refused_at:
+        return jsonify({'has_token': False, 'refused': True, 'refused_at': refused_at})
 
-    if refresh_expires <= now:
-        return jsonify({'has_token': False, 'expired': True})
-
-    return jsonify({
-        'has_token': True,
-        'expired': False,
-        'refresh_expires_at': refresh_expires,
-        'days_remaining': max(0, int((refresh_expires - now) / 86400)),
-        'access_valid': access_expires > now
-    })
+    return jsonify({'has_token': True, 'refused': False})
 
 
 @bp.route('/api/psn/save-npsso', methods=['POST'])
@@ -1826,25 +1864,25 @@ def api_psn_save_npsso():
     if not npsso:
         return error(_('No NPSSO token provided'), 400)
 
-    # Save to user settings
     from services.database import get_request_db
     db = get_request_db()
-    db.execute("UPDATE user_settings SET psn_npsso = ?, psn_username = ? WHERE user_id = ?",
-               (npsso, username, g.user['id']))
-    db.commit()
+    row = db.execute("SELECT psn_npsso FROM user_settings WHERE user_id = ?",
+                     (g.user['id'],)).fetchone()
+    is_new = not row or row[0] != npsso
 
-    # Test the connection
-    psnawp, psn_error = create_psn_client(npsso)
+    # A new token signs in by itself; otherwise the cached session would
+    # answer and the token would go unused until it expired. Nothing is saved
+    # until the sign-in works, so a refused token leaves a working one alone
+    # (PASS-59-111).
+    psnawp, psn_error = create_psn_client(npsso, use_cache=not is_new)
     if psn_error:
         return error(psn_error, 400)
 
     try:
         online_id = psnawp.me().online_id
-        # Update username if we got it from PSN
-        if online_id and not username:
-            db.execute("UPDATE user_settings SET psn_username = ? WHERE user_id = ?",
-                       (online_id, g.user['id']))
-            db.commit()
+        db.execute("UPDATE user_settings SET psn_npsso = ?, psn_username = ? WHERE user_id = ?",
+                   (npsso, username or online_id or '', g.user['id']))
+        db.commit()
         return success(username=online_id or username)
     except Exception as e:
         # PASS-59-114 — the exception text stays in the log, not the reply.

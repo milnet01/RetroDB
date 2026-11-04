@@ -94,10 +94,24 @@ def test_achievement_system_page_has_the_tabs():
 
 
 def test_no_retroachievements_games_opens_the_rpcs3_tab(client, monkeypatch):
+    monkeypatch.setattr('app.get_current_user',
+                        lambda: {'id': 2, 'username': 'viewer', 'role': 'viewer'})
     monkeypatch.setattr('routes.achievements.query', lambda *a, **k: None)
     resp = client.get('/achievements')
     assert resp.status_code == 302
     assert resp.headers['Location'].endswith('/trophies')
+
+
+def test_no_retroachievements_games_shows_an_admin_the_find_button(client, monkeypatch):
+    # PASS-59-232: the button that links games lives on this tab, so a
+    # library with none linked must still reach it.
+    monkeypatch.setattr('routes.achievements.query', lambda *a, **k: None)
+    resp = client.get('/achievements')
+    assert resp.status_code == 200
+    soup = BeautifulSoup(resp.data, 'html.parser')
+    assert soup.find(id='refreshRABtn') is not None
+    tab = soup.select_one('.achievement-tabs [aria-current=page]')
+    assert tab.get_text(strip=True).endswith('RetroAchievements')
 
 
 @pytest.mark.parametrize('page', TOOL_PAGES + ['/reports'])

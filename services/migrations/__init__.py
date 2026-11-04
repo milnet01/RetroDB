@@ -55,6 +55,13 @@ MIGRATIONS = [
     '028_clear_save_type_guesses',
     '029_clear_franchise_guesses',
     '030_tidy_stored_text',
+    '031_hltb_id_and_players',
+    '032_games_ra_copy_fits',
+    '033_platform_play_time',
+    '034_arcade_category',
+    '035_removed_screenshots',
+    '036_games_game_logo',
+    '037_games_boxart_back',
 ]
 
 

@@ -58,6 +58,15 @@
 {% set is_platform_import = is_clz_import or is_steam_import or is_xbox_import or is_psn_import %}
 <div class="game-page-header">
     <div class="game-title-row">
+        {# PASS-59-224 — the logo sits above the title, which stays text. alt=""
+           because the title says the same. #}
+        {% if game.game_logo %}
+        <div class="game-page-logo-line">
+        <img src="{{ url_for('static', filename='images/game_logos/' + game.game_logo) }}"
+             alt="" class="game-page-logo" decoding="async"
+             data-on-error="hide">
+        </div>
+        {% endif %}
         <h1 class="game-page-title">{{ game.title }}</h1>
         {% if is_clz_import %}
         <span class="platform-import-badge clz" title="{{ _('CLZ Import - No ROM file') }}"><img src="{{ url_for('static', filename='images/trophies/clz-games-web.svg') }}" alt="CLZ" class="platform-import-icon"> {{ _('CLZ Import') }}</span>
@@ -94,12 +103,17 @@
     {% endif %}
     <div class="header-buttons">
         {% if can_play and has_perm('launch') %}
-        <button type="button" id="play-btn" class="btn btn-primary" data-game-id="{{ game.id }}" data-on-click="launchGame" data-args='["$this"]' title="{{ _('Launch this game in the configured emulator') }}">
+        {% if play_emulator %}
+        <button type="button" id="play-btn" class="btn btn-primary" data-game-id="{{ game.id }}" data-game-title="{{ game.title }}" data-logo="{{ game.game_logo or '' }}" data-fanart="{{ game.fanart or '' }}" data-on-click="launchGame" data-args='["$this"]' title="{{ _('Launch this game in the configured emulator') }}">
+        {% else %}
+        {# PASS-59-197 — no emulator: Play looks disabled but stays clickable (aria-disabled,
+           not disabled) so its tooltip shows and a click explains why. #}
+        {% set no_emu_msg = _('No emulator is set up for this system.') %}
+        <button type="button" id="play-btn" class="btn btn-primary" aria-disabled="true" data-on-click="showModal" data-args="{{ [_('Play'), no_emu_msg]|tojson|forceescape }}" title="{{ no_emu_msg }}">
+        {% endif %}
             <span class="btn-icon">▶</span>
             {{ _('Play') }}
         </button>
-        {# PASS-59-197 — why Play has no emulator. The Emulator settings heading names one it has. #}
-        {% if not play_emulator %}<span class="play-emulator">{{ _('No emulator is set up for this system.') }}</span>{% endif %}
         {% if keyboard_play %}
         {# PASS-59-152 — keyboard computers start in game focus. #}
         <a href="{{ url_for('help_page') }}#emulators-play" class="play-key-hint">⌨ {{ _('Keyboard game: press Scroll Lock for RetroArch keys') }}</a>
@@ -189,9 +203,35 @@
                     <span id="boxartToggleText">{% if show_3d_initially %}2D{% else %}3D{% endif %}</span>
                 </button>
                 {% endif %}
+                {# PASS-59-225 — the back of the box, behind a Back button. It zooms
+                   as a plain picture, never the Slipcase 3D box. #}
+                {% if game.boxart_back %}
+                <img src="{{ url_for('static', filename='images/boxart_back/' + game.boxart_back) }}"
+                     alt="{{ _('Back of the box') }}"
+                     class="game-boxart-image clickable boxart-back"
+                     id="boxartBack"
+                     loading="lazy" decoding="async"
+                     style="display: none;"
+                     data-zoom-url="{{ url_for('static', filename='images/boxart_back/' + game.boxart_back) }}" data-on-click="openBoxartZoom" data-args='["$this.dataset.zoomUrl", true]'
+                     title="{{ _('Click to zoom') }}">
+                <button type="button" class="boxart-back-btn" id="boxartBackBtn" data-on-click="toggleBoxartBack"
+                        aria-pressed="false" title="{{ _('Show the back of the box') }}"
+                        data-label-back="{{ _('Back') }}" data-title-back="{{ _('Show the back of the box') }}"
+                        data-label-front="{{ _('Front') }}" data-title-front="{{ _('Show the front of the box') }}">
+                    <span id="boxartBackText">{{ _('Back') }}</span>
+                </button>
+                {% endif %}
                 <!-- Hidden placeholder for missing images -->
                 <div class="game-boxart-empty" id="boxartPlaceholder" style="display: none;">
                     <span class="boxart-empty-icon">🎮</span>
+                </div>
+            {% elif game.game_logo %}
+                {# PASS-59-224 — no box: the logo stands in, 🎮 if it fails to load. #}
+                <div class="game-boxart-empty game-boxart-logo">
+                    <img src="{{ url_for('static', filename='images/game_logos/' + game.game_logo) }}"
+                         alt="" class="game-boxart-logo-image" decoding="async"
+                         data-on-error="hide-show-next">
+                    <span class="boxart-empty-icon" style="display: none;">🎮</span>
                 </div>
             {% else %}
                 <div class="game-boxart-empty">
@@ -336,6 +376,10 @@
                 {% endif %}
             </div>
             
+            {% if steam_play %}
+            <p class="text-muted">{% if steam_play.minutes >= 60 %}{{ _('Played on Steam: %(hours)s h %(minutes)s min', hours=(steam_play.minutes // 60)|format_number, minutes=steam_play.minutes % 60) }}{% else %}{{ _('Played on Steam: %(minutes)s min', minutes=steam_play.minutes) }}{% endif %}{% if steam_play.last_played %} · {{ _('Last played: %(date)s', date=steam_play.last_played|timestamp_to_date) }}{% endif %}</p>
+            {% endif %}
+
             <!-- Achievements & Trophies Row -->
             {% set has_any_achievements = (game.ra_game_id and retroachievements and retroachievements.has_achievements) or steam_counts or xbox_counts or psn_progress or (trophy_info and trophy_info[0]) %}
             {% if has_any_achievements %}
@@ -351,6 +395,8 @@
                         <div class="achievement-info">
                             <span class="achievement-label">{{ _('RetroAchievements') }}</span>
                             {% if retroachievements.title %}<span class="achievement-ra-title">{{ retroachievements.title }}</span>{% endif %}
+                            {% if game.ra_copy_fits == 1 %}<span class="achievement-ra-title">{{ _('Your copy earns achievements') }}</span>
+                            {% elif game.ra_copy_fits == 0 %}<span class="achievement-ra-title">{{ _('RetroAchievements does not list your copy, so it may not earn achievements') }}</span>{% endif %}
                             <div class="achievement-progress">
                                 <span class="achievement-bar"><span class="achievement-fill ra-fill" style="width: {{ ra_pct }}%"></span></span>
                                 <span class="achievement-stats">{{ ra_earned|format_number }} / {{ ra_total|format_number }}</span>
@@ -586,9 +632,10 @@
                 <div id="hltbSaved" style="{% if game.playtime_estimate %}display: block;{% else %}display: none;{% endif %}">
                     {% if game.hltb_match_name %}
                     <div class="hltb-match-header">
-                        <span class="hltb-match-title">{{ game.hltb_match_name }}</span>
+                        <span class="hltb-match-title">{% if game.hltb_id %}<a href="https://howlongtobeat.com/game/{{ game.hltb_id }}" target="_blank" rel="noopener noreferrer">{{ game.hltb_match_name }}</a>{% else %}{{ game.hltb_match_name }}{% endif %}</span>
                         {% if game.hltb_match_platform %}<span class="hltb-match-platform">{{ game.hltb_match_platform }}</span>{% endif %}
                         {% if game.hltb_match_confidence %}<span class="hltb-match-confidence">{% trans pct=[(game.hltb_match_confidence * 100) | round | int, 100] | min %}{{ pct }}% match{% endtrans %}</span>{% endif %}
+                        {% if game.hltb_players %}<span class="hltb-match-platform">{{ _('Players who timed it: %(count)s', count=game.hltb_players|format_number) }}</span>{% endif %}
                     </div>
                     {% endif %}
                     <div class="hltb-results">
@@ -1683,7 +1730,8 @@ body:has(.game-fanart-bg.active)::before {
     position: relative;
 }
 
-.boxart-toggle-btn {
+.boxart-toggle-btn,
+.boxart-back-btn {
     position: absolute;
     bottom: 10px;
     right: 10px;
@@ -1702,14 +1750,22 @@ body:has(.game-fanart-bg.active)::before {
     z-index: 10;
 }
 
-.boxart-toggle-btn:hover {
+.boxart-toggle-btn:hover,
+.boxart-back-btn:hover {
     background: rgba(76, 201, 240, 0.2);
     box-shadow: 0 0 10px rgba(76, 201, 240, 0.4);
 }
 
-.boxart-toggle-btn.active {
+.boxart-toggle-btn.active,
+.boxart-back-btn.active {
     background: rgba(76, 201, 240, 0.3);
     border-color: var(--neon-cyan);
+}
+
+/* PASS-59-225 — Back sits opposite the 2D/3D button and shares its look. */
+.boxart-back-btn {
+    left: 10px;
+    right: auto;
 }
 
 /* Age Ratings (bottom of hero-info) */
@@ -1725,6 +1781,7 @@ body:has(.game-fanart-bg.active)::before {
     height: 36px;
     width: auto;
     display: block;
+    margin-inline: auto;
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
     transition: transform 0.15s ease;
 }
@@ -3897,7 +3954,7 @@ function confirmRemoveMedia(field, title, message) {
     });
 }
 function confirmResetMetadata() {
-    showConfirm('🗑️ Reset Metadata', 'Reset all metadata including boxart and screenshots? This cannot be undone.', function() {
+    showConfirm('🗑️ ' + {{ _('Reset Metadata')|tojson }}, {{ _('Reset all metadata including boxart and screenshots? This cannot be undone.')|tojson }}, function() {
         document.getElementById('resetMetadataForm').submit();
     });
 }
@@ -4007,7 +4064,7 @@ async function confirmRename() {
             closeRenameModal();
             
             // Show success message
-            showModal('✅ Success', 'ROM file renamed successfully!');
+            showModal('✅ ' + {{ _('Success')|tojson }}, {{ _('ROM file renamed successfully!')|tojson }});
         } else {
             errorEl.textContent = data.error || 'Failed to rename file.';
             errorEl.classList.add('show');
@@ -4160,7 +4217,7 @@ function initEditExclusiveToggle() {
     const isExclusive = !currentValue || currentValue.toLowerCase() === 'exclusive';
 
     toggle.checked = isExclusive;
-    label.textContent = isExclusive ? t('Exclusive') : t('Multi-platform');
+    label.textContent = isExclusive ? {{ _('Exclusive')|tojson }} : {{ _('Multi-platform')|tojson }};
     input.style.display = isExclusive ? 'none' : 'block';
     if (isExclusive) input.value = 'Exclusive';
 }
@@ -4171,11 +4228,11 @@ function updateEditExclusiveToggle() {
     const input = document.getElementById('edit_other_platforms');
 
     if (toggle.checked) {
-        label.textContent = t('Exclusive');
+        label.textContent = {{ _('Exclusive')|tojson }};
         input.style.display = 'none';
         input.value = 'Exclusive';
     } else {
-        label.textContent = t('Multi-platform');
+        label.textContent = {{ _('Multi-platform')|tojson }};
         input.style.display = 'block';
         if (input.value.toLowerCase() === 'exclusive') {
             input.value = '';
@@ -4198,7 +4255,7 @@ function initEditFranchiseToggle() {
     const isStandalone = !currentValue || currentValue.toLowerCase() === 'standalone';
 
     toggle.checked = isStandalone;
-    label.textContent = isStandalone ? t('Standalone') : t('Part of a Series');
+    label.textContent = isStandalone ? {{ _('Standalone')|tojson }} : {{ _('Part of a Series')|tojson }};
     input.style.display = isStandalone ? 'none' : 'block';
     if (isStandalone) input.value = '';
 }
@@ -4209,11 +4266,11 @@ function updateEditFranchiseToggle() {
     const input = document.getElementById('edit_franchise');
 
     if (toggle.checked) {
-        label.textContent = t('Standalone');
+        label.textContent = {{ _('Standalone')|tojson }};
         input.style.display = 'none';
         input.value = '';
     } else {
-        label.textContent = t('Part of a Series');
+        label.textContent = {{ _('Part of a Series')|tojson }};
         input.style.display = 'block';
     }
 }
@@ -4438,8 +4495,8 @@ window.addEventListener('resize', updateScreenshotsScrollable);
 
 function confirmClearMetadata() {
     showConfirm(
-        '🗑️ Clear Metadata',
-        'Clear all metadata including boxart, screenshots, and videos? This cannot be undone.',
+        '🗑️ ' + {{ _('Clear Metadata')|tojson }},
+        {{ _('Clear all metadata including boxart, screenshots, and videos? This cannot be undone.')|tojson }},
         function() {
             const form = document.createElement('form');
             form.method = 'POST';
@@ -4467,17 +4524,17 @@ function triggerPageAiFill(btn) {
             if (data.success) {
                 const count = data.filled_count || 0;
                 if (count > 0) {
-                    showNotification(`AI filled ${count} field${count !== 1 ? 's' : ''}: ${data.filled_fields.join(', ')}`, 'success');
+                    showNotification(t({{ _('Fields the AI filled ({count}): {fields}')|tojson }}, {count: count, fields: data.filled_fields.join(", ")}), 'success');
                     setTimeout(() => location.reload(), 1200);
                 } else {
-                    showNotification('AI found no missing fields to fill', 'info');
+                    showNotification({{ _('AI found no missing fields to fill')|tojson }}, 'info');
                 }
             } else {
-                showNotification(data.error || 'AI fill failed', 'error');
+                showNotification(data.error || {{ _('AI fill failed')|tojson }}, 'error');
             }
         })
         .catch(err => {
-            showNotification('AI fill request failed: ' + err.message, 'error');
+            showNotification(t({{ _('AI fill request failed: {error}')|tojson }}, {error: err.message}), 'error');
         })
         .finally(() => {
             btn.disabled = false;
@@ -5085,8 +5142,9 @@ function deleteGame(gameId) {
         : {{ url_for("games.all_games")|tojson }};
 
     showConfirm(
-        '🗑️ Delete Game',
-        `Are you sure you want to delete "${gameTitle}" from the database?\n\nThis will remove the game entry from RetroDB but will NOT delete the actual ROM file.`,
+        '🗑️ ' + {{ _('Delete Game')|tojson }},
+        t({{ _('Are you sure you want to delete "{title}" from the database?')|tojson }}, {title: gameTitle}) + '\n\n'
+            + {{ _('This will remove the game entry from RetroDB but will NOT delete the actual ROM file.')|tojson }},
         async function() {
             try {
                 const response = await fetch(`/api/delete-game/${gameId}`, {
@@ -5099,15 +5157,15 @@ function deleteGame(gameId) {
                 const data = await response.json();
 
                 if (data.success) {
-                    showModal('✅ Game Deleted', `Game "${gameTitle}" has been removed from the database.`, function() {
+                    showModal('✅ ' + {{ _('Game Deleted')|tojson }}, t({{ _('Game "{title}" has been removed from the database.')|tojson }}, {title: gameTitle}), function() {
                         window.location.href = returnUrl;
                     });
                 } else {
-                    showModal('❌ Error', data.error || 'Failed to delete game');
+                    showModal('❌ ' + {{ _('Error')|tojson }}, data.error || {{ _('Failed to delete game')|tojson }});
                 }
             } catch (error) {
                 console.error('Delete error:', error);
-                showModal('❌ Error', 'An error occurred while deleting the game.');
+                showModal('❌ ' + {{ _('Error')|tojson }}, {{ _('An error occurred while deleting the game.')|tojson }});
             }
         }
     );
@@ -5438,7 +5496,7 @@ function generateSortTitle() {
     
     // Show a brief notification
     if (typeof showNotification === 'function') {
-        showNotification('Sort title generated', 'success');
+        showNotification({{ _('Sort title generated')|tojson }}, 'success');
     }
 }
 
@@ -5559,7 +5617,7 @@ let pendingHltbData = null;
 async function lookupHLTB() {
     const query = document.getElementById('hltbSearchQuery').value.trim();
     if (!query) {
-        showNotification('Please enter a game title', 'warning');
+        showNotification({{ _('Please enter a game title')|tojson }}, 'warning');
         return;
     }
 
@@ -5632,18 +5690,18 @@ async function lookupHLTB() {
 
             if (pendingHltbData.matched_via_alternate && pendingHltbData.search_term_used) {
                 showNotification(
-                    `Matched via alternate title "${pendingHltbData.search_term_used}" — HLTB shows it as "${pendingHltbData.match_name}". Confirm before saving.`,
+                    t({{ _('Matched via alternate title "{term}" — HLTB shows it as "{name}". Confirm before saving.')|tojson }}, {term: pendingHltbData.search_term_used, name: pendingHltbData.match_name}),
                     'warning',
                     9000
                 );
             } else {
-                showNotification('Match found - please confirm to save', 'info');
+                showNotification({{ _('Match found - please confirm to save')|tojson }}, 'info');
             }
         } else {
-            showNotification(data.error || 'No HLTB data found', 'warning');
+            showNotification(data.error || {{ _('No HLTB data found')|tojson }}, 'warning');
         }
     } catch (error) {
-        showNotification('Error looking up HLTB', 'error');
+        showNotification({{ _('Error looking up HLTB')|tojson }}, 'error');
     } finally {
         btn.disabled = false;
         btn.innerHTML = '🔍 Lookup HLTB';
@@ -5710,12 +5768,12 @@ async function confirmHLTB() {
             document.getElementById('hltbPending').style.display = 'none';
             savedSection.style.display = 'block';
 
-            showNotification('HLTB data saved', 'success');
+            showNotification({{ _('HLTB data saved')|tojson }}, 'success');
         } else {
-            showNotification(data.error || 'Failed to save HLTB data', 'error');
+            showNotification(data.error || {{ _('Failed to save HLTB data')|tojson }}, 'error');
         }
     } catch (error) {
-        showNotification('Error saving HLTB data', 'error');
+        showNotification({{ _('Error saving HLTB data')|tojson }}, 'error');
     }
 
     pendingHltbData = null;
@@ -5730,23 +5788,23 @@ function cancelHLTB() {
     if (hasData && hasData.textContent !== '--') {
         savedSection.style.display = 'block';
     }
-    showNotification('HLTB lookup cancelled', 'info');
+    showNotification({{ _('HLTB lookup cancelled')|tojson }}, 'info');
 }
 
 async function clearHLTB() {
-    showConfirm('🗑️ Clear HLTB Data', 'Clear HLTB data for this game?', async () => {
+    showConfirm('🗑️ ' + {{ _('Clear HLTB Data')|tojson }}, {{ _('Clear HLTB data for this game?')|tojson }}, async () => {
         try {
             const response = await fetch('/api/hltb-clear/{{ game.id }}', { method: 'POST' });
             const data = await response.json();
 
             if (data.success) {
                 document.getElementById('hltbSaved').style.display = 'none';
-                showNotification('HLTB data cleared', 'success');
+                showNotification({{ _('HLTB data cleared')|tojson }}, 'success');
             } else {
-                showNotification(data.error || 'Failed to clear HLTB data', 'error');
+                showNotification(data.error || {{ _('Failed to clear HLTB data')|tojson }}, 'error');
             }
         } catch (error) {
-            showNotification('Error clearing HLTB data', 'error');
+            showNotification({{ _('Error clearing HLTB data')|tojson }}, 'error');
         }
     });
 }
@@ -5757,7 +5815,7 @@ async function clearHLTB() {
 
 // A game with Slipcase faces zooms to the turnable box, whichever cover was
 // clicked; otherwise the clicked picture (PASS-59-143, user 2026-10-23).
-function openBoxartZoom(imageUrl) {
+function openBoxartZoom(imageUrl, plainPicture) {
     const modal = document.getElementById('boxartZoomModal');
     const img = document.getElementById('boxartZoomImage');
     // The page's .content-wrapper (z-index 1) caps any z-index inside it, so
@@ -5766,7 +5824,8 @@ function openBoxartZoom(imageUrl) {
     // viewer does (main.js).
     document.body.appendChild(modal);
     modal.classList.add('active');
-    const showsBox = window.BoxViewer ? BoxViewer.show() : false;
+    // The box back (PASS-59-225) is a plain picture, never the 3D box.
+    const showsBox = !plainPicture && window.BoxViewer ? BoxViewer.show() : false;
     img.style.display = showsBox ? 'none' : '';
     if (!showsBox) img.src = imageUrl;
 }
@@ -5814,6 +5873,47 @@ function toggleBoxartView() {
     }
 }
 
+// PASS-59-225 — Back shows the back of the box in the cover's place; pressed
+// again it brings back whichever front (2D or 3D) was showing.
+let showingBoxBack = false;
+let frontBeforeBack = null;
+
+function toggleBoxartBack() {
+    const back = document.getElementById('boxartBack');
+    const btn = document.getElementById('boxartBackBtn');
+    const frontToggle = document.querySelector('.boxart-toggle-btn');
+    if (!back || !btn) return;
+    showingBoxBack = !showingBoxBack;
+    if (showingBoxBack) {
+        frontBeforeBack = ['boxart2d', 'boxart3d']
+            .map(id => document.getElementById(id))
+            .find(img => img && img.style.display !== 'none') || null;
+        if (frontBeforeBack) frontBeforeBack.style.display = 'none';
+        back.style.display = 'block';
+    } else {
+        back.style.display = 'none';
+        if (frontBeforeBack) frontBeforeBack.style.display = 'block';
+    }
+    if (frontToggle) frontToggle.style.display = showingBoxBack ? 'none' : '';
+    btn.classList.toggle('active', showingBoxBack);
+    btn.setAttribute('aria-pressed', String(showingBoxBack));
+    // Labels come translated from the page: this script's strings are not extracted.
+    btn.title = showingBoxBack ? btn.dataset.titleFront : btn.dataset.titleBack;
+    document.getElementById('boxartBackText').textContent =
+        showingBoxBack ? btn.dataset.labelFront : btn.dataset.labelBack;
+}
+
+// A back whose file is gone takes its button with it, and the front returns.
+document.addEventListener('DOMContentLoaded', function() {
+    const back = document.getElementById('boxartBack');
+    if (!back) return;
+    back.addEventListener('error', function() {
+        if (showingBoxBack) toggleBoxartBack();
+        const btn = document.getElementById('boxartBackBtn');
+        if (btn) btn.remove();
+        back.remove();
+    }, { once: true });
+});
 
 // FU.1 — per-page error handler for the 3D boxart. Two-step fallback (hide
 // 3D → swap to 2D if present → else show the shared placeholder) doesn't
@@ -5841,8 +5941,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function deleteScreenshot(filename) {
     showConfirm(
-        '🗑️ Delete Screenshot',
-        `Are you sure you want to delete this screenshot?`,
+        '🗑️ ' + {{ _('Delete Screenshot')|tojson }},
+        {{ _('Are you sure you want to delete this screenshot?')|tojson }},
         async function() {
             try {
                 const response = await fetch('/api/delete-screenshot/{{ game.id }}', {
@@ -5855,10 +5955,10 @@ async function deleteScreenshot(filename) {
                 const contentType = response.headers.get('content-type') || '';
                 if (!contentType.includes('application/json')) {
                     if (response.redirected || response.url.includes('/login')) {
-                        showNotification('Session expired — please log in again', 'warning');
+                        showNotification({{ _('Session expired — please log in again')|tojson }}, 'warning');
                         return;
                     }
-                    showNotification('Server error — please try again', 'error');
+                    showNotification({{ _('Server error — please try again')|tojson }}, 'error');
                     return;
                 }
 
@@ -5886,13 +5986,13 @@ async function deleteScreenshot(filename) {
                         if (section) section.style.display = 'none';
                     }
 
-                    showNotification('Screenshot deleted', 'success');
+                    showNotification({{ _('Screenshot deleted')|tojson }}, 'success');
                 } else {
-                    showNotification(data.error || 'Failed to delete screenshot', 'error');
+                    showNotification(data.error || {{ _('Failed to delete screenshot')|tojson }}, 'error');
                 }
             } catch (error) {
                 console.error('Delete screenshot error:', error);
-                showNotification('Failed to delete screenshot: ' + error.message, 'error');
+                showNotification(t({{ _('Failed to delete screenshot: {error}')|tojson }}, {error: error.message}), 'error');
             }
         }
     );

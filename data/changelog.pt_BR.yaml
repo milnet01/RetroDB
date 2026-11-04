@@ -1,3 +1,148 @@
+- version: 4.0.0
+  date: '2026-11-04'
+  tags:
+  - type: fix
+    label: As verificações do próprio RetroDB não podem mais mexer na sua biblioteca enquanto rodam. Elas sempre usam uma cópia descartável do banco de dados, das imagens e das configurações, e se recusam a iniciar se qualquer um deles apontar para os seus arquivos reais
+  - type: fix
+    label: Limpar arquivos órfãos não exclui mais as imagens da sua Lista de Desejos. Abrir um jogo não faz mais com que ele esqueça capturas de tela que não encontra. Antes, com o disco das imagens desconectado, todo jogo aberto perdia a lista inteira de capturas de tela; agora a lista é mantida e a imagem ausente apenas fica oculta
+  - type: fix
+    label: Um download de vídeo ou manual que falha no meio não danifica mais a cópia que o jogo já tinha, e um download com falha não deixa mais um meio arquivo oculto na pasta de mídia. O ampliador de imagens em segundo plano não salva mais uma imagem antiga por cima de uma mais nova baixada nesse meio-tempo. Converter para WebP mantém apontando para a imagem todos os jogos que a compartilham, e nunca mexe em arquivos fora das pastas de imagens
+  - type: fix
+    label: Excluir um jogo ou um item da Lista de Desejos agora também exclui suas imagens, vídeos e manuais, mas mantém aqueles que outro jogo ou item da Lista de Desejos ainda usa. As imagens salvas podem ser lidas de novo por outras contas no computador, e Redimensionar Imagens conta como falha uma imagem que não conseguiu salvar, e não como concluída
+  - type: fix
+    label: O Localizador de Duplicados não sugere mais excluir um arquivo que está em uso. Ao buscar por nome, não considera mais os arquivos .cue e .bin de um jogo como cópias um do outro. Nunca sugere o arquivo de faixa de um disco, que duas versões de um jogo podem compartilhar. Não exclui um disco que consta em uma playlist. Um jogo cujo arquivo você exclui agora passa para a cópia que você mantém, e continua na Biblioteca
+  - type: fix
+    label: Organizar Multidisco não sobrescreve mais uma playlist existente nem um arquivo que já está na pasta do jogo; ele para e informa qual. A playlist que ele cria lista o .cue de cada disco, e não seus arquivos de faixa. Os jogos cujos arquivos ele move agora os acompanham até a pasta, então Limpar ROMs ausentes não os remove mais
+  - type: fix
+    label: Converter para CHD com "excluir originais" agora exclui também os arquivos de faixa do disco, mas mantém uma faixa que outro .cue ainda usa. O jogo e qualquer playlist que listava o disco antigo agora apontam para o novo .chd. Renomear o arquivo de um jogo agora atualiza a playlist que o lista, e um arquivo de faixa de que um .cue precisa não pode ser renomeado. Remover arquivos de um zip remove só os arquivos escolhidos, mesmo quando o nome tem [ ou ]. A Remoção de Capturas Duplicadas exclui apenas as cópias encontradas na verificação e sempre mantém uma
+  - type: fix
+    label: O How Long to Beat na página de um jogo busca o que você digitar. Antes, um título não encontrado fazia a busca usar os outros nomes do jogo, e ela podia sugerir um jogo diferente, como um remake feito por fãs. Ele ainda tenta os outros nomes quando o campo contém o nome do próprio jogo
+  - type: fix
+    label: Os passos do How Long to Beat no manual de ajuda agora correspondem à tela. Eles diziam para escolher um resultado em uma lista; a página mostra um resultado com Salvar e Cancelar. A ajuda do PlayStation não diz mais que o login dura cerca de dois meses, pois o RetroDB entra de novo sozinho. Todos os 20 manuais traduzidos trazem as duas mudanças
+  - type: fix
+    label: Toda barra de letras agora começa com um botão Todos. Nas páginas Biblioteca, de console e Troféus PSN, escolher uma letra mostra só os jogos dela, e antes não havia botão para trazer o restante de volta. Nas outras páginas de conquistas, Todos volta ao primeiro jogo
+  - type: fix
+    label: Um novo token de login do PlayStation colado em Configurações agora é usado imediatamente. Antes, o RetroDB continuava usando o login antigo até ele expirar, e Salvar e Testar Conexão informava que esse login antigo estava funcionando. Um token recusado pela Sony não substitui mais um que funciona
+  - type: enhancement
+    label: 'O login do PlayStation em Configurações ficou mais fácil de manter. O aviso não conta mais dias em que você não precisava fazer nada, pois o RetroDB entra de novo sozinho; ele só fica vermelho quando a Sony recusa o seu token salvo. O botão Colar aqui não faz mais o navegador pedir para ler a sua área de transferência: ele coloca o cursor na caixa para você usar Ctrl+V. Os passos agora dizem para sair do PlayStation antes ao trocar um token que ainda funciona, e suas mensagens podem ser traduzidas'
+  - type: enhancement
+    label: Mensagens pop-up e caixas de pergunta, como "Configurações salvas" ou "Excluir esta lista?", agora podem ser traduzidas em todas as páginas. Antes, a maioria ficava em inglês, qualquer que fosse o idioma escolhido
+  - type: enhancement
+    label: As mensagens que explicam por que um login do PlayStation falhou, como "Your NPSSO may have expired", agora podem ser traduzidas
+  - type: fix
+    label: O manual de ajuda em todos os idiomas agora corresponde ao em inglês. Ele ganha Pesquisar em Qualquer Lugar, Manter um Título, Nomes MAME e o verso da caixa, e os parágrafos antigos que estavam desatualizados foram atualizados
+  - type: fix
+    label: Em alemão, africâner e espanhol, o botão Voltar na capa de um jogo agora diz o verso da caixa, e não "voltar"
+  - type: feature
+    label: Ao pressionar Jogar, a tela agora é preenchida com o logo do jogo sobre a imagem de fundo enquanto o jogo inicia, ou com o nome em letras grandes quando não há logo. Ela some sozinha quando a janela do jogo abre, ou quando você pressiona Esc ou clica
+  - type: feature
+    label: 'A caixa 3D giratória agora tem o formato real de uma caixa de PS5: cantos e bordas arredondados, a borda elevada ao redor da capa, a linha onde as duas metades se encontram e o recorte para o dedo no lado de abertura. Ela precisa de um arquivo de caixa de uma versão do Slipcase que grave o formato; importe a caixa de novo para obtê-lo. As outras caixas continuam como antes'
+  - type: enhancement
+    label: Atualizar RetroAchievements saiu de Configurações para a página RetroAchievements e agora se chama Encontrar Jogos com Conquistas. Cada botão ali agora tem uma linha explicando o que faz, para ficar fácil distinguir Encontrar Jogos e Sincronizar Progresso. Sem jogos vinculados ainda, a página mostra ao administrador o botão Encontrar, em vez de passar para a próxima aba
+  body: "<ul>\n  <li><strong>O manual de ajuda está atualizado em todos os idiomas.</strong>\n    As seções que existiam só no manual em inglês agora estão traduzidas.</li>\n</ul>\n"
+- version: 3.35.4
+  date: '2026-11-03'
+  tags:
+  - type: fix
+    label: Uma captura de tela que você exclui de um jogo agora continua excluída. Antes, a próxima busca de metadados podia copiá-la de volta do ES-DE ou baixá-la de novo de uma fonte online. Excluir uma cópia extra na ferramenta Capturas de Tela Duplicadas não conta, porque a imagem continua guardada uma vez
+  - type: feature
+    label: 'Os jogos agora têm logotipo: a busca de metadados o salva do ES-DE, ScreenScraper, TheGamesDB, IGDB e Steam, e a página do jogo o mostra acima do título, ou no lugar de uma caixa ausente. Você pode enviar ou excluir um logotipo na janela Editar. Faça uma busca de metadados em massa com Preencher Faltantes para preencher os logotipos de jogos que você já buscou antes'
+  - type: fix
+    label: O IGDB não usa mais o logotipo de um jogo como plano de fundo da página
+  - type: feature
+    label: 'Os jogos agora têm o verso da caixa: a busca de metadados o salva do ES-DE, ScreenScraper e TheGamesDB, e um botão Verso na capa da página do jogo o mostra. Clique no verso para ampliá-lo. Você pode enviar ou excluir um verso na janela Editar. Os versos são preenchidos sempre que um jogo é buscado; Preencher Faltantes não busca os metadados de um jogo de novo só por causa do verso'
+  - type: fix
+    label: Um jogo sem capa frontal no TheGamesDB não recebe mais o verso da caixa como capa
+  - type: fix
+    label: Se você desativar um buscador em Configurações enquanto uma busca de metadados em massa está em andamento, a contagem de jogos não encontrados agora fica correta a partir do próximo jogo. Antes, um jogo podia ser contado como interrompido
+  - type: enhancement
+    label: Em um sistema sem emulador configurado, o botão Jogar fica esmaecido. Aponte para ele para ver o motivo, ou clique nele para abrir uma caixa informando que não há emulador configurado. Antes, havia uma linha de texto ao lado do botão
+  body: "<ul>\n  <li><strong>Jogos ganham logotipo.</strong> A busca de metadados salva o\n    logotipo de cada jogo, e a página do jogo o mostra acima do título, ou no lugar de uma\n    caixa ausente. Faça uma busca de metadados em massa com Preencher Faltantes para preencher os logotipos de\n    jogos que você já buscou antes.</li>\n  <li><strong>Jogos ganham o verso da caixa.</strong> Um botão Verso na\n    capa da página do jogo o mostra, e você pode clicar nele para ampliar. Os versos\n    são preenchidos sempre que um jogo é buscado.</li>\n  <li><strong>Uma captura de tela excluída continua excluída.</strong> A próxima busca de metadados\n    não a copia de volta nem a baixa de novo.</li>\n  <li><strong>Jogar explica por que não inicia.</strong> Em um sistema sem\n    emulador configurado, o botão Jogar fica esmaecido e informa o motivo.</li>\n</ul>\n"
+- version: 3.35.3
+  date: '2026-11-02'
+  tags:
+  - type: feature
+    label: 'Nova ferramenta Nomes MAME em Ferramentas de ROM: os jogos do MAME recebem nome real, ano e fabricante da própria lista do MAME, e os arquivos mantêm os nomes curtos. Depois, uma busca de metadados encontra cada jogo, e você pode filtrar a lista do MAME por categoria, por exemplo para deixar de fora caça-níqueis. Os conjuntos de BIOS ficam ocultos da lista'
+  - type: fix
+    label: Os Relatórios de ROM não oferecem mais renomear arquivos do MAME, porque um arquivo renomeado deixa de funcionar no MAME
+  - type: fix
+    label: Configurações agora mostra o que a Microsoft exige antes de registrar um app Xbox. Não foi possível testar o login do Xbox por causa disso
+  - type: enhancement
+    label: O cartão separado Nomes Oficiais saiu do Preencher com AI em massa, porque a opção Nome oficial do preenchimento já faz esse trabalho
+  - type: fix
+    label: Quando a Sony recusa um login salvo da PlayStation, o painel e as Configurações agora avisam e pedem para vincular de novo. Antes, o log mostrava um erro sem sentido a cada início do servidor e nada avisava você
+  - type: feature
+    label: Importar da Steam agora preenche, em segundo plano, a descrição, os créditos, a nota do Metacritic, as classificações etárias, os modos de jogo, a caixa, o fundo e as capturas de tela de cada jogo a partir da página da loja. Use Buscar Metadados em um jogo para obter o gênero e a data de lançamento
+  - type: feature
+    label: Uma sincronização da Steam agora mantém seu tempo de jogo e quando você jogou pela última vez, e a página do jogo mostra esses dados
+  - type: fix
+    label: Buscar Biblioteca na página de importação da Steam agora funciona para um administrador com chave da Steam salva. Antes, enviava à Steam a versão oculta da chave, e a página dizia por engano para deixar seu perfil como Público
+  - type: fix
+    label: Um jogo da Steam ou Xbox que já está na sua biblioteca com o mesmo nome agora é vinculado a esse jogo ao importar, e suas conquistas são sincronizadas. Antes, ele era ignorado e nunca vinculado
+  - type: fix
+    label: Jogos importados da Steam, Xbox e PlayStation agora são ordenados corretamente desde o início, como Final Fantasy IX antes de Final Fantasy X, e os símbolos de marca registrada da Steam ficam fora dos nomes
+  - type: feature
+    label: Em sistemas onde o RetroAchievements usa um hash simples do arquivo, como Mega Drive e Game Boy, a página do jogo informa se sua cópia rende conquistas, e esse hash vincula o jogo certo. Execute RA Refresh para preencher isso
+  - type: fix
+    label: Uma busca de metadados agora consulta o ScreenScraper pelo seu arquivo exato antes de pesquisar por nome, assim ele acha o seu jogo e não outro com título parecido. Resultados que você marcar continuam valendo
+  - type: enhancement
+    label: A caixa de progresso de Redimensionar Imagens agora mostra o jogo e o sistema de cada imagem
+  - type: feature
+    label: Buscar Metadados agora traz telas de título do ScreenScraper e do TheGamesDB, mais nomes oficiais do IGDB e do TheGamesDB (como o título japonês de um jogo), e os outros consoles em que um jogo foi lançado, vindos do IGDB
+  - type: feature
+    label: Um jogo sem nota de usuário agora usa a classificação da sua coleção do ES-DE, se houver
+  - type: feature
+    label: A página do jogo mostra quantos jogadores cronometraram um resultado do HowLongToBeat e tem um link para a página dele. Resultados salvos antes mostram isso na próxima vez que você os buscar
+  - type: feature
+    label: A página do RetroAchievements mostra quantas pessoas jogam um jogo e que parcela delas ganhou cada conquista
+  - type: fix
+    label: O navegador de pastas das Ferramentas de ROM agora abre na sua pasta de ROMs quando não tem pasta inicial, em vez de falhar. Uma resposta corrompida do IGDB agora custa só aquele detalhe, não tudo o que o IGDB enviou sobre o jogo
+  - type: fix
+    label: O limite diário do ScreenScraper agora faz o RetroDB parar de consultar até mais tarde, e uma busca de metadados em massa avisa e segue com as outras fontes. Antes, um limite esgotado parecia "jogo não encontrado" e as chamadas continuavam a noite toda
+  - type: fix
+    label: Um jogo que nenhuma fonte conseguiu responder enquanto um serviço estava no limite não é mais marcado como pesquisado, então a próxima execução tenta de novo
+  - type: fix
+    label: Quando uma chave do TheGamesDB esgota o mês, o RetroDB passa para a sua outra chave e para de consultar quando as duas acabam
+  - type: fix
+    label: O limite mensal do RAWG agora também faz o RetroDB parar de consultar, e o IGDB é mantido dentro do limite de quatro requisições por segundo
+  - type: fix
+    label: A busca em massa do HowLongToBeat agora termina com uma mensagem quando o site diz que recebeu requisições demais, e todas as requisições ao site são espaçadas
+  - type: fix
+    label: Corrigir Regiões de Caixa e Manual não desiste mais após 25 jogos seguidos que o ScreenScraper não conhece. Ele só para quando o ScreenScraper informa que o limite foi atingido
+  - type: fix
+    label: Na página do jogo, cada classificação etária agora fica centralizada acima do rótulo de palpite da AI
+  - type: fix
+    label: A cota do TheGamesDB em Configurações agora usa a verificação que não gasta sua cota, e não mostra mais uma data de renovação inventada quando o serviço não informa nenhuma
+  body: |
+    <ul>
+      <li><strong>Jogos de MAME ganham seus nomes reais.</strong> A nova ferramenta Nomes do MAME, em Ferramentas de ROM, pega nomes, anos e fabricantes da própria lista do MAME.
+        Os arquivos mantêm os nomes curtos, porque o MAME precisa deles. Você pode
+        filtrar a lista do MAME por categoria, e os conjuntos de BIOS ficam ocultos.</li>
+      <li><strong>Importações da Steam trazem muito mais.</strong> Cada jogo preenche a sua
+        descrição, créditos, nota do Metacritic, classificações etárias, modos de jogo e
+        imagens a partir da página da loja. Uma sincronização mantém seu tempo de jogo e a data da
+        última vez que você jogou. Um jogo que já está na sua biblioteca com o mesmo nome agora
+        é vinculado a ele, e assim suas conquistas são sincronizadas.</li>
+      <li><strong>As buscas de metadados encontram o seu jogo exato.</strong> Uma busca consulta o
+        ScreenScraper sobre o seu arquivo exato antes de pesquisar pelo nome. As buscas
+        também trazem telas de título, mais nomes oficiais e os outros consoles em que
+        um jogo foi lançado.</li>
+      <li><strong>RetroAchievements reconhece a sua cópia.</strong> Em sistemas que
+        usam um hash de arquivo simples, como Mega Drive e Game Boy, a página do jogo
+        informa se a sua cópia dá direito a conquistas. Execute Atualizar RA para preencher
+        isso. A página do RetroAchievements também mostra quantas pessoas jogam um jogo
+        e que parcela delas ganhou cada conquista.</li>
+      <li><strong>Os limites online são respeitados.</strong> Quando o ScreenScraper,
+        TheGamesDB ou RAWG atinge o limite, o RetroDB para de consultar até mais tarde
+        e uma busca em massa segue com as outras fontes. Um jogo que nenhuma fonte
+        conseguiu responder naquele momento é tentado de novo na próxima execução.</li>
+      <li><strong>Um login recusado da PlayStation agora é avisado.</strong> O painel
+        e as Configurações agora pedem que você vincule de novo quando a Sony recusa um
+        login salvo.</li>
+      <li><strong>Nomes Oficiais mudou de lugar.</strong> O cartão separado foi removido
+        do Preenchimento em Massa com AI, pois a opção Nome oficial do preenchimento
+        faz o mesmo trabalho.</li>
+    </ul>
 - version: 3.35.2
   date: '2026-11-02'
   tags:

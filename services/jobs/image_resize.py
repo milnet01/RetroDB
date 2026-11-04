@@ -29,6 +29,28 @@ logger = logging.getLogger(__name__)
 IMAGE_TYPES = ('boxart', 'screenshots', 'boxart_3d', 'controllers', 'hardware')
 
 
+def _media_owners():
+    """{image file name: (game title, system name)}, so progress can name the game.
+    Controller and hardware pictures, and files no game lists, are absent. Only
+    the progress display uses this, so a failure must not stop the job."""
+    from services.database import get_db_with_context
+    owners = {}
+    try:
+        with get_db_with_context() as conn:
+            rows = conn.execute("""
+                SELECT g.title, s.name, g.boxart, g.boxart_3d, g.screenshots
+                FROM games g JOIN systems s ON s.id = g.system_id
+            """).fetchall()
+    except Exception as e:
+        logger.warning(f"Image resize: could not read which game owns each image: {e}")
+        return owners
+    for title, system, boxart, boxart_3d, screenshots in rows:
+        for name in [boxart, boxart_3d, *(screenshots or '').split(',')]:
+            if name and name.strip():
+                owners[name.strip()] = (title, system)
+    return owners
+
+
 class ImageResizeJob:
     """Manages bulk image standardization via Real-ESRGAN upscaling and Lanczos downscaling."""
 
@@ -47,6 +69,8 @@ class ImageResizeJob:
         self.total_images = 0
         self.current_file = ""
         self.current_type = ""
+        self.current_game = ""
+        self.current_system = ""
         self.processed_count = 0
         self.skipped_count = 0
         self.upscaled_count = 0
@@ -119,6 +143,8 @@ class ImageResizeJob:
             total_images = self.total_images
             current_file = self.current_file
             current_type = self.current_type
+            current_game = self.current_game
+            current_system = self.current_system
             processed_count = self.processed_count
             skipped_count = self.skipped_count
             upscaled_count = self.upscaled_count
@@ -145,6 +171,8 @@ class ImageResizeJob:
             'total': total_images,
             'current_file': current_file,
             'current_type': current_type,
+            'current_game': current_game,
+            'current_system': current_system,
             'processed': processed_count,
             'skipped': skipped_count,
             'upscaled': upscaled_count,
@@ -243,6 +271,7 @@ class ImageResizeJob:
             for t, c in type_counts.items():
                 logger.info(f"Image resize: {c} {t} images queued")
 
+            owners = _media_owners()
             current_type_name = None
             for i, item in enumerate(files_to_process):
                 with self._lock:
@@ -253,6 +282,7 @@ class ImageResizeJob:
                     self.current_index = i + 1
                     self.current_file = item['name']
                     self.current_type = item['type']
+                    self.current_game, self.current_system = owners.get(item['name'], ('', ''))
 
                 # Log when switching image types
                 if item['type'] != current_type_name:
@@ -373,8 +403,9 @@ def _standardize_with_tracking(path, image_type, target, preserve_rgba):
             result_img = _downscale_image(img, image_type, target)
             action = 'downscaled'
 
-        if result_img is not None:
-            _save_image(result_img, path)
+        # PASS-59-238 — a failed save is a failure, not an upscale.
+        if result_img is not None and not _save_image(result_img, path):
+            raise OSError(f"could not save {path}")
     finally:
         try:
             if result_img is not None and result_img is not img:

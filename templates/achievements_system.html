@@ -2,6 +2,7 @@
 {% set adaptive_layout = true %}
 {% from "_macros/nav_tabs.html" import achievement_tabs %}
 {% from "_macros/breadcrumb.html" import breadcrumb %}
+{% from "_macros/ra_tools.html" import ra_find_games, ra_clear_all %}
 {% set needs_games_bundle = true %}
 
 {% block title %}{{ system.name }} Achievements - RetroDB{% endblock %}
@@ -91,25 +92,8 @@
 
 <!-- System Stats -->
 <section class="card mb-lg">
-    <div class="card-header" style="display: flex; flex-wrap: wrap; gap: var(--spacing-sm); justify-content: space-between; align-items: center;">
+    <div class="card-header">
         <h2 class="card-title" style="margin: 0;">{{ system.name }}</h2>
-        {% if ra_configured %}
-        <div class="header-actions" style="display: flex; align-items: center; gap: var(--spacing-md);">
-            <span class="cache-status" id="cacheStatus" 
-                  data-last-synced="{{ system.last_synced or '' }}"
-                  style="font-size: 0.85rem; color: var(--text-muted);">
-                {% if system.last_synced %}{{ _('Loading...') }}{% else %}{{ _('Never synced') }}{% endif %}
-            </span>
-            <button type="button" data-on-click="refreshSystemProgress" class="btn btn-primary btn-sm" id="refreshBtn">
-                <span class="btn-icon">🔄</span>
-                <span class="btn-text">{{ _('Sync Progress') }}</span>
-            </button>
-            <button type="button" data-on-click="clearSystemRAData" class="btn btn-danger btn-sm" id="clearRABtn" title="{{ _('Remove this system from Achievements') }}">
-                <span class="btn-icon">🗑️</span>
-                <span class="btn-text">{{ _('Clear RA Data') }}</span>
-            </button>
-        </div>
-        {% endif %}
     </div>
     <div class="card-body">
         <div class="achievement-overview">
@@ -157,6 +141,42 @@
     </div>
 </section>
 
+{% set _is_admin = current_user and current_user.role == 'admin' %}
+{% if ra_configured or _is_admin %}
+<!-- Achievement jobs: each button says what it does (PASS-59-232) -->
+<section class="card mb-lg" id="raTools">
+    <div class="card-body ra-tools">
+        {% if ra_configured %}
+        <div class="ra-tool">
+            <button type="button" data-on-click="refreshSystemProgress" class="btn btn-primary btn-sm" id="refreshBtn">
+                <span class="btn-icon">🔄</span>
+                <span class="btn-text">{{ _('Sync Progress') }}</span>
+            </button>
+            <p class="text-muted ra-tool-note">
+                {% trans system=system.name %}Downloads which achievements you have earned in your {{ system }} games. Run it after playing.{% endtrans %}
+            </p>
+            <span class="cache-status text-muted ra-tool-note" id="cacheStatus" data-last-synced="{{ system.last_synced or '' }}">
+                {% if system.last_synced %}{{ _('Loading...') }}{% else %}{{ _('Never synced') }}{% endif %}
+            </span>
+        </div>
+        {% endif %}
+        {% if _is_admin %}
+        {{ ra_find_games() }}
+        <div class="ra-tool">
+            <button type="button" data-on-click="clearSystemRAData" class="btn btn-danger btn-sm" id="clearRABtn">
+                <span class="btn-icon">🗑️</span>
+                <span class="btn-text">{{ _('Clear RA Data') }}</span>
+            </button>
+            <p class="text-muted ra-tool-note">
+                {% trans system=system.name %}Unlinks your {{ system }} games from RetroAchievements and removes {{ system }} from this page.{% endtrans %}
+            </p>
+        </div>
+        {{ ra_clear_all() }}
+        {% endif %}
+    </div>
+</section>
+{% endif %}
+
 <!-- Filter Bar -->
 <div class="filter-bar glass-panel" style="padding: var(--spacing-md); margin-bottom: var(--spacing-lg);">
     <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-md); align-items: center;">
@@ -181,6 +201,7 @@
 <div class="alphabet-nav" id="alphabetNav">
     <span class="alphabet-label">{{ _('Jump to:') }}</span>
     <div class="alphabet-letters">
+        <button class="alphabet-btn alphabet-all" data-letter="" title="{{ _('Back to the first game') }}">{{ _('All') }}</button>
         <button class="alphabet-btn" data-letter="#">#</button>
         {% for letter in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' %}
         <button class="alphabet-btn" data-letter="{{ letter }}">{{ letter }}</button>
@@ -339,7 +360,7 @@ async function refreshSystemProgress() {
             
             // Check if already queued
             if (queue.find(q => q.type === 'sync' && q.systemId === systemId)) {
-                showNotification('System is already in the queue', 'info');
+                showNotification({{ _('System is already in the queue')|tojson }}, 'info');
                 return;
             }
             
@@ -368,7 +389,7 @@ async function refreshSystemProgress() {
                 }
             }
             
-            showNotification(`Added ${systemName} to sync queue`, 'info');
+            showNotification(t({{ _('Added {system} to sync queue')|tojson }}, {system: systemName}), 'info');
             return;
         }
     } catch (e) {
@@ -428,7 +449,7 @@ async function refreshSystemProgress() {
                 
                 // Show feedback
                 if (typeof showModal === 'function') {
-                    showModal('📋 Sync Queued', `${data.system_name} has been added to the sync queue. It will start automatically when the current sync completes.`);
+                    showModal('📋 ' + {{ _('Sync Queued')|tojson }}, t({{ _('{system} has been added to the sync queue. It will start automatically when the current sync completes.')|tojson }}, {system: data.system_name}));
                 }
                 
                 if (btn) {
@@ -476,7 +497,7 @@ async function refreshSystemProgress() {
                     }, 2000);
                 }
                 if (typeof showModal === 'function') {
-                    showModal('ℹ️ Sync In Progress', `${data.error || 'This system is already being synced.'} Check the toast notification for progress.`);
+                    showModal('ℹ️ ' + {{ _('Sync In Progress')|tojson }}, t({{ _('{reason} Check the toast notification for progress.')|tojson }}, {reason: data.error || {{ _('This system is already being synced.')|tojson }}}));
                 }
             } else {
                 if (btn) {
@@ -506,8 +527,8 @@ async function clearSystemRAData() {
     const systemName = document.querySelector('.card-title')?.textContent || 'this system';
     
     showConfirm(
-        '🗑️ Clear RetroAchievements Data',
-        `This will remove "${systemName}" from the Achievements page by clearing all RetroAchievements game IDs and progress data for this system. Continue?`,
+        '🗑️ ' + {{ _('Clear RetroAchievements Data')|tojson }},
+        t({{ _('This will remove "{system}" from the Achievements page by clearing all RetroAchievements game IDs and progress data for this system. Continue?')|tojson }}, {system: systemName}),
         async function() {
             const btn = document.getElementById('clearRABtn');
             
@@ -524,14 +545,14 @@ async function clearSystemRAData() {
                 const data = await response.json();
                 
                 if (data.success) {
-                    showNotification(`Cleared RA data for ${data.cleared} games in ${systemName}`, 'success');
+                    showNotification(t({{ _('RA data cleared for {system}. Games cleared: {count}')|tojson }}, {system: systemName, count: data.cleared}), 'success');
                     
                     // Redirect to achievements page after clearing
                     setTimeout(() => {
                         window.location.href = '/achievements';
                     }, 1500);
                 } else {
-                    showNotification(data.error || 'Failed to clear RA data', 'error');
+                    showNotification(data.error || {{ _('Failed to clear RA data')|tojson }}, 'error');
                     if (btn) {
                         btn.disabled = false;
                         btn.innerHTML = '<span class="btn-icon">🗑️</span> Clear RA Data';
@@ -539,7 +560,7 @@ async function clearSystemRAData() {
                 }
             } catch (error) {
                 console.error('Error clearing RA data:', error);
-                showNotification('Failed to clear RA data', 'error');
+                showNotification({{ _('Failed to clear RA data')|tojson }}, 'error');
                 if (btn) {
                     btn.disabled = false;
                     btn.innerHTML = '<span class="btn-icon">🗑️</span> Clear RA Data';
@@ -584,7 +605,7 @@ async function pollSyncStatus() {
             
             // Show notification instead of auto-reload
             if (typeof showNotification === 'function') {
-                showNotification('Sync complete! Refresh page to see updated progress.', 'success');
+                showNotification({{ _('Sync complete! Refresh page to see updated progress.')|tojson }}, 'success');
             }
         } else {
             // Not running

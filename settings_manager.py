@@ -18,8 +18,10 @@ logger = logging.getLogger(__name__)
 
 # Default settings file location.  Pinned to config.BASE_DIR so the file lives
 # next to the executable in a PyInstaller frozen bundle (Pass 46.3 part 2),
-# not inside _internal/.
-SETTINGS_FILE = os.path.join(config.BASE_DIR, 'data', 'settings.json')
+# not inside _internal/. config.SETTINGS_FILE carries the test suite's override
+# (PASS-59-239); a config.py copied before it existed falls back to the anchor.
+SETTINGS_FILE = getattr(config, 'SETTINGS_FILE', None) or os.path.join(
+    config.BASE_DIR, 'data', 'settings.json')
 
 # In-memory cache for settings
 _settings_cache = None

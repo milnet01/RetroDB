@@ -117,8 +117,10 @@ source. Its `source` column is whichever sync wrote last.
   cleared by a sync (`COALESCE(excluded.linked_game_id, ...)`). Editors can
   set or clear a link with `POST /api/psn/link-game`, scoped to their own row.
 - **Steam and Xbox.** Through `games.steam_app_id` and `games.xbox_title_id`,
-  set at import (`routes/platform_import.py::_check_duplicate` matches on the
-  platform id, then on `normalize_title_for_dedup` within the system).
+  set at import (`routes/platform_import.py::_DuplicateIndex` matches on the
+  platform id, then on `normalize_title_for_dedup` within the system). A title
+  match holding no id gets this one (`_link_by_title`), so its achievements
+  sync; one holding another id keeps it (PASS-59-218).
 - **RPCS3.** `routes/trophies.py::find_matching_game` matches at page render
   through an alias table and the same three passes as PSN. Nothing is stored.
 
@@ -132,7 +134,7 @@ cross-process `flock` named after the job, persisted progress and resume.
 | `RARefreshJob` (`ra_refresh`) | `/api/refresh-retroachievements[/<system_id>]` (admin) | global RA account (`_get_ra_credentials`) | `games` RA columns; commits per game |
 | `RASyncJob` (`ra_sync`) | `/api/achievements/sync-system/<id>` (editor) | the caller's own RA account, else the global one | `games.ra_achievement_count`; the caller's `game_achievement_progress` |
 | `PSNRefreshJob` (`psn_refresh`) | `/api/psn/bulk-refresh/start` (login) | the caller's NPSSO | the caller's `psn_games`, `psn_trophies` |
-| `SteamSyncJob` (`steam_sync`) | `/api/steam-achievements/sync-all`, `/api/steam/sync-achievements` (editor) | caller's `user_settings`, else `scraper_settings.json` | the caller's Steam rows |
+| `SteamSyncJob` (`steam_sync`) | `/api/steam-achievements/sync-all`, `/api/steam/sync-achievements` (editor), and a Steam import that added or linked a game | caller's `user_settings`, else `scraper_settings.json`; the store step needs none | the caller's Steam rows and `platform_play_time`; empty `games` fields, once per game, from the store (`docs/specs/scrapers.md` §10) |
 | `XboxSyncJob` (`xbox_sync`) | `/api/xbox-achievements/sync-all`, `/api/xbox/sync-achievements` (editor) | global client id; the caller's tokens | the caller's Xbox rows |
 
 Also:
@@ -148,7 +150,10 @@ Also:
   current game for other users.
 - **PSN keep-alive** (`services/jobs/psn_keepalive.py`) refreshes a user's
   PSN session once a day when it expires within 14 days. It never falls back
-  to the NPSSO and skips sessions already expired.
+  to the NPSSO and skips sessions already expired. When Sony refuses the
+  refresh token, `create_psn_client` records the session as expired, which
+  raises the re-link notice and ends the retries. A server fault changes
+  nothing.
 - **Rate limits.** The PSN, Steam and Xbox bulk starts are limited to two an
   hour (`app.py`). The RA job starts are not rate-limited.
 - **Upstream pacing.** PSN bulk refresh waits 2.5 s per game, Steam 1 s,
@@ -162,7 +167,16 @@ Also:
 - Every accessor does nothing without a `user_id`.
 - PSN: `routes/trophies.py::create_psn_client` uses cached tokens while the
   refresh token is unexpired, re-saves them, and otherwise falls back to the
-  NPSSO. `/api/psn/token-info` reports expiry, never the tokens.
+  NPSSO. Sony's refresh token lasts 10 days and renewing it does not move
+  that date. When Sony refuses the saved NPSSO, the cache records
+  `npsso_refused_at`. `/api/psn/token-info` reports only that refusal and
+  whether a session is cached, never the tokens or an expiry: a lapsed
+  session needs nothing from the user (PASS-59-111,
+  `tests/test_psn_new_npsso.py`).
+- PSN: a new NPSSO replaces the cached session. `/api/psn/save-npsso` signs
+  in with it, ignoring the cache, and saves it only if Sony accepts it;
+  `/api/users/settings` drops the cache when the NPSSO changes
+  (`tests/test_psn_new_npsso.py`).
 - Xbox: `scrape_xbox.get_authenticated_session` refreshes a stale token and
   clears the stored tokens when the refresh fails. The OAuth `state` is bound
   to the user who started sign-in.
@@ -246,7 +260,7 @@ admin-only (`/api/scan-trophies`).
   `acquire_job_singleton_lock` with its own name.
 - **INV-9** — The PSN keep-alive refreshes only sessions that expire within
   its window, and skips a user with no NPSSO. *Test:* `python3 -m pytest -q
-  tests/test_psn_keepalive.py` → `2 passed`. *Breaks when:* an expired
+  tests/test_psn_keepalive.py` → `4 passed`. *Breaks when:* an expired
   session is pinged, or the NPSSO fallback is allowed.
 - **INV-10** — The scraper's RA check writes the `games` RA columns only on a
   match and swallows network errors. *Test:* `python3 -m pytest -q

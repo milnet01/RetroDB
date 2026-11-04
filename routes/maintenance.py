@@ -8,6 +8,8 @@
 
 from flask import Blueprint, request, jsonify
 from flask_babel import gettext as _
+from scraper.service_limits import SCREENSCRAPER
+from services.service_stop_text import stop_sentences
 import os
 import sys
 import time
@@ -142,13 +144,19 @@ def api_clear_scraped_data():
     return success(cleared=cleared, images_deleted=images_deleted)
 
 
+def _scan_orphaned_media():
+    """The orphan scan over every game and wishlist row (PASS-59-238)."""
+    games = query("SELECT id, boxart, boxart_3d, screenshots, fanart, game_logo, boxart_back, video, manual FROM games")
+    wishlist = query("SELECT id, boxart, boxart_3d, screenshots, fanart, video, manual FROM wishlist")
+    return find_orphaned_media(games, wishlist)
+
+
 @bp.route('/api/orphaned-media/preview', methods=['GET'])
 @admin_required
 @handle_api_errors
 def api_orphaned_media_preview():
     """Scan for orphaned media files (not linked to any game in database)"""
-    games = query("SELECT id, boxart, boxart_3d, screenshots, fanart, video, manual FROM games")
-    orphaned, total_size = find_orphaned_media(games)
+    orphaned, total_size = _scan_orphaned_media()
     return success(
         files=orphaned,
         total_size_mb=total_size / (1024 * 1024),
@@ -160,8 +168,7 @@ def api_orphaned_media_preview():
 @handle_api_errors
 def api_orphaned_media_clean():
     """Delete orphaned media files"""
-    games = query("SELECT id, boxart, boxart_3d, screenshots, fanart, video, manual FROM games")
-    orphaned, _ = find_orphaned_media(games)
+    orphaned, _ = _scan_orphaned_media()
     # Pass 48.4 — honour the original preview scan-start so a file written by
     # a concurrent scraper during the preview→clean window is skipped. The
     # client echoes back the timestamp it received from /preview; a missing or
@@ -190,7 +197,7 @@ def api_missing_media_refs_preview():
     mass-missing guard so the UI can warn before the user clears anything.
     """
     games = query(
-        "SELECT id, title, boxart, boxart_3d, screenshots, fanart, video, manual "
+        "SELECT id, title, boxart, boxart_3d, screenshots, fanart, game_logo, boxart_back, video, manual "
         "FROM games"
     )
     affected, guarded = find_missing_media_refs(games)
@@ -493,6 +500,7 @@ def api_ss_region_repair_status():
     """Poll the region repair job."""
     from services.jobs import ss_region_repair_job
     status = ss_region_repair_job.get_status()
+    status['service_stops'] = stop_sentences([SCREENSCRAPER])
     status['success'] = True
     return jsonify(status)
 

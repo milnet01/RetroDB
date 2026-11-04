@@ -1,3 +1,149 @@
+- version: 4.0.0
+  date: '2026-11-04'
+  tags:
+  - type: fix
+    label: Les vérifications internes de RetroDB ne peuvent plus toucher à votre bibliothèque pendant leur exécution. Elles utilisent toujours une copie jetable de la base de données, des images et des paramètres, et refusent de démarrer si l'un d'eux pointe vers vos vrais fichiers
+  - type: fix
+    label: Nettoyer les fichiers orphelins ne supprime plus les images de votre liste de souhaits. Ouvrir un jeu ne lui fait plus oublier les captures d'écran introuvables. Avant, quand le disque des images était débranché, chaque jeu ouvert perdait toute sa liste de captures d'écran ; désormais la liste est conservée, et une image manquante est simplement masquée
+  - type: fix
+    label: Un téléchargement de vidéo ou de manuel qui échoue en cours de route n'abîme plus la copie que le jeu avait déjà, et un téléchargement raté ne laisse plus de fichier partiel caché dans le dossier des médias. L'agrandisseur d'images en arrière-plan n'enregistre plus une ancienne image par-dessus une plus récente téléchargée entre-temps. Convertir en WebP garde tous les jeux qui partagent une image reliés à celle-ci, et ne touche jamais à un fichier hors des dossiers d'images
+  - type: fix
+    label: Supprimer un jeu ou un élément de la liste de souhaits supprime désormais aussi ses images, vidéos et manuels, mais conserve ceux qu'un autre jeu ou élément de la liste de souhaits utilise encore. Les images enregistrées sont de nouveau lisibles par les autres comptes de l'ordinateur, et Redimensionner les images compte une image qu'il n'a pas pu enregistrer comme échouée, et non comme terminée
+  - type: fix
+    label: Le détecteur de doublons ne propose plus de supprimer un fichier qui fonctionne. En cherchant par nom, il ne considère plus les fichiers .cue et .bin d'un jeu comme des copies l'un de l'autre. Il ne propose jamais le fichier de piste d'un disque, que deux versions d'un jeu peuvent partager. Il ne supprimera pas un disque listé dans une playlist. Un jeu dont vous supprimez le fichier passe maintenant à la copie que vous gardez, et reste donc dans la bibliothèque
+  - type: fix
+    label: Organiser les jeux multi-disques n'écrase plus une playlist existante ni un fichier déjà présent dans le dossier du jeu ; il s'arrête et indique lequel. La playlist créée liste le .cue de chaque disque, et non ses fichiers de piste. Les jeux dont il déplace les fichiers les suivent désormais dans le dossier, si bien que Nettoyer les ROM manquantes ne les supprime plus
+  - type: fix
+    label: Convertir en CHD avec « supprimer les originaux » supprime désormais aussi les fichiers de piste du disque, mais garde une piste qu'un autre .cue utilise encore. Le jeu et toute playlist qui listait l'ancien disque pointent maintenant vers le nouveau .chd. Renommer le fichier d'un jeu met désormais à jour la playlist qui le liste, et un fichier de piste nécessaire à un .cue ne peut pas être renommé. Retirer des fichiers d'un zip ne retire que ceux que vous avez choisis, même si un nom contient [ ou ]. Le dédoublonnage de captures d'écran ne supprime que les copies trouvées par son analyse, et en garde toujours une
+  - type: fix
+    label: How Long to Beat sur la page d'un jeu cherche ce que vous tapez. Avant, un titre introuvable lançait la recherche avec les autres noms du jeu, et pouvait proposer un autre jeu, comme un remake de fans. Il essaie toujours les autres noms quand la zone contient le nom du jeu lui-même
+  - type: fix
+    label: Les étapes de How Long to Beat dans le manuel d'aide correspondent à l'écran. Elles disaient de choisir un résultat dans une liste ; la page affiche un seul résultat avec Enregistrer et Annuler. L'aide PlayStation ne dit plus que la connexion dure environ deux mois, puisque RetroDB se reconnecte tout seul. Les 20 manuels traduits contiennent ces deux changements
+  - type: fix
+    label: Chaque barre de lettres commence désormais par un bouton Tous. Sur les pages Bibliothèque, console et Trophées PSN, choisir une lettre n'affiche que les jeux de cette lettre, et il n'y avait pas de bouton pour afficher les autres. Sur les autres pages de succès, Tous revient au premier jeu
+  - type: fix
+    label: Un nouveau jeton de connexion PlayStation collé dans les Paramètres est maintenant utilisé tout de suite. Avant, RetroDB gardait l'ancienne connexion jusqu'à son expiration, et Enregistrer et tester la connexion indiquait que cette ancienne connexion fonctionnait. Un jeton refusé par Sony ne remplace plus un jeton qui fonctionne
+  - type: enhancement
+    label: 'La connexion PlayStation dans les Paramètres est plus facile à maintenir. La bannière ne décompte plus des jours où vous n''aviez rien à faire, car RetroDB se reconnecte tout seul ; elle ne devient rouge que si Sony refuse votre jeton enregistré. Le bouton Coller ici ne fait plus demander au navigateur l''accès à votre presse-papiers : il place le curseur dans la zone pour Ctrl+V. Les étapes disent maintenant de se déconnecter d''abord de PlayStation quand vous remplacez un jeton qui fonctionne encore, et leurs messages peuvent être traduits'
+  - type: enhancement
+    label: Les messages contextuels et les boîtes de question, comme « Paramètres enregistrés » ou « Supprimer cette liste ? », peuvent maintenant être traduits sur toutes les pages. Avant, la plupart restaient en anglais quelle que soit la langue choisie
+  - type: enhancement
+    label: Les messages qui expliquent pourquoi une connexion PlayStation a échoué, comme « Votre NPSSO a peut-être expiré », peuvent maintenant être traduits
+  - type: fix
+    label: Le manuel d'aide dans toutes les langues correspond maintenant à la version anglaise. Il gagne Recherche partout, Garder un titre, Noms MAME et le dos de la boîte, et les anciens paragraphes en retard sont à jour
+  - type: fix
+    label: En allemand, en afrikaans et en espagnol, le bouton Retour sur la jaquette d'un jeu indique maintenant le dos de la boîte, et non « revenir en arrière »
+  - type: feature
+    label: Appuyer sur Jouer remplit maintenant l'écran avec le logo du jeu sur son image de fond pendant le lancement, ou avec son nom en grandes lettres s'il n'a pas de logo. Il disparaît tout seul à l'ouverture de la fenêtre du jeu, ou quand vous appuyez sur Échap ou cliquez
+  - type: feature
+    label: 'La boîte 3D rotative a maintenant la vraie forme d''un boîtier PS5 : coins et bords arrondis, rebord surélevé autour de la jaquette, ligne de jonction des deux moitiés et encoche pour le doigt sur le côté d''ouverture. Elle nécessite un fichier de boîte issu d''une version de Slipcase qui écrit cette forme ; importez à nouveau la boîte pour l''obtenir. Les autres boîtes restent comme avant'
+  - type: enhancement
+    label: Actualiser RetroAchievements est passé des Paramètres à la page RetroAchievements, et s'appelle maintenant Trouver les jeux avec des succès. Chaque bouton y a maintenant une ligne qui explique son rôle, pour bien distinguer Trouver les jeux et Synchroniser la progression. Si aucun jeu n'est encore lié, la page montre à un administrateur le bouton Trouver au lieu de passer à l'onglet suivant
+  body: "<ul>\n  <li><strong>Le manuel d'aide est à jour dans toutes les langues.</strong>\n    Les sections qui n'existaient que dans le manuel anglais sont maintenant traduites.</li>\n</ul>\n"
+- version: 3.35.4
+  date: '2026-11-03'
+  tags:
+  - type: fix
+    label: Une capture d'écran que vous supprimez d'un jeu reste désormais supprimée. Avant, la récupération suivante pouvait la recopier depuis ES-DE ou la télécharger de nouveau depuis une source en ligne. Supprimer un doublon avec l'outil des captures d'écran en double n'est pas concerné, car l'image est conservée une fois
+  - type: feature
+    label: 'Les jeux ont maintenant leur logo : la récupération l''enregistre depuis ES-DE, ScreenScraper, TheGamesDB, IGDB et Steam, et la page du jeu l''affiche au-dessus du titre, ou à la place d''une boîte manquante. Vous pouvez téléverser ou supprimer un logo dans la fenêtre Modifier. Lancez une récupération en masse avec Fill Missing pour ajouter les logos des jeux déjà récupérés'
+  - type: fix
+    label: IGDB ne fournit plus le logo d'un jeu comme arrière-plan de la page
+  - type: feature
+    label: 'Les jeux ont maintenant le dos de leur boîte : la récupération l''enregistre depuis ES-DE, ScreenScraper et TheGamesDB, et un bouton Dos sur la jaquette de la page du jeu l''affiche. Cliquez sur le dos pour l''agrandir. Vous pouvez téléverser ou supprimer un dos dans la fenêtre Modifier. Les dos se remplissent à chaque récupération d''un jeu ; Fill Missing ne récupère pas à nouveau un jeu uniquement pour son dos'
+  - type: fix
+    label: Un jeu sans jaquette avant sur TheGamesDB n'obtient plus le dos de la boîte comme jaquette
+  - type: fix
+    label: Si vous désactivez un outil de récupération dans les Paramètres pendant une récupération en masse, le nombre de jeux introuvables est maintenant juste dès le jeu suivant. Avant, un jeu pouvait être compté comme arrêté
+  - type: enhancement
+    label: Sur un système sans émulateur configuré, le bouton Jouer est grisé. Pointez-le pour savoir pourquoi, ou cliquez dessus pour voir un message indiquant qu'aucun émulateur n'est configuré. Avant, une ligne de texte s'affichait à côté du bouton
+  body: "<ul>\n  <li><strong>Les jeux ont leur logo.</strong> La récupération enregistre le\n    logo de chaque jeu, et la page du jeu l'affiche au-dessus du titre, ou à la place d'une\n    boîte manquante. Lancez une récupération en masse avec Fill Missing pour ajouter les logos des\n    jeux déjà récupérés.</li>\n  <li><strong>Les jeux ont le dos de leur boîte.</strong> Un bouton Dos sur\n    la jaquette de la page du jeu l'affiche, et vous pouvez cliquer dessus pour l'agrandir. Les dos\n    se remplissent à chaque récupération d'un jeu.</li>\n  <li><strong>Une capture d'écran supprimée reste supprimée.</strong> La récupération suivante\n    ne la recopie plus et ne la télécharge plus de nouveau.</li>\n  <li><strong>Jouer indique pourquoi il ne peut pas démarrer.</strong> Sur un système sans\n    émulateur configuré, le bouton Jouer est grisé et explique pourquoi.</li>\n</ul>\n"
+- version: 3.35.3
+  date: '2026-11-02'
+  tags:
+  - type: feature
+    label: 'Nouvel outil Noms MAME dans Outils ROM : les jeux MAME reçoivent leurs vrais noms, années et éditeurs depuis la liste propre à MAME, et les fichiers gardent leurs noms courts. Une récupération trouve ensuite chaque jeu, et vous pouvez filtrer la liste MAME par catégorie, par exemple pour exclure les machines à sous. Les sets BIOS sont masqués de la liste'
+  - type: fix
+    label: Les Rapports ROM ne proposent plus de renommer les fichiers MAME, car un fichier renommé ne fonctionne plus dans MAME
+  - type: fix
+    label: Les Paramètres indiquent désormais ce que Microsoft exige avant l'enregistrement d'une application Xbox. La connexion Xbox n'a pas pu être testée à cause de cela
+  - type: enhancement
+    label: La carte séparée Noms officiels a disparu du Remplissage IA en masse, car l'option Nom officiel du remplissage fait déjà ce travail
+  - type: fix
+    label: Quand Sony refuse une connexion PlayStation enregistrée, le tableau de bord et les Paramètres l'indiquent et vous demandent de relier à nouveau le compte. Avant, le journal affichait une erreur sans sens à chaque démarrage du serveur et rien ne vous prévenait
+  - type: feature
+    label: L'importation depuis Steam remplit désormais, en arrière-plan, la description, les crédits, la note Metacritic, les classifications d'âge, les modes de jeu, la boîte, l'arrière-plan et les captures d'écran de chaque jeu à partir de sa page de boutique. Récupérez un jeu pour obtenir son genre et sa date de sortie
+  - type: feature
+    label: Une synchronisation Steam conserve désormais votre temps de jeu et la date de votre dernière partie, et la page du jeu les affiche
+  - type: fix
+    label: Récupérer la bibliothèque sur la page d'importation Steam fonctionne maintenant pour un administrateur ayant une clé Steam enregistrée. Avant, la page envoyait à Steam la version masquée de la clé et indiquait à tort de passer votre profil en Public
+  - type: fix
+    label: Un jeu Steam ou Xbox déjà présent dans votre bibliothèque sous le même nom est désormais lié à ce jeu lors de l'importation, et ses succès se synchronisent. Avant, il était ignoré et jamais lié
+  - type: fix
+    label: Les jeux importés depuis Steam, Xbox et PlayStation sont maintenant triés correctement dès le départ, par exemple Final Fantasy IX avant Final Fantasy X, et les symboles de marque de Steam sont retirés de leurs noms
+  - type: feature
+    label: Sur les systèmes où RetroAchievements utilise un simple hash de fichier, comme la Mega Drive et la Game Boy, la page du jeu indique si votre copie donne des succès, et ce hash relie le bon jeu. Lancez RA Refresh pour renseigner cela
+  - type: fix
+    label: Une récupération interroge maintenant ScreenScraper avec votre fichier exact avant de chercher par nom, et obtient ainsi votre jeu plutôt qu'un titre similaire. Les résultats que vous cochez vous-même restent prioritaires
+  - type: enhancement
+    label: La fenêtre de progression du Redimensionnement d'images indique maintenant le jeu et le système de chaque image
+  - type: feature
+    label: La récupération apporte désormais des écrans-titres depuis ScreenScraper et TheGamesDB, plus de noms officiels depuis IGDB et TheGamesDB (comme le titre japonais d'un jeu), et les autres consoles sur lesquelles un jeu est sorti depuis IGDB
+  - type: feature
+    label: Un jeu sans note d'utilisateur reprend désormais la classification de votre collection ES-DE, s'il en a une
+  - type: feature
+    label: La page du jeu indique combien de joueurs ont chronométré un résultat HowLongToBeat et renvoie vers sa page. Les résultats enregistrés avant cela les afficheront à la prochaine recherche
+  - type: feature
+    label: La page RetroAchievements montre combien de personnes jouent à un jeu et la part d'entre elles qui a obtenu chaque succès
+  - type: fix
+    label: Le navigateur de dossiers des Outils ROM s'ouvre sur votre dossier ROM quand il n'a pas de dossier de départ, au lieu d'échouer. Une réponse illisible d'IGDB ne fait plus perdre que ce détail, et non tout ce qu'IGDB a envoyé pour le jeu
+  - type: fix
+    label: La limite quotidienne de ScreenScraper empêche désormais RetroDB de l'interroger jusqu'à plus tard, et une récupération en masse l'indique et continue avec ses autres sources. Avant, une limite épuisée ressemblait à « jeu introuvable » et les appels continuaient toute la nuit
+  - type: fix
+    label: Un jeu pour lequel aucune source n'a pu répondre pendant qu'un service était à sa limite n'est plus marqué comme récupéré, donc la prochaine exécution le réessaie
+  - type: fix
+    label: Quand une clé TheGamesDB a épuisé son mois, RetroDB passe à votre autre clé, et arrête d'interroger quand les deux sont épuisées
+  - type: fix
+    label: La limite mensuelle de RAWG empêche aussi RetroDB d'interroger ce service, et IGDB est maintenu sous sa limite de quatre requêtes par seconde
+  - type: fix
+    label: La recherche en masse de HowLongToBeat se termine maintenant par un message quand le site indique avoir reçu trop de requêtes, et chaque requête vers le site est espacée
+  - type: fix
+    label: Corriger régions des boîtes et manuels n'abandonne plus après 25 jeux d'affilée inconnus de ScreenScraper. Il ne s'arrête que lorsque ScreenScraper indique que sa limite est atteinte
+  - type: fix
+    label: Sur la page du jeu, chaque classification d'âge est maintenant centrée au-dessus de son étiquette d'estimation IA
+  - type: fix
+    label: Le quota TheGamesDB dans les Paramètres utilise désormais la vérification qui ne consomme pas votre quota, et n'affiche plus de fausse date de réinitialisation quand le service n'en donne aucune
+  body: |
+    <ul>
+      <li><strong>Les jeux MAME retrouvent leur vrai nom.</strong> Le nouvel outil Noms MAME
+        dans les outils ROM reprend les noms, les années et les éditeurs de la liste officielle de MAME.
+        Les fichiers gardent leur nom court, car MAME en a besoin. Vous pouvez
+        filtrer la liste MAME par catégorie, et les jeux BIOS sont masqués.</li>
+      <li><strong>Les imports Steam apportent bien plus.</strong> Chaque jeu récupère sa
+        description, ses crédits, sa note Metacritic, ses classifications d'âge, ses modes de jeu
+        et ses images depuis sa page de boutique. Une synchronisation conserve votre temps de jeu et la date de
+        votre dernière partie. Un jeu déjà présent dans votre bibliothèque sous le même nom est maintenant
+        lié à celui-ci, et ses succès se synchronisent.</li>
+      <li><strong>Les récupérations trouvent votre jeu exact.</strong> Une récupération interroge
+        ScreenScraper sur votre fichier exact avant de chercher par nom. Elle
+        apporte aussi les écrans-titres, davantage de noms officiels et les autres consoles
+        sur lesquelles un jeu est sorti.</li>
+      <li><strong>RetroAchievements reconnaît votre exemplaire.</strong> Sur les systèmes qui
+        utilisent une simple empreinte de fichier, comme la Mega Drive et la Game Boy, la page du jeu
+        indique si votre exemplaire permet d'obtenir des succès. Lancez RA Refresh pour renseigner
+        cette information. La page RetroAchievements montre aussi combien de personnes jouent à un jeu
+        et quelle part d'entre elles a obtenu chaque succès.</li>
+      <li><strong>Les limites en ligne sont respectées.</strong> Quand ScreenScraper,
+        TheGamesDB ou RAWG atteint sa limite, RetroDB arrête de l'interroger jusqu'à plus tard
+        et une récupération en masse continue avec ses autres sources. Un jeu pour lequel aucune source
+        n'a pu répondre à ce moment-là est réessayé au prochain passage.</li>
+      <li><strong>Une connexion PlayStation refusée est signalée.</strong> Le tableau de bord
+        et les Paramètres vous demandent maintenant de relier à nouveau votre compte quand Sony refuse une
+        connexion enregistrée.</li>
+      <li><strong>Noms officiels a changé de place.</strong> Sa carte séparée a disparu
+        du Remplissage IA en masse, car l'option Nom officiel du remplissage
+        remplit le même rôle.</li>
+    </ul>
 - version: 3.35.2
   date: '2026-11-02'
   tags:

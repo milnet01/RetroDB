@@ -538,11 +538,11 @@ async function deleteSelected() {
     });
     
     if (filesToDelete.length === 0) {
-        showModal('⚠️ No Selection', 'No files selected for deletion');
+        showModal('⚠️ ' + {{ _('No Selection')|tojson }}, {{ _('No files selected for deletion')|tojson }});
         return;
     }
     
-    showConfirm('🗑️ Delete Files', `Are you sure you want to delete ${filesToDelete.length} files?\n\nThis action cannot be undone!`, async function() {
+    showConfirm('🗑️ ' + {{ _('Delete Files')|tojson }}, t({{ _('Are you sure you want to delete these files ({count})?\n\nThis action cannot be undone!')|tojson }}, {count: filesToDelete.length}), async function() {
         try {
             const response = await fetch('/api/rom-tools/duplicate-finder/delete', {
                 method: 'POST',
@@ -553,13 +553,13 @@ async function deleteSelected() {
             const data = await response.json();
             
             if (data.success) {
-                showModal('✅ Files Deleted', `Deleted ${data.results.deleted} files, freed ${formatBytes(data.results.freed_space)}`);
+                showModal('✅ ' + {{ _('Files Deleted')|tojson }}, t({{ _('Files deleted: {deleted}. Space freed: {size}')|tojson }}, {deleted: data.results.deleted, size: formatBytes(data.results.freed_space)}));
                 startScan();
             } else {
-                showModal('❌ Error', data.error);
+                showModal('❌ ' + {{ _('Error')|tojson }}, data.error);
             }
         } catch (error) {
-            showModal('❌ Error', error.message);
+            showModal('❌ ' + {{ _('Error')|tojson }}, error.message);
         }
     });
 }

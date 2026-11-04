@@ -73,3 +73,79 @@
 .launch-indicator-popover-row:first-of-type {
     border-top: none;
 }
+
+/* =============================================================================
+   Play screen — PASS-59-228 (static/js/game-launch.js): the game's logo, or its
+   title, over its background art while the game starts. Under the toasts
+   (z-index 10000) so the launch and error messages stay readable.
+   ============================================================================= */
+
+.play-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg);
+    background-color: var(--bg-darkest);
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+    animation: play-screen-in var(--transition-slow) both;
+}
+
+/* Darken the art so the logo and the status line read on any picture. */
+.play-screen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, var(--bg-darkest) 60%, transparent);
+}
+
+.play-screen > * {
+    position: relative;
+}
+
+.play-screen:focus {
+    outline: none;
+}
+
+/* Grown to a fixed share of the window, so a small logo file still shows large. */
+.play-screen-logo {
+    width: min(70vw, 760px);
+    max-height: 50vh;
+    object-fit: contain;
+    filter: drop-shadow(var(--shadow-xl));
+}
+
+.play-screen-title {
+    margin: 0;
+    max-width: 90vw;
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 7vw, 5rem);
+    line-height: 1.1;
+    text-align: center;
+    color: var(--text-primary);
+    text-shadow: var(--shadow-glow-cyan);
+    overflow-wrap: anywhere;
+}
+
+.play-screen-status {
+    margin: 0;
+    font-family: var(--font-mono, monospace);
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+}
+
+@keyframes play-screen-in {
+    from { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .play-screen {
+        animation: none;
+    }
+}

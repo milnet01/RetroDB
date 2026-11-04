@@ -21,6 +21,7 @@ import time
 from datetime import datetime, timezone
 
 import config
+from scraper import service_limits
 from scraper.metadata_merger import (
     _download_and_finalize, _MEDIA_EXTS, download_ss_media, load_scraper_settings,
 )
@@ -43,11 +44,6 @@ _KINDS = (
     ('boxart_3d', ('box-3D',), 'boxart_3d', 'ss_boxart3d', 'png'),
     ('manual', ('manuel',), 'manuals', 'ss_manual', 'pdf'),
 )
-
-# ScreenScraper's daily limit reply looks like "not found" until PASS-59-215,
-# so this many silent searches in a row ends the run instead of spending more.
-MAX_SILENT_IN_A_ROW = 25
-PACE_SECONDS = 1.0
 
 # Every manual stored so far begins with one of these. A refused media request
 # is answered with a short text such as NOMEDIA, which must not replace a manual.
@@ -97,7 +93,6 @@ class SsRegionRepairJob:
         self.replaced_count = 0
         self.no_match_count = 0
         self.failed_count = 0
-        self.stopped_no_reply = False
         self.current_game = ""
         self.start_time = None
         self.error_message = None
@@ -144,7 +139,6 @@ class SsRegionRepairJob:
                 'replaced': self.replaced_count,
                 'no_match': self.no_match_count,
                 'failed': self.failed_count,
-                'stopped_no_reply': self.stopped_no_reply,
                 'current_game': self.current_game,
                 'error': self.error_message,
             }
@@ -195,22 +189,24 @@ class SsRegionRepairJob:
         return bool(changed)
 
     def _repair_game(self, conn, game, keys):
-        """Look one game up and repair it. Returns False on a silent search."""
+        """Look one game up and repair it."""
         results = search_game(
             game['title'], game['system_folder'],
             keys['screenscraper_username'], keys['screenscraper_password'],
             keys.get('screenscraper_devid', ''), keys.get('screenscraper_devpassword', ''),
         )
         if not results:
-            with self._lock:
-                self.no_match_count += 1
-            return False
+            # A search cut short by the day's limit says nothing about the game.
+            if not service_limits.stopped(service_limits.SCREENSCRAPER):
+                with self._lock:
+                    self.no_match_count += 1
+            return
         wanted = str(game['screenscraper_id'])
         record = next((r for r in results if str(r.get('id')) == wanted), None)
         if record is None:
             with self._lock:
                 self.no_match_count += 1
-            return True
+            return
         for kind in _KINDS:
             try:
                 changed = self._repair_kind(conn, game, record, kind)
@@ -222,7 +218,6 @@ class SsRegionRepairJob:
             if changed:
                 with self._lock:
                     self.replaced_count += 1
-        return True
 
     def _worker(self, keys):
         persist_id = None
@@ -234,7 +229,6 @@ class SsRegionRepairJob:
 
             conn = _get_conn()
             last_persist = time.time()
-            silent = 0
             try:
                 for i, game in enumerate(games):
                     with self._lock:
@@ -257,15 +251,9 @@ class SsRegionRepairJob:
                         persist_job_progress(persist_id, progress)
                         last_persist = time.time()
 
-                    if self._repair_game(conn, game, keys):
-                        silent = 0
-                    else:
-                        silent += 1
-                        if silent >= MAX_SILENT_IN_A_ROW:
-                            with self._lock:
-                                self.stopped_no_reply = True
-                            break
-                    time.sleep(PACE_SECONDS)
+                    self._repair_game(conn, game, keys)
+                    if service_limits.stopped(service_limits.SCREENSCRAPER):
+                        break
             finally:
                 conn.close()
 

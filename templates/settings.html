@@ -1144,13 +1144,13 @@ function saveUserSettings() {
     .then(r => r.json())
     .then(result => {
         if (result.success) {
-            showNotification('Your settings have been saved!', 'success');
+            showNotification({{ _('Your settings have been saved!')|tojson }}, 'success');
         } else {
-            showNotification(result.error || 'Failed to save settings', 'error');
+            showNotification(result.error || {{ _('Failed to save settings')|tojson }}, 'error');
         }
     })
     .catch(e => {
-        showNotification('Network error saving settings', 'error');
+        showNotification({{ _('Network error saving settings')|tojson }}, 'error');
     });
 }
 
@@ -1219,14 +1219,14 @@ function saveTimezone() {
     .then(r => r.json())
     .then(result => {
         if (result.success) {
-            showNotification('Timezone saved! Page will reload to apply.', 'success');
+            showNotification({{ _('Timezone saved! Page will reload to apply.')|tojson }}, 'success');
             setTimeout(() => location.reload(), 1200);
         } else {
-            showNotification(result.error || 'Failed to save timezone', 'error');
+            showNotification(result.error || {{ _('Failed to save timezone')|tojson }}, 'error');
         }
     })
     .catch(() => {
-        showNotification('Network error saving timezone', 'error');
+        showNotification({{ _('Network error saving timezone')|tojson }}, 'error');
     });
 }
 
@@ -1262,7 +1262,7 @@ function changePassword() {
     const newPassword = document.getElementById('newPassword').value;
     
     if (!newPassword) {
-        showNotification('Please enter a new password', 'warning');
+        showNotification({{ _('Please enter a new password')|tojson }}, 'warning');
         return;
     }
     
@@ -1277,15 +1277,15 @@ function changePassword() {
     .then(r => r.json())
     .then(result => {
         if (result.success) {
-            showNotification('Password changed successfully!', 'success');
+            showNotification({{ _('Password changed successfully!')|tojson }}, 'success');
             document.getElementById('currentPassword').value = '';
             document.getElementById('newPassword').value = '';
         } else {
-            showNotification(result.error || 'Failed to change password', 'error');
+            showNotification(result.error || {{ _('Failed to change password')|tojson }}, 'error');
         }
     })
     .catch(e => {
-        showNotification('Network error changing password', 'error');
+        showNotification({{ _('Network error changing password')|tojson }}, 'error');
     });
 }
 
@@ -1372,23 +1372,23 @@ function saveUser() {
     .then(r => r.json())
     .then(result => {
         if (result.success) {
-            showNotification(result.message || 'User saved successfully!', 'success');
+            showNotification(result.message || {{ _('User saved successfully!')|tojson }}, 'success');
             closeUserModal();
             // Reload page to refresh user list
             setTimeout(() => location.reload(), 1000);
         } else {
-            showNotification(result.error || 'Failed to save user', 'error');
+            showNotification(result.error || {{ _('Failed to save user')|tojson }}, 'error');
         }
     })
     .catch(e => {
-        showNotification('Network error saving user', 'error');
+        showNotification({{ _('Network error saving user')|tojson }}, 'error');
     });
 }
 
 function deleteUser(userId, username) {
     showConfirm(
-        '🗑️ Delete User',
-        `Are you sure you want to delete user "${username}"? This action cannot be undone.`,
+        '🗑️ ' + {{ _('Delete User')|tojson }},
+        t({{ _('Are you sure you want to delete user "{username}"? This action cannot be undone.')|tojson }}, {username}),
         function() {
             fetch(`/api/users/${userId}/delete`, {
                 method: 'POST'
@@ -1396,16 +1396,16 @@ function deleteUser(userId, username) {
             .then(r => r.json())
             .then(result => {
                 if (result.success) {
-                    showNotification('User deleted successfully', 'success');
+                    showNotification({{ _('User deleted successfully')|tojson }}, 'success');
                     // Remove row from table
                     const row = document.querySelector(`tr[data-user-id="${userId}"]`);
                     if (row) row.remove();
                 } else {
-                    showNotification(result.error || 'Failed to delete user', 'error');
+                    showNotification(result.error || {{ _('Failed to delete user')|tojson }}, 'error');
                 }
             })
             .catch(e => {
-                showNotification('Network error deleting user', 'error');
+                showNotification({{ _('Network error deleting user')|tojson }}, 'error');
             });
         },
         {danger: true}
@@ -1467,15 +1467,15 @@ function savePathSettings() {
     .then(r => r.json())
     .then(result => {
         if (result.success) {
-            showNotification('Path settings saved!', 'success');
+            showNotification({{ _('Path settings saved!')|tojson }}, 'success');
             if (result.restart_required) {
-                showNotification('Restart required for changes to take full effect', 'warning');
+                showNotification({{ _('Restart required for changes to take full effect')|tojson }}, 'warning');
             }
         } else {
-            showNotification('Failed to save: ' + result.error, 'error');
+            showNotification(t({{ _('Failed to save: {error}')|tojson }}, {error: result.error}), 'error');
         }
     })
-    .catch(e => showNotification('Error saving settings: ' + e, 'error'));
+    .catch(e => showNotification(t({{ _('Error saving settings: {error}')|tojson }}, {error: e}), 'error'));
 }
 
 // Load path settings on page load
@@ -1513,12 +1513,12 @@ function saveDisplaySettings() {
     .then(r => r.json())
     .then(result => {
         if (result.success) {
-            showNotification('Display settings saved!', 'success');
+            showNotification({{ _('Display settings saved!')|tojson }}, 'success');
         } else {
-            showNotification('Failed to save: ' + result.error, 'error');
+            showNotification(t({{ _('Failed to save: {error}')|tojson }}, {error: result.error}), 'error');
         }
     })
-    .catch(e => showNotification('Error saving settings: ' + e, 'error'));
+    .catch(e => showNotification(t({{ _('Error saving settings: {error}')|tojson }}, {error: e}), 'error'));
 }
 
 // Load display settings on page load
@@ -1670,7 +1670,7 @@ function addRegionOption() {
     if (!val) return;
     const existing = getRegionOptions();
     if (existing.some(r => r.toLowerCase() === val.toLowerCase())) {
-        showNotification('Region already exists', 'warning');
+        showNotification({{ _('Region already exists')|tojson }}, 'warning');
         input.value = '';
         return;
     }
@@ -1719,15 +1719,15 @@ function saveNamingSettings() {
         btn.disabled = false;
         btn.innerHTML = originalText;
         if (result.success) {
-            showNotification('ROM naming settings saved!', 'success');
+            showNotification({{ _('ROM naming settings saved!')|tojson }}, 'success');
         } else {
-            showNotification('Failed to save: ' + result.error, 'error');
+            showNotification(t({{ _('Failed to save: {error}')|tojson }}, {error: result.error}), 'error');
         }
     })
     .catch(e => {
         btn.disabled = false;
         btn.innerHTML = originalText;
-        showNotification('Error saving settings: ' + e, 'error');
+        showNotification(t({{ _('Error saving settings: {error}')|tojson }}, {error: e}), 'error');
     });
 }
 
@@ -1767,15 +1767,15 @@ function saveNotificationSettings() {
             if (typeof Notifications !== 'undefined') {
                 Notifications.timeouts = data.notification_timeouts;
             }
-            showNotification('Notification settings saved!', 'success');
+            showNotification({{ _('Notification settings saved!')|tojson }}, 'success');
         } else {
-            showNotification('Failed to save: ' + result.error, 'error');
+            showNotification(t({{ _('Failed to save: {error}')|tojson }}, {error: result.error}), 'error');
         }
     })
     .catch(e => {
         btn.disabled = false;
         btn.innerHTML = originalText;
-        showNotification('Error saving settings: ' + e, 'error');
+        showNotification(t({{ _('Error saving settings: {error}')|tojson }}, {error: e}), 'error');
     });
 }
 
@@ -1787,10 +1787,10 @@ function testNotifications() {
     const errorTimeout = parseInt(document.getElementById('notifTimeoutError').value) || 8;
 
     // Show all notifications at the same time so timeout differences are obvious
-    showNotification(`Success - disappears in ${successTimeout}s`, 'success', successTimeout * 1000);
-    showNotification(`Info - disappears in ${infoTimeout}s`, 'info', infoTimeout * 1000);
-    showNotification(`Warning - disappears in ${warningTimeout}s`, 'warning', warningTimeout * 1000);
-    showNotification(`Error - disappears in ${errorTimeout}s`, 'error', errorTimeout * 1000);
+    showNotification(t({{ _('Success - disappears in {seconds}s')|tojson }}, {seconds: successTimeout}), 'success', successTimeout * 1000);
+    showNotification(t({{ _('Info - disappears in {seconds}s')|tojson }}, {seconds: infoTimeout}), 'info', infoTimeout * 1000);
+    showNotification(t({{ _('Warning - disappears in {seconds}s')|tojson }}, {seconds: warningTimeout}), 'warning', warningTimeout * 1000);
+    showNotification(t({{ _('Error - disappears in {seconds}s')|tojson }}, {seconds: errorTimeout}), 'error', errorTimeout * 1000);
 }
 
 // =============================================================================
@@ -1846,12 +1846,12 @@ function detectBonusDiscs() {
                     html += '</div>';
                     resultDiv.innerHTML = html;
                 }
-                showNotification(`Detected ${data.detected} bonus disc(s)`, 'success');
+                showNotification(t({{ _('Bonus discs detected: {count}')|tojson }}, {count: data.detected}), 'success');
             } else {
-                showNotification('Detection failed: ' + data.error, 'error');
+                showNotification(t({{ _('Detection failed: {error}')|tojson }}, {error: data.error}), 'error');
             }
         })
-        .catch(e => showNotification('Error: ' + e, 'error'))
+        .catch(e => showNotification(t({{ _('Error: {error}')|tojson }}, {error: e}), 'error'))
         .finally(() => {
             btn.disabled = false;
             btn.innerHTML = '<span class="btn-icon">🔍</span> Auto-Detect Bonus Discs';
@@ -1880,14 +1880,14 @@ function autoLinkBonusDiscs() {
                         </ul>
                     </div>
                 `;
-                showNotification(`Linked ${data.linked} bonus disc(s) to parent games`, 'success');
+                showNotification(t({{ _('Bonus discs linked to parent games: {count}')|tojson }}, {count: data.linked}), 'success');
                 // Refresh the detected list
                 detectBonusDiscs();
             } else {
-                showNotification('Auto-link failed: ' + data.error, 'error');
+                showNotification(t({{ _('Auto-link failed: {error}')|tojson }}, {error: data.error}), 'error');
             }
         })
-        .catch(e => showNotification('Error: ' + e, 'error'))
+        .catch(e => showNotification(t({{ _('Error: {error}')|tojson }}, {error: e}), 'error'))
         .finally(() => {
             btn.disabled = false;
             btn.innerHTML = '<span class="btn-icon">🔗</span> Auto-Link to Parents';
@@ -1906,22 +1906,22 @@ function viewBonusStats() {
                 // are server-side COUNT(*) integers (routes/bonus_discs.py:322),
                 // so no escapeHtml is needed for XSS, but the option flag is.
                 showModal(
-                    '📊 Bonus Disc Statistics',
+                    '📊 ' + {{ _('Bonus Disc Statistics')|tojson }},
                     `
                     <div style="font-size: 1.1rem;">
-                        <p><strong>Total Bonus Discs:</strong> ${data.total_bonus}</p>
-                        <p><strong>Linked to Parent:</strong> ${data.linked}</p>
-                        <p><strong>Unlinked:</strong> ${data.unlinked}</p>
-                        <p><strong>Games with Bonus Content:</strong> ${data.parents_with_bonus}</p>
+                        <p><strong>${ {{ _('Total Bonus Discs:')|tojson }} }</strong> ${data.total_bonus}</p>
+                        <p><strong>${ {{ _('Linked to Parent:')|tojson }} }</strong> ${data.linked}</p>
+                        <p><strong>${ {{ _('Unlinked:')|tojson }} }</strong> ${data.unlinked}</p>
+                        <p><strong>${ {{ _('Games with Bonus Content:')|tojson }} }</strong> ${data.parents_with_bonus}</p>
                     </div>
                 `,
                     null, false, null, { allowHtml: true }
                 );
             } else {
-                showNotification('Failed to load stats: ' + data.error, 'error');
+                showNotification(t({{ _('Failed to load stats: {error}')|tojson }}, {error: data.error}), 'error');
             }
         })
-        .catch(e => showNotification('Error: ' + e, 'error'));
+        .catch(e => showNotification(t({{ _('Error: {error}')|tojson }}, {error: e}), 'error'));
 }
 
 function markAsBonusDisc(gameId) {
@@ -1933,13 +1933,13 @@ function markAsBonusDisc(gameId) {
     .then(r => r.json())
     .then(data => {
         if (data.success) {
-            showNotification('Game marked as bonus disc', 'success');
+            showNotification({{ _('Game marked as bonus disc')|tojson }}, 'success');
             detectBonusDiscs(); // Refresh list
         } else {
-            showNotification('Failed: ' + data.error, 'error');
+            showNotification(t({{ _('Failed: {error}')|tojson }}, {error: data.error}), 'error');
         }
     })
-    .catch(e => showNotification('Error: ' + e, 'error'));
+    .catch(e => showNotification(t({{ _('Error: {error}')|tojson }}, {error: e}), 'error'));
 }
 
 function showLinkOptions(gameId, systemId) {
@@ -1954,20 +1954,20 @@ function showLinkOptions(gameId, systemId) {
                     </div>`
                 ).join('');
                 
-                showModal('🔗 Select Parent Game', `
-                    <p style="margin-bottom: var(--spacing-md);">Choose the parent game for this bonus disc:</p>
+                showModal('🔗 ' + {{ _('Select Parent Game')|tojson }}, `
+                    <p style="margin-bottom: var(--spacing-md);">${ {{ _('Choose the parent game for this bonus disc:')|tojson }} }</p>
                     <div style="max-height: 300px; overflow-y: auto; border: 1px solid var(--card-border); border-radius: var(--radius-md);">
                         ${options}
                     </div>
                 `, null, false, null, { allowHtml: true });
             } else if (data.success) {
                 // No parents found - could not extract base title
-                showNotification('No potential parent games found. Try using "Mark" instead to just hide this from listings.', 'warning');
+                showNotification({{ _('No potential parent games found. Try using "Mark" instead to just hide this from listings.')|tojson }}, 'warning');
             } else {
-                showNotification('Error: ' + (data.error || 'Unknown error'), 'error');
+                showNotification(t({{ _('Error: {error}')|tojson }}, {error: data.error || {{ _('Unknown error')|tojson }} }), 'error');
             }
         })
-        .catch(e => showNotification('Error: ' + e, 'error'));
+        .catch(e => showNotification(t({{ _('Error: {error}')|tojson }}, {error: e}), 'error'));
 }
 
 function linkBonusToParent(bonusId, parentId) {
@@ -1983,10 +1983,10 @@ function linkBonusToParent(bonusId, parentId) {
             closeModal();
             detectBonusDiscs(); // Refresh list
         } else {
-            showNotification('Failed: ' + data.error, 'error');
+            showNotification(t({{ _('Failed: {error}')|tojson }}, {error: data.error}), 'error');
         }
     })
-    .catch(e => showNotification('Error: ' + e, 'error'));
+    .catch(e => showNotification(t({{ _('Error: {error}')|tojson }}, {error: e}), 'error'));
 }
 
 // =============================================================================
@@ -2002,13 +2002,13 @@ function createBackup() {
         .then(r => r.json())
         .then(data => {
             if (data.success) {
-                showNotification(`Backup created: ${data.filename} (${data.size})`, 'success');
+                showNotification(t({{ _('Backup created: {filename} ({size})')|tojson }}, {filename: data.filename, size: data.size}), 'success');
                 loadBackups();
             } else {
-                showNotification('Backup failed: ' + data.error, 'error');
+                showNotification(t({{ _('Backup failed: {error}')|tojson }}, {error: data.error}), 'error');
             }
         })
-        .catch(e => showNotification('Backup error: ' + e, 'error'))
+        .catch(e => showNotification(t({{ _('Backup error: {error}')|tojson }}, {error: e}), 'error'))
         .finally(() => {
             btn.disabled = false;
             btn.innerHTML = '<span class="btn-icon">💾</span> Create Backup';
@@ -2048,39 +2048,39 @@ function loadBackups() {
 }
 
 function restoreBackup(filename) {
-    showConfirm('Restore Backup',
-        `Are you sure you want to restore from "${filename}"?\n\nThis will replace your current database. A pre-restore backup will be created automatically.`,
+    showConfirm({{ _('Restore Backup')|tojson }},
+        t({{ _('Are you sure you want to restore from "{filename}"?\n\nThis will replace your current database. A pre-restore backup will be created automatically.')|tojson }}, {filename}),
         () => {
             fetch(`/api/restore/${filename}`, { method: 'POST' })
                 .then(r => r.json())
                 .then(data => {
                     if (data.success) {
-                        showNotification('Database restored! Reloading page...', 'success');
+                        showNotification({{ _('Database restored! Reloading page...')|tojson }}, 'success');
                         if (data.restart_required) {
                             setTimeout(() => location.reload(), 2000);
                         }
                     } else {
-                        showNotification('Restore failed: ' + data.error, 'error');
+                        showNotification(t({{ _('Restore failed: {error}')|tojson }}, {error: data.error}), 'error');
                     }
                 })
-                .catch(e => showNotification('Restore error: ' + e, 'error'));
+                .catch(e => showNotification(t({{ _('Restore error: {error}')|tojson }}, {error: e}), 'error'));
         },
         {danger: true}
     );
 }
 
 function calculateStorage() {
-    showNotification('Calculating file sizes...', 'info');
+    showNotification({{ _('Calculating file sizes...')|tojson }}, 'info');
     fetch('/api/calculate-storage', { method: 'POST' })
         .then(r => r.json())
         .then(data => {
             if (data.success) {
                 showNotification(data.message, 'success');
             } else {
-                showNotification('Calculation failed: ' + data.error, 'error');
+                showNotification(t({{ _('Calculation failed: {error}')|tojson }}, {error: data.error}), 'error');
             }
         })
-        .catch(e => showNotification('Error: ' + e, 'error'));
+        .catch(e => showNotification(t({{ _('Error: {error}')|tojson }}, {error: e}), 'error'));
 }
 
 // Load backups on page load
@@ -2305,11 +2305,11 @@ function toggleScraper(scraper, enabled) {
         body: JSON.stringify(scraperSettings)
     }).then(r => r.json()).then(data => {
         if (data.success) {
-            const names = { esde: 'ES-DE', tgdb: 'TheGamesDB', igdb: 'IGDB', rawg: 'RAWG', screenscraper: 'ScreenScraper', ai: 'AI Metadata' };
-            showNotification(`${names[scraper] || scraper} ${enabled ? 'enabled' : 'disabled'}`, 'success');
+            const names = { esde: 'ES-DE', tgdb: 'TheGamesDB', igdb: 'IGDB', rawg: 'RAWG', screenscraper: 'ScreenScraper', ai: {{ _('AI Metadata')|tojson }} };
+            showNotification(t(enabled ? {{ _('{name} enabled')|tojson }} : {{ _('{name} disabled')|tojson }}, {name: names[scraper] || scraper}), 'success');
         }
     }).catch(() => {
-        showNotification('Failed to save scraper setting', 'error');
+        showNotification({{ _('Failed to save scraper setting')|tojson }}, 'error');
     });
 }
 
@@ -2739,7 +2739,7 @@ async function saveScraperSettings() {
                 setTimeout(() => { resultEl.innerHTML = ''; }, 3000);
             }, 500);
         } else {
-            resultEl.innerHTML = `<div class="alert alert-error">❌ ${escapeHtml(data.error || 'Failed to save settings')}</div>`;
+            resultEl.innerHTML = `<div class="alert alert-error">❌ ${escapeHtml(data.error || {{ _('Failed to save settings')|tojson }})}</div>`;
         }
     } catch (e) {
         resultEl.innerHTML = `<div class="alert alert-error">❌ Error: ${escapeHtml(e.message)}</div>`;
@@ -2902,7 +2902,7 @@ async function addDropdownOption(category, inputId, containerId) {
     const value = input.value.trim();
     
     if (!value) {
-        showModal('⚠️ Invalid Input', 'Please enter a value');
+        showModal('⚠️ ' + {{ _('Invalid Input')|tojson }}, {{ _('Please enter a value')|tojson }});
         return;
     }
     
@@ -2919,18 +2919,18 @@ async function addDropdownOption(category, inputId, containerId) {
             input.value = '';
             loadDropdownOptions(category, containerId);
         } else {
-            showModal('❌ Error', data.error || 'Failed to add option');
+            showModal('❌ ' + {{ _('Error')|tojson }}, data.error || {{ _('Failed to add option')|tojson }});
         }
     } catch (error) {
         console.error('Error adding option:', error);
-        showModal('❌ Error', 'Failed to add option');
+        showModal('❌ ' + {{ _('Error')|tojson }}, {{ _('Failed to add option')|tojson }});
     }
 }
 
 async function deleteDropdownOption(optionId, category, containerId) {
     showConfirmModal(
-        'Delete Option',
-        'Are you sure you want to delete this option?',
+        {{ _('Delete Option')|tojson }},
+        {{ _('Are you sure you want to delete this option?')|tojson }},
         async () => {
             try {
                 const response = await fetch(`/api/dropdown-options/${optionId}`, {
@@ -2942,11 +2942,11 @@ async function deleteDropdownOption(optionId, category, containerId) {
                 if (data.success) {
                     loadDropdownOptions(category, containerId);
                 } else {
-                    showConfirmModal('Error', data.error || 'Failed to delete option', closeConfirmModal);
+                    showConfirmModal({{ _('Error')|tojson }}, data.error || {{ _('Failed to delete option')|tojson }}, closeConfirmModal);
                 }
             } catch (error) {
                 console.error('Error deleting option:', error);
-                showConfirmModal('Error', 'Failed to delete option', closeConfirmModal);
+                showConfirmModal({{ _('Error')|tojson }}, {{ _('Failed to delete option')|tojson }}, closeConfirmModal);
             }
         }
     );
@@ -3493,7 +3493,7 @@ async function addNewController() {
     const description = document.getElementById('newControllerDescription').value.trim();
     
     if (!name) {
-        showModal('⚠️ Missing Input', 'Please enter a controller name');
+        showModal('⚠️ ' + {{ _('Missing Input')|tojson }}, {{ _('Please enter a controller name')|tojson }});
         return;
     }
     
@@ -3537,13 +3537,13 @@ async function addNewController() {
             // Update manufacturer suggestions with any new ones
             updateManufacturerSuggestions();
             
-            showModal('✅ Success', `Controller "${name}" has been added to the library.`);
+            showModal('✅ ' + {{ _('Success')|tojson }}, t({{ _('Controller "{name}" has been added to the library.')|tojson }}, {name}));
         } else {
-            showModal('❌ Error', data.error || 'Failed to add controller');
+            showModal('❌ ' + {{ _('Error')|tojson }}, data.error || {{ _('Failed to add controller')|tojson }});
         }
     } catch (error) {
         console.error('Error adding controller:', error);
-        showModal('❌ Error', 'Failed to add controller');
+        showModal('❌ ' + {{ _('Error')|tojson }}, {{ _('Failed to add controller')|tojson }});
     }
 }
 
@@ -3611,11 +3611,11 @@ async function setSystemDefaultController(systemId, controllerId) {
             // Quietly reload to update the status column
             loadSystemControllersTable();
         } else {
-            showModal('❌ Error', data.error || 'Failed to set default controller');
+            showModal('❌ ' + {{ _('Error')|tojson }}, data.error || {{ _('Failed to set default controller')|tojson }});
         }
     } catch (error) {
         console.error('Error setting default controller:', error);
-        showModal('❌ Error', 'Failed to set default controller');
+        showModal('❌ ' + {{ _('Error')|tojson }}, {{ _('Failed to set default controller')|tojson }});
     }
 }
 
@@ -3646,11 +3646,11 @@ async function addDefaultController(systemId, controllerId) {
         if (data.success) {
             loadSystemControllersTable();
         } else {
-            showModal('❌ Error', data.error || 'Failed to add default controller');
+            showModal('❌ ' + {{ _('Error')|tojson }}, data.error || {{ _('Failed to add default controller')|tojson }});
         }
     } catch (error) {
         console.error('Error adding default controller:', error);
-        showModal('❌ Error', 'Failed to add default controller');
+        showModal('❌ ' + {{ _('Error')|tojson }}, {{ _('Failed to add default controller')|tojson }});
     }
 }
 
@@ -3676,11 +3676,11 @@ async function removeDefaultController(systemId, controllerId) {
         if (data.success) {
             loadSystemControllersTable();
         } else {
-            showModal('❌ Error', data.error || 'Failed to remove default controller');
+            showModal('❌ ' + {{ _('Error')|tojson }}, data.error || {{ _('Failed to remove default controller')|tojson }});
         }
     } catch (error) {
         console.error('Error removing default controller:', error);
-        showModal('❌ Error', 'Failed to remove default controller');
+        showModal('❌ ' + {{ _('Error')|tojson }}, {{ _('Failed to remove default controller')|tojson }});
     }
 }
 
@@ -3783,14 +3783,14 @@ async function clearScrapedData() {
     const btn = document.getElementById('clearScrapedBtn');
     
     // Confirm first
-    const systemName = systemId === 'all' ? 'ALL SYSTEMS' : systemSelect.options[systemSelect.selectedIndex].text;
+    const systemName = systemId === 'all' ? {{ _('ALL SYSTEMS')|tojson }} : systemSelect.options[systemSelect.selectedIndex].text;
     
     // Pass 45.4 — escape system name; opt in to HTML for the formatting.
     showConfirmModal(
-        '⚠️ Clear Scraped Data',
-        `This will clear all scraped metadata from games in <strong>${escapeHtml(systemName)}</strong>.<br><br>
-         ${deleteImages ? '<strong style="color: var(--neon-red);">⚠️ Downloaded images will also be deleted!</strong><br><br>' : ''}
-         This cannot be undone. Are you sure?`,
+        '⚠️ ' + {{ _('Clear Scraped Data')|tojson }},
+        t({{ _('This will clear all scraped metadata from games in {system}.')|tojson }}, {system: '<strong>' + escapeHtml(systemName) + '</strong>'}) + '<br><br>'
+         + (deleteImages ? '<strong style="color: var(--neon-red);">⚠️ ' + {{ _('Downloaded images will also be deleted!')|tojson }} + '</strong><br><br>' : '')
+         + {{ _('This cannot be undone. Are you sure?')|tojson }},
         async () => {
             closeConfirmModal();
             btn.disabled = true;
@@ -3915,13 +3915,13 @@ async function previewOrphanedMedia() {
 
 async function cleanOrphanedMedia() {
     if (!orphanedMediaList || orphanedMediaList.length === 0) {
-        showModal('⚠️ No Files', 'Please scan for orphaned files first.');
+        showModal('⚠️ ' + {{ _('No Files')|tojson }}, {{ _('Please scan for orphaned files first.')|tojson }});
         return;
     }
     
     showConfirm(
-        '⚠️ Delete Orphaned Files',
-        `This will permanently delete ${orphanedMediaList.length} orphaned media files. This action cannot be undone.<br><br>Proceed?`,
+        '⚠️ ' + {{ _('Delete Orphaned Files')|tojson }},
+        t({{ _('Orphaned media files to delete permanently: {count}. This action cannot be undone.<br><br>Proceed?')|tojson }}, {count: orphanedMediaList.length}),
         async function() {
             const btn = document.getElementById('cleanOrphanedBtn');
             const resultDiv = document.getElementById('orphanedMediaResult');
@@ -4051,13 +4051,13 @@ async function previewMissingMediaRefs() {
 
 async function clearMissingMediaRefs() {
     if (!missingMediaRefsCount) {
-        showModal('⚠️ Nothing to Clear', 'Please scan for missing media references first.');
+        showModal('⚠️ ' + {{ _('Nothing to Clear')|tojson }}, {{ _('Please scan for missing media references first.')|tojson }});
         return;
     }
 
     showConfirm(
-        '⚠️ Clear Missing References',
-        `This will clear ${missingMediaRefsCount} database reference(s) to media files that no longer exist on disk, so scrapers can re-download them. Your game entries are not affected.<br><br>Proceed?`,
+        '⚠️ ' + {{ _('Clear Missing References')|tojson }},
+        t({{ _('Database references to clear: {count}. They point to media files that no longer exist on disk, so scrapers can download them again. Your game entries are not affected.<br><br>Proceed?')|tojson }}, {count: missingMediaRefsCount}),
         async function() {
             const btn = document.getElementById('clearMissingRefsBtn');
             const resultDiv = document.getElementById('missingMediaRefsResult');
@@ -4157,8 +4157,8 @@ async function deleteController(controllerId, controllerName) {
     // interpolating into the HTML template, then opt in to HTML so the
     // <strong> + <br><br> still render.
     showConfirmModal(
-        '🗑️ Delete Controller',
-        `Are you sure you want to delete <strong>${escapeHtml(controllerName)}</strong>?<br><br>This will remove it from the library and any systems using it as default.`,
+        '🗑️ ' + {{ _('Delete Controller')|tojson }},
+        t({{ _('Are you sure you want to delete {name}?<br><br>This will remove it from the library and any systems using it as default.')|tojson }}, {name: '<strong>' + escapeHtml(controllerName) + '</strong>'}),
         async () => {
             closeConfirmModal();
             try {
@@ -4180,13 +4180,13 @@ async function deleteController(controllerId, controllerName) {
                         window.scrollTo(0, scrollY);
                     });
                     
-                    showModal('✅ Deleted', `Controller "${controllerName}" has been removed.`);
+                    showModal('✅ ' + {{ _('Deleted')|tojson }}, t({{ _('Controller "{name}" has been removed.')|tojson }}, {name: controllerName}));
                 } else {
-                    showModal('❌ Error', data.error || 'Failed to delete controller');
+                    showModal('❌ ' + {{ _('Error')|tojson }}, data.error || {{ _('Failed to delete controller')|tojson }});
                 }
             } catch (error) {
                 console.error('Error deleting controller:', error);
-                showModal('❌ Error', 'Failed to delete controller');
+                showModal('❌ ' + {{ _('Error')|tojson }}, {{ _('Failed to delete controller')|tojson }});
             }
         },
         {allowHtml: true}
@@ -4204,7 +4204,7 @@ async function openEditControllerModal(controllerId) {
         const data = await response.json();
 
         if (!data.success) {
-            showModal('❌ Error', data.error || 'Failed to load controller');
+            showModal('❌ ' + {{ _('Error')|tojson }}, data.error || {{ _('Failed to load controller')|tojson }});
             return;
         }
 
@@ -4235,7 +4235,7 @@ async function openEditControllerModal(controllerId) {
         }
     } catch (error) {
         console.error('Error opening edit modal:', error);
-        showModal('❌ Error', 'Failed to load controller data');
+        showModal('❌ ' + {{ _('Error')|tojson }}, {{ _('Failed to load controller data')|tojson }});
     }
 }
 
@@ -4255,7 +4255,7 @@ async function saveControllerChanges() {
     const description = document.getElementById('editControllerDescription').value.trim();
     
     if (!name) {
-        showModal('⚠️ Missing Input', 'Please enter a controller name');
+        showModal('⚠️ ' + {{ _('Missing Input')|tojson }}, {{ _('Please enter a controller name')|tojson }});
         return;
     }
     
@@ -4293,13 +4293,13 @@ async function saveControllerChanges() {
             // Update manufacturer suggestions
             updateManufacturerSuggestions();
             
-            showModal('✅ Success', `Controller "${name}" has been updated.`);
+            showModal('✅ ' + {{ _('Success')|tojson }}, t({{ _('Controller "{name}" has been updated.')|tojson }}, {name}));
         } else {
-            showModal('❌ Error', data.error || 'Failed to update controller');
+            showModal('❌ ' + {{ _('Error')|tojson }}, data.error || {{ _('Failed to update controller')|tojson }});
         }
     } catch (error) {
         console.error('Error updating controller:', error);
-        showModal('❌ Error', 'Failed to update controller');
+        showModal('❌ ' + {{ _('Error')|tojson }}, {{ _('Failed to update controller')|tojson }});
     }
 }
 
@@ -4426,14 +4426,14 @@ async function refreshSystemLogos() {
         if (data.success) {
             // Reload the logo reference table
             await reloadLogoReference();
-            showInfoModal('✅ Logos Refreshed', 
-                `Updated ${data.updated} system logos. The table has been refreshed.`);
+            showInfoModal('✅ ' + {{ _('Logos Refreshed')|tojson }}, 
+                t({{ _('System logos updated: {count}. The table has been refreshed.')|tojson }}, {count: data.updated}));
         } else {
-            showInfoModal('Error', data.error || 'Failed to refresh logos');
+            showInfoModal({{ _('Error')|tojson }}, data.error || {{ _('Failed to refresh logos')|tojson }});
         }
     } catch (error) {
         console.error('Error refreshing logos:', error);
-        showInfoModal('Error', 'Failed to refresh system logos');
+        showInfoModal({{ _('Error')|tojson }}, {{ _('Failed to refresh system logos')|tojson }});
     } finally {
         btn.disabled = false;
         btn.innerHTML = originalText;
@@ -4455,15 +4455,15 @@ async function refreshSystemNames() {
         const data = await response.json();
         
         if (data.success) {
-            showInfoModal('✅ Names Refreshed', 
-                `Updated ${data.updated} system names. Click OK to refresh the page.`, 
+            showInfoModal('✅ ' + {{ _('Names Refreshed')|tojson }}, 
+                t({{ _('System names updated: {count}. Click OK to refresh the page.')|tojson }}, {count: data.updated}), 
                 () => window.location.reload());
         } else {
-            showInfoModal('Error', data.error || 'Failed to refresh names');
+            showInfoModal({{ _('Error')|tojson }}, data.error || {{ _('Failed to refresh names')|tojson }});
         }
     } catch (error) {
         console.error('Error refreshing names:', error);
-        showInfoModal('Error', 'Failed to refresh system names');
+        showInfoModal({{ _('Error')|tojson }}, {{ _('Failed to refresh system names')|tojson }});
     } finally {
         btn.disabled = false;
         btn.innerHTML = originalText;
@@ -4906,14 +4906,14 @@ async function viewLogFile(filename) {
                 return `<div class="log-line ${lineClass}">${escapeHtml(line)}</div>`;
             }).join('');
             
-            showModal('📋 Log: ' + filename, `
-                <div class="log-viewer-content">${formattedContent || '<em>Log file is empty</em>'}</div>
+            showModal('📋 ' + t({{ _('Log: {filename}')|tojson }}, {filename}), `
+                <div class="log-viewer-content">${formattedContent || '<em>' + {{ _('Log file is empty')|tojson }} + '</em>'}</div>
             `, null, false, null, { allowHtml: true });
         } else {
-            showModal('❌ Error', data.error || 'Failed to load log file');
+            showModal('❌ ' + {{ _('Error')|tojson }}, data.error || {{ _('Failed to load log file')|tojson }});
         }
     } catch (error) {
-        showModal('❌ Error', 'Error loading log file: ' + error.message);
+        showModal('❌ ' + {{ _('Error')|tojson }}, t({{ _('Error loading log file: {error}')|tojson }}, {error: error.message}));
     }
 }
 
@@ -4922,7 +4922,7 @@ function downloadLogFile(filename) {
 }
 
 async function deleteLogFile(filename) {
-    showConfirm('🗑️ Delete Log File', `Are you sure you want to delete "${filename}"?`, async function() {
+    showConfirm('🗑️ ' + {{ _('Delete Log File')|tojson }}, t({{ _('Are you sure you want to delete "{filename}"?')|tojson }}, {filename}), async function() {
         try {
             const response = await fetch(`/api/logs/delete/${encodeURIComponent(filename)}`, {
                 method: 'DELETE'
@@ -4932,28 +4932,28 @@ async function deleteLogFile(filename) {
             if (data.success) {
                 loadLogFiles(); // Refresh the list
             } else {
-                showModal('❌ Error', data.error || 'Failed to delete log file');
+                showModal('❌ ' + {{ _('Error')|tojson }}, data.error || {{ _('Failed to delete log file')|tojson }});
             }
         } catch (error) {
-            showModal('❌ Error', 'Error deleting log file: ' + error.message);
+            showModal('❌ ' + {{ _('Error')|tojson }}, t({{ _('Error deleting log file: {error}')|tojson }}, {error: error.message}));
         }
     }, {danger: true});
 }
 
 async function clearOldLogs() {
-    showConfirm('🧹 Clear Old Logs', 'This will delete all log files older than 5 days. Continue?', async function() {
+    showConfirm('🧹 ' + {{ _('Clear Old Logs')|tojson }}, {{ _('This will delete all log files older than 5 days. Continue?')|tojson }}, async function() {
         try {
             const response = await fetch('/api/logs/clear-old', { method: 'POST' });
             const data = await response.json();
 
             if (data.success) {
-                showModal('✓ Success', `Removed ${data.removed} old log file(s).`);
+                showModal('✓ ' + {{ _('Success')|tojson }}, t({{ _('Old log files removed: {count}')|tojson }}, {count: data.removed}));
                 loadLogFiles(); // Refresh the list
             } else {
-                showModal('❌ Error', data.error || 'Failed to clear old logs');
+                showModal('❌ ' + {{ _('Error')|tojson }}, data.error || {{ _('Failed to clear old logs')|tojson }});
             }
         } catch (error) {
-            showModal('❌ Error', 'Error clearing old logs: ' + error.message);
+            showModal('❌ ' + {{ _('Error')|tojson }}, t({{ _('Error clearing old logs: {error}')|tojson }}, {error: error.message}));
         }
     }, {danger: true});
 }
@@ -4987,7 +4987,7 @@ function extractNpsso(text) {
 (function setupPsnBookmarklet() {
     const link = document.getElementById('psnBookmarkletLink');
     if (!link) return;
-    link.href = `javascript:(function(){var m=document.body.innerText.match(/"npsso"\\s*:\\s*"([^"]+)"/);if(!m){alert('NPSSO not found. Open https://ca.account.sony.com/api/v1/ssocookie while signed in to PlayStation, then click this bookmark.');return;}navigator.clipboard.writeText(m[1]).then(function(){alert('NPSSO copied \\u2014 paste it into RetroDB.');},function(){window.prompt('Copy your NPSSO:',m[1]);});})();`;
+    link.href = `javascript:(function(){var m=document.body.innerText.match(/"npsso"\\s*:\\s*"([^"]+)"/);if(!m){alert('NPSSO not found. Open https://ca.account.sony.com/api/v1/ssocookie while signed in to PlayStation, then click this bookmark.');return;}navigator.clipboard.writeText(m[1]).then(function(){alert('NPSSO copied \\u2014 paste it into RetroDB.');},function(){window.prompt('Copy your NPSSO:',m[1]);});})();`;  // i18n-skip: runs on Sony's page, no translations there
 })();
 
 /** Auto-detect on input change */
@@ -4998,35 +4998,23 @@ function psnNpssoAutoDetect(input) {
     const token = extractNpsso(val);
     if (token && token !== val) {
         input.value = token;
-        resultEl.innerHTML = '<span style="color: var(--neon-green);">Token extracted from JSON</span>';
+        resultEl.innerHTML = '<span style="color: var(--neon-green);">' + escapeHtml({{ _('Token extracted from the pasted page')|tojson }}) + '</span>';
     } else if (token) {
-        resultEl.innerHTML = '<span style="color: var(--neon-green);">Token detected</span>';
+        resultEl.innerHTML = '<span style="color: var(--neon-green);">' + escapeHtml({{ _('Token detected')|tojson }}) + '</span>';
     } else {
-        resultEl.innerHTML = '<span style="color: var(--neon-orange);">Could not detect a valid NPSSO token</span>';
+        resultEl.innerHTML = '<span style="color: var(--neon-orange);">' + escapeHtml({{ _('Could not detect a valid NPSSO token')|tojson }}) + '</span>';
     }
 }
 
-/** Paste from clipboard and auto-extract */
-async function psnPasteFromClipboard() {
+/** Put the cursor in the token box. Reading the clipboard from a script
+ *  makes the browser ask for permission; Ctrl+V into the box does not, and
+ *  psnNpssoAutoDetect pulls the token out of what is pasted (PASS-59-111). */
+function psnFocusNpssoBox() {
     const input = document.getElementById('userPsnNpsso');
-    const resultEl = document.getElementById('psnNpssoDetectResult');
-    try {
-        const text = await navigator.clipboard.readText();
-        if (!text) {
-            resultEl.innerHTML = '<span style="color: var(--neon-orange);">Clipboard is empty</span>';
-            return;
-        }
-        const token = extractNpsso(text);
-        if (token) {
-            input.value = token;
-            resultEl.innerHTML = '<span style="color: var(--neon-green);">Token extracted and pasted</span>';
-        } else {
-            input.value = text;
-            resultEl.innerHTML = '<span style="color: var(--neon-orange);">Pasted, but could not detect NPSSO token format</span>';
-        }
-    } catch (e) {
-        resultEl.innerHTML = '<span style="color: var(--neon-orange);">Clipboard access denied &mdash; paste manually with Ctrl+V</span>';
-    }
+    input.focus();
+    input.select();
+    document.getElementById('psnNpssoDetectResult').innerHTML =
+        '<span style="color: var(--text-secondary);">' + escapeHtml({{ _('Now press Ctrl+V to paste.')|tojson }}) + '</span>';
 }
 
 /** Save NPSSO + test in one step */
@@ -5035,15 +5023,16 @@ async function psnQuickSaveAndTest() {
     const resultSpan = document.getElementById('psnTestResult');
     const npsso = document.getElementById('userPsnNpsso').value.trim();
     const username = document.getElementById('userPsnUsername').value.trim();
+    const btnLabel = btn.textContent;
 
     if (!npsso) {
-        resultSpan.innerHTML = '<span style="color: var(--neon-orange);">Enter an NPSSO token first</span>';
+        resultSpan.innerHTML = '<span style="color: var(--neon-orange);">' + escapeHtml({{ _('Enter an NPSSO token first')|tojson }}) + '</span>';
         return;
     }
 
     btn.disabled = true;
-    btn.innerHTML = 'Testing...';
-    resultSpan.innerHTML = '<span style="color: var(--text-secondary);">Saving and connecting...</span>';
+    btn.textContent = {{ _('Testing...')|tojson }};
+    resultSpan.innerHTML = '<span style="color: var(--text-secondary);">' + escapeHtml({{ _('Saving and connecting...')|tojson }}) + '</span>';
 
     try {
         const resp = await fetch('/api/psn/save-npsso', {
@@ -5054,48 +5043,48 @@ async function psnQuickSaveAndTest() {
         const data = await resp.json();
 
         if (data.success) {
-            resultSpan.innerHTML = '<span style="color: var(--neon-green);">Connected as ' + escapeHtml(data.username) + '</span>';
+            const msg = {{ _('Connected as %(name)s', name='{name}')|tojson }}.replace('{name}', data.username || '');
+            resultSpan.innerHTML = '<span style="color: var(--neon-green);">' + escapeHtml(msg) + '</span>';
             if (data.username && !username) {
                 document.getElementById('userPsnUsername').value = data.username;
             }
-            // Refresh token status
             loadPsnTokenStatus();
         } else {
-            resultSpan.innerHTML = '<span style="color: var(--neon-red);">' + escapeHtml(data.error || 'Connection failed') + '</span>';
+            resultSpan.innerHTML = '<span style="color: var(--neon-red);">' + escapeHtml(data.error || {{ _('Connection failed')|tojson }}) + '</span>';
         }
     } catch (e) {
-        resultSpan.innerHTML = '<span style="color: var(--neon-red);">Error: ' + escapeHtml(e.message) + '</span>';
+        resultSpan.innerHTML = '<span style="color: var(--neon-red);">' + escapeHtml({{ _('Error: %(msg)s', msg='{msg}')|tojson }}.replace('{msg}', e.message)) + '</span>';
     }
 
     btn.disabled = false;
-    btn.innerHTML = 'Save &amp; Test Connection';
+    btn.textContent = btnLabel;
 }
 
-/** Load and display PSN token expiration status */
+/** Show whether the user must act on their PSN sign-in. Sony's own 10-day
+ *  session is not shown: RetroDB signs in again from the saved NPSSO when it
+ *  lapses, so only a refused NPSSO needs the user (PASS-59-111). */
 async function loadPsnTokenStatus() {
     const statusEl = document.getElementById('psnTokenStatus');
     try {
         const resp = await fetch('/api/psn/token-info');
         const data = await resp.json();
-
-        if (data.has_token && !data.expired) {
-            const days = data.days_remaining;
-            const color = days > 14 ? 'var(--neon-green)' : days > 3 ? 'var(--neon-orange)' : 'var(--neon-red)';
-            const expDate = new Date(data.refresh_expires_at * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-            statusEl.style.display = 'flex';
-            statusEl.style.background = days > 14 ? 'rgba(34,197,94,0.1)' : days > 3 ? 'rgba(245,158,11,0.1)' : 'rgba(239,68,68,0.1)';
-            statusEl.style.border = '1px solid ' + color;
-            statusEl.innerHTML = '<span style="color:' + color + '; font-weight: 600;">' +
-                (days > 14 ? '&#10003;' : '&#9888;') +
-                '</span><span style="color: var(--text-primary);">PSN session active &mdash; expires <strong>' + expDate + '</strong> (' + days + ' day' + (days !== 1 ? 's' : '') + ' remaining)</span>';
-        } else if (data.expired) {
-            statusEl.style.display = 'flex';
-            statusEl.style.background = 'rgba(239,68,68,0.1)';
-            statusEl.style.border = '1px solid var(--neon-red)';
-            statusEl.innerHTML = '<span style="color: var(--neon-red); font-weight: 600;">&#10007;</span><span style="color: var(--text-primary);">PSN session expired &mdash; enter a new NPSSO token below</span>';
+        let color, bg, icon, msg;
+        if (data.refused) {
+            const when = new Date(data.refused_at * 1000).toLocaleDateString(document.documentElement.lang || undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+            color = 'var(--neon-red)'; bg = 'rgba(239,68,68,0.1)'; icon = '&#10007;';
+            msg = {{ _('Sony refused your saved NPSSO token on %(date)s. Get a new one with the steps below.', date='{date}')|tojson }}.replace('{date}', when);
+        } else if (data.has_token) {
+            color = 'var(--neon-green)'; bg = 'rgba(34,197,94,0.1)'; icon = '&#10003;';
+            msg = {{ _('Connected to PSN. RetroDB keeps the sign-in going by itself. You need a new token only if Sony refuses this one.')|tojson }};
         } else {
             statusEl.style.display = 'none';
+            return;
         }
+        statusEl.style.display = 'flex';
+        statusEl.style.background = bg;
+        statusEl.style.border = '1px solid ' + color;
+        statusEl.innerHTML = '<span style="color:' + color + '; font-weight: 600;">' + icon + '</span>' +
+            '<span style="color: var(--text-primary);">' + escapeHtml(msg) + '</span>';
     } catch (e) {
         statusEl.style.display = 'none';
     }
@@ -5123,7 +5112,7 @@ function toggleXboxWizard() {
 function copyXboxRedirectUri() {
     const uri = document.getElementById('xboxRedirectUri').textContent;
     copyToClipboard(uri);
-    showNotification('Redirect URI copied to clipboard', 'success');
+    showNotification({{ _('Redirect URI copied to clipboard')|tojson }}, 'success');
 }
 
 // =============================================================================
@@ -5198,12 +5187,12 @@ async function uploadCustomAvatar(fileInput) {
         if (data.success) {
             updateAllAvatars(data.avatar_url);
             closeAvatarPicker();
-            showNotification('Avatar updated!', 'success');
+            showNotification({{ _('Avatar updated!')|tojson }}, 'success');
         } else {
-            showNotification(data.error || 'Upload failed', 'error');
+            showNotification(data.error || {{ _('Upload failed')|tojson }}, 'error');
         }
     } catch (e) {
-        showNotification('Upload failed: ' + e.message, 'error');
+        showNotification(t({{ _('Upload failed: {error}')|tojson }}, {error: e.message}), 'error');
     }
     fileInput.value = '';
 }
@@ -5217,10 +5206,10 @@ async function removeAvatar() {
             document.querySelectorAll('.avatar-option').forEach(opt => opt.classList.remove('selected'));
             updateAllAvatars(null);
             closeAvatarPicker();
-            showNotification('Avatar removed', 'success');
+            showNotification({{ _('Avatar removed')|tojson }}, 'success');
         }
     } catch (e) {
-        showNotification('Failed to remove avatar', 'error');
+        showNotification({{ _('Failed to remove avatar')|tojson }}, 'error');
     }
 }
 
@@ -5240,10 +5229,10 @@ async function saveAvatarChoice() {
             const url = '/static/images/avatars/' + selectedDefaultAvatar + '.svg';
             updateAllAvatars(url);
             closeAvatarPicker();
-            showNotification('Avatar updated!', 'success');
+            showNotification({{ _('Avatar updated!')|tojson }}, 'success');
         }
     } catch (e) {
-        showNotification('Failed to save avatar', 'error');
+        showNotification({{ _('Failed to save avatar')|tojson }}, 'error');
     }
 }
 

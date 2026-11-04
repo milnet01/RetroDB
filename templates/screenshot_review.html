@@ -150,7 +150,7 @@ async function startReviewScan() {
             },
             onError(task) {
                 endReviewScan();
-                showNotification(task.error || t('Scan failed'), 'error');
+                showNotification(task.error || {{ _('Scan failed')|tojson }}, 'error');
             },
             onCancel: endReviewScan
         }, 500);
@@ -162,10 +162,10 @@ async function startReviewScan() {
 
 function updateReviewSummary(unreadable) {
     let text = reviewShots.length
-        ? t('{count} screenshots, most suspicious first.', { count: formatNumber(reviewShots.length) })
-        : t('No screenshots to review for this system.');
+        ? t({{ _('{count} screenshots, most suspicious first.')|tojson }}, { count: formatNumber(reviewShots.length) })
+        : {{ _('No screenshots to review for this system.')|tojson }};
     if (unreadable) {
-        text += ' ' + t('{count} could not be read.', { count: formatNumber(unreadable) });
+        text += ' ' + t({{ _('{count} could not be read.')|tojson }}, { count: formatNumber(unreadable) });
     }
     document.getElementById('resultsSummary').textContent = text;
 }
@@ -177,19 +177,19 @@ function showMoreShots() {
         const src = '/static/images/screenshots/' + encodeURIComponent(shot.filename);
         const args = escapeHtml(JSON.stringify([shot.game_id, shot.filename, '$this']));
         return '<div class="review-shot">' +
-            '<a href="' + src + '" target="_blank" rel="noopener noreferrer" title="' + escapeHtml(t('Open full size')) + '">' +
+            '<a href="' + src + '" target="_blank" rel="noopener noreferrer" title="' + escapeHtml({{ _('Open full size')|tojson }}) + '">' +
             '<img src="' + src + '" alt="' + escapeHtml(shot.title) + '" loading="lazy"></a>' +
             '<a href="/game/' + shot.game_id + '">' + escapeHtml(shot.title) + '</a>' +
-            '<span class="review-shot-score">' + escapeHtml(t('Colour misfit: {score}', { score: shot.score })) + '</span>' +
+            '<span class="review-shot-score">' + escapeHtml(t({{ _('Colour misfit: {score}')|tojson }}, { score: shot.score })) + '</span>' +
             '<button type="button" class="btn btn-sm btn-danger" data-on-click="removeReviewShot" data-args="' + args + '">' +
-            escapeHtml(t('Remove')) + '</button></div>';
+            escapeHtml({{ _('Remove')|tojson }}) + '</button></div>';
     }).join(''));
     reviewShown += next.length;
     document.getElementById('showMoreBtn').hidden = reviewShown >= reviewShots.length;
 }
 
 function removeReviewShot(gameId, filename, button) {
-    showConfirm(t('Remove Screenshot'), t('Remove this screenshot from the game and delete its file? This cannot be undone.'), async function() {
+    showConfirm({{ _('Remove Screenshot')|tojson }}, {{ _('Remove this screenshot from the game and delete its file? This cannot be undone.')|tojson }}, async function() {
         try {
             const data = await API.post('/api/delete-screenshot/' + gameId, { screenshot: filename });
             if (!data.success) {
@@ -200,7 +200,7 @@ function removeReviewShot(gameId, filename, button) {
             reviewShots = reviewShots.filter(shot => shot.filename !== filename);
             reviewShown -= 1;
             updateReviewSummary(0);
-            showNotification(t('Screenshot removed'), 'success');
+            showNotification({{ _('Screenshot removed')|tojson }}, 'success');
         } catch (err) {
             showNotification(err.message, 'error');
         }

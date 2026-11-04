@@ -178,6 +178,7 @@
 <div class="alphabet-nav glass-panel" id="alphabetNav" role="navigation" aria-label="{{ _('Alphabetical jump navigation') }}">
     <span class="alphabet-label">{{ _('Jump to:') }}</span>
     <div class="alphabet-letters">
+        <button class="alphabet-btn alphabet-all" data-letter="" title="{{ _('Show every game again') }}">{{ _('All') }}</button>
         <button class="alphabet-btn" data-letter="#">#</button>
         <button class="alphabet-btn" data-letter="A">A</button>
         <button class="alphabet-btn" data-letter="B">B</button>
@@ -1061,6 +1062,14 @@ const PSNTrophyController = (function() {
 
         nav.querySelectorAll('.alphabet-btn').forEach(btn => {
             const letter = btn.dataset.letter;
+            if (!letter) {
+                // "All": drop the letter filter.
+                btn.addEventListener('click', () => {
+                    clearLetterJump();
+                    resetAndFetch();
+                });
+                return;
+            }
             if (letterSet.size > 0 && !letterSet.has(letter)) {
                 btn.classList.add('disabled');
             }
@@ -1619,7 +1628,7 @@ let bulkRefreshPolling = null;
 async function startBulkRefresh() {
     const npwrIds = PSNTrophyController.getSelectedIds();
     if (npwrIds.length === 0) {
-        if (typeof showModal === 'function') showModal('⚠️ No Selection', 'Please select at least one game to refresh.');
+        if (typeof showModal === 'function') showModal('⚠️ ' + {{ _('No Selection')|tojson }}, {{ _('Please select at least one game to refresh.')|tojson }});
         return;
     }
 
@@ -1754,7 +1763,7 @@ async function toggleBulkPause() {
 
 async function cancelBulkRefresh() {
     if (typeof showConfirm === 'function') {
-        showConfirm('⚠️ Cancel Refresh', 'Are you sure you want to cancel the bulk refresh?', async () => {
+        showConfirm('⚠️ ' + {{ _('Cancel Refresh')|tojson }}, {{ _('Are you sure you want to cancel the bulk refresh?')|tojson }}, async () => {
             try {
                 await fetch('/api/psn/bulk-refresh/cancel', { method: 'POST' });
                 pollBulkRefreshStatus();

@@ -1,3 +1,128 @@
+- version: 4.0.0
+  date: '2026-11-04'
+  tags:
+  - type: fix
+    label: Własne testy RetroDB nie mogą już ruszać Twojej biblioteki podczas działania. Zawsze używają tymczasowej kopii bazy danych, obrazów i ustawień, a jeśli którykolwiek z tych elementów wskazuje na Twoje prawdziwe pliki, odmawiają uruchomienia
+  - type: fix
+    label: Czyszczenie osieroconych plików nie usuwa już obrazów z Listy życzeń. Otwarcie gry nie powoduje już, że zapomina ona zrzuty ekranu, których nie może znaleźć. Wcześniej, gdy dysk z obrazami był odłączony, każda otwarta gra traciła całą listę zrzutów ekranu; teraz lista zostaje zachowana, a brakujący obraz jest tylko ukrywany
+  - type: fix
+    label: Pobieranie wideo lub instrukcji, które przerwie się w połowie, nie uszkadza już kopii, którą gra już miała, a nieudane pobieranie nie zostawia w folderze mediów ukrytego niedokończonego pliku. Działający w tle skaler nie zapisuje już starego obrazu nad nowszym, pobranym w międzyczasie. Konwersja do WebP zachowuje wskazywanie obrazu dla każdej gry, która go współdzieli, i nigdy nie rusza plików spoza folderów z obrazami
+  - type: fix
+    label: Usunięcie gry lub pozycji z Listy życzeń usuwa teraz także jej obrazy, wideo i instrukcje, ale zachowuje te, z których nadal korzysta inna gra lub pozycja z Listy życzeń. Zapisane obrazy mogą znowu być odczytywane przez inne konta na komputerze, a Zmiana rozmiaru obrazów liczy obraz, którego nie udało się zapisać, jako nieudany, a nie jako gotowy
+  - type: fix
+    label: Wyszukiwarka duplikatów nie proponuje już do usunięcia działającego pliku. Podczas szukania według nazwy nie uznaje już plików .cue i .bin jednej gry za swoje kopie. Nigdy nie proponuje pliku ścieżki płyty, który mogą współdzielić dwie wersje gry. Nie usunie płyty wymienionej na playliście. Gra, której plik usuwasz, przechodzi teraz do kopii, którą zachowujesz, więc pozostaje w Bibliotece
+  - type: fix
+    label: Porządkowanie wielopłytowych nie nadpisuje już istniejącej playlisty ani pliku, który już jest w folderze gry; zatrzymuje się i podaje który. Utworzona playlista zawiera pliki .cue poszczególnych płyt, a nie ich pliki ścieżek. Gry, których pliki przenosi, podążają teraz za nimi do folderu, więc Czyszczenie brakujących ROM-ów już ich nie usuwa
+  - type: fix
+    label: Konwersja do CHD z opcją „usuń oryginały” usuwa teraz także pliki ścieżek płyty, ale zachowuje ścieżkę, której nadal używa inny plik .cue. Gra i każda playlista z wymienioną starą płytą wskazują teraz nowy plik .chd. Zmiana nazwy pliku gry aktualizuje teraz playlistę, na której jest wymieniony, a pliku ścieżki potrzebnego dla .cue nie można zmienić. Usuwanie plików z archiwum zip usuwa tylko wybrane pliki, nawet gdy nazwa zawiera [ lub ]. Usuwanie duplikatów zrzutów ekranu kasuje tylko kopie znalezione podczas skanowania i zawsze zostawia jedną
+  - type: fix
+    label: How Long to Beat na stronie gry wyszukuje to, co wpiszesz. Wcześniej, gdy nie mógł znaleźć tytułu, szukał innych nazw gry i mógł zaproponować inną grę, na przykład fanowski remake. Nadal sprawdza inne nazwy, gdy w polu jest właściwa nazwa gry
+  - type: fix
+    label: Kroki dotyczące How Long to Beat w instrukcji pomocy zgadzają się z ekranem. Mówiły o wyborze dopasowania z listy, a strona pokazuje jedno dopasowanie z przyciskami Zapisz i Anuluj. Pomoc dla PlayStation nie mówi już, że logowanie trwa około dwóch miesięcy, bo RetroDB loguje się ponownie samodzielnie. Wszystkie 20 przetłumaczonych instrukcji zawiera obie zmiany
+  - type: fix
+    label: Każdy pasek liter zaczyna się teraz od przycisku Wszystko. Na stronach Biblioteki, konsoli i Trofeów PSN wybranie litery pokazuje tylko gry na tę literę, a wcześniej nie było przycisku, który przywracał resztę. Na innych stronach osiągnięć Wszystko wraca do pierwszej gry
+  - type: fix
+    label: Nowy token logowania PlayStation wklejony w Ustawieniach jest teraz używany od razu. Wcześniej RetroDB używał starego logowania, aż wygasło, a Zapisz i sprawdź połączenie podawało, że to stare logowanie działa. Token odrzucony przez Sony nie zastępuje już tego, który działa
+  - type: enhancement
+    label: 'Logowanie PlayStation w Ustawieniach łatwiej utrzymać. Baner nie odlicza już dni, w których nie musiałeś nic robić, bo RetroDB loguje się ponownie samodzielnie; robi się czerwony tylko wtedy, gdy Sony odrzuci zapisany token. Przycisk Wklej tutaj nie powoduje już, że przeglądarka prosi o dostęp do schowka: ustawia kursor w polu, abyś użył Ctrl+V. Kroki mówią teraz, by najpierw wylogować się z PlayStation, gdy wymieniasz token, który nadal działa, a ich komunikaty można tłumaczyć'
+  - type: enhancement
+    label: Wyskakujące komunikaty i okna z pytaniami, takie jak „Zapisano ustawienia” lub „Usunąć tę listę?”, można teraz tłumaczyć na każdej stronie. Wcześniej większość z nich pozostawała po angielsku niezależnie od wybranego języka
+  - type: enhancement
+    label: Komunikaty wyjaśniające, dlaczego logowanie PlayStation się nie udało, takie jak „Twój NPSSO mógł wygasnąć”, można teraz tłumaczyć
+  - type: fix
+    label: Instrukcja pomocy w każdym języku odpowiada teraz angielskiej. Zyskuje Wyszukiwanie wszędzie, Zachowanie tytułu, Nazwy MAME i tył pudełka, a starsze akapity, które były nieaktualne, zostały zaktualizowane
+  - type: fix
+    label: W niemieckim, afrikaans i hiszpańskim przycisk Wstecz na okładce gry oznacza teraz tył pudełka, a nie „cofnij”
+  - type: feature
+    label: Naciśnięcie Graj wypełnia teraz ekran logo gry na tle jej obrazu podczas uruchamiania gry, a gdy gra nie ma logo, jej nazwą dużymi literami. Znika samo, gdy otworzy się okno gry, albo po naciśnięciu Esc lub kliknięciu
+  - type: feature
+    label: 'Obracane pudełko 3D ma teraz prawdziwy kształt etui PS5: zaokrąglone rogi i krawędzie, wypukłą krawędź wokół okładki, linię łączenia obu połówek i wcięcie na palec po otwieranej stronie. Wymaga pliku pudełka z wersji Slipcase, która zapisuje kształt; zaimportuj pudełko ponownie, aby go dostać. Inne pudełka wyglądają jak dawniej'
+  - type: enhancement
+    label: Odśwież RetroAchievements zostało przeniesione z Ustawień na stronę RetroAchievements i nazywa się teraz Znajdź gry z osiągnięciami. Każdy przycisk ma teraz opis tego, co robi, więc łatwo odróżnić Znajdź gry od Synchronizuj postęp. Gdy nie połączono jeszcze żadnych gier, strona pokazuje administratorowi przycisk Znajdź zamiast przechodzić do następnej karty
+  body: "<ul>\n  <li><strong>Instrukcja pomocy jest aktualna w każdym języku.</strong>\n    Sekcje, które były tylko w angielskiej instrukcji, są teraz przetłumaczone.</li>\n</ul>\n"
+- version: 3.35.4
+  date: '2026-11-03'
+  tags:
+  - type: fix
+    label: Zrzut ekranu usunięty z gry teraz zostaje usunięty. Wcześniej kolejne pobieranie danych mogło skopiować go z powrotem z ES-DE albo pobrać ponownie ze źródła online. Usunięcie zbędnej kopii w narzędziu Duplikaty zrzutów ekranu się nie liczy, bo obraz i tak zostaje raz
+  - type: feature
+    label: 'Gry mają teraz swoje logo: Pobierz dane zapisuje je z ES-DE, ScreenScraper, TheGamesDB, IGDB i Steam, a strona gry pokazuje je nad tytułem albo zamiast brakującego pudełka. Logo możesz wgrać lub usunąć w oknie Edytuj. Uruchom zbiorcze pobieranie danych z opcją Uzupełnij braki, aby uzupełnić logo w grach, dla których dane pobrano wcześniej'
+  - type: fix
+    label: IGDB nie ustawia już logo gry jako tła strony
+  - type: feature
+    label: 'Gry mają teraz tył pudełka: Pobierz dane zapisuje go z ES-DE, ScreenScraper i TheGamesDB, a przycisk Tył na okładce na stronie gry go pokazuje. Kliknij tył, aby go powiększyć. Tył możesz wgrać lub usunąć w oknie Edytuj. Tyły uzupełniają się za każdym razem, gdy pobierasz dane gry; Uzupełnij braki nie pobiera danych gry ponownie tylko dla tyłu'
+  - type: fix
+    label: Gra bez okładki z przodu w TheGamesDB nie dostaje już tyłu pudełka jako okładki
+  - type: fix
+    label: Jeśli wyłączysz scraper w Ustawieniach w trakcie zbiorczego pobierania danych, liczba nieznalezionych gier jest teraz poprawna od następnej gry. Wcześniej gra mogła zostać policzona jako zatrzymana
+  - type: enhancement
+    label: W systemie bez skonfigurowanego emulatora przycisk Graj jest wyszarzony. Najedź na niego, aby zobaczyć powód, albo kliknij, aby zobaczyć okno z informacją, że emulator nie jest skonfigurowany. Wcześniej obok przycisku był wiersz tekstu
+  body: "<ul>\n  <li><strong>Gry mają logo.</strong> Pobierz dane zapisuje logo każdej gry,\n    a strona gry pokazuje je nad tytułem albo zamiast brakującego pudełka.\n    Uruchom zbiorcze pobieranie danych z opcją Uzupełnij braki, aby uzupełnić\n    logo w grach, dla których dane pobrano wcześniej.</li>\n  <li><strong>Gry mają tył pudełka.</strong> Pokazuje go przycisk Tył na\n    okładce na stronie gry, a kliknięcie powiększa obraz. Tyły uzupełniają się\n    za każdym razem, gdy pobierasz dane gry.</li>\n  <li><strong>Usunięty zrzut ekranu zostaje usunięty.</strong> Kolejne\n    pobieranie danych nie kopiuje go już z powrotem ani nie pobiera ponownie.</li>\n  <li><strong>Graj mówi, dlaczego nie może ruszyć.</strong> W systemie bez\n    skonfigurowanego emulatora przycisk Graj jest wyszarzony i podaje powód.</li>\n</ul>\n"
+- version: 3.35.3
+  date: '2026-11-02'
+  tags:
+  - type: feature
+    label: 'Nowe narzędzie Nazwy MAME w Narzędziach ROM: gry MAME dostają prawdziwe nazwy, lata i producentów z własnej listy MAME, a pliki zachowują krótkie nazwy. Potem funkcja Pobierz dane znajduje każdą grę, a listę MAME można filtrować według kategorii, np. pomijając automaty do gier hazardowych. Zestawy BIOS są ukryte na liście'
+  - type: fix
+    label: Raporty ROM nie proponują już zmiany nazw plików MAME, bo po zmianie nazwy plik przestaje działać w MAME
+  - type: fix
+    label: Ustawienia podają teraz, czego wymaga Microsoft, zanim będzie można zarejestrować aplikację Xbox. Z tego powodu nie dało się przetestować logowania do Xbox
+  - type: enhancement
+    label: Osobna karta Oficjalne nazwy zniknęła z Zbiorczego uzupełniania AI, bo przełącznik Oficjalna nazwa w tym narzędziu już to robi
+  - type: fix
+    label: Gdy Sony odrzuci zapisane logowanie do PlayStation, pulpit i Ustawienia teraz o tym informują i proszą o ponowne połączenie. Wcześniej dziennik przy każdym starcie serwera pokazywał bezsensowny błąd, a nic Ci o tym nie mówiło
+  - type: feature
+    label: Importowanie ze Steam uzupełnia teraz w tle opis każdej gry, twórców, wynik Metacritic, kategorie wiekowe, tryby gry, okładkę, tło i zrzuty ekranu z jej strony w sklepie. Użyj funkcji Pobierz dane, aby poznać gatunek i datę premiery gry
+  - type: feature
+    label: Synchronizacja ze Steam zachowuje teraz Twój czas gry i datę ostatniej gry, a strona gry je pokazuje
+  - type: fix
+    label: Pobieranie biblioteki na stronie importu ze Steam działa teraz dla administratora z zapisanym kluczem Steam. Wcześniej wysyłało do Steam ukrytą postać klucza, a strona błędnie radziła ustawić profil jako publiczny
+  - type: fix
+    label: Gra ze Steam lub Xbox, która jest już w Twojej bibliotece pod tą samą nazwą, jest teraz podczas importu łączona z tą grą, więc jej osiągnięcia się synchronizują. Wcześniej była pomijana i nigdy nie łączona
+  - type: fix
+    label: Gry zaimportowane ze Steam, Xbox i PlayStation od razu sortują się prawidłowo, np. Final Fantasy IX przed Final Fantasy X, a znaki towarowe ze Steam są usuwane z ich nazw
+  - type: feature
+    label: W systemach, w których RetroAchievements używa zwykłego skrótu pliku, np. Mega Drive i Game Boy, strona gry pokazuje, czy Twoja kopia zdobywa osiągnięcia, a ten skrót łączy właściwą grę. Uruchom RA Refresh, aby to uzupełnić
+  - type: fix
+    label: Funkcja Pobierz dane pyta teraz ScreenScraper o dokładnie Twój plik, zanim zacznie szukać po nazwie, dzięki czemu trafia na Twoją grę, a nie na grę o podobnym tytule. Wyniki zaznaczone przez Ciebie nadal mają pierwszeństwo
+  - type: enhancement
+    label: Okno postępu zmiany rozmiaru obrazów podaje teraz grę i system, do których należy każdy obraz
+  - type: feature
+    label: Pobieranie danych sprowadza teraz ekrany tytułowe ze ScreenScraper i TheGamesDB, więcej oficjalnych nazw z IGDB i TheGamesDB (np. japoński tytuł gry) oraz inne konsole, na które wyszła gra, z IGDB
+  - type: feature
+    label: Gra bez oceny użytkowników przejmuje teraz ocenę z Twojej kolekcji ES-DE, jeśli ją ma
+  - type: feature
+    label: Strona gry podaje, ilu graczy zmierzyło czas w wyniku HowLongToBeat, i łączy ze stroną wyniku. Wyniki zapisane wcześniej pokażą te dane przy następnym wyszukaniu
+  - type: feature
+    label: Strona RetroAchievements pokazuje, ilu osób gra w daną grę i jaki odsetek z nich zdobył każde osiągnięcie
+  - type: fix
+    label: Przeglądarka folderów w Narzędziach ROM otwiera się teraz w folderze ROM, gdy nie ma folderu początkowego, zamiast zgłaszać błąd. Nieczytelna odpowiedź z IGDB kosztuje teraz tylko ten jeden szczegół, a nie wszystko, co IGDB przysłało o grze
+  - type: fix
+    label: Dzienny limit ScreenScraper powoduje teraz, że RetroDB przestaje pytać do później, a zbiorcze pobieranie danych informuje o tym i działa dalej z innymi źródłami. Wcześniej wyczerpany limit wyglądał jak „nie znaleziono gry”, a zapytania trwały całą noc
+  - type: fix
+    label: Gra, dla której żadne źródło nie mogło odpowiedzieć, bo usługa osiągnęła limit, nie jest już oznaczana jako pobrana, więc następne uruchomienie spróbuje ponownie
+  - type: fix
+    label: Gdy klucz TheGamesDB wykorzysta swój miesięczny limit, RetroDB przechodzi na drugi klucz i przestaje pytać, gdy oba się wyczerpią
+  - type: fix
+    label: Miesięczny limit RAWG też powoduje, że RetroDB przestaje pytać, a IGDB mieści się w limicie czterech zapytań na sekundę
+  - type: fix
+    label: Zbiorcze wyszukiwanie HowLongToBeat kończy się teraz komunikatem, gdy strona zgłasza zbyt wiele zapytań, a wszystkie zapytania do strony są rozłożone w czasie
+  - type: fix
+    label: Naprawa regionów okładek i instrukcji nie poddaje się już po 25 grach z rzędu nieznanych ScreenScraper. Zatrzymuje się tylko wtedy, gdy ScreenScraper zgłosi osiągnięcie limitu
+  - type: fix
+    label: Na stronie gry każda kategoria wiekowa jest teraz wyśrodkowana nad etykietą z przypuszczeniem AI
+  - type: fix
+    label: Limit TheGamesDB w Ustawieniach używa teraz sprawdzenia, które nie zużywa limitu, i nie pokazuje już zmyślonej daty odnowienia, gdy usługa jej nie podaje
+  body: |
+    <ul>
+      <li><strong>Gry z MAME dostają prawdziwe nazwy.</strong> Nowe narzędzie MAME Names w ROM Tools bierze nazwy, lata i twórców z własnej listy MAME. Pliki zachowują krótkie nazwy, bo MAME ich potrzebuje. Listę MAME można filtrować według kategorii, a zestawy BIOS są ukryte.</li>
+      <li><strong>Importy ze Steam przynoszą znacznie więcej.</strong> Każda gra uzupełnia opis, twórców, wynik Metacritic, oceny wiekowe, tryby gry i obrazy ze swojej strony w sklepie. Synchronizacja zachowuje czas gry i datę ostatniego uruchomienia. Gra, która jest już w Twojej bibliotece pod tą samą nazwą, zostanie teraz z nią powiązana, więc jej osiągnięcia się zsynchronizują.</li>
+      <li><strong>Pobieranie danych znajduje dokładnie Twoją grę.</strong> Przed szukaniem po nazwie program pyta ScreenScraper o Twój dokładny plik. Pobieranie danych przynosi też ekrany tytułowe, więcej oficjalnych nazw oraz inne konsole, na które wyszła dana gra.</li>
+      <li><strong>RetroAchievements rozpoznaje Twoją kopię.</strong> W systemach używających zwykłego skrótu pliku, takich jak Mega Drive i Game Boy, strona gry pokazuje, czy Twoja kopia daje osiągnięcia. Uruchom RA Refresh, aby to uzupełnić. Strona RetroAchievements pokazuje też, ile osób gra w daną grę i jaki odsetek z nich zdobył każde osiągnięcie.</li>
+      <li><strong>Limity online są respektowane.</strong> Gdy ScreenScraper, TheGamesDB lub RAWG osiągnie limit, RetroDB przestaje pytać do później, a zbiorcze pobieranie danych działa dalej z innymi źródłami. Gra, na którą żadne źródło nie mogło wtedy odpowiedzieć, zostanie sprawdzona ponownie przy następnym uruchomieniu.</li>
+      <li><strong>Odrzucone logowanie do PlayStation jest zgłaszane.</strong> Pulpit i Ustawienia proszą teraz o ponowne połączenie, gdy Sony odrzuci zapisane logowanie.</li>
+      <li><strong>Official Names zostało przeniesione.</strong> Jego osobna karta zniknęła z Bulk AI Fill, ponieważ przełącznik Official name w tym narzędziu robi to samo.</li>
+    </ul>
 - version: 3.35.2
   date: '2026-11-02'
   tags:

@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% set adaptive_layout = true %}
+{% from "_macros/nav_tabs.html" import rom_tool_tabs %}
+{% from "_macros/browse_button.html" import browse_button with context %}
+
+{% block title %}{{ _('MAME Names') }} - RetroDB{% endblock %}
+
+{% block styles %}
+<style>
+#mameNames [hidden] {
+    display: none;
+}
+
+.mame-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-box data-page" id="mameNames">
+<div class="page-header">
+    <h1>🔧 {{ _('ROM Tools') }}</h1>
+    <p>{{ _('Manage, organize, and optimize your ROM collection.') }}</p>
+</div>
+
+{{ rom_tool_tabs('mame_names') }}
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title"><span>🕹️</span> {{ _('MAME Names') }}</h2>
+    </div>
+    <div class="card-body">
+        <p>{{ _("MAME finds a game by its exact file name, so the files must keep their short names, such as dyger.zip. This tool leaves the files alone and gives each game its real name, year and maker from MAME's own list. A scrape then finds the game by its file name or its real name.") }}</p>
+        <p class="text-muted">{{ _('A title you changed yourself is kept. A new name is protected from scrapers and the AI. Run this again after adding more MAME games.') }}</p>
+
+        <div class="form-group">
+            <label for="mameListPath">{{ _('MAME list') }}</label>
+            <div class="path-input-row">
+                <input type="text" id="mameListPath" class="form-input" aria-describedby="mameListHelp">
+                {{ browse_button('mameListPath', 'file') }}
+            </div>
+            <p id="mameListHelp" class="text-muted">{{ _('The DAT that matches your ROMs, or the output of mame -listxml. An .xml file, or a .zip holding one.') }}</p>
+        </div>
+        <div class="form-group">
+            <label for="mameExtraListPath">{{ _('Second MAME list (optional)') }}</label>
+            <div class="path-input-row">
+                <input type="text" id="mameExtraListPath" class="form-input" aria-describedby="mameExtraHelp">
+                {{ browse_button('mameExtraListPath', 'file') }}
+            </div>
+            <p id="mameExtraHelp" class="text-muted">{{ _('Fills what the first list lacks. BIOS sets are hidden only if a list marks them.') }}</p>
+        </div>
+        <div class="form-group">
+            <label for="mameCategoryPath">{{ _('Category file (optional)') }}</label>
+            <div class="path-input-row">
+                <input type="text" id="mameCategoryPath" class="form-input" aria-describedby="mameCategoryHelp">
+                {{ browse_button('mameCategoryPath', 'file') }}
+            </div>
+            <p id="mameCategoryHelp" class="text-muted">{{ _('A catver.ini. It lets you filter the list, for example to leave out slot machines.') }}</p>
+        </div>
+
+        <div class="mame-actions">
+            <button type="button" class="btn btn-primary" id="mameRunBtn">{{ _('Name MAME Games') }}</button>
+            <button type="button" class="btn btn-secondary" id="mameCancelBtn" hidden>{{ _('Stop') }}</button>
+        </div>
+        <p id="mameStatus" class="text-muted" role="status" aria-live="polite"></p>
+    </div>
+</div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ asset_url('js/mame-names.js') }}" defer></script>
+{% endblock %}

@@ -1,305 +1,93 @@
-"""Regression tests for Pass 30.4 — IGDB and TGDB `apply_metadata_to_game`
-must use COALESCE so that an empty field in the API response never
-overwrites a previously-scraped or curated value.
-
-Before Pass 30.4 these scrapers wrote bare `?` for publisher, developer,
-release_date, genre, rating, players, modes, description, and boxart —
-an empty IGDB/TGDB response would wipe those fields when the source ran
-as primary.
+"""A scrape only fills: an empty answer from a source never wipes a stored value,
+and it never replaces stored media. Runs the path every scrape takes, the
+per-source merge in `metadata_merger` and `hybrid_scraper`'s save.
 """
 
+import collections
 import sqlite3
 
 import pytest
 
-from scraper import scrape_igdb, scrape_thegamesdb
+from scraper import hybrid_scraper, metadata_merger, scrape_thegamesdb
+from tests.test_pass59_161_screenshots_own_system import downloads  # noqa: F401  (a fixture)
+from tests.test_pass59_205_esde_merge import library  # noqa: F401  (a fixture)
+
+STORED = {
+    'publisher': 'Squaresoft', 'developer': 'Square', 'release_date': '1995-03-11',
+    'genre': 'RPG', 'rating': '92', 'esrb_rating': 'T', 'pegi_rating': '12',
+    'players': 1, 'modes': 'Single-Player', 'description': 'Time-travel classic.',
+}
+
+IGDB_MEDIA = {
+    'name': 'Curated Game',
+    'cover': {'url': '//img/t_thumb/box.jpg'},
+    'screenshots': [{'url': '//img/t_thumb/s1.jpg'}, {'url': '//img/t_thumb/s2.jpg'}],
+    'platforms': [{'id': 26}],
+    'artworks': [{'url': '//img/t_thumb/a1.jpg'}, {'url': '//img/t_thumb/l1.jpg', 'artwork_type': 7}],
+}
+TGDB_MEDIA = {
+    'name': 'Curated Game',
+    'boxart_url': 'http://x/box.jpg',
+    'screenshot_urls': ['http://x/s1.jpg', 'http://x/s2.jpg'],
+    'fanart_urls': ['http://x/f1.jpg'],
+    'logo_urls': ['http://x/l1.png'],
+    'boxart_back_url': 'http://x/back.jpg',
+}
 
 
-class _PersistentConn:
-    """Thin wrapper around sqlite3.Connection that ignores .close() so the
-    scraper's `finally: conn.close()` doesn't discard the test's connection
-    before we assert on it.
-
-    The `make_conn_with_existing_row` fixture calls .real_close() on teardown,
-    so the connection is released deterministically rather than by GC."""
-
-    def __init__(self, conn):
-        self._conn = conn
-
-    def __getattr__(self, name):
-        return getattr(self._conn, name)
-
-    def close(self):
-        pass
-
-    def real_close(self):
-        """Actually close the underlying connection — used in test teardown."""
-        try:
-            self._conn.close()
-        except Exception:
-            pass
+def _metadata(**stored):
+    return collections.defaultdict(lambda: None, stored)
 
 
-def _make_conn_with_existing_row(**values):
-    """Create an in-memory SQLite DB with a `games` row populated from values."""
-    conn = sqlite3.connect(':memory:')
-    conn.row_factory = sqlite3.Row
-    conn.execute("""
-        CREATE TABLE games (
-            id INTEGER PRIMARY KEY,
-            title TEXT, publisher TEXT, developer TEXT, release_date TEXT, region TEXT,
-            genre TEXT, rating TEXT, esrb_rating TEXT, pegi_rating TEXT,
-            players INTEGER, modes TEXT, description TEXT, boxart TEXT,
-            screenshots TEXT, fanart TEXT,
-            critic_score REAL, critic_score_count INTEGER,
-            user_score REAL, user_score_count INTEGER,
-            scraped INTEGER DEFAULT 0, title_locked INTEGER NOT NULL DEFAULT 0
-        )
-    """)
-    cols = ', '.join(values.keys())
-    placeholders = ', '.join(['?'] * len(values))
-    conn.execute(
-        f"INSERT INTO games ({cols}) VALUES ({placeholders})",
-        tuple(values.values()),
-    )
-    conn.commit()
-    return _PersistentConn(conn)
+@pytest.mark.parametrize('force', [False, True])
+def test_a_source_with_nothing_keeps_every_value(library, force):  # noqa: F811
+    library.add_game(boxart='curated_box.webp', game_logo='curated_logo.webp',
+                     boxart_back='curated_back.webp', **STORED)
+    hybrid_scraper.apply_hybrid_metadata(1, 'esde', 'nothing', 'atari2600',
+                                         fill_gaps=False, force_overwrite=force)
+    row = library.row()
+    assert {field: row[field] for field in STORED} == STORED
+    assert row['boxart'] == 'curated_box.webp'
+    assert row['game_logo'] == 'curated_logo.webp'  # PASS-59-224 INV-1
+    assert row['boxart_back'] == 'curated_back.webp'  # PASS-59-225
 
 
 @pytest.fixture
-def make_conn_with_existing_row():
-    """Factory over _make_conn_with_existing_row that closes every connection
-    it made on teardown, even when the test fails."""
-    made = []
-
-    def _make(**values):
-        conn = _make_conn_with_existing_row(**values)
-        made.append(conn)
-        return conn
-
-    yield _make
-    for conn in made:
-        conn.real_close()
+def tgdb_downloads(downloads, monkeypatch):  # noqa: F811
+    monkeypatch.setattr(scrape_thegamesdb, '_download_tgdb_image',
+                        lambda db_id, url, kind, suffix='': f'{db_id}_{kind}{suffix}.webp')
 
 
-@pytest.fixture
-def noop_download(monkeypatch):
-    """Neutralise image-download helpers so tests don't touch the network."""
-    monkeypatch.setattr(scrape_igdb, 'download_image', lambda *a, **kw: None)
-    monkeypatch.setattr(scrape_thegamesdb, '_download_tgdb_image', lambda *a, **kw: None, raising=False)
-
-
-def test_igdb_apply_preserves_existing_values_when_response_is_empty(make_conn_with_existing_row, monkeypatch, noop_download):
-    conn = make_conn_with_existing_row(
-        id=1, title='Chrono Trigger', publisher='Squaresoft',
-        developer='Square', release_date='1995-03-11', genre='RPG',
-        rating='92', esrb_rating='T', pegi_rating='12',
-        players=1, modes='Single-player',
-        description='Time-travel JRPG classic.',
-        boxart='static/images/boxart/1.jpg',
-    )
-    monkeypatch.setattr(scrape_igdb, 'get_scraper_conn', lambda: conn)
-
-    # IGDB returns no usable data (title-only response)
-    result = scrape_igdb.apply_metadata_to_game(1, {'name': 'Chrono Trigger'})
-    assert result is True
-
-    row = conn.execute("SELECT * FROM games WHERE id=1").fetchone()
-    assert row['publisher'] == 'Squaresoft'
-    assert row['developer'] == 'Square'
-    assert row['release_date'] == '1995-03-11'
-    assert row['genre'] == 'RPG'
-    assert row['rating'] == '92'
-    assert row['esrb_rating'] == 'T'
-    assert row['pegi_rating'] == '12'
-    assert row['players'] == 1
-    assert row['modes'] == 'Single-player'
-    assert row['description'] == 'Time-travel JRPG classic.'
-    assert row['boxart'] == 'static/images/boxart/1.jpg'
-
-
-def test_tgdb_apply_preserves_existing_values_when_response_is_empty(make_conn_with_existing_row, monkeypatch, noop_download):
-    conn = make_conn_with_existing_row(
-        id=1, title='Mega Man X', publisher='Capcom',
-        developer='Capcom', release_date='1993-12-17', genre='Platformer',
-        rating='88', esrb_rating='E', pegi_rating='7',
-        players=1, modes='Single-player',
-        description='SNES action platformer.',
-        boxart='static/images/boxart/1.jpg',
-    )
-    monkeypatch.setattr(scrape_thegamesdb, 'get_scraper_conn', lambda: conn)
-
-    # TGDB returns mostly-empty shape (no publisher, developer, genre, etc.)
-    empty_tgdb = {
-        'game_title': 'Mega Man X',
-        'publishers': [],
-        'developers': [],
-        'release_date': '',
-        'genres': [],
-        'rating': '',
-        'players': 0,
-        'overview': '',
-        'boxart': '',
-        'screenshots': [],
-        'fanart': '',
-    }
-    result = scrape_thegamesdb.apply_metadata_to_game(1, empty_tgdb)
-    assert result is True
-
-    row = conn.execute("SELECT * FROM games WHERE id=1").fetchone()
-    assert row['publisher'] == 'Capcom'
-    assert row['developer'] == 'Capcom'
-    assert row['release_date'] == '1993-12-17'
-    assert row['genre'] == 'Platformer'
-    assert row['rating'] == '88'
-    assert row['esrb_rating'] == 'E'
-    assert row['pegi_rating'] == '7'
-    assert row['players'] == 1
-    assert row['modes'] == 'Single-player'
-    assert row['description'] == 'SNES action platformer.'
-    assert row['boxart'] == 'static/images/boxart/1.jpg'
-
-
-# -----------------------------------------------------------------------------
-# Failure-path coverage (test-audit c-007 LOW-3)
-# -----------------------------------------------------------------------------
-#
-# The above tests pin the happy path. These pin the failure path: when the
-# scraper hits a DB error (e.g. connection dies mid-UPDATE), `apply_metadata_
-# to_game` must catch it and return False rather than re-raising. A silent
-# True on failure would let downstream callers assume the row was updated.
-
-class _FailingConn:
-    """Connection that raises on .cursor() so the scraper enters its except branch."""
-
-    def cursor(self):
-        raise sqlite3.OperationalError("simulated DB failure")
-
-    def rollback(self):
-        pass
-
-    def close(self):
-        pass
-
-
-# -----------------------------------------------------------------------------
-# Media fill-only / screenshots-append (Pass 48.5)
-# -----------------------------------------------------------------------------
-#
-# The single-source IGDB/TGDB apply paths run as a hybrid *fallback* (primary
-# fetch failed). They must honour the documented media invariant: never replace
-# curated boxart/fanart, and APPEND screenshots rather than replacing the
-# column. Before Pass 48.5 they downloaded + COALESCE-wrote a fresh boxart over
-# a curated one and overwrote the screenshots column on the fallback path.
-
-
-def test_igdb_apply_does_not_overwrite_curated_media_and_appends_screenshots(make_conn_with_existing_row, monkeypatch, tmp_path):
-    conn = make_conn_with_existing_row(
-        id=1, title='Curated Game',
-        boxart='curated_box.webp', screenshots='old_ss.webp',
-        fanart='curated_fan.webp',
-    )
-    monkeypatch.setattr(scrape_igdb, 'get_scraper_conn', lambda: conn)
-    # Downloads "succeed" so the guard (not the no-op) is what protects media.
-    monkeypatch.setattr(scrape_igdb, 'download_image', lambda *a, **kw: True)
-    monkeypatch.setattr(scrape_igdb, 'IMAGE_PATH', str(tmp_path), raising=False)
-
-    igdb_data = {
-        'name': 'Curated Game',
-        'cover': {'url': '//img/t_thumb/box.jpg'},
-        'screenshots': [{'url': '//img/t_thumb/s1.jpg'}, {'url': '//img/t_thumb/s2.jpg'}],
-        'platforms': [{'id': 26}],
-        'artworks': [{'url': '//img/t_thumb/a1.jpg'}],
-    }
-    assert scrape_igdb.apply_metadata_to_game(1, igdb_data) is True
-
-    row = conn.execute("SELECT boxart, screenshots, fanart FROM games WHERE id=1").fetchone()
-    assert row['boxart'] == 'curated_box.webp'      # fill-only: not overwritten
-    assert row['fanart'] == 'curated_fan.webp'      # fill-only: not overwritten
-    ss = row['screenshots'].split(',')
-    assert ss[0] == 'old_ss.webp'                   # existing kept, first
-    assert len(ss) == 3                             # two new appended
-
-
-def test_igdb_apply_skips_screenshots_of_a_game_on_several_platforms(make_conn_with_existing_row, monkeypatch, tmp_path):
-    """PASS-59-161: the direct path, as metadata_merger's."""
-    conn = make_conn_with_existing_row(screenshots='old_ss.webp')
-    monkeypatch.setattr(scrape_igdb, 'get_scraper_conn', lambda: conn)
-    monkeypatch.setattr('scraper.base_scraper._game_system_folder', lambda game_id: 'zxspectrum')
-    monkeypatch.setattr(scrape_igdb, 'download_image', lambda *a, **kw: True)
-    monkeypatch.setattr(scrape_igdb, 'IMAGE_PATH', str(tmp_path), raising=False)
-
-    igdb_data = {
-        'name': 'Curated Game',
-        'screenshots': [{'url': '//img/t_thumb/s1.jpg'}],
-        'platforms': [{'id': 26}, {'id': 15}],
-    }
-    assert scrape_igdb.apply_metadata_to_game(1, igdb_data) is True
-    row = conn.execute("SELECT screenshots FROM games WHERE id=1").fetchone()
-    assert row['screenshots'] == 'old_ss.webp'
-
-
-def test_tgdb_apply_does_not_overwrite_curated_media_and_appends_screenshots(make_conn_with_existing_row, monkeypatch, tmp_path):
-    conn = make_conn_with_existing_row(
-        id=1, title='Curated Game',
-        boxart='curated_box.webp', screenshots='old_ss.webp',
-        fanart='curated_fan.webp',
-    )
-    monkeypatch.setattr(scrape_thegamesdb, 'get_scraper_conn', lambda: conn)
-    monkeypatch.setattr(
-        scrape_thegamesdb, '_download_tgdb_image',
-        lambda db_id, url, kind, suffix='': f"{db_id}{suffix}.webp",
-        raising=False,
-    )
-
-    tgdb_data = {
-        'name': 'Curated Game',
-        'boxart_url': 'http://x/box.jpg',
-        'screenshot_urls': ['http://x/s1.jpg', 'http://x/s2.jpg'],
-        'fanart_urls': ['http://x/f1.jpg'],
-    }
-    assert scrape_thegamesdb.apply_metadata_to_game(1, tgdb_data) is True
-
-    row = conn.execute("SELECT boxart, screenshots, fanart FROM games WHERE id=1").fetchone()
-    assert row['boxart'] == 'curated_box.webp'      # fill-only: not overwritten
-    assert row['fanart'] == 'curated_fan.webp'      # fill-only: not overwritten
-    ss = row['screenshots'].split(',')
-    assert ss[0] == 'old_ss.webp'                   # existing kept, first
-    assert len(ss) == 3                             # two new appended
-
-
-def test_igdb_apply_fills_media_when_empty(make_conn_with_existing_row, monkeypatch, tmp_path):
-    """Counterpart: when media columns are empty, the fallback still fills them."""
-    conn = make_conn_with_existing_row(id=1, title='Blank Game')
-    monkeypatch.setattr(scrape_igdb, 'get_scraper_conn', lambda: conn)
-    monkeypatch.setattr(scrape_igdb, 'download_image', lambda *a, **kw: True)
-    monkeypatch.setattr(scrape_igdb, 'IMAGE_PATH', str(tmp_path), raising=False)
-
-    igdb_data = {
-        'name': 'Blank Game',
-        'cover': {'url': '//img/t_thumb/box.jpg'},
-        'screenshots': [{'url': '//img/t_thumb/s1.jpg'}],
-        'platforms': [{'id': 26}],
-    }
-    assert scrape_igdb.apply_metadata_to_game(1, igdb_data) is True
-    row = conn.execute("SELECT boxart, screenshots FROM games WHERE id=1").fetchone()
-    assert row['boxart']                            # filled from empty
-    assert len(row['screenshots'].split(',')) == 1
-
-
-@pytest.mark.parametrize("scraper_module,empty_response", [
-    (scrape_igdb, {'name': 'No Such Game'}),
-    (scrape_thegamesdb, {'game_title': 'No Such Game'}),
+@pytest.mark.parametrize('merge, answer', [
+    (metadata_merger.apply_igdb_to_metadata, IGDB_MEDIA),
+    (metadata_merger.apply_tgdb_to_metadata, TGDB_MEDIA),
 ])
-def test_apply_returns_false_when_db_fails(scraper_module, empty_response,
-                                            monkeypatch, noop_download):
-    """A DB error inside `apply_metadata_to_game` must surface as False
-    (not a silent True, not a re-raise). Pins the COALESCE invariant's
-    failure-side contract for both scrapers — collapsed from twin
-    standalone tests (test-audit c-006 LOW parametrisation)."""
-    monkeypatch.setattr(scraper_module, 'get_scraper_conn', lambda: _FailingConn())
-    result = scraper_module.apply_metadata_to_game(999, empty_response)
-    assert result is False
+def test_stored_media_stays_and_screenshots_are_added(tgdb_downloads, merge, answer):
+    metadata = _metadata(title='Curated Game', boxart='curated_box.webp',
+                         fanart='curated_fan.webp', game_logo='curated_logo.webp',
+                         boxart_back='curated_back.webp',
+                         screenshots='old_ss.webp')
+    merge(metadata, answer, 1, {'filled_fields': []})
+    assert metadata['boxart'] == 'curated_box.webp'
+    assert metadata['fanart'] == 'curated_fan.webp'
+    assert metadata['game_logo'] == 'curated_logo.webp'
+    assert metadata['boxart_back'] == 'curated_back.webp'
+    shots = metadata['screenshots'].split(',')
+    assert shots[0] == 'old_ss.webp'
+    assert len(shots) == 3
+
+
+@pytest.mark.parametrize('merge, answer', [
+    (metadata_merger.apply_igdb_to_metadata, IGDB_MEDIA),
+    (metadata_merger.apply_tgdb_to_metadata, TGDB_MEDIA),
+])
+def test_empty_media_is_filled(tgdb_downloads, merge, answer):
+    metadata = _metadata(title='Blank Game', game_logo=None)
+    merge(metadata, answer, 1, {'filled_fields': []})
+    assert metadata['boxart']
+    assert metadata['fanart']
+    assert metadata['game_logo']
+    assert len(metadata['screenshots'].split(',')) == 2
 
 
 # PASS-59-106 INV-10 — the hybrid scraper fills igdb_id and screenscraper_id

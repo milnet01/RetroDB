@@ -1,3 +1,146 @@
+- version: 4.0.0
+  date: '2026-11-04'
+  tags:
+  - type: fix
+    label: RetroDB'nin kendi testleri çalışırken artık Kütüphanenizi etkileyemez. Her zaman veritabanının, resimlerin ve ayarların geçici bir kopyasını kullanır; bunlardan biri gerçek dosyalarınızı gösteriyorsa başlamayı reddeder
+  - type: fix
+    label: Yetim dosyaları temizleme artık İstek Listesi resimlerini silmiyor. Bir oyunu açmak artık bulamadığı Ekran Görüntülerini unutturmuyor. Önceden, resim sürücüsü takılı değilken açtığınız her oyun tüm ekran görüntüsü listesini kaybediyordu; şimdi liste korunuyor ve eksik resim yalnızca gizleniyor
+  - type: fix
+    label: Yarıda kesilen bir Video veya Kılavuz indirmesi artık oyunun elindeki kopyaya zarar vermiyor, başarısız bir indirme de medya klasöründe gizli yarım dosya bırakmıyor. Arka plandaki büyütücü artık eski bir resmi, o sırada indirilen yenisinin üzerine kaydetmiyor. WebP'ye dönüştür, bir resmi paylaşan tüm oyunların o resmi göstermeye devam etmesini sağlar ve resim klasörleri dışındaki hiçbir dosyaya dokunmaz
+  - type: fix
+    label: Bir Oyunu veya İstek Listesi öğesini Sil artık resimlerini, videolarını ve kılavuzlarını da siler, ancak başka bir oyunun veya istek listesi öğesinin hâlâ kullandıklarını korur. Kaydedilen resimler bilgisayardaki diğer hesaplar tarafından yine okunabiliyor ve Resimleri Yeniden Boyutlandır, kaydedemediği bir resmi tamamlandı değil, başarısız sayıyor
+  - type: fix
+    label: Kopya Bulucu artık çalışan bir dosyayı silmeniz için önermiyor. Ada göre ararken bir oyunun .cue ve .bin dosyalarını artık birbirinin kopyası saymıyor. Bir oyunun iki sürümünün paylaşabildiği disk iz dosyasını asla önermez. Bir oynatma listesinde yer alan diski silmez. Dosyasını sildiğiniz oyun artık sakladığınız kopyaya geçer, böylece Kütüphanede kalır
+  - type: fix
+    label: Çoklu Diski Düzenle artık var olan bir oynatma listesinin veya oyunun klasöründeki bir dosyanın üzerine yazmaz; durur ve hangisi olduğunu söyler. Oluşturduğu oynatma listesi, iz dosyalarını değil her diskin .cue dosyasını listeler. Dosyaları taşınan oyunlar artık klasöre onlarla birlikte geçer, böylece Eksik ROM'ları temizle onları kaldırmaz
+  - type: fix
+    label: '"Orijinalleri sil" ile CHD''ye dönüştürmek artık diskin iz dosyalarını da siler, ancak başka bir .cue''nun hâlâ kullandığı izi korur. Oyun ve eski diski listeleyen oynatma listeleri artık yeni .chd dosyasını gösterir. Bir oyunun dosyasını yeniden adlandırmak artık onu listeleyen oynatma listesini günceller ve bir .cue''nun ihtiyaç duyduğu iz dosyası yeniden adlandırılamaz. Zip''ten dosya kaldırmak, adında [ veya ] olsa bile yalnızca seçtiğiniz dosyaları kaldırır. Ekran Görüntüsü Kopya Temizleme yalnızca taramasının bulduğu kopyaları siler ve her zaman birini saklar'
+  - type: fix
+    label: Oyun sayfasındaki How Long to Beat artık yazdığınız şeyi arıyor. Önceden, bulamadığı bir başlık yerine oyunun diğer adlarını arıyor ve hayran yapımı bir yeniden yapım gibi farklı bir oyun önerebiliyordu. Kutuda oyunun kendi adı varsa yine diğer adları dener
+  - type: fix
+    label: Kılavuzdaki How Long to Beat adımları artık ekranla uyuşuyor. Listeden bir eşleşme seçmenizi söylüyordu; sayfa Kaydet ve İptal ile tek bir eşleşme gösteriyor. PlayStation yardımı artık oturum açmanın yaklaşık iki ay sürdüğünü söylemiyor, çünkü RetroDB kendiliğinden yeniden oturum açar. 20 çevrilmiş Kılavuzun hepsinde bu iki değişiklik var
+  - type: fix
+    label: Her harf çubuğu artık Tümü düğmesiyle başlıyor. Kütüphane, konsol ve PSN Kupaları sayfalarında bir harf seçmek yalnızca o harfin oyunlarını gösterir; önceden gerisini geri getirecek düğme yoktu. Diğer Başarımlar sayfalarında Tümü ilk oyuna döner
+  - type: fix
+    label: Ayarlar'a yapıştırdığınız yeni PlayStation oturum jetonu artık hemen kullanılıyor. Önceden RetroDB eski oturum bitene kadar onu kullanmaya devam ediyor ve Kaydet ve Bağlantıyı Test Et eski oturumu çalışıyor diye bildiriyordu. Sony'nin reddettiği bir jeton artık çalışan jetonun yerini almaz
+  - type: enhancement
+    label: 'Ayarlar''daki PlayStation oturumunu sürdürmek artık daha kolay. Afiş artık işlem yapmanız gerekmeyen günleri saymıyor, çünkü RetroDB kendiliğinden yeniden oturum açar; yalnızca Sony kayıtlı jetonunuzu reddettiğinde kırmızı olur. Buraya yapıştır düğmesi artık tarayıcının panonuzu okumak için izin istemesine yol açmıyor: imleci Ctrl+V için kutuya koyar. Adımlar artık çalışan bir jetonu değiştirirken önce PlayStation''dan çıkış yapmanızı söylüyor ve mesajları çevrilebiliyor'
+  - type: enhancement
+    label: '"Ayarlar kaydedildi" veya "Bu liste silinsin mi?" gibi açılır mesajlar ve soru kutuları artık her sayfada çevrilebiliyor. Önceden çoğu, hangi dili seçerseniz seçin İngilizce kalıyordu'
+  - type: enhancement
+    label: '"NPSSO''nuzun süresi dolmuş olabilir" gibi PlayStation oturumunun neden başarısız olduğunu söyleyen mesajlar artık çevrilebiliyor'
+  - type: fix
+    label: Her dildeki Kılavuz artık İngilizce olanla uyuşuyor. Her Yerde Ara, Başlığı Koruma, MAME Adları ve kutunun arkası eklendi; geride kalmış eski paragraflar güncellendi
+  - type: fix
+    label: Almanca, Afrikaanca ve İspanyolcada bir oyunun kapağındaki Geri düğmesi artık "geri git" değil, kutunun arkasını söylüyor
+  - type: feature
+    label: Oyna'ya basmak artık oyun başlarken ekranı oyunun logosuyla arka plan resmi üzerinde, logosu yoksa adını büyük harflerle doldurur. Oyunun penceresi açılınca, ya da Esc'ye basınca veya tıklayınca kendiliğinden kapanır
+  - type: feature
+    label: 'Döndürülebilir 3B kutu artık gerçek bir PS5 kutusunun şeklinde: yuvarlak köşeler ve kenarlar, kapağı çevreleyen yükseltilmiş kenar, iki yarının birleştiği çizgi ve açılan yandaki parmak girintisi. Şekli yazan bir Slipcase sürümünden kutu dosyası gerekir; almak için kutuyu yeniden İçe aktar. Diğer kutular eskisi gibi görünür'
+  - type: enhancement
+    label: RetroAchievements'ı Yenile, Ayarlar'dan RetroAchievements sayfasına taşındı ve artık Başarımlı Oyunları Bul adını taşıyor. Oradaki her düğmenin ne yaptığını anlatan bir satır var, böylece Oyunları Bul ile İlerlemeyi Eşitle kolayca ayırt edilir. Henüz bağlı oyun yokken sayfa, sonraki sekmeye geçmek yerine yöneticiye Bul düğmesini gösterir
+  body: "<ul>\n  <li><strong>Kılavuz her dilde güncel.</strong>\n    Yalnızca İngilizce kılavuzda bulunan bölümler artık çevrildi.</li>\n</ul>\n"
+- version: 3.35.4
+  date: '2026-11-03'
+  tags:
+  - type: fix
+    label: Bir oyundan sildiğiniz ekran görüntüsü artık silinmiş kalır. Daha önce bir sonraki kazıma onu ES-DE'den geri kopyalayabiliyor ya da çevrimiçi bir kaynaktan yeniden indirebiliyordu. Yinelenen Ekran Görüntüleri aracında fazladan bir kopyayı silmek bu kapsamda değildir, çünkü resmi bir kez saklarsınız
+  - type: feature
+    label: 'Oyunlar artık logo alıyor: kazıma logoyu ES-DE, ScreenScraper, TheGamesDB, IGDB ve Steam''den kaydeder, oyun sayfası da onu başlığın üstünde ya da eksik kutunun yerinde gösterir. Logoyu Düzenle penceresinden yükleyebilir veya silebilirsiniz. Daha önce kazıdığınız oyunların logolarını doldurmak için Eksikleri Doldur ile toplu kazıma yapın'
+  - type: fix
+    label: IGDB artık bir oyunun logosunu sayfa arka planı olarak vermiyor
+  - type: feature
+    label: 'Oyunlar artık kutularının arka yüzünü alıyor: kazıma onu ES-DE, ScreenScraper ve TheGamesDB''den kaydeder, oyun sayfasındaki kapağın üzerindeki Arka düğmesi de onu gösterir. Büyütmek için arka yüze tıklayın. Arka yüzü Düzenle penceresinden yükleyebilir veya silebilirsiniz. Arka yüzler oyun her kazındığında doldurulur; Eksikleri Doldur bir oyunu yalnızca arka yüzü için yeniden kazımaz'
+  - type: fix
+    label: TheGamesDB'de ön kapağı olmayan bir oyun artık kutunun arka yüzünü kapak olarak almıyor
+  - type: fix
+    label: Toplu kazıma çalışırken Ayarlar'dan bir kazıyıcıyı kapatırsanız, bulunamayan oyunların sayısı artık bir sonraki oyundan itibaren doğru olur. Daha önce bir oyun bunun yerine durdurulmuş olarak sayılabiliyordu
+  - type: enhancement
+    label: Emülatörü ayarlanmamış bir sistemde Oyna düğmesi gri olur. Nedenini görmek için üzerine gelin ya da emülatör ayarlanmadığını söyleyen bir kutu için tıklayın. Daha önce düğmenin yanında bir satır metin vardı
+  body: "<ul>\n  <li><strong>Oyunlar logo alıyor.</strong> Kazıma her oyunun\n    logosunu kaydeder, oyun sayfası da onu başlığın üstünde ya da\n    eksik kutunun yerinde gösterir. Daha önce kazıdığınız oyunların logolarını\n    doldurmak için Eksikleri Doldur ile toplu kazıma yapın.</li>\n  <li><strong>Oyunlar kutularının arka yüzünü alıyor.</strong> Oyun\n    sayfasındaki kapağın üzerindeki Arka düğmesi onu gösterir, büyütmek için\n    tıklayabilirsiniz. Arka yüzler oyun her kazındığında doldurulur.</li>\n  <li><strong>Silinen ekran görüntüsü silinmiş kalır.</strong> Sonraki kazıma\n    onu artık geri kopyalamaz ya da yeniden indirmez.</li>\n  <li><strong>Oyna, neden başlamadığını söyler.</strong> Emülatörü\n    ayarlanmamış bir sistemde Oyna düğmesi gri olur ve nedenini belirtir.</li>\n</ul>\n"
+- version: 3.35.3
+  date: '2026-11-02'
+  tags:
+  - type: feature
+    label: 'ROM Araçları''nda yeni MAME Adları aracı: MAME oyunları gerçek adlarını, yıllarını ve yapımcılarını MAME''nin kendi listesinden alır, dosyalar ise kısa adlarını korur. Ardından bir kazıma her oyunu bulur ve MAME listesini kategoriye göre süzebilirsiniz, örneğin slot makinelerini dışarıda bırakabilirsiniz. BIOS setleri listede gizlenir'
+  - type: fix
+    label: ROM Raporları artık MAME dosyalarını yeniden adlandırmayı önermiyor, çünkü adı değişen dosya MAME'de çalışmaz
+  - type: fix
+    label: Ayarlar artık bir Xbox uygulaması kaydedilmeden önce Microsoft'un ne istediğini söylüyor. Bu yüzden Xbox girişi test edilemedi
+  - type: enhancement
+    label: Ayrı Resmî Adlar kartı Toplu Yapay Zeka Doldur'dan kaldırıldı, çünkü doldurmadaki Resmî ad anahtarı bu işi zaten yapıyor
+  - type: fix
+    label: Sony kayıtlı bir PlayStation girişini reddettiğinde, panel ve Ayarlar bunu belirtip yeniden bağlamanızı ister. Önceden günlükte her sunucu başlangıcında anlamsız bir hata görünüyordu ve size hiçbir şey söylenmiyordu
+  - type: feature
+    label: Steam'den içe aktarma artık her oyunun açıklamasını, emek verenleri, Metacritic puanını, yaş derecelendirmelerini, oyun modlarını, kutusunu, arka planını ve ekran görüntülerini mağaza sayfasından arka planda dolduruyor. Türü ve çıkış tarihi için oyunu kazıyın
+  - type: feature
+    label: Steam eşitlemesi artık oynama sürenizi ve son oynama zamanınızı koruyor, oyun sayfası da bunları gösteriyor
+  - type: fix
+    label: Steam içe aktarma sayfasındaki Kütüphaneyi Getir, kayıtlı Steam anahtarı olan yönetici için artık çalışıyor. Önceden Steam'e anahtarın gizli biçimini gönderiyordu ve sayfa yanlışlıkla profilinizi Herkese Açık yapmanızı söylüyordu
+  - type: fix
+    label: Kütüphanenizde aynı adla zaten bulunan bir Steam veya Xbox oyunu, içe aktarırken artık o oyuna bağlanıyor ve başarımları eşitleniyor. Önceden atlanıyordu ve hiç bağlanmıyordu
+  - type: fix
+    label: Steam, Xbox ve PlayStation'dan içe aktarılan oyunlar artık hemen doğru sıralanıyor, örneğin Final Fantasy IX, Final Fantasy X'ten önce gelir. Steam'in ticari marka işaretleri de adlardan çıkarıldı
+  - type: feature
+    label: RetroAchievements'ın düz dosya özeti kullandığı Mega Drive ve Game Boy gibi sistemlerde, oyun sayfası kopyanızın başarım kazandırıp kazandırmadığını söylüyor ve bu özet doğru oyuna bağlanıyor. Bunu doldurmak için RA Yenile'yi çalıştırın
+  - type: fix
+    label: Kazıma artık adla aramadan önce ScreenScraper'a tam dosyanızı soruyor, böylece benzer adlı bir oyun yerine sizin oyununuzu buluyor. Kendi işaretlediğiniz sonuçlar yine önceliklidir
+  - type: enhancement
+    label: Görsel Boyutlandırma ilerleme kutusu artık her resmin ait olduğu oyunu ve sistemi gösteriyor
+  - type: feature
+    label: Kazıma artık ScreenScraper ve TheGamesDB'den başlık ekranlarını, IGDB ve TheGamesDB'den daha fazla resmî adı (örneğin oyunun Japonca adı) ve IGDB'den oyunun çıktığı diğer konsolları getiriyor
+  - type: feature
+    label: Kullanıcı puanı olmayan bir oyun artık, varsa ES-DE koleksiyonunuzdaki derecelendirmeyi alıyor
+  - type: feature
+    label: Oyun sayfası, bir HowLongToBeat sonucunu kaç oyuncunun süreye vurduğunu söylüyor ve sayfasına bağlantı veriyor. Bundan önce kaydedilen sonuçlarda bunlar, bir sonraki aramanızda görünür
+  - type: feature
+    label: RetroAchievements sayfası bir oyunu kaç kişinin oynadığını ve her başarımı bunların yüzde kaçının kazandığını gösteriyor
+  - type: fix
+    label: ROM Araçları klasör gezgini, başlanacak klasörü yoksa hata vermek yerine ROM klasörünüzde açılıyor. IGDB'den gelen bozuk bir yanıt artık yalnızca o tek ayrıntıya mal oluyor, IGDB'nin oyun için gönderdiği her şeye değil
+  - type: fix
+    label: ScreenScraper'ın günlük sınırı artık RetroDB'nin daha sonraya kadar sormasını durduruyor, toplu kazıma da bunu söyleyip diğer kaynaklarıyla devam ediyor. Önceden dolmuş bir sınır "oyun bulunamadı" gibi görünüyordu ve çağrılar bütün gece sürüyordu
+  - type: fix
+    label: Bir servis sınırdayken hiçbir kaynağın yanıtlayamadığı oyun artık kazınmış olarak işaretlenmiyor, böylece sonraki çalıştırma yeniden dener
+  - type: fix
+    label: Bir TheGamesDB anahtarı ayını doldurduğunda RetroDB diğer anahtarınıza geçiyor, ikisi de bitince sormayı bırakıyor
+  - type: fix
+    label: RAWG'ın aylık sınırı da artık RetroDB'nin sormasını durduruyor ve IGDB saniyede dört istek sınırında tutuluyor
+  - type: fix
+    label: HowLongToBeat toplu araması, site çok fazla istek aldığını söylediğinde artık bir iletiyle sona eriyor ve siteye giden her istek aralıklandırılıyor
+  - type: fix
+    label: Kutu ve Kılavuz Bölgelerini Düzelt artık ScreenScraper'ın tanımadığı art arda 25 oyundan sonra bırakmıyor. Yalnızca ScreenScraper sınırına ulaşıldığını söylediğinde duruyor
+  - type: fix
+    label: Oyun sayfasında her yaş derecelendirmesi artık Yapay Zeka tahmini etiketinin üzerinde ortalanmış duruyor
+  - type: fix
+    label: Ayarlar'daki TheGamesDB hakkı artık hakkınızı harcamayan denetimi kullanıyor ve servis vermediğinde uydurma bir sıfırlama tarihi göstermiyor
+  body: |
+    <ul>
+      <li><strong>MAME oyunları gerçek adlarına kavuşuyor.</strong> ROM Araçları'ndaki yeni MAME Adları
+        aracı adları, yılları ve yapımcıları MAME'in kendi listesinden alır.
+        Dosyalar kısa adlarını korur, çünkü MAME'in buna ihtiyacı vardır. MAME listesini
+        kategoriye göre süzebilirsiniz, BIOS setleri ise gizlenir.</li>
+      <li><strong>Steam'den içe aktarma çok daha fazlasını getiriyor.</strong> Her oyun; açıklamasını,
+        emekçilerini, Metacritic puanını, yaş derecelendirmelerini, oyun modlarını ve
+        görsellerini mağaza sayfasından doldurur. Eşitleme, oynama sürenizi ve en son ne zaman
+        oynadığınızı korur. Kütüphanenizde aynı adla zaten bulunan bir oyun artık
+        ona bağlanır, böylece başarımları eşitlenir.</li>
+      <li><strong>Kazıma işlemi tam oyununuzu buluyor.</strong> Kazıma, ada göre aramadan önce
+        ScreenScraper'a tam dosyanızı sorar. Kazıma ayrıca başlık ekranlarını, daha fazla
+        resmi adı ve bir oyunun çıktığı diğer konsolları da getirir.</li>
+      <li><strong>RetroAchievements kopyanızı tanıyor.</strong> Mega Drive ve Game Boy gibi
+        düz dosya karması kullanan sistemlerde oyun sayfası,
+        kopyanızın başarım kazandırıp kazandırmadığını söyler. Bunu doldurmak için RA Yenile'yi çalıştırın.
+        RetroAchievements sayfası ayrıca bir oyunu kaç kişinin oynadığını
+        ve her başarımı bunların yüzde kaçının kazandığını gösterir.</li>
+      <li><strong>Çevrimiçi sınırlara uyuluyor.</strong> ScreenScraper,
+        TheGamesDB veya RAWG sınırına ulaştığında RetroDB daha sonrasına kadar sormayı bırakır
+        ve toplu kazıma diğer kaynaklarıyla devam eder. O sırada hiçbir kaynağın
+        yanıt veremediği oyun, bir sonraki çalıştırmada yeniden denenir.</li>
+      <li><strong>Reddedilen PlayStation girişi artık belirtiliyor.</strong> Sony kayıtlı bir girişi
+        reddettiğinde panel ve Ayarlar artık yeniden bağlamanızı ister.</li>
+      <li><strong>Resmi Adlar taşındı.</strong> Ayrı kartı Toplu Yapay Zeka Doldur'dan kalktı,
+        çünkü doldurmadaki Resmi ad anahtarı aynı işi yapar.</li>
+    </ul>
 - version: 3.35.2
   date: '2026-11-02'
   tags:

@@ -46,6 +46,12 @@ DB_PATH = os.environ.get('RETRODB_DB_PATH', os.path.join(BASE_DIR, "database", "
 # use → identical behaviour to before.
 STATIC_PATH = os.environ.get('RETRODB_STATIC_PATH', os.path.join(BUNDLE_DIR, "static"))
 IMAGE_PATH = os.environ.get('RETRODB_IMAGE_PATH', os.path.join(BASE_DIR, "static", "images"))
+# The settings files are env-overridable for the same reason: a test that
+# saves settings must not write the real files (PASS-59-239).
+SETTINGS_FILE = os.environ.get(
+    'RETRODB_SETTINGS_FILE', os.path.join(BASE_DIR, "data", "settings.json"))
+SCRAPER_SETTINGS_FILE = os.environ.get(
+    'RETRODB_SCRAPER_SETTINGS_FILE', os.path.join(BASE_DIR, "data", "scraper_settings.json"))
 
 # Path defaults (empty — set via Settings page, stored in data/settings.json)
 ROM_PATH = ""
@@ -129,8 +135,8 @@ except ValueError:
 
 # Application metadata
 APP_NAME = "RetroDB"
-APP_VERSION = "3.35.2"
-APP_LAST_UPDATE = "2026-11-02"
+APP_VERSION = "4.0.0"
+APP_LAST_UPDATE = "2026-11-04"
 APP_DESCRIPTION = "Retro Gaming ROM Library Manager"
 
 # Supported image extensions for boxart/screenshots

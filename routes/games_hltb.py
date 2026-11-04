@@ -5,6 +5,8 @@
 # generic search, plus the bulk-lookup review queue and job orchestration.
 # =============================================================================
 
+from scraper.service_limits import HOWLONGTOBEAT
+from services.service_stop_text import stop_sentences
 from flask import Blueprint, jsonify, render_template, request
 
 from services.auth import login_required, admin_required, permission_required
@@ -108,7 +110,7 @@ def api_hltb_bulk_start():
 @handle_api_errors
 def api_hltb_bulk_status():
     """Poll bulk HLTB lookup job status."""
-    return success(**bulk_orchestrator.status())
+    return success(service_stops=stop_sentences([HOWLONGTOBEAT]), **bulk_orchestrator.status())
 
 
 @bp.route('/api/hltb/bulk/cancel', methods=['POST'])

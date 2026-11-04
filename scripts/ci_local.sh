@@ -39,8 +39,8 @@
 #   - pytest uses `-n 4 --dist=loadfile`. Without the per-file isolation,
 #     cross-file order-pollution (test_pass48_media_cleanup et al.) produces
 #     false failures.
-#   - The import smoke runs against a THROWAWAY temp DB via RETRODB_DB_PATH, so
-#     it never touches a real database/roms.db.
+#   - The import smoke runs against a THROWAWAY temp DB, media tree and
+#     settings files (RETRODB_* paths), so it never touches real data.
 
 set -uo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.." || { echo "cannot cd to repo root"; exit 2; }
@@ -166,6 +166,9 @@ job_lint_and_smoke() {
   step "Import smoke  ·  Python $py  ·  import app"
   smoke_dir="$(mktemp -d)"
   if RETRODB_DB_PATH="$smoke_dir/smoke.db" RETRODB_DEBUG=false \
+       RETRODB_STATIC_PATH="$smoke_dir/static" RETRODB_IMAGE_PATH="$smoke_dir/static/images" \
+       RETRODB_SETTINGS_FILE="$smoke_dir/settings.json" \
+       RETRODB_SCRAPER_SETTINGS_FILE="$smoke_dir/scraper_settings.json" \
        python -c "import app; print('app imports cleanly')"; then ok "import smoke (Python $py)"
   else fail "import smoke (Python $py)"; fi
   rm -rf "$smoke_dir"

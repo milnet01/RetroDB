@@ -199,6 +199,9 @@
 <section id="navigation" class="help-section card">
     <h2 class="card-title">Navigation</h2>
     <div class="card-body">
+        <h3>Rechercher partout</h3>
+        <p>La zone de recherche sous votre nom dans la barre latérale est présente sur chaque page. Tapez au moins deux lettres pour voir les consoles correspondantes et jusqu'à huit jeux correspondants. Appuyez sur <kbd>&darr;</kbd> et <kbd>&uarr;</kbd> pour les parcourir, sur <kbd>Enter</kbd> pour en ouvrir un et sur <kbd>Esc</kbd> pour fermer la liste. <strong>Voir tous les résultats</strong>, ou <kbd>Enter</kbd> sans rien choisir, ouvre la Bibliothèque avec cette recherche.</p>
+
         <h3>Sections de la barre latérale</h3>
 
         <h4>Principal</h4>
@@ -556,6 +559,7 @@
         <h3 id="emulators-play">Émulateurs et Jouer</h3>
         <p>Les administrateurs configurent les émulateurs dans <strong>Paramètres &rarr; Émulateurs</strong>. Ajoutez le dossier où se trouvent vos émulateurs à <strong>Dossiers d'émulateurs</strong>. RetroDB y trouve chaque émulateur (un AppImage, un script portable ou un Flatpak installé) et le relie aux systèmes qu'il fait tourner. Le tableau de correspondance indique, pour chaque système, si son émulateur fonctionne et si ses fichiers BIOS sont en place. RetroDB ne fait que lire les fichiers BIOS ; il ne les copie ni ne les télécharge jamais.</p>
         <p>Les jeux dont l'émulateur fonctionne reçoivent un bouton <strong>Jouer</strong> sur la page du jeu, sur les cartes de la Bibliothèque et sur les pages de système.</p>
+        <p>Pas encore d'émulateur ? Appuyez sur <strong>Obtenir RetroArch</strong> sous <strong>Jouer dans RetroDB</strong>, sur la même page. RetroDB télécharge le RetroArch officiel de libretro, vérifie le téléchargement et l'installe sous le nom <strong>RetroArch (RetroDB)</strong>, avec ses propres réglages et sauvegardes, séparé de tout RetroArch que vous utilisez déjà. Il télécharge ensuite le meilleur cœur pour chaque système la première fois que vous jouez. Pour un jeu sur plusieurs disques, <strong>Disque suivant</strong> fonctionne sans aucune configuration. Pendant qu'un tel jeu tourne, et sous Windows et macOS pendant que n'importe quel jeu tourne, RetroArch écoute les commandes de RetroDB sur un port réseau.</p>
         <p>Pour DuckStation, PCSX2 et RPCS3, RetroDB règle aussi pour chaque jeu l'échelle de résolution et le format d'image, dans le fichier de réglages par jeu propre à l'émulateur, ainsi que le démarrage du jeu en plein écran. Modifiez les valeurs pour tout un système avec le bouton <strong>Paramètres</strong> du tableau de correspondance, ou pour un seul jeu dans le panneau <strong>Paramètres de l'émulateur</strong> de sa page. Elles sont écrites quand vous appuyez sur Jouer. Un réglage que vous modifiez dans l'émulateur lui-même l'emporte toujours : RetroDB n'y touche plus ensuite. Lancez chaque émulateur une fois avant de jouer, pour qu'il crée son dossier de réglages.</p>
 
         <h4>Codes de triche</h4>
@@ -619,17 +623,22 @@
             <li>Images et médias depuis des sources secondaires lorsque la source principale ne les possède pas</li>
             <li>Comblement automatique des lacunes à travers les scrapers pour une couverture maximale</li>
             <li>Le titre de tri est généré automatiquement à partir du titre du jeu lors de la récupération</li>
+            <li>Une source n'est consultée que si elle répertorie le système du jeu, et seulement sur ce système : RAWG n'a pas d'Intellivision, donc les jeux Intellivision ne sont pas cherchés sur RAWG, où ils ne correspondraient qu'à des jeux d'autres plateformes</li>
+            <li>Quand l'IA est activée, elle donne aussi le titre officiel du jeu tel qu'il est sorti dans la région de sa ROM, et le jeu est renommé ainsi, lors de la récupération d'un seul jeu comme dans la Récupération en masse (voir <a href="#ai-fill">Remplissage IA</a>)</li>
         </ul>
 
         <h3>Gestion des médias</h3>
         <ul>
-            <li>Les champs médias (jaquette, jaquette 3D, captures d'écran, fanart, vidéo, manuel) ne sont <strong>jamais remplacés</strong> lors d'une récupération normale &mdash; ils sont uniquement remplis lorsqu'ils sont vides</li>
+            <li>Les champs médias (jaquette, jaquette 3D, dos de la boîte, captures d'écran, fanart, logo, vidéo, manuel) ne sont <strong>jamais remplacés</strong> lors d'une récupération normale &mdash; ils sont uniquement remplis lorsqu'ils sont vides</li>
             <li>Les captures d'écran sont toujours <strong>ajoutées</strong>, jamais remplacées</li>
             <li>Pour retélécharger un média, effacez d'abord l'image existante dans la fenêtre d'édition, puis relancez la récupération</li>
             <li>Le mode <strong>Récupération complète</strong> remplace ce comportement et écrase tout</li>
             <li>Les références de médias obsolètes (fichier supprimé mais nom toujours en base) sont effacées automatiquement avant la récupération afin que de nouveaux médias puissent être téléchargés</li>
             <li>Les images téléchargées sont automatiquement standardisées à des tailles cibles (voir <a href="#image-standardization">Standardisation des images</a>)</li>
         </ul>
+
+        <h3>Conserver un titre</h3>
+        <p>Quand vous saisissez un nouveau titre dans la fenêtre d'édition et enregistrez, la récupération ne le modifie plus, Récupération complète comprise. La case <strong>Conserver ce titre lors de la récupération</strong> de la fenêtre d'édition indique si un titre est conservé ; décochez-la pour que les scrapers puissent de nouveau renommer le jeu. <strong>Réinitialiser</strong> sur la page d'un jeu permet aussi aux scrapers de le renommer, et <strong>Effacer les données récupérées</strong> dans Maintenance laisse les titres conservés tels quels.</p>
 
         <h3>Priorité des scrapers</h3>
         <p>Configurez quels scrapers s'exécutent en premier et lesquels sont activés/désactivés dans <strong>Paramètres &rarr; Récupération &rarr; Scraper</strong>. Glissez-déposez pour réorganiser la priorité. Les scrapers désactivés ne seront pas sollicités lors de la récupération et ne déclencheront pas d'avertissements d'état des API sur le Tableau de bord.</p>
@@ -646,15 +655,16 @@
         <h3>Démarrer une récupération en masse</h3>
         <ol>
             <li>Rendez-vous sur n'importe quelle page Système ou Bibliothèque</li>
-            <li>Cliquez sur <strong>« Sélectionner »</strong> pour entrer en mode sélection</li>
+            <li>Cliquez sur <strong>« Sélectionner »</strong> pour entrer en mode sélection. Les outils de sélection apparaissent dans une barre en bas de la fenêtre.</li>
             <li>Sélectionnez les jeux individuellement ou utilisez la sélection rapide :
                 <ul>
                     <li><strong>Tout sélectionner</strong> &mdash; Tous les jeux visibles</li>
                     <li><strong>Sélectionner les non récupérés</strong> &mdash; Uniquement les jeux sans métadonnées</li>
                 </ul>
             </li>
-            <li>Choisissez le mode : <strong>Compléter les manquantes</strong> ou <strong>Récupération complète</strong></li>
+            <li>Choisissez le mode : <strong>Remplir les manquants</strong> ou <strong>Récupération complète</strong></li>
             <li>Cliquez sur <strong>« Récupérer la sélection »</strong></li>
+            <li>Cliquez sur <strong>« Terminé »</strong> pour quitter le mode sélection</li>
         </ol>
 
         <h3>Contrôles</h3>
@@ -683,7 +693,7 @@
 
         <h3>Options de récupération</h3>
         <ul>
-            <li><strong>Compléter les manquantes uniquement</strong> &mdash; Ne remplit que les champs de métadonnées vides, en préservant les données existantes</li>
+            <li><strong>Remplir les manquants uniquement</strong> &mdash; Ne remplit que les champs de métadonnées vides, en préservant les données existantes</li>
             <li><strong>Récupération complète</strong> &mdash; Remplace tous les champs, y compris les médias (télécharge de nouvelles images et vidéos)</li>
             <li><strong>Conserver les médias existants</strong> &mdash; Avec la récupération complète, conserve les visuels, les vidéos et les manuels déjà présents sur le disque au lieu de les télécharger à nouveau. Les nouvelles captures d'écran sont toujours ajoutées.</li>
             <li><strong>Vérifier RetroAchievements</strong> &mdash; Vérifie également la présence de jeux de succès RetroAchievements lors de la récupération</li>
@@ -731,6 +741,7 @@
             <li>Les <strong>jeux similaires</strong> sont toujours actualisés (les données de l'IA sont plus fiables pour ce champ)</li>
             <li><strong>Classifications par correspondance croisée</strong> &mdash; Si un système de classification est connu, les classifications vides des autres systèmes sont remplies automatiquement par correspondance croisée des niveaux de maturité</li>
             <li>Le <strong>titre de tri</strong> est généré automatiquement lors du remplissage</li>
+            <li><strong>Titre officiel</strong> &mdash; l'IA donne aussi le titre officiel du jeu tel qu'il est sorti dans la région de sa ROM, et le jeu est renommé ainsi, dans le Remplissage IA et chaque fois que l'IA comble des lacunes pendant la récupération. L'ancien nom est conservé comme titre alternatif. Un titre que vous avez saisi vous-même, ou conservé avec <strong>Conserver ce titre lors de la récupération</strong>, n'est jamais renommé</li>
             <li>Le champ <strong>Joueurs</strong> normalise les plages (par ex. « 1-4 » devient 4)</li>
         </ul>
 
@@ -766,10 +777,11 @@
         <h3>Boutons de filtre</h3>
         <p>Chaque filtre ouvre une fenêtre affichant toutes les valeurs uniques de votre bibliothèque avec leur nombre. Les filtres prennent en charge deux modes :</p>
         <ul>
-            <li><strong>Inclure (EST)</strong> &mdash; N'affiche que les jeux correspondant à la valeur sélectionnée</li>
-            <li><strong>Exclure (N'EST PAS)</strong> &mdash; Masque les jeux correspondant à la valeur sélectionnée</li>
+            <li><strong>Inclure (EST)</strong> &mdash; N'affiche que les jeux correspondant aux valeurs sélectionnées</li>
+            <li><strong>Exclure (N'EST PAS)</strong> &mdash; Masque les jeux correspondant aux valeurs sélectionnées</li>
         </ul>
         <p>Basculez entre le mode inclure et exclure à l'aide du commutateur dans la fenêtre de filtre.</p>
+        <p>Dans les filtres Genre, Série, Éditeur, Développeur, Mode de jeu, Perspective et Dimension, cochez autant de valeurs que vous voulez et appuyez sur <strong>Appliquer</strong>. Un jeu s'affiche s'il a l'une des valeurs cochées ; en mode exclure, un jeu est masqué s'il en a une. Chaque valeur a sa propre étiquette au-dessus des jeux, et son &times; ne retire que cette valeur. Les filtres Classification et Source prennent une seule valeur et s'appliquent dès que vous cliquez dessus.</p>
 
         <h3>Filtres disponibles</h3>
         <table class="data-table">
@@ -786,26 +798,32 @@
                 <tr><td><strong>Perspective</strong></td><td>Première personne, Vue de dessus, Isométrique, Défilement latéral</td><td>Oui</td></tr>
                 <tr><td><strong>Dimension</strong></td><td>2D, 3D</td><td>Oui</td></tr>
                 <tr><td><strong>Classification</strong></td><td>Classification d'âge (affiche votre système préféré)</td><td>Non</td></tr>
-                <tr><td><strong>A des RA</strong></td><td>Jeux prenant en charge RetroAchievements</td><td>Non</td></tr>
-                <tr><td><strong>Afficher les bonus</strong></td><td>Basculer la visibilité des disques bonus</td><td>Non</td></tr>
+                <tr><td><strong>Avec succès</strong></td><td>Jeux prenant en charge RetroAchievements</td><td>Non</td></tr>
+                <tr><td><strong>Non récupéré</strong></td><td>Uniquement les jeux qu'aucun scraper n'a encore remplis</td><td>Non</td></tr>
+                <tr><td><strong>Disques bonus</strong></td><td>Basculer la visibilité des disques bonus</td><td>Non</td></tr>
             </tbody>
         </table>
 
+        <p>Un bouton en surbrillance est activé. Les filtres actifs apparaissent aussi sous forme d'étiquettes à côté du nombre de jeux ; cliquez sur le &times; d'une étiquette pour la retirer. <strong>Effacer</strong> les retire tous. Sur un téléphone, les boutons de filtre s'ouvrent depuis le bouton <strong>Filtres</strong>.</p>
+
         <h3>Options de tri</h3>
+        <p>Choisissez un ordre dans <strong>Trier par</strong>, à côté du nombre de jeux :</p>
         <ul>
-            <li><strong>Titre</strong> &mdash; Ordre alphabétique par titre de tri (insensible à la casse)</li>
-            <li><strong>Date de sortie</strong> &mdash; Ordre chronologique (du plus ancien au plus récent)</li>
-            <li><strong>Plateforme</strong> &mdash; Regroupés par nom de système</li>
+            <li><strong>Nom</strong> &mdash; Ordre alphabétique par titre de tri (insensible à la casse)</li>
+            <li><strong>Sortie la plus récente</strong> / <strong>Sortie la plus ancienne</strong> &mdash; Par date de sortie</li>
+            <li><strong>Note de la presse</strong> / <strong>Note des joueurs</strong> &mdash; La plus haute en premier</li>
+            <li><strong>Ajoutés récemment</strong> &mdash; Les derniers jeux ajoutés à votre bibliothèque en premier</li>
         </ul>
+        <p>Les jeux sans date ou sans note viennent en dernier. Effacer conserve le tri que vous avez choisi.</p>
 
         <h3>Navigation alphabétique</h3>
-        <p>Sautez aux jeux commençant par une lettre précise. Les lettres sans jeu correspondant sont grisées. Les chiffres et les symboles sont regroupés sous <strong>#</strong>.</p>
+        <p>Sautez aux jeux commençant par une lettre précise. Les lettres sans jeu correspondant sont grisées. Les chiffres et les symboles sont regroupés sous <strong>#</strong>. La barre fonctionne pour un tri par nom et est grisée pour tout autre tri.</p>
 
         <h3>Défilement infini</h3>
         <p>Les jeux se chargent par lots de 100 au fur et à mesure que vous faites défiler. De nouvelles pages se chargent automatiquement lorsque vous approchez du bas. Modifier les filtres ou la recherche réinitialise et recharge instantanément les résultats.</p>
 
         <h3>Persistance de l'état</h3>
-        <p>Vos filtres actuels, votre terme de recherche et votre position de défilement sont enregistrés dans le stockage de session. Ils sont restaurés lorsque vous revenez à la page ou l'actualisez.</p>
+        <p>Vos filtres actuels, votre terme de recherche, votre tri et votre position de défilement sont enregistrés dans le stockage de session. Ils sont restaurés lorsque vous revenez à la page ou l'actualisez.</p>
     </div>
 </section>
 
@@ -835,6 +853,8 @@
         <p>Cliquez sur le lien du titre du jeu ou naviguez depuis le fil d'Ariane pour afficher la page de détails complète du jeu. Fonctionnalités supplémentaires sur la page complète :</p>
         <ul>
             <li><strong>En-tête avec arrière-plan fanart</strong> avec navigation par fil d'Ariane</li>
+            <li><strong>Logo du jeu</strong> &mdash; Le logo du jeu s'affiche au-dessus de son titre, qui reste du texte. Un jeu sans jaquette affiche son logo à la place de la boîte. La récupération remplit les logos depuis ES-DE, ScreenScraper, TheGamesDB, IGDB et Steam ; une récupération en masse avec <strong>Remplir les manquants</strong> les remplit pour les jeux récupérés auparavant</li>
+            <li><strong>Dos de la boîte</strong> &mdash; Quand un jeu a le dos de sa boîte, un bouton <strong>Dos</strong> se trouve sur la jaquette. Appuyez dessus pour voir le dos, et sur <strong>Face</strong> pour revenir. Cliquez sur le dos pour l'agrandir. La récupération remplit les dos depuis ES-DE, ScreenScraper et TheGamesDB chaque fois qu'un jeu est récupéré</li>
             <li><strong>Badges d'import de plateforme</strong> &mdash; Affiche Import CLZ, Import Steam, Import Xbox ou Import PSN avec les logos de plateforme le cas échéant</li>
             <li><strong>Indicateur de disque bonus</strong> &mdash; Affiche un badge et un lien « Fait partie de : » vers le jeu parent avec une vignette</li>
             <li><strong>Bouton Supprimer</strong> &mdash; Retirer le jeu de la base de données (avec confirmation)</li>
@@ -851,7 +871,7 @@
             <li><strong>Classifications d'âge</strong> &mdash; Les 8 systèmes de classification avec images officielles et correspondance croisée automatique. Modifier une classification remplit automatiquement les classifications vides des autres systèmes.</li>
             <li><strong>Notes</strong> &mdash; Note de la critique, note des utilisateurs</li>
             <li><strong>Description</strong> &mdash; Texte de description du jeu</li>
-            <li><strong>Images personnalisées</strong> &mdash; Téléversez une jaquette personnalisée (2D), une jaquette 3D et un fanart. Effacez les images existantes pour autoriser une nouvelle récupération.</li>
+            <li><strong>Images personnalisées</strong> &mdash; Téléversez une jaquette personnalisée (2D), une jaquette 3D, le dos de la boîte, un fanart et un logo. Effacez les images existantes pour autoriser une nouvelle récupération.</li>
             <li><strong>Importer une boîte 3D</strong> &mdash; Également dans Images personnalisées. L'enregistrement est immédiat, sans passer par Enregistrer les modifications. Choisissez le fichier <code>.box.json</code> enregistré par Slipcase, avec ses images (choisir tout le dossier convient). Slipcase 1.4.0 ou plus récent enregistre ce fichier à côté de chaque image exportée. RetroDB conserve les faces de la boîte pour ce jeu ; cliquer sur la jaquette montre alors la boîte en 3D, à faire glisser ou à tourner avec les flèches du clavier. Votre image de jaquette 3D n'est pas modifiée. Un jeu qui a déjà des faces demande avant de les remplacer, et <strong>Supprimer</strong> les efface.</li>
             <li><strong>Vidéo / Bande-annonce</strong> &mdash; Téléversez ou liez une bande-annonce vidéo</li>
         </ul>
@@ -1027,8 +1047,9 @@
             <li>Configurez votre clé API Web Steam et votre Steam ID dans les Paramètres</li>
             <li>Rendez-vous sur Imports de jeux &rarr; onglet <strong>Steam</strong></li>
             <li>Cliquez sur <strong>« Récupérer la bibliothèque »</strong> pour récupérer vos jeux Steam</li>
-            <li>Sélectionnez les jeux à importer (les doublons sont détectés automatiquement)</li>
+            <li>Sélectionnez les jeux à importer. Un jeu déjà présent dans votre liste Windows sous le même nom est lié à Steam au lieu d'être ajouté deux fois</li>
             <li>Les jeux importés sont étiquetés avec leur Steam App ID pour le suivi des succès</li>
+            <li>En arrière-plan, chaque jeu remplit ses détails vides depuis sa page du magasin Steam, et vos succès et votre temps de jeu arrivent. La page du jeu affiche votre temps de jeu. Récupérez le jeu pour obtenir son genre et sa date de sortie : ceux de Steam sont trop vagues, ou sont la date de son arrivée sur Steam</li>
         </ol>
 
         <h3>Import Xbox</h3>
@@ -1186,11 +1207,12 @@
     <div class="card-body">
         <h3>Utilisation</h3>
         <ol>
-            <li>Ouvrez la fenêtre de détails d'un jeu</li>
-            <li>Cliquez sur <strong>« Recherche HLTB »</strong></li>
-            <li>Sélectionnez la bonne correspondance parmi les résultats</li>
-            <li>Les estimations de durée sont enregistrées dans le jeu</li>
+            <li>Ouvrez la page d'un jeu et trouvez <strong>How Long to Beat</strong>, ou ouvrez sa fenêtre <strong>Modifier</strong></li>
+            <li>Le champ de recherche contient le titre du jeu. Modifiez-le si HowLongToBeat connaît le jeu sous un autre nom</li>
+            <li>Cliquez sur <strong>« Rechercher sur HLTB »</strong></li>
+            <li>Vérifiez la correspondance unique affichée, avec sa plateforme et son degré de proximité, puis cliquez sur <strong>Enregistrer</strong>. <strong>Annuler</strong> ne conserve rien</li>
         </ol>
+        <p>Si le champ contient encore le titre propre du jeu, la recherche essaie aussi les autres titres connus du jeu. Le texte que vous avez saisi vous-même est recherché tel quel.</p>
 
         <h3>Catégories de durée</h3>
         <ul>
@@ -1244,7 +1266,7 @@
             <li>La page affichera du JSON contenant votre jeton NPSSO</li>
             <li>Copiez la valeur <code>npsso</code> et collez-la dans Paramètres &rarr; Compte &rarr; PSN</li>
         </ol>
-        <p>Une fois authentifié, les jetons sont mis en cache localement dans <code>data/psn_tokens.json</code> et actualisés automatiquement. Les jetons mis en cache restent valides pendant environ 2 mois.</p>
+        <p>Une fois authentifié, RetroDB conserve les jetons d'accès en sécurité dans sa propre base de données (par utilisateur) et les actualise automatiquement &mdash; vous n'avez pas à recoller le NPSSO à chaque synchronisation. Lorsque la session de Sony prend fin, RetroDB se reconnecte tout seul avec votre NPSSO enregistré. Vous n'avez besoin d'un nouveau NPSSO que lorsque Sony refuse celui enregistré ; Paramètres &rarr; Compte et le Tableau de bord vous le signalent alors.</p>
 
         <h3>Détails des trophées</h3>
         <ul>
@@ -1432,6 +1454,10 @@
         <p>Éditeurs uniquement. RetroDB suggère des jeux qui semblent être un même jeu de différentes régions : le même jeu IGDB ou ScreenScraper, le même titre avec une autre étiquette de région, ou un nom régional correspondant. Décochez tout jeu qui n'en fait pas partie et cliquez sur <strong>« Lier les jeux cochés »</strong>, ou cliquez sur <strong>« Pas des versions »</strong> pour que ce groupe ne soit plus jamais suggéré. Rien n'est lié tant que vous ne l'avez pas confirmé. Lancez d'abord <strong>Compléter les titres alternatifs</strong> dans Maintenance : cela remplit les identifiants IGDB et ScreenScraper qu'utilisent les suggestions.</p>
         <p><em>Aucune dépendance externe</em></p>
 
+        <h3>Noms MAME</h3>
+        <p>Administrateurs uniquement. MAME trouve un jeu par son nom de fichier exact, alors gardez les noms courts, comme dyger.zip. Choisissez la liste de MAME (un DAT qui correspond à vos ROM, ou la sortie de <code>mame -listxml</code>) et appuyez sur <strong>« Nommer les jeux MAME »</strong>. Chaque jeu reçoit son vrai nom, son année et son fabricant, et les fichiers ne sont pas touchés. Un titre que vous avez modifié vous-même est conservé. Ajoutez un <code>catver.ini</code> pour filtrer la liste par catégorie. Les jeux BIOS sont masqués de la liste mais restent sur le disque, car d'autres jeux en ont besoin. Lancez ensuite une récupération, pour que les scrapers puissent trouver chaque jeu.</p>
+        <p><em>Requiert : un fichier de liste MAME</em></p>
+
         <h3>Remplissage IA en masse</h3>
         <p>Réservé aux éditeurs. La carte <strong>Remplir les champs vides avec l'IA</strong> lance le Remplissage IA sur un système entier, pour les champs que vous activez (voir Remplissage IA &rarr; Plusieurs jeux à la fois).</p>
         <p><em>Requiert : un fournisseur d'IA dans <strong>Paramètres &rarr; Récupération</strong></em></p>
@@ -1454,7 +1480,7 @@
         <p><em>Aucune dépendance externe (agrandissement IA basé sur Python)</em></p>
 
         <h3>Compléter les titres alternatifs</h3>
-        <p>Balayez la bibliothèque à la recherche de jeux dont le champ <strong>titres alternatifs</strong> est vide et remplissez-le depuis IGDB / TGDB / ScreenScraper. Utile après l'import d'un grand catalogue ou la migration depuis un autre outil qui ne stockait pas les sous-titres régionaux / japonais. S'exécute en arrière-plan ; la progression est affichée sur la carte de l'outil.</p>
+        <p>Parcourt chaque jeu récupéré et va chercher ses <strong>titres alternatifs</strong> sur IGDB / TGDB / ScreenScraper, marqués de la région d'où vient chaque nom. Les noms que vous avez déjà reçoivent leur région. Utile après l'import d'un grand catalogue ou la migration depuis un autre outil qui ne stockait pas les sous-titres régionaux / japonais. S'exécute en arrière-plan ; la progression est affichée sur la carte de l'outil.</p>
         <p><em>Requiert au moins une clé API de scraper (IGDB / TGDB / ScreenScraper)</em></p>
 
         <h3>Corriger les régions des boîtiers et des manuels</h3>
@@ -1463,6 +1489,18 @@
 
         <h3>Corriger les régions d'après les noms de fichiers</h3>
         <p>Le nom de fichier d'une ROM indique de quelle copie il s'agit, donc une étiquette comme <code>(USA)</code> décide maintenant de sa région et l'IA n'est pas interrogée. Les anciennes récupérations laissaient d'abord l'IA deviner, si bien qu'un fichier <code>(USA)</code> pouvait être indiqué comme Japon. Cet outil donne à ces jeux la région de leur nom de fichier. Il ne modifie que les régions remplies par l'IA, y compris une que vous avez ensuite corrigée à la main pour qu'elle diffère du nom de fichier.</p>
+        <p><em>Aucune dépendance requise</em></p>
+
+        <h3>Nettoyer les dates de sortie</h3>
+        <p>Les anciennes récupérations enregistraient une date dont seule l'année était connue comme le 1er janvier ou le 31 décembre, comme si le jour était connu. Cet outil ramène ces dates à l'année ou au mois, pour qu'une récupération ultérieure puisse remplir la vraie. Une date qu'aucune récupération n'a remplie reste telle quelle.</p>
+        <p><em>Aucune dépendance requise</em></p>
+
+        <h3>Vérifier les durées de jeu enregistrées</h3>
+        <p>Les anciennes recherches pouvaient enregistrer la durée de jeu d'une suite, ou d'un autre jeu du même nom sur un autre système. Cet outil envoie ces correspondances à la page de révision HowLongToBeat, et aucun jeu ne change avant votre décision. Là, Approuver garde une durée et Rejeter l'efface. Certaines correspondances sont justes : HowLongToBeat ne liste pas tous les systèmes sur lesquels un jeu est sorti.</p>
+        <p><em>Aucune dépendance requise</em></p>
+
+        <h3>Harmoniser les genres, perspectives et modes</h3>
+        <p>Les sources nomment la même chose différemment, si bien qu'un genre pouvait apparaître à la fois comme RPG et comme Role Playing Game, et qu'un filtre manquait des jeux. Les récupérations utilisent désormais un seul jeu de noms, ceux des listes de filtres. Cet outil convertit ce que les anciennes récupérations ont enregistré. Les mots qui n'ont pas leur place dans ces listes, comme Arcade ou Indie, sont retirés. Les mots qui appartiennent à un autre champ, comme FPV, y sont déplacés si ce champ est vide. Un nombre de joueurs qui contredit les modes d'un jeu est corrigé, et les anciens nombres de 1 venant de RAWG sont effacés pour qu'un vrai nombre puisse les remplir. Une valeur que vous avez ajoutée vous-même à une liste déroulante est conservée. Lancez ensuite une récupération en masse avec <strong>Remplir les manquants</strong> pour remplir ce qui reste vide.</p>
         <p><em>Aucune dépendance requise</em></p>
 
         <h3>Effacer les images RAWG des jaquettes</h3>
@@ -1542,6 +1580,7 @@
                 <tr><td>Manettes</td><td>1280 px sur le côté le plus long</td><td>Préserve la transparence (RGBA)</td></tr>
                 <tr><td>Matériel</td><td>1280 px sur le côté le plus long</td><td>Préserve la transparence (RGBA)</td></tr>
                 <tr><td>Fanart</td><td>Ignoré</td><td>Non standardisé (laissé à la taille d'origine)</td></tr>
+                <tr><td>Logo</td><td>Ignoré</td><td>Laissé à la taille d'origine ; conserve son fond transparent (enregistré en PNG quand le format est JPEG)</td></tr>
             </tbody>
         </table>
 
@@ -1717,9 +1756,7 @@
                     <li><code>data/settings.json</code> (vos préférences d'interface)</li>
                     <li><code>data/scraper_settings.json</code> (votre configuration de scrapers)</li>
                     <li><code>data/rom_tools_config.json</code> (vos préférences d'outils ROM)</li>
-                    <li><code>data/psn_tokens.json</code> (vos jetons d'authentification PSN)</li>
-                    <li><code>data/xbox_tokens.json</code> (vos jetons d'authentification Xbox)</li>
-                    <li>Dossier <code>database/</code> (la base de données de votre bibliothèque de jeux)</li>
+                    <li>Dossier <code>database/</code> (la base de données de votre bibliothèque de jeux, et vos jetons de connexion PSN/Xbox enregistrés)</li>
                 </ul>
             </li>
             <li>Extrayez la nouvelle version par-dessus l'installation existante</li>
@@ -1795,7 +1832,7 @@
         <ul>
             <li>Les jetons NPSSO expirent &mdash; générez-en un nouveau depuis <code>ca.account.sony.com/api/v1/ssocookie</code></li>
             <li>Assurez-vous d'être connecté à store.playstation.com avant de visiter l'URL du cookie</li>
-            <li>Les jetons mis en cache dans <code>data/psn_tokens.json</code> durent environ 2 mois</li>
+            <li>RetroDB se reconnecte tout seul tant que Sony accepte votre NPSSO enregistré. Dès que Sony le refuse, collez-en un nouveau dans Paramètres &rarr; Compte &rarr; PSN. Pour remplacer un jeton qui fonctionne encore, déconnectez-vous d'abord de PlayStation.</li>
         </ul>
 
         <h4>« Échec de l'authentification Xbox »</h4>

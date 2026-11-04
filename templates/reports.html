@@ -678,7 +678,7 @@ function clearScanResults() {
         }
     });
     updateLastScanIndicator(null);
-    showModal('✅ Cleared', 'Scan results have been cleared.');
+    showModal('✅ ' + {{ _('Cleared')|tojson }}, {{ _('Scan results have been cleared.')|tojson }});
 }
 
 // Format relative time
@@ -770,7 +770,7 @@ async function runFullScan() {
     updateLastScanIndicator(Date.now());
 
     if (hasError) {
-        showNotification('Some scan checks encountered errors. Check browser console for details.', 'warning');
+        showNotification({{ _('Some scan checks encountered errors. Check browser console for details.')|tojson }}, 'warning');
     }
 
     btn.disabled = false;
@@ -1106,7 +1106,7 @@ function viewGame(gameId) {
 
 // Rename file
 async function renameFile(gameId, newName) {
-    showConfirm('✏️ Rename File', `Rename ROM file to:<br><code>${escapeHtml(newName)}</code>`, async function() {
+    showConfirm('✏️ ' + {{ _('Rename File')|tojson }}, t({{ _('Rename ROM file to:<br><code>{name}</code>')|tojson }}, {name: escapeHtml(newName)}), async function() {
         try {
             const response = await fetch('/api/reports/rename-rom', {
                 method: 'POST',
@@ -1117,13 +1117,13 @@ async function renameFile(gameId, newName) {
             const data = await response.json();
             
             if (data.success) {
-                showModal('✅ Renamed', 'File renamed successfully.');
+                showModal('✅ ' + {{ _('Renamed')|tojson }}, {{ _('File renamed successfully.')|tojson }});
                 runFullScan();  // Refresh
             } else {
-                showModal('❌ Error', data.error);
+                showModal('❌ ' + {{ _('Error')|tojson }}, data.error);
             }
         } catch (error) {
-            showModal('❌ Error', error.message);
+            showModal('❌ ' + {{ _('Error')|tojson }}, error.message);
         }
     }, { allowHtml: true });
 }
@@ -1137,40 +1137,40 @@ function renameToScraped(item) {
 
     // Build convention display from tags list
     const tags = item.convention_tags || ['region'];
-    const tagLabels = { region: 'Region', year: 'Year', publisher: 'Publisher', developer: 'Developer', genre: 'Genre', system_type: 'System Type', system_name: 'System Name' };
-    const convention = 'Title' + tags.map(t => ' + (' + (tagLabels[t] || t) + ')').join('');
+    const tagLabels = { region: {{ _('Region')|tojson }}, year: {{ _('Year')|tojson }}, publisher: {{ _('Publisher')|tojson }}, developer: {{ _('Developer')|tojson }}, genre: {{ _('Genre')|tojson }}, system_type: {{ _('System Type')|tojson }}, system_name: {{ _('System Name')|tojson }} };
+    const convention = {{ _('Title')|tojson }} + tags.map(t => ' + (' + (tagLabels[t] || t) + ')').join('');
 
     // Handle missing suggested_name (stale cache or empty title)
     const suggestedName = item.suggested_name || '';
     if (!suggestedName) {
-        showModal('⚠️ Cannot Rename', 'No suggested filename available. Please re-scan to refresh the data.');
+        showModal('⚠️ ' + {{ _('Cannot Rename')|tojson }}, {{ _('No suggested filename available. Please re-scan to refresh the data.')|tojson }});
         return;
     }
 
     const message = `
         <div style="text-align: left; font-size: 0.9rem; line-height: 1.6;">
             <div style="margin-bottom: 0.75rem;">
-                <span style="color: var(--text-secondary);">System:</span>
+                <span style="color: var(--text-secondary);">${ {{ _('System:')|tojson }} }</span>
                 <strong>${escapeHtml(item.system_name || item.system)}</strong>
                 <span style="color: var(--text-muted); margin-left: 0.25rem;">(${escapeHtml(item.system)})</span>
                 <span class="issue-badge name-mismatch" style="margin-left: 0.5rem; vertical-align: middle;">${systemType}</span>
             </div>
             <div style="margin-bottom: 0.75rem;">
-                <span style="color: var(--text-secondary);">Naming convention:</span>
+                <span style="color: var(--text-secondary);">${ {{ _('Naming convention:')|tojson }} }</span>
                 <code style="color: var(--primary-cyan);">${convention}</code>
             </div>
             <div style="margin-bottom: 0.5rem;">
-                <span style="color: var(--text-secondary);">Current filename:</span><br>
+                <span style="color: var(--text-secondary);">${ {{ _('Current filename:')|tojson }} }</span><br>
                 <code style="color: var(--neon-red);">${escapeHtml(item.filename)}</code>
             </div>
             <div style="margin-bottom: 0.75rem;">
-                <span style="color: var(--text-secondary);">Rename to:</span><br>
+                <span style="color: var(--text-secondary);">${ {{ _('Rename to:')|tojson }} }</span><br>
                 <code style="color: var(--neon-green);">${escapeHtml(suggestedName)}</code>
             </div>
-            <div style="color: var(--neon-orange); font-size: 0.85rem;">⚠️ This will rename the file on disk. Make sure you have backups.</div>
+            <div style="color: var(--neon-orange); font-size: 0.85rem;">⚠️ ${ {{ _('This will rename the file on disk. Make sure you have backups.')|tojson }} }</div>
         </div>`;
 
-    showConfirm('✏️ Rename ROM File', message, async function() {
+    showConfirm('✏️ ' + {{ _('Rename ROM File')|tojson }}, message, async function() {
         try {
             const response = await fetch('/api/reports/rename-to-scraped', {
                 method: 'POST',
@@ -1181,7 +1181,7 @@ function renameToScraped(item) {
             const data = await response.json();
 
             if (data.success) {
-                showNotification('File renamed successfully.', 'success');
+                showNotification({{ _('File renamed successfully.')|tojson }}, 'success');
                 // Remove from local data and re-render
                 const idx = mismatchIssues.findIndex(m => m.game_id === item.game_id);
                 if (idx !== -1) mismatchIssues.splice(idx, 1);
@@ -1189,10 +1189,10 @@ function renameToScraped(item) {
                 updateMismatchResults();
                 saveScanResults();
             } else {
-                showModal('❌ Error', data.error);
+                showModal('❌ ' + {{ _('Error')|tojson }}, data.error);
             }
         } catch (error) {
-            showModal('❌ Error', error.message);
+            showModal('❌ ' + {{ _('Error')|tojson }}, error.message);
         }
     }, { allowHtml: true });
 }
@@ -1223,7 +1223,7 @@ function startBatchRename() {
     batchRenameItems = getFilteredItemsWithSuggestions();
     
     if (batchRenameItems.length === 0) {
-        showModal('ℹ️ No Items', 'No items with suggested names match your current filters.');
+        showModal('ℹ️ ' + {{ _('No Items')|tojson }}, {{ _('No items with suggested names match your current filters.')|tojson }});
         return;
     }
     
@@ -1255,8 +1255,8 @@ function startBatchRename() {
 // Close batch modal
 function closeBatchModal() {
     if (batchRenameRunning) {
-        showConfirm('⚠️ Cancel Batch Rename?',
-            'A batch rename is in progress. Are you sure you want to cancel?',
+        showConfirm('⚠️ ' + {{ _('Cancel Batch Rename?')|tojson }},
+            {{ _('A batch rename is in progress. Are you sure you want to cancel?')|tojson }},
             function() {
                 batchRenameCancelled = true;
                 document.getElementById('batchStartBtn').setAttribute('data-on-click', 'executeBatchRename');
@@ -1380,7 +1380,7 @@ function startMismatchBatchRename() {
     batchRenameItems = getFilteredMismatchItemsWithSuggestions();
 
     if (batchRenameItems.length === 0) {
-        showModal('ℹ️ No Items', 'No items with suggested names match your current filters.');
+        showModal('ℹ️ ' + {{ _('No Items')|tojson }}, {{ _('No items with suggested names match your current filters.')|tojson }});
         return;
     }
 

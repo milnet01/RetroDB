@@ -737,7 +737,7 @@ message, so nothing flashes yet.
 > (reduced-motion, backup/restore, and core a11y were checked and already exist).
 
 #### Pass 52.1 Translate JS-driven toasts / dialogs — the last i18n seam (I18N, M)
-- **Status**: planned (raises the priority of the Pass 49.x deferral now that
+- **Status**: in-progress (raises the priority of the Pass 49.x deferral now that
   v3.14.0 ships ten UI locales, two of them Chinese).
 - **Problem**: the UI catalogs cover templates and Python, but user-facing
   strings emitted from JavaScript — `showNotification()` / `showConfirm()` /
@@ -759,6 +759,15 @@ message, so nothing flashes yet.
   — never wrap genre/perspective/dimension/modes/game_structure values.
 - **Est.**: M — mechanical sweep, but ~138 strings × 10 locales plus a
   build + catalog round-trip. Supersedes the Pass 49.x inline-`<script>` deferral.
+- **Progress** (2026-11-03, commit e1769b3): pop-up text wrapped in 34
+  templates and four static/js files. Templates use `{{ _('...')|tojson }}`
+  (PASS-49-6's choice); `t()` only fills in values there. Screenshot
+  Review and the game page called `t('...')` in a template, which is never
+  collected; fixed. Guard: `tests/test_js_popup_strings.py`. Walked on
+  :5001 in the pseudolocale: 26 pages, no script errors.
+  **Still owed**: translating the new strings into the 20 locales, in the
+  v4.0.0 end batch (PASS-59-113 step 7). Not wrapped: button labels and
+  other non-pop-up text set from JS.
 
 #### Pass 52.2 aria-live announcements for long-running job progress (A11Y, S)
 - **Status**: done
@@ -7304,7 +7313,14 @@ were corrected in `2836bc3` and are not repeated here.
 - **Verify**: a fresh `--standalone` build contains no `docs/` tree
   (`tests/test_pass58_standalone_docs.py` pins it); then the old token no
   longer authenticates.
-- **Status**: planned (2026-09-02). Lanes: security, packaging.
+- **Resolution** (2026-11-03): rotated. The user signed out of
+  PlayStation, signed in again and saved the new token in Settings. The
+  saved token differs from the one in `docs/psn-npsso.env` (compared
+  by equality, never printed). One sign-in with the old token: Sony
+  refused it (PSNAWPAuthenticationError). One with the new token:
+  accepted, as the user's PSN name. RetroDB reads the token from
+  Settings only; `docs/psn-npsso.env` is an installer template copy.
+- **Status**: done (2026-11-03). Lanes: security, packaging.
 - **Source**: in-session 2026-09-01 (`a5e0939`); filed 2026-09-02 because it
   existed only in a session handoff, which is not somewhere the next session
   will find it.
@@ -7316,6 +7332,8 @@ were corrected in `2836bc3` and are not repeated here.
   docs/psn-npsso.env. A session then printed that file, so the new
   token is exposed in a conversation log. Get one more token, enter
   it in Settings and in that file, then check the app signs in.
+- **Progress** (2026-11-03): still open; the user chose to get the
+  new token later.
 
 ---
 
@@ -8375,6 +8393,42 @@ were corrected in `2836bc3` and are not repeated here.
   the one-line reply whole), or a browser window RetroDB drives, which
   only works on the machine running RetroDB and may meet Sony's bot
   checks. Try guided paste first, during this item's walk.
+- **Progress** (2026-11-03): walk started with the PASS-59-71
+  rotation. Found and fixed (commit 5d37d4a): a new token went unused
+  while the cached session lived, and Save & Test reported the old
+  session as working. Rough steps seen so far, not fixed: Paste &
+  Detect raises Brave's clipboard permission prompt; the wizard's
+  messages in `psnQuickSaveAndTest` (templates/settings.html) are
+  English-only; the steps never say to sign out first, which a
+  rotation needs.
+- **Correction and finding** (2026-11-03, from the log): the user's
+  first Save & Test at 20:13 signed in via the NPSSO; signing out of
+  Sony had already killed the cached session, so the fallback ran.
+  Commit 5d37d4a's message is wrong to call that a passing old
+  session; the flaw it fixes is real only while the old session still
+  works. **Sony's refresh token now lasts 10 days**
+  (`refresh_token_expires_in` 863999, seen twice today), not about
+  two months, and using it does not move its expiry. A lapsed session
+  re-signs from the NPSSO on the next request, but the keep-alive never
+  falls back to the NPSSO (INV-9). So the Settings banner counts down a
+  10-day session the user need not act on. Next: show what the user
+  must act on (the NPSSO's own expiry, which Sony does not report),
+  and reword the banner. The comment "valid ~2 months" in
+  `create_psn_client` and trophies spec §4.5 assume the old lifetime.
+- **Fixed** (2026-11-03, user chose both designs): the Settings banner
+  no longer counts down Sony's 10-day session. It is green while a
+  session is cached and red only once Sony refuses the saved NPSSO,
+  which `create_psn_client` now records as `npsso_refused_at`; the
+  dashboard notice shows only that refusal. Paste here focuses the box
+  for Ctrl+V instead of reading the clipboard. Step 1 says to sign out
+  first when replacing a working token. `psnQuickSaveAndTest` and its
+  neighbours are translatable. The stale "two months" text in
+  `create_psn_client`, trophies spec §4.5, the help page and the
+  keep-alive header is corrected. Walked headless at 1280 and 375 px on
+  a scratch DB, with Sony's replies faked. Still open: the server's own
+  sign-in error ("PSN authentication failed...") is English-only; the
+  guided-paste idea; translations of the new strings and of the two help
+  paragraphs (step 7).
 
 ---
 
@@ -8413,7 +8467,9 @@ were corrected in `2836bc3` and are not repeated here.
      download link, set up next to RetroDB with its own settings
      folder), then PASS-59-155 (cheats).
   5b. Turnable 3D box art (user, 2026-10-23): PASS-59-142 (import
-     Slipcase box faces), then PASS-59-143 (the 3D viewer).
+     Slipcase box faces), then PASS-59-143 (the 3D viewer), then PASS-59-231
+     (real case shape, added by the user 2026-11-03; waits for
+     Slipcase's SLIP-0125 spec).
   5c. Scraper data, complete and correct (user, 2026-10-23): PASS-59-162
      investigation done 2026-10-31; the user chose every group for
      v4.0.0, in this order: PASS-59-201 to PASS-59-214 (wrong data),
@@ -8433,6 +8489,24 @@ were corrected in `2836bc3` and are not repeated here.
   10. Release v4.0.0, then PASS-59-112.
 - **Status**: todo. Lanes: release.
 - **Source**: user, 2026-10-17.
+- **Progress** (2026-11-02): Xbox held (user, 2026-11-02): the Azure portal refuses a personal
+  account with "The ability to create applications outside of a
+  directory has been deprecated". A directory needs an Azure sign-up or
+  the M365 Developer Program, and a February 2026 Microsoft Q&A reply
+  says XboxLive.signin needs Xbox developer enrolment; a hobby plugin
+  guide says otherwise. Nothing tested. So PASS-59-162's findings X1 to
+  X7 stay unconfirmed, and Xbox goes out with v4.0.0 untested. Settings
+  now says this.
+- **Progress** (2026-11-04): step 8 done. 15 lanes ran (the 14-lane
+  partition was stale); raw reports in
+  `docs/reviews/2026-11-04-independent-audit.md`. Step 9 is these
+  passes, in this order: data safety PASS-59-237, PASS-59-238,
+  PASS-59-239, PASS-59-240; silent failures PASS-59-241; user edits
+  PASS-59-242; jobs PASS-59-243; updates PASS-59-244; access
+  PASS-59-245; translation PASS-59-246; scrapers PASS-59-247;
+  hardening PASS-59-248; small fixes PASS-59-249; docs PASS-59-250;
+  the second-look review PASS-59-251 last. PASS-59-252 (Slipcase
+  recess keys) goes with PASS-59-231.
 
 ---
 
@@ -9195,6 +9269,9 @@ were corrected in `2836bc3` and are not repeated here.
   to their pictures; Remove and re-import update the zoom without a
   reload. **Still owed**: a real mouse drag by eye (only keys were
   driven); the 20 locale translations of the two new strings.
+- **Progress** (2026-11-03): the user dragged the box with a real
+  mouse and it turns correctly. Still owed: the 20 locale
+  translations of the two new strings.
 
 ---
 
@@ -9461,6 +9538,10 @@ were corrected in `2836bc3` and are not repeated here.
   `[Cheats] Enable` (file restored after), the PCSX2 pack downloaded.
   **Still owed**: the manual run in the player, DuckStation and PCSX2
   (spec §7), and §14's question on RetroArch's exit rewrite.
+- **Progress** (2026-11-03): the user ran cheats in the player,
+  DuckStation and PCSX2 in the last week of October and says they
+  work. Still open: spec §14 (does RetroArch's exit rewrite of the
+  `.cht` keep cheats it could not apply).
 
 ---
 
@@ -9551,6 +9632,11 @@ were corrected in `2836bc3` and are not repeated here.
   User chose: accepted AI names and hand-typed titles survive every
   scrape (a title lock); the AI tags the old title's region; a run
   covers one system or all, in the background, from the review page.
+- **Progress** (2026-11-02): Review run and page withdrawn (user, 2026-11-02): Bulk AI Fill's
+  Official name switch does this job. The title lock stays, and so does
+  the title_proposals table, whose rejected names still stand.
+  routes/official_names.py is now routes/ai_fill_bulk.py and the page is
+  /tools/ai-fill-bulk.
 
 ---
 
@@ -10354,6 +10440,23 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Source**: PASS-59-162, 2026-10-31. Notes: hltb_ra H1 to H8.
 - **Problem**: `app.py`, `routes/collector_trophies.py` and `services/analytics.py` read `Main: 36 mins` as 36 hours, so totals are far too high. The bulk job ignores `platform_mismatch`. A sequel can pass the 95% bar. The year is never passed, and `Game Boy` is found inside `Game Boy Advance`.
 - **Fix**: one shared time parser or numeric columns; queue mismatches for review; numbers must agree; pass the year; compare whole platform names. Send affected stored rows to the review queue.
+- **Walked** 2026-11-04 (headless Chrome, scratch DB, game 1829
+  Sonic the Hedgehog 3, 1400 px and 375 px): empty box warns; lookup,
+  Cancel, Save and reload work; no console errors; no sideways scroll
+  at 375 px.
+  - **Found**: a typed title HLTB does not know still falls back to the
+  game's stored alternate titles (`HLTBLookupService.search` loads
+  them by `game_id`), so nonsense text offered "Sonic 3 A.I.R" (2019,
+  PC/Mobile, 78%) with Save. The via-notice and "Platform not found"
+  show. Open: use alternates only when the box holds the game's own
+  title. Ask the user.
+  - **Found**: the year shows after Save but not after a reload; no
+  column stores it.
+- **Fixed** 2026-11-04 (584117d, user's choice): stored alternate
+  titles are tried only when the box holds the game's own title.
+  - **Owed**: the help manual's "How Long to Beat" steps say "Select the
+  correct match from the results"; the page shows one match with Save
+  and Cancel. Fix with the translations step (all help files).
 
 ---
 
@@ -10383,6 +10486,9 @@ the cover zoom in Firefox before being reverted for the local fix.
   declined, and no repair button clears stored ones. The answer named
   ratings; scores are treated the same way (kept, marked as AI, checked
   for scale and pairing), which is this session's reading.
+- **Confirmed** (user, 2026-11-02): AI renames stay immediate, so A14
+  is closed as decided. AI scores stay kept and marked, including stored
+  scores of 10 or under.
 
 ---
 
@@ -10418,7 +10524,9 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.215 RetroDB keeps to each service's limits and stops when told to (fix, M).
-- **Status**: todo
+- **Shipped** (2026-11-02, v3.35.3): `scraper/service_limits.py` holds each service's pace and stop; `docs/specs/scrapers.md` §10 has the table. Bulk scrape, HowLongToBeat and Fix Box and Manual Regions report `service_stops`; the 25-silent-searches stop is gone. Live, 2026-11-02: TheGamesDB's free check gave the public key 296 left, refresh in about 12 days, and the private key 0 with a timer of 0. ScreenScraper's reply gave maxthreads 1, 3,072 a minute, 50,000 a day.
+  - **Limits**: no real 430, 431, or RAWG limit reply has been seen; those paths are tested on the documented or expected shapes. Whether `/v1/API/Limit` is truly free is the documentation's word: only one call was made. The key test still calls `/v1/Platforms`. A stop is in memory, so a restart asks once more. Media downloads are not paced or stopped. A dead ScreenScraper no longer ends Fix Box and Manual Regions early; each game waits out its timeouts until cancelled. A single-game search shows no message when a source is stopped. Finding tgdb 12's extra `ByGameID` call per game is not removed. The HowLongToBeat job has no live progress, so its stop shows as a toast when ROM Tools next opens. HowLongToBeat's terms are still unread.
+- **Status**: done
 - **Source**: PASS-59-162, 2026-10-31. Notes: screenscraper Terms; tgdb 12, 16; rawg 14, Terms; igdb Terms, F12; hltb_ra Terms.
 - **Problem**: ScreenScraper's docs require quota handling, and its 430 and 431 replies look like not found, so bulk runs keep calling. TheGamesDB has no stop at zero allowance and its status check spends paid calls when `/v1/API/Limit` is free. RAWG's monthly limit is untracked. IGDB has no throttle for its limit of 4 requests a second. The HowLongToBeat bulk job has no delay.
 - **Fix**: a quota-exhausted result distinct from not found, a stop for that source in the job with a clear message, and a shared per-source pace.
@@ -10426,7 +10534,14 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.216 Free extra data from the sources: real regional dates, title screens, more titles (enhancement, M).
-- **Status**: todo
+- **Resolution** (2026-11-02): 2026-11-02: built in the open 3.35.3, tests in
+  tests/test_pass59_216_extra_data.py. Real replies read from IGDB and
+  RetroAchievements; an IGDB scrape and an ES-DE scrape saved on a
+  scratch copy. TheGamesDB was not called (no calls without asking), so
+  its titlescreen rests on its documentation. Stored rows fill on the
+  next scrape. Source IDs moved to PASS-59-217; box backs and flyers
+  split to PASS-59-225.
+- **Status**: done
 - **Source**: PASS-59-162, 2026-10-31. Table: `docs/reviews/PASS-59-162-scraper-investigation.md`.
 - **Candidates**, each a small change: ScreenScraper `dates[]` per region and `sstitle`; TheGamesDB `alternates` and `titlescreen`; ES-DE `rating` as a user score; IGDB `game_localizations` titles and its platform list for `other_platforms`; HowLongToBeat sample sizes and game ID; RetroAchievements players and rarity; source IDs so a re-scrape need not search again.
 - **Larger**: `box-2D-back` and arcade flyers need somewhere to show them.
@@ -10434,23 +10549,49 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.217 Identify games from the ROM file itself, using checksums and disc serials (enhancement, L).
-- **Status**: todo
+- **Resolution** (2026-11-02): 2026-11-02: built in the open 3.35.3. Spec:
+  docs/specs/PASS-59-217-identify-by-file.md. Live trials: ScreenScraper
+  CRC gave the exact file for 31 of 32 cartridge games, serial 4 of 4
+  PS1 and 2 of 2 PS2, 0 of 3 PS3 (left out). No bulk scrape run yet.
+  Open: TheGamesDB ByGameHash needs a trial the user has not agreed to;
+  .7z files have no reader; RetroAchievements systems with special hash
+  rules stay "not known"; IGDB, RAWG and TheGamesDB still match by
+  title. Source IDs do not skip a search: spec §8 says why.
+- **Status**: done
 - **Source**: PASS-59-162, 2026-10-31. Notes: screenscraper 8, Table 1; hltb_ra R8; tgdb Table 1.
 - **Idea**: normal matching is by title. ScreenScraper's `roms[]`, `rom` and `serialnum`, TheGamesDB's `ByGameHash` and RetroAchievements' hashes can name the exact game, region and language of a file, and say whether achievements work with this copy. `games.disc_serial` already holds serials, and discs over 100 MB are not checksummed today.
 - **Needs**: a spec, because it changes how every scrape picks its game. Would remove many wrong matches at the root (PASS-59-208).
+- **Progress** (2026-11-02): 2026-11-02: PASS-59-216 passed this item its source IDs. Only igdb_id
+  and screenscraper_id are stored; RAWG and TheGamesDB have no column;
+  no scraper reads a stored ID to skip the search. A skip would lock in
+  any wrong match stored before PASS-59-208, so the spec must say when a
+  stored ID can be trusted.
 
 ---
 
 #### Pass 59.218 Steam and Xbox imports keep what the services already send (enhancement, M).
-- **Status**: todo
+- **Status**: in-progress
 - **Source**: PASS-59-162, 2026-10-31. Notes: ai_steam_xbox S1 to S7, X1 to X7. The library has no Steam or Xbox rows, and Xbox has no real reply, so the Xbox claims are unproven.
 - **Problem**: `get_app_details` has no callers, so imports stay nearly empty. A title match never links the Steam ID, so no achievements. Play time is fetched then dropped. Xbox may stop at 100 games, and phone and PC titles may be filed as Xbox One.
 - **Needs**: one real Xbox sign-in to test. Steam store data has real board ratings and a Metacritic score.
+- **Decided** (user, 2026-11-02): Steam first, tested with the user's
+  own Steam account against a scratch database. Then the user is guided
+  through Microsoft's app registration and one Xbox sign-in;
+  `xbox_client_id` and `xbox_client_secret` are empty, so registration
+  comes first. Xbox fixes wait for real replies.
+- **Progress** (2026-11-02): Steam built and run against the user's real account on a scratch database (8 games). `SteamSyncJob` fills empty fields once per game from the store, keeps play time in `platform_play_time`, and a Steam or Xbox title match now links its ID. Steam's date and genre are left out: DOOM 3 is dated 2007, its Steam release, and 7 of 8 genres are only Action. Also fixed: an admin's Fetch Library sent Steam the masked key.
+  - **Not done**: Steam's review summary (`appreviews?json=1`) answered with a web page, not data, so no user scores. S6 (achievement language) and the `hidden` flag are left. The S3 note's example was wrong: `generate_sort_title` pads numbers and does not move "The".
+  - **Next**: Xbox X1 to X7, after the user registers a Microsoft app and signs in once.
 
 ---
 
 #### Pass 59.219 Small scraper leftovers: dead code, spec drift, and a folder-browser server error (chore, S).
-- **Status**: todo
+- **Resolution** (2026-11-02): 2026-11-02: folder-browser 500 fixed (a null path opens the ROM
+  folder). The single-source apply_metadata_to_game routes, their tests
+  and the wording are gone; fill-only and bad-reference tests now run on
+  the live merge, which needed the bad-reference guards. Whether a real
+  button ever sends a null path was not seen.
+- **Status**: done
 - **Source**: PASS-59-162, 2026-10-31. Notes: screenscraper 13; tgdb 17; hltb_ra H8, R12; esde 14; ai_steam_xbox S7; igdb F21; merge_and_stored 25.
 - **Items**: `scrape_screenscraper.get_game_by_id` has no callers and sends `jeuid`, which the service refuses with 400; `gameid` works (tried live). Correct the claims in `docs/specs/scrapers.md`. `routes/tools.py` `api_rom_tools_browse_folders` answers 500 when it has no current path (seen 2026-10-31 by calling `openFolderBrowser` with a made-up name; not seen from a real button).
 - **Progress** (2026-11-02): 2026-11-02: the get_game_by_id item and the fetch-by-id claims in
@@ -10479,27 +10620,679 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.222 A screenshot the user removed stays removed when the game is scraped again (fix, M).
-- **Status**: todo
+- **Resolution** (2026-11-03): Shipped 2026-11-03 in ef3660a (3.35.4, unreleased): a deleted
+  screenshot's dHash goes in removed_screenshots (migration 035);
+  every merger and the ES-DE copy drop a look-alike. The Duplicate
+  Screenshots tool records nothing. Needs the user's Restart for 035.
+- **Status**: done
 - **Problem**: since PASS-59-205 a scrape copies ES-DE's screenshots into the list, so one deleted by hand or in Screenshot Review comes back from ES-DE's folder. Online sources can re-download theirs the same way. No record of a removal exists.
 - **Fix**: record what the user removes per game (a removed picture's look or source name) and have every merger skip it. Decide this before the user's Screenshot Review (PASS-59-161) is followed by a bulk scrape.
+- **Decided** (user, 2026-11-02): the bulk Fill Missing scrape is held
+  until this and PASS-59-224 land. Restart, RA refresh and the tidy-up
+  jobs go ahead.
 
 ---
 
 #### Pass 59.223 The translated help manuals catch up with older English sections (doc-fix, M).
-- **Status**: todo
+- **Resolution** (2026-11-03): Shipped 2026-11-03 in 419ae7e, into the open 4.0.0 entry. All 20
+  manuals match help.html by section structure, <code>/<pre> text, ids,
+  hrefs and Jinja. Also fixed: the Back label meant "go back" in af, de,
+  es; help.html's stale Official Names mention. Left for the PASS-59-113
+  translation step: "MAME Names" is still English in the nb and it
+  catalogs. Gap: test_i18n_longform compares hrefs as sets, so it missed
+  the lost in-text #ai-fill link.
+- **Status**: done
 - **Problem**: found while translating 3.35.0. The translated `help.<locale>.html` files lack two English sections, Search Anywhere and Keeping a Title, and some older paragraphs lag the English, such as Backfill Alternate Titles. In xh and zu, Custom Images and Fill Missing appear under older labels in older text.
 - **Fix**: compare each locale's sections with `help.html` and translate what is missing. Do it before v4.0.0.
+- **Progress** (2026-11-02): Also missing from the translated manuals: the MAME Names section
+  (2026-11-02). New strings for the MAME Names page and the Xbox wording
+  in Settings wait on translation too.
+- **Progress** (2026-11-03): 2026-11-03: help.html gained a "Back of the box" item on the game page
+  list, and "box back" in Media Handling and Custom Images (PASS-59-225).
+  The new UI strings for the Back button and Edit window wait on
+  translation too.
 
 ---
 
 #### Pass 59.224 Game logos on the game page, in place of a missing box, and in the play menu (feature, M).
-- **Status**: todo
+- **Resolution** (2026-11-03): Shipped 2026-11-03 in 5d0e8b6 (3.35.4, unreleased). Game page and Edit
+  window only; the play screen is queued as its own item. Spec:
+  docs/specs/PASS-59-224-game-logos.md.
+- **Status**: shipped (2026-11-03). The play screen is PASS-59-228.
 - **Source**: user, 2026-11-02.
 - **Decided** (user, 2026-11-02): in v4.0.0, after the scraper fixes. Show the logo on the game page above the title text, as a stand-in for a missing box, and on a full-screen play or loading screen. Whether such a screen exists is unchecked. The title stays as text, because a logo can be hard to read.
 - **Sources**: ES-DE `marquees/` (local, about 5,290 files counted 2026-10-31). ScreenScraper `wheel` and `wheel-hd`. TheGamesDB `clearlogo`, from its docs only, no sample. IGDB artwork types 5, 6 and 7, which 69 of 1,672 Mega Drive, 78 of 1,996 SNES and 159 of 4,314 PS2 games have (asked live 2026-11-02).
 - **Needs**: a logo column and folder, fill-only like other media, and a way to fill rows already scraped.
 
 ---
+
+#### Pass 59.225 The back of a game's box, and arcade flyers, on the game page (enhancement, M).
+- **Resolution** (2026-11-03): Shipped 2026-11-03 in d2473a1 (box backs only; arcade flyers still wait
+  until after v4.0.0). Decided with the user 2026-11-03: its own column
+  games.boxart_back, kept apart from Slipcase's box_faces; a Back button on
+  the game page's cover; not a Fill Missing gap. Sources: ES-DE backcovers,
+  ScreenScraper box-2D-back, TheGamesDB side "back".
+- **Status**: done
+- **Source**: split from PASS-59-216, 2026-11-02. Whether it is in v4.0.0 is the user's call.
+- **What the sources send**: ScreenScraper `box-2D-back` (seen in samples, seven regions; parsed to `boxart_back`, unused); TheGamesDB boxart `side: "back"`; ScreenScraper `flyer` (documentation only, in no sample).
+- **Needs**: a column and folder, and somewhere on the game page to show them. `games.box_faces` holds Slipcase imports and only `services/box_faces.py` writes it, so a scraped back needs a decision: its own column, or a change to that contract.
+- **Decided** (user, 2026-11-02): box backs are in v4.0.0; arcade
+  flyers wait until after it.
+
+---
+
+#### Pass 59.226 The PlayStation keep-alive cannot renew a sign-in, and the user's runs out about 8 November (fix, S).
+- **Resolution** (2026-11-02): Cause: Sony's sign-in errors carry a string under "error", and
+  PSNAWP's error class (3.1.0 too) calls .get on it, hiding the refusal.
+  Fixed by replacing that constructor from routes/trophies.py; a 400 or
+  401 on the saved token now marks the row expired, which raises the
+  re-link notice and ends retries. Timeline, from
+  logs/scraping_2026-11-01.log and the live row: 19:49 a server renewed
+  successfully yet the live row stayed at 2026-10-31, so it ran on a
+  copy; 20:07 onward the live server was refused. So the copy's renewal
+  most likely used up the live token, not proven because Sony's text was
+  hidden. Sony's reply of 2026-10-31 gave 7.99 days, not a fresh 2
+  months, so renewals may not extend a sign-in at all. The live server's
+  next start shows the real answer.
+- **Status**: done
+- **Evidence**: `logs/scraping_2026-11-02.log`, on every server start seen today: `PSN keep-alive: user 1 refresh failed: PSN cached-token refresh failed: 'str' object has no attribute 'get'`. User 1's `refresh_token_expires_at` was about 5.9 days away on 2026-11-02.
+- **Where**: the cached-token block of `create_psn_client` in `routes/trophies.py`, which assigns `psnawp.authenticator.token_response`. Cause not traced; a change in the PSNAWP library is unchecked.
+- **Fix**: find what holds a string, and show the failure to the user. The same log line counts one row as already expired.
+- **Why soon**: once it expires, trophy sync needs a new sign-in. PASS-59-111's Sony walk may cover that, so do this first.
+
+---
+
+#### Pass 59.227 MAME games show their real names, and scrape by them, with the file names left alone (enhancement, M).
+- **Target**: `games.title` for the MAME system comes from MAME's own list: the set name (`dyger`) to its description (`Dyger (Korea set 1)`), year and manufacturer. `rom_path` never changes. Scrapers then search by the real name.
+- **Why**: 6,291 MAME rows are titled by short name and 2 are scraped (2026-11-02), so a scrape searches for `dyger` or `peps0275`. Hold them out of the bulk Fill Missing until this lands.
+- **Data** (MAME Curator session, measured 2026-11-02): the title from the 0.284 non-merged DAT, which holds all 6,291 zips; other fields from `listxml-0.287.xml`, joined by set name, which lacks 10 of them. Keep the full description, since 627 zips share a base title. A shipped feature needs the user to point at their own file; RetroDB cannot assume these paths.
+- **Sources**: arcadeDB is keyed by set name; libretro-thumbnails by description. ScreenScraper's romnom with a set's zip name is untested. Read each one's terms first.
+- **Open**: gambling, slot, handheld, computer, tabletop and board-game sets per catver.ini, and BIOS sets, are in the same folder. Whether they show is the user's call.
+- **Status**: todo. Lanes: scraper, services.
+- **Source**: user, 2026-11-02.
+- **Progress** (2026-11-02): Built 2026-11-02: naming tool, category filter, BIOS hidden, search by
+  title, ScreenScraper lookup by zip name, reports refuse a rename.
+  Still to do when worthwhile: arcadeDB and libretro-thumbnails as
+  sources, after reading their terms. A scrape of a named game through
+  every source has not been run.
+
+---
+
+#### Pass 59.228 A full-screen play screen that shows the game's logo while it starts (feature, M).
+- **Target**: when you press Play, a full-screen screen shows the game's logo while the emulator starts.
+- **Why**: PASS-59-224 asked for the logo on a play or loading screen too. None exists: `static/js/game-launch.js::launchGameImpl` relabels the Play button and shows toasts (PASS-59-224 spec §3, §9). Split out when PASS-59-224 shipped, as the user asked (2026-11-03).
+- **Needs**: a design first: when it shows, how it closes, what it shows for a game with no logo.
+- **Shipped** (2026-11-03, 478a00f, in the open 4.0.0): the screen
+  lives in `static/js/game-launch.js`, its styles in
+  `components/launch-indicator.css`. It also closes 15 s after the
+  start, because a game started from another device's browser never
+  takes that browser's focus. Walked in headless Chrome on :5001 with
+  launch replies faked. **Still owed**: one real Play on the user's
+  desktop to see it close as the game window opens; the 20 locale
+  translations of its two strings.
+- **Status**: done.
+- **Source**: user, 2026-11-02.
+- **Decided** (user, 2026-11-03): the game's logo, large, on its
+  background art. It closes by itself once the emulator opens; Esc or
+  a click closes it sooner. A game with no logo shows its title in
+  big text instead. Design done; ready to build.
+
+---
+
+#### Pass 59.229 Some tests pass or fail by run order: they read removed_screenshots from a test database nothing has migrated (test, S).
+- **Target**: every test file passes when run alone and in any order.
+- **Why**: the push gate's docs check runs in random order and failed once on `tests/test_pass59_217_identify_by_file.py::test_the_history_says_the_file_matched`. That test fails when its file runs alone, before PASS-59-224 as well as after. ScreenScraper merge tests in `test_pass59_216_extra_data.py`, `test_metadata_merger.py` and `test_scrape_fill_only.py` fail the same way alone; the full suite passes.
+- **Cause (likely)**: `get_existing_screenshot_hashes(..., game_id)` reads `removed_screenshots` (migration 035) from the session test database, which has its tables only once some test has imported `app`.
+- **Fix idea**: migrate the session test database in `tests/conftest.py`, or point the affected tests at a migrated fixture.
+- **Shipped** (2026-11-03, e915e1f): a session fixture in
+  `tests/conftest.py` migrates the test database before any test runs.
+  The four files that failed alone now pass alone; full suite and
+  `ci_local.sh --docs` pass.
+- **Status**: done.
+- **Source**: build of PASS-59-224, 2026-11-03.
+
+---
+
+#### Pass 59.230 Arcade flyers on the game page (enhancement, S).
+- **Status**: todo
+- **Decided** (user, 2026-11-02): after v4.0.0.
+- **What the sources send**: ScreenScraper `flyer` (documentation only,
+  in no sample seen). Check a real arcade answer before building.
+- **Pattern**: the box back (PASS-59-225) — its own column and folder,
+  fill-only, and a place on the game page.
+
+---
+
+#### Pass 59.231 The 3D box viewer draws a real case shape: rounded corners and edges, a raised lip, a side seam (FEATURE, M).
+- **Shipped** (2026-11-03): built to SLIP-0125 § 4.1 as of Slipcase
+  52dbd6f (slot centred on the seam, half-round ends). The import keeps
+  a valid `shape`; a bad one imports flat. The viewer draws on WebGL2
+  (no WebGL2: the flat picture); its geometry equals Slipcase's
+  `box_patches` exactly for six test shapes. The depth buffer settles
+  the concave solid, so nothing is sorted.
+  - **Owed**: the user's own look, after importing a box file from a
+  Slipcase build that writes `shape` (the stored Final Fantasy VII
+  Rebirth box has none yet). A figure change in Slipcase needs no
+  RetroDB change; a geometry change needs boxPatches ported again.
+- **Status**: done; waits for Slipcase's SLIP-0125 spec (PS5 first).
+- **Why**: the user chose real shape plus painted faces, and put it
+  in v4.0.0 (user, 2026-11-03).
+- **Agreed with Slipcase (2026-11-03, RetroDB's answer)**: shape as
+  a few named mm parameters in an optional `shape` section of box
+  file version 1; absent or zero means flat. Released importers
+  refuse any version but 1 and ignore unknown keys. Face images
+  unchanged (INV-11).
+- **Work**: `services/box_faces.py` keeps `shape` in the record;
+  `static/js/box-viewer.js` draws it (CSS 3D first: rounded face
+  corners, thin strips for lip and bevel). A box imported before
+  this needs importing again to gain its shape.
+- **Progress** (2026-11-03): Slipcase's spec arrived:
+  `Slipcase/docs/specs/SLIP-0125-keep-case-shape.md` § 4.1. An optional
+  `"shape": {"corner_radius_mm", "edge_radius_mm"}` in box file v1;
+  each zero applies on its own (RetroDB agreed); a bad shape draws the
+  box flat. Slipcase dropped the raised lip: it makes the solid concave
+  at the hinge. The lip stays painted in the face pictures. Unblocked.
+- **Decided** (user, 2026-11-03): no raised lip as a 3D shape; it
+  shows only in the face pictures. Build to SLIP-0125 § 4.1.
+- **Decided again** (user, 2026-11-03, later): the real lip shape,
+  replacing the no-lip answer above. SLIP-0125 § 4.1 was amended: new
+  optional `lip_width_mm`, `lip_height_mm`, `seam_width_mm`,
+  `seam_depth_mm` (missing means 0); no lip or seam on the spine side;
+  the solid is concave, so check depth sorting in the viewer. Slipcase
+  no longer paints the lip's inner wall into the pictures.
+- **Spec update** (Slipcase, 2026-11-03, its commit 95bee0b): SLIP-0125
+  § 4.1 (e) adds a finger recess on the opening side, asked for by the
+  user: optional `recess_length_mm`, `recess_height_mm`,
+  `recess_depth_mm` (missing means 0; any 0 means no recess), with
+  their own limits. On the spine side the seam strip is flat and shows
+  the spine picture. Which half the recess cuts waits on the user.
+
+---
+
+#### Pass 59.232 Move Refresh RetroAchievements out of Settings to where weekly jobs live (UX, S).
+- **Target**: the Refresh RetroAchievements button and its Clear RA
+  controls in `templates/_settings_tabs/system.html`.
+- **Why** (user, 2026-11-03): it is a job run about once a week, not a
+  setting; Settings holds what changes how the app is used.
+- **Open**: where it goes. Recommendation: the Achievements page, next
+  to Refresh Progress. Ask the user before building.
+- **Shipped** 2026-11-03 (366650f): the button is Find Games with
+  Achievements on the RetroAchievements page, in a card where every
+  button has a line saying what it does; Clear RA Data for all systems
+  moved with it; an admin with no linked games gets an empty page with
+  the Find button. Settings keeps a link. Owed: translations of the
+  new strings; the user's own look after Restart.
+- **Status**: done.
+- **Decided** (user, 2026-11-03): the Achievements page. That page
+  also has Sync and Refresh Progress buttons, so each button must say
+  plainly what it does (label and a short line under it), so no one
+  mixes them up.
+
+---
+
+#### Pass 59.233 Check each ROM is a good copy against No-Intro and Redump lists (feature, M).
+- **When**: after v4.0.0 (user, 2026-11-04).
+- **Why**: a bad dump plays wrongly or not at all, and nothing in
+  RetroDB says so today. The CHD check covers CHD files only.
+- **Start from**: `services/rom_identity.py` already gives a file's
+  name, size and CRC (PASS-59-217). Compare those to No-Intro and
+  Redump DAT files the user supplies.
+- **Open**: where the result shows (ROM Tools, the game page, both),
+  and how DAT files reach the app. Ask the user before building.
+- **Status**: todo.
+
+---
+
+#### Pass 59.234 Back up and restore each game's saves (feature, M).
+- **When**: after v4.0.0 (user, 2026-11-04).
+- **Why**: saves live only in each emulator's folders; a lost disk or
+  a bad emulator update loses them. Nothing in RetroDB copies them.
+- **Start from**: `services/player.py` names RetroArch's
+  `savefile_directory` and `savestate_directory` keys; DuckStation,
+  PCSX2 and the other standalone emulators keep their own folders.
+- **Open**: which emulators first, where copies go, and how many
+  copies to keep. Ask the user before building.
+- **Status**: todo.
+
+---
+
+#### Pass 59.235 TV mode: a big-text Library you steer with a game controller (feature, L).
+- **When**: after v4.0.0 (user, 2026-11-04).
+- **Why**: RetroDB launches games, but choosing one needs a mouse and
+  keyboard. No page reads a game controller today (no `getGamepads`
+  in `static/js`).
+- **Open**: a separate page or a mode of the Library; which actions it
+  offers (browse, details, Play). Likely needs a spec
+  (`spec-format.md` §1): it spans pages, input and layout.
+- **Status**: todo.
+
+---
+
+#### Pass 59.236 ROCm's roctracer aborts every GPU process at exit: find a fix that needs no copy of ROCm (investigate, S).
+- **When**: after v4.0.0 (user, 2026-11-04).
+- **Why**: `roctracer` 6.4.0 (openSUSE build) fails an assertion in
+  `hsa_support::Finalize` at exit. pytest exits 134, and a plain kill
+  of a server writes a core dump of hundreds of MB.
+- **Try, in order**: a newer ROCm; keeping `libroctracer64` from
+  loading; reporting it to AMD or openSUSE.
+- **Decided** (user, 2026-11-04): no fork of ROCm. Measured that day
+  for this machine's gfx1032 card (run as gfx1030): the ROCm files the
+  upscaler loads are 2.48 GB on disk, 534 MB packed with `xz -1`, for
+  one card family only.
+- **Status**: todo.
+- **Found** 2026-11-04: installed ROCm is mixed 6.4 (rocblas from AMD's
+  SLES 15.6 build in /opt/rocm-6.4.0; roctracer 6.4.0 from OBS
+  science:GPU:ROCm; hip 6.4.2), and zypper shows roctracer locked.
+  Tumbleweed's main repo has ROCm 7.2.0. Its librocblas5 7.2.0-10.1
+  builds for gfx1031 but not gfx1032 (rpm -qlp, 2026-11-04).
+  - **Idea** (user, 2026-11-04): ask openSUSE to add gfx1032 to the
+  build targets, and report the roctracer abort. Test 7.2 first: a
+  report against 6.4 would likely be answered "upgrade". Moving to 7.2
+  must keep onnxruntime's ROCm provider working (memories
+  onnxruntime_rocm_trap, rocsolver_missing). The user posts any report.
+- **Decided** (user, 2026-11-04): after v4.0.0, draft the openSUSE
+  gfx1032 build-target request and test the roctracer abort on 7.2;
+  show the user the report text to post.
+
+---
+
+#### Pass 59.237 ROM tools never delete or overwrite a working ROM or playlist (audit-fix, M).
+- **Resolution** (2026-11-04): Done 2026-11-04 in cb6f0b86. New services/disc_files.py; fixes in
+  routes/tools.py, routes/reports.py, routes/games_media.py,
+  scraper/rom_tools.py; tests in tests/test_pass59_237_disc_files.py.
+  Premise corrections: the live Duplicate Finder and CHD scan are in
+  routes/tools.py (the DuplicateFinder and CHDConverter classes in
+  scraper/rom_tools.py are unused, left for PASS-59-251); the Create M3U
+  staging move already repointed rom_path (PASS-59-137). Not done: a
+  browser walk of the Duplicate Finder and Screenshot Dedup pages.
+- **Status**: done
+- **Why**: the 2026-11-04 audit (`docs/reviews/2026-11-04-independent-audit.md`,
+  lanes 9 and 10). Confirmed in code 2026-11-04 for the first three.
+- **Fix**:
+  - Duplicate Finder name mode groups by stem only, so `Game.cue` and
+    `Game.bin` are duplicates (`scraper/rom_tools.py` name grouping).
+    Group by stem plus extension.
+  - `delete_duplicates` unlinks any path sent. Check each is under the ROM
+    root, in a found group, and that one copy survives.
+  - Hash mode can delete an audio-track `.bin` two releases share, and
+    leaves `games.rom_path` stale.
+  - Organize Multi-Disc (`routes/reports.py`) writes over an existing
+    `.m3u`, and `shutil.move` replaces a same-named file. Refuse both, as
+    `rom_tools` Create M3U does.
+  - Organize and the Create M3U staging move leave `games.rom_path` on
+    the old place, so Clean missing ROMs then deletes those games.
+  - Organize puts `.bin` tracks next to their `.cue` in the playlist.
+  - CHD convert with delete originals lists `.bin` and `.cue` both and
+    deletes only the file chdman got; a `.m3u` naming the `.cue` is not
+    updated.
+  - `zip -d` matches names as patterns (`[!]`); pass `-nw` and check the
+    removed set against the request.
+  - Renaming a `.bin` breaks its `.cue`; renaming a disc in a playlist
+    folder breaks the `.m3u`.
+  - Screenshot-dedup delete (`routes/tools.py`) does not check the file
+    belongs to the game or keep one copy.
+- **Source**: audit 2026-11-04.
+
+---
+
+#### Pass 59.238 Media files are never lost: wishlist pictures, screenshot lists, partial downloads (audit-fix, M).
+- **Resolution** (2026-11-04): Shipped 2026-11-04 in 71ff0a97, all eight parts, tests in
+  tests/test_pass59_238_media.py. Deleting a game removes its media only
+  from the two hand deletes (one game, one wishlist item); Clean missing
+  ROMs and Clear CLZ imports still leave files to the orphan sweep, so a
+  game whose ROM is only briefly missing keeps its pictures.
+- **Status**: done
+- **Why**: audit 2026-11-04, lanes 3, 6 and 8. The first two confirmed in
+  code 2026-11-04.
+- **Fix**:
+  - The orphan sweep (`services/media_cleanup.py`) keeps only digit
+    prefixes, so wishlist files `w<id>_...` are deleted. Keep wishlist
+    rows' files.
+  - The game page and modal (`routes/games.py`) clear `screenshots` for
+    any file not found, on every view, by any user. With `IMAGE_PATH`
+    unmounted every viewed game loses its list. Clear only when the
+    folder is healthy, or only in scans as CLAUDE.md says.
+  - `metadata_merger._download_and_finalize` leaves `.dl_*` temp files
+    on early returns; use `finally`.
+  - Video and manual downloads write straight over the file the row
+    uses; write to a temp file and rename.
+  - `webp_migrate`: no `safe_path` containment; a file two rows share is
+    deleted by the first conversion and the second row keeps a dead
+    name. Run the adopt check before the missing check.
+  - The background upscaler can write an old picture over a newer
+    download of the same name; compare mtime or inode in `still_wanted`.
+  - `_atomic_save` leaves new images at 0600; `_save_image` swallows save
+    errors, so failed saves count as done.
+  - Deleting a game or a wishlist item leaves its media files.
+- **Source**: audit 2026-11-04.
+
+---
+
+#### Pass 59.239 Tests can never reach the live database, media or settings files (test, S).
+- **Resolution** (2026-11-04): Shipped 2026-11-04 in b69b9111. Every listed gap closed; conftest also
+  refuses to run if config resolves a live path outside the temp root.
+- **Status**: done
+- **Why**: audit 2026-11-04, lane 14. Confirmed in `tests/conftest.py`
+  2026-11-04. A test once wiped a live library (memory
+  test-media-isolation).
+- **Fix**:
+  - Outside xdist, conftest keeps an inherited `RETRODB_DB_PATH` or
+    `RETRODB_IMAGE_PATH`. Always make temp dirs under pytest, or refuse
+    any path outside the temp root.
+  - `RETRODB_STATIC_PATH` is set only when `RETRODB_IMAGE_PATH` is unset.
+  - `settings_manager.SETTINGS_FILE` and `SCRAPER_SETTINGS_FILE` are not
+    redirected; `admin_test_client` stubs load but not save.
+  - `test_media_path_isolation` checks config equals the env var, not
+    that it is a temp dir.
+  - `scripts/ci_local.sh` import smoke isolates the DB only.
+- **Source**: audit 2026-11-04.
+
+---
+
+#### Pass 59.240 Sign-ins and keys stay out of logs, backups and shared emulator files (security, M).
+- **Status**: todo
+- **Why**: audit 2026-11-04, lanes 1, 2, 3, 7, 9 and 15. Old scrape logs
+  already held ScreenScraper sign-ins (memory redact-scrape-logs).
+- **Fix**:
+  - Failure logs print full URLs with credentials:
+    `metadata_merger.py` ScreenScraper media; `routes/scraper.py` check
+    routes (`sspassword`, `devpassword`, TGDB `apikey`, Gemini `key=`);
+    `jobs/ra_sync.py` RA key. Log the error type, or redact the URL.
+  - Check where the `log_redactor` filter is attached; add `cheevos_token`
+    and a JSON `"Token":` key.
+  - `services/player.py`: `cheevos_*` keys can be saved into the base
+    `retroarch.cfg` by RetroArch's Save Current Configuration; strip them
+    before each launch. Sweep stale `data/player/run/*.cfg` at startup.
+  - Deleting or deactivating a user leaves their RA token in DuckStation
+    and PCSX2 files (`routes/auth.py`); call `ra_standalone.sign_out`.
+  - DB backups are written at 0644 then chmod; write them 0600 and
+    atomically (`services/database.py::backup_database`).
+  - Migration 015 leaves `.migrated-015` token files.
+  - Task logs with exception text are readable by any signed-in user.
+- **Source**: audit 2026-11-04.
+
+---
+
+#### Pass 59.241 Features that silently do nothing: HLTB auto-apply, RA Refresh hash match, per-user tags, PSN links (fix, M).
+- **Status**: todo
+- **Why**: audit 2026-11-04, lanes 5, 7, 10 and 12. First two confirmed
+  in code 2026-11-04.
+- **Fix**:
+  - `jobs/hltb_bulk.py` auto-apply UPDATE has 7 placeholders and 5 values;
+    every auto-apply fails.
+  - `jobs/ra_refresh.py` passes `game.get('folder')`; rows hold
+    `system_folder`, so the hash match never runs.
+  - Tags: `name` is still UNIQUE across users (001 baseline); a second
+    user's same-named tag fails with a 500. Migrate to `(owner_id, name)`.
+  - A full PSN sync's COALESCE replaces a link the user set by hand, and
+    its substring match links "Doom" to "Doom Eternal".
+  - PSN import never links an existing game by title, unlike Steam and
+    Xbox.
+  - `toast-controller.js` reads `wasActive` after `updateToasts` sets it,
+    so job-end messages and the restart poll never fire.
+  - Xbox: a refresh drops the gamertag and nothing fetches it again; any
+    failed refresh, even a timeout, deletes the tokens.
+  - Steam credentials fall back to the shared settings file for a user
+    with none (`jobs/platform_sync.py`), so one person's library lands
+    under another.
+  - Non-admins can never refresh their RPCS3 trophies.
+- **Source**: audit 2026-11-04.
+
+---
+
+#### Pass 59.242 Scrapes and AI Fill keep what the user typed (audit-fix, M).
+- **Status**: todo
+- **Why**: audit 2026-11-04, lanes 3, 4, 8 and 10. Fill-only is a project
+  contract (CLAUDE.md, `docs/decisions/`).
+- **Fix**:
+  - `canonicalize_metadata` runs on stored values, so a stored genre, mode
+    or perspective not in the lists becomes `''` and overwrites the column;
+    players reconciliation rewrites a stored `players`.
+  - A scrape writes back every field it read at its start, so an edit made
+    during it is lost. Re-read the row before the save.
+  - `ai_fill.py` compares raw text before normalizing, so an unchanged
+    value (`4` vs `1-4`, reordered genres) is recorded as replaced by the
+    AI.
+  - AI Fill replaces hand-edited values in `VALIDATE_FIELDS`; the user
+    decides whether it may.
+  - The system-default controller replaces a typed `controller_support`.
+  - The form edit route sets every field it was not sent to NULL.
+  - Reset says all metadata is cleared but leaves eight fields and the
+    caches.
+  - CLZ import stores a year as `YYYY-01-01`.
+  - A rating cross-mapped from an AI guess is not marked as a guess.
+  - Clear Scraped Data leaves `perspective`, `dimension`, `game_structure`.
+- **Source**: audit 2026-11-04.
+- **Decided** (user, 2026-11-04): AI Fill leaves hand-edited values
+  alone; it replaces only scraped values in `VALIDATE_FIELDS`.
+
+---
+
+#### Pass 59.243 Background jobs survive restarts, swaps and one bad game (audit-fix, M).
+- **Status**: todo
+- **Why**: audit 2026-11-04, lanes 2, 7, 10 and 11.
+- **Fix**:
+  - A demoted or swapped scrape, and a resume queued while one runs, are
+    queued in memory only and lost on restart (`jobs/bulk_scrape.py`).
+  - After the 60 s swap timeout `reset()` clears `cancelled`, so the old
+    worker keeps going beside the new one. Use a run token.
+  - Queue DB writes with retry backoff run under `self._lock`, blocking
+    status polls.
+  - `ss_region_repair` and `ai_fill_bulk` end the whole run on one game's
+    error.
+  - `player_cores_job` is not drained on shutdown and has no cancel.
+  - A run stopped by a service limit ends as completed with no message.
+  - Importing `app` from a second process marks the live server's jobs
+    interrupted.
+  - Resume has no guard against a double click.
+  - Wishlist items stay on "scraping" after an error or a restart.
+  - Migrations: `apply_pending` reads `user_version` before the lock.
+  - PSN: sign-in runs inside `_psn_sync_lock`; keep-alive is per process
+    and renews daily; one game's sync pulls the whole title list.
+  - After SIGTERM the sync loops run with no delay.
+- **Source**: audit 2026-11-04.
+
+---
+
+#### Pass 59.244 Updates and game launches recover from a failure (audit-fix, S).
+- **Status**: todo
+- **Why**: audit 2026-11-04, lane 15. Related: PASS-59-174 (rollback),
+  PASS-59-168 (command port bound to 127.0.0.1).
+- **Fix**:
+  - `updater_apply.apply` returns without restarting on an unknown plan
+    version, a missing plan key, or a folder error before its `try`; the
+    old app has already exited. Restart on every early exit.
+  - The standalone build's version is never checked before the swap.
+  - Two player launches at once both pass the one-session check.
+  - No scan-root check on a ROM when `rom_path` is unset.
+  - Cheats: `take_back` can pick up another game's `.cht` with the same
+    file name; `place_for_launch` and `take_back` catch `OSError` only.
+  - `standalone_settings.write_lines` leaves a temp file on failure,
+    replaces a symlink, and sets 0600; `_read_lines` fails on non-UTF-8.
+  - `cheats.py` writes `sources.json` in place.
+  - `game-launch.js` core wait has no timeout and treats an error page as
+    done; it uses `confirm()`, not `showConfirm`.
+- **Source**: audit 2026-11-04.
+
+---
+
+#### Pass 59.245 Keyboard focus is always easy to see, and every control works from the keyboard (accessibility, M).
+- **Status**: todo
+- **Why**: audit 2026-11-04, lanes 12 and 13. The user is partially
+  sighted.
+- **Fix**:
+  - No global `:focus-visible` rule; several controls show focus only as a
+    1px border change, the same as hover; `launch-indicator.css` removes
+    it.
+  - Focus rings are a fixed cyan, so they ignore the theme.
+  - Library card filter links are spans with no tabindex, role or key
+    handler (`all-games-controller.js`); both Library and console pages.
+  - The play screen has no focus trap; the running-games popover does not
+    close on Escape or outside click.
+  - Tag colour swatches lack `aria-label` and `aria-pressed`.
+  - Trophy images use `alt="P"`, `"G"`, `"S"`, `"B"`.
+  - `docs/specs/themes.md` says every component uses the colour tokens;
+    many fixed colours remain. Move the visible ones to tokens and correct
+    the claim.
+  - Check each fix at desktop and 375px.
+- **Source**: audit 2026-11-04.
+
+---
+
+#### Pass 59.246 The last untranslated screen text, and right-to-left for Hebrew (i18n, M).
+- **Status**: todo
+- **Why**: audit 2026-11-04, lanes 5, 11, 12 and 13. Related: PASS-52-1
+  (JS toasts), PASS-59-179 (maintenance tools), PASS-43-4 (RTL + Arabic).
+- **Fix**:
+  - `app.py`: recovery banner, job-route and setup errors, CSRF, 404/500
+    envelopes; `formatters.py` "Unknown".
+  - `all-games-controller.js` card labels and badge tooltips;
+    `launch-indicator.js` fallback name.
+  - `base.html` job-queue panel (also escape `system_name`); `setup.html`;
+    `tags.html`; `list_detail.html`; `compare_games.html`;
+    `rom_tools_settings.html`; two strings in `game_detail.html`.
+  - Steam/Xbox "Game has no achievements" and platform-sync job errors.
+  - Number and size formats ignore the language.
+  - `base.html` sets no `dir="rtl"` though Hebrew ships; decide with
+    PASS-43-4 whether RTL lands for v4.0.0.
+  - Translate the new strings with `scripts/translate_release.py`.
+- **Source**: audit 2026-11-04.
+- **Decided** (user, 2026-11-04): right-to-left layout waits until after
+  v4.0.0 (PASS-43-4). Hebrew ships marked as a preview whose layout is
+  not yet right to left.
+
+---
+
+#### Pass 59.247 Scrapers follow the service rules and close what they open (audit-fix, S).
+- **Status**: todo
+- **Why**: audit 2026-11-04, lanes 1, 3, 4 and 9.
+- **Fix**:
+  - Gap-fill calls TGDB, IGDB, RAWG and ScreenScraper outside their
+    circuit breakers; only AI uses one (`hybrid_scraper.py`).
+  - ScreenScraper `get_game_info` skips the quota and daily-stop rules.
+  - ScreenScraper streamed replies are not closed on early exits.
+  - The Settings check routes call services without `wait_for_turn`;
+    decide whether checks are exempt and record it.
+  - `ssrf.py` fails on a relative `Location` redirect; `_ip_is_public`
+    should use `is_global`.
+  - A region with no listed part becomes `default_region`.
+  - `release_dates.year_gap_with_own_region` can raise and roll back the
+    whole scrape.
+  - ES-DE: `bulk_import_esde` has no caller and its data does not fit
+    `apply_esde_metadata`; fix or remove. `~/` paths are not expanded;
+    ES-DE media copies have no size cap.
+  - Cache keys `"123:None"` vs `"123:"`.
+  - IGDB ids go into query text without `int()`.
+  - Version-group suggestions can join a rejected pair through a third.
+- **Source**: audit 2026-11-04.
+
+---
+
+#### Pass 59.248 Sign-in hardening and release-pipeline checks (security, S).
+- **Status**: todo
+- **Why**: audit 2026-11-04, lanes 1, 11 and 14. Threat model: LAN, one
+  household (memory deployment-threat-model), so keep fixes small.
+- **Fix**:
+  - A password change or admin reset leaves other sessions valid for 7
+    days (`docs/specs/auth.md` §7 says otherwise). Add a session epoch.
+  - The old avatar is deleted before the new upload is checked.
+  - Setup API has no CSRF before setup completes.
+  - Non-string inputs give unformatted 500s on auth routes.
+  - `release.yml` runs no tests on a tag push; tool installs there and in
+    `dependabot-lockfile.yml` are unpinned.
+  - `release.yml` advises `--certificate-identity-regexp '.*'`.
+  - `dependabot-lockfile.yml` claims the PR turns green on its own; a
+    `GITHUB_TOKEN` push starts no run.
+  - A secret key that cannot be written signs everyone out each restart,
+    with nothing logged.
+- **Source**: audit 2026-11-04.
+
+---
+
+#### Pass 59.249 Smaller correctness and speed fixes from the audit (audit-fix, M).
+- **Status**: todo
+- **Why**: audit 2026-11-04, all lanes; each low on its own. Already
+  filed: PASS-59-160 ("Action" filter).
+- **Fix**:
+  - Library card ETag ignores progress and launch changes.
+  - BIOS rows in header counts, letter bar and `api_filter_games`; similar
+    games lists own regional versions.
+  - Letter bar and accented first letters disagree.
+  - Select all stops at 10,000 silently; bulk edit splits a string id.
+  - Bulk edit runs `_note_hand_edits` per game outside the transaction.
+  - Analytics manufacturer map misses five ES-DE folders; use
+    `SYSTEM_SPECS`.
+  - "Recently scraped" misses re-scrapes.
+  - Category logs duplicate `rom_tools` and `image_resize` lines.
+  - Changelog and JSON reads in `app.py` have no `encoding=`; test on the
+    Windows PC. The changelog YAML is parsed on every request.
+  - Museum controller images go under `STATIC_PATH`, not `IMAGE_PATH`.
+  - `HSA_OVERRIDE_GFX_VERSION=10.3.0` forced for every AMD card.
+  - CLZ import: non-Latin titles all match; preview creates systems.
+  - Bonus discs can loop; auto-link re-marks an unmarked disc.
+  - GIFs are upscaled then discarded; the model download has no hash.
+  - Restore removes `-wal`/`-shm` with connections open.
+  - Other lows in the audit file, lanes 2, 5, 6, 8 to 11.
+- **Source**: audit 2026-11-04.
+
+---
+
+#### Pass 59.250 Docs and comments that say what the code does not (doc-fix, S).
+- **Status**: todo
+- **Why**: audit 2026-11-04, all lanes.
+- **Fix**:
+  - `auth.md`: §7 session revocation (fixed by PASS-59-248 or reworded),
+    §9 bucket clear and force-change, §13.1 bare POST routes, §6 token
+    store also holds RetroAchievements.
+  - `jobs.md`: lock directory, progress cadence, `current`/`total`.
+  - `scrapers.md`: `ai_claude_api_key`; fill-only exceptions match
+    CLAUDE.md; `apply_esde_metadata` named as canonical though unused.
+  - `api-contracts.md` §3.2 vs museum, achievements, trophies routes that
+    answer failures with HTTP 200, and exception text in messages.
+  - `image-pipeline.md` §12.1, §15 rule 3.
+  - Updater spec §6 lacks `/api/updates/dismiss`.
+  - Code comments: CSP "report-only", migration 016 foreign keys, 012 log
+    line, `game-launch.js` onclick, `game_utils` examples,
+    `security.py` realpath, museum admin-only, `platform_tokens`.
+  - `pyproject.toml` pip-compile; `release.yml` `/mnt/Storage`;
+    `ci_local.sh` failure text suggests `--no-verify`.
+  - `help.html` contents list lacks `#emulators-play`.
+- **Source**: audit 2026-11-04.
+
+---
+
+#### Pass 59.251 Finish the audit where it only searched, and update its partition (audit, M).
+- **Status**: todo
+- **Why**: audit 2026-11-04. Lanes 12, 13 and 14 searched patterns more
+  than they read; lane 15 skipped `services/emulator_seeder.py`; lane 9
+  skipped the `SYSTEM_DEFAULT_CONTROLLER` table; lane 4 skipped lookup
+  tables.
+- **Do**:
+  - Run cold lanes over the unread JavaScript files, the templates and
+    CSS, `tests/`, `install*.py`, `.semgrep.yml`, `.gitleaks.toml` and
+    `services/emulator_seeder.py`, split small enough to read in full.
+  - Update `roadmap.md` § Periodic Independent Review: drop the four
+    missing paths, add the launch/emulators/cheats/updater lane, and
+    split the oversized JS and template lanes.
+  - Triage the new findings into this audit's passes.
+- **Source**: audit 2026-11-04.
+
+---
+
+#### Pass 59.252 The box viewer reads Slipcase's two new finger-recess keys (enhancement, S).
+- **Status**: todo
+- **Why**: the Slipcase session, 2026-11-04 (SLIP-0130, Slipcase commit
+  4de187b, SLIP-0125 § 4.1 amended). Box file version stays 1.
+- **Keys** in `shape`:
+  - `recess_end_radius_mm`: 0 square ends; half `recess_height_mm` round
+    (missing means half, the old look); at most half.
+  - `recess_offset_mm`: slot middle above the opening side's middle,
+    negative below; missing 0. Limit: `recess_length_mm + 2*|offset| <
+    height_mm - 2*max(corner_radius_mm, lip_width_mm)`.
+  - A shape breaking either limit is ignored whole.
+- Ignoring the keys still draws a round, centred slot, so nothing breaks
+  today. Xbox One and Series X cases are newly shaped.
+- **Source**: Slipcase session, 2026-11-04.
 
 ## Done index
 

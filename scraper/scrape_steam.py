@@ -9,12 +9,15 @@ import logging
 
 import requests  # only for requests.exceptions.HTTPError reference
 
+from . import service_limits
 from .base_scraper import http_get
 
 logger = logging.getLogger(__name__)
 
 BASE_URL = 'https://api.steampowered.com'
 STORE_URL = 'https://store.steampowered.com/api'
+ART_URL = 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps'
+STORE_STOP_SECONDS = 300
 
 
 def resolve_vanity_url(api_key, vanity_name):
@@ -182,13 +185,20 @@ def get_app_details(app_id):
         app_id: Steam app ID
 
     Returns:
-        dict: App details including header_image, or None on error
+        dict: App details including header_image, or None on error, when the
+        store has no such app, or when the store has said stop.
     """
+    if not service_limits.wait_for_turn(service_limits.STEAM_STORE):
+        return None
     try:
         resp = http_get(f'{STORE_URL}/appdetails', params={
             'appids': app_id,
+            'l': 'english',
         }, timeout=15)
         if resp is None:
+            return None
+        if resp.status_code in (403, 429):
+            service_limits.stop(service_limits.STEAM_STORE, STORE_STOP_SECONDS)
             return None
         resp.raise_for_status()
         data = resp.json()
@@ -201,28 +211,19 @@ def get_app_details(app_id):
         return None
 
 
-def check_api_key(api_key):
-    """Validate a Steam API key by making a simple API call.
+def box_art_urls(app_id):
+    """Addresses to try for an app's upright cover, best first. The store's
+    reply does not name them, and a newer app may keep them elsewhere."""
+    return [f'{ART_URL}/{app_id}/library_600x900_2x.jpg',
+            f'{ART_URL}/{app_id}/library_600x900.jpg']
 
-    Args:
-        api_key: Steam Web API key to test
 
-    Returns:
-        dict: {valid: bool, error: str or None}
-    """
-    try:
-        resp = http_get(f'{BASE_URL}/ISteamUser/GetPlayerSummaries/v2/', params={
-            'key': api_key,
-            'steamids': '76561197960287930',  # Valve test account
-        }, timeout=10)
-        if resp is None:
-            return {'valid': False, 'error': 'Connection error'}
-        if resp.status_code == 200:
-            return {'valid': True, 'error': None}
-        elif resp.status_code == 403:
-            return {'valid': False, 'error': 'Invalid API key'}
-        else:
-            return {'valid': False, 'error': f'HTTP {resp.status_code}'}
-    except Exception as e:
-        logger.error(f"Steam API key validation error: {e}")
-        return {'valid': False, 'error': 'Connection error'}
+def logo_urls(app_id):
+    """Addresses to try for an app's logo on a clear background."""
+    return [f'{ART_URL}/{app_id}/logo.png']
+
+
+def fanart_urls(app_id, details):
+    """Addresses to try for wide background art, best first."""
+    return [url for url in (f'{ART_URL}/{app_id}/library_hero.jpg',
+                            details.get('background_raw')) if url]

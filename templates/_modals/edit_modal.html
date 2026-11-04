@@ -358,7 +358,7 @@
                             <input id="custom_boxart" type="file" name="custom_boxart" accept="image/*" />
                             {% if game.boxart %}
                             <span class="current-file">{% trans filename=game.boxart %}Current: {{ filename }}{% endtrans %}</span>
-                            <button type="button" class="btn btn-sm btn-danger" style="margin-top: 8px;" data-on-click="confirmRemoveMedia" data-args='["remove_boxart", "🗑️ Delete Boxart", "Delete boxart? You can re-scrape to get a new one."]'>
+                            <button type="button" class="btn btn-sm btn-danger" style="margin-top: 8px;" data-on-click="confirmRemoveMedia" data-args='{{ ["remove_boxart", "🗑️ " ~ _("Delete Boxart"), _("Delete boxart? You can re-scrape to get a new one.")]|tojson }}'>
                                 🗑️ {{ _('Delete Boxart') }}
                             </button>
                             <input type="hidden" name="remove_boxart" value="" />
@@ -370,7 +370,7 @@
                             <span class="field-tip">{{ _('One flat picture of the box.') }}</span>
                             {% if game.boxart_3d %}
                             <span class="current-file">{% trans filename=game.boxart_3d %}Current: {{ filename }}{% endtrans %}</span>
-                            <button type="button" class="btn btn-sm btn-danger" style="margin-top: 8px;" data-on-click="confirmRemoveMedia" data-args='["remove_boxart_3d", "🗑️ Delete 3D Boxart", "Delete 3D boxart? You can re-scrape to get a new one."]'>
+                            <button type="button" class="btn btn-sm btn-danger" style="margin-top: 8px;" data-on-click="confirmRemoveMedia" data-args='{{ ["remove_boxart_3d", "🗑️ " ~ _("Delete 3D Boxart"), _("Delete 3D boxart? You can re-scrape to get a new one.")]|tojson }}'>
                                 🗑️ {{ _('Delete 3D Boxart') }}
                             </button>
                             <input type="hidden" name="remove_boxart_3d" value="" />
@@ -395,10 +395,32 @@
                             <input id="custom_fanart" type="file" name="custom_fanart" accept="image/*" />
                             {% if game.fanart %}
                             <span class="current-file">{% trans filename=game.fanart %}Current: {{ filename }}{% endtrans %}</span>
-                            <button type="button" class="btn btn-sm btn-danger" style="margin-top: 8px;" data-on-click="confirmRemoveMedia" data-args='["remove_fanart", "🗑️ Delete Fanart", "Delete fanart? You can re-scrape to get a new one."]'>
+                            <button type="button" class="btn btn-sm btn-danger" style="margin-top: 8px;" data-on-click="confirmRemoveMedia" data-args='{{ ["remove_fanart", "🗑️ " ~ _("Delete Fanart"), _("Delete fanart? You can re-scrape to get a new one.")]|tojson }}'>
                                 🗑️ {{ _('Delete Fanart') }}
                             </button>
                             <input type="hidden" name="remove_fanart" value="" />
+                            {% endif %}
+                        </div>
+                        <div class="edit-field">
+                            <label for="custom_game_logo">{{ _('Custom Logo') }}</label>
+                            <input id="custom_game_logo" type="file" name="custom_game_logo" accept="image/*" />
+                            {% if game.game_logo %}
+                            <span class="current-file">{% trans filename=game.game_logo %}Current: {{ filename }}{% endtrans %}</span>
+                            <button type="button" class="btn btn-sm btn-danger" style="margin-top: 8px;" data-on-click="confirmRemoveMedia" data-args='{{ ["remove_game_logo", "🗑️ " ~ _("Delete Logo"), _("Delete the logo? You can re-scrape to get a new one.")]|tojson }}'>
+                                🗑️ {{ _('Delete Logo') }}
+                            </button>
+                            <input type="hidden" name="remove_game_logo" value="" />
+                            {% endif %}
+                        </div>
+                        <div class="edit-field">
+                            <label for="custom_boxart_back">{{ _('Custom Box Back') }}</label>
+                            <input id="custom_boxart_back" type="file" name="custom_boxart_back" accept="image/*" />
+                            {% if game.boxart_back %}
+                            <span class="current-file">{% trans filename=game.boxart_back %}Current: {{ filename }}{% endtrans %}</span>
+                            <button type="button" class="btn btn-sm btn-danger" style="margin-top: 8px;" data-on-click="confirmRemoveMedia" data-args='{{ ["remove_boxart_back", "🗑️ " ~ _("Delete Box Back"), _("Delete the back of the box? You can re-scrape to get a new one.")]|tojson }}'>
+                                🗑️ {{ _('Delete Box Back') }}
+                            </button>
+                            <input type="hidden" name="remove_boxart_back" value="" />
                             {% endif %}
                         </div>
                         <div class="edit-field full-width">
@@ -420,7 +442,7 @@
                         <span class="field-tip">{{ _('Supported formats: MP4, WebM, OGG') }}</span>
                         {% if game.video %}
                         <span class="current-file">{% trans filename=game.video %}Current: {{ filename }}{% endtrans %}</span>
-                        <button type="button" class="btn btn-sm btn-danger" style="margin-top: 8px;" data-on-click="confirmRemoveMedia" data-args='["remove_video", "🗑️ Remove Video", "Remove video? You can upload a new one later."]'>
+                        <button type="button" class="btn btn-sm btn-danger" style="margin-top: 8px;" data-on-click="confirmRemoveMedia" data-args='{{ ["remove_video", "🗑️ " ~ _("Remove Video"), _("Remove video? You can upload a new one later.")]|tojson }}'>
                             🗑️ {{ _('Remove Video') }}
                         </button>
                         <input type="hidden" name="remove_video" value="" />

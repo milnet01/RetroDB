@@ -50,7 +50,9 @@ as the JSON stores; it appears in the table for symmetry.
   `RETRODB_DEBUG`, `RETRODB_SLOW_QUERY_MS`,
   `RETRODB_SLOW_REQUEST_MS`, `RETRODB_IMAGE_FORMAT`, `RETRODB_MAX_UPLOAD_MB`,
   `RETRODB_MAX_BACKUPS`, `RETRODB_JOB_HISTORY_RETENTION_DAYS`,
-  `RETRODB_STATIC_PATH`, `RETRODB_IMAGE_PATH`, and **`PORT`**
+  `RETRODB_STATIC_PATH`, `RETRODB_IMAGE_PATH`, `RETRODB_SETTINGS_FILE`,
+  `RETRODB_SCRAPER_SETTINGS_FILE` (where the two JSON files below live; the
+  test suite points every path variable at a temp dir), and **`PORT`**
   (deliberately un-prefixed — it is the conventional name an external process
   manager sets). Those are read once at `config.py` import time via
   `os.environ.get(...)`. **Two are not**, and both are listed in `config.py`'s

@@ -546,6 +546,13 @@ your migration — not in the runner.
 | 028 | `028_clear_save_type_guesses.py` | Clear `games.save_type` where it holds `Battery Save / SRAM` or `Password / None`, the wordings only the per-system guess wrote. | PASS-59-211. The old values are not kept; the pre-migration backup holds them. |
 | 029 | `029_clear_franchise_guesses.py` | Clear `games.franchise` where its newest credit is TheGamesDB or RAWG and it is the start of the title; keep a repeated name once. | PASS-59-212. The next scrape refills them. The old values are not kept; the pre-migration backup holds them. |
 | 030 | `030_tidy_stored_text.py` | Clean stored descriptions and company names; remove executable names from `alternate_titles`; `screenshots` separated by `,` alone; clear an ESRB `NOT RATED`; one value in `region`; `other_platforms` names from the list. | PASS-59-213. Same cleaning as the scrape's save step. The old values are not kept; the pre-migration backup holds them. |
+| 031 | `031_hltb_id_and_players.py` | Add `games.hltb_id`, `games.hltb_players` and `hltb_pending_matches.players` (PASS-59-216). |
+| 032 | `032_games_ra_copy_fits.py` | Add `games.ra_copy_fits` (PASS-59-217). |
+| 033 | `033_platform_play_time.py` | Add `platform_play_time`, the play time a service reports per user (PASS-59-218). |
+| 034 | `034_arcade_category.py` | Add `games.arcade_category` (TEXT): an arcade set's category, `BIOS` hiding it from game lists. | PASS-59-227 |
+| 035 | `035_removed_screenshots.py` | Add `removed_screenshots` (`game_id`, `dhash` hex TEXT, `removed_at`): the look of each screenshot the user deleted, so no scrape brings it back. | PASS-59-222 |
+| 036 | `036_games_game_logo.py` | Add `games.game_logo` (TEXT, a filename in `images/game_logos/`). | PASS-59-224 §4.1. Additive. Filled by a scrape or an editor's upload; NULL = no logo. |
+| 037 | `037_games_boxart_back.py` | Add `games.boxart_back` (TEXT, a filename in `images/boxart_back/`). | PASS-59-225. Additive. Filled by a scrape or an editor's upload; NULL = no back. Separate from `box_faces`. |
 
 ---
 

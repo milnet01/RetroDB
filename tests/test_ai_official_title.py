@@ -1,6 +1,5 @@
 """AI Fill names each game's official title during every scrape (user,
-2026-10-27), and the ROM Tools Official Names run reads the replies the
-providers actually send.
+2026-10-27).
 
 Route tests use the throwaway schema conftest points RETRODB_DB_PATH at.
 """
@@ -14,36 +13,6 @@ import pytest
 from tests.test_official_names import _game, _row, db  # noqa: F401 — fixture
 
 ROOT = Path(__file__).resolve().parent.parent
-
-
-# ---------------------------------------------------------------------------
-# Official Names run: replies that were read as "no answer" before
-# ---------------------------------------------------------------------------
-
-def test_parse_reads_object_reply():
-    """OpenAI's JSON mode returns an object only, so the answers came
-    wrapped and every one was dropped: the run suggested nothing."""
-    from scraper.scrape_ai import _parse_official_names
-    reply = json.dumps({'games': [{'i': 0, 'official_title': 'Rockman',
-                                   'old_title_region': 'USA'}]})
-    assert _parse_official_names(reply, 1) == [
-        {'official_title': 'Rockman', 'old_title_region': 'US'}]
-    other_key = json.dumps({'results': [{'i': 0, 'official_title': 'Rockman'}]})
-    assert _parse_official_names(other_key, 1)[0]['official_title'] == 'Rockman'
-
-
-def test_parse_reads_reply_inside_prose():
-    """Gemini's search grounding can put text and citations around the JSON."""
-    from scraper.scrape_ai import _parse_official_names
-    reply = ('Here are the titles [1]:\n'
-             '[{"i": 1, "official_title": "Rockman 2"}]\nSources: [2]')
-    assert [a['official_title'] for a in _parse_official_names(reply, 2)] == [None, 'Rockman 2']
-
-
-def test_prompt_asks_for_an_object():
-    from scraper.scrape_ai import _build_official_names_prompt
-    prompt = _build_official_names_prompt('NES', [{'title': 'Mega Man', 'rom_file': 'x.nes'}])
-    assert '{"games": [' in prompt
 
 
 # ---------------------------------------------------------------------------
@@ -170,8 +139,8 @@ def _stub_provider(monkeypatch, reply):
 
 
 def test_rejected_name_not_applied_by_ai_fill(db, monkeypatch):
-    """INV-6: a name the user rejected in Official Names is not proposed
-    again, so AI Fill and Bulk Scrape must not apply it either."""
+    """INV-6: a name the user rejected in the old Official Names tool stays
+    refused, so AI Fill and Bulk Scrape must not apply it."""
     from scraper.scrape_ai import get_game_details
     gid = _game(db, 'Mega Man')
     db.conn.execute("INSERT INTO title_proposals (game_id, old_title, proposed_title, status) "

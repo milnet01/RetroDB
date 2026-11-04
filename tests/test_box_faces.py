@@ -85,6 +85,55 @@ def test_import_stores_each_face_and_the_record(game, images):
     assert json.loads(_row(game)['box_faces'])['faces'] == faces
 
 
+# --- The case's shape (Slipcase SLIP-0125 § 4.1, PASS-59-231) ----------------
+
+PS5_SHAPE = {'corner_radius_mm': 3, 'edge_radius_mm': 1, 'lip_width_mm': 2.5,
+             'lip_height_mm': 0.5, 'seam_width_mm': 0.8, 'seam_depth_mm': 0.4,
+             'recess_length_mm': 59, 'recess_height_mm': 6, 'recess_depth_mm': 1.5}
+
+
+def _shape_stored(game, shape):
+    box_faces.import_box_file(game, _uploads(_box(shape=shape)))
+    return json.loads(_row(game)['box_faces']).get('shape')
+
+
+def test_a_good_shape_is_kept_whole(game, images):
+    assert _shape_stored(game, PS5_SHAPE) == PS5_SHAPE
+
+
+def test_a_missing_lip_seam_or_recess_key_means_zero(game, images):
+    stored = _shape_stored(game, {'corner_radius_mm': 3, 'edge_radius_mm': 1})
+    assert stored == {**{key: 0 for key in box_faces.SHAPE_KEYS},
+                      'corner_radius_mm': 3, 'edge_radius_mm': 1}
+
+
+def test_no_shape_stores_no_shape(game, images):
+    box_faces.import_box_file(game, _uploads())
+    assert 'shape' not in json.loads(_row(game)['box_faces'])
+
+
+@pytest.mark.parametrize('shape', [
+    'round',                                            # not an object
+    {'corner_radius_mm': 3},                            # a required key missing
+    {**PS5_SHAPE, 'lip_height_mm': True},               # a bool is not a number
+    {**PS5_SHAPE, 'seam_depth_mm': -1},                 # below 0
+    {**PS5_SHAPE, 'corner_radius_mm': 40},              # above a quarter of the width
+    {**PS5_SHAPE, 'edge_radius_mm': 4},                 # above a quarter of the depth
+    {**PS5_SHAPE, 'seam_depth_mm': 0.9},                # deeper than the seam is wide
+    {**PS5_SHAPE, 'lip_width_mm': 0.5},                 # a lip too narrow for its rounding
+    {**PS5_SHAPE, 'recess_length_mm': 186},             # runs into the corners
+    {**PS5_SHAPE, 'recess_height_mm': 11},              # runs into the lips' rounding
+    {**PS5_SHAPE, 'recess_height_mm': 0.8},             # no taller than the seam
+    {**PS5_SHAPE, 'recess_length_mm': 6},               # no longer than it is tall
+    {key: 0 for key in PS5_SHAPE},                      # every value 0 is a flat box
+], ids=['not-object', 'required', 'bool', 'negative', 'corner', 'edge', 'seam',
+        'lip', 'recess-length', 'recess-height', 'recess-seam', 'recess-short',
+        'all-zero'])
+def test_a_bad_shape_draws_flat_but_the_box_still_imports(game, images, shape):
+    assert _shape_stored(game, shape) is None
+    assert _row(game)['box_faces'] is not None
+
+
 # --- INV-1: a refused box file writes nothing --------------------------------
 
 def _drop(name):

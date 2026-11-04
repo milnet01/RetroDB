@@ -40,8 +40,8 @@ from services.jobs.alt_titles_backfill import AltTitlesBackfillJob
 from services.jobs.hltb_bulk import HLTBBulkLookupJob
 from services.jobs.museum_images import MuseumImageFetchJob
 from services.jobs.player_cores import PlayerCoresJob
-from services.jobs.official_names import OfficialNamesJob
 from services.jobs.ai_fill_bulk import AiFillBulkJob
+from services.jobs.mame_names import MameNamesJob
 from services.jobs.ss_region_repair import SsRegionRepairJob
 
 # =============================================================================
@@ -62,8 +62,8 @@ alt_titles_backfill_job = AltTitlesBackfillJob()
 hltb_bulk_job = HLTBBulkLookupJob()
 museum_images_job = MuseumImageFetchJob()
 player_cores_job = PlayerCoresJob()
-official_names_job = OfficialNamesJob()
 ai_fill_bulk_job = AiFillBulkJob()
+mame_names_job = MameNamesJob()
 ss_region_repair_job = SsRegionRepairJob()
 
 __all__ = [
@@ -96,7 +96,6 @@ __all__ = [
     'HLTBBulkLookupJob',
     'MuseumImageFetchJob',
     'PlayerCoresJob',
-    'OfficialNamesJob',
     'AiFillBulkJob',
     # Singleton instances
     'bulk_scrape_job',
@@ -112,7 +111,7 @@ __all__ = [
     'hltb_bulk_job',
     'museum_images_job',
     'player_cores_job',
-    'official_names_job',
     'ai_fill_bulk_job',
+    'mame_names_job',
     'ss_region_repair_job',
 ]

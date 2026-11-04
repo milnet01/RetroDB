@@ -164,7 +164,8 @@ def test_routes_need_editor(method, url, admin_test_client):
 
 def test_page_has_the_fill_card(admin_test_client, db):
     client, _csrf = admin_test_client()
-    page = client.get('/tools/official-names').get_data(as_text=True)
+    page = client.get('/tools/ai-fill-bulk').get_data(as_text=True)
+    assert 'id="namesRunBtn"' not in page  # Bulk AI Fill does official names
     assert 'id="aiFillBulk"' in page and 'id="fillSystem"' in page
     assert '<title>Bulk AI Fill - RetroDB</title>' in page
     assert 'id="fillProgressBar" role="progressbar"' in page
