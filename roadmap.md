@@ -10880,6 +10880,9 @@ the cover zoom in Firefox before being reverted for the local fix.
   report against 6.4 would likely be answered "upgrade". Moving to 7.2
   must keep onnxruntime's ROCm provider working (memories
   onnxruntime_rocm_trap, rocsolver_missing). The user posts any report.
+- **Decided** (user, 2026-11-04): after v4.0.0, draft the openSUSE
+  gfx1032 build-target request and test the roctracer abort on 7.2;
+  show the user the report text to post.
 
 ## Done index
 
