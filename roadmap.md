@@ -10969,7 +10969,9 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.239 Tests can never reach the live database, media or settings files (test, S).
-- **Status**: todo
+- **Resolution** (2026-11-04): Shipped 2026-11-04 in b69b9111. Every listed gap closed; conftest also
+  refuses to run if config resolves a live path outside the temp root.
+- **Status**: done
 - **Why**: audit 2026-11-04, lane 14. Confirmed in `tests/conftest.py`
   2026-11-04. A test once wiped a live library (memory
   test-media-isolation).
