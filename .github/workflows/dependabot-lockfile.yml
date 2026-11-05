@@ -4,9 +4,12 @@ name: Dependabot lockfile regeneration
 # how to recompile our generated `requirements.lock`. Without this workflow,
 # every Dependabot PR fails the lockfile-drift check in CI until a human
 # recompiles the lock and pushes a follow-up commit. This workflow does that
-# automatically the moment Dependabot opens
-# the PR, then pushes the regenerated lockfile back to the same branch so
-# the original Dependabot PR goes green on its own.
+# automatically the moment Dependabot opens the PR, and pushes the
+# regenerated lockfile back to the same branch.
+#
+# The PR does NOT turn green on its own: a push made with GITHUB_TOKEN starts
+# no workflow run, so CI never sees the new lockfile. Re-run CI by hand on
+# the PR (or close and reopen it) after this workflow pushes.
 
 on:
   pull_request:
@@ -15,12 +18,9 @@ on:
       - "requirements.txt"
 
 # Allow this workflow to push a commit back to the Dependabot PR branch.
-# `pull-requests: write` is needed for the `gh` API call that re-runs the
-# subsequent CI workflow once the new commit lands. Scoped narrowly:
-# everything else stays read.
+# Nothing here calls the PR API, so no `pull-requests` permission.
 permissions:
   contents: write
-  pull-requests: write
 
 concurrency:
   group: dependabot-lockfile-${{ github.event.pull_request.number }}
@@ -45,9 +45,8 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           # The default GITHUB_TOKEN cannot trigger downstream workflows on
-          # the resulting push. We don't need a downstream re-run here — the
-          # original CI run on the Dependabot PR is what the lockfile commit
-          # is meant to satisfy. Keep the default token; no PAT required.
+          # the resulting push, so CI must be re-run by hand (see the top of
+          # this file). Keep the default token; no PAT required.
           #
           # persist-credentials MUST stay on here: the last step does a real
           # `git push`, which reads the credential this checkout leaves in
@@ -61,9 +60,14 @@ jobs:
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
         with:
           python-version: "3.13"
+          # Caches pip's download of uv, keyed on the file that pins it
+          # (local-gate.md § 9).
+          cache: pip
+          cache-dependency-path: requirements-ci.txt
 
       - name: Install uv
-        run: pip install uv
+        # Pinned in requirements-ci.txt, the same uv ci.yml uses.
+        run: pip install -c requirements-ci.txt uv
 
       - name: Regenerate requirements.lock with hashes
         run: |
