@@ -11273,7 +11273,12 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.248 Sign-in hardening and release-pipeline checks (security, S).
-- **Status**: todo
+- **Resolution** (2026-11-05): Shipped 2026-11-05 in a627863e (sign-in: session stamp, avatar order,
+  setup CSRF, non-text 400s, secret-key warning) and 98431808 (release
+  test job, pinned tools, exact cosign identity, true Dependabot comment,
+  pip cache). All nine findings and the CI tuning note fixed; none
+  dismissed or queued.
+- **Status**: done
 - **Why**: audit 2026-11-04, lanes 1, 11 and 14. Threat model: LAN, one
   household (memory deployment-threat-model), so keep fixes small.
 - **Fix**:
@@ -11536,6 +11541,24 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Source**: session_message 1388 from contact-list.
 
 ---
+
+#### Pass 59.261 Xbox import signs in with a free OpenXBL key, not an Azure app (feature, M).
+- **Status**: todo
+- **Why**: the user tried to link Xbox and was asked for an Azure
+  account (2026-11-05). Microsoft app registration needs an Azure
+  account since June 2024. The current redirect is built from
+  `request.host_url` (`routes/platform_import.py`), and Microsoft only
+  accepts http redirects to localhost, so LAN installs cannot sign in.
+- **Decided** (user, 2026-11-05): OpenXBL per-user free key
+  (https://xbl.io, 150 requests an hour, no card). A shipped public
+  client with device-code sign-in stays a later option. Borrowing
+  Microsoft's own Xbox app id was rejected (impersonation).
+- **Do**: a per-user OpenXBL key in Profile, stored like other platform
+  tokens; library and achievements through the OpenXBL API, paced under
+  `service_limits`; remove the client id and secret settings and the
+  OAuth routes. Carries PASS-59-218's X1 to X7.
+- **Source**: research 2026-11-05 (Home Assistant, xbox-webapi-python,
+  Microsoft Entra docs, xbl.io pricing).
 
 ## Done index
 
