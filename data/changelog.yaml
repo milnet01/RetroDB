@@ -2,6 +2,14 @@
   date: 2026-11-05
   tags:
   - type: fix
+    label: If an update stops before it starts swapping files, RetroDB now starts the version you had again, instead of staying closed
+  - type: fix
+    label: Pressing Play twice at once can no longer start two games on the built-in player. Waiting for a core download now gives up after a while, or when RetroDB stops answering, instead of waiting forever, and the "already running" question uses RetroDB's own dialog
+  - type: fix
+    label: Cheats you switch on or off during play are kept for the right game, never taken from another game whose file has the same name. A cheat problem never stops a game starting
+  - type: fix
+    label: RetroDB writes an emulator's settings file more safely. A settings file that is a link stays a link, keeps its permissions, and keeps letters it cannot read, and a failed save leaves no stray file behind
+  - type: fix
     label: A bulk scrape you move down the queue, swap with another or resume while one runs is no longer lost when RetroDB restarts; the dashboard offers it, from where it stopped. A swapped-out scrape no longer keeps running beside the new one, and two quick clicks on Resume start a job once
   - type: fix
     label: One game's error, such as the network dropping, no longer ends a whole AI Fill run or a Fix Box and Manual Regions run; that game counts as failed and the rest go on. Stopping RetroDB now also stops core downloads cleanly
