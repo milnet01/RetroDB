@@ -11095,7 +11095,17 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.243 Background jobs survive restarts, swaps and one bad game (audit-fix, M).
-- **Status**: todo
+- **Resolution** (2026-11-05): Done 2026-11-05 in four commits by subject: 595e2ee8 (one bad game),
+  63151f2c (bulk-scrape queue: displaced jobs saved, run token, writes
+  outside the lock, resume claim), eeb37be7 (startup only in the serving
+  process, migration version re-read, core downloads drained, wishlist
+  stuck/duplicate scrapes), 6c099f0b (PSN sign-in outside the lock,
+  keep-alive threshold 2 days). Tests: tests/test_pass59_243_jobs.py.
+  Dismissed with reasons in the commit bodies: the service-limit stop
+  message (shown since PASS-59-215) and loops after SIGTERM
+  (request_shutdown cancels them). Queued: PASS-59-254 (one game's PSN
+  sync pulls the whole list; needs a live account).
+- **Status**: done
 - **Why**: audit 2026-11-04, lanes 2, 7, 10 and 11.
 - **Fix**:
   - A demoted or swapped scrape, and a resume queued while one runs, are
@@ -11333,6 +11343,20 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Waiting-on: user** (Add Steam boxes to Profile so every member can
   sync their own Steam? Recommended: yes, before v4.0.0; it is small
   and the shared key now serves admins only. 2026-11-05)
+
+---
+
+#### Pass 59.254 Syncing one PlayStation game asks Sony about that game only (perf, S).
+- **Status**: todo
+- **Why**: `routes/trophies.py::api_psn_sync_game` pulls the user's whole
+  trophy-title list (`client.trophy_titles()`) to find one game, then
+  downloads every trophy icon one at a time, all inside the request.
+- **Fix**: ask for the one game (`trophy_groups_summary(npwr_id,
+  platform)` or `trophy_titles_for_title`), and fetch icons in the
+  background or in parallel.
+- **Hazard**: those calls return another shape than `TrophyTitle`, which
+  `_psn_trophy_counts` reads. Needs a live PSN account to test, so it was
+  not done untested in PASS-59-243.
 
 ## Done index
 

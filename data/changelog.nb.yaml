@@ -2,67 +2,77 @@
   date: '2026-11-05'
   tags:
   - type: fix
-    label: Et skrap overskriver ikke lenger en endring du gjør mens det kjører, og tømmer ikke lenger en sjanger, modus eller visning det ikke har noe navn for. Det endrer heller ikke lenger et lagret antall spillere for å passe til spillets moduser
+    label: En massehenting (skraping) som du flytter nedover i køen, bytter med en annen eller gjenopptar mens en kjører, går ikke lenger tapt når RetroDB starter på nytt; dashbordet tilbyr den, fra der den stoppet. En utbyttet skraping fortsetter ikke lenger ved siden av den nye, og to raske klikk på Fortsett starter jobben bare én gang
   - type: fix
-    label: AI-utfylling endrer ikke lenger det du selv har skrevet, som en utgiver eller sjanger du har rettet for hånd; den retter bare skrapede verdier. Den melder heller ikke lenger en verdi som endret når den bare er skrevet annerledes, for eksempel 4 spillere som «1-4» eller de samme sjangrene i en annen rekkefølge
+    label: En feil i ett spill, for eksempel at nettverket faller ut, avslutter ikke lenger en hel AI-utfylling eller en kjøring av Fix Box and Manual Regions; det spillet regnes som mislykket og resten fortsetter. Når du stopper RetroDB, stoppes nå også nedlastinger av kjerner på en ryddig måte
   - type: fix
-    label: En kontroller du skriver inn for et spill beholdes; konsollens standardkontroller erstatter nå bare skrapede verdier og AI-verdier. En aldersgrense omregnet fra et annet lands AI-gjetning er nå også merket som en gjetning
+    label: Elementer på ønskelisten blir ikke lenger stående på «skraper» for alltid etter en feil eller omstart, og to Skrap alle-kjøringer for samme ønskeliste kjører ikke lenger samtidig
+  - type: fix
+    label: Et skript eller en andre kopi av RetroDB som starter, markerer ikke lenger jobbene til den kjørende serveren som avbrutt, og to kopier som starter samtidig kan ikke lenger sette databasen tilbake en versjon
+  - type: fix
+    label: Når du starter en PlayStation-synkronisering, må ikke lenger alles fremdriftslinjer vente mens den logger inn hos Sony. Den daglige PlayStation-vedlikeholdsjobben fornyer nå innloggingen bare nær slutten av de 10 dagene, i stedet for hver dag
+  - type: fix
+    label: En skraping skriver ikke lenger over en endring du gjør mens den kjører, og tømmer ikke lenger en sjanger, modus eller visning den ikke har noe navn for. Den endrer heller ikke lenger et lagret antall spillere for å passe til spillets moduser
+  - type: fix
+    label: AI-utfylling endrer ikke lenger det du har skrevet selv, for eksempel en utgiver eller sjanger du har rettet for hånd; den retter bare skrapede verdier. Den melder heller ikke lenger en verdi som endret når den bare ble skrevet annerledes, for eksempel 4 spillere som «1-4» eller de samme sjangrene i en annen rekkefølge
+  - type: fix
+    label: En kontroller du skriver inn for et spill beholdes; konsollens standardkontroller erstatter nå bare skrapede verdier og AI-verdier. En aldersgrense omregnet fra et annet systems AI-gjetning er nå også merket som et gjett
   - type: fix
     label: Når du lagrer i redigeringsvinduet til et spill, tømmes ikke lenger felt som vinduet ikke viser. Tilbakestill på et spills side fjerner nå alt det sier at den gjør, inkludert visning, utgave og andre navn, sletter spillets bilder og videoer med mindre et annet spill bruker dem, og oppdaterer bibliotekfiltrene med en gang
   - type: fix
     label: Tøm skrapede data tømmer nå også visning, 2D eller 3D, og spillstruktur. En CLZ-import av et spill med bare årstall beholder bare året, ikke 1. januar
   - type: security
-    label: Steam-synkronisering låner ikke lenger Steam-nøkkelen fra Innstillinger til alle i husstanden. Et medlem uten egen Steam-nøkkel fikk administratorens Steam-bibliotek og prestasjoner på kontoen sin. Nøkkelen i Innstillinger gjelder nå bare administratorer
+    label: Steam-synkronisering låner ikke lenger Steam-nøkkelen fra Innstillinger til alle i husholdningen. Et medlem uten egen Steam-nøkkel fikk administratorens Steam-bibliotek og prestasjoner under sin konto. Nøkkelen i Innstillinger gjelder nå bare administratorer
   - type: fix
-    label: How Long to Beat-oppslaget for mange spill lagrer nå tidene det er sikkert på. Før feilet alle sikre treff og ingenting ble lagret. Oppdater RetroAchievements sjekker nå også hvert spills fil mot listen til RetroAchievements, slik et skrap gjør, så et spill kobles til nøyaktig den versjonen du har
+    label: How Long to Beats oppslag for mange spill lagrer nå tidene den er sikker på. Før mislyktes alle sikre treff og ingenting ble lagret. Oppdater RetroAchievements sjekker nå også hver spillfil mot listen til RetroAchievements, slik en skraping gjør, så et spill kobles til den nøyaktige versjonen du har
   - type: fix
-    label: Meldingen om at en bakgrunnsjobb er ferdig vises igjen, og fremdriftsboksen til en jobb merker når serveren tar opp jobben etter en omstart. Før dukket ingen av dem opp
+    label: Meldingen om at en bakgrunnsjobb er ferdig vises igjen, og fremdriftsboksen til en jobb merker når serveren tar over jobben etter en omstart. Før dukket ingen av delene opp
   - type: fix
-    label: 'PlayStation-trofeer: et spill du koblet for hånd forblir koblet etter en full synkronisering, og en synkronisering kobler ikke lenger et spill til oppfølgeren, som «Doom» til «Doom Eternal». Import av PlayStation-spill kobler nå et spill som allerede er i biblioteket ditt, slik Steam- og Xbox-import gjør, så trofeene vises på det'
+    label: 'PlayStation-troféer: et spill du har koblet for hånd forblir koblet etter en full synkronisering, og en synkronisering kobler ikke lenger et spill til oppfølgeren, for eksempel «Doom» til «Doom Eternal». Import av PlayStation-spill kobler nå et spill som allerede er i biblioteket ditt, slik Steam- og Xbox-import gjør, så troféene vises på det'
   - type: fix
-    label: Xbox viser ikke lenger gamertagen din som Ukjent etter at påloggingen fornyer seg selv, og en treg eller mislykket tilkobling logger deg ikke lenger ut av Xbox. Det skjer nå bare hvis Microsoft nekter påloggingen
+    label: Xbox viser ikke lenger gamertaggen din som Ukjent etter at innloggingen fornyer seg selv, og en treg eller mislykket tilkobling logger deg ikke lenger ut av Xbox. Det gjør bare at Microsoft avviser innloggingen
   - type: fix
-    label: To personer kan nå hver ha en tagg med samme navn; før feilet den andre med en feil. Alle innloggede brukere kan nå skanne sine egne RPCS3-trofeer på nytt; før kunne bare en administrator det, og alle andre så gamle trofeer til RetroDB ble startet på nytt
+    label: To personer kan nå ha hver sin etikett med samme navn; før mislyktes den andre med en feil. Alle innloggede brukere kan nå skanne sine egne RPCS3-troféer på nytt; før kunne bare en administrator det, og alle andre så gamle troféer til RetroDB startet på nytt
   - type: security
-    label: Påloggingene dine forblir private. Sikkerhetskopier av databasen kan ikke lenger leses av andre kontoer på datamaskinen, og en mislykket sikkerhetskopi sletter ikke lenger den forrige. Når en bruker slettes eller slås av, logges den også ut av RetroAchievements i DuckStation og PCSX2. En RetroAchievements-pålogging lagret fra spillerens egen meny går ikke lenger videre til neste person som spiller. Logger og lagrede jobbfeil skjuler RetroAchievements-tokens, et annet medlems PlayStation-feil vises bare for dem, og gamle PlayStation- og Xbox-påloggingsfiler i ren tekst fjernes
+    label: Innloggingene dine forblir private. Sikkerhetskopier av databasen kan ikke lenger leses av andre kontoer på datamaskinen, og en mislykket sikkerhetskopi sletter ikke lenger den forrige. Når en bruker slettes eller slås av, logges den også ut av RetroAchievements i DuckStation og PCSX2. En RetroAchievements-innlogging lagret fra spillerens egen meny føres ikke lenger over til neste person som spiller. Logger og lagrede jobbfeil skjuler RetroAchievements-tokens, et annet medlems PlayStation-feil vises bare for vedkommende, og gamle PlayStation- og Xbox-innloggingsfiler i klartekst fjernes
   - type: fix
-    label: RetroDBs egne kontroller kan ikke lenger røre biblioteket ditt mens de kjører. De bruker alltid en kastbar kopi av databasen, bildene og innstillingene, og nekter å starte hvis noen av dem peker på de ekte filene dine
+    label: RetroDBs egne kontroller kan ikke lenger røre biblioteket ditt mens de kjører. De bruker alltid en engangskopi av databasen, bildene og innstillingene, og nekter å starte hvis noe av det peker på de virkelige filene dine
   - type: fix
-    label: Rydd opp i foreldreløse filer sletter ikke lenger bildene til ønskelisten din. Å åpne et spill får det ikke lenger til å glemme skjermbilder det ikke finner. Før mistet hvert spill du åpnet hele skjermbildelisten når bildestasjonen var frakoblet; nå beholdes listen, og et manglende bilde skjules bare
+    label: Rydd opp i foreldreløse filer sletter ikke lenger bildene på ønskelisten din. Å åpne et spill får det ikke lenger til å glemme skjermbilder det ikke finner. Før mistet hvert spill du åpnet hele skjermbildelisten når bildestasjonen var frakoblet; nå beholdes listen, og et manglende bilde skjules bare
   - type: fix
-    label: En nedlasting av video eller manual som feiler underveis skader ikke lenger kopien spillet allerede hadde, og en mislykket nedlasting etterlater ikke lenger en skjult halv fil i mediemappen. Oppskaleringen i bakgrunnen lagrer ikke lenger et gammelt bilde over et nyere som ble lastet ned i mellomtiden. Konverter til WebP lar alle spill som deler et bilde fortsatt peke på det, og rører aldri en fil utenfor bildemappene
+    label: En nedlasting av video eller manual som mislykkes underveis skader ikke lenger kopien spillet allerede hadde, og en mislykket nedlasting etterlater ikke lenger en skjult halv fil i mediemappen. Oppskaleringen i bakgrunnen lagrer ikke lenger et gammelt bilde over et nyere som ble lastet ned i mellomtiden. Konverter til WebP lar alle spill som deler et bilde fortsatt peke på det, og rører aldri en fil utenfor bildemappene
   - type: fix
-    label: Når du sletter et spill eller et ønskelisteelement, slettes nå også bildene, videoene og manualene, men de som et annet spill eller ønskelisteelement fortsatt bruker, beholdes. Lagrede bilder kan igjen leses av andre kontoer på datamaskinen, og Endre størrelse på bilder teller et bilde som ikke kunne lagres som mislykket, ikke som ferdig
+    label: Når du sletter et spill eller et element på ønskelisten, slettes nå også bildene, videoene og manualene, men de som et annet spill eller ønskelisteelement fortsatt bruker, beholdes. Lagrede bilder kan igjen leses av andre kontoer på datamaskinen, og Endre bildestørrelse teller et bilde det ikke kunne lagre som mislykket, ikke som ferdig
   - type: fix
-    label: Duplikatsøk foreslår ikke lenger en fungerende fil for sletting. Når det søker etter navn, regner det ikke lenger et spills .cue- og .bin-filer som kopier av hverandre. Det foreslår aldri en plates sporfil, som to versjoner av et spill kan dele. Det sletter ikke en plate som står i en spilleliste. Et spill der du sletter filen flyttes nå til kopien du beholder, så det blir i biblioteket
+    label: Duplikatsøk foreslår ikke lenger en fungerende fil for sletting. Ved søk på navn regnes ikke lenger et spills .cue- og .bin-filer som kopier av hverandre. Den foreslår aldri sporfilen til en disk, som to versjoner av et spill kan dele. Den sletter ikke en disk som står i en spilleliste. Et spill der du sletter filen, flyttes nå til kopien du beholder, så det blir i biblioteket
   - type: fix
-    label: Organiser flere plater overskriver ikke lenger en eksisterende spilleliste eller en fil som allerede er i spillets mappe; det stopper og sier hvilken. Spillelisten det lager, viser hver plates .cue, ikke sporfilene. Spill der filene flyttes følger nå med inn i mappen, så Rydd bort manglende ROM-er fjerner dem ikke lenger
+    label: Organiser flere disker skriver ikke lenger over en eksisterende spilleliste eller en fil som allerede ligger i spillets mappe; den stopper og sier hvilken. Spillelisten den lager oppgir hver disks .cue, ikke sporfilene. Spill der den flytter filer følger nå med inn i mappen, så Rydd bort manglende ROM-er fjerner dem ikke lenger
   - type: fix
-    label: Konvertering til CHD med «slett originaler» sletter nå også platens sporfiler, men beholder et spor som en annen .cue fortsatt bruker. Spillet og alle spillelister som listet den gamle platen peker nå til den nye .chd-filen. Når en spillfil får nytt navn, oppdateres nå spillelisten som viser den, og en sporfil som en .cue trenger kan ikke få nytt navn. Fjerning av filer fra en zip fjerner bare filene du valgte, selv når et navn inneholder [ eller ]. Skjermbildeduplikater sletter bare kopiene skanningen fant, og beholder alltid én
+    label: Konvertering til CHD med «slett originaler» sletter nå også diskens sporfiler, men beholder et spor som en annen .cue fortsatt bruker. Spillet og alle spillelister som oppga den gamle disken peker nå til den nye .chd-filen. Når du gir nytt navn til et spills fil, oppdateres nå spillelisten som oppgir den, og en sporfil som en .cue trenger kan ikke få nytt navn. Fjerning av filer fra en zip fjerner bare filene du valgte, selv når et navn inneholder [ eller ]. Skjermbildeduplikater sletter bare kopiene skanningen fant, og beholder alltid én
   - type: fix
-    label: How Long to Beat på et spills side søker etter det du skriver. Før fikk en tittel den ikke fant den til å søke etter spillets andre navn i stedet, og den kunne foreslå et annet spill, som en fan-nyinnspilling. Den prøver fortsatt de andre navnene når boksen inneholder spillets eget navn
+    label: How Long to Beat på et spills side søker etter det du skriver. Før fikk en tittel den ikke fant den til å søke etter spillets andre navn i stedet, og den kunne foreslå et annet spill, for eksempel en nylaging laget av fans. Den prøver fortsatt de andre navnene når boksen inneholder spillets eget navn
   - type: fix
-    label: Trinnene for How Long to Beat i hjelpemanualen stemmer nå med skjermen. De sa at du skulle velge et treff fra en liste; siden viser ett treff med Lagre og Avbryt. PlayStation-hjelpen sier ikke lenger at påloggingen varer i omtrent to måneder, siden RetroDB logger inn igjen av seg selv. Alle 20 oversatte manualer har begge endringene
+    label: Trinnene for How Long to Beat i hjelpemanualen stemmer nå med skjermen. De sa at du skulle velge et treff fra en liste; siden viser ett treff med Lagre og Avbryt. PlayStation-hjelpen sier ikke lenger at innloggingen varer i omtrent to måneder, siden RetroDB logger inn på nytt av seg selv. Alle 20 oversatte manualene har begge endringene
   - type: fix
-    label: Hver bokstavlinje begynner nå med en Alle-knapp. På sidene Bibliotek, konsoll og PSN-trofeer viser valg av en bokstav bare spillene med den bokstaven, og før fantes det ingen knapp for å få tilbake resten. På de andre prestasjonssidene går Alle tilbake til det første spillet
+    label: Hver bokstavlinje starter nå med en Alle-knapp. På sidene Bibliotek, konsoll og PSN-troféer viser valg av en bokstav bare spillene med den bokstaven, og før fantes det ingen knapp for å få tilbake resten. På de andre prestasjonssidene går Alle tilbake til det første spillet
   - type: fix
-    label: Et nytt PlayStation-påloggingstoken du limer inn i Innstillinger brukes nå med en gang. Før brukte RetroDB den gamle påloggingen til den gikk ut, og Lagre og test tilkobling meldte at den gamle påloggingen fungerte. Et token Sony nekter erstatter ikke lenger et som fungerer
+    label: Et nytt PlayStation-innloggingstoken du limer inn i Innstillinger brukes nå med en gang. Før brukte RetroDB den gamle innloggingen til den gikk ut, og Lagre og test tilkobling meldte at den gamle innloggingen fungerte. Et token Sony avviser erstatter ikke lenger et som fungerer
   - type: enhancement
-    label: 'PlayStation-påloggingen i Innstillinger er enklere å holde i gang. Banneret teller ikke lenger ned dager du aldri trengte å gjøre noe i, siden RetroDB logger inn igjen av seg selv; det blir rødt bare når Sony nekter det lagrede tokenet ditt. Knappen Lim inn her får ikke lenger nettleseren til å be om å lese utklippstavlen: den setter markøren i boksen så du kan trykke Ctrl+V. Trinnene sier nå at du først skal logge ut av PlayStation når du bytter et token som fortsatt fungerer, og meldingene deres kan oversettes'
+    label: 'PlayStation-innloggingen i Innstillinger er enklere å holde i gang. Banneret teller ikke lenger ned dager du aldri trengte å gjøre noe i, fordi RetroDB logger inn på nytt av seg selv; det blir bare rødt når Sony avviser det lagrede tokenet ditt. Knappen Lim inn her får ikke lenger nettleseren til å be om tilgang til utklippstavlen: den setter markøren i boksen så du kan trykke Ctrl+V. Trinnene sier nå at du først skal logge ut av PlayStation når du bytter et token som fortsatt fungerer, og meldingene deres kan oversettes'
   - type: enhancement
-    label: Popup-meldinger og spørsmålsbokser, som «Innstillinger lagret» eller «Slette denne listen?», kan nå oversettes på alle sider. Før ble de fleste igjen på engelsk uansett hvilket språk du valgte
+    label: Hurtigmeldinger og spørsmålsbokser, for eksempel «Innstillinger lagret» eller «Slette denne listen?», kan nå oversettes på alle sider. Før ble de fleste stående på engelsk uansett hvilket språk du valgte
   - type: enhancement
-    label: Meldingene som sier hvorfor en PlayStation-pålogging mislyktes, som «NPSSO-en din kan ha utløpt», kan nå oversettes
+    label: Meldingene som sier hvorfor en PlayStation-innlogging mislyktes, for eksempel «Your NPSSO may have expired», kan nå oversettes
   - type: fix
-    label: Hjelpemanualen på alle språk stemmer nå med den engelske. Den har fått Søk overalt, Behold en tittel, MAME-navn og baksiden av esken, og eldre avsnitt som hadde falt etter er oppdatert
+    label: Hjelpemanualen på alle språk stemmer nå med den engelske. Den får Søk overalt, Behold en tittel, MAME-navn og baksiden av esken, og eldre avsnitt som hadde falt etter er oppdatert
   - type: fix
-    label: På tysk, afrikaans og spansk står det nå på Tilbake-knappen på et spills omslag baksiden av esken, ikke «gå tilbake»
+    label: På tysk, afrikaans og spansk sier Tilbake-knappen på et spills omslag nå baksiden av esken, ikke «gå tilbake»
   - type: feature
-    label: Når du trykker Spill, fylles skjermen nå med spillets logo på bakgrunnsbildet mens spillet starter, eller navnet med store bokstaver hvis det ikke har logo. Det forsvinner av seg selv når spillets vindu åpnes, eller når du trykker Esc eller klikker
+    label: Når du trykker Spill, fylles skjermen nå med spillets logo på bakgrunnsbildet mens spillet starter, eller navnet i store bokstaver når det ikke har logo. Det forsvinner av seg selv når spillets vindu åpnes, eller når du trykker Esc eller klikker
   - type: feature
-    label: 'Den dreibare 3D-esken har nå den ekte formen til et PS5-etui: avrundede hjørner og kanter, den hevede kanten rundt omslaget, linjen der de to halvdelene møtes og fingerssporet i siden som åpnes. Den trenger en eskefil fra en Slipcase-versjon som skriver formen; importer esken på nytt for å få den. Andre esker ser ut som før'
+    label: 'Den dreibare 3D-esken har nå den ekte formen til et PS5-etui: avrundede hjørner og kanter, den hevede kanten rundt omslaget, linjen der de to halvdelene møtes og fingerhakket i åpningssiden. Den trenger en eskefil fra en Slipcase-versjon som skriver formen; importer esken på nytt for å få den. Andre esker ser ut som før'
   - type: enhancement
-    label: Oppdater RetroAchievements er flyttet fra Innstillinger til RetroAchievements-siden og heter nå Finn spill med prestasjoner. Hver knapp der har nå en linje som sier hva den gjør, så det er lett å skille Finn spill og Synkroniser fremdrift. Når ingen spill er koblet ennå, viser siden Finn-knappen for en administrator i stedet for å gå videre til neste fane
+    label: Oppdater RetroAchievements er flyttet fra Innstillinger til RetroAchievements-siden, og heter nå Finn spill med prestasjoner. Hver knapp der har nå en linje som sier hva den gjør, så det er lett å se forskjell på Finn spill og Synkroniser fremdrift. Når ingen spill er koblet ennå, viser siden en administrator Finn-knappen i stedet for å gå videre til neste fane
   body: "<ul>\n  <li><strong>Hjelpemanualen er oppdatert på alle språk.</strong>\n    Deler som bare fantes i den engelske manualen, er nå oversatt.</li>\n</ul>\n"
 - version: 3.35.4
   date: '2026-11-03'

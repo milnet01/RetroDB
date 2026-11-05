@@ -2,6 +2,16 @@
   date: 2026-11-05
   tags:
   - type: fix
+    label: A bulk scrape you move down the queue, swap with another or resume while one runs is no longer lost when RetroDB restarts; the dashboard offers it, from where it stopped. A swapped-out scrape no longer keeps running beside the new one, and two quick clicks on Resume start a job once
+  - type: fix
+    label: One game's error, such as the network dropping, no longer ends a whole AI Fill run or a Fix Box and Manual Regions run; that game counts as failed and the rest go on. Stopping RetroDB now also stops core downloads cleanly
+  - type: fix
+    label: Wishlist items no longer stay on "scraping" forever after an error or a restart, and two Scrape All runs for the same wishlist no longer run at once
+  - type: fix
+    label: A script or a second copy of RetroDB starting up no longer marks the running server's jobs as interrupted, and two copies starting at once can no longer set the database back a version
+  - type: fix
+    label: Starting a PlayStation sync no longer makes everyone's progress bars wait while it signs in to Sony. The daily PlayStation keep-alive now renews a sign-in only near the end of its 10 days, instead of every day
+  - type: fix
     label: A scrape no longer writes over a change you make while it runs, and no longer empties a genre, mode or view it has no name for. It no longer changes a stored player count to match the game's modes
   - type: fix
     label: AI Fill no longer changes what you typed yourself, such as a publisher or genre you corrected by hand; it corrects only scraped values. It no longer reports a value as changed when it only wrote it differently, such as 4 players as "1-4" or the same genres in another order
