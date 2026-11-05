@@ -839,7 +839,7 @@
                         <div class="queue-item-icon">⏳</div>
                         <div class="queue-item-info">
                             <div class="queue-item-title">Running</div>
-                            <div class="queue-item-system">${data.system_name || 'Multi-System'}</div>
+                            <div class="queue-item-system">${escapeHtml(data.system_name || 'Multi-System')}</div>
                             <div class="queue-item-games">${current} / ${total} games</div>
                             <div class="queue-item-progress">${percent}% complete</div>
                         </div>
@@ -858,7 +858,8 @@
                     const position = index + 1;
                     const isFirst = position === 1;
                     const isLast = position === queueLength;
-                    const systemName = job.system_name || 'Multi-System';
+                    // Escaped: a system's name comes from its folder or the user (PASS-59-246).
+                    const systemName = escapeHtml(job.system_name || 'Multi-System');
 
                     html += `
                         <div class="queue-item queued" data-job-id="${job.job_id}">
