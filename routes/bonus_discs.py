@@ -186,7 +186,8 @@ def link_bonus_disc_to_parent(bonus_game_id, parent_game_id):
     try:
         # Verify both games exist and are in the same system
         bonus = query("SELECT id, title, system_id FROM games WHERE id = ?", (bonus_game_id,), one=True)
-        parent = query("SELECT id, title, system_id FROM games WHERE id = ?", (parent_game_id,), one=True)
+        parent = query("SELECT id, title, system_id, is_bonus_disc FROM games WHERE id = ?",
+                       (parent_game_id,), one=True)
 
         if not bonus:
             return {'success': False, 'error': _('Bonus disc not found'), 'code': 404}
@@ -194,6 +195,13 @@ def link_bonus_disc_to_parent(bonus_game_id, parent_game_id):
             return {'success': False, 'error': _('Parent game not found'), 'code': 404}
         if bonus['system_id'] != parent['system_id']:
             return {'success': False, 'error': _('Bonus disc and parent game must be in the same system'),
+                    'code': 400}
+        # One level only, so no link can loop (PASS-59-249): the parent is a
+        # main game, and a game with bonus discs of its own stays a main game.
+        has_discs = query("SELECT 1 FROM games WHERE parent_game_id = ? AND is_bonus_disc = 1 LIMIT 1",
+                          (bonus['id'],), one=True)
+        if bonus['id'] == parent['id'] or parent['is_bonus_disc'] == 1 or has_discs:
+            return {'success': False, 'error': _('A bonus disc links to a main game, one level only'),
                     'code': 400}
 
         # Update the bonus disc
@@ -382,10 +390,11 @@ def api_auto_link_bonus_discs():
     # back instead of leaving an arbitrary prefix of the library flagged.
     linked_count = 0
     with get_db_with_context() as conn:
+        # Mark every disc first, so no game picked as a parent below is
+        # marked a bonus disc later in the sweep (PASS-59-249).
         for game in result['games']:
-            # Mark as bonus disc
             conn.execute("UPDATE games SET is_bonus_disc = 1 WHERE id = ?", (game['id'],))
-
+        for game in result['games']:
             # Try to find and link parent
             if game['base_title']:
                 # Escape LIKE wildcards so a base_title containing % or _ matches

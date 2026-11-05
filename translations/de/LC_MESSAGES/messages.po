@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-05 19:11+0200\n"
+"POT-Creation-Date: 2026-11-05 19:42+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -18,15 +18,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: app.py:679
+#: app.py:682
 msgid "Not found"
 msgstr "Nicht gefunden"
 
-#: app.py:689
+#: app.py:692
 msgid "Internal server error"
 msgstr "Interner Serverfehler"
 
-#: app.py:705
+#: app.py:708
 #, python-format
 msgid ""
 "Upload exceeds the %(total)s MB limit. Each image may be up to %(image)s "
@@ -38,19 +38,19 @@ msgstr ""
 "weniger Dateien auf einmal hoch. Betreiber können das Gesamtlimit über "
 "RETRODB_MAX_UPLOAD_MB erhöhen."
 
-#: app.py:736
+#: app.py:739
 msgid "Too many requests. Please wait and try again."
 msgstr "Zu viele Anfragen. Bitte warten Sie und versuchen Sie es erneut."
 
-#: app.py:820 app.py:823
+#: app.py:823 app.py:826
 msgid "Invalid or missing CSRF token"
 msgstr "Ungültiges oder fehlendes CSRF-Token"
 
-#: app.py:847
+#: app.py:850
 msgid "Setup required"
 msgstr "Einrichtung erforderlich"
 
-#: app.py:868
+#: app.py:871
 msgid "Password change required"
 msgstr "Passwortänderung erforderlich"
 
@@ -156,32 +156,37 @@ msgstr "Auftrag konnte nicht fortgesetzt werden – Handler hat false zurückgeg
 msgid "No games in library"
 msgstr "Keine Spiele in der Bibliothek"
 
-#: app.py:1644 app.py:1682
+#: app.py:1658 app.py:1696
 msgid "Setup has already been completed"
 msgstr "Die Einrichtung wurde bereits abgeschlossen"
 
-#: app.py:1666 routes/settings.py:553 routes/tools.py:364
+#: app.py:1680 routes/settings.py:553 routes/tools.py:364
 msgid "Permission denied"
 msgstr "Zugriff verweigert"
 
-#: app.py:1686 routes/collections.py:194 routes/collections.py:271
+#: app.py:1700 routes/collections.py:194 routes/collections.py:271
 #: routes/collections.py:438 routes/collections.py:679
 msgid "No data provided"
 msgstr "Keine Daten angegeben"
 
-#: app.py:1690
+#: app.py:1704
 msgid "You must accept the license and terms before completing setup"
 msgstr ""
 "Du musst die Lizenz und die Bedingungen akzeptieren, bevor du die "
 "Einrichtung abschließt"
 
-#: app.py:1697 routes/auth.py:208 routes/auth.py:268 routes/auth.py:471
+#: app.py:1711 routes/auth.py:208 routes/auth.py:268 routes/auth.py:471
 #: routes/auth.py:517 templates/force_change_password.html:49
 #: templates/setup.html:469
 msgid "Password must be at least 12 characters"
 msgstr "Das Passwort muss mindestens 12 Zeichen lang sein"
 
-#: app.py:1788
+#: app.py:1715
+#, fuzzy
+msgid "Unknown time zone"
+msgstr "Unbekannter Bildtyp"
+
+#: app.py:1802
 msgid ""
 "Could not save your settings. Check that the data folder is writable, "
 "then try again."
@@ -198,7 +203,7 @@ msgid "System not found or has no achievement games"
 msgstr "System nicht gefunden oder hat keine Spiele mit Achievements"
 
 #: routes/achievements.py:176 routes/achievements.py:486
-#: routes/bonus_discs.py:265 routes/bulk_scrape.py:48 routes/cheats.py:32
+#: routes/bonus_discs.py:273 routes/bulk_scrape.py:48 routes/cheats.py:32
 #: routes/cheats.py:51 routes/collections.py:276 routes/collections.py:531
 #: routes/emulators.py:304 routes/emulators.py:318 routes/games.py:393
 #: routes/games.py:930 routes/games.py:1049 routes/games.py:1127
@@ -233,7 +238,7 @@ msgid "Could not fetch achievement data"
 msgstr "Achievement-Daten konnten nicht abgerufen werden"
 
 #: routes/achievements.py:337 routes/controllers.py:419
-#: routes/controllers.py:471 routes/museum.py:309 routes/museum.py:381
+#: routes/controllers.py:471 routes/museum.py:326 routes/museum.py:395
 #: routes/ra_sync.py:98 routes/systems.py:227
 msgid "System not found"
 msgstr "System nicht gefunden"
@@ -534,7 +539,7 @@ msgstr "Passwortänderung nicht erforderlich"
 msgid "No file provided"
 msgstr "Keine Datei angegeben"
 
-#: routes/auth.py:565 routes/museum.py:660
+#: routes/auth.py:565 routes/museum.py:672
 msgid "No file selected"
 msgstr "Keine Datei ausgewählt"
 
@@ -554,23 +559,28 @@ msgstr ""
 "Avatar-Uploads erfordern Pillow; bitten Sie den Betreiber, die "
 "Projektabhängigkeiten zu installieren."
 
-#: routes/auth.py:606 routes/museum.py:692
+#: routes/auth.py:606 routes/museum.py:704
 msgid "Invalid image file"
 msgstr "Ungültige Bilddatei"
 
-#: routes/bonus_discs.py:192
+#: routes/bonus_discs.py:193
 msgid "Bonus disc not found"
 msgstr "Bonus-Disc nicht gefunden"
 
-#: routes/bonus_discs.py:194
+#: routes/bonus_discs.py:195
 msgid "Parent game not found"
 msgstr "Hauptspiel nicht gefunden"
 
-#: routes/bonus_discs.py:196
+#: routes/bonus_discs.py:197
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "Bonus-Disc und Hauptspiel müssen sich im selben System befinden"
 
-#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1397
+#: routes/bonus_discs.py:204
+#, fuzzy, python-brace-format
+msgid "A bonus disc links to a main game, one level only"
+msgstr "Bonus-Discs mit Hauptspielen verknüpft: {count}"
+
+#: routes/bonus_discs.py:219 routes/bonus_discs.py:237 routes/games.py:1397
 #: routes/games.py:1427 routes/platform_import.py:344
 #: routes/platform_import.py:723 routes/platform_import.py:1107
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
@@ -586,18 +596,18 @@ msgstr "Bonus-Disc und Hauptspiel müssen sich im selben System befinden"
 msgid "An internal error occurred"
 msgstr "Ein interner Fehler ist aufgetreten"
 
-#: routes/bonus_discs.py:278 routes/bonus_discs.py:309
+#: routes/bonus_discs.py:286 routes/bonus_discs.py:317
 #: routes/controllers.py:216 routes/controllers.py:280
 #: routes/controllers.py:413 routes/controllers.py:465 routes/settings.py:224
 #: routes/settings.py:494 routes/settings.py:577 routes/systems.py:307
 msgid "Request body must be a JSON object"
 msgstr "Der Anfragetext muss ein JSON-Objekt sein"
 
-#: routes/bonus_discs.py:283
+#: routes/bonus_discs.py:291
 msgid "Missing bonus_id or parent_id"
 msgstr "bonus_id oder parent_id fehlt"
 
-#: routes/bonus_discs.py:314 routes/reports.py:829
+#: routes/bonus_discs.py:322 routes/reports.py:829
 msgid "Missing game_id"
 msgstr "game_id fehlt"
 
@@ -737,8 +747,8 @@ msgid "Controller \"%(name)s\" already exists"
 msgstr "Controller \"%(name)s\" existiert bereits"
 
 #: routes/controllers.py:297 routes/controllers.py:339
-#: routes/controllers.py:426 routes/controllers.py:477 routes/museum.py:577
-#: routes/museum.py:653 routes/museum.py:723
+#: routes/controllers.py:426 routes/controllers.py:477 routes/museum.py:589
+#: routes/museum.py:665 routes/museum.py:735
 msgid "Controller not found"
 msgstr "Controller nicht gefunden"
 
@@ -1088,66 +1098,66 @@ msgstr "Wähle zuerst eine MAME-Liste aus."
 msgid "MAME Names is already running."
 msgstr "MAME Names läuft bereits."
 
-#: routes/museum.py:385 routes/scraper.py:770
+#: routes/museum.py:399 routes/scraper.py:770
 msgid "No AI provider configured"
 msgstr "Kein AI-Anbieter konfiguriert"
 
-#: routes/museum.py:398
+#: routes/museum.py:412
 #, python-format
 msgid "Unknown provider: %(provider)s"
 msgstr "Unbekannter Anbieter: %(provider)s"
 
-#: routes/museum.py:409
+#: routes/museum.py:423
 msgid "Empty AI response"
 msgstr "Leere AI-Antwort"
 
-#: routes/museum.py:416
+#: routes/museum.py:430
 msgid "No usable content in AI response"
 msgstr "Kein verwertbarer Inhalt in der AI-Antwort"
 
-#: routes/museum.py:600
+#: routes/museum.py:612
 msgid "Could not find a suitable image for this controller"
 msgstr "Es konnte kein passendes Bild für diesen Controller gefunden werden"
 
-#: routes/museum.py:617
+#: routes/museum.py:629
 msgid "No controllers found"
 msgstr "Keine Controller gefunden"
 
-#: routes/museum.py:620
+#: routes/museum.py:632
 msgid "An image fetch is already running"
 msgstr "Ein Bildabruf läuft bereits"
 
-#: routes/museum.py:656
+#: routes/museum.py:668
 msgid "No image file provided"
 msgstr "Keine Bilddatei angegeben"
 
-#: routes/museum.py:672
+#: routes/museum.py:684
 #, python-format
 msgid "File too large (%(size)s MB). Maximum is %(max)s MB."
 msgstr "Datei zu groß (%(size)s MB). Maximum ist %(max)s MB."
 
-#: routes/museum.py:682
+#: routes/museum.py:694
 #, python-format
 msgid "File too large (> %(max)s MB)."
 msgstr "Datei zu groß (> %(max)s MB)."
 
-#: routes/museum.py:685
+#: routes/museum.py:697
 msgid "File is too small"
 msgstr "Datei ist zu klein"
 
-#: routes/museum.py:703
+#: routes/museum.py:715
 msgid "Failed to process image"
 msgstr "Bild konnte nicht verarbeitet werden"
 
-#: routes/museum.py:726
+#: routes/museum.py:738
 msgid "No image to process"
 msgstr "Kein Bild zum Verarbeiten"
 
-#: routes/museum.py:730
+#: routes/museum.py:742
 msgid "Image file not found"
 msgstr "Bilddatei nicht gefunden"
 
-#: routes/museum.py:740 routes/museum.py:744 services/js_i18n_strings.py:616
+#: routes/museum.py:752 routes/museum.py:756 services/js_i18n_strings.py:616
 msgid "Background removal failed"
 msgstr "Entfernen des Hintergrunds fehlgeschlagen"
 
@@ -4750,7 +4760,7 @@ msgstr "Geben Sie Ihren RetroAchievements-Benutzernamen und Ihr Passwort ein."
 msgid "Sign in to RetroAchievements first."
 msgstr "Melden Sie sich zuerst bei RetroAchievements an."
 
-#: services/service_stop_text.py:22
+#: services/service_stop_text.py:26
 #, python-format
 msgid ""
 "%(service)s refused every saved key, which usually means their limit is "
@@ -4759,7 +4769,7 @@ msgstr ""
 "%(service)s hat alle gespeicherten Schlüssel abgelehnt. Meist ist dann "
 "das Limit erreicht. RetroDB fragt dort erst wieder an: %(when)s."
 
-#: services/service_stop_text.py:26
+#: services/service_stop_text.py:30
 #, python-format
 msgid ""
 "%(service)s says its limit is reached. RetroDB will not ask it again "

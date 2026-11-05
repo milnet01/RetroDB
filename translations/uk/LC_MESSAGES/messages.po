@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-05 19:11+0200\n"
+"POT-Creation-Date: 2026-11-05 19:42+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: uk\n"
@@ -19,15 +19,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: app.py:679
+#: app.py:682
 msgid "Not found"
 msgstr "Не знайдено"
 
-#: app.py:689
+#: app.py:692
 msgid "Internal server error"
 msgstr "Внутрішня помилка сервера"
 
-#: app.py:705
+#: app.py:708
 #, python-format
 msgid ""
 "Upload exceeds the %(total)s MB limit. Each image may be up to %(image)s "
@@ -39,19 +39,19 @@ msgstr ""
 "раз. Оператори можуть підвищити загальний ліміт через "
 "RETRODB_MAX_UPLOAD_MB."
 
-#: app.py:736
+#: app.py:739
 msgid "Too many requests. Please wait and try again."
 msgstr "Забагато запитів. Зачекайте й спробуйте ще раз."
 
-#: app.py:820 app.py:823
+#: app.py:823 app.py:826
 msgid "Invalid or missing CSRF token"
 msgstr "Недійсний або відсутній токен CSRF"
 
-#: app.py:847
+#: app.py:850
 msgid "Setup required"
 msgstr "Потрібне налаштування"
 
-#: app.py:868
+#: app.py:871
 msgid "Password change required"
 msgstr "Потрібна зміна пароля"
 
@@ -156,30 +156,35 @@ msgstr "Не вдалося відновити завдання — обробн
 msgid "No games in library"
 msgstr "У бібліотеці немає ігор"
 
-#: app.py:1644 app.py:1682
+#: app.py:1658 app.py:1696
 msgid "Setup has already been completed"
 msgstr "Налаштування вже завершено"
 
-#: app.py:1666 routes/settings.py:553 routes/tools.py:364
+#: app.py:1680 routes/settings.py:553 routes/tools.py:364
 msgid "Permission denied"
 msgstr "Доступ заборонено"
 
-#: app.py:1686 routes/collections.py:194 routes/collections.py:271
+#: app.py:1700 routes/collections.py:194 routes/collections.py:271
 #: routes/collections.py:438 routes/collections.py:679
 msgid "No data provided"
 msgstr "Дані не надано"
 
-#: app.py:1690
+#: app.py:1704
 msgid "You must accept the license and terms before completing setup"
 msgstr "Перед завершенням налаштування потрібно прийняти ліцензію та умови"
 
-#: app.py:1697 routes/auth.py:208 routes/auth.py:268 routes/auth.py:471
+#: app.py:1711 routes/auth.py:208 routes/auth.py:268 routes/auth.py:471
 #: routes/auth.py:517 templates/force_change_password.html:49
 #: templates/setup.html:469
 msgid "Password must be at least 12 characters"
 msgstr "Пароль має містити щонайменше 12 символів"
 
-#: app.py:1788
+#: app.py:1715
+#, fuzzy
+msgid "Unknown time zone"
+msgstr "Невідомий тип зображення"
+
+#: app.py:1802
 msgid ""
 "Could not save your settings. Check that the data folder is writable, "
 "then try again."
@@ -196,7 +201,7 @@ msgid "System not found or has no achievement games"
 msgstr "Систему не знайдено або вона не має ігор з досягненнями"
 
 #: routes/achievements.py:176 routes/achievements.py:486
-#: routes/bonus_discs.py:265 routes/bulk_scrape.py:48 routes/cheats.py:32
+#: routes/bonus_discs.py:273 routes/bulk_scrape.py:48 routes/cheats.py:32
 #: routes/cheats.py:51 routes/collections.py:276 routes/collections.py:531
 #: routes/emulators.py:304 routes/emulators.py:318 routes/games.py:393
 #: routes/games.py:930 routes/games.py:1049 routes/games.py:1127
@@ -229,7 +234,7 @@ msgid "Could not fetch achievement data"
 msgstr "Не вдалося отримати дані про досягнення"
 
 #: routes/achievements.py:337 routes/controllers.py:419
-#: routes/controllers.py:471 routes/museum.py:309 routes/museum.py:381
+#: routes/controllers.py:471 routes/museum.py:326 routes/museum.py:395
 #: routes/ra_sync.py:98 routes/systems.py:227
 msgid "System not found"
 msgstr "Систему не знайдено"
@@ -530,7 +535,7 @@ msgstr "Зміна пароля не потрібна"
 msgid "No file provided"
 msgstr "Файл не надано"
 
-#: routes/auth.py:565 routes/museum.py:660
+#: routes/auth.py:565 routes/museum.py:672
 msgid "No file selected"
 msgstr "Файл не вибрано"
 
@@ -550,23 +555,28 @@ msgstr ""
 "Для завантаження аватарів потрібна бібліотека Pillow; попросіть оператора"
 " встановити залежності проєкту."
 
-#: routes/auth.py:606 routes/museum.py:692
+#: routes/auth.py:606 routes/museum.py:704
 msgid "Invalid image file"
 msgstr "Недійсний файл зображення"
 
-#: routes/bonus_discs.py:192
+#: routes/bonus_discs.py:193
 msgid "Bonus disc not found"
 msgstr "Бонусний диск не знайдено"
 
-#: routes/bonus_discs.py:194
+#: routes/bonus_discs.py:195
 msgid "Parent game not found"
 msgstr "Батьківську гру не знайдено"
 
-#: routes/bonus_discs.py:196
+#: routes/bonus_discs.py:197
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "Бонусний диск і батьківська гра мають належати до однієї системи"
 
-#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1397
+#: routes/bonus_discs.py:204
+#, fuzzy, python-brace-format
+msgid "A bonus disc links to a main game, one level only"
+msgstr "Бонусних дисків, прив’язаних до основних ігор: {count}"
+
+#: routes/bonus_discs.py:219 routes/bonus_discs.py:237 routes/games.py:1397
 #: routes/games.py:1427 routes/platform_import.py:344
 #: routes/platform_import.py:723 routes/platform_import.py:1107
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
@@ -582,18 +592,18 @@ msgstr "Бонусний диск і батьківська гра мають н
 msgid "An internal error occurred"
 msgstr "Сталася внутрішня помилка"
 
-#: routes/bonus_discs.py:278 routes/bonus_discs.py:309
+#: routes/bonus_discs.py:286 routes/bonus_discs.py:317
 #: routes/controllers.py:216 routes/controllers.py:280
 #: routes/controllers.py:413 routes/controllers.py:465 routes/settings.py:224
 #: routes/settings.py:494 routes/settings.py:577 routes/systems.py:307
 msgid "Request body must be a JSON object"
 msgstr "Тіло запиту має бути об'єктом JSON"
 
-#: routes/bonus_discs.py:283
+#: routes/bonus_discs.py:291
 msgid "Missing bonus_id or parent_id"
 msgstr "Відсутній bonus_id або parent_id"
 
-#: routes/bonus_discs.py:314 routes/reports.py:829
+#: routes/bonus_discs.py:322 routes/reports.py:829
 msgid "Missing game_id"
 msgstr "Відсутній game_id"
 
@@ -733,8 +743,8 @@ msgid "Controller \"%(name)s\" already exists"
 msgstr "Контролер «%(name)s» вже існує"
 
 #: routes/controllers.py:297 routes/controllers.py:339
-#: routes/controllers.py:426 routes/controllers.py:477 routes/museum.py:577
-#: routes/museum.py:653 routes/museum.py:723
+#: routes/controllers.py:426 routes/controllers.py:477 routes/museum.py:589
+#: routes/museum.py:665 routes/museum.py:735
 msgid "Controller not found"
 msgstr "Контролер не знайдено"
 
@@ -1079,66 +1089,66 @@ msgstr "Спершу виберіть список MAME."
 msgid "MAME Names is already running."
 msgstr "MAME Names уже працює."
 
-#: routes/museum.py:385 routes/scraper.py:770
+#: routes/museum.py:399 routes/scraper.py:770
 msgid "No AI provider configured"
 msgstr "Провайдера ШІ не налаштовано"
 
-#: routes/museum.py:398
+#: routes/museum.py:412
 #, python-format
 msgid "Unknown provider: %(provider)s"
 msgstr "Невідомий провайдер: %(provider)s"
 
-#: routes/museum.py:409
+#: routes/museum.py:423
 msgid "Empty AI response"
 msgstr "Порожня відповідь ШІ"
 
-#: routes/museum.py:416
+#: routes/museum.py:430
 msgid "No usable content in AI response"
 msgstr "У відповіді ШІ немає придатного вмісту"
 
-#: routes/museum.py:600
+#: routes/museum.py:612
 msgid "Could not find a suitable image for this controller"
 msgstr "Не вдалося знайти відповідне зображення для цього контролера"
 
-#: routes/museum.py:617
+#: routes/museum.py:629
 msgid "No controllers found"
 msgstr "Контролерів не знайдено"
 
-#: routes/museum.py:620
+#: routes/museum.py:632
 msgid "An image fetch is already running"
 msgstr "Завантаження зображень уже триває"
 
-#: routes/museum.py:656
+#: routes/museum.py:668
 msgid "No image file provided"
 msgstr "Файл зображення не надано"
 
-#: routes/museum.py:672
+#: routes/museum.py:684
 #, python-format
 msgid "File too large (%(size)s MB). Maximum is %(max)s MB."
 msgstr "Файл завеликий (%(size)s МБ). Максимум — %(max)s МБ."
 
-#: routes/museum.py:682
+#: routes/museum.py:694
 #, python-format
 msgid "File too large (> %(max)s MB)."
 msgstr "Файл завеликий (> %(max)s МБ)."
 
-#: routes/museum.py:685
+#: routes/museum.py:697
 msgid "File is too small"
 msgstr "Файл замалий"
 
-#: routes/museum.py:703
+#: routes/museum.py:715
 msgid "Failed to process image"
 msgstr "Не вдалося обробити зображення"
 
-#: routes/museum.py:726
+#: routes/museum.py:738
 msgid "No image to process"
 msgstr "Немає зображення для обробки"
 
-#: routes/museum.py:730
+#: routes/museum.py:742
 msgid "Image file not found"
 msgstr "Файл зображення не знайдено"
 
-#: routes/museum.py:740 routes/museum.py:744 services/js_i18n_strings.py:616
+#: routes/museum.py:752 routes/museum.py:756 services/js_i18n_strings.py:616
 msgid "Background removal failed"
 msgstr "Не вдалося видалити фон"
 
@@ -4691,7 +4701,7 @@ msgstr "Введіть ім'я користувача й пароль RetroAchie
 msgid "Sign in to RetroAchievements first."
 msgstr "Спочатку увійдіть у RetroAchievements."
 
-#: services/service_stop_text.py:22
+#: services/service_stop_text.py:26
 #, python-format
 msgid ""
 "%(service)s refused every saved key, which usually means their limit is "
@@ -4700,7 +4710,7 @@ msgstr ""
 "%(service)s відхилив усі збережені ключі, що зазвичай означає вичерпаний "
 "ліміт. RetroDB не звертатиметься до нього до %(when)s."
 
-#: services/service_stop_text.py:26
+#: services/service_stop_text.py:30
 #, python-format
 msgid ""
 "%(service)s says its limit is reached. RetroDB will not ask it again "

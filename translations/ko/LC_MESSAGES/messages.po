@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-05 19:11+0200\n"
+"POT-Creation-Date: 2026-11-05 19:42+0200\n"
 "PO-Revision-Date: 2026-06-30 14:26+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ko\n"
@@ -18,15 +18,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: app.py:679
+#: app.py:682
 msgid "Not found"
 msgstr "찾을 수 없음"
 
-#: app.py:689
+#: app.py:692
 msgid "Internal server error"
 msgstr "내부 서버 오류"
 
-#: app.py:705
+#: app.py:708
 #, python-format
 msgid ""
 "Upload exceeds the %(total)s MB limit. Each image may be up to %(image)s "
@@ -37,19 +37,19 @@ msgstr ""
 "MB까지 가능합니다. 한 번에 더 적은 파일을 업로드하세요. 운영자는 RETRODB_MAX_UPLOAD_MB로 전체 한도를 늘릴 수"
 " 있습니다."
 
-#: app.py:736
+#: app.py:739
 msgid "Too many requests. Please wait and try again."
 msgstr "요청이 너무 많습니다. 잠시 후 다시 시도하세요."
 
-#: app.py:820 app.py:823
+#: app.py:823 app.py:826
 msgid "Invalid or missing CSRF token"
 msgstr "CSRF 토큰이 잘못되었거나 없습니다"
 
-#: app.py:847
+#: app.py:850
 msgid "Setup required"
 msgstr "설정이 필요합니다"
 
-#: app.py:868
+#: app.py:871
 msgid "Password change required"
 msgstr "비밀번호 변경이 필요합니다"
 
@@ -152,30 +152,35 @@ msgstr "작업을 다시 시작할 수 없습니다. 핸들러가 false를 반�
 msgid "No games in library"
 msgstr "라이브러리에 게임이 없습니다"
 
-#: app.py:1644 app.py:1682
+#: app.py:1658 app.py:1696
 msgid "Setup has already been completed"
 msgstr "설정이 이미 완료되었습니다"
 
-#: app.py:1666 routes/settings.py:553 routes/tools.py:364
+#: app.py:1680 routes/settings.py:553 routes/tools.py:364
 msgid "Permission denied"
 msgstr "권한이 거부되었습니다"
 
-#: app.py:1686 routes/collections.py:194 routes/collections.py:271
+#: app.py:1700 routes/collections.py:194 routes/collections.py:271
 #: routes/collections.py:438 routes/collections.py:679
 msgid "No data provided"
 msgstr "제공된 데이터가 없습니다"
 
-#: app.py:1690
+#: app.py:1704
 msgid "You must accept the license and terms before completing setup"
 msgstr "설정을 완료하려면 라이선스와 약관에 동의해야 합니다"
 
-#: app.py:1697 routes/auth.py:208 routes/auth.py:268 routes/auth.py:471
+#: app.py:1711 routes/auth.py:208 routes/auth.py:268 routes/auth.py:471
 #: routes/auth.py:517 templates/force_change_password.html:49
 #: templates/setup.html:469
 msgid "Password must be at least 12 characters"
 msgstr "비밀번호는 최소 12자 이상이어야 합니다"
 
-#: app.py:1788
+#: app.py:1715
+#, fuzzy
+msgid "Unknown time zone"
+msgstr "알 수 없는 이미지 유형"
+
+#: app.py:1802
 msgid ""
 "Could not save your settings. Check that the data folder is writable, "
 "then try again."
@@ -190,7 +195,7 @@ msgid "System not found or has no achievement games"
 msgstr "시스템을 찾을 수 없거나 업적이 있는 게임이 없습니다"
 
 #: routes/achievements.py:176 routes/achievements.py:486
-#: routes/bonus_discs.py:265 routes/bulk_scrape.py:48 routes/cheats.py:32
+#: routes/bonus_discs.py:273 routes/bulk_scrape.py:48 routes/cheats.py:32
 #: routes/cheats.py:51 routes/collections.py:276 routes/collections.py:531
 #: routes/emulators.py:304 routes/emulators.py:318 routes/games.py:393
 #: routes/games.py:930 routes/games.py:1049 routes/games.py:1127
@@ -223,7 +228,7 @@ msgid "Could not fetch achievement data"
 msgstr "업적 데이터를 가져올 수 없습니다"
 
 #: routes/achievements.py:337 routes/controllers.py:419
-#: routes/controllers.py:471 routes/museum.py:309 routes/museum.py:381
+#: routes/controllers.py:471 routes/museum.py:326 routes/museum.py:395
 #: routes/ra_sync.py:98 routes/systems.py:227
 msgid "System not found"
 msgstr "시스템을 찾을 수 없습니다"
@@ -522,7 +527,7 @@ msgstr "비밀번호 변경이 필요하지 않습니다"
 msgid "No file provided"
 msgstr "제공된 파일이 없습니다"
 
-#: routes/auth.py:565 routes/museum.py:660
+#: routes/auth.py:565 routes/museum.py:672
 msgid "No file selected"
 msgstr "선택된 파일이 없습니다"
 
@@ -540,23 +545,28 @@ msgid ""
 "project requirements."
 msgstr "아바타 업로드에는 Pillow가 필요합니다. 운영자에게 프로젝트 요구 사항 설치를 요청하세요."
 
-#: routes/auth.py:606 routes/museum.py:692
+#: routes/auth.py:606 routes/museum.py:704
 msgid "Invalid image file"
 msgstr "잘못된 이미지 파일입니다"
 
-#: routes/bonus_discs.py:192
+#: routes/bonus_discs.py:193
 msgid "Bonus disc not found"
 msgstr "보너스 디스크를 찾을 수 없습니다"
 
-#: routes/bonus_discs.py:194
+#: routes/bonus_discs.py:195
 msgid "Parent game not found"
 msgstr "상위 게임을 찾을 수 없습니다"
 
-#: routes/bonus_discs.py:196
+#: routes/bonus_discs.py:197
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "보너스 디스크와 상위 게임은 같은 시스템에 있어야 합니다"
 
-#: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1397
+#: routes/bonus_discs.py:204
+#, fuzzy, python-brace-format
+msgid "A bonus disc links to a main game, one level only"
+msgstr "상위 게임에 연결된 보너스 디스크: {count}개"
+
+#: routes/bonus_discs.py:219 routes/bonus_discs.py:237 routes/games.py:1397
 #: routes/games.py:1427 routes/platform_import.py:344
 #: routes/platform_import.py:723 routes/platform_import.py:1107
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
@@ -572,18 +582,18 @@ msgstr "보너스 디스크와 상위 게임은 같은 시스템에 있어야 �
 msgid "An internal error occurred"
 msgstr "내부 오류가 발생했습니다"
 
-#: routes/bonus_discs.py:278 routes/bonus_discs.py:309
+#: routes/bonus_discs.py:286 routes/bonus_discs.py:317
 #: routes/controllers.py:216 routes/controllers.py:280
 #: routes/controllers.py:413 routes/controllers.py:465 routes/settings.py:224
 #: routes/settings.py:494 routes/settings.py:577 routes/systems.py:307
 msgid "Request body must be a JSON object"
 msgstr "요청 본문은 JSON 객체여야 합니다"
 
-#: routes/bonus_discs.py:283
+#: routes/bonus_discs.py:291
 msgid "Missing bonus_id or parent_id"
 msgstr "bonus_id 또는 parent_id가 누락되었습니다"
 
-#: routes/bonus_discs.py:314 routes/reports.py:829
+#: routes/bonus_discs.py:322 routes/reports.py:829
 msgid "Missing game_id"
 msgstr "game_id가 누락되었습니다"
 
@@ -723,8 +733,8 @@ msgid "Controller \"%(name)s\" already exists"
 msgstr "컨트롤러 \"%(name)s\"이(가) 이미 존재합니다"
 
 #: routes/controllers.py:297 routes/controllers.py:339
-#: routes/controllers.py:426 routes/controllers.py:477 routes/museum.py:577
-#: routes/museum.py:653 routes/museum.py:723
+#: routes/controllers.py:426 routes/controllers.py:477 routes/museum.py:589
+#: routes/museum.py:665 routes/museum.py:735
 msgid "Controller not found"
 msgstr "컨트롤러를 찾을 수 없습니다"
 
@@ -1057,66 +1067,66 @@ msgstr "먼저 MAME 목록을 선택하세요."
 msgid "MAME Names is already running."
 msgstr "MAME 이름 지정이 이미 실행 중입니다."
 
-#: routes/museum.py:385 routes/scraper.py:770
+#: routes/museum.py:399 routes/scraper.py:770
 msgid "No AI provider configured"
 msgstr "설정된 AI 공급자가 없습니다"
 
-#: routes/museum.py:398
+#: routes/museum.py:412
 #, python-format
 msgid "Unknown provider: %(provider)s"
 msgstr "알 수 없는 공급자: %(provider)s"
 
-#: routes/museum.py:409
+#: routes/museum.py:423
 msgid "Empty AI response"
 msgstr "AI 응답이 비어 있습니다"
 
-#: routes/museum.py:416
+#: routes/museum.py:430
 msgid "No usable content in AI response"
 msgstr "AI 응답에 사용 가능한 콘텐츠가 없습니다"
 
-#: routes/museum.py:600
+#: routes/museum.py:612
 msgid "Could not find a suitable image for this controller"
 msgstr "이 컨트롤러에 적합한 이미지를 찾을 수 없습니다"
 
-#: routes/museum.py:617
+#: routes/museum.py:629
 msgid "No controllers found"
 msgstr "컨트롤러를 찾을 수 없습니다"
 
-#: routes/museum.py:620
+#: routes/museum.py:632
 msgid "An image fetch is already running"
 msgstr "이미지 가져오기가 이미 실행 중입니다"
 
-#: routes/museum.py:656
+#: routes/museum.py:668
 msgid "No image file provided"
 msgstr "제공된 이미지 파일이 없습니다"
 
-#: routes/museum.py:672
+#: routes/museum.py:684
 #, python-format
 msgid "File too large (%(size)s MB). Maximum is %(max)s MB."
 msgstr "파일이 너무 큽니다 (%(size)s MB). 최대는 %(max)s MB입니다."
 
-#: routes/museum.py:682
+#: routes/museum.py:694
 #, python-format
 msgid "File too large (> %(max)s MB)."
 msgstr "파일이 너무 큽니다 (> %(max)s MB)."
 
-#: routes/museum.py:685
+#: routes/museum.py:697
 msgid "File is too small"
 msgstr "파일이 너무 작습니다"
 
-#: routes/museum.py:703
+#: routes/museum.py:715
 msgid "Failed to process image"
 msgstr "이미지 처리에 실패했습니다"
 
-#: routes/museum.py:726
+#: routes/museum.py:738
 msgid "No image to process"
 msgstr "처리할 이미지가 없습니다"
 
-#: routes/museum.py:730
+#: routes/museum.py:742
 msgid "Image file not found"
 msgstr "이미지 파일을 찾을 수 없습니다"
 
-#: routes/museum.py:740 routes/museum.py:744 services/js_i18n_strings.py:616
+#: routes/museum.py:752 routes/museum.py:756 services/js_i18n_strings.py:616
 msgid "Background removal failed"
 msgstr "배경 제거에 실패했습니다"
 
@@ -4593,7 +4603,7 @@ msgstr "RetroAchievements 사용자 이름과 비밀번호를 입력하세요."
 msgid "Sign in to RetroAchievements first."
 msgstr "먼저 RetroAchievements에 로그인하세요."
 
-#: services/service_stop_text.py:22
+#: services/service_stop_text.py:26
 #, python-format
 msgid ""
 "%(service)s refused every saved key, which usually means their limit is "
@@ -4602,7 +4612,7 @@ msgstr ""
 "%(service)s이(가) 저장된 키를 모두 거부했습니다. 보통 사용 한도에 도달했다는 뜻입니다. RetroDB는 "
 "%(when)s까지 다시 요청하지 않습니다."
 
-#: services/service_stop_text.py:26
+#: services/service_stop_text.py:30
 #, python-format
 msgid ""
 "%(service)s says its limit is reached. RetroDB will not ask it again "
