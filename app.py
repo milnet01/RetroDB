@@ -241,6 +241,9 @@ app.jinja_env.globals['locale_display_name'] = locale_display_name
 # the active locale, js_i18n_map() builds window.I18N and field_labels_map()
 # builds window.FIELD_LABELS. See docs/specs/i18n.md §6/§7.
 from flask_babel import gettext as _flask_gettext
+# `_` for replies: the catalog extractor looks for `_(`, not `_flask_gettext(`
+# (PASS-59-246).
+_ = _flask_gettext
 from services.i18n_labels import display_field_value, field_labels_map
 from services.js_i18n_strings import JS_I18N_KEYS
 
@@ -669,7 +672,7 @@ _PROBE_ENDPOINTS = frozenset({'health_probe', 'ready_probe'})
 def handle_not_found(e):
     # Pass 34.1: API paths return the standard envelope.
     if request.path.startswith('/api/'):
-        return api_error('Not found', 404)
+        return api_error(_('Not found'), 404)
     return render_template('base.html'), 404
 
 @app.errorhandler(500)
@@ -679,7 +682,7 @@ def handle_internal_error(e):
     # shared error() helper; non-API path stays HTML.
     logger.error(f"Internal server error: {e}", exc_info=True)
     if request.path.startswith('/api/'):
-        return api_error('Internal server error', 500)
+        return api_error(_('Internal server error'), 500)
     return render_template('base.html'), 500
 
 @app.errorhandler(413)
@@ -808,10 +811,10 @@ def validate_csrf():
     # Check X-CSRF-Token header or _csrf_token form field
     session_token = session.get('_csrf_token', '')
     if not session_token:
-        return jsonify({'success': False, 'error': 'Invalid or missing CSRF token'}), 403
+        return jsonify({'success': False, 'error': _('Invalid or missing CSRF token')}), 403
     token = request.headers.get('X-CSRF-Token', '') or request.form.get('_csrf_token', '')
     if not secrets.compare_digest(token, session_token):
-        return jsonify({'success': False, 'error': 'Invalid or missing CSRF token'}), 403
+        return jsonify({'success': False, 'error': _('Invalid or missing CSRF token')}), 403
 
 
 @app.before_request
@@ -1364,38 +1367,36 @@ def dashboard():
             # vs was just queued (no work done yet)
             has_progress = progress.get('current', 0) > 0
 
-            # Build human-readable description
+            # Build human-readable description, in the reader's language
+            # (PASS-59-246).
+            from flask_babel import gettext as _, ngettext
+            job_names = {
+                'ra_refresh': _('RetroAchievements refresh'),
+                'ra_sync': _('RetroAchievements sync'),
+                'psn_refresh': _('PSN trophy refresh'),
+                'steam_sync': _('Steam achievement sync'),
+                'xbox_sync': _('Xbox achievement sync'),
+                'hltb_bulk': _('HLTB bulk lookup'),
+                'alt_titles_backfill': _('Alternate titles backfill'),
+                'mame_names': _('MAME Names'),
+                'ss_region_repair': _('Box and manual region fix'),
+                'ai_fill_bulk': _('AI fill run'),
+            }
             if jtype == 'bulk_scrape':
-                sys_name = params.get('system_name', 'Unknown')
+                sys_name = params.get('system_name') or _('Unknown')
                 if has_progress:
-                    current = progress.get('current', 0)
-                    total = progress.get('total', params.get('game_count', 0))
-                    desc = f"{sys_name} bulk scrape was interrupted ({current}/{total} completed)"
+                    desc = _('%(system)s bulk scrape was interrupted (%(current)s/%(total)s completed)',
+                             system=sys_name, current=progress.get('current', 0),
+                             total=progress.get('total', params.get('game_count', 0)))
                 else:
                     count = params.get('game_count', len(params.get('game_ids', [])))
-                    desc = f"{sys_name} bulk scrape was queued ({count} games)"
-            elif jtype == 'ra_refresh':
-                desc = "RetroAchievements refresh was interrupted" if has_progress else "RetroAchievements refresh was queued"
-            elif jtype == 'ra_sync':
-                desc = "RetroAchievements sync was interrupted" if has_progress else "RetroAchievements sync was queued"
-            elif jtype == 'psn_refresh':
-                desc = "PSN trophy refresh was interrupted" if has_progress else "PSN trophy refresh was queued"
-            elif jtype == 'steam_sync':
-                desc = "Steam achievement sync was interrupted" if has_progress else "Steam achievement sync was queued"
-            elif jtype == 'xbox_sync':
-                desc = "Xbox achievement sync was interrupted" if has_progress else "Xbox achievement sync was queued"
-            elif jtype == 'hltb_bulk':
-                desc = "HLTB bulk lookup was interrupted" if has_progress else "HLTB bulk lookup was queued"
-            elif jtype == 'alt_titles_backfill':
-                desc = "Alternate titles backfill was interrupted" if has_progress else "Alternate titles backfill was queued"
-            elif jtype == 'mame_names':
-                desc = "MAME Names was interrupted"
-            elif jtype == 'ss_region_repair':
-                desc = "Box and manual region fix was interrupted"
-            elif jtype == 'ai_fill_bulk':
-                desc = "AI fill run was interrupted"
+                    desc = ngettext('%(system)s bulk scrape was queued (%(num)s game)',
+                                    '%(system)s bulk scrape was queued (%(num)s games)',
+                                    count, system=sys_name)
+            elif has_progress or jtype in ('mame_names', 'ss_region_repair', 'ai_fill_bulk'):
+                desc = _('%(job)s was interrupted', job=job_names.get(jtype, jtype))
             else:
-                desc = f"{jtype} job was {status}"
+                desc = _('%(job)s was queued', job=job_names.get(jtype, jtype))
 
             # Mirror resume_job's handler_map so the UI never offers "Resume"
             # on a job type that would 400 at the endpoint.
@@ -1407,7 +1408,7 @@ def dashboard():
                 'status': status,
                 'description': desc,
                 'can_resume': can_resume,
-                'action_label': 'Resume' if has_progress else 'Start'
+                'action_label': _('Resume') if has_progress else _('Start')
             })
 
         return render_template('dashboard.html',
@@ -1475,7 +1476,7 @@ def resume_job(job_id):
             break
 
     if not job:
-        return api_error('Job not found or already handled', 404)
+        return api_error(_('Job not found or already handled'), 404)
 
     handler_map = {
         'bulk_scrape': bulk_scrape_job,
@@ -1489,13 +1490,13 @@ def resume_job(job_id):
     }
     handler = handler_map.get(job['job_type'])
     if not handler or not hasattr(handler, 'resume_from_params'):
-        return api_error(f"No handler for job type '{job['job_type']}'", 400)
+        return api_error(_("No handler for job type '%(type)s'", type=job['job_type']), 400)
 
     if not _may_manage_job(job['job_type'], job.get('params')):
-        return api_error('You do not have permission to perform this action', 403)
+        return api_error(_('You do not have permission to perform this action'), 403)
 
     if not claim_recoverable_job(job_id):
-        return api_error('Job not found or already handled', 404)
+        return api_error(_('Job not found or already handled'), 404)
     try:
         resumed = handler.resume_from_params(job['params'], progress=job.get('progress'))
     except Exception:
@@ -1503,7 +1504,7 @@ def resume_job(job_id):
         raise
     if not resumed:
         release_recoverable_job(job_id)
-        return api_error('Could not resume job — handler returned false', 500)
+        return api_error(_('Could not resume job — handler returned false'), 500)
     # Mark the old interrupted/queued row as completed so it doesn't reappear
     persist_job_complete(job_id, status='completed')
     logger.info(f"Resumed {job['job_type']} job (DB id={job_id}) from dashboard")
@@ -1526,7 +1527,7 @@ def dismiss_job_route(job_id):
         except (TypeError, ValueError):
             params = {}
         if not _may_manage_job(row['job_type'], params if isinstance(params, dict) else {}):
-            return api_error('You do not have permission to perform this action', 403)
+            return api_error(_('You do not have permission to perform this action'), 403)
     dismiss_job(job_id)
     return api_success()
 
@@ -1539,7 +1540,7 @@ def random_game():
     game = query("SELECT id FROM games ORDER BY RANDOM() LIMIT 1", one=True)
     if game:
         return api_success(game_id=game['id'])
-    return api_error('No games in library', 404)
+    return api_error(_('No games in library'), 404)
 
 
 
@@ -1634,7 +1635,7 @@ def setup_browse_folders():
     has_rom_path = bool(user_settings_check.get('rom_path') or getattr(config, 'ROM_PATH', ''))
     setup_done = user_settings_check.get('setup_completed', False)
     if setup_done or has_rom_path:
-        return api_error('Setup has already been completed', 403)
+        return api_error(_('Setup has already been completed'), 403)
 
     data = request.get_json() or {}
     requested_path = data.get('path', '')
@@ -1656,7 +1657,7 @@ def setup_browse_folders():
     try:
         view = path_browser.list_path(current_path, include_hidden=False)
     except PermissionError:
-        return api_error('Permission denied', 403)
+        return api_error(_('Permission denied'), 403)
     return api_success(**view)
 
 
@@ -1672,22 +1673,21 @@ def setup_api():
     has_rom_path = bool(user_settings_check.get('rom_path') or getattr(config, 'ROM_PATH', ''))
     setup_done = user_settings_check.get('setup_completed', False)
     if setup_done or has_rom_path:
-        return api_error('Setup has already been completed', 403)
+        return api_error(_('Setup has already been completed'), 403)
 
     data = request.get_json()
     if not data:
-        return api_error('No data provided', 400)
+        return api_error(_('No data provided'), 400)
 
     # Require license acceptance
     if not data.get('license_accepted'):
-        return api_error('You must accept the license and terms before completing setup', 400)
+        return api_error(_('You must accept the license and terms before completing setup'), 400)
 
     # 1. Create admin account if username/password provided
     admin_username = data.get('admin_username', '').strip()
     admin_password = data.get('admin_password', '').strip()
     # PASS-59-121: the same 12-character floor as routes/auth.py.
     if admin_password and len(admin_password) < 12:
-        from flask_babel import gettext as _
         return api_error(_('Password must be at least 12 characters'), 422)
     if admin_username and admin_password:
         import sqlite3 as _sqlite3
@@ -1779,7 +1779,7 @@ def setup_api():
     user_settings['setup_completed'] = True
     # Pass 59.85: a failed (or, since 59.42, refused) save is not "complete".
     if not settings_manager.save_settings(user_settings):
-        return api_error('Could not save your settings. Check that the data folder is writable, then try again.', 500)
+        return api_error(_('Could not save your settings. Check that the data folder is writable, then try again.'), 500)
 
     # Update runtime config paths
     app.config['ROM_PATH'] = get_rom_path()

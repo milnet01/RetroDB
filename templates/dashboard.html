@@ -1156,12 +1156,12 @@ function resumeJob(jobId) {
                 animateOutItem(item);
             } else {
                 showNotification(data.error || {{ _('Failed to resume job')|tojson }}, 'error');
-                if (btn) { btn.disabled = false; btn.textContent = 'Resume'; }
+                if (btn) { btn.disabled = false; btn.textContent = {{ _('Resume')|tojson }}; }
             }
         })
         .catch(() => {
             showNotification({{ _('Error resuming job')|tojson }}, 'error');
-            if (btn) { btn.disabled = false; btn.textContent = 'Resume'; }
+            if (btn) { btn.disabled = false; btn.textContent = {{ _('Resume')|tojson }}; }
         });
 }
 

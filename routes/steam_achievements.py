@@ -117,7 +117,7 @@ def api_steam_sync_single(game_id):
 
     result = get_player_achievements(steam_api_key, steam_id, game['steam_app_id'])
     if result is None:
-        return success(message='Game has no achievements', earned=0, total=0)
+        return success(message=_('Game has no achievements'), earned=0, total=0)
 
     conn = None
     try:

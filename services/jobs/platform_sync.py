@@ -21,6 +21,24 @@ from services.jobs.base import (
 logger = logging.getLogger(__name__)
 
 
+def N_(message):
+    """Mark a message for the catalog without translating it: these are set
+    in a job thread, where no reader's language is known (PASS-59-246)."""
+    return message
+
+
+def _say(message):
+    """A marked message in the reader's language, inside a request; a raw
+    error text, which has no msgid, comes back as it is."""
+    if not message:
+        return message
+    from flask import has_request_context
+    if not has_request_context():
+        return message
+    from flask_babel import gettext
+    return gettext(message)
+
+
 def _shared_steam_credentials():
     """(key, id) from the install-wide data/scraper_settings.json, or ('', '')."""
     import os, json
@@ -335,7 +353,7 @@ class SteamSyncJob:
                 'failed': self.failed_count,
                 'skipped': self.skipped_count,
                 'current_game': self.current_game_title,
-                'error': self.error_message,
+                'error': _say(self.error_message),
             }
 
     def start(self, user_id=None):
@@ -347,12 +365,12 @@ class SteamSyncJob:
         """
         with self._lock:
             if self.running:
-                return {'success': False, 'error': 'Sync already running'}
+                return {'success': False, 'error': _say(N_('Sync already running'))}
             singleton_fd = acquire_job_singleton_lock('steam_sync')
             if singleton_fd is None:
                 return {
                     'success': False,
-                    'error': 'Steam sync is already running on another worker process.',
+                    'error': _say(N_('Steam sync is already running on another worker process.')),
                 }
             self.reset()
             self._singleton_fd = singleton_fd
@@ -370,7 +388,7 @@ class SteamSyncJob:
             if self.running and not self.completed:
                 self.cancelled = True
                 return {'success': True}
-            return {'success': False, 'error': 'No running sync to cancel'}
+            return {'success': False, 'error': _say(N_('No running sync to cancel'))}
 
     def resume_from_params(self, params, progress=None):
         """Resume Steam sync from persisted params after server restart.
@@ -464,7 +482,7 @@ class SteamSyncJob:
                 with self._lock:
                     self.completed = True
                     self.running = False
-                    self.error_message = "Steam API key or Steam ID not configured"
+                    self.error_message = N_("Steam API key or Steam ID not configured")
                 release_singleton_fd(self)
                 return
 
@@ -483,7 +501,7 @@ class SteamSyncJob:
                 with self._lock:
                     self.completed = True
                     self.running = False
-                    self.error_message = "No Steam games found to sync"
+                    self.error_message = N_("No Steam games found to sync")
                 release_singleton_fd(self)
                 persist_job_complete(persist_id, status='completed', error="No Steam games found")
                 return
@@ -641,7 +659,7 @@ class XboxSyncJob:
                 'failed': self.failed_count,
                 'skipped': self.skipped_count,
                 'current_game': self.current_game_title,
-                'error': self.error_message,
+                'error': _say(self.error_message),
             }
 
     def start(self, user_id=None):
@@ -656,12 +674,12 @@ class XboxSyncJob:
             return {'success': False, 'error': 'user_id required for Xbox sync'}
         with self._lock:
             if self.running:
-                return {'success': False, 'error': 'Sync already running'}
+                return {'success': False, 'error': _say(N_('Sync already running'))}
             singleton_fd = acquire_job_singleton_lock('xbox_sync')
             if singleton_fd is None:
                 return {
                     'success': False,
-                    'error': 'Xbox sync is already running on another worker process.',
+                    'error': _say(N_('Xbox sync is already running on another worker process.')),
                 }
             self.reset()
             self._singleton_fd = singleton_fd
@@ -679,7 +697,7 @@ class XboxSyncJob:
             if self.running and not self.completed:
                 self.cancelled = True
                 return {'success': True}
-            return {'success': False, 'error': 'No running sync to cancel'}
+            return {'success': False, 'error': _say(N_('No running sync to cancel'))}
 
     def resume_from_params(self, params, progress=None):
         """Resume Xbox sync from persisted params after server restart.
@@ -747,7 +765,7 @@ class XboxSyncJob:
                 with self._lock:
                     self.completed = True
                     self.running = False
-                    self.error_message = "Xbox credentials not configured"
+                    self.error_message = N_("Xbox credentials not configured")
                 release_singleton_fd(self)
                 return
 
@@ -756,7 +774,7 @@ class XboxSyncJob:
                 with self._lock:
                     self.completed = True
                     self.running = False
-                    self.error_message = "Xbox authentication failed — please re-connect your Xbox account"
+                    self.error_message = N_("Xbox authentication failed — please re-connect your Xbox account")
                 release_singleton_fd(self)
                 return
 
@@ -807,7 +825,7 @@ class XboxSyncJob:
                 with self._lock:
                     self.completed = True
                     self.running = False
-                    self.error_message = "No Xbox games found to sync"
+                    self.error_message = N_("No Xbox games found to sync")
                 release_singleton_fd(self)
                 persist_job_complete(persist_id, status='completed', error="No Xbox games found")
                 return

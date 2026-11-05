@@ -136,7 +136,7 @@ def api_xbox_sync_single(game_id):
 
     result = get_achievements(session['auth_header'], session['xuid'], game['xbox_title_id'])
     if result is None:
-        return success(message='Game has no achievements', earned=0, total=0)
+        return success(message=_('Game has no achievements'), earned=0, total=0)
 
     conn = None
     try:

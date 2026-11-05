@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-05 05:13+0200\n"
+"POT-Creation-Date: 2026-11-05 05:52+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: eo\n"
@@ -18,28 +18,161 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: app.py:698
+#: app.py:675
+msgid "Not found"
+msgstr "⟦Ñöţ ƒöüñð⟧"
+
+#: app.py:685
+msgid "Internal server error"
+msgstr "⟦Ìñţéŕñàļ šéŕⱴéŕ éŕŕöŕ⟧"
+
+#: app.py:701
 #, python-format
 msgid "Upload exceeds the %(total)s MB limit. Each image may be up to %(image)s MB and a video up to %(video)s MB; upload fewer files at once. Operators can raise the total limit via RETRODB_MAX_UPLOAD_MB."
 msgstr "⟦Üþļöàð éжçééðš ţĥé %(total)s ⱮƁ ļìɱìţ. Éàçĥ ìɱàĝé ɱàý ƀé üþ ţö %(image)s ⱮƁ àñð à ⱴìðéö üþ ţö %(video)s ⱮƁ; üþļöàð ƒéŵéŕ ƒìļéš àţ öñçé. Öþéŕàţöŕš çàñ ŕàìšé ţĥé ţöţàļ ļìɱìţ ⱴìà ŔÉŢŔÖÐƁ_ⱮÀЖ_ÜÞĻÖÀÐ_ⱮƁ.⟧"
 
-#: app.py:729
+#: app.py:732
 msgid "Too many requests. Please wait and try again."
 msgstr "⟦Ţöö ɱàñý ŕéɋüéšţš. Þļéàšé ŵàìţ àñð ţŕý àĝàìñ.⟧"
 
-#: app.py:838
+#: app.py:814 app.py:817
+msgid "Invalid or missing CSRF token"
+msgstr "⟦Ìñⱴàļìð öŕ ɱìššìñĝ ÇŠŔƑ ţöķéñ⟧"
+
+#: app.py:841
 msgid "Setup required"
 msgstr "⟦Šéţüþ ŕéɋüìŕéð⟧"
 
-#: app.py:859
+#: app.py:862
 msgid "Password change required"
 msgstr "⟦Þàššŵöŕð çĥàñĝé ŕéɋüìŕéð⟧"
 
-#: app.py:1691 routes/auth.py:202 routes/auth.py:262 routes/auth.py:465
+#: app.py:1374
+msgid "RetroAchievements refresh"
+msgstr "⟦ŔéţŕöÀçĥìéⱴéɱéñţš ŕéƒŕéšĥ⟧"
+
+#: app.py:1375
+msgid "RetroAchievements sync"
+msgstr "⟦ŔéţŕöÀçĥìéⱴéɱéñţš šýñç⟧"
+
+#: app.py:1376
+msgid "PSN trophy refresh"
+msgstr "⟦ÞŠÑ ţŕöþĥý ŕéƒŕéšĥ⟧"
+
+#: app.py:1377
+msgid "Steam achievement sync"
+msgstr "⟦Šţéàɱ àçĥìéⱴéɱéñţ šýñç⟧"
+
+#: app.py:1378
+msgid "Xbox achievement sync"
+msgstr "⟦Жƀöж àçĥìéⱴéɱéñţ šýñç⟧"
+
+#: app.py:1379
+msgid "HLTB bulk lookup"
+msgstr "⟦ĤĻŢƁ ƀüļķ ļööķüþ⟧"
+
+#: app.py:1380
+msgid "Alternate titles backfill"
+msgstr "⟦Àļţéŕñàţé ţìţļéš ƀàçķƒìļļ⟧"
+
+#: app.py:1381 templates/_macros/nav_tabs.html:42 templates/mame_names.html:6
+#: templates/mame_names.html:34 templates/rom_tools_hub.html:340
+msgid "MAME Names"
+msgstr "⟦ⱮÀⱮÉ Ñàɱéš⟧"
+
+#: app.py:1382
+msgid "Box and manual region fix"
+msgstr "⟦Ɓöж àñð ɱàñüàļ ŕéĝìöñ ƒìж⟧"
+
+#: app.py:1383
+msgid "AI fill run"
+msgstr "⟦ÀÌ ƒìļļ ŕüñ⟧"
+
+#: app.py:1386 services/js_i18n_strings.py:1022 templates/analytics.html:583
+#: templates/base.html:1239 templates/local_trophy_detail.html:220
+#: templates/local_trophy_detail.html:224
+msgid "Unknown"
+msgstr "⟦Üñķñöŵñ⟧"
+
+#: app.py:1388
+#, python-format
+msgid "%(system)s bulk scrape was interrupted (%(current)s/%(total)s completed)"
+msgstr "⟦%(system)s ƀüļķ šçŕàþé ŵàš ìñţéŕŕüþţéð (%(current)s/%(total)s çöɱþļéţéð)⟧"
+
+#: app.py:1393
+#, python-format
+msgid "%(system)s bulk scrape was queued (%(num)s game)"
+msgid_plural "%(system)s bulk scrape was queued (%(num)s games)"
+msgstr[0] "⟦%(system)s ƀüļķ šçŕàþé ŵàš ɋüéüéð (%(num)s ĝàɱé)⟧"
+msgstr[1] "⟦%(system)s ƀüļķ šçŕàþé ŵàš ɋüéüéð (%(num)s ĝàɱéš)⟧"
+
+#: app.py:1397
+#, python-format
+msgid "%(job)s was interrupted"
+msgstr "⟦%(job)s ŵàš ìñţéŕŕüþţéð⟧"
+
+#: app.py:1399
+#, python-format
+msgid "%(job)s was queued"
+msgstr "⟦%(job)s ŵàš ɋüéüéð⟧"
+
+#: app.py:1411 services/js_i18n_strings.py:903
+#: templates/archive_scanner.html:1623 templates/dashboard.html:1159
+#: templates/dashboard.html:1164
+msgid "Resume"
+msgstr "⟦Ŕéšüɱé⟧"
+
+#: app.py:1411
+msgid "Start"
+msgstr "⟦Šţàŕţ⟧"
+
+#: app.py:1479 app.py:1499
+msgid "Job not found or already handled"
+msgstr "⟦Ĵöƀ ñöţ ƒöüñð öŕ àļŕéàðý ĥàñðļéð⟧"
+
+#: app.py:1493
+#, python-format
+msgid "No handler for job type '%(type)s'"
+msgstr "⟦Ñö ĥàñðļéŕ ƒöŕ ĵöƀ ţýþé '%(type)s'⟧"
+
+#: app.py:1496 app.py:1530
+msgid "You do not have permission to perform this action"
+msgstr "⟦Ýöü ðö ñöţ ĥàⱴé þéŕɱìššìöñ ţö þéŕƒöŕɱ ţĥìš àçţìöñ⟧"
+
+#: app.py:1507
+msgid "Could not resume job — handler returned false"
+msgstr "⟦Çöüļð ñöţ ŕéšüɱé ĵöƀ — ĥàñðļéŕ ŕéţüŕñéð ƒàļšé⟧"
+
+#: app.py:1543
+msgid "No games in library"
+msgstr "⟦Ñö ĝàɱéš ìñ ļìƀŕàŕý⟧"
+
+#: app.py:1638 app.py:1676
+msgid "Setup has already been completed"
+msgstr "⟦Šéţüþ ĥàš àļŕéàðý ƀééñ çöɱþļéţéð⟧"
+
+#: app.py:1660 routes/settings.py:553 routes/tools.py:364
+msgid "Permission denied"
+msgstr "⟦Þéŕɱìššìöñ ðéñìéð⟧"
+
+#: app.py:1680 routes/collections.py:194 routes/collections.py:271
+#: routes/collections.py:438 routes/collections.py:679
+msgid "No data provided"
+msgstr "⟦Ñö ðàţà þŕöⱴìðéð⟧"
+
+#: app.py:1684
+msgid "You must accept the license and terms before completing setup"
+msgstr "⟦Ýöü ɱüšţ àççéþţ ţĥé ļìçéñšé àñð ţéŕɱš ƀéƒöŕé çöɱþļéţìñĝ šéţüþ⟧"
+
+#: app.py:1692 routes/auth.py:202 routes/auth.py:262 routes/auth.py:465
 #: routes/auth.py:510 templates/force_change_password.html:49
 #: templates/setup.html:469
 msgid "Password must be at least 12 characters"
 msgstr "⟦Þàššŵöŕð ɱüšţ ƀé àţ ļéàšţ 12 çĥàŕàçţéŕš⟧"
+
+#: app.py:1783
+msgid "Could not save your settings. Check that the data folder is writable, then try again."
+msgstr "⟦Çöüļð ñöţ šàⱴé ýöüŕ šéţţìñĝš. Çĥéçķ ţĥàţ ţĥé ðàţà ƒöļðéŕ ìš ŵŕìţàƀļé, ţĥéñ ţŕý àĝàìñ.⟧"
 
 #: routes/achievements.py:54
 msgid "No games with RetroAchievements found in your library"
@@ -115,7 +248,7 @@ msgid "Official name"
 msgstr "⟦Öƒƒìçìàļ ñàɱé⟧"
 
 #: routes/ai_fill_bulk.py:36 templates/_modals/edit_modal.html:348
-#: templates/base.html:1394
+#: templates/base.html:1395
 msgid "Game Description"
 msgstr "⟦Ĝàɱé Ðéšçŕìþţìöñ⟧"
 
@@ -123,8 +256,8 @@ msgstr "⟦Ĝàɱé Ðéšçŕìþţìöñ⟧"
 #: templates/_modals/edit_modal.html:115 templates/_settings_tabs/data.html:83
 #: templates/_settings_tabs/data.html:156 templates/achievement_game.html:241
 #: templates/all_games.html:72 templates/analytics.html:481
-#: templates/analytics.html:2428 templates/base.html:975
-#: templates/base.html:1188 templates/compare_games.html:73
+#: templates/analytics.html:2428 templates/base.html:976
+#: templates/base.html:1189 templates/compare_games.html:73
 #: templates/dashboard.html:390 templates/game_detail.html:350
 #: templates/local_trophy_detail.html:99 templates/psn_trophy_detail.html:94
 #: templates/psn_trophy_detail.html:258 templates/reports.html:1140
@@ -136,8 +269,8 @@ msgstr "⟦Ĝéñŕé⟧"
 #: routes/ai_fill_bulk.py:38 templates/_bulk_edit_modal.html:67
 #: templates/_modals/edit_modal.html:99 templates/achievement_game.html:87
 #: templates/all_games.html:81 templates/analytics.html:482
-#: templates/analytics.html:2428 templates/base.html:973
-#: templates/base.html:1174 templates/compare_games.html:70
+#: templates/analytics.html:2428 templates/base.html:974
+#: templates/base.html:1175 templates/compare_games.html:70
 #: templates/game_detail.html:338 templates/local_trophy_detail.html:93
 #: templates/psn_trophy_detail.html:88 templates/reports.html:1140
 #: templates/steam_achievement_game.html:84 templates/system_games.html:72
@@ -148,8 +281,8 @@ msgstr "⟦Ðéⱴéļöþéŕ⟧"
 #: routes/ai_fill_bulk.py:39 templates/_bulk_edit_modal.html:53
 #: templates/_modals/edit_modal.html:94 templates/achievement_game.html:81
 #: templates/all_games.html:78 templates/analytics.html:483
-#: templates/analytics.html:2428 templates/base.html:974
-#: templates/base.html:1170 templates/compare_games.html:71
+#: templates/analytics.html:2428 templates/base.html:975
+#: templates/base.html:1171 templates/compare_games.html:71
 #: templates/game_detail.html:326 templates/game_detail.html:822
 #: templates/local_trophy_detail.html:87 templates/psn_trophy_detail.html:82
 #: templates/reports.html:1140 templates/steam_achievement_game.html:78
@@ -159,79 +292,79 @@ msgstr "⟦Þüƀļìšĥéŕ⟧"
 
 #: routes/ai_fill_bulk.py:40 templates/_modals/edit_modal.html:72
 #: templates/_modals/filter_modal.html:14 templates/analytics.html:484
-#: templates/analytics.html:2428 templates/base.html:1153
+#: templates/analytics.html:2428 templates/base.html:1154
 #: templates/compare_games.html:72
 msgid "Release Date"
 msgstr "⟦Ŕéļéàšé Ðàţé⟧"
 
-#: routes/ai_fill_bulk.py:41 templates/base.html:977
+#: routes/ai_fill_bulk.py:41 templates/base.html:978
 #: templates/game_detail.html:368
 msgid "Release dates"
 msgstr "⟦Ŕéļéàšé ðàţéš⟧"
 
 #: routes/ai_fill_bulk.py:42 templates/_modals/edit_modal.html:104
-#: templates/base.html:1178
+#: templates/base.html:1179
 msgid "Copies sold"
 msgstr "⟦Çöþìéš šöļð⟧"
 
 #: routes/ai_fill_bulk.py:43 templates/_bulk_edit_modal.html:112
 #: templates/_modals/edit_modal.html:137 templates/achievement_game.html:271
-#: templates/all_games.html:84 templates/base.html:1204
+#: templates/all_games.html:84 templates/base.html:1205
 #: templates/compare_games.html:76 templates/game_detail.html:265
 #: templates/system_games.html:75
 msgid "Players"
 msgstr "⟦Þļàýéŕš⟧"
 
 #: routes/ai_fill_bulk.py:44 templates/_modals/edit_modal.html:126
-#: templates/_settings_tabs/data.html:123 templates/base.html:1196
+#: templates/_settings_tabs/data.html:123 templates/base.html:1197
 msgid "Play Modes"
 msgstr "⟦Þļàý Ɱöðéš⟧"
 
 #: routes/ai_fill_bulk.py:45 templates/_bulk_edit_modal.html:106
 #: templates/_modals/edit_modal.html:85 templates/analytics.html:492
-#: templates/analytics.html:2428 templates/base.html:1161
+#: templates/analytics.html:2428 templates/base.html:1162
 #: templates/compare_games.html:75 templates/game_detail.html:819
 #: templates/reports.html:444 templates/reports.html:1140
 msgid "Region"
 msgstr "⟦Ŕéĝìöñ⟧"
 
 #: routes/ai_fill_bulk.py:46 templates/_modals/edit_modal.html:44
-#: templates/base.html:1128
+#: templates/base.html:1129
 msgid "Franchise / Series"
 msgstr "⟦Ƒŕàñçĥìšé / Šéŕìéš⟧"
 
 #: routes/ai_fill_bulk.py:47 templates/_modals/edit_modal.html:56
-#: templates/base.html:1139 templates/compare_games.html:96
+#: templates/base.html:1140 templates/compare_games.html:96
 #: templates/game_detail.html:580
 msgid "Similar Games"
 msgstr "⟦Šìɱìļàŕ Ĝàɱéš⟧"
 
 #: routes/ai_fill_bulk.py:48 templates/_modals/edit_modal.html:222
-#: templates/base.html:1268
+#: templates/base.html:1269
 msgid "Platform Availability"
 msgstr "⟦Þļàţƒöŕɱ Àⱴàìļàƀìļìţý⟧"
 
 #: routes/ai_fill_bulk.py:49 templates/_modals/edit_modal.html:195
-#: templates/base.html:1249 templates/compare_games.html:91
+#: templates/base.html:1250 templates/compare_games.html:91
 msgid "Controller Support"
 msgstr "⟦Çöñţŕöļļéŕ Šüþþöŕţ⟧"
 
 #: routes/ai_fill_bulk.py:50 templates/_modals/edit_modal.html:211
-#: templates/_settings_tabs/data.html:133 templates/base.html:1260
+#: templates/_settings_tabs/data.html:133 templates/base.html:1261
 #: templates/compare_games.html:92
 msgid "Save Type"
 msgstr "⟦Šàⱴé Ţýþé⟧"
 
 #: routes/ai_fill_bulk.py:51 templates/_bulk_edit_modal.html:118
 #: templates/_modals/edit_modal.html:154 templates/_settings_tabs/data.html:93
-#: templates/base.html:1208
+#: templates/base.html:1209
 msgid "Game Structure"
 msgstr "⟦Ĝàɱé Šţŕüçţüŕé⟧"
 
 #: routes/ai_fill_bulk.py:52 templates/_bulk_edit_modal.html:135
 #: templates/_modals/edit_modal.html:167 templates/_settings_tabs/data.html:103
 #: templates/all_games.html:87 templates/analytics.html:199
-#: templates/base.html:1216 templates/compare_games.html:78
+#: templates/base.html:1217 templates/compare_games.html:78
 #: templates/system_games.html:78
 msgid "Perspective"
 msgstr "⟦Þéŕšþéçţìⱴé⟧"
@@ -239,7 +372,7 @@ msgstr "⟦Þéŕšþéçţìⱴé⟧"
 #: routes/ai_fill_bulk.py:53 templates/_bulk_edit_modal.html:151
 #: templates/_modals/edit_modal.html:178 templates/_settings_tabs/data.html:113
 #: templates/all_games.html:90 templates/analytics.html:207
-#: templates/base.html:1224 templates/compare_games.html:79
+#: templates/base.html:1225 templates/compare_games.html:79
 #: templates/system_games.html:81
 msgid "Dimension"
 msgstr "⟦Ðìɱéñšìöñ⟧"
@@ -249,7 +382,7 @@ msgid "Campaign"
 msgstr "⟦Çàɱþàìĝñ⟧"
 
 #: routes/ai_fill_bulk.py:55 templates/_modals/edit_modal.html:61
-#: templates/base.html:1143
+#: templates/base.html:1144
 msgid "Edition"
 msgstr "⟦Éðìţìöñ⟧"
 
@@ -515,11 +648,6 @@ msgstr "⟦Ţàĝ ñàɱé ìš ŕéɋüìŕéð⟧"
 #: routes/collections.py:177 routes/collections.py:215
 msgid "A tag with that name already exists"
 msgstr "⟦À ţàĝ ŵìţĥ ţĥàţ ñàɱé àļŕéàðý éжìšţš⟧"
-
-#: routes/collections.py:194 routes/collections.py:271
-#: routes/collections.py:438 routes/collections.py:679
-msgid "No data provided"
-msgstr "⟦Ñö ðàţà þŕöⱴìðéð⟧"
 
 #: routes/collections.py:202 routes/collections.py:233
 #: routes/collections.py:294 routes/collections.py:359
@@ -1187,10 +1315,6 @@ msgstr "⟦Ìñⱴàļìð %(field)s: %(result)s⟧"
 msgid "Failed to save settings"
 msgstr "⟦Ƒàìļéð ţö šàⱴé šéţţìñĝš⟧"
 
-#: routes/settings.py:553 routes/tools.py:364
-msgid "Permission denied"
-msgstr "⟦Þéŕɱìššìöñ ðéñìéð⟧"
-
 #: routes/settings.py:587 routes/tools.py:284
 #, python-format
 msgid "Unknown setting key: %(key)s"
@@ -1225,6 +1349,10 @@ msgstr "⟦Šţéàɱ çŕéðéñţìàļš ñöţ çöñƒìĝüŕéð⟧"
 #: routes/steam_achievements.py:116
 msgid "Game not found or not a Steam game"
 msgstr "⟦Ĝàɱé ñöţ ƒöüñð öŕ ñöţ à Šţéàɱ ĝàɱé⟧"
+
+#: routes/steam_achievements.py:120 routes/xbox_achievements.py:139
+msgid "Game has no achievements"
+msgstr "⟦Ĝàɱé ĥàš ñö àçĥìéⱴéɱéñţš⟧"
 
 #: routes/systems.py:318
 msgid "System ID required"
@@ -1437,7 +1565,7 @@ msgstr "⟦Ţĥàţ ĝàɱé ìš ñöţ ļìñķéð ţö öţĥéŕ ⱴéŕš�
 msgid "The AI did not give a usable answer. Try again later."
 msgstr "⟦Ţĥé ÀÌ ðìð ñöţ ĝìⱴé à üšàƀļé àñšŵéŕ. Ţŕý àĝàìñ ļàţéŕ.⟧"
 
-#: routes/xbox_achievements.py:126
+#: routes/xbox_achievements.py:126 services/jobs/platform_sync.py:768
 msgid "Xbox credentials not configured"
 msgstr "⟦Жƀöж çŕéðéñţìàļš ñöţ çöñƒìĝüŕéð⟧"
 
@@ -1871,7 +1999,7 @@ msgid "... and {n} more"
 msgstr "⟦... àñð {n} ɱöŕé⟧"
 
 #: services/js_i18n_strings.py:561 templates/_bulk_edit_modal.html:30
-#: templates/base.html:1050
+#: templates/base.html:1051
 msgid "100%"
 msgstr "⟦100%⟧"
 
@@ -2077,7 +2205,7 @@ msgstr "⟦Çàñ ƀé çöɱþļéţéð ŵìţĥ þļàýàƀļé þéŕƒöŕ
 #: templates/_settings_tabs/customization.html:264
 #: templates/achievement_game.html:178 templates/archive_scanner.html:661
 #: templates/archive_scanner.html:798 templates/base.html:340
-#: templates/base.html:358 templates/base.html:1091
+#: templates/base.html:358 templates/base.html:1092
 #: templates/chd_converter.html:170 templates/chd_verify.html:126
 #: templates/game_detail.html:627 templates/login.html:254
 #: templates/museum.html:29 templates/museum_system.html:182
@@ -2177,7 +2305,7 @@ msgstr "⟦Çļìçķ àĝàìñ ţö ŕéɱöⱴé⟧"
 #: templates/_settings_tabs/customization.html:224
 #: templates/archive_scanner.html:749 templates/archive_scanner.html:757
 #: templates/base.html:251 templates/base.html:334 templates/base.html:351
-#: templates/base.html:730 templates/base.html:1007 templates/base.html:1405
+#: templates/base.html:730 templates/base.html:1008 templates/base.html:1406
 #: templates/dashboard.html:37 templates/reports.html:472
 #: templates/systems.html:121 templates/wishlist.html:56
 msgid "Close"
@@ -2201,13 +2329,13 @@ msgid "Complete!"
 msgstr "⟦Çöɱþļéţé!⟧"
 
 #: services/js_i18n_strings.py:632 templates/_bulk_edit_modal.html:29
-#: templates/analytics.html:1664 templates/base.html:1049
+#: templates/analytics.html:1664 templates/base.html:1050
 #: templates/dashboard.html:506 templates/game_detail.html:307
 msgid "Completed"
 msgstr "⟦Çöɱþļéţéð⟧"
 
 #: services/js_i18n_strings.py:633 templates/_bulk_edit_modal.html:23
-#: templates/analytics.html:137 templates/base.html:1044
+#: templates/analytics.html:137 templates/base.html:1045
 msgid "Completion Status"
 msgstr "⟦Çöɱþļéţìöñ Šţàţüš⟧"
 
@@ -2221,7 +2349,7 @@ msgstr "⟦Çöɱþļéţìöñ šţàţüš üþðàţéð⟧"
 
 #: services/js_i18n_strings.py:636 templates/achievement_game.html:172
 #: templates/achievement_game.html:197 templates/achievement_game.html:211
-#: templates/base.html:1086 templates/game_detail.html:621
+#: templates/base.html:1087 templates/game_detail.html:621
 #: templates/game_detail.html:647 templates/game_detail.html:661
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:176
 #: templates/psn_trophy_detail.html:209
@@ -2470,7 +2598,7 @@ msgid "DuckStation ignores cheats in hardcore mode."
 msgstr "⟦ÐüçķŠţàţìöñ ìĝñöŕéš çĥéàţš ìñ ĥàŕðçöŕé ɱöðé.⟧"
 
 #: services/js_i18n_strings.py:693 templates/_settings_tabs/account.html:342
-#: templates/base.html:1005 templates/game_detail.html:135
+#: templates/base.html:1006 templates/game_detail.html:135
 #: templates/wishlist.html:641
 msgid "Edit"
 msgstr "⟦Éðìţ⟧"
@@ -2579,7 +2707,7 @@ msgid "Error updating status"
 msgstr "⟦Éŕŕöŕ üþðàţìñĝ šţàţüš⟧"
 
 #: services/js_i18n_strings.py:711 templates/_modals/edit_modal.html:228
-#: templates/base.html:1281 templates/game_detail.html:4220
+#: templates/base.html:1282 templates/game_detail.html:4220
 #: templates/game_detail.html:4231
 msgid "Exclusive"
 msgstr "⟦Éжçļüšìⱴé⟧"
@@ -2856,7 +2984,7 @@ msgstr "⟦Ìɱþöŕţìñĝ…⟧"
 #: services/js_i18n_strings.py:774 templates/_bulk_edit_modal.html:27
 #: templates/achievements_system.html:135
 #: templates/achievements_system.html:190 templates/analytics.html:1664
-#: templates/base.html:1047 templates/dashboard.html:362
+#: templates/base.html:1048 templates/dashboard.html:362
 #: templates/dashboard.html:502 templates/game_detail.html:305
 #: templates/steam_achievements.html:77 templates/xbox_achievements.html:77
 msgid "In Progress"
@@ -2968,7 +3096,7 @@ msgstr "⟦Ļööķìñĝ ƒöŕ ⱴéŕšìöñš…⟧"
 
 #: services/js_i18n_strings.py:799 templates/achievement_game.html:168
 #: templates/achievement_game.html:197 templates/achievement_game.html:207
-#: templates/base.html:1082 templates/game_detail.html:617
+#: templates/base.html:1083 templates/game_detail.html:617
 #: templates/game_detail.html:647 templates/game_detail.html:657
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:172
 #: templates/psn_trophy_detail.html:205
@@ -2981,7 +3109,7 @@ msgstr "⟦Ɱàìñ + Éжţŕàš⟧"
 
 #: services/js_i18n_strings.py:800 templates/achievement_game.html:164
 #: templates/achievement_game.html:197 templates/achievement_game.html:203
-#: templates/base.html:1078 templates/game_detail.html:613
+#: templates/base.html:1079 templates/game_detail.html:613
 #: templates/game_detail.html:647 templates/game_detail.html:653
 #: templates/local_trophy_detail.html:175 templates/psn_trophy_detail.html:168
 #: templates/psn_trophy_detail.html:201
@@ -3186,7 +3314,7 @@ msgstr "⟦Ñöţ ðöŵñļöàðéð⟧"
 msgid "Not versions"
 msgstr "⟦Ñöţ ⱴéŕšìöñš⟧"
 
-#: services/js_i18n_strings.py:847 templates/base.html:1441
+#: services/js_i18n_strings.py:847 templates/base.html:1442
 msgid "Now playing"
 msgstr "⟦Ñöŵ þļàýìñĝ⟧"
 
@@ -3260,7 +3388,7 @@ msgid "Play"
 msgstr "⟦Þļàý⟧"
 
 #: services/js_i18n_strings.py:864 templates/_bulk_edit_modal.html:28
-#: templates/analytics.html:1664 templates/base.html:1048
+#: templates/analytics.html:1664 templates/base.html:1049
 #: templates/dashboard.html:504 templates/game_detail.html:306
 msgid "Played"
 msgstr "⟦Þļàýéð⟧"
@@ -3436,10 +3564,6 @@ msgstr "⟦Ŕéšöļüţìöñ šçàļé⟧"
 #: services/js_i18n_strings.py:902
 msgid "Restarting server..."
 msgstr "⟦Ŕéšţàŕţìñĝ šéŕⱴéŕ...⟧"
-
-#: services/js_i18n_strings.py:903 templates/archive_scanner.html:1623
-msgid "Resume"
-msgstr "⟦Ŕéšüɱé⟧"
 
 #: services/js_i18n_strings.py:904
 msgid "RetroArch cheats (libretro)"
@@ -3726,7 +3850,7 @@ msgid "Signing in…"
 msgstr "⟦Šìĝñìñĝ ìñ…⟧"
 
 #: services/js_i18n_strings.py:970 templates/_modals/edit_modal.html:50
-#: templates/base.html:1134 templates/game_detail.html:4258
+#: templates/base.html:1135 templates/game_detail.html:4258
 #: templates/game_detail.html:4269
 msgid "Standalone"
 msgstr "⟦Šţàñðàļöñé⟧"
@@ -3955,12 +4079,6 @@ msgstr "⟦Üñéжþéçţéð éŕŕöŕ: {error}⟧"
 #, python-brace-format
 msgid "Unhandled rejection: {error}"
 msgstr "⟦Üñĥàñðļéð ŕéĵéçţìöñ: {error}⟧"
-
-#: services/js_i18n_strings.py:1022 templates/analytics.html:583
-#: templates/base.html:1238 templates/local_trophy_detail.html:220
-#: templates/local_trophy_detail.html:224
-msgid "Unknown"
-msgstr "⟦Üñķñöŵñ⟧"
 
 #: services/js_i18n_strings.py:1023 templates/rom_tools_settings.html:578
 #: templates/settings.html:1967
@@ -4332,6 +4450,38 @@ msgstr "⟦Ŕüñ %(name)s öñçé šö ìţ çŕéàţéš ìţš šéţţìñ
 msgid "The player has no core for this system."
 msgstr "⟦Ţĥé þļàýéŕ ĥàš ñö çöŕé ƒöŕ ţĥìš šýšţéɱ.⟧"
 
+#: services/jobs/platform_sync.py:368 services/jobs/platform_sync.py:677
+msgid "Sync already running"
+msgstr "⟦Šýñç àļŕéàðý ŕüññìñĝ⟧"
+
+#: services/jobs/platform_sync.py:373
+msgid "Steam sync is already running on another worker process."
+msgstr "⟦Šţéàɱ šýñç ìš àļŕéàðý ŕüññìñĝ öñ àñöţĥéŕ ŵöŕķéŕ þŕöçéšš.⟧"
+
+#: services/jobs/platform_sync.py:391 services/jobs/platform_sync.py:700
+msgid "No running sync to cancel"
+msgstr "⟦Ñö ŕüññìñĝ šýñç ţö çàñçéļ⟧"
+
+#: services/jobs/platform_sync.py:485
+msgid "Steam API key or Steam ID not configured"
+msgstr "⟦Šţéàɱ ÀÞÌ ķéý öŕ Šţéàɱ ÌÐ ñöţ çöñƒìĝüŕéð⟧"
+
+#: services/jobs/platform_sync.py:504
+msgid "No Steam games found to sync"
+msgstr "⟦Ñö Šţéàɱ ĝàɱéš ƒöüñð ţö šýñç⟧"
+
+#: services/jobs/platform_sync.py:682
+msgid "Xbox sync is already running on another worker process."
+msgstr "⟦Жƀöж šýñç ìš àļŕéàðý ŕüññìñĝ öñ àñöţĥéŕ ŵöŕķéŕ þŕöçéšš.⟧"
+
+#: services/jobs/platform_sync.py:777
+msgid "Xbox authentication failed — please re-connect your Xbox account"
+msgstr "⟦Жƀöж àüţĥéñţìçàţìöñ ƒàìļéð — þļéàšé ŕé-çöññéçţ ýöüŕ Жƀöж àççöüñţ⟧"
+
+#: services/jobs/platform_sync.py:828
+msgid "No Xbox games found to sync"
+msgstr "⟦Ñö Жƀöж ĝàɱéš ƒöüñð ţö šýñç⟧"
+
 #: templates/_bulk_edit_modal.html:7
 msgid "Bulk Edit"
 msgstr "⟦Ɓüļķ Éðìţ⟧"
@@ -4346,7 +4496,7 @@ msgid "Only fields changed from \"Don't change\" will be updated."
 msgstr "⟦Öñļý ƒìéļðš çĥàñĝéð ƒŕöɱ \"Ðöñ'ţ çĥàñĝé\" ŵìļļ ƀé üþðàţéð.⟧"
 
 #: templates/_bulk_edit_modal.html:26 templates/achievements_system.html:191
-#: templates/analytics.html:1664 templates/base.html:1046
+#: templates/analytics.html:1664 templates/base.html:1047
 #: templates/dashboard.html:500 templates/game_detail.html:304
 #: templates/steam_achievements.html:78 templates/xbox_achievements.html:78
 msgid "Not Started"
@@ -4370,23 +4520,23 @@ msgid "ESRB Rating"
 msgstr "⟦ÉŠŔƁ Ŕàţìñĝ⟧"
 
 #: templates/_bulk_edit_modal.html:84 templates/_modals/edit_modal.html:245
-#: templates/base.html:1291
+#: templates/base.html:1292
 msgid "E - Everyone"
 msgstr "⟦É - Éⱴéŕýöñé⟧"
 
 #: templates/_bulk_edit_modal.html:85 templates/_modals/edit_modal.html:246
-#: templates/base.html:1292
+#: templates/base.html:1293
 msgid "E10+ - Everyone 10+"
 msgstr "⟦É10+ - Éⱴéŕýöñé 10+⟧"
 
 #: templates/_bulk_edit_modal.html:86 templates/_modals/edit_modal.html:247
-#: templates/base.html:1293
+#: templates/base.html:1294
 msgid "T - Teen"
 msgstr "⟦Ţ - Ţééñ⟧"
 
 #: templates/_bulk_edit_modal.html:87 templates/_modals/edit_modal.html:248
-#: templates/_modals/edit_modal.html:292 templates/base.html:1294
-#: templates/base.html:1338
+#: templates/_modals/edit_modal.html:292 templates/base.html:1295
+#: templates/base.html:1339
 msgid "M - Mature"
 msgstr "⟦Ɱ - Ɱàţüŕé⟧"
 
@@ -4414,7 +4564,7 @@ msgstr "⟦ÞÉĜÌ 16⟧"
 msgid "PEGI 18"
 msgstr "⟦ÞÉĜÌ 18⟧"
 
-#: templates/_bulk_edit_modal.html:177 templates/base.html:976
+#: templates/_bulk_edit_modal.html:177 templates/base.html:977
 #: templates/compare_games.html:74 templates/local_trophy_detail.html:105
 #: templates/psn_trophy_detail.html:100
 msgid "Franchise"
@@ -4506,7 +4656,7 @@ msgstr "⟦Çĥéçķ ýöüŕ ŔéţŕöÀçĥìéⱴéɱéñţš çŕéðéñ�
 msgid "How Long to Beat"
 msgstr "⟦Ĥöŵ Ļöñĝ ţö Ɓéàţ⟧"
 
-#: templates/achievement_game.html:153 templates/base.html:1059
+#: templates/achievement_game.html:153 templates/base.html:1060
 #: templates/game_detail.html:602 templates/psn_trophy_detail.html:157
 #: templates/psn_trophy_detail.html:317
 #: templates/steam_achievement_game.html:126
@@ -4514,7 +4664,7 @@ msgstr "⟦Ĥöŵ Ļöñĝ ţö Ɓéàţ⟧"
 msgid "Search game title..."
 msgstr "⟦Šéàŕçĥ ĝàɱé ţìţļé...⟧"
 
-#: templates/achievement_game.html:156 templates/base.html:1062
+#: templates/achievement_game.html:156 templates/base.html:1063
 #: templates/game_detail.html:605 templates/local_trophy_detail.html:193
 #: templates/psn_trophy_detail.html:160
 #: templates/steam_achievement_game.html:127
@@ -4523,7 +4673,7 @@ msgid "Lookup HLTB"
 msgstr "⟦Ļööķüþ ĤĻŢƁ⟧"
 
 #: templates/_settings_tabs/account.html:74 templates/achievement_game.html:177
-#: templates/achievement_game.html:253 templates/base.html:1090
+#: templates/achievement_game.html:253 templates/base.html:1091
 #: templates/game_detail.html:626 templates/local_trophy_detail.html:223
 #: templates/psn_trophy_detail.html:181 templates/psn_trophy_detail.html:270
 #: templates/settings_emulators.html:60 templates/settings_emulators.html:275
@@ -4533,7 +4683,7 @@ msgid "Save"
 msgstr "⟦Šàⱴé⟧"
 
 #: templates/achievement_game.html:217 templates/all_games.html:113
-#: templates/base.html:1103 templates/duplicate_finder.html:301
+#: templates/base.html:1104 templates/duplicate_finder.html:301
 #: templates/game_detail.html:131 templates/game_detail.html:667
 #: templates/local_trophy_detail.html:185 templates/psn_trophy_detail.html:214
 #: templates/reports.html:277 templates/screenshot_dedup.html:325
@@ -5089,7 +5239,7 @@ msgid "Developers"
 msgstr "⟦Ðéⱴéļöþéŕš⟧"
 
 #: templates/_modals/edit_modal.html:112 templates/analytics.html:13
-#: templates/base.html:1034 templates/base.html:1185
+#: templates/base.html:1035 templates/base.html:1186
 msgid "Gameplay"
 msgstr "⟦Ĝàɱéþļàý⟧"
 
@@ -5353,7 +5503,7 @@ msgstr "⟦Ƒìéļð Çöɱþļéţéñéšš⟧"
 #: templates/_settings_tabs/customization.html:193
 #: templates/_settings_tabs/customization.html:259 templates/analytics.html:479
 #: templates/analytics.html:2428 templates/base.html:268
-#: templates/base.html:1392 templates/compare_games.html:97
+#: templates/base.html:1393 templates/compare_games.html:97
 #: templates/settings_emulators.html:258
 msgid "Description"
 msgstr "⟦Ðéšçŕìþţìöñ⟧"
@@ -6065,7 +6215,7 @@ msgstr "⟦Çöñƒìĝüŕàţìöñ⟧"
 msgid "Log Viewer"
 msgstr "⟦Ļöĝ Ѵìéŵéŕ⟧"
 
-#: templates/base.html:198 templates/base.html:1036
+#: templates/base.html:198 templates/base.html:1037
 msgid "Info"
 msgstr "⟦Ìñƒö⟧"
 
@@ -6161,254 +6311,254 @@ msgstr "⟦Ɋüéüé Ɱàñàĝéŕ⟧"
 msgid "Close queue manager"
 msgstr "⟦Çļöšé ɋüéüé ɱàñàĝéŕ⟧"
 
-#: templates/base.html:940
+#: templates/base.html:941
 msgid "Game details"
 msgstr "⟦Ĝàɱé ðéţàìļš⟧"
 
-#: templates/base.html:941
+#: templates/base.html:942
 msgid "Close game details"
 msgstr "⟦Çļöšé ĝàɱé ðéţàìļš⟧"
 
-#: templates/base.html:946
+#: templates/base.html:947
 msgid "Loading game details..."
 msgstr "⟦Ļöàðìñĝ ĝàɱé ðéţàìļš...⟧"
 
-#: templates/base.html:989 templates/game_detail.html:552
+#: templates/base.html:990 templates/game_detail.html:552
 msgid "Your browser does not support the video tag."
 msgstr "⟦Ýöüŕ ƀŕöŵšéŕ ðöéš ñöţ šüþþöŕţ ţĥé ⱴìðéö ţàĝ.⟧"
 
-#: templates/base.html:996
+#: templates/base.html:997
 msgid "View Full Page"
 msgstr "⟦Ѵìéŵ Ƒüļļ Þàĝé⟧"
 
-#: templates/base.html:998 templates/game_detail.html:139
+#: templates/base.html:999 templates/game_detail.html:139
 msgid "Fill missing metadata with AI"
 msgstr "⟦Ƒìļļ ɱìššìñĝ ɱéţàðàţà ŵìţĥ ÀÌ⟧"
 
-#: templates/base.html:999 templates/game_detail.html:141
+#: templates/base.html:1000 templates/game_detail.html:141
 msgid "AI Fill"
 msgstr "⟦ÀÌ Ƒìļļ⟧"
 
-#: templates/base.html:1002 templates/game_detail.html:146
+#: templates/base.html:1003 templates/game_detail.html:146
 msgid "Scrape"
 msgstr "⟦Šçŕàþé⟧"
 
-#: templates/_modals/screenshot_modal.html:2 templates/base.html:1014
+#: templates/_modals/screenshot_modal.html:2 templates/base.html:1015
 msgid "Screenshot viewer"
 msgstr "⟦Šçŕééñšĥöţ ⱴìéŵéŕ⟧"
 
-#: templates/_modals/screenshot_modal.html:3 templates/base.html:1015
+#: templates/_modals/screenshot_modal.html:3 templates/base.html:1016
 msgid "Close screenshot viewer"
 msgstr "⟦Çļöšé šçŕééñšĥöţ ⱴìéŵéŕ⟧"
 
-#: templates/_modals/screenshot_modal.html:4 templates/base.html:1016
+#: templates/_modals/screenshot_modal.html:4 templates/base.html:1017
 msgid "Previous screenshot"
 msgstr "⟦Þŕéⱴìöüš šçŕééñšĥöţ⟧"
 
-#: templates/base.html:1017
+#: templates/base.html:1018
 msgid "Screenshot"
 msgstr "⟦Šçŕééñšĥöţ⟧"
 
-#: templates/_modals/screenshot_modal.html:6 templates/base.html:1018
+#: templates/_modals/screenshot_modal.html:6 templates/base.html:1019
 msgid "Next screenshot"
 msgstr "⟦Ñéжţ šçŕééñšĥöţ⟧"
 
-#: templates/base.html:1019
+#: templates/base.html:1020
 msgid "Use &#8592; &#8594; arrow keys to navigate &bull; ESC to close"
 msgstr "⟦Üšé &#8592; &#8594; àŕŕöŵ ķéýš ţö ñàⱴìĝàţé &ƀüļļ; ÉŠÇ ţö çļöšé⟧"
 
-#: templates/_modals/edit_modal.html:7 templates/base.html:1026
+#: templates/_modals/edit_modal.html:7 templates/base.html:1027
 msgid "Close edit modal"
 msgstr "⟦Çļöšé éðìţ ɱöðàļ⟧"
 
-#: templates/base.html:1029
+#: templates/base.html:1030
 msgid "Edit Game"
 msgstr "⟦Éðìţ Ĝàɱé⟧"
 
-#: templates/base.html:1030
+#: templates/base.html:1031
 msgid "Edit game sections"
 msgstr "⟦Éðìţ ĝàɱé šéçţìöñš⟧"
 
-#: templates/base.html:1031
+#: templates/base.html:1032
 msgid "Quick"
 msgstr "⟦Ɋüìçķ⟧"
 
-#: templates/_modals/edit_modal.html:25 templates/base.html:1032
-#: templates/base.html:1110
+#: templates/_modals/edit_modal.html:25 templates/base.html:1033
+#: templates/base.html:1111
 msgid "Identity"
 msgstr "⟦Ìðéñţìţý⟧"
 
-#: templates/base.html:1033
+#: templates/base.html:1034
 msgid "Release"
 msgstr "⟦Ŕéļéàšé⟧"
 
-#: templates/_modals/edit_modal.html:192 templates/base.html:1035
-#: templates/base.html:1246
+#: templates/_modals/edit_modal.html:192 templates/base.html:1036
+#: templates/base.html:1247
 msgid "Technical"
 msgstr "⟦Ţéçĥñìçàļ⟧"
 
-#: templates/base.html:1042
+#: templates/base.html:1043
 msgid "Quick edit"
 msgstr "⟦Ɋüìçķ éðìţ⟧"
 
-#: templates/base.html:1055
+#: templates/base.html:1056
 msgid "HowLongToBeat"
 msgstr "⟦ĤöŵĻöñĝŢöƁéàţ⟧"
 
-#: templates/base.html:1069
+#: templates/base.html:1070
 msgid "Searching HowLongToBeat..."
 msgstr "⟦Šéàŕçĥìñĝ ĤöŵĻöñĝŢöƁéàţ...⟧"
 
-#: templates/base.html:1100 templates/local_trophy_detail.html:189
+#: templates/base.html:1101 templates/local_trophy_detail.html:189
 msgid "No playtime data"
 msgstr "⟦Ñö þļàýţìɱé ðàţà⟧"
 
 #: templates/_modals/edit_modal.html:28 templates/_modals/filter_modal.html:13
-#: templates/base.html:1113 templates/dashboard.html:329
+#: templates/base.html:1114 templates/dashboard.html:329
 #: templates/dashboard.html:388 templates/dashboard.html:465
 #: templates/dashboard.html:531 templates/game_detail.html:820
 #: templates/reports.html:1141
 msgid "Title"
 msgstr "⟦Ţìţļé⟧"
 
-#: templates/_modals/edit_modal.html:32 templates/base.html:1117
+#: templates/_modals/edit_modal.html:32 templates/base.html:1118
 msgid "Keep this title when scraping"
 msgstr "⟦Ķééþ ţĥìš ţìţļé ŵĥéñ šçŕàþìñĝ⟧"
 
-#: templates/_modals/edit_modal.html:36 templates/base.html:1121
+#: templates/_modals/edit_modal.html:36 templates/base.html:1122
 msgid "Sort Title"
 msgstr "⟦Šöŕţ Ţìţļé⟧"
 
-#: templates/_modals/edit_modal.html:38 templates/base.html:1123
+#: templates/_modals/edit_modal.html:38 templates/base.html:1124
 msgid "Auto-generated from title"
 msgstr "⟦Àüţö-ĝéñéŕàţéð ƒŕöɱ ţìţļé⟧"
 
-#: templates/_modals/edit_modal.html:47 templates/base.html:1131
+#: templates/_modals/edit_modal.html:47 templates/base.html:1132
 msgid "Toggle franchise status"
 msgstr "⟦Ţöĝĝļé ƒŕàñçĥìšé šţàţüš⟧"
 
-#: templates/_modals/edit_modal.html:52 templates/base.html:1136
+#: templates/_modals/edit_modal.html:52 templates/base.html:1137
 msgid "e.g., Final Fantasy, Crash Bandicoot"
 msgstr "⟦é.ĝ., Ƒìñàļ Ƒàñţàšý, Çŕàšĥ Ɓàñðìçööţ⟧"
 
-#: templates/_modals/edit_modal.html:57 templates/base.html:1140
+#: templates/_modals/edit_modal.html:57 templates/base.html:1141
 msgid "Game 1, Game 2, Game 3"
 msgstr "⟦Ĝàɱé 1, Ĝàɱé 2, Ĝàɱé 3⟧"
 
-#: templates/base.html:1144
+#: templates/base.html:1145
 msgid "Standard, Collector&#39;s, GOTY"
 msgstr "⟦Šţàñðàŕð, Çöļļéçţöŕ&#39;š, ĜÖŢÝ⟧"
 
-#: templates/base.html:1150
+#: templates/base.html:1151
 msgid "Release info"
 msgstr "⟦Ŕéļéàšé ìñƒö⟧"
 
-#: templates/base.html:1155
+#: templates/base.html:1156
 msgid "YYYY-MM-DD"
 msgstr "⟦ÝÝÝÝ-ⱮⱮ-ÐÐ⟧"
 
-#: templates/_modals/edit_modal.html:80 templates/base.html:1157
+#: templates/_modals/edit_modal.html:80 templates/base.html:1158
 msgid "Pick date"
 msgstr "⟦Þìçķ ðàţé⟧"
 
-#: templates/_modals/edit_modal.html:87 templates/base.html:1163
+#: templates/_modals/edit_modal.html:87 templates/base.html:1164
 msgid "— Select —"
 msgstr "⟦— Šéļéçţ —⟧"
 
-#: templates/_modals/edit_modal.html:95 templates/base.html:1171
+#: templates/_modals/edit_modal.html:95 templates/base.html:1172
 msgid "Sony, Nintendo"
 msgstr "⟦Šöñý, Ñìñţéñðö⟧"
 
-#: templates/base.html:1175
+#: templates/base.html:1176
 msgid "Naughty Dog, Insomniac"
 msgstr "⟦Ñàüĝĥţý Ðöĝ, Ìñšöɱñìàç⟧"
 
-#: templates/_modals/edit_modal.html:106 templates/base.html:1179
+#: templates/_modals/edit_modal.html:106 templates/base.html:1180
 msgid "Lifetime copies sold on this system, from published sales figures"
 msgstr "⟦Ļìƒéţìɱé çöþìéš šöļð öñ ţĥìš šýšţéɱ, ƒŕöɱ þüƀļìšĥéð šàļéš ƒìĝüŕéš⟧"
 
-#: templates/_modals/edit_modal.html:119 templates/base.html:1191
+#: templates/_modals/edit_modal.html:119 templates/base.html:1192
 msgid "Add genre"
 msgstr "⟦Àðð ĝéñŕé⟧"
 
-#: templates/_modals/edit_modal.html:120 templates/base.html:1192
+#: templates/_modals/edit_modal.html:120 templates/base.html:1193
 msgid "+ Add genre..."
 msgstr "⟦+ Àðð ĝéñŕé...⟧"
 
-#: templates/_modals/edit_modal.html:130 templates/base.html:1199
+#: templates/_modals/edit_modal.html:130 templates/base.html:1200
 msgid "Add play mode"
 msgstr "⟦Àðð þļàý ɱöðé⟧"
 
-#: templates/_modals/edit_modal.html:131 templates/base.html:1200
+#: templates/_modals/edit_modal.html:131 templates/base.html:1201
 msgid "+ Add mode..."
 msgstr "⟦+ Àðð ɱöðé...⟧"
 
-#: templates/_modals/edit_modal.html:160 templates/base.html:1211
+#: templates/_modals/edit_modal.html:160 templates/base.html:1212
 msgid "Add game structure"
 msgstr "⟦Àðð ĝàɱé šţŕüçţüŕé⟧"
 
-#: templates/_modals/edit_modal.html:161 templates/base.html:1212
+#: templates/_modals/edit_modal.html:161 templates/base.html:1213
 msgid "+ Add structure..."
 msgstr "⟦+ Àðð šţŕüçţüŕé...⟧"
 
-#: templates/_modals/edit_modal.html:171 templates/base.html:1219
+#: templates/_modals/edit_modal.html:171 templates/base.html:1220
 msgid "Add perspective"
 msgstr "⟦Àðð þéŕšþéçţìⱴé⟧"
 
-#: templates/_modals/edit_modal.html:172 templates/base.html:1220
+#: templates/_modals/edit_modal.html:172 templates/base.html:1221
 msgid "+ Add perspective..."
 msgstr "⟦+ Àðð þéŕšþéçţìⱴé...⟧"
 
-#: templates/_modals/edit_modal.html:182 templates/base.html:1227
+#: templates/_modals/edit_modal.html:182 templates/base.html:1228
 msgid "Add dimension"
 msgstr "⟦Àðð ðìɱéñšìöñ⟧"
 
-#: templates/_modals/edit_modal.html:183 templates/base.html:1228
+#: templates/_modals/edit_modal.html:183 templates/base.html:1229
 msgid "+ Add dimension..."
 msgstr "⟦+ Àðð ðìɱéñšìöñ...⟧"
 
-#: templates/_modals/edit_modal.html:141 templates/base.html:1232
+#: templates/_modals/edit_modal.html:141 templates/base.html:1233
 msgid "Campaign Mode"
 msgstr "⟦Çàɱþàìĝñ Ɱöðé⟧"
 
-#: templates/_modals/edit_modal.html:145 templates/base.html:1235
+#: templates/_modals/edit_modal.html:145 templates/base.html:1236
 msgid "Toggle campaign mode"
 msgstr "⟦Ţöĝĝļé çàɱþàìĝñ ɱöðé⟧"
 
-#: templates/_modals/edit_modal.html:199 templates/base.html:1253
+#: templates/_modals/edit_modal.html:199 templates/base.html:1254
 msgid "Add controller"
 msgstr "⟦Àðð çöñţŕöļļéŕ⟧"
 
-#: templates/_modals/edit_modal.html:200 templates/base.html:1254
+#: templates/_modals/edit_modal.html:200 templates/base.html:1255
 msgid "+ Add controller..."
 msgstr "⟦+ Àðð çöñţŕöļļéŕ...⟧"
 
-#: templates/_modals/edit_modal.html:204 templates/base.html:1256
+#: templates/_modals/edit_modal.html:204 templates/base.html:1257
 msgid "Custom controller name"
 msgstr "⟦Çüšţöɱ çöñţŕöļļéŕ ñàɱé⟧"
 
-#: templates/base.html:1256
+#: templates/base.html:1257
 msgid "Or type custom..."
 msgstr "⟦Öŕ ţýþé çüšţöɱ...⟧"
 
-#: templates/_modals/edit_modal.html:215 templates/base.html:1263
+#: templates/_modals/edit_modal.html:215 templates/base.html:1264
 msgid "Add save type"
 msgstr "⟦Àðð šàⱴé ţýþé⟧"
 
-#: templates/_modals/edit_modal.html:216 templates/base.html:1264
+#: templates/_modals/edit_modal.html:216 templates/base.html:1265
 msgid "+ Add save type..."
 msgstr "⟦+ Àðð šàⱴé ţýþé...⟧"
 
-#: templates/_modals/edit_modal.html:225 templates/base.html:1278
+#: templates/_modals/edit_modal.html:225 templates/base.html:1279
 msgid "Toggle platform exclusivity"
 msgstr "⟦Ţöĝĝļé þļàţƒöŕɱ éжçļüšìⱴìţý⟧"
 
-#: templates/base.html:1283
+#: templates/base.html:1284
 msgid "Xbox 360, PC, Switch"
 msgstr "⟦Жƀöж 360, ÞÇ, Šŵìţçĥ⟧"
 
 #: templates/_modals/edit_modal.html:241
-#: templates/_settings_tabs/library.html:156 templates/base.html:1287
+#: templates/_settings_tabs/library.html:156 templates/base.html:1288
 msgid "ESRB (North America)"
 msgstr "⟦ÉŠŔƁ (Ñöŕţĥ Àɱéŕìçà)⟧"
 
@@ -6416,138 +6566,138 @@ msgstr "⟦ÉŠŔƁ (Ñöŕţĥ Àɱéŕìçà)⟧"
 #: templates/_modals/edit_modal.html:267 templates/_modals/edit_modal.html:278
 #: templates/_modals/edit_modal.html:289 templates/_modals/edit_modal.html:300
 #: templates/_modals/edit_modal.html:314 templates/_modals/edit_modal.html:324
-#: templates/_modals/edit_modal.html:336 templates/base.html:1289
-#: templates/base.html:1302 templates/base.html:1313 templates/base.html:1324
-#: templates/base.html:1335 templates/base.html:1346 templates/base.html:1360
-#: templates/base.html:1370 templates/base.html:1382
+#: templates/_modals/edit_modal.html:336 templates/base.html:1290
+#: templates/base.html:1303 templates/base.html:1314 templates/base.html:1325
+#: templates/base.html:1336 templates/base.html:1347 templates/base.html:1361
+#: templates/base.html:1371 templates/base.html:1383
 msgid "-- None --"
 msgstr "⟦-- Ñöñé --⟧"
 
-#: templates/_modals/edit_modal.html:244 templates/base.html:1290
+#: templates/_modals/edit_modal.html:244 templates/base.html:1291
 msgid "EC - Early Childhood"
 msgstr "⟦ÉÇ - Éàŕļý Çĥìļðĥööð⟧"
 
-#: templates/_modals/edit_modal.html:249 templates/base.html:1295
+#: templates/_modals/edit_modal.html:249 templates/base.html:1296
 msgid "AO - Adults Only"
 msgstr "⟦ÀÖ - Àðüļţš Öñļý⟧"
 
-#: templates/_modals/edit_modal.html:250 templates/base.html:1296
+#: templates/_modals/edit_modal.html:250 templates/base.html:1297
 msgid "RP - Rating Pending"
 msgstr "⟦ŔÞ - Ŕàţìñĝ Þéñðìñĝ⟧"
 
 #: templates/_modals/edit_modal.html:254
-#: templates/_settings_tabs/library.html:157 templates/base.html:1300
+#: templates/_settings_tabs/library.html:157 templates/base.html:1301
 msgid "PEGI (Europe)"
 msgstr "⟦ÞÉĜÌ (Éüŕöþé)⟧"
 
 #: templates/_modals/edit_modal.html:265
-#: templates/_settings_tabs/library.html:158 templates/base.html:1311
+#: templates/_settings_tabs/library.html:158 templates/base.html:1312
 msgid "CERO (Japan)"
 msgstr "⟦ÇÉŔÖ (Ĵàþàñ)⟧"
 
 #: templates/_modals/edit_modal.html:268 templates/_modals/edit_modal.html:301
-#: templates/base.html:1314 templates/base.html:1347
+#: templates/base.html:1315 templates/base.html:1348
 msgid "A - All Ages"
 msgstr "⟦À - Àļļ Àĝéš⟧"
 
-#: templates/_modals/edit_modal.html:269 templates/base.html:1315
+#: templates/_modals/edit_modal.html:269 templates/base.html:1316
 msgid "B - Ages 12+"
 msgstr "⟦Ɓ - Àĝéš 12+⟧"
 
-#: templates/_modals/edit_modal.html:270 templates/base.html:1316
+#: templates/_modals/edit_modal.html:270 templates/base.html:1317
 msgid "C - Ages 15+"
 msgstr "⟦Ç - Àĝéš 15+⟧"
 
-#: templates/_modals/edit_modal.html:271 templates/base.html:1317
+#: templates/_modals/edit_modal.html:271 templates/base.html:1318
 msgid "D - Ages 17+"
 msgstr "⟦Ð - Àĝéš 17+⟧"
 
-#: templates/_modals/edit_modal.html:272 templates/base.html:1318
+#: templates/_modals/edit_modal.html:272 templates/base.html:1319
 msgid "Z - Ages 18+"
 msgstr "⟦Ž - Àĝéš 18+⟧"
 
 #: templates/_modals/edit_modal.html:276
-#: templates/_settings_tabs/library.html:159 templates/base.html:1322
+#: templates/_settings_tabs/library.html:159 templates/base.html:1323
 msgid "USK (Germany)"
 msgstr "⟦ÜŠĶ (Ĝéŕɱàñý)⟧"
 
 #: templates/_modals/edit_modal.html:287
-#: templates/_settings_tabs/library.html:160 templates/base.html:1333
+#: templates/_settings_tabs/library.html:160 templates/base.html:1334
 msgid "ACB (Australia)"
 msgstr "⟦ÀÇƁ (Àüšţŕàļìà)⟧"
 
-#: templates/_modals/edit_modal.html:290 templates/base.html:1336
+#: templates/_modals/edit_modal.html:290 templates/base.html:1337
 msgid "G - General"
 msgstr "⟦Ĝ - Ĝéñéŕàļ⟧"
 
 #: templates/_modals/edit_modal.html:291 templates/_modals/edit_modal.html:302
-#: templates/base.html:1337
+#: templates/base.html:1338
 msgid "PG - Parental Guidance"
 msgstr "⟦ÞĜ - Þàŕéñţàļ Ĝüìðàñçé⟧"
 
-#: templates/_modals/edit_modal.html:293 templates/base.html:1339
+#: templates/_modals/edit_modal.html:293 templates/base.html:1340
 msgid "MA15+ - Restricted"
 msgstr "⟦ⱮÀ15+ - Ŕéšţŕìçţéð⟧"
 
-#: templates/_modals/edit_modal.html:294 templates/base.html:1340
+#: templates/_modals/edit_modal.html:294 templates/base.html:1341
 msgid "R18+ - Restricted"
 msgstr "⟦Ŕ18+ - Ŕéšţŕìçţéð⟧"
 
 #: templates/_modals/edit_modal.html:298
-#: templates/_settings_tabs/library.html:161 templates/base.html:1344
+#: templates/_settings_tabs/library.html:161 templates/base.html:1345
 msgid "FPB (South Africa)"
 msgstr "⟦ƑÞƁ (Šöüţĥ Àƒŕìçà)⟧"
 
 #: templates/_modals/edit_modal.html:312
-#: templates/_settings_tabs/library.html:162 templates/base.html:1358
+#: templates/_settings_tabs/library.html:162 templates/base.html:1359
 msgid "GRAC (South Korea)"
 msgstr "⟦ĜŔÀÇ (Šöüţĥ Ķöŕéà)⟧"
 
-#: templates/_modals/edit_modal.html:315 templates/base.html:1361
+#: templates/_modals/edit_modal.html:315 templates/base.html:1362
 msgid "ALL - All Ages"
 msgstr "⟦ÀĻĻ - Àļļ Àĝéš⟧"
 
 #: templates/_modals/edit_modal.html:322
-#: templates/_settings_tabs/library.html:163 templates/base.html:1368
+#: templates/_settings_tabs/library.html:163 templates/base.html:1369
 msgid "ClassInd (Brazil)"
 msgstr "⟦ÇļàššÌñð (Ɓŕàžìļ)⟧"
 
-#: templates/_modals/edit_modal.html:325 templates/base.html:1371
+#: templates/_modals/edit_modal.html:325 templates/base.html:1372
 msgid "L - General"
 msgstr "⟦Ļ - Ĝéñéŕàļ⟧"
 
 #: templates/_modals/edit_modal.html:334
-#: templates/_settings_tabs/library.html:164 templates/base.html:1380
+#: templates/_settings_tabs/library.html:164 templates/base.html:1381
 msgid "CADPA (China)"
 msgstr "⟦ÇÀÐÞÀ (Çĥìñà)⟧"
 
-#: templates/_modals/edit_modal.html:337 templates/base.html:1383
+#: templates/_modals/edit_modal.html:337 templates/base.html:1384
 msgid "8+ - Ages 8 and up"
 msgstr "⟦8+ - Àĝéš 8 àñð üþ⟧"
 
-#: templates/_modals/edit_modal.html:338 templates/base.html:1384
+#: templates/_modals/edit_modal.html:338 templates/base.html:1385
 msgid "12+ - Ages 12 and up"
 msgstr "⟦12+ - Àĝéš 12 àñð üþ⟧"
 
-#: templates/_modals/edit_modal.html:339 templates/base.html:1385
+#: templates/_modals/edit_modal.html:339 templates/base.html:1386
 msgid "16+ - Ages 16 and up"
 msgstr "⟦16+ - Àĝéš 16 àñð üþ⟧"
 
-#: templates/base.html:1395
+#: templates/base.html:1396
 msgid "Enter game description..."
 msgstr "⟦Éñţéŕ ĝàɱé ðéšçŕìþţìöñ...⟧"
 
-#: templates/base.html:1402
+#: templates/base.html:1403
 msgid "Images/Video"
 msgstr "⟦Ìɱàĝéš/Ѵìðéö⟧"
 
 #: templates/_modals/edit_modal.html:15
-#: templates/_settings_tabs/customization.html:267 templates/base.html:1407
+#: templates/_settings_tabs/customization.html:267 templates/base.html:1408
 #: templates/wishlist.html:700
 msgid "Save Changes"
 msgstr "⟦Šàⱴé Çĥàñĝéš⟧"
 
-#: templates/base.html:1444
+#: templates/base.html:1445
 msgid "running"
 msgstr "⟦ŕüññìñĝ⟧"
 
@@ -8693,11 +8843,6 @@ msgstr "⟦Šéššìöñš:⟧"
 #: templates/logs.html:819
 msgid "Select a log file to view"
 msgstr "⟦Šéļéçţ à ļöĝ ƒìļé ţö ⱴìéŵ⟧"
-
-#: templates/_macros/nav_tabs.html:42 templates/mame_names.html:6
-#: templates/mame_names.html:34 templates/rom_tools_hub.html:340
-msgid "MAME Names"
-msgstr "⟦ⱮÀⱮÉ Ñàɱéš⟧"
 
 #: templates/mame_names.html:37
 msgid "MAME finds a game by its exact file name, so the files must keep their short names, such as dyger.zip. This tool leaves the files alone and gives each game its real name, year and maker from MAME's own list. A scrape then finds the game by its file name or its real name."
