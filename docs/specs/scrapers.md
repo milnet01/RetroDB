@@ -277,7 +277,7 @@ Hand-off points:
 
 `scraper/base_scraper.py` is the only sanctioned HTTP layer for the `scraper/` package. Every adapter (TGDB, IGDB, RAWG, ScreenScraper, AI, RA, Steam, Xbox) goes through it (Pass 41.5 / 41.5.B closed most carry-overs; Xbox followed in Pass 59.26). The key and status probes in `routes/scraper.py` (`api_check_scraper`, `api_scraper_allowance`) call `requests` directly and are outside this contract: a probe must not wait out a 429 backoff.
 
-`scraper/service_limits.py` (PASS-59-215) sets the gap between calls to each service and holds each service's stop. A stopped service's sender returns its usual nothing without calling, and a caller that must tell "no answer" from "no such game" asks `stopped()`. A stop lives in memory: a restart forgets it, and saving API keys clears it.
+`scraper/service_limits.py` (PASS-59-215) sets the gap between calls to each service and holds each service's stop. A stopped service's sender returns its usual nothing without calling, and a caller that must tell "no answer" from "no such game" asks `stopped()`. A stop lives in memory: a restart forgets it, and saving API keys clears it. The Settings check buttons (`routes/scraper.py`) do not wait for a turn (decided 2026-11-05, PASS-59-247): a check is one request a person asks for, and it is how they learn whether a stop has cleared, so holding it behind that stop would defeat it.
 
 | Service | Gap between calls | Stops when | For |
 |---|---|---|---|
