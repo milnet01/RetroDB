@@ -201,18 +201,17 @@ def download_pack(pack) -> int:
         dest = packs / pack
         old = None
         if dest.exists():
-            old = packs / f'.{pack}-old-{os.getpid()}'
-            shutil.rmtree(old, ignore_errors=True)
+            # Its own name: two downloads of one pack shared `-old-<pid>`.
+            old = Path(tempfile.mkdtemp(prefix=f'.{pack}-old-', dir=packs)) / pack
             os.replace(dest, old)
         os.replace(staging, dest)
         staging = None
         if old:
-            shutil.rmtree(old, ignore_errors=True)
+            shutil.rmtree(old.parent, ignore_errors=True)
         sources = pack_sources()
         sources[pack] = {'url': PACKS[pack], 'files': count,
                          'downloaded_at': time.strftime('%Y-%m-%d %H:%M')}
-        (store_dir() / 'sources.json').write_text(json.dumps(sources, indent=1, sort_keys=True),
-                                                  encoding='utf-8')
+        _save_pack_sources(sources)
         return count
     except player_cores.CoreInstallError as e:
         raise CheatError(str(e)) from e
@@ -472,6 +471,13 @@ def _player_save(game, enabled, source) -> None:
         own.write_text(_set_cht(_read_text(own), set(enabled)), encoding='utf-8')
 
 
+def _save_pack_sources(sources):
+    """sources.json in one step, so a crash never leaves it half-written."""
+    from services import atomic_io
+    atomic_io.atomic_write_text(str(store_dir() / 'sources.json'),
+                                json.dumps(sources, indent=1, sort_keys=True))
+
+
 def place_for_launch(game_id, core, rom_path: Path, profile: Path) -> None:
     """Copy the game's list to <profile>/cheats/<library name>/<ROM
     basename>.cht, where RetroArch loads it, or remove a stale copy there
@@ -484,11 +490,16 @@ def place_for_launch(game_id, core, rom_path: Path, profile: Path) -> None:
             return
         dest = profile / 'cheats' / library / f'{rom_path.stem}.cht'
         own = player._game_file(game_id, 'cht')
+        # take_back reads only this folder: another game with the same file
+        # name may have left a copy under another core (PASS-59-244).
+        rec = player._record(game_id)
+        rec['cheats_library'] = library
+        player._save_record(game_id, rec)
         if own.exists():
             _copy(own, dest)
         else:
             dest.unlink(missing_ok=True)
-    except OSError as e:
+    except Exception as e:  # noqa: BLE001 — a cheat problem never stops a launch (INV-11)
         logger.warning("cheats: not set up for game %s, launching without them: %s", game_id, e)
 
 
@@ -497,15 +508,16 @@ def take_back(game_id, rom_path: Path, profile: Path) -> None:
     switches, so it replaces the game's list, then goes (INV-2)."""
     from services import player
     try:
-        root = profile / 'cheats'
-        copies = [sub / f'{rom_path.stem}.cht' for sub in root.iterdir()
-                  if (sub / f'{rom_path.stem}.cht').is_file()] if root.is_dir() else []
+        library = player._record(game_id).get('cheats_library')
+        if not library:
+            return
+        copy = profile / 'cheats' / library / f'{rom_path.stem}.cht'
         own = player._game_file(game_id, 'cht')
-        if copies and own.is_file():
-            _copy(max(copies, key=lambda p: p.stat().st_mtime), own)
-        for p in copies:
-            p.unlink()
-    except OSError as e:
+        if copy.is_file():
+            if own.is_file():
+                _copy(copy, own)
+            copy.unlink()
+    except Exception as e:  # noqa: BLE001 — never stops the session's other cleanup
         logger.warning("cheats: in-game changes for game %s not kept: %s", game_id, e)
 
 

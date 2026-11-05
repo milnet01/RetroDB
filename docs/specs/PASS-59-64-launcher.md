@@ -545,7 +545,9 @@ Stopping a player, as the fork session read its source:
   command.
 
 - **INV-17** — While one player session runs, a second player launch is
-  refused with 409 and nothing is spawned.
+  refused with 409 and nothing is spawned. The check and the spawn run under
+  one lock (`routes/launch.py::_launch_lock`), so two launches at once cannot
+  both pass it (PASS-59-244).
   *Test:* `tests/test_player_launch.py` — launch a stub player for game A,
   then POST a launch of game B on the player row; assert 409, and one
   registry entry.

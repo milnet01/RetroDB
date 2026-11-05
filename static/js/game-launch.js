@@ -29,15 +29,28 @@
     }
 
     // Wait for the core job to finish `core`; its error message, or null.
+    // PASS-59-244: an error page is no answer, not "done"; five in a row, or
+    // a download past CORE_WAIT_MS (RetroArch itself is large), give up. The
+    // caller shows its own message, so these reasons are for the log only.
+    const CORE_POLL_MS = 1500;
+    const CORE_WAIT_MS = 30 * 60 * 1000;
     async function waitForCore(core) {
-        for (;;) {
-            await sleep(1500);
-            const rv = await fetch('/api/player/cores/status');
-            const st = ((await rv.json().catch(() => ({}))).data) || {};
+        let failures = 0;
+        for (let waited = 0; waited < CORE_WAIT_MS; waited += CORE_POLL_MS) {
+            await sleep(CORE_POLL_MS);
+            const rv = await fetch('/api/player/cores/status').catch(() => null);
+            const body = rv && rv.ok ? await rv.json().catch(() => null) : null;
+            if (!body) {
+                if (++failures >= 5) return 'no answer from RetroDB';
+                continue;
+            }
+            failures = 0;
+            const st = body.data || {};
             const pending = st.running && (st.current_item === core
                 || (st.queued || []).includes(core));
             if (!pending) return (st.errors || {})[core] || null;
         }
+        return 'the download took too long';
     }
 
     // PASS-59-228 — the play screen: the game's logo, large, on its background
@@ -131,7 +144,11 @@
 
             if (rv.status === 409 && body.existing_token) {
                 closeScreen();
-                if (confirm(t('This game is already running.  Kill the existing process and relaunch?'))) {
+                const relaunch = await new Promise((resolve) => showConfirm(
+                    t('Confirm Action'),
+                    t('This game is already running.  Kill the existing process and relaunch?'),
+                    () => resolve(true), () => resolve(false)));
+                if (relaunch) {
                     openScreen(btn);
                     // Pass 48.4 — check the kill succeeded before retrying. A
                     // failed kill (process unkillable, token expired) otherwise

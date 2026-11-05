@@ -18,6 +18,7 @@
 # =============================================================================
 
 import logging
+import threading
 
 from flask import Blueprint
 from flask_babel import gettext as _
@@ -64,10 +65,21 @@ def _status_to_dict(s):
 # Launch
 # -----------------------------------------------------------------------------
 
+# Held from the one-session check to the spawn: two launches at once both
+# passed the check (PASS-59-244). A launch takes moments; a core download
+# runs in the background, not under it.
+_launch_lock = threading.Lock()
+
+
 @bp.route('/api/game/<int:game_id>/launch', methods=['POST'])
 @login_required
 @handle_api_errors
 def api_launch_game(game_id):
+    with _launch_lock:
+        return _launch_game(game_id)
+
+
+def _launch_game(game_id):
     """Resolve emulator + ROM, spawn the process, return a token for polling.
 
     Permission read at request time (not import time) so admins can change

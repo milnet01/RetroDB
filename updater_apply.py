@@ -382,21 +382,46 @@ def cleanup_after_success(plan):
 # Entry point
 # -----------------------------------------------------------------------------
 
+def _restart_old(plan, log):
+    """Start the version that was running; best effort. The old app has
+    exited by the time the helper gives up, so every early exit calls this
+    (PASS-59-244)."""
+    try:
+        old = start_app(plan)
+        ok = wait_healthy(plan['port'], plan.get('from_version'), old, host=bind_host(plan))
+        log('old version is running again' if ok else 'old version did not answer /health')
+    except (OSError, KeyError, TypeError) as start_err:
+        log(f'could not restart the old version: {start_err}')
+
+
 def apply(plan):
     log = Log(plan['log_path'])
     if plan.get('plan_version') != PLAN_VERSION:
         log(f"unknown plan version {plan.get('plan_version')}")
+        if plan.get('pid') is None or wait_for_exit(plan['pid']):
+            _restart_old(plan, log)
         return 2
-    log(f"updating {plan['from_version']} -> {plan['to_version']} ({plan['kind']})")
+    log(f"updating {plan.get('from_version')} -> {plan.get('to_version')} ({plan.get('kind')})")
 
     if not wait_for_exit(plan['pid']):
         log('the running RetroDB did not stop; nothing changed')
         write_status(plan, 'failed', reason='RetroDB did not stop')
         return 1
 
-    shutil.rmtree(plan['rollback_dir'], ignore_errors=True)
-    os.makedirs(plan['rollback_dir'], exist_ok=True)
-    swap = Swap(plan['install_dir'], plan['rollback_dir'], log)
+    try:
+        shutil.rmtree(plan['rollback_dir'], ignore_errors=True)
+        os.makedirs(plan['rollback_dir'], exist_ok=True)
+        swap = Swap(plan['install_dir'], plan['rollback_dir'], log)
+    except (OSError, KeyError) as e:
+        # Nothing swapped yet: say why and bring the old version back.
+        reason = f'could not prepare the update: {e!r}'
+        log(reason)
+        try:
+            write_status(plan, 'failed', reason=reason)
+        except (OSError, KeyError):
+            pass
+        _restart_old(plan, log)
+        return 1
     proc = None
     new_files = None
     try:
@@ -421,12 +446,7 @@ def apply(plan):
             restore_database(plan, log)
         except OSError as db_err:
             log(f'database restore failed: {db_err}')
-        try:
-            old = start_app(plan)
-            ok = wait_healthy(plan['port'], plan['from_version'], old, host=bind_host(plan))
-            log('old version is running again' if ok else 'old version did not answer /health')
-        except OSError as start_err:
-            log(f'could not restart the old version: {start_err}')
+        _restart_old(plan, log)
         write_status(plan, 'rolled_back', reason=reason)
         return 1
 

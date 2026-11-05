@@ -22,7 +22,6 @@ import json
 import logging
 import os
 import re
-import tempfile
 from functools import lru_cache
 from pathlib import Path
 from typing import Optional
@@ -279,12 +278,18 @@ def write_values(lines, section, key, values) -> list:
 
 
 def write_lines(path: Path, lines) -> None:
-    """Replace a file the emulator owns in one step, so it never reads half."""
-    path.parent.mkdir(parents=True, exist_ok=True)
-    fd, tmp = tempfile.mkstemp(dir=path.parent, prefix='.retrodb-')
-    with os.fdopen(fd, 'w', encoding='utf-8') as f:
-        f.writelines(lines)
-    os.replace(tmp, path)
+    """Replace a file the emulator owns in one step, so it never reads half.
+
+    A symlink stays one: its target is written. The file keeps its mode, and
+    bytes that are not UTF-8 go back as they came (PASS-59-244)."""
+    from services.atomic_io import atomic_write_bytes
+    target = Path(os.path.realpath(path))
+    try:
+        mode = target.stat().st_mode & 0o777
+    except OSError:
+        mode = 0o644
+    data = ''.join(lines).encode('utf-8', 'surrogateescape')
+    atomic_write_bytes(str(target), data, mode=mode)
 
 
 # -----------------------------------------------------------------------------
@@ -388,7 +393,8 @@ def _context(game_id) -> dict:
 def _read_lines(path: Path) -> list:
     if not path.exists():
         return []
-    with open(path, encoding='utf-8') as f:
+    # surrogateescape: a file that is not UTF-8 is read, and written back as it was.
+    with open(path, encoding='utf-8', errors='surrogateescape') as f:
         return f.readlines()
 
 

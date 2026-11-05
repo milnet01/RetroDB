@@ -256,7 +256,9 @@ one of the game's candidates. Errors use the project's usual
 
 - **INV-2** — In-game changes are kept. After `after_session`, the game's
   `.cht` equals the launch copy RetroArch rewrote, and the launch copy is
-  gone.
+  gone. Only the copy under the core this launch used counts: the game's
+  record holds it as `cheats_library`, so another game's leftover with the
+  same file name is never taken (PASS-59-244).
   *Test:* `tests/test_cheats_player.py` — a fixture flips one `enable`
   line in the launch copy, then calls `after_session`.
   *Breaks when:* `after_session` skips the copy-back, or copies in the

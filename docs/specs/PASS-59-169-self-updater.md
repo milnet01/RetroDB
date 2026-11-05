@@ -207,5 +207,7 @@ Settings > System > Updates has the toggle.
   the app and answers `/health` with its version. Covers success, a new
   version that never becomes healthy (rollback restores files, removes added
   files, restores the database and restarts the old one), and the manifest
-  removing files a later version dropped.
+  removing files a later version dropped. An exit before the swap (an
+  unknown plan version, a missing plan key, a folder that cannot be made)
+  restarts the old version too (`_restart_old`, PASS-59-244).
 - Routes: admin-only, state machine refusals.
