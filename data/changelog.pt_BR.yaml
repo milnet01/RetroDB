@@ -1,104 +1,108 @@
 - version: 4.0.0
   date: '2026-11-05'
   tags:
+  - type: security
+    label: Alterar sua senha, ou um administrador redefini-la, agora desconecta essa conta em todos os outros dispositivos. Por isso, todos entrarão mais uma vez após esta atualização. A página de configuração inicial também recebe a mesma proteção contra outros sites que as demais páginas
   - type: fix
-    label: As buscas ficam mais leves para os serviços online. Um serviço que continua falhando é ignorado por um tempo ao preencher lacunas, como já acontecia nas pesquisas, e as consultas de jogos do ScreenScraper agora também respeitam os limites diários dele
+    label: Uma imagem recusada como seu avatar não exclui mais o avatar que você tinha
   - type: fix
-    label: Uma busca de metadados não falha mais em um jogo com ano de lançamento desconhecido, como "TBA", e um jogo listado para regiões fora da sua lista, como "Brasil, Coreia", mantém a própria região em vez de assumir a sua padrão
+    label: As buscas de metadados ficam mais leves para os serviços online. Um serviço que falha sempre é ignorado por um tempo ao preencher lacunas, como já acontecia nas pesquisas, e as consultas de jogos do ScreenScraper agora também respeitam os limites diários dele
   - type: fix
-    label: Pastas do ES-DE escritas como ~/ agora funcionam, e um arquivo muito grande do ES-DE não é mais copiado. As versões regionais sugeridas nunca juntam de novo dois jogos que você disse não serem versões um do outro
+    label: Uma busca de metadados não falha mais em um jogo com ano de lançamento desconhecido, como "TBA", e um jogo listado para regiões fora da sua lista, como "Brasil, Coreia", mantém a região dele em vez de virar a sua padrão
+  - type: fix
+    label: Pastas do ES-DE escritas como ~/ agora funcionam, e um arquivo do ES-DE muito grande não é mais copiado. Versões regionais sugeridas nunca juntam de novo dois jogos que você disse não serem versões um do outro
   - type: security
     label: O RetroDB recusa mais alguns endereços de rede privada ao buscar imagens na web e segue corretamente o redirecionamento de um endereço da web
   - type: fix
-    label: As últimas telas que ainda estavam em inglês agora também seguem o seu idioma, incluindo o assistente de configuração, Tags, Listas, Comparar Jogos, as configurações das Ferramentas de ROM, a fila de buscas de metadados em massa, a lista de tarefas interrompidas do painel, os rótulos dos cartões da biblioteca e muitas mensagens de erro
+    label: As últimas telas que ainda estavam em inglês agora seguem o seu idioma também, incluindo o assistente de configuração, Tags, Listas, Comparar Jogos, as configurações de Ferramentas de ROM, a fila de buscas de metadados em massa, a lista de tarefas interrompidas do painel, os rótulos dos cartões da biblioteca e muitas mensagens de erro
   - type: security
-    label: Um nome de sistema com código web não pode mais executá-lo na janela da fila de buscas de metadados em massa
+    label: Um nome de sistema com código da web não pode mais executá-lo na janela da fila de buscas de metadados em massa
   - type: accessibility
-    label: Em qualquer lugar da página, a posição do teclado agora é marcada com um anel grosso na cor do seu tema, em todo botão, caixa e link. Antes, muitos controles mostravam só uma linha fraca, igual à de quando o mouse passava por cima
+    label: Em qualquer lugar da página, a posição do teclado agora é marcada por um anel grosso na cor do seu tema, em todos os botões, caixas e links. Antes, muitos controles mostravam só uma linha fraca, igual a quando o mouse passava por cima
   - type: accessibility
     label: Os links de Gênero, Série, Desenvolvedora e Distribuidora nos cartões da biblioteca agora funcionam pelo teclado. O botão "em execução" dos jogos em andamento também abre pelo teclado, e Esc ou um clique fora fecha a lista
   - type: accessibility
-    label: Os leitores de tela agora dizem o nome de cada cor de tag e qual está escolhida, e leem as imagens de troféu como Platina, Ouro, Prata e Bronze em vez de letras soltas. Enquanto um jogo inicia, o Tab não vai mais para trás da tela de início
+    label: Leitores de tela agora dizem o nome de cada cor de tag e qual está escolhida, e leem as imagens de troféu como Platina, Ouro, Prata e Bronze em vez de letras soltas. Enquanto um jogo inicia, o Tab não vai mais para trás da tela de início
   - type: fix
     label: Se uma atualização parar antes de começar a trocar os arquivos, o RetroDB agora inicia de novo a versão que você tinha, em vez de ficar fechado
   - type: fix
-    label: Apertar Jogar duas vezes ao mesmo tempo não pode mais iniciar dois jogos no player integrado. A espera pelo download de um core agora desiste depois de um tempo, ou quando o RetroDB para de responder, em vez de esperar para sempre, e a pergunta "já está em execução" usa a caixa de diálogo do próprio RetroDB
+    label: Apertar Jogar duas vezes ao mesmo tempo não pode mais iniciar dois jogos no player integrado. A espera pelo download de um core agora desiste depois de um tempo, ou quando o RetroDB para de responder, em vez de esperar para sempre, e a pergunta "já em execução" usa a caixa de diálogo do próprio RetroDB
   - type: fix
-    label: As trapaças que você liga ou desliga durante o jogo são guardadas para o jogo certo, nunca tiradas de outro jogo cujo arquivo tenha o mesmo nome. Um problema com trapaças nunca impede um jogo de iniciar
+    label: As Trapaças que você liga ou desliga durante o jogo são guardadas para o jogo certo, nunca tiradas de outro jogo cujo arquivo tenha o mesmo nome. Um problema com Trapaças nunca impede um jogo de iniciar
   - type: fix
-    label: O RetroDB grava o arquivo de configurações de um emulador com mais segurança. Um arquivo de configurações que é um link continua sendo um link, mantém as permissões e as letras que não consegue ler, e uma gravação que falha não deixa arquivo solto para trás
+    label: O RetroDB grava o arquivo de configurações de um emulador com mais segurança. Um arquivo de configurações que é um link continua sendo um link, mantém as permissões e mantém letras que não consegue ler, e um salvamento que falha não deixa arquivo solto para trás
   - type: fix
-    label: Uma busca de metadados em massa que você move para baixo na fila, troca com outra ou retoma enquanto uma está rodando não se perde mais quando o RetroDB reinicia; o painel a oferece, de onde parou. Uma busca trocada não continua rodando ao lado da nova, e dois cliques rápidos em Retomar iniciam a tarefa uma só vez
+    label: Uma busca de metadados em massa que você move para baixo na fila, troca com outra ou retoma enquanto uma está em execução não se perde mais quando o RetroDB reinicia; o painel a oferece, de onde parou. Uma busca trocada não continua rodando junto com a nova, e dois cliques rápidos em Retomar iniciam a tarefa uma só vez
   - type: fix
-    label: O erro de um jogo, como a queda da rede, não encerra mais toda uma execução de Preencher com AI nem de Corrigir Caixa e Manual e Regiões; esse jogo conta como falha e os outros continuam. Parar o RetroDB também interrompe os downloads de cores sem problemas
+    label: O erro de um jogo, como a queda da rede, não encerra mais uma execução inteira de Preencher com AI nem de Corrigir Caixa e Regiões do Manual; esse jogo conta como falho e os outros continuam. Parar o RetroDB agora também interrompe os downloads de core de forma limpa
   - type: fix
-    label: Itens da Lista de Desejos não ficam mais em "buscando" para sempre após um erro ou reinício, e duas execuções de Buscar Metadados de Tudo na mesma lista não rodam mais ao mesmo tempo
+    label: Itens da Lista de Desejos não ficam mais em "buscando" para sempre após um erro ou reinício, e duas execuções de Buscar Metadados de Todos para a mesma Lista de Desejos não rodam mais ao mesmo tempo
   - type: fix
     label: Um script ou uma segunda cópia do RetroDB iniciando não marca mais as tarefas do servidor em execução como interrompidas, e duas cópias iniciando ao mesmo tempo não podem mais voltar o banco de dados a uma versão anterior
   - type: fix
-    label: Iniciar uma sincronização do PlayStation não faz mais as barras de progresso de todos esperarem enquanto ela entra na conta da Sony. A renovação diária do PlayStation agora renova o login só perto do fim dos 10 dias, em vez de todo dia
+    label: Iniciar uma sincronização da PlayStation não faz mais as barras de progresso de todos esperarem enquanto ela entra na Sony. A manutenção diária da conexão da PlayStation agora renova o login só perto do fim dos 10 dias, em vez de todo dia
   - type: fix
-    label: Uma busca de metadados não sobrescreve mais uma alteração que você faz enquanto ela roda, e não esvazia mais um gênero, modo ou visão para os quais não tem nome. Ela também não altera mais um número de jogadores salvo para combinar com os modos do jogo
+    label: Uma busca de metadados não sobrescreve mais uma alteração feita enquanto ela roda, e não esvazia mais um gênero, modo ou visão para o qual não tem nome. Ela também não altera mais um número de jogadores salvo para combinar com os modos do jogo
   - type: fix
-    label: O Preencher com AI não altera mais o que você mesmo digitou, como uma distribuidora ou um gênero corrigido à mão; ele corrige só valores obtidos por busca. Ele também não informa mais um valor como alterado quando só foi escrito de outra forma, como 4 jogadores como "1-4" ou os mesmos gêneros em outra ordem
+    label: Preencher com AI não altera mais o que você digitou, como uma distribuidora ou um gênero corrigido à mão; ele corrige apenas valores obtidos por busca. Também não informa mais um valor como alterado quando só foi escrito de outro jeito, como 4 jogadores como "1-4" ou os mesmos gêneros em outra ordem
   - type: fix
     label: Um controle que você digita para um jogo é mantido; o controle padrão do console agora substitui apenas valores obtidos por busca e por AI. Uma classificação etária convertida do palpite de AI de outro órgão agora também é marcada como palpite
   - type: fix
-    label: Salvar a janela de edição de um jogo não esvazia mais campos que a janela não mostra. Redefinir na página de um jogo agora limpa tudo o que diz limpar, incluindo a visão, a edição e outros nomes, exclui as imagens e os vídeos do jogo, a menos que outro jogo os use, e atualiza os filtros da biblioteca na hora
+    label: Salvar a janela de edição de um jogo não esvazia mais campos que a janela não mostra. Redefinir na página de um jogo agora limpa tudo o que diz limpar, incluindo a visão, a edição e outros nomes, exclui as imagens e vídeos do jogo, a menos que outro jogo os use, e atualiza os filtros da biblioteca na hora
   - type: fix
     label: Limpar Dados Obtidos agora também limpa a visão, 2D ou 3D, e a estrutura do jogo. Uma importação do CLZ de um jogo com apenas o ano mantém só o ano, não 1º de janeiro
   - type: security
-    label: A sincronização da Steam não pega mais emprestada a chave da Steam das Configurações para todos os membros da casa. Um membro sem chave própria da Steam recebia a biblioteca e as conquistas do administrador na própria conta. A chave nas Configurações agora serve só aos administradores
+    label: A sincronização da Steam não pega mais emprestada a chave Steam das Configurações para todos os membros da casa. Um membro sem chave Steam própria estava recebendo a biblioteca e as conquistas Steam do administrador na própria conta. A chave nas Configurações agora serve só aos administradores
   - type: fix
-    label: A consulta do How Long to Beat para muitos jogos agora salva os tempos de que tem certeza. Antes, toda correspondência segura falhava e nada era salvo. A Atualização do RetroAchievements agora também confere o arquivo de cada jogo na lista do RetroAchievements, como faz uma busca de metadados, e assim o jogo é vinculado à versão exata que você tem
+    label: A consulta do How Long to Beat para muitos jogos agora salva os tempos de que tem certeza. Antes, toda correspondência segura falhava e nada era salvo. Atualizar do RetroAchievements agora também confere o arquivo de cada jogo com a lista do RetroAchievements, como faz uma busca de metadados, e assim o jogo é ligado à versão exata que você tem
   - type: fix
-    label: A mensagem de que uma tarefa em segundo plano terminou voltou a aparecer, e a caixa de progresso de uma tarefa percebe quando o servidor a retoma após um reinício. Antes, nenhuma das duas aparecia
+    label: A mensagem de que uma tarefa em segundo plano terminou volta a aparecer, e a caixa de progresso de uma tarefa percebe quando o servidor a retoma após um reinício. Antes, nenhuma das duas aparecia
   - type: fix
-    label: 'Troféus do PlayStation: um jogo vinculado por você manualmente continua vinculado após uma sincronização completa, e a sincronização não vincula mais um jogo à sua sequência, como "Doom" a "Doom Eternal". Importar jogos do PlayStation agora vincula um jogo que já está na sua biblioteca, como as importações da Steam e do Xbox, e assim os troféus aparecem nele'
+    label: 'Troféus da PlayStation: um jogo que você ligou à mão continua ligado após uma sincronização completa, e a sincronização não liga mais um jogo à sua sequência, como "Doom" a "Doom Eternal". Importar jogos da PlayStation agora liga um jogo que já está na sua biblioteca, como fazem as importações da Steam e do Xbox, e assim os troféus aparecem nele'
   - type: fix
-    label: O Xbox não mostra mais o seu gamertag como Desconhecido depois que o login se renova sozinho, e uma conexão lenta ou com falha não desconecta mais você do Xbox. Só a recusa do login pela Microsoft faz isso
+    label: O Xbox não mostra mais sua gamertag como Desconhecido depois que o login se renova sozinho, e uma conexão lenta ou com falha não desconecta mais você do Xbox. Só a recusa do login pela Microsoft faz isso
   - type: fix
-    label: Duas pessoas agora podem ter uma tag com o mesmo nome; antes, a segunda falhava com um erro. Qualquer usuário conectado agora pode reescanear os próprios troféus do RPCS3; antes, só um administrador podia, e todos os outros viam troféus antigos até o RetroDB reiniciar
+    label: Duas pessoas agora podem ter uma tag com o mesmo nome; antes, a segunda falhava com um erro. Qualquer usuário conectado agora pode reescanear seus próprios troféus do RPCS3; antes, só um administrador podia, e os demais viam troféus antigos até o RetroDB reiniciar
   - type: security
-    label: Seus logins continuam privados. Os backups do banco de dados não podem mais ser lidos por outras contas do computador, e um backup que falha não exclui mais o anterior. Excluir ou desativar um usuário também o desconecta do RetroAchievements no DuckStation e no PCSX2. Um login do RetroAchievements salvo pelo menu do próprio player não passa mais para a próxima pessoa que jogar. Os logs e os erros de tarefas salvos ocultam os tokens do RetroAchievements, o erro do PlayStation de outro membro só aparece para ele, e os antigos arquivos de login do PlayStation e do Xbox em texto simples são removidos
+    label: Seus logins continuam privados. Backups do banco de dados não podem mais ser lidos por outras contas do computador, e um backup que falha não exclui mais o anterior. Excluir ou desativar um usuário também o desconecta do RetroAchievements no DuckStation e no PCSX2. Um login do RetroAchievements salvo pelo menu do próprio player não passa mais para a próxima pessoa que jogar. Logs e erros de tarefas salvos ocultam os tokens do RetroAchievements, o erro da PlayStation de outro membro é mostrado só a ele, e arquivos antigos de login da PlayStation e do Xbox em texto simples são removidos
   - type: fix
-    label: As verificações do próprio RetroDB não podem mais mexer na sua biblioteca enquanto rodam. Elas sempre usam uma cópia descartável do banco de dados, das imagens e das configurações, e se recusam a iniciar se algum deles apontar para os seus arquivos reais
+    label: As verificações do próprio RetroDB não podem mais mexer na sua biblioteca enquanto rodam. Elas sempre usam uma cópia descartável do banco de dados, das imagens e das configurações, e se recusam a iniciar se algum deles apontar para seus arquivos reais
   - type: fix
-    label: Limpar arquivos órfãos não exclui mais as imagens da sua Lista de Desejos. Abrir um jogo não o faz mais esquecer capturas de tela que não encontra. Antes, com o disco das imagens desconectado, todo jogo aberto perdia a lista inteira de capturas de tela; agora a lista é mantida e uma imagem ausente apenas fica oculta
+    label: Limpar arquivos órfãos não exclui mais as imagens da sua Lista de Desejos. Abrir um jogo não o faz mais esquecer Capturas de Tela que não encontra. Antes, com o disco das imagens desconectado, todo jogo aberto perdia a lista inteira de Capturas de Tela; agora a lista é mantida e uma imagem ausente só fica oculta
   - type: fix
-    label: Um download de vídeo ou manual que falha no meio não danifica mais a cópia que o jogo já tinha, e um download com falha não deixa mais um meio arquivo oculto na pasta de mídia. O ampliador em segundo plano não salva mais uma imagem antiga por cima de uma mais nova baixada nesse meio-tempo. Converter para WebP mantém todos os jogos que compartilham uma imagem apontando para ela e nunca mexe em arquivos fora das pastas de imagens
+    label: Um download de vídeo ou manual que falha no meio não danifica mais a cópia que o jogo já tinha, e um download com falha não deixa mais um meio arquivo oculto na pasta de mídia. O ampliador em segundo plano não salva mais uma imagem antiga sobre uma mais nova baixada nesse meio-tempo. Converter para WebP mantém apontando para a imagem todos os jogos que a compartilham, e nunca mexe em arquivos fora das pastas de imagens
   - type: fix
-    label: Excluir um jogo ou um item da Lista de Desejos agora também exclui suas imagens, vídeos e manuais, mas mantém o que outro jogo ou item da Lista de Desejos ainda usa. As imagens salvas podem ser lidas de novo por outras contas do computador, e Redimensionar Imagens conta como falha uma imagem que não conseguiu salvar, não como concluída
+    label: Excluir um jogo ou um item da Lista de Desejos agora exclui também as imagens, vídeos e manuais dele, mas mantém os que outro jogo ou item da Lista de Desejos ainda usa. Imagens salvas podem ser lidas de novo por outras contas do computador, e Redimensionar Imagens conta como falha uma imagem que não conseguiu salvar, não como concluída
   - type: fix
-    label: O Localizador de Duplicados não oferece mais um arquivo em uso para exclusão. Ao procurar por nome, não considera mais as cópias .cue e .bin de um jogo como duplicadas entre si. Ele nunca oferece o arquivo de faixa de um disco, que duas versões de um jogo podem compartilhar. Ele não exclui um disco listado em uma playlist. Um jogo cujo arquivo você exclui agora passa para a cópia que você mantém, e assim continua na biblioteca
+    label: O Localizador de Duplicatas não oferece mais um arquivo em uso para exclusão. Ao procurar por nome, não considera mais as cópias .cue e .bin de um jogo como duplicatas uma da outra. Nunca oferece o arquivo de faixa de um disco, que duas versões de um jogo podem compartilhar. Não exclui um disco que esteja em uma playlist. Um jogo cujo arquivo você exclui agora passa para a cópia que você mantém, e assim continua na biblioteca
   - type: fix
-    label: Organizar Multi-Disco não sobrescreve mais uma playlist existente nem um arquivo que já está na pasta do jogo; ele para e informa qual. A playlist que ele cria lista o .cue de cada disco, não os arquivos de faixa. Os jogos cujos arquivos ele move agora os acompanham até a pasta, e assim Limpar ROMs ausentes não os remove mais
+    label: Organizar Multidisco não sobrescreve mais uma playlist existente nem um arquivo que já esteja na pasta do jogo; ele para e informa qual. A playlist que ele cria lista o .cue de cada disco, não os arquivos de faixa. Os jogos cujos arquivos ele move agora os acompanham até a pasta, e assim Limpar ROMs ausentes não os remove mais
   - type: fix
-    label: Converter para CHD com "excluir originais" agora também exclui os arquivos de faixa do disco, mas mantém uma faixa que outro .cue ainda usa. O jogo e qualquer playlist que listava o disco antigo agora apontam para o novo .chd. Renomear o arquivo de um jogo agora atualiza a playlist que o lista, e um arquivo de faixa de que um .cue precisa não pode ser renomeado. Remover arquivos de um zip remove apenas os arquivos escolhidos, mesmo quando um nome tem [ ou ]. A Remoção de Capturas Duplicadas exclui só as cópias que a análise encontrou e sempre mantém uma
+    label: Converter para CHD com "excluir originais" agora exclui também os arquivos de faixa do disco, mas mantém uma faixa que outro .cue ainda use. O jogo e qualquer playlist que listava o disco antigo agora apontam para o novo .chd. Renomear o arquivo de um jogo agora atualiza a playlist que o lista, e um arquivo de faixa de que um .cue precisa não pode ser renomeado. Remover arquivos de um zip remove só os arquivos escolhidos, mesmo quando um nome tem [ ou ]. A Remoção de Capturas de Tela Duplicadas exclui só as cópias que a verificação encontrou e sempre mantém uma
   - type: fix
-    label: O How Long to Beat na página de um jogo pesquisa o que você digita. Antes, um título que ele não encontrava fazia a busca usar os outros nomes do jogo, e ele podia oferecer um jogo diferente, como um remake de fãs. Ele ainda tenta os outros nomes quando a caixa tem o nome do próprio jogo
+    label: O How Long to Beat na página de um jogo pesquisa o que você digita. Antes, um título que ele não encontrava fazia pesquisar os outros nomes do jogo, e podia oferecer outro jogo, como um remake feito por fãs. Ele ainda tenta os outros nomes quando a caixa contém o próprio nome do jogo
   - type: fix
-    label: Os passos do How Long to Beat no manual de ajuda agora correspondem à tela. Eles diziam para escolher uma correspondência numa lista; a página mostra uma correspondência com Salvar e Cancelar. A ajuda do PlayStation não diz mais que o login dura cerca de dois meses, já que o RetroDB entra de novo sozinho. Todos os 20 manuais traduzidos trazem as duas mudanças
+    label: Os passos de How Long to Beat no manual de ajuda agora correspondem à tela. Antes diziam para escolher uma correspondência em uma lista; a página mostra uma correspondência com Salvar e Cancelar. A ajuda do PlayStation não diz mais que o login dura cerca de dois meses, pois o RetroDB entra de novo sozinho. Os 20 manuais traduzidos têm as duas mudanças
   - type: fix
-    label: Toda barra de letras agora começa com um botão Todos. Nas páginas Biblioteca, console e Troféus da PSN, escolher uma letra mostra só os jogos dela, e antes não havia botão para trazer o resto de volta. Nas outras páginas de conquistas, Todos volta ao primeiro jogo
+    label: Toda barra de letras agora começa com um botão Todos. Nas páginas Biblioteca, de console e Troféus PSN, ao escolher uma letra aparecem só os jogos dela, e antes não havia botão para mostrar o resto de novo. Nas outras páginas de conquistas, Todos volta ao primeiro jogo
   - type: fix
-    label: Um novo token de login do PlayStation colado em Configurações agora é usado imediatamente. Antes, o RetroDB continuava usando o login antigo até ele expirar, e Salvar e testar conexão indicava que esse login antigo estava funcionando. Um token recusado pela Sony não substitui mais um que funciona
+    label: Um novo token de login do PlayStation colado em Configurações agora é usado na hora. Antes, o RetroDB continuava usando o login antigo até ele expirar, e Salvar e testar conexão dizia que esse login antigo estava funcionando. Um token que a Sony recusa não substitui mais um que funciona
   - type: enhancement
-    label: 'O login do PlayStation em Configurações ficou mais fácil de manter. O aviso não conta mais dias em que você não precisava fazer nada, porque o RetroDB entra de novo sozinho; ele só fica vermelho quando a Sony recusa o token salvo. O botão Colar aqui não faz mais o navegador pedir para ler a área de transferência: ele coloca o cursor na caixa para você usar Ctrl+V. Os passos agora dizem para sair do PlayStation primeiro ao trocar um token que ainda funciona, e as mensagens deles podem ser traduzidas'
+    label: 'O login do PlayStation em Configurações ficou mais fácil de manter. O aviso não conta mais dias em que você não precisava fazer nada, pois o RetroDB entra de novo sozinho; ele só fica vermelho quando a Sony recusa o token salvo. O botão Colar aqui não faz mais o navegador pedir para ler a área de transferência: ele coloca o cursor na caixa para você usar Ctrl+V. Os passos agora dizem para sair do PlayStation (Sair) antes de trocar um token que ainda funciona, e as mensagens deles podem ser traduzidas'
   - type: enhancement
-    label: As mensagens que aparecem na tela e as caixas de pergunta, como "Configurações salvas" ou "Excluir esta lista?", agora podem ser traduzidas em todas as páginas. Antes, a maioria ficava em inglês, qualquer que fosse o idioma escolhido
+    label: As mensagens pop-up e caixas de pergunta, como "Configurações salvas" ou "Excluir esta lista?", agora podem ser traduzidas em todas as páginas. Antes, a maioria ficava em inglês, qualquer que fosse o idioma escolhido
   - type: enhancement
     label: As mensagens que explicam por que um login do PlayStation falhou, como "Seu NPSSO pode ter expirado", agora podem ser traduzidas
   - type: fix
-    label: O manual de ajuda em todos os idiomas agora corresponde ao em inglês. Ele ganha Pesquisar em qualquer lugar, Manter um título, Nomes do MAME e o verso da caixa, e parágrafos antigos que estavam desatualizados foram atualizados
+    label: O manual de ajuda em todos os idiomas agora corresponde ao em inglês. Ele ganha Busca em qualquer lugar, Manter um título, Nomes MAME e o verso da caixa, e os parágrafos antigos que estavam desatualizados foram atualizados
   - type: fix
     label: Em alemão, africâner e espanhol, o botão Voltar na capa de um jogo agora diz o verso da caixa, e não "voltar"
   - type: feature
-    label: Ao pressionar Jogar, a tela agora é preenchida com o logo do jogo sobre a imagem de fundo enquanto o jogo inicia, ou com o nome em letras grandes quando não há logo. Ela some sozinha quando a janela do jogo abre, ou quando você pressiona Esc ou clica
+    label: Ao pressionar Jogar, a tela agora é preenchida com o logotipo do jogo sobre a imagem de fundo enquanto o jogo inicia, ou com o nome em letras grandes quando não há logotipo. Ela some sozinha quando a janela do jogo abre, ou quando você pressiona Esc ou clica
   - type: feature
-    label: 'A caixa 3D giratória agora tem o formato real de uma caixa de PS5: cantos e bordas arredondados, a borda elevada ao redor da capa, a linha onde as duas metades se encontram e o recorte para o dedo no lado de abertura. Ela precisa de um arquivo de caixa de uma versão do Slipcase que grave esse formato; importe a caixa de novo para obtê-lo. As outras caixas continuam como antes'
+    label: 'A caixa 3D giratória agora tem o formato real de uma caixa de PS5: cantos e bordas arredondados, a borda elevada ao redor da capa, a linha onde as duas metades se encontram e o recorte para o dedo no lado de abertura. Ela precisa de um arquivo de caixa de uma versão do Slipcase que grave o formato; use Importar na caixa de novo para obtê-lo. As outras caixas ficam como antes'
   - type: enhancement
-    label: Atualizar RetroAchievements saiu de Configurações e foi para a página RetroAchievements, e agora se chama Encontrar jogos com conquistas. Cada botão ali agora tem uma linha explicando o que faz, para ficar fácil diferenciar Encontrar jogos e Sincronizar progresso. Se ainda não houver jogos vinculados, a página mostra a um administrador o botão Encontrar em vez de passar para a próxima aba
+    label: Atualizar RetroAchievements saiu de Configurações e foi para a página RetroAchievements, e agora se chama Encontrar jogos com conquistas. Cada botão ali agora tem uma linha dizendo o que faz, assim fica fácil distinguir Encontrar jogos de Sincronizar progresso. Sem jogos vinculados ainda, a página mostra ao administrador o botão Encontrar em vez de passar para a próxima aba
   body: "<ul>\n  <li><strong>O manual de ajuda está atualizado em todos os idiomas.</strong>\n    As seções que existiam só no manual em inglês agora estão traduzidas.</li>\n</ul>\n"
 - version: 3.35.4
   date: '2026-11-03'
