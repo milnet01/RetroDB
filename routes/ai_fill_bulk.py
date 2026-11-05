@@ -90,9 +90,12 @@ def api_ai_fill_bulk_count():
     groups = _groups_arg(request.args.get('fields'))
     if groups is False:
         return error(_('Unknown field.'), 400)
+    raw = request.args.get('system_id')
+    system_id = _system_id_arg(int(raw) if raw and raw.isdigit() else raw)
+    if system_id is False:
+        return error(_('Pick a system, or all systems.'), 400)
     return success(count=count_games_to_fill(
-        request.args.get('system_id', type=int), groups,
-        request.args.get('include_done') == '1'))
+        system_id, groups, request.args.get('include_done') == '1'))
 
 
 @bp.route('/api/ai-fill-bulk/run', methods=['POST'])

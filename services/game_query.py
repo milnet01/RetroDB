@@ -190,6 +190,28 @@ VERSION_COLUMNS = """g.version_group_id,
                    END AS version_count"""
 
 
+def listed_sql(alias='g'):
+    """SQL that holds for a row the game lists show: not a bonus disc, and not
+    a BIOS set (PASS-59-227). Counts, letter bars and side lists use it."""
+    return (f"(COALESCE({alias}.is_bonus_disc, 0) = 0"
+            f" AND COALESCE({alias}.arcade_category, '') != 'BIOS')")
+
+
+def one_row_per_group(where, values):
+    """`where` narrowed to each version group's preferred row (PASS-59-106
+    §4.3), over `games g JOIN systems s`. Returns (where, values)."""
+    from services.version_groups import preferred_rank_sql
+    rank_sql, rank_values = preferred_rank_sql('g')
+    return f"""g.id IN (
+            SELECT id FROM (
+                SELECT g.id, ROW_NUMBER() OVER (
+                         PARTITION BY COALESCE(g.version_group_id, -g.id)
+                         ORDER BY {rank_sql}, g.id) AS version_rank
+                FROM games g JOIN systems s ON g.system_id = s.id
+                WHERE {where}
+            ) WHERE version_rank = 1)""", [*rank_values, *values]
+
+
 # PASS-53-2 — the Library sort control's choices. A `sort` param not in this
 # map falls back to 'name'. Missing dates and scores sort last; `g.id` breaks
 # ties so LIMIT/OFFSET pages never repeat or skip a game.
@@ -216,14 +238,13 @@ def _build_games_query(params, count_only=False, ids_only=False, user_id=None,
     (services.version_groups.preferred_rank_sql). Ungrouped games are their
     own group. `group_versions=False` counts every row, for `total_roms`.
 
-    Pass 31.1 — `user_id` (optional) scopes the psn_games/psn_trophies subquery
-    to the caller so each user sees only their own PSN progress on game cards.
-    COUNT and ids_only variants don't join the psn subquery, so user_id is
-    ignored there. For callers that haven't been threaded through yet, a
-    missing user_id preserves the historical "show everyone's PSN data"
-    behavior — safe on a single-user install, visibly wrong on multi-user;
-    audit any new caller that reads a card with psn.* columns.
+    Pass 31.1 — `user_id` scopes the achievement and PSN progress joins to
+    the caller. The card query needs it: without it those joins would take
+    every user's rows and repeat a card per user (PASS-59-249). COUNT and
+    ids_only variants join no progress and ignore it.
     """
+    if not count_only and not ids_only and user_id is None:
+        raise ValueError('the card query needs user_id')
     conditions = []
     values = []
 
@@ -304,17 +325,7 @@ def _build_games_query(params, count_only=False, ids_only=False, user_id=None,
     where = " AND ".join(conditions) if conditions else "1=1"
 
     if group_versions:
-        from services.version_groups import preferred_rank_sql
-        rank_sql, rank_values = preferred_rank_sql('g')
-        where = f"""g.id IN (
-            SELECT id FROM (
-                SELECT g.id, ROW_NUMBER() OVER (
-                         PARTITION BY COALESCE(g.version_group_id, -g.id)
-                         ORDER BY {rank_sql}, g.id) AS version_rank
-                FROM games g JOIN systems s ON g.system_id = s.id
-                WHERE {where}
-            ) WHERE version_rank = 1)"""
-        values = [*rank_values, *values]
+        where, values = one_row_per_group(where, values)
 
     order_by = GAME_SORTS.get(params.get('sort'), GAME_SORTS['name'])
 
@@ -323,12 +334,10 @@ def _build_games_query(params, count_only=False, ids_only=False, user_id=None,
     elif ids_only:
         sql = f"SELECT g.id FROM games g JOIN systems s ON g.system_id = s.id WHERE {where} ORDER BY {order_by}"
     else:
-        # Pass 31.1 / 31.2 — psn and gap joins scope by user_id when the
-        # caller passes one, so each user sees only their own library
-        # progress on game cards. Legacy call sites without user_id keep
-        # their historical shape (which matches the pre-31 behavior).
-        psn_user_clause = "AND pg.user_id = ?" if user_id is not None else ""
-        gap_user_clause = "AND gap.user_id = ?" if user_id is not None else ""
+        # Pass 31.1 / 31.2 — psn and gap joins scope by user_id, so each
+        # user sees only their own progress on game cards.
+        psn_user_clause = "AND pg.user_id = ?"
+        gap_user_clause = "AND gap.user_id = ?"
         sql = f"""
             SELECT g.id, g.title, g.sort_title, g.system_id, g.emulator_override_id,
                    g.boxart, g.boxart_3d,
@@ -372,10 +381,9 @@ def _build_games_query(params, count_only=False, ids_only=False, user_id=None,
             WHERE {where}
             ORDER BY {order_by}
         """
-        if user_id is not None:
-            # gap JOIN and psn subquery each consume one user_id bind; both
-            # land before the WHERE bindings (gap first since its clause
-            # appears earlier in the SQL).
-            values = [user_id, user_id, *values]
+        # gap JOIN and psn subquery each consume one user_id bind; both land
+        # before the WHERE bindings (gap first since its clause appears
+        # earlier in the SQL).
+        values = [user_id, user_id, *values]
 
     return sql, values

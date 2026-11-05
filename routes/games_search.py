@@ -14,7 +14,7 @@ from flask_babel import gettext as _
 from services.api_helpers import handle_api_errors, success, error
 from services.auth import login_required
 from services.database import query
-from services.game_query import escape_like
+from services.game_query import escape_like, listed_sql
 
 logger = logging.getLogger(__name__)
 
@@ -111,44 +111,59 @@ def api_local_search_games():
 def api_similar_games(game_id):
     """Find similar games based on genre, developer, and franchise."""
     try:
-        game = query("SELECT genre, developer, franchise, system_id FROM games WHERE id = ?", [game_id], one=True)
+        game = query("SELECT genre, developer, franchise, system_id, version_group_id "
+                     "FROM games WHERE id = ?", [game_id], one=True)
         if not game:
             return success(games=[])
 
         similar = []
         seen_ids = {game_id}
+        # A version group is one game: the game's own versions are not
+        # "similar", and another game shows once (PASS-59-249).
+        seen_groups = {game['version_group_id']} if game['version_group_id'] else set()
+        listed = listed_sql('g')
+
+        def _take(matches, reason, most=5):
+            taken = 0
+            for m in matches:
+                group = m['version_group_id']
+                if taken == most:
+                    break
+                if m['id'] in seen_ids or (group and group in seen_groups):
+                    continue
+                taken += 1
+                similar.append({'id': m['id'], 'title': m['title'], 'boxart': m['boxart'],
+                                'system_name': m['system_name'], 'reason': reason})
+                seen_ids.add(m['id'])
+                if group:
+                    seen_groups.add(group)
+
+        columns = "g.id, g.title, g.boxart, g.version_group_id, s.name AS system_name"
 
         # Match by franchise first (strongest signal)
         if game['franchise']:
             franchises = [f.strip() for f in game['franchise'].split(',') if f.strip()]
             for franchise in franchises[:2]:
-                matches = query("""
-                    SELECT g.id, g.title, g.boxart, s.name AS system_name
+                _take(query(f"""
+                    SELECT {columns}
                     FROM games g JOIN systems s ON g.system_id = s.id
-                    WHERE g.franchise LIKE ? ESCAPE '\\' AND g.id != ? AND g.is_bonus_disc = 0
-                    ORDER BY g.title LIMIT 5
-                """, [f'%{escape_like(franchise)}%', game_id])
-                for m in matches:
-                    if m['id'] not in seen_ids:
-                        similar.append({'id': m['id'], 'title': m['title'], 'boxart': m['boxart'], 'system_name': m['system_name'], 'reason': f'Same franchise: {franchise}'})
-                        seen_ids.add(m['id'])
+                    WHERE g.franchise LIKE ? ESCAPE '\\' AND g.id != ? AND {listed}
+                    ORDER BY g.title LIMIT 10
+                """, [f'%{escape_like(franchise)}%', game_id]), f'Same franchise: {franchise}')
 
         # Match by genre + developer
         if game['genre'] and game['developer']:
             genres = [g.strip() for g in game['genre'].split(',') if g.strip()]
             devs = [d.strip() for d in game['developer'].split(',') if d.strip()]
             if genres and devs:
-                matches = query("""
-                    SELECT g.id, g.title, g.boxart, s.name AS system_name
+                _take(query(f"""
+                    SELECT {columns}
                     FROM games g JOIN systems s ON g.system_id = s.id
                     WHERE g.genre LIKE ? ESCAPE '\\' AND g.developer LIKE ? ESCAPE '\\'
-                      AND g.id != ? AND g.is_bonus_disc = 0
-                    ORDER BY g.title LIMIT 5
-                """, [f'%{escape_like(genres[0])}%', f'%{escape_like(devs[0])}%', game_id])
-                for m in matches:
-                    if m['id'] not in seen_ids:
-                        similar.append({'id': m['id'], 'title': m['title'], 'boxart': m['boxart'], 'system_name': m['system_name'], 'reason': 'Same genre & developer'})
-                        seen_ids.add(m['id'])
+                      AND g.id != ? AND {listed}
+                    ORDER BY g.title LIMIT 10
+                """, [f'%{escape_like(genres[0])}%', f'%{escape_like(devs[0])}%', game_id]),
+                    'Same genre & developer')
 
         # Match by genre on same system (weaker signal, fill remaining)
         if len(similar) < 8 and game['genre']:
@@ -158,16 +173,15 @@ def api_similar_games(game_id):
                 # iterate the same sequence (set iteration order is unstable).
                 seen_ids_list = list(seen_ids)
                 placeholders = ','.join(['?'] * len(seen_ids_list))
-                matches = query(f"""
-                    SELECT g.id, g.title, g.boxart, s.name AS system_name
+                _take(query(f"""
+                    SELECT {columns}
                     FROM games g JOIN systems s ON g.system_id = s.id
-                    WHERE g.genre LIKE ? ESCAPE '\\' AND g.system_id = ? AND g.id NOT IN ({placeholders}) AND g.is_bonus_disc = 0
+                    WHERE g.genre LIKE ? ESCAPE '\\' AND g.system_id = ?
+                      AND g.id NOT IN ({placeholders}) AND {listed}
                     ORDER BY RANDOM() LIMIT ?
-                """, [f'%{escape_like(genres[0])}%', game['system_id']] + seen_ids_list + [8 - len(similar)])
-                for m in matches:
-                    if m['id'] not in seen_ids:
-                        similar.append({'id': m['id'], 'title': m['title'], 'boxart': m['boxart'], 'system_name': m['system_name'], 'reason': 'Similar genre on same system'})
-                        seen_ids.add(m['id'])
+                """, [f'%{escape_like(genres[0])}%', game['system_id']] + seen_ids_list
+                    + [2 * (8 - len(similar))]), 'Similar genre on same system',
+                    most=8 - len(similar))
 
         return success(games=similar[:8])
     except Exception as e:

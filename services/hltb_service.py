@@ -99,18 +99,19 @@ def _whole_number(value):
 
 
 def _normalize_confidence(confidence):
-    """Accept 0-1 float, 0-100 number, or list/tuple; return a 0-1 float or None."""
+    """A 0-100 percent, or a list holding one, as a 0-1 fraction; None stays None.
+
+    Every source sends a percent (hltb_lookup's round(score * 100)), so 1 is
+    1%, not 100% (PASS-59-249).
+    """
+    if isinstance(confidence, (list, tuple)):
+        confidence = confidence[0] if confidence else None
     if confidence is None:
         return None
-    if isinstance(confidence, (list, tuple)):
-        if not confidence:
-            return None
-        confidence = float(confidence[0])
-    else:
-        confidence = float(confidence)
-    if confidence > 1:
-        confidence = confidence / 100.0
-    return confidence
+    try:
+        return float(confidence) / 100.0
+    except (ValueError, TypeError):
+        return None
 
 
 def _resolve_filter_clause(filter_value):
@@ -335,13 +336,7 @@ class HLTBPendingQueue:
         return items
 
     def _apply(self, pending_row):
-        confidence_frac = None
-        if pending_row.get('confidence') is not None:
-            try:
-                c = float(pending_row['confidence'])
-                confidence_frac = c / 100.0 if c > 1 else c
-            except (ValueError, TypeError):
-                confidence_frac = None
+        confidence_frac = _normalize_confidence(pending_row.get('confidence'))
         execute("""
             UPDATE games SET
                 playtime_estimate = ?,

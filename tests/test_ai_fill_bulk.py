@@ -141,6 +141,14 @@ def test_run_route_refuses_a_bad_system(system_id, admin_test_client, monkeypatc
     assert resp.status_code == 400
 
 
+@pytest.mark.parametrize('system_id', ['abc', '1.5', ''])
+def test_count_route_refuses_a_bad_system(system_id, admin_test_client):
+    # It counted every system, while the run it previews refuses (PASS-59-249).
+    client, _csrf = admin_test_client()
+    resp = client.get(f'/api/ai-fill-bulk/count?system_id={system_id}')
+    assert resp.status_code == 400
+
+
 def test_run_route_needs_an_ai_provider(admin_test_client, monkeypatch):
     from scraper import scrape_ai
     monkeypatch.setattr(scrape_ai, 'active_provider_name', lambda: '')

@@ -4,7 +4,7 @@
 # Handles settings page, logging configuration, backups, and dropdown options.
 # =============================================================================
 
-from flask import Blueprint, render_template, request, jsonify, g, current_app
+from flask import Blueprint, render_template, request, jsonify, g, current_app, abort
 from flask_babel import gettext as _
 import sqlite3
 import os
@@ -191,8 +191,8 @@ def settings():
                              users=users,
                              settings=user_settings)
     except Exception as e:
-        logger.error(f"Settings error: {e}")
-        return f"Error loading settings: {e}", 500
+        logger.error(f"Settings error: {e}", exc_info=True)
+        abort(500)
 
 
 # =============================================================================

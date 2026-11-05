@@ -4,7 +4,7 @@
 # Handles system pages and system management APIs.
 # =============================================================================
 
-from flask import Blueprint, render_template, request, jsonify, redirect, url_for, flash
+from flask import Blueprint, render_template, request, jsonify, redirect, url_for, flash, abort
 from flask_babel import gettext as _
 import os
 import logging
@@ -14,6 +14,7 @@ from services.database import get_db, query, execute, execute_many
 from services.api_helpers import handle_api_errors, success, error
 from services.auth import login_required, admin_required
 from services.game_utils import find_image_file, is_ra_supported, get_ra_supported_systems
+from services.game_query import listed_sql
 
 logger = logging.getLogger(__name__)
 
@@ -212,8 +213,8 @@ def systems():
         return render_template('systems.html', systems=systems_list, system_specs=config.SYSTEM_SPECS,
                              system_features=system_features)
     except Exception as e:
-        logger.error(f"Systems error: {e}")
-        return f"Error loading systems: {e}", 500
+        logger.error(f"Systems error: {e}", exc_info=True)
+        abort(500)
 
 
 @bp.route('/system/<int:system_id>')
@@ -226,16 +227,8 @@ def system_games(system_id):
             flash(_("System not found"), "error")
             return redirect(url_for('systems.systems'))
 
-        counts = query("""
-            SELECT
-                -- PASS-59-106: a version group is one game; total_roms counts rows.
-                COUNT(DISTINCT CASE WHEN (is_bonus_disc = 0 OR is_bonus_disc IS NULL)
-                                    THEN COALESCE(version_group_id, -id) END) AS total_games,
-                COUNT(CASE WHEN (is_bonus_disc = 0 OR is_bonus_disc IS NULL) THEN 1 END) AS total_roms,
-                COUNT(CASE WHEN scraped = 0 AND (is_bonus_disc = 0 OR is_bonus_disc IS NULL) THEN 1 END) AS total_missing,
-                COUNT(CASE WHEN is_bonus_disc = 1 THEN 1 END) AS bonus_count
-            FROM games WHERE system_id = ?
-        """, (system_id,), one=True)
+        from routes.games import _LIST_COUNTS_SQL
+        counts = query(_LIST_COUNTS_SQL + " AND system_id = ?", (system_id,), one=True)
         total_games = counts['total_games']
         total_roms = counts['total_roms']
         total_missing = counts['total_missing']
@@ -249,10 +242,11 @@ def system_games(system_id):
         filter_options = _get_filter_options(system_id=system_id)
 
         # Get available first letters for alphabet nav
-        letter_rows = query("""
-            SELECT DISTINCT UPPER(SUBSTR(COALESCE(sort_title, title), 1, 1)) AS letter
-            FROM games
-            WHERE system_id = ? AND (is_bonus_disc = 0 OR is_bonus_disc IS NULL)
+        letter_rows = query(f"""
+            SELECT DISTINCT UPPER(SUBSTR(COALESCE(g.sort_title, g.title), 1, 1)) AS letter
+            FROM games g
+            WHERE g.system_id = ? AND {listed_sql('g')}
+            ORDER BY letter
         """, (system_id,))
         available_letters = [r['letter'] for r in letter_rows if r['letter']]
 
@@ -266,8 +260,8 @@ def system_games(system_id):
                              filter_options=filter_options,
                              available_letters=available_letters)
     except Exception as e:
-        logger.error(f"System games error: {e}")
-        return f"Error loading games: {e}", 500
+        logger.error(f"System games error: {e}", exc_info=True)
+        abort(500)
 
 
 # =============================================================================

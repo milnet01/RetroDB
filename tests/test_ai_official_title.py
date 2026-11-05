@@ -204,3 +204,17 @@ def test_live_cards_refresh_each_game_once():
     res = subprocess.run([NODE, '-e', script], capture_output=True, text=True, timeout=60)
     assert res.returncode == 0, res.stderr[-1500:]
     assert json.loads(res.stdout) == 0
+
+
+def test_ai_fill_reply_carries_every_field_it_filled(db, admin_test_client, monkeypatch):
+    # The reply's game left out units_sold, release_dates, the scores,
+    # sort_title and title_locked (PASS-59-249).
+    import scraper.scrape_ai as scrape_ai
+    gid = _game(db, 'Sales Test')
+    monkeypatch.setattr(scrape_ai, 'get_game_details',
+                        lambda game_id, *a, **k: {'units_sold': 2400000})
+    client, csrf = admin_test_client()
+    body = _ai_fill(client, csrf, gid)
+    assert 'units_sold' in body['filled_fields']
+    assert body['game']['units_sold'] == 2400000
+    assert {'sort_title', 'title_locked', 'release_dates'} <= set(body['game'])

@@ -17,6 +17,16 @@ logger = logging.getLogger(__name__)
 
 bp = Blueprint('games_ai', __name__)
 
+_REPLY_FIELDS = (
+    'id', 'title', 'sort_title', 'title_locked', 'genre', 'description', 'developer',
+    'publisher', 'release_date', 'release_dates', 'players', 'modes', 'units_sold',
+    'esrb_rating', 'pegi_rating', 'cero_rating', 'usk_rating', 'acb_rating', 'fpb_rating',
+    'grac_rating', 'classind_rating', 'china_rating',
+    'critic_score', 'critic_score_count', 'user_score', 'user_score_count',
+    'region', 'franchise', 'similar_games', 'controller_support', 'save_type',
+    'game_structure', 'perspective', 'dimension', 'campaign', 'other_platforms', 'edition',
+)
+
 
 @bp.route('/api/game/<int:game_id>/ai-fill', methods=['POST'])
 @editor_required
@@ -40,41 +50,11 @@ def api_game_ai_fill(game_id):
 
         updated_game = load_game(game_id)
 
-        return success(
-            filled_fields=filled_fields,
-            filled_count=len(filled_fields),
-            game={
-                'id': updated_game['id'],
-                'title': updated_game['title'],
-                'genre': updated_game['genre'],
-                'description': updated_game['description'],
-                'developer': updated_game['developer'],
-                'publisher': updated_game['publisher'],
-                'release_date': updated_game['release_date'],
-                'players': updated_game['players'],
-                'modes': updated_game['modes'],
-                'esrb_rating': updated_game['esrb_rating'],
-                'pegi_rating': updated_game['pegi_rating'],
-                'cero_rating': updated_game.get('cero_rating'),
-                'usk_rating': updated_game.get('usk_rating'),
-                'acb_rating': updated_game.get('acb_rating'),
-                'fpb_rating': updated_game.get('fpb_rating'),
-                'grac_rating': updated_game.get('grac_rating'),
-                'classind_rating': updated_game.get('classind_rating'),
-                'china_rating': updated_game.get('china_rating'),
-                'region': updated_game['region'],
-                'franchise': updated_game['franchise'],
-                'similar_games': updated_game['similar_games'],
-                'controller_support': updated_game['controller_support'],
-                'save_type': updated_game['save_type'],
-                'game_structure': updated_game['game_structure'],
-                'perspective': updated_game['perspective'],
-                'dimension': updated_game['dimension'],
-                'campaign': updated_game['campaign'],
-                'other_platforms': updated_game['other_platforms'],
-                'edition': updated_game['edition'],
-            },
-        )
+        # Every field the edit modal shows, and every field this fill wrote
+        # (PASS-59-249: units_sold, release_dates and the scores were missing).
+        shown = {f: updated_game.get(f) for f in _REPLY_FIELDS}
+        shown.update({f: updated_game.get(f) for f in filled_fields if f in updated_game})
+        return success(filled_fields=filled_fields, filled_count=len(filled_fields), game=shown)
 
     except ImportError:
         return error(_('AI scraper module not available'), 500)

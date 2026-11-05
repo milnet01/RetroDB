@@ -33,22 +33,22 @@ class TestBuildGamesQuery:
     def test_show_bonus_true_produces_no_filter(self):
         # group_versions=False: these tests pin the filters; the PASS-59-106
         # grouping wrapper is pinned by tests/test_version_groups_query.py.
-        sql, vals = _build_games_query({'show_bonus': '1'}, group_versions=False)
+        sql, vals = _build_games_query({'show_bonus': '1'}, count_only=True, group_versions=False)
         assert "is_bonus_disc = 0" not in sql
         assert vals == []
 
     def test_empty_params_hides_bonus_discs_by_default(self):
         # Default behaviour: hide bonus discs (show_bonus defaults to '0').
-        sql, vals = _build_games_query({})
+        sql, vals = _build_games_query({}, user_id=1)
         assert "is_bonus_disc = 0" in sql
 
     def test_show_bonus_removes_filter(self):
-        sql, vals = _build_games_query({'show_bonus': '1'})
+        sql, vals = _build_games_query({'show_bonus': '1'}, user_id=1)
         # With show_bonus=1 no bonus-disc condition is added
         assert "is_bonus_disc = 0" not in sql
 
     def test_system_filter(self):
-        sql, vals = _build_games_query({'system': '42'}, group_versions=False)
+        sql, vals = _build_games_query({'system': '42'}, count_only=True, group_versions=False)
         assert "g.system_id = ?" in sql
         # The SUT passes params['system'] verbatim — value comes off the query
         # string as a str. Pin the exact bound-value list so a future
@@ -58,18 +58,18 @@ class TestBuildGamesQuery:
         assert vals == ['42']
 
     def test_search_filter_escapes_wildcards(self):
-        sql, vals = _build_games_query({'search': '100%'})
+        sql, vals = _build_games_query({'search': '100%'}, user_id=1)
         # Both title and sort_title should have LIKE conditions
         assert "g.title LIKE ?" in sql
         # User's % must be escaped to \% in the bind value
         assert any('100\\%' in str(v) for v in vals)
 
     def test_letter_hash_matches_non_alpha(self):
-        sql, vals = _build_games_query({'letter': '#'})
+        sql, vals = _build_games_query({'letter': '#'}, user_id=1)
         assert "NOT BETWEEN 'A' AND 'Z'" in sql
 
     def test_letter_alpha_binds_upper(self):
-        sql, vals = _build_games_query({'letter': 'z'})
+        sql, vals = _build_games_query({'letter': 'z'}, user_id=1)
         # The SUT does `values.append(letter.upper())` — the bound value
         # must be the literal string 'Z'. `'Z' in vals` alone would pass
         # for a vals list with 'ZERO' or duplicate 'Z' entries; pin the
@@ -77,7 +77,7 @@ class TestBuildGamesQuery:
         assert 'Z' in vals and vals.count('Z') == 1
 
     def test_ra_only_filter(self):
-        sql, vals = _build_games_query({'ra_only': '1'})
+        sql, vals = _build_games_query({'ra_only': '1'}, user_id=1)
         assert "has_retroachievements = 1" in sql
 
     def test_count_only_emits_count_query(self):
@@ -91,33 +91,33 @@ class TestBuildGamesQuery:
         assert "ORDER BY COALESCE(g.sort_title" in sql
 
     def test_data_query_includes_expected_columns(self):
-        sql, vals = _build_games_query({})
+        sql, vals = _build_games_query({}, user_id=1)
         # Spot-check a few columns that must not disappear
         for col in ['g.title', 'g.boxart', 'g.critic_score', 's.name AS system_name',
                     'bc.bonus_count', 'gap.earned_achievements']:
             assert col in sql, f"missing column {col} in SELECT"
 
     def test_not_filters_include_null_safe(self):
-        sql, vals = _build_games_query({'not_genre': 'Horror'})
+        sql, vals = _build_games_query({'not_genre': 'Horror'}, user_id=1)
         # NOT filters must include `OR IS NULL` so null-genre rows aren't
         # accidentally excluded (they don't contain Horror either).
         assert "g.genre IS NULL" in sql
 
     def test_source_clz(self):
-        sql, _ = _build_games_query({'source': 'clz'})
+        sql, _ = _build_games_query({'source': 'clz'}, user_id=1)
         assert "g.rom_path LIKE 'clz_import/%'" in sql
 
     def test_source_steam(self):
-        sql, _ = _build_games_query({'source': 'steam'})
+        sql, _ = _build_games_query({'source': 'steam'}, user_id=1)
         assert "g.rom_path LIKE 'steam_import/%'" in sql
 
     def test_source_rom_excludes_all_imports(self):
-        sql, _ = _build_games_query({'source': 'rom'})
+        sql, _ = _build_games_query({'source': 'rom'}, user_id=1)
         for marker in ['clz_import', 'steam_import', 'xbox_import', 'psn_import']:
             assert marker in sql
 
     def test_rating_filter_ORs_all_rating_systems(self):
-        sql, vals = _build_games_query({'rating': 'T'})
+        sql, vals = _build_games_query({'rating': 'T'}, user_id=1)
         # rating searches across every rating-system column
         assert 'esrb_rating' in sql
         assert 'pegi_rating' in sql
@@ -126,7 +126,7 @@ class TestBuildGamesQuery:
 
     @pytest.mark.parametrize("field", ['genre', 'franchise', 'developer', 'publisher', 'modes', 'perspective', 'dimension'])
     def test_multivalue_fields_use_like_with_escape(self, field):
-        sql, vals = _build_games_query({field: 'Value'})
+        sql, vals = _build_games_query({field: 'Value'}, user_id=1)
         # SQL literal: ESCAPE '\' (single backslash — the LIKE escape char).
         assert f"g.{field} LIKE ? ESCAPE '\\'" in sql
         assert '%Value%' in vals
@@ -177,5 +177,5 @@ class TestSortOrder:
         assert self._ids(db, sort) == expected
 
     def test_data_query_uses_same_sort(self):
-        sql, _ = _build_games_query({'sort': 'critic_score'}, group_versions=False)
+        sql, _ = _build_games_query({'sort': 'critic_score'}, group_versions=False, user_id=1)
         assert "g.critic_score DESC" in sql

@@ -1411,7 +1411,10 @@ const AllGamesController = (function() {
                 updateSelectedCount();
 
                 if (typeof showNotification === 'function') {
-                    showNotification(t('Selected {count} games across all pages', {count: data.ids.length}), 'info');
+                    showNotification(data.truncated
+                        ? t('Selected the first {count} of {total} games. Narrow the filters to select the rest.', {count: data.ids.length, total: data.total})
+                        : t('Selected {count} games across all pages', {count: data.ids.length}),
+                        data.truncated ? 'warning' : 'info');
                 }
             }
         } catch (err) {
@@ -1449,7 +1452,10 @@ const AllGamesController = (function() {
                 updateSelectedCount();
 
                 if (typeof showNotification === 'function') {
-                    showNotification(t('Selected {count} unscraped games across all pages', {count: data.ids.length}), 'info');
+                    showNotification(data.truncated
+                        ? t('Selected the first {count} of {total} games. Narrow the filters to select the rest.', {count: data.ids.length, total: data.total})
+                        : t('Selected {count} unscraped games across all pages', {count: data.ids.length}),
+                        data.truncated ? 'warning' : 'info');
                 }
             }
         } catch (err) {

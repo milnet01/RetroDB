@@ -197,22 +197,23 @@ Only one route currently sets `ETag` / honours `If-None-Match`:
 
 ### 5.1 Key composition
 
-The etag payload must include every input that affects the response body:
+The etag must change whenever the response body does. The card-data route
+builds the reply first and hashes it, so nothing a card shows can be left out
+(PASS-59-249: an ETag keyed on `games.updated_at` missed achievement and PSN
+progress, launch setup and ROM files):
 
 ```python
-etag_payload = f"cd:{g.user['id']}:{','.join(str(i) for i in sorted_ids)}:{max_updated}"
-etag = f'W/"{hashlib.md5(etag_payload.encode(), usedforsecurity=False).hexdigest()}"'
+resp = success(games=games)
+etag_payload = f"cd:{g.user['id']}:".encode() + resp.get_data()
+etag = f'W/"{hashlib.md5(etag_payload, usedforsecurity=False).hexdigest()}"'
 ```
 
 - `cd:` — route discriminator (`card-data`).
 - `g.user['id']` — **Pass 40.5 multi-user discriminator**. The response embeds
   per-user PSN progress + achievement progress, so a globally-keyed ETag would
   let one user's browser serve another user's progress out of cache. CWE-524.
-- Sorted ids — request determinism (clients hitting the same set in different
-  orders share cache).
-- `max(games.updated_at)` over the requested ids — migration 004 guarantees
-  every INSERT/UPDATE on `games` bumps `updated_at`, so this is a reliable
-  freshness key.
+
+A 304 saves the transfer, not the query: the server still builds every card.
 
 Weak validator (`W/"..."`) — the body is semantically equivalent under gzip
 re-compression and irrelevant trailing-whitespace changes, but the response is
@@ -235,9 +236,10 @@ if request.headers.get('If-None-Match') == etag:
 
 ### 5.3 Adding ETag to new routes
 
-Same pattern: include caller's user id whenever the response is user-scoped,
-a freshness column (or table-level `MAX(updated_at)`), and a route prefix to
-avoid collisions across endpoints. Pin the contract with a `tests/test_etag_*`
+Same pattern: hash the built reply, with the caller's user id whenever the
+response is user-scoped and a route prefix to avoid collisions across
+endpoints. A key built from freshness columns instead must name every input
+the body reads, and is wrong the day a new one is added. Pin the contract with a `tests/test_etag_*`
 case modeled on `tests/test_etag_and_gzip.py::TestCardDataETag`.
 
 ---
@@ -435,8 +437,10 @@ into its group's card is placed at that card; `found` is false when the game
 is not in the list.
 
 Bulk-id endpoints (`/api/games/ids`, `/api/games/neighbors`, `/api/games/card-data`) use a different
-cap pattern — see Pass 25.8: `LIMIT 20 * MAX_LIST_ROWS` (default 10 000) on
-id-only fetches, and a hard `[1, 50]` range on card-data ids. Match the
+cap pattern — see Pass 25.8: `LIMIT 20 * MAX_LIST_ROWS` on id-only fetches,
+and a hard `[1, 50]` range on card-data ids. `/api/games/ids` returns
+`{ids, total, truncated}`: when the cap cut the list, `truncated` is true and
+`total` is the full count, so Select all can say so (PASS-59-249). Match the
 relevant pattern by route shape; the rule is "always cap", not "always paginate".
 
 ---

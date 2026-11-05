@@ -31,6 +31,7 @@ from services.game_query import (
     escape_like, get_retroachievements_info, get_trophy_info_for_game,
     get_bonus_discs_for_game, _get_filter_options, _build_games_query,
     invalidate_filter_cache, VERSION_COLUMNS, MULTI_FILTER_FIELDS,
+    listed_sql, one_row_per_group,
 )
 from services.analytics import invalidate_analytics_cache
 from services.box_faces import faces_for
@@ -78,6 +79,25 @@ except ImportError:
         return []
 
 
+# The Library and console page headers. PASS-59-106: a version group is one
+# game, and total_roms counts rows. A BIOS set is not counted (PASS-59-227).
+_LIST_COUNTS_SQL = """
+    SELECT
+        COUNT(DISTINCT CASE WHEN COALESCE(is_bonus_disc, 0) = 0
+                            THEN COALESCE(version_group_id, -id) END) AS total_games,
+        COUNT(CASE WHEN COALESCE(is_bonus_disc, 0) = 0 THEN 1 END) AS total_roms,
+        COUNT(CASE WHEN scraped = 0 AND COALESCE(is_bonus_disc, 0) = 0 THEN 1 END) AS total_missing,
+        COUNT(CASE WHEN is_bonus_disc = 1 THEN 1 END) AS bonus_count
+    FROM games
+    WHERE COALESCE(arcade_category, '') != 'BIOS'
+"""
+
+
+def _select_all_cap():
+    """Most ids Select all and Previous / Next read (Pass 25.8)."""
+    return 20 * int(getattr(config, 'MAX_LIST_ROWS', 500))
+
+
 @bp.route('/games')
 @login_required
 def all_games():
@@ -87,21 +107,13 @@ def all_games():
             SELECT s.*, COUNT(g.id) AS rom_count
             FROM systems s
             LEFT JOIN games g ON s.id = g.system_id
+                AND COALESCE(g.arcade_category, '') != 'BIOS'
             GROUP BY s.id
             HAVING rom_count > 0
             ORDER BY s.name COLLATE NOCASE
         """)
 
-        counts = query("""
-            SELECT
-                -- PASS-59-106: a version group is one game; total_roms counts rows.
-                COUNT(DISTINCT CASE WHEN (is_bonus_disc = 0 OR is_bonus_disc IS NULL)
-                                    THEN COALESCE(version_group_id, -id) END) AS total_games,
-                COUNT(CASE WHEN (is_bonus_disc = 0 OR is_bonus_disc IS NULL) THEN 1 END) AS total_roms,
-                COUNT(CASE WHEN scraped = 0 AND (is_bonus_disc = 0 OR is_bonus_disc IS NULL) THEN 1 END) AS total_missing,
-                COUNT(CASE WHEN is_bonus_disc = 1 THEN 1 END) AS bonus_count
-            FROM games
-        """, one=True)
+        counts = query(_LIST_COUNTS_SQL, one=True)
         total_games = counts['total_games']
         total_roms = counts['total_roms']
         total_missing = counts['total_missing']
@@ -111,10 +123,11 @@ def all_games():
         filter_options = _get_filter_options()
 
         # Get available first letters for alphabet nav
-        letter_rows = query("""
-            SELECT DISTINCT UPPER(SUBSTR(COALESCE(sort_title, title), 1, 1)) AS letter
-            FROM games
-            WHERE is_bonus_disc = 0 OR is_bonus_disc IS NULL
+        letter_rows = query(f"""
+            SELECT DISTINCT UPPER(SUBSTR(COALESCE(g.sort_title, g.title), 1, 1)) AS letter
+            FROM games g
+            WHERE {listed_sql('g')}
+            ORDER BY letter
         """)
         available_letters = [r['letter'] for r in letter_rows if r['letter']]
 
@@ -128,8 +141,8 @@ def all_games():
                              filter_options=filter_options,
                              available_letters=available_letters)
     except Exception as e:
-        logger.error(f"All games error: {e}")
-        return f"Error loading games: {e}", 500
+        logger.error(f"All games error: {e}", exc_info=True)
+        abort(500)
 
 
 def _add_can_launch(games, rows):
@@ -227,16 +240,16 @@ def api_games_ids():
     params = _filter_params()
     ids_sql, ids_vals = _build_games_query(params, ids_only=True)
 
-    # Pass 25.8 — sanity LIMIT. This endpoint feeds bulk-select ("select every
-    # filtered game on this page") so a 500-row cap would break a realistic
-    # library; we pick a ceiling (20 000) that's one order of magnitude past
-    # any plausible library size but still prevents a runaway response.
-    ids_sql += f" LIMIT {20 * int(getattr(config, 'MAX_LIST_ROWS', 500))}"
-
-    rows = query(ids_sql, tuple(ids_vals))
-    ids = [r['id'] for r in rows]
-
-    return success(ids=ids, total=len(ids))
+    # Pass 25.8 — a cap well past any likely library stops a runaway reply.
+    # One row past it tells the page the list was cut (PASS-59-249).
+    cap = _select_all_cap()
+    rows = query(ids_sql + f" LIMIT {cap + 1}", tuple(ids_vals))
+    ids = [r['id'] for r in rows[:cap]]
+    if len(rows) <= cap:
+        return success(ids=ids, total=len(ids), truncated=False)
+    count_sql, count_vals = _build_games_query(params, count_only=True)
+    total = query(count_sql, tuple(count_vals), one=True)['total']
+    return success(ids=ids, total=total, truncated=True)
 
 
 @bp.route('/api/games/neighbors')
@@ -253,7 +266,7 @@ def api_games_neighbors():
         return error(_('No IDs provided'), 400)
     ids_sql, ids_vals = _build_games_query(_filter_params(extra=('sort',)), ids_only=True)
     # Pass 25.8 — the same cap as /api/games/ids.
-    ids_sql += f" LIMIT {20 * int(getattr(config, 'MAX_LIST_ROWS', 500))}"
+    ids_sql += f" LIMIT {_select_all_cap()}"
     ids = [r['id'] for r in query(ids_sql, tuple(ids_vals))]
 
     position = {gid: i for i, gid in enumerate(ids)}
@@ -293,30 +306,6 @@ def api_games_card_data():
             game_ids.append(int(part))
     if not game_ids or len(game_ids) > 50:
         return error(_('Provide 1-50 valid IDs'), 400)
-
-    # Pass 21.1: ETag short-circuit. Key off MAX(games.updated_at) for the
-    # requested IDs — migration 004 guarantees every INSERT/UPDATE refreshes
-    # it. If the client's If-None-Match matches, skip the heavy JOIN + JSON
-    # serialisation entirely and return 304.
-    sorted_ids = sorted(game_ids)
-    max_updated_row = query(
-        f"SELECT MAX(updated_at) AS m FROM games WHERE id IN ({','.join('?' * len(sorted_ids))})",
-        tuple(sorted_ids),
-        one=True,
-    )
-    max_updated = (max_updated_row or {}).get('m') or ''
-    # Pass 40.5 — bake the user id into the ETag.  The response payload
-    # includes per-user PSN + achievement progress (joins below), so a
-    # globally-keyed ETag lets one user's browser serve another user's
-    # progress as a 304.  CWE-524.
-    etag_payload = (f"cd:{g.user['id']}:{','.join(str(i) for i in sorted_ids)}:{max_updated}"
-                    f":{rpcs3_compat.stamp()}")
-    etag = f'W/"{hashlib.md5(etag_payload.encode(), usedforsecurity=False).hexdigest()}"'
-    if request.headers.get('If-None-Match') == etag:
-        resp = make_response('', 304)
-        resp.headers['ETag'] = etag
-        resp.headers['Cache-Control'] = 'private, must-revalidate'
-        return resp
 
     placeholders = ','.join('?' * len(game_ids))
     sql = f"""
@@ -374,7 +363,15 @@ def api_games_card_data():
     ]
     _add_can_launch(games, rows)
 
+    # Pass 21.1 — ETag. It is a hash of the reply itself, so every input a
+    # card shows is in it: progress, launch setup, ROM files, RPCS3 status
+    # (PASS-59-249). Pass 40.5 — the user id is in it too, so one user's
+    # browser never serves another user's cards as a 304. CWE-524.
     resp = success(games=games)
+    etag_payload = f"cd:{g.user['id']}:".encode() + resp.get_data()
+    etag = f'W/"{hashlib.md5(etag_payload, usedforsecurity=False).hexdigest()}"'
+    if request.headers.get('If-None-Match') == etag:
+        resp = make_response('', 304)
     resp.headers['ETag'] = etag
     resp.headers['Cache-Control'] = 'private, must-revalidate'
     return resp
@@ -911,7 +908,7 @@ def game_detail(game_id):
                              box_faces=faces_for(game))
     except Exception as e:
         logger.error(f"Game detail error: {e}", exc_info=True)
-        return f"Error loading game: {e}", 500
+        abort(500)
 
 
 # =============================================================================
@@ -1096,15 +1093,26 @@ def api_apply_metadata_progress(task_id):
     return jsonify({'success': True, **snap})
 
 
-def _note_hand_edits(game_id, new_values):
+def _note_hand_edits(game_id, new_values, conn=None):
     """Credit a person for the marked fields this edit changes, so a corrected
-    AI rating stops showing as a guess (PASS-59-211)."""
+    AI rating stops showing as a guess (PASS-59-211). Pass `conn` to write
+    inside the caller's transaction."""
     columns = ', '.join(HAND_EDITED_FIELDS)
-    row = query(f"SELECT scrape_history, {columns} FROM games WHERE id = ?", (game_id,), one=True)
+    sql = f"SELECT scrape_history, {columns} FROM games WHERE id = ?"
+    if conn is None:
+        row = query(sql, (game_id,), one=True)
+    else:
+        cursor = conn.execute(sql, (game_id,))
+        found = cursor.fetchone()
+        row = dict(zip([d[0] for d in cursor.description], found)) if found else None
     if row:
         history = hand_edit_history(row['scrape_history'], row, new_values)
         if history:
-            execute("UPDATE games SET scrape_history = ? WHERE id = ?", (history, game_id))
+            update = ("UPDATE games SET scrape_history = ? WHERE id = ?", (history, game_id))
+            if conn is None:
+                execute(*update)
+            else:
+                conn.execute(*update)
 
 
 @bp.route('/api/game/<int:game_id>/edit', methods=['POST'])
@@ -1195,9 +1203,15 @@ def api_games_bulk_edit():
 
     if not game_ids:
         return error(_('No games selected'), 400)
+    # A string would be walked character by character: "12" edits games 1 and 2.
+    if not isinstance(game_ids, list) or not all(
+            isinstance(i, int) and not isinstance(i, bool) for i in game_ids):
+        return error(_('Invalid game selection'), 400)
 
-    if not fields:
+    if not fields or not isinstance(fields, dict):
         return error(_('No fields to update'), 400)
+    if not isinstance(field_modes, dict):
+        field_modes = {}
 
     # Pass 48.5 — validate completion_status against the same whitelist the
     # single-edit endpoint enforces (bulk edit previously stored the raw value).
@@ -1241,6 +1255,8 @@ def api_games_bulk_edit():
 
         mode = field_modes.get(field, 'replace')
         if mode == 'append' and safe_field in appendable_fields and value:
+            if not isinstance(value, str):
+                return error(_('%(field)s must be text', field=safe_field), 400)
             append_fields[safe_field] = value
         else:
             if safe_field == 'players':
@@ -1254,13 +1270,13 @@ def api_games_bulk_edit():
     if not replace_updates and not append_fields:
         return error(_('No valid fields to update'), 400)
 
-    for bulk_game_id in game_ids:
-        _note_hand_edits(bulk_game_id, {f: v for f, v in fields.items() if f in bulk_allowed_fields})
-
     from services.database import get_db_with_context
 
     with get_db_with_context() as conn:
         cursor = conn.cursor()
+        edited = {f: v for f, v in fields.items() if f in bulk_allowed_fields}
+        for bulk_game_id in game_ids:
+            _note_hand_edits(bulk_game_id, edited, conn)
 
         # Handle standard replace updates
         if replace_updates:
@@ -1453,43 +1469,24 @@ def api_filter_games():
     # genre on a 50 000-game library would ship every row in one response.
     limit_clause = f"LIMIT {int(getattr(config, 'MAX_LIST_ROWS', 500))}"
 
-    if filter_type == 'modes':
-        if 'single' in filter_value.lower():
-            games = query(f"""
-                SELECT g.*, s.name AS system_name
-                FROM games g
-                JOIN systems s ON g.system_id = s.id
-                WHERE g.{column} LIKE '%Single%' OR g.players = 1
-                {order_clause}
-                {limit_clause}
-            """)
-        elif 'multi' in filter_value.lower():
-            games = query(f"""
-                SELECT g.*, s.name AS system_name
-                FROM games g
-                JOIN systems s ON g.system_id = s.id
-                WHERE g.{column} LIKE '%Multi%' OR g.players > 1
-                {order_clause}
-                {limit_clause}
-            """)
-        else:
-            games = query(f"""
-                SELECT g.*, s.name AS system_name
-                FROM games g
-                JOIN systems s ON g.system_id = s.id
-                WHERE g.{column} LIKE ? ESCAPE '\\'
-                {order_clause}
-                {limit_clause}
-            """, (f'%{escape_like(filter_value)}%',))
+    # The Library's own rules: no bonus discs or BIOS sets, and one row per
+    # version group (PASS-59-249).
+    if filter_type == 'modes' and 'single' in filter_value.lower():
+        match, match_values = f"(g.{column} LIKE '%Single%' OR g.players = 1)", []
+    elif filter_type == 'modes' and 'multi' in filter_value.lower():
+        match, match_values = f"(g.{column} LIKE '%Multi%' OR g.players > 1)", []
     else:
-        games = query(f"""
-            SELECT g.*, s.name AS system_name
-            FROM games g
-            JOIN systems s ON g.system_id = s.id
-            WHERE g.{column} LIKE ? ESCAPE '\\'
-            {order_clause}
-            {limit_clause}
-        """, (f'%{escape_like(filter_value)}%',))
+        match = f"g.{column} LIKE ? ESCAPE '\\'"
+        match_values = [f'%{escape_like(filter_value)}%']
+    where, values = one_row_per_group(f"{match} AND {listed_sql('g')}", match_values)
+    games = query(f"""
+        SELECT g.*, s.name AS system_name
+        FROM games g
+        JOIN systems s ON g.system_id = s.id
+        WHERE {where}
+        {order_clause}
+        {limit_clause}
+    """, tuple(values))
 
     result_games = []
     # Pass 48.5 — loop var `row` (not `g`) to avoid shadowing `from flask import g`.
