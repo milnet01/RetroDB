@@ -11290,6 +11290,9 @@ the cover zoom in Firefox before being reverted for the local fix.
   - A secret key that cannot be written signs everyone out each restart,
     with nothing logged.
 - **Source**: audit 2026-11-04.
+- Found 2026-11-05 (CI tuning, ci-gate): `dependabot-lockfile.yml` has
+  no dependency cache (local-gate.md § 9). Add `cache: pip` to its
+  setup-python step while pinning its tool installs.
 
 ---
 
