@@ -11211,6 +11211,23 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Decided** (user, 2026-11-04): right-to-left layout waits until after
   v4.0.0 (PASS-43-4). Hebrew ships marked as a preview whose layout is
   not yet right to left.
+- **Progress** (2026-11-05): the job-queue panel now escapes
+  `system_name` (336a1f24). Survey of what is still unwrapped, by file:
+  `app.py` (recovery banner per job type with progress and count
+  placeholders, Resume/Start, job-route and setup `api_error` texts, CSRF,
+  404/500 envelopes); `services/formatters.py` "Unknown"; Steam/Xbox
+  "Game has no achievements"; `platform_sync.py` job errors;
+  `all-games-controller.js` card labels, filter title, badge titles
+  (bonus discs is a plural), "(cross-mapped)"; `launch-indicator.js`
+  fallback name; `base.html` job-queue panel; `setup.html` (all but the
+  MIT licence text); `tags.html`; `list_detail.html`;
+  `compare_games.html`; `rom_tools_settings.html` (one line holds a
+  link); `game_detail.html` hybrid-scrape title, HLTB "via {term}" note,
+  `Screenshot {n}` alt.
+  - **Traps**: `app.py` has no module-level `_` (functions import it);
+  `platform_sync.py` errors are set in a job thread, so translate where
+  the status is returned; new `t()` msgids reach the page through
+  `services/js_i18n_strings.py` (`build_js.py`); plurals take `{count}`.
 
 ---
 
