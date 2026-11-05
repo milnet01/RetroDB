@@ -4,6 +4,7 @@ import ipaddress
 import pytest
 
 from services import ssrf
+from tests.test_pass59_205_esde_merge import library  # noqa: F401  (a fixture)
 
 
 @pytest.mark.parametrize('ip,public', [
@@ -58,3 +59,24 @@ def test_a_record_with_no_system_is_found_in_the_cache():
     from scraper import scraper_cache
     scraper_cache.cache_screenscraper_result('987654', '', {'id': 'x'})
     assert scraper_cache.get_cached_screenscraper_result('987654', None) == {'id': 'x'}
+
+
+def test_esde_folders_typed_with_a_tilde_mean_the_home_folder(monkeypatch):
+    import os
+    from scraper import scrape_esde
+    monkeypatch.setattr(scrape_esde.settings_manager, 'get_effective_path',
+                        lambda key, fallback='': '~/ES-DE/gamelists')
+    assert scrape_esde._get_esde_gamelists_path() == os.path.expanduser('~/ES-DE/gamelists')
+
+
+def test_an_oversized_esde_picture_is_not_copied(library, monkeypatch):  # noqa: F811
+    import os
+    from scraper import scrape_esde
+    monkeypatch.setattr(scrape_esde.config, 'MAX_MEDIA_DOWNLOAD_BYTES', 10)
+    library.add_game()
+    media = os.path.join(library.esde, 'downloaded_media', 'atari2600', 'covers')
+    os.makedirs(media, exist_ok=True)
+    with open(os.path.join(media, 'Fatal Run (USA).png'), 'wb') as f:
+        f.write(b'x' * 100)
+    copied = scrape_esde.copy_esde_media(1, {'name': 'Fatal Run'}, 'atari2600')
+    assert 'boxart' not in copied

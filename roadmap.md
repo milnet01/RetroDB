@@ -11317,6 +11317,11 @@ the cover zoom in Firefox before being reverted for the local fix.
   repeat live msgids, so GNU `msgfmt --statistics` reports "duplicate
   message definition" (Babel's compile ignores them). Drop the obsolete
   entries (`pybabel update --ignore-obsolete`, or delete the `#~` blocks).
+- Found 2026-11-05 (PASS-59-247 removed the unused `bulk_import_esde`):
+  `scrape_esde.apply_esde_metadata` now has no caller outside tests, yet
+  CLAUDE.md and docs/specs/scrapers.md name it the canonical COALESCE
+  pattern. Point both at `hybrid_scraper._save_game_row` and remove it,
+  with its tests moved to `_save_game_row`.
 
 ---
 

@@ -13,6 +13,7 @@ import sys
 
 # Add parent directory to path for config import
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import config
 from config import IMAGE_PATH, STATIC_PATH
 from scraper.base_scraper import get_scraper_conn
 from scraper.image_dedup import get_existing_screenshot_hashes, keep_screenshot_if_unique
@@ -39,11 +40,12 @@ def esde_date(raw):
 
 
 def _get_esde_gamelists_path():
-    return settings_manager.get_effective_path('esde_gamelists_path', '')
+    # `~/` as typed in Settings means the home folder (PASS-59-247).
+    return os.path.expanduser(settings_manager.get_effective_path('esde_gamelists_path', ''))
 
 
 def _get_esde_media_path():
-    return settings_manager.get_effective_path('esde_downloaded_media_path', '')
+    return os.path.expanduser(settings_manager.get_effective_path('esde_downloaded_media_path', ''))
 
 logger = logging.getLogger(__name__)
 
@@ -896,7 +898,16 @@ def copy_esde_media(db_game_id, game_data, system_folder=None, existing=None,
             dest_dir = os.path.join(root, dest_folder)
             os.makedirs(dest_dir, exist_ok=True)
             dest_path = os.path.join(dest_dir, filename)
+            # The caps a download has, so a stray huge file is not copied
+            # (PASS-59-247): videos and manuals the upload cap, pictures the
+            # scraper's download cap.
+            cap = (getattr(config, 'MAX_VIDEO_SIZE', 500 * 1024 * 1024)
+                   if dest_folder in ('videos', 'manuals')
+                   else getattr(config, 'MAX_MEDIA_DOWNLOAD_BYTES', 50 * 1024 * 1024))
             try:
+                if os.path.getsize(src_path) > cap:
+                    logger.warning(f"  Not copying {dest_folder}: {src_path} is over {cap} bytes")
+                    return None
                 shutil.copy2(src_path, dest_path)
                 # Standardize image size for supported types
                 if dest_folder in ('boxart', 'screenshots', 'boxart_3d', 'boxart_back'):
@@ -1107,91 +1118,6 @@ def apply_esde_metadata(db_game_id, game_data, system_folder=None):
     finally:
         if conn:
             conn.close()
-
-
-def bulk_import_esde(system_folder=None):
-    """
-    Bulk import all ES-DE metadata for a system (or all systems)
-    Matches games by ROM filename
-    """
-    conn = None
-    imported = 0
-    skipped = 0
-
-    try:
-        conn = get_scraper_conn()
-        c = conn.cursor()
-
-        # Get systems to process
-        if system_folder:
-            c.execute("SELECT id, folder FROM systems WHERE folder = ?", (system_folder,))
-        else:
-            c.execute("SELECT id, folder FROM systems")
-
-        systems = c.fetchall()
-
-        for system_id, sys_folder in systems:
-            xml_path = find_gamelist_xml(sys_folder)
-
-            if not xml_path:
-                logger.debug(f"No gamelist.xml for {sys_folder}")
-                continue
-
-            games = parse_gamelist_xml(xml_path)
-
-            if not games:
-                continue
-
-            # Get all unscraped games for this system
-            c.execute("""
-                SELECT id, rom_path, title FROM games
-                WHERE system_id = ? AND scraped = 0
-            """, (system_id,))
-
-            db_games = c.fetchall()
-
-            # Build lookup dicts for O(1) matching instead of O(n²) nested loop
-            esde_by_filename = {}
-            esde_by_relpath = {}
-            for esde_game in games:
-                esde_path = esde_game.get('path', '')
-                esde_filename = os.path.basename(esde_path)
-                esde_by_filename.setdefault(esde_filename, esde_game)
-                rel_path = esde_path.replace('./', '')
-                if rel_path:
-                    esde_by_relpath.setdefault(rel_path, esde_game)
-
-            for db_id, rom_path, db_title in db_games:
-                rom_filename = os.path.basename(rom_path)
-
-                # O(1) lookup by filename or relative path
-                esde_game = esde_by_filename.get(rom_filename) or esde_by_relpath.get(rom_filename)
-                if esde_game:
-                    game_data = {
-                        'name': esde_game.get('name', ''),
-                        'description': esde_game.get('desc', ''),
-                        'developer': esde_game.get('developer', ''),
-                        'publisher': esde_game.get('publisher', ''),
-                        'genre': esde_game.get('genre', ''),
-                        # None when absent: COALESCE keeps a curated count.
-                        'players': esde_game.get('players'),
-                        'release_date': esde_game.get('releasedate', ''),
-                        'image_path': esde_game.get('image', ''),
-                        'screenshot_path': esde_game.get('screenshot', ''),
-                    }
-
-                    if apply_esde_metadata(db_id, game_data, sys_folder):
-                        imported += 1
-                    else:
-                        skipped += 1
-    except Exception as e:
-        logger.error(f"ES-DE bulk import failed: {e}")
-    finally:
-        if conn:
-            conn.close()
-
-    logger.info(f"ES-DE bulk import complete: {imported} imported, {skipped} skipped")
-    return imported, skipped
 
 
 def import_system_logos():
