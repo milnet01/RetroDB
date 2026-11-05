@@ -5,6 +5,7 @@
 # ================================================================================
 
 import os
+import functools
 import logging
 from datetime import datetime, timezone
 
@@ -122,6 +123,18 @@ def get_logging_settings():
         return {}
 
 
+@functools.lru_cache(maxsize=512)
+def category_of(logger_name):
+    """The category whose CATEGORY_LOGGERS entry is the closest ancestor of
+    `logger_name` (or the name itself), or None."""
+    best, best_len = None, -1
+    for category, names in CATEGORY_LOGGERS.items():
+        for name in names:
+            if (logger_name == name or logger_name.startswith(name + '.')) and len(name) > best_len:
+                best, best_len = category, len(name)
+    return best
+
+
 class CategoryFileHandler(logging.Handler):
     """Custom handler that writes to category-specific date-based log files"""
     
@@ -182,6 +195,11 @@ class CategoryFileHandler(logging.Handler):
     
     def emit(self, record):
         """Emit a log record"""
+        # A line propagates up to its parents' handlers too, so a logger
+        # claimed by another category (scraper.rom_tools under scraper) is
+        # left to that category's file (PASS-59-249).
+        if category_of(record.name) not in (self.category, None):
+            return
         self._setup_handler()  # Check for date rollover
 
         # If data/settings.json is malformed (e.g. `logging` got overwritten
