@@ -1015,7 +1015,15 @@ def _fetch_fallback(source, lookup):
     Runs on a pool thread; touches no shared state."""
     with apply_progress.timed(f"fetch {_PROGRESS_SOURCE_LABELS.get(source, source)}"):
         try:
-            return _FALLBACK_FETCHERS[source](lookup)
+            fetch = _FALLBACK_FETCHERS[source]
+            # Under the service's breaker, as a search is: a service that keeps
+            # failing is skipped for its recovery window (PASS-59-247). An
+            # open breaker raises, which ends as "no record" below.
+            breaker = _FALLBACK_BREAKERS.get(source)
+            if breaker:
+                from scraper import scraper_manager
+                fetch = getattr(scraper_manager, breaker)(fetch)
+            return fetch(lookup)
         except Exception as fallback_error:
             logger.warning(f"Fallback scraper {source} failed: {fallback_error}")
             return None
@@ -1185,6 +1193,14 @@ def _fetch_screenscraper(lookup):
     # fill-only and so survive a re-scrape (Pass 59.21).
     return _pick_best_fallback(ss_results, game_title)
 
+
+# Each online source's circuit breaker in scraper_manager; ES-DE is local.
+_FALLBACK_BREAKERS = {
+    'tgdb': '_tgdb_breaker',
+    'igdb': '_igdb_breaker',
+    'rawg': '_rawg_breaker',
+    'screenscraper': '_screenscraper_breaker',
+}
 
 _FALLBACK_FETCHERS = {
     'esde': _fetch_esde,

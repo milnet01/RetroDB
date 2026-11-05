@@ -91,3 +91,23 @@ def test_a_listed_region_outside_the_options_is_kept_not_defaulted(monkeypatch):
         metadata, result = {'region': given}, {'filled_fields': []}
         hybrid_scraper._normalize_region(metadata, result)
         assert metadata['region'] == kept, given
+
+
+@pytest.mark.parametrize('source,breaker', [('tgdb', '_tgdb_breaker'), ('igdb', '_igdb_breaker'),
+                                            ('rawg', '_rawg_breaker'),
+                                            ('screenscraper', '_screenscraper_breaker')])
+def test_gap_fill_runs_each_service_under_its_breaker(source, breaker, monkeypatch):
+    """Only the AI ran under its breaker; the others called a failing service
+    on every gap-fill."""
+    from scraper import hybrid_scraper, scraper_manager
+    used = []
+
+    def wrap(fn):
+        def run(*a, **k):
+            used.append(source)
+            return fn(*a, **k)
+        return run
+    monkeypatch.setattr(scraper_manager, breaker, wrap)
+    monkeypatch.setitem(hybrid_scraper._FALLBACK_FETCHERS, source, lambda lookup: {'ok': 1})
+    assert hybrid_scraper._fetch_fallback(source, {}) == {'ok': 1}
+    assert used == [source]
