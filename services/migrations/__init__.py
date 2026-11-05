@@ -119,6 +119,11 @@ def apply_pending(conn):
             # busy_timeout already set on the connection, IMMEDIATE will
             # wait politely rather than fail-fast on contention.
             conn.execute("BEGIN IMMEDIATE")
+            # Read again under the lock: another process starting at the
+            # same time may have applied it since (PASS-59-243).
+            if conn.execute("PRAGMA user_version").fetchone()[0] >= version:
+                conn.rollback()
+                continue
             module.apply(conn)
             conn.execute(f"PRAGMA user_version = {version}")
             conn.commit()

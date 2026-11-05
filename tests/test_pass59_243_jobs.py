@@ -180,3 +180,109 @@ def test_resume_claims_the_row_before_starting(monkeypatch):
         conn.execute("DELETE FROM job_queue WHERE id = ?", (job_id,))
         conn.commit()
         conn.close()
+
+
+# --- C. Process lifecycle -----------------------------------------------------------
+
+def test_cancelling_core_downloads_stops_after_the_current_one():
+    from services.jobs.player_cores import PlayerCoresJob
+    job = PlayerCoresJob()
+    job.running = True
+    job.queue = [('snes9x', 1, False), ('mgba', 2, False)]
+    job.cancel()
+    assert job._next() is None
+    assert job.queue == []
+
+
+def test_importing_app_does_not_touch_a_live_servers_jobs(tmp_path):
+    """Only the serving process marks jobs interrupted; `import app` from a
+    script or a second process used to flag the live server's jobs."""
+    import os
+    import subprocess
+    import sys
+    from services import migrations
+    from tests._util import REPO_ROOT
+    db = str(tmp_path / 'roms.db')
+    conn = sqlite3.connect(db)
+    migrations.apply_pending(conn)
+    conn.execute("INSERT INTO job_queue (job_type, status, created_at, updated_at) "
+                 "VALUES ('bulk_scrape', 'running', 'x', 'x')")
+    conn.execute("INSERT INTO wishlist (title, scrape_status) VALUES ('Live', 'scraping')")
+    conn.commit()
+    conn.close()
+    env = {**os.environ, 'RETRODB_DB_PATH': db}
+    res = subprocess.run([sys.executable, '-c', 'import app'], cwd=REPO_ROOT, env=env,
+                         capture_output=True, text=True, timeout=120)
+    assert res.returncode == 0, res.stderr[-800:]
+    conn = sqlite3.connect(db)
+    assert conn.execute("SELECT status FROM job_queue").fetchone()[0] == 'running'
+    assert conn.execute("SELECT scrape_status FROM wishlist").fetchone()[0] == 'scraping'
+    conn.close()
+
+
+def test_a_restart_frees_wishlist_items_left_scraping(tmp_path, monkeypatch):
+    import config
+    from services import migrations, wishlist_scraper
+    db = str(tmp_path / 'roms.db')
+    conn = sqlite3.connect(db)
+    migrations.apply_pending(conn)
+    conn.execute("INSERT INTO wishlist (title, scrape_status) VALUES ('Stuck', 'scraping')")
+    conn.commit()
+    monkeypatch.setattr(config, 'DB_PATH', db)
+    assert wishlist_scraper.free_stuck_scrapes() == 1
+    assert conn.execute("SELECT scrape_status FROM wishlist").fetchone()[0] == 'unscraped'
+    conn.close()
+
+
+def test_a_wishlist_item_that_raises_in_scrape_all_is_marked_failed(monkeypatch):
+    from services import wishlist_scraper
+    statuses = []
+    monkeypatch.setattr(wishlist_scraper, 'query', lambda *a, **k: [{'id': 7}])
+    monkeypatch.setattr(wishlist_scraper, '_set_status', lambda i, s: statuses.append((i, s)))
+
+    def boom(item_id):
+        statuses.append((item_id, 'scraping'))
+        raise RuntimeError('source fell over')
+    monkeypatch.setattr(wishlist_scraper, 'scrape_wishlist_item', boom)
+    wishlist_scraper.scrape_unscraped_items()
+    assert statuses[-1] == (7, 'failed')
+
+
+def test_only_one_wishlist_scrape_all_runs_at_once(monkeypatch):
+    from services import wishlist_scraper
+    gate, calls = threading.Event(), []
+    monkeypatch.setattr(wishlist_scraper, 'scrape_unscraped_items',
+                        lambda owner_id=None: calls.append(owner_id) or gate.wait(5))
+    first = wishlist_scraper.scrape_unscraped_items_async(1)
+    second = wishlist_scraper.scrape_unscraped_items_async(1)
+    gate.set()
+    first.join(5)
+    if second is not None:
+        second.join(5)
+    assert calls == [1]
+
+
+def test_two_people_can_each_scrape_their_own_wishlist(monkeypatch):
+    from services import wishlist_scraper
+    gate, calls = threading.Event(), []
+    monkeypatch.setattr(wishlist_scraper, 'scrape_unscraped_items',
+                        lambda owner_id=None: calls.append(owner_id) or gate.wait(5))
+    threads = [wishlist_scraper.scrape_unscraped_items_async(o) for o in (1, 2, None)]
+    gate.set()
+    for t in threads:
+        if t is not None:
+            t.join(5)
+    assert sorted(calls) == [1, 2] and threads[2] is None
+
+
+def test_a_second_starting_process_does_not_rerun_migrations(tmp_path, monkeypatch):
+    """apply_pending read user_version before its lock; a process that read
+    it while another migrated re-ran every migration and set it back."""
+    from services import migrations
+    conn = sqlite3.connect(str(tmp_path / 'roms.db'))
+    migrations.apply_pending(conn)
+    latest = migrations.latest_version()
+    monkeypatch.setattr(migrations, 'current_version', lambda c: 0)  # its stale read
+    assert migrations.apply_pending(conn) == []
+    assert conn.execute("PRAGMA user_version").fetchone()[0] == latest
+    conn.close()

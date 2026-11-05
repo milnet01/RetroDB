@@ -317,12 +317,15 @@ Anything not persisted in the last progress-tick window (≤ 10 items or
 ≤ 30 s) is lost; the `job_queue` row for an in-flight job stays
 `running` until the next start.
 
-**Startup recovery** (`app.py:1589`):
+**Startup recovery** (`app.py`, only in the serving process: the file run
+as `__main__`, never a script or a second process that imports `app`,
+PASS-59-243):
 
 1. `mark_jobs_interrupted()` — flips every leftover `running` / `queued`
    row to `interrupted`. Idempotent; safe to run on every start.
 2. `sweep_old_job_history()` — deletes terminal rows older than retention
-   (§10).
+   (§10). `wishlist_scraper.free_stuck_scrapes()` returns wishlist items left
+   `scraping` to `unscraped`, so scrape-all tries them again.
 3. The dashboard reads `get_recoverable_jobs()` and offers a banner.
    `BulkScrapeJob` deduplicates single-system scrapes by
    `(system_id, scrape_mode)` and auto-dismisses losers (`base.py:606`).

@@ -390,14 +390,49 @@ def scrape_unscraped_items(owner_id=None):
             count += 1
         except Exception as e:
             logger.error(f"Wishlist bulk scrape: item {row['id']} failed: {e}")
+            # Left on 'scraping', scrape-all would never try it again.
+            try:
+                _set_status(row['id'], 'failed')
+            except Exception:
+                pass
     return count
 
 
+_scrape_all_lock = threading.Lock()
+_scrape_all_owners = set()   # owner ids with a scrape-all running; None = everyone's
+
+
 def scrape_unscraped_items_async(owner_id=None):
-    """Background-thread wrapper for scrape_unscraped_items()."""
-    thread = threading.Thread(
-        target=scrape_unscraped_items, args=(owner_id,),
-        name="wishlist-scrape-all", daemon=True,
-    )
+    """Background-thread wrapper for scrape_unscraped_items(). One per person,
+    and an admin's (everyone's) alone, since two would scrape the same items
+    (PASS-59-243). Returns None when one already covers these items."""
+    with _scrape_all_lock:
+        if None in _scrape_all_owners or owner_id in _scrape_all_owners or (
+                owner_id is None and _scrape_all_owners):
+            return None
+        _scrape_all_owners.add(owner_id)
+
+    def _run():
+        try:
+            scrape_unscraped_items(owner_id)
+        finally:
+            with _scrape_all_lock:
+                _scrape_all_owners.discard(owner_id)
+
+    thread = threading.Thread(target=_run, name="wishlist-scrape-all", daemon=True)
     thread.start()
     return thread
+
+
+def free_stuck_scrapes():
+    """At startup: items left 'scraping' by the last run go back to
+    'unscraped', so scrape-all tries them again. Returns the count."""
+    from services.database import get_db
+    conn = get_db()
+    try:
+        cur = conn.execute("UPDATE wishlist SET scrape_status = 'unscraped' "
+                           "WHERE scrape_status = 'scraping'")
+        conn.commit()
+        return cur.rowcount
+    finally:
+        conn.close()

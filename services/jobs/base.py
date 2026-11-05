@@ -62,6 +62,7 @@ def request_shutdown(timeout=5.0):
         getattr(_jobs_pkg, 'ai_fill_bulk_job', None),
         getattr(_jobs_pkg, 'ss_region_repair_job', None),
         getattr(_jobs_pkg, 'mame_names_job', None),
+        getattr(_jobs_pkg, 'player_cores_job', None),
     ]
 
     cancelled = 0

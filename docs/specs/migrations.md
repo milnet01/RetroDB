@@ -131,6 +131,7 @@ ensure_user_tables()   →  init_database()   →  Flask starts
                               │      ↓
                               │   for N in pending_versions:
                               │     BEGIN IMMEDIATE
+                              │     skip if user_version >= N now
                               │     module.apply(conn)
                               │     PRAGMA user_version = N
                               │     COMMIT     (or ROLLBACK on error)
@@ -191,6 +192,10 @@ versa).
   long-running reader, table-rebuild migrations (007/008/009) could deadlock —
   the reader holds a blocking shared lock that the deferred writer can't
   upgrade past, and SQLite's default `busy_timeout = 0` fails fast.
+- Under the lock the runner reads `user_version` again and skips a migration
+  another process applied meanwhile; read once before the loop, a second
+  process starting at the same time re-ran them all and set the version back
+  (PASS-59-243).
 - `IMMEDIATE` acquires the write lock up front; combined with
   `PRAGMA busy_timeout = 5000` on the connection, it waits politely for up to
   five seconds for any concurrent reader to finish.

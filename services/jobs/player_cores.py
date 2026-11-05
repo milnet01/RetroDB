@@ -80,6 +80,12 @@ class PlayerCoresJob:
         self._thread.start()
         return self.job_id
 
+    def cancel(self):
+        """Drop what is queued; the download in hand finishes, so no file is
+        left half-written. Shutdown calls this (PASS-59-243)."""
+        with self._lock:
+            self.queue = []
+
     def _next(self):
         with self._lock:
             if not self.queue:

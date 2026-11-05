@@ -1865,7 +1865,11 @@ except Exception as _e:
 # In debug mode, Flask's reloader spawns a child process (worker) that handles
 # HTTP requests. Module-level code runs in BOTH processes. We must only mark
 # jobs in the worker process so the dashboard reads correct state.
-_is_worker = os.environ.get('WERKZEUG_RUN_MAIN') == 'true' or not config.DEBUG_MODE
+# Only the process that serves: `python app.py`, the standalone bundle and the
+# reloader's child all run this file as __main__. A script or a second process
+# that imports app must not mark a live server's jobs (PASS-59-243).
+_is_worker = __name__ == '__main__' and (
+    os.environ.get('WERKZEUG_RUN_MAIN') == 'true' or not config.DEBUG_MODE)
 if _is_worker:
     try:
         from services.jobs.base import mark_jobs_interrupted, sweep_old_job_history
@@ -1875,6 +1879,11 @@ if _is_worker:
         sweep_old_job_history()
     except Exception as _e:
         logger.warning(f"Could not mark interrupted jobs: {_e}")
+    try:
+        from services.wishlist_scraper import free_stuck_scrapes
+        free_stuck_scrapes()
+    except Exception as _e:
+        logger.warning(f"Could not free wishlist scrapes: {_e}")
 
     # Graceful-shutdown handler: on SIGTERM/SIGINT, ask running jobs to
     # cancel and give them a few seconds to flush persisted state.
