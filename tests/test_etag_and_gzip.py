@@ -57,6 +57,11 @@ class TestGzipCompression:
         # Still sets Vary so shared caches don't serve a gzipped copy later.
         assert 'Accept-Encoding' in (resp.headers.get('Vary') or '')
 
+    def test_uncompressed_when_client_refuses_gzip_by_quality(self, client):
+        # 'gzip;q=0' means "never gzip"; a substring check read it as yes (PASS-59-249).
+        resp = client.get('/api/timezones', headers={'Accept-Encoding': 'gzip;q=0, identity'})
+        assert resp.headers.get('Content-Encoding') != 'gzip'
+
     def test_small_responses_not_compressed(self, client):
         """Threshold guard: the CPU cost of gzipping sub-1KB bodies is
         usually a net loss over just sending them raw."""

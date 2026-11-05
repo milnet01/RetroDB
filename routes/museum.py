@@ -117,6 +117,23 @@ GENERATION_ERAS = {
 # HELPERS
 # =============================================================================
 
+def _controller_dirs():
+    """Where controller pictures live: the user folder an update keeps
+    (IMAGE_PATH) first, then the pictures shipped in the bundle. A source
+    install has one folder for both (PASS-59-249)."""
+    return (os.path.join(config.IMAGE_PATH, 'controllers'),
+            os.path.join(config.STATIC_PATH, 'images', 'controllers'))
+
+
+def _controller_image_file(name):
+    """The file for controller picture `name`, or None when neither folder has it."""
+    for folder in _controller_dirs():
+        path = os.path.join(folder, name)
+        if os.path.isfile(path):
+            return path
+    return None
+
+
 def _find_hardware_image(folder):
     """Find a hardware image for the given system folder."""
     hardware_dir = os.path.join(config.STATIC_PATH, 'images', 'hardware')
@@ -329,7 +346,6 @@ def museum_system(system_id):
         (system_id,)
     ).fetchall()
 
-    controllers_dir = os.path.join(config.STATIC_PATH, 'images', 'controllers')
     controllers = []
     # Pass 41.11.B — a GET handler must not mutate shared DB state (RFC 7231
     # GET-idempotency). The previous shape ran `UPDATE controllers SET
@@ -339,10 +355,8 @@ def museum_system(system_id):
     # /api/museum/cleanup-controller-images (admin-only) below.
     for ctrl in controllers_raw:
         ctrl = dict(ctrl)
-        if ctrl.get('image'):
-            img_path = os.path.join(controllers_dir, ctrl['image'])
-            if not os.path.isfile(img_path):
-                ctrl['image'] = None
+        if ctrl.get('image') and not _controller_image_file(ctrl['image']):
+            ctrl['image'] = None
         controllers.append(ctrl)
 
     # Game count
@@ -486,14 +500,12 @@ def cleanup_controller_images():
     sweep when they notice broken thumbnails.
     """
     db = get_request_db()
-    controllers_dir = os.path.join(config.STATIC_PATH, 'images', 'controllers')
     rows = db.execute(
         "SELECT id, image FROM controllers WHERE image IS NOT NULL AND image != ''"
     ).fetchall()
     cleared = 0
     for row in rows:
-        img_path = os.path.join(controllers_dir, row['image'])
-        if not os.path.isfile(img_path):
+        if not _controller_image_file(row['image']):
             db.execute(
                 "UPDATE controllers SET image = NULL WHERE id = ? AND image = ?",
                 (row['id'], row['image']),
@@ -526,7 +538,7 @@ def _persist_controller_image(controller_id, image_data):
         img = img.convert('RGBA')
         img = _crop_to_content(img)
 
-        controllers_dir = os.path.join(config.STATIC_PATH, 'images', 'controllers')
+        controllers_dir = _controller_dirs()[0]
         os.makedirs(controllers_dir, exist_ok=True)
 
         filename = f"{controller_id}.webp"
@@ -725,8 +737,8 @@ def remove_controller_bg(controller_id):
     if not controller['image']:
         return jsonify({'success': False, 'error': _('No image to process')})
 
-    filepath = os.path.join(config.STATIC_PATH, 'images', 'controllers', controller['image'])
-    if not os.path.exists(filepath):
+    filepath = _controller_image_file(controller['image'])
+    if not filepath:
         return jsonify({'success': False, 'error': _('Image file not found')})
 
     try:
@@ -876,12 +888,12 @@ def _remove_background(image_data, removebg_key=None):
             if _rembg_session is None:
                 providers = None
                 try:
-                    # AMD GPUs like gfx1032 (RX 6600) need version override so
-                    # rocBLAS/Tensile can find gfx1030 kernels (same RDNA2 arch).
-                    # Must be set before ONNX Runtime touches the GPU.
-                    if 'HSA_OVERRIDE_GFX_VERSION' not in os.environ:
-                        os.environ['HSA_OVERRIDE_GFX_VERSION'] = '10.3.0'
-                        logger.info("Museum: Set HSA_OVERRIDE_GFX_VERSION=10.3.0 for ROCm compatibility")
+                    # An RDNA2 card (RX 6600, gfx1032) needs gfx1030's kernels;
+                    # set before ONNX Runtime touches the GPU, for those cards
+                    # only (PASS-59-249).
+                    from services.gpu_env import apply_rdna2_override
+                    if apply_rdna2_override():
+                        logger.info("Museum: HSA_OVERRIDE_GFX_VERSION=10.3.0 for an RDNA2 card")
                     # Use MIOpen FAST find mode to skip exhaustive kernel benchmarking.
                     # Default mode benchmarks every candidate kernel on cache miss,
                     # hammering the GPU for ~60s after inference is already complete.

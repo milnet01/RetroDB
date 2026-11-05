@@ -88,12 +88,14 @@ def get_system_type(system_folder):
     return 'console'
 
 
+_REGION_WORDS = (r'USA|Europe|Japan|World|Germany|France|Spain|Italy|Australia|Brazil'
+                 r'|Korea|China|Taiwan|Asia|UK|Netherlands|Sweden|Canada')
+
 # Tags that are NOT publisher names (used by extract_filename_hints)
 _KNOWN_NON_PUBLISHER_TAGS = re.compile(
     r'^('
-    # Regions
-    r'USA|Europe|Japan|World|Germany|France|Spain|Italy|Australia|Brazil'
-    r'|Korea|China|Taiwan|Asia'
+    # Regions, alone or comma-joined as No-Intro writes them: "USA, Europe"
+    r'(?:' + _REGION_WORDS + r')(?:,\s*(?:' + _REGION_WORDS + r'))*'
     r'|U|E|J|W|En|Fr|De|Es|It|Ja'
     r'|En,\s*Fr|En,\s*De|En,\s*Es|En,\s*Fr,\s*De|En,\s*Fr,\s*De,\s*Es,\s*It'
     # Versions/revisions

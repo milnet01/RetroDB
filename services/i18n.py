@@ -37,6 +37,9 @@ PSEUDO_LOCALE = 'eo'
 TRANSLATIONS_DIR = os.path.join(config.BUNDLE_DIR, 'translations')
 
 
+_locale_cache = {}
+
+
 def available_locales():
     """Return sorted locale codes for every compiled catalog plus implicit 'en'.
 
@@ -44,13 +47,23 @@ def available_locales():
     source language and needs no catalog. Used by the locale selector, the
     ``/api/users/settings`` validation, and the Settings dropdown so the three
     can never drift.
+
+    It runs on every request, so the list is read again only when the
+    catalog folder changes, as adding a language folder does (PASS-59-249).
     """
+    try:
+        key = (TRANSLATIONS_DIR, os.stat(TRANSLATIONS_DIR).st_mtime_ns)
+    except OSError:
+        key = None
+    if key is not None and _locale_cache.get('key') == key:
+        return list(_locale_cache['locales'])
     locales = {'en'}
     pattern = os.path.join(TRANSLATIONS_DIR, '*', 'LC_MESSAGES', 'messages.mo')
     for mo_path in glob.glob(pattern):
         # .../translations/<code>/LC_MESSAGES/messages.mo -> <code>
         code = os.path.basename(os.path.dirname(os.path.dirname(mo_path)))
         locales.add(code)
+    _locale_cache.update(key=key, locales=sorted(locales))
     return sorted(locales)
 
 

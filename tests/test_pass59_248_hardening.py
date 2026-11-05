@@ -258,3 +258,20 @@ def test_setup_page_hands_out_the_token_its_api_needs(setup_not_done):
                       page.get_data(as_text=True)).group(1)
     r = client.post('/api/setup/browse-folders', json={}, headers={'X-CSRF-Token': token})
     assert r.status_code == 200, r.get_json()
+
+
+def test_setup_refuses_an_unknown_time_zone_before_saving_anything(setup_not_done, monkeypatch, tmp_path):
+    # The time zone was stored unchecked, and the steps before it had already
+    # saved (PASS-59-249). BASE_DIR points at tmp_path so a red run cannot
+    # rewrite the real data/scraper_settings.json.
+    import settings_manager
+    monkeypatch.setattr(config, 'BASE_DIR', str(tmp_path))
+    saved = []
+    monkeypatch.setattr(settings_manager, 'save_settings', lambda s: saved.append(s) or True)
+    client = setup_not_done
+    with client.session_transaction() as sess:
+        sess['_csrf_token'] = 'setup-token'
+    r = client.post('/api/setup', headers={'X-CSRF-Token': 'setup-token'},
+                    json={'license_accepted': True, 'timezone': 'Not/AZone'})
+    assert r.status_code == 400, (r.status_code, r.get_json())
+    assert saved == [] and not (tmp_path / 'data').exists()

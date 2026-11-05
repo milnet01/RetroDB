@@ -259,7 +259,8 @@ A response is gzipped when **all** of these hold:
 3. Status code is 2xx, 3xx, 4xx — **but never 204 or 304**.
 4. `Content-Encoding` is not already set.
 5. `Content-Type` matches `json` or `javascript` (substring check).
-6. Client sent `Accept-Encoding: gzip`.
+6. Client's `Accept-Encoding` accepts gzip, read through Werkzeug's parser:
+   `gzip;q=0` is a refusal (PASS-59-249).
 7. Body is at least `_GZIP_MIN_BYTES = 1024` bytes uncompressed.
 
 When all hold, body is replaced with `gzip.compress(data, compresslevel=6)`,

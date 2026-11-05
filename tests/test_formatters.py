@@ -90,3 +90,13 @@ class TestGetManufacturer:
     def test_map_has_expected_size(self):
         """Sanity check that MANUFACTURER_MAP hasn't shrunk unexpectedly."""
         assert len(MANUFACTURER_MAP) >= 40
+
+
+@pytest.mark.parametrize('folder,maker', [
+    ('sfc', 'Nintendo'), ('n64dd', 'Nintendo'), ('atarilynx', 'Atari'),
+    ('atarijaguar', 'Atari'), ('sg-1000', 'Sega'), ('tg-cd', 'NEC'),
+    ('nes', 'Nintendo'), ('not-a-console', 'Other'),
+])
+def test_manufacturer_falls_back_to_system_specs(folder, maker):
+    # ES-DE folders the short map lacked were all "Other" on Analytics (PASS-59-249).
+    assert get_manufacturer(folder) == maker

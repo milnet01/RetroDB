@@ -33,25 +33,27 @@ from zoneinfo import available_timezones
 
 # ---------------------------------------------------------------------------
 # ROCm GPU environment — MUST be set before any library loads ROCm/MIOpen.
-# Overrides gfx1032 (RX 6600-series) to use gfx1030 pre-compiled kernels,
-# forces MIOpen algorithm benchmarking, and cleans stale GPU cache.
+# An RDNA2 card (RX 6600-series, gfx1032) uses gfx1030's kernels through
+# HSA_OVERRIDE_GFX_VERSION; services.gpu_env sets it for those cards only and
+# never over a value the user set (PASS-59-249). MIOpen benchmarks once into
+# its own cache. A stale gfx1032 cache conflicts with the override.
 # ---------------------------------------------------------------------------
 if os.path.exists('/dev/kfd'):
+    from services.gpu_env import apply_rdna2_override as _apply_rdna2_override
     _miopen_cache = os.path.join(os.path.expanduser('~'), '.cache', 'realesrgan', 'miopen')
     os.makedirs(_miopen_cache, exist_ok=True)
-    os.environ['HSA_OVERRIDE_GFX_VERSION'] = '10.3.0'
-    os.environ['MIOPEN_FIND_MODE'] = '3'
-    os.environ['MIOPEN_USER_DB_PATH'] = _miopen_cache
-    os.environ['MIOPEN_CUSTOM_CACHE_DIR'] = _miopen_cache
-    # Clean stale gfx1032 cache that conflicts with gfx1030 override
-    import glob as _glob
-    _stale = None
-    for _stale in _glob.glob(os.path.join(_miopen_cache, 'gfx1032*')):
-        try:
-            os.remove(_stale)
-        except OSError:
-            pass
-    del _miopen_cache, _glob, _stale
+    os.environ.setdefault('MIOPEN_FIND_MODE', '3')
+    os.environ.setdefault('MIOPEN_USER_DB_PATH', _miopen_cache)
+    os.environ.setdefault('MIOPEN_CUSTOM_CACHE_DIR', _miopen_cache)
+    if _apply_rdna2_override():
+        import glob as _glob
+        for _stale in _glob.glob(os.path.join(_miopen_cache, 'gfx1032*')):
+            try:
+                os.remove(_stale)
+            except OSError:
+                pass
+        del _glob
+    del _miopen_cache, _apply_rdna2_override
 
 # Import configuration
 import config
@@ -123,7 +125,7 @@ def _get_secret_key():
         pass
     try:
         if os.path.exists(key_path):
-            with open(key_path, 'r') as f:
+            with open(key_path, 'r', encoding='utf-8') as f:
                 key = f.read().strip()
                 if key:
                     return key
@@ -594,7 +596,8 @@ def compress_response(response):
     ctype = response.content_type or ''
     if 'json' not in ctype and 'javascript' not in ctype:
         return response
-    if 'gzip' not in (request.headers.get('Accept-Encoding') or ''):
+    # Parsed, not a substring test: 'gzip;q=0' refuses gzip (PASS-59-249).
+    if request.accept_encodings['gzip'] <= 0:
         # Even when we don't compress, advertise that the response varies by
         # Accept-Encoding so the browser cache keys on it correctly.
         response.headers.setdefault('Vary', 'Accept-Encoding')
@@ -964,7 +967,7 @@ def _ai_scraper_enabled_cached():
         mtime = os.path.getmtime(_ssf)
         if _AI_SCRAPER_CACHE['mtime'] == mtime:
             return _AI_SCRAPER_CACHE['enabled']
-        with open(_ssf, 'r') as _f:
+        with open(_ssf, 'r', encoding='utf-8') as _f:
             _ss = json.load(_f)
         _ak = _ss.get('api_keys', {})
         _prov = _ak.get('ai_provider', '')
@@ -1193,7 +1196,7 @@ def get_api_status():
     settings_path = os.path.join(config.BASE_DIR, 'data', 'scraper_settings.json')
     if os.path.exists(settings_path):
         try:
-            with open(settings_path, 'r') as f:
+            with open(settings_path, 'r', encoding='utf-8') as f:
                 scraper_settings = json.load(f)
         except (json.JSONDecodeError, OSError):
             pass
@@ -1323,29 +1326,26 @@ def dashboard():
             LIMIT 5
         """, (user_id,))
 
-        # Get recently scraped games (from scrape_history JSON)
+        # Recently scraped: the newest scrape in each game's history, so an old
+        # game scraped again counts. A hand edit's 'manual' entry is not a
+        # scrape (PASS-59-249).
         recently_scraped = query("""
-            SELECT g.id, g.title, g.boxart, g.boxart_3d, g.scraped,
-                   g.scrape_history, g.system_id, s.name AS system_name
-            FROM games g
-            JOIN systems s ON g.system_id = s.id
-            WHERE g.scrape_history IS NOT NULL AND g.scrape_history != '' AND g.scrape_history != '[]'
-            ORDER BY g.id DESC
-            LIMIT 20
+            SELECT * FROM (
+                SELECT g.id, g.title, g.boxart, g.boxart_3d, g.scraped,
+                       g.system_id, s.name AS system_name,
+                       (SELECT MAX(COALESCE(json_extract(h.value, '$.timestamp'),
+                                            json_extract(h.value, '$.date')))
+                        FROM json_each(g.scrape_history) h
+                        WHERE COALESCE(json_extract(h.value, '$.primary_source'), '') != 'manual'
+                       ) AS last_scraped
+                FROM games g
+                JOIN systems s ON g.system_id = s.id
+                WHERE json_valid(g.scrape_history) AND json_type(g.scrape_history) = 'array'
+            )
+            WHERE last_scraped IS NOT NULL
+            ORDER BY last_scraped DESC
+            LIMIT 5
         """)
-        # Sort by most recent scrape timestamp from history JSON
-        scraped_with_dates = []
-        for game in recently_scraped:
-            try:
-                history = json.loads(game.get('scrape_history', '[]'))
-                if history:
-                    last_entry = history[-1] if isinstance(history, list) else history
-                    ts = last_entry.get('timestamp', last_entry.get('date', ''))
-                    scraped_with_dates.append((ts, game))
-            except (json.JSONDecodeError, AttributeError, TypeError):
-                pass
-        scraped_with_dates.sort(key=lambda x: x[0], reverse=True)
-        recently_scraped = [g for _, g in scraped_with_dates[:5]]
 
         # Check for offline configured APIs (for warning banner)
         api_warning = False
@@ -1565,14 +1565,29 @@ def analytics():
 CHANGELOG_PAGE_SIZE = 20  # entries rendered per "Load More" slice (Pass 49.1)
 
 
+_changelog_cache = {}
+
+
+def _changelog_file(path):
+    """A changelog YAML file, parsed once until it changes on disk
+    (PASS-59-249: it was parsed on every page and every Load More)."""
+    import yaml
+    stamp = os.stat(path).st_mtime_ns
+    cached = _changelog_cache.get(path)
+    if cached and cached[0] == stamp:
+        return cached[1]
+    with open(path, 'r', encoding='utf-8') as f:
+        data = yaml.safe_load(f)
+    _changelog_cache[path] = (stamp, data)
+    return data
+
+
 @app.route('/changelog')
 def changelog():
     """Changelog page showing version history (paginated — Pass 49.1)"""
-    import yaml
     from flask_babel import get_locale
     data_dir = os.path.join(config.BUNDLE_DIR, 'data')
-    with open(os.path.join(data_dir, 'changelog.yaml'), 'r') as f:
-        entries = yaml.safe_load(f)
+    entries = _changelog_file(os.path.join(data_dir, 'changelog.yaml'))
     # Per-locale changelog (Pass 43.6): recent entries are translated per
     # language in data/changelog.<locale>.yaml; older history stays English.
     # We swap in any translated entry by version, keeping the full timeline —
@@ -1581,8 +1596,7 @@ def changelog():
     locale = str(get_locale())
     loc_path = os.path.join(data_dir, f'changelog.{locale}.yaml')
     if os.path.exists(loc_path):
-        with open(loc_path, 'r') as f:
-            translated = {e['version']: e for e in (yaml.safe_load(f) or [])}
+        translated = {e['version']: e for e in (_changelog_file(loc_path) or [])}
         if translated:
             entries = [translated.get(e['version'], e) for e in entries]
     # Pagination (Pass 49.1): the changelog has 788+ entries; rendering them all
@@ -1695,28 +1709,32 @@ def setup_api():
     # PASS-59-121: the same 12-character floor as routes/auth.py.
     if admin_password and len(admin_password) < 12:
         return api_error(_('Password must be at least 12 characters'), 422)
+    # Checked before anything is saved (PASS-59-249).
+    timezone_name = text_field(data, 'timezone')
+    if timezone_name and timezone_name not in available_timezones():
+        return api_error(_('Unknown time zone'), 400)
+    from contextlib import closing
+    import sqlite3 as _sqlite3
     if admin_username and admin_password:
-        import sqlite3 as _sqlite3
-        conn = _sqlite3.connect(config.DB_PATH)
-        cursor = conn.cursor()
-        # Update existing admin or create new one
-        cursor.execute("SELECT id FROM users WHERE role = 'admin' LIMIT 1")
-        admin = cursor.fetchone()
-        new_hash = hash_password(admin_password)
-        if admin:
-            cursor.execute("""
-                UPDATE users SET username = ?, password_hash = ?, force_password_change = 0
-                WHERE id = ?
-            """, (admin_username, new_hash, admin[0]))
-        else:
-            cursor.execute("""
-                INSERT INTO users (username, display_name, password_hash, role, force_password_change)
-                VALUES (?, ?, ?, 'admin', 0)
-            """, (admin_username, admin_username, new_hash))
-            admin_id = cursor.lastrowid
-            cursor.execute("INSERT INTO user_settings (user_id) VALUES (?)", (admin_id,))
-        conn.commit()
-        conn.close()
+        with closing(_sqlite3.connect(config.DB_PATH)) as conn:
+            cursor = conn.cursor()
+            # Update existing admin or create new one
+            cursor.execute("SELECT id FROM users WHERE role = 'admin' LIMIT 1")
+            admin = cursor.fetchone()
+            new_hash = hash_password(admin_password)
+            if admin:
+                cursor.execute("""
+                    UPDATE users SET username = ?, password_hash = ?, force_password_change = 0
+                    WHERE id = ?
+                """, (admin_username, new_hash, admin[0]))
+            else:
+                cursor.execute("""
+                    INSERT INTO users (username, display_name, password_hash, role, force_password_change)
+                    VALUES (?, ?, ?, 'admin', 0)
+                """, (admin_username, admin_username, new_hash))
+                admin_id = cursor.lastrowid
+                cursor.execute("INSERT INTO user_settings (user_id) VALUES (?)", (admin_id,))
+            conn.commit()
 
     # 2. Save paths to settings
     user_settings = settings_manager.load_settings()
@@ -1732,7 +1750,7 @@ def setup_api():
     scraper_settings = {}
     if os.path.exists(scraper_path):
         try:
-            with open(scraper_path, 'r') as f:
+            with open(scraper_path, 'r', encoding='utf-8') as f:
                 scraper_settings = json.load(f)
         except (json.JSONDecodeError, OSError):
             pass
@@ -1769,17 +1787,13 @@ def setup_api():
         logger.error(f"Error saving scraper settings during setup: {e}")
 
     # 4. Save timezone to admin's user_settings if provided
-    if text_field(data, 'timezone'):
-        import sqlite3 as _sqlite3_tz
-        tz_conn = _sqlite3_tz.connect(config.DB_PATH)
-        tz_cursor = tz_conn.cursor()
-        tz_cursor.execute("SELECT id FROM users WHERE role = 'admin' LIMIT 1")
-        tz_admin = tz_cursor.fetchone()
-        if tz_admin:
-            tz_cursor.execute("UPDATE user_settings SET timezone = ? WHERE user_id = ?",
-                              (data['timezone'], tz_admin[0]))
-        tz_conn.commit()
-        tz_conn.close()
+    if timezone_name:
+        with closing(_sqlite3.connect(config.DB_PATH)) as tz_conn:
+            tz_admin = tz_conn.execute("SELECT id FROM users WHERE role = 'admin' LIMIT 1").fetchone()
+            if tz_admin:
+                tz_conn.execute("UPDATE user_settings SET timezone = ? WHERE user_id = ?",
+                                (timezone_name, tz_admin[0]))
+            tz_conn.commit()
 
     # 5. Mark setup as completed
     user_settings['setup_completed'] = True

@@ -28,10 +28,20 @@ MANUFACTURER_MAP = {
 
 
 def get_manufacturer(folder):
-    """Get manufacturer for a system folder."""
+    """The maker a system folder groups under on Analytics.
+
+    MANUFACTURER_MAP first, then the first maker `config.SYSTEM_SPECS` names
+    ("NEC / Hudson Soft" groups under NEC), so an ES-DE folder the map lacks
+    is not "Other" (PASS-59-249).
+    """
     if not folder:
         return 'Other'
-    return MANUFACTURER_MAP.get(folder.lower(), 'Other')
+    folder = folder.lower()
+    if folder in MANUFACTURER_MAP:
+        return MANUFACTURER_MAP[folder]
+    import config
+    maker = (getattr(config, 'SYSTEM_SPECS', {}).get(folder) or {}).get('manufacturer')
+    return maker.split(' / ')[0].strip() if maker else 'Other'
 
 
 def format_size(bytes_size):

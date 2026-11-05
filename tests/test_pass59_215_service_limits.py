@@ -304,6 +304,26 @@ class TestWords:
         limits.stop(limits.SCREENSCRAPER, 3600)
         assert stop_sentences([limits.HOWLONGTOBEAT]) == []
 
+    def test_an_empty_list_asks_about_none(self, app_context_for_i18n):
+        # [] was read as "all services" (PASS-59-249).
+        from services.service_stop_text import stop_sentences
+        limits.stop(limits.SCREENSCRAPER, 3600)
+        assert stop_sentences([]) == []
+
+    def test_the_time_is_in_the_readers_time_zone(self, app_context_for_i18n, monkeypatch):
+        # It was the server's clock, not the time zone in the user's settings.
+        from datetime import datetime, timezone
+        from zoneinfo import ZoneInfo
+        from flask import g
+        from services.service_stop_text import stop_sentences
+        until = datetime(2031, 3, 4, 10, 0, tzinfo=timezone.utc).timestamp()
+        monkeypatch.setattr(limits, 'stopped', lambda source: {
+            'until': until, 'reason': ''} if source == limits.SCREENSCRAPER else None)
+        g.user_settings = {'timezone': 'Asia/Tokyo'}
+        local = datetime.fromtimestamp(until, ZoneInfo('Asia/Tokyo')).strftime('%Y-%m-%d %H:%M')
+        assert local == '2031-03-04 19:00'
+        assert local in stop_sentences([limits.SCREENSCRAPER])[0]
+
 
 @pytest.fixture
 def app_context_for_i18n():
