@@ -181,8 +181,8 @@ The collision points worth knowing:
     unreadable.** An `OSError` creating `data/`, reading or writing
     `.secret_key`, or a `UnicodeDecodeError` reading it, is swallowed and a
     key is generated in memory. The app boots either way; the cost is that
-    every restart invalidates existing sessions, which looks like random logouts
-    rather than like a failure.
+    every restart invalidates existing sessions. A key that cannot be saved
+    logs a warning naming the path, so the logouts can be traced.
   - **The write goes through `atomic_write_text(..., mode=0o600)`** (Pass 45.5),
     so the file never exists world-readable — see the Atomic-write contract's
     step-3-before-step-4 note.

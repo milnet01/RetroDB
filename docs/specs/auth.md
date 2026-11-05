@@ -290,7 +290,7 @@ Pass 33.5 equivalents:
 1. **`api_login`** (Pass 24.2) — discards pre-login state including
    attacker-planted cookies.
 2. **`api_change_password`** (Pass 33.5) — invalidates hijacked cookies
-   and concurrent sessions of the same account.
+   and concurrent sessions of the same account (through the stamp below).
 3. **`api_force_change_password`** (Pass 33.5) — first authenticated
    touch after a `changeme` / admin-reset login; bootstrap cookie cannot
    be replayed after.
@@ -298,6 +298,17 @@ Pass 33.5 equivalents:
 `logout` also calls `session.clear()` (Pass 33.6) so the CSRF token,
 `permanent` flag, and other ambient state don't survive into the next
 login.
+
+### Sign-out everywhere on a new password (PASS-59-248)
+
+The cookie lives in the browser, so rotating one session cannot end the
+others. Each sign-in therefore stores `session['auth_stamp']`,
+`services/auth.py::session_stamp(password_hash)`: an HMAC of the password
+hash under the app's secret key. `get_current_user` answers None when the
+stamp does not match the user's current hash. A password change, a forced
+change or an admin reset writes a new hash, so every other session of that
+account is signed out; the session that made the change gets a fresh stamp.
+A session with no stamp is signed out too.
 
 ---
 
@@ -411,8 +422,9 @@ keeps POSTing without a GET round-trip.
 
 **Validation.** `app.py::validate_csrf` is a `@before_request` hook.
 Skipped for `GET / HEAD / OPTIONS` and the exempt endpoint set
-`{static, serve_static_image, auth.api_login, auth.login, setup_api,
-setup_browse_folders}`. Otherwise compares
+`{static, serve_static_image, auth.api_login, auth.login}`. The setup
+wizard's two POST routes are not exempt: before setup they need no sign-in,
+so the token is their only guard against a cross-site post. Otherwise compares
 `request.headers['X-CSRF-Token']` (or `_csrf_token` form field) against
 `session['_csrf_token']` via `secrets.compare_digest`; mismatch → 403
 JSON envelope.

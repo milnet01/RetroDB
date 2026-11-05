@@ -9,7 +9,7 @@ import hashlib
 import hmac
 import secrets
 from functools import wraps
-from flask import g, session, redirect, url_for, flash, request
+from flask import current_app, g, session, redirect, url_for, flash, request
 
 from services.database import query
 
@@ -18,7 +18,7 @@ from services.database import query
 __all__ = (
     'hash_password', 'verify_password', 'needs_rehash',
     'count_stale_password_hashes',
-    'get_current_user', 'get_user_settings', 'get_user_ra_credentials',
+    'get_current_user', 'get_user_settings', 'session_stamp', 'get_user_ra_credentials',
     'has_permission', 'login_required', 'permission_required',
     'admin_required', 'editor_required',
     'ROLE_PERMISSIONS', 'VALID_ROLES',
@@ -156,6 +156,20 @@ def needs_rehash(password_hash):
 # USER SESSION MANAGEMENT
 # =============================================================================
 
+def session_stamp(password_hash):
+    """The sign-in's tie to the password it was made with (PASS-59-248).
+
+    Stored in the session at sign-in and checked on every request, so a new
+    password, set by the user or reset by an admin, signs every other
+    session out. Keyed with the app's secret: the session cookie is signed,
+    not encrypted, so it must not carry a bare hash of the password hash.
+    """
+    key = current_app.secret_key
+    if isinstance(key, str):
+        key = key.encode()
+    return hmac.new(key, (password_hash or '').encode(), hashlib.sha256).hexdigest()
+
+
 def get_current_user():
     """
     Get the currently logged in user from session.
@@ -170,10 +184,16 @@ def get_current_user():
         # every UI surface while their existing session cookie kept full
         # role privileges for the remaining PERMANENT_SESSION_LIFETIME --
         # and deactivation is the only revocation short of deletion.
-        return query(
+        user = query(
             "SELECT * FROM users WHERE id = ? AND is_active = 1",
             (user_id,), one=True,
         )
+        # A session from before the password changed, or from before the
+        # stamp existed, is signed out (user, 2026-11-05: one sign-out for
+        # everyone at the 4.0.0 update is fine).
+        if user and hmac.compare_digest(session.get('auth_stamp', ''),
+                                        session_stamp(user['password_hash'])):
+            return user
     return None
 
 

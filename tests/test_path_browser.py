@@ -133,12 +133,21 @@ def test_route_refuses_everyone_else(monkeypatch, setup_complete, tree, role):
     assert _post(_client(monkeypatch, role), path=str(tree)).status_code == 403
 
 
+def _setup_client(app_module):
+    """The setup wizard's routes need the CSRF token (PASS-59-248)."""
+    client = app_module.app.test_client()
+    with client.session_transaction() as sess:
+        sess['_csrf_token'] = 'setup-tok'
+    return client
+
+
 def test_setup_browser_still_hides_hidden_folders(monkeypatch, tree):
     import app as app_module
     monkeypatch.setattr('app.settings_manager.load_settings', lambda: {})
     monkeypatch.setattr('app.config.ROM_PATH', '', raising=False)
     monkeypatch.setitem(app_module.app.config, 'TESTING', True)
-    rv = app_module.app.test_client().post('/api/setup/browse-folders', json={'path': str(tree)})
+    rv = _setup_client(app_module).post('/api/setup/browse-folders', json={'path': str(tree)},
+                                        headers={'X-CSRF-Token': 'setup-tok'})
     assert rv.status_code == 200, rv.data
     assert _names(rv.get_json()['folders']) == ['alpha', 'Beta']
 
@@ -147,8 +156,10 @@ def test_setup_browser_closes_once_setup_is_done(monkeypatch):
     import app as app_module
     monkeypatch.setattr('app.settings_manager.load_settings', lambda: {'setup_completed': True})
     monkeypatch.setitem(app_module.app.config, 'TESTING', True)
-    rv = app_module.app.test_client().post('/api/setup/browse-folders', json={})
+    rv = _setup_client(app_module).post('/api/setup/browse-folders', json={},
+                                        headers={'X-CSRF-Token': 'setup-tok'})
     assert rv.status_code == 403
+    assert 'CSRF' not in rv.get_json()['error'], 'refused for the token, not for setup being done'
 
 
 # -----------------------------------------------------------------------------

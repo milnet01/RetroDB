@@ -7,7 +7,7 @@
 import logging
 from functools import wraps
 
-from flask import jsonify
+from flask import abort, jsonify, request
 from werkzeug.exceptions import HTTPException
 from flask_babel import gettext as _
 
@@ -82,3 +82,27 @@ def error(message, code=400, **extra):
     same envelope shape and logs the stack trace.
     """
     return jsonify({'success': False, 'error': message, **extra}), code
+
+
+def json_body():
+    """The request's JSON object, or {} when the body is missing or not an object.
+
+    A list or a number as the body would otherwise reach `data.get(...)` and
+    end as a 500 (PASS-59-248).
+    """
+    data = request.get_json(silent=True)
+    return data if isinstance(data, dict) else {}
+
+
+def text_field(data, key, default=''):
+    """`data[key]` as a string; a non-text value answers 400 (PASS-59-248).
+
+    A missing key or JSON null gives `default`. A number, list or object in a
+    field the route treats as text is the caller's mistake, not a server error.
+    """
+    value = data.get(key)
+    if value is None:
+        return default
+    if not isinstance(value, str):
+        abort(400, description=_('%(field)s must be text', field=key))
+    return value

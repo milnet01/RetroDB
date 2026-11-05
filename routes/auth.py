@@ -13,12 +13,12 @@ import time
 
 import config
 from services.database import query, execute, get_db_with_context
-from services.api_helpers import handle_api_errors, success, error
+from services.api_helpers import handle_api_errors, success, error, json_body, text_field
 from services.i18n import selectable_locales
 from services.settings_validators import ALLOWED_THEMES
 from services.auth import (
     hash_password, verify_password, needs_rehash, get_user_settings,
-    admin_required, login_required, has_permission, VALID_ROLES,
+    admin_required, login_required, has_permission, VALID_ROLES, session_stamp,
 )
 from services.security import rate_limit_login, record_login_attempt, safe_filename, validate_settings_path
 
@@ -49,9 +49,12 @@ def api_login():
     """Process login — Pass 24.1: every role now requires a password. The
     prior passwordless branch for editor/viewer was a full authentication
     bypass (anyone hitting /api/login could assume any non-admin identity)."""
-    data = request.get_json() or request.form
+    data = (json_body() if request.is_json else request.form)
     user_id = data.get('user_id')
-    password = data.get('password', '')
+    password = text_field(data, 'password')
+    # A user id is a number, or a number sent as text by the login form.
+    if isinstance(user_id, bool) or not isinstance(user_id, (int, str, type(None))):
+        return error(_('No user selected'), code=400)
 
     # Rate limit login attempts
     client_ip = request.remote_addr or '127.0.0.1'
@@ -86,9 +89,11 @@ def api_login():
 
     # Migrate legacy (pre-v2.84.0) password hash to current OWASP floor.
     # We have the plaintext here, so this is the natural rehash point.
-    if needs_rehash(user['password_hash']):
+    password_hash = user['password_hash']
+    if needs_rehash(password_hash):
+        password_hash = hash_password(password)
         execute("UPDATE users SET password_hash = ? WHERE id = ?",
-                (hash_password(password), user['id']))
+                (password_hash, user['id']))
 
     # Login successful. Clear only THIS user's bucket.
     #
@@ -107,12 +112,13 @@ def api_login():
     # server's secret_key on next response.
     session.clear()
     session['user_id'] = user['id']
+    session['auth_stamp'] = session_stamp(password_hash)
     session.permanent = True
 
     # Update last login
     execute("UPDATE users SET last_login = ? WHERE id = ?", (datetime.now(timezone.utc).isoformat(), user['id']))
 
-    next_url = data.get('next', url_for('dashboard'))
+    next_url = text_field(data, 'next') or url_for('dashboard')
     # Prevent open redirect: reject URLs with a netloc or backslashes (CVE-2023-49438)
     parsed = urlparse(next_url)
     if parsed.netloc or parsed.scheme or '\\' in next_url:
@@ -175,9 +181,9 @@ def api_list_users():
 @handle_api_errors
 def api_create_user():
     """Create a new user (admin only)"""
-    data = request.get_json(silent=True) or {}
-    username = data.get('username', '').strip()
-    display_name = data.get('display_name', '').strip() or username
+    data = json_body()
+    username = text_field(data, 'username').strip()
+    display_name = text_field(data, 'display_name').strip() or username
     role = data.get('role', 'viewer')
 
     if not username:
@@ -196,7 +202,7 @@ def api_create_user():
     # that admin accounts already used. The new user's first login lands
     # on the force-change-password page via the app.py before_request hook.
     # An admin can override this during creation by passing `password`.
-    raw_password = data.get('password', '').strip()
+    raw_password = text_field(data, 'password').strip()
     if raw_password:
         if len(raw_password) < 12:
             return error(_('Password must be at least 12 characters'), code=422, field='password')
@@ -221,8 +227,8 @@ def api_create_user():
 @admin_required
 def api_update_user(user_id):
     """Update a user (admin only)"""
-    data = request.get_json(silent=True) or {}
-    
+    data = json_body()
+
     user = query("SELECT * FROM users WHERE id = ?", (user_id,), one=True)
     if not user:
         return error(_('User not found'), code=404)
@@ -243,7 +249,7 @@ def api_update_user(user_id):
     
     if 'display_name' in data:
         updates.append('display_name = ?')
-        params.append(data['display_name'])
+        params.append(text_field(data, 'display_name'))
     
     if 'role' in data and data['role'] in VALID_ROLES:
         updates.append('role = ?')
@@ -253,11 +259,11 @@ def api_update_user(user_id):
         updates.append('is_active = ?')
         params.append(1 if data['is_active'] else 0)
     
-    if 'new_password' in data and data['new_password']:
+    raw_password = text_field(data, 'new_password')
+    if raw_password:
         # Pass 33.3: enforce the same 12-char floor that api_create_user
         # applies. Admin was previously able to silently set a 3-char
         # password via this endpoint, violating the Pass 24.4 contract.
-        raw_password = data['new_password']
         if len(raw_password) < 12:
             return error(_('Password must be at least 12 characters'), code=422, field='password')
         updates.append('password_hash = ?')
@@ -452,9 +458,9 @@ def api_change_password():
     if not rate_limit_login(rl_bucket):
         return error(_('Too many attempts. Please try again later.'), 429)
 
-    data = request.get_json(silent=True) or {}
-    current_password = data.get('current_password', '')
-    new_password = data.get('new_password', '')
+    data = json_body()
+    current_password = text_field(data, 'current_password')
+    new_password = text_field(data, 'new_password')
 
     if not new_password:
         return error(_('New password is required'), code=400)
@@ -484,6 +490,7 @@ def api_change_password():
     # client can keep POSTing without a GET round-trip.
     session.clear()
     session['user_id'] = user_id
+    session['auth_stamp'] = session_stamp(new_hash)
     session.permanent = True
     import secrets as _secrets
     session['_csrf_token'] = _secrets.token_hex(32)
@@ -499,8 +506,8 @@ def api_force_change_password():
     if not g.user.get('force_password_change'):
         return error(_('Password change not required'), code=400)
 
-    data = request.get_json(silent=True) or {}
-    new_password = data.get('new_password', '')
+    data = json_body()
+    new_password = text_field(data, 'new_password')
 
     if not new_password:
         return error(_('New password is required'), code=400)
@@ -521,6 +528,7 @@ def api_force_change_password():
     # bootstrap cookie cannot be replayed after the password is set.
     session.clear()
     session['user_id'] = user_id
+    session['auth_stamp'] = session_stamp(new_hash)
     session.permanent = True
     import secrets as _secrets
     session['_csrf_token'] = _secrets.token_hex(32)
@@ -535,12 +543,13 @@ ALLOWED_AVATAR_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif', 'webp'}
 MAX_AVATAR_SIZE = 2 * 1024 * 1024  # 2MB
 
 
-def _delete_custom_avatar(user_id):
-    """Delete any existing custom avatar file for a user"""
+def _delete_custom_avatar(user_id, keep=None):
+    """Delete a user's custom avatar files, except the one named `keep`."""
     avatars_dir = os.path.join(config.IMAGE_PATH, 'avatars')
     for ext in ALLOWED_AVATAR_EXTENSIONS:
-        path = os.path.join(avatars_dir, f'user_{user_id}_avatar.{ext}')
-        if os.path.isfile(path):
+        name = f'user_{user_id}_avatar.{ext}'
+        path = os.path.join(avatars_dir, name)
+        if name != keep and os.path.isfile(path):
             os.remove(path)
 
 
@@ -564,9 +573,6 @@ def api_upload_avatar():
     file_data = file.read()
     if len(file_data) > MAX_AVATAR_SIZE:
         return error(_('File too large. Maximum size is 2MB'), code=413)
-
-    # Delete any previous custom avatar
-    _delete_custom_avatar(g.user['id'])
 
     filename = f"user_{g.user['id']}_avatar.{ext}"
     avatar_path = os.path.join(config.IMAGE_PATH, 'avatars', filename)
@@ -598,6 +604,10 @@ def api_upload_avatar():
     except Exception:
         # PIL.verify() failed or decode error — treat as invalid upload.
         return error(_('Invalid image file'), code=422)
+
+    # Only now that the new picture is saved does the old one go, so a
+    # rejected upload keeps it (PASS-59-248).
+    _delete_custom_avatar(g.user['id'], keep=filename)
 
     # Update user settings
     execute("UPDATE user_settings SET avatar = ? WHERE user_id = ?", (filename, g.user['id']))

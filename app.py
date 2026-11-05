@@ -77,7 +77,7 @@ from services.template_filters import register_filters as _register_template_fil
 from services.database_init import init_database, ensure_user_tables
 from services.assets import asset_url
 from services.settings_validators import ALLOWED_THEMES
-from services.api_helpers import handle_api_errors, success as api_success, error as api_error
+from services.api_helpers import handle_api_errors, json_body, text_field, success as api_success, error as api_error
 from services.analytics import (
     build_analytics_context,
 )
@@ -138,8 +138,12 @@ def _get_secret_key():
     try:
         from services.atomic_io import atomic_write_text
         atomic_write_text(key_path, key, mode=0o600)
-    except OSError:
-        pass
+    except OSError as e:
+        # Without a saved key every restart signs everyone out (PASS-59-248).
+        logging.getLogger(__name__).warning(
+            "Could not save the secret key to %s (%s); every restart will "
+            "sign everyone out. Make data/ writable or set RETRODB_SECRET_KEY.",
+            key_path, e)
     return key
 
 
@@ -792,7 +796,10 @@ def validate_csrf():
     """Validate CSRF token on state-changing requests.
 
     Checks the X-CSRF-Token header against the session token for POST/PUT/DELETE.
-    Exempt: login, setup, static files, and GET/HEAD/OPTIONS requests.
+    Exempt: login, static files, and GET/HEAD/OPTIONS requests. The setup
+    wizard is not exempt (PASS-59-248): before setup it creates the admin
+    with no sign-in, so a cross-site post must not reach it. Its page gets
+    the token like every other, and base.html's fetch adds the header.
     """
     if request.method in ('GET', 'HEAD', 'OPTIONS'):
         return
@@ -802,8 +809,7 @@ def validate_csrf():
     # Exempt endpoints that must work without a CSRF token
     csrf_exempt = {
         'static', 'serve_static_image',
-        'auth.api_login', 'auth.login', 'setup_api',
-        'setup_browse_folders',
+        'auth.api_login', 'auth.login',
     }
     if request.endpoint in csrf_exempt:
         return
@@ -1675,7 +1681,7 @@ def setup_api():
     if setup_done or has_rom_path:
         return api_error(_('Setup has already been completed'), 403)
 
-    data = request.get_json()
+    data = json_body()
     if not data:
         return api_error(_('No data provided'), 400)
 
@@ -1684,8 +1690,8 @@ def setup_api():
         return api_error(_('You must accept the license and terms before completing setup'), 400)
 
     # 1. Create admin account if username/password provided
-    admin_username = data.get('admin_username', '').strip()
-    admin_password = data.get('admin_password', '').strip()
+    admin_username = text_field(data, 'admin_username').strip()
+    admin_password = text_field(data, 'admin_password').strip()
     # PASS-59-121: the same 12-character floor as routes/auth.py.
     if admin_password and len(admin_password) < 12:
         return api_error(_('Password must be at least 12 characters'), 422)
@@ -1714,11 +1720,11 @@ def setup_api():
 
     # 2. Save paths to settings
     user_settings = settings_manager.load_settings()
-    if data.get('rom_path'):
+    if text_field(data, 'rom_path'):
         user_settings['rom_path'] = data['rom_path']
-    if data.get('esde_gamelists_path'):
+    if text_field(data, 'esde_gamelists_path'):
         user_settings['esde_gamelists_path'] = data['esde_gamelists_path']
-    if data.get('esde_media_path'):
+    if text_field(data, 'esde_media_path'):
         user_settings['esde_downloaded_media_path'] = data['esde_media_path']
 
     # 3. Save API keys to scraper_settings.json
@@ -1746,7 +1752,7 @@ def setup_api():
         'ra_apikey': 'ra_apikey',
     }
     for form_key, settings_key in key_mapping.items():
-        val = data.get(form_key, '').strip()
+        val = text_field(data, form_key).strip()
         if val:
             api_keys[settings_key] = val
 
@@ -1763,7 +1769,7 @@ def setup_api():
         logger.error(f"Error saving scraper settings during setup: {e}")
 
     # 4. Save timezone to admin's user_settings if provided
-    if data.get('timezone'):
+    if text_field(data, 'timezone'):
         import sqlite3 as _sqlite3_tz
         tz_conn = _sqlite3_tz.connect(config.DB_PATH)
         tz_cursor = tz_conn.cursor()
