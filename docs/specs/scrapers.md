@@ -252,7 +252,7 @@ A word in these columns ends as a `FIELD_SCHEMAS` value or one added to the fiel
 
 Single-value:
 
-- **`region`** — single-value dropdown driven by `region_options` in settings (default `['USA', 'Europe', 'Japan', 'World']`). `_normalize_region` reduces multi-value scraped values to one (pick the first that matches a configured option, else the user's `default_region`).
+- **`region`** — single-value dropdown driven by `region_options` in settings (default `['USA', 'Europe', 'Japan', 'World']`). `_normalize_region` reduces multi-value scraped values to one (pick the first that matches a configured option, else the first part, as a single unlisted value is kept; PASS-59-247). An empty region gets the user's `default_region`.
 - **`players`** — INTEGER. Scraper ranges like `"1-4"` are normalised to the max via `re.findall(r'\d+', ...)` + `max(int(n) for n in nums)` immediately before save. The `services/game_utils.py::normalize_players_value` helper does the same coercion in the route layer so JSON-edit and form-POST paths can't smuggle a string into an INTEGER column (Pass 40.6).
 
 Ratings: see §4 for the 8-system precedence; `services/game_metadata_service.cross_map_ratings` fills empty ratings by mapping from any present rating via the maturity-tier table in `services/game_utils.py`. `normalize_esrb_rating` collapses legacy values (`KA` → `E`, `E10` → `E10+`) before cross-mapping fires.

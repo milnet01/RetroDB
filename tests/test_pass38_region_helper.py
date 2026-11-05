@@ -81,7 +81,9 @@ class TestNormalizeRegion:
         metadata = {'region': 'Mars, Pluto'}
         result = {'filled_fields': []}
         hybrid_scraper._normalize_region(metadata, result)
-        assert metadata['region'] == 'USA'
+        # PASS-59-247: the first part is kept, as a single unlisted value is;
+        # the default replaced real regions ("Brazil, Korea" -> USA).
+        assert metadata['region'] == 'Mars'
         # Multi-value — not a "default fill", just a reduction with fallback;
         # the original inline didn't tag either, helper preserves that.
         assert 'region (default)' not in result['filled_fields']

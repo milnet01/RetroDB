@@ -80,3 +80,14 @@ def test_an_oversized_esde_picture_is_not_copied(library, monkeypatch):  # noqa:
         f.write(b'x' * 100)
     copied = scrape_esde.copy_esde_media(1, {'name': 'Fatal Run'}, 'atari2600')
     assert 'boxart' not in copied
+
+
+def test_a_listed_region_outside_the_options_is_kept_not_defaulted(monkeypatch):
+    """'Brazil, Korea' became the default region, USA."""
+    from scraper import hybrid_scraper
+    monkeypatch.setattr('settings_manager.load_settings',
+                        lambda: {'region_options': ['USA', 'Europe', 'Japan'], 'default_region': 'USA'})
+    for given, kept in (('Brazil, Korea', 'Brazil'), ('Korea, Japan', 'Japan')):
+        metadata, result = {'region': given}, {'filled_fields': []}
+        hybrid_scraper._normalize_region(metadata, result)
+        assert metadata['region'] == kept, given

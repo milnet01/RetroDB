@@ -526,7 +526,7 @@ def _normalize_region(metadata, result):
 
     Two cases handled:
       - Multi-value ('USA, Europe, Japan' or 'USA/Europe'): pick the first
-        part that matches a configured region option, else `default_region`.
+        part that matches a configured region option, else the first part.
       - Empty: use `default_region` and record `'region (default)'` in
         `result['filled_fields']`.
       - Single-value: leave untouched.
@@ -555,7 +555,10 @@ def _normalize_region(metadata, result):
         parts = [p.strip() for p in re.split(r'[,/]', region_value) if p.strip()]
         if len(parts) > 1:
             matched = next((p for p in parts if p.lower() in region_opts), None)
-            metadata['region'] = matched or default_region
+            # No listed part: keep the first real one, as a single value
+            # is kept; the default replaced "Brazil, Korea" with USA
+            # (PASS-59-247).
+            metadata['region'] = matched or parts[0]
         # Single-value path: leave as-is.
     else:
         metadata['region'] = default_region

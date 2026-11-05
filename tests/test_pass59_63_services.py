@@ -166,12 +166,13 @@ class TestAiRegionSingleValue:
         from scraper.scrape_ai import _validate_all_fields
         assert _validate_all_fields({'region': 'Japan, USA'}) == {'region': 'Japan'}
 
-    def test_unmatched_multi_value_falls_back_to_default(self, monkeypatch):
+    def test_unmatched_multi_value_keeps_its_first_part(self, monkeypatch):
         import settings_manager
         monkeypatch.setattr(settings_manager, 'load_settings', lambda: {
             'region_options': ['USA', 'Europe'], 'default_region': 'Europe'})
         from scraper.scrape_ai import _validate_field
-        assert _validate_field('region', 'Mars, Venus') == 'Europe'
+        # PASS-59-247: kept like a single unlisted value, not the default.
+        assert _validate_field('region', 'Mars, Venus') == 'Mars'
 
 
 # ---------------------------------------------------------------------------
