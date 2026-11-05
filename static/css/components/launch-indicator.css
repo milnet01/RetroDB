@@ -20,13 +20,17 @@
     font-size: 0.85rem;
     line-height: inherit;
     cursor: pointer;
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s;
 }
 
+/* visibility takes the hidden button out of the Tab order and away from
+   screen readers; it waits for the fade so the fade still shows. */
 .launch-indicator.hidden {
     opacity: 0;
+    visibility: hidden;
     pointer-events: none;
     transform: translateY(8px);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s 0.2s;
 }
 
 .launch-indicator-icon {

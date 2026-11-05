@@ -37,6 +37,14 @@ def test_the_running_games_indicator_is_a_button_that_says_when_it_is_open():
     assert "e.key === 'Escape'" in js and "aria-expanded', 'true'" in js
 
 
+def test_the_hidden_indicator_is_not_a_tab_stop():
+    # Only see-through, the hidden button still took focus and was read out.
+    # Checked in Chrome on 2026-11-05: Tab skips it once this rule is there.
+    rules = _rules(read_source('static/css/components/launch-indicator.css'))
+    hidden = [body for sel, body in rules if sel.strip() == '.launch-indicator.hidden']
+    assert hidden and 'visibility: hidden' in hidden[0]
+
+
 def test_tag_colours_have_names_and_say_which_is_chosen():
     html = read_source('templates/tags.html')
     swatches = re.findall(r'<button type="button" class="tag-color-swatch[^>]*>', html)
