@@ -11443,6 +11443,97 @@ the cover zoom in Firefox before being reverted for the local fix.
   space where a locale has no grouping rule of its own.
 - Not done in PASS-59-246, which wrapped text only.
 
+---
+
+#### Pass 59.257 A scrape credits only what it wrote, and the edit form credits only what was typed (review-fix, M).
+- **Status**: todo
+- **Why**: cold read of 97f77776 (PASS-59-242), 2026-11-05. The save
+  check's high finding (own media clears) was fixed in ecd19a0a.
+- **Fix**:
+  - A field the save check drops still gets a scrape_history entry
+    (`_build_scrape_history_json` uses `filled_fields`), so the
+    scraper overtakes a hand edit's `(manual)`. Credit only what was
+    written.
+  - The edit form sends `players` as `{{ game.players or 1 }}`
+    (`_modals/edit_modal.html`), and `players` is in
+    `HAND_EDITED_FIELDS`, so any save marks an empty Players as a
+    typed 1. Ratings the form cross-maps get `(manual)` the same way.
+    Credit only fields the person changed.
+  - AI Fill's `other_platforms == 'exclusive'` branch
+    (`services/ai_fill.py`) runs before the hand-edited check, so a
+    hand-set Exclusive is replaced. Check hand edits first.
+  - Reviewer's reading, not confirmed: `_what_to_write`'s SELECT and
+    `_save_game_row`'s UPDATE are not one transaction; AI Fill builds
+    from the row read before the AI call and writes plain `col = ?`.
+- **Source**: session_message 1394 from oneup.
+
+---
+
+#### Pass 59.258 Screen readers and keyboards: the running-games popover and the library cards (accessibility, S).
+- **Status**: todo
+- **Why**: cold a11y read of 557461fa (PASS-59-245), 2026-11-05. Its
+  high finding (hidden indicator a Tab stop) was fixed in 632da447.
+- **Fix**:
+  - `aria-live="polite"` on the indicator button reads a bare "1" on
+    each 5 s refresh. Drop it; write "1 game running" into a hidden
+    `role="status"` span only when the count changes.
+  - `aria-haspopup="true"` announces a menu; the popover is a plain
+    div. Use `"dialog"` (or none) plus `aria-controls`, give the
+    popover `role="dialog"` and a name, and move focus into it on open.
+  - Kill closes the popover and drops focus to the page top; return
+    focus to the indicator (or the next control if it hides).
+  - Kill and Next disk buttons do not name the game; with two games
+    a reader hears "Kill" twice.
+  - A library card (`all-games-controller.js`, `.game-card-new`) opens
+    only on click: no keyboard way to a game's details. Put a button
+    or link in the title.
+  - The filter buttons on a card are named by value only ("Capcom");
+    name them "Filter by Developer: Capcom" in full.
+  - Not checked: whether Shift+Enter on a filter button excludes.
+- **Source**: session_message 1403 from localwebservermanager.
+
+---
+
+#### Pass 59.259 Bulk scrape hand-off: no counts from the old worker, and the token read under the lock (review-fix, S).
+- **Status**: todo
+- **Why**: cold read of 63151f2c (PASS-59-243), 2026-11-05. Its
+  reproduced finding (a second swap lost a job) was fixed in aa4e2c8b.
+- **Fix**:
+  - After the swap's 60 s join gives up, the old worker's game in
+    flight still adds to the new job's success, skipped or failed
+    count and its recent list; only loop top and exit check
+    `_replaced()`. Check it before those writes too. The demote
+    warning still says "state mixing possible".
+  - `_run_scrape` reads `self._run_token` inside the new thread, and
+    `self._thread` is assigned outside the lock in `start()`,
+    `resume_from_params`, `_start_next_queued` and the swap. Read the
+    token and job fields under the lock and pass them to the thread.
+  - `routes/collections.py` replies success to a refused second
+    wishlist "scrape all" click (the job returns None).
+- **Source**: session_message 1382 from album-builder (F2, F3, and the
+  eeb37be7 cosmetic note). Not done: migration 012's own commit lets a
+  second process re-run it; dismissed, 012 is idempotent.
+
+---
+
+#### Pass 59.260 PSN sync can correct a wrong automatic game link (review-fix, S).
+- **Status**: todo
+- **Why**: cold read of 597a2edb (PASS-59-241), 2026-11-05. Its high
+  finding (migration 039 stopping the app) was fixed in da22c8d7.
+- **Fix**:
+  - `routes/trophies.py` keeps the stored `psn_games.linked_game_id`
+    over a new match. Automatic and hand-set links are stored alike,
+    so every wrong link the old substring match made ("Doom" to
+    "Doom Eternal") is now frozen. Mark how a link was made, and let
+    sync replace only an automatic one.
+  - Unverified: migration 039's table rebuild resets the tags id
+    counter, so a deleted tag's id can be reused. Matters only if a
+    tag id is kept elsewhere (saved filters, URLs); check, then fix
+    or dismiss.
+- **Source**: session_message 1388 from contact-list.
+
+---
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
