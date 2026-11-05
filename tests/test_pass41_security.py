@@ -1966,7 +1966,7 @@ class TestPass41_13cLabelAsGroupHeading:
 
     def test_tags_color_label_promoted(self):
         body = read_source('templates/tags.html')
-        assert '<div class="form-label" id="tagColorLabel">Tag Color</div>' in body
+        assert '<div class="form-label" id="tagColorLabel">{{ _(\'Tag Color\') }}</div>' in body
         assert 'role="group" aria-labelledby="tagColorLabel"' in body
 
     def test_logs_level_view_labels_promoted(self):
@@ -1985,9 +1985,9 @@ class TestPass41_13cLabelAsGroupHeading:
 
     def test_rom_tools_settings_group_labels_promoted(self):
         body = read_source('templates/rom_tools_settings.html')
-        assert 'id="chdConversionOptionsLabel">Conversion Options</div>' in body
+        assert 'id="chdConversionOptionsLabel">{{ _(\'Conversion Options\') }}</div>' in body
         assert 'aria-labelledby="chdConversionOptionsLabel"' in body
-        assert 'id="duplicateFinderDefaultsLabel">Default Options</div>' in body
+        assert 'id="duplicateFinderDefaultsLabel">{{ _(\'Default Options\') }}</div>' in body
         assert 'aria-labelledby="duplicateFinderDefaultsLabel"' in body
 
     def test_duplicate_finder_options_label_promoted(self):

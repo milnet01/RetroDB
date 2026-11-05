@@ -838,14 +838,14 @@
                     <div class="queue-item running">
                         <div class="queue-item-icon">⏳</div>
                         <div class="queue-item-info">
-                            <div class="queue-item-title">Running</div>
-                            <div class="queue-item-system">${escapeHtml(data.system_name || 'Multi-System')}</div>
-                            <div class="queue-item-games">${current} / ${total} games</div>
-                            <div class="queue-item-progress">${percent}% complete</div>
+                            <div class="queue-item-title">${ {{ _('Running')|tojson }} }</div>
+                            <div class="queue-item-system">${escapeHtml(data.system_name || {{ _('Multi-System')|tojson }})}</div>
+                            <div class="queue-item-games">${ {{ _('{current} / {total} games')|tojson }}.replace('{current}', current).replace('{total}', total) }</div>
+                            <div class="queue-item-progress">${percent}% ${ {{ _('complete')|tojson }} }</div>
                         </div>
                         <div class="queue-item-controls">
-                            <button type="button" class="queue-btn" data-on-click="demoteRunningJob" ${queueLength === 0 ? 'disabled title="No queued jobs to swap with"' : 'title="Swap with next in queue"'}>
-                                ↑ Demote
+                            <button type="button" class="queue-btn" data-on-click="demoteRunningJob" ${queueLength === 0 ? 'disabled title="' + escapeHtml({{ _('No queued jobs to swap with')|tojson }}) + '"' : 'title="' + escapeHtml({{ _('Swap with next in queue')|tojson }}) + '"'}>
+                                ↑ ${ {{ _('Demote')|tojson }} }
                             </button>
                         </div>
                     </div>
@@ -859,35 +859,35 @@
                     const isFirst = position === 1;
                     const isLast = position === queueLength;
                     // Escaped: a system's name comes from its folder or the user (PASS-59-246).
-                    const systemName = escapeHtml(job.system_name || 'Multi-System');
+                    const systemName = escapeHtml(job.system_name || {{ _('Multi-System')|tojson }});
 
                     html += `
                         <div class="queue-item queued" data-job-id="${job.job_id}">
                             <div class="queue-item-icon">📋</div>
                             <div class="queue-item-info">
-                                <div class="queue-item-title">#${position} in Queue</div>
+                                <div class="queue-item-title">${ {{ _('#{position} in Queue')|tojson }}.replace('{position}', position) }</div>
                                 <div class="queue-item-system">${systemName}</div>
-                                <div class="queue-item-games">${job.total} games waiting</div>
+                                <div class="queue-item-games">${ {{ _('{count} games waiting')|tojson }}.replace('{count}', job.total) }</div>
                             </div>
                             <div class="queue-item-controls">
                                 ${isFirst
-                                    ? `<button type="button" class="queue-btn" data-on-click="swapWithRunning" data-args="${actionArgs(String(job.job_id))}" title="Run now (swap with running)">↓ Run Now</button>`
-                                    : `<button type="button" class="queue-btn" data-on-click="promoteQueuedJob" data-args="${actionArgs(String(job.job_id))}" title="Run sooner">↓ Promote</button>`
+                                    ? `<button type="button" class="queue-btn" data-on-click="swapWithRunning" data-args="${actionArgs(String(job.job_id))}" title="${escapeHtml({{ _('Run now (swap with running)')|tojson }})}">↓ ${ {{ _('Run Now')|tojson }} }</button>`
+                                    : `<button type="button" class="queue-btn" data-on-click="promoteQueuedJob" data-args="${actionArgs(String(job.job_id))}" title="${escapeHtml({{ _('Run sooner')|tojson }})}">↓ ${ {{ _('Promote')|tojson }} }</button>`
                                 }
-                                <button type="button" class="queue-btn" data-on-click="demoteQueuedJob" data-args="${actionArgs(String(job.job_id))}" ${isLast ? 'disabled' : ''} title="${isLast ? 'Already last in queue' : 'Run later'}">
-                                    ↑ Demote
+                                <button type="button" class="queue-btn" data-on-click="demoteQueuedJob" data-args="${actionArgs(String(job.job_id))}" ${isLast ? 'disabled' : ''} title="${escapeHtml(isLast ? {{ _('Already last in queue')|tojson }} : {{ _('Run later')|tojson }})}">
+                                    ↑ ${ {{ _('Demote')|tojson }} }
                                 </button>
-                                <button type="button" class="queue-btn danger" data-on-click="cancelQueuedJob" data-args="${actionArgs(String(job.job_id))}" title="Cancel this queued scrape">
-                                    ✕ Cancel
+                                <button type="button" class="queue-btn danger" data-on-click="cancelQueuedJob" data-args="${actionArgs(String(job.job_id))}" title="${escapeHtml({{ _('Cancel this queued scrape')|tojson }})}">
+                                    ✕ ${ {{ _('Cancel')|tojson }} }
                                 </button>
                             </div>
                         </div>
                     `;
                 });
             } else if (!data.running || data.completed) {
-                html = '<div class="queue-empty">No bulk scrape jobs running or queued.</div>';
+                html = '<div class="queue-empty">' + {{ _('No bulk scrape jobs running or queued.')|tojson }} + '</div>';
             } else {
-                html += '<div class="queue-empty" style="margin-top: 10px;">No jobs in queue.</div>';
+                html += '<div class="queue-empty" style="margin-top: 10px;">' + {{ _('No jobs in queue.')|tojson }} + '</div>';
             }
 
             body.innerHTML = html;

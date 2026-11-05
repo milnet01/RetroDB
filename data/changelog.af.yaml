@@ -1,92 +1,96 @@
 - version: 4.0.0
   date: '2026-11-05'
   tags:
-  - type: accessibility
-    label: Waar jy ook al op 'n bladsy is, word die sleutelbord se plek nou met 'n dik ring in jou tema se kleur gemerk, op elke knoppie, blokkie en skakel. Voorheen het baie kontroles net 'n vae lyn gewys, dieselfde as wanneer die muis oor hulle beweeg het
-  - type: accessibility
-    label: Die Genre-, Reeks-, Ontwikkelaar- en Uitgewer-skakels op biblioteekkaartjies werk nou met die sleutelbord. Die "loop"-knoppie vir speletjies wat speel, maak ook met die sleutelbord oop, en Esc of 'n klik elders sluit sy lys
-  - type: accessibility
-    label: Skermlesers noem nou elke etiketkleur en sê watter een gekies is, en lees trofeeprente as Platinum, Goud, Silwer en Brons in plaas van enkele letters. Terwyl 'n speletjie begin, beweeg Tab nie meer agter die beginskerm nie
   - type: fix
-    label: As 'n opdatering stop voordat dit begin om lêers te verwissel, begin RetroDB nou weer die weergawe wat jy gehad het, in plaas daarvan om toe te bly
+    label: Die laaste skerms wat nog in Engels was, volg nou ook jou taal, insluitend die opstelassistent, Merkers, Lyste, Vergelyk Speletjies, ROM Tools-instellings, die grootmaat-skraapry, die kontroleskerm se lys van onderbroke take, die etikette op biblioteekkaarte en baie foutboodskappe
+  - type: security
+    label: '''n Stelselnaam wat webkode bevat, kan dit nie meer in die grootmaat-skraapryvenster laat loop nie'
+  - type: accessibility
+    label: Waar jy ook al op 'n bladsy is, word die sleutelbord se plek nou met 'n vet ring in jou tema se kleur gemerk, op elke knoppie, blokkie en skakel. Voorheen het baie kontroles net 'n dowwe lyn gewys, dieselfde as wanneer die muis daaroor beweeg het
+  - type: accessibility
+    label: Die Genre-, Reeks-, Ontwikkelaar- en Uitgewer-skakels op biblioteekkaarte werk nou met die sleutelbord. Die "loop"-knoppie vir speletjies wat aan die gang is, maak ook met die sleutelbord oop, en Esc of 'n klik elders maak sy lys toe
+  - type: accessibility
+    label: Skermlesers noem nou elke merkerkleur en sê watter een gekies is, en lees trofeeprente as Platinum, Goud, Silwer en Brons in plaas van enkele letters. Terwyl 'n speletjie begin, beweeg Tab nie meer agter die beginskerm nie
   - type: fix
-    label: Om Speel twee keer gelyk te druk kan nie meer twee speletjies op die ingeboude speler begin nie. Wag vir 'n Core-aflaai gee nou ná 'n rukkie op, of wanneer RetroDB ophou antwoord, in plaas van vir ewig te wag, en die "loop reeds"-vraag gebruik RetroDB se eie dialoog
+    label: As 'n opdatering stop voordat dit lêers begin omruil, begin RetroDB nou weer die weergawe wat jy gehad het, in plaas daarvan om toe te bly
+  - type: fix
+    label: As jy twee keer gelyktydig Speel druk, kan dit nie meer twee speletjies op die ingeboude speler begin nie. Wag vir 'n Core-aflaai gee nou ná 'n rukkie op, of wanneer RetroDB ophou antwoord, in plaas van vir ewig te wag, en die "reeds aan die gang"-vraag gebruik RetroDB se eie dialoog
   - type: fix
     label: Kulkodes wat jy tydens spel aan- of afskakel, word vir die regte speletjie bewaar, nooit van 'n ander speletjie geneem waarvan die lêer dieselfde naam het nie. 'n Kulkode-probleem keer nooit dat 'n speletjie begin nie
   - type: fix
-    label: RetroDB skryf 'n Emulator se instellingslêer veiliger. 'n Instellingslêer wat 'n skakel is, bly 'n skakel, behou sy toestemmings, en behou letters wat dit nie kan lees nie, en 'n mislukte stoor los geen verdwaalde lêer agter nie
+    label: RetroDB skryf 'n emulator se instellingslêer veiliger. 'n Instellingslêer wat 'n skakel is, bly 'n skakel, behou sy toestemmings en behou letters wat dit nie kan lees nie, en 'n mislukte stoor los geen verdwaalde lêer agter nie
   - type: fix
-    label: '''n Grootmaat-skraap wat jy af in die tou skuif, met ''n ander verwissel of hervat terwyl een loop, gaan nie meer verlore wanneer RetroDB herbegin nie; die kontrolebord bied dit aan, van waar dit gestop het. ''n Uitgeruilde skraap bly nie meer langs die nuwe een loop nie, en twee vinnige klikke op Hervat begin ''n taak net een keer'
+    label: '''n Grootmaat-skraapwerk wat jy in die ry af skuif, met ''n ander omruil of hervat terwyl een loop, gaan nie meer verlore wanneer RetroDB herbegin nie; die kontroleskerm bied dit aan, vanaf waar dit gestop het. ''n Uitgeruilde skraapwerk bly nie meer langs die nuwe een loop nie, en twee vinnige klikke op Hervat begin ''n werk net een keer'
   - type: fix
-    label: Een speletjie se fout, soos die netwerk wat wegval, beëindig nie meer 'n hele AI-vul-lopie of 'n Fix Box and Manual Regions-lopie nie; daardie speletjie tel as misluk en die res gaan voort. Om RetroDB te stop, stop nou ook Core-aflaaie netjies
+    label: Een speletjie se fout, soos 'n netwerk wat wegval, beëindig nie meer 'n hele AI-vul-lopie of 'n Fix Box and Manual Regions-lopie nie; daardie speletjie tel as mislukt en die res gaan voort. Wanneer RetroDB gestop word, stop dit nou ook Core-aflaaie netjies
   - type: fix
-    label: Wenslys-items bly nie meer vir ewig op "skraap" ná 'n fout of 'n herbegin nie, en twee Skraap Alles-lopies vir dieselfde Wenslys loop nie meer gelyk nie
+    label: Wenslys-items bly nie meer vir ewig op "skraap" ná 'n fout of 'n herbegin nie, en twee Skraap Alles-lopies vir dieselfde wenslys loop nie meer gelyktydig nie
   - type: fix
-    label: '''n Skrip of ''n tweede kopie van RetroDB wat begin, merk nie meer die lopende bediener se take as onderbreek nie, en twee kopieë wat gelyk begin kan nie meer die databasis ''n weergawe terugstel nie'
+    label: '''n Skrip of ''n tweede kopie van RetroDB wat begin, merk nie meer die lopende bediener se take as onderbreek nie, en twee kopieë wat gelyk begin, kan nie meer die databasis ''n weergawe terugstel nie'
   - type: fix
-    label: Om 'n PlayStation-sinkronisering te begin laat nie meer almal se vorderingsbalke wag terwyl dit by Sony aanmeld nie. Die daaglikse PlayStation-lewendighouding hernu 'n aanmelding nou net naby die einde van sy 10 dae, in plaas van elke dag
+    label: Wanneer 'n PlayStation-sinkronisering begin, laat dit nie meer almal se vorderingsbalke wag terwyl dit by Sony aanmeld nie. Die daaglikse PlayStation-aanhou-aan hernu nou 'n aanmelding net naby die einde van sy 10 dae, in plaas van elke dag
   - type: fix
-    label: '''n Skraap skryf nie meer oor ''n verandering wat jy maak terwyl dit loop nie, en maak nie meer ''n genre, modus of aansig leeg waarvoor dit geen naam het nie. Dit verander nie meer ''n gestoorde spelertal om by die speletjie se modusse te pas nie'
+    label: '''n Skraapwerk skryf nie meer oor ''n verandering wat jy maak terwyl dit loop nie, en maak nie meer ''n genre, modus of aansig leeg waarvoor dit geen naam het nie. Dit verander nie meer ''n gestoorde spelertal om by die speletjie se modusse te pas nie'
   - type: fix
-    label: AI-vul verander nie meer wat jy self getik het nie, soos 'n uitgewer of genre wat jy met die hand reggemaak het; dit korrigeer net geskraapte waardes. Dit meld nie meer 'n waarde as verander as dit dit net anders geskryf het nie, soos 4 spelers as "1-4" of dieselfde genres in 'n ander volgorde
+    label: AI-vul verander nie meer wat jy self getik het nie, soos 'n uitgewer of genre wat jy met die hand reggemaak het; dit korrigeer net geskraapte waardes. Dit meld nie meer 'n waarde as verander nie wanneer dit dit net anders geskryf het, soos 4 spelers as "1-4" of dieselfde genres in 'n ander volgorde
   - type: fix
-    label: '''n Beheerder wat jy vir ''n speletjie tik, word behou; die Konsole se verstekbeheerder vervang nou net geskraapte en AI-waardes. ''n Ouderdomsgradering wat van ''n ander bord se AI-raaiskoot omgeskakel is, word nou ook as ''n raaiskoot gemerk'
+    label: '''n Beheerder wat jy vir ''n speletjie tik, word behou; die konsole se verstekbeheerder vervang nou net geskraapte en AI-waardes. ''n Ouderdomsgradering wat van ''n ander bord se AI-raaiskoot omgeskakel is, word nou ook as ''n raaiskoot gemerk'
   - type: fix
-    label: Om 'n speletjie se wysigvenster te stoor maak nie meer velde leeg wat die venster nie wys nie. Terugstel op 'n speletjie se bladsy maak nou alles skoon wat dit sê, insluitend die aansig, uitgawe en ander name, verwyder die speletjie se prente en video's tensy 'n ander speletjie dit gebruik, en werk die biblioteekfilters dadelik op
+    label: Om 'n speletjie se wysigvenster te stoor, maak nie meer velde leeg wat die venster nie wys nie. Terugstel op 'n speletjie se bladsy maak nou alles skoon wat dit sê, insluitend die aansig, uitgawe en ander name, verwyder die speletjie se prente en video's tensy 'n ander speletjie dit gebruik, en werk die biblioteekfilters dadelik by
   - type: fix
     label: Maak Geskraapte Data Skoon maak nou ook die aansig, 2D of 3D, en speletjiestruktuur skoon. 'n CLZ-invoer van 'n speletjie met net 'n jaar behou net die jaar, nie 1 Januarie nie
   - type: security
-    label: Steam-sinkronisering leen nie meer die Steam-sleutel uit Instellings vir elke huishoudelid nie. 'n Lid sonder 'n eie Steam-sleutel het die admin se Steam-biblioteek en prestasies onder sy rekening gekry. Die sleutel in Instellings bedien nou net admins
+    label: Steam-sinkronisering leen nie meer die Steam-sleutel uit Instellings vir elke huishoudelike lid nie. 'n Lid sonder eie Steam-sleutel het die admin se Steam-biblioteek en prestasies onder sy rekening gekry. Die sleutel in Instellings dien nou net admins
   - type: fix
-    label: How Long to Beat se opsoek vir baie speletjies stoor nou die tye waarvan dit seker is. Voorheen het elke seker passing misluk en niks is gestoor nie. RetroAchievements Verfris kontroleer nou ook elke speletjie se lêer teen RetroAchievements se lys, soos 'n skraap, sodat 'n speletjie aan die presiese weergawe gekoppel word wat jy het
+    label: How Long to Beat se opsoek vir baie speletjies stoor nou die tye waarvan dit seker is. Voorheen het elke seker passing misluk en niks is gestoor nie. RetroAchievements-Herlaai kontroleer nou ook elke speletjie se lêer teen RetroAchievements se lys, soos 'n skraapwerk, sodat 'n speletjie aan die presiese weergawe gekoppel word wat jy het
   - type: fix
-    label: Die boodskap dat 'n agtergrondtaak klaar is, verskyn weer, en 'n taak se vorderingsblokkie let op wanneer die bediener die taak ná 'n herbegin optel. Voorheen het nie een ooit verskyn nie
+    label: Die boodskap dat 'n agtergrondwerk klaar is, verskyn weer, en 'n werk se vorderingsblokkie let op wanneer die bediener die werk ná 'n herbegin optel. Voorheen het nie een ooit verskyn nie
   - type: fix
-    label: 'PlayStation-trofeë: ''n speletjie wat jy met die hand gekoppel het, bly gekoppel ná ''n volle sinkronisering, en ''n sinkronisering koppel nie meer ''n speletjie aan sy opvolger nie, soos "Doom" aan "Doom Eternal". Om PlayStation-speletjies in te voer koppel nou ''n speletjie wat reeds in jou Biblioteek is, soos Steam- en Xbox-invoere, sodat sy trofeë daarop wys'
+    label: 'PlayStation-trofeë: ''n speletjie wat jy met die hand gekoppel het, bly gekoppel ná ''n volle sinkronisering, en ''n sinkronisering koppel nie meer ''n speletjie aan sy opvolger nie, soos "Doom" aan "Doom Eternal". Om PlayStation-speletjies in te voer koppel nou ''n speletjie wat reeds in jou biblioteek is, soos Steam- en Xbox-invoere, sodat sy trofeë daarop wys'
   - type: fix
-    label: Xbox wys nie meer jou gamertag as Onbekend nadat sy aanmelding homself hernu nie, en 'n stadige of mislukte verbinding meld jou nie meer van Xbox af nie. Slegs as Microsoft die aanmelding weier, gebeur dit
+    label: Xbox wys nie meer jou gamertag as Onbekend nadat sy aanmelding homself hernu nie, en 'n stadige of mislukte verbinding meld jou nie meer van Xbox af nie. Net as Microsoft die aanmelding weier, gebeur dit
   - type: fix
-    label: Twee mense kan nou elk 'n etiket met dieselfde naam hê; voorheen het die tweede met 'n fout misluk. Enige aangemelde gebruiker kan nou sy eie RPCS3-trofeë herskandeer; voorheen kon net 'n admin, en almal anders het ou trofeë gesien totdat RetroDB herbegin het
+    label: Twee mense kan nou elk 'n merker met dieselfde naam hê; voorheen het die tweede met 'n fout misluk. Enige aangemelde gebruiker kan nou hul eie RPCS3-trofeë herskandeer; voorheen kon net 'n admin, en almal anders het ou trofeë gesien totdat RetroDB herbegin het
   - type: security
-    label: Jou aanmeldings bly privaat. Databasis-rugsteune kan nie meer deur ander rekeninge op die rekenaar gelees word nie, en 'n mislukte rugsteun verwyder nie meer die een voor dit nie. Om 'n gebruiker te verwyder of af te skakel meld hulle ook af van RetroAchievements in DuckStation en PCSX2. 'n RetroAchievements-aanmelding wat uit die speler se eie kieslys gestoor is, gaan nie meer oor na die volgende persoon wat speel nie. Logboeke en gestoorde taakfoute versteek RetroAchievements-tekens, 'n ander lid se PlayStation-fout word net aan hulle gewys, en ou platteks PlayStation- en Xbox-aanmeldlêers word verwyder
+    label: Jou aanmeldings bly privaat. Databasis-rugsteun kan nie meer deur ander rekeninge op die rekenaar gelees word nie, en 'n mislukte rugsteun verwyder nie meer die een daarvoor nie. Om 'n gebruiker te verwyder of af te skakel meld hulle ook af van RetroAchievements in DuckStation en PCSX2. 'n RetroAchievements-aanmelding wat uit die speler se eie kieslys gestoor is, gaan nie meer oor na die volgende persoon wat speel nie. Logboeke en gestoorde werkfoute versteek RetroAchievements-tekens, 'n ander lid se PlayStation-fout word net aan hulle gewys, en ou PlayStation- en Xbox-aanmeldlêers in gewone teks word verwyder
   - type: fix
-    label: RetroDB se eie toetse kan nie meer jou Biblioteek raak terwyl hulle loop nie. Hulle gebruik altyd 'n weggooibare kopie van die databasis, prente en instellings, en weier om te begin as enige een na jou regte lêers wys
+    label: RetroDB se eie toetse kan nie meer jou biblioteek raak terwyl hulle loop nie. Hulle gebruik altyd 'n wegdoenkopie van die databasis, prente en instellings, en weier om te begin as enige daarvan na jou regte lêers wys
   - type: fix
-    label: Maak weeslêers skoon verwyder nie meer jou Wenslys se prente nie. Om 'n speletjie oop te maak laat dit nie meer skermkiekies vergeet wat dit nie kan vind nie. Voorheen het elke speletjie wat jy oopgemaak het sy hele Skermkiekies-lys verloor as die prentaandrywing uitgeskakel was; nou word die lys behou, en 'n ontbrekende prent word net versteek
+    label: Maak Weesleêrs Skoon verwyder nie meer jou wenslys se prente nie. Om 'n speletjie oop te maak laat dit nie meer skermkiekies vergeet wat dit nie kan vind nie. Voorheen, met die prentaandrywing uitgesteek, het elke speletjie wat jy oopgemaak het sy hele skermkiekie-lys verloor; nou word die lys behou, en 'n ontbrekende prent word net versteek
   - type: fix
-    label: '''n Video- of Handleiding-aflaai wat halfpad misluk, beskadig nie meer die kopie wat die speletjie reeds gehad het nie, en ''n mislukte aflaai laat nie meer ''n versteekte halflêer in die media-vouer agter nie. Die agtergrond-opgradeerder stoor nie meer ''n ou prent oor ''n nuwer een wat intussen afgelaai is nie. Skakel om na WebP hou elke speletjie wat ''n prent deel daarna wys, en raak nooit ''n lêer buite die prentvouers nie'
+    label: '''n Video- of handleiding-aflaai wat halfpad misluk, beskadig nie meer die kopie wat die speletjie reeds gehad het nie, en ''n mislukte aflaai laat nie ''n versteekte halwe lêer in die media-gids agter nie. Die agtergrond-opskaler stoor nie meer ''n ou prent oor ''n nuwer een wat intussen afgelaai is nie. Skakel om na WebP hou elke speletjie wat ''n prent deel daarna wys, en raak nooit ''n lêer buite die prentgidse nie'
   - type: fix
-    label: Om 'n speletjie of 'n Wenslys-item te verwyder verwyder nou ook sy prente, video's en handleidings, maar behou enigiets wat 'n ander speletjie of Wenslys-item nog gebruik. Gestoorde prente kan weer deur ander rekeninge op die rekenaar gelees word, en Verander Prentgrootte tel 'n prent wat dit nie kon stoor nie as misluk, nie as klaar nie
+    label: Om 'n speletjie of 'n wenslys-item te verwyder, verwyder nou ook sy prente, video's en handleidings, maar behou enige wat 'n ander speletjie of wenslys-item nog gebruik. Gestoorde prente kan weer deur ander rekeninge op die rekenaar gelees word, en Verander Prentgrootte tel 'n prent wat dit nie kon stoor nie as mislukt, nie as klaar nie
   - type: fix
-    label: Duplikaatvinder bied nie meer 'n werkende lêer vir verwydering aan nie. Wanneer dit volgens naam soek, noem dit nie meer 'n speletjie se .cue- en .bin-kopieë duplikate van mekaar nie. Dit bied nooit 'n skyf se snitlêer aan nie, wat twee weergawes van 'n speletjie kan deel. Dit sal nie 'n skyf verwyder wat 'n snitlys lys nie. 'n Speletjie wie se lêer jy verwyder skuif nou na die kopie wat jy hou, sodat dit in die Biblioteek bly
+    label: Duplikaatvinder bied nie meer 'n werkende lêer vir verwydering aan nie. Wanneer dit volgens naam soek, noem dit nie meer 'n speletjie se .cue- en .bin-kopieë duplikate van mekaar nie. Dit bied nooit 'n skyf se snitlêer aan nie, wat twee weergawes van 'n speletjie kan deel. Dit sal nie 'n skyf verwyder wat 'n snitlys lys nie. 'n Speletjie waarvan jy die lêer verwyder, skuif nou na die kopie wat jy hou, sodat dit in die biblioteek bly
   - type: fix
-    label: Organiseer Multi-skyf skryf nie meer oor 'n bestaande snitlys of 'n lêer wat reeds in die speletjie se vouer is nie; dit stop en sê watter. Die snitlys wat dit maak lys elke skyf se .cue, nie sy snitlêers nie. Speletjies wie se lêers dit skuif volg hulle nou in die vouer, sodat Maak ontbrekende ROM's skoon hulle nie meer verwyder nie
+    label: Organiseer Multi-Skyf skryf nie meer oor 'n bestaande snitlys of 'n lêer wat reeds in die speletjie se gids is nie; dit stop en sê watter een. Die snitlys wat dit maak, lys elke skyf se .cue, nie sy snitlêers nie. Speletjies wie se lêers dit skuif, volg hulle nou in die gids in, sodat Maak ontbrekende ROM's skoon hulle nie meer verwyder nie
   - type: fix
-    label: Omskakeling na CHD met "verwyder oorspronklikes" verwyder nou ook die skyf se snitlêers, maar behou 'n snit wat 'n ander .cue nog gebruik. Die speletjie en enige snitlys wat die ou skyf gelys het, wys nou na die nuwe .chd. Om 'n speletjie se lêer te hernoem werk nou die snitlys op wat dit lys, en 'n snitlêer wat 'n .cue nodig het kan nie hernoem word nie. Om lêers uit 'n zip te verwyder verwyder net die lêers wat jy gekies het, selfs wanneer 'n naam [ of ] bevat. Skermkiekie-ontdubbeling verwyder net die kopieë wat sy skandering gevind het, en hou altyd een
+    label: Om na CHD om te skakel met "verwyder oorspronklikes" verwyder nou ook die skyf se snitlêers, maar behou 'n snit wat 'n ander .cue nog gebruik. Die speletjie en enige snitlys wat die ou skyf gelys het, wys nou na die nuwe .chd. Om 'n speletjie se lêer te hernoem werk nou die snitlys by wat dit lys, en 'n snitlêer wat 'n .cue nodig het, kan nie hernoem word nie. Om lêers uit 'n zip te verwyder, verwyder net die lêers wat jy gekies het, selfs wanneer 'n naam [ of ] bevat. Skermkiekie-Ontdubbel verwyder net die kopieë wat sy skandering gevind het, en hou altyd een
   - type: fix
-    label: How Long to Beat op 'n speletjie se bladsy soek na wat jy tik. Voorheen, as 'n titel nie gevind is nie, het dit die speletjie se ander name gesoek, en dit kon 'n ander speletjie aanbied, soos 'n aanhanger-hermaak. Dit probeer steeds die ander name wanneer die blokkie die speletjie se eie naam bevat
+    label: How Long to Beat op 'n speletjie se bladsy soek na wat jy tik. Voorheen, as dit 'n titel nie kon vind nie, het dit eerder die speletjie se ander name gesoek, en dit kon 'n ander speletjie aanbied, soos 'n aanhangers-remake. Dit probeer steeds die ander name wanneer die blokkie die speletjie se eie naam bevat
   - type: fix
-    label: Die hulphandleiding se How Long to Beat-stappe pas by die skerm. Hulle het gesê kies 'n passing uit 'n lys; die bladsy wys een passing met Stoor en Kanselleer. Die PlayStation-hulp sê nie meer die aanmelding hou ongeveer twee maande nie, aangesien RetroDB self weer aanmeld. Al 20 vertaalde handleidings dra albei veranderings
+    label: Die hulphandleiding se How Long to Beat-stappe stem met die skerm ooreen. Hulle het gesê om 'n passing uit 'n lys te kies; die bladsy wys een passing met Stoor en Kanselleer. Die PlayStation-hulp sê nie meer die aanmelding hou ongeveer twee maande nie, aangesien RetroDB self weer aanmeld. Al 20 vertaalde handleidings het albei veranderinge
   - type: fix
-    label: Elke letterbalk begin nou met 'n Alles-knoppie. Op die Biblioteek-, konsole- en PSN-trofeë-bladsye wys die keuse van 'n letter net daardie letter se speletjies, en voorheen was daar geen knoppie om die res terug te bring nie. Op die ander prestasiebladsye gaan Alles terug na die eerste speletjie
+    label: Elke letterbalk begin nou met 'n Alles-knoppie. Op die Biblioteek-, konsole- en PSN-trofeë-bladsye wys 'n letter kies net daardie letter se speletjies, en voorheen was daar geen knoppie om die res terug te bring nie. Op die ander prestasiebladsye gaan Alles terug na die eerste speletjie
   - type: fix
-    label: '''n Nuwe PlayStation-aanmeldteken wat jy in Instellings plak, word nou dadelik gebruik. Voorheen het RetroDB die ou aanmelding gebruik totdat dit verval het, en Stoor en toets verbinding het daardie ou aanmelding as werkend gemeld. ''n Teken wat Sony weier vervang nie meer een wat werk nie'
+    label: '''n Nuwe PlayStation-aanmeldteken wat jy in Instellings plak, word nou dadelik gebruik. Voorheen het RetroDB die ou aanmelding gebruik totdat dit verstryk het, en Stoor & Toets Verbinding het daardie ou aanmelding as werkend gemeld. ''n Teken wat Sony weier, vervang nie meer een wat werk nie'
   - type: enhancement
-    label: 'Die PlayStation-aanmelding in Instellings is makliker om aan die gang te hou. Die banier tel nie meer dae af waarop jy nooit hoef op te tree nie, omdat RetroDB self weer aanmeld; dit word net rooi wanneer Sony jou gestoorde teken weier. Die Plak hier-knoppie laat nie meer die blaaier vra om jou knipbord te lees nie: dit sit die wyser in die blokkie vir Ctrl+V. Die stappe sê nou om eers van PlayStation af te meld wanneer jy ''n teken vervang wat nog werk, en hul boodskappe kan vertaal word'
+    label: 'Die PlayStation-aanmelding in Instellings is makliker om aan die gang te hou. Die banier tel nie meer dae af waarop jy nooit hoef op te tree nie, omdat RetroDB self weer aanmeld; dit word net rooi wanneer Sony jou gestoorde teken weier. Die Plak hier-knoppie laat die blaaier nie meer vra om jou knipbord te lees nie: dit plaas die wyser in die blokkie vir Ctrl+V. Die stappe sê nou om eers van PlayStation af te meld wanneer jy ''n teken vervang wat nog werk, en hul boodskappe kan vertaal word'
   - type: enhancement
-    label: Opspringboodskappe en vraagblokkies, soos "Instellings gestoor" of "Verwyder hierdie lys?", kan nou op elke bladsy vertaal word. Voorheen het die meeste in Engels gebly, wat ook al jou taalkeuse was
+    label: Opspringboodskappe en vraagblokkies, soos "Instellings gestoor" of "Verwyder hierdie lys?", kan nou op elke bladsy vertaal word. Voorheen het die meeste in Engels gebly, watter taal jy ook al gekies het
   - type: enhancement
     label: Die boodskappe wat sê hoekom 'n PlayStation-aanmelding misluk het, soos "Your NPSSO may have expired", kan nou vertaal word
   - type: fix
-    label: Die hulphandleiding in elke taal pas nou by die Engelse een. Dit kry Search Anywhere, Keeping a Title, MAME Names en die agterkant van die boks, en ouer paragrawe wat agter geraak het, is op datum
+    label: Die hulphandleiding in elke taal stem nou ooreen met die Engelse een. Dit kry Search Anywhere, Keeping a Title, MAME Names en die agterkant van die boks, en ouer paragrawe wat agtergeraak het, is op datum
   - type: fix
-    label: In Duits, Afrikaans en Spaans sê die Terug-knoppie op 'n speletjie se voorblad nou die agterkant van die boks, nie "gaan terug" nie
+    label: In Duits, Afrikaans en Spaans sê die Terug-knoppie op 'n speletjie se omslag nou die agterkant van die boks, nie "gaan terug" nie
   - type: feature
-    label: As jy nou op Speel druk, vul die speletjie se logo op sy agtergrondprent die skerm terwyl die speletjie begin, of sy naam in groot letters as dit nie 'n logo het nie. Dit verdwyn vanself wanneer die speletjie se venster oopgaan, of wanneer jy Esc druk of klik
+    label: As jy Speel druk, vul die speletjie se logo op sy agtergrondprent nou die skerm terwyl die speletjie begin, of sy naam in groot letters as dit nie 'n logo het nie. Dit verdwyn vanself wanneer die speletjie se venster oopgaan, of wanneer jy Esc druk of klik
   - type: feature
-    label: 'Die draaibare 3D-boks het nou die egte vorm van ''n PS5-houer: ronde hoeke en rande, die verhoogde lip om die omslag, die lyn waar die twee helftes bymekaarkom, en die vingersleuf in die kant wat oopmaak. Dit het ''n boks-lêer nodig van ''n Slipcase-weergawe wat die vorm skryf; voer die boks weer in om dit te kry. Ander bokse lyk soos voorheen'
+    label: 'Die draaibare 3D-boks het nou die regte vorm van ''n PS5-houer: ronde hoeke en rande, die verhoogde lip om die omslag, die lyn waar die twee helftes ontmoet, en die vingerspleet in die kant wat oopgaan. Dit het ''n boks-lêer nodig van ''n Slipcase-weergawe wat die vorm skryf; voer die boks weer in om dit te kry. Ander bokse lyk soos voorheen'
   - type: enhancement
-    label: Verfris RetroAchievements is van Instellings na die RetroAchievements-bladsy geskuif en heet nou Vind Speletjies met Prestasies. Elke knoppie daar het nou 'n reël wat sê wat dit doen, sodat Vind Speletjies en Sinkroniseer Vordering maklik uit mekaar te ken is. As daar nog geen speletjies gekoppel is nie, wys die bladsy vir 'n admin die Vind-knoppie in plaas daarvan om na die volgende oortjie te gaan
+    label: Refresh RetroAchievements het van Instellings na die RetroAchievements-bladsy verskuif, en heet nou Vind Speletjies met Prestasies. Elke knoppie daar het nou 'n reël wat sê wat dit doen, sodat Vind Speletjies en Sinkroniseer Vordering maklik uitmekaar te ken is. As daar nog geen speletjies gekoppel is nie, wys die bladsy vir 'n admin die Vind-knoppie in plaas daarvan om na die volgende oortjie te gaan
   body: "<ul>\n  <li><strong>Die hulphandleiding is in elke taal op datum.</strong>\n    Afdelings wat net in die Engelse handleiding was, is nou vertaal.</li>\n</ul>\n"
 - version: 3.35.4
   date: '2026-11-03'

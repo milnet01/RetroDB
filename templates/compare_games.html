@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% set adaptive_layout = true %}
 
-{% block title %}Compare Games - RetroDB{% endblock %}
+{% block title %}{{ _('Compare Games') }} - RetroDB{% endblock %}
 
 {% block content %}
 <div class="page-box data-page">
@@ -108,7 +108,7 @@
                     {% if field == 'file_size' and val0 %}
                         {{ val0|filesizeformat }}
                     {% elif field == 'scraped' %}
-                        {{ 'Yes' if val0 else 'No' }}
+                        {{ _('Yes') if val0 else _('No') }}
                     {% elif field == 'description' and val0 %}
                         <div class="compare-desc">{{ val0[:200] }}{% if val0|length > 200 %}...{% endif %}</div>
                     {% else %}
@@ -119,7 +119,7 @@
                     {% if field == 'file_size' and val1 %}
                         {{ val1|filesizeformat }}
                     {% elif field == 'scraped' %}
-                        {{ 'Yes' if val1 else 'No' }}
+                        {{ _('Yes') if val1 else _('No') }}
                     {% elif field == 'description' and val1 %}
                         <div class="compare-desc">{{ val1[:200] }}{% if val1|length > 200 %}...{% endif %}</div>
                     {% else %}
@@ -128,11 +128,11 @@
                 </td>
                 <td class="compare-match-indicator">
                     {% if v0_str == v1_str and v0_str %}
-                        <span class="match-badge same">Same</span>
+                        <span class="match-badge same">{{ _('Same') }}</span>
                     {% elif not v0_str and not v1_str %}
                         <span class="match-badge empty">—</span>
                     {% else %}
-                        <span class="match-badge diff">Diff</span>
+                        <span class="match-badge diff">{{ _('Diff') }}</span>
                     {% endif %}
                 </td>
             </tr>
@@ -140,7 +140,7 @@
 
             <!-- Media comparison -->
             <tr>
-                <td class="compare-label">Box Art</td>
+                <td class="compare-label">{{ _('Box Art') }}</td>
                 <td class="compare-value">
                     {% if games[0].boxart %}
                     <img src="/static/images/boxart/{{ games[0].boxart }}" alt="" class="compare-media-thumb">
@@ -154,9 +154,9 @@
                 <td class="compare-match-indicator">
                     {% if games[0].boxart and games[1].boxart %}
                         {% if games[0].boxart == games[1].boxart %}
-                            <span class="match-badge same">Same</span>
+                            <span class="match-badge same">{{ _('Same') }}</span>
                         {% else %}
-                            <span class="match-badge diff">Diff</span>
+                            <span class="match-badge diff">{{ _('Diff') }}</span>
                         {% endif %}
                     {% else %}
                         <span class="match-badge empty">—</span>
@@ -168,7 +168,7 @@
 </div>
 {% elif games|length < 2 %}
 <div class="compare-empty">
-    <p>Select two games above to compare their metadata side by side.</p>
+    <p>{{ _('Select two games above to compare their metadata side by side.') }}</p>
 </div>
 {% endif %}
 
@@ -176,19 +176,19 @@
 <div class="custom-modal" id="searchModal" data-on-click="closeSearchModal" data-self-only>
     <div class="custom-modal-content" style="max-width: 600px; max-height: 80vh;" role="dialog" aria-modal="true" aria-labelledby="searchModalTitle">
         <div class="custom-modal-header">
-            <h3 id="searchModalTitle">Select a Game</h3>
-            <button type="button" class="custom-modal-close" data-on-click="closeSearchModal" aria-label="Close">&times;</button>
+            <h3 id="searchModalTitle">{{ _('Select a Game') }}</h3>
+            <button type="button" class="custom-modal-close" data-on-click="closeSearchModal" aria-label="{{ _('Close') }}">&times;</button>
         </div>
         <div class="custom-modal-body" style="padding: 0;">
             <div class="compare-search-bar">
                 <input type="text" id="compareSearchInput" class="form-control"
-                       placeholder="Search games by title..."
+                       placeholder="{{ _('Search games by title...') }}"
                        data-on-keydown="searchForCompare" data-key="Enter"
                        data-on-input="debounceCompareSearch">
-                <button type="button" class="btn btn-primary btn-sm" data-on-click="searchForCompare">Search</button>
+                <button type="button" class="btn btn-primary btn-sm" data-on-click="searchForCompare">{{ _('Search') }}</button>
             </div>
             <div class="compare-search-results" id="compareSearchResults">
-                <div class="compare-search-hint">Type a game title to search.</div>
+                <div class="compare-search-hint">{{ _('Type a game title to search.') }}</div>
             </div>
         </div>
     </div>
@@ -564,7 +564,7 @@ function openSearchModal(slot) {
     modal.classList.add('active');
     const input = document.getElementById('compareSearchInput');
     input.value = '';
-    document.getElementById('compareSearchResults').innerHTML = '<div class="compare-search-hint">Type a game title to search.</div>';
+    document.getElementById('compareSearchResults').innerHTML = '<div class="compare-search-hint">' + {{ _('Type a game title to search.')|tojson }} + '</div>';
     setTimeout(() => input.focus(), 100);
     if (window.ModalFocusTrap) {
         ModalFocusTrap.activate(modal, trigger, { onEscape: closeSearchModal, autoFocus: false });
@@ -586,18 +586,18 @@ async function searchForCompare() {
     const results = document.getElementById('compareSearchResults');
 
     if (q.length < 2) {
-        results.innerHTML = '<div class="compare-search-hint">Type at least 2 characters to search.</div>';
+        results.innerHTML = '<div class="compare-search-hint">' + {{ _('Type at least 2 characters to search.')|tojson }} + '</div>';
         return;
     }
 
-    results.innerHTML = '<div class="compare-search-hint">Searching...</div>';
+    results.innerHTML = '<div class="compare-search-hint">' + {{ _('Searching...')|tojson }} + '</div>';
 
     try {
         const resp = await fetch(`/api/games/find?q=${encodeURIComponent(q)}&limit=20`);
         const data = await resp.json();
 
         if (!data.success || !data.games || data.games.length === 0) {
-            results.innerHTML = '<div class="compare-search-hint">No games found.</div>';
+            results.innerHTML = '<div class="compare-search-hint">' + {{ _('No games found.')|tojson }} + '</div>';
             return;
         }
 
@@ -615,7 +615,7 @@ async function searchForCompare() {
         }).join('');
     } catch (e) {
         console.error('Error searching:', e);
-        results.innerHTML = '<div class="compare-search-hint" style="color: var(--neon-red);">Error searching games.</div>';
+        results.innerHTML = '<div class="compare-search-hint" style="color: var(--neon-red);">' + {{ _('Error searching games.')|tojson }} + '</div>';
     }
 }
 

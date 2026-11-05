@@ -1,19 +1,19 @@
 {% extends "base.html" %}
 {% set adaptive_layout = true %}
 
-{% block title %}Tags - RetroDB{% endblock %}
+{% block title %}{{ _('Tags') }} - RetroDB{% endblock %}
 
 {% block content %}
 <div class="page-box grid-4 tags-page">
 <!-- Page Header -->
 <div class="page-header">
     <div>
-        <h1 class="page-title">Tags</h1>
-        <p class="page-subtitle">Organize your collection with custom tags</p>
+        <h1 class="page-title">{{ _('Tags') }}</h1>
+        <p class="page-subtitle">{{ _('Organize your collection with custom tags') }}</p>
     </div>
     <div class="page-actions">
         <button type="button" class="btn btn-primary" data-on-click="openCreateTagModal">
-            <span class="btn-icon">+</span> New Tag
+            <span class="btn-icon">+</span> {{ _('New Tag') }}
         </button>
     </div>
 </div>
@@ -26,12 +26,12 @@
 <!-- Empty State -->
 <div class="empty-state" id="tagsEmptyState" style="display: none;">
     <div class="empty-state-icon">🏷️</div>
-    <div class="empty-state-title">No Tags Yet</div>
+    <div class="empty-state-title">{{ _('No Tags Yet') }}</div>
     <div class="empty-state-text">
-        Create your first tag to start organizing your collection.
+        {{ _('Create your first tag to start organizing your collection.') }}
     </div>
     <button type="button" class="btn btn-primary" data-on-click="openCreateTagModal">
-        <span class="btn-icon">+</span> Create Tag
+        <span class="btn-icon">+</span> {{ _('Create Tag') }}
     </button>
 </div>
 
@@ -39,17 +39,17 @@
 <div class="custom-modal" id="tagModal" data-on-click="closeTagModal" data-self-only>
     <div class="custom-modal-content" style="max-width: 450px;" role="dialog" aria-modal="true" aria-labelledby="tagModalTitle">
         <div class="custom-modal-header">
-            <h3 id="tagModalTitle">New Tag</h3>
-            <button type="button" class="custom-modal-close" data-on-click="closeTagModal" aria-label="Close">&times;</button>
+            <h3 id="tagModalTitle">{{ _('New Tag') }}</h3>
+            <button type="button" class="custom-modal-close" data-on-click="closeTagModal" aria-label="{{ _('Close') }}">&times;</button>
         </div>
         <div class="custom-modal-body">
             <input type="hidden" id="tagEditId" value="">
             <div class="form-group">
-                <label class="form-label" for="tagNameInput">Tag Name</label>
-                <input type="text" id="tagNameInput" class="form-control" placeholder="e.g., Favorites, Backlog, Co-op..." maxlength="50">
+                <label class="form-label" for="tagNameInput">{{ _('Tag Name') }}</label>
+                <input type="text" id="tagNameInput" class="form-control" placeholder="{{ _('e.g., Favorites, Backlog, Co-op...') }}" maxlength="50">
             </div>
             <div class="form-group" style="margin-top: var(--spacing-md);">
-                <div class="form-label" id="tagColorLabel">Tag Color</div>
+                <div class="form-label" id="tagColorLabel">{{ _('Tag Color') }}</div>
                 <div class="tag-color-picker" id="tagColorPicker" role="group" aria-labelledby="tagColorLabel">
                     <button type="button" class="tag-color-swatch active" data-color="#4cc9f0" style="background: #4cc9f0;" data-on-click="selectTagColor" data-args='["$this"]' title="{{ _('Cyan') }}" aria-label="{{ _('Cyan') }}" aria-pressed="true"></button>
                     <button type="button" class="tag-color-swatch" data-color="#f72585" style="background: #f72585;" data-on-click="selectTagColor" data-args='["$this"]' title="{{ _('Magenta') }}" aria-label="{{ _('Magenta') }}" aria-pressed="false"></button>
@@ -65,8 +65,8 @@
             </div>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="btn btn-secondary" data-on-click="closeTagModal">Cancel</button>
-            <button type="button" class="btn btn-primary" id="tagSaveBtn" data-on-click="saveTag">Create Tag</button>
+            <button type="button" class="btn btn-secondary" data-on-click="closeTagModal">{{ _('Cancel') }}</button>
+            <button type="button" class="btn btn-primary" id="tagSaveBtn" data-on-click="saveTag">{{ _('Create Tag') }}</button>
         </div>
     </div>
 </div>
@@ -79,13 +79,13 @@
             <h2 class="tag-games-name" id="tagGamesName"></h2>
             <span class="tag-games-count" id="tagGamesCount"></span>
         </div>
-        <button type="button" class="btn btn-secondary btn-sm" data-on-click="closeTagGamesPanel">Close</button>
+        <button type="button" class="btn btn-secondary btn-sm" data-on-click="closeTagGamesPanel">{{ _('Close') }}</button>
     </div>
     <div class="tag-games-grid" id="tagGamesGrid">
         <!-- Populated by JavaScript -->
     </div>
     <div class="tag-games-empty" id="tagGamesEmpty" style="display: none;">
-        No games have this tag yet. Add tags to games from the game detail page.
+        {{ _('No games have this tag yet. Add tags to games from the game detail page.') }}
     </div>
 </div>
 </div>
@@ -414,20 +414,20 @@ function renderTags() {
             <div class="tag-card-top">
                 <span class="tag-pill" style="background: ${escapeHtml(tag.color || '#4cc9f0')};">${escapeHtml(tag.name)}</span>
                 <div class="tag-card-actions" data-on-click data-stop>
-                    <button type="button" class="tag-action-btn" data-on-click="openEditTagModal" data-args="${actionArgs(tag.id)}" title="Edit tag">&#9998;</button>
-                    <button type="button" class="tag-action-btn danger" data-name="${escapeHtml(tag.name)}" data-on-click="confirmDeleteTag" data-args="${actionArgs(tag.id, '$this.dataset.name')}" title="Delete tag">&#10005;</button>
+                    <button type="button" class="tag-action-btn" data-on-click="openEditTagModal" data-args="${actionArgs(tag.id)}" title="${escapeHtml({{ _('Edit tag')|tojson }})}">&#9998;</button>
+                    <button type="button" class="tag-action-btn danger" data-name="${escapeHtml(tag.name)}" data-on-click="confirmDeleteTag" data-args="${actionArgs(tag.id, '$this.dataset.name')}" title="${escapeHtml({{ _('Delete tag')|tojson }})}">&#10005;</button>
                 </div>
             </div>
             <div class="tag-card-count">${formatNumber(tag.game_count || 0)}</div>
-            <div class="tag-card-label">game${(tag.game_count || 0) !== 1 ? 's' : ''}</div>
+            <div class="tag-card-label">${(tag.game_count || 0) === 1 ? {{ _('game')|tojson }} : {{ _('games')|tojson }}}</div>
         </div>
     `).join('');
 }
 
 function openCreateTagModal() {
     const trigger = document.activeElement;
-    document.getElementById('tagModalTitle').textContent = 'New Tag';
-    document.getElementById('tagSaveBtn').textContent = 'Create Tag';
+    document.getElementById('tagModalTitle').textContent = {{ _('New Tag')|tojson }};
+    document.getElementById('tagSaveBtn').textContent = {{ _('Create Tag')|tojson }};
     document.getElementById('tagEditId').value = '';
     document.getElementById('tagNameInput').value = '';
     selectedTagColor = '#4cc9f0';
@@ -448,8 +448,8 @@ function openEditTagModal(tagId) {
     const tag = allTags.find(t => t.id === tagId);
     if (!tag) return;
 
-    document.getElementById('tagModalTitle').textContent = 'Edit Tag';
-    document.getElementById('tagSaveBtn').textContent = 'Save Changes';
+    document.getElementById('tagModalTitle').textContent = {{ _('Edit Tag')|tojson }};
+    document.getElementById('tagSaveBtn').textContent = {{ _('Save Changes')|tojson }};
     document.getElementById('tagEditId').value = tag.id;
     document.getElementById('tagNameInput').value = tag.name;
     selectedTagColor = tag.color || '#4cc9f0';
@@ -559,11 +559,11 @@ async function toggleTagGames(tagId) {
 
     document.getElementById('tagGamesPill').style.background = tag.color || '#4cc9f0';
     document.getElementById('tagGamesName').textContent = tag.name;
-    document.getElementById('tagGamesCount').textContent = `${formatNumber(tag.game_count || 0)} game${(tag.game_count || 0) !== 1 ? 's' : ''}`;
+    document.getElementById('tagGamesCount').textContent = ((tag.game_count || 0) === 1 ? {{ _('1 game')|tojson }} : {{ _('{count} games')|tojson }}.replace('{count}', formatNumber(tag.game_count || 0)));
 
     const grid = document.getElementById('tagGamesGrid');
     const empty = document.getElementById('tagGamesEmpty');
-    grid.innerHTML = '<div style="text-align: center; padding: var(--spacing-lg); color: var(--text-muted);">Loading...</div>';
+    grid.innerHTML = '<div style="text-align: center; padding: var(--spacing-lg); color: var(--text-muted);">' + {{ _('Loading...')|tojson }} + '</div>';
     empty.style.display = 'none';
     panel.style.display = '';
 
@@ -587,7 +587,7 @@ async function toggleTagGames(tagId) {
         }
     } catch (e) {
         console.error('Error loading tag games:', e);
-        grid.innerHTML = '<div style="text-align: center; padding: var(--spacing-lg); color: var(--neon-red);">Error loading games.</div>';
+        grid.innerHTML = '<div style="text-align: center; padding: var(--spacing-lg); color: var(--neon-red);">' + {{ _('Error loading games.')|tojson }} + '</div>';
     }
 
     // Scroll to panel

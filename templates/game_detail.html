@@ -533,7 +533,7 @@
                     {% for ss in game.screenshots.split(',') if ss %}
                     <div class="screenshot-thumb" data-filename="{{ ss.strip() }}">
                         <img src="{{ url_for('static', filename='images/screenshots/' + ss.strip()) }}"
-                             alt="Screenshot {{ loop.index }}" loading="lazy" decoding="async">
+                             alt="{{ _('Screenshot %(n)s', n=loop.index) }}" loading="lazy" decoding="async">
                         <button type="button" class="screenshot-delete-btn" data-filename="{{ ss.strip() }}" data-on-click="deleteScreenshot" data-args='["$this.dataset.filename"]' data-stop title="{{ _('Delete screenshot') }}">×</button>
                     </div>
                     {% endfor %}
@@ -5366,7 +5366,7 @@ async function performSearch(event) {
                     const encodedId = encodeURIComponent(result.id).replace(/'/g, '%27');
                     return `
                         <div class="scrape-result-item-compact">
-                            <label class="scrape-select-checkbox" title="Select for hybrid scraping">
+                            <label class="scrape-select-checkbox" title="${escapeHtml({{ _('Select for hybrid scraping')|tojson }})}">
                                 <input type="checkbox" class="scrape-select-input"
                                        data-source="${result.source}" data-id="${encodedId}" data-name="${escapeHtml(result.name)}" />
                                 <span class="scrape-select-mark"></span>
@@ -5675,7 +5675,7 @@ async function lookupHLTB() {
                 headerHtml += `<span class="hltb-match-confidence">${confidence}% match</span>`;
             }
             if (pendingHltbData.matched_via_alternate && pendingHltbData.search_term_used) {
-                headerHtml += `<span class="hltb-match-alt-notice" title="Matched using this alternate/regional title — confirm it refers to the same game before saving.">⚡ via &ldquo;${escapeHtml(pendingHltbData.search_term_used)}&rdquo;</span>`;
+                headerHtml += `<span class="hltb-match-alt-notice" title="${escapeHtml({{ _('Matched using this alternate/regional title — confirm it refers to the same game before saving.')|tojson }})}">⚡ ${ {{ _('via “{term}”')|tojson }}.replace('{term}', () => escapeHtml(pendingHltbData.search_term_used)) }</span>`;
             }
             document.getElementById('hltbMatchHeader').innerHTML = headerHtml;
 

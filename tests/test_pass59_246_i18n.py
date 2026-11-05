@@ -57,3 +57,76 @@ def test_library_card_text_is_wrapped():
         assert f'title="{title}"' not in js, title
     assert '(cross-mapped)`' not in js
     assert 'game #${h.game_id}' not in read_source('static/js/launch-indicator.js')
+
+
+def test_wrapped_pages_render_in_the_pseudolocale(admin_test_client, monkeypatch):
+    """A wrapped template breaks only when its text is translated (a bare `%`
+    in a Jinja msgid, say), so render each under the pseudolocale."""
+    import os
+    import sqlite3
+    import app as app_module
+    from services.i18n import PSEUDO_LOCALE
+    client, _csrf = admin_test_client()
+    monkeypatch.setattr(app_module, 'get_user_settings',
+                        lambda _uid: {'locale_preference': PSEUDO_LOCALE})
+    conn = sqlite3.connect(os.environ['RETRODB_DB_PATH'])
+    list_id = conn.execute("INSERT INTO lists (name, owner_id) VALUES ('p246', 1)").lastrowid
+    conn.commit()
+    try:
+        pages = ['/dashboard', '/tags', '/compare', '/tools/settings', f'/list/{list_id}']
+        for page in pages:
+            resp = client.get(page)
+            assert resp.status_code == 200, (page, resp.status_code)
+            assert f'<html lang="{PSEUDO_LOCALE}' in resp.get_data(as_text=True), page
+    finally:
+        conn.execute("DELETE FROM lists WHERE id = ?", (list_id,))
+        conn.commit()
+        conn.close()
+
+
+def test_setup_and_game_pages_render_in_the_pseudolocale(admin_test_client, monkeypatch):
+    import os
+    import sqlite3
+    import app as app_module
+    from services.i18n import PSEUDO_LOCALE
+    conn = sqlite3.connect(os.environ['RETRODB_DB_PATH'])
+    conn.execute("INSERT OR IGNORE INTO systems (name, folder) VALUES ('P246', 'p246')")
+    sid = conn.execute("SELECT id FROM systems WHERE folder = 'p246'").fetchone()[0]
+    gid = conn.execute("INSERT INTO games (system_id, title, rom_path, screenshots) "
+                       "VALUES (?, 'Zelda', '/roms/p246/z.nes', 'a.webp')", (sid,)).lastrowid
+    conn.commit()
+    try:
+        client, _csrf = admin_test_client()
+        monkeypatch.setattr(app_module, 'get_user_settings',
+                            lambda _uid: {'locale_preference': PSEUDO_LOCALE})
+        resp = client.get(f'/game/{gid}')
+        assert resp.status_code == 200
+        assert f'<html lang="{PSEUDO_LOCALE}' in resp.get_data(as_text=True)
+        client, _csrf = admin_test_client(settings={'setup_completed': False})
+        monkeypatch.setattr(app_module, 'get_user_settings',
+                            lambda _uid: {'locale_preference': PSEUDO_LOCALE})
+        resp = client.get('/setup')
+        assert resp.status_code == 200, resp.status_code
+        assert f'<html lang="{PSEUDO_LOCALE}' in resp.get_data(as_text=True)
+    finally:
+        conn.execute("DELETE FROM games WHERE id = ?", (gid,))
+        conn.execute("DELETE FROM systems WHERE id = ?", (sid,))
+        conn.commit()
+        conn.close()
+
+
+def test_template_text_is_wrapped():
+    bare = {
+        'templates/setup.html': ['>Welcome to RetroDB<', '>Admin Account<', "'Saving...'"],
+        'templates/tags.html': ['>No Tags Yet<', "'Save Changes'"],
+        'templates/list_detail.html': ['>Back to Lists<', "'Searching...'"],
+        'templates/compare_games.html': ['>Select a Game<', "'No games found.'"],
+        'templates/rom_tools_settings.html': ['>General Settings<', '>Save Settings<'],
+        'templates/base.html': ['queue-item-title">Running<', "'Multi-System'"],
+        'templates/game_detail.html': ['title="Select for hybrid scraping"'],
+    }
+    def unwrapped(f):
+        return re.sub(r"_\('[^']*'", '', read_source(f))
+    left = [f'{f}: {text}' for f, texts in bare.items() for text in texts
+            if text in unwrapped(f)]
+    assert left == []

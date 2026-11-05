@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% set adaptive_layout = true %}
 
-{% block title %}Setup Wizard - RetroDB{% endblock %}
+{% block title %}{{ _('Setup Wizard') }} - RetroDB{% endblock %}
 
 {% block content %}
 <div class="page-box">
@@ -9,8 +9,8 @@
 
     <!-- Header -->
     <div style="text-align: center; margin-bottom: var(--spacing-xl);">
-        <h1 style="font-family: var(--font-heading); font-size: 2rem; color: var(--primary-cyan);">Welcome to RetroDB</h1>
-        <p style="color: var(--text-secondary);">Let's get your ROM library manager set up. This wizard will guide you through the essential configuration.</p>
+        <h1 style="font-family: var(--font-heading); font-size: 2rem; color: var(--primary-cyan);">{{ _('Welcome to RetroDB') }}</h1>
+        <p style="color: var(--text-secondary);">{{ _("Let's get your ROM library manager set up. This wizard will guide you through the essential configuration.") }}</p>
     </div>
 
     <!-- Tab Navigation -->
@@ -38,14 +38,14 @@
     <div class="setup-panel active" id="panel-welcome">
         <div class="card">
             <div class="card-body">
-                <h2 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">What is RetroDB?</h2>
-                <p style="color: var(--text-secondary); line-height: 1.6;">RetroDB is a web-based retro gaming ROM library manager. It helps you organize your ROM collection, scrape metadata from multiple sources, track achievements, and more.</p>
+                <h2 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">{{ _('What is RetroDB?') }}</h2>
+                <p style="color: var(--text-secondary); line-height: 1.6;">{{ _('RetroDB is a web-based retro gaming ROM library manager. It helps you organize your ROM collection, scrape metadata from multiple sources, track achievements, and more.') }}</p>
                 <ul style="color: var(--text-secondary); line-height: 1.8; margin-top: var(--spacing-md);">
-                    <li>Organize ROMs across 270+ gaming platforms</li>
-                    <li>Scrape metadata from TheGamesDB, IGDB, RAWG, ScreenScraper</li>
-                    <li>Track RetroAchievements progress and PS3 trophies</li>
-                    <li>ROM tools: archive scanner, CHD converter, duplicate finder</li>
-                    <li>Analytics dashboard with collection statistics</li>
+                    <li>{{ _('Organize ROMs across 270+ gaming platforms') }}</li>
+                    <li>{{ _('Scrape metadata from TheGamesDB, IGDB, RAWG, ScreenScraper') }}</li>
+                    <li>{{ _('Track RetroAchievements progress and PS3 trophies') }}</li>
+                    <li>{{ _('ROM tools: archive scanner, CHD converter, duplicate finder') }}</li>
+                    <li>{{ _('Analytics dashboard with collection statistics') }}</li>
                 </ul>
 
                 <!-- License -->
@@ -76,11 +76,11 @@ SOFTWARE.</pre>
 
                 <!-- Disclaimers -->
                 <div class="setup-disclaimers" style="margin-top: var(--spacing-lg);">
-                    <h3 style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: var(--spacing-sm);">Disclaimers</h3>
+                    <h3 style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: var(--spacing-sm);">{{ _('Disclaimers') }}</h3>
                     <ul style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.7;">
-                        <li><strong style="color: var(--text-secondary);">ROM Legality:</strong> RetroDB is a library manager and does not provide, host, or distribute ROM files. You are solely responsible for ensuring your ROM collection complies with the laws of your jurisdiction.</li>
-                        <li><strong style="color: var(--text-secondary);">Third-Party APIs:</strong> Metadata scraping uses external services (IGDB, ScreenScraper, RAWG, TheGamesDB, RetroAchievements) that are subject to their own terms of service and rate limits.</li>
-                        <li><strong style="color: var(--text-secondary);">No Warranty:</strong> This software is provided as-is with no guarantee of functionality. Use at your own risk. See the MIT License above for full terms.</li>
+                        <li><strong style="color: var(--text-secondary);">{{ _('ROM Legality:') }}</strong> {{ _('RetroDB is a library manager and does not provide, host, or distribute ROM files. You are solely responsible for ensuring your ROM collection complies with the laws of your jurisdiction.') }}</li>
+                        <li><strong style="color: var(--text-secondary);">{{ _('Third-Party APIs:') }}</strong> {{ _('Metadata scraping uses external services (IGDB, ScreenScraper, RAWG, TheGamesDB, RetroAchievements) that are subject to their own terms of service and rate limits.') }}</li>
+                        <li><strong style="color: var(--text-secondary);">{{ _('No Warranty:') }}</strong> {{ _('This software is provided as-is with no guarantee of functionality. Use at your own risk. See the MIT License above for full terms.') }}</li>
                     </ul>
                 </div>
 
@@ -88,12 +88,12 @@ SOFTWARE.</pre>
                 <div style="margin-top: var(--spacing-lg); padding: var(--spacing-md); background: var(--bg-medium); border-radius: var(--radius-md); border: 1px solid var(--card-border);">
                     <label style="display: flex; align-items: center; gap: var(--spacing-sm); cursor: pointer; color: var(--text-secondary); font-size: 0.9rem;">
                         <input type="checkbox" id="licenseAccepted" data-on-change="updateGetStartedBtn">
-                        I have read and accept the license and terms above
+                        {{ _('I have read and accept the license and terms above') }}
                     </label>
                 </div>
 
                 <div style="margin-top: var(--spacing-xl); text-align: right;">
-                    <button type="button" class="btn btn-primary" id="getStartedBtn" data-on-click="showTab" data-args='["admin"]' disabled>Get Started &rarr;</button>
+                    <button type="button" class="btn btn-primary" id="getStartedBtn" data-on-click="showTab" data-args='["admin"]' disabled>{{ _('Get Started') }} &rarr;</button>
                 </div>
             </div>
         </div>
@@ -103,32 +103,32 @@ SOFTWARE.</pre>
     <div class="setup-panel" id="panel-admin">
         <div class="card">
             <div class="card-body">
-                <h2 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">Admin Account</h2>
-                <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">Create your admin account. This is required to access settings and manage users.</p>
+                <h2 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">{{ _('Admin Account') }}</h2>
+                <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">{{ _('Create your admin account. This is required to access settings and manage users.') }}</p>
                 <div class="form-group">
-                    <label for="admin_username">Username</label>
+                    <label for="admin_username">{{ _('Username') }}</label>
                     <input type="text" id="admin_username" class="form-input" value="admin" autocomplete="username">
                 </div>
                 <div class="form-group">
-                    <label for="admin_password">Password</label>
-                    <input type="password" id="admin_password" class="form-input" placeholder="Choose a secure password" autocomplete="new-password">
+                    <label for="admin_password">{{ _('Password') }}</label>
+                    <input type="password" id="admin_password" class="form-input" placeholder="{{ _('Choose a secure password') }}" autocomplete="new-password">
                 </div>
                 <div class="form-group">
-                    <label for="admin_password_confirm">Confirm Password</label>
-                    <input type="password" id="admin_password_confirm" class="form-input" placeholder="Confirm password" autocomplete="new-password">
+                    <label for="admin_password_confirm">{{ _('Confirm Password') }}</label>
+                    <input type="password" id="admin_password_confirm" class="form-input" placeholder="{{ _('Confirm password') }}" autocomplete="new-password">
                 </div>
                 <div class="form-group">
-                    <label for="tz_search_setup">Timezone</label>
-                    <input type="text" id="tz_search_setup" class="form-input" placeholder="Search timezones..." autocomplete="off" style="margin-bottom: var(--spacing-sm);">
+                    <label for="tz_search_setup">{{ _('Timezone') }}</label>
+                    <input type="text" id="tz_search_setup" class="form-input" placeholder="{{ _('Search timezones...') }}" autocomplete="off" style="margin-bottom: var(--spacing-sm);">
                     <select id="timezone_select" class="form-input" size="6" style="font-family: var(--font-mono); font-size: 0.85rem;"></select>
                     <small style="color: var(--text-muted); display: block; margin-top: 4px;">
-                        Browser detected: <span id="detectedTzSetup"></span>
-                        &mdash; <a href="#" data-on-click="useDetectedTzSetup" data-prevent style="color: var(--primary-cyan);">Use detected</a>
+                        {{ _('Browser detected:') }} <span id="detectedTzSetup"></span>
+                        &mdash; <a href="#" data-on-click="useDetectedTzSetup" data-prevent style="color: var(--primary-cyan);">{{ _('Use detected') }}</a>
                     </small>
                 </div>
                 <div class="setup-nav">
-                    <button type="button" class="btn btn-secondary" data-on-click="showTab" data-args='["welcome"]'>&larr; Back</button>
-                    <button type="button" class="btn btn-primary" data-on-click="showTab" data-args='["library"]'>Next &rarr;</button>
+                    <button type="button" class="btn btn-secondary" data-on-click="showTab" data-args='["welcome"]'>&larr; {{ _('Back') }}</button>
+                    <button type="button" class="btn btn-primary" data-on-click="showTab" data-args='["library"]'>{{ _('Next') }} &rarr;</button>
                 </div>
             </div>
         </div>
@@ -138,22 +138,22 @@ SOFTWARE.</pre>
     <div class="setup-panel" id="panel-library">
         <div class="card">
             <div class="card-body">
-                <h2 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">ROM Library Path</h2>
-                <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">Set the root directory where your ROMs are stored. Each system should be in a subfolder (e.g., <code>ROMS/nes/</code>, <code>ROMS/snes/</code>).</p>
+                <h2 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">{{ _('ROM Library Path') }}</h2>
+                <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">{{ _('Set the root directory where your ROMs are stored. Each system should be in a subfolder (e.g., %(examples)s).', examples='<code>ROMS/nes/</code>, <code>ROMS/snes/</code>'|safe) }}</p>
                 <div class="form-group">
-                    <label for="rom_path">ROM Library Path</label>
+                    <label for="rom_path">{{ _('ROM Library Path') }}</label>
                     <div class="setup-path-row">
                         <input type="text" id="rom_path" class="form-input" placeholder="{% if platform_name == 'Windows' %}C:\Games\ROMS{% elif platform_name == 'macOS' %}/Users/user/ROMS{% else %}/home/user/ROMS{% endif %}">
-                        <button type="button" class="btn btn-secondary setup-browse-btn" data-on-click="setupBrowseFolder" data-args='["rom_path"]' title="Browse folders">Browse</button>
+                        <button type="button" class="btn btn-secondary setup-browse-btn" data-on-click="setupBrowseFolder" data-args='["rom_path"]' title="{{ _('Browse folders') }}">{{ _('Browse') }}</button>
                     </div>
                     <small style="color: var(--text-muted); display: block; margin-top: 4px;">
-                        {% if config.ROM_PATH %}Current: {{ config.ROM_PATH }}{% else %}
-                        Example: <code>{% if platform_name == 'Windows' %}C:\Games\ROMS{% elif platform_name == 'macOS' %}/Users/user/ROMS{% else %}/home/user/ROMS{% endif %}</code>{% endif %}
+                        {% if config.ROM_PATH %}{{ _('Current: %(path)s', path=config.ROM_PATH) }}{% else %}
+                        {{ _('Example:') }} <code>{% if platform_name == 'Windows' %}C:\Games\ROMS{% elif platform_name == 'macOS' %}/Users/user/ROMS{% else %}/home/user/ROMS{% endif %}</code>{% endif %}
                     </small>
                 </div>
                 <div class="setup-nav">
-                    <button type="button" class="btn btn-secondary" data-on-click="showTab" data-args='["admin"]'>&larr; Back</button>
-                    <button type="button" class="btn btn-primary" data-on-click="showTab" data-args='["esde"]'>Next &rarr;</button>
+                    <button type="button" class="btn btn-secondary" data-on-click="showTab" data-args='["admin"]'>&larr; {{ _('Back') }}</button>
+                    <button type="button" class="btn btn-primary" data-on-click="showTab" data-args='["esde"]'>{{ _('Next') }} &rarr;</button>
                 </div>
             </div>
         </div>
@@ -163,8 +163,8 @@ SOFTWARE.</pre>
     <div class="setup-panel" id="panel-esde">
         <div class="card">
             <div class="card-body">
-                <h2 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">ES-DE Integration <span style="color: var(--text-muted); font-size: 0.8rem;">(Optional)</span></h2>
-                <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">If you use ES-DE (EmulationStation Desktop Edition), RetroDB can import your existing scraped metadata and media.</p>
+                <h2 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">{{ _('ES-DE Integration') }} <span style="color: var(--text-muted); font-size: 0.8rem;">({{ _('Optional') }})</span></h2>
+                <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">{{ _('If you use ES-DE (EmulationStation Desktop Edition), RetroDB can import your existing scraped metadata and media.') }}</p>
 
                 <!-- Skip ES-DE toggle -->
                 <div style="margin-bottom: var(--spacing-lg); padding: var(--spacing-md); background: var(--bg-medium); border-radius: var(--radius-md); border: 1px solid var(--card-border);">
@@ -173,33 +173,33 @@ SOFTWARE.</pre>
                             <input type="checkbox" id="skipEsde" data-on-change="toggleEsdeFields">
                             <span class="toggle-slider"></span>
                         </label>
-                        <span class="toggle-label" style="color: var(--text-secondary); font-size: 0.9rem;">I don't use ES-DE</span>
+                        <span class="toggle-label" style="color: var(--text-secondary); font-size: 0.9rem;">{{ _("I don't use ES-DE") }}</span>
                     </div>
                 </div>
 
                 <div id="esdeFields">
                     <div class="form-group">
-                        <label for="esde_gamelists">ES-DE Gamelists Path</label>
+                        <label for="esde_gamelists">{{ _('ES-DE Gamelists Path') }}</label>
                         <div class="setup-path-row">
                             <input type="text" id="esde_gamelists" class="form-input" placeholder="{% if platform_name == 'Windows' %}C:\Users\&lt;user&gt;\ES-DE\gamelists{% elif platform_name == 'macOS' %}/Users/user/.emulationstation/gamelists{% else %}/home/user/.emulationstation/gamelists{% endif %}">
-                            <button type="button" class="btn btn-secondary setup-browse-btn" data-on-click="setupBrowseFolder" data-args='["esde_gamelists"]' title="Browse folders">Browse</button>
+                            <button type="button" class="btn btn-secondary setup-browse-btn" data-on-click="setupBrowseFolder" data-args='["esde_gamelists"]' title="{{ _('Browse folders') }}">{{ _('Browse') }}</button>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="esde_media">ES-DE Downloaded Media Path</label>
+                        <label for="esde_media">{{ _('ES-DE Downloaded Media Path') }}</label>
                         <div class="setup-path-row">
                             <input type="text" id="esde_media" class="form-input" placeholder="{% if platform_name == 'Windows' %}C:\Users\&lt;user&gt;\ES-DE\downloaded_media{% elif platform_name == 'macOS' %}/Users/user/.emulationstation/downloaded_media{% else %}/home/user/.emulationstation/downloaded_media{% endif %}">
-                            <button type="button" class="btn btn-secondary setup-browse-btn" data-on-click="setupBrowseFolder" data-args='["esde_media"]' title="Browse folders">Browse</button>
+                            <button type="button" class="btn btn-secondary setup-browse-btn" data-on-click="setupBrowseFolder" data-args='["esde_media"]' title="{{ _('Browse folders') }}">{{ _('Browse') }}</button>
                         </div>
                     </div>
                 </div>
                 <div id="esdeSkipNote" style="display: none; padding: var(--spacing-md); color: var(--text-muted); font-size: 0.9rem;">
-                    You can configure ES-DE integration later in Settings if needed.
+                    {{ _('You can configure ES-DE integration later in Settings if needed.') }}
                 </div>
 
                 <div class="setup-nav">
-                    <button type="button" class="btn btn-secondary" data-on-click="showTab" data-args='["library"]'>&larr; Back</button>
-                    <button type="button" class="btn btn-primary" data-on-click="showTab" data-args='["apikeys"]'>Next &rarr;</button>
+                    <button type="button" class="btn btn-secondary" data-on-click="showTab" data-args='["library"]'>&larr; {{ _('Back') }}</button>
+                    <button type="button" class="btn btn-primary" data-on-click="showTab" data-args='["apikeys"]'>{{ _('Next') }} &rarr;</button>
                 </div>
             </div>
         </div>
@@ -209,76 +209,76 @@ SOFTWARE.</pre>
     <div class="setup-panel" id="panel-apikeys">
         <div class="card">
             <div class="card-body">
-                <h2 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">API Keys <span style="color: var(--text-muted); font-size: 0.8rem;">(Optional)</span></h2>
-                <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">API keys enable metadata scraping from external databases. You can add these later in Settings.</p>
+                <h2 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">{{ _('API Keys') }} <span style="color: var(--text-muted); font-size: 0.8rem;">({{ _('Optional') }})</span></h2>
+                <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">{{ _('API keys enable metadata scraping from external databases. You can add these later in Settings.') }}</p>
 
                 <details class="api-section">
                     <summary>TheGamesDB</summary>
                     <div class="form-group">
-                        <label for="tgdb_public_key">Public API Key <a href="https://api.thegamesdb.net/key.php" target="_blank" rel="noopener noreferrer" style="font-size: 0.8rem;">(Get keys)</a></label>
-                        <input type="text" id="tgdb_public_key" class="form-input" placeholder="Per-IP rate limit — primary key for scraping">
+                        <label for="tgdb_public_key">{{ _('Public API Key') }} <a href="https://api.thegamesdb.net/key.php" target="_blank" rel="noopener noreferrer" style="font-size: 0.8rem;">({{ _('Get keys') }})</a></label>
+                        <input type="text" id="tgdb_public_key" class="form-input" placeholder="{{ _('Per-IP rate limit — primary key for scraping') }}">
                     </div>
                     <div class="form-group">
-                        <label for="tgdb_key">Private API Key</label>
-                        <input type="text" id="tgdb_key" class="form-input" placeholder="Shared monthly pool — fallback key">
+                        <label for="tgdb_key">{{ _('Private API Key') }}</label>
+                        <input type="text" id="tgdb_key" class="form-input" placeholder="{{ _('Shared monthly pool — fallback key') }}">
                     </div>
                 </details>
 
                 <details class="api-section">
                     <summary>IGDB (Twitch)</summary>
                     <div class="form-group">
-                        <label for="igdb_client_id">Client ID <a href="https://dev.twitch.tv/console" target="_blank" rel="noopener noreferrer" style="font-size: 0.8rem;">(Twitch Dev Console)</a></label>
-                        <input type="text" id="igdb_client_id" class="form-input" placeholder="Twitch Client ID">
+                        <label for="igdb_client_id">{{ _('Client ID') }} <a href="https://dev.twitch.tv/console" target="_blank" rel="noopener noreferrer" style="font-size: 0.8rem;">(Twitch Dev Console)</a></label>
+                        <input type="text" id="igdb_client_id" class="form-input" placeholder="{{ _('Twitch Client ID') }}">
                     </div>
                     <div class="form-group">
-                        <label for="igdb_client_secret">Client Secret</label>
-                        <input type="text" id="igdb_client_secret" class="form-input" placeholder="Twitch Client Secret">
+                        <label for="igdb_client_secret">{{ _('Client Secret') }}</label>
+                        <input type="text" id="igdb_client_secret" class="form-input" placeholder="{{ _('Twitch Client Secret') }}">
                     </div>
                 </details>
 
                 <details class="api-section">
                     <summary>RAWG.io</summary>
                     <div class="form-group">
-                        <label for="rawg_key">API Key <a href="https://rawg.io/apidocs" target="_blank" rel="noopener noreferrer" style="font-size: 0.8rem;">(Get key)</a></label>
-                        <input type="text" id="rawg_key" class="form-input" placeholder="RAWG API key">
+                        <label for="rawg_key">{{ _('API Key') }} <a href="https://rawg.io/apidocs" target="_blank" rel="noopener noreferrer" style="font-size: 0.8rem;">({{ _('Get key') }})</a></label>
+                        <input type="text" id="rawg_key" class="form-input" placeholder="{{ _('RAWG API key') }}">
                     </div>
                 </details>
 
                 <details class="api-section">
                     <summary>ScreenScraper</summary>
                     <div class="form-group">
-                        <label for="ss_username">Username <a href="https://www.screenscraper.fr" target="_blank" rel="noopener noreferrer" style="font-size: 0.8rem;">(Sign up)</a></label>
-                        <input type="text" id="ss_username" class="form-input" placeholder="ScreenScraper username">
+                        <label for="ss_username">{{ _('Username') }} <a href="https://www.screenscraper.fr" target="_blank" rel="noopener noreferrer" style="font-size: 0.8rem;">({{ _('Sign up') }})</a></label>
+                        <input type="text" id="ss_username" class="form-input" placeholder="{{ _('ScreenScraper username') }}">
                     </div>
                     <div class="form-group">
-                        <label for="ss_password">Password</label>
-                        <input type="password" id="ss_password" class="form-input" placeholder="ScreenScraper password">
+                        <label for="ss_password">{{ _('Password') }}</label>
+                        <input type="password" id="ss_password" class="form-input" placeholder="{{ _('ScreenScraper password') }}">
                     </div>
                     <div class="form-group">
-                        <label for="ss_devid">Developer ID <a href="https://www.screenscraper.fr/forumsujets.php?fression=0&numpage=0&num_dossier=60" target="_blank" rel="noopener noreferrer" style="font-size: 0.8rem;">(Request dev access)</a></label>
-                        <input type="text" id="ss_devid" class="form-input" placeholder="Dev username from developer area">
+                        <label for="ss_devid">{{ _('Developer ID') }} <a href="https://www.screenscraper.fr/forumsujets.php?fression=0&numpage=0&num_dossier=60" target="_blank" rel="noopener noreferrer" style="font-size: 0.8rem;">({{ _('Request dev access') }})</a></label>
+                        <input type="text" id="ss_devid" class="form-input" placeholder="{{ _('Dev username from developer area') }}">
                     </div>
                     <div class="form-group">
-                        <label for="ss_devpassword">Developer Password</label>
-                        <input type="password" id="ss_devpassword" class="form-input" placeholder="Password from developer area (NOT debug password)">
+                        <label for="ss_devpassword">{{ _('Developer Password') }}</label>
+                        <input type="password" id="ss_devpassword" class="form-input" placeholder="{{ _('Password from developer area (NOT debug password)') }}">
                     </div>
                 </details>
 
                 <details class="api-section">
                     <summary>RetroAchievements</summary>
                     <div class="form-group">
-                        <label for="ra_username">Username <a href="https://retroachievements.org/controlpanel.php" target="_blank" rel="noopener noreferrer" style="font-size: 0.8rem;">(Get API key)</a></label>
-                        <input type="text" id="ra_username" class="form-input" placeholder="RA username">
+                        <label for="ra_username">{{ _('Username') }} <a href="https://retroachievements.org/controlpanel.php" target="_blank" rel="noopener noreferrer" style="font-size: 0.8rem;">({{ _('Get API key') }})</a></label>
+                        <input type="text" id="ra_username" class="form-input" placeholder="{{ _('RA username') }}">
                     </div>
                     <div class="form-group">
-                        <label for="ra_apikey">API Key</label>
-                        <input type="text" id="ra_apikey" class="form-input" placeholder="RA API key">
+                        <label for="ra_apikey">{{ _('API Key') }}</label>
+                        <input type="text" id="ra_apikey" class="form-input" placeholder="{{ _('RA API key') }}">
                     </div>
                 </details>
 
                 <div class="setup-nav">
-                    <button type="button" class="btn btn-secondary" data-on-click="showTab" data-args='["esde"]'>&larr; Back</button>
-                    <button type="button" class="btn btn-primary" data-on-click="showTab" data-args='["complete"]'>Next &rarr;</button>
+                    <button type="button" class="btn btn-secondary" data-on-click="showTab" data-args='["esde"]'>&larr; {{ _('Back') }}</button>
+                    <button type="button" class="btn btn-primary" data-on-click="showTab" data-args='["complete"]'>{{ _('Next') }} &rarr;</button>
                 </div>
             </div>
         </div>
@@ -288,12 +288,12 @@ SOFTWARE.</pre>
     <div class="setup-panel" id="panel-complete">
         <div class="card">
             <div class="card-body" style="text-align: center;">
-                <h2 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">Ready to Go!</h2>
-                <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">Click the button below to save your configuration and start using RetroDB.</p>
-                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: var(--spacing-xl);">You can change any of these settings later via the Settings page.</p>
-                <button type="button" class="btn btn-primary" id="finishBtn" data-on-click="finishSetup" style="font-size: 1.1rem; padding: var(--spacing-md) var(--spacing-xl);">Complete Setup</button>
+                <h2 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">{{ _('Ready to Go!') }}</h2>
+                <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">{{ _('Click the button below to save your configuration and start using RetroDB.') }}</p>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: var(--spacing-xl);">{{ _('You can change any of these settings later via the Settings page.') }}</p>
+                <button type="button" class="btn btn-primary" id="finishBtn" data-on-click="finishSetup" style="font-size: 1.1rem; padding: var(--spacing-md) var(--spacing-xl);">{{ _('Complete Setup') }}</button>
                 <div style="margin-top: var(--spacing-lg);">
-                    <button type="button" class="btn btn-secondary" data-on-click="showTab" data-args='["apikeys"]'>&larr; Back</button>
+                    <button type="button" class="btn btn-secondary" data-on-click="showTab" data-args='["apikeys"]'>&larr; {{ _('Back') }}</button>
                 </div>
             </div>
         </div>
@@ -351,8 +351,8 @@ async function setupBrowseFolder(inputId) {
     const inputEl = document.getElementById(inputId);
     let startPath = inputEl ? inputEl.value : '';
 
-    list.innerHTML = '<div style="padding: 2rem; text-align: center; color: var(--text-muted);">Loading...</div>';
-    pathEl.textContent = 'Loading...';
+    list.innerHTML = '<div style="padding: 2rem; text-align: center; color: var(--text-muted);">' + {{ _('Loading...')|tojson }} + '</div>';
+    pathEl.textContent = {{ _('Loading...')|tojson }};
     modal.classList.add('active');
 
     try {
@@ -369,10 +369,10 @@ async function setupBrowseFolder(inputId) {
             folderBrowserCallback = inputId;
             renderSetupFolderBrowser(data);
         } else {
-            list.innerHTML = '<div style="padding: 1rem; color: var(--neon-red);">Error: ' + escapeHtml(data.error || 'Unknown error') + '</div>';
+            list.innerHTML = '<div style="padding: 1rem; color: var(--neon-red);">' + {{ _('Error:')|tojson }} + ' ' + escapeHtml(data.error || {{ _('Unknown error')|tojson }}) + '</div>';
         }
     } catch (e) {
-        list.innerHTML = '<div style="padding: 1rem; color: var(--neon-red);">Error: ' + escapeHtml(e.message || 'An error occurred') + '</div>';
+        list.innerHTML = '<div style="padding: 1rem; color: var(--neon-red);">' + {{ _('Error:')|tojson }} + ' ' + escapeHtml(e.message || {{ _('An error occurred')|tojson }}) + '</div>';
     }
 }
 
@@ -389,25 +389,25 @@ function renderSetupFolderBrowser(data) {
         html += '<div class="folder-item folder-parent" data-path="' + escapeHtml(data.parent_path) + '" data-on-click="navigateSetupFolder" data-args="' + actionArgs('$this.dataset.path') + '">' +
                 '<span class="folder-icon">\u{1F4C1}</span>' +
                 '<span class="folder-name">..</span>' +
-                '<span class="folder-info">Parent folder</span>' +
+                '<span class="folder-info">' + {{ _('Parent folder')|tojson }} + '</span>' +
                 '</div>';
     }
 
     if (data.folders.length === 0 && !data.parent_path) {
-        html += '<div style="padding: 1.5rem; text-align: center; color: var(--text-muted);">No subfolders found</div>';
+        html += '<div style="padding: 1.5rem; text-align: center; color: var(--text-muted);">' + {{ _('No subfolders found')|tojson }} + '</div>';
     } else if (data.folders.length === 0) {
-        html += '<div style="padding: 1rem; text-align: center; color: var(--text-muted); font-size: 0.9rem;">No subfolders</div>';
+        html += '<div style="padding: 1rem; text-align: center; color: var(--text-muted); font-size: 0.9rem;">' + {{ _('No subfolders')|tojson }} + '</div>';
     }
 
     for (const folder of data.folders) {
         const info = [];
-        if (folder.file_count > 0) info.push(folder.file_count + ' files');
-        if (folder.subfolder_count > 0) info.push(folder.subfolder_count + ' folders');
+        if (folder.file_count > 0) info.push(folder.file_count === 1 ? {{ _('1 file')|tojson }} : {{ _('{count} files')|tojson }}.replace('{count}', folder.file_count));
+        if (folder.subfolder_count > 0) info.push(folder.subfolder_count === 1 ? {{ _('1 folder')|tojson }} : {{ _('{count} folders')|tojson }}.replace('{count}', folder.subfolder_count));
 
         html += '<div class="folder-item" data-path="' + escapeHtml(folder.path) + '" data-on-click="navigateSetupFolder" data-args="' + actionArgs('$this.dataset.path') + '">' +
                 '<span class="folder-icon">\u{1F4C1}</span>' +
                 '<span class="folder-name">' + escapeHtml(folder.name) + '</span>' +
-                '<span class="folder-info">' + (info.join(', ') || 'Empty') + '</span>' +
+                '<span class="folder-info">' + (info.join(', ') || {{ _('Empty')|tojson }}) + '</span>' +
                 '</div>';
     }
 
@@ -416,7 +416,7 @@ function renderSetupFolderBrowser(data) {
 
 async function navigateSetupFolder(path) {
     const list = document.getElementById('folderBrowserList');
-    list.innerHTML = '<div style="padding: 2rem; text-align: center; color: var(--text-muted);">Loading...</div>';
+    list.innerHTML = '<div style="padding: 2rem; text-align: center; color: var(--text-muted);">' + {{ _('Loading...')|tojson }} + '</div>';
 
     try {
         const response = await fetch('/api/setup/browse-folders', {
@@ -429,10 +429,10 @@ async function navigateSetupFolder(path) {
         if (data.success) {
             renderSetupFolderBrowser(data);
         } else {
-            list.innerHTML = '<div style="padding: 1rem; color: var(--neon-red);">Error: ' + escapeHtml(data.error || 'Unknown error') + '</div>';
+            list.innerHTML = '<div style="padding: 1rem; color: var(--neon-red);">' + {{ _('Error:')|tojson }} + ' ' + escapeHtml(data.error || {{ _('Unknown error')|tojson }}) + '</div>';
         }
     } catch (e) {
-        list.innerHTML = '<div style="padding: 1rem; color: var(--neon-red);">Error: ' + escapeHtml(e.message || 'An error occurred') + '</div>';
+        list.innerHTML = '<div style="padding: 1rem; color: var(--neon-red);">' + {{ _('Error:')|tojson }} + ' ' + escapeHtml(e.message || {{ _('An error occurred')|tojson }}) + '</div>';
     }
 }
 
@@ -448,19 +448,19 @@ function finishSetup() {
 
     // Validate required fields
     if (!username) {
-        errorBanner.textContent = 'Admin username is required.';
+        errorBanner.textContent = {{ _('Admin username is required.')|tojson }};
         errorBanner.style.display = 'block';
         showTab('admin');
         return;
     }
     if (!pw) {
-        errorBanner.textContent = 'Admin password is required.';
+        errorBanner.textContent = {{ _('Admin password is required.')|tojson }};
         errorBanner.style.display = 'block';
         showTab('admin');
         return;
     }
     if (pw !== pw2) {
-        errorBanner.textContent = 'Passwords do not match.';
+        errorBanner.textContent = {{ _('Passwords do not match.')|tojson }};
         errorBanner.style.display = 'block';
         showTab('admin');
         return;
@@ -472,7 +472,7 @@ function finishSetup() {
         return;
     }
     if (!romPath) {
-        errorBanner.textContent = 'ROM Library Path is required.';
+        errorBanner.textContent = {{ _('ROM Library Path is required.')|tojson }};
         errorBanner.style.display = 'block';
         showTab('library');
         return;
@@ -480,14 +480,14 @@ function finishSetup() {
 
     const btn = document.getElementById('finishBtn');
     btn.disabled = true;
-    btn.textContent = 'Saving...';
+    btn.textContent = {{ _('Saving...')|tojson }};
 
     if (!document.getElementById('licenseAccepted').checked) {
-        errorBanner.textContent = 'You must accept the license and terms before completing setup.';
+        errorBanner.textContent = {{ _('You must accept the license and terms before completing setup.')|tojson }};
         errorBanner.style.display = 'block';
         showTab('welcome');
         btn.disabled = false;
-        btn.textContent = 'Complete Setup';
+        btn.textContent = {{ _('Complete Setup')|tojson }};
         return;
     }
 
@@ -522,17 +522,17 @@ function finishSetup() {
         if (result.success) {
             window.location.href = '/dashboard';
         } else {
-            errorBanner.textContent = result.error || 'Setup failed.';
+            errorBanner.textContent = result.error || {{ _('Setup failed.')|tojson }};
             errorBanner.style.display = 'block';
             btn.disabled = false;
-            btn.textContent = 'Complete Setup';
+            btn.textContent = {{ _('Complete Setup')|tojson }};
         }
     })
     .catch(() => {
-        errorBanner.textContent = 'Network error. Please try again.';
+        errorBanner.textContent = {{ _('Network error. Please try again.')|tojson }};
         errorBanner.style.display = 'block';
         btn.disabled = false;
-        btn.textContent = 'Complete Setup';
+        btn.textContent = {{ _('Complete Setup')|tojson }};
     });
 }
 

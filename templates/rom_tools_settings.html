@@ -2,7 +2,7 @@
 {% set adaptive_layout = true %}
 {% from "_macros/nav_tabs.html" import rom_tool_tabs %}
 
-{% block title %}ROM Tools Settings - RetroDB{% endblock %}
+{% block title %}{{ _('ROM Tools Settings') }} - RetroDB{% endblock %}
 
 {% block styles %}
 <style>
@@ -220,8 +220,8 @@
 {% from "_macros/browse_button.html" import browse_button with context %}
 <div class="page-box form-page">
 <div class="page-header">
-    <h1>🔧 ROM Tools</h1>
-    <p>Manage, organize, and optimize your ROM collection.</p>
+    <h1>🔧 {{ _('ROM Tools') }}</h1>
+    <p>{{ _('Manage, organize, and optimize your ROM collection.') }}</p>
 </div>
 
 <!-- Tool Tabs -->
@@ -229,11 +229,11 @@
 
 <div class="card">
     <div class="card-header">
-        <h2 class="card-title"><span>🔧</span> Tool Availability</h2>
+        <h2 class="card-title"><span>🔧</span> {{ _('Tool Availability') }}</h2>
     </div>
     <div class="card-body">
     <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.9rem;">
-        These external tools are required for certain features. Install missing tools to enable full functionality.
+        {{ _('These external tools are required for certain features. Install missing tools to enable full functionality.') }}
     </p>
     
     <div class="tool-status-grid">
@@ -242,7 +242,7 @@
             <div class="tool-info">
                 <h4>unzip</h4>
                 <span class="status {% if tool_status.tools.unzip %}available{% else %}missing{% endif %}">
-                    {% if tool_status.tools.unzip %}✓ Available{% else %}✗ Not Found{% endif %}
+                    {% if tool_status.tools.unzip %}✓ {{ _('Available') }}{% else %}✗ {{ _('Not Found') }}{% endif %}
                 </span>
             </div>
         </div>
@@ -251,7 +251,7 @@
             <div class="tool-info">
                 <h4>7-Zip (7z)</h4>
                 <span class="status {% if tool_status.tools['7z'] %}available{% else %}missing{% endif %}">
-                    {% if tool_status.tools['7z'] %}✓ Available{% else %}✗ Not Found{% endif %}
+                    {% if tool_status.tools['7z'] %}✓ {{ _('Available') }}{% else %}✗ {{ _('Not Found') }}{% endif %}
                 </span>
             </div>
         </div>
@@ -260,7 +260,7 @@
             <div class="tool-info">
                 <h4>unrar</h4>
                 <span class="status {% if tool_status.tools.unrar %}available{% else %}missing{% endif %}">
-                    {% if tool_status.tools.unrar %}✓ Available{% else %}✗ Not Found{% endif %}
+                    {% if tool_status.tools.unrar %}✓ {{ _('Available') }}{% else %}✗ {{ _('Not Found') }}{% endif %}
                 </span>
             </div>
         </div>
@@ -269,7 +269,7 @@
             <div class="tool-info">
                 <h4>chdman</h4>
                 <span class="status {% if tool_status.tools.chdman %}available{% else %}missing{% endif %}">
-                    {% if tool_status.tools.chdman %}✓ Available{% else %}✗ Not Found{% endif %}
+                    {% if tool_status.tools.chdman %}✓ {{ _('Available') }}{% else %}✗ {{ _('Not Found') }}{% endif %}
                 </span>
             </div>
         </div>
@@ -280,8 +280,8 @@
     <div class="info-banner" style="background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(247, 37, 133, 0.1)); border-color: rgba(255, 193, 7, 0.3);">
         <span class="info-icon">⚠️</span>
         <div class="info-text">
-            <h4>Missing Tools ({{ tool_status.platform }})</h4>
-            <p>Install all required tools: <code>{{ tool_status.install_instructions.all }}</code></p>
+            <h4>{{ _('Missing Tools (%(platform)s)', platform=tool_status.platform) }}</h4>
+            <p>{{ _('Install all required tools:') }} <code>{{ tool_status.install_instructions.all }}</code></p>
         </div>
     </div>
     {% endif %}
@@ -291,20 +291,20 @@
 <form id="settingsForm">
     <div class="card">
         <div class="card-header">
-            <h2 class="card-title"><span>📁</span> General Settings</h2>
+            <h2 class="card-title"><span>📁</span> {{ _('General Settings') }}</h2>
         </div>
         <div class="card-body">
         <div class="form-group">
-            <label for="romsPath">Default ROMs Path</label>
+            <label for="romsPath">{{ _('Default ROMs Path') }}</label>
             <div class="path-input-row">
                 <input type="text" class="form-input" id="romsPath" value="{{ settings.roms_path }}" placeholder="/mnt/Games/ROMS">
                 {{ browse_button('romsPath', 'folder') }}
             </div>
-            <p class="form-help">Base directory for scanning ROMs</p>
+            <p class="form-help">{{ _('Base directory for scanning ROMs') }}</p>
         </div>
         
         <div class="form-group">
-            <label for="tempPath">Temporary Path</label>
+            <label for="tempPath">{{ _('Temporary Path') }}</label>
             <div class="path-input-row">
                 <input type="text" class="form-input" id="tempPath" value="{{ settings.temp_path }}" placeholder="{{ _('Empty: RetroDB\'s data folder') }}">
                 {{ browse_button('tempPath', 'folder') }}
@@ -313,88 +313,89 @@
         </div>
         
         <div class="form-group">
-            <label for="chdmanPath">chdman Path</label>
+            <label for="chdmanPath">{{ _('chdman Path') }}</label>
             <div class="path-input-row">
                 <input type="text" class="form-input" id="chdmanPath" value="{{ settings.chdman_path }}" placeholder="chdman">
                 {{ browse_button('chdmanPath', 'file') }}
             </div>
-            <p class="form-help">Path to chdman executable (use "chdman" if in PATH)</p>
+            <p class="form-help">{{ _('Path to chdman executable (use "chdman" if in PATH)') }}</p>
         </div>
         </div>
     </div>
 
     <div class="card">
         <div class="card-header">
-            <h2 class="card-title"><span>📦</span> Archive Scanner Settings</h2>
+            <h2 class="card-title"><span>📦</span> {{ _('Archive Scanner Settings') }}</h2>
         </div>
         <div class="card-body">
         <div class="info-banner" style="margin-bottom: 1rem;">
             <span class="info-icon">💡</span>
             <div class="info-text">
-                <p>Archive types and scan options (corruption check, M3U creation, unwanted file removal) are configured directly on the <a href="{{ url_for('tools.archive_scanner') }}" style="color: var(--accent-cyan);">Archive Scanner</a> page.</p>
+                {% set scanner_link %}<a href="{{ url_for('tools.archive_scanner') }}" style="color: var(--accent-cyan);">{{ _('Archive Scanner') }}</a>{% endset %}
+                <p>{{ _('Archive types and scan options (corruption check, M3U creation, unwanted file removal) are configured directly on the %(link)s page.', link=scanner_link) }}</p>
             </div>
         </div>
         
         <div class="form-group">
-            <label for="newUnwantedPattern">Unwanted File Extensions <small class="text-muted">(files to flag/remove during scans)</small></label>
+            <label for="newUnwantedPattern">{{ _('Unwanted File Extensions') }} <small class="text-muted">{{ _('(files to flag/remove during scans)') }}</small></label>
             <div class="tags-input" id="unwantedPatternsContainer">
                 <!-- Tags will be rendered here -->
             </div>
             <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
-                <input type="text" class="form-input" id="newUnwantedPattern" placeholder="Enter extension (e.g., .txt, .nfo)" style="flex: 1;">
-                <button type="button" class="btn btn-secondary" data-on-click="addUnwantedPattern">Add</button>
+                <input type="text" class="form-input" id="newUnwantedPattern" placeholder="{{ _('Enter extension (e.g., .txt, .nfo)') }}" style="flex: 1;">
+                <button type="button" class="btn btn-secondary" data-on-click="addUnwantedPattern">{{ _('Add') }}</button>
             </div>
-            <p class="form-help">Extensions for files to flag as unwanted (e.g., .txt, .nfo, .url). These are used when scanning archives for unwanted files.</p>
+            <p class="form-help">{{ _('Extensions for files to flag as unwanted (e.g., .txt, .nfo, .url). These are used when scanning archives for unwanted files.') }}</p>
         </div>
         </div>
     </div>
 
     <div class="card">
         <div class="card-header">
-            <h2 class="card-title"><span>📁</span> Excluded Paths</h2>
+            <h2 class="card-title"><span>📁</span> {{ _('Excluded Paths') }}</h2>
         </div>
         <div class="card-body">
         <div class="form-group">
-            <label for="newExcludedPath">Default Excluded Folders <small class="text-muted">(folders to skip during scans)</small></label>
+            <label for="newExcludedPath">{{ _('Default Excluded Folders') }} <small class="text-muted">{{ _('(folders to skip during scans)') }}</small></label>
             <div class="tags-input" id="excludedPathsContainer">
                 <!-- Tags will be rendered here -->
             </div>
             <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
-                <input type="text" class="form-input" id="newExcludedPath" placeholder="Enter folder name to exclude" style="flex: 1;">
-                <button type="button" class="btn btn-secondary" data-on-click="addExcludedPathSetting">Add</button>
+                <input type="text" class="form-input" id="newExcludedPath" placeholder="{{ _('Enter folder name to exclude') }}" style="flex: 1;">
+                <button type="button" class="btn btn-secondary" data-on-click="addExcludedPathSetting">{{ _('Add') }}</button>
             </div>
-            <p class="form-help">Folder names to skip during archive scans (e.g., mame, ps3, xbox360)</p>
+            <p class="form-help">{{ _('Folder names to skip during archive scans (e.g., mame, ps3, xbox360)') }}</p>
         </div>
         </div>
     </div>
 
     <div class="card">
         <div class="card-header">
-            <h2 class="card-title"><span>💿</span> CHD Converter Settings</h2>
+            <h2 class="card-title"><span>💿</span> {{ _('CHD Converter Settings') }}</h2>
         </div>
         <div class="card-body">
         <div class="form-group" role="group" aria-labelledby="chdConversionOptionsLabel">
-            <div class="form-label" id="chdConversionOptionsLabel">Conversion Options</div>
+            <div class="form-label" id="chdConversionOptionsLabel">{{ _('Conversion Options') }}</div>
             <div class="toggle-item">
                 <label class="toggle-switch">
                     <input type="checkbox" id="chdVerifyAfter" {% if settings.chd_verify_after_convert %}checked{% endif %}>
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label">Verify CHD files after conversion</span>
+                <span class="toggle-label">{{ _('Verify CHD files after conversion') }}</span>
             </div>
             <div class="toggle-item">
                 <label class="toggle-switch">
                     <input type="checkbox" id="chdDeleteOriginals" {% if settings.chd_delete_originals %}checked{% endif %}>
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label">Delete original files after successful conversion</span>
+                <span class="toggle-label">{{ _('Delete original files after successful conversion') }}</span>
             </div>
             <div class="toggle-item">
                 <label class="toggle-switch">
                     <input type="checkbox" id="chdSkipExisting" {% if settings.chd_skip_existing %}checked{% endif %}>
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label">Skip files that already have CHD versions</span>
+                <span class="toggle-label">{{ _('Skip files that already have CHD versions') }}</span>
             </div>
         </div>
         </div>
@@ -402,40 +403,40 @@
 
     <div class="card">
         <div class="card-header">
-            <h2 class="card-title"><span>🔍</span> Duplicate Finder Defaults</h2>
+            <h2 class="card-title"><span>🔍</span> {{ _('Duplicate Finder Defaults') }}</h2>
         </div>
         <div class="card-body">
         <div class="form-group" role="group" aria-labelledby="duplicateFinderDefaultsLabel">
-            <div class="form-label" id="duplicateFinderDefaultsLabel">Default Options</div>
+            <div class="form-label" id="duplicateFinderDefaultsLabel">{{ _('Default Options') }}</div>
             <div class="toggle-item">
                 <label class="toggle-switch">
                     <input type="checkbox" id="ignoreRegionTags" {% if settings.ignore_region_tags %}checked{% endif %}>
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label">Ignore region tags (USA, Europe, Japan) when comparing names</span>
+                <span class="toggle-label">{{ _('Ignore region tags (USA, Europe, Japan) when comparing names') }}</span>
             </div>
             <div class="toggle-item">
                 <label class="toggle-switch">
                     <input type="checkbox" id="includeArchives" {% if settings.include_archives %}checked{% endif %}>
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label">Include archives (.zip, .7z, .rar) in duplicate scan</span>
+                <span class="toggle-label">{{ _('Include archives (.zip, .7z, .rar) in duplicate scan') }}</span>
             </div>
             <p class="form-hint" style="margin-top: 0.5rem; color: var(--text-muted); font-size: 0.8rem;">
-                Detection method can be selected directly on the Duplicate Finder page.
+                {{ _('Detection method can be selected directly on the Duplicate Finder page.') }}
             </p>
         </div>
         </div>
     </div>
 
     <div class="btn-group">
-        <button type="submit" class="btn btn-primary">💾 Save Settings</button>
-        <button type="button" class="btn btn-danger" data-on-click="resetDefaults">🔄 Reset to Defaults</button>
+        <button type="submit" class="btn btn-primary">💾 {{ _('Save Settings') }}</button>
+        <button type="button" class="btn btn-danger" data-on-click="resetDefaults">🔄 {{ _('Reset to Defaults') }}</button>
     </div>
 </form>
 
 <div id="successMessage" class="success-message" style="display: none;">
-    ✓ Settings saved successfully!
+    ✓ {{ _('Settings saved successfully!') }}
 </div>
 </div>
 {% endblock %}
@@ -450,7 +451,7 @@ let excludedPaths = {{ settings.excluded_paths | default([]) | tojson }};
 function renderUnwantedPatterns() {
     const container = document.getElementById('unwantedPatternsContainer');
     if (unwantedPatterns.length === 0) {
-        container.innerHTML = '<span style="color: var(--text-secondary); font-size: 0.85rem; padding: 0.5rem;">No patterns defined</span>';
+        container.innerHTML = '<span style="color: var(--text-secondary); font-size: 0.85rem; padding: 0.5rem;">' + {{ _('No patterns defined')|tojson }} + '</span>';
         return;
     }
     // Sort alphabetically
@@ -458,7 +459,7 @@ function renderUnwantedPatterns() {
     container.innerHTML = sorted.map(pattern => `
         <span class="tag">
             ${pattern}
-            <span class="remove-tag" data-pattern="${escapeHtml(pattern)}" data-on-click="removeUnwantedPattern" data-args="${actionArgs('$this.dataset.pattern')}" title="Remove">×</span>
+            <span class="remove-tag" data-pattern="${escapeHtml(pattern)}" data-on-click="removeUnwantedPattern" data-args="${actionArgs('$this.dataset.pattern')}" title="${escapeHtml({{ _('Remove')|tojson }})}">×</span>
         </span>
     `).join('');
 }
@@ -489,7 +490,7 @@ function removeUnwantedPattern(pattern) {
 function renderExcludedPaths() {
     const container = document.getElementById('excludedPathsContainer');
     if (excludedPaths.length === 0) {
-        container.innerHTML = '<span style="color: var(--text-secondary); font-size: 0.85rem; padding: 0.5rem;">No paths excluded</span>';
+        container.innerHTML = '<span style="color: var(--text-secondary); font-size: 0.85rem; padding: 0.5rem;">' + {{ _('No paths excluded')|tojson }} + '</span>';
         return;
     }
     // Sort alphabetically
@@ -497,7 +498,7 @@ function renderExcludedPaths() {
     container.innerHTML = sorted.map(path => `
         <span class="tag">
             ${path}
-            <span class="remove-tag" data-path="${escapeHtml(path)}" data-on-click="removeExcludedPathSetting" data-args="${actionArgs('$this.dataset.path')}" title="Remove">×</span>
+            <span class="remove-tag" data-path="${escapeHtml(path)}" data-on-click="removeExcludedPathSetting" data-args="${actionArgs('$this.dataset.path')}" title="${escapeHtml({{ _('Remove')|tojson }})}">×</span>
         </span>
     `).join('');
 }

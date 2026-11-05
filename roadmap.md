@@ -11191,7 +11191,15 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.246 The last untranslated screen text, and right-to-left for Hebrew (i18n, M).
-- **Status**: todo
+- **Resolution** (2026-11-05): Done 2026-11-05: 336a1f24 (queue panel escapes system_name),
+  20340a30 (Python replies), b29b55f7 (library card and indicator JS),
+  and the template commit (setup, tags, list, compare, ROM Tools settings,
+  queue panel, game page). Every edited page renders under the
+  pseudolocale (tests/test_pass59_246_i18n.py). Dismissed:
+  services/formatters.py "Unknown" (module unused outside tests). Queued:
+  PASS-59-256 (number and size formats). Right-to-left stays after
+  v4.0.0 (user, 2026-11-04).
+- **Status**: done
 - **Why**: audit 2026-11-04, lanes 5, 11, 12 and 13. Related: PASS-52-1
   (JS toasts), PASS-59-179 (maintenance tools), PASS-43-4 (RTL + Arabic).
 - **Fix**:
@@ -11302,6 +11310,13 @@ the cover zoom in Firefox before being reverted for the local fix.
   - Restore removes `-wal`/`-shm` with connections open.
   - Other lows in the audit file, lanes 2, 5, 6, 8 to 11.
 - **Source**: audit 2026-11-04.
+- Found 2026-11-05 (PASS-59-246): `services/formatters.py` is imported
+  only by `tests/test_formatters.py`; `app.py` has a comment saying the
+  helpers moved there. Remove the module and its test, or wire it in.
+- Found 2026-11-05: the `.po` catalogs keep obsolete `#~` entries that
+  repeat live msgids, so GNU `msgfmt --statistics` reports "duplicate
+  message definition" (Babel's compile ignores them). Drop the obsolete
+  entries (`pybabel update --ignore-obsolete`, or delete the `#~` blocks).
 
 ---
 
@@ -11402,6 +11417,18 @@ the cover zoom in Firefox before being reverted for the local fix.
   `color-mix(in srgb, var(--primary-cyan) 15%, transparent)`, and look at
   every theme at desktop and 375px. Then drop the caveat from themes.md.
 - **Find them**: `grep -rnE "rgba\(76, ?201, ?240|#4cc9f0" static/css/*/`.
+
+---
+
+#### Pass 59.256 Numbers and sizes are written the way the reader's language writes them (i18n, S).
+- **Status**: todo
+- **Why**: `formatNumber` (thin-space thousands) and `formatBytes` in
+  `static/js/utils.js`, and the Jinja `format_number` filter, ignore the
+  language, so a German reader sees English decimal points.
+- **Fix**: format with the page's locale (`Intl.NumberFormat` from the
+  `<html lang>`; Babel's `format_decimal` on the server), keeping the thin
+  space where a locale has no grouping rule of its own.
+- Not done in PASS-59-246, which wrapped text only.
 
 ## Done index
 
