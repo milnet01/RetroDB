@@ -83,6 +83,10 @@ class BulkScrapeJob:
         # Pass 59.43 — the worker swap/demote is replacing. Its exit must not
         # run the queue hand-off: the handler starts the promoted job itself.
         self._handoff_thread = None
+        # True from a swap or demote's first step until the promoted job's
+        # worker has started. A second one meanwhile queued the displaced
+        # job twice and lost the first promoted job (PASS-59-243 review).
+        self._handing_off = False
         self.reset()
 
     def reset(self):
@@ -395,8 +399,26 @@ class BulkScrapeJob:
                     return {'success': True}
             return {'success': False, 'error': 'Job not found in queue'}
 
+    def _one_hand_off_at_a_time(self, step, *args):
+        with self._lock:
+            if self._handing_off:
+                return {'success': False, 'error': 'A swap is already under way'}
+            self._handing_off = True
+        try:
+            return step(*args)
+        finally:
+            with self._lock:
+                self._handing_off = False
+
     def swap_with_running(self, job_id):
         """Swap a queued job with the currently running job"""
+        return self._one_hand_off_at_a_time(self._swap_with_running, job_id)
+
+    def demote_running(self):
+        """Demote the running job to queue position 1 and start the next queued job"""
+        return self._one_hand_off_at_a_time(self._demote_running)
+
+    def _swap_with_running(self, job_id):
         with self._lock:
             if not self.running or self.completed:
                 return {'success': False, 'error': 'No running job to swap'}
@@ -492,8 +514,7 @@ class BulkScrapeJob:
 
         return {'success': True, 'new_job_id': new_running_job['job_id']}
 
-    def demote_running(self):
-        """Demote the running job to queue position 1 and start the next queued job"""
+    def _demote_running(self):
         with self._lock:
             if not self.running or self.completed:
                 return {'success': False, 'error': 'No running job to demote'}

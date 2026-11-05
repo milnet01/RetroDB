@@ -312,3 +312,47 @@ def test_psn_keepalive_renews_only_near_expiry():
     every live session every day."""
     from services.jobs import psn_keepalive
     assert psn_keepalive.KEEPALIVE_THRESHOLD_DAYS < 10
+
+
+@pytest.mark.parametrize('second', ['swap', 'demote'])
+def test_a_second_swap_waits_for_the_first_to_finish(bulk, second):
+    """A second swap or demote during a hand-off queued the displaced job
+    twice, and the first promoted job was cancelled with no row left."""
+    _mod, jobs = bulk
+    let_go = threading.Event()
+
+    def slow_worker(job):
+        while not let_go.is_set():
+            threading.Event().wait(0.02)
+        _exiting_worker(job)
+
+    with patch.object(BulkScrapeJob, '_run_scrape', slow_worker):
+        job = BulkScrapeJob()
+        jobs.append(job)
+        job.start([100], system_id=1)
+        job.start([300], system_id=3)
+        job.start([400], system_id=4)
+        first, other = job._queue[0]['job_id'], job._queue[1]['job_id']
+        running = job.job_id
+        swap = threading.Thread(target=job.swap_with_running, args=(first,))
+        try:
+            swap.start()
+            while not job.cancelled:
+                threading.Event().wait(0.01)
+            replies = []
+            act = (lambda: job.swap_with_running(other)) if second == 'swap' \
+                else job.demote_running
+            again = threading.Thread(target=lambda: replies.append(act()))
+            again.start()
+            again.join(0.3)      # refused at once; unfixed, it waits on the old worker
+            let_go.set()
+            swap.join(5)
+            again.join(5)
+            assert not replies[0]['success']
+            assert job.job_id == first
+            assert [q['job_id'] for q in job._queue] == [running, other]
+        finally:
+            let_go.set()
+            with job._lock:
+                job._queue.clear()
+                job.cancelled = True
