@@ -618,37 +618,41 @@ const AllGamesController = (function() {
 
         // Title badges
         let badges = '';
-        if (isBonus) badges += '<span class="bonus-badge" title="Bonus/Extra Disc">&#127873;</span>';
+        if (isBonus) badges += `<span class="bonus-badge" title="${esc(t('Bonus/Extra Disc'))}">&#127873;</span>`;
         if (game.version_count > 1) {
             const versionsTitle = t('{count} regional versions', { count: game.version_count });
             badges += `<span class="versions-badge" title="${esc(versionsTitle)}" aria-label="${esc(versionsTitle)}">&#127760;${game.version_count}</span>`;
         }
-        if (game.bonus_count > 0) badges += `<span class="has-bonus-badge" title="Has ${game.bonus_count} bonus disc${game.bonus_count > 1 ? 's' : ''}">&#127873;+</span>`;
-        if (isClz) badges += '<img class="import-badge clz-badge" src="/static/images/trophies/clz-games-web.svg" title="CLZ Import (No ROM file)" alt="CLZ">';
-        if (importSource === 'steam') badges += '<img class="import-badge steam-badge" src="/static/images/trophies/steam.png" title="Steam Import" alt="Steam">';
-        if (importSource === 'xbox') badges += '<img class="import-badge xbox-badge" src="/static/images/trophies/xbox.png" title="Xbox Import" alt="Xbox">';
-        if (importSource === 'psn') badges += '<img class="import-badge psn-badge" src="/static/images/trophies/psn.png" title="PSN Import" alt="PlayStation">';
-        if (game.has_retroachievements) badges += '<img class="import-badge ra-badge" src="/static/images/trophies/ra.webp" title="Has RetroAchievements" alt="RetroAchievements">';
+        if (game.bonus_count > 0) {
+            const bonusTitle = game.bonus_count === 1 ? t('Has 1 bonus disc')
+                : t('Has {count} bonus discs', { count: game.bonus_count });
+            badges += `<span class="has-bonus-badge" title="${esc(bonusTitle)}">&#127873;+</span>`;
+        }
+        if (isClz) badges += `<img class="import-badge clz-badge" src="/static/images/trophies/clz-games-web.svg" title="${esc(t('CLZ Import (No ROM file)'))}" alt="CLZ">`;
+        if (importSource === 'steam') badges += `<img class="import-badge steam-badge" src="/static/images/trophies/steam.png" title="${esc(t('Steam Import'))}" alt="Steam">`;
+        if (importSource === 'xbox') badges += `<img class="import-badge xbox-badge" src="/static/images/trophies/xbox.png" title="${esc(t('Xbox Import'))}" alt="Xbox">`;
+        if (importSource === 'psn') badges += `<img class="import-badge psn-badge" src="/static/images/trophies/psn.png" title="${esc(t('PSN Import'))}" alt="PlayStation">`;
+        if (game.has_retroachievements) badges += `<img class="import-badge ra-badge" src="/static/images/trophies/ra.webp" title="${esc(t('Has RetroAchievements'))}" alt="RetroAchievements">`;
 
         // Meta grid
         let metaHtml = '';
         if (game.genre) {
             const firstGenre = game.genre.split(',')[0].trim();
-            metaHtml += `<div class="meta-item"><span class="meta-label">Genre</span><button type="button" class="meta-value meta-clickable" data-on-click="AllGamesController.metaFilterClick" data-args="${actionArgs('genre', firstGenre, '$event')}" data-stop data-prevent title="Click to filter, Shift+click to exclude">${esc(tField(firstGenre))}</button></div>`;
+            metaHtml += `<div class="meta-item"><span class="meta-label">${esc(t('Genre'))}</span><button type="button" class="meta-value meta-clickable" data-on-click="AllGamesController.metaFilterClick" data-args="${actionArgs('genre', firstGenre, '$event')}" data-stop data-prevent title="${esc(t('Click to filter, Shift+click to exclude'))}">${esc(tField(firstGenre))}</button></div>`;
         }
         if (game.franchise) {
-            metaHtml += `<div class="meta-item"><span class="meta-label">Series</span><button type="button" class="meta-value meta-clickable" data-on-click="AllGamesController.metaFilterClick" data-args="${actionArgs('franchise', game.franchise, '$event')}" data-stop data-prevent title="Click to filter, Shift+click to exclude">${esc(game.franchise.substring(0, 20))}${game.franchise.length > 20 ? '...' : ''}</button></div>`;
+            metaHtml += `<div class="meta-item"><span class="meta-label">${esc(t('Series'))}</span><button type="button" class="meta-value meta-clickable" data-on-click="AllGamesController.metaFilterClick" data-args="${actionArgs('franchise', game.franchise, '$event')}" data-stop data-prevent title="${esc(t('Click to filter, Shift+click to exclude'))}">${esc(game.franchise.substring(0, 20))}${game.franchise.length > 20 ? '...' : ''}</button></div>`;
         }
         if (game.developer) {
             const firstDev = game.developer.split(',')[0].trim();
-            metaHtml += `<div class="meta-item"><span class="meta-label">Developer</span><button type="button" class="meta-value meta-clickable" data-on-click="AllGamesController.metaFilterClick" data-args="${actionArgs('developer', firstDev, '$event')}" data-stop data-prevent title="Click to filter, Shift+click to exclude">${esc(firstDev.substring(0, 20))}${firstDev.length > 20 ? '...' : ''}</button></div>`;
+            metaHtml += `<div class="meta-item"><span class="meta-label">${esc(t('Developer'))}</span><button type="button" class="meta-value meta-clickable" data-on-click="AllGamesController.metaFilterClick" data-args="${actionArgs('developer', firstDev, '$event')}" data-stop data-prevent title="${esc(t('Click to filter, Shift+click to exclude'))}">${esc(firstDev.substring(0, 20))}${firstDev.length > 20 ? '...' : ''}</button></div>`;
         }
         if (game.publisher) {
             const firstPub = game.publisher.split(',')[0].trim();
-            metaHtml += `<div class="meta-item"><span class="meta-label">Publisher</span><button type="button" class="meta-value meta-clickable" data-on-click="AllGamesController.metaFilterClick" data-args="${actionArgs('publisher', firstPub, '$event')}" data-stop data-prevent title="Click to filter, Shift+click to exclude">${esc(firstPub.substring(0, 20))}${firstPub.length > 20 ? '...' : ''}</button></div>`;
+            metaHtml += `<div class="meta-item"><span class="meta-label">${esc(t('Publisher'))}</span><button type="button" class="meta-value meta-clickable" data-on-click="AllGamesController.metaFilterClick" data-args="${actionArgs('publisher', firstPub, '$event')}" data-stop data-prevent title="${esc(t('Click to filter, Shift+click to exclude'))}">${esc(firstPub.substring(0, 20))}${firstPub.length > 20 ? '...' : ''}</button></div>`;
         }
         if (game.release_date) {
-            metaHtml += `<div class="meta-item"><span class="meta-label">Year</span><span class="meta-value">${esc(game.release_date.substring(0, 4))}</span></div>`;
+            metaHtml += `<div class="meta-item"><span class="meta-label">${esc(t('Year'))}</span><span class="meta-value">${esc(game.release_date.substring(0, 4))}</span></div>`;
         }
 
         // Rating badges — age ratings first so they group on their own row
@@ -668,7 +672,9 @@ const AllGamesController = (function() {
             const ageRating = _getPreferredRating(game);
             if (ageRating) {
                 const sysName = (window.RATING_SYSTEM_NAMES || {})[ageRating.system] || ageRating.system.toUpperCase();
-                const tooltip = ageRating.crossmapped ? `${sysName}: ${ageRating.value} (cross-mapped)` : `${sysName}: ${ageRating.value}`;
+                const tooltip = ageRating.crossmapped
+                    ? t('{system}: {value} (cross-mapped)', { system: sysName, value: ageRating.value })
+                    : `${sysName}: ${ageRating.value}`;
                 if (ageRating.image) {
                     ratingBadges += `<span class="game-badge age-rating-badge${ageRating.crossmapped ? ' crossmapped' : ''}" title="${esc(tooltip)}"><img src="/static/images/ratings/${ageRating.image}" alt="${esc(ageRating.value)}" class="age-rating-img"></span>`;
                 } else {

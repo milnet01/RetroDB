@@ -91,7 +91,7 @@
             const row = document.createElement('div');
             row.className = 'launch-indicator-popover-row';
             const label = document.createElement('span');
-            label.textContent = h.title || `game #${h.game_id} (pid ${h.pid})`;
+            label.textContent = h.title || t('game #{id} (pid {pid})', {id: h.game_id, pid: h.pid});
             row.appendChild(label);
             if (h.disk_swap) {
                 const dbtn = document.createElement('button');

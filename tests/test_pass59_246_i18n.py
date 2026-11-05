@@ -46,3 +46,14 @@ def test_setup_refuses_a_second_run_in_words_not_a_crash(app_client, monkeypatch
                         lambda: {'setup_completed': True})
     resp = app_client.post('/api/setup', json={})
     assert resp.status_code == 403, resp.status_code
+
+
+def test_library_card_text_is_wrapped():
+    js = read_source('static/js/all-games-controller.js')
+    for label in ('Genre', 'Series', 'Developer', 'Publisher', 'Year'):
+        assert f'<span class="meta-label">{label}</span>' not in js, label
+    for title in ('Bonus/Extra Disc', 'CLZ Import (No ROM file)', 'Steam Import', 'Xbox Import',
+                  'PSN Import', 'Has RetroAchievements', 'Click to filter, Shift+click to exclude'):
+        assert f'title="{title}"' not in js, title
+    assert '(cross-mapped)`' not in js
+    assert 'game #${h.game_id}' not in read_source('static/js/launch-indicator.js')
