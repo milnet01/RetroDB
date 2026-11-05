@@ -48,30 +48,61 @@ Run-level, group A:
 
 ## B. Dashboard, changelog, app core
 
+Tests: `tests/test_pass59_249_app_core.py`, plus additions to `tests/test_formatters.py`,
+`tests/test_pass59_215_service_limits.py`, `tests/test_etag_and_gzip.py` and
+`tests/test_pass59_248_hardening.py`. Each was run red against the unfixed code first.
+
 | Finding | Verified | Disposition |
 |---|---|---|
-| Analytics manufacturer map misses ES-DE folders; use `SYSTEM_SPECS` (`services/formatters.py`) | yes | |
-| "Recently scraped" misses re-scrapes (`app.py` `dashboard`) | yes | |
-| Changelog/JSON reads in `app.py` lack `encoding=`; changelog YAML parsed per request | yes | |
-| gzip check is a substring match (`gzip;q=0`) | not yet read | |
-| `available_locales()` globs the disk on every call | not yet read | |
-| Setup wizard: timezone not checked; raw sqlite connections lack try/finally | not yet read | |
-| `stop_sentences([])` returns every service; server clock, not the user's | not yet read | |
-| `(UK)` and comma-joined regions not in `_KNOWN_NON_PUBLISHER_TAGS` | not yet read | |
+| Analytics manufacturer map misses ES-DE folders; use `SYSTEM_SPECS` | yes, and wider: most ES-DE folders with a `SYSTEM_SPECS` maker fell to "Other" | fixed: `get_manufacturer` falls back to the first maker `SYSTEM_SPECS` names |
+| "Recently scraped" misses re-scrapes | yes | fixed: ordered in SQL by each game's newest history entry. A `manual` entry (a hand edit, PASS-59-211) no longer counts as a scrape |
+| Changelog/JSON reads in `app.py` lack `encoding=`; changelog YAML parsed per request | yes | fixed: `encoding='utf-8'` on every text read in `app.py`; `_changelog_file` parses once per file change |
+| gzip check is a substring match | yes | fixed: `request.accept_encodings['gzip']` |
+| `available_locales()` globs the disk on every call | yes | fixed: read again only when `translations/` changes |
+| Setup wizard: timezone not checked; raw sqlite connections lack try/finally | yes | fixed: an unknown zone is refused before anything is saved; both connections use `closing()` |
+| `stop_sentences([])` returns every service; server clock | yes | fixed: `[]` asks about none; the time goes through `tz_filter` |
+| `(UK)` and comma-joined regions not in `_KNOWN_NON_PUBLISHER_TAGS` | yes: latent, no caller reads `publisher` | fixed: region words shared, alone or comma-joined, with UK and four more |
+
+Run-level, group B:
+
+- cited_by: `docs/specs/api-contracts.md` §6.1; `docs/specs/i18n.md` §3 (`available_locales`).
+- swept: api-contracts §6.1 rule 6 fixed; i18n.md §3 fixed; `docs/specs/scrapers.md` §10 table names no stop-text time, agrees; i18n foundation design doc is a dated design record, frozen.
+- collateral: none.
+- surfaced: none.
+- out_of_scope: none.
+- falsified: none.
 
 ## C. Logging
 
+Test: `tests/test_pass59_249_logging.py`, run red against the unfixed code first.
+
 | Finding | Verified | Disposition |
 |---|---|---|
-| `rom_tools` and `image_resize` lines also written to the scraping log | yes | |
-| `CategoryFileHandler.emit` loads settings per record | not yet read | |
+| `rom_tools` and `image_resize` lines also written to the scraping log | yes | fixed: `CategoryFileHandler.emit` skips a line whose closest logger entry (`category_of`) is another category's. Propagation to the root log is kept |
+| `CategoryFileHandler.emit` loads settings per record | yes, but `load_settings` is cached by file date: a line costs one stat and a dict copy, never a file read | dismissed: no read happens per line |
+
+Run-level, group C:
+
+- cited_by: none outside `log_manager.py`.
+- swept: `CATEGORY_LOGGERS` comment on propagation agrees (it still sets `propagate=False` for same-category children).
+- collateral: none. surfaced: none. out_of_scope: none. falsified: none.
 
 ## D. Museum and GPU
 
+Tests: `tests/test_pass59_249_museum.py`, `tests/test_pass59_249_gpu_env.py`, each run red first.
+
 | Finding | Verified | Disposition |
 |---|---|---|
-| Controller images saved under `STATIC_PATH`, not `IMAGE_PATH` (`routes/museum.py`) | yes | |
-| `HSA_OVERRIDE_GFX_VERSION=10.3.0` forced; also set at `app.py` import, overwriting a user value | yes | |
+| Controller images saved under `STATIC_PATH`, not `IMAGE_PATH` | yes: in the standalone build `STATIC_PATH` is inside the bundle an update replaces | fixed: `_controller_dirs`/`_controller_image_file` save to `IMAGE_PATH/controllers` and read the user folder, then the bundle. URLs are unchanged: `/static/images/<path>` already serves both roots |
+| `HSA_OVERRIDE_GFX_VERSION=10.3.0` forced; also at `app.py` import, overwriting a user value | yes, at both | fixed: `services/gpu_env.py` sets it only when every GPU reports gfx103x in the kernel topology, and never over a set value. `app.py` MIOpen variables use `setdefault` |
+
+Run-level, group D:
+
+- cited_by: `start.sh` (its own gfx1032 gate, Pass 59.17); `tests/test_pass59_packaging.py` pins that gate.
+- swept: `start.sh` agrees (narrower: gfx1032 only; an explicit value wins in both); `app.py` image-route comment agrees; hardware images stay bundle-only shipped assets.
+- collateral: none. surfaced: none.
+- out_of_scope: a bare `import app` outside pytest during this run opened the live database (startup warning only).
+- falsified: none.
 
 ## E. Imports (CLZ, platforms)
 
@@ -89,9 +120,18 @@ Run-level, group A:
 
 ## F. Bonus discs
 
+Test: `tests/test_pass59_249_bonus_discs.py`, all four run red first.
+
 | Finding | Verified | Disposition |
 |---|---|---|
-| Self-links and loops allowed; auto-link re-marks a disc the user unmarked | yes | |
+| Self-links and loops allowed | yes, and auto-link could pick a parent it marked later in the same sweep | fixed: a link is one level only (no self-link, no bonus-disc parent, no game with discs of its own); auto-link marks every disc before linking |
+| Auto-link re-marks a disc the user unmarked | yes: unlink sets `is_bonus_disc = 0`, which detection reads as never judged | queued as PASS-59-262: it needs a new column, because every list reads any other value of `is_bonus_disc` as hidden |
+
+Run-level, group F:
+
+- cited_by: none in docs.
+- swept: the help manual's bonus disc section names no linking rule, agrees.
+- collateral: none. surfaced: none. out_of_scope: none. falsified: none.
 
 ## G. Image pipeline
 

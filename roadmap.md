@@ -11302,7 +11302,7 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.249 Smaller correctness and speed fixes from the audit (audit-fix, M).
-- **Status**: todo
+- **Status**: in-progress
 - **Why**: audit 2026-11-04, all lanes; each low on its own. Already
   filed: PASS-59-160 ("Action" filter).
 - **Fix**:
@@ -11338,6 +11338,16 @@ the cover zoom in Firefox before being reverted for the local fix.
   CLAUDE.md and docs/specs/scrapers.md name it the canonical COALESCE
   pattern. Point both at `hybrid_scraper._save_game_row` and remove it,
   with its tests moved to `_save_game_row`.
+- **Progress** (2026-11-05): Closing by subject; the ledger is
+  docs/reviews/close-findings-2026-11-05-pass-59-249.md, one row per
+  finding with its disposition. Done: A (lists, Select all, bulk edit,
+  HLTB, error pages), B (app core), C (logging), D (museum pictures, GPU
+  override), F (bonus disc loops). Queued: PASS-59-262. Dismissed with
+  reasons: formatters.py "unused", the letter bar, Select all's preferred
+  versions, per-record settings load. Left: E (imports), G (images), H
+  (database, restore), I (maintenance and scanning), J (collections,
+  trophies), K (apply_esde_metadata, obsolete .po entries), and the
+  audit's open questions listed in the ledger.
 
 ---
 
@@ -11559,6 +11569,20 @@ the cover zoom in Firefox before being reverted for the local fix.
   OAuth routes. Carries PASS-59-218's X1 to X7.
 - **Source**: research 2026-11-05 (Home Assistant, xbox-webapi-python,
   Microsoft Entra docs, xbl.io pricing).
+
+---
+
+#### Pass 59.262 Auto-link leaves alone a disc the user unmarked as a bonus disc (audit-fix, S).
+- **Status**: todo
+- **Why**: `unlink_bonus_disc` (routes/bonus_discs.py) sets
+  `is_bonus_disc = 0`, and `auto_detect_bonus_discs` reads 0 as never
+  judged, so the next auto-link marks the disc again.
+- **Fix**: a new column (a migration) recording that a person said "not
+  a bonus disc"; unlink sets it, a manual link clears it, detection skips
+  it. Not a new `is_bonus_disc` value: every game list reads any value
+  other than 0 or NULL as hidden.
+- **Not fixed in PASS-59-249** because it needs a schema change; the loop
+  half of the same finding shipped there.
 
 ## Done index
 
