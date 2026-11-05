@@ -178,8 +178,14 @@ class AiFillBulkJob:
                         break
                     self.current_title = game['title']
                     self.system_name = game['system_name']
-                row = load_game(game['id'])
-                filled = fill_game(row, fields) if row else []
+                try:
+                    row = load_game(game['id'])
+                    filled = fill_game(row, fields) if row else []
+                except Exception as e:
+                    # One game's error is that game's failure (PASS-59-243);
+                    # MAX_FAILURES_IN_A_ROW still stops a run that fails on all.
+                    logger.warning(f"AI fill: {game['title']} failed: {e}")
+                    filled = None
                 with self._lock:
                     if filled is None:
                         self.failed_count += 1

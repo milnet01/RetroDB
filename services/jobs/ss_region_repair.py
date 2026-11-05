@@ -251,7 +251,14 @@ class SsRegionRepairJob:
                         persist_job_progress(persist_id, progress)
                         last_persist = time.time()
 
-                    self._repair_game(conn, game, keys)
+                    try:
+                        self._repair_game(conn, game, keys)
+                    except Exception as e:
+                        # One game's error, such as the network dropping,
+                        # is that game's failure, not the run's (PASS-59-243).
+                        logger.warning(f"Region repair: {game['title']} failed: {e}")
+                        with self._lock:
+                            self.failed_count += 1
                     if service_limits.stopped(service_limits.SCREENSCRAPER):
                         break
             finally:
