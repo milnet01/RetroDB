@@ -7,7 +7,7 @@ import pytest
 
 from scraper import hybrid_scraper
 from services import ai_fill, field_sources, normalization
-from tests.test_pass59_205_esde_merge import library  # noqa: F401  (a fixture)
+from tests.test_pass59_205_esde_merge import library, later_source  # noqa: F401  (fixtures)
 
 
 def _history(*items):
@@ -56,6 +56,30 @@ def test_an_edit_made_during_a_scrape_stays(library, monkeypatch):
     _scrape()
     row = library.row()
     assert (row['publisher'], row['developer']) == ('New', 'Typed')
+
+
+def test_a_scrape_keeps_its_own_tidy_of_missing_screenshots(library):
+    # The scrape clears a missing file's link before it saves. Its own clear
+    # is not an edit made meanwhile, so the shots still on disk stay linked.
+    for name in ('a.png', 'b.png'):
+        path = library.image('screenshots', name)
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, 'wb') as f:
+            f.write(b'shot')
+    library.add_game(screenshots='a.png,b.png,c.png')
+    _scrape()
+    assert library.row()['screenshots'] == 'a.png,b.png'
+
+
+def test_a_full_rescrape_keeps_what_it_found_for_a_cleared_link(library, later_source):
+    other = library.image('fanart', 'other.png')
+    os.makedirs(os.path.dirname(other), exist_ok=True)
+    with open(other, 'wb') as f:
+        f.write(b'art')
+    library.add_game(fanart='gone.png')
+    hybrid_scraper.apply_hybrid_metadata(1, 'none', None, 'atari2600',
+                                         fill_gaps=True, force_overwrite=True)
+    assert library.row()['fanart'] == 'later_fanart.png'
 
 
 # --- 3 and 4. AI Fill: an unchanged value is not "replaced"; a hand edit stays ---

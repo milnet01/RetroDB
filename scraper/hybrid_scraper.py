@@ -1386,6 +1386,10 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
             result['success'] = False
             return result
         game = dict(row)
+        # Links this scrape clears itself (missing files). The save check
+        # compares against `game`, so without these it would read its own
+        # clear as an edit made meanwhile and drop what it found.
+        own_clears = {}
 
         # Initialize metadata dict
         metadata = {
@@ -1536,6 +1540,8 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                         f"WHERE id = ? AND {field} = ?",
                         (db_game_id, stale_filename),
                     )
+                    if c.rowcount:
+                        own_clears[field] = None
                 conn.commit()
                 logger.info(
                     f"Cleared {len(stale_media)} stale media reference(s) from DB: "
@@ -1587,6 +1593,8 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                         f"UPDATE games SET {field} = NULL WHERE id = ? AND {field} = ?",
                         (db_game_id, stale_filename),
                     )
+                    if c.rowcount:
+                        own_clears[field] = None
                 conn.commit()
                 logger.info(
                     f"Force mode: cleared {len(_force_stale)} stale media reference(s): "
@@ -1838,7 +1846,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
 
         # Pass 38.1 — SAVE TO DATABASE block extracted to _save_game_row.
         apply_progress.begin('save')
-        _save_game_row(c, _what_to_write(c, metadata, game, db_game_id),
+        _save_game_row(c, _what_to_write(c, metadata, {**game, **own_clears}, db_game_id),
                        scrape_history_json, db_game_id, mark_scraped)
         _save_source_ids(c, db_game_id, sources_data, force_overwrite)
 
