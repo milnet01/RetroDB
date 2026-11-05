@@ -2034,8 +2034,8 @@ if __name__ == '__main__':
             print(f"WARN: ESRGAN init failed: {_upscaler_init_err}", file=sys.stderr)
             traceback.print_exc()
 
-    # Pass 50.1 — start the PSN session keep-alive (daily background refresh so
-    # the ~2-month refresh-token window never lapses while the app runs). Only in
+    # Pass 50.1 — start the PSN session keep-alive (a daily check that renews a
+    # sign-in near the end of its 10-day refresh token). Only in
     # the serving worker, never the reloader parent (and never on a bare import,
     # since this is inside `if __name__ == '__main__'`).
     if is_reloader_process or not config.DEBUG_MODE:

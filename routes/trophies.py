@@ -1142,16 +1142,19 @@ def api_psn_sync_all():
         state = _psn_state_for(uid)
         if state['running']:
             return error(_('Sync already in progress'), 409)
-
-        psnawp, psn_error = get_psn_client()
-        if psn_error:
-            return error(psn_error, 400)
-
         state.update({
             'running': True, 'phase': 'connecting', 'total': 0, 'current': 0,
             'current_game': 'Connecting to PSN...', 'games_synced': 0,
             'images_downloaded': 0, 'error': None
         })
+
+    # Sign in outside the lock: every status poll waits on it (PASS-59-243).
+    # `running` is already set, so a second click is refused meanwhile.
+    psnawp, psn_error = get_psn_client()
+    if psn_error:
+        with _psn_sync_lock:
+            state.update({'running': False, 'phase': 'idle', 'current_game': ''})
+        return error(psn_error, 400)
 
     # Pass 27.2 — capture the dispatching user's id; the worker thread has
     # no Flask request context to read g.user from.

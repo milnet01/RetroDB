@@ -27,7 +27,9 @@ import time
 logger = logging.getLogger(__name__)
 
 # Refresh a session once its refresh token drops below this many days of runway.
-KEEPALIVE_THRESHOLD_DAYS = 14
+# Below the token's 10-day life, or every live session is renewed every day
+# (PASS-59-243).
+KEEPALIVE_THRESHOLD_DAYS = 2
 _TICK_SECONDS = 24 * 3600
 _STARTUP_DELAY_SECONDS = 60  # let startup/migrations settle before the first tick
 

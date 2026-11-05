@@ -154,7 +154,8 @@ Also:
   caller who did not start it (`PSNRefreshJob._owns`). Its status blanks the
   current game for other users.
 - **PSN keep-alive** (`services/jobs/psn_keepalive.py`) refreshes a user's
-  PSN session once a day when it expires within 14 days. It never falls back
+  PSN session once a day when it expires within 2 days, below the refresh
+  token's 10-day life (PASS-59-243). It never falls back
   to the NPSSO and skips sessions already expired. When Sony refuses the
   refresh token, `create_psn_client` records the session as expired, which
   raises the re-link notice and ends the retries. A server fault changes

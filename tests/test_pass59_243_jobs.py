@@ -286,3 +286,29 @@ def test_a_second_starting_process_does_not_rerun_migrations(tmp_path, monkeypat
     assert migrations.apply_pending(conn) == []
     assert conn.execute("PRAGMA user_version").fetchone()[0] == latest
     conn.close()
+
+
+# --- D. PlayStation ---------------------------------------------------------------
+
+def test_psn_sign_in_runs_outside_the_sync_lock(admin_test_client, monkeypatch):
+    """Every user's status poll waits on that lock; a sign-in is a network call."""
+    from routes import trophies
+    held = []
+
+    def sign_in():
+        held.append(trophies._psn_sync_lock.locked())
+        return None, 'PSN not configured'
+    monkeypatch.setattr(trophies, 'get_psn_client', sign_in)
+    client, csrf = admin_test_client()
+    resp = client.post('/api/psn/sync', headers={'X-CSRF-Token': csrf})
+    assert resp.status_code == 400
+    assert held == [False]
+    status = client.get('/api/psn/sync/status').get_json()
+    assert status['running'] is False
+
+
+def test_psn_keepalive_renews_only_near_expiry():
+    """Sony's refresh token lasts 10 days; a threshold above that renewed
+    every live session every day."""
+    from services.jobs import psn_keepalive
+    assert psn_keepalive.KEEPALIVE_THRESHOLD_DAYS < 10

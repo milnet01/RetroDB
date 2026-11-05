@@ -50,10 +50,11 @@ def test_keepalive_only_refreshes_in_window_sessions(monkeypatch):
 
     now = 1_000_000.0
     day = 86400
-    # threshold is 14 days; seed one of each state with distinct synthetic uids.
+    # threshold is 2 days (PASS-59-243); one of each state, distinct synthetic uids.
     _seed_psn(7001, "npsso-expired", now - day)        # already expired
-    _seed_psn(7002, "npsso-inwindow", now + 7 * day)   # valid, within 14 days
+    _seed_psn(7002, "npsso-inwindow", now + 1 * day)   # valid, within 2 days
     _seed_psn(7003, "npsso-runway", now + 40 * day)    # valid, plenty of runway
+    _seed_psn(7008, "npsso-week", now + 7 * day)       # a live session mid-life
 
     calls = []
 
@@ -73,6 +74,7 @@ def test_keepalive_only_refreshes_in_window_sessions(monkeypatch):
     assert 7001 not in pinged, "expired session must NOT be pinged"
     # A session with plenty of runway is left alone.
     assert 7003 not in pinged, "session far from expiry must not be pinged"
+    assert 7008 not in pinged, "a session mid-life must not be renewed daily"
     # The in-window session IS refreshed, and only via the refresh-token path.
     assert 7002 in pinged, "in-window session should be refreshed"
     assert all(fallback is False for uid, fallback in calls if uid == 7002), \
@@ -84,7 +86,7 @@ def test_keepalive_skips_in_window_user_without_npsso(monkeypatch):
     import routes.trophies as trophies
 
     now = 2_000_000.0
-    _seed_psn(7004, "", now + 5 * 86400)  # in-window but no NPSSO stored
+    _seed_psn(7004, "", now + 1 * 86400)  # in-window but no NPSSO stored
 
     calls = []
     monkeypatch.setattr(
@@ -147,7 +149,7 @@ def test_refused_renewal_says_so_and_marks_the_session_expired(monkeypatch):
     from services.jobs import psn_keepalive
 
     now = time.time()
-    _seed_psn(7005, "npsso-refused", now + 5 * 86400)
+    _seed_psn(7005, "npsso-refused", now + 1 * 86400)  # in the window, so the tick would ask
     _sony_refuses(monkeypatch)
 
     with app_module.app.app_context():
