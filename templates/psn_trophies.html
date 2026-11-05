@@ -1237,19 +1237,19 @@ const PSNTrophyController = (function() {
                     '</div>' +
                     '<div class="trophy-counts">' +
                         '<span class="trophy-mini-badge tmb-platinum">' +
-                            '<img src="' + TROPHY_ICONS.platinum + '" alt="P" class="t-icon">' +
+                            '<img src="' + TROPHY_ICONS.platinum + '" alt="' + escapeHtml({{ _('Platinum')|tojson }}) + '" class="t-icon">' +
                             trophyCount(game.platinum_earned, game.platinum_total) +
                         '</span>' +
                         '<span class="trophy-mini-badge tmb-gold">' +
-                            '<img src="' + TROPHY_ICONS.gold + '" alt="G" class="t-icon">' +
+                            '<img src="' + TROPHY_ICONS.gold + '" alt="' + escapeHtml({{ _('Gold')|tojson }}) + '" class="t-icon">' +
                             trophyCount(game.gold_earned, game.gold_total) +
                         '</span>' +
                         '<span class="trophy-mini-badge tmb-silver">' +
-                            '<img src="' + TROPHY_ICONS.silver + '" alt="S" class="t-icon">' +
+                            '<img src="' + TROPHY_ICONS.silver + '" alt="' + escapeHtml({{ _('Silver')|tojson }}) + '" class="t-icon">' +
                             trophyCount(game.silver_earned, game.silver_total) +
                         '</span>' +
                         '<span class="trophy-mini-badge tmb-bronze">' +
-                            '<img src="' + TROPHY_ICONS.bronze + '" alt="B" class="t-icon">' +
+                            '<img src="' + TROPHY_ICONS.bronze + '" alt="' + escapeHtml({{ _('Bronze')|tojson }}) + '" class="t-icon">' +
                             trophyCount(game.bronze_earned, game.bronze_total) +
                         '</span>' +
                     '</div>' +

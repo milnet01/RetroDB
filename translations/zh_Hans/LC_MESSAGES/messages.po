@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-04 18:35+0200\n"
+"POT-Creation-Date: 2026-11-05 05:13+0200\n"
 "PO-Revision-Date: 2026-07-01 09:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hans\n"
@@ -40,8 +40,8 @@ msgstr "需要初始设置"
 msgid "Password change required"
 msgstr "需要更改密码"
 
-#: app.py:1681 routes/auth.py:202 routes/auth.py:262 routes/auth.py:456
-#: routes/auth.py:501 templates/force_change_password.html:49
+#: app.py:1691 routes/auth.py:202 routes/auth.py:262 routes/auth.py:465
+#: routes/auth.py:510 templates/force_change_password.html:49
 #: templates/setup.html:469
 msgid "Password must be at least 12 characters"
 msgstr "密码长度至少为 12 个字符"
@@ -57,12 +57,12 @@ msgstr "未找到系统，或该系统没有包含成就的游戏"
 #: routes/achievements.py:176 routes/achievements.py:486
 #: routes/bonus_discs.py:265 routes/bulk_scrape.py:48 routes/cheats.py:32
 #: routes/cheats.py:51 routes/collections.py:276 routes/collections.py:531
-#: routes/emulators.py:304 routes/emulators.py:318 routes/games.py:395
-#: routes/games.py:923 routes/games.py:1052 routes/games.py:1119
-#: routes/games_ai.py:31 routes/games_media.py:39 routes/games_media.py:87
-#: routes/games_media.py:154 routes/games_media.py:205
-#: routes/games_media.py:238 routes/launch.py:242 routes/reports.py:706
-#: routes/reports.py:841 routes/trophies.py:1336 services/cheats.py:617
+#: routes/emulators.py:304 routes/emulators.py:318 routes/games.py:396
+#: routes/games.py:933 routes/games.py:1052 routes/games.py:1119
+#: routes/games_ai.py:31 routes/games_media.py:40 routes/games_media.py:89
+#: routes/games_media.py:156 routes/games_media.py:207
+#: routes/games_media.py:240 routes/launch.py:254 routes/reports.py:706
+#: routes/reports.py:841 routes/trophies.py:1347 services/cheats.py:629
 #: services/hltb_service.py:162
 msgid "Game not found"
 msgstr "未找到游戏"
@@ -305,7 +305,7 @@ msgstr "登录尝试次数过多，请稍后再试。"
 msgid "No user selected"
 msgstr "未选择用户"
 
-#: routes/auth.py:68 routes/auth.py:228 routes/auth.py:287
+#: routes/auth.py:68 routes/auth.py:228 routes/auth.py:292
 msgid "User not found"
 msgstr "未找到用户"
 
@@ -341,70 +341,70 @@ msgstr "用户名已存在"
 msgid "The last admin must stay an active admin"
 msgstr "最后一个管理员必须保持为启用状态的管理员"
 
-#: routes/auth.py:291
+#: routes/auth.py:296
 msgid "Cannot delete your own account"
 msgstr "无法删除您自己的账户"
 
-#: routes/auth.py:296
+#: routes/auth.py:301
 msgid "Cannot delete the last admin user"
 msgstr "无法删除最后一个管理员用户"
 
-#: routes/auth.py:354 routes/auth.py:432 routes/auth.py:488
+#: routes/auth.py:363 routes/auth.py:441 routes/auth.py:497
 msgid "Not logged in"
 msgstr "未登录"
 
-#: routes/auth.py:391
+#: routes/auth.py:400
 msgid "Invalid locale"
 msgstr "无效的语言区域"
 
-#: routes/auth.py:396
+#: routes/auth.py:405
 msgid "Invalid theme"
 msgstr "无效的主题"
 
-#: routes/auth.py:402
+#: routes/auth.py:411
 #, python-format
 msgid "Invalid RPCS3 trophy folder: %(reason)s"
 msgstr "无效的 RPCS3 奖杯文件夹：%(reason)s"
 
-#: routes/auth.py:444
+#: routes/auth.py:453
 msgid "Too many attempts. Please try again later."
 msgstr "尝试次数过多，请稍后再试。"
 
-#: routes/auth.py:451 routes/auth.py:497
+#: routes/auth.py:460 routes/auth.py:506
 msgid "New password is required"
 msgstr "需要设置新密码"
 
-#: routes/auth.py:462
+#: routes/auth.py:471
 msgid "Current password is incorrect"
 msgstr "当前密码不正确"
 
-#: routes/auth.py:491
+#: routes/auth.py:500
 msgid "Password change not required"
 msgstr "无需更改密码"
 
-#: routes/auth.py:543
+#: routes/auth.py:552
 msgid "No file provided"
 msgstr "未提供文件"
 
-#: routes/auth.py:547 routes/museum.py:660
+#: routes/auth.py:556 routes/museum.py:660
 msgid "No file selected"
 msgstr "未选择文件"
 
-#: routes/auth.py:552
+#: routes/auth.py:561
 msgid "Invalid file type. Allowed: jpg, png, gif, webp"
 msgstr "文件类型无效。允许的类型：jpg、png、gif、webp"
 
-#: routes/auth.py:557
+#: routes/auth.py:566
 msgid "File too large. Maximum size is 2MB"
 msgstr "文件过大。最大大小为 2MB"
 
-#: routes/auth.py:575
+#: routes/auth.py:584
 msgid ""
 "Avatar uploads require Pillow; please ask the operator to install the "
 "project requirements."
 msgstr "上传头像需要 Pillow；请联系操作员安装项目依赖。"
 
-#: routes/auth.py:591 routes/museum.py:692
+#: routes/auth.py:600 routes/museum.py:692
 msgid "Invalid image file"
 msgstr "无效的图片文件"
 
@@ -422,16 +422,16 @@ msgstr "附赠光盘与主游戏必须属于同一系统"
 
 #: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1381
 #: routes/games.py:1411 routes/platform_import.py:344
-#: routes/platform_import.py:723 routes/platform_import.py:1089
+#: routes/platform_import.py:723 routes/platform_import.py:1107
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
-#: routes/scrape_logs.py:219 routes/scraper.py:204 routes/scraper.py:535
-#: routes/scraper.py:926 routes/settings.py:320 routes/settings.py:344
+#: routes/scrape_logs.py:219 routes/scraper.py:207 routes/scraper.py:538
+#: routes/scraper.py:929 routes/settings.py:320 routes/settings.py:344
 #: routes/settings.py:459 routes/settings.py:538 routes/settings.py:567
 #: routes/settings.py:611 routes/settings.py:627 routes/settings.py:663
 #: routes/steam_achievements.py:138 routes/systems.py:292 routes/systems.py:482
-#: routes/trophies.py:553 routes/trophies.py:751 routes/trophies.py:799
-#: routes/trophies.py:1627 routes/trophies.py:1651 routes/trophies.py:1696
-#: routes/trophies.py:1724 routes/trophies.py:1766 routes/trophies.py:1833
+#: routes/trophies.py:593 routes/trophies.py:791 routes/trophies.py:839
+#: routes/trophies.py:1638 routes/trophies.py:1662 routes/trophies.py:1707
+#: routes/trophies.py:1735 routes/trophies.py:1777 routes/trophies.py:1844
 #: routes/xbox_achievements.py:157 services/api_helpers.py:46
 msgid "An internal error occurred"
 msgstr "发生内部错误"
@@ -467,7 +467,7 @@ msgstr "未找到匹配项"
 msgid "No game IDs provided"
 msgstr "未提供游戏 ID"
 
-#: routes/cheats.py:49 services/cheats.py:562
+#: routes/cheats.py:49 services/cheats.py:574
 msgid "Send the names of the cheats to switch on."
 msgstr "请发送要开启的金手指名称。"
 
@@ -479,45 +479,45 @@ msgstr "没有这个金手指包。"
 msgid "Enter a folder to import."
 msgstr "请输入要导入的文件夹。"
 
-#: routes/clz_import.py:258
+#: routes/clz_import.py:271
 msgid ""
 "pdfplumber module not installed. Please run: pip install pdfplumber "
 "--break-system-packages"
 msgstr "未安装 pdfplumber 模块。请运行：pip install pdfplumber --break-system-packages"
 
-#: routes/clz_import.py:263
+#: routes/clz_import.py:276
 msgid "No file uploaded"
 msgstr "未上传文件"
 
-#: routes/clz_import.py:267
+#: routes/clz_import.py:280
 msgid "File must be a PDF"
 msgstr "文件必须为 PDF"
 
-#: routes/clz_import.py:274
+#: routes/clz_import.py:287
 #, python-format
 msgid "File too large (%(size)sMB). Maximum size is 50MB"
 msgstr "文件过大（%(size)sMB）。最大允许 50MB"
 
-#: routes/clz_import.py:277
+#: routes/clz_import.py:290
 msgid "Invalid PDF file (bad magic bytes)"
 msgstr "无效的 PDF 文件（魔数字节错误）"
 
-#: routes/clz_import.py:301
+#: routes/clz_import.py:314
 #, python-format
 msgid "PDF has %(pages)s pages; maximum is %(max)s."
 msgstr "该 PDF 共有 %(pages)s 页，最多允许 %(max)s 页。"
 
-#: routes/clz_import.py:570
+#: routes/clz_import.py:583
 msgid "No games to import"
 msgstr "没有可导入的游戏"
 
-#: routes/collections.py:102 routes/collections.py:446
+#: routes/collections.py:103 routes/collections.py:446
 #: routes/collections.py:475 routes/collections.py:497
 #: routes/collections.py:527 routes/collections.py:566
 msgid "List not found"
 msgstr "未找到列表"
 
-#: routes/collections.py:162
+#: routes/collections.py:163
 msgid "Tag name is required"
 msgstr "标签名称为必填项"
 
@@ -576,7 +576,7 @@ msgid "This game is already on your wishlist"
 msgstr "该游戏已在您的愿望单中"
 
 #: routes/collections.py:687 routes/collections.py:732
-#: routes/collections.py:754
+#: routes/collections.py:755
 msgid "Wishlist item not found"
 msgstr "未找到心愿单项目"
 
@@ -628,7 +628,7 @@ msgstr "全屏按系统设置，位于 设置 > 模拟器。"
 msgid "That value is not one of the choices."
 msgstr "该值不在可选项中。"
 
-#: routes/emulators.py:320 services/standalone_settings.py:368
+#: routes/emulators.py:320 services/standalone_settings.py:373
 msgid "RetroDB manages per-game settings for DuckStation, PCSX2 and RPCS3 only."
 msgstr "RetroDB 仅为 DuckStation、PCSX2 和 RPCS3 管理单个游戏的设置。"
 
@@ -636,27 +636,27 @@ msgstr "RetroDB 仅为 DuckStation、PCSX2 和 RPCS3 管理单个游戏的设置
 msgid "Emulator not found"
 msgstr "未找到模拟器"
 
-#: routes/games.py:252 routes/games.py:286
+#: routes/games.py:253 routes/games.py:287
 msgid "No IDs provided"
 msgstr "未提供 ID"
 
-#: routes/games.py:294
+#: routes/games.py:295
 msgid "Provide 1-50 valid IDs"
 msgstr "请提供 1-50 个有效 ID"
 
-#: routes/games.py:570
+#: routes/games.py:580
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
 msgstr "视频未保存：必须是不超过 %(mb)s MB 的 MP4、WebM 或 OGG 文件。"
 
-#: routes/games.py:580
+#: routes/games.py:590
 #, python-format
 msgid ""
 "Screenshots not added because they match ones the game already has: "
 "%(count)s"
 msgstr "因与该游戏已有的截图相同而未添加的截图：%(count)s"
 
-#: routes/games.py:720
+#: routes/games.py:738
 msgid "Game not found after update"
 msgstr "更新后未找到该游戏"
 
@@ -684,8 +684,8 @@ msgid "No fields to update"
 msgstr "没有可更新的字段"
 
 #: routes/games.py:1197 routes/platform_import.py:250
-#: routes/platform_import.py:629 routes/platform_import.py:992
-#: routes/trophies.py:1908 templates/game_imports.html:579
+#: routes/platform_import.py:629 routes/platform_import.py:993
+#: routes/trophies.py:1919 templates/game_imports.html:579
 #: templates/game_imports.html:842
 msgid "No games selected"
 msgstr "未选择任何游戏"
@@ -722,97 +722,97 @@ msgstr "AI 未返回任何数据。请检查您的 API 密钥和提供商设置�
 msgid "AI scraper module not available"
 msgstr "AI 抓取模块不可用"
 
-#: routes/games_media.py:76
+#: routes/games_media.py:78
 msgid "No filename provided"
 msgstr "未提供文件名"
 
-#: routes/games_media.py:83 routes/reports.py:699 routes/scrape_logs.py:129
+#: routes/games_media.py:85 routes/reports.py:699 routes/scrape_logs.py:129
 #: routes/scrape_logs.py:154 routes/scrape_logs.py:203 routes/settings.py:353
 msgid "Invalid filename"
 msgstr "无效的文件名"
 
-#: routes/games_media.py:92
+#: routes/games_media.py:94
 #, python-format
 msgid "ROM file not found on disk: %(path)s"
 msgstr "磁盘上未找到 ROM 文件：%(path)s"
 
-#: routes/games_media.py:96 routes/reports.py:731 routes/reports.py:856
+#: routes/games_media.py:98 routes/reports.py:731 routes/reports.py:856
 msgid ""
 "A .cue or .gdi file names this track, so renaming it would break that "
 "disc. Rename the .cue or .gdi file instead."
 msgstr "这个音轨已被 .cue 或 .gdi 文件引用，重命名会导致该光盘无法使用。请改为重命名 .cue 或 .gdi 文件。"
 
-#: routes/games_media.py:111 routes/reports.py:740 routes/reports.py:921
+#: routes/games_media.py:113 routes/reports.py:740 routes/reports.py:921
 msgid "Destination is outside the configured ROM root"
 msgstr "目标位置在已配置的 ROM 根目录之外"
 
-#: routes/games_media.py:115 routes/reports.py:744
+#: routes/games_media.py:117 routes/reports.py:744
 #, python-format
 msgid "Cannot rename: %(reason)s"
 msgstr "无法重命名：%(reason)s"
 
-#: routes/games_media.py:120 routes/reports.py:750 routes/reports.py:927
+#: routes/games_media.py:122 routes/reports.py:750 routes/reports.py:927
 msgid "A file with that name already exists"
 msgstr "已存在同名文件"
 
-#: routes/games_media.py:127
+#: routes/games_media.py:129
 msgid "Failed to rename file"
 msgstr "重命名文件失败"
 
-#: routes/games_media.py:147
+#: routes/games_media.py:149
 msgid "No screenshot specified"
 msgstr "未指定截图"
 
-#: routes/games_media.py:150
+#: routes/games_media.py:152
 msgid "Invalid screenshot filename"
 msgstr "截图文件名无效"
 
-#: routes/games_media.py:160
+#: routes/games_media.py:162
 msgid "Screenshot not found"
 msgstr "未找到截图"
 
-#: routes/games_media.py:196 templates/_modals/edit_modal.html:389
+#: routes/games_media.py:198 templates/_modals/edit_modal.html:389
 msgid "Pick the .box.json file Slipcase saved, together with its pictures."
 msgstr "请选择 Slipcase 保存的 .box.json 文件及其图片。"
 
-#: routes/games_media.py:197
+#: routes/games_media.py:199
 msgid "Pick only one .box.json file at a time."
 msgstr "一次只能选择一个 .box.json 文件。"
 
-#: routes/games_media.py:198
+#: routes/games_media.py:200
 msgid "The .box.json file could not be read."
 msgstr "无法读取该 .box.json 文件。"
 
-#: routes/games_media.py:199
+#: routes/games_media.py:201
 msgid "This is not a Slipcase box file RetroDB can read."
 msgstr "这不是 RetroDB 能读取的 Slipcase 盒子文件。"
 
-#: routes/games_media.py:200
+#: routes/games_media.py:202
 msgid "The box file names a picture RetroDB will not open."
 msgstr "盒子文件指定了一张 RetroDB 不会打开的图片。"
 
-#: routes/games_media.py:201
+#: routes/games_media.py:203
 #, python-format
 msgid "Some pictures the box file needs were not picked: %(names)s"
 msgstr "盒子文件需要的部分图片未被选择：%(names)s"
 
-#: routes/games_media.py:203
+#: routes/games_media.py:205
 msgid "A picture is larger than 10 MB."
 msgstr "有一张图片超过 10 MB。"
 
-#: routes/games_media.py:204
+#: routes/games_media.py:206
 msgid "A picture is not a readable image."
 msgstr "有一张图片无法读取。"
 
-#: routes/games_media.py:206
+#: routes/games_media.py:208
 msgid "This game already has 3D box faces."
 msgstr "此游戏已有 3D 盒子的各个面。"
 
-#: routes/games_media.py:207
+#: routes/games_media.py:209
 msgid "The faces could not be saved. Check the disk has space."
 msgstr "无法保存这些面。请检查磁盘是否有空间。"
 
-#: routes/games_media.py:209 services/js_i18n_strings.py:991
+#: routes/games_media.py:211 services/js_i18n_strings.py:991
 msgid "The box file could not be imported."
 msgstr "无法导入该盒子文件。"
 
@@ -820,63 +820,63 @@ msgstr "无法导入该盒子文件。"
 msgid "Title required"
 msgstr "必须填写标题"
 
-#: routes/launch.py:78
+#: routes/launch.py:90
 #, python-format
 msgid "This action requires the \"%(perm)s\" permission"
 msgstr "此操作需要“%(perm)s”权限"
 
-#: routes/launch.py:91
+#: routes/launch.py:103
 msgid "The player is already running another game"
 msgstr "播放器正在运行另一个游戏"
 
-#: routes/launch.py:102
+#: routes/launch.py:114
 msgid "This game is already running"
 msgstr "该游戏已在运行中"
 
-#: routes/launch.py:108
+#: routes/launch.py:120
 #, python-format
 msgid "failed to kill prior instance: %(err)s"
 msgstr "无法终止先前实例：%(err)s"
 
-#: routes/launch.py:182
+#: routes/launch.py:194
 msgid "RetroArch is not built for this computer."
 msgstr "RetroArch 没有适用于这台电脑的版本。"
 
-#: routes/launch.py:195
+#: routes/launch.py:207
 msgid "Cores are not built for this computer."
 msgstr "没有为这台电脑构建的核心。"
 
-#: routes/launch.py:198
+#: routes/launch.py:210
 msgid "The player is not installed."
 msgstr "播放器未安装。"
 
-#: routes/launch.py:207
+#: routes/launch.py:219
 msgid "No system with games has a player core."
 msgstr "没有任何有游戏的系统拥有播放器核心。"
 
-#: routes/launch.py:220
+#: routes/launch.py:232
 msgid ""
 "Could not fetch the list of cores. Check the internet connection and try "
 "again."
 msgstr "无法获取核心列表。请检查网络连接后重试。"
 
-#: routes/launch.py:225
+#: routes/launch.py:237
 msgid "Every core is up to date."
 msgstr "所有核心均为最新。"
 
-#: routes/launch.py:244
+#: routes/launch.py:256
 msgid "Player settings reset to recommended"
 msgstr "播放器设置已重置为推荐值"
 
-#: routes/launch.py:320
+#: routes/launch.py:332
 msgid "That game is no longer running"
 msgstr "该游戏已不在运行"
 
-#: routes/launch.py:322
+#: routes/launch.py:334
 msgid "This game has no disk list to swap through"
 msgstr "此游戏没有可切换的光盘列表"
 
-#: routes/launch.py:329
+#: routes/launch.py:341
 #, python-format
 msgid ""
 "RetroArch is not accepting commands. In RetroArch, turn on Settings > "
@@ -885,19 +885,19 @@ msgstr ""
 "RetroArch 未接受命令。请在 RetroArch 中打开 Settings > Network > Network Commands（端口"
 " %(port)s）。"
 
-#: routes/launch.py:332
+#: routes/launch.py:344
 msgid "Next disk inserted"
 msgstr "已插入下一张光盘"
 
-#: routes/maintenance.py:274
+#: routes/maintenance.py:279
 msgid "Unknown image type"
 msgstr "未知的图片类型"
 
-#: routes/maintenance.py:487
+#: routes/maintenance.py:492
 msgid "Add your ScreenScraper account in Settings first."
 msgstr "请先在设置中添加你的 ScreenScraper 账户。"
 
-#: routes/maintenance.py:488
+#: routes/maintenance.py:493
 msgid "This fix is already running."
 msgstr "此修复已在运行。"
 
@@ -913,7 +913,7 @@ msgstr "请先选择一个 MAME 列表。"
 msgid "MAME Names is already running."
 msgstr "MAME 命名已在运行。"
 
-#: routes/museum.py:385 routes/scraper.py:767
+#: routes/museum.py:385 routes/scraper.py:770
 msgid "No AI provider configured"
 msgstr "未配置 AI 提供方"
 
@@ -1107,78 +1107,78 @@ msgstr "未找到文件"
 msgid "Log file not found"
 msgstr "未找到日志文件"
 
-#: routes/scraper.py:219
+#: routes/scraper.py:222
 #, python-format
 msgid "invalid scraper settings: %(reason)s"
 msgstr "抓取器设置无效：%(reason)s"
 
-#: routes/scraper.py:280
+#: routes/scraper.py:283
 #, python-format
 msgid "invalid api keys: %(reason)s"
 msgstr "API 密钥无效：%(reason)s"
 
-#: routes/scraper.py:555
+#: routes/scraper.py:558
 msgid "No TGDB API key configured"
 msgstr "尚未配置 TGDB API 密钥"
 
-#: routes/scraper.py:652
+#: routes/scraper.py:655
 msgid "No ScreenScraper credentials configured"
 msgstr "尚未配置 ScreenScraper 凭据"
 
-#: routes/scraper.py:688
+#: routes/scraper.py:691
 msgid "Invalid JSON response from ScreenScraper"
 msgstr "ScreenScraper 返回的 JSON 响应无效"
 
-#: routes/scraper.py:691
+#: routes/scraper.py:694
 msgid "Error parsing API response"
 msgstr "解析 API 响应时出错"
 
-#: routes/scraper.py:693
+#: routes/scraper.py:696
 #, python-format
 msgid "ScreenScraper answered HTTP %(code)s"
 msgstr "ScreenScraper 返回了 HTTP %(code)s"
 
-#: routes/scraper.py:708
+#: routes/scraper.py:711
 msgid "No RAWG API key configured"
 msgstr "未配置 RAWG API 密钥"
 
-#: routes/scraper.py:813
+#: routes/scraper.py:816
 #, python-format
 msgid "Unknown AI provider: %(provider)s"
 msgstr "未知的 AI 提供方：%(provider)s"
 
-#: routes/scraper.py:816
+#: routes/scraper.py:819
 msgid "No response from AI provider"
 msgstr "AI 提供方无响应"
 
-#: routes/scraper.py:821 routes/scraper.py:822
+#: routes/scraper.py:824 routes/scraper.py:825
 #, python-format
 msgid "%(provider)s refused the API key. Check the key and save it again."
 msgstr "%(provider)s 拒绝了该 API 密钥。请检查密钥并重新保存。"
 
-#: routes/scraper.py:823
+#: routes/scraper.py:826
 #, python-format
 msgid "%(provider)s wants payment: the account has no credit or billing is off."
 msgstr "%(provider)s 要求付款：账户没有余额，或已关闭计费。"
 
-#: routes/scraper.py:824
+#: routes/scraper.py:827
 #, python-format
 msgid ""
 "%(provider)s says a usage limit is reached. Try again later or check your"
 " plan."
 msgstr "%(provider)s 表示已达到使用上限。请稍后再试，或检查您的套餐。"
 
-#: routes/scraper.py:826
+#: routes/scraper.py:829
 #, python-format
 msgid "%(provider)s answered with error %(code)s."
 msgstr "%(provider)s 返回错误 %(code)s。"
 
-#: routes/scraper.py:919
+#: routes/scraper.py:922
 #, python-format
 msgid "Connection error: %(error)s"
 msgstr "连接错误：%(error)s"
 
-#: routes/scraper.py:922
+#: routes/scraper.py:925
 #, python-format
 msgid "Allowance check not supported for %(scraper)s"
 msgstr "%(scraper)s 不支持配额检查"
@@ -1345,7 +1345,7 @@ msgstr "此系统没有截图检查"
 msgid "Keep at least one copy of each screenshot. Nothing was deleted."
 msgstr "每张截图至少要保留一份。没有任何内容被删除。"
 
-#: routes/trophies.py:154 routes/trophies.py:1778
+#: routes/trophies.py:154 routes/trophies.py:1789
 msgid "PSNAWP library not installed. Run: pip install psnawp"
 msgstr "未安装 PSNAWP 库。请运行：pip install psnawp"
 
@@ -1371,62 +1371,62 @@ msgstr "PSN 身份验证失败。您的 NPSSO 可能已过期。"
 msgid "PSN connection error: %(error)s"
 msgstr "PSN 连接错误:%(error)s"
 
-#: routes/trophies.py:441
+#: routes/trophies.py:477
 msgid ""
 "Please configure your RPCS3 Trophy Path in your profile settings to view "
 "trophies"
 msgstr "请在您的个人资料设置中配置 RPCS3 奖杯路径以查看奖杯"
 
-#: routes/trophies.py:473
+#: routes/trophies.py:509
 msgid "Trophy set not found"
 msgstr "未找到奖杯组"
 
-#: routes/trophies.py:517
+#: routes/trophies.py:557
 msgid "RPCS3_TROPHY_PATH not configured"
 msgstr "未配置 RPCS3_TROPHY_PATH"
 
-#: routes/trophies.py:520
+#: routes/trophies.py:560
 #, python-format
 msgid "Trophy path not found: %(path)s"
 msgstr "未找到奖杯路径：%(path)s"
 
-#: routes/trophies.py:812 routes/trophies.py:1749
+#: routes/trophies.py:852 routes/trophies.py:1760
 msgid "PSN game not found"
 msgstr "未找到 PSN 游戏"
 
-#: routes/trophies.py:1103
+#: routes/trophies.py:1144
 msgid "Sync already in progress"
 msgstr "同步已在进行中"
 
-#: routes/trophies.py:1354
+#: routes/trophies.py:1365
 msgid "Game not found in your PSN trophy list"
 msgstr "在你的 PSN 奖杯列表中未找到该游戏"
 
-#: routes/trophies.py:1624
+#: routes/trophies.py:1635
 msgid "Game not found on PSN"
 msgstr "在 PSN 上未找到该游戏"
 
-#: routes/trophies.py:1639 routes/trophies.py:1712
+#: routes/trophies.py:1650 routes/trophies.py:1723
 msgid "Missing npwr_id"
 msgstr "缺少 npwr_id"
 
-#: routes/trophies.py:1737
+#: routes/trophies.py:1748
 msgid "Missing npwr_id or group_id"
 msgstr "缺少 npwr_id 或 group_id"
 
-#: routes/trophies.py:1740
+#: routes/trophies.py:1751
 msgid "Name cannot be empty"
 msgstr "名称不能为空"
 
-#: routes/trophies.py:1865
+#: routes/trophies.py:1876
 msgid "No NPSSO token provided"
 msgstr "未提供 NPSSO 令牌"
 
-#: routes/trophies.py:1890
+#: routes/trophies.py:1901
 msgid "Could not connect to PSN"
 msgstr "无法连接到 PSN"
 
-#: routes/trophies.py:1917
+#: routes/trophies.py:1928
 msgid "PSN NPSSO not configured"
 msgstr "未配置 PSN NPSSO"
 
@@ -1483,44 +1483,44 @@ msgstr "未找到该游戏，或它不是 Xbox 游戏"
 msgid "%(name)s is too large to be a cheat file."
 msgstr "%(name)s 太大，不可能是金手指文件。"
 
-#: services/cheats.py:269 services/cheats.py:289
+#: services/cheats.py:268 services/cheats.py:288
 msgid "Not a cheat file."
 msgstr "不是金手指文件。"
 
-#: services/cheats.py:276
+#: services/cheats.py:275
 msgid "A PCSX2 file with no CRC in its name or its gametitle line."
 msgstr "PCSX2 文件的名称和 gametitle 行中都没有 CRC。"
 
-#: services/cheats.py:283
+#: services/cheats.py:282
 msgid "A RetroArch file whose folder names no single system."
 msgstr "RetroArch 文件所在的文件夹没有对应到单一系统。"
 
-#: services/cheats.py:288
+#: services/cheats.py:287
 msgid "A DuckStation file not named by its serial."
 msgstr "DuckStation 文件没有以序列号命名。"
 
-#: services/cheats.py:297
+#: services/cheats.py:296
 msgid "That folder was not found."
 msgstr "未找到该文件夹。"
 
-#: services/cheats.py:300
+#: services/cheats.py:299
 msgid "That folder is RetroDB's own cheat store."
 msgstr "该文件夹是 RetroDB 自己的金手指存储位置。"
 
-#: services/cheats.py:435 services/cheats.py:453
+#: services/cheats.py:434 services/cheats.py:452
 msgid "The player has no cheats for this system."
 msgstr "播放器没有此系统的金手指。"
 
-#: services/cheats.py:444 services/cheats.py:467 services/cheats.py:560
-#: services/cheats.py:599 services/cheats.py:606
+#: services/cheats.py:443 services/cheats.py:466 services/cheats.py:572
+#: services/cheats.py:611 services/cheats.py:618
 msgid "No cheats were found for this game."
 msgstr "未找到此游戏的金手指。"
 
-#: services/cheats.py:459
+#: services/cheats.py:458
 msgid "That cheat list is not one of this game's."
 msgstr "该金手指列表不属于此游戏。"
 
-#: services/cheats.py:595 services/cheats.py:623
+#: services/cheats.py:607 services/cheats.py:635
 msgid "Cheats work in the player, DuckStation and PCSX2."
 msgstr "金手指可在播放器、DuckStation 和 PCSX2 中使用。"
 
@@ -3233,7 +3233,7 @@ msgstr "未下载"
 msgid "Not versions"
 msgstr "非版本"
 
-#: services/js_i18n_strings.py:847 templates/base.html:1440
+#: services/js_i18n_strings.py:847 templates/base.html:1441
 msgid "Now playing"
 msgstr "正在游玩"
 
@@ -4388,38 +4388,38 @@ msgid ""
 "until %(when)s."
 msgstr "%(service)s 表示已达到其限额。在 %(when)s 之前,RetroDB 不会再次向它请求。"
 
-#: services/standalone_settings.py:310
+#: services/standalone_settings.py:315
 msgid ""
 "RetroDB could not read this disc's serial, so it cannot name the "
 "emulator's per-game settings file."
 msgstr "RetroDB 无法读取此光盘的序列号，因此无法确定模拟器的单个游戏设置文件名。"
 
-#: services/standalone_settings.py:320
+#: services/standalone_settings.py:325
 msgid ""
 "PCSX2 has two or more settings files for this game; remove the ones you "
 "do not use."
 msgstr "PCSX2 中此游戏有两个或更多设置文件；请删除不用的文件。"
 
-#: services/standalone_settings.py:328
+#: services/standalone_settings.py:333
 msgid ""
 "RetroDB could not read this disc's boot file, so it cannot name PCSX2's "
 "per-game settings file."
 msgstr "RetroDB 无法读取此光盘的引导文件，因此无法确定 PCSX2 的单个游戏设置文件名。"
 
-#: services/standalone_settings.py:336
+#: services/standalone_settings.py:341
 msgid "Settings path outside the data folder."
 msgstr "设置路径位于数据文件夹之外。"
 
-#: services/standalone_settings.py:360 templates/game_detail.html:111
+#: services/standalone_settings.py:365 templates/game_detail.html:111
 msgid "No emulator is set up for this system."
 msgstr "此系统尚未设置模拟器。"
 
-#: services/standalone_settings.py:378
+#: services/standalone_settings.py:383
 #, python-format
 msgid "Run %(name)s once so it creates its settings, then play again."
 msgstr "请先运行一次 %(name)s 以生成其设置，然后再次游玩。"
 
-#: services/standalone_settings.py:481
+#: services/standalone_settings.py:487
 msgid "The player has no core for this system."
 msgstr "播放器没有此系统的核心。"
 
@@ -6666,7 +6666,7 @@ msgstr "图片/视频"
 msgid "Save Changes"
 msgstr "保存更改"
 
-#: templates/base.html:1443
+#: templates/base.html:1444
 msgid "running"
 msgstr "运行中"
 
@@ -6882,8 +6882,10 @@ msgid "Maximum rank reached. Flawless."
 msgstr "已达最高等级。完美无瑕。"
 
 #: templates/collector_trophies.html:66 templates/local_trophies.html:66
-#: templates/local_trophies.html:68 templates/psn_trophies.html:83
-#: templates/psn_trophies.html:85 templates/psn_trophy_detail.html:370
+#: templates/local_trophies.html:68 templates/local_trophies.html:144
+#: templates/local_trophy_detail.html:134 templates/psn_trophies.html:83
+#: templates/psn_trophies.html:85 templates/psn_trophies.html:1240
+#: templates/psn_trophy_detail.html:125 templates/psn_trophy_detail.html:370
 #: templates/psn_trophy_detail.html:403 templates/psn_trophy_detail.html:456
 #: templates/psn_trophy_detail.html:486
 msgid "Platinum"
@@ -6894,8 +6896,10 @@ msgid "Legendary milestones"
 msgstr "传奇里程碑"
 
 #: templates/collector_trophies.html:67 templates/local_trophies.html:73
-#: templates/local_trophies.html:75 templates/psn_trophies.html:90
-#: templates/psn_trophies.html:92 templates/psn_trophy_detail.html:370
+#: templates/local_trophies.html:75 templates/local_trophies.html:148
+#: templates/local_trophy_detail.html:138 templates/psn_trophies.html:90
+#: templates/psn_trophies.html:92 templates/psn_trophies.html:1244
+#: templates/psn_trophy_detail.html:129 templates/psn_trophy_detail.html:370
 #: templates/psn_trophy_detail.html:403 templates/psn_trophy_detail.html:456
 #: templates/psn_trophy_detail.html:486
 msgid "Gold"
@@ -6906,8 +6910,10 @@ msgid "Expert-level achievements"
 msgstr "专家级成就"
 
 #: templates/collector_trophies.html:68 templates/local_trophies.html:80
-#: templates/local_trophies.html:82 templates/psn_trophies.html:97
-#: templates/psn_trophies.html:99 templates/psn_trophy_detail.html:370
+#: templates/local_trophies.html:82 templates/local_trophies.html:152
+#: templates/local_trophy_detail.html:142 templates/psn_trophies.html:97
+#: templates/psn_trophies.html:99 templates/psn_trophies.html:1248
+#: templates/psn_trophy_detail.html:133 templates/psn_trophy_detail.html:370
 #: templates/psn_trophy_detail.html:403 templates/psn_trophy_detail.html:456
 #: templates/psn_trophy_detail.html:486
 msgid "Silver"
@@ -6918,8 +6924,10 @@ msgid "Intermediate milestones"
 msgstr "中间里程碑"
 
 #: templates/collector_trophies.html:69 templates/local_trophies.html:87
-#: templates/local_trophies.html:89 templates/psn_trophies.html:104
-#: templates/psn_trophies.html:106 templates/psn_trophy_detail.html:370
+#: templates/local_trophies.html:89 templates/local_trophies.html:156
+#: templates/local_trophy_detail.html:146 templates/psn_trophies.html:104
+#: templates/psn_trophies.html:106 templates/psn_trophies.html:1252
+#: templates/psn_trophy_detail.html:137 templates/psn_trophy_detail.html:370
 #: templates/psn_trophy_detail.html:403 templates/psn_trophy_detail.html:456
 #: templates/psn_trophy_detail.html:486
 msgid "Bronze"
@@ -8345,7 +8353,8 @@ msgstr "断开失败:{error}"
 msgid "Xbox games found: {total} ({existing} already imported)"
 msgstr "找到的 Xbox 游戏:{total}(其中 {existing} 个已导入)"
 
-#: templates/game_imports.html:762 templates/game_imports.html:776
+#: templates/game_imports.html:762 templates/game_imports.html:770
+#: templates/game_imports.html:776
 msgid "In your library: link it"
 msgstr "在你的游戏库中:去关联"
 
@@ -11452,31 +11461,71 @@ msgstr "扫描您的 ROM 游戏库以添加系统。"
 msgid "System Specifications"
 msgstr "系统规格"
 
-#: templates/tags.html:480
+#: templates/tags.html:54
+msgid "Cyan"
+msgstr "青色"
+
+#: templates/tags.html:55
+msgid "Magenta"
+msgstr "洋红色"
+
+#: templates/tags.html:56
+msgid "Green"
+msgstr "绿色"
+
+#: templates/tags.html:57
+msgid "Red"
+msgstr "红色"
+
+#: templates/tags.html:58
+msgid "Orange"
+msgstr "橙色"
+
+#: templates/tags.html:59
+msgid "Purple"
+msgstr "紫色"
+
+#: templates/tags.html:60
+msgid "Blue"
+msgstr "蓝色"
+
+#: templates/tags.html:61
+msgid "Pink"
+msgstr "粉色"
+
+#: templates/tags.html:62
+msgid "Teal"
+msgstr "青绿色"
+
+#: templates/tags.html:63
+msgid "Gray"
+msgstr "灰色"
+
+#: templates/tags.html:486
 msgid "Please enter a tag name."
 msgstr "请输入标签名称。"
 
-#: templates/tags.html:505
+#: templates/tags.html:511
 msgid "Tag updated."
 msgstr "标签已更新。"
 
-#: templates/tags.html:505
+#: templates/tags.html:511
 msgid "Tag created."
 msgstr "标签已创建。"
 
-#: templates/tags.html:509
+#: templates/tags.html:515
 msgid "Failed to save tag."
 msgstr "保存标签失败。"
 
-#: templates/tags.html:513
+#: templates/tags.html:519
 msgid "Error saving tag."
 msgstr "保存标签时出错。"
 
-#: templates/tags.html:519
+#: templates/tags.html:525
 msgid "Delete Tag"
 msgstr "删除标签"
 
-#: templates/tags.html:520
+#: templates/tags.html:526
 #, python-brace-format
 msgid ""
 "Are you sure you want to delete the tag \"{name}\"?\n"
@@ -11485,15 +11534,15 @@ msgstr ""
 "确定要删除标签“{name}”吗?\n"
 "这会从所有游戏中移除该标签。"
 
-#: templates/tags.html:530
+#: templates/tags.html:536
 msgid "Tag deleted."
 msgstr "标签已删除。"
 
-#: templates/tags.html:534
+#: templates/tags.html:540
 msgid "Failed to delete tag."
 msgstr "删除标签失败。"
 
-#: templates/tags.html:538
+#: templates/tags.html:544
 msgid "Error deleting tag."
 msgstr "删除标签时出错。"
 

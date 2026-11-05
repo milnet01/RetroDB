@@ -1377,6 +1377,13 @@
 }
 
 .meta-value.meta-clickable {
+    /* A <button> (PASS-59-245), so it reaches the keyboard; drawn as text. */
+    background: none;
+    border: none;
+    font: inherit;
+    font-size: 0.75rem;
+    text-align: left;
+    max-width: 100%;
     cursor: pointer;
     padding: 2px 6px;
     margin: -2px -6px;
@@ -1385,9 +1392,10 @@
     display: inline-block;
 }
 
-.meta-value.meta-clickable:hover {
-    background: rgba(76, 201, 240, 0.15);
-    color: var(--neon-cyan);
+.meta-value.meta-clickable:hover,
+.meta-value.meta-clickable:focus-visible {
+    background: color-mix(in srgb, var(--primary-cyan) 15%, transparent);
+    color: var(--primary-cyan);
 }
 
 .rating-badges {

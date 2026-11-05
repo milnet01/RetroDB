@@ -51,16 +51,16 @@
             <div class="form-group" style="margin-top: var(--spacing-md);">
                 <div class="form-label" id="tagColorLabel">Tag Color</div>
                 <div class="tag-color-picker" id="tagColorPicker" role="group" aria-labelledby="tagColorLabel">
-                    <button type="button" class="tag-color-swatch active" data-color="#4cc9f0" style="background: #4cc9f0;" data-on-click="selectTagColor" data-args='["$this"]' title="Cyan"></button>
-                    <button type="button" class="tag-color-swatch" data-color="#f72585" style="background: #f72585;" data-on-click="selectTagColor" data-args='["$this"]' title="Magenta"></button>
-                    <button type="button" class="tag-color-swatch" data-color="#22c55e" style="background: #22c55e;" data-on-click="selectTagColor" data-args='["$this"]' title="Green"></button>
-                    <button type="button" class="tag-color-swatch" data-color="#ef4444" style="background: #ef4444;" data-on-click="selectTagColor" data-args='["$this"]' title="Red"></button>
-                    <button type="button" class="tag-color-swatch" data-color="#f59e0b" style="background: #f59e0b;" data-on-click="selectTagColor" data-args='["$this"]' title="Orange"></button>
-                    <button type="button" class="tag-color-swatch" data-color="#a855f7" style="background: #a855f7;" data-on-click="selectTagColor" data-args='["$this"]' title="Purple"></button>
-                    <button type="button" class="tag-color-swatch" data-color="#3b82f6" style="background: #3b82f6;" data-on-click="selectTagColor" data-args='["$this"]' title="Blue"></button>
-                    <button type="button" class="tag-color-swatch" data-color="#ec4899" style="background: #ec4899;" data-on-click="selectTagColor" data-args='["$this"]' title="Pink"></button>
-                    <button type="button" class="tag-color-swatch" data-color="#14b8a6" style="background: #14b8a6;" data-on-click="selectTagColor" data-args='["$this"]' title="Teal"></button>
-                    <button type="button" class="tag-color-swatch" data-color="#64748b" style="background: #64748b;" data-on-click="selectTagColor" data-args='["$this"]' title="Gray"></button>
+                    <button type="button" class="tag-color-swatch active" data-color="#4cc9f0" style="background: #4cc9f0;" data-on-click="selectTagColor" data-args='["$this"]' title="{{ _('Cyan') }}" aria-label="{{ _('Cyan') }}" aria-pressed="true"></button>
+                    <button type="button" class="tag-color-swatch" data-color="#f72585" style="background: #f72585;" data-on-click="selectTagColor" data-args='["$this"]' title="{{ _('Magenta') }}" aria-label="{{ _('Magenta') }}" aria-pressed="false"></button>
+                    <button type="button" class="tag-color-swatch" data-color="#22c55e" style="background: #22c55e;" data-on-click="selectTagColor" data-args='["$this"]' title="{{ _('Green') }}" aria-label="{{ _('Green') }}" aria-pressed="false"></button>
+                    <button type="button" class="tag-color-swatch" data-color="#ef4444" style="background: #ef4444;" data-on-click="selectTagColor" data-args='["$this"]' title="{{ _('Red') }}" aria-label="{{ _('Red') }}" aria-pressed="false"></button>
+                    <button type="button" class="tag-color-swatch" data-color="#f59e0b" style="background: #f59e0b;" data-on-click="selectTagColor" data-args='["$this"]' title="{{ _('Orange') }}" aria-label="{{ _('Orange') }}" aria-pressed="false"></button>
+                    <button type="button" class="tag-color-swatch" data-color="#a855f7" style="background: #a855f7;" data-on-click="selectTagColor" data-args='["$this"]' title="{{ _('Purple') }}" aria-label="{{ _('Purple') }}" aria-pressed="false"></button>
+                    <button type="button" class="tag-color-swatch" data-color="#3b82f6" style="background: #3b82f6;" data-on-click="selectTagColor" data-args='["$this"]' title="{{ _('Blue') }}" aria-label="{{ _('Blue') }}" aria-pressed="false"></button>
+                    <button type="button" class="tag-color-swatch" data-color="#ec4899" style="background: #ec4899;" data-on-click="selectTagColor" data-args='["$this"]' title="{{ _('Pink') }}" aria-label="{{ _('Pink') }}" aria-pressed="false"></button>
+                    <button type="button" class="tag-color-swatch" data-color="#14b8a6" style="background: #14b8a6;" data-on-click="selectTagColor" data-args='["$this"]' title="{{ _('Teal') }}" aria-label="{{ _('Teal') }}" aria-pressed="false"></button>
+                    <button type="button" class="tag-color-swatch" data-color="#64748b" style="background: #64748b;" data-on-click="selectTagColor" data-args='["$this"]' title="{{ _('Gray') }}" aria-label="{{ _('Gray') }}" aria-pressed="false"></button>
                 </div>
             </div>
         </div>
@@ -433,6 +433,7 @@ function openCreateTagModal() {
     selectedTagColor = '#4cc9f0';
     document.querySelectorAll('.tag-color-swatch').forEach(s => {
         s.classList.toggle('active', s.dataset.color === selectedTagColor);
+        s.setAttribute('aria-pressed', String(s.dataset.color === selectedTagColor));
     });
     const modal = document.getElementById('tagModal');
     modal.classList.add('active');
@@ -454,6 +455,7 @@ function openEditTagModal(tagId) {
     selectedTagColor = tag.color || '#4cc9f0';
     document.querySelectorAll('.tag-color-swatch').forEach(s => {
         s.classList.toggle('active', s.dataset.color === selectedTagColor);
+        s.setAttribute('aria-pressed', String(s.dataset.color === selectedTagColor));
     });
     const modal = document.getElementById('tagModal');
     modal.classList.add('active');
@@ -470,8 +472,12 @@ function closeTagModal() {
 
 function selectTagColor(el) {
     selectedTagColor = el.dataset.color;
-    document.querySelectorAll('.tag-color-swatch').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tag-color-swatch').forEach(s => {
+        s.classList.remove('active');
+        s.setAttribute('aria-pressed', 'false');
+    });
     el.classList.add('active');
+    el.setAttribute('aria-pressed', 'true');
 }
 
 async function saveTag() {

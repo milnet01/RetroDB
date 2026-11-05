@@ -131,19 +131,19 @@
                 </div>
                 <div class="trophy-summary-counts">
                     <span class="trophy-count platinum">
-                        <img src="{{ url_for('static', filename='images/trophies/platinum.png') }}" alt="P" data-on-error="outer-html" data-on-error-html="🏆">
+                        <img src="{{ url_for('static', filename='images/trophies/platinum.png') }}" alt="{{ _('Platinum') }}" data-on-error="outer-html" data-on-error-html="🏆">
                         {{ counts.P[0]|format_number }} / {{ counts.P[1]|format_number }}
                     </span>
                     <span class="trophy-count gold">
-                        <img src="{{ url_for('static', filename='images/trophies/gold.png') }}" alt="G" data-on-error="outer-html" data-on-error-html="🥇">
+                        <img src="{{ url_for('static', filename='images/trophies/gold.png') }}" alt="{{ _('Gold') }}" data-on-error="outer-html" data-on-error-html="🥇">
                         {{ counts.G[0]|format_number }} / {{ counts.G[1]|format_number }}
                     </span>
                     <span class="trophy-count silver">
-                        <img src="{{ url_for('static', filename='images/trophies/silver.png') }}" alt="S" data-on-error="outer-html" data-on-error-html="🥈">
+                        <img src="{{ url_for('static', filename='images/trophies/silver.png') }}" alt="{{ _('Silver') }}" data-on-error="outer-html" data-on-error-html="🥈">
                         {{ counts.S[0]|format_number }} / {{ counts.S[1]|format_number }}
                     </span>
                     <span class="trophy-count bronze">
-                        <img src="{{ url_for('static', filename='images/trophies/bronze.png') }}" alt="B" data-on-error="outer-html" data-on-error-html="🥉">
+                        <img src="{{ url_for('static', filename='images/trophies/bronze.png') }}" alt="{{ _('Bronze') }}" data-on-error="outer-html" data-on-error-html="🥉">
                         {{ counts.B[0]|format_number }} / {{ counts.B[1]|format_number }}
                     </span>
                 </div>

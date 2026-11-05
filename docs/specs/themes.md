@@ -22,6 +22,11 @@ flash-of-unstyled-content. Cyberpunk is the default and ships as the `:root`
 baseline — every other theme is a `[data-theme="..."]` override on top of that
 baseline.
 
+Not yet the whole UI: some component rules still name the cyberpunk cyan
+directly (`rgba(76, 201, 240, …)`, `#4cc9f0`), so those parts stay cyan in
+every theme. Focus rings and focus glows follow the theme (PASS-59-245); the
+rest is PASS-59-255.
+
 ---
 
 ## 2. Theme inventory

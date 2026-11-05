@@ -634,18 +634,18 @@ const AllGamesController = (function() {
         let metaHtml = '';
         if (game.genre) {
             const firstGenre = game.genre.split(',')[0].trim();
-            metaHtml += `<div class="meta-item"><span class="meta-label">Genre</span><span class="meta-value meta-clickable" data-on-click="AllGamesController.metaFilterClick" data-args="${actionArgs('genre', firstGenre, '$event')}" data-stop data-prevent title="Click to filter, Shift+click to exclude">${esc(tField(firstGenre))}</span></div>`;
+            metaHtml += `<div class="meta-item"><span class="meta-label">Genre</span><button type="button" class="meta-value meta-clickable" data-on-click="AllGamesController.metaFilterClick" data-args="${actionArgs('genre', firstGenre, '$event')}" data-stop data-prevent title="Click to filter, Shift+click to exclude">${esc(tField(firstGenre))}</button></div>`;
         }
         if (game.franchise) {
-            metaHtml += `<div class="meta-item"><span class="meta-label">Series</span><span class="meta-value meta-clickable" data-on-click="AllGamesController.metaFilterClick" data-args="${actionArgs('franchise', game.franchise, '$event')}" data-stop data-prevent title="Click to filter, Shift+click to exclude">${esc(game.franchise.substring(0, 20))}${game.franchise.length > 20 ? '...' : ''}</span></div>`;
+            metaHtml += `<div class="meta-item"><span class="meta-label">Series</span><button type="button" class="meta-value meta-clickable" data-on-click="AllGamesController.metaFilterClick" data-args="${actionArgs('franchise', game.franchise, '$event')}" data-stop data-prevent title="Click to filter, Shift+click to exclude">${esc(game.franchise.substring(0, 20))}${game.franchise.length > 20 ? '...' : ''}</button></div>`;
         }
         if (game.developer) {
             const firstDev = game.developer.split(',')[0].trim();
-            metaHtml += `<div class="meta-item"><span class="meta-label">Developer</span><span class="meta-value meta-clickable" data-on-click="AllGamesController.metaFilterClick" data-args="${actionArgs('developer', firstDev, '$event')}" data-stop data-prevent title="Click to filter, Shift+click to exclude">${esc(firstDev.substring(0, 20))}${firstDev.length > 20 ? '...' : ''}</span></div>`;
+            metaHtml += `<div class="meta-item"><span class="meta-label">Developer</span><button type="button" class="meta-value meta-clickable" data-on-click="AllGamesController.metaFilterClick" data-args="${actionArgs('developer', firstDev, '$event')}" data-stop data-prevent title="Click to filter, Shift+click to exclude">${esc(firstDev.substring(0, 20))}${firstDev.length > 20 ? '...' : ''}</button></div>`;
         }
         if (game.publisher) {
             const firstPub = game.publisher.split(',')[0].trim();
-            metaHtml += `<div class="meta-item"><span class="meta-label">Publisher</span><span class="meta-value meta-clickable" data-on-click="AllGamesController.metaFilterClick" data-args="${actionArgs('publisher', firstPub, '$event')}" data-stop data-prevent title="Click to filter, Shift+click to exclude">${esc(firstPub.substring(0, 20))}${firstPub.length > 20 ? '...' : ''}</span></div>`;
+            metaHtml += `<div class="meta-item"><span class="meta-label">Publisher</span><button type="button" class="meta-value meta-clickable" data-on-click="AllGamesController.metaFilterClick" data-args="${actionArgs('publisher', firstPub, '$event')}" data-stop data-prevent title="Click to filter, Shift+click to exclude">${esc(firstPub.substring(0, 20))}${firstPub.length > 20 ? '...' : ''}</button></div>`;
         }
         if (game.release_date) {
             metaHtml += `<div class="meta-item"><span class="meta-label">Year</span><span class="meta-value">${esc(game.release_date.substring(0, 4))}</span></div>`;

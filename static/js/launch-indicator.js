@@ -53,14 +53,30 @@
         }).catch(() => {});
         // The open list still shows the killed game; close it so the next
         // click rebuilds it from the refreshed list.
-        if (popover) { popover.remove(); popover = null; }
+        closePopover();
         await refresh();
+    }
+
+    // PASS-59-245 — Esc or a click elsewhere closes the list; Esc returns
+    // focus to the indicator.
+    function onPopoverKey(e) {
+        if (e.key === 'Escape') { closePopover(); ind.focus(); }
+    }
+    function onOutsideClick(e) {
+        if (popover && !popover.contains(e.target) && !ind.contains(e.target)) closePopover();
+    }
+    function closePopover() {
+        if (!popover) return;
+        popover.remove();
+        popover = null;
+        ind.setAttribute('aria-expanded', 'false');
+        document.removeEventListener('keydown', onPopoverKey);
+        document.removeEventListener('click', onOutsideClick, true);
     }
 
     function togglePopover() {
         if (popover) {
-            popover.remove();
-            popover = null;
+            closePopover();
             return;
         }
         const handles = JSON.parse(ind.dataset.launches || '[]');
@@ -92,6 +108,9 @@
             popover.appendChild(row);
         }
         document.body.appendChild(popover);
+        ind.setAttribute('aria-expanded', 'true');
+        document.addEventListener('keydown', onPopoverKey);
+        document.addEventListener('click', onOutsideClick, true);
     }
 
     ind.addEventListener('click', togglePopover);

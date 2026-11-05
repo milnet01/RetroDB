@@ -14,10 +14,11 @@
     background: var(--card-bg);
     border: 1px solid var(--primary-cyan);
     border-radius: 999px;
-    box-shadow: 0 0 12px rgba(76, 201, 240, 0.35);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--primary-cyan) 35%, transparent);
     color: var(--text-primary);
     font-family: var(--font-mono, monospace);
     font-size: 0.85rem;
+    line-height: inherit;
     cursor: pointer;
     transition: opacity 0.2s ease, transform 0.2s ease;
 }
@@ -109,8 +110,11 @@
     position: relative;
 }
 
-.play-screen:focus {
-    outline: none;
+/* The play screen fills the window and takes focus only so Esc reaches it;
+   a ring round the whole window would say nothing (PASS-59-245). */
+.play-screen:focus,
+.play-screen:focus-visible {
+    outline: none !important;
 }
 
 /* Grown to a fixed share of the window, so a small logo file still shows large. */

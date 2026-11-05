@@ -11131,7 +11131,11 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.244 Updates and game launches recover from a failure (audit-fix, S).
-- **Status**: todo
+- **Resolution** (2026-11-05): Shipped in f331bf48 (2026-11-05). Tests: tests/test_pass59_244_recover.py.
+  Dismissed with reasons in the commit body: the standalone version check
+  (checksum plus /health after the swap, with rollback) and the scan-root
+  check with rom_path unset (LAN-only threat model).
+- **Status**: done
 - **Why**: audit 2026-11-04, lane 15. Related: PASS-59-174 (rollback),
   PASS-59-168 (command port bound to 127.0.0.1).
 - **Fix**:
@@ -11153,7 +11157,18 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.245 Keyboard focus is always easy to see, and every control works from the keyboard (accessibility, M).
-- **Status**: todo
+- **Resolution** (2026-11-05): Done 2026-11-05. One global `:focus-visible` ring (core/reset.css,
+  3px, `--primary-cyan-light`, `!important` so `outline: none` cannot hide
+  it); focus glows moved to `color-mix` of the theme colour; card filter
+  links and the running-games indicator are buttons; the popover closes on
+  Esc (focus returns) or an outside click; the play screen keeps Tab;
+  swatches carry aria-label and aria-pressed; trophy alts are full names.
+  Checked in headless Chrome on a :5001 scratch copy at 1600px and 375px:
+  the ring shows in the theme colour, Enter on a filter button refetches
+  the filtered list, no sideways overflow, no console errors. The rest of
+  the fixed cyan is PASS-59-255; themes.md §1 says so.
+  Tests: tests/test_pass59_245_focus.py.
+- **Status**: done
 - **Why**: audit 2026-11-04, lanes 12 and 13. The user is partially
   sighted.
 - **Fix**:
@@ -11357,6 +11372,19 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Hazard**: those calls return another shape than `TrophyTitle`, which
   `_psn_trophy_counts` reads. Needs a live PSN account to test, so it was
   not done untested in PASS-59-243.
+
+---
+
+#### Pass 59.255 Every theme colours the whole page: the remaining fixed cyan becomes theme colours (ux, M).
+- **Status**: todo
+- **Why**: component CSS still names the cyberpunk cyan directly
+  (`rgba(76, 201, 240, …)`, `#4cc9f0`), so those parts stay cyan in the
+  Matrix, Amber and other themes. PASS-59-245 moved the focus rings and
+  focus glows; `docs/specs/themes.md` §1 now says the rest are not done.
+- **Fix**: replace each with a theme colour, for example
+  `color-mix(in srgb, var(--primary-cyan) 15%, transparent)`, and look at
+  every theme at desktop and 375px. Then drop the caveat from themes.md.
+- **Find them**: `grep -rnE "rgba\(76, ?201, ?240|#4cc9f0" static/css/*/`.
 
 ## Done index
 

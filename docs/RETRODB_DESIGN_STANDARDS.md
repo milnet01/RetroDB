@@ -711,10 +711,15 @@ showConfirm('🗑️ Delete?', 'Are you sure?', () => { deleteItem(); });
 ## 11. Accessibility
 
 ### Focus States
+One rule in `core/reset.css` gives every control a 3px ring in the theme's
+own colour when reached by keyboard (PASS-59-245). It uses `!important`, so a
+component's `outline: none` cannot hide it. Do not add another focus outline;
+a component may add a glow beside it, from theme colours
+(`color-mix(in srgb, var(--primary-cyan) 15%, transparent)`), never a fixed one.
 ```css
-element:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(76, 201, 240, 0.5);
+:focus-visible {
+    outline: 3px solid var(--primary-cyan-light) !important;
+    outline-offset: 2px !important;
 }
 ```
 

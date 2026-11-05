@@ -69,3 +69,12 @@ a {
         scroll-behavior: auto !important;
     }
 }
+
+/* PASS-59-245 — every control shows a clear focus ring, in the theme's own
+   colour, when reached by keyboard. Many component rules set `outline: none`
+   on :focus for their own faint glow; !important lets this ring win over
+   them, because a partially sighted user must always see where focus is. */
+:focus-visible {
+    outline: 3px solid var(--primary-cyan-light) !important;
+    outline-offset: 2px !important;
+}

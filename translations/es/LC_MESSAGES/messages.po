@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-04 18:35+0200\n"
+"POT-Creation-Date: 2026-11-05 05:13+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -42,8 +42,8 @@ msgstr "Configuración necesaria"
 msgid "Password change required"
 msgstr "Es necesario cambiar la contraseña"
 
-#: app.py:1681 routes/auth.py:202 routes/auth.py:262 routes/auth.py:456
-#: routes/auth.py:501 templates/force_change_password.html:49
+#: app.py:1691 routes/auth.py:202 routes/auth.py:262 routes/auth.py:465
+#: routes/auth.py:510 templates/force_change_password.html:49
 #: templates/setup.html:469
 msgid "Password must be at least 12 characters"
 msgstr "La contraseña debe tener al menos 12 caracteres"
@@ -59,12 +59,12 @@ msgstr "Sistema no encontrado o sin juegos con logros"
 #: routes/achievements.py:176 routes/achievements.py:486
 #: routes/bonus_discs.py:265 routes/bulk_scrape.py:48 routes/cheats.py:32
 #: routes/cheats.py:51 routes/collections.py:276 routes/collections.py:531
-#: routes/emulators.py:304 routes/emulators.py:318 routes/games.py:395
-#: routes/games.py:923 routes/games.py:1052 routes/games.py:1119
-#: routes/games_ai.py:31 routes/games_media.py:39 routes/games_media.py:87
-#: routes/games_media.py:154 routes/games_media.py:205
-#: routes/games_media.py:238 routes/launch.py:242 routes/reports.py:706
-#: routes/reports.py:841 routes/trophies.py:1336 services/cheats.py:617
+#: routes/emulators.py:304 routes/emulators.py:318 routes/games.py:396
+#: routes/games.py:933 routes/games.py:1052 routes/games.py:1119
+#: routes/games_ai.py:31 routes/games_media.py:40 routes/games_media.py:89
+#: routes/games_media.py:156 routes/games_media.py:207
+#: routes/games_media.py:240 routes/launch.py:254 routes/reports.py:706
+#: routes/reports.py:841 routes/trophies.py:1347 services/cheats.py:629
 #: services/hltb_service.py:162
 msgid "Game not found"
 msgstr "Juego no encontrado"
@@ -307,7 +307,7 @@ msgstr "Demasiados intentos de inicio de sesión. Inténtalo de nuevo más tarde
 msgid "No user selected"
 msgstr "Ningún usuario seleccionado"
 
-#: routes/auth.py:68 routes/auth.py:228 routes/auth.py:287
+#: routes/auth.py:68 routes/auth.py:228 routes/auth.py:292
 msgid "User not found"
 msgstr "Usuario no encontrado"
 
@@ -345,64 +345,64 @@ msgstr "El nombre de usuario ya existe"
 msgid "The last admin must stay an active admin"
 msgstr "El último administrador debe seguir siendo un administrador activo"
 
-#: routes/auth.py:291
+#: routes/auth.py:296
 msgid "Cannot delete your own account"
 msgstr "No puedes eliminar tu propia cuenta"
 
-#: routes/auth.py:296
+#: routes/auth.py:301
 msgid "Cannot delete the last admin user"
 msgstr "No se puede eliminar el último usuario administrador"
 
-#: routes/auth.py:354 routes/auth.py:432 routes/auth.py:488
+#: routes/auth.py:363 routes/auth.py:441 routes/auth.py:497
 msgid "Not logged in"
 msgstr "Sesión no iniciada"
 
-#: routes/auth.py:391
+#: routes/auth.py:400
 msgid "Invalid locale"
 msgstr "Idioma no válido"
 
-#: routes/auth.py:396
+#: routes/auth.py:405
 msgid "Invalid theme"
 msgstr "Tema no válido"
 
-#: routes/auth.py:402
+#: routes/auth.py:411
 #, python-format
 msgid "Invalid RPCS3 trophy folder: %(reason)s"
 msgstr "Carpeta de trofeos de RPCS3 no válida: %(reason)s"
 
-#: routes/auth.py:444
+#: routes/auth.py:453
 msgid "Too many attempts. Please try again later."
 msgstr "Demasiados intentos. Inténtalo de nuevo más tarde."
 
-#: routes/auth.py:451 routes/auth.py:497
+#: routes/auth.py:460 routes/auth.py:506
 msgid "New password is required"
 msgstr "Se requiere una nueva contraseña"
 
-#: routes/auth.py:462
+#: routes/auth.py:471
 msgid "Current password is incorrect"
 msgstr "La contraseña actual es incorrecta"
 
-#: routes/auth.py:491
+#: routes/auth.py:500
 msgid "Password change not required"
 msgstr "No se requiere cambiar la contraseña"
 
-#: routes/auth.py:543
+#: routes/auth.py:552
 msgid "No file provided"
 msgstr "No se proporcionó ningún archivo"
 
-#: routes/auth.py:547 routes/museum.py:660
+#: routes/auth.py:556 routes/museum.py:660
 msgid "No file selected"
 msgstr "No se seleccionó ningún archivo"
 
-#: routes/auth.py:552
+#: routes/auth.py:561
 msgid "Invalid file type. Allowed: jpg, png, gif, webp"
 msgstr "Tipo de archivo no válido. Permitidos: jpg, png, gif, webp"
 
-#: routes/auth.py:557
+#: routes/auth.py:566
 msgid "File too large. Maximum size is 2MB"
 msgstr "Archivo demasiado grande. El tamaño máximo es 2MB"
 
-#: routes/auth.py:575
+#: routes/auth.py:584
 msgid ""
 "Avatar uploads require Pillow; please ask the operator to install the "
 "project requirements."
@@ -410,7 +410,7 @@ msgstr ""
 "La subida de avatares requiere Pillow; pide al operador que instale las "
 "dependencias del proyecto."
 
-#: routes/auth.py:591 routes/museum.py:692
+#: routes/auth.py:600 routes/museum.py:692
 msgid "Invalid image file"
 msgstr "Archivo de imagen no válido"
 
@@ -428,16 +428,16 @@ msgstr "El disco extra y el juego principal deben estar en el mismo sistema"
 
 #: routes/bonus_discs.py:211 routes/bonus_discs.py:229 routes/games.py:1381
 #: routes/games.py:1411 routes/platform_import.py:344
-#: routes/platform_import.py:723 routes/platform_import.py:1089
+#: routes/platform_import.py:723 routes/platform_import.py:1107
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
-#: routes/scrape_logs.py:219 routes/scraper.py:204 routes/scraper.py:535
-#: routes/scraper.py:926 routes/settings.py:320 routes/settings.py:344
+#: routes/scrape_logs.py:219 routes/scraper.py:207 routes/scraper.py:538
+#: routes/scraper.py:929 routes/settings.py:320 routes/settings.py:344
 #: routes/settings.py:459 routes/settings.py:538 routes/settings.py:567
 #: routes/settings.py:611 routes/settings.py:627 routes/settings.py:663
 #: routes/steam_achievements.py:138 routes/systems.py:292 routes/systems.py:482
-#: routes/trophies.py:553 routes/trophies.py:751 routes/trophies.py:799
-#: routes/trophies.py:1627 routes/trophies.py:1651 routes/trophies.py:1696
-#: routes/trophies.py:1724 routes/trophies.py:1766 routes/trophies.py:1833
+#: routes/trophies.py:593 routes/trophies.py:791 routes/trophies.py:839
+#: routes/trophies.py:1638 routes/trophies.py:1662 routes/trophies.py:1707
+#: routes/trophies.py:1735 routes/trophies.py:1777 routes/trophies.py:1844
 #: routes/xbox_achievements.py:157 services/api_helpers.py:46
 msgid "An internal error occurred"
 msgstr "Se produjo un error interno"
@@ -473,7 +473,7 @@ msgstr "No se encontraron coincidencias"
 msgid "No game IDs provided"
 msgstr "No se proporcionaron IDs de juego"
 
-#: routes/cheats.py:49 services/cheats.py:562
+#: routes/cheats.py:49 services/cheats.py:574
 msgid "Send the names of the cheats to switch on."
 msgstr "Envía los nombres de los trucos que quieres activar."
 
@@ -485,7 +485,7 @@ msgstr "Ese paquete de trucos no existe."
 msgid "Enter a folder to import."
 msgstr "Escribe una carpeta para importar."
 
-#: routes/clz_import.py:258
+#: routes/clz_import.py:271
 msgid ""
 "pdfplumber module not installed. Please run: pip install pdfplumber "
 "--break-system-packages"
@@ -493,39 +493,39 @@ msgstr ""
 "El módulo pdfplumber no está instalado. Ejecuta: pip install pdfplumber "
 "--break-system-packages"
 
-#: routes/clz_import.py:263
+#: routes/clz_import.py:276
 msgid "No file uploaded"
 msgstr "No se subió ningún archivo"
 
-#: routes/clz_import.py:267
+#: routes/clz_import.py:280
 msgid "File must be a PDF"
 msgstr "El archivo debe ser un PDF"
 
-#: routes/clz_import.py:274
+#: routes/clz_import.py:287
 #, python-format
 msgid "File too large (%(size)sMB). Maximum size is 50MB"
 msgstr "Archivo demasiado grande (%(size)sMB). El tamaño máximo es 50MB"
 
-#: routes/clz_import.py:277
+#: routes/clz_import.py:290
 msgid "Invalid PDF file (bad magic bytes)"
 msgstr "Archivo PDF no válido (bytes mágicos incorrectos)"
 
-#: routes/clz_import.py:301
+#: routes/clz_import.py:314
 #, python-format
 msgid "PDF has %(pages)s pages; maximum is %(max)s."
 msgstr "El PDF tiene %(pages)s páginas; el máximo es %(max)s."
 
-#: routes/clz_import.py:570
+#: routes/clz_import.py:583
 msgid "No games to import"
 msgstr "No hay juegos para importar"
 
-#: routes/collections.py:102 routes/collections.py:446
+#: routes/collections.py:103 routes/collections.py:446
 #: routes/collections.py:475 routes/collections.py:497
 #: routes/collections.py:527 routes/collections.py:566
 msgid "List not found"
 msgstr "Lista no encontrada"
 
-#: routes/collections.py:162
+#: routes/collections.py:163
 msgid "Tag name is required"
 msgstr "El nombre de la etiqueta es obligatorio"
 
@@ -584,7 +584,7 @@ msgid "This game is already on your wishlist"
 msgstr "Este juego ya está en tu lista de deseos"
 
 #: routes/collections.py:687 routes/collections.py:732
-#: routes/collections.py:754
+#: routes/collections.py:755
 msgid "Wishlist item not found"
 msgstr "Elemento de la lista de deseos no encontrado"
 
@@ -636,7 +636,7 @@ msgstr "La pantalla completa se configura por sistema, en Ajustes > Emuladores."
 msgid "That value is not one of the choices."
 msgstr "Ese valor no es una de las opciones."
 
-#: routes/emulators.py:320 services/standalone_settings.py:368
+#: routes/emulators.py:320 services/standalone_settings.py:373
 msgid "RetroDB manages per-game settings for DuckStation, PCSX2 and RPCS3 only."
 msgstr "RetroDB gestiona ajustes por juego solo para DuckStation, PCSX2 y RPCS3."
 
@@ -644,20 +644,20 @@ msgstr "RetroDB gestiona ajustes por juego solo para DuckStation, PCSX2 y RPCS3.
 msgid "Emulator not found"
 msgstr "Emulador no encontrado"
 
-#: routes/games.py:252 routes/games.py:286
+#: routes/games.py:253 routes/games.py:287
 msgid "No IDs provided"
 msgstr "No se proporcionaron IDs"
 
-#: routes/games.py:294
+#: routes/games.py:295
 msgid "Provide 1-50 valid IDs"
 msgstr "Proporciona entre 1 y 50 IDs válidos"
 
-#: routes/games.py:570
+#: routes/games.py:580
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
 msgstr "Vídeo no guardado: debe ser un archivo MP4, WebM u OGG de hasta %(mb)s MB."
 
-#: routes/games.py:580
+#: routes/games.py:590
 #, python-format
 msgid ""
 "Screenshots not added because they match ones the game already has: "
@@ -666,7 +666,7 @@ msgstr ""
 "Capturas no añadidas porque coinciden con otras que el juego ya tiene: "
 "%(count)s"
 
-#: routes/games.py:720
+#: routes/games.py:738
 msgid "Game not found after update"
 msgstr "Juego no encontrado tras la actualización"
 
@@ -696,8 +696,8 @@ msgid "No fields to update"
 msgstr "No hay campos que actualizar"
 
 #: routes/games.py:1197 routes/platform_import.py:250
-#: routes/platform_import.py:629 routes/platform_import.py:992
-#: routes/trophies.py:1908 templates/game_imports.html:579
+#: routes/platform_import.py:629 routes/platform_import.py:993
+#: routes/trophies.py:1919 templates/game_imports.html:579
 #: templates/game_imports.html:842
 msgid "No games selected"
 msgstr "Ningún juego seleccionado"
@@ -736,21 +736,21 @@ msgstr ""
 msgid "AI scraper module not available"
 msgstr "El módulo del scraper de IA no está disponible"
 
-#: routes/games_media.py:76
+#: routes/games_media.py:78
 msgid "No filename provided"
 msgstr "No se proporcionó ningún nombre de archivo"
 
-#: routes/games_media.py:83 routes/reports.py:699 routes/scrape_logs.py:129
+#: routes/games_media.py:85 routes/reports.py:699 routes/scrape_logs.py:129
 #: routes/scrape_logs.py:154 routes/scrape_logs.py:203 routes/settings.py:353
 msgid "Invalid filename"
 msgstr "Nombre de archivo no válido"
 
-#: routes/games_media.py:92
+#: routes/games_media.py:94
 #, python-format
 msgid "ROM file not found on disk: %(path)s"
 msgstr "Archivo ROM no encontrado en el disco: %(path)s"
 
-#: routes/games_media.py:96 routes/reports.py:731 routes/reports.py:856
+#: routes/games_media.py:98 routes/reports.py:731 routes/reports.py:856
 msgid ""
 "A .cue or .gdi file names this track, so renaming it would break that "
 "disc. Rename the .cue or .gdi file instead."
@@ -759,79 +759,79 @@ msgstr ""
 " nombre dañaría ese disco. Cambia el nombre del archivo .cue o .gdi en su"
 " lugar."
 
-#: routes/games_media.py:111 routes/reports.py:740 routes/reports.py:921
+#: routes/games_media.py:113 routes/reports.py:740 routes/reports.py:921
 msgid "Destination is outside the configured ROM root"
 msgstr "El destino está fuera de la raíz de ROMs configurada"
 
-#: routes/games_media.py:115 routes/reports.py:744
+#: routes/games_media.py:117 routes/reports.py:744
 #, python-format
 msgid "Cannot rename: %(reason)s"
 msgstr "No se puede renombrar: %(reason)s"
 
-#: routes/games_media.py:120 routes/reports.py:750 routes/reports.py:927
+#: routes/games_media.py:122 routes/reports.py:750 routes/reports.py:927
 msgid "A file with that name already exists"
 msgstr "Ya existe un archivo con ese nombre"
 
-#: routes/games_media.py:127
+#: routes/games_media.py:129
 msgid "Failed to rename file"
 msgstr "No se pudo renombrar el archivo"
 
-#: routes/games_media.py:147
+#: routes/games_media.py:149
 msgid "No screenshot specified"
 msgstr "No se especificó ninguna captura de pantalla"
 
-#: routes/games_media.py:150
+#: routes/games_media.py:152
 msgid "Invalid screenshot filename"
 msgstr "Nombre de archivo de captura de pantalla no válido"
 
-#: routes/games_media.py:160
+#: routes/games_media.py:162
 msgid "Screenshot not found"
 msgstr "Captura de pantalla no encontrada"
 
-#: routes/games_media.py:196 templates/_modals/edit_modal.html:389
+#: routes/games_media.py:198 templates/_modals/edit_modal.html:389
 msgid "Pick the .box.json file Slipcase saved, together with its pictures."
 msgstr "Elige el archivo .box.json que guardó Slipcase, junto con sus imágenes."
 
-#: routes/games_media.py:197
+#: routes/games_media.py:199
 msgid "Pick only one .box.json file at a time."
 msgstr "Elige solo un archivo .box.json cada vez."
 
-#: routes/games_media.py:198
+#: routes/games_media.py:200
 msgid "The .box.json file could not be read."
 msgstr "No se pudo leer el archivo .box.json."
 
-#: routes/games_media.py:199
+#: routes/games_media.py:201
 msgid "This is not a Slipcase box file RetroDB can read."
 msgstr "Este no es un archivo de caja de Slipcase que RetroDB pueda leer."
 
-#: routes/games_media.py:200
+#: routes/games_media.py:202
 msgid "The box file names a picture RetroDB will not open."
 msgstr "El archivo de caja nombra una imagen que RetroDB no abrirá."
 
-#: routes/games_media.py:201
+#: routes/games_media.py:203
 #, python-format
 msgid "Some pictures the box file needs were not picked: %(names)s"
 msgstr ""
 "No se eligieron algunas imágenes que necesita el archivo de caja: "
 "%(names)s"
 
-#: routes/games_media.py:203
+#: routes/games_media.py:205
 msgid "A picture is larger than 10 MB."
 msgstr "Una imagen ocupa más de 10 MB."
 
-#: routes/games_media.py:204
+#: routes/games_media.py:206
 msgid "A picture is not a readable image."
 msgstr "Una imagen no se puede leer."
 
-#: routes/games_media.py:206
+#: routes/games_media.py:208
 msgid "This game already has 3D box faces."
 msgstr "Este juego ya tiene caras de caja 3D."
 
-#: routes/games_media.py:207
+#: routes/games_media.py:209
 msgid "The faces could not be saved. Check the disk has space."
 msgstr "No se pudieron guardar las caras. Comprueba que el disco tiene espacio."
 
-#: routes/games_media.py:209 services/js_i18n_strings.py:991
+#: routes/games_media.py:211 services/js_i18n_strings.py:991
 msgid "The box file could not be imported."
 msgstr "No se pudo importar el archivo de caja."
 
@@ -839,41 +839,41 @@ msgstr "No se pudo importar el archivo de caja."
 msgid "Title required"
 msgstr "Se requiere un título"
 
-#: routes/launch.py:78
+#: routes/launch.py:90
 #, python-format
 msgid "This action requires the \"%(perm)s\" permission"
 msgstr "Esta acción requiere el permiso \"%(perm)s\""
 
-#: routes/launch.py:91
+#: routes/launch.py:103
 msgid "The player is already running another game"
 msgstr "El reproductor ya está ejecutando otro juego"
 
-#: routes/launch.py:102
+#: routes/launch.py:114
 msgid "This game is already running"
 msgstr "Este juego ya está en ejecución"
 
-#: routes/launch.py:108
+#: routes/launch.py:120
 #, python-format
 msgid "failed to kill prior instance: %(err)s"
 msgstr "no se pudo finalizar la instancia anterior: %(err)s"
 
-#: routes/launch.py:182
+#: routes/launch.py:194
 msgid "RetroArch is not built for this computer."
 msgstr "RetroArch no está compilado para este equipo."
 
-#: routes/launch.py:195
+#: routes/launch.py:207
 msgid "Cores are not built for this computer."
 msgstr "Los núcleos no están compilados para este equipo."
 
-#: routes/launch.py:198
+#: routes/launch.py:210
 msgid "The player is not installed."
 msgstr "El reproductor no está instalado."
 
-#: routes/launch.py:207
+#: routes/launch.py:219
 msgid "No system with games has a player core."
 msgstr "Ningún sistema con juegos tiene un núcleo para el reproductor."
 
-#: routes/launch.py:220
+#: routes/launch.py:232
 msgid ""
 "Could not fetch the list of cores. Check the internet connection and try "
 "again."
@@ -881,23 +881,23 @@ msgstr ""
 "No se pudo obtener la lista de núcleos. Comprueba la conexión a Internet "
 "e inténtalo de nuevo."
 
-#: routes/launch.py:225
+#: routes/launch.py:237
 msgid "Every core is up to date."
 msgstr "Todos los núcleos están actualizados."
 
-#: routes/launch.py:244
+#: routes/launch.py:256
 msgid "Player settings reset to recommended"
 msgstr "Ajustes del reproductor restablecidos a los recomendados"
 
-#: routes/launch.py:320
+#: routes/launch.py:332
 msgid "That game is no longer running"
 msgstr "Ese juego ya no se está ejecutando"
 
-#: routes/launch.py:322
+#: routes/launch.py:334
 msgid "This game has no disk list to swap through"
 msgstr "Este juego no tiene lista de discos que cambiar"
 
-#: routes/launch.py:329
+#: routes/launch.py:341
 #, python-format
 msgid ""
 "RetroArch is not accepting commands. In RetroArch, turn on Settings > "
@@ -906,19 +906,19 @@ msgstr ""
 "RetroArch no acepta comandos. En RetroArch, activa Settings > Network > "
 "Network Commands (puerto %(port)s)."
 
-#: routes/launch.py:332
+#: routes/launch.py:344
 msgid "Next disk inserted"
 msgstr "Siguiente disco insertado"
 
-#: routes/maintenance.py:274
+#: routes/maintenance.py:279
 msgid "Unknown image type"
 msgstr "Tipo de imagen desconocido"
 
-#: routes/maintenance.py:487
+#: routes/maintenance.py:492
 msgid "Add your ScreenScraper account in Settings first."
 msgstr "Primero añade tu cuenta de ScreenScraper en Ajustes."
 
-#: routes/maintenance.py:488
+#: routes/maintenance.py:493
 msgid "This fix is already running."
 msgstr "Esta corrección ya se está ejecutando."
 
@@ -934,7 +934,7 @@ msgstr "Elige primero una lista de MAME."
 msgid "MAME Names is already running."
 msgstr "MAME Names ya se está ejecutando."
 
-#: routes/museum.py:385 routes/scraper.py:767
+#: routes/museum.py:385 routes/scraper.py:770
 msgid "No AI provider configured"
 msgstr "No hay ningún proveedor de IA configurado"
 
@@ -1144,63 +1144,63 @@ msgstr "Archivo no encontrado"
 msgid "Log file not found"
 msgstr "Archivo de registro no encontrado"
 
-#: routes/scraper.py:219
+#: routes/scraper.py:222
 #, python-format
 msgid "invalid scraper settings: %(reason)s"
 msgstr "ajustes del scraper no válidos: %(reason)s"
 
-#: routes/scraper.py:280
+#: routes/scraper.py:283
 #, python-format
 msgid "invalid api keys: %(reason)s"
 msgstr "claves de API no válidas: %(reason)s"
 
-#: routes/scraper.py:555
+#: routes/scraper.py:558
 msgid "No TGDB API key configured"
 msgstr "No hay ninguna clave de API de TGDB configurada"
 
-#: routes/scraper.py:652
+#: routes/scraper.py:655
 msgid "No ScreenScraper credentials configured"
 msgstr "No hay credenciales de ScreenScraper configuradas"
 
-#: routes/scraper.py:688
+#: routes/scraper.py:691
 msgid "Invalid JSON response from ScreenScraper"
 msgstr "Respuesta JSON no válida de ScreenScraper"
 
-#: routes/scraper.py:691
+#: routes/scraper.py:694
 msgid "Error parsing API response"
 msgstr "Error al analizar la respuesta de la API"
 
-#: routes/scraper.py:693
+#: routes/scraper.py:696
 #, python-format
 msgid "ScreenScraper answered HTTP %(code)s"
 msgstr "ScreenScraper respondió HTTP %(code)s"
 
-#: routes/scraper.py:708
+#: routes/scraper.py:711
 msgid "No RAWG API key configured"
 msgstr "No hay ninguna clave de API de RAWG configurada"
 
-#: routes/scraper.py:813
+#: routes/scraper.py:816
 #, python-format
 msgid "Unknown AI provider: %(provider)s"
 msgstr "Proveedor de IA desconocido: %(provider)s"
 
-#: routes/scraper.py:816
+#: routes/scraper.py:819
 msgid "No response from AI provider"
 msgstr "Sin respuesta del proveedor de IA"
 
-#: routes/scraper.py:821 routes/scraper.py:822
+#: routes/scraper.py:824 routes/scraper.py:825
 #, python-format
 msgid "%(provider)s refused the API key. Check the key and save it again."
 msgstr "%(provider)s rechazó la clave de API. Revisa la clave y guárdala de nuevo."
 
-#: routes/scraper.py:823
+#: routes/scraper.py:826
 #, python-format
 msgid "%(provider)s wants payment: the account has no credit or billing is off."
 msgstr ""
 "%(provider)s pide un pago: la cuenta no tiene crédito o la facturación "
 "está desactivada."
 
-#: routes/scraper.py:824
+#: routes/scraper.py:827
 #, python-format
 msgid ""
 "%(provider)s says a usage limit is reached. Try again later or check your"
@@ -1209,17 +1209,17 @@ msgstr ""
 "%(provider)s indica que se alcanzó un límite de uso. Inténtalo más tarde "
 "o revisa tu plan."
 
-#: routes/scraper.py:826
+#: routes/scraper.py:829
 #, python-format
 msgid "%(provider)s answered with error %(code)s."
 msgstr "%(provider)s respondió con el error %(code)s."
 
-#: routes/scraper.py:919
+#: routes/scraper.py:922
 #, python-format
 msgid "Connection error: %(error)s"
 msgstr "Error de conexión: %(error)s"
 
-#: routes/scraper.py:922
+#: routes/scraper.py:925
 #, python-format
 msgid "Allowance check not supported for %(scraper)s"
 msgstr "La comprobación de cuota no es compatible con %(scraper)s"
@@ -1394,7 +1394,7 @@ msgstr ""
 "Conserva al menos una copia de cada captura de pantalla. No se eliminó "
 "nada."
 
-#: routes/trophies.py:154 routes/trophies.py:1778
+#: routes/trophies.py:154 routes/trophies.py:1789
 msgid "PSNAWP library not installed. Run: pip install psnawp"
 msgstr "La biblioteca PSNAWP no está instalada. Ejecuta: pip install psnawp"
 
@@ -1420,7 +1420,7 @@ msgstr "Falló la autenticación de PSN. Es posible que tu NPSSO haya caducado."
 msgid "PSN connection error: %(error)s"
 msgstr "Error de conexión con PSN: %(error)s"
 
-#: routes/trophies.py:441
+#: routes/trophies.py:477
 msgid ""
 "Please configure your RPCS3 Trophy Path in your profile settings to view "
 "trophies"
@@ -1428,56 +1428,56 @@ msgstr ""
 "Configura la ruta de trofeos de RPCS3 en los ajustes de tu perfil para "
 "ver los trofeos"
 
-#: routes/trophies.py:473
+#: routes/trophies.py:509
 msgid "Trophy set not found"
 msgstr "Conjunto de trofeos no encontrado"
 
-#: routes/trophies.py:517
+#: routes/trophies.py:557
 msgid "RPCS3_TROPHY_PATH not configured"
 msgstr "RPCS3_TROPHY_PATH no está configurado"
 
-#: routes/trophies.py:520
+#: routes/trophies.py:560
 #, python-format
 msgid "Trophy path not found: %(path)s"
 msgstr "Ruta de trofeos no encontrada: %(path)s"
 
-#: routes/trophies.py:812 routes/trophies.py:1749
+#: routes/trophies.py:852 routes/trophies.py:1760
 msgid "PSN game not found"
 msgstr "Juego de PSN no encontrado"
 
-#: routes/trophies.py:1103
+#: routes/trophies.py:1144
 msgid "Sync already in progress"
 msgstr "Ya hay una sincronización en curso"
 
-#: routes/trophies.py:1354
+#: routes/trophies.py:1365
 msgid "Game not found in your PSN trophy list"
 msgstr "Juego no encontrado en tu lista de trofeos de PSN"
 
-#: routes/trophies.py:1624
+#: routes/trophies.py:1635
 msgid "Game not found on PSN"
 msgstr "Juego no encontrado en PSN"
 
-#: routes/trophies.py:1639 routes/trophies.py:1712
+#: routes/trophies.py:1650 routes/trophies.py:1723
 msgid "Missing npwr_id"
 msgstr "Falta npwr_id"
 
-#: routes/trophies.py:1737
+#: routes/trophies.py:1748
 msgid "Missing npwr_id or group_id"
 msgstr "Falta npwr_id o group_id"
 
-#: routes/trophies.py:1740
+#: routes/trophies.py:1751
 msgid "Name cannot be empty"
 msgstr "El nombre no puede estar vacío"
 
-#: routes/trophies.py:1865
+#: routes/trophies.py:1876
 msgid "No NPSSO token provided"
 msgstr "No se proporcionó ningún token NPSSO"
 
-#: routes/trophies.py:1890
+#: routes/trophies.py:1901
 msgid "Could not connect to PSN"
 msgstr "No se pudo conectar con PSN"
 
-#: routes/trophies.py:1917
+#: routes/trophies.py:1928
 msgid "PSN NPSSO not configured"
 msgstr "El NPSSO de PSN no está configurado"
 
@@ -1534,44 +1534,44 @@ msgstr "Juego no encontrado o no es un juego de Xbox"
 msgid "%(name)s is too large to be a cheat file."
 msgstr "%(name)s es demasiado grande para ser un archivo de trucos."
 
-#: services/cheats.py:269 services/cheats.py:289
+#: services/cheats.py:268 services/cheats.py:288
 msgid "Not a cheat file."
 msgstr "No es un archivo de trucos."
 
-#: services/cheats.py:276
+#: services/cheats.py:275
 msgid "A PCSX2 file with no CRC in its name or its gametitle line."
 msgstr "Un archivo de PCSX2 sin CRC en su nombre ni en su línea gametitle."
 
-#: services/cheats.py:283
+#: services/cheats.py:282
 msgid "A RetroArch file whose folder names no single system."
 msgstr "Un archivo de RetroArch cuya carpeta no nombra un único sistema."
 
-#: services/cheats.py:288
+#: services/cheats.py:287
 msgid "A DuckStation file not named by its serial."
 msgstr "Un archivo de DuckStation que no lleva el número de serie como nombre."
 
-#: services/cheats.py:297
+#: services/cheats.py:296
 msgid "That folder was not found."
 msgstr "No se encontró esa carpeta."
 
-#: services/cheats.py:300
+#: services/cheats.py:299
 msgid "That folder is RetroDB's own cheat store."
 msgstr "Esa carpeta es el propio almacén de trucos de RetroDB."
 
-#: services/cheats.py:435 services/cheats.py:453
+#: services/cheats.py:434 services/cheats.py:452
 msgid "The player has no cheats for this system."
 msgstr "RetroArch (RetroDB) no tiene trucos para este sistema."
 
-#: services/cheats.py:444 services/cheats.py:467 services/cheats.py:560
-#: services/cheats.py:599 services/cheats.py:606
+#: services/cheats.py:443 services/cheats.py:466 services/cheats.py:572
+#: services/cheats.py:611 services/cheats.py:618
 msgid "No cheats were found for this game."
 msgstr "No se encontraron trucos para este juego."
 
-#: services/cheats.py:459
+#: services/cheats.py:458
 msgid "That cheat list is not one of this game's."
 msgstr "Esa lista de trucos no es de este juego."
 
-#: services/cheats.py:595 services/cheats.py:623
+#: services/cheats.py:607 services/cheats.py:635
 msgid "Cheats work in the player, DuckStation and PCSX2."
 msgstr "Los trucos funcionan en RetroArch (RetroDB), DuckStation y PCSX2."
 
@@ -3314,7 +3314,7 @@ msgstr "No descargado"
 msgid "Not versions"
 msgstr "No son versiones"
 
-#: services/js_i18n_strings.py:847 templates/base.html:1440
+#: services/js_i18n_strings.py:847 templates/base.html:1441
 msgid "Now playing"
 msgstr "Reproduciendo ahora"
 
@@ -4520,7 +4520,7 @@ msgstr ""
 "%(service)s indica que se alcanzó su límite. RetroDB no volverá a "
 "consultarlo hasta %(when)s."
 
-#: services/standalone_settings.py:310
+#: services/standalone_settings.py:315
 msgid ""
 "RetroDB could not read this disc's serial, so it cannot name the "
 "emulator's per-game settings file."
@@ -4528,7 +4528,7 @@ msgstr ""
 "RetroDB no pudo leer el número de serie de este disco, así que no puede "
 "nombrar el archivo de ajustes por juego del emulador."
 
-#: services/standalone_settings.py:320
+#: services/standalone_settings.py:325
 msgid ""
 "PCSX2 has two or more settings files for this game; remove the ones you "
 "do not use."
@@ -4536,7 +4536,7 @@ msgstr ""
 "PCSX2 tiene dos o más archivos de ajustes para este juego; elimina los "
 "que no uses."
 
-#: services/standalone_settings.py:328
+#: services/standalone_settings.py:333
 msgid ""
 "RetroDB could not read this disc's boot file, so it cannot name PCSX2's "
 "per-game settings file."
@@ -4544,20 +4544,20 @@ msgstr ""
 "RetroDB no pudo leer el archivo de arranque de este disco, así que no "
 "puede nombrar el archivo de ajustes por juego de PCSX2."
 
-#: services/standalone_settings.py:336
+#: services/standalone_settings.py:341
 msgid "Settings path outside the data folder."
 msgstr "Ruta de ajustes fuera de la carpeta de datos."
 
-#: services/standalone_settings.py:360 templates/game_detail.html:111
+#: services/standalone_settings.py:365 templates/game_detail.html:111
 msgid "No emulator is set up for this system."
 msgstr "No hay ningún emulador configurado para este sistema."
 
-#: services/standalone_settings.py:378
+#: services/standalone_settings.py:383
 #, python-format
 msgid "Run %(name)s once so it creates its settings, then play again."
 msgstr "Ejecuta %(name)s una vez para que cree sus ajustes y vuelve a jugar."
 
-#: services/standalone_settings.py:481
+#: services/standalone_settings.py:487
 msgid "The player has no core for this system."
 msgstr "El reproductor no tiene un núcleo para este sistema."
 
@@ -6843,7 +6843,7 @@ msgstr "Imágenes/Vídeo"
 msgid "Save Changes"
 msgstr "Guardar cambios"
 
-#: templates/base.html:1443
+#: templates/base.html:1444
 msgid "running"
 msgstr "en ejecución"
 
@@ -7067,8 +7067,10 @@ msgid "Maximum rank reached. Flawless."
 msgstr "Rango máximo alcanzado. Impecable."
 
 #: templates/collector_trophies.html:66 templates/local_trophies.html:66
-#: templates/local_trophies.html:68 templates/psn_trophies.html:83
-#: templates/psn_trophies.html:85 templates/psn_trophy_detail.html:370
+#: templates/local_trophies.html:68 templates/local_trophies.html:144
+#: templates/local_trophy_detail.html:134 templates/psn_trophies.html:83
+#: templates/psn_trophies.html:85 templates/psn_trophies.html:1240
+#: templates/psn_trophy_detail.html:125 templates/psn_trophy_detail.html:370
 #: templates/psn_trophy_detail.html:403 templates/psn_trophy_detail.html:456
 #: templates/psn_trophy_detail.html:486
 msgid "Platinum"
@@ -7079,8 +7081,10 @@ msgid "Legendary milestones"
 msgstr "Hitos legendarios"
 
 #: templates/collector_trophies.html:67 templates/local_trophies.html:73
-#: templates/local_trophies.html:75 templates/psn_trophies.html:90
-#: templates/psn_trophies.html:92 templates/psn_trophy_detail.html:370
+#: templates/local_trophies.html:75 templates/local_trophies.html:148
+#: templates/local_trophy_detail.html:138 templates/psn_trophies.html:90
+#: templates/psn_trophies.html:92 templates/psn_trophies.html:1244
+#: templates/psn_trophy_detail.html:129 templates/psn_trophy_detail.html:370
 #: templates/psn_trophy_detail.html:403 templates/psn_trophy_detail.html:456
 #: templates/psn_trophy_detail.html:486
 msgid "Gold"
@@ -7091,8 +7095,10 @@ msgid "Expert-level achievements"
 msgstr "Logros de nivel experto"
 
 #: templates/collector_trophies.html:68 templates/local_trophies.html:80
-#: templates/local_trophies.html:82 templates/psn_trophies.html:97
-#: templates/psn_trophies.html:99 templates/psn_trophy_detail.html:370
+#: templates/local_trophies.html:82 templates/local_trophies.html:152
+#: templates/local_trophy_detail.html:142 templates/psn_trophies.html:97
+#: templates/psn_trophies.html:99 templates/psn_trophies.html:1248
+#: templates/psn_trophy_detail.html:133 templates/psn_trophy_detail.html:370
 #: templates/psn_trophy_detail.html:403 templates/psn_trophy_detail.html:456
 #: templates/psn_trophy_detail.html:486
 msgid "Silver"
@@ -7103,8 +7109,10 @@ msgid "Intermediate milestones"
 msgstr "Hitos intermedios"
 
 #: templates/collector_trophies.html:69 templates/local_trophies.html:87
-#: templates/local_trophies.html:89 templates/psn_trophies.html:104
-#: templates/psn_trophies.html:106 templates/psn_trophy_detail.html:370
+#: templates/local_trophies.html:89 templates/local_trophies.html:156
+#: templates/local_trophy_detail.html:146 templates/psn_trophies.html:104
+#: templates/psn_trophies.html:106 templates/psn_trophies.html:1252
+#: templates/psn_trophy_detail.html:137 templates/psn_trophy_detail.html:370
 #: templates/psn_trophy_detail.html:403 templates/psn_trophy_detail.html:456
 #: templates/psn_trophy_detail.html:486
 msgid "Bronze"
@@ -8562,7 +8570,8 @@ msgstr "No se pudo desconectar: {error}"
 msgid "Xbox games found: {total} ({existing} already imported)"
 msgstr "Juegos de Xbox encontrados: {total} ({existing} ya importados)"
 
-#: templates/game_imports.html:762 templates/game_imports.html:776
+#: templates/game_imports.html:762 templates/game_imports.html:770
+#: templates/game_imports.html:776
 msgid "In your library: link it"
 msgstr "En tu biblioteca: vincúlalo"
 
@@ -11890,31 +11899,71 @@ msgstr "Escanea tu biblioteca de ROMs para añadir sistemas."
 msgid "System Specifications"
 msgstr "Especificaciones del sistema"
 
-#: templates/tags.html:480
+#: templates/tags.html:54
+msgid "Cyan"
+msgstr "Cian"
+
+#: templates/tags.html:55
+msgid "Magenta"
+msgstr "Magenta"
+
+#: templates/tags.html:56
+msgid "Green"
+msgstr "Verde"
+
+#: templates/tags.html:57
+msgid "Red"
+msgstr "Rojo"
+
+#: templates/tags.html:58
+msgid "Orange"
+msgstr "Naranja"
+
+#: templates/tags.html:59
+msgid "Purple"
+msgstr "Morado"
+
+#: templates/tags.html:60
+msgid "Blue"
+msgstr "Azul"
+
+#: templates/tags.html:61
+msgid "Pink"
+msgstr "Rosa"
+
+#: templates/tags.html:62
+msgid "Teal"
+msgstr "Verde azulado"
+
+#: templates/tags.html:63
+msgid "Gray"
+msgstr "Gris"
+
+#: templates/tags.html:486
 msgid "Please enter a tag name."
 msgstr "Introduce un nombre de etiqueta."
 
-#: templates/tags.html:505
+#: templates/tags.html:511
 msgid "Tag updated."
 msgstr "Etiqueta actualizada."
 
-#: templates/tags.html:505
+#: templates/tags.html:511
 msgid "Tag created."
 msgstr "Etiqueta creada."
 
-#: templates/tags.html:509
+#: templates/tags.html:515
 msgid "Failed to save tag."
 msgstr "No se pudo guardar la etiqueta."
 
-#: templates/tags.html:513
+#: templates/tags.html:519
 msgid "Error saving tag."
 msgstr "Error al guardar la etiqueta."
 
-#: templates/tags.html:519
+#: templates/tags.html:525
 msgid "Delete Tag"
 msgstr "Eliminar etiqueta"
 
-#: templates/tags.html:520
+#: templates/tags.html:526
 #, python-brace-format
 msgid ""
 "Are you sure you want to delete the tag \"{name}\"?\n"
@@ -11923,15 +11972,15 @@ msgstr ""
 "¿Seguro que quieres eliminar la etiqueta \"{name}\"?\n"
 "Se quitará de todos los juegos."
 
-#: templates/tags.html:530
+#: templates/tags.html:536
 msgid "Tag deleted."
 msgstr "Etiqueta eliminada."
 
-#: templates/tags.html:534
+#: templates/tags.html:540
 msgid "Failed to delete tag."
 msgstr "No se pudo eliminar la etiqueta."
 
-#: templates/tags.html:538
+#: templates/tags.html:544
 msgid "Error deleting tag."
 msgstr "Error al eliminar la etiqueta."
 

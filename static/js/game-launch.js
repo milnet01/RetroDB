@@ -102,7 +102,11 @@
         status.textContent = t('Starting…');
         el.append(art, status);
         el.addEventListener('click', closeScreen);
-        const onKey = (e) => { if (e.key === 'Escape') { e.preventDefault(); closeScreen(); } };
+        // Esc closes it; Tab stays on it, since it covers the page (PASS-59-245).
+        const onKey = (e) => {
+            if (e.key === 'Escape') { e.preventDefault(); closeScreen(); }
+            else if (e.key === 'Tab') { e.preventDefault(); el.focus({preventScroll: true}); }
+        };
         document.addEventListener('keydown', onKey, true);
         document.body.appendChild(el);
         el.focus({preventScroll: true});
