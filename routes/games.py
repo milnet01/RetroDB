@@ -455,11 +455,20 @@ def game_detail(game_id):
                         'save_type', 'similar_games', 'edition', 'description',
                         'launch_args_override',
                     )
+                    # A field the form did not send keeps its value; it was
+                    # blanked before (PASS-59-242).
+                    def _stored(key):
+                        value = game[key] if key in game.keys() else None
+                        return '' if value is None else str(value)
                     _payload = {
-                        k: request.form.get(f'edit_{k}', '')
+                        k: request.form.get(f'edit_{k}', _stored(k))
                         for k in _form_keys
                     }
-                    _payload['controller_support'] = controller_support_input
+                    _payload['controller_support'] = (
+                        controller_support_input
+                        if ('edit_controller_support' in request.form
+                            or 'edit_controller_support_custom' in request.form)
+                        else _stored('controller_support'))
                     _normalized = normalize_game_edit(_payload)
                     title = _normalized.get('title') or ''
                     sort_title = _normalized.get('sort_title') or ''
@@ -582,11 +591,8 @@ def game_detail(game_id):
                                 "already has: %(count)s", count=duplicate_shots), "warning")
 
                     _note_hand_edits(game_id, {
-                        'units_sold': units_sold, 'esrb_rating': esrb_rating,
-                        'pegi_rating': pegi_rating, 'cero_rating': cero_rating,
-                        'usk_rating': usk_rating, 'acb_rating': acb_rating,
-                        'fpb_rating': fpb_rating, 'grac_rating': grac_rating,
-                        'classind_rating': classind_rating, 'china_rating': china_rating,
+                        **{k: v for k, v in _normalized.items() if k in HAND_EDITED_FIELDS},
+                        'units_sold': units_sold, 'controller_support': controller_support,
                     })
 
                     # Update database
@@ -692,9 +698,20 @@ def game_detail(game_id):
                             release_dates = NULL,
                             hltb_match_name = NULL, hltb_match_platform = NULL, hltb_match_confidence = NULL,
                             hltb_id = NULL, hltb_players = NULL,
+                            perspective = NULL, dimension = NULL, game_structure = NULL,
+                            campaign = NULL, edition = NULL, other_platforms = NULL,
+                            alternate_titles = NULL, sort_title = NULL,
                             scraped = 0, title_locked = 0
                         WHERE id = ?
                     """, (game_id,))
+                    # Its files go too, unless another game or wishlist item
+                    # still uses one; and the lists see the change
+                    # (PASS-59-242), as after an edit.
+                    from services.media_cleanup import delete_unshared_media
+                    delete_unshared_media(game)
+                    invalidate_filter_cache()
+                    invalidate_analytics_cache()
+                    upscale_queue.forget_cleared()
 
                     new_title = reset_game_title_from_filename(game_id)
                     # Pass 34.7: log the destructive reset.

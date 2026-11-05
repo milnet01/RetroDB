@@ -27,6 +27,19 @@ logger = logging.getLogger(__name__)
 bp = Blueprint('clz_import', __name__)
 
 
+def clz_release_date(text):
+    """A CLZ date as exactly as CLZ knows it: "Nov 09, 2018" is a day, "2018"
+    a year, never 1 January (PASS-59-242)."""
+    from services.release_dates import source_date
+    if not text:
+        return None
+    try:
+        return source_date(datetime.strptime(text, '%b %d, %Y').strftime('%Y-%m-%d'))
+    except (ValueError, TypeError):
+        year = re.search(r'\d{4}', str(text))
+        return source_date(year.group()) if year else None
+
+
 def normalize_title(title):
     """Normalize a game title for fuzzy matching.
 
@@ -606,21 +619,7 @@ def api_clz_import():
                 safe_title = re.sub(r'[<>:"/\\|?*]', '', game['title'])
                 rom_path = f"clz_import/{system_folder}/{safe_title}"
 
-                # Parse release date if present
-                release_date = None
-                if game.get('release_date'):
-                    try:
-                        # Handle "Nov 09, 2018" format
-                        dt = datetime.strptime(game['release_date'], '%b %d, %Y')
-                        release_date = dt.strftime('%Y-%m-%d')
-                    except (ValueError, TypeError):
-                        try:
-                            # Try just year
-                            year = re.search(r'\d{4}', game['release_date'])
-                            if year:
-                                release_date = f"{year.group()}-01-01"
-                        except (TypeError, AttributeError):
-                            pass
+                release_date = clz_release_date(game.get('release_date'))
 
                 # Insert the game
                 c.execute("""

@@ -14,6 +14,7 @@ from datetime import datetime, timezone
 
 from services.analytics import invalidate_analytics_cache
 from services.database import query, execute
+from services.field_sources import credits as field_credits
 from services.game_query import invalidate_filter_cache
 from services.game_metadata_service import cross_map_ratings
 from services.game_utils import (
@@ -74,6 +75,16 @@ def load_game(game_id):
     """, (game_id,), one=True)
 
 
+def _same_value(field, new, old):
+    """Do the AI's answer and the stored value say the same thing once both
+    are in stored form? `1-4` players is 4, and a list is a set (PASS-59-242)."""
+    if field == 'players':
+        return normalize_players_value(new) == normalize_players_value(old)
+    def words(text):
+        return {w.strip().casefold() for w in str(text).split(',') if w.strip()}
+    return words(new) == words(old)
+
+
 def fill_game(game, fields=None):
     """Ask the AI about one game (a load_game() row) and save what it fills.
 
@@ -121,6 +132,9 @@ def fill_game(game, fields=None):
 
     filled_fields = []
     replaced = {}
+    # User, 2026-11-04: what a person typed is never corrected by the AI.
+    hand_edited = {f for f, src in field_credits(game.get('scrape_history')).items()
+                   if src == 'manual'}
     # column -> value. One key per column, so a later fixup overrides an
     # earlier assignment instead of appending a duplicate `col = ?`.
     sets = {}
@@ -139,7 +153,8 @@ def fill_game(game, fields=None):
             should_apply = True
         elif field == 'other_platforms' and current.lower() == 'exclusive':
             should_apply = True
-        elif field in VALIDATE_FIELDS and value != current:
+        elif (field in VALIDATE_FIELDS and field not in hand_edited
+              and not _same_value(field, value, current)):
             should_apply = True
             replaced[field] = current[:200]
             logger.info(f"AI fill: correcting {field}: '{current}' → '{value}'")
@@ -228,9 +243,9 @@ def fill_game(game, fields=None):
                 filled_fields.append(col)
             logger.info(f"AI fill: inferred ratings from content ({len(inferred)} systems)")
 
-    # Curated DB controller always wins over AI/scraped data
+    # Curated DB controller wins over AI/scraped data, not over a typed one.
     ctrl = pending.get('controller_support') or (game.get('controller_support', '') or '').strip()
-    if db_default_ctrl:
+    if db_default_ctrl and 'controller_support' not in hand_edited:
         if ctrl != db_default_ctrl:
             sets['controller_support'] = db_default_ctrl
             if 'controller_support' not in filled_fields:

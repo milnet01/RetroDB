@@ -10,6 +10,7 @@ import json
 import re
 from datetime import datetime
 
+from scraper.scrape_ai import VALIDATE_FIELDS
 from services.game_utils import RATING_SYSTEM_KEYS, RATING_SYSTEMS
 
 _RATING_COLUMNS = tuple(RATING_SYSTEMS[k]['db_column'] for k in RATING_SYSTEM_KEYS)
@@ -20,8 +21,12 @@ _INFERRED = 'ratings (inferred from content)'
 # another board's rating is not one.
 _GUESS_CREDITS = ('AI', 'inferred')
 
-# What a person can type in the edit forms that the game page marks.
-HAND_EDITED_FIELDS = _RATING_COLUMNS + ('units_sold',)
+# What a person can type in the edit forms and the history credits to them:
+# the fields the game page marks, the fields AI Fill would otherwise correct
+# and the controller a scrape would otherwise set to the system default
+# (PASS-59-242).
+HAND_EDITED_FIELDS = tuple(dict.fromkeys(
+    _RATING_COLUMNS + ('units_sold', 'controller_support') + tuple(sorted(VALIDATE_FIELDS))))
 
 
 def _entries(history):
@@ -65,8 +70,15 @@ def ai_marks(game):
     left out rather than shown as that score's count.
     """
     found = credits(game.get('scrape_history'))
+    # A rating converted from another board is a guess when every rating it
+    # could come from is one (PASS-59-242).
+    bases = [found.get(c) for c in _RATING_COLUMNS
+             if game.get(c) and not str(found.get(c) or '').startswith('cross-map')]
+    from_guesses = bool(bases) and all(_is_guess(b) for b in bases)
     marks = {
-        'ratings': {c for c in _RATING_COLUMNS if game.get(c) and _is_guess(found.get(c))},
+        'ratings': {c for c in _RATING_COLUMNS if game.get(c) and (
+            _is_guess(found.get(c))
+            or (from_guesses and str(found.get(c) or '').startswith('cross-map')))},
         'units_sold': _is_guess(found.get('units_sold')),
     }
     for score in ('critic_score', 'user_score'):

@@ -11082,6 +11082,14 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Source**: audit 2026-11-04.
 - **Decided** (user, 2026-11-04): AI Fill leaves hand-edited values
   alone; it replaces only scraped values in `VALIDATE_FIELDS`.
+- **Done** (2026-11-05): all ten fixed, each with a test run red first
+  (tests/test_pass59_242_user_edits.py). The scrape's save re-reads the
+  row (`_what_to_write`): an unchanged field or one edited meanwhile is
+  sent as None. `canonicalize_metadata(keep=...)` renames stored labels
+  but never empties them. Hand edits are now credited for every
+  `VALIDATE_FIELDS` field and `controller_support`, so AI Fill and the
+  system-default controller leave them alone. A cross-mapped rating is
+  a guess when all its possible sources are guesses.
 
 ---
 

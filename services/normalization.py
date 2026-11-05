@@ -481,20 +481,21 @@ _MULTIPLAYER_MODES = frozenset((
 ))
 
 
-def _reconcile_players_and_modes(metadata):
+def _reconcile_players_and_modes(metadata, keep=()):
     """Stop a game saying "1 player" and "Local Multiplayer" together.
 
     The higher claim wins, since "1" and "Single-Player" are what a source says
-    when it knows no better. Two is the least a multiplayer mode means.
+    when it knows no better. Two is the least a multiplayer mode means. A field
+    in `keep` is never changed (PASS-59-242).
     """
     players = metadata.get('players')
     modes = metadata.get('modes')
     if not isinstance(players, int) or not modes:
         return
     words = {m.strip() for m in modes.split(',')}
-    if players == 1 and words & _MULTIPLAYER_MODES:
+    if players == 1 and words & _MULTIPLAYER_MODES and 'players' not in keep:
         metadata['players'] = 2
-    elif players > 1 and words == {'Single-Player'}:
+    elif players > 1 and words == {'Single-Player'} and 'modes' not in keep:
         metadata['modes'] = 'Single-Player, Local Multiplayer'
 
 
@@ -533,11 +534,13 @@ def canonical_companies(value):
         COMPANY_ALIASES.get(name.casefold(), name) for name in names if name))
 
 
-def canonicalize_metadata(metadata):
+def canonicalize_metadata(metadata, keep=()):
     """The conversion after the merge, whatever filled each field (PASS-59-206).
 
     Words belonging in another field fill it only when it is empty. A field left
     with no words holds '', which the save's COALESCE writes over the old text.
+    `keep` names fields holding a stored value: renamed, but never emptied, and
+    never changed to make players and modes agree (PASS-59-242).
     """
     if metadata.get('description'):
         metadata['description'] = clean_description(metadata['description']) or None
@@ -549,11 +552,12 @@ def canonicalize_metadata(metadata):
         if not text:
             continue
         value, moved = split_labels(field, str(text))
-        metadata[field] = value
+        if value or field not in keep:
+            metadata[field] = value
         for target, moved_value in moved.items():
             if not metadata.get(target):
                 metadata[target] = moved_value
-    _reconcile_players_and_modes(metadata)
+    _reconcile_players_and_modes(metadata, keep)
 
 
 # =============================================================================

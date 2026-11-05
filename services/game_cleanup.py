@@ -28,7 +28,7 @@ _VIRTUAL_ROM_PREFIXES = ('clz_import/', 'steam_import/', 'xbox_import/', 'psn_im
 
 _SCRAPED_FIELDS = (
     'description', 'genre', 'publisher', 'developer', 'release_date',
-    'players', 'modes', 'esrb_rating', 'pegi_rating',
+    'players', 'modes', 'perspective', 'dimension', 'game_structure', 'esrb_rating', 'pegi_rating',
     'cero_rating', 'usk_rating', 'acb_rating', 'fpb_rating',
     'grac_rating', 'classind_rating', 'china_rating', 'region',
     'franchise', 'similar_games', 'playtime_estimate', 'controller_support',

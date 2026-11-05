@@ -31,7 +31,7 @@ Origins:
   it first.
 - Screenshots are appended, never replaced.
 - A system's curated default controllers always override scraped or AI
-  values.
+  values, never one a person typed (PASS-59-242).
 
 The contract, its audit-column carve-out and AI Fill's separate path are
 [`../specs/scrapers.md`](../specs/scrapers.md) § 5.

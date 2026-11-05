@@ -160,6 +160,8 @@ WHERE id = ?
 
 The hybrid orchestrator's UPDATE (`hybrid_scraper.py::_save_game_row`) is the same pattern across its columns.
 
+**Edits made during a scrape stay** (PASS-59-242). Just before the save, `hybrid_scraper._what_to_write` re-reads the row. A field the scrape left as it found it, or one changed in the row since the scrape read it, is sent as None, so COALESCE keeps what is there now. Name tidying (`canonicalize_metadata`, PASS-59-206) renames a stored genre, mode, perspective, dimension or game structure but never empties it, and the players-and-modes check never changes a stored value (its `keep` argument).
+
 **Arcade sets** (PASS-59-227). In `services.game_utils.ARCADE_SET_FOLDERS` a file name is MAME's identity for a game. ROM Tools > MAME Names (`services/mame_names.py`) sets the title from MAME's list and locks it. A bulk scrape then searches by that title without its brackets, not by the file name. ScreenScraper's `identify_by_file` sends the zip's name as `romnom` and accepts a reply only if `romfilename` matches. ROM Reports will not rename these files.
 
 **Title lock** (PASS-59-159 §4.3). `games.title_locked = 1` means no scraper writes `title` or `sort_title`, in normal or Full Re-scrape mode. Both sites above write `title` as `CASE WHEN title_locked = 1 THEN title ELSE COALESCE(?, title) END`; `_save_game_row` writes `sort_title` the same way. Scrapers still search with a locked title. The edit windows set the lock when a title is changed, and their "Keep this title when scraping" tick box sets or clears it; the per-game Reset clears it. `tests/test_official_names.py` pins it.
@@ -328,6 +330,8 @@ check_api_status() -> dict
 
 Text-only. AI never returns images, screenshots, videos, or manuals — `AI_FILLABLE_FIELDS` is the explicit allowlist.
 
+**What AI Fill corrects** (PASS-59-242). In `VALIDATE_FIELDS` it replaces a stored value it disagrees with, once both are in stored form (`1-4` players is 4; a list compares as a set). A value credited `manual` is never replaced (user, 2026-11-04). Every edit path credits a person for each changed field of `field_sources.HAND_EDITED_FIELDS` through `routes/games.py::_note_hand_edits`.
+
 **`FIELD_SCHEMAS`** pins canonical values for every dropdown-style field (`genre`, `game_structure`, `perspective`, `dimension`, `modes`, `save_type`, `other_platforms`, the 8 rating systems). The AI prompt presents these allowlists to the model; the response validator enforces them post-call (drops or maps unknown values). The full schema and prompt construction live in `scraper/scrape_ai.py` — do not duplicate the strings here, they drift.
 
 **`PLATFORM_ALIASES`** maps non-canonical platform names the AI may produce (`ps1` → `PlayStation`, `playstation portable` → `PSP`).
@@ -367,7 +371,7 @@ Text-only. AI never returns images, screenshots, videos, or manuals — `AI_FILL
 - AI Fill keeps a value it replaces under `replaced` in its history entry.
 - The per-system save type guess is gone for cartridge systems, and AI Fill no longer writes `Standard Edition` by default.
 
-**AI age ratings** (user, 2026-11-02). They stay, new and stored. The game page marks each `AI guess`, and says it is based on the game's content and when each board started. A rating credited `AI` or `ratings (inferred from content)` is marked; a scraper's value, a person's edit or a cross-mapping is not. Only the game page carries marks; the library cards do not.
+**AI age ratings** (user, 2026-11-02). They stay, new and stored. The game page marks each `AI guess`, and says it is based on the game's content and when each board started. A rating credited `AI` or `ratings (inferred from content)` is marked; a scraper's value or a person's edit is not. A cross-mapped rating is marked when every rating it could come from is a guess (PASS-59-242). Only the game page carries marks; the library cards do not.
 
 Start years in `RATING_SYSTEMS`, checked 2026-11-02:
 
@@ -446,7 +450,7 @@ End-to-end checklist for a new remote source `foo`:
 - Every API call from a `scraper/` module goes through `base_scraper.http_get` / `http_post` — backoff with jitter on 429/5xx, optional `max_bytes` cap (Pass 26.4, 32.14). Route-level key and status probes in `routes/scraper.py` are exempt (§10).
 - `players` is INTEGER; ranges like `"1-4"` are normalised to the max (4) via `re.findall + max` before save. `normalize_players_value` is the canonical helper for route-layer writes (Pass 40.6).
 - `genre` values are hyphenated and constrained to `FIELD_SCHEMAS` in `scrape_ai.py`. New genres added to either list must be added to both.
-- Curated DB-default controllers always override scraped/AI controller values (`get_system_default_controller_name`).
+- Curated DB-default controllers always override scraped/AI controller values (`get_system_default_controller_name`), never one a person typed (credited `manual`, PASS-59-242).
 - Per-source primary fetches are wrapped in `try / except`; on failure the orchestrator logs and falls through to gap-fill (Pass 41.4.B). The final UPDATE is **not** wrapped — drift between the metadata dict and the binding tuple must fail loudly.
 - ScreenScraper search results are cached for 10 min. Settings JSON is cached for 30 s. Per-source circuit breakers open after 5 failures, recover after 120 s.
 - AI Fill is text-only; never writes media. Integer-column writes skip the UPDATE clause when the coerced value is `0` (Pass 45.3).

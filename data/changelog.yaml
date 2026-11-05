@@ -1,6 +1,16 @@
 - version: 4.0.0
   date: 2026-11-05
   tags:
+  - type: fix
+    label: A scrape no longer writes over a change you make while it runs, and no longer empties a genre, mode or view it has no name for. It no longer changes a stored player count to match the game's modes
+  - type: fix
+    label: AI Fill no longer changes what you typed yourself, such as a publisher or genre you corrected by hand; it corrects only scraped values. It no longer reports a value as changed when it only wrote it differently, such as 4 players as "1-4" or the same genres in another order
+  - type: fix
+    label: A controller you type for a game is kept; the console's default controller now replaces only scraped and AI values. An age rating converted from another board's AI guess is now marked as a guess too
+  - type: fix
+    label: Saving a game's edit window no longer empties fields the window does not show. Reset on a game's page now clears everything it says it does, including the view, edition and other names, deletes the game's pictures and videos unless another game uses them, and updates the library filters straight away
+  - type: fix
+    label: Clear Scraped Data now also clears the view, 2D or 3D, and game structure. A CLZ import of a game with only a year keeps just the year, not 1 January
   - type: security
     label: Steam sync no longer borrows the Steam key from Settings for every household member. A member with no Steam key of their own was getting the admin's Steam library and achievements under their account. The key in Settings now serves admins only
   - type: fix

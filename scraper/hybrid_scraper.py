@@ -14,6 +14,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import IMAGE_PATH, STATIC_PATH
+from services.field_sources import credits as field_credits
 from services.normalization import canonicalize_metadata
 from services.release_dates import year_gap_with_own_region
 from services.game_utils import generate_sort_title, infer_rating_from_content, RATING_SYSTEM_KEYS, RATING_SYSTEMS
@@ -681,6 +682,29 @@ def _log_date_disagreement(metadata, game):
                                 game_own_region(game)):
         logger.warning(f"Game {game.get('id')}: release date {metadata['release_date']} "
                        f"disagrees with its regional dates {metadata['release_dates']}")
+
+
+def _what_to_write(c, metadata, start, db_game_id):
+    """The metadata to save, leaving out what this scrape did not change and
+    anything changed in the row since the scrape read it (PASS-59-242).
+
+    A scrape can run for many seconds. A field it left as it found it is sent
+    as None, which the save's COALESCE turns into "keep what is there now", so
+    a hand edit or an AI Fill made meanwhile stays. A field changed meanwhile
+    is not written either.
+    """
+    c.execute("SELECT * FROM games WHERE id = ?", (db_game_id,))
+    row = c.fetchone()
+    now = dict(row) if row else {}
+    out = dict(metadata)
+    for field, value in metadata.items():
+        if field not in now or field == 'alternate_titles':
+            continue
+        if now[field] != start.get(field) or value == start.get(field):
+            out[field] = None
+    if 'alternate_titles' in now and now['alternate_titles'] != start.get('alternate_titles'):
+        out['alternate_titles'] = None
+    return out
 
 
 def _save_game_row(c, metadata, scrape_history_json, db_game_id, mark_scraped=True):
@@ -1742,7 +1766,12 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
         if sys_row:
             system_id = sys_row[0]
             default_controller = get_system_default_controller_name(system_id)
-            if default_controller:
+            typed = (game.get('controller_support')
+                     and field_credits(game.get('scrape_history')).get('controller_support') == 'manual')
+            if typed:
+                # A controller a person typed beats the default (PASS-59-242).
+                metadata['controller_support'] = game['controller_support']
+            elif default_controller:
                 old_value = metadata['controller_support']
                 metadata['controller_support'] = default_controller
                 if old_value and old_value != default_controller:
@@ -1766,7 +1795,11 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
         _normalize_players_and_sort_title(metadata)
 
         # One set of names, whichever source or older scrape filled each field.
-        canonicalize_metadata(metadata)
+        # A stored value is renamed but never emptied (PASS-59-242).
+        canonicalize_metadata(metadata, keep=() if force_overwrite else {
+            field for field in ('genre', 'modes', 'perspective', 'dimension',
+                                'game_structure', 'players')
+            if game.get(field) not in (None, '') and metadata.get(field) == game.get(field)})
 
         _log_date_disagreement(metadata, game)
 
@@ -1781,7 +1814,8 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
 
         # Pass 38.1 — SAVE TO DATABASE block extracted to _save_game_row.
         apply_progress.begin('save')
-        _save_game_row(c, metadata, scrape_history_json, db_game_id, mark_scraped)
+        _save_game_row(c, _what_to_write(c, metadata, game, db_game_id),
+                       scrape_history_json, db_game_id, mark_scraped)
         _save_source_ids(c, db_game_id, sources_data, force_overwrite)
 
         conn.commit()
