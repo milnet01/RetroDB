@@ -113,10 +113,15 @@ source. Its `source` column is whichever sync wrote last.
   clears the link, on a scrape, a refresh and the single-game route alike.
 - **PSN.** The full sync matches the title with
   `clean_title_for_matching` — exact on the platform's folder, then exact
-  across PlayStation folders, then substring. An existing link is never
-  cleared by a sync (`COALESCE(excluded.linked_game_id, ...)`). Editors can
-  set or clear a link with `POST /api/psn/link-game`, scoped to their own row.
-- **Steam and Xbox.** Through `games.steam_app_id` and `games.xbox_title_id`,
+  across PlayStation folders, then a numbered title plus a subtitle
+  (`_psn_link_for`, the RA matcher's subtitle rule), so "Doom" never takes
+  "Doom Eternal". A sync never replaces a stored link
+  (`COALESCE(psn_games.linked_game_id, ...)`), so one set by hand stays.
+  Editors can set or clear a link with `POST /api/psn/link-game`, scoped to
+  their own row. Import links as Steam and Xbox do (below), and links that
+  user's trophy row where it holds no link.
+- **Steam, Xbox and PSN imports.** Through `games.steam_app_id`,
+  `games.xbox_title_id` and `games.psn_npwr_id`,
   set at import (`routes/platform_import.py::_DuplicateIndex` matches on the
   platform id, then on `normalize_title_for_dedup` within the system). A title
   match holding no id gets this one (`_link_by_title`), so its achievements
@@ -134,7 +139,7 @@ cross-process `flock` named after the job, persisted progress and resume.
 | `RARefreshJob` (`ra_refresh`) | `/api/refresh-retroachievements[/<system_id>]` (admin) | global RA account (`_get_ra_credentials`) | `games` RA columns; commits per game |
 | `RASyncJob` (`ra_sync`) | `/api/achievements/sync-system/<id>` (editor) | the caller's own RA account, else the global one | `games.ra_achievement_count`; the caller's `game_achievement_progress` |
 | `PSNRefreshJob` (`psn_refresh`) | `/api/psn/bulk-refresh/start` (login) | the caller's NPSSO | the caller's `psn_games`, `psn_trophies` |
-| `SteamSyncJob` (`steam_sync`) | `/api/steam-achievements/sync-all`, `/api/steam/sync-achievements` (editor), and a Steam import that added or linked a game | caller's `user_settings`, else `scraper_settings.json`; the store step needs none | the caller's Steam rows and `platform_play_time`; empty `games` fields, once per game, from the store (`docs/specs/scrapers.md` §10) |
+| `SteamSyncJob` (`steam_sync`) | `/api/steam-achievements/sync-all`, `/api/steam/sync-achievements` (editor), and a Steam import that added or linked a game | caller's `user_settings`, else `scraper_settings.json` for an admin only; the store step needs none | the caller's Steam rows and `platform_play_time`; empty `games` fields, once per game, from the store (`docs/specs/scrapers.md` §10) |
 | `XboxSyncJob` (`xbox_sync`) | `/api/xbox-achievements/sync-all`, `/api/xbox/sync-achievements` (editor) | global client id; the caller's tokens | the caller's Xbox rows |
 
 Also:
@@ -177,8 +182,9 @@ Also:
   in with it, ignoring the cache, and saves it only if Sony accepts it;
   `/api/users/settings` drops the cache when the NPSSO changes
   (`tests/test_psn_new_npsso.py`).
-- Xbox: `scrape_xbox.get_authenticated_session` refreshes a stale token and
-  clears the stored tokens when the refresh fails. The OAuth `state` is bound
+- Xbox: `scrape_xbox.get_authenticated_session` refreshes a stale token,
+  fetches the gamertag again after it, and clears the stored tokens only
+  when Microsoft refuses the refresh (HTTP 400 or 401); no answer keeps them. The OAuth `state` is bound
   to the user who started sign-in.
 - The NPSSO and the RA and Steam keys live in `user_settings` as plain text.
 - `services/log_redactor.py::SecretRedactor` masks tokens, NPSSO and API keys
@@ -205,8 +211,8 @@ the user's `rpcs3_trophy_path` (from `user_settings`, else the global
 setting), skipping `_BU_` backups. `TROPCONF.SFM` is parsed with `defusedxml`.
 `TROPUSR.DAT` is read big-endian with bounds checks: the table count is
 capped to the file, an entry size below 48 bytes stops the read, and one
-unreadable set is skipped without dropping the others. Rescanning is
-admin-only (`/api/scan-trophies`).
+unreadable set is skipped without dropping the others. Any signed-in user
+can rescan their own folder (`/api/scan-trophies`).
 
 ## 5. Invariants
 

@@ -21,46 +21,50 @@ from services.jobs.base import (
 logger = logging.getLogger(__name__)
 
 
-def _get_steam_credentials(user_id=None):
-    """Return (steam_api_key, steam_id) for the caller.
-
-    Pass 31.4 — credentials now live in user_settings, keyed by user_id.
-    When `user_id` is supplied we read directly from there. The legacy
-    fallback to data/scraper_settings.json stays in place for installs that
-    haven't migrated their scraper config yet, so a pre-31 admin can still
-    run a sync while they move their keys to their profile.
-    """
-    if user_id is not None:
-        try:
-            conn = _get_conn()
-            try:
-                row = conn.execute(
-                    "SELECT steam_api_key, steam_id FROM user_settings "
-                    "WHERE user_id = ?",
-                    (user_id,),
-                ).fetchone()
-                if row:
-                    key = (row['steam_api_key'] or '') if hasattr(row, 'keys') else (row[0] or '')
-                    sid = (row['steam_id'] or '') if hasattr(row, 'keys') else (row[1] or '')
-                    if key and sid:
-                        return key, sid
-            finally:
-                conn.close()
-        except Exception as e:
-            logger.warning(f"Could not load per-user Steam credentials: {e}")
-
+def _shared_steam_credentials():
+    """(key, id) from the install-wide data/scraper_settings.json, or ('', '')."""
     import os, json
     settings_file = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(
         os.path.abspath(__file__)))), 'data', 'scraper_settings.json')
     try:
         if os.path.exists(settings_file):
             with open(settings_file, 'r') as f:
-                settings = json.load(f)
-                keys = settings.get('api_keys', {})
+                keys = json.load(f).get('api_keys', {})
                 return keys.get('steam_api_key', ''), keys.get('steam_id', '')
     except Exception as e:
         logger.warning(f"Could not load Steam credentials: {e}")
     return '', ''
+
+
+def _get_steam_credentials(user_id=None):
+    """Return (steam_api_key, steam_id) for the caller.
+
+    Credentials live in user_settings, keyed by user_id (Pass 31.4). The
+    install-wide key in Settings > Scraping is the admins': it serves an
+    admin with none of their own, or a caller with no user, and never anyone
+    else, whose library would otherwise land under the admin's account
+    (PASS-59-241; docs/specs/auth.md allows only the RA fallback for all).
+    """
+    if user_id is None:
+        return _shared_steam_credentials()
+    is_admin = False
+    try:
+        conn = _get_conn()
+        try:
+            row = conn.execute(
+                "SELECT us.steam_api_key, us.steam_id, u.role FROM users u "
+                "LEFT JOIN user_settings us ON us.user_id = u.id WHERE u.id = ?",
+                (user_id,),
+            ).fetchone()
+        finally:
+            conn.close()
+        if row:
+            if row['steam_api_key'] and row['steam_id']:
+                return row['steam_api_key'], row['steam_id']
+            is_admin = row['role'] == 'admin'
+    except Exception as e:
+        logger.warning(f"Could not load per-user Steam credentials: {e}")
+    return _shared_steam_credentials() if is_admin else ('', '')
 
 
 def _get_xbox_credentials():

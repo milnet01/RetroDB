@@ -1777,11 +1777,11 @@ const UnifiedToastController = {
 
             if (data.success === false) return;
 
+            const wasActive = this.activeOperations.get(type) || false;
             this.updateToasts(type, data);
             this.sayServiceStops(data.service_stops);
 
             const isActive = data.running && !data.completed;
-            const wasActive = this.activeOperations.get(type) || false;
             const hasToast = this.activeToasts.has(`active-${type}`);
 
             if (isActive && (!wasActive || !this.pollingIntervals.has(type))) {

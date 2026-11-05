@@ -166,10 +166,9 @@ def api_create_tag():
     color = data.get('color', '#4cc9f0').strip()
 
     # Tag-name uniqueness is per-owner — two users can each have a "Favourites"
-    # tag. Pre-Pass 27 the UNIQUE constraint on tags.name was global; the
-    # constraint stays in the schema but we no longer validate against it
-    # cross-user. (Admins still see everyone's tags via _owner_clause but
-    # collisions there are intentional admin behavior.)
+    # tag; the schema says the same since migration 039. (Admins still see
+    # everyone's tags via _owner_clause but collisions there are intentional
+    # admin behavior.)
     existing = query(
         "SELECT id FROM tags WHERE name = ? COLLATE NOCASE AND owner_id = ?",
         (name, g.user['id']), one=True,

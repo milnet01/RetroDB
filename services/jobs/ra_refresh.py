@@ -327,7 +327,7 @@ class RARefreshJob:
                             continue
 
                         ra_match, copy_fits = match_ra_game_for_file(
-                            game['title'], game['rom_path'], game.get('folder'), ra_games,
+                            game['title'], game['rom_path'], game.get('system_folder'), ra_games,
                             extract_alt_titles(game.get('alternate_titles')))
                         save_ra_link(write_conn, game['id'],
                                      {**ra_link_info(ra_match), 'copy_fits': copy_fits}

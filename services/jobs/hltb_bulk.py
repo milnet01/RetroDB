@@ -296,7 +296,9 @@ class HLTBBulkLookupJob:
                                     hltb_players = ?
                                 WHERE id = ?
                             """, (playtime_str, result.get('match_name'),
-                                  match_platform, confidence_frac, game['id']))
+                                  match_platform, confidence_frac,
+                                  result.get('game_id'), result.get('players'),
+                                  game['id']))
                             with self._lock:
                                 self.auto_applied_count += 1
                         else:

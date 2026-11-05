@@ -767,7 +767,7 @@ function renderTable(platform) {
                 <td>${escapeHtml(game.name)}</td>
                 <td><span class="platform-badge">${escapeHtml(game.system_name || game.platform_display)}</span></td>
                 <td><div class="trophy-progress-bar"><div class="trophy-progress-track"><div class="trophy-progress-fill" style="width:${progress}%"></div></div><span class="trophy-progress-text">${progress}%</span></div></td>
-                <td>${isNew ? '<span class="status-new">New</span>' : '<span class="status-existing">Already imported</span>'}</td>`;
+                <td>${!isNew ? '<span class="status-existing">Already imported</span>' : (game.will_link ? `<span class="status-new">${escapeHtml({{ _('In your library: link it')|tojson }})}</span>` : '<span class="status-new">New</span>')}</td>`;
         } else {
             tr.innerHTML = `<td class="checkbox-cell"><input type="checkbox" class="${platform}-checkbox" data-index="${idx}" ${!isNew ? 'disabled' : ''} data-on-change="updateSelection" data-args="${actionArgs(String(platform))}"></td>
                 <td>${escapeHtml(game.name)}</td>

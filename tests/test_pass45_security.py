@@ -1652,6 +1652,7 @@ class TestPass45_12XboxTokenRotation:
                             lambda tok: ('xbl', 'hash'))
         monkeypatch.setattr(scrape_xbox, 'get_xsts_token',
                             lambda tok: ('xsts', 'xuid123'))
+        monkeypatch.setattr(scrape_xbox, 'get_gamertag', lambda *a: None)
 
         result = scrape_xbox.get_authenticated_session('cid', 'csec', 99)
         assert result is not None, "session must succeed with fresh token"
@@ -1685,6 +1686,7 @@ class TestPass45_12XboxTokenRotation:
                             lambda tok: ('xbl', 'hash'))
         monkeypatch.setattr(scrape_xbox, 'get_xsts_token',
                             lambda tok: ('xsts', 'xuid_new'))
+        monkeypatch.setattr(scrape_xbox, 'get_gamertag', lambda *a: None)
 
         scrape_xbox.get_authenticated_session('cid', 'csec', 99)
         assert len(refresh_calls) == 1, "refresh must run on stale token"
@@ -1702,9 +1704,10 @@ class TestPass45_12XboxTokenRotation:
         )
 
     def test_failed_refresh_clears_tokens(self, monkeypatch):
-        """When refresh_access_token returns None, the user's stored tokens
+        """When Microsoft refuses the refresh, the user's stored tokens
         must be cleared via clear_tokens(user_id) — otherwise the dead
-        refresh_token sits in the DB forever."""
+        refresh_token sits in the DB forever. (No answer at all keeps them:
+        PASS-59-241, tests/test_pass59_241_silent_failures.py.)"""
         from scraper import scrape_xbox
 
         monkeypatch.setattr(scrape_xbox, 'load_tokens',
@@ -1712,7 +1715,7 @@ class TestPass45_12XboxTokenRotation:
                                          'refresh_token': 'revoked_rt',
                                          'expires_at': time.time() - 1})
         monkeypatch.setattr(scrape_xbox, 'refresh_access_token',
-                            lambda *a, **kw: None)
+                            lambda *a, **kw: scrape_xbox.REFRESH_REFUSED)
 
         cleared = []
         monkeypatch.setattr(scrape_xbox, 'clear_tokens',
@@ -1728,8 +1731,8 @@ class TestPass45_12XboxTokenRotation:
         result = scrape_xbox.get_authenticated_session('cid', 'csec', 42)
         assert result is None, "failed refresh must yield None session"
         assert cleared == [42], (
-            "Pass 45.12: clear_tokens(user_id) must be called when refresh "
-            "returns None"
+            "Pass 45.12: clear_tokens(user_id) must be called when the "
+            "refresh is refused"
         )
 
     def test_oauth_callback_attaches_expires_at(self):

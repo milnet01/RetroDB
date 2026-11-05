@@ -289,8 +289,45 @@ def extract_psn_platform(title):
 
 
 from services.achievement_linking import (
+    _ra_same_but_subtitle,
     clean_title_for_matching as _clean_title_for_matching,
 )
+
+
+def _title_plus_subtitle(title, rows):
+    """The key of the one row whose title is `title` plus a subtitle, or None.
+
+    `rows` holds (key, raw title). The rule is the RetroAchievements
+    matcher's: only a numbered title ("Uncharted 2" is "Uncharted 2: Among
+    Thieves"), so "Doom" never takes "Doom Eternal" (PASS-59-241).
+    """
+    hit = _ra_same_but_subtitle(title or '', [({'ID': key}, raw) for key, raw in rows])
+    return hit['ID'] if hit else None
+
+
+def _psn_link_candidates(games):
+    """(id, folder, raw title) rows as the full sync matches them: each
+    title cleaned once, not once per trophy title."""
+    return [(game_id, folder, title, _clean_title_for_matching(title))
+            for game_id, folder, title in games]
+
+
+def _psn_link_for(trophy_title, folder, games):
+    """The game a PSN title links to: the same title on its own system,
+    then anywhere, then a numbered title plus a subtitle; else None."""
+    clean = _clean_title_for_matching(trophy_title)
+    if not clean:
+        return None
+    own = [row for row in games if row[1] == folder]
+    for pool in (own, games):
+        for game_id, _folder, _title, db_clean in pool:
+            if db_clean == clean:
+                return game_id
+    for pool in (own, games):
+        hit = _title_plus_subtitle(trophy_title, [(row[0], row[2]) for row in pool])
+        if hit:
+            return hit
+    return None
 
 
 def calculate_rarity_class(rarity):
@@ -423,12 +460,11 @@ def find_matching_game(trophy_title, candidates=None):
         if db_clean == clean_title:
             return dict(game)
 
-    # Pass 3: Substring match (one contains the other)
-    for game, db_clean in candidates:
-        if clean_title and db_clean and (clean_title in db_clean or db_clean in clean_title):
-            return dict(game)
-
-    return None
+    # Pass 3: a numbered title plus a subtitle; never a loose substring,
+    # which took "Doom" for "Doom Eternal" (PASS-59-241).
+    hit = _title_plus_subtitle(search_title, [(i, game['title'])
+                                              for i, (game, _c) in enumerate(candidates)])
+    return dict(candidates[hit][0]) if hit is not None else None
 
 
 @bp.route('/trophies')
@@ -506,9 +542,13 @@ def trophy_game(npwr_id):
                          last_trophy_date=last_trophy_date)
 
 @bp.route('/api/scan-trophies', methods=['POST'])
-@admin_required
+@login_required
 def api_scan_trophies():
-    """Scan RPCS3 trophy folder and copy icons"""
+    """Re-read the caller's own RPCS3 trophy folder into the cache.
+
+    Any signed-in user: it reads only their own folder and writes nothing
+    but the cache, which otherwise stays stale until a restart (PASS-59-241).
+    """
     global _trophy_cache
 
     trophy_path = get_user_trophy_path()
@@ -1086,7 +1126,8 @@ def _upsert_psn_title(conn, user_id, title, platform, icon_url, linked_game_id):
             icon_url = COALESCE(excluded.icon_url, psn_games.icon_url),
             {updates},
             last_updated = datetime('now'),
-            linked_game_id = COALESCE(excluded.linked_game_id, psn_games.linked_game_id)
+            -- The stored link first: it may be one the user set by hand.
+            linked_game_id = COALESCE(psn_games.linked_game_id, excluded.linked_game_id)
     """, (title.np_communication_id, user_id, title.title_name, platform, icon_url,
           *counts, linked_game_id, *counts))
 
@@ -1207,19 +1248,9 @@ def _run_psn_full_sync(psnawp, user_id):
                 WHERE s.folder IN ('ps3', 'ps4', 'ps5', 'psvita', 'psx', 'ps2')
             """).fetchall()
 
-            ps_by_folder = {}
-            # Pass 41.8 — loop var renamed from `g` to `ps_game` to avoid
-            # shadowing the module-level `from flask import g`. Background
-            # sync threads have no request context, so `g` would surface
-            # only as a typing/IDE hazard, but the shadow is fragile under
-            # future refactors that move this body into a request handler.
-            # Each title is cleaned once here, not once per trophy title in
-            # the loop below (that was trophy titles x PS games cleanings).
-            all_ps_games = [(ps_game['id'], ps_game['folder'],
-                             _clean_title_for_matching(ps_game['title']))
-                            for ps_game in all_ps_games]
-            for ps_game in all_ps_games:
-                ps_by_folder.setdefault(ps_game[1], []).append(ps_game)
+            # Each title is cleaned once here, not once per trophy title.
+            all_ps_games = _psn_link_candidates(
+                [(row['id'], row['folder'], row['title']) for row in all_ps_games])
 
             platform_map = {'PS3': 'ps3', 'PS4': 'ps4', 'PS5': 'ps5', 'PSVITA': 'psvita', 'PS Vita': 'psvita'}
 
@@ -1236,31 +1267,8 @@ def _run_psn_full_sync(psnawp, user_id):
                     icon_url = title.title_icon_url if hasattr(title, 'title_icon_url') else None
 
                     # Find linked game (background-safe, uses pre-fetched data)
-                    linked_game_id = None
-                    clean_title = _clean_title_for_matching(title.title_name)
-                    sf = platform_map.get(platform, '')
-
-                    if clean_title:
-                        # Pass 41.8 — `ps_game` instead of `g` to avoid
-                        # shadowing flask.g (mirrors the loop above and
-                        # the existing_groups comprehension at :1384).
-                        if sf and sf in ps_by_folder:
-                            for game_id, _folder, db_clean in ps_by_folder[sf]:
-                                if db_clean == clean_title:
-                                    linked_game_id = game_id
-                                    break
-
-                        if not linked_game_id:
-                            for game_id, _folder, db_clean in all_ps_games:
-                                if db_clean == clean_title:
-                                    linked_game_id = game_id
-                                    break
-
-                        if not linked_game_id:
-                            for game_id, _folder, db_clean in all_ps_games:
-                                if db_clean and (clean_title in db_clean or db_clean in clean_title):
-                                    linked_game_id = game_id
-                                    break
+                    linked_game_id = _psn_link_for(
+                        title.title_name, platform_map.get(platform, ''), all_ps_games)
 
                     _upsert_psn_title(conn, user_id, title, platform, icon_url, linked_game_id)
 

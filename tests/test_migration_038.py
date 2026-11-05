@@ -65,4 +65,4 @@ def test_nothing_to_do_is_fine(install):
 
 def test_is_registered():
     from services.migrations import MIGRATIONS
-    assert MIGRATIONS[-1] == '038_delete_kept_token_files'
+    assert '038_delete_kept_token_files' in MIGRATIONS

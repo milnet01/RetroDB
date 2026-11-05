@@ -934,8 +934,9 @@ def _build_psn_library_response(games_data, from_api=False):
             'system_name': system['name'] if system else platform_str,
             'icon_url': icon_url,
             'trophy_progress': progress,
-            'already_imported': existing_id is not None,
+            'already_imported': existing_id is not None and not dupes.can_link(existing_id),
             'existing_game_id': existing_id,
+            'will_link': dupes.can_link(existing_id),
         })
 
     result_games.sort(key=lambda g: g['name'].lower())
@@ -999,6 +1000,7 @@ def api_psn_import():
             psn_systems[folder] = system
 
     imported = 0
+    linked = 0
     skipped = 0
     failed = 0
 
@@ -1007,14 +1009,20 @@ def api_psn_import():
         conn = get_db()
         c = conn.cursor()
 
+        def link_trophies(npwr_id, game_id):
+            # This user's trophy row, unless they linked it by hand.
+            c.execute("UPDATE psn_games SET linked_game_id = ? WHERE npwr_id = ? "
+                      "AND user_id = ? AND linked_game_id IS NULL",
+                      (game_id, npwr_id, g.user['id']))
+
         # Build lookup for duplicate detection
-        existing_psn_ids = set()
+        existing_psn_ids = {}
         existing_norm = {}
-        for row in c.execute("SELECT psn_npwr_id, title, system_id FROM games").fetchall():
+        for row in c.execute("SELECT id, psn_npwr_id, title, system_id FROM games "
+                             "ORDER BY id").fetchall():
             if row['psn_npwr_id']:
-                existing_psn_ids.add(row['psn_npwr_id'])
-            key = (normalize_title(row['title']), row['system_id'])
-            existing_norm[key] = True
+                existing_psn_ids.setdefault(row['psn_npwr_id'], row['id'])
+            existing_norm.setdefault((normalize_title(row['title']), row['system_id']), row['id'])
 
         for game in selected_games:
             try:
@@ -1034,10 +1042,18 @@ def api_psn_import():
 
                 # Check duplicates
                 if npwr_id in existing_psn_ids:
+                    link_trophies(npwr_id, existing_psn_ids[npwr_id])
                     skipped += 1
                     continue
-                if (normalize_title(title), system_id) in existing_norm:
-                    skipped += 1
+                match = existing_norm.get((normalize_title(title), system_id))
+                if match:
+                    # As Steam and Xbox do (PASS-59-241).
+                    if _link_by_title(c, 'psn_npwr_id', npwr_id, match):
+                        link_trophies(npwr_id, match)
+                        linked += 1
+                        existing_psn_ids[npwr_id] = match
+                    else:
+                        skipped += 1
                     continue
 
                 rom_path = f"psn_import/{platform}/{npwr_id}"
@@ -1067,8 +1083,8 @@ def api_psn_import():
                 )
 
                 imported += 1
-                existing_psn_ids.add(npwr_id)
-                existing_norm[(normalize_title(title), system_id)] = True
+                existing_psn_ids[npwr_id] = new_game_id
+                existing_norm[(normalize_title(title), system_id)] = new_game_id
 
             except Exception as e:
                 logger.error(f"PSN Import: Failed to import '{game.get('name')}': {e}")
@@ -1076,10 +1092,12 @@ def api_psn_import():
 
         conn.commit()
 
-        logger.info(f"PSN Import complete: {imported} imported, {skipped} skipped, {failed} failed")
+        logger.info(f"PSN Import complete: {imported} imported, {linked} linked, "
+                    f"{skipped} skipped, {failed} failed")
 
         return success(
             imported=imported,
+            linked=linked,
             skipped=skipped,
             failed=failed,
         )

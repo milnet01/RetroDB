@@ -114,6 +114,10 @@ def exchange_code_for_tokens(client_id, client_secret, code, redirect_uri):
         return None
 
 
+# refresh_access_token's answer when Microsoft refuses the refresh token.
+REFRESH_REFUSED = object()
+
+
 def refresh_access_token(client_id, client_secret, refresh_token):
     """Refresh an expired access token using a refresh token.
 
@@ -123,7 +127,9 @@ def refresh_access_token(client_id, client_secret, refresh_token):
         refresh_token: OAuth refresh token
 
     Returns:
-        dict: New token data, or None on error
+        dict: New token data; REFRESH_REFUSED when Microsoft turned the
+        refresh token down (400/401); None when there was no usable answer
+        (timeout, server error), which says nothing about the token.
     """
     try:
         resp = http_post(XBOX_TOKEN_URL, data={
@@ -136,6 +142,9 @@ def refresh_access_token(client_id, client_secret, refresh_token):
         if resp is None:
             logger.error("Xbox token refresh: no response from token endpoint")
             return None
+        if resp.status_code in (400, 401):
+            logger.error("Xbox token refresh refused (HTTP %s)", resp.status_code)
+            return REFRESH_REFUSED
         resp.raise_for_status()
         return resp.json()
     except Exception as e:
@@ -312,27 +321,28 @@ def get_authenticated_session(client_id, client_secret, user_id):
     # trip entirely.
     if not _is_token_fresh(tokens) and refresh_token_val:
         new_tokens = refresh_access_token(client_id, client_secret, refresh_token_val)
-        if new_tokens:
-            access_token = new_tokens.get('access_token')
-            attach_expires_at(new_tokens)
-            # Pass 45.12 — drop stored xuid/gamertag on refresh so the
-            # XSTS / profile lookup below re-validates against the live
-            # account. Catches gamertag changes on Xbox.com that would
-            # otherwise show stale data forever.
-            tokens.pop('xuid', None)
-            tokens.pop('gamertag', None)
-            tokens.update(new_tokens)
-            save_tokens(tokens, user_id)
-        else:
-            # Pass 45.12 — refresh failed (revoked / 401-loop). Drop the dead
-            # token so the next access redirects through the OAuth flow
-            # instead of looping on a token Microsoft has already invalidated.
+        if new_tokens is REFRESH_REFUSED:
+            # Microsoft turned the token down: drop it so the next access
+            # goes through sign-in instead of looping on a dead token.
             logger.warning(
-                "Xbox refresh failed for user=%s; clearing stored tokens",
+                "Xbox refresh refused for user=%s; clearing stored tokens",
                 user_id,
             )
             clear_tokens(user_id)
             return None
+        if not new_tokens:
+            # No usable answer (timeout, server error): the token may be
+            # fine, so keep it for the next try (PASS-59-241).
+            return None
+        access_token = new_tokens.get('access_token')
+        attach_expires_at(new_tokens)
+        # Pass 45.12 — drop stored xuid/gamertag on refresh; the lookup
+        # below fetches them again from the live account, so a gamertag
+        # changed on Xbox.com shows up.
+        tokens.pop('xuid', None)
+        tokens.pop('gamertag', None)
+        tokens.update(new_tokens)
+        save_tokens(tokens, user_id)
 
     # Authenticate with Xbox Live
     xbl_token, user_hash = authenticate_xbox_live(access_token)
@@ -346,11 +356,21 @@ def get_authenticated_session(client_id, client_secret, user_id):
 
     auth_header = _get_auth_header(user_hash, xsts_token)
 
+    # After a refresh (or for another account) the stored gamertag is gone
+    # or stale; fetch it again (PASS-59-241).
+    if not tokens.get('gamertag') or tokens.get('xuid') != xuid:
+        gamertag = get_gamertag(auth_header, xuid)
+        if gamertag:
+            tokens['xuid'] = xuid
+            tokens['gamertag'] = gamertag
+            save_tokens(tokens, user_id)
+
     return {
         'auth_header': auth_header,
         'xuid': xuid,
         'user_hash': user_hash,
         'xsts_token': xsts_token,
+        'gamertag': tokens.get('gamertag', ''),
     }
 
 

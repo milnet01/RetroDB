@@ -11044,6 +11044,18 @@ the cover zoom in Firefox before being reverted for the local fix.
     under another.
   - Non-admins can never refresh their RPCS3 trophies.
 - **Source**: audit 2026-11-04.
+- **Done** (2026-11-05): all nine fixed, each with a test run red
+  first (tests/test_pass59_241_silent_failures.py; the HLTB and RA
+  tests sit in test_pass59_209_hltb.py and test_pass59_210_ra_links.py).
+  Tags: migration 039 rebuilds tags with UNIQUE(owner_id, name).
+  PSN matching reuses the RA subtitle rule in place of the substring
+  test. Xbox clears tokens only on HTTP 400/401. Steam: the shared key
+  in Settings now serves admins only.
+  - **Waiting-on: user** (Should each member get Steam key and Steam ID
+  boxes in Profile, as RA and PSN have? Until then a non-admin cannot
+  sync Steam at all; before this fix they silently got the admin's
+  library. Recommended: yes, as a small follow-up item before v4.0.0,
+  2026-11-05).
 
 ---
 

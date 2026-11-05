@@ -554,6 +554,7 @@ your migration — not in the runner.
 | 036 | `036_games_game_logo.py` | Add `games.game_logo` (TEXT, a filename in `images/game_logos/`). | PASS-59-224 §4.1. Additive. Filled by a scrape or an editor's upload; NULL = no logo. |
 | 037 | `037_games_boxart_back.py` | Add `games.boxart_back` (TEXT, a filename in `images/boxart_back/`). | PASS-59-225. Additive. Filled by a scrape or an editor's upload; NULL = no back. Separate from `box_faces`. |
 | 038 | `038_delete_kept_token_files.py` | Delete the `*_tokens.json.migrated-015` plaintext token files 015 kept, where `user_platform_tokens` already holds that platform's token. | PASS-59-240. No schema change. A file whose platform has no row may be the only copy, and stays. |
+| 039 | `039_tags_unique_per_owner.py` | Rebuild `tags` with `UNIQUE(owner_id, name)` in place of a `UNIQUE` on `name` alone; rebuild `game_tags` alongside, keeping every id. | PASS-59-241. A second user's same-named tag failed. Both wait in copies with no foreign keys, so dropping `tags` cascades nowhere; no `ALTER TABLE RENAME`, which re-checks every trigger. |
 
 ---
 

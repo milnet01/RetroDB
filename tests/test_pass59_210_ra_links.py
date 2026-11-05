@@ -277,6 +277,21 @@ def test_refresh_changes_nothing_when_the_list_fails(tmp_path, monkeypatch):
     assert job.get_status()['failed'] == 2
 
 
+
+def test_refresh_passes_the_system_folder_for_the_hash_match(tmp_path, monkeypatch):
+    """PASS-59-241: the job read game['folder'], which no row has, so the
+    file-hash match never ran."""
+    from services.jobs import ra_refresh as mod
+    seen = []
+    real = mod.match_ra_game_for_file
+
+    def spy(title, rom_path, system_folder, ra_games, alternates=None):
+        seen.append(system_folder)
+        return real(title, rom_path, system_folder, ra_games, alternates)
+    monkeypatch.setattr(mod, 'match_ra_game_for_file', spy)
+    _run_refresh(tmp_path, monkeypatch, [_ra(14817, 'Pikmin 2')])
+    assert seen == ['gc', 'gc']
+
 # --- The upgrade --------------------------------------------------------------------
 
 def _migrate(db):

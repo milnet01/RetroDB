@@ -2,6 +2,18 @@
   date: 2026-11-05
   tags:
   - type: security
+    label: Steam sync no longer borrows the Steam key from Settings for every household member. A member with no Steam key of their own was getting the admin's Steam library and achievements under their account. The key in Settings now serves admins only
+  - type: fix
+    label: How Long to Beat's lookup for many games now saves the times it is sure of. Before, every sure match failed and nothing was saved. RetroAchievements Refresh now also checks each game's file against RetroAchievements' list, as a scrape does, so a game is linked to the exact version you have
+  - type: fix
+    label: The message that a background job has finished shows again, and a job's progress box notices when the server picks the job up after a restart. Before, neither ever appeared
+  - type: fix
+    label: 'PlayStation trophies: a game you linked by hand stays linked after a full sync, and a sync no longer links a game to its sequel, such as "Doom" to "Doom Eternal". Importing PlayStation games now links a game already in your library, as Steam and Xbox imports do, so its trophies show on it'
+  - type: fix
+    label: Xbox no longer shows your gamertag as Unknown after its sign-in renews itself, and a slow or failed connection no longer signs you out of Xbox. Only Microsoft refusing the sign-in does that
+  - type: fix
+    label: Two people can now each have a tag of the same name; before, the second one failed with an error. Any signed-in user can now rescan their own RPCS3 trophies; before, only an admin could, and everyone else saw old trophies until RetroDB restarted
+  - type: security
     label: "Your sign-ins stay private. Database backups can no longer be read by other accounts on the computer, and a failed backup no longer deletes the one before it. Deleting or switching off a user also signs them out of RetroAchievements in DuckStation and PCSX2. A RetroAchievements sign-in saved from the player's own menu no longer carries over to the next person who plays. Logs and saved job errors hide RetroAchievements tokens, another member's PlayStation error is shown only to them, and old plain-text PlayStation and Xbox sign-in files are removed"
   - type: fix
     label: "RetroDB's own checks can no longer touch your library while they run. They always use a throwaway copy of the database, pictures and settings, and refuse to start if any of them points at your real files"

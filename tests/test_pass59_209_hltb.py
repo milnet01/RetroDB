@@ -323,6 +323,19 @@ class TestBulkJob:
         queued = db.execute("SELECT reason FROM hltb_pending_matches").fetchone()
         assert queued['reason'] == 'wrong_platform'
 
+    def test_a_sure_match_is_saved(self, db, monkeypatch):
+        """PASS-59-241: the auto-apply UPDATE had more ? than values, so every
+        sure match failed and nothing was saved."""
+        game_id = _game(db, 'Tetris', estimate=None, match='Old')
+        self._run(db, monkeypatch, {'Tetris': {
+            'game_id': 4321, 'match_name': 'Tetris', 'match_confidence': 100,
+            'match_platform': 'Game Boy', 'main_story': 9.0, 'players': 2}})
+        row = db.execute("SELECT * FROM games WHERE id = ?", (game_id,)).fetchone()
+        assert row['playtime_estimate'] == 'Main: 9 hrs'
+        assert row['hltb_id'] == 4321
+        assert row['hltb_players'] == 2
+        assert db.execute("SELECT COUNT(*) FROM hltb_pending_matches").fetchone()[0] == 0
+
 
 def test_analytics_counts_minutes_as_minutes(db):
     from services.analytics import _get_playtime_data
