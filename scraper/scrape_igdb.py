@@ -621,6 +621,11 @@ def search_games(title, system_name=None, limit=10):
 
 def fetch_game_details(game_id):
     """Fetch detailed game information from IGDB"""
+    # An id goes into the query text, so it must be a number (PASS-59-247).
+    try:
+        game_id = int(game_id)
+    except (TypeError, ValueError):
+        return None
     try:
         token = igdb_auth()
         

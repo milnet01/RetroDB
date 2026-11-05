@@ -260,6 +260,11 @@ def should_use_default_controller(controller_value):
 
 def fetch_igdb_extended(game_id):
     """Fetch extended game information from IGDB including franchise, similar games, ratings, etc."""
+    # An id goes into the query text, so it must be a number (PASS-59-247).
+    try:
+        game_id = int(game_id)
+    except (TypeError, ValueError):
+        return None
     try:
         token = igdb_auth()
 

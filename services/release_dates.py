@@ -192,9 +192,12 @@ def year_gap_with_own_region(release_date, regional, own_region):
     """Is `release_date` over a year from the regional date of this copy's region?"""
     dates = parse_release_dates(regional)
     own = next((dates[code] for code in _own_codes(own_region) if code in dates), None)
-    if not own or not release_date:
+    year = str(release_date or '')[:4]
+    # An unreadable year ("TBA", "199?") is no gap: raising rolled back the
+    # whole scrape (PASS-59-247).
+    if not own or not year.isdigit() or not own[:4].isdigit():
         return False
-    return abs(int(own[:4]) - int(str(release_date)[:4])) > 1
+    return abs(int(own[:4]) - int(year)) > 1
 
 
 def merge_release_dates(stored, found):

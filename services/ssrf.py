@@ -16,7 +16,7 @@ import logging
 import socket
 import threading
 from contextlib import contextmanager
-from urllib.parse import urlparse
+from urllib.parse import urljoin, urlparse
 
 logger = logging.getLogger(__name__)
 
@@ -29,14 +29,10 @@ _ALLOWED_SCHEMES = frozenset({'http', 'https'})
 # 127/8 via is_private, but we enumerate them for clarity and to include
 # 169.254.169.254 (AWS IMDS) via is_link_local.
 def _ip_is_public(ip_obj):
-    return not (
-        ip_obj.is_private
-        or ip_obj.is_loopback
-        or ip_obj.is_link_local
-        or ip_obj.is_reserved
-        or ip_obj.is_multicast
-        or ip_obj.is_unspecified
-    )
+    # is_global follows IANA's special-purpose registries, so it also refuses
+    # ranges the list above misses, such as 100.64.0.0/10 (PASS-59-247).
+    # Multicast is refused on its own: some multicast ranges count as global.
+    return ip_obj.is_global and not ip_obj.is_multicast
 
 
 def validate_outbound_url(url, *, require_https=False):
@@ -211,7 +207,8 @@ def validate_redirect_chain(session, start_url, *, max_redirects=3, timeout=5):
             next_url = head.headers.get('Location')
             if not next_url:
                 return None, 'redirect without Location'
-            current = next_url
+            # A relative Location ("/next") is relative to this hop.
+            current = urljoin(current, next_url)
             continue
         return current, None
     return None, f'exceeded {max_redirects} redirects'

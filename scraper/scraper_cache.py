@@ -17,9 +17,16 @@ _cache = {}
 _cache_lock = threading.Lock()
 
 
+def _key(game_id, system_id):
+    """One key for "no system": the lookup passed None ("123:None") where the
+    search stored "" ("123:"), so a cached record was fetched again
+    (PASS-59-247)."""
+    return f"{game_id}:{'' if system_id is None else system_id}"
+
+
 def cache_screenscraper_result(game_id, system_id, data):
     """Cache a ScreenScraper search result (thread-safe)."""
-    key = f"{game_id}:{system_id}"
+    key = _key(game_id, system_id)
     with _cache_lock:
         _cache[key] = {"data": data, "timestamp": datetime.now()}
         if len(_cache) > _CACHE_MAX_SIZE:
@@ -37,7 +44,7 @@ def cache_screenscraper_result(game_id, system_id, data):
 
 def get_cached_screenscraper_result(game_id, system_id):
     """Return a cached ScreenScraper result if not expired, else None."""
-    key = f"{game_id}:{system_id}"
+    key = _key(game_id, system_id)
     with _cache_lock:
         entry = _cache.get(key)
         if entry is None:
