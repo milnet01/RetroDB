@@ -264,6 +264,31 @@ def test_the_upgrade_keeps_every_tag_and_its_games(tmp_path):
     assert conn.execute("PRAGMA foreign_key_check").fetchall() == []
 
 
+def test_the_upgrade_drops_dangling_links_instead_of_stopping_the_app(tmp_path):
+    # Old installs can hold tag links to deleted games or tags, and tags of a
+    # deleted person. With foreign keys on, copying those back failed and the
+    # app would not start. They go, as the delete would have taken them.
+    from services import migrations
+    index = migrations.MIGRATIONS.index('039_tags_unique_per_owner')
+    conn = _tag_db(str(tmp_path / 'o.db'), upto=index)
+    conn.execute("INSERT INTO systems (id, name, folder) VALUES (1, 'NES', 'nes')")
+    conn.execute("INSERT INTO games (id, system_id, title, rom_path) VALUES (5, 1, 'Zelda', 'z')")
+    conn.execute("INSERT INTO tags (id, name, owner_id) VALUES (7, 'Done', 1)")
+    conn.execute("INSERT INTO game_tags VALUES (5, 7)")
+    conn.commit()
+    conn.execute("PRAGMA foreign_keys = OFF")
+    conn.execute("INSERT INTO tags (id, name, owner_id) VALUES (8, 'Gone', 99)")
+    conn.execute("INSERT INTO game_tags VALUES (99, 7)")   # game deleted
+    conn.execute("INSERT INTO game_tags VALUES (5, 77)")   # tag deleted
+    conn.execute("INSERT INTO game_tags VALUES (5, 8)")    # tag of a deleted person
+    conn.commit()
+    conn.execute("PRAGMA foreign_keys = ON")
+    migrations.apply_pending(conn)
+    assert conn.execute("SELECT id FROM tags").fetchall() == [(7,)]
+    assert conn.execute("SELECT * FROM game_tags").fetchall() == [(5, 7)]
+    assert conn.execute("PRAGMA foreign_key_check").fetchall() == []
+
+
 # --- Steam: the shared key in Settings is the admins', never another person's ---
 
 @pytest.mark.parametrize('user_id,expected', [

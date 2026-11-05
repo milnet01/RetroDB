@@ -38,8 +38,15 @@ def apply(conn):
             UNIQUE (owner_id, name)
         )
     """)
+    # Old installs can hold rows a delete should have taken: tags of a deleted
+    # person, links to a deleted game or tag. Copying them back fails with
+    # foreign keys on and the app will not start, so they are left behind,
+    # as deleting the person, game or tag would have done (011's pattern).
+    owner_ok = (' WHERE owner_id IS NULL OR owner_id IN (SELECT id FROM users)'
+                if owner_ref else '')
     cursor.execute("INSERT INTO tags (id, name, color, created_at, owner_id) "
-                   "SELECT id, name, color, created_at, owner_id FROM tags_keep")
+                   "SELECT id, name, color, created_at, owner_id FROM tags_keep"
+                   + owner_ok)
     cursor.execute("""
         CREATE TABLE game_tags (
             game_id INTEGER NOT NULL,
@@ -50,7 +57,9 @@ def apply(conn):
         )
     """)
     cursor.execute("INSERT INTO game_tags (game_id, tag_id) "
-                   "SELECT game_id, tag_id FROM game_tags_keep")
+                   "SELECT game_id, tag_id FROM game_tags_keep "
+                   "WHERE game_id IN (SELECT id FROM games) "
+                   "AND tag_id IN (SELECT id FROM tags)")
     cursor.execute("DROP TABLE game_tags_keep")
     cursor.execute("DROP TABLE tags_keep")
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_tags_owner_id ON tags(owner_id)")
