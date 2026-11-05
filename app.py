@@ -1458,7 +1458,10 @@ def resume_job(job_id):
     error bodies (SQL text / column names leak to the client). The decorator
     emits a stack trace to the log and a redacted 500 envelope.
     """
-    from services.jobs.base import get_recoverable_jobs, persist_job_complete
+    from services.jobs.base import (
+        claim_recoverable_job, get_recoverable_jobs, persist_job_complete,
+        release_recoverable_job,
+    )
     from services.jobs import bulk_scrape_job, ra_sync_job, ra_refresh_job, psn_refresh_job
     from services.jobs import steam_sync_job, xbox_sync_job, museum_generate_job
     from services.jobs import ai_fill_bulk_job
@@ -1491,8 +1494,15 @@ def resume_job(job_id):
     if not _may_manage_job(job['job_type'], job.get('params')):
         return api_error('You do not have permission to perform this action', 403)
 
-    resumed = handler.resume_from_params(job['params'], progress=job.get('progress'))
+    if not claim_recoverable_job(job_id):
+        return api_error('Job not found or already handled', 404)
+    try:
+        resumed = handler.resume_from_params(job['params'], progress=job.get('progress'))
+    except Exception:
+        release_recoverable_job(job_id)
+        raise
     if not resumed:
+        release_recoverable_job(job_id)
         return api_error('Could not resume job — handler returned false', 500)
     # Mark the old interrupted/queued row as completed so it doesn't reappear
     persist_job_complete(job_id, status='completed')

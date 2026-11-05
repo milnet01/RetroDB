@@ -580,7 +580,8 @@ def mark_jobs_interrupted():
         try:
             now = datetime.now(timezone.utc).isoformat()
             c = conn.cursor()
-            c.execute("SELECT id, job_type, status FROM job_queue WHERE status IN ('running', 'queued')")
+            c.execute("SELECT id, job_type, status FROM job_queue "
+                      "WHERE status IN ('running', 'queued', 'resuming')")
             rows = c.fetchall()
             affected = []
             for row in rows:
@@ -681,6 +682,32 @@ def get_recoverable_jobs():
         return []
 
 
+def claim_recoverable_job(job_id):
+    """Mark an interrupted job as being resumed. False when another request
+    got there first, so two quick clicks start it once (PASS-59-243)."""
+    conn = _get_conn()
+    try:
+        cur = conn.execute(
+            "UPDATE job_queue SET status = 'resuming', updated_at = ? "
+            "WHERE id = ? AND status = 'interrupted'",
+            (datetime.now(timezone.utc).isoformat(), job_id))
+        conn.commit()
+        return cur.rowcount == 1
+    finally:
+        conn.close()
+
+
+def release_recoverable_job(job_id):
+    """Put a claimed job back on the dashboard when its resume failed."""
+    conn = _get_conn()
+    try:
+        conn.execute("UPDATE job_queue SET status = 'interrupted' "
+                     "WHERE id = ? AND status = 'resuming'", (job_id,))
+        conn.commit()
+    finally:
+        conn.close()
+
+
 def dismiss_job(job_id):
     """Dismiss an interrupted or queued job so it no longer appears on the dashboard."""
     try:
@@ -699,10 +726,11 @@ def dismiss_job(job_id):
         logger.warning(f"Failed to dismiss job {job_id}: {e}")
 
 
-def persist_job_queued(job_type, params=None):
+def persist_job_queued(job_type, params=None, progress=None):
     """Persist a queued job to the database (survives restarts).
 
-    Same pattern as persist_job_start but with status='queued'.
+    Same pattern as persist_job_start but with status='queued'. `progress`
+    is how far a displaced job had got, so a resume continues from there.
     Returns the job_queue row ID, or None on failure.
     """
     try:
@@ -714,7 +742,7 @@ def persist_job_queued(job_type, params=None):
                 c.execute(
                     "INSERT INTO job_queue (job_type, status, progress, created_at, updated_at, params) "
                     "VALUES (?, 'queued', ?, ?, ?, ?)",
-                    (job_type, json.dumps({'current': 0, 'total': 0}), now, now,
+                    (job_type, json.dumps(progress or {'current': 0, 'total': 0}), now, now,
                      json.dumps(params) if params else None)
                 )
                 row_id = c.lastrowid

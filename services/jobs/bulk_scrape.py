@@ -87,6 +87,9 @@ class BulkScrapeJob:
 
     def reset(self):
         """Reset current job state (not the queue)"""
+        # Each job gets a new token; a worker whose token is old belongs to
+        # a job that was replaced and stops (PASS-59-243).
+        self._run_token = getattr(self, '_run_token', 0) + 1
         self.job_id = None
         self.game_ids = []
         self.system_id = None
@@ -229,6 +232,7 @@ class BulkScrapeJob:
             except Exception as e:
                 logger.warning(f"Could not fetch first game title: {e}")
 
+        queued_job = queued_reply = None
         with self._lock:
             new_job_id = f"bulk_{int(time.time())}_{next(_JOB_SEQ)}"
 
@@ -261,19 +265,8 @@ class BulkScrapeJob:
                 }
                 self._queue.append(queued_job)
 
-                # Persist queued job to DB so it survives server restarts
-                db_queue_id = persist_job_queued('bulk_scrape', {
-                    'game_ids': game_ids,
-                    'game_count': len(game_ids),
-                    'system_id': system_id,
-                    'system_name': system_name,
-                    'return_url': return_url,
-                    'scrape_mode': scrape_mode
-                })
-                queued_job['db_queue_id'] = db_queue_id
-
                 logger.info(f"Queued bulk scrape job {new_job_id} with {len(game_ids)} games for {system_name} (queue position: {len(self._queue)}, mode: {scrape_mode})")
-                return {
+                queued_reply = {
                     'success': True,
                     'queued': True,
                     'job_id': new_job_id,
@@ -281,32 +274,39 @@ class BulkScrapeJob:
                     'queue_position': len(self._queue)
                 }
 
-            # No job running, start immediately. Pass 41.6.A — try the
-            # cross-process advisory lock first. If another worker is
-            # already running bulk_scrape (multi-worker WSGI deploy), the
-            # acquire returns None and we refuse the start. Held FD lives
-            # on `self._singleton_fd` for the whole queue-chain; released
-            # in `_start_next_queued` when the queue empties.
-            singleton_fd = acquire_job_singleton_lock('bulk_scrape')
-            if singleton_fd is None:
-                return {
-                    'success': False,
-                    'error': 'A bulk scrape is already running on another worker process. Wait for it to complete or stop the other worker.',
-                }
-            self._singleton_fd = singleton_fd
+            else:
+                # No job running, start immediately. Pass 41.6.A — try the
+                # cross-process advisory lock first. If another worker is
+                # already running bulk_scrape (multi-worker WSGI deploy), the
+                # acquire returns None and we refuse the start. Held FD lives
+                # on `self._singleton_fd` for the whole queue-chain; released
+                # in `_start_next_queued` when the queue empties.
+                singleton_fd = acquire_job_singleton_lock('bulk_scrape')
+                if singleton_fd is None:
+                    return {
+                        'success': False,
+                        'error': 'A bulk scrape is already running on another worker process. Wait for it to complete or stop the other worker.',
+                    }
+                self._singleton_fd = singleton_fd
 
-            self.reset()
-            self.job_id = new_job_id
-            self.game_ids = game_ids
-            self.system_id = system_id
-            self.system_name = system_name
-            self.return_url = return_url
-            self.scrape_mode = scrape_mode
-            self.running = True
-            self.start_time = datetime.now()
-            # Set first game title immediately for UI feedback
-            self.current_game_title = first_game_title
-            self.current_index = 0
+                self.reset()
+                self.job_id = new_job_id
+                self.game_ids = game_ids
+                self.system_id = system_id
+                self.system_name = system_name
+                self.return_url = return_url
+                self.scrape_mode = scrape_mode
+                self.running = True
+                self.start_time = datetime.now()
+                # Set first game title immediately for UI feedback
+                self.current_game_title = first_game_title
+                self.current_index = 0
+
+        if queued_reply is not None:
+            # Saved so it survives a restart; outside the lock, because the
+            # write retries while the database is busy (PASS-59-243).
+            self._persist_queued_entry(queued_job)
+            return queued_reply
 
         # Start background thread
         self._thread = threading.Thread(target=self._run_scrape, daemon=True)
@@ -446,6 +446,8 @@ class BulkScrapeJob:
         # so drop its 'queued' job_queue row too — left behind, a restart
         # turned it into a recoverable "interrupted" scrape that had already run.
         remove_queued_job(new_running_job.get('db_queue_id'))
+        # The displaced job waits in the queue; save it so a restart keeps it.
+        self._persist_queued_entry(running_job)
 
         # Wait for the old worker to actually exit its current iteration
         # before we mutate state for the new job.  A bare `time.sleep(0.5)`
@@ -456,7 +458,8 @@ class BulkScrapeJob:
             if old_thread.is_alive():
                 logger.warning(
                     "Old bulk-scrape worker did not exit within 60s of cancel; "
-                    "proceeding with swap (state mixing possible)"
+                    "proceeding with swap (it stops at its next check, its "
+                    "run token being old)"
                 )
 
         # Start the new job
@@ -531,6 +534,7 @@ class BulkScrapeJob:
 
         # As in swap_with_running: the promoted job's 'queued' row goes too.
         remove_queued_job(new_running_job.get('db_queue_id'))
+        self._persist_queued_entry(running_job)
 
         # Same race as swap_with_running — wait for the worker to exit
         # before we mutate state for the new job.
@@ -607,6 +611,7 @@ class BulkScrapeJob:
             system_name = params.get('system_name') or self._get_system_name(system_id)
             remaining_ids = game_ids[resume_index:]
 
+            queued_job = None
             with self._lock:
                 # If a job is already running, queue this one with partial progress
                 # (happens when "Resume All" fires multiple requests in parallel)
@@ -633,28 +638,32 @@ class BulkScrapeJob:
                         f"{resume_index}/{len(game_ids)} done, "
                         f"{len(remaining_ids)} remaining (queue position: {len(self._queue)})"
                     )
-                    return True
 
-                # Pass 48.4 — acquire the cross-process singleton before
-                # starting the worker. The post-restart resume path previously
-                # spawned `_run_scrape` without the flock that `start()` holds,
-                # so on a multi-worker deploy two workers could both resume the
-                # same interrupted job. Refuse (return False) if another worker
-                # already holds it.
-                singleton_fd = try_acquire_singleton_or_warn('bulk_scrape')
-                if singleton_fd is None:
-                    return False
-                self.reset()
-                self._singleton_fd = singleton_fd
-                self.job_id = f"bulk_{int(time.time())}_resume"
-                self.game_ids = pad_resume_game_ids(resume_index, remaining_ids)
-                self.system_id = system_id
-                self.system_name = system_name
-                self.return_url = return_url
-                self.scrape_mode = scrape_mode
-                self.running = True
-                self.start_time = datetime.now()
-                restore_progress_counts(self, resume_index, progress)
+                else:
+                    # Pass 48.4 — acquire the cross-process singleton before
+                    # starting the worker. The post-restart resume path previously
+                    # spawned `_run_scrape` without the flock that `start()` holds,
+                    # so on a multi-worker deploy two workers could both resume the
+                    # same interrupted job. Refuse (return False) if another worker
+                    # already holds it.
+                    singleton_fd = try_acquire_singleton_or_warn('bulk_scrape')
+                    if singleton_fd is None:
+                        return False
+                    self.reset()
+                    self._singleton_fd = singleton_fd
+                    self.job_id = f"bulk_{int(time.time())}_resume"
+                    self.game_ids = pad_resume_game_ids(resume_index, remaining_ids)
+                    self.system_id = system_id
+                    self.system_name = system_name
+                    self.return_url = return_url
+                    self.scrape_mode = scrape_mode
+                    self.running = True
+                    self.start_time = datetime.now()
+                    restore_progress_counts(self, resume_index, progress)
+
+            if queued_job is not None:
+                self._persist_queued_entry(queued_job)
+                return True
 
             self._thread = threading.Thread(target=self._run_scrape, daemon=True)
             self._thread.start()
@@ -724,6 +733,34 @@ class BulkScrapeJob:
         self._thread.start()
         return True
 
+    def _persist_queued_entry(self, job):
+        """Save a queued job so it survives a restart, with how far it had
+        got if it was displaced, and give it its row id (PASS-59-243).
+        Call outside the lock: the write retries while the database is busy."""
+        partial = job.get('partial_progress') or {}
+        done = partial.get('completed', 0)
+        game_ids = [None] * done + list(job['game_ids'])
+        progress = None
+        if done:
+            progress = {'current': done, 'total': len(game_ids),
+                        'success': partial.get('success', 0),
+                        'failed': partial.get('failed', 0),
+                        'skipped': partial.get('skipped', 0)}
+        row_id = persist_job_queued('bulk_scrape', {
+            'game_ids': game_ids,
+            'game_count': len(game_ids),
+            'system_id': job.get('system_id'),
+            'system_name': job.get('system_name'),
+            'return_url': job.get('return_url'),
+            'scrape_mode': job.get('scrape_mode', 'fill_missing'),
+        }, progress=progress)
+        with self._lock:
+            if any(q is job for q in self._queue):
+                job['db_queue_id'] = row_id
+                return
+        # Started or dropped while it was being saved.
+        remove_queued_job(row_id)
+
     def _finish_worker(self):
         """Run the queue hand-off as a worker exits — unless swap/demote is
         replacing this worker, in which case the handler starts the promoted
@@ -747,6 +784,11 @@ class BulkScrapeJob:
         _game_ids = list(self.game_ids)
         _scrape_mode = self.scrape_mode
         _job_id = self.job_id
+        _token = self._run_token
+
+        def _replaced():
+            # Another job took over (a swap that stopped waiting for us).
+            return self._run_token != _token
 
         logger.info(f"Starting bulk scrape job {_job_id} with {len(_game_ids)} games")
 
@@ -810,7 +852,7 @@ class BulkScrapeJob:
             for i, game_id in enumerate(_game_ids):
                 # Check for cancel
                 with self._lock:
-                    if self.cancelled:
+                    if self.cancelled or _replaced():
                         logger.info(f"Bulk scrape cancelled at game {i+1}/{len(_game_ids)}")
                         break
                     self.current_index = i
@@ -846,14 +888,14 @@ class BulkScrapeJob:
                 # thread hanging until the next 0.2s tick (mirrors psn_refresh).
                 while True:
                     with self._lock:
-                        if not self.paused or self.cancelled:
+                        if not self.paused or self.cancelled or _replaced():
                             break
                     if shutdown_requested.wait(0.2):
                         break
 
                 # Double-check cancel after pause
                 with self._lock:
-                    if self.cancelled:
+                    if self.cancelled or _replaced():
                         break
 
                 # Skip placeholder IDs (used for restored partial progress)
@@ -1044,6 +1086,21 @@ class BulkScrapeJob:
             # Job complete — release prefetched data to free memory
             _prefetched_games.clear()
 
+            if _replaced():
+                # The job running now is another's: leave its state, the
+                # queue and the hand-off alone (PASS-59-243).
+                if _progress_conn is not None:
+                    try:
+                        _progress_conn.close()
+                    except sqlite3.Error:
+                        pass
+                persist_job_complete(persist_id, status='cancelled')
+                with self._lock:
+                    if self._handoff_thread is threading.current_thread():
+                        self._handoff_thread = None
+                logger.info(f"Replaced bulk scrape worker for {_job_id} stopped")
+                return
+
             with self._lock:
                 self.completed = True
                 self.running = False
@@ -1088,10 +1145,16 @@ class BulkScrapeJob:
                 except sqlite3.Error:
                     pass
                 _progress_conn = None
+            persist_job_complete(persist_id, status='failed', error=str(e))
+            if _replaced():
+                # Another job's state; leave it (PASS-59-243).
+                with self._lock:
+                    if self._handoff_thread is threading.current_thread():
+                        self._handoff_thread = None
+                return
             with self._lock:
                 self.completed = True
                 self.running = False
                 self.error_message = str(e)
-            persist_job_complete(persist_id, status='failed', error=str(e))
             # Even on error, try to start the next queued job
             self._finish_worker()

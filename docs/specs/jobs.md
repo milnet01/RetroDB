@@ -56,7 +56,8 @@ Two state planes, with distinct vocabularies:
 1. **In-memory flags** on the job object: `running`, `paused`, `cancelled`,
    `completed` — all `bool`, all touched only under `self._lock`.
 2. **`job_queue.status`** in the DB: one of
-   `queued / running / paused / completed / failed / cancelled / interrupted / dismissed`.
+   `queued / running / paused / completed / failed / cancelled / interrupted / resuming / dismissed`.
+   `resuming` is held only while a resume starts (`claim_recoverable_job`).
    This is the **persistent** view used by the dashboard recovery banner.
 
 > Note: `paused` is an in-memory-only state. There is no `paused` value
@@ -128,7 +129,7 @@ process to `interrupted` so the dashboard never shows stale ghosts.
 | State | Lives in | Survives restart? |
 |-------|----------|-------------------|
 | `self.running` / `self.cancelled` / `self.paused` / counters | Job object in memory | No |
-| Queue chain (`BulkScrapeJob._queue`) | In-memory list | No (each queued entry also gets a `job_queue` row with `status='queued'` — those are auto-promoted to `interrupted` at startup) |
+| Queue chain (`BulkScrapeJob._queue`) | In-memory list | No (each queued entry also gets a `job_queue` row with `status='queued'` — those are auto-promoted to `interrupted` at startup). A job displaced by a swap or demote, and a resume queued behind a running scrape, get one too, with their progress (`_persist_queued_entry`, PASS-59-243). The row is written outside `self._lock`. |
 | Per-tick progress | `job_queue.progress` (JSON) | Yes — updated every 10 items or 30 s |
 | Run history (started/finished, params, error) | `job_queue` row | Yes — until `sweep_old_job_history` prunes it (§10) |
 | Cross-process lock | `database/job_locks/<name>.lock` (open FD) | No — released on process exit by the kernel |
@@ -327,8 +328,9 @@ Anything not persisted in the last progress-tick window (≤ 10 items or
    `(system_id, scrape_mode)` and auto-dismisses losers (`base.py:606`).
    Multi-system scrapes (`system_id` None) are distinct selections and are
    never deduplicated.
-4. User clicks "Resume" → route calls `<job>.resume_from_params(params,
-   progress)` which restarts the worker at `progress['current']`. **Seven
+4. User clicks "Resume" → route claims the row (`claim_recoverable_job`;
+   a second click finds it taken) and calls `<job>.resume_from_params(params,
+   progress)`, which restarts the worker at `progress['current']`. **Seven
    classes implement resume**: `BulkScrapeJob`, `RASyncJob`, `RARefreshJob`,
    `PSNRefreshJob`, `SteamSyncJob`, `XboxSyncJob`, `MuseumGenerateJob`.
    Use the shared `pad_resume_game_ids` / `restore_progress_counts` /

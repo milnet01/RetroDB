@@ -108,6 +108,9 @@ def test_resume_job_needs_the_starting_routes_rights(admin_test_client, monkeypa
     monkeypatch.setattr(base, 'get_recoverable_jobs', lambda: [
         {'id': 59118, 'job_type': job_type, 'params': params, 'progress': None}])
     monkeypatch.setattr(base, 'persist_job_complete', lambda *a, **k: None)
+    # No real row to claim (PASS-59-243 claims it before resuming).
+    monkeypatch.setattr(base, 'claim_recoverable_job', lambda job_id: True)
+    monkeypatch.setattr(base, 'release_recoverable_job', lambda job_id: None)
     calls = []
     handler = getattr(jobs, f'{job_type}_job')
     monkeypatch.setattr(handler, 'resume_from_params',
