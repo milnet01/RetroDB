@@ -5,6 +5,7 @@ import pytest
 
 from services import ssrf
 from tests.test_pass59_205_esde_merge import library  # noqa: F401  (a fixture)
+from tests._versions_util import vdb  # noqa: F401  (a fixture)
 
 
 @pytest.mark.parametrize('ip,public', [
@@ -165,3 +166,16 @@ def test_a_screenscraper_reply_dropped_early_is_closed(status, headers, monkeypa
     monkeypatch.setattr(ss.service_limits, 'wait_for_turn', lambda *a, **k: True, raising=False)
     ss._ss_request_with_retry('https://example.invalid', [], retries=1)
     assert closed
+
+
+def test_a_rejected_pair_never_shares_a_suggestion_through_a_third_game(vdb):  # noqa: F811
+    """Union-find joined clusters through a shared game, so a rejected pair
+    came back together in one suggestion."""
+    from services import version_groups as vg
+    a = vdb.game('Alpha', rom='Alpha (USA).zip', igdb_id=77)
+    b = vdb.game('Alpha', rom='Alpha (Europe).zip', igdb_id=77)
+    c = vdb.game('Alpha', rom='Alpha (Japan).zip', igdb_id=77)
+    vg.reject([a, c])
+    for suggestion in vg.suggest_groups(vdb.sid):
+        ids = {g['id'] for g in suggestion['games']}
+        assert not {a, c} <= ids, ids

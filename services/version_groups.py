@@ -418,10 +418,29 @@ def suggest_groups(system_id=None):
         return x
 
     kept = {pair: sigs for pair, sigs in pair_signals.items() if allowed(*pair)}
+    # Two clusters join only when every game in one may pair with every game
+    # in the other: through a shared game a rejected pair, or two discs, came
+    # back together in one suggestion (PASS-59-247).
+    members = {}
+
+    def group(x):
+        return members.setdefault(find(x), {x})
+
+    joined = {}
     for a, b in kept:
-        parent[find(a)] = find(b)
+        ra, rb = find(a), find(b)
+        if ra == rb:
+            joined[(a, b)] = True
+            continue
+        # Pairs are kept smallest id first, as rejections are stored.
+        if all(allowed(*sorted((x, y))) for x in group(a) for y in group(b)):
+            parent[ra] = rb
+            members[rb] = group(b) | members.pop(ra, {a})
+            joined[(a, b)] = True
     clusters = {}
     for (a, b), sigs in kept.items():
+        if not joined.get((a, b)):
+            continue
         cluster = clusters.setdefault(find(a), {'ids': set(), 'signals': set()})
         cluster['ids'].update((a, b))
         cluster['signals'].update(sigs)
