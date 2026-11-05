@@ -543,6 +543,12 @@ def get_game_info(rom_path, system_folder, username, password, dev_id=None, dev_
                 response_text = response.text.strip()
                 if response_text and not response_text.startswith('{'):
                     response_lower = response_text.lower()
+                    # The search's rule (PASS-59-247): a reply in words
+                    # naming a quota stops the service.
+                    if "quota" in response_lower or "maximum" in response_lower or "api fermé" in response_lower:
+                        logger.warning("ScreenScraper: API quota/rate limit reached")
+                        service_limits.stop(service_limits.SCREENSCRAPER, _LIMIT_RECHECK_SECONDS)
+                        return None
                     if "identifiants développeur" in response_lower or "developer" in response_lower:
                         if attempt == 0 and dev_id:
                             logger.warning("ScreenScraper: Dev credentials rejected, retrying without them...")
@@ -556,6 +562,8 @@ def get_game_info(rom_path, system_folder, username, password, dev_id=None, dev_
                 except Exception:
                     logger.warning("ScreenScraper: Invalid JSON response")
                     return None
+                # The pace and daily stop this account's reply states.
+                _note_account_limits(data)
                 
                 if "response" not in data or "jeu" not in data["response"]:
                     return None
@@ -1020,6 +1028,9 @@ def _ss_request(url, params, timeout, retries):
                     logger.warning(
                         f"ScreenScraper response too large ({declared} > {max_bytes}) — skipping"
                     )
+                    # A streamed reply holds its pooled connection until
+                    # closed (PASS-59-247).
+                    response.close()
                     return None
                 # Force full body read under the cap so downstream .json()
                 # gets a bounded payload. Abort as soon as we exceed max_bytes
@@ -1033,6 +1044,7 @@ def _ss_request(url, params, timeout, retries):
                         logger.warning(
                             f"ScreenScraper response exceeded {max_bytes} bytes mid-stream — discarding"
                         )
+                        response.close()
                         return None
                 # Re-inject the bounded body so callers can still use .json()/.text.
                 response._content = bytes(buf)
@@ -1046,6 +1058,7 @@ def _ss_request(url, params, timeout, retries):
                 if attempt < retries:
                     wait = 2 ** attempt
                     logger.warning(f"ScreenScraper rate limited ({response.status_code}), waiting {wait}s...")
+                    response.close()
                     _time.sleep(wait)
                     continue
                 return response
@@ -1054,6 +1067,7 @@ def _ss_request(url, params, timeout, retries):
                 if attempt < retries:
                     wait = 2 ** (attempt + 1)
                     logger.warning(f"ScreenScraper server error ({response.status_code}), retrying in {wait}s...")
+                    response.close()
                     _time.sleep(wait)
                     continue
                 logger.warning(f"ScreenScraper server error ({response.status_code}) after {retries + 1} attempts")

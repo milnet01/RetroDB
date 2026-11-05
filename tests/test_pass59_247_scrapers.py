@@ -111,3 +111,57 @@ def test_gap_fill_runs_each_service_under_its_breaker(source, breaker, monkeypat
     monkeypatch.setitem(hybrid_scraper._FALLBACK_FETCHERS, source, lambda lookup: {'ok': 1})
     assert hybrid_scraper._fetch_fallback(source, {}) == {'ok': 1}
     assert used == [source]
+
+
+class _SSReply:
+    def __init__(self, text, status=200):
+        self.status_code, self.text = status, text
+
+    def json(self):
+        import json
+        return json.loads(self.text)
+
+
+def _ss_game_info(monkeypatch, reply):
+    from scraper import scrape_screenscraper as ss
+    monkeypatch.setattr(ss, 'get_system_id', lambda folder: 1)
+    monkeypatch.setattr(ss, '_ss_request_with_retry', lambda *a, **k: reply)
+    return ss.get_game_info('/roms/nes/Contra.nes', 'nes', 'u', 'p', use_checksums=False)
+
+
+def test_a_quota_reply_to_a_game_lookup_stops_screenscraper(monkeypatch):
+    from scraper import service_limits
+    _ss_game_info(monkeypatch, _SSReply('API closed: quota maximum reached'))
+    assert service_limits.stopped(service_limits.SCREENSCRAPER)
+
+
+def test_a_game_lookup_learns_the_accounts_limits(monkeypatch):
+    from scraper import scrape_screenscraper as ss
+    seen = []
+    monkeypatch.setattr(ss, '_note_account_limits', lambda data: seen.append(data))
+    _ss_game_info(monkeypatch, _SSReply('{"response": {"ssuser": {"maxrequestspermin": "20"}}}'))
+    assert seen
+
+
+@pytest.mark.parametrize('status,headers', [(200, {'Content-Length': str(10 ** 9)}), (429, {}), (503, {})])
+def test_a_screenscraper_reply_dropped_early_is_closed(status, headers, monkeypatch):
+    from scraper import scrape_screenscraper as ss
+    closed = []
+
+    class Reply:
+        status_code = status
+        text = ''
+
+        def __init__(self):
+            self.headers = headers
+
+        def close(self):
+            closed.append(status)
+
+        def iter_content(self, chunk_size):
+            return iter(())
+    monkeypatch.setattr(ss._http_session, 'get', lambda *a, **k: Reply())
+    monkeypatch.setattr('time.sleep', lambda s: None)
+    monkeypatch.setattr(ss.service_limits, 'wait_for_turn', lambda *a, **k: True, raising=False)
+    ss._ss_request_with_retry('https://example.invalid', [], retries=1)
+    assert closed
