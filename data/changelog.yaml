@@ -2,6 +2,14 @@
   date: 2026-11-05
   tags:
   - type: fix
+    label: Scrapes are gentler on the online services. A service that keeps failing is skipped for a while when filling gaps, as it already was in searches, and ScreenScraper game lookups now respect its daily limits too
+  - type: fix
+    label: A scrape no longer fails on a game whose release year is unknown, such as "TBA", and a game listed for regions outside your list, such as "Brazil, Korea", keeps its region instead of becoming your default
+  - type: fix
+    label: ES-DE folders written as ~/ now work, and a very large ES-DE file is no longer copied. Suggested regional versions never put back together two games you said are not versions of each other
+  - type: security
+    label: RetroDB refuses a few more private network addresses when fetching pictures from the web, and follows a web address's redirect correctly
+  - type: fix
     label: The last screens still in English now follow your language too, including the setup wizard, Tags, Lists, Compare Games, ROM Tools settings, the bulk scrape queue, the dashboard's interrupted-jobs list, the library card labels and many error messages
   - type: security
     label: A system name holding web code can no longer run it in the bulk scrape queue window

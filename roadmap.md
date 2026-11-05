@@ -11240,7 +11240,15 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.247 Scrapers follow the service rules and close what they open (audit-fix, S).
-- **Status**: todo
+- **Resolution** (2026-11-05): Done 2026-11-05 in six commits: e8eeb89b (ssrf is_global and relative
+  redirects, odd release years, IGDB int ids, cache key), c48f9497 (ES-DE
+  ~ paths, copy size cap, unused bulk_import_esde removed), 4bb6cef3
+  (listed region kept, not defaulted), ccaa7345 (decided: Settings check
+  buttons do not wait for a turn, recorded in scrapers.md), 78052df8
+  (gap-fill under circuit breakers), d0069c90 (ScreenScraper lookup stop
+  rules, dropped replies closed), 215b542d (version suggestions keep
+  rejected pairs apart). Tests: tests/test_pass59_247_scrapers.py.
+- **Status**: done
 - **Why**: audit 2026-11-04, lanes 1, 3, 4 and 9.
 - **Fix**:
   - Gap-fill calls TGDB, IGDB, RAWG and ScreenScraper outside their
