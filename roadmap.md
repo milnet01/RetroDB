@@ -11021,7 +11021,8 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.241 Features that silently do nothing: HLTB auto-apply, RA Refresh hash match, per-user tags, PSN links (fix, M).
-- **Status**: todo
+- **Resolution** (2026-11-05): Shipped in 597a2edb (2026-11-05).
+- **Status**: done
 - **Why**: audit 2026-11-04, lanes 5, 7, 10 and 12. First two confirmed
   in code 2026-11-04.
 - **Fix**:
@@ -11051,11 +11052,8 @@ the cover zoom in Firefox before being reverted for the local fix.
   PSN matching reuses the RA subtitle rule in place of the substring
   test. Xbox clears tokens only on HTTP 400/401. Steam: the shared key
   in Settings now serves admins only.
-  - **Waiting-on: user** (Should each member get Steam key and Steam ID
-  boxes in Profile, as RA and PSN have? Until then a non-admin cannot
-  sync Steam at all; before this fix they silently got the admin's
-  library. Recommended: yes, as a small follow-up item before v4.0.0,
-  2026-11-05).
+  - **Follow-up**: per-member Steam boxes in Profile are PASS-59-253,
+  waiting on the user.
 
 ---
 
@@ -11312,6 +11310,20 @@ the cover zoom in Firefox before being reverted for the local fix.
 - Ignoring the keys still draws a round, centred slot, so nothing breaks
   today. Xbox One and Series X cases are newly shaped.
 - **Source**: Slipcase session, 2026-11-04.
+
+---
+
+#### Pass 59.253 Each member can save their own Steam key and Steam ID in Profile (feature, S).
+- **Status**: todo
+- **Why**: PASS-59-241 stopped a member with no Steam key getting the
+  admin's library. `user_settings` has `steam_api_key` and `steam_id`
+  columns, but nothing writes them: Profile offers RA and PSN only. So a
+  non-admin cannot sync Steam at all now.
+- **Fix**: add both to `routes/auth.py` `allowed_fields` and to the
+  Profile page; the key masked like the others.
+- **Waiting-on: user** (Add Steam boxes to Profile so every member can
+  sync their own Steam? Recommended: yes, before v4.0.0; it is small
+  and the shared key now serves admins only. 2026-11-05)
 
 ## Done index
 
