@@ -11058,7 +11058,8 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.242 Scrapes and AI Fill keep what the user typed (audit-fix, M).
-- **Status**: todo
+- **Resolution** (2026-11-05): Shipped in 97f77776 (2026-11-05).
+- **Status**: done
 - **Why**: audit 2026-11-04, lanes 3, 4, 8 and 10. Fill-only is a project
   contract (CLAUDE.md, `docs/decisions/`).
 - **Fix**:
