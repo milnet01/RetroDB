@@ -449,6 +449,19 @@ def api_import_logos():
         )
 
 
+def _rom_size(path):
+    """A ROM's size on disk; for a folder game (a .PS3 folder), its files'."""
+    if not os.path.isdir(path):
+        return os.path.getsize(path)
+    total = 0
+    for root, _dirs, files in os.walk(path):     # does not follow folder links
+        for name in files:
+            file_path = os.path.join(root, name)
+            if not os.path.islink(file_path):
+                total += os.path.getsize(file_path)
+    return total
+
+
 @bp.route('/api/calculate-storage', methods=['POST'])
 @admin_required
 def api_calculate_storage():
@@ -460,7 +473,7 @@ def api_calculate_storage():
         for game in games:
             if game['rom_path'] and os.path.exists(game['rom_path']):
                 try:
-                    sizes.append((os.path.getsize(game['rom_path']), game['id']))
+                    sizes.append((_rom_size(game['rom_path']), game['id']))
                 except Exception as e:
                     logger.warning(f"Could not get size for {game['rom_path']}: {e}")
         if sizes:

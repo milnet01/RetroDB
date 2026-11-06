@@ -2,6 +2,8 @@
   date: 2026-11-05
   tags:
   - type: fix
+    label: Maintenance fixes. A multi-disc archive that fails to unpack no longer leaves a half-made folder behind that blocks every retry. Calculate Storage now counts every file inside a PS3 game folder. Clear Scraped Data deletes pictures only when you ask it to. A library scan that meets a game another scan has just added carries on with the rest of that console's games
+  - type: fix
     label: Restoring a backup is safer. It is now written into the library database the way the database itself expects, so a part of RetroDB that has it open sees the restored data instead of risking damage. Deleting a game now also deletes its box pictures and its waiting picture and emulator-setting entries, so a new game can never inherit them. Two settings saved at the same moment no longer lose one of them
   - type: fix
     label: Picture fixes. GIFs are no longer run through the upscaler only to be thrown away. The upscaler model is checked against its published fingerprint, and a bad download is fetched again instead of turning upscaling off for good. Logos and pictures with see-through parts keep their transparency when enlarged. Convert to WebP now takes back covers and logos too, and no longer refuses a large library for want of room it does not need. Two faces of a box file can share one picture, and removing a box with a damaged record removes its pictures

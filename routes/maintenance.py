@@ -43,7 +43,7 @@ from services.media_cleanup import (
     find_missing_media_refs,
     find_orphaned_media,
 )
-from services.rom_scanner import RomPathNotConfigured, run_inline_scan
+from services.rom_scanner import RomPathNotConfigured
 
 logger = logging.getLogger(__name__)
 
@@ -76,11 +76,8 @@ def api_scan():
     toast (the previous behaviour, caused by an empty config.ROM_PATH).
     """
     try:
-        try:
-            from scraper.scan_roms import scan_roms
-            new_games = scan_roms()
-        except ImportError:
-            new_games = run_inline_scan()
+        from scraper.scan_roms import scan_roms
+        new_games = scan_roms()
     except RomPathNotConfigured as exc:
         return error(str(exc), 400)
 
@@ -137,7 +134,7 @@ def api_clear_scraped_data():
     data = request.get_json() or {}
     cleared, images_deleted = clear_scraped_data(
         system_id=data.get('system_id'),
-        delete_images=data.get('delete_images', False),
+        delete_images=data.get('delete_images') is True,  # never a "false" string
     )
     if cleared:
         invalidate_analytics_cache()

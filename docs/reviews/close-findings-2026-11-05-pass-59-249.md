@@ -190,14 +190,23 @@ Run-level, group H:
 
 ## I. Maintenance and ROM scanning
 
+Test: `tests/test_pass59_249_maintenance.py`, seven of eight run red first (`True` already worked). Two tests passed before the fix on their first draft and were tightened until they failed.
+
 | Finding | Verified | Disposition |
 |---|---|---|
-| Failed extraction leaves its folder; retries refused | not yet read | |
+| Failed extraction leaves its folder; retries refused | yes | fixed: the folder this call made is removed on any failure before the playlist is written |
 | Raw exception text in HTML (`settings.py`, `systems.py`) | yes | fixed in group A |
-| `delete_images` "false" string is truthy | not yet read | |
-| Two scans at once can add the same ROM twice | not yet read | |
-| `rom_scanner.py` lacks `scan_roms.py`'s hidden/PS3/special-folder handling | not yet read | |
-| Calculate Storage wrong for folder games | not yet read | |
+| `delete_images` "false" string is truthy | yes | fixed: only JSON `true` deletes |
+| Two scans at once can add the same ROM twice | no as stated: `games.rom_path` is UNIQUE. What is real: the refused insert raised and ended that console's folder | fixed: `INSERT OR IGNORE`, counting only rows added |
+| `rom_scanner.py` lacks `scan_roms.py`'s hidden/PS3/special-folder handling | yes | fixed by deletion: the fallback ran only if `scraper.scan_roms` failed to import, which ships with the app; `run_inline_scan` and its tests removed |
+| Calculate Storage wrong for folder games | yes | fixed: a folder's size is its files', links not followed |
+
+Run-level, group I:
+
+- cited_by: `docs/plans/2026-04-25-retrodb-multi-emulator-launch.md` names `services/rom_scanner.py`.
+- swept: that plan, frozen (a dated plan); help.html, agrees (no mechanism named); `tests/test_scan_library_rom_path.py` header and fake cursor, fixed.
+- collateral: a function-local `import shutil` in `create_m3u_playlist` shadowed the module's and broke the new cleanup; removed.
+- surfaced: none. out_of_scope: none. falsified: none.
 
 ## J. Collections, achievements, trophies, tools
 

@@ -859,6 +859,10 @@ class ArchiveScanner:
                 return {"success": False,
                         "error": f"{existing.name} already exists; move or rename it first"}
 
+        # The folder did not exist (checked above), so it is this call's: any
+        # failure before the playlist is written removes it again, or every
+        # retry would be refused as "already exists" (PASS-59-249).
+        playlist_written = False
         try:
             # Create extraction folder if it doesn't exist
             extract_folder.mkdir(parents=True, exist_ok=True)
@@ -924,6 +928,7 @@ class ArchiveScanner:
                 for entry in m3u_entries:
                     f.write(f"{entry}\n")
             
+            playlist_written = True
             logger.info(f"Created M3U: {m3u_path} with {len(m3u_entries)} entries")
             
             # Move original archive to staging folder after successful extraction
@@ -943,7 +948,6 @@ class ArchiveScanner:
                         counter += 1
                     
                     # Move the archive
-                    import shutil
                     shutil.move(str(path), str(dest_path))
                     archive_moved = True
                     moved_to = str(dest_path)
@@ -968,6 +972,9 @@ class ArchiveScanner:
         except Exception as e:
             logger.error(f"M3U creation error: {e}")
             return {"success": False, "error": str(e)}
+        finally:
+            if not playlist_written and extract_folder.is_dir() and not extract_folder.is_symlink():
+                shutil.rmtree(extract_folder, ignore_errors=True)
     
     def batch_create_m3u(self, archive_paths: List[str], delete_archives: bool = False, 
                           staging_folder: str = None) -> Dict[str, Any]:

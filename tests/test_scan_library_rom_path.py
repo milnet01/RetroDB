@@ -12,8 +12,8 @@
 #     `ROM_PATH = ""`, then returned 0 silently. The user saw a green "Library
 #     scan complete! Found 0 new games." toast instead of a misconfig error.
 #
-#   - `services/rom_scanner.py:74` (the inline fallback used when the scraper
-#     package can't be imported) had the same bug.
+#   - The inline fallback scanner in `services/rom_scanner.py` had the same
+#     bug. It was removed in PASS-59-249.
 #
 # These tests pin:
 #   1. The scanner resolves rom_path at call time via
@@ -61,9 +61,7 @@ def _seed_rom_root(tmp_path, *, system='xbox', filename='Halo (USA).iso'):
 # -----------------------------------------------------------------------------
 # Shared fake DB layer (test-audit c-007 MED-2)
 # -----------------------------------------------------------------------------
-# Used by both `_stub_db` (`scraper.scan_roms` — get_scraper_conn) and
-# `_stub_db_context` (`services.rom_scanner` — get_db_with_context). Keeping
-# one definition prevents drift between the two scanners' fakes.
+# Used by `_stub_db` (`scraper.scan_roms` — get_scraper_conn).
 
 class _FakeCursor:
     """In-memory cursor that pattern-matches the three SQL shapes the
@@ -73,6 +71,7 @@ class _FakeCursor:
     def __init__(self, inserted):
         self._inserted = inserted
         self._row = None
+        self.rowcount = -1
 
     def execute(self, sql, params=()):
         sql_norm = ' '.join(sql.split())
@@ -82,9 +81,10 @@ class _FakeCursor:
             # No existing game with this rom_path → return None so the
             # scanner inserts.
             self._row = None
-        elif sql_norm.startswith('INSERT INTO games'):
+        elif sql_norm.startswith(('INSERT INTO games', 'INSERT OR IGNORE INTO games')):
             self._inserted.append(params)
             self._row = None
+            self.rowcount = 1
         else:
             self._row = None
         return self
@@ -123,22 +123,6 @@ def _stub_db(monkeypatch, scan_mod):
     return inserted
 
 
-def _stub_db_context(monkeypatch, scan_mod):
-    """Replace `services.rom_scanner.get_db_with_context` with a context-
-    manager-wrapped fake. Returns the `inserted` list."""
-    from contextlib import contextmanager
-
-    inserted = []
-    conn = _FakeConn(inserted)
-
-    @contextmanager
-    def _fake_ctx():
-        yield conn
-
-    monkeypatch.setattr(scan_mod, 'get_db_with_context', _fake_ctx)
-    return inserted
-
-
 # -----------------------------------------------------------------------------
 # 1 — Source-level pin: no module-level `from config import ROM_PATH`
 # -----------------------------------------------------------------------------
@@ -156,16 +140,6 @@ class TestScanRomsImportTimeBinding:
             'config.ROM_PATH is the hardcoded `""` default and is never '
             'mutated at runtime. Resolve via settings_manager inside '
             'scan_roms() instead. (v3.6.5)'
-        )
-
-    def test_rom_scanner_does_not_read_config_rom_path_directly(self):
-        """The inline fallback in services/rom_scanner.py had the same bug:
-        `rom_path = config.ROM_PATH` reads the hardcoded `""` default."""
-        src = read_source('services/rom_scanner.py')
-        assert 'rom_path = config.ROM_PATH' not in src, (
-            'services/rom_scanner.py must resolve rom_path via '
-            'settings_manager.get_effective_path, not by reading the '
-            'config.ROM_PATH hardcoded default. (v3.6.5)'
         )
 
 
@@ -202,25 +176,6 @@ class TestScanRomsRuntimeResolution:
             f'got {n}, inserted={inserted}'
         )
 
-    def test_run_inline_scan_uses_settings_manager_path(self, tmp_path, monkeypatch):
-        """The inline fallback must resolve the same way."""
-        from services import rom_scanner as scan_mod
-
-        rom_root = _seed_rom_root(tmp_path, system='xbox360', filename='Halo 3 (USA).iso')
-        monkeypatch.setattr(
-            scan_mod.settings_manager, 'get_effective_path',
-            lambda key, fallback='': str(rom_root) if key == 'rom_path' else fallback,
-        )
-
-        inserted = _stub_db_context(monkeypatch, scan_mod)
-        monkeypatch.setattr(scan_mod, 'find_image_file', lambda *a, **kw: (None, None))
-
-        n = scan_mod.run_inline_scan()
-        assert n == 1, (
-            f'run_inline_scan() must find the seeded ROM via settings_manager '
-            f'— got {n}, inserted={inserted}'
-        )
-
 
 # -----------------------------------------------------------------------------
 # 3 — Behavioural pin: empty rom_path raises typed error (not silent 0)
@@ -243,17 +198,6 @@ class TestScanRomsLoudFailureWhenUnset:
         # must fire first.
         with pytest.raises(RomPathNotConfigured, match=r'[Ss]ettings'):
             scan_mod.scan_roms()
-
-    def test_run_inline_scan_raises_when_path_empty(self, monkeypatch):
-        from services import rom_scanner as scan_mod
-        from services.rom_scanner import RomPathNotConfigured
-
-        monkeypatch.setattr(
-            scan_mod.settings_manager, 'get_effective_path',
-            lambda key, fallback='': '',
-        )
-        with pytest.raises(RomPathNotConfigured, match=r'[Ss]ettings'):
-            scan_mod.run_inline_scan()
 
 
 # -----------------------------------------------------------------------------

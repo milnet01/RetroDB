@@ -213,9 +213,11 @@ def scan_roms():
                         
                         # Insert new game
                         c.execute("""
-                            INSERT INTO games (system_id, title, rom_path, scraped, created_at)
+                            INSERT OR IGNORE INTO games (system_id, title, rom_path, scraped, created_at)
                             VALUES (?, ?, ?, 0, ?)
                         """, (system_id, title, entry_path, datetime.now(timezone.utc).isoformat()))
+                        if c.rowcount == 0:
+                            continue  # another scan added it since the check (rom_path is UNIQUE)
 
                         rom_count += 1
                         new_games += 1
@@ -233,9 +235,11 @@ def scan_roms():
                         
                         # Insert new game
                         c.execute("""
-                            INSERT INTO games (system_id, title, rom_path, scraped, created_at)
+                            INSERT OR IGNORE INTO games (system_id, title, rom_path, scraped, created_at)
                             VALUES (?, ?, ?, 0, ?)
                         """, (system_id, title, entry_path, datetime.now(timezone.utc).isoformat()))
+                        if c.rowcount == 0:
+                            continue  # another scan added it since the check (rom_path is UNIQUE)
 
                         rom_count += 1
                         new_games += 1
@@ -268,9 +272,11 @@ def scan_roms():
                     
                     # Insert new game
                     c.execute("""
-                        INSERT INTO games (system_id, title, rom_path, scraped, created_at)
+                        INSERT OR IGNORE INTO games (system_id, title, rom_path, scraped, created_at)
                         VALUES (?, ?, ?, 0, ?)
                     """, (system_id, title, file_path, datetime.now(timezone.utc).isoformat()))
+                    if c.rowcount == 0:
+                        continue  # another scan added it since the check (rom_path is UNIQUE)
 
                     rom_count += 1
                     new_games += 1
