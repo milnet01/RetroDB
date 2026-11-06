@@ -106,17 +106,26 @@ Run-level, group D:
 
 ## E. Imports (CLZ, platforms)
 
+Test: `tests/test_pass59_249_imports.py`, all ten run red first.
+
 | Finding | Verified | Disposition |
 |---|---|---|
-| CLZ: non-Latin titles all match; preview creates systems | yes | |
-| Steam `store_filled` check depends on JSON spacing | not yet read | |
-| Import routes accept empty/None ids | not yet read | |
-| Non-string Steam ID gives a 500 | not yet read | |
-| Viewers can create system rows through fetch routes | not yet read | |
-| Blank titles may match in platform imports | not yet read | |
-| Xbox platform map lacks PC; 360 contract v2 may count 0/0 | not yet read | |
-| Xbox history cap and partial lists are silent; delisted Steam apps re-asked | not yet read | |
-| `main_story_hours` raises on "Main: ." | not yet read | |
+| CLZ: non-Latin titles all match; preview creates systems | yes | fixed: the shared title key keeps non-Latin letters (CLZ now uses `normalize_title_for_dedup` instead of its own copy); the preview names a new system and the import creates it, admin only |
+| Steam `store_filled` check depends on JSON spacing | yes; today's writer uses `json.dumps` defaults, so it matched | fixed: read with `json_each` |
+| Import routes accept empty/None ids | yes | fixed: `_sent_id`; a game with no id counts as failed, in all three routes |
+| Non-string Steam ID gives a 500 | yes | fixed: the id is read as text |
+| Viewers can create system rows through fetch routes | yes | fixed: `_ensure_system_exists` creates only with the `edit` permission |
+| Blank titles may match in platform imports | yes, through non-Latin titles | fixed with the CLZ row's title key |
+| Xbox platform map lacks PC; 360 contract v2 may count 0/0 | yes (code read; Microsoft's replies not checked) | queued on PASS-59-261, which replaces this code |
+| Xbox history cap and partial lists are silent; delisted Steam apps re-asked | yes | Steam: fixed, a store "no such app" is recorded once. Xbox: queued on PASS-59-261 |
+| `main_story_hours` raises on "Main: ." | yes | fixed: the number must hold a digit |
+
+Run-level, group E:
+
+- cited_by: `docs/specs/scrapers.md` Steam row (store fill); CLAUDE.md Steam imports line.
+- swept: scrapers.md Steam row, fixed (delisted sentence added); CLAUDE.md Steam line, agrees; help.html CLZ section, agrees (names no system creation); `game_imports.html` CLZ table, fixed (a new-system row is selectable).
+- collateral: the new tests pushed the Steam import route past its rate limit for later test files; fixed with a limiter reset, as other files do.
+- surfaced: none. out_of_scope: none. falsified: none.
 
 ## F. Bonus discs
 

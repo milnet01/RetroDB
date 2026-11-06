@@ -188,27 +188,35 @@ def get_app_details(app_id):
         dict: App details including header_image, or None on error, when the
         store has no such app, or when the store has said stop.
     """
+    return app_details_reply(app_id)[0]
+
+
+def app_details_reply(app_id):
+    """(details, gone): get_app_details's answer, and whether the store said it
+    has no such app (a delisted game), as against no answer at all."""
     if not service_limits.wait_for_turn(service_limits.STEAM_STORE):
-        return None
+        return None, False
     try:
         resp = http_get(f'{STORE_URL}/appdetails', params={
             'appids': app_id,
             'l': 'english',
         }, timeout=15)
         if resp is None:
-            return None
+            return None, False
         if resp.status_code in (403, 429):
             service_limits.stop(service_limits.STEAM_STORE, STORE_STOP_SECONDS)
-            return None
+            return None, False
         resp.raise_for_status()
         data = resp.json()
-        app_data = data.get(str(app_id), {})
+        app_data = data.get(str(app_id))
+        if not isinstance(app_data, dict):
+            return None, False
         if app_data.get('success'):
-            return app_data.get('data')
-        return None
+            return app_data.get('data'), False
+        return None, app_data.get('success') is False
     except Exception as e:
         logger.error(f"Steam get_app_details error (app {app_id}): {e}")
-        return None
+        return None, False
 
 
 def box_art_urls(app_id):

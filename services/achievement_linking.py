@@ -174,19 +174,22 @@ def normalize_title_for_dedup(title):
     imported titles frequently differ from scraped titles only by region-
     specific glyphs.
 
+    A title with no ASCII letter or digit (a Japanese-only title) keeps its
+    own letters, case-folded, so two such titles do not share the empty key.
+
     Args:
         title: raw title string (may be None / empty).
 
     Returns:
-        str: normalized dedup key. Empty string for falsy input.
+        str: normalized dedup key. Empty string for falsy or blank input.
     """
     if not title:
         return ''
     nfkd = unicodedata.normalize('NFKD', title)
     stripped = ''.join(c for c in nfkd if not unicodedata.combining(c))
     stripped = stripped.lower()
-    stripped = _NON_ASCII_ALNUM.sub('', stripped)
-    return _WHITESPACE.sub(' ', stripped).strip()
+    stripped = _WHITESPACE.sub(' ', _NON_ASCII_ALNUM.sub('', stripped)).strip()
+    return stripped or _WHITESPACE.sub(' ', unicodedata.normalize('NFKC', title).casefold()).strip()
 
 
 # =============================================================================

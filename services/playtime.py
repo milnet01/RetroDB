@@ -10,7 +10,7 @@
 import re
 
 _MAIN_STORY = re.compile(
-    r'(?:^|\|)\s*Main(?: Story)?\s*:\s*(\d*\.?\d*)(½?)\s*(min)?', re.IGNORECASE)
+    r'(?:^|\|)\s*Main(?: Story)?\s*:\s*(\d+(?:\.\d*)?|\.\d+)?(½?)\s*(min)?', re.IGNORECASE)
 
 
 def main_story_hours(estimate):

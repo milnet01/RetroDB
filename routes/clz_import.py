@@ -10,7 +10,6 @@ import os
 import re
 import tempfile
 import logging
-import unicodedata
 from datetime import datetime, timezone
 
 import config
@@ -21,6 +20,8 @@ from flask import g
 
 from services.auth import editor_required, login_required
 from services.api_helpers import handle_api_errors, success, error
+
+from services.achievement_linking import normalize_title_for_dedup as normalize_title
 
 logger = logging.getLogger(__name__)
 
@@ -38,25 +39,6 @@ def clz_release_date(text):
     except (ValueError, TypeError):
         year = re.search(r'\d{4}', str(text))
         return source_date(year.group()) if year else None
-
-
-def normalize_title(title):
-    """Normalize a game title for fuzzy matching.
-
-    Strips diacritical marks (û→u, é→e), lowercases, removes punctuation,
-    and collapses whitespace so that titles like "Abzû" and "Abzu" or
-    "AC/DC Live: Rock Band" and "ACDC Live Rock Band" compare equal.
-    """
-    if not title:
-        return ''
-    # Decompose unicode and strip combining marks (accents/diacritics)
-    nfkd = unicodedata.normalize('NFKD', title)
-    stripped = ''.join(c for c in nfkd if not unicodedata.combining(c))
-    # Lowercase, strip punctuation, collapse whitespace
-    stripped = stripped.lower()
-    stripped = re.sub(r'[^a-z0-9\s]', '', stripped)
-    stripped = re.sub(r'\s+', ' ', stripped).strip()
-    return stripped
 
 
 # =============================================================================
@@ -470,41 +452,10 @@ def api_clz_parse():
     systems_dict = {s['folder']: {'id': s['id'], 'name': s['name']} for s in systems}
     systems_map = {str(s['id']): s['name'] for s in systems}
 
-    # Auto-create missing systems that CLZ games need
-    # Collect all unique target folders from the parsed games
-    needed_folders = set()
-    for game in games:
-        platform_lower = game['clz_platform'].lower().strip()
-        matched_folder = CLZ_PLATFORM_MAP.get(platform_lower)
-        if matched_folder and matched_folder not in systems_dict:
-            needed_folders.add(matched_folder)
-
-    # Auto-creating systems rows is an admin-only operation (Pass 31.7):
-    # editors can import into existing systems but cannot add new ones, since
-    # that's a schema-level decision and the system folder / logo convention
-    # is part of library structure.
-    if needed_folders and g.user and g.user.get('role') == 'admin':
-        for folder in needed_folders:
-            system_name = config.SYSTEM_NAME_MAP.get(folder, folder.upper())
-            logo = f"{folder}.png" if os.path.isfile(os.path.join(config.IMAGE_PATH, 'systems', f'{folder}.png')) else None
-            try:
-                execute(
-                    "INSERT OR IGNORE INTO systems (name, folder, logo) VALUES (?, ?, ?)",
-                    (system_name, folder, logo)
-                )
-                row = query("SELECT id, name FROM systems WHERE folder = ?", (folder,), one=True)
-                if row:
-                    systems_dict[folder] = {'id': row['id'], 'name': row['name']}
-                    systems_map[str(row['id'])] = row['name']
-                    logger.info(f"CLZ Import: Auto-created system '{system_name}' (folder: {folder})")
-            except Exception as e:
-                logger.warning(f"CLZ Import: Failed to auto-create system '{folder}': {e}")
-    elif needed_folders:
-        logger.info(
-            "CLZ Import: %d system folder(s) not in DB and caller is non-admin; "
-            "skipping auto-create. Rows for these platforms will be unmatched: %s",
-            len(needed_folders), sorted(needed_folders),
-        )
+    # A system CLZ needs that the library lacks is created by the import, for
+    # an admin only (Pass 31.7), never by this preview: the user has not
+    # confirmed anything yet (PASS-59-249).
+    may_create = bool(g.user and g.user.get('role') == 'admin')
 
     # Log available systems for debugging
     logger.info(f"CLZ Import: Available system folders: {sorted(systems_dict.keys())}")
@@ -548,6 +499,12 @@ def api_clz_parse():
             # Check if game already exists (normalized matching)
             key = (normalize_title(game['title']), system_info['id'])
             game['existing'] = key in existing_games
+        elif matched_folder and may_create:
+            game['system_id'] = None
+            game['system_name'] = config.SYSTEM_NAME_MAP.get(matched_folder, matched_folder.upper())
+            game['system_folder'] = matched_folder
+            game['new_system'] = True
+            game['existing'] = False
         else:
             game['system_id'] = None
             game['system_name'] = None
@@ -571,6 +528,19 @@ def api_clz_parse():
     return success(games=games, systems_map=systems_map)
 
 
+def _create_system(folder):
+    """The id of the system for `folder`, created if the library lacks it."""
+    system_name = config.SYSTEM_NAME_MAP.get(folder, folder.upper())
+    logo = f"{folder}.png" if os.path.isfile(os.path.join(config.IMAGE_PATH, 'systems', f'{folder}.png')) else None
+    execute("INSERT OR IGNORE INTO systems (name, folder, logo) VALUES (?, ?, ?)",
+            (system_name, folder, logo))
+    row = query("SELECT id FROM systems WHERE folder = ?", (folder,), one=True)
+    if row:
+        logger.info(f"CLZ Import: Created system '{system_name}' (folder: {folder})")
+        return row['id']
+    return None
+
+
 @bp.route('/api/clz-import/import', methods=['POST'])
 @editor_required
 @handle_api_errors
@@ -585,6 +555,18 @@ def api_clz_import():
     imported = 0
     skipped = 0
     failed = 0
+
+    # A system the preview named as new is created now, for an admin only.
+    is_admin = bool(g.user and g.user.get('role') == 'admin')
+    known_folders = set(CLZ_PLATFORM_MAP.values())
+    created = {}
+    for game in games:
+        folder = game.get('system_folder')
+        if game.get('system_id') is None and game.get('new_system') and is_admin \
+                and folder in known_folders:
+            if folder not in created:
+                created[folder] = _create_system(folder)
+            game['system_id'] = created[folder]
 
     conn = None
     try:

@@ -38,7 +38,7 @@ from services.achievement_linking import normalize_title_for_dedup as normalize_
 from services.database import get_db, query, execute
 from services.game_utils import generate_sort_title
 from services.api_helpers import success, error
-from services.auth import login_required, editor_required
+from services.auth import login_required, editor_required, has_permission
 from routes.scraper import get_saved_api_keys, is_masked_sentinel
 
 logger = logging.getLogger(__name__)
@@ -53,12 +53,17 @@ bp = Blueprint('platform_import', __name__)
 def _ensure_system_exists(folder, name=None):
     """Ensure a system exists in the DB, auto-creating if needed.
 
+    Only someone who may edit the library creates one; for anyone else (a
+    viewer fetching a library) a missing system stays missing.
+
     Returns:
         dict: {id, name, folder} or None
     """
     row = query("SELECT id, name, folder FROM systems WHERE folder = ?", (folder,), one=True)
     if row:
         return dict(row)
+    if not has_permission('edit'):
+        return None
 
     system_name = name or config.SYSTEM_NAME_MAP.get(folder, folder.upper())
     logo = f"{folder}.png" if os.path.isfile(
@@ -77,6 +82,14 @@ def _ensure_system_exists(folder, name=None):
 
 _PLATFORM_ID_FIELDS = ('steam_app_id', 'xbox_title_id', 'psn_npwr_id')
 _TRADE_MARKS = re.compile('[\u2122\u00ae\u00a9]')
+
+
+def _sent_id(value):
+    """A platform id as the page sent it, or '' when it sent none. str(None)
+    would otherwise store the text 'None' as an id."""
+    if value is None or isinstance(value, (bool, dict, list)):
+        return ''
+    return str(value).strip()
 
 
 def _new_game_title(name):
@@ -176,7 +189,7 @@ def api_steam_fetch_library():
     typed_key = data.get('steam_api_key')
     if typed_key and not is_masked_sentinel(typed_key):
         steam_api_key = typed_key
-    steam_id = data.get('steam_id') or steam_id
+    steam_id = str(data.get('steam_id') or steam_id or '').strip()
 
     if not steam_api_key:
         return error(_('Steam API key not configured. Add it in Settings → API Keys.'), 400)
@@ -275,9 +288,9 @@ def api_steam_import():
 
         for game in selected_games:
             try:
-                app_id = str(game.get('appid', ''))
+                app_id = _sent_id(game.get('appid'))
                 title, sort_title = _new_game_title(game.get('name'))
-                if not title:
+                if not title or not app_id:
                     failed += 1
                     continue
 
@@ -655,10 +668,10 @@ def api_xbox_import():
 
         for game in selected_games:
             try:
-                title_id = str(game.get('title_id', ''))
+                title_id = _sent_id(game.get('title_id'))
                 title, sort_title = _new_game_title(game.get('name'))
                 platform = game.get('platform', 'xboxone')
-                if not title:
+                if not title or not title_id:
                     failed += 1
                     continue
 
@@ -1026,10 +1039,10 @@ def api_psn_import():
 
         for game in selected_games:
             try:
-                npwr_id = str(game.get('npwr_id', ''))
+                npwr_id = _sent_id(game.get('npwr_id'))
                 title, sort_title = _new_game_title(game.get('name'))
                 platform = game.get('platform', 'ps4')
-                if not title:
+                if not title or not npwr_id:
                     failed += 1
                     continue
 

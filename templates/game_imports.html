@@ -556,13 +556,13 @@ function renderClzTable() {
     tbody.innerHTML = '';
     games.forEach((game, i) => {
         const tr = document.createElement('tr');
-        const isNew = !game.existing && game.system_id;
+        const isNew = !game.existing && (game.system_id || game.new_system);
         const idx = state.clz.games.indexOf(game);
         tr.innerHTML = `
             <td class="checkbox-cell"><input type="checkbox" class="clz-checkbox" data-index="${idx}" ${!isNew ? 'disabled' : ''} data-on-change="updateSelection" data-args="${actionArgs('clz')}"></td>
             <td>${escapeHtml(game.title)}</td>
             <td>${game.system_name ? '<span class="platform-badge">' + escapeHtml(game.system_name) + '</span>' : '<span style="color:var(--neon-orange)">' + escapeHtml(game.clz_platform || '?') + '</span>'}</td>
-            <td>${game.existing ? '<span class="status-existing">Already imported</span>' : (game.system_id ? '<span class="status-new">New</span>' : '<span style="color:var(--neon-orange)">No system match</span>')}</td>
+            <td>${game.existing ? '<span class="status-existing">Already imported</span>' : (isNew ? '<span class="status-new">New</span>' : '<span style="color:var(--neon-orange)">No system match</span>')}</td>
         `;
         tbody.appendChild(tr);
     });

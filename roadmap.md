@@ -11569,6 +11569,13 @@ the cover zoom in Firefox before being reverted for the local fix.
   OAuth routes. Carries PASS-59-218's X1 to X7.
 - **Source**: research 2026-11-05 (Home Assistant, xbox-webapi-python,
   Microsoft Entra docs, xbl.io pricing).
+- Carried from PASS-59-249 group E (audit 2026-11-04, 2026-11-06): the
+  OpenXBL rewrite must not repeat three lows in the code it replaces.
+  `XBOX_PLATFORM_MAP` has no `PC` device, so PC titles may file as Xbox
+  One; Xbox 360 achievements read with contract 2 may come back empty
+  and count as 0/0; title history stops at 1000 and returns a partial
+  list on errors with no warning (`scraper/scrape_xbox.py`). Not fixed
+  in place: that code goes with this item.
 
 ---
 

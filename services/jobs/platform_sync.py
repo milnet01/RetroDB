@@ -102,10 +102,14 @@ def _get_xbox_credentials():
 
 
 # `store_filled`: a scrape history entry from the Steam store means it has already
-# answered for this game, so it is not asked again on every sync.
+# answered for this game, so it is not asked again on every sync. Read as JSON,
+# so it does not hang on how the history was spaced.
 _STEAM_GAMES_SQL = """
     SELECT g.id, g.title, g.steam_app_id, s.folder AS system_folder,
-           COALESCE(g.scrape_history, '') LIKE '%"primary_source": "steam"%' AS store_filled
+           CASE WHEN json_valid(g.scrape_history) THEN EXISTS (
+               SELECT 1 FROM json_each(g.scrape_history)
+               WHERE json_extract(json_each.value, '$.primary_source') = 'steam')
+           ELSE 0 END AS store_filled
     FROM games g LEFT JOIN systems s ON s.id = g.system_id
 """
 
@@ -115,16 +119,42 @@ def _fill_from_steam_store(game):
 
     The store says nothing about most of what a scrape finds, so the game still
     counts as waiting for one. No reply records nothing, so the next sync asks
-    again.
+    again. A store that says it has no such app (a delisted game) is recorded
+    as an answer, so it is not asked again on every sync.
     """
     from scraper.hybrid_scraper import apply_hybrid_metadata
-    from scraper.scrape_steam import get_app_details
+    from scraper.scrape_steam import app_details_reply
 
-    details = get_app_details(game['steam_app_id'])
-    if details:
+    details, gone = app_details_reply(game['steam_app_id'])
+    if gone:
+        _note_not_in_store(game['id'])
+    elif details:
         apply_hybrid_metadata(
             game['id'], 'steam', game['steam_app_id'], game['system_folder'],
             fill_gaps=False, primary_data=details, mark_scraped=False)
+
+
+def _note_not_in_store(game_id):
+    """Add a Steam entry that filled nothing to the game's scrape history."""
+    import json
+    from datetime import datetime
+    conn = _get_conn()
+    try:
+        row = conn.execute("SELECT scrape_history FROM games WHERE id = ?", (game_id,)).fetchone()
+        try:
+            history = json.loads(row[0]) if row and row[0] else []
+        except (ValueError, TypeError):
+            history = []
+        if not isinstance(history, list):
+            history = []
+        history.append({'timestamp': datetime.now().isoformat(), 'primary_source': 'steam',
+                        'sources_used': [], 'fields_filled': [], 'fields_missing': [],
+                        'scrape_mode': 'not_in_store'})
+        conn.execute("UPDATE games SET scrape_history = ? WHERE id = ?",
+                     (json.dumps(history), game_id))
+        conn.commit()
+    finally:
+        conn.close()
 
 
 def _save_steam_play_time(cursor, game_id, user_id, owned):
