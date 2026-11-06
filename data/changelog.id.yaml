@@ -1,135 +1,137 @@
 - version: 4.0.0
-  date: '2026-11-05'
+  date: '2026-11-06'
   tags:
   - type: fix
-    label: Editor yang memulai pemindaian ROM Tools kini bisa menjeda, melanjutkan, atau membatalkannya; pemindaian milik orang lain tetap hanya bisa dihentikan admin. Tag dan daftar menolak nama yang kosong atau warna yang salah dengan pesan yang jelas, bukan halaman error, dan mengganti nama game wishlist menjadi game lain yang sudah ada di wishlist Anda ditolak, seperti saat menambahkannya. Clear RA Data kini juga melupakan apakah salinan Anda mendapat achievement. Trofi yang tidak lagi ditawarkan RetroDB tidak dihitung lagi untuk peringkat kolektor Anda. Path ROM Windows kini cocok dengan game RetroAchievements berdasarkan nama file
+    label: Screenshot Review tidak lagi berhenti di tengah jalan saat ada satu screenshot tersimpan yang terlalu besar untuk dibuka; gambar itu dihitung sebagai tidak terbaca dan prosesnya berlanjut. Daftar isi halaman bantuan kini memuat tautan ke Emulator dan Memainkan Game, dan catatan pengembang tentang masuk akun, tugas latar belakang, scraping, gambar, pembaruan, dan balasan error kini menjelaskan apa yang sebenarnya dilakukan program
   - type: fix
-    label: Perbaikan pemeliharaan. Arsip multi-disc yang gagal diekstrak tidak lagi meninggalkan folder setengah jadi yang menghalangi setiap percobaan ulang. Calculate Storage kini menghitung setiap file di dalam folder game PS3. Clear Scraped Data menghapus gambar hanya jika Anda memintanya. Pemindaian pustaka yang menemukan game yang baru saja ditambahkan pemindaian lain akan melanjutkan game konsol itu yang lain
+    label: Editor yang memulai pemindaian ROM Tools kini bisa menjeda, melanjutkan, atau membatalkannya; pemindaian milik orang lain tetap hanya bisa dihentikan admin. Tag dan daftar menolak nama yang kosong atau warna yang salah dengan pesan yang jelas, bukan halaman error, dan mengganti nama game wishlist menjadi game lain yang sudah ada di wishlist Anda ditolak, sama seperti saat menambahkannya. Clear RA Data kini juga melupakan apakah salinan Anda mendapatkan achievement. Trofi yang tidak lagi ditawarkan RetroDB tidak dihitung lagi dalam peringkat kolektor Anda. Path ROM Windows kini dicocokkan dengan game RetroAchievements berdasarkan nama file
   - type: fix
-    label: Memulihkan backup kini lebih aman. Backup ditulis ke database pustaka sesuai cara yang diharapkan database itu sendiri, sehingga bagian RetroDB yang sedang membukanya melihat data hasil pemulihan, tanpa risiko kerusakan. Menghapus game kini juga menghapus gambar boks, gambar yang menunggu, dan entri pengaturan emulatornya, sehingga game baru tidak akan mewarisinya. Dua pengaturan yang disimpan bersamaan tidak lagi menghilangkan salah satunya
+    label: Perbaikan pemeliharaan. Arsip multi-disc yang gagal diekstrak tidak lagi meninggalkan folder setengah jadi yang menghalangi setiap percobaan ulang. Calculate Storage kini menghitung semua file di dalam folder game PS3. Clear Scraped Data hanya menghapus gambar jika Anda memintanya. Pemindaian pustaka yang menemukan game yang baru saja ditambahkan oleh pemindaian lain akan melanjutkan game konsol itu yang lain
   - type: fix
-    label: Perbaikan gambar. GIF tidak lagi diproses upscaler lalu dibuang. Model upscaler diperiksa dengan sidik jari resminya, dan unduhan yang rusak diunduh ulang, bukan mematikan upscaling selamanya. Logo dan gambar dengan bagian transparan tetap transparan saat diperbesar. Convert to WebP kini juga memproses sampul belakang dan logo, serta tidak lagi menolak pustaka besar karena kekurangan ruang yang sebenarnya tidak diperlukan. Dua sisi file boks bisa berbagi satu gambar, dan menghapus boks dengan catatan rusak ikut menghapus gambarnya
+    label: Memulihkan backup kini lebih aman. Backup ditulis ke database pustaka sesuai cara yang diharapkan database itu sendiri, sehingga bagian RetroDB yang sedang membukanya melihat data yang dipulihkan dan tidak berisiko rusak. Menghapus game kini juga menghapus gambar boks, gambar yang menunggu, dan entri pengaturan emulatornya, sehingga game baru tidak bisa mewarisinya. Dua pengaturan yang disimpan bersamaan tidak lagi saling menghilangkan
   - type: fix
-    label: Impor dari CLZ, Steam, Xbox, dan PlayStation tidak lagi menganggap setiap judul yang hanya ditulis dalam bahasa Jepang atau aksara non-Latin lainnya sebagai game yang sama, dan tidak lagi menambahkan game tanpa id. Pratinjau CLZ tidak lagi menambahkan konsol sebelum Anda mengonfirmasi impor, dan penonton yang melihat pustaka Steam, Xbox, atau PlayStation juga tidak lagi menambahkannya. Game Steam yang dihapus dari toko hanya ditanyakan sekali, bukan setiap sinkronisasi
+    label: Perbaikan gambar. GIF tidak lagi diproses upscaler lalu dibuang. Model upscaler diperiksa dengan sidik jari yang dipublikasikan, dan unduhan yang rusak diunduh ulang, bukan mematikan upscaling selamanya. Logo dan gambar dengan bagian transparan tetap transparan saat diperbesar. Convert to WebP kini juga memproses sampul belakang dan logo, serta tidak lagi menolak pustaka besar karena kekurangan ruang yang sebenarnya tidak perlu. Dua sisi file boks bisa memakai satu gambar, dan menghapus boks dengan data rusak juga menghapus gambarnya
   - type: fix
-    label: Analytics kini mengelompokkan lebih banyak konsol di bawah pembuatnya, bukan "Other", dan daftar Recently Scraped di dasbor menampilkan game yang Anda scrape ulang, bukan hanya game yang baru ditambahkan
+    label: Impor dari CLZ, Steam, Xbox, dan PlayStation tidak lagi menganggap semua judul yang hanya ditulis dalam bahasa Jepang atau aksara non-Latin lainnya sebagai game yang sama, dan tidak lagi menambahkan game tanpa id. Pratinjau CLZ tidak lagi menambahkan konsol sebelum Anda mengonfirmasi impor, dan pengguna yang hanya melihat pustaka Steam, Xbox, atau PlayStation juga tidak lagi menambahkannya. Game Steam yang dihapus dari toko hanya ditanyakan sekali, tidak di setiap sinkronisasi
   - type: fix
-    label: Gambar kontroler yang Anda tambahkan di Museum tetap tersimpan saat versi mandiri diperbarui. Saat layanan online berhenti sementara karena mencapai batasnya, waktu layanan itu akan diminta lagi ditampilkan dalam zona waktu Anda
+    label: Analytics kini mengelompokkan lebih banyak konsol berdasarkan pembuatnya, bukan "Other", dan daftar Recently Scraped di dasbor menampilkan game yang Anda scrape ulang, bukan hanya game yang baru ditambahkan
   - type: fix
-    label: Disc bonus tidak lagi bisa ditautkan ke dirinya sendiri atau ke disc bonus lain, dan Auto-link tidak lagi menautkan disc ke disc yang ditandainya sebagai disc bonus dalam proses yang sama
+    label: Gambar kontroler yang Anda tambahkan di Museum tetap tersimpan saat versi mandiri diperbarui. Saat layanan online berhenti sementara karena mencapai batasnya, waktu layanan itu akan diminta lagi ditampilkan sesuai zona waktu Anda
   - type: fix
-    label: Halaman Pustaka dan konsol tidak lagi menghitung file BIOS arcade sebagai game, baik di total maupun di bilah huruf. Game serupa, dan daftar yang muncul saat mengeklik genre atau penerbit di halaman game, tidak lagi menampilkan versi wilayah, disc bonus, atau file BIOS dari game itu sendiri
+    label: Bonus disc tidak lagi bisa ditautkan ke dirinya sendiri atau ke bonus disc lain, dan Auto-link tidak lagi menautkan disc ke disc yang ditandainya sebagai bonus disc pada proses yang sama
   - type: fix
-    label: Select all kini memberi tahu saat daftar yang sangat besar dipotong, bukan diam-diam memilih sebagian saja
+    label: Halaman Pustaka dan konsol tidak lagi menghitung file BIOS arcade sebagai game, baik pada total maupun bilah huruf. Game serupa, dan daftar yang muncul saat mengeklik genre atau penerbit di halaman game, tidak lagi menampilkan versi regional, bonus disc, atau file BIOS dari game itu sendiri
+  - type: fix
+    label: Select all kini memberi tahu jika daftar yang sangat besar terpotong, bukan diam-diam memilih sebagian saja
   - type: fix
     label: Kartu pustaka kini diperbarui saat progres achievement atau trofi Anda berubah, dan saat game menjadi bisa dimainkan atau tidak lagi bisa dimainkan
   - type: fix
     label: Bulk edit tidak lagi mengubah game yang salah saat menerima pilihan yang keliru, dan bulk edit yang gagal tidak lagi menandai game sebagai diedit oleh Anda
   - type: fix
-    label: Kecocokan HowLongToBeat yang hanya 1% tidak lagi ditampilkan sebagai kecocokan 100%, dan halaman yang gagal dimuat menampilkan halaman error, bukan teks error mentah
+    label: Kecocokan HowLongToBeat yang hanya cocok 1% tidak lagi ditampilkan sebagai kecocokan 100%, dan halaman yang gagal dimuat menampilkan halaman error, bukan teks error mentah
   - type: security
-    label: Mengganti kata sandi, atau admin mereset-nya, kini mengeluarkan akun itu dari semua perangkat lain. Karena itu, semua orang harus masuk sekali lagi setelah pembaruan ini. Halaman penyiapan awal juga mendapat perlindungan dari situs web lain yang sama seperti halaman lainnya
+    label: Mengganti kata sandi, atau admin yang meresetnya, kini mengeluarkan akun itu dari semua perangkat lain. Karena itu, semua orang perlu masuk sekali lagi setelah pembaruan ini. Halaman penyiapan pertama kali juga mendapat perlindungan yang sama terhadap situs web lain seperti halaman lainnya
   - type: fix
     label: Gambar yang ditolak sebagai avatar tidak lagi menghapus avatar yang Anda miliki
   - type: fix
-    label: Scrape kini lebih ringan bagi layanan online. Layanan yang terus gagal dilewati untuk sementara saat mengisi data kosong, seperti yang sudah berlaku pada pencarian, dan pencarian game ScreenScraper kini juga mematuhi batas hariannya
+    label: Scrape kini lebih ramah terhadap layanan online. Layanan yang terus gagal dilewati sementara saat mengisi bagian kosong, seperti yang sudah berlaku pada pencarian, dan pencarian game ScreenScraper kini juga mematuhi batas hariannya
   - type: fix
-    label: Scrape tidak lagi gagal pada game dengan tahun rilis yang tidak diketahui, seperti "TBA", dan game yang terdaftar untuk wilayah di luar daftar Anda, seperti "Brazil, Korea", tetap memakai wilayahnya, bukan berubah ke wilayah default Anda
+    label: Scrape tidak lagi gagal pada game yang tahun rilisnya tidak diketahui, seperti "TBA", dan game yang dirilis di wilayah di luar daftar Anda, seperti "Brazil, Korea", tetap mempertahankan wilayahnya, bukan berubah ke wilayah default Anda
   - type: fix
-    label: Folder ES-DE yang ditulis dengan ~/ kini berfungsi, dan file ES-DE yang sangat besar tidak lagi disalin. Saran versi wilayah tidak pernah menyatukan kembali dua game yang Anda nyatakan bukan versi satu sama lain
+    label: Folder ES-DE yang ditulis dengan ~/ kini berfungsi, dan file ES-DE yang sangat besar tidak lagi disalin. Saran versi regional tidak lagi menyatukan kembali dua game yang Anda nyatakan bukan versi satu sama lain
   - type: security
-    label: RetroDB menolak lebih banyak alamat jaringan pribadi saat mengambil gambar dari web, dan mengikuti pengalihan alamat web dengan benar
+    label: RetroDB menolak beberapa alamat jaringan privat lagi saat mengambil gambar dari web, dan mengikuti pengalihan alamat web dengan benar
   - type: fix
-    label: Layar terakhir yang masih berbahasa Inggris kini juga mengikuti bahasa Anda, termasuk panduan penyiapan, Tags, Lists, Compare Games, pengaturan ROM Tools, antrean bulk scrape, daftar tugas terhenti di dasbor, label kartu pustaka, dan banyak pesan error
+    label: Layar terakhir yang masih berbahasa Inggris kini juga mengikuti bahasa Anda, termasuk panduan penyiapan, Tags, Lists, Compare Games, pengaturan ROM Tools, antrean bulk scrape, daftar tugas terputus di dasbor, label kartu pustaka, dan banyak pesan error
   - type: security
     label: Nama sistem yang berisi kode web tidak lagi bisa menjalankannya di jendela antrean bulk scrape
   - type: accessibility
-    label: Di mana pun Anda berada di halaman, posisi keyboard kini ditandai dengan cincin tebal berwarna tema Anda, pada setiap tombol, kotak, dan tautan. Sebelumnya banyak kontrol hanya menampilkan garis tipis, sama seperti saat mouse melewatinya
+    label: Di mana pun Anda berada di halaman, posisi keyboard kini ditandai dengan cincin tebal berwarna sesuai tema Anda, pada setiap tombol, kotak, dan tautan. Sebelumnya banyak kontrol hanya menampilkan garis tipis, sama seperti saat kursor mouse melewatinya
   - type: accessibility
-    label: Tautan Genre, Series, Pengembang, dan Penerbit pada kartu pustaka kini bisa digunakan dari keyboard. Tombol "running" untuk game yang sedang dimainkan juga bisa dibuka dari keyboard, dan Esc atau klik di tempat lain menutup daftarnya
+    label: Tautan Genre, Series, Pengembang, dan Penerbit pada kartu pustaka kini bisa dipakai dengan keyboard. Tombol "running" untuk game yang sedang dimainkan juga bisa dibuka dengan keyboard, dan Esc atau klik di tempat lain menutup daftarnya
   - type: accessibility
-    label: Pembaca layar kini menyebutkan nama setiap warna tag dan mana yang dipilih, serta membaca gambar trofi sebagai Platinum, Gold, Silver, dan Bronze, bukan huruf tunggal. Saat game dimulai, Tab tidak lagi berpindah ke belakang layar pembuka
+    label: Pembaca layar kini menyebutkan nama setiap warna tag dan mana yang dipilih, serta membaca gambar trofi sebagai Platinum, Gold, Silver, dan Bronze, bukan huruf tunggal. Saat game sedang dimulai, Tab tidak lagi berpindah ke balik layar permulaan
   - type: fix
-    label: Jika pembaruan berhenti sebelum mulai menukar file, RetroDB kini menjalankan kembali versi yang Anda miliki, bukan tetap tertutup
+    label: Jika pembaruan berhenti sebelum mulai menukar file, RetroDB kini menjalankan lagi versi yang Anda punya, bukan tetap tertutup
   - type: fix
-    label: Menekan Mainkan dua kali sekaligus tidak lagi bisa memulai dua game di pemutar bawaan. Menunggu unduhan core kini berhenti setelah beberapa lama, atau saat RetroDB tidak menjawab, bukan menunggu selamanya, dan pertanyaan "sudah berjalan" memakai dialog RetroDB sendiri
+    label: Menekan Mainkan dua kali sekaligus tidak lagi bisa menjalankan dua game di pemutar bawaan. Menunggu unduhan core kini berhenti setelah beberapa saat, atau saat RetroDB tidak merespons, bukan menunggu selamanya, dan pertanyaan "sudah berjalan" memakai dialog RetroDB sendiri
   - type: fix
-    label: Cheat yang Anda aktifkan atau matikan saat bermain disimpan untuk game yang benar, tidak diambil dari game lain yang file-nya bernama sama. Masalah cheat tidak pernah menghentikan game untuk mulai
+    label: Cheat yang Anda aktifkan atau matikan saat bermain disimpan untuk game yang tepat, tidak pernah diambil dari game lain yang file-nya bernama sama. Masalah pada cheat tidak pernah menghentikan game untuk dimulai
   - type: fix
-    label: RetroDB menulis file pengaturan emulator dengan lebih aman. File pengaturan yang berupa tautan tetap berupa tautan, mempertahankan izinnya, dan mempertahankan huruf yang tidak bisa dibacanya, dan penyimpanan yang gagal tidak meninggalkan file sisa
+    label: RetroDB menulis file pengaturan emulator dengan lebih aman. File pengaturan berupa tautan tetap menjadi tautan, mempertahankan izinnya, dan mempertahankan huruf yang tidak bisa dibacanya, dan penyimpanan yang gagal tidak meninggalkan file sisa
   - type: fix
-    label: Bulk scrape yang Anda geser turun dalam antrean, tukar dengan yang lain, atau lanjutkan saat yang lain berjalan tidak lagi hilang saat RetroDB dimulai ulang; dasbor menawarkannya dari titik berhentinya. Scrape yang ditukar keluar tidak lagi tetap berjalan di samping yang baru, dan dua klik cepat pada Resume hanya memulai satu tugas
+    label: Bulk scrape yang Anda geser turun dalam antrean, tukar dengan yang lain, atau lanjutkan saat ada yang berjalan tidak lagi hilang saat RetroDB dimulai ulang; dasbor menawarkannya, dari titik terakhir berhenti. Scrape yang ditukar keluar tidak lagi tetap berjalan di samping yang baru, dan dua klik cepat pada Resume hanya memulai satu tugas
   - type: fix
-    label: Error pada satu game, seperti jaringan terputus, tidak lagi mengakhiri seluruh proses Isi dengan AI atau Fix Box and Manual Regions; game itu dihitung gagal dan sisanya dilanjutkan. Menghentikan RetroDB kini juga menghentikan unduhan core dengan rapi
+    label: Error pada satu game, seperti jaringan terputus, tidak lagi mengakhiri seluruh proses Isi dengan AI atau Fix Box and Manual Regions; game itu dihitung gagal dan sisanya dilanjutkan. Menghentikan RetroDB kini juga menghentikan unduhan core dengan bersih
   - type: fix
-    label: Item wishlist tidak lagi terus berstatus "scraping" setelah error atau restart, dan dua proses Scrape All untuk wishlist yang sama tidak lagi berjalan bersamaan
+    label: Item wishlist tidak lagi terjebak di "scraping" selamanya setelah error atau restart, dan dua proses Scrape All untuk wishlist yang sama tidak lagi berjalan bersamaan
   - type: fix
-    label: Skrip atau salinan kedua RetroDB yang dijalankan tidak lagi menandai tugas server yang sedang berjalan sebagai terhenti, dan dua salinan yang dimulai bersamaan tidak lagi bisa menurunkan versi database
+    label: Skrip atau salinan kedua RetroDB yang dimulai tidak lagi menandai tugas server yang sedang berjalan sebagai terputus, dan dua salinan yang dimulai bersamaan tidak lagi bisa menurunkan versi database
   - type: fix
-    label: Memulai sinkronisasi PlayStation tidak lagi membuat bilah progres semua orang menunggu saat masuk ke Sony. Keep-alive PlayStation harian kini memperbarui login hanya mendekati akhir 10 harinya, bukan setiap hari
+    label: Memulai sinkronisasi PlayStation tidak lagi membuat bilah progres semua orang menunggu saat masuk ke Sony. Keep-alive PlayStation harian kini memperbarui login hanya mendekati akhir masa 10 harinya, bukan setiap hari
   - type: fix
-    label: Scrape tidak lagi menimpa perubahan yang Anda buat saat berjalan, dan tidak lagi mengosongkan genre, mode, atau tampilan yang namanya tidak ia ketahui. Scrape juga tidak lagi mengubah jumlah pemain yang tersimpan agar sesuai dengan mode game
+    label: Scrape tidak lagi menimpa perubahan yang Anda buat saat berjalan, dan tidak lagi mengosongkan genre, mode, atau tampilan yang tidak diketahui namanya. Scrape juga tidak lagi mengubah jumlah pemain yang tersimpan agar sesuai dengan mode game
   - type: fix
-    label: Isi dengan AI tidak lagi mengubah apa yang Anda ketik sendiri, seperti penerbit atau genre yang Anda koreksi manual; ia hanya mengoreksi nilai hasil scrape. Ia juga tidak lagi melaporkan nilai berubah padahal hanya ditulis berbeda, seperti 4 pemain sebagai "1-4" atau genre yang sama dalam urutan lain
+    label: Isi dengan AI tidak lagi mengubah apa yang Anda ketik sendiri, seperti penerbit atau genre yang Anda perbaiki manual; hanya nilai hasil scrape yang dikoreksi. AI juga tidak lagi melaporkan nilai berubah jika hanya ditulis berbeda, seperti 4 pemain menjadi "1-4" atau genre yang sama dengan urutan berbeda
   - type: fix
-    label: Kontroler yang Anda ketik untuk sebuah game tetap tersimpan; kontroler default konsol kini hanya menggantikan nilai hasil scrape dan AI. Rating usia yang dikonversi dari tebakan AI lembaga lain kini juga ditandai sebagai tebakan
+    label: Kontroler yang Anda ketik untuk sebuah game tetap tersimpan; kontroler default konsol kini hanya menggantikan nilai hasil scrape dan AI. Rating usia yang dikonversi dari tebakan AI papan lain kini juga ditandai sebagai tebakan
   - type: fix
-    label: Menyimpan jendela edit game tidak lagi mengosongkan kolom yang tidak ditampilkan jendela itu. Reset di halaman game kini menghapus semua yang dijanjikannya, termasuk tampilan, edisi, dan nama lain, menghapus gambar dan video game kecuali dipakai game lain, dan langsung memperbarui filter pustaka
+    label: Menyimpan jendela edit game tidak lagi mengosongkan kolom yang tidak ditampilkan jendela itu. Reset di halaman game kini menghapus semua yang dinyatakannya, termasuk tampilan, edisi, dan nama lain, menghapus gambar dan video game kecuali dipakai game lain, dan langsung memperbarui filter pustaka
   - type: fix
-    label: Clear Scraped Data kini juga menghapus tampilan, 2D atau 3D, dan struktur game. Impor CLZ untuk game yang hanya memiliki tahun menyimpan tahunnya saja, bukan 1 Januari
+    label: Clear Scraped Data kini juga menghapus tampilan, 2D atau 3D, dan struktur game. Impor CLZ untuk game yang hanya punya tahun hanya menyimpan tahunnya, bukan 1 Januari
   - type: security
-    label: Sinkronisasi Steam tidak lagi meminjam kunci Steam dari Pengaturan untuk setiap anggota rumah tangga. Anggota tanpa kunci Steam sendiri sebelumnya mendapat pustaka dan achievement Steam milik admin di akunnya. Kunci di Pengaturan kini hanya melayani admin
+    label: Sinkronisasi Steam tidak lagi meminjam kunci Steam dari Pengaturan untuk setiap anggota rumah tangga. Anggota tanpa kunci Steam sendiri sebelumnya mendapat pustaka dan achievement Steam milik admin di akunnya. Kunci di Pengaturan kini hanya untuk admin
   - type: fix
-    label: Pencarian How Long to Beat untuk banyak game kini menyimpan waktu yang sudah pasti. Sebelumnya setiap kecocokan pasti gagal dan tidak ada yang tersimpan. RetroAchievements Refresh kini juga memeriksa file setiap game terhadap daftar RetroAchievements, seperti scrape, sehingga game tertaut ke versi persis yang Anda miliki
+    label: Pencarian How Long to Beat untuk banyak game kini menyimpan waktu yang sudah pasti cocok. Sebelumnya, setiap kecocokan pasti gagal dan tidak ada yang tersimpan. Refresh RetroAchievements kini juga mencocokkan file tiap game dengan daftar RetroAchievements, seperti saat Scrape, sehingga game terhubung ke versi persis yang Anda miliki
   - type: fix
-    label: Pesan bahwa tugas latar belakang sudah selesai kini muncul lagi, dan kotak progres tugas mengenali saat server melanjutkan tugas setelah restart. Sebelumnya keduanya tidak pernah muncul
+    label: Pesan bahwa tugas latar belakang sudah selesai kini muncul lagi, dan kotak progres tugas mengetahui saat server melanjutkan tugas setelah dimulai ulang. Sebelumnya, keduanya tidak pernah muncul
   - type: fix
-    label: 'Trofi PlayStation: game yang Anda tautkan manual tetap tertaut setelah sinkronisasi penuh, dan sinkronisasi tidak lagi menautkan sebuah game ke sekuelnya, misalnya "Doom" ke "Doom Eternal". Mengimpor game PlayStation kini menautkan game yang sudah ada di Pustaka Anda, seperti impor Steam dan Xbox, sehingga trofinya tampil di game tersebut'
+    label: 'Trofi PlayStation: game yang Anda tautkan manual tetap tertaut setelah sinkronisasi penuh, dan sinkronisasi tidak lagi menautkan game ke sekuelnya, seperti "Doom" ke "Doom Eternal". Impor game PlayStation kini menautkan game yang sudah ada di Pustaka Anda, seperti impor Steam dan Xbox, sehingga trofinya tampil di game tersebut'
   - type: fix
-    label: Xbox tidak lagi menampilkan gamertag Anda sebagai Unknown setelah sign-in-nya diperbarui otomatis, dan koneksi yang lambat atau gagal tidak lagi membuat Anda keluar dari Xbox. Hanya penolakan sign-in oleh Microsoft yang melakukannya
+    label: Xbox tidak lagi menampilkan gamertag Anda sebagai Unknown setelah login-nya diperbarui otomatis, dan koneksi yang lambat atau gagal tidak lagi membuat Anda keluar dari Xbox. Hanya penolakan login oleh Microsoft yang menyebabkannya
   - type: fix
-    label: Dua orang kini bisa punya tag dengan nama yang sama; sebelumnya yang kedua gagal dengan error. Setiap pengguna yang masuk kini bisa memindai ulang trofi RPCS3 miliknya sendiri; sebelumnya hanya admin yang bisa, dan yang lain melihat trofi lama sampai RetroDB dimulai ulang
+    label: Dua orang kini bisa memiliki tag dengan nama yang sama; sebelumnya, yang kedua gagal dengan pesan error. Pengguna yang masuk kini bisa memindai ulang trofi RPCS3 miliknya sendiri; sebelumnya hanya admin yang bisa, dan yang lain melihat trofi lama sampai RetroDB dimulai ulang
   - type: security
-    label: Sign-in Anda tetap privat. Backup database tidak lagi bisa dibaca akun lain di komputer, dan backup yang gagal tidak lagi menghapus backup sebelumnya. Menghapus atau menonaktifkan pengguna juga membuatnya keluar dari RetroAchievements di DuckStation dan PCSX2. Sign-in RetroAchievements yang disimpan dari menu Pemain sendiri tidak lagi terbawa ke orang berikutnya yang bermain. Log dan error tugas yang tersimpan menyembunyikan token RetroAchievements, error PlayStation anggota lain hanya ditampilkan kepadanya, dan file sign-in PlayStation dan Xbox lama berupa teks biasa dihapus
+    label: Login Anda tetap privat. Backup database tidak lagi bisa dibaca akun lain di komputer, dan backup yang gagal tidak lagi menghapus backup sebelumnya. Menghapus atau menonaktifkan pengguna juga mengeluarkannya dari RetroAchievements di DuckStation dan PCSX2. Login RetroAchievements yang disimpan dari menu Pemain tidak lagi terbawa ke orang berikutnya yang bermain. Log dan error tugas yang tersimpan menyembunyikan token RetroAchievements, error PlayStation anggota lain hanya ditampilkan kepada orangnya, dan file login PlayStation dan Xbox lama berupa teks biasa dihapus
   - type: fix
-    label: Pemeriksaan internal RetroDB tidak lagi bisa menyentuh Pustaka Anda saat berjalan. Pemeriksaan selalu memakai salinan sementara database, gambar, dan pengaturan, dan menolak mulai jika salah satunya mengarah ke file asli Anda
+    label: Pemeriksaan internal RetroDB tidak lagi bisa menyentuh Pustaka Anda saat berjalan. Pemeriksaan selalu memakai salinan sementara database, gambar, dan pengaturan, serta menolak berjalan jika salah satunya menunjuk ke file asli Anda
   - type: fix
-    label: Bersihkan file yatim tidak lagi menghapus gambar Wishlist Anda. Membuka game tidak lagi membuatnya melupakan screenshot yang tidak ditemukan. Sebelumnya, saat drive gambar dicabut, setiap game yang dibuka kehilangan seluruh daftar screenshot-nya; kini daftar tetap disimpan, dan gambar yang hilang hanya disembunyikan
+    label: Clean orphaned files tidak lagi menghapus gambar Wishlist Anda. Membuka game tidak lagi membuatnya melupakan screenshot yang tidak ditemukan. Sebelumnya, saat drive gambar dicabut, setiap game yang dibuka kehilangan seluruh daftar screenshot-nya; kini daftar tetap disimpan, dan gambar yang hilang hanya disembunyikan
   - type: fix
-    label: Unduh video atau manual yang gagal di tengah jalan tidak lagi merusak salinan yang sudah dimiliki game, dan unduhan yang gagal tidak lagi meninggalkan file setengah tersembunyi di folder media. Peningkat resolusi latar belakang tidak lagi menimpa gambar baru dengan gambar lama yang diunduh sementara itu. Konversi ke WebP menjaga semua game yang berbagi satu gambar tetap menunjuk ke gambar itu, dan tidak pernah menyentuh file di luar folder gambar
+    label: Unduh video atau manual yang gagal di tengah jalan tidak lagi merusak salinan yang sudah dimiliki game, dan unduhan gagal tidak lagi meninggalkan setengah file tersembunyi di folder media. Upscaler latar belakang tidak lagi menyimpan gambar lama menimpa gambar baru yang diunduh sementara itu. Convert to WebP menjaga semua game yang berbagi satu gambar tetap menunjuk ke gambar itu, dan tidak pernah menyentuh file di luar folder gambar
   - type: fix
-    label: Menghapus game atau item Wishlist kini juga menghapus gambar, video, dan manualnya, tetapi mempertahankan yang masih dipakai game atau item Wishlist lain. Gambar yang disimpan kini bisa dibaca lagi oleh akun lain di komputer, dan Ubah Ukuran Gambar menghitung gambar yang tidak bisa disimpan sebagai gagal, bukan selesai
+    label: Menghapus game atau item Wishlist kini juga menghapus gambar, video, dan manualnya, tetapi mempertahankan yang masih dipakai game atau item Wishlist lain. Gambar yang disimpan kini bisa dibaca lagi oleh akun lain di komputer, dan Resize Images menghitung gambar yang gagal disimpan sebagai gagal, bukan selesai
   - type: fix
-    label: Pencari Duplikat tidak lagi menawarkan file yang masih dipakai untuk dihapus. Saat mencari berdasarkan nama, file .cue dan .bin sebuah game tidak lagi dianggap salinan satu sama lain. Ia tidak pernah menawarkan file track disc, yang bisa dipakai bersama oleh dua versi game. Ia tidak akan menghapus disc yang tercantum di playlist. Game yang file-nya Anda hapus kini berpindah ke salinan yang Anda simpan, sehingga tetap ada di Pustaka
+    label: Duplicate Finder tidak lagi menawarkan file yang berfungsi untuk dihapus. Saat mencari berdasarkan nama, file .cue dan .bin sebuah game tidak lagi dianggap salinan satu sama lain. Alat ini tidak pernah menawarkan file track disc, yang bisa dipakai bersama oleh dua versi game. Alat ini tidak akan menghapus disc yang tercantum di playlist. Game yang filenya Anda hapus kini pindah ke salinan yang Anda simpan, sehingga tetap ada di Pustaka
   - type: fix
-    label: Atur Multi-Disc tidak lagi menimpa playlist yang ada atau file yang sudah ada di folder game; ia berhenti dan menyebutkan file mana. Playlist yang dibuatnya mencantumkan .cue setiap disc, bukan file track-nya. Game yang file-nya dipindahkan kini ikut ke folder tersebut, sehingga Bersihkan ROM hilang tidak lagi menghapusnya
+    label: Organize Multi-Disc tidak lagi menimpa playlist yang ada atau file yang sudah ada di folder game; prosesnya berhenti dan menyebutkan file mana. Playlist yang dibuat mencantumkan .cue tiap disc, bukan file track-nya. Game yang filenya dipindahkan kini ikut ke folder tersebut, sehingga Clean missing ROMs tidak lagi menghapusnya
   - type: fix
-    label: Konversi ke CHD dengan "hapus file asli" kini juga menghapus file track disc, tetapi mempertahankan track yang masih dipakai .cue lain. Game dan playlist yang mencantumkan disc lama kini menunjuk ke .chd baru. Mengganti nama file game kini memperbarui playlist yang mencantumkannya, dan file track yang dibutuhkan .cue tidak bisa diganti namanya. Menghapus file dari zip hanya menghapus file yang Anda pilih, bahkan saat nama berisi [ atau ]. Screenshot Dedup hanya menghapus salinan yang ditemukan pemindaiannya, dan selalu menyisakan satu
+    label: Konversi ke CHD dengan "delete originals" kini juga menghapus file track disc, tetapi mempertahankan track yang masih dipakai .cue lain. Game dan playlist yang mencantumkan disc lama kini menunjuk ke .chd baru. Mengganti nama file game kini memperbarui playlist yang mencantumkannya, dan file track yang dibutuhkan .cue tidak bisa diganti namanya. Menghapus file dari zip hanya menghapus file yang Anda pilih, bahkan saat nama berisi [ atau ]. Screenshot Dedup hanya menghapus salinan yang ditemukan pemindaiannya, dan selalu menyisakan satu
   - type: fix
-    label: How Long to Beat di halaman game kini mencari sesuai yang Anda ketik. Sebelumnya, judul yang tidak ditemukan membuatnya mencari nama lain game itu, dan bisa menawarkan game berbeda, seperti remake buatan penggemar. Nama lain tetap dicoba saat kotak berisi nama asli game
+    label: How Long to Beat di halaman game mencari apa yang Anda ketik. Sebelumnya, judul yang tidak ditemukan membuatnya mencari nama lain game tersebut, dan bisa menawarkan game berbeda, seperti remake buatan penggemar. Nama lain tetap dicoba saat kotak berisi nama asli game
   - type: fix
-    label: Langkah How Long to Beat di manual bantuan kini sesuai dengan layar. Dulu tertulis memilih satu hasil dari daftar; halamannya menampilkan satu hasil dengan Simpan dan Batal. Bantuan PlayStation tidak lagi menyebut sign-in bertahan sekitar dua bulan, karena RetroDB masuk lagi sendiri. Semua 20 manual terjemahan memuat kedua perubahan ini
+    label: Langkah How Long to Beat di manual bantuan kini sesuai tampilan. Sebelumnya tertulis memilih kecocokan dari daftar; halamannya menampilkan satu kecocokan dengan Simpan dan Batal. Bantuan PlayStation tidak lagi menyebut login berlaku sekitar dua bulan, karena RetroDB masuk lagi sendiri. Semua 20 manual terjemahan memuat kedua perubahan ini
   - type: fix
-    label: Setiap bilah huruf kini diawali tombol Semua. Di halaman Pustaka, konsol, dan Trofi PSN, memilih huruf hanya menampilkan game berawalan huruf itu, dan sebelumnya tidak ada tombol untuk menampilkan sisanya lagi. Di halaman achievement lainnya, Semua kembali ke game pertama
+    label: Setiap bar huruf kini diawali tombol All. Di halaman Pustaka, konsol, dan Trofi PSN, memilih huruf hanya menampilkan game berawalan huruf itu, dan sebelumnya tidak ada tombol untuk menampilkan sisanya. Di halaman achievement lainnya, All kembali ke game pertama
   - type: fix
-    label: Token sign-in PlayStation baru yang Anda tempel di Pengaturan kini langsung dipakai. Sebelumnya, RetroDB terus memakai sign-in lama sampai habis, dan Simpan & Tes Koneksi melaporkan sign-in lama itu berfungsi. Token yang ditolak Sony tidak lagi menggantikan token yang masih berfungsi
+    label: Token login PlayStation baru yang Anda tempel di Pengaturan kini langsung dipakai. Sebelumnya, RetroDB terus memakai login lama sampai habis, dan Save & Test Connection melaporkan login lama itu berfungsi. Token yang ditolak Sony tidak lagi menggantikan token yang masih berfungsi
   - type: enhancement
-    label: 'Sign-in PlayStation di Pengaturan lebih mudah dijaga. Spanduk tidak lagi menghitung mundur hari yang tidak perlu Anda tindaklanjuti, karena RetroDB masuk lagi sendiri; spanduk menjadi merah hanya saat Sony menolak token tersimpan Anda. Tombol Tempel di sini tidak lagi membuat browser meminta izin membaca clipboard: ia menaruh kursor di kotak untuk Ctrl+V. Langkahnya kini menyuruh keluar dari PlayStation dulu saat Anda mengganti token yang masih berfungsi, dan pesannya bisa diterjemahkan'
+    label: 'Login PlayStation di Pengaturan kini lebih mudah dipertahankan. Banner tidak lagi menghitung mundur hari yang tidak perlu Anda tindaklanjuti, karena RetroDB masuk lagi sendiri; banner menjadi merah hanya saat Sony menolak token tersimpan Anda. Tombol Paste here tidak lagi membuat browser meminta izin membaca clipboard: tombol ini menaruh kursor di kotak untuk Ctrl+V. Langkahnya kini meminta Keluar dari PlayStation dulu saat Anda mengganti token yang masih berfungsi, dan pesannya bisa diterjemahkan'
   - type: enhancement
-    label: Pesan pop-up dan kotak pertanyaan, seperti "Pengaturan disimpan" atau "Hapus daftar ini?", kini bisa diterjemahkan di setiap halaman. Sebelumnya, sebagian besar tetap berbahasa Inggris apa pun bahasa yang Anda pilih
+    label: Pesan pop-up dan kotak pertanyaan, seperti "Settings saved" atau "Delete this list?", kini bisa diterjemahkan di setiap halaman. Sebelumnya, sebagian besar tetap berbahasa Inggris apa pun bahasa yang Anda pilih
   - type: enhancement
-    label: Pesan yang menjelaskan mengapa sign-in PlayStation gagal, seperti "Your NPSSO may have expired", kini bisa diterjemahkan
+    label: Pesan yang menjelaskan mengapa login PlayStation gagal, seperti "Your NPSSO may have expired", kini bisa diterjemahkan
   - type: fix
-    label: Manual bantuan di semua bahasa kini sama dengan versi Inggris. Ditambahkan Search Anywhere, Keeping a Title, MAME Names, dan bagian belakang boks, dan paragraf lama yang tertinggal sudah diperbarui
+    label: Manual bantuan di setiap bahasa kini sama dengan versi Inggris. Ada tambahan Search Anywhere, Keeping a Title, MAME Names, dan bagian belakang kotak, dan paragraf lama yang tertinggal sudah diperbarui
   - type: fix
-    label: Dalam bahasa Jerman, Afrikaans, dan Spanyol, tombol Kembali pada sampul game kini berarti bagian belakang boks, bukan "kembali"
+    label: Dalam bahasa Jerman, Afrikaans, dan Spanyol, tombol Kembali di sampul game kini berarti bagian belakang kotak, bukan "kembali"
   - type: feature
-    label: Menekan Mainkan kini memenuhi layar dengan logo game di atas gambar latarnya selama game dimulai, atau namanya dengan huruf besar jika tidak ada logo. Tampilan hilang sendiri saat jendela game terbuka, atau saat Anda menekan Esc atau mengeklik
+    label: Menekan Mainkan kini memenuhi layar dengan logo game di atas gambar latarnya saat game dimulai, atau namanya dengan huruf besar jika tidak ada logo. Tampilan hilang sendiri saat jendela game terbuka, atau saat Anda menekan Esc atau mengeklik
   - type: feature
-    label: 'Boks 3D yang bisa diputar kini berbentuk seperti casing PS5 asli: sudut dan tepi membulat, bibir yang menonjol di sekeliling sampul, garis pertemuan kedua belahan, dan celah jari di sisi pembuka. Ini membutuhkan file boks dari versi Slipcase yang menulis bentuk tersebut; impor boks lagi untuk mendapatkannya. Boks lain tampil seperti sebelumnya'
+    label: 'Kotak 3D yang bisa diputar kini berbentuk seperti casing PS5 asli: sudut dan tepi membulat, bibir yang menonjol di sekeliling sampul, garis pertemuan kedua belahan, dan celah jari di sisi pembuka. Ini memerlukan file kotak dari versi Slipcase yang menulis bentuk tersebut; impor kotak lagi untuk mendapatkannya. Kotak lain tampil seperti sebelumnya'
   - type: enhancement
-    label: Refresh RetroAchievements dipindahkan dari Pengaturan ke halaman RetroAchievements, dan kini bernama Temukan Game dengan Achievement. Setiap tombol di sana kini punya keterangan fungsinya, sehingga Temukan Game dan Sinkronkan Progres mudah dibedakan. Jika belum ada game tertaut, halaman menampilkan tombol Temukan kepada admin, bukan langsung pindah ke tab berikutnya
-  body: "<ul>\n  <li><strong>Manual bantuan sudah terbaru di semua bahasa.</strong>\n    Bagian yang sebelumnya hanya ada di manual Inggris kini sudah diterjemahkan.</li>\n</ul>\n"
+    label: Refresh RetroAchievements pindah dari Pengaturan ke halaman RetroAchievements, dan kini bernama Find Games with Achievements. Setiap tombol di sana kini punya keterangan fungsinya, sehingga Find Games dan Sync Progress mudah dibedakan. Jika belum ada game tertaut, halaman menampilkan tombol Find kepada admin, bukan langsung pindah ke tab berikutnya
+  body: "<ul>\n  <li><strong>Manual bantuan sudah diperbarui di setiap bahasa.</strong>\n    Bagian yang sebelumnya hanya ada di manual Inggris kini sudah diterjemahkan.</li>\n</ul>\n"
 - version: 3.35.4
   date: '2026-11-03'
   tags:
