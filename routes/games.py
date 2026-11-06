@@ -587,10 +587,7 @@ def game_detail(game_id):
                         flash(_("Screenshots not added because they match ones the game "
                                 "already has: %(count)s", count=duplicate_shots), "warning")
 
-                    _note_hand_edits(game_id, {
-                        **{k: v for k, v in _normalized.items() if k in HAND_EDITED_FIELDS},
-                        'units_sold': units_sold, 'controller_support': controller_support,
-                    })
+                    _note_hand_edits(game_id, _payload)
 
                     # Update database
                     execute("""
@@ -1096,7 +1093,10 @@ def api_apply_metadata_progress(task_id):
 def _note_hand_edits(game_id, new_values, conn=None):
     """Credit a person for the marked fields this edit changes, so a corrected
     AI rating stops showing as a guess (PASS-59-211). Pass `conn` to write
-    inside the caller's transaction."""
+    inside the caller's transaction.
+
+    `new_values` are the fields as sent, before `normalize_game_edit`: a
+    rating it converts from another board was not typed (PASS-59-257)."""
     columns = ', '.join(HAND_EDITED_FIELDS)
     sql = f"SELECT scrape_history, {columns} FROM games WHERE id = ?"
     if conn is None:
@@ -1177,7 +1177,7 @@ def api_game_edit(game_id):
 
     values.append(game_id)
 
-    _note_hand_edits(game_id, normalized)
+    _note_hand_edits(game_id, payload)
     execute(f"""
         UPDATE games SET {', '.join(updates)} WHERE id = ?
     """, tuple(values))

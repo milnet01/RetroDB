@@ -1907,7 +1907,7 @@ const GameEditModal = {
         this.loadGenreDropdown();
         this.initModesTags(game.modes || '');
         this.loadModesDropdown();
-        document.getElementById('gemPlayers').value = game.players || 1;
+        document.getElementById('gemPlayers').value = game.players || '';
         this.initGameStructureTags(game.game_structure || '');
         this.loadGameStructureDropdown();
         this.initPerspectiveTags(game.perspective || '');
@@ -2029,7 +2029,7 @@ const GameEditModal = {
             units_sold: document.getElementById('gemUnitsSold').value.trim(),
             genre: document.getElementById('gemGenreHidden').value.trim(),
             modes: document.getElementById('gemModesHidden').value.trim(),
-            players: parseInt(document.getElementById('gemPlayers').value) || 1,
+            players: parseInt(document.getElementById('gemPlayers').value) || null,
             game_structure: document.getElementById('gemGameStructureHidden').value.trim(),
             perspective: document.getElementById('gemPerspectiveHidden').value.trim(),
             dimension: document.getElementById('gemDimensionHidden').value.trim(),

@@ -107,7 +107,11 @@ def fill_game(game, fields=None):
 
     # Always re-fetch similar_games (scraper data unreliable)
     existing_metadata['similar_games'] = ''
-    if (existing_metadata.get('other_platforms', '') or '').strip().lower() == 'exclusive':
+    # User, 2026-11-04: what a person typed is never corrected by the AI.
+    hand_edited = {f for f, src in field_credits(game.get('scrape_history')).items()
+                   if src == 'manual'}
+    if ((existing_metadata.get('other_platforms', '') or '').strip().lower() == 'exclusive'
+            and 'other_platforms' not in hand_edited):
         existing_metadata['other_platforms'] = ''
     db_default_ctrl = get_system_default_controller_name(game['system_id'])
     if not db_default_ctrl and should_use_default_controller(existing_metadata.get('controller_support', '')):
@@ -132,9 +136,6 @@ def fill_game(game, fields=None):
 
     filled_fields = []
     replaced = {}
-    # User, 2026-11-04: what a person typed is never corrected by the AI.
-    hand_edited = {f for f, src in field_credits(game.get('scrape_history')).items()
-                   if src == 'manual'}
     # column -> value. One key per column, so a later fixup overrides an
     # earlier assignment instead of appending a duplicate `col = ?`.
     sets = {}
@@ -151,7 +152,8 @@ def fill_game(game, fields=None):
             should_apply = True
         elif field == 'similar_games':
             should_apply = True
-        elif field == 'other_platforms' and current.lower() == 'exclusive':
+        elif (field == 'other_platforms' and current.lower() == 'exclusive'
+              and field not in hand_edited):
             should_apply = True
         elif (field in VALIDATE_FIELDS and field not in hand_edited
               and not _same_value(field, value, current)):
@@ -278,6 +280,16 @@ def fill_game(game, fields=None):
             allowed |= {'sort_title', 'alternate_titles'}
         sets = {col: val for col, val in sets.items() if col in allowed}
         filled_fields = [f for f in filled_fields if f in allowed]
+
+    # A field changed while the AI answered keeps its new value, and the
+    # history keeps what was added meanwhile (PASS-59-257).
+    now = load_game(game_id) or game
+    for col in [col for col in sets if str(now.get(col) or '') != str(game.get(col) or '')]:
+        del sets[col]
+        replaced.pop(col, None)
+        if col in filled_fields:
+            filled_fields.remove(col)
+    game = {**game, 'scrape_history': now.get('scrape_history')}
 
     scrape_history_json = None
     if filled_fields:

@@ -715,6 +715,11 @@ def _what_to_write(c, metadata, start, db_game_id):
     return out
 
 
+def _left_out(field, metadata, to_write):
+    """Did `_what_to_write` hold back a value this scrape found for `field`?"""
+    return metadata.get(field) is not None and field in to_write and to_write[field] is None
+
+
 def _save_game_row(c, metadata, scrape_history_json, db_game_id, mark_scraped=True):
     """Write the assembled metadata back to the games row (fill-only).
 
@@ -1835,7 +1840,12 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
 
         _log_date_disagreement(metadata, game)
 
-        # After the steps above, so what they filled is credited (PASS-59-214).
+        # After the steps above, so what they filled is credited (PASS-59-214),
+        # and only what the save will write (PASS-59-257).
+        to_write = _what_to_write(c, metadata, {**game, **own_clears}, db_game_id)
+        result['filled_fields'] = [
+            item for item in result['filled_fields']
+            if not _left_out(item.split(' ', 1)[0], metadata, to_write)]
         scrape_history_json = _build_scrape_history_json(
             c, db_game_id, primary_source, metadata, result, force_overwrite
         )
@@ -1846,8 +1856,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
 
         # Pass 38.1 — SAVE TO DATABASE block extracted to _save_game_row.
         apply_progress.begin('save')
-        _save_game_row(c, _what_to_write(c, metadata, {**game, **own_clears}, db_game_id),
-                       scrape_history_json, db_game_id, mark_scraped)
+        _save_game_row(c, to_write, scrape_history_json, db_game_id, mark_scraped)
         _save_source_ids(c, db_game_id, sources_data, force_overwrite)
 
         conn.commit()
