@@ -13,6 +13,7 @@
 from flask import Blueprint, render_template, request, g
 from flask_babel import gettext as _
 import logging
+import re
 from datetime import datetime, timezone
 
 from services.database import query, execute
@@ -28,6 +29,18 @@ bp = Blueprint('collections', __name__)
 # =============================================================================
 # HELPER FUNCTIONS
 # =============================================================================
+
+_COLOUR = re.compile(r'^#[0-9a-fA-F]{6}$')
+
+
+def _text(value):
+    """Text a request sent, stripped; None when it sent something else."""
+    return value.strip() if isinstance(value, str) else None
+
+
+def _colour_error():
+    return error(_('A tag colour is written like #4cc9f0'), 400)
+
 
 def _utcnow_iso():
     """Return current UTC time as ISO 8601 string."""
@@ -158,12 +171,14 @@ def api_get_tags():
 @handle_api_errors
 def api_create_tag():
     """Create a new tag."""
-    data = request.get_json()
-    if not data or not data.get('name', '').strip():
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict) or not _text(data.get('name')):
         return error(_('Tag name is required'), 400)
 
-    name = data['name'].strip()
-    color = data.get('color', '#4cc9f0').strip()
+    name = _text(data['name'])
+    color = _text(data.get('color', '#4cc9f0'))
+    if not color or not _COLOUR.match(color):
+        return _colour_error()
 
     # Tag-name uniqueness is per-owner — two users can each have a "Favourites"
     # tag; the schema says the same since migration 039. (Admins still see
@@ -201,8 +216,12 @@ def api_update_tag(tag_id):
     if not tag:
         return error(_('Tag not found'), 404)
 
-    name = data.get('name', tag['name']).strip()
-    color = data.get('color', tag['color']).strip()
+    name = _text(data.get('name', tag['name']))
+    if not name:
+        return error(_('Tag name is required'), 400)
+    color = _text(data.get('color', tag['color']))
+    if not color or not _COLOUR.match(color):
+        return _colour_error()
 
     # Conflict check is scoped to the same owner so two users with the same
     # tag name don't collide on an admin's edit.
@@ -401,13 +420,15 @@ def api_get_lists():
 @handle_api_errors
 def api_create_list():
     """Create a new named list."""
-    data = request.get_json()
-    if not data or not data.get('name', '').strip():
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict) or not _text(data.get('name')):
         return error(_('List name is required'), 400)
 
-    name = data['name'].strip()
-    description = data.get('description', '').strip()
-    icon = data.get('icon', '').strip()
+    name = _text(data['name'])
+    description = _text(data.get('description') or '')
+    icon = _text(data.get('icon') or '')
+    if description is None or icon is None:
+        return error(_('A list description and icon are text'), 400)
 
     # sort_order is per-owner so two users' lists don't fight for slot 1.
     max_order = query(
@@ -445,10 +466,16 @@ def api_update_list(list_id):
     if not lst:
         return error(_('List not found'), 404)
 
-    name = (data.get('name', lst['name']) or '').strip()
-    description = (data.get('description', lst['description']) or '').strip()
-    icon = (data.get('icon', lst['icon']) or '').strip()
+    name = _text(data.get('name', lst['name']))
+    if not name:
+        return error(_('List name is required'), 400)
+    description = _text(data.get('description', lst['description']) or '')
+    icon = _text(data.get('icon', lst['icon']) or '')
+    if description is None or icon is None:
+        return error(_('A list description and icon are text'), 400)
     sort_order = data.get('sort_order', lst['sort_order'])
+    if not isinstance(sort_order, int) or isinstance(sort_order, bool):
+        return error(_('A list position is a whole number'), 400)
 
     execute(
         "UPDATE lists SET name = ?, description = ?, icon = ?, sort_order = ? WHERE id = ?",
@@ -686,7 +713,9 @@ def api_update_wishlist_item(item_id):
     if not item:
         return error(_('Wishlist item not found'), 404)
 
-    title = (data.get('title', item['title']) or '').strip()
+    title = _text(data.get('title', item['title']))
+    if not title:
+        return error(_('Title is required'), 400)
     system_name = (data.get('system_name', item['system_name']) or '').strip()
     system_id = data.get('system_id', item['system_id']) if 'system_id' in data else item['system_id']
     notes = (data.get('notes', item['notes']) or '').strip()
@@ -695,6 +724,15 @@ def api_update_wishlist_item(item_id):
 
     if not isinstance(priority, int) or priority < 1 or priority > 5:
         return error(_('Priority must be an integer between 1 and 5'), 400)
+
+    # The same per-owner duplicate check adding a wish makes.
+    if title.lower() != (item['title'] or '').lower():
+        clash = query(
+            "SELECT id FROM wishlist WHERE title = ? COLLATE NOCASE AND owner_id = ? AND id != ?",
+            (title, item['owner_id'], item_id), one=True,
+        )
+        if clash:
+            return error(_('This game is already on your wishlist'), 409)
 
     # Validate system_id if it was supplied (either in this request or previously stored)
     if system_id is not None:

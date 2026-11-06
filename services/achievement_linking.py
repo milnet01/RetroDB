@@ -395,8 +395,8 @@ def match_ra_game(game_title, rom_name, ra_games, alternate_titles=None,
 
 
 def ra_rom_name(rom_path):
-    """A ROM path's file name without its extension."""
-    return rom_path.split('/')[-1].rsplit('.', 1)[0] if rom_path else ''
+    """A ROM path's file name without its extension; a Windows path's too."""
+    return rom_path.replace('\\', '/').split('/')[-1].rsplit('.', 1)[0] if rom_path else ''
 
 
 # Systems RetroAchievements identifies by a whole file's MD5 with no special
@@ -446,7 +446,8 @@ def ra_link_info(ra_game):
 
 
 def save_ra_link(conn, game_id, ra_info):
-    """Store a game's RA link, the only place that does; the caller commits.
+    """Store a game's RA link, the only place that sets one; the caller commits.
+    (The Clear RA Data routes in routes/ra_sync.py empty these columns in bulk.)
 
     `ra_info` is `ra_link_info`'s result, or NO_RA_MATCH to clear the link. Never
     call this after a failed request. Progress saved under another link was for

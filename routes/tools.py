@@ -392,17 +392,33 @@ def api_rom_tools_task_status(task_id):
     return jsonify({'error': _('Task not found')}), 404
 
 
-@tools_bp.route('/api/rom-tools/task/<task_id>/cancel', methods=['POST'])
-@admin_required
-def api_rom_tools_task_cancel(task_id):
-    """Cancel a running task. Pass 41.10 — admin-only.
+def _may_control(task_id):
+    """Whether the caller may pause, resume or cancel this task: an admin, or
+    the editor who started it (PASS-59-249). False for an unknown task."""
+    task = _rom_tool_tasks.get(task_id)
+    if task is not None:
+        owner = task.get('started_by')
+    else:
+        from scraper.rom_tools import get_task
+        task_obj = get_task(task_id)
+        if task_obj is None:
+            return False
+        owner = task_obj.started_by
+    return g.user['role'] == 'admin' or (owner is not None and owner == g.user['id'])
 
-    Previously @login_required, which let any logged-in user (Player /
-    Viewer) cancel an admin's in-flight scan/convert task by guessing the
-    8-char task_id (32 bits, brute-forceable across 100s of attempts).
-    The full-UUID swap below removes the guessability path; admin-only
-    closes the legitimate-but-unauthorized cancellation vector.
+
+@tools_bp.route('/api/rom-tools/task/<task_id>/cancel', methods=['POST'])
+@editor_required
+def api_rom_tools_task_cancel(task_id):
+    """Cancel a running task: an admin's call, or the editor's who started it.
+
+    Pass 41.10 made this admin-only: at @login_required any Player or Viewer
+    could cancel an admin's task by guessing its id. An editor may start
+    scans, so PASS-59-249 lets the starter stop their own; another editor's
+    or an admin's task stays out of reach.
     """
+    if not _may_control(task_id):
+        return error(_('Only an admin or the person who started this task can change it'), 403)
     task = _rom_tool_tasks.get(task_id)
     if task and task.get('status') in ('running', 'paused'):
         task['status'] = 'cancelled'
@@ -416,9 +432,11 @@ def api_rom_tools_task_cancel(task_id):
 
 
 @tools_bp.route('/api/rom-tools/task/<task_id>/pause', methods=['POST'])
-@admin_required
+@editor_required
 def api_rom_tools_task_pause(task_id):
-    """Pause a running task. Pass 41.10 — admin-only (see _cancel)."""
+    """Pause a running task: an admin's call, or the starter's (see _cancel)."""
+    if not _may_control(task_id):
+        return error(_('Only an admin or the person who started this task can change it'), 403)
     from scraper.rom_tools import get_task, update_task
     
     task = _rom_tool_tasks.get(task_id)
@@ -436,9 +454,11 @@ def api_rom_tools_task_pause(task_id):
 
 
 @tools_bp.route('/api/rom-tools/task/<task_id>/resume', methods=['POST'])
-@admin_required
+@editor_required
 def api_rom_tools_task_resume(task_id):
-    """Resume a paused task. Pass 41.10 — admin-only (see _cancel)."""
+    """Resume a paused task: an admin's call, or the starter's (see _cancel)."""
+    if not _may_control(task_id):
+        return error(_('Only an admin or the person who started this task can change it'), 403)
     from scraper.rom_tools import get_task, update_task
     
     task = _rom_tool_tasks.get(task_id)
@@ -478,7 +498,7 @@ def api_archive_scanner_scan():
     unwanted_patterns = settings.get('unwanted_patterns', [])
     logger.info(f"Archive scanner using unwanted patterns: {unwanted_patterns}")
 
-    task = create_task('archive_scan')
+    task = create_task('archive_scan', started_by=g.user['id'])
     task.logs.append(f"[{datetime.now().strftime('%H:%M:%S')}] Starting scan of {path}")
     task.logs.append(f"[{datetime.now().strftime('%H:%M:%S')}] Unwanted patterns: {unwanted_patterns}")
     update_task(task)
@@ -731,6 +751,7 @@ def api_chd_converter_convert():
     # registry that keeps state for the lifetime of long-running scans.
     task_id = str(uuid.uuid4())
     task = {
+        'started_by': g.user['id'],
         'task_id': task_id,
         'task_type': 'chd_convert',
         'status': 'running',
@@ -880,6 +901,7 @@ def api_chd_verify_verify():
     # registry that keeps state for the lifetime of long-running scans.
     task_id = str(uuid.uuid4())
     task = {
+        'started_by': g.user['id'],
         'task_id': task_id,
         'task_type': 'chd_verify',
         'status': 'running',
@@ -993,6 +1015,7 @@ def api_duplicate_finder_scan():
     # registry that keeps state for the lifetime of long-running scans.
     task_id = str(uuid.uuid4())
     task = {
+        'started_by': g.user['id'],
         'task_id': task_id,
         'task_type': 'duplicate_scan',
         'status': 'running',
@@ -1453,6 +1476,7 @@ def api_screenshot_review_scan():
     _cleanup_completed_tasks()
     task_id = str(uuid.uuid4())
     task = {
+        'started_by': g.user['id'],
         'task_id': task_id,
         'task_type': 'screenshot_review',
         'status': 'running',
@@ -1495,6 +1519,7 @@ def api_screenshot_dedup_scan():
     # registry that keeps state for the lifetime of long-running scans.
     task_id = str(uuid.uuid4())
     task = {
+        'started_by': g.user['id'],
         'task_id': task_id,
         'task_type': 'screenshot_dedup',
         'status': 'running',

@@ -91,7 +91,7 @@ For a game in those folders with a `file_identity` no larger than 64 MiB, `match
 - The hash is in no game's list and the title match found a game: keep that link and set `ra_copy_fits = 0`.
 - Otherwise, or on another system: `ra_copy_fits` is NULL, meaning not known.
 
-Migration `032_games_ra_copy_fits` adds the column. `save_ra_link` is its only writer, and an unlinked game holds NULL.
+Migration `032_games_ra_copy_fits` adds the column. `save_ra_link` sets it, and the Clear RA Data routes empty it with the link, so an unlinked game holds NULL (PASS-59-249).
 
 ### 4.6 What the user sees — `templates/game_detail.html`
 

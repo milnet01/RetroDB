@@ -210,15 +210,23 @@ Run-level, group I:
 
 ## J. Collections, achievements, trophies, tools
 
+Test: `tests/test_pass59_249_collections.py`, eighteen run red first (three cases already worked).
+
 | Finding | Verified | Disposition |
 |---|---|---|
-| Collector-trophies docstring says library-wide | not yet read | |
-| `ra_sync` second writer of RA link columns | not yet read | |
-| Tag/list names, colours, sort_order unvalidated | not yet read | |
-| Wishlist rename skips duplicate check | not yet read | |
-| `ra_rom_name` splits on `/` only | not yet read | |
-| Editors cannot pause/cancel ROM-tool scans they start | not yet read | |
-| Removed trophies still count toward rank | not yet read | |
+| Collector-trophies docstring says library-wide | yes | fixed: docstring says achievement stats are per user. No red run: nothing observable changes |
+| `ra_sync` second writer of RA link columns | yes: the Clear RA Data routes, which left `ra_copy_fits` set | fixed: both clears empty `ra_copy_fits`; `save_ra_link`'s docstring and PASS-59-217's spec name the clears |
+| Tag/list names, colours, sort_order unvalidated | yes; a `null` name gave a 500 | fixed: names must be text, a tag colour is `#RRGGBB`, a list position a whole number |
+| Wishlist rename skips duplicate check | yes | fixed: the per-owner check adding makes |
+| `ra_rom_name` splits on `/` only | yes | fixed: backslashes count as separators |
+| Editors cannot pause/cancel ROM-tool scans they start | yes | fixed: each task records who started it; that editor or an admin may pause, resume or cancel. Pass 41.10.A's pins now check `@editor_required` plus the owner check |
+| Removed trophies still count toward rank | yes | fixed: the rank counts current trophies only, and a refresh deletes rows of removed ones |
+
+Run-level, group J:
+
+- cited_by: `docs/specs/PASS-59-217-identify-by-file.md` ("only writer"); `tests/test_pass41_security.py` Pass 41.10.A pins.
+- swept: PASS-59-217 spec line, fixed; auth.md, agrees (names no ROM-tool task rule); the Pass 41.10.A pins, fixed.
+- collateral: none. surfaced: none. out_of_scope: none. falsified: none.
 
 ## K. Records and catalogs
 

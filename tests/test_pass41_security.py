@@ -1215,41 +1215,26 @@ class TestPass41_14CRglobSymlinkGuard:
 
 
 # -----------------------------------------------------------------------------
-# 41.10.A — tools.py task cancel/pause/resume require admin
+# 41.10.A — tools.py task cancel/pause/resume: never a viewer or player
 # -----------------------------------------------------------------------------
 class TestPass41_10ATaskAuthz:
-    """Task cancel/pause/resume in routes/tools.py at lines 327-378 were
-    @login_required, letting any logged-in user (Player / Viewer) interrupt
-    an admin's running scan or convert task by knowing the task_id. Pass
-    41.10.A raises all three to @admin_required."""
+    """Task cancel/pause/resume in routes/tools.py were @login_required,
+    letting any logged-in user (Player / Viewer) interrupt an admin's running
+    scan or convert task by knowing the task_id. Pass 41.10.A raised all three
+    to @admin_required; PASS-59-249 lets the editor who started a task control
+    it too (`_may_control`), so an admin's task is still an admin's alone.
+    The behaviour is pinned in tests/test_pass59_249_collections.py."""
 
-    def test_task_cancel_requires_admin(self):
+    @pytest.mark.parametrize('verb', ['cancel', 'pause', 'resume'])
+    def test_task_control_needs_an_editor_and_the_owner_check(self, verb):
         body = read_source('routes/tools.py')
-        # Locate the cancel route's decorator stack; expect @admin_required.
-        idx = body.find("/api/rom-tools/task/<task_id>/cancel")
-        assert idx != -1, "cancel route not found"
-        block = body[idx:idx + 400]
-        assert '@admin_required' in block, (
-            "task_cancel must be @admin_required (Pass 41.10.A)"
-        )
-
-    def test_task_pause_requires_admin(self):
-        body = read_source('routes/tools.py')
-        idx = body.find("/api/rom-tools/task/<task_id>/pause")
-        assert idx != -1, "pause route not found"
-        block = body[idx:idx + 200]
-        assert '@admin_required' in block, (
-            "task_pause must be @admin_required (Pass 41.10.A)"
-        )
-
-    def test_task_resume_requires_admin(self):
-        body = read_source('routes/tools.py')
-        idx = body.find("/api/rom-tools/task/<task_id>/resume")
-        assert idx != -1, "resume route not found"
-        block = body[idx:idx + 200]
-        assert '@admin_required' in block, (
-            "task_resume must be @admin_required (Pass 41.10.A)"
-        )
+        idx = body.find(f"/api/rom-tools/task/<task_id>/{verb}")
+        assert idx != -1, f"{verb} route not found"
+        block = body[idx:idx + 1200]
+        assert '@editor_required' in block.split('def ', 1)[0], (
+            f"task_{verb} must be at least @editor_required (Pass 41.10.A)")
+        assert 'if not _may_control(task_id):' in block, (
+            f"task_{verb} must check the caller started the task or is an admin (PASS-59-249)")
 
 
 # -----------------------------------------------------------------------------

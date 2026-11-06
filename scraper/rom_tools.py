@@ -254,6 +254,7 @@ class TaskStatus:
     results: Dict[str, Any] = field(default_factory=dict)
     logs: List[str] = field(default_factory=list)
     error: str = ""
+    started_by: Optional[int] = None  # user id; that user or an admin may pause or cancel
     
     def to_dict(self) -> dict:
         result = {
@@ -288,13 +289,13 @@ def get_task(task_id: str) -> Optional[TaskStatus]:
 _TASK_RETENTION_SECONDS = 1800  # as routes/tools.py's registry
 
 
-def create_task(task_type: str) -> TaskStatus:
+def create_task(task_type: str, started_by: Optional[int] = None) -> TaskStatus:
     """PASS-59-119 — a full UUID, as routes/tools.py's registry uses; and
     finished tasks older than the retention window are dropped here, the one
     point every new task passes through."""
     import uuid
     task_id = str(uuid.uuid4())
-    task = TaskStatus(task_id=task_id, task_type=task_type)
+    task = TaskStatus(task_id=task_id, task_type=task_type, started_by=started_by)
     cutoff = time.time() - _TASK_RETENTION_SECONDS
     with _task_lock:
         for old_id in [tid for tid, t in _tasks.items()

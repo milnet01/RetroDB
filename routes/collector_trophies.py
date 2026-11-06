@@ -188,6 +188,10 @@ def compute_collector_rank(trophies):
     """Given a list of trophy dicts, return rank metadata: current tier name
     + index, points earned, next tier threshold + name (None if already at
     top), and progress percent toward the next tier."""
+    # A trophy taken out of TROPHY_DEFINITIONS earns nothing, though its row
+    # may stay until the next refresh removes it.
+    known = {td['id'] for td in TROPHY_DEFINITIONS}
+    trophies = [t for t in trophies if t.get('id') in known]
     points = sum(_trophy_points(t) for t in trophies)
 
     # Find the highest tier whose threshold has been met
@@ -237,7 +241,7 @@ def get_current_rank():
         }
     try:
         rows = query(
-            "SELECT tier, earned_at FROM collector_trophies WHERE user_id = ?",
+            "SELECT id, tier, earned_at FROM collector_trophies WHERE user_id = ?",
             (user_id,),
         )
     except Exception:
@@ -264,8 +268,8 @@ def _gather_collection_stats(user_id=None):
     Pass 31.3 — `user_id` (required for per-user stats) scopes psn_games
     and wishlist counts to the caller. The games/systems/scraped stats stay
     library-wide because the `games` table is shared schema (not per-user).
-    Achievement stats (RA/Steam/Xbox) are still library-wide pending Pass
-    31.2 which adds user_id to those tables.
+    Achievement stats (RA/Steam/Xbox) are per user (Pass 31.2 added user_id
+    to those tables).
     """
     stats = {}
 
@@ -507,8 +511,13 @@ def _refresh_trophies(user_id=None):
             inserts.append((trophy_id, user_id, *definition[:5], threshold,
                             earned_at, progress))
 
+    removed = [trophy_id for trophy_id in existing_rows
+               if trophy_id not in {td['id'] for td in TROPHY_DEFINITIONS}]
     conn = get_request_db()
     with conn:
+        if removed:
+            conn.executemany("DELETE FROM collector_trophies WHERE id = ? AND user_id = ?",
+                             [(trophy_id, user_id) for trophy_id in removed])
         if updates:
             conn.executemany(
                 """UPDATE collector_trophies
@@ -528,7 +537,7 @@ def _refresh_trophies(user_id=None):
 
     # Compute the rank after refresh so the API response reflects the new state
     all_trophies = query(
-        "SELECT tier, earned_at FROM collector_trophies WHERE user_id = ?",
+        "SELECT id, tier, earned_at FROM collector_trophies WHERE user_id = ?",
         (user_id,),
     )
     rank = compute_collector_rank(all_trophies)
