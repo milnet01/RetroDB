@@ -153,9 +153,10 @@ def test_ra_console(folder, console):
     assert retroachievements.get_ra_console_id(folder) == console
 
 
-def test_ra_has_no_neo_geo_entry():
-    """Its number was the Neo Geo Pocket's, which gave Pocket achievements."""
-    assert retroachievements.get_ra_console_id('neogeo') is None
+def test_neo_geo_is_ra_arcade_not_the_pocket():
+    """Its number was once the Neo Geo Pocket's, which gave Pocket
+    achievements. Neo Geo sets are RA Arcade games (user, 2026-11-06)."""
+    assert retroachievements.get_ra_console_id('neogeo') == 27
     assert retroachievements.get_ra_console_id('ngp') == 14
 
 
