@@ -7,6 +7,7 @@
 
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for, send_file
 from flask_babel import gettext as _
+import io
 import os
 import logging
 
@@ -131,13 +132,14 @@ def api_download_log(filename):
     if not any(filename.startswith(p) for p in VALID_PREFIXES):
         return error(_('Invalid log file'), 403)
 
-    filepath = os.path.join(log_manager.LOGS_DIR, filename)
-
-    if not os.path.exists(filepath):
+    # The text, not the file: redacted again for logs written before a
+    # pattern existed (PASS-59-267).
+    content = log_manager.get_full_log_content(filename)
+    if content is None:
         return error(_('Log file not found'), 404)
 
     return send_file(
-        filepath,
+        io.BytesIO(content.encode('utf-8')),
         mimetype='text/plain',
         as_attachment=True,
         download_name=filename

@@ -11705,7 +11705,11 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.267 The log viewer hides secrets in old log files too (security, S).
-- **Status**: todo
+- **Resolution** (2026-11-06): Done 2026-11-06: log_manager.get_log_content and get_full_log_content
+  run log_redactor.redact() on what they return; the download route
+  sends that redacted text instead of the file. Locked by
+  tests/test_pass59_267_log_redaction.py.
+- **Status**: done
 - **Why**: `routes/scrape_logs.py` content, view and download send the
   file as written; redaction happens only at write time, so a log from
   before a pattern was added (RA `y`/`z`, ScreenScraper `sspassword`)

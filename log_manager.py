@@ -340,7 +340,12 @@ def get_log_files():
 
 
 def get_log_content(filename, lines=100):
-    """Get the last N lines of a log file"""
+    """Get the last N lines of a log file, secrets redacted.
+
+    Redaction at write time misses files written before a pattern existed
+    (PASS-59-267), so every reader redacts again.
+    """
+    from services.log_redactor import redact
     filepath = os.path.join(LOGS_DIR, filename)
     
     if not os.path.exists(filepath):
@@ -349,7 +354,8 @@ def get_log_content(filename, lines=100):
     try:
         with open(filepath, 'r', encoding='utf-8') as f:
             all_lines = f.readlines()
-            return all_lines[-lines:] if len(all_lines) > lines else all_lines
+            tail = all_lines[-lines:] if len(all_lines) > lines else all_lines
+            return [redact(line) for line in tail]
     except Exception as e:
         return [f"Error reading log file: {e}"]
 
@@ -375,7 +381,9 @@ def clear_old_logs(days=30):
 
 
 def get_full_log_content(filename):
-    """Get the full content of a log file as a string with path traversal protection"""
+    """Get the full content of a log file, secrets redacted (PASS-59-267),
+    with path traversal protection."""
+    from services.log_redactor import redact
     # Security: only allow simple filenames, no path separators
     if os.path.sep in filename or '/' in filename or '\\' in filename or '..' in filename:
         return None
@@ -391,7 +399,7 @@ def get_full_log_content(filename):
 
     try:
         with open(filepath, 'r', encoding='utf-8') as f:
-            return f.read()
+            return redact(f.read())
     except Exception:
         return None
 
