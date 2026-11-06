@@ -167,6 +167,29 @@ def test_review_scan_ranks_worst_first_and_counts_unreadable(rom_client, monkeyp
     assert task['results']['unreadable'] == 1
 
 
+def test_review_scan_counts_a_decompression_bomb_as_unreadable(rom_client, monkeypatch, tmp_path):  # noqa: F811
+    """PASS-59-250: one oversized shot must not end the whole scan."""
+    import routes.tools as tools
+    post, _roms = rom_client
+    shots = tmp_path / 'images' / 'screenshots'
+    shots.mkdir(parents=True)
+    _picture(shots / 'big.png', 15)
+    _picture(shots / 'small.png', 15, size=(16, 16))
+    # Pillow raises above twice the cap: 256x192 is past it, 16x16 is not.
+    monkeypatch.setattr(Image, 'MAX_IMAGE_PIXELS', 1000)
+    monkeypatch.setattr(tools.config, 'IMAGE_PATH', str(tmp_path / 'images'))
+    monkeypatch.setattr(tools, 'query', lambda *_a, **_k: [
+        {'id': 1, 'title': 'Game', 'screenshots': 'big.png,small.png'}])
+    monkeypatch.setattr(tools, 'threading', SimpleNamespace(**{**vars(threading), 'Thread': _InlineThread}))
+
+    resp = post('/api/rom-tools/screenshot-review/scan', {'system': 'zxspectrum'})
+    task = tools._rom_tool_tasks[resp.get_json()['task_id']]
+
+    assert task['status'] == 'completed'
+    assert task['results']['unreadable'] == 1
+    assert [s['filename'] for s in task['results']['shots']] == ['small.png']
+
+
 def test_review_scan_refuses_an_unchecked_system(rom_client):  # noqa: F811
     post, _roms = rom_client
     resp = post('/api/rom-tools/screenshot-review/scan', {'system': 'snes'})

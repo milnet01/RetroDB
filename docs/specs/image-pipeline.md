@@ -544,24 +544,29 @@ early on cancel, pause, or shutdown — never on a single bad file.
   coverage).
 - **Per-file order:** PIL save to a `.webp` sibling → integrity-verify
   the new file (open + `verify()`) → DB `UPDATE` to the new filename →
-  unlink the original. If verify fails the partial `.webp` is removed
-  and the original is left untouched; the file is bucketed as failed.
-- **Disk-space precheck:** runs inside `_run()` after the worker thread
+  unlink the original. If verify fails, or the `UPDATE` finds the row
+  already changed, the new `.webp` is removed, the original is left
+  untouched, and the file is bucketed as failed.
+- **Disk-space precheck:** runs inside `_worker()` after the worker thread
   has spun (so `start()` itself returns immediately with `success: True`).
   Files convert one at a time and each original is deleted once its
   WebP is saved, so the precheck asks for twice the largest in-scope
-  file. If free space is below that, the job logs a human-readable
-  error, transitions to `failed`, and surfaces the reason via
-  `get_status()`. The 2× floor covers the "old + new both on disk"
-  window for one file.
-- **Resume:** the job adopts an existing `.webp` sibling if it appears
-  intact (open + `verify()`); the original is unlinked, the DB row
-  updated, and the file counted as already-migrated.
-- **Responsive variants:** after each successful conversion, the legacy
-  `-sm.jpg` / `-md.png` siblings are wiped and `_make_responsive_variants`
-  re-runs against the new primary so srcset stays consistent.
-- **Lock:** `database/job_locks/webp_migrate.lock` (singleton, same
-  pattern as Pass 41.6.A).
+  file. If free space is below that, or cannot be read, the job logs a
+  human-readable error and stops before converting anything. The reason
+  is in `get_status()`'s `error_message`, with `completed: true`; the
+  run writes no job-history row. The 2× floor covers the "old + new
+  both on disk" window for one file.
+- **Resume:** the job adopts an existing `.webp` sibling if it opens and
+  passes `verify()`: the DB row is updated, then the original is
+  unlinked, and the file counts as converted. A sibling that fails
+  `verify()` is re-encoded over.
+- **Responsive variants:** for `boxart` and `boxart_3d` only, after each
+  conversion that re-encodes, the old `-sm` / `-md` siblings in any of
+  `_CONVERTIBLE_EXTS` are removed and `_make_responsive_variants` re-runs
+  against the new primary so srcset stays consistent. An adopted
+  `.webp` keeps whatever variants it already has.
+- **Lock:** `job_locks/webp_migrate.lock` beside the database file
+  (singleton, same pattern as Pass 41.6.A).
 
 ---
 
@@ -678,8 +683,16 @@ is a regression — flag it in code review.
    ESRGAN model download (Pass 41.14.B / 45.2).
 3. **`Image.MAX_IMAGE_PIXELS` is set at module import** in
    `services/image_utils.py` and `services/game_media_service.py`, both
-   from `config.IMAGE_MAX_PIXELS`. Every `Image.open(...)` call site has an explicit
-   `Image.DecompressionBombError` catch with a distinct log line.
+   from `config.IMAGE_MAX_PIXELS`. The setting is process-wide, so every
+   `Image.open` in the server inherits it once either module is loaded.
+   Pillow only warns above the cap; it raises
+   `Image.DecompressionBombError` above twice the cap. Every
+   `Image.open` catches that error, by name or through a broad
+   `except Exception` (it subclasses `Exception`, not `OSError`). The
+   opens in `image_utils.py` and `game_media_service.py` catch it by
+   name with a distinct log line. `screenshot_fit.fit_error` catches
+   nothing; its caller, `routes/tools.py::_run_screenshot_review_scan`,
+   counts such a shot as unreadable (PASS-59-250).
 4. **ESRGAN model load is lazy and singleton.** `_get_upscaler()`
    double-checks under `_upscaler_lock`; the GPU inference worker is a
    single daemon thread; the GPU-fail circuit breaker is one-way for

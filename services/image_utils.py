@@ -29,9 +29,9 @@ defer_upscale = contextvars.ContextVar('defer_upscale', default=False)
 # Pass 45.6 — Pillow decompression-bomb cap. A 1 MB malicious PNG can
 # advertise dimensions that decode to 4+ GB of pixel data, OOM-killing
 # the worker. Pillow has a built-in cap (`Image.MAX_IMAGE_PIXELS`,
-# default ~89 megapixels) that emits a `DecompressionBombWarning`, but
-# it doesn't *raise* unless the value is set explicitly OR a stricter
-# value is configured. We set the cap once at module import so every
+# default ~89 megapixels): above it Pillow emits a
+# `DecompressionBombWarning`, and above twice it raises
+# `DecompressionBombError`. We set a lower cap once at module import so every
 # `Image.open` call site below inherits it. Pass 41.14.A applied this
 # only to `compute_dhash` in `image_dedup`; here we cover the rest of
 # the image stack (`_validate_image_bytes`, `_atomic_save`,

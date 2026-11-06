@@ -19,6 +19,8 @@ import hashlib
 import re
 import glob
 
+from PIL.Image import DecompressionBombError
+
 import config
 import settings_manager
 from services.atomic_io import atomic_write_json
@@ -1439,7 +1441,7 @@ def _run_screenshot_review_scan(task, folder):
                 continue
             try:
                 error_score = screenshot_fit.fit_error(os.path.join(screenshots_dir, filename), colours)
-            except (OSError, ValueError):
+            except (OSError, ValueError, DecompressionBombError):
                 unreadable += 1
                 continue
             shots.append({'game_id': game['id'], 'title': game['title'],
