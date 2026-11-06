@@ -638,18 +638,18 @@ const AllGamesController = (function() {
         let metaHtml = '';
         if (game.genre) {
             const firstGenre = game.genre.split(',')[0].trim();
-            metaHtml += `<div class="meta-item"><span class="meta-label">${esc(t('Genre'))}</span><button type="button" class="meta-value meta-clickable" data-on-click="AllGamesController.metaFilterClick" data-args="${actionArgs('genre', firstGenre, '$event')}" data-stop data-prevent title="${esc(t('Click to filter, Shift+click to exclude'))}">${esc(tField(firstGenre))}</button></div>`;
+            metaHtml += `<div class="meta-item"><span class="meta-label">${esc(t('Genre'))}</span><button type="button" class="meta-value meta-clickable" data-on-click="AllGamesController.metaFilterClick" data-args="${actionArgs('genre', firstGenre, '$event')}" data-stop data-prevent aria-label="${esc(t('Filter by {field}: {value}', {field: t('Genre'), value: tField(firstGenre)}))}" title="${esc(t('Click to filter, Shift+click to exclude'))}">${esc(tField(firstGenre))}</button></div>`;
         }
         if (game.franchise) {
-            metaHtml += `<div class="meta-item"><span class="meta-label">${esc(t('Series'))}</span><button type="button" class="meta-value meta-clickable" data-on-click="AllGamesController.metaFilterClick" data-args="${actionArgs('franchise', game.franchise, '$event')}" data-stop data-prevent title="${esc(t('Click to filter, Shift+click to exclude'))}">${esc(game.franchise.substring(0, 20))}${game.franchise.length > 20 ? '...' : ''}</button></div>`;
+            metaHtml += `<div class="meta-item"><span class="meta-label">${esc(t('Series'))}</span><button type="button" class="meta-value meta-clickable" data-on-click="AllGamesController.metaFilterClick" data-args="${actionArgs('franchise', game.franchise, '$event')}" data-stop data-prevent aria-label="${esc(t('Filter by {field}: {value}', {field: t('Series'), value: game.franchise}))}" title="${esc(t('Click to filter, Shift+click to exclude'))}">${esc(game.franchise.substring(0, 20))}${game.franchise.length > 20 ? '...' : ''}</button></div>`;
         }
         if (game.developer) {
             const firstDev = game.developer.split(',')[0].trim();
-            metaHtml += `<div class="meta-item"><span class="meta-label">${esc(t('Developer'))}</span><button type="button" class="meta-value meta-clickable" data-on-click="AllGamesController.metaFilterClick" data-args="${actionArgs('developer', firstDev, '$event')}" data-stop data-prevent title="${esc(t('Click to filter, Shift+click to exclude'))}">${esc(firstDev.substring(0, 20))}${firstDev.length > 20 ? '...' : ''}</button></div>`;
+            metaHtml += `<div class="meta-item"><span class="meta-label">${esc(t('Developer'))}</span><button type="button" class="meta-value meta-clickable" data-on-click="AllGamesController.metaFilterClick" data-args="${actionArgs('developer', firstDev, '$event')}" data-stop data-prevent aria-label="${esc(t('Filter by {field}: {value}', {field: t('Developer'), value: firstDev}))}" title="${esc(t('Click to filter, Shift+click to exclude'))}">${esc(firstDev.substring(0, 20))}${firstDev.length > 20 ? '...' : ''}</button></div>`;
         }
         if (game.publisher) {
             const firstPub = game.publisher.split(',')[0].trim();
-            metaHtml += `<div class="meta-item"><span class="meta-label">${esc(t('Publisher'))}</span><button type="button" class="meta-value meta-clickable" data-on-click="AllGamesController.metaFilterClick" data-args="${actionArgs('publisher', firstPub, '$event')}" data-stop data-prevent title="${esc(t('Click to filter, Shift+click to exclude'))}">${esc(firstPub.substring(0, 20))}${firstPub.length > 20 ? '...' : ''}</button></div>`;
+            metaHtml += `<div class="meta-item"><span class="meta-label">${esc(t('Publisher'))}</span><button type="button" class="meta-value meta-clickable" data-on-click="AllGamesController.metaFilterClick" data-args="${actionArgs('publisher', firstPub, '$event')}" data-stop data-prevent aria-label="${esc(t('Filter by {field}: {value}', {field: t('Publisher'), value: firstPub}))}" title="${esc(t('Click to filter, Shift+click to exclude'))}">${esc(firstPub.substring(0, 20))}${firstPub.length > 20 ? '...' : ''}</button></div>`;
         }
         if (game.release_date) {
             metaHtml += `<div class="meta-item"><span class="meta-label">${esc(t('Year'))}</span><span class="meta-value">${esc(game.release_date.substring(0, 4))}</span></div>`;
@@ -742,12 +742,12 @@ const AllGamesController = (function() {
                         <span class="system-badge ${esc((game.system_folder || '').toLowerCase().replace(/ /g, '-'))}">${esc(game.system_name)}</span>
                         <div class="title-badges">${badges}</div>
                     </div>
-                    <h3 class="game-card-title">${esc(game.title)}</h3>`;
+                    <h3 class="game-card-title"><button type="button" class="game-card-open">${esc(game.title)}</button></h3>`;
         } else {
             // System-games layout: title row with inline badges (no system badge)
             infoSectionHtml = `
                     <div class="title-row">
-                        <h3 class="game-card-title">${esc(game.title)}</h3>
+                        <h3 class="game-card-title"><button type="button" class="game-card-open">${esc(game.title)}</button></h3>
                         <div class="title-badges">${badges}</div>
                     </div>`;
         }

@@ -12,6 +12,7 @@
 
     const ind = document.getElementById('launch-indicator');
     const cnt = document.getElementById('launch-count');
+    const status = document.getElementById('launch-status');
     if (!ind || !cnt) return;
 
     const csrfToken = () => {
@@ -21,6 +22,7 @@
 
     let timer = null;
     let popover = null;
+    let shownCount = null;
 
     async function refresh() {
         try {
@@ -31,9 +33,20 @@
             cnt.textContent = String(handles.length);
             ind.classList.toggle('hidden', handles.length === 0);
             ind.dataset.launches = JSON.stringify(handles);
+            announce(handles.length);
         } catch (e) {
             // silent — viewer may lack the view permission, etc.
         }
+    }
+
+    // PASS-59-258 — a screen reader hears the count only when it changes,
+    // not on each refresh, and not on page load.
+    function announce(n) {
+        if (status && shownCount !== null && n !== shownCount) {
+            status.textContent = n === 0 ? t('No games running')
+                : n === 1 ? t('1 game running') : t('{count} games running', {count: n});
+        }
+        shownCount = n;
     }
 
     async function nextDisk(token) {
@@ -55,6 +68,16 @@
         // click rebuilds it from the refreshed list.
         closePopover();
         await refresh();
+        // Focus goes back to the indicator, or to the page if it has gone.
+        if (ind.classList.contains('hidden')) {
+            const main = document.getElementById('main-content');
+            if (main) {
+                main.setAttribute('tabindex', '-1');
+                main.focus();
+            }
+        } else {
+            ind.focus();
+        }
     }
 
     // PASS-59-245 — Esc or a click elsewhere closes the list; Esc returns
@@ -83,6 +106,9 @@
         if (handles.length === 0) return;
         popover = document.createElement('div');
         popover.className = 'launch-indicator-popover';
+        popover.id = 'launch-popover';
+        popover.setAttribute('role', 'dialog');
+        popover.setAttribute('aria-label', t('Now playing'));
         const title = document.createElement('div');
         title.className = 'launch-indicator-popover-title';
         title.textContent = t('Now playing');
@@ -91,24 +117,28 @@
             const row = document.createElement('div');
             row.className = 'launch-indicator-popover-row';
             const label = document.createElement('span');
-            label.textContent = h.title || t('game #{id} (pid {pid})', {id: h.game_id, pid: h.pid});
+            const name = h.title || t('game #{id} (pid {pid})', {id: h.game_id, pid: h.pid});
+            label.textContent = name;
             row.appendChild(label);
             if (h.disk_swap) {
                 const dbtn = document.createElement('button');
                 dbtn.className = 'btn btn-sm btn-secondary';
                 dbtn.textContent = t('Next disk');
+                dbtn.setAttribute('aria-label', t('Next disk: {game}', {game: name}));
                 dbtn.addEventListener('click', () => nextDisk(h.token));
                 row.appendChild(dbtn);
             }
             const kbtn = document.createElement('button');
             kbtn.className = 'btn btn-sm btn-danger';
             kbtn.textContent = t('Kill');
+            kbtn.setAttribute('aria-label', t('Kill {game}', {game: name}));
             kbtn.addEventListener('click', () => killLaunch(h.token));
             row.appendChild(kbtn);
             popover.appendChild(row);
         }
         document.body.appendChild(popover);
         ind.setAttribute('aria-expanded', 'true');
+        popover.querySelector('button').focus();
         document.addEventListener('keydown', onPopoverKey);
         document.addEventListener('click', onOutsideClick, true);
     }

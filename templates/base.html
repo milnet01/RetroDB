@@ -1438,12 +1438,14 @@
 
     <!-- Pass 44 — multi-emulator launch indicator -->
     {% if current_user %}
-    <button type="button" id="launch-indicator" class="launch-indicator hidden" aria-live="polite"
-            aria-haspopup="true" aria-expanded="false" title="{{ _('Now playing') }}">
-        <span class="launch-indicator-icon">▶</span>
+    <button type="button" id="launch-indicator" class="launch-indicator hidden"
+            aria-haspopup="dialog" aria-controls="launch-popover" aria-expanded="false"
+            title="{{ _('Now playing') }}">
+        <span class="launch-indicator-icon" aria-hidden="true">▶</span>
         <span class="launch-indicator-count" id="launch-count">0</span>
         <span class="launch-indicator-text">{{ _('running') }}</span>
     </button>
+    <span id="launch-status" class="visually-hidden" role="status"></span>
     <script src="{{ asset_url('js/launch-indicator.js') }}" defer></script>
     {% endif %}
 </body>

@@ -1348,6 +1348,26 @@
     overflow: hidden;
 }
 
+/* PASS-59-258 — the title is the card's keyboard way in; it looks like text. */
+.game-card-open {
+    background: none;
+    border: 0;
+    padding: 0;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.game-card-open:focus-visible {
+    outline: 2px solid var(--primary-cyan);
+    outline-offset: -2px; /* the title box clips anything outside it */
+}
+
 .meta-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
