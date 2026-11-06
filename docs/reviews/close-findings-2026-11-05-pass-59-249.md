@@ -233,18 +233,15 @@ Run-level, group J:
 | Finding | Verified | Disposition |
 |---|---|---|
 | `apply_esde_metadata` has no production caller; docs name it canonical | yes | fixed: removed, with `resolve_publisher_developer` (used only by it) and the tests of either; CLAUDE.md, scrapers.md and ADR 0002 name `_save_game_row`; the PASS-59-159 and PASS-59-224 specs note the removal. Its tests' behaviour is pinned on the hybrid path by `tests/test_scrape_fill_only.py` and `tests/test_official_names.py` |
-| Obsolete `#~` entries duplicate live msgids in every locale but `eo` | yes | |
+| Obsolete `#~` entries duplicate live msgids in every locale but `eo` | yes | fixed: dropped with `pybabel update --ignore-obsolete`, now the documented command (CLAUDE.md, `docs/specs/i18n.md` §4, `gen_pseudolocale.py`) so they do not come back |
 
 ## Open questions from the audit (not findings; to ask or file)
 
-- `reset_to_defaults` resets `setup_completed`.
-- Where Steam's date and genre are left out.
-- Unreadable PS3 serial re-reads all PS3 discs on each Library load.
-- `get_system_type` casing vs the naming validator.
-- `queued=True` replies with no server-side queue (RA sync, achievements).
-- Does the log viewer strip credentials?
-- Collector trophies not filtered by source.
-- DecompressionBomb not caught in code (PASS-59-250 fixes only the doc).
+Closed 2026-11-06:
+
+- Where Steam's date and genre are left out: answered. `metadata_merger.apply_steam_to_metadata` leaves them out on purpose; `test_store_date_and_genre_are_left_for_a_scrape` pins it.
+- DecompressionBomb not caught in code: queued on PASS-59-250, which already covers that spec passage.
+- The other six (`reset_to_defaults` and `setup_completed`, the unreadable PS3 serial, `get_system_type` casing, `queued=True` with no queue, the log viewer and credentials, collector trophies by source): queued as PASS-59-263.
 
 ## Run-level fields, per group at its sweep
 

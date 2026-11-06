@@ -24,7 +24,7 @@ this script touches):
     pybabel extract -F babel.cfg \
         --ignore-dirs='.* __pycache__ node_modules venv .venv env build dist staging tests' \
         -o messages.pot .
-    pybabel update  -i messages.pot -d translations       # 2. merge real catalogs
+    pybabel update --ignore-obsolete -i messages.pot -d translations  # 2. merge real catalogs
     python3 scripts/gen_pseudolocale.py                   # 3. regen pseudolocale
     pybabel compile -d translations                       # 4. compile -> .mo
 

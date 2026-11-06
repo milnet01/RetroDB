@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-05 19:42+0200\n"
+"POT-Creation-Date: 2026-11-06 09:02+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -161,12 +161,12 @@ msgstr "В Библиотеке нет игр"
 msgid "Setup has already been completed"
 msgstr "Настройка уже завершена"
 
-#: app.py:1680 routes/settings.py:553 routes/tools.py:364
+#: app.py:1680 routes/settings.py:525 routes/tools.py:364
 msgid "Permission denied"
 msgstr "Доступ запрещён"
 
-#: app.py:1700 routes/collections.py:194 routes/collections.py:271
-#: routes/collections.py:438 routes/collections.py:679
+#: app.py:1700 routes/collections.py:209 routes/collections.py:290
+#: routes/collections.py:459 routes/collections.py:706
 msgid "No data provided"
 msgstr "Данные не предоставлены"
 
@@ -202,7 +202,7 @@ msgstr "Система не найдена или не содержит игр �
 
 #: routes/achievements.py:176 routes/achievements.py:486
 #: routes/bonus_discs.py:273 routes/bulk_scrape.py:48 routes/cheats.py:32
-#: routes/cheats.py:51 routes/collections.py:276 routes/collections.py:531
+#: routes/cheats.py:51 routes/collections.py:295 routes/collections.py:558
 #: routes/emulators.py:304 routes/emulators.py:318 routes/games.py:393
 #: routes/games.py:930 routes/games.py:1049 routes/games.py:1127
 #: routes/games_ai.py:41 routes/games_media.py:40 routes/games_media.py:89
@@ -248,8 +248,8 @@ msgstr "В этой системе нет игр с RetroAchievements"
 msgid "Sync already in progress for %(name)s"
 msgstr "Синхронизация для %(name)s уже выполняется"
 
-#: routes/achievements.py:410 routes/platform_import.py:381
-#: routes/platform_import.py:758
+#: routes/achievements.py:410 routes/platform_import.py:394
+#: routes/platform_import.py:771
 msgid "That job belongs to another user"
 msgstr "Это задание принадлежит другому пользователю"
 
@@ -576,14 +576,14 @@ msgid "A bonus disc links to a main game, one level only"
 msgstr "Бонусный диск привязывается к основной игре, только на один уровень"
 
 #: routes/bonus_discs.py:219 routes/bonus_discs.py:237 routes/games.py:1397
-#: routes/games.py:1427 routes/platform_import.py:344
-#: routes/platform_import.py:723 routes/platform_import.py:1107
+#: routes/games.py:1427 routes/platform_import.py:357
+#: routes/platform_import.py:736 routes/platform_import.py:1120
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:207 routes/scraper.py:538
-#: routes/scraper.py:929 routes/settings.py:320 routes/settings.py:344
-#: routes/settings.py:459 routes/settings.py:538 routes/settings.py:567
-#: routes/settings.py:611 routes/settings.py:627 routes/settings.py:663
-#: routes/steam_achievements.py:138 routes/systems.py:286 routes/systems.py:476
+#: routes/scraper.py:929 routes/settings.py:319 routes/settings.py:343
+#: routes/settings.py:431 routes/settings.py:510 routes/settings.py:539
+#: routes/settings.py:583 routes/settings.py:599 routes/settings.py:635
+#: routes/steam_achievements.py:138 routes/systems.py:286 routes/systems.py:489
 #: routes/trophies.py:593 routes/trophies.py:791 routes/trophies.py:839
 #: routes/trophies.py:1638 routes/trophies.py:1662 routes/trophies.py:1707
 #: routes/trophies.py:1735 routes/trophies.py:1777 routes/trophies.py:1844
@@ -593,8 +593,8 @@ msgstr "Произошла внутренняя ошибка"
 
 #: routes/bonus_discs.py:286 routes/bonus_discs.py:317
 #: routes/controllers.py:216 routes/controllers.py:280
-#: routes/controllers.py:413 routes/controllers.py:465 routes/settings.py:224
-#: routes/settings.py:494 routes/settings.py:577 routes/systems.py:307
+#: routes/controllers.py:413 routes/controllers.py:465 routes/settings.py:223
+#: routes/settings.py:466 routes/settings.py:549 routes/systems.py:307
 msgid "Request body must be a JSON object"
 msgstr "Тело запроса должно быть JSON-объектом"
 
@@ -634,7 +634,7 @@ msgstr "Такого набора читов нет."
 msgid "Enter a folder to import."
 msgstr "Укажите папку для импорта."
 
-#: routes/clz_import.py:271
+#: routes/clz_import.py:253
 msgid ""
 "pdfplumber module not installed. Please run: pip install pdfplumber "
 "--break-system-packages"
@@ -642,93 +642,105 @@ msgstr ""
 "Модуль pdfplumber не установлен. Выполните: pip install pdfplumber "
 "--break-system-packages"
 
-#: routes/clz_import.py:276
+#: routes/clz_import.py:258
 msgid "No file uploaded"
 msgstr "Файл не загружен"
 
-#: routes/clz_import.py:280
+#: routes/clz_import.py:262
 msgid "File must be a PDF"
 msgstr "Файл должен быть в формате PDF"
 
-#: routes/clz_import.py:287
+#: routes/clz_import.py:269
 #, python-format
 msgid "File too large (%(size)sMB). Maximum size is 50MB"
 msgstr "Файл слишком большой (%(size)s МБ). Максимальный размер — 50 МБ"
 
-#: routes/clz_import.py:290
+#: routes/clz_import.py:272
 msgid "Invalid PDF file (bad magic bytes)"
 msgstr "Недопустимый PDF-файл (неверная сигнатура)"
 
-#: routes/clz_import.py:314
+#: routes/clz_import.py:296
 #, python-format
 msgid "PDF has %(pages)s pages; maximum is %(max)s."
 msgstr "В PDF %(pages)s страниц; максимум — %(max)s."
 
-#: routes/clz_import.py:583
+#: routes/clz_import.py:553
 msgid "No games to import"
 msgstr "Нет игр для импорта"
 
-#: routes/collections.py:103 routes/collections.py:446
-#: routes/collections.py:475 routes/collections.py:497
-#: routes/collections.py:527 routes/collections.py:566
+#: routes/collections.py:42
+msgid "A tag colour is written like #4cc9f0"
+msgstr "Цвет тега записывается так: #4cc9f0"
+
+#: routes/collections.py:116 routes/collections.py:467
+#: routes/collections.py:502 routes/collections.py:524
+#: routes/collections.py:554 routes/collections.py:593
 msgid "List not found"
 msgstr "Список не найден"
 
-#: routes/collections.py:163
+#: routes/collections.py:176 routes/collections.py:221
 msgid "Tag name is required"
 msgstr "Требуется название тега"
 
-#: routes/collections.py:177 routes/collections.py:215
+#: routes/collections.py:192 routes/collections.py:234
 msgid "A tag with that name already exists"
 msgstr "Тег с таким названием уже существует"
 
-#: routes/collections.py:202 routes/collections.py:233
-#: routes/collections.py:294 routes/collections.py:359
+#: routes/collections.py:217 routes/collections.py:252
+#: routes/collections.py:313 routes/collections.py:378
 msgid "Tag not found"
 msgstr "Тег не найден"
 
-#: routes/collections.py:282
+#: routes/collections.py:301
 msgid "Either tag_id or tag_name is required"
 msgstr "Требуется указать tag_id или tag_name"
 
-#: routes/collections.py:338
+#: routes/collections.py:357
 msgid "Tag is not assigned to this game"
 msgstr "Тег не назначен этой игре"
 
-#: routes/collections.py:406
+#: routes/collections.py:425 routes/collections.py:471
 msgid "List name is required"
 msgstr "Требуется название списка"
 
-#: routes/collections.py:517
+#: routes/collections.py:431 routes/collections.py:475
+msgid "A list description and icon are text"
+msgstr "Описание и значок списка — это текст"
+
+#: routes/collections.py:478
+msgid "A list position is a whole number"
+msgstr "Позиция списка — целое число"
+
+#: routes/collections.py:544
 msgid "game_id is required"
 msgstr "Требуется game_id"
 
-#: routes/collections.py:573
+#: routes/collections.py:600
 msgid "Game is not in this list"
 msgstr "Игры нет в этом списке"
 
-#: routes/collections.py:618
+#: routes/collections.py:645 routes/collections.py:718
 msgid "Title is required"
 msgstr "Требуется название"
 
-#: routes/collections.py:630 routes/collections.py:697
+#: routes/collections.py:657 routes/collections.py:726
 msgid "Priority must be an integer between 1 and 5"
 msgstr "Приоритет должен быть целым числом от 1 до 5"
 
-#: routes/collections.py:635 routes/collections.py:702
+#: routes/collections.py:662 routes/collections.py:740
 msgid "system_id must be an integer"
 msgstr "system_id должен быть целым числом"
 
-#: routes/collections.py:638 routes/collections.py:705
+#: routes/collections.py:665 routes/collections.py:743
 msgid "Unknown system_id"
 msgstr "Неизвестный system_id"
 
-#: routes/collections.py:649
+#: routes/collections.py:676 routes/collections.py:735
 msgid "This game is already on your wishlist"
 msgstr "Эта игра уже в вашем списке желаемого"
 
-#: routes/collections.py:687 routes/collections.py:732
-#: routes/collections.py:755
+#: routes/collections.py:714 routes/collections.py:770
+#: routes/collections.py:793
 msgid "Wishlist item not found"
 msgstr "Элемент списка желаемого не найден"
 
@@ -841,8 +853,8 @@ msgstr "Не удалось применить метаданные."
 msgid "No fields to update"
 msgstr "Нет полей для обновления"
 
-#: routes/games.py:1205 routes/platform_import.py:250
-#: routes/platform_import.py:629 routes/platform_import.py:993
+#: routes/games.py:1205 routes/platform_import.py:263
+#: routes/platform_import.py:642 routes/platform_import.py:1006
 #: routes/trophies.py:1919 templates/game_imports.html:579
 #: templates/game_imports.html:842
 msgid "No games selected"
@@ -894,7 +906,7 @@ msgid "No filename provided"
 msgstr "Имя файла не указано"
 
 #: routes/games_media.py:85 routes/reports.py:699 routes/scrape_logs.py:129
-#: routes/scrape_logs.py:154 routes/scrape_logs.py:203 routes/settings.py:353
+#: routes/scrape_logs.py:154 routes/scrape_logs.py:203 routes/settings.py:352
 msgid "Invalid filename"
 msgstr "Недопустимое имя файла"
 
@@ -1060,15 +1072,15 @@ msgstr ""
 msgid "Next disk inserted"
 msgstr "Вставлен следующий диск"
 
-#: routes/maintenance.py:279
+#: routes/maintenance.py:276
 msgid "Unknown image type"
 msgstr "Неизвестный тип изображения"
 
-#: routes/maintenance.py:492
+#: routes/maintenance.py:489
 msgid "Add your ScreenScraper account in Settings first."
 msgstr "Сначала добавьте учётную запись ScreenScraper в Настройках."
 
-#: routes/maintenance.py:493
+#: routes/maintenance.py:490
 msgid "This fix is already running."
 msgstr "Это исправление уже выполняется."
 
@@ -1147,15 +1159,15 @@ msgstr "Файл изображения не найден"
 msgid "Background removal failed"
 msgstr "Не удалось удалить фон"
 
-#: routes/platform_import.py:182
+#: routes/platform_import.py:195
 msgid "Steam API key not configured. Add it in Settings → API Keys."
 msgstr "API-ключ Steam не настроен. Добавьте его в Настройки → API-ключи."
 
-#: routes/platform_import.py:184
+#: routes/platform_import.py:197
 msgid "Steam ID not configured. Add it in Settings → API Keys."
 msgstr "Steam ID не настроен. Добавьте его в Настройки → API-ключи."
 
-#: routes/platform_import.py:190
+#: routes/platform_import.py:203
 #, python-format
 msgid ""
 "Could not resolve Steam vanity URL \"%(steam_id)s\". Use your 17-digit "
@@ -1164,7 +1176,7 @@ msgstr ""
 "Не удалось определить произвольный URL Steam «%(steam_id)s». Используйте "
 "вместо этого 17-значный Steam ID."
 
-#: routes/platform_import.py:196
+#: routes/platform_import.py:209
 msgid ""
 "No games found. Check that your Steam profile and game details are set to"
 " Public."
@@ -1172,33 +1184,33 @@ msgstr ""
 "Игры не найдены. Убедитесь, что ваш профиль Steam и информация об играх "
 "открыты для всех (Public)."
 
-#: routes/platform_import.py:255
+#: routes/platform_import.py:268
 msgid "Could not create Windows system entry"
 msgstr "Не удалось создать запись системы Windows"
 
-#: routes/platform_import.py:399
+#: routes/platform_import.py:412
 msgid "Xbox Client ID not configured. Add it in Settings → API Keys."
 msgstr "Client ID Xbox не настроен. Добавьте его в Настройки → API-ключи."
 
-#: routes/platform_import.py:537
+#: routes/platform_import.py:550
 msgid "Xbox credentials not configured. Add them in Settings → API Keys."
 msgstr "Учётные данные Xbox не настроены. Добавьте их в Настройки → API-ключи."
 
-#: routes/platform_import.py:541
+#: routes/platform_import.py:554
 msgid "Xbox authentication failed. Please re-connect your Xbox account."
 msgstr ""
 "Не удалось выполнить аутентификацию Xbox. Переподключите свою учётную "
 "запись Xbox."
 
-#: routes/platform_import.py:545
+#: routes/platform_import.py:558
 msgid "No games found in Xbox title history."
 msgstr "В истории игр Xbox не найдено ни одной игры."
 
-#: routes/platform_import.py:833
+#: routes/platform_import.py:846
 msgid "PSN NPSSO not configured. Add it in Settings → API Keys."
 msgstr "NPSSO PSN не настроен. Добавьте его в Настройки → API-ключи."
 
-#: routes/platform_import.py:860
+#: routes/platform_import.py:873
 msgid "Failed to fetch PSN game list. Try syncing trophies first."
 msgstr ""
 "Не удалось получить список игр PSN. Сначала попробуйте синхронизировать "
@@ -1221,8 +1233,8 @@ msgstr "Путь к ROM не настроен. Перейдите в Настр�
 msgid "Missing required parameters"
 msgstr "Отсутствуют обязательные параметры"
 
-#: routes/reports.py:617 routes/tools.py:513 routes/tools.py:570
-#: routes/tools.py:615
+#: routes/reports.py:617 routes/tools.py:533 routes/tools.py:590
+#: routes/tools.py:635
 msgid "Invalid path"
 msgstr "Недопустимый путь"
 
@@ -1277,7 +1289,7 @@ msgstr "Сгенерированное имя файла содержит нед
 msgid "Invalid log file"
 msgstr "Недопустимый файл журнала"
 
-#: routes/scrape_logs.py:101 routes/tools.py:516
+#: routes/scrape_logs.py:101 routes/tools.py:536
 msgid "File not found"
 msgstr "Файл не найден"
 
@@ -1364,61 +1376,65 @@ msgstr "Ошибка подключения: %(error)s"
 msgid "Allowance check not supported for %(scraper)s"
 msgstr "Проверка лимита не поддерживается для %(scraper)s"
 
-#: routes/settings.py:228
+#: routes/settings.py:227
 msgid "Value is required"
 msgstr "Требуется значение"
 
-#: routes/settings.py:250
+#: routes/settings.py:249
 msgid "Option already exists"
 msgstr "Такой вариант уже существует"
 
-#: routes/settings.py:359
+#: routes/settings.py:358
 msgid "Backup file not found"
 msgstr "Файл резервной копии не найден"
 
-#: routes/settings.py:373
+#: routes/settings.py:376
 msgid "A background job is running. Wait for it to finish before restoring."
 msgstr "Выполняется фоновая задача. Дождитесь её завершения перед восстановлением."
 
-#: routes/settings.py:393
+#: routes/settings.py:396
 msgid "Backup failed its integrity check; restore aborted."
 msgstr "Резервная копия не прошла проверку целостности; восстановление отменено."
 
-#: routes/settings.py:515
+#: routes/settings.py:419
+msgid "The backup could not be copied in; nothing was changed."
+msgstr "Не удалось скопировать резервную копию; ничего не изменилось."
+
+#: routes/settings.py:487
 #, python-format
 msgid "Invalid %(field)s: %(result)s"
 msgstr "Недопустимое значение поля %(field)s: %(result)s"
 
-#: routes/settings.py:534 routes/settings.py:608 routes/settings.py:660
+#: routes/settings.py:506 routes/settings.py:580 routes/settings.py:632
 #: routes/tools.py:292 services/js_i18n_strings.py:745
 #: templates/settings.html:1149 templates/settings.html:2742
 msgid "Failed to save settings"
 msgstr "Не удалось сохранить настройки"
 
-#: routes/settings.py:587 routes/tools.py:284
+#: routes/settings.py:559 routes/tools.py:284
 #, python-format
 msgid "Unknown setting key: %(key)s"
 msgstr "Неизвестный ключ настройки: %(key)s"
 
-#: routes/settings.py:593 routes/tools.py:287
+#: routes/settings.py:565 routes/tools.py:287
 #, python-format
 msgid "Invalid value for '%(key)s': %(reason)s"
 msgstr "Недопустимое значение для «%(key)s»: %(reason)s"
 
-#: routes/settings.py:625
+#: routes/settings.py:597
 msgid "Failed to reset settings"
 msgstr "Не удалось сбросить настройки"
 
-#: routes/settings.py:646
+#: routes/settings.py:618
 #, python-format
 msgid "invalid logging settings: %(reason)s"
 msgstr "недопустимые настройки журналирования: %(reason)s"
 
-#: routes/settings.py:676 routes/settings.py:704
+#: routes/settings.py:648 routes/settings.py:676
 msgid "Invalid field. Must be \"genre\" or \"modes\""
 msgstr "Недопустимое поле. Должно быть «genre» или «modes»"
 
-#: routes/settings.py:707
+#: routes/settings.py:679
 msgid "No mappings provided"
 msgstr "Сопоставления не предоставлены"
 
@@ -1450,7 +1466,7 @@ msgstr "Требуются права администратора"
 msgid "Settings payload must be an object"
 msgstr "Данные настроек должны быть объектом"
 
-#: routes/tools.py:327 routes/tools.py:979
+#: routes/tools.py:327 routes/tools.py:1001
 #, python-format
 msgid "Path does not exist: %(path)s"
 msgstr "Путь не существует: %(path)s"
@@ -1459,70 +1475,74 @@ msgstr "Путь не существует: %(path)s"
 msgid "Task not found"
 msgstr "Задача не найдена"
 
-#: routes/tools.py:415 routes/tools.py:435
+#: routes/tools.py:421 routes/tools.py:439 routes/tools.py:461
+msgid "Only an admin or the person who started this task can change it"
+msgstr "Изменить это может только администратор или тот, кто запустил эту задачу"
+
+#: routes/tools.py:431 routes/tools.py:453
 msgid "Task not found or not running"
 msgstr "Задача не найдена или не выполняется"
 
-#: routes/tools.py:455
+#: routes/tools.py:475
 msgid "Task not found or not paused"
 msgstr "Задача не найдена или не приостановлена"
 
-#: routes/tools.py:472 routes/tools.py:677 routes/tools.py:852
-#: routes/tools.py:968
+#: routes/tools.py:492 routes/tools.py:697 routes/tools.py:873
+#: routes/tools.py:990
 msgid "Invalid scan path"
 msgstr "Недопустимый путь сканирования"
 
-#: routes/tools.py:510 routes/tools.py:567 routes/tools.py:612
+#: routes/tools.py:530 routes/tools.py:587 routes/tools.py:632
 msgid "No path provided"
 msgstr "Путь не указан"
 
-#: routes/tools.py:538
+#: routes/tools.py:558
 msgid "No archive path provided"
 msgstr "Путь к архиву не указан"
 
-#: routes/tools.py:541
+#: routes/tools.py:561
 msgid "Invalid archive path"
 msgstr "Недопустимый путь к архиву"
 
-#: routes/tools.py:544
+#: routes/tools.py:564
 msgid "No files to remove"
 msgstr "Нет файлов для удаления"
 
-#: routes/tools.py:645
+#: routes/tools.py:665
 msgid "No paths provided"
 msgstr "Пути не предоставлены"
 
-#: routes/tools.py:651
+#: routes/tools.py:671
 #, python-format
 msgid "Invalid path: %(path)s"
 msgstr "Недопустимый путь: %(path)s"
 
-#: routes/tools.py:726
+#: routes/tools.py:746
 msgid "chdman not found. Please install MAME tools."
 msgstr "chdman не найден. Установите инструменты MAME."
 
-#: routes/tools.py:875
+#: routes/tools.py:896
 msgid "chdman not found"
 msgstr "chdman не найден"
 
-#: routes/tools.py:973
+#: routes/tools.py:995
 #, python-format
 msgid "Unknown duplicate method: %(method)s"
 msgstr "Неизвестный метод поиска дубликатов: %(method)s"
 
-#: routes/tools.py:1186 routes/tools.py:1540
+#: routes/tools.py:1209 routes/tools.py:1565
 msgid "These scan results have expired. Scan again, then delete."
 msgstr "Эти результаты сканирования устарели. Просканируйте снова, затем удаляйте."
 
-#: routes/tools.py:1191
+#: routes/tools.py:1214
 msgid "Keep at least one copy of each game. Nothing was deleted."
 msgstr "Оставьте хотя бы одну копию каждой игры. Ничего не удалено."
 
-#: routes/tools.py:1451
+#: routes/tools.py:1474
 msgid "This system has no screenshot check"
 msgstr "Для этой системы нет проверки скриншотов"
 
-#: routes/tools.py:1550
+#: routes/tools.py:1575
 msgid "Keep at least one copy of each screenshot. Nothing was deleted."
 msgstr "Оставьте хотя бы одну копию каждого скриншота. Ничего не было удалено."
 
@@ -1651,7 +1671,7 @@ msgstr "Эта игра не связана с другими версиями."
 msgid "The AI did not give a usable answer. Try again later."
 msgstr "ИИ не дал пригодного ответа. Повторите попытку позже."
 
-#: routes/xbox_achievements.py:126 services/jobs/platform_sync.py:768
+#: routes/xbox_achievements.py:126 services/jobs/platform_sync.py:798
 msgid "Xbox credentials not configured"
 msgstr "Учётные данные Xbox не настроены"
 
@@ -4758,37 +4778,37 @@ msgstr ""
 msgid "The player has no core for this system."
 msgstr "У плеера нет ядра для этой системы."
 
-#: services/jobs/platform_sync.py:368 services/jobs/platform_sync.py:677
+#: services/jobs/platform_sync.py:398 services/jobs/platform_sync.py:707
 msgid "Sync already running"
 msgstr "Синхронизация уже запущена"
 
-#: services/jobs/platform_sync.py:373
+#: services/jobs/platform_sync.py:403
 msgid "Steam sync is already running on another worker process."
 msgstr "Синхронизация Steam уже запущена в другом рабочем процессе."
 
-#: services/jobs/platform_sync.py:391 services/jobs/platform_sync.py:700
+#: services/jobs/platform_sync.py:421 services/jobs/platform_sync.py:730
 msgid "No running sync to cancel"
 msgstr "Нет запущенной синхронизации для отмены"
 
-#: services/jobs/platform_sync.py:485
+#: services/jobs/platform_sync.py:515
 msgid "Steam API key or Steam ID not configured"
 msgstr "Не настроен ключ Steam API или Steam ID"
 
-#: services/jobs/platform_sync.py:504
+#: services/jobs/platform_sync.py:534
 msgid "No Steam games found to sync"
 msgstr "Не найдено игр Steam для синхронизации"
 
-#: services/jobs/platform_sync.py:682
+#: services/jobs/platform_sync.py:712
 msgid "Xbox sync is already running on another worker process."
 msgstr "Синхронизация Xbox уже запущена в другом рабочем процессе."
 
-#: services/jobs/platform_sync.py:777
+#: services/jobs/platform_sync.py:807
 msgid "Xbox authentication failed — please re-connect your Xbox account"
 msgstr ""
 "Не удалось пройти аутентификацию Xbox — подключите учётную запись Xbox "
 "заново"
 
-#: services/jobs/platform_sync.py:828
+#: services/jobs/platform_sync.py:858
 msgid "No Xbox games found to sync"
 msgstr "Не найдено игр Xbox для синхронизации"
 
@@ -14705,480 +14725,4 @@ msgstr "Поддержать на GitHub"
 #: templates/_settings_tabs/system.html:465
 msgid "Support on Patreon"
 msgstr "Поддержать на Patreon"
-
-#~ msgid "(auto-detect)"
-#~ msgstr "(автоопределение)"
-
-#~ msgid "(not set)"
-#~ msgstr "(не задано)"
-
-#~ msgid "API configured"
-#~ msgstr "API настроен"
-
-#~ msgid "API key missing"
-#~ msgstr "Отсутствует API-ключ"
-
-#~ msgid "API keys saved!"
-#~ msgstr "API-ключи сохранены!"
-
-#~ msgid "Apply"
-#~ msgstr "Применить"
-
-#~ msgid ""
-#~ "Are you sure you want to delete"
-#~ " user \"{username}\"? This action cannot"
-#~ " be undone."
-#~ msgstr ""
-#~ "Вы уверены, что хотите удалить "
-#~ "пользователя «{username}»? Это действие нельзя"
-#~ " отменить."
-
-#~ msgid ""
-#~ "Are you sure you want to restore"
-#~ " from \"{filename}\"? This will replace "
-#~ "all current data."
-#~ msgstr ""
-#~ "Вы уверены, что хотите восстановить "
-#~ "данные из «{filename}»? Это заменит все"
-#~ " текущие данные."
-
-#~ msgid "Backup created successfully!"
-#~ msgstr "Резервная копия успешно создана!"
-
-#~ msgid "Backup failed: {error}"
-#~ msgstr "Ошибка резервного копирования: {error}"
-
-#~ msgid "Confirm"
-#~ msgstr "Подтвердить"
-
-#~ msgid "Create Backup"
-#~ msgstr "Создать резервную копию"
-
-#~ msgid "Creating backup..."
-#~ msgstr "Создание резервной копии…"
-
-#~ msgid "Database restored! Reloading..."
-#~ msgstr "База данных восстановлена! Перезагрузка…"
-
-#~ msgid "Default: {value}"
-#~ msgstr "По умолчанию: {value}"
-
-#~ msgid "Delete User"
-#~ msgstr "Удалить пользователя"
-
-#~ msgid "Display settings saved!"
-#~ msgstr "Настройки отображения сохранены!"
-
-#~ msgid "Edit User"
-#~ msgstr "Редактировать пользователя"
-
-#~ msgid "Error - disappears in {n}s"
-#~ msgstr "Ошибка — исчезнет через {n} с"
-
-#~ msgid "Error creating backup: {error}"
-#~ msgstr "Ошибка создания резервной копии: {error}"
-
-#~ msgid "Error restoring: {error}"
-#~ msgstr "Ошибка восстановления: {error}"
-
-#~ msgid "Error saving API keys: {error}"
-#~ msgstr "Ошибка сохранения API-ключей: {error}"
-
-#~ msgid "Error saving settings: {error}"
-#~ msgstr "Ошибка сохранения настроек: {error}"
-
-#~ msgid "Error searching: {error}"
-#~ msgstr "Ошибка поиска: {error}"
-
-#~ msgid "Failed to change password"
-#~ msgstr "Не удалось изменить пароль"
-
-#~ msgid "Failed to delete user"
-#~ msgstr "Не удалось удалить пользователя"
-
-#~ msgid "Failed to save user"
-#~ msgstr "Не удалось сохранить пользователя"
-
-#~ msgid "Failed to save: {error}"
-#~ msgstr "Не удалось сохранить: {error}"
-
-#~ msgid "Info - disappears in {n}s"
-#~ msgstr "Информация — исчезнет через {n} с"
-
-#~ msgid "Network error changing password"
-#~ msgstr "Ошибка сети при смене пароля"
-
-#~ msgid "Network error deleting user"
-#~ msgstr "Ошибка сети при удалении пользователя"
-
-#~ msgid "Network error saving settings"
-#~ msgstr "Ошибка сети при сохранении настроек"
-
-#~ msgid "Network error saving user"
-#~ msgstr "Ошибка сети при сохранении пользователя"
-
-#~ msgid "No logo"
-#~ msgstr "Нет логотипа"
-
-#~ msgid "No systems found"
-#~ msgstr "Системы не найдены"
-
-#~ msgid "Notification settings saved!"
-#~ msgstr "Настройки уведомлений сохранены!"
-
-#~ msgid "Password changed successfully!"
-#~ msgstr "Пароль успешно изменён!"
-
-#~ msgid "Path settings saved!"
-#~ msgstr "Настройки путей сохранены!"
-
-#~ msgid "Please enter a new password"
-#~ msgstr "Введите новый пароль"
-
-#~ msgid "Restart required for changes to take full effect"
-#~ msgstr "Для полного применения изменений требуется перезапуск"
-
-#~ msgid "Restore Database"
-#~ msgstr "Восстановить базу данных"
-
-#~ msgid "Restore failed: {error}"
-#~ msgstr "Восстановление не удалось: {error}"
-
-#~ msgid "Score: {score}"
-#~ msgstr "Оценка: {score}"
-
-#~ msgid "Scraper settings saved!"
-#~ msgstr "Настройки скрапера сохранены!"
-
-#~ msgid "Searching..."
-#~ msgstr "Поиск…"
-
-#~ msgid "Success - disappears in {n}s"
-#~ msgstr "Успех — исчезнет через {n} с"
-
-#~ msgid "Try modifying the search title"
-#~ msgstr "Попробуйте изменить название для поиска"
-
-#~ msgid "User deleted successfully"
-#~ msgstr "Пользователь успешно удалён"
-
-#~ msgid "User saved successfully!"
-#~ msgstr "Пользователь успешно сохранён!"
-
-#~ msgid "Warning - disappears in {n}s"
-#~ msgstr "Предупреждение — исчезнет через {n} с"
-
-#~ msgid "Your settings have been saved!"
-#~ msgstr "Ваши настройки сохранены!"
-
-#~ msgid "Could not validate destination path"
-#~ msgstr "Не удалось проверить целевой путь"
-
-#~ msgid "Patreon"
-#~ msgstr "Patreon"
-
-#~ msgid "Trophies & Achievements"
-#~ msgstr "Трофеи и достижения"
-
-#~ msgid "Two game IDs required"
-#~ msgstr "Требуются два ID игры"
-
-#~ msgid "One or both games not found"
-#~ msgstr "Одна или обе игры не найдены"
-
-#~ msgid "Failed to sync trophies"
-#~ msgstr "Не удалось синхронизировать трофеи"
-
-#~ msgid "Network error syncing trophies"
-#~ msgstr "Ошибка сети при синхронизации трофеев"
-
-#~ msgid "Trophies synced successfully!"
-#~ msgstr "Трофеи успешно синхронизированы!"
-
-#~ msgid "Admin Login"
-#~ msgstr "Вход администратора"
-
-#~ msgid "Enter admin password"
-#~ msgstr "Введите пароль администратора"
-
-#~ msgid "Fetching controller images..."
-#~ msgstr "Получение изображений контроллеров…"
-
-#~ msgid "Connection failed: %(error)s"
-#~ msgstr "Не удалось подключиться: %(error)s"
-
-#~ msgid ""
-#~ "Log in with your PlayStation account "
-#~ "(if not already), then the page "
-#~ "will show your NPSSO token as "
-#~ "JSON."
-#~ msgstr ""
-#~ "Войдите в свою учётную запись "
-#~ "PlayStation (если ещё не вошли), после"
-#~ " чего на странице отобразится ваш "
-#~ "токен NPSSO в формате JSON."
-
-#~ msgid "Hide Bonus"
-#~ msgstr "Скрыть бонусы"
-
-#~ msgid "Show Bonus"
-#~ msgstr "Показать бонусы"
-
-#~ msgid ""
-#~ "Asking the AI: {current} of {total} "
-#~ "games, {proposals} names suggested. {system}"
-#~ msgstr ""
-
-#~ msgid "Done. {proposals} names suggested from {total} games."
-#~ msgstr ""
-
-#~ msgid "Stopped. {proposals} names suggested."
-#~ msgstr ""
-
-#~ msgid "{accepted} names changed."
-#~ msgstr ""
-
-#~ msgid "{accepted} names changed. {skipped} skipped: their title changed since."
-#~ msgstr ""
-
-#~ msgid "{count} suggested names. Untick any you do not want, then accept."
-#~ msgstr ""
-
-#~ msgid "{rejected} names rejected. They will not be suggested again."
-#~ msgstr ""
-
-#~ msgid "Format: YYYY-MM-DD (e.g., 1996-09-29)"
-#~ msgstr "Формат: ГГГГ-ММ-ДД (например, 1996-09-29)"
-
-#~ msgid "RetroDB Player cores"
-#~ msgstr "Ядра RetroDB Player"
-
-#~ msgid "Every game here has had AI Fill already."
-#~ msgstr "Все игры здесь уже прошли заполнение ИИ."
-
-#~ msgid ""
-#~ "Ask the AI for each game's full"
-#~ " official name in its ROM's own "
-#~ "region, then tick the new names "
-#~ "you want. Nothing changes until you "
-#~ "accept it."
-#~ msgstr ""
-#~ "Спросите у ИИ полное официальное "
-#~ "название каждой игры в регионе её "
-#~ "ROM, затем отметьте нужные новые "
-#~ "названия. Ничего не меняется, пока вы"
-#~ " их не примете."
-
-#~ msgid "Cheats downloaded."
-#~ msgstr "Читы скачаны."
-
-#~ msgid "Downloading RetroArch… This can take a few minutes."
-#~ msgstr "Скачивание RetroArch… Это может занять несколько минут."
-
-#~ msgid "Downloading {pack}…"
-#~ msgstr "Скачивание {pack}…"
-
-#~ msgid "Default"
-#~ msgstr "По умолчанию"
-
-#~ msgid "Earn achievements in RetroDB's RetroArch"
-#~ msgstr "Получайте достижения в RetroArch от RetroDB"
-
-#~ msgid "Launches in: %(name)s"
-#~ msgstr "Запускается в: %(name)s"
-
-#~ msgid ""
-#~ "This will clear the play time from"
-#~ " {stored} games that already have "
-#~ "one. The other {other} queued matches"
-#~ " are dropped, and those games keep"
-#~ " what they have. A bulk lookup "
-#~ "can fetch the times again."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Stopped: ScreenScraper stopped answering, so"
-#~ " your daily allowance may be spent."
-#~ " Files swapped: {replaced}. Run it "
-#~ "again tomorrow."
-#~ msgstr ""
-#~ "Остановлено: ScreenScraper перестал отвечать, "
-#~ "возможно, ваш дневной лимит исчерпан. "
-#~ "Заменено файлов: {replaced}. Запустите снова"
-#~ " завтра."
-
-#~ msgid "An official names run is already running."
-#~ msgstr "Поиск официальных названий уже выполняется."
-
-#~ msgid "No official names run to cancel."
-#~ msgstr "Нет поиска официальных названий для отмены."
-
-#~ msgid ""
-#~ "Asking the AI: game {current} of "
-#~ "{total}. Names suggested: {proposals}. "
-#~ "{system}"
-#~ msgstr ""
-#~ "Запрос к ИИ: игра {current} из "
-#~ "{total}. Предложено названий: {proposals}. "
-#~ "{system}"
-
-#~ msgid "Could not accept these names."
-#~ msgstr "Не удалось принять эти названия."
-
-#~ msgid "Could not load the suggested names."
-#~ msgstr "Не удалось загрузить предложенные названия."
-
-#~ msgid "Could not reject these names."
-#~ msgstr "Не удалось отклонить эти названия."
-
-#~ msgid "Done. Games asked: {total}. Names suggested: {proposals}."
-#~ msgstr "Готово. Проверено игр: {total}. Предложено названий: {proposals}."
-
-#~ msgid "Europe"
-#~ msgstr "Европа"
-
-#~ msgid "Japan"
-#~ msgstr "Япония"
-
-#~ msgid "Names changed: {accepted}."
-#~ msgstr "Изменено названий: {accepted}."
-
-#~ msgid ""
-#~ "Names changed: {accepted}. Skipped because "
-#~ "their title changed since: {skipped}."
-#~ msgstr ""
-#~ "Изменено названий: {accepted}. Пропущено, так"
-#~ " как название с тех пор изменилось:"
-#~ " {skipped}."
-
-#~ msgid "Names rejected: {rejected}. They will not be suggested again."
-#~ msgstr "Отклонено названий: {rejected}. Они больше не будут предлагаться."
-
-#~ msgid "No suggested names waiting. Press Ask the AI to look for some."
-#~ msgstr ""
-#~ "Нет ожидающих предложенных названий. Нажмите"
-#~ " «Спросить ИИ», чтобы найти их."
-
-#~ msgid "Stopped. Names suggested: {proposals}."
-#~ msgstr "Остановлено. Предложено названий: {proposals}."
-
-#~ msgid ""
-#~ "Suggested names waiting: {count}. Untick "
-#~ "any you do not want, then accept."
-#~ msgstr ""
-#~ "Ожидают предложенные названия: {count}. "
-#~ "Снимите отметку с ненужных, затем "
-#~ "примите."
-
-#~ msgid "The run stopped: {error}. Names already suggested are kept."
-#~ msgstr "Поиск остановлен: {error}. Уже предложенные названия сохранены."
-
-#~ msgid "Tick at least one name."
-#~ msgstr "Отметьте хотя бы одно название."
-
-#~ msgid "USA"
-#~ msgstr "США"
-
-#~ msgid "World"
-#~ msgstr "Весь мир"
-
-#~ msgid "unknown"
-#~ msgstr "неизвестно"
-
-#~ msgid "{system} · {file} · old name from: {region}"
-#~ msgstr "{system} · {file} · старое название из: {region}"
-
-#~ msgid "Official Names"
-#~ msgstr "Официальные названия"
-
-#~ msgid ""
-#~ "The AI suggests each game's full "
-#~ "official name, as released in the "
-#~ "region of its ROM: a Japanese ROM"
-#~ " of Mega Man becomes Rockman. Tick"
-#~ " the names you want and accept "
-#~ "them. The old name is kept as "
-#~ "an alternate title, and an accepted "
-#~ "name is kept when scraping. Nothing "
-#~ "changes until you accept it."
-#~ msgstr ""
-#~ "ИИ предлагает полное официальное название "
-#~ "каждой игры, под которым она вышла "
-#~ "в регионе её ROM: японский ROM "
-#~ "Mega Man становится Rockman. Отметьте "
-#~ "нужные названия и примите их. Старое "
-#~ "название сохраняется как альтернативное, а "
-#~ "принятое название сохраняется при скрапинге."
-#~ " Ничего не меняется, пока вы его "
-#~ "не примете."
-
-#~ msgid "Ask the AI"
-#~ msgstr "Спросить ИИ"
-
-#~ msgid "Suggested names"
-#~ msgstr "Предложенные названия"
-
-#~ msgid "Accept ticked"
-#~ msgstr "Принять отмеченные"
-
-#~ msgid "Reject ticked"
-#~ msgstr "Отклонить отмеченные"
-
-#~ msgid "Tick all"
-#~ msgstr "Отметить все"
-
-#~ msgid "Tick none"
-#~ msgstr "Снять все отметки"
-
-#~ msgid "Cleared RA data for {n} games in {system}"
-#~ msgstr "Данные RA очищены для {n} игр в системе {system}"
-
-#~ msgid ""
-#~ "Cleared RetroAchievements data for {n} "
-#~ "games. Run \"Refresh RetroAchievements\" to"
-#~ " re-scan with updated matching."
-#~ msgstr ""
-#~ "Данные RetroAchievements очищены для {n} "
-#~ "игр. Запустите «Обновить RetroAchievements» "
-#~ "для повторного сканирования с обновлённым "
-#~ "сопоставлением."
-
-#~ msgid "RA Data Cleared"
-#~ msgstr "Данные RA очищены"
-
-#~ msgid "Refresh RetroAchievements"
-#~ msgstr "Обновить RetroAchievements"
-
-#~ msgid ""
-#~ "This will clear RetroAchievements game "
-#~ "IDs and progress data for \"{system}\"."
-#~ " Continue?"
-#~ msgstr ""
-#~ "Это очистит ID игр RetroAchievements и"
-#~ " данные о прогрессе для «{system}». "
-#~ "Продолжить?"
-
-#~ msgid "🏆 Refresh RetroAchievements"
-#~ msgstr "🏆 Обновить RetroAchievements"
-
-#~ msgid "Remove this system from Achievements"
-#~ msgstr "Удалить эту систему из достижений"
-
-#~ msgid ""
-#~ "Your PlayStation Network session expires "
-#~ "soon — re-link it to avoid "
-#~ "an interruption."
-#~ msgstr ""
-#~ "Срок действия вашей сессии PlayStation "
-#~ "Network скоро истечёт — переподключите "
-#~ "её, чтобы избежать перебоя."
-
-#~ msgid "Re-link now"
-#~ msgstr "Переподключить сейчас"
-
-#~ msgid "Read from clipboard"
-#~ msgstr "Прочитать из буфера обмена"
-
-#~ msgid "Paste &amp; Detect"
-#~ msgstr "Вставить и определить"
 

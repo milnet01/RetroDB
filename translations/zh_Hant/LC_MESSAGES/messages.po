@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-05 19:42+0200\n"
+"POT-Creation-Date: 2026-11-06 09:02+0200\n"
 "PO-Revision-Date: 2026-07-01 09:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hant\n"
@@ -155,12 +155,12 @@ msgstr "遊戲庫中沒有遊戲"
 msgid "Setup has already been completed"
 msgstr "設定已經完成"
 
-#: app.py:1680 routes/settings.py:553 routes/tools.py:364
+#: app.py:1680 routes/settings.py:525 routes/tools.py:364
 msgid "Permission denied"
 msgstr "權限被拒絕"
 
-#: app.py:1700 routes/collections.py:194 routes/collections.py:271
-#: routes/collections.py:438 routes/collections.py:679
+#: app.py:1700 routes/collections.py:209 routes/collections.py:290
+#: routes/collections.py:459 routes/collections.py:706
 msgid "No data provided"
 msgstr "未提供資料"
 
@@ -194,7 +194,7 @@ msgstr "未找到系統，或該系統沒有包含成就的遊戲"
 
 #: routes/achievements.py:176 routes/achievements.py:486
 #: routes/bonus_discs.py:273 routes/bulk_scrape.py:48 routes/cheats.py:32
-#: routes/cheats.py:51 routes/collections.py:276 routes/collections.py:531
+#: routes/cheats.py:51 routes/collections.py:295 routes/collections.py:558
 #: routes/emulators.py:304 routes/emulators.py:318 routes/games.py:393
 #: routes/games.py:930 routes/games.py:1049 routes/games.py:1127
 #: routes/games_ai.py:41 routes/games_media.py:40 routes/games_media.py:89
@@ -240,8 +240,8 @@ msgstr "此系統中沒有帶 RetroAchievements 的遊戲"
 msgid "Sync already in progress for %(name)s"
 msgstr "%(name)s 的同步已在進行中"
 
-#: routes/achievements.py:410 routes/platform_import.py:381
-#: routes/platform_import.py:758
+#: routes/achievements.py:410 routes/platform_import.py:394
+#: routes/platform_import.py:771
 msgid "That job belongs to another user"
 msgstr "該工作屬於其他使用者"
 
@@ -564,14 +564,14 @@ msgid "A bonus disc links to a main game, one level only"
 msgstr "額外光碟可連結到一款主遊戲,且僅限一層"
 
 #: routes/bonus_discs.py:219 routes/bonus_discs.py:237 routes/games.py:1397
-#: routes/games.py:1427 routes/platform_import.py:344
-#: routes/platform_import.py:723 routes/platform_import.py:1107
+#: routes/games.py:1427 routes/platform_import.py:357
+#: routes/platform_import.py:736 routes/platform_import.py:1120
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:207 routes/scraper.py:538
-#: routes/scraper.py:929 routes/settings.py:320 routes/settings.py:344
-#: routes/settings.py:459 routes/settings.py:538 routes/settings.py:567
-#: routes/settings.py:611 routes/settings.py:627 routes/settings.py:663
-#: routes/steam_achievements.py:138 routes/systems.py:286 routes/systems.py:476
+#: routes/scraper.py:929 routes/settings.py:319 routes/settings.py:343
+#: routes/settings.py:431 routes/settings.py:510 routes/settings.py:539
+#: routes/settings.py:583 routes/settings.py:599 routes/settings.py:635
+#: routes/steam_achievements.py:138 routes/systems.py:286 routes/systems.py:489
 #: routes/trophies.py:593 routes/trophies.py:791 routes/trophies.py:839
 #: routes/trophies.py:1638 routes/trophies.py:1662 routes/trophies.py:1707
 #: routes/trophies.py:1735 routes/trophies.py:1777 routes/trophies.py:1844
@@ -581,8 +581,8 @@ msgstr "發生內部錯誤"
 
 #: routes/bonus_discs.py:286 routes/bonus_discs.py:317
 #: routes/controllers.py:216 routes/controllers.py:280
-#: routes/controllers.py:413 routes/controllers.py:465 routes/settings.py:224
-#: routes/settings.py:494 routes/settings.py:577 routes/systems.py:307
+#: routes/controllers.py:413 routes/controllers.py:465 routes/settings.py:223
+#: routes/settings.py:466 routes/settings.py:549 routes/systems.py:307
 msgid "Request body must be a JSON object"
 msgstr "請求正文必須是 JSON 物件"
 
@@ -622,99 +622,111 @@ msgstr "沒有這個金手指包。"
 msgid "Enter a folder to import."
 msgstr "請輸入要匯入的資料夾。"
 
-#: routes/clz_import.py:271
+#: routes/clz_import.py:253
 msgid ""
 "pdfplumber module not installed. Please run: pip install pdfplumber "
 "--break-system-packages"
 msgstr "未安裝 pdfplumber 模組。請執行：pip install pdfplumber --break-system-packages"
 
-#: routes/clz_import.py:276
+#: routes/clz_import.py:258
 msgid "No file uploaded"
 msgstr "未上傳檔案"
 
-#: routes/clz_import.py:280
+#: routes/clz_import.py:262
 msgid "File must be a PDF"
 msgstr "檔案必須為 PDF"
 
-#: routes/clz_import.py:287
+#: routes/clz_import.py:269
 #, python-format
 msgid "File too large (%(size)sMB). Maximum size is 50MB"
 msgstr "檔案過大（%(size)sMB）。最大允許 50MB"
 
-#: routes/clz_import.py:290
+#: routes/clz_import.py:272
 msgid "Invalid PDF file (bad magic bytes)"
 msgstr "無效的 PDF 檔案（魔數位元組錯誤）"
 
-#: routes/clz_import.py:314
+#: routes/clz_import.py:296
 #, python-format
 msgid "PDF has %(pages)s pages; maximum is %(max)s."
 msgstr "該 PDF 共有 %(pages)s 頁，最多允許 %(max)s 頁。"
 
-#: routes/clz_import.py:583
+#: routes/clz_import.py:553
 msgid "No games to import"
 msgstr "沒有可匯入的遊戲"
 
-#: routes/collections.py:103 routes/collections.py:446
-#: routes/collections.py:475 routes/collections.py:497
-#: routes/collections.py:527 routes/collections.py:566
+#: routes/collections.py:42
+msgid "A tag colour is written like #4cc9f0"
+msgstr "標籤顏色的寫法如 #4cc9f0"
+
+#: routes/collections.py:116 routes/collections.py:467
+#: routes/collections.py:502 routes/collections.py:524
+#: routes/collections.py:554 routes/collections.py:593
 msgid "List not found"
 msgstr "找不到清單"
 
-#: routes/collections.py:163
+#: routes/collections.py:176 routes/collections.py:221
 msgid "Tag name is required"
 msgstr "標籤名稱為必填項目"
 
-#: routes/collections.py:177 routes/collections.py:215
+#: routes/collections.py:192 routes/collections.py:234
 msgid "A tag with that name already exists"
 msgstr "同名標籤已存在"
 
-#: routes/collections.py:202 routes/collections.py:233
-#: routes/collections.py:294 routes/collections.py:359
+#: routes/collections.py:217 routes/collections.py:252
+#: routes/collections.py:313 routes/collections.py:378
 msgid "Tag not found"
 msgstr "未找到標籤"
 
-#: routes/collections.py:282
+#: routes/collections.py:301
 msgid "Either tag_id or tag_name is required"
 msgstr "tag_id 或 tag_name 必須提供其一"
 
-#: routes/collections.py:338
+#: routes/collections.py:357
 msgid "Tag is not assigned to this game"
 msgstr "該標籤未指派給此遊戲"
 
-#: routes/collections.py:406
+#: routes/collections.py:425 routes/collections.py:471
 msgid "List name is required"
 msgstr "必須填寫列表名稱"
 
-#: routes/collections.py:517
+#: routes/collections.py:431 routes/collections.py:475
+msgid "A list description and icon are text"
+msgstr "清單說明和圖示都是文字"
+
+#: routes/collections.py:478
+msgid "A list position is a whole number"
+msgstr "清單位置必須是整數"
+
+#: routes/collections.py:544
 msgid "game_id is required"
 msgstr "game_id 為必填項"
 
-#: routes/collections.py:573
+#: routes/collections.py:600
 msgid "Game is not in this list"
 msgstr "遊戲不在此列表中"
 
-#: routes/collections.py:618
+#: routes/collections.py:645 routes/collections.py:718
 msgid "Title is required"
 msgstr "標題為必填項"
 
-#: routes/collections.py:630 routes/collections.py:697
+#: routes/collections.py:657 routes/collections.py:726
 msgid "Priority must be an integer between 1 and 5"
 msgstr "優先順序必須是 1 到 5 之間的整數"
 
-#: routes/collections.py:635 routes/collections.py:702
+#: routes/collections.py:662 routes/collections.py:740
 msgid "system_id must be an integer"
 msgstr "system_id 必須為整數"
 
-#: routes/collections.py:638 routes/collections.py:705
+#: routes/collections.py:665 routes/collections.py:743
 msgid "Unknown system_id"
 msgstr "未知的 system_id"
 
-#: routes/collections.py:649
+#: routes/collections.py:676 routes/collections.py:735
 msgid "This game is already on your wishlist"
 msgstr "該遊戲已在您的願望清單中"
 
-#: routes/collections.py:687 routes/collections.py:732
-#: routes/collections.py:755
+#: routes/collections.py:714 routes/collections.py:770
+#: routes/collections.py:793
 msgid "Wishlist item not found"
 msgstr "未找到心願單項目"
 
@@ -821,8 +833,8 @@ msgstr "套用中繼資料失敗。"
 msgid "No fields to update"
 msgstr "沒有可更新的欄位"
 
-#: routes/games.py:1205 routes/platform_import.py:250
-#: routes/platform_import.py:629 routes/platform_import.py:993
+#: routes/games.py:1205 routes/platform_import.py:263
+#: routes/platform_import.py:642 routes/platform_import.py:1006
 #: routes/trophies.py:1919 templates/game_imports.html:579
 #: templates/game_imports.html:842
 msgid "No games selected"
@@ -874,7 +886,7 @@ msgid "No filename provided"
 msgstr "未提供檔名"
 
 #: routes/games_media.py:85 routes/reports.py:699 routes/scrape_logs.py:129
-#: routes/scrape_logs.py:154 routes/scrape_logs.py:203 routes/settings.py:353
+#: routes/scrape_logs.py:154 routes/scrape_logs.py:203 routes/settings.py:352
 msgid "Invalid filename"
 msgstr "無效的檔案名稱"
 
@@ -1036,15 +1048,15 @@ msgstr ""
 msgid "Next disk inserted"
 msgstr "已插入下一張光碟"
 
-#: routes/maintenance.py:279
+#: routes/maintenance.py:276
 msgid "Unknown image type"
 msgstr "未知的圖片類型"
 
-#: routes/maintenance.py:492
+#: routes/maintenance.py:489
 msgid "Add your ScreenScraper account in Settings first."
 msgstr "請先到「設定」新增你的 ScreenScraper 帳戶。"
 
-#: routes/maintenance.py:493
+#: routes/maintenance.py:490
 msgid "This fix is already running."
 msgstr "此修復已在執行中。"
 
@@ -1123,52 +1135,52 @@ msgstr "未找到圖片檔案"
 msgid "Background removal failed"
 msgstr "背景移除失敗"
 
-#: routes/platform_import.py:182
+#: routes/platform_import.py:195
 msgid "Steam API key not configured. Add it in Settings → API Keys."
 msgstr "尚未設定 Steam API 金鑰。請在「設定 → API 金鑰」中新增。"
 
-#: routes/platform_import.py:184
+#: routes/platform_import.py:197
 msgid "Steam ID not configured. Add it in Settings → API Keys."
 msgstr "尚未設定 Steam ID。請在「設定 → API Keys」中新增。"
 
-#: routes/platform_import.py:190
+#: routes/platform_import.py:203
 #, python-format
 msgid ""
 "Could not resolve Steam vanity URL \"%(steam_id)s\". Use your 17-digit "
 "Steam ID instead."
 msgstr "無法解析 Steam 個性網址「%(steam_id)s」。請改用你的 17 位 Steam ID。"
 
-#: routes/platform_import.py:196
+#: routes/platform_import.py:209
 msgid ""
 "No games found. Check that your Steam profile and game details are set to"
 " Public."
 msgstr "未找到遊戲。請檢查您的 Steam 個人資料和遊戲詳情是否設定為公開。"
 
-#: routes/platform_import.py:255
+#: routes/platform_import.py:268
 msgid "Could not create Windows system entry"
 msgstr "無法建立 Windows 系統項目"
 
-#: routes/platform_import.py:399
+#: routes/platform_import.py:412
 msgid "Xbox Client ID not configured. Add it in Settings → API Keys."
 msgstr "未設定 Xbox Client ID。請在「設定 → API 金鑰」中新增。"
 
-#: routes/platform_import.py:537
+#: routes/platform_import.py:550
 msgid "Xbox credentials not configured. Add them in Settings → API Keys."
 msgstr "未配置 Xbox 憑據。請在「設定 → API Keys」中新增。"
 
-#: routes/platform_import.py:541
+#: routes/platform_import.py:554
 msgid "Xbox authentication failed. Please re-connect your Xbox account."
 msgstr "Xbox 身分驗證失敗。請重新連接你的 Xbox 帳戶。"
 
-#: routes/platform_import.py:545
+#: routes/platform_import.py:558
 msgid "No games found in Xbox title history."
 msgstr "在 Xbox 遊戲歷史記錄中未找到遊戲。"
 
-#: routes/platform_import.py:833
+#: routes/platform_import.py:846
 msgid "PSN NPSSO not configured. Add it in Settings → API Keys."
 msgstr "尚未設定 PSN NPSSO。請在「設定 → API 金鑰」中新增。"
 
-#: routes/platform_import.py:860
+#: routes/platform_import.py:873
 msgid "Failed to fetch PSN game list. Try syncing trophies first."
 msgstr "取得 PSN 遊戲清單失敗。請先嘗試同步獎盃。"
 
@@ -1189,8 +1201,8 @@ msgstr "未設定 ROM 路徑。請前往「設定 → 路徑」進行設定。"
 msgid "Missing required parameters"
 msgstr "缺少必填參數"
 
-#: routes/reports.py:617 routes/tools.py:513 routes/tools.py:570
-#: routes/tools.py:615
+#: routes/reports.py:617 routes/tools.py:533 routes/tools.py:590
+#: routes/tools.py:635
 msgid "Invalid path"
 msgstr "路徑無效"
 
@@ -1245,7 +1257,7 @@ msgstr "產生的檔案名稱包含無效字元"
 msgid "Invalid log file"
 msgstr "日誌檔案無效"
 
-#: routes/scrape_logs.py:101 routes/tools.py:516
+#: routes/scrape_logs.py:101 routes/tools.py:536
 msgid "File not found"
 msgstr "未找到檔案"
 
@@ -1330,61 +1342,65 @@ msgstr "連接錯誤：%(error)s"
 msgid "Allowance check not supported for %(scraper)s"
 msgstr "%(scraper)s 不支援配額檢查"
 
-#: routes/settings.py:228
+#: routes/settings.py:227
 msgid "Value is required"
 msgstr "此值為必填項"
 
-#: routes/settings.py:250
+#: routes/settings.py:249
 msgid "Option already exists"
 msgstr "選項已存在"
 
-#: routes/settings.py:359
+#: routes/settings.py:358
 msgid "Backup file not found"
 msgstr "未找到備份檔案"
 
-#: routes/settings.py:373
+#: routes/settings.py:376
 msgid "A background job is running. Wait for it to finish before restoring."
 msgstr "有背景任務正在執行。請等待其完成後再還原。"
 
-#: routes/settings.py:393
+#: routes/settings.py:396
 msgid "Backup failed its integrity check; restore aborted."
 msgstr "備份未通過完整性檢查；已中止還原。"
 
-#: routes/settings.py:515
+#: routes/settings.py:419
+msgid "The backup could not be copied in; nothing was changed."
+msgstr "無法複製備份進來,沒有任何變更。"
+
+#: routes/settings.py:487
 #, python-format
 msgid "Invalid %(field)s: %(result)s"
 msgstr "無效的 %(field)s：%(result)s"
 
-#: routes/settings.py:534 routes/settings.py:608 routes/settings.py:660
+#: routes/settings.py:506 routes/settings.py:580 routes/settings.py:632
 #: routes/tools.py:292 services/js_i18n_strings.py:745
 #: templates/settings.html:1149 templates/settings.html:2742
 msgid "Failed to save settings"
 msgstr "儲存設定失敗"
 
-#: routes/settings.py:587 routes/tools.py:284
+#: routes/settings.py:559 routes/tools.py:284
 #, python-format
 msgid "Unknown setting key: %(key)s"
 msgstr "未知的設定鍵：%(key)s"
 
-#: routes/settings.py:593 routes/tools.py:287
+#: routes/settings.py:565 routes/tools.py:287
 #, python-format
 msgid "Invalid value for '%(key)s': %(reason)s"
 msgstr "“%(key)s”的值無效：%(reason)s"
 
-#: routes/settings.py:625
+#: routes/settings.py:597
 msgid "Failed to reset settings"
 msgstr "重置設定失敗"
 
-#: routes/settings.py:646
+#: routes/settings.py:618
 #, python-format
 msgid "invalid logging settings: %(reason)s"
 msgstr "日誌設定無效：%(reason)s"
 
-#: routes/settings.py:676 routes/settings.py:704
+#: routes/settings.py:648 routes/settings.py:676
 msgid "Invalid field. Must be \"genre\" or \"modes\""
 msgstr "無效的欄位。必須為「genre」或「modes」"
 
-#: routes/settings.py:707
+#: routes/settings.py:679
 msgid "No mappings provided"
 msgstr "未提供對應"
 
@@ -1416,7 +1432,7 @@ msgstr "需要管理員權限"
 msgid "Settings payload must be an object"
 msgstr "設定資料必須為物件"
 
-#: routes/tools.py:327 routes/tools.py:979
+#: routes/tools.py:327 routes/tools.py:1001
 #, python-format
 msgid "Path does not exist: %(path)s"
 msgstr "路徑不存在：%(path)s"
@@ -1425,70 +1441,74 @@ msgstr "路徑不存在：%(path)s"
 msgid "Task not found"
 msgstr "未找到任務"
 
-#: routes/tools.py:415 routes/tools.py:435
+#: routes/tools.py:421 routes/tools.py:439 routes/tools.py:461
+msgid "Only an admin or the person who started this task can change it"
+msgstr "只有管理員或啟動此任務的人才能變更"
+
+#: routes/tools.py:431 routes/tools.py:453
 msgid "Task not found or not running"
 msgstr "未找到任務或任務未執行"
 
-#: routes/tools.py:455
+#: routes/tools.py:475
 msgid "Task not found or not paused"
 msgstr "未找到任務或任務未暫停"
 
-#: routes/tools.py:472 routes/tools.py:677 routes/tools.py:852
-#: routes/tools.py:968
+#: routes/tools.py:492 routes/tools.py:697 routes/tools.py:873
+#: routes/tools.py:990
 msgid "Invalid scan path"
 msgstr "掃描路徑無效"
 
-#: routes/tools.py:510 routes/tools.py:567 routes/tools.py:612
+#: routes/tools.py:530 routes/tools.py:587 routes/tools.py:632
 msgid "No path provided"
 msgstr "未提供路徑"
 
-#: routes/tools.py:538
+#: routes/tools.py:558
 msgid "No archive path provided"
 msgstr "未提供歸檔路徑"
 
-#: routes/tools.py:541
+#: routes/tools.py:561
 msgid "Invalid archive path"
 msgstr "壓縮檔路徑無效"
 
-#: routes/tools.py:544
+#: routes/tools.py:564
 msgid "No files to remove"
 msgstr "沒有可移除的檔案"
 
-#: routes/tools.py:645
+#: routes/tools.py:665
 msgid "No paths provided"
 msgstr "未提供路徑"
 
-#: routes/tools.py:651
+#: routes/tools.py:671
 #, python-format
 msgid "Invalid path: %(path)s"
 msgstr "路徑無效：%(path)s"
 
-#: routes/tools.py:726
+#: routes/tools.py:746
 msgid "chdman not found. Please install MAME tools."
 msgstr "未找到 chdman。請安裝 MAME 工具。"
 
-#: routes/tools.py:875
+#: routes/tools.py:896
 msgid "chdman not found"
 msgstr "未找到 chdman"
 
-#: routes/tools.py:973
+#: routes/tools.py:995
 #, python-format
 msgid "Unknown duplicate method: %(method)s"
 msgstr "未知的重複偵測方式：%(method)s"
 
-#: routes/tools.py:1186 routes/tools.py:1540
+#: routes/tools.py:1209 routes/tools.py:1565
 msgid "These scan results have expired. Scan again, then delete."
 msgstr "這些掃描結果已過期。請重新掃描後再刪除。"
 
-#: routes/tools.py:1191
+#: routes/tools.py:1214
 msgid "Keep at least one copy of each game. Nothing was deleted."
 msgstr "每個遊戲至少保留一份副本。未刪除任何內容。"
 
-#: routes/tools.py:1451
+#: routes/tools.py:1474
 msgid "This system has no screenshot check"
 msgstr "此系統沒有螢幕截圖檢查"
 
-#: routes/tools.py:1550
+#: routes/tools.py:1575
 msgid "Keep at least one copy of each screenshot. Nothing was deleted."
 msgstr "每張螢幕截圖請至少保留一份。沒有刪除任何項目。"
 
@@ -1613,7 +1633,7 @@ msgstr "該遊戲未與其他版本連結。"
 msgid "The AI did not give a usable answer. Try again later."
 msgstr "AI 未給出可用的回答。請稍後再試。"
 
-#: routes/xbox_achievements.py:126 services/jobs/platform_sync.py:768
+#: routes/xbox_achievements.py:126 services/jobs/platform_sync.py:798
 msgid "Xbox credentials not configured"
 msgstr "尚未設定 Xbox 憑據"
 
@@ -4635,35 +4655,35 @@ msgstr "請先執行一次 %(name)s 以產生其設定，然後再次遊玩。"
 msgid "The player has no core for this system."
 msgstr "播放器沒有此系統的核心。"
 
-#: services/jobs/platform_sync.py:368 services/jobs/platform_sync.py:677
+#: services/jobs/platform_sync.py:398 services/jobs/platform_sync.py:707
 msgid "Sync already running"
 msgstr "同步已在執行中"
 
-#: services/jobs/platform_sync.py:373
+#: services/jobs/platform_sync.py:403
 msgid "Steam sync is already running on another worker process."
 msgstr "Steam 同步已在另一個工作程序中執行。"
 
-#: services/jobs/platform_sync.py:391 services/jobs/platform_sync.py:700
+#: services/jobs/platform_sync.py:421 services/jobs/platform_sync.py:730
 msgid "No running sync to cancel"
 msgstr "沒有可取消的同步"
 
-#: services/jobs/platform_sync.py:485
+#: services/jobs/platform_sync.py:515
 msgid "Steam API key or Steam ID not configured"
 msgstr "尚未設定 Steam API 金鑰或 Steam ID"
 
-#: services/jobs/platform_sync.py:504
+#: services/jobs/platform_sync.py:534
 msgid "No Steam games found to sync"
 msgstr "找不到可同步的 Steam 遊戲"
 
-#: services/jobs/platform_sync.py:682
+#: services/jobs/platform_sync.py:712
 msgid "Xbox sync is already running on another worker process."
 msgstr "Xbox 同步已在另一個工作程序中執行。"
 
-#: services/jobs/platform_sync.py:777
+#: services/jobs/platform_sync.py:807
 msgid "Xbox authentication failed — please re-connect your Xbox account"
 msgstr "Xbox 驗證失敗，請重新連結你的 Xbox 帳戶"
 
-#: services/jobs/platform_sync.py:828
+#: services/jobs/platform_sync.py:858
 msgid "No Xbox games found to sync"
 msgstr "找不到可同步的 Xbox 遊戲"
 
@@ -14149,436 +14169,4 @@ msgstr "在 GitHub 上贊助"
 #: templates/_settings_tabs/system.html:465
 msgid "Support on Patreon"
 msgstr "在 Patreon 上支持"
-
-#~ msgid "(auto-detect)"
-#~ msgstr "（自動偵測）"
-
-#~ msgid "(not set)"
-#~ msgstr "（未設定）"
-
-#~ msgid "API configured"
-#~ msgstr "已設定 API"
-
-#~ msgid "API key missing"
-#~ msgstr "缺少 API 金鑰"
-
-#~ msgid "API keys saved!"
-#~ msgstr "API 金鑰已儲存！"
-
-#~ msgid "Apply"
-#~ msgstr "套用"
-
-#~ msgid ""
-#~ "Are you sure you want to delete"
-#~ " user \"{username}\"? This action cannot"
-#~ " be undone."
-#~ msgstr "確定要刪除使用者「{username}」嗎？此操作無法復原。"
-
-#~ msgid ""
-#~ "Are you sure you want to restore"
-#~ " from \"{filename}\"? This will replace "
-#~ "all current data."
-#~ msgstr "確定要從「{filename}」還原嗎？這將取代所有目前的資料。"
-
-#~ msgid "Backup created successfully!"
-#~ msgstr "備份建立成功！"
-
-#~ msgid "Backup failed: {error}"
-#~ msgstr "備份失敗：{error}"
-
-#~ msgid "Confirm"
-#~ msgstr "確認"
-
-#~ msgid "Create Backup"
-#~ msgstr "建立備份"
-
-#~ msgid "Creating backup..."
-#~ msgstr "正在建立備份…"
-
-#~ msgid "Database restored! Reloading..."
-#~ msgstr "資料庫已還原！正在重新載入……"
-
-#~ msgid "Default: {value}"
-#~ msgstr "預設：{value}"
-
-#~ msgid "Delete User"
-#~ msgstr "刪除使用者"
-
-#~ msgid "Display settings saved!"
-#~ msgstr "顯示設定已儲存！"
-
-#~ msgid "Edit User"
-#~ msgstr "編輯使用者"
-
-#~ msgid "Error - disappears in {n}s"
-#~ msgstr "錯誤 — 將在 {n} 秒後消失"
-
-#~ msgid "Error creating backup: {error}"
-#~ msgstr "建立備份出錯：{error}"
-
-#~ msgid "Error restoring: {error}"
-#~ msgstr "還原時出錯：{error}"
-
-#~ msgid "Error saving API keys: {error}"
-#~ msgstr "儲存 API 金鑰出錯：{error}"
-
-#~ msgid "Error saving settings: {error}"
-#~ msgstr "儲存設定出錯：{error}"
-
-#~ msgid "Error searching: {error}"
-#~ msgstr "搜尋出錯：{error}"
-
-#~ msgid "Failed to change password"
-#~ msgstr "更改密碼失敗"
-
-#~ msgid "Failed to delete user"
-#~ msgstr "刪除使用者失敗"
-
-#~ msgid "Failed to save user"
-#~ msgstr "儲存使用者失敗"
-
-#~ msgid "Failed to save: {error}"
-#~ msgstr "儲存失敗：{error}"
-
-#~ msgid "Info - disappears in {n}s"
-#~ msgstr "提示 - {n} 秒後消失"
-
-#~ msgid "Network error changing password"
-#~ msgstr "修改密碼時發生網路錯誤"
-
-#~ msgid "Network error deleting user"
-#~ msgstr "刪除使用者時發生網路錯誤"
-
-#~ msgid "Network error saving settings"
-#~ msgstr "儲存設定時網路出錯"
-
-#~ msgid "Network error saving user"
-#~ msgstr "儲存使用者時發生網路錯誤"
-
-#~ msgid "No logo"
-#~ msgstr "無標誌"
-
-#~ msgid "No systems found"
-#~ msgstr "未找到系統"
-
-#~ msgid "Notification settings saved!"
-#~ msgstr "通知設定已儲存！"
-
-#~ msgid "Password changed successfully!"
-#~ msgstr "密碼修改成功！"
-
-#~ msgid "Path settings saved!"
-#~ msgstr "路徑設定已儲存！"
-
-#~ msgid "Please enter a new password"
-#~ msgstr "請輸入新密碼"
-
-#~ msgid "Restart required for changes to take full effect"
-#~ msgstr "需要重新啟動才能使變更完全生效"
-
-#~ msgid "Restore Database"
-#~ msgstr "還原資料庫"
-
-#~ msgid "Restore failed: {error}"
-#~ msgstr "還原失敗：{error}"
-
-#~ msgid "Score: {score}"
-#~ msgstr "評分：{score}"
-
-#~ msgid "Scraper settings saved!"
-#~ msgstr "抓取器設定已儲存！"
-
-#~ msgid "Searching..."
-#~ msgstr "正在搜尋…"
-
-#~ msgid "Success - disappears in {n}s"
-#~ msgstr "成功 - {n} 秒後消失"
-
-#~ msgid "Try modifying the search title"
-#~ msgstr "嘗試修改搜尋標題"
-
-#~ msgid "User deleted successfully"
-#~ msgstr "使用者刪除成功"
-
-#~ msgid "User saved successfully!"
-#~ msgstr "使用者儲存成功！"
-
-#~ msgid "Warning - disappears in {n}s"
-#~ msgstr "警告 - 將在 {n} 秒後消失"
-
-#~ msgid "Your settings have been saved!"
-#~ msgstr "你的設定已儲存！"
-
-#~ msgid "Could not validate destination path"
-#~ msgstr "無法驗證目標路徑"
-
-#~ msgid "Patreon"
-#~ msgstr "Patreon"
-
-#~ msgid "Trophies & Achievements"
-#~ msgstr "獎盃與成就"
-
-#~ msgid "Two game IDs required"
-#~ msgstr "需要提供兩個遊戲 ID"
-
-#~ msgid "One or both games not found"
-#~ msgstr "未找到其中一個或兩個遊戲"
-
-#~ msgid "Failed to sync trophies"
-#~ msgstr "同步獎盃失敗"
-
-#~ msgid "Network error syncing trophies"
-#~ msgstr "同步獎盃時發生網路錯誤"
-
-#~ msgid "Trophies synced successfully!"
-#~ msgstr "獎盃同步成功！"
-
-#~ msgid "Admin Login"
-#~ msgstr "管理員登入"
-
-#~ msgid "Enter admin password"
-#~ msgstr "輸入管理員密碼"
-
-#~ msgid "Fetching controller images..."
-#~ msgstr "正在擷取手把圖片……"
-
-#~ msgid "Connection failed: %(error)s"
-#~ msgstr "連線失敗：%(error)s"
-
-#~ msgid ""
-#~ "Log in with your PlayStation account "
-#~ "(if not already), then the page "
-#~ "will show your NPSSO token as "
-#~ "JSON."
-#~ msgstr "使用你的 PlayStation 帳戶登入（如尚未登入），隨後頁面會以 JSON 格式顯示你的 NPSSO 權杖。"
-
-#~ msgid "Hide Bonus"
-#~ msgstr "隱藏附贈"
-
-#~ msgid "Show Bonus"
-#~ msgstr "顯示附贈"
-
-#~ msgid ""
-#~ "Asking the AI: {current} of {total} "
-#~ "games, {proposals} names suggested. {system}"
-#~ msgstr ""
-
-#~ msgid "Done. {proposals} names suggested from {total} games."
-#~ msgstr ""
-
-#~ msgid "Stopped. {proposals} names suggested."
-#~ msgstr ""
-
-#~ msgid "{accepted} names changed."
-#~ msgstr ""
-
-#~ msgid "{accepted} names changed. {skipped} skipped: their title changed since."
-#~ msgstr ""
-
-#~ msgid "{count} suggested names. Untick any you do not want, then accept."
-#~ msgstr ""
-
-#~ msgid "{rejected} names rejected. They will not be suggested again."
-#~ msgstr ""
-
-#~ msgid "Format: YYYY-MM-DD (e.g., 1996-09-29)"
-#~ msgstr "格式：YYYY-MM-DD（例如 1996-09-29）"
-
-#~ msgid "RetroDB Player cores"
-#~ msgstr "RetroDB Player 核心"
-
-#~ msgid "Every game here has had AI Fill already."
-#~ msgstr "這裡的每個遊戲都已做過 AI 填充。"
-
-#~ msgid ""
-#~ "Ask the AI for each game's full"
-#~ " official name in its ROM's own "
-#~ "region, then tick the new names "
-#~ "you want. Nothing changes until you "
-#~ "accept it."
-#~ msgstr "讓 AI 給出每個遊戲在其 ROM 所屬地區的完整官方名稱，然後勾選你想要的新名稱。在你接受之前什麼都不會改變。"
-
-#~ msgid "Cheats downloaded."
-#~ msgstr "金手指已下載。"
-
-#~ msgid "Downloading RetroArch… This can take a few minutes."
-#~ msgstr "正在下載 RetroArch… 這可能需要幾分鐘。"
-
-#~ msgid "Downloading {pack}…"
-#~ msgstr "正在下載 {pack}…"
-
-#~ msgid "Default"
-#~ msgstr "預設"
-
-#~ msgid "Earn achievements in RetroDB's RetroArch"
-#~ msgstr "在 RetroDB 的 RetroArch 中獲得成就"
-
-#~ msgid "Launches in: %(name)s"
-#~ msgstr "啟動方式：%(name)s"
-
-#~ msgid ""
-#~ "This will clear the play time from"
-#~ " {stored} games that already have "
-#~ "one. The other {other} queued matches"
-#~ " are dropped, and those games keep"
-#~ " what they have. A bulk lookup "
-#~ "can fetch the times again."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Stopped: ScreenScraper stopped answering, so"
-#~ " your daily allowance may be spent."
-#~ " Files swapped: {replaced}. Run it "
-#~ "again tomorrow."
-#~ msgstr "已停止:ScreenScraper 不再回應,你的每日額度可能已用完。已更換檔案:{replaced}。請明天再執行一次。"
-
-#~ msgid "An official names run is already running."
-#~ msgstr "官方名稱工作已在執行中。"
-
-#~ msgid "No official names run to cancel."
-#~ msgstr "沒有可取消的官方名稱工作。"
-
-#~ msgid ""
-#~ "Asking the AI: game {current} of "
-#~ "{total}. Names suggested: {proposals}. "
-#~ "{system}"
-#~ msgstr "正在詢問 AI：第 {current} 個遊戲，共 {total} 個。已建議名稱：{proposals}。{system}"
-
-#~ msgid "Could not accept these names."
-#~ msgstr "無法接受這些名稱。"
-
-#~ msgid "Could not load the suggested names."
-#~ msgstr "無法載入建議的名稱。"
-
-#~ msgid "Could not reject these names."
-#~ msgstr "無法拒絕這些名稱。"
-
-#~ msgid "Done. Games asked: {total}. Names suggested: {proposals}."
-#~ msgstr "完成。已詢問的遊戲：{total}。已建議名稱：{proposals}。"
-
-#~ msgid "Europe"
-#~ msgstr "歐洲"
-
-#~ msgid "Japan"
-#~ msgstr "日本"
-
-#~ msgid "Names changed: {accepted}."
-#~ msgstr "已變更的名稱：{accepted}。"
-
-#~ msgid ""
-#~ "Names changed: {accepted}. Skipped because "
-#~ "their title changed since: {skipped}."
-#~ msgstr "已變更的名稱：{accepted}。因標題此後已變更而略過：{skipped}。"
-
-#~ msgid "Names rejected: {rejected}. They will not be suggested again."
-#~ msgstr "已拒絕的名稱：{rejected}。它們不會再被建議。"
-
-#~ msgid "No suggested names waiting. Press Ask the AI to look for some."
-#~ msgstr "沒有待處理的建議名稱。按「詢問 AI」來尋找。"
-
-#~ msgid "Stopped. Names suggested: {proposals}."
-#~ msgstr "已停止。已建議名稱：{proposals}。"
-
-#~ msgid ""
-#~ "Suggested names waiting: {count}. Untick "
-#~ "any you do not want, then accept."
-#~ msgstr "待處理的建議名稱：{count}。取消勾選你不想要的，然後接受。"
-
-#~ msgid "The run stopped: {error}. Names already suggested are kept."
-#~ msgstr "工作已停止：{error}。已建議的名稱會保留。"
-
-#~ msgid "Tick at least one name."
-#~ msgstr "請至少勾選一個名稱。"
-
-#~ msgid "USA"
-#~ msgstr "美國"
-
-#~ msgid "World"
-#~ msgstr "全球"
-
-#~ msgid "unknown"
-#~ msgstr "未知"
-
-#~ msgid "{system} · {file} · old name from: {region}"
-#~ msgstr "{system} · {file} · 舊名稱來自：{region}"
-
-#~ msgid "Official Names"
-#~ msgstr "官方名稱"
-
-#~ msgid ""
-#~ "The AI suggests each game's full "
-#~ "official name, as released in the "
-#~ "region of its ROM: a Japanese ROM"
-#~ " of Mega Man becomes Rockman. Tick"
-#~ " the names you want and accept "
-#~ "them. The old name is kept as "
-#~ "an alternate title, and an accepted "
-#~ "name is kept when scraping. Nothing "
-#~ "changes until you accept it."
-#~ msgstr ""
-#~ "AI 會建議每個遊戲在其 ROM 所屬地區發行時的完整官方名稱：日版 Mega "
-#~ "Man ROM 會變成 "
-#~ "Rockman。勾選你想要的名稱並接受。舊名稱會保留為別名標題，已接受的名稱在抓取時會被保留。在你接受之前什麼都不會改變。"
-
-#~ msgid "Ask the AI"
-#~ msgstr "詢問 AI"
-
-#~ msgid "Suggested names"
-#~ msgstr "建議的名稱"
-
-#~ msgid "Accept ticked"
-#~ msgstr "接受已勾選"
-
-#~ msgid "Reject ticked"
-#~ msgstr "拒絕已勾選"
-
-#~ msgid "Tick all"
-#~ msgstr "全部勾選"
-
-#~ msgid "Tick none"
-#~ msgstr "全部取消"
-
-#~ msgid "Cleared RA data for {n} games in {system}"
-#~ msgstr "已清除 {system} 中 {n} 個遊戲的 RA 資料"
-
-#~ msgid ""
-#~ "Cleared RetroAchievements data for {n} "
-#~ "games. Run \"Refresh RetroAchievements\" to"
-#~ " re-scan with updated matching."
-#~ msgstr ""
-#~ "已清除 {n} 個遊戲的 RetroAchievements 資料。執行「重新整理 "
-#~ "RetroAchievements」即可使用更新後的比對重新掃描。"
-
-#~ msgid "RA Data Cleared"
-#~ msgstr "RA 資料已清除"
-
-#~ msgid "Refresh RetroAchievements"
-#~ msgstr "重新整理 RetroAchievements"
-
-#~ msgid ""
-#~ "This will clear RetroAchievements game "
-#~ "IDs and progress data for \"{system}\"."
-#~ " Continue?"
-#~ msgstr "這將清除「{system}」的 RetroAchievements 遊戲 ID 和進度資料。是否繼續？"
-
-#~ msgid "🏆 Refresh RetroAchievements"
-#~ msgstr "🏆 重新整理 RetroAchievements"
-
-#~ msgid "Remove this system from Achievements"
-#~ msgstr "將此系統從成就中移除"
-
-#~ msgid ""
-#~ "Your PlayStation Network session expires "
-#~ "soon — re-link it to avoid "
-#~ "an interruption."
-#~ msgstr "你的 PlayStation Network 工作階段即將過期 — 請重新關聯以避免中斷。"
-
-#~ msgid "Re-link now"
-#~ msgstr "立即重新關聯"
-
-#~ msgid "Read from clipboard"
-#~ msgstr "從剪貼簿讀取"
-
-#~ msgid "Paste &amp; Detect"
-#~ msgstr "貼上 &amp; 偵測"
 

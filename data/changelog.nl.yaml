@@ -2,124 +2,134 @@
   date: '2026-11-05'
   tags:
   - type: fix
-    label: Analytics deelt nu veel meer consoles in onder hun fabrikant in plaats van onder "Overig", en de lijst Recent gescrapet op het dashboard toont ook een game die je opnieuw hebt gescrapet, niet alleen nieuw toegevoegde games
+    label: Een editor die een ROM Tools-scan start, kan die nu pauzeren, hervatten of annuleren; scans van anderen kan alleen een beheerder stoppen. Tags en lijsten weigeren een ontbrekende naam of een ongeldige kleur met een duidelijke melding in plaats van een foutpagina, en een game op de verlanglijst hernoemen naar een andere game die je al wilt hebben wordt geweigerd, net als het toevoegen ervan. Clear RA Data vergeet nu ook of jouw kopie prestaties oplevert. Een trofee die RetroDB niet meer aanbiedt, telt niet langer mee voor je verzamelaarsrang. Windows-ROM-paden worden nu op bestandsnaam gekoppeld aan RetroAchievements-games
   - type: fix
-    label: Controllerafbeeldingen die je in het Museum toevoegt, blijven bewaard wanneer de standalone versie wordt bijgewerkt. Wanneer een onlineservice bij zijn limiet pauzeert, wordt het tijdstip waarop opnieuw wordt gevraagd getoond in je eigen tijdzone
+    label: Onderhoudsfixes. Een archief met meerdere schijven dat niet uitgepakt kan worden, laat geen half gemaakte map meer achter die elke nieuwe poging blokkeert. Calculate Storage telt nu elk bestand in een PS3-gamemap mee. Clear Scraped Data verwijdert afbeeldingen alleen als je erom vraagt. Een bibliotheekscan die een game tegenkomt die net door een andere scan is toegevoegd, gaat door met de rest van de games van die console
   - type: fix
-    label: Een bonusdisc kan niet meer aan zichzelf of aan een andere bonusdisc worden gekoppeld, en Auto-koppelen koppelt een disc niet meer aan een disc die in dezelfde run als bonusdisc is gemarkeerd
+    label: Een back-up terugzetten is veiliger. Hij wordt nu in de bibliotheekdatabase geschreven zoals de database zelf verwacht, zodat een onderdeel van RetroDB dat de database open heeft de herstelde gegevens ziet in plaats van schade te riskeren. Een game verwijderen verwijdert nu ook de doosafbeeldingen en de wachtende afbeeldings- en emulatorinstellingen, zodat een nieuwe game ze nooit kan erven. Twee instellingen die tegelijk worden opgeslagen, gaan niet meer verloren
   - type: fix
-    label: De pagina's van de Bibliotheek en van consoles tellen arcade-BIOS-bestanden niet meer als games mee, noch in de totalen noch in de letterbalk. Vergelijkbare games en de lijst die je krijgt door op een genre of uitgever op de pagina van een game te klikken, tonen niet meer de eigen regionale versies, bonusdiscs of BIOS-bestanden van die game
+    label: Afbeeldingsfixes. GIF's gaan niet meer door de upscaler om vervolgens weggegooid te worden. Het upscalermodel wordt gecontroleerd aan de hand van zijn gepubliceerde vingerafdruk, en een slechte download wordt opnieuw opgehaald in plaats van upscaling voorgoed uit te zetten. Logo's en afbeeldingen met doorzichtige delen behouden hun transparantie bij vergroting. Convert to WebP verwerkt nu ook achterkanten en logo's, en weigert een grote bibliotheek niet meer wegens ruimte die niet nodig is. Twee zijden van een doosbestand kunnen één afbeelding delen, en een doos met een beschadigd record verwijderen verwijdert ook de afbeeldingen ervan
   - type: fix
-    label: Alles selecteren meldt het nu wanneer een erg lange lijst wordt afgekapt, in plaats van stilletjes maar een deel te selecteren
+    label: Imports uit CLZ, Steam, Xbox en PlayStation beschouwen titels die alleen in het Japans of een ander niet-Latijns schrift zijn geschreven niet meer als dezelfde game, en voegen geen game zonder id meer toe. De CLZ-voorvertoning voegt geen consoles meer toe voordat je de import bevestigt, en een kijker die een Steam-, Xbox- of PlayStation-bibliotheek bekijkt, voegt ze ook niet meer toe. Over een Steam-game die uit de winkel is verwijderd wordt één keer gevraagd, niet bij elke synchronisatie
+  - type: fix
+    label: Analytics groepeert nu veel meer consoles onder hun maker in plaats van onder "Overig", en de lijst Recent gescrapet op het dashboard toont ook een game die je opnieuw hebt gescrapet, niet alleen nieuw toegevoegde games
+  - type: fix
+    label: Controllerafbeeldingen die je in het Museum toevoegt, blijven behouden wanneer de standalone versie wordt bijgewerkt. Wanneer een online service pauzeert bij zijn limiet, wordt het moment waarop hij weer wordt aangesproken getoond in je eigen tijdzone
+  - type: fix
+    label: Een bonusschijf kan niet meer aan zichzelf of aan een andere bonusschijf worden gekoppeld, en Auto-link koppelt een schijf niet meer aan een schijf die in dezelfde run als bonusschijf is gemarkeerd
+  - type: fix
+    label: De Bibliotheek- en consolepagina's tellen arcade-BIOS-bestanden niet meer als games mee, niet in de totalen en niet in de letterbalk. Vergelijkbare games en de lijst die je krijgt door op een genre of uitgever op de pagina van een game te klikken, tonen niet meer de eigen regionale versies, bonusschijven of BIOS-bestanden van die game
+  - type: fix
+    label: Alles selecteren meldt nu dat een zeer grote lijst is afgekapt, in plaats van stilletjes maar een deel te selecteren
   - type: fix
     label: Bibliotheekkaarten worden nu bijgewerkt wanneer je voortgang in prestaties of trofeeën verandert, en wanneer een game speelbaar wordt of niet meer speelbaar is
   - type: fix
-    label: Bulkbewerken kan niet meer de verkeerde games wijzigen als er een ongeldige selectie wordt verstuurd, en een mislukte bulkbewerking markeert de games niet meer als door jou bewerkt
+    label: Bulk bewerken kan niet meer de verkeerde games wijzigen als het een foute selectie krijgt, en een mislukte bulkbewerking markeert de games niet meer als door jou bewerkt
   - type: fix
-    label: Een HowLongToBeat-match die maar voor 1% past, wordt niet meer getoond als een match van 100%, en een pagina die niet laadt toont de foutpagina in plaats van de ruwe foutmelding
+    label: Een HowLongToBeat-match die maar 1% overeenkomt, wordt niet meer als 100% match getoond, en een pagina die niet laadt toont de foutpagina in plaats van de ruwe foutmelding
   - type: security
-    label: Als je je wachtwoord wijzigt, of een beheerder het opnieuw instelt, wordt dat account op alle andere apparaten uitgelogd. Hierdoor moet iedereen na deze update eenmalig opnieuw inloggen. De installatiepagina bij de eerste start krijgt ook dezelfde bescherming tegen andere websites als alle andere pagina's
+    label: Als je je wachtwoord wijzigt, of een beheerder het opnieuw instelt, wordt dat account op alle andere apparaten uitgelogd. Hierdoor moet iedereen na deze update één keer opnieuw inloggen. De installatiepagina bij de eerste keer opstarten krijgt ook dezelfde bescherming tegen andere websites als alle andere pagina's
   - type: fix
     label: Een afbeelding die als avatar wordt geweigerd, verwijdert je huidige avatar niet meer
   - type: fix
-    label: Scrapes zijn vriendelijker voor de onlineservices. Een service die blijft falen wordt een tijdje overgeslagen bij het aanvullen van hiaten, zoals dat bij zoekopdrachten al gebeurde, en game-opzoekingen bij ScreenScraper houden nu ook rekening met de dagelijkse limieten
+    label: Scrapes zijn vriendelijker voor de online services. Een service die steeds faalt, wordt een tijdje overgeslagen bij het aanvullen van hiaten, zoals al gebeurde bij zoekopdrachten, en ScreenScraper-opzoekingen van games houden nu ook rekening met de dagelijkse limieten
   - type: fix
-    label: Een scrape mislukt niet meer bij een game met een onbekend releasejaar, zoals "TBA", en een game die voor regio's buiten je lijst staat, zoals "Brazilië, Korea", behoudt zijn regio in plaats van je standaardregio te krijgen
+    label: Een scrape mislukt niet meer bij een game met een onbekend releasejaar, zoals "TBA", en een game die voor regio's buiten je lijst is uitgebracht, zoals "Brazilië, Korea", behoudt zijn regio in plaats van je standaardregio te krijgen
   - type: fix
-    label: ES-DE-mappen die met ~/ zijn geschreven werken nu, en een heel groot ES-DE-bestand wordt niet meer gekopieerd. Voorgestelde regionale versies voegen nooit meer twee games samen waarvan jij hebt aangegeven dat het geen versies van elkaar zijn
+    label: ES-DE-mappen die als ~/ zijn geschreven werken nu, en een zeer groot ES-DE-bestand wordt niet meer gekopieerd. Voorgestelde regionale versies voegen nooit twee games weer samen waarvan je hebt gezegd dat ze geen versies van elkaar zijn
   - type: security
-    label: RetroDB weigert nu nog een aantal privénetwerkadressen bij het ophalen van afbeeldingen van het web, en volgt de doorverwijzing van een webadres correct
+    label: RetroDB weigert nog een aantal privénetwerkadressen bij het ophalen van afbeeldingen van het web, en volgt de omleiding van een webadres correct
   - type: fix
-    label: De laatste schermen die nog Engels waren, volgen nu ook je taal, waaronder de installatiewizard, Tags, Lijsten, Games vergelijken, de ROM Tools-instellingen, de bulkscrapewachtrij, de lijst met onderbroken taken op het dashboard, de labels op bibliotheekkaarten en veel foutmeldingen
+    label: De laatste schermen die nog in het Engels stonden, volgen nu ook je taal, waaronder de installatiewizard, Tags, Lijsten, Games vergelijken, de ROM Tools-instellingen, de bulkscrapewachtrij, de lijst met onderbroken taken op het dashboard, de labels op bibliotheekkaarten en veel foutmeldingen
   - type: security
     label: Een systeemnaam met webcode kan die code niet meer uitvoeren in het venster van de bulkscrapewachtrij
   - type: accessibility
-    label: Waar je ook op een pagina bent, de plek van het toetsenbord wordt nu aangegeven met een dikke ring in de kleur van je thema, bij elke knop, elk veld en elke link. Eerder toonden veel bedieningselementen maar een vage lijn, dezelfde als wanneer de muis eroverheen ging
+    label: Waar je ook bent op een pagina, de plek van het toetsenbord wordt nu aangegeven met een dikke ring in de kleur van je thema, bij elke knop, elk vak en elke link. Eerder toonden veel bedieningselementen alleen een vage lijn, dezelfde als wanneer de muis erover ging
   - type: accessibility
-    label: De links Genre, Serie, Ontwikkelaar en Uitgever op bibliotheekkaarten werken nu met het toetsenbord. De knop "actief" voor games die draaien opent ook met het toetsenbord, en Esc of een klik elders sluit de lijst
+    label: De links Genre, Serie, Ontwikkelaar en Uitgever op bibliotheekkaarten werken nu met het toetsenbord. De knop "actief" voor games die bezig zijn opent ook met het toetsenbord, en Esc of een klik elders sluit de lijst
   - type: accessibility
     label: Schermlezers noemen nu elke tagkleur en zeggen welke is gekozen, en lezen trofeeafbeeldingen voor als Platina, Goud, Zilver en Brons in plaats van losse letters. Terwijl een game start, gaat Tab niet meer achter het startscherm
   - type: fix
-    label: Als een update stopt voordat het wisselen van bestanden begint, start RetroDB nu weer de versie die je had, in plaats van gesloten te blijven
+    label: Als een update stopt voordat het wisselen van bestanden begint, start RetroDB nu de versie die je had weer op, in plaats van gesloten te blijven
   - type: fix
-    label: Twee keer tegelijk op Spelen drukken kan niet meer twee games starten in de ingebouwde speler. Wachten op het downloaden van een core geeft nu na een tijdje op, of wanneer RetroDB niet meer antwoordt, in plaats van eeindeloos te wachten, en de vraag "draait al" gebruikt het eigen dialoogvenster van RetroDB
+    label: Twee keer tegelijk op Spelen drukken kan niet meer twee games starten op de ingebouwde speler. Wachten op een core-download geeft nu na een tijdje op, of wanneer RetroDB niet meer antwoordt, in plaats van eeuwig te wachten, en de vraag "al actief" gebruikt het eigen dialoogvenster van RetroDB
   - type: fix
-    label: Cheats die je tijdens het spelen aan- of uitzet, worden bewaard voor de juiste game en nooit overgenomen van een andere game met dezelfde bestandsnaam. Een cheatprobleem verhindert nooit dat een game start
+    label: Cheats die je tijdens het spelen aan- of uitzet, worden bewaard voor de juiste game en nooit overgenomen van een andere game waarvan het bestand dezelfde naam heeft. Een cheatprobleem verhindert nooit dat een game start
   - type: fix
-    label: RetroDB schrijft het instellingenbestand van een emulator veiliger weg. Een instellingenbestand dat een link is, blijft een link, behoudt zijn rechten en bewaart tekens die het niet kan lezen, en een mislukte opslag laat geen losse bestanden achter
+    label: RetroDB schrijft het instellingenbestand van een emulator veiliger weg. Een instellingenbestand dat een link is, blijft een link, behoudt zijn rechten en tekens die het niet kan lezen, en een mislukte opslag laat geen los bestand achter
   - type: fix
-    label: Een bulkscrape die je omlaag in de wachtrij verplaatst, omwisselt met een andere of hervat terwijl er een loopt, gaat niet meer verloren als RetroDB opnieuw start; het dashboard biedt hem aan, vanaf waar hij stopte. Een omgewisselde scrape blijft niet meer naast de nieuwe doorlopen, en twee snelle klikken op Hervatten starten een taak maar één keer
+    label: Een bulkscrape die je in de wachtrij omlaag verplaatst, met een andere verwisselt of hervat terwijl er een loopt, gaat niet meer verloren wanneer RetroDB opnieuw start; het dashboard biedt hem aan, vanaf waar hij stopte. Een weggewisselde scrape blijft niet meer naast de nieuwe doorlopen, en twee snelle klikken op Hervatten starten een taak één keer
   - type: fix
-    label: De fout van één game, zoals een wegvallend netwerk, beëindigt niet meer een hele AI-aanvulling of een run van Fix Box en Manual Regions; die game telt als mislukt en de rest gaat door. RetroDB stoppen stopt nu ook het downloaden van cores netjes
+    label: De fout van één game, zoals een wegvallend netwerk, beëindigt niet meer een hele AI-aanvulling of een run van Fix Box and Manual Regions; die game telt als mislukt en de rest gaat door. RetroDB stoppen stopt nu ook core-downloads netjes
   - type: fix
-    label: Items op de Verlanglijst blijven na een fout of herstart niet meer eeuwig op "scrapen" staan, en twee runs van Alles scrapen voor dezelfde verlanglijst draaien niet meer tegelijk
+    label: Verlanglijstitems blijven na een fout of herstart niet meer eeuwig op "scrapen" staan, en twee Scrape All-runs voor dezelfde verlanglijst draaien niet meer tegelijk
   - type: fix
-    label: Een script of een tweede exemplaar van RetroDB dat opstart, markeert de taken van de draaiende server niet meer als onderbroken, en twee exemplaren die tegelijk opstarten kunnen de database niet meer een versie terugzetten
+    label: Een script of een tweede exemplaar van RetroDB dat opstart, markeert de taken van de draaiende server niet meer als onderbroken, en twee exemplaren die tegelijk starten kunnen de database niet meer een versie terugzetten
   - type: fix
-    label: Het starten van een PlayStation-synchronisatie laat de voortgangsbalken van iedereen niet meer wachten terwijl er bij Sony wordt ingelogd. De dagelijkse PlayStation-keep-alive vernieuwt een login nu pas tegen het einde van de 10 dagen, in plaats van elke dag
+    label: Het starten van een PlayStation-synchronisatie laat ieders voortgangsbalken niet meer wachten terwijl er wordt ingelogd bij Sony. De dagelijkse PlayStation-keep-alive vernieuwt een login nu pas tegen het einde van de 10 dagen, in plaats van elke dag
   - type: fix
-    label: Een scrape overschrijft geen wijziging meer die je tijdens het scrapen maakt, en maakt geen genre, modus of weergave meer leeg waarvoor hij geen naam heeft. Hij wijzigt ook geen opgeslagen aantal spelers meer om bij de modi van de game te passen
+    label: Een scrape overschrijft geen wijziging meer die je tijdens het scrapen maakt, en leegt geen genre, modus of weergave waarvoor hij geen naam heeft. Hij wijzigt een opgeslagen aantal spelers niet meer om bij de modi van de game te passen
   - type: fix
-    label: AI-aanvulling wijzigt niet meer wat je zelf hebt getypt, zoals een uitgever of genre dat je met de hand hebt gecorrigeerd; het corrigeert alleen gescrapete waarden. Het meldt een waarde niet meer als gewijzigd wanneer die alleen anders is opgeschreven, zoals 4 spelers als "1-4" of dezelfde genres in een andere volgorde
+    label: AI-aanvulling wijzigt niet meer wat je zelf hebt getypt, zoals een uitgever of genre dat je met de hand hebt gecorrigeerd; hij corrigeert alleen gescrapete waarden. Hij meldt een waarde niet meer als gewijzigd wanneer die alleen anders is geschreven, zoals 4 spelers als "1-4" of dezelfde genres in een andere volgorde
   - type: fix
-    label: Een controller die je voor een game intypt, blijft bewaard; de standaardcontroller van de console vervangt nu alleen gescrapete en AI-waarden. Een leeftijdsclassificatie die is omgezet vanuit de AI-gok van een ander keuringssysteem, wordt nu ook als gok gemarkeerd
+    label: Een controller die je voor een game typt, blijft behouden; de standaardcontroller van de console vervangt nu alleen gescrapete en AI-waarden. Een leeftijdsclassificatie die is omgezet vanuit de AI-gok van een andere organisatie wordt nu ook als gok gemarkeerd
   - type: fix
-    label: Het opslaan van het bewerkvenster van een game maakt velden die het venster niet toont niet meer leeg. Resetten op de pagina van een game wist nu alles wat het zegt te wissen, inclusief de weergave, editie en andere namen, verwijdert de afbeeldingen en video's van de game tenzij een andere game ze gebruikt, en werkt de bibliotheekfilters meteen bij
+    label: Het opslaan van het bewerkvenster van een game leegt geen velden meer die het venster niet toont. Reset op de pagina van een game wist nu alles wat het zegt te wissen, inclusief de weergave, editie en andere namen, verwijdert de afbeeldingen en video's van de game tenzij een andere game ze gebruikt, en werkt de bibliotheekfilters meteen bij
   - type: fix
-    label: Gescrapete gegevens wissen wist nu ook de weergave, 2D of 3D, en de spelstructuur. Een CLZ-import van een game met alleen een jaar bewaart alleen het jaar, niet 1 januari
+    label: Clear Scraped Data wist nu ook de weergave, 2D of 3D, en de gamestructuur. Een CLZ-import van een game met alleen een jaar behoudt alleen het jaar, niet 1 januari
   - type: security
     label: Steam-synchronisatie leent de Steam-sleutel uit Instellingen niet meer voor elk huishoudlid. Een lid zonder eigen Steam-sleutel kreeg de Steam-bibliotheek en prestaties van de beheerder onder zijn account. De sleutel in Instellingen geldt nu alleen voor beheerders
   - type: fix
-    label: Het opzoeken van veel games bij How Long to Beat slaat nu de tijden op waarvan het zeker is. Eerder mislukte elke zekere match en werd niets opgeslagen. Vernieuwen van RetroAchievements controleert nu ook het bestand van elke game tegen de lijst van RetroAchievements, zoals een scrape doet, zodat een game wordt gekoppeld aan de exacte versie die je hebt
+    label: De opzoeking van How Long to Beat voor veel games slaat nu de tijden op waarvan hij zeker is. Eerder mislukte elke zekere match en werd niets opgeslagen. RetroAchievements Refresh controleert nu ook het bestand van elke game tegen de lijst van RetroAchievements, zoals een scrape doet, zodat een game wordt gekoppeld aan de exacte versie die je hebt
   - type: fix
-    label: De melding dat een achtergrondtaak klaar is, verschijnt weer, en het voortgangsvak van een taak merkt het op wanneer de server de taak na een herstart oppakt. Eerder verscheen geen van beide ooit
+    label: De melding dat een achtergrondtaak klaar is, verschijnt weer, en het voortgangsvak van een taak merkt het op wanneer de server de taak na een herstart weer oppakt. Eerder gebeurde geen van beide
   - type: fix
-    label: 'PlayStation-trofeeën: een game die je met de hand hebt gekoppeld, blijft gekoppeld na een volledige synchronisatie, en een synchronisatie koppelt een game niet meer aan zijn vervolg, zoals "Doom" aan "Doom Eternal". Het importeren van PlayStation-games koppelt nu een game die al in je bibliotheek staat, zoals bij Steam- en Xbox-imports, zodat de trofeeën erbij verschijnen'
+    label: 'PlayStation-trofeeën: een game die je handmatig hebt gekoppeld, blijft gekoppeld na een volledige synchronisatie, en een synchronisatie koppelt een game niet meer aan het vervolg, zoals "Doom" aan "Doom Eternal". Bij het importeren van PlayStation-games wordt nu een game gekoppeld die al in je bibliotheek staat, net als bij Steam- en Xbox-imports, zodat de trofeeën erbij verschijnen'
   - type: fix
-    label: Xbox toont je gamertag niet meer als Onbekend nadat de login zichzelf vernieuwt, en een trage of mislukte verbinding logt je niet meer uit bij Xbox. Alleen als Microsoft de login weigert gebeurt dat
+    label: Xbox toont je gamertag niet meer als Unknown nadat de aanmelding zichzelf vernieuwt, en een trage of mislukte verbinding logt je niet meer uit bij Xbox. Alleen als Microsoft de aanmelding weigert gebeurt dat nog
   - type: fix
-    label: Twee mensen kunnen nu elk een tag met dezelfde naam hebben; eerder mislukte de tweede met een fout. Elke ingelogde gebruiker kan nu zijn eigen RPCS3-trofeeën opnieuw scannen; eerder kon dat alleen een beheerder en zagen anderen oude trofeeën tot RetroDB opnieuw startte
+    label: Twee mensen kunnen nu allebei een tag met dezelfde naam hebben; eerder gaf de tweede een foutmelding. Elke ingelogde gebruiker kan nu zijn eigen RPCS3-trofeeën opnieuw scannen; eerder kon dat alleen een beheerder en zagen alle anderen oude trofeeën tot RetroDB opnieuw werd gestart
   - type: security
-    label: Je logins blijven privé. Back-ups van de database kunnen niet meer worden gelezen door andere accounts op de computer, en een mislukte back-up verwijdert de vorige niet meer. Een gebruiker verwijderen of uitschakelen logt die ook uit bij RetroAchievements in DuckStation en PCSX2. Een RetroAchievements-login die is opgeslagen vanuit het eigen menu van de speler, wordt niet meer overgedragen aan de volgende persoon die speelt. Logs en opgeslagen taakfouten verbergen RetroAchievements-tokens, de PlayStation-fout van een ander lid wordt alleen aan die persoon getoond, en oude PlayStation- en Xbox-loginbestanden in platte tekst worden verwijderd
+    label: Je aanmeldingen blijven privé. Back-ups van de database kunnen niet meer door andere accounts op de computer worden gelezen, en een mislukte back-up verwijdert de vorige niet meer. Als je een gebruiker verwijdert of uitschakelt, wordt die ook uitgelogd bij RetroAchievements in DuckStation en PCSX2. Een RetroAchievements-aanmelding die via het eigen menu van de speler is opgeslagen, blijft niet meer hangen voor de volgende speler. Logboeken en opgeslagen taakfouten verbergen RetroAchievements-tokens, de PlayStation-fout van een ander lid wordt alleen aan die persoon getoond, en oude PlayStation- en Xbox-aanmeldbestanden in platte tekst worden verwijderd
   - type: fix
-    label: De eigen controles van RetroDB kunnen je bibliotheek tijdens het uitvoeren niet meer aanraken. Ze gebruiken altijd een wegwerpkopie van de database, afbeeldingen en instellingen, en weigeren te starten als een daarvan naar je echte bestanden wijst
+    label: De eigen controles van RetroDB kunnen je bibliotheek niet meer aanraken terwijl ze draaien. Ze gebruiken altijd een wegwerpkopie van de database, afbeeldingen en instellingen, en weigeren te starten als een daarvan naar je echte bestanden wijst
   - type: fix
-    label: Verweesde bestanden opruimen verwijdert de afbeeldingen van je verlanglijst niet meer. Als je een game opent, vergeet die geen screenshots meer die hij niet kan vinden. Als de afbeeldingenschijf was losgekoppeld, raakte elke game die je opende vroeger zijn hele screenshotlijst kwijt; nu blijft de lijst bewaard en wordt een ontbrekende afbeelding alleen verborgen
+    label: Verweesde bestanden opruimen verwijdert de afbeeldingen van je verlanglijst niet meer. Als je een game opent, vergeet die niet meer welke screenshots hij niet kan vinden. Eerder verloor elke game die je opende, met de afbeeldingenschijf losgekoppeld, de hele lijst met screenshots; nu blijft de lijst bewaard en wordt een ontbrekende afbeelding alleen verborgen
   - type: fix
-    label: Een video- of handleiding-download die halverwege mislukt, beschadigt de kopie die de game al had niet meer, en een mislukte download laat geen verborgen half bestand meer achter in de mediamap. De upscaler op de achtergrond slaat geen oude afbeelding meer op over een nieuwere die intussen is gedownload. Converteren naar WebP laat elke game die een afbeelding deelt ernaar blijven verwijzen, en raakt nooit een bestand buiten de afbeeldingsmappen aan
+    label: Een video- of handleiding-download die halverwege mislukt, beschadigt de kopie die de game al had niet meer, en een mislukte download laat geen verborgen half bestand achter in de mediamap. De upscaler op de achtergrond slaat geen oude afbeelding meer op over een nieuwere die intussen is gedownload. Converteren naar WebP houdt alle games die een afbeelding delen eraan gekoppeld, en raakt nooit een bestand buiten de afbeeldingsmappen aan
   - type: fix
-    label: Als je een game of een verlanglijstitem verwijdert, worden nu ook de afbeeldingen, video's en handleidingen verwijderd, maar die van een andere game of een ander verlanglijstitem die ze nog gebruikt blijven staan. Opgeslagen afbeeldingen kunnen weer door andere accounts op de computer worden gelezen, en Afbeeldingen verkleinen telt een afbeelding die niet kon worden opgeslagen als mislukt, niet als voltooid
+    label: Als je een game of verlanglijstitem verwijdert, worden ook de bijbehorende afbeeldingen, video's en handleidingen verwijderd, behalve die een andere game of een ander verlanglijstitem nog gebruikt. Opgeslagen afbeeldingen kunnen weer door andere accounts op de computer worden gelezen, en Afbeeldingen verkleinen telt een afbeelding die niet kon worden opgeslagen als mislukt, niet als gedaan
   - type: fix
-    label: Dubbele bestanden zoeken biedt geen werkend bestand meer aan om te verwijderen. Bij zoeken op naam ziet het .cue- en .bin-bestanden van een game niet meer als kopieën van elkaar. Het biedt nooit het trackbestand van een schijf aan, dat twee versies van een game kunnen delen. Het verwijdert geen schijf die in een afspeellijst staat. Een game waarvan je het bestand verwijdert, gaat nu naar de kopie die je bewaart, zodat hij in de bibliotheek blijft
+    label: Duplicaten zoeken biedt geen werkend bestand meer aan om te verwijderen. Bij zoeken op naam ziet het .cue- en .bin-bestanden van een game niet meer als kopieën van elkaar. Het biedt nooit het trackbestand van een schijf aan, dat twee versies van een game kunnen delen. Het verwijdert geen schijf die in een afspeellijst staat. Een game waarvan je het bestand verwijdert, gaat nu naar de kopie die je houdt, zodat hij in de bibliotheek blijft
   - type: fix
-    label: Multi-disc ordenen overschrijft geen bestaande afspeellijst of een bestand dat al in de map van de game staat; het stopt en zegt welk bestand het is. De afspeellijst die het maakt, bevat van elke schijf de .cue, niet de trackbestanden. Games waarvan de bestanden worden verplaatst, volgen ze nu naar de map, zodat Ontbrekende ROM's opruimen ze niet meer verwijdert
+    label: Meerdere schijven ordenen overschrijft geen bestaande afspeellijst of een bestand dat al in de map van de game staat; het stopt en meldt welk bestand het is. De afspeellijst die het maakt, bevat de .cue van elke schijf, niet de trackbestanden. Games waarvan de bestanden worden verplaatst, volgen ze nu naar de map, zodat Ontbrekende ROM's opruimen ze niet meer verwijdert
   - type: fix
-    label: Converteren naar CHD met "originelen verwijderen" verwijdert nu ook de trackbestanden van de schijf, maar bewaart een track die een andere .cue nog gebruikt. De game en elke afspeellijst met de oude schijf wijzen nu naar de nieuwe .chd. Als je het bestand van een game hernoemt, wordt nu ook de afspeellijst bijgewerkt waarin het staat, en een trackbestand dat een .cue nodig heeft, kan niet worden hernoemd. Bestanden uit een zip verwijderen verwijdert alleen de bestanden die je koos, ook als een naam [ of ] bevat. Screenshots ontdubbelen verwijdert alleen de kopieën die de scan vond en houdt er altijd één over
+    label: Converteren naar CHD met "originelen verwijderen" verwijdert nu ook de trackbestanden van de schijf, maar behoudt een track die een andere .cue nog gebruikt. De game en elke afspeellijst met de oude schijf verwijzen nu naar de nieuwe .chd. Als je het bestand van een game hernoemt, wordt de afspeellijst waarin het staat nu bijgewerkt, en een trackbestand dat een .cue nodig heeft, kan niet worden hernoemd. Bestanden uit een zip verwijderen verwijdert alleen de bestanden die je koos, ook als een naam [ of ] bevat. Screenshotduplicaten verwijdert alleen de kopieën die de scan vond en houdt er altijd één over
   - type: fix
-    label: How Long to Beat op de pagina van een game zoekt naar wat je typt. Vroeger zocht het bij een titel die het niet kon vinden op de andere namen van de game, en kon het een andere game voorstellen, zoals een remake van fans. Het probeert nog steeds de andere namen als het vak de eigen naam van de game bevat
+    label: How Long to Beat op de pagina van een game zoekt naar wat je typt. Eerder zocht het bij een titel die het niet kon vinden op de andere namen van de game, en kon het een andere game voorstellen, zoals een fanremake. Het probeert de andere namen nog steeds als het vak de eigen naam van de game bevat
   - type: fix
-    label: De stappen voor How Long to Beat in de handleiding komen nu overeen met het scherm. Er stond dat je een resultaat uit een lijst kiest; de pagina toont één resultaat met Opslaan en Annuleren. De PlayStation-help zegt niet meer dat de aanmelding ongeveer twee maanden geldig blijft, omdat RetroDB zelf opnieuw inlogt. Alle 20 vertaalde handleidingen bevatten beide wijzigingen
+    label: De stappen voor How Long to Beat in de handleiding komen nu overeen met het scherm. Er stond dat je een resultaat uit een lijst kiest; de pagina toont één resultaat met Opslaan en Annuleren. In de PlayStation-hulp staat niet meer dat de aanmelding ongeveer twee maanden geldig blijft, omdat RetroDB zelf opnieuw aanmeldt. Alle 20 vertaalde handleidingen bevatten beide wijzigingen
   - type: fix
-    label: Elke letterbalk begint nu met een knop Alles. Op de pagina's Bibliotheek, console en PSN-trofeeën toont het kiezen van een letter alleen de games met die letter, en vroeger was er geen knop om de rest terug te halen. Op de andere pagina's met prestaties gaat Alles terug naar de eerste game
+    label: Elke letterbalk begint nu met een knop Alles. Op de pagina's Bibliotheek, console en PSN-trofeeën toont het kiezen van een letter alleen de games met die letter, en eerder was er geen knop om de rest terug te halen. Op de andere prestatiepagina's gaat Alles terug naar de eerste game
   - type: fix
-    label: Een nieuw PlayStation-aanmeldtoken dat je in Instellingen plakt, wordt nu meteen gebruikt. Vroeger bleef RetroDB de oude aanmelding gebruiken tot die verliep, en Opslaan en verbinding testen meldde dat die oude aanmelding werkte. Een token dat Sony weigert, vervangt er geen dat nog werkt
+    label: Een nieuw PlayStation-aanmeldtoken dat je in Instellingen plakt, wordt nu meteen gebruikt. Eerder bleef RetroDB de oude aanmelding gebruiken tot die verliep, en Opslaan en verbinding testen meldde dat die oude aanmelding werkte. Een token dat Sony weigert, vervangt er geen dat wel werkt
   - type: enhancement
-    label: 'De PlayStation-aanmelding in Instellingen is makkelijker draaiende te houden. De banner telt geen dagen meer af waarop je niets hoefde te doen, omdat RetroDB zelf opnieuw inlogt; hij wordt alleen rood als Sony je opgeslagen token weigert. De knop Hier plakken laat de browser niet meer vragen om je klembord te lezen: hij zet de cursor in het vak voor Ctrl+V. De stappen zeggen nu dat je eerst bij PlayStation moet uitloggen als je een token vervangt dat nog werkt, en de berichten erbij kunnen worden vertaald'
+    label: 'De PlayStation-aanmelding in Instellingen is makkelijker draaiende te houden. De banner telt geen dagen meer af waarop je niets hoefde te doen, omdat RetroDB zelf opnieuw aanmeldt; hij wordt alleen rood als Sony je opgeslagen token weigert. De knop Hier plakken laat de browser niet meer om toegang tot je klembord vragen: hij zet de cursor in het vak voor Ctrl+V. In de stappen staat nu dat je eerst moet uitloggen bij PlayStation als je een token vervangt dat nog werkt, en de berichten erin kunnen worden vertaald'
   - type: enhancement
-    label: Pop-upberichten en vraagvensters, zoals "Instellingen opgeslagen" of "Deze lijst verwijderen?", kunnen nu op elke pagina worden vertaald. Vroeger bleven de meeste in het Engels, welke taal je ook koos
+    label: Pop-upmeldingen en vraagvensters, zoals "Instellingen opgeslagen" of "Deze lijst verwijderen?", kunnen nu op elke pagina worden vertaald. Eerder bleven de meeste in het Engels, welke taal je ook koos
   - type: enhancement
-    label: De berichten die uitleggen waarom een PlayStation-aanmelding mislukte, zoals "Je NPSSO is mogelijk verlopen", kunnen nu worden vertaald
+    label: De meldingen die uitleggen waarom een PlayStation-aanmelding mislukte, zoals "Your NPSSO may have expired", kunnen nu worden vertaald
   - type: fix
-    label: De handleiding in elke taal komt nu overeen met de Engelse. Ze krijgt Overal zoeken, Een titel behouden, MAME-namen en de achterkant van de doos, en oudere alinea's die achterliepen zijn bijgewerkt
+    label: De handleiding in elke taal komt nu overeen met de Engelse. Ze bevat nu Overal zoeken, Een titel behouden, MAME-namen en de achterkant van de doos, en oudere alinea's die achterliepen zijn bijgewerkt
   - type: fix
-    label: In het Duits, Afrikaans en Spaans zegt de knop Terug op de cover van een game nu de achterkant van de doos, niet "ga terug"
+    label: In het Duits, Afrikaans en Spaans staat op de knop Terug op de cover van een game nu de achterkant van de doos, niet "ga terug"
   - type: feature
-    label: Als je op Spelen drukt, vult nu het logo van de game op zijn achtergrondafbeelding het scherm terwijl de game start, of de naam in grote letters als er geen logo is. Het verdwijnt vanzelf als het venster van de game opent, of als je op Esc drukt of klikt
+    label: Als je op Spelen drukt, vult het scherm zich nu met het logo van de game op zijn achtergrondafbeelding terwijl de game start, of met de naam in grote letters als er geen logo is. Het verdwijnt vanzelf als het venster van de game opent, of als je op Esc drukt of klikt
   - type: feature
-    label: 'De draaibare 3D-doos heeft nu de echte vorm van een PS5-hoesje: afgeronde hoeken en randen, de verhoogde rand rond de cover, de lijn waar de twee helften samenkomen en de vingersleuf in de openingszijde. Hiervoor is een doosbestand nodig van een Slipcase-versie die de vorm schrijft; importeer de doos opnieuw om hem te krijgen. Andere dozen zien er hetzelfde uit'
+    label: 'De draaibare 3D-doos heeft nu de echte vorm van een PS5-hoes: afgeronde hoeken en randen, de verhoogde rand rond de cover, de lijn waar de twee helften samenkomen en de vingersleuf in de opening. Hiervoor is een doosbestand nodig van een Slipcase-versie die de vorm meeschrijft; importeer de doos opnieuw om die te krijgen. Andere dozen zien eruit zoals eerder'
   - type: enhancement
-    label: Refresh RetroAchievements is verplaatst van Instellingen naar de pagina RetroAchievements en heet nu Games met prestaties zoeken. Elke knop daar heeft nu een regel die uitlegt wat hij doet, zodat Games zoeken en Voortgang synchroniseren makkelijk te onderscheiden zijn. Als er nog geen games gekoppeld zijn, toont de pagina een beheerder de knop Zoeken in plaats van door te gaan naar het volgende tabblad
-  body: "<ul>\n  <li><strong>De handleiding is in elke taal up-to-date.</strong>\n    Onderdelen die alleen in de Engelse handleiding stonden, zijn nu vertaald.</li>\n</ul>\n"
+    label: RetroAchievements vernieuwen is verplaatst van Instellingen naar de RetroAchievements-pagina en heet nu Games met prestaties zoeken. Elke knop daar heeft nu een regel die zegt wat de knop doet, zodat Games zoeken en Voortgang synchroniseren makkelijk uit elkaar te houden zijn. Als er nog geen games zijn gekoppeld, toont de pagina aan een beheerder de knop Zoeken in plaats van door te gaan naar het volgende tabblad
+  body: "<ul>\n  <li><strong>De handleiding is in elke taal bijgewerkt.</strong>\n    Secties die alleen in de Engelse handleiding stonden, zijn nu vertaald.</li>\n</ul>\n"
 - version: 3.35.4
   date: '2026-11-03'
   tags:

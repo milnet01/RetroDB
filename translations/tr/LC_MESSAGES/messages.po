@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-05 19:42+0200\n"
+"POT-Creation-Date: 2026-11-06 09:02+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: tr\n"
@@ -159,12 +159,12 @@ msgstr "Kütüphanede oyun yok"
 msgid "Setup has already been completed"
 msgstr "Kurulum zaten tamamlandı"
 
-#: app.py:1680 routes/settings.py:553 routes/tools.py:364
+#: app.py:1680 routes/settings.py:525 routes/tools.py:364
 msgid "Permission denied"
 msgstr "İzin reddedildi"
 
-#: app.py:1700 routes/collections.py:194 routes/collections.py:271
-#: routes/collections.py:438 routes/collections.py:679
+#: app.py:1700 routes/collections.py:209 routes/collections.py:290
+#: routes/collections.py:459 routes/collections.py:706
 msgid "No data provided"
 msgstr "Veri sağlanmadı"
 
@@ -200,7 +200,7 @@ msgstr "Sistem bulunamadı veya başarım içeren oyunu yok"
 
 #: routes/achievements.py:176 routes/achievements.py:486
 #: routes/bonus_discs.py:273 routes/bulk_scrape.py:48 routes/cheats.py:32
-#: routes/cheats.py:51 routes/collections.py:276 routes/collections.py:531
+#: routes/cheats.py:51 routes/collections.py:295 routes/collections.py:558
 #: routes/emulators.py:304 routes/emulators.py:318 routes/games.py:393
 #: routes/games.py:930 routes/games.py:1049 routes/games.py:1127
 #: routes/games_ai.py:41 routes/games_media.py:40 routes/games_media.py:89
@@ -246,8 +246,8 @@ msgstr "Bu sistemde RetroAchievements içeren oyun yok"
 msgid "Sync already in progress for %(name)s"
 msgstr "%(name)s için senkronizasyon zaten devam ediyor"
 
-#: routes/achievements.py:410 routes/platform_import.py:381
-#: routes/platform_import.py:758
+#: routes/achievements.py:410 routes/platform_import.py:394
+#: routes/platform_import.py:771
 msgid "That job belongs to another user"
 msgstr "Bu iş başka bir kullanıcıya ait"
 
@@ -574,14 +574,14 @@ msgid "A bonus disc links to a main game, one level only"
 msgstr "Bonus disk, yalnızca bir seviye olacak şekilde bir ana Oyun'a bağlanır"
 
 #: routes/bonus_discs.py:219 routes/bonus_discs.py:237 routes/games.py:1397
-#: routes/games.py:1427 routes/platform_import.py:344
-#: routes/platform_import.py:723 routes/platform_import.py:1107
+#: routes/games.py:1427 routes/platform_import.py:357
+#: routes/platform_import.py:736 routes/platform_import.py:1120
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:207 routes/scraper.py:538
-#: routes/scraper.py:929 routes/settings.py:320 routes/settings.py:344
-#: routes/settings.py:459 routes/settings.py:538 routes/settings.py:567
-#: routes/settings.py:611 routes/settings.py:627 routes/settings.py:663
-#: routes/steam_achievements.py:138 routes/systems.py:286 routes/systems.py:476
+#: routes/scraper.py:929 routes/settings.py:319 routes/settings.py:343
+#: routes/settings.py:431 routes/settings.py:510 routes/settings.py:539
+#: routes/settings.py:583 routes/settings.py:599 routes/settings.py:635
+#: routes/steam_achievements.py:138 routes/systems.py:286 routes/systems.py:489
 #: routes/trophies.py:593 routes/trophies.py:791 routes/trophies.py:839
 #: routes/trophies.py:1638 routes/trophies.py:1662 routes/trophies.py:1707
 #: routes/trophies.py:1735 routes/trophies.py:1777 routes/trophies.py:1844
@@ -591,8 +591,8 @@ msgstr "Bir dahili hata oluştu"
 
 #: routes/bonus_discs.py:286 routes/bonus_discs.py:317
 #: routes/controllers.py:216 routes/controllers.py:280
-#: routes/controllers.py:413 routes/controllers.py:465 routes/settings.py:224
-#: routes/settings.py:494 routes/settings.py:577 routes/systems.py:307
+#: routes/controllers.py:413 routes/controllers.py:465 routes/settings.py:223
+#: routes/settings.py:466 routes/settings.py:549 routes/systems.py:307
 msgid "Request body must be a JSON object"
 msgstr "İstek gövdesi bir JSON nesnesi olmalıdır"
 
@@ -632,7 +632,7 @@ msgstr "Böyle bir hile paketi yok."
 msgid "Enter a folder to import."
 msgstr "İçe aktarılacak bir klasör girin."
 
-#: routes/clz_import.py:271
+#: routes/clz_import.py:253
 msgid ""
 "pdfplumber module not installed. Please run: pip install pdfplumber "
 "--break-system-packages"
@@ -640,93 +640,105 @@ msgstr ""
 "pdfplumber modülü kurulu değil. Lütfen çalıştırın: pip install pdfplumber"
 " --break-system-packages"
 
-#: routes/clz_import.py:276
+#: routes/clz_import.py:258
 msgid "No file uploaded"
 msgstr "Dosya yüklenmedi"
 
-#: routes/clz_import.py:280
+#: routes/clz_import.py:262
 msgid "File must be a PDF"
 msgstr "Dosya bir PDF olmalıdır"
 
-#: routes/clz_import.py:287
+#: routes/clz_import.py:269
 #, python-format
 msgid "File too large (%(size)sMB). Maximum size is 50MB"
 msgstr "Dosya çok büyük (%(size)sMB). Maksimum boyut 50MB'dir"
 
-#: routes/clz_import.py:290
+#: routes/clz_import.py:272
 msgid "Invalid PDF file (bad magic bytes)"
 msgstr "Geçersiz PDF dosyası (hatalı sihirli baytlar)"
 
-#: routes/clz_import.py:314
+#: routes/clz_import.py:296
 #, python-format
 msgid "PDF has %(pages)s pages; maximum is %(max)s."
 msgstr "PDF %(pages)s sayfa içeriyor; maksimum %(max)s."
 
-#: routes/clz_import.py:583
+#: routes/clz_import.py:553
 msgid "No games to import"
 msgstr "İçe aktarılacak oyun yok"
 
-#: routes/collections.py:103 routes/collections.py:446
-#: routes/collections.py:475 routes/collections.py:497
-#: routes/collections.py:527 routes/collections.py:566
+#: routes/collections.py:42
+msgid "A tag colour is written like #4cc9f0"
+msgstr "Etiket rengi #4cc9f0 gibi yazılır"
+
+#: routes/collections.py:116 routes/collections.py:467
+#: routes/collections.py:502 routes/collections.py:524
+#: routes/collections.py:554 routes/collections.py:593
 msgid "List not found"
 msgstr "Liste bulunamadı"
 
-#: routes/collections.py:163
+#: routes/collections.py:176 routes/collections.py:221
 msgid "Tag name is required"
 msgstr "Etiket adı gerekli"
 
-#: routes/collections.py:177 routes/collections.py:215
+#: routes/collections.py:192 routes/collections.py:234
 msgid "A tag with that name already exists"
 msgstr "Bu isimde bir etiket zaten mevcut"
 
-#: routes/collections.py:202 routes/collections.py:233
-#: routes/collections.py:294 routes/collections.py:359
+#: routes/collections.py:217 routes/collections.py:252
+#: routes/collections.py:313 routes/collections.py:378
 msgid "Tag not found"
 msgstr "Etiket bulunamadı"
 
-#: routes/collections.py:282
+#: routes/collections.py:301
 msgid "Either tag_id or tag_name is required"
 msgstr "tag_id veya tag_name gereklidir"
 
-#: routes/collections.py:338
+#: routes/collections.py:357
 msgid "Tag is not assigned to this game"
 msgstr "Etiket bu oyuna atanmamış"
 
-#: routes/collections.py:406
+#: routes/collections.py:425 routes/collections.py:471
 msgid "List name is required"
 msgstr "Liste adı gerekli"
 
-#: routes/collections.py:517
+#: routes/collections.py:431 routes/collections.py:475
+msgid "A list description and icon are text"
+msgstr "Liste açıklaması ve simgesi metindir"
+
+#: routes/collections.py:478
+msgid "A list position is a whole number"
+msgstr "Liste konumu bir tam sayıdır"
+
+#: routes/collections.py:544
 msgid "game_id is required"
 msgstr "game_id gerekli"
 
-#: routes/collections.py:573
+#: routes/collections.py:600
 msgid "Game is not in this list"
 msgstr "Oyun bu listede değil"
 
-#: routes/collections.py:618
+#: routes/collections.py:645 routes/collections.py:718
 msgid "Title is required"
 msgstr "Başlık gerekli"
 
-#: routes/collections.py:630 routes/collections.py:697
+#: routes/collections.py:657 routes/collections.py:726
 msgid "Priority must be an integer between 1 and 5"
 msgstr "Öncelik 1 ile 5 arasında bir tamsayı olmalıdır"
 
-#: routes/collections.py:635 routes/collections.py:702
+#: routes/collections.py:662 routes/collections.py:740
 msgid "system_id must be an integer"
 msgstr "system_id bir tamsayı olmalıdır"
 
-#: routes/collections.py:638 routes/collections.py:705
+#: routes/collections.py:665 routes/collections.py:743
 msgid "Unknown system_id"
 msgstr "Bilinmeyen system_id"
 
-#: routes/collections.py:649
+#: routes/collections.py:676 routes/collections.py:735
 msgid "This game is already on your wishlist"
 msgstr "Bu oyun zaten istek listenizde"
 
-#: routes/collections.py:687 routes/collections.py:732
-#: routes/collections.py:755
+#: routes/collections.py:714 routes/collections.py:770
+#: routes/collections.py:793
 msgid "Wishlist item not found"
 msgstr "İstek listesi öğesi bulunamadı"
 
@@ -841,8 +853,8 @@ msgstr "Meta veriler uygulanamadı."
 msgid "No fields to update"
 msgstr "Güncellenecek alan yok"
 
-#: routes/games.py:1205 routes/platform_import.py:250
-#: routes/platform_import.py:629 routes/platform_import.py:993
+#: routes/games.py:1205 routes/platform_import.py:263
+#: routes/platform_import.py:642 routes/platform_import.py:1006
 #: routes/trophies.py:1919 templates/game_imports.html:579
 #: templates/game_imports.html:842
 msgid "No games selected"
@@ -896,7 +908,7 @@ msgid "No filename provided"
 msgstr "Dosya adı sağlanmadı"
 
 #: routes/games_media.py:85 routes/reports.py:699 routes/scrape_logs.py:129
-#: routes/scrape_logs.py:154 routes/scrape_logs.py:203 routes/settings.py:353
+#: routes/scrape_logs.py:154 routes/scrape_logs.py:203 routes/settings.py:352
 msgid "Invalid filename"
 msgstr "Geçersiz dosya adı"
 
@@ -1063,15 +1075,15 @@ msgstr ""
 msgid "Next disk inserted"
 msgstr "Sonraki disk takıldı"
 
-#: routes/maintenance.py:279
+#: routes/maintenance.py:276
 msgid "Unknown image type"
 msgstr "Bilinmeyen görsel türü"
 
-#: routes/maintenance.py:492
+#: routes/maintenance.py:489
 msgid "Add your ScreenScraper account in Settings first."
 msgstr "Önce Ayarlar'dan ScreenScraper hesabınızı ekleyin."
 
-#: routes/maintenance.py:493
+#: routes/maintenance.py:490
 msgid "This fix is already running."
 msgstr "Bu düzeltme zaten çalışıyor."
 
@@ -1150,17 +1162,17 @@ msgstr "Resim dosyası bulunamadı"
 msgid "Background removal failed"
 msgstr "Arka plan kaldırma başarısız oldu"
 
-#: routes/platform_import.py:182
+#: routes/platform_import.py:195
 msgid "Steam API key not configured. Add it in Settings → API Keys."
 msgstr ""
 "Steam API anahtarı yapılandırılmamış. Ayarlar → API Anahtarları "
 "bölümünden ekleyin."
 
-#: routes/platform_import.py:184
+#: routes/platform_import.py:197
 msgid "Steam ID not configured. Add it in Settings → API Keys."
 msgstr "Steam ID yapılandırılmamış. Ayarlar → API Anahtarları bölümünden ekleyin."
 
-#: routes/platform_import.py:190
+#: routes/platform_import.py:203
 #, python-format
 msgid ""
 "Could not resolve Steam vanity URL \"%(steam_id)s\". Use your 17-digit "
@@ -1169,7 +1181,7 @@ msgstr ""
 "Steam özel URL'si \"%(steam_id)s\" çözümlenemedi. Bunun yerine 17 haneli "
 "Steam ID'nizi kullanın."
 
-#: routes/platform_import.py:196
+#: routes/platform_import.py:209
 msgid ""
 "No games found. Check that your Steam profile and game details are set to"
 " Public."
@@ -1177,37 +1189,37 @@ msgstr ""
 "Oyun bulunamadı. Steam profilinizin ve oyun ayrıntılarınızın Herkese Açık"
 " olarak ayarlandığından emin olun."
 
-#: routes/platform_import.py:255
+#: routes/platform_import.py:268
 msgid "Could not create Windows system entry"
 msgstr "Windows sistem girişi oluşturulamadı"
 
-#: routes/platform_import.py:399
+#: routes/platform_import.py:412
 msgid "Xbox Client ID not configured. Add it in Settings → API Keys."
 msgstr ""
 "Xbox İstemci Kimliği yapılandırılmamış. Ayarlar → API Anahtarları "
 "bölümünden ekleyin."
 
-#: routes/platform_import.py:537
+#: routes/platform_import.py:550
 msgid "Xbox credentials not configured. Add them in Settings → API Keys."
 msgstr ""
 "Xbox kimlik bilgileri yapılandırılmamış. Ayarlar → API Anahtarları "
 "bölümünden ekleyin."
 
-#: routes/platform_import.py:541
+#: routes/platform_import.py:554
 msgid "Xbox authentication failed. Please re-connect your Xbox account."
 msgstr ""
 "Xbox kimlik doğrulaması başarısız oldu. Lütfen Xbox hesabınızı yeniden "
 "bağlayın."
 
-#: routes/platform_import.py:545
+#: routes/platform_import.py:558
 msgid "No games found in Xbox title history."
 msgstr "Xbox oyun geçmişinde oyun bulunamadı."
 
-#: routes/platform_import.py:833
+#: routes/platform_import.py:846
 msgid "PSN NPSSO not configured. Add it in Settings → API Keys."
 msgstr "PSN NPSSO yapılandırılmamış. Ayarlar → API Anahtarları bölümünden ekleyin."
 
-#: routes/platform_import.py:860
+#: routes/platform_import.py:873
 msgid "Failed to fetch PSN game list. Try syncing trophies first."
 msgstr "PSN oyun listesi alınamadı. Önce kupaları senkronize etmeyi deneyin."
 
@@ -1230,8 +1242,8 @@ msgstr ""
 msgid "Missing required parameters"
 msgstr "Gerekli parametreler eksik"
 
-#: routes/reports.py:617 routes/tools.py:513 routes/tools.py:570
-#: routes/tools.py:615
+#: routes/reports.py:617 routes/tools.py:533 routes/tools.py:590
+#: routes/tools.py:635
 msgid "Invalid path"
 msgstr "Geçersiz yol"
 
@@ -1288,7 +1300,7 @@ msgstr "Oluşturulan dosya adı geçersiz karakterler içeriyor"
 msgid "Invalid log file"
 msgstr "Geçersiz günlük dosyası"
 
-#: routes/scrape_logs.py:101 routes/tools.py:516
+#: routes/scrape_logs.py:101 routes/tools.py:536
 msgid "File not found"
 msgstr "Dosya bulunamadı"
 
@@ -1377,61 +1389,65 @@ msgstr "Bağlantı hatası: %(error)s"
 msgid "Allowance check not supported for %(scraper)s"
 msgstr "%(scraper)s için kota kontrolü desteklenmiyor"
 
-#: routes/settings.py:228
+#: routes/settings.py:227
 msgid "Value is required"
 msgstr "Değer gerekli"
 
-#: routes/settings.py:250
+#: routes/settings.py:249
 msgid "Option already exists"
 msgstr "Seçenek zaten mevcut"
 
-#: routes/settings.py:359
+#: routes/settings.py:358
 msgid "Backup file not found"
 msgstr "Yedek dosyası bulunamadı"
 
-#: routes/settings.py:373
+#: routes/settings.py:376
 msgid "A background job is running. Wait for it to finish before restoring."
 msgstr "Arka planda bir iş çalışıyor. Geri yüklemeden önce bitmesini bekleyin."
 
-#: routes/settings.py:393
+#: routes/settings.py:396
 msgid "Backup failed its integrity check; restore aborted."
 msgstr "Yedek bütünlük kontrolünden geçemedi; geri yükleme iptal edildi."
 
-#: routes/settings.py:515
+#: routes/settings.py:419
+msgid "The backup could not be copied in; nothing was changed."
+msgstr "Yedekleme kopyalanamadı; hiçbir şey değiştirilmedi."
+
+#: routes/settings.py:487
 #, python-format
 msgid "Invalid %(field)s: %(result)s"
 msgstr "Geçersiz %(field)s: %(result)s"
 
-#: routes/settings.py:534 routes/settings.py:608 routes/settings.py:660
+#: routes/settings.py:506 routes/settings.py:580 routes/settings.py:632
 #: routes/tools.py:292 services/js_i18n_strings.py:745
 #: templates/settings.html:1149 templates/settings.html:2742
 msgid "Failed to save settings"
 msgstr "Ayarlar kaydedilemedi"
 
-#: routes/settings.py:587 routes/tools.py:284
+#: routes/settings.py:559 routes/tools.py:284
 #, python-format
 msgid "Unknown setting key: %(key)s"
 msgstr "Bilinmeyen ayar anahtarı: %(key)s"
 
-#: routes/settings.py:593 routes/tools.py:287
+#: routes/settings.py:565 routes/tools.py:287
 #, python-format
 msgid "Invalid value for '%(key)s': %(reason)s"
 msgstr "'%(key)s' için geçersiz değer: %(reason)s"
 
-#: routes/settings.py:625
+#: routes/settings.py:597
 msgid "Failed to reset settings"
 msgstr "Ayarlar sıfırlanamadı"
 
-#: routes/settings.py:646
+#: routes/settings.py:618
 #, python-format
 msgid "invalid logging settings: %(reason)s"
 msgstr "geçersiz günlükleme ayarları: %(reason)s"
 
-#: routes/settings.py:676 routes/settings.py:704
+#: routes/settings.py:648 routes/settings.py:676
 msgid "Invalid field. Must be \"genre\" or \"modes\""
 msgstr "Geçersiz alan. \"genre\" veya \"modes\" olmalıdır"
 
-#: routes/settings.py:707
+#: routes/settings.py:679
 msgid "No mappings provided"
 msgstr "Eşleme sağlanmadı"
 
@@ -1463,7 +1479,7 @@ msgstr "Yönetici izinleri gerekli"
 msgid "Settings payload must be an object"
 msgstr "Ayarlar verisi bir nesne olmalıdır"
 
-#: routes/tools.py:327 routes/tools.py:979
+#: routes/tools.py:327 routes/tools.py:1001
 #, python-format
 msgid "Path does not exist: %(path)s"
 msgstr "Yol mevcut değil: %(path)s"
@@ -1472,70 +1488,74 @@ msgstr "Yol mevcut değil: %(path)s"
 msgid "Task not found"
 msgstr "Görev bulunamadı"
 
-#: routes/tools.py:415 routes/tools.py:435
+#: routes/tools.py:421 routes/tools.py:439 routes/tools.py:461
+msgid "Only an admin or the person who started this task can change it"
+msgstr "Bunu yalnızca bir yönetici veya bu görevi başlatan kişi değiştirebilir"
+
+#: routes/tools.py:431 routes/tools.py:453
 msgid "Task not found or not running"
 msgstr "Görev bulunamadı veya çalışmıyor"
 
-#: routes/tools.py:455
+#: routes/tools.py:475
 msgid "Task not found or not paused"
 msgstr "Görev bulunamadı veya duraklatılmamış"
 
-#: routes/tools.py:472 routes/tools.py:677 routes/tools.py:852
-#: routes/tools.py:968
+#: routes/tools.py:492 routes/tools.py:697 routes/tools.py:873
+#: routes/tools.py:990
 msgid "Invalid scan path"
 msgstr "Geçersiz tarama yolu"
 
-#: routes/tools.py:510 routes/tools.py:567 routes/tools.py:612
+#: routes/tools.py:530 routes/tools.py:587 routes/tools.py:632
 msgid "No path provided"
 msgstr "Yol sağlanmadı"
 
-#: routes/tools.py:538
+#: routes/tools.py:558
 msgid "No archive path provided"
 msgstr "Arşiv yolu sağlanmadı"
 
-#: routes/tools.py:541
+#: routes/tools.py:561
 msgid "Invalid archive path"
 msgstr "Geçersiz arşiv yolu"
 
-#: routes/tools.py:544
+#: routes/tools.py:564
 msgid "No files to remove"
 msgstr "Kaldırılacak dosya yok"
 
-#: routes/tools.py:645
+#: routes/tools.py:665
 msgid "No paths provided"
 msgstr "Yol sağlanmadı"
 
-#: routes/tools.py:651
+#: routes/tools.py:671
 #, python-format
 msgid "Invalid path: %(path)s"
 msgstr "Geçersiz yol: %(path)s"
 
-#: routes/tools.py:726
+#: routes/tools.py:746
 msgid "chdman not found. Please install MAME tools."
 msgstr "chdman bulunamadı. Lütfen MAME araçlarını kurun."
 
-#: routes/tools.py:875
+#: routes/tools.py:896
 msgid "chdman not found"
 msgstr "chdman bulunamadı"
 
-#: routes/tools.py:973
+#: routes/tools.py:995
 #, python-format
 msgid "Unknown duplicate method: %(method)s"
 msgstr "Bilinmeyen kopya bulma yöntemi: %(method)s"
 
-#: routes/tools.py:1186 routes/tools.py:1540
+#: routes/tools.py:1209 routes/tools.py:1565
 msgid "These scan results have expired. Scan again, then delete."
 msgstr "Bu tarama sonuçlarının süresi doldu. Yeniden tarayın, ardından silin."
 
-#: routes/tools.py:1191
+#: routes/tools.py:1214
 msgid "Keep at least one copy of each game. Nothing was deleted."
 msgstr "Her oyunun en az bir kopyasını tutun. Hiçbir şey silinmedi."
 
-#: routes/tools.py:1451
+#: routes/tools.py:1474
 msgid "This system has no screenshot check"
 msgstr "Bu sistem için ekran görüntüsü kontrolü yok"
 
-#: routes/tools.py:1550
+#: routes/tools.py:1575
 msgid "Keep at least one copy of each screenshot. Nothing was deleted."
 msgstr "Her ekran görüntüsünün en az bir kopyasını tutun. Hiçbir şey silinmedi."
 
@@ -1662,7 +1682,7 @@ msgstr "Bu oyun diğer sürümlere bağlı değil."
 msgid "The AI did not give a usable answer. Try again later."
 msgstr "Yapay zeka kullanılabilir bir yanıt vermedi. Daha sonra tekrar deneyin."
 
-#: routes/xbox_achievements.py:126 services/jobs/platform_sync.py:768
+#: routes/xbox_achievements.py:126 services/jobs/platform_sync.py:798
 msgid "Xbox credentials not configured"
 msgstr "Xbox kimlik bilgileri yapılandırılmamış"
 
@@ -4774,37 +4794,37 @@ msgstr ""
 msgid "The player has no core for this system."
 msgstr "Oynatıcının bu sistem için çekirdeği yok."
 
-#: services/jobs/platform_sync.py:368 services/jobs/platform_sync.py:677
+#: services/jobs/platform_sync.py:398 services/jobs/platform_sync.py:707
 msgid "Sync already running"
 msgstr "Eşitleme zaten çalışıyor"
 
-#: services/jobs/platform_sync.py:373
+#: services/jobs/platform_sync.py:403
 msgid "Steam sync is already running on another worker process."
 msgstr "Steam eşitleme başka bir çalışan işlemde zaten çalışıyor."
 
-#: services/jobs/platform_sync.py:391 services/jobs/platform_sync.py:700
+#: services/jobs/platform_sync.py:421 services/jobs/platform_sync.py:730
 msgid "No running sync to cancel"
 msgstr "İptal edilecek çalışan eşitleme yok"
 
-#: services/jobs/platform_sync.py:485
+#: services/jobs/platform_sync.py:515
 msgid "Steam API key or Steam ID not configured"
 msgstr "Steam API anahtarı veya Steam kimliği yapılandırılmamış"
 
-#: services/jobs/platform_sync.py:504
+#: services/jobs/platform_sync.py:534
 msgid "No Steam games found to sync"
 msgstr "Eşitlenecek Steam oyunu bulunamadı"
 
-#: services/jobs/platform_sync.py:682
+#: services/jobs/platform_sync.py:712
 msgid "Xbox sync is already running on another worker process."
 msgstr "Xbox eşitleme başka bir çalışan işlemde zaten çalışıyor."
 
-#: services/jobs/platform_sync.py:777
+#: services/jobs/platform_sync.py:807
 msgid "Xbox authentication failed — please re-connect your Xbox account"
 msgstr ""
 "Xbox kimlik doğrulaması başarısız oldu — lütfen Xbox hesabınızı yeniden "
 "bağlayın"
 
-#: services/jobs/platform_sync.py:828
+#: services/jobs/platform_sync.py:858
 msgid "No Xbox games found to sync"
 msgstr "Eşitlenecek Xbox oyunu bulunamadı"
 
@@ -14730,477 +14750,4 @@ msgstr "GitHub'da Destekle"
 #: templates/_settings_tabs/system.html:465
 msgid "Support on Patreon"
 msgstr "Patreon'da Destekle"
-
-#~ msgid "(auto-detect)"
-#~ msgstr "(otomatik algıla)"
-
-#~ msgid "(not set)"
-#~ msgstr "(ayarlanmadı)"
-
-#~ msgid "API configured"
-#~ msgstr "API yapılandırıldı"
-
-#~ msgid "API key missing"
-#~ msgstr "API anahtarı eksik"
-
-#~ msgid "API keys saved!"
-#~ msgstr "API anahtarları kaydedildi!"
-
-#~ msgid "Apply"
-#~ msgstr "Uygula"
-
-#~ msgid ""
-#~ "Are you sure you want to delete"
-#~ " user \"{username}\"? This action cannot"
-#~ " be undone."
-#~ msgstr ""
-#~ "\"{username}\" kullanıcısını silmek istediğinizden"
-#~ " emin misiniz? Bu işlem geri "
-#~ "alınamaz."
-
-#~ msgid ""
-#~ "Are you sure you want to restore"
-#~ " from \"{filename}\"? This will replace "
-#~ "all current data."
-#~ msgstr ""
-#~ "\"{filename}\" dosyasından geri yüklemek "
-#~ "istediğinizden emin misiniz? Bu işlem "
-#~ "mevcut tüm verilerin yerini alacaktır."
-
-#~ msgid "Backup created successfully!"
-#~ msgstr "Yedek başarıyla oluşturuldu!"
-
-#~ msgid "Backup failed: {error}"
-#~ msgstr "Yedekleme başarısız oldu: {error}"
-
-#~ msgid "Confirm"
-#~ msgstr "Onayla"
-
-#~ msgid "Create Backup"
-#~ msgstr "Yedek Oluştur"
-
-#~ msgid "Creating backup..."
-#~ msgstr "Yedek oluşturuluyor..."
-
-#~ msgid "Database restored! Reloading..."
-#~ msgstr "Veritabanı geri yüklendi! Yeniden yükleniyor..."
-
-#~ msgid "Default: {value}"
-#~ msgstr "Varsayılan: {value}"
-
-#~ msgid "Delete User"
-#~ msgstr "Kullanıcıyı Sil"
-
-#~ msgid "Display settings saved!"
-#~ msgstr "Görüntü ayarları kaydedildi!"
-
-#~ msgid "Edit User"
-#~ msgstr "Kullanıcıyı Düzenle"
-
-#~ msgid "Error - disappears in {n}s"
-#~ msgstr "Hata - {n}sn içinde kaybolur"
-
-#~ msgid "Error creating backup: {error}"
-#~ msgstr "Yedek oluşturulurken hata: {error}"
-
-#~ msgid "Error restoring: {error}"
-#~ msgstr "Geri yüklenirken hata: {error}"
-
-#~ msgid "Error saving API keys: {error}"
-#~ msgstr "API anahtarları kaydedilirken hata: {error}"
-
-#~ msgid "Error saving settings: {error}"
-#~ msgstr "Ayarlar kaydedilirken hata: {error}"
-
-#~ msgid "Error searching: {error}"
-#~ msgstr "Arama yapılırken hata: {error}"
-
-#~ msgid "Failed to change password"
-#~ msgstr "Şifre değiştirilemedi"
-
-#~ msgid "Failed to delete user"
-#~ msgstr "Kullanıcı silinemedi"
-
-#~ msgid "Failed to save user"
-#~ msgstr "Kullanıcı kaydedilemedi"
-
-#~ msgid "Failed to save: {error}"
-#~ msgstr "Kaydedilemedi: {error}"
-
-#~ msgid "Info - disappears in {n}s"
-#~ msgstr "Bilgi - {n}sn içinde kaybolur"
-
-#~ msgid "Network error changing password"
-#~ msgstr "Şifre değiştirilirken ağ hatası"
-
-#~ msgid "Network error deleting user"
-#~ msgstr "Kullanıcı silinirken ağ hatası"
-
-#~ msgid "Network error saving settings"
-#~ msgstr "Ayarlar kaydedilirken ağ hatası"
-
-#~ msgid "Network error saving user"
-#~ msgstr "Kullanıcı kaydedilirken ağ hatası"
-
-#~ msgid "No logo"
-#~ msgstr "Logo yok"
-
-#~ msgid "No systems found"
-#~ msgstr "Sistem bulunamadı"
-
-#~ msgid "Notification settings saved!"
-#~ msgstr "Bildirim ayarları kaydedildi!"
-
-#~ msgid "Password changed successfully!"
-#~ msgstr "Şifre başarıyla değiştirildi!"
-
-#~ msgid "Path settings saved!"
-#~ msgstr "Yol ayarları kaydedildi!"
-
-#~ msgid "Please enter a new password"
-#~ msgstr "Lütfen yeni bir şifre girin"
-
-#~ msgid "Restart required for changes to take full effect"
-#~ msgstr "Değişikliklerin tam olarak etkili olması için yeniden başlatma gerekli"
-
-#~ msgid "Restore Database"
-#~ msgstr "Veritabanını Geri Yükle"
-
-#~ msgid "Restore failed: {error}"
-#~ msgstr "Geri yükleme başarısız oldu: {error}"
-
-#~ msgid "Score: {score}"
-#~ msgstr "Puan: {score}"
-
-#~ msgid "Scraper settings saved!"
-#~ msgstr "Kazıyıcı ayarları kaydedildi!"
-
-#~ msgid "Searching..."
-#~ msgstr "Aranıyor..."
-
-#~ msgid "Success - disappears in {n}s"
-#~ msgstr "Başarılı - {n}sn içinde kaybolur"
-
-#~ msgid "Try modifying the search title"
-#~ msgstr "Arama başlığını değiştirmeyi deneyin"
-
-#~ msgid "User deleted successfully"
-#~ msgstr "Kullanıcı başarıyla silindi"
-
-#~ msgid "User saved successfully!"
-#~ msgstr "Kullanıcı başarıyla kaydedildi!"
-
-#~ msgid "Warning - disappears in {n}s"
-#~ msgstr "Uyarı - {n}sn içinde kaybolur"
-
-#~ msgid "Your settings have been saved!"
-#~ msgstr "Ayarlarınız kaydedildi!"
-
-#~ msgid "Could not validate destination path"
-#~ msgstr "Hedef yol doğrulanamadı"
-
-#~ msgid "Patreon"
-#~ msgstr "Patreon"
-
-#~ msgid "Trophies & Achievements"
-#~ msgstr "Kupalar ve Başarımlar"
-
-#~ msgid "Two game IDs required"
-#~ msgstr "İki oyun ID'si gerekli"
-
-#~ msgid "One or both games not found"
-#~ msgstr "Oyunlardan biri veya ikisi de bulunamadı"
-
-#~ msgid "Failed to sync trophies"
-#~ msgstr "Kupalar senkronize edilemedi"
-
-#~ msgid "Network error syncing trophies"
-#~ msgstr "Kupalar senkronize edilirken ağ hatası"
-
-#~ msgid "Trophies synced successfully!"
-#~ msgstr "Kupalar başarıyla senkronize edildi!"
-
-#~ msgid "Admin Login"
-#~ msgstr "Yönetici Girişi"
-
-#~ msgid "Enter admin password"
-#~ msgstr "Yönetici şifresini girin"
-
-#~ msgid "Fetching controller images..."
-#~ msgstr "Kontrolcü resimleri alınıyor..."
-
-#~ msgid "Connection failed: %(error)s"
-#~ msgstr "Bağlantı başarısız oldu: %(error)s"
-
-#~ msgid ""
-#~ "Log in with your PlayStation account "
-#~ "(if not already), then the page "
-#~ "will show your NPSSO token as "
-#~ "JSON."
-#~ msgstr ""
-#~ "PlayStation hesabınızla giriş yapın (henüz "
-#~ "yapmadıysanız), ardından sayfa NPSSO "
-#~ "token'ınızı JSON olarak gösterecektir."
-
-#~ msgid "Hide Bonus"
-#~ msgstr "Bonusu Gizle"
-
-#~ msgid "Show Bonus"
-#~ msgstr "Bonusu Göster"
-
-#~ msgid ""
-#~ "Asking the AI: {current} of {total} "
-#~ "games, {proposals} names suggested. {system}"
-#~ msgstr ""
-
-#~ msgid "Done. {proposals} names suggested from {total} games."
-#~ msgstr ""
-
-#~ msgid "Stopped. {proposals} names suggested."
-#~ msgstr ""
-
-#~ msgid "{accepted} names changed."
-#~ msgstr ""
-
-#~ msgid "{accepted} names changed. {skipped} skipped: their title changed since."
-#~ msgstr ""
-
-#~ msgid "{count} suggested names. Untick any you do not want, then accept."
-#~ msgstr ""
-
-#~ msgid "{rejected} names rejected. They will not be suggested again."
-#~ msgstr ""
-
-#~ msgid "Format: YYYY-MM-DD (e.g., 1996-09-29)"
-#~ msgstr "Format: YYYY-AA-GG (örn. 1996-09-29)"
-
-#~ msgid "RetroDB Player cores"
-#~ msgstr "RetroDB Player çekirdekleri"
-
-#~ msgid "Every game here has had AI Fill already."
-#~ msgstr "Buradaki her oyun zaten Yapay Zeka Doldur'dan geçti."
-
-#~ msgid ""
-#~ "Ask the AI for each game's full"
-#~ " official name in its ROM's own "
-#~ "region, then tick the new names "
-#~ "you want. Nothing changes until you "
-#~ "accept it."
-#~ msgstr ""
-#~ "Yapay zekaya her oyunun kendi ROM "
-#~ "bölgesindeki tam resmi adını sorun, "
-#~ "ardından istediğiniz yeni adları işaretleyin."
-#~ " Siz kabul edene kadar hiçbir şey "
-#~ "değişmez."
-
-#~ msgid "Cheats downloaded."
-#~ msgstr "Hileler indirildi."
-
-#~ msgid "Downloading RetroArch… This can take a few minutes."
-#~ msgstr "RetroArch indiriliyor… Bu birkaç dakika sürebilir."
-
-#~ msgid "Downloading {pack}…"
-#~ msgstr "{pack} indiriliyor…"
-
-#~ msgid "Default"
-#~ msgstr "Varsayılan"
-
-#~ msgid "Earn achievements in RetroDB's RetroArch"
-#~ msgstr "RetroDB'nin RetroArch'ında başarım kazanın"
-
-#~ msgid "Launches in: %(name)s"
-#~ msgstr "Şurada açılır: %(name)s"
-
-#~ msgid ""
-#~ "This will clear the play time from"
-#~ " {stored} games that already have "
-#~ "one. The other {other} queued matches"
-#~ " are dropped, and those games keep"
-#~ " what they have. A bulk lookup "
-#~ "can fetch the times again."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Stopped: ScreenScraper stopped answering, so"
-#~ " your daily allowance may be spent."
-#~ " Files swapped: {replaced}. Run it "
-#~ "again tomorrow."
-#~ msgstr ""
-#~ "Durduruldu: ScreenScraper yanıt vermeyi kesti,"
-#~ " günlük hakkınız dolmuş olabilir. "
-#~ "Değiştirilen dosya: {replaced}. Yarın tekrar"
-#~ " çalıştırın."
-
-#~ msgid "An official names run is already running."
-#~ msgstr "Bir resmi ad taraması zaten çalışıyor."
-
-#~ msgid "No official names run to cancel."
-#~ msgstr "İptal edilecek bir resmi ad taraması yok."
-
-#~ msgid ""
-#~ "Asking the AI: game {current} of "
-#~ "{total}. Names suggested: {proposals}. "
-#~ "{system}"
-#~ msgstr ""
-#~ "Yapay zekaya soruluyor: oyun {current} /"
-#~ " {total}. Önerilen ad sayısı: {proposals}."
-#~ " {system}"
-
-#~ msgid "Could not accept these names."
-#~ msgstr "Bu adlar kabul edilemedi."
-
-#~ msgid "Could not load the suggested names."
-#~ msgstr "Önerilen adlar yüklenemedi."
-
-#~ msgid "Could not reject these names."
-#~ msgstr "Bu adlar reddedilemedi."
-
-#~ msgid "Done. Games asked: {total}. Names suggested: {proposals}."
-#~ msgstr "Bitti. Sorulan oyun sayısı: {total}. Önerilen ad sayısı: {proposals}."
-
-#~ msgid "Europe"
-#~ msgstr "Avrupa"
-
-#~ msgid "Japan"
-#~ msgstr "Japonya"
-
-#~ msgid "Names changed: {accepted}."
-#~ msgstr "Değiştirilen ad sayısı: {accepted}."
-
-#~ msgid ""
-#~ "Names changed: {accepted}. Skipped because "
-#~ "their title changed since: {skipped}."
-#~ msgstr ""
-#~ "Değiştirilen ad sayısı: {accepted}. Başlığı"
-#~ " o zamandan beri değiştiği için "
-#~ "atlanan: {skipped}."
-
-#~ msgid "Names rejected: {rejected}. They will not be suggested again."
-#~ msgstr "Reddedilen ad sayısı: {rejected}. Bunlar bir daha önerilmeyecek."
-
-#~ msgid "No suggested names waiting. Press Ask the AI to look for some."
-#~ msgstr "Bekleyen önerilen ad yok. Aramak için Yapay Zekaya Sor düğmesine basın."
-
-#~ msgid "Stopped. Names suggested: {proposals}."
-#~ msgstr "Durduruldu. Önerilen ad sayısı: {proposals}."
-
-#~ msgid ""
-#~ "Suggested names waiting: {count}. Untick "
-#~ "any you do not want, then accept."
-#~ msgstr ""
-#~ "Bekleyen önerilen ad sayısı: {count}. "
-#~ "İstemediklerinizin işaretini kaldırın, ardından "
-#~ "kabul edin."
-
-#~ msgid "The run stopped: {error}. Names already suggested are kept."
-#~ msgstr "Tarama durdu: {error}. Önceden önerilen adlar korunur."
-
-#~ msgid "Tick at least one name."
-#~ msgstr "En az bir adı işaretleyin."
-
-#~ msgid "USA"
-#~ msgstr "ABD"
-
-#~ msgid "World"
-#~ msgstr "Dünya"
-
-#~ msgid "unknown"
-#~ msgstr "bilinmiyor"
-
-#~ msgid "{system} · {file} · old name from: {region}"
-#~ msgstr "{system} · {file} · eski adın bölgesi: {region}"
-
-#~ msgid "Official Names"
-#~ msgstr "Resmi Adlar"
-
-#~ msgid ""
-#~ "The AI suggests each game's full "
-#~ "official name, as released in the "
-#~ "region of its ROM: a Japanese ROM"
-#~ " of Mega Man becomes Rockman. Tick"
-#~ " the names you want and accept "
-#~ "them. The old name is kept as "
-#~ "an alternate title, and an accepted "
-#~ "name is kept when scraping. Nothing "
-#~ "changes until you accept it."
-#~ msgstr ""
-#~ "Yapay zeka her oyun için, ROM'unun "
-#~ "bölgesinde çıktığı haliyle tam resmi "
-#~ "adını önerir: Mega Man'in Japon ROM'u"
-#~ " Rockman olur. İstediğiniz adları "
-#~ "işaretleyip kabul edin. Eski ad "
-#~ "alternatif başlık olarak korunur ve "
-#~ "kabul edilen ad kazıma sırasında "
-#~ "korunur. Siz kabul edene kadar hiçbir"
-#~ " şey değişmez."
-
-#~ msgid "Ask the AI"
-#~ msgstr "Yapay Zekaya Sor"
-
-#~ msgid "Suggested names"
-#~ msgstr "Önerilen adlar"
-
-#~ msgid "Accept ticked"
-#~ msgstr "İşaretlileri kabul et"
-
-#~ msgid "Reject ticked"
-#~ msgstr "İşaretlileri reddet"
-
-#~ msgid "Tick all"
-#~ msgstr "Tümünü işaretle"
-
-#~ msgid "Tick none"
-#~ msgstr "Hiçbirini işaretleme"
-
-#~ msgid "Cleared RA data for {n} games in {system}"
-#~ msgstr "{system} sisteminde {n} oyun için RA verisi temizlendi"
-
-#~ msgid ""
-#~ "Cleared RetroAchievements data for {n} "
-#~ "games. Run \"Refresh RetroAchievements\" to"
-#~ " re-scan with updated matching."
-#~ msgstr ""
-#~ "{n} oyun için RetroAchievements verisi "
-#~ "temizlendi. Güncellenmiş eşleştirmeyle yeniden "
-#~ "taramak için \"RetroAchievements'ı Yenile\"yi "
-#~ "çalıştırın."
-
-#~ msgid "RA Data Cleared"
-#~ msgstr "RA Verisi Temizlendi"
-
-#~ msgid "Refresh RetroAchievements"
-#~ msgstr "RetroAchievements'ı Yenile"
-
-#~ msgid ""
-#~ "This will clear RetroAchievements game "
-#~ "IDs and progress data for \"{system}\"."
-#~ " Continue?"
-#~ msgstr ""
-#~ "Bu işlem \"{system}\" için RetroAchievements"
-#~ " oyun ID'lerini ve ilerleme verilerini "
-#~ "temizleyecektir. Devam edilsin mi?"
-
-#~ msgid "🏆 Refresh RetroAchievements"
-#~ msgstr "🏆 RetroAchievements'ı Yenile"
-
-#~ msgid "Remove this system from Achievements"
-#~ msgstr "Bu sistemi Başarımlar'dan kaldır"
-
-#~ msgid ""
-#~ "Your PlayStation Network session expires "
-#~ "soon — re-link it to avoid "
-#~ "an interruption."
-#~ msgstr ""
-#~ "PlayStation Network oturumunuzun süresi "
-#~ "yakında dolacak — kesinti yaşamamak için"
-#~ " yeniden bağlayın."
-
-#~ msgid "Re-link now"
-#~ msgstr "Şimdi yeniden bağla"
-
-#~ msgid "Read from clipboard"
-#~ msgstr "Panodan oku"
-
-#~ msgid "Paste &amp; Detect"
-#~ msgstr "Yapıştır ve Algıla"
 

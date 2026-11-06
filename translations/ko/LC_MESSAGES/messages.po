@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-05 19:42+0200\n"
+"POT-Creation-Date: 2026-11-06 09:02+0200\n"
 "PO-Revision-Date: 2026-06-30 14:26+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ko\n"
@@ -156,12 +156,12 @@ msgstr "라이브러리에 게임이 없습니다"
 msgid "Setup has already been completed"
 msgstr "설정이 이미 완료되었습니다"
 
-#: app.py:1680 routes/settings.py:553 routes/tools.py:364
+#: app.py:1680 routes/settings.py:525 routes/tools.py:364
 msgid "Permission denied"
 msgstr "권한이 거부되었습니다"
 
-#: app.py:1700 routes/collections.py:194 routes/collections.py:271
-#: routes/collections.py:438 routes/collections.py:679
+#: app.py:1700 routes/collections.py:209 routes/collections.py:290
+#: routes/collections.py:459 routes/collections.py:706
 msgid "No data provided"
 msgstr "제공된 데이터가 없습니다"
 
@@ -195,7 +195,7 @@ msgstr "시스템을 찾을 수 없거나 업적이 있는 게임이 없습니�
 
 #: routes/achievements.py:176 routes/achievements.py:486
 #: routes/bonus_discs.py:273 routes/bulk_scrape.py:48 routes/cheats.py:32
-#: routes/cheats.py:51 routes/collections.py:276 routes/collections.py:531
+#: routes/cheats.py:51 routes/collections.py:295 routes/collections.py:558
 #: routes/emulators.py:304 routes/emulators.py:318 routes/games.py:393
 #: routes/games.py:930 routes/games.py:1049 routes/games.py:1127
 #: routes/games_ai.py:41 routes/games_media.py:40 routes/games_media.py:89
@@ -241,8 +241,8 @@ msgstr "이 시스템에 RetroAchievements가 있는 게임이 없습니다"
 msgid "Sync already in progress for %(name)s"
 msgstr "%(name)s에 대한 동기화가 이미 진행 중입니다"
 
-#: routes/achievements.py:410 routes/platform_import.py:381
-#: routes/platform_import.py:758
+#: routes/achievements.py:410 routes/platform_import.py:394
+#: routes/platform_import.py:771
 msgid "That job belongs to another user"
 msgstr "해당 작업은 다른 사용자의 것입니다"
 
@@ -565,14 +565,14 @@ msgid "A bonus disc links to a main game, one level only"
 msgstr "보너스 디스크는 메인 게임 하나에만 연결되며, 한 단계까지만 가능합니다"
 
 #: routes/bonus_discs.py:219 routes/bonus_discs.py:237 routes/games.py:1397
-#: routes/games.py:1427 routes/platform_import.py:344
-#: routes/platform_import.py:723 routes/platform_import.py:1107
+#: routes/games.py:1427 routes/platform_import.py:357
+#: routes/platform_import.py:736 routes/platform_import.py:1120
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:207 routes/scraper.py:538
-#: routes/scraper.py:929 routes/settings.py:320 routes/settings.py:344
-#: routes/settings.py:459 routes/settings.py:538 routes/settings.py:567
-#: routes/settings.py:611 routes/settings.py:627 routes/settings.py:663
-#: routes/steam_achievements.py:138 routes/systems.py:286 routes/systems.py:476
+#: routes/scraper.py:929 routes/settings.py:319 routes/settings.py:343
+#: routes/settings.py:431 routes/settings.py:510 routes/settings.py:539
+#: routes/settings.py:583 routes/settings.py:599 routes/settings.py:635
+#: routes/steam_achievements.py:138 routes/systems.py:286 routes/systems.py:489
 #: routes/trophies.py:593 routes/trophies.py:791 routes/trophies.py:839
 #: routes/trophies.py:1638 routes/trophies.py:1662 routes/trophies.py:1707
 #: routes/trophies.py:1735 routes/trophies.py:1777 routes/trophies.py:1844
@@ -582,8 +582,8 @@ msgstr "내부 오류가 발생했습니다"
 
 #: routes/bonus_discs.py:286 routes/bonus_discs.py:317
 #: routes/controllers.py:216 routes/controllers.py:280
-#: routes/controllers.py:413 routes/controllers.py:465 routes/settings.py:224
-#: routes/settings.py:494 routes/settings.py:577 routes/systems.py:307
+#: routes/controllers.py:413 routes/controllers.py:465 routes/settings.py:223
+#: routes/settings.py:466 routes/settings.py:549 routes/systems.py:307
 msgid "Request body must be a JSON object"
 msgstr "요청 본문은 JSON 객체여야 합니다"
 
@@ -623,7 +623,7 @@ msgstr "해당 치트 팩이 없습니다."
 msgid "Enter a folder to import."
 msgstr "가져올 폴더를 입력하세요."
 
-#: routes/clz_import.py:271
+#: routes/clz_import.py:253
 msgid ""
 "pdfplumber module not installed. Please run: pip install pdfplumber "
 "--break-system-packages"
@@ -631,93 +631,105 @@ msgstr ""
 "pdfplumber 모듈이 설치되어 있지 않습니다. 다음을 실행하세요: pip install pdfplumber --break-"
 "system-packages"
 
-#: routes/clz_import.py:276
+#: routes/clz_import.py:258
 msgid "No file uploaded"
 msgstr "업로드된 파일이 없습니다"
 
-#: routes/clz_import.py:280
+#: routes/clz_import.py:262
 msgid "File must be a PDF"
 msgstr "파일은 PDF여야 합니다"
 
-#: routes/clz_import.py:287
+#: routes/clz_import.py:269
 #, python-format
 msgid "File too large (%(size)sMB). Maximum size is 50MB"
 msgstr "파일이 너무 큽니다 (%(size)sMB). 최대 크기는 50MB입니다"
 
-#: routes/clz_import.py:290
+#: routes/clz_import.py:272
 msgid "Invalid PDF file (bad magic bytes)"
 msgstr "잘못된 PDF 파일입니다 (잘못된 매직 바이트)"
 
-#: routes/clz_import.py:314
+#: routes/clz_import.py:296
 #, python-format
 msgid "PDF has %(pages)s pages; maximum is %(max)s."
 msgstr "PDF에 %(pages)s페이지가 있습니다. 최대는 %(max)s입니다."
 
-#: routes/clz_import.py:583
+#: routes/clz_import.py:553
 msgid "No games to import"
 msgstr "가져올 게임이 없습니다"
 
-#: routes/collections.py:103 routes/collections.py:446
-#: routes/collections.py:475 routes/collections.py:497
-#: routes/collections.py:527 routes/collections.py:566
+#: routes/collections.py:42
+msgid "A tag colour is written like #4cc9f0"
+msgstr "태그 색상은 #4cc9f0 같은 형식으로 입력합니다"
+
+#: routes/collections.py:116 routes/collections.py:467
+#: routes/collections.py:502 routes/collections.py:524
+#: routes/collections.py:554 routes/collections.py:593
 msgid "List not found"
 msgstr "목록을 찾을 수 없습니다"
 
-#: routes/collections.py:163
+#: routes/collections.py:176 routes/collections.py:221
 msgid "Tag name is required"
 msgstr "태그 이름은 필수입니다"
 
-#: routes/collections.py:177 routes/collections.py:215
+#: routes/collections.py:192 routes/collections.py:234
 msgid "A tag with that name already exists"
 msgstr "해당 이름의 태그가 이미 존재합니다"
 
-#: routes/collections.py:202 routes/collections.py:233
-#: routes/collections.py:294 routes/collections.py:359
+#: routes/collections.py:217 routes/collections.py:252
+#: routes/collections.py:313 routes/collections.py:378
 msgid "Tag not found"
 msgstr "태그를 찾을 수 없습니다"
 
-#: routes/collections.py:282
+#: routes/collections.py:301
 msgid "Either tag_id or tag_name is required"
 msgstr "tag_id 또는 tag_name이 필요합니다"
 
-#: routes/collections.py:338
+#: routes/collections.py:357
 msgid "Tag is not assigned to this game"
 msgstr "이 게임에 태그가 할당되어 있지 않습니다"
 
-#: routes/collections.py:406
+#: routes/collections.py:425 routes/collections.py:471
 msgid "List name is required"
 msgstr "목록 이름은 필수입니다"
 
-#: routes/collections.py:517
+#: routes/collections.py:431 routes/collections.py:475
+msgid "A list description and icon are text"
+msgstr "목록 설명과 아이콘은 텍스트입니다"
+
+#: routes/collections.py:478
+msgid "A list position is a whole number"
+msgstr "목록 위치는 정수입니다"
+
+#: routes/collections.py:544
 msgid "game_id is required"
 msgstr "game_id가 필요합니다"
 
-#: routes/collections.py:573
+#: routes/collections.py:600
 msgid "Game is not in this list"
 msgstr "게임이 이 목록에 없습니다"
 
-#: routes/collections.py:618
+#: routes/collections.py:645 routes/collections.py:718
 msgid "Title is required"
 msgstr "제목은 필수입니다"
 
-#: routes/collections.py:630 routes/collections.py:697
+#: routes/collections.py:657 routes/collections.py:726
 msgid "Priority must be an integer between 1 and 5"
 msgstr "우선순위는 1에서 5 사이의 정수여야 합니다"
 
-#: routes/collections.py:635 routes/collections.py:702
+#: routes/collections.py:662 routes/collections.py:740
 msgid "system_id must be an integer"
 msgstr "system_id는 정수여야 합니다"
 
-#: routes/collections.py:638 routes/collections.py:705
+#: routes/collections.py:665 routes/collections.py:743
 msgid "Unknown system_id"
 msgstr "알 수 없는 system_id입니다"
 
-#: routes/collections.py:649
+#: routes/collections.py:676 routes/collections.py:735
 msgid "This game is already on your wishlist"
 msgstr "이 게임은 이미 위시리스트에 있습니다"
 
-#: routes/collections.py:687 routes/collections.py:732
-#: routes/collections.py:755
+#: routes/collections.py:714 routes/collections.py:770
+#: routes/collections.py:793
 msgid "Wishlist item not found"
 msgstr "위시리스트 항목을 찾을 수 없습니다"
 
@@ -824,8 +836,8 @@ msgstr "메타데이터 적용에 실패했습니다."
 msgid "No fields to update"
 msgstr "업데이트할 필드가 없습니다"
 
-#: routes/games.py:1205 routes/platform_import.py:250
-#: routes/platform_import.py:629 routes/platform_import.py:993
+#: routes/games.py:1205 routes/platform_import.py:263
+#: routes/platform_import.py:642 routes/platform_import.py:1006
 #: routes/trophies.py:1919 templates/game_imports.html:579
 #: templates/game_imports.html:842
 msgid "No games selected"
@@ -877,7 +889,7 @@ msgid "No filename provided"
 msgstr "제공된 파일 이름이 없습니다"
 
 #: routes/games_media.py:85 routes/reports.py:699 routes/scrape_logs.py:129
-#: routes/scrape_logs.py:154 routes/scrape_logs.py:203 routes/settings.py:353
+#: routes/scrape_logs.py:154 routes/scrape_logs.py:203 routes/settings.py:352
 msgid "Invalid filename"
 msgstr "잘못된 파일 이름입니다"
 
@@ -1041,15 +1053,15 @@ msgstr ""
 msgid "Next disk inserted"
 msgstr "다음 디스크를 넣었습니다"
 
-#: routes/maintenance.py:279
+#: routes/maintenance.py:276
 msgid "Unknown image type"
 msgstr "알 수 없는 이미지 유형"
 
-#: routes/maintenance.py:492
+#: routes/maintenance.py:489
 msgid "Add your ScreenScraper account in Settings first."
 msgstr "먼저 설정에서 ScreenScraper 계정을 추가하세요."
 
-#: routes/maintenance.py:493
+#: routes/maintenance.py:490
 msgid "This fix is already running."
 msgstr "이 수정 작업이 이미 실행 중입니다."
 
@@ -1128,52 +1140,52 @@ msgstr "이미지 파일을 찾을 수 없습니다"
 msgid "Background removal failed"
 msgstr "배경 제거에 실패했습니다"
 
-#: routes/platform_import.py:182
+#: routes/platform_import.py:195
 msgid "Steam API key not configured. Add it in Settings → API Keys."
 msgstr "Steam API 키가 설정되지 않았습니다. 설정 → API 키에서 추가하세요."
 
-#: routes/platform_import.py:184
+#: routes/platform_import.py:197
 msgid "Steam ID not configured. Add it in Settings → API Keys."
 msgstr "Steam ID가 설정되지 않았습니다. 설정 → API 키에서 추가하세요."
 
-#: routes/platform_import.py:190
+#: routes/platform_import.py:203
 #, python-format
 msgid ""
 "Could not resolve Steam vanity URL \"%(steam_id)s\". Use your 17-digit "
 "Steam ID instead."
 msgstr "Steam 커스텀 URL \"%(steam_id)s\"을(를) 확인할 수 없습니다. 대신 17자리 Steam ID를 사용하세요."
 
-#: routes/platform_import.py:196
+#: routes/platform_import.py:209
 msgid ""
 "No games found. Check that your Steam profile and game details are set to"
 " Public."
 msgstr "게임을 찾을 수 없습니다. Steam 프로필과 게임 세부 정보가 공개로 설정되어 있는지 확인하세요."
 
-#: routes/platform_import.py:255
+#: routes/platform_import.py:268
 msgid "Could not create Windows system entry"
 msgstr "Windows 시스템 항목을 생성할 수 없습니다"
 
-#: routes/platform_import.py:399
+#: routes/platform_import.py:412
 msgid "Xbox Client ID not configured. Add it in Settings → API Keys."
 msgstr "Xbox 클라이언트 ID가 설정되지 않았습니다. 설정 → API 키에서 추가하세요."
 
-#: routes/platform_import.py:537
+#: routes/platform_import.py:550
 msgid "Xbox credentials not configured. Add them in Settings → API Keys."
 msgstr "Xbox 자격 증명이 설정되지 않았습니다. 설정 → API 키에서 추가하세요."
 
-#: routes/platform_import.py:541
+#: routes/platform_import.py:554
 msgid "Xbox authentication failed. Please re-connect your Xbox account."
 msgstr "Xbox 인증에 실패했습니다. Xbox 계정을 다시 연결하세요."
 
-#: routes/platform_import.py:545
+#: routes/platform_import.py:558
 msgid "No games found in Xbox title history."
 msgstr "Xbox 타이틀 기록에서 게임을 찾을 수 없습니다."
 
-#: routes/platform_import.py:833
+#: routes/platform_import.py:846
 msgid "PSN NPSSO not configured. Add it in Settings → API Keys."
 msgstr "PSN NPSSO가 설정되지 않았습니다. 설정 → API 키에서 추가하세요."
 
-#: routes/platform_import.py:860
+#: routes/platform_import.py:873
 msgid "Failed to fetch PSN game list. Try syncing trophies first."
 msgstr "PSN 게임 목록을 가져오지 못했습니다. 먼저 트로피를 동기화해 보세요."
 
@@ -1194,8 +1206,8 @@ msgstr "ROM 경로가 설정되지 않았습니다. 설정 → 경로에서 설�
 msgid "Missing required parameters"
 msgstr "필수 매개변수가 누락되었습니다"
 
-#: routes/reports.py:617 routes/tools.py:513 routes/tools.py:570
-#: routes/tools.py:615
+#: routes/reports.py:617 routes/tools.py:533 routes/tools.py:590
+#: routes/tools.py:635
 msgid "Invalid path"
 msgstr "잘못된 경로입니다"
 
@@ -1250,7 +1262,7 @@ msgstr "생성된 파일 이름에 잘못된 문자가 포함되어 있습니다
 msgid "Invalid log file"
 msgstr "잘못된 로그 파일입니다"
 
-#: routes/scrape_logs.py:101 routes/tools.py:516
+#: routes/scrape_logs.py:101 routes/tools.py:536
 msgid "File not found"
 msgstr "파일을 찾을 수 없습니다"
 
@@ -1335,61 +1347,65 @@ msgstr "연결 오류: %(error)s"
 msgid "Allowance check not supported for %(scraper)s"
 msgstr "%(scraper)s에 대해서는 허용량 확인이 지원되지 않습니다"
 
-#: routes/settings.py:228
+#: routes/settings.py:227
 msgid "Value is required"
 msgstr "값은 필수입니다"
 
-#: routes/settings.py:250
+#: routes/settings.py:249
 msgid "Option already exists"
 msgstr "옵션이 이미 존재합니다"
 
-#: routes/settings.py:359
+#: routes/settings.py:358
 msgid "Backup file not found"
 msgstr "백업 파일을 찾을 수 없습니다"
 
-#: routes/settings.py:373
+#: routes/settings.py:376
 msgid "A background job is running. Wait for it to finish before restoring."
 msgstr "백그라운드 작업이 실행 중입니다. 복원하기 전에 작업이 완료될 때까지 기다리세요."
 
-#: routes/settings.py:393
+#: routes/settings.py:396
 msgid "Backup failed its integrity check; restore aborted."
 msgstr "백업이 무결성 검사에 실패하여 복원이 중단되었습니다."
 
-#: routes/settings.py:515
+#: routes/settings.py:419
+msgid "The backup could not be copied in; nothing was changed."
+msgstr "백업을 복사해 넣지 못했습니다. 변경된 내용은 없습니다."
+
+#: routes/settings.py:487
 #, python-format
 msgid "Invalid %(field)s: %(result)s"
 msgstr "잘못된 %(field)s: %(result)s"
 
-#: routes/settings.py:534 routes/settings.py:608 routes/settings.py:660
+#: routes/settings.py:506 routes/settings.py:580 routes/settings.py:632
 #: routes/tools.py:292 services/js_i18n_strings.py:745
 #: templates/settings.html:1149 templates/settings.html:2742
 msgid "Failed to save settings"
 msgstr "설정 저장에 실패했습니다"
 
-#: routes/settings.py:587 routes/tools.py:284
+#: routes/settings.py:559 routes/tools.py:284
 #, python-format
 msgid "Unknown setting key: %(key)s"
 msgstr "알 수 없는 설정 키: %(key)s"
 
-#: routes/settings.py:593 routes/tools.py:287
+#: routes/settings.py:565 routes/tools.py:287
 #, python-format
 msgid "Invalid value for '%(key)s': %(reason)s"
 msgstr "'%(key)s'에 대한 잘못된 값: %(reason)s"
 
-#: routes/settings.py:625
+#: routes/settings.py:597
 msgid "Failed to reset settings"
 msgstr "설정 초기화에 실패했습니다"
 
-#: routes/settings.py:646
+#: routes/settings.py:618
 #, python-format
 msgid "invalid logging settings: %(reason)s"
 msgstr "잘못된 로깅 설정입니다: %(reason)s"
 
-#: routes/settings.py:676 routes/settings.py:704
+#: routes/settings.py:648 routes/settings.py:676
 msgid "Invalid field. Must be \"genre\" or \"modes\""
 msgstr "잘못된 필드입니다. \"genre\" 또는 \"modes\"여야 합니다"
 
-#: routes/settings.py:707
+#: routes/settings.py:679
 msgid "No mappings provided"
 msgstr "제공된 매핑이 없습니다"
 
@@ -1421,7 +1437,7 @@ msgstr "관리자 권한이 필요합니다"
 msgid "Settings payload must be an object"
 msgstr "설정 페이로드는 객체여야 합니다"
 
-#: routes/tools.py:327 routes/tools.py:979
+#: routes/tools.py:327 routes/tools.py:1001
 #, python-format
 msgid "Path does not exist: %(path)s"
 msgstr "경로가 존재하지 않습니다: %(path)s"
@@ -1430,70 +1446,74 @@ msgstr "경로가 존재하지 않습니다: %(path)s"
 msgid "Task not found"
 msgstr "작업을 찾을 수 없습니다"
 
-#: routes/tools.py:415 routes/tools.py:435
+#: routes/tools.py:421 routes/tools.py:439 routes/tools.py:461
+msgid "Only an admin or the person who started this task can change it"
+msgstr "관리자 또는 이 작업을 시작한 사람만 변경할 수 있습니다"
+
+#: routes/tools.py:431 routes/tools.py:453
 msgid "Task not found or not running"
 msgstr "작업을 찾을 수 없거나 실행 중이 아닙니다"
 
-#: routes/tools.py:455
+#: routes/tools.py:475
 msgid "Task not found or not paused"
 msgstr "작업을 찾을 수 없거나 일시정지되어 있지 않습니다"
 
-#: routes/tools.py:472 routes/tools.py:677 routes/tools.py:852
-#: routes/tools.py:968
+#: routes/tools.py:492 routes/tools.py:697 routes/tools.py:873
+#: routes/tools.py:990
 msgid "Invalid scan path"
 msgstr "잘못된 스캔 경로입니다"
 
-#: routes/tools.py:510 routes/tools.py:567 routes/tools.py:612
+#: routes/tools.py:530 routes/tools.py:587 routes/tools.py:632
 msgid "No path provided"
 msgstr "제공된 경로가 없습니다"
 
-#: routes/tools.py:538
+#: routes/tools.py:558
 msgid "No archive path provided"
 msgstr "제공된 아카이브 경로가 없습니다"
 
-#: routes/tools.py:541
+#: routes/tools.py:561
 msgid "Invalid archive path"
 msgstr "잘못된 아카이브 경로입니다"
 
-#: routes/tools.py:544
+#: routes/tools.py:564
 msgid "No files to remove"
 msgstr "제거할 파일이 없습니다"
 
-#: routes/tools.py:645
+#: routes/tools.py:665
 msgid "No paths provided"
 msgstr "제공된 경로가 없습니다"
 
-#: routes/tools.py:651
+#: routes/tools.py:671
 #, python-format
 msgid "Invalid path: %(path)s"
 msgstr "잘못된 경로: %(path)s"
 
-#: routes/tools.py:726
+#: routes/tools.py:746
 msgid "chdman not found. Please install MAME tools."
 msgstr "chdman을 찾을 수 없습니다. MAME 도구를 설치하세요."
 
-#: routes/tools.py:875
+#: routes/tools.py:896
 msgid "chdman not found"
 msgstr "chdman을 찾을 수 없습니다"
 
-#: routes/tools.py:973
+#: routes/tools.py:995
 #, python-format
 msgid "Unknown duplicate method: %(method)s"
 msgstr "알 수 없는 중복 검사 방법: %(method)s"
 
-#: routes/tools.py:1186 routes/tools.py:1540
+#: routes/tools.py:1209 routes/tools.py:1565
 msgid "These scan results have expired. Scan again, then delete."
 msgstr "이 스캔 결과는 만료되었습니다. 다시 스캔한 후 삭제하세요."
 
-#: routes/tools.py:1191
+#: routes/tools.py:1214
 msgid "Keep at least one copy of each game. Nothing was deleted."
 msgstr "각 게임의 사본을 하나 이상 남겨 두세요. 아무것도 삭제되지 않았습니다."
 
-#: routes/tools.py:1451
+#: routes/tools.py:1474
 msgid "This system has no screenshot check"
 msgstr "이 시스템은 스크린샷 검사를 지원하지 않습니다"
 
-#: routes/tools.py:1550
+#: routes/tools.py:1575
 msgid "Keep at least one copy of each screenshot. Nothing was deleted."
 msgstr "스크린샷마다 사본을 하나 이상 남겨 두세요. 삭제된 항목은 없습니다."
 
@@ -1618,7 +1638,7 @@ msgstr "해당 게임은 다른 버전과 연결되어 있지 않습니다."
 msgid "The AI did not give a usable answer. Try again later."
 msgstr "AI가 사용할 수 있는 답변을 주지 않았습니다. 나중에 다시 시도하세요."
 
-#: routes/xbox_achievements.py:126 services/jobs/platform_sync.py:768
+#: routes/xbox_achievements.py:126 services/jobs/platform_sync.py:798
 msgid "Xbox credentials not configured"
 msgstr "Xbox 자격 증명이 설정되지 않았습니다"
 
@@ -4652,35 +4672,35 @@ msgstr "%(name)s을(를) 한 번 실행해 설정을 만든 다음 다시 플레
 msgid "The player has no core for this system."
 msgstr "플레이어에 이 시스템용 코어가 없습니다."
 
-#: services/jobs/platform_sync.py:368 services/jobs/platform_sync.py:677
+#: services/jobs/platform_sync.py:398 services/jobs/platform_sync.py:707
 msgid "Sync already running"
 msgstr "동기화가 이미 실행 중입니다"
 
-#: services/jobs/platform_sync.py:373
+#: services/jobs/platform_sync.py:403
 msgid "Steam sync is already running on another worker process."
 msgstr "Steam 동기화가 다른 워커 프로세스에서 이미 실행 중입니다."
 
-#: services/jobs/platform_sync.py:391 services/jobs/platform_sync.py:700
+#: services/jobs/platform_sync.py:421 services/jobs/platform_sync.py:730
 msgid "No running sync to cancel"
 msgstr "취소할 실행 중인 동기화가 없습니다"
 
-#: services/jobs/platform_sync.py:485
+#: services/jobs/platform_sync.py:515
 msgid "Steam API key or Steam ID not configured"
 msgstr "Steam API 키 또는 Steam ID가 설정되지 않았습니다"
 
-#: services/jobs/platform_sync.py:504
+#: services/jobs/platform_sync.py:534
 msgid "No Steam games found to sync"
 msgstr "동기화할 Steam 게임이 없습니다"
 
-#: services/jobs/platform_sync.py:682
+#: services/jobs/platform_sync.py:712
 msgid "Xbox sync is already running on another worker process."
 msgstr "Xbox 동기화가 다른 워커 프로세스에서 이미 실행 중입니다."
 
-#: services/jobs/platform_sync.py:777
+#: services/jobs/platform_sync.py:807
 msgid "Xbox authentication failed — please re-connect your Xbox account"
 msgstr "Xbox 인증에 실패했습니다. Xbox 계정을 다시 연결해 주세요"
 
-#: services/jobs/platform_sync.py:828
+#: services/jobs/platform_sync.py:858
 msgid "No Xbox games found to sync"
 msgstr "동기화할 Xbox 게임이 없습니다"
 
@@ -14242,446 +14262,4 @@ msgstr "GitHub에서 후원하기"
 #: templates/_settings_tabs/system.html:465
 msgid "Support on Patreon"
 msgstr "Patreon에서 후원하기"
-
-#~ msgid "(auto-detect)"
-#~ msgstr "(자동 감지)"
-
-#~ msgid "(not set)"
-#~ msgstr "(설정 안 됨)"
-
-#~ msgid "API configured"
-#~ msgstr "API 구성됨"
-
-#~ msgid "API key missing"
-#~ msgstr "API 키 없음"
-
-#~ msgid "API keys saved!"
-#~ msgstr "API 키가 저장되었습니다!"
-
-#~ msgid "Apply"
-#~ msgstr "적용"
-
-#~ msgid ""
-#~ "Are you sure you want to delete"
-#~ " user \"{username}\"? This action cannot"
-#~ " be undone."
-#~ msgstr "사용자 \"{username}\"을(를) 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다."
-
-#~ msgid ""
-#~ "Are you sure you want to restore"
-#~ " from \"{filename}\"? This will replace "
-#~ "all current data."
-#~ msgstr "\"{filename}\"에서 복원하시겠습니까? 현재 모든 데이터가 대체됩니다."
-
-#~ msgid "Backup created successfully!"
-#~ msgstr "백업이 성공적으로 생성되었습니다!"
-
-#~ msgid "Backup failed: {error}"
-#~ msgstr "백업 실패: {error}"
-
-#~ msgid "Confirm"
-#~ msgstr "확인"
-
-#~ msgid "Create Backup"
-#~ msgstr "백업 생성"
-
-#~ msgid "Creating backup..."
-#~ msgstr "백업 생성 중..."
-
-#~ msgid "Database restored! Reloading..."
-#~ msgstr "데이터베이스가 복원되었습니다! 다시 불러오는 중..."
-
-#~ msgid "Default: {value}"
-#~ msgstr "기본값: {value}"
-
-#~ msgid "Delete User"
-#~ msgstr "사용자 삭제"
-
-#~ msgid "Display settings saved!"
-#~ msgstr "디스플레이 설정이 저장되었습니다!"
-
-#~ msgid "Edit User"
-#~ msgstr "사용자 편집"
-
-#~ msgid "Error - disappears in {n}s"
-#~ msgstr "오류 - {n}초 후 사라짐"
-
-#~ msgid "Error creating backup: {error}"
-#~ msgstr "백업 생성 중 오류: {error}"
-
-#~ msgid "Error restoring: {error}"
-#~ msgstr "복원 중 오류: {error}"
-
-#~ msgid "Error saving API keys: {error}"
-#~ msgstr "API 키 저장 중 오류: {error}"
-
-#~ msgid "Error saving settings: {error}"
-#~ msgstr "설정 저장 중 오류: {error}"
-
-#~ msgid "Error searching: {error}"
-#~ msgstr "검색 중 오류: {error}"
-
-#~ msgid "Failed to change password"
-#~ msgstr "비밀번호 변경에 실패했습니다"
-
-#~ msgid "Failed to delete user"
-#~ msgstr "사용자 삭제에 실패했습니다"
-
-#~ msgid "Failed to save user"
-#~ msgstr "사용자 저장에 실패했습니다"
-
-#~ msgid "Failed to save: {error}"
-#~ msgstr "저장 실패: {error}"
-
-#~ msgid "Info - disappears in {n}s"
-#~ msgstr "정보 - {n}초 후 사라짐"
-
-#~ msgid "Network error changing password"
-#~ msgstr "비밀번호 변경 중 네트워크 오류"
-
-#~ msgid "Network error deleting user"
-#~ msgstr "사용자 삭제 중 네트워크 오류"
-
-#~ msgid "Network error saving settings"
-#~ msgstr "설정 저장 중 네트워크 오류"
-
-#~ msgid "Network error saving user"
-#~ msgstr "사용자 저장 중 네트워크 오류"
-
-#~ msgid "No logo"
-#~ msgstr "로고 없음"
-
-#~ msgid "No systems found"
-#~ msgstr "시스템을 찾을 수 없습니다"
-
-#~ msgid "Notification settings saved!"
-#~ msgstr "알림 설정이 저장되었습니다!"
-
-#~ msgid "Password changed successfully!"
-#~ msgstr "비밀번호가 성공적으로 변경되었습니다!"
-
-#~ msgid "Path settings saved!"
-#~ msgstr "경로 설정이 저장되었습니다!"
-
-#~ msgid "Please enter a new password"
-#~ msgstr "새 비밀번호를 입력하세요"
-
-#~ msgid "Restart required for changes to take full effect"
-#~ msgstr "변경 사항을 완전히 적용하려면 다시 시작해야 합니다"
-
-#~ msgid "Restore Database"
-#~ msgstr "데이터베이스 복원"
-
-#~ msgid "Restore failed: {error}"
-#~ msgstr "복원 실패: {error}"
-
-#~ msgid "Score: {score}"
-#~ msgstr "점수: {score}"
-
-#~ msgid "Scraper settings saved!"
-#~ msgstr "스크레이퍼 설정이 저장되었습니다!"
-
-#~ msgid "Searching..."
-#~ msgstr "검색 중..."
-
-#~ msgid "Success - disappears in {n}s"
-#~ msgstr "성공 - {n}초 후 사라짐"
-
-#~ msgid "Try modifying the search title"
-#~ msgstr "검색 제목을 수정해 보세요"
-
-#~ msgid "User deleted successfully"
-#~ msgstr "사용자가 성공적으로 삭제되었습니다"
-
-#~ msgid "User saved successfully!"
-#~ msgstr "사용자가 성공적으로 저장되었습니다!"
-
-#~ msgid "Warning - disappears in {n}s"
-#~ msgstr "경고 - {n}초 후 사라짐"
-
-#~ msgid "Your settings have been saved!"
-#~ msgstr "설정이 저장되었습니다!"
-
-#~ msgid "Could not validate destination path"
-#~ msgstr "대상 경로를 검증할 수 없습니다"
-
-#~ msgid "Patreon"
-#~ msgstr "Patreon"
-
-#~ msgid "Trophies & Achievements"
-#~ msgstr "트로피 & 업적"
-
-#~ msgid "Two game IDs required"
-#~ msgstr "두 개의 게임 ID가 필요합니다"
-
-#~ msgid "One or both games not found"
-#~ msgstr "하나 또는 두 게임을 찾을 수 없습니다"
-
-#~ msgid "Failed to sync trophies"
-#~ msgstr "트로피 동기화에 실패했습니다"
-
-#~ msgid "Network error syncing trophies"
-#~ msgstr "트로피 동기화 중 네트워크 오류"
-
-#~ msgid "Trophies synced successfully!"
-#~ msgstr "트로피가 성공적으로 동기화되었습니다!"
-
-#~ msgid "Admin Login"
-#~ msgstr "관리자 로그인"
-
-#~ msgid "Enter admin password"
-#~ msgstr "관리자 비밀번호 입력"
-
-#~ msgid "Fetching controller images..."
-#~ msgstr "컨트롤러 이미지 가져오는 중..."
-
-#~ msgid "Connection failed: %(error)s"
-#~ msgstr "연결에 실패했습니다: %(error)s"
-
-#~ msgid ""
-#~ "Log in with your PlayStation account "
-#~ "(if not already), then the page "
-#~ "will show your NPSSO token as "
-#~ "JSON."
-#~ msgstr "PlayStation 계정으로 로그인하면 (아직 하지 않았다면) 페이지에 NPSSO 토큰이 JSON 형식으로 표시됩니다."
-
-#~ msgid "Hide Bonus"
-#~ msgstr "보너스 숨기기"
-
-#~ msgid "Show Bonus"
-#~ msgstr "보너스 표시"
-
-#~ msgid ""
-#~ "Asking the AI: {current} of {total} "
-#~ "games, {proposals} names suggested. {system}"
-#~ msgstr ""
-
-#~ msgid "Done. {proposals} names suggested from {total} games."
-#~ msgstr ""
-
-#~ msgid "Stopped. {proposals} names suggested."
-#~ msgstr ""
-
-#~ msgid "{accepted} names changed."
-#~ msgstr ""
-
-#~ msgid "{accepted} names changed. {skipped} skipped: their title changed since."
-#~ msgstr ""
-
-#~ msgid "{count} suggested names. Untick any you do not want, then accept."
-#~ msgstr ""
-
-#~ msgid "{rejected} names rejected. They will not be suggested again."
-#~ msgstr ""
-
-#~ msgid "Format: YYYY-MM-DD (e.g., 1996-09-29)"
-#~ msgstr "형식: YYYY-MM-DD (예: 1996-09-29)"
-
-#~ msgid "RetroDB Player cores"
-#~ msgstr "RetroDB Player 코어"
-
-#~ msgid "Every game here has had AI Fill already."
-#~ msgstr "여기 있는 모든 게임은 이미 AI 채우기를 거쳤습니다."
-
-#~ msgid ""
-#~ "Ask the AI for each game's full"
-#~ " official name in its ROM's own "
-#~ "region, then tick the new names "
-#~ "you want. Nothing changes until you "
-#~ "accept it."
-#~ msgstr ""
-#~ "AI에게 각 게임의 ROM 지역 기준 정식 공식"
-#~ " 이름을 묻고, 원하는 새 이름을 체크하세요. 수락하기"
-#~ " 전까지는 아무것도 바뀌지 않습니다."
-
-#~ msgid "Cheats downloaded."
-#~ msgstr "치트를 다운로드했습니다."
-
-#~ msgid "Downloading RetroArch… This can take a few minutes."
-#~ msgstr "RetroArch를 다운로드하는 중… 몇 분 걸릴 수 있습니다."
-
-#~ msgid "Downloading {pack}…"
-#~ msgstr "{pack} 다운로드 중…"
-
-#~ msgid "Default"
-#~ msgstr "기본값"
-
-#~ msgid "Earn achievements in RetroDB's RetroArch"
-#~ msgstr "RetroDB의 RetroArch에서 업적 획득"
-
-#~ msgid "Launches in: %(name)s"
-#~ msgstr "실행 에뮬레이터: %(name)s"
-
-#~ msgid ""
-#~ "This will clear the play time from"
-#~ " {stored} games that already have "
-#~ "one. The other {other} queued matches"
-#~ " are dropped, and those games keep"
-#~ " what they have. A bulk lookup "
-#~ "can fetch the times again."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Stopped: ScreenScraper stopped answering, so"
-#~ " your daily allowance may be spent."
-#~ " Files swapped: {replaced}. Run it "
-#~ "again tomorrow."
-#~ msgstr ""
-#~ "중지됨: ScreenScraper가 응답하지 않아 하루 사용량을 "
-#~ "다 썼을 수 있습니다. 교체된 파일: {replaced}개."
-#~ " 내일 다시 실행하세요."
-
-#~ msgid "An official names run is already running."
-#~ msgstr "공식 이름 작업이 이미 실행 중입니다."
-
-#~ msgid "No official names run to cancel."
-#~ msgstr "취소할 공식 이름 작업이 없습니다."
-
-#~ msgid ""
-#~ "Asking the AI: game {current} of "
-#~ "{total}. Names suggested: {proposals}. "
-#~ "{system}"
-#~ msgstr "AI에게 묻는 중: 게임 {total}개 중 {current}번째. 제안된 이름: {proposals}. {system}"
-
-#~ msgid "Could not accept these names."
-#~ msgstr "이 이름들을 수락할 수 없습니다."
-
-#~ msgid "Could not load the suggested names."
-#~ msgstr "제안된 이름을 불러올 수 없습니다."
-
-#~ msgid "Could not reject these names."
-#~ msgstr "이 이름들을 거절할 수 없습니다."
-
-#~ msgid "Done. Games asked: {total}. Names suggested: {proposals}."
-#~ msgstr "완료. 물어본 게임: {total}. 제안된 이름: {proposals}."
-
-#~ msgid "Europe"
-#~ msgstr "유럽"
-
-#~ msgid "Japan"
-#~ msgstr "일본"
-
-#~ msgid "Names changed: {accepted}."
-#~ msgstr "바뀐 이름: {accepted}."
-
-#~ msgid ""
-#~ "Names changed: {accepted}. Skipped because "
-#~ "their title changed since: {skipped}."
-#~ msgstr "바뀐 이름: {accepted}. 그사이 제목이 바뀌어 건너뜀: {skipped}."
-
-#~ msgid "Names rejected: {rejected}. They will not be suggested again."
-#~ msgstr "거절한 이름: {rejected}. 다시 제안되지 않습니다."
-
-#~ msgid "No suggested names waiting. Press Ask the AI to look for some."
-#~ msgstr "대기 중인 제안 이름이 없습니다. \"AI에게 묻기\"를 눌러 찾아보세요."
-
-#~ msgid "Stopped. Names suggested: {proposals}."
-#~ msgstr "중지됨. 제안된 이름: {proposals}."
-
-#~ msgid ""
-#~ "Suggested names waiting: {count}. Untick "
-#~ "any you do not want, then accept."
-#~ msgstr "대기 중인 제안 이름: {count}. 원하지 않는 것은 체크를 해제한 뒤 수락하세요."
-
-#~ msgid "The run stopped: {error}. Names already suggested are kept."
-#~ msgstr "작업이 중지되었습니다: {error}. 이미 제안된 이름은 유지됩니다."
-
-#~ msgid "Tick at least one name."
-#~ msgstr "이름을 하나 이상 선택하세요."
-
-#~ msgid "USA"
-#~ msgstr "미국"
-
-#~ msgid "World"
-#~ msgstr "전 세계"
-
-#~ msgid "unknown"
-#~ msgstr "알 수 없음"
-
-#~ msgid "{system} · {file} · old name from: {region}"
-#~ msgstr "{system} · {file} · 예전 이름의 지역: {region}"
-
-#~ msgid "Official Names"
-#~ msgstr "공식 이름"
-
-#~ msgid ""
-#~ "The AI suggests each game's full "
-#~ "official name, as released in the "
-#~ "region of its ROM: a Japanese ROM"
-#~ " of Mega Man becomes Rockman. Tick"
-#~ " the names you want and accept "
-#~ "them. The old name is kept as "
-#~ "an alternate title, and an accepted "
-#~ "name is kept when scraping. Nothing "
-#~ "changes until you accept it."
-#~ msgstr ""
-#~ "AI가 각 게임이 ROM의 지역에서 출시된 정식 "
-#~ "공식 이름을 제안합니다. 예를 들어 일본판 Mega "
-#~ "Man ROM은 Rockman이 됩니다. 원하는 이름을 체크해"
-#~ " 수락하세요. 예전 이름은 대체 제목으로 남고, 수락한"
-#~ " 이름은 스크래핑할 때 유지됩니다. 수락하기 전까지는 "
-#~ "아무것도 바뀌지 않습니다."
-
-#~ msgid "Ask the AI"
-#~ msgstr "AI에게 묻기"
-
-#~ msgid "Suggested names"
-#~ msgstr "제안된 이름"
-
-#~ msgid "Accept ticked"
-#~ msgstr "선택한 항목 수락"
-
-#~ msgid "Reject ticked"
-#~ msgstr "선택한 항목 거절"
-
-#~ msgid "Tick all"
-#~ msgstr "모두 선택"
-
-#~ msgid "Tick none"
-#~ msgstr "모두 선택 해제"
-
-#~ msgid "Cleared RA data for {n} games in {system}"
-#~ msgstr "{system}의 게임 {n}개에서 RA 데이터를 지웠습니다"
-
-#~ msgid ""
-#~ "Cleared RetroAchievements data for {n} "
-#~ "games. Run \"Refresh RetroAchievements\" to"
-#~ " re-scan with updated matching."
-#~ msgstr ""
-#~ "게임 {n}개에서 RetroAchievements 데이터를 지웠습니다. "
-#~ "업데이트된 매칭으로 다시 스캔하려면 \"RetroAchievements "
-#~ "새로 고침\"을 실행하세요."
-
-#~ msgid "RA Data Cleared"
-#~ msgstr "RA 데이터 삭제됨"
-
-#~ msgid "Refresh RetroAchievements"
-#~ msgstr "RetroAchievements 새로고침"
-
-#~ msgid ""
-#~ "This will clear RetroAchievements game "
-#~ "IDs and progress data for \"{system}\"."
-#~ " Continue?"
-#~ msgstr "이 작업은 \"{system}\"의 RetroAchievements 게임 ID와 진행 데이터를 삭제합니다. 계속하시겠습니까?"
-
-#~ msgid "🏆 Refresh RetroAchievements"
-#~ msgstr "🏆 RetroAchievements 새로고침"
-
-#~ msgid "Remove this system from Achievements"
-#~ msgstr "업적에서 이 시스템 제거"
-
-#~ msgid ""
-#~ "Your PlayStation Network session expires "
-#~ "soon — re-link it to avoid "
-#~ "an interruption."
-#~ msgstr "PlayStation Network 세션이 곧 만료됩니다. 중단을 피하려면 다시 연결하세요."
-
-#~ msgid "Re-link now"
-#~ msgstr "지금 다시 연결"
-
-#~ msgid "Read from clipboard"
-#~ msgstr "클립보드에서 읽기"
-
-#~ msgid "Paste &amp; Detect"
-#~ msgstr "붙여넣기 &amp; 감지"
 

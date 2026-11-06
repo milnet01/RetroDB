@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-05 19:42+0200\n"
+"POT-Creation-Date: 2026-11-06 09:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: eo\n"
@@ -151,12 +151,12 @@ msgstr "⟦Ñö ĝàɱéš ìñ ļìƀŕàŕý⟧"
 msgid "Setup has already been completed"
 msgstr "⟦Šéţüþ ĥàš àļŕéàðý ƀééñ çöɱþļéţéð⟧"
 
-#: app.py:1680 routes/settings.py:553 routes/tools.py:364
+#: app.py:1680 routes/settings.py:525 routes/tools.py:364
 msgid "Permission denied"
 msgstr "⟦Þéŕɱìššìöñ ðéñìéð⟧"
 
-#: app.py:1700 routes/collections.py:194 routes/collections.py:271
-#: routes/collections.py:438 routes/collections.py:679
+#: app.py:1700 routes/collections.py:209 routes/collections.py:290
+#: routes/collections.py:459 routes/collections.py:706
 msgid "No data provided"
 msgstr "⟦Ñö ðàţà þŕöⱴìðéð⟧"
 
@@ -188,7 +188,7 @@ msgstr "⟦Šýšţéɱ ñöţ ƒöüñð öŕ ĥàš ñö àçĥìéⱴéɱéñ
 
 #: routes/achievements.py:176 routes/achievements.py:486
 #: routes/bonus_discs.py:273 routes/bulk_scrape.py:48 routes/cheats.py:32
-#: routes/cheats.py:51 routes/collections.py:276 routes/collections.py:531
+#: routes/cheats.py:51 routes/collections.py:295 routes/collections.py:558
 #: routes/emulators.py:304 routes/emulators.py:318 routes/games.py:393
 #: routes/games.py:930 routes/games.py:1049 routes/games.py:1127
 #: routes/games_ai.py:41 routes/games_media.py:40 routes/games_media.py:89
@@ -234,8 +234,8 @@ msgstr "⟦Ñö ĝàɱéš ŵìţĥ ŔéţŕöÀçĥìéⱴéɱéñţš ìñ ţ�
 msgid "Sync already in progress for %(name)s"
 msgstr "⟦Šýñç àļŕéàðý ìñ þŕöĝŕéšš ƒöŕ %(name)s⟧"
 
-#: routes/achievements.py:410 routes/platform_import.py:381
-#: routes/platform_import.py:758
+#: routes/achievements.py:410 routes/platform_import.py:394
+#: routes/platform_import.py:771
 msgid "That job belongs to another user"
 msgstr "⟦Ţĥàţ ĵöƀ ƀéļöñĝš ţö àñöţĥéŕ üšéŕ⟧"
 
@@ -556,14 +556,14 @@ msgid "A bonus disc links to a main game, one level only"
 msgstr "⟦À ƀöñüš ðìšç ļìñķš ţö à ɱàìñ ĝàɱé, öñé ļéⱴéļ öñļý⟧"
 
 #: routes/bonus_discs.py:219 routes/bonus_discs.py:237 routes/games.py:1397
-#: routes/games.py:1427 routes/platform_import.py:344
-#: routes/platform_import.py:723 routes/platform_import.py:1107
+#: routes/games.py:1427 routes/platform_import.py:357
+#: routes/platform_import.py:736 routes/platform_import.py:1120
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:207 routes/scraper.py:538
-#: routes/scraper.py:929 routes/settings.py:320 routes/settings.py:344
-#: routes/settings.py:459 routes/settings.py:538 routes/settings.py:567
-#: routes/settings.py:611 routes/settings.py:627 routes/settings.py:663
-#: routes/steam_achievements.py:138 routes/systems.py:286 routes/systems.py:476
+#: routes/scraper.py:929 routes/settings.py:319 routes/settings.py:343
+#: routes/settings.py:431 routes/settings.py:510 routes/settings.py:539
+#: routes/settings.py:583 routes/settings.py:599 routes/settings.py:635
+#: routes/steam_achievements.py:138 routes/systems.py:286 routes/systems.py:489
 #: routes/trophies.py:593 routes/trophies.py:791 routes/trophies.py:839
 #: routes/trophies.py:1638 routes/trophies.py:1662 routes/trophies.py:1707
 #: routes/trophies.py:1735 routes/trophies.py:1777 routes/trophies.py:1844
@@ -573,8 +573,8 @@ msgstr "⟦Àñ ìñţéŕñàļ éŕŕöŕ öççüŕŕéð⟧"
 
 #: routes/bonus_discs.py:286 routes/bonus_discs.py:317
 #: routes/controllers.py:216 routes/controllers.py:280
-#: routes/controllers.py:413 routes/controllers.py:465 routes/settings.py:224
-#: routes/settings.py:494 routes/settings.py:577 routes/systems.py:307
+#: routes/controllers.py:413 routes/controllers.py:465 routes/settings.py:223
+#: routes/settings.py:466 routes/settings.py:549 routes/systems.py:307
 msgid "Request body must be a JSON object"
 msgstr "⟦Ŕéɋüéšţ ƀöðý ɱüšţ ƀé à ĴŠÖÑ öƀĵéçţ⟧"
 
@@ -614,97 +614,109 @@ msgstr "⟦Ñö šüçĥ çĥéàţ þàçķ.⟧"
 msgid "Enter a folder to import."
 msgstr "⟦Éñţéŕ à ƒöļðéŕ ţö ìɱþöŕţ.⟧"
 
-#: routes/clz_import.py:271
+#: routes/clz_import.py:253
 msgid "pdfplumber module not installed. Please run: pip install pdfplumber --break-system-packages"
 msgstr "⟦þðƒþļüɱƀéŕ ɱöðüļé ñöţ ìñšţàļļéð. Þļéàšé ŕüñ: þìþ ìñšţàļļ þðƒþļüɱƀéŕ --ƀŕéàķ-šýšţéɱ-þàçķàĝéš⟧"
 
-#: routes/clz_import.py:276
+#: routes/clz_import.py:258
 msgid "No file uploaded"
 msgstr "⟦Ñö ƒìļé üþļöàðéð⟧"
 
-#: routes/clz_import.py:280
+#: routes/clz_import.py:262
 msgid "File must be a PDF"
 msgstr "⟦Ƒìļé ɱüšţ ƀé à ÞÐƑ⟧"
 
-#: routes/clz_import.py:287
+#: routes/clz_import.py:269
 #, python-format
 msgid "File too large (%(size)sMB). Maximum size is 50MB"
 msgstr "⟦Ƒìļé ţöö ļàŕĝé (%(size)sⱮƁ). Ɱàжìɱüɱ šìžé ìš 50ⱮƁ⟧"
 
-#: routes/clz_import.py:290
+#: routes/clz_import.py:272
 msgid "Invalid PDF file (bad magic bytes)"
 msgstr "⟦Ìñⱴàļìð ÞÐƑ ƒìļé (ƀàð ɱàĝìç ƀýţéš)⟧"
 
-#: routes/clz_import.py:314
+#: routes/clz_import.py:296
 #, python-format
 msgid "PDF has %(pages)s pages; maximum is %(max)s."
 msgstr "⟦ÞÐƑ ĥàš %(pages)s þàĝéš; ɱàжìɱüɱ ìš %(max)s.⟧"
 
-#: routes/clz_import.py:583
+#: routes/clz_import.py:553
 msgid "No games to import"
 msgstr "⟦Ñö ĝàɱéš ţö ìɱþöŕţ⟧"
 
-#: routes/collections.py:103 routes/collections.py:446
-#: routes/collections.py:475 routes/collections.py:497
-#: routes/collections.py:527 routes/collections.py:566
+#: routes/collections.py:42
+msgid "A tag colour is written like #4cc9f0"
+msgstr "⟦À ţàĝ çöļöüŕ ìš ŵŕìţţéñ ļìķé #4çç9ƒ0⟧"
+
+#: routes/collections.py:116 routes/collections.py:467
+#: routes/collections.py:502 routes/collections.py:524
+#: routes/collections.py:554 routes/collections.py:593
 msgid "List not found"
 msgstr "⟦Ļìšţ ñöţ ƒöüñð⟧"
 
-#: routes/collections.py:163
+#: routes/collections.py:176 routes/collections.py:221
 msgid "Tag name is required"
 msgstr "⟦Ţàĝ ñàɱé ìš ŕéɋüìŕéð⟧"
 
-#: routes/collections.py:177 routes/collections.py:215
+#: routes/collections.py:192 routes/collections.py:234
 msgid "A tag with that name already exists"
 msgstr "⟦À ţàĝ ŵìţĥ ţĥàţ ñàɱé àļŕéàðý éжìšţš⟧"
 
-#: routes/collections.py:202 routes/collections.py:233
-#: routes/collections.py:294 routes/collections.py:359
+#: routes/collections.py:217 routes/collections.py:252
+#: routes/collections.py:313 routes/collections.py:378
 msgid "Tag not found"
 msgstr "⟦Ţàĝ ñöţ ƒöüñð⟧"
 
-#: routes/collections.py:282
+#: routes/collections.py:301
 msgid "Either tag_id or tag_name is required"
 msgstr "⟦Éìţĥéŕ ţàĝ_ìð öŕ ţàĝ_ñàɱé ìš ŕéɋüìŕéð⟧"
 
-#: routes/collections.py:338
+#: routes/collections.py:357
 msgid "Tag is not assigned to this game"
 msgstr "⟦Ţàĝ ìš ñöţ àššìĝñéð ţö ţĥìš ĝàɱé⟧"
 
-#: routes/collections.py:406
+#: routes/collections.py:425 routes/collections.py:471
 msgid "List name is required"
 msgstr "⟦Ļìšţ ñàɱé ìš ŕéɋüìŕéð⟧"
 
-#: routes/collections.py:517
+#: routes/collections.py:431 routes/collections.py:475
+msgid "A list description and icon are text"
+msgstr "⟦À ļìšţ ðéšçŕìþţìöñ àñð ìçöñ àŕé ţéжţ⟧"
+
+#: routes/collections.py:478
+msgid "A list position is a whole number"
+msgstr "⟦À ļìšţ þöšìţìöñ ìš à ŵĥöļé ñüɱƀéŕ⟧"
+
+#: routes/collections.py:544
 msgid "game_id is required"
 msgstr "⟦ĝàɱé_ìð ìš ŕéɋüìŕéð⟧"
 
-#: routes/collections.py:573
+#: routes/collections.py:600
 msgid "Game is not in this list"
 msgstr "⟦Ĝàɱé ìš ñöţ ìñ ţĥìš ļìšţ⟧"
 
-#: routes/collections.py:618
+#: routes/collections.py:645 routes/collections.py:718
 msgid "Title is required"
 msgstr "⟦Ţìţļé ìš ŕéɋüìŕéð⟧"
 
-#: routes/collections.py:630 routes/collections.py:697
+#: routes/collections.py:657 routes/collections.py:726
 msgid "Priority must be an integer between 1 and 5"
 msgstr "⟦Þŕìöŕìţý ɱüšţ ƀé àñ ìñţéĝéŕ ƀéţŵééñ 1 àñð 5⟧"
 
-#: routes/collections.py:635 routes/collections.py:702
+#: routes/collections.py:662 routes/collections.py:740
 msgid "system_id must be an integer"
 msgstr "⟦šýšţéɱ_ìð ɱüšţ ƀé àñ ìñţéĝéŕ⟧"
 
-#: routes/collections.py:638 routes/collections.py:705
+#: routes/collections.py:665 routes/collections.py:743
 msgid "Unknown system_id"
 msgstr "⟦Üñķñöŵñ šýšţéɱ_ìð⟧"
 
-#: routes/collections.py:649
+#: routes/collections.py:676 routes/collections.py:735
 msgid "This game is already on your wishlist"
 msgstr "⟦Ţĥìš ĝàɱé ìš àļŕéàðý öñ ýöüŕ ŵìšĥļìšţ⟧"
 
-#: routes/collections.py:687 routes/collections.py:732
-#: routes/collections.py:755
+#: routes/collections.py:714 routes/collections.py:770
+#: routes/collections.py:793
 msgid "Wishlist item not found"
 msgstr "⟦Ŵìšĥļìšţ ìţéɱ ñöţ ƒöüñð⟧"
 
@@ -807,8 +819,8 @@ msgstr "⟦Ƒàìļéð ţö àþþļý ɱéţàðàţà.⟧"
 msgid "No fields to update"
 msgstr "⟦Ñö ƒìéļðš ţö üþðàţé⟧"
 
-#: routes/games.py:1205 routes/platform_import.py:250
-#: routes/platform_import.py:629 routes/platform_import.py:993
+#: routes/games.py:1205 routes/platform_import.py:263
+#: routes/platform_import.py:642 routes/platform_import.py:1006
 #: routes/trophies.py:1919 templates/game_imports.html:579
 #: templates/game_imports.html:842
 msgid "No games selected"
@@ -860,7 +872,7 @@ msgid "No filename provided"
 msgstr "⟦Ñö ƒìļéñàɱé þŕöⱴìðéð⟧"
 
 #: routes/games_media.py:85 routes/reports.py:699 routes/scrape_logs.py:129
-#: routes/scrape_logs.py:154 routes/scrape_logs.py:203 routes/settings.py:353
+#: routes/scrape_logs.py:154 routes/scrape_logs.py:203 routes/settings.py:352
 msgid "Invalid filename"
 msgstr "⟦Ìñⱴàļìð ƒìļéñàɱé⟧"
 
@@ -1014,15 +1026,15 @@ msgstr "⟦ŔéţŕöÀŕçĥ ìš ñöţ àççéþţìñĝ çöɱɱàñðš. �
 msgid "Next disk inserted"
 msgstr "⟦Ñéжţ ðìšķ ìñšéŕţéð⟧"
 
-#: routes/maintenance.py:279
+#: routes/maintenance.py:276
 msgid "Unknown image type"
 msgstr "⟦Üñķñöŵñ ìɱàĝé ţýþé⟧"
 
-#: routes/maintenance.py:492
+#: routes/maintenance.py:489
 msgid "Add your ScreenScraper account in Settings first."
 msgstr "⟦Àðð ýöüŕ ŠçŕééñŠçŕàþéŕ àççöüñţ ìñ Šéţţìñĝš ƒìŕšţ.⟧"
 
-#: routes/maintenance.py:493
+#: routes/maintenance.py:490
 msgid "This fix is already running."
 msgstr "⟦Ţĥìš ƒìж ìš àļŕéàðý ŕüññìñĝ.⟧"
 
@@ -1101,48 +1113,48 @@ msgstr "⟦Ìɱàĝé ƒìļé ñöţ ƒöüñð⟧"
 msgid "Background removal failed"
 msgstr "⟦Ɓàçķĝŕöüñð ŕéɱöⱴàļ ƒàìļéð⟧"
 
-#: routes/platform_import.py:182
+#: routes/platform_import.py:195
 msgid "Steam API key not configured. Add it in Settings → API Keys."
 msgstr "⟦Šţéàɱ ÀÞÌ ķéý ñöţ çöñƒìĝüŕéð. Àðð ìţ ìñ Šéţţìñĝš → ÀÞÌ Ķéýš.⟧"
 
-#: routes/platform_import.py:184
+#: routes/platform_import.py:197
 msgid "Steam ID not configured. Add it in Settings → API Keys."
 msgstr "⟦Šţéàɱ ÌÐ ñöţ çöñƒìĝüŕéð. Àðð ìţ ìñ Šéţţìñĝš → ÀÞÌ Ķéýš.⟧"
 
-#: routes/platform_import.py:190
+#: routes/platform_import.py:203
 #, python-format
 msgid "Could not resolve Steam vanity URL \"%(steam_id)s\". Use your 17-digit Steam ID instead."
 msgstr "⟦Çöüļð ñöţ ŕéšöļⱴé Šţéàɱ ⱴàñìţý ÜŔĻ \"%(steam_id)s\". Üšé ýöüŕ 17-ðìĝìţ Šţéàɱ ÌÐ ìñšţéàð.⟧"
 
-#: routes/platform_import.py:196
+#: routes/platform_import.py:209
 msgid "No games found. Check that your Steam profile and game details are set to Public."
 msgstr "⟦Ñö ĝàɱéš ƒöüñð. Çĥéçķ ţĥàţ ýöüŕ Šţéàɱ þŕöƒìļé àñð ĝàɱé ðéţàìļš àŕé šéţ ţö Þüƀļìç.⟧"
 
-#: routes/platform_import.py:255
+#: routes/platform_import.py:268
 msgid "Could not create Windows system entry"
 msgstr "⟦Çöüļð ñöţ çŕéàţé Ŵìñðöŵš šýšţéɱ éñţŕý⟧"
 
-#: routes/platform_import.py:399
+#: routes/platform_import.py:412
 msgid "Xbox Client ID not configured. Add it in Settings → API Keys."
 msgstr "⟦Жƀöж Çļìéñţ ÌÐ ñöţ çöñƒìĝüŕéð. Àðð ìţ ìñ Šéţţìñĝš → ÀÞÌ Ķéýš.⟧"
 
-#: routes/platform_import.py:537
+#: routes/platform_import.py:550
 msgid "Xbox credentials not configured. Add them in Settings → API Keys."
 msgstr "⟦Жƀöж çŕéðéñţìàļš ñöţ çöñƒìĝüŕéð. Àðð ţĥéɱ ìñ Šéţţìñĝš → ÀÞÌ Ķéýš.⟧"
 
-#: routes/platform_import.py:541
+#: routes/platform_import.py:554
 msgid "Xbox authentication failed. Please re-connect your Xbox account."
 msgstr "⟦Жƀöж àüţĥéñţìçàţìöñ ƒàìļéð. Þļéàšé ŕé-çöññéçţ ýöüŕ Жƀöж àççöüñţ.⟧"
 
-#: routes/platform_import.py:545
+#: routes/platform_import.py:558
 msgid "No games found in Xbox title history."
 msgstr "⟦Ñö ĝàɱéš ƒöüñð ìñ Жƀöж ţìţļé ĥìšţöŕý.⟧"
 
-#: routes/platform_import.py:833
+#: routes/platform_import.py:846
 msgid "PSN NPSSO not configured. Add it in Settings → API Keys."
 msgstr "⟦ÞŠÑ ÑÞŠŠÖ ñöţ çöñƒìĝüŕéð. Àðð ìţ ìñ Šéţţìñĝš → ÀÞÌ Ķéýš.⟧"
 
-#: routes/platform_import.py:860
+#: routes/platform_import.py:873
 msgid "Failed to fetch PSN game list. Try syncing trophies first."
 msgstr "⟦Ƒàìļéð ţö ƒéţçĥ ÞŠÑ ĝàɱé ļìšţ. Ţŕý šýñçìñĝ ţŕöþĥìéš ƒìŕšţ.⟧"
 
@@ -1163,8 +1175,8 @@ msgstr "⟦ŔÖⱮ þàţĥ ñöţ çöñƒìĝüŕéð. Ĝö ţö Šéţţìñ�
 msgid "Missing required parameters"
 msgstr "⟦Ɱìššìñĝ ŕéɋüìŕéð þàŕàɱéţéŕš⟧"
 
-#: routes/reports.py:617 routes/tools.py:513 routes/tools.py:570
-#: routes/tools.py:615
+#: routes/reports.py:617 routes/tools.py:533 routes/tools.py:590
+#: routes/tools.py:635
 msgid "Invalid path"
 msgstr "⟦Ìñⱴàļìð þàţĥ⟧"
 
@@ -1219,7 +1231,7 @@ msgstr "⟦Ĝéñéŕàţéð ƒìļéñàɱé çöñţàìñš ìñⱴàļìð 
 msgid "Invalid log file"
 msgstr "⟦Ìñⱴàļìð ļöĝ ƒìļé⟧"
 
-#: routes/scrape_logs.py:101 routes/tools.py:516
+#: routes/scrape_logs.py:101 routes/tools.py:536
 msgid "File not found"
 msgstr "⟦Ƒìļé ñöţ ƒöüñð⟧"
 
@@ -1302,61 +1314,65 @@ msgstr "⟦Çöññéçţìöñ éŕŕöŕ: %(error)s⟧"
 msgid "Allowance check not supported for %(scraper)s"
 msgstr "⟦Àļļöŵàñçé çĥéçķ ñöţ šüþþöŕţéð ƒöŕ %(scraper)s⟧"
 
-#: routes/settings.py:228
+#: routes/settings.py:227
 msgid "Value is required"
 msgstr "⟦Ѵàļüé ìš ŕéɋüìŕéð⟧"
 
-#: routes/settings.py:250
+#: routes/settings.py:249
 msgid "Option already exists"
 msgstr "⟦Öþţìöñ àļŕéàðý éжìšţš⟧"
 
-#: routes/settings.py:359
+#: routes/settings.py:358
 msgid "Backup file not found"
 msgstr "⟦Ɓàçķüþ ƒìļé ñöţ ƒöüñð⟧"
 
-#: routes/settings.py:373
+#: routes/settings.py:376
 msgid "A background job is running. Wait for it to finish before restoring."
 msgstr "⟦À ƀàçķĝŕöüñð ĵöƀ ìš ŕüññìñĝ. Ŵàìţ ƒöŕ ìţ ţö ƒìñìšĥ ƀéƒöŕé ŕéšţöŕìñĝ.⟧"
 
-#: routes/settings.py:393
+#: routes/settings.py:396
 msgid "Backup failed its integrity check; restore aborted."
 msgstr "⟦Ɓàçķüþ ƒàìļéð ìţš ìñţéĝŕìţý çĥéçķ; ŕéšţöŕé àƀöŕţéð.⟧"
 
-#: routes/settings.py:515
+#: routes/settings.py:419
+msgid "The backup could not be copied in; nothing was changed."
+msgstr "⟦Ţĥé ƀàçķüþ çöüļð ñöţ ƀé çöþìéð ìñ; ñöţĥìñĝ ŵàš çĥàñĝéð.⟧"
+
+#: routes/settings.py:487
 #, python-format
 msgid "Invalid %(field)s: %(result)s"
 msgstr "⟦Ìñⱴàļìð %(field)s: %(result)s⟧"
 
-#: routes/settings.py:534 routes/settings.py:608 routes/settings.py:660
+#: routes/settings.py:506 routes/settings.py:580 routes/settings.py:632
 #: routes/tools.py:292 services/js_i18n_strings.py:745
 #: templates/settings.html:1149 templates/settings.html:2742
 msgid "Failed to save settings"
 msgstr "⟦Ƒàìļéð ţö šàⱴé šéţţìñĝš⟧"
 
-#: routes/settings.py:587 routes/tools.py:284
+#: routes/settings.py:559 routes/tools.py:284
 #, python-format
 msgid "Unknown setting key: %(key)s"
 msgstr "⟦Üñķñöŵñ šéţţìñĝ ķéý: %(key)s⟧"
 
-#: routes/settings.py:593 routes/tools.py:287
+#: routes/settings.py:565 routes/tools.py:287
 #, python-format
 msgid "Invalid value for '%(key)s': %(reason)s"
 msgstr "⟦Ìñⱴàļìð ⱴàļüé ƒöŕ '%(key)s': %(reason)s⟧"
 
-#: routes/settings.py:625
+#: routes/settings.py:597
 msgid "Failed to reset settings"
 msgstr "⟦Ƒàìļéð ţö ŕéšéţ šéţţìñĝš⟧"
 
-#: routes/settings.py:646
+#: routes/settings.py:618
 #, python-format
 msgid "invalid logging settings: %(reason)s"
 msgstr "⟦ìñⱴàļìð ļöĝĝìñĝ šéţţìñĝš: %(reason)s⟧"
 
-#: routes/settings.py:676 routes/settings.py:704
+#: routes/settings.py:648 routes/settings.py:676
 msgid "Invalid field. Must be \"genre\" or \"modes\""
 msgstr "⟦Ìñⱴàļìð ƒìéļð. Ɱüšţ ƀé \"ĝéñŕé\" öŕ \"ɱöðéš\"⟧"
 
-#: routes/settings.py:707
+#: routes/settings.py:679
 msgid "No mappings provided"
 msgstr "⟦Ñö ɱàþþìñĝš þŕöⱴìðéð⟧"
 
@@ -1388,7 +1404,7 @@ msgstr "⟦Àðɱìñìšţŕàţöŕ þŕìⱴìļéĝéš ŕéɋüìŕéð⟧"
 msgid "Settings payload must be an object"
 msgstr "⟦Šéţţìñĝš þàýļöàð ɱüšţ ƀé àñ öƀĵéçţ⟧"
 
-#: routes/tools.py:327 routes/tools.py:979
+#: routes/tools.py:327 routes/tools.py:1001
 #, python-format
 msgid "Path does not exist: %(path)s"
 msgstr "⟦Þàţĥ ðöéš ñöţ éжìšţ: %(path)s⟧"
@@ -1397,70 +1413,74 @@ msgstr "⟦Þàţĥ ðöéš ñöţ éжìšţ: %(path)s⟧"
 msgid "Task not found"
 msgstr "⟦Ţàšķ ñöţ ƒöüñð⟧"
 
-#: routes/tools.py:415 routes/tools.py:435
+#: routes/tools.py:421 routes/tools.py:439 routes/tools.py:461
+msgid "Only an admin or the person who started this task can change it"
+msgstr "⟦Öñļý àñ àðɱìñ öŕ ţĥé þéŕšöñ ŵĥö šţàŕţéð ţĥìš ţàšķ çàñ çĥàñĝé ìţ⟧"
+
+#: routes/tools.py:431 routes/tools.py:453
 msgid "Task not found or not running"
 msgstr "⟦Ţàšķ ñöţ ƒöüñð öŕ ñöţ ŕüññìñĝ⟧"
 
-#: routes/tools.py:455
+#: routes/tools.py:475
 msgid "Task not found or not paused"
 msgstr "⟦Ţàšķ ñöţ ƒöüñð öŕ ñöţ þàüšéð⟧"
 
-#: routes/tools.py:472 routes/tools.py:677 routes/tools.py:852
-#: routes/tools.py:968
+#: routes/tools.py:492 routes/tools.py:697 routes/tools.py:873
+#: routes/tools.py:990
 msgid "Invalid scan path"
 msgstr "⟦Ìñⱴàļìð šçàñ þàţĥ⟧"
 
-#: routes/tools.py:510 routes/tools.py:567 routes/tools.py:612
+#: routes/tools.py:530 routes/tools.py:587 routes/tools.py:632
 msgid "No path provided"
 msgstr "⟦Ñö þàţĥ þŕöⱴìðéð⟧"
 
-#: routes/tools.py:538
+#: routes/tools.py:558
 msgid "No archive path provided"
 msgstr "⟦Ñö àŕçĥìⱴé þàţĥ þŕöⱴìðéð⟧"
 
-#: routes/tools.py:541
+#: routes/tools.py:561
 msgid "Invalid archive path"
 msgstr "⟦Ìñⱴàļìð àŕçĥìⱴé þàţĥ⟧"
 
-#: routes/tools.py:544
+#: routes/tools.py:564
 msgid "No files to remove"
 msgstr "⟦Ñö ƒìļéš ţö ŕéɱöⱴé⟧"
 
-#: routes/tools.py:645
+#: routes/tools.py:665
 msgid "No paths provided"
 msgstr "⟦Ñö þàţĥš þŕöⱴìðéð⟧"
 
-#: routes/tools.py:651
+#: routes/tools.py:671
 #, python-format
 msgid "Invalid path: %(path)s"
 msgstr "⟦Ìñⱴàļìð þàţĥ: %(path)s⟧"
 
-#: routes/tools.py:726
+#: routes/tools.py:746
 msgid "chdman not found. Please install MAME tools."
 msgstr "⟦çĥðɱàñ ñöţ ƒöüñð. Þļéàšé ìñšţàļļ ⱮÀⱮÉ ţööļš.⟧"
 
-#: routes/tools.py:875
+#: routes/tools.py:896
 msgid "chdman not found"
 msgstr "⟦çĥðɱàñ ñöţ ƒöüñð⟧"
 
-#: routes/tools.py:973
+#: routes/tools.py:995
 #, python-format
 msgid "Unknown duplicate method: %(method)s"
 msgstr "⟦Üñķñöŵñ ðüþļìçàţé ɱéţĥöð: %(method)s⟧"
 
-#: routes/tools.py:1186 routes/tools.py:1540
+#: routes/tools.py:1209 routes/tools.py:1565
 msgid "These scan results have expired. Scan again, then delete."
 msgstr "⟦Ţĥéšé šçàñ ŕéšüļţš ĥàⱴé éжþìŕéð. Šçàñ àĝàìñ, ţĥéñ ðéļéţé.⟧"
 
-#: routes/tools.py:1191
+#: routes/tools.py:1214
 msgid "Keep at least one copy of each game. Nothing was deleted."
 msgstr "⟦Ķééþ àţ ļéàšţ öñé çöþý öƒ éàçĥ ĝàɱé. Ñöţĥìñĝ ŵàš ðéļéţéð.⟧"
 
-#: routes/tools.py:1451
+#: routes/tools.py:1474
 msgid "This system has no screenshot check"
 msgstr "⟦Ţĥìš šýšţéɱ ĥàš ñö šçŕééñšĥöţ çĥéçķ⟧"
 
-#: routes/tools.py:1550
+#: routes/tools.py:1575
 msgid "Keep at least one copy of each screenshot. Nothing was deleted."
 msgstr "⟦Ķééþ àţ ļéàšţ öñé çöþý öƒ éàçĥ šçŕééñšĥöţ. Ñöţĥìñĝ ŵàš ðéļéţéð.⟧"
 
@@ -1583,7 +1603,7 @@ msgstr "⟦Ţĥàţ ĝàɱé ìš ñöţ ļìñķéð ţö öţĥéŕ ⱴéŕš�
 msgid "The AI did not give a usable answer. Try again later."
 msgstr "⟦Ţĥé ÀÌ ðìð ñöţ ĝìⱴé à üšàƀļé àñšŵéŕ. Ţŕý àĝàìñ ļàţéŕ.⟧"
 
-#: routes/xbox_achievements.py:126 services/jobs/platform_sync.py:768
+#: routes/xbox_achievements.py:126 services/jobs/platform_sync.py:798
 msgid "Xbox credentials not configured"
 msgstr "⟦Жƀöж çŕéðéñţìàļš ñöţ çöñƒìĝüŕéð⟧"
 
@@ -4541,35 +4561,35 @@ msgstr "⟦Ŕüñ %(name)s öñçé šö ìţ çŕéàţéš ìţš šéţţìñ
 msgid "The player has no core for this system."
 msgstr "⟦Ţĥé þļàýéŕ ĥàš ñö çöŕé ƒöŕ ţĥìš šýšţéɱ.⟧"
 
-#: services/jobs/platform_sync.py:368 services/jobs/platform_sync.py:677
+#: services/jobs/platform_sync.py:398 services/jobs/platform_sync.py:707
 msgid "Sync already running"
 msgstr "⟦Šýñç àļŕéàðý ŕüññìñĝ⟧"
 
-#: services/jobs/platform_sync.py:373
+#: services/jobs/platform_sync.py:403
 msgid "Steam sync is already running on another worker process."
 msgstr "⟦Šţéàɱ šýñç ìš àļŕéàðý ŕüññìñĝ öñ àñöţĥéŕ ŵöŕķéŕ þŕöçéšš.⟧"
 
-#: services/jobs/platform_sync.py:391 services/jobs/platform_sync.py:700
+#: services/jobs/platform_sync.py:421 services/jobs/platform_sync.py:730
 msgid "No running sync to cancel"
 msgstr "⟦Ñö ŕüññìñĝ šýñç ţö çàñçéļ⟧"
 
-#: services/jobs/platform_sync.py:485
+#: services/jobs/platform_sync.py:515
 msgid "Steam API key or Steam ID not configured"
 msgstr "⟦Šţéàɱ ÀÞÌ ķéý öŕ Šţéàɱ ÌÐ ñöţ çöñƒìĝüŕéð⟧"
 
-#: services/jobs/platform_sync.py:504
+#: services/jobs/platform_sync.py:534
 msgid "No Steam games found to sync"
 msgstr "⟦Ñö Šţéàɱ ĝàɱéš ƒöüñð ţö šýñç⟧"
 
-#: services/jobs/platform_sync.py:682
+#: services/jobs/platform_sync.py:712
 msgid "Xbox sync is already running on another worker process."
 msgstr "⟦Жƀöж šýñç ìš àļŕéàðý ŕüññìñĝ öñ àñöţĥéŕ ŵöŕķéŕ þŕöçéšš.⟧"
 
-#: services/jobs/platform_sync.py:777
+#: services/jobs/platform_sync.py:807
 msgid "Xbox authentication failed — please re-connect your Xbox account"
 msgstr "⟦Жƀöж àüţĥéñţìçàţìöñ ƒàìļéð — þļéàšé ŕé-çöññéçţ ýöüŕ Жƀöж àççöüñţ⟧"
 
-#: services/jobs/platform_sync.py:828
+#: services/jobs/platform_sync.py:858
 msgid "No Xbox games found to sync"
 msgstr "⟦Ñö Жƀöж ĝàɱéš ƒöüñð ţö šýñç⟧"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-05 19:42+0200\n"
+"POT-Creation-Date: 2026-11-06 09:02+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -155,12 +155,12 @@ msgstr "ライブラリにゲームがありません"
 msgid "Setup has already been completed"
 msgstr "セットアップはすでに完了しています"
 
-#: app.py:1680 routes/settings.py:553 routes/tools.py:364
+#: app.py:1680 routes/settings.py:525 routes/tools.py:364
 msgid "Permission denied"
 msgstr "アクセスが拒否されました"
 
-#: app.py:1700 routes/collections.py:194 routes/collections.py:271
-#: routes/collections.py:438 routes/collections.py:679
+#: app.py:1700 routes/collections.py:209 routes/collections.py:290
+#: routes/collections.py:459 routes/collections.py:706
 msgid "No data provided"
 msgstr "データが指定されていません"
 
@@ -194,7 +194,7 @@ msgstr "システムが見つからないか、実績対応ゲームがありま
 
 #: routes/achievements.py:176 routes/achievements.py:486
 #: routes/bonus_discs.py:273 routes/bulk_scrape.py:48 routes/cheats.py:32
-#: routes/cheats.py:51 routes/collections.py:276 routes/collections.py:531
+#: routes/cheats.py:51 routes/collections.py:295 routes/collections.py:558
 #: routes/emulators.py:304 routes/emulators.py:318 routes/games.py:393
 #: routes/games.py:930 routes/games.py:1049 routes/games.py:1127
 #: routes/games_ai.py:41 routes/games_media.py:40 routes/games_media.py:89
@@ -240,8 +240,8 @@ msgstr "このシステムにRetroAchievements対応のゲームがありませ�
 msgid "Sync already in progress for %(name)s"
 msgstr "%(name)sの同期はすでに実行中です"
 
-#: routes/achievements.py:410 routes/platform_import.py:381
-#: routes/platform_import.py:758
+#: routes/achievements.py:410 routes/platform_import.py:394
+#: routes/platform_import.py:771
 msgid "That job belongs to another user"
 msgstr "そのジョブは別のユーザーのものです"
 
@@ -564,14 +564,14 @@ msgid "A bonus disc links to a main game, one level only"
 msgstr "ボーナスディスクはメインのゲームにリンクされます（1階層のみ）"
 
 #: routes/bonus_discs.py:219 routes/bonus_discs.py:237 routes/games.py:1397
-#: routes/games.py:1427 routes/platform_import.py:344
-#: routes/platform_import.py:723 routes/platform_import.py:1107
+#: routes/games.py:1427 routes/platform_import.py:357
+#: routes/platform_import.py:736 routes/platform_import.py:1120
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:207 routes/scraper.py:538
-#: routes/scraper.py:929 routes/settings.py:320 routes/settings.py:344
-#: routes/settings.py:459 routes/settings.py:538 routes/settings.py:567
-#: routes/settings.py:611 routes/settings.py:627 routes/settings.py:663
-#: routes/steam_achievements.py:138 routes/systems.py:286 routes/systems.py:476
+#: routes/scraper.py:929 routes/settings.py:319 routes/settings.py:343
+#: routes/settings.py:431 routes/settings.py:510 routes/settings.py:539
+#: routes/settings.py:583 routes/settings.py:599 routes/settings.py:635
+#: routes/steam_achievements.py:138 routes/systems.py:286 routes/systems.py:489
 #: routes/trophies.py:593 routes/trophies.py:791 routes/trophies.py:839
 #: routes/trophies.py:1638 routes/trophies.py:1662 routes/trophies.py:1707
 #: routes/trophies.py:1735 routes/trophies.py:1777 routes/trophies.py:1844
@@ -581,8 +581,8 @@ msgstr "内部エラーが発生しました"
 
 #: routes/bonus_discs.py:286 routes/bonus_discs.py:317
 #: routes/controllers.py:216 routes/controllers.py:280
-#: routes/controllers.py:413 routes/controllers.py:465 routes/settings.py:224
-#: routes/settings.py:494 routes/settings.py:577 routes/systems.py:307
+#: routes/controllers.py:413 routes/controllers.py:465 routes/settings.py:223
+#: routes/settings.py:466 routes/settings.py:549 routes/systems.py:307
 msgid "Request body must be a JSON object"
 msgstr "リクエスト本文はJSONオブジェクトである必要があります"
 
@@ -622,7 +622,7 @@ msgstr "そのチートパックはありません。"
 msgid "Enter a folder to import."
 msgstr "インポートするフォルダーを入力してください。"
 
-#: routes/clz_import.py:271
+#: routes/clz_import.py:253
 msgid ""
 "pdfplumber module not installed. Please run: pip install pdfplumber "
 "--break-system-packages"
@@ -630,93 +630,105 @@ msgstr ""
 "pdfplumberモジュールがインストールされていません。次を実行してください: pip install pdfplumber --break-"
 "system-packages"
 
-#: routes/clz_import.py:276
+#: routes/clz_import.py:258
 msgid "No file uploaded"
 msgstr "ファイルがアップロードされていません"
 
-#: routes/clz_import.py:280
+#: routes/clz_import.py:262
 msgid "File must be a PDF"
 msgstr "ファイルはPDFである必要があります"
 
-#: routes/clz_import.py:287
+#: routes/clz_import.py:269
 #, python-format
 msgid "File too large (%(size)sMB). Maximum size is 50MB"
 msgstr "ファイルが大きすぎます（%(size)sMB）。最大サイズは50MBです"
 
-#: routes/clz_import.py:290
+#: routes/clz_import.py:272
 msgid "Invalid PDF file (bad magic bytes)"
 msgstr "PDFファイルが無効です（マジックバイトが不正です）"
 
-#: routes/clz_import.py:314
+#: routes/clz_import.py:296
 #, python-format
 msgid "PDF has %(pages)s pages; maximum is %(max)s."
 msgstr "PDFのページ数は%(pages)sページです。最大は%(max)sページです。"
 
-#: routes/clz_import.py:583
+#: routes/clz_import.py:553
 msgid "No games to import"
 msgstr "インポートするゲームがありません"
 
-#: routes/collections.py:103 routes/collections.py:446
-#: routes/collections.py:475 routes/collections.py:497
-#: routes/collections.py:527 routes/collections.py:566
+#: routes/collections.py:42
+msgid "A tag colour is written like #4cc9f0"
+msgstr "タグの色は #4cc9f0 のように書きます"
+
+#: routes/collections.py:116 routes/collections.py:467
+#: routes/collections.py:502 routes/collections.py:524
+#: routes/collections.py:554 routes/collections.py:593
 msgid "List not found"
 msgstr "リストが見つかりません"
 
-#: routes/collections.py:163
+#: routes/collections.py:176 routes/collections.py:221
 msgid "Tag name is required"
 msgstr "タグ名が必要です"
 
-#: routes/collections.py:177 routes/collections.py:215
+#: routes/collections.py:192 routes/collections.py:234
 msgid "A tag with that name already exists"
 msgstr "その名前のタグはすでに存在します"
 
-#: routes/collections.py:202 routes/collections.py:233
-#: routes/collections.py:294 routes/collections.py:359
+#: routes/collections.py:217 routes/collections.py:252
+#: routes/collections.py:313 routes/collections.py:378
 msgid "Tag not found"
 msgstr "タグが見つかりません"
 
-#: routes/collections.py:282
+#: routes/collections.py:301
 msgid "Either tag_id or tag_name is required"
 msgstr "tag_idまたはtag_nameのいずれかが必要です"
 
-#: routes/collections.py:338
+#: routes/collections.py:357
 msgid "Tag is not assigned to this game"
 msgstr "このゲームにはタグが割り当てられていません"
 
-#: routes/collections.py:406
+#: routes/collections.py:425 routes/collections.py:471
 msgid "List name is required"
 msgstr "リスト名が必要です"
 
-#: routes/collections.py:517
+#: routes/collections.py:431 routes/collections.py:475
+msgid "A list description and icon are text"
+msgstr "リストの説明とアイコンはテキストです"
+
+#: routes/collections.py:478
+msgid "A list position is a whole number"
+msgstr "リストの位置は整数です"
+
+#: routes/collections.py:544
 msgid "game_id is required"
 msgstr "game_idが必要です"
 
-#: routes/collections.py:573
+#: routes/collections.py:600
 msgid "Game is not in this list"
 msgstr "ゲームはこのリストに含まれていません"
 
-#: routes/collections.py:618
+#: routes/collections.py:645 routes/collections.py:718
 msgid "Title is required"
 msgstr "タイトルが必要です"
 
-#: routes/collections.py:630 routes/collections.py:697
+#: routes/collections.py:657 routes/collections.py:726
 msgid "Priority must be an integer between 1 and 5"
 msgstr "優先度は1から5までの整数で指定してください"
 
-#: routes/collections.py:635 routes/collections.py:702
+#: routes/collections.py:662 routes/collections.py:740
 msgid "system_id must be an integer"
 msgstr "system_idは整数である必要があります"
 
-#: routes/collections.py:638 routes/collections.py:705
+#: routes/collections.py:665 routes/collections.py:743
 msgid "Unknown system_id"
 msgstr "不明なsystem_idです"
 
-#: routes/collections.py:649
+#: routes/collections.py:676 routes/collections.py:735
 msgid "This game is already on your wishlist"
 msgstr "このゲームはすでにウィッシュリストに登録されています"
 
-#: routes/collections.py:687 routes/collections.py:732
-#: routes/collections.py:755
+#: routes/collections.py:714 routes/collections.py:770
+#: routes/collections.py:793
 msgid "Wishlist item not found"
 msgstr "ウィッシュリストの項目が見つかりません"
 
@@ -823,8 +835,8 @@ msgstr "メタデータの適用に失敗しました。"
 msgid "No fields to update"
 msgstr "更新するフィールドがありません"
 
-#: routes/games.py:1205 routes/platform_import.py:250
-#: routes/platform_import.py:629 routes/platform_import.py:993
+#: routes/games.py:1205 routes/platform_import.py:263
+#: routes/platform_import.py:642 routes/platform_import.py:1006
 #: routes/trophies.py:1919 templates/game_imports.html:579
 #: templates/game_imports.html:842
 msgid "No games selected"
@@ -876,7 +888,7 @@ msgid "No filename provided"
 msgstr "ファイル名が指定されていません"
 
 #: routes/games_media.py:85 routes/reports.py:699 routes/scrape_logs.py:129
-#: routes/scrape_logs.py:154 routes/scrape_logs.py:203 routes/settings.py:353
+#: routes/scrape_logs.py:154 routes/scrape_logs.py:203 routes/settings.py:352
 msgid "Invalid filename"
 msgstr "ファイル名が無効です"
 
@@ -1040,15 +1052,15 @@ msgstr ""
 msgid "Next disk inserted"
 msgstr "次のディスクを挿入しました"
 
-#: routes/maintenance.py:279
+#: routes/maintenance.py:276
 msgid "Unknown image type"
 msgstr "不明な画像タイプです"
 
-#: routes/maintenance.py:492
+#: routes/maintenance.py:489
 msgid "Add your ScreenScraper account in Settings first."
 msgstr "まず設定でScreenScraperのアカウントを追加してください。"
 
-#: routes/maintenance.py:493
+#: routes/maintenance.py:490
 msgid "This fix is already running."
 msgstr "この修正はすでに実行中です。"
 
@@ -1127,52 +1139,52 @@ msgstr "画像ファイルが見つかりません"
 msgid "Background removal failed"
 msgstr "背景の削除に失敗しました"
 
-#: routes/platform_import.py:182
+#: routes/platform_import.py:195
 msgid "Steam API key not configured. Add it in Settings → API Keys."
 msgstr "Steam API キーが設定されていません。「設定」→「API キー」で追加してください。"
 
-#: routes/platform_import.py:184
+#: routes/platform_import.py:197
 msgid "Steam ID not configured. Add it in Settings → API Keys."
 msgstr "Steam IDが設定されていません。「設定」→「API キー」で追加してください。"
 
-#: routes/platform_import.py:190
+#: routes/platform_import.py:203
 #, python-format
 msgid ""
 "Could not resolve Steam vanity URL \"%(steam_id)s\". Use your 17-digit "
 "Steam ID instead."
 msgstr "Steamのカスタム URL「%(steam_id)s」を解決できませんでした。代わりに17桁のSteam IDを使用してください。"
 
-#: routes/platform_import.py:196
+#: routes/platform_import.py:209
 msgid ""
 "No games found. Check that your Steam profile and game details are set to"
 " Public."
 msgstr "ゲームが見つかりません。Steamのプロフィールとゲーム詳細が「公開」に設定されているか確認してください。"
 
-#: routes/platform_import.py:255
+#: routes/platform_import.py:268
 msgid "Could not create Windows system entry"
 msgstr "Windowsシステムのエントリを作成できませんでした"
 
-#: routes/platform_import.py:399
+#: routes/platform_import.py:412
 msgid "Xbox Client ID not configured. Add it in Settings → API Keys."
 msgstr "Xbox Client IDが設定されていません。「設定」→「API キー」で追加してください。"
 
-#: routes/platform_import.py:537
+#: routes/platform_import.py:550
 msgid "Xbox credentials not configured. Add them in Settings → API Keys."
 msgstr "Xboxの認証情報が設定されていません。「設定」→「API キー」で追加してください。"
 
-#: routes/platform_import.py:541
+#: routes/platform_import.py:554
 msgid "Xbox authentication failed. Please re-connect your Xbox account."
 msgstr "Xboxの認証に失敗しました。Xboxアカウントを再接続してください。"
 
-#: routes/platform_import.py:545
+#: routes/platform_import.py:558
 msgid "No games found in Xbox title history."
 msgstr "Xboxのタイトル履歴にゲームが見つかりません。"
 
-#: routes/platform_import.py:833
+#: routes/platform_import.py:846
 msgid "PSN NPSSO not configured. Add it in Settings → API Keys."
 msgstr "PSN NPSSOが設定されていません。「設定」→「API キー」で追加してください。"
 
-#: routes/platform_import.py:860
+#: routes/platform_import.py:873
 msgid "Failed to fetch PSN game list. Try syncing trophies first."
 msgstr "PSNのゲームリストの取得に失敗しました。まずトロフィーを同期してみてください。"
 
@@ -1193,8 +1205,8 @@ msgstr "ROMパスが設定されていません。「設定」→「パス」で
 msgid "Missing required parameters"
 msgstr "必須パラメーターがありません"
 
-#: routes/reports.py:617 routes/tools.py:513 routes/tools.py:570
-#: routes/tools.py:615
+#: routes/reports.py:617 routes/tools.py:533 routes/tools.py:590
+#: routes/tools.py:635
 msgid "Invalid path"
 msgstr "パスが無効です"
 
@@ -1249,7 +1261,7 @@ msgstr "生成されたファイル名に無効な文字が含まれています
 msgid "Invalid log file"
 msgstr "ログファイルが無効です"
 
-#: routes/scrape_logs.py:101 routes/tools.py:516
+#: routes/scrape_logs.py:101 routes/tools.py:536
 msgid "File not found"
 msgstr "ファイルが見つかりません"
 
@@ -1334,61 +1346,65 @@ msgstr "接続エラー: %(error)s"
 msgid "Allowance check not supported for %(scraper)s"
 msgstr "%(scraper)sでは利用上限の確認はサポートされていません"
 
-#: routes/settings.py:228
+#: routes/settings.py:227
 msgid "Value is required"
 msgstr "値が必要です"
 
-#: routes/settings.py:250
+#: routes/settings.py:249
 msgid "Option already exists"
 msgstr "その選択肢はすでに存在します"
 
-#: routes/settings.py:359
+#: routes/settings.py:358
 msgid "Backup file not found"
 msgstr "バックアップファイルが見つかりません"
 
-#: routes/settings.py:373
+#: routes/settings.py:376
 msgid "A background job is running. Wait for it to finish before restoring."
 msgstr "バックグラウンドジョブが実行中です。復元する前に完了を待ってください。"
 
-#: routes/settings.py:393
+#: routes/settings.py:396
 msgid "Backup failed its integrity check; restore aborted."
 msgstr "バックアップの整合性チェックに失敗しました。復元を中止しました。"
 
-#: routes/settings.py:515
+#: routes/settings.py:419
+msgid "The backup could not be copied in; nothing was changed."
+msgstr "バックアップをコピーできませんでした。何も変更されていません。"
+
+#: routes/settings.py:487
 #, python-format
 msgid "Invalid %(field)s: %(result)s"
 msgstr "%(field)sが無効です: %(result)s"
 
-#: routes/settings.py:534 routes/settings.py:608 routes/settings.py:660
+#: routes/settings.py:506 routes/settings.py:580 routes/settings.py:632
 #: routes/tools.py:292 services/js_i18n_strings.py:745
 #: templates/settings.html:1149 templates/settings.html:2742
 msgid "Failed to save settings"
 msgstr "設定の保存に失敗しました"
 
-#: routes/settings.py:587 routes/tools.py:284
+#: routes/settings.py:559 routes/tools.py:284
 #, python-format
 msgid "Unknown setting key: %(key)s"
 msgstr "不明な設定キーです: %(key)s"
 
-#: routes/settings.py:593 routes/tools.py:287
+#: routes/settings.py:565 routes/tools.py:287
 #, python-format
 msgid "Invalid value for '%(key)s': %(reason)s"
 msgstr "「%(key)s」の値が無効です: %(reason)s"
 
-#: routes/settings.py:625
+#: routes/settings.py:597
 msgid "Failed to reset settings"
 msgstr "設定のリセットに失敗しました"
 
-#: routes/settings.py:646
+#: routes/settings.py:618
 #, python-format
 msgid "invalid logging settings: %(reason)s"
 msgstr "ロギング設定が無効です: %(reason)s"
 
-#: routes/settings.py:676 routes/settings.py:704
+#: routes/settings.py:648 routes/settings.py:676
 msgid "Invalid field. Must be \"genre\" or \"modes\""
 msgstr "フィールドが無効です。「genre」または「modes」である必要があります"
 
-#: routes/settings.py:707
+#: routes/settings.py:679
 msgid "No mappings provided"
 msgstr "マッピングが指定されていません"
 
@@ -1420,7 +1436,7 @@ msgstr "管理者権限が必要です"
 msgid "Settings payload must be an object"
 msgstr "設定ペイロードはオブジェクトである必要があります"
 
-#: routes/tools.py:327 routes/tools.py:979
+#: routes/tools.py:327 routes/tools.py:1001
 #, python-format
 msgid "Path does not exist: %(path)s"
 msgstr "パスが存在しません: %(path)s"
@@ -1429,70 +1445,74 @@ msgstr "パスが存在しません: %(path)s"
 msgid "Task not found"
 msgstr "タスクが見つかりません"
 
-#: routes/tools.py:415 routes/tools.py:435
+#: routes/tools.py:421 routes/tools.py:439 routes/tools.py:461
+msgid "Only an admin or the person who started this task can change it"
+msgstr "変更できるのは管理者か、このタスクを開始した人だけです"
+
+#: routes/tools.py:431 routes/tools.py:453
 msgid "Task not found or not running"
 msgstr "タスクが見つからないか、実行中ではありません"
 
-#: routes/tools.py:455
+#: routes/tools.py:475
 msgid "Task not found or not paused"
 msgstr "タスクが見つからないか、一時停止していません"
 
-#: routes/tools.py:472 routes/tools.py:677 routes/tools.py:852
-#: routes/tools.py:968
+#: routes/tools.py:492 routes/tools.py:697 routes/tools.py:873
+#: routes/tools.py:990
 msgid "Invalid scan path"
 msgstr "スキャンパスが無効です"
 
-#: routes/tools.py:510 routes/tools.py:567 routes/tools.py:612
+#: routes/tools.py:530 routes/tools.py:587 routes/tools.py:632
 msgid "No path provided"
 msgstr "パスが指定されていません"
 
-#: routes/tools.py:538
+#: routes/tools.py:558
 msgid "No archive path provided"
 msgstr "アーカイブパスが指定されていません"
 
-#: routes/tools.py:541
+#: routes/tools.py:561
 msgid "Invalid archive path"
 msgstr "アーカイブパスが無効です"
 
-#: routes/tools.py:544
+#: routes/tools.py:564
 msgid "No files to remove"
 msgstr "削除するファイルがありません"
 
-#: routes/tools.py:645
+#: routes/tools.py:665
 msgid "No paths provided"
 msgstr "パスが指定されていません"
 
-#: routes/tools.py:651
+#: routes/tools.py:671
 #, python-format
 msgid "Invalid path: %(path)s"
 msgstr "パスが無効です: %(path)s"
 
-#: routes/tools.py:726
+#: routes/tools.py:746
 msgid "chdman not found. Please install MAME tools."
 msgstr "chdmanが見つかりません。MAMEツールをインストールしてください。"
 
-#: routes/tools.py:875
+#: routes/tools.py:896
 msgid "chdman not found"
 msgstr "chdmanが見つかりません"
 
-#: routes/tools.py:973
+#: routes/tools.py:995
 #, python-format
 msgid "Unknown duplicate method: %(method)s"
 msgstr "不明な重複検出方法です: %(method)s"
 
-#: routes/tools.py:1186 routes/tools.py:1540
+#: routes/tools.py:1209 routes/tools.py:1565
 msgid "These scan results have expired. Scan again, then delete."
 msgstr "このスキャン結果は期限切れです。再度スキャンしてから削除してください。"
 
-#: routes/tools.py:1191
+#: routes/tools.py:1214
 msgid "Keep at least one copy of each game. Nothing was deleted."
 msgstr "各ゲームのコピーを少なくとも1つ残してください。何も削除されませんでした。"
 
-#: routes/tools.py:1451
+#: routes/tools.py:1474
 msgid "This system has no screenshot check"
 msgstr "このシステムにはスクリーンショットの確認がありません"
 
-#: routes/tools.py:1550
+#: routes/tools.py:1575
 msgid "Keep at least one copy of each screenshot. Nothing was deleted."
 msgstr "各スクリーンショットは少なくとも1つ残してください。削除されたものはありません。"
 
@@ -1617,7 +1637,7 @@ msgstr "そのゲームは他のバージョンにリンクされていません
 msgid "The AI did not give a usable answer. Try again later."
 msgstr "AI から有効な回答が得られませんでした。後でもう一度お試しください。"
 
-#: routes/xbox_achievements.py:126 services/jobs/platform_sync.py:768
+#: routes/xbox_achievements.py:126 services/jobs/platform_sync.py:798
 msgid "Xbox credentials not configured"
 msgstr "Xboxの認証情報が設定されていません"
 
@@ -4641,35 +4661,35 @@ msgstr "%(name)s を一度起動して設定を作成させてから、もう一
 msgid "The player has no core for this system."
 msgstr "プレーヤーにはこのシステム用のコアがありません。"
 
-#: services/jobs/platform_sync.py:368 services/jobs/platform_sync.py:677
+#: services/jobs/platform_sync.py:398 services/jobs/platform_sync.py:707
 msgid "Sync already running"
 msgstr "同期はすでに実行中です"
 
-#: services/jobs/platform_sync.py:373
+#: services/jobs/platform_sync.py:403
 msgid "Steam sync is already running on another worker process."
 msgstr "Steamの同期は別のワーカープロセスですでに実行中です。"
 
-#: services/jobs/platform_sync.py:391 services/jobs/platform_sync.py:700
+#: services/jobs/platform_sync.py:421 services/jobs/platform_sync.py:730
 msgid "No running sync to cancel"
 msgstr "キャンセルする実行中の同期がありません"
 
-#: services/jobs/platform_sync.py:485
+#: services/jobs/platform_sync.py:515
 msgid "Steam API key or Steam ID not configured"
 msgstr "Steam APIキーまたはSteam IDが設定されていません"
 
-#: services/jobs/platform_sync.py:504
+#: services/jobs/platform_sync.py:534
 msgid "No Steam games found to sync"
 msgstr "同期するSteamのゲームが見つかりません"
 
-#: services/jobs/platform_sync.py:682
+#: services/jobs/platform_sync.py:712
 msgid "Xbox sync is already running on another worker process."
 msgstr "Xboxの同期は別のワーカープロセスですでに実行中です。"
 
-#: services/jobs/platform_sync.py:777
+#: services/jobs/platform_sync.py:807
 msgid "Xbox authentication failed — please re-connect your Xbox account"
 msgstr "Xbox認証に失敗しました。Xboxアカウントを再接続してください"
 
-#: services/jobs/platform_sync.py:828
+#: services/jobs/platform_sync.py:858
 msgid "No Xbox games found to sync"
 msgstr "同期できるXboxのゲームが見つかりません"
 
@@ -14169,439 +14189,4 @@ msgstr "GitHub でスポンサーになる"
 #: templates/_settings_tabs/system.html:465
 msgid "Support on Patreon"
 msgstr "Patreon で支援"
-
-#~ msgid "Loading…"
-#~ msgstr "アップロードしています…"
-
-#~ msgid "(auto-detect)"
-#~ msgstr "(自動検出)"
-
-#~ msgid "(not set)"
-#~ msgstr "(未設定)"
-
-#~ msgid "API configured"
-#~ msgstr "API設定済み"
-
-#~ msgid "API key missing"
-#~ msgstr "APIキーがありません"
-
-#~ msgid "API keys saved!"
-#~ msgstr "APIキーを保存しました！"
-
-#~ msgid "Apply"
-#~ msgstr "適用"
-
-#~ msgid ""
-#~ "Are you sure you want to delete"
-#~ " user \"{username}\"? This action cannot"
-#~ " be undone."
-#~ msgstr "ユーザー「{username}」を削除してもよろしいですか？この操作は元に戻せません。"
-
-#~ msgid ""
-#~ "Are you sure you want to restore"
-#~ " from \"{filename}\"? This will replace "
-#~ "all current data."
-#~ msgstr "「{filename}」から復元してもよろしいですか？現在のすべてのデータが置き換えられます。"
-
-#~ msgid "Backup created successfully!"
-#~ msgstr "バックアップを正常に作成しました！"
-
-#~ msgid "Backup failed: {error}"
-#~ msgstr "バックアップに失敗しました: {error}"
-
-#~ msgid "Confirm"
-#~ msgstr "確認"
-
-#~ msgid "Create Backup"
-#~ msgstr "バックアップを作成"
-
-#~ msgid "Creating backup..."
-#~ msgstr "バックアップを作成しています..."
-
-#~ msgid "Database restored! Reloading..."
-#~ msgstr "データベースを復元しました！再読み込みしています..."
-
-#~ msgid "Default: {value}"
-#~ msgstr "デフォルト: {value}"
-
-#~ msgid "Delete User"
-#~ msgstr "ユーザーを削除"
-
-#~ msgid "Display settings saved!"
-#~ msgstr "表示設定を保存しました！"
-
-#~ msgid "Edit User"
-#~ msgstr "ユーザーを編集"
-
-#~ msgid "Error - disappears in {n}s"
-#~ msgstr "エラー - {n}秒後に消えます"
-
-#~ msgid "Error creating backup: {error}"
-#~ msgstr "バックアップの作成中にエラーが発生しました: {error}"
-
-#~ msgid "Error restoring: {error}"
-#~ msgstr "復元中にエラーが発生しました: {error}"
-
-#~ msgid "Error saving API keys: {error}"
-#~ msgstr "APIキーの保存中にエラーが発生しました: {error}"
-
-#~ msgid "Error saving settings: {error}"
-#~ msgstr "設定の保存中にエラーが発生しました: {error}"
-
-#~ msgid "Error searching: {error}"
-#~ msgstr "検索エラー：{error}"
-
-#~ msgid "Failed to change password"
-#~ msgstr "パスワードの変更に失敗しました"
-
-#~ msgid "Failed to delete user"
-#~ msgstr "ユーザーの削除に失敗しました"
-
-#~ msgid "Failed to save user"
-#~ msgstr "ユーザーの保存に失敗しました"
-
-#~ msgid "Failed to save: {error}"
-#~ msgstr "保存に失敗しました: {error}"
-
-#~ msgid "Info - disappears in {n}s"
-#~ msgstr "情報 - {n}秒後に消えます"
-
-#~ msgid "Network error changing password"
-#~ msgstr "パスワードの変更中にネットワークエラーが発生しました"
-
-#~ msgid "Network error deleting user"
-#~ msgstr "ユーザーの削除中にネットワークエラーが発生しました"
-
-#~ msgid "Network error saving settings"
-#~ msgstr "設定の保存中にネットワークエラーが発生しました"
-
-#~ msgid "Network error saving user"
-#~ msgstr "ユーザーの保存中にネットワークエラーが発生しました"
-
-#~ msgid "No logo"
-#~ msgstr "ロゴなし"
-
-#~ msgid "No systems found"
-#~ msgstr "システムが見つかりません"
-
-#~ msgid "Notification settings saved!"
-#~ msgstr "通知設定を保存しました！"
-
-#~ msgid "Password changed successfully!"
-#~ msgstr "パスワードを正常に変更しました！"
-
-#~ msgid "Path settings saved!"
-#~ msgstr "パス設定を保存しました！"
-
-#~ msgid "Please enter a new password"
-#~ msgstr "新しいパスワードを入力してください"
-
-#~ msgid "Restart required for changes to take full effect"
-#~ msgstr "変更を完全に反映するには再起動が必要です"
-
-#~ msgid "Restore Database"
-#~ msgstr "データベースを復元"
-
-#~ msgid "Restore failed: {error}"
-#~ msgstr "復元に失敗しました: {error}"
-
-#~ msgid "Score: {score}"
-#~ msgstr "スコア: {score}"
-
-#~ msgid "Scraper settings saved!"
-#~ msgstr "スクレイパー設定を保存しました！"
-
-#~ msgid "Searching..."
-#~ msgstr "検索中..."
-
-#~ msgid "Success - disappears in {n}s"
-#~ msgstr "成功 - {n}秒後に消えます"
-
-#~ msgid "Try modifying the search title"
-#~ msgstr "検索タイトルを変更してみてください"
-
-#~ msgid "User deleted successfully"
-#~ msgstr "ユーザーを正常に削除しました"
-
-#~ msgid "User saved successfully!"
-#~ msgstr "ユーザーを正常に保存しました！"
-
-#~ msgid "Warning - disappears in {n}s"
-#~ msgstr "警告 - {n}秒後に消えます"
-
-#~ msgid "Your settings have been saved!"
-#~ msgstr "設定を保存しました！"
-
-#~ msgid "Could not validate destination path"
-#~ msgstr "保存先のパスを検証できませんでした"
-
-#~ msgid "Patreon"
-#~ msgstr "Patreon"
-
-#~ msgid "Trophies & Achievements"
-#~ msgstr "トロフィー＆実績"
-
-#~ msgid "Two game IDs required"
-#~ msgstr "ゲームIDが2つ必要です"
-
-#~ msgid "One or both games not found"
-#~ msgstr "片方または両方のゲームが見つかりません"
-
-#~ msgid "Failed to sync trophies"
-#~ msgstr "トロフィーの同期に失敗しました"
-
-#~ msgid "Network error syncing trophies"
-#~ msgstr "トロフィーの同期中にネットワークエラーが発生しました"
-
-#~ msgid "Trophies synced successfully!"
-#~ msgstr "トロフィーを正常に同期しました！"
-
-#~ msgid "Admin Login"
-#~ msgstr "管理者ログイン"
-
-#~ msgid "Enter admin password"
-#~ msgstr "管理者パスワードを入力"
-
-#~ msgid "Fetching controller images..."
-#~ msgstr "コントローラー画像を取得しています..."
-
-#~ msgid "Connection failed: %(error)s"
-#~ msgstr "接続に失敗しました: %(error)s"
-
-#~ msgid ""
-#~ "Log in with your PlayStation account "
-#~ "(if not already), then the page "
-#~ "will show your NPSSO token as "
-#~ "JSON."
-#~ msgstr "PlayStationアカウントでログインすると（未ログインの場合）、ページにNPSSOトークンがJSON形式で表示されます。"
-
-#~ msgid "Hide Bonus"
-#~ msgstr "ボーナスを非表示"
-
-#~ msgid "Show Bonus"
-#~ msgstr "ボーナスを表示"
-
-#~ msgid ""
-#~ "Asking the AI: {current} of {total} "
-#~ "games, {proposals} names suggested. {system}"
-#~ msgstr ""
-
-#~ msgid "Done. {proposals} names suggested from {total} games."
-#~ msgstr ""
-
-#~ msgid "Stopped. {proposals} names suggested."
-#~ msgstr ""
-
-#~ msgid "{accepted} names changed."
-#~ msgstr ""
-
-#~ msgid "{accepted} names changed. {skipped} skipped: their title changed since."
-#~ msgstr ""
-
-#~ msgid "{count} suggested names. Untick any you do not want, then accept."
-#~ msgstr ""
-
-#~ msgid "{rejected} names rejected. They will not be suggested again."
-#~ msgstr ""
-
-#~ msgid "Format: YYYY-MM-DD (e.g., 1996-09-29)"
-#~ msgstr "形式：YYYY-MM-DD（例：1996-09-29）"
-
-#~ msgid "RetroDB Player cores"
-#~ msgstr "RetroDB Player のコア"
-
-#~ msgid "Every game here has had AI Fill already."
-#~ msgstr "ここのゲームはすべてAI補完済みです。"
-
-#~ msgid ""
-#~ "Ask the AI for each game's full"
-#~ " official name in its ROM's own "
-#~ "region, then tick the new names "
-#~ "you want. Nothing changes until you "
-#~ "accept it."
-#~ msgstr "AI に各ゲームの正式な公式名をその ROM の地域で問い合わせ、採用したい新しい名前にチェックを入れます。承認するまで何も変わりません。"
-
-#~ msgid "Cheats downloaded."
-#~ msgstr "チートをダウンロードしました。"
-
-#~ msgid "Downloading RetroArch… This can take a few minutes."
-#~ msgstr "RetroArch をダウンロードしています… 数分かかることがあります。"
-
-#~ msgid "Downloading {pack}…"
-#~ msgstr "{pack} をダウンロード中…"
-
-#~ msgid "Default"
-#~ msgstr "既定"
-
-#~ msgid "Earn achievements in RetroDB's RetroArch"
-#~ msgstr "RetroDB の RetroArch で実績を獲得"
-
-#~ msgid "Launches in: %(name)s"
-#~ msgstr "起動先: %(name)s"
-
-#~ msgid ""
-#~ "This will clear the play time from"
-#~ " {stored} games that already have "
-#~ "one. The other {other} queued matches"
-#~ " are dropped, and those games keep"
-#~ " what they have. A bulk lookup "
-#~ "can fetch the times again."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Stopped: ScreenScraper stopped answering, so"
-#~ " your daily allowance may be spent."
-#~ " Files swapped: {replaced}. Run it "
-#~ "again tomorrow."
-#~ msgstr ""
-#~ "停止しました。ScreenScraperが応答しなくなったため、1日の利用枠を使い切った可能性があります。差し替えたファイル: "
-#~ "{replaced}。明日もう一度実行してください。"
-
-#~ msgid "An official names run is already running."
-#~ msgstr "公式名の処理はすでに実行中です。"
-
-#~ msgid "No official names run to cancel."
-#~ msgstr "キャンセルする公式名の処理はありません。"
-
-#~ msgid ""
-#~ "Asking the AI: game {current} of "
-#~ "{total}. Names suggested: {proposals}. "
-#~ "{system}"
-#~ msgstr "AI に問い合わせ中: {total} 件中 {current} 件目。提案された名前: {proposals}。{system}"
-
-#~ msgid "Could not accept these names."
-#~ msgstr "これらの名前を承認できませんでした。"
-
-#~ msgid "Could not load the suggested names."
-#~ msgstr "提案された名前を読み込めませんでした。"
-
-#~ msgid "Could not reject these names."
-#~ msgstr "これらの名前を却下できませんでした。"
-
-#~ msgid "Done. Games asked: {total}. Names suggested: {proposals}."
-#~ msgstr "完了しました。問い合わせたゲーム: {total}。提案された名前: {proposals}。"
-
-#~ msgid "Europe"
-#~ msgstr "ヨーロッパ"
-
-#~ msgid "Japan"
-#~ msgstr "日本"
-
-#~ msgid "Names changed: {accepted}."
-#~ msgstr "変更した名前: {accepted}。"
-
-#~ msgid ""
-#~ "Names changed: {accepted}. Skipped because "
-#~ "their title changed since: {skipped}."
-#~ msgstr "変更した名前: {accepted}。その後タイトルが変わったためスキップ: {skipped}。"
-
-#~ msgid "Names rejected: {rejected}. They will not be suggested again."
-#~ msgstr "却下した名前: {rejected}。これらは再び提案されません。"
-
-#~ msgid "No suggested names waiting. Press Ask the AI to look for some."
-#~ msgstr "保留中の提案はありません。「AI に聞く」を押して探してください。"
-
-#~ msgid "Stopped. Names suggested: {proposals}."
-#~ msgstr "停止しました。提案された名前: {proposals}。"
-
-#~ msgid ""
-#~ "Suggested names waiting: {count}. Untick "
-#~ "any you do not want, then accept."
-#~ msgstr "保留中の提案: {count}。不要なもののチェックを外してから承認してください。"
-
-#~ msgid "The run stopped: {error}. Names already suggested are kept."
-#~ msgstr "処理が停止しました: {error}。すでに提案された名前は保持されます。"
-
-#~ msgid "Tick at least one name."
-#~ msgstr "名前を 1 つ以上チェックしてください。"
-
-#~ msgid "USA"
-#~ msgstr "アメリカ"
-
-#~ msgid "World"
-#~ msgstr "世界"
-
-#~ msgid "unknown"
-#~ msgstr "不明"
-
-#~ msgid "{system} · {file} · old name from: {region}"
-#~ msgstr "{system} · {file} · 旧名の地域: {region}"
-
-#~ msgid "Official Names"
-#~ msgstr "公式名"
-
-#~ msgid ""
-#~ "The AI suggests each game's full "
-#~ "official name, as released in the "
-#~ "region of its ROM: a Japanese ROM"
-#~ " of Mega Man becomes Rockman. Tick"
-#~ " the names you want and accept "
-#~ "them. The old name is kept as "
-#~ "an alternate title, and an accepted "
-#~ "name is kept when scraping. Nothing "
-#~ "changes until you accept it."
-#~ msgstr ""
-#~ "AI が各ゲームの正式な公式名を、その ROM の地域で発売されたとおりに提案します。たとえば日本版の"
-#~ " Mega Man の ROM "
-#~ "はロックマンになります。採用したい名前にチェックを入れて承認してください。古い名前は別タイトルとして残り、承認した名前は取得時にも保持されます。承認するまで何も変わりません。"
-
-#~ msgid "Ask the AI"
-#~ msgstr "AI に聞く"
-
-#~ msgid "Suggested names"
-#~ msgstr "提案された名前"
-
-#~ msgid "Accept ticked"
-#~ msgstr "チェックしたものを承認"
-
-#~ msgid "Reject ticked"
-#~ msgstr "チェックしたものを却下"
-
-#~ msgid "Tick all"
-#~ msgstr "すべてチェック"
-
-#~ msgid "Tick none"
-#~ msgstr "チェックをすべて外す"
-
-#~ msgid "Cleared RA data for {n} games in {system}"
-#~ msgstr "{system}内の{n}件のゲームのRAデータを消去しました"
-
-#~ msgid ""
-#~ "Cleared RetroAchievements data for {n} "
-#~ "games. Run \"Refresh RetroAchievements\" to"
-#~ " re-scan with updated matching."
-#~ msgstr "{n}件のゲームのRetroAchievementsデータをクリアしました。更新された照合で再スキャンするには「RetroAchievementsを更新」を実行してください。"
-
-#~ msgid "RA Data Cleared"
-#~ msgstr "RAデータをクリアしました"
-
-#~ msgid "Refresh RetroAchievements"
-#~ msgstr "RetroAchievementsを更新"
-
-#~ msgid ""
-#~ "This will clear RetroAchievements game "
-#~ "IDs and progress data for \"{system}\"."
-#~ " Continue?"
-#~ msgstr "「{system}」のRetroAchievementsゲームIDと進行状況データを消去します。続行しますか？"
-
-#~ msgid "🏆 Refresh RetroAchievements"
-#~ msgstr "🏆 RetroAchievementsを更新"
-
-#~ msgid "Remove this system from Achievements"
-#~ msgstr "このシステムを実績から削除"
-
-#~ msgid ""
-#~ "Your PlayStation Network session expires "
-#~ "soon — re-link it to avoid "
-#~ "an interruption."
-#~ msgstr "PlayStation Network のセッションの有効期限がまもなく切れます。中断を避けるため再リンクしてください。"
-
-#~ msgid "Re-link now"
-#~ msgstr "今すぐ再リンク"
-
-#~ msgid "Read from clipboard"
-#~ msgstr "クリップボードから読み取り"
-
-#~ msgid "Paste &amp; Detect"
-#~ msgstr "貼り付け &amp; 検出"
 

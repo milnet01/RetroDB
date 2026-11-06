@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-05 19:42+0200\n"
+"POT-Creation-Date: 2026-11-06 09:02+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: nl\n"
@@ -160,12 +160,12 @@ msgstr "Geen games in de bibliotheek"
 msgid "Setup has already been completed"
 msgstr "De installatie is al voltooid"
 
-#: app.py:1680 routes/settings.py:553 routes/tools.py:364
+#: app.py:1680 routes/settings.py:525 routes/tools.py:364
 msgid "Permission denied"
 msgstr "Toegang geweigerd"
 
-#: app.py:1700 routes/collections.py:194 routes/collections.py:271
-#: routes/collections.py:438 routes/collections.py:679
+#: app.py:1700 routes/collections.py:209 routes/collections.py:290
+#: routes/collections.py:459 routes/collections.py:706
 msgid "No data provided"
 msgstr "Geen gegevens opgegeven"
 
@@ -203,7 +203,7 @@ msgstr "Systeem niet gevonden of heeft geen games met prestaties"
 
 #: routes/achievements.py:176 routes/achievements.py:486
 #: routes/bonus_discs.py:273 routes/bulk_scrape.py:48 routes/cheats.py:32
-#: routes/cheats.py:51 routes/collections.py:276 routes/collections.py:531
+#: routes/cheats.py:51 routes/collections.py:295 routes/collections.py:558
 #: routes/emulators.py:304 routes/emulators.py:318 routes/games.py:393
 #: routes/games.py:930 routes/games.py:1049 routes/games.py:1127
 #: routes/games_ai.py:41 routes/games_media.py:40 routes/games_media.py:89
@@ -249,8 +249,8 @@ msgstr "Geen games met RetroAchievements in dit systeem"
 msgid "Sync already in progress for %(name)s"
 msgstr "Synchronisatie al bezig voor %(name)s"
 
-#: routes/achievements.py:410 routes/platform_import.py:381
-#: routes/platform_import.py:758
+#: routes/achievements.py:410 routes/platform_import.py:394
+#: routes/platform_import.py:771
 msgid "That job belongs to another user"
 msgstr "Die taak is van een andere gebruiker"
 
@@ -577,14 +577,14 @@ msgid "A bonus disc links to a main game, one level only"
 msgstr "Een bonusdisc is gekoppeld aan één hoofdgame, slechts één niveau diep"
 
 #: routes/bonus_discs.py:219 routes/bonus_discs.py:237 routes/games.py:1397
-#: routes/games.py:1427 routes/platform_import.py:344
-#: routes/platform_import.py:723 routes/platform_import.py:1107
+#: routes/games.py:1427 routes/platform_import.py:357
+#: routes/platform_import.py:736 routes/platform_import.py:1120
 #: routes/scrape_logs.py:84 routes/scrape_logs.py:168 routes/scrape_logs.py:181
 #: routes/scrape_logs.py:219 routes/scraper.py:207 routes/scraper.py:538
-#: routes/scraper.py:929 routes/settings.py:320 routes/settings.py:344
-#: routes/settings.py:459 routes/settings.py:538 routes/settings.py:567
-#: routes/settings.py:611 routes/settings.py:627 routes/settings.py:663
-#: routes/steam_achievements.py:138 routes/systems.py:286 routes/systems.py:476
+#: routes/scraper.py:929 routes/settings.py:319 routes/settings.py:343
+#: routes/settings.py:431 routes/settings.py:510 routes/settings.py:539
+#: routes/settings.py:583 routes/settings.py:599 routes/settings.py:635
+#: routes/steam_achievements.py:138 routes/systems.py:286 routes/systems.py:489
 #: routes/trophies.py:593 routes/trophies.py:791 routes/trophies.py:839
 #: routes/trophies.py:1638 routes/trophies.py:1662 routes/trophies.py:1707
 #: routes/trophies.py:1735 routes/trophies.py:1777 routes/trophies.py:1844
@@ -594,8 +594,8 @@ msgstr "Er is een interne fout opgetreden"
 
 #: routes/bonus_discs.py:286 routes/bonus_discs.py:317
 #: routes/controllers.py:216 routes/controllers.py:280
-#: routes/controllers.py:413 routes/controllers.py:465 routes/settings.py:224
-#: routes/settings.py:494 routes/settings.py:577 routes/systems.py:307
+#: routes/controllers.py:413 routes/controllers.py:465 routes/settings.py:223
+#: routes/settings.py:466 routes/settings.py:549 routes/systems.py:307
 msgid "Request body must be a JSON object"
 msgstr "Aanvraagtekst moet een JSON-object zijn"
 
@@ -635,7 +635,7 @@ msgstr "Dit cheatpakket bestaat niet."
 msgid "Enter a folder to import."
 msgstr "Voer een map in om te importeren."
 
-#: routes/clz_import.py:271
+#: routes/clz_import.py:253
 msgid ""
 "pdfplumber module not installed. Please run: pip install pdfplumber "
 "--break-system-packages"
@@ -643,93 +643,105 @@ msgstr ""
 "pdfplumber-module niet geïnstalleerd. Voer uit: pip install pdfplumber "
 "--break-system-packages"
 
-#: routes/clz_import.py:276
+#: routes/clz_import.py:258
 msgid "No file uploaded"
 msgstr "Geen bestand geüpload"
 
-#: routes/clz_import.py:280
+#: routes/clz_import.py:262
 msgid "File must be a PDF"
 msgstr "Bestand moet een PDF zijn"
 
-#: routes/clz_import.py:287
+#: routes/clz_import.py:269
 #, python-format
 msgid "File too large (%(size)sMB). Maximum size is 50MB"
 msgstr "Bestand te groot (%(size)sMB). Maximale grootte is 50MB"
 
-#: routes/clz_import.py:290
+#: routes/clz_import.py:272
 msgid "Invalid PDF file (bad magic bytes)"
 msgstr "Ongeldig PDF-bestand (onjuiste magic bytes)"
 
-#: routes/clz_import.py:314
+#: routes/clz_import.py:296
 #, python-format
 msgid "PDF has %(pages)s pages; maximum is %(max)s."
 msgstr "PDF heeft %(pages)s pagina's; maximum is %(max)s."
 
-#: routes/clz_import.py:583
+#: routes/clz_import.py:553
 msgid "No games to import"
 msgstr "Geen games om te importeren"
 
-#: routes/collections.py:103 routes/collections.py:446
-#: routes/collections.py:475 routes/collections.py:497
-#: routes/collections.py:527 routes/collections.py:566
+#: routes/collections.py:42
+msgid "A tag colour is written like #4cc9f0"
+msgstr "Een tagkleur wordt geschreven als #4cc9f0"
+
+#: routes/collections.py:116 routes/collections.py:467
+#: routes/collections.py:502 routes/collections.py:524
+#: routes/collections.py:554 routes/collections.py:593
 msgid "List not found"
 msgstr "Lijst niet gevonden"
 
-#: routes/collections.py:163
+#: routes/collections.py:176 routes/collections.py:221
 msgid "Tag name is required"
 msgstr "Tagnaam is vereist"
 
-#: routes/collections.py:177 routes/collections.py:215
+#: routes/collections.py:192 routes/collections.py:234
 msgid "A tag with that name already exists"
 msgstr "Er bestaat al een tag met die naam"
 
-#: routes/collections.py:202 routes/collections.py:233
-#: routes/collections.py:294 routes/collections.py:359
+#: routes/collections.py:217 routes/collections.py:252
+#: routes/collections.py:313 routes/collections.py:378
 msgid "Tag not found"
 msgstr "Tag niet gevonden"
 
-#: routes/collections.py:282
+#: routes/collections.py:301
 msgid "Either tag_id or tag_name is required"
 msgstr "tag_id of tag_name is vereist"
 
-#: routes/collections.py:338
+#: routes/collections.py:357
 msgid "Tag is not assigned to this game"
 msgstr "Tag is niet toegewezen aan deze game"
 
-#: routes/collections.py:406
+#: routes/collections.py:425 routes/collections.py:471
 msgid "List name is required"
 msgstr "Lijstnaam is vereist"
 
-#: routes/collections.py:517
+#: routes/collections.py:431 routes/collections.py:475
+msgid "A list description and icon are text"
+msgstr "De beschrijving en het pictogram van een lijst zijn tekst"
+
+#: routes/collections.py:478
+msgid "A list position is a whole number"
+msgstr "De positie van een lijst is een geheel getal"
+
+#: routes/collections.py:544
 msgid "game_id is required"
 msgstr "game_id is vereist"
 
-#: routes/collections.py:573
+#: routes/collections.py:600
 msgid "Game is not in this list"
 msgstr "Game staat niet in deze lijst"
 
-#: routes/collections.py:618
+#: routes/collections.py:645 routes/collections.py:718
 msgid "Title is required"
 msgstr "Titel is vereist"
 
-#: routes/collections.py:630 routes/collections.py:697
+#: routes/collections.py:657 routes/collections.py:726
 msgid "Priority must be an integer between 1 and 5"
 msgstr "Prioriteit moet een geheel getal tussen 1 en 5 zijn"
 
-#: routes/collections.py:635 routes/collections.py:702
+#: routes/collections.py:662 routes/collections.py:740
 msgid "system_id must be an integer"
 msgstr "system_id moet een geheel getal zijn"
 
-#: routes/collections.py:638 routes/collections.py:705
+#: routes/collections.py:665 routes/collections.py:743
 msgid "Unknown system_id"
 msgstr "Onbekende system_id"
 
-#: routes/collections.py:649
+#: routes/collections.py:676 routes/collections.py:735
 msgid "This game is already on your wishlist"
 msgstr "Deze game staat al op je verlanglijst"
 
-#: routes/collections.py:687 routes/collections.py:732
-#: routes/collections.py:755
+#: routes/collections.py:714 routes/collections.py:770
+#: routes/collections.py:793
 msgid "Wishlist item not found"
 msgstr "Verlanglijst-item niet gevonden"
 
@@ -844,8 +856,8 @@ msgstr "Toepassen van metadata mislukt."
 msgid "No fields to update"
 msgstr "Geen velden om bij te werken"
 
-#: routes/games.py:1205 routes/platform_import.py:250
-#: routes/platform_import.py:629 routes/platform_import.py:993
+#: routes/games.py:1205 routes/platform_import.py:263
+#: routes/platform_import.py:642 routes/platform_import.py:1006
 #: routes/trophies.py:1919 templates/game_imports.html:579
 #: templates/game_imports.html:842
 msgid "No games selected"
@@ -899,7 +911,7 @@ msgid "No filename provided"
 msgstr "Geen bestandsnaam opgegeven"
 
 #: routes/games_media.py:85 routes/reports.py:699 routes/scrape_logs.py:129
-#: routes/scrape_logs.py:154 routes/scrape_logs.py:203 routes/settings.py:353
+#: routes/scrape_logs.py:154 routes/scrape_logs.py:203 routes/settings.py:352
 msgid "Invalid filename"
 msgstr "Ongeldige bestandsnaam"
 
@@ -1072,15 +1084,15 @@ msgstr ""
 msgid "Next disk inserted"
 msgstr "Volgende schijf geplaatst"
 
-#: routes/maintenance.py:279
+#: routes/maintenance.py:276
 msgid "Unknown image type"
 msgstr "Onbekend afbeeldingstype"
 
-#: routes/maintenance.py:492
+#: routes/maintenance.py:489
 msgid "Add your ScreenScraper account in Settings first."
 msgstr "Voeg eerst je ScreenScraper-account toe bij Instellingen."
 
-#: routes/maintenance.py:493
+#: routes/maintenance.py:490
 msgid "This fix is already running."
 msgstr "Deze reparatie loopt al."
 
@@ -1159,19 +1171,19 @@ msgstr "Afbeeldingsbestand niet gevonden"
 msgid "Background removal failed"
 msgstr "Achtergrond verwijderen mislukt"
 
-#: routes/platform_import.py:182
+#: routes/platform_import.py:195
 msgid "Steam API key not configured. Add it in Settings → API Keys."
 msgstr ""
 "Steam API-sleutel niet geconfigureerd. Voeg deze toe bij Instellingen → "
 "API-sleutels."
 
-#: routes/platform_import.py:184
+#: routes/platform_import.py:197
 msgid "Steam ID not configured. Add it in Settings → API Keys."
 msgstr ""
 "Steam-ID niet geconfigureerd. Voeg deze toe bij Instellingen → API-"
 "sleutels."
 
-#: routes/platform_import.py:190
+#: routes/platform_import.py:203
 #, python-format
 msgid ""
 "Could not resolve Steam vanity URL \"%(steam_id)s\". Use your 17-digit "
@@ -1180,7 +1192,7 @@ msgstr ""
 "Kon Steam vanity-URL \"%(steam_id)s\" niet herleiden. Gebruik in plaats "
 "daarvan je 17-cijferige Steam-ID."
 
-#: routes/platform_import.py:196
+#: routes/platform_import.py:209
 msgid ""
 "No games found. Check that your Steam profile and game details are set to"
 " Public."
@@ -1188,37 +1200,37 @@ msgstr ""
 "Geen games gevonden. Controleer of je Steam-profiel en gamegegevens op "
 "Openbaar staan."
 
-#: routes/platform_import.py:255
+#: routes/platform_import.py:268
 msgid "Could not create Windows system entry"
 msgstr "Kon Windows-systeeminvoer niet aanmaken"
 
-#: routes/platform_import.py:399
+#: routes/platform_import.py:412
 msgid "Xbox Client ID not configured. Add it in Settings → API Keys."
 msgstr ""
 "Xbox Client-ID niet geconfigureerd. Voeg deze toe bij Instellingen → API-"
 "sleutels."
 
-#: routes/platform_import.py:537
+#: routes/platform_import.py:550
 msgid "Xbox credentials not configured. Add them in Settings → API Keys."
 msgstr ""
 "Xbox-inloggegevens niet geconfigureerd. Voeg deze toe bij Instellingen → "
 "API-sleutels."
 
-#: routes/platform_import.py:541
+#: routes/platform_import.py:554
 msgid "Xbox authentication failed. Please re-connect your Xbox account."
 msgstr "Xbox-authenticatie mislukt. Koppel je Xbox-account opnieuw."
 
-#: routes/platform_import.py:545
+#: routes/platform_import.py:558
 msgid "No games found in Xbox title history."
 msgstr "Geen games gevonden in Xbox-titelgeschiedenis."
 
-#: routes/platform_import.py:833
+#: routes/platform_import.py:846
 msgid "PSN NPSSO not configured. Add it in Settings → API Keys."
 msgstr ""
 "PSN NPSSO niet geconfigureerd. Voeg deze toe bij Instellingen → API-"
 "sleutels."
 
-#: routes/platform_import.py:860
+#: routes/platform_import.py:873
 msgid "Failed to fetch PSN game list. Try syncing trophies first."
 msgstr ""
 "Ophalen van PSN-gamelijst mislukt. Probeer eerst trofeeën te "
@@ -1243,8 +1255,8 @@ msgstr ""
 msgid "Missing required parameters"
 msgstr "Vereiste parameters ontbreken"
 
-#: routes/reports.py:617 routes/tools.py:513 routes/tools.py:570
-#: routes/tools.py:615
+#: routes/reports.py:617 routes/tools.py:533 routes/tools.py:590
+#: routes/tools.py:635
 msgid "Invalid path"
 msgstr "Ongeldig pad"
 
@@ -1301,7 +1313,7 @@ msgstr "Gegenereerde bestandsnaam bevat ongeldige tekens"
 msgid "Invalid log file"
 msgstr "Ongeldig logbestand"
 
-#: routes/scrape_logs.py:101 routes/tools.py:516
+#: routes/scrape_logs.py:101 routes/tools.py:536
 msgid "File not found"
 msgstr "Bestand niet gevonden"
 
@@ -1392,63 +1404,67 @@ msgstr "Verbindingsfout: %(error)s"
 msgid "Allowance check not supported for %(scraper)s"
 msgstr "Quotacontrole niet ondersteund voor %(scraper)s"
 
-#: routes/settings.py:228
+#: routes/settings.py:227
 msgid "Value is required"
 msgstr "Waarde is vereist"
 
-#: routes/settings.py:250
+#: routes/settings.py:249
 msgid "Option already exists"
 msgstr "Optie bestaat al"
 
-#: routes/settings.py:359
+#: routes/settings.py:358
 msgid "Backup file not found"
 msgstr "Back-upbestand niet gevonden"
 
-#: routes/settings.py:373
+#: routes/settings.py:376
 msgid "A background job is running. Wait for it to finish before restoring."
 msgstr ""
 "Er draait een achtergrondtaak. Wacht tot deze klaar is voordat je "
 "herstelt."
 
-#: routes/settings.py:393
+#: routes/settings.py:396
 msgid "Backup failed its integrity check; restore aborted."
 msgstr "Back-up heeft de integriteitscontrole niet doorstaan; herstel afgebroken."
 
-#: routes/settings.py:515
+#: routes/settings.py:419
+msgid "The backup could not be copied in; nothing was changed."
+msgstr "De Back-up kon niet worden gekopieerd; er is niets gewijzigd."
+
+#: routes/settings.py:487
 #, python-format
 msgid "Invalid %(field)s: %(result)s"
 msgstr "Ongeldig(e) %(field)s: %(result)s"
 
-#: routes/settings.py:534 routes/settings.py:608 routes/settings.py:660
+#: routes/settings.py:506 routes/settings.py:580 routes/settings.py:632
 #: routes/tools.py:292 services/js_i18n_strings.py:745
 #: templates/settings.html:1149 templates/settings.html:2742
 msgid "Failed to save settings"
 msgstr "Opslaan van instellingen mislukt"
 
-#: routes/settings.py:587 routes/tools.py:284
+#: routes/settings.py:559 routes/tools.py:284
 #, python-format
 msgid "Unknown setting key: %(key)s"
 msgstr "Onbekende instellingssleutel: %(key)s"
 
-#: routes/settings.py:593 routes/tools.py:287
+#: routes/settings.py:565 routes/tools.py:287
 #, python-format
 msgid "Invalid value for '%(key)s': %(reason)s"
 msgstr "Ongeldige waarde voor '%(key)s': %(reason)s"
 
-#: routes/settings.py:625
+#: routes/settings.py:597
 msgid "Failed to reset settings"
 msgstr "Resetten van instellingen mislukt"
 
-#: routes/settings.py:646
+#: routes/settings.py:618
 #, python-format
 msgid "invalid logging settings: %(reason)s"
 msgstr "ongeldige logginginstellingen: %(reason)s"
 
-#: routes/settings.py:676 routes/settings.py:704
+#: routes/settings.py:648 routes/settings.py:676
 msgid "Invalid field. Must be \"genre\" or \"modes\""
 msgstr "Ongeldig veld. Moet \"genre\" of \"modes\" zijn"
 
-#: routes/settings.py:707
+#: routes/settings.py:679
 msgid "No mappings provided"
 msgstr "Geen mappings opgegeven"
 
@@ -1480,7 +1496,7 @@ msgstr "Beheerdersrechten vereist"
 msgid "Settings payload must be an object"
 msgstr "Instellingen-payload moet een object zijn"
 
-#: routes/tools.py:327 routes/tools.py:979
+#: routes/tools.py:327 routes/tools.py:1001
 #, python-format
 msgid "Path does not exist: %(path)s"
 msgstr "Pad bestaat niet: %(path)s"
@@ -1489,70 +1505,76 @@ msgstr "Pad bestaat niet: %(path)s"
 msgid "Task not found"
 msgstr "Taak niet gevonden"
 
-#: routes/tools.py:415 routes/tools.py:435
+#: routes/tools.py:421 routes/tools.py:439 routes/tools.py:461
+msgid "Only an admin or the person who started this task can change it"
+msgstr ""
+"Alleen een beheerder of de persoon die deze taak heeft gestart, kan dit "
+"wijzigen"
+
+#: routes/tools.py:431 routes/tools.py:453
 msgid "Task not found or not running"
 msgstr "Taak niet gevonden of draait niet"
 
-#: routes/tools.py:455
+#: routes/tools.py:475
 msgid "Task not found or not paused"
 msgstr "Taak niet gevonden of niet gepauzeerd"
 
-#: routes/tools.py:472 routes/tools.py:677 routes/tools.py:852
-#: routes/tools.py:968
+#: routes/tools.py:492 routes/tools.py:697 routes/tools.py:873
+#: routes/tools.py:990
 msgid "Invalid scan path"
 msgstr "Ongeldig scanpad"
 
-#: routes/tools.py:510 routes/tools.py:567 routes/tools.py:612
+#: routes/tools.py:530 routes/tools.py:587 routes/tools.py:632
 msgid "No path provided"
 msgstr "Geen pad opgegeven"
 
-#: routes/tools.py:538
+#: routes/tools.py:558
 msgid "No archive path provided"
 msgstr "Geen archiefpad opgegeven"
 
-#: routes/tools.py:541
+#: routes/tools.py:561
 msgid "Invalid archive path"
 msgstr "Ongeldig archiefpad"
 
-#: routes/tools.py:544
+#: routes/tools.py:564
 msgid "No files to remove"
 msgstr "Geen bestanden om te verwijderen"
 
-#: routes/tools.py:645
+#: routes/tools.py:665
 msgid "No paths provided"
 msgstr "Geen paden opgegeven"
 
-#: routes/tools.py:651
+#: routes/tools.py:671
 #, python-format
 msgid "Invalid path: %(path)s"
 msgstr "Ongeldig pad: %(path)s"
 
-#: routes/tools.py:726
+#: routes/tools.py:746
 msgid "chdman not found. Please install MAME tools."
 msgstr "chdman niet gevonden. Installeer de MAME-tools."
 
-#: routes/tools.py:875
+#: routes/tools.py:896
 msgid "chdman not found"
 msgstr "chdman niet gevonden"
 
-#: routes/tools.py:973
+#: routes/tools.py:995
 #, python-format
 msgid "Unknown duplicate method: %(method)s"
 msgstr "Onbekende duplicaatmethode: %(method)s"
 
-#: routes/tools.py:1186 routes/tools.py:1540
+#: routes/tools.py:1209 routes/tools.py:1565
 msgid "These scan results have expired. Scan again, then delete."
 msgstr "Deze scanresultaten zijn verlopen. Scan opnieuw en verwijder daarna."
 
-#: routes/tools.py:1191
+#: routes/tools.py:1214
 msgid "Keep at least one copy of each game. Nothing was deleted."
 msgstr "Houd van elke game ten minste één kopie. Er is niets verwijderd."
 
-#: routes/tools.py:1451
+#: routes/tools.py:1474
 msgid "This system has no screenshot check"
 msgstr "Dit systeem heeft geen screenshotcontrole"
 
-#: routes/tools.py:1550
+#: routes/tools.py:1575
 msgid "Keep at least one copy of each screenshot. Nothing was deleted."
 msgstr ""
 "Bewaar minstens één kopie van elke schermafbeelding. Er is niets "
@@ -1681,7 +1703,7 @@ msgstr "Die game is niet aan andere versies gekoppeld."
 msgid "The AI did not give a usable answer. Try again later."
 msgstr "De AI gaf geen bruikbaar antwoord. Probeer het later opnieuw."
 
-#: routes/xbox_achievements.py:126 services/jobs/platform_sync.py:768
+#: routes/xbox_achievements.py:126 services/jobs/platform_sync.py:798
 msgid "Xbox credentials not configured"
 msgstr "Xbox-inloggegevens niet geconfigureerd"
 
@@ -4795,35 +4817,35 @@ msgstr ""
 msgid "The player has no core for this system."
 msgstr "De speler heeft geen core voor dit systeem."
 
-#: services/jobs/platform_sync.py:368 services/jobs/platform_sync.py:677
+#: services/jobs/platform_sync.py:398 services/jobs/platform_sync.py:707
 msgid "Sync already running"
 msgstr "Synchronisatie loopt al"
 
-#: services/jobs/platform_sync.py:373
+#: services/jobs/platform_sync.py:403
 msgid "Steam sync is already running on another worker process."
 msgstr "Steam-synchronisatie loopt al op een ander workerproces."
 
-#: services/jobs/platform_sync.py:391 services/jobs/platform_sync.py:700
+#: services/jobs/platform_sync.py:421 services/jobs/platform_sync.py:730
 msgid "No running sync to cancel"
 msgstr "Geen lopende synchronisatie om te annuleren"
 
-#: services/jobs/platform_sync.py:485
+#: services/jobs/platform_sync.py:515
 msgid "Steam API key or Steam ID not configured"
 msgstr "Steam API-sleutel of Steam-ID niet ingesteld"
 
-#: services/jobs/platform_sync.py:504
+#: services/jobs/platform_sync.py:534
 msgid "No Steam games found to sync"
 msgstr "Geen Steam-games gevonden om te synchroniseren"
 
-#: services/jobs/platform_sync.py:682
+#: services/jobs/platform_sync.py:712
 msgid "Xbox sync is already running on another worker process."
 msgstr "Xbox-synchronisatie loopt al op een ander workerproces."
 
-#: services/jobs/platform_sync.py:777
+#: services/jobs/platform_sync.py:807
 msgid "Xbox authentication failed — please re-connect your Xbox account"
 msgstr "Xbox-authenticatie mislukt — verbind je Xbox-account opnieuw"
 
-#: services/jobs/platform_sync.py:828
+#: services/jobs/platform_sync.py:858
 msgid "No Xbox games found to sync"
 msgstr "Geen Xbox-games gevonden om te synchroniseren"
 
@@ -14780,484 +14802,4 @@ msgstr "Sponsoren op GitHub"
 #: templates/_settings_tabs/system.html:465
 msgid "Support on Patreon"
 msgstr "Steunen op Patreon"
-
-#~ msgid "(auto-detect)"
-#~ msgstr "(automatisch detecteren)"
-
-#~ msgid "(not set)"
-#~ msgstr "(niet ingesteld)"
-
-#~ msgid "API configured"
-#~ msgstr "API geconfigureerd"
-
-#~ msgid "API key missing"
-#~ msgstr "API-sleutel ontbreekt"
-
-#~ msgid "API keys saved!"
-#~ msgstr "API-sleutels opgeslagen!"
-
-#~ msgid "Apply"
-#~ msgstr "Toepassen"
-
-#~ msgid ""
-#~ "Are you sure you want to delete"
-#~ " user \"{username}\"? This action cannot"
-#~ " be undone."
-#~ msgstr ""
-#~ "Weet je zeker dat je gebruiker "
-#~ "\"{username}\" wilt verwijderen? Deze actie"
-#~ " kan niet ongedaan worden gemaakt."
-
-#~ msgid ""
-#~ "Are you sure you want to restore"
-#~ " from \"{filename}\"? This will replace "
-#~ "all current data."
-#~ msgstr ""
-#~ "Weet je zeker dat je wilt "
-#~ "herstellen vanuit \"{filename}\"? Hiermee "
-#~ "worden alle huidige gegevens vervangen."
-
-#~ msgid "Backup created successfully!"
-#~ msgstr "Back-up succesvol aangemaakt!"
-
-#~ msgid "Backup failed: {error}"
-#~ msgstr "Back-up mislukt: {error}"
-
-#~ msgid "Confirm"
-#~ msgstr "Bevestigen"
-
-#~ msgid "Create Backup"
-#~ msgstr "Back-up maken"
-
-#~ msgid "Creating backup..."
-#~ msgstr "Back-up wordt gemaakt..."
-
-#~ msgid "Database restored! Reloading..."
-#~ msgstr "Database hersteld! Bezig met herladen..."
-
-#~ msgid "Default: {value}"
-#~ msgstr "Standaard: {value}"
-
-#~ msgid "Delete User"
-#~ msgstr "Gebruiker verwijderen"
-
-#~ msgid "Display settings saved!"
-#~ msgstr "Weergave-instellingen opgeslagen!"
-
-#~ msgid "Edit User"
-#~ msgstr "Gebruiker bewerken"
-
-#~ msgid "Error - disappears in {n}s"
-#~ msgstr "Fout - verdwijnt over {n}s"
-
-#~ msgid "Error creating backup: {error}"
-#~ msgstr "Fout bij maken van back-up: {error}"
-
-#~ msgid "Error restoring: {error}"
-#~ msgstr "Fout bij herstellen: {error}"
-
-#~ msgid "Error saving API keys: {error}"
-#~ msgstr "Fout bij opslaan van API-sleutels: {error}"
-
-#~ msgid "Error saving settings: {error}"
-#~ msgstr "Fout bij opslaan van instellingen: {error}"
-
-#~ msgid "Error searching: {error}"
-#~ msgstr "Fout bij zoeken: {error}"
-
-#~ msgid "Failed to change password"
-#~ msgstr "Wijzigen van wachtwoord mislukt"
-
-#~ msgid "Failed to delete user"
-#~ msgstr "Verwijderen van gebruiker mislukt"
-
-#~ msgid "Failed to save user"
-#~ msgstr "Opslaan van gebruiker mislukt"
-
-#~ msgid "Failed to save: {error}"
-#~ msgstr "Opslaan mislukt: {error}"
-
-#~ msgid "Info - disappears in {n}s"
-#~ msgstr "Info - verdwijnt over {n}s"
-
-#~ msgid "Network error changing password"
-#~ msgstr "Netwerkfout bij wijzigen van wachtwoord"
-
-#~ msgid "Network error deleting user"
-#~ msgstr "Netwerkfout bij verwijderen van gebruiker"
-
-#~ msgid "Network error saving settings"
-#~ msgstr "Netwerkfout bij opslaan van instellingen"
-
-#~ msgid "Network error saving user"
-#~ msgstr "Netwerkfout bij opslaan van gebruiker"
-
-#~ msgid "No logo"
-#~ msgstr "Geen logo"
-
-#~ msgid "No systems found"
-#~ msgstr "Geen systemen gevonden"
-
-#~ msgid "Notification settings saved!"
-#~ msgstr "Meldingsinstellingen opgeslagen!"
-
-#~ msgid "Password changed successfully!"
-#~ msgstr "Wachtwoord succesvol gewijzigd!"
-
-#~ msgid "Path settings saved!"
-#~ msgstr "Padinstellingen opgeslagen!"
-
-#~ msgid "Please enter a new password"
-#~ msgstr "Voer een nieuw wachtwoord in"
-
-#~ msgid "Restart required for changes to take full effect"
-#~ msgstr "Herstart vereist om wijzigingen volledig door te voeren"
-
-#~ msgid "Restore Database"
-#~ msgstr "Database herstellen"
-
-#~ msgid "Restore failed: {error}"
-#~ msgstr "Herstel mislukt: {error}"
-
-#~ msgid "Score: {score}"
-#~ msgstr "Score: {score}"
-
-#~ msgid "Scraper settings saved!"
-#~ msgstr "Scraperinstellingen opgeslagen!"
-
-#~ msgid "Searching..."
-#~ msgstr "Bezig met zoeken..."
-
-#~ msgid "Success - disappears in {n}s"
-#~ msgstr "Gelukt - verdwijnt over {n}s"
-
-#~ msgid "Try modifying the search title"
-#~ msgstr "Probeer de zoektitel aan te passen"
-
-#~ msgid "User deleted successfully"
-#~ msgstr "Gebruiker succesvol verwijderd"
-
-#~ msgid "User saved successfully!"
-#~ msgstr "Gebruiker succesvol opgeslagen!"
-
-#~ msgid "Warning - disappears in {n}s"
-#~ msgstr "Waarschuwing - verdwijnt over {n}s"
-
-#~ msgid "Your settings have been saved!"
-#~ msgstr "Je instellingen zijn opgeslagen!"
-
-#~ msgid "Could not validate destination path"
-#~ msgstr "Kon bestemmingspad niet valideren"
-
-#~ msgid "Patreon"
-#~ msgstr "Patreon"
-
-#~ msgid "Trophies & Achievements"
-#~ msgstr "Trofeeën & prestaties"
-
-#~ msgid "Two game IDs required"
-#~ msgstr "Twee game-ID's vereist"
-
-#~ msgid "One or both games not found"
-#~ msgstr "Een of beide games niet gevonden"
-
-#~ msgid "Failed to sync trophies"
-#~ msgstr "Synchroniseren van trofeeën mislukt"
-
-#~ msgid "Network error syncing trophies"
-#~ msgstr "Netwerkfout bij synchroniseren van trofeeën"
-
-#~ msgid "Trophies synced successfully!"
-#~ msgstr "Trofeeën succesvol gesynchroniseerd!"
-
-#~ msgid "Admin Login"
-#~ msgstr "Beheerderslogin"
-
-#~ msgid "Enter admin password"
-#~ msgstr "Voer beheerderswachtwoord in"
-
-#~ msgid "Fetching controller images..."
-#~ msgstr "Controllerafbeeldingen ophalen..."
-
-#~ msgid "Connection failed: %(error)s"
-#~ msgstr "Verbinding mislukt: %(error)s"
-
-#~ msgid ""
-#~ "Log in with your PlayStation account "
-#~ "(if not already), then the page "
-#~ "will show your NPSSO token as "
-#~ "JSON."
-#~ msgstr ""
-#~ "Log in met je PlayStation-account "
-#~ "(indien nog niet gedaan); de pagina "
-#~ "toont vervolgens je NPSSO-token als "
-#~ "JSON."
-
-#~ msgid "Hide Bonus"
-#~ msgstr "Bonus verbergen"
-
-#~ msgid "Show Bonus"
-#~ msgstr "Bonus tonen"
-
-#~ msgid ""
-#~ "Asking the AI: {current} of {total} "
-#~ "games, {proposals} names suggested. {system}"
-#~ msgstr ""
-
-#~ msgid "Done. {proposals} names suggested from {total} games."
-#~ msgstr ""
-
-#~ msgid "Stopped. {proposals} names suggested."
-#~ msgstr ""
-
-#~ msgid "{accepted} names changed."
-#~ msgstr ""
-
-#~ msgid "{accepted} names changed. {skipped} skipped: their title changed since."
-#~ msgstr ""
-
-#~ msgid "{count} suggested names. Untick any you do not want, then accept."
-#~ msgstr ""
-
-#~ msgid "{rejected} names rejected. They will not be suggested again."
-#~ msgstr ""
-
-#~ msgid "Format: YYYY-MM-DD (e.g., 1996-09-29)"
-#~ msgstr "Formaat: JJJJ-MM-DD (bijv. 1996-09-29)"
-
-#~ msgid "RetroDB Player cores"
-#~ msgstr "Cores van RetroDB Player"
-
-#~ msgid "Every game here has had AI Fill already."
-#~ msgstr "Elke game hier heeft al AI-aanvulling gehad."
-
-#~ msgid ""
-#~ "Ask the AI for each game's full"
-#~ " official name in its ROM's own "
-#~ "region, then tick the new names "
-#~ "you want. Nothing changes until you "
-#~ "accept it."
-#~ msgstr ""
-#~ "Vraag de AI om de volledige "
-#~ "officiële naam van elke game in de"
-#~ " eigen regio van de ROM, en "
-#~ "vink daarna de nieuwe namen aan "
-#~ "die je wilt. Er verandert niets "
-#~ "tot je ze accepteert."
-
-#~ msgid "Cheats downloaded."
-#~ msgstr "Cheats gedownload."
-
-#~ msgid "Downloading RetroArch… This can take a few minutes."
-#~ msgstr "Bezig met downloaden van RetroArch… Dit kan een paar minuten duren."
-
-#~ msgid "Downloading {pack}…"
-#~ msgstr "Bezig met downloaden van {pack}…"
-
-#~ msgid "Default"
-#~ msgstr "Standaard"
-
-#~ msgid "Earn achievements in RetroDB's RetroArch"
-#~ msgstr "Verdien prestaties in de RetroArch van RetroDB"
-
-#~ msgid "Launches in: %(name)s"
-#~ msgstr "Start in: %(name)s"
-
-#~ msgid ""
-#~ "This will clear the play time from"
-#~ " {stored} games that already have "
-#~ "one. The other {other} queued matches"
-#~ " are dropped, and those games keep"
-#~ " what they have. A bulk lookup "
-#~ "can fetch the times again."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Stopped: ScreenScraper stopped answering, so"
-#~ " your daily allowance may be spent."
-#~ " Files swapped: {replaced}. Run it "
-#~ "again tomorrow."
-#~ msgstr ""
-#~ "Gestopt: ScreenScraper reageert niet meer, "
-#~ "dus je dagelijkse limiet is mogelijk "
-#~ "op. Vervangen bestanden: {replaced}. Probeer"
-#~ " het morgen opnieuw."
-
-#~ msgid "An official names run is already running."
-#~ msgstr "Er loopt al een ronde voor officiële namen."
-
-#~ msgid "No official names run to cancel."
-#~ msgstr "Er is geen ronde voor officiële namen om te annuleren."
-
-#~ msgid ""
-#~ "Asking the AI: game {current} of "
-#~ "{total}. Names suggested: {proposals}. "
-#~ "{system}"
-#~ msgstr ""
-#~ "De AI wordt gevraagd: game {current} "
-#~ "van {total}. Voorgestelde namen: {proposals}."
-#~ " {system}"
-
-#~ msgid "Could not accept these names."
-#~ msgstr "Kon deze namen niet accepteren."
-
-#~ msgid "Could not load the suggested names."
-#~ msgstr "Kon de voorgestelde namen niet laden."
-
-#~ msgid "Could not reject these names."
-#~ msgstr "Kon deze namen niet afwijzen."
-
-#~ msgid "Done. Games asked: {total}. Names suggested: {proposals}."
-#~ msgstr "Klaar. Gevraagde games: {total}. Voorgestelde namen: {proposals}."
-
-#~ msgid "Europe"
-#~ msgstr "Europa"
-
-#~ msgid "Japan"
-#~ msgstr "Japan"
-
-#~ msgid "Names changed: {accepted}."
-#~ msgstr "Gewijzigde namen: {accepted}."
-
-#~ msgid ""
-#~ "Names changed: {accepted}. Skipped because "
-#~ "their title changed since: {skipped}."
-#~ msgstr ""
-#~ "Gewijzigde namen: {accepted}. Overgeslagen "
-#~ "omdat hun titel intussen is gewijzigd:"
-#~ " {skipped}."
-
-#~ msgid "Names rejected: {rejected}. They will not be suggested again."
-#~ msgstr "Afgewezen namen: {rejected}. Ze worden niet opnieuw voorgesteld."
-
-#~ msgid "No suggested names waiting. Press Ask the AI to look for some."
-#~ msgstr ""
-#~ "Er wachten geen voorgestelde namen. Druk"
-#~ " op Vraag het de AI om ernaar"
-#~ " te zoeken."
-
-#~ msgid "Stopped. Names suggested: {proposals}."
-#~ msgstr "Gestopt. Voorgestelde namen: {proposals}."
-
-#~ msgid ""
-#~ "Suggested names waiting: {count}. Untick "
-#~ "any you do not want, then accept."
-#~ msgstr ""
-#~ "Wachtende voorgestelde namen: {count}. Vink"
-#~ " de namen uit die je niet wilt"
-#~ " en accepteer daarna."
-
-#~ msgid "The run stopped: {error}. Names already suggested are kept."
-#~ msgstr "De ronde is gestopt: {error}. Al voorgestelde namen blijven bewaard."
-
-#~ msgid "Tick at least one name."
-#~ msgstr "Vink ten minste één naam aan."
-
-#~ msgid "USA"
-#~ msgstr "VS"
-
-#~ msgid "World"
-#~ msgstr "Wereld"
-
-#~ msgid "unknown"
-#~ msgstr "onbekend"
-
-#~ msgid "{system} · {file} · old name from: {region}"
-#~ msgstr "{system} · {file} · oude naam uit: {region}"
-
-#~ msgid "Official Names"
-#~ msgstr "Officiële namen"
-
-#~ msgid ""
-#~ "The AI suggests each game's full "
-#~ "official name, as released in the "
-#~ "region of its ROM: a Japanese ROM"
-#~ " of Mega Man becomes Rockman. Tick"
-#~ " the names you want and accept "
-#~ "them. The old name is kept as "
-#~ "an alternate title, and an accepted "
-#~ "name is kept when scraping. Nothing "
-#~ "changes until you accept it."
-#~ msgstr ""
-#~ "De AI stelt voor elke game de "
-#~ "volledige officiële naam voor, zoals die"
-#~ " is uitgebracht in de regio van "
-#~ "de ROM: een Japanse ROM van Mega"
-#~ " Man wordt Rockman. Vink de namen "
-#~ "aan die je wilt en accepteer ze."
-#~ " De oude naam blijft bewaard als "
-#~ "alternatieve titel, en een geaccepteerde "
-#~ "naam blijft behouden bij het scrapen."
-#~ " Er verandert niets tot je hem "
-#~ "accepteert."
-
-#~ msgid "Ask the AI"
-#~ msgstr "Vraag het de AI"
-
-#~ msgid "Suggested names"
-#~ msgstr "Voorgestelde namen"
-
-#~ msgid "Accept ticked"
-#~ msgstr "Aangevinkte accepteren"
-
-#~ msgid "Reject ticked"
-#~ msgstr "Aangevinkte afwijzen"
-
-#~ msgid "Tick all"
-#~ msgstr "Alles aanvinken"
-
-#~ msgid "Tick none"
-#~ msgstr "Niets aanvinken"
-
-#~ msgid "Cleared RA data for {n} games in {system}"
-#~ msgstr "RA-gegevens gewist voor {n} games in {system}"
-
-#~ msgid ""
-#~ "Cleared RetroAchievements data for {n} "
-#~ "games. Run \"Refresh RetroAchievements\" to"
-#~ " re-scan with updated matching."
-#~ msgstr ""
-#~ "RetroAchievements-gegevens gewist voor {n} "
-#~ "games. Voer \"RetroAchievements vernieuwen\" "
-#~ "uit om opnieuw te scannen met "
-#~ "bijgewerkte matching."
-
-#~ msgid "RA Data Cleared"
-#~ msgstr "RA-gegevens gewist"
-
-#~ msgid "Refresh RetroAchievements"
-#~ msgstr "RetroAchievements vernieuwen"
-
-#~ msgid ""
-#~ "This will clear RetroAchievements game "
-#~ "IDs and progress data for \"{system}\"."
-#~ " Continue?"
-#~ msgstr ""
-#~ "Hiermee worden de RetroAchievements-game-"
-#~ "ID's en voortgangsgegevens voor \"{system}\""
-#~ " gewist. Doorgaan?"
-
-#~ msgid "🏆 Refresh RetroAchievements"
-#~ msgstr "🏆 RetroAchievements vernieuwen"
-
-#~ msgid "Remove this system from Achievements"
-#~ msgstr "Dit systeem verwijderen uit Prestaties"
-
-#~ msgid ""
-#~ "Your PlayStation Network session expires "
-#~ "soon — re-link it to avoid "
-#~ "an interruption."
-#~ msgstr ""
-#~ "Je PlayStation Network-sessie verloopt "
-#~ "binnenkort — koppel opnieuw om "
-#~ "onderbreking te voorkomen."
-
-#~ msgid "Re-link now"
-#~ msgstr "Nu opnieuw koppelen"
-
-#~ msgid "Read from clipboard"
-#~ msgstr "Lezen vanaf klembord"
-
-#~ msgid "Paste &amp; Detect"
-#~ msgstr "Plakken &amp; detecteren"
 

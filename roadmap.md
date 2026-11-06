@@ -11302,7 +11302,16 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.249 Smaller correctness and speed fixes from the audit (audit-fix, M).
-- **Status**: in-progress
+- **Done** (2026-11-06, in the open 4.0.0): groups E (imports), G
+  (images), H (database, restore), I (maintenance, scanning), J
+  (collections, trophies, ROM tools) and K (`apply_esde_metadata`
+  removed; obsolete `#~` catalog entries dropped, and
+  `--ignore-obsolete` is now the documented update) closed, after A to
+  D and F. Every finding's disposition is in
+  docs/reviews/close-findings-2026-11-05-pass-59-249.md. Queued:
+  PASS-59-262, PASS-59-263 (the audit's open questions), Xbox lows on
+  PASS-59-261, DecompressionBomb on PASS-59-250.
+- **Status**: done
 - **Why**: audit 2026-11-04, all lanes; each low on its own. Already
   filed: PASS-59-160 ("Action" filter).
 - **Fix**:
@@ -11372,6 +11381,12 @@ the cover zoom in Firefox before being reverted for the local fix.
     `ci_local.sh` failure text suggests `--no-verify`.
   - `help.html` contents list lacks `#emulators-play`.
 - **Source**: audit 2026-11-04.
+- 2026-11-06, from PASS-59-249: done there, so skip here: scrapers.md
+  no longer names `apply_esde_metadata` (removed); `image-pipeline.md`
+  §12.1's worklist and disk precheck were rewritten (re-read §12.1 for
+  anything else the audit meant). Added here: the audit's open question
+  that `Image.DecompressionBombError` is not caught in code everywhere
+  the spec says it is; check each `Image.open` site, not only the doc.
 
 ---
 
@@ -11590,6 +11605,29 @@ the cover zoom in Firefox before being reverted for the local fix.
   other than 0 or NULL as hidden.
 - **Not fixed in PASS-59-249** because it needs a schema change; the loop
   half of the same finding shipped there.
+
+---
+
+#### Pass 59.263 Answer the audit's six open questions (investigate, S).
+- **Status**: todo
+- **Why**: the 2026-11-04 audit raised these without checking them.
+  Each needs a read, then a fix item or a recorded "fine as is".
+- **Questions**:
+  - `reset_to_defaults` resets `setup_completed`: does a reset send
+    the user back to the setup wizard, and should it?
+  - An unreadable PS3 serial: is every PS3 disc read again on each
+    Library load?
+  - `get_system_type` casing against the ROM naming validator.
+  - RA sync and achievements reply `queued=True` with no server-side
+    queue: is anything ever queued?
+  - Does the log viewer strip credentials before sending a log
+    (`services/log_redactor.py`)?
+  - Collector trophies: should they filter by source?
+- Answered already: Steam's date and genre are left out in
+  `metadata_merger.apply_steam_to_metadata`, pinned by
+  `test_store_date_and_genre_are_left_for_a_scrape`.
+- **Source**: audit 2026-11-04 open questions, carried from
+  PASS-59-249 on 2026-11-06.
 
 ## Done index
 
