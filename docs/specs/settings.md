@@ -345,7 +345,7 @@ unless explicitly noted.
 | --- | --- | --- | --- |
 | `/api/settings` | GET | n/a | `data/settings.json` |
 | `/api/settings` | POST | `validate_settings_value` per key (Pass 32.2) | `data/settings.json` |
-| `/api/settings/reset` | POST | n/a (reset to `DEFAULT_SETTINGS`) | `data/settings.json` |
+| `/api/settings/reset` | POST | n/a (reset to `DEFAULT_SETTINGS`, keeping `setup_completed` and `rom_path`, PASS-59-265) | `data/settings.json` |
 | `/api/settings/paths` | GET | n/a | `data/settings.json` |
 | `/api/settings/paths` | POST | `validate_settings_path` (Pass 32.1) | `data/settings.json` |
 | `/api/settings/logging` | POST | `validate_settings_value('logging', …)` (Pass 45.11) | `data/settings.json` |

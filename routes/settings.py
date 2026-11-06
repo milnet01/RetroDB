@@ -589,10 +589,7 @@ def api_reset_settings():
     """Reset all settings to defaults"""
     try:
         if settings_manager.reset_to_defaults():
-            return success(
-                message='Settings reset to defaults',
-                restart_required=True,
-            )
+            return success(message='Settings reset to defaults')
         else:
             return error(_('Failed to reset settings'), 500)
     except Exception:

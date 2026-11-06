@@ -11679,7 +11679,11 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.265 Reset to defaults keeps setup done and the ROM path, so the sign-in-free setup pages stay shut (security, S).
-- **Status**: todo
+- **Resolution** (2026-11-06): Done 2026-11-06: reset_to_defaults keeps setup_completed and rom_path
+  under the settings write lock; the reply no longer claims a restart.
+  Locked by tests/test_settings_reset.py. No page calls this route; an
+  admin's direct request could.
+- **Status**: done
 - **Why**: `settings_manager.reset_to_defaults` saves `DEFAULT_SETTINGS`
   (`setup_completed` False, `rom_path` empty). With `config.ROM_PATH`
   empty, as shipped, `/api/setup` and `/api/setup/browse-folders` answer

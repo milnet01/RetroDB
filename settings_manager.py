@@ -323,8 +323,19 @@ def get_effective_path(setting_key, config_fallback=''):
 
 
 def reset_to_defaults():
-    """Reset all settings to defaults"""
-    return save_settings(DEFAULT_SETTINGS.copy())
+    """Reset all settings to defaults, except that setup stays done.
+
+    `setup_completed` and `rom_path` are kept: with both at their defaults,
+    /api/setup and /api/setup/browse-folders answer without a sign-in
+    (PASS-59-265).
+    """
+    with _settings_write_lock:
+        current = load_settings()
+        settings = DEFAULT_SETTINGS.copy()
+        for key in ('setup_completed', 'rom_path'):
+            if key in current:
+                settings[key] = current[key]
+        return save_settings(settings)
 
 
 # =============================================================================
