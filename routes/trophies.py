@@ -1126,8 +1126,10 @@ def _upsert_psn_title(conn, user_id, title, platform, icon_url, linked_game_id):
             icon_url = COALESCE(excluded.icon_url, psn_games.icon_url),
             {updates},
             last_updated = datetime('now'),
-            -- The stored link first: it may be one the user set by hand.
-            linked_game_id = COALESCE(psn_games.linked_game_id, excluded.linked_game_id)
+            -- A link a person set stays; the sync's own it checks again (PASS-59-260).
+            linked_game_id = CASE WHEN psn_games.link_set_by_hand = 1
+                                  THEN psn_games.linked_game_id
+                                  ELSE excluded.linked_game_id END
     """, (title.np_communication_id, user_id, title.title_name, platform, icon_url,
           *counts, linked_game_id, *counts))
 
@@ -1652,7 +1654,7 @@ def api_psn_link_game():
     try:
         execute("""
             UPDATE psn_games
-            SET linked_game_id = ?
+            SET linked_game_id = ?, link_set_by_hand = 1
             WHERE npwr_id = ? AND user_id = ?
         """, (game_id if game_id else None, npwr_id, g.user['id']))
 

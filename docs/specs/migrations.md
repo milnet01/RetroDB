@@ -566,6 +566,7 @@ your migration — not in the runner.
 | 038 | `038_delete_kept_token_files.py` | Delete the `*_tokens.json.migrated-015` plaintext token files 015 kept, where `user_platform_tokens` already holds that platform's token. | PASS-59-240. No schema change. A file whose platform has no row may be the only copy, and stays. |
 | 039 | `039_tags_unique_per_owner.py` | Rebuild `tags` with `UNIQUE(owner_id, name)` in place of a `UNIQUE` on `name` alone; rebuild `game_tags` alongside, keeping every id. | PASS-59-241. A second user's same-named tag failed. Both wait in copies with no foreign keys, so dropping `tags` cascades nowhere; no `ALTER TABLE RENAME`, which re-checks every trigger. |
 | 040 | `040_game_delete_cleans_rows.py` | Triggers delete a deleted game's `pending_upscales` row and game-scope `emulator_setting_choices` rows; rows already orphaned are removed. | PASS-59-249. Neither table has a foreign key to `games`, so a new game given the same id inherited them. |
+| 041 | `041_psn_hand_links.py` | Add `psn_games.link_set_by_hand` (0 by default); set it to 1 where the link is to the game the PSN import made for that title. | PASS-59-260. A sync replaces only a link no person set; older links are checked again (user, 2026-11-06). |
 
 ---
 

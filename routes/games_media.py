@@ -41,7 +41,7 @@ def api_delete_game(game_id):
 
     # Unlink any records that reference this game via foreign keys
     execute("UPDATE games SET parent_game_id = NULL, is_bonus_disc = 0 WHERE parent_game_id = ?", (game_id,))
-    execute("UPDATE psn_games SET linked_game_id = NULL WHERE linked_game_id = ?", (game_id,))
+    execute("UPDATE psn_games SET linked_game_id = NULL, link_set_by_hand = 0 WHERE linked_game_id = ?", (game_id,))
 
     execute("DELETE FROM games WHERE id = ?", (game_id,))
     upscale_queue.forget_cleared()

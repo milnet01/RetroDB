@@ -94,7 +94,7 @@ def clean_missing_roms():
                 chunk,
             )
             conn.execute(
-                f"UPDATE psn_games SET linked_game_id = NULL "
+                f"UPDATE psn_games SET linked_game_id = NULL, link_set_by_hand = 0 "
                 f"WHERE linked_game_id IN ({placeholders})",
                 chunk,
             )
@@ -131,7 +131,7 @@ def clear_clz_imports():
         "WHERE parent_game_id IN (SELECT id FROM games WHERE rom_path LIKE 'clz_import/%')"
     )
     execute(
-        "UPDATE psn_games SET linked_game_id = NULL "
+        "UPDATE psn_games SET linked_game_id = NULL, link_set_by_hand = 0 "
         "WHERE linked_game_id IN (SELECT id FROM games WHERE rom_path LIKE 'clz_import/%')"
     )
     execute("DELETE FROM games WHERE rom_path LIKE 'clz_import/%'")

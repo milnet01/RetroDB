@@ -157,10 +157,10 @@ def test_the_full_sync_does_not_take_a_sequel():
     assert tr._psn_link_for('Journey', 'ps5', games) == 3
 
 
-def _psn_row(conn, linked):
+def _psn_row(conn, linked, by_hand=0):
     conn.execute("DELETE FROM psn_games WHERE npwr_id = 'NPWR241'")
-    conn.execute("INSERT INTO psn_games (npwr_id, user_id, title, linked_game_id) "
-                 "VALUES ('NPWR241', 1, 'Doom', ?)", (linked,))
+    conn.execute("INSERT INTO psn_games (npwr_id, user_id, title, linked_game_id, "
+                 "link_set_by_hand) VALUES ('NPWR241', 1, 'Doom', ?, ?)", (linked, by_hand))
 
 
 def test_the_full_sync_keeps_a_link_set_by_hand(vdb):
@@ -168,12 +168,16 @@ def test_the_full_sync_keeps_a_link_set_by_hand(vdb):
     import routes.trophies as tr
     mine = vdb.game('Doom (1993)')
     other = vdb.game('Doom')
-    _psn_row(vdb.conn, mine)
+    _psn_row(vdb.conn, mine, by_hand=1)
     title = types.SimpleNamespace(np_communication_id='NPWR241', title_name='Doom',
                                   defined_trophies=None, earned_trophies=None)
     tr._upsert_psn_title(vdb.conn, 1, title, 'ps4', None, other)
     assert vdb.conn.execute("SELECT linked_game_id FROM psn_games "
                             "WHERE npwr_id = 'NPWR241'").fetchone()[0] == mine
+    _psn_row(vdb.conn, None, by_hand=1)        # unlinked by hand stays unlinked
+    tr._upsert_psn_title(vdb.conn, 1, title, 'ps4', None, other)
+    assert vdb.conn.execute("SELECT linked_game_id FROM psn_games "
+                            "WHERE npwr_id = 'NPWR241'").fetchone()[0] is None
     _psn_row(vdb.conn, None)
     tr._upsert_psn_title(vdb.conn, 1, title, 'ps4', None, other)
     assert vdb.conn.execute("SELECT linked_game_id FROM psn_games "
@@ -309,3 +313,18 @@ def test_the_shared_steam_key_is_for_admins_only(vdb, monkeypatch, user_id, expe
                         lambda: ('shared-key', '765'))
     got = platform_sync._get_steam_credentials(user_id=user_id)
     assert got == expected
+
+
+def test_the_full_sync_corrects_its_own_earlier_link(vdb):
+    """PASS-59-260: a wrong automatic link is replaced, or dropped when the
+    sync now finds no game."""
+    import types
+    import routes.trophies as tr
+    wrong, right = vdb.game('D'), vdb.game('Doom')
+    title = types.SimpleNamespace(np_communication_id='NPWR241', title_name='Doom',
+                                  defined_trophies=None, earned_trophies=None)
+    for found in (right, None):
+        _psn_row(vdb.conn, wrong)
+        tr._upsert_psn_title(vdb.conn, 1, title, 'ps4', None, found)
+        assert vdb.conn.execute("SELECT linked_game_id FROM psn_games "
+                                "WHERE npwr_id = 'NPWR241'").fetchone()[0] == found

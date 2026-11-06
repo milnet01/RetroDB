@@ -1024,8 +1024,8 @@ def api_psn_import():
 
         def link_trophies(npwr_id, game_id):
             # This user's trophy row, unless they linked it by hand.
-            c.execute("UPDATE psn_games SET linked_game_id = ? WHERE npwr_id = ? "
-                      "AND user_id = ? AND linked_game_id IS NULL",
+            c.execute("UPDATE psn_games SET linked_game_id = ?, link_set_by_hand = 1 "
+                      "WHERE npwr_id = ? AND user_id = ? AND link_set_by_hand = 0",
                       (game_id, npwr_id, g.user['id']))
 
         # Build lookup for duplicate detection
@@ -1090,7 +1090,7 @@ def api_psn_import():
                 # inadvertently repoint user A's trophy row to a new game.
                 new_game_id = c.lastrowid
                 c.execute(
-                    "UPDATE psn_games SET linked_game_id = ? "
+                    "UPDATE psn_games SET linked_game_id = ?, link_set_by_hand = 1 "
                     "WHERE npwr_id = ? AND user_id = ?",
                     (new_game_id, npwr_id, g.user['id'])
                 )
