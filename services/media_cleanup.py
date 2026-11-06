@@ -195,6 +195,9 @@ def delete_unshared_media(row):
         if field in keys and row[field]:
             entries = [e.strip() for e in row[field].split(',') if e.strip()]
             own[field] = ','.join(e for e in entries if os.path.basename(e) not in still_named)
+    if 'box_faces' in keys:
+        from services.box_faces import delete_faces_of
+        delete_faces_of(row)
     return delete_game_images([own])
 
 

@@ -17,10 +17,13 @@ logger = logging.getLogger(__name__)
 
 
 def _add_column_if_missing(c, table, col_name, col_type):
+    """ALTER TABLE ADD COLUMN, hiding only the duplicate-column error. Any
+    other failure (a missing table, a bad default) is raised, not lost."""
     try:
         c.execute(f"ALTER TABLE {table} ADD COLUMN {col_name} {col_type}")
-    except sqlite3.OperationalError:
-        pass
+    except sqlite3.OperationalError as e:
+        if 'duplicate column name' not in str(e).lower():
+            raise
 
 
 def apply(conn):
@@ -53,8 +56,10 @@ def apply(conn):
         )
     """)
 
-    _add_column_if_missing(c, 'games', 'emulator_override_id', 'INTEGER REFERENCES emulators(id)')
-    _add_column_if_missing(c, 'games', 'launch_args_override', 'TEXT')
+    # A bare database (a test's) has no games table; real installs made it in 001.
+    if c.execute("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'games'").fetchone():
+        _add_column_if_missing(c, 'games', 'emulator_override_id', 'INTEGER REFERENCES emulators(id)')
+        _add_column_if_missing(c, 'games', 'launch_args_override', 'TEXT')
 
     c.execute("CREATE INDEX IF NOT EXISTS idx_system_emulators_system  ON system_emulators(system_id)")
     c.execute("CREATE INDEX IF NOT EXISTS idx_system_emulators_default ON system_emulators(system_id, is_default)")

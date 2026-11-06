@@ -2,6 +2,8 @@
   date: 2026-11-05
   tags:
   - type: fix
+    label: Restoring a backup is safer. It is now written into the library database the way the database itself expects, so a part of RetroDB that has it open sees the restored data instead of risking damage. Deleting a game now also deletes its box pictures and its waiting picture and emulator-setting entries, so a new game can never inherit them. Two settings saved at the same moment no longer lose one of them
+  - type: fix
     label: Picture fixes. GIFs are no longer run through the upscaler only to be thrown away. The upscaler model is checked against its published fingerprint, and a bad download is fetched again instead of turning upscaling off for good. Logos and pictures with see-through parts keep their transparency when enlarged. Convert to WebP now takes back covers and logos too, and no longer refuses a large library for want of room it does not need. Two faces of a box file can share one picture, and removing a box with a damaged record removes its pictures
   - type: fix
     label: Imports from CLZ, Steam, Xbox and PlayStation no longer treat every title written only in Japanese or another non-Latin script as the same game, and no longer add a game with no id. The CLZ preview no longer adds consoles before you confirm the import, and a viewer looking at a Steam, Xbox or PlayStation library no longer adds them either. A Steam game removed from the store is asked about once, not on every sync

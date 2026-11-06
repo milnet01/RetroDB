@@ -31,6 +31,9 @@ _settings_cache_mtime = None
 # save_settings() must then not write that dict over the file.
 _settings_read_failed = False
 _settings_cache_lock = threading.Lock()
+# set_setting reads, changes and saves: two at once in this process would
+# each save a copy missing the other's change (PASS-59-249).
+_settings_write_lock = threading.RLock()
 
 # Default values for user-editable settings
 DEFAULT_SETTINGS = {
@@ -299,9 +302,10 @@ def get_setting(key, default=None):
 
 def set_setting(key, value):
     """Set a single setting value"""
-    settings = load_settings()
-    settings[key] = value
-    return save_settings(settings)
+    with _settings_write_lock:
+        settings = load_settings()
+        settings[key] = value
+        return save_settings(settings)
 
 
 def get_effective_path(setting_key, config_fallback=''):
@@ -313,7 +317,7 @@ def get_effective_path(setting_key, config_fallback=''):
     settings = load_settings()
     user_value = settings.get(setting_key, '')
     
-    if user_value and user_value.strip():
+    if isinstance(user_value, str) and user_value.strip():
         return user_value.strip()
     return config_fallback
 

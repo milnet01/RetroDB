@@ -64,6 +64,7 @@ MIGRATIONS = [
     '037_games_boxart_back',
     '038_delete_kept_token_files',
     '039_tags_unique_per_owner',
+    '040_game_delete_cleans_rows',
 ]
 
 

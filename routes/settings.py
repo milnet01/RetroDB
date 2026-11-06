@@ -8,7 +8,6 @@ from flask import Blueprint, render_template, request, jsonify, g, current_app, 
 from flask_babel import gettext as _
 import sqlite3
 import os
-import shutil
 import json
 import logging
 import sys
@@ -363,9 +362,13 @@ def api_restore(filename):
         # to the swapped-out inode mid-restore (lost writes / split-brain).
         # job_queue.status = 'running' is the cross-process source of truth.
         try:
-            active_jobs = get_db().execute(
-                "SELECT COUNT(*) FROM job_queue WHERE status = 'running'"
-            ).fetchone()[0]
+            jobs_conn = get_db()
+            try:
+                active_jobs = jobs_conn.execute(
+                    "SELECT COUNT(*) FROM job_queue WHERE status = 'running'"
+                ).fetchone()[0]
+            finally:
+                jobs_conn.close()
         except Exception:
             active_jobs = 0  # table absent on a fresh DB → nothing running
         if active_jobs:
@@ -400,54 +403,23 @@ def api_restore(filename):
         pre_restore_backup = os.path.join(backup_dir, f"pre_restore_{timestamp}.db")
         backup_database(config.DB_PATH, pre_restore_backup)
 
-        # Pass 32.3: prevent WAL-replay corruption. Before overwriting the
-        # DB file we (a) checkpoint-truncate any unflushed WAL frames into
-        # the live DB, (b) close the request-scoped connection if any,
-        # (c) remove stale -wal / -shm so SQLite can't later try to replay
-        # frames belonging to the pre-restore DB against the new one, and
-        # (d) use tempfile + os.replace for an atomic swap, so any readers
-        # still holding a file descriptor keep their original inode and do
-        # not observe a mid-copy truncated file.
+        # Copy the backup INTO the live database with SQLite's backup API
+        # (PASS-59-249). SQLite takes its own locks, so a connection another
+        # thread or job holds open sees the restored data, and the -wal / -shm
+        # files stay SQLite's to manage. Deleting them or swapping the file
+        # under open connections, as this did before, could corrupt it. The
+        # copy is one transaction: if it fails, the live database is unchanged.
+        import sqlite3 as _sqlite3
+        src = _sqlite3.connect(f"file:{backup_path}?mode=ro", uri=True)
+        dst = _sqlite3.connect(config.DB_PATH, timeout=30)
         try:
-            ck = get_db()
-            try:
-                ck.execute('PRAGMA wal_checkpoint(TRUNCATE)')
-                ck.commit()
-            finally:
-                ck.close()
-        except Exception as e:
-            logger.warning(f"WAL checkpoint before restore failed: {e}")
-
-        # Request-scoped g.db, if any, is now stale — drop it so later
-        # code in this request doesn't write to the about-to-be-replaced DB.
-        try:
-            if g.pop('db', None) is not None:
-                pass
-        except Exception:
-            pass
-
-        for side in ('-wal', '-shm'):
-            side_path = config.DB_PATH + side
-            if os.path.exists(side_path):
-                try:
-                    os.remove(side_path)
-                except OSError as e:
-                    logger.warning(f"Could not remove {side_path}: {e}")
-
-        import tempfile
-        db_dir = os.path.dirname(config.DB_PATH) or '.'
-        fd, tmp_path = tempfile.mkstemp(prefix='restore_', dir=db_dir)
-        os.close(fd)
-        try:
-            shutil.copy2(backup_path, tmp_path)
-            os.replace(tmp_path, config.DB_PATH)
-        except Exception:
-            if os.path.exists(tmp_path):
-                try:
-                    os.remove(tmp_path)
-                except OSError:
-                    pass
-            raise
+            src.backup(dst)
+        except _sqlite3.Error as e:
+            logger.error(f"Restore from {filename} failed; database unchanged: {e}")
+            return error(_('The backup could not be copied in; nothing was changed.'), 500)
+        finally:
+            src.close()
+            dst.close()
 
         logger.info(f"Restored database from: {filename}")
         return success(

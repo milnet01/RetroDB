@@ -17,11 +17,13 @@ logger = logging.getLogger(__name__)
 
 
 def _add_column_if_missing(c, table, col_name, col_type):
-    """ALTER TABLE ADD COLUMN, swallowing the duplicate-column error."""
+    """ALTER TABLE ADD COLUMN, hiding only the duplicate-column error. Any
+    other failure (a missing table, a bad default) is raised, not lost."""
     try:
         c.execute(f"ALTER TABLE {table} ADD COLUMN {col_name} {col_type}")
-    except sqlite3.OperationalError:
-        pass
+    except sqlite3.OperationalError as e:
+        if 'duplicate column name' not in str(e).lower():
+            raise
 
 
 def apply(conn):
@@ -100,7 +102,7 @@ def apply(conn):
         ('controller_support', 'TEXT'),
         ('save_type', 'TEXT'),
         ('scrape_history', 'TEXT'),
-        ('completion_status', 'TEXT DEFAULT "not_started"'),
+        ('completion_status', "TEXT DEFAULT 'not_started'"),
         ('file_size', 'INTEGER'),
         ('last_viewed', 'TEXT'),
         ('sort_title', 'TEXT'),

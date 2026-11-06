@@ -356,18 +356,27 @@ def remove_box_faces(game_id):
     game = query('SELECT id, box_faces FROM games WHERE id = ?', (game_id,), one=True)
     if not game:
         raise BoxImportError('not_found')
-    old = _stored_record(game['box_faces'])
     if game['box_faces'] is None:
         return False
     execute('UPDATE games SET box_faces = NULL WHERE id = ?', (game_id,))
-    if old is None:
-        # An unreadable record names no files, but its faces still carry this
-        # game's id, so the orphan sweep would never remove them.
-        for name in _faces_of_game(game_id):
-            _delete_faces({'faces': {name.split('_')[1]: name}})
-        return True
-    _delete_faces(old)
+    # An unreadable record names no files, but its faces still carry this
+    # game's id, so the orphan sweep would never remove them.
+    delete_faces_of(game)
     return True
+
+
+def delete_faces_of(row):
+    """Delete the face files of a games row that has just been deleted. A new
+    game may be given the same id, and its prefix would hide them from the
+    orphan sweep."""
+    if 'box_faces' not in row.keys() or row['box_faces'] is None:
+        return
+    old = _stored_record(row['box_faces'])
+    if old is None:
+        for name in _faces_of_game(row['id']):
+            _delete_faces({'faces': {name.split('_')[1]: name}})
+    else:
+        _delete_faces(old)
 
 
 def _faces_of_game(game_id):

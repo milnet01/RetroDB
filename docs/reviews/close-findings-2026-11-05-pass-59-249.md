@@ -168,15 +168,25 @@ Run-level, group G:
 
 ## H. Database, settings, restore
 
+Test: `tests/test_pass59_249_database.py`, ten of eleven run red first (a `None` path already worked).
+
 | Finding | Verified | Disposition |
 |---|---|---|
-| Restore removes `-wal`/`-shm` with connections open (`routes/settings.py` `api_restore`) | yes | |
-| Migration 030 imports live code | not yet read | |
-| `set_setting` read-modify-write unlocked | not yet read | |
-| Lenient column helpers in migrations 001/012 swallow every error | not yet read | |
-| `get_effective_path` crashes on a non-string | not yet read | |
-| Orphan `pending_upscales` / game-scope `emulator_setting_choices` rows | not yet read | |
-| `api_delete_game` leaves per-game rows behind | not yet read | |
+| Restore removes `-wal`/`-shm` with connections open (`routes/settings.py` `api_restore`) | yes; an open connection kept reading the old file after a restore | fixed: the backup is copied in with SQLite's backup API; no side files deleted, no file swap; the jobs check closes its connection |
+| Migration 030 imports live code | yes | fixed in part: a missing helper skips the tidy with a log instead of failing boot. The drift half is dismissed: 030 runs only on upgrades from below 30, where today's tidy is the wanted one, and freezing copies of the mapping tables costs more than it saves |
+| `set_setting` read-modify-write unlocked | yes | fixed: a process-wide lock around read, change and save. Two processes can still race; this app runs one |
+| Lenient column helpers in migrations 001/012 swallow every error | yes | fixed: only `duplicate column name` is hidden; 001's default uses single quotes. Edited under migrations.md §4's carve-out (nil effect on databases past 12) |
+| `get_effective_path` crashes on a non-string | yes | fixed |
+| Orphan `pending_upscales` / game-scope `emulator_setting_choices` rows | yes | fixed: migration 040 adds delete triggers and removes existing orphans |
+| `api_delete_game` leaves per-game rows behind | yes, in part: progress, views, removed screenshots, HLTB pending and play time cascade (`get_db` turns foreign keys on); media was already deleted | fixed for what was left: box face files (`delete_unshared_media` calls `box_faces.delete_faces_of`) and the two tables above |
+
+Run-level, group H:
+
+- cited_by: `docs/specs/migrations.md` (helpers note, pre-restore backups, migration table).
+- swept: migrations.md helpers note, fixed (it said 001 and 012 stay as they are); restore passage, fixed (how a restore writes); migration table, fixed (row 040); help.html restore text, agrees (names no mechanism).
+- collateral: none. surfaced: none.
+- out_of_scope: `game_cleanup.clean_missing_roms` deletes games without deleting their media or box faces; left to the orphan sweep, not changed here.
+- falsified: none.
 
 ## I. Maintenance and ROM scanning
 

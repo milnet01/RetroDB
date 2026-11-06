@@ -70,6 +70,7 @@ _MIGRATION_SCRIPTS = [
     'services.migrations.scripts.037_games_boxart_back',
     'services.migrations.scripts.038_delete_kept_token_files',
     'services.migrations.scripts.039_tags_unique_per_owner',
+    'services.migrations.scripts.040_game_delete_cleans_rows',
 ]
 
 # Some pip packages have their own runtime imports that PyInstaller's

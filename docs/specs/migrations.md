@@ -255,6 +255,12 @@ live DB; there is no "snapshot before migrating" step.
 *current* live DB into `pre_restore_<timestamp>.db` before overwriting it.
 This is the only "undo" the system offers for a bad restore.
 
+**How a restore writes.** The backup is copied into the live database with
+SQLite's backup API, never swapped in as a file (PASS-59-249). SQLite takes
+its own locks, so connections other threads hold see the restored data, and
+the `-wal` / `-shm` files are left to SQLite. A failed copy leaves the live
+database unchanged.
+
 ---
 
 ## 8. Rollback — what's possible
@@ -405,11 +411,10 @@ Things to copy when authoring a similar migration:
   not (re-running raises `duplicate column name`). **New migrations must
   import the strict helper from `services.migrations._helpers`** —
   `_add_column_if_missing` there checks `_has_column()` first and only ALTERs
-  when missing. The inline `try/except sqlite3.OperationalError: pass` shape
-  in 012 is the pre-Pass-42.2 pattern and is **not** the model to copy; it
-  silently swallows non-duplicate-column SQL errors. Migrations 001 and 012
-  both carry this inline helper; they stay as they are under the
-  append-only rule.
+  when missing. Migrations 001 and 012 carry an older inline helper that
+  tries the ALTER and hides only a `duplicate column name` error (PASS-59-249,
+  under §4's carve-out: a database past version 12 never runs either again,
+  and a fresh one ends with the same schema). It is **not** the model to copy.
 - **FK clauses on brand-new tables are free.** You only need the table-rebuild
   procedure (§9) when adding FKs to a table that already exists in production.
 
@@ -560,6 +565,7 @@ your migration — not in the runner.
 | 037 | `037_games_boxart_back.py` | Add `games.boxart_back` (TEXT, a filename in `images/boxart_back/`). | PASS-59-225. Additive. Filled by a scrape or an editor's upload; NULL = no back. Separate from `box_faces`. |
 | 038 | `038_delete_kept_token_files.py` | Delete the `*_tokens.json.migrated-015` plaintext token files 015 kept, where `user_platform_tokens` already holds that platform's token. | PASS-59-240. No schema change. A file whose platform has no row may be the only copy, and stays. |
 | 039 | `039_tags_unique_per_owner.py` | Rebuild `tags` with `UNIQUE(owner_id, name)` in place of a `UNIQUE` on `name` alone; rebuild `game_tags` alongside, keeping every id. | PASS-59-241. A second user's same-named tag failed. Both wait in copies with no foreign keys, so dropping `tags` cascades nowhere; no `ALTER TABLE RENAME`, which re-checks every trigger. |
+| 040 | `040_game_delete_cleans_rows.py` | Triggers delete a deleted game's `pending_upscales` row and game-scope `emulator_setting_choices` rows; rows already orphaned are removed. | PASS-59-249. Neither table has a foreign key to `games`, so a new game given the same id inherited them. |
 
 ---
 

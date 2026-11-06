@@ -8,8 +8,11 @@
 # =============================================================================
 
 import json
+import logging
 
 from services.migrations._helpers import _has_column, _table_exists
+
+logger = logging.getLogger(__name__)
 
 _REGIONS = {'north america': 'USA'}
 
@@ -36,8 +39,14 @@ def apply(conn):
     if not _table_exists(cursor, 'games'):
         return
     # Imported here: a fresh install's first migrations run before these load.
-    from scraper.scrape_ai import FIELD_SCHEMAS, PLATFORM_ALIASES
-    from services.normalization import canonical_companies, clean_description
+    # This is a tidy, not a schema change: if the helpers are renamed, skip it
+    # rather than fail every upgrade from below version 30 at boot.
+    try:
+        from scraper.scrape_ai import FIELD_SCHEMAS, PLATFORM_ALIASES
+        from services.normalization import canonical_companies, clean_description
+    except ImportError as e:
+        logger.warning(f"Migration 030: stored text left as it is; its helpers are missing ({e})")
+        return
 
     schema = {name.lower(): name for name in FIELD_SCHEMAS['other_platforms']}
 
