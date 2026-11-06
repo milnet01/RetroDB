@@ -30,7 +30,9 @@ def _seed_games_table(db_path):
             boxart_3d TEXT,
             fanart TEXT,
             screenshots TEXT,
-            manual TEXT
+            manual TEXT,
+            boxart_back TEXT,
+            game_logo TEXT
         )
     """)
     conn.commit()
@@ -65,7 +67,7 @@ def webp_env(tmp_path, monkeypatch):
         monkeypatch.setattr(mod, 'DB_PATH', str(db_path), raising=False)
         monkeypatch.setattr(mod, 'IMAGE_PATH', image_path, raising=False)
 
-    for sub in ('boxart', 'boxart_3d', 'fanart', 'screenshots'):
+    for sub in ('boxart', 'boxart_3d', 'fanart', 'screenshots', 'boxart_back', 'game_logos'):
         (tmp_path / 'images' / sub).mkdir(parents=True)
 
     _seed_games_table(db_path)

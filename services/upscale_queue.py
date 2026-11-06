@@ -16,6 +16,8 @@ import threading
 import time
 from datetime import datetime, timezone
 
+from services.security import safe_path
+
 from services.image_utils import (
     _make_responsive_variants,
     defer_upscale,
@@ -101,10 +103,14 @@ def _media_files(conn, game_id):
         return []
     files = []
     for field in _MEDIA_FIELDS:
+        folder = os.path.join(config.IMAGE_PATH, field)
         for name in (row[field] or '').split(','):
             name = name.strip()
-            if name:
-                files.append((os.path.join(config.IMAGE_PATH, field, name), field))
+            # A stored name must stay inside its folder (as PASS-59-238 has
+            # the WebP job do); anything else is skipped, never rewritten.
+            path = safe_path(os.path.join(folder, name), folder) if name else None
+            if path:
+                files.append((path, field))
     return files
 
 

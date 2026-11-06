@@ -100,11 +100,21 @@ def media_dir_is_healthy(directory):
     """
     try:
         with os.scandir(directory) as it:
-            for _ in it:
-                return True
+            for entry in it:
+                if _is_media_original(entry.name):
+                    return True
         return False
     except OSError:
         return False
+
+
+def _is_media_original(name):
+    """A file a game could name: not a hidden or temp file (`.save_*`), and
+    not a `-sm` / `-md` card variant, which outlive their original."""
+    if name.startswith('.'):
+        return False
+    stem = os.path.splitext(name)[0]
+    return not stem.endswith(('-sm', '-md'))
 
 
 def shown_screenshots(value):

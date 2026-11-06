@@ -144,7 +144,9 @@ After every check passes:
    and logged.
 
 `remove_box_faces(game_id)` sets the column to NULL first, then deletes the
-files the old record named, with the same `safe_path` and symlink rule.
+files the old record named, with the same `safe_path` and symlink rule. An
+unreadable record names no files, so it deletes the faces that carry the
+game's id instead (PASS-59-249).
 
 **No symlink is ever followed on the way in.** The files arrive as upload
 bytes, so RetroDB never opens a path the editor chose.

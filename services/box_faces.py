@@ -303,8 +303,11 @@ def import_box_file(game_id, uploads, replace=False):
     missing = [names[face] for face in FACES if names[face] and names[face] not in uploads]
     if missing:
         raise BoxImportError('missing_face', ', '.join(missing))
-    pictures = {face: _read(uploads[names[face]], MAX_IMAGE_SIZE)
-                for face in FACES if names[face]}
+    # Each upload is read once: two faces may name the same picture, and a
+    # file object read twice gives nothing the second time.
+    read = {name: _read(uploads[name], MAX_IMAGE_SIZE)
+            for name in {names[face] for face in FACES if names[face]}}
+    pictures = {face: read[names[face]] for face in FACES if names[face]}
     encoded = _encode_faces(pictures, colours)
 
     game = query('SELECT id, box_faces FROM games WHERE id = ?', (game_id,), one=True)
@@ -357,5 +360,23 @@ def remove_box_faces(game_id):
     if game['box_faces'] is None:
         return False
     execute('UPDATE games SET box_faces = NULL WHERE id = ?', (game_id,))
+    if old is None:
+        # An unreadable record names no files, but its faces still carry this
+        # game's id, so the orphan sweep would never remove them.
+        for name in _faces_of_game(game_id):
+            _delete_faces({'faces': {name.split('_')[1]: name}})
+        return True
     _delete_faces(old)
     return True
+
+
+def _faces_of_game(game_id):
+    """The face files in faces_dir() written for `game_id`
+    (`<id>_<face>_<token>.webp`)."""
+    try:
+        names = os.listdir(faces_dir())
+    except OSError:
+        return []
+    return [name for name in names
+            if name.endswith('.webp') and name.split('_')[0] == str(game_id)
+            and len(name.split('_')) == 3 and name.split('_')[1] in FACES]

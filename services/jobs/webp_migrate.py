@@ -36,6 +36,8 @@ _SOURCES = (
     ('boxart',      'boxart',      False),
     ('boxart_3d',   'boxart_3d',   False),
     ('fanart',      'fanart',      False),
+    ('boxart_back', 'boxart_back', False),
+    ('game_logo',   'game_logos',  False),
     ('screenshots', 'screenshots', True),  # comma-split
 )
 
@@ -155,23 +157,24 @@ class WebPMigrateJob:
         try:
             work_items, in_scope_bytes = _build_work_list()
 
-            # Disk-space guard. WebP is normally smaller than JPEG, but a
-            # cold cap of 2× the in-scope total protects against the worst
-            # case (re-encoding loss + tmp files held during atomic save).
-            # Fails closed: unreadable free space refuses rather than
-            # proceeding as if space were unlimited.
+            # Disk-space guard. Files convert one at a time and each original
+            # is deleted once its WebP is saved, so the most held at once is
+            # one original plus its copy and the atomic save's temp file:
+            # 2× the largest file. Fails closed: unreadable free space
+            # refuses rather than proceeding as if space were unlimited.
+            needed = 2 * max((it['size'] for it in work_items), default=0)
             try:
                 free_bytes = shutil.disk_usage(config.IMAGE_PATH).free
             except (OSError, AttributeError) as e:
                 free_bytes = None
                 msg = f"Refusing to start: cannot read free disk space ({e})."
-            if free_bytes is not None and free_bytes < 2 * in_scope_bytes:
+            if free_bytes is not None and free_bytes < needed:
                 msg = (
                     f"Refusing to start: free disk {free_bytes / 1e6:.0f} MB "
-                    f"< 2× in-scope media size ({in_scope_bytes / 1e6:.0f} MB). "
+                    f"< 2× the largest file to convert ({needed / 2e6:.0f} MB). "
                     f"Free up space and retry."
                 )
-            if free_bytes is None or free_bytes < 2 * in_scope_bytes:
+            if free_bytes is None or free_bytes < needed:
                 logger.warning(msg)
                 with self._lock:
                     self.error_message = msg
@@ -270,10 +273,12 @@ def _build_work_list():
     Returns `(items, in_scope_bytes)` where each `item` is a dict shaped:
         {
             'game_id': int,
-            'column': 'boxart' | 'boxart_3d' | 'fanart' | 'screenshots',
+            'column': a column of _SOURCES,
             'image_type': matching subdir name,
             'is_csv': bool,
             'filename': str,    # the bare entry as it appears in the DB
+            'full_path': str,
+            'size': int,        # bytes on disk
         }
     Only files with a `.jpg` / `.jpeg` / `.png` extension are included; WebP
     / GIF / missing-on-disk entries are filtered out here so the worker
@@ -320,6 +325,7 @@ def _build_work_list():
                         'is_csv': is_csv,
                         'filename': entry,
                         'full_path': full_path,
+                        'size': size,
                     })
                     in_scope_bytes += size
     finally:

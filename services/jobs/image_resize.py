@@ -365,6 +365,9 @@ def _standardize_with_tracking(path, image_type, target, preserve_rgba):
     if not os.path.isfile(path):
         logger.debug(f"Image resize: file no longer exists {path} (deleted by dedup?)")
         return 'skipped'
+    # A GIF is never re-saved (_save_image), so resizing one is wasted work.
+    if os.path.splitext(path)[1].lower() == '.gif':
+        return 'skipped'
 
     # Pass 32.9: decode inside a context manager and copy pixels off the
     # source handle. The pre-existing flow leaked a file descriptor on any

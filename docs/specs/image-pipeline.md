@@ -191,6 +191,10 @@ logs its own errors so a finalize failure never fails the download
 `_MODEL_URLS` carries a hardcoded fallback list of HuggingFace mirrors, tried
 after the configured URL. The Xenova mirror left the list on 2026-10-17: it
 answers 401 (PASS-59-101).
+A file from a default address must match the SHA-256 Hugging Face publishes
+for it (`_MODEL_DIGESTS`), or it is not saved; a cached default model of the
+wrong size is downloaded again (PASS-59-249). A model at an address set in
+config is not checked.
 Pass 41.14.B routes every URL through
 `services.ssrf.validate_outbound_url(require_https=True)`; Pass 45.2
 also pins the IP via `validate_and_pin_url` + `pin_host_ip` so DNS
@@ -528,13 +532,13 @@ early on cancel, pause, or shutdown — never on a single bad file.
 `POST /api/maintenance/convert-to-webp/{start,status,cancel}` in
 `routes/maintenance.py`.
 
-- **Worklist:** the `_SOURCES` tuple at `services/jobs/webp_migrate.py:34-39`
-  enumerates four columns — `boxart`, `boxart_3d`, `fanart`, `screenshots`
-  (with `is_csv=True` for the last one). Manuals are out of scope by
+- **Worklist:** the `_SOURCES` tuple in `services/jobs/webp_migrate.py`
+  names the columns — `boxart`, `boxart_3d`, `fanart`, `boxart_back`,
+  `game_logo` (folder `game_logos/`) and `screenshots` (with `is_csv=True`
+  for the last one). Manuals are out of scope by
   omission, not by skip-branch (the `manual` column is simply not in
   `_SOURCES`). The per-file filter is the allowlist
-  `_CONVERTIBLE_EXTS = {'.jpg', '.jpeg', '.png'}`
-  (`webp_migrate.py:44`); anything else — `.gif`, `.webp`, `.bmp`, etc. —
+  `_CONVERTIBLE_EXTS = {'.jpg', '.jpeg', '.png'}`; anything else — `.gif`, `.webp`, `.bmp`, etc. —
   is left untouched (`.gif` because Pillow's animated-WebP output is lossy;
   others because they're too rare to handle without per-format edge-case
   coverage).
@@ -544,11 +548,12 @@ early on cancel, pause, or shutdown — never on a single bad file.
   and the original is left untouched; the file is bucketed as failed.
 - **Disk-space precheck:** runs inside `_run()` after the worker thread
   has spun (so `start()` itself returns immediately with `success: True`).
-  The precheck sums the byte size of every in-scope file
-  (`in_scope_bytes`). If `free < 2 × in_scope_bytes` the job logs a
-  human-readable error, transitions to `failed`, and surfaces the reason
-  via `get_status()` — WebP is usually smaller, but the 2× floor covers
-  the transient "old + new both on disk" window per file.
+  Files convert one at a time and each original is deleted once its
+  WebP is saved, so the precheck asks for twice the largest in-scope
+  file. If free space is below that, the job logs a human-readable
+  error, transitions to `failed`, and surfaces the reason via
+  `get_status()`. The 2× floor covers the "old + new both on disk"
+  window for one file.
 - **Resume:** the job adopts an existing `.webp` sibling if it appears
   intact (open + `verify()`); the original is unlinked, the DB row
   updated, and the file counted as already-migrated.
@@ -678,7 +683,9 @@ is a regression — flag it in code review.
 4. **ESRGAN model load is lazy and singleton.** `_get_upscaler()`
    double-checks under `_upscaler_lock`; the GPU inference worker is a
    single daemon thread; the GPU-fail circuit breaker is one-way for
-   the process lifetime.
+   the process lifetime. A GPU session runs only on that thread: once
+   the breaker stops it, a call still waiting on it raises at once and
+   that image uses Lanczos.
 5. **Every `Path.rglob` over a configurable root has a symlink-escape
    guard.** Use the `_safe_under_root` pattern (§11) — `Path.is_
    symlink()` alone is insufficient because Python 3.12's `rglob`
@@ -696,7 +703,8 @@ is a regression — flag it in code review.
    (`find_orphaned_media`), re-check at delete time
    (`clean_orphaned_files`). A symlinked entry inside a media dir from
    manual admin work can never be unlinked by the cleaner.
-9. **GIFs pass through untouched.** Never re-encoded, never resized,
+9. **GIFs pass through untouched.** Never re-encoded, never resized
+   (neither `standardize_image` nor the resize job opens one),
    never converted to WebP — `img.save(path, 'GIF')` without
    `save_all=True` flattens animation to the first frame.
 10. **The fill-only invariant extends to media columns.** Scraper

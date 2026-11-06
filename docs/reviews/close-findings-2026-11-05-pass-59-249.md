@@ -144,18 +144,27 @@ Run-level, group F:
 
 ## G. Image pipeline
 
+Test: `tests/test_pass59_249_images.py`, all thirteen run red first.
+
 | Finding | Verified | Disposition |
 |---|---|---|
-| GIFs upscaled then discarded | yes | |
-| Upscale model download has no hash check | yes | |
-| `upscale_queue.py` has no path containment check | not yet read | |
-| `media_dir_is_healthy` counts any entry | not yet read | |
-| GPU circuit-breaker race; swallowed error | not yet read | |
-| Transparency kept only for RGBA on upscale | not yet read | |
-| Two box faces naming one upload: second read empty | not yet read | |
-| `webp_migrate._SOURCES` misses `boxart_back`, `game_logo` | not yet read | |
-| WebP migrate disk guard asks twice the library size | not yet read | |
-| `remove_box_faces` with unreadable record leaves files | not yet read | |
+| GIFs upscaled then discarded | yes | fixed: `standardize_image` and the resize job skip a GIF |
+| Upscale model download has no hash check | yes | fixed: a default-address download must match Hugging Face's published SHA-256 (`_MODEL_DIGESTS`); a cached default model of the wrong size is fetched again |
+| `upscale_queue.py` has no path containment check | yes | fixed: `_media_files` keeps only names inside their folder (`safe_path`) |
+| `media_dir_is_healthy` counts any entry | yes | fixed: hidden/temp files and `-sm`/`-md` variants do not count |
+| GPU circuit-breaker race; swallowed error | yes | fixed: `_gpu_run` reads the queue once and raises when it stops; a GPU upscaler never runs its session off the GPU thread; the after-switch case logs |
+| Transparency kept only for RGBA on upscale | yes | fixed: LA, PA and palette-with-transparency upscale as RGBA |
+| Two box faces naming one upload: second read empty | yes | fixed: each upload is read once |
+| `webp_migrate._SOURCES` misses `boxart_back`, `game_logo` | yes | fixed: both added (`game_logos/` folder) |
+| WebP migrate disk guard asks twice the library size | yes | fixed: twice the largest file |
+| `remove_box_faces` with unreadable record leaves files | yes | fixed: deletes the faces carrying the game's id |
+
+Run-level, group G:
+
+- cited_by: `docs/specs/image-pipeline.md` (model download, §12.1, invariants 4 and 9); `docs/specs/PASS-59-142-box-file-import.md` removal rule.
+- swept: image-pipeline model passage, fixed; §12.1 worklist and disk precheck, fixed (also dropped two stale line citations); invariant 4, fixed; invariant 9, fixed; GIF table rows, agree; box file spec removal rule, fixed; help.html, agrees (names no WebP columns).
+- collateral: `tests/test_webp_migrate.py` fixture lacked the two new columns; added.
+- surfaced: none. out_of_scope: none. falsified: none.
 
 ## H. Database, settings, restore
 

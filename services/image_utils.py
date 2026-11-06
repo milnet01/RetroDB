@@ -7,11 +7,13 @@
 # =============================================================================
 
 import contextvars
+import hashlib
 import os
 import logging
 import queue
 import tempfile
 import threading
+import time
 
 from services import apply_progress
 
@@ -90,12 +92,23 @@ def _gpu_inference_worker():
 
 def _gpu_run(session, input_dict):
     """Submit an inference request to the dedicated GPU thread and block
-    until the result is ready, or raise TimeoutError after _GPU_RUN_TIMEOUT."""
+    until the result is ready, or raise TimeoutError after _GPU_RUN_TIMEOUT.
+
+    Raises RuntimeError when the GPU thread is gone, or stops while this call
+    waits (the circuit breaker tripped in another thread), so the caller falls
+    back to Lanczos at once instead of waiting out the timeout."""
+    gpu_queue = _gpu_queue
+    if gpu_queue is None:
+        raise RuntimeError("GPU inference thread has stopped")
     result = {}
     event = threading.Event()
-    _gpu_queue.put((session, input_dict, event, result))
-    if not event.wait(_GPU_RUN_TIMEOUT):
-        raise TimeoutError(f"GPU inference gave no result in {_GPU_RUN_TIMEOUT}s")
+    gpu_queue.put((session, input_dict, event, result))
+    deadline = time.monotonic() + _GPU_RUN_TIMEOUT
+    while not event.wait(min(0.1, max(0.0, deadline - time.monotonic()))):
+        if _gpu_queue is not gpu_queue:
+            raise RuntimeError("GPU inference thread stopped during the call")
+        if time.monotonic() >= deadline:
+            raise TimeoutError(f"GPU inference gave no result in {_GPU_RUN_TIMEOUT}s")
     if 'error' in result:
         raise result['error']
     return result['output']
@@ -104,6 +117,12 @@ def _gpu_run(session, input_dict):
 _MODEL_URLS = [
     'https://huggingface.co/AXERA-TECH/Real-ESRGAN/resolve/main/onnx/realesrgan-x4.onnx',
 ]
+# (sha256, size) of each default model file, from Hugging Face's own file
+# record (its Git LFS pointer). A model at an address set in config is not
+# checked: nobody here knows its hash.
+_MODEL_DIGESTS = {
+    _MODEL_URLS[0]: ('10a7a075719220ee6627124473ce57c74b7ef336b57bed4508d9353eaa8f17ef', 66991363),
+}
 
 
 def _download_model(url, dest):
@@ -161,15 +180,20 @@ def _download_model(url, dest):
                 stream=True, allow_redirects=False,
             ) as resp:
                 resp.raise_for_status()
+                digest = hashlib.sha256()
                 with open(tmp, 'wb') as f:
                     for chunk in resp.iter_content(chunk_size=1024 * 256):
                         if chunk:
                             f.write(chunk)
+                            digest.update(chunk)
                     f.flush()
                     try:
                         os.fsync(f.fileno())
                     except OSError:
                         pass
+            expected = _MODEL_DIGESTS.get(try_url)
+            if expected and digest.hexdigest() != expected[0]:
+                raise RuntimeError("downloaded file does not match the model's published SHA-256")
             os.replace(tmp, dest)
             logger.info("Model download complete")
             return
@@ -281,7 +305,9 @@ class _OnnxUpscaler:
 
                 # Run inference (GPU: dispatch to dedicated thread to keep
                 # MIOpen's invoker cache on the same handle)
-                if self._gpu and _gpu_queue is not None:
+                # A GPU session runs only on the GPU thread; once that has
+                # stopped, _gpu_run raises and the caller uses Lanczos.
+                if self._gpu:
                     result = _gpu_run(self._session, {input_name: tile_f})[0]
                 else:
                     result = self._session.run(None, {input_name: tile_f})[0]
@@ -372,11 +398,14 @@ def _init_upscaler(allow_gpu=True):
         model_path = os.path.join(
             os.path.expanduser('~'), '.cache', 'realesrgan', f'{model_name}.onnx'
         )
+        model_url = getattr(config, 'REALESRGAN_MODEL_URL', _MODEL_URLS[0])
+        # A cached default model of the wrong size (an error page saved by an
+        # older download) is fetched again rather than kept for good.
+        expected = _MODEL_DIGESTS.get(model_url)
+        if expected and os.path.exists(model_path) and os.path.getsize(model_path) != expected[1]:
+            logger.warning(f"Real-ESRGAN model at {model_path} is not the published file; downloading it again")
+            os.remove(model_path)
         if not os.path.exists(model_path):
-            model_url = getattr(
-                config, 'REALESRGAN_MODEL_URL',
-                'https://huggingface.co/AXERA-TECH/Real-ESRGAN/resolve/main/onnx/realesrgan-x4.onnx'
-            )
             _download_model(model_url, model_path)
 
         # Prefer GPU providers, fall back to CPU
@@ -803,6 +832,10 @@ def standardize_image(path, image_type, target, preserve_rgba=False, still_wante
     import config
     from PIL import Image
 
+    # A GIF is never re-saved (_save_image), so resizing one is wasted work.
+    if os.path.splitext(path)[1].lower() == '.gif':
+        return
+
     # Pass 32.9: decode inside a context manager and copy pixels off the
     # source handle before the upscale / downscale branches. A raising
     # upscale path otherwise leaks the file descriptor — exhausts the FD
@@ -890,10 +923,14 @@ def _upscale_image(img, image_type, target, preserve_rgba):
         logger.debug(f"Real-ESRGAN unavailable, using Lanczos upscale for {os.path.basename(img.filename) if hasattr(img, 'filename') else 'image'}")
         return _downscale_image(img, image_type, target)
 
-    has_alpha = preserve_rgba and img.mode == 'RGBA'
+    has_alpha = preserve_rgba and (
+        img.mode in ('RGBA', 'LA', 'PA', 'RGBa', 'La')
+        or (img.mode == 'P' and 'transparency' in img.info))
 
     try:
         if has_alpha:
+            if img.mode != 'RGBA':
+                img = img.convert('RGBA')
             # Separate alpha channel
             r, g, b, a = img.split()
             rgb_img = Image.merge('RGB', (r, g, b))
@@ -943,6 +980,8 @@ def _upscale_image(img, image_type, target, preserve_rgba):
                     _upscaler_checked = True
         elif not _gpu_failed:
             logger.warning(f"Real-ESRGAN upscale failed, falling back to Lanczos: {e}")
+        else:
+            logger.info(f"Real-ESRGAN upscale ended by the switch to CPU; Lanczos used for this image: {e}")
         # img is still the original or partially processed — Lanczos resize anyway
 
     # Now resize to exact target
