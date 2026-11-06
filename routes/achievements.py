@@ -11,7 +11,7 @@ import logging
 from services.analytics import invalidate_analytics_cache
 from services.database import query, execute
 from services.auth import login_required, editor_required, get_user_ra_credentials
-from services.api_helpers import handle_api_errors, success, error
+from services.api_helpers import handle_api_errors, success, error, job_reply
 from services.jobs import ra_sync_job, ra_refresh_job
 from services import ra_sign_in
 
@@ -391,7 +391,7 @@ def api_sync_system_achievements(system_id):
     # Start background sync (Pass 31.2 — per-user progress rows).
     result = ra_sync_job.start(system_id, game_ids, system['name'], user_id=g.user['id'])
     
-    return jsonify(result)
+    return job_reply(result)
 
 
 @bp.route('/api/achievements/sync-status')
@@ -407,9 +407,9 @@ def api_achievements_sync_cancel():
     """Cancel the current RA sync job"""
     from services.jobs.base import may_control
     if not may_control(ra_sync_job._user_id, g.user):
-        return jsonify({'success': False, 'error': _('That job belongs to another user')})
+        return jsonify({'success': False, 'error': _('That job belongs to another user')}), 403
     result = ra_sync_job.cancel()
-    return jsonify(result)
+    return job_reply(result)
 
 
 @bp.route('/api/achievements/sync-results/<int:system_id>')

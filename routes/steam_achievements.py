@@ -17,7 +17,7 @@ from flask import Blueprint, render_template, jsonify, g
 from flask_babel import gettext as _
 
 from services.database import query, get_db
-from services.api_helpers import success, error
+from services.api_helpers import success, error, job_reply
 from services.auth import login_required, editor_required
 
 logger = logging.getLogger(__name__)
@@ -155,4 +155,4 @@ def api_steam_sync_all():
     """Start bulk Steam achievement sync (Pass 31.4 — per-user credentials)."""
     from services.jobs import steam_sync_job
     result = steam_sync_job.start(user_id=g.user['id'])
-    return jsonify(result)
+    return job_reply(result)

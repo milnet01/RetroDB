@@ -1249,7 +1249,8 @@ async function refreshRetroAchievements() {
                 }
             } catch (error) {
                 console.error('Error starting RetroAchievements refresh:', error);
-                showNotification(t('Failed to start RetroAchievements refresh'), 'error');
+                // PASS-59-264: a refusal is a 4xx carrying the server's message.
+                showNotification(error.status ? error.message : t('Failed to start RetroAchievements refresh'), 'error');
                 resetFindGamesButton();
             }
         }

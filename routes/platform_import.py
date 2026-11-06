@@ -37,7 +37,7 @@ import config
 from services.achievement_linking import normalize_title_for_dedup as normalize_title
 from services.database import get_db, query, execute
 from services.game_utils import generate_sort_title
-from services.api_helpers import success, error
+from services.api_helpers import success, error, job_reply
 from services.auth import login_required, editor_required, has_permission
 from routes.scraper import get_saved_api_keys, is_masked_sentinel
 
@@ -369,7 +369,7 @@ def api_steam_sync_achievements():
     """
     from services.jobs import steam_sync_job
     result = steam_sync_job.start(user_id=g.user['id'])
-    return jsonify(result)
+    return job_reply(result)
 
 
 @bp.route('/api/steam/sync-status')
@@ -750,7 +750,7 @@ def api_xbox_sync_achievements():
     """
     from services.jobs import xbox_sync_job
     result = xbox_sync_job.start(user_id=g.user['id'])
-    return jsonify(result)
+    return job_reply(result)
 
 
 @bp.route('/api/xbox/sync-status')

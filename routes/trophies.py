@@ -14,7 +14,7 @@ import threading
 
 import config
 from services.database import query, execute, execute_many
-from services.api_helpers import success, error
+from services.api_helpers import success, error, job_reply
 from services.auth import login_required, admin_required, editor_required, get_user_settings
 from services.jobs.base import _download_psn_trophy_image as download_psn_trophy_image
 
@@ -1930,7 +1930,7 @@ def api_psn_bulk_refresh_start():
         return error(_('PSN NPSSO not configured'), 400)
 
     result = psn_refresh_job.start(npwr_ids, npsso, return_url, user_id=g.user['id'])
-    return jsonify(result)
+    return job_reply(result)
 
 
 @bp.route('/api/psn/bulk-refresh/status')

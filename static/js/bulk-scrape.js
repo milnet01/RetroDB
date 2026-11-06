@@ -158,18 +158,18 @@ const BulkScrapeController = {
                         UnifiedToastController.broadcast('job-started', 'bulk-scrape', initialData);
                     }
                 }
-            } else {
-                if (data.error && data.error.includes('already')) {
-                    showNotification(data.error, 'warning');
-                } else {
-                    const _ei2 = typeof getThemedIcon === 'function' ? getThemedIcon('error') : '❌';
-                    showModal(_ei2 + ' ' + t('Error'), data.error || t('Failed to start bulk scrape'));
-                }
             }
         } catch (error) {
             console.error('Error starting bulk scrape:', error);
+            // PASS-59-264: a refusal is a 4xx carrying the server's message;
+            // 409 means a scrape is already running or queued.
+            if (error.status === 409) {
+                showNotification(error.message, 'warning');
+                return;
+            }
             const _ei3 = typeof getThemedIcon === 'function' ? getThemedIcon('error') : '❌';
-            showModal(_ei3 + ' ' + t('Error'), t('Network error starting bulk scrape'));
+            showModal(_ei3 + ' ' + t('Error'),
+                error.status ? error.message : t('Network error starting bulk scrape'));
         }
     },
     

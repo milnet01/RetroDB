@@ -2643,14 +2643,24 @@ const UnifiedToastController = {
 
             if (endpoint) {
                 await API.post(endpoint);
-                this.hideActiveToast(type);
-                this._stopTypePolling(type);
-                this.activeOperations.set(type, false);
-                this.broadcast('job-cancelled', type);
+                this._clearCancelled(type);
             }
         } catch (e) {
-            console.error(`Error cancelling ${type}:`, e);
+            if (e.status === 409) {
+                this._clearCancelled(type);
+            } else if (e.status === 403) {
+                showNotification(e.message, 'error');
+            } else {
+                console.error(`Error cancelling ${type}:`, e);
+            }
         }
+    },
+
+    _clearCancelled(type) {
+        this.hideActiveToast(type);
+        this._stopTypePolling(type);
+        this.activeOperations.set(type, false);
+        this.broadcast('job-cancelled', type);
     },
 
     /**
@@ -2659,7 +2669,11 @@ const UnifiedToastController = {
     async cancelQueued(type, jobId) {
         try {
             if (type === 'bulk-scrape') {
-                await API.post(`/api/bulk-scrape-job/cancel-queued/${jobId}`);
+                try {
+                    await API.post(`/api/bulk-scrape-job/cancel-queued/${jobId}`);
+                } catch (e) {
+                    if (e.status !== 409) throw e;
+                }
 
                 const toastId = `queued-${type}-${jobId}`;
                 const toast = this.activeToasts.get(toastId);
@@ -3894,7 +3908,7 @@ async function refreshRetroAchievements() {
                 }
             } catch (error) {
                 console.error('Error starting RetroAchievements refresh:', error);
-                showNotification(t('Failed to start RetroAchievements refresh'), 'error');
+                showNotification(error.status ? error.message : t('Failed to start RetroAchievements refresh'), 'error');
                 resetFindGamesButton();
             }
         }

@@ -385,10 +385,9 @@ per-key TTL (the previous form was a soft-DoS amplifier).
 
 **Bucket keys:**
 - `/api/login` — failures count against the bare client IP
-  (`request.remote_addr or '127.0.0.1'`). A successful login clears only
-  the `f"{ip}:login:{user_id}"` key, so one account holder cannot reset
-  the counter for guesses against another. No failure writes that key,
-  so a success leaves the IP bucket in place until its window ends.
+  (`request.remote_addr or '127.0.0.1'`). A successful login clears
+  nothing, so one account holder cannot reset the counter for guesses
+  against another; the bucket ends with its window (PASS-59-264).
 - `/api/profile/password` — `f"{ip}:cpw:{user_id}"` (Pass 41.1.B). The
   legacy IP-only bucket was shared with `/api/login`, so 5 failed
   change-password attempts on a shared LAN locked everyone else out of

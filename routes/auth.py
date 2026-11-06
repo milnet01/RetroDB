@@ -95,15 +95,11 @@ def api_login():
         execute("UPDATE users SET password_hash = ? WHERE id = ?",
                 (password_hash, user['id']))
 
-    # Login successful. Clear only THIS user's bucket.
-    #
-    # This was `record_login_attempt(client_ip, True)`, which pops the whole
-    # per-IP entry -- so any household account holder could reset the
-    # counter at will: four guesses against `admin`, one successful login
-    # as themselves, repeat forever. That is the viewer-to-admin escalation
-    # the threat model puts in scope, and the per-(ip, user) pattern was
-    # already in this file at api_change_password.
-    record_login_attempt(f"{client_ip}:login:{user_id}", True)
+    # Login successful. The per-IP failure count is NOT cleared: it ends with
+    # its window. Clearing it let any household account holder reset the
+    # counter at will -- four guesses against `admin`, one successful login
+    # as themselves, repeat forever -- the viewer-to-admin escalation the
+    # threat model puts in scope (auth.md §9).
 
     # Pass 24.2 — rotate the session on the auth boundary so any pre-login
     # session state (including an attacker-planted cookie) is discarded.

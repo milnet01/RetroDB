@@ -16,7 +16,7 @@ import logging
 from flask import Blueprint, render_template, jsonify, g
 from flask_babel import gettext as _
 from services.database import query, get_db
-from services.api_helpers import success, error
+from services.api_helpers import success, error, job_reply
 from services.auth import login_required, editor_required
 
 logger = logging.getLogger(__name__)
@@ -174,4 +174,4 @@ def api_xbox_sync_all():
     """Start bulk Xbox achievement sync (Pass 27.3 — per current user)."""
     from services.jobs import xbox_sync_job
     result = xbox_sync_job.start(user_id=g.user['id'])
-    return jsonify(result)
+    return job_reply(result)

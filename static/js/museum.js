@@ -35,8 +35,8 @@ function _doBulkGenerate(overwrite) {
                 if (btn) btn.disabled = false;
             }
         })
-        .catch(function () {
-            showNotification(t('Failed to start generation'), 'error');
+        .catch(function (err) {
+            showNotification((err && err.data && err.data.error) || t('Failed to start generation'), 'error');
             if (btn) btn.disabled = false;
         });
 }
@@ -48,10 +48,10 @@ function cancelBulkGenerate() {
                 showNotification(t('Cancellation requested'), 'warning');
             }
         })
-        .catch(function () {
+        .catch(function (err) {
             // API.post rejects on HTTP error / 30s timeout; surface it instead
             // of leaving an unhandled rejection and no user feedback.
-            showNotification(t('Cancel request failed'), 'warning');
+            showNotification((err && err.data && err.data.error) || t('Cancel request failed'), 'warning');
         });
 }
 
@@ -297,9 +297,9 @@ function removeControllerBg(controllerId) {
                 location.reload();
             }
         })
-        .catch(function () {
+        .catch(function (err) {
             _removeControllerOverlay(controllerId);
-            showNotification(t('Background removal failed'), 'error');
+            showNotification((err && err.data && err.data.error) || t('Background removal failed'), 'error');
             location.reload();
         });
 }
@@ -321,8 +321,8 @@ function fetchControllerImage(controllerId) {
                 _resetPlaceholder(controllerId);
             }
         })
-        .catch(function () {
-            showNotification(t('Failed to fetch controller image'), 'error');
+        .catch(function (err) {
+            showNotification((err && err.data && err.data.error) || t('Failed to fetch controller image'), 'error');
             _resetPlaceholder(controllerId);
         });
 }
@@ -369,9 +369,9 @@ function _doUpload(controllerId, file, removeBg) {
                 _resetPlaceholder(controllerId);
             }
         })
-        .catch(function () {
+        .catch(function (err) {
             _removeControllerOverlay(controllerId);
-            showNotification(t('Upload failed'), 'error');
+            showNotification((err && err.data && err.data.error) || t('Upload failed'), 'error');
             _resetPlaceholder(controllerId);
         });
 

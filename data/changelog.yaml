@@ -1,6 +1,8 @@
 - version: 4.0.0
   date: 2026-11-06
   tags:
+  - type: fix
+    label: 'Cancelling a scrape, sync or image job that has already finished now clears its stuck progress popup. Starting a job that is already running shows the real reason, such as "A scrape for SNES is already running", instead of "Network error". Controller image errors in the Museum now say what went wrong, and cancelling another user''s RetroAchievements sync says it is theirs instead of pretending to cancel it'
   - type: security
     label: 'The log viewer now hides passwords and keys in older log files too. Logs written before RetroDB learned to hide a particular password, such as ScreenScraper''s, showed it in plain text when viewed or downloaded'
   - type: security

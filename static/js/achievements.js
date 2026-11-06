@@ -53,6 +53,11 @@ const RASync = {
                 this.handleError(data, btn, statusEl);
             }
         } catch (e) {
+            // PASS-59-264: a refusal is a 4xx whose envelope handleError reads.
+            if (e.data) {
+                this.handleError(e.data, btn, statusEl);
+                return;
+            }
             console.error('Error starting sync:', e);
             if (btn) {
                 btn.innerHTML = '<span class="btn-icon">❌</span> ' + t('Network error');

@@ -11658,7 +11658,7 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.264 Failure replies at HTTP 200, and launch errors that show raw system text (audit-fix, S).
-- **Status**: todo
+- **Status**: in-progress
 - **Found by**: PASS-59-250, checking api-contracts.md §3.2 and
   decision record 0003 against the routes.
 - **HTTP 200 failures** (§3.2 now lists them): `routes/museum.py`
@@ -11675,6 +11675,22 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Dead line**: `routes/auth.py::api_login` clears
   `{ip}:login:{user_id}` on success, which no failure ever writes
   (auth.md §9). Remove it or count failures per user too.
+- **Progress** (2026-11-06): 2026-11-06 part 1 done: museum image routes answer
+  400/404/409/422/500; job start/pause/cancel routes go through
+  api_helpers.job_reply (refusal = 409); RA sync-cancel of another
+  user's job = 403; six JS callers fixed (bulk-scrape.js start, main.js
+  RA refresh, museum.js, toast-controller performCancel/cancelQueued,
+  achievements.js); dead login-bucket clear removed (auth.md §9). Tests
+  tests/test_pass59_264_error_status.py. LEFT: launch errors. User
+  decided 2026-11-06: translate every LaunchResolutionError message and
+  keep names/paths; a spawn or kill failure logs the OS text and shows a
+  short translated message; RA sign-in wraps RA's reason in a translated
+  sentence. WIP for services/launch_resolver.py saved at
+  /mnt/Games/DevTools/cache/retrodb-p264-launch-wip.patch (git apply).
+  Still to do: services/player.py raises, routes/launch.py
+  spawn/kill/status, services/ra_sign_in.py,
+  test_launch_resolver/test_launcher_local wording, catalog regen and
+  translation of the new msgids.
 
 ---
 

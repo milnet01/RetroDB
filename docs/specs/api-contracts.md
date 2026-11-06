@@ -152,17 +152,18 @@ alone. These remain:
 
 - `/api/psn/status` reports a state, not a failed request, and keeps 200
   on purpose.
-- Job start, pause, resume and cancel routes that return the job's own
-  result with `jsonify(result)`. The job answers `success: false` when one
-  is already running, or none is.
-- In `routes/museum.py`: `fetch_controller_image`, `upload_controller_image`
-  and `remove_controller_bg`.
-- `api_achievements_sync_cancel` in `routes/achievements.py`, when the job
-  belongs to another user.
 - `api_bulk_scrape` in `routes/bulk_scrape.py`, which answers a game it
   skipped with `success: false, skipped: true`.
+- The archive scanner's routes in `routes/tools.py` (contents,
+  remove-files, clean, create-m3u, batch-create-m3u), which return the
+  scanner's own result.
 
-Find them with `grep -rnE "jsonify\(\{'success': False|return jsonify\(result\)" routes`.
+A job's start, pause, resume and cancel routes send the job's reply through
+`job_reply()` in `services/api_helpers.py`: a refusal (one is already
+running, or none is) answers 409 (PASS-59-264). `/api/check-scraper` and
+`/api/scraper-allowance` report a state, not a failure.
+
+Find the rest with `grep -rnE "jsonify\(\{'success': False|return jsonify\(result\)" routes`.
 
 ---
 

@@ -20,7 +20,7 @@ import logging
 import config
 from services.analytics import invalidate_analytics_cache
 from services.game_query import invalidate_filter_cache
-from services.api_helpers import error, handle_api_errors, success
+from services.api_helpers import error, handle_api_errors, success, job_reply
 from services.database import get_db, query
 from services.auth import admin_required, login_required
 from services.game_cleanup import (
@@ -276,7 +276,7 @@ def api_image_resize_start():
         return error(_('Unknown image type'), 400)
 
     result = image_resize_job.start(image_types=image_types)
-    return jsonify(result)
+    return job_reply(result)
 
 
 @bp.route('/api/maintenance/image-resize/status', methods=['GET'])
@@ -297,7 +297,7 @@ def api_image_resize_cancel():
     """Cancel running image resize job."""
     from services.jobs import image_resize_job
     result = image_resize_job.cancel()
-    return jsonify(result)
+    return job_reply(result)
 
 
 # =============================================================================
@@ -316,7 +316,7 @@ def api_convert_to_webp_start():
     """Start the bulk JPEG/PNG → WebP migration job."""
     from services.jobs import webp_migrate_job
     result = webp_migrate_job.start()
-    return jsonify(result)
+    return job_reply(result)
 
 
 @bp.route('/api/maintenance/convert-to-webp/status', methods=['GET'])
@@ -337,7 +337,7 @@ def api_convert_to_webp_cancel():
     """Cancel the running WebP migration."""
     from services.jobs import webp_migrate_job
     result = webp_migrate_job.cancel()
-    return jsonify(result)
+    return job_reply(result)
 
 
 # =============================================================================
@@ -353,7 +353,7 @@ def api_alt_titles_backfill_start():
     data = request.get_json(silent=True) or {}
     only_empty = bool(data.get('only_empty', True))
     result = alt_titles_backfill_job.start(only_empty=only_empty)
-    return jsonify(result)
+    return job_reply(result)
 
 
 @bp.route('/api/maintenance/alt-titles-backfill/status', methods=['GET'])
@@ -374,7 +374,7 @@ def api_alt_titles_backfill_cancel():
     """Cancel running alt-titles backfill job."""
     from services.jobs import alt_titles_backfill_job
     result = alt_titles_backfill_job.cancel()
-    return jsonify(result)
+    return job_reply(result)
 
 
 # =============================================================================

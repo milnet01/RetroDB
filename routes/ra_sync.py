@@ -9,7 +9,7 @@ from flask_babel import gettext as _
 import logging
 
 from services.analytics import invalidate_analytics_cache
-from services.api_helpers import handle_api_errors, success, error
+from services.api_helpers import handle_api_errors, success, error, job_reply
 from services.auth import login_required, admin_required
 from services.database import query, execute
 from services.jobs import ra_sync_job, ra_refresh_job
@@ -68,7 +68,7 @@ def api_refresh_retroachievements():
         )
 
     result = ra_refresh_job.start()
-    return jsonify(result)
+    return job_reply(result)
 
 
 @bp.route('/api/refresh-retroachievements/status', methods=['GET'])
@@ -136,7 +136,7 @@ def api_refresh_retroachievements_system(system_id):
     result = ra_refresh_job.start(system_id=system_id, system_name=system['name'])
     result['game_count'] = game_count
 
-    return jsonify(result)
+    return job_reply(result)
 
 
 # =============================================================================

@@ -84,6 +84,13 @@ def error(message, code=400, **extra):
     return jsonify({'success': False, 'error': message, **extra}), code
 
 
+def job_reply(result, code=409):
+    """Send a background job's own reply dict. A refusal from the job (one
+    is already running, or none is to pause or cancel) answers `code`
+    instead of 200 (PASS-59-264, decision 0003)."""
+    return jsonify(result), (200 if result.get('success') else code)
+
+
 def json_body():
     """The request's JSON object, or {} when the body is missing or not an object.
 

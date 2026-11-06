@@ -15,7 +15,7 @@ from services.database import query
 from services.jobs import bulk_scrape_job
 from services.game_utils import arcade_search_title, derive_title_from_filename, get_system_type, is_arcade_set
 from services.auth import login_required, editor_required
-from services.api_helpers import handle_api_errors, success, error
+from services.api_helpers import handle_api_errors, success, error, job_reply
 
 logger = logging.getLogger(__name__)
 
@@ -168,7 +168,7 @@ def api_bulk_scrape_job_start():
         return error(_('No game IDs provided'), code=400)
 
     result = bulk_scrape_job.start(game_ids, system_id, return_url, scrape_mode)
-    return jsonify(result)
+    return job_reply(result)
 
 
 @bp.route('/api/bulk-scrape-job/status', methods=['GET'])
@@ -186,7 +186,7 @@ def api_bulk_scrape_job_status():
 def api_bulk_scrape_job_pause():
     """Pause the current bulk scrape job"""
     result = bulk_scrape_job.pause()
-    return jsonify(result)
+    return job_reply(result)
 
 
 @bp.route('/api/bulk-scrape-job/resume', methods=['POST'])
@@ -195,7 +195,7 @@ def api_bulk_scrape_job_pause():
 def api_bulk_scrape_job_resume():
     """Resume the current bulk scrape job"""
     result = bulk_scrape_job.resume()
-    return jsonify(result)
+    return job_reply(result)
 
 
 @bp.route('/api/bulk-scrape-job/cancel', methods=['POST'])
@@ -204,7 +204,7 @@ def api_bulk_scrape_job_resume():
 def api_bulk_scrape_job_cancel():
     """Cancel the current bulk scrape job"""
     result = bulk_scrape_job.cancel()
-    return jsonify(result)
+    return job_reply(result)
 
 
 @bp.route('/api/bulk-scrape-job/cancel-queued/<job_id>', methods=['POST'])
@@ -213,7 +213,7 @@ def api_bulk_scrape_job_cancel():
 def api_bulk_scrape_job_cancel_queued(job_id):
     """Cancel a specific queued bulk scrape job"""
     result = bulk_scrape_job.cancel_queued(job_id)
-    return jsonify(result)
+    return job_reply(result)
 
 
 @bp.route('/api/bulk-scrape-job/cancel-all-queued', methods=['POST'])
@@ -222,7 +222,7 @@ def api_bulk_scrape_job_cancel_queued(job_id):
 def api_bulk_scrape_job_cancel_all_queued():
     """Cancel all queued bulk scrape jobs"""
     result = bulk_scrape_job.cancel_all_queued()
-    return jsonify(result)
+    return job_reply(result)
 
 
 @bp.route('/api/bulk-scrape-job/promote-queued/<job_id>', methods=['POST'])
@@ -231,7 +231,7 @@ def api_bulk_scrape_job_cancel_all_queued():
 def api_bulk_scrape_job_promote_queued(job_id):
     """Move a queued job up in the queue (run sooner)"""
     result = bulk_scrape_job.promote_queued(job_id)
-    return jsonify(result)
+    return job_reply(result)
 
 
 @bp.route('/api/bulk-scrape-job/demote-queued/<job_id>', methods=['POST'])
@@ -240,7 +240,7 @@ def api_bulk_scrape_job_promote_queued(job_id):
 def api_bulk_scrape_job_demote_queued(job_id):
     """Move a queued job down in the queue (run later)"""
     result = bulk_scrape_job.demote_queued(job_id)
-    return jsonify(result)
+    return job_reply(result)
 
 
 @bp.route('/api/bulk-scrape-job/swap-running/<job_id>', methods=['POST'])
@@ -249,7 +249,7 @@ def api_bulk_scrape_job_demote_queued(job_id):
 def api_bulk_scrape_job_swap_running(job_id):
     """Swap a queued job with the currently running job"""
     result = bulk_scrape_job.swap_with_running(job_id)
-    return jsonify(result)
+    return job_reply(result)
 
 
 @bp.route('/api/bulk-scrape-job/demote-running', methods=['POST'])
@@ -258,4 +258,4 @@ def api_bulk_scrape_job_swap_running(job_id):
 def api_bulk_scrape_job_demote_running():
     """Demote the running job to queue position 1 and start the next queued job"""
     result = bulk_scrape_job.demote_running()
-    return jsonify(result)
+    return job_reply(result)

@@ -7,6 +7,7 @@
 
 from flask import Blueprint, render_template, jsonify, request
 from flask_babel import gettext as _
+from services.api_helpers import job_reply
 import json
 import os
 import re
@@ -470,7 +471,7 @@ def generate_all():
     data = request.get_json(silent=True) or {}
     overwrite = data.get('overwrite', False)
     result = museum_generate_job.start(overwrite=overwrite)
-    return jsonify(result)
+    return job_reply(result)
 
 
 @bp.route('/api/museum/generate-status')
@@ -487,7 +488,7 @@ def cancel_generate():
     """Cancel running bulk generation."""
     from services.jobs import museum_generate_job
     result = museum_generate_job.cancel()
-    return jsonify(result)
+    return job_reply(result)
 
 
 @bp.route('/api/museum/cleanup-controller-images', methods=['POST'])
@@ -609,7 +610,7 @@ def fetch_controller_image(controller_id):
         _propagate_controller_image(db, controller_id, result)
         return jsonify({'success': True, 'image': result})
 
-    return jsonify({'success': False, 'error': _('Could not find a suitable image for this controller')})
+    return jsonify({'success': False, 'error': _('Could not find a suitable image for this controller')}), 404
 
 
 @bp.route('/api/museum/controller-images-bulk/<int:system_id>', methods=['POST'])
@@ -665,11 +666,11 @@ def upload_controller_image(controller_id):
         return jsonify({'success': False, 'error': _('Controller not found')}), 404
 
     if 'image' not in request.files:
-        return jsonify({'success': False, 'error': _('No image file provided')})
+        return jsonify({'success': False, 'error': _('No image file provided')}), 400
 
     file = request.files['image']
     if not file.filename:
-        return jsonify({'success': False, 'error': _('No file selected')})
+        return jsonify({'success': False, 'error': _('No file selected')}), 400
 
     # Pass 25.4 — reject oversize uploads before reading the whole payload.
     # Werkzeug's MAX_CONTENT_LENGTH covers the full request body, but a single
@@ -694,14 +695,14 @@ def upload_controller_image(controller_id):
             'error': _('File too large (> %(max)s MB).') % {'max': max_upload // (1024*1024)},
         }), 413
     if len(image_data) < 100:
-        return jsonify({'success': False, 'error': _('File is too small')})
+        return jsonify({'success': False, 'error': _('File is too small')}), 422
 
     # Validate it's actually an image
     try:
         img_check = Image.open(io.BytesIO(image_data))
         img_check.verify()
     except Exception:
-        return jsonify({'success': False, 'error': _('Invalid image file')})
+        return jsonify({'success': False, 'error': _('Invalid image file')}), 422
 
     # Optionally remove background
     remove_bg = request.form.get('remove_bg', 'false') == 'true'
@@ -712,7 +713,7 @@ def upload_controller_image(controller_id):
     # Save as webp
     filename = _persist_controller_image(controller_id, image_data)
     if not filename:
-        return jsonify({'success': False, 'error': _('Failed to process image')})
+        return jsonify({'success': False, 'error': _('Failed to process image')}), 500
 
     db.execute("UPDATE controllers SET image = ? WHERE id = ?", (filename, controller_id))
     db.commit()
@@ -735,11 +736,11 @@ def remove_controller_bg(controller_id):
         return jsonify({'success': False, 'error': _('Controller not found')}), 404
 
     if not controller['image']:
-        return jsonify({'success': False, 'error': _('No image to process')})
+        return jsonify({'success': False, 'error': _('No image to process')}), 409
 
     filepath = _controller_image_file(controller['image'])
     if not filepath:
-        return jsonify({'success': False, 'error': _('Image file not found')})
+        return jsonify({'success': False, 'error': _('Image file not found')}), 404
 
     try:
         with open(filepath, 'rb') as f:
@@ -749,11 +750,11 @@ def remove_controller_bg(controller_id):
         processed = _remove_background(image_data, removebg_key)
     except Exception as e:
         logger.error(f"Museum: Failed to remove background for {controller['name']}: {e}")
-        return jsonify({'success': False, 'error': _('Background removal failed')})
+        return jsonify({'success': False, 'error': _('Background removal failed')}), 500
 
     filename = _persist_controller_image(controller_id, processed)
     if not filename:
-        return jsonify({'success': False, 'error': _('Background removal failed')})
+        return jsonify({'success': False, 'error': _('Background removal failed')}), 500
 
     if controller['image'] != filename:
         db.execute("UPDATE controllers SET image = ? WHERE id = ?", (filename, controller_id))
