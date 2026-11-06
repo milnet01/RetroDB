@@ -1,7 +1,8 @@
 # 0003 — Some error replies still use HTTP 200
 
-**Status:** ended 2026-10-19 by PASS-59-120, which converted the last
-`code=200` calls. **Recorded:** 2026-10-17 (roadmap PASS-59-65).
+**Status:** in force. PASS-59-120 converted the last `code=200` calls
+on 2026-10-19, but some routes still answer `success: false` at HTTP 200
+without one (see Consequences). **Recorded:** 2026-10-17 (roadmap PASS-59-65).
 **Narrowed:** 2026-10-17 by PASS-59-114, which converted the hand-built
 replies.
 
@@ -37,17 +38,13 @@ Origins:
 
 - On these routes, the status code alone does not show a failure. A caller
   reads the `success` field.
-- These files still call `error(..., code=200)`: `routes/auth.py` (the auth
-  and profile validators), `routes/achievements.py`, `routes/bulk_scrape.py`,
-  `routes/clz_import.py`, `routes/games_ai.py`, `routes/games_media.py` and
-  `services/hltb_service.py`. Find them with `grep -rn "code=200" routes services`.
-- PASS-59-114 converted the replies built by hand with no status code, in
-  ten route files. One stays: `/api/psn/status` answers `success: false`
-  with its `configured` flags at 200, because it reports a state rather than
-  a failed request.
+- No route calls `error(..., code=200)` any more (PASS-59-120).
+- Some routes still build `success: false` replies with no status, so they
+  answer 200. `/api/psn/status` does so on purpose: it reports a state, not
+  a failed request. The rest are listed in
+  [`../specs/api-contracts.md`](../specs/api-contracts.md) § 3.2.
 - The JSON helper in `static/js/utils.js` (`API.get`, `API.post`,
   `API.postForm`) rejects a failed request with the reply's `error` text as
   the message, the envelope on `.data` and the status on `.status`.
-- This record ends when the `code=200` calls above are converted.
-  PASS-59-120 did so on 2026-10-19. `/api/psn/status` keeps its 200, as
-  above.
+- This record ends when the routes listed in § 3.2 are converted.
+  `/api/psn/status` keeps its 200, as above.

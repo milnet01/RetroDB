@@ -6,7 +6,7 @@
 
 ## 1. Purpose
 
-RetroDB ingests game metadata from a mix of remote APIs (IGDB, TGDB, RAWG, ScreenScraper, RetroAchievements, HLTB), a local file source (ES-DE `gamelist.xml` + `downloaded_media/`), and a generative AI fallback. Steam and Xbox modules supply per-user library imports and achievement data, not metadata. The scraper subsystem unifies these into a single `games` row: it walks one user-selected primary source, falls back to user-prioritised secondaries to fill any remaining gaps, and writes the result without ever overwriting a non-empty field unless the user has opted into Full Re-scrape mode.
+RetroDB ingests game metadata from a mix of remote APIs (IGDB, TGDB, RAWG, ScreenScraper, RetroAchievements, HLTB), a local file source (ES-DE `gamelist.xml` + `downloaded_media/`), and a generative AI fallback. Steam and Xbox modules supply per-user library imports and achievement data, not metadata. The scraper subsystem unifies these into a single `games` row: it walks one user-selected primary source, falls back to user-prioritised secondaries to fill any remaining gaps, and writes the result without overwriting a non-empty field, except in the cases §5 lists.
 
 Three contracts pin the subsystem and exist solely because they were broken in the past:
 
@@ -32,7 +32,7 @@ See also: CLAUDE.md "Scraper fill-only invariant" and "Schema / data shapes"; [`
 | Steam             | `scraper/scrape_steam.py`         | remote          | `steam_api_key` + `steam_id` (store app details need no key)              | Per-user owned-games import and achievement sync. Not a source in the hybrid walk: `SteamSyncJob` fills an imported game once from its store page, as primary source `steam` with `mark_scraped=False`. It leaves the date and genre to a scrape, because the date is the Steam release and the genre is nearly always Action. A store that says it has no such app (a delisted game) gets an entry that fills nothing, so it is not asked again.                |
 | Xbox              | `scraper/scrape_xbox.py`          | remote          | `xbox_client_id` + `xbox_client_secret`, then a per-user Microsoft OAuth2 sign-in (XBL + XSTS tokens) | Per-user title import and achievement sync. Not a source in the hybrid walk. |
 | RetroAchievements | `scraper/retroachievements.py`    | remote          | `ra_apikey`                                                               | `has_retroachievements`, `ra_game_id`, `ra_achievement_count`, `ra_points` (tail of hybrid apply) |
-| AI Fill           | `scraper/scrape_ai.py`            | AI              | One of: `ai_gemini_api_key`, `ai_openai_api_key`, `ai_anthropic_api_key` (+ optional `ai_gemini_project_id`) | Final gap-fill for text-only fields; never media (see §12)                                        |
+| AI Fill           | `scraper/scrape_ai.py`            | AI              | One of: `ai_gemini_api_key`, `ai_openai_api_key`, `ai_claude_api_key` (+ optional `ai_gemini_project_id`) | Final gap-fill for text-only fields; never media (see §12)                                        |
 | HLTB              | `scraper/hltb_lookup.py`          | remote          | No (public site scrape)                                                   | Playtime estimates (main / extra / completionist) for HowLongToBeat                               |
 
 **Platform coverage** (user, 2026-10-27). A source is searched only when it maps the game's system to one of its platforms, and every query it sends keeps that platform filter: `scrape_rawg.PLATFORM_MAP` (only platforms RAWG lists; no Intellivision, ColecoVision, PC Engine, arcade, Virtual Boy), `scrape_igdb.get_platform_id`, `scrape_thegamesdb.get_system_id`, `scrape_screenscraper.get_system_id`. An unmapped system gets `[]` without a request: searching without the filter matched games from other platforms. A system's name or folder must match an entry exactly; part of a name is no match. TheGamesDB files Mega Drive and Genesis as two platforms, so a game's own list is searched first and the other only if that finds nothing. Its documented comma-separated platform filter is ignored by the live service, which then returns every platform (tried 2026-10-31). The maps live in the scraper modules, not `config.py`, because an update never rewrites an installed `config.py`. Pinned by `tests/test_scraper_platform_coverage.py` and `tests/test_scraper_platform_maps.py`.
@@ -48,7 +48,7 @@ Entry point: `scraper.hybrid_scraper.apply_hybrid_metadata(db_game_id, primary_s
 Two modes:
 
 - **Normal (default; `force_overwrite=False`)** — pre-populate `metadata` from the existing `games` row so every per-source merger sees the current state and only writes into still-empty fields. Stale media references (file deleted but DB still names it) are detected via `os.path.exists` and conditionally NULLed under a `WHERE id = ? AND <field> = ?` guard so a concurrent upload between stat and clear isn't wiped (Pass 40.15).
-- **Full Re-scrape (`force_overwrite=True`)** — `metadata` starts empty; every source applies as if the row were new. ES-DE deletes the row's old box art and 3D box only when it copied a replacement itself; a field another source already filled in this run is left alone. This is the only documented exception to fill-only.
+- **Full Re-scrape (`force_overwrite=True`)** — `metadata` starts empty; every source applies as if the row were new. ES-DE deletes the row's old box art and 3D box only when it copied a replacement itself; a field another source already filled in this run is left alone. It is one of the fill-only exceptions in §5.
   - **Keep existing media (`keep_media=True`, bulk mode `full_rescrape_keep_media`)** — seeds each media field whose file is on disk (`_seed_kept_media`), so it is not downloaded again and ES-DE leaves it alone; new screenshots still append (PASS-59-133).
 
 Walk order:
@@ -166,7 +166,13 @@ The hybrid orchestrator's UPDATE (`hybrid_scraper.py::_save_game_row`) is the sa
 
 **Title lock** (PASS-59-159 §4.3). `games.title_locked = 1` means no scraper writes `title` or `sort_title`, in normal or Full Re-scrape mode. Both sites above write `title` as `CASE WHEN title_locked = 1 THEN title ELSE COALESCE(?, title) END`; `_save_game_row` writes `sort_title` the same way. Scrapers still search with a locked title. The edit windows set the lock when a title is changed, and their "Keep this title when scraping" tick box sets or clears it; the per-game Reset clears it. `tests/test_official_names.py` pins it.
 
-**Exception:** Full Re-scrape mode in `hybrid_scraper` (`force_overwrite=True`) intentionally bypasses fill-only — the user opted in. ES-DE in this mode deletes old box art only once it has copied a replacement.
+**Exceptions.** Five writes break or tighten fill-only:
+
+- **AI Fill corrects scraped values** (PASS-59-211). In `services/ai_fill.py`, a field in `scrape_ai.VALIDATE_FIELDS` that was not edited by hand takes the AI's value when it differs. The old value is kept under `replaced` in that run's `scrape_history` entry.
+- **An own-region date fills out a stored one** (PASS-59-207). `metadata_merger._fill_release_date` lets an IGDB or ScreenScraper date for the game's own region replace a stored year or month it agrees with (§12 "How exact a date is").
+- **Full Re-scrape** (`force_overwrite=True` in `hybrid_scraper`) overwrites any field a source provides; the user opted in. A field no source fills keeps its value (PASS-59-214). ES-DE in this mode deletes old box art only once it has copied a replacement.
+- **AI Fill renames to the official title** (§12 "Official title"). The replaced name is kept as an alternate title.
+- **A locked title is never written** (Title lock above). With `title_locked = 1`, no scrape writes `title` or `sort_title`, Full Re-scrape included.
 
 **Source ids are stricter.** `hybrid_scraper._save_source_ids` stores the IGDB and ScreenScraper game ids a scrape used, as regional-version signals (PASS-59-106 §4.5). It writes `COALESCE(igdb_id, ?)`: a stored id is kept, because a later wrong match would otherwise relink a game. Full Re-scrape writes `COALESCE(?, igdb_id)`. A ScreenScraper record for this exact file replaces the stored `screenscraper_id` (PASS-59-217). Pinned by `tests/test_scrape_fill_only.py::test_source_ids_fill_only`.
 

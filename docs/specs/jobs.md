@@ -130,9 +130,9 @@ process to `interrupted` so the dashboard never shows stale ghosts.
 |-------|----------|-------------------|
 | `self.running` / `self.cancelled` / `self.paused` / counters | Job object in memory | No |
 | Queue chain (`BulkScrapeJob._queue`) | In-memory list | No (each queued entry also gets a `job_queue` row with `status='queued'` — those are auto-promoted to `interrupted` at startup). A job displaced by a swap or demote, and a resume queued behind a running scrape, get one too, with their progress (`_persist_queued_entry`, PASS-59-243). The row is written outside `self._lock`. |
-| Per-tick progress | `job_queue.progress` (JSON) | Yes — updated every 10 items or 30 s |
+| Per-tick progress | `job_queue.progress` (JSON) | Yes. Most jobs write it every 10 items or 30 s; `museum` every 5 items, `webp_migrate` every 20, each also at 30 s. `hltb_bulk`, `alt_titles_backfill` and `ss_region_repair` write it every 15 s. `ai_fill_bulk` and `mame_names` write no progress. |
 | Run history (started/finished, params, error) | `job_queue` row | Yes — until `sweep_old_job_history` prunes it (§10) |
-| Cross-process lock | `database/job_locks/<name>.lock` (open FD) | No — released on process exit by the kernel |
+| Cross-process lock | `job_locks/<name>.lock` beside the database file (`config.DB_PATH`; by default `database/job_locks/`), as an open FD | No — released on process exit by the kernel |
 
 The `job_queue` schema (see
 [`services/migrations/scripts/001_baseline.py:295`](../../services/migrations/scripts/001_baseline.py)):
@@ -142,7 +142,7 @@ CREATE TABLE job_queue (
     id            INTEGER PRIMARY KEY AUTOINCREMENT,
     job_type      TEXT NOT NULL,         -- 'bulk_scrape', 'ra_sync', ...
     status        TEXT DEFAULT 'running',
-    progress      TEXT,                  -- JSON {current, total, success, failed, skipped, current_item}
+    progress      TEXT,                  -- JSON {current, total, ...}; other keys vary by job
     created_at    TEXT NOT NULL,
     updated_at    TEXT NOT NULL,
     completed_at  TEXT,
@@ -363,8 +363,8 @@ it. The fields and their consumers
 |-------|------|----------|----------------|
 | `running` / `completed` / `cancelled` | bool | all jobs | state machine — drives polling cadence + cancel-button visibility |
 | `paused` | bool | bulk_scrape, psn_refresh | paused state |
-| `current` / `total` / `percent` | int | all jobs (`percent`: all but museum) | progress bar fill |
-| `processed` / `processing` | int | bulk_scrape (both); psn_refresh, image_resize (`processed` only) (§7) | counter strings above + below the bar |
+| `current` / `total` / `percent` | int | all jobs except: `museum` (sends `current_index` / `total_systems`, no `percent`); `ai_fill_bulk` and `player_cores` (no `current`; they send `processed`); `mame_names` (no `percent`) | progress bar fill |
+| `processed` / `processing` | int | bulk_scrape, ai_fill_bulk (both); psn_refresh, image_resize, museum_images, player_cores (`processed` only) (§7) | counter strings above + below the bar |
 | `success` / `failed` / `skipped` | int | scrape / sync jobs | result-breakdown line (icons + counts) |
 | `current_game` | string | bulk_scrape, ra_*, psn_refresh, hltb_bulk | "currently being processed" line on most job types |
 | `current_file` | string | image_resize | same line, file-rather-than-game wording |

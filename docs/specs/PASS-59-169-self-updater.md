@@ -175,6 +175,7 @@ shows the outcome to the admin, and removes leftovers the helper could not
 | `POST /api/updates/check` | check now |
 | `POST /api/updates/download` | start §4 |
 | `POST /api/updates/install` | §5 |
+| `POST /api/updates/dismiss` | forget the last install's result: deletes `data/update_status.json` (`updater.dismiss_result`). `static/js/updates.js` calls it when the user presses OK on the result message. |
 
 Errors are the usual `error(...)` envelope (`docs/specs/api-contracts.md`).
 Release notes are GitHub's release body, shown as plain text.

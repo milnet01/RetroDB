@@ -242,9 +242,14 @@ swap inside `services/platform_tokens.py` — call sites unchanged.
 | RetroAchievements user / key        | `user_settings.ra_username`, `.ra_api_key`    |
 | PSN username / NPSSO                | `user_settings.psn_username`, `.psn_npsso`    |
 | PSN + Xbox OAuth token blobs        | `user_platform_tokens.tokens` (JSON-encoded)  |
+| RetroAchievements sign-in token     | `user_platform_tokens.tokens`, platform `retroachievements` |
+
+The RetroAchievements row holds the username, the login token and the
+hardcore setting. `services/ra_sign_in.py` writes and clears it; the
+password is never stored.
 
 **Accessor:** `services/platform_tokens.py` is the single shared module for
-PSN + Xbox OAuth blobs. Functions: `load_tokens(user_id, platform)`,
+`user_platform_tokens`. Functions: `load_tokens(user_id, platform)`,
 `save_tokens(user_id, platform, tokens)` (upsert),
 `clear_tokens(user_id, platform)`. All three short-circuit
 `if not user_id: return` — defence-in-depth pin for misconfigured
@@ -308,6 +313,7 @@ hash under the app's secret key. `get_current_user` answers None when the
 stamp does not match the user's current hash. A password change, a forced
 change or an admin reset writes a new hash, so every other session of that
 account is signed out; the session that made the change gets a fresh stamp.
+A sign-in that upgrades an old-format hash (§8) also writes a new hash.
 A session with no stamp is signed out too.
 
 ---
@@ -360,8 +366,9 @@ Pinned by `TestPasswordPolicyAndRateLimit::test_min_length_raised_to_12`.
 - Admin reset (`api_update_user` with `new_password`) sets the flag
   unless `skip_force_change: true` is passed (Pass 33.4).
 - `app.py::check_force_password_change` `@before_request` hook
-  intercepts any flagged user and serves the force-change template for
-  every endpoint outside `{auth.api_change_password,
+  intercepts any flagged user on every endpoint outside the list below.
+  An `/api/*` request gets a 403 JSON error; any other request gets the
+  force-change page. Allowed endpoints: `{auth.api_change_password,
   auth.api_force_change_password, auth.logout, static,
   serve_static_image, setup_page, setup_api}`. Pinned by
   `TestForcePasswordChangeMiddleware`.
@@ -372,12 +379,16 @@ Pinned by `TestPasswordPolicyAndRateLimit::test_min_length_raised_to_12`.
 
 In-memory `OrderedDict` rate limiter in `services/security.py`:
 `MAX_ATTEMPTS = 5`, `WINDOW_SECONDS = 300`. Five failed attempts in five
-minutes → 429; bucket clears on the next successful login. Pass 33.9
+minutes → 429. The window runs from the first failure. Pass 33.9
 replaced an O(N) + O(N log N) sweep with eviction-on-insert + lazy
 per-key TTL (the previous form was a soft-DoS amplifier).
 
 **Bucket keys:**
-- `/api/login` — bare client IP (`request.remote_addr or '127.0.0.1'`).
+- `/api/login` — failures count against the bare client IP
+  (`request.remote_addr or '127.0.0.1'`). A successful login clears only
+  the `f"{ip}:login:{user_id}"` key, so one account holder cannot reset
+  the counter for guesses against another. No failure writes that key,
+  so a success leaves the IP bucket in place until its window ends.
 - `/api/profile/password` — `f"{ip}:cpw:{user_id}"` (Pass 41.1.B). The
   legacy IP-only bucket was shared with `/api/login`, so 5 failed
   change-password attempts on a shared LAN locked everyone else out of
@@ -385,13 +396,12 @@ per-key TTL (the previous form was a soft-DoS amplifier).
   login AND from other users on the same IP. Backing storage: the same
   `_login_attempts` `OrderedDict` in `services/security.py` that serves
   `/api/login`; `_MAX_ENTRIES = 10000` LRU eviction is therefore global
-  across both bucket families.
-- `/api/profile/force-change-password` — **intentionally not rate-limited.**
-  The endpoint re-verifies the user's current password before accepting
-  the new one, so it carries some brute-force surface, but the caller is
-  already authenticated and the bootstrap credential pair is documented
-  publicly in the README. Reconsider this carve-out if the endpoint ever
-  becomes reachable pre-auth.
+  across both bucket families. A successful change clears this bucket.
+- `/api/profile/force-change-password` — **not rate-limited.** It asks
+  for no current password, so there is nothing to guess. It needs a
+  signed-in user whose `force_password_change` flag is set, and answers
+  400 otherwise. Reconsider this if the endpoint ever becomes reachable
+  before sign-in.
 
 **Open-redirect protection:** `api_login` parses `next` via `urlparse`
 and rejects any URL with a `netloc`, `scheme`, or backslash
@@ -508,7 +518,14 @@ Contracts any new code / refactor MUST honour. Each is a bug if violated.
 1. **Every mutating route has an auth decorator.** No bare `@bp.route`
    on `POST` / `PUT` / `DELETE`. `@editor_required` for metadata
    mutation, `@admin_required` for user/settings management,
-   `@permission_required(perm)` for finer grain.
+   `@permission_required(perm)` for finer grain. The only bare mutating
+   routes guard themselves in the body:
+   - `auth.api_login` — before sign-in; rate limit and password (§9).
+   - `auth.api_user_settings`, `auth.api_change_password`,
+     `auth.api_force_change_password` — answer 401 when `g.user` is
+     unset.
+   - `setup_api`, `setup_browse_folders` — no sign-in; answer 403 once
+     setup is complete or a ROM path is set. CSRF still applies (§10).
 2. **Read-only API routes still need `@login_required` (or stronger).**
    Public exceptions are small and explicit (login, setup, static,
    analytics).

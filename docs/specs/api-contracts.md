@@ -141,9 +141,28 @@ decorator**; that divergence is what Pass 49.5 closed.
 ### 3.2 Validation-failure shape
 
 A missing required field answers 400. A present but invalid value answers
-422 with the field named: `error('…', code=422, field='password')`. No route
-answers a failure at HTTP 200; PASS-59-120 converted the last ones, and
-`grep -rn "code=200" routes services` finds none.
+422 with the field named: `error('…', code=422, field='password')`.
+
+A new route answers every failure with a 4xx or 5xx status
+([decision 0003](../decisions/0003-error-code-200-convention.md)).
+PASS-59-120 removed the last `error(..., code=200)` calls, but some older
+routes still build `success: false` with `jsonify` and no status, so it
+goes out at HTTP 200. A caller reads the `success` field, not the status
+alone. These remain:
+
+- `/api/psn/status` reports a state, not a failed request, and keeps 200
+  on purpose.
+- Job start, pause, resume and cancel routes that return the job's own
+  result with `jsonify(result)`. The job answers `success: false` when one
+  is already running, or none is.
+- In `routes/museum.py`: `fetch_controller_image`, `upload_controller_image`
+  and `remove_controller_bg`.
+- `api_achievements_sync_cancel` in `routes/achievements.py`, when the job
+  belongs to another user.
+- `api_bulk_scrape` in `routes/bulk_scrape.py`, which answers a game it
+  skipped with `success: false, skipped: true`.
+
+Find them with `grep -rnE "jsonify\(\{'success': False|return jsonify\(result\)" routes`.
 
 ---
 
